@@ -38,6 +38,8 @@
 struct _GossipContactInfo {
 	LmConnection *connection;
 
+	GossipJID *jid;
+
 	GtkWidget *dialog;
 	GtkWidget *title_label;
 	GtkWidget *jid_label;
@@ -50,26 +52,39 @@ struct _GossipContactInfo {
 	GtkWidget *version_label;
 	GtkWidget *os_label;
 	GtkWidget *description_textview;
+	GtkWidget *subscription_box;
+	GtkWidget *subscription_label;
+	GtkWidget *resubscribe_button;
 	GtkWidget *close_button;
 
 	LmMessageHandler *vcard_handler;
 	LmMessageHandler *version_handler;
+	gulong presence_signal_handler;
 };
 
+static void contact_info_dialog_destroy_cb   (GtkWidget         *widget,
+					      GossipContactInfo *info);
 static void contact_info_request_information (GossipContactInfo *info,
 					      GossipJID         *jid);
+static void contact_info_dialog_close_cb     (GtkWidget         *widget, 
+					      GossipContactInfo *info);
 static LmHandlerResult
-contact_info_vcard_reply_cb                (LmMessageHandler  *handler,
-					    LmConnection      *connection,
-					    LmMessage         *message,
-					    GossipContactInfo *info);
+contact_info_vcard_reply_cb                  (LmMessageHandler  *handler,
+					      LmConnection      *connection,
+					      LmMessage         *message,
+					      GossipContactInfo *info);
 static LmHandlerResult
-contact_info_version_reply_cb              (LmMessageHandler  *handler,
-					    LmConnection      *connection,
-					    LmMessage         *message,
-					    GossipContactInfo *info);
-
-static void contact_info_dialog_close_cb     (GtkWidget         *widget,
+contact_info_version_reply_cb                (LmMessageHandler  *handler,
+					      LmConnection      *connection,
+					      LmMessage         *message,
+					      GossipContactInfo *info);
+static void contact_info_resubscribe_cb      (GtkWidget         *widget,
+					      GossipContactInfo *info);
+static void 
+contact_info_update_subscription_ui          (GossipContactInfo *info,
+					      GossipRosterItem  *item);
+static void contact_info_presence_updated_cb (GossipRoster      *roster,
+					      GossipRosterItem  *item,
 					      GossipContactInfo *info);
 
 static void
@@ -83,6 +98,11 @@ contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
 	if (info->version_handler) {
 		lm_message_handler_invalidate (info->version_handler);
 		lm_message_handler_unref (info->version_handler);
+	}
+
+	if (info->presence_signal_handler) {
+		g_signal_handler_disconnect (gossip_app_get_roster (), 
+					     info->presence_signal_handler);
 	}
 
 	g_free (info);
@@ -101,7 +121,7 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
 	info->vcard_handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_vcard_reply_cb,
-					  info, NULL);
+						      info, NULL);
 					  
 	if (!lm_connection_send_with_reply (info->connection, m,
 					    info->vcard_handler, &error)) {
@@ -119,7 +139,7 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:version");
 
 	info->version_handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_version_reply_cb,
-					  info, NULL);
+							info, NULL);
 
 	if (!lm_connection_send_with_reply (info->connection, m,
 					    info->version_handler, &error)) {
@@ -292,6 +312,64 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
+static void
+contact_info_resubscribe_cb (GtkWidget *widget, GossipContactInfo *info)
+{
+	LmMessage *m;
+	GError *error = NULL;
+
+	m = lm_message_new (gossip_jid_get_without_resource (info->jid), 
+			    LM_MESSAGE_TYPE_PRESENCE);
+	lm_message_node_set_attribute (m->node, "type", "subscribe");
+
+	if (!lm_connection_send (info->connection, m, &error)) {
+		d(g_print ("Error while sending: %s\n", error->message));
+		lm_message_unref (m);
+		return;
+	}
+
+	lm_message_unref (m);
+}
+
+static void
+contact_info_update_subscription_ui (GossipContactInfo *info,
+				     GossipRosterItem  *item)
+{
+	const gchar *subscription;
+
+	g_return_if_fail (item != NULL);
+	g_return_if_fail (info != NULL);
+
+	subscription = gossip_roster_item_get_subscription (item);
+
+	if (strcmp(subscription, "none") == 0 || strcmp(subscription, "from") == 0) {
+		gtk_label_set_label (GTK_LABEL (info->subscription_label), 
+				     _("You are not subscribed to this contact's status. Press Subscribe to recieve their status."));
+		
+		gtk_widget_show_all (info->subscription_box);
+	
+		g_signal_connect (info->resubscribe_button,
+				  "clicked",
+				  G_CALLBACK (contact_info_resubscribe_cb),
+				  info);
+	} else {
+		gtk_widget_hide (info->subscription_box);
+	}
+}
+
+static void
+contact_info_presence_updated_cb (GossipRoster *roster, GossipRosterItem *item, GossipContactInfo *info)
+{
+	g_return_if_fail (item != NULL);
+	g_return_if_fail (info != NULL);
+	
+	if (!gossip_jid_equals_without_resource (gossip_roster_item_get_jid (item), info->jid)) {
+		return;
+	}
+	
+	contact_info_update_subscription_ui (info, item);
+}
+
 GossipContactInfo *
 gossip_contact_info_new (GossipJID *jid, const gchar *name)
 {
@@ -299,11 +377,14 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 	GladeXML          *gui;
 	gchar             *str, *tmp_str;
 	GtkSizeGroup      *size_group;
+	GossipRoster *roster;
+	GossipRosterItem *item;
 
 	info = g_new0 (GossipContactInfo, 1);
 
 	info->connection = gossip_app_get_connection ();
-	
+	info->jid = jid;
+
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "contact_information_dialog",
 				     NULL,
@@ -320,6 +401,9 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 				     "os_label", &info->os_label,
 				     "close_button", &info->close_button,
 				     "description_textview", &info->description_textview,
+				     "subscription_box", &info->subscription_box,
+				     "subscription_label", &info->subscription_label,
+				     "resubscribe_button", &info->resubscribe_button,
 				     NULL);
 
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
@@ -361,6 +445,15 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 
 	gtk_label_set_text (GTK_LABEL (info->jid_label), gossip_jid_get_without_resource (jid));
 	
+	roster = gossip_app_get_roster ();
+	item = gossip_roster_get_item (roster, jid);
+	contact_info_update_subscription_ui (info, item);
+		
+	info->presence_signal_handler = g_signal_connect(roster, 
+							 "item_updated", 
+							 G_CALLBACK(contact_info_presence_updated_cb), 
+							 info);
+
 	g_signal_connect (info->close_button,
 			  "clicked",
 			  G_CALLBACK (contact_info_dialog_close_cb),

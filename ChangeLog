@@ -1,5 +1,18 @@
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-info.c:
+	- Implemented resubscription if you are not subscribed to the other
+	  contact.
+	- Patch from Ross Burton
+	- Fixes bug #116403
+	(contact_info_resubscribe_cb): Added
+	(contact_info_update_subscription_ui): Added
+	(contact_info_presence_updated_cb): Added
+	(gossip_contact_info_new): Setup the new UI.
+	* ui/main.glade: Update the UI to include resubscription button.
+
+2004-06-16  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.in: Added dependency on GnomeVFS
 	* src/gossip-log.c: (log_get_filename):
 	- Store log files as lowercase jid
