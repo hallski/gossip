@@ -7,14 +7,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
-"POT-Creation-Date: 2004-03-19 11:36+0100\n"
-"PO-Revision-Date: 2004-03-04 21:05+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-03-19 04:11+0100\n"
+"PO-Revision-Date: 2004-03-19 16:26+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
+"Content-Transfer-Encoding: 8bit"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -113,24 +113,24 @@ msgstr "X-positie van hoofdvenster"
 msgid "Y position of main window"
 msgstr "Y-positie van hoofdvenster"
 
-#: src/gossip-about.c:277
+#: src/gossip-about.c:269
 msgid "Written by:"
-msgstr ""
+msgstr "Geschreven door:"
 
-#: src/gossip-about.c:287
+#: src/gossip-about.c:279
 msgid "Artwork by:"
 msgstr "Kunstwerk van:"
 
-#: src/gossip-about.c:298
+#: src/gossip-about.c:290
 msgid "Translated by:"
-msgstr ""
+msgstr "Vertaald door:"
 
 #. Note to translators: put your name here so it will shop up in the
 #. * "about" box. Please add ONLY names, separated by newlines. No mail
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:344
+#: src/gossip-about.c:336
 msgid "translator_credits"
 msgstr ""
 "Vincent van Adrighem\n"
@@ -983,18 +983,3 @@ msgstr "Contactlijst _weergeven"
 msgid "_Status Messages"
 msgstr "_Statusberichten"
 
-#, fuzzy
-#~ msgid "About Gossip"
-#~ msgstr "Gossip"
-
-#, fuzzy
-#~ msgid "translator_credits_old"
-#~ msgstr ""
-#~ "Vincent van Adrighem\n"
-#~ "Elros Cyriatan"
-
-#~ msgid "An Instant Messaging Client for GNOME"
-#~ msgstr "Een Instant Messaging Client voor GNOME"
-
-#~ msgid "Gossip Website"
-#~ msgstr "Gossip Webstek"
