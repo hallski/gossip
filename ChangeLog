@@ -1,3 +1,8 @@
+2003-08-05  Mikael Hallendal  <micke@imendio.com>
+
+	* ui/chat.glade: Added compose_image to the glade-file. Otherwise you 
+	  can't open a window, might not be what Richard had in mind...
+
 2003-08-05  Richard Hult  <rhult@codefactory.se>
 
 	* src/gossip-chat.c: (destroy_notify_cb),
