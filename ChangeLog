@@ -1,4 +1,6 @@
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
+  
+        * configure.in: Bumped to 0.4
 
 	* NEWS: Added with information for 0.4
 

@@ -1,6 +1,6 @@
 AC_INIT(src)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(gossip, 0.3)
+AM_INIT_AUTOMAKE(gossip, 0.4)
 
 AM_MAINTAINER_MODE
 
