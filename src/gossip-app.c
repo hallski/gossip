@@ -2145,6 +2145,9 @@ app_update_show (void)
 	lm_connection_send (app->priv->connection, m, NULL);
 	lm_message_unref (m);
 
+	/* set for group chat */
+	gossip_group_chat_set_show (effective_show);
+
 	g_free (status_text);
 }
 

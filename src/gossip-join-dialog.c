@@ -146,6 +146,8 @@ join_dialog_response_cb (GtkWidget        *dialog,
 	gchar *nick;
 	gchar       *to;
 	LmMessage   *m;
+	GossipShow   show;
+	const gchar *show_str;
 	
 	switch (response) {
 	case GTK_RESPONSE_OK:
@@ -158,6 +160,12 @@ join_dialog_response_cb (GtkWidget        *dialog,
 		m = lm_message_new_with_sub_type (to, LM_MESSAGE_TYPE_PRESENCE,
 						  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 		g_free (to);
+
+		show = gossip_app_get_show ();
+		show_str = gossip_utils_show_to_string (show);
+		if (show) {
+			lm_message_node_add_child (m->node, "show", show_str);
+		}
 
 		lm_connection_send (join->connection, m, NULL);
 		lm_message_unref (m);
