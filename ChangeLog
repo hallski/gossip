@@ -1,3 +1,10 @@
+2004-08-28  Mikael Hallendal  <micke@imendio.com>
+
+	* src/eggtrayicon.[ch]: 
+	- Synced with libegg.
+	* src/gossip-disco.c: Some style tweaking.
+	* ui/main.glade: Renabled transport item.
+
 2004-08-27  Mikael Hallendal  <micke@imendio.com>
 
 	* Release 0.7.7

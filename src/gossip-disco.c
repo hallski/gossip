@@ -32,7 +32,6 @@
 /* in seconds */
 #define TIMEOUT 30
 
-
 struct _GossipDisco {
         LmMessageHandler    *message_handler;
 
@@ -53,12 +52,10 @@ typedef struct {
 	gchar *name;
 } GossipDiscoIdentity;
 
-
 typedef struct {
 	GList *identities;
 	GList *features;
 } GossipDiscoInfo;
-
 
 struct _GossipDiscoItem {
 	GossipJID *jid;
@@ -69,37 +66,32 @@ struct _GossipDiscoItem {
 	GossipDiscoInfo *info;
 };
 
-
-static GossipDisco    *disco_new                      (void);
-static void            disco_init                     (void);
-static void            disco_destroy_items_foreach    (GossipDiscoItem     *item,
-						       gpointer             user_data);
-static void            disco_destroy_info_foreach     (GossipDiscoInfo     *info,
-						       gpointer             user_data);
-static void            disco_destroy_ident_foreach    (GossipDiscoIdentity *ident,
-						       gpointer             user_data);
-
-static LmHandlerResult disco_message_handler          (LmMessageHandler    *handler,
-						       LmConnection        *connection,
-						       LmMessage           *m,
-						       gpointer             user_data);
-
-static void            disco_request_items            (GossipDisco         *disco);
-static gboolean        disco_request_items_timeout_cb (GossipDisco         *disco);
-
-static void            disco_handle_items             (GossipDisco         *disco,
-						       LmMessage           *m,
-						       gpointer             user_data);
-
-static void            disco_request_info             (GossipDisco         *disco);
-
-static void            disco_handle_info              (GossipDisco         *disco,
-						       LmMessage           *m,
-						       gpointer             user_data);
-
+static GossipDisco *
+disco_new                                      (void);
+static void        disco_init                  (void);
+static void        disco_destroy_items_foreach (GossipDiscoItem     *item,
+						gpointer             user_data);
+static void        disco_destroy_info_foreach  (GossipDiscoInfo     *info,
+						gpointer             user_data);
+static void        disco_destroy_ident_foreach (GossipDiscoIdentity *ident,
+						gpointer             user_data);
+static LmHandlerResult 
+disco_message_handler                          (LmMessageHandler    *handler,
+						LmConnection        *connection,
+						LmMessage           *m,
+						gpointer             user_data);
+static void        disco_request_items         (GossipDisco         *disco);
+static gboolean  
+disco_request_items_timeout_cb                 (GossipDisco         *disco);
+static void        disco_handle_items          (GossipDisco         *disco,
+						LmMessage           *m,
+						gpointer             user_data);
+static void        disco_request_info          (GossipDisco         *disco);
+static void        disco_handle_info           (GossipDisco         *disco,
+						LmMessage           *m,
+						gpointer             user_data);
 
 static GHashTable *discos = NULL;
-
 
 static GossipDisco *
 disco_new (void)
@@ -288,7 +280,6 @@ disco_request_items_timeout_cb (GossipDisco *disco)
 	return FALSE;
 }
 
-
 static LmHandlerResult
 disco_message_handler (LmMessageHandler *handler,
 		       LmConnection     *connection,
@@ -341,11 +332,9 @@ disco_message_handler (LmMessageHandler *handler,
         return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
-
 /*
  * items
  */
-
 static void
 disco_handle_items (GossipDisco *disco,
 		    LmMessage   *m,
