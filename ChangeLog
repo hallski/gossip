@@ -1,5 +1,11 @@
 2003-11-17  Richard Hult  <richard@imendio.com>
 
+	* ui/svg/gossip-busy.svg:
+	* ui/svg/gossip-offline.svg: Update to the version we're using
+	now.
+
+2003-11-17  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat.c: (chat_update_locked_resource), (chat_send),
 	(chat_composing_send_start_event), (chat_message_handler),
 	(chat_event_handler): Don't relock on error messages, don't send
