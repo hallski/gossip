@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-23 04:51+0100\n"
-"PO-Revision-Date: 2004-01-23 17:28+0100\n"
+"POT-Creation-Date: 2004-01-24 04:49+0100\n"
+"PO-Revision-Date: 2004-01-26 22:42+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -113,7 +113,7 @@ msgstr "Pozice X hlavního okna"
 msgid "Y position of main window"
 msgstr "Pozice Y hlavního okna"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:56
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
 msgstr "Domů"
 
@@ -127,117 +127,117 @@ msgstr "Jakou zprávu požadavku chcete odeslat %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s bude přidán do vašeho seznamu kontaktů."
 
-#: src/gossip-app.c:448
+#: src/gossip-app.c:453
 msgid "_Show Contact List"
 msgstr "_Zobrazit seznam kontaktů"
 
-#: src/gossip-app.c:457
+#: src/gossip-app.c:462
 msgid "_Hide Contact List"
 msgstr "_Skrýt seznam kontaktů"
 
-#: src/gossip-app.c:470
+#: src/gossip-app.c:475
 msgid "Send _Message..."
 msgstr "_Odeslat zprávu..."
 
-#: src/gossip-app.c:485
+#: src/gossip-app.c:490
 msgid "_Quit"
 msgstr "U_končit"
 
-#: src/gossip-app.c:607
+#: src/gossip-app.c:613
 msgid "Artwork by:"
 msgstr "Grafika od:"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:614
+#: src/gossip-app.c:620
 msgid "translator_credits"
 msgstr "Miloslav Trmač <mitr@volny.cz>"
 
-#: src/gossip-app.c:629
+#: src/gossip-app.c:635
 msgid "An Instant Messaging Client for GNOME"
 msgstr "Klient Instant Messaging pro GNOME"
 
-#: src/gossip-app.c:638
+#: src/gossip-app.c:644
 msgid "Gossip Website"
 msgstr "WWW stránka Gossipu:"
 
-#: src/gossip-app.c:759
+#: src/gossip-app.c:765
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:764 ui/main.glade.h:75
+#: src/gossip-app.c:770 ui/main.glade.h:75
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: src/gossip-app.c:1023
+#: src/gossip-app.c:1029
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s chce být upozorňován na vaši přítomnost."
 
-#: src/gossip-app.c:1264
+#: src/gossip-app.c:1270
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1403
+#: src/gossip-app.c:1409
 msgid "Make sure that your account information is correct."
 msgstr "Zkontrolujte, že vaše informace o účtu jsou správné."
 
-#: src/gossip-app.c:1404
+#: src/gossip-app.c:1410
 msgid "The server may currently be unavailable."
 msgstr "Server teď možná není k dispozici."
 
-#: src/gossip-app.c:1805
+#: src/gossip-app.c:1811
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, klient Jabberu"
 
-#: src/gossip-app.c:1981
+#: src/gossip-app.c:1987
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2331 src/gossip-preferences.c:629
+#: src/gossip-app.c:2337 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "K dispozici"
 
-#: src/gossip-app.c:2338 src/gossip-preferences.c:630
+#: src/gossip-app.c:2344 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/gossip-app.c:2345 src/gossip-preferences.c:631
+#: src/gossip-app.c:2351 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "Pryč"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2476
 msgid "Available..."
 msgstr "K dispozici..."
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2480
 msgid "Busy..."
 msgstr "Zaneprázdněn..."
 
-#: src/gossip-app.c:2478
+#: src/gossip-app.c:2484
 msgid "Away..."
 msgstr "Pryč..."
 
-#: src/gossip-app.c:2504
+#: src/gossip-app.c:2510
 msgid "Edit List..."
 msgstr "Upravit seznam..."
 
-#: src/gossip-chat-view.c:320 ui/chat.glade.h:2
+#: src/gossip-chat-view.c:338 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr "_Vymazat"
 
-#: src/gossip-chat-view.c:337
+#: src/gossip-chat-view.c:355
 msgid "_Copy Link Address"
 msgstr "_Kopírovat adresu odkazu"
 
-#: src/gossip-chat-view.c:345
+#: src/gossip-chat-view.c:363
 msgid "_Open Link"
 msgstr "_Otevřít odkaz"
 
-#: src/gossip-chat-view.c:695
+#: src/gossip-chat-view.c:677
 msgid "%A %d %B %Y"
 msgstr "%A %d. %B %Y"
 
@@ -250,31 +250,31 @@ msgstr "%sDiskuse - %s"
 msgid "Offline"
 msgstr "Odpojen"
 
-#: src/gossip-chat.c:699
+#: src/gossip-chat.c:700
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Při diskusi s %s došlo k chybě."
 
-#: src/gossip-chat.c:704 src/gossip-group-chat.c:809
+#: src/gossip-chat.c:705 src/gossip-group-chat.c:809
 #: src/gossip-group-chat.c:912
 msgid "Details:"
 msgstr "Detaily:"
 
-#: src/gossip-chat.c:794
+#: src/gossip-chat.c:795
 #, c-format
 msgid "%s went offline"
 msgstr "%s se připojil"
 
-#: src/gossip-chat.c:808
+#: src/gossip-chat.c:809
 #, c-format
 msgid "%s comes online"
 msgstr "%s se odpojil"
 
-#: src/gossip-chat.c:895
+#: src/gossip-chat.c:896
 msgid "Connected"
 msgstr "Připojen"
 
-#: src/gossip-chat.c:910
+#: src/gossip-chat.c:911
 msgid "Disconnected"
 msgstr "Odpojen"
 
@@ -313,35 +313,35 @@ msgstr "Při skupinové diskusi %s došlo k chybě."
 msgid "Unable to enter the group chat %s."
 msgstr "Nemohu vstoupit do skupinové diskuse %s."
 
-#: src/gossip-log.c:227
+#: src/gossip-log.c:296
 msgid "Conversation Log"
 msgstr "Záznam konverzace"
 
-#: src/gossip-main.c:71
+#: src/gossip-main.c:69
 msgid "Don't connect on startup"
 msgstr "Nepřipojovat se při startu"
 
-#: src/gossip-main.c:80
+#: src/gossip-main.c:78
 msgid "Which account to connect to on startup"
 msgstr "Ke kterému účtu se připojit při startu"
 
-#: src/gossip-main.c:81
+#: src/gossip-main.c:79
 msgid "ACCOUNT-NAME"
 msgstr "NÁZEV-ÚČTU"
 
-#: src/gossip-main.c:89
+#: src/gossip-main.c:87
 msgid "List the available accounts"
 msgstr "Vypsat dostupné účty"
 
-#: src/gossip-main.c:122
+#: src/gossip-main.c:120
 msgid "Available accounts:"
 msgstr "Dostupné účty:"
 
-#: src/gossip-main.c:131
+#: src/gossip-main.c:129
 msgid "[default]"
 msgstr "[implicitní]"
 
-#: src/gossip-main.c:154
+#: src/gossip-main.c:152
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Neexistuje účet s názvem '%s'."
@@ -427,11 +427,11 @@ msgstr "Gossip se nyní pokusí použít váš účet:"
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip se nyní pokusí zaregistrovat účet:"
 
-#: src/gossip-utils.c:434
+#: src/gossip-utils.c:438
 msgid "Please enter your password:"
 msgstr "Zadejte prosím své heslo."
 
-#: src/gossip-utils.c:436
+#: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Zapamatovat si heslo?"
 
@@ -993,12 +993,6 @@ msgstr "_Zprávy o stavu"
 #~ msgid "Just about to leave..."
 #~ msgstr "Právě odcházím..."
 
-#~ msgid "Custom Message..."
-#~ msgstr "Vlasní zpráva..."
-
-#~ msgid "Custom Busy Message..."
-#~ msgstr "Vlasní zpráva o zaneprázdnění..."
-
 #~ msgid "Leave..."
 #~ msgstr "Odejít..."
 
@@ -1095,9 +1089,6 @@ msgstr "_Zprávy o stavu"
 
 #~ msgid "Notification"
 #~ msgstr "Upozornění"
-
-#~ msgid "Open conversations in a single window with _list view"
-#~ msgstr "Otevřít konverzace v jednom okne a zobrazovat jako _seznam"
 
 #~ msgid "Remove"
 #~ msgstr "Odstranit"
@@ -1294,9 +1285,6 @@ msgstr "_Zprávy o stavu"
 #~ msgstr ""
 #~ "Tento uživatel chce sledovat vaši přítomnost.\n"
 #~ "Povolíte to?"
-
-#~ msgid "What request message do you want to send to <b>micke</b>?"
-#~ msgstr "Jakou zprávu požadavku chcete odeslat <b>micke</b>?"
 
 #~ msgid "_Actions"
 #~ msgstr "_Akce"
