@@ -44,6 +44,7 @@
 #include "gossip-join-dialog.h"
 #include "gossip-message.h"
 #include "gossip-sound.h"
+#include "gossip-idle.h"
 #include "gossip-app.h"
 
 #include "gossip-startup-druid.h"
@@ -75,6 +76,8 @@ struct _GossipAppPriv {
 
 	/* The status to set when we get a connection. */
 	GossipStatus         status_to_set_on_connect;
+
+	gboolean             is_auto_away;
 	
 	/* Dialogs that we only have one of at a time. */
 	GossipJoinDialog    *join_dialog;
@@ -126,6 +129,7 @@ app_get_chat_for_jid                                (GossipApp      *app,
 static void      app_user_activated_cb              (GossipRoster   *roster,
 						     GossipJID      *jid,
 						     GossipApp      *app);
+static gboolean  app_idle_check_cb                  (GossipApp      *app);
 static void      app_set_status                     (GossipApp      *app,
 						     GossipStatus    status);
 static void      app_quit_cb                        (GtkWidget      *window,
@@ -364,6 +368,9 @@ app_init (GossipApp *app)
 	app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 
 	app_update_connection_dependent_menu_items (app);
+
+	/* Start the idle time checker. */
+	g_timeout_add (5000, (GSourceFunc) app_idle_check_cb, app);
 	
 	priv->about = NULL;
 	gtk_widget_show (priv->window);
@@ -1110,22 +1117,19 @@ app_connection_open_cb (LmConnection *connection,
 }
 
 static void
-app_client_disconnected_cb (LmConnection *connection,
+app_client_disconnected_cb (LmConnection       *connection,
 			    LmDisconnectReason  reason, 
-			    GossipApp    *app)
+			    GossipApp          *app)
 {
 	GossipAppPriv *priv;
 	GtkWidget     *dialog;
-	GtkWidget     *menu, *item;
-	GossipStatus   old_status;
+	GossipStatus   status;
 
 	priv = app->priv;
 
 	/* Keep the old status if we are going to reconnect. */
-	menu = gtk_option_menu_get_menu (GTK_OPTION_MENU (priv->option_menu));
-	item = gtk_menu_get_active (GTK_MENU (menu));
-	old_status = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (item), "data"));
-
+	status = gossip_status_menu_get_status (priv->option_menu);
+	
 	app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 
 	g_signal_emit (app, signals[DISCONNECTED], 0);
@@ -1139,7 +1143,9 @@ app_client_disconnected_cb (LmConnection *connection,
 						   "Do you want to reconnect?"));
 		
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_YES) {
-			app_set_status (app, old_status);
+			app_set_status (app, status);
+		} else {
+			app_set_status (app, GOSSIP_STATUS_OFFLINE);
 		}
 	
 		gtk_widget_destroy (dialog);
@@ -1161,6 +1167,59 @@ gossip_app_join_group_chat (GossipApp   *app,
 			    const gchar *nick)
 {
 	app_get_group_chat (app, room, server, nick, TRUE);
+}
+
+static gboolean
+app_idle_check_cb (GossipApp *app)
+{
+	GossipStatus   status;
+	GossipAppPriv *priv;
+	gint           idle_secs;
+	gint           auto_away_mins = 15;
+	gint           auto_ext_away_mins = 60;
+	gboolean       is_away;
+
+	priv = app->priv;
+
+	status = gossip_status_menu_get_status (priv->option_menu);
+
+	switch (status) {
+	case GOSSIP_STATUS_OFFLINE:
+		return TRUE;
+
+	case GOSSIP_STATUS_AWAY:
+	case GOSSIP_STATUS_EXT_AWAY:
+		is_away = TRUE;
+		break;
+
+	default:
+		is_away = FALSE;
+		break;
+	}
+	
+	idle_secs = gossip_idle_get_seconds ();
+
+	if (!is_away && idle_secs > (auto_away_mins * 60)) {
+		d(g_print ("Going auto-away...\n"));
+
+		app_set_status (app, GOSSIP_STATUS_AWAY);//, "Autoaway");
+		/*gossip_app_statusbar_push_notification (app, "Going auto-away");*/
+		priv->is_auto_away = TRUE;
+	}
+	else if (priv->is_auto_away && status != GOSSIP_STATUS_EXT_AWAY &&
+		 idle_secs > (auto_ext_away_mins * 60)) {
+		d(g_print ("Going extended auto-away...\n"));
+		app_set_status (app, GOSSIP_STATUS_EXT_AWAY);//, "Auto-Away (Ext)");
+		/*gossip_app_statusbar_push_notification (app, "Going extended auto-away");*/
+	}
+	else if (priv->is_auto_away && idle_secs < (auto_away_mins * 60)) {
+		d(g_print ("Returning from auto-away...\n"));
+		app_set_status (app, GOSSIP_STATUS_AVAILABLE);//, "Back from idle");
+		/*gossip_app_statusbar_push_notification (app, "Returning from auto-away");*/
+		priv->is_auto_away = FALSE;
+	}
+
+	return TRUE;
 }
 
 void

@@ -729,7 +729,7 @@ group_chat_presence_handler (LmMessageHandler *handler,
 	switch (type) {
 	case LM_MESSAGE_SUB_TYPE_ERROR:
 		tmp = g_strdup_printf ("<b>%s</b>", gossip_jid_get_part_name (jid));
-		str = g_strdup_printf (_("The group chat %s could not be entered."), tmp);
+		str = g_strdup_printf (_("Unable to enter the group chat %s."), tmp);
 		g_free (tmp);
 		
 		node = lm_message_node_get_child (m->node, "error");
