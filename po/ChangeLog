@@ -1,3 +1,7 @@
+2004-09-02  Mikael Hallendal <micke@imendio.com>
+
+	* POTFILES.in: Added src/gossip-private-chat.c
+
 2004-09-10  Jordi Mallach  <jordi@sindominio.net>
 
 	* ca.po: Updated Catalan translation.
