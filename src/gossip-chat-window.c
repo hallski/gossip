@@ -315,6 +315,8 @@ chat_window_has_toplevel_focus (GossipChatWindow *window)
 	return focus;
 }
 
+#define TAB_MIN_WIDTH 130
+
 #if 0
 static void
 tab_label_set_size (GtkWidget *window, GtkWidget *label_hbox)
@@ -369,62 +371,54 @@ width_compare_func (gconstpointer a, gconstpointer b)
 	}
 }
 
-#define TAB_MIN_WIDTH 100
+static void
+tab_notebook_size_request_cb (GtkNotebook    *notebook,
+			      GtkRequisition *requisition,
+			      gpointer        userdata)
+{
+	gint num_pages;
+	gint thickness, focus_width;
+	gint width;
+
+	num_pages = gtk_notebook_get_n_pages (notebook);
+
+	gtk_widget_style_get (GTK_WIDGET (notebook), "focus-line-width", &focus_width, NULL);
+	thickness = GTK_WIDGET (notebook)->style->xthickness;
+	
+	width = 2 * thickness + num_pages * (TAB_MIN_WIDTH + 2 * thickness + 2 * focus_width);
+
+	requisition->width = width;
+}
 
 static void
 tab_label_size_request_cb (GtkWidget      *window,
 			   GtkRequisition *requisition,
 			   GtkNotebook    *notebook)
 {
-	gint           num_pages, i;
+	gint           num_pages, num_overflow_pages, i;
 	GtkWidget      *page;
 	GtkWidget      *tab;
 	GtkRequisition  tab_req;
 	gint            total_width = 0;
+	gint            notebook_width;
 	gint            overflow;
 
 	TabWidth tab_width;
 	
 	GArray         *array;
-	GtkWidget *label;
 
+	gint thickness, focus_width;
+
+	gtk_widget_style_get (GTK_WIDGET (notebook), "focus-line-width", &focus_width, NULL);
+	thickness = GTK_WIDGET (notebook)->style->xthickness;
+	
 	num_pages = gtk_notebook_get_n_pages (notebook);
-	
-/*	for (i = 0; i < num_pages; i++) {
-		page = gtk_notebook_get_nth_page (notebook, i);
-		
-		tab = gtk_notebook_get_tab_label (notebook, page);
-		
-		gtk_widget_set_size_request (tab, -1, -1);
-		gtk_widget_size_request (tab, &tab_req);
-
-		tab_width.tab = tab;
-		tab_width.width = tab_req.width;
-		
-		g_array_append_val (array, tab_width);
-
-		total_width += tab_req.width;
-	}
-*/
-	for (i = 0; i < num_pages; i++) {
-		page = gtk_notebook_get_nth_page (notebook, i);
-		
-		tab = gtk_notebook_get_tab_label (notebook, page);
-		
-		label = g_object_get_data (G_OBJECT (tab), "label");
-
-		//gtk_widget_size_request (label, &tab_req);
-		
-		//gtk_widget_set_size_request (tab, -1, -1);
-		//gtk_widget_size_request (tab, &tab_req);
-
-		total_width += tab_req.width;
-	}
-	
-	return;
-	
 	array = g_array_new (FALSE, FALSE, sizeof (TabWidth));
 
+	notebook_width = GTK_WIDGET (notebook)->allocation.width;
+
+	num_overflow_pages = 0;
+	
 	for (i = 0; i < num_pages; i++) {
 		page = gtk_notebook_get_nth_page (notebook, i);
 		
@@ -433,37 +427,43 @@ tab_label_size_request_cb (GtkWidget      *window,
 		gtk_widget_set_size_request (tab, -1, -1);
 		gtk_widget_size_request (tab, &tab_req);
 
-		tab_width.tab = tab;
-		tab_width.width = tab_req.width;
-		
-		g_array_append_val (array, tab_width);
-
-		total_width += tab_req.width;
+		if (tab_req.width > TAB_MIN_WIDTH) {
+			tab_width.tab = tab;
+			tab_width.width = tab_req.width;
+			
+			g_array_append_val (array, tab_width);
+			
+			total_width += tab_req.width + (2 * thickness + 2 * focus_width);
+			num_overflow_pages++;
+		}
 	}
 
-	overflow = total_width - GTK_WIDGET (notebook)->allocation.width;
+	overflow = total_width - notebook_width;
 
+	if (overflow > 0) {
+		g_print ("overflow: %d\n", overflow);
+	}
+		
 	g_array_sort (array, width_compare_func);
 	
 	if (overflow > 0) {
-		for (i = 0; i < num_pages; i++) {
+		for (i = 0; i < num_overflow_pages; i++) {
 			gint delta;
 			
 			tab_width = g_array_index (array, TabWidth, i);
 
 			delta = tab_width.width - TAB_MIN_WIDTH;
-			if (delta > 0) {
-				overflow -= delta;
 
-				if (overflow < 0) {
-					delta += overflow;
-				}
-				
-				gtk_widget_set_size_request (tab_width.tab, tab_width.width - delta, -1);
+			overflow -= delta;
 
-				if (overflow <= 0) {
-					break;
-				}
+			if (overflow < 0) {
+				delta += overflow;
+			}
+			
+			gtk_widget_set_size_request (tab_width.tab, tab_width.width - delta, -1);
+			
+			if (overflow <= 0) {
+				break;
 			}
 		}
 	}
@@ -497,7 +497,7 @@ chat_window_create_label (GossipChatWindow *window,
 	name_label = gtk_label_new (name);
 
 	/* Set minimum size. */
-	/*gtk_widget_set_size_request (hbox, 120, -1);*/
+	gtk_widget_set_size_request (hbox, TAB_MIN_WIDTH, -1);
 	
 	gtk_misc_set_padding (GTK_MISC (name_label), 2, 0);
 	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
@@ -508,6 +508,11 @@ chat_window_create_label (GossipChatWindow *window,
 			  "size_request",
 			  G_CALLBACK (tab_label_size_request_cb),
 			  priv->notebook);
+
+	g_signal_connect (priv->notebook,
+			  "size_request",
+			  G_CALLBACK (tab_notebook_size_request_cb),
+			  NULL);
 */
 	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
 	close_button = gtk_button_new ();
@@ -898,7 +903,7 @@ chat_window_create_notebook (gpointer data)
 	GtkWidget *notebook;
 
 	notebook = gossip_notebook_new ();
-//	gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
+	gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
 	gtk_widget_show (notebook);
 
 	return notebook;

@@ -1,5 +1,16 @@
 2003-11-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c: (tab_notebook_size_request_cb),
+	(tab_label_size_request_cb), (chat_window_create_label): Set
+	minimum size for tab labels, and add some experimental commented
+	code for resizing the labels when the window is resized.
+
+	(chat_window_create_notebook): Set scrollable to TRUE.
+
+2003-11-17  Richard Hult  <richard@imendio.com>
+
+	* configure.in: Set Loudmouth requirement to 0.14.1.
+
 	* ui/main.glade: Use a border width of 2 pixels for the main
 	window.
 	
