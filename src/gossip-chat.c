@@ -1170,7 +1170,8 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 
 	window_height = priv->window_static_height + allocation->height;
 	
-	if (last_height == window_height) {
+	if (last_height <= window_height) {
+		last_height = window_height;
 		return;
 	}
 
