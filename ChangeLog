@@ -1,5 +1,14 @@
 2004-08-08  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_create_connection):
+	* src/gossip-register.c: (gossip_register_account):
+	- Set proxy if user has set HTTP proxy in GNOME.
+	* src/gossip-utils.[ch]: (gossip_utils_set_proxy):
+	- Added, reads GConf settings for desktop settings to see if user
+	  specified a HTTP proxy.
+
+2004-08-08  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-account-dialog.c:
 	* src/gossip-account.[ch]: 
 	* src/gossip-app.c:

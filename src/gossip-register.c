@@ -162,6 +162,8 @@ gossip_register_account (GossipAccount *account,
 
 	data->account = account;
 	data->connection = lm_connection_new (account->server);
+	gossip_utils_set_proxy (data->connection);
+
 	lm_connection_set_port (data->connection, account->port);
 	if (account->use_ssl) {
 		LmSSL *ssl = lm_ssl_new (NULL,  

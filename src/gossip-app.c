@@ -1458,6 +1458,8 @@ app_create_connection (void)
 	priv = app->priv;
 
 	priv->connection = lm_connection_new (priv->account->server);
+	gossip_utils_set_proxy (priv->connection);
+
 	lm_connection_set_port (priv->connection, priv->account->port);
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) app_message_handler, 

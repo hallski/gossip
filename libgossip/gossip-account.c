@@ -140,8 +140,6 @@ gossip_account_get (const gchar *name)
 		g_free (resource);
 	}
 
-	g_print ("Got: %s\n", jid_str);
-
 	account->jid = gossip_jid_new (jid_str);
 
 	g_free (jid_str);

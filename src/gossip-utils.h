@@ -118,6 +118,6 @@ gint         gossip_utils_str_case_cmp               (const gchar        *s1,
 gint         gossip_utils_str_n_case_cmp             (const gchar        *s1, 
 						      const gchar        *s2,
 						      gsize               n);
-
+void         gossip_utils_set_proxy                  (LmConnection       *conn);
 
 #endif /*  __GOSSIP_UTILS_H__ */

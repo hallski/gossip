@@ -959,3 +959,56 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 	return ret_val;
 }
 
+#define CONF_HTTP_PROXY_PREFIX "/system/http_proxy"
+
+void
+gossip_utils_set_proxy (LmConnection *conn)
+{
+	gboolean  use_http_proxy;
+	
+	use_http_proxy = gconf_client_get_bool (gconf_client,
+						CONF_HTTP_PROXY_PREFIX "/use_http_proxy",
+						NULL);
+	if (use_http_proxy) {
+		LmProxy  *proxy;
+		gchar    *host;
+		gint      port;
+		gboolean  use_auth;
+			host = gconf_client_get_string (gconf_client,
+						CONF_HTTP_PROXY_PREFIX "/host",
+						NULL);
+
+		port = gconf_client_get_int (gconf_client,
+					     CONF_HTTP_PROXY_PREFIX "/port",
+					     NULL);
+
+		proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
+						  host, (guint) port);
+		g_free (host);
+
+		lm_connection_set_proxy (conn, proxy);
+
+		use_auth = gconf_client_get_bool (gconf_client,
+						  CONF_HTTP_PROXY_PREFIX "/use_authentication",
+						  NULL);
+		if (use_auth) {
+			gchar *username;
+			gchar *password;
+
+			username = gconf_client_get_string (gconf_client,
+							    CONF_HTTP_PROXY_PREFIX "/authentication_user",
+							    NULL);
+			password = gconf_client_get_string (gconf_client,
+							    CONF_HTTP_PROXY_PREFIX "/authentication_password",
+							    NULL);
+			lm_proxy_set_username (proxy, username);
+			lm_proxy_set_password (proxy, password);
+
+			g_free (username);
+			g_free (password);
+		}
+		
+		lm_proxy_unref (proxy);
+	}
+
+}
