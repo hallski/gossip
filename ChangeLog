@@ -4,8 +4,9 @@
 	remove unecessary casts, don't set treeview properties with
 	code. Add support for applying and reverting changes. Don't
 	display both the name AND jid if they are the same. Don't mark
-	markup as translatable.
- 	
+	markup as translatable. Make the add entry activate the add
+	button.
+
 	* src/gossip-roster.c: (roster_group_remove): Remove empty groups.
 
 	* ui/main.glade: Add apply and cancel buttons to the group edit
