@@ -407,7 +407,7 @@ gossip_contact_get_groups (GossipContact *contact)
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
 	priv = GOSSIP_CONTACT_GET_PRIV (contact);
-	/* FIXME: Implement */
+
 	return priv->groups;
 }
 
@@ -415,13 +415,24 @@ gboolean
 gossip_contact_set_groups (GossipContact *contact, GList *groups)
 {
 	GossipContactPriv *priv;
+	GList             *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+	g_return_val_if_fail (groups != NULL, FALSE);
 	
 	priv = GOSSIP_CONTACT_GET_PRIV (contact);
 
-	/* FIXME: Implement */
-	return FALSE;
+	if (priv->groups) {
+		g_list_foreach (priv->groups, (GFunc)g_free, NULL);
+		priv->groups = NULL;
+	}
+
+	for (l = groups; l; l = l->next) {
+		priv->groups = g_list_append (priv->groups, 
+					      g_strdup (l->data));
+	}
+
+	return TRUE;
 }
 
 GossipSubscription

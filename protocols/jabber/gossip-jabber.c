@@ -773,13 +773,14 @@ jabber_update_contact (GossipContact *contact, LmMessageNode *node)
 
 	for (child = node->children; child; child = child->next) {
 		if (strcmp (child->name, "group") == 0 && child->value) {
-			categories = g_list_append (categories, 
-						    g_strdup (child->value));
+			categories = g_list_append (categories, child->value);
 		}
 	}
 
-	/* FIXME: Should this list be freed after? */
+	if (categories) {
+		/* does not get free'd */
 	categories_updated = gossip_contact_set_groups (contact, categories);
+	}
 
 	return updated || categories_updated;
 }
@@ -919,12 +920,12 @@ jabber_iq_handler (LmMessageHandler *handler,
 
 	node = lm_message_node_get_child (m->node, "query");
 	if (!node) {
-		goto end;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 	if (!xmlns || strcmp (xmlns, "jabber:iq:roster") != 0) {
-		goto end;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	for (node = node->children; node; node = node->next) {
@@ -933,6 +934,8 @@ jabber_iq_handler (LmMessageHandler *handler,
 		const gchar   *subscription;
 		gboolean       new_item = FALSE;
 		gboolean       updated;
+		LmMessageNode *subnode;
+		GList         *groups = NULL;
 
 		if (strcmp (node->name, "item") != 0) {
 			continue;
@@ -943,10 +946,23 @@ jabber_iq_handler (LmMessageHandler *handler,
 			continue;
 		}
 
-		contact = jabber_get_contact_from_jid (jabber, 
-						       jid_str, &new_item);
-		subscription = lm_message_node_get_attribute (node, 
-							      "subscription");
+		contact = jabber_get_contact_from_jid (jabber, jid_str, &new_item);
+
+		/* groups */
+		for (subnode = node->children; subnode; subnode = subnode->next) {
+			if (strcmp (subnode->name, "group") != 0) {
+				continue;
+			}
+			
+			groups = g_list_append (groups, subnode->value);
+		}
+		
+		if (groups) {
+			gossip_contact_set_groups (contact, groups);
+		}
+
+		/* subscription */
+		subscription = lm_message_node_get_attribute (node, "subscription");
 		if (contact && subscription && strcmp (subscription, "remove") == 0) {
 			g_object_ref (contact);
 			g_hash_table_remove (priv->contacts, 
@@ -970,7 +986,6 @@ jabber_iq_handler (LmMessageHandler *handler,
 		}
 	}
 
-end:
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
         /*return LM_HANDLER_RESULT_REMOVE_MESSAGE; */
 }

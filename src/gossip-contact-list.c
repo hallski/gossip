@@ -18,6 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <string.h>
+
 #include <config.h>
 
 #include <glib/gi18n.h>
@@ -54,6 +56,20 @@ typedef struct {
 } FlashData;
 
 
+typedef struct {
+	gchar       *name;
+	gboolean     found;
+	GtkTreeIter  iter;
+} FindGroup;
+
+
+typedef struct {
+	GossipContact *contact;
+	gboolean       found;
+	GList         *iters;
+} FindContact;
+
+
 /* -- Static functions -- */
 static void gossip_contact_list_class_init (GossipContactListClass *klass);
 static void gossip_contact_list_init       (GossipContactList      *list);
@@ -75,23 +91,32 @@ static void contact_list_contact_added_cb  (GossipSession          *session,
 static void contact_list_contact_updated_cb (GossipSession         *session,
 					     GossipContact         *contact,
 					     GossipContactList     *list);
-static void 
-contact_list_contact_presence_updated_cb    (GossipSession         *session,
+static void     contact_list_contact_presence_updated_cb (GossipSession          *session,
 					     GossipContact         *contact,
 					     GossipContactList     *list);
 static void contact_list_contact_removed_cb (GossipSession         *session,
 					     GossipContact         *contact,
 					     GossipContactList     *list);
+static void     contact_list_get_group                   (GossipContactList      *list,
+							  const gchar            *name,
+							  GtkTreeIter            *iter_to_set,
+							  gboolean               *created);
+static gboolean contact_list_get_group_foreach           (GtkTreeModel           *model,
+							  GtkTreePath            *path,
+							  GtkTreeIter            *iter,
+							  FindGroup              *fg);
 static void contact_list_add_contact        (GossipContactList     *list,
 					     GossipContact         *contact);
 static void contact_list_remove_contact     (GossipContactList     *list,
 					     GossipContact         *contact);
 static void contact_list_create_model       (GossipContactList     *list);
-
 static void contact_list_setup_view         (GossipContactList     *list);
-
-static gboolean 
-contact_list_button_press_event_cb             (GossipContactList *list,
+static void     contact_list_pixbuf_cell_data_func       (GtkTreeViewColumn      *tree_column,
+							  GtkCellRenderer        *cell,
+							  GtkTreeModel           *model,
+							  GtkTreeIter            *iter,
+							  gpointer                user_data);
+static gboolean contact_list_button_press_event_cb       (GossipContactList      *list,
 						GdkEventButton    *event,
 						gpointer           unused);
 static void contact_list_row_activated_cb      (GossipContactList *list,
@@ -102,13 +127,13 @@ static gint contact_list_sort_func             (GtkTreeModel      *model,
 						GtkTreeIter       *iter_a,
 						GtkTreeIter       *iter_b,
 						gpointer           unused);
-static gboolean
-contact_list_find_contact                      (GossipContactList *list,
+static GList *  contact_list_find_contact                (GossipContactList      *list,
+							  GossipContact          *contact);
+static gboolean contact_list_find_contact_foreach        (GtkTreeModel           *model,
+							  GtkTreePath            *path,
 						GtkTreeIter       *iter,
-						GossipContact     *contact,
-						const gchar       *group);
-static gchar *
-contact_list_item_factory_translate_func       (const gchar       *path,
+							  FindContact            *fc);
+static gchar *  contact_list_item_factory_translate_func (const gchar            *path,
                                                 gpointer           data);
 static void contact_list_item_menu_info_cb     (gpointer               data,
                                                 guint                  action,
@@ -116,8 +141,7 @@ static void contact_list_item_menu_info_cb     (gpointer               data,
 static void contact_list_item_menu_rename_cb   (gpointer               data,
                                                 guint                  action,
                                                 GtkWidget             *widget);
-static void 
-contact_list_item_menu_edit_groups_cb          (gpointer               data,
+static void     contact_list_item_menu_edit_groups_cb    (gpointer                data,
                                                 guint                  action,
                                                 GtkWidget             *widget);
 static void contact_list_item_menu_log_cb      (gpointer               data,
@@ -150,6 +174,7 @@ enum {
 	MODEL_COL_NAME,
 	MODEL_COL_STATUS,
 	MODEL_COL_CONTACT,
+	MODEL_COL_IS_GROUP,
 	NUMBER_OF_COLS
 };
 
@@ -439,22 +464,28 @@ contact_list_contact_updated_cb (GossipSession     *session,
 				 GossipContactList *list)
 {
 	GtkTreeModel   *model;
-	GtkTreeIter     iter;
 	GossipPresence *presence;
+	GList          *iters, *l;
 
 	model    = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	presence = gossip_contact_get_presence (contact);
 
-	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
+	iters = contact_list_find_contact (list, contact);
+	if (!iters) {
 		return;
 	}
 
-	gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+	for (l = iters; l; l = l->next) {
+		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
 			    MODEL_COL_NAME, gossip_contact_get_name (contact),
 			    -1);
+	}
 
 	g_print ("Contact List: contact updated: %s\n",
 		 gossip_contact_get_name (contact));
+	
+	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free (iters);
 }
 
 static void 
@@ -464,14 +495,15 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 {
 	GossipContactListPriv *priv;
 	GtkTreeModel          *model;
-	GtkTreeIter            iter;
 	gboolean               in_list;
 	gboolean               should_be_in_list;
+	GList                 *iters, *l;
 
 	priv = list->priv;
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
-	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
+	iters = contact_list_find_contact (list, contact);
+	if (!iters) {
 		in_list = FALSE;
 	} else {
 		in_list = TRUE;
@@ -485,6 +517,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 	if (!in_list && !should_be_in_list) {
 		/* Nothing to do */
+		g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+		g_list_free (iters);
 		return;
 	}
 	else if (in_list && !should_be_in_list) {
@@ -493,15 +527,20 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	else if (!in_list && should_be_in_list) {
 		contact_list_add_contact (list, contact);
 	} else {
-		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+		for (l = iters; l; l = l->next) {
+			gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
 				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    -1);
+	}
 	}
 		
 	g_print ("Contact List: contact presence updated: %s '%s'\n",
 		 gossip_contact_get_name (contact),
 		 gossip_contact_get_status (contact));
+
+	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free (iters);
 }
 
 static void
@@ -516,45 +555,153 @@ contact_list_contact_removed_cb (GossipSession     *session,
 }
 
 static void
+contact_list_get_group (GossipContactList *list, 
+			const gchar       *name,
+			GtkTreeIter       *iter_to_set, 
+			gboolean          *created) 
+{
+	GtkTreeModel *model;
+	FindGroup    *fg;
+
+	fg = g_new0 (FindGroup, 1);
+
+	fg->name = g_strdup (name);
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) contact_list_get_group_foreach, 
+				fg);
+
+	if (!fg->found) {
+		if (created) {
+			*created = TRUE;
+		}
+		
+		gtk_tree_store_append (GTK_TREE_STORE (model), iter_to_set, NULL);
+		gtk_tree_store_set (GTK_TREE_STORE (model), iter_to_set,
+				    MODEL_COL_PIXBUF, NULL,
+				    MODEL_COL_NAME, name,
+				    MODEL_COL_IS_GROUP, TRUE,
+				    -1);
+		
+	} else {
+		if (created) {
+			*created = FALSE;
+		}
+
+		*iter_to_set = fg->iter;
+	}
+
+	g_free (fg->name);
+	g_free (fg);
+}
+
+static gboolean
+contact_list_get_group_foreach (GtkTreeModel *model,
+				GtkTreePath  *path,
+				GtkTreeIter  *iter,
+				FindGroup    *fg)
+{
+	gchar    *str;
+	gboolean  is_group;
+
+	/* groups are only at the top level */
+	if (gtk_tree_path_get_depth (path) != 1) {
+		return FALSE;
+	}
+	
+	gtk_tree_model_get (model, iter, 
+			    MODEL_COL_NAME, &str, 
+			    MODEL_COL_IS_GROUP, &is_group,
+			    -1);
+	if (is_group && strcmp (str, fg->name) == 0) {
+		fg->found = TRUE;
+		fg->iter = *iter;
+	}
+
+	g_free (str);
+
+	return fg->found;
+}
+
+static void
 contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 {
 	GossipContactListPriv *priv;
-	GtkTreeIter            iter;
+	GtkTreeIter            iter, iter_group;
 	GtkTreeModel          *model;
+	GList                 *l, *groups;
 
 	priv = list->priv;
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
-	gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 
+	/* if no groups just add it at the top level */
+	groups = gossip_contact_get_groups (contact);
+	if (!groups) {
+		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 	gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 			    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+				    MODEL_COL_NAME, gossip_contact_get_name (contact),
+				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
+				    MODEL_COL_CONTACT, g_object_ref (contact),
+				    MODEL_COL_IS_GROUP, FALSE,
+				    -1);
+	}
+
+	/* else add to each group */
+	for (l = groups; l; l = l->next) {
+		const gchar *name;
+		gboolean     created;
+
+		name = l->data;
+		contact_list_get_group (list, name, &iter_group, &created);
 			    
+		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
 			    MODEL_COL_NAME, gossip_contact_get_name (contact),
 			    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 			    MODEL_COL_CONTACT, g_object_ref (contact),
+				    MODEL_COL_IS_GROUP, FALSE,
 			    -1);
+	}
 
+	/* is this the right place for this? */
+	gtk_tree_view_expand_all (GTK_TREE_VIEW (list));
 }
 
 static void
 contact_list_remove_contact (GossipContactList *list, GossipContact *contact)
 {
 	GossipContactListPriv *priv;
-	GtkTreeIter            iter;
 	GtkTreeModel          *model;
+	GList                 *iters, *l;
 
 	priv = list->priv;
 	
-	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
+	iters = contact_list_find_contact (list, contact);
+	if (!iters) {
 		return;
 	}
 
-	g_hash_table_remove (priv->flash_table, contact);
-	
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
-	gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
 
+	for (l = iters; l; l = l->next) {
+		GtkTreeIter parent;
+
+		if (gtk_tree_model_iter_parent (model, &parent, l->data) &&
+		    gtk_tree_model_iter_n_children (model, &parent) <= 1) {
+			gtk_tree_store_remove (GTK_TREE_STORE (model), &parent);
+		} else {
+			gtk_tree_store_remove (GTK_TREE_STORE (model), l->data);
+		}
+	}
+
+	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free (iters);
+
+	g_hash_table_remove (priv->flash_table, contact);
 	g_object_unref (contact);
 }
 
@@ -567,7 +714,8 @@ contact_list_create_model (GossipContactList *list)
 						    GDK_TYPE_PIXBUF,
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
-						    G_TYPE_POINTER));
+						    G_TYPE_POINTER,
+						    G_TYPE_BOOLEAN));
 	
 	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (model),
 					 MODEL_COL_NAME,
@@ -595,10 +743,13 @@ contact_list_setup_view (GossipContactList *list)
 	g_object_set (cell, 
 		      "xpad", (guint) 0,
 		      "ypad", (guint) 1,
+		      "visible", FALSE,
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_add_attribute (col, cell, 
-					    "pixbuf", MODEL_COL_PIXBUF);
+
+	gtk_tree_view_column_set_cell_data_func (col, cell, 
+						 contact_list_pixbuf_cell_data_func, 
+						 NULL, NULL);
 					    
 	/* FIXME: Write a cell renderer that handles our name/status cell */
 	cell = gossip_cell_renderer_text_new ();
@@ -611,10 +762,36 @@ contact_list_setup_view (GossipContactList *list)
 					    "name", MODEL_COL_NAME);
 	gtk_tree_view_column_add_attribute (col, cell,
 					    "status", MODEL_COL_STATUS);
-
+	gtk_tree_view_column_add_attribute (col, cell,
+					    "is_group", MODEL_COL_IS_GROUP);
 	/* FIXME: Add drag'n'drop support back */
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (list), col);
+}
+
+static void  
+contact_list_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
+				    GtkCellRenderer   *cell,
+				    GtkTreeModel      *model,
+				    GtkTreeIter       *iter,
+				    gpointer           user_data)
+{
+	GdkPixbuf *pixbuf;
+	gboolean   is_group;
+
+	gtk_tree_model_get (model, iter, 
+			    MODEL_COL_IS_GROUP, &is_group, 
+			    MODEL_COL_PIXBUF, &pixbuf,
+			    -1);
+
+	g_object_set (cell, 
+		      "visible", !is_group,
+		      "pixbuf", pixbuf,
+		      NULL); 
+
+	if (pixbuf) {
+		g_object_unref (pixbuf); 
+	}
 }
 
 static gboolean 
@@ -768,43 +945,46 @@ contact_list_iter_equal_contact (GtkTreeModel  *model,
 	
 }	
 
-static gboolean
+static GList *
 contact_list_find_contact (GossipContactList *list,
-			   GtkTreeIter       *iter,
-			   GossipContact     *contact,
-			   const gchar       *group)
+			   GossipContact     *contact)
 {
 	GtkTreeModel *model;
-	GtkTreeIter   i;
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	FindContact  *fc;
+	GList        *l = NULL;
 
-	if (group) {
-		/* GtkTreeIter parent; */
+	fc = g_new0 (FindContact, 1);
 	
-		/* FIXME: Find the group */
-		/* if (!roster_view_find_group (view, &parent, group)) {
-			return FALSE;
+	fc->contact = g_object_ref (contact);
 		
-		if (!gtk_tree_model_iter_children (priv->model, &i, &parent)) {
-			return FALSE;
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) contact_list_find_contact_foreach, 
+				fc);
+
+	if (fc->found) {
+		l = fc->iters;
 		}
-		*/
-	} else {
-		if (!gtk_tree_model_iter_children (model, &i, NULL)) {
-			return FALSE;
-		}
+
+	g_object_unref (fc->contact);
+	g_free (fc);
+
+	return l;
+}
+
+static gboolean
+contact_list_find_contact_foreach (GtkTreeModel *model,
+				   GtkTreePath  *path,
+				   GtkTreeIter  *iter,
+				   FindContact  *fc)
+{
+	if (contact_list_iter_equal_contact (model, iter, fc->contact)) {
+		fc->found = TRUE;
+		fc->iters = g_list_append (fc->iters, gtk_tree_iter_copy (iter));
 	}
-
-	do {
-		if (contact_list_iter_equal_contact (model, &i, contact)) {
-			*iter = i;
-			return TRUE;
-		}
-	} while (gtk_tree_model_iter_next (model, &i));
-
-	return FALSE;
 	
+	return fc->found;
 }
 
 static gchar *
@@ -1026,8 +1206,8 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	gboolean               ret_val;
 	GossipContact         *contact;
 	GdkPixbuf             *pixbuf;
-	GtkTreeIter            iter;
 	GtkTreeModel          *model;
+	GList                 *l, *iters;
 	
 	list = t_data->list;
 	priv = list->priv;
@@ -1036,7 +1216,8 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 
 	pixbuf = gossip_contact_get_pixbuf (contact);
 		
-	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
+	iters = contact_list_find_contact (list, contact);
+	if (!iters) {
 		return FALSE;
 	}
 	
@@ -1046,7 +1227,6 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	} else {
 		data->flash_on = !data->flash_on;
 
-	
 		if (data->flash_on) {
 			pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 		} 
@@ -1056,10 +1236,15 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
+	for (l = iters; l; l = l->next) {
 	gtk_tree_store_set (GTK_TREE_STORE (model),
-			    &iter, 
+				    l->data, 
 			    MODEL_COL_PIXBUF, pixbuf,
 			    -1);
+	}
+
+	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free (iters);
 
 	return ret_val;
 }
@@ -1113,8 +1298,8 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 	FlashData             *data;
 	GossipContact         *contact;
 	GdkPixbuf             *pixbuf;
-	GtkTreeIter            iter;
 	GtkTreeModel          *model;
+	GList                 *iters, *l;
 	
 	if (gossip_event_get_event_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
 		return;
@@ -1132,17 +1317,25 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 
 	g_hash_table_remove (priv->flash_table, contact);
 	
-	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
+	iters = contact_list_find_contact (list, contact);
+	if (!iters) {
 		return;
 	}
 	
 	pixbuf = gossip_contact_get_pixbuf (contact);
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
+	for (l = iters; l; l = l->next) {
 	gtk_tree_store_set (GTK_TREE_STORE (model),
-			    &iter, 
+				    l->data, 
 			    MODEL_COL_PIXBUF, pixbuf,
 			    -1);
+	}
+
+ 	
+	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free (iters);
+	g_object_unref (pixbuf); 
 }
 
 GossipContactList *

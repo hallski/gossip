@@ -1,3 +1,20 @@
+2005-01-16  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-cell-renderer-text.c (cell_renderer_text_update_text): 
+	- Added some of the old code to show the roster with italic grey
+	text for the status'.
+	- Silently accept setting the Status or Name to NULL.
+	* src/gossip-contact-list.c (contact_list_add_contact): 
+	- Added groups support.
+	- Updated the contact_find function to return a GList of iterators
+	which can be used to remove contacts, etc if they are in more than
+	one group.
+	* src/gossip-jabber.c (jabber_update_contact), (jabber_iq_handler):  
+	- Do not dup the strings before setting a contacts groups.
+	- Set groups on roster setting.
+	* src/gossip-contact.c (gossip_contact_set_groups): 
+	- Implemented this function.
+
 2005-01-11  Mikael Hallendal  <micke@imendio.com>
 
 	* autogen.sh: Match correctly whether to run autoheader or not.

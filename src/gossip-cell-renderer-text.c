@@ -18,6 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <string.h>
+
 #include <config.h>
 
 #include <libgnome/gnome-i18n.h>
@@ -62,7 +64,8 @@ static void cell_renderer_text_render       (GtkCellRenderer      *cell,
 					     GtkCellRendererState  flags);
 static void cell_renderer_text_update_text  (GossipCellRendererText *cell,
 					     GtkWidget              *widget,
-					     gint                    new_width);
+					     gint                    new_width,
+					     gboolean                selected);
 static void
 cell_renderer_text_ellipsize_string         (GtkWidget              *widget,
 					     gchar                  *str,
@@ -187,6 +190,7 @@ cell_renderer_text_set_property (GObject      *object,
 {
 	GossipCellRendererText     *cell;
 	GossipCellRendererTextPriv *priv;
+	const gchar                *str;
 
 	cell = GOSSIP_CELL_RENDERER_TEXT (object);
 	priv = cell->priv;
@@ -194,12 +198,14 @@ cell_renderer_text_set_property (GObject      *object,
 	switch (param_id) {
 	case PROP_NAME:
 		g_free (priv->name);
-		priv->name = g_strdup (g_value_get_string (value));
+		str = g_value_get_string (value);
+		priv->name = g_strdup (str ? str : "");
 		g_strdelimit (priv->name, "\n\r\t", ' ');
 		break;
 	case PROP_STATUS:
 		g_free (priv->status);
-		priv->status = g_strdup (g_value_get_string (value));
+		str = g_value_get_string (value);
+		priv->status = g_strdup (str ? str : "");
 		g_strdelimit (priv->status, "\n\r\t", ' ');
 		break;
 	case PROP_IS_GROUP:
@@ -226,7 +232,7 @@ cell_renderer_text_get_size (GtkCellRenderer *cell,
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
 	priv     = celltext->priv;
 	
-	cell_renderer_text_update_text (celltext, widget, 0);
+	cell_renderer_text_update_text (celltext, widget, 0, 0);
 	
 	(GTK_CELL_RENDERER_CLASS (parent_class)->get_size) (cell, widget,
 							    cell_area, 
@@ -251,7 +257,8 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 	priv     = celltext->priv;
 
 	cell_renderer_text_update_text (celltext, widget, 
-					cell_area->width);
+					cell_area->width,
+					(flags & GTK_CELL_RENDERER_SELECTED));
 
 //	layout = cell_renderer_text_get_layout (celltext, widget, TRUE, flags);
 
@@ -265,9 +272,14 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 static void
 cell_renderer_text_update_text (GossipCellRendererText *cell, 
 				GtkWidget              *widget,
-				gint                    new_width)
+				gint                    new_width,
+				gboolean                selected)
 {
 	GossipCellRendererTextPriv *priv;
+	PangoAttrList              *attr_list;
+	PangoAttribute             *attr_color, *attr_style, *attr_size;
+	GtkStyle                   *style;
+	GdkColor                    color;
 	gchar                      *name;
 	gchar                      *status;
 	gchar                      *str;
@@ -276,14 +288,59 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 
 	priv->width = new_width;
 
+	attr_color = NULL;
+
 	name = g_strdup (priv->name);
 	cell_renderer_text_ellipsize_string (widget, name, new_width, FALSE);
+
+	if (priv->is_group) {
+		g_object_set (cell, 
+			      "visible", TRUE,
+			      "weight", PANGO_WEIGHT_BOLD, 
+			      "text", name,
+			      "attributes", NULL,
+			      NULL);
+		return;
+	}
 
 	status = g_strdup (priv->status);
 	cell_renderer_text_ellipsize_string (widget, status, new_width, TRUE);
 	
-	str = g_strdup_printf ("%s\n%s", name, status);
-	g_object_set (cell, "text", str, NULL);
+	str = g_strdup_printf ("%s%s%s", 
+			       name, 
+			       priv->is_group ? "" : "\n",
+			       priv->is_group ? "" : status);
+
+ 	style = gtk_widget_get_style (widget);
+	color = style->text_aa[GTK_STATE_NORMAL];
+
+	attr_list = pango_attr_list_new ();
+
+	attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
+	attr_style->start_index = strlen (name) + 1;
+	attr_style->end_index = -1;
+	pango_attr_list_insert (attr_list, attr_style);
+
+  	if (!selected) {  
+   		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);   
+   		attr_color->start_index = attr_style->start_index;   
+   		attr_color->end_index = -1;   
+   		pango_attr_list_insert (attr_list, attr_color);   
+   	}   
+
+	attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
+	attr_size->start_index = attr_style->start_index;
+	attr_size->end_index = -1;
+	pango_attr_list_insert (attr_list, attr_size);
+
+	g_object_set (cell,
+		      "visible", TRUE,
+		      "weight", PANGO_WEIGHT_NORMAL,
+		      "text", str,
+		      "attributes", attr_list,
+		      NULL);
+       
+	pango_attr_list_unref (attr_list);
 
 	g_free (name);
 	g_free (status);
