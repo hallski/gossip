@@ -1,4 +1,20 @@
 News in 0.4:
 ============
-* :
-* New translations: nl, cs, 
+* SSL support through Loudmouth/GnuTLS.
+* Chat window beautification.
+* Added contact information button in chat window.
+* Fixed the contact information window to actually show useful information.
+* Proper error checking when entering group chat.
+* Plugged a couple of memory leaks.
+* Support for autoaway.
+* Fixed disconnect/connect problems.
+* Support for disabling graphical smileys.
+* Support for disabling sound events.
+* Support for disabling timestamps.
+* Made renaming of contacts work.
+* Made it possible to remove contacts from the roster.
+* Added remember password to password dialog.
+* Added bugzilla info.
+* Improvements to add contact dialog.
+* Notification in titlebar when new messages arrive to unfocused windows.
+* New translations: nl, cs, es, cy, ru

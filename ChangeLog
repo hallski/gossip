@@ -1,5 +1,9 @@
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
+	* NEWS: Added with information for 0.4
+
+2003-07-17  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-add-contact.c:
 	- Cancel pending operation when dialog is destroyed.
 
