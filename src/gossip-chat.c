@@ -455,7 +455,7 @@ chat_send (GossipChat  *chat,
 
         gossip_chat_view_append_chat_message (priv->view,
                                               NULL,
-                                              gossip_app_get_username (),
+					      gossip_app_get_username (),
                                               nick,
                                               msg);
 
@@ -712,7 +712,7 @@ chat_message_handler (LmMessageHandler *handler,
 
         gossip_chat_view_append_chat_message (chat->priv->view,
                                               timestamp,
-                                              gossip_app_get_username (),
+					      NULL,
                                               gossip_roster_item_get_name (priv->item),
                                               body);
 

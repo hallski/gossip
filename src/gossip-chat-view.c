@@ -767,10 +767,10 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 
 			/* FIXME: This only works if nick == name... */
-			if (!strcmp (from, to)) {
+			if (to && strcmp (from, to) == 0) {
 				nick_tag = "nick-me";
 			}
-			else if (strstr (msg, to)) {
+			else if (to && strstr (msg, to)) {
 				nick_tag = "nick-highlight";
 			} else {
 				nick_tag = "nick-other";

@@ -1,3 +1,13 @@
+2003-12-20  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.c:
+	(gossip_chat_view_append_chat_message):
+	- Don't set highligh if to is NULL (private chat)
+	* src/gossip-chat.c:
+	(chat_message_handler):
+	- Send NULL as 'to', it's obvious that it's to yourself.
+	- Fixed bug #126189
+
 2003-12-20  Mike Gratton  <mike@vee.net>
 
 	* src/gossip-preferences.c: 
