@@ -1,7 +1,8 @@
 %define ver @VERSION@
 %define name @PACKAGE@
 
-Summary: A program that reminds you to take wrist breaks
+Summary: Gives users of the GNOME Desktop a user friendly way of keeping
+in touch with their friends.
 Name: %name
 Version: %ver
 Release: imendio.1

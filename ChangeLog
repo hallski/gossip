@@ -1,3 +1,7 @@
+2003-07-27  Richard Hult  <richard@imendio.com>
+
+	* gossip.spec.in (Summary): Fix description, thanks Johan.
+
 2003-07-22  Dafydd Harries  <daf@parnassus.ath.cx>
 
 	* src/gossip-chat.c: Marked chat window title strings translatable.
