@@ -30,6 +30,8 @@ gossip_SOURCES = 				\
 	gossip-chat-window.h			\
 	gossip-connect-dialog.c			\
 	gossip-connect-dialog.h			\
+	gossip-contact.c                        \
+	gossip-contact.h                        \
 	gossip-contact-info.c                   \
 	gossip-contact-info.h                   \
 	gossip-favorite.c			\
@@ -40,6 +42,8 @@ gossip_SOURCES = 				\
 	gossip-group-chat.h			\
 	gossip-idle.c				\
 	gossip-idle.h				\
+	gossip-jabber.c                         \
+	gossip-jabber.h                         \
 	gossip-jid.c                            \
 	gossip-jid.h                            \
 	gossip-join-dialog.c			\
@@ -52,12 +56,16 @@ gossip_SOURCES = 				\
 	gossip-notebook.h			\
 	gossip-preferences.c			\
 	gossip-preferences.h	                \
+	gossip-presence.c                       \
+	gossip-presence.h                       \
 	gossip-roster.c                         \
 	gossip-roster.h                         \
 	gossip-roster-view.c                    \
 	gossip-roster-view.h                    \
 	gossip-register.c			\
 	gossip-register.h			\
+	gossip-session.c                        \
+	gossip-session.h                        \
 	gossip-sound.c				\
 	gossip-sound.h				\
 	gossip-startup-druid.c			\
