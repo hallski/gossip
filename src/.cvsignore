@@ -1,0 +1,7 @@
+Makefile.in
+Makefile
+.deps
+.libs
+gossip
+gossip-marshal.c
+gossip-marshal.h

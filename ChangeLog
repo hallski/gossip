@@ -1,0 +1,1106 @@
+2003-04-15  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c: (chat_message_handler): Remove debug output.
+
+2003-04-15  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (app_tray_icon_destroy_cb): Show the main window
+	* when the tray icon is destroyed.
+
+	* src/gossip-app.c (app_tray_icon_button_press_cb): Fix coding style
+	and don't use g_object_get_property, fixes a GValue leak.
+
+2003-04-14  Mikael Hallendal  <micke@codefactory.se>
+
+        * src/gossip-app.c: Fixes #626
+	(app_get_chat_for_jid): ref the jid
+	(app_chat_dialog_destroy_cb): unref the jid
+	
+2003-04-11  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c: (app_message_handler): Use 
+	  LM_MESSAGE_SUB_TYPE_AVAILABLE instead of LM_MESSAGE_SUB_TYPE_NOT_SET.
+
+2003-04-09  Ross Burton  <ross@burtonini.com>
+       
+        * src/gossip-app.c: Connect to click events on the tray icon and
+          show/hide the main window.
+
+2003-04-09  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-contact-info.c:
+	(contact_info_request_information): 
+	- use resource when requesting version.
+	(gossip_contact_info_new): use GossipJID
+	* src/gossip-roster.c:
+	(roster_presence_handler): Update JID
+	(roster_item_update): unref correct jid.
+
+2003-04-09  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/Makefile.am: added gossip-contact-info.[ch]
+	
+	* src/gossip-roster.c: (roster_menu_remove_cb),
+	(roster_menu_info_cb), (roster_menu_rename_cb),
+	(roster_get_selected_item), (roster_presence_handler),
+	(roster_update_user), (roster_item_new): 
+	- worked on the contact info
+	* src/gossip-utils.h:
+	* ui/main.glade:
+
+2003-04-09  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c: (app_get_group_chat): 
+	- use without resource here, I think that is what we want...
+	
+	* src/gossip-group-chat.c:
+	(group_chat_presence_handler): reference the jid we put in the model.
+
+2003-04-08  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/Makefile.am:
+	* src/gossip-account.c: (gossip_account_get_jid):
+	* src/gossip-account.h:
+	* src/gossip-add-contact.c: (add_contact_prepare_page_1),
+	(add_contact_prepare_page_2), (add_contact_1_id_entry_changed),
+	(gossip_add_contact_new):
+	* src/gossip-add-contact.h:
+	* src/gossip-app.c: (app_init),
+	(app_subscription_request_dialog_response_cb),
+	(app_handle_subscription_request), (app_chat_dialog_destroy_cb),
+	(app_get_chat_for_jid), (app_group_chat_destroy_cb),
+	(app_get_group_chat), (app_message_handler),
+	(app_connection_open_cb), (app_user_activated_cb):
+	* src/gossip-app.h:
+	* src/gossip-chat.c: (chat_create), (chat_dialog_destroy_cb),
+	(chat_dialog_send), (chat_dialog_send_single_clicked_cb),
+	(chat_dialog_send_multi_clicked_cb), (chat_message_handler),
+	(chat_presence_handler), (gossip_chat_new),
+	(gossip_chat_new_from_group_chat):
+	* src/gossip-chat.h:
+	* src/gossip-group-chat.c: (group_chat_send),
+	(group_chat_activate_cb), (group_chat_row_activated_cb),
+	(group_chat_destroy_cb), (group_chat_setup_tree),
+	(group_chat_find_user_foreach), (group_chat_find_user),
+	(group_chat_message_handler), (group_chat_presence_handler),
+	(group_chat_topic_entry_activate_cb), (group_chat_priv_chat_new),
+	(group_chat_priv_chat_incoming), (gossip_group_chat_new):
+	* src/gossip-group-chat.h:
+	* src/gossip-jid.c: (jid_free), (gossip_jid_new),
+	(gossip_jid_get_full), (gossip_jid_get_without_resource),
+	(gossip_jid_get_resource), (gossip_jid_get_part_name),
+	(gossip_jid_ref), (gossip_jid_unref), (gossip_jid_equals),
+	(gossip_jid_equals_without_resource),
+	(gossip_jid_string_is_valid_jid):
+	* src/gossip-jid.h:
+	* src/gossip-message.c: (message_dialog_destroy_cb),
+	(message_send_dialog_response_cb),
+	(gossip_message_send_dialog_new),
+	(message_recv_dialog_response_cb), (message_new):
+	* src/gossip-message.h:
+	* src/gossip-roster.c: (roster_menu_remove_cb),
+	(roster_find_user_foreach), (roster_create_store),
+	(roster_presence_handler), (roster_iq_handler),
+	(roster_update_user), (roster_item_new), (roster_item_update),
+	(roster_item_free), (gossip_roster_get_nick_from_jid),
+	(gossip_roster_get_status_pixbuf_for_jid),
+	(gossip_roster_have_jid):
+	* src/gossip-roster.h:
+	* src/gossip-utils.c:
+	* src/gossip-utils.h: 
+	- Added GossipJID and use it everywhere :)
+
+2003-04-05  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-roster.c:
+	(roster_presence_handler): 
+	- remove old group from hash table, not just the tree model.
+
+2003-03-29  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-sound.c (gossip_sound_play): Disable sounds for
+	online/offline for now. We need preferences for this later.
+
+2003-03-26  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c (roster_menu_remove_cb): Implemented.
+
+2003-03-26  Richard Hult  <rhult@localhost.localdomain>
+
+	* src/gossip-utils.c:
+	(gossip_text_view_append_chat_message):
+	(gossip_text_view_append_normal_message): Turn off scrolling
+	protection (tm).
+
+2003-04-03  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c: 
+	(app_connection_open_cb): 
+	- Removed some old cruft with gotos and horror.
+	(app_client_disconnected_cb): 
+	- Don't show dialog if the disconnect was done by the user.
+	(app_disconnect): 
+	- Don't emit CONNECTED-signal, *doh*
+	- Only disconnect if we are actually connected.
+	(app_block_until_connected_timeout), 
+	(app_block_until_connected): Removed, unused and 
+	  lm_connection_open_and_block should be used instead
+	* src/gossip-roster.c:
+	(roster_init): Don't create the hashes here.
+	(roster_create_store):
+	- Do it here instead, and destroy them if they exists. 
+
+2003-04-02  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-startup-druid.c:
+	- Work to get it working. Now collects almost all information.
+	- Still needs to actually register and store account information.
+
+	* ui/main.glade: Work on the startup druid.
+
+2003-04-01  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-roster.c (roster_presence_handler):
+	- notify that the tree changed. Patch by Dirk Dierckx.
+
+2003-03-25  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c:
+	- Removed block_until_disconnect stuff
+	- Use app_disconnect instead of lm_connection_close
+	directly. It also signals "disconnected" signal on app. 
+	(app_client_disconnected_cb): removed the ifdef around this
+	function and instead use it.
+	(app_disconnect): added
+
+2003-03-14  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_create_connection): 
+	- updated for API change in Loudmouth
+
+	* src/gossip-roster.c: use gossip_marshal_*
+
+	* src/Makefile.am: generate marshals
+
+	* src/gossip-app.c (app_class_init): use gossip_marshal_*
+
+	* src/gossip-marshal-main.c: added
+
+	* src/gossip-marshal.list: added
+
+2003-03-13  Mikael Hallendal  <micke@codefactory.se>
+
+	* configure.in: updated loudmouth deps. to make sure we have a
+	  late enough.
+
+2003-03-09  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-add-contact.c (add_contact_prepare_page_2): Use
+	gossip_jid_get_name.
+
+	* src/gossip-app.c (app_get_group_chat): Remove gpointer hack.
+	(app_get_chat_for_user): Likewise.
+
+	* src/gossip-chat.c (chat_message_handler): Put nick matching here
+	instead of in gossip_text_view_append_chat_message.
+
+	* src/gossip-group-chat.c (gossip_group_chat_new): Change to take
+	room, server and nick arguments.
+	(group_chat_presence_handler): Use gossip_jid_ functions.
+	(group_chat_message_handler): Likewise.
+	(group_chat_set_title): Don't mark Gossip for translation.
+	(group_chat_destroy_cb): Free a bit more stuff. Use gossip_jid_
+	functions.
+	(group_chat_send): Add support for /nick, mostly for making
+	testing easier. Dunno if we want to keep it.
+
+	* src/gossip-app.c (gossip_app_join_group_chat): Change to take
+	room, server and nick arguments.
+	* src/gossip-join-dialog.c (join_dialog_response_cb): Update for
+	the above change.
+
+	* src/gossip-utils.c (gossip_jid_get_name): Rename from
+	gossip_username_from_jid.
+	(gossip_jid_get_server): Implement.
+	(gossip_jid_create): Implement.
+	(gossip_text_view_append_chat_message): Don't pass roster, handle
+	that from the outside. Fix the to/from matching so that nick
+	highlighting works for both chat and group chat, and when nick !=
+	username. Try to fix the scroll problem.
+	(gossip_text_view_append_normal_message): Try to fix the scroll
+	problem.
+	Remove old unused include.
+
+2003-02-26  Richard Hult  <rhult@codefactory.se>
+
+	* ui/main.glade: Remove file menu and put quit in actions.
+
+	* src/gossip-roster.c (roster_connected_cb): Don't play roster
+	sounds within the first 5 seconds, instead of 2.
+
+2003-02-25  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-utils.c (gossip_text_view_append_chat_message): Don't
+	scroll down if we're not at the bottom before the message is
+	inserted.
+	(gossip_text_view_append_normal_message): Likewise.
+	(gossip_text_view_setup_tags): Don't use bold for nicks.
+	Add a few variants of smileys.
+	(utils_insert_with_emoticons): Strip out the total length of the
+	smiley characters when we get a match.
+	(gossip_text_view_append_chat_message): Use <nick> style instead
+	of nick:.
+
+2003-02-11  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/*.c: Use the new GError API in loudmouth.
+	
+2003-02-04  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_create_connection): moved code  here so
+	  that we connect if we make a new connection after the inital
+	  one.
+
+2003-02-03  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-utils.c (utils_insert_with_emoticons): Loop so we can
+	have more than one smiley in a string.
+	
+2003-02-03  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-utils.c (utils_insert_with_emoticons): Rewrite from
+	scratch to work properly with utf-8 and to make it stop mangling
+	word and numbers. Also add a cool smiley and make adding smileys a
+	lot easier.
+
+2003-02-02  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-utils.c (utils_insert_with_emoticons): Don't insert a
+	smile if it would end up inside a word.
+
+	* src/gossip-roster.c: Remove extern GossipApp.
+	(roster_item_factory_trans, roster_init): Setup right-click menu.
+	(roster_button_press_event_cb): Handle right-click and bring up
+	context menu. 
+	(roster_menu_remove_cb): Add stub, needs implementing.
+
+	* ui/main.glade: Add startup druid. Needs more work.
+
+	* src/gossip-startup-druid.c: Add, needs more work.
+
+	* src/gossip-app.c (app_about_cb): Don't mark copyright for
+	translation and update year.
+	(app_init): Test the startup druid (GOSSIP_DRUID=1 gossip).
+
+2003-02-02  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/*.c: Updated for sending "to" argument with lm_message_new*.
+	
+	* src/*.c: LmConnection is no longer an object.
+	
+2003-02-02  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c (chat_message_handler): Fix sounds on gtk 2.0.
+
+2003-02-02  Mikael hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c: Updated to latest changes in loudmouth.
+	
+2003-02-01  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (app_set_status): Set silent mode for busy,
+	away, extended away, offline.
+
+	* src/gossip-sound.c (gossip_sound_set_silent): Add.
+
+2003-01-30  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-add-contact.c:
+	(add_contact_prepare_page_2): send a vcard request.
+	(add_contact_page_2_vcard_handler): set the values if they are
+	  included in the vcard. requested in prepare_page_2.
+
+	* src/gossip-chat.c (chat_message_handler): print if we have a
+	  thread, would be nice to know if clients actually set the thread 
+	  field in there clients.
+
+	* src/gossip-add-contact.c:
+	(add_contact_prepare_page_3):
+	- added, set the label to no hardcode micke. Fixes #492
+	(add_contact_last_page_finished): 
+	- added, called when you click finish.
+	- Sends the request/roster update and closes the dialog.
+	- Fixes #479
+
+2003-01-29  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c (chat_message_handler): Don't play sound if
+	we're focused.
+
+2003-01-29  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_init): only set data on connection if we
+	  have an account. Fixes crash reported by marcus.
+
+	* src/gossip-add-contact.c:
+	(add_contact_complete_group_idle): fix warning reported by marcus.
+	(add_contact_prepare_page_last): 
+	- don't set group child if group is not set.
+
+	* src/gossip-roster.c (roster_iq_handler): 
+	- Don't just check if group node exists, also check that the value
+	  exists. Fixes #494
+
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_set_account_information): 
+	- store passwd in private.
+
+	* src/gossip-account.c:
+	(account_get_value): use get_string_with_default to always get
+	  something (never NULL).  
+	(gossip_account_get): read password from private
+
+2003-01-29  Richard Hult  <rhult@codefactory.se>
+
+	* src/Makefile.am:
+	* configure.in: Build the sounds directory.
+
+	* src/sounds: Add sounds from PSI.
+
+	* src/gossip-chat.c (chat_message_handler): Play sound.
+
+	* src/gossip-roster.c (roster_presence_handler): Play sound.
+	(roster_disconnected_cb): Disable sounds.
+	(roster_connected_cb): Run 2 second timeout to enable sounds.
+	(roster_enable_sound_cb): Enable sounds here.
+	(roster_finalize): Remove the timeout if it's running when we
+	finalize.
+
+2003-01-29  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_message_handler): don't assert on messages
+	  with sub type "error"
+
+	* src/gossip-roster.c (roster_iq_handler): 
+	- add user in group Others if no group is set on them.
+
+	* src/*.c:
+	- Updated to use the new LmMessageSubType in loudmouth 0.2
+
+	* src/gossip-roster.c:
+	- Fixes #481
+	- Fixes #468
+	- Store GossipRosterItem's in an hashtable for quick access.
+	- Use set_data_func to set information in the roster
+	- Lots of changes that had to do with this...
+
+	* src/gossip-app.c:
+	- Fixes #478
+	(app_subscription_request_dialog_response_cb): 
+	- Check to see if the jid already is in the roster and if it is
+	  not popup the add user dialog.
+	(app_handle_subscription_request):
+	- Set add to contact list check button insensitive and uncheck it
+	  if user already in your contact list.
+
+	* configure.in:
+	- require loudmouth 0.2
+	- updated to 0.2 (for fun, so that we can point fingers at Marcus
+	  for only running 0.1 :)
+	
+
+2003-01-28  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c: Remove duplicate includes.
+	(gossip_app_init): Remove unused gconf favorites code.
+
+	* ui/group-chat.glade: Add disclosure widget here too.
+
+	* src/gossip-group-chat.c: Handle single/multi line input.
+
+	* src/gossip-chat.c: Rework to use a window instead of dialog and
+	also add a disclosure widget so we can switch between single and
+	multiline entry.
+
+	* src/Makefile.am: Add -export-dynamic to get custom widgets
+	working with libglade.
+
+	* src/gossip-group-chat.c (group_chat_message_handler): Remove
+	debug output.
+	(group_chat_priv_chat_new): Likewise.
+
+	* ui/group-chat.glade: Add group chat editing dialog.
+
+	* src/gossip-join-dialog.c: Update to use the new config UI and
+	data for group chat favorites.
+
+	* src/gossip-favorites-dialog.[ch}: New, dialog for configuring
+	the group chat favorites.
+
+	* src/gossip-favorite.[ch]: New, handle group chat favorites
+	config data.
+
+	* ui/connect.glade: Move the edit button, next to the option menu.
+
+	* src/gossip-connect-dialog.c: Connect to the edit button instead
+	of handling it in the response callback.
+
+2003-01-27  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-accounts-dialog.c: 
+	- Fixes #364
+	- Added support for ports entry.
+	(accounts_dialog_passwd_entry_insert_text_cb): 
+	- added to check the input in the port entry.
+	(accounts_dialog_update_account_cb): set port if port entry
+	  changed.
+
+	* src/gossip-account.c:
+	(gossip_account_get): read port from config.
+
+	* ui/connect.glade: added port entry to accounts-dialog.
+
+	* src/gossip-utils.c (gossip_text_view_append_chat_message):
+	- removed rhult-warning.
+	
+	* src/gossip-chat.c (chat_presence_handler): 
+	- show is a child, not an attribute. Fixes #476
+
+	* src/gossip-app.c (app_set_status): 
+	- Fixes #454
+	- send status to all group chats user is currently in.
+	(app_set_status_group_chat_foreach): added.
+
+	* src/gossip-group-chat.c:
+	- Fixes #449
+	(group_chat_priv_chat_new): added
+	(group_chat_priv_chat_incoming): added
+	(group_chat_priv_chat_destroyed): added
+	(group_chat_row_activated_cb): call priv_chat_new ...
+	(group_chat_message_handler): 
+	- return if message isn't groupchat or chat.
+	- handle chat messages (private messages to a person in the group
+	  chat).
+
+	* src/gossip-chat.c:
+	(chat_create): added. code from gossip_chat_new.
+	(gossip_chat_new): Code moved to chat_create.
+	(gossip_chat_new_from_group_chat): added, used when you are
+	  creating a private chat from a group chat. This one doesn't
+	  cause the chat to listen to messages but instead requires
+	  messages being added with the append_message call.
+	(chat_message_handler): added support to have a nick set instead
+	  of using the jid. (Needed in priv chatting in group chats).
+
+	* src/gossip-message.c:
+	(message_send_dialog_response_cb): 
+	- don't free the string before using it!
+	(message_recv_dialog_response_cb):
+	- the body of a message is a subnode, not an attribute.
+
+	* src/gossip-utils.c (gossip_text_view_append_chat_message): 
+	- Set the name to be nick from roster if it's available and roster
+	  is passed to the function. 
+
+	* src/gossip-message.c (message_new): 
+	- sets the from labe to "Nick <jid>". Fixes #224
+	- moved set_margin to after gtk_widget_show 
+
+	* src/gossip-chat.c:
+	(chat_message_handler): send the roster to
+	  gossip_text_view_append_chat_message.
+	(gossip_chat_new): Sets the from to "Nick <jid>". Fixes #224
+
+	* src/gossip-group-chat.c:
+	- Use a list store for users in a group chat.
+        (group_chat_setup_tree): 
+	- Set default sort function and set sort column to default sort
+	  column. Fixes #387
+        (group_chat_iter_compare_func): added.
+	(gossip_group_chat_new): moved gossip_text_view_set_margin call to
+	  after gtk_widget_show.
+
+	* src/gossip-chat.c:
+	(gossip_chat_new): changed order in which things were done on the
+	  window. It tried to set background before the window was
+	  realized.
+	(chat_message_handler): return
+	  LM_HANDLER_RESULT_REMOVE_MESSAGE if it's handled by this
+	  handler. Fixes #473.
+
+	* src/*:
+	- Updated for major changes in loudmouth.
+	- Roster handling entirely in gossip-roster now
+	- Added connected and disconnected signals on GossipApp used by
+	  the roster. 
+
+2003-01-25  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/*.c: Updated to changes in loudmouth.
+
+	* src/gossip-add-contact.c: sends some stuff to actually start
+	  subscribing ...
+
+2003-01-24  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-add-contact.c:
+	(add_contact_complete_group_idle): added, couldn't get the
+	  selection-thingy working without doing it in an idle.
+
+	* src/gossip-utils.c (gossip_utils_is_valid_jid): added
+
+	* src/app.c: Use the new Add user dialog (not finished)
+
+	* src/gossip-add-contact.[ch]: Added
+
+	* src/Makefile.am (gossip_SOURCES): added gossip-add-contact.[ch]
+
+2003-01-23  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c:
+	(app_subscription_request_dialog_response_cb): 
+	- handle defer and delete event.
+	
+	* src/*.c:
+	- Use gossip_glade_get_file_simple where appropriate
+	- Pass parent widget to all glade_get_file* calls
+	- Unref glade object where gossip_glade_get_file is used.
+
+	* data/*: Images moved to ui/pixmaps
+
+	* ui/pixmaps/*: Install in $datadir/gossip
+
+        * src/*: UI work.
+	
+	* ui/*: Merged UI files
+	* ui/connect-dialog.glade: tweaked a bit
+	* src/gossip-account.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-connect-dialog.c:
+	- Use gnome-config instead of GConf for storing account
+	  information.
+	
+2002-12-13  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-connect-dialog.c: 
+	- Start using GossipAccount
+	- Update the entries when they get updated in the account editing
+	  dialog
+	- Moved in stuff from gossip-accounts-dialog which was only used
+	  here after the move to the new accounts dialog.
+
+	* src/gossip-app.c: Use GossipAccount
+
+	* src/gossip-accounts-dialog.c: 
+	- Use a list view to the left and edit the entries to the right
+	  instead of the old style way. Much more intiutive. 
+	- Start using the GossipAccount struct all over. 
+
+	* src/gossip-account.[ch]: Added
+
+	* src/gossip-account-utils.[ch]: Removed, most of the stuff moved
+	  into gossip-connect-dialog.c since it wasn't used in the new
+	  account editor dialog.
+
+2002-12-11  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-message.c (message_new): don't use g_object_ref on a
+	  LmElement. Should fix a crash.
+
+2002-12-10  Mikael Hallendal <micke@codefactory.se>
+
+	* Fixed #345, use timestamp when showing messages if
+	  jabber:x:delay is included in the message.
+	
+2002-12-04  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c (gossip_roster_init): Set cell ypadding to 1
+	to get the roster list to be slightly more compact.
+
+2002-12-03  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c: Apply modified patch from Anders Carlsson
+	to not show the empty pixbufs for groups.
+
+2002-12-01  Anders Carlsson  <andersca@codefactory.se>
+
+	* src/gossip-app.c: Fix build.
+	
+2002-12-01  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-utils.c (gossip_status_menu_setup)
+	(gossip_status_menu_set_status, gossip_status_menu_get_status):
+	Rename from gossip_image_....
+	(gossip_status_menu_setup): Revert part of the change and add a
+	more elaborate comment on why the hack is needed.
+
+	* src/gossip-app.c (app_tray_icon_set_status)
+	(app_create_tray_icon, app_tray_icon_destroy_cb): Refactor a bit
+	and recreate the tray icon when it's destroyed.
+
+	* src/Makefile.am (gossip_SOURCES): Add eggtrayicon.
+
+	* src/gossip-app.c (app_set_status_indicator): Update tray icon.
+	(gossip_app_init): Create tray icon.
+
+2002-11-30  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c (chat_presence_handler): Don't do anything
+	with presence messages from any other than the person we're
+	chatting with (the fix is only a workaround, we need to handle
+	chatting with different resources I think).
+
+	* src/gossip-roster.c (roster_find_user_foreach): Fix leak.
+	(roster_find_group_foreach): Fix leak.
+
+2002-11-29  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c: Make the group names translatable.
+
+	* src/gossip-main.c (main): Setup gconf things here.
+
+	* src/gossip-app.c (gossip_app_init): Add a separator above the
+	offline item.
+	(gossip_app_init): Setup server/username/password/resource from
+	the default account.
+
+	* src/gossip-utils.c (gossip_image_option_menu_setup): Add support
+	for separator menu items.
+
+	* src/gossip-app.c (app_set_status_indicator): New function to
+	update the option menu and set the window icon, without changing
+	the status itself. Also block so we don't get signal recursion.
+	(gossip_app_init): Use utility function to get status icon
+	filenames.
+	(app_block_until_disconnected): New function that let's us block
+	using a main loop until we get disconnected. This is needed for
+	when we reconnect.
+	(app_block_until_connected): Like above but for connecting, not
+	sure if it's needed yet.
+	(gossip_app_new): Don't handle connecting here.
+	(gossip_app_connect): Add precondition checks on server, username,
+	resource. Only do connecting, nothing else.
+	(app_client_disconnected): Handle the block-until-disconnected
+	flag here. Reset the roster and status option menu directly on
+	disconnect.
+	
+	* src/gossip-roster.c (roster_presence_handler): Use utility
+	function to get the status icon filenames.
+
+2002-11-29  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_subscription_request_dialog_response_cb): 
+	- don't use g_object_(set|get|ref|unref) on LmElements.
+
+2002-11-29  Mikael Hallendal <micke@codefactory.se>
+
+	* src/gossip-app.c: Updated for new API in loudmouth.
+	
+2002-11-28  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-main.c: Set a default icon.
+
+	* src/gossip-app.c (app_set_status): Set the window icon too.
+
+2002-11-27  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (app_client_connected): Make sure we always
+	have a resource.
+
+	* po/sv.po: Update.
+
+	* src/*.c: Mark more strings for translation.
+	
+	* src/gossip-app.c (app_client_disconnected): Bring up a dialog
+	and ask if the user wants to reconnect.
+
+	* ui/chat-dialog.glade: 
+	* ui/group-chat-window.glade: Wrap lines at words instead of chars.
+
+2002-11-26  Mikael Hallendal <micke@codefactory.se>
+
+	* src/*.c: Updated to the new loudmouth (where LmElements are no
+	  longer objects).
+
+2002-11-26  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-group-chat.c (group_chat_topic_entry_activate_cb):
+	Remove extra newline from the topic string.
+	(group_chat_set_title): Set the name of the group chat room in the title.
+
+	* src/gossip-roster.c (gossip_roster_get_status_pixbuf_for_jid):
+	Impl.
+
+	* src/gossip-chat.c (gossip_chat_new): Get the status pixbuf from
+	the roster.
+
+2002-11-25  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-accounts-dialog.c
+	(accounts_dialog_remove_account_cb): Remove duplicate unset on
+	server key.
+	(accounts_dialog_update_account_cb): Add, update changes.
+	(accounts_dialog_set_account_information): Refactor out from
+	add_account and use for updating as well.
+	(accounts_dialog_entries_changed_cb): Update the sensitivity of
+	the update button too.
+
+	* src/gossip-app.c (app_get_default_account): Don't use NULL as
+	resource, send "" in that case.
+	(app_client_connected): Don't use the resource if it's empty.
+
+	* src/gossip-utils.c (gossip_text_view_append_chat_message):
+	Remove the g_error on NULL msgs, it's annoying and I couldn't
+	figure out where the NULL msg came from...
+
+2002-11-25  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_subscription_request_dialog_response_cb): 
+	- reply to the requester
+	(app_default_subscription_request_handler): 
+	- don't show dialog if request is unsubscribe
+	- set from-name in bold.
+	- send app as user_data and set presence as data on dialog.
+	
+2002-11-24  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (app_subscription_request_dialog_response_cb)
+	(app_default_subscription_request_handler): First cut at
+	subscription request handler.
+
+	* po/sv.po: Translate to Swedish.
+
+	* src/gossip-chat.c: Implement presence handler and clean up code.
+
+	* src/gossip-app.c: Change loudmouth callbacks to not use *.
+
+2002-11-23  Richard Hult  <rhult@codefactory.se>
+
+	* configure.in: Enable compile warnings.
+
+	* src/*.c: Fix lots of warnings.
+
+	* src/gossip-utils.c (url_regex_match): Advance to the position
+	after the match. Fixes a few weird url detection bugs.
+
+	* src/gossip-connect-dialog.c: Remove unused account entry stuff.
+
+	* src/gossip-group-chat.c (group_chat_topic_entry_activate_cb):
+	Grab focus on the input entry.
+
+2002-11-23  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-group-chat.c:
+	(group_chat_topic_entry_activate_cb): added, sets topic when user
+	  changes it.
+	(group_chat_message_handler): set topic
+
+2002-11-23  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-group-chat.c (group_chat_row_activated_cb): Add
+	comment about gossip_app_show_chat. Needs to be fixed to use that.
+
+	* src/gossip-app.c (gossip_app_show_chat): Add, shows a chat
+	window for a particular user.
+
+2002-11-23  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_get_default_account): get resource too
+
+2002-11-23  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c: (app_subscription_request_response_cb)
+	(app_add_contact_dialog_response_cb, app_add_contact_cb): Add very
+	simple subscription add dialog, needs reworking.
+
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-account-utils.[ch]: 
+	* src/gossip-accounts-dialog.[ch]: 
+	* src/gossip-connect-dialog.[ch]: 
+	* ui/connect-dialog.glade:
+	* ui/accounts-dialog.glade: Break out accounts editing into its
+	own dialog and clean up a lot. Removing and adding accounts should
+	work properly now. Also add "resource" to the account editing so
+	the user can set the resource.
+
+2002-11-22  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c:
+	(app_default_iq_handler): added, handle version
+
+	* src/*: Use the new API in loudmouth.
+
+	* Makefile.am (SUBDIRS): changed order on data and src.
+
+2002-11-22  Richard Hult  <rhult@codefactory.se>
+
+	* data/images/Makefile.am (inline-emoticons.h): Emoticons.
+
+	* src/gossip-utils.c: Add emoticon support stolen from
+	gnomemeeting.
+
+2002-11-22  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c: 
+	- changes default handlers to use the new API.
+	- Set name, version and os on LmClient, will later be used to
+	  answer VERSION requests.
+
+2002-11-21  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-group-chat.c: 
+	* src/gossip-chat.c: 
+	* src/gossip-app.c: GossipApp now inherits LmClient
+	- removed gossip_app_get_client
+	- Don't call lm_client_add_default_*
+
+2002-11-21  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c (roster_presence_handler): Missed one icon.
+
+	* src/gossip-group-chat.c (group_chat_presence_handler): Change
+	icons here too.
+
+	* data/images/gossip-*.png:
+	* src/gossip-roster.c (gossip_roster_add_user): 
+	* src/gossip-app.c (gossip_app_init): Try a new set of icons.
+	(gossip_app_init): Put busy before away·
+
+	* src/gossip-utils.c (gossip_text_view_setup_tags): Tweak colors
+	again.
+
+2002-11-20  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-utils.c (utils_text_view_event_cb): Use a hand mouse
+	cursor over links.
+
+2002-11-19  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c: 
+	* src/gossip-group-chat.c: 
+	* src/gossip-utils.c: Clean up by breaking out common code from the
+	group chats and chat and put it here.
+	(group_chat_row_activated_cb): Start to implement double-click in
+	the group chat "roster" to start a one-to-one chat with someone,
+	needs more work to get the jid from the conference jid.
+
+	* src/gossip-chat.c (gossip_chat_new): Tweak colors.
+
+	* src/gossip-group-chat.c (gossip_group_chat_new): Tweak colors.
+
+	* src/gossip-group-chat.c:
+	* src/gossip-utils.c: Add dingus clicking, aka url clicking
+	feature.
+
+	* src/gossip-group-chat.c (gossip_group_chat_new): Use sea green
+	for highlighting.
+	(group_chat_key_press_event_cb): Don't insert a space after the
+	nick when completing inside sentence.
+	
+	* src/gossip-chat.c (gossip_chat_new): Use sea green for
+	highlighting.
+
+	* src/gossip-group-chat.c (group_chat_key_press_event_cb): Fix
+	nick completion to complete just to the length that matches all
+	nicks with the same prefix, and also support completing nicks
+	inside sentences.
+
+2002-11-16  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-roster.c:
+	(roster_presence_handler): expand groups if they aren't and the
+	  group is not the Offline group.
+	* src/gossip-roster.c:
+	(roster_iter_compare_func): added. sorts the roster (puts Offline
+	  last and Others just before it). 
+	(roster_create_store): set the default sort func and set the
+	  default sort function to be used.
+
+2002-11-16  Richard Hult  <rhult@codefactory.se>
+
+	* configure.in: Add libgnomeui dependency.
+
+	* src/gossip-app.c: Use GnomeApp for the UI. Add About box, add
+	offline to status option menu, handle disconnect/connect through
+	option menu somewhat.
+
+2002-11-16  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-roster.c:
+	(gossip_roster_add_user): Add all users to the Offline group
+	(roster_presence_handler):
+	- Create group if it doesn't exist
+	- Remove group if it's empty
+	- DO FUNKY STUFF!!!
+	
+	* src/gossip-app.c:
+	(app_default_message_handler): renamed from message_received.
+	(app_default_presence_handler): renamed from presence_received.
+	(app_presence_received): don't handle presence to roster.
+	(gossip_app_init): create the LmClient here instead of in _new
+
+	* src/gossip-group-chat.c:
+	(group_chat_destroy_cb): unregister  presence handler.
+	(gossip_group_chat_new): register presence handler.
+	(group_chat_presence_handler): renamed from handle_presence and
+	  made into a static function.
+	(group_chat_message_handler): renamed from handle_message.
+
+	* src/gossip-app.c (app_presence_received): don't handle group
+	  chat presence events
+
+	* src/gossip-chat.c:
+	(gossip_chat_handle_message): now a LmMessageHandler.
+	(chat_dialog_destroy_cb): unregister message handler.
+	(gossip_chat_new): register message handler.
+
+2002-11-16  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c (gossip_roster_add_user): Expand the online
+	groups when adding the first user to them (so we don't mess with
+	groups the user has collapsed).
+
+2002-11-16  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-group-chat.c (group_chat_destroy_cb): unregister
+	  message handler and send a LmPresence about leaving.
+
+	* src/gossip-app.c (app_message_received): don't take care of
+	  group chat messages any more.
+
+	* src/gossip-group-chat.c:
+	(gossip_group_chat_new): register message handler
+	(group_chat_handle_message): now a LmMessageHandler, returns FALSE
+	  if this message didn't belong to this chat room.
+
+2002-11-16  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c: More tweaking.
+
+2002-11-15  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-roster.c (gossip_roster_add_user): Handle contacts
+	with no group.
+	(roster_row_activated_cb): Don't emit activated signal on groups.
+
+	* src/gossip-utils.c (gossip_text_view_append_chat_message): Tweak
+	the style of chat messages.
+
+	* src/gossip-roster.c (gossip_roster_add_user): Start implementing
+	group handling.
+
+2002-11-15  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c: Use callbacks for message and presence.
+
+	* src/gossip-app.c: Use callbacks for connected and disconnected
+	  instead of signals.
+
+2002-11-15  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (gossip_app_init): Use gnomeicu-dnd.png for
+	Busy.
+
+	* src/gossip-utils.c (gossip_option_menu_set_history): Add, match
+	on the user_data set per menu item and select it if found.
+
+	* src/gossip-app.c (app_set_status): Remove dead code. Use
+	gossip_option_menu_set_history to make setting the status work
+	properly.
+
+2002-11-14  Mikael Hallendal  <micke@codefactory.se>
+
+	* src/gossip-app.c (app_status_item_activated_cb): added.
+	(app_set_status): set presence show/type corresponding to gossip
+	  status.
+
+	* configure.in: require loudmouth 0.1.1
+
+	* src/gossip-roster.c:
+	(gossip_roster_handle_presence): cleaned up a little.
+	
+	* src/gossip-group-chat.c (gossip_group_chat_handle_presence): 
+	- use icons from gnomeicu.
+
+	* src/gossip-roster.c (gossip_roster_handle_presence): 
+	- Use different icons depending on type of show
+	- Set user as offline when presence type == ERROR or UNAVAILABLE.
+	(gossip_roster_list_received_cb): moved from gossip-app. Handles
+	  incoming roster list.
+
+	* src/gossip-app.h: match the GossipStatuses with LmPresenceShows
+
+	* src/gossip-app.c (gossip_app_init): use icons from gnomeicu
+	(app_set_status): also send the presence.
+	(app_presence_received): don't let the roster handle the presence
+	  if it's not of type AVAILABLE or UNAVAILABLE.
+
+	* data/images/gnomeicu-*: Added from GnomeICU
+
+	* data/images/Makefile.am (image_DATA): Added gnomeicu-*
+
+	* src/gossip-app.c (app_auth_cb): added
+	(app_client_connected): don't request roster and set status to
+	  available until we have actually authenticated.
+
+2002-10-28  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (app_presence_received): Don't do anything if
+	we get a presence message with type == error.
+
+2002-10-23  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-group-chat.c (group_chat_key_press_event_cb):
+	Implement tab completion for nick.
+	(group_chat_key_press_event_cb): Don't complete if control or
+	shift is pressed.
+
+	* src/gossip-chat.c (gossip_chat_new, chat_focus_in_event_cb):
+	Don't give focus to the text view, only the input entry.
+
+	* src/gossip-app.c (gossip_app_new): Only connect if the caller
+	told us to.
+
+	* src/gossip-main.c (main): Add -a option (don't connect on
+	startup).
+
+2002-10-21  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-group-chat.c (group_chat_focus_in_event_cb): Grab
+	focus in entry when the text view gets focus, restore cursor
+	position and deselect the text. A bit of a kludge but works ok.
+	(gossip_group_chat_new): Set focus chain.
+
+	* src/gossip-connect-dialog.c (connect_dialog_update_optionmenu):
+	Refactor.
+	(connect_dialog_add_account_cb): Update the option menu when
+	server is added.
+
+	* src/gossip-join-dialog.c (join_dialog_response_cb): Plug leak.
+	(join_dialog_update_optionmenu): Refactor so we can use this when
+	a new favorite is added.
+	(join_dialog_add_favorite_cb): Update option menu when favorite is
+	added.
+
+	* src/gossip-app.c (app_get_default_account): Don't try to use the
+	default account if it's an empty string.
+
+2002-10-02  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c (app_get_default_account): Handle the case
+	where no accounts exist.
+	(gossip_app_connect): Only disconnect if we're connected.
+	(gossip_app_init): Work around the lack of a schema for now.
+	(app_get_group_chat_for_room): Casefold so we get matches for
+	CodeFactory etc even if the name is codefactory.
+	(app_get_chat_for_user): Likewise. 
+
+	Add g_return_if... in lots of places.
+
+	* src/gossip-main.c (main): Run gtk_init before checking cmdline
+	arguments since gtk_init might strip off some.
+
+	* src/gossip-connect-dialog.c (connect_dialog_entries_changed_cb):
+	Don't set add button insensitive when no password is entered.
+

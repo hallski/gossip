@@ -1,0 +1,106 @@
+AC_INIT(src)
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(gossip, 0.2)
+
+AM_MAINTAINER_MODE
+
+AC_ISC_POSIX
+AC_PROG_CC
+AC_STDC_HEADERS
+AM_PROG_LIBTOOL
+AM_PATH_GLIB_2_0 
+
+AC_PROG_INTLTOOL
+
+MRP_COMPILE_WARNINGS
+
+dnl ==========================================================================
+dnl
+dnl Library Dependencies, uses pkg-config to detect correct version, etc
+dnl
+dnl ==========================================================================
+
+dnl If you add a version number here, you *must* add an AC_SUBST line for
+dnl it too, or it will never make it into the spec file!
+
+GLIB_REQUIRED=2.0.3
+GTK_REQUIRED=2.0.4
+LIBGLADE_REQUIRED=2.0.0
+LOUDMOUTH_REQUIRED=0.8.99
+GCONF_REQUIRED=1.2.0
+LIBGNOMEUI_REQUIRED=2.0.0
+
+AC_SUBST(GLIB_REQUIRED)
+AC_SUBST(GTK_REQUIRED)
+AC_SUBST(LIBGLADE_REQUIRED)
+AC_SUBST(LOUDMOUTH_REQUIRED)
+AC_SUBST(GCONF_REQUIRED)
+AC_SUBST(LIBGNOMEUI_REQUIRED)
+
+dnl ================================
+dnl | Pkg-Config dependency checks |---------------------------
+dnl ================================
+
+PKG_CHECK_MODULES(GOSSIP,
+[
+	glib-2.0 >= $GLIB_REQUIRED
+	gobject-2.0
+	gtk+-2.0 >= $GTK_REQUIRED
+	libglade-2.0 >= $LIBGLADE_REQUIRED 
+	loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
+	gconf-2.0 >= $GCONF_REQUIRED
+	libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED
+])
+
+AC_SUBST(GOSSIP_CFLAGS)
+AC_SUBST(GOSSIP_LIBS)
+dnl -----------------------------------------------------------
+
+
+dnl
+dnl check if we have gtk+ 2.1.x (again - for multihead support)
+dnl
+#AC_MSG_CHECKING([for gtk+ multihead support])
+#if $PKG_CONFIG --atleast-version 2.1.0 gtk+-2.0; then
+#   AC_DEFINE(HAVE_GTK_MULTIHEAD,,[gtk+ with multihead support found])
+#   AC_MSG_RESULT(yes)
+#else
+#   AC_MSG_RESULT(no)
+#fi
+AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
+dnl -----------------------------------------------------------
+
+
+dnl  ------------------
+dnl | Language Support |---------------------------------------
+dnl  ------------------
+GETTEXT_PACKAGE=gossip
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
+
+ALL_LINGUAS="sv"
+
+AM_GLIB_GNU_GETTEXT
+
+if test "x$prefix" = "xNONE"; then
+  GOSSIP_LOCALEDIR=$ac_default_prefix/share/locale
+else
+  GOSSIP_LOCALEDIR=$prefix/share/locale
+fi
+AC_DEFINE_UNQUOTED(GOSSIP_LOCALEDIR, "$GOSSIP_LOCALEDIR",[locale directory])
+dnl -----------------------------------------------------------
+
+CFLAGS="$CFLAGS $WARN_CFLAGS"
+
+AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal)
+
+AC_OUTPUT([
+Makefile
+ui/Makefile
+ui/pixmaps/Makefile
+src/Makefile
+src/sounds/Makefile
+po/Makefile.in
+])
+
+

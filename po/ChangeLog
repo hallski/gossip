@@ -1,0 +1,20 @@
+2003-04-02  Mikael Hallendal  <set EMAIL_ADDRESS environment variable>
+
+	reviewed by: <delete if not using a buddy>
+
+	* ChangeLog:
+	* POTFILES.in:
+
+2003-04-02  Mikael Hallendal  <set EMAIL_ADDRESS environment variable>
+
+	reviewed by: <delete if not using a buddy>
+
+	* POTFILES.in:
+
+2003-02-02  Richard Hult  <rhult@codefactory.se>
+
+	* po/sv.po: Update translation.
+
+	* po/POTFILES.in: 
+	* po/POTFILES.skip: Update. 
+	
