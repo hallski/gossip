@@ -1,5 +1,7 @@
 2004-12-27  Mikael Hallendal  <micke@imendio.com>
 
+	* Release 0.8
+	
 	* NEWS: Updated for 0.8
 	* configure.in: Bumped to 0.8
 	* ui/main.glade: Disable service discovery for release
