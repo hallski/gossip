@@ -1,3 +1,17 @@
+2003-06-15  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-account.c:
+	* src/gossip-account.h:
+	(gossip_account_store): Moved from gossip-accounts-dialog.
+	* src/gossip-accounts-dialog.c: 
+	(accounts_dialog_add_account_cb),
+	(accounts_dialog_update_account_cb): 
+	- updated to the move of gossip_account_store.
+	* src/gossip-startup-druid.c:
+	(startup_druid_get_account_info),
+	(startup_druid_prepare_page_last),
+	(startup_druid_last_page_finished): store the created account.
+
 2003-06-14  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-add-contact.c: (add_contact_page_2_vcard_handler):

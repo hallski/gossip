@@ -1,8 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2002 CodeFactory AB
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
- * Copyright (C) 2002 Mikael Hallendal <micke@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -106,51 +106,6 @@ accounts_dialog_response_cb (GtkWidget            *widget,
 }
 
 static void
-accounts_dialog_set_account_information (GossipAccountsDialog *dialog,
-					 GossipAccount        *account,
-					 gchar                *old_name)
-{
-	gchar       *path;
-	gchar       *key;
-
-	if (old_name) {
-		gchar *old_path = g_strdup_printf ("%s/Account: %s",
-						   GOSSIP_ACCOUNTS_PATH,
-						   old_name);
-		gnome_config_clean_section (old_path);
-		g_free (old_path);
-	}
-
-	path = g_strdup_printf ("%s/Account: %s", 
-				GOSSIP_ACCOUNTS_PATH, account->name);
-	
-	key = g_strdup_printf ("%s/username", path);
-	gnome_config_set_string (key, account->username);
-	g_free (key);
-	
-	key = g_strdup_printf ("%s/resource", path);
-	gnome_config_set_string (key, account->resource);
-	g_free (key);
-
-	key = g_strdup_printf ("%s/server", path);
-	gnome_config_set_string (key, account->server);
-	g_free (key);
-
-	key = g_strdup_printf ("%s/port", path);
-	gnome_config_set_int (key, account->port);
-	g_free (key);
-	
-	key = g_strdup_printf ("%s/password", path);
-	gnome_config_private_set_string (key, account->password);
-	g_free (key);
-
-	g_free (path);
-
- 	gnome_config_sync_file (GOSSIP_ACCOUNTS_PATH);
- 	gnome_config_private_sync_file (GOSSIP_ACCOUNTS_PATH);
-}
-
-static void
 accounts_dialog_add_account_cb (GtkWidget            *widget,
 				GossipAccountsDialog *dialog)
 {
@@ -173,7 +128,7 @@ accounts_dialog_add_account_cb (GtkWidget            *widget,
 	
 	gtk_tree_selection_select_iter (selection, &iter);
 
-	accounts_dialog_set_account_information (dialog, account, NULL);
+	gossip_account_store (account, NULL);
 }
 
 static void
@@ -261,7 +216,7 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 		}
 	}
 
-	accounts_dialog_set_account_information (dialog, account, old_name);
+	gossip_account_store (account, old_name);
 	g_free (old_name);
 	
 	return FALSE;

@@ -210,3 +210,47 @@ gossip_account_unref (GossipAccount *account)
 	}
 }
 
+void
+gossip_account_store (GossipAccount *account, gchar *old_name)
+{
+	gchar *path;
+	gchar *key;
+
+	if (old_name) {
+		gchar *old_path = g_strdup_printf ("%s/Account: %s",
+						   GOSSIP_ACCOUNTS_PATH,
+						   old_name);
+		gnome_config_clean_section (old_path);
+		g_free (old_path);
+	}
+
+	path = g_strdup_printf ("%s/Account: %s", 
+				GOSSIP_ACCOUNTS_PATH, account->name);
+	
+	key = g_strdup_printf ("%s/username", path);
+	gnome_config_set_string (key, account->username);
+	g_free (key);
+	
+	key = g_strdup_printf ("%s/resource", path);
+	gnome_config_set_string (key, account->resource);
+	g_free (key);
+
+	key = g_strdup_printf ("%s/server", path);
+	gnome_config_set_string (key, account->server);
+	g_free (key);
+
+	key = g_strdup_printf ("%s/port", path);
+	gnome_config_set_int (key, account->port);
+	g_free (key);
+	
+	key = g_strdup_printf ("%s/password", path);
+	gnome_config_private_set_string (key, account->password);
+	g_free (key);
+
+	g_free (path);
+
+ 	gnome_config_sync_file (GOSSIP_ACCOUNTS_PATH);
+ 	gnome_config_private_sync_file (GOSSIP_ACCOUNTS_PATH);
+}
+
+

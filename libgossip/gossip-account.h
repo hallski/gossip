@@ -52,5 +52,7 @@ GossipAccount * gossip_account_get          (const gchar   *name);
 GossipJID *     gossip_account_get_jid      (GossipAccount *account);
 GossipAccount * gossip_account_ref          (GossipAccount *account);
 void            gossip_account_unref        (GossipAccount *account);
+void            gossip_account_store        (GossipAccount *account,
+					     gchar         *old_name);
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

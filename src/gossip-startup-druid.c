@@ -1,8 +1,9 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 CodeFactory AB
+ * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,6 +26,7 @@
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-druid.h>
 #include <libgnome/gnome-i18n.h>
+#include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-app.h"
 #include "gossip-startup-druid.h"
@@ -176,9 +178,7 @@ startup_druid_prepare_page_4 (GnomeDruidPage     *page,
 
 static gboolean
 startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
-				gchar              **jid,
-				const gchar        **resource,
-				const gchar        **realname)
+				GossipAccount      **account)
 {
 	GtkToggleButton *toggle;
 	gboolean         has_account;
@@ -189,28 +189,28 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 	toggle = GTK_TOGGLE_BUTTON (startup_druid->four_different_radiobutton);
 	predefined_server = !gtk_toggle_button_get_active  (toggle);
 
-	if (jid) {
+	if (account) {
 		const gchar *username;
 		const gchar *server = "";
-		
+
 		username = gtk_entry_get_text (GTK_ENTRY (startup_druid->three_nick_entry));
 		if (predefined_server) {
 			/* Get from list */
 		} else {
 			server = gtk_entry_get_text (GTK_ENTRY (startup_druid->four_server_entry));
 		}
-
-		*jid = g_strdup_printf ("%s@%s", username, server);
+		
+		/* Should user be able to set resource, account name and port?
+		 */
+		*account = gossip_account_new (_("Default"), username, NULL, 
+					       "Gossip", server, 
+					       LM_CONNECTION_DEFAULT_PORT);
 	}
 
-	if (resource) {
-		/* Use resource */
-		*resource = "Gossip";
-	}
-	
-	if (realname) {
-		*realname = gtk_entry_get_text (GTK_ENTRY (startup_druid->three_name_entry));
-	}
+	/* Set this in some settings-thingy... */
+	/*
+	 * *realname = gtk_entry_get_text (GTK_ENTRY (startup_druid->three_name_entry));
+	 */
 
 	return has_account;
 }
@@ -221,15 +221,17 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 				 GnomeDruid         *druid,
 				 GossipStartupDruid *startup_druid)
 {
-	gboolean  has_account;
-	gchar    *jid;
-	gchar    *label_text;
+	gboolean       has_account;
+	const gchar   *jid;
+	gchar         *label_text;
+	GossipAccount *account;
 	
   	gnome_druid_set_show_finish (GNOME_DRUID (startup_druid->druid), TRUE);
 
-	has_account = startup_druid_get_account_info (startup_druid,
-						      &jid, NULL, NULL);
+	has_account = startup_druid_get_account_info (startup_druid, &account);
 	
+	jid = gossip_jid_get_without_resource (gossip_account_get_jid (account));
+
 	if (has_account) {
 		label_text = g_strdup_printf (_("Gossip will now try to use your account:\n <b>%s</b>"), jid);
 	} else {
@@ -240,7 +242,8 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 			      label_text);
 	
 	g_free (label_text);
-	g_free (jid);
+	gossip_account_store (account, NULL);
+	gossip_account_unref (account);
 }
 
 static void
@@ -248,13 +251,11 @@ startup_druid_last_page_finished (GnomeDruidPage     *page,
 				  GnomeDruid         *druid,
 				  GossipStartupDruid *startup_druid)
 {
-	gboolean     has_account;
-	gchar       *jid;
-	const gchar *username;
+	gboolean has_account = FALSE;
 	
-	has_account = startup_druid_get_account_info (startup_druid, 
+/*	has_account = startup_druid_get_account_info (startup_druid, 
 						      &jid, NULL, &username);
-
+*/
 	if (!has_account) {
 		/* Send a register request */
 	}
