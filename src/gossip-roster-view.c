@@ -540,7 +540,7 @@ roster_view_item_presence_updated (GossipRoster     *roster,
 	
 	for (l = gossip_roster_item_get_groups (item); l; l = l->next) {
 		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
-		
+
 		if (roster_view_find_item (view, &iter, item, group)) {
 			if (!show_item) {
 				/* Remove item */

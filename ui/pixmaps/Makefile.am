@@ -1,6 +1,7 @@
 imagedir = $(datadir)/gossip
 
 image_DATA =			\
+	gossip-logo.png		\
 	gossip-available.png    \
 	gossip-away.png		\
 	gossip-busy.png		\

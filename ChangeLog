@@ -1,5 +1,9 @@
 2004-01-09  Richard Hult  <richard@imendio.com>
 
+	* ui/pixmaps: Add large gossip logo.
+
+	* src/gossip-app.c (app_about_cb): Spiffy about box.
+
 	* src/gossip-chat.c (chat_message_handler): Move sound handling here...
 
 	* src/gossip-chat-window.c (chat_window_new_message_cb): ...from

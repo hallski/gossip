@@ -596,8 +596,9 @@ app_about_cb (GtkWidget *window,
 	/* Note to translators: put here your name and email so it
 	 * will shop up in the "about" box
 	 */
-	gchar         *translator_credits = _("translator_credits");
-	GtkWidget     *href;
+	gchar     *translator_credits = _("translator_credits");
+	GtkWidget *href;
+	GdkPixbuf *pixbuf;
 
 	priv = app->priv;
 
@@ -605,16 +606,20 @@ app_about_cb (GtkWidget *window,
 		gtk_window_present (GTK_WINDOW (priv->about));
 		return;
 	}
+
+	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/gossip-logo.png", NULL);
 	
 	priv->about = gnome_about_new ("Gossip", VERSION,
-				       "Copyright \xc2\xa9 2003 Imendio HB",
-				       _("A Jabber Client for GNOME"),
+				       "Copyright \xc2\xa9 2003-2004 Imendio HB",
+				       _("An Instant Messaging Client for GNOME"),
 				       authors,
 				       NULL,
 				       strcmp (translator_credits, "translator_credits") != 0 ?
 				       translator_credits : NULL,
-				       NULL);
+				       pixbuf);
 
+	g_object_unref (pixbuf);
+	
 	href = gnome_href_new ("http://www.imendio.com/projects/gossip/", _("Gossip Website"));
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (priv->about)->vbox), href, FALSE, FALSE, 5);
 	gtk_widget_show (href);
