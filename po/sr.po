@@ -8,14 +8,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-16 05:55+0100\n"
+"POT-Creation-Date: 2003-11-18 13:13+0100\n"
 "PO-Revision-Date: 2003-11-16 05:55+0100\n"
 "Last-Translator: Данило Шеган <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -217,27 +217,27 @@ msgstr "_Отвори везу"
 msgid "%A %d %B %Y"
 msgstr "%A, %d. %B %Y."
 
-#: src/gossip-chat-window.c:470
+#: src/gossip-chat-window.c:564
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sЧаврљање - %s"
 
-#: src/gossip-chat.c:674
+#: src/gossip-chat.c:685
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Догодила се грешка приликом чаврљање са %s."
 
-#: src/gossip-chat.c:679 src/gossip-group-chat.c:808
-#: src/gossip-group-chat.c:911
+#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
+#: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Детаљи:"
 
-#: src/gossip-chat.c:752
+#: src/gossip-chat.c:776
 #, c-format
 msgid "%s went offline"
 msgstr "%s прекиде везу"
 
-#: src/gossip-chat.c:766
+#: src/gossip-chat.c:790
 #, c-format
 msgid "%s comes online"
 msgstr "%s се повеза"
@@ -247,12 +247,12 @@ msgstr "%s се повеза"
 msgid "Contact Information for %s"
 msgstr "Контакт информације за %s"
 
-#: src/gossip-group-chat.c:803
+#: src/gossip-group-chat.c:802
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "Догодила се грешка приликом чаврљање у групи %s."
 
-#: src/gossip-group-chat.c:906
+#: src/gossip-group-chat.c:905
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Није могуће унети grupu групу за чаврљање %s."
@@ -338,11 +338,11 @@ msgstr "/Уклони контакт"
 msgid "/Re_name group"
 msgstr "/Преи_менуј групу"
 
-#: src/gossip-roster-view.c:929
+#: src/gossip-roster-view.c:930
 msgid "Offline"
 msgstr "Неповезан"
 
-#: src/gossip-roster-view.c:1227
+#: src/gossip-roster-view.c:1237
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -353,7 +353,7 @@ msgstr ""
 "%s\n"
 "из вашег списка другара?"
 
-#: src/gossip-roster-view.c:1319
+#: src/gossip-roster-view.c:1330
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -362,7 +362,7 @@ msgstr ""
 "Унесите нови надимак за контакт\n"
 "%s"
 
-#: src/gossip-roster-view.c:1406
+#: src/gossip-roster-view.c:1417
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"

@@ -1,5 +1,9 @@
 2003-11-18  Richard Hult  <richard@imendio.com>
 
+	* Release 0.6.
+
+	* NEWS: Update.
+
 	* configure.in: Bump version, lower requirement of libxml.
 
 	* src/gossip-chat-window.c (chat_window_tab_removed_cb): Update

@@ -8,14 +8,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-16 05:55+0100\n"
+"POT-Creation-Date: 2003-11-18 13:13+0100\n"
 "PO-Revision-Date: 2003-11-16 05:55+0100\n"
 "Last-Translator: Danilo Šegan <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -161,7 +161,8 @@ msgstr "Veb stranica Čavrljanja"
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
-"Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za čavrljanje."
+"Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za "
+"čavrljanje."
 
 #: src/gossip-app.c:688 ui/main.glade.h:83
 msgid "_Chat"
@@ -217,27 +218,27 @@ msgstr "_Otvori vezu"
 msgid "%A %d %B %Y"
 msgstr "%A, %d. %B %Y."
 
-#: src/gossip-chat-window.c:470
+#: src/gossip-chat-window.c:564
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sČavrljanje - %s"
 
-#: src/gossip-chat.c:674
+#: src/gossip-chat.c:685
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Dogodila se greška prilikom čavrljanje sa %s."
 
-#: src/gossip-chat.c:679 src/gossip-group-chat.c:808
-#: src/gossip-group-chat.c:911
+#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
+#: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detalji:"
 
-#: src/gossip-chat.c:752
+#: src/gossip-chat.c:776
 #, c-format
 msgid "%s went offline"
 msgstr "%s prekide vezu"
 
-#: src/gossip-chat.c:766
+#: src/gossip-chat.c:790
 #, c-format
 msgid "%s comes online"
 msgstr "%s se poveza"
@@ -247,12 +248,12 @@ msgstr "%s se poveza"
 msgid "Contact Information for %s"
 msgstr "Kontakt informacije za %s"
 
-#: src/gossip-group-chat.c:803
+#: src/gossip-group-chat.c:802
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "Dogodila se greška prilikom čavrljanje u grupi %s."
 
-#: src/gossip-group-chat.c:906
+#: src/gossip-group-chat.c:905
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Nije moguće uneti grupu grupu za čavrljanje %s."
@@ -338,11 +339,11 @@ msgstr "/Ukloni kontakt"
 msgid "/Re_name group"
 msgstr "/Prei_menuj grupu"
 
-#: src/gossip-roster-view.c:929
+#: src/gossip-roster-view.c:930
 msgid "Offline"
 msgstr "Nepovezan"
 
-#: src/gossip-roster-view.c:1227
+#: src/gossip-roster-view.c:1237
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -353,7 +354,7 @@ msgstr ""
 "%s\n"
 "iz vašeg spiska drugara?"
 
-#: src/gossip-roster-view.c:1319
+#: src/gossip-roster-view.c:1330
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -362,7 +363,7 @@ msgstr ""
 "Unesite novi nadimak za kontakt\n"
 "%s"
 
-#: src/gossip-roster-view.c:1406
+#: src/gossip-roster-view.c:1417
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -720,8 +721,8 @@ msgid ""
 msgstr ""
 "Čavrljanje je moderan klijent za DŽaber sistem brzih poruka.\n"
 "\n"
-"Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i povežete se na vaš omiljen "
-"DŽaber server.\n"
+"Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i povežete se na vaš "
+"omiljen DŽaber server.\n"
 "\n"
 "Da počnete, samo kliknite „Napred“."
 
@@ -1039,8 +1040,8 @@ msgstr "Poruk_e o stanju"
 #~ "These messages are used to describe your status when you're available, "
 #~ "about to leave, or automatically set away due to inactivity."
 #~ msgstr ""
-#~ "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, upravo "
-#~ "odlazite ili ste odsutni usled neaktivnosti."
+#~ "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, "
+#~ "upravo odlazite ili ste odsutni usled neaktivnosti."
 
 #~ msgid "Use com_pact conversation style"
 #~ msgstr "Koristi stil sa_žetog razgovora"
@@ -1159,8 +1160,8 @@ msgstr "Poruk_e o stanju"
 #~ "\n"
 #~ "Čavrljanje je moderan klijent za DŽaber Trenutne Poruke.\n"
 #~ "\n"
-#~ "Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i konektujete se na vaš "
-#~ "omiljen DŽaber server."
+#~ "Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i konektujete se na "
+#~ "vaš omiljen DŽaber server."
 
 #~ msgid "<b>Additional information</b>"
 #~ msgstr "<b>Dodatne informacije</b>"

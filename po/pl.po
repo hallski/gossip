@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip cvs\n"
-"POT-Creation-Date: 2003-11-17 23:50+0100\n"
+"POT-Creation-Date: 2003-11-18 13:13+0100\n"
 "PO-Revision-Date: 2003-07-17 23:49+0200\n"
 "Last-Translator: GNOME PL Team <translators@gnome.pl>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -217,7 +217,7 @@ msgstr "_Otwórz odnośnik"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:558
+#: src/gossip-chat-window.c:564
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sRozmowa - %s"

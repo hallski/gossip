@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.6\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-16 18:53+0100\n"
+"POT-Creation-Date: 2003-11-18 13:13+0100\n"
 "PO-Revision-Date: 2003-11-16 18:57+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -217,27 +217,27 @@ msgstr "_Obre l'enllaç"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:470
+#: src/gossip-chat-window.c:564
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sXerrada - %s"
 
-#: src/gossip-chat.c:674
+#: src/gossip-chat.c:685
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:679 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detalls:"
 
-#: src/gossip-chat.c:752
+#: src/gossip-chat.c:776
 #, c-format
 msgid "%s went offline"
 msgstr "%s s'ha desconnectat"
 
-#: src/gossip-chat.c:766
+#: src/gossip-chat.c:790
 #, c-format
 msgid "%s comes online"
 msgstr "%s s'ha connectat"
@@ -338,11 +338,11 @@ msgstr "/Sup_rimeix el contacte"
 msgid "/Re_name group"
 msgstr "/Rea_nomena el grup"
 
-#: src/gossip-roster-view.c:929
+#: src/gossip-roster-view.c:930
 msgid "Offline"
 msgstr "Desconnectat"
 
-#: src/gossip-roster-view.c:1236
+#: src/gossip-roster-view.c:1237
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -353,7 +353,7 @@ msgstr ""
 "%s\n"
 "de la llista de contactes?"
 
-#: src/gossip-roster-view.c:1328
+#: src/gossip-roster-view.c:1330
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -362,7 +362,7 @@ msgstr ""
 "Introduïu un àlias nou per al contacte\n"
 "%s"
 
-#: src/gossip-roster-view.c:1415
+#: src/gossip-roster-view.c:1417
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"

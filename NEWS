@@ -1,3 +1,16 @@
+News in 0.6:
+============
+
+* Improved contact list
+* New presence system
+* New icons
+* Tabbed chat windows
+* Conversation logging
+* Nicer timestamping
+* Many bug fixes and small improvements
+* Updated and new translations (az, ca, cs, cy, da, de, es, fr, fr, it,
+  nl, no, pl, pt, ru, sr, sr@Latn, sv, zh_CN, zh_TW)
+
 News in 0.5:
 ============
 * Typing notification, JEP-0022

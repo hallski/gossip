@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip 0.6\n"
-"POT-Creation-Date: 2003-11-16 00:31+0100\n"
+"POT-Creation-Date: 2003-11-18 13:13+0100\n"
 "PO-Revision-Date: 2003-11-13 17:27+0100\n"
 "Last-Translator: Hendrik Richter <naggeldak@gnome-de.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -216,27 +216,27 @@ msgstr "_Öffne Link"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:470
+#: src/gossip-chat-window.c:564
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sUnterhaltung - %s"
 
-#: src/gossip-chat.c:674
+#: src/gossip-chat.c:685
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Beim Unterhalten mit %s ist ein Fehler aufgetreten."
 
-#: src/gossip-chat.c:679 src/gossip-group-chat.c:808
-#: src/gossip-group-chat.c:911
+#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
+#: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:752
+#: src/gossip-chat.c:776
 #, c-format
 msgid "%s went offline"
 msgstr "%s hat sich abgemeldet"
 
-#: src/gossip-chat.c:766
+#: src/gossip-chat.c:790
 #, c-format
 msgid "%s comes online"
 msgstr "%s hat sich angemeldet"
@@ -246,12 +246,12 @@ msgstr "%s hat sich angemeldet"
 msgid "Contact Information for %s"
 msgstr "Kontaktinformationen von %s"
 
-#: src/gossip-group-chat.c:803
+#: src/gossip-group-chat.c:802
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "Beim Unterhalten im Chat %s ist ein Fehler aufgetreten."
 
-#: src/gossip-group-chat.c:906
+#: src/gossip-group-chat.c:905
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Chat %s konnte nicht betreten werden."
@@ -339,11 +339,11 @@ msgstr "/Kontakt _löschen"
 msgid "/Re_name group"
 msgstr "/Gruppe umbe_nennen"
 
-#: src/gossip-roster-view.c:903
+#: src/gossip-roster-view.c:930
 msgid "Offline"
 msgstr "Abgemeldet"
 
-#: src/gossip-roster-view.c:1203
+#: src/gossip-roster-view.c:1237
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -353,14 +353,14 @@ msgstr ""
 "Kontakt %s wirklich von der\n"
 "Kontaktliste löschen?"
 
-#: src/gossip-roster-view.c:1295
+#: src/gossip-roster-view.c:1330
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
 msgstr "Neuen Spitznamen für %s eingeben"
 
-#: src/gossip-roster-view.c:1382
+#: src/gossip-roster-view.c:1417
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
