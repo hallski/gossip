@@ -143,6 +143,7 @@ static void     app_main_window_destroy_cb           (GtkWidget          *window
 static void     app_user_activated_cb                (GossipRosterOld    *roster,
 						      GossipJID          *jid,
 						      GossipApp          *app);
+static void     app_cancel_pending_leave             (void);
 static gboolean app_idle_check_cb                    (GossipApp          *app);
 static void     app_quit_cb                          (GtkWidget          *window,
 						      GossipApp          *app);
@@ -1230,6 +1231,16 @@ gossip_app_join_group_chat (const gchar *room,
 	gossip_jid_unref (jid);
 }
 
+static void
+app_cancel_pending_leave (void)
+{
+	GossipAppPriv *priv = app->priv;
+
+	priv->leaving_time = 0;
+	g_free (priv->overridden_away_message);
+	priv->overridden_away_message = NULL;
+}
+
 static gboolean
 app_idle_check_cb (GossipApp *app)
 {
@@ -1268,10 +1279,7 @@ app_idle_check_cb (GossipApp *app)
 			app_update_show ();
 		} else {
 			/* No leaving after all... */
-			priv->leaving_time = 0;
-
-			g_free (priv->overridden_away_message);
-			priv->overridden_away_message = NULL;
+			app_cancel_pending_leave ();
 
 			app_update_show ();
 		}			
@@ -1293,8 +1301,7 @@ app_idle_check_cb (GossipApp *app)
 
 		add = 0;
 
-		g_free (priv->overridden_away_message);
-		priv->overridden_away_message = NULL;
+		app_cancel_pending_leave ();
 	}
 
 	if (idle - add > AUTO_EXT_AWAY_TIME) {
@@ -2152,6 +2159,8 @@ app_status_activate_cb (GtkWidget *item,
 	str = g_object_get_data (G_OBJECT (item), "status");
 	show = g_object_get_data (G_OBJECT (item), "show");
 
+	app_cancel_pending_leave ();
+	
 	g_free (priv->status_text);
 	priv->status_text = g_strdup (str);
 	priv->explicit_show = GPOINTER_TO_INT (show);
@@ -2323,6 +2332,8 @@ status_entry_activate_cb (GtkEntry *entry,
 		priv->status_text = g_strdup (str);
 	}
 
+	app_cancel_pending_leave ();
+	
 	app_update_show ();
 }
 
