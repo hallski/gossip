@@ -7,7 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-02-24 05:15+0100\n"
 "PO-Revision-Date: 2004-02-01 15:33+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -276,9 +277,10 @@ msgstr "Contact informatie voor %s"
 msgid "Edit groups for %s"
 msgstr "Groepen bewerken voor %s"
 
+#. GRUT modified this item
 #: src/gossip-edit-groups-dialog.c:246
 msgid "Select"
-msgstr "Kiezen"
+msgstr "Selecteren"
 
 #: src/gossip-edit-groups-dialog.c:257
 msgid "Group"
@@ -660,9 +662,10 @@ msgstr "Contact toevoegen"
 msgid "Add to your contact list"
 msgstr "Toevoegen aan uw contactlijst"
 
+#. GRUT modified this item
 #: ui/main.glade.h:11
 msgid "Appearance"
-msgstr "Verschijning"
+msgstr "Uiterlijk"
 
 #: ui/main.glade.h:12
 msgid "Choose a Server"
@@ -844,10 +847,10 @@ msgstr "_Offline contacten weergeven"
 msgid "Sound"
 msgstr "Geluid"
 
+#. GRUT modified this item
 #: ui/main.glade.h:57
-#, fuzzy
 msgid "Status"
-msgstr "Statusbericht"
+msgstr "Status"
 
 #: ui/main.glade.h:58
 msgid "Status Message"
