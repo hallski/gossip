@@ -1,5 +1,13 @@
 2004-01-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (gossip_app_status_force_nonaway),
+	(app_status_available_activate_cb), (app_status_busy_activate_cb):
+	Fix silly bug when going from away manually.
+	(app_status_button_clicked_cb): Popup on clicked as well to get
+	keyboard nav working.
+
+2004-01-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c: (gossip_app_status_force_nonaway):
 	* src/gossip-chat.c: (chat_send):
 	* src/gossip-group-chat.c: (group_chat_send): Return from away

@@ -247,6 +247,9 @@ static void     app_tray_update_tooltip              (void);
 static gboolean app_status_button_press_event_cb     (GtkButton          *button,
 						      GdkEventButton     *event,
 						      gpointer            user_data);
+static void     app_status_button_clicked_cb         (GtkButton          *button,
+						      GdkEventButton     *event,
+						      gpointer            user_data);
 static void     app_status_entry_activate_cb         (GtkEntry           *entry,
 						      gpointer            user_data);
 static gboolean app_status_entry_key_press_event_cb  (GtkEntry           *entry,
@@ -508,6 +511,11 @@ app_init (GossipApp *singleton_app)
 	g_signal_connect (priv->status_button,
 			  "button_press_event",
 			  G_CALLBACK (app_status_button_press_event_cb),
+			  NULL);
+
+	g_signal_connect (priv->status_button,
+			  "clicked",
+			  G_CALLBACK (app_status_button_clicked_cb),
 			  NULL);
 
         g_signal_connect (priv->status_entry,                                   
@@ -2156,19 +2164,17 @@ gossip_app_status_force_nonaway (void)
 {
 	GossipAppPriv *priv = app->priv;
 
-	if (priv->auto_show != GOSSIP_SHOW_AWAY && priv->auto_show != GOSSIP_SHOW_EXT_AWAY) {
-		return;
+	if (priv->auto_show == GOSSIP_SHOW_AWAY || priv->auto_show == GOSSIP_SHOW_EXT_AWAY) {
+		gossip_idle_reset ();
+
+		g_free (priv->overridden_away_message);
+		priv->overridden_away_message = NULL;
+
+		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+
+		/* Force the idle check to be done so we don't get a 5 second delay. */
+		app_update_show ();
 	}
-
-	gossip_idle_reset ();
-
-	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
-
-	g_free (priv->overridden_away_message);
-	priv->overridden_away_message = NULL;
-
-	/* Force the idle check to be done so we don't get a 5 second delay. */
-	app_update_show ();
 }
 
 static void
@@ -2222,20 +2228,17 @@ app_status_available_activate_cb (GtkWidget *item,
 	gossip_idle_reset ();
 
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
-//	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
-
+	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+	
 	str = g_object_get_data (G_OBJECT (item), "status");
 
 	g_free (priv->status_text);
 	priv->status_text = g_strdup (str);
 	
-	gossip_app_status_force_nonaway ();
-/*	
 	g_free (priv->overridden_away_message);
 	priv->overridden_away_message = NULL;
 	
 	app_update_show ();
-*/
 }
 
 static void
@@ -2248,19 +2251,17 @@ app_status_busy_activate_cb (GtkWidget *item,
 	gossip_idle_reset ();
 	
 	priv->explicit_show = GOSSIP_SHOW_BUSY;
-//	priv->auto_show = GOSSIP_SHOW_BUSY;
+	priv->auto_show = GOSSIP_SHOW_BUSY;
 	
 	str = g_object_get_data (G_OBJECT (item), "status");
 
 	g_free (priv->status_text);
 	priv->status_text = g_strdup (str);
 
-	gossip_app_status_force_nonaway ();
-	
-/*g_free (priv->overridden_away_message);
+	g_free (priv->overridden_away_message);
 	priv->overridden_away_message = NULL;
-*/
-//	app_update_show ();
+	
+	app_update_show ();
 }
 
 static void
@@ -2566,6 +2567,14 @@ app_status_button_press_event_cb (GtkButton      *button,
 	app_status_popup_show ();
 
 	return TRUE;
+}
+
+static void
+app_status_button_clicked_cb (GtkButton      *button,
+			      GdkEventButton *event,
+			      gpointer        user_data)
+{
+	app_status_popup_show ();
 }
 
 static void
