@@ -907,6 +907,7 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		roster_view_ellipsize_item_string (view, name, width, FALSE);
 
 		g_object_set (cell,
+			      "attributes", NULL,
 			      "weight", PANGO_WEIGHT_NORMAL,
 			      "text", name,
 			      NULL);
