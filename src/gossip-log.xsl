@@ -77,7 +77,7 @@
   <xsl:template match="a">
     <xsl:text disable-output-escaping="yes">&lt;a href="</xsl:text>
 
-    <xsl:value-of select="@href"/>
+    <xsl:value-of disable-output-escaping="yes" select="@href"/>
 
     <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
 

@@ -1,3 +1,10 @@
+2004-01-27  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-log.c (log_urlify): Escape the href value.
+
+	* src/gossip-log.xsl: Disable output escaping for the href
+	value.
+
 2004-01-26  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_authentication_cb):

@@ -142,16 +142,24 @@ log_urlify (const gchar *msg)
 			}
 
 			tmp = gossip_utils_substring (msg, s, e);
+
 			g_string_append (ret, "<a href=\"");
-			g_string_append (ret, tmp);
-			g_string_append (ret, "\">");
+
 			esc = g_markup_escape_text (tmp, -1);
 			g_string_append (ret, esc);
-			g_string_append (ret, "</a>");
 			g_free (esc);
-			g_free (tmp);
+
+			g_string_append (ret, "\">");
+
+			esc = g_markup_escape_text (tmp, -1);
+			g_string_append (ret, esc);
+			g_free (esc);
+
+			g_string_append (ret, "</a>");
 			
 			last = e;
+
+			g_free (tmp);
 		}
 
 		if (e < strlen (msg)) {
