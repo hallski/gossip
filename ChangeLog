@@ -1,5 +1,7 @@
 2004-01-21  Richard Hult  <richard@imendio.com>
 
+	* gossip.spec.in (BuildRequires): Add missing file.
+
 	* ui/main.glade: Resave with an older glade so we don't get
 	warnings when running with an older gtk+.
 

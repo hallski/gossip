@@ -15,7 +15,7 @@ BuildRequires: libxslt-devel >= @LIBXSLT_REQUIRED@
 BuildRequires: libglade2-devel >= @LIBGLADE_REQUIRED@
 BuildRequires: desktop-file-utils >= @DESKTOP_FILE_UTILS_REQUIRED@
 %description
-Gossip is a Jabber instant messaging program.
+Gossip is an instant messaging program for GNOME.
 %prep
 %setup -q
 
@@ -52,6 +52,7 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gossip.schemas 
 %{_bindir}/*
 %{_datadir}/applications
 %{_datadir}/gossip/*
+%{_datadir}/pixmaps/*
 %{_sysconfdir}/gconf/schemas/*
 
 %changelog
