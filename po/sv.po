@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-07 18:14+0200\n"
+"POT-Creation-Date: 2003-07-10 20:59+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -20,81 +20,82 @@ msgstr ""
 msgid "New account"
 msgstr "Nytt konto"
 
-#: src/gossip-add-contact.c:255
+#: src/gossip-add-contact.c:260
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Vilket förfrågansmeddelande vill du skicka till %s?"
 
-#: src/gossip-add-contact.c:275
+#: src/gossip-add-contact.c:280
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s kommer att läggas till i din kontaktlista."
 
-#: src/gossip-add-contact.c:279
+#: src/gossip-add-contact.c:284
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:333
+#: src/gossip-app.c:337
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:337
+#: src/gossip-app.c:341
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:341
+#: src/gossip-app.c:345
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:345 ui/main.glade.h:27
+#: src/gossip-app.c:349 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:349
+#: src/gossip-app.c:353
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:357
+#: src/gossip-app.c:361
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:422
+#: src/gossip-app.c:429
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:440
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:554
+#: src/gossip-app.c:561
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelenade till."
 
-#: src/gossip-app.c:559
+#: src/gossip-app.c:566
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1138
+#: src/gossip-app.c:1142
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1397
+#: src/gossip-app.c:1456
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-chat.c:440
+#: src/gossip-chat.c:453
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:445
+#: src/gossip-chat.c:458 src/gossip-group-chat.c:633
+#: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr "Detaljer:"
 
@@ -112,8 +113,18 @@ msgstr "Operativsystem:"
 
 #: src/gossip-contact-info.c:295
 #, c-format
-msgid "Information about %s"
-msgstr "Information om %s"
+msgid "Contact Information for %s"
+msgstr "Kontaktinformation för %s"
+
+#: src/gossip-group-chat.c:628
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr "Ett fel inträffade under samtal i gruppchatten %s."
+
+#: src/gossip-group-chat.c:732
+#, c-format
+msgid "Unable to enter the group chat %s."
+msgstr "Kunde inte gå in i gruppchatten %s."
 
 #: src/gossip-main.c:69
 msgid "Don't connect on startup"
@@ -223,7 +234,7 @@ msgstr ""
 "Gossip kommer nu att försöka registrera kontot:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1238
+#: src/gossip-utils.c:1252
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
@@ -741,6 +752,9 @@ msgstr "_Skicka chattmeddelande..."
 msgid "Jabber Instant Messaging"
 msgstr "Jabber Instant Messaging"
 
+#~ msgid "Information about %s"
+#~ msgstr "Information om %s"
+
 #~ msgid "Add"
 #~ msgstr "Lägg till"
 
@@ -793,9 +807,6 @@ msgstr "Jabber Instant Messaging"
 
 #~ msgid "Contact _Information"
 #~ msgstr "Kontakt_information"
-
-#~ msgid "Contact Information"
-#~ msgstr "Kontaktinformation"
 
 #~ msgid ""
 #~ "Gossip will now try to register the account:\n"

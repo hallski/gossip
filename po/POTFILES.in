@@ -7,6 +7,7 @@ src/gossip-chat.c
 src/gossip-connect-dialog.c
 src/gossip-contact-info.c
 src/gossip-group-chat.c
+src/gossip-idle.c
 src/gossip-join-dialog.c
 src/gossip-main.c
 src/gossip-message.c

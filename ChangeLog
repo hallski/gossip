@@ -1,5 +1,24 @@
 2003-07-10  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-group-chat.c (group_chat_presence_handler): Fix
+	string, suggested by Jordi.
+
+	* src/gossip-app.c (app_client_disconnected_cb): Clean up the code
+	a bit. Try to fix bug #117134.
+
+	Add the start of auto-away feature, based on a patch from Kevin
+	Dougherty <gossip@kdough.net>.
+	
+	* src/Makefile.am: Add gossip-idle.[ch].
+	
+	* src/gossip-app.c (app_init): Start idle checker.
+	* src/gossip-idle.c (gossip_idle_get_seconds): Add.
+
+	* configure.in: Add XScreenSaver test. Default to disabled for
+	now.
+
+2003-07-10  Richard Hult  <richard@imendio.com>
+
 	* configure.in: Add es.
 
 2003-07-09  Richard Hult  <richard@imendio.com>

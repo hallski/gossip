@@ -1,5 +1,9 @@
 2003-07-10  Richard Hult  <richard@imendio.com>
 
+	* sv.po: Update.
+
+	* POTFILES.in: Add gossip-idle.c
+
 	* es.po: Added from Ezequiel Pérez.
 
 2003-07-09  Jordi Mallach  <jordi@sindominio.net>

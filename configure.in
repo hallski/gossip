@@ -9,6 +9,7 @@ AC_PROG_CC
 AC_STDC_HEADERS
 AM_PROG_LIBTOOL
 AM_PATH_GLIB_2_0 
+AC_PATH_X
 
 AC_PROG_INTLTOOL
 
@@ -39,10 +40,13 @@ AC_SUBST(GCONF_REQUIRED)
 AC_SUBST(LIBGNOMEUI_REQUIRED)
 AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED)
 
+dnl To make the egg stuff build properly, should have a real test...
+AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
+dnl -----------------------------------------------------------
+
 dnl ================================
 dnl | Pkg-Config dependency checks |---------------------------
 dnl ================================
-
 PKG_CHECK_MODULES(GOSSIP,
 [
 	glib-2.0 >= $GLIB_REQUIRED
@@ -54,22 +58,44 @@ PKG_CHECK_MODULES(GOSSIP,
 	libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED
 ])
 
+
+dnl ---------------------------------------------------------------------------
+dnl Check for XScreenSaver
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(screensaver, [  --enable-screensaver build with X screensaver extension], enable_xss="$enableval", enable_xss=no)
+
+dnl Check for XScreenSaver
+if test "x$enable_xss" = "xyes" ; then
+	old_LIBS="$LIBS"
+	old_CFLAGS="$CFLAGS"
+	LIBS="$LIBS -L$x_libraries $GOSSIP_LIBS"
+	CFLAGS="$CFLAGS -L$x_libraries $GOSSIP_CFLAGS"
+	XSS_LIBS="no"
+	XSS_HEADERS="no"
+	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
+	if test \! "$XSS_LIBS" = "no"; then
+		AC_TRY_COMPILE([
+#include <X11/extensions/scrnsaver.h>
+				],[],[enable_xss=no],[
+				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
+				])
+	else
+	       XSS_LIBS=""
+	       enable_xss=no
+	fi
+	LIBS="$old_LIBS"
+	CFLAGS="$old_CFLAGS"
+else
+	XSS_LIBS=""
+	enable_xss=no
+fi
+
+GOSSIP_CFLAGS="$GOSSIP_CFLAGS $XSS_CFLAGS"
+GOSSIP_LIBS="$GOSSIP_LIBS $XSS_LIBS"
+
 AC_SUBST(GOSSIP_CFLAGS)
 AC_SUBST(GOSSIP_LIBS)
-dnl -----------------------------------------------------------
-
-
-dnl
-dnl check if we have gtk+ 2.1.x (again - for multihead support)
-dnl
-#AC_MSG_CHECKING([for gtk+ multihead support])
-#if $PKG_CONFIG --atleast-version 2.1.0 gtk+-2.0; then
-#   AC_DEFINE(HAVE_GTK_MULTIHEAD,,[gtk+ with multihead support found])
-#   AC_MSG_RESULT(yes)
-#else
-#   AC_MSG_RESULT(no)
-#fi
-AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
 dnl -----------------------------------------------------------
 
 
@@ -106,4 +132,7 @@ po/Makefile.in
 gossip.spec
 ])
 
-
+echo
+echo "Gossip prefix             : $prefix"
+echo "XScreenSaver idle checking: $enable_xss"
+echo
