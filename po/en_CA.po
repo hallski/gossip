@@ -9,13 +9,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-28 15:27-0400\n"
-"PO-Revision-Date: 2004-04-28 15:28-0400\n"
-"Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
+"POT-Creation-Date: 2004-05-27 13:43-0400\n"
+"PO-Revision-Date: 2004-05-27 13:44-0400\n"
+"Last-Translator: Alexander Winston <alexander.winston@comcast.net>\n"
 "Language-Team: English/Canada <adamw@FreeBSD.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -134,9 +134,11 @@ msgstr "Translated by:"
 #.
 #: src/gossip-about.c:342
 msgid "translator_credits"
-msgstr "Adam Weinberger  <adamw@gnome.org>"
+msgstr ""
+"Adam Weinberger <adamw@gnome.org>\n"
+"Alexander Winston <alexander.winston@comcast.net>"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:63
 msgid "Home"
 msgstr "Home"
 
@@ -150,34 +152,34 @@ msgstr "What request message do you want to send to %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s will be added to your contact list."
 
-#: src/gossip-app.c:639
+#: src/gossip-app.c:641
 msgid "Could not connect"
 msgstr "Could not connect"
 
-#: src/gossip-app.c:640
+#: src/gossip-app.c:642
 msgid "Make sure that your account information is correct."
 msgstr "Make sure that your account information is correct."
 
-#: src/gossip-app.c:696
+#: src/gossip-app.c:698
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Enter the user ID of the person you would like to send a chat message to."
 
-#: src/gossip-app.c:703 ui/main.glade.h:76
+#: src/gossip-app.c:705 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:954
+#: src/gossip-app.c:972
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s wants to be notified of your presence."
 
-#: src/gossip-app.c:1195
+#: src/gossip-app.c:1214
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "You were disconnected from the server. Do you want to reconnect?"
 
-#: src/gossip-app.c:1350
+#: src/gossip-app.c:1369
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -185,45 +187,45 @@ msgstr ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 
-#: src/gossip-app.c:1822
+#: src/gossip-app.c:1845
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:1964
+#: src/gossip-app.c:1989
 #, c-format
 msgid "New message from %s"
 msgstr "New message from %s"
 
-#: src/gossip-app.c:2053 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:938
+#: src/gossip-app.c:2078 src/gossip-chat-window.c:737
+#: src/gossip-roster-view.c:987
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2452 src/gossip-preferences.c:638
+#: src/gossip-app.c:2477 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Available"
 
-#: src/gossip-app.c:2463 src/gossip-preferences.c:639
+#: src/gossip-app.c:2488 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Busy"
 
-#: src/gossip-app.c:2474 src/gossip-preferences.c:640
+#: src/gossip-app.c:2499 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2606
+#: src/gossip-app.c:2631
 msgid "Available..."
 msgstr "Available..."
 
-#: src/gossip-app.c:2611
+#: src/gossip-app.c:2636
 msgid "Busy..."
 msgstr "Busy..."
 
-#: src/gossip-app.c:2616
+#: src/gossip-app.c:2641
 msgid "Away..."
 msgstr "Away..."
 
-#: src/gossip-app.c:2645
+#: src/gossip-app.c:2670
 msgid "Edit List..."
 msgstr "Edit List..."
 
@@ -243,36 +245,40 @@ msgstr "_Open Link"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:490
+#: src/gossip-chat-window.c:520
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChat - %s"
 
-#: src/gossip-chat.c:715
+#: src/gossip-chat-window.c:749
+msgid "Typing a message."
+msgstr "Typing a message."
+
+#: src/gossip-chat.c:698
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "An error occurred when chatting with %s."
 
-#: src/gossip-chat.c:720 src/gossip-group-chat.c:823
-#: src/gossip-group-chat.c:926
+#: src/gossip-chat.c:703 src/gossip-group-chat.c:911
+#: src/gossip-group-chat.c:1021
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:810
+#: src/gossip-chat.c:794
 #, c-format
 msgid "%s went offline"
 msgstr "%s went offline"
 
-#: src/gossip-chat.c:824
+#: src/gossip-chat.c:808
 #, c-format
 msgid "%s comes online"
 msgstr "%s comes online"
 
-#: src/gossip-chat.c:911
+#: src/gossip-chat.c:889
 msgid "Connected"
 msgstr "Connected"
 
-#: src/gossip-chat.c:926
+#: src/gossip-chat.c:903
 msgid "Disconnected"
 msgstr "Disconnected"
 
@@ -297,16 +303,16 @@ msgstr "Group"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:37
+#: src/gossip-roster.c:38
 msgid "Unsorted"
 msgstr "Unsorted"
 
-#: src/gossip-group-chat.c:818
+#: src/gossip-group-chat.c:906
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "An error occurred when chatting in the group chat %s."
 
-#: src/gossip-group-chat.c:921
+#: src/gossip-group-chat.c:1016
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Unable to enter the group chat %s."
@@ -364,31 +370,31 @@ msgstr "Failed registering the account"
 msgid "Reason:"
 msgstr "Reason:"
 
-#: src/gossip-roster-view.c:186
+#: src/gossip-roster-view.c:209
 msgid "/Contact _Information"
 msgstr "/Contact _Information"
 
-#: src/gossip-roster-view.c:194
+#: src/gossip-roster-view.c:217
 msgid "/Re_name contact"
 msgstr "/Re_name contact"
 
-#: src/gossip-roster-view.c:202
+#: src/gossip-roster-view.c:225
 msgid "/_Edit groups"
 msgstr "/_Edit groups"
 
-#: src/gossip-roster-view.c:210
+#: src/gossip-roster-view.c:233
 msgid "/Show _Log"
 msgstr "/Show _Log"
 
-#: src/gossip-roster-view.c:226
+#: src/gossip-roster-view.c:249
 msgid "/_Remove contact"
 msgstr "/_Remove contact"
 
-#: src/gossip-roster-view.c:237
+#: src/gossip-roster-view.c:260
 msgid "/Re_name group"
 msgstr "/Re_name group"
 
-#: src/gossip-roster-view.c:1245
+#: src/gossip-roster-view.c:1398
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -399,7 +405,7 @@ msgstr ""
 "%s\n"
 "from your contact list?"
 
-#: src/gossip-roster-view.c:1338
+#: src/gossip-roster-view.c:1491
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -408,7 +414,7 @@ msgstr ""
 "Please enter a new nickname for the contact\n"
 "%s"
 
-#: src/gossip-roster-view.c:1444
+#: src/gossip-roster-view.c:1597
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -981,4 +987,3 @@ msgstr "_Show Contact List"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "_Status Messages"
-
