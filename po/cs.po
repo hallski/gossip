@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-07 21:16+0200\n"
-"PO-Revision-Date: 2003-07-08 02:09+0200\n"
+"POT-Creation-Date: 2003-07-10 13:17+0200\n"
+"PO-Revision-Date: 2003-07-10 19:34+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,17 +19,17 @@ msgstr ""
 msgid "New account"
 msgstr "Nový účet"
 
-#: src/gossip-add-contact.c:255
+#: src/gossip-add-contact.c:260
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Jakou zprávu požadavku chcete odeslat %s?"
 
-#: src/gossip-add-contact.c:275
+#: src/gossip-add-contact.c:280
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s bude přidán do vašeho seznamu kontaktů."
 
-#: src/gossip-add-contact.c:279
+#: src/gossip-add-contact.c:284
 msgid "Contact will be added to your contact list"
 msgstr "Kontakt bude přidán do vašeho seznamu kontaktů."
 
@@ -84,12 +84,13 @@ msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, klient Jabberu"
 
-#: src/gossip-chat.c:440
+#: src/gossip-chat.c:453
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Při diskusi s %s došlo k chybě."
 
-#: src/gossip-chat.c:445
+#: src/gossip-chat.c:458 src/gossip-group-chat.c:633
+#: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr "Detaily:"
 
@@ -107,8 +108,18 @@ msgstr "Operační systém:"
 
 #: src/gossip-contact-info.c:295
 #, c-format
-msgid "Information about %s"
-msgstr "Informace o %s"
+msgid "Contact Information for %s"
+msgstr "Informace o kontaktu %s"
+
+#: src/gossip-group-chat.c:628
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr "Při skupinové diskusi %s došlo k chybě."
+
+#: src/gossip-group-chat.c:732
+#, c-format
+msgid "The group chat %s could not be entered."
+msgstr "Nebylo možné vstoupit do skupinové diskuse %s."
 
 #: src/gossip-main.c:69
 msgid "Don't connect on startup"
@@ -218,7 +229,7 @@ msgstr ""
 "Gossip se nyní pokusí zaregistrovat účet:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1238
+#: src/gossip-utils.c:1252
 msgid "Please enter your password:"
 msgstr "Zadejte prosím své heslo."
 
@@ -360,7 +371,8 @@ msgstr ""
 "\n"
 "Gossip je moderní klient pro systém instant message Jabber.\n"
 "\n"
-"Tento asistent vám pomůže nastavit Gossip a připojit vás k vašemu oblíbenému serveru Jabberu."
+"Tento asistent vám pomůže nastavit Gossip a připojit vás k vašemu oblíbenému "
+"serveru Jabberu."
 
 #: ui/group-chat.glade.h:2
 msgid "        "
@@ -402,7 +414,9 @@ msgstr "_Přezdívka:"
 msgid ""
 "Pick a favorite, or enter nick, server name, and the name of the chat room "
 "to enter."
-msgstr "Vstupte výběrem oblíbeného nebo zadejte přezdívku, název serveru a název diskusní místnosti."
+msgstr ""
+"Vstupte výběrem oblíbeného nebo zadejte přezdívku, název serveru a název "
+"diskusní místnosti."
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
@@ -489,7 +503,8 @@ msgstr ""
 "<b>Vítejte v Gossipu</b>\n"
 "Gossip je moderní klient pro systém instant message Jabber.\n"
 "\n"
-"Tento asistent vám pomůže nastavit Gossip a připojit vás k vašemu oblíbenému serveru Jabberu.\n"
+"Tento asistent vám pomůže nastavit Gossip a připojit vás k vašemu oblíbenému "
+"serveru Jabberu.\n"
 "\n"
 "Začněte kliknutím na \"Vpřed\"."
 
@@ -548,7 +563,8 @@ msgid ""
 ">Connect... menu item."
 msgstr ""
 "Gossip je nyní správně nastaven pro váš systém.\n"
-"Nastavení svého účtu můžete později změnit vybráním položky menu Akce->Připojit..."
+"Nastavení svého účtu můžete později změnit vybráním položky menu Akce-"
+">Připojit..."
 
 #: ui/main.glade.h:36
 msgid "I would like to add you to my contact list."
@@ -563,7 +579,10 @@ msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
-msgstr "Abyste se přihlásili k upozornění o přítomnosti uživatele, bude poslán požadavek. Dokud tento požadavek není potvrzen, uživatel bude ve vašem seznamu kontaktů vždy zobrazen jako \"Odpojen\"."
+msgstr ""
+"Abyste se přihlásili k upozornění o přítomnosti uživatele, bude poslán "
+"požadavek. Dokud tento požadavek není potvrzen, uživatel bude ve vašem "
+"seznamu kontaktů vždy zobrazen jako \"Odpojen\"."
 
 #: ui/main.glade.h:39
 msgid "In which group do you want to place this contact?"
