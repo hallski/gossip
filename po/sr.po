@@ -1,5 +1,5 @@
 # Serbian translation of gossip
-# Courtesy of Prevod.org team (http://www.prevod.org/) -- 2003, 2004.
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2003, 2004.
 #
 # This file is distributed under the same license as the gossip package.
 #
@@ -8,14 +8,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
-"PO-Revision-Date: 2004-01-23 12:25+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-02-20 09:29+0100\n"
+"PO-Revision-Date: 2004-02-20 09:30+0100\n"
 "Last-Translator: Данило Шеган <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -178,9 +178,8 @@ msgid "The server may currently be unavailable."
 msgstr "Можда је сервер тренутно недоступан."
 
 #: src/gossip-app.c:1847
-#, fuzzy
 msgid "Gossip, Instant Messaging Client"
-msgstr "Брзи гласник за Гнома"
+msgstr "Чаврљање, брзи гласник за Гнома"
 
 #: src/gossip-app.c:1988
 #, c-format
