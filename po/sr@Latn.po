@@ -9,15 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-10 00:18+0100\n"
-"PO-Revision-Date: 2003-11-10 00:18+0100\n"
+"POT-Creation-Date: 2003-11-10 23:35+0100\n"
+"PO-Revision-Date: 2003-11-10 23:49+0100\n"
 "Last-Translator: Danilo Šegan <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:26
+#: gossip.desktop.in.h:1 ui/main.glade.h:33
 msgid "Gossip"
 msgstr "Čavrljanje"
 
@@ -70,47 +70,39 @@ msgid "The width of the main window."
 msgstr "Širina glavnog prozora."
 
 #: gossip.schemas.in.h:12
-msgid "Timestamp all messages"
-msgstr "Označi vreme za sve poruke"
-
-#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr "Prikaži grafički smešak"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:13
 msgid "Use notification sounds"
 msgstr "Koristi zvuk za napomene"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:14
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Da li da pretvori smeške u grafičke slike u čavrljanju."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:15
 msgid "Whether or not to open conversations in a single window with list view."
 msgstr "Da li da otvorim razgovore u jednom prozoru pregledajući u spisku."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Da li da pusti zvuk kada poruka stigne."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away or busy."
 msgstr "Da li da pusti zvuk kada je odsutan ili zauzet."
 
-#: gossip.schemas.in.h:19
-msgid "Whether or not to timestamp all messages in conversations."
-msgstr "Da li da doda oznake vremena na sve poruke u razgovorima."
-
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:18
 msgid "Width of main window"
 msgstr "Širina glavnog prozora"
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:19
 msgid "[Eating,Sleeping]"
 msgstr "[Jedem,spavam]"
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:20
 msgid "[Working]"
 msgstr "[Radim]"
 
@@ -132,19 +124,19 @@ msgstr "%s će biti dodat u vašu listu drugara."
 msgid "Just about to leave..."
 msgstr "Upravo odlazim..."
 
-#: src/gossip-app.c:401
+#: src/gossip-app.c:405
 msgid "_Show Contact List"
 msgstr "_Prikaži spisak kontakata"
 
-#: src/gossip-app.c:410
+#: src/gossip-app.c:414
 msgid "_Hide Contact List"
 msgstr "_Sakrij spisak kontakata"
 
-#: src/gossip-app.c:423
+#: src/gossip-app.c:427
 msgid "Send _Chat message..."
 msgstr "Pošalji poruku u _razgovor..."
 
-#: src/gossip-app.c:438
+#: src/gossip-app.c:442
 msgid "_Quit"
 msgstr "_Izađi"
 
@@ -153,111 +145,111 @@ msgstr "_Izađi"
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:530
+#: src/gossip-app.c:544
 msgid "translator_credits"
 msgstr "Dejan Matijević <dejan@ns.sympatico.ca>"
 
-#: src/gossip-app.c:542
+#: src/gossip-app.c:556
 msgid "A Jabber Client for GNOME"
 msgstr "DŽaber klijent za Gnom"
 
-#: src/gossip-app.c:549
+#: src/gossip-app.c:563
 msgid "Gossip Website"
 msgstr "Veb stranica Čavrljanja"
 
-#: src/gossip-app.c:652
+#: src/gossip-app.c:667
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za čavrljanje."
 
-#: src/gossip-app.c:657 ui/main.glade.h:83
+#: src/gossip-app.c:672 ui/main.glade.h:95
 msgid "_Chat"
 msgstr "_Razgovor"
 
-#: src/gossip-app.c:884
+#: src/gossip-app.c:905
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s želi obaveštenja o vašem prisustvu."
 
-#: src/gossip-app.c:1119
+#: src/gossip-app.c:1140
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vi ste razvezani sa servera.  Želiteli da se ponovo povežete?"
 
-#: src/gossip-app.c:1279
+#: src/gossip-app.c:1300
 msgid "Make sure that your account information is correct."
 msgstr "Proverite da li su podaci o nalogu ispravni."
 
-#: src/gossip-app.c:1280
+#: src/gossip-app.c:1301
 msgid "The server may currently be unavailable."
 msgstr "Možda je server trenutno nedostupan."
 
-#: src/gossip-app.c:1667
+#: src/gossip-app.c:1690
 msgid "Gossip, Jabber Client"
 msgstr "Čavrljanje, DŽaber Klijent"
 
-#: src/gossip-app.c:1861
+#: src/gossip-app.c:1887
 #, c-format
 msgid "New message from %s"
 msgstr "Nova poruka od %s"
 
-#: src/gossip-app.c:2183
+#: src/gossip-app.c:2209
 msgid "Eating"
 msgstr "Jedem"
 
-#: src/gossip-app.c:2184
+#: src/gossip-app.c:2210
 msgid "Sleeping"
 msgstr "Spavam"
 
-#: src/gossip-app.c:2433
+#: src/gossip-app.c:2462
 msgid "Custom Message..."
 msgstr "Posebna poruka..."
 
-#: src/gossip-app.c:2451
+#: src/gossip-app.c:2480
 msgid "Working"
 msgstr "Radim"
 
-#: src/gossip-app.c:2467
+#: src/gossip-app.c:2496
 msgid "Custom Busy Message..."
 msgstr "Posebna poruka za zauzeće..."
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2503
 msgid "Leave..."
 msgstr "Napusti..."
 
-#: src/gossip-chat-view.c:336
+#: src/gossip-chat-view.c:323
 msgid "_Copy Link Address"
 msgstr "_Umnoži adresu veze"
 
-#: src/gossip-chat-view.c:344
+#: src/gossip-chat-view.c:331
 msgid "_Open Link"
 msgstr "_Otvori vezu"
 
-#: src/gossip-chat-view.c:719
+#: src/gossip-chat-view.c:674
 msgid "%A %d %B %Y"
 msgstr "%A, %d. %B %Y."
 
-#: src/gossip-chat-window.c:513
+#: src/gossip-chat-window.c:509
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sČavrljanje - %s"
 
-#: src/gossip-chat.c:819
+#: src/gossip-chat.c:600
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Dogodila se greška prilikom čavrljanje sa %s."
 
-#: src/gossip-chat.c:824 src/gossip-group-chat.c:808
+#: src/gossip-chat.c:605 src/gossip-group-chat.c:808
 #: src/gossip-group-chat.c:911
 msgid "Details:"
 msgstr "Detalji:"
 
-#: src/gossip-chat.c:916
+#: src/gossip-chat.c:676
 #, c-format
 msgid "%s went offline"
 msgstr "%s prekide vezu"
 
-#: src/gossip-chat.c:928
+#: src/gossip-chat.c:688
 #, c-format
 msgid "%s comes online"
 msgstr "%s se poveza"
@@ -346,7 +338,7 @@ msgstr "/Ukloni kontakt"
 msgid "/Re_name group"
 msgstr "/Prei_menuj grupu"
 
-#: src/gossip-roster-view.c:930
+#: src/gossip-roster-view.c:1021
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -357,7 +349,7 @@ msgstr ""
 "%s\n"
 "iz vašeg spiska drugara?"
 
-#: src/gossip-roster-view.c:1007
+#: src/gossip-roster-view.c:1097
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -366,7 +358,7 @@ msgstr ""
 "Unesite novi nadimak za kontakt\n"
 "%s"
 
-#: src/gossip-roster-view.c:1095
+#: src/gossip-roster-view.c:1184
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -611,94 +603,122 @@ msgid " "
 msgstr " "
 
 #: ui/main.glade.h:4
+msgid "<b>Away messages</b>"
+msgstr "<b>Poruke za odsustvo</b>"
+
+#: ui/main.glade.h:5
+msgid "<b>Busy messages</b>"
+msgstr "<b>Poruke za zauzeće</b>"
+
+#: ui/main.glade.h:6
+msgid "<b>Default messages</b>"
+msgstr "<b>Podrazumevane poruke</b>"
+
+#: ui/main.glade.h:7
 msgid "<b>Information requested, Please wait...</b>"
 msgstr "<b>Tražio je informacije, molim sačekajte...</b>"
 
-#: ui/main.glade.h:5
+#: ui/main.glade.h:8
 msgid "<i>Information not available</i>"
 msgstr "<i>Informacija nije dostupana</i>"
 
-#: ui/main.glade.h:6
+#: ui/main.glade.h:9
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Primer: korisnik@jabber.org</span>"
 
-#: ui/main.glade.h:7
+#: ui/main.glade.h:10
+msgid "Add"
+msgstr "Dodaj"
+
+#: ui/main.glade.h:11
 msgid "Add a contact"
 msgstr "Dodaj kontakt"
 
-#: ui/main.glade.h:8
+#: ui/main.glade.h:12
 msgid "Add contact"
 msgstr "Dodaj kontakt"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:13
 msgid "Add to your contact list"
 msgstr "Dodaj u svoj spisak drugara"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:14
 msgid "Appearance"
 msgstr "Izgled"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:15
 msgid "Available"
 msgstr "Dostupan"
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:16
+msgid "Available:"
+msgstr "Dostupan:"
+
+#: ui/main.glade.h:17
+msgid "Away"
+msgstr "Odsutan"
+
+#: ui/main.glade.h:18
 msgid "Away:"
 msgstr "Odsutan:"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:19
 msgid "Busy"
 msgstr "Zauzet"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:20
 msgid "Choose a Server"
 msgstr "Izaberi server"
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:21
 msgid "Choose from list:"
 msgstr "Odaberite iz spiska:"
 
-#: ui/main.glade.h:16
+#: ui/main.glade.h:22
 msgid "Client information"
 msgstr "Podaci o klijentu"
 
-#: ui/main.glade.h:17
+#: ui/main.glade.h:23
 msgid "Client:"
 msgstr "Klijent:"
 
-#: ui/main.glade.h:18
+#: ui/main.glade.h:24
 msgid "Contact information"
 msgstr "Informacije za kontakt"
 
-#: ui/main.glade.h:19
+#: ui/main.glade.h:25
 msgid "Conversation"
 msgstr "Razgovor"
 
-#: ui/main.glade.h:20
+#: ui/main.glade.h:26
 msgid "Convert _smileys to graphical images"
 msgstr "Pretvori _smeške u grafičke simbole"
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:27
 msgid "Country:"
 msgstr "Država:"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:28
+msgid "Default"
+msgstr "Podrazumevano"
+
+#: ui/main.glade.h:29
 msgid "Description"
 msgstr "Opis"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:30
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Da li već imate nalog na DŽaber serveru?"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:31
 msgid "Do you want to accept the request?"
 msgstr "Da li želite da prihvatite zahtev?"
 
-#: ui/main.glade.h:25
+#: ui/main.glade.h:32
 msgid "Email:"
 msgstr "E-pošta:"
 
-#: ui/main.glade.h:27
+#: ui/main.glade.h:34
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -714,7 +734,7 @@ msgstr ""
 "\n"
 "Da počnete, samo kliknite „Napred“."
 
-#: ui/main.glade.h:32
+#: ui/main.glade.h:39
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -724,11 +744,11 @@ msgstr ""
 "Vi možete da promenite podešavanja vašeg naloga kasnije izborom menija "
 "Razgovor->Povezivanje...."
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:41
 msgid "I would like to add you to my contact list."
 msgstr "Ja bih voleo da dodam tebe na moju listu drugara."
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:42
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -738,120 +758,136 @@ msgstr ""
 "zahtev ne odobri, korisnik će uvek biti prikazan kao \"Ne povezan\" u vašoj "
 "listi prijatelja."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:43
 msgid "In which group do you want to place this contact?"
 msgstr "U koju grupu želite da rasporedite ovaj kontakt?"
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:44
 msgid "Information about ..."
 msgstr "Informacije o..."
 
 # DŽaber identifikaciona oznaka :-)
-#: ui/main.glade.h:38
+#: ui/main.glade.h:45
 msgid "JID"
 msgstr "DŽIO"
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:46
 msgid "Jabber"
 msgstr "DŽaber"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:47
 msgid "Jabber Account"
 msgstr "DŽaber Nalog"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:48
 msgid "Jabber ID:"
 msgstr "DŽaber ID:"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:49
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:50
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:51
 msgid "Leave"
 msgstr "Napusti"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:52
 msgid "Leaving:"
 msgstr "Napuštam:"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:53
 msgid "Messages"
 msgstr "Poruke"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:54
 msgid "Name:"
 msgstr "Ime:"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:55
 msgid "No"
 msgstr "Ne"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:56
 msgid "Notification"
 msgstr "Obaveštenje"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:57
 msgid "OS:"
 msgstr "OS:"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:58
 msgid "On what server do you have a Jabber account?"
 msgstr "Na kom serveru imate DŽaber nalog?"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:59
 msgid "Open conversations in a single window with _list view"
 msgstr "Otvori razgovore u jednom prozoru kao sp_isak"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:60
 msgid "Personal information"
 msgstr "Lični podaci"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:61
 msgid "Preferences"
 msgstr "Postavke"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:62
+msgid "Preset messages for quickly setting away status."
+msgstr "Postavljanje poruke za brzo odlaženje na odsustvo."
+
+#: ui/main.glade.h:63
+msgid "Preset messages for quickly setting busy status."
+msgstr "Postavljanje poruke za brzo podešavanje zauzeća."
+
+#: ui/main.glade.h:64
 msgid "Reason for being busy:"
 msgstr "Razlog zauzeća:"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:65
 msgid "Reason for leaving:"
 msgstr "Razlog odlaska:"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:66
+msgid "Remove"
+msgstr "Ukloni"
+
+#: ui/main.glade.h:67
 msgid "Request message"
 msgstr "Poruka sa zahtevom"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:68
 msgid "Sending request"
 msgstr "Zahtev za slanje"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:69
 msgid "Setup Finished"
 msgstr "Podešavanje je završeno"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:70
 msgid "Show _Offline Contacts"
 msgstr "_Prikaži nepovezane kontakte"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:71
 msgid "Sound"
 msgstr "Zvuk"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:72
 msgid "Status"
 msgstr "Stanje"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:73
+msgid "Status Messages"
+msgstr "Poruke o stanju"
+
+#: ui/main.glade.h:74
 msgid "Status message:"
 msgstr "Poruka o stanju:"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:75
 msgid ""
 "These messages are used to describe your status when you're about to leave "
 "and when you're away."
@@ -859,121 +895,136 @@ msgstr ""
 "Ove poruke se koriste za opisivanje vašeg stanja kada upravo odlazite ili ste "
 "odsutni."
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:76
+msgid ""
+"These messages are used to describe your status when you're available, about "
+"to leave, or automatically set away due to inactivity."
+msgstr "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, upravo odlazite ili ste odsutni usled neaktivnosti."
+
+#: ui/main.glade.h:77
 msgid "Use a different server"
 msgstr "Koristi drugi server"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:78
 msgid "Use com_pact conversation style"
 msgstr "Koristi stil sa_žetog razgovora"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:79
 msgid "Use sounds to _notify when new messages arrive"
 msgstr "Koristi zvuk za _obaveštenje kada nova poruka stigne"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:80
 msgid "Version:"
 msgstr "Verzija:"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:81
 msgid "Web site:"
 msgstr "Veb sajt :"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:82
 msgid "Welcome to Gossip"
 msgstr "Dobrodošli u Čavrljanje"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:83
 msgid "What instant messaging system does the contact use?"
 msgstr "Koji sistem trenutnih poruka korisnik koristi?"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:84
 msgid "What is your name?"
 msgstr "Kako se zovete?"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:85
 msgid "What nickname do you want to use for this contact?"
 msgstr "Koji nadimak želite da koristite za ovog korisnika?"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:86
 msgid "What request message do you want to send to ...?"
 msgstr "Koju poruku sa zahtevom želite da pošaljete ...?"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:87
 msgid "What server do you want to use?"
 msgstr "Koji server želite da koristite?"
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:88
 msgid "What username do you use?"
 msgstr "Koji nadimak koristite?"
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:89
 msgid "What username do you want to use?"
 msgstr "Koji nadimak želite da koristite?"
 
-#: ui/main.glade.h:78
+#: ui/main.glade.h:90
 msgid "Yes"
 msgstr "Da"
 
-#: ui/main.glade.h:79
+#: ui/main.glade.h:91
 msgid "Your Identity"
 msgstr "Vaš identitet"
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:92
 msgid "_Accept"
 msgstr "_Prihvati"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:93
 msgid "_Account Information"
 msgstr "Podaci o _nalogu"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:94
 msgid "_Add Contact..."
 msgstr "_Dodaj kontakt..."
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:96
 msgid "_Connect..."
 msgstr "Po_vezivanje..."
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:97
 msgid "_Decide Later"
 msgstr "O_dluči kasnije"
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:98
 msgid "_Deny"
 msgstr "O_dbij"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:99
 msgid "_Disable sounds when busy or away"
 msgstr "_Isključi zvuk kada ste zauzeti ili odsutni"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:100
 msgid "_Disconnect"
 msgstr "_Raskini vezu"
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:101
 msgid "_Jabber ID of new contact:"
 msgstr "_DŽaber ID novog kontakta:"
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:102
 msgid "_Join Group Chat..."
 msgstr "_Priključi se grupnom čavrljanju..."
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:103
 msgid "_Preferences"
 msgstr "_Postavke"
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:104
 msgid "_Search..."
 msgstr "_Traži..."
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:105
 msgid "_Send Chat Message..."
 msgstr "Pošalji poruku u _razgovor..."
 
-#: ui/main.glade.h:94
-msgid "_Timestamp all messages"
-msgstr "Dodaj oznaku _vremenskog trenutka na sve poruke"
+#: ui/main.glade.h:106
+msgid "_Status Messages"
+msgstr "Poruk_e o stanju"
+
+#~ msgid "Timestamp all messages"
+#~ msgstr "Označi vreme za sve poruke"
+
+#~ msgid "Whether or not to timestamp all messages in conversations."
+#~ msgstr "Da li da doda oznake vremena na sve poruke u razgovorima."
+
+#~ msgid "_Timestamp all messages"
+#~ msgstr "Dodaj oznaku _vremenskog trenutka na sve poruke"
 
 #~ msgid "Custom Away Message..."
 #~ msgstr "Posebna poruka za odsustvo..."
@@ -1007,9 +1058,6 @@ msgstr "Dodaj oznaku _vremenskog trenutka na sve poruke"
 
 #~ msgid "_Edit List..."
 #~ msgstr "_Uredi spisak..."
-
-#~ msgid "Available:"
-#~ msgstr "Dostupan:"
 
 #~ msgid "Auto away enabled"
 #~ msgstr "Automatski odsutan uključeno"
