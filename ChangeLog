@@ -1,4 +1,8 @@
 2003-07-07  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-utils.c: Include sys/types.h, fixes build on FreeBSD.
+
+2003-07-07  Mikael Hallendal  <micke@imendio.com>
   
         * configure.in: Added italian translation.
 	

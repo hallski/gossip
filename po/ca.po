@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.2\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-06 01:13+0200\n"
+"POT-Creation-Date: 2003-07-07 13:14+0100\n"
 "PO-Revision-Date: 2003-07-06 01:14+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
@@ -33,65 +33,66 @@ msgstr "S'afegirà a %s a la vostra llista de contactes."
 msgid "Contact will be added to your contact list"
 msgstr "S'afegirà el contacte a la vostra llista de contactes."
 
-#: src/gossip-app.c:316
+#: src/gossip-app.c:333
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:320
+#: src/gossip-app.c:337
 msgid "Free to chat"
 msgstr "Disponible per xerrar"
 
-#: src/gossip-app.c:324
+#: src/gossip-app.c:341
 msgid "Busy"
 msgstr "Ocupat"
 
-#: src/gossip-app.c:328 ui/main.glade.h:27
+#: src/gossip-app.c:345 ui/main.glade.h:27
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:332
+#: src/gossip-app.c:349
 msgid "Extended away"
 msgstr "Absent fa estona"
 
-#: src/gossip-app.c:340
+#: src/gossip-app.c:357
 msgid "Offline"
 msgstr "Desconnectat"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:405
+#: src/gossip-app.c:422
 msgid "translator_credits"
 msgstr "Jordi Mallach <jordi@sindominio.net>"
 
-#: src/gossip-app.c:416
+#: src/gossip-app.c:433
 msgid "A Jabber Client for GNOME"
 msgstr "Un client Jabber per al GNOME"
 
-#: src/gossip-app.c:534
+#: src/gossip-app.c:554
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
 "xerrada."
 
-#: src/gossip-app.c:539
-msgid "_Start Chat"
+#: src/gossip-app.c:559
+#, fuzzy
+msgid "_Chat"
 msgstr "_Comença una xerrada"
 
-#: src/gossip-app.c:1109
+#: src/gossip-app.c:1138
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1368
+#: src/gossip-app.c:1397
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-chat.c:404
+#: src/gossip-chat.c:440
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:409
+#: src/gossip-chat.c:445
 msgid "Details:"
 msgstr "Detalls:"
 
@@ -286,64 +287,71 @@ msgid "<b>_Account:</b>"
 msgstr "<b>Co_mpte</b>"
 
 #: ui/connect.glade.h:7
-msgid "Account name:"
+#, fuzzy
+msgid "Account _name:"
 msgstr "Nom del compte:"
 
 #: ui/connect.glade.h:8
-msgid "Add"
-msgstr "Afegeix"
-
-#: ui/connect.glade.h:9
 msgid "C_onnect"
 msgstr "C_onnecta"
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:9
 msgid "Gossip - Connect"
 msgstr "Gossip - Connexió"
 
-#: ui/connect.glade.h:11
+#: ui/connect.glade.h:10
 msgid "Gossip - Edit Accounts"
 msgstr "Gossip - Edició dels comptes"
 
-#: ui/connect.glade.h:12
-msgid "Password:"
+#: ui/connect.glade.h:11
+#, fuzzy
+msgid "Pass_word:"
 msgstr "Contrassenya:"
 
-#: ui/connect.glade.h:13
-msgid "Port:"
-msgstr "Port:"
-
-#: ui/connect.glade.h:14
-msgid "Register..."
-msgstr "Registra'm..."
-
-#: ui/connect.glade.h:15
-msgid "Remove"
-msgstr "Elimina"
-
-#: ui/connect.glade.h:16
-msgid "Resource:"
+#: ui/connect.glade.h:12
+#, fuzzy
+msgid "R_esource:"
 msgstr "Recurs:"
 
-#: ui/connect.glade.h:17
-msgid "Server:"
-msgstr "Servidor:"
+#: ui/connect.glade.h:13
+#, fuzzy
+msgid "Re_gister..."
+msgstr "Registra'm..."
 
-#: ui/connect.glade.h:18
-msgid "User name:"
-msgstr "Nom d'usuari:"
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:14
+msgid "_Add"
+msgstr "_Afegeix"
 
-#: ui/connect.glade.h:19
+#: ui/connect.glade.h:15
 msgid "_Edit accounts..."
 msgstr "_Edita els comptes..."
 
-#: ui/connect.glade.h:20
+#: ui/connect.glade.h:16
+#, fuzzy
+msgid "_Port:"
+msgstr "Port:"
+
+#: ui/connect.glade.h:17
 msgid "_Priority:"
 msgstr "_Prioritat:"
 
-#: ui/connect.glade.h:21
+#: ui/connect.glade.h:18
+#, fuzzy
+msgid "_Remove"
+msgstr "Elimina"
+
+#: ui/connect.glade.h:19
 msgid "_Resource:"
 msgstr "_Recurs:"
+
+#: ui/connect.glade.h:20 ui/group-chat.glade.h:20
+msgid "_Server:"
+msgstr "_Servidor:"
+
+#: ui/connect.glade.h:21
+#, fuzzy
+msgid "_User name:"
+msgstr "Nom d'usuari:"
 
 #: ui/connect.glade.h:22
 msgid "_User:"
@@ -414,10 +422,6 @@ msgstr ""
 msgid "R_emove"
 msgstr "_Elimina"
 
-#: ui/group-chat.glade.h:14
-msgid "_Add"
-msgstr "_Afegeix"
-
 #: ui/group-chat.glade.h:15
 msgid "_Edit favorites..."
 msgstr "_Edita els preferits..."
@@ -433,10 +437,6 @@ msgstr "Àl_ies:"
 #: ui/group-chat.glade.h:18
 msgid "_Room:"
 msgstr "Sa_la:"
-
-#: ui/group-chat.glade.h:20
-msgid "_Server:"
-msgstr "_Servidor:"
 
 #: ui/group-chat.glade.h:21
 msgid "_Topic:"
@@ -748,3 +748,9 @@ msgstr "_Envia un missatge de xerrada..."
 #: gossip.desktop.in.h:2
 msgid "Jabber Instant Messaging"
 msgstr "Missatgeria instantània Jabber"
+
+#~ msgid "Add"
+#~ msgstr "Afegeix"
+
+#~ msgid "Server:"
+#~ msgstr "Servidor:"
