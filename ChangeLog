@@ -1,7 +1,13 @@
+2003-12-11  Andreas Lööw  <aginor@ludd.luth.se>
+
+	* src/gossip-app.c: (app_tray_button_press_cb):
+	- Don't handle double clicks and tripple clicks. 
+	- Fixes bug #128730
+
 2003-12-11  Thomas Reynolds  <thomasr@infograph.com>
 
 	* src/gossip-app.c: (app_init), (app_show_offline_key_changed_cb):
-	- Listen to show_offline gconf key. Fixes #127985
+	- Listen to show_offline gconf key. Fixes bug #127985
 
 2003-12-11  Iñaki Larrañaga  <dooteo@euskalgnu.org>
 

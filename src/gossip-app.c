@@ -1696,6 +1696,11 @@ app_tray_button_press_cb (GtkWidget      *widget,
 
 	priv = app->priv;
 
+	if (event->type == GDK_2BUTTON_PRESS ||
+	    event->type == GDK_3BUTTON_PRESS) {
+		return FALSE;
+	}
+	
 	switch (event->button) {
 	case 1:
 		if (app_tray_pop_message (NULL)) {
