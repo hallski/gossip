@@ -218,8 +218,13 @@ chat_view_init (GossipChatView *view)
 static void
 chat_view_finalize (GObject *object)
 {
-	GossipChatView *view = GOSSIP_CHAT_VIEW (object);
+	GossipChatView     *view = GOSSIP_CHAT_VIEW (object);
+	GossipChatViewPriv *priv;
 
+	priv = view->priv;
+
+	g_object_unref (priv->buffer);
+	
 	g_free (view->priv);
 }
 
@@ -722,8 +727,6 @@ chat_view_maybe_append_datestamp (GossipChatView *view)
 	GossipChatViewPriv *priv;
 	GDate              *cur_date;
 	char                date_str[256];
-	char               *time_str;
-	char               *date_time_str;
 	GTimeVal            cur_time;
 
 	priv = view->priv;
@@ -735,13 +738,9 @@ chat_view_maybe_append_datestamp (GossipChatView *view)
 		return;
 	}
 
-	time_str = chat_view_get_timestamp (NULL);
 	g_date_strftime (date_str, 256, _("%A %d %B %Y"), cur_date);
-	date_time_str = g_strdup_printf (" %s - %s", date_str, time_str);
-	g_free (time_str);
 	
-	gossip_chat_view_append_event_msg (view, date_time_str);
-	g_free (date_time_str);
+	gossip_chat_view_append_event_msg (view, date_str);
 
 	g_get_current_time (&cur_time);
 	priv->last_timestamp.tv_sec = cur_time.tv_sec;
@@ -949,8 +948,10 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 void
 gossip_chat_view_append_event_msg (GossipChatView *view, const gchar *str)
 {
-	GtkTextBuffer   *buffer;
-	GtkTextIter      iter;
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	gchar         *stamp;
+	gchar         *msg;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	gtk_text_buffer_get_end_iter (buffer, &iter);
@@ -959,9 +960,14 @@ gossip_chat_view_append_event_msg (GossipChatView *view, const gchar *str)
 		gtk_text_buffer_insert (buffer,	&iter, "\n", 1);
 	}
 
+	stamp = chat_view_get_timestamp (NULL);
+	msg = g_strdup_printf (" %s - %s", str, stamp);
+	g_free (stamp);
+	
 	gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
-						  str, -1, "event-tag",
+						  msg, -1, "event-tag",
 						  NULL);
+	g_free (msg);
 
 	gtk_text_buffer_insert (buffer, &iter, "\n", 1);
 }

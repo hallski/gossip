@@ -1,3 +1,11 @@
+2003-10-27  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.c:
+	(chat_view_finalize): Unref the buffer
+	(chat_view_maybe_append_datestamp): 
+	- Don't append timestamp on event messages.
+	(gossip_chat_view_append_event_msg): Append timestamps.
+
 2003-10-26  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c: (chat_presence_handler):
