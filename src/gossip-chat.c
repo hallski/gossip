@@ -31,11 +31,12 @@
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-sound.h"
-#include "gossip-chat.h"
+#include "gossip-chat-view.h"
 #include "gossip-app.h"
 #include "gossip-contact-info.h"
 #include "gossip-stock.h"
 #include "disclosure-widget.h"
+#include "gossip-chat.h"
 
 #define d(x) 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
@@ -47,7 +48,7 @@ struct _GossipChat {
 	LmMessageHandler *message_handler;
 
 	GtkWidget        *dialog;
-	GtkWidget        *text_view;
+	GtkWidget        *text_view_sw;
 	GtkWidget        *input_entry;
 	GtkWidget        *input_text_view;
 	GtkWidget        *single_hbox;
@@ -60,6 +61,8 @@ struct _GossipChat {
 	GtkWidget        *from_label;
 	GtkWidget        *composing_image;
 
+	GossipChatView   *text_view;
+	
 	GtkTooltips      *tooltips;
 	GtkWidget        *from_eventbox;
 	
@@ -73,8 +76,6 @@ struct _GossipChat {
 	
 	/* Chat exists but has been hidden by the user. */
 	gboolean          hidden;
-
-	GTimeVal          last_timestamp;
 };
 
 
@@ -224,8 +225,7 @@ chat_init (void)
 }
 
 static GossipChat *
-chat_get_for_jid (GossipJID  *jid,
-		  gboolean    priv_group_chat)
+chat_get_for_jid (GossipJID *jid, gboolean priv_group_chat)
 {
 	GossipChat       *chat;
 	const gchar      *without_resource;
@@ -244,7 +244,6 @@ chat_get_for_jid (GossipJID  *jid,
 	
 	chat->jid = gossip_jid_ref (jid);
 	chat->hidden = FALSE;
-	chat->last_timestamp.tv_sec = chat->last_timestamp.tv_usec = 0;
 	
 	if (priv_group_chat) {
 		chat->nick = g_strdup (gossip_jid_get_resource (jid));
@@ -282,15 +281,15 @@ static void
 chat_create_gui (GossipChat *chat) 
 {
 	GossipRosterOld  *roster;
-	gchar         *name;
-	GtkTextBuffer *buffer;
-	GdkPixbuf     *pixbuf;
-	
+	gchar            *name;
+	GtkTextBuffer    *buffer;
+	GdkPixbuf        *pixbuf;
+
 	gossip_glade_get_file_simple (GLADEDIR "/chat.glade",
 				      "chat_window",
 				      NULL,
 				      "chat_window", &chat->dialog,
-				      "chat_textview", &chat->text_view,
+				      "chat_view_sw", &chat->text_view_sw,
 				      "input_entry", &chat->input_entry,
 				      "input_textview", &chat->input_text_view,
 				      "single_hbox", &chat->single_hbox,
@@ -303,6 +302,11 @@ chat_create_gui (GossipChat *chat)
 				      "send_multi_button", &chat->send_multi_button,
 				      "composing_image", &chat->composing_image,
 				      NULL);
+
+	chat->text_view = gossip_chat_view_new ();
+	gtk_container_add (GTK_CONTAINER (chat->text_view_sw), 
+			   GTK_WIDGET (chat->text_view));
+	gtk_widget_show (GTK_WIDGET (chat->text_view));
 
 	roster = gossip_app_get_roster ();
 
@@ -408,8 +412,7 @@ chat_create_gui (GossipChat *chat)
 			  G_CALLBACK (chat_focus_in_event_cb),
 			  chat);
 
-	gossip_text_view_set_margin (GTK_TEXT_VIEW (chat->text_view), 3);
-	gossip_text_view_setup_tags (GTK_TEXT_VIEW (chat->text_view));
+	gossip_chat_view_set_margin (chat->text_view, 3);
 
 	chat_update_title (chat, FALSE);
 		
@@ -582,11 +585,8 @@ chat_send (GossipChat *chat, const gchar *msg)
 
 	nick = gossip_jid_get_part_name (gossip_app_get_jid ());	
 
-	gossip_text_view_append_timestamp (GTK_TEXT_VIEW (chat->text_view),
-					   NULL,
-					   &chat->last_timestamp);
-	
-	gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->text_view),
+	gossip_chat_view_append_chat_message (chat->text_view,
+					      NULL,
 					      gossip_app_get_username (),
 					      nick,
 					      msg);
@@ -771,11 +771,8 @@ chat_message_handler (LmMessageHandler *handler,
 
 	chat_show_composing_icon (chat, FALSE);
 
-	gossip_text_view_append_timestamp (GTK_TEXT_VIEW (chat->text_view),
-					   timestamp,
-					   &chat->last_timestamp);
-	
-	gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->text_view),
+	gossip_chat_view_append_chat_message (chat->text_view,
+					      timestamp,
 					      gossip_app_get_username (),
 					      nick,
 					      body);
@@ -828,6 +825,7 @@ chat_presence_handler (LmMessageHandler *handler,
 		chat_composing_remove_timeout (chat);
 		chat->send_composing_events = FALSE;
 		chat_show_composing_icon (chat, FALSE);
+		// Put a message about being away!
 	} else {
 		icon = gossip_get_icon_for_show_string (show);
 	}

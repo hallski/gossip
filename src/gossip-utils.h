@@ -55,18 +55,7 @@ void         gossip_glade_connect                    (GladeXML         *gui,
 void         gossip_glade_setup_size_group           (GladeXML         *gui,
 						      GtkSizeGroupMode  mode,
 						      gchar            *first_widget, ...);
-void         gossip_text_view_set_margin             (GtkTextView      *tv,
-						      gint              margin);
-void         gossip_text_view_append_timestamp       (GtkTextView    *text_view,
-						      const gchar    *timestamp,
-						      GTimeVal       *last_timestamp);
-void         gossip_text_view_append_chat_message    (GtkTextView      *text_view,
-						      const gchar      *to,
-						      const gchar      *from,
-						      const gchar      *msg);
-void         gossip_text_view_append_normal_message  (GtkTextView      *text_view,
-						      const gchar      *msg);
-void         gossip_text_view_setup_tags             (GtkTextView      *view);
+
 const gchar *gossip_utils_get_timestamp_from_message (LmMessage        *message);
 const gchar *gossip_get_icon_for_show_string         (const gchar      *str);
 const gchar *gossip_show_to_string                   (GossipShow        show);
@@ -81,5 +70,8 @@ GtkWidget *  gossip_hig_dialog_new                   (GtkWindow        *parent,
 						      const gchar      *messagefmt,
 						      ...);
 
+gchar *      gossip_utils_substring                 (const gchar      *str,
+						      gint              start,
+						      gint              end);
 
 #endif /*  __GOSSIP_UTILS_H__ */

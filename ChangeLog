@@ -1,3 +1,30 @@
+2003-10-26  Mikael Hallendal  <micke@imendio.com>
+
+	* Long time planned cleanup. Now the chat text views are of the class
+	* GossipChatView which is a sub class of GtkTextView. All functions
+	* used from GossipChat and GossipGroupChat was put in gossip-utils. 
+
+	* src/Makefile.am: 
+	- Added gossip-chat-view.[ch]
+	- Removed gossip-message.[ch]
+	  
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.c:
+	- Use GossipChatView instead of a GtkTextView directly.
+	  
+	* src/gossip-message.[ch]: Removed 
+	
+	* src/gossip-utils.c: 
+	(gossip_utils_substring): Made external, used to be static for use only
+	  within the text view functions. Might become handy in other places 
+	  and is now used in GossipChatView.
+
+	* ui/chat.glade: 
+	- Removed the message dialogs (unused, old and ugly)
+	- Removed the chat text view, created from C now
+	* ui/group-chat.glade:
+	- Removed the chat text view, created from C now
+
 2003-10-25  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-utils.c: (gossip_text_view_setup_tags):

@@ -31,8 +31,9 @@
 #include "gossip-utils.h"
 #include "gossip-app.h"
 #include "gossip-chat.h"
-#include "gossip-group-chat.h"
 #include "disclosure-widget.h"
+#include "gossip-chat-view.h"
+#include "gossip-group-chat.h"
 
 /* Treeview columns */
 enum {
@@ -49,7 +50,7 @@ struct _GossipGroupChat {
 	LmMessageHandler *presence_handler;
 	
 	GtkWidget        *window;
-	GtkWidget        *textview;
+	GtkWidget        *text_view_sw;
 	GtkWidget        *input_entry;
 	GtkWidget        *input_text_view;
 	GtkWidget        *topic_entry;
@@ -59,6 +60,8 @@ struct _GossipGroupChat {
 	GtkWidget        *multi_vbox;
 	GtkWidget        *send_multi_button;
 
+	GossipChatView   *view;
+	
 	GossipJID        *jid;
 	gchar            *nick;
 
@@ -264,7 +267,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 				       "group_chat_window",
 				       NULL,
 				       "group_chat_window", &chat->window,
-				       "chat_textview", &chat->textview,
+				       "chat_view_sw", &chat->text_view_sw,
 				       "input_entry", &chat->input_entry,
 				       "input_textview", &chat->input_text_view,
 				       "topic_entry", &chat->topic_entry,
@@ -282,12 +285,21 @@ group_chat_create_gui (GossipGroupChat *chat)
 			      "input_entry", "activate", group_chat_activate_cb,
 			      "input_entry", "key_press_event", group_chat_key_press_event_cb,
 			      "input_textview", "key_press_event", group_chat_key_press_event_cb,
-			      "chat_textview", "focus_in_event", group_chat_focus_in_event_cb,
 			      "topic_entry", "activate", group_chat_topic_activate_cb,
 			      "disclosure", "toggled", group_chat_disclosure_toggled_cb,
 			      "send_multi_button", "clicked", group_chat_send_multi_clicked_cb,
 			      NULL);
 
+	chat->view = gossip_chat_view_new ();
+	gtk_container_add (GTK_CONTAINER (chat->text_view_sw), 
+			   GTK_WIDGET (chat->view));
+	gtk_widget_show (GTK_WIDGET (chat->view));
+
+	g_signal_connect (chat->view,
+			  "focus_in_event",
+			  G_CALLBACK (group_chat_focus_in_event_cb),
+			  chat);
+			  
 	g_object_unref (glade);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
@@ -312,12 +324,10 @@ group_chat_create_gui (GossipGroupChat *chat)
 	g_completion_set_compare (chat->completion,
 				  group_chat_completion_compare);
 		
-	gossip_text_view_setup_tags (GTK_TEXT_VIEW (chat->textview));
-
 	gtk_widget_grab_focus (chat->input_entry);
 	group_chat_setup_tree (chat);
 
-	gossip_text_view_set_margin (GTK_TEXT_VIEW (chat->textview), 3);
+	gossip_chat_view_set_margin (chat->view, 3);
 }
 
 GossipGroupChat *
@@ -416,7 +426,7 @@ group_chat_send (GossipGroupChat *chat,
 	else if (g_ascii_strcasecmp (msg, "/clear") == 0) {
 		GtkTextBuffer *buffer;
 
-		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->textview));
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->view));
 		gtk_text_buffer_set_text (buffer, "", -1);
 		
 		return;
@@ -477,7 +487,7 @@ group_chat_setup_tree (GossipGroupChat *chat)
 	GtkTreeViewColumn *col;
 
 	tree = GTK_TREE_VIEW (chat->tree);
-	tv = GTK_TEXT_VIEW (chat->textview);
+	tv = GTK_TEXT_VIEW (chat->view);
 
 	gtk_tree_view_set_headers_visible (tree, FALSE);
 	
@@ -835,11 +845,8 @@ group_chat_message_handler (LmMessageHandler *handler,
 		if (node) {
 			timestamp = gossip_utils_get_timestamp_from_message (m);
 		
-			gossip_text_view_append_timestamp (GTK_TEXT_VIEW (chat->textview),
-							   timestamp,
-							   &chat->last_timestamp);
-
-			gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->textview),
+			gossip_chat_view_append_chat_message (chat->view,
+							      timestamp,
 							      chat->nick,
 							      gossip_jid_get_resource (jid),
 							      node->value);

@@ -3,7 +3,6 @@
  * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
- * Copyright (C) 2002-2003 CodeFactory AB
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
  *
  * This program is free software; you can redistribute it and/or
@@ -44,7 +43,6 @@
 #include "gossip-account.h"
 #include "gossip-connect-dialog.h"
 #include "gossip-join-dialog.h"
-#include "gossip-message.h"
 #include "gossip-sound.h"
 #include "gossip-idle.h"
 #include "gossip-startup-druid.h"

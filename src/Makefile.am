@@ -23,6 +23,8 @@ gossip_SOURCES = 				\
 	gossip-app.h				\
 	gossip-chat.c				\
 	gossip-chat.h				\
+	gossip-chat-view.c                      \
+	gossip-chat-view.h                      \
 	gossip-connect-dialog.c			\
 	gossip-connect-dialog.h			\
 	gossip-contact-info.c                   \
@@ -41,8 +43,6 @@ gossip_SOURCES = 				\
 	gossip-join-dialog.h			\
 	gossip-main.c				\
 	gossip-marshal-main.c			\
-	gossip-message.c			\
-	gossip-message.h			\
 	gossip-preferences.c			\
 	gossip-preferences.h	                \
 	gossip-roster.c                         \
