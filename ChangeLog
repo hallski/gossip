@@ -1,5 +1,8 @@
 2004-01-21  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Resave with an older glade so we don't get
+	warnings when running with an older gtk+.
+
 	* src/gossip-app.c: 
 	* ui/main.glade: Use dialog instead of weird entry for setting
 	status.
