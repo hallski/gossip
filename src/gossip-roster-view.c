@@ -675,11 +675,11 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		const gchar      *status;
 		
 		status = gossip_roster_item_get_status (item);
-		if (status && strcmp (status, "") == 0) {
+		if (!status || strcmp (status, "") == 0) {
 			GossipShow show = gossip_roster_item_get_show (item);
 			status = gossip_utils_get_default_status (show);
 		}
-		
+
 		txt = gossip_roster_item_get_name (item);
 		txt = g_strdup_printf ("%s\n<span foreground=\"gray\" style=\"italic\">%s</span>",
 				       gossip_roster_item_get_name (item),

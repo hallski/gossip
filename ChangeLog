@@ -1,5 +1,21 @@
 2003-11-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (app_update_show),
+	(app_status_custom_leave_activate_cb),
+	(app_status_custom_busy_activate_cb),
+	(app_status_custom_available_activate_cb),
+	(add_status_image_menu_item), (show_popup):
+	* ui/main.glade: Add support for custom available message and
+	remove some dead test code.
+
+	* src/gossip-app.c (app_update_show): Send status message even
+	when available. We need to decide on how to handle this later.
+
+	* src/gossip-roster-view.c: (roster_view_name_cell_data_func):
+	Don't try to print a NULL status string.
+
+2003-11-09  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat.c (gossip_chat_present): Grab focus on the
 	entry.
 

@@ -1999,12 +1999,7 @@ app_update_show (void)
 	}
 	
 	lm_message_node_add_child (m->node, "priority", priority);
-
-	/* Only set status string when we're not available. */
-	if (effective_show != GOSSIP_SHOW_AVAILABLE) {
-		lm_message_node_add_child (m->node, "status", status_text);
-	}
-
+	lm_message_node_add_child (m->node, "status", status_text);
 	lm_connection_send (app->priv->connection, m, NULL);
 	lm_message_unref (m);
 
@@ -2229,27 +2224,6 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 				break;
 			}
 		}
-#if 0
-		if (new_message) {
-			list = g_slist_prepend (list, g_strdup (str));
-		}
-
-		if (g_slist_length (list) > 5) {
-			GSList *last;
-
-			last = g_slist_last (list);
-			
-			list = g_slist_remove_link (list, last);
-			g_free (last->data);
-			g_slist_free_1 (last);
-		}
-		
-		gconf_client_set_list (gconf_client,
-				       "/apps/gossip/status/custom_away_messages",
-				       GCONF_VALUE_STRING,
-				       list,
-				       NULL);
-#endif
 	}
 
 	for (l = list; l; l = l->next) {
@@ -2284,18 +2258,6 @@ app_status_custom_busy_activate_cb (GtkWidget *item,
 				      "reason_entry", &entry,
 				      NULL);
 
-	/*str = gconf_client_get_string (gconf_client,
-				       "/apps/gossip/status/auto_away_message",
-				       NULL);
-
-	if (str) {
-		gtk_entry_set_text (GTK_ENTRY (entry), str);
-		g_free (str);
-	}
-
-	gtk_entry_select_region (GTK_ENTRY (entry), 0, -1);
-	*/
-
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response != GTK_RESPONSE_OK) {
 		gtk_widget_destroy (dialog);
@@ -2310,6 +2272,41 @@ app_status_custom_busy_activate_cb (GtkWidget *item,
 	g_free (priv->status_text);
 	priv->status_text = str;
 	priv->explicit_show = GOSSIP_SHOW_BUSY;
+	
+	app_update_show ();
+}
+
+static void
+app_status_custom_available_activate_cb (GtkWidget *item,
+					 gpointer   user_data)
+{
+	GossipAppPriv *priv = app->priv;
+	GtkWidget     *dialog;
+	GtkWidget     *entry;
+	gint           response;
+	gchar         *str;
+	
+	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
+				      "status_available_dialog",
+				      NULL,
+				      "status_available_dialog", &dialog,
+				      "available_entry", &entry,
+				      NULL);
+
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (response != GTK_RESPONSE_OK) {
+		gtk_widget_destroy (dialog);
+		return;
+	}
+
+	app_cancel_pending_leave ();
+
+	str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+	gtk_widget_destroy (dialog);
+
+	g_free (priv->status_text);
+	priv->status_text = str;
+	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 	
 	app_update_show ();
 }
@@ -2357,10 +2354,17 @@ add_status_image_menu_item (GtkWidget   *menu,
 	case GOSSIP_SHOW_AVAILABLE:
 		stock = GOSSIP_STOCK_AVAILABLE;
 
-		g_signal_connect (item,
-				  "activate",
-				  G_CALLBACK (app_status_available_activate_cb),
-				  NULL);
+		if (custom) {
+			g_signal_connect (item,
+					  "activate",
+					  G_CALLBACK (app_status_custom_available_activate_cb),
+					  NULL);
+		} else {
+			g_signal_connect (item,
+					  "activate",
+					  G_CALLBACK (app_status_available_activate_cb),
+					  NULL);
+		}
 		break;
 		
 	case GOSSIP_SHOW_BUSY:
@@ -2425,6 +2429,9 @@ show_popup (void)
 
 	add_status_image_menu_item (menu, gossip_utils_get_default_status (GOSSIP_SHOW_AVAILABLE),
 				    GOSSIP_SHOW_AVAILABLE, FALSE);
+	
+	add_status_image_menu_item (menu, _("Custom Message..."),
+				    GOSSIP_SHOW_AVAILABLE, TRUE);
 
 	/* Separator. */
 	item = gtk_menu_item_new ();
@@ -2464,44 +2471,14 @@ show_popup (void)
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
-#if 0
-	/* Leave messages. */
-
-	/* FIXME: Same workaround as above. */
-	value = gconf_client_get (gconf_client,
-				  "/apps/gossip/status/custom_away_messages",
-				  NULL);
-
-	if (!value) {
-		list = g_slist_append (NULL, g_strdup (_("Eating")));
-		list = g_slist_append (list, g_strdup (_("Sleeping")));
-	} else {
-		gconf_value_free (value);
-		
-		list = gconf_client_get_list (gconf_client,
-					      "/apps/gossip/status/custom_away_messages",
-					      GCONF_VALUE_STRING,
-					      NULL);
-	}
-	
-	for (l = list; l; l = l->next) {
-		add_status_image_menu_item (menu, l->data, GOSSIP_SHOW_AWAY, FALSE);
-		g_free (l->data);
-	}
-	g_slist_free (list);
-
-	add_status_image_menu_item (menu, _("Custom Away Message..."), GOSSIP_SHOW_AWAY, TRUE);
-#else
-
 	item = gtk_menu_item_new_with_label (_("Leave..."));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
-
+	
 	g_signal_connect (item,
 			  "activate",
 			  G_CALLBACK (app_status_custom_leave_activate_cb),
 			  NULL);
-#endif
 	
 	gtk_menu_popup (GTK_MENU (menu), NULL, NULL, app_status_align_menu,
 			NULL, 1, gtk_get_current_event_time ());
