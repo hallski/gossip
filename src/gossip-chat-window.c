@@ -851,7 +851,6 @@ chat_window_new_message_cb (GossipChat       *chat,
 	if (!chat_window_has_toplevel_focus (window)) {
 		window->priv->new_msg = TRUE;
 		chat_window_update_title (window);
-		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 
 	if (chat == window->priv->current_chat) {

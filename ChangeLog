@@ -1,3 +1,10 @@
+2004-01-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c (chat_message_handler): Move sound handling here...
+
+	* src/gossip-chat-window.c (chat_window_new_message_cb): ...from
+	here. Fixes #130991.
+
 2004-01-08  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_status_custom_available_activate_cb)

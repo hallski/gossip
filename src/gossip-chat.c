@@ -631,6 +631,33 @@ chat_composing_stop_timeout_cb (GossipChat *chat)
         return FALSE;
 }
 
+static gboolean
+chat_should_play_sound (GossipChat *chat)
+{
+	GossipChatPriv *priv = chat->priv;
+	GtkWidget      *toplevel;
+	gboolean        play = TRUE;
+
+	/* Play sounds if the window is not focused. */
+	
+	if (!priv->window) {
+		return TRUE;
+	}
+
+	toplevel = gossip_chat_window_get_dialog (priv->window);
+
+	/* The has-toplevel-focus property is new in GTK 2.2 so if we don't find it, we
+	 * pretend that the window doesn't have focus => always play sound.
+	 */
+	if (g_object_class_find_property (G_OBJECT_GET_CLASS (toplevel),
+					  "has-toplevel-focus")) {
+		g_object_get (toplevel, "has-toplevel-focus", &play, NULL);
+		play = !play;
+	}
+
+	return play;
+}
+
 static LmHandlerResult
 chat_message_handler (LmMessageHandler *handler,
                       LmConnection     *connection,
@@ -728,6 +755,10 @@ chat_message_handler (LmMessageHandler *handler,
 
 	g_signal_emit (chat, chat_signals[NEW_MESSAGE], 0);
 	
+	if (chat_should_play_sound (chat)) {
+		gossip_sound_play (GOSSIP_SOUND_CHAT);
+	}
+
 	if (priv->window == NULL) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
