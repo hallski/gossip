@@ -515,9 +515,12 @@ button_release_cb (GossipNotebook *notebook,
                 /* Ungrab the pointer if it's grabbed. */
                 if (gdk_pointer_is_grabbed ()) {
                         gdk_pointer_ungrab (GDK_CURRENT_TIME);
-                        gtk_grab_remove (GTK_WIDGET (notebook));
                 }
-        }
+
+		if (gtk_grab_get_current () == GTK_WIDGET (notebook)) {
+			gtk_grab_remove (GTK_WIDGET (notebook));
+		}
+	}
 
         /* This must be called even if a drag isn't happening. */
         drag_stop (notebook);
@@ -571,9 +574,7 @@ gossip_notebook_insert_page (GossipNotebook *notebook,
                                   label,
                                   position);
 
-        g_signal_emit (G_OBJECT (notebook),
-                       signals[TAB_ADDED],
-                       0, child);
+        g_signal_emit (notebook, signals[TAB_ADDED], 0, child);
 
         if (jump_to == TRUE) {
                 gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook),
@@ -619,14 +620,24 @@ gossip_notebook_move_page (GossipNotebook *src,
                 }
         }
         else {
-                GtkWidget *src_label = gossip_notebook_get_tab_label (src, src_page);
-                /* make sure the child and label aren't destroyed while we move
-                 * them */
-                g_object_ref (G_OBJECT (src_page));
+                GtkWidget *src_label;
+
+		src_label = gossip_notebook_get_tab_label (src, src_page);
+
+                /* Make sure the child and label aren't destroyed while we move
+                 * them. */
+		g_object_ref (G_OBJECT (src_page));
                 g_object_ref (G_OBJECT (src_label));
+
+		/* Remove the label so we can insert it in it's new parent. */
+		gtk_container_remove (
+			GTK_CONTAINER (gtk_widget_get_parent (src_label)),
+			src_label);
+		
                 gossip_notebook_remove_page (src, src_page);
                 gossip_notebook_insert_page (dest, src_page, src_label, 
                                              dest_page, TRUE);
+
                 g_object_unref (G_OBJECT (src_page));
                 g_object_unref (G_OBJECT (src_label));
         } 

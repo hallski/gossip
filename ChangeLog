@@ -1,3 +1,12 @@
+2005-04-05  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-notebook.c (button_release_cb): Always remove the
+	grab if we have it, not only if the pointer grab is effective,
+	since we don't always have that. Fixes stuck grab when dragging
+	chats.
+	(gossip_notebook_move_page): Remove the label from its old parent
+	before reinserting it.
+
 2005-04-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-main.c (main): Set application name, makes the window
