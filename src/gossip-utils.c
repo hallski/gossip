@@ -1082,6 +1082,25 @@ gossip_show_to_string (GossipShow show)
 	return NULL;
 }
 
+GossipShow 
+gossip_show_from_string (const gchar *str)
+{
+	if (!str) {
+		return GOSSIP_SHOW_AVAILABLE;
+	}
+	if (strcmp (str, "dnd") == 0) {
+		return GOSSIP_SHOW_BUSY;
+	}
+	if (strcmp (str, "away") == 0) {
+		return GOSSIP_SHOW_AWAY;
+	}
+	if (strcmp (str, "xa") == 0) {
+		return GOSSIP_SHOW_EXT_AWAY;
+	}
+
+	return GOSSIP_SHOW_AVAILABLE;
+}
+
 #define ve_string_empty(x) ((x)==NULL||(x)[0]=='\0')
 
 /* stolen from gsearchtool */

@@ -44,7 +44,9 @@ gossip_SOURCES = 				\
 	gossip-message.c			\
 	gossip-message.h			\
 	gossip-preferences.c			\
-	gossip-preferences.h			\
+	gossip-preferences.h	                \ 
+	gossip-roster.c                         \
+	gossip-roster.h                         \
 	gossip-roster-old.c			\
 	gossip-roster-old.h			\
 	gossip-register.c			\

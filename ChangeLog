@@ -1,3 +1,10 @@
+2003-10-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster.c: 
+	- More work done. Starting to get there, soon I'll be able to start 
+	  hacking on the GUI parts.
+	* src/gossip-utils.[ch] (gossip_show_from_string): Added
+
 2003-09-09  Jordi Mallach  <jordi@sindominio.net>
 
 	* ui/main.glade: Add mnemonics to the Edit menu items and Prefs

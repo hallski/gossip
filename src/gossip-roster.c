@@ -20,13 +20,18 @@
 
 #include <config.h>
 
+#include <gtk/gtkmain.h>
+#include <string.h>
+
+#include "gossip-utils.h"
+#include "gossip-marshal.h"
 #include "gossip-roster.h"
 
-struct _GossipRoster {
+struct _GossipRosterPriv {
         GHashTable       *items;
 	GHashTable       *groups;
 
-	LmConnect        *connection;
+	LmConnection     *connection;
         LmMessageHandler *presence_handler;
         LmMessageHandler *iq_handler;
 
@@ -36,18 +41,17 @@ struct _GossipRoster {
 struct _GossipRosterGroup {
         gchar *name;
         GList *items; /* List of RosterItems */
-
-	gint   ref_count;
 };
 
 struct _GossipRosterItem {
         gchar        *jid;
         gchar        *name;
-        GossipStatus *show;
+	gboolean      online;
+        GossipShow    show;
         gchar        *status;
         gchar        *subscription;
         gchar        *ask;
-        GList        *groups;    /* Group names as strings */
+        GList        *groups;    /* List of groups */
         GList        *resources; /* Should be {Resource, Priority} */
 };
    
@@ -59,6 +63,9 @@ typedef struct {
 /* Signals for item_added, item_removed, ... */
 
 enum {
+	ITEM_ADDED,
+	ITEM_REMOVED,
+	ITEM_UPDATED,
         LAST_SIGNAL
 };
 
@@ -84,14 +91,23 @@ roster_iq_handler                            (LmMessageHandler  *handler,
 					      LmConnection      *connection,
 					      LmMessage         *m,
 					      GossipRoster      *roster);
-static void     roster_update_item_status    (GossipRoster      *roster,
+static GossipRosterItem * roster_item_new    (const gchar       *jid);
+
+static void     roster_item_update           (GossipRoster      *roster,
+					      GossipRosterItem  *item,
+					      LmMessageNode     *node);
+static gboolean roster_item_update_presence  (GossipRoster      *roster,
 					      GossipRosterItem  *item,
 					      LmMessage         *presence);
-static GossipRosterItem *
-roster_item_new                              (const gchar       *jid,
-					      const gchar       *name,
-					      const gchar       *subscription,
-					      const gchar       *ask);
+static void     roster_item_remove           (GossipRoster      *roster, 
+					      GossipRosterItem  *item);
+static void     roster_item_free             (GossipRosterItem  *item);
+
+static void     roster_item_add_group        (GossipRoster      *roster, 
+					      GossipRosterItem  *item,
+					      const gchar       *name);
+static GossipRosterGroup * roster_group_new  (const gchar       *name);
+static void     roster_group_free            (GossipRosterGroup *group);
 
 GType
 gossip_roster_get_type (void)
@@ -123,17 +139,45 @@ gossip_roster_get_type (void)
 static void     
 roster_class_init (GossipRosterClass *klass)
 {
-        GObjectClass *object_class = G_OBJECT_CLASS(klass);
+        GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-        parent_class = G_OBJECT_CLASS(g_type_class_peak_parent(klass));
+        parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
         
         object_class->finalize = roster_finalize;
         
         /* Create signals */
+	signals[ITEM_ADDED] =
+		g_signal_new ("item_added",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+	signals[ITEM_REMOVED] = 
+		g_signal_new ("item_removed",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+	signals[ITEM_UPDATED] =
+		g_signal_new ("item_updated",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+
 }
 
 static void
-roster_init (GossipRos *roster)
+roster_init (GossipRoster *roster)
 {
         GossipRosterPriv *priv;
 
@@ -141,15 +185,23 @@ roster_init (GossipRos *roster)
         roster->priv = priv;
 
         priv->items  = g_hash_table_new_full (g_str_hash, g_str_equal,
-					      (GDestroyNotify) gossip_jid_unref,
-					      (GDestroyNotify) gossip_roster_item_unref);
+					      NULL,
+					      (GDestroyNotify) roster_item_free);
 	priv->groups = g_hash_table_new_full (g_str_hash, g_str_equal,
-					      (GDestroyNotify) gossip_jid_unref,
-					      (GDestroyNotify) gossip_roster_group_unref);
-
-        priv->connection       = NULL;
+					      NULL,
+					      (GDestroyNotify) roster_group_free);
+        
+	priv->connection       = NULL;
         priv->presence_handler = NULL;
         priv->iq_handler       = NULL;
+
+	g_signal_connect (gossip_app_get (), "connected",
+			  G_CALLBACK (roster_connected_cb),
+			  roster);
+
+	g_signal_connect (gossip_app_get (), "disconnected",
+			  G_CALLBACK (roster_disconnected_cb),
+			  roster);
 }
 
 static void
@@ -177,7 +229,7 @@ roster_connected_cb (GossipApp *app, GossipRoster *roster)
 
 	priv = roster->priv;
 
-	priv->connection = lm_connect_ref (gossip_app_get_connection ());
+	priv->connection = lm_connection_ref (gossip_app_get_connection ());
 
 	priv->presence_handler = 
 		lm_message_handler_new ((LmHandleMessageFunction) roster_presence_handler,
@@ -248,7 +300,7 @@ roster_reset_connection (GossipRoster *roster)
 
 	if (priv->connection) {
 		lm_connection_unref (priv->connection);
-		priv->connect = NULL;
+		priv->connection = NULL;
 	}
 }
 
@@ -283,6 +335,7 @@ roster_presence_handler (LmMessageHandler *handler,
 	GossipRosterPriv *priv;
 	GossipJID        *from;
 	GossipRosterItem *item;
+	gboolean          ret_val = LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 
 	g_return_val_if_fail (GOSSIP_IS_ROSTER (roster), 
 			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
@@ -295,14 +348,17 @@ roster_presence_handler (LmMessageHandler *handler,
 							 gossip_jid_get_without_resource (from));
 
 	if (!item) {
-		gossip_jid_unref (jid);
+		gossip_jid_unref (from);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	} 
 
-	roster_update_item_status (roster, item, m);
-
-	gossip_jid_unref (jid);
-	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	if (roster_item_update_presence (roster, item, m)) {
+		ret_val = LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	}
+	
+	gossip_jid_unref (from);
+	
+	return ret_val;
 }
 
 static LmHandlerResult
@@ -332,98 +388,238 @@ roster_iq_handler (LmMessageHandler *handler,
 
 	for (node = node->children; node; node = node->next) {
 		GossipRosterItem *item;
-		const gchar      *jid;
-		const gchar      *name;
+		GossipJID        *jid;
+		const gchar      *jid_str;
 		const gchar      *subscription;
-		const gchar      *ask;
-		const gchar      *group = NULL;
-		LmMessageNode    *child;
 
 		if (strcmp (node->name, "item") != 0) { 
 			continue;
 		}
 
-		jid = lm_message_node_get_attribute (node, "jid");
-		if (!jid) {
+		jid_str= lm_message_node_get_attribute (node, "jid");
+		if (!jid_str) {
 			continue;
 		}
 
-		item = g_hash_table_lookup (priv->items, jid);
+		jid = gossip_jid_new (jid_str);
+
+		item = (GossipRosterItem *) g_hash_table_lookup (priv->items, 
+								 gossip_jid_get_without_resource (jid));
+		
 		if (item) {
-			/* FIXME: We are updating */
+			roster_item_update (roster, item, node);
 		}
 
-		subscription = lm_message_node_get_attribute (node, 
-							      "subscription");
-		if (!subscription) {
-			subscription = "";
-		}
-		
-		if (strcmp (subscription, "remove") == 0) {
-			g_hash_table_remove (priv->items, jid);
-			/* FIXME: Don't allow more handlers */
-			/* FIXME: Signal removal */
+		subscription = lm_message_node_get_attribute (node, "subscription");
+		if (subscription && strcmp (subscription, "remove") == 0) {
+			roster_item_remove (roster, item);
 			return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 		}
 
-		ask = lm_message_node_get_attribute (node, "ask");
-		if (!ask) {
-			ask = "";
-		}
-		
-		name = lm_message_node_get_attribute (node, "name");
-		if (!name) {
-			name = jid;
-		}
-		
-		item = roster_item_new (jid, name, subscription, ask);
-
-		/* Go through the list of groups */
-		for (child = node->children; child; child = child->next) {
-			/* Add group */
-		}
-
-		/* FIXME: Signal added */
-		
-		/* Do some stuff ... */
-	}
-		
-	/* Add, Remove, Move user and stuff */
+		/* It's a new item */
+		item = roster_item_new (jid_str);
 	
-	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-}
+		g_hash_table_insert (priv->items, 
+				     g_strdup (gossip_jid_get_without_resource (jid)), 
+				     item);
+		gossip_jid_unref (jid);
+		g_signal_emit (roster, signals[ITEM_ADDED], 0, item);
 
-static void
-roster_update_item_status (GossipRoster     *roster,
-			   GossipRosterItem *item,
-			   LmMessage        *presence)
-{
-	/* Read the fields of the message and set item attributes accordingly */
+		roster_item_update (roster, item, node);
+	}
+	
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static GossipRosterItem *
-roster_item_new (const gchar *jid,
-		 const gchar *name,
-		 const gchar *subscription,
-		 const gchar *ask)
+roster_item_new (const gchar *jid)
 {
 	GossipRosterItem *item;
 
 	item = g_new0 (GossipRosterItem, 1);
 	item->jid = g_strdup (jid);
-	item->name = g_strdup (name);
-	item->subscription = g_strdup (subscription);
-	item->ask = g_strdup (ask);
+
+	/* Set name to be jid to have something to show */
+	item->name = g_strdup (jid);
+	item->subscription = NULL;
+	item->ask = NULL;
 
 	item->groups = NULL;
 	item->resources = NULL;
 
-	item->show = GOSSIP_STATUS_OFFLINE;
-	item->status = g_strdup ("");
-
-	item->ref_count = 1;
+	item->online = FALSE;
+	item->show = GOSSIP_SHOW_AVAILABLE;
+	item->status = NULL;
 
 	return item;
+}
+
+static void
+roster_item_update (GossipRoster     *roster,
+		    GossipRosterItem *item,
+		    LmMessageNode    *node)
+{
+	const gchar   *subscription;
+	const gchar   *ask;
+	const gchar   *name;
+	LmMessageNode *child;
+
+	/* Update the item, can be name change, group change, etc.. */
+
+	subscription = lm_message_node_get_attribute (node, "subscription");
+	if (subscription) {
+		g_free (item->subscription);
+		item->subscription = g_strdup (subscription);
+	}
+	
+	ask = lm_message_node_get_attribute (node, "ask");
+	if (ask) {
+		g_free (item->ask);
+		item->ask = g_strdup (ask);
+	}
+		
+	name = lm_message_node_get_attribute (node, "name");
+	if (name) {
+		g_free (item->name);
+		name = g_strdup (name);
+	}
+
+	/* Go through the list of groups */
+	for (child = node->children; child; child = child->next) {
+		if (strcmp (child->name, "group") == 0) {
+			roster_item_add_group (roster, item, child->value);
+		}
+	}
+
+	g_signal_emit (roster, signals[ITEM_UPDATED], 0, item);
+}
+
+static gboolean
+roster_item_update_presence (GossipRoster     *roster,
+			     GossipRosterItem *item,
+			     LmMessage        *presence)
+{
+	LmMessageSubType  type;
+	LmMessageNode    *node;
+
+	type = lm_message_get_sub_type (presence);
+
+	switch (type) {
+	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
+		item->online = TRUE;
+		break;
+	case LM_MESSAGE_SUB_TYPE_UNAVAILABLE: 
+		item->online = FALSE;
+		break;
+	default:
+		return FALSE;
+	}
+
+	node = lm_message_node_get_child (presence->node, "show");
+	if (node) {
+		item->show = gossip_show_from_string (node->value);
+	} else {
+		item->show = GOSSIP_SHOW_AVAILABLE;
+	}
+
+	node = lm_message_node_get_child (presence->node, "status");
+	if (node) {
+		g_free (item->status);
+		item->status = g_strdup (node->value);
+	}
+
+	/* FIXME: Handle priority/resource-combos */
+	node = lm_message_node_get_child (presence->node, "priority");
+	if (node) {
+	}
+
+	g_signal_emit (roster, signals[ITEM_UPDATED], 0, item);
+
+	return TRUE;
+}
+
+static void
+roster_item_remove (GossipRoster *roster, GossipRosterItem *item) 
+{
+	GossipRosterPriv *priv;
+	GList            *l;
+
+	priv = roster->priv;
+
+	for (l = item->groups; l; l = l->next) {
+		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
+		
+		group->items = g_list_remove (group->items, item);
+		/* FIXME: Should we remove the group if there are no items *
+		 *        in it?                                           */
+	}
+	
+	g_signal_emit (roster, signals[ITEM_REMOVED], 0, item);
+	
+	g_hash_table_remove (priv->items, item->jid);
+}
+
+static void
+roster_item_free (GossipRosterItem *item)
+{
+	g_return_if_fail (item->groups != NULL);
+
+	g_free (item->jid);
+	g_free (item->name);
+	g_free (item->subscription);
+	g_free (item->ask);
+	g_free (item->status);
+
+	g_free (item);
+}
+
+static void
+roster_item_add_group (GossipRoster     *roster, 
+		       GossipRosterItem *item,
+		       const gchar      *name) 
+{
+	GossipRosterPriv  *priv;
+	GossipRosterGroup *group;
+	
+	priv = roster->priv;
+
+	group = (GossipRosterGroup *) g_hash_table_lookup (priv->groups, name);
+
+	if (!group) {
+		group = roster_group_new (name);
+		g_hash_table_insert (priv->groups, group->name, group);
+	}
+	
+	if (!g_list_find (group->items, item)) {
+		group->items = g_list_prepend (group->items, item);
+	}
+
+	if (!g_list_find (item->groups, group)) {
+		item->groups = g_list_prepend (item->groups, group);
+	}
+}
+
+static GossipRosterGroup *
+roster_group_new (const gchar *name)
+{
+	GossipRosterGroup *group;
+
+	group = g_new0 (GossipRosterGroup, 1);
+
+	group->name = g_strdup (name);
+	group->items = NULL;
+
+	return group;
+}
+
+static void
+roster_group_free (GossipRosterGroup *group) 
+{
+	g_return_if_fail (group->items != NULL);
+	
+	g_free (group->name);
+
+	g_free (group);
 }
 
 GossipRoster *

@@ -22,6 +22,10 @@
 #define __GOSSIP_ROSTER_H__
 
 #include <loudmouth/loudmouth.h>
+#include <glib.h>
+#include <glib-object.h>
+#include "gossip-jid.h"
+#include "gossip-app.h"
 
 #define GOSSIP_TYPE_ROSTER         (gossip_roster_get_type ())
 #define GOSSIP_ROSTER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ROSTER, GossipRoster))
@@ -63,8 +67,6 @@ GossipRoster *     gossip_roster_flash_jid          (GossipRoster      *roster,
 /* Group */
 const gchar *      gossip_roster_group_get_name     (GossipRosterGroup *group);
 GList *            gossip_roster_group_get_items    (GossipRosterGroup *group);
-GossipRosterGroup *gossip_roster_group_ref          (GossipRosterGroup *group);
-void               gossip_roster_group_unref        (GossipRosterGroup *group);
 
 /* Item */
 
@@ -73,10 +75,8 @@ void               gossip_roster_group_unref        (GossipRosterGroup *group);
  */
 GossipJID *        gossip_roster_item_get_jid       (GossipRosterItem  *item);
 const gchar *      gossip_roster_item_get_name      (GossipRosterItem  *item);
-GossipStatus *     gossip_roster_item_get_show      (GossipRosterItem  *item);
+GossipShow *       gossip_roster_item_get_show      (GossipRosterItem  *item);
 GList *            gossip_roster_item_get_groups    (GossipRosterItem  *item);
 GList *            gossip_roster_item_get_resources (GossipRosterItem  *item);
-GossipRosterItem * gossip_roster_item_ref           (GossipRosterItem  *item);
-void               gossip_roster_item_unref         (GossipRosterItem  *item);
 
 #endif /* __GOSSIP_ROSTER_H__ */
