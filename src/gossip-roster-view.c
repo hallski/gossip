@@ -795,12 +795,15 @@ ellipsize_string (gchar *str, gint len)
 static void
 roster_view_ellipsize_item_string (GossipRosterView *view,
 				   gchar            *str,
-				   gint              width) 
+				   gint              width,
+				   gboolean          smaller) 
 {
 	PangoLayout    *layout;
 	PangoRectangle  rect;
 	gint            len_str;
 	gint            width_str;
+	PangoAttrList  *attr_list = NULL;
+	PangoAttribute *attr_size, *attr_style;
 	
 	len_str = g_utf8_strlen (str, -1);
 
@@ -814,14 +817,37 @@ roster_view_ellipsize_item_string (GossipRosterView *view,
 	pango_layout_get_extents (layout, NULL, &rect);
 	width_str = rect.width / PANGO_SCALE;
 
+	if (smaller) {
+		/* Do the same as pango markup does for "smaller". */
+		attr_list = pango_attr_list_new ();
+
+		attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
+		attr_style->start_index = 0;
+		attr_style->end_index = -1;
+		pango_attr_list_insert (attr_list, attr_style);
+		
+		attr_size = pango_attr_size_new (
+			pango_font_description_get_size (GTK_WIDGET (view)->style->font_desc) / 1.2);
+		attr_size->start_index = 0;
+		attr_size->end_index = -1;
+		pango_attr_list_insert (attr_list, attr_size);
+	}
+	
 	while (len_str >= ELLIPSIS_LIMIT && width_str > width) {
 		len_str--;
 		ellipsize_string (str, len_str);
 		
 		pango_layout_set_text (layout, str, -1);
+		if (smaller) {
+			pango_layout_set_attributes (layout, attr_list);
+		}
 		pango_layout_get_extents (layout, NULL, &rect);
 		
 		width_str = rect.width / PANGO_SCALE;
+	}
+
+	if (smaller) {
+		pango_attr_list_unref (attr_list);
 	}
 	
 	g_object_unref (layout);
@@ -878,7 +904,7 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		name = g_strdup (gossip_roster_item_get_name (e->item));
 		g_strdelimit (name, "\n\r\t", ' ');
 
-		roster_view_ellipsize_item_string (view, name, width);
+		roster_view_ellipsize_item_string (view, name, width, FALSE);
 
 		g_object_set (cell,
 			      "weight", PANGO_WEIGHT_NORMAL,
@@ -911,8 +937,8 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	g_strdelimit (name, "\n\r\t", ' ');
 	g_strdelimit (status, "\n\r\t", ' ');
 
-	roster_view_ellipsize_item_string (view, name, width);
-	roster_view_ellipsize_item_string (view, status, width);
+	roster_view_ellipsize_item_string (view, name, width, FALSE);
+	roster_view_ellipsize_item_string (view, status, width, TRUE);
 	
 	str = g_strdup_printf ("%s\n%s", name, status);
 
@@ -934,6 +960,7 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		pango_attr_list_insert (attr_list, attr_color);
 	}
 
+	/* Do the same as pango markup does for "smaller". */
 	attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
 	attr_size->start_index = attr_style->start_index;
 	attr_size->end_index = -1;
