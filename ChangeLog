@@ -3,6 +3,7 @@
 	* src/gossip-app.c: (app_cancel_pending_leave),
 	(app_idle_check_cb), (app_status_activate_cb),
 	(status_entry_activate_cb): Cancel leave if the status is changed.
+	(app_leaving_cb): Remove some unused text buffer code.
 
 2003-10-28  Richard Hult  <richard@imendio.com>
 

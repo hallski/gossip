@@ -782,11 +782,7 @@ app_leaving_cb (GtkWidget *widget, GossipApp *app)
 {
 	GossipAppPriv *priv = app->priv;
 	GtkWidget     *dialog;
-	GtkWidget     *view;
-	GtkTextBuffer *buffer;
 	GtkEntry      *entry;
-	GtkTextIter    start;
-	GtkTextIter    end;
 	gint           response;
 	gchar         *str;
 	
@@ -794,21 +790,14 @@ app_leaving_cb (GtkWidget *widget, GossipApp *app)
 				      "leave_dialog",
 				      NULL,
 				      "leave_dialog", &dialog,
-				      "reason_textview", &view,
 				      "reason_entry", &entry,
 				      NULL);
 	
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
 	str = gconf_client_get_string (gconf_client,
 				       "/apps/gossip/status/away_message",
 				       NULL);
-	gtk_text_buffer_set_text (buffer, str, -1);
 	gtk_entry_set_text (entry, str);
 	g_free (str);
-
-	gtk_text_buffer_get_bounds (buffer, &start, &end);
-	gtk_text_buffer_select_range (buffer, &start, &end);
 
 	gtk_entry_select_region (entry, 0, -1);
 
@@ -818,8 +807,6 @@ app_leaving_cb (GtkWidget *widget, GossipApp *app)
 		return;
 	}
 	
-	gtk_text_buffer_get_bounds (buffer, &start, &end);
-	/*str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);*/
 	str = g_strdup (gtk_entry_get_text (entry));
 	gtk_widget_destroy (dialog);
 
