@@ -191,9 +191,14 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 	gchar         *body;
 	const gchar   *to_or_from;
 	gchar         *stamp;
-	LmMessageNode *node;
+	LmMessageNode *body_node;
 	gchar         *nick;
 	const gchar   *resource;
+	
+	body_node = lm_message_node_get_child (msg->node, "body");
+	if (!body_node) {
+		return;
+	}
 	
 	if (incoming) {
 		jid_string = lm_message_node_get_attribute (msg->node, "from");
@@ -245,22 +250,17 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 		to_or_from = "to";
 	}
 
-	node = lm_message_node_get_child (msg->node, "body");
-	if (node) {
-		gchar *tmp;
-
-		tmp = log_urlify (node->value);
-		body = g_strdup (tmp); //g_markup_escape_text (tmp, -1);
-		g_free (tmp);
+	if (body_node->value) {
+		body = log_urlify (body_node->value);
 	} else {
 		body = g_strdup ("");
 	}
-
+	
 	resource = gossip_jid_get_resource (jid);
 	if (!resource) {
 		resource = "";
 	}
-	
+
 	fprintf (file,
 		 "  <message time='%s' %s='%s' resource='%s' nick='%s'>\n"
 		 "    %s\n"

@@ -1,3 +1,8 @@
+2004-04-14  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-log.c (gossip_log_message): Handle no or empty
+	body. Fixes bug #138443.
+
 2004-04-11  Gareth Owen  <gowen72@yahoo.com>
 
 	* configure.in: Added en_GB to ALL_LINGUAS
