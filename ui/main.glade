@@ -3900,7 +3900,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
   <child>
     <widget class="GtkImageMenuItem" id="tray_new_message">
       <property name="visible">True</property>
-      <property name="label" translatable="yes">New _Message...</property>
+      <property name="label" translatable="yes">_New Message...</property>
       <property name="use_underline">True</property>
 
       <child internal-child="image">
