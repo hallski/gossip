@@ -1,5 +1,10 @@
 2005-03-29  Bastien Nocera  <hadess@hadess.net>
 
+	* src/gossip-app.c: (app_main_window_destroy_cb): Fix warnings on exit
+	when no connections or account exist
+
+2005-03-29  Bastien Nocera  <hadess@hadess.net>
+
 	* autogen.sh: Fix missing po/Makefile.in.in on first build
 
 	* configure.ac: Fix XScreenSaver compile check, by adding the
