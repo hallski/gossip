@@ -1,5 +1,18 @@
 2005-03-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c: (contact_list_contact_updated_cb):
+	* src/gossip-contact.[ch]:
+	* src/gossip-jabber-helper.c:
+	(gossip_jabber_helper_async_get_version):
+	* src/gossip-jabber.c: (jabber_presence_handler):
+	- Added support for multiple connections to GossipContact so that
+	  presence stuff works as intended in Jabber.
+	* src/gossip-presence.[ch]: 
+	(gossip_presence_resource_equal): Added
+	(gossip_presence_priority_sort_func): Added
+
+2005-03-31  Mikael Hallendal  <micke@imendio.com>
+
 	* AUTHORS:
 	* CONTRIBUTORS:
 	* Makefile.am:

@@ -69,9 +69,14 @@ void                gossip_presence_set_priority (GossipPresence *presence,
 
 GdkPixbuf *         gossip_presence_get_pixbuf   (GossipPresence *presence);
 
+gboolean            gossip_presence_resource_equal     (gconstpointer a,
+							gconstpointer b);
+gint                gossip_presence_priority_sort_func (gconstpointer a,
+							gconstpointer b);
 /* Returns the default status message for presence's current state */
 const gchar *
 gossip_presence_get_default_status               (GossipPresence *presence);
+
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

@@ -468,7 +468,7 @@ contact_list_contact_updated_cb (GossipSession     *session,
 	GList          *iters, *l;
 
 	model    = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
-	presence = gossip_contact_get_presence (contact);
+	presence = gossip_contact_get_active_presence (contact);
 
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {

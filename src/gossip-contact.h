@@ -65,18 +65,26 @@ GossipContact *    gossip_contact_new            (GossipContactType type);
 GossipContact *    gossip_contact_new_full       (GossipContactType type,
 						  const gchar      *id,
 						  const gchar      *name);
-GossipContactType  gossip_contact_get_type       (GossipContact    *contact);
+GossipContactType  gossip_contact_get_type      (GossipContact    *contact);
 
-const gchar *      gossip_contact_get_id         (GossipContact    *contact);
-void               gossip_contact_set_id         (GossipContact    *contact,
-						  const gchar      *id);
-void               gossip_contact_set_name       (GossipContact    *contact,
-						  const gchar      *name);
-const gchar *      gossip_contact_get_name       (GossipContact    *contact);
+const gchar *    gossip_contact_get_id          (GossipContact    *contact);
+void             gossip_contact_set_id          (GossipContact    *contact,
+						 const gchar      *id);
+void             gossip_contact_set_name        (GossipContact    *contact,
+						 const gchar      *name);
+const gchar *    gossip_contact_get_name        (GossipContact    *contact);
 
-void               gossip_contact_set_presence   (GossipContact    *contact,
-						  GossipPresence   *presence);
-GossipPresence *   gossip_contact_get_presence   (GossipContact    *contact);
+void             gossip_contact_add_presence    (GossipContact    *contact,
+						 GossipPresence   *presence);
+void             gossip_contact_remove_presence (GossipContact   *contact,
+						 GossipPresence  *presence);
+GossipPresence *
+gossip_contact_get_presence_for_resource (GossipContact *contact,
+					  const gchar   *resource);
+
+GossipPresence * gossip_contact_get_active_presence (GossipContact    *contact);
+GList *          gossip_contact_get_presence_list   (GossipContact    *contact);
+
 
 gboolean           gossip_contact_is_online      (GossipContact    *contact);
 

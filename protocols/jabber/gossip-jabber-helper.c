@@ -251,7 +251,7 @@ gossip_jabber_helper_async_get_version (LmConnection                *connection,
 	const gchar       *id, *resource;
 	gchar             *jid_str;
 
-	p = gossip_contact_get_presence (contact);
+	p = gossip_contact_get_active_presence (contact);
 	resource = gossip_presence_get_resource (p);
 	id = gossip_contact_get_id (contact);
 

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2005 Imendio AB
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
@@ -1166,21 +1166,30 @@ jabber_presence_handler (LmMessageHandler *handler,
 	if (contact) {
 		GossipPresence *presence;
 		GossipJID      *jid;
+		const gchar    *resource;
 		
+		jid = gossip_jid_new (from);
+		resource = gossip_jid_get_resource (jid);
+		if (!resource) {
+			resource = "";
+		}
+
 		presence = jabber_get_presence (m);
 		if (!presence) {
-			gossip_contact_set_presence (contact, presence);
+			presence = gossip_contact_get_presence_for_resource (contact, resource);
+			if (presence) {
+				gossip_contact_remove_presence (contact,
+								presence);
+			}
 		} else {
-			jid = gossip_jid_new (from);
-			gossip_presence_set_resource (presence,
-						      gossip_jid_get_resource (jid));
-			gossip_jid_unref (jid);
+			gossip_presence_set_resource (presence, resource);
+			gossip_contact_add_presence (contact, presence);
 
-			gossip_contact_set_presence (contact, presence);
-		
 			g_object_unref (presence);
 		}
 		
+		gossip_jid_unref (jid);
+	
 		g_signal_emit_by_name (jabber,
 				       "contact-presence-updated", 
 				       contact);
