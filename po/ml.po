@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version:gossip\n"
-"POT-Creation-Date: 2004-01-22 13:22+0100\n"
+"POT-Creation-Date: 2004-02-10 11:55+0100\n"
 "PO-Revision-Date: 2003-07-05 10:29+0530\n"
 "Last-Translator: FSF-India <locale@gnu.org.in>\n"
 "Language-Team: Malayalam <locale@gnu.org.in>\n"
@@ -43,67 +43,77 @@ msgid "Hide the main window."
 msgstr ""
 
 #: gossip.schemas.in.h:6
+#, fuzzy
+msgid "Preset status messages"
+msgstr "സന്ദേശം:"
+
+#: gossip.schemas.in.h:7
+#, fuzzy
+msgid "Preset status messages."
+msgstr "സന്ദേശം:"
+
+#: gossip.schemas.in.h:8
 msgid "Show offline contacts"
 msgstr ""
 
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:9
 msgid "The X position of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:10
 msgid "The Y position of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr ""
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:14
 msgid "Use notification sounds"
 msgstr ""
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:15
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr ""
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away."
 msgstr ""
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:18
 msgid "Whether or not to play sounds when busy."
 msgstr ""
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:20
 msgid "Width of the main window"
 msgstr ""
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:21
 msgid "X position of main window"
 msgstr ""
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:22
 msgid "Y position of main window"
 msgstr ""
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:56
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr ""
 
@@ -117,121 +127,111 @@ msgstr ""
 msgid "%s will be added to your contact list."
 msgstr ""
 
-#: src/gossip-app.c:448
-msgid "_Show Contact List"
-msgstr ""
-
-#: src/gossip-app.c:457
-msgid "_Hide Contact List"
-msgstr ""
-
-#: src/gossip-app.c:470
-msgid "Send _Message..."
-msgstr ""
-
-#: src/gossip-app.c:485
-msgid "_Quit"
-msgstr "പുറത്ത് കടക്കുക"
-
-#: src/gossip-app.c:607
+#: src/gossip-app.c:591
 msgid "Artwork by:"
 msgstr ""
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:614
+#: src/gossip-app.c:598
 msgid "translator_credits"
 msgstr "എഫ്.എസ്.എഫ് - ഇന്ത്യ <gnu@gnu.org.in>"
 
-#: src/gossip-app.c:629
+#: src/gossip-app.c:613
 msgid "An Instant Messaging Client for GNOME"
 msgstr ""
 
-#: src/gossip-app.c:638
+#: src/gossip-app.c:622
 msgid "Gossip Website"
 msgstr ""
 
-#: src/gossip-app.c:759
+#: src/gossip-app.c:718
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 
-#: src/gossip-app.c:764 ui/main.glade.h:75
+#: src/gossip-app.c:723 ui/main.glade.h:76
 msgid "_Chat"
 msgstr ""
 
-#: src/gossip-app.c:1023
+#: src/gossip-app.c:974
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr ""
 
-#: src/gossip-app.c:1264
+#: src/gossip-app.c:1215
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr ""
 
-#: src/gossip-app.c:1403
+#: src/gossip-app.c:1375
 msgid "Make sure that your account information is correct."
 msgstr ""
 
-#: src/gossip-app.c:1404
+#: src/gossip-app.c:1376
 msgid "The server may currently be unavailable."
 msgstr ""
 
-#: src/gossip-app.c:1805
-msgid "Gossip, Jabber Client"
+#: src/gossip-app.c:1847
+msgid "Gossip, Instant Messaging Client"
 msgstr ""
 
-#: src/gossip-app.c:1981
+#: src/gossip-app.c:1988
 #, c-format
 msgid "New message from %s"
 msgstr ""
 
-#: src/gossip-app.c:2331 src/gossip-preferences.c:629
+#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:935
+#, fuzzy
+msgid "Offline"
+msgstr "കാര്യാലയം"
+
+#: src/gossip-app.c:2472 src/gossip-preferences.c:639
 #, fuzzy
 msgid "Available"
 msgstr "ലഭ്യത"
 
-#: src/gossip-app.c:2338 src/gossip-preferences.c:630
+#: src/gossip-app.c:2483 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "തിരക്ക്"
 
-#: src/gossip-app.c:2345 src/gossip-preferences.c:631
+#: src/gossip-app.c:2494 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "ദൂരെ"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2626
 #, fuzzy
 msgid "Available..."
 msgstr "ലഭ്യത"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2631
 #, fuzzy
 msgid "Busy..."
 msgstr "തിരക്ക്"
 
-#: src/gossip-app.c:2478
+#: src/gossip-app.c:2636
 #, fuzzy
 msgid "Away..."
 msgstr "ദൂരെ"
 
-#: src/gossip-app.c:2504
+#: src/gossip-app.c:2665
 msgid "Edit List..."
 msgstr ""
 
-#: src/gossip-chat-view.c:320 ui/chat.glade.h:2
+#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr ""
 
-#: src/gossip-chat-view.c:337
+#: src/gossip-chat-view.c:356
 msgid "_Copy Link Address"
 msgstr ""
 
-#: src/gossip-chat-view.c:345
+#: src/gossip-chat-view.c:364
 msgid "_Open Link"
 msgstr ""
 
-#: src/gossip-chat-view.c:695
+#: src/gossip-chat-view.c:678
 msgid "%A %d %B %Y"
 msgstr ""
 
@@ -240,37 +240,32 @@ msgstr ""
 msgid "%sChat - %s"
 msgstr ""
 
-#: src/gossip-chat-window.c:698 src/gossip-roster-view.c:932
-#, fuzzy
-msgid "Offline"
-msgstr "കാര്യാലയം"
-
-#: src/gossip-chat.c:699
+#: src/gossip-chat.c:717
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr ""
 
-#: src/gossip-chat.c:704 src/gossip-group-chat.c:809
+#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
 #: src/gossip-group-chat.c:912
 msgid "Details:"
 msgstr ""
 
-#: src/gossip-chat.c:794
+#: src/gossip-chat.c:812
 #, c-format
 msgid "%s went offline"
 msgstr ""
 
-#: src/gossip-chat.c:808
+#: src/gossip-chat.c:826
 #, c-format
 msgid "%s comes online"
 msgstr ""
 
-#: src/gossip-chat.c:895
+#: src/gossip-chat.c:913
 #, fuzzy
 msgid "Connected"
 msgstr "ഘടിപ്പിക്കുക"
 
-#: src/gossip-chat.c:910
+#: src/gossip-chat.c:928
 #, fuzzy
 msgid "Disconnected"
 msgstr "ഘടിപ്പിക്കുക"
@@ -311,35 +306,35 @@ msgstr ""
 msgid "Unable to enter the group chat %s."
 msgstr ""
 
-#: src/gossip-log.c:227
+#: src/gossip-log.c:308
 msgid "Conversation Log"
 msgstr ""
 
-#: src/gossip-main.c:71
+#: src/gossip-main.c:69
 msgid "Don't connect on startup"
 msgstr ""
 
-#: src/gossip-main.c:80
+#: src/gossip-main.c:78
 msgid "Which account to connect to on startup"
 msgstr ""
 
-#: src/gossip-main.c:81
+#: src/gossip-main.c:79
 msgid "ACCOUNT-NAME"
 msgstr ""
 
-#: src/gossip-main.c:89
+#: src/gossip-main.c:87
 msgid "List the available accounts"
 msgstr ""
 
-#: src/gossip-main.c:122
+#: src/gossip-main.c:120
 msgid "Available accounts:"
 msgstr ""
 
-#: src/gossip-main.c:131
+#: src/gossip-main.c:129
 msgid "[default]"
 msgstr ""
 
-#: src/gossip-main.c:154
+#: src/gossip-main.c:152
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr ""
@@ -388,7 +383,7 @@ msgstr ""
 msgid "/Re_name group"
 msgstr ""
 
-#: src/gossip-roster-view.c:1239
+#: src/gossip-roster-view.c:1242
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -396,14 +391,14 @@ msgid ""
 "from your contact list?"
 msgstr ""
 
-#: src/gossip-roster-view.c:1332
+#: src/gossip-roster-view.c:1335
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
 msgstr ""
 
-#: src/gossip-roster-view.c:1438
+#: src/gossip-roster-view.c:1441
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -418,11 +413,11 @@ msgstr ""
 msgid "Gossip will now try to register the account:"
 msgstr ""
 
-#: src/gossip-utils.c:434
+#: src/gossip-utils.c:438
 msgid "Please enter your password:"
 msgstr ""
 
-#: src/gossip-utils.c:436
+#: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr ""
 
@@ -841,129 +836,142 @@ msgstr "അയ‍യ്‍ക്കുക"
 
 #: ui/main.glade.h:57
 #, fuzzy
+msgid "Status"
+msgstr "<b>അവസ്ഥ</b>"
+
+#: ui/main.glade.h:58
+#, fuzzy
 msgid "Status Message"
 msgstr "സന്ദേശം:"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:59
 #, fuzzy
 msgid "Status Messages"
 msgstr "സന്ദേശം:"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:60
 msgid "Use a different server"
 msgstr ""
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:61
 msgid "Version:"
 msgstr ""
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:62
 msgid "Web site:"
 msgstr ""
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:63
 msgid "Welcome to Gossip"
 msgstr ""
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:64
 msgid "What instant messaging system does the contact use?"
 msgstr ""
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:65
 msgid "What is your name?"
 msgstr ""
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:66
 msgid "What nickname do you want to use for this contact?"
 msgstr ""
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:67
 msgid "What request message do you want to send to ...?"
 msgstr ""
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:68
 msgid "What server do you want to use?"
 msgstr ""
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:69
 msgid "What username do you use?"
 msgstr ""
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:70
 msgid "What username do you want to use?"
 msgstr ""
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:71
 msgid "Yes"
 msgstr "അതെ"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:72
 msgid "Your Identity"
 msgstr ""
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:73
 msgid "_Accept"
 msgstr ""
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:74
 msgid "_Account Information"
 msgstr ""
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:75
 msgid "_Add Contact..."
 msgstr ""
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:77
 msgid "_Connect..."
 msgstr ""
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:78
 msgid "_Decide Later"
 msgstr ""
 
-#: ui/main.glade.h:78
+#: ui/main.glade.h:79
 #, fuzzy
 msgid "_Deny"
 msgstr "അയ‍യ്‍ക്കുക"
 
-#: ui/main.glade.h:79
+#: ui/main.glade.h:80
 msgid "_Disconnect"
 msgstr ""
 
-#: ui/main.glade.h:80
-msgid "_Jabber ID of new contact:"
-msgstr ""
-
 #: ui/main.glade.h:81
-msgid "_Join Group Chat..."
+msgid "_Hide Contact List"
 msgstr ""
 
 #: ui/main.glade.h:82
-msgid "_New Message..."
+msgid "_Jabber ID of new contact:"
 msgstr ""
 
 #: ui/main.glade.h:83
+msgid "_Join Group Chat..."
+msgstr ""
+
+#: ui/main.glade.h:84
+msgid "_New Message..."
+msgstr ""
+
+#: ui/main.glade.h:85
 #, fuzzy
 msgid "_Preferences"
 msgstr "മുന്‍ഗണനകള്‍"
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:86
 msgid "_Remove"
 msgstr "നീക്കുക"
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:87
 msgid "_Search..."
 msgstr ""
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:88
+msgid "_Show Contact List"
+msgstr ""
+
+#: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr ""
 
+#~ msgid "_Quit"
+#~ msgstr "പുറത്ത് കടക്കുക"
+
 #~ msgid "Others"
 #~ msgstr "മറ്റുള്ളവ"
-
-#~ msgid "<b>Status:</b>"
-#~ msgstr "<b>അവസ്ഥ</b>"
 
 #~ msgid "minutes"
 #~ msgstr "മിനിട്ട്"

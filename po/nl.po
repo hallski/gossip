@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
-"POT-Creation-Date: 2004-01-30 04:16+0100\n"
+"POT-Creation-Date: 2004-02-10 11:55+0100\n"
 "PO-Revision-Date: 2004-02-01 15:33+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -112,7 +112,7 @@ msgstr "X-positie van hoofdvenster"
 msgid "Y position of main window"
 msgstr "Y-positie van hoofdvenster"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:57
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr "Startpagina"
 
@@ -126,110 +126,94 @@ msgstr "Welk verzoekbericht wilt u zenden aan %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s zal aan uw contactlijst worden toegevoegd."
 
-#: src/gossip-app.c:473
-msgid "_Show Contact List"
-msgstr "Contactlijst _weergeven"
-
-#: src/gossip-app.c:482
-msgid "_Hide Contact List"
-msgstr "Contactlijst _verbergen"
-
-#: src/gossip-app.c:495
-msgid "Send _Message..."
-msgstr "Bericht _verzenden..."
-
-#: src/gossip-app.c:510
-msgid "_Quit"
-msgstr "A_fsluiten"
-
-#: src/gossip-app.c:637
+#: src/gossip-app.c:591
 msgid "Artwork by:"
 msgstr "Kunstwerk van:"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:644
+#: src/gossip-app.c:598
 msgid "translator_credits"
 msgstr ""
 "Vincent van Adrighem\n"
 "Elros Cyriatan"
 
-#: src/gossip-app.c:659
+#: src/gossip-app.c:613
 msgid "An Instant Messaging Client for GNOME"
 msgstr "Een Instant Messaging Client voor GNOME"
 
-#: src/gossip-app.c:668
+#: src/gossip-app.c:622
 msgid "Gossip Website"
 msgstr "Gossip Webstek"
 
-#: src/gossip-app.c:787
+#: src/gossip-app.c:718
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Voer de gebruikers ID van de persoon in aan wie u een chatbericht wilt "
 "sturen."
 
-#: src/gossip-app.c:792 ui/main.glade.h:75
+#: src/gossip-app.c:723 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Chatten"
 
-#: src/gossip-app.c:1053
+#: src/gossip-app.c:974
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s wilt van uw aanwezigheid op de hoogte worden gehouden."
 
-#: src/gossip-app.c:1294
+#: src/gossip-app.c:1215
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "De verbinding met de server is verbroken. Wilt u opnieuw verbinden?"
 
-#: src/gossip-app.c:1455
+#: src/gossip-app.c:1375
 msgid "Make sure that your account information is correct."
 msgstr "Zorg er voor dat uw account informatie juist is."
 
-#: src/gossip-app.c:1456
+#: src/gossip-app.c:1376
 msgid "The server may currently be unavailable."
 msgstr "De server kan momenteel onbereikbaar zijn."
 
-#: src/gossip-app.c:1886
+#: src/gossip-app.c:1847
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, instant messaging client"
 
-#: src/gossip-app.c:2063
+#: src/gossip-app.c:1988
 #, c-format
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
 
-#: src/gossip-app.c:2152 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:932
+#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:935
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2491 src/gossip-preferences.c:629
+#: src/gossip-app.c:2472 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "Beschikbaar"
 
-#: src/gossip-app.c:2498 src/gossip-preferences.c:630
+#: src/gossip-app.c:2483 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "Bezig"
 
-#: src/gossip-app.c:2505 src/gossip-preferences.c:631
+#: src/gossip-app.c:2494 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "Weg"
 
-#: src/gossip-app.c:2632
+#: src/gossip-app.c:2626
 msgid "Available..."
 msgstr "Beschikbaar..."
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2631
 msgid "Busy..."
 msgstr "Bezig..."
 
-#: src/gossip-app.c:2640
+#: src/gossip-app.c:2636
 msgid "Away..."
 msgstr "Weg..."
 
-#: src/gossip-app.c:2666
+#: src/gossip-app.c:2665
 msgid "Edit List..."
 msgstr "Lijst bewerken..."
 
@@ -254,31 +238,31 @@ msgstr "%A %d %B %Y"
 msgid "%sChat - %s"
 msgstr "%sChatten - %s"
 
-#: src/gossip-chat.c:700
+#: src/gossip-chat.c:717
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Er is een fout opgetreden bij het chatten met %s."
 
-#: src/gossip-chat.c:705 src/gossip-group-chat.c:809
+#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
 #: src/gossip-group-chat.c:912
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:795
+#: src/gossip-chat.c:812
 #, c-format
 msgid "%s went offline"
 msgstr "%s ging offline"
 
-#: src/gossip-chat.c:809
+#: src/gossip-chat.c:826
 #, c-format
 msgid "%s comes online"
 msgstr "%s komt online"
 
-#: src/gossip-chat.c:896
+#: src/gossip-chat.c:913
 msgid "Connected"
 msgstr "Verbonden"
 
-#: src/gossip-chat.c:911
+#: src/gossip-chat.c:928
 msgid "Disconnected"
 msgstr "Niet verbonden"
 
@@ -394,7 +378,7 @@ msgstr "/Contact _verwijderen"
 msgid "/Re_name group"
 msgstr "/Groep her_noemen"
 
-#: src/gossip-roster-view.c:1239
+#: src/gossip-roster-view.c:1242
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -405,7 +389,7 @@ msgstr ""
 "%s\n"
 "uit uw contactlijst verwijderen?"
 
-#: src/gossip-roster-view.c:1332
+#: src/gossip-roster-view.c:1335
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -414,7 +398,7 @@ msgstr ""
 "Voer alstublieft een nieuwe bijnaam in voor contact\n"
 "%s"
 
-#: src/gossip-roster-view.c:1438
+#: src/gossip-roster-view.c:1441
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -613,8 +597,8 @@ msgid ""
 "Pick a favorite, or enter nickname, server name, and the name of the chat "
 "room to enter."
 msgstr ""
-"Kies een favoriet, of voer een bijnaam, servernaam en naam van chat ruimte om "
-"binnen te gaan in."
+"Kies een favoriet, of voer een bijnaam, servernaam en naam van chat ruimte "
+"om binnen te gaan in."
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
@@ -759,12 +743,12 @@ msgstr ""
 #: ui/main.glade.h:33
 msgid ""
 "Gossip is now configured properly for your system.\n"
-"You can change your account settings later, by selecting the Chat->Connect... "
-"menu item."
+"You can change your account settings later, by selecting the Chat-"
+">Connect... menu item."
 msgstr ""
 "Gossip is nu goed ingesteld op uw systeem.\n"
-"U kunt later uw account instellingen wijzigen, door in het menu "
-"Chatten->Verbinden... te kiezen."
+"U kunt later uw account instellingen wijzigen, door in het menu Chatten-"
+">Verbinden... te kiezen."
 
 #: ui/main.glade.h:35
 msgid "I would like to add you to my contact list."
@@ -772,9 +756,9 @@ msgstr "Ik wil je vraag toevoegen aan mijn contactlijst."
 
 #: ui/main.glade.h:36
 msgid ""
-"In order to subscribe to presence notifications from the user, a request will "
-"be sent. Until this request is approved, the user will always be shown as "
-"\"Offline\" in your contact list."
+"In order to subscribe to presence notifications from the user, a request "
+"will be sent. Until this request is approved, the user will always be shown "
+"as \"Offline\" in your contact list."
 msgstr ""
 "Om aan te melden op aanwezigheidswaarschuwingen van de gebruiker, zal een "
 "verzoek worden verzonden. Totdat dit verzoek is bevestigd, zal de gebruiker "
@@ -861,118 +845,136 @@ msgid "Sound"
 msgstr "Geluid"
 
 #: ui/main.glade.h:57
-msgid "Status Message"
+#, fuzzy
+msgid "Status"
 msgstr "Statusbericht"
 
 #: ui/main.glade.h:58
+msgid "Status Message"
+msgstr "Statusbericht"
+
+#: ui/main.glade.h:59
 msgid "Status Messages"
 msgstr "Statusberichten"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:60
 msgid "Use a different server"
 msgstr "Een andere server gebruiken"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:61
 msgid "Version:"
 msgstr "Versie:"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:62
 msgid "Web site:"
 msgstr "Webstek:"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:63
 msgid "Welcome to Gossip"
 msgstr "Welkom bij Gossip"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:64
 msgid "What instant messaging system does the contact use?"
 msgstr "Welke instant messaging systeem gebruikt het contact?"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:65
 msgid "What is your name?"
 msgstr "Wat is uw naam?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:66
 msgid "What nickname do you want to use for this contact?"
 msgstr "Welke bijnaam wilt u voor dit contact gebruiken?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:67
 msgid "What request message do you want to send to ...?"
 msgstr "Welke verzoek-bericht wilt u sturen naar ...?"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:68
 msgid "What server do you want to use?"
 msgstr "Welke server wilt u gebruiken?"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:69
 msgid "What username do you use?"
 msgstr "Welke gebruikersnaam gebruikt u?"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:70
 msgid "What username do you want to use?"
 msgstr "Welke gebruikersnaam wilt u gebruiken?"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:71
 msgid "Yes"
 msgstr "Ja"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:72
 msgid "Your Identity"
 msgstr "Uw identiteit"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:73
 msgid "_Accept"
 msgstr "_Accepteren"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:74
 msgid "_Account Information"
 msgstr "_Account informatie"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:75
 msgid "_Add Contact..."
 msgstr "_Nieuw Contact..."
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:77
 msgid "_Connect..."
 msgstr "_Verbinden..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:78
 msgid "_Decide Later"
 msgstr "_Later besluiten"
 
-#: ui/main.glade.h:78
+#: ui/main.glade.h:79
 msgid "_Deny"
 msgstr "_Weigeren"
 
-#: ui/main.glade.h:79
+#: ui/main.glade.h:80
 msgid "_Disconnect"
 msgstr "Verbinding ver_breken"
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:81
+msgid "_Hide Contact List"
+msgstr "Contactlijst _verbergen"
+
+#: ui/main.glade.h:82
 msgid "_Jabber ID of new contact:"
 msgstr "_Jabber ID van nieuw contact:"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:83
 msgid "_Join Group Chat..."
 msgstr "Groep-chat _binnengaan..."
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:84
 msgid "_New Message..."
 msgstr "_Nieuw bericht..."
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:85
 msgid "_Preferences"
 msgstr "_Voorkeuren"
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:86
 msgid "_Remove"
 msgstr "_Verwijderen"
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:87
 msgid "_Search..."
 msgstr "_Zoeken..."
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:88
+msgid "_Show Contact List"
+msgstr "Contactlijst _weergeven"
+
+#: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "_Statusberichten"
 
+#~ msgid "Send _Message..."
+#~ msgstr "Bericht _verzenden..."
+
+#~ msgid "_Quit"
+#~ msgstr "A_fsluiten"

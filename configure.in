@@ -1,6 +1,6 @@
 AC_INIT(src)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(gossip, 0.7.1)
+AM_INIT_AUTOMAKE(gossip, 0.7.2)
 
 AM_MAINTAINER_MODE
 
@@ -81,7 +81,7 @@ dnl ================================
 PKG_CHECK_MODULES(GOSSIP,
 [
 	libxml-2.0 >= $LIBXML_REQUIRED
-	libxslt >= $LIBXSLT_REQUIRED
+	libxslt >= $LIBXSLT_REQUIRED libexslt
 	glib-2.0 >= $GLIB_REQUIRED
 	gobject-2.0
 	gtk+-2.0 >= $GTK_REQUIRED
@@ -91,9 +91,6 @@ PKG_CHECK_MODULES(GOSSIP,
 	libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED
 	$dbus_pkgconfig
 ])
-
-# Sucks that we need to do this
-GOSSIP_LIBS="$GOSSIP_LIBS -lexslt"
 
 dnl -----------------------------------------------------------
 dnl Check for autoaway

@@ -20,7 +20,7 @@ Gossip is an instant messaging program for GNOME.
 %setup -q
 
 %build
-%configure
+%configure --enable-dbus=no
 make
 
 %install

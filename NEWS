@@ -1,3 +1,25 @@
+News in 0.7.2:
+==============
+
+ * Make the status icon flash when going to and from away state
+ * Show the contact list if it's visible on another workspace when
+   toggling visibility
+ * Make links clickable in logs
+ * Handle incoming private chats through group chats correctly
+ * An experimental and optional dbus interface
+ * Add status submenu to the notification area icon
+ * Limit the length of the status text in the contact list
+ * Plug memory leaks
+ * When detaching a tab, put the new window at the pointer
+ * Updated translations (ca, cs, es, hr, nl, no, sr, sr@Latn, sv)
+
+News in 0.7.1:
+==============
+
+ * The away message wasn't always cleared when coming back
+ * Fixed a few schema problems
+ * Didn't export a variable for the spec file
+
 News in 0.7:
 ============
 * Fixes to the chat window (URL matching, clear chat)
