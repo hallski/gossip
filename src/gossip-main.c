@@ -54,11 +54,29 @@ main (int argc, char *argv[])
 {
 	GnomeProgram       *program;
 	gboolean            no_connect = FALSE;
+	gchar              *account_name = NULL;
 	poptContext         popt_context;
 	const gchar       **args;
 	struct poptOption   options[] = {
-		{ "no-connect", 'a', POPT_ARG_NONE, &no_connect, 0,
-		  N_("Don't connect on startup."), NULL },
+		{
+			"no-connect",
+			'n',
+			POPT_ARG_NONE,
+			&no_connect,
+			0,
+			N_("Don't connect on startup"),
+			NULL
+		},
+		{
+			"account",
+			'a',
+			POPT_ARG_STRING,
+			&account_name,
+			0,
+			N_("Which account to connect to on startup"),
+			N_("ACCOUNT-NAME")
+		},
+
 		{ NULL, '\0', 0, NULL, 0, NULL, NULL }
 	};
 	
@@ -71,7 +89,7 @@ main (int argc, char *argv[])
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,
 				      GNOME_PARAM_POPT_TABLE, options,
-				      GNOME_PARAM_HUMAN_READABLE_NAME, _("Gossip"),
+				      GNOME_PARAM_HUMAN_READABLE_NAME, "Gossip",
 				      NULL);
 
 	g_object_get (program,
@@ -93,7 +111,16 @@ main (int argc, char *argv[])
 	gossip_app_create ();
 
 	if (!no_connect) {
-		gossip_app_connect_default ();
+		if (!account_name) {
+			gossip_app_connect_default ();
+		} else {
+			GossipAccount *account;
+			
+			account = gossip_account_get (account_name);
+			if (account) {
+				gossip_app_connect (account);
+			}
+		}
 	}
 	
 	gtk_main ();

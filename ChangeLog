@@ -1,5 +1,9 @@
 2003-06-28  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c (main): Add option for which account to
+	connect to, fixes bug #495. Also change the short option for no
+	autoconnect to -n.
+
 	* src/Makefile.am: Make it pass distcheck..
 
 	* Makefile.am: Dist intltool. Patch from Ross Burton
