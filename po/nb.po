@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-29 00:55+0200\n"
-"PO-Revision-Date: 2004-09-29 00:59+0200\n"
+"POT-Creation-Date: 2004-12-25 16:24+0100\n"
+"PO-Revision-Date: 2004-12-25 16:25+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -15,11 +15,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: gossip.desktop.in.h:1
+#: gossip.desktop.in.in.h:1
 msgid "Imendio Gossip"
 msgstr "Imendio Gossip"
 
-#: gossip.desktop.in.h:2
+#: gossip.desktop.in.in.h:2
 msgid "Instant Messenger"
 msgstr "Instant Messaging"
 
@@ -169,11 +169,11 @@ msgstr "_Prat"
 msgid "%s wants to be notified of your status."
 msgstr "%s ønsker å få melding om din status."
 
-#: src/gossip-app.c:1264
+#: src/gossip-app.c:1268
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du har blitt koblet fra tjeneren. Vil du koble til på nytt?"
 
-#: src/gossip-app.c:1450
+#: src/gossip-app.c:1454
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -181,45 +181,45 @@ msgstr ""
 "Sjekk at din kontoinformasjon er korrekt. Det er også mulig at tjeneren ikke "
 "er tilgjengelig for øyeblikket."
 
-#: src/gossip-app.c:1924
+#: src/gossip-app.c:1928
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, klient for øyeblikksmeldinger"
 
-#: src/gossip-app.c:2068
+#: src/gossip-app.c:2072
 #, c-format
 msgid "New message from %s"
 msgstr "Ny melding fra %s"
 
-#: src/gossip-app.c:2157 src/gossip-private-chat.c:1140
+#: src/gossip-app.c:2161 src/gossip-private-chat.c:1140
 #: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Frakoblet"
 
-#: src/gossip-app.c:2556 src/gossip-preferences.c:638
+#: src/gossip-app.c:2560 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Tilgjengelig"
 
-#: src/gossip-app.c:2567 src/gossip-preferences.c:639
+#: src/gossip-app.c:2571 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Opptatt"
 
-#: src/gossip-app.c:2578 src/gossip-preferences.c:640
+#: src/gossip-app.c:2582 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Borte"
 
-#: src/gossip-app.c:2710
+#: src/gossip-app.c:2714
 msgid "Available..."
 msgstr "Tilgjengelig..."
 
-#: src/gossip-app.c:2715
+#: src/gossip-app.c:2719
 msgid "Busy..."
 msgstr "Opptatt..."
 
-#: src/gossip-app.c:2720
+#: src/gossip-app.c:2724
 msgid "Away..."
 msgstr "Borte..."
 
-#: src/gossip-app.c:2749
+#: src/gossip-app.c:2753
 msgid "Edit List..."
 msgstr "Rediger liste..."
 
@@ -805,7 +805,8 @@ msgid ""
 msgstr ""
 "Gossip er en moderne klient for meldingssystemet Jabber.\n"
 "\n"
-"Denne veiviseren vil hjelpe deg med å konfigurere Gossip og å koble deg til din foretrukne Jabber-tjener.\n"
+"Denne veiviseren vil hjelpe deg med å konfigurere Gossip og å koble deg til "
+"din foretrukne Jabber-tjener.\n"
 "\n"
 "Klikk «Fremover» for å starte."
 
@@ -816,7 +817,8 @@ msgid ""
 ">Connect... menu item."
 msgstr ""
 "Gossip er nå konfigurert for ditt system.\n"
-"Du kan endre innstillingene for kontoen ved å velge menyoppføringen «Prat->Koble til» senere."
+"Du kan endre innstillingene for kontoen ved å velge menyoppføringen «Prat-"
+">Koble til» senere."
 
 #: ui/main.glade.h:45
 msgid "I would like to add you to my contact list."
@@ -905,7 +907,7 @@ msgstr "Spill av lyd når meldinger ankommer"
 msgid ""
 "Please enter your user name, password and all other required details below "
 "to set up your account.  "
-msgstr ""
+msgstr "Vennligst oppgi ditt brukernavn, passord og all annen nødvendig informasjon for å sette opp din konto under."
 
 #: ui/main.glade.h:66
 msgid "Preferences"
@@ -957,7 +959,7 @@ msgstr ""
 
 #: ui/main.glade.h:78
 msgid "This name will be used to identify you in chat windows."
-msgstr ""
+msgstr "Dette navnet vil bli brukt for å identifisere deg i pratevinduer."
 
 #: ui/main.glade.h:79
 msgid ""
