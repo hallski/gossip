@@ -1,14 +1,15 @@
 # Czech translation of gossip.
-# Copyright (C) 2003 THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2003, 2004 gossip'S COPYRIGHT HOLDER
+# Copyright (C) 2003, 2004 Miloslav Trmac <mitr@volny.cz>
 # This file is distributed under the same license as the gossip package.
-# Miloslav Trmac <mitr@volny.cz>, 2003.
+# Miloslav Trmac <mitr@volny.cz>, 2003, 2004.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-18 15:24+0100\n"
-"PO-Revision-Date: 2003-12-18 18:24+0100\n"
+"POT-Creation-Date: 2004-01-07 04:38+0100\n"
+"PO-Revision-Date: 2004-01-07 19:46+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -146,81 +147,81 @@ msgstr "%s bude přidán do vašeho seznamu kontaktů."
 msgid "Just about to leave..."
 msgstr "Právě odcházím..."
 
-#: src/gossip-app.c:439
+#: src/gossip-app.c:438
 msgid "_Show Contact List"
 msgstr "_Zobrazit seznam kontaktů"
 
-#: src/gossip-app.c:448
+#: src/gossip-app.c:447
 msgid "_Hide Contact List"
 msgstr "_Skrýt seznam kontaktů"
 
-#: src/gossip-app.c:461 ui/main.glade.h:59
+#: src/gossip-app.c:460 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "_Odeslat zprávu..."
 
-#: src/gossip-app.c:476
+#: src/gossip-app.c:475
 msgid "_Quit"
 msgstr "U_končit"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:597
+#: src/gossip-app.c:599
 msgid "translator_credits"
 msgstr "Miloslav Trmač <mitr@volny.cz>"
 
-#: src/gossip-app.c:609
+#: src/gossip-app.c:611
 msgid "A Jabber Client for GNOME"
 msgstr "Klient Jabberu pro GNOME"
 
-#: src/gossip-app.c:616
+#: src/gossip-app.c:618
 msgid "Gossip Website"
 msgstr "WWW stránka Gossipu:"
 
-#: src/gossip-app.c:720
+#: src/gossip-app.c:737
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:725 ui/main.glade.h:83
+#: src/gossip-app.c:742 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: src/gossip-app.c:987
+#: src/gossip-app.c:1001
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s chce být upozorňován na vaši přítomnost."
 
-#: src/gossip-app.c:1230
+#: src/gossip-app.c:1244
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1380
+#: src/gossip-app.c:1393
 msgid "Make sure that your account information is correct."
 msgstr "Zkontrolujte, že vaše informace o účtu jsou správné."
 
-#: src/gossip-app.c:1381
+#: src/gossip-app.c:1394
 msgid "The server may currently be unavailable."
 msgstr "Server teď možná není k dispozici."
 
-#: src/gossip-app.c:1798
+#: src/gossip-app.c:1796
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, klient Jabberu"
 
-#: src/gossip-app.c:1974
+#: src/gossip-app.c:1972
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2528
+#: src/gossip-app.c:2526
 msgid "Custom Message..."
 msgstr "Vlasní zpráva..."
 
-#: src/gossip-app.c:2546
+#: src/gossip-app.c:2544
 msgid "Custom Busy Message..."
 msgstr "Vlasní zpráva o zaneprázdnění..."
 
-#: src/gossip-app.c:2553
+#: src/gossip-app.c:2551
 msgid "Leave..."
 msgstr "Odejít..."
 
@@ -240,30 +241,38 @@ msgstr "_Otevřít odkaz"
 msgid "%A %d %B %Y"
 msgstr "%A %d. %B %Y"
 
-#: src/gossip-chat-window.c:620
+#: src/gossip-chat-window.c:638
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sDiskuse - %s"
 
-#: src/gossip-chat.c:641
+#: src/gossip-chat.c:674
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Při diskusi s %s došlo k chybě."
 
-#: src/gossip-chat.c:646 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:679 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detaily:"
 
-#: src/gossip-chat.c:732
+#: src/gossip-chat.c:765
 #, c-format
 msgid "%s went offline"
 msgstr "%s se připojil"
 
-#: src/gossip-chat.c:746
+#: src/gossip-chat.c:779
 #, c-format
 msgid "%s comes online"
 msgstr "%s se odpojil"
+
+#: src/gossip-chat.c:866
+msgid "Connected"
+msgstr "Připojen"
+
+#: src/gossip-chat.c:881
+msgid "Disconnected"
+msgstr "Odpojen"
 
 #: src/gossip-contact-info.c:352
 #, c-format
