@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2002 CodeFactory AB
  * Copyright (C) 2002 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,9 +23,7 @@
 #ifndef __GOSSIP_ACCOUNT_H__
 #define __GOSSIP_ACCOUNT_H__
 
-#include <gtk/gtkoptionmenu.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtkentry.h>
+#include <glib.h>
 #include "gossip-jid.h"
 
 #define GOSSIP_ACCOUNTS_PATH "/Gossip/Accounts"

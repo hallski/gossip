@@ -112,7 +112,7 @@ gossip_jid_get_part_name (GossipJID *jid)
 		}
 	}
 
-	return ""; 
+	return g_strdup (""); 
 }
 
 GossipJID *

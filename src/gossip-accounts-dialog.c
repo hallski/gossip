@@ -57,33 +57,38 @@ enum {
 	NUM_COLS
 };
 
-static void accounts_dialog_destroy_cb         (GtkWidget             *widget,
-						GossipAccountsDialog  *dialog);
-static void accounts_dialog_response_cb        (GtkWidget             *widget,
-						gint                   response,
-						GossipAccountsDialog  *dialog);
-static void accounts_dialog_add_account_cb     (GtkWidget             *widget,
-						GossipAccountsDialog  *dialog);
-static void accounts_dialog_remove_account_cb  (GtkWidget             *widget,
-						GossipAccountsDialog  *dialog);
-static gboolean accounts_dialog_update_account_cb  (GtkWidget             *widget,
-						    GdkEventFocus         *event,
-						    GossipAccountsDialog  *dialog);
-static void accounts_dialog_set_entries        (GossipAccountsDialog *dialog,
-						const gchar          *account_name,
-						const gchar          *username,
-						const gchar          *password,
-						const gchar          *resource,
-						const gchar          *server,
-						guint                 port);
-static void accounts_dialog_rebuild_list       (GossipAccountsDialog  *dialog);
-static void accounts_dialog_selection_changed_cb (GtkTreeSelection    *selection,
-						  GossipAccountsDialog *dialog);
-static void accounts_dialog_passwd_entry_insert_text_cb (GtkEditable *editable,
-							 gchar       *new_text,
-							 gint         len,
-							 gint        *position,
-							 GossipAccountsDialog *dialog);
+static void accounts_dialog_destroy_cb      (GtkWidget            *widget,
+					     GossipAccountsDialog *dialog);
+static void accounts_dialog_response_cb     (GtkWidget            *widget,
+					     gint                  response,
+					     GossipAccountsDialog  *dialog);
+static void accounts_dialog_add_account_cb  (GtkWidget            *widget,
+					     GossipAccountsDialog *dialog);
+static void
+accounts_dialog_remove_account_cb           (GtkWidget            *widget,
+					     GossipAccountsDialog *dialog);
+static gboolean
+accounts_dialog_update_account_cb           (GtkWidget            *widget,
+					     GdkEventFocus        *event,
+					     GossipAccountsDialog *dialog);
+static void accounts_dialog_set_entries     (GossipAccountsDialog *dialog,
+					     const gchar          *account_name,
+					     const gchar          *username,
+					     const gchar          *password,
+					     const gchar          *resource,
+					     const gchar          *server,
+					     guint                 port);
+static void accounts_dialog_rebuild_list    (GossipAccountsDialog *dialog);
+static void
+accounts_dialog_selection_changed_cb        (GtkTreeSelection     *selection,
+					     GossipAccountsDialog *dialog);
+static void
+accounts_dialog_passwd_entry_insert_text_cb (GtkEditable          *editable,
+					     gchar                *new_text,
+					     gint                  len,
+					     gint                 *position,
+					     GossipAccountsDialog *dialog);
+
 
 static void
 accounts_dialog_destroy_cb (GtkWidget            *widget,
@@ -154,7 +159,9 @@ accounts_dialog_remove_account_cb (GtkWidget            *widget,
 	g_free (path);
 
 	accounts_dialog_rebuild_list (dialog);
-	/* Move all accounts that is after the removed one! */
+
+	/* FIXME: Move all accounts that is after the removed one! */
+
 	gnome_config_sync_file (GOSSIP_ACCOUNTS_PATH);
 }
 

@@ -22,9 +22,7 @@
 #ifndef __GOSSIP_STARTUP_DRUID_H__
 #define __GOSSIP_STARTUP_DRUID_H__
 
-#include <loudmouth/lm-connection.h>
-
-void  gossip_startup_druid_run (LmConnection *connection);
+void  gossip_startup_druid_run (void);
 
 #endif /* __GOSSIP_STARTUP_DRUID_H__ */
 

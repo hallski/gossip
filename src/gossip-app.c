@@ -23,6 +23,7 @@
 
 #include <config.h>
 #include <sys/utsname.h>
+#include <stdlib.h>
 #include <string.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
@@ -260,16 +261,14 @@ app_init (GossipApp *app)
 	g_object_unref (glade);
 
 	if (!priv->account) {
-		gossip_startup_druid_run (priv->connection);
+		gossip_startup_druid_run ();
 		priv->account = gossip_account_get_default ();
 	}
 	
-	if (!priv->account) {
-		g_error ("Get your act together dude!");
+	if (priv->account) {
+		app_create_connection (app);
 	}
-		
-	app_create_connection (app);
-
+	
 	priv->roster = gossip_roster_new (app);
 
 	gtk_widget_show (GTK_WIDGET (priv->roster));

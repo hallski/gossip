@@ -1,5 +1,31 @@
 2003-07-03  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-utils.c: Add a few smiley patterns.
+
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_remove_account_cb): Fix comment.
+
+	* src/gossip-app.c: (app_init): Remove debug message, and only
+	create connection if we have an account.
+
+	* src/gossip-roster.c: (roster_menu_remove_cb): Add comment about
+	agents.
+
+	* src/gossip-startup-druid.c: (startup_druid_get_account_info),
+	(startup_druid_last_page_finished), (gossip_startup_druid_run),
+	(startup_druid_progress_dialog_destroy_cb),
+	(startup_druid_register_handler),
+	(startup_druid_connection_open_cb),
+	(startup_druid_register_account):
+	* src/gossip-startup-druid.h: Implement the remaining bits of the
+	startup druid and hook it up.
+
+	* ui/connect.glade: Remove spurios '5' in the port entry.
+
+	* src/gossip-jid.c (gossip_jid_get_part_name): Don't return an
+	allocated string for some cases and a static one for some. Always
+	return a copy.
+
 	* ui/*.glade: Add missing mnemonics, patch from Jordi Mallach
 	<jordi@sindominio.net>.
 

@@ -421,6 +421,8 @@ roster_menu_remove_cb (gpointer   callback_data,
 	lm_connection_send (priv->connection, m, NULL);
 
 	lm_message_unref (m);
+
+	/* FIXME: if the selected item is an agent, we need to unregister too. */
 }
 
 static void

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,6 +21,7 @@
 #ifndef __GOSSIP_UTILS_H__
 #define __GOSSIP_UTILS_H__
 
+#include <gtk/gtkoptionmenu.h>
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktextview.h>
 #include <glade/glade.h>
