@@ -1,5 +1,10 @@
 2003-11-07  Mikael Hallendal  <micke@imendio.com>
 
+        * src/gossip-roster.c (roster_clear_foreach_item):
+	- Signal item removed, not added. Wonder how this worked.
+
+2003-11-07  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-roster.c (roster_item_update): 
 	- Don't crash on empty groups. Patch from Sjoerd Simons. Fixes #126436
 

@@ -18,6 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <stdio.h>
 #include <config.h>
 
 #include <gtk/gtkmain.h>
@@ -386,7 +387,7 @@ roster_clear_foreach_item (gpointer          key,
 	for (l = item->groups; l; l = l->next) {
 		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
 
-		g_signal_emit (roster, signals[GROUP_ITEM_ADDED], 0,
+		g_signal_emit (roster, signals[GROUP_ITEM_REMOVED], 0,
 			       group, item);
 	}
 
@@ -599,7 +600,7 @@ roster_item_update (GossipRoster     *roster,
 	in_a_group = FALSE;
 	
 	for (child = node->children; child; child = child->next) {
-		if (strcmp (child->name, "group") == 0) {
+		if (strcmp (child->name, "group") == 0 && child->value) {
 			roster_item_add_group (roster, item, child->value);
 			in_a_group = TRUE;
 		}
