@@ -1128,6 +1128,7 @@ gossip_chat_get_for_contact (GossipContact *contact, gboolean create)
 	priv = chat->priv;
 	priv->contact = gossip_contact_ref (contact);
 	priv->name = g_strdup (gossip_contact_get_name (contact));
+
 	priv->groupchat_priv = FALSE;
 
 	roster = gossip_app_get_roster ();

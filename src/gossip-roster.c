@@ -586,11 +586,15 @@ roster_item_update (GossipRoster     *roster,
 		g_free (item->ask);
 		item->ask = g_strdup (ask);
 	}
+	
+	contact = g_hash_table_lookup (priv->contacts, item->jid);
 		
 	name = lm_message_node_get_attribute (node, "name");
 	if (name) {
 		g_free (item->name);
 		item->name = g_strdup (name);
+
+		gossip_contact_set_name (contact, item->name);
 	}
 
 	/* FIXME: We should probably check if groups changed before doing
@@ -618,7 +622,6 @@ roster_item_update (GossipRoster     *roster,
 		roster_item_add_to_group (roster, item, UNSORTED_GROUP);
 	}
 
-	contact = g_hash_table_lookup (priv->contacts, item->jid);
 	
 	if (new_item) {
 		g_signal_emit (roster, signals[ITEM_ADDED], 0, item);
@@ -1004,7 +1007,7 @@ roster_item_get_contact (GossipRosterItem *item)
 	contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CONTACTLIST,
 					   item->jid,
 					   gossip_roster_item_get_name (item));
-
+	
 	gossip_contact_set_groups (contact, item->groups);
 
 	if (gossip_roster_item_is_offline (item)) {
