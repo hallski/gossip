@@ -18,6 +18,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <time.h>
 #include <config.h>
 #include "gossip-idle.h"
 
@@ -33,6 +34,7 @@ gint
 gossip_idle_get_seconds (void)
 {
 	gint idle_secs = 0;
+  static time_t timestamp = 0;
 	
 #ifdef USE_SCREENSAVER
 	static gboolean          inited = FALSE;
@@ -41,6 +43,7 @@ gossip_idle_get_seconds (void)
 	gint                     error_base;
 
 	if (!inited) {
+    timestamp = time(NULL);
 		if (XScreenSaverQueryExtension (GDK_DISPLAY (), &event_base, &error_base)) {
 			ss_info = XScreenSaverAllocInfo ();
 		}
@@ -53,7 +56,12 @@ gossip_idle_get_seconds (void)
 		idle_secs = ss_info->idle / 1000;
 	}
 #endif
+  /* when idle time is below 3 seconds, we're not really idle */
+  if (idle_secs < 3) {
+    return timestamp - time(NULL);
+  }
 
+  /* update timestamp */
+  timestamp = time(NULL);
 	return idle_secs;
 }
-

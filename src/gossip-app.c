@@ -59,6 +59,7 @@
 #define ADD_CONTACT_RESPONSE_ADD 1
 #define REQUEST_RESPONSE_DECIDE_LATER 1
 
+#define NONIDLE_TIME -6
 #define LEAVE_TIME 15
 #define	AUTO_AWAY_TIME (5*60)
 #define	AUTO_EXT_AWAY_TIME (30*60)
@@ -120,7 +121,6 @@ struct _GossipAppPriv {
 	gchar               *overridden_away_message;
 	time_t               leave_time;
 	guint                leave_flash_timeout_id;
-	gint                 leave_offset;
 
 	guint                size_timeout_id;
 };
@@ -1237,11 +1237,8 @@ app_idle_check_cb (GossipApp *app)
 
 		if (t - priv->leave_time < LEAVE_TIME) {
 			/* Waiting to leave. */
-			priv->leave_offset = 0;
 		} else {
 			/* Time to leave. */
-			priv->leave_offset = AUTO_AWAY_TIME - idle;
-			
 			priv->leave_time = 0;
 			priv->auto_show = GOSSIP_SHOW_AWAY;
 			app_update_show ();
@@ -1250,8 +1247,6 @@ app_idle_check_cb (GossipApp *app)
 		return TRUE;
 	}
 
-	idle += priv->leave_offset;
-
 	if (show != GOSSIP_SHOW_EXT_AWAY && idle > AUTO_EXT_AWAY_TIME) {
 		priv->auto_show = GOSSIP_SHOW_EXT_AWAY;
 	}
@@ -1259,15 +1254,11 @@ app_idle_check_cb (GossipApp *app)
 		 idle > AUTO_AWAY_TIME) {
 		priv->auto_show = GOSSIP_SHOW_AWAY;
 	}
-	else if (idle <= AUTO_AWAY_TIME) {
+	else if (idle <= NONIDLE_TIME) {
 		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 		app_cancel_pending_leave ();
 	}
 
-	if (idle - priv->leave_offset >= AUTO_EXT_AWAY_TIME) {
-		priv->leave_offset = 0;
-	}
-	
 	if (show != app_get_effective_show ()) {
 		app_update_show ();
 	}
@@ -2051,7 +2042,6 @@ app_cancel_pending_leave (void)
 {
 	GossipAppPriv *priv = app->priv;
 
-	priv->leave_offset = 0;
 	priv->leave_time = 0;
 
 	g_free (priv->overridden_away_message);

@@ -1,6 +1,15 @@
+2003-12-06  Sjoerd Simons  <sjoerd@luon.net>
+
+	* src/gossip-app.c: (app_idle_check_cb),
+	(app_cancel_pending_leave):
+	* src/gossip-idle.c: (gossip_idle_get_seconds):
+        Let gossip detect how long you have been active, sortof. It
+	reports the time in which you have not been idle 3 or more
+	seconds.
+
 2003-11-29  Hasbullah Bin Pit <sebol@ikhlas.com>
-                                                                                
-        * configure.in: Added 'ms' (Malay) to ALL_LINGUAS. 
+        
+	* configure.in: Added 'ms' (Malay) to ALL_LINGUAS. 
 
 2003-11-24  Mikael Hallendal  <micke@imendio.com>
 
