@@ -1,3 +1,10 @@
+2005-04-04  Richard Hult  <richard@imendio.com>
+
+	* POTFILES.in: 
+	* POTFILES.skip: Update. 
+
+	* sv.po: Update.
+
 2005-03-16  Adam Weinberger  <adamw@gnome.org>
 
 	* en_CA.po: Updated Canadian English translation.
