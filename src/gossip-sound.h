@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Richard Hult <rhult@imendo.com>
+ * Copyright (C) 2003 Richard Hult <rhult@codefactory.se>
  * Copyright (C) 2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
