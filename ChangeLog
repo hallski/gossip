@@ -1,4 +1,20 @@
+2003-07-04  Richard Hult  <richard@imendio.com>
+
+	* ui/connect.glade: Hm, why was the response ID changed? Change
+	back to make connect work again.
+
+	* src/gossip-app.c (app_init): Make it possible to test the druid
+	by setting the environment variable GOSSIP_FORCE_DRUID.
+	(gossip_app_connect): Add warning.
+
+	* src/gossip-roster.c (roster_disconnected_cb): Disconnect
+	handlers.
+
 2003-07-03  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-connect-dialog.c: Remove unsed ACCOUNTS_PATH macro.
+
+	* gossip.spec.in: Update.
 
 	* src/gossip-utils.c: Add a few smiley patterns.
 
@@ -29,7 +45,7 @@
 	* ui/*.glade: Add missing mnemonics, patch from Jordi Mallach
 	<jordi@sindominio.net>.
 
-2003-07-03  Richard Hult  <rhult@codefactory.se>
+2003-07-03  Richard Hult  <richard@imendio.com>
 
 	* ui/chat.glade: Remove send button from single line entry box.
 	* ui/group-chat.glade: Likewise.

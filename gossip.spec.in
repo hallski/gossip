@@ -4,7 +4,7 @@
 Summary: A program that reminds you to take wrist breaks
 Name: %name
 Version: %ver
-Release: 1
+Release: imendio.1
 Source: %{name}-%{ver}.tar.gz
 License: GPL
 Group: Applications/System

@@ -76,7 +76,7 @@ connect_dialog_response_cb (GtkWidget           *widget,
 	GossipAccount *account;
 	const gchar   *name;
 	const gchar   *resource;
-	
+
 	switch (response) {
 	case GTK_RESPONSE_OK:
 		name = connect_dialog_option_menu_get_active (GTK_OPTION_MENU (dialog->option_menu));
@@ -258,8 +258,6 @@ connect_dialog_option_menu_get_active (GtkOptionMenu *option_menu)
 
 	return g_object_get_data (G_OBJECT (item), "name");
 }
-
-#define ACCOUNTS_PATH "/Gossip/Accounts"
 
 void
 gossip_connect_dialog_show (GossipApp *app)

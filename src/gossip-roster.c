@@ -696,6 +696,37 @@ roster_enable_sound_cb (gpointer data)
 }
 
 static void
+roster_reset_connection (GossipRoster *roster)
+{
+	GossipRosterPriv *priv;
+
+	priv = roster->priv;
+
+	if (priv->presence_handler) {
+		lm_connection_unregister_message_handler (priv->connection,
+							  priv->presence_handler,
+							  LM_MESSAGE_TYPE_PRESENCE);
+
+		lm_message_handler_unref (priv->presence_handler);
+		priv->presence_handler = NULL;
+	}
+
+	if (priv->iq_handler) {
+		lm_connection_unregister_message_handler (priv->connection,
+							  priv->iq_handler,
+							  LM_MESSAGE_TYPE_IQ);
+
+		lm_message_handler_unref (priv->iq_handler);
+		priv->iq_handler = NULL;
+	}
+
+	if (priv->connection) {
+		lm_connection_unref (priv->connection);
+		priv->connection = NULL;
+	}
+}
+
+static void
 roster_connected_cb (GossipApp *app, GossipRoster *roster)
 {
 	GossipRosterPriv *priv;
@@ -708,20 +739,20 @@ roster_connected_cb (GossipApp *app, GossipRoster *roster)
 	priv = roster->priv;
 
 	priv->connection = lm_connection_ref (gossip_app_get_connection (app));
-
+	
 	priv->presence_handler = 
 		lm_message_handler_new ((LmHandleMessageFunction) roster_presence_handler,
 					roster, NULL);
-
+	
 	lm_connection_register_message_handler (priv->connection, 
 						priv->presence_handler,
 						LM_MESSAGE_TYPE_PRESENCE,
 						LM_HANDLER_PRIORITY_NORMAL);
-
+	
 	priv->iq_handler = 
 		lm_message_handler_new ((LmHandleMessageFunction) roster_iq_handler,
 					roster, NULL);
-
+	
 	lm_connection_register_message_handler (priv->connection, 
 						priv->iq_handler,
 						LM_MESSAGE_TYPE_IQ,
@@ -738,7 +769,7 @@ roster_connected_cb (GossipApp *app, GossipRoster *roster)
 	lm_connection_send_with_reply (priv->connection, m, 
 				       priv->iq_handler, NULL);
 	lm_message_unref (m);
-
+	
 	if (!priv->enable_sound_timeout_id) {
 		priv->enable_sound_timeout_id =
 			g_timeout_add (5000, roster_enable_sound_cb, roster);
@@ -760,6 +791,8 @@ roster_disconnected_cb (GossipApp *app, GossipRoster *roster)
 		priv->enable_sound_timeout_id = 0;
 		priv->sound_enabled = FALSE;
 	}
+
+	roster_reset_connection (roster);
 	
 	roster_clear (roster);
 }

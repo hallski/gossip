@@ -260,7 +260,7 @@ app_init (GossipApp *app)
 
 	g_object_unref (glade);
 
-	if (!priv->account) {
+	if (!priv->account || g_getenv ("GOSSIP_FORCE_DRUID")) {
 		gossip_startup_druid_run ();
 		priv->account = gossip_account_get_default ();
 	}
@@ -893,8 +893,7 @@ app_connection_open_cb (LmConnection *connection,
 		g_warning ("Connection failed, handle this!");
 	}
 
-	if (!priv->account->password || 
-	    strlen (priv->account->password) == 0) {
+	if (!priv->account->password || !priv->account->password[0]) {
 		dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
 						 GTK_DIALOG_DESTROY_WITH_PARENT,
 						 GTK_MESSAGE_QUESTION,
@@ -1002,15 +1001,16 @@ gossip_app_connect (GossipAccount *account)
 {
 	GossipAppPriv *priv;
 
-	if (!account) {
-		/* Handle this better */
-		return;
-	}
-	
 	priv = app->priv;
 
-	app_disconnect (app);
+	if (!account) {
+		/* FIXME: Handle this better */
+		g_warning ("NULL account\n");
+		return;
+	}
 
+	app_disconnect (app);
+	
 	gossip_account_ref (account);
 
 	d(g_print ("Connecting to: %s\n", account->server));
@@ -1023,7 +1023,7 @@ gossip_app_connect (GossipAccount *account)
 	if (!priv->connection) {
 		app_create_connection (app);
 	}
-	
+
 	lm_connection_open (priv->connection,
 			    (LmResultFunction) app_connection_open_cb,
 			    app, NULL, NULL);
@@ -1277,7 +1277,7 @@ app_create_connection (GossipApp *app)
 {
 	GossipAppPriv    *priv;
 	LmMessageHandler *handler;
-	
+
 	priv = app->priv;
 
 	priv->connection = lm_connection_new (priv->account->server);
@@ -1316,9 +1316,8 @@ static void
 app_disconnect (GossipApp *app)
 {
 	GossipAppPriv *priv = app->priv;
-	
-	if (priv->connection &&
-	    lm_connection_is_open (priv->connection)) {
+
+	if (priv->connection && lm_connection_is_open (priv->connection)) {
 		lm_connection_close (priv->connection, NULL);
 	}
 }
