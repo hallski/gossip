@@ -1,5 +1,10 @@
 2003-11-12  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Fix #121000 and #125566, unnecessary space and
+	confusing menu item.
+
+2003-11-12  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c: Include config.h, fixes #126569.
 
 	* src/gossip-roster-view.c (roster_view_name_cell_data_func):

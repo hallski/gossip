@@ -70,7 +70,7 @@
 		      <child>
 			<widget class="GtkMenuItem" id="actions_send_chat_message">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_Send Chat Message...</property>
+			  <property name="label" translatable="yes">_Send Message...</property>
 			  <property name="use_underline">True</property>
 			</widget>
 		      </child>
@@ -88,7 +88,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image23">
+			    <widget class="GtkImage" id="image24">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
 			      <property name="icon_size">1</property>
@@ -164,7 +164,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image24">
+			    <widget class="GtkImage" id="image25">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-preferences</property>
 			      <property name="icon_size">1</property>
@@ -2322,7 +2322,7 @@ To get started, just click &quot;Forward&quot;.</property>
 	      <child>
 		<widget class="GtkLabel" id="label357">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Do you already have an account on a Jabber server? </property>
+		  <property name="label" translatable="yes">Do you already have an account on a Jabber server?</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
