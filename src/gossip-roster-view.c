@@ -278,7 +278,6 @@ static GtkTargetEntry row_targets[] = {
 };
 */
 
-GObjectClass *parent_class;
 static guint signals[LAST_SIGNAL];
 
 GType                

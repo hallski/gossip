@@ -1,3 +1,9 @@
+2004-07-28  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c:
+	- Remove unused parent_class. Fixes bug #147360
+	- Patch from Heikki Taurianinen.
+
 2004-07-09  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact.c: (gossip_contact_get_name):
