@@ -10,6 +10,7 @@ src/gossip-accounts-dialog.c
 src/gossip-utils.c           
 src/gossip-startup-druid.c
 src/gossip-add-contact.c
+src/gossip-contact-info.c
 
 ui/main.glade
 ui/chat.glade

@@ -1,5 +1,10 @@
 2003-06-18  Jordi Mallach  <jordi@sindominio.net>
 
+	* POTFILES.in: Added src/gossip-contact-info.c.
+	* ca.po: Updated Catalan translation.
+
+2003-06-18  Jordi Mallach  <jordi@sindominio.net>
+
 	* ca.po: Added Catalan translation.
 
 2003-06-15  Richard Hult  <richard@imendio.com>
