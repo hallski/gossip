@@ -1,6 +1,14 @@
 2003-12-11  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c: 
+	(chat_create_gui),
+	(chat_input_text_view_send), (chat_input_key_press_event_cb):
+	* ui/chat.glade:
+	- Removed the send button, not needed.
+
+2003-12-11  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat.c: 
 	(chat_create_gui), (chat_send_clicked_cb),
 	(chat_input_key_press_event_cb),
 	(chat_input_text_buffer_changed_cb),

@@ -54,7 +54,6 @@ struct _GossipChatPriv {
 	GtkWidget	 *text_view_sw;
         GtkWidget        *input_text_view;
         GtkWidget        *single_hbox;
-        GtkWidget        *send_button;
         GtkWidget        *subject_entry;
 
 	GossipChatView   *view;
@@ -99,8 +98,6 @@ static gboolean        chat_event_handler                (GossipChat       *chat
                                                           LmMessage        *m);
 static void            chat_error_dialog                 (GossipChat       *chat,
                                                           const gchar      *msg);
-static void	       chat_send_clicked_cb	         (GtkWidget	   *button,
-							  GossipChat	   *chat);
 static gboolean        chat_input_key_press_event_cb     (GtkWidget        *widget,
                                                           GdkEventKey      *event,
                                                           GossipChat       *chat);
@@ -291,7 +288,6 @@ chat_create_gui (GossipChat *chat)
                                       "chat_widget", &priv->widget,
                                       "chat_view_sw", &priv->text_view_sw,
                                       "input_textview", &priv->input_text_view,
-                                      "send_button", &priv->send_button,
                                       NULL);
 
 	priv->view = gossip_chat_view_new ();
@@ -307,10 +303,6 @@ chat_create_gui (GossipChat *chat)
 
 	priv->tooltips = gtk_tooltips_new ();
 
-	g_signal_connect (priv->send_button,
-			  "clicked",
-			  G_CALLBACK (chat_send_clicked_cb),
-			  chat);
 	g_signal_connect (priv->input_text_view,
 			  "key_press_event",
 			  G_CALLBACK (chat_input_key_press_event_cb),
@@ -852,7 +844,7 @@ chat_error_dialog (GossipChat  *chat,
 }
 
 static void
-chat_send_clicked_cb (GtkWidget *button, GossipChat *chat)
+chat_input_text_view_send (GossipChat *chat)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter    start, end;
@@ -880,10 +872,8 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
                                GdkEventKey *event,
                                GossipChat  *chat)
 {
-	GossipChatPriv *priv = chat->priv;
-	
         if (IS_ENTER (event->keyval)) {
-		gtk_widget_activate (priv->send_button);
+		chat_input_text_view_send (chat);
 
                 return TRUE;
         }
