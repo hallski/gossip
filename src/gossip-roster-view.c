@@ -791,7 +791,8 @@ ellipsize_string (gchar *str, gint len)
 	}
 }
 
-#define ELLIPSIS_LIMIT 6
+#define ELLIPSIS_MIN 6
+#define ELLIPSIS_MAX 100
 #define TREE_INDENT 30
 
 static void
@@ -809,9 +810,11 @@ roster_view_ellipsize_item_string (GossipRosterView *view,
 	
 	len_str = g_utf8_strlen (str, -1);
 
-	if (len_str < ELLIPSIS_LIMIT) {
+	if (len_str < ELLIPSIS_MIN) {
 		return;
 	}
+
+	len_str = MIN (len_str, ELLIPSIS_MAX);
 
 	layout = gtk_widget_create_pango_layout (GTK_WIDGET (view), NULL);
 	
@@ -835,7 +838,7 @@ roster_view_ellipsize_item_string (GossipRosterView *view,
 		pango_attr_list_insert (attr_list, attr_size);
 	}
 	
-	while (len_str >= ELLIPSIS_LIMIT && width_str > width) {
+	while (len_str >= ELLIPSIS_MIN && width_str > width) {
 		len_str--;
 		ellipsize_string (str, len_str);
 		
