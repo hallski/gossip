@@ -43,6 +43,8 @@ typedef struct {
 	gchar        *subscription;
 	gchar        *ask;
 	gchar        *status_str;
+	guint         flash_timeout_id;
+	gboolean      flash_on;
 } GossipRosterItem;
 
 struct _GossipRosterPriv {
@@ -53,7 +55,6 @@ struct _GossipRosterPriv {
 
 	GHashTable       *contacts;
 	GList            *groups;
-	GdkPixbuf        *status_pixbufs[GOSSIP_STATUS_OFFLINE  + 1];
 
 	GtkItemFactory   *popup_factory;
 
@@ -227,6 +228,8 @@ static GtkItemFactoryEntry menu_items[] = {
 
 static GObjectClass *parent_class;
 static guint signals[LAST_SIGNAL];
+static GdkPixbuf *status_pixbufs[GOSSIP_STATUS_OFFLINE  + 1];
+static GdkPixbuf *flash_pixbuf = NULL;
 
 
 GType
@@ -710,17 +713,20 @@ roster_create_store (GossipRoster *roster)
 static void
 roster_create_pixbufs (GossipRoster *roster)
 {
-	GossipRosterPriv *priv;
-	gint              i;
+	gint i;
 	
-	priv = roster->priv;
+	if (flash_pixbuf) {
+		return;
+	}
 	
-	for (i = 0; i <= GOSSIP_STATUS_OFFLINE; ++i) {
+	for (i = 0; i <= GOSSIP_STATUS_OFFLINE; i++) {
 		const gchar *filename;
 		filename = gossip_status_to_icon_filename (i);
-		priv->status_pixbufs[i] = gdk_pixbuf_new_from_file (filename,
-								    NULL);
+		status_pixbufs[i] = gdk_pixbuf_new_from_file (filename,
+							      NULL);
 	}
+
+	flash_pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/message.png", NULL); 
 }
 
 static GossipRosterItem *
@@ -1308,13 +1314,14 @@ roster_update_user (GossipRoster *roster,
 		return;
 	}
 	
-	/* Check if user is online, if not we don't have to care about
-	   the group setting. If yes we need to check if a group was 
-	   changed ... */
+	/* Check if user is online, if not we don't have to care about the group
+	 * setting. If yes we need to check if a group was changed.
+	 */
 	if (item->status == GOSSIP_STATUS_OFFLINE ||
 	    strcmp (item->group, group) == 0) {
-		/* Find the correct place in the tree and inform tree */
-		/* to update */
+		/* Find the correct place in the tree and inform tree
+		 * to update.
+		 */
 		roster_item_update (item, jid, name, subscription, ask, group);
 		return;
 	}
@@ -1330,8 +1337,9 @@ roster_update_user (GossipRoster *roster,
 		g_hash_table_remove (priv->contacts, gossip_jid_get_without_resource (jid));
 	}
 */
-	/* User is online and have changed group, we need to move him */
-	/* in the roster */
+	/* User is online and have changed group, we need to move him in the
+	 * roster.
+	 */
 	
 	/* Bug #483 */ 
 }
@@ -1345,6 +1353,7 @@ roster_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 {
 	GossipRosterPriv *priv;
 	GossipRosterItem *item;
+	GdkPixbuf        *pixbuf;
 	
 	gtk_tree_model_get (tree_model, iter, COL_ITEM, &item, -1);
 
@@ -1357,9 +1366,15 @@ roster_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 		return;
 	}
 
+	if (item->flash_on) {
+		pixbuf = flash_pixbuf;
+	} else {
+		pixbuf = status_pixbufs[item->status];
+	}
+	
 	g_object_set (cell,
 		      "visible", TRUE,
- 		      "pixbuf", priv->status_pixbufs[item->status],
+ 		      "pixbuf", pixbuf,
 		      NULL);
 }
 
@@ -1451,11 +1466,16 @@ roster_item_free (GossipRosterItem *item)
 	if (item->jid) {
 		gossip_jid_unref (item->jid);
 	}
+
 	g_free (item->name);
 	g_free (item->subscription);
 	g_free (item->ask);
 	g_free (item->group);
 	g_free (item);
+
+	if (item->flash_timeout_id) {
+		g_source_remove (item->flash_timeout_id);
+	}
 }
 
 GossipRoster *
@@ -1512,11 +1532,11 @@ gossip_roster_get_status_pixbuf_for_jid (GossipRoster *roster,
 
 	priv = roster->priv;
 
-	item = (GossipRosterItem *) g_hash_table_lookup (priv->contacts, 
-							 gossip_jid_get_without_resource (jid));
+	item = g_hash_table_lookup (priv->contacts, 
+				    gossip_jid_get_without_resource (jid));
 	
 	if (item) {
-		return priv->status_pixbufs[item->status];
+		return status_pixbufs[item->status];
 	}
 	
 	return NULL;
@@ -1626,4 +1646,75 @@ gossip_roster_get_selected_jid (GossipRoster *roster)
 	}
 
 	return item->jid;
+}
+
+static gboolean
+flash_timeout_func (gpointer data)
+{
+	GossipRoster     *roster;
+	GossipRosterPriv *priv;
+	GossipRosterItem *item = data;
+	GtkTreeModel     *model;
+	GdkPixbuf        *pixbuf;
+	FindUserData      find;
+	GtkTreePath      *path;
+	
+	roster = gossip_app_get_roster ();
+	priv = roster->priv;
+	
+	if (item->flash_on) {
+		pixbuf = flash_pixbuf;
+	} else {
+		pixbuf = status_pixbufs[item->status];
+	}
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (roster)); 
+	
+	find.roster = roster;
+	find.jid = item->jid;
+	gtk_tree_model_foreach (model,
+				(GtkTreeModelForeachFunc) roster_find_user_foreach,
+				&find);
+
+	if (!find.found) {
+		item->flash_timeout_id = 0;
+		return FALSE;
+	}
+
+	path = gtk_tree_model_get_path (model, &find.found_iter);
+	gtk_tree_model_row_changed (model, path, &find.found_iter);
+	gtk_tree_path_free (path);
+
+	item->flash_on = !item->flash_on;
+
+	return TRUE;
+}
+
+void
+gossip_roster_flash_jid (GossipRoster *roster,
+			 GossipJID    *jid,
+			 gboolean      flash)
+{
+	GossipRosterPriv *priv;
+	GossipRosterItem *item;
+	const gchar      *without_resource;
+
+	priv = roster->priv;
+
+	without_resource = gossip_jid_get_without_resource (jid);
+	
+	item = g_hash_table_lookup (priv->contacts, without_resource);
+	if (!item) {
+		return;
+	}
+
+	if (flash && !item->flash_timeout_id) {
+		/* Start... */
+		item->flash_timeout_id = g_timeout_add (350, flash_timeout_func, item);
+	}
+	else if (!flash && item->flash_timeout_id) {
+		/* Stop... */
+		g_source_remove (item->flash_timeout_id);
+		item->flash_timeout_id = 0;
+	}
 }

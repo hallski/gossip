@@ -49,22 +49,22 @@ struct _GossipRosterClass {
         GtkTreeViewClass parent_class;
 };
 
+
 GType          gossip_roster_get_type           (void) G_GNUC_CONST;
- 
-GossipRoster * gossip_roster_new                (GossipApp    *app);
+GossipRoster *gossip_roster_new                       (GossipApp    *app);
+const gchar * gossip_roster_get_nick_from_jid         (GossipRoster *roster,
+						       GossipJID    *jid);
+GdkPixbuf *   gossip_roster_get_status_pixbuf_for_jid (GossipRoster *roster,
+						       GossipJID    *jid);
+gboolean      gossip_roster_have_jid                  (GossipRoster *roster,
+						       GossipJID    *jid);
+GList *       gossip_roster_get_groups                (GossipRoster *roster);
+GList *       gossip_roster_get_jids                  (GossipRoster *roster);
+void          gossip_roster_free_jid_list             (GList        *jids);
+GossipJID *   gossip_roster_get_selected_jid          (GossipRoster *roster);
+void          gossip_roster_flash_jid                 (GossipRoster *roster,
+						       GossipJID    *jid,
+						       gboolean      flash);
 
-const gchar *  gossip_roster_get_nick_from_jid  (GossipRoster *roster,
-						 GossipJID    *jid);
-
-GdkPixbuf *    
-gossip_roster_get_status_pixbuf_for_jid         (GossipRoster *roster,
-						 GossipJID    *jid);
-gboolean       gossip_roster_have_jid           (GossipRoster *roster,
-						 GossipJID    *jid);
-GList *        gossip_roster_get_groups         (GossipRoster *roster);
-GList *        gossip_roster_get_jids           (GossipRoster *roster);
-void           gossip_roster_free_jid_list      (GList        *jids);
-
-GossipJID *    gossip_roster_get_selected_jid   (GossipRoster *roster);
 
 #endif /* __GOSSIP_ROSTER_H__ */

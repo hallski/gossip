@@ -1,3 +1,20 @@
+2003-08-02  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c: (app_message_handler), (app_user_activated_cb),
+	(app_complete_jid_response_cb), (app_tray_icon_button_press_cb),
+	(app_push_message), (app_pop_message):
+	* src/gossip-roster.c: (roster_create_pixbufs),
+	(roster_update_user), (roster_pixbuf_cell_data_func),
+	(roster_item_free), (gossip_roster_get_status_pixbuf_for_jid),
+	(gossip_roster_get_selected_jid), (flash_timeout_func),
+	(gossip_roster_flash_jid): Flash icons in the roster as well.
+
+2003-08-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_user_activated_cb):
+	(app_complete_jid_response_cb): Present the window instead of just
+	showing it.
+
 2003-08-01  Richard Hult  <rhult@codefactory.se>
 
 	* src/gossip-app.c: (app_init), (app_show_hide_activate_cb),

@@ -206,8 +206,8 @@ static void     app_complete_jid_activate_cb         (GtkEntry           *entry,
 						      CompleteJIDData    *data);
 static gchar *  app_complete_jid_to_string           (gpointer            data);
 static void     app_toggle_visibility                (void);
-static void     app_tray_icon_push_message           (LmMessage          *m);
-static gboolean app_tray_icon_pop_message            (void);
+static void     app_push_message                     (LmMessage          *m);
+static gboolean app_pop_message                      (GossipJID          *jid);
 static void     app_tray_icon_update_tooltip         (void);
 
 
@@ -884,7 +884,7 @@ app_message_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_NOT_SET:
 	case LM_MESSAGE_SUB_TYPE_NORMAL:
 	case LM_MESSAGE_SUB_TYPE_CHAT:
-		app_tray_icon_push_message (m);
+		app_push_message (m);
 		return gossip_chat_handle_message (m);
 
 	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
@@ -1094,7 +1094,9 @@ app_user_activated_cb (GossipRoster *roster,
 
 	chat = gossip_chat_get_for_jid (jid);
 	widget = gossip_chat_get_dialog (chat);
-	gtk_widget_show (widget);
+	gtk_window_present (GTK_WINDOW (widget));
+
+	app_pop_message (jid);
 }
 
 void
@@ -1454,7 +1456,7 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 			jid = gossip_jid_new (str);
 			chat = gossip_chat_get_for_jid (jid);
 			widget = gossip_chat_get_dialog (chat);
-			gtk_widget_show (widget);
+			gtk_window_present (GTK_WINDOW (widget));
 			gossip_jid_unref (jid);
 		} else {
 			/* FIXME: Display error dialog... */
@@ -1465,7 +1467,6 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 	for (l = data->jid_strings; l; l = l->next) {
 		g_free (l->data);
 	}
-	
 	g_list_free (data->jid_strings);
 	gossip_roster_free_jid_list (data->jids);
 	g_free (data);
@@ -1624,7 +1625,7 @@ app_tray_icon_button_press_cb (GtkWidget      *widget,
 
 	switch (event->button) {
 	case 1:
-		if (app_tray_icon_pop_message ()) {
+		if (app_pop_message (NULL)) {
 			break;
 		}
 
@@ -1726,15 +1727,17 @@ flash_timeout_func (gpointer data)
 }
 
 static void
-app_tray_icon_push_message (LmMessage *m)
+app_push_message (LmMessage *m)
 {
 	GossipAppPriv *priv;
 	const gchar   *from;
-
+	GossipJID     *jid;
+		
 	priv = app->priv;
-
-	from = lm_message_node_get_attribute (m->node, "from");
 	
+	from = lm_message_node_get_attribute (m->node, "from");
+	jid = gossip_jid_new (from);
+		
 	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons,
 						g_strdup (from));
 
@@ -1745,35 +1748,56 @@ app_tray_icon_push_message (LmMessage *m)
 
 		app_tray_icon_update_tooltip ();
 	}
+
+	gossip_roster_flash_jid (priv->roster, jid, TRUE);
+
+	gossip_jid_unref (jid);
 }
 
 static gboolean
-app_tray_icon_pop_message (void)
+app_pop_message (GossipJID *jid)
 {
 	GossipAppPriv *priv;
-	gchar         *from;
-	GossipJID     *jid;
+	const gchar   *from;
 	GossipChat    *chat;
 	GtkWidget     *widget;
 	GossipStatus   status;
 	const gchar   *filename;
+	GList         *l;
 
 	priv = app->priv;
 
-	if (!priv->tray_flash_icons)
+	if (!priv->tray_flash_icons) {
 		return FALSE;
+	}
 
-	from = priv->tray_flash_icons->data;
-	jid = gossip_jid_new (from);
+	if (jid) {
+		gossip_jid_ref (jid);
+	} else {
+		jid = gossip_jid_new (priv->tray_flash_icons->data);
+	}
+	
 	chat = gossip_chat_get_for_jid (jid);
-	gossip_jid_unref (jid);
+	if (!chat) {
+		gossip_jid_unref (jid);
+		return FALSE;
+	}
 
 	widget = gossip_chat_get_dialog (chat);
-
 	gtk_window_present (GTK_WINDOW (widget));
+
+	from = gossip_jid_get_without_resource (jid);
+
+	l = g_list_find_custom (priv->tray_flash_icons,
+				from,
+				(GCompareFunc) strcmp);
+
+	if (!l) {
+		l = priv->tray_flash_icons;
+	}
 	
-	priv->tray_flash_icons = g_list_delete_link (priv->tray_flash_icons,
-						     priv->tray_flash_icons);
+	priv->tray_flash_icons = g_list_delete_link (priv->tray_flash_icons, l);
+	g_free (l->data);
 
 	if (!priv->tray_flash_icons && priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
@@ -1785,6 +1809,10 @@ app_tray_icon_pop_message (void)
 	}
 
 	app_tray_icon_update_tooltip ();
+
+	gossip_roster_flash_jid (priv->roster, jid, FALSE);
+
+	gossip_jid_unref (jid);
 
 	return TRUE;
 }
