@@ -1,3 +1,8 @@
+2004-09-15  Mikael Hallendal  <micke@imendio.com>
+
+	* gossip.desktop.in: Updated name
+	* ui/main.glade: Changed window title
+
 2004-09-11  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-chat.c (gossip_chat_present): 
