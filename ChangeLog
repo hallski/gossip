@@ -1,3 +1,8 @@
+2003-12-11  Thomas Reynolds  <thomasr@infograph.com>
+
+	* src/gossip-app.c: (app_init), (app_show_offline_key_changed_cb):
+	- Listen to show_offline gconf key. Fixes #127985
+
 2003-12-11  Iñaki Larrañaga  <dooteo@euskalgnu.org>
 
 	* configure.in: Added "eu" (Basque) to ALL_LINGUAS.

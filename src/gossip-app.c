@@ -166,6 +166,10 @@ static void     app_add_contact_cb                   (GtkWidget          *widget
 						      GossipApp          *app);
 static void     app_show_offline_cb                  (GtkCheckMenuItem   *item,
 						      GossipApp          *app);
+static void     app_show_offline_key_changed_cb      (GConfClient        *client,
+						      guint               cnxn_id,
+						      GConfEntry         *entry,
+						      gpointer            check_menu_item);
 static void     app_preferences_cb                   (GtkWidget          *widget,
 						      GossipApp          *app);
 static void     app_account_information_cb           (GtkWidget          *widget,
@@ -401,6 +405,12 @@ app_init (GossipApp *singleton_app)
 	show_offline = gconf_client_get_bool (gconf_client,
 					      "/apps/gossip/contact/show_offline",
 					      NULL);
+
+	gconf_client_notify_add (gconf_client,
+				 "/apps/gossip/contact/show_offline",
+				 app_show_offline_key_changed_cb,
+				 show_offline_widget,
+				 NULL, NULL);
 
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
 					show_offline);
@@ -810,6 +820,20 @@ app_show_offline_cb (GtkCheckMenuItem *item, GossipApp *app)
 
 	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view),
 					     current);
+}
+
+static void
+app_show_offline_key_changed_cb (GConfClient *client,
+				 guint        cnxn_id,
+				 GConfEntry  *entry,
+				 gpointer     check_menu_item)
+{
+	gboolean show_offline;
+
+	show_offline = gconf_value_get_bool (gconf_entry_get_value (entry));
+
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (check_menu_item),
+					show_offline);
 }
 
 static void
