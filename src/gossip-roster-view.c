@@ -34,7 +34,7 @@
 #include "gossip-roster-view.h"
 #include "gossip-log.h"
 
-#define d(x)
+#define d(x) 
 
 struct _GossipRosterViewPriv {
 	GtkTreeModel   *model;
@@ -320,7 +320,7 @@ roster_view_init (GossipRosterView *view)
 	egg_tree_model_filter_set_visible_func (EGG_TREE_MODEL_FILTER (priv->filtered_model),
 						(EggTreeModelFilterVisibleFunc) roster_view_filter_visible_func,
 						view,
-						NULL);
+						NULL); 
 	
 	/*
 	gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (view),
@@ -432,11 +432,12 @@ roster_view_item_updated (GossipRoster     *roster,
 		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
 		
 		if (!roster_view_find_item (view, &iter, item, group)) {
-			d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+			d(g_assert_not_reached ());
+			return;
 		}
-		
+	
 		path = gtk_tree_model_get_path (priv->model, &iter);
-		gtk_tree_model_row_changed (priv->model, path, &iter);
+		gtk_tree_model_row_changed (priv->model, path, &iter); 
 		gtk_tree_path_free (path);
 	}
 }
@@ -470,6 +471,7 @@ roster_view_group_added   (GossipRoster      *roster,
 	path = gtk_tree_model_get_path (priv->model, &iter);
 	gtk_tree_view_expand_row (GTK_TREE_VIEW (view), path, FALSE);
 	gtk_tree_path_free (path);
+
 }
 
 static void
@@ -489,7 +491,8 @@ roster_view_group_removed (GossipRoster      *roster,
 
 	if (!roster_view_find_group (view, &iter, 
 				     gossip_roster_group_get_name (group))) {
-		d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+		d(g_assert_not_reached());
+		return;
 	}
 
 	gtk_tree_store_remove (GTK_TREE_STORE (priv->model), &iter);
@@ -508,15 +511,15 @@ roster_view_group_item_added (GossipRoster      *roster,
 	const gchar          *name;
 	
 	d(g_print ("Item '%s' added to group '%s'\n",
-		 gossip_roster_item_get_name (item),
-		 gossip_roster_group_get_name (group)));
+		   gossip_jid_get_full (gossip_roster_item_get_jid(item)),
+		   gossip_roster_group_get_name (group)));
 		
 	priv = view->priv;
-	
+
 	name = gossip_roster_group_get_name (group);
 		
 	if (!roster_view_find_group (view, &group_iter, name)) {
-		d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+		d(g_assert_not_reached());
 		return;
 	}
 
@@ -558,13 +561,13 @@ roster_view_group_item_removed (GossipRoster      *roster,
 	FlashData            *flash;
 
 	d(g_print ("Item '%s' removed from group '%s'\n", 
-		   gossip_roster_item_get_name (item),
+		   gossip_jid_get_full (gossip_roster_item_get_jid(item)),
 		   gossip_roster_group_get_name (group)));
 	
 	priv = view->priv;
 	
 	if (!roster_view_find_item (view, &iter, item, group)) {
-		d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+		d(g_assert_not_reached());
 		return;
 	}
 
@@ -1294,8 +1297,6 @@ roster_view_filter_visible_func (GtkTreeModel     *model,
 			    COL_POINTER, &item,
 			    -1);
 
-	d(g_print ("In filter visible func\n"));
-	
 	if (is_group) {
 		d(g_print ("is_group=t\n"));
 		return TRUE;
@@ -1308,8 +1309,11 @@ roster_view_filter_visible_func (GtkTreeModel     *model,
 	d(g_print("is_group=f\n"));
 
 	if (!priv->show_offline && gossip_roster_item_is_offline (item)) {
+		d(g_print ("returning false\n"));
 		return FALSE;
 	}
+
+	d(g_print ("returning true\n"));
 
 	return TRUE;
 }
@@ -1408,7 +1412,8 @@ roster_view_flash_timeout_func (gpointer data)
 	priv = view->priv;
 
 	if (!roster_view_find_item (view, &iter, fdata->item, fdata->group)) {
-		d(g_assert ("Item doesn't exists in flash_timeout_func, please report"));
+		d(g_assert_not_reached());
+		return FALSE;
 	}
 
 	gtk_tree_model_get (priv->model, &iter,
@@ -1443,7 +1448,7 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 		FlashData         *flash_data;
 		
 		if (!roster_view_find_item (view, &iter, item, group)) {
-			d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+			d(g_assert_not_reached());
 			return;
 		}
 

@@ -1,3 +1,10 @@
+2003-11-13  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c: fixed asserts.
+	* src/gossip-roster.c: 
+	(gossip_roster_item_get_subscription): added
+	(gossip_roster_item_get_ask): added
+
 2003-11-12  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster-view.c:

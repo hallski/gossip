@@ -84,14 +84,16 @@ void               gossip_roster_group_unref        (GossipRosterGroup *group);
 /* Returns the JID (with Resource) that has the highest priority 
  * (or connected last). 
  */
-GossipJID *        gossip_roster_item_get_jid       (GossipRosterItem  *item);
-const gchar *      gossip_roster_item_get_name      (GossipRosterItem  *item);
-GossipShow         gossip_roster_item_get_show      (GossipRosterItem  *item);
-const gchar *      gossip_roster_item_get_status    (GossipRosterItem  *item);
-GList *            gossip_roster_item_get_groups    (GossipRosterItem  *item);
-GList *            gossip_roster_item_get_resources (GossipRosterItem  *item);
-gboolean           gossip_roster_item_is_offline    (GossipRosterItem  *item);
-GossipRosterItem * gossip_roster_item_ref           (GossipRosterItem  *item);
+GossipJID *    gossip_roster_item_get_jid       (GossipRosterItem  *item);
+const gchar *  gossip_roster_item_get_name      (GossipRosterItem  *item);
+GossipShow     gossip_roster_item_get_show      (GossipRosterItem  *item);
+const gchar *  gossip_roster_item_get_status    (GossipRosterItem  *item);
+const gchar *  gossip_roster_item_get_subscription (GossipRosterItem  *item);
+const gchar *  gossip_roster_item_get_ask          (GossipRosterItem  *item);
+GList *        gossip_roster_item_get_groups       (GossipRosterItem  *item);
+gboolean       gossip_roster_item_is_offline    (GossipRosterItem  *item);
+GossipRosterItem * 
+gossip_roster_item_ref           (GossipRosterItem  *item);
 void               gossip_roster_item_unref         (GossipRosterItem  *item);
 
 #endif /* __GOSSIP_ROSTER_H__ */

@@ -591,7 +591,9 @@ roster_item_update (GossipRoster     *roster,
 	groups = g_list_copy (item->groups);
 	for (l = groups; l; l = l->next) {
 		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
-
+		d(g_print ("Looping groups [%s]-[%s] and removing\n",
+			   gossip_roster_item_get_name (item),
+			   gossip_roster_group_get_name (group)));
 		roster_item_remove_group (roster, item, group);
 	}
 
@@ -759,7 +761,7 @@ roster_item_add_group (GossipRoster     *roster,
 	GossipRosterGroup *group;
 	
 	priv = roster->priv;
-
+	
 	group = (GossipRosterGroup *) g_hash_table_lookup (priv->groups, name);
 
 	if (!group) {
@@ -1263,6 +1265,22 @@ gossip_roster_item_get_status (GossipRosterItem *item)
 	}
 
 	return "";
+}
+
+const gchar *
+gossip_roster_item_get_subscription (GossipRosterItem *item)
+{
+	g_return_val_if_fail (item != NULL, NULL);
+
+	return item->subscription;
+}
+
+const gchar *
+gossip_roster_item_get_ask (GossipRosterItem *item)
+{
+	g_return_val_if_fail (item != NULL, NULL);
+
+	return item->ask;
 }
 
 GList * 
