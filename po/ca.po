@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-02 01:49+0200\n"
-"PO-Revision-Date: 2003-08-02 01:50+0200\n"
+"POT-Creation-Date: 2003-08-10 23:16+0200\n"
+"PO-Revision-Date: 2003-08-10 23:17+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -94,7 +94,7 @@ msgid "Whether or not to timestamp all messages in conversations."
 msgstr ""
 "Si s'ha de ficar marques de temps o no a tots els missatges a les xerrades."
 
-#: src/gossip-accounts-dialog.c:151
+#: src/gossip-accounts-dialog.c:154
 msgid "New account"
 msgstr "Nou compte"
 
@@ -158,40 +158,44 @@ msgstr "_Surt"
 msgid "translator_credits"
 msgstr "Jordi Mallach <jordi@sindominio.net>"
 
-#: src/gossip-app.c:483
+#: src/gossip-app.c:484
 msgid "A Jabber Client for GNOME"
 msgstr "Un client Jabber per al GNOME"
 
-#: src/gossip-app.c:610
+#: src/gossip-app.c:492
+msgid "Gossip Website"
+msgstr "Lloc web del Gossip"
+
+#: src/gossip-app.c:616
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
 "xerrada."
 
-#: src/gossip-app.c:615
+#: src/gossip-app.c:621
 msgid "_Chat"
 msgstr "_Xarra"
 
-#: src/gossip-app.c:1074
+#: src/gossip-app.c:1075
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1655
+#: src/gossip-app.c:1662
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-app.c:1818
+#: src/gossip-app.c:1860
 #, c-format
 msgid "New message from %s"
 msgstr "Nou missatge de %s"
 
-#: src/gossip-chat.c:561
+#: src/gossip-chat.c:642
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:566 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detalls:"
@@ -202,7 +206,7 @@ msgstr "Detalls:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:720
+#: src/gossip-chat.c:807
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sXerrada - %s"
@@ -210,7 +214,7 @@ msgstr "%sXerrada - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:725
+#: src/gossip-chat.c:812
 #, c-format
 msgid "%sChat"
 msgstr "%sXerrada"
@@ -282,27 +286,27 @@ msgstr "Raó:"
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
 #.
-#: src/gossip-roster.c:100
+#: src/gossip-roster.c:101
 msgid "Offline "
 msgstr "Desconnectats"
 
-#: src/gossip-roster.c:101
+#: src/gossip-roster.c:102
 msgid "Others"
 msgstr "Altres"
 
-#: src/gossip-roster.c:194
+#: src/gossip-roster.c:195
 msgid "/Contact _Information"
 msgstr "/_Informació del contacte"
 
-#: src/gossip-roster.c:202
+#: src/gossip-roster.c:203
 msgid "/Re_name contact"
 msgstr "/Rea_nomena el contacte"
 
-#: src/gossip-roster.c:218
+#: src/gossip-roster.c:219
 msgid "/_Remove contact"
 msgstr "/Sup_rimeix el contacte"
 
-#: src/gossip-roster.c:421
+#: src/gossip-roster.c:424
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -313,7 +317,7 @@ msgstr ""
 "%s\n"
 "de la llista de contactes?"
 
-#: src/gossip-roster.c:519
+#: src/gossip-roster.c:522
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
