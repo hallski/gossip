@@ -374,7 +374,7 @@ chat_dialog_info_clicked_cb (GtkWidget  *widget,
 {
 	const gchar *name;
 
-	name = gossip_roster_get_nick_from_jid (chat->jid);
+	name = gossip_roster_get_nick_from_jid (gossip_app_get_roster (), chat->jid);
 	if (name && name[0]) {
 		gossip_contact_info_new (chat->app, chat->jid, name);
 	}
