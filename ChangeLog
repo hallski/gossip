@@ -1,5 +1,15 @@
 2004-05-18  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-window.c:
+	(chat_window_create_label),
+	(chat_window_update_tooltip):
+	- Have tooltip both on label and presence icon in chat window.
+	- Append Typing a message to tooltip when the other person is replying.
+	- Based on a patch from Fabio Bonelli.
+	- Fixes bug #120284
+
+2004-05-18  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-roster-view.c: (gossip_roster_view_flash_contact):
 	- Fix a crash
 

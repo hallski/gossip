@@ -441,17 +441,19 @@ chat_window_create_label (GossipChatWindow *window,
 	GtkWidget            *status_img;
 	const gchar          *name;
 	gint	              w, h;
-	GtkWidget            *eventbox;
+	GtkWidget            *evbox_tooltip;
+	GtkWidget            *evbox_hbox;
 	
 	priv = window->priv;
 	
 	hbox = gtk_hbox_new (FALSE, 0);
 
-	eventbox = gtk_event_box_new ();
+	evbox_tooltip = gtk_event_box_new ();
 	
 	status_img = gtk_image_new ();
 	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
-	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", eventbox);
+	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget",
+			   evbox_tooltip);
 
 	name = chat_window_get_name (window, chat);
 
@@ -474,10 +476,13 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_widget_set_size_request (close_button, w, h);
 	gtk_container_add (GTK_CONTAINER (close_button), close_img);
 
-	gtk_container_add (GTK_CONTAINER (eventbox), name_label);
+	evbox_hbox = gtk_hbox_new (FALSE, 0);
 
-	gtk_box_pack_start (GTK_BOX (hbox), status_img, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (hbox), eventbox, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (evbox_hbox), status_img, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (evbox_hbox), name_label, TRUE, TRUE, 0);
+
+	gtk_container_add (GTK_CONTAINER (evbox_tooltip), evbox_hbox);
+	gtk_box_pack_start (GTK_BOX (hbox), evbox_tooltip, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 
 	g_signal_connect (close_button,
@@ -712,9 +717,9 @@ chat_window_update_tooltip (GossipChatWindow *window,
 	const gchar          *status;
 	GtkWidget            *widget;
 	GossipPresence       *presence;
-	
+
 	priv = window->priv;
-	
+
 	contact = gossip_chat_get_contact (chat);
 	jid = gossip_contact_get_jid (contact);
 
@@ -737,7 +742,16 @@ chat_window_update_tooltip (GossipChatWindow *window,
 			       gossip_jid_get_without_resource (jid),
 			       status);
 
-	widget = g_object_get_data (G_OBJECT (chat), "chat-window-tooltip-widget");
+	if (g_list_find (priv->chats_composing, chat)) {
+		gchar *t_str;
+
+		t_str = str;
+		str = g_strconcat (t_str, "\n", _("Typing a message."), NULL);
+		g_free (t_str);
+	}
+
+	widget = g_object_get_data (G_OBJECT (chat), 
+				    "chat-window-tooltip-widget");
 
 	gtk_tooltips_set_tip (priv->tooltips,
 			      widget,
