@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-22 13:22+0100\n"
-"PO-Revision-Date: 2004-01-16 22:33+0100\n"
+"POT-Creation-Date: 2004-01-23 04:51+0100\n"
+"PO-Revision-Date: 2004-01-24 11:13+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -45,63 +45,71 @@ msgid "Hide the main window."
 msgstr "Het hoofdvenster niet weergeven."
 
 #: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "Voor-ingestelde statusberichten"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "Voor-ingestelde statusberichten."
+
+#: gossip.schemas.in.h:8
 msgid "Show offline contacts"
 msgstr "Offline contacten weergeven"
 
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:9
 msgid "The X position of the main window."
 msgstr "De X-positie van het hoofdvenster."
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:10
 msgid "The Y position of the main window."
 msgstr "De Y-positie van het hoofdvenster."
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr "De hoogte van het hoofdvenster."
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr "De breedte van het hoofdvenster."
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr "Grafische smileys gebruiken"
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:14
 msgid "Use notification sounds"
 msgstr "Waarschuwingsgeluiden gebruiken"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:15
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Smileys in gesprekken converteren naar grafische smileys."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Een geluid afspelen als berichten aankomen."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away."
 msgstr "Geluiden afspelen bij afwezig."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:18
 msgid "Whether or not to play sounds when busy."
 msgstr "Geluiden afspelen bij bezig."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Contacten die offline zijn in de contactlijst wel of niet weergeven."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:20
 msgid "Width of the main window"
 msgstr "Breedte van het hoofdvenster"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:21
 msgid "X position of main window"
 msgstr "X-positie van hoofdvenster"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:22
 msgid "Y position of main window"
 msgstr "Y-positie van hoofdvenster"
 
@@ -206,24 +214,20 @@ msgid "Away"
 msgstr "Weg"
 
 #: src/gossip-app.c:2470
-#, fuzzy
 msgid "Available..."
-msgstr "Beschikbaar"
+msgstr "Beschikbaar..."
 
 #: src/gossip-app.c:2474
-#, fuzzy
 msgid "Busy..."
-msgstr "Bezig"
+msgstr "Bezig..."
 
 #: src/gossip-app.c:2478
-#, fuzzy
 msgid "Away..."
-msgstr "Weg"
+msgstr "Weg..."
 
 #: src/gossip-app.c:2504
-#, fuzzy
 msgid "Edit List..."
-msgstr "_Favorieten bewerken..."
+msgstr "Lijst bewerken..."
 
 #: src/gossip-chat-view.c:320 ui/chat.glade.h:2
 msgid "C_lear"
@@ -284,18 +288,17 @@ msgid "Contact Information for %s"
 msgstr "Contact informatie voor %s"
 
 #: src/gossip-edit-groups-dialog.c:182
-#, fuzzy, c-format
+#, c-format
 msgid "Edit groups for %s"
-msgstr "/Groepen be_werken"
+msgstr "Groepen bewerken voor %s"
 
 #: src/gossip-edit-groups-dialog.c:246
 msgid "Select"
-msgstr ""
+msgstr "Kiezen"
 
 #: src/gossip-edit-groups-dialog.c:257
-#, fuzzy
 msgid "Group"
-msgstr "Groepen bewerken"
+msgstr "Groep"
 
 #. This needs to be done better, could have group_is_unsorted().
 #.
@@ -651,7 +654,7 @@ msgstr "<b>Informatie opgevraagd, even geduld a.u.b....</b>"
 
 #: ui/main.glade.h:5
 msgid "<b>Preset status messages</b>"
-msgstr ""
+msgstr "<b>Voor-ingestelde statusberichten</b>"
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
@@ -734,9 +737,8 @@ msgid "Email:"
 msgstr "E-mail:"
 
 #: ui/main.glade.h:26
-#, fuzzy
 msgid "Enter status message:"
-msgstr "Statusbericht:"
+msgstr "Geef een statusbericht:"
 
 #: ui/main.glade.h:28
 msgid ""
@@ -859,9 +861,8 @@ msgid "Sound"
 msgstr "Geluid"
 
 #: ui/main.glade.h:57
-#, fuzzy
 msgid "Status Message"
-msgstr "Statusberichten"
+msgstr "Statusbericht"
 
 #: ui/main.glade.h:58
 msgid "Status Messages"
@@ -975,72 +976,3 @@ msgstr "_Zoeken..."
 msgid "_Status Messages"
 msgstr "_Statusberichten"
 
-#~ msgid "About to leave..."
-#~ msgstr "Op het punt weg te gaan..."
-
-#~ msgid "Autoaway message"
-#~ msgstr "Auto-afwezigheidsbericht"
-
-#~ msgid "Away messages"
-#~ msgstr "Afwezigheidsberichten"
-
-#~ msgid "Busy messages"
-#~ msgstr "Bezigheidsberichten"
-
-#~ msgid "Message to show before going away"
-#~ msgstr "Bericht om weer te geven alvorens weg te gaan"
-
-#~ msgid "Not at the computer"
-#~ msgstr "Niet bij de computer"
-
-#~ msgid "Just about to leave..."
-#~ msgstr "Op het punt om weg te gaan..."
-
-#~ msgid "Custom Message..."
-#~ msgstr "Aangepast bericht..."
-
-#~ msgid "Custom Busy Message..."
-#~ msgstr "Aangepast bezig-bericht..."
-
-#~ msgid "Leave..."
-#~ msgstr "Verlaten..."
-
-#~ msgid "New Busy Message"
-#~ msgstr "Nieuw bezigheidsbericht"
-
-#~ msgid "New Away Message"
-#~ msgstr "Nieuw afwezigheidsbericht"
-
-#~ msgid "Working"
-#~ msgstr "Aan het werk"
-
-#~ msgid "Eating"
-#~ msgstr "Aan het eten"
-
-#~ msgid "Sleeping"
-#~ msgstr "Aan het slapen"
-
-#~ msgid "Enter the new message:"
-#~ msgstr "Voer een nieuw bericht in:"
-
-#~ msgid "Leave"
-#~ msgstr "Verlaten"
-
-#~ msgid ""
-#~ "Note: contacts can belong to multiple groups or they can be in no group "
-#~ "at all."
-#~ msgstr ""
-#~ "Let op: contacten kunnen tot meerdere groepen behoren of in geen enkele "
-#~ "groep zitten."
-
-#~ msgid "Preset messages for quickly setting away status."
-#~ msgstr "Berichten vooraf invullen om snel weg-status in te stellen."
-
-#~ msgid "Preset messages for quickly setting busy status."
-#~ msgstr "Berichten vooraf invullen om snel bezig-status in te stellen."
-
-#~ msgid "Reason for being busy:"
-#~ msgstr "Reden om bezig te zijn:"
-
-#~ msgid "Reason for leaving:"
-#~ msgstr "Reden om te vertrekken:"
