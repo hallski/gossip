@@ -1,3 +1,10 @@
+2004-07-02  Mikael Hallendal,,,  <micke@imendio.com>
+
+	* src/Makefile.am:
+	* src/disclosure-widget.c:
+	* src/disclosure-widget.h:
+	- Removed the unused disclosure widget.
+
 2004-07-02  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
 
 	* src/gossip-group-chat.c:

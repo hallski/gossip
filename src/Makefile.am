@@ -84,14 +84,11 @@ gossip_SOURCES = 				\
 	gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c			\
 	gossip-vcard-dialog.h			\
-						\
 	eel-ellipsizing-label.c			\
 	eel-ellipsizing-label.h			\
 	eggtrayicon.c				\
-	eggtrayicon.h				\
-	disclosure-widget.c			\
-	disclosure-widget.h
-
+	eggtrayicon.h
+	
 gossip_LDADD = @GOSSIP_LIBS@
 gossip_LDFLAGS = -export-dynamic
 
