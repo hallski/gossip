@@ -1400,7 +1400,7 @@ roster_view_group_menu_rename_cb (gpointer   data,
 	GossipRosterViewPriv *priv;
 	gboolean              is_group;
 	RosterElement        *e;
-	gchar                *str;
+	gchar                *str, *tmp;
 	GtkTreeSelection     *selection;
 	GtkTreeIter           iter;
 	GtkTreeModel         *model;
@@ -1426,8 +1426,9 @@ roster_view_group_menu_rename_cb (gpointer   data,
 		return;
 	}
 
-	str = g_strdup_printf ("<b>%s</b>", 
-			       gossip_roster_group_get_name (e->group));
+	tmp = g_markup_escape_text (gossip_roster_group_get_name (e->group), -1);
+	str = g_strdup_printf ("<b>%s</b>", tmp);
+	g_free (tmp);
 
 	/* Translator: %s denotes the group name */
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
@@ -1515,6 +1516,13 @@ roster_view_add_item (GossipRosterView  *view,
 	d(g_print ("Adding item: [%s] to group: [%s]\n", 
 		   gossip_roster_item_get_name (item),
 		   gossip_roster_group_get_name (group)));
+
+	// koko
+	if (!priv->show_offline && gossip_roster_item_is_offline (item)) {
+		d(g_print ("Offline item: %s\n",
+			   gossip_roster_item_get_name (item)));
+		return;
+	}
 	
 	if (!group) {
 		gtk_tree_store_append (GTK_TREE_STORE (priv->model),

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -1124,6 +1124,7 @@ gossip_roster_rename_item (GossipRoster     *roster,
 	LmMessage        *m;
 	LmMessageNode    *node;
 	const gchar      *jid_str;
+	gchar            *escaped;
 	GList            *l; 
 
 	g_return_if_fail (GOSSIP_IS_ROSTER (roster));
@@ -1144,16 +1145,22 @@ gossip_roster_rename_item (GossipRoster     *roster,
 					"xmlns", "jabber:iq:roster",
 					NULL);
 
+	escaped = g_markup_escape_text (name, -1);
+	
 	node = lm_message_node_add_child (node, "item", NULL);
 	lm_message_node_set_attributes (node, 
 					"jid", jid_str,
-					"name", name,
+					"name", escaped,
 					NULL);
+	g_free (escaped);
+	
 	for (l = item->groups; l; l = l->next) {
-		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
+		GossipRosterGroup *group = l->data;
 
 		if (!roster_group_is_internal (group)) {
-			lm_message_node_add_child (node, "group", group->name);
+			escaped = g_markup_escape_text (group->name, -1);
+			lm_message_node_add_child (node, "group", escaped);
+			g_free (escaped);
 		}
 	}	
 	
@@ -1190,22 +1197,28 @@ gossip_roster_rename_group (GossipRoster      *roster,
 	
 	/* Iterate over all children in the group */
 	for (i = group->items; i; i = i->next) {
-		GossipRosterItem *item = (GossipRosterItem *) i->data;
+		GossipRosterItem *item = i->data;
 		LmMessageNode    *node;
 		const gchar      *jid_str;
+		gchar            *escaped;
 		GList            *l;
 		
 		jid_str = gossip_jid_get_without_resource (item->jid);
+
+		escaped = g_markup_escape_text (item->name, -1);
 		
 		node = lm_message_node_add_child (q_node, "item", NULL);
 		lm_message_node_set_attributes (node,
 						"jid", jid_str,
-						"name", item->name,
+						"name", escaped,
 						NULL);
+
+		g_free (escaped);
 		
 		/* Iterate over all groups in each child */
 		for (l = item->groups; l; l = l->next) {
-			GossipRosterGroup *g = (GossipRosterGroup *) l->data;
+			GossipRosterGroup *g = l->data;
+
 			if (g != group && !roster_group_is_internal (g)) {
 				lm_message_node_add_child (node, 
 							   "group", g->name);

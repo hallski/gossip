@@ -2547,6 +2547,8 @@ app_status_popup_show (void)
 			  G_CALLBACK (app_status_edit_activate_cb),
 			  NULL);
 
+	gtk_widget_set_size_request (menu, app->priv->status_button->allocation.width, -1);
+	
 	gtk_menu_popup (GTK_MENU (menu), NULL, NULL, app_status_align_menu,
 			NULL, 1, gtk_get_current_event_time ());
 }

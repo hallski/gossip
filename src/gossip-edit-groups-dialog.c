@@ -178,7 +178,9 @@ gossip_edit_groups_new (GossipJID *jid, const gchar *name, GList *groups)
 
 	g_object_unref (gui);
 
-	tmp = g_strdup_printf (_("Edit groups for %s"), name);
+	str = g_markup_escape_text (name, -1);
+	tmp = g_strdup_printf (_("Edit groups for %s"), str);
+	g_free (str);
 	
 	str = g_strdup_printf ("<b>%s</b>", tmp);
 	gtk_label_set_markup (GTK_LABEL (info->contact_label), str);
@@ -273,6 +275,7 @@ edit_groups_set (GossipEditGroups *info, GList *groups)
 	LmMessage     *m;
 	LmMessageNode *node;
 	GList         *l;
+	gchar         *escaped;
 
 	connection = gossip_app_get_connection ();
 
@@ -291,12 +294,16 @@ edit_groups_set (GossipEditGroups *info, GList *groups)
 	lm_message_node_set_attributes (node,
 					"xmlns", "jabber:iq:roster",
 					NULL);
-
+				       
+	escaped = g_markup_escape_text (info->name, -1);
+	
 	node = lm_message_node_add_child (node, "item", NULL);
 	lm_message_node_set_attributes (node, 
 					"jid", info->jid_str,
-					"name", info->name,
+					"name", escaped,
 					NULL);
+
+	g_free (escaped);
 
 	for (l = groups; l; l = l->next) {
 		gchar *group_str = l->data;

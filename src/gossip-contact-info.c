@@ -352,11 +352,14 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 	tmp_str = g_strdup_printf (_("Contact Information for %s"), name);
 
 	gtk_window_set_title (GTK_WINDOW (info->dialog), tmp_str);
-	
-	str = g_strdup_printf ("<b>%s</b>", tmp_str);
+
+	str = g_markup_escape_text (tmp_str, -1);
 	g_free (tmp_str);
-	gtk_label_set_markup (GTK_LABEL (info->title_label), str);
+	
+	tmp_str = g_strdup_printf ("<b>%s</b>", str);
 	g_free (str);
+	gtk_label_set_markup (GTK_LABEL (info->title_label), tmp_str);
+	g_free (tmp_str);
 
 	gtk_label_set_text (GTK_LABEL (info->jid_label), gossip_jid_get_without_resource (jid));
 	
