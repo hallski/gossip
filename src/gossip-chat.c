@@ -650,9 +650,18 @@ chat_update_title (GossipChat *chat, gboolean new_message)
 	}
 	
 	if (nick && nick[0]) {
-		title = g_strdup_printf ("%sChat - %s", new_message ? "* " : "", nick);
+		/*
+		Translators: This is for the title of the chat window. The
+		first %s is an "* " that gets displayed if the chat window has
+		new messages in it. (Please complain if this doesn't work well
+		in your locale.)
+		*/
+		title = g_strdup_printf (_("%sChat - %s"), new_message ? "* " : "", nick);
 	} else {
-		title = g_strdup_printf ("%sChat", new_message ? "* " : "");
+		/*
+		Translators: See comment for "%sChat - %s".
+		*/
+		title = g_strdup_printf (_("%sChat"), new_message ? "* " : "");
 	}
 	g_free (nick);
 	

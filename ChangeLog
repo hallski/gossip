@@ -1,3 +1,7 @@
+2003-07-22  Dafydd Harries  <daf@parnassus.ath.cx>
+
+	* src/gossip-chat.c: Marked chat window title strings translatable.
+
 2003-07-18  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c (chat_dialog_info_clicked_cb): Use the nick,
