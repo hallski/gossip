@@ -1,3 +1,9 @@
+2003-12-08  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_idle_check_cb), (app_update_show),
+	(app_leave_flash_stop), (app_cancel_pending_leave): Fix bug that
+	appeared with the new idle checking.
+
 2003-12-06  Sjoerd Simons  <sjoerd@luon.net>
 
 	* src/gossip-app.c: (app_idle_check_cb),

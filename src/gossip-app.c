@@ -240,7 +240,9 @@ static void     app_status_button_clicked_cb         (GtkButton          *button
 static GossipShow app_get_explicit_show              (void);
 static GossipShow app_get_effective_show             (void);
 static void       app_update_show                    (void);
-
+static void       app_leave_flash_start              (void);
+static void       app_leave_flash_stop               (void);
+static void       app_cancel_pending_leave           (void);
 
 static const gchar * app_get_current_status_icon     (void);
 static gboolean      app_window_configure_event_cb   (GtkWidget          *widget,
@@ -1242,6 +1244,7 @@ app_idle_check_cb (GossipApp *app)
 			priv->leave_time = 0;
 			priv->auto_show = GOSSIP_SHOW_AWAY;
 			app_update_show ();
+			app_leave_flash_stop ();
 		}
 
 		return TRUE;
@@ -2002,8 +2005,6 @@ app_update_show (void)
 		status_label = gossip_utils_get_default_status (effective_show);
 	}
 
-	//g_print ("%s, %s\n", status_text, status_label);
-	
 	eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
 					status_label);
 
@@ -2035,22 +2036,6 @@ app_update_show (void)
 	lm_message_unref (m);
 
 	g_free (status_text);
-}
-
-static void
-app_cancel_pending_leave (void)
-{
-	GossipAppPriv *priv = app->priv;
-
-	priv->leave_time = 0;
-
-	g_free (priv->overridden_away_message);
-	priv->overridden_away_message = NULL;
-
-	if (priv->leave_flash_timeout_id) {
-		g_source_remove (priv->leave_flash_timeout_id);
-		priv->leave_flash_timeout_id = 0;
-	}
 }
 
 static gboolean
@@ -2085,6 +2070,37 @@ app_leave_flash_start (void)
 							      app_leave_flash_timeout_func,
 							      NULL);
 	}
+}
+
+static void
+app_leave_flash_stop (void)
+{
+	GossipAppPriv *priv = app->priv;
+	const gchar   *icon;
+
+	icon = app_get_current_status_icon ();
+	
+	gtk_image_set_from_stock (GTK_IMAGE (priv->status_image),
+				  icon,
+				  GTK_ICON_SIZE_MENU);
+
+	if (priv->leave_flash_timeout_id) {
+		g_source_remove (priv->leave_flash_timeout_id);
+		priv->leave_flash_timeout_id = 0;
+	}
+}
+
+static void
+app_cancel_pending_leave (void)
+{
+	GossipAppPriv *priv = app->priv;
+
+	priv->leave_time = 0;
+
+	g_free (priv->overridden_away_message);
+	priv->overridden_away_message = NULL;
+
+	app_leave_flash_stop ();
 }
 
 static void
