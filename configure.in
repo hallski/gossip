@@ -1,6 +1,6 @@
 AC_INIT(src)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(gossip, 0.5)
+AM_INIT_AUTOMAKE(gossip, 0.6)
 
 AM_MAINTAINER_MODE
 
@@ -27,7 +27,7 @@ dnl ==========================================================================
 dnl If you add a version number here, you *must* add an AC_SUBST line for
 dnl it too, or it will never make it into the spec file!
 
-LIBXML_REQUIRED=2.5.0
+LIBXML_REQUIRED=2.4.7
 LIBXSLT_REQUIRED=1.0.0
 GLIB_REQUIRED=2.0.3
 GTK_REQUIRED=2.0.4

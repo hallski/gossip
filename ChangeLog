@@ -1,3 +1,10 @@
+2003-11-18  Richard Hult  <richard@imendio.com>
+
+	* configure.in: Bump version, lower requirement of libxml.
+
+	* src/gossip-chat-window.c (chat_window_tab_removed_cb): Update
+	sensitivity when removing a tab too.
+
 2003-11-18  Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
 
 	* src/gossip-chat-window.c: (gossip_chat_window_init),

@@ -851,6 +851,8 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 
 	if (window->priv->chats == NULL) {
 		g_object_unref (window);
+	} else {
+		chat_window_update_menu (window);
 	}
 }
 
