@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-14 04:13+0100\n"
-"PO-Revision-Date: 2003-12-14 16:08+0100\n"
+"POT-Creation-Date: 2003-12-18 15:24+0100\n"
+"PO-Revision-Date: 2003-12-18 18:24+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -52,57 +52,81 @@ msgid "Height of main window"
 msgstr "Výška hlavního okna"
 
 #: gossip.schemas.in.h:8
+msgid "Hide main window"
+msgstr "Skrýt hlavní okno"
+
+#: gossip.schemas.in.h:9
+msgid "Hide the main window."
+msgstr "Skrýt hlavní okno."
+
+#: gossip.schemas.in.h:10
 msgid "Message to show before going away"
 msgstr "Zpráva, kterou zobrazit před odchodem"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "Not at the computer"
 msgstr "Nejsem u počítače"
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "Show offline contacts"
 msgstr "Zobrazovat odpojené kontakty"
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
+msgid "The X position of the main window."
+msgstr "Pozice X hlavního okna."
+
+#: gossip.schemas.in.h:14
+msgid "The Y position of the main window."
+msgstr "Pozice Y hlavního okna."
+
+#: gossip.schemas.in.h:15
 msgid "The height of the main window."
 msgstr "Výška hlavního okna."
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:16
 msgid "The width of the main window."
 msgstr "Šířka hlavního okna."
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:17
 msgid "Use graphical smileys"
 msgstr "Používat grafické smajlíky"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:18
 msgid "Use notification sounds"
 msgstr "Používat zvuky upozornění"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:19
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Jestli převádět smajlíky v konverzacích na grafické smajlíky."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:20
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Jestli přehrávat zvuk, když přijdou zprávy."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:21
 msgid "Whether or not to play sounds when away."
 msgstr "Jestli přehrávat zvuky, když jsem pryč."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:22
 msgid "Whether or not to play sounds when busy."
 msgstr "Jestli přehrávat zvuky, když jsem zaneprázdněn."
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:23
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Jestli zobrazovat odpojené kontakty v seznamu kontaktů."
 
-#: gossip.schemas.in.h:20
-msgid "Width of main window"
+#: gossip.schemas.in.h:24
+msgid "Width of the main window"
 msgstr "Šířka hlavního okna"
+
+#: gossip.schemas.in.h:25
+msgid "X position of main window"
+msgstr "Pozice X hlavního okna"
+
+#: gossip.schemas.in.h:26
+msgid "Y position of main window"
+msgstr "Pozice Y hlavního okna"
 
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
@@ -122,81 +146,81 @@ msgstr "%s bude přidán do vašeho seznamu kontaktů."
 msgid "Just about to leave..."
 msgstr "Právě odcházím..."
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:439
 msgid "_Show Contact List"
 msgstr "_Zobrazit seznam kontaktů"
 
-#: src/gossip-app.c:442
+#: src/gossip-app.c:448
 msgid "_Hide Contact List"
 msgstr "_Skrýt seznam kontaktů"
 
-#: src/gossip-app.c:455 ui/main.glade.h:59
+#: src/gossip-app.c:461 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "_Odeslat zprávu..."
 
-#: src/gossip-app.c:470
+#: src/gossip-app.c:476
 msgid "_Quit"
 msgstr "U_končit"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:572
+#: src/gossip-app.c:597
 msgid "translator_credits"
 msgstr "Miloslav Trmač <mitr@volny.cz>"
 
-#: src/gossip-app.c:584
+#: src/gossip-app.c:609
 msgid "A Jabber Client for GNOME"
 msgstr "Klient Jabberu pro GNOME"
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:616
 msgid "Gossip Website"
 msgstr "WWW stránka Gossipu:"
 
-#: src/gossip-app.c:695
+#: src/gossip-app.c:720
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:700 ui/main.glade.h:83
+#: src/gossip-app.c:725 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: src/gossip-app.c:962
+#: src/gossip-app.c:987
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s chce být upozorňován na vaši přítomnost."
 
-#: src/gossip-app.c:1197
+#: src/gossip-app.c:1230
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1340
+#: src/gossip-app.c:1380
 msgid "Make sure that your account information is correct."
 msgstr "Zkontrolujte, že vaše informace o účtu jsou správné."
 
-#: src/gossip-app.c:1341
+#: src/gossip-app.c:1381
 msgid "The server may currently be unavailable."
 msgstr "Server teď možná není k dispozici."
 
-#: src/gossip-app.c:1746
+#: src/gossip-app.c:1798
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, klient Jabberu"
 
-#: src/gossip-app.c:1922
+#: src/gossip-app.c:1974
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2476
+#: src/gossip-app.c:2528
 msgid "Custom Message..."
 msgstr "Vlasní zpráva..."
 
-#: src/gossip-app.c:2494
+#: src/gossip-app.c:2546
 msgid "Custom Busy Message..."
 msgstr "Vlasní zpráva o zaneprázdnění..."
 
-#: src/gossip-app.c:2501
+#: src/gossip-app.c:2553
 msgid "Leave..."
 msgstr "Odejít..."
 
