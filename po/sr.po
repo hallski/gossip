@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-10-26 02:48+0200\n"
-"PO-Revision-Date: 2003-10-26 02:49+0200\n"
+"POT-Creation-Date: 2003-10-27 01:12+0100\n"
+"PO-Revision-Date: 2003-10-27 01:14+0100\n"
 "Last-Translator: Дејан Матијевић <dejan@ns.sympatico.ca>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -189,23 +189,37 @@ msgstr "Подесите ваше стање:"
 msgid "_Busy"
 msgstr "_Заузет"
 
-#: src/gossip-chat-view.c:313
+#: src/gossip-chat-view.c:337
 msgid "_Copy Link Address"
 msgstr "_Копирај адресу везе"
 
-#: src/gossip-chat-view.c:321
+#: src/gossip-chat-view.c:345
 msgid "_Open Link"
 msgstr "_Отвори везу"
 
-#: src/gossip-chat.c:698
+#: src/gossip-chat-view.c:741
+msgid "%A %d %B %Y"
+msgstr "%A, %d. %B %Y."
+
+#: src/gossip-chat.c:704
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Догодила се грешка приликом чаврљање са %s."
 
-#: src/gossip-chat.c:703 src/gossip-group-chat.c:808
+#: src/gossip-chat.c:709 src/gossip-group-chat.c:808
 #: src/gossip-group-chat.c:911
 msgid "Details:"
 msgstr "Детаљи:"
+
+#: src/gossip-chat.c:838
+#, c-format
+msgid "%s went offline"
+msgstr "%s прекиде везу"
+
+#: src/gossip-chat.c:854
+#, c-format
+msgid "%s comes online"
+msgstr "%s се повеза"
 
 #.
 #. Translators: This is for the title of the chat window. The
@@ -213,7 +227,7 @@ msgstr "Детаљи:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:873
+#: src/gossip-chat.c:902
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sЧаврљање - %s"
@@ -222,7 +236,7 @@ msgstr "%sЧаврљање - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:878
+#: src/gossip-chat.c:907
 #, c-format
 msgid "%sChat"
 msgstr "%sЧаврљање"
