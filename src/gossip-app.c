@@ -705,7 +705,7 @@ app_name_complete_cmp_func (const gchar *s1, const gchar *s2, gsize n)
 }
 
 static void
-app_new_message (gboolean use_roster_selection)
+app_new_message (gboolean use_roster_selection, gboolean be_transient)
 {
 	GossipAppPriv    *priv;
 	const gchar      *selected_name = NULL;
@@ -714,12 +714,19 @@ app_new_message (gboolean use_roster_selection)
 	GossipRosterItem *item = NULL;
 	GtkWidget        *frame;
 	CompleteNameData  *data;
+	GtkWindow         *parent;
 	
 	priv = app->priv;
 
 	data = g_new0 (CompleteNameData, 1);
 
-	data->dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
+	if (be_transient) {
+		parent = GTK_WINDOW (priv->window);
+	} else {
+		parent = NULL;
+	}
+	
+	data->dialog = gtk_message_dialog_new (parent,
 					       0,
 					       GTK_MESSAGE_QUESTION,
 					       GTK_BUTTONS_NONE,
@@ -816,16 +823,16 @@ app_new_message (gboolean use_roster_selection)
 
 static void
 app_new_message_cb (GtkWidget *widget,
-			  gpointer   user_data)
+		    gpointer   user_data)
 {
-	app_new_message (TRUE);
+	app_new_message (TRUE, TRUE);
 }
 
 static void
 app_popup_new_message_cb (GtkWidget *widget,
 			  gpointer   user_data)
 {
-	app_new_message (FALSE);
+	app_new_message (FALSE, FALSE);
 }
 
 static void
