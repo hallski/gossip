@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-06-18 18:55+0200\n"
-"PO-Revision-Date: 2003-06-18 19:01+0200\n"
+"PO-Revision-Date: 2003-06-18 19:09+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -219,13 +219,12 @@ msgid ""
 "To get started, just click \"Forward\"."
 msgstr ""
 "<b>Benvingut a Gossip</b>\n"
-"Gossip és un client modern per al sistema de missatgeria instantània "
-"Jabber.\n"
+"Gossip és un client modern per al sistema de missatgeria instantània Jabber.\n"
 "\n"
 "Aquest assistent vos ajudarà a configurar Gossip i connectar-vos al vostre\n"
 "servidor de Jabber preferit.\n"
 "\n"
-"Per començar, feu clic en «Següent»."
+"Per començar, feu clic en «Endavant»."
 
 #: ui/main.glade.h:22
 msgid "<i>Information not available</i>"
@@ -419,7 +418,7 @@ msgstr "_Accions"
 
 #: ui/main.glade.h:70
 msgid "_Add contact..."
-msgstr "_Afegeix el contacte..."
+msgstr "_Afegeix un contacte..."
 
 #: ui/main.glade.h:71
 msgid "_Approve"
