@@ -31,9 +31,10 @@
 #include "gossip-utils.h"
 #include "gossip-app.h"
 #include "gossip-chat.h"
-#include "disclosure-widget.h"
 #include "gossip-chat-view.h"
 #include "gossip-group-chat.h"
+
+#define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
 /* Treeview columns */
 enum {
@@ -51,14 +52,9 @@ struct _GossipGroupChatPriv {
 	
 	GtkWidget        *window;
 	GtkWidget        *text_view_sw;
-	GtkWidget        *input_entry;
 	GtkWidget        *input_text_view;
 	GtkWidget        *topic_entry;
 	GtkWidget        *tree;
-	GtkWidget        *disclosure;
-	GtkWidget        *single_hbox;
-	GtkWidget        *multi_vbox;
-	GtkWidget        *send_multi_button;
 
 	GossipChatView   *view;
 	
@@ -71,6 +67,13 @@ struct _GossipGroupChatPriv {
 
 	GHashTable       *contacts;
 	GList            *priv_chats;
+
+	/* Used to automatically shrink a window that has temporarily grown
+	 * due to long input */
+	gint              padding_height;
+	gint              default_window_height;
+	gint              last_input_height;
+	gboolean          is_first_char;
 };
 
 typedef struct {
@@ -87,27 +90,24 @@ static void             group_chat_window_destroy_cb            (GtkWidget      
 								 GossipGroupChat   *chat);
 static void             group_chats_init                        (void);
 static void             group_chat_create_gui                   (GossipGroupChat   *chat);
-GtkWidget *             group_chat_create_disclosure            (gpointer           data);
-static void             group_chat_disclosure_toggled_cb        (GtkToggleButton   *disclosure,
-								 GossipGroupChat   *chat);
 static void             group_chat_input_text_buffer_changed_cb (GtkTextBuffer     *buffer,
 								 GossipGroupChat   *chat);
 static void             group_chat_send                         (GossipGroupChat   *chat,
 								 const gchar       *msg);
-static void             group_chat_activate_cb                  (GtkWidget         *entry,
-								 GossipGroupChat   *chat);
 static void             group_chat_row_activated_cb             (GtkTreeView       *view,
 								 GtkTreePath       *path,
 								 GtkTreeViewColumn *col,
 								 GossipGroupChat   *chat);
 static void             group_chat_setup_tree                   (GossipGroupChat   *chat);
-static gint             group_chat_get_start_of_word            (GtkEditable       *editable);
 static gboolean         group_chat_find_user_foreach            (GtkTreeModel      *model,
 								 GtkTreePath       *path,
 								 GtkTreeIter       *iter,
 								 FindUserData      *data);
 static gboolean         group_chat_key_press_event_cb           (GtkWidget         *widget,
 								 GdkEventKey       *event,
+								 GossipGroupChat   *chat);
+static void		group_chat_text_view_size_allocate_cb   (GtkWidget	   *widget,
+								 GtkAllocation     *allocation,
 								 GossipGroupChat   *chat);
 static gint             group_chat_completion_compare           (const gchar       *s1,
 								 const gchar       *s2,
@@ -138,12 +138,11 @@ static GossipChat *     group_chat_priv_chat_new                (GossipGroupChat
 static void             group_chat_priv_chat_incoming           (GossipGroupChat   *chat,
 								 GossipJID         *jid,
 								 LmMessage         *m);
-static void             group_chat_priv_chat_removed            (GossipGroupChat *chat,
-								 GossipChat   *priv_chat);
-static void             group_chat_send_multi_clicked_cb        (GtkWidget         *unused,
-								 GossipGroupChat   *chat);
+static void             group_chat_priv_chat_removed            (GossipGroupChat   *chat,
+								 GossipChat        *priv_chat);
+static void		group_chat_input_text_view_send         (GossipGroupChat   *chat);
 static void             group_chat_priv_chats_disconnect        (GossipGroupChat   *chat);
-static gchar *          group_chat_create_contact_name          (GossipJID  *jid);
+static gchar *          group_chat_create_contact_name          (GossipJID         *jid);
 
 
 static GHashTable *group_chats = NULL;
@@ -167,6 +166,8 @@ gossip_group_chat_init (GossipGroupChat *chat)
         GossipGroupChatPriv *priv;
                                                                                 
         priv = g_new0 (GossipGroupChatPriv, 1);
+	priv->is_first_char = TRUE;
+	priv->default_window_height = -1;
                                                                                 
         chat->priv = priv;
                                                                                 
@@ -281,26 +282,18 @@ group_chat_create_gui (GossipGroupChat *chat)
 				       NULL,
 				       "group_chat_window", &priv->window,
 				       "chat_view_sw", &priv->text_view_sw,
-				       "input_entry", &priv->input_entry,
 				       "input_textview", &priv->input_text_view,
 				       "topic_entry", &priv->topic_entry,
 				       "treeview", &priv->tree,
 				       "left_vbox", &focus_vbox,
-				       "disclosure", &priv->disclosure,
-				       "single_hbox", &priv->single_hbox,
-				       "multi_vbox", &priv->multi_vbox,
-				       "send_multi_button", &priv->send_multi_button,
 				       NULL);
 	
 	gossip_glade_connect (glade,
 			      chat,
 			      "group_chat_window", "destroy", group_chat_window_destroy_cb,
-			      "input_entry", "activate", group_chat_activate_cb,
-			      "input_entry", "key_press_event", group_chat_key_press_event_cb,
 			      "input_textview", "key_press_event", group_chat_key_press_event_cb,
+			      "input_textview", "size_allocate", group_chat_text_view_size_allocate_cb,
 			      "topic_entry", "activate", group_chat_topic_activate_cb,
-			      "disclosure", "toggled", group_chat_disclosure_toggled_cb,
-			      "send_multi_button", "clicked", group_chat_send_multi_clicked_cb,
 			      NULL);
 
 	priv->view = gossip_chat_view_new ();
@@ -323,7 +316,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 	
 	list = NULL;
 	list = g_list_append (list, priv->topic_entry);
-	list = g_list_append (list, priv->input_entry);
+	list = g_list_append (list, priv->input_text_view);
 	
 	gtk_container_set_focus_chain (GTK_CONTAINER (focus_vbox), list);
 	
@@ -337,7 +330,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 	g_completion_set_compare (priv->completion,
 				  group_chat_completion_compare);
 		
-	gtk_widget_grab_focus (priv->input_entry);
+	gtk_widget_grab_focus (priv->input_text_view);
 	group_chat_setup_tree (chat);
 
 	gossip_chat_view_set_margin (priv->view, 3);
@@ -403,49 +396,6 @@ gossip_group_chat_show (GossipJID *jid, const gchar *nick)
 	return chat;
 }
 
-GtkWidget *
-group_chat_create_disclosure (gpointer data)
-{
-	GtkWidget *widget;
-	
-	widget = cddb_disclosure_new (NULL, NULL);
-
-	gtk_widget_show (widget);
-
-	return widget;
-}
-
-static void
-group_chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
-				  GossipGroupChat *chat)
-{
-	GossipGroupChatPriv *priv;
-	GtkTextBuffer       *buffer;
-	GtkTextIter          start, end;
-	const gchar         *const_str; 
-	gchar               *str;
-
-	priv = chat->priv;
-	
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
-	
-	if (gtk_toggle_button_get_active (disclosure)) {
-		gtk_widget_show (priv->multi_vbox);
-		gtk_widget_hide (priv->single_hbox);
-
-		const_str = gtk_entry_get_text (GTK_ENTRY (priv->input_entry));
-		gtk_text_buffer_set_text (buffer, const_str, -1);
-	} else {
-		gtk_widget_show (priv->single_hbox);
-		gtk_widget_hide (priv->multi_vbox);
-
-		gtk_text_buffer_get_bounds (buffer, &start, &end);
-		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
-		gtk_entry_set_text (GTK_ENTRY (priv->input_entry), str);
-		g_free (str);
-	}
-}
-
 static void
 group_chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
 					 GossipGroupChat *chat)
@@ -453,11 +403,27 @@ group_chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
 	GossipGroupChatPriv *priv;
 
 	priv = chat->priv;
-	
-	if (gtk_text_buffer_get_line_count (buffer) > 1) {
-		gtk_widget_set_sensitive (priv->disclosure, FALSE);
-	} else {
-		gtk_widget_set_sensitive (priv->disclosure, TRUE);
+
+	if (priv->is_first_char) {
+		GtkRequisition  req;
+		gint            window_height;
+		GtkWidget      *dialog; 
+		GtkAllocation  *allocation;
+
+		/* Save the window's size */
+		dialog = priv->window;
+		gtk_window_get_size (GTK_WINDOW (dialog),
+				     NULL, &window_height);
+
+		gtk_widget_size_request (priv->input_text_view, &req);
+
+		allocation = &GTK_WIDGET (priv->view)->allocation;
+
+		priv->default_window_height = window_height;
+		priv->last_input_height = req.height;
+		priv->padding_height = window_height - req.height - allocation->height;
+
+		priv->is_first_char = FALSE;
 	}
 }
 
@@ -511,22 +477,6 @@ group_chat_send (GossipGroupChat *chat, const gchar *msg)
 	lm_message_unref (m);
 
 	gossip_app_force_non_away ();
-}
-
-static void
-group_chat_activate_cb (GtkWidget *entry, GossipGroupChat *chat)
-{
-	GossipGroupChatPriv *priv;
-	const gchar         *msg;
-	
-	priv = chat->priv;
-	
-	msg = gtk_entry_get_text (GTK_ENTRY (entry));
-	
-	group_chat_send (chat, msg);
-
-	/* Clear the input field. */
-	gtk_entry_set_text (GTK_ENTRY (priv->input_entry), "");
 }
 
 static void
@@ -603,39 +553,6 @@ group_chat_setup_tree (GossipGroupChat *chat)
 			  chat);
 }
 
-static gint
-group_chat_get_start_of_word (GtkEditable *editable)
-{
-	gint      pos, start = 0;
-	gchar    *tmp, *p;
-	gunichar  c;
-	
-	pos = gtk_editable_get_position (editable);
-
-	tmp = gtk_editable_get_chars (editable, 0, pos);
-
-	p = tmp + strlen (tmp);
-	while (p) {
-		c = g_utf8_get_char (p);
-
-		if (g_unichar_isspace (c) || g_unichar_ispunct (c)) {
-			p = g_utf8_find_next_char (p, tmp);
-			if (p) {
-				start = g_utf8_pointer_to_offset (tmp, p);
-			} else {
-				start = 0;
-			}
-			break;
-		}
-		
-		p = g_utf8_prev_char (p);
-	}
-
-	g_free (tmp);
-	
-	return start;
-}
-
 static gboolean
 group_chat_find_user_foreach (GtkTreeModel *model,
 			      GtkTreePath  *path,
@@ -664,34 +581,58 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 			       GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
-	gint                 start_pos, pos;
+	GtkAdjustment       *adj;
+	gdouble              val;
+	GtkTextBuffer       *buffer;
+	GtkTextIter          start, current;
 	gchar               *nick, *completed;
 	gint                 len;
 	GList               *list, *l, *completed_list;
-	
+	gboolean  is_start_of_buffer;
+
 	priv = chat->priv;
 	
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->disclosure))) {
-		/* Multi line entry. */
-		if ((event->state & GDK_CONTROL_MASK) &&
-		    (event->keyval == GDK_Return ||
-		     event->keyval == GDK_ISO_Enter ||
-		     event->keyval == GDK_KP_Enter)) {
-			gtk_widget_activate (priv->send_multi_button);
-			return TRUE;
-		}
+	/* Catch enter but not ctrl/shift-enter */
+	if (IS_ENTER (event->keyval) && !(event->state & GDK_CONTROL_MASK) &&
+	    !(event->state & GDK_SHIFT_MASK)) {
+		group_chat_input_text_view_send (chat);
 
+		return TRUE;
+	}
+	if (IS_ENTER (event->keyval) && (event->state & GDK_CONTROL_MASK)) {
+		/* Do nothing for ctrl-enter */
+		return TRUE;
+	}
+	if (IS_ENTER (event->keyval) && (event->state & GDK_SHIFT_MASK)) {
+		/* Newline for shift-enter. */
 		return FALSE;
+	}
+	else if (event->keyval == GDK_Page_Up) {
+		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
+		gtk_adjustment_set_value (adj, adj->value - adj->page_size);
+
+		return TRUE;
+	}
+	else if (event->keyval == GDK_Page_Down) {
+		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
+		val = MIN (adj->value + adj->page_size, adj->upper - adj->page_size);
+		gtk_adjustment_set_value (adj, val);
+
+		return TRUE;
 	}
 
 	if ((event->state & GDK_CONTROL_MASK) != GDK_CONTROL_MASK &&
 	    (event->state & GDK_SHIFT_MASK) != GDK_SHIFT_MASK &&
 	    event->keyval == GDK_Tab) {
-		/* Get the start of the nick to complete. */
-		start_pos = group_chat_get_start_of_word (GTK_EDITABLE (priv->input_entry));
-		pos = gtk_editable_get_position (GTK_EDITABLE (priv->input_entry));
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
+		gtk_text_buffer_get_iter_at_mark (buffer, &current, gtk_text_buffer_get_insert (buffer));
 
-		nick = gtk_editable_get_chars (GTK_EDITABLE (priv->input_entry), start_pos, pos);
+		/* Get the start of the nick to complete. */
+		gtk_text_buffer_get_iter_at_mark (buffer, &start, gtk_text_buffer_get_insert (buffer));
+		gtk_text_iter_backward_word_start (&start);
+		is_start_of_buffer = gtk_text_iter_is_start (&start);
+
+		nick = gtk_text_buffer_get_text (buffer, &start, &current, FALSE);
 
 		g_completion_clear_items (priv->completion);
 		
@@ -708,14 +649,11 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 		g_free (nick);
 
 		if (completed) {
-			int    len;
-			gchar *text;
+			int       len;
+			gchar    *text;
 			
-			gtk_editable_delete_text (GTK_EDITABLE (priv->input_entry),
-						  start_pos,
-						  pos);
+			gtk_text_buffer_delete (buffer, &start, &current);
 			
-			pos = start_pos;
 			len = g_list_length (completed_list);
 
 			if (len == 1) {
@@ -729,23 +667,14 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 			} else {
 				text = completed;
 			}
-			
-			gtk_editable_insert_text (GTK_EDITABLE (priv->input_entry),
-						  text,
-						  -1,
-						  &pos);
 
+			gtk_text_buffer_insert_at_cursor (buffer, text, strlen (text));
+			
 			if (len == 1) {
-				if (start_pos == 0) {
-					gtk_editable_insert_text (GTK_EDITABLE (priv->input_entry),
-								  ", ",
-								  2,
-								  &pos);
+				if (is_start_of_buffer) {
+					gtk_text_buffer_insert_at_cursor (buffer, ", ", 2);
 				}
 			}
-			
-			gtk_editable_set_position (GTK_EDITABLE (priv->input_entry),
-						   pos);
 			
 			g_free (completed);
 		}
@@ -784,6 +713,80 @@ group_chat_completion_compare (const gchar *s1, const gchar *s2, gsize n)
 	g_free (nick2);
 
 	return ret;
+}
+
+typedef struct {
+	GtkWidget *window;
+	gint       width;
+	gint       height;
+} ChangeSizeData;
+
+static gboolean
+group_chat_change_size_in_idle_cb (ChangeSizeData *data)
+{
+	gtk_window_resize (GTK_WINDOW (data->window),
+			   data->width, data->height);
+
+	return FALSE;
+}
+
+static void
+group_chat_text_view_size_allocate_cb (GtkWidget *widget,
+   				       GtkAllocation *allocation,
+				       GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+	gint                 width;
+	GtkWidget           *dialog;
+	ChangeSizeData      *data;
+	gint                 window_height;
+	gint                 new_height;
+	GtkAllocation       *view_allocation;
+	gint                 current_height;
+	gint                 diff;
+
+	priv = chat->priv;
+	
+	if (priv->default_window_height <= 0) {
+		return;
+	}
+
+	if (priv->last_input_height <= allocation->height) {
+		priv->last_input_height = allocation->height;
+		return;
+	}
+
+	diff = priv->last_input_height - allocation->height;
+	priv->last_input_height = allocation->height;
+
+	view_allocation = &GTK_WIDGET (priv->view)->allocation;
+
+	dialog = priv->window;
+	gtk_window_get_size (GTK_WINDOW (dialog), NULL, &current_height);
+
+	new_height = view_allocation->height + priv->padding_height + allocation->height - diff;
+
+	if (new_height <= priv->default_window_height) {
+		window_height = priv->default_window_height;
+	} else {
+		window_height = new_height;
+	}
+
+	if (current_height <= window_height) {
+		return;
+	}
+
+	/* Restore the window's size */
+	gtk_window_get_size (GTK_WINDOW (dialog), &width, NULL);
+
+	data = g_new0 (ChangeSizeData, 1);
+	data->window = dialog;
+	data->width = width;
+	data->height = window_height;
+
+	g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+			 (GSourceFunc) group_chat_change_size_in_idle_cb,
+			 data, g_free);
 }
 
 static gboolean
@@ -855,17 +858,11 @@ group_chat_focus_in_event_cb (GtkWidget       *widget,
 			      GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
-	gint                 pos;
 
 	priv = chat->priv;
 	
-	pos = gtk_editable_get_position (GTK_EDITABLE (priv->input_entry));
+	gtk_widget_grab_focus (priv->input_text_view);
 
-	gtk_widget_grab_focus (priv->input_entry);
-
-	gtk_editable_select_region (GTK_EDITABLE (priv->input_entry), 0, 0);
-	gtk_editable_set_position (GTK_EDITABLE (priv->input_entry), pos);
-	
 	return TRUE;
 }
 
@@ -1150,7 +1147,7 @@ group_chat_topic_activate_cb (GtkEntry *entry, GossipGroupChat *chat)
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 	
-	gtk_widget_grab_focus (priv->input_entry);
+	gtk_widget_grab_focus (priv->input_text_view);
 }
 
 static gint
@@ -1247,17 +1244,17 @@ group_chat_priv_chat_removed (GossipGroupChat *chat, GossipChat *priv_chat)
 }
 
 static void
-group_chat_send_multi_clicked_cb (GtkWidget *unused, GossipGroupChat *chat)
+group_chat_input_text_view_send (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
 	GtkTextBuffer       *buffer;
 	GtkTextIter          start, end;
-	gchar               *msg;
+	gchar		    *msg;
 
 	priv = chat->priv;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
 	
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
+
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	msg = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 	

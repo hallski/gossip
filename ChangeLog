@@ -1,3 +1,11 @@
+2004-07-02  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
+
+	* src/gossip-group-chat.c:
+	* ui/group-chat.glade:
+	- Make text input field in group chat the same as in regular
+	  chat windows (no longer uses the disclosure widget)
+	- Fixes bug #136830
+
 2004-06-24  Mikael Hallendal  <micke@imendio.com>
 
 	* Release 0.7.6

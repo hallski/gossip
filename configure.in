@@ -20,7 +20,7 @@ AM_GCONF_SOURCE_2
 
 dnl D-BUS
 dnl ==========================
-AC_ARG_ENABLE(dbus, [  --enable-dbus=[no/yes/auto]    compile with d-bus support.],,enable_dbus=auto)
+AC_ARG_ENABLE(dbus, [  --enable-dbus=[no/yes/auto]    compile with d-bus support.],,enable_dbus=no)
 
 if test "x$enable_dbus" != "xno"; then
    dbus_pkgconfig_tmp="dbus-1 >= 0.20 dbus-glib-1"
