@@ -8,7 +8,8 @@ INCLUDES =	\
 	-DLIBDIR=\""$(libdir)"\"		\
 	@GOSSIP_CFLAGS@				\
 	-DGLADEDIR=\"$(datadir)/gossip\"	\
-	-DIMAGEDIR=\"$(datadir)/gossip\"
+	-DIMAGEDIR=\"$(datadir)/gossip\"	\
+	-DSTYLESHEETDIR=\"$(datadir)/gossip\"
 
 bin_PROGRAMS = gossip
 
@@ -92,7 +93,11 @@ BUILT_SOURCES = 					\
 	gossip-marshal.h				\
 	gossip-marshal.c
 
+stylesheetdir = $(datadir)/gossip
+stylesheet_DATA = gossip-log.xsl
+
 EXTRA_DIST =						\
-	gossip-marshal.list
+	gossip-marshal.list				\
+	gossip-log.xsl
 
 CLEANFILES = $(BUILT_SOURCES)

@@ -1,3 +1,18 @@
+2003-11-06  Richard Hult  <richard@imendio.com>
+
+	* configure.in: Add libxml/libxslt dependencies.
+	* gossip.spec.in: Add libxslt requirement.
+
+	* src/Makefile.am: 
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_update_menu), (chat_window_log_activate_cb):
+	* src/gossip-chat.c: (chat_send), (chat_message_handler):
+	* src/gossip-log.c: (log_ensure_dir), (log_get_filename),
+	(log_get_timestamp), (gossip_log_message), (log_transform),
+	(gossip_log_exists), (gossip_log_show):
+	* ui/chat.glade: More logging stuff and rearrange the menu
+	slightly.
+
 2003-11-06  Ross Burton  <ross@burtonini.com>
 
 	* ui/main.glade: (contact_information):

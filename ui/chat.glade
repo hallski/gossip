@@ -791,14 +791,6 @@
 		<widget class="GtkMenu" id="menu_conv_menu">
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_conv_info">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Get _Info</property>
-		      <property name="use_underline">True</property>
-		    </widget>
-		  </child>
-
-		  <child>
 		    <widget class="GtkMenuItem" id="menu_conv_detach">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">D_etach</property>
@@ -833,6 +825,28 @@
 		<widget class="GtkMenu" id="menu_view_menu">
 
 		  <child>
+		    <widget class="GtkMenuItem" id="menu_view_log">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Lo_g</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_view_info">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Contact _Information</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="avskiljare1">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkRadioMenuItem" id="menu_view_as_list">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">As a _List</property>
@@ -846,7 +860,7 @@
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">As _Windows</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">False</property>
+		      <property name="active">True</property>
 		      <property name="group">menu_view_as_list</property>
 		    </widget>
 		  </child>

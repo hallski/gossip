@@ -22,7 +22,14 @@
 #define __GOSSIP_LOG_H__
 
 #include <loudmouth/loudmouth.h>
+#include "gossip-jid.h"
 
-void gossip_log_message (LmMessage *msg, gboolean incoming);
+void     gossip_log_message (LmMessage *msg,
+			     gboolean   incoming);
+
+gboolean gossip_log_exists  (GossipJID *jid);
+
+void     gossip_log_show    (GossipJID *jid);
+
 
 #endif /* __GOSSIP_LOG_H__ */

@@ -602,6 +602,8 @@ chat_send (GossipChat  *chat,
                 chat_request_composing (m);
         }
 
+	gossip_log_message (m, FALSE);
+
         lm_connection_send (gossip_app_get_connection (), m, NULL);
         lm_message_unref (m);
 }
@@ -812,6 +814,8 @@ chat_message_handler (LmMessageHandler *handler,
         if (!nick) {
                 nick = gossip_jid_get_part_name (jid);
         }
+
+	gossip_log_message (m, TRUE);
 
         gossip_chat_view_append_chat_message (chat->priv->view,
                                               timestamp,

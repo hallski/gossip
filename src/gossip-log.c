@@ -21,48 +21,100 @@
 
 #include <config.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <time.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <libgnome/gnome-i18n.h>
+#include <libgnome/gnome-url.h>
+#include <libxslt/xslt.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+#include "libexslt/exslt.h"
 #include "gossip-utils.h"
 #include "gossip-log.h"
 
+#define LOG_HEADER \
+    "<?xml version='1.0' encoding='UTF-8'?>\n" \
+    "<?xml-stylesheet type=\"text/xsl\" href=\"gossip-log.xsl\"?>\n" \
+    "<gossip xmlns:log=\"gossip:log\" version=\"1\">\n" \
+
+#define LOG_FOOTER \
+    "</gossip>\n"
+
 static void
-ensure_dir (void)
+log_ensure_dir (void)
 {
 	gchar *dir;
 	
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		mkdir (dir, 0755);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 	g_free (dir);
 	
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		mkdir (dir, 0755);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 	g_free (dir);
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", "logs", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		mkdir (dir, 0755);
+		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 	g_free (dir);
+}
+
+static gchar *
+log_get_filename (GossipJID *jid, const gchar *suffix)
+{
+	gchar *tmp;
+	
+	tmp = g_build_filename (g_get_home_dir (),
+				".gnome2", "Gossip", "logs",
+				gossip_jid_get_without_resource (jid),
+				NULL);
+
+	return g_strconcat (tmp, suffix, NULL);
+}
+
+static gchar *
+log_get_timestamp (LmMessage *msg)
+{
+	const gchar *stamp;
+	time_t       t;
+	struct tm   *tm;
+	gchar        buf[128];
+	
+	stamp = gossip_utils_get_timestamp_from_message (msg);
+	if (stamp) {
+		tm = lm_utils_get_localtime (stamp);
+	} else {
+		t  = time (NULL);
+		tm = localtime (&t);
+	}
+	
+	buf[0] = 0;
+	strftime (buf, sizeof (buf), "%Y%m%dT%H:%M:%S", tm);
+
+	return g_strdup (buf);
 }
 
 void
 gossip_log_message (LmMessage *msg, gboolean incoming)
 {
-	FILE          *file;
-        gchar         *filename;
 	const gchar   *jid_string;
         GossipJID     *jid;
-	const gchar   *body = "";
+        gchar         *filename;
+	FILE          *file;
+	gchar         *body;
 	const gchar   *to_or_from;
 	gchar         *stamp;
 	LmMessageNode *node;
 	gchar         *nick;
+	const gchar   *resource;
 	
 	if (incoming) {
 		jid_string = lm_message_node_get_attribute (msg->node, "from");
@@ -71,25 +123,19 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 	}
 
 	jid = gossip_jid_new (jid_string);
+	filename = log_get_filename (jid, ".log");
 
-	ensure_dir ();
+	log_ensure_dir ();
 	
-	filename = g_build_filename (g_get_home_dir (),
-				     ".gnome2", "Gossip", "logs",
-				     gossip_jid_get_without_resource (jid),
-				     NULL);
-
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		file = fopen (filename, "w+");
 		if (file) {
-			fprintf (file,
-				 "<?xml version='1.0' encoding='UTF-8'?>\n"
-				 "<gossip-log>\n");
+			fprintf (file, LOG_HEADER);
 		}
 	} else {
 		file = fopen (filename, "r+");
 		if (file) {
-			fseek (file, - (strlen ("</gossip-log>") + 1), SEEK_END);
+			fseek (file, - strlen (LOG_FOOTER), SEEK_END);
 		} 
 	}
 	
@@ -99,8 +145,8 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 		gossip_jid_unref (jid);
 		return;
 	}
-
-	stamp = gossip_utils_get_timestamp (gossip_utils_get_timestamp_from_message (msg));
+	
+	stamp = log_get_timestamp (msg);
 
 	if (incoming) {
 		nick = g_strdup (gossip_roster_old_get_nick_from_jid (gossip_app_get_roster (), jid));
@@ -117,15 +163,24 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 
 	node = lm_message_node_get_child (msg->node, "body");
 	if (node) {
-		body = node->value;
-	} 
+		body = g_markup_escape_text (node->value, -1);
+	} else {
+		body = g_strdup ("");
+	}
 
+	resource = gossip_jid_get_resource (jid);
+	if (!resource) {
+		resource = "";
+	}
+	
 	fprintf (file,
-		 "    <message time='%s' %s='%s' resource='%s' nick='%s'>%s</message>\n"
-		 "</gossip-log>\n",
+		 "  <message time='%s' %s='%s' resource='%s' nick='%s'>\n"
+		 "    %s\n"
+		 "  </message>\n"
+		 LOG_FOOTER,
 		 stamp, to_or_from,
 		 gossip_jid_get_without_resource (jid),
-		 gossip_jid_get_resource (jid),
+		 resource,
 		 nick,
 		 body);
 	
@@ -134,4 +189,111 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 	gossip_jid_unref (jid);
 	g_free (stamp);
 	g_free (nick);
+	g_free (body);
+}
+
+static gboolean
+log_transform (const gchar *infile, gint fd_outfile)
+{
+        xsltStylesheet *stylesheet;
+        xmlDoc         *xml_doc;
+        xmlDoc         *html_doc;
+	const gchar    *params[6];
+
+	/* Setup libxml. */
+        xmlSubstituteEntitiesDefault (1);
+        xmlLoadExtDtdDefaultValue = 1;
+        exsltRegisterAll ();
+
+        stylesheet = xsltParseStylesheetFile (STYLESHEETDIR "/gossip-log.xsl");
+	if (!stylesheet) {
+		return FALSE;
+	}
+
+        xml_doc = xmlParseFile (infile);
+	if (!xml_doc) {
+		return FALSE;
+	}
+
+	/* Set params to be passed to stylesheet. */
+	params[0] = "title";
+	params[1] = g_strconcat ("\"", _("Conversation Log"), "\"", NULL);
+        params[2] = NULL;
+	
+        html_doc = xsltApplyStylesheet (stylesheet, xml_doc, params);
+	if (!html_doc) {
+		xmlFree (xml_doc);
+		return FALSE;
+	}
+                                                                                
+        xmlFree (xml_doc);
+	
+	xsltSaveResultToFd (fd_outfile, html_doc, stylesheet);
+
+	xsltFreeStylesheet (stylesheet);
+        xmlFree (html_doc);
+
+	return TRUE;
+}
+
+gboolean
+gossip_log_exists (GossipJID *jid)
+{
+	gchar    *infile;
+	gboolean  exists;
+
+	infile = log_get_filename (jid, ".log");
+	exists = g_file_test (infile, G_FILE_TEST_EXISTS);
+	g_free (infile);
+
+	return exists;
+}	
+
+void
+gossip_log_show (GossipJID *jid)
+{
+	gchar *infile, *outfile, *url;
+	FILE  *file;
+	int    fd;
+
+	infile = log_get_filename (jid, ".log");
+
+	if (!g_file_test (infile, G_FILE_TEST_EXISTS)) {
+		file = fopen (infile, "w+");
+		if (file) {
+			fprintf (file, LOG_HEADER LOG_FOOTER);
+			fclose (file);
+		}
+	}
+
+	if (!g_file_test (infile, G_FILE_TEST_EXISTS)) {
+		g_free (infile);
+		return;
+	}
+
+	outfile = g_build_filename (g_get_tmp_dir (), "gossip-log-XXXXXX", NULL);
+
+	fd = mkstemp (outfile);
+	if (fd == -1) {
+		g_free (outfile);
+		return;
+	}
+	
+	if (!log_transform (infile, fd)) {
+		/* Error dialog... */
+		
+		g_free (infile);
+		g_free (outfile);
+		return;
+	}
+
+	close (fd);
+	
+	url = g_strconcat ("file://", outfile, NULL);
+	if (!gnome_url_show (url, NULL)) {
+		/* Error dialog... */
+	}
+
+	g_free (url);
+	g_free (outfile);
 }
