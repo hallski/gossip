@@ -11,6 +11,11 @@
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="has_separator">True</property>
 
   <child internal-child="vbox">
@@ -32,6 +37,7 @@
 	      <property name="label">gtk-close</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-7</property>
 	    </widget>
 	  </child>
@@ -44,6 +50,7 @@
 	      <property name="label" translatable="yes">_Reply...</property>
 	      <property name="use_underline">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
 	    </widget>
 	  </child>
@@ -147,6 +154,8 @@
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="editable">False</property>
+		  <property name="overwrite">False</property>
+		  <property name="accepts_tab">True</property>
 		  <property name="justification">GTK_JUSTIFY_LEFT</property>
 		  <property name="wrap_mode">GTK_WRAP_CHAR</property>
 		  <property name="cursor_visible">False</property>
@@ -184,6 +193,11 @@
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="has_separator">True</property>
 
   <child internal-child="vbox">
@@ -205,6 +219,7 @@
 	      <property name="label">gtk-cancel</property>
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-6</property>
 	    </widget>
 	  </child>
@@ -217,6 +232,7 @@
 	      <property name="label" translatable="yes">_Send</property>
 	      <property name="use_underline">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
 	    </widget>
 	  </child>
@@ -372,6 +388,8 @@
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">False</property>
+			  <property name="overwrite">False</property>
+			  <property name="accepts_tab">True</property>
 			  <property name="justification">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap_mode">GTK_WRAP_CHAR</property>
 			  <property name="cursor_visible">False</property>
@@ -412,6 +430,8 @@
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
+		      <property name="overwrite">False</property>
+		      <property name="accepts_tab">True</property>
 		      <property name="justification">GTK_JUSTIFY_LEFT</property>
 		      <property name="wrap_mode">GTK_WRAP_CHAR</property>
 		      <property name="cursor_visible">True</property>
@@ -457,6 +477,11 @@
   <property name="default_height">250</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
 
   <child>
     <widget class="GtkVBox" id="chat_widget">
@@ -512,6 +537,8 @@
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
+		      <property name="overwrite">False</property>
+		      <property name="accepts_tab">True</property>
 		      <property name="justification">GTK_JUSTIFY_LEFT</property>
 		      <property name="wrap_mode">GTK_WRAP_WORD</property>
 		      <property name="cursor_visible">True</property>
@@ -559,6 +586,11 @@
   <property name="default_height">250</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
+  <property name="decorated">True</property>
+  <property name="skip_taskbar_hint">False</property>
+  <property name="skip_pager_hint">False</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
 
   <child>
     <widget class="GtkVBox" id="vbox5">
@@ -605,7 +637,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator5">
+		    <widget class="GtkSeparatorMenuItem" id="separator5">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
@@ -614,6 +646,39 @@
 		    <widget class="GtkImageMenuItem" id="menu_conv_close">
 		      <property name="visible">True</property>
 		      <property name="stock_item">GNOMEUIINFO_MENU_CLOSE_ITEM</property>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="redigera1">
+	      <property name="visible">True</property>
+	      <property name="stock_item">GNOMEUIINFO_MENU_EDIT_TREE</property>
+
+	      <child>
+		<widget class="GtkMenu" id="redigera1_menu">
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_edit_cut">
+		      <property name="visible">True</property>
+		      <property name="stock_item">GNOMEUIINFO_MENU_CUT_ITEM</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_edit_copy">
+		      <property name="visible">True</property>
+		      <property name="stock_item">GNOMEUIINFO_MENU_COPY_ITEM</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_edit_paste">
+		      <property name="visible">True</property>
+		      <property name="stock_item">GNOMEUIINFO_MENU_PASTE_ITEM</property>
 		    </widget>
 		  </child>
 		</widget>
@@ -649,7 +714,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="separator4">
+		    <widget class="GtkSeparatorMenuItem" id="separator4">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>

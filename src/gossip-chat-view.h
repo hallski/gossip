@@ -44,20 +44,23 @@ struct _GossipChatViewClass {
 	GtkTextViewClass    parent_class;
 };
 
-GType            gossip_chat_view_get_type            (void) G_GNUC_CONST;
-GossipChatView * gossip_chat_view_new                 (void);
-void             gossip_chat_view_append_chat_message (GossipChatView *view,
-						       const gchar    *time_str,
-						       const gchar    *to,
-						       const gchar    *from,
-						       const gchar    *msg);
-void             gossip_chat_view_append_event_msg    (GossipChatView *view,
-						       const gchar    *str,
-						       gboolean        timestamp);
-void             gossip_chat_view_set_margin          (GossipChatView *view,
-						       gint            margin);
-void             gossip_chat_view_clear               (GossipChatView *view);
-void             gossip_chat_view_scroll_down         (GossipChatView *view);
-
+GType            gossip_chat_view_get_type             (void) G_GNUC_CONST;
+GossipChatView * gossip_chat_view_new                  (void);
+void             gossip_chat_view_append_chat_message  (GossipChatView *view,
+							const gchar    *time_str,
+							const gchar    *to,
+							const gchar    *from,
+							const gchar    *msg);
+void             gossip_chat_view_append_event_msg     (GossipChatView *view,
+							const gchar    *str,
+							gboolean        timestamp);
+void             gossip_chat_view_set_margin           (GossipChatView *view,
+							gint            margin);
+void             gossip_chat_view_clear                (GossipChatView *view);
+void             gossip_chat_view_scroll_down          (GossipChatView *view);
+gboolean         gossip_chat_view_get_selection_bounds (GossipChatView *view,
+							GtkTextIter    *start,
+							GtkTextIter    *end);
+void             gossip_chat_view_copy_clipboard       (GossipChatView *view);
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

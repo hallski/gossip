@@ -36,6 +36,7 @@
 #include "gossip-contact-info.h"
 #include "gossip-stock.h"
 #include "gossip-log.h"
+#include "gossip-marshal.h"
 #include "gossip-roster.h"
 #include "gossip-chat.h"
 
@@ -176,7 +177,7 @@ chat_class_init (GossipChatClass *klass)
                               G_SIGNAL_RUN_LAST,
                               G_STRUCT_OFFSET (GossipChatClass, composing),
                               NULL, NULL,
-                              g_cclosure_marshal_VOID__BOOLEAN,
+			      gossip_marshal_VOID__BOOLEAN,
                               G_TYPE_NONE,
                               1,
                               G_TYPE_BOOLEAN);
@@ -187,17 +188,17 @@ chat_class_init (GossipChatClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GossipChatClass, new_message),
 			      NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID,
+			      gossip_marshal_VOID__VOID,
 			      G_TYPE_NONE,
 			      0);
 
-	chat_signals[NAME_CHANGED]=
+	chat_signals[NAME_CHANGED] =
 		g_signal_new ("name-changed",
 			      G_OBJECT_CLASS_TYPE (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GossipChatClass, name_changed),
 			      NULL, NULL,
-			      g_cclosure_marshal_VOID__POINTER,
+			      gossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 }
@@ -1361,5 +1362,47 @@ gossip_chat_clear (GossipChat *chat)
 	priv = chat->priv;
 
 	gossip_chat_view_clear (priv->view);
+}
+
+void 
+gossip_chat_copy (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	GtkTextBuffer  *buffer;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+	
+	if (gossip_chat_view_get_selection_bounds (priv->view, NULL, NULL)) {
+		gossip_chat_view_copy_clipboard (priv->view);
+		return;
+	}
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
+	if (gtk_text_buffer_get_selection_bounds (buffer, NULL, NULL)) {
+		GtkClipboard *clipboard;
+
+		clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+
+		gtk_text_buffer_copy_clipboard (buffer, clipboard);
+	}
+}
+
+void
+gossip_chat_paste (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	GtkTextBuffer  *buffer;
+	GtkClipboard   *clipboard;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
+	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+
+	gtk_text_buffer_paste_clipboard (buffer, clipboard, NULL, TRUE);
 }
 

@@ -35,7 +35,7 @@
 
 struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
-	
+
 	GTimeVal       last_timestamp;
 	GDate         *last_datestamp;
 };
@@ -190,6 +190,7 @@ chat_view_init (GossipChatView *view)
 	view->priv = priv;
 	
 	priv->buffer = gtk_text_buffer_new (NULL);
+	
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW (view), priv->buffer);
 
 	g_object_set (view,
@@ -483,10 +484,7 @@ chat_view_copy_address_cb (GtkMenuItem *menuitem, const gchar *url)
 {
 	GtkClipboard *clipboard;
 
-	/* Is this right? It's what gnome-terminal does and
-	 * GDK_SELECTION_CLIPBOARD doesn't work.
-	 */
-	clipboard = gtk_clipboard_get (GDK_NONE);
+	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_set_text (clipboard, url, -1);
 }
 
@@ -1021,7 +1019,31 @@ gossip_chat_view_clear (GossipChatView *view)
 	gtk_text_buffer_set_text (buffer, "", -1);
 }
 
+gboolean
+gossip_chat_view_get_selection_bounds (GossipChatView *view,
+				       GtkTextIter    *start,
+				       GtkTextIter    *end)
+{
+	GtkTextBuffer *buffer;
+	
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
 
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
+	return gtk_text_buffer_get_selection_bounds (buffer, start, end);
+}
 
+void
+gossip_chat_view_copy_clipboard (GossipChatView *view)
+{
+	GtkTextBuffer *buffer;
+	GtkClipboard  *clipboard;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+
+	gtk_text_buffer_copy_clipboard (buffer, clipboard);
+}
 

@@ -1,3 +1,24 @@
+2004-06-05  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
+
+	* ui/main.glade: 
+	- Fix duplicate shortcut in subscription request dialog.
+	- Fixes bug #143779.
+	  
+2004-05-20  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.[ch]: 
+	(gossip_chat_view_get_selection_bounds): Added
+	(gossip_chat_view_copy_clipboard): Added
+	* src/gossip-chat-window.c: 
+	(gossip_chat_window_init): Connect to copy&paste.
+	(chat_window_copy_activate_cb): Added
+	(chat_window_paste_activate_cb): Added
+	* src/gossip-chat.[ch]: 
+	(gossip_chat_copy): Added
+	(gossip_chat_paste): Added
+	* ui/chat.glade: Added Edit menu to chat windows.
+	- Added support for Copy in chat windows.
+
 2004-05-18  Mikael Hallendal  <micke@imendio.com>
 
 	* autogen.sh: Hard code automake 1.7

@@ -68,6 +68,10 @@ static void chat_window_conv_activate_cb      (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_close_activate_cb     (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
+static void chat_window_copy_activate_cb      (GtkWidget             *menuitem,
+					       GossipChatWindow      *window);
+static void chat_window_paste_activate_cb     (GtkWidget             *menuitem,
+					       GossipChatWindow      *window);
 static void chat_window_tab_left_activate_cb  (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_tab_right_activate_cb (GtkWidget	     *menuitem,
@@ -145,6 +149,8 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *m_conv_log;
 	GtkWidget   *m_conv_info;
 	GtkWidget   *m_conv_close;
+	GtkWidget   *m_edit_copy;
+	GtkWidget   *m_edit_paste;
 	GtkWidget   *m_tabs_next;
 	GtkWidget   *m_tabs_prev;
 	GtkWidget   *m_tabs_left;
@@ -227,6 +233,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_conv_info", &priv->m_conv_info,
 				       "menu_conv_log", &priv->m_conv_log,
 				       "menu_conv_close", &priv->m_conv_close,
+				       "menu_edit_copy", &priv->m_edit_copy,
+				       "menu_edit_paste", &priv->m_edit_paste,
 				       "menu_tabs_next", &priv->m_tabs_next,
 				       "menu_tabs_prev", &priv->m_tabs_prev,
 				       "menu_tabs_left", &priv->m_tabs_left,
@@ -270,6 +278,14 @@ gossip_chat_window_init (GossipChatWindow *window)
 	g_signal_connect (priv->m_conv_close,
 			  "activate",
 			  G_CALLBACK (chat_window_close_activate_cb),
+			  window);
+	g_signal_connect (priv->m_edit_copy,
+			  "activate",
+			  G_CALLBACK (chat_window_copy_activate_cb),
+			  window);
+	g_signal_connect (priv->m_edit_paste,
+			  "activate",
+			  G_CALLBACK (chat_window_paste_activate_cb),
 			  window);
 	g_signal_connect_swapped (priv->m_tabs_prev,
 			          "activate",
@@ -613,6 +629,32 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
+chat_window_copy_activate_cb (GtkWidget        *menuitem,
+			      GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
+
+	priv = window->priv;
+
+	gossip_chat_copy (priv->current_chat);
+}
+
+static void
+chat_window_paste_activate_cb (GtkWidget        *menuitem,
+			       GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
+	
+	priv = window->priv;
+
+	gossip_chat_paste (priv->current_chat);
+}
+
+static void
 chat_window_tab_left_activate_cb (GtkWidget        *menuitem,
 				  GossipChatWindow *window)
 {
@@ -621,13 +663,13 @@ chat_window_tab_left_activate_cb (GtkWidget        *menuitem,
 	gint                  index;
 
 	priv = window->priv;
-	
+
 	chat = priv->current_chat;
 	index = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
 	if (index <= 0) {
 		return;
 	}
-	
+
 	gossip_notebook_move_page (GOSSIP_NOTEBOOK (priv->notebook),
 				   GOSSIP_NOTEBOOK (priv->notebook),
 				   gossip_chat_get_widget (chat),
@@ -647,7 +689,7 @@ chat_window_tab_right_activate_cb (GtkWidget        *menuitem,
 	gint                  index;
 
 	priv = window->priv;
-	
+
 	chat = priv->current_chat;
 	index = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
 
@@ -667,7 +709,7 @@ chat_window_detach_activate_cb (GtkWidget        *menuitem,
 {
 	GossipChatWindow *new_window;
 	GossipChat       *chat;
-	
+
 	chat = window->priv->current_chat;
 	new_window = gossip_chat_window_new ();
 
@@ -700,9 +742,9 @@ chat_window_presence_updated_cb (gpointer           not_used,
 				 GossipChat        *chat)
 { 
 	GossipChatWindow *window;
-	
+
 	window = gossip_chat_get_window (chat);
-	
+
 	chat_window_update_status (window, chat);
 }
 
@@ -769,7 +811,7 @@ chat_window_name_changed_cb (GossipChat       *chat,
 	GtkLabel *label;
 
 	label = g_object_get_data (G_OBJECT (chat), "label");
-	
+
 	gtk_label_set_text (label, name);
 }
 
@@ -829,18 +871,21 @@ chat_window_switch_page_cb (GtkNotebook	     *notebook,
 			    gint	      page_num,
 			    GossipChatWindow *window)
 {
-	GossipChat *chat;
-	GtkWidget  *child;
+	GossipChatWindowPriv *priv;
+	GossipChat           *chat;
+	GtkWidget            *child;
 
+	priv = window->priv;
+	
 	child = gtk_notebook_get_nth_page (notebook, page_num); 	
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 
-	if (window->priv->current_chat == chat) {
+	if (priv->current_chat == chat) {
 		return;
 	}
 
-	window->priv->current_chat = chat;
-	window->priv->chats_new_msg = g_list_remove (window->priv->chats_new_msg, chat);
+	priv->current_chat = chat;
+	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, chat);
 
 	chat_window_update_title (window);
 	chat_window_update_menu (window);
