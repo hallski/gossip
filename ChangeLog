@@ -1,3 +1,14 @@
+2003-11-17  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Use a border width of 2 pixels for the main
+	window.
+	
+	* ui/chat.glade:
+	* ui/group-chat.glade: Set window icons.
+	
+	* ui/pixmaps/Makefile.am (image_DATA): Add group chat icon from
+	Michael Gratton <mike@vee.net>.
+
 2003-11-17  Frederic Crozat  <fcrozat@mandrakesoft.com>
 
 	* autogen.sh: Handle GNOME2_DIR for aclocal path.
