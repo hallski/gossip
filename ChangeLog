@@ -1,3 +1,7 @@
+2003-06-29  Jordi Mallach  <jordi@sindominio.net>
+
+	* gossip.desktop.in: Add translation markers and StartupNotify entry.
+
 2003-06-28  Richard Hult  <richard@imendio.com>
 
 	* gossip.spec.in: 

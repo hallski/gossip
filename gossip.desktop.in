@@ -1,9 +1,10 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=Gossip
-Comment=Jabber Instant Messaging
+_Name=Gossip
+_Comment=Jabber Instant Messaging
 Exec=gossip
+StartupNotify=true
 Terminal=false
 Type=Application
 Categories=Application;Network;
