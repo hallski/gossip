@@ -1,3 +1,8 @@
+2003-12-11  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
+
+	* src/gossip-chat.c: (chat_input_key_press_event_cb):
+	- Don't handle ctrl-enter.
+	
 2003-12-11  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c: 
