@@ -57,19 +57,25 @@ gossip_SOURCES = 				\
 gossip_LDADD = @GOSSIP_LIBS@
 gossip_LDFLAGS = -export-dynamic
 
+gossip-marshal.h: gossip-marshal.list
+	(cd $(srcdir) && \
+	@GLIB_GENMARSHAL@ --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \
+	&& (cmp -s xgen-gmh gossip-marshal.h || cp xgen-gmh gossip-marshal.h) \
+	&& rm -f xgen-gmh xgen-gmh~
+
+gossip-marshal.c: gossip-marshal.list
+	(cd $(srcdir) && \
+	@GLIB_GENMARSHAL@ --prefix=gossip_marshal gossip-marshal.list --body) > xgen-gmc \
+	&& cp xgen-gmc gossip-marshal.c \
+	&& rm -f xgen-gmc xgen-gmc~
+
 gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
 
-gossip-marshal.h: gossip-marshal.list
-	cd $(srcdir) && \
-	( @GLIB_GENMARSHAL@ --prefix=gossip_marshal gossip-marshal.list --header > gossip-marshal1.tmp \
-	&& mv gossip-marshal1.tmp gossip-marshal.h ) \
-	|| ( rm -f gossip-marshal1.tmp && exit 1 )
+BUILT_SOURCES = 					\
+	gossip-marshal.h				\
+	gossip-marshal.c
 
-gossip-marshal.c: gossip-marshal.h
-	cd $(srcdir) && \
-	( @GLIB_GENMARSHAL@ --prefix=gossip_marshal gossip-marshal.list --body > gossip-marshal2.tmp \
-	&& mv gossip-marshal2.tmp gossip-marshal.c ) \
-	|| ( rm -f gossip-marshal2.tmp && exit 1 )
-
-EXTRA_DIST =					\
+EXTRA_DIST =						\
 	gossip-marshal.list
+
+CLEANFILES = $(BUILT_SOURCES)

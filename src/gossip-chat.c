@@ -222,8 +222,9 @@ chat_create (GossipApp *app, GossipJID *jid)
 	
 	gtk_widget_grab_focus (chat->input_entry);
 
-	chat->presence_handler = lm_message_handler_new ((LmHandleMessageFunction) chat_presence_handler,
-							chat, NULL);
+	chat->presence_handler = lm_message_handler_new (
+		(LmHandleMessageFunction) chat_presence_handler, chat,NULL);
+
 	lm_connection_register_message_handler (chat->connection,
 						chat->presence_handler,
 						LM_MESSAGE_TYPE_PRESENCE,
@@ -277,6 +278,15 @@ chat_dialog_send (GossipChat *chat, const gchar *msg)
 	LmMessage *m;
 	gchar     *nick;
 
+	if (g_ascii_strcasecmp (msg, "/clear") == 0) {
+		GtkTextBuffer *buffer;
+		
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->text_view));
+		gtk_text_buffer_set_text (buffer, "", -1);
+		
+		return;
+	}
+	
 	nick = gossip_jid_get_part_name (gossip_app_get_jid (chat->app));	
 	
 	gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->text_view),

@@ -22,6 +22,7 @@
  */
 
 #include <config.h>
+#include <sys/utsname.h>
 #include <string.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
@@ -828,8 +829,10 @@ app_iq_handler (LmMessageHandler *handler,
 		d(g_print ("with namespace %s", namespace));
 		
 		if (strcmp (namespace, "jabber:iq:version") == 0) {
-			LmMessage   *v;
-			const gchar *from, *id;
+			LmMessage      *v;
+			const gchar    *from, *id;
+			struct utsname  osinfo;
+			gchar          *os;
 
 			from = lm_message_node_get_attribute (m->node, "from");
 			id = lm_message_node_get_attribute (m->node, "id");
@@ -847,7 +850,14 @@ app_iq_handler (LmMessageHandler *handler,
 							NULL);
 			lm_message_node_add_child (node, "name", PACKAGE);
 			lm_message_node_add_child (node, "version", VERSION);
-			lm_message_node_add_child (node, "os", "Linux");
+			
+			uname (&osinfo);
+			os = g_strdup_printf ("%s %s %s",
+					      osinfo.sysname,
+					      osinfo.release,
+					      osinfo.machine);
+			lm_message_node_add_child (node, "os", os);
+			g_free (os);
 
 			lm_connection_send (connection, v, NULL);
 			lm_message_unref (v);

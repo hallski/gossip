@@ -189,7 +189,7 @@ group_chat_send (GossipGroupChat *chat,
 {
 	LmMessage *m;
 
-	if (strncmp (msg, "/nick ", 6) == 0 && strlen (msg) > 6) {
+	if (g_ascii_strncasecmp (msg, "/nick ", 6) == 0 && strlen (msg) > 6) {
 		gchar *to;
 
 		g_free (chat->nick);
@@ -207,7 +207,15 @@ group_chat_send (GossipGroupChat *chat,
 		
 		return;
 	}
+	else if (g_ascii_strcasecmp (msg, "/clear") == 0) {
+		GtkTextBuffer *buffer;
 
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->textview));
+		gtk_text_buffer_set_text (buffer, "", -1);
+		
+		return;
+	}
+	
 	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (chat->jid),
 					  LM_MESSAGE_TYPE_MESSAGE,
 					  LM_MESSAGE_SUB_TYPE_GROUPCHAT);
