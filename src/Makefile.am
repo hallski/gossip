@@ -72,8 +72,6 @@ gossip_SOURCES = 				\
 	gossip-roster-view.h                    \
 	gossip-register.c			\
 	gossip-register.h			\
-	gossip-session.c                        \
-	gossip-session.h                        \
 	gossip-sound.c				\
 	gossip-sound.h				\
 	gossip-startup-druid.c			\

@@ -22,33 +22,42 @@
 #include "gossip-presence.h"
 
 struct _GossipPresence {
-	GossipPresenceType  type;
-	gchar              *status;
+	GossipPresenceState  state;
+	GossipPresenceType   type;
+	gchar               *status;
 
-	
-	guint               ref_count;
+	gint                 priority;
+
+	guint                ref_count;
 };
 
-static void  presence_free (GossipPresence *presence);
-	
-static void
-presence_free (GossipPresence *presence)
-{
-	g_free (presence->status);
-	
-	g_free (presence);
-}
-
 GossipPresence *
-gossip_presence_new (void)
+gossip_presence_new ()
 {
 	GossipPresence *presence;
 
 	presence = g_new0 (GossipPresence, 1);
 	presence->ref_count = 1;
+	presence->state = GOSSIP_PRESENCE_STATE_OFFLINE;
 	presence->status = NULL;
 
 	return presence;
+}
+
+GossipPresenceState 
+gossip_presence_get_state (GossipPresence *presence)
+{
+	g_return_val_if_fail (presence != NULL, GOSSIP_PRESENCE_STATE_OFFLINE);
+	
+	return presence->state;
+}
+
+void
+gossip_presence_set_state (GossipPresence *presence, GossipPresenceState state)
+{
+	g_return_if_fail (presence != NULL);
+
+	presence->state = state;
 }
 
 GossipPresenceType
@@ -60,12 +69,53 @@ gossip_presence_get_type (GossipPresence *presence)
 	return presence->type;
 }
 
+void
+gossip_presence_set_type (GossipPresence *presence, GossipPresenceType type)
+{
+	g_return_if_fail (presence != NULL);
+
+	presence->type = type;
+}
+
 const gchar *
 gossip_presence_get_status (GossipPresence *presence)
 {
 	g_return_val_if_fail (presence != NULL, NULL);
 
-	return presence->status;
+	if (presence->status) {
+		return presence->status;
+	}
+
+	return "";
+}
+
+void
+gossip_presence_set_status (GossipPresence *presence, const gchar *status)
+{
+	g_return_if_fail (presence != NULL);
+
+	g_free (presence->status);
+	if (status) {
+		presence->status = g_strdup (status);
+	} else {
+		presence->status = NULL;
+	}
+}
+
+gint
+gossip_presence_get_priority (GossipPresence *presence)
+{
+	g_return_val_if_fail (presence != NULL, 0);
+
+	return presence->priority;
+}
+
+void
+gossip_presence_set_priority (GossipPresence *presence, gint priority)
+{
+	g_return_if_fail (presence != NULL);
+
+	presence->priority = priority;
 }
 
 GossipPresence *
@@ -85,9 +135,25 @@ gossip_presence_unref (GossipPresence *presence)
 
 	presence->ref_count--;
 	
-	if (presence->ref_count <= 0) {
-		presence_free (presence);
+	if (presence->ref_count > 0) {
+		return;
 	}
+
+	g_free (presence->status);
+	g_free (presence);
 }
+
+GossipPresence *
+gossip_presence_new_available (void)
+{
+	GossipPresence *presence;
+
+	presence = gossip_presence_new ();
+	gossip_presence_set_state (presence, GOSSIP_PRESENCE_STATE_ONLINE);
+	gossip_presence_set_type (presence, GOSSIP_PRESENCE_TYPE_AVAILABLE);
+
+	return presence;
+}
+
 
 

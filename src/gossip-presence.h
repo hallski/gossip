@@ -26,19 +26,36 @@
 typedef struct _GossipPresence GossipPresence;
 
 typedef enum {
+	GOSSIP_PRESENCE_STATE_ONLINE,
+	GOSSIP_PRESENCE_STATE_OFFLINE
+} GossipPresenceState;
+
+typedef enum {
 	GOSSIP_PRESENCE_TYPE_AVAILABLE, /* available (null) */
 	GOSSIP_PRESENCE_TYPE_BUSY,      /* busy (dnd) */
 	GOSSIP_PRESENCE_TYPE_AWAY,      /* away (away) */
 	GOSSIP_PRESENCE_TYPE_EXT_AWAY        /* extended away (xa) */
 } GossipPresenceType;
 
-GossipPresence *    gossip_presence_new      (void);
+GossipPresence *    gossip_presence_new          (void);
 
-GossipPresenceType  gossip_presence_get_type   (GossipPresence *presence);
-const gchar *       gossip_presence_get_status (GossipPresence *presence);
+GossipPresenceState gossip_presence_get_state    (GossipPresence *presence);
+void                gossip_presence_set_state    (GossipPresence *presence,
+						  GossipPresenceState state);
+GossipPresenceType  gossip_presence_get_type     (GossipPresence *presence);
+void                gossip_presence_set_type     (GossipPresence *presence,
+						  GossipPresenceType type);
+const gchar *       gossip_presence_get_status   (GossipPresence *presence);
+void                gossip_presence_set_status   (GossipPresence *presence,
+						  const gchar    *status);
+gint                gossip_presence_get_priority (GossipPresence *presence);
+void                gossip_presence_set_priority (GossipPresence *presence,
+						  gint            priority);
 
-GossipPresence *    gossip_presence_ref        (GossipPresence *presence);
-void                gossip_presence_unref      (GossipPresence *presence);
+GossipPresence *    gossip_presence_ref          (GossipPresence *presence);
+void                gossip_presence_unref        (GossipPresence *presence);
+
+GossipPresence *    gossip_presence_new_available (void);
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

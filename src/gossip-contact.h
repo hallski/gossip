@@ -23,19 +23,55 @@
 
 #include <glib.h>
 
+#include "gossip-presence.h"
+
+#define GOSSIP_CONTACT(x) (GossipContact *) x
+
 typedef struct _GossipContact GossipContact;
 
 typedef enum {
-	GOSSIP_CONTACT_TYPE_INVALID,
-	GOSSIP_CONTACT_TYPE_JABBER
+	GOSSIP_CONTACT_TYPE_TEMPORARY,
+	GOSSIP_CONTACT_TYPE_CONTACTLIST,
+	GOSSIP_CONTACT_TYPE_USER
 } GossipContactType;
 
-GossipContact *    gossip_contact_new      (void);
+typedef enum {
+	GOSSIP_CONTACT_PROTOCOL_INVALID,
+	GOSSIP_CONTACT_PROTOCOL_JABBER,
+	GOSSIP_CONTACT_PROTOCOL_ICQ,
+	GOSSIP_CONTACT_PROTOCOL_MSN,
+	GOSSIP_CONTACT_PROTOCOL_YAHOO
+} GossipContactProtocol;
 
-GossipContactType  gossip_contact_get_type (GossipContact *contact);
+GossipContact *    gossip_contact_new            (GossipContactType type);
+GossipContactType  gossip_contact_get_type       (GossipContact    *contact);
 
-GossipContact *    gossip_contact_ref      (GossipContact *contact);
-void               gossip_contact_unref    (GossipContact *contact);
+void               gossip_contact_set_id         (GossipContact    *contact,
+						  const gchar      *id);
+const gchar *      gossip_contact_get_id         (GossipContact    *contact);
+
+void               gossip_contact_set_name       (GossipContact    *contact,
+						  const gchar      *name);
+const gchar *      gossip_contact_get_name       (GossipContact    *contact);
+
+void               gossip_contact_set_presence   (GossipContact    *contact,
+						  GossipPresence   *presence);
+GossipPresence *   gossip_contact_get_presence   (GossipContact    *contact);
+
+gboolean           gossip_contact_is_online      (GossipContact    *contact);
+
+gboolean           gossip_contact_set_categories (GossipContact    *contact,
+						  GSList           *categories);
+GSList *           gossip_contact_get_categories (GossipContact    *contact);
+						
+GossipContact *    gossip_contact_ref            (GossipContact    *contact);
+void               gossip_contact_unref          (GossipContact    *contact);
+
+gint               gossip_contact_compare        (gconstpointer    *a,
+						  gconstpointer    *b);
+gboolean           gossip_contact_equal          (gconstpointer     v1,
+						  gconstpointer     v2);
+guint              gossip_contact_hash           (gconstpointer     key);
 
 #endif /* __GOSSIP_CONTACT_H__ */
 
