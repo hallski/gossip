@@ -21,12 +21,9 @@
 #ifndef __GOSSIP_PREFERENCES_H__
 #define __GOSSIP_PREFERENCES_H__
 
-#include "gossip-app.h"
-
 #define GCONF_PATH "/apps/gossip"
 
-GtkWidget * gossip_preferences_show               (GossipApp *app);
-
-GtkWidget * gossip_preferences_show_status_editor (void);
+void gossip_preferences_show               (void);
+void gossip_preferences_show_status_editor (void);
 
 #endif /* __GOSSIP_PREFERENCES_H__ */

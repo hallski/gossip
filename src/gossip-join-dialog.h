@@ -21,14 +21,6 @@
 #ifndef __GOSSIP_JOIN_DIALOG_H__
 #define __GOSSIP_JOIN_DIALOG_H__
 
-#include "gossip-app.h"
-
-typedef struct _GossipJoinDialog GossipJoinDialog;
-
-
-GossipJoinDialog * gossip_join_dialog_new        (GossipApp        *app);
-
-GtkWidget *        gossip_join_dialog_get_dialog (GossipJoinDialog *dialog);
-
+void gossip_join_dialog_show (void);
 
 #endif /* __GOSSIP_JOIN_DIALOG_H__ */

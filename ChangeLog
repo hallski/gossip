@@ -1,3 +1,13 @@
+2004-01-30  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c:
+	* src/gossip-join-dialog.c:
+	* src/gossip-preferences.c:
+	* ui/main.glade: Add status submenu to the notification area icon
+	popup menu, create the menu with glade instead of with code, add a
+	few icons, clean up a bit while at it (remove cruft from the pre
+	0.3 days).
+
 2004-01-29  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.c (chat_view_finalize)

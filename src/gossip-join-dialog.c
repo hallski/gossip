@@ -34,17 +34,19 @@
 
 #define FAVORITES_PATH "/apps/gossip/group_chat_favorites"
 
+typedef struct _GossipJoinDialog GossipJoinDialog;
+
 struct _GossipJoinDialog {
-	GossipApp *app;
+	GossipApp    *app;
 	LmConnection *connection;
 	
-	GtkWidget *dialog;
-	GtkEntry  *nick_entry;
-	GtkEntry  *server_entry;
-	GtkEntry  *room_entry;
-	GtkWidget *option_menu;
-	GtkWidget *edit_button;
-	GtkWidget *join_button;
+	GtkWidget    *dialog;
+	GtkEntry     *nick_entry;
+	GtkEntry     *server_entry;
+	GtkEntry     *room_entry;
+	GtkWidget    *option_menu;
+	GtkWidget    *edit_button;
+	GtkWidget    *join_button;
 };
 
 static void join_dialog_response_cb        (GtkWidget        *dialog,
@@ -58,10 +60,6 @@ static void join_dialog_entries_changed_cb (GtkWidget        *widget,
 					    GossipJoinDialog *join);
 static void join_dialog_update_option_menu (GossipJoinDialog *join);
 
-
-/*static void join_group_chat_cb      (GtkWidget        *widget,
-				     GossipApp        *app);
-*/
 
 static void
 join_dialog_update_option_menu (GossipJoinDialog *join)
@@ -244,14 +242,19 @@ join_dialog_entries_changed_cb (GtkWidget        *widget,
 	gtk_widget_set_sensitive (join->join_button, !disabled);
 }
 
-GossipJoinDialog *
-gossip_join_dialog_new (GossipApp *app)
+void
+gossip_join_dialog_show (void)
 {
-	GossipJoinDialog *join;
+	static GossipJoinDialog *join;
 
+	if (join) {
+		gtk_window_present (GTK_WINDOW (join->dialog));
+		return;
+	}		
+	
         join = g_new0 (GossipJoinDialog, 1);
 
-	join->app = app;
+	join->app = gossip_app_get ();
 	join->connection = gossip_app_get_connection ();
 	
 	gossip_glade_get_file_simple (GLADEDIR "/group-chat.glade",
@@ -266,6 +269,9 @@ gossip_join_dialog_new (GossipApp *app)
 				      "join_button", &join->join_button,
 				      NULL);
 
+	g_object_add_weak_pointer (G_OBJECT (join->dialog),
+				   (gpointer) &join);
+	
 	g_signal_connect (join->dialog,
 			  "response",
 			  G_CALLBACK (join_dialog_response_cb),
@@ -297,13 +303,4 @@ gossip_join_dialog_new (GossipApp *app)
 
 	gtk_window_set_transient_for (GTK_WINDOW (join->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (join->dialog);
-
-	return join;
 }
-
-GtkWidget *
-gossip_join_dialog_get_dialog (GossipJoinDialog *dialog)
-{
-	return dialog->dialog;
-}
-

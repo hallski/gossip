@@ -365,14 +365,19 @@ preferences_setup_widgets (GossipPreferences *preferences)
 			      preferences->smileys_checkbutton);
 }
 
-GtkWidget *
-gossip_preferences_show (GossipApp *app)
+void
+gossip_preferences_show (void)
 {
-	GossipPreferences *preferences;
-	GladeXML          *gui;
+	static GossipPreferences *preferences;
+	GladeXML                 *gui;
+
+	if (preferences) {
+		gtk_window_present (GTK_WINDOW (preferences->dialog));
+		return;
+	}
 	
         preferences = g_new0 (GossipPreferences, 1);
-	preferences->app = app;
+	preferences->app = gossip_app_get ();
 
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "preferences_dialog",
@@ -384,6 +389,9 @@ gossip_preferences_show (GossipApp *app)
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
 				     NULL);
 
+	g_object_add_weak_pointer (G_OBJECT (preferences->dialog),
+				   (gpointer) &preferences);
+	
 	preferences_setup_widgets (preferences);
 	
 	gossip_glade_connect (gui, preferences,
@@ -393,8 +401,6 @@ gossip_preferences_show (GossipApp *app)
 	
 	gtk_window_set_transient_for (GTK_WINDOW (preferences->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (preferences->dialog);
-
- 	return preferences->dialog;
 }
 
 
@@ -584,19 +590,24 @@ status_entry_activate_cb (GtkWidget *widget, GossipStatusEditor *editor)
 {
 	gtk_widget_activate (editor->add_button);
 }
-	
-GtkWidget *
+
+void
 gossip_preferences_show_status_editor (void)
 {
-	GossipStatusEditor *editor;
-	GladeXML           *glade;
-	GList              *list, *l;
-	GtkListStore       *store;
-	GtkTreeIter         iter;
-	GtkCellRenderer    *cell;
-	GtkTreeViewColumn  *col;
-	GtkTreeSelection   *selection;
+	static GossipStatusEditor *editor;
+	GladeXML                  *glade;
+	GList                     *list, *l;
+	GtkListStore              *store;
+	GtkTreeIter                iter;
+	GtkCellRenderer           *cell;
+	GtkTreeViewColumn         *col;
+	GtkTreeSelection          *selection;
 
+	if (editor) {
+		gtk_window_present (GTK_WINDOW (editor->dialog));
+		return;
+	}
+	
 	editor = g_new0 (GossipStatusEditor, 1);
 	
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
@@ -620,6 +631,8 @@ gossip_preferences_show_status_editor (void)
 			      "entry", "activate", status_entry_activate_cb,
 			      NULL);
 
+	g_object_add_weak_pointer (G_OBJECT (editor->dialog), (gpointer) &editor);
+	
 	gtk_window_set_transient_for (GTK_WINDOW (editor->dialog),
 				      GTK_WINDOW (gossip_app_get_window ()));
 	
@@ -686,6 +699,4 @@ gossip_preferences_show_status_editor (void)
 	gtk_widget_set_sensitive (editor->remove_button, FALSE);
 
 	gtk_widget_show (editor->dialog);
-
-	return editor->dialog;
 }
