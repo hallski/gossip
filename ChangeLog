@@ -1,7 +1,13 @@
+2004-04-28  Mikael Hallendal  <micke@imendio.com>
+
+	* Makefile.am:
+	* configure.in: Bumped version number to 0.7.5
+	* gossip.spec.in: Removed the spec-file from here.
+
 2004-04-28  Ross Burton  <ross@burtonini.com>
 
 	* src/gossip-register.c:
-	Use SSL when registering if we need to. Closes #141273.
+	- Use SSL when registering if we need to. Closes bug #141273.
 
 2004-04-27  Mikael Hallendal  <micke@imendio.com>
 

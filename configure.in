@@ -1,6 +1,6 @@
 AC_INIT(src)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(gossip, 0.7.4)
+AM_INIT_AUTOMAKE(gossip, 0.7.5)
 
 AM_MAINTAINER_MODE
 
@@ -163,7 +163,6 @@ ui/pixmaps/Makefile
 src/Makefile
 src/sounds/Makefile
 po/Makefile.in
-gossip.spec
 ])
 
 echo

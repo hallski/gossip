@@ -20,8 +20,6 @@ INTLTOOL = 			\
 EXTRA_DIST = 			\
         ChangeLog               \
         README                  \
-	gossip.spec		\
-	gossip.spec.in		\
 	$(desktop_in_files)	\
 	$(desktop_files)	\
 	$(schemas_in_files)	\
