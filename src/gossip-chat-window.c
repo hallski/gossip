@@ -86,6 +86,8 @@ static void chat_window_tab_removed_cb	      (GossipNotebook	     *notebook,
 static void chat_window_tab_detached_cb       (GossipNotebook        *notebook,
 					       GtkWidget	     *widget,
 					       GossipChatWindow      *window);
+static void chat_window_tabs_reordered_cb     (GossipNotebook	     *notebook,
+					       GossipChatWindow      *window);
 static void chat_window_close_clicked_cb      (GtkWidget	     *button,
 					       GossipChat	     *chat);
 static gboolean
@@ -248,6 +250,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 	g_signal_connect (priv->notebook,
 			  "tab_detached",
 			  G_CALLBACK (chat_window_tab_detached_cb),
+			  window);
+	g_signal_connect (priv->notebook,
+			  "tabs_reordered",
+			  G_CALLBACK (chat_window_tabs_reordered_cb),
 			  window);
 
 	chat_windows = g_list_prepend (chat_windows, window);
@@ -861,6 +867,13 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 
 	gossip_chat_window_remove_chat (window, chat);
 	gossip_chat_window_add_chat (new_window, chat);
+}
+
+static void
+chat_window_tabs_reordered_cb (GossipNotebook   *notebook,
+			       GossipChatWindow *window)
+{
+	chat_window_update_menu (window);
 }
 
 static void

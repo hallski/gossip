@@ -1,3 +1,9 @@
+2003-11-18  Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_tabs_reordered_cb): Update menu item sensitivity
+	on tabs_reordered.
+
 2003-11-17  Richard Hult  <richard@imendio.com>
 
 	* ui/svg/gossip-busy.svg:
