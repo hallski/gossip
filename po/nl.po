@@ -536,9 +536,10 @@ msgstr "<b>Account instellingen</b>"
 msgid "<b>Connect to server</b>"
 msgstr "<b>Verbinden met server</b>"
 
+#. GRUT modified this item
 #: ui/connect.glade.h:5
 msgid "C_onnect"
-msgstr "Verbinden"
+msgstr "_Verbinden"
 
 #: ui/connect.glade.h:6
 msgid "Connect"
