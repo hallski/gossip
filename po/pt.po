@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.4\n"
 "Report-Msgid-Bugs-To: Duarte Loreto <happyguy_pt@hotmail.com>\n"
-"POT-Creation-Date: 2003-11-13 11:13+0000\n"
-"PO-Revision-Date: 2003-11-13 11:15+0000\n"
+"POT-Creation-Date: 2003-11-14 06:47+0000\n"
+"PO-Revision-Date: 2003-11-14 08:00+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -130,83 +130,83 @@ msgstr "%s será adicionado à sua lista de contactos."
 msgid "Just about to leave..."
 msgstr "Prestes a ausentar-se..."
 
-#: src/gossip-app.c:410
+#: src/gossip-app.c:411
 msgid "_Show Contact List"
 msgstr "_Mostrar Lista Contactos"
 
-#: src/gossip-app.c:419
+#: src/gossip-app.c:420
 msgid "_Hide Contact List"
 msgstr "_Esconder Lista Contactos"
 
-#: src/gossip-app.c:432 ui/main.glade.h:62
+#: src/gossip-app.c:433 ui/main.glade.h:62
 msgid "Send _Message..."
 msgstr "Enviar _Mensagem..."
 
-#: src/gossip-app.c:447
+#: src/gossip-app.c:448
 msgid "_Quit"
 msgstr "_Sair"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:549
+#: src/gossip-app.c:550
 msgid "translator_credits"
 msgstr "Duarte Loreto <happyguy_pt@hotmail.com>"
 
-#: src/gossip-app.c:561
+#: src/gossip-app.c:562
 msgid "A Jabber Client for GNOME"
 msgstr "Um Cliente Jabber para o GNOME"
 
-#: src/gossip-app.c:568
+#: src/gossip-app.c:569
 msgid "Gossip Website"
 msgstr "Página Web Gossip"
 
-#: src/gossip-app.c:672
+#: src/gossip-app.c:673
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduza o ID de utilizador da pessoa para quem deseja enviar uma mensagem "
 "de diálogo."
 
-#: src/gossip-app.c:677 ui/main.glade.h:85
+#: src/gossip-app.c:678 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Diálogo"
 
-#: src/gossip-app.c:917
+#: src/gossip-app.c:918
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s deseja ser notificado da sua presença."
 
-#: src/gossip-app.c:1152
+#: src/gossip-app.c:1153
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Foi desligado do servidor. Deseja ligar-se novamente?"
 
-#: src/gossip-app.c:1305
+#: src/gossip-app.c:1306
 msgid "Make sure that your account information is correct."
 msgstr "Certifique-se de que a sua informação de conta está correcta."
 
-#: src/gossip-app.c:1306
+#: src/gossip-app.c:1307
 msgid "The server may currently be unavailable."
 msgstr "O servidor pode estar de momento indisponível."
 
-#: src/gossip-app.c:1695
+#: src/gossip-app.c:1696
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Cliente Jabber"
 
-#: src/gossip-app.c:1892
+#: src/gossip-app.c:1893
 #, c-format
 msgid "New message from %s"
 msgstr "Nova mensagem de %s"
 
-#: src/gossip-app.c:2433
+#: src/gossip-app.c:2434
 msgid "Custom Message..."
 msgstr "Mensagem Personalizada..."
 
-#: src/gossip-app.c:2451
+#: src/gossip-app.c:2452
 msgid "Custom Busy Message..."
 msgstr "Mensagem Personalizada de Ocupado..."
 
-#: src/gossip-app.c:2458
+#: src/gossip-app.c:2459
 msgid "Leave..."
 msgstr "Ausentar-se..."
 
@@ -295,6 +295,14 @@ msgstr "[omissão]"
 msgid "There is no account with the name '%s'."
 msgstr "Não existe qualquer conta com o nome '%s'."
 
+#: src/gossip-preferences.c:462
+msgid "New Busy Message"
+msgstr "Nova Mensagem de Ocupado"
+
+#: src/gossip-preferences.c:496
+msgid "New Away Message"
+msgstr "Nova Mensagens de Ausente"
+
 #: src/gossip-register.c:79
 msgid "Unknown error"
 msgstr "Erro desconhecido"
@@ -315,31 +323,31 @@ msgstr "Falha ao registar a conta"
 msgid "Reason:"
 msgstr "Motivo:"
 
-#: src/gossip-roster-view.c:166
+#: src/gossip-roster-view.c:178
 msgid "/Contact _Information"
 msgstr "/_Informação Contacto"
 
-#: src/gossip-roster-view.c:174
+#: src/gossip-roster-view.c:186
 msgid "/Re_name contact"
 msgstr "/Re_nomear contacto"
 
-#: src/gossip-roster-view.c:182
+#: src/gossip-roster-view.c:194
 msgid "/Show _Log"
 msgstr "/Mostrar _Registo"
 
-#: src/gossip-roster-view.c:198
+#: src/gossip-roster-view.c:210
 msgid "/_Remove contact"
 msgstr "/_Remover contacto"
 
-#: src/gossip-roster-view.c:209
+#: src/gossip-roster-view.c:221
 msgid "/Re_name group"
 msgstr "/Re_nomear grupo"
 
-#: src/gossip-roster-view.c:783
+#: src/gossip-roster-view.c:872
 msgid "Offline"
 msgstr "Desligado"
 
-#: src/gossip-roster-view.c:1055
+#: src/gossip-roster-view.c:1141
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -350,7 +358,7 @@ msgstr ""
 "%s\n"
 "da sua lista de contactos?"
 
-#: src/gossip-roster-view.c:1147
+#: src/gossip-roster-view.c:1233
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -359,7 +367,7 @@ msgstr ""
 "Introduza uma nova alcunha para o contacto\n"
 "%s"
 
-#: src/gossip-roster-view.c:1234
+#: src/gossip-roster-view.c:1320
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
