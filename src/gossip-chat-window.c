@@ -109,7 +109,6 @@ chat_window_get_name                          (GossipChatWindow      *window,
 GtkWidget * chat_window_create_notebook (gpointer data);
 
 struct _GossipChatWindowPriv {
-	GossipChatWindowLayout  layout;
 	GList                  *chats;
 	GList                  *chats_new_msg;
 	GList                  *chats_composing;

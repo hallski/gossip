@@ -25,17 +25,12 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtktreeselection.h>
 
-typedef enum {
-        GOSSIP_CHAT_WINDOW_LAYOUT_LIST,
-        GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW
-} GossipChatWindowLayout;
-
 #define GOSSIP_TYPE_CHAT_WINDOW         (gossip_chat_window_get_type ())
 #define GOSSIP_CHAT_WINDOW(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindow))
 #define GOSSIP_CHAT_WINDOW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowClass))
 #define GOSSIP_IS_CHAT_WINDOW(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CHAT_WINDOW))
 #define GOSSIP_IS_CHAT_WINDOW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT_WINDOW))
-#define GOSSIP_CHAT_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindow))
+#define GOSSIP_CHAT_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowClass))
 
 typedef struct _GossipChatWindow GossipChatWindow;
 typedef struct _GossipChatWindowClass GossipChatWindowClass;
@@ -50,9 +45,6 @@ struct _GossipChatWindow {
 
 struct _GossipChatWindowClass {
         GObjectClass parent_class;
-
-        /* signals */
-        void (*layout_changed) (GossipChatWindow *window, GossipChatWindowLayout layout);
 };
 
 GType                   gossip_chat_window_get_type                     (void);
@@ -62,11 +54,6 @@ GossipChatWindow *      gossip_chat_window_get_default                  (void);
 GossipChatWindow *      gossip_chat_window_new                          (void);
 
 GtkWidget *             gossip_chat_window_get_dialog                   (GossipChatWindow *window);
-
-void                    gossip_chat_window_set_layout                   (GossipChatWindow       *window,
-                                                                         GossipChatWindowLayout  layout);
-
-GossipChatWindowLayout  gossip_chat_window_get_layout		        (GossipChatWindow	*window);
 
 void                    gossip_chat_window_add_chat                     (GossipChatWindow       *window,
                                                                          GossipChat             *chat);
