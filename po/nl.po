@@ -530,7 +530,7 @@ msgstr "<b>Verbinden met server</b>"
 
 #: ui/connect.glade.h:5
 msgid "C_onnect"
-msgstr "Verbindingen _maken"
+msgstr "Verbinden"
 
 #: ui/connect.glade.h:6
 msgid "Connect"
@@ -970,7 +970,7 @@ msgstr "_Weigeren"
 
 #: ui/main.glade.h:87
 msgid "_Disconnect"
-msgstr "Verbinding verbre_ken"
+msgstr "Verbinding ver_breken"
 
 #: ui/main.glade.h:88
 msgid "_Jabber ID of new contact:"
