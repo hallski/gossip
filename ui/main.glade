@@ -131,7 +131,7 @@
 		      <child>
 			<widget class="GtkMenuItem" id="edit_account_information">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Account Information</property>
+			  <property name="label" translatable="yes">_Account Information</property>
 			  <property name="use_underline">True</property>
 			</widget>
 		      </child>
@@ -145,7 +145,7 @@
 		      <child>
 			<widget class="GtkImageMenuItem" id="edit_preferences">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Preferences</property>
+			  <property name="label" translatable="yes">_Preferences</property>
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">

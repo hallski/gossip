@@ -1,3 +1,7 @@
+2003-09-09  Jordi Mallach  <jordi@sindominio.net>
+
+	* ui/main.glade: Add mnemonics to the Edit menu items.
+
 2003-09-03  Mikael Hallendal  <micke@imendio.com>
 
         * src/gossip-app.c (app_update_show): Send that we are away and 
