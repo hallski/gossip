@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-19 13:00+0200\n"
+"POT-Creation-Date: 2003-08-19 16:19+0200\n"
 "PO-Revision-Date: 2003-08-05 16:02+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -408,8 +408,8 @@ msgid "<b>Account Settings</b>"
 msgstr "<b>Kontoinställningar</b>"
 
 #: ui/connect.glade.h:4
-msgid "<b>Connect to Jabber server</b>"
-msgstr "<b>Anslut till Jabberserver</b>"
+msgid "<b>Connect to server</b>"
+msgstr "<b>Anslut till server</b>"
 
 #: ui/connect.glade.h:5
 msgid "C_onnect"

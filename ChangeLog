@@ -1,13 +1,14 @@
 2003-08-19  Richard Hult  <richard@imendio.com>
 
+	* ui/connect.glade: Hide priority and edit buttons for now.
+
 	* src/gossip-utils.c (utils_url_event_cb): Remove unecessary
-	string.
+	string. Check that we got the right tag, fixes bug #118601.
 
 	* src/gossip-startup-druid.c (startup_druid_prepare_page_last):
 	Remove markup from two strings.
 
 	* ui/chat.glade: 
-
 	* ui/main.glade: Remove a string and tweak padding to get rid of
 	uneccesary spaces from a strings.
 

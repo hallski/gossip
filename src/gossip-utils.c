@@ -774,8 +774,8 @@ utils_url_event_cb (GtkTextTag    *tag,
 	if (event->type == GDK_BUTTON_RELEASE && event->button.button == 1) {
 		start = end = *iter;
 		
-		if (gtk_text_iter_backward_to_tag_toggle (&start, NULL) &&
-		    gtk_text_iter_forward_to_tag_toggle (&end, NULL)) {
+		if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
+		    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
 			str = gtk_text_buffer_get_text (buffer,
 							&start,
 							&end,
