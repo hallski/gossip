@@ -40,6 +40,12 @@ typedef enum {
 	GOSSIP_SHOW_EXT_AWAY   /* extended away (xa) */
 } GossipShow;
 
+typedef struct {
+	GossipShow  show;
+	gchar      *string;
+} GossipStatusEntry;
+
+
 void         gossip_option_menu_setup                (GtkWidget        *option_menu,
 						      GCallback         func,
 						      gpointer          user_data,
@@ -95,9 +101,9 @@ GdkPixbuf *  gossip_utils_get_pixbuf_from_stock      (const gchar      *stock);
 GdkPixbuf *  gossip_utils_get_pixbuf_offline         (void);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);
 const gchar *gossip_utils_get_default_status         (GossipShow        show);
-
-GSList *     gossip_utils_get_busy_messages          (void);
-GSList *     gossip_utils_get_away_messages          (void);
+GList *      gossip_utils_get_status_messages        (void);
+void         gossip_utils_set_status_messages        (GList            *list);
+void         gossip_utils_free_status_messages       (GList            *list);
 
 
 #endif /*  __GOSSIP_UTILS_H__ */

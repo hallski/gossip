@@ -1,3 +1,13 @@
+2004-01-19  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c:
+	* src/gossip-idle.c:
+	* src/gossip-preferences.c:
+	* src/gossip-utils.c:
+	* ui/main.glade: Lots of changes. Implement editing of the new
+	status strings, support them in the popup, fix explicit away, and
+	fix a few bugs when entering custom messages.
+
 2004-01-18  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: Implement the new presence stuff.

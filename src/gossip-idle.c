@@ -81,3 +81,9 @@ gossip_idle_reset (void)
 	timestamp = 0;
 }
 
+void
+gossip_idle_set_away (void)
+{
+	timestamp = time (NULL);
+}
+

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003      Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
@@ -525,7 +525,7 @@ app_init (GossipApp *singleton_app)
 			  NULL);
 	
 	/* Start the idle time checker. */
-	g_timeout_add (10 * 1000, (GSourceFunc) app_idle_check_cb, app);
+	g_timeout_add (5 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set window position */
  	x = gconf_client_get_int (gconf_client, 
@@ -2192,14 +2192,17 @@ app_status_available_activate_cb (GtkWidget *item,
 				  gpointer   user_data)
 {
 	GossipAppPriv *priv = app->priv;
+	gchar         *str;
 
 	gossip_idle_reset ();
 
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
+	str = g_object_get_data (G_OBJECT (item), "status");
+
 	g_free (priv->status_text);
-	priv->status_text = NULL;
+	priv->status_text = g_strdup (str);
 	
 	app_update_show ();
 }
@@ -2211,13 +2214,35 @@ app_status_busy_activate_cb (GtkWidget *item,
 	GossipAppPriv *priv = app->priv;
 	gchar         *str;
 
+	gossip_idle_reset ();
+	
 	priv->explicit_show = GOSSIP_SHOW_BUSY;
-
+	priv->auto_show = GOSSIP_SHOW_BUSY;
+	
 	str = g_object_get_data (G_OBJECT (item), "status");
 
 	g_free (priv->status_text);
-	priv->status_text = str;
+	priv->status_text = g_strdup (str);
 	
+	app_update_show ();
+}
+
+static void
+app_status_away_activate_cb (GtkWidget *item,
+			     gpointer   user_data)
+{
+	GossipAppPriv *priv = app->priv;
+	gchar         *str;
+
+	gossip_idle_set_away ();
+
+	priv->auto_show = GOSSIP_SHOW_AWAY;
+
+	str = g_object_get_data (G_OBJECT (item), "status");
+
+	g_free (priv->overridden_away_message);
+	priv->overridden_away_message = g_strdup (str);
+
 	app_update_show ();
 }
 
@@ -2278,7 +2303,7 @@ static void
 app_status_edit_activate_cb (GtkWidget *item,
 			     gpointer   user_data)
 {
-	g_print ("FIXME: Edit list\n");
+	gossip_preferences_show_status_editor ();
 }
 
 static gchar *
@@ -2362,7 +2387,10 @@ add_status_image_menu_item (GtkWidget   *menu,
 					  G_CALLBACK (app_status_custom_away_activate_cb),
 					  NULL);
 		} else {
-			g_assert_not_reached ();
+			g_signal_connect (item,
+					  "activate",
+					  G_CALLBACK (app_status_away_activate_cb),
+					  NULL);
 		}
 		break;
 
@@ -2387,9 +2415,9 @@ add_status_image_menu_item (GtkWidget   *menu,
 static void
 app_status_popup_show (void)
 {
-	GtkWidget  *menu;
-	GtkWidget  *item;
-	GSList     *list, *l;
+	GtkWidget *menu;
+	GtkWidget *item;
+	GList     *list, *l;
 
 	menu = gtk_menu_new ();
 
@@ -2411,11 +2439,11 @@ app_status_popup_show (void)
 	gtk_widget_show (item);
 
 	/* Preset messages. */
-	list = NULL; /*gossip_utils_get_busy_messages ();*/
-
+	list = gossip_utils_get_status_messages ();
 	for (l = list; l; l = l->next) {
-		add_status_image_menu_item (menu, l->data, GOSSIP_SHOW_BUSY, FALSE);
-		g_free (l->data);
+		GossipStatusEntry *entry = l->data;
+		
+		add_status_image_menu_item (menu, entry->string, entry->show, FALSE);
 	}
 
 	/* Separator again if there are preset messages. */
@@ -2425,7 +2453,7 @@ app_status_popup_show (void)
 		gtk_widget_show (item);
 	}
 
-	g_slist_free (list);
+	gossip_utils_free_status_messages (list);
 
 	item = gtk_menu_item_new_with_label (_("Edit List..."));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -2482,7 +2510,12 @@ app_status_entry_activate_cb (GtkEntry *entry,
 
 		g_free (priv->status_text);
 		priv->status_text = g_strdup (str);
+
+		g_free (priv->overridden_away_message);
+		priv->overridden_away_message = NULL;
 	} else {
+		gossip_idle_set_away ();
+
 		priv->auto_show = GOSSIP_SHOW_AWAY;
 
 		g_free (priv->overridden_away_message);
@@ -2504,8 +2537,8 @@ app_status_entry_key_press_event_cb (GtkEntry    *entry,
 
 	switch (event->keyval) {
 	case GDK_Escape:
-		gtk_widget_hide (priv->status_entry);
-		gtk_widget_show (priv->status_button);
+		gtk_widget_hide (priv->status_entry_hbox);
+		gtk_widget_show (priv->status_button_hbox);
 		return TRUE;
       
 	default:

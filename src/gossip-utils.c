@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003      Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -98,6 +98,9 @@ gossip_option_image_menu_setup (GtkWidget     *option_menu,
 {
 	GtkWidget     *menu;
 	GtkWidget     *item;
+	GtkWidget     *hbox;
+	GtkWidget     *label;
+	GtkWidget     *image;
 	gint           i;
 	va_list        args;
 	gconstpointer  str;
@@ -116,14 +119,19 @@ gossip_option_image_menu_setup (GtkWidget     *option_menu,
 			item = gtk_separator_menu_item_new ();
 			str = va_arg (args, gpointer);
 		} else {
-			item = gtk_image_menu_item_new_with_label (str);
+			item = gtk_menu_item_new ();
+
+			hbox = gtk_hbox_new (FALSE, 4);
+
+			label = gtk_label_new (str);
+
 			str = va_arg (args, gpointer);
+			image = gtk_image_new_from_stock (str, GTK_ICON_SIZE_MENU);
+
+			gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+			gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
 			
-			if (str) {
-				gtk_image_menu_item_set_image (
-					GTK_IMAGE_MENU_ITEM (item),
-					gtk_image_new_from_stock (str, GTK_ICON_SIZE_MENU));
-			}
+			gtk_container_add (GTK_CONTAINER (item), hbox);
 		}
 
 		gtk_widget_show_all (item);
@@ -770,57 +778,104 @@ gossip_utils_get_default_status (GossipShow show)
 	return _(AVAILABLE_MESSAGE);
 }
 
-GSList *
-gossip_utils_get_busy_messages (void)
+GList *
+gossip_utils_get_status_messages (void)
 {
-	GConfValue *value;
-	GSList     *list;
+	GSList            *list, *l;
+	GList             *ret = NULL;
+	GossipStatusEntry *entry;
+	const gchar       *status;
 	
-	/* FIXME: Workaround for broken intltool for now... It clears the
-	 * default values for lists. See #121330.
-	 */
-	value = gconf_client_get (gconf_client,
-				  "/apps/gossip/status/custom_busy_messages",
-				  NULL);
-	
-	if (!value) {
-		list = g_slist_append (NULL, g_strdup (_("Working")));
-	} else {
-		gconf_value_free (value);
-		
-		list = gconf_client_get_list (gconf_client,
-					      "/apps/gossip/status/custom_busy_messages",
-					      GCONF_VALUE_STRING,
-					      NULL);
-	}
+	list = gconf_client_get_list (gconf_client,
+				      "/apps/gossip/status/preset_messages",
+				      GCONF_VALUE_STRING,
+				      NULL);
 
-	return list;
+	/* This is really ugly, but we can't store a list of pairs and a dir
+	 * with entries wouldn't work since we have no guarantee on the order of
+	 * entries.
+	 */
+	
+	for (l = list; l; l = l->next) {
+		entry = g_new (GossipStatusEntry, 1);
+
+		status = l->data;
+
+		if (strncmp (status, "available/", 10) == 0) {
+			entry->string = g_strdup (&status[10]);
+			entry->show = GOSSIP_SHOW_AVAILABLE;
+		}
+		else if (strncmp (status, "busy/", 5) == 0) {
+			entry->string = g_strdup (&status[5]);
+			entry->show = GOSSIP_SHOW_BUSY;
+		}
+		else if (strncmp (status, "away/", 5) == 0) {
+			entry->string = g_strdup (&status[5]);
+			entry->show = GOSSIP_SHOW_AWAY;
+		} else {
+			continue;
+		}
+		
+		ret = g_list_append (ret, entry);
+	}
+	
+	g_slist_foreach (list, (GFunc) g_free, NULL);
+	g_slist_free (list);
+	
+	return ret;
 }
 
-GSList *
-gossip_utils_get_away_messages (void)
+void
+gossip_utils_set_status_messages (GList *list)
 {
-	GConfValue *value;
-	GSList     *list;
+	GList             *l;
+	GossipStatusEntry *entry;
+	GSList            *slist = NULL;
+	const gchar       *show;
+	gchar             *str;
 	
-	/* FIXME: Workaround for broken intltool for now... It clears the
-	 * default values for lists. See #121330.
-	 */
-	value = gconf_client_get (gconf_client,
-				  "/apps/gossip/status/custom_away_messages",
-				  NULL);
-	
-	if (!value) {
-		list = g_slist_append (NULL, g_strdup (_("Eating")));
-		list = g_slist_append (list, g_strdup (_("Sleeping")));
-	} else {
-		gconf_value_free (value);
+	for (l = list; l; l = l->next) {
+		entry = l->data;
+
+		switch (entry->show) {
+		case GOSSIP_SHOW_AVAILABLE:
+			show = "available";
+			break;
+		case GOSSIP_SHOW_BUSY:
+			show = "busy";
+			break;
+		case GOSSIP_SHOW_AWAY:
+			show = "away";
+			break;
+		default:
+			show = NULL;
+			g_assert_not_reached ();
+		}
 		
-		list = gconf_client_get_list (gconf_client,
-					      "/apps/gossip/status/custom_away_messages",
-					      GCONF_VALUE_STRING,
-					      NULL);
+		str = g_strdup_printf ("%s/%s", show, entry->string);
+		slist = g_slist_append (slist, str);
 	}
 
-	return list;
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/preset_messages",
+			       GCONF_VALUE_STRING,
+			       slist,
+			       NULL);
+
+	g_slist_foreach (slist, (GFunc) g_free, NULL);
+	g_slist_free (slist);
+}
+
+static void
+free_entry (GossipStatusEntry *entry)
+{
+	g_free (entry->string);
+	g_free (entry);
+}
+
+void
+gossip_utils_free_status_messages (GList *list)
+{
+	g_list_foreach (list, (GFunc) free_entry, NULL);
+	g_list_free (list);
 }
