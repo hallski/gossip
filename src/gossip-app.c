@@ -597,8 +597,6 @@ app_send_chat_message_cb (GtkWidget *widget,
 		g_completion_add_items (completion, jids);
 	}
 
-	gtk_widget_grab_focus (combo);
-
 	if (selected_jid) {
 		gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), selected_jid);
 		gtk_editable_select_region (GTK_EDITABLE (GTK_COMBO (combo)->entry), 0, -1);

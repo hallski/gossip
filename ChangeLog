@@ -1,5 +1,9 @@
 2003-07-06  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_send_chat_message_cb): Remove grab_focus,
+	since it's not needed and also screwed up focus. Fixes bug
+	#116785 reported by Jordi Mallach.
+	
 	* src/gossip-chat.c (chat_message_handler): It doesn't matter how
 	many <b> you strip out of strings, they will always find something
 	else to complain about! ;)
