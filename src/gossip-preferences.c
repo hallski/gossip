@@ -633,6 +633,80 @@ status_away_selection_changed_cb (GtkTreeSelection   *selection,
 	gtk_widget_set_sensitive (editor->remove_away_button, TRUE);
 }
 
+static void
+status_busy_dnd_row_deleted_cb (GtkTreeModel *model,
+				GtkTreePath *arg1,
+				GtkTreeIter *arg2,
+				gpointer user_data)
+{
+	GSList      *list = NULL;
+	GtkTreeIter  iter;
+	gboolean     valid;
+	gint         row_count = 0;
+
+	valid = gtk_tree_model_get_iter_first (model, &iter);
+
+	while (valid) {
+		gchar *str;
+
+		gtk_tree_model_get (model, &iter,
+				    0, &str,
+				    -1);
+		
+		list = g_slist_append (list, str);
+		
+		row_count++;
+		
+		valid = gtk_tree_model_iter_next (model, &iter);
+	}
+
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/custom_busy_messages",
+			       GCONF_VALUE_STRING,
+			       list,
+			       NULL);
+
+	g_slist_foreach (list, (GFunc)g_free, NULL);
+	g_slist_free (list);
+}
+
+static void
+status_away_dnd_row_deleted_cb (GtkTreeModel *model,
+				GtkTreePath *arg1,
+				GtkTreeIter *arg2,
+				gpointer user_data)
+{
+	GSList      *list = NULL;
+	GtkTreeIter  iter;
+	gboolean     valid;
+	gint         row_count = 0;
+
+	valid = gtk_tree_model_get_iter_first (model, &iter);
+
+	while (valid) {
+		gchar *str;
+
+		gtk_tree_model_get (model, &iter,
+				    0, &str,
+				    -1);
+		
+		list = g_slist_append (list, str);
+		
+		row_count++;
+		
+		valid = gtk_tree_model_iter_next (model, &iter);
+	}
+
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/custom_away_messages",
+			       GCONF_VALUE_STRING,
+			       list,
+			       NULL);
+
+	g_slist_foreach (list, (GFunc)g_free, NULL);
+	g_slist_free (list);
+}
+
 GtkWidget *
 gossip_preferences_show_status_editor (void)
 {
@@ -692,6 +766,11 @@ gossip_preferences_show_status_editor (void)
 
 	g_slist_free (list);
 	
+	g_signal_connect (GTK_TREE_MODEL (store),
+			  "row-deleted",
+			  G_CALLBACK (status_busy_dnd_row_deleted_cb),
+			  NULL);
+	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->busy_treeview));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 	g_signal_connect (selection,
@@ -723,6 +802,11 @@ gossip_preferences_show_status_editor (void)
 	}
 	
 	g_slist_free (list);
+
+	g_signal_connect (GTK_TREE_MODEL (store),
+			  "row-deleted",
+			  G_CALLBACK (status_away_dnd_row_deleted_cb),
+			  NULL);
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->away_treeview));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);

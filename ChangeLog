@@ -1,3 +1,14 @@
+2003-12-20  Mike Gratton  <mike@vee.net>
+
+	* src/gossip-preferences.c: 
+	(status_busy_dnd_row_deleted_cb): Added
+	(status_away_dnd_row_deleted_cb): Added
+	(gossip_preferences_show_status_editor): connect to row-deleted 
+	  functions
+	* ui/main.glade: Set reordable
+	- Adds drag-n-drop to the status message lists. 
+	- Fixes bug #127206
+
 2003-12-20  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-window.c: 
