@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
-"POT-Creation-Date: 2003-07-17 23:49+0200\n"
-"PO-Revision-Date: 2003-07-17 21:23+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-18 12:37+0200\n"
+"PO-Revision-Date: 2003-07-18 22:15+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:43
 msgid "Gossip"
@@ -24,18 +24,16 @@ msgid "Jabber Instant Messaging"
 msgstr "Instant Messaging Jabber"
 
 #: gossip.schemas.in.h:1
-#, fuzzy
 msgid "Auto away enabled"
 msgstr "Automatické pryč povoleno"
 
 #: gossip.schemas.in.h:2
-#, fuzzy
 msgid "Auto away time"
 msgstr "Čas automatického pryč"
 
 #: gossip.schemas.in.h:3
 msgid "Be silent when away"
-msgstr ""
+msgstr "Být tichý, když jsem pryč"
 
 #: gossip.schemas.in.h:4
 msgid "Extended autoaway time"
@@ -56,18 +54,16 @@ msgstr ""
 "\"."
 
 #: gossip.schemas.in.h:7
-#, fuzzy
 msgid "Timestamp messages"
-msgstr "Zpráva požadavku"
+msgstr "Přidávat časové značky ke zprávám"
 
 #: gossip.schemas.in.h:8
-#, fuzzy
 msgid "Use graphical smileys"
-msgstr "Používat smajlíky"
+msgstr "Používat grafické smajlíky"
 
 #: gossip.schemas.in.h:9
 msgid "Use notification sounds"
-msgstr ""
+msgstr "Používat zvuky upozornění"
 
 #: gossip.schemas.in.h:10
 msgid ""
@@ -83,16 +79,15 @@ msgstr ""
 
 #: gossip.schemas.in.h:12
 msgid "Whether or not to play a sound when messages arrive."
-msgstr ""
+msgstr "Jestli přehrávat zvuk, když přijdou zprávy."
 
 #: gossip.schemas.in.h:13
 msgid "Whether or not to play sounds when away or busy."
-msgstr ""
+msgstr "Jestli přehrávat zvuky, když jsem pryč nebo zaneprázdněn."
 
 #: gossip.schemas.in.h:14
-#, fuzzy
 msgid "Whether or not to timestamp all messages in conversations."
-msgstr "Jestli převádět smajlíky v konverzacích na grafické smajlíky."
+msgstr "Jestli přidávat časové značky ke všem zprávám v konverzacích."
 
 #: src/gossip-accounts-dialog.c:151
 msgid "New account"
@@ -272,7 +267,7 @@ msgstr ""
 "ze svého seznamu kontaktů?"
 
 #: src/gossip-roster.c:519
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
@@ -324,14 +319,12 @@ msgid "*"
 msgstr "*"
 
 #: ui/chat.glade.h:3
-#, fuzzy
 msgid "<b>Chat with: </b>"
-msgstr "<b>Diskuse s:</b>"
+msgstr "<b>Diskuse s: </b>"
 
 #: ui/chat.glade.h:4
-#, fuzzy
 msgid "Click to get the user's contact information"
-msgstr "Informace o kontaktu"
+msgstr "Získejte kontaktní informace uživatele kliknutím"
 
 #: ui/chat.glade.h:5
 msgid "From: "
@@ -411,7 +404,7 @@ msgstr "Za_registrovat..."
 
 #: ui/connect.glade.h:14
 msgid "Use SS_L"
-msgstr ""
+msgstr "Používat SS_L"
 
 #: ui/connect.glade.h:15 ui/group-chat.glade.h:14
 msgid "_Add"
@@ -502,7 +495,6 @@ msgid "N_ickname:"
 msgstr "_Přezdívka:"
 
 #: ui/group-chat.glade.h:12
-#, fuzzy
 msgid ""
 "Pick a favorite, or enter nickname, server name, and the name of the chat "
 "room to enter."
@@ -543,18 +535,16 @@ msgid "<b>Address</b>"
 msgstr "<b>Adresa</b>"
 
 #: ui/main.glade.h:5
-#, fuzzy
 msgid "<b>Auto away</b>"
-msgstr "<b>Země:</b>"
+msgstr "<b>Automatické pryč</b>"
 
 #: ui/main.glade.h:6
 msgid "<b>Client information</b>"
 msgstr "<b>Informace o klientovi</b>"
 
 #: ui/main.glade.h:7
-#, fuzzy
 msgid "<b>Conversation</b>"
-msgstr "<b>Popis</b>"
+msgstr "<b>Konverzace</b>"
 
 #: ui/main.glade.h:8
 msgid "<b>Country:</b>"
@@ -589,9 +579,8 @@ msgid "<b>Setup Finished</b>"
 msgstr "<b>Nastavení dokončeno</b>"
 
 #: ui/main.glade.h:16
-#, fuzzy
 msgid "<b>Sound</b>"
-msgstr "<b>Země:</b>"
+msgstr "<b>Zvuk</b>"
 
 #: ui/main.glade.h:17
 msgid "<b>Status:</b>"
@@ -641,7 +630,7 @@ msgstr "Přidat do vašeho seznamu kontaktů"
 
 #: ui/main.glade.h:30
 msgid "Automatically enter away mode during inactivity"
-msgstr ""
+msgstr "Automaticky přejít do režimu nepřítomnosti při neaktivitě"
 
 #: ui/main.glade.h:32
 msgid "Choose a Server"
@@ -653,16 +642,15 @@ msgstr "Vyberte ze seznamu:"
 
 #: ui/main.glade.h:34
 msgid "Client:"
-msgstr ""
+msgstr "Klient:"
 
 #: ui/main.glade.h:35
 msgid "Contact information"
 msgstr "Informace o kontaktu"
 
 #: ui/main.glade.h:36
-#, fuzzy
 msgid "Convert smileys to graphical images"
-msgstr "Jestli převádět smajlíky v konverzacích na grafické smajlíky."
+msgstr "Převádět smajlíky na grafické obrázky"
 
 #: ui/main.glade.h:37
 msgid "Dinner"
@@ -670,25 +658,23 @@ msgstr "Večeře"
 
 #: ui/main.glade.h:38
 msgid "Disable sounds when busy or away"
-msgstr ""
+msgstr "Zakázat zvuky, když jsem zaneprázdněn nebo pryč"
 
 #: ui/main.glade.h:39
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Máte již účet na serveru Jabberu? "
 
 #: ui/main.glade.h:40
-#, fuzzy
 msgid "Email:"
-msgstr "<b>E-mail:</b>"
+msgstr "E-mail"
 
 #: ui/main.glade.h:41
 msgid "Enter away mode after"
-msgstr ""
+msgstr "Přejít do režimu nepřítomnosti po"
 
 #: ui/main.glade.h:42
-#, fuzzy
 msgid "Enter extended away mode after "
-msgstr "Čas automatického pryč na déle"
+msgstr "Přejít do režimu pryč na déle po "
 
 #: ui/main.glade.h:44
 msgid ""
@@ -752,16 +738,15 @@ msgstr "Ne"
 
 #: ui/main.glade.h:57
 msgid "OS:"
-msgstr ""
+msgstr "OS:"
 
 #: ui/main.glade.h:58
 msgid "On what server do you have a Jabber account?"
 msgstr "Na kterém serveru máte účet Jabberu?"
 
 #: ui/main.glade.h:59
-#, fuzzy
 msgid "Preferences"
-msgstr "Přítomnost:"
+msgstr "Nastavení"
 
 #: ui/main.glade.h:60
 msgid "Presence:"
@@ -805,7 +790,7 @@ msgstr ""
 
 #: ui/main.glade.h:70
 msgid "Timestamp all messages"
-msgstr ""
+msgstr "Přidávat časovou značku ke všem zprávám"
 
 #: ui/main.glade.h:71
 msgid "Use a different server"
@@ -813,11 +798,11 @@ msgstr "Použít jiný server"
 
 #: ui/main.glade.h:72
 msgid "Use compact conversation style"
-msgstr ""
+msgstr "Používat kompaktní styl konverzace"
 
 #: ui/main.glade.h:73
 msgid "Use sounds to notify when new messages arrive"
-msgstr ""
+msgstr "Používat zvuky pro upozornění, když přijdou nové zprávy"
 
 #: ui/main.glade.h:74
 msgid "Version:"
@@ -825,7 +810,7 @@ msgstr "Verze:"
 
 #: ui/main.glade.h:75
 msgid "Web site:"
-msgstr ""
+msgstr "WWW stránka:"
 
 #: ui/main.glade.h:76
 msgid "Welcome to Gossip"
@@ -913,7 +898,4 @@ msgstr "_Odeslat zprávu..."
 
 #: ui/main.glade.h:97
 msgid "minutes"
-msgstr ""
-
-#~ msgid "Operating system:"
-#~ msgstr "Operační systém:"
+msgstr "minut"
