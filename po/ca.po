@@ -7,13 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-05 22:59+0200\n"
-"PO-Revision-Date: 2003-07-05 23:01+0200\n"
+"POT-Creation-Date: 2003-07-06 01:13+0200\n"
+"PO-Revision-Date: 2003-07-06 01:14+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/gossip-accounts-dialog.c:126
+msgid "New account"
+msgstr "Nou compte"
 
 #: src/gossip-add-contact.c:255
 #, c-format
@@ -66,29 +70,28 @@ msgstr "Un client Jabber per al GNOME"
 #: src/gossip-app.c:534
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
-msgstr "Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de xerrada."
+msgstr ""
+"Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
+"xerrada."
 
 #: src/gossip-app.c:539
 msgid "_Start Chat"
 msgstr "_Comença una xerrada"
 
-#: src/gossip-app.c:1053
-msgid "Please enter your password:"
-msgstr "Si us plau, introduïu la vostra contrasenya:"
-
-#: src/gossip-app.c:1123
+#: src/gossip-app.c:1109
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1382
+#: src/gossip-app.c:1368
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-chat.c:408 src/gossip-chat.c:414
-msgid "An error occurred when chatting with"
-msgstr "S'ha produït un error mentre es xerrava amb"
+#: src/gossip-chat.c:404
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:410
+#: src/gossip-chat.c:409
 msgid "Details:"
 msgstr "Detalls:"
 
@@ -138,6 +141,26 @@ msgstr "[predeterminat]"
 msgid "There is no account with the name '%s'."
 msgstr "No hi ha cap compte amb el nom «%s»."
 
+#: src/gossip-register.c:79
+msgid "Unknown error"
+msgstr "Error desconegut"
+
+#: src/gossip-register.c:168
+msgid "Registering account"
+msgstr "S'està registrant el compte"
+
+#: src/gossip-register.c:208
+msgid "Successfully registered the account"
+msgstr "S'ha registrat el compte correctament"
+
+#: src/gossip-register.c:229 src/gossip-register.c:235
+msgid "Failed registering the account"
+msgstr "No s'ha pogut registrar el compte"
+
+#: src/gossip-register.c:231
+msgid "Reason:"
+msgstr "Raó:"
+
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
 #.
@@ -175,11 +198,11 @@ msgstr ""
 #. Should user be able to set resource, account name and
 #. * port?
 #.
-#: src/gossip-startup-druid.c:228
-msgid "Default"
-msgstr "Predeterminat"
+#: src/gossip-startup-druid.c:221
+msgid "Default Account"
+msgstr "Compte predeterminat"
 
-#: src/gossip-startup-druid.c:256
+#: src/gossip-startup-druid.c:249
 #, c-format
 msgid ""
 "Gossip will now try to use your account:\n"
@@ -188,7 +211,7 @@ msgstr ""
 "Gossip tractarà d'utilitzar el vostre compte:\n"
 "<b>%s</b>"
 
-#: src/gossip-startup-druid.c:258
+#: src/gossip-startup-druid.c:251
 #, c-format
 msgid ""
 "Gossip will now try to register the account:\n"
@@ -197,25 +220,9 @@ msgstr ""
 "Gossip tractarà d'enregistrar el compte:\n"
 "<b>%s</b>."
 
-#: src/gossip-startup-druid.c:474
-msgid "Unknown error"
-msgstr "Error desconegut"
-
-#: src/gossip-startup-druid.c:566
-msgid "Registering account"
-msgstr "S'està registrant el compte"
-
-#: src/gossip-startup-druid.c:606
-msgid "Successfully registered the account"
-msgstr "S'ha registrat el compte correctament"
-
-#: src/gossip-startup-druid.c:627 src/gossip-startup-druid.c:633
-msgid "Failed registering the account"
-msgstr "No s'ha pogut registrar el compte"
-
-#: src/gossip-startup-druid.c:629
-msgid "Reason:"
-msgstr "Raó:"
+#: src/gossip-utils.c:1237
+msgid "Please enter your password:"
+msgstr "Si us plau, introduïu la vostra contrasenya:"
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:2
@@ -557,7 +564,8 @@ msgid ""
 ">Connect... menu item."
 msgstr ""
 "Gossip està ara configurat correctament per al vostre sistema.\n"
-"Podeu canviar la configuració del vostre compte més endavant, seleccionant l'element del menú «Accions->Connecta...»."
+"Podeu canviar la configuració del vostre compte més endavant, seleccionant "
+"l'element del menú «Accions->Connecta...»."
 
 #: ui/main.glade.h:36
 msgid "I would like to add you to my contact list."
