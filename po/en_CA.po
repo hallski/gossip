@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-31 14:19-0400\n"
-"PO-Revision-Date: 2004-08-31 13:44-0400\n"
+"POT-Creation-Date: 2004-09-02 19:55-0400\n"
+"PO-Revision-Date: 2004-09-02 13:44-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: English/Canada <adamw@FreeBSD.org>\n"
 "MIME-Version: 1.0\n"
@@ -137,7 +137,7 @@ msgstr ""
 "Maintainer: Adam Weinberger <adamw@gnome.org>\n"
 "Alexander Winston <alexander.winston@comcast.net>"
 
-#: src/gossip-account.c:292 src/gossip-app.c:64 src/gossip-startup-druid.c:219
+#: src/gossip-account.c:302 src/gossip-app.c:64 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Home"
 
@@ -178,7 +178,7 @@ msgstr "%s wants to be notified of your status."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "You were disconnected from the server. Do you want to reconnect?"
 
-#: src/gossip-app.c:1420
+#: src/gossip-app.c:1448
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -186,45 +186,45 @@ msgstr ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 
-#: src/gossip-app.c:1895
+#: src/gossip-app.c:1922
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:2039
+#: src/gossip-app.c:2066
 #, c-format
 msgid "New message from %s"
 msgstr "New message from %s"
 
-#: src/gossip-app.c:2128 src/gossip-chat-window.c:793
+#: src/gossip-app.c:2155 src/gossip-chat-window.c:793
 #: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2527 src/gossip-preferences.c:638
+#: src/gossip-app.c:2554 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Available"
 
-#: src/gossip-app.c:2538 src/gossip-preferences.c:639
+#: src/gossip-app.c:2565 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Busy"
 
-#: src/gossip-app.c:2549 src/gossip-preferences.c:640
+#: src/gossip-app.c:2576 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2681
+#: src/gossip-app.c:2708
 msgid "Available..."
 msgstr "Available..."
 
-#: src/gossip-app.c:2686
+#: src/gossip-app.c:2713
 msgid "Busy..."
 msgstr "Busy..."
 
-#: src/gossip-app.c:2691
+#: src/gossip-app.c:2718
 msgid "Away..."
 msgstr "Away..."
 
-#: src/gossip-app.c:2720
+#: src/gossip-app.c:2747
 msgid "Edit List..."
 msgstr "Edit List..."
 
@@ -422,11 +422,11 @@ msgstr ""
 "Please enter a new name for the group\n"
 "%s"
 
-#: src/gossip-startup-druid.c:257
+#: src/gossip-startup-druid.c:258
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip will now try to use your account:"
 
-#: src/gossip-startup-druid.c:261
+#: src/gossip-startup-druid.c:262
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip will now try to register the account:"
 
@@ -568,14 +568,18 @@ msgid "Use _encryption (SSL)"
 msgstr "Use _encryption (SSL)"
 
 #: ui/connect.glade.h:13
+msgid "Use system pro_xy"
+msgstr "Use system pro_xy"
+
+#: ui/connect.glade.h:14
 msgid "_Jabber ID:"
 msgstr "_Jabber ID:"
 
-#: ui/connect.glade.h:14
+#: ui/connect.glade.h:15
 msgid "_Password:"
 msgstr "_Password:"
 
-#: ui/connect.glade.h:15
+#: ui/connect.glade.h:16
 msgid "_Resource:"
 msgstr "_Resource:"
 
