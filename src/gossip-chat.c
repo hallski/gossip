@@ -39,7 +39,7 @@
 #include "gossip-roster.h"
 #include "gossip-chat.h"
 
-#define d(x) x
+#define d(x)
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 #define COMPOSING_STOP_TIMEOUT 5

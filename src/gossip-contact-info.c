@@ -38,6 +38,8 @@
 struct _GossipContactInfo {
 	LmConnection *connection;
 
+	GossipJID *jid;
+
 	GtkWidget *dialog;
 	GtkWidget *title_label;
 	GtkWidget *jid_label;
@@ -50,10 +52,14 @@ struct _GossipContactInfo {
 	GtkWidget *version_label;
 	GtkWidget *os_label;
 	GtkWidget *description_textview;
+	GtkWidget *subscription_image;
+	GtkWidget *subscription_label;
+	GtkWidget *resubscribe_button;
 	GtkWidget *close_button;
 
 	LmMessageHandler *vcard_handler;
 	LmMessageHandler *version_handler;
+	gulong presence_signal_handler;
 };
 
 static void contact_info_request_information (GossipContactInfo *info,
@@ -83,6 +89,10 @@ contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
 	if (info->version_handler) {
 		lm_message_handler_invalidate (info->version_handler);
 		lm_message_handler_unref (info->version_handler);
+	}
+
+	if (info->presence_signal_handler) {
+		g_signal_handler_disconnect (gossip_app_get_roster (), info->presence_signal_handler);
 	}
 
 	g_free (info);
@@ -292,6 +302,40 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
+static void
+contact_info_resubscribe_cb (GtkWidget *widget, GossipContactInfo *info)
+{
+	/* <presence to='juliet@example.com' type='subscribe'/> */
+	LmMessage *m;
+	GError *error = NULL;
+
+	g_print("resub");
+
+	m = lm_message_new (gossip_jid_get_without_resource (info->jid), LM_MESSAGE_TYPE_PRESENCE);
+	lm_message_node_set_attribute (m->node, "type", "subscribe");
+
+	if (!lm_connection_send (info->connection, m, &error)) {
+		d(g_print ("Error while sending: %s\n", error->message));
+		lm_message_unref (m);
+		return;
+	}
+	lm_message_unref (m);
+}
+
+static void
+contact_info_presence_updated_cb (GossipRoster *roster, GossipRosterItem *item, GossipContactInfo *info)
+{
+	g_return_if_fail (item != NULL);
+	g_return_if_fail (info != NULL);
+
+	g_print("%s\n", __FUNCTION__);
+
+	if (!gossip_jid_equals (gossip_roster_item_get_jid (item), info->jid))
+		return;
+	g_print("Got new presence %s\n", gossip_roster_item_get_subscription (item));
+	gtk_label_set_text (GTK_LABEL (info->subscription_label), gossip_roster_item_get_subscription (item));
+}
+
 GossipContactInfo *
 gossip_contact_info_new (GossipJID *jid, const gchar *name)
 {
@@ -303,7 +347,8 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 	info = g_new0 (GossipContactInfo, 1);
 
 	info->connection = gossip_app_get_connection ();
-	
+	info->jid = jid;
+
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "contact_information_dialog",
 				     NULL,
@@ -320,6 +365,9 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 				     "os_label", &info->os_label,
 				     "close_button", &info->close_button,
 				     "description_textview", &info->description_textview,
+				     "subscription_image", &info->subscription_image,
+				     "subscription_label", &info->subscription_label,
+				     "resubscribe_button", &info->resubscribe_button,
 				     NULL);
 
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
@@ -369,6 +417,27 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 	contact_info_request_information (info, jid);
 
 	gtk_widget_show (info->dialog);
+
+	{
+		GossipRoster *roster;
+		GossipRosterItem *item;
+		const char *subscription;
+
+		roster = gossip_app_get_roster ();
+		item = gossip_roster_get_item (roster, jid);
+		subscription = gossip_roster_item_get_subscription (item);
+		/* TODO: write presence in English */
+		gtk_label_set_label (GTK_LABEL (info->subscription_label), subscription);
+		if (0 && strcmp(subscription, "both") == 0) {
+			gtk_widget_hide (info->resubscribe_button);
+		} else {
+			g_signal_connect (info->resubscribe_button,
+					  "clicked",
+					  G_CALLBACK (contact_info_resubscribe_cb),
+					  info);
+			info->presence_signal_handler = g_signal_connect(roster, "item_presence_updated", G_CALLBACK(contact_info_presence_updated_cb), info);
+		}
+	}
 
 	return info;
 }
