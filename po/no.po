@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-01-29 11:28+0100\n"
-"PO-Revision-Date: 2004-01-29 11:38+0100\n"
+"PO-Revision-Date: 2004-01-29 11:39+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -586,7 +586,7 @@ msgstr "<b>Favoritt:</b>"
 
 #: ui/group-chat.glade.h:7
 msgid "Chat _name:"
-msgstr "_Navn på prat"
+msgstr "_Navn på samtale:"
 
 #: ui/group-chat.glade.h:8
 msgid "Gossip - Edit Group Chats"
@@ -860,7 +860,7 @@ msgstr "Versjon:"
 
 #: ui/main.glade.h:61
 msgid "Web site:"
-msgstr "Nettsted: "
+msgstr "Nettsted:"
 
 #: ui/main.glade.h:62
 msgid "Welcome to Gossip"
