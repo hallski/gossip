@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-20 10:20+0100\n"
+"POT-Creation-Date: 2003-07-23 01:40+0100\n"
 "PO-Revision-Date: 2003-07-16 14:10+0100\n"
 "Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
@@ -169,6 +169,25 @@ msgstr "Digwyddod gwall wrth sgwrsio efo %s."
 #: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr "Manylion:"
+
+#.
+#. Translators: This is for the title of the chat window. The
+#. first %s is an "* " that gets displayed if the chat window has
+#. new messages in it. (Please complain if this doesn't work well
+#. in your locale.)
+#.
+#: src/gossip-chat.c:659
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sSgwrs - %s"
+
+#.
+#. Translators: See comment for "%sChat - %s".
+#.
+#: src/gossip-chat.c:664
+#, c-format
+msgid "%sChat"
+msgstr "%sSgwrs"
 
 #: src/gossip-contact-info.c:350
 #, c-format
