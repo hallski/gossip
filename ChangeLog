@@ -1,3 +1,7 @@
+2003-12-11  Iñaki Larrañaga  <dooteo@euskalgnu.org>
+
+	* configure.in: Added "eu" (Basque) to ALL_LINGUAS.
+
 2003-12-10  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-log.c (gossip_log_message): Fix namespace, thanks
