@@ -90,4 +90,8 @@ GdkPixbuf *  gossip_utils_get_pixbuf_offline         (void);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);
 const gchar *gossip_utils_get_default_status         (GossipShow        show);
 
+GSList *     gossip_utils_get_busy_messages          (void);
+GSList *     gossip_utils_get_away_messages          (void);
+
+
 #endif /*  __GOSSIP_UTILS_H__ */

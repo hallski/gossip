@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include <string.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-i18n.h>
@@ -34,7 +35,8 @@ typedef struct {
  	
 	GtkWidget    *dialog;
 	GtkWidget    *sound_checkbutton;
-	GtkWidget    *silent_checkbutton;
+	GtkWidget    *silent_busy_checkbutton;
+	GtkWidget    *silent_away_checkbutton;
 	GtkWidget    *smileys_checkbutton;
 	GtkWidget    *list_checkbutton;
 	GtkWidget    *compact_checkbutton;
@@ -212,6 +214,10 @@ hookup_entry (GossipPreferences *preferences,
 
 	g_return_if_fail (GTK_ENTRY (widget));
 
+	if (0) {  /* Silent warning before we use this function. */
+		hookup_entry (preferences, key, widget);
+	}
+	
 	set_string_from_gconf (key, widget);
 
 	g_object_set_data_full (G_OBJECT (widget), "key",
@@ -335,27 +341,23 @@ preferences_setup_widgets (GossipPreferences *preferences)
 			      preferences->sound_checkbutton);
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/sound/silent_away",
-			      preferences->silent_checkbutton);
+			      preferences->silent_away_checkbutton);
+	hookup_toggle_button (preferences,
+			      GCONF_PATH "/sound/silent_busy",
+			      preferences->silent_busy_checkbutton);
 	hookup_sensitivity_controller (preferences,
 				       GCONF_PATH "/sound/play_sounds",
-				       preferences->silent_checkbutton);
+				       preferences->silent_away_checkbutton);
+	hookup_sensitivity_controller (preferences,
+				       GCONF_PATH "/sound/play_sounds",
+				       preferences->silent_busy_checkbutton);
 
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/graphical_smileys",
 			      preferences->smileys_checkbutton);
 	hookup_toggle_button (preferences,
-			      GCONF_PATH "/conversation/compact_mode",
-			      preferences->compact_checkbutton);
-	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/open_in_list",
 			      preferences->list_checkbutton);
-	
-	hookup_entry (preferences,
-		      GCONF_PATH "/status/leaving_message",
-		      preferences->leaving_entry);
-	hookup_entry (preferences,
-		      GCONF_PATH "/status/auto_away_message",
-		      preferences->away_entry);
 }
 
 GtkWidget *
@@ -372,12 +374,10 @@ gossip_preferences_show (GossipApp *app)
 				     NULL,
 				     "preferences_dialog", &preferences->dialog,
 				     "sound_checkbutton", &preferences->sound_checkbutton,
-				     "silent_checkbutton", &preferences->silent_checkbutton,
+				     "silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
+				     "silent_away_checkbutton", &preferences->silent_away_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
-				     "compact_checkbutton", &preferences->compact_checkbutton,
 				     "list_checkbutton", &preferences->list_checkbutton,
-				     "leaving_entry", &preferences->leaving_entry,
-				     "away_entry", &preferences->away_entry,
 				     NULL);
 
 	preferences_setup_widgets (preferences);
@@ -393,3 +393,346 @@ gossip_preferences_show (GossipApp *app)
  	return preferences->dialog;
 }
 
+
+/* ------------------------------
+ * Status message editor
+ */
+
+typedef struct {
+	GtkWidget    *dialog;
+
+	GtkWidget    *busy_treeview;
+	GtkWidget    *away_treeview;
+
+	GtkWidget    *remove_busy_button;
+	GtkWidget    *remove_away_button;
+} GossipStatusEditor;
+
+static gchar *
+get_new_message (GtkWidget *parent, const gchar *title)
+{
+	GtkWidget   *dialog;
+	GtkWidget   *entry;
+	gint         response;
+	gchar       *str;
+
+	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
+				      "add_status_message_dialog",
+				      NULL,
+				      "add_status_message_dialog", &dialog,
+				      "status_entry", &entry,
+				      NULL);
+
+	gtk_window_set_title (GTK_WINDOW (dialog), title);
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent));
+
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (response != GTK_RESPONSE_OK) {
+		gtk_widget_destroy (dialog);
+		return NULL;
+	}
+
+	str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+	gtk_widget_destroy (dialog);
+	
+	if (strlen (str) == 0) {
+		g_free (str);
+		return NULL;
+	}
+
+	return str;
+}
+
+static void
+status_destroy_cb (GtkWidget          *widget,
+		   GossipStatusEditor *editor)
+{
+	g_free (editor);
+}
+
+static void
+status_add_busy_clicked_cb (GtkWidget          *button,
+			    GossipStatusEditor *editor)
+{
+	gchar        *str;
+	GSList       *list;
+	GtkListStore *store;
+	GtkTreeIter   iter;
+	
+	str = get_new_message (editor->dialog, _("New Busy Message"));
+	if (!str) {
+		return;
+	}
+
+	list = gossip_utils_get_busy_messages ();
+
+	list = g_slist_append (list, g_strdup (str));
+	
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/custom_busy_messages",
+			       GCONF_VALUE_STRING,
+			       list,
+			       NULL);
+
+	store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (editor->busy_treeview)));
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter,
+			    0, str,
+			    -1);
+
+	g_slist_foreach (list, (GFunc)g_free, NULL);
+	g_slist_free (list);
+}
+
+static void
+status_add_away_clicked_cb (GtkWidget          *button,
+			    GossipStatusEditor *editor)
+{
+	gchar        *str;
+	GSList       *list;
+	GtkListStore *store;
+	GtkTreeIter   iter;
+
+	str = get_new_message (editor->dialog, _("New Away Message"));
+
+	list = gossip_utils_get_away_messages ();
+
+	list = g_slist_append (list, g_strdup (str));
+	
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/custom_away_messages",
+			       GCONF_VALUE_STRING,
+			       list,
+			       NULL);
+
+	store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (editor->away_treeview)));
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter,
+			    0, str,
+			    -1);
+	
+	g_slist_foreach (list, (GFunc)g_free, NULL);
+	g_slist_free (list);
+}
+
+static void
+status_remove_busy_clicked_cb (GtkWidget          *button,
+			       GossipStatusEditor *editor)
+{
+	GtkTreeSelection *selection;
+	GtkTreeModel     *model;
+	GtkTreeIter       iter;
+	gchar            *str;
+	GSList           *list, *l;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->busy_treeview));
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		return;
+ 	}
+
+	gtk_tree_model_get (model, &iter,
+			    0, &str,
+			    -1);
+
+	list = gossip_utils_get_busy_messages ();
+
+	for (l = list; l; l = l->next) {
+		if (strcmp (str, l->data) == 0) {
+			break;
+		}
+	}
+
+	if (l) {
+		g_free (l->data);
+		list = g_slist_delete_link (list, l);
+	}
+	
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/custom_busy_messages",
+			       GCONF_VALUE_STRING,
+			       list,
+			       NULL);
+
+	g_slist_foreach (list, (GFunc)g_free, NULL);
+	g_slist_free (list);
+
+	gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+}
+
+static void
+status_remove_away_clicked_cb (GtkWidget          *button,
+			       GossipStatusEditor *editor)
+{
+	GtkTreeSelection *selection;
+	GtkTreeModel     *model;
+	GtkTreeIter       iter;
+	gchar            *str;
+	GSList           *list, *l;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->away_treeview));
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		return;
+ 	}
+
+	gtk_tree_model_get (model, &iter,
+			    0, &str,
+			    -1);
+
+	list = gossip_utils_get_away_messages ();
+
+	for (l = list; l; l = l->next) {
+		if (strcmp (str, l->data) == 0) {
+			break;
+		}
+	}
+
+	if (l) {
+		g_free (l->data);
+		list = g_slist_delete_link (list, l);
+	}
+	
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/custom_away_messages",
+			       GCONF_VALUE_STRING,
+			       list,
+			       NULL);
+
+	g_slist_foreach (list, (GFunc)g_free, NULL);
+	g_slist_free (list);
+
+	gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+}
+
+static void
+status_response_cb (GtkWidget *widget,
+		    gint       response,
+		    gpointer user_data)
+{
+	gtk_widget_destroy (widget);
+}
+
+static void
+status_busy_selection_changed_cb (GtkTreeSelection   *selection,
+				  GossipStatusEditor *editor)
+{
+	if (!gtk_tree_selection_get_selected (selection, NULL, NULL)) {
+		gtk_widget_set_sensitive (editor->remove_busy_button, FALSE);
+		return;
+ 	}
+	
+	gtk_widget_set_sensitive (editor->remove_busy_button, TRUE);
+}
+
+static void
+status_away_selection_changed_cb (GtkTreeSelection   *selection,
+				  GossipStatusEditor *editor)
+{
+	if (!gtk_tree_selection_get_selected (selection, NULL, NULL)) {
+		gtk_widget_set_sensitive (editor->remove_away_button, FALSE);
+		return;
+ 	}
+	
+	gtk_widget_set_sensitive (editor->remove_away_button, TRUE);
+}
+
+GtkWidget *
+gossip_preferences_show_status_editor (void)
+{
+	GossipStatusEditor *editor;
+	GladeXML           *glade;
+	GSList             *list, *l;
+	GtkListStore       *store;
+	GtkTreeIter         iter;
+	GtkCellRenderer    *cell;
+	GtkTreeViewColumn  *col;
+	GtkTreeSelection   *selection;
+
+	editor = g_new0 (GossipStatusEditor, 1);
+	
+	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+				       "status_editor_dialog",
+				       NULL,
+				       "status_editor_dialog", &editor->dialog,
+				       "busy_treeview", &editor->busy_treeview,
+				       "away_treeview", &editor->away_treeview,
+				       "busy_remove_button", &editor->remove_busy_button,
+				       "away_remove_button", &editor->remove_away_button,
+				       NULL);
+
+	gossip_glade_connect (glade,
+			      editor,
+			      "status_editor_dialog", "response", status_response_cb,
+			      "status_editor_dialog", "destroy", status_destroy_cb,
+			      "busy_add_button", "clicked", status_add_busy_clicked_cb,
+			      "away_add_button", "clicked", status_add_away_clicked_cb,
+			      "busy_remove_button", "clicked", status_remove_busy_clicked_cb,
+			      "away_remove_button", "clicked", status_remove_away_clicked_cb,
+			      NULL);
+
+	/* Fill in busy messages. */
+	list = gossip_utils_get_busy_messages ();
+
+	store = gtk_list_store_new (1, G_TYPE_STRING);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (editor->busy_treeview),
+				 GTK_TREE_MODEL (store));
+
+	col = gtk_tree_view_column_new ();
+	cell = gtk_cell_renderer_text_new ();
+	gtk_tree_view_column_pack_start (col, cell, TRUE);
+	gtk_tree_view_column_add_attribute (col, cell,  "text", 0);
+	
+	gtk_tree_view_append_column (GTK_TREE_VIEW (editor->busy_treeview), col);
+	
+	for (l = list; l; l = l->next) {
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter,
+				    0, l->data,
+				    -1);
+	}
+
+	g_slist_free (list);
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->busy_treeview));
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	g_signal_connect (selection,
+			  "changed",
+			  G_CALLBACK (status_busy_selection_changed_cb),
+			  editor);
+	
+	gtk_widget_set_sensitive (editor->remove_busy_button, FALSE);
+
+	/* Fill in away messages. */
+	list = gossip_utils_get_away_messages ();
+
+	store = gtk_list_store_new (1, G_TYPE_STRING);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (editor->away_treeview),
+				 GTK_TREE_MODEL (store));
+	
+	col = gtk_tree_view_column_new ();
+	cell = gtk_cell_renderer_text_new ();
+	gtk_tree_view_column_pack_start (col, cell, TRUE);
+	gtk_tree_view_column_add_attribute (col, cell,  "text", 0);
+	
+	gtk_tree_view_append_column (GTK_TREE_VIEW (editor->away_treeview), col);
+	
+	for (l = list; l; l = l->next) {
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter,
+				    0, l->data,
+				    -1);
+	}
+	
+	g_slist_free (list);
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->away_treeview));
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	g_signal_connect (selection,
+			  "changed",
+			  G_CALLBACK (status_away_selection_changed_cb),
+			  editor);
+	
+	gtk_widget_set_sensitive (editor->remove_away_button, FALSE);
+
+	gtk_widget_show (editor->dialog);
+	return editor->dialog;
+}

@@ -704,3 +704,57 @@ gossip_utils_get_default_status (GossipShow show)
 	return _(AVAILABLE_MESSAGE);
 }
 
+GSList *
+gossip_utils_get_busy_messages (void)
+{
+	GConfValue *value;
+	GSList     *list;
+	
+	/* FIXME: Workaround for broken intltool for now... It clears the
+	 * default values for lists. See #121330.
+	 */
+	value = gconf_client_get (gconf_client,
+				  "/apps/gossip/status/custom_busy_messages",
+				  NULL);
+	
+	if (!value) {
+		list = g_slist_append (NULL, g_strdup (_("Working")));
+	} else {
+		gconf_value_free (value);
+		
+		list = gconf_client_get_list (gconf_client,
+					      "/apps/gossip/status/custom_busy_messages",
+					      GCONF_VALUE_STRING,
+					      NULL);
+	}
+
+	return list;
+}
+
+GSList *
+gossip_utils_get_away_messages (void)
+{
+	GConfValue *value;
+	GSList     *list;
+	
+	/* FIXME: Workaround for broken intltool for now... It clears the
+	 * default values for lists. See #121330.
+	 */
+	value = gconf_client_get (gconf_client,
+				  "/apps/gossip/status/custom_away_messages",
+				  NULL);
+	
+	if (!value) {
+		list = g_slist_append (NULL, g_strdup (_("Eating")));
+		list = g_slist_append (list, g_strdup (_("Sleeping")));
+	} else {
+		gconf_value_free (value);
+		
+		list = gconf_client_get_list (gconf_client,
+					      "/apps/gossip/status/custom_away_messages",
+					      GCONF_VALUE_STRING,
+					      NULL);
+	}
+
+	return list;
+}

@@ -59,7 +59,7 @@
 #define ADD_CONTACT_RESPONSE_ADD 1
 #define REQUEST_RESPONSE_DECIDE_LATER 1
 
-#define LEAVING_TIME 15
+#define LEAVE_TIME 15
 #define	AUTO_AWAY_TIME (5*60)
 #define	AUTO_EXT_AWAY_TIME (30*60)
 #define FLASH_TIMEOUT 400
@@ -110,11 +110,15 @@ struct _GossipAppPriv {
 	
 	/* Current status. */
 	gchar               *status_text;
+
+	/* Set by the user (available/busy). */
 	GossipShow           explicit_show;
-	GossipShow           auto_show;
+
+	/* Autostatus (away/xa), overrides explicit_show. */
+	GossipShow           auto_show;     
 	
 	gchar               *overridden_away_message;
-	time_t               leaving_time;
+	time_t               leave_time;
 	guint                leave_flash_timeout_id;
 
 	guint                size_timeout_id;
@@ -808,7 +812,8 @@ app_account_information_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_status_messages_cb (GtkWidget *widget, GossipApp *app)
 {
-	/* Do it... */
+	// FIXME: allow only one...
+	gossip_preferences_show_status_editor ();
 }
 
 static void
@@ -1200,28 +1205,21 @@ app_idle_check_cb (GossipApp *app)
 	show = app_get_effective_show ();
 
 	/* First, check if we're about to leaving and special-case that. */
-	if (priv->leaving_time > 0) {
+	if (priv->leave_time > 0) {
 		time_t t;
 
 		t = time (NULL);
 
-		if (t - priv->leaving_time < LEAVING_TIME) {
-			/* Waiting to leaving */
-		}
-		else if (idle >= LEAVING_TIME / 3) {
-			/* Time to leaving */
-			
+		if (t - priv->leave_time < LEAVE_TIME) {
+			/* Waiting to leaving. */
+		} else {
+			/* Time to leave. */
 			add = AUTO_AWAY_TIME - idle;
 			
-			priv->leaving_time = 0;
+			priv->leave_time = 0;
 			priv->auto_show = GOSSIP_SHOW_AWAY;
 			app_update_show ();
-		} else {
-			/* No leaving after all... */
-			app_cancel_pending_leave ();
-
-			app_update_show ();
-		}			
+		}
 
 		return TRUE;
 	}
@@ -1958,7 +1956,8 @@ app_update_show (void)
 	LmMessage     *m;
 	const gchar   *show = NULL;
 	gchar         *priority = "50"; /* Default priority when available. */
-	gchar         *status_text;
+	gchar         *status_text;     /* Text to send. */
+	const gchar   *status_label;    /* Text to display in the UI. */
 	
 	priv = app->priv;
 
@@ -1986,23 +1985,35 @@ app_update_show (void)
 		if (priv->overridden_away_message) {
 			status_text = g_strdup (priv->overridden_away_message);
 		} else {
-			status_text = gconf_client_get_string (
-				gconf_client,
-				"/apps/gossip/status/auto_away_message",
-				NULL);
+			status_text = NULL;
 		}
 	}
-	else if (priv->leaving_time > 0) {
+	else if (priv->leave_time > 0) {
+		/* We're about to leave. */
 		status_text = gconf_client_get_string (
 			gconf_client,
 			"/apps/gossip/status/leaving_message",
 			NULL);
+		status_label = g_strdup (status_text);
 	} else {
 		status_text = g_strdup (priv->status_text);
+		if (status_text) {
+			status_label = g_strdup (priv->status_text);
+		} else {
+			status_label = g_strdup (gossip_utils_get_default_status (effective_show));
+		}
 	}
 
+	if (status_text && status_text[0]) {
+		status_label = status_text;
+	} else {
+		status_label = gossip_utils_get_default_status (effective_show);
+	}
+
+	//g_print ("%s, %s\n", status_text, status_label);
+	
 	eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
-					status_text);
+					status_label);
 
 	show = gossip_utils_show_to_string (effective_show);
 
@@ -2025,7 +2036,9 @@ app_update_show (void)
 	}
 	
 	lm_message_node_add_child (m->node, "priority", priority);
-	lm_message_node_add_child (m->node, "status", status_text);
+	if (status_text) {
+		lm_message_node_add_child (m->node, "status", status_text);
+	}
 	lm_connection_send (app->priv->connection, m, NULL);
 	lm_message_unref (m);
 
@@ -2037,7 +2050,7 @@ app_cancel_pending_leave (void)
 {
 	GossipAppPriv *priv = app->priv;
 
-	priv->leaving_time = 0;
+	priv->leave_time = 0;
 	g_free (priv->overridden_away_message);
 	priv->overridden_away_message = NULL;
 
@@ -2133,7 +2146,7 @@ app_status_available_activate_cb (GtkWidget *item,
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 
 	g_free (priv->status_text);
-	priv->status_text = g_strdup (gossip_utils_get_default_status (GOSSIP_SHOW_AVAILABLE));
+	priv->status_text = NULL;//g_strdup (gossip_utils_get_default_status (GOSSIP_SHOW_AVAILABLE));
 	
 	app_update_show ();
 }
@@ -2158,25 +2171,6 @@ app_status_busy_activate_cb (GtkWidget *item,
 }
 
 static void
-app_status_leave_activate_cb (GtkWidget *item,
-			      gpointer   user_data)
-{
-	GossipAppPriv *priv = app->priv;
-	gchar         *str;
-
-	app_cancel_pending_leave ();
-
-	str = g_object_get_data (G_OBJECT (item), "status");
-
-	priv->overridden_away_message = str;
-	priv->leaving_time = time (NULL);
-
-	app_leave_flash_start ();
-	
-	app_update_show ();
-}
-
-static void
 app_status_custom_leave_activate_cb (GtkWidget *item,
 				     gpointer   user_data)
 {
@@ -2184,12 +2178,9 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 	GtkWidget     *dialog;
 	GtkWidget     *combo;
 	gint           response;
-	gchar         *str;
-
-	GSList     *list, *l;
-	GList      *strings;
-	GConfValue *value;
-	gboolean    new_message = TRUE;
+	const gchar   *str;
+	GSList        *list, *l;
+	GList         *strings;
 	
 	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
 				      "status_leave_dialog",
@@ -2200,33 +2191,19 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 
 	gtk_combo_disable_activate (GTK_COMBO (combo));
 	
-	/* FIXME: Same workaround as below. */
-	value = gconf_client_get (gconf_client,
-				  "/apps/gossip/status/custom_away_messages",
-				  NULL);
-
-	if (!value) {
-		list = g_slist_append (NULL, g_strdup (_("Eating")));
-		list = g_slist_append (list, g_strdup (_("Sleeping")));
-	} else {
-		gconf_value_free (value);
-		
-		list = gconf_client_get_list (gconf_client,
-					      "/apps/gossip/status/custom_away_messages",
-					      GCONF_VALUE_STRING,
-					      NULL);
-	}
+	list = gossip_utils_get_away_messages ();
 
 	strings = NULL;
 	for (l = list; l; l = l->next) {
 		strings = g_list_append (strings, l->data);
 	}
 
-	gtk_combo_set_popdown_strings (GTK_COMBO (combo), strings);
-	g_list_free (strings);
-
+	if (strings) {
+		gtk_combo_set_popdown_strings (GTK_COMBO (combo), strings);
+		g_list_free (strings);
+	}
+	
 	gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), "");
-	/*gtk_entry_select_region (GTK_ENTRY (GTK_COMBO (combo)->entry), 0, -1);*/
 
 	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -2235,24 +2212,13 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 		return;
 	}
 
-	str = g_strdup (gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (combo)->entry)));
-	gtk_widget_destroy (dialog);
+	str = gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (combo)->entry));
+	gtk_widget_hide (dialog);
 
 	if (strlen (str) == 0) {
-		g_free (str);
-
-		str = gconf_client_get_string (gconf_client,
-					       "/apps/gossip/status/auto_away_message",
-					       NULL);
-	} else {
-		for (l = list; l; l = l->next) {
-			if (strcmp (str, l->data) == 0) {
-				new_message = FALSE;
-				break;
-			}
-		}
+		str = NULL;
 	}
-
+	
 	for (l = list; l; l = l->next) {
 		g_free (l->data);
 	}
@@ -2260,12 +2226,14 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 	
 	app_cancel_pending_leave ();
 	
-	priv->overridden_away_message = str;
-	priv->leaving_time = time (NULL);
+	priv->overridden_away_message = g_strdup (str);
+	priv->leave_time = time (NULL);
 
 	app_leave_flash_start ();
 	
 	app_update_show ();
+
+	gtk_widget_destroy (dialog);
 }
 
 static void
@@ -2421,10 +2389,7 @@ add_status_image_menu_item (GtkWidget   *menu,
 					  G_CALLBACK (app_status_custom_leave_activate_cb),
 					  NULL);
 		} else {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_leave_activate_cb),
-					  NULL);
+			g_assert_not_reached ();
 		}
 		break;
 
@@ -2452,7 +2417,6 @@ show_popup (void)
 	GtkWidget  *menu;
 	GtkWidget  *item;
 	GSList     *list, *l;
-	GConfValue *value;
 
 	menu = gtk_menu_new ();
 
@@ -2469,23 +2433,7 @@ show_popup (void)
 
 	/* Busy messages. */
 
-	/* FIXME: Workaround for broken intltool for now... It clears the
-	 * default values for lists. See #121330.
-	 */
-	value = gconf_client_get (gconf_client,
-				  "/apps/gossip/status/custom_busy_messages",
-				  NULL);
-
-	if (!value) {
-		list = g_slist_append (NULL, g_strdup (_("Working")));
-	} else {
-		gconf_value_free (value);
-		
-		list = gconf_client_get_list (gconf_client,
-					      "/apps/gossip/status/custom_busy_messages",
-					      GCONF_VALUE_STRING,
-					      NULL);
-	}
+	list = gossip_utils_get_busy_messages ();
 
 	for (l = list; l; l = l->next) {
 		add_status_image_menu_item (menu, l->data, GOSSIP_SHOW_BUSY, FALSE);

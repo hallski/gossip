@@ -54,7 +54,21 @@
       <locale name="C">
          <short>Be silent when away</short>
          <long>
-	 Whether or not to play sounds when away or busy.
+	 Whether or not to play sounds when away.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/sound/silent_busy</key>
+      <applyto>/apps/gossip/sound/silent_busy</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+         <short>Be silent when busy</short>
+         <long>
+	 Whether or not to play sounds when busy.
          </long>
       </locale>
     </schema>
