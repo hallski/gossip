@@ -1,5 +1,8 @@
 2005-01-03  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-transport-accounts.c: 
+	- Updated to reflect the new GError pointer returned for disco
+	items. 
 	* src/gossip-transport-add-window.c: 
 	- If we get a 404 Not Found when initiating service discovery, we
 	now look to 3rd party servers for transport support instead of

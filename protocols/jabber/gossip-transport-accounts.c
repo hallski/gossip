@@ -70,6 +70,7 @@ static void                    transport_account_update_info_cb         (GossipT
 									 GossipTransportDiscoItem   *item,
 									 gboolean                    last_item,
 									 gboolean                    timeout,
+									 GError                     *error,
 									 GossipTransportAccount     *account);
 static void                    transport_account_update_username_cb     (GossipJID                  *jid,
 									 const gchar                *key,
@@ -494,6 +495,7 @@ transport_account_update_info_cb (GossipTransportDisco     *disco,
 				  GossipTransportDiscoItem *item, 
 				  gboolean                  last_item,
 				  gboolean                  timeout,
+				  GError                   *error,
 				  GossipTransportAccount   *account)
 {
 	const gchar *type;
