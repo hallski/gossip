@@ -475,6 +475,8 @@ chat_window_update_status (GossipChatWindow *window, GossipChat *chat)
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
 	image = g_object_get_data (G_OBJECT (chat), "chat-window-status-img");
 	gtk_image_set_from_pixbuf (image, pixbuf);
+
+	chat_window_update_tooltip (window, chat);
 }
 
 static void
@@ -661,32 +663,11 @@ chat_window_presence_updated_cb (gpointer           not_used,
 				 GossipRosterItem  *item,
 				 GossipChat        *chat)
 { 
-	GossipChatWindow     *window;
-	GossipChatWindowPriv *priv;
-	GossipJID            *jid;
-	gchar                *str;
-	GtkWidget            *widget;
+	GossipChatWindow *window;
 	
 	window = gossip_chat_get_window (chat);
-	priv = window->priv;
 	
 	chat_window_update_status (window, chat);
-
-	jid = gossip_roster_item_get_jid (item);
-	
-	str = g_strdup_printf ("%s\n%s %s",
-			       gossip_jid_get_without_resource (jid),
-			       _("Status:"),
-			       gossip_roster_item_get_status (item));
-	
-	widget = g_object_get_data (G_OBJECT (chat), "chat-window-tooltip-widget");
-
-	gtk_tooltips_set_tip (priv->tooltips,
-			      widget,
-			      str,
-			      NULL);
-
-	g_free (str);
 }
 
 static void
@@ -706,7 +687,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
 	jid = gossip_roster_item_get_jid (item);
 
 	status = gossip_roster_item_get_status (item);
-	
+
 	if (!status || strcmp (status, "") == 0) {
 		GossipShow show;
 
@@ -728,7 +709,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
 	gtk_tooltips_set_tip (priv->tooltips,
 			      widget,
 			      str,
-			      NULL);
+			      str);
 
 	g_free (str);
 }
