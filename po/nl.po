@@ -7,14 +7,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
-"POT-Creation-Date: 2003-11-18 13:13+0100\n"
-"PO-Revision-Date: 2003-11-14 22:05+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-11-21 04:18+0100\n"
+"PO-Revision-Date: 2003-11-21 19:22+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
+"Content-Transfer-Encoding: 8bit"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -61,9 +61,8 @@ msgid "Not at the computer"
 msgstr "Niet bij de computer"
 
 #: gossip.schemas.in.h:10
-#, fuzzy
 msgid "Show offline contacts"
-msgstr "_Offline contacten weergeven"
+msgstr "Offline contacten weergeven"
 
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
@@ -99,9 +98,8 @@ msgid "Whether or not to play sounds when busy."
 msgstr "Geluiden afspelen bij bezig."
 
 #: gossip.schemas.in.h:19
-#, fuzzy
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr "Gesprekken wel of niet in een enkel venster met lijstweergave openen."
+msgstr "Contacten die offline zijn in de contactlijst wel of niet weergeven."
 
 #: gossip.schemas.in.h:20
 msgid "Width of main window"
@@ -444,11 +442,11 @@ msgstr "Lo_g"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
-msgstr ""
+msgstr "Tabblad _links verplaatsen"
 
 #: ui/chat.glade.h:11
 msgid "Move Tab _Right"
-msgstr ""
+msgstr "Tabblad _rechts verplaatsen"
 
 #: ui/chat.glade.h:12
 msgid "To:"
@@ -459,18 +457,16 @@ msgid "_Conversation"
 msgstr "_Gesprek"
 
 #: ui/chat.glade.h:14
-#, fuzzy
 msgid "_Detach Tab"
-msgstr "_Losmaken"
+msgstr "Tabblad _losmaken"
 
 #: ui/chat.glade.h:15
 msgid "_Next Tab"
-msgstr ""
+msgstr "Vo_lgend tabblad"
 
 #: ui/chat.glade.h:16
-#, fuzzy
 msgid "_Previous Tab"
-msgstr "_Vorig gesprek"
+msgstr "Vo_rig tabblad"
 
 #: ui/chat.glade.h:17
 msgid "_Reply..."
@@ -482,7 +478,7 @@ msgstr "_Verzenden"
 
 #: ui/chat.glade.h:19
 msgid "_Tabs"
-msgstr ""
+msgstr "_Tabbladen"
 
 #: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
 msgid "    "
@@ -953,9 +949,8 @@ msgid "_Preferences"
 msgstr "_Voorkeuren"
 
 #: ui/main.glade.h:91
-#, fuzzy
 msgid "_Remove"
-msgstr "Verwijderen"
+msgstr "_Verwijderen"
 
 #: ui/main.glade.h:92
 msgid "_Search..."
@@ -964,33 +959,3 @@ msgstr "_Zoeken..."
 #: ui/main.glade.h:93
 msgid "_Status Messages"
 msgstr "_Statusberichten"
-
-#~ msgid "Open conversations in single window with list view"
-#~ msgstr "Gesprekken in een enkel venster met lijstweergave openen"
-
-#~ msgid "[Eating,Sleeping]"
-#~ msgstr "[Aan het eten, slapen]"
-
-#~ msgid "[Working]"
-#~ msgstr "[Aan het werk]"
-
-#~ msgid "As _Windows"
-#~ msgstr "Als _vensters"
-
-#~ msgid "As a _List"
-#~ msgstr "Als een _lijst"
-
-#~ msgid "Chat with:"
-#~ msgstr "Chatten met:"
-
-#~ msgid "_Go"
-#~ msgstr "_Ga"
-
-#~ msgid "_Next Conversation"
-#~ msgstr "_Volgend gesprek"
-
-#~ msgid "Add"
-#~ msgstr "Toevoegen"
-
-#~ msgid "Open conversations in a single window with _list view"
-#~ msgstr "Gesprekken in een enkel venster met _lijstweergave openen"
