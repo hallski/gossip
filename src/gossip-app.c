@@ -1,8 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2002-2003 CodeFactory AB
- * Copyright (C) 2002-2003 Richard Hult <rhult@codefactory.se>
- * Copyright (C) 2002-2003 Mikael Hallendal <micke@codefactory.se>
+ * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -357,8 +357,8 @@ app_about_cb (GtkWidget *window,
 {
 	GossipAppPriv *priv;
 	const gchar   *authors[] = { 
-		"Richard Hult <rhult@codefactory.se>",
-		"Mikael Hallendal <micke@codefactory.se>",
+		"Richard Hult <richard@imendio.com>",
+		"Mikael Hallendal <micke@imendio.com>",
 		NULL
 	};
 	/* Note to translators: put here your name (and address) so it
