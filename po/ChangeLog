@@ -1,3 +1,7 @@
+2004-06-23  Jordi Mallach  <jordi@sindominio.net>
+
+	* ca.po: Updated Catalan translation.
+
 2004-06-23  Mikael Hallendal  <micke@imendio.com>
 
 	* POTFILES.in: Added gossip-vcard-dialog.c
