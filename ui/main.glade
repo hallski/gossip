@@ -564,12 +564,13 @@
 		      <child>
 			<widget class="GtkLabel" id="2_id_label">
 			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
+			  <property name="selectable">True</property>
 			  <property name="xalign">0</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -588,12 +589,13 @@
 		      <child>
 			<widget class="GtkLabel" id="2_name_label">
 			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
+			  <property name="selectable">True</property>
 			  <property name="xalign">0</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -612,12 +614,13 @@
 		      <child>
 			<widget class="GtkLabel" id="2_email_label">
 			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
+			  <property name="selectable">True</property>
 			  <property name="xalign">0</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -661,12 +664,13 @@
 		      <child>
 			<widget class="GtkLabel" id="2_country_label">
 			  <property name="visible">True</property>
+			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes"></property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
+			  <property name="selectable">True</property>
 			  <property name="xalign">0</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>

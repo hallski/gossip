@@ -1,5 +1,10 @@
 2003-07-17  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Make labels selectable in add contact
+	dialog. Fixes bug #116991.
+
+2003-07-17  Richard Hult  <richard@imendio.com>
+
 	* ui/chat.glade: 
 	* src/gossip-chat.c (chat_create, chat_dialog_info_clicked_cb):
 	Add a small button that brings up contact info for the user. Based
