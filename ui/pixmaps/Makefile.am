@@ -13,6 +13,7 @@ image_DATA =			\
 	watermark.png		\
 	vcard_48.png		\
 	message.png		\
+	typing.png		\
 	emoticon-face1.png 	\
 	emoticon-face2.png 	\
 	emoticon-face3.png 	\

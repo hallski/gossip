@@ -1,3 +1,25 @@
+2003-08-05  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c: (destroy_notify_cb),
+	(chat_dialog_notify_visible_cb), (chat_init), (chat_get_for_jid),
+	(chat_create_gui), (chat_input_key_press_event_cb),
+	(chat_key_press_event_cb), (chat_send), (chat_message_handler),
+	(chat_presence_handler), (gossip_chat_get_dialog),
+	(chat_request_composing), (chat_event_handler),
+	(chat_composing_start), (chat_composing_stop),
+	(chat_composing_timeout), (chat_set_compose_icon): Typing
+	notification based on patch from Nicolas Peninguy. It's disabled
+	for now, since it's not complete finished yet.
+
+	* ui/chat.glade:
+	* ui/pixmaps/Makefile.am:
+	* ui/pixmaps/typing.png: Add typing image.
+
+2003-08-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_iq_handler): Don't use PACKAGE for the
+	client name, "Gossip" looks nicer than "gossip".
+
 2003-08-05  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_push_message): compare without resouce.

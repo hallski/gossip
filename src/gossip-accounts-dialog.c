@@ -264,7 +264,7 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 	}
 	else if (widget == GTK_WIDGET (dialog->use_ssl_cb)) {
 		account->use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
-		/* Might need to reset the port aswell */
+		/* Might need to reset the port as well. */
 		accounts_dialog_update_account_cb (GTK_WIDGET (dialog->port_entry), 
 						   event,
 						   dialog);
