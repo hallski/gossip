@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-19 12:46+0200\n"
-"PO-Revision-Date: 2004-06-19 13:00+0200\n"
+"POT-Creation-Date: 2004-06-23 21:14+0200\n"
+"PO-Revision-Date: 2004-06-23 21:14+0200\n"
 "Last-Translator: Ole Laursen <olau@hardworking.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -432,6 +432,14 @@ msgstr "Indtast din adgangskode:"
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Husk adgangskode?"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Spørger efter personlige detaljer, vent venligst..."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Gemmer personlige detaljer, vent venligst..."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
