@@ -1,0 +1,954 @@
+# GnomeICU Malay Translation
+# Copyright (C) 2001-2003 Free Software Foundation, Inc.
+# 1. Khairulanuar Abd Majid <khairul@ikhlas.com>, 2001, 2002.
+# 2. Hasbullah Bin Pit <sebol@ikhlas.com> 2002,2003
+msgid ""
+msgstr ""
+"Project-Id-Version: gnomeicu 0.95.5\n"
+"POT-Creation-Date: 2003-11-28 11:57+0800\n"
+"PO-Revision-Date: 2003-11-30 00:07+0730\n"
+"Last-Translator: Hasbullah Bin Pit <sebol@ikhlas.com>\n"
+"Language-Team: Bahasa Melayu <gabai-penyumbang@lists.sourceforge.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gossip.desktop.in.h:1
+#: ui/main.glade.h:28
+msgid "Gossip"
+msgstr "Gossip"
+
+#: gossip.desktop.in.h:2
+msgid "Instant Messenger"
+msgstr "Pesanan Segera"
+
+#: gossip.schemas.in.h:1
+msgid "About to leave..."
+msgstr "Akan keluar..."
+
+#: gossip.schemas.in.h:2
+msgid "Autoaway message"
+msgstr "Mesej auto away"
+
+#: gossip.schemas.in.h:3
+msgid "Away messages"
+msgstr "Mesej away"
+
+#: gossip.schemas.in.h:4
+msgid "Be silent when away"
+msgstr "Senyap bila away"
+
+#: gossip.schemas.in.h:5
+msgid "Be silent when busy"
+msgstr "Senyap bila sibuk"
+
+#: gossip.schemas.in.h:6
+msgid "Busy messages"
+msgstr "Mesej sibuk"
+
+#: gossip.schemas.in.h:7
+msgid "Height of main window"
+msgstr "Tinggi tetingkap utama"
+
+#: gossip.schemas.in.h:8
+msgid "Message to show before going away"
+msgstr "Mesej untuk dipapar sebelum away"
+
+#: gossip.schemas.in.h:9
+msgid "Not at the computer"
+msgstr "Tiada di sisi komputer"
+
+#: gossip.schemas.in.h:10
+msgid "Show offline contacts"
+msgstr "Papar kenalan luartalian"
+
+#: gossip.schemas.in.h:11
+msgid "The height of the main window."
+msgstr "Tinggi bagi tetingkap utama."
+
+#: gossip.schemas.in.h:12
+msgid "The width of the main window."
+msgstr "Lebar bagi tetingkap utama."
+
+#: gossip.schemas.in.h:13
+msgid "Use graphical smileys"
+msgstr ""
+
+#: gossip.schemas.in.h:14
+msgid "Use notification sounds"
+msgstr "Guna bunyi pemakluman"
+
+#: gossip.schemas.in.h:15
+msgid "Whether or not to convert smileys into graphical images in conversations."
+msgstr ""
+
+#: gossip.schemas.in.h:16
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "Samada memainkan bunyi ketika mesej tiba atau tidak."
+
+#: gossip.schemas.in.h:17
+msgid "Whether or not to play sounds when away."
+msgstr "Samada memainkan bunyi ketika away atau tidak."
+
+#: gossip.schemas.in.h:18
+msgid "Whether or not to play sounds when busy."
+msgstr "Samada memainkan bunyi ketika sibuk atau tidak."
+
+#: gossip.schemas.in.h:19
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "Samada memapar senarai kenalan yang luartalian pada senarai kenalan."
+
+#: gossip.schemas.in.h:20
+msgid "Width of main window"
+msgstr "Lebar bagi tetingkap utama"
+
+#: src/gossip-account-dialog.c:296
+#: src/gossip-app.c:57
+msgid "Home"
+msgstr "Rumah"
+
+#: src/gossip-add-contact.c:293
+#, c-format
+msgid "What request message do you want to send to %s?"
+msgstr "Mesej permintaan apa yang anda ingin kirim ke %s?"
+
+#: src/gossip-add-contact.c:311
+#, c-format
+msgid "%s will be added to your contact list."
+msgstr "%s akan ditambah ke senarai kenalan anda."
+
+#: src/gossip-app.c:56
+msgid "Just about to leave..."
+msgstr "Baru nak keluar..."
+
+#: src/gossip-app.c:421
+msgid "_Show Contact List"
+msgstr "_Papar Senarai Kenalan"
+
+#: src/gossip-app.c:430
+msgid "_Hide Contact List"
+msgstr "_Sorok Senarai Kenalan"
+
+#: src/gossip-app.c:443
+#: ui/main.glade.h:59
+msgid "Send _Message..."
+msgstr "Kirim _Mesej..."
+
+#: src/gossip-app.c:458
+msgid "_Quit"
+msgstr "_Keluar"
+
+#. Note to translators: put here your name and email so it
+#. * will shop up in the "about" box
+#.
+#: src/gossip-app.c:560
+msgid "translator_credits"
+msgstr ""
+"Khairulanuar Abd Majid <khairul@ikhlas.com>\n"
+"Hasbullah Bin Pit <sebol@ikhlas.com>, Merlimau."
+
+#: src/gossip-app.c:572
+msgid "A Jabber Client for GNOME"
+msgstr "Klien Jabber bagi GNOME"
+
+#: src/gossip-app.c:579
+msgid "Gossip Website"
+msgstr "Tapak Web Gossip"
+
+#: src/gossip-app.c:683
+msgid "Enter the user ID of the person you would like to send a chat message to."
+msgstr "Masukka  ID pengguna bagi orang yang anda ingin kirim mesej chat."
+
+#: src/gossip-app.c:688
+#: ui/main.glade.h:83
+msgid "_Chat"
+msgstr "_Chat"
+
+#: src/gossip-app.c:935
+#, c-format
+msgid "%s wants to be notified of your presence."
+msgstr "%s ingin dimaklumkan dengan kehadiran anda"
+
+#: src/gossip-app.c:1170
+msgid "You were disconnected from the server. Do you want to reconnect?"
+msgstr "Anda diputuskan drpd pelayan. Adakah anda ingin ulangsambung?"
+
+#: src/gossip-app.c:1321
+msgid "Make sure that your account information is correct."
+msgstr "Pastikan maklumat akaun anda betul"
+
+#: src/gossip-app.c:1322
+msgid "The server may currently be unavailable."
+msgstr "Pelayan mungkin kini tidak berfungsi."
+
+#: src/gossip-app.c:1711
+msgid "Gossip, Jabber Client"
+msgstr "Gossip, Klien Jabber"
+
+#: src/gossip-app.c:1887
+#, c-format
+msgid "New message from %s"
+msgstr "Mesej baru dari %s"
+
+#: src/gossip-app.c:2429
+msgid "Custom Message..."
+msgstr "Mesej Tersendiri..."
+
+#: src/gossip-app.c:2447
+msgid "Custom Busy Message..."
+msgstr "Mesej Sibuk Tersendiri..."
+
+#: src/gossip-app.c:2454
+msgid "Leave..."
+msgstr "Keluar..."
+
+#: src/gossip-chat-view.c:323
+msgid "_Copy Link Address"
+msgstr "_Salin Alamat Pautan"
+
+#: src/gossip-chat-view.c:331
+msgid "_Open Link"
+msgstr "_Buka Pautan"
+
+#: src/gossip-chat-view.c:677
+msgid "%A %d %B %Y"
+msgstr "%A %d %B %Y"
+
+#: src/gossip-chat-window.c:615
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sChat - %s"
+
+#: src/gossip-chat.c:685
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "Ralat berlaku bila berchat dengan %s."
+
+#: src/gossip-chat.c:690
+#: src/gossip-group-chat.c:807
+#: src/gossip-group-chat.c:910
+msgid "Details:"
+msgstr "Perincian:"
+
+#: src/gossip-chat.c:776
+#, c-format
+msgid "%s went offline"
+msgstr "%s telah luartalian"
+
+#: src/gossip-chat.c:790
+#, c-format
+msgid "%s comes online"
+msgstr "%s sedang dalamtalian"
+
+#: src/gossip-contact-info.c:352
+#, c-format
+msgid "Contact Information for %s"
+msgstr "Maklumat Kenalan bagi %s"
+
+#: src/gossip-group-chat.c:802
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr ""
+
+#: src/gossip-group-chat.c:905
+#, c-format
+msgid "Unable to enter the group chat %s."
+msgstr "Tak dapat masuk ke chat kumpulan %s."
+
+#: src/gossip-log.c:233
+msgid "Conversation Log"
+msgstr "Log Perbualan"
+
+#: src/gossip-main.c:71
+msgid "Don't connect on startup"
+msgstr "Jangan sambung pada permulaan"
+
+#: src/gossip-main.c:80
+msgid "Which account to connect to on startup"
+msgstr "Akaun mana untuk disambung pada permulaan"
+
+#: src/gossip-main.c:81
+msgid "ACCOUNT-NAME"
+msgstr "NAMA-AKAUN"
+
+#: src/gossip-main.c:89
+msgid "List the available accounts"
+msgstr "Senarai akaun yang ada"
+
+#: src/gossip-main.c:122
+msgid "Available accounts:"
+msgstr "Akaun yang ada:"
+
+#: src/gossip-main.c:131
+msgid "[default]"
+msgstr "[default]"
+
+#: src/gossip-main.c:154
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "Tiada akaun dengan nama '%s'."
+
+#: src/gossip-preferences.c:457
+msgid "New Busy Message"
+msgstr "Mesej Sibuk Baru"
+
+#: src/gossip-preferences.c:491
+msgid "New Away Message"
+msgstr "Mesej Away Baru"
+
+#: src/gossip-register.c:79
+msgid "Unknown error"
+msgstr "Ralat tidak diketahui"
+
+#: src/gossip-register.c:168
+msgid "Registering account"
+msgstr "Mendaftar akaun"
+
+#: src/gossip-register.c:208
+msgid "Successfully registered the account"
+msgstr "Berjaya mendaftar akaun"
+
+#: src/gossip-register.c:229
+#: src/gossip-register.c:235
+msgid "Failed registering the account"
+msgstr "Gagal mendaftar akaun"
+
+#: src/gossip-register.c:231
+msgid "Reason:"
+msgstr "Sebab:"
+
+#: src/gossip-roster-view.c:178
+msgid "/Contact _Information"
+msgstr "/_Maklumat Kenalan"
+
+#: src/gossip-roster-view.c:186
+msgid "/Re_name contact"
+msgstr "/_Tukarnama kenalan"
+
+#: src/gossip-roster-view.c:194
+msgid "/Show _Log"
+msgstr "/Papar log"
+
+#: src/gossip-roster-view.c:210
+msgid "/_Remove contact"
+msgstr "/_Buang kenalan"
+
+#: src/gossip-roster-view.c:221
+msgid "/Re_name group"
+msgstr "/_Tukarnama kumpulan"
+
+#: src/gossip-roster-view.c:930
+msgid "Offline"
+msgstr "Luar Talian"
+
+#: src/gossip-roster-view.c:1237
+#, c-format
+msgid ""
+"Do you want to remove the contact\n"
+"%s\n"
+"from your contact list?"
+msgstr ""
+"Anda pasti untuk membuang kenalan\n"
+"%s\n"
+" dari senarai kenalan anda?"
+
+#: src/gossip-roster-view.c:1330
+#, c-format
+msgid ""
+"Please enter a new nickname for the contact\n"
+"%s"
+msgstr ""
+"Sila masukkan gelaran baru bagi kenalan\n"
+" %s"
+
+#: src/gossip-roster-view.c:1417
+#, c-format
+msgid ""
+"Please enter a new name for the group\n"
+"%s"
+msgstr ""
+"Sila masukkan nama baru bagi kumpulan\n"
+"%s"
+
+#: src/gossip-roster.c:37
+msgid "Unsorted"
+msgstr "Tidak Diisih"
+
+#: src/gossip-startup-druid.c:254
+msgid "Gossip will now try to use your account:"
+msgstr "Gossip kini akan cuba menggunakan akaun anda:"
+
+#: src/gossip-startup-druid.c:258
+msgid "Gossip will now try to register the account:"
+msgstr "Gossip kini akan cuba mendaftarkan akaun:"
+
+#: src/gossip-utils.c:369
+msgid "Please enter your password:"
+msgstr "Sila masukkan katalaluan anda:"
+
+#: src/gossip-utils.c:371
+msgid "Remember Password?"
+msgstr "Ingat katalaluan?"
+
+#: src/gossip-utils.c:721
+msgid "Working"
+msgstr "Bekerja"
+
+#: src/gossip-utils.c:748
+msgid "Eating"
+msgstr "Makan"
+
+#: src/gossip-utils.c:749
+msgid "Sleeping"
+msgstr "Tidur"
+
+#: ui/chat.glade.h:1
+#: ui/connect.glade.h:2
+#: ui/group-chat.glade.h:3
+#: ui/main.glade.h:3
+msgid "*"
+msgstr "*"
+
+#: ui/chat.glade.h:2
+msgid "Chat"
+msgstr "Chat"
+
+#: ui/chat.glade.h:3
+msgid "Contact _Information"
+msgstr "_Maklumat Kenalan"
+
+#: ui/chat.glade.h:4
+msgid "From:"
+msgstr "Dari:"
+
+#: ui/chat.glade.h:5
+msgid "Gossip - Chat"
+msgstr "Gossip - Chat"
+
+#: ui/chat.glade.h:6
+msgid "Gossip - Received Message"
+msgstr "Gossip - Mesej Diterima"
+
+#: ui/chat.glade.h:7
+msgid "Gossip - Send Message"
+msgstr "Gossip - Kirim Mesej"
+
+#: ui/chat.glade.h:8
+msgid "In reply to:"
+msgstr ""
+
+#: ui/chat.glade.h:9
+msgid "Lo_g"
+msgstr "Lo_g"
+
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "Alih Tab ke Ki_ri"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "Alih Tab ke Ka_nan"
+
+#: ui/chat.glade.h:12
+msgid "To:"
+msgstr "Ke:"
+
+#: ui/chat.glade.h:13
+msgid "_Conversation"
+msgstr "Per_bualan"
+
+#: ui/chat.glade.h:14
+msgid "_Detach Tab"
+msgstr "_Leraikan Tab"
+
+#: ui/chat.glade.h:15
+msgid "_Next Tab"
+msgstr "Tab _Berikutnya"
+
+#: ui/chat.glade.h:16
+msgid "_Previous Tab"
+msgstr "Tab _Terdahulu"
+
+#: ui/chat.glade.h:17
+msgid "_Reply..."
+msgstr "_Balas..."
+
+#: ui/chat.glade.h:18
+#: ui/group-chat.glade.h:19
+msgid "_Send"
+msgstr "_Kirim"
+
+#: ui/chat.glade.h:19
+msgid "_Tabs"
+msgstr "_Tab"
+
+#: ui/connect.glade.h:1
+#: ui/group-chat.glade.h:1
+#: ui/main.glade.h:2
+msgid "    "
+msgstr "    "
+
+#: ui/connect.glade.h:3
+msgid "<b>Account Settings</b>"
+msgstr "<b>Tetapan Akaun</b>"
+
+#: ui/connect.glade.h:4
+msgid "<b>Connect to server</b>"
+msgstr "<b>Sambung ke pelayan</b>"
+
+#: ui/connect.glade.h:5
+msgid "C_onnect"
+msgstr "_Sambung"
+
+#: ui/connect.glade.h:6
+msgid "Connect"
+msgstr "Sambung"
+
+#: ui/connect.glade.h:7
+msgid "Edit Account Information"
+msgstr "Edit Maklumat Akaun"
+
+#: ui/connect.glade.h:8
+msgid "P_ort:"
+msgstr "_Liang:"
+
+#: ui/connect.glade.h:9
+msgid "Re_gister..."
+msgstr "_Daftar..."
+
+#: ui/connect.glade.h:10
+msgid "Server:"
+msgstr "Pelayan:"
+
+#: ui/connect.glade.h:11
+msgid "Use _encryption (SSL)"
+msgstr "Guna peng_enkripsian (SSL)"
+
+#: ui/connect.glade.h:12
+msgid "_Password:"
+msgstr "_Katalaluan:"
+
+#: ui/connect.glade.h:13
+msgid "_Resource:"
+msgstr "_Sumber:"
+
+#: ui/connect.glade.h:14
+#: ui/group-chat.glade.h:20
+msgid "_Server:"
+msgstr "_Pelayan:"
+
+#: ui/connect.glade.h:15
+msgid "_User name:"
+msgstr "Nama _pengguna:"
+
+#: ui/group-chat.glade.h:2
+msgid "        "
+msgstr "        "
+
+#: ui/group-chat.glade.h:4
+msgid "<b>Available chat rooms</b>"
+msgstr "<b>Bilik chat yang ada</b>"
+
+#: ui/group-chat.glade.h:5
+msgid "<b>Chat room information</b>"
+msgstr "<b>Maklumat bilik chat</b>"
+
+#: ui/group-chat.glade.h:6
+msgid "<b>Favorite:</b>"
+msgstr "<b>Kegemaran:</b>"
+
+#: ui/group-chat.glade.h:7
+msgid "Chat _name:"
+msgstr "_Nama chat:"
+
+#: ui/group-chat.glade.h:8
+msgid "Gossip - Edit Group Chats"
+msgstr "Gossip - Edit Chat Kumpulan"
+
+#: ui/group-chat.glade.h:9
+msgid "Gossip - Group Chat"
+msgstr "Gossip -  Chat Kumpulan"
+
+#: ui/group-chat.glade.h:10
+msgid "Gossip - Join Group Chat"
+msgstr "Gossip - Sertai Chat Kumpulan"
+
+#: ui/group-chat.glade.h:11
+msgid "N_ickname:"
+msgstr "_Gelaran:"
+
+#: ui/group-chat.glade.h:12
+msgid "Pick a favorite, or enter nickname, server name, and the name of the chat room to enter."
+msgstr "Pilih kegemaran, atau masukkan nama gelaran, nama pelayan, dan nama bagi bilik chat untuk dimasuki."
+
+#: ui/group-chat.glade.h:13
+msgid "R_emove"
+msgstr "_Buang"
+
+#: ui/group-chat.glade.h:14
+#: ui/main.glade.h:81
+msgid "_Add"
+msgstr "_Tambah"
+
+#: ui/group-chat.glade.h:15
+msgid "_Edit favorites..."
+msgstr "_Edit Kegemaran..."
+
+#: ui/group-chat.glade.h:16
+msgid "_Join"
+msgstr "_Sertai"
+
+#: ui/group-chat.glade.h:17
+msgid "_Nickname:"
+msgstr "_Gelaran:"
+
+#: ui/group-chat.glade.h:18
+msgid "_Room:"
+msgstr "_Bilik:"
+
+#: ui/group-chat.glade.h:21
+msgid "_Topic:"
+msgstr "_Topik:"
+
+#: ui/main.glade.h:1
+msgid " "
+msgstr " "
+
+#: ui/main.glade.h:4
+msgid "<b>Information requested, Please wait...</b>"
+msgstr "<b>Maklumat dipinta, Sila tunggu...</b>"
+
+#: ui/main.glade.h:5
+msgid "<i>Information not available</i>"
+msgstr "<i>Maklumat tidak ada</i>"
+
+#: ui/main.glade.h:6
+msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
+msgstr "<span size=\"smaller\">Contoh: sebol@jabber.org</span>"
+
+#: ui/main.glade.h:7
+msgid "Add a contact"
+msgstr "Tambah kenalan"
+
+#: ui/main.glade.h:8
+msgid "Add contact"
+msgstr "Tambah kenalan"
+
+#: ui/main.glade.h:9
+msgid "Add to your contact list"
+msgstr "Tambah ke senarai kenalan"
+
+#: ui/main.glade.h:10
+msgid "Appearance"
+msgstr "Penampilan"
+
+#: ui/main.glade.h:11
+msgid "Available"
+msgstr "Ada"
+
+#: ui/main.glade.h:12
+msgid "Away"
+msgstr "Away"
+
+#: ui/main.glade.h:13
+msgid "Busy"
+msgstr "Sibuk"
+
+#: ui/main.glade.h:14
+msgid "Choose a Server"
+msgstr "Pilih Pelayan"
+
+#: ui/main.glade.h:15
+msgid "Choose from list:"
+msgstr "Pilih dari senarai:"
+
+#: ui/main.glade.h:16
+msgid "Client information"
+msgstr "Maklumat klien"
+
+#: ui/main.glade.h:17
+msgid "Client:"
+msgstr "Klien:"
+
+#: ui/main.glade.h:18
+msgid "Contact information"
+msgstr "Maklumat kenalan"
+
+#: ui/main.glade.h:19
+msgid "Convert _smileys to graphical images"
+msgstr "Tukar _smiley ke imej grafik"
+
+#: ui/main.glade.h:20
+msgid "Country:"
+msgstr "Negara:"
+
+#: ui/main.glade.h:21
+msgid "Description"
+msgstr "Keterangan"
+
+#: ui/main.glade.h:22
+msgid "Disable sounds when _away"
+msgstr "Matikan bunyi ketika _away"
+
+#: ui/main.glade.h:23
+msgid "Disable sounds when _busy"
+msgstr "Matikan bunyi ketika _sibuk"
+
+#: ui/main.glade.h:24
+msgid "Do you already have an account on a Jabber server?"
+msgstr "Adakah anda sudah mempunyai akaun pada pelayan Jabber?"
+
+#: ui/main.glade.h:25
+msgid "Do you want to accept the request?"
+msgstr "Adakah anda ingin menerima permintaan?"
+
+#: ui/main.glade.h:26
+msgid "Email:"
+msgstr "Emel:"
+
+#: ui/main.glade.h:27
+msgid "Enter the new message:"
+msgstr "Masukkan mesej baru:"
+
+#: ui/main.glade.h:29
+msgid ""
+"Gossip is a modern client for the Jabber Instant Messaging system.\n"
+"\n"
+"This assistant will help you configure Gossip and connect you to your favorite Jabber server.\n"
+"\n"
+"To get started, just click \"Forward\"."
+msgstr ""
+"Gossip adalah klien moden bagi sistem Pesanan Segera Jabber.\n"
+"\n"
+"Pembantu ini akan membantu anda mengkonfigurasikan Gossip dan sambungkan anda ke pelayan Jabber kegemaran anda.\n"
+"\n"
+"Untuk bermula, hanya klik \"Maju\"."
+
+#: ui/main.glade.h:34
+msgid ""
+"Gossip is now configured properly for your system.\n"
+"You can change your account settings later, by selecting the Chat->Connect... menu item."
+msgstr ""
+"Gossip kini dikonfigurasikan untuk sistem anda.\n"
+"Anda boleh menukar tetapan akaun anda kemudian hari, dengan memilih item menu Chat->Sambung...  ."
+
+#: ui/main.glade.h:36
+msgid "I would like to add you to my contact list."
+msgstr "Saya ingin menambah anda ke senarai kenalan saya."
+
+#: ui/main.glade.h:37
+msgid "In order to subscribe to presence notifications from the user, a request will be sent. Until this request is approved, the user will always be shown as \"Offline\" in your contact list."
+msgstr ""
+
+#: ui/main.glade.h:38
+msgid "In which group do you want to place this contact?"
+msgstr "Dalam kumpulan mana anda ingin letak kenalan ini?"
+
+#: ui/main.glade.h:39
+msgid "Information about ..."
+msgstr "Maklumat perihal ...."
+
+#: ui/main.glade.h:40
+msgid "JID"
+msgstr "JID"
+
+#: ui/main.glade.h:41
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ui/main.glade.h:42
+msgid "Jabber Account"
+msgstr "Akaun Jabber"
+
+#: ui/main.glade.h:43
+msgid "Jabber ID:"
+msgstr "ID Jabber:"
+
+#: ui/main.glade.h:44
+msgid "Jabber.com"
+msgstr "Jabber.com"
+
+#: ui/main.glade.h:45
+msgid "Jabber.org"
+msgstr "Jabber.org"
+
+#: ui/main.glade.h:46
+msgid "Leave"
+msgstr "Keluar"
+
+#: ui/main.glade.h:47
+msgid "Name:"
+msgstr "Nama:"
+
+#: ui/main.glade.h:48
+msgid "No"
+msgstr "Tidak"
+
+#: ui/main.glade.h:49
+msgid "OS:"
+msgstr "OS:"
+
+#: ui/main.glade.h:50
+msgid "On what server do you have a Jabber account?"
+msgstr "Pada pelayan apa yg anda mempunyai akaun jabber?"
+
+#: ui/main.glade.h:51
+msgid "Personal information"
+msgstr "Maklumat peribadi"
+
+#: ui/main.glade.h:52
+msgid "Play sound when messages arrive"
+msgstr "Mainkan bunyi bila mesej  tiba"
+
+#: ui/main.glade.h:53
+msgid "Preferences"
+msgstr "Keutamaan"
+
+#: ui/main.glade.h:54
+msgid "Preset messages for quickly setting away status."
+msgstr "Mesej preset bagi penetapan cepat status away."
+
+#: ui/main.glade.h:55
+msgid "Preset messages for quickly setting busy status."
+msgstr "Mesej preset bagi penetapan cepat status sibuk"
+
+#: ui/main.glade.h:56
+msgid "Reason for being busy:"
+msgstr "Alasan menjadi sibuk:"
+
+#: ui/main.glade.h:57
+msgid "Reason for leaving:"
+msgstr "Alasan keluar:"
+
+#: ui/main.glade.h:58
+msgid "Request message"
+msgstr "Mesej permintaan"
+
+#: ui/main.glade.h:60
+msgid "Sending request"
+msgstr "Menghantar permintaan"
+
+#: ui/main.glade.h:61
+msgid "Setup Finished"
+msgstr "Tetapan Selesai"
+
+#: ui/main.glade.h:62
+msgid "Show _Offline Contacts"
+msgstr "Papar Kenalan _Luartalian"
+
+#: ui/main.glade.h:63
+msgid "Sound"
+msgstr "Bunyi"
+
+#: ui/main.glade.h:64
+msgid "Status Messages"
+msgstr "Mesej Status"
+
+#: ui/main.glade.h:65
+msgid "Status message:"
+msgstr "Mesej status:"
+
+#: ui/main.glade.h:66
+msgid "Use a different server"
+msgstr "Guna pengenkodan lain"
+
+#: ui/main.glade.h:67
+msgid "Version:"
+msgstr "Versi:"
+
+#: ui/main.glade.h:68
+msgid "Web site:"
+msgstr "Tapak Web:"
+
+#: ui/main.glade.h:69
+msgid "Welcome to Gossip"
+msgstr "Selamat Datang ke Gossip"
+
+#: ui/main.glade.h:70
+msgid "What instant messaging system does the contact use?"
+msgstr "Apa sistem pesanan segera yang anda gunakan yg kenalan ini gunakan?"
+
+#: ui/main.glade.h:71
+msgid "What is your name?"
+msgstr "Apakah nama anda?"
+
+#: ui/main.glade.h:72
+msgid "What nickname do you want to use for this contact?"
+msgstr "Nama gelaran apa yang anda ingin gunakan bagi kenalan ini?"
+
+#: ui/main.glade.h:73
+msgid "What request message do you want to send to ...?"
+msgstr "Mesej permintaan apa yang anda ingin kirim ..?"
+
+#: ui/main.glade.h:74
+msgid "What server do you want to use?"
+msgstr "Apakah pelayan anda ingin gunakan?"
+
+#: ui/main.glade.h:75
+msgid "What username do you use?"
+msgstr "Apakah namapengguna anda gunakan?"
+
+#: ui/main.glade.h:76
+msgid "What username do you want to use?"
+msgstr "Apakah namapengguna anda ingin gunakan?"
+
+#: ui/main.glade.h:77
+msgid "Yes"
+msgstr "Ya"
+
+#: ui/main.glade.h:78
+msgid "Your Identity"
+msgstr "Indentiti Anda"
+
+#: ui/main.glade.h:79
+msgid "_Accept"
+msgstr "_Terima"
+
+#: ui/main.glade.h:80
+msgid "_Account Information"
+msgstr "Maklumat _Akaun"
+
+#: ui/main.glade.h:82
+msgid "_Add Contact..."
+msgstr "_Tambah Kenalan..."
+
+#: ui/main.glade.h:84
+msgid "_Connect..."
+msgstr "_Sambung"
+
+#: ui/main.glade.h:85
+msgid "_Decide Later"
+msgstr ""
+
+#: ui/main.glade.h:86
+msgid "_Deny"
+msgstr "_Dinafikan"
+
+#: ui/main.glade.h:87
+msgid "_Disconnect"
+msgstr "_Putus"
+
+#: ui/main.glade.h:88
+msgid "_Jabber ID of new contact:"
+msgstr "ID _Jabber bagi kenalan baru:"
+
+#: ui/main.glade.h:89
+msgid "_Join Group Chat..."
+msgstr " _Sertai Chat Kumpulan..."
+
+#: ui/main.glade.h:90
+msgid "_Preferences"
+msgstr "Ke_utamaan"
+
+#: ui/main.glade.h:91
+msgid "_Remove"
+msgstr "_Buang"
+
+#: ui/main.glade.h:92
+msgid "_Search..."
+msgstr "_Cari:"
+
+#: ui/main.glade.h:93
+msgid "_Status Messages"
+msgstr "Mesej _Status"
+

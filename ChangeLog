@@ -1,3 +1,7 @@
+2003-11-29  Hasbullah Bin Pit <sebol@ikhlas.com>
+                                                                                
+        * configure.in: Added 'ms' (Malay) to ALL_LINGUAS. 
+
 2003-11-24  Mikael Hallendal  <micke@imendio.com>
 
 	* ui/pixmaps/gossip-offline.png:
