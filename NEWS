@@ -1,3 +1,14 @@
+News in 0.8:
+============
+ * Fixed #151737 (Martyn)
+ * Group chats now support tabbed windows (Geert-Jan)
+ * If only one window exists, open new chats in that window (Martyn)
+ * Fixed window title (Micke)
+ * Fixed issue when Gossip sent replies to error messages (Micke)
+ * New translations (nb, tr, bg)
+ * Updated translations (cs, pt_BR, fr, de, ca, da, nl, no, en_CA, zh_TW, 
+			 en_GB, lt, eu, sv)
+
 News in 0.7.8:
 ==============
  * Add support for disabling system proxy (Ross Burton)

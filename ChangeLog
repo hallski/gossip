@@ -1,3 +1,9 @@
+2004-12-27  Mikael Hallendal  <micke@imendio.com>
+
+	* NEWS: Updated for 0.8
+	* configure.in: Bumped to 0.8
+	* ui/main.glade: Disable service discovery for release
+
 2004-12-10  Alexander Shopov  <ash@contact.bg>
 
 	* configure.in (ALL_LINGUAS): Added "bg" (Bulgarian
