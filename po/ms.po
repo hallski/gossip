@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnomeicu 0.95.5\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
+"POT-Creation-Date: 2004-03-18 23:04+0100\n"
 "PO-Revision-Date: 2003-11-30 00:07+0730\n"
 "Last-Translator: Hasbullah Bin Pit <sebol@ikhlas.com>\n"
 "Language-Team: Bahasa Melayu <gabai-penyumbang@lists.sourceforge.net>\n"
@@ -119,6 +119,29 @@ msgstr "Lebar bagi tetingkap utama"
 msgid "Y position of main window"
 msgstr "Lebar bagi tetingkap utama"
 
+#: src/gossip-about.c:269
+msgid "Written by:"
+msgstr ""
+
+#: src/gossip-about.c:279
+msgid "Artwork by:"
+msgstr ""
+
+#: src/gossip-about.c:290
+msgid "Translated by:"
+msgstr ""
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:336
+msgid "translator_credits"
+msgstr ""
+"Khairulanuar Abd Majid\n"
+"Hasbullah Bin Pit"
+
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr "Rumah"
@@ -133,97 +156,82 @@ msgstr "Mesej permintaan apa yang anda ingin kirim ke %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s akan ditambah ke senarai kenalan anda."
 
-#: src/gossip-app.c:591
-msgid "Artwork by:"
+#: src/gossip-app.c:639
+msgid "Could not connect"
 msgstr ""
 
-#. Note to translators: put here your name and email so it
-#. * will shop up in the "about" box
-#.
-#: src/gossip-app.c:598
-msgid "translator_credits"
-msgstr ""
-"Khairulanuar Abd Majid <khairul@ikhlas.com>\n"
-"Hasbullah Bin Pit <sebol@ikhlas.com>, Merlimau."
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
+msgstr "Pastikan maklumat akaun anda betul"
 
-#: src/gossip-app.c:613
-#, fuzzy
-msgid "An Instant Messaging Client for GNOME"
-msgstr "Klien Jabber bagi GNOME"
-
-#: src/gossip-app.c:622
-msgid "Gossip Website"
-msgstr "Tapak Web Gossip"
-
-#: src/gossip-app.c:718
+#: src/gossip-app.c:696
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Masukka  ID pengguna bagi orang yang anda ingin kirim mesej chat."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:701 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:952
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s ingin dimaklumkan dengan kehadiran anda"
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1193
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Anda diputuskan drpd pelayan. Adakah anda ingin ulangsambung?"
 
-#: src/gossip-app.c:1375
-msgid "Make sure that your account information is correct."
+#: src/gossip-app.c:1348
+#, fuzzy
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
 msgstr "Pastikan maklumat akaun anda betul"
 
-#: src/gossip-app.c:1376
-msgid "The server may currently be unavailable."
-msgstr "Pelayan mungkin kini tidak berfungsi."
-
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1820
 #, fuzzy
 msgid "Gossip, Instant Messaging Client"
 msgstr "Klien Jabber bagi GNOME"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:1962
 #, c-format
 msgid "New message from %s"
 msgstr "Mesej baru dari %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
+#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
 msgid "Offline"
 msgstr "Luar Talian"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2450 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "Ada"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2461 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "Sibuk"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2472 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2604
 #, fuzzy
 msgid "Available..."
 msgstr "Ada"
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2609
 #, fuzzy
 msgid "Busy..."
 msgstr "Sibuk"
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2614
 #, fuzzy
 msgid "Away..."
 msgstr "Away"
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2643
 #, fuzzy
 msgid "Edit List..."
 msgstr "_Edit Kegemaran..."
@@ -314,7 +322,7 @@ msgstr ""
 msgid "Unable to enter the group chat %s."
 msgstr "Tak dapat masuk ke chat kumpulan %s."
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:307
 msgid "Conversation Log"
 msgstr "Log Perbualan"
 
@@ -367,31 +375,31 @@ msgstr "Gagal mendaftar akaun"
 msgid "Reason:"
 msgstr "Sebab:"
 
-#: src/gossip-roster-view.c:183
+#: src/gossip-roster-view.c:186
 msgid "/Contact _Information"
 msgstr "/_Maklumat Kenalan"
 
-#: src/gossip-roster-view.c:191
+#: src/gossip-roster-view.c:194
 msgid "/Re_name contact"
 msgstr "/_Tukarnama kenalan"
 
-#: src/gossip-roster-view.c:199
+#: src/gossip-roster-view.c:202
 msgid "/_Edit groups"
 msgstr ""
 
-#: src/gossip-roster-view.c:207
+#: src/gossip-roster-view.c:210
 msgid "/Show _Log"
 msgstr "/Papar log"
 
-#: src/gossip-roster-view.c:223
+#: src/gossip-roster-view.c:226
 msgid "/_Remove contact"
 msgstr "/_Buang kenalan"
 
-#: src/gossip-roster-view.c:234
+#: src/gossip-roster-view.c:237
 msgid "/Re_name group"
 msgstr "/_Tukarnama kumpulan"
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1245
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -402,7 +410,7 @@ msgstr ""
 "%s\n"
 " dari senarai kenalan anda?"
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1338
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -411,7 +419,7 @@ msgstr ""
 "Sila masukkan gelaran baru bagi kenalan\n"
 " %s"
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1444
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -987,6 +995,26 @@ msgstr "_Papar Senarai Kenalan"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "Mesej _Status"
+
+#, fuzzy
+#~ msgid "About Gossip"
+#~ msgstr "Gossip"
+
+#, fuzzy
+#~ msgid "translator_credits_old"
+#~ msgstr ""
+#~ "Khairulanuar Abd Majid <khairul@ikhlas.com>\n"
+#~ "Hasbullah Bin Pit <sebol@ikhlas.com>, Merlimau."
+
+#, fuzzy
+#~ msgid "An Instant Messaging Client for GNOME"
+#~ msgstr "Klien Jabber bagi GNOME"
+
+#~ msgid "Gossip Website"
+#~ msgstr "Tapak Web Gossip"
+
+#~ msgid "The server may currently be unavailable."
+#~ msgstr "Pelayan mungkin kini tidak berfungsi."
 
 #~ msgid "Send _Message..."
 #~ msgstr "Kirim _Mesej..."

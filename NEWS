@@ -1,3 +1,14 @@
+News in 0.7.3:
+==============
+
+ * Fix transient window behaviour, Mikael.
+ * Fix bugs with the flashing icons, Richard.
+ * Propagate status updates to group chat, Martyn Russell.
+ * Show dialog when authentication fails. Martyn, Richard.
+ * Behave better when the notification area is removed, Qball Cow.
+ * Plug leaks, Richard.
+ * Updated translations (cs, da, eu, fr, nl, sr, sr@Latn, sv)
+
 News in 0.7.2:
 ==============
 

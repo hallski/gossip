@@ -35,7 +35,6 @@
 #include <libgnomeui/libgnomeui.h>
 #include "eggtrayicon.h"
 #include "eel-ellipsizing-label.h"
-
 #include "gossip-add-contact.h"
 #include "gossip-jid.h"
 #include "gossip-marshal.h"
@@ -52,6 +51,7 @@
 #include "gossip-account-dialog.h"
 #include "gossip-stock.h"
 #include "gossip-roster-view.h"
+#include "gossip-about.h"
 #include "gossip-app.h"
 
 #ifdef HAVE_DBUS
@@ -577,52 +577,15 @@ static void
 app_about_cb (GtkWidget *window,
 	      GossipApp *app)
 {
-	GossipAppPriv    *priv;
 	static GtkWidget *about;
-	const gchar *authors[] = { 
-		"Richard Hult <richard@imendio.com>",
-		"Mikael Hallendal <micke@imendio.com>",
-		"",
-		_("Artwork by:"),
-		"Daniel Taylor <dantaylor@web.de>",
-		NULL
-	};
-	/* Note to translators: put here your name and email so it
-	 * will shop up in the "about" box
-	 */
-	gchar     *translator_credits = _("translator_credits");
-	GtkWidget *href;
-	GdkPixbuf *pixbuf;
-
-	priv = app->priv;
 
 	if (about) {
 		gtk_window_present (GTK_WINDOW (about));
 		return;
 	}
-
-	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/gossip-logo.png", NULL);
 	
-	about = gnome_about_new ("Gossip", VERSION,
-				  "Copyright \xc2\xa9 2003-2004 Imendio HB",
-				  _("An Instant Messaging Client for GNOME"),
-				  authors,
-				  NULL,
-				  strcmp (translator_credits, "translator_credits") != 0 ?
-				  translator_credits : NULL,
-				  pixbuf);
-
-	g_object_unref (pixbuf);
-	
-	href = gnome_href_new ("http://gossip.imendio.org/", _("Gossip Website"));
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (about)->vbox), href, FALSE, FALSE, 5);
-	gtk_widget_show (href);
-	
+	about = gossip_about_new ();
 	g_object_add_weak_pointer (G_OBJECT (about), (gpointer) &about);
-
-	gtk_dialog_set_default_response (GTK_DIALOG (about), GTK_RESPONSE_CLOSE);
-
-	gtk_window_set_transient_for (GTK_WINDOW (about), GTK_WINDOW (priv->window));
 	gtk_widget_show (about);
 }
 

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version:gossip\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
+"POT-Creation-Date: 2004-03-18 23:04+0100\n"
 "PO-Revision-Date: 2003-07-05 10:29+0530\n"
 "Last-Translator: FSF-India <locale@gnu.org.in>\n"
 "Language-Team: Malayalam <locale@gnu.org.in>\n"
@@ -113,6 +113,27 @@ msgstr ""
 msgid "Y position of main window"
 msgstr ""
 
+#: src/gossip-about.c:269
+msgid "Written by:"
+msgstr ""
+
+#: src/gossip-about.c:279
+msgid "Artwork by:"
+msgstr ""
+
+#: src/gossip-about.c:290
+msgid "Translated by:"
+msgstr ""
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:336
+msgid "translator_credits"
+msgstr "എഫ്.എസ്.എഫ് - ഇന്ത്യ"
+
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr ""
@@ -127,95 +148,82 @@ msgstr ""
 msgid "%s will be added to your contact list."
 msgstr ""
 
-#: src/gossip-app.c:591
-msgid "Artwork by:"
+#: src/gossip-app.c:639
+msgid "Could not connect"
 msgstr ""
 
-#. Note to translators: put here your name and email so it
-#. * will shop up in the "about" box
-#.
-#: src/gossip-app.c:598
-msgid "translator_credits"
-msgstr "എഫ്.എസ്.എഫ് - ഇന്ത്യ <gnu@gnu.org.in>"
-
-#: src/gossip-app.c:613
-msgid "An Instant Messaging Client for GNOME"
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
 msgstr ""
 
-#: src/gossip-app.c:622
-msgid "Gossip Website"
-msgstr ""
-
-#: src/gossip-app.c:718
+#: src/gossip-app.c:696
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:701 ui/main.glade.h:76
 msgid "_Chat"
 msgstr ""
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:952
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr ""
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1193
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr ""
 
-#: src/gossip-app.c:1375
-msgid "Make sure that your account information is correct."
+#: src/gossip-app.c:1348
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
 msgstr ""
 
-#: src/gossip-app.c:1376
-msgid "The server may currently be unavailable."
-msgstr ""
-
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1820
 msgid "Gossip, Instant Messaging Client"
 msgstr ""
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:1962
 #, c-format
 msgid "New message from %s"
 msgstr ""
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
+#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
 #, fuzzy
 msgid "Offline"
 msgstr "കാര്യാലയം"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2450 src/gossip-preferences.c:639
 #, fuzzy
 msgid "Available"
 msgstr "ലഭ്യത"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2461 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "തിരക്ക്"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2472 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "ദൂരെ"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2604
 #, fuzzy
 msgid "Available..."
 msgstr "ലഭ്യത"
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2609
 #, fuzzy
 msgid "Busy..."
 msgstr "തിരക്ക്"
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2614
 #, fuzzy
 msgid "Away..."
 msgstr "ദൂരെ"
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2643
 msgid "Edit List..."
 msgstr ""
 
@@ -306,7 +314,7 @@ msgstr ""
 msgid "Unable to enter the group chat %s."
 msgstr ""
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:307
 msgid "Conversation Log"
 msgstr ""
 
@@ -359,31 +367,31 @@ msgstr ""
 msgid "Reason:"
 msgstr ""
 
-#: src/gossip-roster-view.c:183
+#: src/gossip-roster-view.c:186
 msgid "/Contact _Information"
 msgstr ""
 
-#: src/gossip-roster-view.c:191
+#: src/gossip-roster-view.c:194
 msgid "/Re_name contact"
 msgstr ""
 
-#: src/gossip-roster-view.c:199
+#: src/gossip-roster-view.c:202
 msgid "/_Edit groups"
 msgstr ""
 
-#: src/gossip-roster-view.c:207
+#: src/gossip-roster-view.c:210
 msgid "/Show _Log"
 msgstr ""
 
-#: src/gossip-roster-view.c:223
+#: src/gossip-roster-view.c:226
 msgid "/_Remove contact"
 msgstr ""
 
-#: src/gossip-roster-view.c:234
+#: src/gossip-roster-view.c:237
 msgid "/Re_name group"
 msgstr ""
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1245
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -391,14 +399,14 @@ msgid ""
 "from your contact list?"
 msgstr ""
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1338
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
 msgstr ""
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1444
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -966,6 +974,10 @@ msgstr ""
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr ""
+
+#, fuzzy
+#~ msgid "translator_credits_old"
+#~ msgstr "എഫ്.എസ്.എഫ് - ഇന്ത്യ <gnu@gnu.org.in>"
 
 #~ msgid "_Quit"
 #~ msgstr "പുറത്ത് കടക്കുക"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
+"POT-Creation-Date: 2004-03-18 23:04+0100\n"
 "PO-Revision-Date: 2003-11-10 12:53+0300\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: RUSSIAN <ru@li.org>\n"
@@ -128,6 +128,27 @@ msgstr "Ширина главного окна"
 msgid "Y position of main window"
 msgstr "Ширина главного окна"
 
+#: src/gossip-about.c:269
+msgid "Written by:"
+msgstr ""
+
+#: src/gossip-about.c:279
+msgid "Artwork by:"
+msgstr ""
+
+#: src/gossip-about.c:290
+msgid "Translated by:"
+msgstr ""
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:336
+msgid "translator_credits"
+msgstr "black@asplinux.ru"
+
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr "Ушел домой"
@@ -142,100 +163,87 @@ msgstr "Какое сообщение нужно послать пользова
 msgid "%s will be added to your contact list."
 msgstr "%s будет добавлен в список контактов."
 
-#: src/gossip-app.c:591
-msgid "Artwork by:"
+#: src/gossip-app.c:639
+msgid "Could not connect"
 msgstr ""
 
-#. Note to translators: put here your name and email so it
-#. * will shop up in the "about" box
-#.
-#: src/gossip-app.c:598
-msgid "translator_credits"
-msgstr "Григорий Бакунов <black@asplinux.ru>"
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
+msgstr "Убедитесь что данные по учетной записи корректны."
 
-#: src/gossip-app.c:613
-#, fuzzy
-msgid "An Instant Messaging Client for GNOME"
-msgstr "Клиент Jabber для среды GNOME"
-
-#: src/gossip-app.c:622
-msgid "Gossip Website"
-msgstr "Домашняя страница Gossip"
-
-#: src/gossip-app.c:718
+#: src/gossip-app.c:696
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Введите идентификатор пользователя которому вы хотите послать сообщение."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:701 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Разговор"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:952
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr ""
 "Пользователь %s хочет получать информацию о вашем состоянии.\n"
 "Разрешить?"
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1193
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Произошло разсоединение с сервером. Восстановить соединение?"
 
-#: src/gossip-app.c:1375
-msgid "Make sure that your account information is correct."
+#: src/gossip-app.c:1348
+#, fuzzy
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
 msgstr "Убедитесь что данные по учетной записи корректны."
 
-#: src/gossip-app.c:1376
-msgid "The server may currently be unavailable."
-msgstr "Сервер может быть недоступен."
-
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1820
 #, fuzzy
 msgid "Gossip, Instant Messaging Client"
 msgstr "Клиент Jabber для среды GNOME"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:1962
 #, c-format
 msgid "New message from %s"
 msgstr "Новое сообщение от %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
+#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
 msgid "Offline"
 msgstr ""
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2450 src/gossip-preferences.c:639
 #, fuzzy
 msgid "Available"
 msgstr "Доступные учетные записи:"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2461 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "Занят"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2472 src/gossip-preferences.c:641
 #, fuzzy
 msgid "Away"
 msgstr "Отсутствую:"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2604
 #, fuzzy
 msgid "Available..."
 msgstr "Доступные учетные записи:"
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2609
 #, fuzzy
 msgid "Busy..."
 msgstr "Занят"
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2614
 #, fuzzy
 msgid "Away..."
 msgstr "Отсутствую:"
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2643
 #, fuzzy
 msgid "Edit List..."
 msgstr "_Редактировать предпочтения..."
@@ -326,7 +334,7 @@ msgstr "При общении в комнате %s произошла ошибк
 msgid "Unable to enter the group chat %s."
 msgstr "Невозможно войти в комнату %s."
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:307
 msgid "Conversation Log"
 msgstr "Журнал разговоров"
 
@@ -379,31 +387,31 @@ msgstr "Ошибка регистрации учетной записи"
 msgid "Reason:"
 msgstr "Причина:"
 
-#: src/gossip-roster-view.c:183
+#: src/gossip-roster-view.c:186
 msgid "/Contact _Information"
 msgstr "/_Информация о контакте"
 
-#: src/gossip-roster-view.c:191
+#: src/gossip-roster-view.c:194
 msgid "/Re_name contact"
 msgstr "/_Переименовать контакт"
 
-#: src/gossip-roster-view.c:199
+#: src/gossip-roster-view.c:202
 msgid "/_Edit groups"
 msgstr ""
 
-#: src/gossip-roster-view.c:207
+#: src/gossip-roster-view.c:210
 msgid "/Show _Log"
 msgstr ""
 
-#: src/gossip-roster-view.c:223
+#: src/gossip-roster-view.c:226
 msgid "/_Remove contact"
 msgstr "/У_далить контакт"
 
-#: src/gossip-roster-view.c:234
+#: src/gossip-roster-view.c:237
 msgid "/Re_name group"
 msgstr "/_Переименовать группу"
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1245
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -414,7 +422,7 @@ msgstr ""
 "%s\n"
 "из списка контактов?"
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1338
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -423,7 +431,7 @@ msgstr ""
 "Введите псевдоним для контакта\n"
 "%s"
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1444
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -1010,6 +1018,24 @@ msgstr "_Показать список контактов"
 #, fuzzy
 msgid "_Status Messages"
 msgstr "Сообщения режима \"занят\""
+
+#, fuzzy
+#~ msgid "About Gossip"
+#~ msgstr "Gossip"
+
+#, fuzzy
+#~ msgid "translator_credits_old"
+#~ msgstr "Григорий Бакунов <black@asplinux.ru>"
+
+#, fuzzy
+#~ msgid "An Instant Messaging Client for GNOME"
+#~ msgstr "Клиент Jabber для среды GNOME"
+
+#~ msgid "Gossip Website"
+#~ msgstr "Домашняя страница Gossip"
+
+#~ msgid "The server may currently be unavailable."
+#~ msgstr "Сервер может быть недоступен."
 
 #, fuzzy
 #~ msgid "Send _Message..."

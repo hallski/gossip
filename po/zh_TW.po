@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
+"POT-Creation-Date: 2004-03-18 23:04+0100\n"
 "PO-Revision-Date: 2003-11-12 01:10+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -124,6 +124,27 @@ msgstr "主視窗寬度"
 msgid "Y position of main window"
 msgstr "主視窗寬度"
 
+#: src/gossip-about.c:269
+msgid "Written by:"
+msgstr ""
+
+#: src/gossip-about.c:279
+msgid "Artwork by:"
+msgstr ""
+
+#: src/gossip-about.c:290
+msgid "Translated by:"
+msgstr ""
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:336
+msgid "translator_credits"
+msgstr "Abel Cheung"
+
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr "首頁"
@@ -138,99 +159,82 @@ msgstr ""
 msgid "%s will be added to your contact list."
 msgstr "%s 將會被加入至您的好友名單"
 
-#: src/gossip-app.c:591
-msgid "Artwork by:"
+#: src/gossip-app.c:639
+msgid "Could not connect"
 msgstr ""
 
-#. Note to translators: put here your name and email so it
-#. * will shop up in the "about" box
-#.
-#: src/gossip-app.c:598
-msgid "translator_credits"
-msgstr ""
-"i18n 程式中文化計劃\n"
-"http://i18n.linux.org.tw/\n"
-"\n"
-"Abel Cheung <maddog@linux.org.hk>, 2003"
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
+msgstr "請確保您的戶口的資訊正確無誤。"
 
-#: src/gossip-app.c:613
-#, fuzzy
-msgid "An Instant Messaging Client for GNOME"
-msgstr "適用於 GNOME 的 Jabber 即時通訊程式"
-
-#: src/gossip-app.c:622
-msgid "Gossip Website"
-msgstr "Gossip 網頁"
-
-#: src/gossip-app.c:718
+#: src/gossip-app.c:696
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:701 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "聊天(_C)"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:952
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s 希望可以在您連線時獲得通知。"
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1193
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "伺服器方面已經中斷連線。是否重新連線？"
 
-#: src/gossip-app.c:1375
-msgid "Make sure that your account information is correct."
+#: src/gossip-app.c:1348
+#, fuzzy
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
 msgstr "請確保您的戶口的資訊正確無誤。"
 
-#: src/gossip-app.c:1376
-msgid "The server may currently be unavailable."
-msgstr "伺服器可能暫時無法運作。"
-
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1820
 #, fuzzy
 msgid "Gossip, Instant Messaging Client"
 msgstr "適用於 GNOME 的 Jabber 即時通訊程式"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:1962
 #, c-format
 msgid "New message from %s"
 msgstr "收到來自 %s 的訊息"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
+#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
 msgid "Offline"
 msgstr "離線"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2450 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "已連線"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2461 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "忙碌"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2472 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "離開"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2604
 #, fuzzy
 msgid "Available..."
 msgstr "已連線"
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2609
 #, fuzzy
 msgid "Busy..."
 msgstr "忙碌"
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2614
 #, fuzzy
 msgid "Away..."
 msgstr "離開"
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2643
 #, fuzzy
 msgid "Edit List..."
 msgstr "修改戶口資料(_E)..."
@@ -322,7 +326,7 @@ msgstr ""
 msgid "Unable to enter the group chat %s."
 msgstr ""
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:307
 msgid "Conversation Log"
 msgstr "對話紀錄"
 
@@ -375,31 +379,31 @@ msgstr "註冊戶口不成功"
 msgid "Reason:"
 msgstr "原因："
 
-#: src/gossip-roster-view.c:183
+#: src/gossip-roster-view.c:186
 msgid "/Contact _Information"
 msgstr "/好友資訊(_I)"
 
-#: src/gossip-roster-view.c:191
+#: src/gossip-roster-view.c:194
 msgid "/Re_name contact"
 msgstr "/更改好友名稱(_N)"
 
-#: src/gossip-roster-view.c:199
+#: src/gossip-roster-view.c:202
 msgid "/_Edit groups"
 msgstr ""
 
-#: src/gossip-roster-view.c:207
+#: src/gossip-roster-view.c:210
 msgid "/Show _Log"
 msgstr "/顯示對話紀錄(_L)"
 
-#: src/gossip-roster-view.c:223
+#: src/gossip-roster-view.c:226
 msgid "/_Remove contact"
 msgstr "/移除好友(_R)"
 
-#: src/gossip-roster-view.c:234
+#: src/gossip-roster-view.c:237
 msgid "/Re_name group"
 msgstr "/更改群組名稱(_N)"
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1245
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -409,7 +413,7 @@ msgstr ""
 "您是否想從名單中移除以下的好友？\n"
 "%s"
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1338
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -418,7 +422,7 @@ msgstr ""
 "請輸入以下好友的稱呼\n"
 "%s"
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1444
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -994,6 +998,28 @@ msgstr "顯示好友名單(_S)"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr ""
+
+#, fuzzy
+#~ msgid "About Gossip"
+#~ msgstr "Gossip"
+
+#, fuzzy
+#~ msgid "translator_credits_old"
+#~ msgstr ""
+#~ "i18n 程式中文化計劃\n"
+#~ "http://i18n.linux.org.tw/\n"
+#~ "\n"
+#~ "Abel Cheung <maddog@linux.org.hk>, 2003"
+
+#, fuzzy
+#~ msgid "An Instant Messaging Client for GNOME"
+#~ msgstr "適用於 GNOME 的 Jabber 即時通訊程式"
+
+#~ msgid "Gossip Website"
+#~ msgstr "Gossip 網頁"
+
+#~ msgid "The server may currently be unavailable."
+#~ msgstr "伺服器可能暫時無法運作。"
 
 #, fuzzy
 #~ msgid "Send _Message..."

@@ -2,6 +2,7 @@
 # Please keep this file sorted alphabetically.
 gossip.desktop.in
 gossip.schemas.in
+src/gossip-about.c
 src/gossip-account-dialog.c
 src/gossip-account.c
 src/gossip-add-contact.c

@@ -5,14 +5,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-19 22:35+0100\n"
+"POT-Creation-Date: 2004-03-18 23:04+0100\n"
 "PO-Revision-Date: 2004-02-19 22:35+0100\n"
 "Last-Translator: Ole Laursen <olau@hardworking.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -111,6 +111,27 @@ msgstr "Vandret placering af hovedvindue"
 msgid "Y position of main window"
 msgstr "Lodret placering af hovedvindue"
 
+#: src/gossip-about.c:269
+msgid "Written by:"
+msgstr ""
+
+#: src/gossip-about.c:279
+msgid "Artwork by:"
+msgstr "Grafik af:"
+
+#: src/gossip-about.c:290
+msgid "Translated by:"
+msgstr ""
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:336
+msgid "translator_credits"
+msgstr "Ole Laursen"
+
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
 msgstr "Hjem"
@@ -125,91 +146,79 @@ msgstr "Hvilken forespørgselsmeddelelse ønsker du at sende til %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s vil blive tilføjet til din kontaktliste."
 
-#: src/gossip-app.c:591
-msgid "Artwork by:"
-msgstr "Grafik af:"
+#: src/gossip-app.c:639
+msgid "Could not connect"
+msgstr ""
 
-#. Note to translators: put here your name and email so it
-#. * will shop up in the "about" box
-#.
-#: src/gossip-app.c:598
-msgid "translator_credits"
-msgstr "Ole Laursen <olau@hardworking.dk>"
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
+msgstr "Sikr dig at dine kontooplysninger er korrekte."
 
-#: src/gossip-app.c:613
-msgid "An Instant Messaging Client for GNOME"
-msgstr "En klient til øjeblikkelige beskeder til GNOME."
-
-#: src/gossip-app.c:622
-msgid "Gossip Website"
-msgstr "Gossips hjemmeside"
-
-#: src/gossip-app.c:718
+#: src/gossip-app.c:696
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Indtast bruger-id'et på den person du ønsker at sende en meddelelse til."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:701 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:952
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s ønsker at blive holdt orienteret om når du kommer og går."
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1193
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du blev koblet fra serveren. Ønsker du at tilslutte igen?"
 
-#: src/gossip-app.c:1375
-msgid "Make sure that your account information is correct."
+#: src/gossip-app.c:1348
+#, fuzzy
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
 msgstr "Sikr dig at dine kontooplysninger er korrekte."
 
-#: src/gossip-app.c:1376
-msgid "The server may currently be unavailable."
-msgstr "Serveren er muligvis ikke tilgængelig i øjeblikket."
-
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1820
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, klient til øjeblikkelige beskeder"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:1962
 #, c-format
 msgid "New message from %s"
 msgstr "Ny meddelelse fra %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
+#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
 msgid "Offline"
 msgstr "Frakoblet"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2450 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "Tilgængelig"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2461 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "Optaget"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2472 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "Væk"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2604
 msgid "Available..."
 msgstr "Tilgængelig..."
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2609
 msgid "Busy..."
 msgstr "Optaget..."
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2614
 msgid "Away..."
 msgstr "Væk..."
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2643
 msgid "Edit List..."
 msgstr "Redigér liste..."
 
@@ -297,7 +306,7 @@ msgstr "En fejl opstod under samtale i gruppechatten %s."
 msgid "Unable to enter the group chat %s."
 msgstr "Kunne ikke indtræde i gruppechatten %s."
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:307
 msgid "Conversation Log"
 msgstr "Konversationslog"
 
@@ -350,31 +359,31 @@ msgstr "Det mislykkedes at registrere kontoen"
 msgid "Reason:"
 msgstr "Årsag:"
 
-#: src/gossip-roster-view.c:183
+#: src/gossip-roster-view.c:186
 msgid "/Contact _Information"
 msgstr "/Kontakt_oplysninger"
 
-#: src/gossip-roster-view.c:191
+#: src/gossip-roster-view.c:194
 msgid "/Re_name contact"
 msgstr "/Om_døb kontakt"
 
-#: src/gossip-roster-view.c:199
+#: src/gossip-roster-view.c:202
 msgid "/_Edit groups"
 msgstr "/_Redigér grupper"
 
-#: src/gossip-roster-view.c:207
+#: src/gossip-roster-view.c:210
 msgid "/Show _Log"
 msgstr "/Vis _log"
 
-#: src/gossip-roster-view.c:223
+#: src/gossip-roster-view.c:226
 msgid "/_Remove contact"
 msgstr "/_Fjern kontakt"
 
-#: src/gossip-roster-view.c:234
+#: src/gossip-roster-view.c:237
 msgid "/Re_name group"
 msgstr "/Om_døb gruppe"
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1245
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -385,7 +394,7 @@ msgstr ""
 "%s\n"
 "fra din kontaktliste?"
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1338
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -394,7 +403,7 @@ msgstr ""
 "Indtast et nyt øgenavn til kontakten\n"
 "%s"
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1444
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -968,6 +977,23 @@ msgstr "_Vis kontaktliste"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "_Statusmeddelelser"
+
+#, fuzzy
+#~ msgid "About Gossip"
+#~ msgstr "Gossip"
+
+#, fuzzy
+#~ msgid "translator_credits_old"
+#~ msgstr "Ole Laursen <olau@hardworking.dk>"
+
+#~ msgid "An Instant Messaging Client for GNOME"
+#~ msgstr "En klient til øjeblikkelige beskeder til GNOME."
+
+#~ msgid "Gossip Website"
+#~ msgstr "Gossips hjemmeside"
+
+#~ msgid "The server may currently be unavailable."
+#~ msgstr "Serveren er muligvis ikke tilgængelig i øjeblikket."
 
 #~ msgid "Send _Message..."
 #~ msgstr "Send _meddelelse..."

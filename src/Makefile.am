@@ -20,6 +20,8 @@ bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				\
 	$(dbus_sources)				\
+	gossip-about.c				\
+	gossip-about.h				\
 	gossip-account.c			\
 	gossip-account.h			\
 	gossip-account-dialog.c			\
