@@ -1,3 +1,10 @@
+2004-06-24  Mikael Hallendal  <micke@imendio.com>
+
+	* Release 0.7.6
+	
+	* NEWS: Updated for 0.7.6
+	* configure.in: Bumped to 0.7.6
+
 2004-06-20  Arafat Medini  <lumina@silverpen.de>
 
 	* ar.po: Added Arabic locale ar to ALL_LINGUAS.

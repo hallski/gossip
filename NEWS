@@ -1,3 +1,21 @@
+News in 0.7.6:
+==============
+ * Lot of bug fixing gone into the Group Chats (Micke)
+ * Drag contacts from roster to chat windows to start a chat (Micke)
+ * Show new message icon as window icon when new message 
+   arrived (Sergey Dolgopolov)
+ * Crash fixes (Micke)
+ * Allow IP-numbers as hostpart of the JID (Fabio Bonelli)
+ * Added copy&paste to chat windows. (Micke)
+ * Fixed drawing error in chat windows tabs with certain themes (Geert-Jan)
+ * Shrink chat windows after long messages has been sent (Micke, Lionel Henry)
+ * Store log files as lowercase JID. (Micke)
+ * Resubscribe support if subscription isn't both way (Ross Burton)
+ * Show presence icon in new message popup list (Micke)
+ * Added support for editing your own vCard (Martyn Russel, Micke)
+ * New translations (en_CA, uk, eo, ar)
+ * Updated translations (lt, cs, en_GB, nl, ca, pt_BR, sv, zh_CN, da, pl, pt)
+
 News in 0.7.5:
 ==============
  
