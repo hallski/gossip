@@ -2544,7 +2544,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		    <widget class="GtkVBox" id="vbox46">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">False</property>
-		      <property name="spacing">0</property>
+		      <property name="spacing">4</property>
 
 		      <child>
 			<widget class="GtkRadioButton" id="2_yes_radiobutton">
@@ -2748,27 +2748,69 @@ To get started, just click &quot;Forward&quot;.</property>
 	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkVBox" id="vbox43">
+		<widget class="GtkVBox" id="vbox47">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">0</property>
+		  <property name="spacing">2</property>
 
 		  <child>
-		    <widget class="GtkVBox" id="vbox47">
+		    <widget class="GtkLabel" id="4_no_account_label">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">What server do you want to use?</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkLabel" id="4_account_label">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">On what server do you have a Jabber account?</property>
+		      <property name="use_underline">False</property>
+		      <property name="use_markup">False</property>
+		      <property name="justify">GTK_JUSTIFY_LEFT</property>
+		      <property name="wrap">False</property>
+		      <property name="selectable">False</property>
+		      <property name="xalign">0</property>
+		      <property name="yalign">0.5</property>
+		      <property name="xpad">0</property>
+		      <property name="ypad">0</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkHBox" id="hbox51">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">False</property>
-		      <property name="spacing">2</property>
+		      <property name="spacing">0</property>
 
 		      <child>
-			<widget class="GtkLabel" id="4_no_account_label">
+			<widget class="GtkLabel" id="label361">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">What server do you want to use?</property>
+			  <property name="label" translatable="yes">    </property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
 			  <property name="selectable">False</property>
-			  <property name="xalign">0</property>
+			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
@@ -2781,45 +2823,89 @@ To get started, just click &quot;Forward&quot;.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="4_account_label">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">On what server do you have a Jabber account?</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">False</property>
-			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkHBox" id="hbox51">
+			<widget class="GtkVBox" id="vbox48">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">0</property>
+			  <property name="spacing">4</property>
 
 			  <child>
-			    <widget class="GtkLabel" id="label361">
+			    <widget class="GtkHBox" id="hbox52">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">    </property>
-			      <property name="use_underline">False</property>
-			      <property name="use_markup">False</property>
-			      <property name="justify">GTK_JUSTIFY_LEFT</property>
-			      <property name="wrap">False</property>
-			      <property name="selectable">False</property>
-			      <property name="xalign">0.5</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">0</property>
-			      <property name="ypad">0</property>
+			      <property name="homogeneous">False</property>
+			      <property name="spacing">4</property>
+
+			      <child>
+				<widget class="GtkRadioButton" id="4_list_radiobutton">
+				  <property name="visible">True</property>
+				  <property name="can_focus">True</property>
+				  <property name="label" translatable="yes">Choose from list:</property>
+				  <property name="use_underline">True</property>
+				  <property name="relief">GTK_RELIEF_NORMAL</property>
+				  <property name="active">False</property>
+				  <property name="inconsistent">False</property>
+				  <property name="draw_indicator">True</property>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+
+			      <child>
+				<widget class="GtkOptionMenu" id="4_server_optionmenu">
+				  <property name="visible">True</property>
+				  <property name="can_focus">True</property>
+				  <property name="history">0</property>
+
+				  <child>
+				    <widget class="GtkMenu" id="menu8">
+
+				      <child>
+					<widget class="GtkMenuItem" id="jabberorg1">
+					  <property name="visible">True</property>
+					  <property name="label" translatable="yes">Jabber.org</property>
+					  <property name="use_underline">True</property>
+					  <signal name="activate" handler="on_jabberorg1_activate" last_modification_time="Sun, 02 Feb 2003 14:31:02 GMT"/>
+					</widget>
+				      </child>
+
+				      <child>
+					<widget class="GtkMenuItem" id="jabbercom1">
+					  <property name="visible">True</property>
+					  <property name="label" translatable="yes">Jabber.com</property>
+					  <property name="use_underline">True</property>
+					  <signal name="activate" handler="on_jabbercom1_activate" last_modification_time="Sun, 02 Feb 2003 14:31:02 GMT"/>
+					</widget>
+				      </child>
+				    </widget>
+				  </child>
+				</widget>
+				<packing>
+				  <property name="padding">0</property>
+				  <property name="expand">False</property>
+				  <property name="fill">False</property>
+				</packing>
+			      </child>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">True</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkRadioButton" id="4_different_radiobutton">
+			      <property name="visible">True</property>
+			      <property name="can_focus">True</property>
+			      <property name="label" translatable="yes">Use a different server</property>
+			      <property name="use_underline">True</property>
+			      <property name="relief">GTK_RELIEF_NORMAL</property>
+			      <property name="active">False</property>
+			      <property name="inconsistent">False</property>
+			      <property name="draw_indicator">True</property>
+			      <property name="group">4_list_radiobutton</property>
 			    </widget>
 			    <packing>
 			      <property name="padding">0</property>
@@ -2829,121 +2915,22 @@ To get started, just click &quot;Forward&quot;.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkVBox" id="vbox48">
+			    <widget class="GtkEntry" id="4_server_entry">
 			      <property name="visible">True</property>
-			      <property name="homogeneous">False</property>
-			      <property name="spacing">2</property>
-
-			      <child>
-				<widget class="GtkHBox" id="hbox52">
-				  <property name="visible">True</property>
-				  <property name="homogeneous">False</property>
-				  <property name="spacing">4</property>
-
-				  <child>
-				    <widget class="GtkRadioButton" id="4_list_radiobutton">
-				      <property name="visible">True</property>
-				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">Choose from list:</property>
-				      <property name="use_underline">True</property>
-				      <property name="relief">GTK_RELIEF_NORMAL</property>
-				      <property name="active">False</property>
-				      <property name="inconsistent">False</property>
-				      <property name="draw_indicator">True</property>
-				    </widget>
-				    <packing>
-				      <property name="padding">0</property>
-				      <property name="expand">False</property>
-				      <property name="fill">False</property>
-				    </packing>
-				  </child>
-
-				  <child>
-				    <widget class="GtkOptionMenu" id="4_server_optionmenu">
-				      <property name="visible">True</property>
-				      <property name="can_focus">True</property>
-				      <property name="history">0</property>
-
-				      <child>
-					<widget class="GtkMenu" id="menu8">
-
-					  <child>
-					    <widget class="GtkMenuItem" id="jabberorg1">
-					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Jabber.org</property>
-					      <property name="use_underline">True</property>
-					      <signal name="activate" handler="on_jabberorg1_activate" last_modification_time="Sun, 02 Feb 2003 14:31:02 GMT"/>
-					    </widget>
-					  </child>
-
-					  <child>
-					    <widget class="GtkMenuItem" id="jabbercom1">
-					      <property name="visible">True</property>
-					      <property name="label" translatable="yes">Jabber.com</property>
-					      <property name="use_underline">True</property>
-					      <signal name="activate" handler="on_jabbercom1_activate" last_modification_time="Sun, 02 Feb 2003 14:31:02 GMT"/>
-					    </widget>
-					  </child>
-					</widget>
-				      </child>
-				    </widget>
-				    <packing>
-				      <property name="padding">0</property>
-				      <property name="expand">False</property>
-				      <property name="fill">False</property>
-				    </packing>
-				  </child>
-				</widget>
-				<packing>
-				  <property name="padding">0</property>
-				  <property name="expand">False</property>
-				  <property name="fill">True</property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkRadioButton" id="4_different_radiobutton">
-				  <property name="visible">True</property>
-				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Use a different server</property>
-				  <property name="use_underline">True</property>
-				  <property name="relief">GTK_RELIEF_NORMAL</property>
-				  <property name="active">False</property>
-				  <property name="inconsistent">False</property>
-				  <property name="draw_indicator">True</property>
-				  <property name="group">4_list_radiobutton</property>
-				</widget>
-				<packing>
-				  <property name="padding">0</property>
-				  <property name="expand">False</property>
-				  <property name="fill">False</property>
-				</packing>
-			      </child>
-
-			      <child>
-				<widget class="GtkEntry" id="4_server_entry">
-				  <property name="visible">True</property>
-				  <property name="sensitive">False</property>
-				  <property name="can_focus">True</property>
-				  <property name="editable">True</property>
-				  <property name="visibility">True</property>
-				  <property name="max_length">0</property>
-				  <property name="text" translatable="yes"></property>
-				  <property name="has_frame">True</property>
-				  <property name="invisible_char" translatable="yes">*</property>
-				  <property name="activates_default">False</property>
-				</widget>
-				<packing>
-				  <property name="padding">0</property>
-				  <property name="expand">False</property>
-				  <property name="fill">False</property>
-				</packing>
-			      </child>
+			      <property name="sensitive">False</property>
+			      <property name="can_focus">True</property>
+			      <property name="editable">True</property>
+			      <property name="visibility">True</property>
+			      <property name="max_length">0</property>
+			      <property name="text" translatable="yes"></property>
+			      <property name="has_frame">True</property>
+			      <property name="invisible_char" translatable="yes">*</property>
+			      <property name="activates_default">False</property>
 			    </widget>
 			    <packing>
 			      <property name="padding">0</property>
-			      <property name="expand">True</property>
-			      <property name="fill">True</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
 			    </packing>
 			  </child>
 			</widget>
@@ -3016,11 +3003,11 @@ To get started, just click &quot;Forward&quot;.</property>
 		    <widget class="GtkLabel" id="label363">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Gossip is now configured properly for your system.
-You can later change your account settings...</property>
+You can change your account settings later, by selecting the Actions-&gt;Connect... menu item.</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
-		      <property name="wrap">False</property>
+		      <property name="wrap">True</property>
 		      <property name="selectable">False</property>
 		      <property name="xalign">0</property>
 		      <property name="yalign">0.5</property>

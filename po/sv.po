@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-05 19:45+0200\n"
+"POT-Creation-Date: 2003-07-05 22:34+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -177,47 +177,48 @@ msgstr ""
 "%s\n"
 "från din kontaktlista?"
 
-#. Should user be able to set resource, account name and port?
+#. Should user be able to set resource, account name and
+#. * port?
 #.
-#: src/gossip-startup-druid.c:203
+#: src/gossip-startup-druid.c:228
 msgid "Default"
 msgstr "Standard"
 
-#: src/gossip-startup-druid.c:234
+#: src/gossip-startup-druid.c:256
 #, c-format
 msgid ""
 "Gossip will now try to use your account:\n"
-" <b>%s</b>"
+"<b>%s</b>"
 msgstr ""
 "Gossip kommer nu att försöka använda ditt konto:\n"
-" <b>%s</b>"
+"<b>%s</b>"
 
-#: src/gossip-startup-druid.c:236
+#: src/gossip-startup-druid.c:258
 #, c-format
 msgid ""
 "Gossip will now try to register the account:\n"
-" <b>%s</b>."
+"<b>%s</b>."
 msgstr ""
 "Gossip kommer nu att försöka registrera kontot:\n"
-" <b>%s</b>."
+"<b>%s</b>."
 
-#: src/gossip-startup-druid.c:446
+#: src/gossip-startup-druid.c:474
 msgid "Unknown error"
 msgstr "Okänt fel"
 
-#: src/gossip-startup-druid.c:538
+#: src/gossip-startup-druid.c:566
 msgid "Registering account"
 msgstr "Registrerar konto"
 
-#: src/gossip-startup-druid.c:578
+#: src/gossip-startup-druid.c:606
 msgid "Successfully registered the account"
 msgstr "Lyckades registrera kontot "
 
-#: src/gossip-startup-druid.c:599 src/gossip-startup-druid.c:605
+#: src/gossip-startup-druid.c:627 src/gossip-startup-druid.c:633
 msgid "Failed registering the account"
 msgstr "Misslyckades med registrering av kontot"
 
-#: src/gossip-startup-druid.c:601
+#: src/gossip-startup-druid.c:629
 msgid "Reason:"
 msgstr "Orsak:"
 
@@ -554,10 +555,12 @@ msgstr "Gossip"
 #: ui/main.glade.h:34
 msgid ""
 "Gossip is now configured properly for your system.\n"
-"You can later change your account settings..."
+"You can change your account settings later, by selecting the Actions-"
+">Connect... menu item."
 msgstr ""
 "Gossip är nu korrekt konfigurerat för ditt system.\n"
-"Du kan senare ändra dina kontoinställningar..."
+"Du kan ändra dina kontoinställningar senare, genom att "
+"välja menyvalet Åtgärder->Anslut..."
 
 #: ui/main.glade.h:36
 msgid "I would like to add you to my contact list."
@@ -741,6 +744,20 @@ msgstr "_Skicka chattmeddelande..."
 msgid "Jabber Instant Messaging"
 msgstr "Jabber Instant Messaging"
 
+#~ msgid ""
+#~ "Gossip will now try to use your account:\n"
+#~ " <b>%s</b>"
+#~ msgstr ""
+#~ "Gossip kommer nu att försöka använda ditt konto:\n"
+#~ " <b>%s</b>"
+
+#~ msgid ""
+#~ "Gossip will now try to register the account:\n"
+#~ " <b>%s</b>."
+#~ msgstr ""
+#~ "Gossip kommer nu att försöka registrera kontot:\n"
+#~ " <b>%s</b>."
+
 #~ msgid "5"
 #~ msgstr "5"
 
@@ -776,20 +793,6 @@ msgstr "Jabber Instant Messaging"
 
 #~ msgid "Contact Information"
 #~ msgstr "Kontaktinformation"
-
-#~ msgid ""
-#~ "Gossip will now try to use your account:\n"
-#~ "<b>%s</b>"
-#~ msgstr ""
-#~ "Gossip kommer nu att försöka använda ditt konto:\n"
-#~ "<b>%s</b>"
-
-#~ msgid ""
-#~ "Gossip will now try to register the account:\n"
-#~ "<b>%s</b>."
-#~ msgstr ""
-#~ "Gossip kommer nu att försöka registrera kontot:\n"
-#~ "<b>%s</b>."
 
 #~ msgid ""
 #~ "Gossip will now try to register the account:\n"

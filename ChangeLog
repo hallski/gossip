@@ -1,5 +1,13 @@
-2003-07-05  Richard Hult  <richard@imendio.com>
+2003-07-05  Richard Hult  <rhult@codefactory.se>
 
+	* src/gossip-startup-druid.c: (startup_druid_get_account_info),
+	(startup_druid_prepare_page_last), (gossip_startup_druid_run): Put
+	the list of servers in the code instead of in the glade file and
+	use the selected one.
+
+	* ui/main.glade: Remove a double vbox, make spacing consistent and
+	fix a string.
+	
 	* src/gossip-chat.c (chat_message_handler): Handle errors by
 	displaying them in a dialog.
 

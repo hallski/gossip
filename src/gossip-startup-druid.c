@@ -31,6 +31,24 @@
 #include "gossip-app.h"
 #include "gossip-startup-druid.h"
 
+typedef enum {
+	SERVER_JABBER_ORG,
+	SERVER_JABBER_COM,
+	SERVER_IMENDIO_COM
+} Server;
+
+typedef struct {
+	gchar  *label;
+	gchar  *address;
+	Server  server;
+} ServerEntry;
+
+static ServerEntry servers[] = {
+	{ "Jabber.org", "jabber.org", SERVER_JABBER_ORG },
+	{ "Jabber.com", "jabber.com", SERVER_JABBER_COM },
+	{ "Imendio.com", "imendio.com", SERVER_IMENDIO_COM }
+};
+
 typedef struct {
 	GtkWidget    *window;
 	GtkWidget    *druid;
@@ -181,11 +199,12 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 	GtkToggleButton *toggle;
 	gboolean         has_account;
 	gboolean         predefined_server;
+	GtkOptionMenu   *option_menu;
 	
 	toggle = GTK_TOGGLE_BUTTON (startup_druid->two_yes_radiobutton);
 	has_account = gtk_toggle_button_get_active (toggle);
 	toggle = GTK_TOGGLE_BUTTON (startup_druid->four_different_radiobutton);
-	predefined_server = !gtk_toggle_button_get_active  (toggle);
+	predefined_server = !gtk_toggle_button_get_active (toggle);
 
 	if (account) {
 		const gchar *username;
@@ -193,26 +212,29 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 
 		username = gtk_entry_get_text (GTK_ENTRY (startup_druid->three_nick_entry));
 		if (predefined_server) {
-			/* FIXME: Get from list. */
+			ServerEntry *server_entry;
+			
+			option_menu = GTK_OPTION_MENU (startup_druid->four_server_optionmenu);
+			server_entry = gossip_option_menu_get_history (option_menu);
+
+			server = server_entry->address;
 		} else {
 			server = gtk_entry_get_text (GTK_ENTRY (startup_druid->four_server_entry));
 		}
 		
-		/* Should user be able to set resource, account name and port?
+		/* Should user be able to set resource, account name and
+		 * port?
 		 */
 		*account = gossip_account_new (_("Default"), username, NULL, 
 					       "Gossip", server, 
 					       LM_CONNECTION_DEFAULT_PORT);
 	}
 
-	/* Set this in some settings-thingy... */
-	/*
-	 * *realname = gtk_entry_get_text (GTK_ENTRY (startup_druid->three_name_entry));
-	 */
+	/* FIXME: Set this in some settings-thingy... */
+	/* *realname = gtk_entry_get_text (GTK_ENTRY (startup_druid->three_name_entry)); */
 
 	return has_account;
 }
-				
 				
 static void
 startup_druid_prepare_page_last (GnomeDruidPage     *page,
@@ -231,9 +253,9 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 	jid = gossip_jid_get_without_resource (gossip_account_get_jid (account));
 
 	if (has_account) {
-		label_text = g_strdup_printf (_("Gossip will now try to use your account:\n <b>%s</b>"), jid);
+		label_text = g_strdup_printf (_("Gossip will now try to use your account:\n<b>%s</b>"), jid);
 	} else {
-		label_text = g_strdup_printf (_("Gossip will now try to register the account:\n <b>%s</b>."), jid);
+		label_text = g_strdup_printf (_("Gossip will now try to register the account:\n<b>%s</b>."), jid);
 	}
 
 	gtk_label_set_markup (GTK_LABEL (startup_druid->last_action_label),
@@ -361,7 +383,6 @@ gossip_startup_druid_run (void)
 		"4_server_entry", &startup_druid->four_server_entry,
 		"last_page", &startup_druid->last_page,
 		"last_action_label", &startup_druid->last_action_label,
-
 		NULL);
 	
 	gossip_glade_connect (
@@ -374,6 +395,13 @@ gossip_startup_druid_run (void)
 		"last_page", "finish", startup_druid_last_page_finished,
 		NULL);
 	
+	gossip_option_menu_setup (startup_druid->four_server_optionmenu,
+				  NULL, NULL,
+				  servers[0].label, &servers[0], 
+				  servers[1].label, &servers[1], 
+				  servers[2].label, &servers[2], 
+				  NULL);
+		
 	g_object_unref (glade);
 	
 	g_signal_connect_after (startup_druid->one_page, "prepare",
