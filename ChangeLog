@@ -30,6 +30,9 @@
 
 2003-11-10  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-roster-view.c (roster_view_name_cell_data_func):
+	Escape name and status strings properly.
+
 	* src/gossip-app.c: (configure_event_idle_cb),
 	(app_window_configure_event_cb): Tweak the window size saving code
 	a bit, don't save until we've stopped resizing.
@@ -41,8 +44,8 @@
 	(roster_view_name_cell_data_func): Weird hack to ellipsize the
 	name and status strings in the roster. Needs a bit more work.
 
-	* ui/main.glade: Add placeholder and menu item for status editor
-	list.
+	* ui/main.glade: Add placeholder and menu item for status message
+	editor.
 
 2003-11-09  Richard Hult  <richard@imendio.com>
 

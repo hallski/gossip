@@ -688,7 +688,7 @@ roster_view_ellipsize_item_strings (GossipRosterView *view,
 	 * status, like a smaller font, we need to take that in consideration
 	 * here.
 	 */
-	pango_layout_set_markup (layout, status, -1);
+	pango_layout_set_text (layout, status, -1);
 	pango_layout_get_extents (layout, NULL, &rect);
 	width_status = rect.width / PANGO_SCALE;
 
@@ -743,14 +743,16 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	} else {
 		GossipRosterItem *item = (GossipRosterItem *) pointer;
 		const gchar      *tmp;
-		gchar            *status, *name, *markup;
-
+		gchar            *status, *name;
+		gchar            *escaped_status, *escaped_name;
+		gchar            *markup;
+		
 		tmp = gossip_roster_item_get_status (item);
 		if (!tmp || strcmp (tmp, "") == 0) {
 			GossipShow show = gossip_roster_item_get_show (item);
 			status = g_strdup (gossip_utils_get_default_status (show));
 		} else {
-			status = g_markup_escape_text (tmp, -1);
+			status = g_strdup (tmp);
 		}
 			
 		name = g_strdup (gossip_roster_item_get_name (item));
@@ -761,10 +763,13 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		roster_view_ellipsize_item_strings (view, name, status,
 						    GTK_WIDGET (view)->allocation.width -
 						    (16 + 2*2 + 35));
+
+		escaped_name = g_markup_escape_text (name, -1);
+		escaped_status = g_markup_escape_text (status, -1);
 		
 		markup = g_strdup_printf ("%s\n<span foreground=\"gray\" "
 					  "style=\"italic\">%s</span>",
-					  name, status);
+					  escaped_name, escaped_status);
 
 		g_object_set (cell,
 			      "weight", PANGO_WEIGHT_NORMAL,
@@ -773,6 +778,8 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 
 		g_free (name);
 		g_free (status);
+		g_free (escaped_name);
+		g_free (escaped_status);
 		g_free (markup);
 	}
 }
