@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
+#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <gconf/gconf-client.h>
@@ -62,6 +63,8 @@
 #define	AUTO_EXT_AWAY_TIME (30*60)
 #define FLASH_TIMEOUT 400
 #define STATUS_ENTRY_TIMEOUT (30*1000)
+
+#define MIN_WIDTH 50
 
 #define d(x)
 
@@ -264,6 +267,7 @@ static const gchar * app_get_current_status_icon     (void);
 static gboolean      app_window_configure_event_cb   (GtkWidget          *widget,
 						      GdkEventConfigure  *event,
 						      gpointer            data);
+static gboolean      app_have_tray                   (void);
 
 
 static GObjectClass *parent_class;
@@ -366,6 +370,7 @@ app_init (GossipApp *singleton_app)
 				       GCONF_PATH "/ui/main_window_height",
 				       NULL);
 
+	width = MAX (width, MIN_WIDTH);
 	gtk_window_set_default_size (GTK_WINDOW (priv->window), width, height);
 	
 	priv->status_label = eel_ellipsizing_label_new (NULL);
@@ -524,7 +529,7 @@ app_init (GossipApp *singleton_app)
 					GCONF_PATH "/ui/main_window_hidden", 
 					NULL);
 
- 	if (!hidden) {
+ 	if (!hidden || !app_have_tray ()) {
 		gtk_widget_show (priv->window);
 	}
 
@@ -536,6 +541,7 @@ app_init (GossipApp *singleton_app)
 	 * theme/font change.
 	 */
 	gtk_widget_size_request (priv->window, &req);
+	req.width = MAX (req.width, MIN_WIDTH);
 	gtk_widget_set_size_request (priv->window, req.width, -1);
 }
 
@@ -2602,4 +2608,22 @@ gossip_app_get_window (void)
 }
 
 
+static gboolean
+app_have_tray (void)
+{
+	Screen *xscreen = DefaultScreenOfDisplay (gdk_display);
+	Atom    selection_atom;
+	char   *selection_atom_name;
+	
+	selection_atom_name = g_strdup_printf ("_NET_SYSTEM_TRAY_S%d",
+					       XScreenNumberOfScreen (xscreen));
+	selection_atom = XInternAtom (DisplayOfScreen (xscreen), selection_atom_name, False);
+	g_free (selection_atom_name);
+	
+	if (XGetSelectionOwner (DisplayOfScreen (xscreen), selection_atom)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
 

@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2004-01-22 13:22+0100\n"
+"POT-Creation-Date: 2004-01-23 11:31+0100\n"
 "PO-Revision-Date: 2004-01-10 19:31+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -47,69 +47,77 @@ msgid "Hide the main window."
 msgstr "Göm huvudfönstret."
 
 #: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "Förinställda statusmeddelanden"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "Förinställda statusmeddelanden."
+
+#: gossip.schemas.in.h:8
 msgid "Show offline contacts"
 msgstr "Visa frånkopplade kontakter"
 
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:9
 msgid "The X position of the main window."
 msgstr "X-positionen av huvudfönstret."
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:10
 msgid "The Y position of the main window."
 msgstr "Y-positionen av huvudfönstret."
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr "Höjden på huvudfönstret."
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr "Bredden på huvudfönstret."
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr "Använd grafiska smilisar"
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:14
 msgid "Use notification sounds"
 msgstr "Använd notifieringsljud"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:15
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Huruvida smilisar ska omvandlas till grafiska bilder eller inte i "
 "konversationer."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Huruvida ljud ska spelas eller inte när meddelanden kommer."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away."
 msgstr "Huruvida ljud ska spelas eller inte under frånvaro."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:18
 msgid "Whether or not to play sounds when busy."
 msgstr "Huruvida ljud ska spelas eller inte under upptagetläge."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Huruvida frånkopplade kontakter ska visas i kontaktlistan eller inte."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:20
 msgid "Width of the main window"
 msgstr "Bredden på huvudfönstret"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:21
 msgid "X position of main window"
 msgstr "X-positionen av huvudfönstret"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:22
 msgid "Y position of main window"
 msgstr "Y-positionen av huvudfönstret"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:56
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
 msgstr "Hemma"
 
@@ -123,108 +131,108 @@ msgstr "Vilket förfrågansmeddelande vill du skicka till %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s kommer att läggas till i din kontaktlista."
 
-#: src/gossip-app.c:448
+#: src/gossip-app.c:453
 msgid "_Show Contact List"
 msgstr "_Visa kontaktlista"
 
 # Vi översätter "hide" med "dölj" i GNOME. Gömmer gör man något för att det
 # inte ska hittas, döljer gör man för att det inte ska synas.
-#: src/gossip-app.c:457
+#: src/gossip-app.c:462
 msgid "_Hide Contact List"
 msgstr "_Dölj kontaktlista"
 
-#: src/gossip-app.c:470
+#: src/gossip-app.c:475
 msgid "Send _Message..."
 msgstr "Skicka _meddelande..."
 
-#: src/gossip-app.c:485
+#: src/gossip-app.c:490
 msgid "_Quit"
 msgstr "_Avsluta"
 
-#: src/gossip-app.c:607
+#: src/gossip-app.c:613
 msgid "Artwork by:"
 msgstr "Grafik av:"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:614
+#: src/gossip-app.c:620
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:629
+#: src/gossip-app.c:635
 msgid "An Instant Messaging Client for GNOME"
 msgstr "En snabbmeddelandeklient för GNOME"
 
 # "Web site" är "webbplats". "Web page" är "webbsida".
-#: src/gossip-app.c:638
+#: src/gossip-app.c:644
 msgid "Gossip Website"
 msgstr "Gossip-webbplatsen"
 
-#: src/gossip-app.c:759
+#: src/gossip-app.c:765
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelande till."
 
-#: src/gossip-app.c:764 ui/main.glade.h:75
+#: src/gossip-app.c:770 ui/main.glade.h:75
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1023
+#: src/gossip-app.c:1029
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s vill bli meddelad om din närvaro."
 
-#: src/gossip-app.c:1264
+#: src/gossip-app.c:1270
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1403
+#: src/gossip-app.c:1409
 msgid "Make sure that your account information is correct."
 msgstr "Kontrollera att kontoinformationen är korrekt."
 
-#: src/gossip-app.c:1404
+#: src/gossip-app.c:1410
 msgid "The server may currently be unavailable."
 msgstr "Servern kan vara tillfälligt otillgänglig."
 
-#: src/gossip-app.c:1805
+#: src/gossip-app.c:1811
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1981
+#: src/gossip-app.c:1987
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-app.c:2331 src/gossip-preferences.c:629
+#: src/gossip-app.c:2337 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:2338 src/gossip-preferences.c:630
+#: src/gossip-app.c:2344 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:2345 src/gossip-preferences.c:631
+#: src/gossip-app.c:2351 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2476
 msgid "Available..."
 msgstr "Tillgänglig..."
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2480
 msgid "Busy..."
 msgstr "Upptagen..."
 
-#: src/gossip-app.c:2478
+#: src/gossip-app.c:2484
 msgid "Away..."
 msgstr "Frånvarande..."
 
-#: src/gossip-app.c:2504
+#: src/gossip-app.c:2510
 msgid "Edit List..."
 msgstr "Redigera listan..."
 
