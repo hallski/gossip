@@ -1156,7 +1156,7 @@ app_idle_check_cb (GossipApp *app)
 	   "/apps/gossip/auto_away/extended_idle_time",
 	   NULL); */
 
-	idle = base + gossip_idle_get_seconds ();
+	idle = gossip_idle_get_seconds ();
 	show = app_get_effective_show ();
 
 	if (show != GOSSIP_SHOW_EXT_AWAY && idle >= auto_ext_away) {
