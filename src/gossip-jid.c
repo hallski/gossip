@@ -147,6 +147,25 @@ gossip_jid_get_resource (GossipJID *jid)
 	return NULL;
 }
 
+gboolean 
+gossip_jid_is_service (GossipJID *jid)
+{
+	gchar *ch;
+
+	/* this basically checks to see if there is an '@'
+	   sign in the jid, if not, we assume it is a component
+	   or service (for example msn.jabber.org.uk) */
+
+	g_return_val_if_fail (jid != NULL, FALSE);
+
+	ch = strchr (jid->full, '@');
+	if (!ch) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
 gchar *
 gossip_jid_get_part_name (GossipJID *jid)
 {

@@ -35,8 +35,12 @@ const gchar *   gossip_jid_get_without_resource    (GossipJID     *jid);
 const gchar *   gossip_jid_get_resource            (GossipJID     *jid);
 gchar *         gossip_jid_get_part_name           (GossipJID     *jid);
 const gchar *   gossip_jid_get_part_host           (GossipJID     *jid);
+
+gboolean        gossip_jid_is_service              (GossipJID     *jid);
+
 GossipJID *     gossip_jid_ref                     (GossipJID     *jid);
 void            gossip_jid_unref                   (GossipJID     *jid);
+
 gboolean        gossip_jid_equals                  (GossipJID     *jid_a,
 						    GossipJID     *jid_b);
 gboolean        gossip_jid_equals_without_resource (GossipJID     *jid_a,

@@ -84,6 +84,14 @@ gossip_SOURCES = 				\
 	gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c			\
 	gossip-vcard-dialog.h			\
+	gossip-disco.c				\
+	gossip-disco.h				\
+	gossip-disco-register.c   	 	\
+	gossip-disco-register.h		    	\
+	gossip-disco-servers.c			\
+	gossip-disco-servers.h			\
+	gossip-disco-window.c			\
+	gossip-disco-window.h			\
 	eel-ellipsizing-label.c			\
 	eel-ellipsizing-label.h			\
 	eggtrayicon.c				\

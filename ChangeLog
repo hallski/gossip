@@ -1,3 +1,21 @@
+2004-08-18  Martyn Russell  <ginxd@btopenworld.com>
+ 
+	* src/gossip-disco.c:
+	* src/gossip-disco-register.c:
+ 	- Added these modules to handle the back end of discovering
+ 	  services and registering them.
+	* src/gossip-disco-servers.c:
+ 	- Added this module to handle the look up of the
+ 	  http://www.jabber.org/servers.xml and to parse it. It makes use of 
+ 	  GnomeVFS.
+	* src/gossip-disco-window.c:
+ 	- Added for my test harness of the gossip-disco module.  This is a
+   	  simple wizard that registers transports.
+	(gossip_jid_is_service): 
+ 	- Added to check each roster item and see if it is a service or a
+ 	  contact.  We need this so we can test to see if we are registered
+  	  or not with JID's on the roster.
+	
 2004-08-13  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jid.c: (jid_free), (jid_locate_resource),

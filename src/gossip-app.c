@@ -33,6 +33,8 @@
 #include <libgnomeui/libgnomeui.h>
 #include "eggtrayicon.h"
 #include "eel-ellipsizing-label.h"
+#include "gossip-disco-window.h"
+#include "gossip-disco.h"
 #include "gossip-vcard-dialog.h"
 #include "gossip-add-contact.h"
 #include "gossip-contact.h"
@@ -188,6 +190,8 @@ static void     app_personal_details_cb              (GtkWidget          *widget
 static void     app_account_information_cb           (GtkWidget          *widget,
 						      GossipApp          *app);
 static void     app_status_messages_cb               (GtkWidget          *widget,
+						      GossipApp          *app);
+static void     app_discover_services_cb             (GtkWidget          *widget, 
 						      GossipApp          *app);
 static void     app_about_cb                         (GtkWidget          *widget,
 						      GossipApp          *app);
@@ -404,6 +408,7 @@ app_init (GossipApp *singleton_app)
 			      "actions_send_chat_message", "activate", app_new_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "actions_show_offline", "toggled", app_show_offline_cb,
+			      "actions_discover_services", "activate", app_discover_services_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "edit_personal_details", "activate", app_personal_details_cb,
 			      "edit_account_information", "activate", app_account_information_cb,
@@ -909,6 +914,12 @@ app_status_messages_cb (GtkWidget *widget, GossipApp *app)
 }
 
 static void
+app_discover_services_cb (GtkWidget *widget, GossipApp *app)
+{
+	gossip_disco_window_show ();
+}
+
+static void
 app_subscription_request_dialog_response_cb (GtkWidget *dialog,
 					     gint       response,
 					     GossipApp *app)
@@ -1125,7 +1136,7 @@ app_iq_handler (LmMessageHandler *handler,
 		
 		namespace = lm_message_node_get_attribute (node, "xmlns");
 		
-		if (strcmp (namespace, "jabber:iq:version") == 0) {
+		if (namespace && strcmp (namespace, "jabber:iq:version") == 0) {
 			LmMessage      *v;
 			const gchar    *from, *id;
 			struct utsname  osinfo;
@@ -1519,6 +1530,7 @@ app_setup_conn_dependent_menu_items (GladeXML *glade)
 		"actions_send_chat_message",
 		"actions_add_contact",
 		"status_button",
+		"actions_discover_services",
 		"edit_personal_details"
 	};
 	
