@@ -858,12 +858,16 @@ static void
 chat_error_dialog (GossipChat  *chat, 
                    const gchar *msg)
 {
-        GtkWidget *window;
+        GtkWindow *window = NULL;
         GtkWidget *dialog;
 
-        window = gossip_chat_window_get_dialog (chat->priv->window);
-        
-        dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+        g_return_if_fail (chat != NULL);
+
+        if (chat->priv->window) {
+                window = GTK_WINDOW (gossip_chat_window_get_dialog (chat->priv->window));
+        }
+
+        dialog = gtk_message_dialog_new (window,
                                          GTK_DIALOG_DESTROY_WITH_PARENT,
                                          GTK_MESSAGE_ERROR,
                                          GTK_BUTTONS_CLOSE,

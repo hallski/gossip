@@ -933,6 +933,8 @@ gossip_chat_window_new (void)
 GtkWidget *
 gossip_chat_window_get_dialog (GossipChatWindow *window)
 {
+	g_return_val_if_fail (window != NULL, NULL);
+	
 	return window->priv->dialog;
 }
 

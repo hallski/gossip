@@ -1,3 +1,11 @@
+2003-11-20  Ross Burton  <ross@burtonini.com>
+
+	* src/gossip-chat.c (chat_error_dialog): 
+	Don't get the dialog of a NULL window.
+
+	* src/gossip-chat-window.c (gossip_chat_window_get_dialog):
+	Sanity check the parameter.
+
 2003-11-20  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-group-chat.c: (group_chat_priv_chat_new):
