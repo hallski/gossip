@@ -9,17 +9,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
-"PO-Revision-Date: 2004-01-19 23:52+0100\n"
+"POT-Creation-Date: 2004-01-19 23:46+0100\n"
+"PO-Revision-Date: 2004-02-22 17:07+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>\n"
 "Language-Team: basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Report-Msgid-Bugs-To: \n"
-"X-Generator: KBabel 1.0.2\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:27
+#: gossip.desktop.in.h:1 ui/main.glade.h:26
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -28,101 +27,115 @@ msgid "Instant Messenger"
 msgstr "Berehalako mezularitza"
 
 #: gossip.schemas.in.h:1
+msgid "About to leave..."
+msgstr "Irtetzeari buruz..."
+
+#: gossip.schemas.in.h:2
+msgid "Autoaway message"
+msgstr "Aldentze automatikoaren mezuak"
+
+#: gossip.schemas.in.h:3
+msgid "Away messages"
+msgstr "Aldentze-mezuak"
+
+#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "Soinurik ez aldentzerakoan"
 
-#: gossip.schemas.in.h:2
+#: gossip.schemas.in.h:5
 msgid "Be silent when busy"
 msgstr "Soinurik ez lanpetutakoan"
 
-#: gossip.schemas.in.h:3
+#: gossip.schemas.in.h:6
+msgid "Busy messages"
+msgstr "Lanpetu-mezuak"
+
+#: gossip.schemas.in.h:7
 msgid "Height of main window"
 msgstr "Leiho nagusiaren altuera"
 
-#: gossip.schemas.in.h:4
+#: gossip.schemas.in.h:8
 msgid "Hide main window"
 msgstr "Ezkutatu leiho nagusia"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:9
 msgid "Hide the main window."
 msgstr "Ezkutatu leiho nagusia."
 
-#: gossip.schemas.in.h:6
-#, fuzzy
-msgid "Preset status messages"
-msgstr "<b>Aurrezarri egoera mezuak</b>"
+#: gossip.schemas.in.h:10
+msgid "Message to show before going away"
+msgstr "Aldendu aurretik erakutsiko den mezua"
 
-#: gossip.schemas.in.h:7
-#, fuzzy
-msgid "Preset status messages."
-msgstr "<b>Aurrezarri egoera mezuak</b>"
+#: gossip.schemas.in.h:11
+msgid "Not at the computer"
+msgstr "Ordenagailutik aldendua"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:12
 msgid "Show offline contacts"
 msgstr "Erakutsi konektatu gabeko kontaktuak"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:13
 msgid "The X position of the main window."
 msgstr "Leiho nagusiaren X posizioa."
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:14
 msgid "The Y position of the main window."
 msgstr "Leiho nagusiaren Y posizioa."
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:15
 msgid "The height of the main window."
 msgstr "Leiho nagusiaren altuera."
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:16
 msgid "The width of the main window."
 msgstr "Leiho nagusiaren zabalera."
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:17
 msgid "Use graphical smileys"
 msgstr "Erabili Smiley irudiak"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:18
 msgid "Use notification sounds"
 msgstr "Erabili jakinarazpen-soinuak"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:19
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Elkarrizketetan smiley-ak irudi grafikoetara bihurtuko dituen ala ez "
 "adierazten du."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:20
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Mezuak iristean soinua joko duen ala ez adierazten du."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:21
 msgid "Whether or not to play sounds when away."
 msgstr "Kanpoan zaudenean soinua joko duen ala ez adierazten du."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:22
 msgid "Whether or not to play sounds when busy."
 msgstr "Lanpetuta zaudenean soinua joko duen ala ez adierazten du."
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:23
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 "Kontaktu-zerrendan deskonektatuak dauden kontaktuak erakutsiko dituen ala ez "
 "adierazten du."
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:24
 msgid "Width of the main window"
 msgstr "Leiho nagusiaren zabalera"
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:25
 msgid "X position of main window"
 msgstr "Leiho nagusiaren X posizioa"
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:26
 msgid "Y position of main window"
 msgstr "Leiho nagusiaren Y posizioa"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:56
 msgid "Home"
 msgstr "Etxea"
 
@@ -136,108 +149,120 @@ msgstr "Zein eskaera mezu bidali nahi diozu %sri?"
 msgid "%s will be added to your contact list."
 msgstr "%s zure kontaktu-zerrendara gehituko da."
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:462
+msgid "_Show Contact List"
+msgstr "_Erakutsi kontaktu-zerrenda"
+
+#: src/gossip-app.c:471
+msgid "_Hide Contact List"
+msgstr "E_zkutatu kontaktu-zerrenda"
+
+#: src/gossip-app.c:484
+msgid "Send _Message..."
+msgstr "_Bidali mezua..."
+
+#: src/gossip-app.c:499
+msgid "_Quit"
+msgstr "_Irten"
+
+#: src/gossip-app.c:640
 msgid "Artwork by:"
 msgstr "Artelanak:"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:598
+#: src/gossip-app.c:647
 msgid "translator_credits"
-msgstr "Mikel Olasagasti <hey_neken@mundurat.net>"
+msgstr ""
+"Mikel Olasagasti <hey_neken@mundurat.net>\n"
+"Iñaki Larrañaga <dooteo@euskalgnu.org>"
 
-#: src/gossip-app.c:613
+#: src/gossip-app.c:662
 msgid "An Instant Messaging Client for GNOME"
 msgstr "Berehalako mezularitza bat GNOMErako"
 
-#: src/gossip-app.c:622
+#: src/gossip-app.c:671
 msgid "Gossip Website"
 msgstr "Gossip-en web gunea"
 
-#: src/gossip-app.c:718
+#: src/gossip-app.c:792
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
-"Sartu berriketa-mezua bidali nahi diozun kontaktuaren erabiltzaile ID-a."
+"Sartu erabiltzaile ID-a, berriketa-mezua bidali nahi diozun pertsonarena."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:797 ui/main.glade.h:73
 msgid "_Chat"
 msgstr "_Berriketa"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:1056
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s-k zure presentziaz jakinarazia izatea nahi du."
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1297
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Zerbitzaritik deskonektatua izan zara. Berriz konektatzea nahi duzu?"
 
-#: src/gossip-app.c:1375
+#: src/gossip-app.c:1432
 msgid "Make sure that your account information is correct."
 msgstr "Ziurtatu zure kontu informazioa zuzena dela."
 
-#: src/gossip-app.c:1376
+#: src/gossip-app.c:1433
 msgid "The server may currently be unavailable."
 msgstr "Zerbitzaria erabilgarri ez dagoela dirudi."
 
-#: src/gossip-app.c:1847
-#, fuzzy
-msgid "Gossip, Instant Messaging Client"
-msgstr "Berehalako mezularitza bat GNOMErako"
+#: src/gossip-app.c:1834
+msgid "Gossip, Jabber Client"
+msgstr "Gossip, Jabber bezeroa"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:2010
 #, c-format
 msgid "New message from %s"
 msgstr "%s(e)tik mezu berria"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
-msgid "Offline"
-msgstr "Deskonektatuta"
-
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2368 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Eskuragarri"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2375 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Lanpetuta"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2382 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "Aldendua"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2507
 msgid "Available..."
 msgstr "Eskuragarri..."
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2511
 msgid "Busy..."
 msgstr "Lanpetuta..."
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2515
 msgid "Away..."
 msgstr "Aldendua..."
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2541
 msgid "Edit List..."
 msgstr "Editatu _zerrenda..."
 
-#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
+#: src/gossip-chat-view.c:320 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr "_Garbitu"
 
-#: src/gossip-chat-view.c:356
+#: src/gossip-chat-view.c:337
 msgid "_Copy Link Address"
 msgstr "_Kopiatu estekaren helbidea"
 
-#: src/gossip-chat-view.c:364
+#: src/gossip-chat-view.c:345
 msgid "_Open Link"
 msgstr "_Ireki esteka"
 
-#: src/gossip-chat-view.c:678
+#: src/gossip-chat-view.c:695
 msgid "%A %d %B %Y"
 msgstr "%A, %Y %B %d"
 
@@ -246,31 +271,35 @@ msgstr "%A, %Y %B %d"
 msgid "%sChat - %s"
 msgstr "%s berriketa - %s"
 
-#: src/gossip-chat.c:717
+#: src/gossip-chat-window.c:698 src/gossip-roster-view.c:932
+msgid "Offline"
+msgstr "Deskonektatuta"
+
+#: src/gossip-chat.c:699
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Errore bat gertatu da %srekin berriketan egiterakoan."
 
-#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
+#: src/gossip-chat.c:704 src/gossip-group-chat.c:809
 #: src/gossip-group-chat.c:912
 msgid "Details:"
 msgstr "Xehetasunak:"
 
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:794
 #, c-format
 msgid "%s went offline"
 msgstr "%s deskonektatu da"
 
-#: src/gossip-chat.c:826
+#: src/gossip-chat.c:808
 #, c-format
 msgid "%s comes online"
 msgstr "%s konektatu da"
 
-#: src/gossip-chat.c:913
+#: src/gossip-chat.c:895
 msgid "Connected"
 msgstr "Konektatuta"
 
-#: src/gossip-chat.c:928
+#: src/gossip-chat.c:910
 msgid "Disconnected"
 msgstr "Deskonektatuta"
 
@@ -279,25 +308,25 @@ msgstr "Deskonektatuta"
 msgid "Contact Information for %s"
 msgstr "%s kontaktuaren informazioa"
 
-#: src/gossip-edit-groups-dialog.c:182
+#: src/gossip-edit-groups-dialog.c:181
 #, c-format
 msgid "Edit groups for %s"
 msgstr "Editatu taldeak honentzako: %s"
 
-#: src/gossip-edit-groups-dialog.c:246
+#: src/gossip-edit-groups-dialog.c:244
 msgid "Select"
 msgstr "Hautatu"
 
-#: src/gossip-edit-groups-dialog.c:257
+#: src/gossip-edit-groups-dialog.c:255
 msgid "Group"
 msgstr "Taldea"
 
 #. This needs to be done better, could have group_is_unsorted().
 #.
-#: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
+#: src/gossip-edit-groups-dialog.c:354 src/gossip-edit-groups-dialog.c:367
 #: src/gossip-roster.c:37
 msgid "Unsorted"
-msgstr "Sailkatu Gabe"
+msgstr "Sailkatu gabe"
 
 #: src/gossip-group-chat.c:804
 #, c-format
@@ -309,35 +338,35 @@ msgstr "Errore bat gertatu da %s berriketa-taldearekin aritzean."
 msgid "Unable to enter the group chat %s."
 msgstr "Ezin izan da %s berriketa-taldean sartu."
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:227
 msgid "Conversation Log"
 msgstr "Berriketaldiaren egunkaria"
 
-#: src/gossip-main.c:69
+#: src/gossip-main.c:71
 msgid "Don't connect on startup"
 msgstr "Ez konektatu abiatzean"
 
-#: src/gossip-main.c:78
+#: src/gossip-main.c:80
 msgid "Which account to connect to on startup"
 msgstr "Zein konturekin konektatu abiatzean"
 
-#: src/gossip-main.c:79
+#: src/gossip-main.c:81
 msgid "ACCOUNT-NAME"
 msgstr "KONTU-IZENA"
 
-#: src/gossip-main.c:87
+#: src/gossip-main.c:89
 msgid "List the available accounts"
 msgstr "Zerrendatu kontu eskuragarriak"
 
-#: src/gossip-main.c:120
+#: src/gossip-main.c:122
 msgid "Available accounts:"
 msgstr "Kontu eskuragarriak:"
 
-#: src/gossip-main.c:129
+#: src/gossip-main.c:131
 msgid "[default]"
 msgstr "[lehenetsia]"
 
-#: src/gossip-main.c:152
+#: src/gossip-main.c:154
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Ez dago '%s' izeneko konturik."
@@ -386,7 +415,7 @@ msgstr "/_Ezabatu kontaktua"
 msgid "/Re_name group"
 msgstr "/Berrize_ndatu taldea"
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1239
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -397,7 +426,7 @@ msgstr ""
 "%s\n"
 "kontaktua ezabatu nahi duzu?"
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1332
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -406,7 +435,7 @@ msgstr ""
 "Mesedez sartu ezizen berria kontaktuarentzat\n"
 "%s"
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1437
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -423,11 +452,11 @@ msgstr "Gossip zure kontua erabiltzen saiatuko da orain:"
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip kontua erregistratzen saiatuko da orain:"
 
-#: src/gossip-utils.c:438
+#: src/gossip-utils.c:434
 msgid "Please enter your password:"
 msgstr "Sartu zure pasahitza:"
 
-#: src/gossip-utils.c:440
+#: src/gossip-utils.c:436
 msgid "Remember Password?"
 msgstr "Gogoratu pasahitza?"
 
@@ -466,11 +495,11 @@ msgstr "Honi erantzuten:"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
-msgstr "Mugitu fitxa e_zkerrera"
+msgstr "Lerrotu fitxa e_zkerrera"
 
 #: ui/chat.glade.h:11
 msgid "Move Tab _Right"
-msgstr "Mugitu fitxa e_skubira"
+msgstr "Lerrotu fitxa e_skubira"
 
 #: ui/chat.glade.h:12
 msgid "To:"
@@ -728,12 +757,7 @@ msgstr "Editatu taldeak"
 msgid "Email:"
 msgstr "Helb. elek.:"
 
-#: ui/main.glade.h:26
-#, fuzzy
-msgid "Enter status message:"
-msgstr "Egoera mezua:"
-
-#: ui/main.glade.h:28
+#: ui/main.glade.h:27
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -749,7 +773,7 @@ msgstr ""
 "\n"
 "Hasteko, klikatu \"Aurrera\"-n."
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:32
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -759,11 +783,11 @@ msgstr ""
 "Zure kontuaren ezarpenak alda ditzakezu, menuan Berriketa->Konektatu... "
 "hautatuz."
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:34
 msgid "I would like to add you to my contact list."
 msgstr "Nire kontaktu-zerrendara gehitu nahi zaitut."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:35
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -773,242 +797,215 @@ msgstr ""
 "bidaliko zaio. Eskaera onartu bitartean kontaktua \"Deskonektatuta\" bezala "
 "agertuko da kontaktu-zerrendan."
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:36
 msgid "In which group do you want to place this contact?"
 msgstr "Zein taldetan jarri nahi duzu kontaktu hau?"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:37
 msgid "Information about ..."
 msgstr "Honi buruzko informazioa..."
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:38
 msgid "JID"
 msgstr "JID"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:39
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:40
 msgid "Jabber Account"
 msgstr "Jabber kontua"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:41
 msgid "Jabber ID:"
 msgstr "Jabber IDa:"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:42
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:43
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:44
 msgid "Name:"
 msgstr "Izena:"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:45
 msgid "No"
 msgstr "Ez"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:46
 msgid "OS:"
 msgstr "SE:"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:47
 msgid "On what server do you have a Jabber account?"
 msgstr "Zein zerbitzaritan daukazu Jabber kontu bat?"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:48
 msgid "Personal information"
 msgstr "Informazio pertsonala"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:49
 msgid "Play sound when messages arrive"
 msgstr "Soinua jo mezuak iristean"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:50
 msgid "Preferences"
 msgstr "Hobespenak"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:51
 msgid "Request message"
 msgstr "Eskatu mezua"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:52
 msgid "Sending request"
 msgstr "Eskaera bidaltzen"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:53
 msgid "Setup Finished"
 msgstr "Konfigurazioa amaituta"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:54
 msgid "Show _Offline Contacts"
 msgstr "Erakutsi _konektatu gabeko kontaktuak"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:55
 msgid "Sound"
 msgstr "Soinua"
 
-#: ui/main.glade.h:57
-#, fuzzy
-msgid "Status"
-msgstr "Egoera mezuak"
-
-#: ui/main.glade.h:58
-#, fuzzy
-msgid "Status Message"
-msgstr "Egoera mezuak"
-
-#: ui/main.glade.h:59
+#: ui/main.glade.h:56
 msgid "Status Messages"
 msgstr "Egoera mezuak"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:57
 msgid "Use a different server"
 msgstr "Erabili beste zerbitzari bat"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:58
 msgid "Version:"
 msgstr "Bertsioa:"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:59
 msgid "Web site:"
 msgstr "Web gunea:"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:60
 msgid "Welcome to Gossip"
 msgstr "Ongi etorri Gossip-era"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:61
 msgid "What instant messaging system does the contact use?"
 msgstr "Zein berehalako·mezularitza sistema erabiltzen du kontaktuak?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:62
 msgid "What is your name?"
 msgstr "Zein da zure izena?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:63
 msgid "What nickname do you want to use for this contact?"
 msgstr "Zein ezizen erabili nahi duzu kontaktu honentzat?"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:64
 msgid "What request message do you want to send to ...?"
 msgstr "Zein mezu-eskaera bidali nahi diozu ...?"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:65
 msgid "What server do you want to use?"
 msgstr "Zein zerbitzari erabili nahi duzu?"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:66
 msgid "What username do you use?"
 msgstr "Zein erabiltzaile-izen erabiltzen duzu?"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:67
 msgid "What username do you want to use?"
 msgstr "Zein erabiltzaile-izen erabili nahi duzu?"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:68
 msgid "Yes"
 msgstr "Bai"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:69
 msgid "Your Identity"
 msgstr "Zure nortasuna"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:70
 msgid "_Accept"
 msgstr "_Onartu"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:71
 msgid "_Account Information"
 msgstr "_Kontuaren informazioa"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:72
 msgid "_Add Contact..."
 msgstr "Gehitu _kontaktua..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:74
 msgid "_Connect..."
 msgstr "_Konektatu..."
 
-#: ui/main.glade.h:78
+#: ui/main.glade.h:75
 msgid "_Decide Later"
 msgstr "Erabaki _beranduago"
 
-#: ui/main.glade.h:79
+#: ui/main.glade.h:76
 msgid "_Deny"
 msgstr "_Ukatu"
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:77
 msgid "_Disconnect"
 msgstr "_Deskonektatu"
 
-#: ui/main.glade.h:81
-msgid "_Hide Contact List"
-msgstr "E_zkutatu kontaktu-zerrenda"
-
-#: ui/main.glade.h:82
+#: ui/main.glade.h:78
 msgid "_Jabber ID of new contact:"
 msgstr "_Kontaktu berriaren Jabber IDa:"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:79
 msgid "_Join Group Chat..."
 msgstr "_Elkartu berriketa-taldera..."
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:80
 msgid "_New Message..."
 msgstr "Mezu _berria..."
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:81
 msgid "_Preferences"
 msgstr "_Hobespenak"
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:82
 msgid "_Remove"
 msgstr "_Ezabatu"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:83
 msgid "_Search..."
 msgstr "_Bilatu..."
 
-#: ui/main.glade.h:88
-msgid "_Show Contact List"
-msgstr "_Erakutsi kontaktu-zerrenda"
-
-#: ui/main.glade.h:89
+#: ui/main.glade.h:84
 msgid "_Status Messages"
 msgstr "_Egoera mezuak"
 
-#~ msgid "Send _Message..."
-#~ msgstr "_Bidali mezua..."
+#~ msgid "Preset status messages"
+#~ msgstr "<b>Uneko egoera mezuak</b>"
 
-#~ msgid "_Quit"
-#~ msgstr "_Irten"
+#~ msgid "Preset status messages."
+#~ msgstr "Uneko egoera mezuak."
 
-#~ msgid "Gossip, Jabber Client"
-#~ msgstr "Gossip, Jabber bezeroa"
+#~ msgid "Gossip, Instant Messaging Client"
+#~ msgstr "Gossip, berehalako mezularitza bezero bat GNOMErako"
 
-#~ msgid "About to leave..."
-#~ msgstr "Irtetzeari buruz..."
+#~ msgid "Enter status message:"
+#~ msgstr "Idatzi egoera mezua:"
 
-#~ msgid "Autoaway message"
-#~ msgstr "Aldentze automatikoaren mezuak"
+#~ msgid "Status"
+#~ msgstr "Egoera"
 
-#~ msgid "Away messages"
-#~ msgstr "Aldentze-mezuak"
-
-#~ msgid "Busy messages"
-#~ msgstr "Lanpetu-mezuak"
-
-#~ msgid "Message to show before going away"
-#~ msgstr "Aldendu aurretik erakutsiko den mezua"
-
-#~ msgid "Not at the computer"
-#~ msgstr "Ordenagailutik aldendua"
+#~ msgid "Status Message"
+#~ msgstr "Egoera mezua"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "Irtetzekotan..."
