@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-19 21:53+0200\n"
+"POT-Creation-Date: 2003-08-25 06:57+0200\n"
 "PO-Revision-Date: 2003-07-17 23:49+0200\n"
 "Last-Translator: GNOME PL Team <translators@gnome.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -311,7 +311,7 @@ msgstr "/Z_mień nazwę kontaktu"
 msgid "/_Remove contact"
 msgstr "/_Usuń kontakt"
 
-#: src/gossip-roster-old.c:424
+#: src/gossip-roster-old.c:425
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -322,7 +322,7 @@ msgstr ""
 "%s\n"
 "ze swojej listy kontaktów?"
 
-#: src/gossip-roster-old.c:522
+#: src/gossip-roster-old.c:524
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
