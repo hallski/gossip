@@ -1369,16 +1369,15 @@ gossip_app_connect (void)
 	lm_connection_set_port (priv->connection, account->port);
 	
 	if (account->use_ssl) {
-		result = lm_connection_open_ssl (priv->connection,
-						 NULL,
-						 (LmSSLFunction) app_connection_ssl_func,
-						 (LmResultFunction) app_connection_open_cb,
-						 app, NULL, &error);
-	} else {
-		result = lm_connection_open (priv->connection,
-					     (LmResultFunction) app_connection_open_cb,
-					     app, NULL, &error);
+		lm_connection_set_use_ssl (priv->connection,
+					   NULL,
+					   (LmSSLFunction) app_connection_ssl_func,
+					   app);
 	}
+	
+	result = lm_connection_open (priv->connection,
+				     (LmResultFunction) app_connection_open_cb,
+				     app, NULL, &error);
 
 	if (result == FALSE && error) {
 		GtkWidget *dialog;
