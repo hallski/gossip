@@ -132,7 +132,7 @@ static GtkTreeStore *roster_create_store     (GossipRoster      *roster);
 static void          roster_create_pixbufs   (GossipRoster      *roster);
 static GossipRosterItem *
 roster_get_selected_item                     (GossipRoster      *roster);
-
+static void     roster_reset_connection      (GossipRoster      *roster);
 static void     roster_connected_cb          (GossipApp         *app,
 					      GossipRoster      *roster);
 static void     roster_disconnected_cb       (GossipApp         *app,
@@ -358,30 +358,14 @@ roster_finalize (GObject *object)
 
 	g_hash_table_destroy (priv->contacts);
 	roster_free_string_list (priv->groups);
+
+	roster_reset_connection (roster);
 	
-	if (priv->presence_handler) {
-		lm_connection_unregister_message_handler (priv->connection,
-							  priv->presence_handler,
-							  LM_MESSAGE_TYPE_PRESENCE);
-		lm_message_handler_unref (priv->presence_handler);
-	}
-
-	if (priv->iq_handler) {
-		lm_connection_unregister_message_handler (priv->connection,
-							  priv->iq_handler,
-							  LM_MESSAGE_TYPE_IQ);
-		lm_message_handler_unref (priv->iq_handler);
-	}
-
 	if (priv->enable_sound_timeout_id) {
 		g_source_remove (priv->enable_sound_timeout_id);
 		priv->enable_sound_timeout_id = 0;
 	}
 	
-	if (priv->connection) {
-		lm_connection_unref (priv->connection);
-	}
-
 	g_free (priv);
 	roster->priv = NULL;
 

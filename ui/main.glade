@@ -48,6 +48,20 @@
 		      </child>
 
 		      <child>
+			<widget class="GtkMenuItem" id="actions_disconnect">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">_Disconnect</property>
+			  <property name="use_underline">True</property>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkMenuItem" id="avskiljare3">
+			  <property name="visible">True</property>
+			</widget>
+		      </child>
+
+		      <child>
 			<widget class="GtkMenuItem" id="actions_join_group_chat">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">_Join group chat...</property>

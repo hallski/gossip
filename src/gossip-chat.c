@@ -505,7 +505,10 @@ chat_presence_handler (LmMessageHandler *handler,
 GossipChat *
 gossip_chat_new (GossipApp *app, GossipJID *jid)
 {
-	GossipChat *chat;
+	GossipChat   *chat;
+	GossipRoster *roster;
+	gchar        *nick = NULL;
+	gchar        *title;
 	
 	chat = chat_create (app, jid);
 	
@@ -515,6 +518,29 @@ gossip_chat_new (GossipApp *app, GossipJID *jid)
 						chat->message_handler,
 						LM_MESSAGE_TYPE_MESSAGE,
 						LM_HANDLER_PRIORITY_NORMAL);
+
+	if (chat->nick) {
+		nick = g_strdup (chat->nick);
+	}
+
+	if (!nick) {
+		roster = gossip_app_get_roster ();
+		nick = g_strdup (gossip_roster_get_nick_from_jid (roster, jid));
+	}
+	
+	if (!nick) {
+		nick = gossip_jid_get_part_name (jid);
+	}
+
+	if (nick && nick[0]) {
+		title = g_strdup_printf ("Chat - %s", nick);
+	} else {
+		title = g_strdup ("Chat");
+	}
+	g_free (nick);
+	
+	gtk_window_set_title (GTK_WINDOW (chat->dialog), title);
+	g_free (title);
 	
 	return chat;
 }

@@ -78,6 +78,12 @@ struct _GossipAppPriv {
 	/* Dialogs that we only have one of at a time. */
 	GossipJoinDialog    *join_dialog;
 	GtkWidget           *about;
+
+	/* Widges that are enabled when we're connected. */
+	GList               *enabled_connected_widgets;
+
+	/* Widges that are enabled when we're disconnected. */
+	GList               *enabled_disconnected_widgets;
 };
 
 enum {
@@ -128,7 +134,8 @@ static void      app_client_disconnected_cb         (LmConnection *connection,
 						     GossipApp    *app);
 static void      app_connect_cb                     (GtkWidget      *widget,
 						     GossipApp      *app);
-
+static void      app_disconnect_cb                  (GtkWidget      *widget,
+						     GossipApp      *app);
 static void      app_status_item_activated_cb       (GtkMenuItem    *item,
 						     GossipApp      *app);
 static LmHandlerResult
@@ -159,6 +166,13 @@ static void      app_tray_icon_set_status           (GossipApp      *app,
 static void      app_create_connection              (GossipApp      *app);
 
 static void      app_disconnect                     (GossipApp      *app);
+static void
+app_setup_connection_dependent_menu_items           (GossipApp      *app,
+						     GladeXML       *glade);
+static void
+app_update_connection_dependent_menu_items          (GossipApp      *app);
+
+
 
 static GObjectClass *parent_class;
 
@@ -247,10 +261,13 @@ app_init (GossipApp *app)
 				       "roster_scrolledwindow", &sw,
 				       NULL);
 
+	app_setup_connection_dependent_menu_items (app, glade);
+	
 	gossip_glade_connect (glade,
 			      app,
 			      "file_quit", "activate", app_quit_cb,
 			      "actions_connect", "activate", app_connect_cb,
+			      "actions_disconnect", "activate", app_disconnect_cb,
 			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
 			      "actions_send_chat_message", "activate", app_send_chat_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
@@ -317,6 +334,8 @@ app_init (GossipApp *app)
 	app_create_tray_icon (app);
 	app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 
+	app_update_connection_dependent_menu_items (app);
+	
 	priv->about = NULL;
 	gtk_widget_show (priv->window);
 }
@@ -333,6 +352,9 @@ app_finalize (GObject *object)
 	g_hash_table_destroy (priv->one2one_chats);
 
 	gossip_account_unref (priv->account);
+
+	g_list_free (priv->enabled_connected_widgets);
+	g_list_free (priv->enabled_disconnected_widgets);
 	
 	g_free (priv);
 	app->priv = NULL;
@@ -400,6 +422,15 @@ app_connect_cb (GtkWidget *window,
 }
 
 static void
+app_disconnect_cb (GtkWidget *window,
+		   GossipApp *app)
+{
+	g_return_if_fail (GOSSIP_IS_APP (app));
+
+	app_set_status (app, GOSSIP_STATUS_OFFLINE);
+}
+
+static void
 app_join_dialog_destroy_cb (GtkWidget *widget,
 			    GossipApp *app)
 {
@@ -446,6 +477,8 @@ app_authentication_cb (LmConnection *connection,
 	if (result == TRUE) {
 		g_signal_emit (app, signals[CONNECTED], 0);
 		app_set_status (app, priv->status_to_set_on_connect);
+
+		app_update_connection_dependent_menu_items (app);
 	} else {
 		app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 	}
@@ -1030,7 +1063,7 @@ gossip_app_connect (GossipAccount *account)
 }
 
 void
-gossip_app_connect_default ()
+gossip_app_connect_default (void)
 {
 	GossipAppPriv *priv;
 
@@ -1090,10 +1123,11 @@ app_set_status (GossipApp *app, GossipStatus status)
 			app_disconnect (app);
 			app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 		}
-					     
+
+		app_update_connection_dependent_menu_items (app);
 		return;
 	}
-	
+
 	/* Connect. */
 	if (!lm_connection_is_open (priv->connection)) {
 		priv->status_to_set_on_connect = status;
@@ -1143,7 +1177,7 @@ gossip_app_get_jid (GossipApp *app)
 }
 
 GossipRoster *
-gossip_app_get_roster ()
+gossip_app_get_roster (void)
 {
 	return app->priv->roster;
 }
@@ -1322,13 +1356,67 @@ app_disconnect (GossipApp *app)
 	}
 }
 
-	LmConnection *
+LmConnection *
 gossip_app_get_connection (GossipApp *app)
 {
 	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
 	
 	return app->priv->connection;
 }
+
+static void
+app_setup_connection_dependent_menu_items (GossipApp *app,
+					   GladeXML  *glade)
+{
+	const gchar *connect_widgets[] = { "actions_disconnect",
+					   "actions_join_group_chat",
+					   "actions_send_chat_message",
+					   "actions_add_contact"
+	};
+	
+	const gchar *disconnect_widgets[] = { "actions_connect"
+	};
+	
+	GList     *list;
+	GtkWidget *w;
+	gint       i;
+
+	list = NULL;
+	for (i = 0; i < G_N_ELEMENTS (connect_widgets); i++) {
+		w = glade_xml_get_widget (glade, connect_widgets[i]);
+		list = g_list_prepend (list, w);
+	}
+	app->priv->enabled_connected_widgets = list;
+
+	list = NULL;
+	for (i = 0; i < G_N_ELEMENTS (disconnect_widgets); i++) {
+		w = glade_xml_get_widget (glade, disconnect_widgets[i]);
+		list = g_list_prepend (list, w);
+	}
+	app->priv->enabled_disconnected_widgets = list;
+}
+
+static void
+app_update_connection_dependent_menu_items (GossipApp *app)
+{
+	GossipAppPriv *priv;
+	GList         *l;
+	GossipStatus   status;
+	gboolean       connected;
+
+	priv = app->priv;
+	
+	status = gossip_status_menu_get_status (priv->option_menu);
+	connected = (status != GOSSIP_STATUS_OFFLINE);
+
+	for (l = priv->enabled_connected_widgets; l; l = l->next) {
+		gtk_widget_set_sensitive (l->data, connected);
+	}
+	for (l = priv->enabled_disconnected_widgets; l; l = l->next) {
+		gtk_widget_set_sensitive (l->data, !connected);
+	}
+}
+
 
 #if 0
 static void app_tray_icon_push_notification (GossipApp   *app,

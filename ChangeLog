@@ -1,5 +1,25 @@
 2003-07-04  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Add disconnect menu item.
+	* src/gossip-app.c (app_disconnect_cb): Add.
+	Patch from Kevin Dougherty <gossip@kdough.net>.
+
+	* src/gossip-app.c (app_finalize)
+	(app_setup_connection_dependent_menu_items, app_init):
+	(app_update_connection_dependent_menu_items): Update sensitivity
+	of menu items depending on connected/disconnected state.
+
+
+	* src/gossip-roster.c (roster_finalize): Use
+	roster_reset_connection.
+
+	* src/gossip-app.c (gossip_app_get_roster): Add missing void.
+	(gossip_app_connect_default): Likewise.
+
+	* src/gossip-chat.c (gossip_chat_new): Put the name of the other
+	part in the title. Based on patch from Kevin Dougherty
+	<gossip@kdough.net>.
+
 	* ui/connect.glade: Hm, why was the response ID changed? Change
 	back to make connect work again.
 
