@@ -341,8 +341,10 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 		GossipRosterGroup *group = l->data;
 		const gchar       *group_str = gossip_roster_group_get_name (group);
 
-		/* This needs to be done better - should be a definition */
-		if (strcmp (group_str, "Unsorted") == 0) {
+		/* This needs to be done better - could have
+		 * group_is_unsorted()
+		 */
+		if (strcmp (group_str, _("Unsorted")) == 0) {
 			continue;
 		}
 	
