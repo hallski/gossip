@@ -1,3 +1,7 @@
+2003-08-24  Abel Cheung  <maddog@linux.org.hk>
+
+	* src/gossip-roster-old.c: Add translator comment.
+
 2003-08-23  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* configure.in: Added "no" to ALL_LINGUAS.

@@ -417,6 +417,7 @@ roster_menu_remove_cb (gpointer   callback_data,
 	str = g_strdup_printf ("<b>%s</b>", 
 			       gossip_jid_get_without_resource (item->jid));
 
+	/* Translator: %s denotes the Jabber ID */
 	dialog = gtk_message_dialog_new (NULL,
 					 0,
 					 GTK_MESSAGE_QUESTION,
@@ -515,6 +516,7 @@ roster_menu_rename_cb (gpointer   callback_data,
 	str = g_strdup_printf ("<b>%s</b>", 
 			       gossip_jid_get_without_resource (item->jid));
        	
+	/* Translator: %s denotes the Jabber ID */
 	dialog = gtk_message_dialog_new (NULL,
 					 0,
 					 GTK_MESSAGE_QUESTION,
