@@ -588,9 +588,13 @@ app_about_cb (GtkWidget *window,
 	      GossipApp *app)
 {
 	GossipAppPriv *priv;
-	const gchar   *authors[] = { 
+
+	const gchar *authors[] = { 
 		"Richard Hult <richard@imendio.com>",
 		"Mikael Hallendal <micke@imendio.com>",
+		"",
+		_("Artwork by:"),
+		"Daniel Taylor <dantaylor@web.de>",
 		NULL
 	};
 	/* Note to translators: put here your name and email so it
