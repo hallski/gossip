@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-05-03 14:52+0300\n"
-"PO-Revision-Date: 2004-05-03 14:53+0300\n"
+"POT-Creation-Date: 2004-06-10 17:04+0300\n"
+"PO-Revision-Date: 2004-06-10 17:05+0300\n"
 "Last-Translator: Žygimantas Beručka <uid0@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:27
+#: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -161,7 +161,7 @@ msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Įveskite asmens, kuriam norite nusiųsti pokalbio žinutę, vartotojo ID."
 
-#: src/gossip-app.c:705 ui/main.glade.h:76
+#: src/gossip-app.c:705 ui/main.glade.h:77
 msgid "_Chat"
 msgstr "P_okalbis"
 
@@ -191,7 +191,7 @@ msgstr "Gossip, greitų žinučių perdavimo klientas"
 msgid "New message from %s"
 msgstr "Nauja žinutė iš %s"
 
-#: src/gossip-app.c:2078 src/gossip-chat-window.c:725
+#: src/gossip-app.c:2078 src/gossip-chat-window.c:779
 #: src/gossip-roster-view.c:987
 msgid "Offline"
 msgstr "Atsijungęs"
@@ -224,52 +224,56 @@ msgstr "Manęs nėra..."
 msgid "Edit List..."
 msgstr "Keisti sąrašą..."
 
-#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
+#: src/gossip-chat-view.c:340 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr "Išva_lyti"
 
-#: src/gossip-chat-view.c:356
+#: src/gossip-chat-view.c:357
 msgid "_Copy Link Address"
 msgstr "_Kopijuoti nuorodos adresą"
 
-#: src/gossip-chat-view.c:364
+#: src/gossip-chat-view.c:365
 msgid "_Open Link"
 msgstr "_Atidaryti nuorodą"
 
-#: src/gossip-chat-view.c:678
+#: src/gossip-chat-view.c:676
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:514
+#: src/gossip-chat-window.c:536
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sPokalbis - %s"
 
-#: src/gossip-chat.c:698
+#: src/gossip-chat-window.c:791
+msgid "Typing a message."
+msgstr "Rašoma žinutė."
+
+#: src/gossip-chat.c:699
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Besišnekant su %s įvyko klaida."
 
-#: src/gossip-chat.c:703 src/gossip-group-chat.c:911
+#: src/gossip-chat.c:704 src/gossip-group-chat.c:911
 #: src/gossip-group-chat.c:1021
 msgid "Details:"
 msgstr "Detalės:"
 
-#: src/gossip-chat.c:794
+#: src/gossip-chat.c:795
 #, c-format
 msgid "%s went offline"
 msgstr "%s atsijungė"
 
-#: src/gossip-chat.c:808
+#: src/gossip-chat.c:809
 #, c-format
 msgid "%s comes online"
 msgstr "%s prisijungė"
 
-#: src/gossip-chat.c:889
+#: src/gossip-chat.c:890
 msgid "Connected"
 msgstr "Prisijungęs"
 
-#: src/gossip-chat.c:903
+#: src/gossip-chat.c:904
 msgid "Disconnected"
 msgstr "Neprisijungęs"
 
@@ -700,38 +704,42 @@ msgid "Country:"
 msgstr "Šalis:"
 
 #: ui/main.glade.h:19
+msgid "Decide _Later"
+msgstr "Nuspręsti vė_liau"
+
+#: ui/main.glade.h:20
 msgid "Description"
 msgstr "Aprašymas"
 
-#: ui/main.glade.h:20
+#: ui/main.glade.h:21
 msgid "Disable sounds when _away"
 msgstr "Atjungti garsus kai m_anęs nėra"
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:22
 msgid "Disable sounds when _busy"
 msgstr "Atjungti garsus kai aš _užsiėmęs"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:23
 msgid "Do you already have an account on a Jabber server?"
 msgstr "Ar Jūs jau turite abonementą Jabber serveryje?"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:24
 msgid "Do you want to accept the request?"
 msgstr "Ar Jūs norite priimti prašymą?"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:25
 msgid "Edit Groups"
 msgstr "Keisti grupes"
 
-#: ui/main.glade.h:25
+#: ui/main.glade.h:26
 msgid "Email:"
 msgstr "El.paštas:"
 
-#: ui/main.glade.h:26
+#: ui/main.glade.h:27
 msgid "Enter status message:"
 msgstr "Įveskit būsenos žinutę:"
 
-#: ui/main.glade.h:28
+#: ui/main.glade.h:29
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -747,7 +755,7 @@ msgstr ""
 "\n"
 "Kad pradėti, paprasčiausiai spauskit „Pirmyn“."
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:34
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -757,11 +765,11 @@ msgstr ""
 "Jūs galite pakeisti Jūsų abonento nustatymus vėliau, pasirinkdami Pokalbis-"
 ">Prisijungti... meniu punktą."
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:36
 msgid "I would like to add you to my contact list."
 msgstr "Aš norėčiau pridėti Jus į mano kontaktų sąrašą."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:37
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -771,169 +779,165 @@ msgstr ""
 "prašymas. Kol šis prašymas nepatenkintas, vartotojas Jūsų kontaktų sąraše "
 "visada bus rodomas kaip „Atsijungęs“."
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:38
 msgid "In which group do you want to place this contact?"
 msgstr "Kuriai grupei norite priskirti šį kontaktą?"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:39
 msgid "Information about ..."
 msgstr "Informacija apie ..."
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:40
 msgid "JID"
 msgstr "JID"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:41
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:42
 msgid "Jabber Account"
 msgstr "Jabber abonentas"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:43
 msgid "Jabber ID:"
 msgstr "Jabber ID:"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:44
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:45
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:46
 msgid "Name:"
 msgstr "Vardas:"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:47
 msgid "No"
 msgstr "Ne"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:48
 msgid "OS:"
 msgstr "OS:"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:49
 msgid "On what server do you have a Jabber account?"
 msgstr "Kokiame serveryje Jūs turite Jabber abonementą?"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:50
 msgid "Personal information"
 msgstr "Asmeninė informacija"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:51
 msgid "Play sound when messages arrive"
 msgstr "Sugroti garsą kai gaunama žinutė"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:52
 msgid "Preferences"
 msgstr "Nustatymai"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:53
 msgid "Request message"
 msgstr "Prašymo žinutė"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:54
 msgid "Sending request"
 msgstr "Siunčiama užklausa"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:55
 msgid "Setup Finished"
 msgstr "Sąranka baigta"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:56
 msgid "Show _Offline Contacts"
 msgstr "Rodyti _atsijungusius kontaktus"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:57
 msgid "Sound"
 msgstr "Garsas"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:58
 msgid "Status"
 msgstr "Būsena"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:59
 msgid "Status Message"
 msgstr "Busenos žinutė"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:60
 msgid "Status Messages"
 msgstr "Busenos žinutės"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:61
 msgid "Use a different server"
 msgstr "Naudoti kitą serverį"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:62
 msgid "Version:"
 msgstr "Versija:"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:63
 msgid "Web site:"
 msgstr "Tinklapis:"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:64
 msgid "Welcome to Gossip"
 msgstr "Sveiki atvykę į Gossip"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:65
 msgid "What instant messaging system does the contact use?"
 msgstr "Kokią greitų žinučių sistemą kontaktas naudoją?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:66
 msgid "What is your name?"
 msgstr "Koks Jūsų vardas?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:67
 msgid "What nickname do you want to use for this contact?"
 msgstr "Kokią pravardę norite naudoti šiam kontaktui?"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:68
 msgid "What request message do you want to send to ...?"
 msgstr "Kokios užklausos žinutę Jūs norite išsiųsti ...?"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:69
 msgid "What server do you want to use?"
 msgstr "Kokį serverį Jūs norite naudoti?"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:70
 msgid "What username do you use?"
 msgstr "Kokį vartotojo vardą naudojate?"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:71
 msgid "What username do you want to use?"
 msgstr "Kokį naudotojo vardą Jūs norite naudoti?"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:72
 msgid "Yes"
 msgstr "Taip"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:73
 msgid "Your Identity"
 msgstr "Jūsų tapatybė"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:74
 msgid "_Accept"
 msgstr "_Priimti"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:75
 msgid "_Account Information"
 msgstr "_Abonemento informacija"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:76
 msgid "_Add Contact..."
 msgstr "Pri_dėti kontaktą..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:78
 msgid "_Connect..."
 msgstr "_Prisijungti..."
-
-#: ui/main.glade.h:78
-msgid "_Decide Later"
-msgstr "_Nuspręsti vėliau"
 
 #: ui/main.glade.h:79
 msgid "_Deny"
