@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.7.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-23 00:32+0200\n"
-"PO-Revision-Date: 2004-08-23 00:36+0200\n"
+"POT-Creation-Date: 2004-09-05 22:24+0200\n"
+"PO-Revision-Date: 2004-09-05 22:25+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -136,7 +136,7 @@ msgstr "Traduït per:"
 msgid "translator_credits"
 msgstr "Jordi Mallach"
 
-#: src/gossip-account.c:292 src/gossip-app.c:64 src/gossip-startup-druid.c:219
+#: src/gossip-account.c:302 src/gossip-app.c:64 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Casa"
 
@@ -178,7 +178,7 @@ msgstr "%s vol ser notificat del vostre estat."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1420
+#: src/gossip-app.c:1448
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -186,45 +186,45 @@ msgstr ""
 "Assegureu-vos que la informació del vostre compte és correcta. El servidor "
 "també pot no estar disponible en aquest moment."
 
-#: src/gossip-app.c:1892
+#: src/gossip-app.c:1922
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, un client de missatgeria instantània"
 
-#: src/gossip-app.c:2036
+#: src/gossip-app.c:2066
 #, c-format
 msgid "New message from %s"
 msgstr "Nou missatge de %s"
 
-#: src/gossip-app.c:2125 src/gossip-chat-window.c:793
-#: src/gossip-roster-view.c:986
+#: src/gossip-app.c:2155 src/gossip-chat-window.c:793
+#: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Desconnectat"
 
-#: src/gossip-app.c:2524 src/gossip-preferences.c:638
+#: src/gossip-app.c:2554 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:2535 src/gossip-preferences.c:639
+#: src/gossip-app.c:2565 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Ocupat"
 
-#: src/gossip-app.c:2546 src/gossip-preferences.c:640
+#: src/gossip-app.c:2576 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2708
 msgid "Available..."
 msgstr "Disponible..."
 
-#: src/gossip-app.c:2683
+#: src/gossip-app.c:2713
 msgid "Busy..."
 msgstr "Ocupat..."
 
-#: src/gossip-app.c:2688
+#: src/gossip-app.c:2718
 msgid "Away..."
 msgstr "Absent..."
 
-#: src/gossip-app.c:2717
+#: src/gossip-app.c:2747
 msgid "Edit List..."
 msgstr "Edita la llista..."
 
@@ -302,7 +302,7 @@ msgstr "Grup"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:38
+#: src/gossip-roster.c:39
 msgid "Unsorted"
 msgstr "Sense ordenar"
 
@@ -369,31 +369,31 @@ msgstr "No s'ha pogut registrar el compte"
 msgid "Reason:"
 msgstr "Raó:"
 
-#: src/gossip-roster-view.c:209
+#: src/gossip-roster-view.c:244
 msgid "/Contact _Information"
 msgstr "/_Informació del contacte"
 
-#: src/gossip-roster-view.c:217
+#: src/gossip-roster-view.c:252
 msgid "/Re_name contact"
 msgstr "/Rea_nomena el contacte"
 
-#: src/gossip-roster-view.c:225
+#: src/gossip-roster-view.c:260
 msgid "/_Edit groups"
 msgstr "/_Edita els grups"
 
-#: src/gossip-roster-view.c:233
+#: src/gossip-roster-view.c:268
 msgid "/Show _Log"
 msgstr "/Mostra el _registre"
 
-#: src/gossip-roster-view.c:249
+#: src/gossip-roster-view.c:284
 msgid "/_Remove contact"
 msgstr "/Sup_rimeix el contacte"
 
-#: src/gossip-roster-view.c:260
+#: src/gossip-roster-view.c:295
 msgid "/Re_name group"
 msgstr "/Rea_nomena el grup"
 
-#: src/gossip-roster-view.c:1397
+#: src/gossip-roster-view.c:1642
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -404,7 +404,7 @@ msgstr ""
 "%s\n"
 "de la llista de contactes?"
 
-#: src/gossip-roster-view.c:1490
+#: src/gossip-roster-view.c:1735
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -413,7 +413,7 @@ msgstr ""
 "Introduïu un àlias nou per al contacte\n"
 "%s"
 
-#: src/gossip-roster-view.c:1596
+#: src/gossip-roster-view.c:1841
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -422,11 +422,11 @@ msgstr ""
 "Introduïu un àlias nou per al grup\n"
 "%s"
 
-#: src/gossip-startup-druid.c:257
+#: src/gossip-startup-druid.c:258
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip tractarà d'utilitzar el vostre compte:"
 
-#: src/gossip-startup-druid.c:261
+#: src/gossip-startup-druid.c:262
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip tractarà d'enregistrar el compte:"
 
@@ -568,14 +568,18 @@ msgid "Use _encryption (SSL)"
 msgstr "Utilitza el _xifrat (SSL)"
 
 #: ui/connect.glade.h:13
+msgid "Use system pro_xy"
+msgstr "Utilitza el _servidor intermediari del sistema"
+
+#: ui/connect.glade.h:14
 msgid "_Jabber ID:"
 msgstr "_Jabber ID:"
 
-#: ui/connect.glade.h:14
+#: ui/connect.glade.h:15
 msgid "_Password:"
 msgstr "Con_trassenya:"
 
-#: ui/connect.glade.h:15
+#: ui/connect.glade.h:16
 msgid "_Resource:"
 msgstr "_Recurs:"
 
@@ -917,12 +921,12 @@ msgid "Sending request"
 msgstr "S'està enviant la petició"
 
 #: ui/main.glade.h:67
-msgid "Setup Finished"
-msgstr "Ha finalitzat la configuració"
+msgid "Server Details"
+msgstr "Detalls del servidor"
 
 #: ui/main.glade.h:68
-msgid "Sever Details"
-msgstr "Detalls del servidor"
+msgid "Setup Finished"
+msgstr "Ha finalitzat la configuració"
 
 #: ui/main.glade.h:69
 msgid "Show _Offline Contacts"
@@ -960,7 +964,9 @@ msgstr "Aquest nom s'usarà per a indentificar-vos en les finestres de xerrada."
 msgid ""
 "This wizard will allow you to configure your account settings for another "
 "protocol. "
-msgstr "Aquest auxiliar vos permetrà configurar els vostres paràmetres de compte per a un altre protocol. "
+msgstr ""
+"Aquest auxiliar vos permetrà configurar els vostres paràmetres de compte per "
+"a un altre protocol. "
 
 #: ui/main.glade.h:78
 msgid "Use a different server"
@@ -1020,7 +1026,7 @@ msgstr "Sí"
 
 #: ui/main.glade.h:92
 msgid ""
-"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"You are not subscribed to this contact's status. Press Subscribe to receive "
 "their status."
 msgstr ""
 "No esteu subscrit a l'estat d'aquest contacte. Premeu «Subscriu» per a rebre "
