@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-01-22 13:22+0100\n"
-"PO-Revision-Date: 2003-12-21 23:38+0100\n"
+"PO-Revision-Date: 2004-01-24 21:39+0100\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -146,7 +146,7 @@ msgstr "_Salir"
 
 #: src/gossip-app.c:607
 msgid "Artwork by:"
-msgstr ""
+msgstr "Arte por:"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
@@ -158,9 +158,8 @@ msgstr ""
 "Francisco Javier F. <serrador@arrakis.es>"
 
 #: src/gossip-app.c:629
-#, fuzzy
 msgid "An Instant Messaging Client for GNOME"
-msgstr "Un cliente de Jabber para GNOME"
+msgstr "Un cliente de Mensajería Instantánea Jabber para Gnome"
 
 #: src/gossip-app.c:638
 msgid "Gossip Website"
@@ -215,24 +214,20 @@ msgid "Away"
 msgstr "Ausente"
 
 #: src/gossip-app.c:2470
-#, fuzzy
 msgid "Available..."
-msgstr "Disponible"
+msgstr "Disponible..."
 
 #: src/gossip-app.c:2474
-#, fuzzy
 msgid "Busy..."
-msgstr "Ocupado"
+msgstr "Ocupado..."
 
 #: src/gossip-app.c:2478
-#, fuzzy
 msgid "Away..."
-msgstr "Ausente"
+msgstr "Ausente..."
 
 #: src/gossip-app.c:2504
-#, fuzzy
 msgid "Edit List..."
-msgstr "_Editar estados..."
+msgstr "_Editar lista..."
 
 #: src/gossip-chat-view.c:320 ui/chat.glade.h:2
 msgid "C_lear"
@@ -280,14 +275,12 @@ msgid "%s comes online"
 msgstr "%s se conecta"
 
 #: src/gossip-chat.c:895
-#, fuzzy
 msgid "Connected"
-msgstr "Conectar"
+msgstr "Conectado"
 
 #: src/gossip-chat.c:910
-#, fuzzy
 msgid "Disconnected"
-msgstr "_Desconectar"
+msgstr "Desconectado"
 
 #: src/gossip-contact-info.c:352
 #, c-format
@@ -297,16 +290,15 @@ msgstr "Información del contacto para %s"
 #: src/gossip-edit-groups-dialog.c:182
 #, c-format
 msgid "Edit groups for %s"
-msgstr ""
+msgstr "Editar grupos de %s"
 
 #: src/gossip-edit-groups-dialog.c:246
-#, fuzzy
 msgid "Select"
-msgstr "_Rechazar"
+msgstr "Seleccionar"
 
 #: src/gossip-edit-groups-dialog.c:257
 msgid "Group"
-msgstr ""
+msgstr "Grupo"
 
 #. This needs to be done better, could have group_is_unsorted().
 #.
@@ -387,9 +379,8 @@ msgid "/Re_name contact"
 msgstr "/Re_nombrar contacto"
 
 #: src/gossip-roster-view.c:199
-#, fuzzy
 msgid "/_Edit groups"
-msgstr "_Editar cuentas..."
+msgstr "/_Editar grupos"
 
 #: src/gossip-roster-view.c:207
 msgid "/Show _Log"
@@ -663,7 +654,7 @@ msgstr "<b>Información solicitada, espere por favor...</b>"
 
 #: ui/main.glade.h:5
 msgid "<b>Preset status messages</b>"
-msgstr ""
+msgstr "<b>Preconfigurar mensajes de estado</b>"
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
@@ -738,18 +729,16 @@ msgid "Do you want to accept the request?"
 msgstr "¿Quiere aceptar la solicitud?"
 
 #: ui/main.glade.h:24
-#, fuzzy
 msgid "Edit Groups"
-msgstr "Gossip - Editar grupos de charlas"
+msgstr "Editar grupos"
 
 #: ui/main.glade.h:25
 msgid "Email:"
 msgstr "Correo-e:"
 
 #: ui/main.glade.h:26
-#, fuzzy
 msgid "Enter status message:"
-msgstr "Mensaje de estado."
+msgstr "Introduzca mensaje de estado:"
 
 #: ui/main.glade.h:28
 msgid ""
@@ -873,7 +862,6 @@ msgid "Sound"
 msgstr "Sonido"
 
 #: ui/main.glade.h:57
-#, fuzzy
 msgid "Status Message"
 msgstr "Mensajes de estado"
 
@@ -970,9 +958,8 @@ msgid "_Join Group Chat..."
 msgstr "_Unirse al grupo de charla..."
 
 #: ui/main.glade.h:82
-#, fuzzy
 msgid "_New Message..."
-msgstr "Enviar _mensaje..."
+msgstr "Mensaje _nuevo..."
 
 #: ui/main.glade.h:83
 msgid "_Preferences"
