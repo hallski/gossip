@@ -1,4 +1,4 @@
-2003-12-11  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
+2003-12-12  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
 
 	* src/gossip-chat-window.h:
 	* src/gossip-chat-window.c:
@@ -6,7 +6,7 @@
 	tabs and treeview layout.
 	- Correct cast in GOSSIP_CHAT_WINDOW_GET_CLASS.
 
-2003-12-11  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
+2003-12-12  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
 
 	* src/gossip-chat.c: (chat_input_key_press_event_cb):
 	- Don't handle ctrl-enter.
