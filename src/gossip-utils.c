@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 CodeFactory AB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
@@ -1250,9 +1251,10 @@ password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
 }
 
 gchar *
-gossip_password_dialog_run (GtkWindow *parent)
+gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 {
 	GtkWidget *dialog;
+	GtkWidget *checkbox;
 	GtkWidget *entry, *hbox;
 	gchar     *password;
 	
@@ -1262,6 +1264,9 @@ gossip_password_dialog_run (GtkWindow *parent)
 					 GTK_BUTTONS_OK_CANCEL,
 					 _("Please enter your password:"));
 	
+	checkbox = gtk_check_button_new_with_label (_("Remember Password?"));
+	gtk_widget_show (checkbox);
+
 	entry = gtk_entry_new ();
 	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
 	gtk_widget_show (entry);
@@ -1276,9 +1281,15 @@ gossip_password_dialog_run (GtkWindow *parent)
 	
 	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), checkbox, FALSE, TRUE, 4);
 	
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
 		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbox))) {
+			g_free (account->password);
+			account->password = password;
+			gossip_account_store (account, NULL);
+		}
 	} else {
 		password = NULL;
 	}

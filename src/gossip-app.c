@@ -1088,7 +1088,7 @@ app_connection_open_cb (LmConnection *connection,
 	}
 
 	if (!priv->account->password || !priv->account->password[0]) {
-		password = gossip_password_dialog_run (GTK_WINDOW (priv->window));
+		password = gossip_password_dialog_run (priv->account, GTK_WINDOW (priv->window));
 		if (!password) {
 			app_disconnect (app);
 			return;

@@ -142,7 +142,7 @@ gossip_register_account (GossipAccount *account,
 	gboolean             retval;
 
 	if (!account->password || !account->password[0]) {
-		password = gossip_password_dialog_run (parent);
+		password = gossip_password_dialog_run (account, parent);
 
 		if (!password) {
 			return FALSE;

@@ -1,3 +1,15 @@
+2003-07-16  Thomas Reynolds  <thomasr@infograph.com>
+
+	* src/gossip-app.c: 
+	(app_connection_open_cb): 
+	* src/gossip-register.c: 
+	(gossip_register_account):
+	* src/gossip-utils.c: 
+	(gossip_password_dialog_run):
+	* src/gossip-utils.h:
+	* ui/connect.glade: 
+	- Added a "remember password"-checkbutton to the password dialog.
+
 2003-07-12  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-roster.c (roster_iq_handler): Remove user from the

@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -73,7 +74,8 @@ const gchar *gossip_utils_get_show_filename          (const gchar      *show);
 const gchar *gossip_utils_get_timestamp_from_message (LmMessage        *message);
 GossipStatus gossip_utils_get_status_from_type_show  (LmMessageSubType  type,
 						      const gchar      *show);
-gchar *      gossip_password_dialog_run              (GtkWindow        *parent);
+gchar *      gossip_password_dialog_run              (GossipAccount    *account,
+						      GtkWindow        *parent);
 
 
 #endif /*  __GOSSIP_UTILS_H__ */
