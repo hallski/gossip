@@ -669,6 +669,8 @@ gossip_preferences_show_status_editor (void)
 			      "away_remove_button", "clicked", status_remove_away_clicked_cb,
 			      NULL);
 
+	gtk_window_set_transient_for (GTK_WINDOW (editor->dialog), GTK_WINDOW (gossip_app_get_window ()));
+	
 	/* Fill in busy messages. */
 	list = gossip_utils_get_busy_messages ();
 

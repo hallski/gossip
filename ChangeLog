@@ -1,5 +1,9 @@
 2003-11-12  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-preferences.c
+	(gossip_preferences_show_status_editor): Set transient, just for
+	Ross.
+
 	* src/gossip-sound.c (gossip_sound_play): Use silent_busy
 	preference.
 
