@@ -1,3 +1,8 @@
+2004-01-23  Richard Hult  <richard@imendio.com>
+
+	* gossip.schemas.in: Add short/long description to
+	preset_messages, get rid of warning.
+
 2004-01-22  Richard Hult  <richard@imendio.com>
 
 	* Release 0.7.1.

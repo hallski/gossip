@@ -149,6 +149,12 @@
       <type>list</type>
       <list_type>string</list_type>
       <default>[]</default>
+       <locale name="C">
+          <short>Preset status messages</short>
+          <long>
+            Preset status messages.
+          </long>
+       </locale>
     </schema>
 
   </schemalist>  
