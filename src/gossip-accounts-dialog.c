@@ -28,25 +28,28 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-config.h>
+#include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-app.h"
 #include "gossip-accounts-dialog.h"
+#include "gossip-register.h"
 #include "gossip-account.h"
 
 typedef struct {
-	GossipApp *app;
-	
-	GtkWidget *dialog;
-	GtkWidget *accounts_list;
-	GtkEntry  *account_entry;
-	GtkEntry  *username_entry;
-	GtkEntry  *resource_entry;
-	GtkEntry  *server_entry;
-	GtkEntry  *port_entry;
-	GtkEntry  *password_entry;
-	GtkWidget *add_button;
-	GtkWidget *remove_button;
+	GossipApp    *app;
+ 	
+	GtkWidget    *dialog;
+	GtkWidget    *accounts_list;
+	GtkEntry     *account_entry;
+	GtkEntry     *username_entry;
+	GtkEntry     *resource_entry;
+	GtkEntry     *server_entry;
+	GtkEntry     *port_entry;
+	GtkEntry     *password_entry;
+	GtkWidget    *add_button;
+	GtkWidget    *remove_button;
+	GtkWidget    *register_button;
 
 	GtkListStore *model;
 } GossipAccountsDialog;
@@ -57,37 +60,37 @@ enum {
 	NUM_COLS
 };
 
-static void accounts_dialog_destroy_cb      (GtkWidget            *widget,
-					     GossipAccountsDialog *dialog);
-static void accounts_dialog_response_cb     (GtkWidget            *widget,
-					     gint                  response,
-					     GossipAccountsDialog  *dialog);
-static void accounts_dialog_add_account_cb  (GtkWidget            *widget,
-					     GossipAccountsDialog *dialog);
+static void accounts_dialog_destroy_cb           (GtkWidget            *widget,
+						  GossipAccountsDialog *dialog);
+static void accounts_dialog_response_cb          (GtkWidget            *widget,
+						  gint                  response,
+						  GossipAccountsDialog *dialog);
+static void accounts_dialog_add_account_cb       (GtkWidget            *widget,
+						  GossipAccountsDialog *dialog);
+static void accounts_dialog_remove_account_cb    (GtkWidget            *widget,
+						  GossipAccountsDialog *dialog);
+static void accounts_dialog_register_account_cb  (GtkWidget            *widget,
+						  GossipAccountsDialog *dialog);
+static
+gboolean accounts_dialog_update_account_cb       (GtkWidget            *widget,
+						  GdkEventFocus        *event,
+						  GossipAccountsDialog *dialog);
+static void accounts_dialog_set_entries          (GossipAccountsDialog *dialog,
+						  const gchar          *account_name,
+						  const gchar          *username,
+						  const gchar          *password,
+						  const gchar          *resource,
+						  const gchar          *server,
+						  guint                 port);
+static void accounts_dialog_rebuild_list         (GossipAccountsDialog *dialog);
+static void accounts_dialog_selection_changed_cb (GtkTreeSelection     *selection,
+						  GossipAccountsDialog *dialog);
 static void
-accounts_dialog_remove_account_cb           (GtkWidget            *widget,
-					     GossipAccountsDialog *dialog);
-static gboolean
-accounts_dialog_update_account_cb           (GtkWidget            *widget,
-					     GdkEventFocus        *event,
-					     GossipAccountsDialog *dialog);
-static void accounts_dialog_set_entries     (GossipAccountsDialog *dialog,
-					     const gchar          *account_name,
-					     const gchar          *username,
-					     const gchar          *password,
-					     const gchar          *resource,
-					     const gchar          *server,
-					     guint                 port);
-static void accounts_dialog_rebuild_list    (GossipAccountsDialog *dialog);
-static void
-accounts_dialog_selection_changed_cb        (GtkTreeSelection     *selection,
-					     GossipAccountsDialog *dialog);
-static void
-accounts_dialog_passwd_entry_insert_text_cb (GtkEditable          *editable,
-					     gchar                *new_text,
-					     gint                  len,
-					     gint                 *position,
-					     GossipAccountsDialog *dialog);
+accounts_dialog_port_entry_insert_text_cb        (GtkEditable          *editable,
+						  gchar                *new_text,
+						  gint                  len,
+						  gint                 *position,
+						  GossipAccountsDialog *dialog);
 
 
 static void
@@ -120,9 +123,10 @@ accounts_dialog_add_account_cb (GtkWidget            *widget,
 
 	gtk_list_store_append (GTK_LIST_STORE (dialog->model), &iter);
 
-	account = gossip_account_new ("New account", NULL, NULL, NULL, NULL, 
+	account = gossip_account_new (_("New account"),
+				      NULL, NULL, NULL, NULL, 
 				      LM_CONNECTION_DEFAULT_PORT);
-	
+
 	gtk_list_store_set (GTK_LIST_STORE (dialog->model),
 			    &iter,
 			    COL_NAME, account->name,
@@ -165,6 +169,28 @@ accounts_dialog_remove_account_cb (GtkWidget            *widget,
 	gnome_config_sync_file (GOSSIP_ACCOUNTS_PATH);
 }
 
+static void
+accounts_dialog_register_account_cb (GtkWidget            *widget,
+				     GossipAccountsDialog *dialog)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter       iter;
+	GossipAccount    *account;
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
+	
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return;
+	}
+	
+	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
+			    &iter,
+			    COL_ACCOUNT, &account,
+			    -1);
+	
+	gossip_register_account (account, GTK_WINDOW (dialog->dialog));
+}
+
 static gboolean
 accounts_dialog_update_account_cb (GtkWidget            *widget,
 				   GdkEventFocus        *event,
@@ -176,8 +202,10 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 	gchar            *old_name = NULL;
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
-	
-	gtk_tree_selection_get_selected (selection, NULL, &iter);
+
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return FALSE;
+	}
 	
 	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
 			    &iter,
@@ -190,7 +218,7 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 		gtk_list_store_set (GTK_LIST_STORE (dialog->model),
 				    &iter,
 				    COL_NAME, account->name,
-				    COL_ACCOUNT, account,
+				    //COL_ACCOUNT, account,
 				    -1);
 	}
 	else if (widget == GTK_WIDGET (dialog->username_entry)) {
@@ -212,12 +240,11 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 	else if (widget == GTK_WIDGET (dialog->port_entry)) {
 		gint pnr;
 		
-		pnr = strtol (gtk_entry_get_text (dialog->port_entry), 
-			      NULL, 10);
+		pnr = strtol (gtk_entry_get_text (dialog->port_entry), NULL, 10);
 		if (pnr > 0 && pnr < 65556) {
 			account->port = pnr;
 		} else {
-			gchar *str = g_strdup_printf ("%d", account->port);;
+			gchar *str = g_strdup_printf ("%d", account->port);
 			gtk_entry_set_text (dialog->port_entry, str);
 			g_free (str);
 		}
@@ -225,7 +252,7 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 
 	gossip_account_store (account, old_name);
 	g_free (old_name);
-	
+
 	return FALSE;
 }
 
@@ -311,11 +338,11 @@ accounts_dialog_selection_changed_cb (GtkTreeSelection     *selection,
 }
 
 static void
-accounts_dialog_passwd_entry_insert_text_cb (GtkEditable *editable,
-					     gchar       *new_text,
-					     gint         len,
-					     gint        *position,
-					     GossipAccountsDialog *dialog)
+accounts_dialog_port_entry_insert_text_cb (GtkEditable          *editable,
+					   gchar                *new_text,
+					   gint                  len,
+					   gint                 *position,
+					   GossipAccountsDialog *dialog)
 {
 	gint  i;
 	
@@ -353,6 +380,7 @@ gossip_accounts_dialog_show (GossipApp *app)
 				      "account_entry", &dialog->account_entry,
 				      "add_button", &dialog->add_button,
 				      "remove_button", &dialog->remove_button,
+				      "register_button", &dialog->register_button,
 				      NULL);
 	
 	g_signal_connect (dialog->dialog,
@@ -373,6 +401,11 @@ gossip_accounts_dialog_show (GossipApp *app)
 	g_signal_connect (dialog->remove_button,
 			  "clicked",
 			  G_CALLBACK (accounts_dialog_remove_account_cb),
+			  dialog);
+
+	g_signal_connect (dialog->register_button,
+			  "clicked",
+			  G_CALLBACK (accounts_dialog_register_account_cb),
 			  dialog);
 
 	g_signal_connect (dialog->account_entry,
@@ -407,7 +440,7 @@ gossip_accounts_dialog_show (GossipApp *app)
 
 	g_signal_connect (dialog->port_entry,
 			  "insert-text",
-			  G_CALLBACK (accounts_dialog_passwd_entry_insert_text_cb),
+			  G_CALLBACK (accounts_dialog_port_entry_insert_text_cb),
 			  dialog);
 	
 	dialog->model = gtk_list_store_new (NUM_COLS,

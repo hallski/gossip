@@ -1021,20 +1021,12 @@ app_iq_handler (LmMessageHandler *handler,
 }
 
 static void
-app_password_dialog_activate_cb (GtkWidget *entry, gpointer dialog)
-{
-	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
-}
-
-static void
 app_connection_open_cb (LmConnection *connection,
 			gboolean      result,
 			GossipApp    *app)
 {
 	GossipAppPriv *priv;
-	GtkWidget     *dialog;
-	GtkWidget     *hbox;
-	GtkWidget     *entry;
+	gchar         *password;
 
 	g_return_if_fail (connection != NULL);
 	g_return_if_fail (GOSSIP_IS_APP (app));
@@ -1042,38 +1034,20 @@ app_connection_open_cb (LmConnection *connection,
 	priv = app->priv;
 
 	if (result != TRUE) {
-		g_warning ("Connection failed, handle this!");
+		/* FIXME: Handle this better... */
+
+		app_disconnect (app);
+		return;
 	}
 
 	if (!priv->account->password || !priv->account->password[0]) {
-		dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
-						 GTK_MESSAGE_QUESTION,
-						 GTK_BUTTONS_OK_CANCEL,
-						 _("Please enter your password:"));
-
-		entry = gtk_entry_new ();
-		gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
-		gtk_widget_show (entry);
-
-		g_signal_connect (entry,
-				  "activate",
-				  G_CALLBACK (app_password_dialog_activate_cb),
-				  dialog);
-		
-		hbox = gtk_hbox_new (FALSE, 0);
-		gtk_widget_show (hbox);
-		
-		gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
-		gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, TRUE, 4);
-		
-		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
-			priv->account->password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
-		} else {
-			gtk_widget_destroy (dialog);
-		}
-		
-		gtk_widget_destroy (dialog);
+		password = gossip_password_dialog_run (GTK_WINDOW (priv->window));
+		if (!password) {
+			app_disconnect (app);
+			return;
+ 		}
+	} else {
+		password = g_strdup (priv->account->password);
 	}
 
 	if (!priv->account->resource || !priv->account->resource[0]) {
@@ -1088,10 +1062,12 @@ app_connection_open_cb (LmConnection *connection,
 
 	lm_connection_authenticate (connection, 
 				    priv->account->username, 
-				    priv->account->password,
+				    password,
 				    priv->account->resource,
 				    (LmResultFunction) app_authentication_cb,
 				    app, NULL, NULL);
+
+	g_free (password);
 }
 
 static void

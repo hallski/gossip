@@ -10,12 +10,15 @@ src/gossip-group-chat.c
 src/gossip-join-dialog.c
 src/gossip-main.c
 src/gossip-message.c
+src/gossip-register.c
 src/gossip-roster.c
 src/gossip-startup-druid.c
-src/gossip-utils.c           
+src/gossip-utils.c
 ui/chat.glade
 ui/connect.glade
 ui/druid.glade
 ui/group-chat.glade
 ui/main.glade
 gossip.desktop.in
+
+

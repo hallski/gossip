@@ -1,3 +1,30 @@
+2003-07-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-register.c (register_connection_open_cb): Use the
+	real password.
+	(gossip_register_account): Ask for a password if we don't have
+	one.
+
+2003-07-05  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_connection_open_cb): Move password dialog
+	from here...
+
+	* src/gossip-utils.c (gossip_password_dialog_run): ...and move
+	here.
+
+	* src/gossip-accounts-dialog.c
+	(accounts_dialog_update_account_cb): Plug leak and fix crash when
+	no account was selected..
+	(accounts_dialog_register_account_cb): Add.
+
+	* src/gossip-startup-druid.c (startup_druid_get_account_info):
+	Tweak a string.
+	(startup_druid_register_account): Remove registration code from
+	here...
+
+	* src/gossip-register.c: ...and put it here.
+
 2003-07-05  Richard Hult  <rhult@codefactory.se>
 
 	* src/gossip-startup-druid.c: (startup_druid_get_account_info),

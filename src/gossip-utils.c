@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-url.h>
+#include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 
@@ -1216,3 +1217,47 @@ gossip_utils_get_status_from_type_show (LmMessageSubType  type,
 	return GOSSIP_STATUS_AVAILABLE;
 }
 
+static void
+password_dialog_activate_cb (GtkWidget *entry, gpointer dialog)
+{
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+}
+
+gchar *
+gossip_password_dialog_run (GtkWindow *parent)
+{
+	GtkWidget *dialog;
+	GtkWidget *entry, *hbox;
+	gchar     *password;
+	
+	dialog = gtk_message_dialog_new (parent,
+					 GTK_DIALOG_DESTROY_WITH_PARENT,
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_OK_CANCEL,
+					 _("Please enter your password:"));
+	
+	entry = gtk_entry_new ();
+	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
+	gtk_widget_show (entry);
+	
+	g_signal_connect (entry,
+			  "activate",
+			  G_CALLBACK (password_dialog_activate_cb),
+			  dialog);
+	
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox);
+	
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, TRUE, 4);
+	
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
+		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+	} else {
+		password = NULL;
+	}
+	
+	gtk_widget_destroy (dialog);
+
+	return password;
+}
