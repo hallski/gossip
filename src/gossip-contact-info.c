@@ -367,7 +367,6 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 	
 	contact_info_request_information (info, jid);
 
-	gtk_window_set_transient_for (GTK_WINDOW (info->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (info->dialog);
 
 	return info;

@@ -1245,7 +1245,8 @@ roster_view_item_menu_remove_cb (gpointer   data,
 		      "use-markup", TRUE,
 		      "wrap", FALSE,
 		      NULL);
-	
+
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (gossip_app_get_window ()));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 

@@ -1,5 +1,30 @@
 2003-11-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-info.c (gossip_contact_info_new): Don't make
+	this one transient.
+
+	* src/gossip-roster-view.c (roster_view_item_menu_remove_cb): Make
+	the remove dialog transient.
+
+	* ui/main.glade: Make status editor resizable.
+	
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_update_menu),
+	(chat_window_view_activate_cb),
+	(chat_window_tab_left_activate_cb),
+	(chat_window_tab_right_activate_cb),
+	(chat_window_create_notebook): Fix tab navigation and menu
+	sensitivization. Set log item sensitivity each time we open the
+	menu since there might be a log or it might be removed since the
+	last time.
+
+	* ui/pixmaps/gossip-offline.png: Update from Dan.
+
+2003-11-17  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (gossip_chat_window_init): Connect
+	after so the switch is actually done when weget the callback.
+
 	* src/gossip-roster-view.c (roster_view_name_cell_data_func):
 	Reset attributes for inbox items.
 
