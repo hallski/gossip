@@ -1,5 +1,8 @@
 2003-08-30  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c (chat_create_gui): Use stock icon for typing
+	notification.
+
 	* src/gossip-main.c: (setup_default_window_icon):
 	* ui/main.glade: Fix stale references to old image. Thanks boyens!
 

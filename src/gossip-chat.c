@@ -304,8 +304,9 @@ chat_create_gui (GossipChat *chat)
 
 	roster = gossip_app_get_roster ();
 
-	gtk_image_set_from_file (GTK_IMAGE (chat->composing_image),
-				 IMAGEDIR "/typing.png");
+	gtk_image_set_from_stock (GTK_IMAGE (chat->composing_image),
+				  GOSSIP_STOCK_TYPING,
+				  GTK_ICON_SIZE_MENU);
 	
 	pixbuf = gossip_roster_old_get_status_pixbuf_for_jid (roster,
 							      chat->jid);
