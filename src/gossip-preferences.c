@@ -406,64 +406,10 @@ typedef struct {
 	GtkWidget *dialog;
 	GtkWidget *treeview;
 	GtkWidget *remove_button;
+	GtkWidget *add_button;
 	GtkWidget *type_menu;
+	GtkWidget *status_entry;
 } GossipStatusEditor;
-
-static gchar *
-get_new_message (GtkWidget *parent, GossipShow show)
-{
-	GtkWidget   *dialog;
-	GtkWidget   *entry;
-	GtkWidget   *label;
-	GtkWidget   *image;
-	gint         response;
-	gchar       *str;
-
-	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "add_status_message_dialog",
-				      NULL,
-				      "add_status_message_dialog", &dialog,
-				      "status_entry", &entry,
-				      "status_label", &label,
-				      "status_image", &image,
-				      NULL);
-
-	switch (show) {
-	case GOSSIP_SHOW_AVAILABLE:
-		gtk_label_set_text (GTK_LABEL (label), _("Enter the new available message"));
-		break;
-	case GOSSIP_SHOW_BUSY:
-		gtk_label_set_text (GTK_LABEL (label), _("Enter the new busy message"));
-		break;
-	case GOSSIP_SHOW_AWAY:
-		gtk_label_set_text (GTK_LABEL (label), _("Enter the new away message"));
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-	
-	gtk_image_set_from_stock (GTK_IMAGE (image),
-				  gossip_utils_get_stock_from_show (show),
-				  GTK_ICON_SIZE_MENU);
-
-	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (parent));
-
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	if (response != GTK_RESPONSE_OK) {
-		gtk_widget_destroy (dialog);
-		return NULL;
-	}
-
-	str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
-	gtk_widget_destroy (dialog);
-	
-	if (strlen (str) == 0) {
-		g_free (str);
-		return NULL;
-	}
-
-	return str;
-}
 
 static void
 status_destroy_cb (GtkWidget          *widget,
@@ -477,7 +423,7 @@ status_add_clicked_cb (GtkWidget          *button,
 		       GossipStatusEditor *editor)
 {
 	GossipShow         show;
-	gchar             *str;
+	const gchar       *str;
 	GList             *list;
 	GtkListStore      *store;
 	GtkTreeIter        iter;
@@ -487,11 +433,16 @@ status_add_clicked_cb (GtkWidget          *button,
 
 	show = GPOINTER_TO_INT (gossip_option_menu_get_history (GTK_OPTION_MENU (editor->type_menu)));
 	
-	str = get_new_message (editor->dialog, show);
+	/*str = get_new_message (editor->dialog, show);
 	if (!str) {
 		return;
-	}
+		}*/
 
+	str = gtk_entry_get_text (GTK_ENTRY (editor->status_entry));
+	if (strlen (str) == 0) {
+		return;
+	}
+	
 	list = gossip_utils_get_status_messages ();
 
 	entry = g_new (GossipStatusEntry, 1);
@@ -516,6 +467,8 @@ status_add_clicked_cb (GtkWidget          *button,
 	g_object_unref (pixbuf);
 
 	gossip_utils_free_status_messages (list);
+
+	gtk_entry_set_text (GTK_ENTRY (editor->status_entry), "");
 }
 
 static void
@@ -617,6 +570,21 @@ status_dnd_row_deleted_cb (GtkTreeModel *model,
 	gossip_utils_free_status_messages (list);
 }
 
+static void
+status_entry_changed_cb (GtkWidget *widget, GossipStatusEditor *editor)
+{
+	const gchar *str;
+
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	gtk_widget_set_sensitive (editor->add_button, strlen (str) > 0);
+}
+
+static void
+status_entry_activate_cb (GtkWidget *widget, GossipStatusEditor *editor)
+{
+	gtk_widget_activate (editor->add_button);
+}
+	
 GtkWidget *
 gossip_preferences_show_status_editor (void)
 {
@@ -637,7 +605,9 @@ gossip_preferences_show_status_editor (void)
 				       "status_editor_dialog", &editor->dialog,
 				       "treeview", &editor->treeview,
 				       "remove_button", &editor->remove_button,
-				       "type_optionmenu", &editor->type_menu,
+				       "add_button", &editor->add_button,
+				       "optionmenu", &editor->type_menu,
+				       "entry", &editor->status_entry,
 				       NULL);
 
 	gossip_glade_connect (glade,
@@ -646,6 +616,8 @@ gossip_preferences_show_status_editor (void)
 			      "status_editor_dialog", "destroy", status_destroy_cb,
 			      "add_button", "clicked", status_add_clicked_cb,
 			      "remove_button", "clicked", status_remove_clicked_cb,
+			      "entry", "changed", status_entry_changed_cb,
+			      "entry", "activate", status_entry_activate_cb,
 			      NULL);
 
 	gtk_window_set_transient_for (GTK_WINDOW (editor->dialog),

@@ -1,5 +1,29 @@
 2004-01-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (app_authentication_cb),
+	(app_client_disconnected_cb): Make the presence button sensitive
+	only when we're connected.
+
+	(app_status_entry_timeout_cb),
+	(app_status_show_status_entry), (app_status_hide_status_entry),
+	(app_status_entry_set_from_entry), (app_status_entry_activate_cb),
+	(app_status_entry_key_press_event_cb): Hide the entry if it's not
+	touched.
+	
+	* src/gossip-preferences.c: (status_add_clicked_cb),
+	(status_entry_changed_cb), (status_entry_activate_cb),
+	(gossip_preferences_show_status_editor):
+	* ui/main.glade: Tweak the editor some more.
+
+2004-01-19  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-preferences.c: (status_add_clicked_cb),
+	(status_entry_changed_cb), (status_entry_activate_cb),
+	(gossip_preferences_show_status_editor):
+	* ui/main.glade: Tweak the presence editor.
+
+2004-01-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c:
 	* src/gossip-idle.c:
 	* src/gossip-preferences.c:
