@@ -1,3 +1,10 @@
+2004-09-04  Martyn Russell  <ginxd@btopenworld.com>
+
+	* src/gossip-roster-view.c (roster_view_item_active_cb): 
+	- Fixed bug #151737 which kept contacts highlighted when they go
+	offline but only when the preference "showing offline contacts"
+	was used. 
+
 2004-09-02  Mikael Hallendal  <micke@imendio.com>
 
 	* Release 0.7.8

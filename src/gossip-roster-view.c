@@ -808,22 +808,22 @@ roster_view_item_active_cb (ShowActiveData *data)
 					 data->item, 
 					 data->group);
 	} else {
-		GtkTreeIter  iter;
+		GtkTreeIter iter;
 
 		if (roster_view_find_item (data->view, 
 					   &iter, 
 					   data->item, 
 					   data->group)) {
-			GtkTreePath *path = gtk_tree_model_get_path (priv->model, &iter);
-			
+			GtkTreePath *path;
+
+			path = gtk_tree_model_get_path (priv->model, &iter);
 			gtk_tree_model_row_changed (priv->model, path, &iter); 
 			gtk_tree_path_free (path);
 		}
 	}
 
-	if (!gossip_roster_item_is_offline (data->item)) {
-		gossip_roster_item_set_active (data->item, FALSE);  
-	}
+	/* turn background highlight off */
+	gossip_roster_item_set_active (data->item, FALSE);  
 
 	roster_view_item_active_free (data);
 
