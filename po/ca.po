@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-14 18:11+0100\n"
-"PO-Revision-Date: 2003-11-15 20:59+0100\n"
+"POT-Creation-Date: 2003-11-16 18:53+0100\n"
+"PO-Revision-Date: 2003-11-16 18:57+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -99,7 +99,9 @@ msgstr "Si s'ha de reproduir o no sons quan s'està ocupat."
 
 #: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr "Si s'han de mostrar o no els contactes que estan desconnectats a la llista de contactes."
+msgstr ""
+"Si s'han de mostrar o no els contactes que estan desconnectats a la llista "
+"de contactes."
 
 #: gossip.schemas.in.h:20
 msgid "Width of main window"
@@ -215,27 +217,27 @@ msgstr "_Obre l'enllaç"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:510
+#: src/gossip-chat-window.c:470
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sXerrada - %s"
 
-#: src/gossip-chat.c:683
+#: src/gossip-chat.c:674
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:688 src/gossip-group-chat.c:808
-#: src/gossip-group-chat.c:911
+#: src/gossip-chat.c:679 src/gossip-group-chat.c:807
+#: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detalls:"
 
-#: src/gossip-chat.c:759
+#: src/gossip-chat.c:752
 #, c-format
 msgid "%s went offline"
 msgstr "%s s'ha desconnectat"
 
-#: src/gossip-chat.c:770
+#: src/gossip-chat.c:766
 #, c-format
 msgid "%s comes online"
 msgstr "%s s'ha connectat"
@@ -245,12 +247,12 @@ msgstr "%s s'ha connectat"
 msgid "Contact Information for %s"
 msgstr "Informació del contacte %s"
 
-#: src/gossip-group-chat.c:803
+#: src/gossip-group-chat.c:802
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "S'ha produït un error mentre es xerrava a la xerrada en grup %s."
 
-#: src/gossip-group-chat.c:906
+#: src/gossip-group-chat.c:905
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "No s'ha pogut entrar a la xerrada en grup %s."
@@ -336,11 +338,11 @@ msgstr "/Sup_rimeix el contacte"
 msgid "/Re_name group"
 msgstr "/Rea_nomena el grup"
 
-#: src/gossip-roster-view.c:896
+#: src/gossip-roster-view.c:929
 msgid "Offline"
 msgstr "Desconnectat"
 
-#: src/gossip-roster-view.c:1187
+#: src/gossip-roster-view.c:1236
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -351,7 +353,7 @@ msgstr ""
 "%s\n"
 "de la llista de contactes?"
 
-#: src/gossip-roster-view.c:1279
+#: src/gossip-roster-view.c:1328
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -360,7 +362,7 @@ msgstr ""
 "Introduïu un àlias nou per al contacte\n"
 "%s"
 
-#: src/gossip-roster-view.c:1366
+#: src/gossip-roster-view.c:1415
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -401,91 +403,86 @@ msgstr "Menjant"
 msgid "Sleeping"
 msgstr "Dormint"
 
-#: ui/chat.glade.h:1 ui/connect.glade.h:1 ui/group-chat.glade.h:1
-#: ui/main.glade.h:2
-msgid "    "
-msgstr "    "
-
-#: ui/chat.glade.h:2 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:3
-msgid "As _Windows"
-msgstr "Com _finestres"
-
-#: ui/chat.glade.h:4
-msgid "As a _List"
-msgstr "Com una _llista"
-
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:2
 msgid "Chat"
 msgstr "Xarra"
 
-#: ui/chat.glade.h:6
-msgid "Chat with:"
-msgstr "Xerrada amb:"
-
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:3
 msgid "Contact _Information"
 msgstr "_Informació del contacte"
 
-#: ui/chat.glade.h:8
-msgid "D_etach"
-msgstr "D_esenganxa"
-
-#: ui/chat.glade.h:9
+#: ui/chat.glade.h:4
 msgid "From:"
 msgstr "De:"
 
-#: ui/chat.glade.h:10
+#: ui/chat.glade.h:5
 msgid "Gossip - Chat"
 msgstr "Gossip - Xerrada"
 
-#: ui/chat.glade.h:11
+#: ui/chat.glade.h:6
 msgid "Gossip - Received Message"
 msgstr "Gossip - Missatge rebut"
 
-#: ui/chat.glade.h:12
+#: ui/chat.glade.h:7
 msgid "Gossip - Send Message"
 msgstr "Gossip - Envia un missatge"
 
-#: ui/chat.glade.h:13
+#: ui/chat.glade.h:8
 msgid "In reply to:"
 msgstr "En resposta a:"
 
-#: ui/chat.glade.h:14
+#: ui/chat.glade.h:9
 msgid "Lo_g"
 msgstr "Re_gistres"
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "Mou la pestanya a l'_esquerra"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "Mou la pestanya a la d_reta"
+
+#: ui/chat.glade.h:12
 msgid "To:"
 msgstr "A:"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:13
 msgid "_Conversation"
 msgstr "_Xerrada"
 
+#: ui/chat.glade.h:14
+msgid "_Detach Tab"
+msgstr "D_esenganxa la pestanya"
+
+#: ui/chat.glade.h:15
+msgid "_Next Tab"
+msgstr "Pestanya següe_nt"
+
+#: ui/chat.glade.h:16
+msgid "_Previous Tab"
+msgstr "_Pestanya anterior"
+
 #: ui/chat.glade.h:17
-msgid "_Go"
-msgstr "_Vés"
-
-#: ui/chat.glade.h:18
-msgid "_Next Conversation"
-msgstr "Xerrada _següent"
-
-#: ui/chat.glade.h:19
-msgid "_Previous Conversation"
-msgstr "Xerrada _anterior"
-
-#: ui/chat.glade.h:20
 msgid "_Reply..."
 msgstr "_Respon..."
 
-#: ui/chat.glade.h:21 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:18 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Envia"
+
+#: ui/chat.glade.h:19
+msgid "_Tabs"
+msgstr "Pes_tanyes"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
+msgid "    "
+msgstr "    "
 
 #: ui/connect.glade.h:3
 msgid "<b>Account Settings</b>"
@@ -963,6 +960,21 @@ msgstr "_Cerca..."
 #: ui/main.glade.h:93
 msgid "_Status Messages"
 msgstr "Missatge d'e_stat"
+
+#~ msgid "As _Windows"
+#~ msgstr "Com _finestres"
+
+#~ msgid "As a _List"
+#~ msgstr "Com una _llista"
+
+#~ msgid "Chat with:"
+#~ msgstr "Xerrada amb:"
+
+#~ msgid "_Go"
+#~ msgstr "_Vés"
+
+#~ msgid "_Next Conversation"
+#~ msgstr "Xerrada _següent"
 
 #~ msgid "Open conversations in single window with list view"
 #~ msgstr "Obre les xerrades a una sola finestra amb una vista de llista"
