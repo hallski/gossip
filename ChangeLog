@@ -1,3 +1,8 @@
+2003-11-07  Richard Hult  <richard@imendio.com>
+
+	* configure.in: Add missing -I to the X includes when checking for
+	Xss. Fixes autoaway.
+
 2003-11-07  Mikael Hallendal  <micke@imendio.com>
 
         * Merged with roster-rewrite branch
