@@ -230,8 +230,7 @@ app_iq_handler                                       (LmMessageHandler   *handle
 						      GossipApp          *app);
 static void     app_handle_subscription_request      (GossipApp          *app,
 						      LmMessage          *m);
-static gboolean app_tray_destroy_event_cb            (GtkWidget          *widget,
-						      GdkEvent           *event,
+static gboolean app_tray_destroy_cb                  (GtkWidget          *widget,
 						      gpointer            user_data);
 static void     app_tray_create_menu                 (void);
 static void     app_tray_create                      (void);
@@ -669,13 +668,27 @@ app_authentication_cb (LmConnection *connection,
 		       GossipApp    *app)
 {
 	GossipAppPriv *priv;
+	GtkWidget     *dialog;
 	
 	priv = app->priv;
-
-	if (success) {
-		g_signal_emit (app, signals[CONNECTED], 0);
-	}
-
+	
+	if (!success) {
+		dialog = gossip_hig_dialog_new (GTK_WINDOW (priv->window),
+						GTK_DIALOG_DESTROY_WITH_PARENT,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_OK,
+						_("Unable to Authenticate"),
+						_("Make sure that your account information is "
+						  "correct, such as your username and password."));
+		
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+		
+		return;
+        }
+	
+	g_signal_emit (app, signals[CONNECTED], 0);
+	
 	app_update_conn_dependent_menu_items ();
 	app_update_show ();
 }
@@ -1724,9 +1737,8 @@ app_toggle_visibility (void)
 }
 
 static gboolean
-app_tray_destroy_event_cb (GtkWidget *widget,
-			   GdkEvent  *event,
-			   gpointer   user_data)
+app_tray_destroy_cb (GtkWidget *widget,
+		     gpointer   user_data)
 {
 	GossipAppPriv *priv = app->priv;
 	
@@ -1872,10 +1884,11 @@ app_tray_create (void)
 			  "button_press_event",
 			  G_CALLBACK (app_tray_button_press_cb),
 			  app);
-	
+
+	/* Handles when the area is removed from the panel. */
 	g_signal_connect (priv->tray_icon,
-			  "destroy_event",
-			  G_CALLBACK (app_tray_destroy_event_cb),
+			  "destroy",
+			  G_CALLBACK (app_tray_destroy_cb),
 			  priv->tray_event_box);
 }
 
@@ -2804,6 +2817,9 @@ app_tray_flash_timeout_func (gpointer data)
 
 	priv = app->priv;
 
+	/*if (priv->tray_flash_icons == NULL && priv->status_flash_timeout_id == 0)
+	  g_warning ("no flash!?\n");*/
+	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
 			switch (priv->explicit_show) {
