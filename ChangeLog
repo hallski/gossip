@@ -1,3 +1,31 @@
+2004-01-06  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
+
+	* src/gossip-chat.c:
+	(chat_item_added): Added
+	(chat_connected_cb): Added
+	(chat_disconnected_cb): Added
+	(gossip_chat_init)
+	* src/gossip-chat-window.c:
+	(chat_window_disconnected_cb): Added
+	(gossip_chat_window_init), (gossip_chat_window_finalize),
+	(chat_window_get_status_pixbuf):
+	- Fixed bug #128010.
+	- Show "(Dis)connected" event message in chat view.
+	- Show contacts in open chat windows as offline when 
+	  disconnected.
+
+2004-01-06  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
+
+	* src/gossip-chat-window.c:
+	(chat_window_presence_changed_cb): Removed
+	(chat_window_presence_updated_cb): Added
+	(chat_window_tab_added_cb), (chat_window_tab_removed_cb):
+	* src/gossip-chat.c:
+	(gossip_chat_class_init), (gossip_chat_init),
+	(chat_presence_handler):
+	* src/gossip-chat.c:
+	- Get rid of PRESENCE_UPDATED signal on GossipChat.
+
 2003-12-28  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (gossip_app_connect):

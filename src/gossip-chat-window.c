@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
+ * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
  * Copyright (C) 2003 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
@@ -30,6 +30,7 @@
 #include "gossip-preferences.h"
 #include "gossip-chat-window.h"
 #include "gossip-notebook.h"
+#include "gossip-roster.h"
 #include "gossip-utils.h"
 #include "gossip-stock.h"
 #include "gossip-sound.h"
@@ -75,8 +76,9 @@ static void chat_window_detach_activate_cb    (GtkWidget	     *menuitem,
 static gboolean chat_window_delete_event_cb   (GtkWidget	     *dialog,
 					       GdkEvent		     *event,
 					       GossipChatWindow	     *window);
-static void chat_window_presence_changed_cb   (GossipChat	     *chat,
-					       GossipChatWindow	     *window);
+static void chat_window_presence_updated_cb   (gpointer               not_used,
+					       GossipRosterItem      *item,
+					       GossipChat	     *chat);
 static void chat_window_name_changed_cb       (GossipChat            *chat,
 					       const gchar           *name,
 					       GossipChatWindow      *window);
@@ -84,6 +86,8 @@ static void chat_window_composing_cb	      (GossipChat	     *chat,
 					       gboolean		      is_composing,
 					       GossipChatWindow	     *window);
 static void chat_window_new_message_cb	      (GossipChat	     *chat,
+					       GossipChatWindow	     *window);
+static void chat_window_disconnected_cb	      (GossipApp	     *app,
 					       GossipChatWindow	     *window);
 static void chat_window_switch_page_cb	      (GtkNotebook	     *notebook,
 					       GtkNotebookPage	     *page,
@@ -292,6 +296,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 			  "tabs_reordered",
 			  G_CALLBACK (chat_window_tabs_reordered_cb),
 			  window);
+	g_signal_connect (gossip_app_get (),
+			  "disconnected",
+			  G_CALLBACK (chat_window_disconnected_cb),
+			  window);
 
 	chat_windows = g_list_prepend (chat_windows, window);
 
@@ -305,6 +313,10 @@ static void
 gossip_chat_window_finalize (GObject *object)
 {
 	GossipChatWindow *window = GOSSIP_CHAT_WINDOW (object);
+
+	g_signal_handlers_disconnect_by_func (gossip_app_get (),
+					      chat_window_disconnected_cb,
+					      window);
 
 	chat_windows = g_list_remove (chat_windows, window);
 	gtk_widget_destroy (window->priv->dialog);
@@ -324,6 +336,10 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	}
 	else if (g_list_find (window->priv->chats_composing, chat)) {
 		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
+	}
+	else if (!gossip_app_is_connected ()) {
+		/* Always show offline if we're not connected */
+		pixbuf = gossip_utils_get_pixbuf_offline ();
 	}
 	else {
 		GossipRosterItem *item;
@@ -791,8 +807,14 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 }
 
 static void
-chat_window_presence_changed_cb (GossipChat *chat, GossipChatWindow *window)
-{
+chat_window_presence_updated_cb (gpointer           not_used,
+				 GossipRosterItem  *item,
+				 GossipChat        *chat)
+{ 
+	GossipChatWindow *window = gossip_chat_get_window (chat);
+
+	g_return_if_fail (window != NULL);
+
 	chat_window_update_status (window, chat);
 }
 
@@ -843,6 +865,23 @@ chat_window_new_message_cb (GossipChat       *chat,
 }
 
 static void
+chat_window_disconnected_cb (GossipApp        *app,
+			     GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GList		     *l;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
+
+	priv = window->priv;
+
+	for (l = priv->chats; l != NULL; l = g_list_next (l)) {
+		GossipChat *chat = GOSSIP_CHAT (l->data);
+		chat_window_update_status (window, chat);
+	}
+}
+
+static void
 chat_window_switch_page_cb (GtkNotebook	     *notebook,
 			    GtkNotebookPage  *page,
 			    gint	      page_num,
@@ -886,9 +925,10 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	label = chat_window_create_label (window, chat);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), child, label);
 
-	g_signal_connect (chat, "presence_changed",
-			  G_CALLBACK (chat_window_presence_changed_cb),
-			  window);
+	g_signal_connect (gossip_app_get_roster (),
+			  "item_presence_updated",
+			  G_CALLBACK (chat_window_presence_updated_cb),
+			  chat);
 	g_signal_connect (chat, "name_changed",
 			  G_CALLBACK (chat_window_name_changed_cb),
 			  window);
@@ -915,9 +955,9 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 	
 	gossip_chat_set_window (chat, NULL);
 
-	g_signal_handlers_disconnect_by_func (chat,
-					      G_CALLBACK (chat_window_presence_changed_cb),
-					      window);
+	g_signal_handlers_disconnect_by_func (gossip_app_get_roster (),
+					      G_CALLBACK (chat_window_presence_updated_cb),
+					      chat);
 	g_signal_handlers_disconnect_by_func (chat,
 					      G_CALLBACK (chat_window_name_changed_cb),
 					      window);

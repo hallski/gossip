@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
- * Copyright (C) 2003 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
+ * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -102,7 +102,14 @@ static void            chat_item_updated                 (gpointer          not_
 static void            chat_item_removed                 (gpointer          not_used,
 							  GossipRosterItem *item,
 							  GossipChat       *chat);
-static gboolean      chat_event_handler                (GossipChat       *chat,
+static void            chat_item_added			 (gpointer	    not_used,
+							  GossipRosterItem *item,
+							  GossipChat       *chat);
+static void            chat_connected_cb		 (GossipApp	   *app,
+							  GossipChat	   *chat);
+static void            chat_disconnected_cb		 (GossipApp	   *app,
+							  GossipChat	   *chat);
+static gboolean        chat_event_handler                (GossipChat       *chat,
                                                           LmMessage        *m);
 static void            chat_error_dialog                 (GossipChat       *chat,
                                                           const gchar      *msg);
@@ -118,11 +125,9 @@ static gboolean	       chat_delete_event_cb		 (GtkWidget	   *widget,
 							  GdkEvent	   *event,
 							  GossipChat       *chat);
 
-
 enum {
         COMPOSING,
         NEW_MESSAGE,
-	PRESENCE_CHANGED,
 	NAME_CHANGED,
 	LAST_SIGNAL
 };
@@ -187,16 +192,6 @@ gossip_chat_class_init (GossipChatClass *klass)
 			      G_TYPE_NONE,
 			      0);
 
-	chat_signals[PRESENCE_CHANGED]=
-		g_signal_new ("presence-changed",
-			      G_OBJECT_CLASS_TYPE (object_class),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GossipChatClass, presence_changed),
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID,
-			      G_TYPE_NONE,
-			      0);
-	
 	chat_signals[NAME_CHANGED]=
 		g_signal_new ("name-changed",
 			      G_OBJECT_CLASS_TYPE (object_class),
@@ -248,6 +243,21 @@ gossip_chat_init (GossipChat *chat)
 	g_signal_connect (roster,
 			  "item_removed",
 			  G_CALLBACK (chat_item_removed),
+			  chat);
+
+	g_signal_connect (roster,
+			  "item_added",
+			  G_CALLBACK (chat_item_added),
+			  chat);
+
+	g_signal_connect (gossip_app_get (), 
+			  "connected",
+			  G_CALLBACK (chat_connected_cb),
+			  chat);
+
+	g_signal_connect (gossip_app_get (), 
+			  "disconnected",
+			  G_CALLBACK (chat_disconnected_cb),
 			  chat);
 }
 
@@ -774,8 +784,6 @@ chat_item_presence_updated (gpointer          not_used,
 		}
 		priv->is_online = TRUE;
 	}
-
-	g_signal_emit (chat, chat_signals[PRESENCE_CHANGED], 0);
 }
 
 static void
@@ -816,7 +824,61 @@ chat_item_removed (gpointer          not_used,
 	if (item != priv->item) {
 		return;
 	}
-	/* Handle this, set as offline? */
+}
+
+static void
+chat_item_added (gpointer          not_user,
+		 GossipRosterItem *item,
+		 GossipChat       *chat)
+{
+	GossipChatPriv *priv;
+	GossipJID      *new_jid;
+	GossipJID      *old_jid;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+	g_return_if_fail (item != NULL);
+
+	priv = chat->priv;
+	
+	new_jid = gossip_roster_item_get_jid (item);
+	old_jid = gossip_roster_item_get_jid (priv->item);
+
+	if (!gossip_jid_equals_without_resource (old_jid, new_jid))
+		return;
+
+	gossip_roster_item_unref (priv->item);
+	priv->item = item;
+	gossip_roster_item_ref (item);
+}
+
+static void
+chat_connected_cb (GossipApp  *app,
+		   GossipChat *chat)
+{
+	GossipChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+
+	gtk_widget_set_sensitive (priv->input_text_view, TRUE);
+
+	gossip_chat_view_append_event_msg (priv->view, _("Connected"), TRUE);
+}
+
+static void
+chat_disconnected_cb (GossipApp  *app,
+		      GossipChat *chat)
+{
+	GossipChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+
+	gtk_widget_set_sensitive (priv->input_text_view, FALSE);
+
+	gossip_chat_view_append_event_msg (priv->view, _("Disconnected"), TRUE);
 }
 
 static gboolean
