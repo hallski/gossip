@@ -1,3 +1,7 @@
+2004-09-02  Mikael Hallendal  <micke@imendio.com>
+
+	* POTFILES.in: Added src/eggtrayicon.c
+
 2004-08-31  Adam Weinberger  <adamw@gnome.org>
 
 	* en_CA.po: Updated Canadian English translation.
