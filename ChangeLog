@@ -1,3 +1,10 @@
+2003-12-21  Mikael Hallendal  <micke@imendio.com>
+
+	* ui/main.glade: 
+	- Use stock icons for add and remove in status editor.
+	- Patch from Thomas Reynolds
+	- Fixes bug #129765
+
 2003-12-20  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.c (chat_view_is_scrolled_down): If we've
