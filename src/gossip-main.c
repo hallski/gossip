@@ -89,11 +89,11 @@ main (int argc, char *argv[])
 		{ NULL, '\0', 0, NULL, 0, NULL, NULL }
 	};
 	
-	bindtextdomain (PACKAGE, GNOMELOCALEDIR);
+	bindtextdomain (PACKAGE_TARNAME, GNOMELOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (PACKAGE);
+	textdomain (PACKAGE_TARNAME);
 
-	program = gnome_program_init (PACKAGE, VERSION,
+	program = gnome_program_init (PACKAGE_TARNAME, PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,

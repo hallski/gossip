@@ -1,6 +1,6 @@
 SUBDIRS = sounds
 
-INCLUDES =	\
+AM_CPPFLAGS =	\
 	-DGNOMELOCALEDIR=\""$(datadir)/locale"\" \
 	-DPREFIX="\"$(prefix)"\"		\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"        \

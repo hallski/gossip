@@ -1,3 +1,15 @@
+2005-01-08  Mikael Hallendal  <micke@imendio.com>
+
+	* acinclude.m4:
+	* autogen.sh:
+	* configure.in:
+	* src/Makefile.am:
+	* src/gossip-about.c: (gossip_about_new):
+	* src/gossip-main.c: (main):
+	- Updated to automake 1.9
+	- Patch from Julio M. Merino Vidal
+	- Fixes bug #152241
+
 2005-01-03  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-transport-accounts.c: 

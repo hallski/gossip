@@ -7,7 +7,11 @@ AC_DEFUN([MRP_COMPILE_WARNINGS],[
 	default_compile_warnings="no"
     fi
 
-    AC_ARG_WITH(compile-warnings, [  --with-compile-warnings=[no/yes/error] Compiler warnings ], [enable_compile_warnings="$withval"], [enable_compile_warnings="$default_compile_warnings"])
+    AC_ARG_WITH(compile-warnings,
+                AS_HELP_STRING([--with-compile-warnings=@<:@no/yes/error@:>@],
+                               [Compiler warnings]),
+                [enable_compile_warnings="$withval"],
+                [enable_compile_warnings="$default_compile_warnings"])
 
     warnCFLAGS=
     if test "x$GCC" != xyes; then

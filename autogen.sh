@@ -3,8 +3,8 @@
 
 : ${AUTOCONF=autoconf}
 : ${AUTOHEADER=autoheader}
-: ${AUTOMAKE=automake-1.7}
-: ${ACLOCAL=aclocal-1.7}
+: ${AUTOMAKE=automake-1.9}
+: ${ACLOCAL=aclocal-1.9}
 : ${LIBTOOLIZE=libtoolize}
 : ${INTLTOOLIZE=intltoolize}
 : ${LIBTOOL=libtool}
@@ -47,7 +47,7 @@ fi
 ($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have automake installed to compile $PROJECT."
-	echo "Get ftp://sourceware.cygnus.com/pub/automake/automake-1.4.tar.gz"
+	echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.tar.gz"
 	echo "(or a newer version if it is available)"
 	DIE=1
 }
