@@ -1,8 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003 Imendio HB
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
- * Copyright (C) 2002 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,7 +21,6 @@
 #ifndef __GOSSIP_ROSTER_H__
 #define __GOSSIP_ROSTER_H__
 
-#include <gtk/gtktreeview.h>
 #include <loudmouth/loudmouth.h>
 
 #define GOSSIP_TYPE_ROSTER         (gossip_roster_get_type ())
@@ -33,38 +30,49 @@
 #define GOSSIP_IS_ROSTER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ROSTER))
 #define GOSSIP_ROSTER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ROSTER, GossipRosterClass))
 
-typedef struct _GossipRoster      GossipRoster;
-typedef struct _GossipRosterClass GossipRosterClass;
-typedef struct _GossipRosterPriv  GossipRosterPriv;
+typedef struct _GossipRoster        GossipRoster;
+typedef struct _GossipRosterClass   GossipRosterClass;
+typedef struct _GossipRosterPriv    GossipRosterPriv;
 
-#include "gossip-app.h"
+typedef struct _GossipRosterItem    GossipRosterItem;
+typedef struct _GossipRosterGroup   GossipRosterGroup;
 
 struct _GossipRoster {
-        GtkTreeView       parent;
-
+        GObject           parent;
         GossipRosterPriv *priv;
 };
 
 struct _GossipRosterClass {
-        GtkTreeViewClass parent_class;
+        GObjectClass      parent_class;
 };
 
+GType              gossip_roster_get_type           (void) G_GNUC_CONST;
+GossipRoster *     gossip_roster_new                (void);
 
-GType          gossip_roster_get_type           (void) G_GNUC_CONST;
-GossipRoster *gossip_roster_new                       (GossipApp    *app);
-const gchar * gossip_roster_get_nick_from_jid         (GossipRoster *roster,
-						       GossipJID    *jid);
-GdkPixbuf *   gossip_roster_get_status_pixbuf_for_jid (GossipRoster *roster,
-						       GossipJID    *jid);
-gboolean      gossip_roster_have_jid                  (GossipRoster *roster,
-						       GossipJID    *jid);
-GList *       gossip_roster_get_groups                (GossipRoster *roster);
-GList *       gossip_roster_get_jids                  (GossipRoster *roster);
-void          gossip_roster_free_jid_list             (GList        *jids);
-GossipJID *   gossip_roster_get_selected_jid          (GossipRoster *roster);
-void          gossip_roster_flash_jid                 (GossipRoster *roster,
-						       GossipJID    *jid,
-						       gboolean      flash);
+GossipRosterGroup * gossip_roster_get_group         (const gchar       *name);
 
+GList *            gossip_roster_get_all_groups     (GossipRoster      *roster);
+
+GList *            gossip_roster_get_all_items      (GossipRoster      *roster);
+GossipRosterItem * gossip_roster_get_item           (GossipRoster      *roster,
+                                                     GossipJID         *jid);
+
+GossipRoster *     gossip_roster_flash_jid          (GossipRoster      *roster,
+                                                     GossipJID         *jid);
+
+/* Group */
+const gchar *      gossip_roster_group_get_name     (GossipRosterGroup *group);
+GList *            gossip_roster_group_get_items    (GossipRosterGroup *group);
+
+/* Item */
+
+/* Returns the JID (with Resource) that has the highest priority 
+ * (or connected last). 
+ */
+GossipJID *        gossip_roster_item_get_jid       (GossipRosterItem  *item);
+const gchar *      gossip_roster_item_get_name      (GossipRosterItem  *item);
+GossipStatus *     gossip_roster_item_get_show      (GossipRosterItem  *item);
+GList *            gossip_roster_item_get_groups    (GossipRosterItem  *item);
+GList *            gossip_roster_item_get_resources (GossipRosterItem  *item);
 
 #endif /* __GOSSIP_ROSTER_H__ */

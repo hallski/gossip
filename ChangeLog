@@ -1,3 +1,14 @@
+2003-08-16  Mikael Hallendal  <micke@imendio.com>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/gossip-app.c: (app_message_handler):
+        - handle headline messages like any other for now.
+          
+	* src/gossip-roster.c: (gossip_roster_get_type),
+	(roster_class_init), (roster_init), (roster_finalize):
+	* src/gossip-roster.h: WIP
+
 2003-08-15  Mikael Hallendal  <micke@imendio.com>
 
 	* src/Makefile.am:

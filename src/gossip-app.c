@@ -885,6 +885,7 @@ app_message_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_NOT_SET:
 	case LM_MESSAGE_SUB_TYPE_NORMAL:
 	case LM_MESSAGE_SUB_TYPE_CHAT:
+	case LM_MESSAGE_SUB_TYPE_HEADLINE: /* For now, fixes #120009 */
 		app_push_message (m);
 		return gossip_chat_handle_message (m);
 
@@ -892,10 +893,6 @@ app_message_handler (LmMessageHandler *handler,
 		g_warning ("Hmm .. looks like an unhandled group chat message "
 			   "from %s, this needs to be taken care of.", from);
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-
-	case LM_MESSAGE_SUB_TYPE_HEADLINE:
-		g_warning ("Unhandled headline.");
-		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 
 	case LM_MESSAGE_SUB_TYPE_ERROR:
 		g_warning ("Unhandled error from: %s.", from);
