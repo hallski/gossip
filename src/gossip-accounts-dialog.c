@@ -108,7 +108,10 @@ accounts_dialog_get_current_account (GossipAccountsDialog *dialog)
 	GtkTreeSelection *selection;
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
-	gtk_tree_selection_get_selected (selection, NULL, &iter);
+
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return NULL;
+	}
 	
 	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
 			    &iter,
@@ -169,10 +172,13 @@ static void
 accounts_dialog_remove_account_cb (GtkWidget            *widget,
 				   GossipAccountsDialog *dialog)
 {
-	GossipAccount    *account;
-	gchar            *path;
+	GossipAccount *account;
+	gchar         *path;
 
 	account = accounts_dialog_get_current_account (dialog);
+	if (!account) {
+		return;
+	}
 	
 	path = g_strdup_printf ("%s/Account: %s", 
 				GOSSIP_ACCOUNTS_PATH, account->name);
@@ -190,9 +196,12 @@ static void
 accounts_dialog_register_account_cb (GtkWidget            *widget,
 				     GossipAccountsDialog *dialog)
 {
-	GossipAccount    *account;
+	GossipAccount *account;
 
 	account = accounts_dialog_get_current_account (dialog);
+	if (!account) {
+		return;
+	}
 	
 	gossip_register_account (account, GTK_WINDOW (dialog->dialog));
 }
@@ -203,11 +212,20 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 				   GossipAccountsDialog *dialog)
 {
 	GossipAccount    *account;
+	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
 	gchar            *old_name = NULL;
 	
 	account = accounts_dialog_get_current_account (dialog);
+	if (!account) {
+		return FALSE;
+	}
 
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return FALSE;
+ 	}
+	
 	if (widget == GTK_WIDGET (dialog->account_entry)) {
 		old_name = account->name;
 		account->name = g_strdup (gtk_entry_get_text (dialog->account_entry));
@@ -379,6 +397,10 @@ accounts_dialog_use_ssl_toggled (GtkToggleButton      *button,
 	gboolean       changed = FALSE;
 
 	account = accounts_dialog_get_current_account (dialog);
+	if (!account) {
+		return;
+	}
+
 	active = gtk_toggle_button_get_active (button);
 
 	if (active && (account->port == LM_CONNECTION_DEFAULT_PORT)) {

@@ -1,5 +1,15 @@
 2003-08-03  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-accounts-dialog.c
+	(accounts_dialog_get_current_account)
+	(accounts_dialog_use_ssl_toggled)
+	(accounts_dialog_remove_account_cb)
+	(accounts_dialog_register_account_cb)
+	(accounts_dialog_update_account_cb): Don't do anything if there is
+	no selected account. Fixes bug #117863 and some more.
+	(accounts_dialog_update_account_cb): Actually get the iter before
+	trying to set the name.
+
 	* src/gossip-roster.c (gossip_roster_flash_jid)
 	(roster_jid_updated): Finish up the flashing code from last night.
 
