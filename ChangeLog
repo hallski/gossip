@@ -1,3 +1,7 @@
+2003-08-30  Wang Jian  <lark@linux.net.cn>
+
+	* configure.in: Added "zh_CN" to ALL_LINGUAS.
+
 2003-08-30  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-add-contact.c (add_contact_prepare_page_2): Reset
