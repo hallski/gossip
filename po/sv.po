@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-17 14:58+0200\n"
+"POT-Creation-Date: 2003-07-17 17:41+0200\n"
 "PO-Revision-Date: 2003-07-13 11:51+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -95,7 +95,7 @@ msgid "Whether or not to timestamp all messages in conversations."
 msgstr ""
 "Huruvida alla meddelanden ska tidsstämplas eller inte i konversationer."
 
-#: src/gossip-accounts-dialog.c:126
+#: src/gossip-accounts-dialog.c:151
 msgid "New account"
 msgstr "Nytt konto"
 
@@ -164,7 +164,7 @@ msgstr "_Chatta"
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1480
+#: src/gossip-app.c:1481
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -304,7 +304,7 @@ msgstr ""
 msgid "Default Account"
 msgstr "Standardkonto"
 
-#: src/gossip-startup-druid.c:249
+#: src/gossip-startup-druid.c:250
 #, c-format
 msgid ""
 "Gossip will now try to use your account:\n"
@@ -313,7 +313,7 @@ msgstr ""
 "Gossip kommer nu att försöka använda ditt konto:\n"
 "<b>%s</b>"
 
-#: src/gossip-startup-druid.c:251
+#: src/gossip-startup-druid.c:252
 #, c-format
 msgid ""
 "Gossip will now try to register the account:\n"
@@ -424,39 +424,43 @@ msgstr "R_esurs:"
 msgid "Re_gister..."
 msgstr "Re_gistrera..."
 
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:14
+#: ui/connect.glade.h:14
+msgid "Use SS_L"
+msgstr "A_nvänd SSL"
+
+#: ui/connect.glade.h:15 ui/group-chat.glade.h:14
 msgid "_Add"
 msgstr "_Lägg till"
 
-#: ui/connect.glade.h:15
+#: ui/connect.glade.h:16
 msgid "_Edit accounts..."
 msgstr "R_edigera konton..."
 
-#: ui/connect.glade.h:16
+#: ui/connect.glade.h:17
 msgid "_Port:"
 msgstr "_Port:"
 
-#: ui/connect.glade.h:17
+#: ui/connect.glade.h:18
 msgid "_Priority:"
 msgstr "_Prioritet:"
 
-#: ui/connect.glade.h:18
+#: ui/connect.glade.h:19
 msgid "_Remove"
 msgstr "Ta _bort"
 
-#: ui/connect.glade.h:19
+#: ui/connect.glade.h:20
 msgid "_Resource:"
 msgstr "_Resurs:"
 
-#: ui/connect.glade.h:20 ui/group-chat.glade.h:20
+#: ui/connect.glade.h:21 ui/group-chat.glade.h:20
 msgid "_Server:"
 msgstr "_Server:"
 
-#: ui/connect.glade.h:21
+#: ui/connect.glade.h:22
 msgid "_User name:"
 msgstr "An_vändarnamn:"
 
-#: ui/connect.glade.h:22
+#: ui/connect.glade.h:23
 msgid "_User:"
 msgstr "An_vändare:"
 
