@@ -1,3 +1,40 @@
+2005-04-04  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.[ch]: 
+	(app_create_status_menu), (app_tray_flash_timeout_func),
+	(app_tray_flash_maybe_stop):
+	- Refactored to use GossipPresence instead of GossipShow and strings
+	  for statuses.
+	- Use gossip_session_set_presence, instead of Loudmouth directly to
+	  set presence.
+	* src/gossip-contact.[ch]: (gossip_contact_get_status):
+	- Return default status if presence doesn't have it set.
+	* src/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_message_handler):
+	- Emit chatroom-title-changed.
+	(jabber_chatrooms_get_contact):
+	- Take an argument to see if the contact was just added
+	(jabber_chatrooms_presence_handler):
+	- Implemented, based on patch from Aurelien Naldi.
+	- Added emitting of new contacts to the patch.
+	* src/gossip-preferences.c:
+	- Updated to not use GossipShow API.
+	* src/gossip-presence.[ch]:
+	(gossip_presence_get_status):
+	- Return NULL if not set instead of default value.
+	(gossip_presence_state_get_default_status):
+	- Added, can be used to get default value if presence doesn't have
+	  status set.
+	(gossip_presence_state_get_pixbuf): 
+	- Added, should be replaced by a function that returns stock id instead.
+	* src/gossip-session.c: 
+	(gossip_session_set_presence): Implemented by Aurelien Naldi
+	* src/gossip-utils.[ch]:
+	- DIE GossipShow, DIE!!!!!!!!!!!!!!!!!!
+	- Did a lot of refactoring to remove some old cruft and make GossipApp
+	  use more of the new code instead.
+	* CONTRIBUTORS: Added Aurelien
+
 2005-04-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-manager.c: (chat_manager_new_message_cb):

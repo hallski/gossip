@@ -33,17 +33,9 @@
 #include "gossip-account.h"
 #include "gossip-presence.h"
 
-/* Note: We don't support "free to chat". */
-typedef enum {
-	GOSSIP_SHOW_AVAILABLE, /* available (null) */
-	GOSSIP_SHOW_BUSY,      /* busy (dnd) */
-	GOSSIP_SHOW_AWAY,      /* away (away) */
-	GOSSIP_SHOW_EXT_AWAY   /* extended away (xa) */
-} GossipShow;
-
 typedef struct {
-	GossipShow  show;
-	gchar      *string;
+	GossipPresenceState  state;
+	gchar               *string;
 } GossipStatusEntry;
 
 
@@ -92,15 +84,9 @@ gchar *      gossip_utils_substring                  (const gchar      *str,
 						      gint              start,
 						      gint              end);
 
-const gchar *gossip_utils_show_to_string             (GossipShow        show);
-GossipShow   gossip_utils_show_from_string           (const gchar      *str);
-const gchar *gossip_utils_get_stock_from_show        (GossipShow        show);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_stock      (const gchar      *stock);
 GdkPixbuf *  gossip_utils_get_pixbuf_offline         (void);
-GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);
 
-/* FIXME: Deprecate */
-const gchar *gossip_utils_get_default_status_show    (GossipShow        show);
 GList *      gossip_utils_get_status_messages        (void);
 void         gossip_utils_set_status_messages        (GList            *list);
 void         gossip_utils_free_status_messages       (GList            *list);

@@ -433,43 +433,6 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 	return password;
 }
 
-
-const gchar *
-gossip_utils_show_to_string (GossipShow show)
-{
-	switch (show) {
-	case GOSSIP_SHOW_BUSY:
-		return "dnd";
-	case GOSSIP_SHOW_AWAY:
-		return "away";
-	case GOSSIP_SHOW_EXT_AWAY:
-		return "xa";
-	case GOSSIP_SHOW_AVAILABLE:
-		return NULL;
-	}
-
-	return NULL;
-}
-
-GossipShow 
-gossip_utils_show_from_string (const gchar *str)
-{
-	if (!str) {
-		return GOSSIP_SHOW_AVAILABLE;
-	}
-	if (strcmp (str, "dnd") == 0) {
-		return GOSSIP_SHOW_BUSY;
-	}
-	if (strcmp (str, "away") == 0) {
-		return GOSSIP_SHOW_AWAY;
-	}
-	if (strcmp (str, "xa") == 0) {
-		return GOSSIP_SHOW_EXT_AWAY;
-	}
-
-	return GOSSIP_SHOW_AVAILABLE;
-}
-
 #define ve_string_empty(x) ((x)==NULL||(x)[0]=='\0')
 
 /* stolen from gsearchtool */
@@ -671,54 +634,6 @@ gossip_utils_get_pixbuf_offline (void)
 	return gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
 }
 
-const gchar *
-gossip_utils_get_stock_from_show (GossipShow show)
-{
-	const gchar *stock = NULL;
-	
-	switch (show) {
-	case GOSSIP_SHOW_AVAILABLE:
-		stock = GOSSIP_STOCK_AVAILABLE;
-		break;
-	case GOSSIP_SHOW_BUSY:
-		stock = GOSSIP_STOCK_BUSY;
-		break;
-	case GOSSIP_SHOW_AWAY:
-		stock = GOSSIP_STOCK_AWAY;
-		break;
-	case GOSSIP_SHOW_EXT_AWAY:
-		stock = GOSSIP_STOCK_EXT_AWAY;
-		break;
-	}
-
-	return stock;
-}
-
-GdkPixbuf *
-gossip_utils_get_pixbuf_from_show (GossipShow show)
-{
-	const gchar *stock;
-
-	stock = gossip_utils_get_stock_from_show (show);
-	return gossip_utils_get_pixbuf_from_stock (stock);
-}
-
-const gchar *
-gossip_utils_get_default_status_show (GossipShow show)
-{
-	switch (show) {
-        case GOSSIP_SHOW_AVAILABLE:
-                return _(AVAILABLE_MESSAGE);
-        case GOSSIP_SHOW_BUSY:
-                return _(BUSY_MESSAGE);
-        case GOSSIP_SHOW_AWAY:
-        case GOSSIP_SHOW_EXT_AWAY:
-                return _(AWAY_MESSAGE);
-        };
- 
-        return _(AVAILABLE_MESSAGE);
-}
-
 GList *
 gossip_utils_get_status_messages (void)
 {
@@ -744,15 +659,15 @@ gossip_utils_get_status_messages (void)
 
 		if (strncmp (status, "available/", 10) == 0) {
 			entry->string = g_strdup (&status[10]);
-			entry->show = GOSSIP_SHOW_AVAILABLE;
+			entry->state = GOSSIP_PRESENCE_STATE_AVAILABLE;
 		}
 		else if (strncmp (status, "busy/", 5) == 0) {
 			entry->string = g_strdup (&status[5]);
-			entry->show = GOSSIP_SHOW_BUSY;
+			entry->state = GOSSIP_PRESENCE_STATE_BUSY;
 		}
 		else if (strncmp (status, "away/", 5) == 0) {
 			entry->string = g_strdup (&status[5]);
-			entry->show = GOSSIP_SHOW_AWAY;
+			entry->state = GOSSIP_PRESENCE_STATE_AWAY;
 		} else {
 			continue;
 		}
@@ -772,28 +687,28 @@ gossip_utils_set_status_messages (GList *list)
 	GList             *l;
 	GossipStatusEntry *entry;
 	GSList            *slist = NULL;
-	const gchar       *show;
+	const gchar       *state;
 	gchar             *str;
 	
 	for (l = list; l; l = l->next) {
 		entry = l->data;
 
-		switch (entry->show) {
-		case GOSSIP_SHOW_AVAILABLE:
-			show = "available";
+		switch (entry->state) {
+		case GOSSIP_PRESENCE_STATE_AVAILABLE:
+			state = "available";
 			break;
-		case GOSSIP_SHOW_BUSY:
-			show = "busy";
+		case GOSSIP_PRESENCE_STATE_BUSY:
+			state = "busy";
 			break;
-		case GOSSIP_SHOW_AWAY:
-			show = "away";
+		case GOSSIP_PRESENCE_STATE_AWAY:
+			state = "away";
 			break;
 		default:
-			show = NULL;
+			state = NULL;
 			g_assert_not_reached ();
 		}
 		
-		str = g_strdup_printf ("%s/%s", show, entry->string);
+		str = g_strdup_printf ("%s/%s", state, entry->string);
 		slist = g_slist_append (slist, str);
 	}
 

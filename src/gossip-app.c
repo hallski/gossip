@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio AB
+ * Copyright (C) 2002-2005 Imendio AB
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
  * Copyright (C) 2004      Martyn Russell <mr@gnome.org>
  *
@@ -137,15 +137,11 @@ struct _GossipAppPriv {
 	guint              status_flash_timeout_id;
 	time_t             leave_time;
 
-	/* Current status/overridden away message. */
-	gchar             *status_text;
-	gchar             *away_message;
-
 	/* Set by the user (available/busy). */
-	GossipShow         explicit_show;
+	GossipPresence    *presence;
 
-	/* Autostatus (away/xa), overrides explicit_show. */
-	GossipShow         auto_show;     
+	/* Away presence (away/xa), overrides priv->presence. */
+	GossipPresence    *away_presence;
 	
 	guint              size_timeout_id;
 };
@@ -253,16 +249,16 @@ static gboolean app_status_button_press_event_cb     (GtkButton          *button
 static void     app_status_button_clicked_cb         (GtkButton          *button,
 						      GdkEventButton     *event,
 						      gpointer            user_data);
-static void     app_status_show_status_dialog        (GossipShow          show,
+static void     app_status_show_status_dialog        (GossipPresenceState state,
 						      const gchar        *str,
 						      gboolean            transient);
-static GossipShow app_get_explicit_show              (void);
-static GossipShow app_get_effective_show             (void);
-static void       app_update_show                    (void);
+static GossipPresence * app_get_effective_presence   (void);
+static void       app_set_away                       (const gchar        *status);
+static void       app_presence_updated               (void);
 static void       app_status_clear_away              (void);
 static void       app_status_flash_start             (void);
 static void       app_status_flash_stop              (void);
-static const gchar * app_get_current_status_icon     (void);
+static GdkPixbuf *app_get_current_status_pixbuf      (void);
 static gboolean      app_window_configure_event_cb   (GtkWidget          *widget,
 						      GdkEventConfigure  *event,
 						      gpointer            data);
@@ -355,8 +351,10 @@ gossip_app_init (GossipApp *singleton_app)
 			  G_CALLBACK (app_event_removed_cb),
 			  NULL);
 
-	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
-	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+	priv->presence = gossip_presence_new ();
+	gossip_presence_set_state (priv->presence, 
+				   GOSSIP_PRESENCE_STATE_AVAILABLE);
+	priv->away_presence = NULL;
 
 #ifdef HAVE_DBUS
 	gossip_dbus_init ();
@@ -466,7 +464,7 @@ gossip_app_init (GossipApp *singleton_app)
 	app_tray_create_menu ();
 	app_tray_create ();
 
-	app_update_show ();
+	app_presence_updated ();
 
 	app_update_conn_dependent_menu_items ();
 
@@ -591,7 +589,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	priv->connection = gossip_jabber_get_connection (GOSSIP_JABBER (protocol));
 	app_update_conn_dependent_menu_items ();
-	app_update_show ();
+	app_presence_updated ();
 }
 
 static void
@@ -604,7 +602,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	priv = app->priv;
 	
 	app_update_conn_dependent_menu_items ();
-	app_update_show ();
+	app_presence_updated ();
 
 	/* FIXME: implement */
 
@@ -930,9 +928,11 @@ app_configure_transports_cb (GtkWidget *widget, GossipApp *app)
 static gboolean
 app_idle_check_cb (GossipApp *app)
 {
-	GossipAppPriv *priv;
-	gint32         idle;
-	GossipShow     show;
+	GossipAppPriv       *priv;
+	gint32               idle;
+	GossipPresence      *presence;
+	GossipPresenceState  state;
+	gboolean             presence_changed = FALSE;
 
 	priv = app->priv;
 
@@ -941,7 +941,8 @@ app_idle_check_cb (GossipApp *app)
 	}
 	
 	idle = gossip_idle_get_seconds ();
-	show = app_get_effective_show ();
+	presence = app_get_effective_presence ();
+	state = gossip_presence_get_state (presence);
 
 	/* We're going away, allow some slack. */
 	if (priv->leave_time > 0) {
@@ -955,14 +956,21 @@ app_idle_check_cb (GossipApp *app)
 		
 		return TRUE;
 	}
-	else if (show != GOSSIP_SHOW_EXT_AWAY && idle > EXT_AWAY_TIME) {
-		priv->auto_show = GOSSIP_SHOW_EXT_AWAY;
+	else if (state != GOSSIP_PRESENCE_STATE_EXT_AWAY && 
+		 idle > EXT_AWAY_TIME) {
+		/* Presence will already be away */
+		gossip_presence_set_state (priv->away_presence, 
+					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
+		presence_changed = TRUE;
 	}
-	else if (show != GOSSIP_SHOW_AWAY && show != GOSSIP_SHOW_EXT_AWAY && 
+	else if (state != GOSSIP_PRESENCE_STATE_AWAY && 
+		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
-		priv->auto_show = GOSSIP_SHOW_AWAY;
+		app_set_away (NULL);
+		presence_changed = TRUE;
 	}
-	else if (show == GOSSIP_SHOW_AWAY || show == GOSSIP_SHOW_EXT_AWAY) {
+	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
+		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
 		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= 0) {
 			d(g_print ("Slack, do nothing.\n"));
@@ -970,12 +978,8 @@ app_idle_check_cb (GossipApp *app)
 		}
 		else if (idle < -BACK_SLACK) {
 			d(g_print ("No more slack, break interrupted.\n"));
-			priv->auto_show = GOSSIP_SHOW_AVAILABLE;
-			
-			g_free (priv->away_message);
-			priv->away_message = NULL;
-
-			app_status_flash_stop ();
+			app_status_clear_away ();
+			return TRUE;
 		}
 		else if (idle > BACK_SLACK) {
 			d(g_print ("Don't interrupt break.\n"));
@@ -983,8 +987,8 @@ app_idle_check_cb (GossipApp *app)
 		}
 	}
 
-	if (show != app_get_effective_show ()) {
-		app_update_show ();
+	if (presence_changed) {
+		app_presence_updated ();
 	}
 
 	return TRUE;
@@ -1408,6 +1412,7 @@ static void
 app_tray_create (void)
 {
 	GossipAppPriv *priv;
+	GdkPixbuf     *pixbuf;
 
 	priv = app->priv;
 
@@ -1416,9 +1421,9 @@ app_tray_create (void)
 	priv->tray_event_box = gtk_event_box_new ();
 	priv->tray_image = gtk_image_new ();
 	
-	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
-				  app_get_current_status_icon (),
-				  GTK_ICON_SIZE_MENU);
+	pixbuf = app_get_current_status_pixbuf ();
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
+	g_object_unref (pixbuf);
 	
 	gtk_container_add (GTK_CONTAINER (priv->tray_event_box),
 			   priv->tray_image);
@@ -1488,145 +1493,91 @@ app_tray_update_tooltip (void)
 			      gossip_event_get_message (event));
 }	
 
-static GossipShow
-app_get_explicit_show (void)
-{
-	GossipAppPriv *priv;
-
-	if (0) app_get_explicit_show ();
-	
-	priv = app->priv;
-
-	return priv->explicit_show;
-}
-
-static GossipShow
-app_get_effective_show (void)
+static GossipPresence *
+app_get_effective_presence (void)
 {
 	GossipAppPriv *priv;
 
 	priv = app->priv;
 
-	if (priv->auto_show != GOSSIP_SHOW_AVAILABLE) {
-		return priv->auto_show;
+	if (priv->away_presence) {
+		return priv->away_presence;
 	}
 
-	return priv->explicit_show;
+	return priv->presence;
 }
 
-static const gchar *
-app_get_current_status_icon (void)
+static void
+app_set_away (const gchar *status)
 {
 	GossipAppPriv *priv;
+
+	priv = app->priv;
+
+	if (!priv->away_presence) {
+		priv->away_presence = gossip_presence_new ();
+		gossip_presence_set_state (priv->away_presence, 
+					   GOSSIP_PRESENCE_STATE_AWAY);
+	}
+	
+	priv->leave_time = time (NULL);
+	gossip_idle_reset ();
+
+	if (status) {
+		gossip_presence_set_status (priv->away_presence, status);
+	}
+}
+
+static GdkPixbuf *
+app_get_current_status_pixbuf (void)
+{
+	GossipAppPriv  *priv;
+	GossipPresence *presence;
 
 	priv = app->priv;
 
 	if (!gossip_session_is_connected (priv->session)) {
-		return GOSSIP_STOCK_OFFLINE;
+		return gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
 	}
 	
-	switch (app_get_effective_show ()) {
-	case GOSSIP_SHOW_BUSY:
-		return GOSSIP_STOCK_BUSY;
-	case GOSSIP_SHOW_AWAY:
-		return GOSSIP_STOCK_AWAY;
-	case GOSSIP_SHOW_EXT_AWAY:
-		return GOSSIP_STOCK_EXT_AWAY;
-	case GOSSIP_SHOW_AVAILABLE:
-	default:
-		return GOSSIP_STOCK_AVAILABLE;
-	}
-
-	return NULL;
+	presence = app_get_effective_presence ();
+	return gossip_presence_get_pixbuf (presence);
 }
 
-/* Updates the GUI bits and pieces to match the current show/connected
- * status. Also sends the correct show to the server.
- */
 static void
-app_update_show (void)
+app_presence_updated (void)
 {
-	GossipAppPriv *priv;
-	GossipShow     effective_show;
-	const gchar   *icon;
-	LmMessage     *m;
-	const gchar   *show = NULL;
-	gchar         *priority = "50"; /* Default priority when available. */
-	gchar         *status_text;     /* Text to send. */
-	const gchar   *status_label;    /* Text to display in the UI. */
+	GossipAppPriv  *priv;
+	GdkPixbuf      *pixbuf;
+	GossipPresence *presence;
+	const gchar    *status;
 	
 	priv = app->priv;
 
-	icon = app_get_current_status_icon ();
+	pixbuf = app_get_current_status_pixbuf ();
+
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->status_image), pixbuf);
 	
-	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
-				  icon,
-				  GTK_ICON_SIZE_MENU);
-	gtk_image_set_from_stock (GTK_IMAGE (priv->status_image),
-				  icon,
-				  GTK_ICON_SIZE_MENU);
+	g_object_unref (pixbuf);
 	
 	if (!gossip_session_is_connected (priv->session)) {
 		eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
 						_("Offline"));
 		return;
 	}
-	
-	m = lm_message_new_with_sub_type (NULL, 
-					  LM_MESSAGE_TYPE_PRESENCE,
-					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 
-	effective_show = app_get_effective_show ();
-	
-	if (effective_show == GOSSIP_SHOW_AWAY ||
-	    effective_show == GOSSIP_SHOW_EXT_AWAY) {
-		status_text = g_strdup (priv->away_message);
-	} else {
-		status_text = g_strdup (priv->status_text);
-		if (status_text) {
-			status_label = g_strdup (priv->status_text);
-		} else {
-			status_label = g_strdup (gossip_utils_get_default_status_show (effective_show));
-		}
-	}
+	presence = app_get_effective_presence ();
 
-	if (status_text && status_text[0]) {
-		status_label = status_text;
-	} else {
-		status_label = gossip_utils_get_default_status_show (effective_show);
+	status = gossip_presence_get_status (presence);
+	if (!status) {
+		status = gossip_presence_state_get_default_status (gossip_presence_get_state (presence));
 	}
 
 	eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
-					status_label);
+					status);
 
-	show = gossip_utils_show_to_string (effective_show);
-
-	switch (effective_show) {
-	case GOSSIP_SHOW_BUSY:
-		priority = "40";
-		break;
-	case GOSSIP_SHOW_AWAY:
-		priority = "30";
-		break;
-	case GOSSIP_SHOW_EXT_AWAY:
-		priority = "0";
-		break;
-	default:
-		break;
-	}
-	
-	if (show) {
-		lm_message_node_add_child (m->node, "show", show);
-	}
-	
-	lm_message_node_add_child (m->node, "priority", priority);
-	if (status_text) {
-		lm_message_node_add_child (m->node, "status", status_text);
-	}
-	lm_connection_send (app->priv->connection, m, NULL);
-	lm_message_unref (m);
-
-	g_free (status_text);
+	gossip_session_set_presence (priv->session, presence);
 }
 
 /* Clears status data from autoaway mode. */ 
@@ -1635,16 +1586,16 @@ app_status_clear_away (void)
 {
 	GossipAppPriv *priv = app->priv;
 	
-	g_free (priv->away_message);
-	priv->away_message = NULL;
-
-	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+	if (priv->away_presence) {
+		g_object_unref (priv->away_presence);
+		priv->away_presence = NULL;
+	}
 
 	priv->leave_time = 0;
 	app_status_flash_stop ();
 	
 	/* Force this so we don't get a delay in the display. */
-	app_update_show ();
+	app_presence_updated ();
 }
 
 static gboolean
@@ -1652,28 +1603,16 @@ app_status_flash_timeout_func (gpointer data)
 {
 	GossipAppPriv   *priv = app->priv;
 	static gboolean  on = FALSE;
-	const gchar     *icon;
+	GdkPixbuf       *pixbuf;
 
 	if (on) {
-		switch (priv->explicit_show) {
-		case GOSSIP_SHOW_BUSY:
-			icon = GOSSIP_STOCK_BUSY;
-			break;
-		case GOSSIP_SHOW_AVAILABLE:
-			icon = GOSSIP_STOCK_AVAILABLE;
-			break;
-		default:
-			icon = GOSSIP_STOCK_AVAILABLE;
-			g_assert_not_reached ();
-			break;
-		}
+		pixbuf = gossip_presence_get_pixbuf (priv->presence);
 	} else {
-		icon = app_get_current_status_icon ();
+		pixbuf = app_get_current_status_pixbuf ();
 	}
 	
-	gtk_image_set_from_stock (GTK_IMAGE (priv->status_image),
-				  icon,
-				  GTK_ICON_SIZE_MENU);
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->status_image), pixbuf);
+	g_object_unref (pixbuf);
 	
 	on = !on;
 
@@ -1697,14 +1636,12 @@ app_status_flash_start (void)
 static void
 app_status_flash_stop (void)
 {
-	GossipAppPriv *priv = app->priv;
-	const gchar   *icon;
-
-	icon = app_get_current_status_icon ();
+	GossipAppPriv  *priv = app->priv;
+	GdkPixbuf      *pixbuf;
 	
-	gtk_image_set_from_stock (GTK_IMAGE (priv->status_image),
-				  icon,
-				  GTK_ICON_SIZE_MENU);
+	pixbuf = app_get_current_status_pixbuf ();
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->status_image), pixbuf);
+	g_object_unref (pixbuf);
 
 	if (priv->status_flash_timeout_id) {
 		g_source_remove (priv->status_flash_timeout_id);
@@ -1724,21 +1661,21 @@ gossip_app_force_non_away (void)
 		return;
 	}
 	
-	if (priv->auto_show == GOSSIP_SHOW_AWAY || priv->auto_show == GOSSIP_SHOW_EXT_AWAY) {
+	if (priv->away_presence) {
 		app_status_clear_away ();
 	}
 }
 
 /* Note: test function for the dbus stuff. */
 void
-gossip_app_set_presence (GossipShow show, const gchar *status)
+gossip_app_set_presence (GossipPresenceState state, const gchar *status)
 {
+#if 0
 	GossipAppPriv *priv = app->priv;
-
 	switch (show) {
-	case GOSSIP_SHOW_AVAILABLE:
-		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
-		priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
+	case GOSSIP_PRESENCE_STATE_AVAILABLE:
+		priv->auto_show = GOSSIP_PRESENCE_STATE_AVAILABLE;
+		priv->explicit_show = GOSSIP_PRESENCE_STATE_AVAILABLE;
 
 		g_free (priv->status_text);
 		priv->status_text = g_strdup (status);
@@ -1749,9 +1686,9 @@ gossip_app_set_presence (GossipShow show, const gchar *status)
 		app_status_clear_away ();
 		break;
 
-	case GOSSIP_SHOW_BUSY:
-		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
-		priv->explicit_show = GOSSIP_SHOW_BUSY;
+	case GOSSIP_PRESENCE_STATE_BUSY:
+		priv->auto_show = GOSSIP_PRESENCE_STATE_AVAILABLE;
+		priv->explicit_show = GOSSIP_PRESENCE_STATE_BUSY;
 
 		g_free (priv->status_text);
 		priv->status_text = g_strdup (status);
@@ -1762,16 +1699,17 @@ gossip_app_set_presence (GossipShow show, const gchar *status)
 		app_status_clear_away ();
 		break;
 
-	case GOSSIP_SHOW_AWAY:
-	case GOSSIP_SHOW_EXT_AWAY:
+	case GOSSIP_PRESENCE_STATE_AWAY:
+	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
 		gossip_idle_reset ();
-		priv->auto_show = GOSSIP_SHOW_AWAY;
+		priv->auto_show = GOSSIP_PRESENCE_STATE_AWAY;
 		g_free (priv->away_message);
 		priv->away_message = g_strdup (status);
 		break;
 	}		
 	
 	app_update_show ();
+#endif
 }
 
 static void
@@ -1825,10 +1763,11 @@ app_status_available_activate_cb (GtkWidget *item,
 	app_status_flash_stop ();
 			
 	str = g_object_get_data (G_OBJECT (item), "status");
-	g_free (priv->status_text);
-	priv->status_text = g_strdup (str);
 
-	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
+	g_object_set (priv->presence,
+		      "state", GOSSIP_PRESENCE_STATE_AVAILABLE,
+		      "status", str,
+		      NULL);
 	
 	app_status_clear_away ();
 }
@@ -1843,10 +1782,11 @@ app_status_busy_activate_cb (GtkWidget *item,
 	app_status_flash_stop ();
 	
 	str = g_object_get_data (G_OBJECT (item), "status");
-	g_free (priv->status_text);
-	priv->status_text = g_strdup (str);
 
-	priv->explicit_show = GOSSIP_SHOW_BUSY;
+	g_object_set (priv->presence,
+		      "state", GOSSIP_PRESENCE_STATE_BUSY,
+		      "status", str,
+		      NULL);
 	
 	app_status_clear_away ();
 }
@@ -1855,39 +1795,27 @@ static void
 app_status_away_activate_cb (GtkWidget *item,
 			     gpointer   user_data)
 {
-	GossipAppPriv *priv = app->priv;
-	gchar         *str;
+	gchar *status;
 
-	/* If we are already away, don't go back to available, just change the
-	 * message.
-	 */
-	if (priv->auto_show != GOSSIP_SHOW_AWAY &&
-	    priv->auto_show != GOSSIP_SHOW_EXT_AWAY) {
-		priv->leave_time = time (NULL);
-		app_status_flash_start ();
-	}
+	status = g_object_get_data (G_OBJECT (item), "status");
 
-	gossip_idle_reset ();
-	priv->auto_show = GOSSIP_SHOW_AWAY;
-
-	str = g_object_get_data (G_OBJECT (item), "status");
-	g_free (priv->away_message);
-	priv->away_message = g_strdup (str);
-	
-	app_update_show ();
+	app_status_flash_start ();
+	app_set_away (status);
+	app_presence_updated ();
 }
 
 static void
-app_status_show_status_dialog (GossipShow   show,
-			       const gchar *str,
-			       gboolean     transient)
+app_status_show_status_dialog (GossipPresenceState  state,
+			       const gchar         *str,
+			       gboolean             transient)
 {
-        GossipAppPriv  *priv;
-	GladeXML       *glade;
-	GtkWidget      *dialog;
-	GtkWidget      *image;
-	GtkWidget      *entry;
-	gint            response;
+        GossipAppPriv       *priv;
+	GladeXML            *glade;
+	GtkWidget           *dialog;
+	GtkWidget           *image;
+	GtkWidget           *entry;
+	gint                 response;
+	GdkPixbuf           *pixbuf;
 
         priv = app->priv;
 
@@ -1901,9 +1829,10 @@ app_status_show_status_dialog (GossipShow   show,
 
 	gtk_entry_set_text (GTK_ENTRY (entry), str);
 
-	gtk_image_set_from_stock (GTK_IMAGE (image),
-				  gossip_utils_get_stock_from_show (show),
-				  GTK_ICON_SIZE_MENU);
+	pixbuf = gossip_presence_state_get_pixbuf (state);
+	
+	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
+	g_object_unref (pixbuf);
 
 	if (transient) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog),
@@ -1922,37 +1851,32 @@ app_status_show_status_dialog (GossipShow   show,
 		
 	str = gtk_entry_get_text (GTK_ENTRY (entry));
 
-	if (strcmp (str, gossip_utils_get_default_status_show (show)) == 0) {
+	if (strcmp (str, gossip_presence_state_get_default_status (state)) == 0) {
 		str = NULL;
 	}
 
-	if (show != GOSSIP_SHOW_AWAY) {
+	if (state != GOSSIP_PRESENCE_STATE_AWAY) {
 		app_status_flash_stop ();
-		
-		g_free (priv->status_text);
-		priv->status_text = g_strdup (str);
-
-		priv->explicit_show = show;
+	
+		gossip_presence_set_state (priv->presence, state);
+		if (str) {
+			gossip_presence_set_status (priv->presence, str);
+		}
 
 		app_status_clear_away ();
 	} else {
-		/* If we are already away, don't go back to available, just
+#if 0/* If we are already away, don't go back to available, just
 		 * change the message.
 		 */
-		if (priv->auto_show != GOSSIP_SHOW_AWAY &&
-		    priv->auto_show != GOSSIP_SHOW_EXT_AWAY) {
-			priv->leave_time = time (NULL);
-			app_status_flash_start ();
+		if (!priv->away_presence) {
 		}
+#endif
 
-		gossip_idle_reset ();
-		priv->auto_show = GOSSIP_SHOW_AWAY;
-
-		g_free (priv->away_message);
-		priv->away_message = g_strdup (str);
-
-		app_update_show ();
+		app_status_flash_start ();
+		app_set_away (str);
 	}
+		
+	app_presence_updated ();
 	
 	gtk_widget_destroy (dialog);
 }
@@ -1963,7 +1887,7 @@ app_status_custom_available_activate_cb (GtkWidget *item,
 {
 	gboolean transient = GPOINTER_TO_INT (user_data);
 	
-	app_status_show_status_dialog (GOSSIP_SHOW_AVAILABLE,
+	app_status_show_status_dialog (GOSSIP_PRESENCE_STATE_AVAILABLE,
 				       _("Available"),
 				       transient);
 }
@@ -1974,7 +1898,7 @@ app_status_custom_busy_activate_cb (GtkWidget *item,
 {
 	gboolean transient = GPOINTER_TO_INT (user_data);
 
-	app_status_show_status_dialog (GOSSIP_SHOW_BUSY,
+	app_status_show_status_dialog (GOSSIP_PRESENCE_STATE_BUSY,
 				       _("Busy"),
 				       transient);
 }
@@ -1985,7 +1909,7 @@ app_status_custom_away_activate_cb (GtkWidget *item,
 {
 	gboolean transient = GPOINTER_TO_INT (user_data);
 
-	app_status_show_status_dialog (GOSSIP_SHOW_AWAY,
+	app_status_show_status_dialog (GOSSIP_PRESENCE_STATE_AWAY,
 				       _("Away"),
 				       transient);
 }
@@ -2018,27 +1942,27 @@ ellipsize_string (const gchar *str, gint len)
 }
 
 static void
-add_status_image_menu_item (GtkWidget   *menu,
-			    const gchar *str,
-			    GossipShow   show,
-			    gboolean     custom,
-			    gpointer     user_data)
+add_status_image_menu_item (GtkWidget           *menu,
+			    const gchar         *str,
+			    GossipPresenceState  state,
+			    gboolean             custom,
+			    gpointer             user_data)
 {
 	gchar       *shortened;
 	GtkWidget   *item;
 	GtkWidget   *image;
 	const gchar *stock;
 
-	g_return_if_fail (show == GOSSIP_SHOW_AVAILABLE ||
-			  show == GOSSIP_SHOW_BUSY ||
-			  show == GOSSIP_SHOW_AWAY);
+	g_return_if_fail (state == GOSSIP_PRESENCE_STATE_AVAILABLE ||
+			  state == GOSSIP_PRESENCE_STATE_BUSY ||
+			  state == GOSSIP_PRESENCE_STATE_AWAY);
 
 	shortened = ellipsize_string (str, 25);
 	
 	item = gtk_image_menu_item_new_with_label (shortened);
 
-	switch (show) {
-	case GOSSIP_SHOW_AVAILABLE:
+	switch (state) {
+	case GOSSIP_PRESENCE_STATE_AVAILABLE:
 		stock = GOSSIP_STOCK_AVAILABLE;
 
 		if (custom) {
@@ -2054,7 +1978,7 @@ add_status_image_menu_item (GtkWidget   *menu,
 		}
 		break;
 		
-	case GOSSIP_SHOW_BUSY:
+	case GOSSIP_PRESENCE_STATE_BUSY:
 		stock = GOSSIP_STOCK_BUSY;
 
 		if (custom) {
@@ -2070,7 +1994,7 @@ add_status_image_menu_item (GtkWidget   *menu,
 		}
 		break;
 
-	case GOSSIP_SHOW_AWAY:
+	case GOSSIP_PRESENCE_STATE_AWAY:
 		stock = GOSSIP_STOCK_AWAY;
 
 		if (custom) {
@@ -2119,17 +2043,17 @@ app_create_status_menu (gboolean from_window)
 	menu = gtk_menu_new ();
 
 	add_status_image_menu_item (menu, _("Available..."),
-				    GOSSIP_SHOW_AVAILABLE,
+				    GOSSIP_PRESENCE_STATE_AVAILABLE,
 				    TRUE,
 				    transient);
 	
 	add_status_image_menu_item (menu, _("Busy..."),
-				    GOSSIP_SHOW_BUSY,
+				    GOSSIP_PRESENCE_STATE_BUSY,
 				    TRUE,
 				    transient);
 
 	add_status_image_menu_item (menu, _("Away..."),
-				    GOSSIP_SHOW_AWAY,
+				    GOSSIP_PRESENCE_STATE_AWAY,
 				    TRUE,
 				    transient);
 	
@@ -2144,7 +2068,7 @@ app_create_status_menu (gboolean from_window)
 		GossipStatusEntry *entry = l->data;
 		
 		add_status_image_menu_item (menu, entry->string,
-					    entry->show, FALSE,
+					    entry->state, FALSE,
 					    NULL);
 	}
 
@@ -2295,7 +2219,7 @@ app_tray_flash_timeout_func (gpointer data)
 {
 	GossipAppPriv   *priv;
 	static gboolean  on = FALSE;
-	const gchar     *icon = NULL;
+	GdkPixbuf       *pixbuf = NULL;
 
 	priv = app->priv;
 
@@ -2312,32 +2236,21 @@ app_tray_flash_timeout_func (gpointer data)
 	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
-			switch (priv->explicit_show) {
-			case GOSSIP_SHOW_BUSY:
-				icon = GOSSIP_STOCK_BUSY;
-				break;
-			case GOSSIP_SHOW_AVAILABLE:
-				icon = GOSSIP_STOCK_AVAILABLE;
-				break;
-			default:
-				g_assert_not_reached ();
-				break;
-			}
+			pixbuf = gossip_presence_get_pixbuf (priv->presence);
 		}
 	}
 	else if (priv->tray_flash_icons != NULL) {
 		if (on) {
-			icon = GOSSIP_STOCK_MESSAGE;
+			pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 		}
 	}
 
-	if (icon == NULL) {
-		icon = app_get_current_status_icon ();
+	if (pixbuf == NULL) {
+		pixbuf = app_get_current_status_pixbuf ();
 	}
 
-	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
-				  icon,
-				  GTK_ICON_SIZE_MENU);
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
+	g_object_unref (pixbuf);
 	
 	on = !on;
 
@@ -2361,14 +2274,15 @@ static void
 app_tray_flash_maybe_stop (void)
 {
 	GossipAppPriv *priv = app->priv;
-	
+	GdkPixbuf     *pixbuf;
+
 	if (priv->tray_flash_icons != NULL || priv->leave_time > 0) {
 		return;
 	}
-	
-	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
-				  app_get_current_status_icon (),
-				  GTK_ICON_SIZE_MENU);
+
+	pixbuf = app_get_current_status_pixbuf ();
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
+	g_object_unref (pixbuf);
 	
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);

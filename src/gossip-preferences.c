@@ -32,7 +32,7 @@
 enum {
 	COL_TYPE,
 	COL_STRING,
-	COL_SHOW,
+	COL_STATE,
 	NUM_COLS
 };
 
@@ -433,16 +433,15 @@ static void
 status_add_clicked_cb (GtkWidget          *button,
 		       GossipStatusEditor *editor)
 {
-	GossipShow         show;
-	const gchar       *str;
-	GList             *list;
-	GtkListStore      *store;
-	GtkTreeIter        iter;
-	GdkPixbuf         *pixbuf;
-	const gchar       *stock;
-	GossipStatusEntry *entry;
+	GossipPresenceState  state;
+	const gchar         *str;
+	GList               *list;
+	GtkListStore        *store;
+	GtkTreeIter          iter;
+	GdkPixbuf           *pixbuf;
+	GossipStatusEntry   *entry;
 
-	show = GPOINTER_TO_INT (gossip_option_menu_get_history (GTK_OPTION_MENU (editor->type_menu)));
+	state = GPOINTER_TO_INT (gossip_option_menu_get_history (GTK_OPTION_MENU (editor->type_menu)));
 	
 	/*str = get_new_message (editor->dialog, show);
 	if (!str) {
@@ -458,21 +457,20 @@ status_add_clicked_cb (GtkWidget          *button,
 
 	entry = g_new (GossipStatusEntry, 1);
 	entry->string = g_strdup (str);
-	entry->show = show;
+	entry->state = state;
 
 	list = g_list_append (list, entry);
 
 	gossip_utils_set_status_messages (list);
 
-	stock = gossip_utils_get_stock_from_show (entry->show);
-	pixbuf = gossip_utils_get_pixbuf_from_stock (stock);
+	pixbuf = gossip_presence_state_get_pixbuf (state);
 
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (editor->treeview)));
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter,
 			    COL_TYPE, pixbuf,
 			    COL_STRING, str,
-			    COL_SHOW, show,
+			    COL_STATE, state,
 			    -1);
 
 	g_object_unref (pixbuf);
@@ -486,12 +484,12 @@ static void
 status_remove_clicked_cb (GtkWidget          *button,
 			  GossipStatusEditor *editor)
 {
-	GtkTreeSelection *selection;
-	GtkTreeModel     *model;
-	GtkTreeIter       iter;
-	gchar            *str;
-	GList            *list, *l;
-	GossipShow        show;
+	GtkTreeSelection    *selection;
+	GtkTreeModel        *model;
+	GtkTreeIter          iter;
+	gchar               *str;
+	GList               *list, *l;
+	GossipPresenceState  state;
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (editor->treeview));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -500,7 +498,7 @@ status_remove_clicked_cb (GtkWidget          *button,
 
 	gtk_tree_model_get (model, &iter,
 			    COL_STRING, &str,
-			    COL_SHOW, &show,
+			    COL_STATE, &state,
 			    -1);
 
 	list = gossip_utils_get_status_messages ();
@@ -508,7 +506,7 @@ status_remove_clicked_cb (GtkWidget          *button,
 	for (l = list; l; l = l->next) {
 		GossipStatusEntry *entry = l->data;
 		
-		if (show == entry->show && strcmp (str, entry->string) == 0) {
+		if (state == entry->state && strcmp (str, entry->string) == 0) {
 			break;
 		}
 	}
@@ -550,25 +548,25 @@ status_dnd_row_deleted_cb (GtkTreeModel *model,
 			   GtkTreeIter  *arg2,
 			   gpointer      user_data)
 {
-	GList             *list = NULL;
-	GtkTreeIter        iter;
-	gboolean           valid;
-	gint               row_count = 0;
-	gchar             *str;
-	GossipShow         show;
-	GossipStatusEntry *entry;
+	GList               *list = NULL;
+	GtkTreeIter          iter;
+	gboolean             valid;
+	gint                 row_count = 0;
+	gchar               *str;
+	GossipPresenceState  state;
+	GossipStatusEntry   *entry;
 
 	valid = gtk_tree_model_get_iter_first (model, &iter);
 
 	while (valid) {
 		gtk_tree_model_get (model, &iter,
 				    COL_STRING, &str,
-				    COL_SHOW, &show,
+				    COL_STATE, &state,
 				    -1);
 
 		entry = g_new (GossipStatusEntry, 1);
 		entry->string = str;
-		entry->show = show;
+		entry->state = state;
 		
 		list = g_list_append (list, entry);
 		
@@ -641,9 +639,9 @@ gossip_preferences_show_status_editor (void)
 	gossip_option_image_menu_setup (editor->type_menu,
 					NULL,
 					NULL,
-					_("Available"), GOSSIP_STOCK_AVAILABLE, GOSSIP_SHOW_AVAILABLE,
-					_("Busy"), GOSSIP_STOCK_BUSY, GOSSIP_SHOW_BUSY,
-					_("Away"), GOSSIP_STOCK_AWAY, GOSSIP_SHOW_AWAY,
+					_("Available"), GOSSIP_STOCK_AVAILABLE, GOSSIP_PRESENCE_STATE_AVAILABLE,
+					_("Busy"), GOSSIP_STOCK_BUSY, GOSSIP_PRESENCE_STATE_BUSY,
+					_("Away"), GOSSIP_STOCK_AWAY, GOSSIP_PRESENCE_STATE_AWAY,
 					NULL);
 	
 	store = gtk_list_store_new (NUM_COLS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_INT);
@@ -667,18 +665,16 @@ gossip_preferences_show_status_editor (void)
 	for (l = list; l; l = l->next) {
 		GossipStatusEntry *entry;
 		GdkPixbuf         *pixbuf;
-		const gchar       *stock;
 
 		entry = l->data;
 
-		stock = gossip_utils_get_stock_from_show (entry->show);
-		pixbuf = gossip_utils_get_pixbuf_from_stock (stock);
+		pixbuf = gossip_presence_state_get_pixbuf (entry->state);
 		
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,
 				    COL_TYPE, pixbuf,
 				    COL_STRING, entry->string,
-				    COL_SHOW, entry->show,
+				    COL_STATE, entry->state,
 				    -1);
 
 		g_object_unref (pixbuf);

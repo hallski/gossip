@@ -33,11 +33,12 @@
 #define d(x) 
 
 struct _GossipJabberChatrooms {
-	GossipJabber *jabber;
-	LmConnection *connection;
+	GossipJabber   *jabber;
+	GossipPresence *presence;
+	LmConnection   *connection;
 
-	GHashTable   *room_id_hash;
-	GHashTable   *room_jid_hash;
+	GHashTable     *room_id_hash;
+	GHashTable     *room_jid_hash;
 };
 
 typedef struct {
@@ -73,7 +74,8 @@ static LmHandlerResult jabber_chatrooms_join_cb (LmMessageHandler  *handler,
 						 LmMessage         *message,
 						 AsyncCallbackData *data);
 static GossipContact * jabber_chatrooms_get_contact (JabberChatroom *room,
-						     GossipJID      *jid);
+						     GossipJID      *jid,
+						     gboolean       *new_contact);
 
 static JabberChatroom *
 jabber_chatrooms_chatroom_new (const gchar *room_name, 
@@ -139,7 +141,7 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
-	contact = jabber_chatrooms_get_contact (room, jid);
+	contact = jabber_chatrooms_get_contact (room, jid, NULL);
 
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
@@ -161,6 +163,13 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 
 		g_object_unref (message);
 	}
+
+	node = lm_message_node_get_child (m->node, "subject");
+	if (node) {
+		g_signal_emit_by_name (chatrooms->jabber,
+				       "chatroom-title-changed", 
+				       room->id, node->value);
+	}
 	
 	gossip_jid_unref (jid);
 	 
@@ -170,9 +179,75 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 static LmHandlerResult
 jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 				   LmConnection          *conn,
-				   LmMessage             *message,
+				   LmMessage             *m,
 				   GossipJabberChatrooms *chatrooms)
 {
+	const gchar         *from;
+	GossipJID           *jid;
+	JabberChatroom      *room;
+	GossipContact       *contact;
+	GossipPresence      *presence;
+	GossipPresenceState  p_state;
+	LmMessageSubType     type;
+	LmMessageNode       *node;
+	gboolean             new_contact;
+	
+	from = lm_message_node_get_attribute (m->node, "from");
+	jid = gossip_jid_new (from);
+		
+	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+	
+	g_print ("Chatroom presence from: %s\n", from);
+	
+	if (!room) {
+		gossip_jid_unref (jid);
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+
+	type = lm_message_get_sub_type (m);
+	switch (type) {
+	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
+		contact = jabber_chatrooms_get_contact (room, jid, 
+							&new_contact);
+
+		presence = gossip_presence_new ();
+		node = lm_message_node_get_child (m->node, "show");
+		if (node) {
+			p_state = gossip_utils_get_presence_state_from_show_string (node->value);
+			gossip_presence_set_state (presence, p_state);
+		}
+		node = lm_message_node_get_child (m->node, "status");
+		if (node) {
+			gossip_presence_set_status (presence, node->value);
+		}
+		
+		gossip_contact_add_presence (contact, presence);
+
+		if (new_contact) {
+			g_signal_emit_by_name (chatrooms->jabber,
+					       "chatroom-contact-joined",
+					       room->id, contact);
+		} else {
+			g_signal_emit_by_name (chatrooms->jabber,
+					       "chatroom-contact-presence-updated", 
+					       room->id, contact);
+		}
+		break;
+
+	case LM_MESSAGE_SUB_TYPE_UNAVAILABLE:
+		contact = jabber_chatrooms_get_contact (room, jid, NULL);
+		if (contact) {
+			g_signal_emit_by_name (chatrooms->jabber, 
+					       "chatroom-contact-left",
+					       room->id, contact);
+		}
+		break;
+
+	default:
+		gossip_jid_unref (jid);
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}	
+	
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
@@ -214,7 +289,9 @@ jabber_chatrooms_join_cb (LmMessageHandler  *handler,
 }
 
 static GossipContact *
-jabber_chatrooms_get_contact (JabberChatroom *room, GossipJID *jid)
+jabber_chatrooms_get_contact (JabberChatroom *room, 
+			      GossipJID      *jid, 
+			      gboolean       *new_contact) 
 {
 	GSList        *l;
 	GossipContact *c;
@@ -226,8 +303,15 @@ jabber_chatrooms_get_contact (JabberChatroom *room, GossipJID *jid)
 		c = GOSSIP_CONTACT (l->data);
 
 		if (g_ascii_strcasecmp (gossip_contact_get_id (c), id) == 0) {
+			if (new_contact) {
+				*new_contact = FALSE;
+			}
 			return c;
 		}
+	}
+
+	if (new_contact) {
+		*new_contact = TRUE;
 	}
 
 	c = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM, id, 

@@ -73,10 +73,10 @@ gboolean            gossip_presence_resource_equal     (gconstpointer a,
 							gconstpointer b);
 gint                gossip_presence_priority_sort_func (gconstpointer a,
 							gconstpointer b);
-/* Returns the default status message for presence's current state */
+/* Returns the default status message for presence state */
 const gchar *
-gossip_presence_get_default_status               (GossipPresence *presence);
-
+gossip_presence_state_get_default_status     (GossipPresenceState state);
+GdkPixbuf * gossip_presence_state_get_pixbuf (GossipPresenceState state);
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

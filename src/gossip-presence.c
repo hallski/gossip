@@ -304,7 +304,10 @@ gossip_presence_get_status (GossipPresence *presence)
 
 	priv = GET_PRIV (presence);
 
-	if (priv->status) {
+	return priv->status;
+}
+#if 0
+if (priv->status) {
 		return priv->status;
 	} else {
 		return presence_get_default_status (priv->state);
@@ -312,6 +315,7 @@ gossip_presence_get_status (GossipPresence *presence)
 
 	return _(AVAILABLE_MESSAGE);
 }
+#endif
 
 void
 gossip_presence_set_status (GossipPresence *presence, const gchar *status)
@@ -357,27 +361,10 @@ gossip_presence_set_priority (GossipPresence *presence,
 GdkPixbuf *
 gossip_presence_get_pixbuf (GossipPresence *presence)
 {
-	const gchar        *stock = NULL;
-
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
 			      gossip_utils_get_pixbuf_offline ());
 
-	switch (gossip_presence_get_state (presence)) {
-	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		stock = GOSSIP_STOCK_AVAILABLE;
-		break;
-	case GOSSIP_PRESENCE_STATE_BUSY:
-		stock = GOSSIP_STOCK_BUSY;
-		break;
-	case GOSSIP_PRESENCE_STATE_AWAY:
-		stock = GOSSIP_STOCK_AWAY;
-		break;
-	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-		stock = GOSSIP_STOCK_EXT_AWAY;
-		break;
-	}
-
-	return gossip_utils_get_pixbuf_from_stock (stock);
+	return gossip_presence_state_get_pixbuf (gossip_presence_get_state (presence));
 }
 
 gboolean
@@ -415,15 +402,31 @@ gossip_presence_priority_sort_func (gconstpointer a, gconstpointer b)
 }
 
 const gchar *
-gossip_presence_get_default_status (GossipPresence *presence)
+gossip_presence_state_get_default_status (GossipPresenceState state)
 {
-	GossipPresencePriv *priv;
+	return presence_get_default_status (state);
+}
 
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
-			      _(OFFLINE_MESSAGE));
+GdkPixbuf *
+gossip_presence_state_get_pixbuf (GossipPresenceState state)
+{
+	const gchar *stock = NULL; 
 
-	priv = GET_PRIV (presence);
+	switch (state) {
+	case GOSSIP_PRESENCE_STATE_AVAILABLE:
+		stock = GOSSIP_STOCK_AVAILABLE;
+		break;
+	case GOSSIP_PRESENCE_STATE_BUSY:
+		stock = GOSSIP_STOCK_BUSY;
+		break;
+	case GOSSIP_PRESENCE_STATE_AWAY:
+		stock = GOSSIP_STOCK_AWAY;
+		break;
+	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
+		stock = GOSSIP_STOCK_EXT_AWAY;
+		break;
+	}
 
-	return presence_get_default_status (priv->state);
+	return gossip_utils_get_pixbuf_from_stock (stock);
 }
 

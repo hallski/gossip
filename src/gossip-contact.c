@@ -374,7 +374,7 @@ gossip_contact_add_presence (GossipContact *contact, GossipPresence *presence)
 	priv = GET_PRIV (contact);
 
 	old = FALSE;
-	
+
 	for (l = priv->presences; l; l = l->next) {
 		if (gossip_presence_resource_equal (l->data, presence)) {
 			/* Replace the old presence with the new */
@@ -661,7 +661,15 @@ gossip_contact_get_status (GossipContact *contact)
 	priv = GET_PRIV (contact);
 
 	if (priv->presences) {
-		return gossip_presence_get_status (GOSSIP_PRESENCE (priv->presences->data));
+		GossipPresence *p;
+		const gchar    *status;
+
+		p = GOSSIP_PRESENCE (priv->presences->data);
+		status = gossip_presence_get_status (p);
+		if (!status) {
+			status = gossip_presence_state_get_default_status (gossip_presence_get_state (p));
+		}
+		return status;
 	} else {
 		return _("Offline");
 	}

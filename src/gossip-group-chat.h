@@ -50,6 +50,5 @@ GType              gossip_group_chat_get_type  (void) G_GNUC_CONST;
 
 GossipGroupChat *  gossip_group_chat_show      (GossipChatroomProvider *provider,
 						GossipChatroomId        id);
-void               gossip_group_chat_set_show  (GossipShow   show);
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */
