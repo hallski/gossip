@@ -7,21 +7,27 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-06-18 18:55+0200\n"
-"PO-Revision-Date: 2003-06-18 19:09+0200\n"
+"POT-Creation-Date: 2003-06-23 18:48+0200\n"
+"PO-Revision-Date: 2003-06-23 17:26+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gossip-main.c:61
-msgid "Don't connect on startup."
-msgstr "No connectes en iniciar."
+#: src/gossip-add-contact.c:252
+#, c-format
+msgid "What request message do you want to send to %s?"
+msgstr "Quin missatge de petició voleu enviar a %s?"
 
-#: src/gossip-main.c:74 ui/main.glade.h:33
-msgid "Gossip"
-msgstr "Gossip"
+#: src/gossip-add-contact.c:272
+#, c-format
+msgid "%s will be added to your contact list."
+msgstr "S'afegirà a %s a la vostra llista de contactes."
+
+#: src/gossip-add-contact.c:276
+msgid "Contact will be added to your contact list"
+msgstr "S'afegirà el contacte a la vostra llista de contactes."
 
 #: src/gossip-app.c:287
 msgid "Available"
@@ -68,6 +74,31 @@ msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 #: src/gossip-app.c:1221
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
+
+#: src/gossip-contact-info.c:176
+msgid "Name:"
+msgstr "Nom:"
+
+#: src/gossip-contact-info.c:194
+msgid "Version:"
+msgstr "Versió:"
+
+#: src/gossip-contact-info.c:209
+msgid "Operating system:"
+msgstr "Sistema operatiu:"
+
+#: src/gossip-contact-info.c:255
+#, c-format
+msgid "Information about %s"
+msgstr "Informació sobre %s"
+
+#: src/gossip-main.c:61
+msgid "Don't connect on startup."
+msgstr "No connectes en iniciar."
+
+#: src/gossip-main.c:74 ui/main.glade.h:33
+msgid "Gossip"
+msgstr "Gossip"
 
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
@@ -116,337 +147,10 @@ msgstr ""
 "Gossip tractarà de enregistrar el compte:\n"
 " <b>%s</b>."
 
-#: src/gossip-add-contact.c:249
-#, c-format
-msgid "What request message do you want to send to <b>%s</b>"
-msgstr "Quin missatge de petició voleu enviar a <b>%s</b>"
-
-#: src/gossip-add-contact.c:268
-#, c-format
-msgid "%s will be added to your contact list."
-msgstr "S'afegirà a %s a la vostra llista de contactes."
-
-#: src/gossip-add-contact.c:272
-msgid "Contact will be added to your contact list"
-msgstr "S'afegirà el contacte a la vostra llista de contactes."
-
-#: src/gossip-contact-info.c:176
-msgid "Name:"
-msgstr "Nom:"
-
-#: src/gossip-contact-info.c:194
-msgid "Version:"
-msgstr "Versió:"
-
-#: src/gossip-contact-info.c:209
-msgid "Operating system:"
-msgstr "Sistema operatiu:"
-
-#: src/gossip-contact-info.c:255
-#, c-format
-msgid "<b>Information about %s</b>"
-msgstr "<b>Informació sobre %s</b>"
-
-#: ui/main.glade.h:1 ui/connect.glade.h:1 ui/group-chat.glade.h:1
-msgid "    "
-msgstr "    "
-
-#: ui/main.glade.h:2 ui/chat.glade.h:1 ui/connect.glade.h:2
-#: ui/group-chat.glade.h:3
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/main.glade.h:2
 msgid "*"
 msgstr "*"
-
-#: ui/main.glade.h:3
-msgid "<b>Additional information</b>"
-msgstr "<b>Informació addicional</b>"
-
-#: ui/main.glade.h:4
-msgid "<b>Address</b>"
-msgstr "<b>Adreça</b>"
-
-#: ui/main.glade.h:5
-msgid "<b>Client information</b>"
-msgstr "<b>Informació del client</b>"
-
-#: ui/main.glade.h:6
-msgid "<b>Country:</b>"
-msgstr "<b>Estat:</b>"
-
-#: ui/main.glade.h:7
-msgid "<b>Description</b>"
-msgstr "<b>Descripció</b>"
-
-#: ui/main.glade.h:8
-msgid "<b>Email:</b>"
-msgstr "<b>Correu electrònic:</b>"
-
-#: ui/main.glade.h:9
-msgid "<b>Information about ...</b>"
-msgstr "<b>Informació sobre...</b>"
-
-#: ui/main.glade.h:10
-msgid "<b>Jabber ID:</b>"
-msgstr "<b>Jabber ID:</b>"
-
-#: ui/main.glade.h:11
-msgid "<b>Jabber ID</b> of new contact:"
-msgstr "<b>Jabber ID</b> del nou contacte:"
-
-#: ui/main.glade.h:12
-msgid "<b>Name:</b>"
-msgstr "<b>Nom:</b>"
-
-#: ui/main.glade.h:13
-msgid "<b>Personal information</b>"
-msgstr "<b>Informació personal</b>"
-
-#: ui/main.glade.h:14
-msgid "<b>Setup Finished</b>"
-msgstr "<b>Configuració finalitzada</b>"
-
-#: ui/main.glade.h:15
-msgid "<b>Status:</b>"
-msgstr "<b>Estat:</b>"
-
-#: ui/main.glade.h:16
-msgid ""
-"<b>Welcome to Gossip</b>\n"
-"Gossip is a modern client for the Jabber Instant Messaging system.\n"
-"\n"
-"This assistant will help you configure Gossip and connect you to your "
-"favorite Jabber server.\n"
-"\n"
-"To get started, just click \"Forward\"."
-msgstr ""
-"<b>Benvingut a Gossip</b>\n"
-"Gossip és un client modern per al sistema de missatgeria instantània Jabber.\n"
-"\n"
-"Aquest assistent vos ajudarà a configurar Gossip i connectar-vos al vostre\n"
-"servidor de Jabber preferit.\n"
-"\n"
-"Per començar, feu clic en «Endavant»."
-
-#: ui/main.glade.h:22
-msgid "<i>Information not available</i>"
-msgstr "<i>Informació no disponible</i>"
-
-#: ui/main.glade.h:23
-msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
-msgstr "<span size=\"smaller\">Exemple: usuari@jabber.org</span>"
-
-#: ui/main.glade.h:24
-msgid "Add a contact"
-msgstr "Afegeix un contacte"
-
-#: ui/main.glade.h:25
-msgid "Add contact"
-msgstr "Afegeix un contacte"
-
-#: ui/main.glade.h:26
-msgid "Add to your contact list"
-msgstr "Afegeix a la llista de contactes"
-
-#: ui/main.glade.h:28
-msgid "Choose a Server"
-msgstr "Seleccioneu un servidor"
-
-#: ui/main.glade.h:29
-msgid "Choose from list:"
-msgstr "Seleccioneu de la llista:"
-
-#: ui/main.glade.h:30
-msgid "Contact information"
-msgstr "Informació del contacte"
-
-#: ui/main.glade.h:31
-msgid "Dinner"
-msgstr "Sopar"
-
-#: ui/main.glade.h:32
-msgid "Do you already have an account on a Jabber server? "
-msgstr "Teniu ja un compte a un servidor de Jabber? "
-
-#: ui/main.glade.h:34
-msgid ""
-"Gossip is now configured properly for your system.\n"
-"You can later change your account settings..."
-msgstr ""
-"Gossip està ara configurat correctament per al vostre sistema.\n"
-"Podeu canviar més endavant la vostra configuració del compte..."
-
-#: ui/main.glade.h:36
-msgid "I would like to add you to my contact list."
-msgstr "M'agradaria afegir-te a la meua llista de contactes."
-
-#: ui/main.glade.h:37
-msgid "I'm away eating dinner, bbiab..."
-msgstr "Estic sopant, tornaré aviat..."
-
-#: ui/main.glade.h:38
-msgid ""
-"In order to subscribe to presence notifications from the user, a request "
-"will be sent. Until this request is approved, the user will always be shown "
-"as \"Offline\" in your contact list."
-msgstr ""
-"Per a subscriure a les notificacions de presència de l'usuari, s'enviarà una "
-"petició. Fins que s'aprove aquesta petició, l'usuari es mostrarà sempre com "
-"«Desconnectat» a la vostra llista de contactes."
-
-#: ui/main.glade.h:39
-msgid "In which group do you want to place this contact?"
-msgstr "A quin grup voleu afegir a aquest contacte?"
-
-#: ui/main.glade.h:40
-msgid "Jabber"
-msgstr "Jabber"
-
-#: ui/main.glade.h:41
-msgid "Jabber Account"
-msgstr "Compte Jabber"
-
-#: ui/main.glade.h:42
-msgid "Jabber.com"
-msgstr "Jabber.com"
-
-#: ui/main.glade.h:43
-msgid "Jabber.org"
-msgstr "Jabber.org"
-
-#: ui/main.glade.h:44
-msgid "Message:"
-msgstr "Missatge:"
-
-#: ui/main.glade.h:45
-msgid "No"
-msgstr "No"
-
-#: ui/main.glade.h:46
-msgid "On what server do you have a Jabber account?"
-msgstr "A quin servidor teniu un compte Jabber?"
-
-#: ui/main.glade.h:47
-msgid "Presence:"
-msgstr "Presència:"
-
-#: ui/main.glade.h:48
-msgid "Priority:"
-msgstr "Prioritat:"
-
-#: ui/main.glade.h:49
-msgid "Request message"
-msgstr "Missatge de petició"
-
-#: ui/main.glade.h:50
-msgid "Search..."
-msgstr "Cerca..."
-
-#: ui/main.glade.h:51
-msgid "Sending request"
-msgstr "S'està enviant la petició"
-
-#: ui/main.glade.h:52
-msgid "Set status"
-msgstr "Estableix l'estat"
-
-#: ui/main.glade.h:53
-msgid "Set the status you want to use"
-msgstr "Estableix l'estat que voleu utilitzar"
-
-#: ui/main.glade.h:54
-msgid "Setup Finished"
-msgstr "Ha finalitzat la configuració"
-
-#: ui/main.glade.h:55
-msgid "Subscription request"
-msgstr "Petició de subscripció"
-
-#: ui/main.glade.h:56
-msgid ""
-"This user wants to subscribe to your presence.\n"
-"Do you approve?"
-msgstr ""
-"Aquest usuari vol subscriure's a la vostra presència.\n"
-"Ho aproveu?"
-
-#: ui/main.glade.h:58
-msgid "Use a different server"
-msgstr "Utilitza un servidor diferent"
-
-#: ui/main.glade.h:59
-msgid "Welcome to Gossip"
-msgstr "Benvinguts a Gossip"
-
-#: ui/main.glade.h:60
-msgid "What instant messaging system does the contact use?"
-msgstr "Quin sistema de missatgeria instantània utilitza el contacte?"
-
-#: ui/main.glade.h:61
-msgid "What is your name?"
-msgstr "Quin és el vostre nom?"
-
-#: ui/main.glade.h:62
-msgid "What nickname do you want to use for this contact?"
-msgstr "Quina àlies voleu utilitzar per a aquest contacte?"
-
-#: ui/main.glade.h:63
-msgid "What request message do you want to send to <b>micke</b>?"
-msgstr "Quin missatge de petició voleu enviar a <b>micke</b>?"
-
-#: ui/main.glade.h:64
-msgid "What server do you want to use?"
-msgstr "Quin servidor voleu utilitzar?"
-
-#: ui/main.glade.h:65
-msgid "What username do you use?"
-msgstr "Quin nom d'usuari utilitzeu?"
-
-#: ui/main.glade.h:66
-msgid "What username do you want to use?"
-msgstr "Quin nom d'usuari voleu utilitzar?"
-
-#: ui/main.glade.h:67
-msgid "Yes"
-msgstr "Sí"
-
-#: ui/main.glade.h:68
-msgid "Your Identity"
-msgstr "La vostra identitat"
-
-#: ui/main.glade.h:69
-msgid "_Actions"
-msgstr "_Accions"
-
-#: ui/main.glade.h:70
-msgid "_Add contact..."
-msgstr "_Afegeix un contacte..."
-
-#: ui/main.glade.h:71
-msgid "_Approve"
-msgstr "_Aprova"
-
-#: ui/main.glade.h:72
-msgid "_Connect..."
-msgstr "_Connecta..."
-
-#: ui/main.glade.h:73
-msgid "_Defer"
-msgstr "Retar_da"
-
-#: ui/main.glade.h:74
-msgid "_Edit statuses..."
-msgstr "_Edita els estats..."
-
-#: ui/main.glade.h:75
-msgid "_Join group chat..."
-msgstr "Entra a la _xerrada en grup..."
-
-#: ui/main.glade.h:76
-msgid "_Reject"
-msgstr "_Rebutja"
-
-#: ui/main.glade.h:77
-msgid "_Send chat message..."
-msgstr "_Envia un missatge de xerrada..."
 
 #: ui/chat.glade.h:2
 msgid "<b>Chat with:</b>"
@@ -483,6 +187,10 @@ msgstr "_Respon..."
 #: ui/chat.glade.h:10 ui/group-chat.glade.h:22
 msgid "_Send"
 msgstr "_Envia"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:1
+msgid "    "
+msgstr "    "
 
 #: ui/connect.glade.h:3
 msgid "5"
@@ -656,3 +364,296 @@ msgstr "_Sala:"
 #: ui/group-chat.glade.h:23
 msgid "_Server:"
 msgstr "_Servidor:"
+
+#: ui/main.glade.h:3
+msgid "<b>Additional information</b>"
+msgstr "<b>Informació addicional</b>"
+
+#: ui/main.glade.h:4
+msgid "<b>Address</b>"
+msgstr "<b>Adreça</b>"
+
+#: ui/main.glade.h:5
+msgid "<b>Client information</b>"
+msgstr "<b>Informació del client</b>"
+
+#: ui/main.glade.h:6
+msgid "<b>Country:</b>"
+msgstr "<b>Estat:</b>"
+
+#: ui/main.glade.h:7
+msgid "<b>Description</b>"
+msgstr "<b>Descripció</b>"
+
+#: ui/main.glade.h:8
+msgid "<b>Email:</b>"
+msgstr "<b>Correu electrònic:</b>"
+
+#: ui/main.glade.h:9
+msgid "<b>Information about ...</b>"
+msgstr "<b>Informació sobre...</b>"
+
+#: ui/main.glade.h:10
+msgid "<b>Jabber ID:</b>"
+msgstr "<b>Jabber ID:</b>"
+
+#: ui/main.glade.h:11
+msgid "<b>Jabber ID</b> of new contact:"
+msgstr "<b>Jabber ID</b> del nou contacte:"
+
+#: ui/main.glade.h:12
+msgid "<b>Name:</b>"
+msgstr "<b>Nom:</b>"
+
+#: ui/main.glade.h:13
+msgid "<b>Personal information</b>"
+msgstr "<b>Informació personal</b>"
+
+#: ui/main.glade.h:14
+msgid "<b>Setup Finished</b>"
+msgstr "<b>Configuració finalitzada</b>"
+
+#: ui/main.glade.h:15
+msgid "<b>Status:</b>"
+msgstr "<b>Estat:</b>"
+
+#: ui/main.glade.h:16
+msgid ""
+"<b>Welcome to Gossip</b>\n"
+"Gossip is a modern client for the Jabber Instant Messaging system.\n"
+"\n"
+"This assistant will help you configure Gossip and connect you to your "
+"favorite Jabber server.\n"
+"\n"
+"To get started, just click \"Forward\"."
+msgstr ""
+"<b>Benvingut a Gossip</b>\n"
+"Gossip és un client modern per al sistema de missatgeria instantània "
+"Jabber.\n"
+"\n"
+"Aquest assistent vos ajudarà a configurar Gossip i connectar-vos al vostre\n"
+"servidor de Jabber preferit.\n"
+"\n"
+"Per començar, feu clic en «Endavant»."
+
+#: ui/main.glade.h:22
+msgid "<i>Information not available</i>"
+msgstr "<i>Informació no disponible</i>"
+
+#: ui/main.glade.h:23
+msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
+msgstr "<span size=\"smaller\">Exemple: usuari@jabber.org</span>"
+
+#: ui/main.glade.h:24
+msgid "Add a contact"
+msgstr "Afegeix un contacte"
+
+#: ui/main.glade.h:25
+msgid "Add contact"
+msgstr "Afegeix un contacte"
+
+#: ui/main.glade.h:26
+msgid "Add to your contact list"
+msgstr "Afegeix a la llista de contactes"
+
+#: ui/main.glade.h:28
+msgid "Choose a Server"
+msgstr "Seleccioneu un servidor"
+
+#: ui/main.glade.h:29
+msgid "Choose from list:"
+msgstr "Seleccioneu de la llista:"
+
+#: ui/main.glade.h:30
+msgid "Contact information"
+msgstr "Informació del contacte"
+
+#: ui/main.glade.h:31
+msgid "Dinner"
+msgstr "Sopar"
+
+#: ui/main.glade.h:32
+msgid "Do you already have an account on a Jabber server? "
+msgstr "Teniu ja un compte a un servidor de Jabber? "
+
+#: ui/main.glade.h:34
+msgid ""
+"Gossip is now configured properly for your system.\n"
+"You can later change your account settings..."
+msgstr ""
+"Gossip està ara configurat correctament per al vostre sistema.\n"
+"Podeu canviar més endavant la vostra configuració del compte..."
+
+#: ui/main.glade.h:36
+msgid "I would like to add you to my contact list."
+msgstr "M'agradaria afegir-te a la meua llista de contactes."
+
+#: ui/main.glade.h:37
+msgid "I'm away eating dinner, bbiab..."
+msgstr "Estic sopant, tornaré aviat..."
+
+#: ui/main.glade.h:38
+msgid ""
+"In order to subscribe to presence notifications from the user, a request "
+"will be sent. Until this request is approved, the user will always be shown "
+"as \"Offline\" in your contact list."
+msgstr ""
+"Per a subscriure a les notificacions de presència de l'usuari, s'enviarà una "
+"petició. Fins que s'aprove aquesta petició, l'usuari es mostrarà sempre com "
+"«Desconnectat» a la vostra llista de contactes."
+
+#: ui/main.glade.h:39
+msgid "In which group do you want to place this contact?"
+msgstr "A quin grup voleu afegir a aquest contacte?"
+
+#: ui/main.glade.h:40
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ui/main.glade.h:41
+msgid "Jabber Account"
+msgstr "Compte Jabber"
+
+#: ui/main.glade.h:42
+msgid "Jabber.com"
+msgstr "Jabber.com"
+
+#: ui/main.glade.h:43
+msgid "Jabber.org"
+msgstr "Jabber.org"
+
+#: ui/main.glade.h:44
+msgid "Message:"
+msgstr "Missatge:"
+
+#: ui/main.glade.h:45
+msgid "No"
+msgstr "No"
+
+#: ui/main.glade.h:46
+msgid "On what server do you have a Jabber account?"
+msgstr "A quin servidor teniu un compte Jabber?"
+
+#: ui/main.glade.h:47
+msgid "Presence:"
+msgstr "Presència:"
+
+#: ui/main.glade.h:48
+msgid "Priority:"
+msgstr "Prioritat:"
+
+#: ui/main.glade.h:49
+msgid "Request message"
+msgstr "Missatge de petició"
+
+#: ui/main.glade.h:50
+msgid "Search..."
+msgstr "Cerca..."
+
+#: ui/main.glade.h:51
+msgid "Sending request"
+msgstr "S'està enviant la petició"
+
+#: ui/main.glade.h:52
+msgid "Set status"
+msgstr "Estableix l'estat"
+
+#: ui/main.glade.h:53
+msgid "Set the status you want to use"
+msgstr "Estableix l'estat que voleu utilitzar"
+
+#: ui/main.glade.h:54
+msgid "Setup Finished"
+msgstr "Ha finalitzat la configuració"
+
+#: ui/main.glade.h:55
+msgid "Subscription request"
+msgstr "Petició de subscripció"
+
+#: ui/main.glade.h:56
+msgid ""
+"This user wants to subscribe to your presence.\n"
+"Do you approve?"
+msgstr ""
+"Aquest usuari vol subscriure's a la vostra presència.\n"
+"Ho aproveu?"
+
+#: ui/main.glade.h:58
+msgid "Use a different server"
+msgstr "Utilitza un servidor diferent"
+
+#: ui/main.glade.h:59
+msgid "Welcome to Gossip"
+msgstr "Benvinguts a Gossip"
+
+#: ui/main.glade.h:60
+msgid "What instant messaging system does the contact use?"
+msgstr "Quin sistema de missatgeria instantània utilitza el contacte?"
+
+#: ui/main.glade.h:61
+msgid "What is your name?"
+msgstr "Quin és el vostre nom?"
+
+#: ui/main.glade.h:62
+msgid "What nickname do you want to use for this contact?"
+msgstr "Quin àlies voleu utilitzar per a aquest contacte?"
+
+#: ui/main.glade.h:63
+msgid "What request message do you want to send to <b>micke</b>?"
+msgstr "Quin missatge de petició voleu enviar a <b>micke</b>?"
+
+#: ui/main.glade.h:64
+msgid "What server do you want to use?"
+msgstr "Quin servidor voleu utilitzar?"
+
+#: ui/main.glade.h:65
+msgid "What username do you use?"
+msgstr "Quin nom d'usuari utilitzeu?"
+
+#: ui/main.glade.h:66
+msgid "What username do you want to use?"
+msgstr "Quin nom d'usuari voleu utilitzar?"
+
+#: ui/main.glade.h:67
+msgid "Yes"
+msgstr "Sí"
+
+#: ui/main.glade.h:68
+msgid "Your Identity"
+msgstr "La vostra identitat"
+
+#: ui/main.glade.h:69
+msgid "_Actions"
+msgstr "_Accions"
+
+#: ui/main.glade.h:70
+msgid "_Add contact..."
+msgstr "_Afegeix un contacte..."
+
+#: ui/main.glade.h:71
+msgid "_Approve"
+msgstr "_Aprova"
+
+#: ui/main.glade.h:72
+msgid "_Connect..."
+msgstr "_Connecta..."
+
+#: ui/main.glade.h:73
+msgid "_Defer"
+msgstr "Retar_da"
+
+#: ui/main.glade.h:74
+msgid "_Edit statuses..."
+msgstr "_Edita els estats..."
+
+#: ui/main.glade.h:75
+msgid "_Join group chat..."
+msgstr "Entra a la _xerrada en grup..."
+
+#: ui/main.glade.h:76
+msgid "_Reject"
+msgstr "_Rebutja"
+
+#: ui/main.glade.h:77
+msgid "_Send chat message..."
+msgstr "_Envia un missatge de xerrada..."
