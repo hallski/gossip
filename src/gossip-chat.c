@@ -410,7 +410,7 @@ chat_get_jid_with_resource (GossipChat *chat, const gchar *resource)
 
 	jid = gossip_contact_get_jid (priv->contact);
 
-	g_print ("Getting jid with resource: %s\n", resource);
+	d(g_print ("Getting jid with resource: %s\n", resource));
 	
 	if (resource) {
 		return g_strconcat (gossip_jid_get_without_resource (jid),
