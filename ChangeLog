@@ -1,3 +1,12 @@
+2003-11-14  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c:
+	- Do the offline/online-filter myself. Probably fixes #126472
+	* src/gossip-roster.c:
+	- Removed group_item_added/group_item_removed signals
+	- Added "item-presence-updated" signal
+	* src/Makefile.am: Don't compile eggtreemodelfilter
+
 2003-11-13  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster-view.c: fixed asserts.

@@ -69,8 +69,6 @@ gossip_SOURCES = 				\
 	eel-ellipsizing-label.h			\
 	eggtrayicon.c				\
 	eggtrayicon.h				\
-	eggtreemodelfilter.c                    \
-	eggtreemodelfilter.h                    \
 	disclosure-widget.c			\
 	disclosure-widget.h
 

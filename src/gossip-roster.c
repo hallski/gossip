@@ -98,7 +98,8 @@ static GossipRosterItem * roster_item_new    (GossipJID         *jid);
 
 static void     roster_item_update           (GossipRoster      *roster,
 					      GossipRosterItem  *item,
-					      LmMessageNode     *node);
+					      LmMessageNode     *node,
+					      gboolean           new_item);
 static gboolean roster_item_update_presence  (GossipRoster      *roster,
 					      GossipRosterItem  *item,
 					      GossipJID         *from,
@@ -107,13 +108,12 @@ static void     roster_item_remove           (GossipRoster      *roster,
 					      GossipRosterItem  *item);
 static void     roster_item_free             (GossipRosterItem  *item);
 
-static void     roster_item_add_group        (GossipRoster      *roster, 
+static void     roster_item_add_to_group     (GossipRoster      *roster, 
 					      GossipRosterItem  *item,
 					      const gchar       *name);
-static void     roster_item_remove_group     (GossipRoster      *roster, 
+static void     roster_item_remove_from_group(GossipRoster      *roster, 
 					      GossipRosterItem  *item,
 					      GossipRosterGroup *group);
-
 static RosterConnection *
 roster_item_add_connection                   (GossipRosterItem  *item,
 					      GossipJID         *from);
@@ -136,10 +136,9 @@ enum {
 	ITEM_ADDED,
 	ITEM_REMOVED,
 	ITEM_UPDATED,
+	ITEM_PRESENCE_UPDATED,
 	GROUP_ADDED,
 	GROUP_REMOVED,
-	GROUP_ITEM_REMOVED,
-	GROUP_ITEM_ADDED,
         LAST_SIGNAL
 };
 
@@ -210,6 +209,16 @@ roster_class_init (GossipRosterClass *klass)
 			      gossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
+	signals[ITEM_PRESENCE_UPDATED] =
+		g_signal_new ("item_presence_updated",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+
 	signals[GROUP_ADDED] =
 		g_signal_new ("group_added",
 			      G_TYPE_FROM_CLASS (klass),
@@ -228,24 +237,6 @@ roster_class_init (GossipRosterClass *klass)
 			      gossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
-	signals[GROUP_ITEM_ADDED] =
-		g_signal_new ("group_item_added",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER_POINTER,
-			      G_TYPE_NONE,
-			      2, G_TYPE_POINTER, G_TYPE_POINTER);
-	signals[GROUP_ITEM_REMOVED] =
-		g_signal_new ("group_item_removed",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER_POINTER,
-			      G_TYPE_NONE,
-			      2, G_TYPE_POINTER, G_TYPE_POINTER);
 }
 
 static void
@@ -382,15 +373,7 @@ roster_clear_foreach_item (gpointer          key,
 			   GossipRosterItem *item,
 			   GossipRoster     *roster)
 {
-	GList *l;
-
-	for (l = item->groups; l; l = l->next) {
-		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
-
-		g_signal_emit (roster, signals[GROUP_ITEM_REMOVED], 0,
-			       group, item);
-	}
-
+	g_signal_emit (roster, signals[ITEM_REMOVED], 0, item);
 	return TRUE;
 }
 
@@ -410,7 +393,7 @@ roster_clear (GossipRoster *roster)
 
 	priv = roster->priv;
 
-	/* Go through items and signal group_item_removed ... */
+	/* Go through items and signal item_removed ... */
 	if (priv->items) {
 		g_hash_table_foreach_remove (priv->items,
 				      (GHRFunc) roster_clear_foreach_item,
@@ -489,6 +472,7 @@ roster_iq_handler (LmMessageHandler *handler,
 		GossipJID        *jid;
 		const gchar      *jid_str;
 		const gchar      *subscription;
+		gboolean          new_item = FALSE;
 
 		if (strcmp (node->name, "item") != 0) { 
 			continue;
@@ -503,30 +487,25 @@ roster_iq_handler (LmMessageHandler *handler,
 
 		item = (GossipRosterItem *) g_hash_table_lookup (priv->items, 
 								 jid);
-		
+
 		subscription = lm_message_node_get_attribute (node, 
 							      "subscription");
-		if (subscription && strcmp (subscription, "remove") == 0) {
+		if (item && subscription && strcmp (subscription, "remove") == 0) {
 			roster_item_remove (roster, item);
 			continue;
 		}
+		
+		if (!item) {
+			item = roster_item_new (jid);
 	
-		if (item) {
-			roster_item_update (roster, item, node);
-			continue;
+			g_hash_table_insert (priv->items,
+					     gossip_jid_ref (item->jid),
+					     item);
+			new_item = TRUE;
 		}
-
-		/* It's a new item */
-		item = roster_item_new (jid);
+		
 		gossip_jid_unref (jid);
-	
-		g_hash_table_insert (priv->items,
-				     gossip_jid_ref (item->jid),
-				     item);
-		
-		g_signal_emit (roster, signals[ITEM_ADDED], 0, item);
-		
-		roster_item_update (roster, item, node);
+		roster_item_update (roster, item, node, new_item);
 	}
 	
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -557,7 +536,8 @@ roster_item_new (GossipJID *jid)
 static void
 roster_item_update (GossipRoster     *roster,
 		    GossipRosterItem *item,
-		    LmMessageNode    *node)
+		    LmMessageNode    *node,
+		    gboolean          new_item)
 {
 	const gchar   *subscription;
 	const gchar   *ask;
@@ -591,10 +571,8 @@ roster_item_update (GossipRoster     *roster,
 	groups = g_list_copy (item->groups);
 	for (l = groups; l; l = l->next) {
 		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
-		d(g_print ("Looping groups [%s]-[%s] and removing\n",
-			   gossip_roster_item_get_name (item),
-			   gossip_roster_group_get_name (group)));
-		roster_item_remove_group (roster, item, group);
+
+		roster_item_remove_from_group (roster, item, group);
 	}
 
 	g_list_free (groups);
@@ -602,17 +580,22 @@ roster_item_update (GossipRoster     *roster,
 	
 	for (child = node->children; child; child = child->next) {
 		if (strcmp (child->name, "group") == 0 && child->value) {
-			roster_item_add_group (roster, item, child->value);
+			roster_item_add_to_group (roster, item, child->value);
 			in_a_group = TRUE;
 		}
 	}
 	/* End of FIXME */
 
+	/* Should be handled by the roster view */
 	if (!in_a_group) {
-		roster_item_add_group (roster, item, UNSORTED_GROUP);
+		roster_item_add_to_group (roster, item, UNSORTED_GROUP);
 	}
 
-	g_signal_emit (roster, signals[ITEM_UPDATED], 0, item);
+	if (new_item) {
+		g_signal_emit (roster, signals[ITEM_ADDED], 0, item);
+	} else {
+		g_signal_emit (roster, signals[ITEM_UPDATED], 0, item);
+	}
 }
 
 static gboolean
@@ -693,7 +676,7 @@ roster_item_update_presence (GossipRoster     *roster,
 					 roster_item_sort_connections);
 
 item_updated:
-	g_signal_emit (roster, signals[ITEM_UPDATED], 0, item);
+	g_signal_emit (roster, signals[ITEM_PRESENCE_UPDATED], 0, item);
 
 	return TRUE;
 }
@@ -714,12 +697,10 @@ roster_item_remove (GossipRoster *roster, GossipRosterItem *item)
 	groups = g_list_copy (item->groups);
 	for (l = groups; l; l = l->next) {
 		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
-	
-		roster_item_remove_group (roster, item, group);
+
+		roster_item_remove_from_group (roster, item, group);
 	}
 	g_list_free (groups);
-	
-	g_signal_emit (roster, signals[ITEM_REMOVED], 0, item);
 	
 	/* Remove these here since there can be external references to the
 	 * item. But the groups might be gone */
@@ -753,9 +734,9 @@ roster_item_free (GossipRosterItem *item)
 }
 
 static void
-roster_item_add_group (GossipRoster     *roster, 
-		       GossipRosterItem *item,
-		       const gchar      *name) 
+roster_item_add_to_group (GossipRoster     *roster, 
+			  GossipRosterItem *item,
+			  const gchar      *name) 
 {
 	GossipRosterPriv  *priv;
 	GossipRosterGroup *group;
@@ -777,19 +758,15 @@ roster_item_add_group (GossipRoster     *roster,
 	if (!g_list_find (item->groups, group)) {
 		item->groups = g_list_prepend (item->groups, group);
 	}
-
-	g_signal_emit (roster, signals[GROUP_ITEM_ADDED], 0, group, item);
 }
 
 static void
-roster_item_remove_group (GossipRoster      *roster, 
-			  GossipRosterItem  *item,
-			  GossipRosterGroup *group)
+roster_item_remove_from_group (GossipRoster      *roster, 
+			       GossipRosterItem  *item,
+			       GossipRosterGroup *group)
 {
 	item->groups = g_list_remove (item->groups, group);
 	group->items = g_list_remove (group->items, item);
-
-	g_signal_emit (roster, signals[GROUP_ITEM_REMOVED], 0, group, item);
 
 	if (g_list_length (group->items) == 0) {
 		roster_group_remove (roster, group);
@@ -892,6 +869,9 @@ roster_group_remove (GossipRoster *roster, GossipRosterGroup *group)
 	g_return_if_fail (group != NULL);
 
 	priv = roster->priv;
+
+	/* FIXME: Not sure if we should remove right away or not... */
+	return;
 
 	/* Don't need to worry about the items, if we get here there are no
 	 * items in this groups items list. */

@@ -393,6 +393,7 @@ app_init (GossipApp *singleton_app)
 	
 	priv->roster = gossip_roster_new ();
 	priv->roster_view = gossip_roster_view_new (priv->roster);
+	/* Read from GConf ? */
 	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view), FALSE);
 
 	gtk_widget_show (GTK_WIDGET (priv->roster_view));
