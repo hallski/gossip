@@ -1,4 +1,9 @@
-2003-09-03  Martyn Russell <ginxd@btopenworld.com>
+2003-09-03  Mikael Hallendal  <micke@imendio.com>
+
+        * src/gossip-app.c (app_update_show): Send that we are away and 
+	  extended away to the server, don't just update the local icon :)
+	
+2003-09-03  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-add-contact.c:
 	(add_contact_prepare_page_2),

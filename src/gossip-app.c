@@ -1876,6 +1876,7 @@ app_update_show (void)
 	GossipAppPriv *priv;
 	const gchar   *icon;
 	LmMessage     *m;
+	const gchar   *show = NULL;
 	
 	priv = app->priv;
 	
@@ -1901,10 +1902,24 @@ app_update_show (void)
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 	
-	if (app_get_effective_show () == GOSSIP_SHOW_BUSY) {
-		lm_message_node_add_child (m->node, "show", "dnd");
+	switch (app_get_effective_show()) {
+	case GOSSIP_SHOW_BUSY:
+		show = "dnd";
+		break;
+	case GOSSIP_SHOW_AWAY:
+		show = "away";
+		break;
+	case GOSSIP_SHOW_EXT_AWAY:
+		show = "xa";
+		break;
+	default:
+		break;
 	}
 	
+	if (show) {
+		lm_message_node_add_child (m->node, "show", show);
+	}
+
 	lm_message_node_add_child (m->node, "status", priv->status_text);
 	lm_connection_send (app->priv->connection, m, NULL);
 	lm_message_unref (m);
