@@ -1,3 +1,10 @@
+2004-03-01  Richard Hult  <richard@imendio.com>
+
+	* Release 0.7.3
+
+	* Move translator credits to new format and put the old as backup
+	in translator_credits_old.
+
 2004-03-16  Iñaki Larrañaga  <dooteo@euskalgnu.org>
 
 	* eu.po: Updated Basque translation.
