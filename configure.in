@@ -65,34 +65,28 @@ PKG_CHECK_MODULES(GOSSIP,
 dnl -----------------------------------------------------------
 dnl Check for autoaway
 dnl -----------------------------------------------------------
-AC_ARG_ENABLE(autoaway, [  --enable-autoaway build with X screensaver extension for idle checking], enable_xss="$enableval", enable_xss=yes)
 
 dnl Check for XScreenSaver
-if test "x$enable_xss" = "xyes" ; then
-	old_LIBS="$LIBS"
-	old_CFLAGS="$CFLAGS"
-	LIBS="$LIBS -L$x_libraries $GOSSIP_LIBS"
-	CFLAGS="$CFLAGS -L$x_libraries $GOSSIP_CFLAGS"
-	XSS_LIBS="no"
-	XSS_HEADERS="no"
-	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
-	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
-	if test \! "$XSS_LIBS" = "no"; then
-		AC_TRY_COMPILE([
+old_LIBS="$LIBS"
+old_CFLAGS="$CFLAGS"
+LIBS="$LIBS -L$x_libraries $GOSSIP_LIBS"
+CFLAGS="$CFLAGS -L$x_libraries $GOSSIP_CFLAGS"
+XSS_LIBS="no"
+XSS_HEADERS="no"
+AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
+AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
+if test \! "$XSS_LIBS" = "no"; then
+   AC_TRY_COMPILE([
 #include <X11/extensions/scrnsaver.h>
-				],[],[enable_xss=no],[
-				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
-				])
-	else
-	       XSS_LIBS=""
-	       enable_xss=no
-	fi
-	LIBS="$old_LIBS"
-	CFLAGS="$old_CFLAGS"
+		],[],[enable_xss=no],[
+		AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
+		])
 else
-	XSS_LIBS=""
-	enable_xss=no
+    XSS_LIBS=""
+    enable_xss=no
 fi
+LIBS="$old_LIBS"
+CFLAGS="$old_CFLAGS"
 
 GOSSIP_CFLAGS="$GOSSIP_CFLAGS $XSS_CFLAGS"
 GOSSIP_LIBS="$GOSSIP_LIBS $XSS_LIBS"
@@ -137,5 +131,4 @@ gossip.spec
 
 echo
 echo "Gossip prefix: $prefix"
-echo "Autoaway     : $enable_xss"
 echo
