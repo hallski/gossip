@@ -1,3 +1,7 @@
+2004-06-07  Mikael Hallendal  <micke@imendio.com>
+
+	* configure.in: Added Esperanto translation from Brient Hess.
+
 2004-06-05  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
 
 	* ui/main.glade: 

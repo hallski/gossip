@@ -1,0 +1,988 @@
+# Esperanto translation of Gossip
+# Copyright (C) 2003 Free Software Foundation, Inc.
+# Brient Hess <brient@brient.net>, 2004.
+#
+# This file is distributed under the same license as the Gossip package.
+#
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Gossip 0.7.5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-05-26 11:06-0700\n"
+"PO-Revision-Date: 2004-05-29 12:22-0900\n"
+"Last-Translator: Brient Hess <brient@brient.net>\n"
+"Language-Team: Esperanto Team (inactive?) <eo@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gossip.desktop.in.h:1 ui/main.glade.h:27
+msgid "Gossip"
+msgstr "Gossip"
+
+#: gossip.desktop.in.h:2
+msgid "Instant Messenger"
+msgstr "Tujmesaĝilo"
+
+#: gossip.schemas.in.h:1
+msgid "Be silent when away"
+msgstr "Silentu dum fora"
+
+#: gossip.schemas.in.h:2
+msgid "Be silent when busy"
+msgstr "Silentu dum okupita"
+
+#: gossip.schemas.in.h:3
+msgid "Height of main window"
+msgstr "Alteco de precipa fenestro"
+
+#: gossip.schemas.in.h:4
+msgid "Hide main window"
+msgstr "Kaŝu precipa fenestro"
+
+#: gossip.schemas.in.h:5
+msgid "Hide the main window."
+msgstr "Kaŝu la precipa fenestro."
+
+#: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "Savis stato mesaĝoj"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "Savis stato mesaĝoj."
+
+#: gossip.schemas.in.h:8
+msgid "Show offline contacts"
+msgstr "Vidigu ne kontaktebloj"
+
+#: gossip.schemas.in.h:9
+#, fuzzy
+msgid "The X position of the main window."
+msgstr "La iksa pozicio de la precipa fenestro."
+
+#: gossip.schemas.in.h:10
+#, fuzzy
+msgid "The Y position of the main window."
+msgstr "La ipsilona pozicio de la precipa fenestro."
+
+#: gossip.schemas.in.h:11
+msgid "The height of the main window."
+msgstr "La alteco de la precipa fenestro."
+
+#: gossip.schemas.in.h:12
+msgid "The width of the main window."
+msgstr "La larĝeco de la precipa fenestro."
+
+#: gossip.schemas.in.h:13
+msgid "Use graphical smileys"
+msgstr "Uzas grafika ridetoj"
+
+#: gossip.schemas.in.h:14
+msgid "Use notification sounds"
+msgstr "Uzas anoncadaj sonoj"
+
+#: gossip.schemas.in.h:15
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr ""
+"Ĉu konverti ridetoj al iĝi grafika bildo en konversacioj."
+
+#: gossip.schemas.in.h:16
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "Ĉu ludu iu sono kiam mesaĝoj alvenas."
+
+#: gossip.schemas.in.h:17
+msgid "Whether or not to play sounds when away."
+msgstr "Ĉu ludu sonoj dum fora."
+
+#: gossip.schemas.in.h:18
+msgid "Whether or not to play sounds when busy."
+msgstr "Ĉu ludu sonoj dum okupita."
+
+#: gossip.schemas.in.h:19
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "Ĉu montru kontaktoj kiun estas ne kontaktebla en la kontaktlisto."
+
+#: gossip.schemas.in.h:20
+msgid "Width of the main window"
+msgstr "Larĝeco de la precipa fenestro"
+
+#: gossip.schemas.in.h:21
+#, fuzzy
+msgid "X position of main window"
+msgstr "Iksa pozicio de precipa fenestro"
+
+#: gossip.schemas.in.h:22
+#, fuzzy
+msgid "Y position of main window"
+msgstr "Ipsilona pozicio de precipa fenestro"
+
+#: src/gossip-about.c:275
+msgid "Written by:"
+msgstr "Programadis per:"
+
+#: src/gossip-about.c:285
+msgid "Artwork by:"
+msgstr "Arto per:"
+
+#: src/gossip-about.c:296
+msgid "Translated by:"
+msgstr "Tradukis per:"
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:342
+msgid "translator_credits"
+msgstr "Brient Hess"
+
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+msgid "Home"
+msgstr "Hejmo"
+
+#: src/gossip-add-contact.c:291
+#, c-format
+msgid "What request message do you want to send to %s?"
+msgstr "Kio peta mesaĝo vi deziras sendi al %s?"
+
+#: src/gossip-add-contact.c:309
+#, c-format
+msgid "%s will be added to your contact list."
+msgstr "%s aldonos al vi kontaktlisto."
+
+#: src/gossip-app.c:639
+msgid "Could not connect"
+msgstr "Sensukcese konekti"
+
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
+msgstr "Kontrolu vin konton informaĵon ĉu korekta."
+
+#: src/gossip-app.c:696
+msgid ""
+"Enter the user ID of the person you would like to send a chat message to."
+msgstr ""
+"Enigu la uzantonomon de la personon vi deziras sendi iu mesaĝo."
+
+#: src/gossip-app.c:703 ui/main.glade.h:76
+msgid "_Chat"
+msgstr "_Babilu"
+
+#: src/gossip-app.c:954
+#, c-format
+msgid "%s wants to be notified of your presence."
+msgstr "%s deziras avizi da vin ĉeesto."
+
+#: src/gossip-app.c:1195
+msgid "You were disconnected from the server. Do you want to reconnect?"
+msgstr "Vi malkonektis de ĉi servilo. Ĉu vi deziras rekonekti?"
+
+#: src/gossip-app.c:1350
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
+msgstr ""
+"Kontrolu vin konton informaĵon ĉu korekta. Ankaŭ, la servilo eble estas "
+"malkonekti."
+
+#: src/gossip-app.c:1822
+msgid "Gossip, Instant Messaging Client"
+msgstr "Gossip, Tujmesaĝilo"
+
+#: src/gossip-app.c:1964
+#, c-format
+msgid "New message from %s"
+msgstr "Nova mesaĝo el %s"
+
+#: src/gossip-app.c:2053 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
+msgid "Offline"
+msgstr "Ne kontaktebla"
+
+#: src/gossip-app.c:2452 src/gossip-preferences.c:638
+msgid "Available"
+msgstr "Ricevebla"
+
+#: src/gossip-app.c:2463 src/gossip-preferences.c:639
+msgid "Busy"
+msgstr "Okupita"
+
+#: src/gossip-app.c:2474 src/gossip-preferences.c:640
+msgid "Away"
+msgstr "Fora"
+
+#: src/gossip-app.c:2606
+msgid "Available..."
+msgstr "Ricevebla..."
+
+#: src/gossip-app.c:2611
+msgid "Busy..."
+msgstr "Okupita..."
+
+#: src/gossip-app.c:2616
+msgid "Away..."
+msgstr "Fora..."
+
+#: src/gossip-app.c:2645
+msgid "Edit List..."
+msgstr "Editu Listo..."
+
+#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
+msgid "C_lear"
+msgstr "_Forviŝu"
+
+#: src/gossip-chat-view.c:356
+msgid "_Copy Link Address"
+msgstr "_Kopiu Ligo Adreso"
+
+#: src/gossip-chat-view.c:364
+msgid "_Open Link"
+msgstr "_Malfermu Ligo"
+
+#: src/gossip-chat-view.c:678
+msgid "%A %d %B %Y"
+msgstr "%A %d %B %Y"
+
+#: src/gossip-chat-window.c:490
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sBabilo - %s"
+
+#: src/gossip-chat.c:715
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "Iu eraro okazintis dum babilinta kun %s."
+
+#: src/gossip-chat.c:720 src/gossip-group-chat.c:823
+#: src/gossip-group-chat.c:926
+msgid "Details:"
+msgstr "Detaloj:"
+
+#: src/gossip-chat.c:810
+#, c-format
+msgid "%s went offline"
+msgstr "%s estinta ne kontaktebla"
+
+#: src/gossip-chat.c:824
+#, c-format
+msgid "%s comes online"
+msgstr "%s estanta kontaktebla"
+
+#: src/gossip-chat.c:911
+msgid "Connected"
+msgstr "Konektis"
+
+#: src/gossip-chat.c:926
+msgid "Disconnected"
+msgstr "Malkonektis"
+
+#: src/gossip-contact-info.c:350
+#, c-format
+msgid "Contact Information for %s"
+msgstr "Kontakto Informaĵo por %s"
+
+#: src/gossip-edit-groups-dialog.c:182
+#, c-format
+msgid "Edit groups for %s"
+msgstr "Editu grupoj por %s"
+
+#: src/gossip-edit-groups-dialog.c:246
+msgid "Select"
+msgstr "Elektu"
+
+#: src/gossip-edit-groups-dialog.c:257
+msgid "Group"
+msgstr "Grupo"
+
+#. This needs to be done better, could have group_is_unsorted().
+#.
+#: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
+#: src/gossip-roster.c:37
+msgid "Unsorted"
+msgstr "Malklasa"
+
+#: src/gossip-group-chat.c:818
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr "Iu eraron okazis dum babilis en la grupbabilo %s."
+
+#: src/gossip-group-chat.c:921
+#, c-format
+msgid "Unable to enter the group chat %s."
+msgstr "Malsukcesis enveni la grupbabilo %s."
+
+#: src/gossip-log.c:307
+msgid "Conversation Log"
+msgstr "Protokolo de Konversacio"
+
+#: src/gossip-main.c:67
+msgid "Don't connect on startup"
+msgstr "Ne konekti dum lanĉo"
+
+#: src/gossip-main.c:76
+msgid "Which account to connect to on startup"
+msgstr "Tio konto al konekti dum lanĉo"
+
+#: src/gossip-main.c:77
+msgid "ACCOUNT-NAME"
+msgstr "KONTO-NOMO"
+
+#: src/gossip-main.c:85
+msgid "List the available accounts"
+msgstr "Listigu la disponeblaj kontoj"
+
+#: src/gossip-main.c:118
+msgid "Available accounts:"
+msgstr "Disponeblaj kontoj:"
+
+#: src/gossip-main.c:127
+msgid "[default]"
+msgstr "[defaŭlto]"
+
+#: src/gossip-main.c:150
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "Ne estas konto nomas '%s'."
+
+#: src/gossip-register.c:84
+msgid "Unknown error"
+msgstr "Nekonata eraro"
+
+#: src/gossip-register.c:182
+msgid "Registering account"
+msgstr "Registrigas konto"
+
+#: src/gossip-register.c:222
+msgid "Successfully registered the account"
+msgstr "Sukcesus registrigi la konto"
+
+#: src/gossip-register.c:243 src/gossip-register.c:249
+msgid "Failed registering the account"
+msgstr "Malsukcesus registrigi la konto"
+
+#: src/gossip-register.c:245
+msgid "Reason:"
+msgstr "Ekspliko:"
+
+#: src/gossip-roster-view.c:186
+msgid "/Contact _Information"
+msgstr "/_Informo de Kontakto"
+
+#: src/gossip-roster-view.c:194
+msgid "/Re_name contact"
+msgstr "/Re_nomu kontakto"
+
+#: src/gossip-roster-view.c:202
+msgid "/_Edit groups"
+msgstr "/_Editu grupoj"
+
+#: src/gossip-roster-view.c:210
+msgid "/Show _Log"
+msgstr "/Montru Protoko_lo"
+
+#: src/gossip-roster-view.c:226
+msgid "/_Remove contact"
+msgstr "/Forti_ru kontakto"
+
+#: src/gossip-roster-view.c:237
+msgid "/Re_name group"
+msgstr "/Re_nomu grupo"
+
+#: src/gossip-roster-view.c:1245
+#, c-format
+msgid ""
+"Do you want to remove the contact\n"
+"%s\n"
+"from your contact list?"
+msgstr ""
+"Vi deziras fortiri la kontakto"
+"%s\n"
+"de vi kontaktlisto?"
+
+#: src/gossip-roster-view.c:1338
+#, c-format
+msgid ""
+"Please enter a new nickname for the contact\n"
+"%s"
+msgstr ""
+"Bonvolu enigu novan kromnomon por la kontakto\n"
+"%s"
+
+#: src/gossip-roster-view.c:1444
+#, c-format
+msgid ""
+"Please enter a new name for the group\n"
+"%s"
+msgstr ""
+"Bonvolu enigu novan nomon por la grupo\n"
+"%s"
+
+#: src/gossip-startup-druid.c:251
+msgid "Gossip will now try to use your account:"
+msgstr "Gossip penos uzi vin konton:"
+
+#: src/gossip-startup-druid.c:255
+msgid "Gossip will now try to register the account:"
+msgstr "Gossip penos registrigi la konton:"
+
+#: src/gossip-utils.c:438
+msgid "Please enter your password:"
+msgstr "Bonvolu enigu vin pasvorton:"
+
+#: src/gossip-utils.c:440
+msgid "Remember Password?"
+msgstr "Memoru Pasvorto?"
+
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/main.glade.h:3
+msgid "*"
+msgstr "*"
+
+#: ui/chat.glade.h:3
+msgid "Chat"
+msgstr "Babilo"
+
+#: ui/chat.glade.h:4
+msgid "Contact _Information"
+msgstr "Kontakto _Informaĵo"
+
+#: ui/chat.glade.h:5
+msgid "From:"
+msgstr "El:"
+
+#: ui/chat.glade.h:6
+msgid "Gossip - Chat"
+msgstr "Gossip - Babilo"
+
+#: ui/chat.glade.h:7
+msgid "Gossip - Received Message"
+msgstr "Gossip - Ricevis Mesaĝo"
+
+#: ui/chat.glade.h:8
+msgid "Gossip - Send Message"
+msgstr "Gossip - Sendu Mesaĝo"
+
+#: ui/chat.glade.h:9
+msgid "In reply to:"
+msgstr "En responda pri:"
+
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "Movu Tabo _Maldekstre"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "Movu Tabo _Dekstre"
+
+#: ui/chat.glade.h:12
+msgid "To:"
+msgstr "Por:"
+
+#: ui/chat.glade.h:13
+msgid "View Lo_g"
+msgstr "Vidu _Protokolo"
+
+#: ui/chat.glade.h:14
+msgid "_Conversation"
+msgstr "_Konversacio"
+
+#: ui/chat.glade.h:15
+msgid "_Detach Tab"
+msgstr "_Deigu Tabo"
+
+#: ui/chat.glade.h:16
+msgid "_Next Tab"
+msgstr "_Posta Tabo"
+
+#: ui/chat.glade.h:17
+msgid "_Previous Tab"
+msgstr "_Antaŭa Tabo"
+
+#: ui/chat.glade.h:18
+msgid "_Reply..."
+msgstr "_Respondu..."
+
+#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
+msgid "_Send"
+msgstr "_Sendu"
+
+#: ui/chat.glade.h:20
+msgid "_Tabs"
+msgstr "_Taboj"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
+msgid "    "
+msgstr "    "
+
+#: ui/connect.glade.h:3
+msgid "<b>Account Settings</b>"
+msgstr "<b>Konto Elektoj</b>"
+
+#: ui/connect.glade.h:4
+msgid "<b>Connect to server</b>"
+msgstr "<b>Konektu al servilo</b>"
+
+#: ui/connect.glade.h:5
+msgid "C_onnect"
+msgstr "K_onektu"
+
+#: ui/connect.glade.h:6
+msgid "Connect"
+msgstr "Konektu"
+
+#: ui/connect.glade.h:7
+msgid "Edit Account Information"
+msgstr "Editu Konto Informaĵo"
+
+#: ui/connect.glade.h:8
+msgid "P_ort:"
+msgstr "_Konektilo:"
+
+#: ui/connect.glade.h:9
+msgid "Re_gister..."
+msgstr "Re_gistrigu..."
+
+#: ui/connect.glade.h:10
+msgid "Server:"
+msgstr "Servilo:"
+
+#: ui/connect.glade.h:11
+msgid "Use _encryption (SSL)"
+msgstr "_Uzu ĉifrado (SSL)"
+
+#: ui/connect.glade.h:12
+msgid "_Password:"
+msgstr "_Pasvorto:"
+
+#: ui/connect.glade.h:13
+msgid "_Resource:"
+msgstr "_Rimedero:"
+
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:20
+msgid "_Server:"
+msgstr "_Servilo:"
+
+#: ui/connect.glade.h:15
+msgid "_User name:"
+msgstr "Uzanto_nomo:"
+
+#: ui/group-chat.glade.h:2
+msgid "        "
+msgstr "        "
+
+#: ui/group-chat.glade.h:4
+msgid "<b>Available chat rooms</b>"
+msgstr "<b>Riceveblaj babilejoj</b>"
+
+#: ui/group-chat.glade.h:5
+msgid "<b>Chat room information</b>"
+msgstr "<b>Informaĵo de babilejo</b>"
+
+#: ui/group-chat.glade.h:6
+msgid "<b>Favorite:</b>"
+msgstr "<b>Favorata:</b>"
+
+#: ui/group-chat.glade.h:7
+msgid "Chat _name:"
+msgstr "Babilo _nomo:"
+
+#: ui/group-chat.glade.h:8
+msgid "Gossip - Edit Group Chats"
+msgstr "Gossip - Editu Grupbabiloj"
+
+#: ui/group-chat.glade.h:9
+msgid "Gossip - Group Chat"
+msgstr "Gossip - Grupbabilo"
+
+#: ui/group-chat.glade.h:10
+msgid "Gossip - Join Group Chat"
+msgstr "Gossip - Kuniĝu Grupbabilo"
+
+#: ui/group-chat.glade.h:11
+msgid "N_ickname:"
+msgstr "K_romnomo"
+
+#: ui/group-chat.glade.h:12
+msgid ""
+"Pick a favorite, or enter nickname, server name, and the name of the chat "
+"room to enter."
+msgstr ""
+"Elektu iu favorata, aŭ enskribu kromnomo, la nomo de servilo, kaj la nomo "
+"de la babilejo por kuniĝi."
+
+#: ui/group-chat.glade.h:13
+msgid "R_emove"
+msgstr "_Fortiru"
+
+#: ui/group-chat.glade.h:14
+msgid "_Add"
+msgstr "_Aldonu"
+
+#: ui/group-chat.glade.h:15
+msgid "_Edit favorites..."
+msgstr "Editu favoratoj..."
+
+#: ui/group-chat.glade.h:16
+msgid "_Join"
+msgstr "_Kuniĝu"
+
+#: ui/group-chat.glade.h:17
+msgid "_Nickname:"
+msgstr "Krom_nomo:"
+
+#: ui/group-chat.glade.h:18
+msgid "_Room:"
+msgstr "_Ejo:"
+
+#: ui/group-chat.glade.h:21
+msgid "_Topic:"
+msgstr "_Temo:"
+
+#: ui/main.glade.h:1
+msgid " "
+msgstr " "
+
+#: ui/main.glade.h:4
+msgid "<b>Information requested, Please wait...</b>"
+msgstr "<b>Informaĵo petis, Bonvolu atendi...</b>"
+
+#: ui/main.glade.h:5
+msgid "<b>Preset status messages</b>"
+msgstr "<b>Savis stata mesaĝoj</b>"
+
+#: ui/main.glade.h:6
+msgid "<i>Information not available</i>"
+msgstr "<i>Informaĵo ne havebla</i>"
+
+#: ui/main.glade.h:7
+msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
+msgstr "<span size=\"smaller\">Ekzemplo: uzanto@jabber.org</span>"
+
+#: ui/main.glade.h:8
+msgid "Add a contact"
+msgstr "Aldonu iu kontakto"
+
+#: ui/main.glade.h:9
+msgid "Add contact"
+msgstr "Aldonu kontakto"
+
+#: ui/main.glade.h:10
+msgid "Add to your contact list"
+msgstr "Aldonu al vi kontaktlisto"
+
+#: ui/main.glade.h:11
+msgid "Appearance"
+msgstr "Aspekto"
+
+#: ui/main.glade.h:12
+msgid "Choose a Server"
+msgstr "Elektu Servilo"
+
+#: ui/main.glade.h:13
+msgid "Choose from list:"
+msgstr "Elektu el listo:"
+
+#: ui/main.glade.h:14
+msgid "Client information"
+msgstr "Informaĵo pri Babililo "
+# babililo = chat-tool
+
+#: ui/main.glade.h:15
+msgid "Client:"
+msgstr "Babililo:"
+
+#: ui/main.glade.h:16
+msgid "Contact information"
+msgstr "Kontakto informaĵo"
+
+#: ui/main.glade.h:17
+msgid "Convert _smileys to graphical images"
+msgstr "Konvertu _ridetoj al iĝi grafikaj bildoj"
+
+#: ui/main.glade.h:18
+msgid "Country:"
+msgstr "Lando:"
+
+#: ui/main.glade.h:19
+msgid "Description"
+msgstr "Priskribo"
+
+#: ui/main.glade.h:20
+msgid "Disable sounds when _away"
+msgstr "Invalidu sonoj dum _fora"
+
+#: ui/main.glade.h:21
+msgid "Disable sounds when _busy"
+msgstr "Invalidu sonoj dum _okupita"
+
+#: ui/main.glade.h:22
+msgid "Do you already have an account on a Jabber server?"
+msgstr "Ĉu havas konton en iu Jabber servilo?"
+
+#: ui/main.glade.h:23
+msgid "Do you want to accept the request?"
+msgstr "Ĉu vi deziras akcepti la peton?"
+
+#: ui/main.glade.h:24
+msgid "Edit Groups"
+msgstr "Editu Grupoj"
+
+#: ui/main.glade.h:25
+msgid "Email:"
+msgstr "Retpoŝto:"
+
+#: ui/main.glade.h:26
+msgid "Enter status message:"
+msgstr "Enskribu stata mesaĝo:"
+
+#: ui/main.glade.h:28
+msgid ""
+"Gossip is a modern client for the Jabber Instant Messaging system.\n"
+"\n"
+"This assistant will help you configure Gossip and connect you to your "
+"favorite Jabber server.\n"
+"\n"
+"To get started, just click \"Forward\"."
+msgstr ""
+"Gossip estas iu modernan programon por la Jabber sistemo de tujmesaĝilo.\n"
+"\n"
+"Ĉi tion asistanton asistos vi al konfiguri Gossip, kaj konekti vi al"
+"via favorata servilo de Jabber."
+""
+"Por komenci, simple alklaki \"Antaŭen\"."
+
+#: ui/main.glade.h:33
+msgid ""
+"Gossip is now configured properly for your system.\n"
+"You can change your account settings later, by selecting the Chat-"
+">Connect... menu item."
+msgstr ""
+"Gossip nun estas deca konfigura por vi sistemo.\n"
+"Vi povus vian konfiguron pli poste, per selektus la Babilo->Konektu..."
+"menuero."
+
+#: ui/main.glade.h:35
+msgid "I would like to add you to my contact list."
+msgstr "Mi deziras aldoni vin al mia kontaktlisto."
+
+#: ui/main.glade.h:36
+msgid ""
+"In order to subscribe to presence notifications from the user, a request "
+"will be sent. Until this request is approved, the user will always be shown "
+"as \"Offline\" in your contact list."
+msgstr ""
+"Por kotizi al avizojn de ĉeeston el la uzanto, iu peto estos sendi. Ĝis la "
+"peton estas elprovita, la uzanto ĉiam vidiĝi kiel nekontaktebla el via"
+"kontaktlisto."
+
+#: ui/main.glade.h:37
+msgid "In which group do you want to place this contact?"
+msgstr "Ĉu grupoj vi deziras meti tiu kontakto?"
+
+#: ui/main.glade.h:38
+msgid "Information about ..."
+msgstr "Informaĵo pri ..."
+
+#: ui/main.glade.h:39
+msgid "JID"
+msgstr "JID"
+
+#: ui/main.glade.h:40
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ui/main.glade.h:41
+msgid "Jabber Account"
+msgstr "Jabber Konto"
+
+#: ui/main.glade.h:42
+msgid "Jabber ID:"
+msgstr "Jabber ID:"
+
+#: ui/main.glade.h:43
+msgid "Jabber.com"
+msgstr "Jabber.com"
+
+#: ui/main.glade.h:44
+msgid "Jabber.org"
+msgstr "Jabber.org"
+
+#: ui/main.glade.h:45
+msgid "Name:"
+msgstr "Nomo:"
+
+#: ui/main.glade.h:46
+msgid "No"
+msgstr "Ne"
+
+#: ui/main.glade.h:47
+msgid "OS:"
+msgstr "Mastruma Sistemo:"
+
+#: ui/main.glade.h:48
+msgid "On what server do you have a Jabber account?"
+msgstr "Ĉu kio servilo vi havas iu konto de Jabber?"
+
+#: ui/main.glade.h:49
+msgid "Personal information"
+msgstr "Persona Informaĵo"
+
+#: ui/main.glade.h:50
+msgid "Play sound when messages arrive"
+msgstr "Ludu sono kiam mesaĝoj alveni"
+
+#: ui/main.glade.h:51
+msgid "Preferences"
+msgstr "Agordoj"
+
+#: ui/main.glade.h:52
+msgid "Request message"
+msgstr "Petomesaĝo"
+
+#: ui/main.glade.h:53
+msgid "Sending request"
+msgstr "Sendas peto"
+
+#: ui/main.glade.h:54
+msgid "Setup Finished"
+msgstr "Agordo Finitis"
+
+#: ui/main.glade.h:55
+msgid "Show _Offline Contacts"
+msgstr "_Vidigu Ne Kontaktebloj"
+
+#: ui/main.glade.h:56
+msgid "Sound"
+msgstr "Sono"
+
+#: ui/main.glade.h:57
+msgid "Status"
+msgstr "Stato"
+
+#: ui/main.glade.h:58
+msgid "Status Message"
+msgstr "Stato"
+
+#: ui/main.glade.h:59
+msgid "Status Messages"
+msgstr "Stato Mesaĝoj"
+
+#: ui/main.glade.h:60
+msgid "Use a different server"
+msgstr "Uzas iu diferenca servilo"
+
+#: ui/main.glade.h:61
+msgid "Version:"
+msgstr "Versio:"
+
+#: ui/main.glade.h:62
+msgid "Web site:"
+msgstr "TTT-ejo:"
+
+#: ui/main.glade.h:63
+msgid "Welcome to Gossip"
+msgstr "Bonvenon al Gossip"
+
+#: ui/main.glade.h:64
+msgid "What instant messaging system does the contact use?"
+msgstr "Kio sistemo de tujmesaĝilo ĉu la kontakto uzas?"
+
+#: ui/main.glade.h:65
+msgid "What is your name?"
+msgstr "Kio estas vi nomo?"
+
+#: ui/main.glade.h:66
+msgid "What nickname do you want to use for this contact?"
+msgstr "Kio kromnomo vi deziras uzi por tio kontakto?"
+
+#: ui/main.glade.h:67
+msgid "What request message do you want to send to ...?"
+msgstr "Kio petomesaĝo vi deziras sendi?"
+
+#: ui/main.glade.h:68
+msgid "What server do you want to use?"
+msgstr "Kio servilo vi deziras uzi?"
+
+#: ui/main.glade.h:69
+msgid "What username do you use?"
+msgstr "Kio uzantonomo vi uzas?"
+
+#: ui/main.glade.h:70
+msgid "What username do you want to use?"
+msgstr "Kio uzantonomo vi deziras uzi?"
+
+#: ui/main.glade.h:71
+msgid "Yes"
+msgstr "Jes"
+
+#: ui/main.glade.h:72
+msgid "Your Identity"
+msgstr "Vi Idento"
+
+#: ui/main.glade.h:73
+msgid "_Accept"
+msgstr "_Akceptu"
+
+#: ui/main.glade.h:74
+msgid "_Account Information"
+msgstr "_Konto Informaĵo"
+
+#: ui/main.glade.h:75
+msgid "_Add Contact..."
+msgstr "_Aldonu Kontakto..."
+
+#: ui/main.glade.h:77
+msgid "_Connect..."
+msgstr "_Konektu..."
+
+#: ui/main.glade.h:78
+msgid "_Decide Later"
+msgstr "_Decidi pli Poste"
+
+#: ui/main.glade.h:79
+msgid "_Deny"
+msgstr "_Neu"
+
+#: ui/main.glade.h:80
+msgid "_Disconnect"
+msgstr "_Malkonektu"
+
+#: ui/main.glade.h:81
+msgid "_Hide Contact List"
+msgstr "_Kaŝu Kontaktlisto"
+
+#: ui/main.glade.h:82
+msgid "_Jabber ID of new contact:"
+msgstr "_Jabber ID de nova kontakto:"
+
+#: ui/main.glade.h:83
+msgid "_Join Group Chat..."
+msgstr "Kuniĝu _Grupbabilo..."
+
+#: ui/main.glade.h:84
+msgid "_New Message..."
+msgstr "_Nova Mesaĝo..."
+
+#: ui/main.glade.h:85
+msgid "_Preferences"
+msgstr "_Agordo"
+
+#: ui/main.glade.h:86
+msgid "_Remove"
+msgstr "_Forigu"
+
+#: ui/main.glade.h:87
+msgid "_Search..."
+msgstr "_Serĉo..."
+
+#: ui/main.glade.h:88
+msgid "_Show Contact List"
+msgstr "_Montru Kontaktlisto"
+
+#: ui/main.glade.h:89
+msgid "_Status Messages"
+msgstr "_Statoj Mesaĝoj"
