@@ -2,10 +2,11 @@
 # Please keep this file sorted alphabetically.
 gossip.desktop.in
 gossip.schemas.in
-src/gossip-account.c
 src/gossip-account-dialog.c
+src/gossip-account.c
 src/gossip-add-contact.c
 src/gossip-app.c
+src/gossip-chat-view.c
 src/gossip-chat.c
 src/gossip-connect-dialog.c
 src/gossip-contact-info.c
@@ -13,7 +14,6 @@ src/gossip-group-chat.c
 src/gossip-idle.c
 src/gossip-join-dialog.c
 src/gossip-main.c
-src/gossip-message.c
 src/gossip-register.c
 src/gossip-roster-old.c
 src/gossip-startup-druid.c
@@ -22,7 +22,3 @@ ui/chat.glade
 ui/connect.glade
 ui/group-chat.glade
 ui/main.glade
-
-
-
-
