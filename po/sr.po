@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-19 19:33+0100\n"
-"PO-Revision-Date: 2003-12-19 19:37+0100\n"
+"POT-Creation-Date: 2004-01-10 03:36+0100\n"
+"PO-Revision-Date: 2004-01-10 03:37+0100\n"
 "Last-Translator: Данило Шеган <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -169,63 +169,63 @@ msgstr "_Изађи"
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:596
+#: src/gossip-app.c:599
 msgid "translator_credits"
 msgstr "Дејан Матијевић <dejan@ns.sympatico.ca>"
 
-#: src/gossip-app.c:608
-msgid "A Jabber Client for GNOME"
-msgstr "Џабер клијент за Гном"
+#: src/gossip-app.c:614
+msgid "An Instant Messaging Client for GNOME"
+msgstr "Брзи гласник за Гнома"
 
-#: src/gossip-app.c:615
+#: src/gossip-app.c:623
 msgid "Gossip Website"
 msgstr "Веб страница Чаврљања"
 
-#: src/gossip-app.c:734
+#: src/gossip-app.c:742
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Унесите кориснички ID од особе којој желите да пошањете поруку за чаврљање."
 
-#: src/gossip-app.c:739 ui/main.glade.h:83
+#: src/gossip-app.c:747 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Разговор"
 
-#: src/gossip-app.c:998
+#: src/gossip-app.c:1006
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s жели обавештења о вашем присуству."
 
-#: src/gossip-app.c:1241
+#: src/gossip-app.c:1249
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Ви сте развезани са сервера.  Желители да се поново повежете?"
 
-#: src/gossip-app.c:1391
+#: src/gossip-app.c:1398
 msgid "Make sure that your account information is correct."
 msgstr "Проверите да ли су подаци о налогу исправни."
 
-#: src/gossip-app.c:1392
+#: src/gossip-app.c:1399
 msgid "The server may currently be unavailable."
 msgstr "Можда је сервер тренутно недоступан."
 
-#: src/gossip-app.c:1794
+#: src/gossip-app.c:1801
 msgid "Gossip, Jabber Client"
 msgstr "Чаврљање, Џабер Клијент"
 
-#: src/gossip-app.c:1970
+#: src/gossip-app.c:1977
 #, c-format
 msgid "New message from %s"
 msgstr "Нова порука од %s"
 
-#: src/gossip-app.c:2524
+#: src/gossip-app.c:2541
 msgid "Custom Message..."
 msgstr "Посебна порука..."
 
-#: src/gossip-app.c:2542
+#: src/gossip-app.c:2559
 msgid "Custom Busy Message..."
 msgstr "Посебна порука за заузеће..."
 
-#: src/gossip-app.c:2549
+#: src/gossip-app.c:2566
 msgid "Leave..."
 msgstr "Напусти..."
 
@@ -245,30 +245,38 @@ msgstr "_Отвори везу"
 msgid "%A %d %B %Y"
 msgstr "%A, %d. %B %Y."
 
-#: src/gossip-chat-window.c:620
+#: src/gossip-chat-window.c:638
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sЧаврљање - %s"
 
-#: src/gossip-chat.c:641
+#: src/gossip-chat.c:701
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Догодила се грешка приликом чаврљање са %s."
 
-#: src/gossip-chat.c:646 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:706 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Детаљи:"
 
-#: src/gossip-chat.c:732
+#: src/gossip-chat.c:796
 #, c-format
 msgid "%s went offline"
 msgstr "%s прекиде везу"
 
-#: src/gossip-chat.c:746
+#: src/gossip-chat.c:810
 #, c-format
 msgid "%s comes online"
 msgstr "%s се повеза"
+
+#: src/gossip-chat.c:897
+msgid "Connected"
+msgstr "Повезан"
+
+#: src/gossip-chat.c:912
+msgid "Disconnected"
+msgstr "Неповезан"
 
 #: src/gossip-contact-info.c:352
 #, c-format
@@ -285,7 +293,7 @@ msgstr "Догодила се грешка приликом чаврљање у 
 msgid "Unable to enter the group chat %s."
 msgstr "Није могуће унети grupu групу за чаврљање %s."
 
-#: src/gossip-log.c:233
+#: src/gossip-log.c:227
 msgid "Conversation Log"
 msgstr "Дневник разговора"
 
