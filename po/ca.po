@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-15 12:16+0100\n"
-"PO-Revision-Date: 2003-12-15 12:17+0100\n"
+"POT-Creation-Date: 2003-12-19 19:50+0100\n"
+"PO-Revision-Date: 2003-12-19 19:52+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -52,60 +52,84 @@ msgid "Height of main window"
 msgstr "Alçada de la finestra principal"
 
 #: gossip.schemas.in.h:8
+msgid "Hide main window"
+msgstr "Amaga la finestra principal"
+
+#: gossip.schemas.in.h:9
+msgid "Hide the main window."
+msgstr "Amaga la finestra principal."
+
+#: gossip.schemas.in.h:10
 msgid "Message to show before going away"
 msgstr "Missatge a mostrar abans de canviar a absent"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "Not at the computer"
 msgstr "No estic a l'ordinador"
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "Show offline contacts"
 msgstr "Mostra els contactes desconnectats"
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
+msgid "The X position of the main window."
+msgstr "La posició X de la finestra principal."
+
+#: gossip.schemas.in.h:14
+msgid "The Y position of the main window."
+msgstr "La posició Y de la finestra principal."
+
+#: gossip.schemas.in.h:15
 msgid "The height of the main window."
 msgstr "L'alçada de la finestra principal."
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:16
 msgid "The width of the main window."
 msgstr "L'amplada de la finestra principal."
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:17
 msgid "Use graphical smileys"
 msgstr "Utilitza «smileys» gràfics"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:18
 msgid "Use notification sounds"
 msgstr "Utilitza sons de notificació"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:19
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Si s'ha de convertir o no els «smileys» a imatges gràfiques a les xerrades."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:20
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Si s'ha de reproduir o no un so quan arriba un missatge."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:21
 msgid "Whether or not to play sounds when away."
 msgstr "Si s'ha de reproduir o no sons quan s'està absent."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:22
 msgid "Whether or not to play sounds when busy."
 msgstr "Si s'ha de reproduir o no sons quan s'està ocupat."
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:23
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 "Si s'han de mostrar o no els contactes que estan desconnectats a la llista "
 "de contactes."
 
-#: gossip.schemas.in.h:20
-msgid "Width of main window"
+#: gossip.schemas.in.h:24
+msgid "Width of the main window"
 msgstr "Amplada de la finestra principal"
+
+#: gossip.schemas.in.h:25
+msgid "X position of main window"
+msgstr "Posició X de la finestra principal"
+
+#: gossip.schemas.in.h:26
+msgid "Y position of main window"
+msgstr "Posició Y de la finestra principal"
 
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
@@ -125,83 +149,83 @@ msgstr "S'afegirà a %s a la vostra llista de contactes."
 msgid "Just about to leave..."
 msgstr "Estic a punt de sortir..."
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:438
 msgid "_Show Contact List"
 msgstr "_Mostra la llista de contactes"
 
-#: src/gossip-app.c:442
+#: src/gossip-app.c:447
 msgid "_Hide Contact List"
 msgstr "_Amaga la llista de contactes"
 
-#: src/gossip-app.c:455 ui/main.glade.h:59
+#: src/gossip-app.c:460 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "Envia un _missatge..."
 
-#: src/gossip-app.c:470
+#: src/gossip-app.c:475
 msgid "_Quit"
 msgstr "_Surt"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:572
+#: src/gossip-app.c:596
 msgid "translator_credits"
 msgstr "Jordi Mallach <jordi@sindominio.net>"
 
-#: src/gossip-app.c:584
+#: src/gossip-app.c:608
 msgid "A Jabber Client for GNOME"
 msgstr "Un client Jabber per al GNOME"
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:615
 msgid "Gossip Website"
 msgstr "Lloc web del Gossip"
 
-#: src/gossip-app.c:695
+#: src/gossip-app.c:734
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
 "xerrada."
 
-#: src/gossip-app.c:700 ui/main.glade.h:83
+#: src/gossip-app.c:739 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Xarra"
 
-#: src/gossip-app.c:962
+#: src/gossip-app.c:998
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s vol rebre notificacions de la vostra presència."
 
-#: src/gossip-app.c:1197
+#: src/gossip-app.c:1241
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1340
+#: src/gossip-app.c:1391
 msgid "Make sure that your account information is correct."
 msgstr "Assegureu-vos que la informació del vostre compte és correcta."
 
-#: src/gossip-app.c:1341
+#: src/gossip-app.c:1392
 msgid "The server may currently be unavailable."
 msgstr "El servidor pot no estar disponible ara mateix."
 
-#: src/gossip-app.c:1746
+#: src/gossip-app.c:1794
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-app.c:1922
+#: src/gossip-app.c:1970
 #, c-format
 msgid "New message from %s"
 msgstr "Nou missatge de %s"
 
-#: src/gossip-app.c:2476
+#: src/gossip-app.c:2524
 msgid "Custom Message..."
 msgstr "Missatge personalitzat..."
 
-#: src/gossip-app.c:2494
+#: src/gossip-app.c:2542
 msgid "Custom Busy Message..."
 msgstr "Missatge «Ocupat» personalitzat..."
 
-#: src/gossip-app.c:2501
+#: src/gossip-app.c:2549
 msgid "Leave..."
 msgstr "Surt..."
 
