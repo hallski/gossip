@@ -3,7 +3,7 @@
 <protocol>
   <name>AIM</name>
   <disco-type>aim</disco-type>
-  <stock-icon>gossip-aim</stock-icon>
+  <stock-icon>im-aim</stock-icon>
   <description>Configure an AOL AIM account</description>
   <server-list url="">
     <server name="Aster (PL)" host="jabber.aster.pl"/>

@@ -1,3 +1,32 @@
+2004-09-18  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-disco.c:
+	- Added a function to get the number of disco items in total.
+	* src/gossip-disco-register.c: 
+	- Fixed some memory leaks where things were not being cleaned up.
+	- Improved the debugging.
+	* src/gossip-disco-window.c: 
+	- Fixed calculations with progress bar. 
+	- Removed code that uses the jabber.org list for disco requests.
+	- Fixed the server label under the expander so it has a value.
+	- Added a limit to the number of servers used from the protocol
+	files, currently this is 5.
+	- Was calling the registration requirements function twice.
+	- Re-worked the cell pixbuf function to use the gnome images for
+	AIM, ICQ, MSN and Yahoo via the GtkIconTheme API.
+	* src/gossip-stock.c: 
+	- Removed AIM, ICQ, MSN, Yahoo stock definitions.
+	* protocols/Makefile.am: 
+	- Removed PNG files.
+	* protocols/aim.protocol: 
+	* protocols/icq.protocol: 
+	* protocols/msn.protocol: 
+	* protocols/yahoo.protocol: 
+	- Changed the stock-icon to be the gnome theme icon filename. This
+	is slightly redundent because we don't use stock-icon or icon for
+	core protocols. It should be possible to overide this, but
+	currently you can't. 
+	
 2004-09-18  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* configure.in: Add «nb» to ALL_LINGUAS.

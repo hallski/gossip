@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell (ginxd@btopenworld.com)
+ * Copyright (C) 2004 Martyn Russell (mr@gnome.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -36,6 +36,8 @@ typedef void (*GossipDiscoRegisterFunc) (GossipDiscoRegister *reg,
 					 const gchar         *error_reason,
 					 gpointer             user_data);
 
+
+void                 gossip_disco_register_destroy              (GossipDiscoRegister     *reg);
 
 GossipDiscoRegister *gossip_disco_register_requirements         (const char              *to,
 								 GossipDiscoRegisterFunc  func,

@@ -3,7 +3,7 @@
 <protocol>
   <name>Yahoo!</name>
   <disco-type>yahoo</disco-type>
-  <stock-icon>gossip-yahoo</stock-icon>
+  <stock-icon>im-yahoo</stock-icon>
   <description>Configure a Yahoo! account</description>
   <server-list url="">
     <server name="Aster (PL)" host="jabber.aster.pl"/>

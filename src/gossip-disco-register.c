@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell (ginxd@btopenworld.com)
+ * Copyright (C) 2004 Martyn Russell (mr@gnome.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -58,9 +58,6 @@ struct _GossipDiscoRegister {
 
 static void                 disco_register_init            (void);
 static GossipDiscoRegister *disco_register_new             (void);
-#if 0
-static void                 disco_register_destroy         (GossipDiscoRegister *reg);
-#endif
 static LmHandlerResult      disco_register_message_handler (LmMessageHandler    *handler,
 							    LmConnection        *connection,
 							    LmMessage           *m,
@@ -88,9 +85,9 @@ disco_register_init (void)
         inited = TRUE;
 
         disco_registers = g_hash_table_new_full (gossip_jid_hash,
-						   gossip_jid_equal,
-						   (GDestroyNotify) gossip_jid_unref,
-						   (GDestroyNotify) g_object_unref);
+						 gossip_jid_equal,
+						 (GDestroyNotify) gossip_jid_unref,
+						 (GDestroyNotify) g_object_unref);
 }
 
 static GossipDiscoRegister *
@@ -114,32 +111,41 @@ disco_register_new (void)
 	return reg;
 }
 
-#if 0
-static void
-disco_register_destroy (GossipDiscoRegister *reg)
+void
+gossip_disco_register_destroy (GossipDiscoRegister *reg)
 {
 	LmConnection     *connection;
         LmMessageHandler *handler;
 
-        connection = gossip_app_get_connection ();
+	if (!reg) {
+		return;
+	}
 
+        connection = gossip_app_get_connection ();
         handler = reg->message_handler;
+
         if (handler) {
-                lm_connection_unregister_message_handler (
-                                connection, handler, LM_MESSAGE_TYPE_IQ);
+                lm_connection_unregister_message_handler (connection, handler, 
+							  LM_MESSAGE_TYPE_IQ);
                 lm_message_handler_unref (handler);
         }
 
 	gossip_jid_unref (reg->to);
 
+	g_free (reg->key);
+	g_free (reg->instructions);
+	g_free (reg->username);
+	g_free (reg->password);
+	g_free (reg->email);
+	g_free (reg->nickname);
+
         g_free (reg);
 }
-#endif
 
 GossipDiscoRegister *
 gossip_disco_register_requirements (const char                *to, 
-				      GossipDiscoRegisterFunc  func,
-				      gpointer                 user_data)
+				    GossipDiscoRegisterFunc  func,
+				    gpointer                 user_data)
 {
 	GossipDiscoRegister *reg;
 	GossipJID           *jid;
@@ -182,7 +188,7 @@ disco_register_requirements (GossipDiscoRegister *reg)
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_GET);
 
-	d(g_print ("to: %s (disco register requirements)\n", gossip_jid_get_full (reg->to)));
+	d(g_print ("disco register to: %s (requirements)\n", gossip_jid_get_full (reg->to)));
 	
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
@@ -238,7 +244,7 @@ disco_register_request (GossipDiscoRegister *reg)
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_SET);
 
-	d(g_print ("to: %s (disco register requirements)\n", gossip_jid_get_full (reg->to)));
+	d(g_print ("disco register to: %s (request)\n", gossip_jid_get_full (reg->to)));
 	
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
@@ -269,9 +275,9 @@ disco_register_request (GossipDiscoRegister *reg)
 
 static LmHandlerResult
 disco_register_message_handler (LmMessageHandler *handler,
-				  LmConnection   *connection,
-				  LmMessage      *m,
-				  gpointer        user_data)
+				LmConnection   *connection,
+				LmMessage      *m,
+				gpointer        user_data)
 {
         GossipDiscoRegister *reg;
         const gchar         *from;

@@ -30,11 +30,6 @@ static GtkStockItem stock_items[] = {
 	{ GOSSIP_STOCK_EXT_AWAY,   NULL },    
 	{ GOSSIP_STOCK_MESSAGE,    NULL },
 	{ GOSSIP_STOCK_TYPING,     NULL },
-
-	{ GOSSIP_STOCK_AIM,        NULL },
-	{ GOSSIP_STOCK_ICQ,        NULL },
-	{ GOSSIP_STOCK_MSN,        NULL },
-	{ GOSSIP_STOCK_YAHOO,      NULL },
 };
 
 void

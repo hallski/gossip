@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell (ginxd@btopenworld.com)
+ * Copyright (C) 2004 Martyn Russell (mr@gnome.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -37,9 +37,11 @@ typedef void (*GossipDiscoItemFunc) (GossipDisco     *disco,
 				     gboolean         timeout,
 				     gpointer         user_data);
 
+
 GossipDisco      *gossip_disco_request               (const char          *to,
-						      GossipDiscoItemFunc  callback,
+						      GossipDiscoItemFunc  item_func,
 						      gpointer             user_data);
+
 void              gossip_disco_destroy               (GossipDisco         *disco);
 
 GList            *gossip_disco_get_category          (GossipDisco         *disco,
@@ -48,7 +50,7 @@ GList            *gossip_disco_get_category_and_type (GossipDisco         *disco
 						      const gchar         *category,
 						      const gchar         *type);
 gint              gossip_disco_get_items_remaining   (GossipDisco         *disco);
-
+gint              gossip_disco_get_items_total       (GossipDisco         *disco);
 GossipDiscoItem  *gossip_disco_get_item              (GossipDisco         *disco,
 						      GossipJID           *jid);
 

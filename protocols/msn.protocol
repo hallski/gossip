@@ -3,7 +3,7 @@
 <protocol>
   <name>MSN</name>
   <disco-type>msn</disco-type>
-  <stock-icon>gossip-msn</stock-icon>
+  <stock-icon>im-msn</stock-icon>
   <description>Configure a Microsoft Hotmail account</description>
   <server-list url="">
     <server name="Chaos Computer Club (DE)" host="jabber.ccc.de"/>

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell <ginxd@btopenworld.com>
+ * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -33,6 +33,8 @@
 #include "gossip-stock.h"
 
 #define d(x) x
+
+#define SEARCH_MAX 5
 
 
 struct _GossipDiscoWindow {
@@ -70,14 +72,13 @@ struct _GossipDiscoWindow {
 	GtkWidget *label_register_response;
 	GtkWidget *label_register_result;
 
-	GossipDisco *disco;
+	GList *disco_list;
 	GossipDiscoRegister *reg;
 
 	GossipJID *server_jid;
-	const gchar *protocol_type;
 	gboolean server_found;
 
-	gint services_to_search;
+	const gchar *disco_type;
 };
 
 enum {
@@ -101,53 +102,54 @@ static gboolean disco_window_model_foreach_cb      (GtkTreeModel        *model,
 						    GtkTreePath         *path,
 						    GtkTreeIter         *iter,
 						    gpointer             data);
-static void disco_window_prepare_page_1        (GnomeDruidPage      *page,
-						GnomeDruid          *druid,
-						GossipDiscoWindow   *window);
-static void disco_window_prepare_page_2        (GnomeDruidPage      *page,
-						GnomeDruid          *druid,
-						GossipDiscoWindow   *window);
-static void disco_window_prepare_page_3        (GnomeDruidPage      *page,
-						GnomeDruid          *druid,
-						GossipDiscoWindow   *window);
-static void disco_window_prepare_page_4        (GnomeDruidPage      *page,
-						GnomeDruid          *druid,
-						GossipDiscoWindow   *window);
-static void disco_window_finish_page_4         (GnomeDruidPage      *page,
-						GtkWidget           *widget,
-						GossipDiscoWindow   *window);
+static void     disco_window_prepare_page_1        (GnomeDruidPage      *page,
+						    GnomeDruid          *druid,
+						    GossipDiscoWindow   *window);
+static void     disco_window_prepare_page_2        (GnomeDruidPage      *page,
+						    GnomeDruid          *druid,
+						    GossipDiscoWindow   *window);
+static void     disco_window_prepare_page_3        (GnomeDruidPage      *page,
+						    GnomeDruid          *druid,
+						    GossipDiscoWindow   *window);
+static void     disco_window_prepare_page_4        (GnomeDruidPage      *page,
+						    GnomeDruid          *druid,
+						    GossipDiscoWindow   *window);
+static void     disco_window_finish_page_4         (GnomeDruidPage      *page,
+						    GtkWidget           *widget,
+						    GossipDiscoWindow   *window);
 static void     disco_window_selection_changed_cb  (GtkTreeSelection    *treeselection,
 						    GossipDiscoWindow   *window);
-static void disco_window_druid_stop            (GtkWidget           *widget,
-						GossipDiscoWindow   *window);
-static void disco_window_entry_details_changed (GtkEntry            *entry,
-						GossipDiscoWindow   *window);
-static void disco_window_destroy               (GtkWidget           *widget,
-						GossipDiscoWindow   *window);
-static void disco_window_check_local           (GossipDiscoWindow   *window);
-static void disco_window_check_local_cb        (GossipDisco         *disco,
-						GossipDiscoItem     *item,
-						gboolean             last_item,
-						gboolean             timeout,
-						GossipDiscoWindow   *window);
-static void disco_window_check_others          (GossipDiscoWindow   *window);
-static void disco_window_check_others_2_cb     (GossipDisco         *disco,
-						GossipDiscoItem     *item,
-						gboolean             last_item,
-						gboolean             timeout,
-						GossipDiscoWindow   *window);
+static void     disco_window_druid_stop            (GtkWidget           *widget,
+						    GossipDiscoWindow   *window);
+static void     disco_window_entry_details_changed (GtkEntry            *entry,
+						    GossipDiscoWindow   *window);
+static void     disco_window_destroy               (GtkWidget           *widget,
+						    GossipDiscoWindow   *window);
+static void     disco_window_disco_cleanup         (GossipDiscoWindow   *window);
+static void     disco_window_check_local           (GossipDiscoWindow   *window);
+static void     disco_window_check_local_cb        (GossipDisco         *disco,
+						    GossipDiscoItem     *item,
+						    gboolean             last_item,
+						    gboolean             timeout,
+						    GossipDiscoWindow   *window);
+static void     disco_window_check_others          (GossipDiscoWindow   *window);
+static void     disco_window_check_others_cb       (GossipDisco         *disco,
+						    GossipDiscoItem     *item,
+						    gboolean             last_item,
+						    gboolean             timeout,
+						    GossipDiscoWindow   *window);
 static void     disco_window_search_failed         (GossipDiscoWindow   *window);
-static void disco_window_proceed_to_register   (GossipDiscoWindow   *window);
-static void disco_window_requirements          (GossipDiscoWindow   *window);
-static void disco_window_register              (GossipDiscoWindow   *window);
-static void disco_window_register_1_cb         (GossipDiscoRegister *reg,
-						const gchar         *error_code,
-						const gchar         *error_reason,
-						GossipDiscoWindow   *window);
-static void disco_window_register_2_cb         (GossipDiscoRegister *reg,
-						const gchar         *error_code,
-						const gchar         *error_reason,
-						GossipDiscoWindow   *window);
+static void     disco_window_proceed_to_register   (GossipDiscoWindow   *window);
+static void     disco_window_requirements          (GossipDiscoWindow   *window);
+static void     disco_window_register              (GossipDiscoWindow   *window);
+static void     disco_window_register_1_cb         (GossipDiscoRegister *reg,
+						    const gchar         *error_code,
+						    const gchar         *error_reason,
+						    GossipDiscoWindow   *window);
+static void     disco_window_register_2_cb         (GossipDiscoRegister *reg,
+						    const gchar         *error_code,
+						    const gchar         *error_reason,
+						    GossipDiscoWindow   *window);
 static void     disco_window_pixbuf_cell_data_func (GtkTreeViewColumn   *tree_column,
 						    GtkCellRenderer     *cell,
 						    GtkTreeModel        *model,
@@ -160,11 +162,9 @@ static void     disco_window_name_cell_data_func   (GtkTreeViewColumn   *tree_co
 						    GossipDiscoWindow   *window);
 
 
+
+static GossipDiscoWindow *current_window = NULL;
     
-#ifdef USE_JABBER_ORG_LIST
-static void     disco_window_check_others_1_cb     (const GList         *servers,
-						    GossipDiscoWindow   *window);
-#endif
 
 GossipDiscoWindow *
 gossip_disco_window_show (void)
@@ -172,7 +172,12 @@ gossip_disco_window_show (void)
 	GossipDiscoWindow *window;
 	GladeXML          *gui;
 	
-	window = g_new0 (GossipDiscoWindow, 1);
+	if (current_window) {
+		gtk_window_present (GTK_WINDOW (current_window->window));
+		return current_window;	
+	}
+
+	current_window = window = g_new0 (GossipDiscoWindow, 1);
 
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "disco_window",
@@ -256,8 +261,24 @@ gossip_disco_window_show (void)
  */
 
 static void 
+disco_window_disco_cleanup (GossipDiscoWindow *window)
+{
+	GList *l;
+
+	/* clean up all discos which are not required */
+	for (l=window->disco_list; l; l=l->next) {
+		GossipDisco *d = l->data;
+		gossip_disco_destroy (d);
+	}
+	
+	g_list_free (window->disco_list);
+	window->disco_list = NULL;
+}
+
+static void 
 disco_window_check_local (GossipDiscoWindow *window)
 {
+	GossipDisco *disco;
 	GossipJID   *jid;
 	const gchar *host;
 
@@ -265,11 +286,18 @@ disco_window_check_local (GossipDiscoWindow *window)
  	host = gossip_jid_get_part_host (jid); 
 
 	window->server_found = FALSE;
-	gossip_disco_request (host, 
-			      (GossipDiscoItemFunc) disco_window_check_local_cb,
-			      window);
+
+	d(g_print ("running disco on local server:'%s'\n", host));
+
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching), 
+				   _("Searching Local Services..."));
+
+	disco = gossip_disco_request (host, 
+				      (GossipDiscoItemFunc) disco_window_check_local_cb,
+				      window);
 	
-	d(g_print ("running disco on local server\n"));
+	window->disco_list = g_list_append (window->disco_list, disco);
 }
 
 static void
@@ -279,22 +307,22 @@ disco_window_check_local_cb (GossipDisco       *disco,
 			     gboolean           timeout,
 			     GossipDiscoWindow *window)
 {
-	static gdouble  items = 0;
+	gdouble  total;
 	gdouble         remaining;
 	gdouble         fraction;
 	gchar          *str;
 
 	remaining = gossip_disco_get_items_remaining (disco);
-
-	if (items == 0) {
-		items = remaining + 1;
-	}
+	total = gossip_disco_get_items_total (disco);
 
 	/* show progress */
-	fraction = 1 - (remaining / items);
+	fraction = 1 - (remaining / total);
 
-	str = g_strdup_printf ("Searching Local Services (%d of %d)", 
-			       (gint)items - (gint)remaining, (gint)items);
+	d(g_print ("disco local items: complete:%d, items:%d, remaining:%d, fraction:%f\n", 
+		   (gint)total - (gint)remaining, (gint)remaining, (gint)total, (gfloat)fraction));
+
+	str = g_strdup_printf (_("Searching Local Services (%d of %d)"), 
+			       (gint)total - (gint)remaining, (gint)total);
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 
 				       fraction);
@@ -307,11 +335,14 @@ disco_window_check_local_cb (GossipDisco       *disco,
 	    (!item ||
 	     !gossip_disco_item_has_feature (item, "jabber:iq:register") ||
 	     !gossip_disco_item_has_category (item, "gateway") ||
-	     !gossip_disco_item_has_type (item, window->protocol_type))) {
+	     !gossip_disco_item_has_type (item, window->disco_type))) {
 		if (timeout) {
 			d(g_print ("disco timed out\n"));
-		} else if (last_item) {
+		} 
+
+		if (last_item) {
 			d(g_print ("all local disco services received\n"));
+			disco_window_disco_cleanup (window);
 			disco_window_check_others (window);
 		}
 
@@ -319,15 +350,26 @@ disco_window_check_local_cb (GossipDisco       *disco,
 	} 
 
 	if (!window->server_found) {
+		GossipJID *jid;
+
+		jid = gossip_disco_item_get_jid (item);
+
 		window->server_found = TRUE;
+		window->server_jid = gossip_jid_ref (jid);
+
+		d(g_print ("disco server found: '%s'!\n", 
+			   gossip_jid_get_full (jid)));
+
+		disco_window_disco_cleanup (window);
 
 		if (timeout) {
 			d(g_print ("disco timed out\n"));
-		} else if (last_item) {
+		}
+
+		if (last_item) {
 			d(g_print ("all local disco services received\n"));
 		}
 		 
-		window->server_jid = gossip_disco_item_get_jid (item);
 		disco_window_proceed_to_register (window);
 	}
 }
@@ -335,108 +377,73 @@ disco_window_check_local_cb (GossipDisco       *disco,
 static void
 disco_window_check_others (GossipDiscoWindow *window)
 {
-#ifdef USE_JABBER_ORG_LIST
-	d(g_print ("checking other servers, protocol:'%s' not found locally\n", 
-		   window->protocol_type));
-
-	gossip_disco_servers_fetch ((GossipDiscoServersFunc) disco_window_check_others_1_cb,
-				    window);
-#else
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
 	
 	d(g_print ("checking other servers, protocol:'%s' not found locally\n", 
-		   window->protocol_type));
+		   window->disco_type));
+
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 0);
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching), 
+				   _("Searching 3rd Party Services..."));
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_protocol));
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		GossipDiscoProtocol *protocol;
 		GList               *l;
+		gint                 count;
 
-		gtk_tree_model_get (model, &iter, 
-				    COL_DISCO_TYPE_DATA, &protocol,
-				    -1);
-
+		gtk_tree_model_get (model, &iter, COL_DISCO_TYPE_DATA, &protocol, -1);
 		g_return_if_fail (protocol != NULL);
 
+ 		d(g_print ("only looking up %d servers from protocol server listing\n",  
+ 			   SEARCH_MAX)); 
+		
 		l = gossip_disco_protocol_get_servers (protocol);
 		
-		for (; l; l=l->next) {
+ 		for (count=0; l && count < SEARCH_MAX; l=l->next, count++) { 
+			GossipDisco       *disco;
 			GossipDiscoServer *server;
 			const gchar       *host;
 
 			server = (GossipDiscoServer*) l->data;
 			host = gossip_disco_server_get_host (server);
 
-			gossip_disco_request (host, 
-					      (GossipDiscoItemFunc) disco_window_check_others_2_cb,
-					      window);
+			d(g_print ("running disco on remote server:'%s'\n", host));
 
+			disco = gossip_disco_request (host, 
+						      (GossipDiscoItemFunc) disco_window_check_others_cb,
+						      window);
+
+			window->disco_list = g_list_append (window->disco_list, disco);
 		}
 	}
-#endif
 }
 
-#ifdef USE_JABBER_ORG_LIST
 static void
-disco_window_check_others_1_cb (const GList       *servers, 
-				GossipDiscoWindow *window)
+disco_window_check_others_cb (GossipDisco       *disco, 
+			      GossipDiscoItem   *item, 
+			      gboolean           last_item,
+			      gboolean           timeout,
+			      GossipDiscoWindow *window)
 {
-	GList *l;
-	GRand *rand;
-	gint   i;
-
-	d(g_print ("got list (%d entries) of servers to disco, trying the first 5\n", 
-		   g_list_length ((GList*)servers)));
-
-	l = (GList*)servers;
-
-	/* generate random generator */
-	rand = g_rand_new ();
-	
-	/* browse 5 servers */
-	for (i = 0; i < 5 && l != NULL; i++) {
-		guint        j;
-		const gchar *jid_str;
-
-		j = g_rand_int_range (rand, 0, g_list_length ((GList*)servers));
-	
-		/* sleep for 1/5 of a sec before each req */
-		g_usleep (G_USEC_PER_SEC * 1);
-		
-		jid_str = (gchar*) g_list_nth_data (l, j);
-		gossip_disco_request (jid_str, 
-				      (GossipDiscoItemFunc) disco_window_check_others_2_cb,
-				      window);
-	}
-	
-	g_rand_free (rand);
-}
-#endif
-
-static void
-disco_window_check_others_2_cb (GossipDisco       *disco, 
-				GossipDiscoItem   *item, 
-				gboolean           last_item,
-				gboolean           timeout,
-				GossipDiscoWindow *window)
-{
-	static gdouble  items = 0;
+	gdouble  total;
 	gdouble         remaining;
 	gdouble         fraction;
 	gchar          *str;
 
 	remaining = gossip_disco_get_items_remaining (disco);
-
-	if (items == 0) {
-		items = remaining + 1;
-	}
+	total = gossip_disco_get_items_total (disco);
 
 	/* show progress */
-	fraction = 1 - (remaining / items);
-	str = g_strdup_printf ("Searching 3rd Party Services (%d of %d)", 
-			       (gint)items - (gint)remaining, (gint)items);
+	fraction = 1 - (remaining / total);
+
+	d(g_print ("disco 3rd party items: complete:%d, items:%d, remaining:%d, fraction:%f\n", 
+		   (gint)total - (gint)remaining, (gint)remaining, (gint)total, (gfloat)fraction));
+
+	str = g_strdup_printf (_("Searching 3rd Party Services (%d of %d)"), 
+			       (gint)total - (gint)remaining, (gint)total);
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 
 				       fraction);
@@ -449,10 +456,13 @@ disco_window_check_others_2_cb (GossipDisco       *disco,
 	    (!item ||
 	     !gossip_disco_item_has_feature (item, "jabber:iq:register") ||
 	     !gossip_disco_item_has_category (item, "gateway") ||
-	     !gossip_disco_item_has_type (item, window->protocol_type))) {
+	     !gossip_disco_item_has_type (item, window->disco_type))) {
 		if (timeout) {
 			d(g_print ("disco timed out\n"));
-		} else if (last_item) {
+		} 
+
+		if(last_item) {
+			disco_window_disco_cleanup (window);
 			disco_window_search_failed (window);
 			d(g_print ("all disco services received\n"));
 		}
@@ -461,15 +471,26 @@ disco_window_check_others_2_cb (GossipDisco       *disco,
 	} 
 
 	if (!window->server_found) {
+		GossipJID *jid;
+
+		jid = gossip_disco_item_get_jid (item);
+
 		window->server_found = TRUE;
+		window->server_jid = gossip_jid_ref (jid);
+
+		d(g_print ("disco server found: '%s'!\n", 
+			   gossip_jid_get_full (jid)));
+		
+		disco_window_disco_cleanup (window);
 
 		if (timeout) {
 			d(g_print ("disco timed out\n"));
-		} else if (last_item) {
+		} 
+
+		if (last_item) {
 			d(g_print ("all disco services received\n"));
 		}
 		 
-		window->server_jid = gossip_disco_item_get_jid (item);
 		disco_window_proceed_to_register (window);
 	}
 }
@@ -500,7 +521,7 @@ static void
 disco_window_proceed_to_register (GossipDiscoWindow *window)
 {
 	d(g_print ("proceeding to register protocol:'%s' with jid:'%s'\n", 
-		   window->protocol_type, 
+		   window->disco_type, 
 		   gossip_jid_get_full (window->server_jid)));
 
 	gtk_label_set_text (GTK_LABEL (window->label_server), 
@@ -515,11 +536,15 @@ disco_window_proceed_to_register (GossipDiscoWindow *window)
 static void
 disco_window_requirements (GossipDiscoWindow *window)
 {
+	GossipDiscoRegister *reg;
+
 	d(g_print ("asking for disco registration requirements\n"));
 
-	gossip_disco_register_requirements (gossip_jid_get_full (window->server_jid),
-					    (GossipDiscoRegisterFunc) disco_window_register_1_cb,
-					    window);
+	reg = gossip_disco_register_requirements (gossip_jid_get_full (window->server_jid),
+						  (GossipDiscoRegisterFunc) disco_window_register_1_cb,
+						  window);
+
+	window->reg = reg;
 }
 
 static void
@@ -748,6 +773,10 @@ disco_window_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 	const gchar         *disco_type;
 	const gchar         *icon;
 	const gchar         *stock_id = NULL;
+	const gchar         *core_icon = NULL;
+	GdkPixbuf           *pixbuf = NULL;
+	gint                 w, h;
+	gint                 size = 48;  /* default size */
 	
 	gtk_tree_model_get (model, iter, COL_DISCO_TYPE_DATA, &protocol, -1);
 
@@ -758,54 +787,83 @@ disco_window_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 
 	/* these can not be overridden */
 	if (strcmp (disco_type, "aim") == 0) {
-		stock_id = "gossip-aim";
+		core_icon = "im-aim";
 	} else if (strcmp (disco_type, "icq") == 0) {
-		stock_id = "gossip-icq";
+		core_icon = "im-icq";
 	} else if (strcmp (disco_type, "msn") == 0) {
-		stock_id = "gossip-msn";
+		core_icon = "im-msn";
 	} else if (strcmp (disco_type, "yahoo") == 0) {
-		stock_id = "gossip-yahoo";
+		core_icon = "im-yahoo";
 	} else {
 		stock_id = gossip_disco_protocol_get_stock_icon (protocol);
 	}
 
-	if (stock_id) {
+	if (core_icon || icon) {
+		if (!gtk_icon_size_lookup (GTK_ICON_SIZE_DND, &w, &h)) {
+			size = 48;
+		} else {
+			/* we average the two, this way if the height
+			   and width are not equal, they meet in the middle */
+			size = (w + h) / 2; 
+		}
+	}
+
+	if (core_icon) {
+		GError       *error = NULL;
+		GtkIconTheme *theme;
+				
+		theme = gtk_icon_theme_get_default ();
+		pixbuf = gtk_icon_theme_load_icon (theme,
+						   core_icon, /* icon name */
+						   size,      /* size */
+						   0,         /* flags */
+						   &error);
+		if (!pixbuf) {
+			g_warning ("could not load icon: %s", error->message);
+			g_error_free (error);
+
+			g_object_set (cell, 
+				      "visible", TRUE,
+				      "stock_id", NULL,
+				      "pixbuf", NULL,
+				      NULL); 
+
+			return;
+		}
+	} else if (stock_id) {
 		g_object_set (cell, 
 			      "visible", TRUE,
 			      "stock-id", stock_id,
 			      "stock-size", GTK_ICON_SIZE_DND, 
 			      NULL); 
-	} else {
-		const gchar *icon = NULL;
-		GdkPixbuf   *pb = NULL;
+
+		return;
+	} else if (icon) {
 		GError      *error = NULL;
 
-		if (!icon) {
+		pixbuf = gdk_pixbuf_new_from_file_at_size (icon, w, h, &error);
+
+		if (!pixbuf) {
+			g_warning ("could not load icon: %s", error->message);
+			g_error_free (error);
+
 			g_object_set (cell, 
 				      "visible", TRUE,
 				      "stock_id", NULL,
+				      "pixbuf", NULL,
 				      NULL); 
+
 			return;
 		}
+	}
 
-		pb = gdk_pixbuf_new_from_file_at_size (icon, 24, 24, &error);
-
-		if (pb) {
 			g_object_set (cell, 
 				      "visible", TRUE,
 				      "stock_id", NULL,
-				      "pixbuf", pb,
+		      "pixbuf", pixbuf,
 				      NULL); 
 			
-			g_object_unref (pb);
-		} else {
-			/* look at error */
-			g_warning ("could not open icon, error code:%d, message:'%s'", 
-				   error->code, error->message);
-
-			g_error_free (error);
-		}
-	}
+	g_object_unref (pixbuf); 
 }
 
 static void  
@@ -928,7 +986,7 @@ disco_window_prepare_page_2 (GnomeDruidPage    *page,
 
 		g_return_if_fail (protocol != NULL);
 
-		window->protocol_type = gossip_disco_protocol_get_disco_type (protocol);
+		window->disco_type = gossip_disco_protocol_get_disco_type (protocol);
 	} 
 
 	disco_window_check_local (window);
@@ -943,12 +1001,10 @@ disco_window_prepare_page_3 (GnomeDruidPage    *page,
 	gtk_widget_hide (window->label_requirements_result);
 	gtk_widget_hide (window->label_instructions);
 
-	gtk_label_set_text (GTK_LABEL (window->label_server), "");
-
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
 					   FALSE, FALSE, TRUE, TRUE); 
 
-	disco_window_requirements (window);
+/* 	disco_window_requirements (window); */
 }
 
 static void
@@ -1032,10 +1088,16 @@ disco_window_destroy (GtkWidget         *widget,
 {
 	GtkTreeModel *model;
 
+	current_window = NULL;
+
+	disco_window_disco_cleanup (window);
+
+	gossip_disco_register_destroy (window->reg);
+
+	gossip_jid_unref (window->server_jid);
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (window->treeview_protocol));
 	gtk_tree_model_foreach (model, disco_window_model_foreach_cb, NULL);
-
-	gossip_disco_destroy (window->disco);
 
  	g_free (window); 
 }

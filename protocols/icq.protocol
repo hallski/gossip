@@ -3,7 +3,7 @@
 <protocol>
   <name>ICQ</name>
   <disco-type>icq</disco-type>
-  <stock-icon>gossip-icq</stock-icon>
+  <stock-icon>im-icq</stock-icon>
   <description>Configure an ICQ account</description>
   <server-list url="">
     <server name="Aster (PL)" host="jabber.aster.pl"/>
