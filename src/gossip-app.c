@@ -810,7 +810,7 @@ app_subscription_request_dialog_response_cb (GtkWidget *dialog,
 	jid = gossip_jid_new (from);
 	subscribed = gossip_roster_old_have_jid (priv->roster, jid);
 
-	if (add_user && !subscribed && !REQUEST_RESPONSE_DECIDE_LATER) {
+	if (add_user && !subscribed && sub_type == LM_MESSAGE_SUB_TYPE_SUBSCRIBED) {
 		gossip_add_contact_new (app->priv->connection, jid);
 	}
 	

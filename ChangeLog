@@ -1,3 +1,8 @@
+2003-08-29  Martyn Russell <ginxd@btopenworld.com>
+	
+	* src/gossip-app.c (app_subscription_request_dialog_response_cb):
+	Only add a user if we accept their request.
+
 2003-08-29  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-utils.c (gossip_hig_dialog_new): Add.
