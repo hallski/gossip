@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-06 00:11+0200\n"
+"POT-Creation-Date: 2003-07-06 01:09+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -81,19 +81,20 @@ msgstr ""
 msgid "_Start Chat"
 msgstr "_Starta chatt"
 
-#: src/gossip-app.c:1099
+#: src/gossip-app.c:1109
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1358
+#: src/gossip-app.c:1368
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-chat.c:408 src/gossip-chat.c:414
-msgid "An error occurred when chatting with"
-msgstr "Ett fel inträffade under chatt med"
+#: src/gossip-chat.c:404
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:410
+#: src/gossip-chat.c:409
 msgid "Details:"
 msgstr "Detaljer:"
 
