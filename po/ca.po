@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.6\n"
-"POT-Creation-Date: 2003-11-18 13:13+0100\n"
-"PO-Revision-Date: 2003-11-16 18:57+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-15 12:16+0100\n"
+"PO-Revision-Date: 2003-12-15 12:17+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -125,119 +125,123 @@ msgstr "S'afegirà a %s a la vostra llista de contactes."
 msgid "Just about to leave..."
 msgstr "Estic a punt de sortir..."
 
-#: src/gossip-app.c:421
+#: src/gossip-app.c:433
 msgid "_Show Contact List"
 msgstr "_Mostra la llista de contactes"
 
-#: src/gossip-app.c:430
+#: src/gossip-app.c:442
 msgid "_Hide Contact List"
 msgstr "_Amaga la llista de contactes"
 
-#: src/gossip-app.c:443 ui/main.glade.h:59
+#: src/gossip-app.c:455 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "Envia un _missatge..."
 
-#: src/gossip-app.c:458
+#: src/gossip-app.c:470
 msgid "_Quit"
 msgstr "_Surt"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:560
+#: src/gossip-app.c:572
 msgid "translator_credits"
 msgstr "Jordi Mallach <jordi@sindominio.net>"
 
-#: src/gossip-app.c:572
+#: src/gossip-app.c:584
 msgid "A Jabber Client for GNOME"
 msgstr "Un client Jabber per al GNOME"
 
-#: src/gossip-app.c:579
+#: src/gossip-app.c:591
 msgid "Gossip Website"
 msgstr "Lloc web del Gossip"
 
-#: src/gossip-app.c:683
+#: src/gossip-app.c:695
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
 "xerrada."
 
-#: src/gossip-app.c:688 ui/main.glade.h:83
+#: src/gossip-app.c:700 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Xarra"
 
-#: src/gossip-app.c:935
+#: src/gossip-app.c:962
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s vol rebre notificacions de la vostra presència."
 
-#: src/gossip-app.c:1170
+#: src/gossip-app.c:1197
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1321
+#: src/gossip-app.c:1340
 msgid "Make sure that your account information is correct."
 msgstr "Assegureu-vos que la informació del vostre compte és correcta."
 
-#: src/gossip-app.c:1322
+#: src/gossip-app.c:1341
 msgid "The server may currently be unavailable."
 msgstr "El servidor pot no estar disponible ara mateix."
 
-#: src/gossip-app.c:1711
+#: src/gossip-app.c:1746
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-app.c:1887
+#: src/gossip-app.c:1922
 #, c-format
 msgid "New message from %s"
 msgstr "Nou missatge de %s"
 
-#: src/gossip-app.c:2429
+#: src/gossip-app.c:2476
 msgid "Custom Message..."
 msgstr "Missatge personalitzat..."
 
-#: src/gossip-app.c:2447
+#: src/gossip-app.c:2494
 msgid "Custom Busy Message..."
 msgstr "Missatge «Ocupat» personalitzat..."
 
-#: src/gossip-app.c:2454
+#: src/gossip-app.c:2501
 msgid "Leave..."
 msgstr "Surt..."
 
-#: src/gossip-chat-view.c:323
+#: src/gossip-chat-view.c:320 ui/chat.glade.h:2
+msgid "C_lear"
+msgstr "_Neteja"
+
+#: src/gossip-chat-view.c:337
 msgid "_Copy Link Address"
 msgstr "_Còpia l'adreça de l'enllaç"
 
-#: src/gossip-chat-view.c:331
+#: src/gossip-chat-view.c:345
 msgid "_Open Link"
 msgstr "_Obre l'enllaç"
 
-#: src/gossip-chat-view.c:674
+#: src/gossip-chat-view.c:695
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:564
+#: src/gossip-chat-window.c:620
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sXerrada - %s"
 
-#: src/gossip-chat.c:685
+#: src/gossip-chat.c:641
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:646 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detalls:"
 
-#: src/gossip-chat.c:776
+#: src/gossip-chat.c:732
 #, c-format
 msgid "%s went offline"
 msgstr "%s s'ha desconnectat"
 
-#: src/gossip-chat.c:790
+#: src/gossip-chat.c:746
 #, c-format
 msgid "%s comes online"
 msgstr "%s s'ha connectat"
@@ -408,37 +412,33 @@ msgstr "Dormint"
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:2
+#: ui/chat.glade.h:3
 msgid "Chat"
 msgstr "Xarra"
 
-#: ui/chat.glade.h:3
+#: ui/chat.glade.h:4
 msgid "Contact _Information"
 msgstr "_Informació del contacte"
 
-#: ui/chat.glade.h:4
+#: ui/chat.glade.h:5
 msgid "From:"
 msgstr "De:"
 
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:6
 msgid "Gossip - Chat"
 msgstr "Gossip - Xerrada"
 
-#: ui/chat.glade.h:6
+#: ui/chat.glade.h:7
 msgid "Gossip - Received Message"
 msgstr "Gossip - Missatge rebut"
 
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:8
 msgid "Gossip - Send Message"
 msgstr "Gossip - Envia un missatge"
 
-#: ui/chat.glade.h:8
+#: ui/chat.glade.h:9
 msgid "In reply to:"
 msgstr "En resposta a:"
-
-#: ui/chat.glade.h:9
-msgid "Lo_g"
-msgstr "Re_gistres"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
@@ -453,30 +453,34 @@ msgid "To:"
 msgstr "A:"
 
 #: ui/chat.glade.h:13
+msgid "View Lo_g"
+msgstr "Visualitza el re_gistre"
+
+#: ui/chat.glade.h:14
 msgid "_Conversation"
 msgstr "_Xerrada"
 
-#: ui/chat.glade.h:14
+#: ui/chat.glade.h:15
 msgid "_Detach Tab"
 msgstr "D_esenganxa la pestanya"
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:16
 msgid "_Next Tab"
 msgstr "Pestanya següe_nt"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:17
 msgid "_Previous Tab"
 msgstr "_Pestanya anterior"
 
-#: ui/chat.glade.h:17
+#: ui/chat.glade.h:18
 msgid "_Reply..."
 msgstr "_Respon..."
 
-#: ui/chat.glade.h:18 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Envia"
 
-#: ui/chat.glade.h:19
+#: ui/chat.glade.h:20
 msgid "_Tabs"
 msgstr "Pes_tanyes"
 
