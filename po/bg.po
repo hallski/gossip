@@ -1,0 +1,1116 @@
+# Bulgarian translation of gossip.
+# Copyright (C) 2004 THE gossip'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gossip package.
+# Iassen Pramatarov <turin@fsa-bg.org>, 2004.
+#
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gossip HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-12-10 17:59+0200\n"
+"PO-Revision-Date: 2004-12-10 17:39+0200\n"
+"Last-Translator: Iassen Pramatarov <turin@fsa-bg.org>\n"
+"Language-Team: Bulgarian <dict@linux.zonebg.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: gossip.desktop.in.in.h:1
+msgid "Imendio Gossip"
+msgstr "Imendio Gossip"
+
+#: gossip.desktop.in.in.h:2
+msgid "Instant Messenger"
+msgstr "Моментни съобщения"
+
+#: gossip.schemas.in.h:1
+msgid "Be silent when away"
+msgstr "Без звуци в състояние \"Отсъствам\""
+
+#: gossip.schemas.in.h:2
+msgid "Be silent when busy"
+msgstr "Без звуци в състояние \"Зает\""
+
+#: gossip.schemas.in.h:3
+msgid "Height of main window"
+msgstr "Височина на основния прозорец"
+
+#: gossip.schemas.in.h:4
+msgid "Hide main window"
+msgstr "Скирване на основния прозорец"
+
+#: gossip.schemas.in.h:5
+msgid "Hide the main window."
+msgstr "Скирване на основния прозорец"
+
+#: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "Вградени съобщения за състояние"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "Вградени съобщения за състояние."
+
+#: gossip.schemas.in.h:8
+msgid "Show offline contacts"
+msgstr "Показване на изключените контакти"
+
+#: gossip.schemas.in.h:9
+msgid "The X position of the main window."
+msgstr "Разположение на основния прозорец по хоризонтала."
+
+#: gossip.schemas.in.h:10
+msgid "The Y position of the main window."
+msgstr "Разположение на основния прозорец по вертикала."
+
+#: gossip.schemas.in.h:11
+msgid "The height of the main window."
+msgstr "Височината на основния прозорец"
+
+#: gossip.schemas.in.h:12
+msgid "The width of the main window."
+msgstr "Широчината на основния прозорец"
+
+#: gossip.schemas.in.h:13
+msgid "Use graphical smileys"
+msgstr "Изображения за усмивки"
+
+#: gossip.schemas.in.h:14
+msgid "Use notification sounds"
+msgstr "Използване на звуци за уведомяване"
+
+#: gossip.schemas.in.h:15
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr "Дали да се преобразуват \"усмивките\" в картинки в разговорите."
+
+#: gossip.schemas.in.h:16
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "Дали да се издава звук при пристигане на нови съобщения."
+
+#: gossip.schemas.in.h:17
+msgid "Whether or not to play sounds when away."
+msgstr "Дали да се издават звуци в състояние \"Отсъствам\"."
+
+#: gossip.schemas.in.h:18
+msgid "Whether or not to play sounds when busy."
+msgstr "Дали да се издават звуци в състояние \"Зает\"."
+
+#: gossip.schemas.in.h:19
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr ""
+"Дали да се показват в списъка контактите, които в момента не са включени."
+
+#: gossip.schemas.in.h:20
+msgid "Width of the main window"
+msgstr "Широчина на основния прозорец"
+
+#: gossip.schemas.in.h:21
+msgid "X position of main window"
+msgstr "Разположение на основния прозорец по хоризонтала"
+
+#: gossip.schemas.in.h:22
+msgid "Y position of main window"
+msgstr "Разположение на основния прозорец по вертикала"
+
+#: src/gossip-about.c:275
+msgid "Written by:"
+msgstr "Програмиране:"
+
+#: src/gossip-about.c:285
+msgid "Artwork by:"
+msgstr "Графично оформление:"
+
+#: src/gossip-about.c:296
+msgid "Translated by:"
+msgstr "Преведено от:"
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:342
+msgid "translator_credits"
+msgstr "Ясен Праматаров"
+
+#: src/gossip-account.c:302 src/gossip-app.c:66 src/gossip-startup-druid.c:219
+msgid "Home"
+msgstr "Вкъщи"
+
+#: src/gossip-add-contact.c:291
+#, c-format
+msgid "What request message do you want to send to %s?"
+msgstr "Къкъв да бъде текстът на запитването до %s?"
+
+#: src/gossip-add-contact.c:309
+#, c-format
+msgid "%s will be added to your contact list."
+msgstr "%s ще бъде добавен към списъка ви с контакти."
+
+#: src/gossip-app.c:644
+msgid "Could not connect"
+msgstr "Неуспех при свързването"
+
+#: src/gossip-app.c:645
+msgid "Make sure that your account information is correct."
+msgstr "Проверете дали данните на сметката ви са правилно въведени."
+
+#: src/gossip-app.c:708
+msgid ""
+"Enter the user ID of the person you would like to send a chat message to."
+msgstr ""
+"Въведете идентификатора на потребителя, на когото искате да изпратите "
+"съобщение."
+
+#: src/gossip-app.c:715 ui/main.glade.h:99
+msgid "_Chat"
+msgstr "_Разговор"
+
+#: src/gossip-app.c:1018
+#, c-format
+msgid "%s wants to be notified of your status."
+msgstr "%s иска да може да вижда промените в състоянието ви."
+
+#: src/gossip-app.c:1268
+msgid "You were disconnected from the server. Do you want to reconnect?"
+msgstr "Връзката със сървъра е прекъсната. Желаете ли повторно свързване?"
+
+#: src/gossip-app.c:1454
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
+msgstr ""
+"Проверете дали данните на сметката ви са правилно въведени. Освен това "
+"сървърът може в момента да е недостъпен."
+
+#: src/gossip-app.c:1928
+msgid "Gossip, Instant Messaging Client"
+msgstr "Gossip, програма за моментни съобщения"
+
+#: src/gossip-app.c:2072
+#, c-format
+msgid "New message from %s"
+msgstr "Ново съобщение от %s"
+
+#: src/gossip-app.c:2161 src/gossip-private-chat.c:1140
+#: src/gossip-roster-view.c:1230
+msgid "Offline"
+msgstr "Изключен"
+
+#: src/gossip-app.c:2560 src/gossip-preferences.c:638
+msgid "Available"
+msgstr "На линия"
+
+#: src/gossip-app.c:2571 src/gossip-preferences.c:639
+msgid "Busy"
+msgstr "Зает"
+
+#: src/gossip-app.c:2582 src/gossip-preferences.c:640
+msgid "Away"
+msgstr "Отсъства"
+
+#: src/gossip-app.c:2714
+msgid "Available..."
+msgstr "На линия..."
+
+#: src/gossip-app.c:2719
+msgid "Busy..."
+msgstr "Зает..."
+
+#: src/gossip-app.c:2724
+msgid "Away..."
+msgstr "Отсъствам..."
+
+#: src/gossip-app.c:2753
+msgid "Edit List..."
+msgstr "Редактиране на списъка..."
+
+#: src/gossip-chat-view.c:340 ui/chat.glade.h:2
+msgid "C_lear"
+msgstr "_Изчистване на прозореца"
+
+#: src/gossip-chat-view.c:357
+msgid "_Copy Link Address"
+msgstr "_Запомняне адреса на препратката"
+
+#: src/gossip-chat-view.c:365
+msgid "_Open Link"
+msgstr "_Проследяване на препратката"
+
+#: src/gossip-chat-view.c:676
+msgid "%A %d %B %Y"
+msgstr "%A %d %B %Y"
+
+#: src/gossip-chat-window.c:597
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sРазговор - %s"
+
+#: src/gossip-chat-window.c:848
+msgid "Typing a message."
+msgstr "Пише съобщение."
+
+#: src/gossip-contact-info.c:431
+#, c-format
+msgid "Contact Information for %s"
+msgstr "Данни за контакта %s"
+
+#: src/gossip-edit-groups-dialog.c:182
+#, c-format
+msgid "Edit groups for %s"
+msgstr "Редактиране на групите на %s"
+
+#: src/gossip-edit-groups-dialog.c:246
+msgid "Select"
+msgstr "Избор"
+
+#: src/gossip-edit-groups-dialog.c:257
+msgid "Group"
+msgstr "Група"
+
+#. This needs to be done better, could have group_is_unsorted().
+#.
+#: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
+#: src/gossip-roster.c:39
+msgid "Unsorted"
+msgstr "Неразпределени"
+
+#: src/gossip-group-chat.c:809
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr "Възникна грешка по време на разговор в стая %s."
+
+#: src/gossip-group-chat.c:814 src/gossip-group-chat.c:927
+#: src/gossip-private-chat.c:686
+msgid "Details:"
+msgstr "Подробности:"
+
+#: src/gossip-group-chat.c:922
+#, c-format
+msgid "Unable to enter the group chat %s."
+msgstr "Неуспешно влизане в стая %s."
+
+#: src/gossip-log.c:316
+msgid "Conversation Log"
+msgstr "Запис на разговора"
+
+#: src/gossip-main.c:67
+msgid "Don't connect on startup"
+msgstr "Без автоматично свързване в началото"
+
+#: src/gossip-main.c:76
+msgid "Which account to connect to on startup"
+msgstr "Сметка за свързване при начално зареждане"
+
+#: src/gossip-main.c:77
+msgid "ACCOUNT-NAME"
+msgstr "ИМЕ-НА-СМЕТКА"
+
+#: src/gossip-main.c:85
+msgid "List the available accounts"
+msgstr "Списък на наличните сметки"
+
+#: src/gossip-main.c:118
+msgid "Available accounts:"
+msgstr "Налични сметки:"
+
+#: src/gossip-main.c:127
+msgid "[default]"
+msgstr "[по подразбиране]"
+
+#: src/gossip-main.c:150
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "Не е открита сметка с име \"%s\"."
+
+#: src/gossip-private-chat.c:681
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "Възникна грешка по време на разговор с %s."
+
+#: src/gossip-private-chat.c:779
+#, c-format
+msgid "%s went offline"
+msgstr "%s се изключи"
+
+#: src/gossip-private-chat.c:793
+#, c-format
+msgid "%s comes online"
+msgstr "%s се включи"
+
+#: src/gossip-private-chat.c:874
+msgid "Connected"
+msgstr "Свързан"
+
+#: src/gossip-private-chat.c:888
+msgid "Disconnected"
+msgstr "Изключен"
+
+#: src/gossip-register.c:84
+msgid "Unknown error"
+msgstr "Неизвестна грешка"
+
+#: src/gossip-register.c:184
+msgid "Registering account"
+msgstr "Регистриране на сметката"
+
+#: src/gossip-register.c:224
+msgid "Successfully registered the account"
+msgstr "Сметката е регистрирана успешно"
+
+#: src/gossip-register.c:245 src/gossip-register.c:251
+msgid "Failed registering the account"
+msgstr "Грешка при регистриране на сметката"
+
+#: src/gossip-register.c:247
+msgid "Reason:"
+msgstr "Причина:"
+
+#: src/gossip-roster-view.c:244
+msgid "/Contact _Information"
+msgstr "/_Данни за контакта"
+
+#: src/gossip-roster-view.c:252
+msgid "/Re_name contact"
+msgstr "/Пре_именуване на контакта"
+
+#: src/gossip-roster-view.c:260
+msgid "/_Edit groups"
+msgstr "/_Редактиране на групите"
+
+#: src/gossip-roster-view.c:268
+msgid "/Show _Log"
+msgstr "/Записани разговори"
+
+#: src/gossip-roster-view.c:284
+msgid "/_Remove contact"
+msgstr "/_Премахване на контакта"
+
+#: src/gossip-roster-view.c:295
+msgid "/Re_name group"
+msgstr "/Преименуване на _групата"
+
+#: src/gossip-roster-view.c:1642
+#, c-format
+msgid ""
+"Do you want to remove the contact\n"
+"%s\n"
+"from your contact list?"
+msgstr ""
+"Наистина ли исакте да премахнете\n"
+"%s\n"
+"от списъка ви с контакти?"
+
+#: src/gossip-roster-view.c:1735
+#, c-format
+msgid ""
+"Please enter a new nickname for the contact\n"
+"%s"
+msgstr ""
+"Въведете нов псевдоним за контакта\n"
+"%s"
+
+#: src/gossip-roster-view.c:1841
+#, c-format
+msgid ""
+"Please enter a new name for the group\n"
+"%s"
+msgstr ""
+"Въведете ново име за групата\n"
+"%s"
+
+#: src/gossip-startup-druid.c:258
+msgid "Gossip will now try to use your account:"
+msgstr "Gossip ще опита да използва сметката "
+
+#: src/gossip-startup-druid.c:262
+msgid "Gossip will now try to register the account:"
+msgstr "Gossip ще опита да регистрира сметката "
+
+#: src/gossip-utils.c:438
+msgid "Please enter your password:"
+msgstr "Въведете паролата си:"
+
+#: src/gossip-utils.c:440
+msgid "Remember Password?"
+msgstr "Запомняне на паролата"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Получаване на лични данни, моля изчакайте..."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Записване на личните данни, моля изчакайте..."
+
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/main.glade.h:3
+msgid "*"
+msgstr "*"
+
+#: ui/chat.glade.h:3
+msgid "Chat"
+msgstr "Разговор"
+
+#: ui/chat.glade.h:4
+msgid "Contact _Information"
+msgstr "_Данни за контакта"
+
+#: ui/chat.glade.h:5
+msgid "From:"
+msgstr "От:"
+
+#: ui/chat.glade.h:6
+msgid "Gossip - Chat"
+msgstr "Gossip - разговор"
+
+#: ui/chat.glade.h:7
+msgid "Gossip - Received Message"
+msgstr "Gossip - получени съобщения"
+
+#: ui/chat.glade.h:8
+msgid "Gossip - Send Message"
+msgstr "Gossip - пращане на съобщение"
+
+#: ui/chat.glade.h:9
+msgid "In reply to:"
+msgstr "В отговор на:"
+
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "Преместване страницата _наляво"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "Преместване страницата _надясно"
+
+#: ui/chat.glade.h:12
+msgid "To:"
+msgstr "До:"
+
+#: ui/chat.glade.h:13
+msgid "View Lo_g"
+msgstr "Преглед на записите"
+
+#: ui/chat.glade.h:14
+msgid "_Conversation"
+msgstr "_Разговор"
+
+#: ui/chat.glade.h:15
+msgid "_Detach Tab"
+msgstr "_Отделяне на страницата"
+
+#: ui/chat.glade.h:16
+msgid "_Next Tab"
+msgstr "_Следваща страница"
+
+#: ui/chat.glade.h:17
+msgid "_Previous Tab"
+msgstr "_Предишна страница"
+
+#: ui/chat.glade.h:18
+msgid "_Reply..."
+msgstr "_Отговор..."
+
+#: ui/chat.glade.h:19
+msgid "_Send"
+msgstr "_Изпращане"
+
+#: ui/chat.glade.h:20
+msgid "_Tabs"
+msgstr "_Страници"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
+msgid "    "
+msgstr "    "
+
+#: ui/connect.glade.h:3
+msgid "<b>Account Settings</b>"
+msgstr "<b>Настройки на сметка</b>"
+
+#: ui/connect.glade.h:4
+msgid "<b>Connect to server</b>"
+msgstr "<b>Свързване към сървър</b>"
+
+#: ui/connect.glade.h:5
+msgid "C_onnect"
+msgstr "_Свързване"
+
+#: ui/connect.glade.h:6
+msgid "Connect"
+msgstr "Свързване"
+
+#: ui/connect.glade.h:7
+msgid "Connect _Server:"
+msgstr "_Сървър за свързване:"
+
+#: ui/connect.glade.h:8
+msgid "Edit Account Information"
+msgstr "Редактиране настройките на сметка"
+
+#: ui/connect.glade.h:9
+msgid "P_ort:"
+msgstr "_Порт:"
+
+#: ui/connect.glade.h:10
+msgid "Re_gister..."
+msgstr "_Регистриране..."
+
+#: ui/connect.glade.h:11
+msgid "Server:"
+msgstr "Сървър:"
+
+#: ui/connect.glade.h:12
+msgid "Use _encryption (SSL)"
+msgstr "Използване на шифриране (SSL)"
+
+#: ui/connect.glade.h:13
+msgid "Use system pro_xy"
+msgstr "Използване на системния уеб-_посредник"
+
+#: ui/connect.glade.h:14
+msgid "_Jabber ID:"
+msgstr "_Jabber ID:"
+
+#: ui/connect.glade.h:15
+msgid "_Password:"
+msgstr "_Парола:"
+
+#: ui/connect.glade.h:16
+msgid "_Resource:"
+msgstr "_Ресурс:"
+
+#: ui/group-chat.glade.h:2
+msgid "        "
+msgstr "        "
+
+#: ui/group-chat.glade.h:4
+msgid "<b>Available chat rooms</b>"
+msgstr "<b>Налични стаи за разговор</b>"
+
+#: ui/group-chat.glade.h:5
+msgid "<b>Chat room information</b>"
+msgstr "<b>Данни за стаята за разговори</b>"
+
+#: ui/group-chat.glade.h:6
+msgid "<b>Favorite:</b>"
+msgstr "<b>Отметки:</b>"
+
+#: ui/group-chat.glade.h:7
+msgid "Chat _name:"
+msgstr "Име на _отметката:"
+
+#: ui/group-chat.glade.h:8
+msgid "Gossip - Edit Group Chats"
+msgstr "Gossip - редактиране на стаи за разговор"
+
+#: ui/group-chat.glade.h:9
+msgid "Gossip - Join Group Chat"
+msgstr "Gossip - влизане в стая за разговори"
+
+#: ui/group-chat.glade.h:10
+msgid "Imendio Gossip - Group Chat"
+msgstr "Imendio Gossip - стая за разговори"
+
+#: ui/group-chat.glade.h:11
+msgid "N_ickname:"
+msgstr "Псевдо_ним:"
+
+#: ui/group-chat.glade.h:12
+msgid ""
+"Pick a favorite, or enter nickname, server name, and the name of the chat "
+"room to enter."
+msgstr ""
+"Изберете отметка или въведете псевдоним, име на сървър и име на стая за "
+"разговори, в която искате да влезете."
+
+#: ui/group-chat.glade.h:13
+msgid "R_emove"
+msgstr "_Премахване"
+
+#: ui/group-chat.glade.h:14
+msgid "_Add"
+msgstr "_Добавяне"
+
+#: ui/group-chat.glade.h:15
+msgid "_Edit favorites..."
+msgstr "_Редактиране на отметките..."
+
+#: ui/group-chat.glade.h:16
+msgid "_Join"
+msgstr "_Влизане"
+
+#: ui/group-chat.glade.h:17
+msgid "_Nickname:"
+msgstr "_Псевдоним:"
+
+#: ui/group-chat.glade.h:18
+msgid "_Room:"
+msgstr "_Стая:"
+
+#: ui/group-chat.glade.h:19
+msgid "_Server:"
+msgstr "_Сървър:"
+
+#: ui/group-chat.glade.h:20
+msgid "_Topic:"
+msgstr "_Тема:"
+
+#: ui/main.glade.h:1
+msgid " "
+msgstr " "
+
+#: ui/main.glade.h:4
+msgid "<b>Description</b>"
+msgstr "<b>Кратко представяне</b>"
+
+#: ui/main.glade.h:5
+msgid ""
+"<b>Finding the best server...</b>\n"
+"This will take a few moments, please wait."
+msgstr ""
+"<b>Откриване на най-подходящия сървър...</b>\n"
+"Това ще отнеме малко време, моля изчакайте!"
+
+#: ui/main.glade.h:7
+msgid "<b>Information requested, Please wait...</b>"
+msgstr "<b>Данните се получават, моля изчакайте...</b>"
+
+#: ui/main.glade.h:8
+msgid "<b>Personal information</b>"
+msgstr "<b>Лични данни</b>"
+
+#: ui/main.glade.h:9
+msgid "<b>Preset status messages</b>"
+msgstr "<b>Задаване на съобщения за състояние</b>"
+
+#: ui/main.glade.h:10
+msgid "<b>Waiting for server response...</b>"
+msgstr "<b>Изчакване за отговор от сървъра...</b>"
+
+#: ui/main.glade.h:11
+msgid "<i>Information not available</i>"
+msgstr "<i>Данните не са налични</i>"
+
+#: ui/main.glade.h:12
+msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
+msgstr "<span size=\"smaller\">Например ivancho@jabber.org</span>"
+
+#: ui/main.glade.h:13
+msgid "Add Another Account"
+msgstr "Добавяне на друга сметка"
+
+#: ui/main.glade.h:14
+msgid "Add a contact"
+msgstr "Добавяне на контакт"
+
+#: ui/main.glade.h:15
+msgid "Add contact"
+msgstr "Добяване на контакт"
+
+#: ui/main.glade.h:16
+msgid "Add to your contact list"
+msgstr "Добяване към списъка ви с контакти"
+
+#: ui/main.glade.h:17
+msgid "Appearance"
+msgstr "Изглед"
+
+#: ui/main.glade.h:18
+msgid "Choose a Server"
+msgstr "Избор на сървър"
+
+#: ui/main.glade.h:19
+msgid "Choose from list:"
+msgstr "Избор от списък:"
+
+#: ui/main.glade.h:20
+msgid "Client information"
+msgstr "Данни за клиента"
+
+#: ui/main.glade.h:21
+msgid "Client:"
+msgstr "Клиент:"
+
+#: ui/main.glade.h:22
+msgid "Configuration Details"
+msgstr "Настройки"
+
+#: ui/main.glade.h:23
+msgid "Configuring Service"
+msgstr "Настройка на услуга"
+
+#: ui/main.glade.h:24
+msgid "Contact information"
+msgstr "Данни за контакта"
+
+#: ui/main.glade.h:25
+msgid "Convert _smileys to graphical images"
+msgstr "Използване на _картинки за усмивки"
+
+#: ui/main.glade.h:26
+msgid "Country:"
+msgstr "Страна:"
+
+#: ui/main.glade.h:27
+msgid "Decide _Later"
+msgstr "Отлагане на _решението"
+
+#: ui/main.glade.h:28
+msgid "Description"
+msgstr "Описание"
+
+#: ui/main.glade.h:29
+msgid "Disable sounds when _away"
+msgstr "Без звуци в състояние \"_Отсъствам\""
+
+#: ui/main.glade.h:30
+msgid "Disable sounds when _busy"
+msgstr "Без звуци в състояние \"_Зает\""
+
+#: ui/main.glade.h:31
+msgid "Discover Services"
+msgstr "Откриване на услуги"
+
+#: ui/main.glade.h:32
+msgid "Do you already have an account on a Jabber server?"
+msgstr "Имате ли регистрирана сметка към някой Jabber сървър?"
+
+#: ui/main.glade.h:33
+msgid "Do you want to accept the request?"
+msgstr "Ще одобрите ли искането?"
+
+#: ui/main.glade.h:34
+msgid "Edit Groups"
+msgstr "Редактиране на групите"
+
+#: ui/main.glade.h:35
+msgid "Email:"
+msgstr "Е-поща:"
+
+#: ui/main.glade.h:36
+msgid "Enter status message:"
+msgstr "Въведете съобщение за състояние:"
+
+#: ui/main.glade.h:37
+msgid "Gossip"
+msgstr "Gossip"
+
+#: ui/main.glade.h:38
+msgid ""
+"Gossip is a modern client for the Jabber Instant Messaging system.\n"
+"\n"
+"This assistant will help you configure Gossip and connect you to your "
+"favorite Jabber server.\n"
+"\n"
+"To get started, just click \"Forward\"."
+msgstr ""
+"Gossip е съвременен клиент за мрежата за моментни съобщения Jabber.\n"
+"\n"
+"Този помощник ще ви преведе през настройките на Gossip и ще ви свърже към "
+"предпочитания от вас Jabber сървър.\n"
+"\n"
+"За да започнете, просто натиснете \"Напред\"."
+
+#: ui/main.glade.h:43
+msgid ""
+"Gossip is now configured properly for your system.\n"
+"You can change your account settings later, by selecting the Chat-"
+">Connect... menu item."
+msgstr ""
+"Gossip вече е настроен за системата ви.\n"
+"Можете впоследствие да промените настройките на сметката си, като изберете "
+"Разговор->Свързване... от менюто."
+
+#: ui/main.glade.h:45
+msgid "I would like to add you to my contact list."
+msgstr "I would like to add you to my contact list."
+
+#: ui/main.glade.h:46
+msgid ""
+"In order to subscribe to presence notifications from the user, a request "
+"will be sent. Until this request is approved, the user will always be shown "
+"as \"Offline\" in your contact list."
+msgstr ""
+"За да можете да виждате състоянието на потребителя ще бъде изпратено "
+"запитване. Докато не бъде одобрено искането, потребителят винаги ще се вижда "
+"в списъка ви като \"Изключен\"."
+
+#: ui/main.glade.h:47
+msgid "In which group do you want to place this contact?"
+msgstr "В коя група да бъде поставен контактът?"
+
+#: ui/main.glade.h:48
+msgid "Information about ..."
+msgstr "Данни да ..."
+
+#: ui/main.glade.h:49
+msgid "JID"
+msgstr "JID"
+
+#: ui/main.glade.h:50
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ui/main.glade.h:51
+msgid "Jabber Account"
+msgstr "Jabber сметка"
+
+#: ui/main.glade.h:52
+msgid "Jabber ID:"
+msgstr "Jabber ID:"
+
+#: ui/main.glade.h:53
+msgid "Jabber.com"
+msgstr "Jabber.com"
+
+#: ui/main.glade.h:54
+msgid "Jabber.org"
+msgstr "Jabber.org"
+
+#: ui/main.glade.h:55
+msgid "Name:"
+msgstr "Име:"
+
+#: ui/main.glade.h:56
+msgid "Nick name:"
+msgstr "Псевдоним:"
+
+#: ui/main.glade.h:57
+msgid "Nickname:"
+msgstr "Псевдоним:"
+
+#: ui/main.glade.h:58
+msgid "No"
+msgstr "Не"
+
+#: ui/main.glade.h:59
+msgid "OS:"
+msgstr "Операционна система:"
+
+#: ui/main.glade.h:60
+msgid "On what server do you have a Jabber account?"
+msgstr "На кой сървър имате регистрирана Jabber сметка?"
+
+#: ui/main.glade.h:61
+msgid "Password:"
+msgstr "Парола:"
+
+#: ui/main.glade.h:62
+msgid "Personal Details"
+msgstr "Лични данни"
+
+#: ui/main.glade.h:63
+msgid "Personal information"
+msgstr "Лични данни"
+
+#: ui/main.glade.h:64
+msgid "Play sound when messages arrive"
+msgstr "Уведомяване със звук при пристигане на съобщение"
+
+#: ui/main.glade.h:65
+msgid ""
+"Please enter your user name, password and all other required details below "
+"to set up your account.  "
+msgstr ""
+"Въведете потребителско име, парола и всички други нужни данни за настройка "
+"на сметката ви.  "
+
+#: ui/main.glade.h:66
+msgid "Preferences"
+msgstr "Настройки"
+
+#: ui/main.glade.h:67
+msgid "Request message"
+msgstr "Запитване"
+
+#: ui/main.glade.h:68
+msgid "Sending request"
+msgstr "Изпращане на запитване"
+
+#: ui/main.glade.h:69
+msgid "Server Details"
+msgstr "Данни за сървъра"
+
+#: ui/main.glade.h:70
+msgid "Setup Finished"
+msgstr "Настройката приключи"
+
+#: ui/main.glade.h:71
+msgid "Show _Offline Contacts"
+msgstr "Показване на _изключените контакти"
+
+#: ui/main.glade.h:72
+msgid "Sound"
+msgstr "Звуци"
+
+#: ui/main.glade.h:73
+msgid "Status"
+msgstr "Състояние"
+
+#: ui/main.glade.h:74
+msgid "Status Message"
+msgstr "Съобщение за състояние"
+
+#: ui/main.glade.h:75
+msgid "Status Messages"
+msgstr "Съобщения за състояние"
+
+#: ui/main.glade.h:76
+msgid "Subscription"
+msgstr "Записване"
+
+#: ui/main.glade.h:77
+msgid "Subscription Request"
+msgstr "Искане за записване"
+
+#: ui/main.glade.h:78
+msgid "This name will be used to identify you in chat windows."
+msgstr "Това ще бъде отличителното ви име в разговорите."
+
+#: ui/main.glade.h:79
+msgid ""
+"This wizard will allow you to configure your account settings for another "
+"protocol. "
+msgstr ""
+"Този помощник ще ви помогне да настроите сметката си за използване на друг "
+"протокол. "
+
+#: ui/main.glade.h:80
+msgid "Use a different server"
+msgstr "Друг сървър"
+
+#: ui/main.glade.h:81
+msgid "User name:"
+msgstr "Потребителско име:"
+
+#: ui/main.glade.h:82
+msgid "Version:"
+msgstr "Версия:"
+
+#: ui/main.glade.h:83
+msgid "Web site:"
+msgstr "Интернет страница:"
+
+#: ui/main.glade.h:84
+msgid "Welcome to Gossip"
+msgstr "Добре дошли в Gossip"
+
+#: ui/main.glade.h:85
+msgid "What instant messaging system does the contact use?"
+msgstr "Каква система за моментни съобщения използва контактът?"
+
+#: ui/main.glade.h:86
+msgid "What is your name?"
+msgstr "Как е истинското ви име?"
+
+#: ui/main.glade.h:87
+msgid "What nickname do you want to use for this contact?"
+msgstr "С какъв псевдоним бихте желали да виждате този контакт?"
+
+#: ui/main.glade.h:88
+msgid "What request message do you want to send to ...?"
+msgstr "Къкъв да бъде текстът на запитването до ...?"
+
+#: ui/main.glade.h:89
+msgid "What server do you want to use?"
+msgstr "Кой сървър бихте желали да използвате?"
+
+#: ui/main.glade.h:90
+msgid "What username do you use?"
+msgstr "Какво потребителско име използвате?"
+
+#: ui/main.glade.h:91
+msgid "What username do you want to use?"
+msgstr "Какво потребителско име бихте желали да използвате?"
+
+#: ui/main.glade.h:92
+msgid "Which protocol would you like to set up? "
+msgstr "Кой протокол искате да настроите?"
+
+#: ui/main.glade.h:93
+msgid "Yes"
+msgstr "Да"
+
+#: ui/main.glade.h:94
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to receive "
+"their status."
+msgstr ""
+"Не сте записани за промените в състоянието на контакта. Натиснете \"Записване"
+"\", ако искате да можете да виждате състоянието на контакта."
+
+#: ui/main.glade.h:95
+msgid "Your Identity"
+msgstr "Вашите данни"
+
+#: ui/main.glade.h:96
+msgid "_Accept"
+msgstr "_Одобряване"
+
+#: ui/main.glade.h:97
+msgid "_Account Information"
+msgstr "_Данни за сметката"
+
+#: ui/main.glade.h:98
+msgid "_Add Contact..."
+msgstr "_Добавяне на контакт..."
+
+#: ui/main.glade.h:100
+msgid "_Connect..."
+msgstr "_Свързване..."
+
+#: ui/main.glade.h:101
+msgid "_Deny"
+msgstr "От_хвърляне"
+
+#: ui/main.glade.h:102
+msgid "_Disconnect"
+msgstr "_Изключване"
+
+#: ui/main.glade.h:103
+msgid "_Hide Contact List"
+msgstr "_Скриване на списъка с контакти"
+
+#: ui/main.glade.h:104
+msgid "_Jabber ID of new contact:"
+msgstr "_Jabber идентификатор на новия контакт:"
+
+#: ui/main.glade.h:105
+msgid "_Join Group Chat..."
+msgstr "_Влизане в стая за разговори..."
+
+#: ui/main.glade.h:106
+msgid "_New Message..."
+msgstr "_Ново съобщение..."
+
+#: ui/main.glade.h:107
+msgid "_Personal Details"
+msgstr "_Лични данни"
+
+#: ui/main.glade.h:108
+msgid "_Preferences"
+msgstr "_Настройки"
+
+#: ui/main.glade.h:109
+msgid "_Remove"
+msgstr "_Премахване"
+
+#: ui/main.glade.h:110
+msgid "_Search..."
+msgstr "_Търсене..."
+
+#: ui/main.glade.h:111
+msgid "_Show Contact List"
+msgstr "_Показване на списъка с контакти"
+
+#: ui/main.glade.h:112
+msgid "_Status Messages"
+msgstr "_Съобщения за състояние"
+
+#: ui/main.glade.h:113
+msgid "_Subscribe"
+msgstr "_Записване"
