@@ -1130,7 +1130,11 @@ app_iq_handler (LmMessageHandler *handler,
 			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
 	g_return_val_if_fail (GOSSIP_IS_APP (app),
 			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
-	
+
+        if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GET) {
+                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+        }
+        
 	node = lm_message_node_get_child (m->node, "query");
 
 	if (node) {

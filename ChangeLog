@@ -1,3 +1,7 @@
+2004-11-16  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_iq_handler): Don't reply to error messages.
+
 2004-09-28  Abel Cheung  <maddog@linuxhall.org>
 
 	* configure.in: Added "tr" to ALL_LINGUAS.
