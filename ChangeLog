@@ -1,3 +1,16 @@
+2004-09-06  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
+
+	* src/gossip-private-chat.c: Added
+	* src/gossip-private-chat.h: Added
+	* src/gossip-chat.c:
+	* src/gossip-chat.h:
+	* src/gossip-group-chat.c:
+	* src/gossip-group-chat.h:
+	* src/gossip-chat-window.c:
+	* src/gossip-app.c:
+	- Implemented tabbed group chat windows. GossipChat is now an abstract
+ 	base class for GossipPrivateChat and GossipGroupChat.
+
 2004-09-04  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-roster-view.c (roster_view_item_active_cb): 

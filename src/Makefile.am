@@ -66,6 +66,8 @@ gossip_SOURCES = 				\
 	gossip-preferences.h	                \
 	gossip-presence.c                       \
 	gossip-presence.h                       \
+	gossip-private-chat.c                   \
+	gossip-private-chat.h                   \
 	gossip-roster.c                         \
 	gossip-roster.h                         \
 	gossip-roster-view.c                    \

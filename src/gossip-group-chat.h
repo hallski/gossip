@@ -21,6 +21,7 @@
 #ifndef __GOSSIP_GROUP_CHAT_H__
 #define __GOSSIP_GROUP_CHAT_H__
 
+#include "gossip-chat.h"
 #include "gossip-jid.h"
 #include "gossip-app.h"
 
@@ -36,13 +37,13 @@ typedef struct _GossipGroupChatClass GossipGroupChatClass;
 typedef struct _GossipGroupChatPriv  GossipGroupChatPriv;
 
 struct _GossipGroupChat {
-	GObject   parent;
+	GossipChat parent;
 
 	GossipGroupChatPriv *priv;
 };
 
 struct _GossipGroupChatClass {
-	GObjectClass parent_class;
+	GossipChatClass parent_class;
 };
 
 GType              gossip_group_chat_get_type  (void) G_GNUC_CONST;

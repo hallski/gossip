@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2002-2003 Imendio HB
- * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
+ * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,7 +25,7 @@
 #include <glib-object.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-app.h"
-#include "gossip-group-chat.h"
+#include "gossip-chat-view.h"
 #include "gossip-jid.h"
 #include "gossip-roster.h"
 
@@ -46,6 +46,13 @@ typedef struct _GossipChatPriv GossipChatPriv;
 
 struct _GossipChat {
         GObject         parent;
+
+	/* protected */
+	GossipChatView *view;
+	GtkWidget      *input_text_view;
+	gboolean        is_first_char;
+
+	/* private */
         GossipChatPriv *priv;
 };
 
@@ -53,36 +60,47 @@ struct _GossipChatClass {
         GObjectClass parent;
 
         /* Signals */
-	void (*new_message)      (GossipChat  *chat);
-        void (*composing)        (GossipChat  *chat, 
-			          gboolean     composing);
-	void (*name_changed)     (GossipChat  *chat,
-				  const gchar *name);
+
+	void             (*new_message)       (GossipChat  *chat);
+        void             (*composing)         (GossipChat  *chat, 
+			                       gboolean     composing);
+	void             (*name_changed)      (GossipChat  *chat,
+				               const gchar *name);
+	void             (*status_changed)    (GossipChat  *chat);
+
+	/* vtable */
+
+	const gchar *    (*get_name)           (GossipChat *chat);
+	gchar *          (*get_tooltip)        (GossipChat *chat);
+	GdkPixbuf *      (*get_status_pixbuf)  (GossipChat *chat);
+	GossipContact *  (*get_contact)        (GossipChat *chat);
+	void             (*get_geometry)       (GossipChat *chat,
+			                        gint       *width,
+					        gint       *height);
+	GtkWidget *      (*get_widget)         (GossipChat *chat);
 };
 
 GType             gossip_chat_get_type           (void);
-GossipChat *      gossip_chat_get_for_contact    (GossipContact    *contact,
-						  gboolean          create);
-GossipChat *      gossip_chat_get_for_group_chat (GossipContact    *contact,
-						  GossipGroupChat  *g_chat);
-void              gossip_chat_append_message     (GossipChat       *chat,
-						  LmMessage        *message);
 void              gossip_chat_present            (GossipChat       *chat);
-LmHandlerResult   gossip_chat_handle_message     (LmMessage        *message);
 GtkWidget *       gossip_chat_get_widget         (GossipChat       *chat);
 GossipContact *   gossip_chat_get_contact        (GossipChat       *chat);
 void              gossip_chat_set_window         (GossipChat       *chat,
 						  GossipChatWindow *window);
 GossipChatWindow *gossip_chat_get_window         (GossipChat       *chat);
 void              gossip_chat_clear              (GossipChat       *chat);
-gchar *           gossip_chat_get_history        (GossipChat       *chat,
-						  gint              lines);
 void              gossip_chat_scroll_down        (GossipChat       *chat);
 void              gossip_chat_cut                (GossipChat       *chat);
 void              gossip_chat_copy               (GossipChat       *chat);
 void              gossip_chat_paste              (GossipChat       *chat);
+const gchar *     gossip_chat_get_name		 (GossipChat       *chat);
+gchar *           gossip_chat_get_tooltip        (GossipChat       *chat);
+GdkPixbuf *       gossip_chat_get_status_pixbuf  (GossipChat       *chat);
+GtkWidget *       gossip_chat_get_widget         (GossipChat       *chat);
+GossipChatView *  gossip_chat_get_view           (GossipChat       *chat);
+void              gossip_chat_get_geometry       (GossipChat       *chat,
+		                                  int              *width,
+						  int              *height);
 
-        
 G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_H__ */

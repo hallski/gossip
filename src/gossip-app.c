@@ -43,6 +43,7 @@
 #include "gossip-utils.h"
 #include "gossip-group-chat.h"
 #include "gossip-chat.h"
+#include "gossip-private-chat.h"
 #include "gossip-account.h"
 #include "gossip-connect-dialog.h"
 #include "gossip-join-dialog.h"
@@ -51,6 +52,7 @@
 #include "gossip-startup-druid.h"
 #include "gossip-preferences.h"
 #include "gossip-presence.h"
+#include "gossip-private-chat.h"
 #include "gossip-account-dialog.h"
 #include "gossip-stock.h"
 #include "gossip-roster-view.h"
@@ -1066,7 +1068,7 @@ app_message_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_CHAT:
 	case LM_MESSAGE_SUB_TYPE_HEADLINE: /* For now, fixes #120009 */
 		app_tray_push_message (m);
-		return gossip_chat_handle_message (m);
+		return gossip_private_chat_handle_message (m);
 
 	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
 		g_warning ("Hmm .. looks like an unhandled group chat message "
@@ -1279,10 +1281,10 @@ app_contact_activated_cb (GossipRosterView *roster,
 			  GossipContact    *contact,
 			  GossipApp        *app)
 {
-	GossipChat *chat;
+	GossipPrivateChat *chat;
 
-	chat = gossip_chat_get_for_contact (contact, TRUE);
-	gossip_chat_present (chat);
+	chat = gossip_private_chat_get_for_contact (contact, TRUE);
+	gossip_chat_present (GOSSIP_CHAT (chat));
 
 	app_tray_pop_message (contact);
 }
@@ -1611,9 +1613,9 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 			       gint              response,
 			       CompleteNameData *data)
 {
-	const gchar *str;
-	GossipChat  *chat;
-	GList       *l;
+	const gchar        *str;
+	GossipPrivateChat  *chat;
+	GList              *l;
 
 	if (response == GTK_RESPONSE_OK) {
 		GossipRosterItem *item;
@@ -1631,9 +1633,9 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 
 			contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
 							       item);
-			chat = gossip_chat_get_for_contact (contact, TRUE);
+			chat = gossip_private_chat_get_for_contact (contact, TRUE);
 			
-			gossip_chat_present (chat);
+			gossip_chat_present (GOSSIP_CHAT (chat));
 		}
 	}
 
@@ -1999,9 +2001,9 @@ app_tray_push_message (LmMessage *m)
 static gboolean
 app_tray_pop_message (GossipContact *contact)
 {
-	GossipAppPriv *priv;
-	GossipChat    *chat;
-	GList         *l;
+	GossipAppPriv     *priv;
+	GossipPrivateChat *chat;
+	GList             *l;
 
 	priv = app->priv;
 
@@ -2013,12 +2015,12 @@ app_tray_pop_message (GossipContact *contact)
 		contact = priv->tray_flash_icons->data;
 	}
 	
-	chat = gossip_chat_get_for_contact (contact, TRUE);
+	chat = gossip_private_chat_get_for_contact (contact, TRUE);
 	if (!chat) {
 		return FALSE;
 	}
 
-	gossip_chat_present (chat);
+	gossip_chat_present (GOSSIP_CHAT (chat));
 
 	l = g_list_find_custom (priv->tray_flash_icons, contact,
 				(GCompareFunc) gossip_contact_compare);
