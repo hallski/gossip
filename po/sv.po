@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-31 00:19+0200\n"
+"POT-Creation-Date: 2004-09-02 20:06+0200\n"
 "PO-Revision-Date: 2004-06-23 18:15+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -141,7 +141,7 @@ msgstr ""
 "Christian Rose\n"
 "Richard Hult"
 
-#: src/gossip-account.c:292 src/gossip-app.c:64 src/gossip-startup-druid.c:219
+#: src/gossip-account.c:302 src/gossip-app.c:64 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Hemma"
 
@@ -182,7 +182,7 @@ msgstr "%s vill bli meddelad om din status."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1420
+#: src/gossip-app.c:1448
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -190,45 +190,45 @@ msgstr ""
 "Kontrollera att din kontoinformation är korrekt. Servern kan också vara "
 "otillgänglig för tillfället."
 
-#: src/gossip-app.c:1895
+#: src/gossip-app.c:1922
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, snabbmeddelandeklient"
 
-#: src/gossip-app.c:2039
+#: src/gossip-app.c:2066
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-app.c:2128 src/gossip-chat-window.c:793
+#: src/gossip-app.c:2155 src/gossip-chat-window.c:793
 #: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Frånkopplad"
 
-#: src/gossip-app.c:2527 src/gossip-preferences.c:638
+#: src/gossip-app.c:2554 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:2538 src/gossip-preferences.c:639
+#: src/gossip-app.c:2565 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:2549 src/gossip-preferences.c:640
+#: src/gossip-app.c:2576 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:2681
+#: src/gossip-app.c:2708
 msgid "Available..."
 msgstr "Tillgänglig..."
 
-#: src/gossip-app.c:2686
+#: src/gossip-app.c:2713
 msgid "Busy..."
 msgstr "Upptagen..."
 
-#: src/gossip-app.c:2691
+#: src/gossip-app.c:2718
 msgid "Away..."
 msgstr "Frånvarande..."
 
-#: src/gossip-app.c:2720
+#: src/gossip-app.c:2747
 msgid "Edit List..."
 msgstr "Redigera listan..."
 
@@ -430,11 +430,11 @@ msgstr ""
 "%s"
 
 # Dessa meddelanden slutar inte båda i punkt, borde kanske rapporteras
-#: src/gossip-startup-druid.c:257
+#: src/gossip-startup-druid.c:258
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip kommer nu att försöka använda ditt konto:"
 
-#: src/gossip-startup-druid.c:261
+#: src/gossip-startup-druid.c:262
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip kommer nu att försöka registrera kontot:"
 
@@ -576,14 +576,18 @@ msgid "Use _encryption (SSL)"
 msgstr "Använd _kryptering (SSL)"
 
 #: ui/connect.glade.h:13
+msgid "Use system pro_xy"
+msgstr "Använd systemets pro_xyinställningar"
+
+#: ui/connect.glade.h:14
 msgid "_Jabber ID:"
 msgstr "_Jabber-id:"
 
-#: ui/connect.glade.h:14
+#: ui/connect.glade.h:15
 msgid "_Password:"
 msgstr "_Lösenord:"
 
-#: ui/connect.glade.h:15
+#: ui/connect.glade.h:16
 msgid "_Resource:"
 msgstr "_Resurs:"
 

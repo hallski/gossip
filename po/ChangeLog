@@ -1,3 +1,9 @@
+2004-09-02  Richard Hult  <richard@imendio.com>
+
+	* sv.po: Update.
+
+	* POTFILES.skip: Put eggtray here instead.
+
 2004-09-02  Mikael Hallendal  <micke@imendio.com>
 
 	* POTFILES.in: Added src/eggtrayicon.c
