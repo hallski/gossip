@@ -1,11 +1,33 @@
 2003-10-15  Mikael Hallendal  <micke@imendio.com>
 
+	* ui/svg/emoticon-face1.svg:
+	* ui/svg/emoticon-face10.svg:
+	* ui/svg/emoticon-face11.svg:
+	* ui/svg/emoticon-face12.svg:
+	* ui/svg/emoticon-face2.svg:
+	* ui/svg/emoticon-face3.svg:
+	* ui/svg/emoticon-face4.svg:
+	* ui/svg/emoticon-face5.svg:
+	* ui/svg/emoticon-face6.svg:
+	* ui/svg/emoticon-face7.svg:
+	* ui/svg/emoticon-face8.svg:
+	* ui/svg/emoticon-face9.svg:
+	* ui/svg/face-template.svg:
+	* ui/svg/gossip-away.svg:
+	* ui/svg/gossip-busy.svg:
+	* ui/svg/gossip-extended-away.svg:
+	* ui/svg/gossip-offline.svg:
+	* ui/svg/gossip-online.svg:
+	* ui/svg/id.svg:
+	* ui/svg/license:
+	* ui/svg/message.svg:
+	- More art work from Daniel Taylor. Here are the SVG's. 
+
 	* ui/pixmaps/gossip-available.png:
 	* ui/pixmaps/gossip-away.png:
 	* ui/pixmaps/gossip-busy.png:
 	* ui/pixmaps/gossip-extended-away.png:
 	* ui/pixmaps/gossip-offline.png:
-
 	- Added great new icons by Daniel Taylor. 
 	  Rock on dude! Let's attack the emoticons next ;)
 
