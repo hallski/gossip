@@ -1,3 +1,4 @@
+# gossip.HEAD.po faylının Azərbaycan Dilinə tərcüməsi
 # gossip.HEAD.po faylının Azərbaycan dilinə tərcüməsi
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
@@ -8,9 +9,9 @@ msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-23 04:54+0200\n"
-"PO-Revision-Date: 2003-08-24 22:24+0300\n"
+"PO-Revision-Date: 2003-10-19 20:34+0300\n"
 "Last-Translator: Mətin Əmirov <metin@karegen.com>\n"
-"Language-Team: Azerbaijani <gnome@azitt.com>\n"
+"Language-Team: Azərbaycan Dili <gnome@azətt.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -247,7 +248,7 @@ msgstr ""
 
 #: src/gossip-main.c:130
 msgid "[default]"
-msgstr ""
+msgstr "[ön qurğulu]"
 
 #: src/gossip-main.c:153
 #, c-format
