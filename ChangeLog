@@ -1,5 +1,7 @@
 2003-08-05  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_push_message): compare without resouce.
+
         * configure.in: Bumped loudmouth version to 0.13
 
 	* src/gossip-app.c:

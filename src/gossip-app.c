@@ -1741,7 +1741,7 @@ app_push_message (LmMessage *m)
 	jid = gossip_jid_new (from);
 	
 	l = g_list_find_custom (priv->tray_flash_icons,
-				from,
+				gossip_jid_get_without_resource (jid),
 				(GCompareFunc) g_ascii_strcasecmp);
 	if (l) {
 		return;
