@@ -220,7 +220,8 @@ chat_view_finalize (GObject *object)
 	priv = view->priv;
 
 	g_object_unref (priv->buffer);
-	
+	g_date_free (priv->last_datestamp);
+	 
 	g_free (view->priv);
 
 	G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -880,8 +881,8 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 		}
 	}
 
-	g_array_free (start, FALSE);
-	g_array_free (end, FALSE);
+	g_array_free (start, TRUE);
+	g_array_free (end, TRUE);
 	
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 	gtk_text_buffer_insert (buffer,

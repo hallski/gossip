@@ -1963,6 +1963,8 @@ app_tray_push_message (LmMessage *m)
 		gossip_roster_item_ref (item);
 	}
 
+	gossip_jid_unref (jid);
+	
 	l = g_list_find_custom (priv->tray_flash_icons, item,
 				(GCompareFunc) gossip_roster_item_compare);
 	if (l) {
@@ -2614,6 +2616,8 @@ add_status_image_menu_item (GtkWidget   *menu,
 				(GDestroyNotify) g_free);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	g_free (shortened);
 }
 	
 static void

@@ -73,13 +73,17 @@ static gchar *
 log_get_filename (GossipJID *jid, const gchar *suffix)
 {
 	gchar *tmp;
+	gchar *ret;
 	
 	tmp = g_build_filename (g_get_home_dir (),
 				".gnome2", "Gossip", "logs",
 				gossip_jid_get_without_resource (jid),
 				NULL);
 
-	return g_strconcat (tmp, suffix, NULL);
+	ret = g_strconcat (tmp, suffix, NULL);
+	g_free (tmp);
+
+	return ret;
 }
 
 static gchar *

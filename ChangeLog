@@ -1,3 +1,14 @@
+2004-01-29  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.c (chat_view_finalize)
+	(gossip_chat_view_append_chat_message): 
+	* src/gossip-app.c (app_tray_push_message): Plug leaks.
+
+2004-01-28  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (add_status_image_menu_item): 
+	* src/gossip-log.c (log_get_filename): Plug leaks.
+
 2004-01-27  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c (chat_window_tab_detached_cb): When

@@ -56,6 +56,8 @@ gossip_stock_init (void)
 	       gtk_icon_factory_add (icon_factory,
 				     stock_items[i].stock_id,
 				     icon_set);
+
+	       g_object_unref (pixbuf);
        }
 }
 
