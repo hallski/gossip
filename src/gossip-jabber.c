@@ -252,6 +252,9 @@ gossip_jabber_init (GossipJabber *jabber)
 
 	priv->connection = lm_connection_new (priv->account->server);
 
+	// Setup the connection to send keep alive messages every 30 second.
+        lm_connection_set_keep_alive_rate (priv->connection, 30);
+
 	lm_connection_set_disconnect_function (priv->connection,
 					       (LmDisconnectFunction) jabber_disconnect_func,
 					       jabber, NULL);

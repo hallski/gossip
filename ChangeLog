@@ -1,3 +1,8 @@
+2005-03-11  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-jabber.c: (gossip_jabber_init):
+	- Set keep alive rate on Loudmouth connection, reported by Richard.
+
 2005-01-27  Martyn Russell  <martyn.russell@bt.com>
 
 	* src/gossip-session.[ch]:
