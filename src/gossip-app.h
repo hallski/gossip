@@ -78,4 +78,6 @@ GossipRoster * gossip_app_get_roster      (void);
 
 LmConnection * gossip_app_get_connection  (GossipApp     *app);
 
+GossipStatus   gossip_app_get_status      (void);
+
 #endif /* __GOSSIP_APP_H__ */

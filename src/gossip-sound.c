@@ -22,28 +22,52 @@
 #include <config.h>
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-sound.h>
+#include "gossip-preferences.h"
+#include "gossip-app.h"
 #include "gossip-sound.h"
 
 /* Use gconf pref for sound preferences later. */
 
-static gboolean sound_silent = FALSE;
-
-void
-gossip_sound_set_silent (gboolean silent)
-{
-	sound_silent = silent;
-}
+extern GConfClient *gconf_client;
 
 void
 gossip_sound_play (GossipSound sound)
 {
-	const gchar *file;
-	gchar       *str;
+	gboolean      enabled, silent;
+	GossipStatus  status;
+	const gchar  *file;
+	gchar        *str;
 	
-	if (sound_silent) {
+	enabled = gconf_client_get_bool (gconf_client,
+					 GCONF_PATH "/sound/play_sounds",
+					 NULL);
+	silent = gconf_client_get_bool (gconf_client,
+					GCONF_PATH "/sound/silent_away",
+					NULL);
+
+	if (!enabled) {
 		return;
 	}
 
+	if (silent) {
+		status = gossip_app_get_status ();
+		switch (status) {
+		case GOSSIP_STATUS_AVAILABLE:
+		case GOSSIP_STATUS_FREE:
+			break;
+			
+		case GOSSIP_STATUS_BUSY:
+		case GOSSIP_STATUS_AWAY:
+		case GOSSIP_STATUS_EXT_AWAY:
+		case GOSSIP_STATUS_OFFLINE:
+			return;
+
+		default:
+			g_assert_not_reached ();
+			break;
+		}
+	}
+	
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
 		file = "chat1.wav";

@@ -51,6 +51,8 @@ gossip_SOURCES = 				\
 	gossip-account.h			\
 	gossip-utils.c				\
 	gossip-utils.h				\
+	gossip-preferences.c			\
+	gossip-preferences.h			\
 	gossip-sound.c				\
 	gossip-sound.h				\
 	eggtrayicon.c				\

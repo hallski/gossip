@@ -46,9 +46,9 @@
 #include "gossip-message.h"
 #include "gossip-sound.h"
 #include "gossip-idle.h"
-#include "gossip-app.h"
-
 #include "gossip-startup-druid.h"
+#include "gossip-preferences.h"
+#include "gossip-app.h"
 
 #define DEFAULT_RESOURCE "Gossip"
 #define ADD_CONTACT_RESPONSE_ADD 1
@@ -83,6 +83,7 @@ struct _GossipAppPriv {
 	/* Dialogs that we only have one of at a time. */
 	GossipJoinDialog    *join_dialog;
 	GtkWidget           *about;
+	GtkWidget           *preferences_dialog;
 
 	/* Widges that are enabled when we're connected. */
 	GList               *enabled_connected_widgets;
@@ -138,6 +139,8 @@ static void      app_quit_cb                        (GtkWidget      *window,
 static void      app_send_chat_message_cb           (GtkWidget      *widget,
 						     GossipApp      *app);
 static void      app_add_contact_cb                 (GtkWidget      *widget,
+						     GossipApp      *app);
+static void      app_preferences_cb                 (GtkWidget      *widget,
 						     GossipApp      *app);
 static void      app_about_cb                       (GtkWidget      *widget,
 						     GossipApp      *app);
@@ -305,6 +308,7 @@ app_init (GossipApp *app)
 			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
 			      "actions_send_chat_message", "activate", app_send_chat_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
+			      "edit_preferences", "activate", app_preferences_cb,
 			      "help_about", "activate", app_about_cb,
 			      "main_window", "destroy", app_main_window_destroy_cb,
 			      NULL);
@@ -677,7 +681,24 @@ static void
 app_add_contact_cb (GtkWidget *widget, GossipApp *app)
 {
 	gossip_add_contact_new (app->priv->connection, NULL);
-	return;
+}
+
+static void
+app_preferences_cb (GtkWidget *widget, GossipApp *app)
+{
+	GossipAppPriv *priv;
+
+	priv = app->priv;
+
+	if (priv->preferences_dialog) {
+		gtk_window_present (GTK_WINDOW (priv->preferences_dialog));
+		return;
+	}
+
+	priv->preferences_dialog = gossip_preferences_show (app);
+
+	g_object_add_weak_pointer (G_OBJECT (priv->preferences_dialog),
+				   (gpointer) &priv->preferences_dialog);
 }
 
 static void
@@ -1183,7 +1204,7 @@ app_idle_check_cb (GossipApp *app)
 	priv = app->priv;
 
 	if (!gconf_client_get_bool (gconf_client,
-				    "/apps/gossip/auto_away_enabled",
+				    "/apps/gossip/auto_away/enabled",
 				    NULL)) {
 		return TRUE;
 	}
@@ -1205,10 +1226,10 @@ app_idle_check_cb (GossipApp *app)
 	}
 
 	auto_away = 60 * gconf_client_get_int (gconf_client,
-					       "/apps/gossip/auto_away_time",
+					       "/apps/gossip/auto_away/idle_time",
 					       NULL);
 	auto_ext_away = 60 * gconf_client_get_int (gconf_client,
-						   "/apps/gossip/auto_away_extended_time",
+						   "/apps/gossip/auto_away/extended_idle_time",
 						   NULL);
 	
 	idle = gossip_idle_get_seconds ();
@@ -1312,17 +1333,6 @@ app_set_status (GossipApp *app, GossipStatus status)
 
 	d(g_print ("app_set_status\n"));
 
-	switch (status) {
-	case GOSSIP_STATUS_OFFLINE:
-	case GOSSIP_STATUS_EXT_AWAY:
-	case GOSSIP_STATUS_AWAY:
-	case GOSSIP_STATUS_BUSY:
-		gossip_sound_set_silent (TRUE);
-		break;
-	default:
-		gossip_sound_set_silent (FALSE);
-	}
-	
 	/* Disconnect. */
 	if (status == GOSSIP_STATUS_OFFLINE) {
 		if (lm_connection_is_open (priv->connection)) {
@@ -1742,4 +1752,8 @@ app_complete_jid_to_string (gpointer data)
 	return (gchar *) gossip_jid_get_without_resource (jid);
 }
 
-
+GossipStatus 
+gossip_app_get_status (void)
+{
+	return gossip_status_menu_get_status (app->priv->option_menu);
+}

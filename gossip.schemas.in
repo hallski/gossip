@@ -2,28 +2,70 @@
   <schemalist>
 
     <schema>
-      <key>/schemas/apps/gossip/smileys_enabled</key>
-      <applyto>/apps/gossip/smileys_enabled</applyto>
+      <key>/schemas/apps/gossip/conversation/graphical_smileys</key>
+      <applyto>/apps/gossip/conversation/graphical_smileys</applyto>
       <owner>gossip</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
-         <short>Use smileys</short>
+         <short>Use graphical smileys</short>
          <long>
 	 Whether or not to convert smileys into graphical images in
 	 conversations.
          </long>
       </locale>
     </schema>
-
+    
     <schema>
-      <key>/schemas/apps/gossip/auto_away_enabled</key>
-      <applyto>/apps/gossip/auto_away_enabled</applyto>
+      <key>/schemas/apps/gossip/conversation/timestamp_messages</key>
+      <applyto>/apps/gossip/conversation/timestamp_messages</applyto>
       <owner>gossip</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
-         <short>Autoaway enabled</short>
+         <short>Timestamp messages</short>
+         <long>
+	 Whether or not to timestamp all messages in conversations.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/sound/play_sounds</key>
+      <applyto>/apps/gossip/sound/play_sounds</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use notification sounds</short>
+         <long>
+	 Whether or not to play a sound when messages arrive.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/sound/silent_away</key>
+      <applyto>/apps/gossip/sound/silent_away</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Be silent when away</short>
+         <long>
+	 Whether or not to play sounds when away or busy.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/auto_away/enabled</key>
+      <applyto>/apps/gossip/auto_away/enabled</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Auto away enabled</short>
          <long>
 	 Whether or not to go into "away" mode automatically when a certain
 	 time of idling has passed.
@@ -32,13 +74,13 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/auto_away_time</key>
-      <applyto>/apps/gossip/auto_away_time</applyto>
+      <key>/schemas/apps/gossip/auto_away/idle_time</key>
+      <applyto>/apps/gossip/auto_away/idle_time</applyto>
       <owner>gossip</owner>
       <type>int</type>
       <default>30</default>
       <locale name="C">
-         <short>Autoaway time</short>
+         <short>Auto away time</short>
          <long>
 	 The number of minutes of idle time before automatically going
 	 into "away" mode.
@@ -47,8 +89,8 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/auto_away_extended_time</key>
-      <applyto>/apps/gossip/auto_away_extended_time</applyto>
+      <key>/schemas/apps/gossip/auto_away/extended_idle_time</key>
+      <applyto>/apps/gossip/auto_away/extended_idle_time</applyto>
       <owner>gossip</owner>
       <type>int</type>
       <default>60</default>

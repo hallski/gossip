@@ -516,7 +516,7 @@ roster_menu_rename_cb (gpointer   callback_data,
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_OK_CANCEL,
-					 _("Please enter a new nick for the contact\n%s"),
+					 _("Please enter a new nickname for the contact\n%s"),
 					 str);
 
 	g_free (str);

@@ -375,72 +375,6 @@ gossip_glade_connect (GladeXML *gui,
 
 	va_end (args);
 }
-#if 0
-gchar *
-gossip_jid_get_name (const gchar *str)
-{
-	const gchar *p;
-	
-	for (p = str; *p; p++) {
-		if (*p == '@') {
-			return g_strndup (str, p - str);
-		}
-	}
-
-	return g_strdup (str);
-}
-
-gchar *
-gossip_jid_get_server (const gchar *str)
-{
-	gchar *p;
-
-	p = strstr (str, "@");
-	if (!p) {
-		return NULL;
-	}
-
-	p++;
-	
-	return gossip_jid_strip_resource (p);
-}
-
-gchar *
-gossip_jid_strip_resource (const gchar *str)
-{
-	gchar *tmp;
-	
-	tmp = strchr (str, '/');
-	if (tmp) {
-		return g_strndup (str, tmp - str);
-	}
-
-	return g_strdup (str);
-}
-
-gchar *
-gossip_jid_get_resource (const gchar *str)
-{
-	gchar *tmp;
-	
-	tmp = strchr (str, '/');
-	if (tmp) {
-		return g_strdup (tmp + 1);
-	}
-
-	return NULL;
-}
-
-gchar *
-gossip_jid_create (const gchar *name, const gchar *server, const gchar *resource)
-{
-	gchar *tmp;
-
-	tmp = g_strconcat (name, "@", server, resource ? "/" : NULL, resource);
-
-	return tmp;
-}
-#endif
 
 static gchar *
 get_stamp (const gchar *timestamp)
@@ -517,11 +451,12 @@ gossip_text_view_append_chat_message (GtkTextView  *text_view,
 	GtkTextIter    iter;
 	gchar         *nick_tag;
 	GtkTextMark   *mark;
-	gchar         *stamp;
+	gchar         *stamp = NULL;
 	gint           num_matches, i;
 	GArray        *start, *end;
 	gboolean       bottom = TRUE;
 	GtkWidget     *parent;
+	gboolean       use_timestamp;
 
 	if (msg == NULL || msg[0] == 0) {
 		return;
@@ -554,15 +489,22 @@ gossip_text_view_append_chat_message (GtkTextView  *text_view,
 	if (from) {
 		if (strncmp (msg, "/me ", 4) != 0) {
 			/* Regular message. */
-			stamp = get_stamp (timestamp);
 			
 			gtk_text_buffer_get_end_iter (buffer, &iter);
-			gtk_text_buffer_insert_with_tags_by_name (buffer,
-								  &iter,
-								  stamp,
-								  -1,
-								  "shadow",
-								  NULL);
+			
+			use_timestamp = gconf_client_get_bool (
+				gconf_client,
+				"/apps/gossip/conversation/timestamp_messages",
+				NULL);
+			
+			if (use_timestamp) {
+				stamp = get_stamp (timestamp);
+				gtk_text_buffer_insert_with_tags_by_name (
+					buffer, &iter,
+					stamp, -1,
+					"shadow",
+					NULL);
+			}
 
 			g_free (stamp);
 
@@ -1017,13 +959,14 @@ utils_insert_with_emoticons (GtkTextBuffer *buf,
 	gint         i;
 	gint         match;
 	gint         submatch;
-	gboolean     smileys_enabled;
+	gboolean     use_smileys;
 
-	smileys_enabled = gconf_client_get_bool (gconf_client,
-						 "/apps/gossip/smileys_enabled",
-						 NULL);
-
-	if (!smileys_enabled) {
+	use_smileys = gconf_client_get_bool (
+		gconf_client,
+		"/apps/gossip/conversation/graphical_smileys",
+		NULL);
+	
+	if (!use_smileys) {
 		gtk_text_buffer_insert (buf, iter, str, -1);
 		return;
 	}
@@ -1267,6 +1210,8 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 	checkbox = gtk_check_button_new_with_label (_("Remember Password?"));
 	gtk_widget_show (checkbox);
 
+	gtk_container_set_border_width (GTK_CONTAINER (checkbox), 2);
+	
 	entry = gtk_entry_new ();
 	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
 	gtk_widget_show (entry);

@@ -29,6 +29,7 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
+#include "gossip-preferences.h"
 #include "gossip-app.h"
 
 GConfClient *gconf_client = NULL;
@@ -139,8 +140,8 @@ main (int argc, char *argv[])
 	gconf_client = gconf_client_get_default ();
 
 	gconf_client_add_dir (gconf_client,
-			      "/apps/gossip",
-			      GCONF_CLIENT_PRELOAD_NONE,
+			      GCONF_PATH,
+			      GCONF_CLIENT_PRELOAD_ONELEVEL,
 			      NULL);
 	
 	setup_default_window_icon ();

@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003 Richard Hult <richard@imendio.com>
- * Copyright (C) 2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,17 +18,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_SOUND_H__
-#define __GOSSIP_SOUND_H__
+#ifndef __GOSSIP_PREFERENCES_H__
+#define __GOSSIP_PREFERENCES_H__
 
 #include "gossip-app.h"
 
-typedef enum {
-	GOSSIP_SOUND_CHAT,
-	GOSSIP_SOUND_OFFLINE,
-	GOSSIP_SOUND_ONLINE
-} GossipSound;
+#define GCONF_PATH "/apps/gossip"
 
-void gossip_sound_play       (GossipSound sound);
+GtkWidget * gossip_preferences_show (GossipApp *app);
 
-#endif /* __GOSSIP_SOUND_H__ */
+
+#endif /* __GOSSIP_PREFERENCES_H__ */
