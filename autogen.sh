@@ -1,6 +1,13 @@
 #!/bin/sh
 # Run this to generate all the initial makefiles, etc.
 
+: ${AUTOCONF=autoconf}
+: ${AUTOHEADER=autoheader}
+: ${AUTOMAKE=automake}
+: ${ACLOCAL=aclocal}
+: ${LIBTOOLIZE=libtoolize}
+: ${INTLTOOLIZE=intltoolize}
+
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
@@ -12,7 +19,7 @@ FILE=src/gossip-main.c
 
 DIE=0
 
-(autoconf --version) < /dev/null > /dev/null 2>&1 || {
+($AUTOCONF --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoconf installed to compile $PROJECT."
 	echo "Download the appropriate package for your distribution,"
@@ -21,7 +28,7 @@ DIE=0
 }
 
 (grep "^AC_PROG_INTLTOOL" $srcdir/configure.in >/dev/null) && {
-  (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
+  ($INTLTOOLIZE --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "You must have \`intltoolize' installed to compile $PROJECT."
     echo "Get ftp://ftp.gnome.org/pub/GNOME/stable/sources/intltool/intltool-0.22.tar.gz"
@@ -30,7 +37,7 @@ DIE=0
   }
 }
 
-(automake --version) < /dev/null > /dev/null 2>&1 || {
+($AUTOMAKE --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have automake installed to compile $PROJECT."
 	echo "Get ftp://sourceware.cygnus.com/pub/automake/automake-1.4.tar.gz"
@@ -39,7 +46,7 @@ DIE=0
 }
 
 (grep "^AM_PROG_LIBTOOL" configure.in >/dev/null) && {
-  (libtool --version) < /dev/null > /dev/null 2>&1 || {
+  ($LIBTOOL --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile $PROJECT."
     echo "Get ftp://ftp.gnu.org/pub/gnu/libtool-1.2d.tar.gz"
@@ -123,19 +130,19 @@ do
 	intltoolize --copy --force --automake
       fi
       if grep "^AM_PROG_LIBTOOL" configure.in >/dev/null; then
-	echo "Running libtoolize..."
-	libtoolize --force --copy
+	echo "Running $LIBTOOLIZE..."
+	$LIBTOOLIZE --force --copy
       fi
-      echo "Running aclocal $aclocalinclude ..."
-      aclocal $aclocalinclude
+      echo "Running $ACLOCAL $aclocalinclude ..."
+      $ACLOCAL $aclocalinclude
       if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
-	echo "Running autoheader..."
-	autoheader
+	echo "Running $AUTOHEADER..."
+	$AUTOHEADER
       fi
-      echo "Running automake --gnu $am_opt ..."
-      automake --add-missing --gnu $am_opt
-      echo "Running autoconf ..."
-      autoconf
+      echo "Running $AUTOMAKE --gnu $am_opt ..."
+      $AUTOMAKE --add-missing --gnu $am_opt
+      echo "Running $AUTOCONF ..."
+      $AUTOCONF
     )
   fi
 done
