@@ -30,13 +30,13 @@ struct _GossipPresence {
 };
 
 GossipPresence *
-gossip_presence_new ()
+gossip_presence_new (GossipPresenceState state)
 {
 	GossipPresence *presence;
 
 	presence = g_new0 (GossipPresence, 1);
 	presence->ref_count = 1;
-	presence->state = GOSSIP_PRESENCE_STATE_OFFLINE;
+	presence->state = state;
 	presence->status = NULL;
 
 	return presence;
@@ -49,9 +49,8 @@ gossip_presence_new_full (GossipPresenceState state,
 {
 	GossipPresence *presence;
 
-	presence = gossip_presence_new ();
+	presence = gossip_presence_new (state);
 	
-	gossip_presence_set_state  (presence, state);
 	gossip_presence_set_type   (presence, type);
 	gossip_presence_set_status (presence, status);
 
@@ -140,18 +139,4 @@ gossip_presence_unref (GossipPresence *presence)
 	g_free (presence->status);
 	g_free (presence);
 }
-
-GossipPresence *
-gossip_presence_new_available (void)
-{
-	GossipPresence *presence;
-
-	presence = gossip_presence_new ();
-	gossip_presence_set_state (presence, GOSSIP_PRESENCE_STATE_ONLINE);
-	gossip_presence_set_type (presence, GOSSIP_PRESENCE_TYPE_AVAILABLE);
-
-	return presence;
-}
-
-
 

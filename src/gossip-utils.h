@@ -80,7 +80,6 @@ void         gossip_glade_setup_size_group           (GladeXML         *gui,
 
 const gchar *gossip_utils_get_timestamp_from_message (LmMessage        *message);
 gchar *      gossip_utils_get_timestamp              (const gchar      *time_str);
-const gchar *gossip_get_icon_for_show_string         (const gchar      *str);
 gchar *      gossip_password_dialog_run              (GossipAccount    *account,
 						      GtkWindow        *parent);
 GtkWidget *  gossip_hig_dialog_new                   (GtkWindow        *parent,
@@ -114,4 +113,8 @@ gint         gossip_utils_url_regex_match            (const gchar      *msg,
 						      GArray           *end);
 const gchar *gossip_utils_get_stock_from_presence    (GossipPresence   *presence);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_presence   (GossipPresence   *presence);
+
+GossipPresenceType
+gossip_utils_get_presence_type_from_show_string      (const gchar *str);
+
 #endif /*  __GOSSIP_UTILS_H__ */

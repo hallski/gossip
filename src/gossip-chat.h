@@ -25,8 +25,9 @@
 #include <glib-object.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-app.h"
-#include "gossip-roster.h"
+#include "gossip-group-chat.h"
 #include "gossip-jid.h"
+#include "gossip-roster.h"
 
 G_BEGIN_DECLS
 
@@ -62,7 +63,8 @@ struct _GossipChatClass {
 GType             gossip_chat_get_type           (void);
 GossipChat *      gossip_chat_get_for_contact    (GossipContact    *contact,
 						  gboolean          create);
-GossipChat *      gossip_chat_get_for_group_chat (GossipContact    *contact);
+GossipChat *      gossip_chat_get_for_group_chat (GossipContact    *contact,
+						  GossipGroupChat  *g_chat);
 void              gossip_chat_append_message     (GossipChat       *chat,
 						  LmMessage        *message);
 void              gossip_chat_present            (GossipChat       *chat);

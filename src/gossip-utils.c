@@ -474,28 +474,6 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 	return password;
 }
 
-const gchar *
-gossip_get_icon_for_show_string (const gchar *str)
-{
-	if (!str || !str[0]) {
-		return GOSSIP_STOCK_AVAILABLE;
-	}
-	else if (strcmp (str, "dnd") == 0) {
-		return GOSSIP_STOCK_BUSY;
-	}
-	else if (strcmp (str, "away") == 0) {
-		return GOSSIP_STOCK_AWAY;
-	}
-	else if (strcmp (str, "xa") == 0) {
-		return GOSSIP_STOCK_EXT_AWAY;
-	}
-	/* We don't support chat, so treat it like available. */
-	else if (strcmp (str, "chat") == 0) {
-		return GOSSIP_STOCK_AVAILABLE;
-	}
-
-	return GOSSIP_STOCK_AVAILABLE;
-}
 
 const gchar *
 gossip_utils_show_to_string (GossipShow show)
@@ -966,5 +944,28 @@ gossip_utils_get_pixbuf_from_presence (GossipPresence *presence)
  
         stock = gossip_utils_get_stock_from_presence (presence);
         return gossip_utils_get_pixbuf_from_stock (stock);
+}
+
+GossipPresenceType
+gossip_utils_get_presence_type_from_show_string (const gchar *str)
+{
+	if (!str || !str[0]) {
+		return GOSSIP_PRESENCE_TYPE_AVAILABLE;
+	}
+	else if (strcmp (str, "dnd") == 0) {
+		return GOSSIP_PRESENCE_TYPE_BUSY;
+	}
+	else if (strcmp (str, "away") == 0) {
+		return GOSSIP_PRESENCE_TYPE_AWAY;
+	}
+	else if (strcmp (str, "xa") == 0) {
+		return GOSSIP_PRESENCE_TYPE_EXT_AWAY;
+	}
+	/* We don't support chat, so treat it like available. */
+	else if (strcmp (str, "chat") == 0) {
+		return GOSSIP_PRESENCE_TYPE_AVAILABLE;
+	}
+
+	return GOSSIP_PRESENCE_TYPE_AVAILABLE;
 }
 

@@ -39,7 +39,7 @@
 #include "gossip-roster.h"
 #include "gossip-chat.h"
 
-#define d(x)
+#define d(x) x
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 #define COMPOSING_STOP_TIMEOUT 5
@@ -410,6 +410,8 @@ chat_get_jid_with_resource (GossipChat *chat, const gchar *resource)
 
 	jid = gossip_contact_get_jid (priv->contact);
 
+	g_print ("Getting jid with resource: %s\n", resource);
+	
 	if (resource) {
 		return g_strconcat (gossip_jid_get_without_resource (jid),
 				    "/", resource, NULL);
@@ -713,7 +715,8 @@ chat_message_handler (LmMessageHandler *handler,
 
 	from_resource = gossip_jid_get_resource (from_jid);
 	
-	if (from_resource &&
+	if (!priv->groupchat_priv &&
+	    from_resource &&
 	    (!priv->locked_resource ||
 	     g_ascii_strcasecmp (from_resource, priv->locked_resource) != 0)) {
 
@@ -1159,10 +1162,12 @@ gossip_chat_get_for_contact (GossipContact *contact, gboolean create)
 }
 
 GossipChat *
-gossip_chat_get_for_group_chat (GossipContact *contact)
+gossip_chat_get_for_group_chat (GossipContact   *contact, 
+				GossipGroupChat *g_chat)
 {
 	GossipChat     *chat;
 	GossipChatPriv *priv;
+	GossipJID      *jid;
 
 	chats_init ();
 
@@ -1170,20 +1175,45 @@ gossip_chat_get_for_group_chat (GossipContact *contact)
 	if (chat) {
 		return chat;
 	}
-
+	
+	jid = gossip_contact_get_jid (contact);
+	
 	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
+	g_hash_table_insert (chats, gossip_contact_ref (contact), chat);
 
 	priv = chat->priv;
 	priv->contact = gossip_contact_ref (contact);
+	priv->name = g_strdup (gossip_contact_get_name (contact));
 	priv->groupchat_priv = TRUE;
 
-	priv->locked_resource = g_strdup (gossip_contact_get_name (contact));
+	priv->locked_resource = g_strdup (gossip_jid_get_resource (jid));
+	
 	if (gossip_contact_is_online (priv->contact)) {
 		priv->is_online = TRUE;
 	} else {
 		priv->is_online = FALSE;
 	}
 
+	g_signal_connect_object (g_chat,
+				 "contact_presence_updated",
+				 G_CALLBACK (chat_contact_presence_updated),
+				 chat, 0);
+
+	g_signal_connect_object (g_chat,
+				 "contact_updated",
+				 G_CALLBACK (chat_contact_updated),
+				 chat, 0);
+
+	g_signal_connect_object (g_chat,
+				 "contact_removed",
+				 G_CALLBACK (chat_contact_removed),
+				 chat, 0);
+	
+	g_signal_connect_object (g_chat,
+				 "contact_added",
+				 G_CALLBACK (chat_contact_added),
+				 chat, 0);
+	
 	return chat;
 }
 

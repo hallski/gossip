@@ -37,7 +37,7 @@ typedef enum {
 	GOSSIP_PRESENCE_TYPE_EXT_AWAY        /* extended away (xa) */
 } GossipPresenceType;
 
-GossipPresence *    gossip_presence_new          (void);
+GossipPresence *    gossip_presence_new          (GossipPresenceState state);
 GossipPresence *    gossip_presence_new_full     (GossipPresenceState state,
 						  GossipPresenceType  type,
 						  const gchar        *status);
@@ -52,8 +52,6 @@ void                gossip_presence_set_status   (GossipPresence *presence,
 						  const gchar    *status);
 GossipPresence *    gossip_presence_ref          (GossipPresence *presence);
 void                gossip_presence_unref        (GossipPresence *presence);
-
-GossipPresence *    gossip_presence_new_available (void);
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

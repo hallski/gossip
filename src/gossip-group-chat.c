@@ -68,6 +68,8 @@ struct _GossipGroupChatPriv {
 	GCompletion      *completion;
 
 	GTimeVal          last_timestamp;
+
+	GHashTable       *contacts;
 	GList            *priv_chats;
 };
 
@@ -141,6 +143,7 @@ static void             group_chat_priv_chat_removed            (GossipGroupChat
 static void             group_chat_send_multi_clicked_cb        (GtkWidget         *unused,
 								 GossipGroupChat   *chat);
 static void             group_chat_priv_chats_disconnect        (GossipGroupChat   *chat);
+static gchar *          group_chat_create_contact_name          (GossipJID  *jid);
 
 
 static GHashTable *group_chats = NULL;
@@ -986,7 +989,10 @@ group_chat_presence_handler (LmMessageHandler *handler,
 	GdkPixbuf           *pixbuf;
 	GtkTreeIter          iter;
 	LmMessageNode       *node;
-	const gchar         *stock;
+	GossipContact       *contact;
+	GossipPresence      *presence;
+	GossipPresenceType   p_type;
+	gchar               *name;
 	
 	chat = GOSSIP_GROUP_CHAT (user_data);
 	priv = chat->priv;
@@ -1040,23 +1046,36 @@ group_chat_presence_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 
 	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
+		name = group_chat_create_contact_name (jid);
+		
+		contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_GROUPCHAT,
+						   jid, name);
+		g_free (name);
+
 		node = lm_message_node_get_child (m->node, "show");
 		if (node) {
-			stock = gossip_get_icon_for_show_string (node->value);
+			p_type = gossip_utils_get_presence_type_from_show_string (node->value);
 		} else {
-			stock = gossip_get_icon_for_show_string (NULL);
+			p_type = gossip_utils_get_presence_type_from_show_string (NULL);
 		}
-		
-		pixbuf = gtk_widget_render_icon (priv->window,
+		presence = gossip_presence_new (GOSSIP_PRESENCE_STATE_ONLINE);
+		gossip_presence_set_type (presence, p_type);
+
+		pixbuf = gossip_utils_get_pixbuf_from_presence (presence);
+		/*gossip_utils_gtk_widget_render_icon (priv->window,
 						 stock,
 						 GTK_ICON_SIZE_MENU,
-						 NULL);
+						 NULL); */
+		gossip_contact_set_presence (contact, presence);
+		gossip_presence_unref (presence);
 		
 		if (group_chat_find_user (chat, jid, &iter)) {
 			gtk_list_store_set (GTK_LIST_STORE (model),
 					    &iter,
 					    COL_STATUS, pixbuf,
 					    -1);
+			g_signal_emit_by_name (chat, "contact_presence_updated",
+					       contact);
 		} else {
 			gtk_list_store_append (GTK_LIST_STORE (model), &iter);
 			gtk_list_store_set (GTK_LIST_STORE (model),
@@ -1065,14 +1084,24 @@ group_chat_presence_handler (LmMessageHandler *handler,
 					    COL_NAME, gossip_jid_get_resource (jid),
 					    COL_STATUS, pixbuf,
 					    -1);
+			g_signal_emit_by_name (chat, "contact_added", contact);
 		}
-		
+
+		gossip_contact_unref (contact);
 		g_object_unref (pixbuf);
 		break;
 
 	case LM_MESSAGE_SUB_TYPE_UNAVAILABLE:
 		if (group_chat_find_user (chat, jid, &iter)) {
+			GossipContact *contact;
+			
 			gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+
+			contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_GROUPCHAT,
+							   jid, NULL);
+			g_signal_emit_by_name (chat, 
+					       "contact_removed", contact);
+			gossip_contact_unref (contact);
 		}
 		break;
 		
@@ -1151,14 +1180,14 @@ group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 	GossipChat          *priv_chat = NULL;
 	GList               *l;
 	GossipContact       *contact;
-/*	gchar            *name; */
+	gchar               *name;
 
 	priv = chat->priv;
 	
 	for (l = priv->priv_chats; l; l = l->next) {
-		GossipChat       *p_chat = GOSSIP_CHAT (l->data);
-		GossipContact    *contact;
-		GossipJID        *j;
+		GossipChat    *p_chat = GOSSIP_CHAT (l->data);
+		GossipContact *contact;
+		GossipJID     *j;
 		
 		contact = gossip_chat_get_contact (p_chat);
 		j = gossip_contact_get_jid (contact);
@@ -1173,14 +1202,13 @@ group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 		return priv_chat;
 	}
 
-	contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_GROUPCHAT);
-	gossip_contact_set_jid (contact, jid);
-	/* name = g_strdup_printf ("%s@%s", gossip_jid_get_resource (jid),
-				gossip_jid_get_part_name (jid));
-	gossip_roster_item_set_name (item, name);
-	g_free (name); */
+	name = group_chat_create_contact_name (jid);
+	
+	contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_GROUPCHAT,
+					   jid, name);
+	g_free (name);
 
-	priv_chat = gossip_chat_get_for_group_chat (contact);
+	priv_chat = gossip_chat_get_for_group_chat (contact, chat);
 	gossip_contact_unref (contact);
 
 	priv->priv_chats = g_list_prepend (priv->priv_chats, priv_chat);
@@ -1296,3 +1324,21 @@ group_chat_priv_chats_disconnect (GossipGroupChat *chat)
 				     chat);
 	}
 }	
+
+static gchar *
+group_chat_create_contact_name (GossipJID *jid)
+{
+	gchar *g_chat_name;
+	gchar *name;
+
+	g_chat_name = gossip_jid_get_part_name (jid);
+	
+	name = g_strdup_printf ("%s@%s", gossip_jid_get_resource (jid),
+				g_chat_name);
+	
+	g_free (g_chat_name);
+
+	return name;
+}
+
+

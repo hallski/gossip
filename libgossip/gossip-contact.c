@@ -75,7 +75,7 @@ gossip_contact_new (GossipContactType type)
 	contact->type = type;
 	contact->name = NULL;
 	contact->jid = NULL;
-	contact->presence = gossip_presence_new ();
+	contact->presence = gossip_presence_new (GOSSIP_PRESENCE_STATE_OFFLINE);
 
 	return contact;
 }
