@@ -198,8 +198,9 @@ app_iq_handler                                       (LmMessageHandler   *handle
 						      GossipApp          *app);
 static void     app_handle_subscription_request      (GossipApp          *app,
 						      LmMessage          *m);
-static void     app_tray_destroy_cb                  (GtkWidget          *widget,
-						      GossipApp          *app);
+static gboolean app_tray_destroy_event_cb            (GtkWidget          *widget,
+						      GdkEvent           *event,
+						      gpointer            user_data);
 static void     app_tray_create                      (void);
 static void     app_create_connection                (void);
 static void     app_disconnect                       (void);
@@ -1590,19 +1591,30 @@ app_toggle_visibility (void)
 	}
 }
 
-static void
-app_tray_destroy_cb (GtkWidget *widget,
-		     GossipApp *app)
+static gboolean
+app_tray_destroy_event_cb (GtkWidget *widget,
+			   GdkEvent  *event,
+			   gpointer   user_data)
 {
-	GossipAppPriv *priv;
+	GossipAppPriv *priv = app->priv;
 	
-	priv = app->priv;
-
 	gtk_widget_destroy (GTK_WIDGET (priv->tray_icon));
-	app_tray_create ();
+	priv->tray_icon = NULL;
+	priv->tray_event_box = NULL;
+	priv->tray_image = NULL;
+	priv->tray_tooltips = NULL;
 
+	if (priv->tray_flash_timeout_id) {
+		g_source_remove (priv->tray_flash_timeout_id);
+		priv->tray_flash_timeout_id = 0;
+	}
+	
+	app_tray_create ();
+	
 	/* Show the window in case the notification area was removed. */
-	gtk_widget_show (priv->window);	
+	gtk_widget_show (app->priv->window);	
+
+	return TRUE;
 }
 
 static gboolean
@@ -1673,10 +1685,10 @@ app_tray_create (void)
 			  G_CALLBACK (app_tray_button_press_cb),
 			  app);
 	
-	g_signal_connect (priv->tray_event_box,
-			  "destroy",
-			  G_CALLBACK (app_tray_destroy_cb),
-			  app);
+	g_signal_connect (priv->tray_icon,
+			  "destroy-event",
+			  G_CALLBACK (app_tray_destroy_event_cb),
+			  priv->tray_event_box);
 }
 
 static gboolean

@@ -1,3 +1,9 @@
+2003-11-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_tray_destroy_event_cb),
+	(app_tray_create): Try a bit harder not to crash when the
+	notification area disappears.
+
 2003-11-03  Richard Hult  <richard@imendio.com>
 
 	* src/Makefile.am: Add gossip-log.[ch]
