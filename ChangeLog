@@ -1,3 +1,19 @@
+2005-01-20  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-spell-dialog.c:
+	- Added to present a list of suggestions.
+	* configure.in:
+	- Added checks for aspell, Gossip does not depend on it.
+	* src/gossip-spell.c:
+	- Added code to call use aspell library and provide generic API
+	  for the GossipChat object to use.
+	* src/gossip-chat.c:
+	- Added menu items to the context menu of the input textview to
+	  list suggestions for misspelled words.
+	* src/gossip-preferences.c:
+	- Added ability to disable spell checking.
+	- Fixes bug #127338
+
 2005-01-20  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_complete_name_response_cb):

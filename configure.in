@@ -141,6 +141,21 @@ ALL_LINGUAS="ar az bg ca cs cy da de en_CA en_GB eo es eu fr ga hr it lt ml ms n
 AM_GLIB_GNU_GETTEXT
 dnl -----------------------------------------------------------
 
+dnl -----------------------------------------------------------
+dnl ASpell
+dnl -----------------------------------------------------------
+
+AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
+
+if test "x$have_aspell" = "xyes"; then
+  AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
+
+  GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
+fi
+
+dnl -----------------------------------------------------------
+
+
 CFLAGS="$CFLAGS $WARN_CFLAGS"
 
 AC_OUTPUT([
@@ -157,4 +172,5 @@ gossip.desktop.in
 echo
 echo "Gossip prefix: $prefix"
 echo "D-BUS        : $have_dbus"
+echo "ASpell       : $have_aspell"
 echo

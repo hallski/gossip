@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2002-2004 Imendio HB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
+ * Copyright (C) 2004      Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,21 +20,42 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <string.h>
+#include <stdlib.h>
 #include <config.h>
 #include <gtk/gtk.h>
+#include <gconf/gconf-client.h>
+#include <glib/gi18n.h>
 #include "gossip-chat.h"
 #include "gossip-marshal.h"
 #include "gossip-chat-window.h"
+#include "gossip-spell.h"
+#include "gossip-spell-dialog.h"
+
+#define d(x) x
+
+extern GConfClient *gconf_client;
 
 struct _GossipChatPriv {
 	GossipChatWindow *window;
 
+	GossipSpell      *spell;
 	/* Used to automatically shrink a window that has temporarily grown
 	 * due to long input */
 	gint              padding_height;
 	gint              default_window_height;
 	gint              last_input_height;
 };
+
+typedef struct {
+	GossipChat  *chat;
+	GossipSpell *spell;
+       	gchar       *word;
+
+       	GtkTextIter  start;
+       	GtkTextIter  end;
+} GossipChatSpell;
+
 
 static void     gossip_chat_class_init            (GossipChatClass *klass);
 static void     gossip_chat_init                  (GossipChat      *chat);
@@ -43,6 +65,19 @@ static void     chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 static void     chat_text_view_size_allocate_cb   (GtkWidget       *widget,
 		                                   GtkAllocation   *allocation,
 					           GossipChat      *chat);
+static void      chat_text_populate_popup_cb       (GtkTextView     *view,
+						    GtkMenu         *menu,
+						    GossipChat      *chat);
+static void      chat_text_check_word_spelling_cb  (GtkMenuItem     *menuitem,
+						    GossipChatSpell *chat_spell);
+GossipChatSpell *chat_spell_new                    (GossipChat      *chat,
+						    const gchar     *word,
+						    GtkTextIter      start,
+						    GtkTextIter      end);
+static void      chat_spell_free                   (GossipChatSpell *chat_spell);
+
+
+
 
 enum {
 	COMPOSING,
@@ -143,7 +178,20 @@ gossip_chat_init (GossipChat *chat)
 			  G_CALLBACK (chat_text_view_size_allocate_cb),
 			  chat);
 
+	g_signal_connect (GTK_TEXT_VIEW (chat->input_text_view),
+			  "populate_popup",
+			  G_CALLBACK (chat_text_populate_popup_cb),
+			  chat);
+
 	gossip_chat_view_set_margin (chat->view, 3);
+
+	/* create misspelt words identification tag */
+	gtk_text_buffer_create_tag (buffer,
+				    "misspelled",
+				    "underline", PANGO_UNDERLINE_ERROR,
+				    NULL);
+
+	priv->spell = gossip_spell_new (NULL);
 }
 
 static void
@@ -157,18 +205,26 @@ chat_finalize (GObject *object)
 	chat = GOSSIP_CHAT (object);
 	priv = chat->priv;
 
+	gossip_spell_unref (priv->spell);
 	g_free (priv);
 
 	G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
-chat_input_text_buffer_changed_cb (GtkTextBuffer     *buffer,
-		                   GossipChat        *chat)
+chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 {
 	GossipChatPriv *priv;
 
+	GtkTextIter     start, end;
+	gchar          *str;
+	gboolean        spell_checker;
+
 	priv = chat->priv;
+
+ 	spell_checker = gconf_client_get_bool (gconf_client, 
+					       "/apps/gossip/conversation/enable_spell_checker", 
+					       NULL); 
 
 	if (chat->is_first_char) {
 		GtkRequisition  req;
@@ -190,6 +246,58 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer     *buffer,
 		priv->padding_height = window_height - req.height - allocation->height;
 
 		chat->is_first_char = FALSE;
+	}
+
+	gtk_text_buffer_get_start_iter (buffer, &start);
+
+	if (!spell_checker) {
+		gtk_text_buffer_get_end_iter (buffer, &end);
+		gtk_text_buffer_remove_tag_by_name (buffer, "misspelled", &start, &end);
+		return;
+	}
+
+	if (!gossip_spell_has_backend (priv->spell)) {
+		return;
+	}
+	
+	/* NOTE: this is really inefficient, we shouldn't have to
+	   reiterate the whole buffer each time and check each work
+	   every time. */
+	while (TRUE) {
+		gboolean correct = FALSE;
+
+		/* if at start */
+		if (gtk_text_iter_is_start (&start)) {
+			end = start;
+
+			if (!gtk_text_iter_forward_word_end (&end)) {
+				/* no whole word yet */
+				break;
+			}
+		} else {
+			if (!gtk_text_iter_forward_word_end (&end)) {
+				/* must be the end of the buffer */
+				break;
+			}
+
+			start = end; 
+			gtk_text_iter_backward_word_start (&start);
+		}
+	
+		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+
+		/* spell check string */
+		correct = gossip_spell_check (priv->spell, str);
+		if (!correct) {
+			gtk_text_buffer_apply_tag_by_name (buffer, "misspelled", &start, &end);
+		} else {
+			gtk_text_buffer_remove_tag_by_name (buffer, "misspelled", &start, &end);
+		}
+
+		g_free (str);
+
+		/* set start iter to the end iters position */
+		start = end; 
 	}
 }
 
@@ -265,6 +373,129 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 	g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
 			 (GSourceFunc) chat_change_size_in_idle_cb,
 			 data, g_free);
+}
+
+static void
+chat_text_populate_popup_cb (GtkTextView *view,
+			     GtkMenu     *menu,
+			     GossipChat  *chat)
+{
+	GtkTextBuffer      *buffer;
+	GtkTextTagTable    *table;
+	GtkTextTag         *tag;
+	gint                x, y;
+	GtkTextIter         iter, start, end;
+	GtkWidget          *item;
+	gchar              *str = NULL;
+	GossipChatSpell    *chat_spell;
+
+	buffer = gtk_text_view_get_buffer (view);
+	table = gtk_text_buffer_get_tag_table (buffer);
+	
+	/* handle misspelled tags */
+	tag = gtk_text_tag_table_lookup (table, "misspelled");
+	
+	gtk_widget_get_pointer (GTK_WIDGET (view), &x, &y);
+	
+	gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (view), 
+					       GTK_TEXT_WINDOW_WIDGET,
+					       x, y,
+					       &x, &y);
+	
+	gtk_text_view_get_iter_at_location (GTK_TEXT_VIEW (view), &iter, x, y);
+
+	start = end = iter;
+	
+	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
+	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
+					
+		str = gtk_text_buffer_get_text (buffer, 
+						&start, &end, FALSE);
+	}
+
+	if (!str || strlen (str) == 0) {
+		return;
+	}
+
+	chat_spell = chat_spell_new (chat, str, start, end);
+
+	g_object_set_data_full (G_OBJECT (menu), 
+				"chat_spell", chat_spell, 
+				(GDestroyNotify) chat_spell_free);
+
+	item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+	
+	item = gtk_menu_item_new_with_mnemonic (_("_Check Word Spelling..."));
+	g_signal_connect (item,
+			  "activate",
+			  G_CALLBACK (chat_text_check_word_spelling_cb),
+			  chat_spell);
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+}
+
+GossipChatSpell *
+chat_spell_new (GossipChat  *chat, 
+		const gchar *word,
+		GtkTextIter  start,
+		GtkTextIter  end)
+{
+	GossipChatSpell *chat_spell;
+
+	g_return_val_if_fail (chat != NULL, NULL);
+	g_return_val_if_fail (word != NULL, NULL);
+
+	chat_spell = g_new0 (GossipChatSpell, 1);
+
+	chat_spell->chat = g_object_ref (chat);
+
+	chat_spell->word = g_strdup (word);
+
+	chat_spell->start = start;
+	chat_spell->end = end;
+	
+	return chat_spell;
+}
+
+static void
+chat_spell_free (GossipChatSpell *chat_spell)
+{
+	g_object_unref (chat_spell->chat);
+	g_free (chat_spell->word);
+	g_free (chat_spell);
+}
+
+static void     
+chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem, 
+				  GossipChatSpell *chat_spell)
+{
+	gossip_spell_dialog_show (chat_spell->chat,
+				  chat_spell->spell,
+				  chat_spell->start,
+				  chat_spell->end,
+				  chat_spell->word);
+}
+
+void
+gossip_chat_correct_word (GossipChat  *chat,
+			  GtkTextIter  start,
+			  GtkTextIter  end,
+			  const gchar *new_word)
+{
+	GtkTextBuffer *buffer;
+
+	g_return_if_fail (chat != NULL);
+	g_return_if_fail (new_word != NULL);
+	g_return_if_fail (strlen (new_word) > 0);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+
+	gtk_text_buffer_delete (buffer, &start, &end);
+	gtk_text_buffer_insert (buffer, &start, 
+				new_word, 
+				g_utf8_strlen (new_word, -1));
 }
 
 const gchar *

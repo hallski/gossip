@@ -49,6 +49,7 @@ typedef struct {
 	GtkWidget    *compact_checkbutton;
 	GtkWidget    *leaving_entry;
 	GtkWidget    *away_entry;
+	GtkWidget    *spell_checker_checkbutton;
 	
 	GList        *ids;
 } GossipPreferences;
@@ -362,6 +363,10 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/graphical_smileys",
 			      preferences->smileys_checkbutton);
+
+	hookup_toggle_button (preferences,
+			      GCONF_PATH "/conversation/enable_spell_checker",
+			      preferences->spell_checker_checkbutton);
 }
 
 void
@@ -386,6 +391,7 @@ gossip_preferences_show (void)
 				     "silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
 				     "silent_away_checkbutton", &preferences->silent_away_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
+				     "spell_checker_checkbutton", &preferences->spell_checker_checkbutton,
 				     NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (preferences->dialog),

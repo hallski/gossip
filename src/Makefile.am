@@ -14,7 +14,8 @@ AM_CPPFLAGS =	\
 	-DDBUS_API_SUBJECT_TO_CHANGE
 
 if HAVE_DBUS
-dbus_sources = gossip-dbus.c gossip-dbus.h
+dbus_sources =                                                         \
+       gossip-dbus.c                   gossip-dbus.h
 endif
 
 bin_PROGRAMS = gossip
@@ -63,6 +64,8 @@ gossip_SOURCES = 				                        	\
 	gossip-sound.c		           gossip-sound.h			\
 	gossip-startup-druid.c	           gossip-startup-druid.h		\
 	gossip-stock.c		           gossip-stock.h			\
+	gossip-spell.c                     gossip-spell.h                       \
+	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
 	gossip-time.c                      gossip-time.h                        \
 	gossip-utils.c		           gossip-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
@@ -81,15 +84,17 @@ gossip_SOURCES = 				                        	\
 gossip_LDADD = @GOSSIP_LIBS@
 gossip_LDFLAGS = -export-dynamic
 
+GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
+
 gossip-marshal.h: gossip-marshal.list
 	(cd $(srcdir) && \
-	@GLIB_GENMARSHAL@ --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \
+	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \
 	&& (cmp -s xgen-gmh gossip-marshal.h || cp xgen-gmh gossip-marshal.h) \
 	&& rm -f xgen-gmh xgen-gmh~
 
 gossip-marshal.c: gossip-marshal.list
 	(cd $(srcdir) && \
-	@GLIB_GENMARSHAL@ --prefix=gossip_marshal gossip-marshal.list --body) > xgen-gmc \
+	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --body) > xgen-gmc \
 	&& cp xgen-gmc gossip-marshal.c \
 	&& rm -f xgen-gmc xgen-gmc~
 

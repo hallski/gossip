@@ -30,6 +30,7 @@
 typedef struct _GossipSessionPriv  GossipSessionPriv;
 struct _GossipSessionPriv {
 	GossipJabber   *default_jabber;
+
 	GList          *protocols;
 
 	gchar          *account_name;

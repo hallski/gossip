@@ -41,9 +41,12 @@ typedef struct _GossipChatClass GossipChatClass;
 typedef struct _GossipChatPriv GossipChatPriv;
 
 #include "gossip-chat-window.h"
+#include "gossip-spell.h"
 
 struct _GossipChat {
         GObject         parent;
+
+	GossipSpell    *spell;
 
 	/* protected */
 	GossipChatView *view;
@@ -100,6 +103,13 @@ void              gossip_chat_get_geometry       (GossipChat       *chat,
 		                                  int              *width,
 						  int              *height);
 gboolean          gossip_chat_get_group_chat     (GossipChat       *chat);
+
+/* for spell checker dialog to correct the misspelled word */
+void              gossip_chat_correct_word       (GossipChat       *chat,
+						  GtkTextIter       start,
+						  GtkTextIter       end,
+						  const gchar      *new_word);
+
 
 G_END_DECLS
 
