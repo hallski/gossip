@@ -8,15 +8,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-13 11:50+0200\n"
+"POT-Creation-Date: 2003-07-17 11:40+0200\n"
 "PO-Revision-Date: 2003-07-13 11:51+0200\n"
-"Last-Translator: Christian Rose <menthos@menthos.com>\n"
+"Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:33
+#: gossip.desktop.in.h:1 ui/main.glade.h:41
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -25,25 +25,29 @@ msgid "Jabber Instant Messaging"
 msgstr "Jabber Instant Messaging"
 
 #: gossip.schemas.in.h:1
-msgid "Autoaway enabled"
-msgstr "Autofrånvarande aktiverat"
+msgid "Auto away enabled"
+msgstr "Autofrånvaro aktiverat"
 
 #: gossip.schemas.in.h:2
-msgid "Autoaway time"
-msgstr "Tid för autofrånvarande"
+msgid "Auto away time"
+msgstr "Tid för autofrånvaro"
 
 #: gossip.schemas.in.h:3
+msgid "Be silent when away"
+msgstr "Var tyst under frånvaro"
+
+#: gossip.schemas.in.h:4
 msgid "Extended autoaway time"
 msgstr "Tid för utökad autofrånvarande"
 
-#: gossip.schemas.in.h:4
+#: gossip.schemas.in.h:5
 msgid ""
 "The number of minutes of idle time before automatically going into \"away\" "
 "mode."
 msgstr ""
 "Antalet minuter med tomgångstid innan frånvarandeläge automatiskt aktiveras."
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:6
 msgid ""
 "The number of minutes of idle time before automatically going into "
 "\"extended away\" mode."
@@ -51,24 +55,45 @@ msgstr ""
 "Antalet minuter med tomgångstid innan utökat frånvarandeläge automatiskt "
 "aktiveras."
 
-#: gossip.schemas.in.h:6
-msgid "Use smileys"
-msgstr "Använd smilisar"
-
 #: gossip.schemas.in.h:7
+msgid "Timestamp messages"
+msgstr "Tidsstämpla meddelanden"
+
+#: gossip.schemas.in.h:8
+msgid "Use graphical smileys"
+msgstr "Använd grafiska smilisar"
+
+#: gossip.schemas.in.h:9
+msgid "Use notification sounds"
+msgstr "Använd notifieringsljud"
+
+#: gossip.schemas.in.h:10
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Huruvida smilisar ska omvandlas till grafiska bilder eller inte i "
 "konversationer."
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:11
 msgid ""
 "Whether or not to go into \"away\" mode automatically when a certain time of "
 "idling has passed."
 msgstr ""
 "Huruvida frånvarandeläge automatiskt ska aktiveras eller inte efter en viss "
 "tomgångstid."
+
+#: gossip.schemas.in.h:12
+msgid "Whether or not to play a sound when messages arrive."
+msgstr ""
+
+#: gossip.schemas.in.h:13
+msgid "Whether or not to play sounds when away or busy."
+msgstr ""
+
+#: gossip.schemas.in.h:14
+msgid "Whether or not to timestamp all messages in conversations."
+msgstr ""
+"Huruvida alla meddelanden ska tidsstämplas eller inte i konversationer."
 
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
@@ -88,58 +113,58 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:338
+#: src/gossip-app.c:342
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:342
+#: src/gossip-app.c:346
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:346
+#: src/gossip-app.c:350
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:350 ui/main.glade.h:27
+#: src/gossip-app.c:354 ui/main.glade.h:31
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:354
+#: src/gossip-app.c:358
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:362
+#: src/gossip-app.c:366
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:430
+#: src/gossip-app.c:434
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:441
+#: src/gossip-app.c:445
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:562
+#: src/gossip-app.c:566
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelenade till."
 
-#: src/gossip-app.c:567
+#: src/gossip-app.c:571
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1143
+#: src/gossip-app.c:1164
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1470
+#: src/gossip-app.c:1480
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -180,31 +205,31 @@ msgstr "Ett fel inträffade under samtal i gruppchatten %s."
 msgid "Unable to enter the group chat %s."
 msgstr "Kunde inte gå in i gruppchatten %s."
 
-#: src/gossip-main.c:69
+#: src/gossip-main.c:70
 msgid "Don't connect on startup"
 msgstr "Anslut inte vid uppstart"
 
-#: src/gossip-main.c:78
+#: src/gossip-main.c:79
 msgid "Which account to connect to on startup"
 msgstr "Konto att ansluta till vid uppstart"
 
-#: src/gossip-main.c:79
+#: src/gossip-main.c:80
 msgid "ACCOUNT-NAME"
 msgstr "KONTO-NAME"
 
-#: src/gossip-main.c:87
+#: src/gossip-main.c:88
 msgid "List the available accounts"
 msgstr "Lista tillgängliga konton"
 
-#: src/gossip-main.c:120
+#: src/gossip-main.c:121
 msgid "Available accounts:"
 msgstr "Tillgängliga konton:"
 
-#: src/gossip-main.c:129
+#: src/gossip-main.c:130
 msgid "[default]"
 msgstr "[standard]"
 
-#: src/gossip-main.c:161
+#: src/gossip-main.c:162
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Det finns inget konto med namnet \"%s\"."
@@ -266,7 +291,7 @@ msgstr ""
 #: src/gossip-roster.c:519
 #, c-format
 msgid ""
-"Please enter a new nick for the contact\n"
+"Please enter a new nickname for the contact\n"
 "%s"
 msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
@@ -297,9 +322,13 @@ msgstr ""
 "Gossip kommer nu att försöka registrera kontot:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1263
+#: src/gossip-utils.c:1208
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
+
+#: src/gossip-utils.c:1210
+msgid "Remember Password?"
+msgstr ""
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:2
@@ -479,8 +508,8 @@ msgstr "Smek_namn:"
 
 #: ui/group-chat.glade.h:12
 msgid ""
-"Pick a favorite, or enter nick, server name, and the name of the chat room "
-"to enter."
+"Pick a favorite, or enter nickname, server name, and the name of the chat "
+"room to enter."
 msgstr ""
 "Välj en favorit, eller ange smeknamn, servernamn och namnet på chattrummet "
 "du vill gå in i."
@@ -518,46 +547,58 @@ msgid "<b>Address</b>"
 msgstr "<b>Adress</b>"
 
 #: ui/main.glade.h:5
+msgid "<b>Auto away</b>"
+msgstr "<b>Autofrånvaro</b>"
+
+#: ui/main.glade.h:6
 msgid "<b>Client information</b>"
 msgstr "<b>Klientinformation</b>"
 
-#: ui/main.glade.h:6
+#: ui/main.glade.h:7
+msgid "<b>Conversation</b>"
+msgstr "<b>Konversation</b>"
+
+#: ui/main.glade.h:8
 msgid "<b>Country:</b>"
 msgstr "<b>Land:</b>"
 
-#: ui/main.glade.h:7
+#: ui/main.glade.h:9
 msgid "<b>Description</b>"
 msgstr "<b>Beskrivning</b>"
 
-#: ui/main.glade.h:8
+#: ui/main.glade.h:10
 msgid "<b>Email:</b>"
 msgstr "<b>E-post:</b>"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:11
 msgid "<b>Information about ...</b>"
 msgstr "<b>Information om...</b>"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:12
 msgid "<b>Jabber ID:</b>"
 msgstr "<b>Jabber-id:</b>"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:13
 msgid "<b>Name:</b>"
 msgstr "<b>Namn:</b>"
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:14
 msgid "<b>Personal information</b>"
 msgstr "<b>Personlig information</b>"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:15
 msgid "<b>Setup Finished</b>"
 msgstr "<b>Konfigurationen slutförd</b>"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:16
+msgid "<b>Sound</b>"
+msgstr "<b>Ljud</b>"
+
+#: ui/main.glade.h:17
 msgid "<b>Status:</b>"
 msgstr "<b>Status:</b>"
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:18
 msgid ""
 "<b>Welcome to Gossip</b>\n"
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
@@ -575,51 +616,72 @@ msgstr ""
 "\n"
 "För att börja klickar du bara på \"Framåt\"."
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:24
 msgid "<b>_Jabber ID</b> of new contact:"
 msgstr "<b>_Jabber-id</b> för ny kontakt:"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:25
 msgid "<i>Information not available</i>"
 msgstr "<i>Informationen inte tillgänglig</i>"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:26
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Exempel: användare@jabber.org</span>"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:27
 msgid "Add a contact"
 msgstr "Lägg till en kontakt"
 
-#: ui/main.glade.h:25
+#: ui/main.glade.h:28
 msgid "Add contact"
 msgstr "Lägg till kontakt"
 
-#: ui/main.glade.h:26
+#: ui/main.glade.h:29
 msgid "Add to your contact list"
 msgstr "Lägg till i din kontaktlista"
 
-#: ui/main.glade.h:28
+#: ui/main.glade.h:30
+msgid "Automatically enter away mode during inactivity"
+msgstr "Gå in i frånvaroläge automatiskt under inaktivitet"
+
+#: ui/main.glade.h:32
 msgid "Choose a Server"
 msgstr "Välj en server"
 
-#: ui/main.glade.h:29
+#: ui/main.glade.h:33
 msgid "Choose from list:"
 msgstr "Välj från lista:"
 
-#: ui/main.glade.h:30
+#: ui/main.glade.h:34
 msgid "Contact information"
 msgstr "Kontaktinformation"
 
-#: ui/main.glade.h:31
+#: ui/main.glade.h:35
+msgid "Convert smileys to graphical images"
+msgstr ""
+"Konvertera smilisar till grafiska bilder"
+
+#: ui/main.glade.h:36
 msgid "Dinner"
 msgstr "Middag"
 
-#: ui/main.glade.h:32
+#: ui/main.glade.h:37
+msgid "Disable sounds when busy or away"
+msgstr "Stäng av ljud under upptaget- eller frånvaroläge"
+
+#: ui/main.glade.h:38
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Har du redan ett konto på en Jabberserver? "
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:39
+msgid "Enter away mode after"
+msgstr "Gå in i frånvaroläge efter"
+
+#: ui/main.glade.h:40
+msgid "Enter extended away mode after "
+msgstr "Gå in i utökat frånvaroläge efter"
+
+#: ui/main.glade.h:42
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Actions-"
@@ -629,15 +691,15 @@ msgstr ""
 "Du kan ändra dina kontoinställningar senare, genom att välja menyvalet "
 "Åtgärder->Anslut..."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:44
 msgid "I would like to add you to my contact list."
 msgstr "Jag vill lägga till dig i min kontaktlista."
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:45
 msgid "I'm away eating dinner, bbiab..."
 msgstr "Jag är och äter middag, är snart tillbaka..."
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:46
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -647,71 +709,75 @@ msgstr ""
 "förfrågan att skickas. Användaren kommer alltid att visas som \"Frånkopplad"
 "\" i din kontaktlista till dess att denna förfrågan är godkänd."
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:47
 msgid "In which group do you want to place this contact?"
 msgstr "I vilken grupp vill du placera denna kontakt?"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:48
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:49
 msgid "Jabber Account"
 msgstr "Jabberkonto"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:50
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:51
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:52
 msgid "Message:"
 msgstr "Meddelande:"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:53
 msgid "No"
 msgstr "Nej"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:54
 msgid "On what server do you have a Jabber account?"
 msgstr "På vilken server har du ett Jabberkonto?"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:55
+msgid "Preferences"
+msgstr "Inställningar"
+
+#: ui/main.glade.h:56
 msgid "Presence:"
 msgstr "Närvaro:"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:57
 msgid "Priority:"
 msgstr "Prioritet:"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:58
 msgid "Request message"
 msgstr "Förfrågansmeddelande"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:59
 msgid "Sending request"
 msgstr "Skickar förfrågan"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:60
 msgid "Set status"
 msgstr "Ställ in status"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:61
 msgid "Set the status you want to use"
 msgstr "Ställ in status du vill använda"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:62
 msgid "Setup Finished"
 msgstr "Konfigurationen slutförd"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:63
 msgid "Subscription request"
 msgstr "Prenumerationsförfrågan"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:64
 msgid ""
 "This user wants to subscribe to your presence.\n"
 "Do you approve?"
@@ -719,103 +785,119 @@ msgstr ""
 "Denna användare vill prenumerera på din närvaro.\n"
 "Godkänner du detta?"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:66
+msgid "Timestamp all messages"
+msgstr "Tidsstämpla alla meddelanden"
+
+#: ui/main.glade.h:67
 msgid "Use a different server"
 msgstr "Använd en annan server"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:68
+msgid "Use compact conversation style"
+msgstr "Använd kompakt stil för konversationer"
+
+#: ui/main.glade.h:69
+msgid "Use sounds to notify when new messages arrive"
+msgstr "Använd ljud för att uppmärksamma när nya meddelanden kommer"
+
+#: ui/main.glade.h:70
 msgid "Welcome to Gossip"
 msgstr "Välkommen till Gossip"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:71
 msgid "What instant messaging system does the contact use?"
 msgstr "Vilket meddelandesystem använder kontakten?"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:72
 msgid "What is your name?"
 msgstr "Vad heter du?"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:73
 msgid "What nickname do you want to use for this contact?"
 msgstr "Vilket smeknamn vill du använda för denna kontakt?"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:74
 msgid "What request message do you want to send to <b>micke</b>?"
 msgstr "Vilket förfrågansmeddelande vill du skicka till <b>micke</b>?"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:75
 msgid "What server do you want to use?"
 msgstr "Vilken server vill du använda?"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:76
 msgid "What username do you use?"
 msgstr "Vad använder du för användarnamn?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:77
 msgid "What username do you want to use?"
 msgstr "Vilket användarnamn vill du använda?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:78
 msgid "Yes"
 msgstr "Ja"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:79
 msgid "Your Identity"
 msgstr "Din identitet"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:80
 msgid "_Actions"
 msgstr "_Åtgärder"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:81
 msgid "_Add contact..."
 msgstr "_Lägg till kontakt..."
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:82
 msgid "_Approve"
 msgstr "_Godkänn"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:83
 msgid "_Connect..."
 msgstr "_Anslut..."
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:84
 msgid "_Defer"
 msgstr "_Skjut upp"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:85
 msgid "_Disconnect"
 msgstr "_Koppla ifrån"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:86
 msgid "_Edit statuses..."
 msgstr "_Redigera status..."
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:87
 msgid "_Join group chat..."
 msgstr "_Gå in i gruppchatt..."
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:88
 msgid "_Reject"
 msgstr "_Neka"
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:89
 msgid "_Search..."
 msgstr "_Sök..."
 
-#: ui/main.glade.h:78
+#: ui/main.glade.h:90
 msgid "_Send chat message..."
 msgstr "_Skicka chattmeddelande..."
 
+#: ui/main.glade.h:91
+msgid "minutes"
+msgstr "minuter"
+
 #~ msgid ""
-#~ "Please enter a new nickname for the contact\n"
+#~ "Please enter a new nick for the contact\n"
 #~ "%s"
 #~ msgstr ""
 #~ "Ange ett nytt smeknamn för kontakten\n"
 #~ "%s"
 
 #~ msgid ""
-#~ "Pick a favorite, or enter nickname, server name, and the name of the chat "
+#~ "Pick a favorite, or enter nick, server name, and the name of the chat "
 #~ "room to enter."
 #~ msgstr ""
 #~ "Välj en favorit, eller ange smeknamn, servernamn och namnet på "
@@ -943,9 +1025,6 @@ msgstr "_Skicka chattmeddelande..."
 
 #~ msgid "_Edit status..."
 #~ msgstr "_Redigera status..."
-
-#~ msgid "<b>Land:</b>"
-#~ msgstr "<b>Land:</b>"
 
 #~ msgid "What nickname do you want to use?"
 #~ msgstr "Vilket smeknamn vill du använda?"
