@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2004-03-19 11:36+0100\n"
-"PO-Revision-Date: 2003-10-30 18:55+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-04-12 23:46+0100\n"
+"PO-Revision-Date: 2004-04-13 00:13+0100\n"
 "Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -28,52 +28,44 @@ msgid "Be silent when away"
 msgstr "Bod yn dawel wrth fod ymaith"
 
 #: gossip.schemas.in.h:2
-#, fuzzy
 msgid "Be silent when busy"
-msgstr "Bod yn dawel wrth fod ymaith"
+msgstr "Bod yn dawel wrth fod yn brysur"
 
 #: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "Uchder y prif ffenest"
 
 #: gossip.schemas.in.h:4
-#, fuzzy
 msgid "Hide main window"
-msgstr "Lled y prif ffenest"
+msgstr "Cuddio'r prif ffenest"
 
 #: gossip.schemas.in.h:5
-#, fuzzy
 msgid "Hide the main window."
-msgstr "Lled y prif ffenest"
+msgstr "Cuddio'r prif ffenest"
 
 #: gossip.schemas.in.h:6
-#, fuzzy
 msgid "Preset status messages"
-msgstr "Neges cais"
+msgstr "Negeseuon cyflwr rhagosod"
 
 #: gossip.schemas.in.h:7
-#, fuzzy
 msgid "Preset status messages."
-msgstr "Neges cais"
+msgstr "Negeseuon cyflwr rhagosod."
 
 #: gossip.schemas.in.h:8
-#, fuzzy
 msgid "Show offline contacts"
-msgstr "_Dangos y Rhestr Cysylltion"
+msgstr "Dangos cysylltion all-lein"
 
 #: gossip.schemas.in.h:9
-#, fuzzy
 msgid "The X position of the main window."
-msgstr "Lled y prif ffenest."
+msgstr "Safle X y prif ffenest."
 
 #: gossip.schemas.in.h:10
-#, fuzzy
 msgid "The Y position of the main window."
-msgstr "Lled y prif ffenest."
+msgstr "Safle Y y prif ffenest."
 
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
-msgstr "Uchder y prif ffenest."
+msgstr "Safle X y prif ffenest."
 
 #: gossip.schemas.in.h:12
 msgid "The width of the main window."
@@ -97,52 +89,47 @@ msgid "Whether or not to play a sound when messages arrive."
 msgstr "A ddylid chwarae cain pan mae negeseuon yn cyrraedd."
 
 #: gossip.schemas.in.h:17
-#, fuzzy
 msgid "Whether or not to play sounds when away."
-msgstr "A ddylid chwarae synau wrth fod ymaith neu'n brysur."
+msgstr "A ddylid chwarae synau wrth fod ymaith."
 
 #: gossip.schemas.in.h:18
-#, fuzzy
 msgid "Whether or not to play sounds when busy."
-msgstr "A ddylid chwarae synau wrth fod ymaith neu'n brysur."
+msgstr "A ddylid chwarae synau wrth fod yn brysur."
 
 #: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr ""
+msgstr "A ddylid dangos cysylltion sydd all-lein yn y rhestr cysylltion."
 
 #: gossip.schemas.in.h:20
-#, fuzzy
 msgid "Width of the main window"
 msgstr "Lled y prif ffenest"
 
 #: gossip.schemas.in.h:21
-#, fuzzy
 msgid "X position of main window"
-msgstr "Lled y prif ffenest"
+msgstr "Safle X y prif ffenest"
 
 #: gossip.schemas.in.h:22
-#, fuzzy
 msgid "Y position of main window"
-msgstr "Lled y prif ffenest"
+msgstr "Safle Y y prif ffenest"
 
-#: src/gossip-about.c:277
+#: src/gossip-about.c:275
 msgid "Written by:"
-msgstr ""
+msgstr "Ysgrifennwyd gan:"
 
-#: src/gossip-about.c:287
+#: src/gossip-about.c:285
 msgid "Artwork by:"
-msgstr ""
+msgstr "Arlunio gan:"
 
-#: src/gossip-about.c:298
+#: src/gossip-about.c:296
 msgid "Translated by:"
-msgstr ""
+msgstr "Cyfieithwyd gan:"
 
 #. Note to translators: put your name here so it will shop up in the
 #. * "about" box. Please add ONLY names, separated by newlines. No mail
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:344
+#: src/gossip-about.c:342
 msgid "translator_credits"
 msgstr "Dafydd Harries"
 
@@ -162,7 +149,7 @@ msgstr "Caiff %s ei ychwanegu i'ch restr cyswllt."
 
 #: src/gossip-app.c:639
 msgid "Could not connect"
-msgstr ""
+msgstr "Methwyd cysylltu"
 
 #: src/gossip-app.c:640
 msgid "Make sure that your account information is correct."
@@ -187,16 +174,15 @@ msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Fe gafoch eich datgysylltu o'r gweinydd. A hoffech ailgysylltu?"
 
 #: src/gossip-app.c:1348
-#, fuzzy
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
-msgstr "Sicrhewch fod eich manylion cyfrif yn gywir."
+msgstr "Sicrhewch fod eich manylion cyfrif yn gywir. Hefyd, efallai nid yw'r "
+"gweinydd ar gael."
 
 #: src/gossip-app.c:1820
-#, fuzzy
 msgid "Gossip, Instant Messaging Client"
-msgstr "Cleient Jabber ar gyfer GNOME"
+msgstr "Gossip, Cleient Negeseuo Cyflym"
 
 #: src/gossip-app.c:1962
 #, c-format
@@ -213,38 +199,32 @@ msgid "Available"
 msgstr "Ar Gael"
 
 #: src/gossip-app.c:2461 src/gossip-preferences.c:640
-#, fuzzy
 msgid "Busy"
-msgstr "_Prysur"
+msgstr "Prysur"
 
 #: src/gossip-app.c:2472 src/gossip-preferences.c:641
-#, fuzzy
 msgid "Away"
-msgstr "Ymaith:"
+msgstr "Ymaith"
 
 #: src/gossip-app.c:2604
-#, fuzzy
 msgid "Available..."
-msgstr "Ar Gael"
+msgstr "Ar Gael..."
 
 #: src/gossip-app.c:2609
-#, fuzzy
 msgid "Busy..."
-msgstr "_Prysur"
+msgstr "Prysur..."
 
 #: src/gossip-app.c:2614
-#, fuzzy
 msgid "Away..."
-msgstr "Ymaith:"
+msgstr "Ymaith..."
 
 #: src/gossip-app.c:2643
-#, fuzzy
 msgid "Edit List..."
-msgstr "_Golygu Rhestr..."
+msgstr "Golygu'r Rhestr..."
 
 #: src/gossip-chat-view.c:339 ui/chat.glade.h:2
 msgid "C_lear"
-msgstr ""
+msgstr "C_lirio"
 
 #: src/gossip-chat-view.c:356
 msgid "_Copy Link Address"
@@ -284,14 +264,12 @@ msgid "%s comes online"
 msgstr "Mae %s yn dod arlein"
 
 #: src/gossip-chat.c:913
-#, fuzzy
 msgid "Connected"
-msgstr "_Cysylltu"
+msgstr "Wedi Cysylltu"
 
 #: src/gossip-chat.c:928
-#, fuzzy
 msgid "Disconnected"
-msgstr "_Datgysylltu"
+msgstr "Wedi Datgysylltu"
 
 #: src/gossip-contact-info.c:352
 #, c-format
@@ -301,23 +279,22 @@ msgstr "Gwybodaeth Cyswllt ar gyfer %s"
 #: src/gossip-edit-groups-dialog.c:182
 #, c-format
 msgid "Edit groups for %s"
-msgstr ""
+msgstr "Golygu grŵpiau ar gyfer %s"
 
 #: src/gossip-edit-groups-dialog.c:246
-#, fuzzy
 msgid "Select"
-msgstr "_Gwrthod"
+msgstr "Dewis"
 
 #: src/gossip-edit-groups-dialog.c:257
 msgid "Group"
-msgstr ""
+msgstr "Grŵp"
 
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
 #: src/gossip-roster.c:37
 msgid "Unsorted"
-msgstr ""
+msgstr "Heb eu trefnu"
 
 #: src/gossip-group-chat.c:804
 #, c-format
@@ -330,9 +307,8 @@ msgid "Unable to enter the group chat %s."
 msgstr "Ni ellir cyrchu'r sgwrs grŵp %s."
 
 #: src/gossip-log.c:307
-#, fuzzy
 msgid "Conversation Log"
-msgstr "Sgwrs"
+msgstr "Cofnod Sgwrs"
 
 #: src/gossip-main.c:69
 msgid "Don't connect on startup"
@@ -393,20 +369,19 @@ msgstr "/_Ailenwi'r cyswllt"
 
 #: src/gossip-roster-view.c:202
 msgid "/_Edit groups"
-msgstr ""
+msgstr "/_Golygu grŵpiau"
 
 #: src/gossip-roster-view.c:210
 msgid "/Show _Log"
-msgstr ""
+msgstr "/Dangos _Cofnod"
 
 #: src/gossip-roster-view.c:226
 msgid "/_Remove contact"
 msgstr "/_Tynnu'r cyswllt"
 
 #: src/gossip-roster-view.c:237
-#, fuzzy
 msgid "/Re_name group"
-msgstr "/_Ailenwi'r cyswllt"
+msgstr "/_Ailenwi'r grŵp"
 
 #: src/gossip-roster-view.c:1245
 #, c-format
@@ -429,12 +404,12 @@ msgstr ""
 "%s"
 
 #: src/gossip-roster-view.c:1444
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please enter a new name for the group\n"
 "%s"
 msgstr ""
-"Os gwelwch yn dda, rhowch llysenw newydd ar gyfer y cyswllt\n"
+"Os gwelwch yn dda, rhowch enw newydd ar gyfer y grŵp\n"
 "%s"
 
 #: src/gossip-startup-druid.c:254
@@ -459,12 +434,10 @@ msgid "*"
 msgstr "*"
 
 #: ui/chat.glade.h:3
-#, fuzzy
 msgid "Chat"
-msgstr "_Sgwrs"
+msgstr "Sgwrs"
 
 #: ui/chat.glade.h:4
-#, fuzzy
 msgid "Contact _Information"
 msgstr "/_Gwybodaeth Cyswllt"
 
@@ -490,11 +463,11 @@ msgstr "Yn ateb i:"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
-msgstr ""
+msgstr "Symud y Tab i'r _Chwith"
 
 #: ui/chat.glade.h:11
 msgid "Move Tab _Right"
-msgstr ""
+msgstr "Symud y Tab i'r _Dde"
 
 #: ui/chat.glade.h:12
 msgid "To:"
@@ -502,24 +475,23 @@ msgstr "I:"
 
 #: ui/chat.glade.h:13
 msgid "View Lo_g"
-msgstr ""
+msgstr "Gweld y _Cofnod"
 
 #: ui/chat.glade.h:14
-#, fuzzy
 msgid "_Conversation"
-msgstr "Sgwrs"
+msgstr "_Sgwrs"
 
 #: ui/chat.glade.h:15
 msgid "_Detach Tab"
-msgstr ""
+msgstr "_Datgysylltu'r Tab"
 
 #: ui/chat.glade.h:16
 msgid "_Next Tab"
-msgstr ""
+msgstr "Tab _Nesaf"
 
 #: ui/chat.glade.h:17
 msgid "_Previous Tab"
-msgstr ""
+msgstr "Tab _Cynt"
 
 #: ui/chat.glade.h:18
 msgid "_Reply..."
@@ -531,7 +503,7 @@ msgstr "_Anfon"
 
 #: ui/chat.glade.h:20
 msgid "_Tabs"
-msgstr ""
+msgstr "_Tabiau"
 
 #: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
 msgid "    "
@@ -671,11 +643,11 @@ msgstr "<b>Gofynnwyd gwybodaeth, arhoswch os gwelwch yn dda...</b>"
 
 #: ui/main.glade.h:5
 msgid "<b>Preset status messages</b>"
-msgstr ""
+msgstr "<b>Negeseuon cyflwr rhagosod</b>"
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
-msgstr "<i>Manylion ddim ar gael</i>"
+msgstr "<i>Nid yw'r gwybodaeth ar gael</i>"
 
 #: ui/main.glade.h:7
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
@@ -730,37 +702,32 @@ msgid "Description"
 msgstr "Disgrifiad"
 
 #: ui/main.glade.h:20
-#, fuzzy
 msgid "Disable sounds when _away"
-msgstr "_Analluogi synau tra'n brysur neu ymaith"
+msgstr "Analluogi synau wrth fod _ymaith"
 
 #: ui/main.glade.h:21
-#, fuzzy
 msgid "Disable sounds when _busy"
-msgstr "_Analluogi synau tra'n brysur neu ymaith"
+msgstr "Analluogi synau wrth fod yn _brysur"
 
 #: ui/main.glade.h:22
-#, fuzzy
 msgid "Do you already have an account on a Jabber server?"
-msgstr "Oes cyfrif ar weinydd Jabber gennych eisioes?"
+msgstr "A oes cyfrif ar weinydd Jabber gennych eisioes?"
 
 #: ui/main.glade.h:23
 msgid "Do you want to accept the request?"
 msgstr "Ydych chi eisiau derbyn yr ymgais?"
 
 #: ui/main.glade.h:24
-#, fuzzy
 msgid "Edit Groups"
-msgstr "Gossip - Golygu Sgyrsiau Grŵp"
+msgstr "Golygu Grŵpiau"
 
 #: ui/main.glade.h:25
 msgid "Email:"
 msgstr "Ebost:"
 
 #: ui/main.glade.h:26
-#, fuzzy
 msgid "Enter status message:"
-msgstr "Neges cais"
+msgstr "Rhowch neges cyflwr:"
 
 #: ui/main.glade.h:28
 msgid ""
@@ -771,7 +738,7 @@ msgid ""
 "\n"
 "To get started, just click \"Forward\"."
 msgstr ""
-"Mae Gossip yn gleient modern ar gyfer y system Negeseuo Parod Jabber.\n"
+"Mae Gossip yn gleient modern ar gyfer y system Negeseuo Cyflym Jabber.\n"
 "\n"
 "Fe fydd y cynorthwywr yma yn eich arwain drwy'r broses o gyflunio Gossip "
 "a'ch cysylltu i'ch hoff weinydd Jabber.\n"
@@ -812,7 +779,7 @@ msgstr "Gwybodaeth ynghylch ..."
 
 #: ui/main.glade.h:39
 msgid "JID"
-msgstr ""
+msgstr "JID"
 
 #: ui/main.glade.h:40
 msgid "Jabber"
@@ -855,9 +822,8 @@ msgid "Personal information"
 msgstr "Manylion personol"
 
 #: ui/main.glade.h:50
-#, fuzzy
 msgid "Play sound when messages arrive"
-msgstr "A ddylid chwarae cain pan mae negeseuon yn cyrraedd."
+msgstr "Chwarae sain pan mae negeseuon yn cyrraedd"
 
 #: ui/main.glade.h:51
 msgid "Preferences"
@@ -876,9 +842,8 @@ msgid "Setup Finished"
 msgstr "Gorffenwyd Cyflunio"
 
 #: ui/main.glade.h:55
-#, fuzzy
 msgid "Show _Offline Contacts"
-msgstr "_Dangos y Rhestr Cysylltion"
+msgstr "Dangos Cysylltion All-lein"
 
 #: ui/main.glade.h:56
 msgid "Sound"
@@ -889,14 +854,12 @@ msgid "Status"
 msgstr "Cyflwr"
 
 #: ui/main.glade.h:58
-#, fuzzy
 msgid "Status Message"
-msgstr "Negeseuon"
+msgstr "Neges Cyflwr"
 
 #: ui/main.glade.h:59
-#, fuzzy
 msgid "Status Messages"
-msgstr "Negeseuon"
+msgstr "Negeseuon Cyflwr"
 
 #: ui/main.glade.h:60
 msgid "Use a different server"
@@ -991,9 +954,8 @@ msgid "_Join Group Chat..."
 msgstr "_Ymuno â Sgwrs Grŵp..."
 
 #: ui/main.glade.h:84
-#, fuzzy
 msgid "_New Message..."
-msgstr "Danfon neges _Sgwrs..."
+msgstr "Neges _Newydd..."
 
 #: ui/main.glade.h:85
 msgid "_Preferences"
@@ -1012,9 +974,8 @@ msgid "_Show Contact List"
 msgstr "_Dangos y Rhestr Cysylltion"
 
 #: ui/main.glade.h:89
-#, fuzzy
 msgid "_Status Messages"
-msgstr "Negeseuon"
+msgstr "Negeseuon _Cyflwr"
 
 #, fuzzy
 #~ msgid "About Gossip"
