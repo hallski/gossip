@@ -55,7 +55,6 @@ struct _GossipRosterGroup {
 };
 
 struct _GossipRosterItem {
-	GossipRoster *roster;
 	GossipJID    *jid;
         gchar        *name;
 	gboolean      online;

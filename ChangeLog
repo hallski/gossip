@@ -1,3 +1,10 @@
+2003-11-12  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c:
+	(roster_view_group_item_added): return if we can't find group.
+	(roster_view_group_item_removed): same.
+	* src/gossip-roster.c: removed unused variable
+
 2003-11-12  Ross Burton  <ross@burtonini.com>
 
 	* src/gossip-app.c: (app_init), (app_show_offline_cb):

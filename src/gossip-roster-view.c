@@ -517,6 +517,7 @@ roster_view_group_item_added (GossipRoster      *roster,
 		
 	if (!roster_view_find_group (view, &group_iter, name)) {
 		d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+		return;
 	}
 
 	if (!gtk_tree_model_iter_has_child (priv->model, &group_iter)) {
@@ -564,6 +565,7 @@ roster_view_group_item_removed (GossipRoster      *roster,
 	
 	if (!roster_view_find_item (view, &iter, item, group)) {
 		d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));
+		return;
 	}
 
 	gtk_tree_model_get (priv->model, &iter,
