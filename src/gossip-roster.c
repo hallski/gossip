@@ -1024,6 +1024,54 @@ gossip_roster_get_item (GossipRoster *roster,
 	return g_hash_table_lookup (priv->items, jid);
 }
 
+GossipRosterItem *
+gossip_roster_find_item (GossipRoster *roster, const gchar *str)
+{
+	GossipRosterPriv *priv;
+	GossipRosterItem *item = NULL;
+	
+	g_return_val_if_fail (GOSSIP_IS_ROSTER (roster), NULL);
+	g_return_val_if_fail (str != NULL, NULL);
+
+	priv = roster->priv;
+
+	priv = roster->priv;
+	
+	if (gossip_jid_string_is_valid_jid (str)) {
+		GossipJID *jid = gossip_jid_new (str);
+		
+		item = g_hash_table_lookup (priv->items, jid);
+		if (!item) {
+			item = gossip_roster_item_new (jid);
+		}
+	} else {
+		GList *items, *l;
+		gchar *name;
+		
+		name = g_utf8_casefold (str, -1);
+		
+		items = gossip_roster_get_all_items (roster);
+		for (l = items; l; l = l->next) {
+			GossipRosterItem *i = (GossipRosterItem *) l->data;
+			gchar *i_name;
+
+			i_name = g_utf8_casefold (gossip_roster_item_get_name (i), -1);
+
+			if (g_utf8_collate (name, i_name) == 0) {
+				g_free (i_name);
+				item = i;
+				break;
+			}
+			
+			g_free (i_name);
+		}
+		g_free (name);
+		g_list_free (items);
+	}
+
+	return item;
+}
+
 void
 gossip_roster_remove_item (GossipRoster *roster, GossipRosterItem *item)
 {

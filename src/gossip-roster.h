@@ -63,6 +63,10 @@ GList *            gossip_roster_get_all_items      (GossipRoster      *roster);
 void               gossip_roster_free_item_list     (GList             *list);
 GossipRosterItem * gossip_roster_get_item           (GossipRoster      *roster,
                                                      GossipJID         *jid);
+/* Tries to find a roster by either trying str as a jid, and later checks 
+ * all items and tries to match the item names */
+GossipRosterItem * gossip_roster_find_item          (GossipRoster      *roster,
+						     const gchar       *str);
 void               gossip_roster_remove_item        (GossipRoster      *roster,
 						     GossipRosterItem  *item);
 void               gossip_roster_rename_item        (GossipRoster      *roster,
