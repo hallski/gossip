@@ -6,6 +6,7 @@ image_DATA =			\
 	gossip-busy.png		\
 	gossip-extended-away.png \
 	gossip-message.png	\
+	gossip-group-message.png \
 	gossip-offline.png	\
 	gossip-typing.png	\
 	channel-old4.png	\
