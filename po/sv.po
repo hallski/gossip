@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-10-28 22:08+0100\n"
-"PO-Revision-Date: 2003-10-27 01:38+0100\n"
+"POT-Creation-Date: 2003-11-02 01:08+0100\n"
+"PO-Revision-Date: 2003-11-02 01:10+0100\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -23,8 +23,8 @@ msgid "Gossip"
 msgstr "Gossip"
 
 #: gossip.desktop.in.h:2
-msgid "Jabber Instant Messaging"
-msgstr "Jabber-snabbmeddelanden"
+msgid "Instant Messenger"
+msgstr "Snabbmeddelandeklient"
 
 #: gossip.schemas.in.h:1
 msgid "Be silent when away"
@@ -104,104 +104,104 @@ msgstr "Vilket förfrågansmeddelande vill du skicka till %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s kommer att läggas till i din kontaktlista."
 
-#: src/gossip-app.c:354
+#: src/gossip-app.c:355
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:413
+#: src/gossip-app.c:414
 msgid "_Show Contact List"
 msgstr "_Visa kontaktlista"
 
 # Vi översätter "hide" med "dölj" i GNOME. Gömmer gör man något för att det
 # inte ska hittas, döljer gör man för att det inte ska synas.
-#: src/gossip-app.c:422
+#: src/gossip-app.c:423
 msgid "_Hide Contact List"
 msgstr "_Dölj kontaktlista"
 
-#: src/gossip-app.c:435
+#: src/gossip-app.c:436
 msgid "Send _Chat message..."
 msgstr "Skicka _chattmeddelande..."
 
-#: src/gossip-app.c:450
+#: src/gossip-app.c:451
 msgid "_Quit"
 msgstr "_Avsluta"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:545
+#: src/gossip-app.c:546
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:557
+#: src/gossip-app.c:558
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
 # "Web site" är "webbplats". "Web page" är "webbsida".
-#: src/gossip-app.c:564
+#: src/gossip-app.c:565
 msgid "Gossip Website"
 msgstr "Gossip-webbplatsen"
 
-#: src/gossip-app.c:666
+#: src/gossip-app.c:667
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelande till."
 
-#: src/gossip-app.c:671 ui/main.glade.h:78
+#: src/gossip-app.c:672 ui/main.glade.h:78
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:953
+#: src/gossip-app.c:941
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s vill bli meddelad om din närvaro."
 
-#: src/gossip-app.c:1188
+#: src/gossip-app.c:1176
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1353
+#: src/gossip-app.c:1347
 msgid "Make sure that your account information is correct."
 msgstr "Kontrollera att kontoinformationen är korrekt."
 
-#: src/gossip-app.c:1354
+#: src/gossip-app.c:1348
 msgid "The server may currently be unavailable."
 msgstr "Servern kan vara tillfälligt otillgänglig."
 
-#: src/gossip-app.c:1730
+#: src/gossip-app.c:1724
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1916
+#: src/gossip-app.c:1910
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-app.c:2259
+#: src/gossip-app.c:2255
 msgid "Custom Message..."
 msgstr "Eget meddelande..."
 
-#: src/gossip-app.c:2278
+#: src/gossip-app.c:2274
 msgid "Custom Busy Message..."
 msgstr "Eget upptagenmeddelande..."
 
-#: src/gossip-app.c:2285
+#: src/gossip-app.c:2281
 msgid "_Edit List..."
 msgstr "_Redigera listan..."
 
-#: src/gossip-chat-view.c:337
+#: src/gossip-chat-view.c:338
 msgid "_Copy Link Address"
 msgstr "_Kopiera länkadress"
 
-#: src/gossip-chat-view.c:345
+#: src/gossip-chat-view.c:346
 msgid "_Open Link"
 msgstr "_Öppna länk"
 
-#: src/gossip-chat-view.c:741
+#: src/gossip-chat-view.c:742
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
@@ -900,7 +900,6 @@ msgstr "_Tidsstämpla alla meddelanden"
 #~ msgid "[Busy]"
 #~ msgstr "[Upptagen]"
 
-#, fuzzy
 #~ msgid "Auto away enabled"
 #~ msgstr "Autofrånvaro aktiverad"
 
