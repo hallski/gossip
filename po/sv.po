@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-17 11:40+0200\n"
+"POT-Creation-Date: 2003-07-17 14:58+0200\n"
 "PO-Revision-Date: 2003-07-13 11:51+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -84,11 +84,11 @@ msgstr ""
 
 #: gossip.schemas.in.h:12
 msgid "Whether or not to play a sound when messages arrive."
-msgstr ""
+msgstr "Huruvida ljud ska spelas eller inte när meddelanden kommer."
 
 #: gossip.schemas.in.h:13
 msgid "Whether or not to play sounds when away or busy."
-msgstr ""
+msgstr "Huruvida ljud ska spelas eller inte under frånvaro- och upptagetläge."
 
 #: gossip.schemas.in.h:14
 msgid "Whether or not to timestamp all messages in conversations."
@@ -168,12 +168,12 @@ msgstr "Du frånkopplades från servern. Vill du återansluta?"
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-chat.c:453
+#: src/gossip-chat.c:501
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:458 src/gossip-group-chat.c:633
+#: src/gossip-chat.c:506 src/gossip-group-chat.c:633
 #: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr "Detaljer:"
@@ -328,52 +328,57 @@ msgstr "Ange ditt lösenord:"
 
 #: src/gossip-utils.c:1210
 msgid "Remember Password?"
-msgstr ""
+msgstr "Kom ihåg lösenord?"
 
-#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/chat.glade.h:1 ui/connect.glade.h:1 ui/group-chat.glade.h:1
+#: ui/main.glade.h:1
+msgid "    "
+msgstr "    "
+
+#: ui/chat.glade.h:2 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:2
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:2
-msgid "<b>Chat with:</b>"
-msgstr "<b>Chatt med:</b>"
-
 #: ui/chat.glade.h:3
+msgid "<b>Chat with: </b>"
+msgstr "<b>Chatt med: </b>"
+
+#: ui/chat.glade.h:4
+msgid "Click to get the user's contact information"
+msgstr "Klicka för att få användarens kontaktinformation"
+
+#: ui/chat.glade.h:5
 msgid "From: "
 msgstr "Från: "
 
-#: ui/chat.glade.h:4
+#: ui/chat.glade.h:6
 msgid "Gossip - Chat"
 msgstr "Gossip - Chatt"
 
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:7
 msgid "Gossip - Received Message"
 msgstr "Gossip - Mottaget meddelande"
 
-#: ui/chat.glade.h:6
+#: ui/chat.glade.h:8
 msgid "Gossip - Send Message"
 msgstr "Gossip - Skicka meddelande"
 
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:9
 msgid "In reply to:"
 msgstr "Svar på:"
 
-#: ui/chat.glade.h:8
+#: ui/chat.glade.h:10
 msgid "To:"
 msgstr "Till:"
 
-#: ui/chat.glade.h:9
+#: ui/chat.glade.h:11
 msgid "_Reply..."
 msgstr "_Svara..."
 
-#: ui/chat.glade.h:10 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:12 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Skicka"
-
-#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:1
-msgid "    "
-msgstr "    "
 
 #: ui/connect.glade.h:3
 msgid "<b>Account information</b>"
@@ -658,8 +663,7 @@ msgstr "Kontaktinformation"
 
 #: ui/main.glade.h:35
 msgid "Convert smileys to graphical images"
-msgstr ""
-"Konvertera smilisar till grafiska bilder"
+msgstr "Konvertera smilisar till grafiska bilder"
 
 #: ui/main.glade.h:36
 msgid "Dinner"
