@@ -1,5 +1,9 @@
 2004-05-18  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.in: Added ukrainian translation.
+
+2004-05-18  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-jid.c: (gossip_jid_string_is_valid_jid):
 	- Allow IP-numbers as JID's
 	- Patch from Fabio Bonelli.
