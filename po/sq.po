@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-07 04:40+0200\n"
+"POT-Creation-Date: 2004-07-28 03:58+0200\n"
 "PO-Revision-Date: 2004-07-05 19:23+0200\n"
 "Last-Translator: Laurent Dhima <laurenti@alblinux.net>\n"
 "Language-Team: Albanian <gnome-albanian-perkthyesit@lists.sourceforge.net>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.3.1\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:30
+#: gossip.desktop.in.h:1
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -152,7 +152,6 @@ msgstr "%s do të shtohet tek lista juaj e kontakteve."
 msgid "Could not connect"
 msgstr "E pamundur lidhja"
 
-#. GRUT modified this item
 #: src/gossip-app.c:645
 msgid "Make sure that your account information is correct."
 msgstr "Sigurohu që ke dhënë informacionet korrekte të llogarisë tuaj."
@@ -205,7 +204,6 @@ msgstr "Në dispozicion"
 msgid "Busy"
 msgstr "I zënë"
 
-#. GRUT modified this item
 #: src/gossip-app.c:2541 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Nuk jam këtu"
@@ -546,9 +544,10 @@ msgstr ""
 msgid "Re_gister..."
 msgstr ""
 
+#. GRUT modified this item
 #: ui/connect.glade.h:10
 msgid "Server:"
-msgstr "Server-i:"
+msgstr "Serveri:"
 
 #: ui/connect.glade.h:11
 msgid "Use _encryption (SSL)"
@@ -595,11 +594,11 @@ msgid "Gossip - Edit Group Chats"
 msgstr ""
 
 #: ui/group-chat.glade.h:9
-msgid "Gossip - Group Chat"
+msgid "Gossip - Join Group Chat"
 msgstr ""
 
 #: ui/group-chat.glade.h:10
-msgid "Gossip - Join Group Chat"
+msgid "Imendio Gossip - Group Chat"
 msgstr ""
 
 #: ui/group-chat.glade.h:11
@@ -628,9 +627,10 @@ msgstr ""
 msgid "_Join"
 msgstr ""
 
+#. GRUT modified this item
 #: ui/group-chat.glade.h:17
 msgid "_Nickname:"
-msgstr "_Nickname:"
+msgstr "_Pseudonimi:"
 
 #: ui/group-chat.glade.h:18
 msgid "_Room:"
@@ -748,7 +748,7 @@ msgstr "Email:"
 msgid "Enter status message:"
 msgstr ""
 
-#: ui/main.glade.h:31
+#: ui/main.glade.h:30
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -758,16 +758,21 @@ msgid ""
 "To get started, just click \"Forward\"."
 msgstr ""
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:35
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
 ">Connect... menu item."
 msgstr ""
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:37
 msgid "I would like to add you to my contact list."
 msgstr ""
+
+#: ui/main.glade.h:38
+#, fuzzy
+msgid "Imendio Gossip"
+msgstr "Gossip"
 
 #: ui/main.glade.h:39
 msgid ""
@@ -994,9 +999,10 @@ msgstr ""
 msgid "_Preferences"
 msgstr "_Preferimet"
 
+#. GRUT modified this item
 #: ui/main.glade.h:95
 msgid "_Remove"
-msgstr "_Hiqe"
+msgstr "_Hiq"
 
 #: ui/main.glade.h:96
 msgid "_Search..."
