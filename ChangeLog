@@ -1,3 +1,13 @@
+2003-09-03  Martyn Russell <ginxd@btopenworld.com>
+
+	* src/gossip-add-contact.c:
+	(add_contact_prepare_page_2),
+	(add_contact_page_2_vcard_handler), 
+	(gossip_add_contact_new): 
+	* ui/main.glade: 
+	- Show a label to tell the user that we have requested information.
+	- Fixes bug #120606
+
 2003-09-01  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_idle_check_cb): Make compile

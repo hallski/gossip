@@ -45,6 +45,8 @@ typedef struct {
 
 	/* Page two */
 	GtkWidget *two_page;
+	GtkWidget *two_waiting_label;
+	GtkWidget *two_information_table;
 	GtkWidget *two_id_label;
 	GtkWidget *two_name_label;
 	GtkWidget *two_email_label;
@@ -172,6 +174,10 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 		lm_message_handler_invalidate (contact->vcard_handler);
 		lm_message_handler_unref (contact->vcard_handler);
 	}
+
+	gtk_widget_show(contact->two_waiting_label);
+	gtk_widget_hide(contact->two_information_table);
+
 	contact->vcard_handler = lm_message_handler_new 
 		((LmHandleMessageFunction) add_contact_page_2_vcard_handler,
 		 contact, NULL);
@@ -260,6 +266,9 @@ add_contact_page_2_vcard_handler (LmMessageHandler *handler,
 		gtk_label_set_text (GTK_LABEL (contact->two_country_label), "");	
 	}
      
+
+	gtk_widget_hide(contact->two_waiting_label);
+	gtk_widget_show(contact->two_information_table);
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
@@ -474,6 +483,8 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 		"1_id_entry", &contact->one_id_entry,
 		"1_search_button", &contact->one_search_button,
 		"2_page", &contact->two_page,
+		"2_waiting_label", &contact->two_waiting_label,
+		"2_information_table", &contact->two_information_table,
 		"2_id_label", &contact->two_id_label,
 		"2_name_label", &contact->two_name_label,
 		"2_email_label", &contact->two_email_label,

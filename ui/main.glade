@@ -510,7 +510,7 @@
 			<widget class="GtkHBox" id="hbox49">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
-			  <property name="spacing">0</property>
+			  <property name="spacing">6</property>
 
 			  <child>
 			    <widget class="GtkEntry" id="1_id_entry">
@@ -533,7 +533,6 @@
 
 			  <child>
 			    <widget class="GtkButton" id="1_search_button">
-			      <property name="visible">True</property>
 			      <property name="sensitive">False</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">_Search...</property>
@@ -611,11 +610,37 @@
 		<widget class="GtkVBox" id="vbox4">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">6</property>
+		  <property name="spacing">18</property>
 
 		  <child>
-		    <widget class="GtkTable" id="table2">
+		    <widget class="GtkVBox" id="vbox83">
 		      <property name="visible">True</property>
+		      <property name="homogeneous">False</property>
+		      <property name="spacing">0</property>
+
+		  <child>
+			<widget class="GtkLabel" id="2_waiting_label">
+		      <property name="visible">True</property>
+			  <property name="label" translatable="yes">&lt;b&gt;Information requested, Please wait...&lt;/b&gt;</property>
+			  <property name="use_underline">False</property>
+			  <property name="use_markup">True</property>
+			  <property name="justify">GTK_JUSTIFY_LEFT</property>
+			  <property name="wrap">False</property>
+			  <property name="selectable">False</property>
+			  <property name="xalign">0</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+			<packing>
+			  <property name="padding">0</property>
+			  <property name="expand">False</property>
+			  <property name="fill">False</property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkTable" id="2_information_table">
 		      <property name="n_rows">4</property>
 		      <property name="n_columns">2</property>
 		      <property name="homogeneous">False</property>
@@ -649,7 +674,6 @@
 		      <child>
 			<widget class="GtkLabel" id="label12">
 			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
 			  <property name="label" translatable="yes">Name:</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
@@ -674,7 +698,6 @@
 		      <child>
 			<widget class="GtkLabel" id="label13">
 			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
 			  <property name="label" translatable="yes">Email:</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
@@ -774,7 +797,6 @@
 		      <child>
 			<widget class="GtkLabel" id="label336">
 			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
 			  <property name="label" translatable="yes">Country:</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
@@ -827,30 +849,21 @@
 		      <property name="fill">True</property>
 		    </packing>
 		  </child>
-
-		  <child>
-		    <widget class="GtkLabel" id="label411">
-		      <property name="height_request">6</property>
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes"></property>
-		      <property name="use_underline">False</property>
-		      <property name="use_markup">False</property>
-		      <property name="justify">GTK_JUSTIFY_LEFT</property>
-		      <property name="wrap">False</property>
-		      <property name="selectable">False</property>
-		      <property name="xalign">0.5</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xpad">0</property>
-		      <property name="ypad">0</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
-		      <property name="expand">False</property>
-		      <property name="fill">False</property>
+		      <property name="expand">True</property>
+		      <property name="fill">True</property>
 		    </packing>
 		  </child>
 
 		  <child>
+		    <widget class="GtkVBox" id="vbox82">
+		      <property name="visible">True</property>
+		      <property name="homogeneous">False</property>
+		      <property name="spacing">6</property>
+
+		      <child>
 		    <widget class="GtkLabel" id="label14">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">What nickname do you want to use for this contact?</property>
@@ -889,21 +902,6 @@
 		      <property name="fill">False</property>
 		    </packing>
 		  </child>
-
-		  <child>
-		    <widget class="GtkLabel" id="label412">
-		      <property name="height_request">6</property>
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes"></property>
-		      <property name="use_underline">False</property>
-		      <property name="use_markup">False</property>
-		      <property name="justify">GTK_JUSTIFY_LEFT</property>
-		      <property name="wrap">False</property>
-		      <property name="selectable">False</property>
-		      <property name="xalign">0.5</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xpad">0</property>
-		      <property name="ypad">0</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -913,6 +911,12 @@
 		  </child>
 
 		  <child>
+		    <widget class="GtkVBox" id="vbox81">
+		      <property name="visible">True</property>
+		      <property name="homogeneous">False</property>
+		      <property name="spacing">6</property>
+
+		      <child>
 		    <widget class="GtkLabel" id="label338">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">In which group do you want to place this contact?</property>
@@ -970,6 +974,13 @@
 		    </packing>
 		  </child>
 		</widget>
+		<packing>
+		  <property name="padding">0</property>
+		  <property name="expand">True</property>
+		  <property name="fill">True</property>
+		</packing>
+	      </child>
+	    </widget>
 		<packing>
 		  <property name="padding">0</property>
 		  <property name="expand">True</property>
