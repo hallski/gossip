@@ -1,6 +1,11 @@
 2004-07-29  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-presence.c: (gossip_presence_get_pixbuf):
+	- Modified to handle Offline preferences...
+
+2004-07-29  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-presence.c: (gossip_presence_get_pixbuf):
 	- Cleaned up and moved this function from gossip-utils.
 
 2004-07-29  Mikael Hallendal  <micke@imendio.com>

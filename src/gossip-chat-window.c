@@ -397,17 +397,12 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 		pixbuf = gossip_utils_get_pixbuf_offline ();
 	}
 	else {
-		GossipContact *contact;
-
+		GossipContact  *contact;
+		GossipPresence *presence;
+		
 		contact = gossip_chat_get_contact (chat);
-		if (gossip_contact_is_online (contact)) {
-			GossipPresence *presence;
-
-			presence = gossip_contact_get_presence (contact);
-			pixbuf = gossip_presence_get_pixbuf (presence);
-		} else {
-			pixbuf = gossip_utils_get_pixbuf_offline ();
-		}
+		presence = gossip_contact_get_presence (contact);
+		pixbuf = gossip_presence_get_pixbuf (presence);
 	}
 
 	return pixbuf;

@@ -663,19 +663,14 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 				    GtkTreeIter     *iter,
 				    gpointer         unused)
 {
-	GossipContact *c;
-	GdkPixbuf     *pixbuf;
-	
+	GossipContact  *c;
+	GdkPixbuf      *pixbuf;
+	GossipPresence *p;
+
 	gtk_tree_model_get (tree_model, iter, 0, &c, -1);
 
-	if (!gossip_contact_is_online (c)) {
-		pixbuf = gossip_utils_get_pixbuf_offline ();
-	} else {
-		GossipPresence *p;
-
-		p = gossip_contact_get_presence (c);
-		pixbuf = gossip_presence_get_pixbuf (p);
-	}
+	p = gossip_contact_get_presence (c);
+	pixbuf = gossip_presence_get_pixbuf (p);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);
