@@ -1,6 +1,11 @@
+2003-08-29  Richard Hult  <richard@imendio.com>
+
+        * ui/group-chat.glade: Fix a few border widths (4 to 0 or 6).
+
 2003-08-29  Mikael Hallendal  <micke@imendio.com>
 
-        * ui/*.glade: Higification (some, not full done...)
+        * ui/*.glade: Higification (some, not full done...). Based on
+	patch from Martyn Russell <ginxd@btopenworld.com>.
 
 2003-08-27  Ole Laursen  <olau@hardworking.dk>
 

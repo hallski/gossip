@@ -5,6 +5,7 @@
 <requires lib="gnome"/>
 
 <widget class="GtkWindow" id="group_chat_window">
+  <property name="border_width">6</property>
   <property name="title" translatable="yes">Gossip - Group Chat</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -19,14 +20,13 @@
       <property name="border_width">4</property>
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">0</property>
+      <property name="spacing">6</property>
 
       <child>
 	<widget class="GtkVBox" id="left_vbox">
-	  <property name="border_width">4</property>
 	  <property name="visible">True</property>
 	  <property name="homogeneous">False</property>
-	  <property name="spacing">4</property>
+	  <property name="spacing">6</property>
 
 	  <child>
 	    <widget class="GtkHBox" id="hbox4">
@@ -191,7 +191,7 @@
 		  <child>
 		    <widget class="GtkVBox" id="multi_vbox">
 		      <property name="homogeneous">False</property>
-		      <property name="spacing">4</property>
+		      <property name="spacing">6</property>
 
 		      <child>
 			<widget class="GtkScrolledWindow" id="scrolledwindow9">
@@ -287,7 +287,6 @@
 
       <child>
 	<widget class="GtkScrolledWindow" id="scrolledwindow8">
-	  <property name="border_width">4</property>
 	  <property name="width_request">150</property>
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
@@ -534,7 +533,6 @@
 
 	      <child>
 		<widget class="GtkTable" id="table1">
-		  <property name="border_width">4</property>
 		  <property name="visible">True</property>
 		  <property name="n_rows">3</property>
 		  <property name="n_columns">3</property>
