@@ -1,3 +1,8 @@
+2003-11-07  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster.c (roster_item_update): 
+	- Don't crash on empty groups. Patch from Sjoerd Simons. Fixes #126436
+
 2003-11-07  Richard Hult  <richard@imendio.com>
 
 	* configure.in: Add missing -I to the X includes when checking for
