@@ -508,6 +508,7 @@ chat_window_update_title (GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	gchar                *title; 
+	GdkPixbuf 	     *pixbuf;
 
 	priv = window->priv;
 
@@ -517,6 +518,12 @@ chat_window_update_title (GossipChatWindow *window)
 						       priv->current_chat));
 
 	gtk_window_set_title (GTK_WINDOW (window->priv->dialog), title);
+	if (window->priv->new_msg) {
+		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), pixbuf);
+        } else {
+		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), NULL);
+	}
 	g_free (title);
 }
 
