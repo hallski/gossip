@@ -1,3 +1,9 @@
+2004-01-15  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-account-dialog.c:
+	* src/gossip-app.c: 
+	- updated for new SSL API in Loudmouth
+
 2004-01-14  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-edit-groups-dialog.c (groups_add_groups): Compare

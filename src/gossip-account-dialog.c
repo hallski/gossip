@@ -152,7 +152,7 @@ account_dialog_setup (GossipAccountDialog *dialog)
 
 	account = dialog->account;
 	
-	if (lm_connection_supports_ssl ()) {
+	if (lm_ssl_is_supported ()) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->ssl_checkbutton),
 					      account->use_ssl);
 	} else {

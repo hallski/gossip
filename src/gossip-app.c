@@ -183,7 +183,7 @@ static void     app_connection_open_cb               (LmConnection       *connec
 						      gboolean            result,
 						      GossipApp          *app);
 static LmSSLResponse
-app_connection_ssl_func                              (LmConnection       *connection,
+app_connection_ssl_func                              (LmSSL              *ssl,
 						      LmSSLStatus         status,
 						      GossipApp          *app);
 static void     app_authentication_cb                (LmConnection       *connection,
@@ -1222,9 +1222,7 @@ app_connection_open_cb (LmConnection *connection,
 }
 
 static LmSSLResponse
-app_connection_ssl_func (LmConnection *connection,
-			 LmSSLStatus   status,
-			 GossipApp    *app)
+app_connection_ssl_func (LmSSL *ssl, LmSSLStatus status, GossipApp *app)
 {
 	return LM_SSL_RESPONSE_CONTINUE;
 }
@@ -1378,10 +1376,13 @@ gossip_app_connect (void)
 	lm_connection_set_port (priv->connection, account->port);
 	
 	if (account->use_ssl) {
-		lm_connection_set_use_ssl (priv->connection,
-					   NULL,
-					   (LmSSLFunction) app_connection_ssl_func,
-					   app);
+		LmSSL *ssl = lm_ssl_new (NULL,  
+					 (LmSSLFunction) app_connection_ssl_func,
+					 app,
+					 NULL);
+		
+		lm_connection_set_ssl (priv->connection, ssl);
+		lm_ssl_unref (ssl);
 	}
 	
 	result = lm_connection_open (priv->connection,
