@@ -1,3 +1,8 @@
+2004-01-22  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_idle_check_cb): Reset away message when we
+	get auto-back.
+
 2004-01-21  Richard Hult  <richard@imendio.com>
 
 	* Release 0.7.

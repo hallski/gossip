@@ -1334,7 +1334,11 @@ app_idle_check_cb (GossipApp *app)
 	}
 	else if (idle < 0) {
 		gossip_idle_reset ();
+
 		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+
+		g_free (priv->overridden_away_message);
+		priv->overridden_away_message = NULL;
 	}
 	
 	if (show != app_get_effective_show ()) {
