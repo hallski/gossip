@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-13 13:16+0200\n"
-"PO-Revision-Date: 2003-07-13 14:57+0200\n"
+"POT-Creation-Date: 2003-07-17 15:52+0200\n"
+"PO-Revision-Date: 2003-07-17 21:23+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -288,9 +288,13 @@ msgstr ""
 "Gossip se nyní pokusí zaregistrovat účet:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1263
+#: src/gossip-utils.c:1265
 msgid "Please enter your password:"
 msgstr "Zadejte prosím své heslo."
+
+#: src/gossip-utils.c:1267
+msgid "Remember Password?"
+msgstr "Zapamatovat si heslo?"
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:2
