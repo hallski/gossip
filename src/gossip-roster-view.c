@@ -405,6 +405,7 @@ roster_view_setup_tree (GossipRosterView *view)
 	
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell, "xpad", (guint) 0, NULL);
+	g_object_set (cell, "ypad", (guint) 1, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_cell_data_func (col, cell, 
 						 (GtkTreeCellDataFunc) roster_view_pixbuf_cell_data_func,
@@ -413,6 +414,7 @@ roster_view_setup_tree (GossipRosterView *view)
 
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell, "xpad", (guint) 4, NULL);
+	g_object_set (cell, "ypad", (guint) 1, NULL);
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_set_cell_data_func (col, cell,
 						 (GtkTreeCellDataFunc) roster_view_name_cell_data_func,
@@ -788,6 +790,7 @@ ellipsize_string (gchar *str, gint len)
 }
 
 #define ELLIPSIS_LIMIT 6
+#define TREE_INDENT 30
 
 static void
 roster_view_ellipsize_item_string (GossipRosterView *view,
@@ -842,7 +845,8 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	gchar                *status, *name;
 	gchar                *str;
 	PangoAttrList        *attr_list;
-	PangoAttribute       *attr_color, *attr_style;
+	PangoAttribute       *attr_color, *attr_style, *attr_size;
+	GtkStyle             *style;
 	GdkColor              color;
 	GtkTreeSelection     *selection;
 	gint                  width;
@@ -866,7 +870,8 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	/* FIXME: Figure out how to calculate the offset instead of
 	 * hardcoding it here (icon width + padding + indentation).
 	 */
-	width = GTK_WIDGET (view)->allocation.width - (16 + 4*2 + 30);
+	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &width, NULL);
+	width = GTK_WIDGET (view)->allocation.width - (width + 4*2);
 
 	if (!gtk_tree_model_iter_parent (model, &parent, iter)) {
 		/* Inbox */
@@ -884,6 +889,8 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		return;
 	}
 
+	width -= TREE_INDENT;
+	
 	tmp = gossip_roster_item_get_status (e->item);
 
 	if (!tmp || strcmp (tmp, "") == 0) {
@@ -909,12 +916,13 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	
 	str = g_strdup_printf ("%s\n%s", name, status);
 
-	color = GTK_WIDGET (view)->style->text[GTK_STATE_INSENSITIVE];
+	style = gtk_widget_get_style (GTK_WIDGET (view));
+	color = style->text_aa[GTK_STATE_NORMAL];
 
 	attr_list = pango_attr_list_new ();
 
 	attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
-	attr_style->start_index = g_utf8_strlen (name, -1) + 1;
+	attr_style->start_index = strlen (name) + 1;
 	attr_style->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_style);
 
@@ -922,10 +930,18 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	if (!gtk_tree_selection_iter_is_selected (selection, iter)) {
 		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);
 		attr_color->start_index = attr_style->start_index;
-		attr_color->end_index = attr_style->end_index;
+		attr_color->end_index = -1;
 		pango_attr_list_insert (attr_list, attr_color);
 	}
 
+	/* FIXME: Try if this could work? */
+	if (0) {
+		attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
+		attr_size->start_index = attr_style->start_index;
+		attr_size->end_index = -1;
+		pango_attr_list_insert (attr_list, attr_size);
+	}
+	
 	g_object_set (cell,
 		      "weight", PANGO_WEIGHT_NORMAL,
 		      "text", str,

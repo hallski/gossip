@@ -1,4 +1,17 @@
+2003-11-15  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-roster-view.c (roster_view_name_cell_data_func): Use
+	text_aa in normal state instead of text in insensitive, seems to
+	work better with some themes. Fix problem with multibyte char
+	names.
+	(roster_view_setup_tree): Try a tiny bit less vertical padding.
+
 2003-11-14  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-roster-view.c (roster_view_name_cell_data_func): Get
+	the real width of menu sized stock icons instead of hardcoding it
+	to 16. Don't include the tree indentation when ellipsizing "inbox"
+	items.
 
 	* gossip.schemas.in: Fix typo.
 
