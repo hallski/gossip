@@ -1,3 +1,7 @@
+2003-10-07  Mikael Hallendal  <micke@imendio.com>
+
+	* src/Makefile.am: Fixed build problem reported by Jonathan Taylor.
+
 2003-10-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster.c: 
