@@ -1078,10 +1078,7 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
 		chat_input_text_view_send (chat);
 		return TRUE;
 	}
-	if (IS_ENTER (event->keyval) && (event->state & GDK_CONTROL_MASK)) {
-		/* Do nothing for ctrl-enter. */
-		return TRUE;
-	}
+	
 	if (IS_ENTER (event->keyval) && (event->state & GDK_SHIFT_MASK)) {
 		/* Newline for shift-enter. */
 		return FALSE;
