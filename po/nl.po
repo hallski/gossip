@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-02 04:29+0100\n"
-"PO-Revision-Date: 2004-01-03 12:59+0100\n"
+"POT-Creation-Date: 2004-01-12 20:57+0100\n"
+"PO-Revision-Date: 2004-01-13 01:15+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -172,60 +172,60 @@ msgstr ""
 "Vincent van Adrighem\n"
 "Elros Cyriatan"
 
-#: src/gossip-app.c:611
-msgid "A Jabber Client for GNOME"
-msgstr "Een Jabber client voor GNOME"
+#: src/gossip-app.c:614
+msgid "An Instant Messaging Client for GNOME"
+msgstr "Een Instant Messaging Client voor GNOME"
 
-#: src/gossip-app.c:618
+#: src/gossip-app.c:623
 msgid "Gossip Website"
 msgstr "Gossip Webstek"
 
-#: src/gossip-app.c:737
+#: src/gossip-app.c:742
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Voer de gebruikers ID van de persoon in aan wie u een chatbericht wilt "
 "sturen."
 
-#: src/gossip-app.c:742 ui/main.glade.h:83
+#: src/gossip-app.c:747 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Chatten"
 
-#: src/gossip-app.c:1001
+#: src/gossip-app.c:1006
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s wilt van uw aanwezigheid op de hoogte worden gehouden."
 
-#: src/gossip-app.c:1244
+#: src/gossip-app.c:1249
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "De verbinding met de server is verbroken. Wilt u opnieuw verbinden?"
 
-#: src/gossip-app.c:1393
+#: src/gossip-app.c:1398
 msgid "Make sure that your account information is correct."
 msgstr "Zorg er voor dat uw account informatie juist is."
 
-#: src/gossip-app.c:1394
+#: src/gossip-app.c:1399
 msgid "The server may currently be unavailable."
 msgstr "De server kan momenteel onbereikbaar zijn."
 
-#: src/gossip-app.c:1796
+#: src/gossip-app.c:1801
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabber client"
 
-#: src/gossip-app.c:1972
+#: src/gossip-app.c:1977
 #, c-format
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
 
-#: src/gossip-app.c:2526
+#: src/gossip-app.c:2541
 msgid "Custom Message..."
 msgstr "Aangepast bericht..."
 
-#: src/gossip-app.c:2544
+#: src/gossip-app.c:2559
 msgid "Custom Busy Message..."
 msgstr "Aangepast bezig-bericht..."
 
-#: src/gossip-app.c:2551
+#: src/gossip-app.c:2566
 msgid "Leave..."
 msgstr "Verlaten..."
 
@@ -245,30 +245,38 @@ msgstr "Koppeling _openen"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:622
+#: src/gossip-chat-window.c:638
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatten - %s"
 
-#: src/gossip-chat.c:664
+#: src/gossip-chat.c:701
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Er is een fout opgetreden bij het chatten met %s."
 
-#: src/gossip-chat.c:669 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:706 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:755
+#: src/gossip-chat.c:796
 #, c-format
 msgid "%s went offline"
 msgstr "%s ging offline"
 
-#: src/gossip-chat.c:769
+#: src/gossip-chat.c:810
 #, c-format
 msgid "%s comes online"
 msgstr "%s komt online"
+
+#: src/gossip-chat.c:897
+msgid "Connected"
+msgstr "Verbonden"
+
+#: src/gossip-chat.c:912
+msgid "Disconnected"
+msgstr "Niet verbonden"
 
 #: src/gossip-contact-info.c:352
 #, c-format
@@ -285,7 +293,7 @@ msgstr "Er is een fout opgetreden tijdens het chatten in de groep-chat %s."
 msgid "Unable to enter the group chat %s."
 msgstr "Kan groep-chat %s niet binnengaan."
 
-#: src/gossip-log.c:233
+#: src/gossip-log.c:227
 msgid "Conversation Log"
 msgstr "Gesprekslog"
 
@@ -366,11 +374,11 @@ msgstr "/Contact _verwijderen"
 msgid "/Re_name group"
 msgstr "/Groep her_noemen"
 
-#: src/gossip-roster-view.c:930
+#: src/gossip-roster-view.c:909
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-roster-view.c:1237
+#: src/gossip-roster-view.c:1216
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -381,7 +389,7 @@ msgstr ""
 "%s\n"
 "uit uw contactlijst verwijderen?"
 
-#: src/gossip-roster-view.c:1330
+#: src/gossip-roster-view.c:1309
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -390,7 +398,7 @@ msgstr ""
 "Voer alstublieft een nieuwe bijnaam in voor contact\n"
 "%s"
 
-#: src/gossip-roster-view.c:1417
+#: src/gossip-roster-view.c:1396
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
