@@ -1,3 +1,7 @@
+2003-11-14  Richard Hult  <richard@imendio.com>
+
+	* gossip.schemas.in: Fix typo.
+
 2003-11-14  Mikael Hallendal  <micke@imendio.com>
 
 	* ui/main.glade: Make Ctrl-O toggle Show Offline contacts.

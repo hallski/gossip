@@ -23,7 +23,7 @@
       <type>bool</type>
       <default>false</default>
       <locale name="C">
-        <short>Show offline contact</short>
+        <short>Show offline contacts</short>
 	<long>
 	Whether or not to show contacts that are offline in the contact list.
 	</long>
