@@ -8,9 +8,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-06-23 23:38+0200\n"
+"POT-Creation-Date: 2003-06-28 23:28+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
-"Last-Translator: Christian Rose <menthos@menthos.com>\n"
+"Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,52 +30,52 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:287
+#: src/gossip-app.c:288
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:291
+#: src/gossip-app.c:292
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:295
+#: src/gossip-app.c:296
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:299 ui/main.glade.h:27
+#: src/gossip-app.c:300 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:303
+#: src/gossip-app.c:304
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:311
+#: src/gossip-app.c:312
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:371
+#: src/gossip-app.c:372
 msgid "translator_credits"
 msgstr ""
 "Christian Rose\n"
 "Richard Hult\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:382
+#: src/gossip-app.c:383
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:893
+#: src/gossip-app.c:903
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
-#: src/gossip-app.c:963
+#: src/gossip-app.c:973
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1221
+#: src/gossip-app.c:1231
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -96,13 +96,17 @@ msgstr "Operativsystem:"
 msgid "Information about %s"
 msgstr "Information om %s"
 
-#: src/gossip-main.c:61
-msgid "Don't connect on startup."
-msgstr "Anslut inte vid uppstart."
+#: src/gossip-main.c:67
+msgid "Don't connect on startup"
+msgstr "Anslut inte vid uppstart"
 
-#: src/gossip-main.c:74 ui/main.glade.h:33
-msgid "Gossip"
-msgstr "Gossip"
+#: src/gossip-main.c:76
+msgid "Which account to connect to on startup"
+msgstr "Konto att ansluta till vid uppstart"
+
+#: src/gossip-main.c:77
+msgid "ACCOUNT-NAME"
+msgstr "KONTO-NAME"
 
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
@@ -476,6 +480,10 @@ msgstr "Middag"
 #: ui/main.glade.h:32
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Har du redan ett konto på en Jabberserver? "
+
+#: ui/main.glade.h:33
+msgid "Gossip"
+msgstr "Gossip"
 
 #: ui/main.glade.h:34
 msgid ""

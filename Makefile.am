@@ -1,5 +1,13 @@
 SUBDIRS = ui src po
 
+@INTLTOOL_DESKTOP_RULE@
+
+desktop_in_files=gossip.desktop.in
+desktop_files=$(desktop_in_files:.desktop.in=.desktop)
+
+Applicationsdir = $(datadir)/applications
+Applications_DATA = $(desktop_files)
+
 INTLTOOL = 			\
 	intltool-extract.in 	\
 	intltool-merge.in 	\
@@ -8,7 +16,14 @@ INTLTOOL = 			\
 EXTRA_DIST = 			\
         ChangeLog               \
         README                  \
+	gossip.spec		\
+	gossip.spec.in		\
+	$(desktop_in_files)	\
+	$(desktop_files)	\
 	$(INTLTOOL)
 
-DISTCLEANFILES = $(INTLTOOL:.in=)
-
+DISTCLEANFILES = 		\
+	intltool-extract	\
+	intltool-merge		\
+	intltool-update		\
+	$(desktop_files)

@@ -1,5 +1,10 @@
 2003-06-28  Richard Hult  <richard@imendio.com>
 
+	* gossip.spec.in: 
+	* Makefile.am: 
+	* gossip.desktop.in: 
+	* configure.in: Prepare for a release some time in the future.
+
 	* src/gossip-main.c (main): Add option for which account to
 	connect to, fixes bug #495. Also change the short option for no
 	autoconnect to -n.

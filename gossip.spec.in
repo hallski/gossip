@@ -1,0 +1,55 @@
+%define ver @VERSION@
+%define name @PACKAGE@
+
+Summary: A program that reminds you to take wrist breaks
+Name: %name
+Version: %ver
+Release: 1
+Source: %{name}-%{ver}.tar.gz
+License: GPL
+Group: Applications/System
+BuildRoot: %{_tmppath}/%{name}-root
+
+BuildRequires: gtk2-devel >= @GTK_REQUIRED@
+BuildRequires: libglade2-devel >= @LIBGLADE_REQUIRED@
+BuildRequires: desktop-file-utils >= @DESKTOP_FILE_UTILS_REQUIRED@
+%description
+Gossip is a Jabber instant messaging program.
+%prep
+%setup -q
+
+%build
+%configure
+make
+
+%install
+rm -rf $RPM_BUILD_ROOT
+
+export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
+%makeinstall
+unset GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL
+
+desktop-file-install --vendor gnome --delete-original       \
+  --dir $RPM_BUILD_ROOT%{_datadir}/applications             \
+  --add-category X-Red-Hat-Extra                            \
+  $RPM_BUILD_ROOT%{_datadir}/applications/*
+
+%find_lang %{name}
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files -f %{name}.lang
+%defattr(-,root,root)
+
+%doc AUTHORS COPYING ChangeLog NEWS README
+
+%{_bindir}/*
+%{_datadir}/applications
+%{_datadir}/gossip/*
+
+%changelog
+* Sat Jun 28 2003 Richard Hult <richard@imendio.com>
+- Initial build.
+
+

@@ -29,6 +29,7 @@ LIBGLADE_REQUIRED=2.0.0
 LOUDMOUTH_REQUIRED=0.9.1
 GCONF_REQUIRED=1.2.0
 LIBGNOMEUI_REQUIRED=2.0.0
+DESKTOP_FILE_UTILS_REQUIRED=0.2.90
 
 AC_SUBST(GLIB_REQUIRED)
 AC_SUBST(GTK_REQUIRED)
@@ -36,6 +37,7 @@ AC_SUBST(LIBGLADE_REQUIRED)
 AC_SUBST(LOUDMOUTH_REQUIRED)
 AC_SUBST(GCONF_REQUIRED)
 AC_SUBST(LIBGNOMEUI_REQUIRED)
+AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED)
 
 dnl ================================
 dnl | Pkg-Config dependency checks |---------------------------
@@ -101,6 +103,7 @@ ui/pixmaps/Makefile
 src/Makefile
 src/sounds/Makefile
 po/Makefile.in
+gossip.spec
 ])
 
 
