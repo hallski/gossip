@@ -1,10 +1,15 @@
+2003-11-23  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (chat_window_accel_cb)
+	(gossip_chat_window_init): Add Alt-num accels for switching tabs.
+
 2003-11-20  Ross Burton  <ross@burtonini.com>
 
-	* src/gossip-chat.c (chat_error_dialog): 
-	Don't get the dialog of a NULL window.
+	* src/gossip-chat.c (chat_error_dialog): Don't get the dialog of a
+	NULL window.
 
-	* src/gossip-chat-window.c (gossip_chat_window_get_dialog):
-	Sanity check the parameter.
+	* src/gossip-chat-window.c (gossip_chat_window_get_dialog): Sanity
+	check the parameter.
 
 2003-11-20  Mikael Hallendal  <micke@imendio.com>
 

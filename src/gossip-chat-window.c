@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
+ * Copyright (C) 2003 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,6 +21,7 @@
 
 #include <config.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-i18n.h>
 #include <gconf/gconf-client.h>
@@ -40,6 +42,11 @@ static void gossip_chat_window_finalize       (GObject		     *object);
 static GdkPixbuf * 
 chat_window_get_status_pixbuf		      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
+static void chat_window_accel_cb              (GtkAccelGroup         *accelgroup,
+					       GObject               *object,
+					       guint                  key,
+					       GdkModifierType        mod,
+					       GossipChatWindow      *window);
 static gboolean 
 chat_window_has_toplevel_focus                (GossipChatWindow	     *window);
 static GtkWidget*
@@ -126,8 +133,13 @@ struct _GossipChatWindowPriv {
 };
 
 static gpointer parent_class;
-
 static GList *chat_windows = NULL;
+
+static guint tab_accel_keys[] = {
+	GDK_1, GDK_2, GDK_3, GDK_4, GDK_5,
+	GDK_6, GDK_7, GDK_8, GDK_9, GDK_0
+};
+
 
 GType
 gossip_chat_window_get_type (void)
@@ -170,6 +182,9 @@ gossip_chat_window_init (GossipChatWindow *window)
 	GossipChatWindowPriv *priv;
 	GladeXML             *glade;
 	GtkWidget            *menu_view;
+	GtkAccelGroup        *accel_group;
+	GClosure             *closure;
+	gint                  i;
 
 	priv = g_new0 (GossipChatWindowPriv, 1);
 	window->priv = priv;
@@ -190,6 +205,20 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_tabs_detach", &priv->m_tabs_detach,
 				       NULL);
 
+	accel_group = gtk_accel_group_new ();
+	gtk_window_add_accel_group (GTK_WINDOW (priv->dialog), accel_group);
+	
+	for (i = 0; i < G_N_ELEMENTS (tab_accel_keys); i++) {
+		closure =  g_cclosure_new (G_CALLBACK (chat_window_accel_cb),
+					   window,
+					   NULL);
+		gtk_accel_group_connect (accel_group,
+					 tab_accel_keys[i],
+					 GDK_MOD1_MASK,
+					 0,
+					 closure);
+	}
+	
 	g_signal_connect (menu_view,
 			  "activate",
 			  G_CALLBACK (chat_window_view_activate_cb),
@@ -305,11 +334,33 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	return pixbuf;
 }
 
+static void
+chat_window_accel_cb (GtkAccelGroup    *accelgroup,
+		      GObject          *object,
+		      guint             key,
+		      GdkModifierType   mod,
+		      GossipChatWindow *window)
+{
+	gint i, num = -1;
+
+	for (i = 0; i < G_N_ELEMENTS (tab_accel_keys); i++) {
+		if (tab_accel_keys[i] == key) {
+			num = i;
+			break;
+		}
+	}
+
+	if (num != -1) {
+		gtk_notebook_set_current_page (
+			GTK_NOTEBOOK (window->priv->notebook), num);
+	}
+}
+
 static gboolean
 chat_window_has_toplevel_focus (GossipChatWindow *window)
 {
 	gboolean focus = FALSE;
-
+	
 	/* The has-toplevel-focus property is new in GTK 2.2 so if we don't find it, we
 	 * pretend that the window doesn't have focus.
 	 */
