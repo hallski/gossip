@@ -30,7 +30,7 @@ static DBusHandlerResult message_func      (DBusConnection *connection,
 					    gpointer        user_data);
 
 
-static const char     *object_path[] = { "org", "imendio", "Gossip", NULL };
+static const char     *object_path = "/org/imendio/Gossip";
 
 static DBusObjectPathVTable vtable = {
 	unregistered_func,
@@ -45,12 +45,18 @@ gossip_dbus_init (void)
 	DBusConnection *bus;
 	DBusError       error;
 
-	bus = dbus_bus_get_with_g_main (DBUS_BUS_SESSION, NULL);
+	bus = dbus_bus_get(DBUS_BUS_SESSION, NULL);
 	if (!bus) {
 		return FALSE;
 	}
   
 	dbus_error_init (&error);
+	dbus_connection_setup_with_g_main(bus, NULL);
+	if (dbus_error_is_set (&error)) {
+		g_warning ("Failed to setup dbus connection");
+		dbus_error_free (&error);
+		return FALSE;
+  }
 
 	dbus_bus_acquire_service (bus, GOSSIP_SERVICE, 0, &error);
 	if (dbus_error_is_set (&error)) {

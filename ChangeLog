@@ -1,3 +1,10 @@
+2004-08-19  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-dbus.c: (gossip_dbus_init):
+	* src/gossip-dbus.h:
+	- Patch from Sjoerd Simons to compile against D-BUS 0.22
+	* configure.in: Bumped D-BUS requirement to be 0.22
+
 2004-08-18  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-disco-register.c: (disco_register_new),

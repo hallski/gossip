@@ -21,6 +21,8 @@
 #ifndef __GOSSIP_DBUS_H__
 #define __GOSSIP_DBUS_H__
 
+#include <dbus/dbus.h>
+#include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus-glib.h>
 
 #define GOSSIP_SERVICE "org.imendio.gossip"
