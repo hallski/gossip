@@ -45,11 +45,6 @@ struct _GossipChatViewPriv {
 };
 
 typedef enum {
-    TIMESTAMP_STYLE_IRC,
-    TIMESTAMP_STYLE_NORMAL
-} TimestampStyle;
-
-typedef enum {
 	GOSSIP_SMILEY_NORMAL,      /*  :)   */
 	GOSSIP_SMILEY_WINK,        /*  ;)   */
 	GOSSIP_SMILEY_BIGEYE,      /*  =)   */
@@ -130,9 +125,6 @@ static void       chat_view_realize_cb      (GossipChatView      *widget,
 static gint       chat_view_url_regex_match (const gchar         *msg,
 					     GArray              *start,
 					     GArray              *end);
-static TimestampStyle 
-chat_view_get_timestamp_style               (void);
-
 static void       
 chat_view_insert_text_with_emoticons        (GtkTextBuffer       *buf,
 					     GtkTextIter         *iter, 
@@ -253,11 +245,6 @@ chat_view_setup_tags (GossipChatView *view)
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "notice",
 				    "foreground", "steelblue4",
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "timestamp-irc",
-				    "foreground", "darkgrey",
 				    NULL);
 
 	gtk_text_buffer_create_tag (priv->buffer,
@@ -519,18 +506,6 @@ chat_view_url_regex_match (const gchar *msg,
 	return num_matches;
 }
 
-static TimestampStyle 
-chat_view_get_timestamp_style (void)
-{
-    if (gconf_client_get_bool (gconf_client,
-			       "/apps/gossip/conversation/timestamp_messages",
-			       NULL)) {
-	return TIMESTAMP_STYLE_IRC;
-    }
-
-    return TIMESTAMP_STYLE_NORMAL;
-}
-
 static void
 chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 				      GtkTextIter   *iter, 
@@ -660,41 +635,21 @@ chat_view_maybe_append_timestamp (GossipChatView *view, const gchar *time_str)
 {
 	GossipChatViewPriv *priv;
 	gchar              *stamp;
-	TimestampStyle      style;
-	
+	GTimeVal            cur_time;
+
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = view->priv;
 	
-	style = chat_view_get_timestamp_style ();
 	stamp = gossip_utils_get_timestamp (time_str);
 
-	if (style == TIMESTAMP_STYLE_NORMAL) {
-		GTimeVal  cur_time;
+	g_get_current_time (&cur_time);
 
-		g_get_current_time (&cur_time);
+	if (priv->last_timestamp.tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec) {
+		priv->last_timestamp.tv_sec = cur_time.tv_sec;
 
-		if (priv->last_timestamp.tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec) {
-			priv->last_timestamp.tv_sec = cur_time.tv_sec;
-
-			gossip_chat_view_append_event_msg (view, stamp, FALSE);
-		} 
-	} else {
-		GtkTextBuffer *buffer;
-		GtkTextIter    iter;
-
-		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-		gtk_text_buffer_get_end_iter (buffer, &iter);
-
-		if (!gtk_text_iter_starts_line (&iter)) {
-			gtk_text_buffer_insert (buffer,	&iter, "\n", 1);
-		}
-		
-		gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
-							  stamp, -1, 
-							  "timestamp-irc",
-							  NULL);
-	}
+		gossip_chat_view_append_event_msg (view, stamp, FALSE);
+	} 
 	
 	g_free (stamp);
 }
