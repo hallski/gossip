@@ -47,7 +47,13 @@ register_dialog_destroy_cb (GtkWidget           *widget,
 
 	/*g_free (data); We leak this until we can cancel pending replies. */
 }
-	
+
+static LmSSLResponse
+register_connection_ssl_func (LmSSL *ssl, LmSSLStatus status, gpointer user_data)
+{
+	return LM_SSL_RESPONSE_CONTINUE;
+}
+
 static LmHandlerResult
 register_register_handler (LmMessageHandler    *handler,
 			   LmConnection        *connection,
@@ -156,6 +162,15 @@ gossip_register_account (GossipAccount *account,
 
 	data->account = account;
 	data->connection = lm_connection_new (account->server);
+	lm_connection_set_port (data->connection, account->port);
+	if (account->use_ssl) {
+		LmSSL *ssl = lm_ssl_new (NULL,  
+					 (LmSSLFunction) register_connection_ssl_func,
+					 NULL,
+					 NULL);
+		lm_connection_set_ssl (data->connection, ssl);
+		lm_ssl_unref (ssl);
+	}
 	data->password = password;
 	
 	data->dialog = gtk_message_dialog_new (parent,

@@ -1,3 +1,8 @@
+2004-04-28  Ross Burton  <ross@burtonini.com>
+
+	* src/gossip-register.c:
+	Use SSL when registering if we need to. Closes #141273.
+
 2004-04-27  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-register.c: (register_connection_open_cb):
