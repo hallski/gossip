@@ -1,3 +1,19 @@
+2003-12-17  Mikael Hallendal  <micke@imendio.com>
+
+	* gossip.schemas.in:
+	- Added main_window_hidden, and x,y position of main-window.
+	- moved main window width/height keys.
+	- Based on patch from Kim Andersen.
+	  
+	* src/gossip-app.c: 
+	(app_init), (app_toggle_visibility), (configure_event_idle_cb):
+	- Store the visability state of the main window so that we can start 
+	  without showing the roster. Useful when starting from session.
+	- Store location of main window and open it in the same place when 
+	  restarted.
+	- Based on patch from Kim Andersen
+	- Fixes bug #121120
+
 2003-12-15  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c:

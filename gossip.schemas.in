@@ -73,13 +73,13 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/geometry/width</key>
-      <applyto>/apps/gossip/geometry/width</applyto>
+      <key>/schemas/apps/gossip/ui/main_window_width</key>
+      <applyto>/apps/gossip/ui/main_window_width</applyto>
       <owner>gossip</owner>
       <type>int</type>
       <default>180</default>
       <locale name="C">
-         <short>Width of main window</short>
+         <short>Width of the main window</short>
          <long>
            The width of the main window.
          </long>
@@ -87,8 +87,8 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/geometry/height</key>
-      <applyto>/apps/gossip/geometry/height</applyto>
+      <key>/schemas/apps/gossip/ui/main_window_height</key>
+      <applyto>/apps/gossip/ui/main_window_height</applyto>
       <owner>gossip</owner>
       <type>int</type>
       <default>320</default>
@@ -98,6 +98,48 @@
            The height of the main window.
          </long>
       </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/ui/main_window_position_x</key>
+      <applyto>/apps/gossip/ui/main_window_position_x</applyto>
+      <owner>gossip</owner>
+      <type>int</type>
+      <default>0</default>
+      <locale name="C">
+         <short>X position of main window</short>
+         <long>
+           The X position of the main window.
+         </long>
+      </locale>
+    </schema>
+    
+    <schema>
+      <key>/schemas/apps/gossip/ui/main_window_height</key>
+      <applyto>/apps/gossip/ui/main_window_height</applyto>
+      <owner>gossip</owner>
+      <type>int</type>
+      <default>0</default>
+      <locale name="C">
+         <short>Y position of main window</short>
+         <long>
+           The Y position of the main window.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+       <key>/schemas/apps/gossip/ui/main_window_hidden</key>
+       <applyto>/apps/gossip/ui/main_window_hidden</applyto>
+       <owner>gossip</owner>
+       <type>bool</type>
+       <default>0</default>
+       <locale name="C">
+          <short>Hide main window</short>
+          <long>
+            Hide the main window.
+          </long>
+       </locale>
     </schema>
 
     <schema>

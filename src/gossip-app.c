@@ -327,6 +327,8 @@ app_init (GossipApp *singleton_app)
 	GtkRequisition  req;
 	gboolean        show_offline;
 	GtkWidget      *show_offline_widget;
+	gint            x, y;
+	gboolean        hidden;
 
 	app = singleton_app;
 	
@@ -348,11 +350,11 @@ app_init (GossipApp *singleton_app)
 				       NULL);
 
 	width = gconf_client_get_int (gconf_client,
-				      "/apps/gossip/geometry/width",
+				      GCONF_PATH "/ui/main_window_width",
 				      NULL);
 
 	height = gconf_client_get_int (gconf_client,
-				       "/apps/gossip/geometry/height",
+				       GCONF_PATH "/ui/main_window_height",
 				       NULL);
 
 	gtk_window_set_default_size (GTK_WINDOW (priv->window), width, height);
@@ -490,8 +492,27 @@ app_init (GossipApp *singleton_app)
 
 	/* Start the idle time checker. */
 	g_timeout_add (2000, (GSourceFunc) app_idle_check_cb, app);
-	
-	gtk_widget_show (priv->window);
+
+	/* Set window position */
+ 	x = gconf_client_get_int (gconf_client, 
+				  GCONF_PATH "/ui/main_window_position_x",
+				  NULL);
+
+	y = gconf_client_get_int (gconf_client, 
+				  GCONF_PATH "/ui/main_window_position_y", 
+				  NULL);
+ 
+ 	if (x >= 0 && y >= 0) {
+ 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
+	}
+
+	hidden = gconf_client_get_bool (gconf_client, 
+					GCONF_PATH "/ui/main_window_hidden", 
+					NULL);
+
+ 	if (!hidden) {
+		gtk_widget_show (priv->window);
+	}
 
 	/* Note: this is a hack that sets the minimal size of the window so it
 	 * doesn't allow resizing to a smaller width than the menubar takes
@@ -1664,7 +1685,6 @@ static void
 app_toggle_visibility (void)
 {
 	GossipAppPriv *priv;
-	static gint    x = 0, y = 0;
 	gboolean       visible;
 
 	priv = app->priv;
@@ -1674,17 +1694,34 @@ app_toggle_visibility (void)
 		      NULL);
 	
 	if (visible) {
-		gtk_window_get_position (GTK_WINDOW(priv->window), &x, &y);
+		// gtk_window_get_position (GTK_WINDOW(priv->window), &x, &y);
 		gtk_widget_hide (priv->window);
 		
 		gtk_widget_hide (priv->hide_popup_item);
 		gtk_widget_show (priv->show_popup_item);
+		gconf_client_set_bool (gconf_client, 
+				       GCONF_PATH "/ui/main_window_hidden", 1,
+				       NULL);
 	} else {
+		gint x, y;
+
+		x = gconf_client_get_int (gconf_client, 
+					  GCONF_PATH "/ui/main_window_position_x",
+					  NULL);
+		y = gconf_client_get_int (gconf_client, 
+					  GCONF_PATH "/ui/main_window_position_y",
+					  NULL);
 		gtk_widget_show (priv->window);
-		gtk_window_move (GTK_WINDOW (priv->window), x, y);
+		
+		if (x >= 0 && y >= 0) {
+			gtk_window_move (GTK_WINDOW (priv->window), x, y);
+		}
 		
 		gtk_widget_show (priv->hide_popup_item);
 		gtk_widget_hide (priv->show_popup_item);
+		gconf_client_set_bool (gconf_client, 
+				       GCONF_PATH "/ui/main_window_hidden", 0,
+				       NULL);
 	}
 }
 
@@ -2538,18 +2575,30 @@ configure_event_idle_cb (GtkWidget *widget)
 {
 	GossipAppPriv *priv = app->priv;
 	gint           width, height;
+	gint           x, y;
 	
 	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
+	gtk_window_get_position (GTK_WINDOW(app->priv->window), &x, &y);
 
 	gconf_client_set_int (gconf_client,
-			      "/apps/gossip/geometry/width",
+			      GCONF_PATH "/ui/main_window_width",
 			      width,
 			      NULL);
 
 	gconf_client_set_int (gconf_client,
-			      "/apps/gossip/geometry/height",
+			      GCONF_PATH "/ui/main_window_height",
 			      height,
 			      NULL);
+	
+	gconf_client_set_int (gconf_client,
+ 			      GCONF_PATH "/ui/main_window_position_x",
+ 			      x,
+ 			      NULL);
+ 
+ 	gconf_client_set_int (gconf_client,
+ 			      GCONF_PATH "/ui/main_window_position_y",
+ 			      y,
+ 			      NULL);
 
 	priv->size_timeout_id = 0;
 	
