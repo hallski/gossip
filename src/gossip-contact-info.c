@@ -21,10 +21,12 @@
  */
 
 #include <config.h>
+#include <string.h>
 #include <glade/glade.h>
 #include <gtk/gtklabel.h>
 #include <gtk/gtktable.h>
 #include <libgnome/gnome-i18n.h>
+#include <libgnomeui/gnome-href.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-contact-info.h"
@@ -39,8 +41,12 @@ struct _GossipContactInfo {
 	GtkWidget *title_label;
 	GtkWidget *personal_not_avail_label;
 	GtkWidget *personal_table;
+	GtkWidget *name_label;
 	GtkWidget *client_not_avail_label;
 	GtkWidget *client_table;
+	GtkWidget *client_name_label;
+	GtkWidget *version_label;
+	GtkWidget *os_label;
 	GtkWidget *description_textview;
 	GtkWidget *close_button;
 
@@ -128,10 +134,7 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 static void
 contact_info_dialog_close_cb (GtkWidget *widget, GossipContactInfo *info)
 {
-	/* FIXME: use this instead when we can cancel pending replies in
-	 * loudmouth: gtk_widget_destroy (info->dialog); */
-
-	gtk_widget_hide (info->dialog);
+	gtk_widget_destroy (info->dialog);
 }
 
 static LmHandlerResult
@@ -141,6 +144,7 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 			     GossipContactInfo *info)
 {
 	LmMessageNode *vCard, *node;
+	gboolean       show_personal = FALSE;
 
 	d(g_print ("Got a vcard response\n"));
 
@@ -165,14 +169,57 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 		gtk_widget_set_sensitive (info->description_textview, FALSE);
 	}
 
-	node = lm_message_node_get_child (vCard, "N");
+	node = lm_message_node_get_child (vCard, "FN");
 	if (node) {
-		d(g_print ("Found the 'N' tag\n"));
+		show_personal = TRUE;
+		
+		gtk_label_set_text (GTK_LABEL (info->name_label),
+				    lm_message_node_get_value (node)); 
+		
+		d(g_print ("Found the 'FN' tag\n"));
 	}
 
-	node = lm_message_node_get_child (vCard, "ADR");
-	if (node) {
-		d(g_print ("Found the 'ADR' tag\n"));
+	node = lm_message_node_get_child (vCard, "EMAIL");
+	if (node && lm_message_node_get_value (node) &&
+	    strcmp (lm_message_node_get_value (node), "") != 0) {
+		GtkWidget *href;
+		gchar     *link;
+
+		show_personal = TRUE;
+
+		link = g_strdup_printf ("mailto:%s", 
+					lm_message_node_get_value (node));
+		
+		href = gnome_href_new (link,
+				       lm_message_node_get_value (node));
+		
+		gtk_table_attach_defaults (GTK_TABLE (info->personal_table),
+					   href,
+					   1, 2,
+					   1, 2);
+		g_free (link);
+	}
+	
+	node = lm_message_node_get_child (vCard, "URL");
+	if (node && lm_message_node_get_value (node) &&
+	    strcmp (lm_message_node_get_value (node), "") != 0) {
+		GtkWidget *href;
+
+		show_personal = TRUE;
+
+		href = gnome_href_new (lm_message_node_get_value (node),
+				       lm_message_node_get_value (node));
+		gtk_table_attach_defaults (GTK_TABLE (info->personal_table),
+					   href, 
+					   1, 2,
+					   2, 3);
+	}
+
+	
+
+	if (show_personal) {
+		gtk_widget_hide (info->personal_not_avail_label);
+		gtk_widget_show_all (info->personal_table);
 	}
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -185,7 +232,7 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 			       GossipContactInfo *info)
 {
 	LmMessageNode *query, *node;
-	GtkWidget     *name_label, *value_label;
+	gboolean       show_client_info = FALSE;
 
 	d(g_print ("Version reply\n"));
 
@@ -198,67 +245,35 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
-	gtk_widget_hide (info->client_not_avail_label);
-
 	node = lm_message_node_get_child (query, "name");
 	if (node) {
-		name_label = gtk_label_new (_("Name:"));
-		value_label = gtk_label_new (node->value);
+		show_client_info = TRUE;
 
-		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
-		gtk_misc_set_alignment (GTK_MISC (value_label), 0, 0.5);
-		
-		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
-					   name_label,
-					   0, 1, 
-					   0, 1);
-		
-		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
-					   value_label,
-					   1, 2, 
-					   0, 1);
-	}
-	else {
-		d(g_print ("No name\n"));
+		gtk_label_set_text (GTK_LABEL (info->client_name_label),
+				    lm_message_node_get_value (node));
 	}
 
 	node = lm_message_node_get_child (query, "version");
 	if (node) {
-		name_label = gtk_label_new (_("Version:"));
-		value_label = gtk_label_new (node->value);
-	
-		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
-		gtk_misc_set_alignment (GTK_MISC (value_label), 0, 0.5);
-		
-		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
-					   name_label,
-					   0, 1,
-					   1, 2);
-		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
-					   value_label,
-					   1, 2, 
-					   1, 2);
+		show_client_info = TRUE;
+
+		gtk_label_set_text (GTK_LABEL (info->version_label),
+				    lm_message_node_get_value (node));
 	}
 
 	node = lm_message_node_get_child (query, "os");
 	if (node) {
-		name_label = gtk_label_new (_("OS:"));
-		value_label = gtk_label_new (node->value);
-		
-		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
-		gtk_misc_set_alignment (GTK_MISC (value_label), 0, 0.5);
-		
-		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
-					   name_label,
-					   0, 1, 
-					   2, 3);
-		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
-					   value_label,
-					   1, 2, 
-					   2, 3);
+		show_client_info = TRUE;
+
+		gtk_label_set_text (GTK_LABEL (info->os_label),
+				    lm_message_node_get_value (node));
 	}
 
-	gtk_widget_show_all (info->client_table);
+	if (show_client_info) {
+		gtk_widget_hide (info->client_not_avail_label);
+	
+		gtk_widget_show_all (info->client_table);
+	}
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
@@ -281,8 +296,12 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 				      "title_label", &info->title_label,
 				      "personal_not_avail_label", &info->personal_not_avail_label,
 				      "personal_table", &info->personal_table,
+				      "name_label", &info->name_label,
 				      "client_not_avail_label", &info->client_not_avail_label,
 				      "client_table", &info->client_table,
+				      "client_name_label", &info->client_name_label,
+				      "version_label", &info->version_label,
+				      "os_label", &info->os_label,
 				      "close_button", &info->close_button,
 				      "description_textview", &info->description_textview,
 				      NULL);
@@ -318,4 +337,3 @@ gossip_contact_info_get_dialog (GossipContactInfo *info)
 {
 	return info->dialog;
 }
-

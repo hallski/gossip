@@ -1,5 +1,13 @@
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-info.c:
+	(contact_info_vcard_reply_cb),
+	(contact_info_version_reply_cb):
+	(gossip_contact_info_new):
+	* ui/main.glade: More work on the contact information dialog.
+
+2003-07-17  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-contact-info.c: (gossip_contact_info_new):
 	* ui/main.glade: Remove additional information and address fields.
 
