@@ -1,4 +1,14 @@
+Gossip
+======
+
+Gossip aims at making Instant Messaging with Jabber as easy as possible,
+while giving users of the GNOME Desktop a user friendly way of keeping
+in touch with their friends.
+
 Bug reporting:
 ==============
 
-Bugzilla at http://bugzilla.gnome.org/ module gossip
+Please report bugs to the GNOME Bugzilla, in the gossip module:
+
+http://bugzilla.gnome.org/enter_bug.cgi?product=gossip
+

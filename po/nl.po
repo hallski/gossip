@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip cvs\n"
-"POT-Creation-Date: 2003-07-07 13:07+0200\n"
+"POT-Creation-Date: 2003-07-07 18:14+0200\n"
 "PO-Revision-Date: 2003-07-07 16:45+0100\n"
 "Last-Translator: Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -40,11 +40,11 @@ msgstr ""
 msgid "Free to chat"
 msgstr ""
 
-#: src/gossip-app.c:295
+#: src/gossip-app.c:341
 msgid "Busy"
 msgstr "Bezig"
 
-#: src/gossip-app.c:299 ui/main.glade.h:27
+#: src/gossip-app.c:345 ui/main.glade.h:27
 msgid "Away"
 msgstr "Weg"
 
@@ -52,13 +52,13 @@ msgstr "Weg"
 msgid "Extended away"
 msgstr ""
 
-#: src/gossip-app.c:311
+#: src/gossip-app.c:357
 msgid "Offline"
 msgstr "Off-line"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:371
+#: src/gossip-app.c:422
 msgid "translator_credits"
 msgstr "Vincent van Adrighem"
 
@@ -92,11 +92,11 @@ msgstr ""
 msgid "Details:"
 msgstr ""
 
-#: src/gossip-contact-info.c:176
+#: src/gossip-contact-info.c:201
 msgid "Name:"
 msgstr "Naam:"
 
-#: src/gossip-contact-info.c:194
+#: src/gossip-contact-info.c:223
 msgid "Version:"
 msgstr "Versie:"
 
@@ -210,7 +210,7 @@ msgid ""
 "<b>%s</b>."
 msgstr ""
 
-#: src/gossip-utils.c:1237
+#: src/gossip-utils.c:1238
 msgid "Please enter your password:"
 msgstr ""
 
@@ -251,7 +251,7 @@ msgstr "Naar:"
 msgid "_Reply..."
 msgstr "_Beantwoorden..."
 
-#: ui/chat.glade.h:10 ui/group-chat.glade.h:22
+#: ui/chat.glade.h:10 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Verzend"
 
@@ -279,7 +279,7 @@ msgstr ""
 msgid "Account _name:"
 msgstr ""
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:8
 msgid "C_onnect"
 msgstr "Verbindingen _maken"
 
@@ -315,7 +315,7 @@ msgstr ""
 msgid "_Port:"
 msgstr ""
 
-#: ui/connect.glade.h:21
+#: ui/connect.glade.h:17
 msgid "_Priority:"
 msgstr "_Prioriteit:"
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "_Resource:"
 msgstr ""
 
-#: ui/group-chat.glade.h:23
+#: ui/connect.glade.h:20 ui/group-chat.glade.h:20
 msgid "_Server:"
 msgstr "_Server:"
 
@@ -335,7 +335,7 @@ msgstr "_Server:"
 msgid "_User name:"
 msgstr ""
 
-#: ui/connect.glade.h:23
+#: ui/connect.glade.h:22
 msgid "_User:"
 msgstr "_Gebruiker:"
 
@@ -403,7 +403,7 @@ msgstr ""
 msgid "_Join"
 msgstr ""
 
-#: ui/group-chat.glade.h:20
+#: ui/group-chat.glade.h:17
 msgid "_Nickname:"
 msgstr "_Bijnaam:"
 
@@ -459,7 +459,7 @@ msgstr ""
 msgid "<b>Setup Finished</b>"
 msgstr ""
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:14
 msgid "<b>Status:</b>"
 msgstr "<b>Status:</b>"
 
@@ -650,7 +650,7 @@ msgstr ""
 msgid "What username do you want to use?"
 msgstr ""
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:66
 msgid "Yes"
 msgstr "Ja"
 
@@ -658,7 +658,7 @@ msgstr "Ja"
 msgid "Your Identity"
 msgstr ""
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:68
 msgid "_Actions"
 msgstr "_Acties"
 
