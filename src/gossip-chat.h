@@ -76,6 +76,7 @@ GossipChatWindow *gossip_chat_get_window         (GossipChat       *chat);
 void              gossip_chat_clear              (GossipChat       *chat);
 gchar *           gossip_chat_get_history        (GossipChat       *chat,
 						  gint              lines);
+void              gossip_chat_scroll_down        (GossipChat       *chat);
 
         
 G_END_DECLS

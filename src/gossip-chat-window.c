@@ -836,6 +836,8 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	chat_window_update_status (window, chat);
 	chat_window_update_title (window);
 	chat_window_update_menu (window);
+
+	gossip_chat_scroll_down (chat);
 }
 
 static void

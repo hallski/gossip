@@ -1,5 +1,14 @@
 2004-01-23  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c (chat_window_tab_added_cb): Scroll the
+	textview all the way down.
+
+	* src/gossip-chat.c (gossip_chat_scroll_down): Add.
+
+	* src/gossip-chat-view.c (gossip_chat_view_scroll_down): Refactor.
+	(gossip_chat_view_append_chat_message) 
+	(gossip_chat_view_append_event_msg): Use the above.
+
 	* src/gossip-main.c (setup_default_window_icon): 
 	* ui/chat.glade: Use the logo instead. Fixes bug #125663.
 

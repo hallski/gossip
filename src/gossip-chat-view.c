@@ -735,6 +735,29 @@ chat_view_is_scrolled_down (GossipChatView *view)
 }
 
 void
+gossip_chat_view_scroll_down (GossipChatView *view)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	GtkTextMark   *mark;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	mark = gtk_text_buffer_create_mark (buffer,
+					    NULL,
+					    &iter,
+					    FALSE);
+	
+	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+				      mark,
+				      0.0,
+				      FALSE,
+				      0,
+				      0);
+}
+
+void
 gossip_chat_view_append_chat_message (GossipChatView *view,
 				      const gchar    *time_str,
 				      const gchar    *to,
@@ -744,7 +767,6 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	GtkTextBuffer *buffer;
 	GtkTextIter    iter;
 	gchar         *nick_tag;
-	GtkTextMark   *mark;
 	gint           num_matches, i;
 	GArray        *start, *end;
 	gboolean       bottom;
@@ -889,18 +911,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	 * bottom before.
 	 */
 	if (bottom) {
-		gtk_text_buffer_get_end_iter (buffer, &iter);
-		mark = gtk_text_buffer_create_mark (buffer,
-						    NULL,
-						    &iter,
-						    FALSE);
-		
-		gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-					      mark,
-					      0.0,
-					      FALSE,
-					      0,
-					      0);
+		gossip_chat_view_scroll_down (view);
 	}
 }
 
@@ -913,7 +924,6 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 	GtkTextIter    iter;
 	gchar         *stamp;
 	gchar         *msg;
-	GtkTextMark   *mark;
 	gboolean       bottom;
 
 	bottom = chat_view_is_scrolled_down (view);
@@ -948,18 +958,7 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 				1);
 
 	if (bottom) {
-		gtk_text_buffer_get_end_iter (buffer, &iter);
-		mark = gtk_text_buffer_create_mark (buffer,
-						    NULL,
-						    &iter,
-						    FALSE);
-		
-		gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-					      mark,
-					      0.0,
-					      FALSE,
-					      0,
-					      0);
+		gossip_chat_view_scroll_down (view);
 	}
 }
 

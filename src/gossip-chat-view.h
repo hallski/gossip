@@ -59,5 +59,7 @@ void             gossip_chat_view_append_event_msg    (GossipChatView *view,
 void             gossip_chat_view_set_margin          (GossipChatView *view,
 						       gint            margin);
 void             gossip_chat_view_clear               (GossipChatView *view);
+void             gossip_chat_view_scroll_down         (GossipChatView *view);
+
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

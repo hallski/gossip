@@ -1024,6 +1024,18 @@ chat_input_text_view_send (GossipChat *chat)
 	g_free (msg);
 }
 
+void
+gossip_chat_scroll_down (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+
+	gossip_chat_view_scroll_down (priv->view);
+}
+
 static gboolean
 chat_input_key_press_event_cb (GtkWidget   *widget,
                                GdkEventKey *event,
