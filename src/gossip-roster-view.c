@@ -752,13 +752,13 @@ roster_view_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 
 	if (!gtk_tree_model_iter_parent (model, &parent, iter)) {
 		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
-	}
-	else {	
+	} else {	
 		flash = g_hash_table_lookup (priv->flash_table, e->item);
 		
 		if (flash && flash->flash_on) {
 			pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE); 
-		} else if (gossip_roster_item_is_offline (e->item)) {
+		}
+		else if (gossip_roster_item_is_offline (e->item)) {
 			pixbuf = gossip_utils_get_pixbuf_offline ();
 		} else {
 			GossipShow show = gossip_roster_item_get_show (e->item);
