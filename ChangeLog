@@ -1,3 +1,10 @@
+2004-09-16  Martyn Russell  <mr@gnome.org>
+
+	* protocols/Makefile.am (stock_DATA): 
+	- Quick fix to stop the pixbuf loading warnings.  This occurs
+	because the stock images are in a different location to the
+	protocol stock images. 
+
 2004-09-16  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-group-chat.c 
