@@ -1,5 +1,13 @@
 2004-12-30  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.in:
+	* gossip.desktop.in: 
+	- Removed again, had forgotten the patch from Christoffer Olsen 
+	* src/gossip-jabber.c: (jabber_iq_handler):
+	- Readded my patch to not reply to error messages. 
+
+2004-12-30  Mikael Hallendal  <micke@imendio.com>
+
 	* AUTHORS: Added Martyn
 	* configure.in:
 	* protocols/aim.protocol:
