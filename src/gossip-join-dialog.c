@@ -145,18 +145,18 @@ join_dialog_response_cb (GtkWidget        *dialog,
 {
 	const gchar *room;
 	const gchar *server;
-	const gchar *nick;
+	gchar *nick;
 	gchar       *to;
 	LmMessage   *m;
 	
 	switch (response) {
 	case GTK_RESPONSE_OK:
-		nick = gtk_entry_get_text (join->nick_entry);
+		nick = g_strdup (gtk_entry_get_text (join->nick_entry));
+		g_strstrip (nick);
 		server = gtk_entry_get_text (join->server_entry);
 		room = gtk_entry_get_text (join->room_entry);
 		
 		to = g_strdup_printf ("%s@%s/%s", room, server, nick);
-		
 		m = lm_message_new_with_sub_type (to, LM_MESSAGE_TYPE_PRESENCE,
 						  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 		g_free (to);
@@ -165,6 +165,7 @@ join_dialog_response_cb (GtkWidget        *dialog,
 		lm_message_unref (m);
 
 		gossip_app_join_group_chat (join->app, room, server, nick);
+		g_free (nick);
 		break;
 
 	default:

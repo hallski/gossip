@@ -1,5 +1,12 @@
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-favorites-dialog.c: (favorites_dialog_update_favorite_cb): 
+	- Strip nickname before saving. 
+	* src/gossip-join-dialog.c: (join_dialog_response_cb): 
+	- Strip nickname before connecting. Fixes bug #116990
+
+2003-07-17  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-contact-info.c: Added support for cancelling requested
 	  information if user closes the window before the reply to vCard and
 	  version has been received.

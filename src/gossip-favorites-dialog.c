@@ -211,7 +211,7 @@ favorites_dialog_update_favorite_cb (GtkWidget             *widget,
 	}
 	else if (widget == GTK_WIDGET (dialog->nick_entry)) {
 		g_free (favorite->nick);
-		favorite->nick = g_strdup (gtk_entry_get_text (dialog->nick_entry));
+		favorite->nick = g_strstrip (g_strdup (gtk_entry_get_text (dialog->nick_entry)));
 	}
 	else if (widget == GTK_WIDGET (dialog->room_entry)) {
 		g_free (favorite->room);
