@@ -82,6 +82,8 @@ gossip_SOURCES = 				\
 	gossip-utils.h				\
 	gossip-edit-groups-dialog.c		\
 	gossip-edit-groups-dialog.h		\
+	gossip-vcard-dialog.c			\
+	gossip-vcard-dialog.h			\
 						\
 	eel-ellipsizing-label.c			\
 	eel-ellipsizing-label.h			\

@@ -1,3 +1,13 @@
+2004-06-16  Martyn Russell  <ginxd@btopenworld.com>
+
+	* src/gossip-vcard-dialog.c: 
+	- Added the ability to set personal details (jep-0054)
+	* src/Makefile.am (gossip_SOURCES):
+	* src/gossip-app.c (app_personal_details_cb):
+	- Added gossip-vcard-dialog.[ch]
+	* src/gossip-contact-info.h: 
+	- Fixed incorrect #ifdef name.
+
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c:

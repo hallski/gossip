@@ -4,6 +4,7 @@
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
+ * Copyright (C) 2004      Martyn Russell <ginxd@btopenworld.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -35,6 +36,7 @@
 #include <libgnomeui/libgnomeui.h>
 #include "eggtrayicon.h"
 #include "eel-ellipsizing-label.h"
+#include "gossip-vcard-dialog.h"
 #include "gossip-add-contact.h"
 #include "gossip-contact.h"
 #include "gossip-jid.h"
@@ -183,6 +185,8 @@ static void     app_show_offline_key_changed_cb      (GConfClient        *client
 						      GConfEntry         *entry,
 						      gpointer            check_menu_item);
 static void     app_preferences_cb                   (GtkWidget          *widget,
+						      GossipApp          *app);
+static void     app_personal_details_cb              (GtkWidget          *widget,
 						      GossipApp          *app);
 static void     app_account_information_cb           (GtkWidget          *widget,
 						      GossipApp          *app);
@@ -404,6 +408,7 @@ app_init (GossipApp *singleton_app)
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "actions_show_offline", "toggled", app_show_offline_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
+			      "edit_personal_details", "activate", app_personal_details_cb,
 			      "edit_account_information", "activate", app_account_information_cb,
 			      "edit_status_messages", "activate", app_status_messages_cb,
 			      "help_about", "activate", app_about_cb,
@@ -896,6 +901,12 @@ static void
 app_preferences_cb (GtkWidget *widget, GossipApp *app)
 {
 	gossip_preferences_show ();
+}
+
+static void
+app_personal_details_cb (GtkWidget *widget, GossipApp *app)
+{
+	gossip_vcard_dialog_show ();
 }
 
 static void
@@ -1515,7 +1526,8 @@ app_setup_conn_dependent_menu_items (GladeXML *glade)
 		"actions_join_group_chat",
 		"actions_send_chat_message",
 		"actions_add_contact",
-		"status_button"
+		"status_button",
+		"edit_personal_details"
 	};
 	
 	const gchar *disconnect_widgets[] = {

@@ -18,8 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_JOIN_DIALOG_H__
-#define __GOSSIP_JOIN_DIALOG_H__
+#ifndef __GOSSIP_CONTACT_INFO_H__
+#define __GOSSIP_CONTACT_INFO_H__
 
 #include <glib.h>
 #include "gossip-jid.h"
@@ -32,4 +32,4 @@ GossipContactInfo * gossip_contact_info_new        (GossipJID         *jid,
 GtkWidget *         gossip_contact_info_get_dialog (GossipContactInfo *info);
 
 
-#endif /* __GOSSIP_JOIN_DIALOG_H__ */
+#endif /* __GOSSIP_CONTACT_INFO_H__ */
