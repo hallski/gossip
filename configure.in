@@ -1,6 +1,6 @@
 AC_INIT(Imendio Gossip, 0.8.90 , gossip)
 AC_PREREQ(2.59)
-AC_COPYRIGHT([Copyright (C) 2003-2004 Imendio HB])
+AC_COPYRIGHT([Copyright (C) 2003-2005 Imendio HB])
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(1.9 -Wall check-news dist-bzip2 no-define)
