@@ -1,3 +1,19 @@
+2003-08-13  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c: (chat_dialog_notify_visible_cb): Send stop
+	composing event when the window is closed.
+	
+	(chat_create_gui), (chat_input_key_press_event_cb),
+	(chat_input_entry_changed_cb),
+	(chat_input_text_buffer_changed_cb): Don't send composing events
+	for key presses, but when the text changes.
+
+	(chat_send), (chat_presence_handler),
+	(chat_composing_send_start_event), (chat_composing_start),
+	(chat_composing_send_stop_event), (chat_composing_stop),
+	(chat_composing_remove_timeout), (chat_composing_stop_timeout_cb):
+	Refactor a bit so we can send a stop event from other places.
+	
 2003-08-11  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_pop_message): Compare JID without
