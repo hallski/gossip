@@ -1,5 +1,7 @@
 2003-08-05  Mikael Hallendal  <micke@imendio.com>
 
+        * configure.in: Bumped loudmouth version to 0.13
+
 	* src/gossip-app.c:
 	(app_message_handler): Removed bogus sub type check.
 	(app_push_message): Don't push blink if this user is already blinking.
