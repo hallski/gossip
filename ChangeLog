@@ -1,3 +1,7 @@
+2005-01-11  Mikael Hallendal  <micke@imendio.com>
+
+	* autogen.sh: Match correctly whether to run autoheader or not.
+
 2005-01-08  Mikael Hallendal  <micke@imendio.com>
 
 	* acinclude.m4:

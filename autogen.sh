@@ -142,7 +142,7 @@ do
       fi
       echo "Running $ACLOCAL $aclocalinclude ..."
       $ACLOCAL $aclocalinclude
-      if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
+      if grep "^AC_CONFIG_HEADERS" configure.in >/dev/null; then
 	echo "Running $AUTOHEADER..."
 	$AUTOHEADER
       fi
