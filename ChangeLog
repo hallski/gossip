@@ -1,3 +1,11 @@
+2003-08-11  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-chat.c: Tweak the composing event code a bit.
+
+	* ui/chat.glade: Hide composing icon initially.
+
+	* ui/pixmaps/message.png: Use another icon.
+
 2003-08-11  Mikael Hallendal  <micke@imendio.com>
 
 	* gossip.spec.in: 
@@ -35,7 +43,7 @@
 	(chat_composing_start), (chat_composing_stop),
 	(chat_composing_timeout), (chat_set_compose_icon): Typing
 	notification based on patch from Nicolas Peninguy. It's disabled
-	for now, since it's not complete finished yet.
+	for now, since it's not completely finished yet.
 
 	* ui/chat.glade:
 	* ui/pixmaps/Makefile.am:

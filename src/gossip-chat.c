@@ -38,7 +38,7 @@
 
 #define d(x) 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
-#define COMPOSING_TIMEOUT 3
+#define COMPOSING_STOP_TIMEOUT 5
 
 
 struct _GossipChat {
@@ -57,15 +57,15 @@ struct _GossipChat {
 	GtkWidget        *disclosure;
 	GtkWidget        *info_button;
 	GtkWidget        *from_label;
-	GtkWidget        *compose_image;
+	GtkWidget        *composing_image;
 
 	GossipJID        *jid;
 	gchar            *nick;
 
-	guint             compose_timeout_id;
-	gboolean          request_compose_events;
-	gboolean          send_compose_events;
-	gchar            *last_compose_id;
+	guint             composing_stop_timeout_id;
+	gboolean          request_composing_events;
+	gboolean          send_composing_events;
+	gchar            *last_composing_id;
 	
 	/* Chat exists but has been hidden by the user. */
 	gboolean          hidden;
@@ -125,17 +125,16 @@ static void        chat_update_title                 (GossipChat       *chat,
 						      gboolean          new_message);
 static void        chat_hide                         (GossipChat       *chat);
 static void        chat_request_composing            (LmMessage        *m);
-static gboolean    chat_event_handler                 (GossipChat      *chat,
-						       LmMessage       *m);
+static gboolean    chat_event_handler                (GossipChat      *chat,
+						      LmMessage       *m);
 static void        chat_composing_start              (GossipChat       *chat);
 static void        chat_composing_stop               (GossipChat       *chat);
-static gboolean    chat_composing_timeout            (GossipChat       *chat);
-static void        chat_set_compose_icon             (GossipChat       *chat,
+static gboolean    chat_composing_stop_timeout_cb    (GossipChat       *chat);
+static void        chat_show_composing_icon          (GossipChat       *chat,
 						      gboolean          is_composing);
 
 
 static GHashTable *chats = NULL;
-static GdkPixbuf *compose_pixbuf = NULL;
 
 
 static void
@@ -143,8 +142,6 @@ destroy_notify_cb (GossipChat *chat)
 {
 	LmConnection     *connection;
 	LmMessageHandler *handler;
-
-	chat_composing_stop (chat);
 
 	connection = gossip_app_get_connection ();
 	
@@ -184,11 +181,17 @@ chat_dialog_delete_event_cb (GtkWidget  *widget,
 }
 
 static void
-chat_dialog_notify_visible_cb (GtkWidget  *dialog,
+chat_dialog_notify_visible_cb (GtkWidget  *window,
 			       GParamSpec *spec,
 			       GossipChat *chat)
 {
-	chat->hidden = FALSE;
+	gboolean visible;
+	
+	g_object_get (window, "visible", &visible, NULL);
+
+	if (visible) {
+		chat->hidden = FALSE;
+	}
 }
 	
 static void
@@ -206,8 +209,6 @@ chat_init (void)
 				       g_str_equal,
 				       NULL,
 				       (GDestroyNotify) destroy_notify_cb);
-
-	compose_pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/typing.png", NULL);
 }
 
 static GossipChat *
@@ -259,7 +260,7 @@ chat_get_for_jid (GossipJID  *jid,
 	}
 	
 	/* Event stuff */
-	chat->request_compose_events = FALSE; /* disable for now */
+	chat->request_composing_events = TRUE;
 
 	return chat;
 }
@@ -289,11 +290,14 @@ chat_create_gui (GossipChat *chat)
 				      "from_label", &chat->from_label,
 				      "disclosure", &chat->disclosure,
 				      "send_multi_button", &chat->send_multi_button,
-				      "compose_image", &chat->compose_image,
+				      "composing_image", &chat->composing_image,
 				      NULL);
 
 	roster = gossip_app_get_roster ();
 
+	gtk_image_set_from_file (GTK_IMAGE (chat->composing_image),
+				 IMAGEDIR "/typing.png");
+	
 	pixbuf = gossip_roster_get_status_pixbuf_for_jid (roster, chat->jid);
 	if (pixbuf) {
 		gtk_image_set_from_pixbuf (GTK_IMAGE (chat->status_image),
@@ -453,7 +457,7 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
 			       GdkEventKey *event,
 			       GossipChat  *chat)
 {
-	if (chat->send_compose_events && !IS_ENTER (event->keyval)) {
+	if (chat->send_composing_events && !IS_ENTER (event->keyval)) {
 		chat_composing_start (chat);
 	}
 	
@@ -527,9 +531,7 @@ chat_send (GossipChat *chat, const gchar *msg)
 		return;
 	}
 
-	if (chat->send_compose_events) {
-		chat_composing_stop (chat);
-	}
+	chat_composing_stop (chat);
 
 	nick = gossip_jid_get_part_name (gossip_app_get_jid ());	
 	
@@ -546,7 +548,7 @@ chat_send (GossipChat *chat, const gchar *msg)
 					  LM_MESSAGE_SUB_TYPE_CHAT);
 	lm_message_node_add_child (m->node, "body", msg);
 
-	if (chat->request_compose_events) {
+	if (chat->request_composing_events) {
 		chat_request_composing (m);
 	}
 	
@@ -767,7 +769,8 @@ chat_presence_handler (LmMessageHandler *handler,
 		filename = gossip_status_to_icon_filename (GOSSIP_STATUS_OFFLINE);
 
 		chat_composing_stop (chat);
-		chat->send_compose_events = FALSE;
+		chat->send_composing_events = FALSE;
+		chat_show_composing_icon (chat, FALSE);
 	}
 	else if (strcmp (type, "available") == 0) {
 		filename = gossip_utils_get_show_filename (show);
@@ -906,7 +909,7 @@ chat_request_composing (LmMessage  *m)
 	lm_message_node_add_child (x, "composing", NULL);
 	
 	g_snprintf (str_id, 16, "m_%d", id++);
-	
+
 	lm_message_node_set_attribute (m->node, "id", str_id);
 }
 
@@ -928,26 +931,27 @@ chat_event_handler (GossipChat *chat, LmMessage *m)
 	}
 	
 	if (lm_message_node_get_child (m->node, "body")) {
-		/* Handle request for composing events. */
 		if (lm_message_node_get_child (x, "composing")) {
-			chat->send_compose_events = TRUE;
+			/* Handle request for composing events. */
 
-			g_free (chat->last_compose_id);
+			chat->send_composing_events = TRUE;
+
+			g_free (chat->last_composing_id);
 			new_id = lm_message_node_get_attribute (m->node, "id");
 			if (new_id) {
-				chat->last_compose_id = g_strdup (new_id);
+				chat->last_composing_id = g_strdup (new_id);
 			}
 		}
 
-		chat_set_compose_icon (chat, FALSE);
+		chat_show_composing_icon (chat, FALSE);
 
 		return FALSE;
 	}
 	
 	if (lm_message_node_get_child (x, "composing")) {
-		chat_set_compose_icon (chat, TRUE);
+		chat_show_composing_icon (chat, TRUE);
 	} else {
-		chat_set_compose_icon (chat, FALSE);
+		chat_show_composing_icon (chat, FALSE);
 	}
 	
 	return TRUE;
@@ -959,46 +963,46 @@ chat_composing_start (GossipChat *chat)
 	LmMessage     *m;
 	LmMessageNode *x;
 
-	if (chat->compose_timeout_id) {
-		/* Restart the timeout. */
-		g_source_remove (chat->compose_timeout_id);
+	if (chat->composing_stop_timeout_id) {
+		/* Stop and restart the timeout. */
+		chat_composing_stop (chat);
 	} else {
 		m = lm_message_new_with_sub_type (gossip_jid_get_full (chat->jid),
 						  LM_MESSAGE_TYPE_MESSAGE,
 						  LM_MESSAGE_SUB_TYPE_CHAT);
 		x = lm_message_node_add_child (m->node, "x", NULL);
 		lm_message_node_set_attribute (x, "xmlns", "jabber:x:event");
-		lm_message_node_add_child (x, "id", chat->last_compose_id);
+		lm_message_node_add_child (x, "id", chat->last_composing_id);
 		lm_message_node_add_child (x, "composing", NULL);
 		
 		lm_connection_send (gossip_app_get_connection (), m, NULL);
 		lm_message_unref (m);
 	}
 	
-	chat->compose_timeout_id = g_timeout_add (
-		1000 * COMPOSING_TIMEOUT,
-		(GSourceFunc) chat_composing_timeout,
+	chat->composing_stop_timeout_id = g_timeout_add (
+		1000 * COMPOSING_STOP_TIMEOUT,
+		(GSourceFunc) chat_composing_stop_timeout_cb,
 		chat);
 }
 
 static void
 chat_composing_stop (GossipChat *chat)
 {
-	if (chat->compose_timeout_id) {
-		g_source_remove (chat->compose_timeout_id);
-		chat->compose_timeout_id = 0;
+	if (chat->composing_stop_timeout_id) {
+		g_source_remove (chat->composing_stop_timeout_id);
+		chat->composing_stop_timeout_id = 0;
 	}
 }
 
 static gboolean
-chat_composing_timeout (GossipChat *chat)
+chat_composing_stop_timeout_cb (GossipChat *chat)
 {
 	LmMessage     *m;
 	LmMessageNode *x;
 
-	chat->compose_timeout_id = 0;
+	chat->composing_stop_timeout_id = 0;
 
-	if (!chat->send_compose_events) {
+	if (!chat->send_composing_events) {
 		return FALSE;
 	}
 	
@@ -1007,7 +1011,7 @@ chat_composing_timeout (GossipChat *chat)
 					  LM_MESSAGE_SUB_TYPE_CHAT);
 	x = lm_message_node_add_child (m->node, "x", NULL);
 	lm_message_node_set_attribute (x, "xmlns", "jabber:x:event");
-	lm_message_node_add_child (x, "id", chat->last_compose_id);
+	lm_message_node_add_child (x, "id", chat->last_composing_id);
 
 	lm_connection_send (gossip_app_get_connection (), m, NULL);
 	lm_message_unref (m);
@@ -1016,15 +1020,11 @@ chat_composing_timeout (GossipChat *chat)
 }
 
 static void
-chat_set_compose_icon (GossipChat *chat, gboolean is_composing)
+chat_show_composing_icon (GossipChat *chat, gboolean is_composing)
 {
-	GdkPixbuf *pixbuf;
-
 	if (is_composing) {
-		pixbuf = compose_pixbuf;
+		gtk_widget_show (chat->composing_image);
 	} else {
-		pixbuf = NULL;
+		gtk_widget_hide (chat->composing_image);
 	}
-
-	gtk_image_set_from_pixbuf (GTK_IMAGE (chat->compose_image), pixbuf);
 }
