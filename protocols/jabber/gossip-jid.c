@@ -27,12 +27,13 @@
 struct GossipJID {
 	gchar *full;
 	gchar *no_resource;
-	gchar *resource;
+	const gchar *resource;
 
 	guint  ref_count;
 };
 
-void   jid_free   (GossipJID *jid);
+void         jid_free            (GossipJID   *jid);
+const gchar *jid_locate_resource (const gchar *str);
 
 void
 jid_free (GossipJID *jid)
@@ -40,30 +41,38 @@ jid_free (GossipJID *jid)
 	g_free (jid->full);
 	g_free (jid->no_resource);
 
-	/* jid->resource is a pointer into jid->full */
-	
 	g_free (jid);
+}
+
+const gchar *
+jid_locate_resource (const gchar *str)
+{
+	gchar *ch;
+	
+	ch = strchr (str, '/');
+	if (ch) {
+		return (const gchar *) (ch + 1);
+	}
+
+	return NULL;
 }
 
 GossipJID *
 gossip_jid_new (const gchar *str_jid)
 {
 	GossipJID *jid;
-	gchar     *ch;
 	
 	g_return_val_if_fail (str_jid != NULL, NULL);
 
 	jid = g_new0 (GossipJID, 1);
 	jid->ref_count = 1;
 	jid->full = g_strdup (str_jid);
-	
-	ch = strchr (jid->full, '/');
-	if (ch) {
-		jid->resource = ch + 1;
-		jid->no_resource = g_strndup (jid->full, ch - jid->full);
+
+	jid->resource = jid_locate_resource (jid->full);
+	if (jid->resource) {
+		jid->no_resource = g_strndup (jid->full, jid->resource - 1 - jid->full);
 	} else {
-		jid->resource = NULL;
-		jid->no_resource = NULL; 
+		jid->no_resource = g_strdup (jid->full);
 	}
 
 	return jid;
@@ -72,17 +81,26 @@ gossip_jid_new (const gchar *str_jid)
 void 
 gossip_jid_set_without_resource (GossipJID *jid, const gchar *str)
 {
+	gchar *resource = NULL;
+	
 	g_return_if_fail (jid != NULL);
+
+	if (jid->resource) {
+		resource = g_strdup (jid->resource);
+	}
 
 	g_free (jid->full);
 	g_free (jid->no_resource);
 
-	if (jid->resource) {
-		jid->full = g_strdup_printf ("%s/%s", jid->no_resource, jid->resource);
-		jid->no_resource = g_strdup (str);
+	jid->no_resource = g_strdup (str);
+
+	if (resource) {
+		jid->full = g_strdup_printf ("%s/%s",
+					     jid->no_resource, resource);
+		g_free (resource);
+		jid->resource = jid_locate_resource (jid->full);
 	} else {
-		jid->full = g_strdup (str);
-		jid->no_resource = NULL;
+		jid->full = g_strdup (jid->no_resource);
 	}
 }
 
@@ -91,15 +109,10 @@ gossip_jid_set_resource (GossipJID *jid, const gchar *resource)
 {
 	g_return_if_fail (jid != NULL);
 
-	if (!jid->resource) {
-		jid->no_resource = g_strdup (jid->full);
-	}
-
 	g_free (jid->full);
-	g_free (jid->resource);
 
-	jid->resource = g_strdup (resource);
-	jid->full = g_strdup_printf ("%s/%s", jid->no_resource, jid->resource);
+	jid->full = g_strdup_printf ("%s/%s", jid->no_resource, resource);
+	jid->resource = jid_locate_resource (jid->full);
 }
 
 const gchar *

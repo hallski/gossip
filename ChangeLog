@@ -1,3 +1,10 @@
+2004-08-13  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-jid.c: (jid_free), (jid_locate_resource),
+	(gossip_jid_new), (gossip_jid_set_without_resource),
+	(gossip_jid_set_resource):
+	- Fix some weirdness noticed by richard
+
 2004-08-09  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (gossip_app_connect), (app_create_connection):
