@@ -4,7 +4,6 @@
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
- * Copyright (C) 2004      Martyn Russell <ginxd@btopenworld.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

@@ -1,3 +1,11 @@
+2004-06-17  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-vcard-dialog.c:
+	(vcard_dialog_get_vcard): Fixed two strings
+	(vcard_dialog_set_vcard): 
+	- Shouldn't send to attribute when requesting ones own vCard.
+	- Fixed some style
+
 2004-06-16  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-vcard-dialog.c: 

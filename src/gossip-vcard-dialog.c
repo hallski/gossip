@@ -25,32 +25,32 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
 #include <loudmouth/loudmouth.h>
+#include <unistd.h>
 
 #include "gossip-app.h"
 #include "gossip-vcard-dialog.h"
 
 #define d(x) 
 
-
 struct _GossipVCardDialog {
-	LmConnection *connection;
+	LmConnection     *connection;
 
 	LmMessageHandler *vcard_get_handler;
 	LmMessageHandler *vcard_set_handler;
 
-	GtkWidget *dialog;
+	GtkWidget        *dialog;
 
-	GtkWidget *label_status;
+	GtkWidget        *label_status;
 
-	GtkWidget *vbox_personal_information;
-	GtkWidget *vbox_description;
+	GtkWidget        *vbox_personal_information;
+	GtkWidget        *vbox_description;
 
-	GtkWidget *entry_name;
-	GtkWidget *entry_nickname;
-	GtkWidget *entry_web_site;
-	GtkWidget *entry_email;
+	GtkWidget        *entry_name;
+	GtkWidget        *entry_nickname;
+	GtkWidget        *entry_web_site;
+	GtkWidget        *entry_email;
 
-	GtkWidget *textview_description;
+	GtkWidget        *textview_description;
 };
 
 
@@ -123,15 +123,14 @@ vcard_dialog_get_vcard (GossipVCardDialog *dialog)
 	GossipJID     *jid;
 	gchar         *str;
 	
-	str = g_strdup_printf ("<b>%s</b>", _("Requesting Personal Details, Please Wait..."));
+	str = g_strdup_printf ("<b>%s</b>", _("Requesting personal details, please wait..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->label_status), str);
 	gtk_widget_show (dialog->label_status);
 	g_free (str);
 
 	jid = gossip_app_get_jid ();
 
-	m = lm_message_new (gossip_jid_get_full (jid),
-			    LM_MESSAGE_TYPE_IQ);
+	m = lm_message_new (NULL, LM_MESSAGE_TYPE_IQ);
 
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
@@ -152,6 +151,7 @@ vcard_dialog_get_vcard (GossipVCardDialog *dialog)
 	}
 
 	lm_message_unref (m);
+
 }
 
 static LmHandlerResult
@@ -254,7 +254,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gtk_text_buffer_get_bounds (buffer, &iter_begin, &iter_end);
 	description = gtk_text_buffer_get_text (buffer, &iter_begin, &iter_end, FALSE);
 
-	str = g_strdup_printf ("<b>%s</b>", _("Saving Personal Details, Please Wait..."));
+	str = g_strdup_printf ("<b>%s</b>", _("Saving personal details, please wait..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->label_status), str);
 	gtk_widget_show (dialog->label_status);
 	g_free (str);
