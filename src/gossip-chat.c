@@ -179,7 +179,6 @@ chat_get_for_jid (GossipJID  *jid,
 
 	if (priv_group_chat) {
 		chat->nick = g_strdup (gossip_jid_get_resource (jid));
-		g_print ("nick set to %s\n", chat->nick);
 	}
 		
 	chat_create_gui (chat);
@@ -318,7 +317,6 @@ chat_create_gui (GossipChat *chat)
 
 	chat_update_title (chat, FALSE);
 		
-	gtk_widget_show (chat->dialog);
 	gtk_widget_grab_focus (chat->input_entry);
 }
 

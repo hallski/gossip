@@ -1,5 +1,19 @@
 2003-08-01  Richard Hult  <rhult@codefactory.se>
 
+	* src/gossip-app.c: (app_init), (app_authentication_cb),
+	(app_message_handler), (app_user_activated_cb), (app_set_status),
+	(app_tray_icon_button_press_cb),
+	(app_complete_jid_response_cb), (gossip_app_get_status),
+	(flash_timeout_func), (app_tray_icon_push_message),
+	(app_tray_icon_pop_message):
+	* src/gossip-chat.c: (chat_get_for_jid), (chat_create_gui):
+	* ui/pixmaps/Makefile.am:
+	* ui/pixmaps/message.png: Don't popup messages, just blink the
+	notification area. Needs a bit more work like maybe a preference,
+	and making subscription request windows behave the same.
+
+2003-08-01  Richard Hult  <rhult@codefactory.se>
+
 	Clean up a bit:
 
 	* src/*.[ch]: Don't pass around app since it can always be

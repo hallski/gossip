@@ -82,6 +82,9 @@ struct _GossipAppPriv {
 	GtkWidget           *about;
 	GtkWidget           *preferences_dialog;
 
+	GList               *flash_icons;
+	guint                flash_timeout_id;
+	
 	/* Widges that are enabled when we're connected. */
 	GList               *enabled_connected_widgets;
 
@@ -111,44 +114,45 @@ enum {
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
-static void      app_class_init                     (GossipAppClass *klass);
-static void      app_init                           (GossipApp      *app);
-static void      app_finalize                       (GObject        *object);
-static void      app_main_window_destroy_cb         (GtkWidget      *window,
-						     GossipApp      *app);
-static void      app_user_activated_cb              (GossipRoster   *roster,
-						     GossipJID      *jid,
-						     GossipApp      *app);
-static gboolean  app_idle_check_cb                  (GossipApp      *app);
-static void      app_set_status                     (GossipApp      *app,
-						     GossipStatus    status);
-static void      app_quit_cb                        (GtkWidget      *window,
-						     GossipApp      *app);
-static void      app_send_chat_message_cb           (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_add_contact_cb                 (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_preferences_cb                 (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_about_cb                       (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_join_group_chat_cb             (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_connection_open_cb             (LmConnection   *connection,
-						     gboolean        result,
-						     GossipApp      *app);
-static void      app_authentication_cb              (LmConnection   *connection,
-						     gboolean        result,
-						     GossipApp      *app);
-static void      app_client_disconnected_cb         (LmConnection *connection,
-						     LmDisconnectReason  reason, 
-						     GossipApp    *app);
-static void      app_connect_cb                     (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_disconnect_cb                  (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_status_item_activated_cb       (GtkMenuItem    *item,
-						     GossipApp      *app);
+static void     app_class_init               (GossipAppClass     *klass);
+static void     app_init                     (GossipApp          *app);
+static void     app_finalize                 (GObject            *object);
+static void     app_main_window_destroy_cb   (GtkWidget          *window,
+					      GossipApp          *app);
+static void     app_user_activated_cb        (GossipRoster       *roster,
+					      GossipJID          *jid,
+					      GossipApp          *app);
+static gboolean app_idle_check_cb            (GossipApp          *app);
+static void     app_set_status               (GossipApp          *app,
+					      GossipStatus        status);
+static void     app_quit_cb                  (GtkWidget          *window,
+					      GossipApp          *app);
+static void     app_send_chat_message_cb     (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_add_contact_cb           (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_preferences_cb           (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_about_cb                 (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_join_group_chat_cb       (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_connection_open_cb       (LmConnection       *connection,
+					      gboolean            result,
+					      GossipApp          *app);
+static void     app_authentication_cb        (LmConnection       *connection,
+					      gboolean            result,
+					      GossipApp          *app);
+static void     app_client_disconnected_cb   (LmConnection       *connection,
+					      LmDisconnectReason  reason,
+					      GossipApp          *app);
+static void     app_connect_cb               (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_disconnect_cb            (GtkWidget          *widget,
+					      GossipApp          *app);
+static void     app_status_item_activated_cb (GtkMenuItem        *item,
+					      GossipApp          *app);
+
 static LmHandlerResult
 app_message_handler                                 (LmMessageHandler *handler,
 						     LmConnection   *connection,
@@ -164,39 +168,40 @@ app_iq_handler                                      (LmMessageHandler *handler,
 						     LmConnection     *connection,
 						     LmMessage        *m,
 						     GossipApp        *app);
+static void     app_handle_subscription_request      (GossipApp       *app,
+						      LmMessage       *m);
+static void     app_set_status_indicator             (GossipApp       *app,
+						      GossipStatus     status);
+static void     app_tray_icon_destroy_cb             (GtkWidget       *widget,
+						      GossipApp       *app);
+static void     app_create_tray_icon                 (GossipApp       *app);
+static void     app_tray_icon_set_status             (GossipApp       *app,
+						      GossipStatus     status);
+static void     app_create_connection                (GossipApp       *app);
+static void     app_disconnect                       (GossipApp       *app);
+static void     app_setup_conn_dependent_menu_items  (GossipApp       *app,
+						      GladeXML        *glade);
+static void     app_update_conn_dependent_menu_items (GossipApp       *app);
+static void     app_complete_jid_response_cb         (GtkWidget       *dialog,
+						      gint             response,
+						      CompleteJIDData *data);
+static gboolean app_complete_jid_idle                (CompleteJIDData *data);
+static void     app_complete_jid_insert_text_cb      (GtkEntry        *entry,
+						      const gchar     *text,
+						      gint             length,
+						      gint            *position,
+						      CompleteJIDData *data);
+static gboolean app_complete_jid_key_press_event_cb  (GtkEntry        *entry,
+						      GdkEventKey     *event,
+						      CompleteJIDData *data);
+static void     app_complete_jid_activate_cb         (GtkEntry        *entry,
+						      CompleteJIDData *data);
+static gchar *  app_complete_jid_to_string           (gpointer         data);
+static void     app_tray_icon_push_message           (LmMessage       *m);
+static void     app_tray_icon_pop_message            (void);
 
-static void      app_handle_subscription_request    (GossipApp      *app,
-						     LmMessage      *m);
-static void      app_set_status_indicator           (GossipApp      *app,
-						     GossipStatus    status);
-static void      app_tray_icon_destroy_cb           (GtkWidget      *widget,
-						     GossipApp      *app);
-static void      app_create_tray_icon               (GossipApp      *app);
-static void      app_tray_icon_set_status           (GossipApp      *app,
-						     GossipStatus    status);
-static void      app_create_connection              (GossipApp      *app);
 
-static void      app_disconnect                     (GossipApp      *app);
-static void
-app_setup_connection_dependent_menu_items           (GossipApp      *app,
-						     GladeXML       *glade);
-static void
-app_update_connection_dependent_menu_items          (GossipApp      *app);
-static void      app_complete_jid_response_cb       (GtkWidget      *dialog,
-						     gint            response,
-						     CompleteJIDData *data);
-static gboolean  app_complete_jid_idle              (CompleteJIDData *data);
-static void      app_complete_jid_insert_text_cb    (GtkEntry       *entry, 
-						     const gchar    *text,
-						     gint            length,
-						     gint           *position,
-						     CompleteJIDData *data);
-static gboolean  app_complete_jid_key_press_event_cb(GtkEntry       *entry,
-						     GdkEventKey    *event,
-						     CompleteJIDData *data);
-static void      app_complete_jid_activate_cb       (GtkEntry       *entry,
-						     CompleteJIDData *data);
-static gchar *   app_complete_jid_to_string         (gpointer        data);
+
 
 
 static GObjectClass *parent_class;
@@ -277,7 +282,7 @@ app_init (GossipApp *app)
 				       "roster_scrolledwindow", &sw,
 				       NULL);
 
-	app_setup_connection_dependent_menu_items (app, glade);
+	app_setup_conn_dependent_menu_items (app, glade);
 	
 	gossip_glade_connect (glade,
 			      app,
@@ -351,7 +356,7 @@ app_init (GossipApp *app)
 	app_create_tray_icon (app);
 	app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 
-	app_update_connection_dependent_menu_items (app);
+	app_update_conn_dependent_menu_items (app);
 
 	/* Start the idle time checker. */
 	g_timeout_add (5000, (GSourceFunc) app_idle_check_cb, app);
@@ -498,7 +503,7 @@ app_authentication_cb (LmConnection *connection,
 		g_signal_emit (app, signals[CONNECTED], 0);
 		app_set_status (app, priv->status_to_set_on_connect);
 
-		app_update_connection_dependent_menu_items (app);
+		app_update_conn_dependent_menu_items (app);
 	} else {
 		app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 	}
@@ -799,6 +804,7 @@ app_message_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_NOT_SET:
 	case LM_MESSAGE_SUB_TYPE_NORMAL:
 	case LM_MESSAGE_SUB_TYPE_CHAT:
+		app_tray_icon_push_message (m);
 		return gossip_chat_handle_message (m);
 
 	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
@@ -1003,7 +1009,12 @@ app_user_activated_cb (GossipRoster *roster,
 		       GossipJID    *jid,
 		       GossipApp    *app)
 {
-	gossip_chat_get_for_jid (jid);
+	GossipChat *chat;
+	GtkWidget  *widget;
+
+	chat = gossip_chat_get_for_jid (jid);
+	widget = gossip_chat_get_dialog (chat);
+	gtk_widget_show (widget);
 }
 
 void
@@ -1162,7 +1173,7 @@ app_set_status (GossipApp *app, GossipStatus status)
 			app_set_status_indicator (app, GOSSIP_STATUS_OFFLINE);
 		}
 
-		app_update_connection_dependent_menu_items (app);
+		app_update_conn_dependent_menu_items (app);
 		return;
 	}
 
@@ -1255,7 +1266,7 @@ app_tray_icon_destroy_cb (GtkWidget *widget,
 	gtk_widget_show (priv->window);	
 }
 
-static void
+static gboolean
 app_tray_icon_button_press_cb (GtkWidget      *widget, 
 			       GdkEventButton *event, 
 			       GossipApp      *app)
@@ -1266,17 +1277,30 @@ app_tray_icon_button_press_cb (GtkWidget      *widget,
 
 	priv = app->priv;
 
-	g_object_get (priv->window,
-		      "visible", &visible,
-		      NULL);
+	switch (event->button) {
+	case 1:
+		app_tray_icon_pop_message ();
+		break;
 
-	if (visible) {
-		gtk_window_get_position (GTK_WINDOW(priv->window), &x, &y);
-		gtk_widget_hide (priv->window);
-	} else {
-		gtk_widget_show (priv->window);
-		gtk_window_move (GTK_WINDOW(priv->window), x, y);
+	case 3:
+		g_object_get (priv->window,
+			      "visible", &visible,
+			      NULL);
+		
+		if (visible) {
+			gtk_window_get_position (GTK_WINDOW(priv->window), &x, &y);
+			gtk_widget_hide (priv->window);
+		} else {
+			gtk_widget_show (priv->window);
+			gtk_window_move (GTK_WINDOW(priv->window), x, y);
+		}
+		break;
+
+	default:
+		return FALSE;
 	}
+
+	return TRUE;
 }
 	
 static void
@@ -1391,8 +1415,8 @@ gossip_app_get_connection (void)
 }
 
 static void
-app_setup_connection_dependent_menu_items (GossipApp *app,
-					   GladeXML  *glade)
+app_setup_conn_dependent_menu_items (GossipApp *app,
+				     GladeXML  *glade)
 {
 	const gchar *connect_widgets[] = { "actions_disconnect",
 					   "actions_join_group_chat",
@@ -1423,7 +1447,7 @@ app_setup_connection_dependent_menu_items (GossipApp *app,
 }
 
 static void
-app_update_connection_dependent_menu_items (GossipApp *app)
+app_update_conn_dependent_menu_items (GossipApp *app)
 {
 	GossipAppPriv *priv;
 	GList         *l;
@@ -1450,13 +1474,17 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 {
 	const gchar *str;
 	GossipJID   *jid;
+	GossipChat  *chat;
+	GtkWidget   *widget;
 	GList       *l;
 
 	if (response == GTK_RESPONSE_OK) {
 		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
 		if (gossip_jid_string_is_valid_jid (str)) {
 			jid = gossip_jid_new (str);
-			gossip_chat_get_for_jid (jid);
+			chat = gossip_chat_get_for_jid (jid);
+			widget = gossip_chat_get_dialog (chat);
+			gtk_widget_show (widget);
 			gossip_jid_unref (jid);
 		} else {
 			/* FIXME: Display error dialog... */
@@ -1566,4 +1594,82 @@ GossipStatus
 gossip_app_get_status (void)
 {
 	return gossip_status_menu_get_status (app->priv->option_menu);
+}
+
+static gboolean
+flash_timeout_func (gpointer data)
+{
+	GossipAppPriv   *priv;
+	static gboolean  on = FALSE;
+	GossipStatus     status;
+	const gchar     *filename;
+
+	priv = app->priv;
+	
+	if (on) {
+		filename = IMAGEDIR "/message.png";
+	} else {
+		status = gossip_status_menu_get_status (priv->option_menu);
+		filename = gossip_status_to_icon_filename (status);
+	}
+		
+	gtk_image_set_from_file (GTK_IMAGE (priv->tray_image), filename);
+	
+	on = !on;
+
+	return TRUE;
+}
+
+static void
+app_tray_icon_push_message (LmMessage *m)
+{
+	GossipAppPriv *priv;
+	const gchar   *from;
+
+	priv = app->priv;
+
+	from = lm_message_node_get_attribute (m->node, "from");
+	
+	priv->flash_icons = g_list_append (priv->flash_icons, g_strdup  (from));
+
+	if (!priv->flash_timeout_id) {
+		priv->flash_timeout_id = g_timeout_add (250, flash_timeout_func, NULL);
+	}
+}
+
+static void
+app_tray_icon_pop_message (void)
+{
+	GossipAppPriv *priv;
+	gchar         *from;
+	GossipJID     *jid;
+	GossipChat    *chat;
+	GtkWidget     *widget;
+	GossipStatus   status;
+	const gchar   *filename;
+
+	priv = app->priv;
+
+	if (!priv->flash_icons)
+		return;
+
+	from = priv->flash_icons->data;
+	jid = gossip_jid_new (from);
+	chat = gossip_chat_get_for_jid (jid);
+	gossip_jid_unref (jid);
+
+	widget = gossip_chat_get_dialog (chat);
+
+	gtk_window_present (GTK_WINDOW (widget));
+	
+	priv->flash_icons = g_list_delete_link (priv->flash_icons, priv->flash_icons);
+
+	if (!priv->flash_icons && priv->flash_timeout_id) {
+		g_source_remove (priv->flash_timeout_id);
+		priv->flash_timeout_id = 0;
+
+		status = gossip_status_menu_get_status (priv->option_menu);
+		filename = gossip_status_to_icon_filename (status);
+		gtk_image_set_from_file (GTK_IMAGE (priv->tray_image), filename);
+	}
 }
