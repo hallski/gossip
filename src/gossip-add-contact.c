@@ -164,9 +164,9 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	
 	str_jid = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
 	gtk_label_set_text (GTK_LABEL (contact->two_id_label), str_jid);
-	
+
 	changed = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (contact->two_nick_entry),
-						     "changed"));
+						      "changed"));
 
 	if (contact->vcard_handler) {
 		lm_message_handler_invalidate (contact->vcard_handler);
@@ -186,7 +186,7 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 				       contact->vcard_handler, NULL);
 	
 	lm_message_unref (m);
-	
+
 	if (!changed) {
 		GossipJID *jid;
 		
@@ -196,7 +196,7 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 		g_free (str);
 		gossip_jid_unref (jid);
 	}
-
+	
 	roster = gossip_app_get_roster ();
 	groups = gossip_roster_old_get_groups (roster);
 	
@@ -240,19 +240,26 @@ add_contact_page_2_vcard_handler (LmMessageHandler *handler,
 	if (node) {
 		gtk_label_set_text (GTK_LABEL (contact->two_name_label), 
 				    node->value);
+	} else {
+		gtk_label_set_text (GTK_LABEL (contact->two_name_label), "");	
 	}
-
+	
 	node = lm_message_node_find_child (m->node, "EMAIL");
 	if (node) {
 		gtk_label_set_text (GTK_LABEL (contact->two_email_label), 
 				    node->value);
+	} else {
+		gtk_label_set_text (GTK_LABEL (contact->two_email_label), "");	
 	}
-
+	
 	node = lm_message_node_find_child (m->node, "COUNTRY");
 	if (node) {
 		gtk_label_set_text (GTK_LABEL (contact->two_country_label), 
 				    node->value);
+	} else {
+		gtk_label_set_text (GTK_LABEL (contact->two_country_label), "");	
 	}
+     
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }

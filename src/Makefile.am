@@ -58,6 +58,8 @@ gossip_SOURCES = 				\
 	gossip-utils.c				\
 	gossip-utils.h				\
 						\
+	eel-ellipsizing-label.c			\
+	eel-ellipsizing-label.h			\
 	eggtrayicon.c				\
 	eggtrayicon.h				\
 	disclosure-widget.c			\

@@ -34,6 +34,7 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/libgnomeui.h>
 #include "eggtrayicon.h"
+#include "eel-ellipsizing-label.h"
 #include "gossip-add-contact.h"
 #include "gossip-jid.h"
 #include "gossip-marshal.h"
@@ -302,6 +303,7 @@ app_init (GossipApp *singleton_app)
 	GladeXML      *glade;
 	GtkWidget     *sw;
 	GtkWidget     *item;
+	GtkWidget     *status_label_hbox;
 
 	app = singleton_app;
 	
@@ -318,10 +320,15 @@ app_init (GossipApp *singleton_app)
 				       "main_window", &priv->window,
 				       "roster_scrolledwindow", &sw,
 				       "status_button", &priv->status_button,
-				       "status_label", &priv->status_label,
+				       "status_label_hbox", &status_label_hbox,
 				       "status_image", &priv->status_image,
 				       NULL);
 
+	priv->status_label = eel_ellipsizing_label_new (_("Available"));
+	gtk_misc_set_alignment (GTK_MISC (priv->status_label), 0, 0.5);
+	gtk_box_pack_start (GTK_BOX (status_label_hbox), priv->status_label, TRUE, TRUE, 0);
+	gtk_widget_show (priv->status_label);
+	
 	app_setup_conn_dependent_menu_items (glade);
 	
 	gossip_glade_connect (glade,
@@ -1871,9 +1878,9 @@ app_update_show (void)
 	
 	priv = app->priv;
 	
-	if (priv->status_label) {
-		gtk_label_set_text (GTK_LABEL (priv->status_label),
-				    priv->status_text);
+	if (priv->status_text) {
+		eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
+						priv->status_text);
 	}
 	
 	icon = app_get_current_status_icon ();

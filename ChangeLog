@@ -1,3 +1,16 @@
+2003-08-30  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-add-contact.c (add_contact_prepare_page_2): Reset
+	name, email and country labels when we don't have the info. Patch
+	from Martyn Russell.
+
+	* src/Makefile.am:
+	* src/eel-ellipsizing-label.h:
+	* src/eel-ellipsizing-label.c: Add.
+
+	* src/gossip-app.c:
+	* ui/main.glade: Use an ellipsizing label for the status string.
+	
 2003-08-29  Martyn Russell <ginxd@btopenworld.com>
 	
 	* src/gossip-app.c (app_subscription_request_dialog_response_cb):
