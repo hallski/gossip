@@ -4,6 +4,7 @@
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2002-2003 CodeFactory AB
+ * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -1174,12 +1175,18 @@ app_idle_check_cb (GossipApp *app)
 {
 	GossipStatus   status;
 	GossipAppPriv *priv;
-	gint           idle_secs;
-	gint           auto_away_mins = 15;
-	gint           auto_ext_away_mins = 60;
+	gint           idle;
+	gint           auto_away;
+	gint           auto_ext_away;
 	gboolean       is_away;
 
 	priv = app->priv;
+
+	if (!gconf_client_get_bool (gconf_client,
+				    "/apps/gossip/auto_away_enabled",
+				    NULL)) {
+		return TRUE;
+	}
 
 	status = gossip_status_menu_get_status (priv->option_menu);
 
@@ -1196,25 +1203,32 @@ app_idle_check_cb (GossipApp *app)
 		is_away = FALSE;
 		break;
 	}
-	
-	idle_secs = gossip_idle_get_seconds ();
 
-	if (!is_away && idle_secs > (auto_away_mins * 60)) {
+	auto_away = 60 * gconf_client_get_int (gconf_client,
+					       "/apps/gossip/auto_away_time",
+					       NULL);
+	auto_ext_away = 60 * gconf_client_get_int (gconf_client,
+						   "/apps/gossip/auto_away_extended_time",
+						   NULL);
+	
+	idle = gossip_idle_get_seconds ();
+
+	if (!is_away && idle > (auto_away)) {
 		d(g_print ("Going auto-away...\n"));
 
-		app_set_status (app, GOSSIP_STATUS_AWAY);//, "Autoaway");
+		app_set_status (app, GOSSIP_STATUS_AWAY); /*, "Autoaway");*/
 		/*gossip_app_statusbar_push_notification (app, "Going auto-away");*/
 		priv->is_auto_away = TRUE;
 	}
-	else if (priv->is_auto_away && status != GOSSIP_STATUS_EXT_AWAY &&
-		 idle_secs > (auto_ext_away_mins * 60)) {
+	else if (priv->is_auto_away &&
+		 status != GOSSIP_STATUS_EXT_AWAY && idle > auto_ext_away) {
 		d(g_print ("Going extended auto-away...\n"));
-		app_set_status (app, GOSSIP_STATUS_EXT_AWAY);//, "Auto-Away (Ext)");
+		app_set_status (app, GOSSIP_STATUS_EXT_AWAY); /*, "Auto-Away (Ext)");*/
 		/*gossip_app_statusbar_push_notification (app, "Going extended auto-away");*/
 	}
-	else if (priv->is_auto_away && idle_secs < (auto_away_mins * 60)) {
+	else if (priv->is_auto_away && idle < auto_away) {
 		d(g_print ("Returning from auto-away...\n"));
-		app_set_status (app, GOSSIP_STATUS_AVAILABLE);//, "Back from idle");
+		app_set_status (app, GOSSIP_STATUS_AVAILABLE); /*, "Back from idle");*/
 		/*gossip_app_statusbar_push_notification (app, "Returning from auto-away");*/
 		priv->is_auto_away = FALSE;
 	}

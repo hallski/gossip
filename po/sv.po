@@ -8,13 +8,61 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-10 20:59+0200\n"
+"POT-Creation-Date: 2003-07-10 22:07+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: gossip.desktop.in.h:1 ui/main.glade.h:33
+msgid "Gossip"
+msgstr "Gossip"
+
+#: gossip.desktop.in.h:2
+msgid "Jabber Instant Messaging"
+msgstr "Jabber Instant Messaging"
+
+#: gossip.schemas.in.h:1
+msgid "Autoaway enabled"
+msgstr "Autofrånvarande aktiverat"
+
+#: gossip.schemas.in.h:2
+msgid "Autoaway time"
+msgstr "Tid för autofrånvarande"
+
+#: gossip.schemas.in.h:3
+msgid "Extended autoaway time"
+msgstr "Tid för utökad autofrånvarande"
+
+#: gossip.schemas.in.h:4
+msgid ""
+"The number of minutes of idle time before automatically going into autoaway "
+"mode."
+msgstr "Antal minuters tomgångstid innan autofrånvarandeläge aktiveras."
+
+#: gossip.schemas.in.h:5
+msgid ""
+"The number of minutes of idle time before automatically going into extended "
+"autoaway mode."
+msgstr "Antal minuters tomgångstid innan utökat autofrånvarandeläge aktiveras."
+
+#: gossip.schemas.in.h:6
+msgid "Use smileys"
+msgstr "Använd smilisar"
+
+#: gossip.schemas.in.h:7
+msgid ""
+"Whether or not to convert smileys into graphical images in chat "
+"conversations."
+msgstr "Om smilisar ska omvandlas till grafiska bilder i chattsamtal."
+
+#: gossip.schemas.in.h:8
+msgid ""
+"Whether or not to go into autoaway mode when a certain time of idling has "
+"passed."
+msgstr "Om autofrånvarandeläge ska aktiveras efter en viss tomgångstid."
 
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
@@ -85,7 +133,7 @@ msgstr "_Chatta"
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1456
+#: src/gossip-app.c:1469
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -234,7 +282,7 @@ msgstr ""
 "Gossip kommer nu att försöka registrera kontot:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1252
+#: src/gossip-utils.c:1263
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
@@ -556,10 +604,6 @@ msgstr "Middag"
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Har du redan ett konto på en Jabberserver? "
 
-#: ui/main.glade.h:33 gossip.desktop.in.h:1
-msgid "Gossip"
-msgstr "Gossip"
-
 #: ui/main.glade.h:34
 msgid ""
 "Gossip is now configured properly for your system.\n"
@@ -747,10 +791,6 @@ msgstr "_Sök..."
 #: ui/main.glade.h:78
 msgid "_Send chat message..."
 msgstr "_Skicka chattmeddelande..."
-
-#: gossip.desktop.in.h:2
-msgid "Jabber Instant Messaging"
-msgstr "Jabber Instant Messaging"
 
 #~ msgid "Information about %s"
 #~ msgstr "Information om %s"

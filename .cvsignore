@@ -18,3 +18,4 @@ Makefile
 autom4te.cache
 gossip.desktop
 gossip.spec
+gossip.schemas

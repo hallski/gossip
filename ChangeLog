@@ -1,5 +1,15 @@
 2003-07-10  Richard Hult  <richard@imendio.com>
 
+	* Makefile.am: 
+	* gossip.schemas.in: 
+	* gossip.spec.in: Add schemas.
+
+	* src/gossip-app.c (app_idle_check_cb): Only use autoaway if
+	enabled, and get time preferences from gconf.
+
+	* src/gossip-utils.c (utils_insert_with_emoticons): Don't convert
+	smileys unless enabled.
+
 	* src/gossip-group-chat.c (group_chat_presence_handler): Fix
 	string, suggested by Jordi.
 

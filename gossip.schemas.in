@@ -1,0 +1,69 @@
+<gconfschemafile>
+  <schemalist>
+
+    <schema>
+      <key>/schemas/apps/gossip/smileys_enabled</key>
+      <applyto>/apps/gossip/smileys_enabled</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use smileys</short>
+         <long>
+	 Whether or not to convert smileys into graphical images in chat
+	 conversations.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/auto_away_enabled</key>
+      <applyto>/apps/gossip/auto_away_enabled</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Autoaway enabled</short>
+         <long>
+	 Whether or not to go into autoaway mode when a certain time of
+	 idling has passed.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/auto_away_time</key>
+      <applyto>/apps/gossip/auto_away_time</applyto>
+      <owner>gossip</owner>
+      <type>int</type>
+      <default>30</default>
+      <locale name="C">
+         <short>Autoaway time</short>
+         <long>
+	 The number of minutes of idle time before automatically going
+	 into autoaway mode.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/auto_away_extended_time</key>
+      <applyto>/apps/gossip/auto_away_extended_time</applyto>
+      <owner>gossip</owner>
+      <type>int</type>
+      <default>60</default>
+      <locale name="C">
+         <short>Extended autoaway time</short>
+         <long>
+	 The number of minutes of idle time before automatically going
+	 into extended autoaway mode.
+         </long>
+      </locale>
+    </schema>
+
+  </schemalist>  
+</gconfschemafile>
+
+
+
+

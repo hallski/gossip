@@ -26,6 +26,7 @@
 #include <regex.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
+#include <gconf/gconf-client.h>
 #include <libgnome/gnome-url.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
@@ -35,7 +36,7 @@
 #define DINGUS "(((mailto|news|telnet|nttp|file|http|ftp|https)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
 
 static regex_t dingus;
-
+extern GConfClient *gconf_client;
 
 static gboolean utils_url_event_cb          (GtkTextTag     *tag,
 					     GObject        *object,
@@ -1015,7 +1016,17 @@ utils_insert_with_emoticons (GtkTextBuffer *buf,
 	gint         i;
 	gint         match;
 	gint         submatch;
+	gboolean     smileys_enabled;
 
+	smileys_enabled = gconf_client_get_bool (gconf_client,
+						 "/apps/gossip/smileys_enabled",
+						 NULL);
+
+	if (!smileys_enabled) {
+		gtk_text_buffer_insert (buf, iter, str, -1);
+		return;
+	}
+	
 	while (*str) {
 		for (i = 0; i < num_smileys; i++) {
 			smileys[i].index = 0;

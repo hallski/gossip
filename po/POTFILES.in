@@ -1,5 +1,7 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
+gossip.desktop.in
+gossip.schemas.in
 src/gossip-accounts-dialog.c
 src/gossip-add-contact.c
 src/gossip-app.c
@@ -20,6 +22,7 @@ ui/connect.glade
 ui/druid.glade
 ui/group-chat.glade
 ui/main.glade
-gossip.desktop.in
+
+
 
 

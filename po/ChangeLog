@@ -8,6 +8,8 @@
 
 2003-07-10  Richard Hult  <richard@imendio.com>
 
+	* POTFILES.in: Add gossip.schemas.in.
+
 	* sv.po: Update.
 
 	* POTFILES.in: Add gossip-idle.c

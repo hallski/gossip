@@ -12,8 +12,11 @@ AM_PATH_GLIB_2_0
 AC_PATH_X
 
 AC_PROG_INTLTOOL
+AC_PATH_PROG(GCONFTOOL, gconftool-2)
 
 MRP_COMPILE_WARNINGS
+
+AM_GCONF_SOURCE_2
 
 dnl ==========================================================================
 dnl
@@ -59,10 +62,10 @@ PKG_CHECK_MODULES(GOSSIP,
 ])
 
 
-dnl ---------------------------------------------------------------------------
-dnl Check for XScreenSaver
-dnl ---------------------------------------------------------------------------
-AC_ARG_ENABLE(screensaver, [  --enable-screensaver build with X screensaver extension], enable_xss="$enableval", enable_xss=no)
+dnl -----------------------------------------------------------
+dnl Check for autoaway
+dnl -----------------------------------------------------------
+AC_ARG_ENABLE(autoaway, [  --enable-autoaway build with X screensaver extension for idle checking], enable_xss="$enableval", enable_xss=no)
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
@@ -133,6 +136,6 @@ gossip.spec
 ])
 
 echo
-echo "Gossip prefix             : $prefix"
-echo "XScreenSaver idle checking: $enable_xss"
+echo "Gossip prefix: $prefix"
+echo "Autoaway     : $enable_xss"
 echo
