@@ -253,6 +253,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 
 	window->priv->notebook = gtk_notebook_new ();
 	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->priv->notebook), FALSE);
+	gtk_notebook_set_show_border (GTK_NOTEBOOK (window->priv->notebook), FALSE);
 
 	gtk_paned_pack2 (GTK_PANED (window->priv->paned),
 			 window->priv->notebook,

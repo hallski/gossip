@@ -90,8 +90,6 @@ static void            chat_disclosure_toggled_cb        (GtkToggleButton  *disc
                                                           GossipChat       *chat);
 static void	       chat_send_multi_clicked_cb	 (GtkWidget	   *button,
 							  GossipChat	   *chat);
-static void	       chat_info_clicked_cb		 (GtkWidget	   *button,
-							  GossipChat	   *chat);
 static void            chat_input_activate_cb            (GtkWidget        *entry,
                                                           GossipChat       *chat);
 static gboolean        chat_input_key_press_event_cb     (GtkWidget        *widget,
@@ -133,9 +131,7 @@ struct _GossipChatPriv {
         GtkWidget        *subject_entry;
         GtkWidget        *status_image;
         GtkWidget        *disclosure;
-        GtkWidget        *info_button;
         GtkWidget        *from_label;
-        GtkWidget        *composing_image;
 
 	GossipChatView   *view;
 
@@ -499,11 +495,9 @@ chat_create_gui (GossipChat *chat)
                                       "multi_vbox", &chat->priv->multi_vbox,
                                       "status_image", &chat->priv->status_image,
                                       "from_eventbox", &chat->priv->from_eventbox,
-                                      "info_button", &chat->priv->info_button,
                                       "from_label", &chat->priv->from_label,
                                       "disclosure", &chat->priv->disclosure,
                                       "send_multi_button", &chat->priv->send_multi_button,
-                                      "composing_image", &chat->priv->composing_image,
                                       NULL);
 
 	chat->priv->view = gossip_chat_view_new ();
@@ -517,10 +511,6 @@ chat_create_gui (GossipChat *chat)
 
         roster = gossip_app_get_roster ();
 
-        gtk_image_set_from_stock (GTK_IMAGE (chat->priv->composing_image),
-                                  GOSSIP_STOCK_TYPING,
-                                  GTK_ICON_SIZE_MENU);
-
 	chat->priv->tooltips = gtk_tooltips_new ();
 
         g_signal_connect (chat->priv->disclosure,
@@ -530,10 +520,6 @@ chat_create_gui (GossipChat *chat)
 	g_signal_connect (chat->priv->send_multi_button,
 			  "clicked",
 			  G_CALLBACK (chat_send_multi_clicked_cb),
-			  chat);
-	g_signal_connect (chat->priv->info_button,
-			  "clicked",
-			  G_CALLBACK (chat_info_clicked_cb),
 			  chat);
         g_signal_connect (chat->priv->input_entry,
                           "activate",
@@ -1068,21 +1054,6 @@ chat_send_multi_clicked_cb (GtkWidget  *button,
 }
 
 static void
-chat_info_clicked_cb (GtkWidget  *button,
-		      GossipChat *chat)
-{
-	GossipRosterOld *roster;
-	const gchar     *name;
-
-	roster = gossip_app_get_roster ();
-
-	name = gossip_roster_old_get_nick_from_jid (roster, chat->priv->jid);
-	if (name && name[0]) {
-		gossip_contact_info_new (gossip_app_get (), chat->priv->jid, name);
-	}
-}
-
-static void
 chat_input_activate_cb (GtkWidget  *entry,
                         GossipChat *chat)
 {
@@ -1199,10 +1170,22 @@ static void
 chat_composing_cb (GossipChat *chat,
 		   gboolean    composing)
 {
+	GossipRosterOld *roster;
+	GdkPixbuf       *pixbuf;
+
+	roster = gossip_app_get_roster ();
+
 	if (composing) {
-		gtk_widget_show (chat->priv->composing_image);
+		gtk_image_set_from_stock (GTK_IMAGE (chat->priv->status_image),
+					  GOSSIP_STOCK_TYPING,
+					  GTK_ICON_SIZE_MENU);
 	} else {
-		gtk_widget_hide (chat->priv->composing_image);
+		pixbuf = gossip_roster_old_get_status_pixbuf_for_jid (roster, 
+								      chat->priv->jid);
+		
+		gtk_image_set_from_pixbuf (GTK_IMAGE (chat->priv->status_image),
+					   pixbuf);
+		g_object_unref (pixbuf);
 	}
 }
 

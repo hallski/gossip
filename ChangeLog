@@ -1,3 +1,10 @@
+2003-11-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_init):
+	* src/gossip-chat.c: (chat_create_gui), (chat_composing_cb):
+	* ui/chat.glade: Fix paddings etc and remove the info button, move
+	the composing icon.
+
 2003-11-04  Mikael Hallendal  <micke@imendio.com>
         
         * Tabbed window patch from Geert-Jan Van den Bogaerde, you rock!
