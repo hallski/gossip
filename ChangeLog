@@ -1,3 +1,15 @@
+2004-03-01  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_authentication_cb): Fix string.
+	(app_idle_check_cb): Remove the delay before starting to flash,
+	since it was more annoying than helpful.
+	(gossip_app_connect): Make this build with debug output enabled.
+	(app_status_clear_away): Stop the flashing here.
+	(app_tray_flash_timeout_func): ifdef out debug code.
+	
+	* src/gossip-roster-view.c: (gossip_roster_view_flash_item): Use
+	the same timeout as app.
+
 2004-02-27  Martyn Russell  <ginxd@btopenworld.com>
  
  	* src/gossip-join-dialog.c (join_dialog_response_cb): 

@@ -72,15 +72,11 @@
  */
 #define	LEAVE_SLACK 15
 
-/* Number of seconds of slack when returning from autoaway. The _NOFLASH value
- * is the number of seconds to wait before starting to flash (to get a less
- * annoying effect).
- */
+/* Number of seconds of slack when returning from autoaway. */
 #define	BACK_SLACK 15
-#define	BACK_SLACK_NOFLASH 5
 
 /* Flashing delay for icons (milliseconds). */
-#define FLASH_TIMEOUT 400
+#define FLASH_TIMEOUT 500
 
 /* Minimum width of roster window if something goes wrong. */
 #define MIN_WIDTH 50
@@ -677,9 +673,8 @@ app_authentication_cb (LmConnection *connection,
 						GTK_DIALOG_DESTROY_WITH_PARENT,
 						GTK_MESSAGE_ERROR,
 						GTK_BUTTONS_OK,
-						_("Unable to Authenticate"),
-						_("Make sure that your account information is "
-						  "correct, such as your username and password."));
+						_("Could not connect"),
+						_("Make sure that your account information is correct."));
 		
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
@@ -1273,7 +1268,6 @@ app_idle_check_cb (GossipApp *app)
 {
 	GossipAppPriv *priv;
 	gint32         idle;
-	time_t         now;
 	GossipShow     show;
 
 	priv = app->priv;
@@ -1281,17 +1275,13 @@ app_idle_check_cb (GossipApp *app)
 	idle = gossip_idle_get_seconds ();
 	show = app_get_effective_show ();
 
+	/* We're going away, allow some slack. */
 	if (priv->leave_time > 0) {
-		/* We're going away, allow some slack. */
-		now = time (NULL);
-
-		if (now - priv->leave_time > LEAVE_SLACK) {
+		if (time (NULL) - priv->leave_time > LEAVE_SLACK) {
 			priv->leave_time = 0;
-
 			app_status_flash_stop ();
 
 			gossip_idle_reset ();
-
 			d(g_print ("OK, away now.\n"));
 		}
 		
@@ -1306,13 +1296,12 @@ app_idle_check_cb (GossipApp *app)
 	}
 	else if (show == GOSSIP_SHOW_AWAY || show == GOSSIP_SHOW_EXT_AWAY) {
 		/* Allow some slack before returning from away. */
-		if (idle >= -BACK_SLACK && idle <= -BACK_SLACK_NOFLASH) {
+		if (idle >= -BACK_SLACK && idle <= 0) {
 			d(g_print ("Slack, do nothing.\n"));
 			app_status_flash_start ();
 		}
-		else if (idle < -(BACK_SLACK + BACK_SLACK_NOFLASH)) {
-			d(g_print ("No more slack, break away.\n"));
-
+		else if (idle < -BACK_SLACK) {
+			d(g_print ("No more slack, break interrupted.\n"));
 			priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 			
 			g_free (priv->away_message);
@@ -1321,7 +1310,7 @@ app_idle_check_cb (GossipApp *app)
 			app_status_flash_stop ();
 		}
 		else if (idle > BACK_SLACK) {
-			d(g_print ("OK, don't go back.\n"));
+			d(g_print ("Don't interrupt break.\n"));
 			app_status_flash_stop ();
 		}
 	}
@@ -1377,17 +1366,13 @@ gossip_app_connect (void)
 	if (result == FALSE && error) {
 		GtkWidget *dialog;
 
-		d(g_print ("Failed to connect, error:%d, %s\n", error->code, error->reason));
-
 		dialog = gossip_hig_dialog_new (GTK_WINDOW (priv->window),
 						GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
 						GTK_MESSAGE_ERROR,
 						GTK_BUTTONS_OK,
-						"Unable to connect",
-						"%s\n%s",
-						_("Make sure that your account information is correct."),
-						_("The server may currently be unavailable."));
-			
+						"Could not connect",
+						_("Make sure that your account information is correct. "
+						  "The server may also currently be unavailable."));
 
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
@@ -2160,10 +2145,11 @@ app_status_clear_away (void)
 	g_free (priv->away_message);
 	priv->away_message = NULL;
 
-	priv->leave_time = 0;
-
 	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
+	priv->leave_time = 0;
+	app_status_flash_stop ();
+	
 	/* Force this so we don't get a delay in the display. */
 	app_update_show ();
 }
@@ -2820,8 +2806,16 @@ app_tray_flash_timeout_func (gpointer data)
 
 	priv = app->priv;
 
-	/*if (priv->tray_flash_icons == NULL && priv->status_flash_timeout_id == 0)
-	  g_warning ("no flash!?\n");*/
+#if 0
+	/* Debug code */
+	if (priv->tray_flash_icons == NULL && priv->status_flash_timeout_id == 0) {
+		g_print ("no flash\n");
+	}
+
+	if (priv->status_flash_timeout_id != 0 && priv->explicit_show == priv->auto_show) {
+		g_print ("expl == auto, flashing\n");
+	}
+#endif
 	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {

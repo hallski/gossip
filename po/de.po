@@ -11,7 +11,7 @@ msgstr ""
 "Last-Translator: Hendrik Richter <naggeldak@gnome-de.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Report-Msgid-Bugs-To: \n"
 
@@ -29,11 +29,11 @@ msgstr "Keine Benachrichtigung bei Abwesenheit"
 
 #: gossip.schemas.in.h:2
 msgid "Be silent when busy"
-msgstr "Keine Benachrichtigung bei Beschäftigung"
+msgstr "Keine Benachrichtigung bei BeschÃ¤ftigung"
 
 #: gossip.schemas.in.h:3
 msgid "Height of main window"
-msgstr "Höhe des Hauptfensters"
+msgstr "HÃ¶he des Hauptfensters"
 
 #: gossip.schemas.in.h:4
 #, fuzzy
@@ -72,7 +72,7 @@ msgstr "Die Breite des Hauptfensters."
 
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
-msgstr "Die Höhe des Hauptfensters."
+msgstr "Die HÃ¶he des Hauptfensters."
 
 #: gossip.schemas.in.h:12
 msgid "The width of the main window."
@@ -84,7 +84,7 @@ msgstr "Benutze grafische Smilies"
 
 #: gossip.schemas.in.h:14
 msgid "Use notification sounds"
-msgstr "Benachrichtigen mit Klängen"
+msgstr "Benachrichtigen mit KlÃ¤ngen"
 
 #: gossip.schemas.in.h:15
 msgid ""
@@ -97,11 +97,11 @@ msgstr "Bei neuer Nachricht Klang abspielen."
 
 #: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away."
-msgstr "Bei Abwesenheit Klänge abspielen."
+msgstr "Bei Abwesenheit KlÃ¤nge abspielen."
 
 #: gossip.schemas.in.h:18
 msgid "Whether or not to play sounds when busy."
-msgstr "Bei Beschäftigung Klänge abspielen."
+msgstr "Bei BeschÃ¤ftigung KlÃ¤nge abspielen."
 
 #: gossip.schemas.in.h:19
 #, fuzzy
@@ -130,12 +130,12 @@ msgstr "Ort"
 #: src/gossip-add-contact.c:293
 #, c-format
 msgid "What request message do you want to send to %s?"
-msgstr "Welche Anfrage möchten Sie an %s senden?"
+msgstr "Welche Anfrage mÃ¶chten Sie an %s senden?"
 
 #: src/gossip-add-contact.c:311
 #, c-format
 msgid "%s will be added to your contact list."
-msgstr "%s wird Ihrer Kontaktliste hinzugefügt."
+msgstr "%s wird Ihrer Kontaktliste hinzugefÃ¼gt."
 
 #: src/gossip-app.c:591
 msgid "Artwork by:"
@@ -151,7 +151,7 @@ msgstr "Hendrik Richter <naggeldak@gnome-de.org>"
 #: src/gossip-app.c:613
 #, fuzzy
 msgid "An Instant Messaging Client for GNOME"
-msgstr "Ein Jabber-Client für GNOME"
+msgstr "Ein Jabber-Client fÃ¼r GNOME"
 
 #: src/gossip-app.c:622
 msgid "Gossip Website"
@@ -162,7 +162,7 @@ msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Geben Sie die Benutzer-ID der Person ein der Sie eine Nachricht schicken "
-"möchten."
+"mÃ¶chten."
 
 #: src/gossip-app.c:723 ui/main.glade.h:76
 msgid "_Chat"
@@ -171,7 +171,7 @@ msgstr "_Chat"
 #: src/gossip-app.c:974
 #, c-format
 msgid "%s wants to be notified of your presence."
-msgstr "%s möchte über Ihre Anwesenheit informiert werden."
+msgstr "%s mÃ¶chte Ã¼ber Ihre Anwesenheit informiert werden."
 
 #: src/gossip-app.c:1215
 msgid "You were disconnected from the server. Do you want to reconnect?"
@@ -183,12 +183,12 @@ msgstr "Stellen Sie sicher, dass Ihre Konto-Informationen korrekt sind."
 
 #: src/gossip-app.c:1376
 msgid "The server may currently be unavailable."
-msgstr "Dieser Server ist moment möglicherweise nicht verfügbar."
+msgstr "Dieser Server ist moment mÃ¶glicherweise nicht verfÃ¼gbar."
 
 #: src/gossip-app.c:1847
 #, fuzzy
 msgid "Gossip, Instant Messaging Client"
-msgstr "Ein Jabber-Client für GNOME"
+msgstr "Ein Jabber-Client fÃ¼r GNOME"
 
 #: src/gossip-app.c:1988
 #, c-format
@@ -202,11 +202,11 @@ msgstr "Abgemeldet"
 
 #: src/gossip-app.c:2472 src/gossip-preferences.c:639
 msgid "Available"
-msgstr "Verfügbar"
+msgstr "VerfÃ¼gbar"
 
 #: src/gossip-app.c:2483 src/gossip-preferences.c:640
 msgid "Busy"
-msgstr "Beschäftigt"
+msgstr "BeschÃ¤ftigt"
 
 #: src/gossip-app.c:2494 src/gossip-preferences.c:641
 msgid "Away"
@@ -215,12 +215,12 @@ msgstr "Abwesend"
 #: src/gossip-app.c:2626
 #, fuzzy
 msgid "Available..."
-msgstr "Verfügbar"
+msgstr "VerfÃ¼gbar"
 
 #: src/gossip-app.c:2631
 #, fuzzy
 msgid "Busy..."
-msgstr "Beschäftigt"
+msgstr "BeschÃ¤ftigt"
 
 #: src/gossip-app.c:2636
 #, fuzzy
@@ -242,7 +242,7 @@ msgstr "_Kopiere Link-Adresse"
 
 #: src/gossip-chat-view.c:364
 msgid "_Open Link"
-msgstr "_Öffne Link"
+msgstr "_Ã–ffne Link"
 
 #: src/gossip-chat-view.c:678
 msgid "%A %d %B %Y"
@@ -336,11 +336,11 @@ msgstr "Konto-Name"
 
 #: src/gossip-main.c:87
 msgid "List the available accounts"
-msgstr "Liste der verfügbaren Konten"
+msgstr "Liste der verfÃ¼gbaren Konten"
 
 #: src/gossip-main.c:120
 msgid "Available accounts:"
-msgstr "Verfügbare Konten:"
+msgstr "VerfÃ¼gbare Konten:"
 
 #: src/gossip-main.c:129
 msgid "[default]"
@@ -349,7 +349,7 @@ msgstr "[Standard]"
 #: src/gossip-main.c:152
 #, c-format
 msgid "There is no account with the name '%s'."
-msgstr "Kein Konto namens »%s« vorhanden."
+msgstr "Kein Konto namens Â»%sÂ« vorhanden."
 
 #: src/gossip-register.c:79
 msgid "Unknown error"
@@ -389,7 +389,7 @@ msgstr "/Zeige _Mitschnitt"
 
 #: src/gossip-roster-view.c:223
 msgid "/_Remove contact"
-msgstr "/Kontakt _löschen"
+msgstr "/Kontakt _lÃ¶schen"
 
 #: src/gossip-roster-view.c:234
 msgid "/Re_name group"
@@ -403,14 +403,14 @@ msgid ""
 "from your contact list?"
 msgstr ""
 "Kontakt %s wirklich von der\n"
-"Kontaktliste löschen?"
+"Kontaktliste lÃ¶schen?"
 
 #: src/gossip-roster-view.c:1335
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
-msgstr "Neuen Spitznamen für %s eingeben"
+msgstr "Neuen Spitznamen fÃ¼r %s eingeben"
 
 #: src/gossip-roster-view.c:1441
 #, c-format
@@ -418,7 +418,7 @@ msgid ""
 "Please enter a new name for the group\n"
 "%s"
 msgstr ""
-"Bitte neuen Spitznamen für die Gruppe\n"
+"Bitte neuen Spitznamen fÃ¼r die Gruppe\n"
 "%s eingeben"
 
 #: src/gossip-startup-druid.c:254
@@ -555,7 +555,7 @@ msgstr "Server:"
 
 #: ui/connect.glade.h:11
 msgid "Use _encryption (SSL)"
-msgstr "Verschlüsselung benutzen (_SSL)"
+msgstr "VerschlÃ¼sselung benutzen (_SSL)"
 
 #: ui/connect.glade.h:12
 msgid "_Password:"
@@ -579,7 +579,7 @@ msgstr "        "
 
 #: ui/group-chat.glade.h:4
 msgid "<b>Available chat rooms</b>"
-msgstr "<b>Verfügbare Chat-Räume</b>"
+msgstr "<b>VerfÃ¼gbare Chat-RÃ¤ume</b>"
 
 #: ui/group-chat.glade.h:5
 msgid "<b>Chat room information</b>"
@@ -614,7 +614,7 @@ msgid ""
 "Pick a favorite, or enter nickname, server name, and the name of the chat "
 "room to enter."
 msgstr ""
-"Wählen Sie einen Favoriten-Server oder geben Sie Spitznamen, Servernamen und "
+"WÃ¤hlen Sie einen Favoriten-Server oder geben Sie Spitznamen, Servernamen und "
 "den Namendes Chat-Raums ein um den Raum zu betreten."
 
 #: ui/group-chat.glade.h:13
@@ -623,7 +623,7 @@ msgstr "_Entfernen"
 
 #: ui/group-chat.glade.h:14
 msgid "_Add"
-msgstr "_Hinzufügen"
+msgstr "_HinzufÃ¼gen"
 
 #: ui/group-chat.glade.h:15
 msgid "_Edit favorites..."
@@ -659,7 +659,7 @@ msgstr ""
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
-msgstr "<i>Informationen nicht verfügbar</i>"
+msgstr "<i>Informationen nicht verfÃ¼gbar</i>"
 
 #: ui/main.glade.h:7
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
@@ -667,15 +667,15 @@ msgstr "<span size=\"smaller\">Beispiel: benutzer@jabber.org</span>"
 
 #: ui/main.glade.h:8
 msgid "Add a contact"
-msgstr "Kontakt hinzufügen"
+msgstr "Kontakt hinzufÃ¼gen"
 
 #: ui/main.glade.h:9
 msgid "Add contact"
-msgstr "Kontakt hinzufügen"
+msgstr "Kontakt hinzufÃ¼gen"
 
 #: ui/main.glade.h:10
 msgid "Add to your contact list"
-msgstr "Zur Kontaktliste hinzufügen"
+msgstr "Zur Kontaktliste hinzufÃ¼gen"
 
 #: ui/main.glade.h:11
 msgid "Appearance"
@@ -683,11 +683,11 @@ msgstr "Aussehen"
 
 #: ui/main.glade.h:12
 msgid "Choose a Server"
-msgstr "Server auswählen"
+msgstr "Server auswÃ¤hlen"
 
 #: ui/main.glade.h:13
 msgid "Choose from list:"
-msgstr "Aus Liste wählen:"
+msgstr "Aus Liste wÃ¤hlen:"
 
 #: ui/main.glade.h:14
 msgid "Client information"
@@ -715,11 +715,11 @@ msgstr "Beschreibung"
 
 #: ui/main.glade.h:20
 msgid "Disable sounds when _away"
-msgstr "Klänge bei _Abwesenheit deaktivieren"
+msgstr "KlÃ¤nge bei _Abwesenheit deaktivieren"
 
 #: ui/main.glade.h:21
 msgid "Disable sounds when _busy"
-msgstr "Klänge bei _Beschäftigung deaktivieren"
+msgstr "KlÃ¤nge bei _BeschÃ¤ftigung deaktivieren"
 
 #: ui/main.glade.h:22
 msgid "Do you already have an account on a Jabber server?"
@@ -752,12 +752,12 @@ msgid ""
 "\n"
 "To get started, just click \"Forward\"."
 msgstr ""
-"Gossip ist ein moderner Client für das Jabber Instant-Message-System.\n"
+"Gossip ist ein moderner Client fÃ¼r das Jabber Instant-Message-System.\n"
 "\n"
 "Dieser Assistent hilft Ihnen beim Konfigurieren von Gossip und verbindet Sie "
 "zu einem Jabber-Server Ihrer Wahl.\n"
 "\n"
-"Um fortzufahren bitte auf »Vor« klicken."
+"Um fortzufahren bitte auf Â»VorÂ« klicken."
 
 #: ui/main.glade.h:33
 msgid ""
@@ -765,13 +765,13 @@ msgid ""
 "You can change your account settings later, by selecting the Chat-"
 ">Connect... menu item."
 msgstr ""
-"Gossip ist nun korrekt für Ihr System konfiguriert.\n"
-"Sie können Ihre Kontoeinstellungen später im Menü Aktionen - Verbinden...  "
-"ändern."
+"Gossip ist nun korrekt fÃ¼r Ihr System konfiguriert.\n"
+"Sie kÃ¶nnen Ihre Kontoeinstellungen spÃ¤ter im MenÃ¼ Aktionen - Verbinden...  "
+"Ã¤ndern."
 
 #: ui/main.glade.h:35
 msgid "I would like to add you to my contact list."
-msgstr "Ich möchte Dich gerne zu meiner Kontaktliste hinzufügen."
+msgstr "Ich mÃ¶chte Dich gerne zu meiner Kontaktliste hinzufÃ¼gen."
 
 #: ui/main.glade.h:36
 msgid ""
@@ -779,17 +779,17 @@ msgid ""
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
 msgstr ""
-"Um Benachrichtigungen über die Anwesenheit des Benutzers zu bekommen wird "
+"Um Benachrichtigungen Ã¼ber die Anwesenheit des Benutzers zu bekommen wird "
 "nun eine Anfrage gesendet. Bis dieser Anfrage zugestimmt wird erscheint der "
-"Benutzer als »Abgemeldet« in Ihrer Kontaktliste."
+"Benutzer als Â»AbgemeldetÂ« in Ihrer Kontaktliste."
 
 #: ui/main.glade.h:37
 msgid "In which group do you want to place this contact?"
-msgstr "Gruppe, in die Kontakt eingefügt werden soll."
+msgstr "Gruppe, in die Kontakt eingefÃ¼gt werden soll."
 
 #: ui/main.glade.h:38
 msgid "Information about ..."
-msgstr "Informationen über..."
+msgstr "Informationen Ã¼ber..."
 
 #: ui/main.glade.h:39
 msgid "JID"
@@ -833,7 +833,7 @@ msgstr "Auf welchem Server haben Sie ein Jabber-Konto?"
 
 #: ui/main.glade.h:49
 msgid "Personal information"
-msgstr "Persönliche Informationen"
+msgstr "PersÃ¶nliche Informationen"
 
 #: ui/main.glade.h:50
 msgid "Play sound when messages arrive"
@@ -861,7 +861,7 @@ msgstr "Zeige _abgemeldete Kontakte"
 
 #: ui/main.glade.h:56
 msgid "Sound"
-msgstr "Klänge"
+msgstr "KlÃ¤nge"
 
 #: ui/main.glade.h:57
 #, fuzzy
@@ -903,11 +903,11 @@ msgstr "Ihr Name:"
 
 #: ui/main.glade.h:66
 msgid "What nickname do you want to use for this contact?"
-msgstr "Spitzname für den Kontakt:"
+msgstr "Spitzname fÃ¼r den Kontakt:"
 
 #: ui/main.glade.h:67
 msgid "What request message do you want to send to ...?"
-msgstr "Welche Anfrage möchten Sie senden?"
+msgstr "Welche Anfrage mÃ¶chten Sie senden?"
 
 #: ui/main.glade.h:68
 msgid "What server do you want to use?"
@@ -919,7 +919,7 @@ msgstr "Ihr Benutzername:"
 
 #: ui/main.glade.h:70
 msgid "What username do you want to use?"
-msgstr "Gewünschter Benutzername:"
+msgstr "GewÃ¼nschter Benutzername:"
 
 #: ui/main.glade.h:71
 msgid "Yes"
@@ -927,7 +927,7 @@ msgstr "Ja"
 
 #: ui/main.glade.h:72
 msgid "Your Identity"
-msgstr "Ihre Identität"
+msgstr "Ihre IdentitÃ¤t"
 
 #: ui/main.glade.h:73
 msgid "_Accept"
@@ -939,7 +939,7 @@ msgstr "_Kontoinformationen"
 
 #: ui/main.glade.h:75
 msgid "_Add Contact..."
-msgstr "Kontakt _hinzufügen..."
+msgstr "Kontakt _hinzufÃ¼gen..."
 
 #: ui/main.glade.h:77
 msgid "_Connect..."
@@ -947,7 +947,7 @@ msgstr "_Verbinden..."
 
 #: ui/main.glade.h:78
 msgid "_Decide Later"
-msgstr "_Später entscheiden"
+msgstr "_SpÃ¤ter entscheiden"
 
 #: ui/main.glade.h:79
 msgid "_Deny"
@@ -1008,13 +1008,13 @@ msgstr "_Status-Nachrichten"
 #~ msgstr "Bald abwesend..."
 
 #~ msgid "Autoaway message"
-#~ msgstr "Nachricht für »Auto-Abwesend«"
+#~ msgstr "Nachricht fÃ¼r Â»Auto-AbwesendÂ«"
 
 #~ msgid "Away messages"
 #~ msgstr "Nachrichten bei Abwesenheit"
 
 #~ msgid "Busy messages"
-#~ msgstr "Nachrichten bei Beschäftigung"
+#~ msgstr "Nachrichten bei BeschÃ¤ftigung"
 
 #~ msgid "Message to show before going away"
 #~ msgstr "Nachricht, die vor Abwesenheit gezeigt wird"
@@ -1036,7 +1036,7 @@ msgstr "_Status-Nachrichten"
 
 #, fuzzy
 #~ msgid "New Busy Message"
-#~ msgstr "Nachrichten bei Beschäftigung"
+#~ msgstr "Nachrichten bei BeschÃ¤ftigung"
 
 #, fuzzy
 #~ msgid "New Away Message"
@@ -1058,19 +1058,19 @@ msgstr "_Status-Nachrichten"
 #~ msgstr "Verlassen"
 
 #~ msgid "Preset messages for quickly setting away status."
-#~ msgstr "Vorgefertigte Nachrichten für »Abwesend«"
+#~ msgstr "Vorgefertigte Nachrichten fÃ¼r Â»AbwesendÂ«"
 
 #~ msgid "Preset messages for quickly setting busy status."
-#~ msgstr "Vorgefertigte Nachrichten für »Beschäftigt«"
+#~ msgstr "Vorgefertigte Nachrichten fÃ¼r Â»BeschÃ¤ftigtÂ«"
 
 #~ msgid "Reason for being busy:"
-#~ msgstr "Grund der Beschäftigung:"
+#~ msgstr "Grund der BeschÃ¤ftigung:"
 
 #~ msgid "Reason for leaving:"
 #~ msgstr "Grund der Abwesenheit:"
 
 #~ msgid "Open conversations in single window with list view"
-#~ msgstr "Unterhaltungen in einem einzigen Fenster öffnen"
+#~ msgstr "Unterhaltungen in einem einzigen Fenster Ã¶ffnen"
 
 #~ msgid "[Eating,Sleeping]"
 #~ msgstr "[Essen,Schlafen]"
@@ -1091,10 +1091,10 @@ msgstr "_Status-Nachrichten"
 #~ msgstr "_Zeige"
 
 #~ msgid "_Next Conversation"
-#~ msgstr "_Nächste Unterhaltung"
+#~ msgstr "_NÃ¤chste Unterhaltung"
 
 #~ msgid "Add"
-#~ msgstr "Hinzufügen"
+#~ msgstr "HinzufÃ¼gen"
 
 #~ msgid "Open conversations in a single window with _list view"
-#~ msgstr "Unterhaltungen in einem einzigen _Fenster öffnen"
+#~ msgstr "Unterhaltungen in einem einzigen _Fenster Ã¶ffnen"

@@ -36,6 +36,9 @@
 
 #define d(x)
 
+/* Flashing delay for icons (milliseconds). */
+#define FLASH_TIMEOUT 500
+
 struct _GossipRosterViewPriv {
 	GtkTreeModel   *model;
 	GossipRoster   *roster;
@@ -1789,7 +1792,7 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 		flash_data = g_new0 (FlashData, 1);
 		flash_data->flash_on = TRUE;
 		flash_data->flash_timeout_id =
-			g_timeout_add_full (G_PRIORITY_DEFAULT, 350,
+			g_timeout_add_full (G_PRIORITY_DEFAULT, FLASH_TIMEOUT,
 					    (GSourceFunc) roster_view_flash_timeout_func,
 					    fdata,
 					    (GDestroyNotify) roster_view_free_flash_timeout_data);
