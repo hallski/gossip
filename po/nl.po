@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-30 03:56+0200\n"
-"PO-Revision-Date: 2004-08-05 19:08+0200\n"
+"POT-Creation-Date: 2004-08-13 04:00+0200\n"
+"PO-Revision-Date: 2004-08-13 14:09+0200\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -136,7 +136,7 @@ msgstr ""
 "Vincent van Adrighem\n"
 "Elros Cyriatan"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:64
+#: src/gossip-account.c:292 src/gossip-app.c:62 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Startpagina"
 
@@ -150,31 +150,31 @@ msgstr "Welk verzoekbericht wilt u zenden aan %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s zal aan uw contactlijst worden toegevoegd."
 
-#: src/gossip-app.c:644
+#: src/gossip-app.c:637
 msgid "Could not connect"
 msgstr "Kon niet verbinden"
 
-#: src/gossip-app.c:645
+#: src/gossip-app.c:638
 msgid "Make sure that your account information is correct."
 msgstr "Zorg er voor dat uw account informatie juist is."
 
-#: src/gossip-app.c:708
+#: src/gossip-app.c:701
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Voer de gebruikers ID van de persoon in aan wie u een chatbericht wilt "
 "sturen."
 
-#: src/gossip-app.c:715 ui/main.glade.h:85
+#: src/gossip-app.c:708 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chatten"
 
-#: src/gossip-app.c:1012
+#: src/gossip-app.c:1005
 #, c-format
 msgid "%s wants to be notified of your status."
 msgstr "%s wilt van uw status op de hoogte worden gehouden."
 
-#: src/gossip-app.c:1254
+#: src/gossip-app.c:1251
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "De verbinding met de server is verbroken. Wilt u opnieuw verbinden?"
 
@@ -186,45 +186,45 @@ msgstr ""
 "Zorg er voor dat uw account informatie juist is. De server kan ook op dit "
 "moment niet beschikbaar zijn."
 
-#: src/gossip-app.c:1882
+#: src/gossip-app.c:1880
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, instant messaging client"
 
-#: src/gossip-app.c:2026
+#: src/gossip-app.c:2024
 #, c-format
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
 
-#: src/gossip-app.c:2115 src/gossip-chat-window.c:798
+#: src/gossip-app.c:2113 src/gossip-chat-window.c:793
 #: src/gossip-roster-view.c:986
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2514 src/gossip-preferences.c:638
+#: src/gossip-app.c:2512 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Beschikbaar"
 
-#: src/gossip-app.c:2525 src/gossip-preferences.c:639
+#: src/gossip-app.c:2523 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Bezig"
 
-#: src/gossip-app.c:2536 src/gossip-preferences.c:640
+#: src/gossip-app.c:2534 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Weg"
 
-#: src/gossip-app.c:2668
+#: src/gossip-app.c:2666
 msgid "Available..."
 msgstr "Beschikbaar..."
 
-#: src/gossip-app.c:2673
+#: src/gossip-app.c:2671
 msgid "Busy..."
 msgstr "Bezig..."
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2676
 msgid "Away..."
 msgstr "Weg..."
 
-#: src/gossip-app.c:2707
+#: src/gossip-app.c:2705
 msgid "Edit List..."
 msgstr "Lijst bewerken..."
 
@@ -244,40 +244,40 @@ msgstr "Koppeling _openen"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:542
+#: src/gossip-chat-window.c:537
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatten - %s"
 
-#: src/gossip-chat-window.c:810
+#: src/gossip-chat-window.c:805
 msgid "Typing a message."
 msgstr "Bezig met tikken van een bericht."
 
-#: src/gossip-chat.c:715
+#: src/gossip-chat.c:719
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Er is een fout opgetreden bij het chatten met %s."
 
-#: src/gossip-chat.c:720 src/gossip-group-chat.c:913
+#: src/gossip-chat.c:724 src/gossip-group-chat.c:913
 #: src/gossip-group-chat.c:1023
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:811
+#: src/gossip-chat.c:815
 #, c-format
 msgid "%s went offline"
 msgstr "%s ging offline"
 
-#: src/gossip-chat.c:825
+#: src/gossip-chat.c:829
 #, c-format
 msgid "%s comes online"
 msgstr "%s komt online"
 
-#: src/gossip-chat.c:906
+#: src/gossip-chat.c:910
 msgid "Connected"
 msgstr "Verbonden"
 
-#: src/gossip-chat.c:920
+#: src/gossip-chat.c:924
 msgid "Disconnected"
 msgstr "Niet verbonden"
 
@@ -353,19 +353,19 @@ msgstr "Er is geen account met de naam '%s'."
 msgid "Unknown error"
 msgstr "Onbekende fout"
 
-#: src/gossip-register.c:182
+#: src/gossip-register.c:184
 msgid "Registering account"
 msgstr "Bezig met registreren account"
 
-#: src/gossip-register.c:222
+#: src/gossip-register.c:224
 msgid "Successfully registered the account"
 msgstr "Het account is succesvol geregistreerd"
 
-#: src/gossip-register.c:243 src/gossip-register.c:249
+#: src/gossip-register.c:245 src/gossip-register.c:251
 msgid "Failed registering the account"
 msgstr "Registreren van account mislukt"
 
-#: src/gossip-register.c:245
+#: src/gossip-register.c:247
 msgid "Reason:"
 msgstr "Reden:"
 
@@ -422,11 +422,11 @@ msgstr ""
 "Voer alstublieft een nieuwe bijnaam in voor de groep\n"
 "%s"
 
-#: src/gossip-startup-druid.c:251
+#: src/gossip-startup-druid.c:257
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip gaat nu proberen uw account te gebruiken:"
 
-#: src/gossip-startup-druid.c:255
+#: src/gossip-startup-druid.c:261
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip gaat nu proberen uw account te registreren:"
 
@@ -544,40 +544,40 @@ msgid "Connect"
 msgstr "Verbinden"
 
 #: ui/connect.glade.h:7
+msgid "Connect _Server:"
+msgstr "Verbinden met _server:"
+
+#: ui/connect.glade.h:8
 msgid "Edit Account Information"
 msgstr "Account informatie bewerken"
 
-#: ui/connect.glade.h:8
+#: ui/connect.glade.h:9
 msgid "P_ort:"
 msgstr "_Poort:"
 
-#: ui/connect.glade.h:9
+#: ui/connect.glade.h:10
 msgid "Re_gister..."
 msgstr "Re_gistreren..."
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:11
 msgid "Server:"
 msgstr "Server:"
 
-#: ui/connect.glade.h:11
+#: ui/connect.glade.h:12
 msgid "Use _encryption (SSL)"
 msgstr "_Codering gebruiken (SSL)"
 
-#: ui/connect.glade.h:12
+#: ui/connect.glade.h:13
+msgid "_Jabber ID:"
+msgstr "_Jabber ID:"
+
+#: ui/connect.glade.h:14
 msgid "_Password:"
 msgstr "_Wachtwoord:"
 
-#: ui/connect.glade.h:13
+#: ui/connect.glade.h:15
 msgid "_Resource:"
 msgstr "_Bron:"
-
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:19
-msgid "_Server:"
-msgstr "_Server:"
-
-#: ui/connect.glade.h:15
-msgid "_User name:"
-msgstr "_Gebruikersnaam:"
 
 #: ui/group-chat.glade.h:2
 msgid "        "
@@ -646,6 +646,10 @@ msgstr "_Bijnaam:"
 #: ui/group-chat.glade.h:18
 msgid "_Room:"
 msgstr "_Ruimte:"
+
+#: ui/group-chat.glade.h:19
+msgid "_Server:"
+msgstr "_Server:"
 
 #: ui/group-chat.glade.h:20
 msgid "_Topic:"
