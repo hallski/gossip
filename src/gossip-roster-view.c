@@ -1496,6 +1496,8 @@ roster_view_flash_free_data (FlashData *data)
 	g_free (data);
 }
 
+#define EXPAND 1
+
 static void
 roster_view_add_item (GossipRosterView  *view,
 		      GossipRosterItem  *item,
@@ -1504,7 +1506,7 @@ roster_view_add_item (GossipRosterView  *view,
 	GossipRosterViewPriv *priv;
 	GtkTreeIter           iter, group_iter;
 	RosterElement        *e;
-#if 0
+#if EXPAND
 	gboolean              expand = FALSE;
 #endif
 
@@ -1520,6 +1522,7 @@ roster_view_add_item (GossipRosterView  *view,
 				       NULL);
 	} else {
 		const gchar *name;
+
 		name = gossip_roster_group_get_name (group);
 
 		if (!roster_view_find_group (view, &group_iter, name)) {
@@ -1531,17 +1534,17 @@ roster_view_add_item (GossipRosterView  *view,
 			}
 		}
 
+#if EXPAND
+		if (!gtk_tree_model_iter_has_child (priv->model, &group_iter)) {
+			expand = TRUE;
+		}
+#endif
+
 		gtk_tree_store_append (GTK_TREE_STORE (priv->model),
 				       &iter,
 				       &group_iter);
 	}
 
-#if 0
-	if (!gtk_tree_model_iter_has_child (priv->model, &group_iter)) {
-		/* FIXME: ... */
-		expand = FALSE;
-	}
-#endif
 	e = g_new0 (RosterElement, 1);
 	e->item = gossip_roster_item_ref (item);
 
@@ -1550,7 +1553,7 @@ roster_view_add_item (GossipRosterView  *view,
 			    COL_IS_GROUP, FALSE,
 			    COL_ELEMENT, e,
 			    -1);
-#if 0
+#if EXPAND
 	if (expand) {
 		GtkTreePath *path;
 
