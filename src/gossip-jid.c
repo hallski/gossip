@@ -63,7 +63,7 @@ gossip_jid_new (const gchar *str_jid)
 		jid->no_resource = g_strndup (jid->full, ch - jid->full);
 	} else {
 		jid->resource = NULL;
-		jid->no_resource = NULL;
+		jid->no_resource = NULL; 
 	}
 
 	return jid;
@@ -77,14 +77,23 @@ gossip_jid_set_without_resource (GossipJID *jid, const gchar *str)
 	g_free (jid->full);
 	g_free (jid->no_resource);
 
-	jid->no_resource = g_strdup (str);
-	jid->full = g_strdup_printf ("%s/%s", jid->no_resource, jid->resource);
+	if (jid->resource) {
+		jid->full = g_strdup_printf ("%s/%s", jid->no_resource, jid->resource);
+		jid->no_resource = g_strdup (str);
+	} else {
+		jid->full = g_strdup (str);
+		jid->no_resource = NULL;
+	}
 }
 
 void
 gossip_jid_set_resource (GossipJID *jid, const gchar *resource)
 {
 	g_return_if_fail (jid != NULL);
+
+	if (!jid->resource) {
+		jid->no_resource = g_strdup (jid->full);
+	}
 
 	g_free (jid->full);
 	g_free (jid->resource);
@@ -131,10 +140,10 @@ gossip_jid_get_part_name (GossipJID *jid)
 	gchar *ch;
 
 	g_return_val_if_fail (jid != NULL, "");
-	
-	for (ch = jid->no_resource; *ch; ++ch) {
+
+	for (ch = jid->full; *ch; ++ch) {
 		if (*ch == '@') {
-			return g_strndup (jid->no_resource, ch - jid->no_resource);
+			return g_strndup (jid->full, ch - jid->full);
 		}
 	}
 
@@ -144,11 +153,11 @@ gossip_jid_get_part_name (GossipJID *jid)
 const gchar *
 gossip_jid_get_part_host (GossipJID *jid)
 {
-	gchar *ch;
+	const gchar *ch;
 
 	g_return_val_if_fail (jid != NULL, "");
 	
-	for (ch = jid->no_resource; *ch; ++ch) {
+	for (ch = gossip_jid_get_without_resource (jid); *ch; ++ch) {
 		if (*ch == '@') {
 			return ch + 1;
 		}

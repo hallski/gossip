@@ -1,5 +1,9 @@
 2004-08-08  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-jid.c: Fixed some bugs when resource wasn't set. 
+
+2004-08-08  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.in: Bumped loudmouth requirement to 0.17
 	* src/gossip-app.c: (gossip_app_connect), (app_create_connection):
 	- Set the host to connect to.
