@@ -78,6 +78,7 @@ void              gossip_chat_clear              (GossipChat       *chat);
 gchar *           gossip_chat_get_history        (GossipChat       *chat,
 						  gint              lines);
 void              gossip_chat_scroll_down        (GossipChat       *chat);
+void              gossip_chat_cut                (GossipChat       *chat);
 void              gossip_chat_copy               (GossipChat       *chat);
 void              gossip_chat_paste              (GossipChat       *chat);
 

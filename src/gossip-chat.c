@@ -1485,6 +1485,26 @@ gossip_chat_clear (GossipChat *chat)
 }
 
 void 
+gossip_chat_cut (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	GtkTextBuffer  *buffer;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+	
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
+	if (gtk_text_buffer_get_selection_bounds (buffer, NULL, NULL)) {
+		GtkClipboard *clipboard;
+
+		clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+
+		gtk_text_buffer_cut_clipboard (buffer, clipboard, TRUE);
+	}
+}
+
+void 
 gossip_chat_copy (GossipChat *chat)
 {
 	GossipChatPriv *priv;

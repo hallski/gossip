@@ -1,3 +1,15 @@
+2004-07-29  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c:
+	(gossip_chat_window_init),
+	(chat_window_close_activate_cb)
+	(chat_window_cut_activate_cb):
+	- Added code to handle cut.
+	* src/gossip-chat.c: (gossip_chat_cut):
+	- Cut from the input area if text is selected.
+	- Patch from Thomas Reynolds.
+	- Fixes bug #145469
+
 2004-07-28  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster-view.c:

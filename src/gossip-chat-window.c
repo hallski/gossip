@@ -68,6 +68,8 @@ static void chat_window_conv_activate_cb      (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_close_activate_cb     (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
+static void chat_window_cut_activate_cb       (GtkWidget             *menuitem,
+					       GossipChatWindow      *window);
 static void chat_window_copy_activate_cb      (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_paste_activate_cb     (GtkWidget             *menuitem,
@@ -149,6 +151,7 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *m_conv_log;
 	GtkWidget   *m_conv_info;
 	GtkWidget   *m_conv_close;
+	GtkWidget   *m_edit_cut;
 	GtkWidget   *m_edit_copy;
 	GtkWidget   *m_edit_paste;
 	GtkWidget   *m_tabs_next;
@@ -233,6 +236,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_conv_info", &priv->m_conv_info,
 				       "menu_conv_log", &priv->m_conv_log,
 				       "menu_conv_close", &priv->m_conv_close,
+				       "menu_edit_cut", &priv->m_edit_cut,
 				       "menu_edit_copy", &priv->m_edit_copy,
 				       "menu_edit_paste", &priv->m_edit_paste,
 				       "menu_tabs_next", &priv->m_tabs_next,
@@ -278,6 +282,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 	g_signal_connect (priv->m_conv_close,
 			  "activate",
 			  G_CALLBACK (chat_window_close_activate_cb),
+			  window);
+	g_signal_connect (priv->m_edit_cut,
+			  "activate",
+			  G_CALLBACK (chat_window_cut_activate_cb),
 			  window);
 	g_signal_connect (priv->m_edit_copy,
 			  "activate",
@@ -629,6 +637,19 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 	g_return_if_fail (window->priv->current_chat != NULL);
 	
 	gossip_chat_window_remove_chat (window, window->priv->current_chat);
+}
+
+static void
+chat_window_cut_activate_cb (GtkWidget        *menuitem,
+			      GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
+
+	priv = window->priv;
+
+	gossip_chat_cut (priv->current_chat);
 }
 
 static void
