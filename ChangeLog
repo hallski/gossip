@@ -1,5 +1,10 @@
 2003-07-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c (chat_dialog_focus_in_event_cb)
+	(chat_message_handler, chat_update_title, gossip_chat_new): Prefix
+	window title with an asterisk when new messages has arrived and
+	the window is not focused. Fixes bug #117663.
+
 	* configure.in: Test for XScreenSaver extension by default.
 	(ALL_LINGUAS): Add ru.
 

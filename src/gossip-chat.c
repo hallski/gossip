@@ -56,6 +56,7 @@ struct _GossipChat {
 	gchar            *nick;
 };
 
+GtkWidget *     chat_dialog_create_disclosure     (gpointer          data);
 static GossipChat *
 chat_create                                       (GossipApp        *app,
 						   GossipJID        *jid);
@@ -75,7 +76,10 @@ static void     chat_dialog_send                  (GossipChat       *chat,
 						   const gchar      *msg);
 static void     chat_dialog_send_multi_clicked_cb (GtkWidget        *unused,
 						   GossipChat       *chat);
-static gboolean chat_focus_in_event_cb            (GtkWidget        *widget,
+static gboolean chat_text_view_focus_in_event_cb  (GtkWidget        *widget,
+						   GdkEvent         *event,
+						   GossipChat       *chat);
+static gboolean chat_dialog_focus_in_event_cb     (GtkWidget        *widget,
 						   GdkEvent         *event,
 						   GossipChat       *chat);
 static LmHandlerResult
@@ -88,7 +92,8 @@ chat_presence_handler                             (LmMessageHandler *handler,
 						   LmConnection     *connection,
 						   LmMessage        *m,
 						   GossipChat       *chat);
-GtkWidget *     chat_dialog_create_disclosure     (gpointer          data);
+static void     chat_update_title                 (GossipChat       *chat,
+						   gboolean          new_message);
 
 
 GtkWidget *
@@ -224,7 +229,12 @@ chat_create (GossipApp *app, GossipJID *jid)
 
 	g_signal_connect (chat->text_view,
 			  "focus_in_event",
-			  G_CALLBACK (chat_focus_in_event_cb),
+			  G_CALLBACK (chat_text_view_focus_in_event_cb),
+			  chat);
+
+	g_signal_connect (chat->dialog,
+			  "focus_in_event",
+			  G_CALLBACK (chat_dialog_focus_in_event_cb),
 			  chat);
 
 	gossip_text_view_set_margin (GTK_TEXT_VIEW (chat->text_view), 3);
@@ -397,9 +407,9 @@ chat_dialog_send_multi_clicked_cb (GtkWidget *unused, GossipChat *chat)
 }
 
 static gboolean
-chat_focus_in_event_cb (GtkWidget  *widget,
-			GdkEvent   *event,
-			GossipChat *chat)
+chat_text_view_focus_in_event_cb (GtkWidget  *widget,
+				  GdkEvent   *event,
+				  GossipChat *chat)
 {
 	gint pos;
 
@@ -409,8 +419,18 @@ chat_focus_in_event_cb (GtkWidget  *widget,
 	gtk_editable_select_region (GTK_EDITABLE (chat->input_entry), 0, 0);
 
 	gtk_editable_set_position (GTK_EDITABLE (chat->input_entry), pos);
-	
+
 	return TRUE;
+}
+
+static gboolean
+chat_dialog_focus_in_event_cb (GtkWidget  *widget,
+			       GdkEvent   *event,
+			       GossipChat *chat)
+{
+	chat_update_title (chat, FALSE);
+	
+	return FALSE;
 }
 
 static LmHandlerResult
@@ -483,7 +503,7 @@ chat_message_handler (LmMessageHandler *handler,
 	}
 		
 	/* The has-toplevel-focus is new in gtk 2.2 so if we don't find it, we
-	 * pretend that the window doesn't have focus (i.e. always play sounds.
+	 * pretend that the window doesn't have focus (i.e. always play sounds).
 	 */
 	if (g_object_class_find_property (G_OBJECT_GET_CLASS (chat->dialog),
 					  "has-toplevel-focus")) {
@@ -494,6 +514,7 @@ chat_message_handler (LmMessageHandler *handler,
 
 	if (!focus) {
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
+		chat_update_title (chat, TRUE);
 	}
 
 	timestamp = gossip_utils_get_timestamp_from_message (m);
@@ -581,45 +602,52 @@ chat_presence_handler (LmMessageHandler *handler,
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
-GossipChat *
-gossip_chat_new (GossipApp *app, GossipJID *jid)
+static void
+chat_update_title (GossipChat *chat, gboolean new_message)
 {
-	GossipChat   *chat;
+	gchar        *nick = NULL, *title;
 	GossipRoster *roster;
-	gchar        *nick = NULL;
-	gchar        *title;
 	
-	chat = chat_create (app, jid);
-	
-	chat->message_handler = lm_message_handler_new ((LmHandleMessageFunction) chat_message_handler,
-							chat, NULL);
-	lm_connection_register_message_handler (chat->connection,
-						chat->message_handler,
-						LM_MESSAGE_TYPE_MESSAGE,
-						LM_HANDLER_PRIORITY_NORMAL);
-
 	if (chat->nick) {
 		nick = g_strdup (chat->nick);
 	}
-
+	
 	if (!nick) {
 		roster = gossip_app_get_roster ();
-		nick = g_strdup (gossip_roster_get_nick_from_jid (roster, jid));
+		nick = g_strdup (gossip_roster_get_nick_from_jid (roster, chat->jid));
 	}
 	
 	if (!nick) {
-		nick = gossip_jid_get_part_name (jid);
+		nick = gossip_jid_get_part_name (chat->jid);
 	}
-
+	
 	if (nick && nick[0]) {
-		title = g_strdup_printf ("Chat - %s", nick);
+		title = g_strdup_printf ("%sChat - %s", new_message ? "* " : "", nick);
 	} else {
-		title = g_strdup ("Chat");
+		title = g_strdup_printf ("%sChat", new_message ? "* " : "");
 	}
 	g_free (nick);
 	
 	gtk_window_set_title (GTK_WINDOW (chat->dialog), title);
 	g_free (title);
+}
+
+GossipChat *
+gossip_chat_new (GossipApp *app, GossipJID *jid)
+{
+	GossipChat *chat;
+	
+	chat = chat_create (app, jid);
+	
+	chat->message_handler = lm_message_handler_new (
+		(LmHandleMessageFunction) chat_message_handler,
+		chat, NULL);
+	lm_connection_register_message_handler (chat->connection,
+						chat->message_handler,
+						LM_MESSAGE_TYPE_MESSAGE,
+						LM_HANDLER_PRIORITY_NORMAL);
+
+	chat_update_title (chat, FALSE);
 
 	return chat;
 }
