@@ -1,5 +1,9 @@
 2003-08-29  Richard Hult  <richard@imendio.com>
 
+        * ui/main.glade: Don't mark test string as translatable.
+
+2003-08-29  Richard Hult  <richard@imendio.com>
+
         * ui/group-chat.glade: Fix a few border widths (4 to 0 or 6).
 
 2003-08-29  Mikael Hallendal  <micke@imendio.com>
