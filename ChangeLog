@@ -1,3 +1,10 @@
+2003-12-15  Mikael Hallendal  <micke@imendio.com>
+
+	* gossip.desktop.in:  
+	* ui/pixmaps/Makefile.am: 
+	* ui/pixmaps/gossip.png:
+	* ui/svg/gossip.svg: Added new application icon from Dan Taylor.
+
 2003-12-13  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-chat.c (chat_input_key_press_event_cb): 

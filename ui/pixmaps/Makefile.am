@@ -27,5 +27,8 @@ image_DATA =			\
 	emoticon-face11.png 	\
 	emoticon-face12.png
 
-EXTRA_DIST = $(image_DATA)
+pixmapdir = $(datadir)/pixmaps
+pixmap_DATA = gossip.png
+
+EXTRA_DIST = $(image_DATA) $(pixmap_DATA)
 
