@@ -1,11 +1,11 @@
 # Translation of gossip to Croatian
 # Copyright (C) Croatian team
-# Translators: Automatski Prijevod <>,
+# Translators: Antun Krasic <butch@gawab.com>,Automatski Prijevod <>,Boris Tudan <boris.tudan@ka.htnet.hr>,
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0\n"
 "POT-Creation-Date: 2003-11-06 18:11+0100\n"
-"PO-Revision-Date: 2003-11-07 18:44+CET\n"
+"PO-Revision-Date: 2003-11-10 16:53+CET\n"
 "Last-Translator: auto\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
 "MIME-Version: 1.0\n"
@@ -121,7 +121,7 @@ msgstr ""
 #: src/gossip-add-contact.c:301
 #, c-format
 msgid "%s will be added to your contact list."
-msgstr ""
+msgstr "%s će biti dodan na Vašu kontakt listu"
 
 #: src/gossip-app.c:54
 msgid "Just about to leave..."
@@ -172,7 +172,7 @@ msgstr "_Razgovor"
 #: src/gossip-app.c:874
 #, c-format
 msgid "%s wants to be notified of your presence."
-msgstr ""
+msgstr "%s želi biti obavješten o vašoj prisutnosti."
 
 #: src/gossip-app.c:1109
 msgid "You were disconnected from the server. Do you want to reconnect?"
@@ -517,7 +517,7 @@ msgstr "_Korisničko ime:"
 
 #: ui/group-chat.glade.h:2
 msgid "        "
-msgstr ""
+msgstr "        "
 
 #: ui/group-chat.glade.h:4
 msgid "<b>Available chat rooms</b>"
