@@ -1,19 +1,20 @@
-src/gossip-main.c
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+src/gossip-accounts-dialog.c
+src/gossip-add-contact.c
 src/gossip-app.c
-src/gossip-roster.c
-src/gossip-message.c
 src/gossip-chat.c
+src/gossip-connect-dialog.c
+src/gossip-contact-info.c
 src/gossip-group-chat.c
 src/gossip-join-dialog.c
-src/gossip-connect-dialog.c
-src/gossip-accounts-dialog.c
-src/gossip-utils.c           
+src/gossip-main.c
+src/gossip-message.c
+src/gossip-roster.c
 src/gossip-startup-druid.c
-src/gossip-add-contact.c
-src/gossip-contact-info.c
-
-ui/main.glade
+src/gossip-utils.c           
 ui/chat.glade
 ui/connect.glade
 ui/druid.glade
 ui/group-chat.glade
+ui/main.glade

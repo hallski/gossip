@@ -1,3 +1,8 @@
+2003-06-22  Christian Rose  <menthos@menthos.com>
+
+	* POTFILES.in, POTFILES.skip: Sorted and removed empty lines.
+	* sv.po: Updated Swedish translation.
+
 2003-06-18  Jordi Mallach  <jordi@sindominio.net>
 
 	* POTFILES.in: Added src/gossip-contact-info.c.
