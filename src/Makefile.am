@@ -9,11 +9,17 @@ INCLUDES =	\
 	@GOSSIP_CFLAGS@				\
 	-DGLADEDIR=\"$(datadir)/gossip\"	\
 	-DIMAGEDIR=\"$(datadir)/gossip\"	\
-	-DSTYLESHEETDIR=\"$(datadir)/gossip\"
+	-DSTYLESHEETDIR=\"$(datadir)/gossip\"	\
+	-DDBUS_API_SUBJECT_TO_CHANGE
+
+if HAVE_DBUS
+dbus_sources = gossip-dbus.c gossip-dbus.h
+endif
 
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				\
+	$(dbus_sources)				\
 	gossip-account.c			\
 	gossip-account.h			\
 	gossip-account-dialog.c			\
@@ -110,6 +116,7 @@ stylesheet_DATA = gossip-log.xsl
 
 EXTRA_DIST =						\
 	gossip-marshal.list				\
-	gossip-log.xsl
+	gossip-log.xsl					\
+	$(dbus_sources)
 
 CLEANFILES = $(BUILT_SOURCES)

@@ -54,6 +54,10 @@
 #include "gossip-roster-view.h"
 #include "gossip-app.h"
 
+#ifdef HAVE_DBUS
+#include "gossip-dbus.h"
+#endif
+
 #define DEFAULT_RESOURCE _("Home")
 
 #define ADD_CONTACT_RESPONSE_ADD 1
@@ -355,6 +359,10 @@ app_init (GossipApp *singleton_app)
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
+#ifdef HAVE_DBUS
+	gossip_dbus_init ();
+#endif
+	
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
 				       "main_window",
 				       NULL,
@@ -2248,6 +2256,21 @@ gossip_app_status_force_nonaway (void)
 	if (priv->auto_show == GOSSIP_SHOW_AWAY || priv->auto_show == GOSSIP_SHOW_EXT_AWAY) {
 		app_status_clear_away ();
 	}
+}
+
+/* Note: test function for the dbus stuff. */
+void
+gossip_app_set_away (const gchar *status)
+{
+	GossipAppPriv *priv = app->priv;
+
+	gossip_idle_reset ();
+	priv->auto_show = GOSSIP_SHOW_AWAY;
+
+	g_free (priv->away_message);
+	priv->away_message = g_strdup (status);
+	
+	app_update_show ();
 }
 
 static void
