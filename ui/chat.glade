@@ -449,6 +449,7 @@
 </widget>
 
 <widget class="GtkWindow" id="chat_window">
+  <property name="border_width">6</property>
   <property name="title" translatable="yes">Gossip - Chat</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -460,10 +461,9 @@
 
   <child>
     <widget class="GtkVBox" id="vbox3">
-      <property name="border_width">4</property>
       <property name="visible">True</property>
       <property name="homogeneous">False</property>
-      <property name="spacing">2</property>
+      <property name="spacing">6</property>
 
       <child>
 	<widget class="GtkHBox" id="hbox3">
@@ -691,7 +691,7 @@
 	      <child>
 		<widget class="GtkVBox" id="multi_vbox">
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">4</property>
+		  <property name="spacing">6</property>
 
 		  <child>
 		    <widget class="GtkScrolledWindow" id="input_textview_sw">

@@ -1,3 +1,7 @@
+2003-08-29  Mikael Hallendal  <micke@imendio.com>
+
+        * ui/*.glade: Higification (some, not full done...)
+
 2003-08-27  Ole Laursen  <olau@hardworking.dk>
 
 	* configure.in: Added "da" (Danish) to ALL_LINGUAS.

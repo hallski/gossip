@@ -318,13 +318,14 @@
 </widget>
 
 <widget class="GtkDialog" id="join_group_chat_dialog">
+  <property name="border_width">6</property>
   <property name="title" translatable="yes">Gossip - Join Group Chat</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
-  <property name="has_separator">True</property>
+  <property name="has_separator">False</property>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -371,16 +372,16 @@
 
       <child>
 	<widget class="GtkVBox" id="vbox2">
-	  <property name="border_width">4</property>
+	  <property name="border_width">6</property>
 	  <property name="visible">True</property>
 	  <property name="homogeneous">False</property>
-	  <property name="spacing">2</property>
+	  <property name="spacing">18</property>
 
 	  <child>
 	    <widget class="GtkHBox" id="hbox2">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
-	      <property name="spacing">4</property>
+	      <property name="spacing">6</property>
 
 	      <child>
 		<widget class="GtkImage" id="image1">
@@ -428,21 +429,10 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkHSeparator" id="hseparator2">
-	      <property name="visible">True</property>
-	    </widget>
-	    <packing>
-	      <property name="padding">4</property>
-	      <property name="expand">False</property>
-	      <property name="fill">True</property>
-	    </packing>
-	  </child>
-
-	  <child>
 	    <widget class="GtkHBox" id="hbox7">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
-	      <property name="spacing">4</property>
+	      <property name="spacing">6</property>
 
 	      <child>
 		<widget class="GtkLabel" id="label6">
@@ -549,8 +539,8 @@
 		  <property name="n_rows">3</property>
 		  <property name="n_columns">3</property>
 		  <property name="homogeneous">False</property>
-		  <property name="row_spacing">4</property>
-		  <property name="column_spacing">4</property>
+		  <property name="row_spacing">6</property>
+		  <property name="column_spacing">6</property>
 
 		  <child>
 		    <widget class="GtkLabel" id="label3">
@@ -645,7 +635,6 @@
 		      <property name="right_attach">3</property>
 		      <property name="top_attach">0</property>
 		      <property name="bottom_attach">1</property>
-		      <property name="x_options"></property>
 		      <property name="y_options"></property>
 		    </packing>
 		  </child>
@@ -667,7 +656,6 @@
 		      <property name="right_attach">3</property>
 		      <property name="top_attach">1</property>
 		      <property name="bottom_attach">2</property>
-		      <property name="x_options">fill</property>
 		      <property name="y_options"></property>
 		    </packing>
 		  </child>
@@ -689,7 +677,6 @@
 		      <property name="right_attach">3</property>
 		      <property name="top_attach">2</property>
 		      <property name="bottom_attach">3</property>
-		      <property name="x_options">fill</property>
 		      <property name="y_options"></property>
 		    </packing>
 		  </child>
@@ -719,13 +706,14 @@
 </widget>
 
 <widget class="GtkDialog" id="favorites_dialog">
+  <property name="border_width">6</property>
   <property name="title" translatable="yes">Gossip - Edit Group Chats</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="has_separator">True</property>
+  <property name="has_separator">False</property>
 
   <child internal-child="vbox">
     <widget class="GtkVBox" id="dialog-vbox1">
@@ -760,16 +748,16 @@
 
       <child>
 	<widget class="GtkHBox" id="hbox15">
-	  <property name="border_width">4</property>
+	  <property name="border_width">6</property>
 	  <property name="visible">True</property>
 	  <property name="homogeneous">False</property>
-	  <property name="spacing">4</property>
+	  <property name="spacing">6</property>
 
 	  <child>
 	    <widget class="GtkVBox" id="vbox6">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
-	      <property name="spacing">4</property>
+	      <property name="spacing">6</property>
 
 	      <child>
 		<widget class="GtkLabel" id="label42">
@@ -796,7 +784,7 @@
 		<widget class="GtkVBox" id="vbox8">
 		  <property name="visible">True</property>
 		  <property name="homogeneous">False</property>
-		  <property name="spacing">4</property>
+		  <property name="spacing">6</property>
 
 		  <child>
 		    <widget class="GtkScrolledWindow" id="scrolledwindow1">
@@ -831,7 +819,7 @@
 		    <widget class="GtkHBox" id="hbox16">
 		      <property name="visible">True</property>
 		      <property name="homogeneous">False</property>
-		      <property name="spacing">4</property>
+		      <property name="spacing">6</property>
 
 		      <child>
 			<widget class="GtkButton" id="add_button">
@@ -901,7 +889,7 @@
 	    <widget class="GtkVBox" id="vbox7">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
-	      <property name="spacing">4</property>
+	      <property name="spacing">6</property>
 
 	      <child>
 		<widget class="GtkLabel" id="label43">
@@ -936,8 +924,8 @@
 		      <property name="n_rows">4</property>
 		      <property name="n_columns">2</property>
 		      <property name="homogeneous">False</property>
-		      <property name="row_spacing">2</property>
-		      <property name="column_spacing">4</property>
+		      <property name="row_spacing">6</property>
+		      <property name="column_spacing">6</property>
 
 		      <child>
 			<widget class="GtkLabel" id="label38">
