@@ -20,5 +20,8 @@ gossip.desktop
 gossip.spec
 gossip.schemas
 mkinstalldirs
+depcomp
+install-sh
+missing
 *.swp
 gossip.desktop.in
