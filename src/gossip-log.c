@@ -40,7 +40,7 @@
 #define LOG_HEADER \
     "<?xml version='1.0' encoding='UTF-8'?>\n" \
     "<?xml-stylesheet type=\"text/xsl\" href=\"gossip-log.xsl\"?>\n" \
-    "<gossip xmlns:log=\"gossip:log\" version=\"1\">\n" \
+    "<gossip xmlns:log=\"http://gossip.imendio.org/ns/log\" version=\"1\">\n" \
 
 #define LOG_FOOTER \
     "</gossip>\n"
