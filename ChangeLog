@@ -1,3 +1,8 @@
+2003-10-30  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.c: Include sys/types.h for FreeBSD and
+	others. Reported by Edwin Mons <e@ik.nu>.
+
 2003-10-30  Mikael Hallendal  <micke@imendio.com>
 
         * gossip.desktop.in: 
