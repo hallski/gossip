@@ -1,3 +1,8 @@
+2003-06-29  Jordi Mallach  <jordi@sindominio.net>
+
+	* POTFILES.in: Added gossip.desktop.in.
+	* ca.po: Updated Catalan translation.
+
 2003-06-29  Richard Hult  <richard@imendio.com>
 
 	* sv.po: Updated.

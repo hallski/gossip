@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-06-28 19:09+0200\n"
-"PO-Revision-Date: 2003-06-28 19:09+0200\n"
+"POT-Creation-Date: 2003-06-29 20:01+0200\n"
+"PO-Revision-Date: 2003-06-29 20:02+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -480,7 +480,7 @@ msgstr "Sopar"
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Teniu ja un compte a un servidor de Jabber? "
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:33 gossip.desktop.in.h:1
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -665,3 +665,7 @@ msgstr "_Rebutja"
 #: ui/main.glade.h:77
 msgid "_Send chat message..."
 msgstr "_Envia un missatge de xerrada..."
+
+#: gossip.desktop.in.h:2
+msgid "Jabber Instant Messaging"
+msgstr "Missatgeria instantània Jabber"

@@ -18,3 +18,4 @@ ui/connect.glade
 ui/druid.glade
 ui/group-chat.glade
 ui/main.glade
+gossip.desktop.in
