@@ -211,7 +211,11 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 	from_jid = gossip_jid_new (from);
 	tu = g_hash_table_lookup (unregisters, from_jid);
 	gossip_jid_unref (from_jid);
-	
+
+	if (!tu) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+
 	node = lm_message_node_get_child (m->node, "query");
         if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -303,6 +307,22 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 
         return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
+
+gboolean
+gossip_transport_unregister_cancel (GossipJID *jid)
+{
+	TransportUnregister *p;
+
+	g_return_val_if_fail (jid != NULL, FALSE);
+
+	p = g_hash_table_lookup (unregisters, jid);
+	if (p) {
+		return g_hash_table_remove (unregisters, p->jid);
+	}
+
+	return FALSE;
+}
+
 
 /*
  * transport requirements 
@@ -409,6 +429,10 @@ transport_requirements_message_handler (LmMessageHandler      *handler,
 	from_jid = gossip_jid_new (from);
 	trq = g_hash_table_lookup (requirements, from_jid);
 	gossip_jid_unref (from_jid);
+
+	if (!trq) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 	
 	node = lm_message_node_get_child (m->node, "query");
         if (!node) {
@@ -495,6 +519,21 @@ transport_requirements_message_handler (LmMessageHandler      *handler,
 	g_hash_table_remove (requirements, trq->jid);
 	
         return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+}
+
+gboolean
+gossip_transport_requirements_cancel (GossipJID *jid)
+{
+	TransportRequirements *p;
+
+	g_return_val_if_fail (jid != NULL, FALSE);
+
+	p = g_hash_table_lookup (requirements, jid);
+	if (p) {
+		return g_hash_table_remove (requirements, p->jid);
+	}
+	
+	return FALSE;
 }
 
 /*
@@ -612,6 +651,10 @@ transport_register_message_handler (LmMessageHandler  *handler,
 	from_jid = gossip_jid_new (from);
 	trg = g_hash_table_lookup (registers, from_jid);
 	gossip_jid_unref (from_jid);
+
+	if (!trg) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 	
 	/* look for error */
 	node = lm_message_node_get_child (m->node, "query");
@@ -644,13 +687,18 @@ transport_register_message_handler (LmMessageHandler  *handler,
         return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
+gboolean
+gossip_transport_register_cancel (GossipJID *jid)
+{
+	TransportRegister *p;
 
+	g_return_val_if_fail (jid != NULL, FALSE);
 
-
-
-
-
-
-
-
+	p = g_hash_table_lookup (registers, jid);
+	if (p) {
+		return g_hash_table_remove (registers, p->jid);
+	}
+	
+	return FALSE;
+}
 

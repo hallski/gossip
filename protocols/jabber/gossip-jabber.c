@@ -134,11 +134,6 @@ static GossipContact * jabber_get_contact_from_jid           (GossipJabber      
 							      const gchar                  *jid,
 							      gboolean                     *new_item);
 static void            jabber_set_proxy                      (LmConnection                 *conn);
-static void            jabber_subscription_request           (GossipJabber                 *jabber,
-							      LmMessage                    *m);
-static void            jabber_subscription_request_dialog_cb (GtkWidget                    *dialog,
-							      gint                          response,
-							      GossipJabber                 *jabber);
 static LmHandlerResult jabber_subscription_message_handler   (LmMessageHandler             *handler,
 							      LmConnection                 *connection,
 							      LmMessage                    *m,
@@ -191,6 +186,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->async_get_vcard     = jabber_async_get_vcard;
 	protocol_class->async_set_vcard     = jabber_async_set_vcard;
 	protocol_class->async_get_version   = jabber_async_get_version;
+
 }
 
 static void
@@ -854,28 +850,28 @@ jabber_presence_handler (LmMessageHandler *handler,
 			 GossipJabber     *jabber)
 {
 	GossipJabberPriv *priv;
-	GossipJID        *from;
 	GossipContact    *contact;
+	const gchar      *from;
 	const gchar      *type;
-	
+	gboolean          new_item = FALSE;
+
 	priv = jabber->priv;
 
-	from = gossip_jid_new (lm_message_node_get_attribute (m->node, "from"));
+	from = lm_message_node_get_attribute (m->node, "from");
         g_print ("GossipJabber: New presence from: %s\n", 
                  lm_message_node_get_attribute (m->node, "from"));
 	
-	contact = (GossipContact *) g_hash_table_lookup (priv->contacts, 
-							 gossip_jid_get_without_resource (from));
+	contact = jabber_get_contact_from_jid (jabber, from, &new_item); 
 
-	/* FIXME-MJR: do we want to do this here or after the presence
-	   update event? */
 	type = lm_message_node_get_attribute (m->node, "type");
 	if (!type) {
 		type = "available";
 	}
 
 	if (strcmp (type, "subscribe") == 0) {
-		jabber_subscription_request (jabber, m);
+		g_signal_emit_by_name (jabber, "subscribe-request", 
+				       contact, NULL);
+
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 	
@@ -893,7 +889,6 @@ jabber_presence_handler (LmMessageHandler *handler,
                 }
         }
 	
-        gossip_jid_unref (from);
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 /*	return LM_HANDLER_RESULT_REMOVE_MESSAGE; */
 }
@@ -1229,127 +1224,6 @@ gossip_jabber_get_own_contact (GossipJabber *jabber)
  * added by mjr for branch merge
  */
 
-static void
-jabber_subscription_request (GossipJabber *jabber,
-			     LmMessage    *m)
-{
-	GtkWidget        *dialog;
-	GtkWidget        *jid_label;
-	GtkWidget        *add_check_button;
-	gchar            *str, *tmp;
-	const gchar      *from;
-	GossipContact    *contact;
-	gboolean          new_contact = FALSE;
-
-	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "subscription_request_dialog",
-				      NULL,
-				      "subscription_request_dialog", &dialog,
-				      "jid_label", &jid_label,
-				      "add_check_button", &add_check_button,
-				      NULL);
-	
-	from = lm_message_node_get_attribute (m->node, "from");
-
-	tmp = g_strdup_printf (_("%s wants to be notified of your status."), from);
-	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", tmp);
-	g_free (tmp);
-
-	gtk_label_set_text (GTK_LABEL (jid_label), str);
-	gtk_label_set_use_markup (GTK_LABEL (jid_label), TRUE);
-	g_free (str);
-
-	g_signal_connect (dialog,
-			  "response",
-			  G_CALLBACK (jabber_subscription_request_dialog_cb),
-			  g_object_ref (jabber));
-
-	g_object_set_data (G_OBJECT (dialog), 
-			   "message", lm_message_ref (m));
-
-	g_object_set_data (G_OBJECT (dialog),
-			   "add_check_button", add_check_button);
-
- 	contact = jabber_get_contact_from_jid (jabber, from, &new_contact); 
-
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (add_check_button), !new_contact); 
-	gtk_widget_set_sensitive (add_check_button, !new_contact);
-
-	gtk_widget_show (dialog);
-}
-
-#define REQUEST_RESPONSE_DECIDE_LATER 1
-
-static void
-jabber_subscription_request_dialog_cb (GtkWidget    *dialog,
-				       gint          response,
-				       GossipJabber *jabber)
-{
-	LmMessage        *m;
-	LmMessage        *reply = NULL;
-	gboolean          add_user;
-	GtkWidget        *add_check_button;
-	LmMessageSubType  sub_type = LM_MESSAGE_SUB_TYPE_NOT_SET;
-	const gchar      *from;
-	GossipJabberPriv *priv;
-	GossipContact    *contact;
-	gboolean          new_contact;
-
-	g_return_if_fail (GTK_IS_DIALOG (dialog));
-	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-
-	priv = jabber->priv;
-  
-	m = g_object_get_data (G_OBJECT (dialog), "message");
-	if (!m) {
-		g_warning ("Message not set on subscription request dialog\n");
-		return;
-	}
-
-	add_check_button = g_object_get_data (G_OBJECT (dialog), 
-					      "add_check_button");
-	add_user = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (add_check_button));
-
-	gtk_widget_destroy (dialog);
-	
-	switch (response) {
-	case REQUEST_RESPONSE_DECIDE_LATER:
-		/* Decide later. */
-		return;
-		break;
-	case GTK_RESPONSE_DELETE_EVENT:
-		/* Do nothing */
-		return;
-		break;
-	case GTK_RESPONSE_YES:
-		sub_type = LM_MESSAGE_SUB_TYPE_SUBSCRIBED;
-		break;
-	case GTK_RESPONSE_NO:
-		sub_type = LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED;
-		break;
-	default:
-		g_assert_not_reached ();
-		break;
-	};
-	
-	from = lm_message_node_get_attribute (m->node, "from");
-	
-	reply = lm_message_new_with_sub_type (from, 
-					      LM_MESSAGE_TYPE_PRESENCE,
-					      sub_type);
-
-	lm_connection_send (priv->connection, reply, NULL);
-	lm_message_unref (reply);
-	
- 	contact = jabber_get_contact_from_jid (jabber, from, &new_contact); 
-	if (add_user && !contact && sub_type == LM_MESSAGE_SUB_TYPE_SUBSCRIBED) {
-		gossip_add_contact_new (from);
-	}
-	
-	lm_message_unref (m);
-	g_object_unref (jabber);
-}
-
 void
 gossip_jabber_subscription_allow_all (GossipJabber *jabber)
 {
@@ -1391,13 +1265,15 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	LmMessage     *new_message;
 	GossipContact *own_contact;
 	const gchar   *id;
-	const gchar   *to;
+	const gchar   *from;
+	gchar         *to;
 
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_SUBSCRIBE) {
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	to = lm_message_node_get_attribute (m->node, "from");
+	from = lm_message_node_get_attribute (m->node, "from");
+	to = g_strdup (from);
 
 	/* clean up */
 	lm_message_handler_invalidate (handler);
@@ -1415,7 +1291,19 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	lm_connection_send (connection, new_message, NULL);
 	lm_message_unref (new_message);
 
+	/* send our presence */
+	new_message = lm_message_new_with_sub_type (to, 
+						    LM_MESSAGE_TYPE_PRESENCE,
+						    LM_MESSAGE_SUB_TYPE_AVAILABLE);
+
+	lm_message_node_set_attribute (new_message->node, "from", id);
+
+	lm_connection_send (connection, new_message, NULL);
+	lm_message_unref (new_message);
+
 	/* clean up */
+	g_free (to);
+
  	return LM_HANDLER_RESULT_REMOVE_MESSAGE;	 
 }
 
@@ -1437,4 +1325,48 @@ gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
 							  LM_MESSAGE_TYPE_PRESENCE);
 		priv->subscription_handler = NULL;
 	}
+}
+
+void
+gossip_jabber_send_subscribed (GossipJabber  *jabber,
+			       GossipContact *contact)
+{
+	LmConnection *connection;
+	LmMessage    *m;
+	const gchar  *id;
+
+	g_return_if_fail (jabber != NULL);
+	g_return_if_fail (contact != NULL);
+
+	id = gossip_contact_get_id (contact);
+	connection = gossip_jabber_get_connection (jabber);
+
+	m = lm_message_new_with_sub_type (id, 
+					  LM_MESSAGE_TYPE_PRESENCE,
+					  LM_MESSAGE_SUB_TYPE_SUBSCRIBED);
+
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
+}
+
+void
+gossip_jabber_send_unsubscribed (GossipJabber  *jabber,
+				 GossipContact *contact)
+{
+	LmConnection *connection;
+	LmMessage    *m;
+	const gchar  *id;
+
+	g_return_if_fail (jabber != NULL);
+	g_return_if_fail (contact != NULL);
+
+	id = gossip_contact_get_id (contact);
+	connection = gossip_jabber_get_connection (jabber);
+
+	m = lm_message_new_with_sub_type (id, 
+					  LM_MESSAGE_TYPE_PRESENCE,
+					  LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED);
+
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
 }

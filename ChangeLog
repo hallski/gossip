@@ -1,3 +1,21 @@
+2004-12-31  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-protocol.c: 
+	- Added subscribe-request signal.
+	* src/gossip-transport-register.c:
+	- Added 'cancel' functions to stop registering, unregistering and
+	requesting requirements for registering.
+	* src/gossip-transport-add-window.c: 
+	- Fixed the bug where the add transport window is closed before
+	the requirements have returned, and the now invalid window is
+	dereferenced.  
+	* src/gossip-transport-discover.c: 
+	- Made the disco timeout for the initial request 20 seconds
+	instead of 30 seconds which seems too long. 
+	* src/gossip-transport-accounts-window.c:
+	- Moved subscription gui out of the GossipJabber module and into
+	this module instead.
+
 2004-12-31  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_contact_added_cb),

@@ -85,6 +85,7 @@ struct _GossipTransportAddWindow {
 
 	/* misc */
 	gboolean service_found;
+	gboolean using_local_service;
 
 	guint progress_timeout_id;
 
@@ -192,7 +193,7 @@ static void     transport_add_window_register_cb                    (GossipJID  
 								     const gchar              *error_code,
 								     const gchar              *error_reason,
 								     GossipTransportAddWindow *window);
-static void     transport_add_window_roster_update_cb               (GossipSession            *session, 
+static void     transport_add_window_roster_update_cb               (GossipProtocol           *protocol, 
  								     GossipContact            *contact, 
  								     GossipTransportAddWindow *window); 
 static gboolean transport_add_window_roster_timeout_cb              (GossipTransportAddWindow *window);
@@ -349,8 +350,6 @@ transport_add_window_check_local (GossipTransportAddWindow *window)
 	jid = gossip_jid_new (id);
  	host = gossip_jid_get_part_host (jid); 
 	
-	gossip_jid_unref (jid);
-	
 	window->service_found = FALSE;
 
 	d(g_print ("running disco on local service:'%s'\n", host));
@@ -365,6 +364,8 @@ transport_add_window_check_local (GossipTransportAddWindow *window)
 						window);
 	
 	window->disco_list = g_list_append (window->disco_list, disco);
+
+	gossip_jid_unref (jid);
 }
 
 static void
@@ -433,6 +434,7 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 		GossipJID *jid;
 
 		window->service_found = TRUE;
+		window->using_local_service = TRUE;
 
 		jid = gossip_transport_disco_item_get_jid (item);
 		jid = gossip_jid_ref (jid);
@@ -617,6 +619,10 @@ transport_add_window_requirements (GossipTransportAddWindow *window, GossipJID *
 {
 	GossipJabber *jabber;
 
+	if (strcmp (gossip_jid_get_full (jid), "") == 0) {
+		g_print ("here");
+	}
+
 	d(g_print ("asking for disco registration requirements for protocol:'%s' with service jid:'%s'\n", 
 		   window->disco_type, 
 		   gossip_jid_get_full (jid)));
@@ -629,6 +635,12 @@ transport_add_window_requirements (GossipTransportAddWindow *window, GossipJID *
 
 	/* send disco request */
 	jabber = gossip_transport_account_list_get_jabber (window->al);
+
+	if (window->jid) {
+		gossip_jid_unref (window->jid);
+	}
+
+	window->jid = gossip_jid_ref (jid);
 
 	gossip_transport_requirements (jabber,
 				       jid,
@@ -740,12 +752,6 @@ transport_add_window_requirements_cb (GossipJID                *jid,
 		gtk_widget_hide (window->entry_username);
 	}
 
-	if (window->jid) {
-		gossip_jid_unref (window->jid);
-	}
-
-	window->jid = gossip_jid_ref (jid);
-
 	g_free (window->key);
 	window->key = g_strdup (key);
 
@@ -778,7 +784,7 @@ transport_add_window_register (GossipTransportAddWindow *window)
 	gossip_jabber_subscription_allow_all (jabber);
 
 	/* watch roster for updates */
-	g_signal_connect (gossip_app_get_session (),
+	g_signal_connect (GOSSIP_PROTOCOL (jabber),
 			  "contact-added",
 			  G_CALLBACK (transport_add_window_roster_update_cb),
 			  window);
@@ -828,7 +834,7 @@ transport_add_window_register_cb (GossipJID                *jid,
 }
 
 static void
-transport_add_window_roster_update_cb (GossipSession            *session,
+transport_add_window_roster_update_cb (GossipProtocol           *protocol,
 				       GossipContact            *contact,
 				       GossipTransportAddWindow *window)
 {
@@ -1276,18 +1282,23 @@ transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
 					   FALSE, FALSE, TRUE, TRUE); 
 
+	/* if local, we have already done what follows */
+	if (window->using_local_service) {
+		return;
+	}
+
 	/* if we have a prefered service, use that first */
 	jid_str = gtk_entry_get_text (GTK_ENTRY (window->entry_service));
-
+	
 	if (jid_str && strlen (jid_str) > 0) {
 		jid = gossip_jid_new (jid_str);
 	}
-
+	
 	/* get selected item to know which service to use */
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_service));
 	if (!jid && gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gchar *str;
-
+		
 		gtk_tree_model_get (model, &iter, COL_DISCO_SERVICE_JID, &str, -1);
 		jid = gossip_jid_new (str);
 		g_free (str);
@@ -1448,6 +1459,8 @@ transport_add_window_destroy (GtkWidget                *widget,
 	}
 
 	if (window->jid) {
+		gossip_transport_requirements_cancel (window->jid);
+		gossip_transport_register_cancel (window->jid);
 		gossip_jid_unref (window->jid);
 		window->jid = NULL;
 	}
@@ -1455,12 +1468,10 @@ transport_add_window_destroy (GtkWidget                *widget,
 	jabber = gossip_transport_account_list_get_jabber (window->al);
 	gossip_jabber_subscription_disallow_all (jabber);
 
-	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
+	g_signal_handlers_disconnect_by_func (GOSSIP_PROTOCOL (jabber),
 					      transport_add_window_roster_update_cb,
 					      window);
 	
-/* 	g_object_unref (window->jabber); */
-
 	g_free (window->key);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (window->treeview_protocol));

@@ -38,6 +38,9 @@ enum {
 
 	/* Used for protocols to request information from user */
 	GET_PASSWORD,
+	
+	SUBSCRIBE_REQUEST,
+
 	LAST_SIGNAL
 };
 
@@ -145,6 +148,17 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      gossip_marshal_STRING__POINTER,
 			      G_TYPE_STRING,
 			      1, G_TYPE_POINTER);
+
+	signals[SUBSCRIBE_REQUEST] =
+		g_signal_new ("subscribe-request",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      gossip_marshal_STRING__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+
 }
 
 static void

@@ -30,7 +30,7 @@
 #define d(x) x
 
 /* in seconds */
-#define DISCO_TIMEOUT      30
+#define DISCO_TIMEOUT      20
 #define DISCO_INFO_TIMEOUT 10
 
 
@@ -285,6 +285,9 @@ gossip_transport_disco_request (GossipJabber                 *jabber,
 
 	disco->item_func = item_func;
 	disco->user_data = user_data;
+
+	disco->items_remaining = 1;
+	disco->items_total = 1;
 
 	/* start timeout */
 	disco->timeout_id = g_timeout_add (DISCO_TIMEOUT * 1000, 
