@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-07 20:04+0200\n"
-"PO-Revision-Date: 2004-09-07 20:54+0200\n"
+"POT-Creation-Date: 2004-09-14 12:05+0200\n"
+"PO-Revision-Date: 2004-09-14 14:34+0200\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -195,7 +195,8 @@ msgstr "Gossip, instant messaging client"
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
 
-#: src/gossip-app.c:2157 src/gossip-roster-view.c:1230
+#: src/gossip-app.c:2157 src/gossip-private-chat.c:1140
+#: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Offline"
 
@@ -243,12 +244,12 @@ msgstr "Koppeling _openen"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:529
+#: src/gossip-chat-window.c:566
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatten - %s"
 
-#: src/gossip-chat-window.c:780
+#: src/gossip-chat-window.c:817
 msgid "Typing a message."
 msgstr "Bezig met tikken van een bericht."
 
@@ -283,6 +284,7 @@ msgid "An error occurred when chatting in the group chat %s."
 msgstr "Er is een fout opgetreden tijdens het chatten in de groep-chat %s."
 
 #: src/gossip-group-chat.c:811 src/gossip-group-chat.c:924
+#: src/gossip-private-chat.c:686
 msgid "Details:"
 msgstr "Details:"
 
@@ -323,6 +325,29 @@ msgstr "[standaard]"
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Er is geen account met de naam '%s'."
+
+#: src/gossip-private-chat.c:681
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "Er is een fout opgetreden tijdens het chatten met %s."
+
+#: src/gossip-private-chat.c:779
+#, c-format
+msgid "%s went offline"
+msgstr "%s ging off-line"
+
+#: src/gossip-private-chat.c:793
+#, c-format
+msgid "%s comes online"
+msgstr "%s komt on-line"
+
+#: src/gossip-private-chat.c:874
+msgid "Connected"
+msgstr "Verbonden"
+
+#: src/gossip-private-chat.c:888
+msgid "Disconnected"
+msgstr "Verbinding verbroken"
 
 #: src/gossip-register.c:84
 msgid "Unknown error"

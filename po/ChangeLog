@@ -1,3 +1,7 @@
+2004-09-14  Vincent van Adrighem  <adrighem@gnome.org>
+
+	* nl.po: Translation updated by Elros Cyriatan.
+
 2004-09-02  Mikael Hallendal <micke@imendio.com>
 
 	* POTFILES.in: Added src/gossip-private-chat.c
