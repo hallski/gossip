@@ -52,7 +52,6 @@ setup_default_window_icon (void)
 int
 main (int argc, char *argv[])
 {
-	GossipApp          *app;
 	GnomeProgram       *program;
 	gboolean            no_connect = FALSE;
 	poptContext         popt_context;
@@ -91,10 +90,10 @@ main (int argc, char *argv[])
 	
 	setup_default_window_icon ();
 	
-	app = gossip_app_new ();
+	gossip_app_create ();
 
 	if (!no_connect) {
-		gossip_app_connect_default (app);
+		gossip_app_connect_default ();
 	}
 	
 	gtk_main ();

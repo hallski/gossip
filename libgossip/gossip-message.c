@@ -229,7 +229,7 @@ message_new (GossipApp *app, LmMessage *m)
 				      "from_label", &from_label,
 				      NULL);
 
-	roster = gossip_app_get_roster (app);
+	roster = gossip_app_get_roster ();
 	name = gossip_roster_get_nick_from_jid (roster, message->jid);
 	if (name) {
 		from = g_strdup_printf ("%s <%s>", name, 

@@ -88,7 +88,7 @@ connect_dialog_response_cb (GtkWidget           *widget,
 			account->resource = g_strdup (resource);
 		}
 
-		gossip_app_connect (dialog->app, account);
+		gossip_app_connect (account);
 		gossip_account_unref (account);
 		break;
 	default:

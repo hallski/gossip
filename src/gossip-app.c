@@ -1,8 +1,9 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2003 CodeFactory AB
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2002-2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -156,7 +157,10 @@ static void      app_tray_icon_set_status           (GossipApp      *app,
 static void      app_create_connection              (GossipApp      *app);
 
 static void      app_disconnect                     (GossipApp      *app);
+
 static GObjectClass *parent_class;
+
+static GossipApp *app;
 
 GType
 gossip_app_get_type (void)
@@ -984,11 +988,9 @@ gossip_app_join_group_chat (GossipApp   *app,
 }
 
 void
-gossip_app_connect (GossipApp *app, GossipAccount *account)
+gossip_app_connect (GossipAccount *account)
 {
 	GossipAppPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_APP (app));
 
 	if (!account) {
 		/* Handle this better */
@@ -1018,25 +1020,19 @@ gossip_app_connect (GossipApp *app, GossipAccount *account)
 }
 
 void
-gossip_app_connect_default (GossipApp *app)
+gossip_app_connect_default ()
 {
 	GossipAppPriv *priv;
 
-	g_return_if_fail (GOSSIP_IS_APP (app));
-	
 	priv = app->priv;
 
-	gossip_app_connect (app, priv->account);
+	gossip_app_connect (priv->account);
 }
 
-GossipApp *
-gossip_app_new (void)
+void
+gossip_app_create (void)
 {
-	GossipApp *app;
-	
 	app = g_object_new (GOSSIP_TYPE_APP, NULL);
-
-	return app;
 }
 
 typedef struct {
@@ -1092,7 +1088,7 @@ app_set_status (GossipApp *app, GossipStatus status)
 	if (!lm_connection_is_open (priv->connection)) {
 		priv->status_to_set_on_connect = status;
 
-		gossip_app_connect (app, priv->account);
+		gossip_app_connect (priv->account);
 		return;
 	}
 
@@ -1137,10 +1133,8 @@ gossip_app_get_jid (GossipApp *app)
 }
 
 GossipRoster *
-gossip_app_get_roster (GossipApp *app)
+gossip_app_get_roster ()
 {
-	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
-	
 	return app->priv->roster;
 }
 

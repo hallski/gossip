@@ -59,12 +59,11 @@ typedef enum {
 
 GType          gossip_app_get_type        (void) G_GNUC_CONST;
 
-GossipApp *    gossip_app_new             (void);
+void           gossip_app_create          (void);
 
-void           gossip_app_connect         (GossipApp     *app,
-					   GossipAccount *account);
+void           gossip_app_connect         (GossipAccount *account);
 
-void           gossip_app_connect_default (GossipApp     *app);
+void           gossip_app_connect_default (void);
 
 void           gossip_app_join_group_chat (GossipApp     *app,
 					   const gchar   *room,
@@ -75,10 +74,8 @@ const gchar *  gossip_app_get_username    (GossipApp     *app);
 
 GossipJID *    gossip_app_get_jid         (GossipApp     *app);
 
-GossipRoster * gossip_app_get_roster      (GossipApp     *app);
+GossipRoster * gossip_app_get_roster      (void);
 
 LmConnection * gossip_app_get_connection  (GossipApp     *app);
-
-GossipApp *    gossip_app_get             (void);
 
 #endif /* __GOSSIP_APP_H__ */

@@ -1,5 +1,31 @@
 2003-06-13  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-add-contact.c:
+	(add_contact_prepare_page_2): Don't use hardcoded strings
+	* src/gossip-app.c: 
+	* src/gossip-app.h:
+	(gossip_app_connect),
+	(gossip_app_connect_default), 
+	(gossip_app_create),
+	(app_set_status),
+	(gossip_app_get_roster): Use a static GossipApp, only one anyway.
+	* src/gossip-chat.c: 
+	(chat_create), (chat_message_handler): updated to change in gossip-app.
+	* src/gossip-connect-dialog.c: 
+	(connect_dialog_response_cb): updated to change in gossip-app.
+	* src/gossip-main.c: (main): same
+	* src/gossip-message.c: (message_new): same
+	* src/gossip-roster.c: 
+	* src/gossip-roster.h:
+	(roster_free_string_list): added
+	(roster_finalize), 
+	(roster_create_store),
+	(roster_presence_handler), 
+	(roster_update_user): fixed internal list of groups.
+	(gossip_roster_get_groups): added
+
+2003-06-13  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-jid.c: (gossip_jid_get_resource): 
 	- return NULL if resource not set, fix annoying bug in group chats.
 

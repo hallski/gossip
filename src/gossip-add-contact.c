@@ -1,7 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 CodeFactory AB
+ * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -145,10 +146,11 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
+	GossipRoster     *roster;
 	const gchar      *str_jid;
 	gchar            *str;
 	gint              changed;
-	GList            *items = NULL;
+	GList            *groups = NULL;
 	LmMessage        *m;
 	LmMessageNode    *node;
 	LmMessageHandler *handler;
@@ -183,15 +185,14 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 		gossip_jid_unref (jid);
 	}
 
-	items = g_list_append (items, "CodeFactory");
-	items = g_list_append (items, "Kompisar");
-	items = g_list_append (items, "Euroling");
-
+	roster = gossip_app_get_roster ();
+	groups = gossip_roster_get_groups (roster);
+	
 	g_completion_clear_items (contact->group_completion);
-	g_completion_add_items (contact->group_completion, items);
+	g_completion_add_items (contact->group_completion, groups);
 	
 	gtk_combo_set_popdown_strings (GTK_COMBO (contact->two_group_combo),
-				       items);
+				       groups);
 
 	gtk_entry_set_text (GTK_ENTRY (contact->two_group_entry), "");
 

@@ -159,7 +159,7 @@ chat_create (GossipApp *app, GossipJID *jid)
 				      "send_multi_button", &send_multi_button,
 				      NULL);
 
-	roster = gossip_app_get_roster (app);
+	roster = gossip_app_get_roster ();
 
 	pixbuf = gossip_roster_get_status_pixbuf_for_jid (roster, jid);
 	if (pixbuf) {
@@ -406,7 +406,7 @@ chat_message_handler (LmMessageHandler *handler,
 		nick = g_strdup (chat->nick);
 	}
 	else {
-		nick = g_strdup (gossip_roster_get_nick_from_jid (gossip_app_get_roster (chat->app), jid));
+		nick = g_strdup (gossip_roster_get_nick_from_jid (gossip_app_get_roster (), jid));
 	}
 	if (!nick) {
 		nick = gossip_jid_get_part_name (jid);

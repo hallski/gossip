@@ -1,7 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002 CodeFactory AB
+ * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2002 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -55,9 +56,11 @@ GossipRoster * gossip_roster_new                (GossipApp    *app);
 const gchar *  gossip_roster_get_nick_from_jid  (GossipRoster *roster,
 						 GossipJID    *jid);
 
-GdkPixbuf *    gossip_roster_get_status_pixbuf_for_jid  (GossipRoster *roster,
-							 GossipJID    *jid);
+GdkPixbuf *    
+gossip_roster_get_status_pixbuf_for_jid         (GossipRoster *roster,
+						 GossipJID    *jid);
 gboolean       gossip_roster_have_jid           (GossipRoster *roster,
 						 GossipJID    *jid);
+GList *        gossip_roster_get_groups         (GossipRoster *roster);
 
 #endif /* __GOSSIP_ROSTER_H__ */

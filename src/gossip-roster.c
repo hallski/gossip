@@ -1,8 +1,9 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2003 CodeFactory AB
+ * Copyright (C) Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2002-2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -51,7 +52,7 @@ struct _GossipRosterPriv {
 	LmMessageHandler *iq_handler;
 
 	GHashTable       *contacts;
-	GHashTable       *groups;
+	GList            *groups;
 	GdkPixbuf        *status_pixbufs[GOSSIP_STATUS_OFFLINE  + 1];
 
 	GtkItemFactory   *popup_factory;
@@ -336,6 +337,18 @@ roster_init (GossipRoster *roster)
 }
 
 static void
+roster_free_string_list (GList *list) 
+{
+	GList *l;
+
+	for (l = list; l; l = l->next) {
+		g_free (l->data);
+	}
+
+	g_list_free (list);
+}
+
+static void
 roster_finalize (GObject *object)
 {
         GossipRoster     *roster;
@@ -345,7 +358,7 @@ roster_finalize (GObject *object)
         priv = roster->priv;
 
 	g_hash_table_destroy (priv->contacts);
-	g_hash_table_destroy (priv->groups);
+	roster_free_string_list (priv->groups);
 	
 	if (priv->presence_handler) {
 		lm_connection_unregister_message_handler (priv->connection,
@@ -548,7 +561,8 @@ roster_create_store (GossipRoster *roster)
 	GtkTreeStore     *store;
 
 	if (priv->groups) {
-		g_hash_table_destroy (priv->groups);
+		roster_free_string_list (priv->groups);
+		priv->groups = NULL;
 	}
 	if (priv->contacts) {
 		g_hash_table_destroy (priv->contacts);
@@ -556,8 +570,6 @@ roster_create_store (GossipRoster *roster)
 
 	priv->contacts = g_hash_table_new_full (g_str_hash, g_str_equal, 
 						g_free, (GDestroyNotify) roster_item_free);
-	priv->groups = g_hash_table_new_full (g_str_hash, g_str_equal, 
-					      g_free, (GDestroyNotify) roster_item_free);
 	
 	store = gtk_tree_store_new (NUMBER_OF_COLS, G_TYPE_POINTER);
 	
@@ -871,7 +883,10 @@ roster_presence_handler (LmMessageHandler *handler,
 		GossipRosterItem *group_item;
 		group_item = roster_item_new (NULL, cur_group, NULL, 
 					      NULL, NULL, TRUE);
-		
+		priv->groups = g_list_prepend (priv->groups, 
+					       g_strdup (cur_group));
+		priv->groups = g_list_sort (priv->groups, 
+					    (GCompareFunc) strcmp);
 		d(g_print ("Creating a new group \n"));
 		gtk_tree_store_append (GTK_TREE_STORE (model), 
 				       &group_iter,
@@ -893,7 +908,6 @@ roster_presence_handler (LmMessageHandler *handler,
 	if (!gtk_tree_model_iter_has_child (model, &old_group_iter)) {
 		gtk_tree_store_remove (GTK_TREE_STORE (model), 
 				       &old_group_iter);
-		g_hash_table_remove (priv->groups, old_g_item->name);
 		old_g_item = NULL;
 	}
 	
@@ -1074,12 +1088,9 @@ roster_update_user (GossipRoster *roster,
 		g_hash_table_insert (priv->contacts, 
 				     g_strdup (gossip_jid_get_without_resource (item->jid)),
 				     item);
-		if (!g_hash_table_lookup (priv->groups, OFFLINE_GROUP)) {
+		if (!roster_find_group(roster, OFFLINE_GROUP, &parent)) {
 			group_item = roster_item_new (NULL, OFFLINE_GROUP,
 						      NULL, NULL, NULL, TRUE);
-			g_hash_table_insert (priv->groups, 
-					     g_strdup (group_item->name),
-					     group_item);
 			gtk_tree_store_append (GTK_TREE_STORE (model),
 					       &parent, 
 					       NULL);
@@ -1087,10 +1098,8 @@ roster_update_user (GossipRoster *roster,
 					    &parent,
 					    COL_ITEM, group_item,
 					    -1);
-		} else {
-			roster_find_group (roster, OFFLINE_GROUP, &parent);
-		}
-
+		} 
+			
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &parent);
 		d(g_print ("Insert2:: %s\n", gossip_jid_get_full (item->jid)));
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter, 
@@ -1319,4 +1328,18 @@ gossip_roster_have_jid (GossipRoster *roster, GossipJID *jid)
 	
 	return FALSE;
 }
+
+GList *
+gossip_roster_get_groups (GossipRoster *roster)
+{
+	GossipRosterPriv *priv;
+	
+	g_return_val_if_fail (GOSSIP_IS_ROSTER (roster), NULL);
+
+	priv = roster->priv;
+
+	return priv->groups;
+}
+
+
 
