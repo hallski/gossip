@@ -46,7 +46,7 @@
  */
 
 /* time user is shown as active */
-#define ACTIVE_USER_SHOW_TIME 5000     
+#define ACTIVE_USER_SHOW_TIME 7000     
         
 /* time after connecting which we wait before active users are enabled */
 #define ACTIVE_USER_WAIT_TO_ENABLE_TIME 5000    
