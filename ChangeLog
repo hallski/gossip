@@ -4,6 +4,7 @@
 	* src/gossip-app.c: (app_client_disconnected_cb): Don't set
 	transient, doesn't work since they can both be shown when the
 	contact list is on another workspace.
+	(app_init): Revert fix for now, see bug #132632.
 
 	* src/gossip-join-dialog.c:
 	* src/gossip-preferences.c:

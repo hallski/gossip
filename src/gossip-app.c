@@ -489,7 +489,8 @@ app_init (GossipApp *singleton_app)
 					GCONF_PATH "/ui/main_window_hidden", 
 					NULL);
 
- 	if (!hidden || !app_have_tray ()) {
+ 	/* FIXME: See bug #132632, if (!hidden || !app_have_tray ()) {*/
+ 	if (!hidden) {
 		gtk_widget_show (priv->window);
 	}
 
