@@ -17,7 +17,8 @@ src/gossip-join-dialog.c
 src/gossip-log.c
 src/gossip-main.c
 src/gossip-register.c
-src/gossip-roster-old.c
+src/gossip-roster-view.c
+src/gossip-roster.c
 src/gossip-startup-druid.c
 src/gossip-utils.c
 ui/chat.glade
