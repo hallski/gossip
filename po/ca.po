@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-09 18:59+0200\n"
-"PO-Revision-Date: 2003-07-09 19:01+0200\n"
+"POT-Creation-Date: 2003-07-10 21:07+0200\n"
+"PO-Revision-Date: 2003-07-10 21:08+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,79 +19,80 @@ msgstr ""
 msgid "New account"
 msgstr "Nou compte"
 
-#: src/gossip-add-contact.c:255
+#: src/gossip-add-contact.c:260
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Quin missatge de petició voleu enviar a %s?"
 
-#: src/gossip-add-contact.c:275
+#: src/gossip-add-contact.c:280
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "S'afegirà a %s a la vostra llista de contactes."
 
-#: src/gossip-add-contact.c:279
+#: src/gossip-add-contact.c:284
 msgid "Contact will be added to your contact list"
 msgstr "S'afegirà el contacte a la vostra llista de contactes."
 
-#: src/gossip-app.c:333
+#: src/gossip-app.c:337
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:337
+#: src/gossip-app.c:341
 msgid "Free to chat"
 msgstr "Disponible per xerrar"
 
-#: src/gossip-app.c:341
+#: src/gossip-app.c:345
 msgid "Busy"
 msgstr "Ocupat"
 
-#: src/gossip-app.c:345 ui/main.glade.h:27
+#: src/gossip-app.c:349 ui/main.glade.h:27
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:349
+#: src/gossip-app.c:353
 msgid "Extended away"
 msgstr "Absent fa estona"
 
-#: src/gossip-app.c:357
+#: src/gossip-app.c:361
 msgid "Offline"
 msgstr "Desconnectat"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:422
+#: src/gossip-app.c:429
 msgid "translator_credits"
 msgstr "Jordi Mallach <jordi@sindominio.net>"
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:440
 msgid "A Jabber Client for GNOME"
 msgstr "Un client Jabber per al GNOME"
 
-#: src/gossip-app.c:554
+#: src/gossip-app.c:561
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
 "xerrada."
 
-#: src/gossip-app.c:559
+#: src/gossip-app.c:566
 msgid "_Chat"
 msgstr "_Xarra"
 
-#: src/gossip-app.c:1138
+#: src/gossip-app.c:1142
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1397
+#: src/gossip-app.c:1456
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-chat.c:440
+#: src/gossip-chat.c:453
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:445
+#: src/gossip-chat.c:458 src/gossip-group-chat.c:633
+#: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr "Detalls:"
 
@@ -109,8 +110,18 @@ msgstr "Sistema operatiu:"
 
 #: src/gossip-contact-info.c:295
 #, c-format
-msgid "Information about %s"
-msgstr "Informació sobre %s"
+msgid "Contact Information for %s"
+msgstr "Informació del contacte %s"
+
+#: src/gossip-group-chat.c:628
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr "S'ha produït un error mentre es xerrava a la xerrada en grup %s."
+
+#: src/gossip-group-chat.c:732
+#, c-format
+msgid "Unable to enter the group chat %s."
+msgstr "No s'ha pogut entrar a la xerrada en grup %s."
 
 #: src/gossip-main.c:69
 msgid "Don't connect on startup"
@@ -220,7 +231,7 @@ msgstr ""
 "Gossip tractarà d'enregistrar el compte:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1238
+#: src/gossip-utils.c:1252
 msgid "Please enter your password:"
 msgstr "Si us plau, introduïu la vostra contrasenya:"
 
@@ -740,3 +751,9 @@ msgstr "_Envia un missatge de xerrada..."
 #: gossip.desktop.in.h:2
 msgid "Jabber Instant Messaging"
 msgstr "Missatgeria instantània Jabber"
+
+#~ msgid "The group chat %s could not be entered."
+#~ msgstr "No s'ha pogut entrar a la xerrada en grup %s."
+
+#~ msgid "Information about %s"
+#~ msgstr "Informació sobre %s"
