@@ -47,24 +47,26 @@ struct _GossipChatroomProviderIface {
 	GTypeInterface g_iface;
 
 	/* Virtual Table */
-	void (*join)          (GossipChatroomProvider *provider,
-			       const gchar            *room,
-			       const gchar            *server,
-			       const gchar            *nick,
-			       const gchar            *password,
-			       GossipJoinChatroomCb    callback,
-			       gpointer                user_data);
-	void (*send)          (GossipChatroomProvider *provider,
-			       GossipChatroomId        id,
-			       const gchar            *message);
-	void (*set_title)     (GossipChatroomProvider *provider,
-			       GossipChatroomId        id,
-			       const gchar            *new_title);
-	void (*change_nick)   (GossipChatroomProvider *provider,
-			       GossipChatroomId        id,
-			       const gchar            *new_nick);
-	void (*leave)         (GossipChatroomProvider *provider,
-			       GossipChatroomId        id);
+	void          (*join)          (GossipChatroomProvider *provider,
+					const gchar            *room,
+					const gchar            *server,
+					const gchar            *nick,
+					const gchar            *password,
+					GossipJoinChatroomCb    callback,
+					gpointer                user_data);
+	void          (*send)          (GossipChatroomProvider *provider,
+					GossipChatroomId        id,
+					const gchar            *message);
+	void          (*set_title)     (GossipChatroomProvider *provider,
+					GossipChatroomId        id,
+					const gchar            *new_title);
+	void          (*change_nick)   (GossipChatroomProvider *provider,
+					GossipChatroomId        id,
+					const gchar            *new_nick);
+	void          (*leave)         (GossipChatroomProvider *provider,
+					GossipChatroomId        id);
+	const gchar * (*get_room_name) (GossipChatroomProvider *provider,
+					GossipChatroomId        id);
 	/* send_invitation */
 };
 
@@ -87,6 +89,9 @@ void  gossip_chatroom_provider_change_nick (GossipChatroomProvider *provider,
 					    GossipChatroomId        id,
 					    const gchar            *new_nick);
 void  gossip_chatroom_provider_leave       (GossipChatroomProvider *provider,
+					    GossipChatroomId        id);
+const gchar *
+gossip_chatroom_provider_get_room_name     (GossipChatroomProvider *provider,
 					    GossipChatroomId        id);
 
 #endif /* __GOSSIP_CHATROOM_PROVIDER_H__ */

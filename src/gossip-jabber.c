@@ -189,6 +189,8 @@ static void            jabber_chatroom_change_nick           (GossipChatroomProv
 							      const gchar                  *new_nick);
 static void            jabber_chatroom_leave                 (GossipChatroomProvider       *provider,
 							      GossipChatroomId              id);
+static const gchar *   jabber_chatroom_get_room_name         (GossipChatroomProvider       *provider,
+							      GossipChatroomId              id);
 static void            jabber_signal_logged_out              (GossipJabber                 *jabber);
 static void            jabber_version_request                (GossipJabber                 *jabber,
 							      LmMessage                    *m);
@@ -1448,6 +1450,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->set_title = jabber_chatroom_set_title;
 	iface->change_nick = jabber_chatroom_change_nick;
 	iface->leave = jabber_chatroom_leave;
+	iface->get_room_name = jabber_chatroom_get_room_name;
 }
 
 static void
@@ -1533,6 +1536,21 @@ jabber_chatroom_leave (GossipChatroomProvider *provider,
 	priv   = jabber->priv;
 
 	gossip_jabber_chatrooms_leave (priv->chatrooms, id);
+}
+
+static const gchar *
+jabber_chatroom_get_room_name (GossipChatroomProvider *provider,
+			       GossipChatroomId        id)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (provider), NULL);
+
+	jabber = GOSSIP_JABBER (provider);
+	priv   = jabber->priv;
+
+	return gossip_jabber_chatrooms_get_room_name (priv->chatrooms, id);
 }
 
 static void

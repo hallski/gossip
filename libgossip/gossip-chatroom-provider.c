@@ -233,3 +233,18 @@ gossip_chatroom_provider_leave (GossipChatroomProvider *provider,
 	}
 }
 
+const gchar *
+gossip_chatroom_provider_get_room_name (GossipChatroomProvider *provider,
+					GossipChatroomId        id)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
+	g_return_val_if_fail (id > 0, NULL);
+
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_room_name) {
+		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_room_name (provider, id);
+	}
+
+	return NULL;
+}
+
+

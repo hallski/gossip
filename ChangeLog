@@ -1,10 +1,23 @@
+2005-04-04  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chatroom-provider.[ch]:
+	(gossip_chatroom_provider_get_room_name):
+	- Get the room name
+	* src/gossip-group-chat.c: 
+	- Removed the nick private variable and added own_contact instead.
+	- The user nick can now be retrieved from own contact name field.
+	* src/gossip-jabber-chatrooms.[ch]:
+	(gossip_jabber_chatrooms_get_room_name): Added.
+	* src/gossip-jabber.c: (jabber_chatroom_get_room_name): Added
+
 2005-04-04  Martyn Russell  <mr@gnome.org>
 
-	* src/gossip-transport-accounts-window.c (transport_accounts_window_destroy): 
+	* src/gossip-transport-accounts-window.c 
+	(transport_accounts_window_destroy): 
 	- Uncommented out code?? to disconnect the signal for
-	contact-removed on the GOSSIP_PROTOCOL when the window closes, was
-	calling back with a invalid pointer to an
-	GossipTransportAccountsWindow causing a crash on Quit.
+	  contact-removed on the GOSSIP_PROTOCOL when the window closes, was
+	  calling back with a invalid pointer to an
+	  GossipTransportAccountsWindow causing a crash on Quit.
 
 2005-04-04  Mikael Hallendal  <micke@imendio.com>
 

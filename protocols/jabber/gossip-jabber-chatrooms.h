@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2005 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -53,6 +53,8 @@ void gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms   *chatrooms,
 					  const gchar             *new_nick);
 void gossip_jabber_chatrooms_leave       (GossipJabberChatrooms   *chatrooms,
 					  GossipChatroomId         id);
+const gchar * gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
+						     GossipChatroomId       id);
 void gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,
 					   GossipPresence         *presence);
 gboolean

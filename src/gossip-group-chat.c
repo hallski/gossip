@@ -59,12 +59,12 @@ struct _GossipGroupChatPriv {
 	GtkWidget        *tree;
 
 	gchar            *name;
-	gchar            *nick;
 
 	GCompletion      *completion;
 
 	GTimeVal          last_timestamp;
 
+	GossipContact    *own_contact;
 	GHashTable       *contacts;
 	GList            *priv_chats;
 };
@@ -192,6 +192,8 @@ gossip_group_chat_init (GossipGroupChat *chat)
         priv = g_new0 (GossipGroupChatPriv, 1);
                                                                                 
         chat->priv = priv;
+
+	priv->own_contact = NULL;
                                                                                 
         /*
 	g_signal_connect_object (gossip_app_get (),
@@ -241,9 +243,12 @@ group_chat_finalize (GObject *object)
 					      group_chat_contact_updated_cb,
 					      chat);
 	
-	g_free (priv->nick);
 	g_free (priv->name);
 	g_list_free (priv->priv_chats);
+
+	if (priv->own_contact) {
+		g_object_unref (priv->own_contact);
+	}
 	
 	g_free (priv);
 }
@@ -353,21 +358,12 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 {
 	GossipGroupChat     *chat;
 	GossipGroupChatPriv *priv;
-	/* FIXME: Get this from chatroom-provider */
-	const gchar *nick = "foo";
-	const gchar *name = "chatroom";
 	
 	group_chats_init ();
 
 	chat = g_hash_table_lookup (group_chats, GINT_TO_POINTER (id));
 	if (chat) {
 		priv = chat->priv;
-
-		if (priv->nick) {
-			g_free (priv->nick);
-		}
-
-		priv->nick = g_strdup (nick);
 
 		gossip_chat_present (GOSSIP_CHAT (chat));
 		
@@ -379,8 +375,7 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 
 	priv->room_id = id;
 	
-	priv->name = g_strdup (name);
-	priv->nick = g_strdup (nick);
+	priv->name = g_strdup (gossip_chatroom_provider_get_room_name (provider, id));
 
 	priv->inited = FALSE;
 	priv->last_timestamp.tv_sec = priv->last_timestamp.tv_usec = 0;
@@ -429,11 +424,12 @@ group_chat_send (GossipGroupChat *chat, const gchar *msg)
 	priv = chat->priv;
 	
 	if (g_ascii_strncasecmp (msg, "/nick ", 6) == 0 && strlen (msg) > 6) {
-		g_free (priv->nick);
-		priv->nick = g_strdup (msg + 6);
+		const gchar *nick;
+
+		nick = msg + 6;
 		gossip_chatroom_provider_change_nick (priv->provider,
 						      priv->room_id,
-						      priv->nick);
+						      nick);
 		return;
 	}
 	else if (g_ascii_strcasecmp (msg, "/clear") == 0) {
@@ -791,7 +787,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	
 	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
 					      gossip_message_get_timestamp (message),
-					      priv->nick,
+					      gossip_contact_get_name (priv->own_contact),
 					      gossip_contact_get_name (sender),
 					      gossip_message_get_body (message));
 }
@@ -842,11 +838,18 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 	GtkTreeIter          iter;
 	GdkPixbuf           *pixbuf;
 		
-
 	priv = chat->priv;
 	
 	if (priv->room_id != id) {
 		return;
+	}
+
+	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_USER) {
+		if (priv->own_contact) {
+			g_object_unref (priv->own_contact);
+		}
+
+		priv->own_contact = g_object_ref (contact);
 	}
 	
 	pixbuf = gossip_contact_get_pixbuf (contact);

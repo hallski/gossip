@@ -44,6 +44,7 @@ struct _GossipJabberChatrooms {
 typedef struct {
 	gint           id;
 	GossipJID     *jid;
+	gchar         *name;
 
 	GossipContact *own_contact;
 	
@@ -94,6 +95,7 @@ jabber_chatrooms_chatroom_new (const gchar *room_name,
 	room = g_new0 (JabberChatroom, 1);
 
 	room->id = id++;
+	room->name = g_strdup (room_name);
 
 	jid_str = g_strdup_printf ("%s@%s/%s", room_name, server, nick);
 	room->jid = gossip_jid_new (jid_str);
@@ -113,6 +115,7 @@ jabber_chatrooms_chatroom_free (JabberChatroom *room)
 {
 	GSList *l;
 	
+	g_free (room->name);
 	gossip_jid_unref (room->jid);
 
 	for (l = room->contacts; l; l = l->next) {
@@ -121,6 +124,7 @@ jabber_chatrooms_chatroom_free (JabberChatroom *room)
 
 	g_object_unref (room->own_contact);
 	g_slist_free (room->contacts);
+
 	g_free (room);
 }
 
@@ -613,6 +617,22 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 			     GINT_TO_POINTER (room->id));
 	g_hash_table_remove (chatrooms->room_jid_hash, room->jid);
 	jabber_chatrooms_chatroom_free (room);
+}
+
+const gchar *
+gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
+				       GossipChatroomId       id)
+{
+	JabberChatroom *room;
+
+	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash,
+						       GINT_TO_POINTER (id));
+	if (!room) {
+		g_warning ("Unknown chatroom id: %d", id);
+		return NULL;
+	}
+
+	return room->name;
 }
 
 void
