@@ -1,5 +1,12 @@
 2004-01-08  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-log.c (gossip_log_message): Do log messages from
+	contacts not in the roster.
+
+	* ui/main.glade: Don't ploink and schwosh (don't show the window
+	until we've set the checkbuttons, gets rid of some sound events
+	for Ralph).
+
 	* src/gossip-chat.c (gossip_chat_get_for_item): Add create bool
 	and only create chat if specified.
 	(gossip_chat_get_history): Add.

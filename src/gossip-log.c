@@ -126,13 +126,6 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 
 	jid = gossip_jid_new (jid_string);
 	
-	if (incoming) {
-		if (!gossip_roster_get_item (gossip_app_get_roster (), jid)) {
-			/* Don't log messages from people not in the roster */
-			return;
-		}
-	}
-
 	filename = log_get_filename (jid, ".log");
 
 	log_ensure_dir ();
@@ -163,10 +156,11 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 
 		item = gossip_roster_get_item (gossip_app_get_roster (), jid);
 		if (!item) {
-		
+			nick = gossip_jid_get_part_name (jid);
+		} else {
+			nick = g_strdup (gossip_roster_item_get_name (item));
 		}
 		
-		nick = g_strdup (gossip_roster_item_get_name (item));
 		to_or_from = "from";
 	} else {
 		nick = g_strdup (gossip_app_get_username ());
