@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-22 04:37+0200\n"
-"PO-Revision-Date: 2003-07-22 10:43+0200\n"
+"POT-Creation-Date: 2003-08-12 20:39+0200\n"
+"PO-Revision-Date: 2003-08-13 01:43+0200\n"
 "Last-Translator: Francisco Javier F. Serrador <serrador@arrakis.es>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -40,7 +40,7 @@ msgstr "Silencio al estar ausente"
 
 #: gossip.schemas.in.h:4
 msgid "Extended autoaway time"
-msgstr "Tiempo de autoausencia extendido"
+msgstr "Tiempo de auto-ausencia extendido"
 
 #: gossip.schemas.in.h:5
 msgid ""
@@ -92,9 +92,11 @@ msgstr "Indica si debe o no reproducir sonidos cuando esté desconectado u ocupa
 
 #: gossip.schemas.in.h:14
 msgid "Whether or not to timestamp all messages in conversations."
-msgstr "Indica si debe o no debe marcar el tiempo en todos los mensajes de las conversaciones."
+msgstr ""
+"Indica si debe o no debe marcar el tiempo en todos los mensajes de las "
+"conversaciones."
 
-#: src/gossip-accounts-dialog.c:151
+#: src/gossip-accounts-dialog.c:154
 msgid "New account"
 msgstr "Cuenta nueva"
 
@@ -112,79 +114,123 @@ msgstr "Se ha agregado %s a su lista de contactos."
 msgid "Contact will be added to your contact list"
 msgstr "El contacto será agregado a su lista de contactos"
 
-#: src/gossip-app.c:342
+#: src/gossip-app.c:334
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:346
+#: src/gossip-app.c:338
 msgid "Free to chat"
 msgstr "Libre para charlar"
 
-#: src/gossip-app.c:350
+#: src/gossip-app.c:342
 msgid "Busy"
 msgstr "Ocupado"
 
-#: src/gossip-app.c:354 ui/main.glade.h:31
+#: src/gossip-app.c:346 ui/main.glade.h:31
 msgid "Away"
 msgstr "Ausente"
 
-#: src/gossip-app.c:358
+#: src/gossip-app.c:350
 msgid "Extended away"
 msgstr "Ausencia extendida"
 
-#: src/gossip-app.c:366
+#: src/gossip-app.c:358
 msgid "Offline"
 msgstr "Desconectado"
 
+#: src/gossip-app.c:367
+msgid "_Show Contact List"
+msgstr "Mo_strar lista de contactos"
+
+#: src/gossip-app.c:376
+msgid "_Hide Contact List"
+msgstr "_Ocultar lista de contactos"
+
+#: src/gossip-app.c:389
+msgid "Send _Chat message..."
+msgstr "Enviar mensaje de _charla..."
+
+#: src/gossip-app.c:404
+msgid "_Quit"
+msgstr "_Salir"
+
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:434
+#: src/gossip-app.c:472
 msgid "translator_credits"
 msgstr ""
 "Ezequiel Pérez <eazel7@yahoo.com.ar>\n"
 "Francisco Javier F. <serrador@arrakis.es>"
 
-#: src/gossip-app.c:445
+#: src/gossip-app.c:484
 msgid "A Jabber Client for GNOME"
 msgstr "Un cliente de Jabber para GNOME"
 
-#: src/gossip-app.c:566
+#: src/gossip-app.c:492
+msgid "Gossip Website"
+msgstr "Sitio web de gossip:"
+
+#: src/gossip-app.c:616
 msgid "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Introduzca el id de la persona a la que quiere enviarle un mensaje de charla."
 
-#: src/gossip-app.c:571
+#: src/gossip-app.c:621
 msgid "_Chat"
 msgstr "_Charla"
 
-#: src/gossip-app.c:1158
+#: src/gossip-app.c:1075
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Has sido desconectado del servidor. ¿Quiere reconectarse?"
 
-#: src/gossip-app.c:1475
+#: src/gossip-app.c:1662
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, cliente de Jabber"
 
-#: src/gossip-chat.c:501
+#: src/gossip-app.c:1864
+#, c-format
+msgid "New message from %s"
+msgstr "Mensaje nuevo de %s"
+
+#: src/gossip-chat.c:644
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ha habido un error en la charla con %s."
 
-#: src/gossip-chat.c:506 src/gossip-group-chat.c:633
-#: src/gossip-group-chat.c:737
+#: src/gossip-chat.c:649 src/gossip-group-chat.c:798
+#: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detalles:"
+
+#.
+#. Translators: This is for the title of the chat window. The
+#. first %s is an "* " that gets displayed if the chat window has
+#. new messages in it. (Please complain if this doesn't work well
+#. in your locale.)
+#.
+#: src/gossip-chat.c:810
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sCharla - %s"
+
+#.
+#. Translators: See comment for "%sChat - %s".
+#.
+#: src/gossip-chat.c:815
+#, c-format
+msgid "%sChat"
+msgstr "%sCharla"
 
 #: src/gossip-contact-info.c:350
 #, c-format
 msgid "Contact Information for %s"
 msgstr "Información del contacto para %s"
 
-#: src/gossip-group-chat.c:628
+#: src/gossip-group-chat.c:793
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "Ha habido un error al charlar en el grupo de charla %s."
 
-#: src/gossip-group-chat.c:732
+#: src/gossip-group-chat.c:896
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "no se puede entrar en el grupo de charla %s."
@@ -241,27 +287,27 @@ msgstr "Razón:"
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
 #.
-#: src/gossip-roster.c:100
+#: src/gossip-roster.c:101
 msgid "Offline "
 msgstr "Desconectados"
 
-#: src/gossip-roster.c:101
+#: src/gossip-roster.c:102
 msgid "Others"
 msgstr "Otros"
 
-#: src/gossip-roster.c:194
+#: src/gossip-roster.c:195
 msgid "/Contact _Information"
 msgstr "/_Información del contacto"
 
-#: src/gossip-roster.c:202
+#: src/gossip-roster.c:203
 msgid "/Re_name contact"
 msgstr "/Re_nombrar contacto"
 
-#: src/gossip-roster.c:218
+#: src/gossip-roster.c:219
 msgid "/_Remove contact"
 msgstr "/Elimina_r contacto"
 
-#: src/gossip-roster.c:421
+#: src/gossip-roster.c:424
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -272,7 +318,7 @@ msgstr ""
 "%s\n"
 "de su lista de contactos?"
 
-#: src/gossip-roster.c:519
+#: src/gossip-roster.c:522
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -306,11 +352,16 @@ msgstr ""
 "Gossip ahora intentará registrar la cuenta:\n"
 "<b>%s</b>"
 
-#: src/gossip-utils.c:1208
+#: src/gossip-utils.c:762
+#, c-format
+msgid "Could not open the address \"%s\": %s"
+msgstr "No se pudo abrir la dirección «%s»:%s"
+
+#: src/gossip-utils.c:1219
 msgid "Please enter your password:"
 msgstr "Introduzca su contraseña:"
 
-#: src/gossip-utils.c:1210
+#: src/gossip-utils.c:1221
 msgid "Remember Password?"
 msgstr "¿Recordar contraseña?"
 
@@ -506,8 +557,8 @@ msgid ""
 "Pick a favorite, or enter nickname, server name, and the name of the chat "
 "room to enter."
 msgstr ""
-"Elija un favorito, o introduzca un apodo, servidor, y el nombre de la sala de "
-"charla a entrar."
+"Elija un favorito, o introduzca un apodo, servidor, y el nombre de la sala "
+"de charla a entrar."
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
@@ -659,7 +710,7 @@ msgstr "Información del contacto"
 
 #: ui/main.glade.h:36
 msgid "Convert smileys to graphical images"
-msgstr "Convertir los smileys en imágenes gráficas"
+msgstr "Convertir los emoticonos en imágenes gráficas"
 
 #: ui/main.glade.h:37
 msgid "Dinner"
@@ -683,7 +734,7 @@ msgstr "Entrar en modo ausente después de "
 
 #: ui/main.glade.h:42
 msgid "Enter extended away mode after "
-msgstr "Entrar en modo ausente extendidao después de"
+msgstr "Entrar en modo ausente extendido después de"
 
 #: ui/main.glade.h:44
 msgid ""
@@ -692,8 +743,8 @@ msgid ""
 ">Connect... menu item."
 msgstr ""
 "Gossip está ahora configurado correctamente para su sistema.\n"
-"Puede cambiar su configuración de la cuenta más tarde, seleccionando el "
-"menú Acciones->Conectar..."
+"Puede cambiar su configuración de la cuenta más tarde, seleccionando el menú "
+"Acciones->Conectar..."
 
 #: ui/main.glade.h:46
 msgid "I would like to add you to my contact list."
@@ -709,9 +760,9 @@ msgid ""
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
 msgstr ""
-"Para suscribirse a las notificaciones de presencia de un usuario, se "
-"enviará una solicitud. Hasta que la solicitud sea aprobada, el usuario "
-"se mostrará como «Desconectado» en su lista de contactos."
+"Para suscribirse a las notificaciones de presencia de un usuario, se enviará "
+"una solicitud. Hasta que la solicitud sea aprobada, el usuario se mostrará "
+"como «Desconectado» en su lista de contactos."
 
 #: ui/main.glade.h:49
 msgid "In which group do you want to place this contact?"
@@ -794,7 +845,7 @@ msgid ""
 "This user wants to subscribe to your presence.\n"
 "Do you approve?"
 msgstr ""
-"Este usuario quiere subscribirse a su presencia.\n"
+"Este usuario quiere suscribirse a su presencia.\n"
 "¿Lo aprueba?"
 
 #: ui/main.glade.h:70
