@@ -26,8 +26,6 @@ struct _GossipPresence {
 	GossipPresenceType   type;
 	gchar               *status;
 
-	gint                 priority;
-
 	guint                ref_count;
 };
 
@@ -40,6 +38,22 @@ gossip_presence_new ()
 	presence->ref_count = 1;
 	presence->state = GOSSIP_PRESENCE_STATE_OFFLINE;
 	presence->status = NULL;
+
+	return presence;
+}
+
+GossipPresence *
+gossip_presence_new_full (GossipPresenceState state,
+			  GossipPresenceType  type,
+			  const gchar        *status)
+{
+	GossipPresence *presence;
+
+	presence = gossip_presence_new ();
+	
+	gossip_presence_set_state  (presence, state);
+	gossip_presence_set_type   (presence, type);
+	gossip_presence_set_status (presence, status);
 
 	return presence;
 }
@@ -100,22 +114,6 @@ gossip_presence_set_status (GossipPresence *presence, const gchar *status)
 	} else {
 		presence->status = NULL;
 	}
-}
-
-gint
-gossip_presence_get_priority (GossipPresence *presence)
-{
-	g_return_val_if_fail (presence != NULL, 0);
-
-	return presence->priority;
-}
-
-void
-gossip_presence_set_priority (GossipPresence *presence, gint priority)
-{
-	g_return_if_fail (presence != NULL);
-
-	presence->priority = priority;
 }
 
 GossipPresence *

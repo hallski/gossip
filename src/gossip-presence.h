@@ -38,7 +38,9 @@ typedef enum {
 } GossipPresenceType;
 
 GossipPresence *    gossip_presence_new          (void);
-
+GossipPresence *    gossip_presence_new_full     (GossipPresenceState state,
+						  GossipPresenceType  type,
+						  const gchar        *status);
 GossipPresenceState gossip_presence_get_state    (GossipPresence *presence);
 void                gossip_presence_set_state    (GossipPresence *presence,
 						  GossipPresenceState state);
@@ -48,10 +50,6 @@ void                gossip_presence_set_type     (GossipPresence *presence,
 const gchar *       gossip_presence_get_status   (GossipPresence *presence);
 void                gossip_presence_set_status   (GossipPresence *presence,
 						  const gchar    *status);
-gint                gossip_presence_get_priority (GossipPresence *presence);
-void                gossip_presence_set_priority (GossipPresence *presence,
-						  gint            priority);
-
 GossipPresence *    gossip_presence_ref          (GossipPresence *presence);
 void                gossip_presence_unref        (GossipPresence *presence);
 

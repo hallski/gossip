@@ -36,6 +36,7 @@
 #include "eggtrayicon.h"
 #include "eel-ellipsizing-label.h"
 #include "gossip-add-contact.h"
+#include "gossip-contact.h"
 #include "gossip-jid.h"
 #include "gossip-marshal.h"
 #include "gossip-utils.h"
@@ -48,6 +49,7 @@
 #include "gossip-idle.h"
 #include "gossip-startup-druid.h"
 #include "gossip-preferences.h"
+#include "gossip-presence.h"
 #include "gossip-account-dialog.h"
 #include "gossip-stock.h"
 #include "gossip-roster-view.h"
@@ -87,54 +89,54 @@
 extern GConfClient *gconf_client;
 
 struct _GossipAppPriv {
-	LmConnection        *connection;
-	GtkWidget           *window;
+	LmConnection     *connection;
+	GtkWidget        *window;
 
-	EggTrayIcon         *tray_icon;
-	GtkWidget           *tray_event_box;
-	GtkWidget           *tray_image;
-	GtkTooltips         *tray_tooltips;
-	GList               *tray_flash_icons;
-	guint                tray_flash_timeout_id;
+	EggTrayIcon      *tray_icon;
+	GtkWidget        *tray_event_box;
+	GtkWidget        *tray_image;
+	GtkTooltips      *tray_tooltips;
+	GList            *tray_flash_icons;
+	guint             tray_flash_timeout_id;
 
-	GtkWidget           *popup_menu;
-	GtkWidget           *popup_menu_status_item;
-	GtkWidget           *show_popup_item;
-	GtkWidget           *hide_popup_item;
+	GtkWidget        *popup_menu;
+	GtkWidget        *popup_menu_status_item;
+	GtkWidget        *show_popup_item;
+	GtkWidget        *hide_popup_item;
 	
-	GossipRoster        *roster;
-	GossipRosterView    *roster_view;
+	GossipRoster     *roster;
+	GossipRosterView *roster_view;
 
-	GossipAccount       *account;
-	gchar               *overridden_resource;
+	GossipAccount    *account;
+	gchar            *overridden_resource;
 
-	GossipJID           *jid;
+	GossipJID        *jid;
 
 	/* Widgets that are enabled when we're connected/disconnected. */
-	GList               *enabled_connected_widgets;
-	GList               *enabled_disconnected_widgets;
+	GList            *enabled_connected_widgets;
+	GList            *enabled_disconnected_widgets;
 
 	/* Status popup. */
-	GtkWidget           *status_button_hbox;
-	GtkWidget           *status_button;
-	GtkWidget           *status_popup;
-	GtkWidget           *status_label;
-	GtkWidget           *status_image;
+	GtkWidget        *status_button_hbox;
+	GtkWidget        *status_button;
+	GtkWidget        *status_popup;
+	GtkWidget        *status_label;
+	GtkWidget        *status_image;
 
-	guint                status_flash_timeout_id;
-	time_t               leave_time;
+	guint             status_flash_timeout_id;
+	time_t            leave_time;
 
 	/* Current status/overridden away message. */
-	gchar               *status_text;
-	gchar               *away_message;
+	gchar            *status_text;
+	gchar            *away_message;
 
 	/* Set by the user (available/busy). */
-	GossipShow           explicit_show;
+	GossipShow        explicit_show;
 
 	/* Autostatus (away/xa), overrides explicit_show. */
-	GossipShow           auto_show;     
-
-	guint                size_timeout_id;
+	GossipShow        auto_show;     
+	
+	guint             size_timeout_id;
 };
 
 typedef struct {
@@ -162,8 +164,8 @@ static void     app_init                             (GossipApp          *app);
 static void     app_finalize                         (GObject            *object);
 static void     app_main_window_destroy_cb           (GtkWidget          *window,
 						      GossipApp          *app);
-static void     app_item_activated_cb                (GossipRosterView   *roster_view,
-						      GossipRosterItem   *item,
+static void     app_contact_activated_cb             (GossipRosterView   *roster_view,
+						      GossipContact      *contact,
 						      GossipApp          *app);
 static gboolean app_idle_check_cb                    (GossipApp          *app);
 static void     app_quit_cb                          (GtkWidget          *window,
@@ -252,7 +254,7 @@ static void     app_complete_name_activate_cb         (GtkEntry           *entry
 static gchar *  app_complete_item_to_string          (gpointer            data);
 static void     app_toggle_visibility                (void);
 static void     app_tray_push_message                (LmMessage          *m);
-static gboolean app_tray_pop_message                 (GossipRosterItem   *item);
+static gboolean app_tray_pop_message                 (GossipContact      *contact);
 static void     app_tray_update_tooltip              (void);
 static GtkWidget *
 app_create_status_menu                               (gboolean            from_window);
@@ -456,8 +458,8 @@ app_init (GossipApp *singleton_app)
 			   GTK_WIDGET (priv->roster_view));
 
 	g_signal_connect (priv->roster_view,
-			  "item_activated",
-			  G_CALLBACK (app_item_activated_cb),
+			  "contact_activated",
+			  G_CALLBACK (app_contact_activated_cb),
 			  app);
 
 	app_tray_create_menu ();
@@ -673,8 +675,8 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	GossipAppPriv    *priv;
 	const gchar      *selected_name = NULL;
 	GList            *l;
-	GList            *items;
-	GossipRosterItem *item = NULL;
+	GList            *contacts = NULL;
+	GossipContact    *contact = NULL;
 	GtkWidget        *frame;
 	CompleteNameData  *data;
 	GtkWindow         *parent;
@@ -744,24 +746,40 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	data->completion = g_completion_new (app_complete_item_to_string);
 	g_completion_set_compare (data->completion, 
 				  app_name_complete_cmp_func);
+
 	if (use_roster_selection) {
+		GossipRosterItem *item;
+		
 		item = gossip_roster_view_get_selected_item (priv->roster_view);
-	} else {
-		item = NULL;
-	}
+		if (item) {
+			contact = gossip_roster_get_contact_from_item (priv->roster, item);
+		}
+	} 
 
 	data->names = NULL;
 
-	items = gossip_roster_get_all_items (priv->roster);
-	for (l = items; l; l = l->next) {
-		GossipRosterItem *roster_item = (GossipRosterItem *) l->data;
-		
-		data->names = g_list_prepend (data->names, 
-					      g_strdup (gossip_roster_item_get_name (roster_item)));
+	if (contact) {
+		GList *items;
 
-		if (item == roster_item) {
-			/* Got the selected one, select it in the combo. */
-			selected_name = gossip_roster_item_get_name (roster_item);
+		items = gossip_roster_get_all_items (priv->roster);
+		for (l = items; l; l = l->next) {
+			GossipRosterItem *roster_item;
+			GossipContact    *c;
+			
+			roster_item = (GossipRosterItem *) l->data;
+			c = gossip_roster_get_contact_from_item (priv->roster,
+								 roster_item);
+			
+			data->names = g_list_prepend (data->names, 
+						      g_strdup (gossip_contact_get_name (c)));
+
+			if (gossip_contact_equal (contact, c)) {
+				/* Got the selected one, select it in the combo. */
+				selected_name = gossip_contact_get_name (c);
+			}
+
+			contacts = g_list_prepend (contacts, 
+						   gossip_contact_ref (c));
 		}
 	}
 	
@@ -770,8 +788,8 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 					       data->names);
 	}
 
-	if (items) {
-		g_completion_add_items (data->completion, items);
+	if (contacts) {
+		g_completion_add_items (data->completion, contacts);
 	}
 
 	if (selected_name) {
@@ -971,6 +989,7 @@ app_handle_subscription_request (GossipApp *app, LmMessage *m)
 			   "add_check_button", add_check_button);
 
 	jid = gossip_jid_new (from);
+
 	if (gossip_roster_get_item (app->priv->roster, jid)) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (add_check_button),
 					      FALSE);
@@ -1208,16 +1227,16 @@ app_client_disconnected_cb (LmConnection       *connection,
 }
 
 static void
-app_item_activated_cb (GossipRosterView *roster,
-		       GossipRosterItem *item,
-		       GossipApp        *app)
+app_contact_activated_cb (GossipRosterView *roster,
+			  GossipContact    *contact,
+			  GossipApp        *app)
 {
 	GossipChat *chat;
 
-	chat = gossip_chat_get_for_item (item, TRUE);
+	chat = gossip_chat_get_for_contact (contact, TRUE);
 	gossip_chat_present (chat);
 
-	app_tray_pop_message (item);
+	app_tray_pop_message (contact);
 }
 
 void
@@ -1516,7 +1535,9 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 	GList       *l;
 
 	if (response == GTK_RESPONSE_OK) {
-		GossipRosterItem *item = NULL;
+		GossipRosterItem *item;
+		GossipContact    *contact;
+		
 		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
 		
 		item = gossip_roster_find_item (gossip_app_get_roster (), str);
@@ -1525,7 +1546,9 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 			g_warning ("'%s' is not a valid JID or nick name.", str);
 		}
 
-		chat = gossip_chat_get_for_item (item, TRUE);
+		contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
+							       item);
+		chat = gossip_chat_get_for_contact (contact, TRUE);
 				
 		gossip_chat_present (chat);
 	}
@@ -1620,10 +1643,10 @@ app_complete_name_activate_cb (GtkEntry        *entry,
 
 static gchar *
 app_complete_item_to_string (gpointer data)
-{ 
-	GossipRosterItem *item = data;
+{
+	GossipContact *contact = (GossipContact *) data;
 
-	return (gchar *) gossip_roster_item_get_name (item);
+	return (gchar *) gossip_contact_get_name (contact);
 }
 
 GossipShow 
@@ -1862,6 +1885,7 @@ app_tray_push_message (LmMessage *m)
 	const gchar      *from;
 	GossipJID        *jid; 
 	GossipRosterItem *item;
+	GossipContact    *contact;
 	GList            *l;
 		
 	priv = app->priv;
@@ -1871,32 +1895,32 @@ app_tray_push_message (LmMessage *m)
 
 	item = gossip_roster_get_item (priv->roster, jid);
 	if (!item) {
-		item = gossip_roster_item_new (jid);
+		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
+		gossip_contact_set_jid (contact, jid);
 	} else {
-		gossip_roster_item_ref (item);
+		contact = gossip_roster_get_contact_from_item (priv->roster,
+							       item);
+		gossip_contact_ref (contact);
 	}
 
 	gossip_jid_unref (jid);
 	
-	l = g_list_find_custom (priv->tray_flash_icons, item,
-				(GCompareFunc) gossip_roster_item_compare);
+	l = g_list_find_custom (priv->tray_flash_icons, contact,
+				(GCompareFunc) gossip_contact_compare);
 	if (l) {
 		return;
 	}
 
-	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons, 
-						gossip_roster_item_ref (item));
-
+	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons, contact);
 
 	app_tray_flash_start ();
 	app_tray_update_tooltip ();
 
-	gossip_roster_view_flash_item (priv->roster_view, item, TRUE);
-	gossip_roster_item_unref (item);
+	gossip_roster_view_flash_contact (priv->roster_view, contact, TRUE);
 }
 
 static gboolean
-app_tray_pop_message (GossipRosterItem *item)
+app_tray_pop_message (GossipContact *contact)
 {
 	GossipAppPriv *priv;
 	GossipChat    *chat;
@@ -1908,19 +1932,19 @@ app_tray_pop_message (GossipRosterItem *item)
 		return FALSE;
 	}
 
-	if (!item) {
-		item = priv->tray_flash_icons->data;
+	if (!contact) {
+		contact = priv->tray_flash_icons->data;
 	}
 	
-	chat = gossip_chat_get_for_item (item, TRUE);
+	chat = gossip_chat_get_for_contact (contact, TRUE);
 	if (!chat) {
 		return FALSE;
 	}
 
 	gossip_chat_present (chat);
 
-	l = g_list_find_custom (priv->tray_flash_icons, item,
-				(GCompareFunc) gossip_roster_item_compare);
+	l = g_list_find_custom (priv->tray_flash_icons, contact,
+				(GCompareFunc) gossip_contact_compare);
 
 	if (!l) {
 		return FALSE;
@@ -1931,11 +1955,12 @@ app_tray_pop_message (GossipRosterItem *item)
 	app_tray_flash_maybe_stop ();
 	app_tray_update_tooltip ();
 
-	if (item) {
-		gossip_roster_view_flash_item (priv->roster_view, item, FALSE);
+	if (contact) {
+		gossip_roster_view_flash_contact (priv->roster_view, 
+						  contact, FALSE);
 	}
 	
-	gossip_roster_item_unref (item);
+	gossip_contact_unref (contact);
 
 	return TRUE;
 }
@@ -1946,7 +1971,7 @@ app_tray_update_tooltip (void)
 	GossipAppPriv    *priv;
 	const gchar      *name;
 	gchar            *str;
-	GossipRosterItem *item;
+	GossipContact    *contact;
 
 	priv = app->priv;
 
@@ -1957,9 +1982,9 @@ app_tray_update_tooltip (void)
 		return;
 	}
 
-	item = priv->tray_flash_icons->data;
-	
-	name = gossip_roster_item_get_name (item);
+	contact = priv->tray_flash_icons->data;
+
+	name = gossip_contact_get_name (contact);
 	
 	str = g_strdup_printf (_("New message from %s"), name);
 	
@@ -2068,14 +2093,14 @@ app_update_show (void)
 		if (status_text) {
 			status_label = g_strdup (priv->status_text);
 		} else {
-			status_label = g_strdup (gossip_utils_get_default_status (effective_show));
+			status_label = g_strdup (gossip_utils_get_default_status_show (effective_show));
 		}
 	}
 
 	if (status_text && status_text[0]) {
 		status_label = status_text;
 	} else {
-		status_label = gossip_utils_get_default_status (effective_show);
+		status_label = gossip_utils_get_default_status_show (effective_show);
 	}
 
 	eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
@@ -2407,7 +2432,7 @@ app_status_show_status_dialog (GossipShow   show,
 		
 	str = gtk_entry_get_text (GTK_ENTRY (entry));
 
-	if (strcmp (str, gossip_utils_get_default_status (show)) == 0) {
+	if (strcmp (str, gossip_utils_get_default_status_show (show)) == 0) {
 		str = NULL;
 	}
 

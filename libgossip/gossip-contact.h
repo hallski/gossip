@@ -23,6 +23,7 @@
 
 #include <glib.h>
 
+#include "gossip-jid.h"
 #include "gossip-presence.h"
 
 #define GOSSIP_CONTACT(x) (GossipContact *) x
@@ -32,23 +33,19 @@ typedef struct _GossipContact GossipContact;
 typedef enum {
 	GOSSIP_CONTACT_TYPE_TEMPORARY,
 	GOSSIP_CONTACT_TYPE_CONTACTLIST,
+	GOSSIP_CONTACT_TYPE_GROUPCHAT,
 	GOSSIP_CONTACT_TYPE_USER
 } GossipContactType;
 
-typedef enum {
-	GOSSIP_CONTACT_PROTOCOL_INVALID,
-	GOSSIP_CONTACT_PROTOCOL_JABBER,
-	GOSSIP_CONTACT_PROTOCOL_ICQ,
-	GOSSIP_CONTACT_PROTOCOL_MSN,
-	GOSSIP_CONTACT_PROTOCOL_YAHOO
-} GossipContactProtocol;
-
 GossipContact *    gossip_contact_new            (GossipContactType type);
+GossipContact *    gossip_contact_new_full       (GossipContactType type,
+						  GossipJID        *jid,
+						  const gchar      *name);
 GossipContactType  gossip_contact_get_type       (GossipContact    *contact);
 
-void               gossip_contact_set_id         (GossipContact    *contact,
-						  const gchar      *id);
-const gchar *      gossip_contact_get_id         (GossipContact    *contact);
+void               gossip_contact_set_jid        (GossipContact    *contact,
+						  GossipJID        *jid);
+GossipJID *        gossip_contact_get_jid        (GossipContact    *contact);
 
 void               gossip_contact_set_name       (GossipContact    *contact,
 						  const gchar      *name);
@@ -60,9 +57,9 @@ GossipPresence *   gossip_contact_get_presence   (GossipContact    *contact);
 
 gboolean           gossip_contact_is_online      (GossipContact    *contact);
 
-gboolean           gossip_contact_set_categories (GossipContact    *contact,
-						  GSList           *categories);
-GSList *           gossip_contact_get_categories (GossipContact    *contact);
+gboolean           gossip_contact_set_groups     (GossipContact    *contact,
+						  GList            *categories);
+GList *            gossip_contact_get_groups     (GossipContact    *contact);
 						
 GossipContact *    gossip_contact_ref            (GossipContact    *contact);
 void               gossip_contact_unref          (GossipContact    *contact);

@@ -78,7 +78,7 @@ static gboolean chat_window_delete_event_cb   (GtkWidget	     *dialog,
 					       GdkEvent		     *event,
 					       GossipChatWindow	     *window);
 static void chat_window_presence_updated_cb   (gpointer               not_used,
-					       GossipRosterItem      *item,
+					       GossipContact         *contact,
 					       GossipChat	     *chat);
 static void chat_window_update_tooltip        (GossipChatWindow      *window,
 					       GossipChat            *chat);
@@ -349,16 +349,16 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 		pixbuf = gossip_utils_get_pixbuf_offline ();
 	}
 	else {
-		GossipRosterItem *item;
+		GossipContact *contact;
 
-		item = gossip_chat_get_item (chat);
-		if (gossip_roster_item_is_offline (item)) {
-			pixbuf = gossip_utils_get_pixbuf_offline ();
+		contact = gossip_chat_get_contact (chat);
+		if (gossip_contact_is_online (contact)) {
+			GossipPresence *presence;
+
+			presence = gossip_contact_get_presence (contact);
+			pixbuf = gossip_utils_get_pixbuf_from_presence (presence);
 		} else {
-			GossipShow show;
-
-			show  = gossip_roster_item_get_show (item);
-			pixbuf = gossip_utils_get_pixbuf_from_show (show);
+			pixbuf = gossip_utils_get_pixbuf_offline ();
 		}
 	}
 
@@ -531,24 +531,24 @@ static void
 chat_window_log_activate_cb (GtkWidget *menuitem,GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv = window->priv;
-	GossipRosterItem     *item;
+	GossipContact        *contact;
 
-	item = gossip_chat_get_item (priv->current_chat);
+	contact = gossip_chat_get_contact (priv->current_chat);
 	
-	gossip_log_show (gossip_roster_item_get_jid (item));
+	gossip_log_show (gossip_contact_get_jid (contact));
 }
 
 static void
 chat_window_info_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipRosterItem     *item;
+	GossipContact        *contact;
 	
 	priv = window->priv;
 
-	item = gossip_chat_get_item (priv->current_chat);
+	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_contact_info_new (gossip_roster_item_get_jid (item),
+	gossip_contact_info_new (gossip_contact_get_jid (contact),
 				 chat_window_get_name (window, priv->current_chat));
 }
 
@@ -557,13 +557,13 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipRosterItem     *item;
+	GossipContact        *contact;
 	gboolean              log_exists;
 
 	priv = window->priv;
 	
-	item = gossip_chat_get_item (priv->current_chat);
-	log_exists = gossip_log_exists (gossip_roster_item_get_jid (item));
+	contact = gossip_chat_get_contact (priv->current_chat);
+	log_exists = gossip_log_exists (gossip_contact_get_jid (contact));
 	gtk_widget_set_sensitive (priv->m_conv_log, log_exists);
 }
 
@@ -660,7 +660,7 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 
 static void
 chat_window_presence_updated_cb (gpointer           not_used,
-				 GossipRosterItem  *item,
+				 GossipContact     *contact,
 				 GossipChat        *chat)
 { 
 	GossipChatWindow *window;
@@ -675,25 +675,28 @@ chat_window_update_tooltip (GossipChatWindow *window,
 			    GossipChat       *chat)
 {
 	GossipChatWindowPriv *priv;
-	GossipRosterItem     *item;
+	GossipContact        *contact;
 	GossipJID            *jid;
 	gchar                *str;
 	const gchar          *status;
 	GtkWidget            *widget;
+	GossipPresence       *presence;
 	
 	priv = window->priv;
 	
-	item = gossip_chat_get_item (chat);
-	jid = gossip_roster_item_get_jid (item);
+	contact = gossip_chat_get_contact (chat);
+	jid = gossip_contact_get_jid (contact);
 
-	status = gossip_roster_item_get_status (item);
+	presence = gossip_contact_get_presence (contact);
+	status = gossip_presence_get_status (presence);
 
 	if (!status || strcmp (status, "") == 0) {
-		GossipShow show;
 
-		if (!gossip_roster_item_is_offline (item)) {
-			show = gossip_roster_item_get_show (item);
-			status = gossip_utils_get_default_status (show);
+		if (gossip_contact_is_online (contact)) {
+			GossipPresenceType p_type;
+
+			p_type = gossip_presence_get_type (presence);
+			status = gossip_utils_get_default_status (p_type);
 		} else {
 			status = _("Offline");
 		}
@@ -820,7 +823,7 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), child, label);
 
 	g_signal_connect (gossip_app_get_roster (),
-			  "item_presence_updated",
+			  "contact_presence_updated",
 			  G_CALLBACK (chat_window_presence_updated_cb),
 			  chat);
 	g_signal_connect (chat, "name_changed",
@@ -929,13 +932,13 @@ static const gchar *
 chat_window_get_name (GossipChatWindow *window, GossipChat *chat)
 {
 	GossipChatWindowPriv *priv;
-	GossipRosterItem     *item;
+	GossipContact        *contact;
 
 	priv = window->priv;
 
-	item = gossip_chat_get_item (chat);
+	contact = gossip_chat_get_contact (chat);
 
-	return gossip_roster_item_get_name (item);
+	return gossip_contact_get_name (contact);
 }
 
 GtkWidget *

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,6 +25,7 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include "gossip-contact.h"
 #include "gossip-jid.h"
 #include "gossip-utils.h"
 
@@ -76,6 +77,13 @@ void               gossip_roster_rename_group       (GossipRoster      *roster,
 						     GossipRosterGroup *group,
 						     const gchar       *name);
 
+/* FIXME: GossipContact API will replace GossipRosterItem */
+GossipContact *    gossip_roster_get_contact_from_item (GossipRoster   *roster,
+							GossipRosterItem *item);
+
+const gchar *      gossip_roster_get_active_resource (GossipRoster     *roster,
+						      GossipContact    *contact);
+
 /* Group */
 const gchar *      gossip_roster_group_get_name     (GossipRosterGroup *group);
 GList *            gossip_roster_group_get_items    (GossipRosterGroup *group);
@@ -105,5 +113,10 @@ gint           gossip_roster_item_compare          (GossipRosterItem  *a,
 /* Used when receiving messages from a person not in the roster */
 GossipRosterItem *
 gossip_roster_item_new                             (GossipJID         *jid);
+
+/* This is a way to be able to move to GossipContact in steps.
+ * It will create a new GossipContact out of the data in the GossipRosterItem
+ */
+/*GossipContact *  gossip_roster_item_get_contact    (GossipRosterItem  *item); */
 
 #endif /* __GOSSIP_ROSTER_H__ */

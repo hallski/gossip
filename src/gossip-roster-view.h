@@ -46,17 +46,18 @@ struct _GossipRosterViewClass {
 	GtkTreeViewClass    parent_class;
 };
 
-GType              gossip_roster_view_get_type     (void) G_GNUC_CONST;
+GType              gossip_roster_view_get_type      (void) G_GNUC_CONST;
 
-GossipRosterView * gossip_roster_view_new          (GossipRoster     *roster);
+GossipRosterView * gossip_roster_view_new           (GossipRoster     *roster);
 
 GossipRosterItem * 
-gossip_roster_view_get_selected_item               (GossipRosterView *view);
-void               gossip_roster_view_flash_item   (GossipRosterView *view,
-						    GossipRosterItem *item,
-						    gboolean          flash);
+gossip_roster_view_get_selected_item                (GossipRosterView *view);
+void               gossip_roster_view_flash_contact (GossipRosterView *view,
+						     GossipContact    *contact,
+						     gboolean          flash);
 
-void gossip_roster_view_set_show_offline (GossipRosterView *roster, gboolean show_offline);
-gboolean gossip_roster_view_get_show_offline (GossipRosterView *roster);
+void gossip_roster_view_set_show_offline            (GossipRosterView *roster, 
+						     gboolean show_offline);
+gboolean gossip_roster_view_get_show_offline        (GossipRosterView *roster);
 
 #endif /* __GOSSIP_ROSTER_VIEW_H__ */

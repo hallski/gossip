@@ -31,6 +31,7 @@
 #include <loudmouth/loudmouth.h>
 
 #include "gossip-account.h"
+#include "gossip-presence.h"
 
 /* Note: We don't support "free to chat". */
 typedef enum {
@@ -100,7 +101,10 @@ const gchar *gossip_utils_get_stock_from_show        (GossipShow        show);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_stock      (const gchar      *stock);
 GdkPixbuf *  gossip_utils_get_pixbuf_offline         (void);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);
-const gchar *gossip_utils_get_default_status         (GossipShow        show);
+
+/* FIXME: Deprecate */
+const gchar *gossip_utils_get_default_status_show    (GossipShow        show);
+const gchar *gossip_utils_get_default_status         (GossipPresenceType type);
 GList *      gossip_utils_get_status_messages        (void);
 void         gossip_utils_set_status_messages        (GList            *list);
 void         gossip_utils_free_status_messages       (GList            *list);
@@ -108,5 +112,6 @@ void         gossip_utils_free_status_messages       (GList            *list);
 gint         gossip_utils_url_regex_match            (const gchar      *msg,
 						      GArray           *start,
 						      GArray           *end);
-
+const gchar *gossip_utils_get_stock_from_presence    (GossipPresence   *presence);
+GdkPixbuf *  gossip_utils_get_pixbuf_from_presence   (GossipPresence   *presence);
 #endif /*  __GOSSIP_UTILS_H__ */

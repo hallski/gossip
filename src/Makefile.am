@@ -42,6 +42,8 @@ gossip_SOURCES = 				\
 	gossip-contact.h                        \
 	gossip-contact-info.c                   \
 	gossip-contact-info.h                   \
+	gossip-contact-list.c                   \
+	gossip-contact-list.h                   \
 	gossip-favorite.c			\
 	gossip-favorite.h			\
 	gossip-favorites-dialog.c		\
@@ -50,8 +52,6 @@ gossip_SOURCES = 				\
 	gossip-group-chat.h			\
 	gossip-idle.c				\
 	gossip-idle.h				\
-	gossip-jabber.c                         \
-	gossip-jabber.h                         \
 	gossip-jid.c                            \
 	gossip-jid.h                            \
 	gossip-join-dialog.c			\

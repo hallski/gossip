@@ -28,10 +28,11 @@ struct _GossipContact {
 	GossipContactType  type;
 
 	gchar             *name;
-	gchar             *id;
+
+	GossipJID         *jid;
 
 	GossipPresence    *presence;
-	GSList            *categories;
+	GList             *groups;
 	
 	guint ref_count;
 };
@@ -42,20 +43,23 @@ static void
 contact_free (GossipContact *contact)
 {
 	g_free (contact->name);
-	g_free (contact->id);
+
+	if (contact->jid) {
+		gossip_jid_unref (contact->jid);
+	}
 
 	if (contact->presence) {
 		gossip_presence_unref (contact->presence);
 	}
 
-	if (contact->categories) {
-		GSList *l;
+	if (contact->groups) {
+		GList *l;
 
-		for (l = contact->categories; l; l = l->next) {
+		for (l = contact->groups; l; l = l->next) {
 			g_free (l->data);
 		}
 
-		g_slist_free (contact->categories);
+		g_list_free (contact->groups);
 	}
 		
 	g_free (contact);
@@ -70,8 +74,23 @@ gossip_contact_new (GossipContactType type)
 	contact->ref_count = 1;
 	contact->type = type;
 	contact->name = NULL;
-	contact->id = NULL;
+	contact->jid = NULL;
 	contact->presence = gossip_presence_new ();
+
+	return contact;
+}
+
+GossipContact *
+gossip_contact_new_full (GossipContactType  type,
+			 GossipJID         *jid,
+			 const gchar       *name)
+{
+	GossipContact *contact;
+
+	contact = gossip_contact_new (type);
+
+	gossip_contact_set_jid (contact, jid);
+	gossip_contact_set_name (contact, name);
 
 	return contact;
 }
@@ -85,21 +104,24 @@ gossip_contact_get_type (GossipContact *contact)
 }
 
 void
-gossip_contact_set_id (GossipContact *contact, const gchar *id)
+gossip_contact_set_jid (GossipContact *contact, GossipJID *jid)
 {
 	g_return_if_fail (contact != NULL);
-	g_return_if_fail (id != NULL);
+	g_return_if_fail (jid != NULL);
 
-	g_free (contact->id);
-	contact->id = g_strdup (id);
+	if (contact->jid) {
+		gossip_jid_unref (contact->jid);
+	}
+
+	contact->jid = gossip_jid_ref (jid);
 }
 
-const gchar *
-gossip_contact_get_id (GossipContact *contact)
+GossipJID *
+gossip_contact_get_jid (GossipContact *contact)
 {
 	g_return_val_if_fail (contact != NULL, NULL);
 	
-	return contact->id;
+	return contact->jid;
 }
 
 const gchar *
@@ -152,15 +174,15 @@ gossip_contact_is_online (GossipContact *contact)
 	return TRUE;
 }
 
-GSList *
-gossip_contact_get_categories (GossipContact *contact)
+GList *
+gossip_contact_get_groups (GossipContact *contact)
 {
 	/* FIXME: Implement */
-	return contact->categories;
+	return contact->groups;
 }
 
 gboolean
-gossip_contact_set_categories (GossipContact *contact, GSList *categories)
+gossip_contact_set_groups (GossipContact *contact, GList *groups)
 {
 	/* FIXME: Implement */
 	return FALSE;
@@ -175,7 +197,6 @@ gossip_contact_ref (GossipContact *contact)
 
 	return contact;
 }
-
 
 void
 gossip_contact_unref (GossipContact *contact)
@@ -193,34 +214,34 @@ gossip_contact_unref (GossipContact *contact)
 gint
 gossip_contact_compare (gconstpointer *a, gconstpointer *b)
 {
+	GossipJID *jid_a;
+	GossipJID *jid_b;
+	
 	g_return_val_if_fail (a != NULL, 0);
 	g_return_val_if_fail (b != NULL, 0);
 
-	return strcmp (gossip_contact_get_id (GOSSIP_CONTACT (a)),
-		       gossip_contact_get_id (GOSSIP_CONTACT (b)));
+	jid_a = gossip_contact_get_jid (GOSSIP_CONTACT (a));
+	jid_b = gossip_contact_get_jid (GOSSIP_CONTACT (b));
+	
+	return strcmp (gossip_jid_get_without_resource (jid_a),
+		       gossip_jid_get_without_resource (jid_b));
 }
 
 gboolean
 gossip_contact_equal (gconstpointer v1, gconstpointer v2)
 {
-	const gchar *id_a, *id_b;
+	GossipJID *jid_a;
+	GossipJID *jid_b;
+	
+	jid_a = gossip_contact_get_jid (GOSSIP_CONTACT (v1));
+	jid_b = gossip_contact_get_jid (GOSSIP_CONTACT (v2));
 
-	id_a = gossip_contact_get_id (GOSSIP_CONTACT (v1));
-	id_b = gossip_contact_get_id (GOSSIP_CONTACT (v2));
-
-	if (!id_a || !id_b) {
-		return FALSE;
-	}
-
-	if (strcmp (id_a, id_b) == 0)
-		return TRUE;
-
-	return FALSE;
+	return gossip_jid_equals_without_resource (jid_a, jid_b);
 }
 
 guint
 gossip_contact_hash (gconstpointer key)
 {
-	return g_str_hash (gossip_contact_get_id (GOSSIP_CONTACT (key)));
+	return gossip_jid_hash (gossip_contact_get_jid (GOSSIP_CONTACT (key)));
 }
 

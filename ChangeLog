@@ -1,3 +1,25 @@
+2004-05-02  Mikael Hallendal  <micke@imendio.com>
+
+	* src/Makefile.am:
+	- Added gossip-contact-list.[ch]
+	* src/gossip-app.c: 
+	* src/gossip-chat-window.c: 
+	* src/gossip-chat.c: 
+	* src/gossip-contact-list.c: 
+	* src/gossip-contact.c: 
+	* src/gossip-group-chat.c: 
+	* src/gossip-presence.c: 
+	* src/gossip-roster-view.c:
+	* src/gossip-roster.c:
+	* src/gossip-utils.c:
+	- Start using the new GossipContact/GossipPresence API imported from
+	  mp-branch. This will make it much easier to get the group chat stuff 
+	  working.
+	* src/gossip-jabber.[ch]:
+	- Removed left overs
+	* src/gossip-session.[ch]:
+	- Removed left overs
+
 2004-05-01  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-group-chat.[ch]:

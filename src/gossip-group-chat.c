@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2003 Imendio HB
+ * Copyright (C) 2002-2004 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,6 +26,8 @@
 #include <gconf/gconf-client.h>
 #include <loudmouth/loudmouth.h>
 #include <libgnome/gnome-i18n.h>
+
+#include "gossip-contact-list.h"
 #include "gossip-utils.h"
 #include "gossip-app.h"
 #include "gossip-chat.h"
@@ -76,8 +78,8 @@ typedef struct {
 	GtkTreeIter      found_iter;
 } FindUserData;
 
-static void             group_chat_class_init                   (GossipGroupChatClass  *klass);
-static void             group_chat_init                         (GossipGroupChat       *chat);
+static void             group_chat_contact_list_init            (GossipContactListClass *iface);
+
 static void             group_chat_finalize                     (GObject          *object);
 static void             group_chat_window_destroy_cb            (GtkWidget         *widget,
 								 GossipGroupChat   *chat);
@@ -143,47 +145,21 @@ static void             group_chat_priv_chats_disconnect        (GossipGroupChat
 
 static GHashTable *group_chats = NULL;
 
-GObjectClass *parent_class = NULL;
-
-GType
-gossip_group_chat_get_type (void)
-{
-	static GType type_id = 0;
-                                                                                
-        if (type_id == 0) {
-		const GTypeInfo type_info = {
-			sizeof (GossipGroupChatClass),
-                        NULL,
-                        NULL,
-                        (GClassInitFunc) group_chat_class_init,
-                        NULL,
-                        NULL,
-                        sizeof (GossipGroupChat),
-                        0,
-                        (GInstanceInitFunc) group_chat_init
-                };
-                                                                                
-                type_id = g_type_register_static (G_TYPE_OBJECT,
-                                                  "GossipGroupChat",
-                                                  &type_info,
-                                                  0);
-        }
-                                                                                
-        return type_id;
-}
+G_DEFINE_TYPE_WITH_CODE (GossipGroupChat, gossip_group_chat, 
+			 G_TYPE_OBJECT,
+			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CONTACT_LIST,
+						group_chat_contact_list_init));
 
 static void
-group_chat_class_init (GossipGroupChatClass *klass)
+gossip_group_chat_class_init (GossipGroupChatClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
-                                                                                
-        parent_class = g_type_class_peek_parent (klass);
                                                                                 
         object_class->finalize = group_chat_finalize;
 }
 
 static void
-group_chat_init (GossipGroupChat *chat)
+gossip_group_chat_init (GossipGroupChat *chat)
 {
         GossipGroupChatPriv *priv;
                                                                                 
@@ -202,6 +178,12 @@ group_chat_init (GossipGroupChat *chat)
                                  G_CALLBACK (chat_disconnected_cb),
                                  chat, 0);
 	 */
+}
+
+static void
+group_chat_contact_list_init (GossipContactListClass *iface)
+{
+	/* No functions for now */
 }
 
 static void
@@ -1168,15 +1150,18 @@ group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 	GossipGroupChatPriv *priv;
 	GossipChat          *priv_chat = NULL;
 	GList               *l;
-	GossipRosterItem    *item;
+	GossipContact       *contact;
 /*	gchar            *name; */
 
 	priv = chat->priv;
 	
 	for (l = priv->priv_chats; l; l = l->next) {
 		GossipChat       *p_chat = GOSSIP_CHAT (l->data);
-		GossipRosterItem *item = gossip_chat_get_item (p_chat);
-		GossipJID        *j = gossip_roster_item_get_jid (item);
+		GossipContact    *contact;
+		GossipJID        *j;
+		
+		contact = gossip_chat_get_contact (p_chat);
+		j = gossip_contact_get_jid (contact);
 		
 		if (gossip_jid_equals (j, jid)) {
 			priv_chat = p_chat;
@@ -1188,14 +1173,15 @@ group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 		return priv_chat;
 	}
 
-	item = gossip_roster_item_new (jid);
+	contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_GROUPCHAT);
+	gossip_contact_set_jid (contact, jid);
 	/* name = g_strdup_printf ("%s@%s", gossip_jid_get_resource (jid),
 				gossip_jid_get_part_name (jid));
 	gossip_roster_item_set_name (item, name);
 	g_free (name); */
 
-	priv_chat = gossip_chat_get_for_group_chat (item);
-	gossip_roster_item_unref (item);
+	priv_chat = gossip_chat_get_for_group_chat (contact);
+	gossip_contact_unref (contact);
 
 	priv->priv_chats = g_list_prepend (priv->priv_chats, priv_chat);
 	

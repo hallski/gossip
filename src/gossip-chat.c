@@ -57,7 +57,7 @@ struct _GossipChatPriv {
 
 	GossipChatView   *view;
 
-        GossipRosterItem *item;
+        GossipContact    *contact;
 	gchar            *name;
 	
 	gchar            *locked_resource;
@@ -91,17 +91,17 @@ static LmHandlerResult chat_message_handler              (LmMessageHandler *hand
                                                           LmConnection     *connection,
                                                           LmMessage        *m,
                                                           gpointer          user_data);
-static void            chat_item_presence_updated        (gpointer          not_used,
-							  GossipRosterItem *item,
+static void            chat_contact_presence_updated     (gpointer          not_used,
+							  GossipContact    *contact,
 							  GossipChat       *chat);
-static void            chat_item_updated                 (gpointer          not_used,
-							  GossipRosterItem *item,
+static void            chat_contact_updated              (gpointer          not_used,
+							  GossipContact    *contact,
 							  GossipChat       *chat);
-static void            chat_item_removed                 (gpointer          not_used,
-							  GossipRosterItem *item,
+static void            chat_contact_removed              (gpointer          not_used,
+							  GossipContact    *contact,
 							  GossipChat       *chat);
-static void            chat_item_added			 (gpointer	    not_used,
-							  GossipRosterItem *item,
+static void            chat_contact_added		 (gpointer	    not_used,
+							  GossipContact    *contact,
 							  GossipChat       *chat);
 static void            chat_connected_cb		 (GossipApp	   *app,
 							  GossipChat	   *chat);
@@ -256,7 +256,7 @@ chat_finalize (GObject *object)
                 lm_message_handler_unref (handler);
         }
 
-	gossip_roster_item_unref (priv->item);
+	gossip_contact_unref (priv->contact);
 
 	chat_composing_remove_timeout (chat);
 	
@@ -279,9 +279,9 @@ chats_init (void)
 
         inited = TRUE;
 
-        chats = g_hash_table_new_full (gossip_jid_hash,
-				       gossip_jid_equal,
-                                       (GDestroyNotify) gossip_jid_unref,
+        chats = g_hash_table_new_full (gossip_contact_hash,
+				       gossip_contact_equal,
+                                       (GDestroyNotify) gossip_contact_unref,
                                        (GDestroyNotify) g_object_unref);
 }
 
@@ -341,14 +341,13 @@ static void
 chat_update_locked_resource (GossipChat *chat)
 {
 	GossipChatPriv *priv = chat->priv;
-	GossipJID      *jid;
 	const gchar    *roster_resource;
 
 	if (priv->groupchat_priv) {
 		return;
 	}
 	
-	if (gossip_roster_item_is_offline (priv->item)) {
+	if (!gossip_contact_is_online (priv->contact)) {
 		g_free (priv->roster_resource);
 		priv->roster_resource = NULL;
 
@@ -358,9 +357,8 @@ chat_update_locked_resource (GossipChat *chat)
 		return;
 	}
 
-	jid = gossip_roster_item_get_jid (priv->item);
-
-	roster_resource = gossip_jid_get_resource (jid);
+	roster_resource = gossip_roster_get_active_resource (gossip_app_get_roster (),
+							     priv->contact);
 
 	/* It seems like some agents don't set a resource sometimes (ICQ for
 	 * example). I don't know if it's a bug or not, but we need to handle
@@ -410,7 +408,7 @@ chat_get_jid_with_resource (GossipChat *chat, const gchar *resource)
 	GossipChatPriv *priv = chat->priv;
 	GossipJID      *jid;
 
-	jid = gossip_roster_item_get_jid (priv->item);
+	jid = gossip_contact_get_jid (priv->contact);
 
 	if (resource) {
 		return g_strconcat (gossip_jid_get_without_resource (jid),
@@ -466,7 +464,7 @@ chat_send (GossipChat  *chat,
 	
 	lm_message_node_add_child (m->node, "body", msg);
         
-        if (!gossip_roster_item_is_offline (priv->item) &&
+        if (gossip_contact_is_online (priv->contact) &&
 	    priv->request_composing_events) {
                 chat_request_composing (m);
         }
@@ -537,7 +535,7 @@ chat_composing_send_start_event (GossipChat *chat)
                 return;
         }
 
-	if (gossip_roster_item_is_offline (priv->item)) {
+	if (!gossip_contact_is_online (priv->contact)) {
 		return;
 	}
 	
@@ -661,8 +659,13 @@ chat_message_handler (LmMessageHandler *handler,
 
         from = lm_message_node_get_attribute (m->node, "from");
 
+	if (!from) {
+		g_print ("Received message without from attribute");
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+
         from_jid = gossip_jid_new (from);
-	jid = gossip_roster_item_get_jid (priv->item);
+	jid = gossip_contact_get_jid (priv->contact);
 
 	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_GROUPCHAT) {
 		d(g_print ("GROUP CHAT!\n"));
@@ -742,7 +745,7 @@ chat_message_handler (LmMessageHandler *handler,
         gossip_chat_view_append_chat_message (chat->priv->view,
                                               timestamp,
 					      NULL,
-                                              gossip_roster_item_get_name (priv->item),
+                                              gossip_contact_get_name (priv->contact),
                                               body);
 
 	g_signal_emit (chat, chat_signals[NEW_MESSAGE], 0);
@@ -759,23 +762,23 @@ chat_message_handler (LmMessageHandler *handler,
 }
 
 static void
-chat_item_presence_updated (gpointer          not_used,
-			    GossipRosterItem *item,
-			    GossipChat       *chat)
+chat_contact_presence_updated (gpointer       not_used,
+			       GossipContact *contact,
+			       GossipChat    *chat)
 
 {
 	GossipChatPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
-	g_return_if_fail (item != NULL);
+	g_return_if_fail (contact != NULL);
 	
 	priv = chat->priv;
 
-	if (item != priv->item) {
+	if (!gossip_contact_equal (contact, priv->contact)) {
 		return;
 	}
 
-	if (gossip_roster_item_is_offline (item)) {
+	if (!gossip_contact_is_online (contact)) {
 		chat_composing_remove_timeout (chat);
 		priv->send_composing_events = FALSE;
 
@@ -786,8 +789,8 @@ chat_item_presence_updated (gpointer          not_used,
 			gchar *msg;
 			
 			msg = g_strdup_printf (_("%s went offline"),
-					       gossip_roster_item_get_name (priv->item));
-			gossip_chat_view_append_event_msg (priv->view,
+					       gossip_contact_get_name (priv->contact));
+			gossip_chat_view_append_event_msg (priv->view, 
 							   msg, TRUE);
 			g_free (msg);
 		}
@@ -800,7 +803,7 @@ chat_item_presence_updated (gpointer          not_used,
 			gchar *msg;
 		
 			msg = g_strdup_printf (_("%s comes online"),
-					       gossip_roster_item_get_name (priv->item));
+					       gossip_contact_get_name (priv->contact));
 			gossip_chat_view_append_event_msg (priv->view,
 							   msg, TRUE);
 			g_free (msg);
@@ -810,73 +813,67 @@ chat_item_presence_updated (gpointer          not_used,
 }
 
 static void
-chat_item_updated (gpointer          not_used,
-		   GossipRosterItem *item,
-		   GossipChat       *chat)
+chat_contact_updated (gpointer       not_used, 
+		      GossipContact *contact, 
+		      GossipChat    *chat)
 {
 	GossipChatPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
-	g_return_if_fail (item != NULL);
+	g_return_if_fail (contact != NULL);
 	
 	priv = chat->priv;
 
-	if (item != priv->item) {
+	if (!gossip_contact_equal (contact, priv->contact)) {
 		return;
 	}
 
-	if (strcmp (priv->name, gossip_roster_item_get_name (item)) != 0) {
+	if (strcmp (priv->name, gossip_contact_get_name (contact)) != 0) {
 		g_free (priv->name);
-		priv->name = g_strdup (gossip_roster_item_get_name (item));
+		priv->name = g_strdup (gossip_contact_get_name (contact));
 		g_signal_emit (chat, chat_signals[NAME_CHANGED], 0, priv->name);
 	}
 }
 
 static void 
-chat_item_removed (gpointer          not_used,
-		   GossipRosterItem *item,
-		   GossipChat       *chat)
+chat_contact_removed (gpointer       not_used,
+		      GossipContact *contact,
+		      GossipChat    *chat)
 {
 	GossipChatPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
-	g_return_if_fail (item != NULL);
+	g_return_if_fail (contact != NULL);
 	
 	priv = chat->priv;
 
-	if (item != priv->item) {
+	if (!gossip_contact_equal (contact, priv->contact)) {
 		return;
 	}
 }
 
 static void
-chat_item_added (gpointer          not_user,
-		 GossipRosterItem *item,
-		 GossipChat       *chat)
+chat_contact_added (gpointer       not_user,
+		    GossipContact *contact,
+		    GossipChat    *chat)
 {
 	GossipChatPriv *priv;
-	GossipJID      *new_jid;
-	GossipJID      *old_jid;
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
-	g_return_if_fail (item != NULL);
+	g_return_if_fail (contact != NULL);
 
 	priv = chat->priv;
 	
-	new_jid = gossip_roster_item_get_jid (item);
-	old_jid = gossip_roster_item_get_jid (priv->item);
-
-	if (!gossip_jid_equals_without_resource (old_jid, new_jid))
+	if (!gossip_contact_equal (contact, priv->contact)) {
 		return;
-
-	gossip_roster_item_unref (priv->item);
-	priv->item = item;
-	gossip_roster_item_ref (item);
+	}
+	
+	gossip_contact_unref (priv->contact);
+	priv->contact = gossip_contact_ref (contact);
 }
 
 static void
-chat_connected_cb (GossipApp  *app,
-		   GossipChat *chat)
+chat_connected_cb (GossipApp *app, GossipChat *chat)
 {
 	GossipChatPriv *priv;
 
@@ -890,8 +887,7 @@ chat_connected_cb (GossipApp  *app,
 }
 
 static void
-chat_disconnected_cb (GossipApp  *app,
-		      GossipChat *chat)
+chat_disconnected_cb (GossipApp *app, GossipChat *chat)
 {
 	GossipChatPriv *priv;
 
@@ -1105,17 +1101,15 @@ chat_delete_event_cb (GtkWidget  *widget,
 }
 
 GossipChat *
-gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
+gossip_chat_get_for_contact (GossipContact *contact, gboolean create)
 {
 	GossipChat     *chat;
 	GossipChatPriv *priv;
-	GossipJID      *jid;
 	GossipRoster   *roster;
 
 	chats_init ();
 
-	jid = gossip_roster_item_get_jid (item);
-	chat = g_hash_table_lookup (chats, jid);
+	chat = g_hash_table_lookup (chats, contact);
 
 	if (chat) {
 		return chat;
@@ -1126,71 +1120,68 @@ gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
 	}
 	
 	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
-	g_hash_table_insert (chats, gossip_jid_ref (jid), chat);
+	g_hash_table_insert (chats, gossip_contact_ref (contact), chat);
 	
 	priv = chat->priv;
-	priv->item = gossip_roster_item_ref (item);
-	priv->name = g_strdup (gossip_roster_item_get_name (item));
+	priv->contact = gossip_contact_ref (contact);
+	priv->name = g_strdup (gossip_contact_get_name (contact));
 	priv->groupchat_priv = FALSE;
 
 	roster = gossip_app_get_roster ();
+
+	g_signal_connect_object (roster,
+				 "contact_presence_updated",
+				 G_CALLBACK (chat_contact_presence_updated),
+				 chat, 0);
+
+	g_signal_connect_object (roster,
+				 "contact_updated",
+				 G_CALLBACK (chat_contact_updated),
+				 chat, 0);
+
+	g_signal_connect_object (roster,
+				 "contact_removed",
+				 G_CALLBACK (chat_contact_removed),
+				 chat, 0);
 	
 	g_signal_connect_object (roster,
-				 "item_presence_updated",
-				 G_CALLBACK (chat_item_presence_updated),
+				 "contact_added",
+				 G_CALLBACK (chat_contact_added),
 				 chat, 0);
 
-	g_signal_connect_object (roster,
-				 "item_updated",
-				 G_CALLBACK (chat_item_updated),
-				 chat, 0);
-
-	g_signal_connect_object (roster,
-				 "item_removed",
-				 G_CALLBACK (chat_item_removed),
-				 chat, 0);
-	
-	g_signal_connect_object (roster,
-				 "item_added",
-				 G_CALLBACK (chat_item_added),
-				 chat, 0);
-
-
-	if (gossip_roster_item_is_offline (priv->item)) {
-		priv->is_online = FALSE;
-	} else {
+	if (gossip_contact_is_online (priv->contact)) {
 		priv->is_online = TRUE;
+	} else {
+		priv->is_online = FALSE;
 	}
 
 	return chat;
 }
 
 GossipChat *
-gossip_chat_get_for_group_chat (GossipRosterItem *item)
+gossip_chat_get_for_group_chat (GossipContact *contact)
 {
 	GossipChat     *chat;
 	GossipChatPriv *priv;
-	GossipJID      *jid;
 
 	chats_init ();
 
-	jid = gossip_roster_item_get_jid (item);
-	chat = g_hash_table_lookup (chats, jid);
+	chat = g_hash_table_lookup (chats, contact);
 	if (chat) {
 		return chat;
 	}
 
 	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
+
 	priv = chat->priv;
-	priv->item = gossip_roster_item_ref (item);
+	priv->contact = gossip_contact_ref (contact);
 	priv->groupchat_priv = TRUE;
 
-	priv->locked_resource = g_strdup (gossip_jid_get_resource (jid));
-	
-	if (gossip_roster_item_is_offline (priv->item)) {
-		priv->is_online = FALSE;
-	} else {
+	priv->locked_resource = g_strdup (gossip_contact_get_name (contact));
+	if (gossip_contact_is_online (priv->contact)) {
 		priv->is_online = TRUE;
+	} else {
+		priv->is_online = FALSE;
 	}
 
 	return chat;
@@ -1243,6 +1234,7 @@ gossip_chat_handle_message (LmMessage *m)
         GossipChat       *chat;
         LmHandlerResult   result;
 	GossipRosterItem *item;
+	GossipContact    *contact;
 
 	chats_init ();
 
@@ -1250,23 +1242,30 @@ gossip_chat_handle_message (LmMessage *m)
         jid = gossip_jid_new (from);
 
 	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
-	if (!item) {
-		item = gossip_roster_item_new (jid);
+	if (item) {
+		contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
+							       item);
+		gossip_contact_ref (contact);
+	} else {
+		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
+		gossip_contact_set_jid (contact, jid);
 	}
-	chat = (GossipChat *) g_hash_table_lookup (chats, jid);
+
+	gossip_jid_unref (jid);
+
+	chat = (GossipChat *) g_hash_table_lookup (chats, contact);
 
 	if (chat) {
 		/* The existing message handler will catch it. */
 		result = LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	} else {
-		chat = gossip_chat_get_for_item (item, TRUE);
-		/* chat = g_object_new (GOSSIP_TYPE_CHAT,
-				     "jid", jid, NULL); */
+		chat = gossip_chat_get_for_contact (contact, TRUE);
+		
 		gossip_chat_append_message (chat, m);
 		result = LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
-        gossip_jid_unref (jid);
+	gossip_contact_unref (contact);
 
         return result;
 }
@@ -1297,8 +1296,8 @@ gossip_chat_get_widget (GossipChat *chat)
         return chat->priv->widget;
 }
 
-GossipRosterItem *
-gossip_chat_get_item (GossipChat *chat)
+GossipContact *
+gossip_chat_get_contact (GossipChat *chat)
 {
 	GossipChatPriv *priv;
 	
@@ -1306,7 +1305,7 @@ gossip_chat_get_item (GossipChat *chat)
 	
 	priv = chat->priv;
 
-	return priv->item;
+	return priv->contact;
 }
 
 void

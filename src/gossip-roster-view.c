@@ -155,7 +155,7 @@ static gboolean roster_view_iter_equal_item          (GtkTreeModel          *mod
 
 
 enum {
-	ITEM_ACTIVATED,
+	CONTACT_ACTIVATED,
 	LAST_SIGNAL
 };
 
@@ -291,8 +291,8 @@ roster_view_class_init (GossipRosterViewClass *klass)
 
 	object_class->finalize = roster_view_finalize;
 
-	signals[ITEM_ACTIVATED] = 
-		g_signal_new ("item_activated",
+	signals[CONTACT_ACTIVATED] = 
+		g_signal_new ("contact_activated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -1208,7 +1208,11 @@ roster_view_row_activated_cb (GossipRosterView  *view,
 	d(g_print ("Row activated!\n"));
 	
 	if (!is_group) {
-		g_signal_emit (view, signals[ITEM_ACTIVATED], 0, e->item);
+		GossipContact *contact;
+
+		contact = gossip_roster_get_contact_from_item (priv->roster,
+							       e->item);
+		g_signal_emit (view, signals[CONTACT_ACTIVATED], 0, contact);
 	}
 }
 
@@ -1768,17 +1772,21 @@ roster_view_flash_timeout_func (FlashTimeoutData *fdata)
 }
 
 void
-gossip_roster_view_flash_item (GossipRosterView *view,
-			       GossipRosterItem *item,
-			       gboolean          flash)
+gossip_roster_view_flash_contact (GossipRosterView *view,
+				  GossipContact    *contact,
+				  gboolean          flash)
 {
 	GossipRosterViewPriv *priv;
 	FlashData            *flash_data;
+	GossipRosterItem     *item;
 	
 	g_return_if_fail (GOSSIP_IS_ROSTER_VIEW (view));
-	g_return_if_fail (item != NULL);
+	g_return_if_fail (contact != NULL);
 
 	priv = view->priv;
+	
+	item = gossip_roster_get_item (priv->roster, 
+				       gossip_contact_get_jid (contact));
 	
 	flash_data = g_hash_table_lookup (priv->flash_table, item);
 
