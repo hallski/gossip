@@ -1,6 +1,8 @@
 2004-02-07  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_new_message): Grab focus on the entry.
+	(app_client_disconnected_cb): Revert the no separator flag since
+	you can't set that on message dialogs.
 
 	* src/gossip-chat-view.c (chat_view_is_scrolled_down): Fix version
 	check.

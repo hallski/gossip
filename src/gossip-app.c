@@ -1215,7 +1215,7 @@ app_client_disconnected_cb (LmConnection       *connection,
 		 * trying maybe once a minute until it works.
 		 */
 		dialog = gtk_message_dialog_new (NULL,
-						 GTK_DIALOG_NO_SEPARATOR,
+						 0,
 						 GTK_MESSAGE_INFO,
 						 GTK_BUTTONS_YES_NO,
 						 _("You were disconnected from the server. "
