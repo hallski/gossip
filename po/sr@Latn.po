@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-02-20 09:29+0100\n"
-"PO-Revision-Date: 2004-02-20 09:30+0100\n"
+"POT-Creation-Date: 2004-02-27 23:04+0100\n"
+"PO-Revision-Date: 2004-02-27 23:05+0100\n"
 "Last-Translator: Danilo Šegan <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -129,7 +129,7 @@ msgstr "Koju poruku sa zahtevom želite da pošaljete %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s će biti dodat u vašu listu drugara."
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:590
 msgid "Artwork by:"
 msgstr "Crteži:"
 
@@ -138,84 +138,94 @@ msgstr "Crteži:"
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:598
+#: src/gossip-app.c:597
 msgid "translator_credits"
 msgstr "Dejan Matijević <dejan@ns.sympatico.ca>"
 
-#: src/gossip-app.c:613
+#: src/gossip-app.c:612
 msgid "An Instant Messaging Client for GNOME"
 msgstr "Brzi glasnik za Gnoma"
 
-#: src/gossip-app.c:622
+#: src/gossip-app.c:621
 msgid "Gossip Website"
 msgstr "Veb stranica Čavrljanja"
 
-#: src/gossip-app.c:718
+#: src/gossip-app.c:680
+msgid "Unable to Authenticate"
+msgstr "Ne mogu da se identifikujem"
+
+#: src/gossip-app.c:681
+msgid ""
+"Make sure that your account information is correct, such as your username "
+"and password."
+msgstr "Proverite da li su podaci o nalogu ispravni, kao što je korisničko ime i lozinka.."
+
+#: src/gossip-app.c:731
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za čavrljanje."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:736 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Razgovor"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:987
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s želi obaveštenja o vašem prisustvu."
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1228
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vi ste razvezani sa servera.  Želiteli da se ponovo povežete?"
 
-#: src/gossip-app.c:1375
+#: src/gossip-app.c:1388
 msgid "Make sure that your account information is correct."
 msgstr "Proverite da li su podaci o nalogu ispravni."
 
-#: src/gossip-app.c:1376
+#: src/gossip-app.c:1389
 msgid "The server may currently be unavailable."
 msgstr "Možda je server trenutno nedostupan."
 
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1859
 msgid "Gossip, Instant Messaging Client"
 msgstr "Čavrljanje, brzi glasnik za Gnoma"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:2001
 #, c-format
 msgid "New message from %s"
 msgstr "Nova poruka od %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
+#: src/gossip-app.c:2090 src/gossip-chat-window.c:698
 #: src/gossip-roster-view.c:935
 msgid "Offline"
 msgstr "Nepovezan"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2488 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "Dostupan"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2499 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "Zauzet"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2510 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "Odsutan"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2642
 msgid "Available..."
 msgstr "Dostupan..."
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2647
 msgid "Busy..."
 msgstr "Zauzet..."
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2652
 msgid "Away..."
 msgstr "Odsutan..."
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2681
 msgid "Edit List..."
 msgstr "Uredi spisak..."
 
