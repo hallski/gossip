@@ -48,6 +48,7 @@ typedef struct {
 	GtkEntry      *password_entry;
 	GtkEntry      *port_entry;
 	GtkWidget     *ssl_checkbutton;
+	GtkWidget     *proxy_checkbutton;
 	GtkWidget     *register_button;
 } GossipAccountDialog ;
 
@@ -137,6 +138,9 @@ account_dialog_focus_out_event_cb (GtkWidget            *widget,
 						   event,
 						   dialog);
 	}
+	else if (widget == GTK_WIDGET (dialog->proxy_checkbutton)) {
+		account->use_proxy = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
+	}
 
 	gossip_account_store (account, NULL);
 	gossip_account_set_default (account);
@@ -169,6 +173,10 @@ account_dialog_setup (GossipAccountDialog *dialog)
 	port_str = g_strdup_printf ("%d", account->port);
 	gtk_entry_set_text (dialog->port_entry, port_str);
 	g_free (port_str);
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->proxy_checkbutton),
+				      account->use_proxy);
+
 }
 
 static void
@@ -241,6 +249,7 @@ gossip_account_dialog_show (void)
 				     "password_entry", &dialog->password_entry,
 				     "port_entry", &dialog->port_entry,
 				     "ssl_checkbutton", &dialog->ssl_checkbutton,
+				     "proxy_checkbutton", &dialog->proxy_checkbutton,
 				     "register_button", &dialog->register_button,
 				     NULL);
 
@@ -278,6 +287,9 @@ gossip_account_dialog_show (void)
 			      G_CALLBACK (account_dialog_focus_out_event_cb),
 			      
 			      "ssl_checkbutton", "focus_out_event",
+			      G_CALLBACK (account_dialog_focus_out_event_cb),
+
+			      "proxy_checkbutton", "focus_out_event",
 			      G_CALLBACK (account_dialog_focus_out_event_cb),
 			      
 			      "port_entry", "insert_text",

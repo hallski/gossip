@@ -65,7 +65,8 @@ gossip_account_new (const gchar *name,
 		    const gchar *password,
 		    const gchar *server,
 		    guint        port,
-		    gboolean     use_ssl)
+		    gboolean     use_ssl,
+		    gboolean     use_proxy)
 {
 	GossipAccount *account;
 	const gchar   *str;
@@ -85,7 +86,8 @@ gossip_account_new (const gchar *name,
 	
 	account->port = port;
 	account->use_ssl = use_ssl;
-
+	account->use_proxy = use_proxy;
+	
 	account->ref_count = 1;
 
 	return account;
@@ -155,6 +157,10 @@ gossip_account_get (const gchar *name)
 
 	key = g_strdup_printf ("%s/use_ssl=", path);
 	account->use_ssl = gnome_config_get_bool_with_default (key, FALSE);
+	g_free (key);
+
+	key = g_strdup_printf ("%s/use_proxy=", path);
+	account->use_proxy = gnome_config_get_bool_with_default (key, FALSE);
 	g_free (key);
 	
 	g_free (path);
@@ -247,6 +253,10 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 	gnome_config_set_bool (key, account->use_ssl);
 	g_free (key);
 
+	key = g_strdup_printf ("%s/use_proxy", path);
+	gnome_config_set_bool (key, account->use_proxy);
+	g_free (key);
+
 	g_free (path);
 
 	str = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH"/Accounts/Default");
@@ -297,6 +307,7 @@ gossip_account_create_empty (void)
 				      tmp_jid, NULL,
 				      NULL,
 				      LM_CONNECTION_DEFAULT_PORT,
+				      FALSE,
 				      FALSE);
 
 	gossip_jid_unref (tmp_jid);

@@ -1,3 +1,11 @@
+2004-09-02  Ross Burton  <ross@burtonini.com>
+ 
+	* ui/connect.glade: Add a Use Proxy check button.
+	* src/gossip-account.[ch]: Add a use_proxy field.
+	* src/gossip-account-dialog.c: Set the use_proxy field in the account.
+	* src/gossip-startup-druid.c: Default to not using the proxy.
+	* src/gossip-app.c: Configure the proxy on reconnect, not once.
+
 2004-08-31  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Fix two typos.

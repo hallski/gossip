@@ -1384,6 +1384,24 @@ gossip_app_connect (void)
 	if (!priv->account) {
 		return;
 	}
+
+	if (priv->account->use_proxy) {
+		gossip_utils_set_proxy (priv->connection);
+	} else {
+		LmProxy *proxy;
+		proxy = lm_proxy_new (LM_PROXY_TYPE_NONE);
+		lm_connection_set_proxy (priv->connection, proxy);
+		lm_proxy_unref (proxy);
+	}
+
+	if (priv->account->use_proxy) {
+		gossip_utils_set_proxy (priv->connection);
+	} else {
+		LmProxy *proxy;
+		proxy = lm_proxy_new (LM_PROXY_TYPE_NONE);
+		lm_connection_set_proxy (priv->connection, proxy);
+		lm_proxy_unref (proxy);
+	}
 	
 	app_disconnect ();
 	
@@ -1404,7 +1422,17 @@ gossip_app_connect (void)
 		lm_connection_set_ssl (priv->connection, ssl);
 		lm_ssl_unref (ssl);
 	}
-	
+
+	if (priv->account->use_proxy) {
+		gossip_utils_set_proxy (priv->connection);
+	} else {
+		/* FIXME: Just pass NULL when Loudmouth > 0.17.1 */
+		LmProxy *proxy;
+		proxy = lm_proxy_new (LM_PROXY_TYPE_NONE);
+		lm_connection_set_proxy (priv->connection, proxy);
+		lm_proxy_unref (proxy);
+	}
+
 	result = lm_connection_open (priv->connection,
 				     (LmResultFunction) app_connection_open_cb,
 				     app, NULL, &error);
@@ -1474,7 +1502,6 @@ app_create_connection (void)
 	// Setup the connection to send keep alive messages every 30 second.
 	lm_connection_set_keep_alive_rate (priv->connection, 30);
 
-	gossip_utils_set_proxy (priv->connection);
 	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (priv->account->jid));
 
 	lm_connection_set_port (priv->connection, priv->account->port);

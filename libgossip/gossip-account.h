@@ -33,6 +33,7 @@ typedef struct {
 	gchar     *server;
 	guint      port;
 	gboolean   use_ssl;
+	gboolean   use_proxy;
 	
 	gint   ref_count;
 } GossipAccount;
@@ -43,7 +44,8 @@ GossipAccount *gossip_account_new                         (const gchar   *name,
 							   const gchar   *password,
 							   const gchar   *server,
 							   guint          port,
-							   gboolean       use_ssl);
+							   gboolean       use_ssl,
+							   gboolean       use_proxy);
 GossipAccount *gossip_account_get_default                 (void);
 GSList *       gossip_account_get_all                     (void);
 GossipAccount *gossip_account_get                         (const gchar   *name);

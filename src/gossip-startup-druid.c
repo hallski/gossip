@@ -227,6 +227,7 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 					       tmp_jid, NULL, 
 					       server, 
 					       LM_CONNECTION_DEFAULT_PORT, 
+					       FALSE,
 					       FALSE);
 	}
 
