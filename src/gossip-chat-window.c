@@ -778,7 +778,7 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 static void
 chat_window_status_changed_cb (GossipChat       *chat,
 		               GossipChatWindow *window)
-{ 
+{
 	chat_window_update_status (window, chat);
 }
 

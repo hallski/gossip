@@ -778,6 +778,8 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
+	g_signal_emit_by_name (chat, "new-message");
+
 	sender = gossip_message_get_sender (message);
 	
 	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
@@ -786,6 +788,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 					      gossip_contact_get_name (sender),
 					      gossip_message_get_body (message));
 }
+
 static void
 group_chat_title_changed_cb (GossipChatroomProvider *provider,
 			     gint                    id,

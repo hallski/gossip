@@ -1,3 +1,16 @@
+2005-03-15  Richard Hult  <richard@imendio.com>
+
+	* ui/pixmaps/gossip-group-message.png: Use slightly better icon
+	for now.
+
+	* src/gossip-jabber-chatrooms.c: Add debug define.
+
+	* src/gossip-group-chat.c (group_chat_new_message_cb): Emit
+	new-message so the window get notified and can change the icon.
+
+	* src/gossip-chat-view.c (chat_view_is_scrolled_down): Remove hack
+	that disabled this feature for GTK+ < 2.3.
+
 2005-03-11  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jabber.c: (gossip_jabber_init):

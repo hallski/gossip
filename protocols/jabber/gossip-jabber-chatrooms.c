@@ -30,6 +30,8 @@
 
 #define JOIN_MSG_ID_PREFIX "gc_join_"
 
+#define d(x) 
+
 struct _GossipJabberChatrooms {
 	GossipJabber *jabber;
 	LmConnection *connection;
@@ -143,7 +145,7 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 	if (node) {
 		gossip_time_t timestamp;
 
-		g_print ("Emitting\n");
+		d(g_print ("Emitting\n"));
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
 					      gossip_jabber_get_own_contact (chatrooms->jabber));
 
@@ -171,7 +173,6 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 				   LmMessage             *message,
 				   GossipJabberChatrooms *chatrooms)
 {
-
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
@@ -299,7 +300,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
         gchar             *id_str;
 	JabberChatroom    *room;
 	
-        g_print ("Join chatroom: %s\n", room_name);
+        d(g_print ("Join chatroom: %s\n", room_name));
 	
 	room = jabber_chatrooms_chatroom_new (room_name, server, nick);
 
@@ -352,7 +353,7 @@ gossip_jabber_chatrooms_send (GossipJabberChatrooms *chatrooms,
 		return;
 	}
 	
-	g_print ("Send message to chatroom: %d\n", id);
+	d(g_print ("Send message to chatroom: %d\n", id));
 	
 	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (room->jid),
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -378,7 +379,7 @@ gossip_jabber_chatrooms_set_title (GossipJabberChatrooms *chatrooms,
 		g_warning ("Unknown chatroom id: %d", id);
 		return;
 	}
-	g_print ("Set chatroom title: %s\n", new_title);
+	d(g_print ("Set chatroom title: %s\n", new_title));
 	
 	without_resource = gossip_jid_get_without_resource (room->jid);
 	
@@ -407,7 +408,7 @@ gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms *chatrooms,
 		return;
 	}
 
-	g_print ("Change chatroom nick: %s\n", new_nick);
+	d(g_print ("Change chatroom nick: %s\n", new_nick));
 
 	gossip_jid_set_resource (room->jid, new_nick);
 	
@@ -432,7 +433,7 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 		return;
 	}
 
-	g_print ("Leave chatroom: %d\n", id);
+	d(g_print ("Leave chatroom: %d\n", id));
 
 	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),
 					  LM_MESSAGE_TYPE_PRESENCE,
