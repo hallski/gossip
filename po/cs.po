@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-31 11:59+0200\n"
-"PO-Revision-Date: 2004-08-31 14:11+0200\n"
+"POT-Creation-Date: 2004-09-03 12:05+0200\n"
+"PO-Revision-Date: 2004-09-03 14:21+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -134,7 +134,7 @@ msgstr "Přeložili:"
 msgid "translator_credits"
 msgstr "Miloslav Trmač"
 
-#: src/gossip-account.c:292 src/gossip-app.c:64 src/gossip-startup-druid.c:219
+#: src/gossip-account.c:302 src/gossip-app.c:64 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Domů"
 
@@ -174,7 +174,7 @@ msgstr "%s chce být upozorňován na váš stav."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1420
+#: src/gossip-app.c:1448
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -182,45 +182,45 @@ msgstr ""
 "Zkontrolujte, že vaše informace o účtu jsou správné. Možná server momentálně "
 "není dostupný."
 
-#: src/gossip-app.c:1895
+#: src/gossip-app.c:1922
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Klient Instant Messaging"
 
-#: src/gossip-app.c:2039
+#: src/gossip-app.c:2066
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2128 src/gossip-chat-window.c:793
+#: src/gossip-app.c:2155 src/gossip-chat-window.c:793
 #: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Odpojen"
 
-#: src/gossip-app.c:2527 src/gossip-preferences.c:638
+#: src/gossip-app.c:2554 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "K dispozici"
 
-#: src/gossip-app.c:2538 src/gossip-preferences.c:639
+#: src/gossip-app.c:2565 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/gossip-app.c:2549 src/gossip-preferences.c:640
+#: src/gossip-app.c:2576 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Pryč"
 
-#: src/gossip-app.c:2681
+#: src/gossip-app.c:2708
 msgid "Available..."
 msgstr "K dispozici..."
 
-#: src/gossip-app.c:2686
+#: src/gossip-app.c:2713
 msgid "Busy..."
 msgstr "Zaneprázdněn..."
 
-#: src/gossip-app.c:2691
+#: src/gossip-app.c:2718
 msgid "Away..."
 msgstr "Pryč..."
 
-#: src/gossip-app.c:2720
+#: src/gossip-app.c:2747
 msgid "Edit List..."
 msgstr "Upravit seznam..."
 
@@ -418,11 +418,11 @@ msgstr ""
 "Zadejte prosím nový název pro skupinu\n"
 "%s"
 
-#: src/gossip-startup-druid.c:257
+#: src/gossip-startup-druid.c:258
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip se nyní pokusí použít váš účet:"
 
-#: src/gossip-startup-druid.c:261
+#: src/gossip-startup-druid.c:262
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip se nyní pokusí zaregistrovat účet:"
 
@@ -564,14 +564,18 @@ msgid "Use _encryption (SSL)"
 msgstr "Používat _šifrování (SSL)"
 
 #: ui/connect.glade.h:13
+msgid "Use system pro_xy"
+msgstr "Používat systémovou _proxy"
+
+#: ui/connect.glade.h:14
 msgid "_Jabber ID:"
 msgstr "ID _Jabberu:"
 
-#: ui/connect.glade.h:14
+#: ui/connect.glade.h:15
 msgid "_Password:"
 msgstr "_Heslo:"
 
-#: ui/connect.glade.h:15
+#: ui/connect.glade.h:16
 msgid "_Resource:"
 msgstr "Z_droj:"
 
