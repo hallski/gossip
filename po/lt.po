@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-04 21:28+0300\n"
-"PO-Revision-Date: 2004-04-04 21:24+0300\n"
+"POT-Creation-Date: 2004-05-03 14:52+0300\n"
+"PO-Revision-Date: 2004-05-03 14:53+0300\n"
 "Last-Translator: Žygimantas Beručka <uid0@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -117,7 +117,7 @@ msgstr "Pagrindinio lango Y pozicija"
 msgid "Written by:"
 msgstr "Parašė:"
 
-#: src/gossip-about.c:285 src/gossip-app.c:591
+#: src/gossip-about.c:285
 msgid "Artwork by:"
 msgstr "Apipavidalino:"
 
@@ -130,100 +130,97 @@ msgstr "Išvertė:"
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#. Note to translators: put here your name and email so it
-#. * will shop up in the "about" box
-#.
-#: src/gossip-about.c:342 src/gossip-app.c:598
+#: src/gossip-about.c:342
 msgid "translator_credits"
 msgstr "Žygimantas Beručka"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:63
 msgid "Home"
 msgstr "Namai"
 
-#: src/gossip-add-contact.c:293
+#: src/gossip-add-contact.c:291
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Kokio prašymo žinutę norite nusiųsti %s?"
 
-#: src/gossip-add-contact.c:311
+#: src/gossip-add-contact.c:309
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s bus pridėtas į Jūsų kontaktų sąrašą."
 
-#: src/gossip-app.c:613
-msgid "An Instant Messaging Client for GNOME"
-msgstr "Greitų žinučių klientas skirtas GNOME"
+#: src/gossip-app.c:641
+msgid "Could not connect"
+msgstr "Negaliu prisijungti"
 
-#: src/gossip-app.c:622
-msgid "Gossip Website"
-msgstr "Gossip tinklapis"
+#: src/gossip-app.c:642
+msgid "Make sure that your account information is correct."
+msgstr "Įsitikinkit, kad Jūsų abonento informacija yra teisinga."
 
-#: src/gossip-app.c:718
+#: src/gossip-app.c:698
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Įveskite asmens, kuriam norite nusiųsti pokalbio žinutę, vartotojo ID."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:705 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "P_okalbis"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:972
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s nori būti informuotas apie Jūsų buvimą."
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1214
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Ryšys su serveriu nutrūko. Ar norite iš naujo prisijungti?"
 
-#: src/gossip-app.c:1375
-msgid "Make sure that your account information is correct."
-msgstr "Įsitikinkit, kad Jūsų abonento informacija yra teisinga."
+#: src/gossip-app.c:1369
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
+msgstr ""
+"Įsitikinkit, kad Jūsų abonento informacija yra teisinga. Taip pat gali būti, "
+"kad serveris laikinai nepasiekiamas."
 
-#: src/gossip-app.c:1376
-msgid "The server may currently be unavailable."
-msgstr "Serveris šiuo metu gali būti neprieinamas."
-
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1845
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, greitų žinučių perdavimo klientas"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:1989
 #, c-format
 msgid "New message from %s"
 msgstr "Nauja žinutė iš %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:935
+#: src/gossip-app.c:2078 src/gossip-chat-window.c:725
+#: src/gossip-roster-view.c:987
 msgid "Offline"
 msgstr "Atsijungęs"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2477 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Esu"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2488 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Užimtas"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2499 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Manęs nėra"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2631
 msgid "Available..."
 msgstr "Esu..."
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2636
 msgid "Busy..."
 msgstr "Užimtas..."
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2641
 msgid "Away..."
 msgstr "Manęs nėra..."
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2670
 msgid "Edit List..."
 msgstr "Keisti sąrašą..."
 
@@ -243,40 +240,40 @@ msgstr "_Atidaryti nuorodą"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:490
+#: src/gossip-chat-window.c:514
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sPokalbis - %s"
 
-#: src/gossip-chat.c:717
+#: src/gossip-chat.c:698
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Besišnekant su %s įvyko klaida."
 
-#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
-#: src/gossip-group-chat.c:912
+#: src/gossip-chat.c:703 src/gossip-group-chat.c:911
+#: src/gossip-group-chat.c:1021
 msgid "Details:"
 msgstr "Detalės:"
 
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:794
 #, c-format
 msgid "%s went offline"
 msgstr "%s atsijungė"
 
-#: src/gossip-chat.c:826
+#: src/gossip-chat.c:808
 #, c-format
 msgid "%s comes online"
 msgstr "%s prisijungė"
 
-#: src/gossip-chat.c:913
+#: src/gossip-chat.c:889
 msgid "Connected"
 msgstr "Prisijungęs"
 
-#: src/gossip-chat.c:928
+#: src/gossip-chat.c:903
 msgid "Disconnected"
 msgstr "Neprisijungęs"
 
-#: src/gossip-contact-info.c:352
+#: src/gossip-contact-info.c:350
 #, c-format
 msgid "Contact Information for %s"
 msgstr "%s kontakto informacija"
@@ -297,98 +294,98 @@ msgstr "Grupė"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:37
+#: src/gossip-roster.c:38
 msgid "Unsorted"
 msgstr "Nesurūšiuota"
 
-#: src/gossip-group-chat.c:804
+#: src/gossip-group-chat.c:906
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "Kalbant pokalbių kambaryje %s įvyko klaida."
 
-#: src/gossip-group-chat.c:907
+#: src/gossip-group-chat.c:1016
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Nepavyko atverti grupinio pokalbio %s."
 
-#: src/gossip-log.c:308
+#: src/gossip-log.c:307
 msgid "Conversation Log"
 msgstr "Pokalbio žurnalas"
 
-#: src/gossip-main.c:69
+#: src/gossip-main.c:67
 msgid "Don't connect on startup"
 msgstr "Paleidimo metu neprisijungti"
 
-#: src/gossip-main.c:78
+#: src/gossip-main.c:76
 msgid "Which account to connect to on startup"
 msgstr "Prie kurio abonemento prisijungti paleidimo metu"
 
-#: src/gossip-main.c:79
+#: src/gossip-main.c:77
 msgid "ACCOUNT-NAME"
 msgstr "ABONEMENTO-VARDAS"
 
-#: src/gossip-main.c:87
+#: src/gossip-main.c:85
 msgid "List the available accounts"
 msgstr "Prieinamų abonementų sąrašas"
 
-#: src/gossip-main.c:120
+#: src/gossip-main.c:118
 msgid "Available accounts:"
 msgstr "Prieinami abonementai:"
 
-#: src/gossip-main.c:129
+#: src/gossip-main.c:127
 msgid "[default]"
 msgstr "[įprastas]"
 
-#: src/gossip-main.c:152
+#: src/gossip-main.c:150
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Nėra abonemento vardu „%s“."
 
-#: src/gossip-register.c:79
+#: src/gossip-register.c:84
 msgid "Unknown error"
 msgstr "Nežinoma klaida"
 
-#: src/gossip-register.c:168
+#: src/gossip-register.c:182
 msgid "Registering account"
 msgstr "Registruojamas abonementas"
 
-#: src/gossip-register.c:208
+#: src/gossip-register.c:222
 msgid "Successfully registered the account"
 msgstr "Abonementas sėkmingai užregistruotas"
 
-#: src/gossip-register.c:229 src/gossip-register.c:235
+#: src/gossip-register.c:243 src/gossip-register.c:249
 msgid "Failed registering the account"
 msgstr "Nepavyko užregistruoti abonemento"
 
-#: src/gossip-register.c:231
+#: src/gossip-register.c:245
 msgid "Reason:"
 msgstr "Priežastis:"
 
-#: src/gossip-roster-view.c:183
+#: src/gossip-roster-view.c:209
 msgid "/Contact _Information"
 msgstr "/Kontakto _informacija"
 
-#: src/gossip-roster-view.c:191
+#: src/gossip-roster-view.c:217
 msgid "/Re_name contact"
 msgstr "/Pervadi_nti kontaktą"
 
-#: src/gossip-roster-view.c:199
+#: src/gossip-roster-view.c:225
 msgid "/_Edit groups"
 msgstr "/K_eisti grupes"
 
-#: src/gossip-roster-view.c:207
+#: src/gossip-roster-view.c:233
 msgid "/Show _Log"
 msgstr "/Rodyti žurna_lą"
 
-#: src/gossip-roster-view.c:223
+#: src/gossip-roster-view.c:249
 msgid "/_Remove contact"
 msgstr "/_Pašalinti kontaktą"
 
-#: src/gossip-roster-view.c:234
+#: src/gossip-roster-view.c:260
 msgid "/Re_name group"
 msgstr "/Pervadi_nti grupę"
 
-#: src/gossip-roster-view.c:1242
+#: src/gossip-roster-view.c:1398
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -399,7 +396,7 @@ msgstr ""
 "%s\n"
 "iš Jūsų kontaktų sąrašo?"
 
-#: src/gossip-roster-view.c:1335
+#: src/gossip-roster-view.c:1491
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -408,7 +405,7 @@ msgstr ""
 "Prašom įvesti naują pravardę kontaktui\n"
 "%s"
 
-#: src/gossip-roster-view.c:1441
+#: src/gossip-roster-view.c:1597
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -417,11 +414,11 @@ msgstr ""
 "Prašom įvesti naują pavadinimą grupei\n"
 "%s"
 
-#: src/gossip-startup-druid.c:254
+#: src/gossip-startup-druid.c:251
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip dabar pabandys naudoti Jūsų abonementą:"
 
-#: src/gossip-startup-druid.c:258
+#: src/gossip-startup-druid.c:255
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip dabar pabandys užregistruoti Jūsų abonementą:"
 
@@ -981,3 +978,12 @@ msgstr "_Rodyti kontaktų sąrašą"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "_Būsenos žinutės"
+
+#~ msgid "An Instant Messaging Client for GNOME"
+#~ msgstr "Greitų žinučių klientas skirtas GNOME"
+
+#~ msgid "Gossip Website"
+#~ msgstr "Gossip tinklapis"
+
+#~ msgid "The server may currently be unavailable."
+#~ msgstr "Serveris šiuo metu gali būti neprieinamas."
