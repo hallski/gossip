@@ -1,3 +1,12 @@
+2004-01-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-roster-view.c: (roster_view_item_added),
+	(roster_view_item_updated), (roster_view_item_presence_updated),
+	(roster_view_item_removed), (roster_view_group_added),
+	(roster_view_pixbuf_cell_data_func), (roster_view_add_item),
+	(roster_view_remove_item_with_iter), (roster_view_remove_item),
+	(gossip_roster_view_new): Don't show empty groups.
+
 2004-01-09  Richard Hult  <richard@imendio.com>
 
 	* ui/pixmaps: Add large gossip logo.
