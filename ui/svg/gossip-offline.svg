@@ -1,117 +1,111 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
-"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd"
-[
- <!ATTLIST svg
-  xmlns:xlink CDATA #FIXED "http://www.w3.org/1999/xlink">
-]>
-<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Inkscape ("http://www.inkscape.org/") -->
 <svg
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   version="1"
-   x="0.00000000"
-   y="0.00000000"
+   version="1.0"
+   x="0"
+   y="0"
    width="625.000000"
    height="625.000000"
    id="svg548">
   <defs
      id="defs550">
     <linearGradient
-       x1="0.00000000"
-       y1="0.00000000"
-       x2="1.00000000"
-       y2="0.00000000"
+       x1="0.000000"
+       y1="0.000000"
+       x2="1.000000"
+       y2="0.000000"
        id="linearGradient560"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad">
       <stop
          style="stop-color:#ffffff;stop-opacity:1;"
-         offset="0.00000000"
+         offset="0"
          id="stop561" />
       <stop
          style="stop-color:#ffffff;stop-opacity:0;"
-         offset="1.00000000"
+         offset="1"
          id="stop562" />
     </linearGradient>
     <linearGradient
-       x1="0.00000000"
-       y1="0.00000000"
-       x2="1.00000000"
-       y2="0.00000000"
+       x1="0.000000"
+       y1="0.000000"
+       x2="1.000000"
+       y2="0.000000"
        id="linearGradient552"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad">
       <stop
          style="stop-color:#b3b0a6;stop-opacity:1;"
-         offset="0.00000000"
+         offset="0"
          id="stop553" />
       <stop
          style="stop-color:#545147;stop-opacity:1;"
-         offset="1.00000000"
+         offset="1"
          id="stop554" />
     </linearGradient>
     <linearGradient
-       x1="0.96923077"
-       y1="0.97656250"
-       x2="-0.00000003"
-       y2="0.00000000"
+       x1="0.992366"
+       y1="0.960938"
+       x2="0.022901"
+       y2="0.015625"
        id="linearGradient555"
-       xlink:href="#linearGradient552"
-       gradientUnits="objectBoundingBox"
-       spreadMethod="pad" />
+       xlink:href="#linearGradient552" />
     <radialGradient
-       cx="0.93846154"
-       cy="0.94531238"
-       fx="0.93846154"
-       fy="0.94531238"
-       r="1.10782826"
+       cx="0.938462"
+       cy="0.945312"
+       r="1.107828"
+       fx="0.938462"
+       fy="0.945312"
        id="radialGradient556"
        xlink:href="#linearGradient552"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad" />
     <linearGradient
-       x1="0.00735306"
-       y1="0.01562437"
-       x2="0.45588237"
-       y2="0.57812500"
+       x1="0.007353"
+       y1="0.015624"
+       x2="0.455882"
+       y2="0.578125"
        id="linearGradient563"
        xlink:href="#linearGradient560"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad" />
     <radialGradient
-       cx="0.50000000"
-       cy="0.50000000"
-       fx="0.50000000"
-       fy="0.50000000"
-       r="0.50000000"
+       cx="0.500000"
+       cy="0.500000"
+       r="0.500000"
+       fx="0.500000"
+       fy="0.500000"
        id="radialGradient565"
        xlink:href="#linearGradient560"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad" />
     <linearGradient
-       x1="0.00000000"
-       y1="0.00000000"
-       x2="1.00000000"
-       y2="0.00000000"
+       x1="0.000000"
+       y1="0.000000"
+       x2="1.000000"
+       y2="0.000000"
        id="linearGradient697"
        xlink:href="#linearGradient560"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad" />
     <linearGradient
-       x1="0.02247080"
-       y1="0.02344035"
-       x2="1.17977536"
-       y2="1.07031262"
+       x1="0.022471"
+       y1="0.023440"
+       x2="1.179775"
+       y2="1.070313"
        id="linearGradient698"
        xlink:href="#linearGradient560"
        gradientUnits="objectBoundingBox"
        spreadMethod="pad" />
     <linearGradient
-       x1="0.00000000"
-       y1="0.00000000"
-       x2="1.00000000"
-       y2="0.00000000"
+       x1="0.000000"
+       y1="0.000000"
+       x2="1.000000"
+       y2="0.000000"
        id="linearGradient717"
        xlink:href="#linearGradient560"
        gradientUnits="objectBoundingBox"
@@ -124,11 +118,15 @@
      ry="44.4959259"
      x="89.7077255"
      y="93.9090500"
-     style="font-size:12;opacity:0.65;fill:url(#linearGradient555);fill-rule:evenodd;stroke:#19170c;stroke-width:24.9742;"
+     style="font-size:12;opacity:0.64949;fill:url(#linearGradient555);fill-rule:evenodd;stroke-width:24.9742;"
      id="rect610" />
   <path
      d="M 100.763 483.579 C 100.763 483.579 86.6206 119.418 100.763 108.812 C 114.905 98.2052 496.743 101.741 496.743 101.741 C 496.743 101.741 189.151 124.722 152.028 167.148 C 114.905 209.575 102.531 485.346 100.763 483.579 z "
      transform="matrix(0.908156,0.000000,0.000000,0.908156,35.34492,33.87478)"
      style="font-size:12;opacity:0.6;fill:url(#linearGradient563);fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt;"
      id="path611" />
+  <path
+     d="M 126.187 83.0696 C 100.108 83.0696 79.1139 104.064 79.1139 130.142 L 79.1139 500.791 C 79.1139 526.869 100.108 547.864 126.187 547.864 L 502.769 547.864 C 528.847 547.864 549.842 526.869 549.842 500.791 L 549.842 130.142 C 549.842 104.064 528.847 83.0696 502.769 83.0696 L 126.187 83.0696 z M 141.812 107.848 C 118.034 107.848 101.392 121.99 101.392 145.767 L 101.392 487.144 C 101.392 510.921 118.034 525.063 141.812 525.063 L 485.166 525.063 C 508.943 525.063 528.086 510.921 528.086 487.144 L 528.086 145.767 C 528.086 121.99 508.943 107.848 485.166 107.848 L 141.812 107.848 z "
+     style="font-size:12;fill-rule:evenodd;stroke-width:1pt;"
+     id="path606" />
 </svg>
