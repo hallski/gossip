@@ -1,13 +1,13 @@
-# gossip yn Gymraeg
+# gossip yn Gymraeg.
 # Copyright (C) 2003, The Free Software Foundation
 # This file is distributed under the same license as the gossip package.
-# Dafydd Harries <daf@parnassus.ath.cx>, 2003
+# Dafydd Harries <daf@parnassus.ath.cx>, 2003.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-20 18:00+0100\n"
+"POT-Creation-Date: 2003-08-26 15:11+0100\n"
 "PO-Revision-Date: 2003-08-10 13:51+0100\n"
 "Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
@@ -301,7 +301,7 @@ msgstr "/_Ailenwi'r cyswllt"
 msgid "/_Remove contact"
 msgstr "/_Tynnu'r cyswllt"
 
-#: src/gossip-roster-old.c:424
+#: src/gossip-roster-old.c:425
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -312,7 +312,7 @@ msgstr ""
 "%s\n"
 "o'ch rhestr cyswllt?"
 
-#: src/gossip-roster-old.c:522
+#: src/gossip-roster-old.c:524
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -593,7 +593,7 @@ msgstr "<b>Sain</b>"
 
 #: ui/main.glade.h:17
 msgid "<b>Status:</b>"
-msgstr "<b>Statws:</b>"
+msgstr "<b>Cyflwr:</b>"
 
 #: ui/main.glade.h:18
 msgid ""
@@ -779,15 +779,15 @@ msgstr "Yn anfon cais"
 
 #: ui/main.glade.h:65
 msgid "Set status"
-msgstr "Gosod statws"
+msgstr "Gosod cyflwr"
 
 #: ui/main.glade.h:66
 msgid "Set the status you want to use"
-msgstr "Gosod y statws hoffech ddefnyddio"
+msgstr "Gosod y cyflwr hoffech ddefnyddio"
 
 #: ui/main.glade.h:67
 msgid "Setup Finished"
-msgstr "Gorffenwyd Gosod"
+msgstr "Gorffenwyd Cyflunio"
 
 #: ui/main.glade.h:68
 msgid "Subscription request"
@@ -819,7 +819,7 @@ msgstr "Defnyddio synau er mwyn hysbysu pan mae negeseuon newydd yn cyrraedd"
 
 #: ui/main.glade.h:75
 msgid "Version:"
-msgstr "Versiwn:"
+msgstr "Fersiwn:"
 
 #: ui/main.glade.h:76
 msgid "Web site:"
@@ -887,7 +887,7 @@ msgstr "_Datgysylltu"
 
 #: ui/main.glade.h:92
 msgid "_Edit statuses..."
-msgstr "_Golygu statws..."
+msgstr "_Golygu cyflyrau..."
 
 #: ui/main.glade.h:93
 msgid "_Join Group Chat..."
