@@ -1,3 +1,7 @@
+2003-11-11  Abel Cheung  <maddog@linux.org.hk>
+
+	* configure.in: Added "hr" to ALL_LINGUAS.
+
 2003-11-11  Ross Burton  <ross@burtonini.com>
 
 	* gossip-contact-info.c:
