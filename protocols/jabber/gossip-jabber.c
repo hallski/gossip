@@ -1214,8 +1214,6 @@ gossip_jabber_get_connection (GossipJabber *jabber)
 {
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
 
-	g_print ("Foo\n");
-
 	return jabber->priv->connection;
 }
 

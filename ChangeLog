@@ -1,5 +1,13 @@
 2004-12-31  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-list.c: (contact_list_contact_added_cb),
+	(contact_list_contact_presence_updated_cb),
+	(contact_list_contact_removed_cb), (contact_list_add_contact),
+	(contact_list_remove_contact):
+	- Added support to hide/show offline contacts.
+
+2004-12-31  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_new_message):
 	- Updated for new GossipSession API.
 	* src/gossip-contact-list.c:

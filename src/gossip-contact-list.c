@@ -82,6 +82,10 @@ contact_list_contact_presence_updated_cb    (GossipSession         *session,
 static void contact_list_contact_removed_cb (GossipSession         *session,
 					     GossipContact         *contact,
 					     GossipContactList     *list);
+static void contact_list_add_contact        (GossipContactList     *list,
+					     GossipContact         *contact);
+static void contact_list_remove_contact     (GossipContactList     *list,
+					     GossipContact         *contact);
 static void contact_list_create_model       (GossipContactList     *list);
 
 static void contact_list_setup_view         (GossipContactList     *list);
@@ -411,28 +415,22 @@ contact_list_contact_added_cb (GossipSession     *session,
 {
 	GossipContactListPriv *priv;
 	GtkTreeModel          *model;
-	GtkTreeIter            iter;
 	GList                 *groups;
 
 	priv = list->priv;
-	
+
 	g_print ("Contact List: contact added: %s\n",
 		 gossip_contact_get_name (contact));
+
+	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
+		return;
+	}
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	groups = gossip_contact_get_groups (contact);
 
-	/* FIXME: Add group support */
-	gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
-
-	gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-			    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
-			    
-			    MODEL_COL_NAME, gossip_contact_get_name (contact),
-			    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-			    MODEL_COL_CONTACT, g_object_ref (contact),
-			    -1);
+	contact_list_add_contact (list, contact);
 }
 
 static void
@@ -464,21 +462,43 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 					  GossipContact     *contact,
 					  GossipContactList *list)
 {
-	GtkTreeModel   *model;
-	GtkTreeIter     iter;
+	GossipContactListPriv *priv;
+	GtkTreeModel          *model;
+	GtkTreeIter            iter;
+	gboolean               in_list;
+	gboolean               should_be_in_list;
 
+	priv = list->priv;
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
-		return;
+		in_list = FALSE;
+	} else {
+		in_list = TRUE;
 	}
 
-	/* Find contact iter */
-	gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-			    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
-			    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-			    -1);
+	if (priv->show_offline || gossip_contact_is_online (contact)) {
+		should_be_in_list = TRUE;
+	} else {
+		should_be_in_list = FALSE;
+	}
 
+	if (!in_list && !should_be_in_list) {
+		/* Nothing to do */
+		return;
+	}
+	else if (in_list && !should_be_in_list) {
+		contact_list_remove_contact (list, contact);
+	}
+	else if (!in_list && should_be_in_list) {
+		contact_list_add_contact (list, contact);
+	} else {
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
+				    -1);
+	}
+		
 	g_print ("Contact List: contact presence updated: %s '%s'\n",
 		 gossip_contact_get_name (contact),
 		 gossip_contact_get_status (contact));
@@ -491,6 +511,51 @@ contact_list_contact_removed_cb (GossipSession     *session,
 {
 	g_print ("Contact List: contact removed: %s\n",
 		 gossip_contact_get_name (contact));
+
+	contact_list_remove_contact (list, contact);
+}
+
+static void
+contact_list_add_contact (GossipContactList *list, GossipContact *contact)
+{
+	GossipContactListPriv *priv;
+	GtkTreeIter            iter;
+	GtkTreeModel          *model;
+
+	priv = list->priv;
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
+
+	gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+			    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+			    
+			    MODEL_COL_NAME, gossip_contact_get_name (contact),
+			    MODEL_COL_STATUS, gossip_contact_get_status (contact),
+			    MODEL_COL_CONTACT, g_object_ref (contact),
+			    -1);
+
+}
+
+static void
+contact_list_remove_contact (GossipContactList *list, GossipContact *contact)
+{
+	GossipContactListPriv *priv;
+	GtkTreeIter            iter;
+	GtkTreeModel          *model;
+
+	priv = list->priv;
+	
+	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
+		return;
+	}
+
+	g_hash_table_remove (priv->flash_table, contact);
+	
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
+
+	g_object_unref (contact);
 }
 
 static void
