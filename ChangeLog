@@ -1,3 +1,8 @@
+2003-10-30  Mikael Hallendal  <micke@imendio.com>
+
+        * gossip.desktop.in: 
+	- Changed the GenericName suggested by Thomas Reynholds.
+
 2003-10-28  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_cancel_pending_leave),
