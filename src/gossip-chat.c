@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2003 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -80,15 +81,6 @@ struct _GossipChatPriv {
 static void            gossip_chat_class_init            (GossipChatClass  *klass);
 static void            gossip_chat_init                  (GossipChat       *chat);
 static void            gossip_chat_finalize              (GObject          *object);
-static void            gossip_chat_set_property          (GObject          *object,  
-                                                          guint             prop_id,
-                                                          const GValue     *value,
-                                                          GParamSpec       *pspec);
-static void            gossip_chat_get_property          (GObject          *object,
-                                                          guint             prop_id,
-                                                          GValue           *value,
-                                                          GParamSpec       *pspec);
-
 static void            chats_init                        (void);
 static void            chat_create_gui                   (GossipChat       *chat);
 static void            chat_send                         (GossipChat       *chat,
@@ -111,9 +103,6 @@ static gboolean        chat_event_handler                (GossipChat       *chat
                                                           LmMessage        *m);
 static void            chat_error_dialog                 (GossipChat       *chat,
                                                           const gchar      *msg);
-static void            chat_set_window                   (GossipChat       *chat,
-                                                          GossipChatWindow *window);
-
 static void            chat_disclosure_toggled_cb        (GtkToggleButton  *disclosure,
                                                           GossipChat       *chat);
 static void	       chat_send_multi_clicked_cb	 (GtkWidget	   *button,
@@ -141,14 +130,6 @@ static gboolean	       chat_delete_event_cb		 (GtkWidget	   *widget,
 
 /* Called from glade, so it shouldn't be static */
 GtkWidget *     chat_create_disclosure                   (gpointer          data);
-
-enum {
-        PROP_0,
-        PROP_WINDOW,
-	/* BE GONE!!! */
-	PROP_OTHER_SHOW,
-	PROP_OTHER_OFFLINE
-};
 
 enum {
         COMPOSING,
@@ -195,34 +176,6 @@ gossip_chat_class_init (GossipChatClass *klass)
         parent_class = g_type_class_peek_parent (klass);
 
         object_class->finalize = gossip_chat_finalize;
-        object_class->set_property = gossip_chat_set_property;
-        object_class->get_property = gossip_chat_get_property;
-
-        g_object_class_install_property (object_class,
-                                         PROP_WINDOW,
-                                         g_param_spec_object ("window",
-                                                              "window",
-                                                              "window",
-                                                              GOSSIP_TYPE_CHAT_WINDOW,
-                                                              G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_OTHER_SHOW,
-					 g_param_spec_int ("other-show",
-							   "other-show",
-							   "other-show",
-							   0,
-							   G_MAXINT,
-							   GOSSIP_SHOW_AVAILABLE,
-							   G_PARAM_READABLE));
-	
-	g_object_class_install_property (object_class,
-					 PROP_OTHER_OFFLINE,
-					 g_param_spec_boolean ("other-offline",
-							       "other-offline",
-							       "other-offline",
-							       TRUE,
-							       G_PARAM_READABLE));
 
         chat_signals[COMPOSING] =
                 g_signal_new ("composing",
@@ -317,56 +270,6 @@ gossip_chat_finalize (GObject *object)
         
         g_free (priv);
         G_OBJECT_CLASS (parent_class)->finalize (object);
-}
-
-static void
-gossip_chat_set_property (GObject      *object,
-                          guint         prop_id,
-                          const GValue *value,
-                          GParamSpec   *pspec)
-{
-        GossipChat     *chat = GOSSIP_CHAT (object);
-	GossipChatPriv *priv;
-	
-	priv = chat->priv;
-
-        switch (prop_id) {
-        case PROP_WINDOW:
-                chat_set_window (chat, g_value_get_object (value));
-                break;
-        default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-                break;
-        }
-}
-
-static void
-gossip_chat_get_property (GObject    *object,
-                          guint       prop_id,
-                          GValue     *value,
-                          GParamSpec *pspec)
-{
-        GossipChat     *chat = GOSSIP_CHAT (object);
-	GossipChatPriv *priv;
-
-	priv = chat->priv;
-
-        switch (prop_id) {
-        case PROP_WINDOW:
-                g_value_set_object (value, priv->window);
-                break;
-	case PROP_OTHER_SHOW:
-		g_value_set_int (value, 
-				 gossip_roster_item_get_show (priv->item));
-		break;
-	case PROP_OTHER_OFFLINE:
-		g_value_set_boolean (value, 
-				     gossip_roster_item_is_offline (priv->item));
-		break;
-        default:
-                G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-                break;
-        }
 }
 
 static void
@@ -876,37 +779,6 @@ chat_error_dialog (GossipChat  *chat,
 }
 
 static void
-chat_set_window (GossipChat *chat, GossipChatWindow *window)
-{
-	GossipChatPriv *priv;
-
-	priv = chat->priv;
-
-        if (window == priv->window) {
-                return;
-        }
-
-	if (priv->window != NULL) {
-		g_signal_handlers_disconnect_by_func (priv->window,
-						      G_CALLBACK (chat_window_layout_changed_cb),
-						      chat);
-	}
-
-	if (window != NULL) {
-		g_signal_connect (window,
-				  "layout-changed",
-				  G_CALLBACK (chat_window_layout_changed_cb),
-				  chat);
-
-		chat_window_layout_changed_cb (window,
-					       gossip_chat_window_get_layout (window),
-					       chat);
-	}
-
-	priv->window = window;
-}
-
-static void
 chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
                             GossipChat      *chat)
 {
@@ -1096,7 +968,6 @@ chat_delete_event_cb (GtkWidget  *widget,
 	return TRUE;
 }
 
-
 GtkWidget *
 chat_create_disclosure (gpointer data)
 {
@@ -1197,6 +1068,8 @@ gossip_chat_handle_message (LmMessage *m)
         LmHandlerResult   result;
 	GossipRosterItem *item;
 
+	chats_init ();
+
         from = lm_message_node_get_attribute (m->node, "from");
         jid = gossip_jid_new (from);
 
@@ -1251,3 +1124,33 @@ gossip_chat_get_item (GossipChat *chat)
 	return priv->item;
 }
 
+void
+gossip_chat_set_window (GossipChat *chat, GossipChatWindow *window)
+{
+	GossipChatPriv *priv;
+
+	priv = chat->priv;
+
+        if (window == priv->window) {
+                return;
+        }
+
+	if (priv->window != NULL) {
+		g_signal_handlers_disconnect_by_func (priv->window,
+						      G_CALLBACK (chat_window_layout_changed_cb),
+						      chat);
+	}
+
+	if (window != NULL) {
+		g_signal_connect (window,
+				  "layout-changed",
+				  G_CALLBACK (chat_window_layout_changed_cb),
+				  chat);
+
+		chat_window_layout_changed_cb (window,
+					       gossip_chat_window_get_layout (window),
+					       chat);
+	}
+
+	priv->window = window;
+}

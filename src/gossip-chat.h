@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2002 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2003 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -41,6 +42,8 @@ typedef struct _GossipChat GossipChat;
 typedef struct _GossipChatClass GossipChatClass;
 typedef struct _GossipChatPriv GossipChatPriv;
 
+#include "gossip-chat-window.h"
+
 struct _GossipChat {
         GObject         parent;
         GossipChatPriv *priv;
@@ -64,8 +67,10 @@ void            gossip_chat_append_message      (GossipChat       *chat,
 void            gossip_chat_present             (GossipChat       *chat);
 LmHandlerResult gossip_chat_handle_message      (LmMessage        *message);
 GtkWidget *     gossip_chat_get_widget          (GossipChat       *chat);
-GossipRosterItem *gossip_chat_get_item          (GossipChat       *chat);
-
+GossipRosterItem *
+gossip_chat_get_item          (GossipChat       *chat);
+void            gossip_chat_set_window          (GossipChat       *chat,
+						 GossipChatWindow *window);
 G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_H__ */

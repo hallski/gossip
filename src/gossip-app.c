@@ -566,6 +566,7 @@ app_about_cb (GtkWidget *window,
 	
 	g_object_add_weak_pointer (G_OBJECT (priv->about), (gpointer) &priv->about);
 
+	gtk_window_set_transient_for (GTK_WINDOW (priv->about), GTK_WINDOW (priv->window));
 	gtk_widget_show (priv->about);
 }
 
@@ -2227,6 +2228,7 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 	gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), "");
 	/*gtk_entry_select_region (GTK_ENTRY (GTK_COMBO (combo)->entry), 0, -1);*/
 
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response != GTK_RESPONSE_OK) {
 		gtk_widget_destroy (dialog);
@@ -2283,6 +2285,7 @@ app_status_custom_busy_activate_cb (GtkWidget *item,
 				      "reason_entry", &entry,
 				      NULL);
 
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response != GTK_RESPONSE_OK) {
 		gtk_widget_destroy (dialog);
@@ -2318,6 +2321,7 @@ app_status_custom_available_activate_cb (GtkWidget *item,
 				      "available_entry", &entry,
 				      NULL);
 
+	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response != GTK_RESPONSE_OK) {
 		gtk_widget_destroy (dialog);

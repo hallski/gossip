@@ -671,10 +671,13 @@ roster_item_update_presence (GossipRoster     *roster,
 		con->show = GOSSIP_SHOW_AVAILABLE;
 	}
 
+	g_free (con->status);
+
 	node = lm_message_node_get_child (presence->node, "status");
 	if (node) {
-		g_free (con->status);
 		con->status = g_strdup (node->value);
+	} else {
+		con->status = NULL;
 	}
 
 	node = lm_message_node_get_child (presence->node, "priority");

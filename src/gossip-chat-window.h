@@ -24,7 +24,6 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtktreestore.h>
 #include <gtk/gtktreeselection.h>
-#include "gossip-chat.h"
 
 typedef enum {
         GOSSIP_CHAT_WINDOW_LAYOUT_LIST,
@@ -41,6 +40,8 @@ typedef enum {
 typedef struct _GossipChatWindow GossipChatWindow;
 typedef struct _GossipChatWindowClass GossipChatWindowClass;
 typedef struct _GossipChatWindowPriv GossipChatWindowPriv;
+
+#include "gossip-chat.h"
 
 struct _GossipChatWindow {
         GObject parent;

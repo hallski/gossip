@@ -834,7 +834,7 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	GtkTreeRowReference *ref;
 	GdkPixbuf	    *pixbuf;
 
-	g_object_set (chat, "window", window, NULL);
+	gossip_chat_set_window (chat, window);
 
 	if (window->priv->chats != NULL &&
             window->priv->layout == GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW) {
@@ -912,7 +912,7 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 	g_object_set_data (G_OBJECT (chat), "chat-window-tree-row-ref", NULL);
 	gtk_tree_path_free (path);
 
-	g_object_set (chat, "window", NULL, NULL);
+	gossip_chat_set_window (chat, NULL);
 
 	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->priv->notebook),
 					  gossip_chat_get_widget (chat));

@@ -1,5 +1,35 @@
 2003-11-10  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-window.c: 
+	(gossip_chat_window_add_chat):
+	- Use gossip_chat_set_window instead of object property.
+	(gossip_chat_window_remove_chat): same
+	* src/gossip-chat.[ch]:
+	- Added Geert-Jan to copyright.
+	- Removed the rest of the properties.
+	(gossip_chat_handle_message): Make sure hashtables are initiated.
+	(gossip_chat_set_window): added, use instead of object property.
+	* src/gossip-roster.c: (roster_item_update_presence):
+	- Set status to NULL if none where sent.
+
+2003-11-10  Ross Burton  <ross@burtonini.com>
+
+	* src/gossip-app.c:
+	Add calls to gtk_window_set_transient_for().
+
+2003-11-10  Mikael Hallendal  <micke@imendio.com>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_add_chat),
+	(gossip_chat_window_remove_chat):
+	* src/gossip-chat-window.h:
+	* src/gossip-chat.c: (gossip_chat_class_init),
+	(gossip_chat_set_window):
+	* src/gossip-chat.h:
+
+2003-11-10  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c:
 	- Use GossipRosterItem to do things with GossipChat.
 	* src/gossip-chat-window.c:
