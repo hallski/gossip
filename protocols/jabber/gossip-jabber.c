@@ -50,6 +50,7 @@
 
 #define XMPP_VERSION_XMLNS "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
+#define XMPP_REGISTER_XMLNS "jabber:iq:register"
 
 
 struct _GossipJabberPriv {
@@ -71,6 +72,15 @@ struct _GossipJabberPriv {
 	LmMessageHandler      *subscription_handler;
 };
 
+typedef struct {
+	LmConnection          *connection;
+	LmMessageHandler      *message_handler;
+
+	GossipAccount         *account;
+
+	GossipAsyncRegisterCallback callback;
+	gpointer               user_data;
+} RegisterAccountData;
 
 static void            gossip_jabber_class_init              (GossipJabberClass            *klass);
 static void            gossip_jabber_init                    (GossipJabber                 *jabber);
@@ -80,6 +90,19 @@ static void            jabber_logout                         (GossipProtocol    
 static gboolean        jabber_logout_contact_foreach       (gpointer                      key,
 							    GossipContact                *contact,
 							    GossipJabber                 *jabber);
+static gboolean        jabber_register                     (GossipProtocol               *protocol,
+							    GossipAccount                *account,
+							    GossipAsyncRegisterCallback   callback,
+							    gpointer                      user_data,
+							    GError                      **error);
+static void            jabber_register_connection_open_cb  (LmConnection                 *connection,
+							    gboolean                      result,
+							    RegisterAccountData          *ra);
+static const gchar *   jabber_register_error_to_str        (gint                          error_code);
+static LmHandlerResult jabber_register_message_handler     (LmMessageHandler             *handler,
+							    LmConnection                 *conn,
+							    LmMessage                    *m,
+							    RegisterAccountData          *ra);
 static gboolean        jabber_is_connected                   (GossipProtocol               *protocol);
 static void            jabber_send_message                   (GossipProtocol               *protocol,
 							      GossipMessage                *message);
@@ -186,6 +209,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 
 	protocol_class->login               = jabber_login;
 	protocol_class->logout              = jabber_logout;
+	protocol_class->async_register      = jabber_register;
 	protocol_class->is_connected        = jabber_is_connected;
 	protocol_class->send_message        = jabber_send_message;
 	protocol_class->set_presence        = jabber_set_presence;
@@ -362,6 +386,212 @@ jabber_logout_contact_foreach (gpointer       key,
 {
 	g_signal_emit_by_name (jabber, "contact-removed", contact);
 	return TRUE;
+}
+
+static gboolean            
+jabber_register (GossipProtocol               *protocol,
+		 GossipAccount                *account,
+		 GossipAsyncRegisterCallback   callback,
+		 gpointer                      user_data,
+		 GError                      **error)
+{
+	GossipJabber         *jabber;
+	GossipJabberPriv     *priv;
+	RegisterAccountData  *ra;
+	gboolean              result;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), FALSE);
+	g_return_val_if_fail (callback != NULL, FALSE);
+
+	jabber = GOSSIP_JABBER (protocol);
+	priv   = jabber->priv;
+
+	ra = g_new0 (RegisterAccountData, 1);
+	
+	ra->connection = lm_connection_new (account->server);
+	ra->account = gossip_account_ref (account);
+
+	ra->callback = callback;
+	ra->user_data = user_data;
+
+	g_print ("Registering with Jabber server...\n");
+
+	if (account->use_ssl) {
+		LmSSL *ssl = lm_ssl_new (NULL,
+					 (LmSSLFunction) jabber_ssl_func,
+					 jabber, NULL);
+		lm_connection_set_ssl (ra->connection, ssl);
+		lm_ssl_unref (ssl);
+	}
+
+	if (account->use_proxy) {
+		jabber_set_proxy (ra->connection);
+	} else {
+		/* FIXME: Just pass NULL when Loudmouth > 0.17.1 */
+		LmProxy *proxy;
+
+		proxy = lm_proxy_new (LM_PROXY_TYPE_NONE);
+		lm_connection_set_proxy (ra->connection, proxy);
+		lm_proxy_unref (proxy);
+	}
+
+	if (ra->connection == NULL) {
+		if (error) {
+			*error = g_error_new_literal (g_quark_from_string ("gossip-jabber"),
+						      0, "Connection could not be created");
+		}
+
+		gossip_account_unref (account);
+		g_free (ra);
+
+		g_print ("Connection could not be created\n");
+		return FALSE;
+	}
+
+	result = lm_connection_open (ra->connection, 
+				     (LmResultFunction) jabber_register_connection_open_cb,
+				     ra, NULL, error);
+
+	if (!result) {
+		gossip_account_unref (ra->account);
+		g_free (ra);
+
+		g_print ("Connection could not be opened\n");
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static void
+jabber_register_connection_open_cb (LmConnection        *connection,
+				    gboolean             result,
+				    RegisterAccountData *ra)
+{
+	LmMessage        *m;
+	LmMessageNode    *node;
+	gchar            *username;
+	const gchar      *str = NULL;
+	gboolean          ok = FALSE;
+	
+	if (result == FALSE) {
+		str = _("Connection could not be opened");
+		g_print ("%s\n", str);
+
+		if (ra->callback) {
+			(ra->callback) (GOSSIP_ASYNC_ERROR_REGISTRATION, 
+					str, ra->user_data);
+		}
+
+		gossip_account_unref (ra->account);
+		g_free (ra);
+
+		return;
+	} else {
+		g_print ("Connection open!\n");
+	}
+
+	ra->message_handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_register_message_handler,
+						      ra, NULL);
+
+        m = lm_message_new_with_sub_type (ra->account->server,
+                                          LM_MESSAGE_TYPE_IQ,
+                                          LM_MESSAGE_SUB_TYPE_SET);
+
+	lm_message_node_add_child (m->node, "query", NULL);
+	node = lm_message_node_get_child (m->node, "query");
+
+        lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
+	
+	username = gossip_jid_get_part_name (ra->account->jid);
+
+	lm_message_node_add_child (node, "username", username);
+	lm_message_node_add_child (node, "password", ra->account->password);
+
+	g_free (username);
+
+        ok = lm_connection_send_with_reply (ra->connection, m, 
+					    ra->message_handler, NULL);
+        lm_message_unref (m);
+
+	if (!ok) {
+		str = _("Couldn't send message!");
+		g_print ("%s\n", str);
+
+		if (ra->callback) {
+			(ra->callback) (GOSSIP_ASYNC_ERROR_REGISTRATION, 
+					str, ra->user_data);
+		}
+
+		gossip_account_unref (ra->account);
+		g_free (ra);
+	} else {
+		g_print ("Sent registration details\n");
+	}
+}
+
+static const gchar *
+jabber_register_error_to_str (gint error_code) 
+{
+	switch (error_code) {
+	case 302: return _("Redirect");
+	case 400: return _("Bad Request");
+	case 401: return _("Not Authorized");
+	case 402: return _("Payment Required");
+	case 403: return _("Forbidden");
+	case 404: return _("Not Found");
+	case 405: return _("Not Allowed");
+	case 406: return _("Not Acceptable");
+	case 407: return _("Registration Required");
+	case 408: return _("Request Timeout");
+	case 409: return _("Conflict");
+	case 500: return _("Internal Server Error");
+	case 501: return _("Not Implemented");
+	case 502: return _("Remote Server Error");
+	case 503: return _("Service Unavailable");
+	case 504: return _("Remote Server Timeout");
+	case 510: return _("Disconnected");
+	};
+
+	return _("Unknown");
+}
+
+static LmHandlerResult
+jabber_register_message_handler (LmMessageHandler     *handler,
+				 LmConnection         *conn,
+				 LmMessage            *m,
+				 RegisterAccountData  *ra)
+{
+	GossipAsyncResult  result = GOSSIP_ASYNC_OK;
+
+	LmMessageNode     *node;
+	const gchar       *error_code = NULL;
+	const gchar       *error_reason = NULL;
+
+	node = lm_message_node_get_child (m->node, "error");	
+	if (node) {
+		result = GOSSIP_ASYNC_ERROR_REGISTRATION;
+
+		error_code = lm_message_node_get_attribute (node, "code");
+		error_reason = jabber_register_error_to_str (atoi (error_code));
+
+		g_print ("Registration failed with error:%s->'%s'\n",
+			 error_code, error_reason);
+	} else {
+		g_print ("Registration success\n");
+	}
+
+	if (ra->callback) {
+		(ra->callback) (result, 
+				error_reason, ra->user_data);
+	}
+	
+	lm_connection_close (ra->connection, NULL);
+	
+	gossip_account_unref (ra->account);
+	g_free (ra);
+	
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static gboolean
@@ -916,6 +1146,10 @@ jabber_presence_handler (LmMessageHandler *handler,
 				       contact, NULL);
 
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	} 
+	else if (strcmp (type, "subscribed") == 0) {
+		/* Handle this? */
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 	
 	if (contact) {
@@ -924,19 +1158,15 @@ jabber_presence_handler (LmMessageHandler *handler,
 		
 		presence = jabber_get_presence (m);
 		if (!presence) {
-			return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-		}
+			gossip_contact_set_presence (contact, presence);
+		} else {
+			jid = gossip_jid_new (from);
+			gossip_presence_set_resource (presence,
+						      gossip_jid_get_resource (jid));
+			gossip_jid_unref (jid);
 
-		jid = gossip_jid_new (from);
-		gossip_presence_set_resource (presence,
-					      gossip_jid_get_resource (jid));
-		gossip_jid_unref (jid);
+			gossip_contact_set_presence (contact, presence);
 		
-		gossip_contact_set_presence (contact, presence);
-	
-
-		
-		if (presence) {
 			g_object_unref (presence);
 		}
 		

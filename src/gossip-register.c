@@ -120,11 +120,9 @@ gossip_register_account (GossipAccount *account,
 	
         gossip_session_async_register (gossip_app_get_session (),
                                        GOSSIP_ACCOUNT_TYPE_JABBER,
-                                       id,
-                                       password,
-                                       account->use_ssl,
+                                       account,
                                        (GossipAsyncRegisterCallback) register_registration_done_cb,
-                                       NULL, NULL);
+                                       data, NULL);
         g_free (password);
 
 	response = gtk_dialog_run (GTK_DIALOG (data->dialog));

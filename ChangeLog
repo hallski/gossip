@@ -1,3 +1,20 @@
+2005-01-27  Martyn Russell  <martyn.russell@bt.com>
+
+	* src/gossip-session.[ch]:
+	* src/gossip-protocol.[ch]:
+	- Change the parameters for registering to use a GossipAccount,
+	this way each protocol can independently use whatever details that
+	are required from that interface instead of trying to generically
+	have a common interface here. 
+	* src/gossip-register.c:
+	- Fix bug where the data is not passed as user_data resulting in a
+	NULL dereference in the async call back. 
+	* src/gossip-jabber.c (jabber_register),
+	(jabber_register_connection_open_cb),
+	(jabber_register_error_to_str) (jabber_register_message_handler):
+	- Added the capability to register new users.  This opens a new
+	connection independent of any connection already open.
+
 2005-01-21  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-info.[ch]:

@@ -26,6 +26,7 @@
 #include "gossip-async.h"
 #include "gossip-contact.h"
 #include "gossip-message.h"
+#include "gossip-account.h"
 
 #define GOSSIP_TYPE_PROTOCOL         (gossip_protocol_get_type ())
 #define GOSSIP_PROTOCOL(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
@@ -51,7 +52,7 @@ struct _GossipProtocol {
 struct _GossipProtocolClass {
 	GObjectClass parent_class;
 
-	/* overridable functions */
+	/* virtual functions */
 	void          (*login)                 (GossipProtocol *protocol);
 	void          (*logout)                (GossipProtocol *protocol);
 	gboolean      (*is_connected)          (GossipProtocol *protocol);
@@ -73,10 +74,15 @@ struct _GossipProtocolClass {
         void          (*remove_contact)        (GossipProtocol *protocol,
                                                 GossipContact  *contact);
 
-	/* Needed for good jabber support */
 	const gchar * (*get_active_resource)  (GossipProtocol *protocol,
 					       GossipContact  *contact);
 
+	gboolean      (*async_register)       (GossipProtocol *protocol,
+					       GossipAccount  *account,
+					       GossipAsyncRegisterCallback callback,
+					       gpointer        user_data,
+					       GError        **error);
+	
 	gboolean      (*async_get_vcard)      (GossipProtocol  *protocol,
 					       GossipContact   *contact,
 					       GossipAsyncVCardCallback callback,
@@ -120,10 +126,16 @@ void          gossip_protocol_rename_contact (GossipProtocol *protocol,
                                               const gchar    *new_name);
 void          gossip_protocol_remove_contact (GossipProtocol *protocol,
                                               GossipContact  *contact);
-
-const gchar * 
-gossip_protocol_get_active_resource          (GossipProtocol *protocol,
+const gchar *gossip_protocol_get_active_resource (GossipProtocol               *protocol,
 					      GossipContact  *contact);
+
+
+/* Async functions */
+gboolean     gossip_protocol_async_register      (GossipProtocol               *protocol,
+						  GossipAccount                *account,
+						  GossipAsyncRegisterCallback   callback,
+						  gpointer                      user_data,
+						  GError                      **error);
 gboolean      gossip_protocol_async_get_vcard (GossipProtocol *protocol,
 					       GossipContact  *contact,
 					       GossipAsyncVCardCallback callback,

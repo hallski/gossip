@@ -53,6 +53,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 {
 	klass->login               = NULL;
 	klass->logout              = NULL;
+	klass->async_register      = NULL;
 	klass->is_connected        = NULL;
 	klass->send_message        = NULL;
 	klass->set_presence        = NULL;
@@ -312,6 +313,28 @@ gossip_protocol_get_active_resource (GossipProtocol *protocol,
 	}
 
 	return NULL;
+}
+
+gboolean
+gossip_protocol_async_register (GossipProtocol               *protocol,
+				GossipAccount                *account,
+				GossipAsyncRegisterCallback   callback,
+				gpointer                      user_data,
+				GError                      **error)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+	g_return_val_if_fail (callback != NULL, FALSE);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->async_register) {
+		return klass->async_register (protocol, account, 
+					      callback, user_data, 
+					      error);
+	}
+
+	return FALSE;
 }
 
 gboolean

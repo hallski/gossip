@@ -676,9 +676,7 @@ gossip_session_get_nickname (GossipSession *session)
 gboolean
 gossip_session_async_register (GossipSession  *session,
                                GossipAccountType type,
-                               const gchar    *id,
-                               const gchar    *password,
-                               gboolean        use_ssl,
+			       GossipAccount                *account,
                                GossipAsyncRegisterCallback callback,
                                gpointer        user_data,
                                GError        **error)
@@ -686,26 +684,13 @@ gossip_session_async_register (GossipSession  *session,
 	GossipSessionPriv *priv;
 	
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
-	g_return_val_if_fail (id != NULL, FALSE);
-        g_return_val_if_fail (password != NULL, FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
 
 	priv = GET_PRIV (session);
 	
-	/* FIXME: Call set_vcard on all protocols?
-	 *        Currently only calling it on the main Jabber account
-	 */
-#if 0
         return gossip_protocol_async_register (GOSSIP_PROTOCOL (priv->default_jabber),
-                                               type,
-                                               id,
-                                               password,
-                                               use_ssl,
-                                               callback,
-                                               user_data,
+					       account, callback, user_data,
                                                error);
-#endif
-        return TRUE;
 }
 
 gboolean

@@ -70,8 +70,7 @@ void             gossip_session_send_message   (GossipSession  *session,
 void             gossip_session_send_composing (GossipSession  *session,
 						GossipContact  *contact,
 						gboolean        composing);
-
-GossipPresence * gossip_session_get_presence   (GossipSession  *session);
+GossipPresence *gossip_session_get_presence        (GossipSession                *session);
 void             gossip_session_set_presence   (GossipSession  *session,
 						GossipPresence *presence);
 gboolean         gossip_session_is_connected   (GossipSession  *session);
@@ -108,13 +107,10 @@ const gchar *   gossip_session_get_nickname   (GossipSession  *session);
 /* Async operations */
 gboolean        gossip_session_async_register  (GossipSession  *session,
                                                 GossipAccountType type,
-                                                const gchar    *id,
-                                                const gchar    *password,
-                                                gboolean        use_ssl,
+						    GossipAccount                *account,
                                                 GossipAsyncRegisterCallback callback,
                                                 gpointer        user_data,
                                                 GError        **error);
-                                                
 gboolean        gossip_session_async_get_vcard (GossipSession  *session,
 						GossipContact  *contact,
 						GossipAsyncVCardCallback callback,
