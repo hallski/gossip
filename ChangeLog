@@ -1,3 +1,10 @@
+2005-03-31  Mikael Hallendal  <micke@imendio.com>
+
+	* AUTHORS:
+	* CONTRIBUTORS:
+	* Makefile.am:
+	- Added contributors file
+
 2005-03-30  Bastien Nocera  <hadess@hadess.net>
 
 	* src/gossip-app.c: (gossip_app_init): stop the startup notification

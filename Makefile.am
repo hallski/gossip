@@ -20,6 +20,7 @@ INTLTOOL = 			\
 EXTRA_DIST = 			\
         ChangeLog               \
         README                  \
+	CONTRIBUTORS            \
 	$(desktop_in_files)	\
 	$(desktop_files)	\
 	$(schemas_in_files)	\
