@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-15 13:46+0100\n"
-"PO-Revision-Date: 2003-11-15 13:46+0100\n"
+"POT-Creation-Date: 2003-11-16 05:55+0100\n"
+"PO-Revision-Date: 2003-11-16 05:55+0100\n"
 "Last-Translator: Данило Шеган <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -217,27 +217,27 @@ msgstr "_Отвори везу"
 msgid "%A %d %B %Y"
 msgstr "%A, %d. %B %Y."
 
-#: src/gossip-chat-window.c:510
+#: src/gossip-chat-window.c:470
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sЧаврљање - %s"
 
-#: src/gossip-chat.c:683
+#: src/gossip-chat.c:674
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Догодила се грешка приликом чаврљање са %s."
 
-#: src/gossip-chat.c:688 src/gossip-group-chat.c:808
+#: src/gossip-chat.c:679 src/gossip-group-chat.c:808
 #: src/gossip-group-chat.c:911
 msgid "Details:"
 msgstr "Детаљи:"
 
-#: src/gossip-chat.c:759
+#: src/gossip-chat.c:752
 #, c-format
 msgid "%s went offline"
 msgstr "%s прекиде везу"
 
-#: src/gossip-chat.c:770
+#: src/gossip-chat.c:766
 #, c-format
 msgid "%s comes online"
 msgstr "%s се повеза"
@@ -338,11 +338,11 @@ msgstr "/Уклони контакт"
 msgid "/Re_name group"
 msgstr "/Преи_менуј групу"
 
-#: src/gossip-roster-view.c:896
+#: src/gossip-roster-view.c:929
 msgid "Offline"
 msgstr "Неповезан"
 
-#: src/gossip-roster-view.c:1187
+#: src/gossip-roster-view.c:1227
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -353,7 +353,7 @@ msgstr ""
 "%s\n"
 "из вашег списка другара?"
 
-#: src/gossip-roster-view.c:1279
+#: src/gossip-roster-view.c:1319
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -362,7 +362,7 @@ msgstr ""
 "Унесите нови надимак за контакт\n"
 "%s"
 
-#: src/gossip-roster-view.c:1366
+#: src/gossip-roster-view.c:1406
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -404,91 +404,86 @@ msgstr "Једем"
 msgid "Sleeping"
 msgstr "Спавам"
 
-#: ui/chat.glade.h:1 ui/connect.glade.h:1 ui/group-chat.glade.h:1
-#: ui/main.glade.h:2
-msgid "    "
-msgstr "    "
-
-#: ui/chat.glade.h:2 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:3
-msgid "As _Windows"
-msgstr "Као _прозори"
-
-#: ui/chat.glade.h:4
-msgid "As a _List"
-msgstr "Као _списак"
-
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:2
 msgid "Chat"
 msgstr "Ћаскај"
 
-#: ui/chat.glade.h:6
-msgid "Chat with:"
-msgstr "Ћаскај са:"
-
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:3
 msgid "Contact _Information"
 msgstr "По_даци за контакт"
 
-#: ui/chat.glade.h:8
-msgid "D_etach"
-msgstr "_Одвоји"
-
-#: ui/chat.glade.h:9
+#: ui/chat.glade.h:4
 msgid "From:"
 msgstr "Од:"
 
-#: ui/chat.glade.h:10
+#: ui/chat.glade.h:5
 msgid "Gossip - Chat"
 msgstr "Чаврљање - Чаврљај"
 
-#: ui/chat.glade.h:11
+#: ui/chat.glade.h:6
 msgid "Gossip - Received Message"
 msgstr "Чаврљање - Прими поруку"
 
-#: ui/chat.glade.h:12
+#: ui/chat.glade.h:7
 msgid "Gossip - Send Message"
 msgstr "Чаврљање - Пошаљи поруку"
 
-#: ui/chat.glade.h:13
+#: ui/chat.glade.h:8
 msgid "In reply to:"
 msgstr "Као одговор на:"
 
-#: ui/chat.glade.h:14
+#: ui/chat.glade.h:9
 msgid "Lo_g"
 msgstr "Дне_вник"
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "Премести језичак _лево"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "Премести језичак _десно"
+
+#: ui/chat.glade.h:12
 msgid "To:"
 msgstr "Коме:"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:13
 msgid "_Conversation"
 msgstr "_Разговор"
 
+#: ui/chat.glade.h:14
+msgid "_Detach Tab"
+msgstr "_Одвоји лист"
+
+#: ui/chat.glade.h:15
+msgid "_Next Tab"
+msgstr "_Следећи лист"
+
+#: ui/chat.glade.h:16
+msgid "_Previous Tab"
+msgstr "П_ретходни лист"
+
 #: ui/chat.glade.h:17
-msgid "_Go"
-msgstr "_Иди"
-
-#: ui/chat.glade.h:18
-msgid "_Next Conversation"
-msgstr "С_ледећи разговор"
-
-#: ui/chat.glade.h:19
-msgid "_Previous Conversation"
-msgstr "П_ретходни разговор"
-
-#: ui/chat.glade.h:20
 msgid "_Reply..."
 msgstr "Одго_вори..."
 
-#: ui/chat.glade.h:21 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:18 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Пошаљи"
+
+#: ui/chat.glade.h:19
+msgid "_Tabs"
+msgstr "_Листови"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
+msgid "    "
+msgstr "    "
 
 #: ui/connect.glade.h:3
 msgid "<b>Account Settings</b>"
@@ -966,6 +961,21 @@ msgstr "_Тражи..."
 #: ui/main.glade.h:93
 msgid "_Status Messages"
 msgstr "Порук_е о стању"
+
+#~ msgid "As _Windows"
+#~ msgstr "Као _прозори"
+
+#~ msgid "As a _List"
+#~ msgstr "Као _списак"
+
+#~ msgid "Chat with:"
+#~ msgstr "Ћаскај са:"
+
+#~ msgid "_Go"
+#~ msgstr "_Иди"
+
+#~ msgid "_Next Conversation"
+#~ msgstr "С_ледећи разговор"
 
 #~ msgid "Open conversations in single window with list view"
 #~ msgstr "Отвори разговоре у једном прозору приказујући их у списку"
