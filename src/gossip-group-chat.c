@@ -337,8 +337,8 @@ group_chat_create_gui (GossipGroupChat *chat)
 	g_object_unref (glade);
 
 	list = NULL;
-	list = g_list_append (list, priv->topic_entry);
 	list = g_list_append (list, GOSSIP_CHAT (chat)->input_text_view);
+	list = g_list_append (list, priv->topic_entry);
 	
 	gtk_container_set_focus_chain (GTK_CONTAINER (focus_vbox), list);
 	

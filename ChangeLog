@@ -1,3 +1,8 @@
+2005-04-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-group-chat.c (group_chat_create_gui): Put the chat
+	entry before the topic entry in the focus chain.
+
 2005-04-05  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_create_label): Try an
