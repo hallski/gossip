@@ -1,3 +1,7 @@
+2003-06-15  Richard Hult  <richard@imendio.com>
+
+	* sv.po: Fix a string.
+
 2003-04-02  Mikael Hallendal  <set EMAIL_ADDRESS environment variable>
 
 	reviewed by: <delete if not using a buddy>

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) Imendio HB
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2002-2003 CodeFactory AB
@@ -32,7 +32,7 @@
 #include "gossip-sound.h"
 #include "gossip-roster.h"
 
-#define d(x) 
+#define d(x)
 
 typedef struct {
 	GossipJID    *jid;
@@ -103,90 +103,89 @@ enum {
 #define OFFLINE_GROUP _(OFFLINE_GROUP_N)
 #define OTHERS_GROUP _(OTHERS_GROUP_N)
 
-static void     roster_class_init           (GossipRosterClass *klass);
-static void     roster_init                 (GossipRoster      *roster);
-static void     roster_finalize             (GObject           *object);
+static void     roster_class_init            (GossipRosterClass *klass);
+static void     roster_init                  (GossipRoster      *roster);
+static void     roster_finalize              (GObject           *object);
 
 static gchar *
-roster_item_factory_translate_func          (const gchar       *path,
-					     gpointer           data);
+roster_item_factory_translate_func           (const gchar       *path,
+					      gpointer           data);
 
-static void     roster_menu_remove_cb       (gpointer           callback_data,
-					     guint              action,
-					     GtkWidget         *widget);
-static void     roster_menu_info_cb         (gpointer           callback_data,
-					     guint              action,
-					     GtkWidget         *widget);
-static void     roster_menu_rename_cb       (gpointer           callback_data,
-					     guint              action,
-					     GtkWidget         *widget);
-static gboolean roster_button_press_event_cb (GtkTreeView      *tree_view,
-					      GdkEventButton   *event,
-					      GossipRoster     *roster);
+static void     roster_menu_remove_cb        (gpointer           callback_data,
+					      guint              action,
+					      GtkWidget         *widget);
+static void     roster_menu_info_cb          (gpointer           callback_data,
+					      guint              action,
+					      GtkWidget         *widget);
+static void     roster_menu_rename_cb        (gpointer           callback_data,
+					      guint              action,
+					      GtkWidget         *widget);
+static gboolean roster_button_press_event_cb (GtkTreeView       *tree_view,
+					      GdkEventButton    *event,
+					      GossipRoster      *roster);
 
-static void     roster_row_activated_cb     (GtkTreeView       *treeview,
-					     GtkTreePath       *path,
-					     GtkTreeViewColumn *col,
-					     gpointer           data);
-static GtkTreeStore *roster_create_store    (GossipRoster      *roster);
-static void          roster_create_pixbufs  (GossipRoster      *roster);
+static void     roster_row_activated_cb      (GtkTreeView       *treeview,
+					      GtkTreePath       *path,
+					      GtkTreeViewColumn *col,
+					      gpointer           data);
+static GtkTreeStore *roster_create_store     (GossipRoster      *roster);
+static void          roster_create_pixbufs   (GossipRoster      *roster);
 static GossipRosterItem *
-roster_get_selected_item                    (GossipRoster      *roster);
+roster_get_selected_item                     (GossipRoster      *roster);
 
-#if 0
-static gboolean roster_find_user (GossipRoster *roster,
-				  const gchar  *jid,
-				  GtkTreeIter  *iter);
-#endif
-static void     roster_connected_cb        (GossipApp        *app,
-					    GossipRoster     *roster);
-static void     roster_disconnected_cb     (GossipApp        *app,
-					    GossipRoster     *roster);
+static void     roster_connected_cb          (GossipApp         *app,
+					      GossipRoster      *roster);
+static void     roster_disconnected_cb       (GossipApp         *app,
+					      GossipRoster      *roster);
 static LmHandlerResult
-roster_presence_handler                    (LmMessageHandler *handler,
-					    LmConnection     *connection,
-					    LmMessage        *m,
-					    GossipRoster     *roster);
+roster_presence_handler                      (LmMessageHandler  *handler,
+					      LmConnection      *connection,
+					      LmMessage         *m,
+					      GossipRoster      *roster);
 static LmHandlerResult
-roster_iq_handler                         (LmMessageHandler  *handler,
-					   LmConnection      *connection,
-					   LmMessage         *m,
-					   GossipRoster      *roster);
-static gint  roster_iter_compare_func     (GtkTreeModel      *model,
-					   GtkTreeIter       *iter_a,
-					   GtkTreeIter       *iter_b,
-					   gpointer           user_data);
-static void  roster_clear                 (GossipRoster      *roster);
-static void  roster_update_user           (GossipRoster      *roster, 
-					   GossipJID         *jid,
-					   const gchar       *name,
-					   const gchar       *subscription,
-					   const gchar       *ask,
-					   const gchar       *group);
-static void  roster_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
-					   GtkCellRenderer   *cell,
-					   GtkTreeModel      *tree_model,
-					   GtkTreeIter       *iter,
-					   GossipRoster      *roster);
-static void  roster_name_cell_data_func   (GtkTreeViewColumn *tree_column,
-					   GtkCellRenderer   *cell,
-					   GtkTreeModel      *tree_model,
-					   GtkTreeIter       *iter,
-					   GossipRoster      *roster);
-static GossipRosterItem * roster_item_new (GossipJID         *jid,
-					   const gchar       *name,
-					   const gchar       *subscription,
-					   const gchar       *ask,
-					   const gchar       *group,
-					   gboolean           is_group);
-static void roster_item_update            (GossipRosterItem  *item,
-					   GossipJID         *jid,
-					   const gchar       *name,
-					   const gchar       *subscription,
-					   const gchar       *ask,
-					   const gchar       *group);
+roster_iq_handler                            (LmMessageHandler  *handler,
+					      LmConnection      *connection,
+					      LmMessage         *m,
+					      GossipRoster      *roster);
+static gint     roster_iter_compare_func     (GtkTreeModel      *model,
+					      GtkTreeIter       *iter_a,
+					      GtkTreeIter       *iter_b,
+					      gpointer           user_data);
+static void     roster_clear                 (GossipRoster      *roster);
+static void     roster_update_user           (GossipRoster      *roster, 
+					      GossipJID         *jid,
+					      const gchar       *name,
+					      const gchar       *subscription,
+					      const gchar       *ask,
+					      const gchar       *group);
+static void     roster_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
+					      GtkCellRenderer   *cell,
+					      GtkTreeModel      *tree_model,
+					      GtkTreeIter       *iter,
+					      GossipRoster      *roster);
+static void     roster_name_cell_data_func   (GtkTreeViewColumn *tree_column,
+					      GtkCellRenderer   *cell,
+					      GtkTreeModel      *tree_model,
+					      GtkTreeIter       *iter,
+					      GossipRoster      *roster);
+static GossipRosterItem * roster_item_new    (GossipJID         *jid,
+					      const gchar       *name,
+					      const gchar       *subscription,
+					      const gchar       *ask,
+					      const gchar       *group,
+					      gboolean           is_group);
+static void     roster_item_update           (GossipRosterItem  *item,
+					      GossipJID         *jid,
+					      const gchar       *name,
+					      const gchar       *subscription,
+					      const gchar       *ask,
+					      const gchar       *group);
+static void     roster_item_free             (GossipRosterItem  *item);
+static gboolean roster_str_equal             (gconstpointer      a,
+					      gconstpointer      b);
+static guint    roster_str_hash              (gconstpointer      key);
 
-static void  roster_item_free             (GossipRosterItem  *item);
+
 
 #define GIF_CB(x) ((GtkItemFactoryCallback)(x))
 
@@ -568,7 +567,7 @@ roster_create_store (GossipRoster *roster)
 		g_hash_table_destroy (priv->contacts);
 	}
 
-	priv->contacts = g_hash_table_new_full (g_str_hash, g_str_equal, 
+	priv->contacts = g_hash_table_new_full (roster_str_hash, roster_str_equal, 
 						g_free, (GDestroyNotify) roster_item_free);
 	
 	store = gtk_tree_store_new (NUMBER_OF_COLS, G_TYPE_POINTER);
@@ -1341,5 +1340,26 @@ gossip_roster_get_groups (GossipRoster *roster)
 	return priv->groups;
 }
 
+static gboolean
+roster_str_equal (gconstpointer a, gconstpointer b)
+{
+	const gchar *string_a = a;
+	const gchar *string_b = b;
 
+	return g_strcasecmp (string_a, string_b) == 0;
+}
 
+static guint
+roster_str_hash (gconstpointer key)
+{
+	const gchar *p = key;
+	guint     h = g_ascii_tolower (*p);
+
+	if (h) {
+		for (p += 1; *p != '\0'; p++) {
+			h = (h << 5) - h + g_ascii_tolower (*p);
+		}
+	}
+
+	return h;
+}

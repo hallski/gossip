@@ -1,13 +1,13 @@
 # Gossip
 # Copyright (C) 2002-2003 Richard Hult.
-# Richard Hult <rhult@codefactory.se>
+# Richard Hult <richard@imendio.com>
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip 0.1\n"
 "POT-Creation-Date: 2003-02-02 17:22+0100\n"
 "PO-Revision-Date: 2002-07-22 22:35+01\n"
-"Last-Translator: Richard Hult <rhult@codefactory.se>\n"
+"Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -479,7 +479,7 @@ msgstr "Ta bort"
 
 #: ui/connect.glade.h:17
 msgid "Resource:"
-msgstr "_Resurs:"
+msgstr "Resurs:"
 
 #: ui/connect.glade.h:18 ui/group-chat.glade.h:16
 msgid "Server:"
