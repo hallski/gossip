@@ -1156,7 +1156,7 @@ app_iq_handler (LmMessageHandler *handler,
 			lm_message_node_set_attributes (node,
 							"xmlns", namespace,
 							NULL);
-			lm_message_node_add_child (node, "name", "Gossip");
+			lm_message_node_add_child (node, "name", "Imendio Gossip");
 			lm_message_node_add_child (node, "version", VERSION);
 			
 			uname (&osinfo);

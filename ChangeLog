@@ -1,3 +1,11 @@
+2004-07-07  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-about.c: (gossip_about_new):
+	* src/gossip-app.c: (app_iq_handler):
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	- Some branding...
+
 2004-07-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-utils.c: 

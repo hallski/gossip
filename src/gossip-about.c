@@ -325,7 +325,7 @@ gossip_about_new (void)
 
 	data = g_new0 (AboutData, 1);
 
-	data->title = "Gossip " VERSION;
+	data->title = "Imendio Gossip " VERSION;
 
 	data->written_by =
 		"Mikael Hallendal\n"
