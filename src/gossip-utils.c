@@ -759,25 +759,35 @@ gossip_text_view_append_normal_message (GtkTextView *text_view,
 	}
 }
 
+static void
+text_view_realize_cb (GtkWidget *widget, gpointer data)
+{
+	GdkWindow *win;
+
+	win = gtk_text_view_get_window (GTK_TEXT_VIEW (widget), GTK_TEXT_WINDOW_TOP);
+	gdk_window_set_background (win, &widget->style->base[GTK_STATE_NORMAL]);
+
+	win = gtk_text_view_get_window (GTK_TEXT_VIEW (widget), GTK_TEXT_WINDOW_BOTTOM);
+	gdk_window_set_background (win, &widget->style->base[GTK_STATE_NORMAL]);
+}
+
 void
 gossip_text_view_set_margin (GtkTextView *tv, gint margin)
 {
 	GtkWidget *widget;
-	GdkWindow *win;
 
 	widget = GTK_WIDGET (tv);
-	
+
 	gtk_text_view_set_left_margin (tv, margin);
 	gtk_text_view_set_right_margin (tv, margin);
 	
 	gtk_text_view_set_border_window_size (tv, GTK_TEXT_WINDOW_TOP, margin);
 	gtk_text_view_set_border_window_size (tv, GTK_TEXT_WINDOW_BOTTOM, margin);
-	
-	win = gtk_text_view_get_window (tv, GTK_TEXT_WINDOW_TOP);
-	gdk_window_set_background (win, &widget->style->base[GTK_STATE_NORMAL]);
 
-	win = gtk_text_view_get_window (tv, GTK_TEXT_WINDOW_BOTTOM);
-	gdk_window_set_background (win, &widget->style->base[GTK_STATE_NORMAL]);
+	g_signal_connect (tv,
+			  "realize",
+			  G_CALLBACK (text_view_realize_cb),
+			  NULL);
 }
 
 static gboolean
@@ -944,6 +954,10 @@ static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_TOUNGE,      ":-p", 0 },
 	{ GOSSIP_SMILEY_TOUNGE,      ":P", 0 },
 	{ GOSSIP_SMILEY_TOUNGE,      ":-P", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      ";p", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      ";-p", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      ";P", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      ";-P", 0 },
 	{ GOSSIP_SMILEY_SHOCKED,     ":o", 0 },
 	{ GOSSIP_SMILEY_SHOCKED,     ":O", 0 },
 	{ GOSSIP_SMILEY_COOL,        "8)", 0 },

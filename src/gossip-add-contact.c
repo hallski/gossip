@@ -70,46 +70,48 @@ enum {
 	NUM_OF_COLS
 };
 
-static void      add_contact_dialog_destroyed (GtkWidget        *unused,
-					       GossipAddContact *contact);
-static void      add_contact_cancel        (GtkWidget        *unused,
-					    GossipAddContact *contact);
-static void      add_contact_prepare_page_1        (GnomeDruidPage   *page,
-					    GnomeDruid       *druid,
-					    GossipAddContact *contact);
-static void      add_contact_prepare_page_2        (GnomeDruidPage   *page,
-					    GnomeDruid       *druid,
-					    GossipAddContact *contact);
-static LmHandlerResult * 
-add_contact_page_2_vcard_handler            (LmMessageHandler *handler,
-					     LmConnection     *connection,
-					     LmMessage        *message,
-					     GossipAddContact *contact);
 
-static void      add_contact_prepare_page_3        (GnomeDruidPage   *page,
-					    GnomeDruid       *druid,
-					    GossipAddContact *contact);
-static void      add_contact_prepare_page_last (GnomeDruidPage   *page,
-						GnomeDruid       *druid,
-						GossipAddContact *contact);
-static void      add_contact_last_page_finished (GnomeDruidPage   *page,
+static void     add_contact_dialog_destroyed    (GtkWidget        *unused,
+						 GossipAddContact *contact);
+static void     add_contact_cancel              (GtkWidget        *unused,
+						 GossipAddContact *contact);
+static void     add_contact_prepare_page_1      (GnomeDruidPage   *page,
 						 GnomeDruid       *druid,
 						 GossipAddContact *contact);
-
-static void      add_contact_1_id_entry_changed (GtkEntry *entry,
+static void     add_contact_prepare_page_2      (GnomeDruidPage   *page,
+						 GnomeDruid       *druid,
 						 GossipAddContact *contact);
-static void      add_contact_1_search_button_clicked (GtkButton *button,
-						      GossipAddContact *contact);
-static void      add_contact_2_nick_entry_changed  (GtkEntry *entry,
-						    GossipAddContact *contact);
-static gboolean  add_contact_2_nick_entry_key_pressed (GtkWidget *entry,
-						       GdkEvent  *event,
-						       GossipAddContact *contact);
-static void      add_contact_2_group_entry_text_inserted (GtkEntry         *entry, 
-							  const gchar      *text,
-							  gint              length,
-							  gint             *position,
-							  GossipAddContact *contact);
+static LmHandlerResult * 
+add_contact_page_2_vcard_handler                (LmMessageHandler *handler,
+						 LmConnection     *connection,
+						 LmMessage        *message,
+						 GossipAddContact *contact);
+static void add_contact_prepare_page_3          (GnomeDruidPage   *page,
+						 GnomeDruid       *druid,
+						 GossipAddContact *contact);
+static void add_contact_prepare_page_last       (GnomeDruidPage   *page,
+						 GnomeDruid       *druid,
+						 GossipAddContact *contact);
+static void add_contact_last_page_finished      (GnomeDruidPage   *page,
+						 GnomeDruid       *druid,
+						 GossipAddContact *contact);
+static void add_contact_1_id_entry_changed      (GtkEntry         *entry,
+						 GossipAddContact *contact);
+static void add_contact_1_search_button_clicked (GtkButton        *button,
+						 GossipAddContact *contact);
+static void add_contact_2_nick_entry_changed    (GtkEntry         *entry,
+						 GossipAddContact *contact);
+static gboolean
+add_contact_2_nick_entry_key_pressed            (GtkWidget        *entry,
+						 GdkEvent         *event,
+						 GossipAddContact *contact);
+static void
+add_contact_2_group_entry_text_inserted         (GtkEntry         *entry,
+						 const gchar      *text,
+						 gint              length,
+						 gint             *position,
+						 GossipAddContact *contact);
+
 
 static void
 add_contact_dialog_destroyed (GtkWidget *unused, GossipAddContact *contact)
@@ -120,7 +122,10 @@ add_contact_dialog_destroyed (GtkWidget *unused, GossipAddContact *contact)
 static void
 add_contact_cancel (GtkWidget *widget, GossipAddContact *contact)
 {
-	gtk_widget_destroy (contact->dialog);
+	/* FIXME: destroy when we can cancel replies. */
+
+	/*gtk_widget_destroy (contact->dialog);*/
+	gtk_widget_hide (contact->dialog);
 }
 
 static void
@@ -334,7 +339,10 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 	lm_connection_send (contact->connection, m, NULL);
 	lm_message_unref (m);
 
-	gtk_widget_destroy (contact->dialog);
+	/* FIXME: destroy when we can cancel replies. */
+
+	/* gtk_widget_destroy (contact->dialog); */
+	gtk_widget_hide (contact->dialog);
 }
 
 static void

@@ -292,7 +292,10 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 			  G_CALLBACK (contact_info_dialog_destroy_cb),
 			  info);
 
-	tmp_str = g_strdup_printf (_("Information about %s"), name);
+	tmp_str = g_strdup_printf (_("Contact Information for %s"), name);
+
+	gtk_window_set_title (GTK_WINDOW (info->dialog), tmp_str);
+	
 	str = g_strdup_printf ("<b>%s</b>", tmp_str);
 	g_free (tmp_str);
 	gtk_label_set_markup (GTK_LABEL (info->title_label), str);

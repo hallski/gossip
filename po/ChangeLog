@@ -1,3 +1,7 @@
+2003-07-10  Richard Hult  <richard@imendio.com>
+
+	* es.po: Added from Ezequiel Pérez.
+
 2003-07-09  Jordi Mallach  <jordi@sindominio.net>
 
 	* ca.po: Updated Catalan translation.
@@ -11,8 +15,6 @@
 	* nl.po: Dutch translation added.
 
 2003-07-07  Mikael Hallendal  <micke@imendio.com>
-
-	reviewed by: <delete if not using a buddy>
 
 	* ca.po:
 	* it.po:

@@ -1,3 +1,38 @@
+2003-07-10  Richard Hult  <richard@imendio.com>
+
+	* configure.in: Add es.
+
+2003-07-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-group-chat.c (gossip_group_chat_new): Don't show the
+	window until we know things went OK.
+	(group_chat_presence_handler): Remove message after handling it,
+	fix bug in sub type checking code, handle errors. Show window if
+	it's the first presence message.
+	(group_chat_message_handler): Same fixes as above.
+	(group_chat_iter_compare_func): Do case insensitive compare.
+	
+	* src/gossip-chat.c (chat_message_handler): Check that the message
+	is for the chat before checking for errors. Plug leak.
+	(chat_create): Set margin before showing the window.
+	
+	* src/gossip-utils.c: Add a few more smiley patterns.
+	(gossip_text_view_set_margin): Make this work when the theme
+	changes and if set before a widget is shown.
+
+2003-07-08  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-info.c (gossip_contact_info_new): Add window
+	title.
+
+	* src/gossip-add-contact.c (add_contact_cancel)
+	(add_contact_last_page_finished): Hide the window instead of
+	destroying, workaround until we implement cancelling of reply
+	messages.
+
+	* src/gossip-chat.c (chat_dialog_send): Send messages to the full
+	JID, don't strip out the resource.
+
 2003-07-08  Miloslav Trmac  <mitr@volny.cz>
 
 	* configure.in: Added cs (Czech) to ALL_LINGUAS.

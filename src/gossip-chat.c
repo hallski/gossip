@@ -227,10 +227,10 @@ chat_create (GossipApp *app, GossipJID *jid)
 			  G_CALLBACK (chat_focus_in_event_cb),
 			  chat);
 
-	gtk_widget_show (chat->dialog);
-
 	gossip_text_view_set_margin (GTK_TEXT_VIEW (chat->text_view), 3);
 	gossip_text_view_setup_tags (GTK_TEXT_VIEW (chat->text_view));
+
+	gtk_widget_show (chat->dialog);
 	
 	gtk_widget_grab_focus (chat->input_entry);
 
@@ -367,7 +367,7 @@ chat_dialog_send (GossipChat *chat, const gchar *msg)
 
 	g_free (nick);
 
-	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (chat->jid),
+	m = lm_message_new_with_sub_type (gossip_jid_get_full (chat->jid),
 					  LM_MESSAGE_TYPE_MESSAGE,
 					  LM_MESSAGE_SUB_TYPE_CHAT);
 	lm_message_node_add_child (m->node, "body", msg);
@@ -431,7 +431,20 @@ chat_message_handler (LmMessageHandler *handler,
 
 	from = lm_message_node_get_attribute (m->node, "from");
 
+	jid = gossip_jid_new (from);
+
+	d(g_print ("Incoming message:: '%s' ?= '%s'", 
+		   gossip_jid_get_without_resource (jid),
+		   gossip_jid_get_without_resource (chat->jid)));
+	
+	if (!gossip_jid_equals_without_resource (jid, chat->jid)) {
+		gossip_jid_unref (jid);
+
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+	
 	type = lm_message_get_sub_type (m);
+
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
 		GtkWidget *dialog;
 		gchar     *tmp, *str, *msg;
@@ -464,21 +477,11 @@ chat_message_handler (LmMessageHandler *handler,
 		gtk_widget_destroy (dialog);
 
 		g_free (msg);
-		
+		gossip_jid_unref (jid);
+
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 		
-	jid = gossip_jid_new (from);
-
-	d(g_print ("Incoming message:: '%s' ?= '%s'", 
-		   gossip_jid_get_without_resource (jid),
-		   gossip_jid_get_without_resource (chat->jid)));
-	
-	if (!gossip_jid_equals_without_resource (jid, chat->jid)) {
-		gossip_jid_unref (jid);
-		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	}
-
 	/* The has-toplevel-focus is new in gtk 2.2 so if we don't find it, we
 	 * pretend that the window doesn't have focus (i.e. always play sounds.
 	 */
@@ -508,8 +511,7 @@ chat_message_handler (LmMessageHandler *handler,
 
 	if (chat->nick) {
 		nick = g_strdup (chat->nick);
-	}
-	else {
+	} else {
 		nick = g_strdup (gossip_roster_get_nick_from_jid (gossip_app_get_roster (), jid));
 	}
 	if (!nick) {
@@ -523,6 +525,7 @@ chat_message_handler (LmMessageHandler *handler,
 					      body);
 
 	g_free (nick);
+	gossip_jid_unref (jid);
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
