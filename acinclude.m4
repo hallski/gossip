@@ -1,6 +1,6 @@
 dnl Turn on the additional warnings last, so -Werror doesn't affect other tests.
 
-AC_DEFUN([MRP_COMPILE_WARNINGS],[
+AC_DEFUN([IMENDIO_COMPILE_WARNINGS],[
    if test -f $srcdir/autogen.sh; then
 	default_compile_warnings="error"
     else

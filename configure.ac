@@ -1,13 +1,17 @@
 AC_INIT(Imendio Gossip, 0.8.90 , gossip)
 AC_PREREQ(2.59)
-AC_COPYRIGHT([Copyright (C) 2003-2005 Imendio HB])
+AC_COPYRIGHT([Copyright (C) 2003-2005 Imendio AB])
+
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(1.9 -Wall check-news dist-bzip2 no-define)
 
+AM_MAINTAINER_MODE
+
 AC_ISC_POSIX
 AC_PROG_CC
-AC_STDC_HEADERS
+AC_HEADER_STDC
+
 AM_PROG_LIBTOOL
 AM_PATH_GLIB_2_0 
 AC_PATH_X
@@ -15,7 +19,7 @@ AC_PATH_X
 AC_PROG_INTLTOOL
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 
-MRP_COMPILE_WARNINGS
+IMENDIO_COMPILE_WARNINGS
 
 AM_GCONF_SOURCE_2
 
@@ -57,8 +61,8 @@ dnl spec file.
 
 AC_SUBST(LIBXML_REQUIRED, 2.4.7)
 AC_SUBST(LIBXSLT_REQUIRED, 1.0.0)
-AC_SUBST(GLIB_REQUIRED, 2.4.0)
-AC_SUBST(GTK_REQUIRED, 2.4.0)
+AC_SUBST(GLIB_REQUIRED, 2.6.0)
+AC_SUBST(GTK_REQUIRED, 2.6.0)
 AC_SUBST(LIBGLADE_REQUIRED, 2.0.0)
 AC_SUBST(LOUDMOUTH_REQUIRED, 0.17)
 AC_SUBST(GCONF_REQUIRED, 1.2.0)
@@ -104,12 +108,12 @@ XSS_LIBS="no"
 XSS_HEADERS="no"
 AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
 AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
-if test \! "$XSS_LIBS" = "no"; then
+if test "x$XSS_LIBS" != "xno"; then
    AC_TRY_COMPILE([
 #include <X11/extensions/scrnsaver.h>
-		],[],[enable_xss=no],[
+		],[],[
 		AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
-		])
+		], [enable_xss=no])
 else
     XSS_LIBS=""
     enable_xss=no
