@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-12-14 13:39+0100\n"
-"PO-Revision-Date: 2003-12-14 13:40+0100\n"
+"POT-Creation-Date: 2003-12-19 19:33+0100\n"
+"PO-Revision-Date: 2003-12-19 19:37+0100\n"
 "Last-Translator: Данило Шеган <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -54,57 +54,81 @@ msgid "Height of main window"
 msgstr "Висина главног прозора"
 
 #: gossip.schemas.in.h:8
+msgid "Hide main window"
+msgstr "Сакриј главни прозор"
+
+#: gossip.schemas.in.h:9
+msgid "Hide the main window."
+msgstr "Сакриј главни прозор."
+
+#: gossip.schemas.in.h:10
 msgid "Message to show before going away"
 msgstr "Порука која се приказује пре одласка"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "Not at the computer"
 msgstr "Нисам за рачунаром"
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "Show offline contacts"
 msgstr "Прикажи неповезане контакте"
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
+msgid "The X position of the main window."
+msgstr "Водоравни положај главног прозора."
+
+#: gossip.schemas.in.h:14
+msgid "The Y position of the main window."
+msgstr "Усправни положај главног прозора."
+
+#: gossip.schemas.in.h:15
 msgid "The height of the main window."
 msgstr "Висина главног прозора."
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:16
 msgid "The width of the main window."
 msgstr "Ширина главног прозора."
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:17
 msgid "Use graphical smileys"
 msgstr "Прикажи графички смешак"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:18
 msgid "Use notification sounds"
 msgstr "Користи звук за напомене"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:19
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Да ли да претвори смешке у графичке слике у чаврљању."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:20
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Да ли да пусти звук када порука стигне."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:21
 msgid "Whether or not to play sounds when away."
 msgstr "Да ли да пусти звук када је одсутан."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:22
 msgid "Whether or not to play sounds when busy."
 msgstr "Да ли да пусти звук када је заузет."
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:23
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Да ли да прикажем неповезане контакте у списку контаката."
 
-#: gossip.schemas.in.h:20
-msgid "Width of main window"
+#: gossip.schemas.in.h:24
+msgid "Width of the main window"
 msgstr "Ширина главног прозора"
+
+#: gossip.schemas.in.h:25
+msgid "X position of main window"
+msgstr "Водоравни положај главног прозора"
+
+#: gossip.schemas.in.h:26
+msgid "Y position of main window"
+msgstr "Усправни положај главног прозора"
 
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
@@ -124,19 +148,19 @@ msgstr "%s ће бити додат у вашу листу другара."
 msgid "Just about to leave..."
 msgstr "Управо одлазим..."
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:438
 msgid "_Show Contact List"
 msgstr "_Прикажи списак контаката"
 
-#: src/gossip-app.c:442
+#: src/gossip-app.c:447
 msgid "_Hide Contact List"
 msgstr "_Сакриј списак контаката"
 
-#: src/gossip-app.c:455 ui/main.glade.h:59
+#: src/gossip-app.c:460 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "Пошаљи по_руку..."
 
-#: src/gossip-app.c:470
+#: src/gossip-app.c:475
 msgid "_Quit"
 msgstr "_Изађи"
 
@@ -145,63 +169,63 @@ msgstr "_Изађи"
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:572
+#: src/gossip-app.c:596
 msgid "translator_credits"
 msgstr "Дејан Матијевић <dejan@ns.sympatico.ca>"
 
-#: src/gossip-app.c:584
+#: src/gossip-app.c:608
 msgid "A Jabber Client for GNOME"
 msgstr "Џабер клијент за Гном"
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:615
 msgid "Gossip Website"
 msgstr "Веб страница Чаврљања"
 
-#: src/gossip-app.c:695
+#: src/gossip-app.c:734
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Унесите кориснички ID од особе којој желите да пошањете поруку за чаврљање."
 
-#: src/gossip-app.c:700 ui/main.glade.h:83
+#: src/gossip-app.c:739 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Разговор"
 
-#: src/gossip-app.c:962
+#: src/gossip-app.c:998
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s жели обавештења о вашем присуству."
 
-#: src/gossip-app.c:1197
+#: src/gossip-app.c:1241
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Ви сте развезани са сервера.  Желители да се поново повежете?"
 
-#: src/gossip-app.c:1340
+#: src/gossip-app.c:1391
 msgid "Make sure that your account information is correct."
 msgstr "Проверите да ли су подаци о налогу исправни."
 
-#: src/gossip-app.c:1341
+#: src/gossip-app.c:1392
 msgid "The server may currently be unavailable."
 msgstr "Можда је сервер тренутно недоступан."
 
-#: src/gossip-app.c:1746
+#: src/gossip-app.c:1794
 msgid "Gossip, Jabber Client"
 msgstr "Чаврљање, Џабер Клијент"
 
-#: src/gossip-app.c:1922
+#: src/gossip-app.c:1970
 #, c-format
 msgid "New message from %s"
 msgstr "Нова порука од %s"
 
-#: src/gossip-app.c:2476
+#: src/gossip-app.c:2524
 msgid "Custom Message..."
 msgstr "Посебна порука..."
 
-#: src/gossip-app.c:2494
+#: src/gossip-app.c:2542
 msgid "Custom Busy Message..."
 msgstr "Посебна порука за заузеће..."
 
-#: src/gossip-app.c:2501
+#: src/gossip-app.c:2549
 msgid "Leave..."
 msgstr "Напусти..."
 
