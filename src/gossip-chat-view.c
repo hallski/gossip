@@ -725,8 +725,8 @@ chat_view_is_scrolled_down (GossipChatView *view)
 		GtkAdjustment *vadj;
 		
 		vadj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sw));
-		
-		if (vadj->value < vadj->upper - vadj->page_size) {
+
+		if (vadj->value + vadj->page_size / 2 < vadj->upper - vadj->page_size) {
 			return FALSE;
 		}
 	}

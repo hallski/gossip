@@ -1,3 +1,10 @@
+2003-12-20  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.c (chat_view_is_scrolled_down): If we've
+	scrolled up just a tiny bit (half a page), treat that as if we've
+	scrolled down. This makes the scrolling behave nicer with the
+	expanding text entry.
+
 2003-12-20  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c:
