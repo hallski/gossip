@@ -244,10 +244,14 @@ add_contact_prepare_page_3 (GnomeDruidPage   *page,
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
-	gchar *str;
+	gchar *str, *tmp_str;
 	
-	str = g_strdup_printf (_("What request message do you want to send to <b>%s</b>"),
-			       gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry)));
+	tmp_str = g_strdup_printf ("<b>%s</b>",
+				   gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry)));
+	
+	str = g_strdup_printf (_("What request message do you want to send to %s?"),
+			       tmp_str);
+	g_free (tmp_str);
 
 	gtk_label_set_markup (GTK_LABEL (contact->three_message_label), str);
 	g_free (str);

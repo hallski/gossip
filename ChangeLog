@@ -1,7 +1,10 @@
 2003-06-23  Mikael Hallendal  <micke@imendio.com>
 
-	* src/gossip-contact-info.c:
-	(gossip_contact_info_new): 
+	* src/gossip-add-contact.c: (add_contact_prepare_page_3):
+	- Removed markup from translatable string and added question mark.
+	  Reported by Christian Rose.
+
+	* src/gossip-contact-info.c: (gossip_contact_info_new): 
 	- Removed markup from translatable string. Reported by Christian Rose.
 
 2003-06-18  Jordi Mallach  <jordi@sindominio.net>
