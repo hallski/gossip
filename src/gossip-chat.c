@@ -231,35 +231,35 @@ gossip_chat_init (GossipChat *chat)
 						LM_MESSAGE_TYPE_MESSAGE,
 						LM_HANDLER_PRIORITY_NORMAL);
 
-	g_signal_connect (roster,
-			  "item_presence_updated",
-			  G_CALLBACK (chat_item_presence_updated),
-			  chat);
+	g_signal_connect_object (roster,
+				 "item_presence_updated",
+				 G_CALLBACK (chat_item_presence_updated),
+				 chat, 0);
 
-	g_signal_connect (roster,
-			  "item_updated",
-			  G_CALLBACK (chat_item_updated),
-			  chat);
+	g_signal_connect_object (roster,
+				 "item_updated",
+				 G_CALLBACK (chat_item_updated),
+				 chat, 0);
 
-	g_signal_connect (roster,
-			  "item_removed",
-			  G_CALLBACK (chat_item_removed),
-			  chat);
+	g_signal_connect_object (roster,
+				 "item_removed",
+				 G_CALLBACK (chat_item_removed),
+				 chat, 0);
+	
+	g_signal_connect_object (roster,
+				 "item_added",
+				 G_CALLBACK (chat_item_added),
+				 chat, 0);
 
-	g_signal_connect (roster,
-			  "item_added",
-			  G_CALLBACK (chat_item_added),
-			  chat);
-
-	g_signal_connect (gossip_app_get (), 
-			  "connected",
-			  G_CALLBACK (chat_connected_cb),
-			  chat);
-
-	g_signal_connect (gossip_app_get (), 
-			  "disconnected",
-			  G_CALLBACK (chat_disconnected_cb),
-			  chat);
+	g_signal_connect_object (gossip_app_get (), 
+				 "connected",
+				 G_CALLBACK (chat_connected_cb),
+				 chat, 0);
+	
+	g_signal_connect_object (gossip_app_get (), 
+				 "disconnected",
+				 G_CALLBACK (chat_disconnected_cb),
+				 chat, 0);
 }
 
 static void

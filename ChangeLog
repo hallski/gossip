@@ -1,3 +1,9 @@
+2004-03-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c (gossip_chat_init): Use _connect_object so we
+	get disconnected when the data object dies. Fixes a rare crash on
+	exit.
+
 2004-03-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_idle_check_cb): Fix bug #135944, don't do
