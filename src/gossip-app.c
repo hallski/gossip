@@ -620,7 +620,7 @@ app_about_cb (GtkWidget *window,
 
 	g_object_unref (pixbuf);
 	
-	href = gnome_href_new ("http://www.imendio.com/projects/gossip/", _("Gossip Website"));
+	href = gnome_href_new ("http://gossip.imendio.org/", _("Gossip Website"));
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (priv->about)->vbox), href, FALSE, FALSE, 5);
 	gtk_widget_show (href);
 	
