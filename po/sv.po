@@ -10,8 +10,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-09-09 22:42+0200\n"
-"PO-Revision-Date: 2003-09-09 22:44+0200\n"
+"POT-Creation-Date: 2003-09-09 22:45+0200\n"
+"PO-Revision-Date: 2003-09-09 22:46+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1017,10 +1017,6 @@ msgstr "_Tidsstämpla alla meddelanden"
 #~ "Gossip kommer nu att försöka registrera kontot:\n"
 #~ "<b>%s</b>."
 
-#, fuzzy
-#~ msgid "Retrieve contact information for the user"
-#~ msgstr "Kontaktinformation för %s"
-
 #~ msgid "<b>Chat with: </b>"
 #~ msgstr "<b>Chatt med: </b>"
 
@@ -1054,25 +1050,14 @@ msgstr "_Tidsstämpla alla meddelanden"
 #~ msgid "_Remove"
 #~ msgstr "Ta _bort"
 
-#, fuzzy
 #~ msgid "Register..."
-#~ msgstr "Re_gistrera..."
+#~ msgstr "Registrera..."
 
-#, fuzzy
 #~ msgid "Resource:"
-#~ msgstr "_Resurs:"
+#~ msgstr "Resurs:"
 
-#, fuzzy
 #~ msgid "User name:"
-#~ msgstr "An_vändarnamn:"
-
-#, fuzzy
-#~ msgid "<b>Advanced Account Settings</b>"
-#~ msgstr "<b>Tillgängliga konton</b>"
-
-#, fuzzy
-#~ msgid "<b>General Account Settings</b>"
-#~ msgstr "<b>Kontoinformation</b>"
+#~ msgstr "Användarnamn:"
 
 #~ msgid "<b>What account do you want to use for this connection?</b>"
 #~ msgstr "<b>Vilket konto vill du använda för denna anslutning?</b>"
@@ -1080,9 +1065,8 @@ msgstr "_Tidsstämpla alla meddelanden"
 #~ msgid "<b>_Account:</b>"
 #~ msgstr "<b>_Konto:</b>"
 
-#, fuzzy
 #~ msgid "Account name:"
-#~ msgstr "_Kontonamn:"
+#~ msgstr "Kontonamn:"
 
 #~ msgid "Gossip - Connect"
 #~ msgstr "Gossip - Anslut"
