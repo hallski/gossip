@@ -85,12 +85,6 @@
 /* Minimum width of roster window if something goes wrong. */
 #define MIN_WIDTH 50
 
-#undef LEAVE_SLACK
-#undef BACK_SLACK
-#undef BACK_SLACK_NOFLASH
-#define	LEAVE_SLACK 5
-#define	BACK_SLACK 5
-#define	BACK_SLACK_NOFLASH 3
 
 #define d(x)
 

@@ -1,3 +1,7 @@
+2004-02-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: Remove debugging defines for leave/back times.
+
 2004-02-07  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_new_message): Grab focus on the entry.
