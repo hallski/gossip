@@ -446,8 +446,6 @@ chat_window_has_toplevel_focus (GossipChatWindow *window)
 	return focus;
 }
 
-#define TAB_MIN_WIDTH 130
-
 static GtkWidget *
 chat_window_create_label (GossipChatWindow *window,
 			  GossipChat       *chat)
@@ -482,9 +480,6 @@ chat_window_create_label (GossipChatWindow *window,
 	name_label = gtk_label_new (name);
 
 	chat_window_update_tooltip (window, chat);
-	
-	/* Set minimum size. */
-	gtk_widget_set_size_request (hbox, TAB_MIN_WIDTH, -1);
 	
 	gtk_misc_set_padding (GTK_MISC (name_label), 2, 0);
 	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);

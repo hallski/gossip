@@ -1,3 +1,8 @@
+2004-08-08  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_create_label):
+	- Don't set static width on tabs.
+
 2004-07-29  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c: (chat_input_key_press_event_cb):
