@@ -1,3 +1,11 @@
+2005-01-02  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-jabber.c: (gossip_jabber_init):
+	- Set own contact name
+	* src/gossip-session.c: (gossip_session_get_nickname):
+	- Get name from JID as we used to do.
+	- Fixes bug #162564
+
 2004-12-31  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jabber.c: (jabber_presence_handler):

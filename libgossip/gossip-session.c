@@ -654,10 +654,16 @@ gossip_session_get_groups (GossipSession *session)
 const gchar *
 gossip_session_get_nickname (GossipSession *session)
 {
-	/* FIXME: Implement */
-	/* Store nickname in GConf when setting it through the vcard dialog */
-	
-	return "micke";
+	GossipSessionPriv *priv;
+	GossipContact     *contact;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), "");
+
+	priv = GET_PRIV (session);
+
+	contact = gossip_jabber_get_own_contact (priv->default_jabber);
+
+	return gossip_contact_get_name (contact);
 }
 
 gboolean

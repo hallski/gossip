@@ -74,6 +74,4 @@ void           gossip_jabber_send_unsubscribed         (GossipJabber            
 void           gossip_jabber_subscription_allow_all    (GossipJabber             *jabber);
 void           gossip_jabber_subscription_disallow_all (GossipJabber             *jabber);
 
-
-
 #endif /* __GOSSIP_JABBER_H__ */

@@ -194,6 +194,7 @@ gossip_jabber_init (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
 	LmMessageHandler *handler;
+	gchar            *name;
 
 	priv = g_new0 (GossipJabberPriv, 1);
 	jabber->priv = priv;
@@ -208,8 +209,12 @@ gossip_jabber_init (GossipJabber *jabber)
 
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER);
 	
-	gossip_contact_set_id (priv->contact, 
-			       gossip_jid_get_without_resource (priv->account->jid));
+	name = gossip_jid_get_part_name (priv->account->jid);
+	g_object_set (priv->contact,
+		      "id", gossip_jid_get_without_resource (priv->account->jid),
+		      "name", name,
+		      NULL);
+	g_free (name);
 
 	priv->connection = lm_connection_new (priv->account->server);
 	lm_connection_set_port (priv->connection, priv->account->port);
