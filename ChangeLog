@@ -1,3 +1,17 @@
+2003-07-01  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-info.c (contact_info_vcard_reply_cb): Don't
+	try to set NULL text in the text buffer.
+
+	* src/gossip-roster.c (roster_menu_rename_cb): Fix comment. 
+	(roster_menu_info_cb): Remove debug output.
+
+	* src/gossip-contact-info.c (contact_info_dialog_destroy_cb)
+	(gossip_contact_info_new): Free data when the dialog is destroyed.
+	Make debugging output optional.
+	(contact_info_dialog_close_cb): Hide the dialog (we should destroy
+	it when there's a way to cancel a pending reply).
+
 2003-06-30  Richard Hult  <richard@imendio.com>
 
 	* ui/chat.glade: 

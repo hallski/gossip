@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,10 +28,12 @@
 #include "gossip-utils.h"
 #include "gossip-contact-info.h"
 
+#define d(x) 
+
 struct _GossipContactInfo {
 	GossipApp    *app;
 	LmConnection *connection;
-	
+
 	GtkWidget *dialog;
 	GtkWidget *title_label;
 	GtkWidget *personal_not_avail_label;
@@ -62,6 +65,24 @@ static void contact_info_dialog_close_cb     (GtkWidget         *widget,
 					      GossipContactInfo *info);
 
 static void
+contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
+{
+	/* FIXME: Need a way to cancel pending replies from loudmouth here...
+	 */
+#if 0
+	if (info->vcard_handler) {
+		g_print ("Cancelled vcard: %d\n",
+			 lm_connection_cancel_... (info->connection, info->vcard_handler, NULL));
+	}
+	if (info->version_handler) {
+		g_print ("Cancelled version: %d\n",
+			 lm_connection_cancel_... (info->connection, info->version_handler, NULL));
+	}
+#endif	
+	g_free (info);
+}
+
+static void
 contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 {
 	LmMessage        *m;
@@ -79,7 +100,7 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 					  
 	if (!lm_connection_send_with_reply (info->connection, m,
 					    handler, &error)) {
-		g_print ("Error while sending: %s\n", error->message);
+		d(g_print ("Error while sending: %s\n", error->message));
 		lm_message_unref (m);
 		lm_message_handler_unref (handler);
 		return;
@@ -87,7 +108,7 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 
 	lm_message_unref (m);
 	lm_message_handler_unref (handler);
-
+	
 	m = lm_message_new (gossip_jid_get_full (jid), LM_MESSAGE_TYPE_IQ);
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:version");
@@ -97,7 +118,7 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 
 	if (!lm_connection_send_with_reply (info->connection, m,
 					    handler, &error)) {
-		g_print ("Error while sending: %s\n", error->message);
+		d(g_print ("Error while sending: %s\n", error->message));
 		lm_message_unref (m);
 		lm_message_handler_unref (handler);
 		return;
@@ -108,11 +129,12 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 }
 
 static void
-contact_info_dialog_close_cb (GtkWidget *widget, GossipContactInfo *dialog)
+contact_info_dialog_close_cb (GtkWidget *widget, GossipContactInfo *info)
 {
-	//GtkWidget *window;
+	/* FIXME: use this instead when we can cancel pending replies in
+	 * loudmouth: gtk_widget_destroy (info->dialog); */
 
-	/* Free stuff and close window */
+	gtk_widget_hide (info->dialog);
 }
 
 static LmHandlerResult
@@ -123,31 +145,34 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 {
 	LmMessageNode *vCard, *node;
 
-	g_print ("Got a vcard response\n");
-	
+	d(g_print ("Got a vcard response\n"));
+
 	vCard = lm_message_node_get_child (m->node, "vCard");
 	if (!vCard) {
-		g_print ("No vCard node\n");
+		d(g_print ("No vCard node\n"));
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
 	node = lm_message_node_get_child (vCard, "DESC");
 	if (node) {
 		GtkTextBuffer *buffer;
-		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (info->description_textview));
-		gtk_text_buffer_set_text (buffer, node->value, -1);
+
+		if (node->value) {
+			buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (info->description_textview));
+			gtk_text_buffer_set_text (buffer, node->value, -1);
+		}
 	} else {
 		gtk_widget_set_sensitive (info->description_textview, FALSE);
 	}
 
 	node = lm_message_node_get_child (vCard, "N");
 	if (node) {
-		g_print ("Found the 'N' tag\n");
+		d(g_print ("Found the 'N' tag\n"));
 	}
 
 	node = lm_message_node_get_child (vCard, "ADR");
 	if (node) {
-		g_print ("Found the 'ADR' tag\n");
+		d(g_print ("Found the 'ADR' tag\n"));
 	}
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -162,10 +187,10 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	LmMessageNode *query, *node;
 	GtkWidget     *name_label, *value_label;
 
-	g_print ("Version reply\n");
+	d(g_print ("Version reply\n"));
 	query = lm_message_node_get_child (m->node, "query");
 	if (!query) {
-		g_print ("No query node\n");
+		d(g_print ("No query node\n"));
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
@@ -175,18 +200,22 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	if (node) {
 		name_label = gtk_label_new (_("Name:"));
 		value_label = gtk_label_new (node->value);
-	
+
+		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
+		gtk_misc_set_alignment (GTK_MISC (value_label), 0, 0.5);
+		
 		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
 					   name_label,
 					   0, 1, 
 					   0, 1);
+		
 		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
 					   value_label,
 					   1, 2, 
 					   0, 1);
 	}
 	else {
-		g_print ("No name\n");
+		d(g_print ("No name\n"));
 	}
 
 	node = lm_message_node_get_child (query, "version");
@@ -194,6 +223,9 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 		name_label = gtk_label_new (_("Version:"));
 		value_label = gtk_label_new (node->value);
 	
+		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
+		gtk_misc_set_alignment (GTK_MISC (value_label), 0, 0.5);
+		
 		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
 					   name_label,
 					   0, 1,
@@ -208,7 +240,10 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	if (node) {
 		name_label = gtk_label_new (_("Operating system:"));
 		value_label = gtk_label_new (node->value);
-	
+		
+		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
+		gtk_misc_set_alignment (GTK_MISC (value_label), 0, 0.5);
+		
 		gtk_table_attach_defaults (GTK_TABLE (info->client_table),
 					   name_label,
 					   0, 1, 
@@ -251,6 +286,11 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 				      "close_button", &info->close_button,
 				      "description_textview", &info->description_textview,
 				      NULL);
+
+	g_signal_connect (info->dialog,
+			  "destroy",
+			  G_CALLBACK (contact_info_dialog_destroy_cb),
+			  info);
 
 	tmp_str = g_strdup_printf (_("Information about %s"), name);
 	str = g_strdup_printf ("<b>%s</b>", tmp_str);

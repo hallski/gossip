@@ -436,8 +436,6 @@ roster_menu_info_cb (gpointer   callback_data,
 	priv = roster->priv;
 	item = roster_get_selected_item (roster);
 	info = gossip_contact_info_new (priv->app, item->jid, item->name);
-	
-	g_print ("Display some user info for '%s'\n", gossip_jid_get_full (item->jid));
 }
 
 static void
@@ -450,7 +448,7 @@ roster_menu_rename_cb (gpointer   callback_data,
 
 	item = roster_get_selected_item (roster);
 	
-	g_print ("Rename user: '%s'\n", item->name);
+	g_print ("FIXME: Rename user: '%s'\n", item->name);
 }
 
 static gboolean

@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-06-28 23:28+0200\n"
+"POT-Creation-Date: 2003-06-30 11:59+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -481,7 +481,7 @@ msgstr "Middag"
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Har du redan ett konto på en Jabberserver? "
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:33 gossip.desktop.in.h:1
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -649,7 +649,7 @@ msgstr "_Anslut..."
 
 #: ui/main.glade.h:73
 msgid "_Defer"
-msgstr "_Bordlägg"
+msgstr "_Skjut upp"
 
 #: ui/main.glade.h:74
 msgid "_Edit statuses..."
@@ -667,8 +667,9 @@ msgstr "_Neka"
 msgid "_Send chat message..."
 msgstr "_Skicka chattmeddelande..."
 
-#~ msgid "What request message do you want to send to <b>%s</b>"
-#~ msgstr "Vilket förfrågansmeddelande vill du skicka till <b>%s</b>"
+#: gossip.desktop.in.h:2
+msgid "Jabber Instant Messaging"
+msgstr "Jabber Instant Messaging"
 
 #~ msgid "<b>Information about %s</b>"
 #~ msgstr "<b>Information om %s</b>"
