@@ -7,13 +7,60 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-10 13:17+0200\n"
-"PO-Revision-Date: 2003-07-10 19:34+0200\n"
+"POT-Creation-Date: 2003-07-11 21:06+0200\n"
+"PO-Revision-Date: 2003-07-11 22:23+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: gossip.desktop.in.h:1 ui/main.glade.h:33
+msgid "Gossip"
+msgstr "Gossip"
+
+#: gossip.desktop.in.h:2
+msgid "Jabber Instant Messaging"
+msgstr "Instant Messaging Jabber"
+
+#: gossip.schemas.in.h:1
+msgid "Autoaway enabled"
+msgstr "Automatické pryč povoleno"
+
+#: gossip.schemas.in.h:2
+msgid "Autoaway time"
+msgstr "Čas automatického pryč"
+
+#: gossip.schemas.in.h:3
+msgid "Extended autoaway time"
+msgstr "Čas automatického pryč na déle"
+
+#: gossip.schemas.in.h:4
+msgid ""
+"The number of minutes of idle time before automatically going into \"away\" "
+"mode."
+msgstr "Počet minut nečinnosti před automatickým přechodem do režimu \"pryč\"."
+
+#: gossip.schemas.in.h:5
+msgid ""
+"The number of minutes of idle time before automatically going into "
+"\"extended away\" mode."
+msgstr "Počet minut nečinnosti před automatickým přechodem do režimu \"pryč na déle\"."
+
+#: gossip.schemas.in.h:6
+msgid "Use smileys"
+msgstr "Používat smajlíky"
+
+#: gossip.schemas.in.h:7
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr "Jestli převádět smajlíky v konverzacích na grafické smajlíky."
+
+#: gossip.schemas.in.h:8
+msgid ""
+"Whether or not to go into \"away\" mode automatically when a certain time of "
+"idling has passed."
+msgstr "Jestli automaticky přecházet do režimu \"pryč\" po určité době nečinnosti."
 
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
@@ -33,54 +80,54 @@ msgstr "%s bude přidán do vašeho seznamu kontaktů."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakt bude přidán do vašeho seznamu kontaktů."
 
-#: src/gossip-app.c:333
+#: src/gossip-app.c:338
 msgid "Available"
 msgstr "K dispozici"
 
-#: src/gossip-app.c:337
+#: src/gossip-app.c:342
 msgid "Free to chat"
 msgstr "Volný k diskusi"
 
-#: src/gossip-app.c:341
+#: src/gossip-app.c:346
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/gossip-app.c:345 ui/main.glade.h:27
+#: src/gossip-app.c:350 ui/main.glade.h:27
 msgid "Away"
 msgstr "Pryč"
 
-#: src/gossip-app.c:349
+#: src/gossip-app.c:354
 msgid "Extended away"
 msgstr "Pryč na déle"
 
-#: src/gossip-app.c:357
+#: src/gossip-app.c:362
 msgid "Offline"
 msgstr "Odpojen"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:422
+#: src/gossip-app.c:430
 msgid "translator_credits"
 msgstr "Miloslav Trmač <mitr@volny.cz>"
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:441
 msgid "A Jabber Client for GNOME"
 msgstr "Klient Jabberu pro GNOME"
 
-#: src/gossip-app.c:554
+#: src/gossip-app.c:562
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:559
+#: src/gossip-app.c:567
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: src/gossip-app.c:1138
+#: src/gossip-app.c:1143
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1397
+#: src/gossip-app.c:1470
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, klient Jabberu"
 
@@ -118,8 +165,8 @@ msgstr "Při skupinové diskusi %s došlo k chybě."
 
 #: src/gossip-group-chat.c:732
 #, c-format
-msgid "The group chat %s could not be entered."
-msgstr "Nebylo možné vstoupit do skupinové diskuse %s."
+msgid "Unable to enter the group chat %s."
+msgstr "Nemohu vstoupit do skupinové diskuse %s."
 
 #: src/gossip-main.c:69
 msgid "Don't connect on startup"
@@ -229,7 +276,7 @@ msgstr ""
 "Gossip se nyní pokusí zaregistrovat účet:\n"
 "<b>%s</b>."
 
-#: src/gossip-utils.c:1252
+#: src/gossip-utils.c:1263
 msgid "Please enter your password:"
 msgstr "Zadejte prosím své heslo."
 
@@ -552,10 +599,6 @@ msgstr "Večeře"
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Máte již účet na serveru Jabberu? "
 
-#: ui/main.glade.h:33 gossip.desktop.in.h:1
-msgid "Gossip"
-msgstr "Gossip"
-
 #: ui/main.glade.h:34
 msgid ""
 "Gossip is now configured properly for your system.\n"
@@ -743,7 +786,3 @@ msgstr "_Hledat..."
 #: ui/main.glade.h:78
 msgid "_Send chat message..."
 msgstr "_Odeslat zprávu..."
-
-#: gossip.desktop.in.h:2
-msgid "Jabber Instant Messaging"
-msgstr "Instant Messaging Jabber"
