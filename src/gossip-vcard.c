@@ -124,12 +124,12 @@ gossip_vcard_init (GossipVCard *vcard)
 
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
-	priv->name        = g_strdup ("");
-	priv->nickname    = g_strdup ("");
-	priv->email       = g_strdup ("");
-	priv->url         = g_strdup ("");
-        priv->country     = g_strdup ("");
-	priv->description = g_strdup ("");
+	priv->name        = NULL;
+	priv->nickname    = NULL;
+	priv->email       = NULL;
+	priv->url         = NULL;
+        priv->country     = NULL;
+	priv->description = NULL;
 }
 
 static void                
@@ -254,7 +254,12 @@ gossip_vcard_set_name (GossipVCard *vcard, const gchar *name)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->name);
-	priv->name = g_strdup (name);
+	if (name) {
+		priv->name = g_strdup (name);
+	} else {
+		priv->name = NULL;
+	}
+
 }
 
 const gchar *
@@ -279,7 +284,11 @@ gossip_vcard_set_nickname (GossipVCard *vcard, const gchar *nickname)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->nickname);
-	priv->nickname = g_strdup (nickname);
+	if (nickname) {
+		priv->nickname = g_strdup (nickname);
+	} else {
+		priv->nickname = NULL;
+	}
 }
 
 const gchar *
@@ -304,7 +313,12 @@ gossip_vcard_set_email (GossipVCard *vcard, const gchar *email)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->email);
-	priv->email = g_strdup (email);
+
+	if (email) {
+		priv->email = g_strdup (email);
+	} else {
+		priv->email = NULL;
+	}
 }
 
 const gchar *
@@ -329,7 +343,12 @@ gossip_vcard_set_url (GossipVCard *vcard, const gchar *url)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->url);
-	priv->url = g_strdup (url);
+
+	if (url) {
+		priv->url = g_strdup (url);
+	} else {
+		priv->url = NULL;
+	}
 }
 
 const gchar *
@@ -354,7 +373,12 @@ gossip_vcard_set_country (GossipVCard *vcard, const gchar *country)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->country);
-	priv->country = g_strdup (country);
+
+	if (country) {
+		priv->country = g_strdup (country);
+	} else {
+		priv->country = NULL;
+	}
 }
 
 const gchar *
@@ -379,7 +403,13 @@ gossip_vcard_set_description (GossipVCard *vcard, const gchar *desc)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->description);
-	priv->description = g_strdup (desc);
+
+	if (desc) {
+		priv->description = g_strdup (desc);
+	} else {
+		priv->description = NULL;
+	}
+
 }
 
 

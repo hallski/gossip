@@ -102,6 +102,7 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 {
 	GtkTextBuffer *buffer;
 	gboolean       show_personal = FALSE;
+	const gchar   *str;
 
 	g_print ("vcard callback ()\n");
 	
@@ -110,27 +111,31 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 	}
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (info->description_textview));
-	gtk_text_buffer_set_text (buffer, 
-				  gossip_vcard_get_description (vcard), -1);
-	
-	if (strcmp (gossip_vcard_get_name (vcard), "") != 0) {
-		show_personal = TRUE;
-		
-		gtk_label_set_text (GTK_LABEL (info->name_label),
-				    gossip_vcard_get_name (vcard));
+	str = gossip_vcard_get_description (vcard);
+
+	if (!str) {
+		str = "";
 	}
 	
-	if (strcmp (gossip_vcard_get_email (vcard), "") != 0) {
+	gtk_text_buffer_set_text (buffer, str, -1);
+
+	str = gossip_vcard_get_name (vcard);
+	if (str && strcmp (str, "") != 0) {
+		show_personal = TRUE;
+
+		gtk_label_set_text (GTK_LABEL (info->name_label), str);
+	}
+	
+	str = gossip_vcard_get_email (vcard);
+	if (str && strcmp (str, "") != 0) {
 		GtkWidget *href, *alignment;
 		gchar     *link;
 
 		show_personal = TRUE;
 
-		link = g_strdup_printf ("mailto:%s", 
-					gossip_vcard_get_email (vcard));
+		link = g_strdup_printf ("mailto:%s", str);
 		
-		href = gnome_href_new (link,
-				       gossip_vcard_get_email (vcard));
+		href = gnome_href_new (link, str);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -145,13 +150,13 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 		g_free (link);
 	}
 
-	if (strcmp (gossip_vcard_get_url (vcard) , "") != 0) {
+	str = gossip_vcard_get_url (vcard);
+	if (str && strcmp (str, "") != 0) {
 		GtkWidget *href, *alignment;
 
 		show_personal = TRUE;
 
-		href = gnome_href_new (gossip_vcard_get_url (vcard),
-				       gossip_vcard_get_url (vcard));
+		href = gnome_href_new (str, str);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -175,7 +180,8 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 			     GossipVersionInfo *version_info,
 			     GossipContactInfo *info)
 {
-	gboolean show_client_info = FALSE;
+	const gchar *str;
+	gboolean     show_client_info = FALSE;
 
 	g_print ("version callback ()\n");
 
@@ -183,25 +189,25 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 		return;
 	}
 
-	if (strcmp (gossip_version_info_get_name (version_info),  "") != 0) {
+	str = gossip_version_info_get_name (version_info);
+	if (str && strcmp (str,  "") != 0) {
 		show_client_info = TRUE;
 
-		gtk_label_set_text (GTK_LABEL (info->client_name_label),
-				    gossip_version_info_get_name (version_info));
+		gtk_label_set_text (GTK_LABEL (info->client_name_label), str);
 	}
 
-	if (strcmp (gossip_version_info_get_version (version_info), "") != 0) {
+	str = gossip_version_info_get_version (version_info);
+	if (str && strcmp (str, "") != 0) {
 		show_client_info = TRUE;
 
-		gtk_label_set_text (GTK_LABEL (info->version_label),
-				    gossip_version_info_get_version (version_info));
+		gtk_label_set_text (GTK_LABEL (info->version_label), str);
 	}
 
-	if (strcmp (gossip_version_info_get_os (version_info), "") != 0) {
+	str = gossip_version_info_get_os (version_info);
+	if (str && strcmp (str, "") != 0) {
 		show_client_info = TRUE;
 
-		gtk_label_set_text (GTK_LABEL (info->os_label),
-				    gossip_version_info_get_os (version_info));
+		gtk_label_set_text (GTK_LABEL (info->os_label), str);
 	}
 
 	if (show_client_info) {

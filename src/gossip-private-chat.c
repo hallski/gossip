@@ -894,7 +894,6 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 	GossipContact         *contact;
-	GossipPresence        *presence;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
@@ -902,9 +901,8 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 	priv   = p_chat->priv;
 
 	contact = gossip_chat_get_contact (chat);
-	presence = gossip_contact_get_presence (contact);
-	
-	return gossip_presence_get_pixbuf (presence);
+
+	return gossip_contact_get_pixbuf (contact);
 }
 
 static GossipContact *

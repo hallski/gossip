@@ -65,7 +65,18 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler *handler,
 
 	node = lm_message_node_get_child (top_node, "EMAIL");
 	if (node) {
-		gossip_vcard_set_email (vcard, node->value);
+		gchar *email = NULL;
+
+		if (node->value) {
+			email = node->value;
+		} else {
+			node = lm_message_node_get_child (node, "USERID");
+			if (node) {
+				email = node->value;
+			}
+		}
+			
+		gossip_vcard_set_email (vcard, email);
 	}
 
 	node = lm_message_node_get_child (top_node, "URL");

@@ -1,3 +1,27 @@
+2005-01-20  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_complete_name_response_cb):
+	- Create temporary contact if contact doesn't exist. 
+	- Fixes a bunch of bugs regarding sending messages to contacts not in
+	  list.
+	* src/gossip-contact-info.c:
+	- Fixed a crash.
+	* src/gossip-jabber-helper.c: (jabber_helper_async_get_vcard_cb):
+	- Support <email><userid/></email> for email in vcard.
+	* src/gossip-vcard.c:
+	- support unsetting values.
+	* ui/main.glade: 
+	- Make labels selectable in contact info
+	- Fixes bug #156108
+
+2005-01-19  Mikael Hallendal,,,  <micke@imendio.com>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/gossip-app.c: (app_new_message_presence_data_func),
+	(app_complete_name_response_cb):
+	* src/gossip-private-chat.c: (private_chat_get_status_pixbuf):
+
 2005-01-19  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jabber.c: (gossip_jabber_init), (jabber_logout),

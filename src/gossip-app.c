@@ -681,12 +681,10 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 {
 	GossipContact  *c;
 	GdkPixbuf      *pixbuf;
-	GossipPresence *p;
 
 	gtk_tree_model_get (tree_model, iter, 0, &c, -1);
 
-	p = gossip_contact_get_presence (c);
-	pixbuf = gossip_presence_get_pixbuf (p);
+	pixbuf = gossip_contact_get_pixbuf (c);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);
@@ -1125,8 +1123,8 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 							       str);
 
 			if (!contact) {
-				/* FIXME: Display error dialog... */
-				g_warning ("'%s' is not a valid ID or nick name.", str);
+				contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
+				gossip_contact_set_id (contact, str);
 			}
 
 			gossip_chat_manager_show_chat (priv->chat_manager, 
