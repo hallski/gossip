@@ -1,3 +1,7 @@
+2005-01-20  Mikael Hallendal  <micke@imendio.com>
+
+	* src/*.[ch]: Updated Imendio HB -> Imendio AB.
+
 2005-01-20  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-spell-dialog.c:

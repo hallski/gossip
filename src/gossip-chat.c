@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio HB
+ * Copyright (C) 2002-2004 Imendio AB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  * Copyright (C) 2004      Martyn Russell <mr@gnome.org>
  *
@@ -49,7 +49,6 @@ struct _GossipChatPriv {
 
 typedef struct {
 	GossipChat  *chat;
-	GossipSpell *spell;
        	gchar       *word;
 
        	GtkTextIter  start;
@@ -451,6 +450,7 @@ chat_spell_new (GossipChat  *chat,
 
 	chat_spell->chat = g_object_ref (chat);
 
+
 	chat_spell->word = g_strdup (word);
 
 	chat_spell->start = start;
@@ -471,8 +471,12 @@ static void
 chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem, 
 				  GossipChatSpell *chat_spell)
 {
+	GossipChatPriv *priv;
+
+	priv = chat_spell->chat->priv;
+
 	gossip_spell_dialog_show (chat_spell->chat,
-				  chat_spell->spell,
+				  priv->spell,
 				  chat_spell->start,
 				  chat_spell->end,
 				  chat_spell->word);

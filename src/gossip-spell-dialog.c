@@ -180,8 +180,7 @@ spell_dialog_populate_suggestions (GossipSpellDialog *dialog)
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->treeview_words));
 	store = GTK_LIST_STORE (model);
 
-	suggestions = gossip_spell_suggestions (dialog->spell,
-						dialog->word);
+	suggestions = gossip_spell_suggestions (dialog->spell, dialog->word);
 
 	if (!suggestions) {
 		return;
