@@ -1,5 +1,7 @@
 2004-09-02  Richard Hult  <richard@imendio.com>
 
+	* POTFILES.skip: Remove disclosure-widget.c
+
 	* sv.po: Update.
 
 	* POTFILES.skip: Put eggtray here instead.

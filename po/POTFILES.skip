@@ -1,4 +1,3 @@
-src/disclosure-widget.c
 src/eggtreemodelfilter.c
 src/eggtrayicon.c
 src/gossip-accounts-dialog.c
