@@ -455,8 +455,15 @@ gossip_chat_present (GossipChat *chat)
 	priv = chat->priv;
 	
 	if (priv->window == NULL) {
-		gossip_chat_window_add_chat (
-			gossip_chat_window_new (), chat);
+		GossipChatWindow *window;
+
+		window = gossip_chat_window_get_default ();
+		
+		if (!window) {
+			window = gossip_chat_window_new ();
+		}
+
+		gossip_chat_window_add_chat (window, chat);
         }
 
         gossip_chat_window_switch_to_chat (priv->window, chat);

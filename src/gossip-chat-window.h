@@ -47,21 +47,19 @@ struct _GossipChatWindowClass {
         GObjectClass parent_class;
 };
 
-GType                   gossip_chat_window_get_type                     (void);
+GType              gossip_chat_window_get_type                     (void);
+GossipChatWindow * gossip_chat_window_get_default    (void);
+GossipChatWindow * gossip_chat_window_new            (void);
 
-GossipChatWindow *      gossip_chat_window_get_default                  (void);
+GtkWidget *        gossip_chat_window_get_dialog     (GossipChatWindow *window);
 
-GossipChatWindow *      gossip_chat_window_new                          (void);
+void               gossip_chat_window_add_chat       (GossipChatWindow *window,
+						      GossipChat       *chat);
 
-GtkWidget *             gossip_chat_window_get_dialog                   (GossipChatWindow *window);
+void               gossip_chat_window_remove_chat    (GossipChatWindow *window,
+						      GossipChat       *chat);
 
-void                    gossip_chat_window_add_chat                     (GossipChatWindow       *window,
-                                                                         GossipChat             *chat);
-
-void                    gossip_chat_window_remove_chat                  (GossipChatWindow       *window,
-                                                                         GossipChat             *chat);
-
-void                    gossip_chat_window_switch_to_chat               (GossipChatWindow       *window,
-                                                                         GossipChat             *chat);
+void               gossip_chat_window_switch_to_chat (GossipChatWindow *window,
+						      GossipChat       *chat);
 
 #endif /* __GOSSIP_CHAT_WINDOW_H__ */

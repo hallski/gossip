@@ -1,3 +1,12 @@
+2004-09-11  Martyn Russell  <ginxd@btopenworld.com>
+
+	* src/gossip-chat.c (gossip_chat_present): 
+	- Use the ONE chat window already open if there is one.
+	* src/gossip-chat-window.[ch] (gossip_chat_window_get_default): 
+	- Added this function to return the default window if only one
+ 	  window is in the chat window list.  If there is more than one
+	  window, there is no default.
+
 2004-09-06  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
 
 	* src/gossip-private-chat.c: Added
