@@ -1,3 +1,33 @@
+2004-01-26  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_finalize),
+	(app_idle_check_cb),
+	(app_update_show), (app_status_clear_away),
+	(app_status_flash_timeout_func), (app_status_flash_start),
+	(app_status_flash_stop), (gossip_app_status_force_nonaway),
+	(app_status_available_activate_cb), (app_status_busy_activate_cb),
+	(app_status_away_activate_cb), (app_status_show_status_dialog):
+	Make the status icon flash when going from and to away state, and
+	add some slack so we don't go immediately to available status on
+	activity.
+	(app_tray_destroy_event_cb): Only show the window if the tray was
+	removed.
+
+	* src/gossip-app.c: (app_authentication_cb): Set the label for the
+	status button to Offline when we're offline.
+	
+	* src/gossip-idle.c: (gossip_idle_get_seconds),
+	(gossip_idle_reset): Sanitize, and make it possible to read out
+	non-idletime as well.
+
+	* configure.in: Bail out if XSS isn't found, we are really
+	depending on it, things don't work at all without it.
+
+2004-01-25  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_authentication_cb): Only make the status
+	button sensitive when auth succeeds.
+
 2004-01-24  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c (chat_input_key_press_event_cb): Do nothing on

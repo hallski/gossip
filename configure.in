@@ -96,6 +96,10 @@ fi
 LIBS="$old_LIBS"
 CFLAGS="$old_CFLAGS"
 
+if test "x$enable_xss" = "xno"; then
+  AC_MSG_ERROR([Couldn't find XScreenSaver extension.])
+fi
+
 GOSSIP_CFLAGS="$GOSSIP_CFLAGS $XSS_CFLAGS"
 GOSSIP_LIBS="$GOSSIP_LIBS $XSS_LIBS"
 

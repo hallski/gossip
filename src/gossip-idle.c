@@ -18,30 +18,26 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <time.h>
 #include <config.h>
-#include "gossip-idle.h"
-
-#ifdef USE_SCREENSAVER
+#include <time.h>
+#include <stdlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdk.h>
-#endif
+#include "gossip-idle.h"
 
 static time_t timestamp = 0;
 
-gint
+gint32
 gossip_idle_get_seconds (void)
 {
-	gint idle_secs = 0;
-	
-#ifdef USE_SCREENSAVER
 	static gboolean          inited = FALSE;
 	static XScreenSaverInfo *ss_info = NULL;
 	gint                     event_base;
 	gint                     error_base;
+	gint32                   idle = 0;
 
 	if (!inited) {
 		timestamp = time (NULL);
@@ -54,35 +50,21 @@ gossip_idle_get_seconds (void)
 
 	if (ss_info) {
 		XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), ss_info);
-		idle_secs = ss_info->idle / 1000;
+		idle = ss_info->idle / 1000;
 	}
-#endif
-	/* When idle time is below 3 seconds, we're not really idle. */
-	if (idle_secs < 3) {
-		gint t = timestamp - time (NULL);
 
-		if (t <= -15) {
-			t = -1;
-		} else {
-			t = 0;
-		}
-		
-		return t;
+	/* When idle time is low enough, we're not really idle. */
+	if (idle < 3) {
+		return timestamp - time (NULL);
 	}
 	
 	timestamp = time (NULL);
 
-	return idle_secs;
+	return idle;
 }
 
 void
 gossip_idle_reset (void)
-{
-	timestamp = 0;
-}
-
-void
-gossip_idle_set_away (void)
 {
 	timestamp = time (NULL);
 }
