@@ -1,3 +1,11 @@
+2004-01-08  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c (gossip_chat_get_for_item): Add create bool
+	and only create chat if specified.
+	(gossip_chat_get_history): Add.
+
+	* src/gossip-app.c: Adapt to the above change.
+	
 2004-01-07  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c: (gossip_chat_finalize): Remove composing

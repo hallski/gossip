@@ -1263,7 +1263,7 @@ app_item_activated_cb (GossipRosterView *roster,
 {
 	GossipChat *chat;
 
-	chat = gossip_chat_get_for_item (item);
+	chat = gossip_chat_get_for_item (item, TRUE);
 	gossip_chat_present (chat);
 
 	app_tray_pop_message (item);
@@ -1566,7 +1566,7 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 			g_warning ("'%s' is not a valid JID or nick name.", str);
 		}
 
-		chat = gossip_chat_get_for_item (item);
+		chat = gossip_chat_get_for_item (item, TRUE);
 				
 		gossip_chat_present (chat);
 	}
@@ -1912,7 +1912,7 @@ app_tray_pop_message (GossipRosterItem *item)
 	}
 	
 	/* if (item) { */
-	chat = gossip_chat_get_for_item (item);
+	chat = gossip_chat_get_for_item (item, TRUE);
 	if (!chat) {
 		return FALSE;
 	}

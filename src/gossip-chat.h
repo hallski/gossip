@@ -60,21 +60,23 @@ struct _GossipChatClass {
 				  const gchar *name);
 };
 
-GType           gossip_chat_get_type            (void);
-GossipChat *    gossip_chat_get_for_item        (GossipRosterItem *item);
-GossipChat *    gossip_chat_get_for_group_chat  (GossipRosterItem *item);
-void            gossip_chat_append_message      (GossipChat       *chat,
-                                                 LmMessage        *message);
-void            gossip_chat_present             (GossipChat       *chat);
-LmHandlerResult gossip_chat_handle_message      (LmMessage        *message);
-GtkWidget *     gossip_chat_get_widget          (GossipChat       *chat);
-GossipRosterItem *
-gossip_chat_get_item          (GossipChat       *chat);
-void            gossip_chat_set_window          (GossipChat       *chat,
-						 GossipChatWindow *window);
-GossipChatWindow *	
-gossip_chat_get_window				(GossipChat	  *chat);
-void            gossip_chat_clear               (GossipChat       *chat);
+GType             gossip_chat_get_type           (void);
+GossipChat *      gossip_chat_get_for_item       (GossipRosterItem *item,
+						  gboolean          create);
+GossipChat *      gossip_chat_get_for_group_chat (GossipRosterItem *item);
+void              gossip_chat_append_message     (GossipChat       *chat,
+						  LmMessage        *message);
+void              gossip_chat_present            (GossipChat       *chat);
+LmHandlerResult   gossip_chat_handle_message     (LmMessage        *message);
+GtkWidget *       gossip_chat_get_widget         (GossipChat       *chat);
+GossipRosterItem *gossip_chat_get_item           (GossipChat       *chat);
+void              gossip_chat_set_window         (GossipChat       *chat,
+						  GossipChatWindow *window);
+GossipChatWindow *gossip_chat_get_window         (GossipChat       *chat);
+void              gossip_chat_clear              (GossipChat       *chat);
+gchar *           gossip_chat_get_history        (GossipChat       *chat,
+						  gint              lines);
+
         
 G_END_DECLS
 

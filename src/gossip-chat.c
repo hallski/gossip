@@ -1070,7 +1070,7 @@ chat_delete_event_cb (GtkWidget  *widget,
 }
 
 GossipChat *
-gossip_chat_get_for_item (GossipRosterItem *item)
+gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
 {
 	GossipChat     *chat;
 	GossipChatPriv *priv;
@@ -1084,6 +1084,9 @@ gossip_chat_get_for_item (GossipRosterItem *item)
 	if (chat) {
 		return chat;
 	}
+
+	if (!create)
+		return NULL;
 	
 	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
 	g_hash_table_insert (chats, gossip_jid_ref (jid), chat);
@@ -1129,6 +1132,31 @@ gossip_chat_get_for_group_chat (GossipRosterItem *item)
 	return chat;
 }
 
+gchar *
+gossip_chat_get_history (GossipChat *chat, gint lines)
+{
+	GossipChatPriv *priv;
+	GtkTextBuffer  *buffer;
+	GtkTextIter     start, end;
+
+	priv = chat->priv;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->view));
+
+	gtk_text_buffer_get_bounds (buffer, &start, &end);
+
+	if (lines != -1) {
+		GtkTextIter tmp;
+
+		tmp = end;
+		if (gtk_text_iter_backward_lines (&tmp, lines)) {
+			start = tmp;
+		}
+	}
+
+	return gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+}
+
 void
 gossip_chat_append_message (GossipChat *chat, LmMessage *m)
 {
@@ -1167,7 +1195,7 @@ gossip_chat_handle_message (LmMessage *m)
 		/* The existing message handler will catch it. */
 		result = LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	} else {
-		chat = gossip_chat_get_for_item (item);
+		chat = gossip_chat_get_for_item (item, TRUE);
 		/* chat = g_object_new (GOSSIP_TYPE_CHAT,
 				     "jid", jid, NULL); */
 		gossip_chat_append_message (chat, m);
@@ -1237,7 +1265,7 @@ gossip_chat_clear (GossipChat *chat)
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
 	priv = chat->priv;
-	
+
 	gossip_chat_view_clear (priv->view);
 }
 
