@@ -69,6 +69,30 @@ gossip_jid_new (const gchar *str_jid)
 	return jid;
 }
 
+void 
+gossip_jid_set_without_resource (GossipJID *jid, const gchar *str)
+{
+	g_return_if_fail (jid != NULL);
+
+	g_free (jid->full);
+	g_free (jid->no_resource);
+
+	jid->no_resource = g_strdup (str);
+	jid->full = g_strdup_printf ("%s/%s", jid->no_resource, jid->resource);
+}
+
+void
+gossip_jid_set_resource (GossipJID *jid, const gchar *resource)
+{
+	g_return_if_fail (jid != NULL);
+
+	g_free (jid->full);
+	g_free (jid->resource);
+
+	jid->resource = g_strdup (resource);
+	jid->full = g_strdup_printf ("%s/%s", jid->no_resource, jid->resource);
+}
+
 const gchar *
 gossip_jid_get_full (GossipJID *jid)
 {

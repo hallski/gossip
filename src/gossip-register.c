@@ -115,7 +115,7 @@ register_connection_open_cb (LmConnection        *connection,
 		return;
 	}
 
-	jid = gossip_account_get_jid (data->account);
+	jid = gossip_jid_ref (data->account->jid);
 	
 	msg = lm_message_new_with_sub_type (NULL,
 					    LM_MESSAGE_TYPE_IQ,
@@ -156,7 +156,7 @@ gossip_register_account (GossipAccount *account,
 		password = g_strdup (account->password);
 	}
 	
-	jid = gossip_account_get_jid (account);
+	jid = gossip_jid_ref (account->jid);
 
 	data = g_new0 (RegisterAccountData, 1);
 

@@ -445,6 +445,7 @@ chat_send (GossipChat  *chat,
         LmMessage      *m;
         gchar          *nick;
 	gchar          *jid_string;
+	gchar          *username;
 
 	priv = chat->priv;
 
@@ -463,12 +464,15 @@ chat_send (GossipChat  *chat,
 
         nick = gossip_jid_get_part_name (gossip_app_get_jid ());
 
+	username = gossip_jid_get_part_name (gossip_app_get_jid ());
+
         gossip_chat_view_append_chat_message (priv->view,
                                               NULL,
-					      gossip_app_get_username (),
+					      username,
                                               nick,
                                               msg);
 
+	g_free (username);
         g_free (nick);
 
 	chat_update_locked_resource (chat);

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -42,9 +42,9 @@ typedef struct {
 	GossipAccount *account;
 	
 	GtkEntry      *account_name_entry;
-	GtkEntry      *username_entry;
-	GtkEntry      *resource_entry;
+	GtkEntry      *jid_entry;
 	GtkEntry      *server_entry;
+	GtkEntry      *resource_entry;
 	GtkEntry      *password_entry;
 	GtkEntry      *port_entry;
 	GtkWidget     *ssl_checkbutton;
@@ -101,17 +101,17 @@ account_dialog_focus_out_event_cb (GtkWidget            *widget,
 
 	account = dialog->account;
 
-	if (widget == GTK_WIDGET (dialog->username_entry)) {
-		g_free (account->username);
-		account->username = g_strdup (gtk_entry_get_text (dialog->username_entry));
+	if (widget == GTK_WIDGET (dialog->jid_entry)) {
+		GossipJID *tmp_jid = gossip_jid_new (gtk_entry_get_text (dialog->jid_entry));
+		gossip_jid_set_without_resource (account->jid, gossip_jid_get_without_resource (tmp_jid));
+		gossip_jid_unref (tmp_jid);
 	}
 	else if (widget == GTK_WIDGET (dialog->password_entry)) {
 		g_free (account->password);
 		account->password = g_strdup (gtk_entry_get_text (dialog->password_entry));
 	}
 	else if (widget == GTK_WIDGET (dialog->resource_entry)) {
-		g_free (account->resource);
-		account->resource = g_strdup (gtk_entry_get_text (dialog->resource_entry));
+		gossip_jid_set_resource (account->jid, gtk_entry_get_text (dialog->resource_entry));
 	}
 	else if (widget == GTK_WIDGET (dialog->server_entry)) {
 		g_free (account->server);
@@ -160,9 +160,10 @@ account_dialog_setup (GossipAccountDialog *dialog)
 					  FALSE);
 	}
 	
-	gtk_entry_set_text (dialog->username_entry, account->username);
+	gtk_entry_set_text (dialog->jid_entry, gossip_jid_get_without_resource (account->jid));
 	gtk_entry_set_text (dialog->password_entry, account->password);
-	gtk_entry_set_text (dialog->resource_entry, account->resource);
+	gtk_entry_set_text (dialog->resource_entry, 
+			    gossip_jid_get_resource (account->jid));
 	gtk_entry_set_text (dialog->server_entry, account->server);
 
 	port_str = g_strdup_printf ("%d", account->port);
@@ -234,7 +235,7 @@ gossip_account_dialog_show (void)
 				     "account_dialog",
 				     NULL,
 				     "account_dialog", &dialog->dialog,
-				     "username_entry", &dialog->username_entry,
+				     "jid_entry", &dialog->jid_entry,
 				     "resource_entry", &dialog->resource_entry,
 				     "server_entry", &dialog->server_entry,
 				     "password_entry", &dialog->password_entry,
@@ -243,15 +244,15 @@ gossip_account_dialog_show (void)
 				     "register_button", &dialog->register_button,
 				     NULL);
 
-	gossip_glade_setup_size_group (gui,
+/*	gossip_glade_setup_size_group (gui,
 				       GTK_SIZE_GROUP_HORIZONTAL,
 				       "server_label",
-				       "username_label",
+				       "jid_label",
 				       "password_label",
 				       "resource_label",
 				       "port_label",
 				       NULL);
-
+*/
 	g_signal_connect (dialog->dialog,
 			  "destroy",
 			  G_CALLBACK (account_dialog_destroy_cb),
@@ -261,7 +262,7 @@ gossip_account_dialog_show (void)
 			      "account_dialog", "response",
 			      G_CALLBACK (account_dialog_response_cb),
 			      
-			      "username_entry", "focus_out_event",
+			      "jid_entry", "focus_out_event",
 			      G_CALLBACK (account_dialog_focus_out_event_cb),
 			      
 			      "resource_entry", "focus_out_event",
@@ -291,12 +292,7 @@ gossip_account_dialog_show (void)
 
 	dialog->account = gossip_account_get_default ();
 	if (!dialog->account) {
-		dialog->account = gossip_account_new ("Default",
-						      NULL, NULL,
-						      _("Home"),
-						      NULL,
-						      LM_CONNECTION_DEFAULT_PORT,
-						      FALSE);
+		dialog->account = gossip_account_create_empty ();
 	}
 	
 	account_dialog_setup (dialog);

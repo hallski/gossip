@@ -427,12 +427,7 @@ app_init (GossipApp *singleton_app)
 	 * it until it's edited though, so the druid will come up again.
 	 */
 	if (!priv->account) {
-		priv->account = gossip_account_new ("Default",
-						    NULL, NULL,
-						    DEFAULT_RESOURCE,
-						    NULL,
-						    LM_CONNECTION_DEFAULT_PORT,
-						    FALSE);
+		priv->account = gossip_account_create_empty ();
 	}
 
 	app_create_connection ();
@@ -1174,6 +1169,7 @@ app_connection_open_cb (LmConnection *connection,
 	gchar         *password;
 	GossipAccount *account;
 	const gchar   *resource = NULL;
+	gchar         *username;
 
 	priv = app->priv;
 
@@ -1203,7 +1199,7 @@ app_connection_open_cb (LmConnection *connection,
 		resource = priv->overridden_resource;
 	}
 	if (!resource || !resource[0]) {
-		resource = account->resource;
+		resource = gossip_jid_get_resource (account->jid);
 	}
 	if (!resource || !resource[0]) {
 		resource = DEFAULT_RESOURCE;
@@ -1212,15 +1208,18 @@ app_connection_open_cb (LmConnection *connection,
 	if (priv->jid) {
 		gossip_jid_unref (priv->jid);
 	}
-	priv->jid = gossip_account_get_jid (account);
 
+	priv->jid = gossip_jid_ref (account->jid);
+
+	username = gossip_jid_get_part_name (priv->jid);
+	
 	lm_connection_authenticate (connection, 
-				    account->username, 
+				    username, 
 				    password,
 				    resource,
 				    (LmResultFunction) app_authentication_cb,
 				    app, NULL, NULL);
-
+	g_free (username);
 	g_free (password);
 }
 
@@ -1436,12 +1435,6 @@ gossip_app_get (void)
 	g_assert (app != NULL);
 	
 	return app;
-}
-
-const gchar *
-gossip_app_get_username (void)
-{
-	return app->priv->account->username;
 }
 
 GossipJID *

@@ -52,9 +52,8 @@ account_free (GossipAccount *account)
 	g_return_if_fail (account != NULL);
 	
 	g_free (account->name);
-	g_free (account->username);
+	gossip_jid_unref (account->jid);
 	g_free (account->password);
-	g_free (account->resource);
 	g_free (account->server);
 
 	g_free (account);
@@ -62,9 +61,8 @@ account_free (GossipAccount *account)
 
 GossipAccount *
 gossip_account_new (const gchar *name,
-		    const gchar *username,
+		    GossipJID   *jid,
 		    const gchar *password,
-		    const gchar *resource,
 		    const gchar *server,
 		    guint        port,
 		    gboolean     use_ssl)
@@ -77,14 +75,10 @@ gossip_account_new (const gchar *name,
 	str = name ? name : "";
 	account->name = g_strdup (str);
 
-	str = username ? username : "";
-	account->username = g_strdup (str);
+	account->jid = gossip_jid_ref (jid);
 	
 	str = password ? password : "";
 	account->password = g_strdup (str);
-	
-	str = resource ? resource : "";
-	account->resource = g_strdup (str);
 	
 	str = server ? server : "";
 	account->server = g_strdup (str);
@@ -124,6 +118,9 @@ gossip_account_get (const gchar *name)
 	GossipAccount *account = g_new0 (GossipAccount, 1);
 	gchar         *path;
 	gchar         *key;
+	gchar         *username;
+	gchar         *resource;
+	gchar         *jid_str;
 	
 	path = g_strdup_printf ("%s/Account: %s", GOSSIP_ACCOUNTS_PATH, name);
 
@@ -132,9 +129,22 @@ gossip_account_get (const gchar *name)
 	}
 	
 	account->name     = g_strdup (name);
-	account->username = account_get_value (path, "username");
-	account->resource = account_get_value (path, "resource");
 	account->server   = account_get_value (path, "server");
+	jid_str = account_get_value (path, "jid");
+	
+	if (!jid_str || strcmp (jid_str, "") == 0) {
+		username = account_get_value (path, "username");
+		resource = account_get_value (path, "resource");
+		jid_str = g_strdup_printf ("%s@%s/%s", username, account->server, resource);
+		g_free (username);
+		g_free (resource);
+	}
+
+	g_print ("Got: %s\n", jid_str);
+
+	account->jid = gossip_jid_new (jid_str);
+
+	g_free (jid_str);
 
 	key = g_strdup_printf ("%s/password=", path);
 	account->password = 
@@ -154,25 +164,6 @@ gossip_account_get (const gchar *name)
 	account->ref_count = 1;
 	
 	return account;
-}
-
-GossipJID *
-gossip_account_get_jid (GossipAccount *account)
-{
-	GossipJID *jid;
-	gchar     *str;
-
-	g_return_val_if_fail (account != NULL, NULL);
-	
-	str = g_strdup_printf ("%s@%s/%s", 
-			       account->username, 
-			       account->server, 
-			       account->resource);
-
-	jid = gossip_jid_new (str);
-	g_free (str);
-
-	return jid;
 }
 
 GSList *
@@ -238,14 +229,10 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 	path = g_strdup_printf ("%s/Account: %s", 
 				GOSSIP_ACCOUNTS_PATH, account->name);
 	
-	key = g_strdup_printf ("%s/username", path);
-	gnome_config_set_string (key, account->username);
+	key = g_strdup_printf ("%s/jid", path);
+	gnome_config_set_string (key, gossip_jid_get_full (account->jid));
 	g_free (key);
 	
-	key = g_strdup_printf ("%s/resource", path);
-	gnome_config_set_string (key, account->resource);
-	g_free (key);
-
 	key = g_strdup_printf ("%s/server", path);
 	gnome_config_set_string (key, account->server);
 	g_free (key);
@@ -296,3 +283,25 @@ gossip_account_set_overridden_default_name (const gchar *name)
 	g_free (overridden_default_name);
 	overridden_default_name = g_strdup (name);
 }
+
+GossipAccount *
+gossip_account_create_empty (void)
+{
+	GossipAccount *account;
+	gchar         *jid_str;
+	GossipJID     *tmp_jid;
+
+	jid_str = g_strdup_printf ("/%s", _("Home"));
+	tmp_jid = gossip_jid_new (jid_str);
+	g_free (jid_str);
+
+	account = gossip_account_new ("Default",
+				      tmp_jid, NULL,
+				      NULL,
+				      LM_CONNECTION_DEFAULT_PORT,
+				      FALSE);
+
+	gossip_jid_unref (tmp_jid);
+
+	return account;
+}	

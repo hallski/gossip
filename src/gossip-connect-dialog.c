@@ -58,7 +58,8 @@ account_dialog_destroy_cb (GtkWidget           *widget,
 
 	account = gossip_account_get_default ();
 	gtk_label_set_text (GTK_LABEL (dialog->server_label), account->server);
-	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry), account->resource);
+	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry), 
+			    gossip_jid_get_resource (account->jid));
 	gossip_account_unref (account);
 }
 
@@ -138,7 +139,8 @@ gossip_connect_dialog_show (GossipApp *app)
 
 	account = gossip_account_get_default ();
 	gtk_label_set_text (GTK_LABEL (dialog->server_label), account->server);
-	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry), account->resource);
+	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry), 
+			    gossip_jid_get_resource (account->jid));
 	gossip_account_unref (account);
 	
 	g_signal_connect (dialog->dialog,

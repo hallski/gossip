@@ -191,6 +191,8 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 	gboolean         has_account;
 	gboolean         predefined_server;
 	GtkOptionMenu   *option_menu;
+	GossipJID       *tmp_jid;
+	gchar           *tmp_jid_str;
 	
 	toggle = GTK_TOGGLE_BUTTON (startup_druid->two_yes_radiobutton);
 	has_account = gtk_toggle_button_get_active (toggle);
@@ -213,12 +215,16 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 			server = gtk_entry_get_text (GTK_ENTRY (startup_druid->four_server_entry));
 		}
 		
+		tmp_jid_str = g_strdup_printf ("%s@%s/%s", username, server, 
+					       _("Home"));
+		tmp_jid = gossip_jid_new (tmp_jid_str);
+		g_free (tmp_jid_str);
+		
 		/* Should user be able to set resource, account name and
 		 * port?
 		 */
 		*account = gossip_account_new ("Default",
-					       username, NULL, 
-					       "Gossip",
+					       tmp_jid, NULL, 
 					       server, 
 					       LM_CONNECTION_DEFAULT_PORT, 
 					       FALSE);
@@ -236,7 +242,7 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 				 GossipStartupDruid *startup_druid)
 {
 	gboolean       has_account;
-	const gchar   *jid;
+	const gchar   *jid_str;
 	gchar         *str;
 	GossipAccount *account;
 	
@@ -244,16 +250,16 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 
 	has_account = startup_druid_get_account_info (startup_druid, &account);
 	
-	jid = gossip_jid_get_without_resource (gossip_account_get_jid (account));
+	jid_str = gossip_jid_get_without_resource (account->jid);
 
 	if (has_account) {
 		str = g_strdup_printf ("%s\n<b>%s</b>.",
 				       _("Gossip will now try to use your account:"),
-				       jid);
+				       jid_str);
 	} else {
 		str = g_strdup_printf ("%s\n<b>%s</b>.",
 				       _("Gossip will now try to register the account:"),
-				       jid);
+				       jid_str);
 	}
 
 	gtk_label_set_markup (GTK_LABEL (startup_druid->last_action_label), str);

@@ -254,7 +254,7 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 		
 		to_or_from = "from";
 	} else {
-		nick = g_strdup (gossip_app_get_username ());
+		nick = gossip_jid_get_part_name (gossip_app_get_jid ());
 
 		to_or_from = "to";
 	}

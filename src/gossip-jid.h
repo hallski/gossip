@@ -26,6 +26,10 @@
 typedef struct GossipJID GossipJID;		
 
 GossipJID *     gossip_jid_new                     (const gchar   *str_jid);
+void            gossip_jid_set_without_resource    (GossipJID     *jid,
+						    const gchar   *str);
+void            gossip_jid_set_resource            (GossipJID     *jid,
+						    const gchar   *resource);
 const gchar *   gossip_jid_get_full                (GossipJID     *jid);
 const gchar *   gossip_jid_get_without_resource    (GossipJID     *jid);
 const gchar *   gossip_jid_get_resource            (GossipJID     *jid);

@@ -1,5 +1,24 @@
 2004-08-08  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-account-dialog.c:
+	* src/gossip-account.[ch]: 
+	* src/gossip-app.c:
+	* src/gossip-chat.c: 
+	* src/gossip-connect-dialog.c: 
+	* src/gossip-jid.[ch]: 
+	(gossip_jid_set_without_resource): Added
+	(gossip_jid_set_resource): Added
+	* src/gossip-log.c: 
+	* src/gossip-register.c: 
+	* src/gossip-startup-druid.c:
+	* ui/connect.glade:
+	- Started work to support having a different server set than the one
+	  in the JID. Needed to be able to tunnel Gossip traffic through for
+	  example an SSH tunnel and to be able to connect when the server part
+	  of your jid isn't the same as the DNS name of that server.
+
+2004-08-08  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-window.c: (chat_window_create_label):
 	- Don't set static width on tabs.
 
