@@ -1134,7 +1134,8 @@ roster_view_button_press_event_cb (GossipRosterView *view,
 							    &path, 
 							    NULL, NULL, NULL);
 		if (row_exists) {
-			gboolean is_group;
+			gboolean       is_group; 
+			RosterElement *e;
 			
 			gtk_tree_selection_unselect_all (selection);
 			gtk_tree_selection_select_path (selection, path);
@@ -1144,13 +1145,21 @@ roster_view_button_press_event_cb (GossipRosterView *view,
 
 			gtk_tree_model_get (model, &iter,
 					    COL_IS_GROUP, &is_group,
+					    COL_ELEMENT, &e,
 					    -1);
 
 			if (is_group) {
 				d(g_print ("This is a group!\n"));
 				factory = priv->group_popup_factory;
 			} else {
+				gboolean   log_exists;
+				GtkWidget *w;
+				
 				factory = priv->item_popup_factory;
+				w = gtk_item_factory_get_item (factory,
+							       "/Show Log");
+				log_exists = gossip_log_exists (gossip_roster_item_get_jid (e->item));
+				gtk_widget_set_sensitive (w, log_exists);
 			}
 			
 			gtk_item_factory_popup (factory,

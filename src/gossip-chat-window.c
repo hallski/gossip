@@ -479,21 +479,29 @@ chat_window_update_title (GossipChatWindow *window)
 static void
 chat_window_update_menu (GossipChatWindow *window)
 {
-	gboolean first_page;
-	gboolean last_page;
-	gint     num_pages;
-	gint     page_num;
-
-	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->priv->notebook));
-	num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->priv->notebook));
+	GossipChatWindowPriv *priv;
+	gboolean              first_page;
+	gboolean              last_page;
+	gint                  num_pages;
+	gint                  page_num;
+	GossipRosterItem     *item;
+	gboolean              log_exists;
+	
+	priv = window->priv;
+	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
+	num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (priv->notebook));
 	first_page = (page_num == 0) ? TRUE : FALSE;
 	last_page = (page_num == (num_pages - 1)) ? TRUE : FALSE;
 
-	gtk_widget_set_sensitive (window->priv->m_tabs_next, !last_page);
-	gtk_widget_set_sensitive (window->priv->m_tabs_prev, !first_page);
-	gtk_widget_set_sensitive (window->priv->m_tabs_detach, num_pages > 1);
-	gtk_widget_set_sensitive (window->priv->m_tabs_left, !first_page);
-	gtk_widget_set_sensitive (window->priv->m_tabs_right, !last_page);
+	gtk_widget_set_sensitive (priv->m_tabs_next, !last_page);
+	gtk_widget_set_sensitive (priv->m_tabs_prev, !first_page);
+	gtk_widget_set_sensitive (priv->m_tabs_detach, num_pages > 1);
+	gtk_widget_set_sensitive (priv->m_tabs_left, !first_page);
+	gtk_widget_set_sensitive (priv->m_tabs_right, !last_page);
+	
+	item = gossip_chat_get_item (priv->current_chat);
+	log_exists = gossip_log_exists (gossip_roster_item_get_jid (item));
+	gtk_widget_set_sensitive (priv->m_view_log, log_exists);
 }
 
 static void

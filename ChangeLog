@@ -1,5 +1,13 @@
 2003-11-16  Mikael Hallendal  <micke@imendio.com>
 
+        * Fixes #126981
+	* src/gossip-chat-window.c: (chat_window_update_menu):
+	- Make View->Log unsensitive if no log exists.
+	* src/gossip-roster-view.c: (roster_view_button_press_event_cb):
+	- Make Right click->View Log unsensitive when no log exists.
+
+2003-11-16  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-window.c: 
 	(gossip_chat_window_add_chat): ref the chat
 	(gossip_chat_window_remove_chat): unref the chat
