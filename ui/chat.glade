@@ -581,37 +581,31 @@
 		<widget class="GtkMenu" id="menu_conv_menu">
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="menu_conv_close">
+		    <widget class="GtkMenuItem" id="menu_conv_log">
 		      <property name="visible">True</property>
-		      <property name="stock_item">GNOMEUIINFO_MENU_CLOSE_ITEM</property>
-		    </widget>
-		  </child>
-		</widget>
-	      </child>
-	    </widget>
-	  </child>
-
-	  <child>
-	    <widget class="GtkMenuItem" id="menu_view">
-	      <property name="visible">True</property>
-	      <property name="stock_item">GNOMEUIINFO_MENU_VIEW_TREE</property>
-
-	      <child>
-		<widget class="GtkMenu" id="menu_view_menu">
-
-		  <child>
-		    <widget class="GtkMenuItem" id="menu_view_log">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Lo_g</property>
+		      <property name="label" translatable="yes">View Lo_g</property>
 		      <property name="use_underline">True</property>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="menu_view_info">
+		    <widget class="GtkMenuItem" id="menu_conv_info">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Contact _Information</property>
 		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="separator5">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="menu_conv_close">
+		      <property name="visible">True</property>
+		      <property name="stock_item">GNOMEUIINFO_MENU_CLOSE_ITEM</property>
 		    </widget>
 		  </child>
 		</widget>

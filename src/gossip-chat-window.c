@@ -60,7 +60,7 @@ static void chat_window_info_activate_cb      (GtkWidget	     *menuitem,
 					       GossipChatWindow	     *window);
 static void chat_window_log_activate_cb       (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
-static void chat_window_view_activate_cb      (GtkWidget             *menuitem,
+static void chat_window_conv_activate_cb      (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_close_activate_cb     (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
@@ -120,10 +120,8 @@ struct _GossipChatWindowPriv {
 	
 	/* menu items */
 	GtkWidget	       *m_conv_close;
-	GtkWidget	       *m_view_log;
-	GtkWidget	       *m_view_info;
-	GtkWidget	       *m_view_as_windows;
-	GtkWidget	       *m_view_as_list;
+	GtkWidget	       *m_conv_log;
+	GtkWidget	       *m_conv_info;
 	GtkWidget	       *m_tabs_next;
 	GtkWidget	       *m_tabs_prev;
 	GtkWidget	       *m_tabs_left;
@@ -180,10 +178,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GladeXML             *glade;
-	GtkWidget            *menu_view;
 	GtkAccelGroup        *accel_group;
 	GClosure             *closure;
 	gint                  i;
+	GtkWidget            *menu_conv;
 
 	priv = g_new0 (GossipChatWindowPriv, 1);
 	window->priv = priv;
@@ -193,10 +191,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       NULL,
 				       "chat_window", &priv->dialog,
 				       "chats_notebook", &priv->notebook,
+				       "menu_conv", &menu_conv,
+				       "menu_conv_info", &priv->m_conv_info,
+				       "menu_conv_log", &priv->m_conv_log,
 				       "menu_conv_close", &priv->m_conv_close,
-				       "menu_view", &menu_view,
-				       "menu_view_info", &priv->m_view_info,
-				       "menu_view_log", &priv->m_view_log,
 				       "menu_tabs_next", &priv->m_tabs_next,
 				       "menu_tabs_prev", &priv->m_tabs_prev,
 				       "menu_tabs_left", &priv->m_tabs_left,
@@ -218,22 +216,22 @@ gossip_chat_window_init (GossipChatWindow *window)
 					 closure);
 	}
 	
-	g_signal_connect (menu_view,
+	g_signal_connect (menu_conv,
 			  "activate",
-			  G_CALLBACK (chat_window_view_activate_cb),
+			  G_CALLBACK (chat_window_conv_activate_cb),
 			  window);
 	
-	g_signal_connect (priv->m_conv_close,
-			  "activate",
-			  G_CALLBACK (chat_window_close_activate_cb),
-			  window);
-	g_signal_connect (priv->m_view_log,
+	g_signal_connect (priv->m_conv_log,
 			  "activate",
 			  G_CALLBACK (chat_window_log_activate_cb),
 			  window);
-	g_signal_connect (priv->m_view_info,
+	g_signal_connect (priv->m_conv_info,
 			  "activate",
 			  G_CALLBACK (chat_window_info_activate_cb),
+			  window);
+	g_signal_connect (priv->m_conv_close,
+			  "activate",
+			  G_CALLBACK (chat_window_close_activate_cb),
 			  window);
 	g_signal_connect_swapped (priv->m_tabs_prev,
 			          "activate",
@@ -671,7 +669,7 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
-chat_window_view_activate_cb (GtkWidget        *menuitem,
+chat_window_conv_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
@@ -682,7 +680,7 @@ chat_window_view_activate_cb (GtkWidget        *menuitem,
 	
 	item = gossip_chat_get_item (priv->current_chat);
 	log_exists = gossip_log_exists (gossip_roster_item_get_jid (item));
-	gtk_widget_set_sensitive (priv->m_view_log, log_exists);
+	gtk_widget_set_sensitive (priv->m_conv_log, log_exists);
 }
 
 static void

@@ -1,3 +1,14 @@
+2003-12-13  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c:
+	(gossip_chat_window_init),
+	(chat_window_conv_activate_cb): 
+	* ui/chat.glade: 
+	- moved view log and show contact information to conversation menu and 
+	  removed the view menu. 
+	- Based on patch from Thomas Reynolds
+	- Fixes bug #127569
+
 2003-12-12  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
 
 	* src/gossip-chat-window.h:
