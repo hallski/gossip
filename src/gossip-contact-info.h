@@ -23,13 +23,10 @@
 
 #include <glib.h>
 #include "gossip-jid.h"
-#include "gossip-app.h"
 
 typedef struct _GossipContactInfo GossipContactInfo;
 
-
-GossipContactInfo * gossip_contact_info_new        (GossipApp         *app,
-						    GossipJID         *jid,
+GossipContactInfo * gossip_contact_info_new        (GossipJID         *jid,
 						    const gchar       *name);
 
 GtkWidget *         gossip_contact_info_get_dialog (GossipContactInfo *info);

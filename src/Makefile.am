@@ -52,8 +52,8 @@ gossip_SOURCES = 				\
 	gossip-preferences.h	                \
 	gossip-roster.c                         \
 	gossip-roster.h                         \
-	gossip-roster-old.c			\
-	gossip-roster-old.h			\
+	gossip-roster-view.c                    \
+	gossip-roster-view.h                    \
 	gossip-register.c			\
 	gossip-register.h			\
 	gossip-sound.c				\
@@ -69,6 +69,8 @@ gossip_SOURCES = 				\
 	eel-ellipsizing-label.h			\
 	eggtrayicon.c				\
 	eggtrayicon.h				\
+	eggtreemodelfilter.c                    \
+	eggtreemodelfilter.h                    \
 	disclosure-widget.c			\
 	disclosure-widget.h
 

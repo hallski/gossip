@@ -42,14 +42,9 @@ static void gossip_chat_window_get_property   (GObject		     *object,
 					       guint		      prop_id,
 					       GValue		     *value,
 					       GParamSpec	     *spec);
-static gchar * chat_window_get_nick	      (GossipChatWindow	     *window,
-					       GossipChat	     *chat);
 static GdkPixbuf * 
 chat_window_get_status_pixbuf		      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
-static GdkPixbuf *
-chat_window_get_pixbuf_from_stock	      (GossipChatWindow	     *window,
-					       const gchar           *stock);
 static void chat_window_get_iter	      (GossipChatWindow      *window,
 					       GossipChat	     *chat,
 					       GtkTreeIter	     *iter);
@@ -95,7 +90,10 @@ static void chat_window_selection_changed_cb  (GtkTreeSelection	     *sel,
 					       GossipChatWindow	     *window);
 static void chat_window_focus_in_event_cb     (GtkWidget	     *widget,
 					       GdkEvent		     *event,
-					       GossipChatWindow      *window);
+					       GossipChatWindow      *window); 
+static const gchar *
+chat_window_get_name                          (GossipChatWindow      *window, 
+					       GossipChat            *chat);
 
 struct _GossipChatWindowPriv {
 	GossipChatWindowLayout  layout;
@@ -370,22 +368,6 @@ gossip_chat_window_get_property (GObject    *object,
 	}
 }
 
-static gchar *
-chat_window_get_nick (GossipChatWindow *window,
-		      GossipChat *chat)
-{
-	GossipJID	*jid;
-	gchar		*nick;
-
-	g_object_get (chat, "jid", &jid, NULL);
-	nick = g_strdup (gossip_roster_old_get_nick_from_jid (gossip_app_get_roster (), jid));
-	if (!nick) {
-		nick = gossip_jid_get_part_name (jid);
-	}
-
-	return nick;
-}
-
 static GdkPixbuf *
 chat_window_get_status_pixbuf (GossipChatWindow *window,
 			       GossipChat *chat)
@@ -396,10 +378,10 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	const gchar	*icon;
 
 	if (g_list_find (window->priv->chats_new_msg, chat)) {
-		pixbuf = chat_window_get_pixbuf_from_stock (window, GOSSIP_STOCK_MESSAGE);
+		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 	}
 	else if (g_list_find (window->priv->chats_composing, chat)) {
-		pixbuf = chat_window_get_pixbuf_from_stock (window, GOSSIP_STOCK_TYPING);
+		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
 	}
 	else {
 		g_object_get (chat, 
@@ -413,20 +395,10 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 			icon = gossip_get_icon_for_show_string (gossip_show_to_string (show));
 		}
 		
-		pixbuf = chat_window_get_pixbuf_from_stock (window, icon);
+		pixbuf = gossip_utils_get_pixbuf_from_stock (icon);
 	}
 
 	return pixbuf;
-}
-
-static GdkPixbuf *
-chat_window_get_pixbuf_from_stock (GossipChatWindow *window,
-				   const gchar	    *stock)
-{
-	return gtk_widget_render_icon (window->priv->dialog,
-				       stock,
-				       GTK_ICON_SIZE_MENU,
-				       NULL);
 }
 
 static void
@@ -532,24 +504,15 @@ chat_window_update_status (GossipChatWindow *window,
 static void
 chat_window_update_title (GossipChatWindow *window)
 {
-	gchar    *nick;
-	gchar    *title;
+	GossipChatWindowPriv *priv;
+	gchar                *title; 
 
-	nick = chat_window_get_nick (window, window->priv->current_chat);
+	priv = window->priv;
 
-	if (nick && nick[0]) {
-		/* Translators: This is for the title of the chat window. The
-		 * first %s is an "* " that gets displayed if the chat window
-		 * has new messages in it. (Please complain if this doens't work well
-		 * in your locale.)
-		 */
-		title = g_strdup_printf (_("%sChat - %s"), window->priv->new_msg ? "*" : "", nick);
-	} else {
-		/* Translators: see comments for "%sChat - %s" */
-		title = g_strdup_printf (_("%sChat"), window->priv->new_msg ? "*" : "");
-	}
-
-	g_free (nick);
+	title = g_strdup_printf (_("%sChat - %s"), 
+				 window->priv->new_msg ? "*" : "", 
+				 chat_window_get_name (window, 
+						       priv->current_chat));
 
 	gtk_window_set_title (GTK_WINDOW (window->priv->dialog), title);
 	g_free (title);
@@ -590,16 +553,15 @@ static void
 chat_window_info_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
 {
-	GossipRosterOld *roster;
-	GossipJID	*jid;
-	const gchar	*name;
+	GossipChatWindowPriv *priv;
+	GossipJID            *jid;
+	
+	priv = window->priv;
 
 	g_object_get (window->priv->current_chat, "jid", &jid, NULL);
-	roster = gossip_app_get_roster ();
-	name = gossip_roster_old_get_nick_from_jid (roster, jid);
-	if (name && name[0]) {
-		gossip_contact_info_new (gossip_app_get (), jid, name);
-	}
+
+	gossip_contact_info_new (jid, 
+				 chat_window_get_name (window, priv->current_chat));
 }
 
 static void
@@ -783,6 +745,21 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 	chat_window_update_title (window);
 }
 
+static const gchar *
+chat_window_get_name (GossipChatWindow *window, GossipChat *chat)
+{
+	GossipChatWindowPriv *priv;
+	GossipJID            *jid;
+	GossipRosterItem     *item;
+
+	priv = window->priv;
+	
+	g_object_get (chat, "jid", &jid, NULL);
+	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
+
+	return gossip_roster_item_get_name (item);
+}
+
 GossipChatWindow *
 gossip_chat_window_new (void)
 {
@@ -858,7 +835,6 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	GtkTreeIter          iter;
 	GtkTreePath         *path;
 	GtkTreeRowReference *ref;
-	gchar		    *nick;
 	GdkPixbuf	    *pixbuf;
 
 	g_object_set (chat, "window", window, NULL);
@@ -870,14 +846,13 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	
 	window->priv->chats = g_list_append (window->priv->chats, chat);
 
-	nick = chat_window_get_nick (window, chat);
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
 
 	gtk_list_store_append (window->priv->store, &iter);
 	gtk_list_store_set (window->priv->store, &iter,
 			    COL_CHAT, chat,
 			    COL_STATUS_ICON, pixbuf,
-			    COL_NICK, nick,
+			    COL_NICK, chat_window_get_name (window, chat),
 			    -1);
 
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (window->priv->store),
@@ -905,7 +880,6 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 			  window);
 
 	gtk_tree_path_free (path);
-	g_free (nick);
 }
 
 void

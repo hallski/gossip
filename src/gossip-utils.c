@@ -31,7 +31,12 @@
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-stock.h"
+#include "gossip-app.h"
 #include "gossip-utils.h"
+
+#define AVAILABLE_MESSAGE "Available"
+#define AWAY_MESSAGE "Away"
+#define BUSY_MESSAGE "Busy"
 
 extern GConfClient *gconf_client;
 
@@ -643,5 +648,59 @@ gossip_hig_dialog_new (GtkWindow      *parent,
         g_free (hdr);
  
         return dialog;
+}
+
+GdkPixbuf *
+gossip_utils_get_pixbuf_from_stock (const gchar *stock)
+{
+	return gtk_widget_render_icon (gossip_app_get_window (),
+				       stock, 
+				       GTK_ICON_SIZE_MENU,
+				       NULL);
+}
+
+GdkPixbuf *
+gossip_utils_get_pixbuf_offline (void)
+{
+	return gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
+}
+
+GdkPixbuf *
+gossip_utils_get_pixbuf_from_show (GossipShow show)
+{
+	const gchar *stock = NULL;
+	
+	switch (show) {
+	case GOSSIP_SHOW_AVAILABLE:
+		stock = GOSSIP_STOCK_AVAILABLE;
+		break;
+	case GOSSIP_SHOW_BUSY:
+		stock = GOSSIP_STOCK_BUSY;
+		break;
+	case GOSSIP_SHOW_AWAY:
+		stock = GOSSIP_STOCK_AWAY;
+		break;
+	case GOSSIP_SHOW_EXT_AWAY:
+		stock = GOSSIP_STOCK_EXT_AWAY;
+		break;
+	}
+
+	return gossip_utils_get_pixbuf_from_stock (stock);
+}
+
+const gchar *
+gossip_utils_get_default_status (GossipShow show)
+{
+	switch (show) {
+	case GOSSIP_SHOW_AVAILABLE:
+		return _(AVAILABLE_MESSAGE);
+	case GOSSIP_SHOW_BUSY:
+		return _(BUSY_MESSAGE);
+	case GOSSIP_SHOW_AWAY:
+	case GOSSIP_SHOW_EXT_AWAY:
+		return _(AWAY_MESSAGE);
+	};
+
+	return _(AVAILABLE_MESSAGE);
 }
 

@@ -30,13 +30,14 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
 #include <loudmouth/loudmouth.h>
+
+#include "gossip-app.h"
 #include "gossip-utils.h"
 #include "gossip-contact-info.h"
 
 #define d(x) 
 
 struct _GossipContactInfo {
-	GossipApp    *app;
 	LmConnection *connection;
 
 	GtkWidget *dialog;
@@ -294,7 +295,7 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 }
 
 GossipContactInfo *
-gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
+gossip_contact_info_new (GossipJID *jid, const gchar *name)
 {
 	GossipContactInfo *info;
 	GladeXML          *gui;
@@ -303,7 +304,6 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 
 	info = g_new0 (GossipContactInfo, 1);
 
-	info->app = app;
 	info->connection = gossip_app_get_connection ();
 	
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",

@@ -781,20 +781,12 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			if (!strcmp (from, to)) {
 				nick_tag = "nick-me";
 			}
-			else if (strcmp (from, to) && strstr (msg, to)) {
+			else if (strstr (msg, to)) {
 				nick_tag = "nick-highlight";
 			} else {
 				nick_tag = "nick-other";
 			}
 
-			gtk_text_buffer_insert_with_tags_by_name (buffer,
-								  &iter,
-								  "<",
-								  1,
-								  nick_tag,
-								  NULL);
-				
-			gtk_text_buffer_get_end_iter (buffer, &iter);
 			gtk_text_buffer_insert_with_tags_by_name (buffer,
 								  &iter,
 								  from,
@@ -805,7 +797,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 			gtk_text_buffer_insert_with_tags_by_name (buffer,
 								  &iter,
-								  "> ",
+								  ": ",
 								  2,
 								  nick_tag,
 								  NULL);
@@ -932,6 +924,7 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 	GtkTextIter    iter;
 	gchar         *stamp;
 	gchar         *msg;
+	GtkTextMark   *mark;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	gtk_text_buffer_get_end_iter (buffer, &iter);
@@ -956,7 +949,24 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 		g_free (msg);
 	}
 		
-	gtk_text_buffer_insert (buffer, &iter, "\n", 1);
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer,
+				&iter,
+				"\n",
+				1);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	mark = gtk_text_buffer_create_mark (buffer,
+					    NULL,
+					    &iter,
+					    FALSE);
+		
+	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+				      mark,
+				      0.0,
+				      FALSE,
+				      0,
+				      0);
 }
 
 void

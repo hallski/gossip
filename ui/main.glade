@@ -90,7 +90,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image18">
+			    <widget class="GtkImage" id="image20">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
 			      <property name="icon_size">1</property>
@@ -100,6 +100,15 @@
 			      <property name="ypad">0</property>
 			    </widget>
 			  </child>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkCheckMenuItem" id="actions_show_offline">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Show _Offline Contacts</property>
+			  <property name="use_underline">True</property>
+			  <property name="active">False</property>
 			</widget>
 		      </child>
 
@@ -149,7 +158,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image19">
+			    <widget class="GtkImage" id="image21">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-preferences</property>
 			      <property name="icon_size">1</property>

@@ -156,11 +156,13 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
-	GossipRosterOld     *roster;
+	GossipRoster     *roster;
 	const gchar      *str_jid;
 	gchar            *str;
 	gint              changed;
 	GList            *groups = NULL;
+	GList            *l;
+	GList            *group_strings = NULL;
 	LmMessage        *m;
 	LmMessageNode    *node;
 	
@@ -204,14 +206,22 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	}
 	
 	roster = gossip_app_get_roster ();
-	groups = gossip_roster_old_get_groups (roster);
+	groups = gossip_roster_get_all_groups (roster);
 	
 	g_completion_clear_items (contact->group_completion);
 
-	if (groups) {
+	for (l = groups; l; l = l->next) {
+		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
+		group_strings = g_list_prepend (group_strings, 
+						(gchar *)gossip_roster_group_get_name (group));
+	}
+
+	group_strings = g_list_sort (group_strings, (GCompareFunc) strcmp);
+
+	if (group_strings) {
 		gtk_combo_set_popdown_strings (GTK_COMBO (contact->two_group_combo),
-					       groups);
-		g_completion_add_items (contact->group_completion, groups);
+					       group_strings);
+		g_completion_add_items (contact->group_completion, group_strings);
 	}
 
 	gtk_entry_set_text (GTK_ENTRY (contact->two_group_entry), "");

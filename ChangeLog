@@ -1,3 +1,65 @@
+2003-11-07  Mikael Hallendal  <micke@imendio.com>
+
+        * Merged with roster-rewrite branch
+	- Fixes #121265, #116412, #119919, #116396, #125536
+
+	* src/Makefile.am:
+	- Added gossip-roster-view.[ch]
+	- Added eggtreemodelfilter.[ch]
+	* src/eggtreemodelfilter.[ch]: Added, used in the new roster view.
+	* src/gossip-add-contact.c:
+	(add_contact_prepare_page_2): Use the new roster to get groups.
+	* src/gossip-app.[ch]: 
+	- Updated to work with the new roster.
+	- Moved the hard coded status strings (used in the option menu) to 
+	  gossip-utils.[ch].
+	- Moved GossipShow to gossip-utils.h
+	* src/gossip-chat-view.c:
+	* src/gossip-chat.c:
+	- Updated for new roster, still needs a lot of work.
+	* src/gossip-chat-window.c: (chat_window_get_status_pixbuf),
+	- updated for new roster, still needs a lot of work. uses JID's when 
+	  it should use roster item and so.
+	(chat_window_get_name): 
+	- renamed from _get_nick and updated to use roster item.
+	* src/gossip-contact-info.[ch]:
+	(gossip_contact_info_new): 
+	- removed the GossipApp argument, pretty useless.
+	* src/gossip-log.c: 
+	(gossip_log_message): Use GossipRosterItem to get name of contact.
+	* src/gossip-marshal.list: Added VOID:POINTER,POINTER
+	* src/gossip-roster-view.[ch]:
+	- This is the new Roster View. 
+	- Currently listens to signals from GossipRoster to update the tree.
+	- It uses a GtkTreeStore put in a EggTreeModelFilter to filter out 
+	  offline contacts.
+	- Currently shows the status messages on one row under the name. 
+	  Will have a preference for this.
+	- Still need some work but I think most of the work is otherwise to
+	  get the rest of the code to work with the new roster backend.
+	* src/gossip-roster.[ch]:
+	- Implemented now
+	- The GossipRoster object holds a hash table for all items and one for
+	  all groups. It is responsible for parsing incoming presence messages 
+	  aswell as roster pushes.
+	- Other code should probably listen on "item_updated" rather than 
+	  implementing there own presence message handler.
+	- Adds a GossipRosterItem and a GossipRosterGroup to represent a 
+	  contact and the various groups.
+	- This implementation handles when your contacts have logged in 
+	  multiple times. This wasn't handled in the other roster.
+	- Contacts can now be in multiple groups (you can't set them to be so 
+	  in the the view/or a group editor at this point. This can however be 
+	  useful for users that normally use other clients to setup groups.
+	* src/gossip-utils.[ch]: 
+	(gossip_utils_get_pixbuf_from_stock): moved here from old roster.
+	(gossip_utils_get_pixbuf_offline): added
+	(gossip_utils_get_pixbuf_from_show): moved here from old roster.
+	(gossip_utils_get_default_status): 
+	- added, needed by GossipApp and GossipRosterView
+	* ui/main.glade: added a check menu option for showing/hiding offline 
+	  contacts. Not implemented yet though.
+
 2003-11-06  Richard Hult  <richard@imendio.com>
 
 	* configure.in: Add libxml/libxslt dependencies.

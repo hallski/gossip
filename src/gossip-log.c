@@ -33,6 +33,8 @@
 #include <libxslt/xsltutils.h>
 #include "libexslt/exslt.h"
 #include "gossip-utils.h"
+#include "gossip-app.h"
+#include "gossip-roster.h"
 #include "gossip-log.h"
 
 #define LOG_HEADER \
@@ -149,11 +151,11 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 	stamp = log_get_timestamp (msg);
 
 	if (incoming) {
-		nick = g_strdup (gossip_roster_old_get_nick_from_jid (gossip_app_get_roster (), jid));
-		if (!nick) {
-			nick = gossip_jid_get_part_name (jid);
-		}
+		GossipRosterItem *item;
 
+		item = gossip_roster_get_item (gossip_app_get_roster (), jid);
+		
+		nick = g_strdup (gossip_roster_item_get_name (item));
 		to_or_from = "from";
 	} else {
 		nick = g_strdup (gossip_app_get_username ());
