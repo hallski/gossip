@@ -1,3 +1,18 @@
+2003-10-25  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-utils.c: (open_address), (open_address_cb),
+	(copy_address_cb), (utils_url_event_cb),
+	(utils_text_view_populate_popup), (gossip_text_view_setup_tags):
+	Add open and copy link items to the text view's context menu,
+	based on patch from Ross Burton.
+
+	Also fix a small bug that made protocol-less links not to work.
+	
+	* src/gossip-utils.c (utils_url_event_cb): Don't show the url if
+	it's just being selected.
+
+	* ui/main.glade: Remove padding on Ross' orders.
+
 2003-10-16  Richard Hult  <richard@imendio.com>
 
 	* acinclude.m4: Remove -sign-promo since that's not usable for C.

@@ -666,6 +666,43 @@ gossip_text_view_set_margin (GtkTextView *tv, gint margin)
 			  NULL);
 }
 
+static void
+open_address (const gchar *url)
+{
+	if (!url || strlen (url) == 0) {
+		return;
+	}
+	
+	if (strncmp (url, "http://", 7)) {
+		gchar *tmp;
+		
+		tmp = g_strconcat ("http://", url, NULL);
+		gnome_url_show (tmp, NULL);
+		g_free (tmp);
+		return;
+	}
+	
+	gnome_url_show (url, NULL);
+}
+
+static void
+open_address_cb (GtkMenuItem *menuitem, const gchar *url)
+{
+	open_address (url);
+}
+
+static void
+copy_address_cb (GtkMenuItem *menuitem, const gchar *url)
+{
+	GtkClipboard *clipboard;
+
+	/* Is this right? It's what gnome-terminal does and
+	 * GDK_SELECTION_CLIPBOARD doesn't work.
+	 */
+	clipboard = gtk_clipboard_get (GDK_NONE);
+	gtk_clipboard_set_text (clipboard, url, -1);
+}
+
 static gboolean
 utils_url_event_cb (GtkTextTag    *tag,
 		    GObject       *object,
@@ -675,7 +712,13 @@ utils_url_event_cb (GtkTextTag    *tag,
 {
 	GtkTextIter  start, end;
 	gchar       *str;
-			
+
+	/* If the link is being selected, don't do anything. */
+	gtk_text_buffer_get_selection_bounds (buffer, &start, &end);
+	if (gtk_text_iter_get_offset (&start) != gtk_text_iter_get_offset (&end)) {
+		return FALSE;
+	}
+
 	if (event->type == GDK_BUTTON_RELEASE && event->button.button == 1) {
 		start = end = *iter;
 		
@@ -685,8 +728,8 @@ utils_url_event_cb (GtkTextTag    *tag,
 							&start,
 							&end,
 							FALSE);
-			
-			gnome_url_show (str, NULL);
+
+			open_address (str);
 			g_free (str);
 		}
 	}
@@ -732,6 +775,70 @@ utils_text_view_event_cb (GtkTextView    *view,
 	}
 	
 	return FALSE;
+}
+
+static void
+utils_text_view_populate_popup (GtkTextView *view,
+				GtkMenu     *menu,
+				gpointer     user_data)
+{
+	GtkTextBuffer   *buffer;
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+	gint             x, y;
+	GtkTextIter      iter, start, end;
+	GtkWidget       *item;
+	gchar           *str = NULL;
+	
+	buffer = gtk_text_view_get_buffer (view);
+
+	table = gtk_text_buffer_get_tag_table (buffer);
+	tag = gtk_text_tag_table_lookup (table, "url");
+
+	gtk_widget_get_pointer (GTK_WIDGET (view), &x, &y);
+	
+	gtk_text_view_window_to_buffer_coords (view, 
+					       GTK_TEXT_WINDOW_WIDGET,
+					       x, y,
+					       &x, &y);
+	
+	gtk_text_view_get_iter_at_location (view, &iter, x, y);
+
+	start = end = iter;
+	
+	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
+	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
+					
+		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+	}
+
+	if (!str || strlen (str) == 0) {
+		return;
+	}
+
+	/* Set data just to get the string freed when not needed. */
+	g_object_set_data_full (G_OBJECT (menu), "url", str, (GDestroyNotify) g_free);
+
+	item = gtk_menu_item_new ();
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+	
+	item = gtk_menu_item_new_with_mnemonic (_("_Copy Link Address"));
+	g_signal_connect (item,
+			  "activate",
+			  G_CALLBACK (copy_address_cb),
+			  str);
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+
+	item = gtk_menu_item_new_with_mnemonic (_("_Open Link"));
+	g_signal_connect (item,
+			  "activate",
+			  G_CALLBACK (open_address_cb),
+			  str);
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+	
 }
 
 void
@@ -787,6 +894,11 @@ gossip_text_view_setup_tags (GtkTextView *view)
 			  "event",
 			  G_CALLBACK (utils_text_view_event_cb),
 			  tag);
+
+	g_signal_connect (view,
+			  "populate_popup",
+			  G_CALLBACK (utils_text_view_populate_popup),
+			  NULL);
 }
 
 typedef enum {
