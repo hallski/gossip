@@ -400,12 +400,11 @@ roster_view_setup_tree (GossipRosterView *view)
 	priv = view->priv;
 	
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
-	/* gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (view), TRUE); */
 
 	col = gtk_tree_view_column_new ();
 	
 	cell = gtk_cell_renderer_pixbuf_new ();
-	g_object_set (cell, "xpad", (guint) 2, NULL);
+	g_object_set (cell, "xpad", (guint) 0, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_cell_data_func (col, cell, 
 						 (GtkTreeCellDataFunc) roster_view_pixbuf_cell_data_func,
@@ -413,7 +412,7 @@ roster_view_setup_tree (GossipRosterView *view)
 						 NULL);
 
 	cell = gtk_cell_renderer_text_new ();
-	g_object_set (cell, "xpad", (guint) 0, NULL);
+	g_object_set (cell, "xpad", (guint) 4, NULL);
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_set_cell_data_func (col, cell,
 						 (GtkTreeCellDataFunc) roster_view_name_cell_data_func,
@@ -831,6 +830,9 @@ roster_view_ellipsize_item_strings (GossipRosterView *view,
 	g_object_unref (layout);
 }
 
+/* NOTE: We should write our own cell renderer instead of putting all these
+ * nasty hacks here.
+ */
 static void  
 roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 				 GtkCellRenderer   *cell,
@@ -851,15 +853,19 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 
 	if (is_group) {
 		g_object_set (cell,
+			      "attributes", NULL,
 			      "weight", PANGO_WEIGHT_BOLD,
-			      "markup", gossip_roster_group_get_name (e->group),
+			      "text", gossip_roster_group_get_name (e->group),
 			      NULL);
 	} else {
 		const gchar      *tmp;
 		gchar            *status, *name;
-		gchar            *escaped_status, *escaped_name;
-		gchar            *markup;
-		
+		gchar            *str;
+		PangoAttrList    *attr_list;
+		PangoAttribute   *attr_color, *attr_style;
+		GdkColor          color;
+		GtkTreeSelection *selection;
+			
 		tmp = gossip_roster_item_get_status (e->item);
 
 		if (!tmp || strcmp (tmp, "") == 0) {
@@ -885,25 +891,38 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		 */
 		roster_view_ellipsize_item_strings (view, name, status,
 						    GTK_WIDGET (view)->allocation.width -
-						    (16 + 2*2 + 35));
+						    (16 + 4*2 + 30));
 
-		escaped_name = g_markup_escape_text (name, -1);
-		escaped_status = g_markup_escape_text (status, -1);
+		str = g_strdup_printf ("%s\n%s", name, status);
 		
-		markup = g_strdup_printf ("%s\n<span foreground=\"gray\" "
-					  "style=\"italic\">%s</span>",
-					  escaped_name, escaped_status);
+		color = GTK_WIDGET (view)->style->text[GTK_STATE_INSENSITIVE];
+		
+		attr_list = pango_attr_list_new ();
 
+		attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
+		attr_style->start_index = g_utf8_strlen (name, -1) + 1;
+		attr_style->end_index = -1;
+		pango_attr_list_insert (attr_list, attr_style);
+
+		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+		if (!gtk_tree_selection_iter_is_selected (selection, iter)) {
+			attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);
+			attr_color->start_index = attr_style->start_index;
+			attr_color->end_index = attr_style->end_index;
+			pango_attr_list_insert (attr_list, attr_color);
+		}
+		
 		g_object_set (cell,
 			      "weight", PANGO_WEIGHT_NORMAL,
-			      "markup", markup,
+			      "text", str,
+			      "attributes", attr_list,
 			      NULL);
+		
+		pango_attr_list_unref (attr_list);
 
 		g_free (name);
 		g_free (status);
-		g_free (escaped_name);
-		g_free (escaped_status);
-		g_free (markup);
+		g_free (str);
 	}
 }
 

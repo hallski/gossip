@@ -1,3 +1,29 @@
+2003-11-14  Richard Hult  <richard@imendio.com>
+
+	* autogen.sh: Define CONFIGURE.
+
+	* src/gossip-app.c: (app_idle_check_cb),
+	(app_cancel_pending_leave), (app_status_available_activate_cb):
+	Fix bug where autoaway got stuck. Check idleness a bit more often.
+
+	* src/gossip-roster-view.c: (roster_view_setup_tree),
+	(roster_view_name_cell_data_func): Tweak padding for the presence
+	icon and use theme friendly colors for the status text.
+
+	* ui/main.glade: Add missing mnemonics.
+
+2003-11-13  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_show_offline_cb): Get the actual value
+	from the menu item, and store it in gconf.
+	(app_init): Connect to the toggled signal instead of activate for
+	the show offline check menu item. Set the initial state from
+	gconf.
+
+	* gossip.schemas.in: Add show_offline key.
+
+	* src/gossip-app.c (app_init): Don't set status text here.
+
 2003-11-14  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster-view.c:

@@ -3671,7 +3671,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		    <widget class="GtkButton" id="busy_remove_button">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Remove</property>
+		      <property name="label" translatable="yes">_Remove</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		    </widget>
@@ -3687,7 +3687,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		    <widget class="GtkButton" id="busy_add_button">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Add</property>
+		      <property name="label" translatable="yes">_Add</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		    </widget>
@@ -3796,7 +3796,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		    <widget class="GtkButton" id="away_remove_button">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Remove</property>
+		      <property name="label" translatable="yes">_Remove</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		    </widget>
@@ -3812,7 +3812,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		    <widget class="GtkButton" id="away_add_button">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">Add</property>
+		      <property name="label" translatable="yes">_Add</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		    </widget>

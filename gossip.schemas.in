@@ -30,6 +30,19 @@
       </locale>
     </schema>
 	
+    <schema>
+      <key>/schemas/apps/gossip/contacts/show_offline</key>
+      <applyto>/apps/gossip/contacts/show_offline</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show offline contact</short>
+	<long>
+	Whether or not to show contacts that are offline in the contact list.
+	</long>
+      </locale>
+    </schema>
 
     <schema>
       <key>/schemas/apps/gossip/sound/play_sounds</key>

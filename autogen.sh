@@ -17,6 +17,7 @@ cd $srcdir
 PROJECT=gossip
 TEST_TYPE=-f
 FILE=src/gossip-main.c
+CONFIGURE=configure.in
 
 DIE=0
 

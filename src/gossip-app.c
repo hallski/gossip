@@ -120,6 +120,7 @@ struct _GossipAppPriv {
 	gchar               *overridden_away_message;
 	time_t               leave_time;
 	guint                leave_flash_timeout_id;
+	gint                 leave_offset;
 
 	guint                size_timeout_id;
 };
@@ -163,7 +164,7 @@ static void     app_popup_send_chat_message_cb       (GtkWidget          *widget
 						      gpointer            user_data);
 static void     app_add_contact_cb                   (GtkWidget          *widget,
 						      GossipApp          *app);
-static void     app_show_offline_cb                  (GtkWidget          *widget,
+static void     app_show_offline_cb                  (GtkCheckMenuItem   *item,
 						      GossipApp          *app);
 static void     app_preferences_cb                   (GtkWidget          *widget,
 						      GossipApp          *app);
@@ -314,6 +315,8 @@ app_init (GossipApp *singleton_app)
 	GtkWidget      *status_label_hbox;
 	gint            width, height;
 	GtkRequisition  req;
+	gboolean        show_offline;
+	GtkWidget      *show_offline_widget;
 
 	app = singleton_app;
 	
@@ -323,8 +326,6 @@ app_init (GossipApp *singleton_app)
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
-	priv->status_text = g_strdup (gossip_utils_get_default_status (GOSSIP_SHOW_AVAILABLE));
-	
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
 				       "main_window",
 				       NULL,
@@ -333,6 +334,7 @@ app_init (GossipApp *singleton_app)
 				       "status_button", &priv->status_button,
 				       "status_label_hbox", &status_label_hbox,
 				       "status_image", &priv->status_image,
+				       "actions_show_offline", &show_offline_widget,
 				       NULL);
 
 	width = gconf_client_get_int (gconf_client,
@@ -360,7 +362,7 @@ app_init (GossipApp *singleton_app)
 			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
 			      "actions_send_chat_message", "activate", app_send_chat_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
-			      "actions_show_offline", "activate", app_show_offline_cb,
+			      "actions_show_offline", "toggled", app_show_offline_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "edit_account_information", "activate", app_account_information_cb,
 			      "edit_status_messages", "activate", app_status_messages_cb,
@@ -393,8 +395,16 @@ app_init (GossipApp *singleton_app)
 	
 	priv->roster = gossip_roster_new ();
 	priv->roster_view = gossip_roster_view_new (priv->roster);
-	/* Read from GConf ? */
-	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view), FALSE);
+
+	show_offline = gconf_client_get_bool (gconf_client,
+					      "/apps/gossip/contact/show_offline",
+					      NULL);
+
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
+					show_offline);
+	
+	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view),
+					     show_offline);
 
 	gtk_widget_show (GTK_WIDGET (priv->roster_view));
 	gtk_container_add (GTK_CONTAINER (sw),
@@ -463,7 +473,7 @@ app_init (GossipApp *singleton_app)
 			  NULL);
 
 	/* Start the idle time checker. */
-	g_timeout_add (5000, (GSourceFunc) app_idle_check_cb, app);
+	g_timeout_add (2000, (GSourceFunc) app_idle_check_cb, app);
 	
 	gtk_widget_show (priv->window);
 
@@ -782,15 +792,22 @@ app_add_contact_cb (GtkWidget *widget, GossipApp *app)
 }
 
 static void
-app_show_offline_cb (GtkWidget *widget, GossipApp *app)
+app_show_offline_cb (GtkCheckMenuItem *item, GossipApp *app)
 {
 	GossipAppPriv *priv;
 	gboolean current;
 	
 	priv = app->priv;
-	
-	current = gossip_roster_view_get_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view));
-	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view), !current);
+
+	current = gtk_check_menu_item_get_active (item);
+
+	gconf_client_set_bool (gconf_client,
+			       "/apps/gossip/contact/show_offline",
+			       current,
+			       NULL);
+
+	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view),
+					     current);
 }
 
 static void
@@ -820,7 +837,7 @@ app_account_information_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_status_messages_cb (GtkWidget *widget, GossipApp *app)
 {
-	// FIXME: allow only one...
+	/* FIXME: allow only one... */
 	gossip_preferences_show_status_editor ();
 }
 
@@ -1203,26 +1220,27 @@ app_idle_check_cb (GossipApp *app)
 	/* This is a bit hackish, because I don't want to spend a lot of time on
 	 * working around the xss extension. We need to find out some better way
 	 * to detect idleness anyway, so that we can set the threshold a bit
-	 * higher (bad mice can keep idling from even happen now for example).
+	 * higher (bad mice can keep idling from ever happening now for
+	 * example).
 	 */
-	static gint add = 0;
 	
 	priv = app->priv;
 
 	idle = gossip_idle_get_seconds ();
 	show = app_get_effective_show ();
 
-	/* First, check if we're about to leaving and special-case that. */
+	/* First, check if we're about to leave and special-case that. */
 	if (priv->leave_time > 0) {
 		time_t t;
 
 		t = time (NULL);
 
 		if (t - priv->leave_time < LEAVE_TIME) {
-			/* Waiting to leaving. */
+			/* Waiting to leave. */
+			priv->leave_offset = 0;
 		} else {
 			/* Time to leave. */
-			add = AUTO_AWAY_TIME - idle;
+			priv->leave_offset = AUTO_AWAY_TIME - idle;
 			
 			priv->leave_time = 0;
 			priv->auto_show = GOSSIP_SHOW_AWAY;
@@ -1232,25 +1250,22 @@ app_idle_check_cb (GossipApp *app)
 		return TRUE;
 	}
 
-	idle += add;
+	idle += priv->leave_offset;
 
-	if (show != GOSSIP_SHOW_EXT_AWAY && idle >= AUTO_EXT_AWAY_TIME) {
+	if (show != GOSSIP_SHOW_EXT_AWAY && idle > AUTO_EXT_AWAY_TIME) {
 		priv->auto_show = GOSSIP_SHOW_EXT_AWAY;
 	}
 	else if (show != GOSSIP_SHOW_AWAY && show != GOSSIP_SHOW_EXT_AWAY && 
-		 idle >= AUTO_AWAY_TIME) {
+		 idle > AUTO_AWAY_TIME) {
 		priv->auto_show = GOSSIP_SHOW_AWAY;
 	}
-	else if (idle < AUTO_AWAY_TIME) {
+	else if (idle <= AUTO_AWAY_TIME) {
 		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
-
-		add = 0;
-
 		app_cancel_pending_leave ();
 	}
 
-	if (idle - add > AUTO_EXT_AWAY_TIME) {
-		add = 0;
+	if (idle - priv->leave_offset >= AUTO_EXT_AWAY_TIME) {
+		priv->leave_offset = 0;
 	}
 	
 	if (show != app_get_effective_show ()) {
@@ -2058,7 +2073,9 @@ app_cancel_pending_leave (void)
 {
 	GossipAppPriv *priv = app->priv;
 
+	priv->leave_offset = 0;
 	priv->leave_time = 0;
+
 	g_free (priv->overridden_away_message);
 	priv->overridden_away_message = NULL;
 
@@ -2154,7 +2171,7 @@ app_status_available_activate_cb (GtkWidget *item,
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 
 	g_free (priv->status_text);
-	priv->status_text = NULL;//g_strdup (gossip_utils_get_default_status (GOSSIP_SHOW_AVAILABLE));
+	priv->status_text = NULL;
 	
 	app_update_show ();
 }
