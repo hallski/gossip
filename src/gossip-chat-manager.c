@@ -104,25 +104,29 @@ chat_manager_new_message_cb (GossipSession     *session,
 	GossipPrivateChat     *chat;
 	GossipContact         *sender;
 	GossipEvent           *event = NULL;
+	GossipEvent           *old_event;
 
 	priv = GET_PRIV (manager);
 
 	sender = gossip_message_get_sender (msg);
 	chat = g_hash_table_lookup (priv->chats, sender);
 
-	/* Add event to event manager */
+	old_event = g_hash_table_lookup (priv->events, sender);
+	/* Add event to event manager if one doesn't exist already. */
 
 	if (!chat) {
 		g_print ("new chat for: %s\n", gossip_contact_get_id (sender));
 		chat = gossip_chat_manager_get_chat (manager, sender);
 
-		event = gossip_event_new (GOSSIP_EVENT_NEW_MESSAGE);
+		if (!old_event) {
+			event = gossip_event_new (GOSSIP_EVENT_NEW_MESSAGE);
+		}
 	} else {
 		GossipChatWindow *window;
 
 		window = gossip_chat_get_window (GOSSIP_CHAT (chat));
 
-		if (!window) {
+		if (!window && !old_event) {
 			event = gossip_event_new (GOSSIP_EVENT_NEW_MESSAGE);
 		}
 	}

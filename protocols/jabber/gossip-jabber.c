@@ -46,7 +46,7 @@
 #include "gossip-add-contact.h"
 #include "gossip-transport-accounts.h"
 
-#define d(x) x
+#define d(x) 
 
 #define XMPP_VERSION_XMLNS "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
@@ -329,7 +329,7 @@ jabber_login (GossipProtocol *protocol)
 	jabber = GOSSIP_JABBER (protocol);
 	priv   = jabber->priv;
 
-	g_print ("Logging in Jabber\n");
+	d(g_print ("Logging in Jabber\n"));
 	
 	if (priv->account->use_ssl) {
 		LmSSL *ssl = lm_ssl_new (NULL,
@@ -351,7 +351,7 @@ jabber_login (GossipProtocol *protocol)
 	}
 
 	if (priv->connection == NULL) {
-		g_print ("Foo!!!\n");
+		d(g_print ("Foo!!!\n"));
 	}
 
 	priv->presence = gossip_presence_new ();
@@ -421,7 +421,7 @@ jabber_register (GossipProtocol               *protocol,
 	ra->callback = callback;
 	ra->user_data = user_data;
 
-	g_print ("Registering with Jabber server...\n");
+	d(g_print ("Registering with Jabber server...\n"));
 
 	if (account->use_ssl) {
 		LmSSL *ssl = lm_ssl_new (NULL,
@@ -451,7 +451,7 @@ jabber_register (GossipProtocol               *protocol,
 		gossip_account_unref (account);
 		g_free (ra);
 
-		g_print ("Connection could not be created\n");
+		d(g_print ("Connection could not be created\n"));
 		return FALSE;
 	}
 
@@ -463,7 +463,7 @@ jabber_register (GossipProtocol               *protocol,
 		gossip_account_unref (ra->account);
 		g_free (ra);
 
-		g_print ("Connection could not be opened\n");
+		d(g_print ("Connection could not be opened\n"));
 		return FALSE;
 	}
 
@@ -483,7 +483,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 	
 	if (result == FALSE) {
 		str = _("Connection could not be opened");
-		g_print ("%s\n", str);
+		d(g_print ("%s\n", str));
 
 		if (ra->callback) {
 			(ra->callback) (GOSSIP_ASYNC_ERROR_REGISTRATION, 
@@ -495,7 +495,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 
 		return;
 	} else {
-		g_print ("Connection open!\n");
+		d(g_print ("Connection open!\n"));
 	}
 
 	ra->message_handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_register_message_handler,
@@ -523,7 +523,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 
 	if (!ok) {
 		str = _("Couldn't send message!");
-		g_print ("%s\n", str);
+		d(g_print ("%s\n", str));
 
 		if (ra->callback) {
 			(ra->callback) (GOSSIP_ASYNC_ERROR_REGISTRATION, 
@@ -533,7 +533,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 		gossip_account_unref (ra->account);
 		g_free (ra);
 	} else {
-		g_print ("Sent registration details\n");
+		d(g_print ("Sent registration details\n"));
 	}
 }
 
@@ -582,10 +582,10 @@ jabber_register_message_handler (LmMessageHandler     *handler,
 		error_code = lm_message_node_get_attribute (node, "code");
 		error_reason = jabber_register_error_to_str (atoi (error_code));
 
-		g_print ("Registration failed with error:%s->'%s'\n",
-			 error_code, error_reason);
+		d(g_print ("Registration failed with error:%s->'%s'\n",
+			   error_code, error_reason));
 	} else {
-		g_print ("Registration success\n");
+		d(g_print ("Registration success\n"));
 	}
 
 	if (ra->callback) {
@@ -649,7 +649,7 @@ jabber_send_message (GossipProtocol *protocol, GossipMessage *message)
 		jid_str = (gchar *) id;
 	}
 
-	g_print ("Jabber::SendMessage, to: '%s'\n", jid_str);
+	d(g_print ("Jabber::SendMessage, to: '%s'\n", jid_str));
 	
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -927,7 +927,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	
 	priv = jabber->priv;
 
-	g_print ("Connection open!\n");
+	d(g_print ("Connection open!\n"));
 
 	if (result == FALSE) {
 			       
@@ -938,10 +938,8 @@ jabber_connection_open_cb (LmConnection *connection,
 	account = priv->account;
 	if (!account->password || !account->password[0]) {
 		/* FIXME: Ask the user for the password */
-		g_print ("Ask the user for the password\n");
 		g_signal_emit_by_name (jabber, "get-password", 
 				       account, &password);
-		g_print ("Got a password: '%s'\n", password);
 	} else {
 		password = g_strdup (account->password);
 	}
@@ -975,7 +973,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 		return;
 	}
 
-	g_print ("LOGGED IN!\n");
+	d(g_print ("LOGGED IN!\n"));
 
 	/* Request roster */
 	m = lm_message_new_with_sub_type (NULL,
@@ -1078,8 +1076,8 @@ jabber_message_handler (LmMessageHandler *handler,
 	
 	priv = jabber->priv;
 	
-	g_print ("GossipJabber: New message from: %s\n", 
-		 lm_message_node_get_attribute (m->node, "from"));
+	d(g_print ("GossipJabber: New message from: %s\n", 
+		   lm_message_node_get_attribute (m->node, "from")));
 
 	switch (lm_message_get_sub_type (m)) {
 	case LM_MESSAGE_SUB_TYPE_NOT_SET:
@@ -1142,8 +1140,8 @@ jabber_presence_handler (LmMessageHandler *handler,
 	priv = jabber->priv;
 
 	from = lm_message_node_get_attribute (m->node, "from");
-        g_print ("GossipJabber: New presence from: %s\n", 
-                 lm_message_node_get_attribute (m->node, "from"));
+        d(g_print ("GossipJabber: New presence from: %s\n", 
+		   lm_message_node_get_attribute (m->node, "from")));
 	
 	contact = jabber_get_contact_from_jid (jabber, from, &new_item); 
 
@@ -1349,13 +1347,13 @@ jabber_get_contact_from_jid (GossipJabber *jabber,
 	priv = jabber->priv;
 
 	jid = gossip_jid_new (jid_str);
-	g_print ("Get contact: %s\n", gossip_jid_get_without_resource (jid));
+	d(g_print ("Get contact: %s\n", gossip_jid_get_without_resource (jid)));
 
 	contact = g_hash_table_lookup (priv->contacts, 
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
-		g_print ("New contact\n");
+		d(g_print ("New contact\n"));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_CONTACTLIST);
 		gossip_contact_set_id (contact, 
 				       gossip_jid_get_without_resource (jid));
@@ -1561,7 +1559,7 @@ jabber_version_request (GossipJabber *jabber, LmMessage *m)
 	from = lm_message_node_get_attribute (m->node, "from");
 	id = lm_message_node_get_attribute (m->node, "id");
 
-	g_print ("Version request from Richard\n");
+	d(g_print ("Version request from Richard\n"));
 
 	r = lm_message_new_with_sub_type (from,
 					  LM_MESSAGE_TYPE_IQ,

@@ -36,6 +36,8 @@
 
 #include "gossip-contact-list.h"
 
+#define d(x)
+
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
 
@@ -430,7 +432,7 @@ contact_list_set_property (GObject      *object,
 static void
 contact_list_connected_cb (GossipSession *session, GossipContactList *list)
 {
-	g_print ("Contact List: Connected\n");
+	d(g_print ("Contact List: Connected\n"));
 }
 
 static void
@@ -444,8 +446,8 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	priv = list->priv;
 
-	g_print ("Contact List: Contact added: %s\n",
-		 gossip_contact_get_name (contact));
+	d(g_print ("Contact List: Contact added: %s\n",;
+		   gossip_contact_get_name (contact)));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
 		return;
@@ -481,8 +483,8 @@ contact_list_contact_updated_cb (GossipSession     *session,
 			    -1);
 	}
 
-	g_print ("Contact List: Contact updated: %s\n",
-		 gossip_contact_get_name (contact));
+	d(g_print ("Contact List: Contact updated: %s\n",
+		   gossip_contact_get_name (contact)));
 	
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free (iters);
@@ -535,9 +537,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	}
 	}
 		
-	g_print ("Contact List: Contact presence updated: %s '%s'\n",
-		 gossip_contact_get_name (contact),
-		 gossip_contact_get_status (contact));
+	d(g_print ("Contact List: Contact presence updated: %s '%s'\n",
+		   gossip_contact_get_name (contact),
+		   gossip_contact_get_status (contact)));
 
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free (iters);
@@ -548,8 +550,8 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	g_print ("Contact List: Contact removed: %s\n",
-		 gossip_contact_get_name (contact));
+	d(g_print ("Contact List: Contact removed: %s\n",
+		   gossip_contact_get_name (contact)));
 
 	contact_list_remove_contact (list, contact);
 }
@@ -1167,7 +1169,7 @@ contact_list_group_menu_rename_cb (gpointer   data,
                                    guint      action,
                                    GtkWidget *widget)
 {
-        g_print ("FIXME: Implement group::rename\n");
+	d(g_print ("FIXME: Implement group::rename\n"));
 }
 
 typedef struct {

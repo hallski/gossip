@@ -1,3 +1,10 @@
+2005-04-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-manager.c: (chat_manager_new_message_cb):
+	- Only add a new event if one doesn't already exist. This solves the
+	  issue where the notification doesn't go away event though you opened
+	  the window.
+
 2005-03-31  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_contact_updated_cb):
