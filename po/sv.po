@@ -8,9 +8,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-10 22:07+0200\n"
-"PO-Revision-Date: 2003-06-23 23:38+0200\n"
-"Last-Translator: Richard Hult <richard@imendio.com>\n"
+"POT-Creation-Date: 2003-07-13 11:50+0200\n"
+"PO-Revision-Date: 2003-07-13 11:51+0200\n"
+"Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -38,15 +38,18 @@ msgstr "Tid för utökad autofrånvarande"
 
 #: gossip.schemas.in.h:4
 msgid ""
-"The number of minutes of idle time before automatically going into autoaway "
+"The number of minutes of idle time before automatically going into \"away\" "
 "mode."
-msgstr "Antal minuters tomgångstid innan autofrånvarandeläge aktiveras."
+msgstr ""
+"Antalet minuter med tomgångstid innan frånvarandeläge automatiskt aktiveras."
 
 #: gossip.schemas.in.h:5
 msgid ""
-"The number of minutes of idle time before automatically going into extended "
-"autoaway mode."
-msgstr "Antal minuters tomgångstid innan utökat autofrånvarandeläge aktiveras."
+"The number of minutes of idle time before automatically going into "
+"\"extended away\" mode."
+msgstr ""
+"Antalet minuter med tomgångstid innan utökat frånvarandeläge automatiskt "
+"aktiveras."
 
 #: gossip.schemas.in.h:6
 msgid "Use smileys"
@@ -54,15 +57,18 @@ msgstr "Använd smilisar"
 
 #: gossip.schemas.in.h:7
 msgid ""
-"Whether or not to convert smileys into graphical images in chat "
-"conversations."
-msgstr "Om smilisar ska omvandlas till grafiska bilder i chattsamtal."
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr ""
+"Huruvida smilisar ska omvandlas till grafiska bilder eller inte i "
+"konversationer."
 
 #: gossip.schemas.in.h:8
 msgid ""
-"Whether or not to go into autoaway mode when a certain time of idling has "
-"passed."
-msgstr "Om autofrånvarandeläge ska aktiveras efter en viss tomgångstid."
+"Whether or not to go into \"away\" mode automatically when a certain time of "
+"idling has passed."
+msgstr ""
+"Huruvida frånvarandeläge automatiskt ska aktiveras eller inte efter en viss "
+"tomgångstid."
 
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
@@ -82,58 +88,58 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:337
+#: src/gossip-app.c:338
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:341
+#: src/gossip-app.c:342
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:345
+#: src/gossip-app.c:346
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:349 ui/main.glade.h:27
+#: src/gossip-app.c:350 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:353
+#: src/gossip-app.c:354
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:361
+#: src/gossip-app.c:362
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:429
+#: src/gossip-app.c:430
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:440
+#: src/gossip-app.c:441
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:561
+#: src/gossip-app.c:562
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelenade till."
 
-#: src/gossip-app.c:566
+#: src/gossip-app.c:567
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1142
+#: src/gossip-app.c:1143
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1469
+#: src/gossip-app.c:1470
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -246,16 +252,25 @@ msgstr "/Byt _namn på kontakt"
 msgid "/_Remove contact"
 msgstr "/_Ta bort kontakt"
 
-#: src/gossip-roster.c:419
+#: src/gossip-roster.c:421
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
 "%s\n"
-"from you contact list?"
+"from your contact list?"
 msgstr ""
 "Vill du ta bort kontakten\n"
 "%s\n"
 "från din kontaktlista?"
+
+#: src/gossip-roster.c:519
+#, c-format
+msgid ""
+"Please enter a new nick for the contact\n"
+"%s"
+msgstr ""
+"Ange ett nytt smeknamn för kontakten\n"
+"%s"
 
 #. Should user be able to set resource, account name and
 #. * port?
@@ -467,8 +482,8 @@ msgid ""
 "Pick a favorite, or enter nick, server name, and the name of the chat room "
 "to enter."
 msgstr ""
-"Välj en favorit, eller ange användarnamn, servernamn och namnet på "
-"chattrummet du vill gå in i."
+"Välj en favorit, eller ange smeknamn, servernamn och namnet på chattrummet "
+"du vill gå in i."
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
@@ -791,6 +806,20 @@ msgstr "_Sök..."
 #: ui/main.glade.h:78
 msgid "_Send chat message..."
 msgstr "_Skicka chattmeddelande..."
+
+#~ msgid ""
+#~ "Please enter a new nickname for the contact\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Ange ett nytt smeknamn för kontakten\n"
+#~ "%s"
+
+#~ msgid ""
+#~ "Pick a favorite, or enter nickname, server name, and the name of the chat "
+#~ "room to enter."
+#~ msgstr ""
+#~ "Välj en favorit, eller ange smeknamn, servernamn och namnet på "
+#~ "chattrummet du vill gå in i."
 
 #~ msgid "Information about %s"
 #~ msgstr "Information om %s"
