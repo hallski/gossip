@@ -1,3 +1,10 @@
+2003-11-11  Johan Hammar <johan.hammar@swipnet.se>
+
+	* src/gossip-roster-view.c: 
+	(roster_view_item_menu_info_cb): Added Show Log.
+	(roster_view_item_menu_log_cb): 
+        - Added, shows the log for selected particular contact
+
 2003-11-11  Ross Burton  <ross@burtonini.com>
 
 	* src/gossip-account-dialog.c:

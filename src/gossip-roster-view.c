@@ -31,6 +31,7 @@
 #include "gossip-stock.h"
 #include "gossip-utils.h"
 #include "gossip-roster-view.h"
+#include "gossip-log.h"
 
 #define d(x)
 
@@ -111,6 +112,10 @@ roster_view_item_menu_info_cb               (gpointer               data,
 					     guint                  action,
 					     GtkWidget             *widget);
 static void 
+roster_view_item_menu_log_cb               (gpointer               data,
+					     guint                  action,
+					     GtkWidget             *widget);
+static void 
 roster_view_item_menu_rename_cb             (gpointer               data,
 					     guint                  action,
 					     GtkWidget             *widget);
@@ -135,7 +140,8 @@ enum {
 	ITEM_MENU_NONE,
 	ITEM_MENU_REMOVE,
 	ITEM_MENU_INFO,
-	ITEM_MENU_RENAME
+	ITEM_MENU_RENAME,
+	ITEM_MENU_LOG
 };
 
 enum {
@@ -166,6 +172,14 @@ static GtkItemFactoryEntry item_menu_items[] = {
 		NULL,
 		GIF_CB (roster_view_item_menu_rename_cb),
 		ITEM_MENU_RENAME,
+		"<Item>",
+		NULL
+	},
+	{
+		N_("/Show _Log"),
+		NULL,
+		GIF_CB (roster_view_item_menu_log_cb),
+		ITEM_MENU_LOG,
 		"<Item>",
 		NULL
 	},
@@ -1054,6 +1068,22 @@ roster_view_item_menu_info_cb (gpointer   data,
 	
 	gossip_contact_info_new (gossip_roster_item_get_jid (item),
 				 gossip_roster_item_get_name (item));
+}
+
+static void
+roster_view_item_menu_log_cb (gpointer   data,
+			       guint      action,
+			       GtkWidget *widget)
+{
+	GossipRosterItem *item;
+
+	item = gossip_roster_view_get_selected_item (GOSSIP_ROSTER_VIEW (data));
+	if (!item) {
+		return;
+	}
+	
+	gossip_log_show (gossip_roster_item_get_jid (item));	
+	
 }
 
 static void
