@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-18 04:14+0200\n"
-"PO-Revision-Date: 2004-06-18 20:04+0200\n"
+"POT-Creation-Date: 2004-06-25 04:21+0200\n"
+"PO-Revision-Date: 2004-06-25 14:34+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -161,7 +161,7 @@ msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:720 ui/main.glade.h:84
+#: src/gossip-app.c:720 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Diskuse"
 
@@ -433,6 +433,14 @@ msgstr "Zadejte prosím své heslo."
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Zapamatovat si heslo?"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Žádám o osobní detaily, čekejte prosím..."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Ukládám osobní detaily, čekejte prosím..."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
@@ -948,93 +956,84 @@ msgid "Yes"
 msgstr "Ano"
 
 #: ui/main.glade.h:80
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"their status."
+msgstr ""
+"Nejste přihlášeni ke stavu tohoto kontaktu. Jejich stav získejte kliknutím "
+"na Přihlásit."
+
+#: ui/main.glade.h:81
 msgid "Your Identity"
 msgstr "Vaše identita"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:82
 msgid "_Accept"
 msgstr "_Přijmout"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:83
 msgid "_Account Information"
 msgstr "_Informace o účtu"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:84
 msgid "_Add Contact..."
 msgstr "_Přidat kontakt..."
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:86
 msgid "_Connect..."
 msgstr "_Připojit..."
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:87
 msgid "_Deny"
 msgstr "_Odmítnout"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:88
 msgid "_Disconnect"
 msgstr "_Odpojit"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:89
 msgid "_Hide Contact List"
 msgstr "_Skrýt seznam kontaktů"
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:90
 msgid "_Jabber ID of new contact:"
 msgstr "ID _Jabberu nového kontaktu:"
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:91
 msgid "_Join Group Chat..."
 msgstr "_Připojit se ke skupinové diskusi..."
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:92
 msgid "_New Message..."
 msgstr "_Nová zpráva..."
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:93
 msgid "_Personal Details"
 msgstr "_Osobní detaily"
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:94
 msgid "_Preferences"
 msgstr "_Nastavení"
 
-#: ui/main.glade.h:94
+#: ui/main.glade.h:95
 msgid "_Remove"
 msgstr "_Odstranit"
 
-#: ui/main.glade.h:95
+#: ui/main.glade.h:96
 msgid "_Search..."
 msgstr "_Hledat..."
 
-#: ui/main.glade.h:96
+#: ui/main.glade.h:97
 msgid "_Show Contact List"
 msgstr "_Zobrazit seznam kontaktů"
 
-#: ui/main.glade.h:97
+#: ui/main.glade.h:98
 msgid "_Status Messages"
 msgstr "_Zprávy o stavu"
 
-#: ui/main.glade.h:98
+#: ui/main.glade.h:99
 msgid "_Subscribe"
 msgstr "_Přihlásit"
-
-#: ui/main.glade.h:99
-msgid "subscription_label"
-msgstr "subscription_label"
-
-#~ msgid ""
-#~ "You are not subscribed to this contact's status. Press Subscribe to "
-#~ "recieve their status."
-#~ msgstr ""
-#~ "Nejste přihlášeni ke stavu tohoto kontaktu. Jejich stav získejte "
-#~ "kliknutím na Přihlásit."
-
-#~ msgid "An Instant Messaging Client for GNOME"
-#~ msgstr "Klient Instant Messaging pro GNOME"
-
-#~ msgid "Gossip Website"
-#~ msgstr "WWW stránka Gossipu:"
 
 #~ msgid "Unable to Authenticate"
 #~ msgstr "Nemohu se autentizovat"
