@@ -1,5 +1,13 @@
 2005-04-04  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_presence_handler):
+	- Handle joined correctly even if we have earlier received a backlog
+	  from a contact.
+	- Remove contact from list when contact leaves group chat.
+
+2005-04-04  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_event_added_cb), (app_event_removed_cb):
 	* src/gossip-group-chat.c: (group_chat_new_room_event_cb):
 	* src/gossip-private-chat.c: (gossip_private_chat_init),

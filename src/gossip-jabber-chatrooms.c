@@ -157,10 +157,11 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 					       "chatroom-new-room-event",
 					       room->id, node->value);
 		} else {
-			gossip_time_t timestamp;
+			gossip_time_t  timestamp;
 			GossipContact *contact;
 
-			contact = jabber_chatrooms_get_contact (room, jid, NULL);
+			contact = jabber_chatrooms_get_contact (room, jid, 
+								NULL);
 			timestamp = gossip_jabber_helper_get_timestamp_from_lm_message (m);
 			d(g_print ("Emitting\n"));
 			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
@@ -207,6 +208,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	LmMessageSubType     type;
 	LmMessageNode       *node;
 	gboolean             new_contact;
+	gboolean             was_offline;
 	
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
@@ -214,9 +216,12 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
 
 	if (!room) {
+		d(g_print ("Not a chatroom: %s\n", from));
 		gossip_jid_unref (jid);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
+	
+	d(g_print ("Chatroom message handler: %s\n", from));
 
 	type = lm_message_get_sub_type (m);
 	switch (type) {
@@ -234,14 +239,18 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		if (node) {
 			gossip_presence_set_status (presence, node->value);
 		}
-		
+
+		/* Should signal joined if contact was found but offline */
+		was_offline = !gossip_contact_is_online (contact);
 		gossip_contact_add_presence (contact, presence);
 
-		if (new_contact) {
+		if (new_contact || was_offline) {
+			d(g_print ("Chatrooms::presence_handler: Emit joined\n"));
 			g_signal_emit_by_name (chatrooms->jabber,
 					       "chatroom-contact-joined",
 					       room->id, contact);
 		} else {
+			d(g_print ("Chatrooms::presence_handler: Emit updated\n"));
 			g_signal_emit_by_name (chatrooms->jabber,
 					       "chatroom-contact-presence-updated", 
 					       room->id, contact);
@@ -251,13 +260,18 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	case LM_MESSAGE_SUB_TYPE_UNAVAILABLE:
 		contact = jabber_chatrooms_get_contact (room, jid, NULL);
 		if (contact) {
+			d(g_print ("Chatrooms::presence_handler: Emit removed\n"));
 			g_signal_emit_by_name (chatrooms->jabber, 
 					       "chatroom-contact-left",
 					       room->id, contact);
+			room->contacts = g_slist_remove (room->contacts,
+							 contact);
+			g_object_unref (contact);
 		}
 		break;
 
 	default:
+		d(g_print ("Chatrooms::presence_handler: Do nothing\n"));
 		gossip_jid_unref (jid);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}	
