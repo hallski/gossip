@@ -1,5 +1,12 @@
 2004-08-27  Mikael Hallendal  <micke@imendio.com>
 
+	* Release 0.7.7
+	
+	* src/gossip-app.c: (app_main_window_destroy_cb):
+	- Compile fix for update in Loudmouth
+
+2004-08-27  Mikael Hallendal  <micke@imendio.com>
+
 	* NEWS: Updated for 0.7.7
 	* configure.in: Bumped the version to 0.7.7
 	* ui/main.glade:

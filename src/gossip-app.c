@@ -559,7 +559,7 @@ app_main_window_destroy_cb (GtkWidget *window,
 
 	connection = app->priv->connection;
 
-	if (lm_connection_get_state (connection) == LM_CONNECTION_STATE_CONNECTING) {
+	if (lm_connection_get_state (connection) == LM_CONNECTION_STATE_OPENING) {
 		lm_connection_cancel_open (connection);
 	} else if (lm_connection_is_open (connection)) {
 		lm_connection_close (connection, NULL);
