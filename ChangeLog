@@ -1,5 +1,10 @@
 2004-01-08  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_status_custom_available_activate_cb)
+	(app_status_custom_busy_activate_cb): Set the status message to
+	the current string. Patch from Krzysztof Luks and Thomas
+	Reynolds. Fixes bug #129264.
+
 	* src/gossip-log.c (gossip_log_message): Do log messages from
 	contacts not in the roster.
 

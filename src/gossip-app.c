@@ -2302,7 +2302,7 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 		gtk_combo_set_popdown_strings (GTK_COMBO (combo), strings);
 		g_list_free (strings);
 	}
-	
+
 	gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), "");
 
 	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
@@ -2353,6 +2353,11 @@ app_status_custom_busy_activate_cb (GtkWidget *item,
 				      "reason_entry", &entry,
 				      NULL);
 
+	if (priv->status_text) {
+		gtk_entry_set_text (GTK_ENTRY (entry), priv->status_text);
+		gtk_entry_select_region (GTK_ENTRY (entry), 0, -1);
+	}
+
 	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response != GTK_RESPONSE_OK) {
@@ -2388,6 +2393,11 @@ app_status_custom_available_activate_cb (GtkWidget *item,
 				      "status_available_dialog", &dialog,
 				      "available_entry", &entry,
 				      NULL);
+
+	if (priv->status_text) {
+		gtk_entry_set_text (GTK_ENTRY (entry), priv->status_text);
+		gtk_entry_select_region (GTK_ENTRY (entry), 0, -1);
+	}
 
 	gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (priv->window));
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
