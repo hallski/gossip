@@ -465,6 +465,9 @@ chat_window_create_label (GossipChatWindow *window,
 	hbox = gtk_hbox_new (FALSE, 0);
 
 	evbox_tooltip = gtk_event_box_new ();
+
+	/* Make the event box invisible. */
+	gtk_event_box_set_visible_window (GTK_EVENT_BOX (evbox_tooltip), FALSE);
 	
 	status_img = gtk_image_new ();
 	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);

@@ -1,3 +1,9 @@
+2004-06-15  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
+ 
+	* src/gossip-chat-window.c: (chat_window_create_label):
+ 	- Make eventbox used for the toolip invisible.
+ 	- Fixes bug #143671
+
 2004-06-12  Mikael Hallendal  <micke@imendio.com>
 
 	* gossip.desktop.in: 
