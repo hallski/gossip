@@ -1,3 +1,10 @@
+2004-08-18  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-disco-servers.c:
+	(gossip_disco_servers_fetch): Don't need to call gnome_vfs_init here.
+	(disco_servers_print_error), (disco_servers_parse):
+	- Fixed style
+
 2004-08-18  Martyn Russell  <ginxd@btopenworld.com>
  
 	* src/gossip-disco.c:

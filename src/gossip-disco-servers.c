@@ -42,19 +42,14 @@ gossip_disco_servers_fetch (GossipDiscoServersFunc func,
 {
 	GnomeVFSResult  result;
 	GList          *list;
-
-	int             bytes_read = 0;
-	char           *servers = NULL;
-
-	const char     *uri = "http://www.jabber.org/servers.xml";
+	int             bytes_read;
+	char           *servers;
+	const char     *uri;
+	
+	uri = "http://www.jabber.org/servers.xml";
 
 	g_return_val_if_fail (func != NULL, FALSE);
 
-	if (!gnome_vfs_init ()) {
-		g_warning ("could not initialize GnomeVFS");
-		return FALSE;
-	}
-	
 	result = gnome_vfs_read_entire_file (uri, 
 					     &bytes_read, 
 					     &servers);
@@ -79,7 +74,7 @@ static int
 disco_servers_print_error (GnomeVFSResult  result, 
 			   const char     *uri_string)
 {
-	const char *error_string = NULL;
+	const char *error_string;
 
 	error_string = gnome_vfs_result_to_string (result);
 
@@ -92,11 +87,13 @@ disco_servers_print_error (GnomeVFSResult  result,
 static GList *
 disco_servers_parse (const char *servers)
 {
-	const gchar *marker = NULL;
-	const gchar *item_str = "jid=";
-	const gchar *name_str = "name=";
+	const gchar *marker;
+	const gchar *item_str;
+	const gchar *name_str;
+	GList       *list;
 
-	GList       *list = NULL;
+	item_str = "jid=";
+	name_str = "name=";
 
 	g_return_val_if_fail (servers != NULL, NULL);
 
@@ -105,6 +102,8 @@ disco_servers_parse (const char *servers)
 	/* \n\n is what we look for that divides the HTTP header
 	   and the HTTP body */
 	marker = strstr (servers, "\n\n");
+
+	list = NULL;
 
 	/* tried using the LmParser but because the string is not
 	   proper Jabber, it throws it out :( */
