@@ -1,0 +1,1018 @@
+# translation of gossip.HEAD.po to Arabic
+# Arabisch translation of PACKAGE.
+# Copyright (C) 2004 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Arafat Medini <lumina@silverpen.de>, 2004.
+# Abdulaziz Al-Arfaj <alarfaj0@yahoo.com>, 2004.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gossip.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-04-04 15:03+0200\n"
+"PO-Revision-Date: 2004-04-10 12:20+0200\n"
+"Last-Translator: Abdulaziz Al-Arfaj <alarfaj0@yahoo.com>\n"
+"Language-Team: Arabic <support@arabeyes.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
+
+#: gossip.desktop.in.h:1 ui/main.glade.h:27
+msgid "Gossip"
+msgstr "كُسِّب"
+
+#: gossip.desktop.in.h:2
+#. Since we are using the word "مراسل" throughout this po to mean
+#. "contact", I have changed the word for Messenger from "مراسل"
+#. to "رسول".
+msgid "Instant Messenger"
+msgstr "مراسل فوري"
+
+#: gossip.schemas.in.h:1
+msgid "Be silent when away"
+msgstr "كن صامتاً عندما أكون غائباً"
+
+#: gossip.schemas.in.h:2
+msgid "Be silent when busy"
+msgstr "كن صامتاً عندما أكون مشغوﻻً"
+
+#: gossip.schemas.in.h:3
+msgid "Height of main window"
+msgstr "إرتفاع النَّافذة الرَّئيسيَّة"
+
+#: gossip.schemas.in.h:4
+msgid "Hide main window"
+msgstr "إخفاء النَّافذة الرَّئيسيَّة"
+
+#: gossip.schemas.in.h:5
+msgid "Hide the main window."
+msgstr "إخفاء النَّافذة الرَّئيسيَّة."
+
+#: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "رسائل حالة مضبوطة مسبّقا"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "رسائل حالة مضبوطة مسبّقا."
+
+#: gossip.schemas.in.h:8
+msgid "Show offline contacts"
+msgstr "إظهار المراسلين الغير متَّصلين"
+
+#: gossip.schemas.in.h:9
+msgid "The X position of the main window."
+msgstr "موقع س للنَّافذة الرَّئيسية."
+
+#: gossip.schemas.in.h:10
+msgid "The Y position of the main window."
+msgstr "موقع ص للنَّافذة الرَّئيسية."
+
+#: gossip.schemas.in.h:11
+msgid "The height of the main window."
+msgstr "إرتفاع النَّافذة الرَّئيسية."
+
+#: gossip.schemas.in.h:12
+msgid "The width of the main window."
+msgstr "عرض النَّافذة الرَّئيسية."
+
+#: gossip.schemas.in.h:13
+msgid "Use graphical smileys"
+msgstr "استخدام التعابير المرسومة"
+
+#: gossip.schemas.in.h:14
+msgid "Use notification sounds"
+msgstr "استخدام أصوات التَّبليغ"
+
+#: gossip.schemas.in.h:15
+msgid "Whether or not to convert smileys into graphical images in conversations."
+msgstr "فيما إذا ستحول التعابير المرسومة إلى صور مرسومة في المحادثات."
+
+#: gossip.schemas.in.h:16
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "فيما إذا سيصدر صوت عند وصول الرَّسائل."
+
+#: gossip.schemas.in.h:17
+msgid "Whether or not to play sounds when away."
+msgstr "فيما إذا سيصدر صوت عندما أكون غائباً."
+
+#: gossip.schemas.in.h:18
+msgid "Whether or not to play sounds when busy."
+msgstr "فيما إذا سيصدر صوت عندما أكون مشغولاً."
+
+#: gossip.schemas.in.h:19
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "فيما إذا سيظهر المراسلين الغير متَّصلين في قائمة المراسَلين."
+
+#: gossip.schemas.in.h:20
+msgid "Width of the main window"
+msgstr "عرض النَّافذة الرَّئيسية"
+
+#: gossip.schemas.in.h:21
+msgid "X position of main window"
+msgstr "موقع س للنَّافذة الرَّئيسية"
+
+#: gossip.schemas.in.h:22
+msgid "Y position of main window"
+msgstr "موقع ص للنَّافذة الرَّئيسية"
+
+#: src/gossip-about.c:275
+msgid "Written by:"
+msgstr "كتب من طرف:"
+
+#: src/gossip-about.c:285
+msgid "Artwork by:"
+msgstr "الرسوم من قبل:"
+
+#: src/gossip-about.c:296
+msgid "Translated by:"
+msgstr "ترجم من طرف:"
+
+#. Note to translators: put your name here so it will shop up in the
+#. * "about" box. Please add ONLY names, separated by newlines. No mail
+#. * addresses, empty lines, full sentences or years. Just the
+#. * names. Thanks!
+#.
+#: src/gossip-about.c:342
+msgid "translator_credits"
+msgstr ""
+""
+"عبدالعزيز·العرفج\n"
+"عرفات المديني"
+
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+msgid "Home"
+msgstr "المنزل"
+
+#: src/gossip-add-contact.c:293
+#, c-format
+msgid "What request message do you want to send to %s?"
+msgstr "أي رسالة طلب تود إرسالها إلى %s؟"
+
+#: src/gossip-add-contact.c:311
+#, c-format
+msgid "%s will be added to your contact list."
+msgstr "سيضاف %s إلى قائمة مراسليك."
+
+#: src/gossip-app.c:639
+msgid "Could not connect"
+msgstr "لم يمكن الإتِّصال"
+
+#: src/gossip-app.c:640
+msgid "Make sure that your account information is correct."
+msgstr "تأكَّد من صحة معلومات حسابك."
+
+#: src/gossip-app.c:696
+# To Arabeyes.org translators, from Abdulaziz (08/04/2004):
+# We have no standard word for User ID (or I couldnt find one).
+# This word should not be translated as two seperate
+# words because the English equivalents are never
+# used seperately in this context.
+# I suggest permanently settling on one of the following
+# and adding it to the Qamoose:
+# هوية، رمز، بطاقة، مفتاح، شارة
+# I will leave this one up to the superiors
+msgid "Enter the user ID of the person you would like to send a chat message to."
+msgstr "أدخل هوية المستخدم الذي تَود أن ترسل له رسالة دردشة."
+
+#: src/gossip-app.c:701 ui/main.glade.h:76
+msgid "_Chat"
+msgstr "_دردشة"
+
+#: src/gossip-app.c:952
+#, c-format
+msgid "%s wants to be notified of your presence."
+msgstr "يريد %s أن يبلَّغ بوجودك."
+
+#: src/gossip-app.c:1193
+msgid "You were disconnected from the server. Do you want to reconnect?"
+msgstr "قُطع اتّصالك بالخادم. هل تريد إعادة الإتِّصال؟"
+
+#: src/gossip-app.c:1348
+msgid ""
+"Make sure that your account information is correct. The server may also "
+"currently be unavailable."
+msgstr ""
+"تأكَّد من صحة معلومات حسابك. كما قد يكون الخادم غير متوفِّر حالياً."
+
+#: src/gossip-app.c:1820
+msgid "Gossip, Instant Messaging Client"
+msgstr "كُسِّب، عميل مراسلة فورية"
+
+#: src/gossip-app.c:1962
+#, c-format
+msgid "New message from %s"
+msgstr "رسالة جديدة من %s"
+
+#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
+#: src/gossip-roster-view.c:938
+msgid "Offline"
+msgstr "غير متصل"
+
+#: src/gossip-app.c:2450 src/gossip-preferences.c:639
+msgid "Available"
+msgstr "متوفّر"
+
+#: src/gossip-app.c:2461 src/gossip-preferences.c:640
+msgid "Busy"
+msgstr "مشغول"
+
+#: src/gossip-app.c:2472 src/gossip-preferences.c:641
+msgid "Away"
+msgstr "غائب"
+
+#: src/gossip-app.c:2604
+msgid "Available..."
+msgstr "متوفّر..."
+
+#: src/gossip-app.c:2609
+msgid "Busy..."
+msgstr "مشغول..."
+
+#: src/gossip-app.c:2614
+msgid "Away..."
+msgstr "غائب..."
+
+#: src/gossip-app.c:2643
+msgid "Edit List..."
+msgstr "تحرير القائمة..."
+
+#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
+msgid "C_lear"
+msgstr "_مسح"
+
+#: src/gossip-chat-view.c:356
+msgid "_Copy Link Address"
+msgstr "_نسخ عنوان الوصلة"
+
+#: src/gossip-chat-view.c:364
+msgid "_Open Link"
+msgstr "_فتح الوصلة"
+
+#: src/gossip-chat-view.c:678
+msgid "%A %d %B %Y"
+msgstr "%A·%d·%B·%Y"
+
+#: src/gossip-chat-window.c:490
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sدردشة - %s"
+
+#: src/gossip-chat.c:717
+#, c-format
+msgid "An error occurred when chatting with %s."
+msgstr "حصل خطأ أثناء الدَّردشة مع %s."
+
+#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
+#: src/gossip-group-chat.c:912
+msgid "Details:"
+msgstr "التَّفاصيل:"
+
+#: src/gossip-chat.c:812
+#, c-format
+msgid "%s went offline"
+msgstr "%s صار دون اتِّصال"
+
+#: src/gossip-chat.c:826
+#, c-format
+msgid "%s comes online"
+msgstr "%s صار على اتِّصال"
+
+#: src/gossip-chat.c:913
+msgid "Connected"
+msgstr "متَّصل"
+
+#: src/gossip-chat.c:928
+msgid "Disconnected"
+msgstr "غير متَّصل"
+
+#: src/gossip-contact-info.c:352
+#, c-format
+msgid "Contact Information for %s"
+msgstr "معلومات المراسلة لـ %s"
+
+#: src/gossip-edit-groups-dialog.c:182
+#, c-format
+msgid "Edit groups for %s"
+msgstr "تحرير المجموعات لـ %s"
+
+#: src/gossip-edit-groups-dialog.c:246
+msgid "Select"
+msgstr "إنتقاء"
+
+#: src/gossip-edit-groups-dialog.c:257
+msgid "Group"
+msgstr "المجموعة"
+
+#. This needs to be done better, could have group_is_unsorted().
+#. The above comment referrs to "غير مصنَّف" which I have changed to the one below.
+#. In case it is not approved, it should be changed to the previous one. Abdulaziz on April 6th 2004
+#,
+#: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
+#: src/gossip-roster.c:37
+msgid "Unsorted"
+msgstr "غير مصنّف"
+
+#: src/gossip-group-chat.c:804
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr "حصل خطأ أثناء الدَّردشة في الدَّردشة الجماعيَّة %s."
+
+#: src/gossip-group-chat.c:907
+#, c-format
+msgid "Unable to enter the group chat %s."
+msgstr "لم يمكن دخول الدَّردشة الجماعيّة %s."
+
+#: src/gossip-log.c:307
+msgid "Conversation Log"
+msgstr "سجلّ المحادثة"
+
+#: src/gossip-main.c:69
+msgid "Don't connect on startup"
+msgstr "لا تتَّصل عند بدء التَّشغيل"
+
+#: src/gossip-main.c:78
+msgid "Which account to connect to on startup"
+msgstr "أي حساب سيوصل به عند بدء التَّشغيل"
+
+#: src/gossip-main.c:79
+#. I don't know why the letters are in capital case here.
+#. Should this string be treated in a special way? Abdulaziz on April 9th 2004
+msgid "ACCOUNT-NAME"
+msgstr "إسم-الحساب"
+
+#: src/gossip-main.c:87
+msgid "List the available accounts"
+msgstr "سرد الحسابات المتوفرة"
+
+#: src/gossip-main.c:120
+msgid "Available accounts:"
+msgstr "الحسابات المتوفرة:"
+
+#: src/gossip-main.c:129
+msgid "[default]"
+msgstr "[الإفتراض]"
+
+#: src/gossip-main.c:152
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "لا حساب بإسم '%s'."
+
+#: src/gossip-register.c:79
+msgid "Unknown error"
+msgstr "خطأ مجهول"
+
+#: src/gossip-register.c:168
+msgid "Registering account"
+msgstr "جاري تسجيل الحساب"
+
+#: src/gossip-register.c:208
+msgid "Successfully registered the account"
+msgstr "تمَّ تسجيل الحساب بنجاح"
+
+#: src/gossip-register.c:229 src/gossip-register.c:235
+msgid "Failed registering the account"
+msgstr "فشل تسجيل الحساب"
+
+#: src/gossip-register.c:231
+msgid "Reason:"
+msgstr "السبب:"
+
+#: src/gossip-roster-view.c:186
+msgid "/Contact _Information"
+msgstr "/_معلومات المراسَل"
+
+#: src/gossip-roster-view.c:194
+msgid "/Re_name contact"
+msgstr "/إعادة تسمية الم_راسَل"
+
+#: src/gossip-roster-view.c:202
+msgid "/_Edit groups"
+msgstr "/_تحرير المجموعات"
+
+#: src/gossip-roster-view.c:210
+msgid "/Show _Log"
+msgstr "/إ_ظهار السجلّ"
+
+#: src/gossip-roster-view.c:226
+msgid "/_Remove contact"
+msgstr "/_حذف المراسَل"
+
+#: src/gossip-roster-view.c:237
+msgid "/Re_name group"
+msgstr "/إعادة تسمية الم_جموعة"
+
+#: src/gossip-roster-view.c:1245
+#, c-format
+msgid ""
+"Do you want to remove the contact\n"
+"%s\n"
+"from your contact list?"
+msgstr ""
+"هل تريد إزالة المراسَل\n"
+"%s\n"
+"من قائمة مراسَليك؟"
+
+#: src/gossip-roster-view.c:1338
+#, c-format
+msgid ""
+"Please enter a new nickname for the contact\n"
+"%s"
+msgstr ""
+"الرجاء إدخال كنية جديدة للمراسَل\n"
+"%s"
+
+#: src/gossip-roster-view.c:1444
+#, c-format
+msgid ""
+"Please enter a new name for the group\n"
+"%s"
+msgstr ""
+"الرجاء إدخال إسم جديد للمجموعة\n"
+"%s"
+
+#: src/gossip-startup-druid.c:254
+msgid "Gossip will now try to use your account:"
+msgstr "سيحاول كُسِّب الآن استخدام حسابك:"
+
+#: src/gossip-startup-druid.c:258
+msgid "Gossip will now try to register the account:"
+msgstr "سيحاول كُسِّب الآن تسجيل الحساب:"
+
+#: src/gossip-utils.c:438
+#. I see no need to translate the word 'your'. The translation makes
+#. sense without it. And in fact this sentence is more natural than:
+#. "أدخل كلمة السّر خاصّتك"
+#. Would really like to hear your opinion. Abdulaziz April 9th 2004
+msgid "Please enter your password:"
+msgstr "الرجاء إدخال كلمة السِّر:"
+
+#: src/gossip-utils.c:440
+msgid "Remember Password?"
+msgstr "أتذكَّر كلمة السِّر؟"
+
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/main.glade.h:3
+msgid "*"
+msgstr "*"
+
+#: ui/chat.glade.h:3
+msgid "Chat"
+msgstr "دردشة"
+
+#: ui/chat.glade.h:4
+msgid "Contact _Information"
+msgstr "_معلومات المراسل"
+
+#: ui/chat.glade.h:5
+msgid "From:"
+msgstr "من:"
+
+#: ui/chat.glade.h:6
+msgid "Gossip - Chat"
+msgstr "دردشة - كُسِّب"
+
+#: ui/chat.glade.h:7
+msgid "Gossip - Received Message"
+msgstr "كُسِّب - استُلمت رسالة"
+
+#: ui/chat.glade.h:8
+msgid "Gossip - Send Message"
+msgstr "كُسِّب - إرسال رسالة"
+
+#: ui/chat.glade.h:9
+msgid "In reply to:"
+msgstr "إجابة على:"
+
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "نقل اللِّسان إلى اليسا_ر"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "نقل اللِّسان إلى ال_يمين"
+
+#: ui/chat.glade.h:12
+msgid "To:"
+msgstr "إلى:"
+
+#: ui/chat.glade.h:13
+msgid "View Lo_g"
+msgstr "عرض السِّ_جل"
+
+#: ui/chat.glade.h:14
+msgid "_Conversation"
+msgstr "ّم_حادثَة"
+
+#: ui/chat.glade.h:15
+msgid "_Detach Tab"
+msgstr "_فصل اللِّسان"
+
+#: ui/chat.glade.h:16
+msgid "_Next Tab"
+msgstr "اللِّسان ال_تَّالي"
+
+#: ui/chat.glade.h:17
+msgid "_Previous Tab"
+msgstr "اللِّسان ال_سَّابق"
+
+#: ui/chat.glade.h:18
+msgid "_Reply..."
+msgstr "_ردّ..."
+
+#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
+msgid "_Send"
+msgstr "إ_رسال"
+
+#: ui/chat.glade.h:20
+msgid "_Tabs"
+msgstr "أ_لْسنة"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
+msgid "    "
+msgstr "    "
+
+#: ui/connect.glade.h:3
+msgid "<b>Account Settings</b>"
+msgstr "<b>تعيينات الحساب</b>"
+
+#: ui/connect.glade.h:4
+msgid "<b>Connect to server</b>"
+msgstr "<b>إتَّصال بالنادل</b>"
+
+#: ui/connect.glade.h:5
+msgid "C_onnect"
+msgstr "إ_تَّصال"
+
+#: ui/connect.glade.h:6
+msgid "Connect"
+msgstr "إتَّصال"
+
+#: ui/connect.glade.h:7
+msgid "Edit Account Information"
+msgstr "تحرير معلومات الحساب"
+
+#: ui/connect.glade.h:8
+msgid "P_ort:"
+msgstr "ال_مَنفذ:"
+
+#: ui/connect.glade.h:9
+msgid "Re_gister..."
+msgstr "_تسجيل..."
+
+#: ui/connect.glade.h:10
+msgid "Server:"
+msgstr "النادل:"
+
+#: ui/connect.glade.h:11
+msgid "Use _encryption (SSL)"
+msgstr "إستخدام التَّ_شفير (SSL)"
+
+#: ui/connect.glade.h:12
+msgid "_Password:"
+msgstr "_كلمة السِّر:"
+
+#: ui/connect.glade.h:13
+msgid "_Resource:"
+msgstr "الم_ورد:"
+
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:20
+msgid "_Server:"
+msgstr "ال_نادل:"
+
+#: ui/connect.glade.h:15
+msgid "_User name:"
+msgstr "إسم المستخ_دم:"
+
+#: ui/group-chat.glade.h:2
+msgid "        "
+msgstr "        "
+
+#: ui/group-chat.glade.h:4
+msgid "<b>Available chat rooms</b>"
+msgstr "<b>غرف الدَّردشة المتوفرة</b>"
+
+#: ui/group-chat.glade.h:5
+msgid "<b>Chat room information</b>"
+msgstr "<b>معلومات غرفة الدَّردشة</b>"
+
+#: ui/group-chat.glade.h:6
+msgid "<b>Favorite:</b>"
+msgstr "<b>المفضّلات:</b>"
+
+#: ui/group-chat.glade.h:7
+msgid "Chat _name:"
+msgstr "إ_سم الدَّردشة:"
+
+#: ui/group-chat.glade.h:8
+msgid "Gossip - Edit Group Chats"
+msgstr "كُسِّب - تحرير الدَّردشات الجماعيَّة"
+
+#: ui/group-chat.glade.h:9
+msgid "Gossip - Group Chat"
+msgstr "كُسِّب - الدَّردشة الجماعيَّة"
+
+#: ui/group-chat.glade.h:10
+msgid "Gossip - Join Group Chat"
+msgstr "كُسِّب - إنضمام للدَّردشة الجماعيَّة"
+
+#: ui/group-chat.glade.h:11
+msgid "N_ickname:"
+msgstr "الك_نية:"
+
+#: ui/group-chat.glade.h:12
+msgid ""
+"Pick a favorite, or enter nickname, server name, and the name of the chat "
+"room to enter."
+msgstr ""
+"إختر مفضّلا أو أدخل اللَّقب و أسم النادل و أسم "
+"غرفة الدَّردشة لدخولها."
+
+#: ui/group-chat.glade.h:13
+msgid "R_emove"
+msgstr "_حذف"
+
+#: ui/group-chat.glade.h:14
+msgid "_Add"
+msgstr "إ_ضافة"
+
+#: ui/group-chat.glade.h:15
+msgid "_Edit favorites..."
+msgstr "_تحرير المفضّلات..."
+
+#: ui/group-chat.glade.h:16
+msgid "_Join"
+msgstr "إ_نضمام"
+
+#: ui/group-chat.glade.h:17
+msgid "_Nickname:"
+msgstr "الك_نية:"
+
+#: ui/group-chat.glade.h:18
+msgid "_Room:"
+msgstr "ال_غُرفة:"
+
+#: ui/group-chat.glade.h:21
+msgid "_Topic:"
+msgstr "ال_موضوع:"
+
+#: ui/main.glade.h:1
+msgid " "
+msgstr " "
+
+#: ui/main.glade.h:4
+msgid "<b>Information requested, Please wait...</b>"
+msgstr "<b>المعلومات قيد الطلب، الرجاء الإنتظار...</b>"
+
+#: ui/main.glade.h:5
+msgid "<b>Preset status messages</b>"
+msgstr "<b>رسائل حالة مسبوقة الضبط</b>"
+
+#: ui/main.glade.h:6
+msgid "<i>Information not available</i>"
+msgstr "<i>المعلومات غير متوفِّرة</i>"
+
+#: ui/main.glade.h:7
+msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
+msgstr "<span size=\"smaller\">مثال: user@jabber.org</span>"
+
+#: ui/main.glade.h:8
+msgid "Add a contact"
+msgstr "إضافة مراسَل"
+
+#: ui/main.glade.h:9
+msgid "Add contact"
+msgstr "إضافة مراسَل"
+
+#: ui/main.glade.h:10
+msgid "Add to your contact list"
+msgstr "إضافة إلى قائمة مراسليك"
+
+#: ui/main.glade.h:11
+msgid "Appearance"
+msgstr "المظهر"
+
+#: ui/main.glade.h:12
+msgid "Choose a Server"
+msgstr "إختيار نادل"
+
+#: ui/main.glade.h:13
+msgid "Choose from list:"
+msgstr "إختيار من القائمة:"
+
+#: ui/main.glade.h:14
+msgid "Client information"
+msgstr "معلومات العميل"
+
+#: ui/main.glade.h:15
+msgid "Client:"
+msgstr "العميل:"
+
+#: ui/main.glade.h:16
+msgid "Contact information"
+msgstr "معلومات المراسَل"
+
+#: ui/main.glade.h:17
+msgid "Convert _smileys to graphical images"
+msgstr "تحويل الت_عابير المرسومة إلى صورٍ مرسومة"
+
+#: ui/main.glade.h:18
+msgid "Country:"
+msgstr "البلد:"
+
+#: ui/main.glade.h:19
+msgid "Description"
+msgstr "الوصف"
+
+#: ui/main.glade.h:20
+msgid "Disable sounds when _away"
+msgstr "تعطيل الأصوات عندما أكون _غائباً"
+
+#: ui/main.glade.h:21
+msgid "Disable sounds when _busy"
+msgstr "تعطيل الأصوات عندما أكون مَ_شْغولاً"
+
+#: ui/main.glade.h:22
+#. I did not know how to translate Jabber.
+#. This is the best I could do.
+msgid "Do you already have an account on a Jabber server?"
+msgstr "هل لديك حساب عند نادل \"جَابّر\"؟"
+
+#: ui/main.glade.h:23
+msgid "Do you want to accept the request?"
+msgstr "هل تريد قبول الطَّلب؟"
+
+#: ui/main.glade.h:24
+msgid "Edit Groups"
+msgstr "تحرير المجموعات"
+
+#: ui/main.glade.h:25
+msgid "Email:"
+msgstr "البريد الإلكتروني:"
+
+#: ui/main.glade.h:26
+msgid "Enter status message:"
+msgstr "أدخل رسالة الحالة:"
+
+#: ui/main.glade.h:28
+msgid ""
+"Gossip is a modern client for the Jabber Instant Messaging system.\n"
+"\n"
+"This assistant will help you configure Gossip and connect you to your "
+"favorite Jabber server.\n"
+"\n"
+"To get started, just click \"Forward\"."
+msgstr ""
+"كُسِّب عميلٌ حَديث لنظام المراسلة الفورية \"جَابّر\".\n"
+"\n"
+"سيساعدك هذا المُعاون على تهيئَة كُسِّب و الإتِّصال "
+"بنادل \"جَابّر\" المفضَّل لديك.\n"
+"\n"
+"للبدء، أنقر \"إلى الأمام\"."
+
+#: ui/main.glade.h:33
+#. Here I changed the sentence structure in a substantial way,
+#. Because I thought this would be the more naturally Arabic way
+#. To make this statement. Let me know if it is acceptable.
+#. Abdulaziz April 9th 2004
+msgid ""
+"Gossip is now configured properly for your system.\n"
+"You can change your account settings later, by selecting the Chat-"
+">Connect... menu item."
+msgstr ""
+"كُسِّب الآن مهيَّئ بشكلٍ مناسبٍ لنظامك.\n"
+"يمكنك تغيير تعيينات حسابك لاحقا، بإختيار العنصر>إتَّصل... من قائِمة دردشة-."
+
+#: ui/main.glade.h:35
+msgid "I would like to add you to my contact list."
+msgstr "أود إضافتك إلى قائمة مراسليَّ."
+
+#: ui/main.glade.h:36
+msgid ""
+"In order to subscribe to presence notifications from the user, a request "
+"will be sent. Until this request is approved, the user will always be shown "
+"as \"Offline\" in your contact list."
+msgstr ""
+"سيتم·إرسال·طلب للإشتراك بتبليغات وجود المستخدم. "
+"سيظهر المستخدم دائماً على أنَّه \"غير متَّصل\" في قائمة "
+"مراسليك. إلى·أن·تتمَّ·الموافقة·على·هذا·الطَّلب."
+
+#: ui/main.glade.h:37
+msgid "In which group do you want to place this contact?"
+msgstr "في أيّ مجموعة تريد وضع هذا المراسَل؟"
+
+#: ui/main.glade.h:38
+msgid "Information about ..."
+msgstr "معلومات حول..."
+
+#: ui/main.glade.h:39
+msgid "JID"
+msgstr "JID (هوية جابّر للمراسَل)"
+
+#: ui/main.glade.h:40
+msgid "Jabber"
+msgstr "جَابّر"
+
+#: ui/main.glade.h:41
+msgid "Jabber Account"
+msgstr "حساب جَابّر"
+
+#: ui/main.glade.h:42
+msgid "Jabber ID:"
+msgstr "هويَّة جَابّر:"
+
+#: ui/main.glade.h:43
+msgid "Jabber.com"
+msgstr "Jabber.com"
+
+#: ui/main.glade.h:44
+msgid "Jabber.org"
+msgstr "Jabber.org"
+
+#: ui/main.glade.h:45
+msgid "Name:"
+msgstr "الإسم:"
+
+#: ui/main.glade.h:46
+msgid "No"
+msgstr "لا"
+
+#: ui/main.glade.h:47
+msgid "OS:"
+msgstr "نظام التَّشغيل:"
+
+#: ui/main.glade.h:48
+msgid "On what server do you have a Jabber account?"
+msgstr "على أيّ نادل لديك حساب جَابّر؟"
+
+#: ui/main.glade.h:49
+msgid "Personal information"
+msgstr "المعلومات الشَّخصية"
+
+#: ui/main.glade.h:50
+msgid "Play sound when messages arrive"
+msgstr "إصدار صوت عند وصول الرَّسائل"
+
+#: ui/main.glade.h:51
+msgid "Preferences"
+msgstr "التَّفضيلات"
+
+#: ui/main.glade.h:52
+#. It is the responsibility of the writer of the pot file to indicate
+#. in what context the sentence will be used. This sentence
+#. for example can be translated as:
+#. either "رسالة الطلب"
+#. OR "رسالة طلب"
+#. OR "أُطلب رسالة"
+#. The only solution is to use the software thoroughly
+#. and see the context first-hand, but that takes lots of time.
+#. Somehow this needs to be incorporated as a pot file
+#. standard in the future. Abdulaziz April 9th 2004
+msgid "Request message"
+msgstr "رسالة الطَّلب"
+
+#: ui/main.glade.h:53
+msgid "Sending request"
+msgstr "جاري إرسال الطلب"
+
+#: ui/main.glade.h:54
+msgid "Setup Finished"
+msgstr "تمَّ الضبط"
+
+#: ui/main.glade.h:55
+msgid "Show _Offline Contacts"
+msgstr "إظهار المراسلين ال_غير متَّصلين"
+
+#: ui/main.glade.h:56
+msgid "Sound"
+msgstr "الصَّوت"
+
+#: ui/main.glade.h:57
+msgid "Status"
+msgstr "الحالة"
+
+#: ui/main.glade.h:58
+msgid "Status Message"
+msgstr "رسالة الحالة"
+
+#: ui/main.glade.h:59
+msgid "Status Messages"
+msgstr "رسائل الحالة"
+
+#: ui/main.glade.h:60
+msgid "Use a different server"
+msgstr "استخدام نادل آخر"
+
+#: ui/main.glade.h:61
+msgid "Version:"
+msgstr "الإصدارة:"
+
+#: ui/main.glade.h:62
+msgid "Web site:"
+msgstr "موقع الإنترنت:"
+
+#: ui/main.glade.h:63
+msgid "Welcome to Gossip"
+msgstr "أهلاً بكم في كُسِّب"
+
+#: ui/main.glade.h:64
+msgid "What instant messaging system does the contact use?"
+msgstr "ما نظام المراسلة الفورية الذي يستعمله المراسل؟"
+
+#: ui/main.glade.h:65
+msgid "What is your name?"
+msgstr "ما إسمك؟"
+
+#: ui/main.glade.h:66
+msgid "What nickname do you want to use for this contact?"
+msgstr "ّما اللَّقب الذي تريد إطلاقه على هذا المراسل؟"
+
+#: ui/main.glade.h:67
+msgid "What request message do you want to send to ...?"
+msgstr "أيُّ رسالة طلب تريد إرسالها إلى...؟"
+
+#: ui/main.glade.h:68
+msgid "What server do you want to use?"
+msgstr "أي نادل تريد أن تستعمل؟"
+
+#: ui/main.glade.h:69
+msgid "What username do you use?"
+msgstr "ما إسم المستخدم الذي تستعمله؟"
+
+#: ui/main.glade.h:70
+msgid "What username do you want to use?"
+msgstr "ما إسم المستخدم الذي تريد استعماله؟"
+
+#: ui/main.glade.h:71
+msgid "Yes"
+msgstr "نعم"
+
+#: ui/main.glade.h:72
+msgid "Your Identity"
+msgstr "هويَّتك"
+
+#: ui/main.glade.h:73
+msgid "_Accept"
+msgstr "م_وافقة"
+
+#: ui/main.glade.h:74
+msgid "_Account Information"
+msgstr "_معلومات الحساب"
+
+#: ui/main.glade.h:75
+msgid "_Add Contact..."
+msgstr "إ_ضافة مراسَل..."
+
+#: ui/main.glade.h:77
+msgid "_Connect..."
+msgstr "إتَّ_صال..."
+
+#: ui/main.glade.h:78
+msgid "_Decide Later"
+msgstr "_تقرير لاحق"
+
+#: ui/main.glade.h:79
+msgid "_Deny"
+msgstr "_رفض"
+
+#: ui/main.glade.h:80
+msgid "_Disconnect"
+msgstr "_قطع الإتصال"
+
+#: ui/main.glade.h:81
+msgid "_Hide Contact List"
+msgstr "إ_خفاء قائمة المراسلين"
+
+#: ui/main.glade.h:82
+msgid "_Jabber ID of new contact:"
+msgstr "هوية جَابّ_ر للمراسَل الجديد:"
+
+#: ui/main.glade.h:83
+msgid "_Join Group Chat..."
+msgstr "إ_نضمام إلى الدَّردشة الجماعية..."
+
+#: ui/main.glade.h:84
+msgid "_New Message..."
+msgstr "_رسالة جديدة..."
+
+#: ui/main.glade.h:85
+msgid "_Preferences"
+msgstr "ال_تَّفضيلات"
+
+#: ui/main.glade.h:86
+msgid "_Remove"
+msgstr "_حذف"
+
+#: ui/main.glade.h:87
+msgid "_Search..."
+msgstr "_بحث..."
+
+#: ui/main.glade.h:88
+msgid "_Show Contact List"
+msgstr "إظهار _قائمة المراسلين"
+
+#: ui/main.glade.h:89
+msgid "_Status Messages"
+msgstr "_رسائل الحالة"
+

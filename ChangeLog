@@ -1,3 +1,7 @@
+2004-06-20  Arafat Medini  <lumina@silverpen.de>
+
+	* ar.po: Added Arabic locale ar to ALL_LINGUAS.
+
 2004-06-17  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-vcard-dialog.c:
