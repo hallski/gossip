@@ -218,6 +218,7 @@ static gboolean app_tray_destroy_event_cb            (GtkWidget          *widget
 						      GdkEvent           *event,
 						      gpointer            user_data);
 static void     app_tray_create                      (void);
+static gboolean app_is_visible                       (void);
 static void     app_create_connection                (void);
 static void     app_disconnect                       (void);
 static void     app_setup_conn_dependent_menu_items  (GladeXML           *glade);
@@ -1695,8 +1696,8 @@ gossip_app_is_connected (void)
 	return lm_connection_is_open (app->priv->connection);
 }
 
-static void
-app_toggle_visibility (void)
+static gboolean
+app_is_visible (void)
 {
 	GossipAppPriv *priv;
 	gboolean       visible;
@@ -1707,13 +1708,32 @@ app_toggle_visibility (void)
 		      "visible", &visible,
 		      NULL);
 	
+	if (priv->window->window) {
+		GdkWindow *window;
+		
+		window = priv->window->window;
+		
+		visible = visible && !(gdk_window_get_state (window) & GDK_WINDOW_STATE_ICONIFIED);
+	}
+	
+	return visible;
+}
+
+static void
+app_toggle_visibility (void)
+{
+	GossipAppPriv *priv;
+	gboolean       visible;
+
+	priv = app->priv;
+
+	visible = app_is_visible ();
+
 	if (visible) {
 		gtk_widget_hide (priv->window);
-		
-		gtk_widget_hide (priv->hide_popup_item);
-		gtk_widget_show (priv->show_popup_item);
+
 		gconf_client_set_bool (gconf_client, 
-				       GCONF_PATH "/ui/main_window_hidden", 1,
+				       GCONF_PATH "/ui/main_window_hidden", TRUE,
 				       NULL);
 	} else {
 		gint x, y;
@@ -1724,16 +1744,15 @@ app_toggle_visibility (void)
 		y = gconf_client_get_int (gconf_client, 
 					  GCONF_PATH "/ui/main_window_position_y",
 					  NULL);
-		gtk_widget_show (priv->window);
 		
 		if (x >= 0 && y >= 0) {
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
-		
-		gtk_widget_show (priv->hide_popup_item);
-		gtk_widget_hide (priv->show_popup_item);
+
+		gtk_window_present (GTK_WINDOW (priv->window));
+
 		gconf_client_set_bool (gconf_client, 
-				       GCONF_PATH "/ui/main_window_hidden", 0,
+				       GCONF_PATH "/ui/main_window_hidden", FALSE,
 				       NULL);
 	}
 }
@@ -1788,6 +1807,14 @@ app_tray_button_press_cb (GtkWidget      *widget,
 		break;
 
 	case 3:
+		if (app_is_visible ()) {
+			gtk_widget_show (priv->hide_popup_item);
+			gtk_widget_hide (priv->show_popup_item);
+		} else {
+			gtk_widget_hide (priv->hide_popup_item);
+			gtk_widget_show (priv->show_popup_item);
+		}
+
                 gtk_menu_popup (GTK_MENU (priv->popup_menu), NULL, NULL, NULL,
 				NULL, event->button, event->time);
                 return TRUE;

@@ -1,5 +1,9 @@
 2004-01-24  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_toggle_visibility, app_is_visible)
+	(app_tray_button_press_cb): Show the contact list if it's visible
+	but on another workspace Fixes bug #127208.
+
 	* src/gossip-chat-view.c (chat_view_size_allocate): Scroll down
 	the window if it was scrolled down before we resized. Fixes bug
 	#128011.
