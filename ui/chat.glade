@@ -581,6 +581,15 @@
 		<widget class="GtkMenu" id="menu_conv_menu">
 
 		  <child>
+		    <widget class="GtkMenuItem" id="menu_conv_clear">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">C_lear</property>
+		      <property name="use_underline">True</property>
+		      <accelerator key="L" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		    </widget>
+		  </child>
+
+		  <child>
 		    <widget class="GtkMenuItem" id="menu_conv_log">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">View Lo_g</property>

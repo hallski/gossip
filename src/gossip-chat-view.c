@@ -122,6 +122,10 @@ static void       chat_view_copy_address_cb (GtkMenuItem         *menuitem,
 					     const gchar         *url);
 static void       chat_view_realize_cb      (GossipChatView      *widget,
 					     gpointer             data);
+
+static void       chat_view_clear_view_cb   (GtkMenuItem *menuitem,
+					     GossipChatView *view);
+
 static gint       chat_view_url_regex_match (const gchar         *msg,
 					     GArray              *start,
 					     GArray              *end);
@@ -271,6 +275,8 @@ chat_view_setup_tags (GossipChatView *view)
 			  tag);
 }
 
+
+
 static void
 chat_view_populate_popup (GossipChatView *view,
 			  GtkMenu        *menu,
@@ -307,6 +313,18 @@ chat_view_populate_popup (GossipChatView *view,
 						&start, &end, FALSE);
 	}
 
+	item = gtk_menu_item_new ();
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+	
+	item = gtk_menu_item_new_with_mnemonic (_("C_lear"));
+	g_signal_connect (item,
+			  "activate",
+			  G_CALLBACK (chat_view_clear_view_cb),
+			  view);
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+
 	if (!str || strlen (str) == 0) {
 		return;
 	}
@@ -316,10 +334,6 @@ chat_view_populate_popup (GossipChatView *view,
 				"url", str, 
 				(GDestroyNotify) g_free);
 
-	item = gtk_menu_item_new ();
-	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-	
 	item = gtk_menu_item_new_with_mnemonic (_("_Copy Link Address"));
 	g_signal_connect (item,
 			  "activate",
@@ -469,6 +483,12 @@ chat_view_realize_cb (GossipChatView *view, gpointer data)
 	win = gtk_text_view_get_window (GTK_TEXT_VIEW (view), 
 					GTK_TEXT_WINDOW_BOTTOM);
 	gdk_window_set_background (win, &GTK_WIDGET(view)->style->base[GTK_STATE_NORMAL]);
+}
+
+static void
+chat_view_clear_view_cb (GtkMenuItem *menuitem, GossipChatView *view)
+{
+	gossip_chat_view_clear (view);
 }
 
 static gint
@@ -960,6 +980,17 @@ gossip_chat_view_set_margin (GossipChatView *view, gint margin)
 			  "realize",
 			  G_CALLBACK (chat_view_realize_cb),
 			  NULL);
+}
+
+void
+gossip_chat_view_clear (GossipChatView *view)
+{
+	GtkTextBuffer *buffer;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_buffer_set_text (buffer, "", -1);
 }
 
 

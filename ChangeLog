@@ -1,3 +1,20 @@
+2003-12-13  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.c: 
+	(chat_view_populate_popup),
+	(chat_view_clear_view_cb), (gossip_chat_view_clear):
+	* src/gossip-chat-view.h:
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_clear_activate_cb), (chat_window_log_activate_cb),
+	(chat_window_info_activate_cb):
+	* src/gossip-chat.c: (chat_send), (gossip_chat_clear):
+	* src/gossip-chat.h:
+	* ui/chat.glade:
+	- Added a Clear to right click menu in chat windows
+	- Added a Conversation->Clear menu item aswell
+	- Based on a patch from Jonatan Magnusson
+	- Fixes bug #127383
+
 2003-12-13  Martyn Russell  <ginxd@btopenworld.com>
  
 	* src/gossip-app.c (app_complete_jid_response_cb): 

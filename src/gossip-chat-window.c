@@ -56,6 +56,8 @@ static void chat_window_update_status	      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
 static void chat_window_update_title	      (GossipChatWindow	     *window);
 static void chat_window_update_menu	      (GossipChatWindow	     *window);
+static void chat_window_clear_activate_cb     (GtkWidget             *menuitem,
+					       GossipChatWindow      *window);
 static void chat_window_info_activate_cb      (GtkWidget	     *menuitem,
 					       GossipChatWindow	     *window);
 static void chat_window_log_activate_cb       (GtkWidget             *menuitem,
@@ -109,24 +111,25 @@ chat_window_get_name                          (GossipChatWindow      *window,
 GtkWidget * chat_window_create_notebook (gpointer data);
 
 struct _GossipChatWindowPriv {
-	GList                  *chats;
-	GList                  *chats_new_msg;
-	GList                  *chats_composing;
-	GossipChat             *current_chat;
-	gboolean		new_msg;
+	GList      *chats;
+	GList      *chats_new_msg;
+	GList      *chats_composing;
+	GossipChat *current_chat;
+	gboolean    new_msg;
 
-	GtkWidget              *dialog;
-	GtkWidget              *notebook;
+	GtkWidget  *dialog;
+	GtkWidget  *notebook;
 	
 	/* menu items */
-	GtkWidget	       *m_conv_close;
-	GtkWidget	       *m_conv_log;
-	GtkWidget	       *m_conv_info;
-	GtkWidget	       *m_tabs_next;
-	GtkWidget	       *m_tabs_prev;
-	GtkWidget	       *m_tabs_left;
-	GtkWidget	       *m_tabs_right;
-	GtkWidget	       *m_tabs_detach;
+	GtkWidget  *m_conv_clear;
+	GtkWidget  *m_conv_log;
+	GtkWidget  *m_conv_info;
+	GtkWidget  *m_conv_close;
+	GtkWidget  *m_tabs_next;
+	GtkWidget  *m_tabs_prev;
+	GtkWidget  *m_tabs_left;
+	GtkWidget  *m_tabs_right;
+	GtkWidget  *m_tabs_detach;
 };
 
 static gpointer parent_class;
@@ -192,6 +195,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "chat_window", &priv->dialog,
 				       "chats_notebook", &priv->notebook,
 				       "menu_conv", &menu_conv,
+				       "menu_conv_clear", &priv->m_conv_clear,
 				       "menu_conv_info", &priv->m_conv_info,
 				       "menu_conv_log", &priv->m_conv_log,
 				       "menu_conv_close", &priv->m_conv_close,
@@ -220,7 +224,11 @@ gossip_chat_window_init (GossipChatWindow *window)
 			  "activate",
 			  G_CALLBACK (chat_window_conv_activate_cb),
 			  window);
-	
+
+	g_signal_connect (priv->m_conv_clear,
+			  "activate",
+			  G_CALLBACK (chat_window_clear_activate_cb),
+			  window);
 	g_signal_connect (priv->m_conv_log,
 			  "activate",
 			  G_CALLBACK (chat_window_log_activate_cb),
@@ -642,8 +650,15 @@ chat_window_update_menu (GossipChatWindow *window)
 }
 
 static void
-chat_window_log_activate_cb (GtkWidget        *menuitem,
-			     GossipChatWindow *window)
+chat_window_clear_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv = window->priv;
+
+	gossip_chat_clear (priv->current_chat);
+}
+
+static void
+chat_window_log_activate_cb (GtkWidget *menuitem,GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv = window->priv;
 	GossipRosterItem     *item;
@@ -654,8 +669,7 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
-chat_window_info_activate_cb (GtkWidget        *menuitem,
-			      GossipChatWindow *window)
+chat_window_info_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GossipRosterItem     *item;

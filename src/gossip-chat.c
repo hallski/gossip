@@ -422,11 +422,7 @@ chat_send (GossipChat  *chat,
         }
 
         if (g_ascii_strcasecmp (msg, "/clear") == 0) {
-                GtkTextBuffer *buffer;
-
-                buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->view));
-                gtk_text_buffer_set_text (buffer, "", 1);
-
+		gossip_chat_view_clear (priv->view);
                 return;
         }
 
@@ -1082,3 +1078,16 @@ gossip_chat_get_window (GossipChat *chat)
 {
 	return chat->priv->window;
 }
+
+void
+gossip_chat_clear (GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+	
+	gossip_chat_view_clear (priv->view);
+}
+
