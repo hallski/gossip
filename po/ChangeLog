@@ -1,3 +1,7 @@
+2003-07-03  Richard Hult  <richard@imendio.com>
+
+	* sv.po: Update and remove mnemonic conflict.
+
 2003-06-29  Jordi Mallach  <jordi@sindominio.net>
 
 	* POTFILES.in: Added gossip.desktop.in.

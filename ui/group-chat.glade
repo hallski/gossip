@@ -37,8 +37,8 @@
 	      <child>
 		<widget class="GtkLabel" id="label4">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Topic:</property>
-		  <property name="use_underline">False</property>
+		  <property name="label" translatable="yes">_Topic:</property>
+		  <property name="use_underline">True</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
 		  <property name="wrap">False</property>
@@ -47,6 +47,7 @@
 		  <property name="yalign">0.5</property>
 		  <property name="xpad">0</property>
 		  <property name="ypad">0</property>
+		  <property name="mnemonic_widget">topic_entry</property>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -836,7 +837,7 @@
 			<widget class="GtkButton" id="add_button">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Add</property>
+			  <property name="label" translatable="yes">_Add</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			</widget>
@@ -852,7 +853,7 @@
 			<widget class="GtkButton" id="remove_button">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Remove</property>
+			  <property name="label" translatable="yes">R_emove</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			</widget>
@@ -941,8 +942,8 @@
 		      <child>
 			<widget class="GtkLabel" id="label38">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Room:</property>
-			  <property name="use_underline">False</property>
+			  <property name="label" translatable="yes">_Room:</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -951,6 +952,7 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
+			  <property name="mnemonic_widget">room_entry</property>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -965,8 +967,8 @@
 		      <child>
 			<widget class="GtkLabel" id="label39">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Server:</property>
-			  <property name="use_underline">False</property>
+			  <property name="label" translatable="yes">_Server:</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -975,6 +977,7 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
+			  <property name="mnemonic_widget">server_entry</property>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -1033,8 +1036,8 @@
 		      <child>
 			<widget class="GtkLabel" id="label41">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Nickname:</property>
-			  <property name="use_underline">False</property>
+			  <property name="label" translatable="yes">N_ickname:</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -1043,6 +1046,7 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
+			  <property name="mnemonic_widget">nick_entry</property>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>
@@ -1101,8 +1105,8 @@
 		      <child>
 			<widget class="GtkLabel" id="label44">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">Chat name:</property>
-			  <property name="use_underline">False</property>
+			  <property name="label" translatable="yes">Chat _name:</property>
+			  <property name="use_underline">True</property>
 			  <property name="use_markup">False</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
 			  <property name="wrap">False</property>
@@ -1111,6 +1115,7 @@
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
 			  <property name="ypad">0</property>
+			  <property name="mnemonic_widget">name_entry</property>
 			</widget>
 			<packing>
 			  <property name="left_attach">0</property>

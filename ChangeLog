@@ -1,3 +1,8 @@
+2003-07-03  Richard Hult  <richard@imendio.com>
+
+	* ui/*.glade: Add missing mnemonics, patch from Jordi Mallach
+	<jordi@sindominio.net>.
+
 2003-07-03  Richard Hult  <rhult@codefactory.se>
 
 	* ui/chat.glade: Remove send button from single line entry box.
