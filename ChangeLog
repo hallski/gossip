@@ -1,3 +1,16 @@
+2003-10-25  Mikael Hallendal  <micke@imendio.com>
+
+	* gossip.schemas.in: 
+	- Changed timestamp all messages to default to false
+	  
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-utils.c:
+	- Added last_timestamp to keep track of last timestamp.
+	- ichat-like timestamps, half fixes #121004
+	- group-chat and chat now keep track on when the last timestamp was 
+	  added.
+
 2003-10-25  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-utils.c: (open_address), (open_address_cb),

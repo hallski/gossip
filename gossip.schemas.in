@@ -21,9 +21,9 @@
       <applyto>/apps/gossip/conversation/timestamp_messages</applyto>
       <owner>gossip</owner>
       <type>bool</type>
-      <default>true</default>
+      <default>false</default>
       <locale name="C">
-         <short>Timestamp messages</short>
+         <short>Timestamp all messages</short>
          <long>
 	 Whether or not to timestamp all messages in conversations.
          </long>

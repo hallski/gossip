@@ -57,8 +57,10 @@ void         gossip_glade_setup_size_group           (GladeXML         *gui,
 						      gchar            *first_widget, ...);
 void         gossip_text_view_set_margin             (GtkTextView      *tv,
 						      gint              margin);
+void         gossip_text_view_append_timestamp       (GtkTextView    *text_view,
+						      const gchar    *timestamp,
+						      GTimeVal       *last_timestamp);
 void         gossip_text_view_append_chat_message    (GtkTextView      *text_view,
-						      const gchar      *timestamp,
 						      const gchar      *to,
 						      const gchar      *from,
 						      const gchar      *msg);

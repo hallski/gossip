@@ -73,6 +73,8 @@ struct _GossipChat {
 	
 	/* Chat exists but has been hidden by the user. */
 	gboolean          hidden;
+
+	GTimeVal          last_timestamp;
 };
 
 
@@ -141,7 +143,6 @@ static void        chat_composing_remove_timeout     (GossipChat       *chat);
 static gboolean    chat_composing_stop_timeout_cb    (GossipChat       *chat);
 static void        chat_show_composing_icon          (GossipChat       *chat,
 						      gboolean          is_composing);
-
 
 static GHashTable *chats = NULL;
 
@@ -243,7 +244,8 @@ chat_get_for_jid (GossipJID  *jid,
 	
 	chat->jid = gossip_jid_ref (jid);
 	chat->hidden = FALSE;
-		
+	chat->last_timestamp.tv_sec = chat->last_timestamp.tv_usec = 0;
+	
 	if (priv_group_chat) {
 		chat->nick = g_strdup (gossip_jid_get_resource (jid));
 	}
@@ -579,9 +581,12 @@ chat_send (GossipChat *chat, const gchar *msg)
 	chat_composing_remove_timeout (chat);
 
 	nick = gossip_jid_get_part_name (gossip_app_get_jid ());	
+
+	gossip_text_view_append_timestamp (GTK_TEXT_VIEW (chat->text_view),
+					   NULL,
+					   &chat->last_timestamp);
 	
 	gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->text_view),
-					      NULL,
 					      gossip_app_get_username (),
 					      nick,
 					      msg);
@@ -765,9 +770,12 @@ chat_message_handler (LmMessageHandler *handler,
 	}
 
 	chat_show_composing_icon (chat, FALSE);
+
+	gossip_text_view_append_timestamp (GTK_TEXT_VIEW (chat->text_view),
+					   timestamp,
+					   &chat->last_timestamp);
 	
 	gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->text_view),
-					      timestamp,
 					      gossip_app_get_username (),
 					      nick,
 					      body);

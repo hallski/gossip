@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003      Imendio HB
- * Copyright (C) 2002-2003 CodeFactory AB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -34,11 +33,18 @@
 #include "gossip-stock.h"
 #include "gossip-utils.h"
 
-
 #define DINGUS "(((mailto|news|telnet|nttp|file|http|ftp|https|dav)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
+
+/* Number of seconds between timestamps when using normal mode, 5 minutes */
+#define TIMESTAMP_INTERVAL 300
 
 static regex_t dingus;
 extern GConfClient *gconf_client;
+
+typedef enum {
+    TIMESTAMP_STYLE_IRC,
+    TIMESTAMP_STYLE_NORMAL
+} TimestampStyle;
 
 static gboolean utils_url_event_cb          (GtkTextTag     *tag,
 					     GObject        *object,
@@ -51,6 +57,8 @@ static gboolean utils_text_view_event_cb    (GtkTextView    *view,
 static void     utils_insert_with_emoticons (GtkTextBuffer *buf,
 					     GtkTextIter   *iter, 
 					     const gchar   *text);
+
+static TimestampStyle utils_get_timestamp_style (void);
 
 void
 gossip_option_menu_setup (GtkWidget     *option_menu,
@@ -323,6 +331,7 @@ get_stamp (const gchar *timestamp)
 	}
 	
 	buf[0] = 0;
+	
 	strftime (buf, sizeof (buf), "%H:%M ", tm);
 
 	return g_strdup (buf);
@@ -372,9 +381,85 @@ utils_get_substring (const gchar *str, gint start, gint end)
 	return g_strndup (str + start, end - start);
 }
 
+static TimestampStyle
+utils_get_timestamp_style (void)
+{
+    if (gconf_client_get_bool (gconf_client,
+			       "/apps/gossip/conversation/timestamp_messages",
+			       NULL)) {
+	return TIMESTAMP_STYLE_IRC;
+    }
+
+    return TIMESTAMP_STYLE_NORMAL;
+}
+
+void 
+gossip_text_view_append_timestamp (GtkTextView    *text_view,
+				   const gchar    *timestamp,
+				   GTimeVal       *last_timestamp)
+{
+	gchar          *stamp;
+	TimestampStyle  style;
+	gboolean        add_timestamp = FALSE;
+	
+	style = utils_get_timestamp_style();
+	stamp = get_stamp(timestamp);
+
+	if (style == TIMESTAMP_STYLE_NORMAL) {
+		GTimeVal  cur_time;
+
+		g_get_current_time (&cur_time);
+
+		if (last_timestamp->tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec) {
+			last_timestamp->tv_sec = cur_time.tv_sec;
+			add_timestamp = TRUE;
+		} 
+	} else {
+		add_timestamp = TRUE;
+	}
+	
+	if (add_timestamp) {
+		GtkTextBuffer   *buffer;
+		GtkTextIter      iter;
+		GtkTextTagTable *tags;
+		GtkTextTag      *tag;
+		
+		buffer = gtk_text_view_get_buffer (text_view);
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+
+		if (!gtk_text_iter_starts_line (&iter)) {
+			gtk_text_buffer_insert (buffer,
+						&iter,
+						"\n",
+						1);
+		}
+
+		tags = gtk_text_buffer_get_tag_table(buffer);
+		if (style == TIMESTAMP_STYLE_NORMAL) {
+			tag = gtk_text_tag_table_lookup (tags, 
+							 "timestamp_normal");
+		} else {
+			tag = gtk_text_tag_table_lookup (tags,
+							 "timestamp_irc");
+		}
+		
+		gtk_text_buffer_insert_with_tags(buffer, &iter,
+						 stamp, -1, tag,
+						 NULL);
+
+		if (style == TIMESTAMP_STYLE_NORMAL) {
+			gtk_text_buffer_insert (buffer,
+						&iter,
+						"\n",
+						1);
+		}
+		
+		g_free (stamp);
+	} 
+}
+
 void
 gossip_text_view_append_chat_message (GtkTextView  *text_view,
-				      const gchar  *timestamp,
 				      const gchar  *to,
 				      const gchar  *from,
 				      const gchar  *msg)
@@ -383,12 +468,10 @@ gossip_text_view_append_chat_message (GtkTextView  *text_view,
 	GtkTextIter    iter;
 	gchar         *nick_tag;
 	GtkTextMark   *mark;
-	gchar         *stamp = NULL;
 	gint           num_matches, i;
 	GArray        *start, *end;
 	gboolean       bottom = TRUE;
 	GtkWidget     *parent;
-	gboolean       use_timestamp;
 
 	if (msg == NULL || msg[0] == 0) {
 		return;
@@ -410,35 +493,19 @@ gossip_text_view_append_chat_message (GtkTextView  *text_view,
 
 	buffer = gtk_text_view_get_buffer (text_view);
 
-	gtk_text_buffer_get_end_iter (buffer, &iter);
+	/* gtk_text_buffer_get_end_iter (buffer, &iter);
 	if (!gtk_text_iter_is_start (&iter)) {
 		gtk_text_buffer_insert (buffer,
 					&iter,
 					"\n",
 					1);
-	}
+	}*/
 	
 	if (from) {
 		if (strncmp (msg, "/me ", 4) != 0) {
 			/* Regular message. */
 			
 			gtk_text_buffer_get_end_iter (buffer, &iter);
-			
-			use_timestamp = gconf_client_get_bool (
-				gconf_client,
-				"/apps/gossip/conversation/timestamp_messages",
-				NULL);
-			
-			if (use_timestamp) {
-				stamp = get_stamp (timestamp);
-				gtk_text_buffer_insert_with_tags_by_name (
-					buffer, &iter,
-					stamp, -1,
-					"shadow",
-					NULL);
-			}
-
-			g_free (stamp);
 
 			/* FIXME: This only works if nick == name... */
 			if (!strcmp (from, to)) {
@@ -558,6 +625,12 @@ gossip_text_view_append_chat_message (GtkTextView  *text_view,
 	g_array_free (start, FALSE);
 	g_array_free (end, FALSE);
 	
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer,
+				&iter,
+				"\n",
+				1);
+
 	/* Scroll to the end of the newly inserted text, if we were at the
 	 * bottom before.
 	 */
@@ -875,6 +948,12 @@ gossip_text_view_setup_tags (GtkTextView *view)
 				    "foreground", "darkgrey",
 				    NULL);
 	
+	gtk_text_buffer_create_tag (buffer,
+				    "normal_timestamp",
+				    "foreground", "darkgrey",
+				    "justification", GTK_JUSTIFY_CENTER,
+				    NULL);
+
 	gtk_text_buffer_create_tag (buffer,
 				    "url",
 				    "foreground", "steelblue",

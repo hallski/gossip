@@ -3,7 +3,6 @@
  * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
- * Copyright (C) 2002-2003 CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -35,7 +34,6 @@
 #include "gossip-group-chat.h"
 #include "disclosure-widget.h"
 
-
 /* Treeview columns */
 enum {
 	COL_STATUS,
@@ -66,6 +64,7 @@ struct _GossipGroupChat {
 
 	GCompletion      *completion;
 
+	GTimeVal          last_timestamp;
 	GHashTable       *priv_chats;
 };
 
@@ -75,7 +74,6 @@ typedef struct {
 	gboolean         found;
 	GtkTreeIter      found_iter;
 } FindUserData;
-
 
 static void             destroy_group_chat                      (GossipGroupChat   *chat);
 static void             group_chat_window_destroy_cb            (GtkWidget         *widget,
@@ -224,6 +222,7 @@ group_chat_get_for_jid (GossipJID *jid)
 	
 	chat->jid = gossip_jid_ref (jid);
 	chat->inited = FALSE;
+	chat->last_timestamp.tv_sec = chat->last_timestamp.tv_usec = 0;
 
 	chat->priv_chats = g_hash_table_new_full (g_str_hash, g_str_equal,
 						  g_free, NULL);
@@ -835,9 +834,12 @@ group_chat_message_handler (LmMessageHandler *handler,
 		node = lm_message_node_get_child (m->node, "body");
 		if (node) {
 			timestamp = gossip_utils_get_timestamp_from_message (m);
-			
+		
+			gossip_text_view_append_timestamp (GTK_TEXT_VIEW (chat->textview),
+							   timestamp,
+							   &chat->last_timestamp);
+
 			gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->textview),
-							      timestamp,
 							      chat->nick,
 							      gossip_jid_get_resource (jid),
 							      node->value);
