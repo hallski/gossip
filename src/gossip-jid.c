@@ -18,7 +18,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <ctype.h>
 #include <string.h>
+
 #include "gossip-jid.h"
 
 struct GossipJID {
@@ -192,8 +194,7 @@ gossip_jid_string_is_valid_jid (const gchar *str_jid)
 	}
 
 	dot = strrchr (str_jid, '.');
-	if (dot == str_jid + jid_len - 1 ||
-	    dot == str_jid + jid_len - 2) {
+	if (dot == str_jid + jid_len - 1) {
 		return FALSE;
 	}
 

@@ -1,5 +1,12 @@
 2004-05-18  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-jid.c: (gossip_jid_string_is_valid_jid):
+	- Allow IP-numbers as JID's
+	- Patch from Fabio Bonelli.
+	- Fixes bug #135614
+
+2004-05-18  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-window.c:
 	(chat_window_create_label),
 	(chat_window_update_tooltip):
