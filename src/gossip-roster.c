@@ -509,12 +509,12 @@ roster_iq_handler (LmMessageHandler *handler,
 							      "subscription");
 		if (subscription && strcmp (subscription, "remove") == 0) {
 			roster_item_remove (roster, item);
-			return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+			continue;
 		}
 	
 		if (item) {
 			roster_item_update (roster, item, node);
-			return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+			continue;
 		}
 
 		/* It's a new item */

@@ -1,3 +1,9 @@
+2003-11-11  Ross Burton  <ross@burtonini.com>
+
+	* src/gossip-roster.c: (roster_iq_handler):
+	- Don't return on duplicate items. Fixes problem when not all contacts
+	  show up in the roster.
+
 2003-11-10  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c:
