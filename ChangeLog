@@ -1,3 +1,8 @@
+2003-12-13  Martyn Russell  <ginxd@btopenworld.com>
+
+	* src/gossip-chat.c (chat_input_key_press_event_cb): 
+	- Fixes event->state && GDK_CONTROL_MASK to one &.
+
 2003-12-13  Jonatan Magnusson  <barfota@samvetet.lu.se>
 
 	* src/gossip-chat-view.c: 

@@ -869,7 +869,7 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
                                GossipChat  *chat)
 {
 	/* Catch enter but not ctrl-enter */
-	if (IS_ENTER (event->keyval) && !(event->state && GDK_CONTROL_MASK)) {
+	if (IS_ENTER (event->keyval) && !(event->state & GDK_CONTROL_MASK)) {
 		chat_input_text_view_send (chat);
 
 		return TRUE;
