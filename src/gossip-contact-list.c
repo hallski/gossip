@@ -642,8 +642,8 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 	groups = gossip_contact_get_groups (contact);
 	if (!groups) {
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
-	gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-			    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
+				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
 				    MODEL_COL_NAME, gossip_contact_get_name (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_CONTACT, g_object_ref (contact),
@@ -658,19 +658,27 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 
 		name = l->data;
 		contact_list_get_group (list, name, &iter_group, &created);
-			    
+
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
-			    MODEL_COL_NAME, gossip_contact_get_name (contact),
-			    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-			    MODEL_COL_CONTACT, g_object_ref (contact),
+				    MODEL_COL_NAME, gossip_contact_get_name (contact),
+				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
+				    MODEL_COL_CONTACT, g_object_ref (contact),
 				    MODEL_COL_IS_GROUP, FALSE,
-			    -1);
-	}
+				    -1);
 
-	/* is this the right place for this? */
-	gtk_tree_view_expand_all (GTK_TREE_VIEW (list));
+		if (created) {
+			GtkTreePath *path;
+			
+			path = gtk_tree_model_get_path (model, &iter_group);
+			if (path) {
+				gtk_tree_view_expand_row (GTK_TREE_VIEW (list),
+							  path, FALSE);
+				gtk_tree_path_free (path);
+			}
+		}
+	}
 }
 
 static void
@@ -753,7 +761,6 @@ contact_list_setup_view (GossipContactList *list)
 						 contact_list_pixbuf_cell_data_func, 
 						 NULL, NULL);
 					    
-	/* FIXME: Write a cell renderer that handles our name/status cell */
 	cell = gossip_cell_renderer_text_new ();
 	g_object_set (cell,
 		      "xpad", (guint) 4, 

@@ -66,11 +66,7 @@ static void cell_renderer_text_update_text  (GossipCellRendererText *cell,
 					     GtkWidget              *widget,
 					     gint                    new_width,
 					     gboolean                selected);
-static void
-cell_renderer_text_ellipsize_string         (GtkWidget              *widget,
-					     gchar                  *str,
-					     gint                    width,
-					     gboolean                smaller);
+
 /* -- Properties -- */
 enum {
 	PROP_0,
@@ -128,6 +124,10 @@ static void
 gossip_cell_renderer_text_init (GossipCellRendererText *cell)
 {
 	GossipCellRendererTextPriv *priv;
+
+	g_object_set (cell,
+		      "ellipsize", PANGO_ELLIPSIZE_END,
+		      NULL);
 
 	priv = g_new0 (GossipCellRendererTextPriv, 1);
 
@@ -280,8 +280,6 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	PangoAttribute             *attr_color, *attr_style, *attr_size;
 	GtkStyle                   *style;
 	GdkColor                    color;
-	gchar                      *name;
-	gchar                      *status;
 	gchar                      *str;
 
 	priv = cell->priv;
@@ -290,26 +288,20 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 
 	attr_color = NULL;
 
-	name = g_strdup (priv->name);
-	cell_renderer_text_ellipsize_string (widget, name, new_width, FALSE);
-
 	if (priv->is_group) {
 		g_object_set (cell, 
 			      "visible", TRUE,
 			      "weight", PANGO_WEIGHT_BOLD, 
-			      "text", name,
+			      "text", priv->name,
 			      "attributes", NULL,
 			      NULL);
 		return;
 	}
 
-	status = g_strdup (priv->status);
-	cell_renderer_text_ellipsize_string (widget, status, new_width, TRUE);
-	
 	str = g_strdup_printf ("%s%s%s", 
-			       name, 
+			       priv->name, 
 			       priv->is_group ? "" : "\n",
-			       priv->is_group ? "" : status);
+			       priv->is_group ? "" : priv->status);
 
  	style = gtk_widget_get_style (widget);
 	color = style->text_aa[GTK_STATE_NORMAL];
@@ -317,7 +309,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	attr_list = pango_attr_list_new ();
 
 	attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
-	attr_style->start_index = strlen (name) + 1;
+	attr_style->start_index = strlen (priv->name) + 1;
 	attr_style->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_style);
 
@@ -342,93 +334,9 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
        
 	pango_attr_list_unref (attr_list);
 
-	g_free (name);
-	g_free (status);
 	g_free (str);
-
 }
 
-static void
-ellipsize_string (gchar *str, gint len)
-{
-	gchar *tmp;
-
-	if (g_utf8_strlen (str, -1) > len + 4) {
-		tmp = g_utf8_offset_to_pointer (str, len);
-
-		tmp[0] = '.';
-		tmp[1] = '.';
-		tmp[2] = '.';
-		tmp[3] = '\0';
-	}
-}
-
-#define ELLIPSIS_MIN 6
-#define ELLIPSIS_MAX 100
-#define TREE_INDENT 30
-
-static void
-cell_renderer_text_ellipsize_string (GtkWidget *widget,
-				     gchar     *str,
-				     gint       width,
-				     gboolean   smaller) 
-{
-	PangoLayout    *layout;
-	PangoRectangle  rect;
-	gint            len_str;
-	gint            width_str;
-	PangoAttrList  *attr_list = NULL;
-	PangoAttribute *attr_size, *attr_style;
-	
-	len_str = g_utf8_strlen (str, -1);
-
-	if (len_str < ELLIPSIS_MIN) {
-		return;
-	}
-
-	len_str = MIN (len_str, ELLIPSIS_MAX);
-
-	layout = gtk_widget_create_pango_layout (widget, NULL);
-	
-	pango_layout_set_text (layout, str, -1);
-	pango_layout_get_extents (layout, NULL, &rect);
-	width_str = rect.width / PANGO_SCALE;
-
-	if (smaller) {
-		/* Do the same as pango markup does for "smaller". */
-		attr_list = pango_attr_list_new ();
-
-		attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
-		attr_style->start_index = 0;
-		attr_style->end_index = -1;
-		pango_attr_list_insert (attr_list, attr_style);
-		
-		attr_size = pango_attr_size_new (
-			pango_font_description_get_size (widget->style->font_desc) / 1.2);
-		attr_size->start_index = 0;
-		attr_size->end_index = -1;
-		pango_attr_list_insert (attr_list, attr_size);
-	}
-	
-	while (len_str >= ELLIPSIS_MIN && width_str > width) {
-		len_str--;
-		ellipsize_string (str, len_str);
-		
-		pango_layout_set_text (layout, str, -1);
-		if (smaller) {
-			pango_layout_set_attributes (layout, attr_list);
-		}
-		pango_layout_get_extents (layout, NULL, &rect);
-		
-		width_str = rect.width / PANGO_SCALE;
-	}
-
-	if (smaller) {
-		pango_attr_list_unref (attr_list);
-	}
-	
-	g_object_unref (layout);
-}
 #if 0
 static PangoLayout*
 cell_renderer_text_get_layout (GossipCellRendererText *cell,

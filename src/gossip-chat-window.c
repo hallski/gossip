@@ -487,7 +487,7 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
 	
 	attr_list = pango_attr_list_new ();
-	attr = pango_attr_scale_new (0.9);
+	attr = pango_attr_scale_new (1/1.2);
 	attr->start_index = 0;
 	attr->end_index = -1;
 	pango_attr_list_insert (attr_list, attr);

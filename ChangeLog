@@ -1,5 +1,17 @@
 2005-04-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c: (chat_window_create_label): Try an
+	even smaller label for the tabs.
+
+	* src/gossip-cell-renderer-text.c:
+	(gossip_cell_renderer_text_init),
+	(cell_renderer_text_update_text): Remove ellipsizing hack and use
+	pango instead.
+	
+	* src/gossip-contact-list.c: (contact_list_add_contact): Only
+	expand groups that are newly created (restores behavior from the
+	0.8 branch).
+
 	* src/gossip-notebook.c (button_release_cb): Always remove the
 	grab if we have it, not only if the pointer grab is effective,
 	since we don't always have that. Fixes stuck grab when dragging
