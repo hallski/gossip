@@ -1,5 +1,7 @@
 2004-02-10  Richard Hult  <richard@imendio.com>
 
+	* configure.in: Gah, revert the exslt change and really release.
+
 	* Release 0.7.2.
 
 	* configure.in: Bump version to 0.7.2, add libexslt to pkgconfig
