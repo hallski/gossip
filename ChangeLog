@@ -1,5 +1,8 @@
 2003-10-14  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat.c: (chat_message_handler): Don't resend compose
+	  request. 
+
 	* autogen.sh: Added LIBTOOL, couldn't autogen.
 	
 	* configure.in: Require CVS Loudmouth

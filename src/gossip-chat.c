@@ -668,7 +668,6 @@ chat_message_handler (LmMessageHandler *handler,
 	const gchar      *thread = "";
 	gboolean          focus;
 	gchar            *nick;
-	LmMessage        *compose_req;
 
 	from = lm_message_node_get_attribute (m->node, "from");
 
@@ -772,14 +771,6 @@ chat_message_handler (LmMessageHandler *handler,
 					      gossip_app_get_username (),
 					      nick,
 					      body);
-
-	compose_req = lm_message_new_with_sub_type (gossip_jid_get_full (chat->jid),
-						    LM_MESSAGE_TYPE_MESSAGE,
-						    LM_MESSAGE_SUB_TYPE_CHAT);
-
-	chat_request_composing (compose_req);
-	lm_connection_send (gossip_app_get_connection(), compose_req, NULL);
-	lm_message_unref (compose_req);
 
 	g_free (nick);
 	gossip_jid_unref (jid);
