@@ -101,6 +101,8 @@ main (int argc, char *argv[])
 				      GNOME_PARAM_HUMAN_READABLE_NAME, "Gossip",
 				      NULL);
 
+	g_set_application_name ("Gossip");
+
 	g_object_get (program,
 		      GNOME_PARAM_POPT_CONTEXT,
 		      &popt_context,

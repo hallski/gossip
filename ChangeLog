@@ -1,5 +1,8 @@
 2005-04-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c (main): Set application name, makes the window
+	list look better when windows are grouped.
+
 	* src/gossip-utils.c: (utils_window_get_is_on_current_workspace),
 	(gossip_utils_window_get_is_visible),
 	(gossip_utils_window_present): New functions to handle presenting
