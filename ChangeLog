@@ -1,3 +1,15 @@
+2003-12-11  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat.c: 
+	(chat_create_gui), (chat_send_clicked_cb),
+	(chat_input_key_press_event_cb),
+	(chat_input_text_buffer_changed_cb),
+	(chat_text_view_focus_in_event_cb), (gossip_chat_present):
+	- Removed the disclosure widget and always use an expanding text view.
+	- Fixes bug #127596
+	* ui/chat.glade:
+	- Removed the entry and disclosure widget.
+
 2003-12-11  Andreas Lööw  <aginor@ludd.luth.se>
 
 	* src/gossip-app.c: (app_tray_button_press_cb):
