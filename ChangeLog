@@ -1,5 +1,10 @@
 2003-12-19  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_main_window_destroy_cb):
+	- Cancel connection if it's in progress.
+
+2003-12-19  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: 
 	(app_name_complete_cmp_func): Added, does case insensitive completion.
 	(app_send_chat_message): 
