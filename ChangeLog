@@ -1,3 +1,24 @@
+2003-11-14  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat.c:
+	(gossip_chat_init): Listen to new presence_updated signal
+	(chat_item_presence_updated): renamed from _item_updated
+	* src/gossip-roster-view.c: 
+	(roster_view_iter_compare_func): 
+	- Sort items before groups (for inbox functionality).
+	(roster_view_pixbuf_cell_data_func):
+	- Always show message bubble for inbox items.
+	(roster_view_ellipsize_item_string):
+	- Splitted out of _ellipsize_item_strings.
+	(roster_view_name_cell_data_func):
+	- Don't print status on inbox items.
+	(roster_view_find_item): 
+	(roster_view_add_item):
+	- Support group == NULL for messages in inbox (above the groups
+	  in the roster)
+	(gossip_roster_view_flash_item):
+	- Add the item to the inbox.
+
 2003-11-14  Richard Hult  <richard@imendio.com>
 
 	* autogen.sh: Define CONFIGURE.

@@ -608,7 +608,6 @@ roster_view_item_removed (GossipRoster     *roster,
 	}
 }
 
-
 static void
 roster_view_group_added   (GossipRoster      *roster,
 			   GossipRosterGroup *group,
@@ -689,18 +688,28 @@ roster_view_iter_compare_func (GtkTreeModel *model,
 			       gpointer      user_data)
 {
 	RosterElement     *e1, *e2;
-	gboolean           is_group;
+	gboolean           a_is_group, b_is_group;
 	const gchar       *name1, *name2;
 
 	gtk_tree_model_get (model, iter_a, 
-			    COL_IS_GROUP, &is_group,
+			    COL_IS_GROUP, &a_is_group,
 			    COL_ELEMENT, &e1,
 			    -1);
 	gtk_tree_model_get (model, iter_b,
+			    COL_IS_GROUP, &b_is_group,
 			    COL_ELEMENT, &e2,
 			    -1);
+
+	/* Put items before groups */
+	if (a_is_group && !b_is_group) {
+		return 1;
+	}
+
+	if (!a_is_group && b_is_group) {
+		return -1;
+	}
 	
-	if (!is_group) {
+	if (!a_is_group) {
 		name1 = gossip_roster_item_get_name (e1->item);
 		name2 = gossip_roster_item_get_name (e2->item);
 	} else {
@@ -723,7 +732,8 @@ roster_view_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 	GdkPixbuf            *pixbuf;
 	RosterElement        *e;
 	FlashData            *flash;
-	
+	GtkTreeIter           parent;
+
 	g_return_if_fail (GOSSIP_IS_ROSTER_VIEW (view));
 
 	priv = view->priv;
@@ -737,17 +747,22 @@ roster_view_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 		g_object_set (cell, "visible", FALSE, NULL);
 		return;
 	} 
+
+	if (!gtk_tree_model_iter_parent (model, &parent, iter)) {
+		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+	}
+	else {	
+		flash = g_hash_table_lookup (priv->flash_table, e->item);
 		
-	flash = g_hash_table_lookup (priv->flash_table, e->item);
-	
-	if (flash && flash->flash_on) {
-		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE); 
-	} else if (gossip_roster_item_is_offline (e->item)) {
-		pixbuf = gossip_utils_get_pixbuf_offline ();
-	} else {
-		GossipShow show = gossip_roster_item_get_show (e->item);
+		if (flash && flash->flash_on) {
+			pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE); 
+		} else if (gossip_roster_item_is_offline (e->item)) {
+			pixbuf = gossip_utils_get_pixbuf_offline ();
+		} else {
+			GossipShow show = gossip_roster_item_get_show (e->item);
 		
-		pixbuf = gossip_utils_get_pixbuf_from_show (show);
+			pixbuf = gossip_utils_get_pixbuf_from_show (show);
+		}
 	}
 
 	g_object_set (cell,
@@ -774,6 +789,42 @@ ellipsize_string (gchar *str, gint len)
 
 #define ELLIPSIS_LIMIT 6
 
+static void
+roster_view_ellipsize_item_string (GossipRosterView *view,
+				   gchar            *str,
+				   gint              width) 
+{
+	PangoLayout    *layout;
+	PangoRectangle  rect;
+	gint            len_str;
+	gint            width_str;
+	
+	len_str = g_utf8_strlen (str, -1);
+
+	if (len_str < ELLIPSIS_LIMIT) {
+		return;
+	}
+
+	layout = gtk_widget_create_pango_layout (GTK_WIDGET (view), NULL);
+	
+	pango_layout_set_text (layout, str, -1);
+	pango_layout_get_extents (layout, NULL, &rect);
+	width_str = rect.width / PANGO_SCALE;
+
+	while (len_str >= ELLIPSIS_LIMIT && width_str > width) {
+		len_str--;
+		ellipsize_string (str, len_str);
+		
+		pango_layout_set_text (layout, str, -1);
+		pango_layout_get_extents (layout, NULL, &rect);
+		
+		width_str = rect.width / PANGO_SCALE;
+	}
+	
+	g_object_unref (layout);
+}
+
+#if 0
 static void
 roster_view_ellipsize_item_strings (GossipRosterView *view,
 				    gchar            *name,
@@ -829,7 +880,7 @@ roster_view_ellipsize_item_strings (GossipRosterView *view,
 	
 	g_object_unref (layout);
 }
-
+#endif
 /* NOTE: We should write our own cell renderer instead of putting all these
  * nasty hacks here.
  */
@@ -843,7 +894,16 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	GossipRosterViewPriv *priv;
 	gboolean              is_group;
 	RosterElement        *e;
-	
+	GtkTreeIter           parent;
+	const gchar          *tmp;
+	gchar                *status, *name;
+	gchar                *str;
+	PangoAttrList        *attr_list;
+	PangoAttribute       *attr_color, *attr_style;
+	GdkColor              color;
+	GtkTreeSelection     *selection;
+	gint                  width;
+
 	priv = view->priv;
 
 	gtk_tree_model_get (model, iter, 
@@ -857,73 +917,82 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 			      "weight", PANGO_WEIGHT_BOLD,
 			      "text", gossip_roster_group_get_name (e->group),
 			      NULL);
-	} else {
-		const gchar      *tmp;
-		gchar            *status, *name;
-		gchar            *str;
-		PangoAttrList    *attr_list;
-		PangoAttribute   *attr_color, *attr_style;
-		GdkColor          color;
-		GtkTreeSelection *selection;
-			
-		tmp = gossip_roster_item_get_status (e->item);
+		return;
+	} 
+	width = GTK_WIDGET (view)->allocation.width - (16 + 4*2 + 30);
 
-		if (!tmp || strcmp (tmp, "") == 0) {
-			GossipShow show;
-
-			if (!gossip_roster_item_is_offline (e->item)) {
-				show = gossip_roster_item_get_show (e->item);
-				status = g_strdup (gossip_utils_get_default_status (show));
-			} else {
-				status = g_strdup (_("Offline"));
-			}
-		} else {
-			status = g_strdup (tmp);
-		}
-			
+	if (!gtk_tree_model_iter_parent (model, &parent, iter)) {
+		/* Inbox */
 		name = g_strdup (gossip_roster_item_get_name (e->item));
-
 		g_strdelimit (name, "\n\r\t", ' ');
-		g_strdelimit (status, "\n\r\t", ' ');
-		
-		/* FIXME: Figure out how to calculate the offset instead of
-		 * hardcoding it here (icon width + padding + indentation).
-		 */
-		roster_view_ellipsize_item_strings (view, name, status,
-						    GTK_WIDGET (view)->allocation.width -
-						    (16 + 4*2 + 30));
 
-		str = g_strdup_printf ("%s\n%s", name, status);
-		
-		color = GTK_WIDGET (view)->style->text[GTK_STATE_INSENSITIVE];
-		
-		attr_list = pango_attr_list_new ();
+		roster_view_ellipsize_item_string (view, name, width);
 
-		attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
-		attr_style->start_index = g_utf8_strlen (name, -1) + 1;
-		attr_style->end_index = -1;
-		pango_attr_list_insert (attr_list, attr_style);
-
-		selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-		if (!gtk_tree_selection_iter_is_selected (selection, iter)) {
-			attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);
-			attr_color->start_index = attr_style->start_index;
-			attr_color->end_index = attr_style->end_index;
-			pango_attr_list_insert (attr_list, attr_color);
-		}
-		
 		g_object_set (cell,
 			      "weight", PANGO_WEIGHT_NORMAL,
-			      "text", str,
-			      "attributes", attr_list,
+			      "text", name,
 			      NULL);
-		
-		pango_attr_list_unref (attr_list);
 
 		g_free (name);
-		g_free (status);
-		g_free (str);
+		return;
 	}
+
+	tmp = gossip_roster_item_get_status (e->item);
+
+	if (!tmp || strcmp (tmp, "") == 0) {
+		GossipShow show;
+
+		if (!gossip_roster_item_is_offline (e->item)) {
+			show = gossip_roster_item_get_show (e->item);
+			status = g_strdup (gossip_utils_get_default_status (show));
+		} else {
+			status = g_strdup (_("Offline"));
+		}
+	} else {
+		status = g_strdup (tmp);
+	}
+
+	name = g_strdup (gossip_roster_item_get_name (e->item));
+
+	g_strdelimit (name, "\n\r\t", ' ');
+	g_strdelimit (status, "\n\r\t", ' ');
+
+	/* FIXME: Figure out how to calculate the offset instead of
+	 * hardcoding it here (icon width + padding + indentation).
+	 */
+	roster_view_ellipsize_item_string (view, name, width);
+	roster_view_ellipsize_item_string (view, status, width);
+	
+	str = g_strdup_printf ("%s\n%s", name, status);
+
+	color = GTK_WIDGET (view)->style->text[GTK_STATE_INSENSITIVE];
+
+	attr_list = pango_attr_list_new ();
+
+	attr_style = pango_attr_style_new (PANGO_STYLE_ITALIC);
+	attr_style->start_index = g_utf8_strlen (name, -1) + 1;
+	attr_style->end_index = -1;
+	pango_attr_list_insert (attr_list, attr_style);
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+	if (!gtk_tree_selection_iter_is_selected (selection, iter)) {
+		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);
+		attr_color->start_index = attr_style->start_index;
+		attr_color->end_index = attr_style->end_index;
+		pango_attr_list_insert (attr_list, attr_color);
+	}
+
+	g_object_set (cell,
+		      "weight", PANGO_WEIGHT_NORMAL,
+		      "text", str,
+		      "attributes", attr_list,
+		      NULL);
+
+	pango_attr_list_unref (attr_list);
+
+	g_free (name);
+	g_free (status);
+	g_free (str);
 }
 
 typedef struct {
@@ -1021,19 +1090,27 @@ roster_view_find_item (GossipRosterView  *view,
 		       GossipRosterGroup *group)
 {
 	GossipRosterViewPriv *priv;
-	GtkTreeIter           i, parent;
-	const gchar          *group_name;
+	GtkTreeIter           i;
 
 	priv = view->priv;
+	
+	if (group) {
+		GtkTreeIter  parent;
+		const gchar *group_name;
 
-	group_name = gossip_roster_group_get_name (group);
+		group_name = gossip_roster_group_get_name (group);
 		
-	if (!roster_view_find_group (view, &parent, group_name)) {
-		return FALSE;
-	}
-
-	if (!gtk_tree_model_iter_children (priv->model, &i, &parent)) {
-		return FALSE;
+		if (!roster_view_find_group (view, &parent, group_name)) {
+			return FALSE;
+		}
+		
+		if (!gtk_tree_model_iter_children (priv->model, &i, &parent)) {
+			return FALSE;
+		}
+	} else {
+		if (!gtk_tree_model_iter_children (priv->model, &i, NULL)) {
+			return FALSE;
+		}
 	}
 
 	do {
@@ -1405,9 +1482,10 @@ roster_view_add_item (GossipRosterView  *view,
 {
 	GossipRosterViewPriv *priv;
 	GtkTreeIter           iter, group_iter;
-	gboolean              expand = FALSE;
-	const gchar          *name;
 	RosterElement        *e;
+#if 0
+	gboolean              expand = FALSE;
+#endif
 
 	priv = view->priv;
 
@@ -1415,28 +1493,40 @@ roster_view_add_item (GossipRosterView  *view,
 		   gossip_roster_item_get_name (item),
 		   gossip_roster_group_get_name (group)));
 	
-	name = gossip_roster_group_get_name (group);
-	if (!roster_view_find_group (view, &group_iter, name)) {
-		d(g_assert_not_reached());
-		return;
+	if (!group) {
+		gtk_tree_store_append (GTK_TREE_STORE (priv->model),
+				       &iter, 
+				       NULL);
+	}
+	else {
+		const gchar *name;
+		name = gossip_roster_group_get_name (group);
+
+		if (roster_view_find_group (view, &group_iter, name)) {
+			gtk_tree_store_append (GTK_TREE_STORE (priv->model),
+					       &iter,
+					       &group_iter);	
+		} else {
+			d(g_assert_not_reached());
+			return;
+		}
 	}
 
+#if 0
 	if (!gtk_tree_model_iter_has_child (priv->model, &group_iter)) {
 		/* FIXME: ... */
 		expand = FALSE;
 	}
-
+#endif
 	e = g_new0 (RosterElement, 1);
 	e->item = gossip_roster_item_ref (item);
 
-	gtk_tree_store_append (GTK_TREE_STORE (priv->model),
-			       &iter,
-			       &group_iter);	
 	gtk_tree_store_set (GTK_TREE_STORE (priv->model),
 			    &iter,
 			    COL_IS_GROUP, FALSE,
 			    COL_ELEMENT, e,
 			    -1);
+#if 0
 	if (expand) {
 		GtkTreePath *path;
 
@@ -1448,6 +1538,7 @@ roster_view_add_item (GossipRosterView  *view,
 			gtk_tree_path_free (path);
 		}
 	}
+#endif
 }
 
 static void
@@ -1644,9 +1735,14 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 					    (GDestroyNotify) roster_view_free_flash_timeout_data);
 		g_hash_table_insert (priv->flash_table, 
 				     gossip_roster_item_ref (item),
-				     flash_data);
+				     flash_data); 
+
+		roster_view_add_item (view, item, NULL);
+
+		/* Add contact to the top of the list */
 	}
 	else if (!flash && flash_data) {
+		roster_view_remove_item (view, item, NULL);
 		g_hash_table_remove (priv->flash_table, item);
 	}
 }

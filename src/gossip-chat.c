@@ -96,7 +96,7 @@ static LmHandlerResult chat_message_handler              (LmMessageHandler *hand
                                                           LmConnection     *connection,
                                                           LmMessage        *m,
                                                           gpointer          user_data);
-static void            chat_item_updated                 (gpointer          not_used,
+static void            chat_item_presence_updated        (gpointer          not_used,
 							  GossipRosterItem *item,
 							  GossipChat       *chat);
 static gboolean        chat_event_handler                (GossipChat       *chat,
@@ -237,8 +237,8 @@ gossip_chat_init (GossipChat *chat)
 						LM_HANDLER_PRIORITY_NORMAL);
 
 	g_signal_connect (roster,
-			  "item_updated",
-			  G_CALLBACK (chat_item_updated),
+			  "item_presence_updated",
+			  G_CALLBACK (chat_item_presence_updated),
 			  chat);
 
 	/*g_signal_connect (roster,
@@ -649,9 +649,9 @@ chat_message_handler (LmMessageHandler *handler,
 }
 
 static void
-chat_item_updated (gpointer          not_used,
-		   GossipRosterItem *item,
-		   GossipChat       *chat)
+chat_item_presence_updated (gpointer          not_used,
+			    GossipRosterItem *item,
+			    GossipChat       *chat)
 
 {
 	GossipChatPriv *priv;
