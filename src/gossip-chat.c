@@ -1056,15 +1056,26 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
                                GdkEventKey *event,
                                GossipChat  *chat)
 {
-	GossipChatPriv *priv = chat->priv;
+	GossipChatPriv *priv;
 	GtkAdjustment  *adj;
 	gdouble         val;
-		
+	
+	priv = chat->priv;
+
 	/* Catch enter but not ctrl/shift-enter */
-	if (IS_ENTER (event->keyval) && !(event->state & GDK_CONTROL_MASK) &&
-	    !(event->state & GDK_SHIFT_MASK)) {
-		chat_input_text_view_send (chat);
+	if (IS_ENTER (event->keyval) && !(event->state & GDK_SHIFT_MASK)) {
+
+		/* This is to make sure that kinput2 gets the enter. And if 
+		 * it's handled there we shouldn't send on it. This is because
+		 * kinput2 uses Enter to commit letters. See:
+		 * http://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=104299
+		 */
+		if (gtk_im_context_filter_keypress (GTK_TEXT_VIEW (priv->input_text_view)->im_context, event)) {
+			GTK_TEXT_VIEW (priv->input_text_view)->need_im_reset = TRUE;
+			return TRUE;
+		}
 		
+		chat_input_text_view_send (chat);
 		return TRUE;
 	}
 	if (IS_ENTER (event->keyval) && (event->state & GDK_CONTROL_MASK)) {
