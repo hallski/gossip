@@ -404,7 +404,7 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 			GossipPresence *presence;
 
 			presence = gossip_contact_get_presence (contact);
-			pixbuf = gossip_utils_get_pixbuf_from_presence (presence);
+			pixbuf = gossip_presence_get_pixbuf (presence);
 		} else {
 			pixbuf = gossip_utils_get_pixbuf_offline ();
 		}

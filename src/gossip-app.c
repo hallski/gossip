@@ -674,7 +674,7 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 		GossipPresence *p;
 
 		p = gossip_contact_get_presence (c);
-		pixbuf = gossip_utils_get_pixbuf_from_presence (p);
+		pixbuf = gossip_presence_get_pixbuf (p);
 	}
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);

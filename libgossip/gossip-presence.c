@@ -19,6 +19,8 @@
  */
 
 #include <config.h>
+#include "gossip-stock.h"
+#include "gossip-utils.h"
 #include "gossip-presence.h"
 
 struct _GossipPresence {
@@ -138,5 +140,28 @@ gossip_presence_unref (GossipPresence *presence)
 
 	g_free (presence->status);
 	g_free (presence);
+}
+
+GdkPixbuf *
+gossip_presence_get_pixbuf (GossipPresence *presence)
+{
+	const gchar *stock = NULL;
+         
+        switch (gossip_presence_get_type (presence)) {
+        case GOSSIP_PRESENCE_TYPE_AVAILABLE:
+                stock = GOSSIP_STOCK_AVAILABLE;
+                break;
+        case GOSSIP_PRESENCE_TYPE_BUSY:
+                stock = GOSSIP_STOCK_BUSY;
+                break;
+        case GOSSIP_PRESENCE_TYPE_AWAY:
+                stock = GOSSIP_STOCK_AWAY;
+                break;
+        case GOSSIP_PRESENCE_TYPE_EXT_AWAY:
+                stock = GOSSIP_STOCK_EXT_AWAY;
+                break;
+        }
+
+	return gossip_utils_get_pixbuf_from_stock (stock);
 }
 

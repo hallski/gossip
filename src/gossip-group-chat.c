@@ -1058,7 +1058,7 @@ group_chat_presence_handler (LmMessageHandler *handler,
 		presence = gossip_presence_new (GOSSIP_PRESENCE_STATE_ONLINE);
 		gossip_presence_set_type (presence, p_type);
 
-		pixbuf = gossip_utils_get_pixbuf_from_presence (presence);
+		pixbuf = gossip_presence_get_pixbuf (presence);
 		/*gossip_utils_gtk_widget_render_icon (priv->window,
 						 stock,
 						 GTK_ICON_SIZE_MENU,

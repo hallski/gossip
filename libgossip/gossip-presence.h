@@ -22,6 +22,7 @@
 #define __GOSSIP_PRESENCE_H__
 
 #include <glib.h>
+#include <gdk/gdkpixbuf.h>
 
 typedef struct _GossipPresence GossipPresence;
 
@@ -52,6 +53,8 @@ void                gossip_presence_set_status   (GossipPresence *presence,
 						  const gchar    *status);
 GossipPresence *    gossip_presence_ref          (GossipPresence *presence);
 void                gossip_presence_unref        (GossipPresence *presence);
+
+GdkPixbuf *         gossip_presence_get_pixbuf     (GossipPresence *presence);
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

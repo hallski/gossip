@@ -914,38 +914,6 @@ gossip_utils_url_regex_match (const gchar *msg,
 	return num_matches;
 }
 
-const gchar *
-gossip_utils_get_stock_from_presence (GossipPresence *presence)
-{
-        const gchar *stock = NULL;
-         
-        switch (gossip_presence_get_type (presence)) {
-        case GOSSIP_PRESENCE_TYPE_AVAILABLE:
-                stock = GOSSIP_STOCK_AVAILABLE;
-                break;
-        case GOSSIP_PRESENCE_TYPE_BUSY:
-                stock = GOSSIP_STOCK_BUSY;
-                break;
-        case GOSSIP_PRESENCE_TYPE_AWAY:
-                stock = GOSSIP_STOCK_AWAY;
-                break;
-        case GOSSIP_PRESENCE_TYPE_EXT_AWAY:
-                stock = GOSSIP_STOCK_EXT_AWAY;
-                break;
-        }
- 
-        return stock;
-}
- 
-GdkPixbuf *
-gossip_utils_get_pixbuf_from_presence (GossipPresence *presence)
-{
-        const gchar *stock;
- 
-        stock = gossip_utils_get_stock_from_presence (presence);
-        return gossip_utils_get_pixbuf_from_stock (stock);
-}
-
 GossipPresenceType
 gossip_utils_get_presence_type_from_show_string (const gchar *str)
 {

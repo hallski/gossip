@@ -111,9 +111,6 @@ void         gossip_utils_free_status_messages       (GList            *list);
 gint         gossip_utils_url_regex_match            (const gchar      *msg,
 						      GArray           *start,
 						      GArray           *end);
-const gchar *gossip_utils_get_stock_from_presence    (GossipPresence   *presence);
-GdkPixbuf *  gossip_utils_get_pixbuf_from_presence   (GossipPresence   *presence);
-
 GossipPresenceType
 gossip_utils_get_presence_type_from_show_string      (const gchar *str); 
 gint         gossip_utils_str_case_cmp               (const gchar        *s1, 
