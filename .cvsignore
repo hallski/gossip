@@ -21,3 +21,4 @@ gossip.spec
 gossip.schemas
 mkinstalldirs
 *.swp
+gossip.desktop.in

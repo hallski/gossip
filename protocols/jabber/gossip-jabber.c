@@ -908,7 +908,7 @@ jabber_iq_handler (LmMessageHandler *handler,
 	
 	priv = jabber->priv;
 	
-	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GET ||
+	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GET &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
