@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-24 13:11+0100\n"
-"PO-Revision-Date: 2004-07-24 13:11+0100\n"
+"POT-Creation-Date: 2004-08-09 20:33+0100\n"
+"PO-Revision-Date: 2004-08-09 20:33+0100\n"
 "Last-Translator: Gareth Owen <gowen72@yahoo.comg>\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -138,7 +138,7 @@ msgstr ""
 "Bastien Nocera\n"
 "Gareth Owen"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:64
+#: src/gossip-account.c:292 src/gossip-app.c:62 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Home"
 
@@ -152,34 +152,34 @@ msgstr "What request message do you want to send to %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s will be added to your contact list."
 
-#: src/gossip-app.c:644
+#: src/gossip-app.c:637
 msgid "Could not connect"
 msgstr "Could not connect"
 
-#: src/gossip-app.c:645
+#: src/gossip-app.c:638
 msgid "Make sure that your account information is correct."
 msgstr "Make sure that your account information is correct."
 
-#: src/gossip-app.c:713
+#: src/gossip-app.c:701
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Enter the user ID of the person you would like to send a chat message to."
 
-#: src/gossip-app.c:720 ui/main.glade.h:85
+#: src/gossip-app.c:708 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:1017
+#: src/gossip-app.c:1005
 #, c-format
 msgid "%s wants to be notified of your status."
 msgstr "%s wants to be notified of your status."
 
-#: src/gossip-app.c:1259
+#: src/gossip-app.c:1251
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "You were disconnected from the server. Do you want to reconnect?"
 
-#: src/gossip-app.c:1414
+#: src/gossip-app.c:1409
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -187,45 +187,45 @@ msgstr ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 
-#: src/gossip-app.c:1887
+#: src/gossip-app.c:1880
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:2031
+#: src/gossip-app.c:2024
 #, c-format
 msgid "New message from %s"
 msgstr "New message from %s"
 
-#: src/gossip-app.c:2120 src/gossip-chat-window.c:782
-#: src/gossip-roster-view.c:987
+#: src/gossip-app.c:2113 src/gossip-chat-window.c:793
+#: src/gossip-roster-view.c:986
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2519 src/gossip-preferences.c:638
+#: src/gossip-app.c:2512 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Available"
 
-#: src/gossip-app.c:2530 src/gossip-preferences.c:639
+#: src/gossip-app.c:2523 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Busy"
 
-#: src/gossip-app.c:2541 src/gossip-preferences.c:640
+#: src/gossip-app.c:2534 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2673
+#: src/gossip-app.c:2666
 msgid "Available..."
 msgstr "Available..."
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2671
 msgid "Busy..."
 msgstr "Busy..."
 
-#: src/gossip-app.c:2683
+#: src/gossip-app.c:2676
 msgid "Away..."
 msgstr "Away..."
 
-#: src/gossip-app.c:2712
+#: src/gossip-app.c:2705
 msgid "Edit List..."
 msgstr "Edit List..."
 
@@ -245,40 +245,40 @@ msgstr "_Open Link"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:539
+#: src/gossip-chat-window.c:537
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChat - %s"
 
-#: src/gossip-chat-window.c:794
+#: src/gossip-chat-window.c:805
 msgid "Typing a message."
 msgstr "Typing a message."
 
-#: src/gossip-chat.c:715
+#: src/gossip-chat.c:719
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "An error occurred when chatting with %s."
 
-#: src/gossip-chat.c:720 src/gossip-group-chat.c:908
-#: src/gossip-group-chat.c:1018
+#: src/gossip-chat.c:724 src/gossip-group-chat.c:913
+#: src/gossip-group-chat.c:1023
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:811
+#: src/gossip-chat.c:815
 #, c-format
 msgid "%s went offline"
 msgstr "%s went offline"
 
-#: src/gossip-chat.c:825
+#: src/gossip-chat.c:829
 #, c-format
 msgid "%s comes online"
 msgstr "%s comes online"
 
-#: src/gossip-chat.c:906
+#: src/gossip-chat.c:910
 msgid "Connected"
 msgstr "Connected"
 
-#: src/gossip-chat.c:920
+#: src/gossip-chat.c:924
 msgid "Disconnected"
 msgstr "Disconnected"
 
@@ -307,12 +307,12 @@ msgstr "Group"
 msgid "Unsorted"
 msgstr "Unsorted"
 
-#: src/gossip-group-chat.c:903
+#: src/gossip-group-chat.c:908
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "An error occurred when chatting in the group chat %s."
 
-#: src/gossip-group-chat.c:1013
+#: src/gossip-group-chat.c:1018
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Unable to enter the group chat %s."
@@ -354,19 +354,19 @@ msgstr "There is no account with the name '%s'."
 msgid "Unknown error"
 msgstr "Unknown error"
 
-#: src/gossip-register.c:182
+#: src/gossip-register.c:184
 msgid "Registering account"
 msgstr "Registering account"
 
-#: src/gossip-register.c:222
+#: src/gossip-register.c:224
 msgid "Successfully registered the account"
 msgstr "Successfully registered the account"
 
-#: src/gossip-register.c:243 src/gossip-register.c:249
+#: src/gossip-register.c:245 src/gossip-register.c:251
 msgid "Failed registering the account"
 msgstr "Failed registering the account"
 
-#: src/gossip-register.c:245
+#: src/gossip-register.c:247
 msgid "Reason:"
 msgstr "Reason:"
 
@@ -394,7 +394,7 @@ msgstr "/_Remove contact"
 msgid "/Re_name group"
 msgstr "/Re_name group"
 
-#: src/gossip-roster-view.c:1398
+#: src/gossip-roster-view.c:1397
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -405,7 +405,7 @@ msgstr ""
 "%s\n"
 "from your contact list?"
 
-#: src/gossip-roster-view.c:1491
+#: src/gossip-roster-view.c:1490
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -414,7 +414,7 @@ msgstr ""
 "Please enter a new nickname for the contact\n"
 "%s"
 
-#: src/gossip-roster-view.c:1597
+#: src/gossip-roster-view.c:1596
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -423,11 +423,11 @@ msgstr ""
 "Please enter a new name for the group\n"
 "%s"
 
-#: src/gossip-startup-druid.c:251
+#: src/gossip-startup-druid.c:257
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip will now try to use your account:"
 
-#: src/gossip-startup-druid.c:255
+#: src/gossip-startup-druid.c:261
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip will now try to register the account:"
 
@@ -545,40 +545,40 @@ msgid "Connect"
 msgstr "Connect"
 
 #: ui/connect.glade.h:7
+msgid "Connect _Server:"
+msgstr "Connect _Server:"
+
+#: ui/connect.glade.h:8
 msgid "Edit Account Information"
 msgstr "Edit Account Information"
 
-#: ui/connect.glade.h:8
+#: ui/connect.glade.h:9
 msgid "P_ort:"
 msgstr "P_ort:"
 
-#: ui/connect.glade.h:9
+#: ui/connect.glade.h:10
 msgid "Re_gister..."
 msgstr "Re_gister..."
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:11
 msgid "Server:"
 msgstr "Server:"
 
-#: ui/connect.glade.h:11
+#: ui/connect.glade.h:12
 msgid "Use _encryption (SSL)"
 msgstr "Use _encryption (SSL)"
 
-#: ui/connect.glade.h:12
+#: ui/connect.glade.h:13
+msgid "_Jabber ID:"
+msgstr "_Jabber ID:"
+
+#: ui/connect.glade.h:14
 msgid "_Password:"
 msgstr "_Password:"
 
-#: ui/connect.glade.h:13
+#: ui/connect.glade.h:15
 msgid "_Resource:"
 msgstr "_Resource:"
-
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:19
-msgid "_Server:"
-msgstr "_Server:"
-
-#: ui/connect.glade.h:15
-msgid "_User name:"
-msgstr "_User name:"
 
 #: ui/group-chat.glade.h:2
 msgid "        "
@@ -647,6 +647,10 @@ msgstr "_Nickname:"
 #: ui/group-chat.glade.h:18
 msgid "_Room:"
 msgstr "_Room:"
+
+#: ui/group-chat.glade.h:19
+msgid "_Server:"
+msgstr "_Server:"
 
 #: ui/group-chat.glade.h:20
 msgid "_Topic:"
@@ -1044,3 +1048,5 @@ msgstr "_Status Messages"
 msgid "_Subscribe"
 msgstr "_Subscribe"
 
+#~ msgid "_User name:"
+#~ msgstr "_User name:"
