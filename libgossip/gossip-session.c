@@ -305,6 +305,9 @@ session_protocol_logged_out (GossipProtocol *protocol, GossipSession *session)
 
 	/* Update some status? */
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, protocol);
+
+	/* For now, we currently only have one protocol */
+	g_signal_emit (session, signals[DISCONNECTED], 0);
 }
 
 static void

@@ -1,3 +1,14 @@
+2005-01-19  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-jabber.c: (gossip_jabber_init), (jabber_logout),
+	(jabber_disconnect_func):
+	(jabber_signal_logged_out):
+	- Refactor some and signal disconnect on disconnect message from 
+	  loudmouth.
+	* src/gossip-session.c: (session_protocol_logged_out):
+	- Signal disconnected always on protocol disconnected for now, we 
+	  only have support for one protocol at this point.
+
 2005-01-19  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-contact-list.c: 

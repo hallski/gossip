@@ -118,6 +118,9 @@ static void            jabber_connection_auth_cb             (LmConnection      
 static LmSSLResponse   jabber_ssl_func                       (LmConnection                 *connection,
 							      LmSSLStatus                   status,
 							      GossipJabber                 *jabber);
+static void            jabber_disconnect_func                (LmConnection                 *connection,
+							      LmDisconnectReason            reason,
+							      GossipJabber                 *jabber);
 static gboolean        jabber_update_contact                 (GossipContact                *contact,
 							      LmMessageNode                *node);
 static LmHandlerResult jabber_message_handler                (LmMessageHandler             *handler,
@@ -160,6 +163,7 @@ static void            jabber_chatroom_change_nick           (GossipChatroomProv
 							      const gchar                  *new_nick);
 static void            jabber_chatroom_leave                 (GossipChatroomProvider       *provider,
 							      GossipChatroomId              id);
+static void            jabber_signal_logged_out              (GossipJabber                 *jabber);
 
 extern GConfClient *gconf_client;
 
@@ -218,6 +222,11 @@ gossip_jabber_init (GossipJabber *jabber)
 	g_free (name);
 
 	priv->connection = lm_connection_new (priv->account->server);
+
+	lm_connection_set_disconnect_function (priv->connection,
+					       (LmDisconnectFunction) jabber_disconnect_func,
+					       jabber, NULL);
+
 	lm_connection_set_port (priv->connection, priv->account->port);
 	lm_connection_set_jid (priv->connection, 
 			       gossip_jid_get_without_resource (priv->account->jid));
@@ -336,14 +345,8 @@ jabber_logout (GossipProtocol *protocol)
 
 	if (lm_connection_is_open (priv->connection)) {
 		lm_connection_close (priv->connection, NULL);
-		g_signal_emit_by_name (jabber, "logged-out");
 
-		/* signal removal of each contact */
-		if (priv->contacts) {
-			g_hash_table_foreach_remove (priv->contacts,
-						     (GHRFunc) jabber_logout_contact_foreach,
-						     jabber);
-		}
+		jabber_signal_logged_out (jabber);
 	}
 }
 
@@ -755,6 +758,14 @@ jabber_ssl_func (LmConnection *connection,
 		 GossipJabber *jabber)
 {
 	return LM_SSL_RESPONSE_CONTINUE;
+}
+
+static void 
+jabber_disconnect_func (LmConnection       *connection,
+			LmDisconnectReason  reason,
+			GossipJabber       *jabber)
+{
+	jabber_signal_logged_out (jabber);
 }
 
 static gboolean
@@ -1244,6 +1255,23 @@ jabber_chatroom_leave (GossipChatroomProvider *provider,
 	priv   = jabber->priv;
 
 	gossip_jabber_chatrooms_leave (priv->chatrooms, id);
+}
+
+static void
+jabber_signal_logged_out (GossipJabber *jabber)
+{
+	GossipJabberPriv *priv;
+
+	priv = jabber->priv;
+
+	g_signal_emit_by_name (jabber, "logged-out");
+
+	/* signal removal of each contact */
+	if (priv->contacts) {
+		g_hash_table_foreach_remove (priv->contacts,
+					     (GHRFunc) jabber_logout_contact_foreach,
+					     jabber);
+	}
 }
 
 LmConnection *
