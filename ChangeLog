@@ -1,3 +1,10 @@
+2004-08-27  Mikael Hallendal  <micke@imendio.com>
+
+	* NEWS: Updated for 0.7.7
+	* configure.in: Bumped the version to 0.7.7
+	* ui/main.glade:
+	- Disable the unfinished transport support for the release.
+
 2004-08-25  Mikael Hallendal  <micke@imendio.com>
 
 	* configure.in: 

@@ -1,3 +1,17 @@
+News in 0.7.7:
+==============
+ * Make the groupchat input area the same as in chats (Geert-Jan)
+ * Improved URL recognizer (Johan Hammar)
+ * Fixed name bug when chatting with people not in your contact list (Micke)
+ * Cut supported in chat windows (cuts from input area) (Thomas Reynolds)
+ * Support for specifying both JID and connect server (Micke)
+ * Support for HTTP proxy, uses desktop global settings (Micke)
+ * Notify on updates in the contact list (Change the background on that row 
+   for 7 seconds) (Martyn)
+ * New translations (ga)
+ * Updated translations 
+   (cs, nl, en_GB, lt, cy, sq, ru, eu, en_CA, es, nl, pt, da)
+
 News in 0.7.6:
 ==============
  * Lot of bug fixing gone into the Group Chats (Micke)
