@@ -1,3 +1,8 @@
+2004-06-16  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat.c:
+	- Hopefully fixes bug #143797 finally this time.
+
 2004-06-15  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c:

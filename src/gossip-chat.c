@@ -75,8 +75,9 @@ struct _GossipChatPriv {
 
 	/* Used to automatically shrink a window that has temporary grown
 	 * due to long input */
-	gint              window_static_height;
-	gint              window_height;
+	gint              padding_height;
+	gint              default_window_height;
+	gint              last_input_height;
 	gboolean          is_first_char;
 };
 
@@ -224,7 +225,8 @@ chat_init (GossipChat *chat)
 	priv->request_composing_events = TRUE;
 	priv->is_online = FALSE;
 	priv->is_first_char = TRUE;
-	
+	priv->default_window_height = -1;
+
 	chat->priv = priv;
 	
         chat_create_gui (chat);
@@ -1109,6 +1111,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 		GtkRequisition  req;
 		gint            window_height;
 		GtkWidget      *dialog;
+		GtkAllocation  *allocation;
 		
 		/* Save the window's size */
 		dialog = gossip_chat_window_get_dialog (priv->window);
@@ -1117,8 +1120,12 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 
 		gtk_widget_size_request (priv->input_text_view, &req);
 
-		priv->window_static_height = window_height - req.height;
+		allocation = &GTK_WIDGET (priv->view)->allocation;
 		
+		priv->default_window_height = window_height;
+		priv->last_input_height = req.height;
+		priv->padding_height = window_height - req.height - allocation->height;
+
 		chat->priv->is_first_char = FALSE;
 	}
 }
@@ -1158,27 +1165,45 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 	GossipChatPriv *priv;
 	gint            width;
 	GtkWidget      *dialog;
-	static gint     last_height;
 	ChangeSizeData *data;
 	gint            window_height;
-
+	gint            new_height;
+	GtkAllocation  *view_allocation;
+	gint            current_height;
+	gint            diff;
+	
 	priv = chat->priv;
 
-	if (priv->window_static_height <= 0) {
+	if (priv->default_window_height <= 0) {
 		return;
 	}
 
-	window_height = priv->window_static_height + allocation->height;
-	
-	if (last_height <= window_height) {
-		last_height = window_height;
+	if (priv->last_input_height <= allocation->height) {
+		priv->last_input_height = allocation->height;
 		return;
+	} 
+
+	diff = priv->last_input_height - allocation->height;
+	priv->last_input_height = allocation->height;
+
+	view_allocation = &GTK_WIDGET (priv->view)->allocation;
+
+	dialog = gossip_chat_window_get_dialog (priv->window);
+	gtk_window_get_size (GTK_WINDOW (dialog), NULL, &current_height);
+
+	new_height = view_allocation->height + priv->padding_height + allocation->height - diff;
+
+	if (new_height <= priv->default_window_height) {
+		window_height = priv->default_window_height;
+	} else {
+		window_height = new_height;
 	}
 
-	last_height = window_height;
+	if (current_height <= window_height) {
+		return;
+	}
 
 	/* Restore the window's size */
-	dialog = gossip_chat_window_get_dialog (priv->window);
 	gtk_window_get_size (GTK_WINDOW (dialog), &width, NULL);
 
 	data = g_new0 (ChangeSizeData, 1);
