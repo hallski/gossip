@@ -1,3 +1,11 @@
+2005-04-04  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-transport-accounts-window.c (transport_accounts_window_destroy): 
+	- Uncommented out code?? to disconnect the signal for
+	contact-removed on the GOSSIP_PROTOCOL when the window closes, was
+	calling back with a invalid pointer to an
+	GossipTransportAccountsWindow causing a crash on Quit.
+
 2005-04-04  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jabber-chatrooms.c:

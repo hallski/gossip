@@ -742,16 +742,27 @@ static void
 transport_accounts_window_destroy (GtkWidget                     *widget, 
 				   GossipTransportAccountsWindow *window)
 {
-	GtkTreeModel *model;
+	GossipTransportAccountList *al;
+	GossipJabber               *jabber;
+	GList                      *l;
+	GtkTreeModel               *model;
 
 	current_window = NULL;
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (window->treeview_accounts));
 	gtk_tree_model_foreach (model, transport_accounts_window_model_foreach_cb, NULL);
 
-/* 	g_signal_handlers_disconnect_by_func (window->roster,  */
-/* 					      transport_accounts_window_roster_update_cb, */
-/* 					      window); */
+	/* FIXME: need to do this better, plus need a gui to select */
+	l = gossip_transport_account_lists_get_all ();
+	al = g_list_nth_data (l, 0);
+
+	g_return_if_fail (al != NULL);
+
+	jabber = gossip_transport_account_list_get_jabber (al);
+
+ 	g_signal_handlers_disconnect_by_func (GOSSIP_PROTOCOL (jabber),  
+ 					      transport_accounts_window_roster_update_cb, 
+ 					      window); 
 
  	g_free (window); 
 }
