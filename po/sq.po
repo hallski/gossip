@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-07-28 03:58+0200\n"
+"POT-Creation-Date: 2004-07-29 11:59+0200\n"
 "PO-Revision-Date: 2004-07-05 19:23+0200\n"
 "Last-Translator: Laurent Dhima <laurenti@alblinux.net>\n"
 "Language-Team: Albanian <gnome-albanian-perkthyesit@lists.sourceforge.net>\n"
@@ -156,71 +156,71 @@ msgstr "E pamundur lidhja"
 msgid "Make sure that your account information is correct."
 msgstr "Sigurohu që ke dhënë informacionet korrekte të llogarisë tuaj."
 
-#: src/gossip-app.c:713
+#: src/gossip-app.c:708
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Shkruaj ID e përdoruesit të personit të cilit dëshironi t'i dërgoni mesazh "
 "chat."
 
-#: src/gossip-app.c:720 ui/main.glade.h:85
+#: src/gossip-app.c:715 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:1017
+#: src/gossip-app.c:1012
 #, c-format
 msgid "%s wants to be notified of your status."
 msgstr "%s dëshiron të njoftohet mbi gjendjen tuaj."
 
-#: src/gossip-app.c:1259
+#: src/gossip-app.c:1254
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Nuk jeni i lidhur me server-in. Dëshironi të rilidheni?"
 
-#: src/gossip-app.c:1414
+#: src/gossip-app.c:1409
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 msgstr ""
 
-#: src/gossip-app.c:1887
+#: src/gossip-app.c:1882
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Klient për Mesazhe direkte"
 
-#: src/gossip-app.c:2031
+#: src/gossip-app.c:2026
 #, c-format
 msgid "New message from %s"
 msgstr "Mesazh i ri nga %s"
 
-#: src/gossip-app.c:2120 src/gossip-chat-window.c:782
-#: src/gossip-roster-view.c:987
+#: src/gossip-app.c:2115 src/gossip-chat-window.c:798
+#: src/gossip-roster-view.c:986
 msgid "Offline"
 msgstr "Jashtë linje"
 
-#: src/gossip-app.c:2519 src/gossip-preferences.c:638
+#: src/gossip-app.c:2514 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Në dispozicion"
 
-#: src/gossip-app.c:2530 src/gossip-preferences.c:639
+#: src/gossip-app.c:2525 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "I zënë"
 
-#: src/gossip-app.c:2541 src/gossip-preferences.c:640
+#: src/gossip-app.c:2536 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Nuk jam këtu"
 
-#: src/gossip-app.c:2673
+#: src/gossip-app.c:2668
 msgid "Available..."
 msgstr "Në dispozicion..."
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2673
 msgid "Busy..."
 msgstr "I zënë..."
 
-#: src/gossip-app.c:2683
+#: src/gossip-app.c:2678
 msgid "Away..."
 msgstr "Nuk jam këtu..."
 
-#: src/gossip-app.c:2712
+#: src/gossip-app.c:2707
 msgid "Edit List..."
 msgstr "Ndrysho listën..."
 
@@ -240,12 +240,12 @@ msgstr "_Hap adresën"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:539
+#: src/gossip-chat-window.c:542
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChat - %s"
 
-#: src/gossip-chat-window.c:794
+#: src/gossip-chat-window.c:810
 msgid "Typing a message."
 msgstr "Duke shkruar një mesazh."
 
@@ -389,7 +389,7 @@ msgstr ""
 msgid "/Re_name group"
 msgstr ""
 
-#: src/gossip-roster-view.c:1398
+#: src/gossip-roster-view.c:1397
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -397,14 +397,14 @@ msgid ""
 "from your contact list?"
 msgstr ""
 
-#: src/gossip-roster-view.c:1491
+#: src/gossip-roster-view.c:1490
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
 msgstr ""
 
-#: src/gossip-roster-view.c:1597
+#: src/gossip-roster-view.c:1596
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -544,7 +544,6 @@ msgstr ""
 msgid "Re_gister..."
 msgstr ""
 
-#. GRUT modified this item
 #: ui/connect.glade.h:10
 msgid "Server:"
 msgstr "Serveri:"
@@ -569,9 +568,10 @@ msgstr "_Serveri:"
 msgid "_User name:"
 msgstr ""
 
+#. GRUT modified this item
 #: ui/group-chat.glade.h:2
 msgid "        "
-msgstr ""
+msgstr "        "
 
 #: ui/group-chat.glade.h:4
 msgid "<b>Available chat rooms</b>"
@@ -627,7 +627,6 @@ msgstr ""
 msgid "_Join"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/group-chat.glade.h:17
 msgid "_Nickname:"
 msgstr "_Pseudonimi:"
@@ -999,7 +998,6 @@ msgstr ""
 msgid "_Preferences"
 msgstr "_Preferimet"
 
-#. GRUT modified this item
 #: ui/main.glade.h:95
 msgid "_Remove"
 msgstr "_Hiq"
