@@ -53,21 +53,17 @@ struct _GossipChatPriv {
 
         GtkWidget        *widget;
 	GtkWidget	 *text_view_sw;
-	GtkWidget	 *status_box;
         GtkWidget        *input_entry;
         GtkWidget        *input_text_view;
         GtkWidget        *single_hbox;
         GtkWidget        *multi_vbox;
         GtkWidget        *send_multi_button;
         GtkWidget        *subject_entry;
-        GtkWidget        *status_image;
         GtkWidget        *disclosure;
-        GtkWidget        *from_label;
 
 	GossipChatView   *view;
 
         GtkTooltips      *tooltips;
-        GtkWidget        *from_eventbox;
 
         GossipRosterItem *item;
 	gchar            *locked_resource;
@@ -120,14 +116,9 @@ static void            chat_input_entry_changed_cb       (GtkWidget        *widg
                                                           GossipChat       *chat);
 static void            chat_input_text_buffer_changed_cb (GtkTextBuffer    *buffer,
                                                           GossipChat       *chat);
-static void	       chat_window_layout_changed_cb	 (GossipChatWindow       *window,
-							  GossipChatWindowLayout  layout,
-							  GossipChat		 *chat);
 static gboolean	       chat_text_view_focus_in_event_cb  (GtkWidget        *widget,
 							  GdkEvent	   *event,
 							  GossipChat       *chat);
-static void	       chat_composing_cb		 (GossipChat	   *chat,
-							  gboolean	    composing);
 static gboolean	       chat_delete_event_cb		 (GtkWidget	   *widget,
 							  GdkEvent	   *event,
 							  GossipChat       *chat);
@@ -310,15 +301,11 @@ chat_create_gui (GossipChat *chat)
                                       "chat_widget",
                                       NULL,
                                       "chat_widget", &priv->widget,
-				      "status_box", &priv->status_box,
                                       "chat_view_sw", &priv->text_view_sw,
                                       "input_entry", &priv->input_entry,
                                       "input_textview", &priv->input_text_view,
                                       "single_hbox", &priv->single_hbox,
                                       "multi_vbox", &priv->multi_vbox,
-                                      "status_image", &priv->status_image,
-                                      "from_eventbox", &priv->from_eventbox,
-                                      "from_label", &priv->from_label,
                                       "disclosure", &priv->disclosure,
                                       "send_multi_button", &priv->send_multi_button,
                                       NULL);
@@ -370,10 +357,6 @@ chat_create_gui (GossipChat *chat)
 			  "focus_in_event",
 			  G_CALLBACK (chat_text_view_focus_in_event_cb),
 			  chat);
-	g_signal_connect (chat,
-			  "composing",
-			  G_CALLBACK (chat_composing_cb),
-			  NULL);
 	g_signal_connect (priv->widget,
 			  "delete_event",
 			  G_CALLBACK (chat_delete_event_cb),
@@ -391,8 +374,18 @@ chat_update_locked_resource (GossipChat *chat)
 	GossipJID      *jid;
 	const gchar    *roster_resource;
 
-	jid = gossip_roster_item_get_jid (priv->item);
+	if (gossip_roster_item_is_offline (priv->item)) {
+		g_free (priv->roster_resource);
+		priv->roster_resource = NULL;
 
+		g_free (priv->locked_resource);
+		priv->locked_resource = NULL;
+
+		return;
+	}
+
+	jid = gossip_roster_item_get_jid (priv->item);
+	
 	roster_resource = gossip_jid_get_resource (jid);
 
 	if (!priv->roster_resource) {
@@ -433,8 +426,6 @@ chat_get_jid_with_resource (GossipChat *chat, const gchar *resource)
 				    "/", resource, NULL);
 	}
 
-	/* Should never happen but play safe. */
-	d(g_assert_not_reached ());
 	return g_strdup (gossip_jid_get_without_resource (jid));
 }
 
@@ -738,7 +729,6 @@ chat_item_presence_updated (gpointer          not_used,
 
 {
 	GossipChatPriv *priv;
-	GdkPixbuf      *pixbuf;
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 	g_return_if_fail (item != NULL);
@@ -752,6 +742,9 @@ chat_item_presence_updated (gpointer          not_used,
 	if (gossip_roster_item_is_offline (item)) {
 		chat_composing_remove_timeout (chat);
 		priv->send_composing_events = FALSE;
+
+		g_free (priv->composing_resource);
+		priv->composing_resource = NULL;
 		
 		if (priv->is_online) {
 			gchar *msg;
@@ -763,6 +756,9 @@ chat_item_presence_updated (gpointer          not_used,
 			g_free (msg);
 		}
 		priv->is_online = FALSE;
+
+		g_signal_emit (chat, chat_signals[COMPOSING], 0, FALSE);
+				
 	} else {
 		if (!priv->is_online) {
 			gchar *msg;
@@ -775,18 +771,6 @@ chat_item_presence_updated (gpointer          not_used,
 		}
 		priv->is_online = TRUE;
 	}
-
-	if (gossip_roster_item_is_offline (priv->item)) {
-		pixbuf = gossip_utils_get_pixbuf_offline ();
-	} else {
-		GossipShow      show;
-		show = gossip_roster_item_get_show (priv->item);
-		pixbuf = gossip_utils_get_pixbuf_from_show (show);
-	}
-
-	gtk_image_set_from_pixbuf (GTK_IMAGE (chat->priv->status_image),
-				   pixbuf);
-	g_object_unref (pixbuf);
 
 	g_signal_emit (chat, chat_signals[PRESENCE_CHANGED], 0);
 }
@@ -995,18 +979,6 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
         }
 }
 
-static void
-chat_window_layout_changed_cb (GossipChatWindow       *window,
-			       GossipChatWindowLayout  layout,
-			       GossipChat	      *chat)
-{
-	if (layout == GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW) {
-		gtk_widget_show (chat->priv->status_box);
-	} else {
-		gtk_widget_hide (chat->priv->status_box);
-	}
-}
-
 static gboolean
 chat_text_view_focus_in_event_cb (GtkWidget  *widget,
 				  GdkEvent   *event,
@@ -1022,35 +994,6 @@ chat_text_view_focus_in_event_cb (GtkWidget  *widget,
 	gtk_editable_set_position (GTK_EDITABLE (chat->priv->input_entry), pos);
 
 	return TRUE;
-}
-
-static void
-chat_composing_cb (GossipChat *chat,
-		   gboolean    composing)
-{
-	GossipChatPriv   *priv;
-
-	priv   = chat->priv;
-
-	if (composing) {
-		gtk_image_set_from_stock (GTK_IMAGE (priv->status_image),
-					  GOSSIP_STOCK_TYPING,
-					  GTK_ICON_SIZE_MENU);
-	} else {
-		GdkPixbuf  *pixbuf;
-
-		if (gossip_roster_item_is_offline (priv->item)) {
-			pixbuf = gossip_utils_get_pixbuf_offline ();
-		} else {
-			GossipShow show;
-			show = gossip_roster_item_get_show (priv->item);
-			pixbuf = gossip_utils_get_pixbuf_from_show (show);
-		}
-	
-		gtk_image_set_from_pixbuf (GTK_IMAGE (priv->status_image),
-					   pixbuf);
-		g_object_unref (pixbuf);
-	}
 }
 
 static gboolean
@@ -1079,7 +1022,6 @@ gossip_chat_get_for_item (GossipRosterItem *item)
 	GossipChat     *chat;
 	GossipChatPriv *priv;
 	GossipJID      *jid;
-	GdkPixbuf      *pixbuf;
 
 	chats_init ();
 
@@ -1097,25 +1039,10 @@ gossip_chat_get_for_item (GossipRosterItem *item)
 	priv->item = gossip_roster_item_ref (item);
 
 	if (gossip_roster_item_is_offline (priv->item)) {
-		pixbuf = gossip_utils_get_pixbuf_offline ();
 		priv->is_online = FALSE;
 	} else {
-		GossipShow show = gossip_roster_item_get_show (item);
-		pixbuf = gossip_utils_get_pixbuf_from_show (show);
 		priv->is_online = TRUE;
 	}
-
-	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->status_image),
-				   pixbuf);
-	g_object_unref (pixbuf);
-
-	gtk_label_set_text (GTK_LABEL (priv->from_label), 
-			    gossip_roster_item_get_name (priv->item));
-
-	gtk_tooltips_set_tip (priv->tooltips,
-			      priv->from_eventbox,
-			      gossip_jid_get_full (jid),
-			      gossip_jid_get_full (jid));
 
 	return chat;
 }
@@ -1201,7 +1128,7 @@ gossip_chat_present (GossipChat *chat)
 	
 	if (priv->window == NULL) {
 		gossip_chat_window_add_chat (
-			gossip_chat_window_get_default (), chat);
+			gossip_chat_window_new (), chat);
         }
 
         gossip_chat_window_switch_to_chat (priv->window, chat);
@@ -1231,30 +1158,11 @@ gossip_chat_get_item (GossipChat *chat)
 void
 gossip_chat_set_window (GossipChat *chat, GossipChatWindow *window)
 {
-	GossipChatPriv *priv;
+	chat->priv->window = window;
+}
 
-	priv = chat->priv;
-
-        if (window == priv->window) {
-                return;
-        }
-
-	if (priv->window != NULL) {
-		g_signal_handlers_disconnect_by_func (priv->window,
-						      G_CALLBACK (chat_window_layout_changed_cb),
-						      chat);
-	}
-
-	if (window != NULL) {
-		g_signal_connect (window,
-				  "layout-changed",
-				  G_CALLBACK (chat_window_layout_changed_cb),
-				  chat);
-
-		chat_window_layout_changed_cb (window,
-					       gossip_chat_window_get_layout (window),
-					       chat);
-	}
-
-	priv->window = window;
+GossipChatWindow *
+gossip_chat_get_window (GossipChat *chat)
+{
+	return chat->priv->window;
 }

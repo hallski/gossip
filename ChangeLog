@@ -1,3 +1,11 @@
+2003-11-16  Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
+
+	* src/Makefile.am:
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c:
+	* ui/chat.glade: Use notebook tabs instead of a list to manage
+	multiple chats in one window.
+
 2003-11-15  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-roster-view.c (roster_view_name_cell_data_func): Use

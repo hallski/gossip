@@ -27,36 +27,24 @@
 #include "gossip-contact-info.h"
 #include "gossip-preferences.h"
 #include "gossip-chat-window.h"
+#include "gossip-notebook.h"
 #include "gossip-utils.h"
 #include "gossip-stock.h"
 #include "gossip-sound.h"
 #include "gossip-log.h"
+#include "eel-ellipsizing-label.h"
 
 static void gossip_chat_window_class_init     (GossipChatWindowClass *klass);
 static void gossip_chat_window_init	      (GossipChatWindow      *window);
 static void gossip_chat_window_finalize       (GObject		     *object);
-static void gossip_chat_window_set_property   (GObject		     *object,
-					       guint		      prop_id,
-					       const GValue	     *value,
-					       GParamSpec	     *pspec);
-static void gossip_chat_window_get_property   (GObject		     *object,
-					       guint		      prop_id,
-					       GValue		     *value,
-					       GParamSpec	     *spec);
 static GdkPixbuf * 
 chat_window_get_status_pixbuf		      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
-static void chat_window_get_iter	      (GossipChatWindow      *window,
-					       GossipChat	     *chat,
-					       GtkTreeIter	     *iter);
-static GossipChat *
-chat_window_get_next_chat		      (GossipChatWindow      *window,
-					       GossipChat	     *chat);
-static GossipChat *
-chat_window_get_prev_chat		      (GossipChatWindow      *window,
-					       GossipChat	     *chat);
 static gboolean 
 chat_window_has_toplevel_focus                (GossipChatWindow	     *window);
+static GtkWidget*
+chat_window_create_label		      (GossipChatWindow	     *window,
+					       GossipChat	     *chat);
 static void chat_window_update_status	      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
 static void chat_window_update_title	      (GossipChatWindow	     *window);
@@ -67,14 +55,10 @@ static void chat_window_log_activate_cb       (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_close_activate_cb     (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
-static void chat_window_as_list_activate_cb   (GtkWidget	     *menuitem,
+static void chat_window_tab_left_activate_cb  (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
-static void chat_window_as_win_activate_cb    (GtkWidget	     *menuitem,
+static void chat_window_tab_right_activate_cb (GtkWidget	     *menuitem,
 					       GossipChatWindow	     *window);
-static void chat_window_prev_conv_activate_cb (GtkWidget	     *menuitem,
-					       GossipChatWindow      *window);
-static void chat_window_next_conv_activate_cb (GtkWidget	     *menuitem,
-					       GossipChatWindow      *window);
 static void chat_window_detach_activate_cb    (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
 static gboolean chat_window_delete_event_cb   (GtkWidget	     *dialog,
@@ -87,8 +71,21 @@ static void chat_window_composing_cb	      (GossipChat	     *chat,
 					       GossipChatWindow	     *window);
 static void chat_window_new_message_cb	      (GossipChat	     *chat,
 					       GossipChatWindow	     *window);
-static void chat_window_selection_changed_cb  (GtkTreeSelection	     *sel,
-					       GossipChatWindow	     *window);
+static void chat_window_switch_page_cb	      (GtkNotebook	     *notebook,
+					       GtkNotebookPage	     *page,
+					       gint		      page_num,
+					       GossipChatWindow      *window);
+static void chat_window_tab_added_cb	      (GossipNotebook        *notebook,
+					       GtkWidget	     *child,
+					       GossipChatWindow      *window);
+static void chat_window_tab_removed_cb	      (GossipNotebook	     *notebook,
+					       GtkWidget	     *child,
+					       GossipChatWindow      *window);
+static void chat_window_tab_detached_cb       (GossipNotebook        *notebook,
+					       GtkWidget	     *widget,
+					       GossipChatWindow      *window);
+static void chat_window_close_clicked_cb      (GtkWidget	     *button,
+					       GossipChat	     *chat);
 static gboolean
 chat_window_focus_in_event_cb                 (GtkWidget	     *widget,
 					       GdkEvent		     *event,
@@ -96,6 +93,9 @@ chat_window_focus_in_event_cb                 (GtkWidget	     *widget,
 static const gchar *
 chat_window_get_name                          (GossipChatWindow      *window, 
 					       GossipChat            *chat);
+
+/* Called from Glade, so it shouldn't be static */
+GtkWidget * chat_window_create_notebook (gpointer data);
 
 struct _GossipChatWindowPriv {
 	GossipChatWindowLayout  layout;
@@ -106,53 +106,24 @@ struct _GossipChatWindowPriv {
 	gboolean		new_msg;
 
 	GtkWidget              *dialog;
-	GtkWidget              *paned;
 	GtkWidget              *notebook;
-	GtkWidget	       *scrolledwin;
-	GtkWidget              *treeview;
 	
-	GtkListStore           *store;
-	GtkTreeSelection       *sel;
-
-	GtkAccelGroup	       *accel_group;
-
 	/* menu items */
-	GtkWidget	       *m_conv_detach;
 	GtkWidget	       *m_conv_close;
 	GtkWidget	       *m_view_log;
 	GtkWidget	       *m_view_info;
 	GtkWidget	       *m_view_as_windows;
 	GtkWidget	       *m_view_as_list;
-	GtkWidget	       *m_go_next;
-	GtkWidget	       *m_go_prev;
+	GtkWidget	       *m_tabs_next;
+	GtkWidget	       *m_tabs_prev;
+	GtkWidget	       *m_tabs_left;
+	GtkWidget	       *m_tabs_right;
+	GtkWidget	       *m_tabs_detach;
 };
 
-/* Properties */
-enum {
-	PROP_0,
-	PROP_LAYOUT
-};
-
-/* Signals */
-enum {
-	LAYOUT_CHANGED,
-	LAST_SIGNAL
-};
-
-/* Treeview columns */
-enum {
-	COL_CHAT,
-	COL_STATUS_ICON,
-	COL_NICK,
-	NUM_COLUMNS
-};
-
-static gint chat_window_signals[LAST_SIGNAL] = { 0 };
 static gpointer parent_class;
 
 static GList *chat_windows = NULL;
-
-extern GConfClient *gconf_client;
 
 GType
 gossip_chat_window_get_type (void)
@@ -186,139 +157,96 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	parent_class = g_type_class_peek_parent (klass);
 
-	object_class->set_property = gossip_chat_window_set_property;
-	object_class->get_property = gossip_chat_window_get_property;
 	object_class->finalize	   = gossip_chat_window_finalize;
-
-	g_object_class_install_property (object_class,
-					 PROP_LAYOUT,
-					 g_param_spec_int ("layout",
-							   "window layout",
-							   "The layout style of the window",
-							   0,
-							   G_MAXINT,
-							   GOSSIP_CHAT_WINDOW_LAYOUT_LIST,
-							   G_PARAM_READWRITE));
-
-	chat_window_signals[LAYOUT_CHANGED] =
-		g_signal_new ("layout-changed",
-			      G_TYPE_FROM_CLASS (object_class),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GossipChatWindowClass, layout_changed),
-			      NULL, NULL,
-			      g_cclosure_marshal_VOID__INT,
-			      G_TYPE_NONE,
-			      1,
-			      G_TYPE_INT);
 }
 
 static void
 gossip_chat_window_init (GossipChatWindow *window)
 {
-	GladeXML          *glade;
-	GtkCellRenderer   *cell;
-	GtkTreeViewColumn *col;
+	GossipChatWindowPriv    *priv;
+	GladeXML                *glade;
 
-	window->priv = g_new0 (GossipChatWindowPriv, 1);
+	priv = g_new0 (GossipChatWindowPriv, 1);
+	window->priv = priv;
 
 	glade = gossip_glade_get_file (GLADEDIR "/chat.glade",
 				       "chat_window",
 				       NULL,
-				       "chat_window", &window->priv->dialog,
-				       "chats_paned", &window->priv->paned,
-				       "chats_scrolledwindow", &window->priv->scrolledwin,
-				       "chats_treeview", &window->priv->treeview,
-				       "menu_conv_detach", &window->priv->m_conv_detach,
-				       "menu_conv_close", &window->priv->m_conv_close,
-				       "menu_view_info", &window->priv->m_view_info,
-				       "menu_view_log", &window->priv->m_view_log,
-				       "menu_view_as_windows", &window->priv->m_view_as_windows,
-				       "menu_view_as_list", &window->priv->m_view_as_list,
-				       "menu_go_next", &window->priv->m_go_next,
-				       "menu_go_prev", &window->priv->m_go_prev,
+				       "chat_window", &priv->dialog,
+				       "chats_notebook", &priv->notebook,
+				       "menu_conv_close", &priv->m_conv_close,
+				       "menu_view_info", &priv->m_view_info,
+				       "menu_view_log", &priv->m_view_log,
+				       "menu_tabs_next", &priv->m_tabs_next,
+				       "menu_tabs_prev", &priv->m_tabs_prev,
+				       "menu_tabs_left", &priv->m_tabs_left,
+				       "menu_tabs_right", &priv->m_tabs_right,
+				       "menu_tabs_detach", &priv->m_tabs_detach,
 				       NULL);
 
-	window->priv->store = gtk_list_store_new (NUM_COLUMNS,
-						  GOSSIP_TYPE_CHAT,
-						  GDK_TYPE_PIXBUF,
-						  G_TYPE_STRING);
-
-	cell = gtk_cell_renderer_pixbuf_new ();
-	col = gtk_tree_view_column_new_with_attributes ("", cell, "pixbuf", COL_STATUS_ICON, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (window->priv->treeview), col);
-
-	cell = gtk_cell_renderer_text_new ();
-	col = gtk_tree_view_column_new_with_attributes ("", cell, "text", COL_NICK, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (window->priv->treeview), col);
-
-	gtk_tree_view_set_model (GTK_TREE_VIEW (window->priv->treeview),
-				 GTK_TREE_MODEL (window->priv->store));
-
-	window->priv->sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->priv->treeview));
-
-	window->priv->notebook = gtk_notebook_new ();
-	gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->priv->notebook), FALSE);
-	gtk_notebook_set_show_border (GTK_NOTEBOOK (window->priv->notebook), FALSE);
-
-	gtk_paned_pack2 (GTK_PANED (window->priv->paned),
-			 window->priv->notebook,
-			 TRUE, TRUE);
-
-	gtk_widget_show (window->priv->notebook);
-
-	window->priv->accel_group = gtk_accel_group_new ();
-
-	g_signal_connect (window->priv->m_conv_detach,
-			  "activate",
-			  G_CALLBACK (chat_window_detach_activate_cb),
-			  window);
-	g_signal_connect (window->priv->m_conv_close,
+	g_signal_connect (priv->m_conv_close,
 			  "activate",
 			  G_CALLBACK (chat_window_close_activate_cb),
 			  window);
-	g_signal_connect (window->priv->m_view_log,
+	g_signal_connect (priv->m_view_log,
 			  "activate",
 			  G_CALLBACK (chat_window_log_activate_cb),
 			  window);
-	g_signal_connect (window->priv->m_view_info,
+	g_signal_connect (priv->m_view_info,
 			  "activate",
 			  G_CALLBACK (chat_window_info_activate_cb),
 			  window);
-	g_signal_connect (window->priv->m_view_as_list,
+	g_signal_connect_swapped (priv->m_tabs_prev,
+			          "activate",
+			          G_CALLBACK (gtk_notebook_prev_page),
+				  priv->notebook);
+	g_signal_connect_swapped (priv->m_tabs_next,
+			          "activate",
+			          G_CALLBACK (gtk_notebook_next_page),
+			          priv->notebook);
+	g_signal_connect (priv->m_tabs_left,
 			  "activate",
-			  G_CALLBACK (chat_window_as_list_activate_cb),
+			  G_CALLBACK (chat_window_tab_left_activate_cb),
 			  window);
-	g_signal_connect (window->priv->m_view_as_windows,
+	g_signal_connect (priv->m_tabs_right,
 			  "activate",
-			  G_CALLBACK (chat_window_as_win_activate_cb),
+			  G_CALLBACK (chat_window_tab_right_activate_cb),
 			  window);
-	g_signal_connect (window->priv->m_go_prev,
+	g_signal_connect (priv->m_tabs_detach,
 			  "activate",
-			  G_CALLBACK (chat_window_prev_conv_activate_cb),
+			  G_CALLBACK (chat_window_detach_activate_cb),
 			  window);
-	g_signal_connect (window->priv->m_go_next,
-			  "activate",
-			  G_CALLBACK (chat_window_next_conv_activate_cb),
-			  window);
-	g_signal_connect (window->priv->dialog,
+	g_signal_connect (priv->dialog,
 			  "delete_event",
 			  G_CALLBACK (chat_window_delete_event_cb),
 			  window);
-	g_signal_connect (window->priv->sel,
-			  "changed",
-			  G_CALLBACK (chat_window_selection_changed_cb),
+	g_signal_connect (priv->notebook,
+			  "switch_page",
+			  G_CALLBACK (chat_window_switch_page_cb),
 			  window);
-	g_signal_connect (window->priv->dialog,
+	g_signal_connect (priv->dialog,
 			  "focus_in_event",
 			  G_CALLBACK (chat_window_focus_in_event_cb),
+			  window);
+	g_signal_connect (priv->notebook,
+			  "tab_added",
+			  G_CALLBACK (chat_window_tab_added_cb),
+			  window);
+	g_signal_connect (priv->notebook,
+			  "tab_removed",
+			  G_CALLBACK (chat_window_tab_removed_cb),
+			  window);
+	g_signal_connect (priv->notebook,
+			  "tab_detached",
+			  G_CALLBACK (chat_window_tab_detached_cb),
 			  window);
 
 	chat_windows = g_list_prepend (chat_windows, window);
 
-	window->priv->chats = NULL;
-	window->priv->chats_new_msg = NULL;
-	window->priv->chats_composing = NULL;
-	window->priv->current_chat = NULL;
+	priv->chats = NULL;
+	priv->chats_new_msg = NULL;
+	priv->chats_composing = NULL;
+	priv->current_chat = NULL;
 }
 
 static void
@@ -328,46 +256,9 @@ gossip_chat_window_finalize (GObject *object)
 
 	chat_windows = g_list_remove (chat_windows, window);
 	gtk_widget_destroy (window->priv->dialog);
-	g_object_unref (window->priv->accel_group);
 	g_free (window->priv);
 
 	G_OBJECT_CLASS (parent_class)->finalize (object);
-}
-
-static void
-gossip_chat_window_set_property (GObject      *object,
-				 guint         prop_id,
-				 const GValue *value,
-				 GParamSpec   *pspec)
-{
-	GossipChatWindow *window = GOSSIP_CHAT_WINDOW (object);
-
-	switch (prop_id) {
-	case PROP_LAYOUT:
-		gossip_chat_window_set_layout (window, g_value_get_int (value));
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-gossip_chat_window_get_property (GObject    *object,
-				 guint       prop_id,
-				 GValue     *value,
-				 GParamSpec *pspec)
-{
-	GossipChatWindow *window = GOSSIP_CHAT_WINDOW (object);
-
-	switch (prop_id) {
-	case PROP_LAYOUT:
-		g_value_set_int (value, window->priv->layout);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
 }
 
 static GdkPixbuf *
@@ -399,75 +290,6 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	return pixbuf;
 }
 
-static void
-chat_window_get_iter (GossipChatWindow *window,
-		      GossipChat       *chat,
-		      GtkTreeIter      *iter)
-{
-	GtkTreeRowReference *ref;
-	GtkTreePath	    *path;
-
-	ref = g_object_get_data (G_OBJECT (chat), "chat-window-tree-row-ref");
-	path = gtk_tree_row_reference_get_path (ref);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (window->priv->store),
-			         iter, path);
-	gtk_tree_path_free (path);
-}
-
-static GossipChat *
-chat_window_get_next_chat (GossipChatWindow *window,
-			   GossipChat	    *chat)
-{
-	GossipChat  *next;
-	GtkTreeIter  iter;
-	gboolean     has_next;
-
-	chat_window_get_iter (window, chat, &iter);
-
-	has_next = gtk_tree_model_iter_next (GTK_TREE_MODEL (window->priv->store),
-					     &iter);
-
-	if (!has_next) {
-		return NULL;
-	}
-
-	gtk_tree_model_get (GTK_TREE_MODEL (window->priv->store), &iter,
-			    COL_CHAT, &next, -1);
-
-	return next;
-}
-
-static GossipChat *
-chat_window_get_prev_chat (GossipChatWindow *window,
-			   GossipChat	    *chat)
-{
-	GossipChat  *next;
-	GtkTreePath *path;
-	GtkTreeIter  iter;
-	gboolean     has_prev;
-
-	chat_window_get_iter (window, chat, &iter);
-	path = gtk_tree_model_get_path (GTK_TREE_MODEL (window->priv->store),
-					&iter);
-
-
-	has_prev = gtk_tree_path_prev (path);
-
-	if (!has_prev) {
-		return NULL;
-	}
-
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (window->priv->store),
-				 &iter, path);
-
-	gtk_tree_model_get (GTK_TREE_MODEL (window->priv->store), &iter,
-			    COL_CHAT, &next, -1);
-
-	gtk_tree_path_free (path);
-
-	return next;	
-}
-
 static gboolean
 chat_window_has_toplevel_focus (GossipChatWindow *window)
 {
@@ -484,19 +306,157 @@ chat_window_has_toplevel_focus (GossipChatWindow *window)
 	return focus;
 }
 
+#define TAB_MIN_SIZE 60
+#define TAB_NB_MAX 4
+
+#if 0
+static void
+tab_label_set_size (GtkWidget *window, GtkWidget *label_hbox)
+{
+	GtkStyle         *style;
+	PangoFontMetrics *metrics;
+	PangoContext     *context;
+	PangoLanguage    *lang;
+	gint              char_width;
+	gint              max_width, min_width, width;
+	GtkWidget        *label;
+
+	GtkRequisition    requisition;
+	
+	label = g_object_get_data (G_OBJECT (label_hbox), "label");
+	gtk_widget_size_request (label, &requisition);
+
+	width = requisition.width;
+
+	style = gtk_widget_get_style (label);
+	context = gtk_widget_get_pango_context (label);
+	lang = pango_context_get_language (context);
+	metrics = pango_context_get_metrics (context, style->font_desc, lang);
+	char_width = pango_font_metrics_get_approximate_char_width (metrics);
+	pango_font_metrics_unref (metrics);
+	
+	max_width = MAX (PANGO_PIXELS (char_width * 20), window->allocation.width / 3);
+	min_width = MIN (5, width);
+	width = CLAMP (width, min_width, max_width);
+	
+	gtk_widget_set_size_request (label_hbox, width + 16 + 4 + 16, -1);
+}
+
+static void
+tab_label_size_request_cb (GtkWidget      *window,
+			   GtkRequisition *requisition,
+			   GtkNotebook    *notebook)
+{
+	gint           num_pages, i;
+	GtkWidget      *page;
+	GtkWidget      *tab;
+	GtkWidget      *label;
+	GtkRequisition  tab_req;
+	gint            total_width = 0;
+	gint            width;
+
+	gint width_per_page;
+	gint overflow = 0;
+	
+	num_pages = gtk_notebook_get_n_pages (notebook);
+
+	/* FIXME */
+	overflow += 2 + 8 * num_pages;
+	
+	/*g_print ("%d %d\n",
+		 window->allocation.width,
+		 GTK_WIDGET (notebook)->allocation.width);
+	*/
+	
+	width_per_page = GTK_WIDGET (notebook)->allocation.width / num_pages;
+	
+	for (i = 0; i < num_pages; i++) {
+		page = gtk_notebook_get_nth_page (notebook, i);
+		
+		tab = gtk_notebook_get_tab_label (notebook, page);
+		label = g_object_get_data (G_OBJECT (tab), "label");
+
+		gtk_widget_size_request (tab, &tab_req);
+
+		width = tab_req.width;
+		//g_print ("%d, %s\n", width, gtk_label_get_text (GTK_LABEL (label)));
+
+		overflow += width - width_per_page;
+		
+		total_width += width;
+	}
+	
+	g_print ("Total width %d, overflow %d\n", total_width, overflow);
+	
+}
+#endif
+
+static GtkWidget *
+chat_window_create_label (GossipChatWindow *window,
+			  GossipChat       *chat)
+{
+	GossipChatWindowPriv *priv;
+	GtkWidget            *hbox;
+	GtkWidget            *close_button;
+	GtkWidget            *close_img;
+	GtkWidget            *name_label;
+	GtkWidget            *status_img;
+	const gchar          *name;
+	gint	              w, h;
+
+	priv = window->priv;
+	
+	hbox = gtk_hbox_new (FALSE, 0);
+
+	status_img = gtk_image_new ();
+	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
+
+	name = chat_window_get_name (window, chat);
+	name_label = gtk_label_new (name);
+
+	gtk_misc_set_padding (GTK_MISC (name_label), 2, 0);
+	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
+
+	g_object_set_data (G_OBJECT (hbox), "label", name_label);
+		
+	/*tab_label_set_size (window->priv->dialog, hbox);
+
+	g_signal_connect (priv->dialog,
+			  "size_request",
+			  G_CALLBACK (tab_label_size_request_cb),
+			  priv->notebook);
+	*/
+	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
+	close_button = gtk_button_new ();
+	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
+	close_img = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	gtk_widget_set_size_request (close_button, w, h);
+	gtk_container_add (GTK_CONTAINER (close_button), close_img);
+
+	gtk_box_pack_start (GTK_BOX (hbox), status_img, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), name_label, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+
+	g_signal_connect (close_button,
+			  "clicked",
+			  G_CALLBACK (chat_window_close_clicked_cb),
+			  chat);
+	
+	gtk_widget_show_all (hbox);
+
+	return hbox;
+}
+
 static void
 chat_window_update_status (GossipChatWindow *window,
 			   GossipChat	    *chat)
 {
-	GtkTreeIter	     iter;
+	GtkImage	    *image;
 	GdkPixbuf           *pixbuf;
 	
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
-	
-	chat_window_get_iter (window, chat, &iter);
-	gtk_list_store_set (window->priv->store, &iter,
-			    COL_STATUS_ICON, pixbuf,
-			    -1);
+	image = g_object_get_data (G_OBJECT (chat), "chat-window-status-img");
+	gtk_image_set_from_pixbuf (image, pixbuf);
 }
 
 static void
@@ -519,20 +479,21 @@ chat_window_update_title (GossipChatWindow *window)
 static void
 chat_window_update_menu (GossipChatWindow *window)
 {
-	GossipChat *next;
-	GossipChat *prev;
-	gboolean    has_next;
-	gboolean    has_prev;
+	gboolean first_page;
+	gboolean last_page;
+	gint     num_pages;
+	gint     page_num;
 
-	next = chat_window_get_next_chat (window, window->priv->current_chat);
-	prev = chat_window_get_prev_chat (window, window->priv->current_chat);
+	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->priv->notebook));
+	num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->priv->notebook));
+	first_page = (page_num == 0) ? TRUE : FALSE;
+	last_page = (page_num == (num_pages - 1)) ? TRUE : FALSE;
 
-	has_next = (next != NULL) ? TRUE : FALSE;
-	has_prev = (prev != NULL) ? TRUE : FALSE;	
-
-	gtk_widget_set_sensitive (window->priv->m_go_next, has_next);
-	gtk_widget_set_sensitive (window->priv->m_go_prev, has_prev);
-	gtk_widget_set_sensitive (window->priv->m_conv_detach, has_prev || has_next);
+	gtk_widget_set_sensitive (window->priv->m_tabs_next, !last_page);
+	gtk_widget_set_sensitive (window->priv->m_tabs_prev, !first_page);
+	gtk_widget_set_sensitive (window->priv->m_tabs_detach, num_pages > 1);
+	gtk_widget_set_sensitive (window->priv->m_tabs_left, !first_page);
+	gtk_widget_set_sensitive (window->priv->m_tabs_right, !last_page);
 }
 
 static void
@@ -571,65 +532,17 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
-chat_window_as_list_activate_cb (GtkWidget        *menuitem,
-				 GossipChatWindow *window)
+chat_window_tab_left_activate_cb (GtkWidget        *menuitem,
+				  GossipChatWindow *window)
 {
-	window->priv->layout = GOSSIP_CHAT_WINDOW_LAYOUT_LIST;
-	gtk_widget_show (window->priv->scrolledwin);
-	g_signal_emit (window, chat_window_signals[LAYOUT_CHANGED],
-		       0, GOSSIP_CHAT_WINDOW_LAYOUT_LIST);
+	// TODO
 }
 
 static void
-chat_window_as_win_activate_cb (GtkWidget        *menuitem,
-			        GossipChatWindow *window)
-{
-	GList *l = g_list_copy (window->priv->chats);
-
-	l = g_list_next (l);
-	for (; l != NULL; l = g_list_next (l)) {
-		GossipChatWindow *new_window;
-		GossipChat       *chat;
-
-		chat = l->data;
-		new_window = gossip_chat_window_new ();
-		
-		gossip_chat_window_set_layout (new_window, GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW);
-		gossip_chat_window_remove_chat (window, chat);
-		gossip_chat_window_add_chat (new_window, chat);	
-	}
-
-	g_list_free (l);
-
-	window->priv->layout = GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW;
-	gtk_widget_hide (window->priv->scrolledwin);
-
-	g_signal_emit (window, chat_window_signals[LAYOUT_CHANGED],
-		       0, GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW);
-}
-
-static void
-chat_window_prev_conv_activate_cb (GtkWidget        *menuitem,
+chat_window_tab_right_activate_cb (GtkWidget        *menuitem,
 				   GossipChatWindow *window)
 {
-	GossipChat *chat;
-
-	chat = chat_window_get_prev_chat (window, window->priv->current_chat);
-	if (chat != NULL) {
-		gossip_chat_window_switch_to_chat (window, chat);
-	}
-}
-
-static void
-chat_window_next_conv_activate_cb (GtkWidget        *menuitem,
-				   GossipChatWindow *window)
-{
-	GossipChat *chat;
-
-	chat = chat_window_get_next_chat (window, window->priv->current_chat);
-	if (chat != NULL) {
-		gossip_chat_window_switch_to_chat (window, chat);
-	}
+	// TODO
 }
 
 static void
@@ -706,34 +619,117 @@ chat_window_new_message_cb (GossipChat       *chat,
 	}
 }
 
+
 static void
-chat_window_selection_changed_cb (GtkTreeSelection *sel,
-				  GossipChatWindow *window)
+chat_window_switch_page_cb (GtkNotebook	     *notebook,
+			    GtkNotebookPage  *page,
+			    gint	      page_num,
+			    GossipChatWindow *window)
 {
-	GossipChat  *chat;
-	gboolean     selected;
-	GtkTreeIter  iter;
-	gint	     page_num;
+	GossipChat *chat;
+	GtkWidget  *child;
 
-	selected = gtk_tree_selection_get_selected (sel, NULL, &iter);
+	child = gtk_notebook_get_nth_page (notebook, page_num); 	
+	chat = g_object_get_data (G_OBJECT (child), "chat");
 
-	if (!selected) {
+	if (window->priv->current_chat == chat) {
 		return;
 	}
-
-	gtk_tree_model_get (GTK_TREE_MODEL (window->priv->store), &iter,
-			    COL_CHAT, &chat, -1);
 
 	window->priv->current_chat = chat;
 	window->priv->chats_new_msg = g_list_remove (window->priv->chats_new_msg, chat);
 
-	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->priv->notebook),
-					  gossip_chat_get_widget (chat));
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (window->priv->notebook), page_num);
-
 	chat_window_update_title (window);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
+}
+
+static void
+chat_window_tab_added_cb (GossipNotebook   *notebook,
+			  GtkWidget	   *child,
+			  GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GossipChat *chat;
+	GtkWidget  *label;
+
+	priv = window->priv;
+
+	chat = g_object_get_data (G_OBJECT (child), "chat");
+
+	gossip_chat_set_window (chat, window);
+
+	priv->chats = g_list_append (priv->chats, chat);
+
+	label = chat_window_create_label (window, chat);
+	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), child, label);
+
+	g_signal_connect (chat, "presence_changed",
+			  G_CALLBACK (chat_window_presence_changed_cb),
+			  window);
+	g_signal_connect (chat, "composing",
+			  G_CALLBACK (chat_window_composing_cb),
+			  window);
+	g_signal_connect (chat, "new_message",
+			  G_CALLBACK (chat_window_new_message_cb),
+			  window);
+
+	chat_window_update_status (window, chat);
+	chat_window_update_title (window);
+	chat_window_update_menu (window);
+}
+
+static void
+chat_window_tab_removed_cb (GossipNotebook   *notebook,
+			    GtkWidget	     *child,
+			    GossipChatWindow *window)
+{
+	GossipChat *chat;
+
+	chat = g_object_get_data (G_OBJECT (child), "chat");
+	
+	gossip_chat_set_window (chat, NULL);
+
+	g_signal_handlers_disconnect_by_func (chat,
+					      G_CALLBACK (chat_window_presence_changed_cb),
+					      window);
+	g_signal_handlers_disconnect_by_func (chat,
+					      G_CALLBACK (chat_window_composing_cb),
+					      window);
+	g_signal_handlers_disconnect_by_func (chat,
+					      G_CALLBACK (chat_window_new_message_cb),
+					      window);
+
+	window->priv->chats = g_list_remove (window->priv->chats, chat);
+
+	if (window->priv->chats == NULL) {
+		g_object_unref (window);
+	}
+}
+
+static void
+chat_window_tab_detached_cb (GossipNotebook   *notebook,
+			     GtkWidget	      *child,
+			     GossipChatWindow *window)
+{
+	GossipChatWindow *new_window;
+	GossipChat	 *chat;
+
+	chat = g_object_get_data (G_OBJECT (child), "chat");
+	new_window = gossip_chat_window_new ();
+
+	gossip_chat_window_remove_chat (window, chat);
+	gossip_chat_window_add_chat (new_window, chat);
+}
+
+static void
+chat_window_close_clicked_cb (GtkWidget  *button,
+			      GossipChat *chat)
+{
+	GossipChatWindow *window;
+
+	window = gossip_chat_get_window (chat);
+	gossip_chat_window_remove_chat (window, chat);
 }
 
 static gboolean
@@ -760,44 +756,21 @@ chat_window_get_name (GossipChatWindow *window, GossipChat *chat)
 	return gossip_roster_item_get_name (item);
 }
 
-GossipChatWindow *
-gossip_chat_window_new (void)
+GtkWidget *
+chat_window_create_notebook (gpointer data)
 {
-	GossipChatWindow *window;
-	gboolean	  open_in_list;
+	GtkWidget *notebook;
 
-	open_in_list = gconf_client_get_bool (gconf_client,
-					      "/apps/gossip/conversation/open_in_list",
-					      NULL);
+	notebook = gossip_notebook_new ();
+	gtk_widget_show (notebook);
 
-	window = g_object_new (GOSSIP_TYPE_CHAT_WINDOW, NULL);
-
-	if (open_in_list) {
-		gossip_chat_window_set_layout (window, GOSSIP_CHAT_WINDOW_LAYOUT_LIST);
-	} else {
-		gossip_chat_window_set_layout (window, GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW);
-	}
-
-	return window;
+	return notebook;
 }
 
 GossipChatWindow *
-gossip_chat_window_get_default (void)
+gossip_chat_window_new (void)
 {
-	GossipChatWindow *window;
-	gboolean	  open_in_list;
-
-	open_in_list = gconf_client_get_bool (gconf_client,
-					      "/apps/gossip/conversation/open_in_list",
-					      NULL);
-
-	if (!open_in_list || chat_windows == NULL) {
-		window = gossip_chat_window_new ();
-	} else {
-		window = chat_windows->data;
-	}
-
-	return window;
+	return GOSSIP_CHAT_WINDOW (g_object_new (GOSSIP_TYPE_CHAT_WINDOW, NULL));
 }
 
 GtkWidget *
@@ -807,151 +780,36 @@ gossip_chat_window_get_dialog (GossipChatWindow *window)
 }
 
 void
-gossip_chat_window_set_layout (GossipChatWindow       *window,
-			       GossipChatWindowLayout  layout)
-{
-	switch (layout) {
-	case GOSSIP_CHAT_WINDOW_LAYOUT_LIST:
-		gtk_menu_item_activate (GTK_MENU_ITEM (window->priv->m_view_as_list));
-		break;
-	case GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW:
-		gtk_menu_item_activate (GTK_MENU_ITEM (window->priv->m_view_as_windows));
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-}
-
-GossipChatWindowLayout
-gossip_chat_window_get_layout (GossipChatWindow *window)
-{
-	return window->priv->layout;
-}
-
-void
 gossip_chat_window_add_chat (GossipChatWindow *window,
 			     GossipChat	      *chat)
 {
-	GtkTreeIter          iter;
-	GtkTreePath         *path;
-	GtkTreeRowReference *ref;
-	GdkPixbuf	    *pixbuf;
+	GtkWidget *label;
 
-	gossip_chat_set_window (chat, window);
+	label = chat_window_create_label (window, chat);
 
-	if (window->priv->chats != NULL &&
-            window->priv->layout == GOSSIP_CHAT_WINDOW_LAYOUT_WINDOW) {
-		gossip_chat_window_set_layout (window, GOSSIP_CHAT_WINDOW_LAYOUT_LIST);
-	}
-	
-	window->priv->chats = g_list_append (window->priv->chats, chat);
-
-	pixbuf = chat_window_get_status_pixbuf (window, chat);
-
-	gtk_list_store_append (window->priv->store, &iter);
-	gtk_list_store_set (window->priv->store, &iter,
-			    COL_CHAT, chat,
-			    COL_STATUS_ICON, pixbuf,
-			    COL_NICK, chat_window_get_name (window, chat),
-			    -1);
-	/* BEFORE COMMIT, CHECK!? */
-	g_object_unref (pixbuf);
-
-	path = gtk_tree_model_get_path (GTK_TREE_MODEL (window->priv->store),
-					&iter);
-	ref = gtk_tree_row_reference_new (GTK_TREE_MODEL (window->priv->store),
-					  path);
-
-	g_object_set_data_full (G_OBJECT (chat), "chat-window-tree-row-ref", ref,
-				(GDestroyNotify) gtk_tree_row_reference_free);
-
-	gtk_notebook_insert_page (GTK_NOTEBOOK (window->priv->notebook),
-				  gossip_chat_get_widget (chat),
-				  NULL, -1);
-
-	gossip_chat_window_switch_to_chat (window, chat);
-
-	g_signal_connect (chat, "presence_changed",
-			  G_CALLBACK (chat_window_presence_changed_cb),
-			  window);
-	g_signal_connect (chat, "composing",
-			  G_CALLBACK (chat_window_composing_cb),
-			  window);
-	g_signal_connect (chat, "new_message",
-			  G_CALLBACK (chat_window_new_message_cb),
-			  window);
-
-	gtk_tree_path_free (path);
+	gossip_notebook_insert_page (GOSSIP_NOTEBOOK (window->priv->notebook),
+	  			     gossip_chat_get_widget (chat),
+				     label,
+				     GOSSIP_NOTEBOOK_INSERT_LAST,
+				     TRUE);
 }
 
 void
 gossip_chat_window_remove_chat (GossipChatWindow *window,
 				GossipChat	 *chat)
 {
-	GtkTreeIter          iter;
-	GtkTreePath         *path;
-	GtkTreeRowReference *ref;
-	gint		     page_num;
-	GossipChat	    *next;
-
-	ref = g_object_get_data (G_OBJECT (chat), "chat-window-tree-row-ref");
-
-	g_return_if_fail (ref != NULL);
-
-	path = gtk_tree_row_reference_get_path (ref);
-
-	g_return_if_fail (path != NULL);
-
-	gtk_tree_model_get_iter (GTK_TREE_MODEL (window->priv->store),
-				 &iter, path);
-
-	next = chat_window_get_next_chat (window, chat);
-	if (next == NULL) {
-		next = chat_window_get_prev_chat (window, chat);
-	}
-
-	gtk_list_store_remove (window->priv->store, &iter);
-
-	g_object_set_data (G_OBJECT (chat), "chat-window-tree-row-ref", NULL);
-	gtk_tree_path_free (path);
-
-	gossip_chat_set_window (chat, NULL);
-
-	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->priv->notebook),
-					  gossip_chat_get_widget (chat));
-	gtk_notebook_remove_page (GTK_NOTEBOOK (window->priv->notebook),
-				  page_num);
-
-	g_signal_handlers_disconnect_by_func (chat,
-					      G_CALLBACK (chat_window_presence_changed_cb),
-					      window);
-	g_signal_handlers_disconnect_by_func (chat,
-					      G_CALLBACK (chat_window_composing_cb),
-					      window);
-	g_signal_handlers_disconnect_by_func (chat,
-					      G_CALLBACK (chat_window_new_message_cb),
-					      window);
-
-	window->priv->chats = g_list_remove (window->priv->chats, chat);
-
-	if (next != NULL) {
-		gossip_chat_window_switch_to_chat (window, next);
-	}
-
-	if (window->priv->chats == NULL) {
-		g_object_unref (window);
-	}
+	gossip_notebook_remove_page (GOSSIP_NOTEBOOK (window->priv->notebook),
+				     gossip_chat_get_widget (chat));
 }
 
 void
 gossip_chat_window_switch_to_chat (GossipChatWindow *window,
 				   GossipChat	    *chat)
 {
-	GtkTreeRowReference *ref;
-	GtkTreePath *path;
+	gint page_num;
 
-	ref = g_object_get_data (G_OBJECT (chat), "chat-window-tree-row-ref");
-	path = gtk_tree_row_reference_get_path (ref);
-	gtk_tree_selection_select_path (window->priv->sel, path);
-	gtk_tree_path_free (path);
+	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->priv->notebook),
+					  gossip_chat_get_widget (chat));
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (window->priv->notebook),
+				       page_num);
 }

@@ -71,6 +71,8 @@ GossipRosterItem *
 gossip_chat_get_item          (GossipChat       *chat);
 void            gossip_chat_set_window          (GossipChat       *chat,
 						 GossipChatWindow *window);
+GossipChatWindow *	
+gossip_chat_get_window				(GossipChat	  *chat);
 G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_H__ */

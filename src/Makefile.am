@@ -48,6 +48,8 @@ gossip_SOURCES = 				\
 	gossip-log.h				\
 	gossip-main.c				\
 	gossip-marshal-main.c			\
+	gossip-notebook.c			\
+	gossip-notebook.h			\
 	gossip-preferences.c			\
 	gossip-preferences.h	                \
 	gossip-roster.c                         \
