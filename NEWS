@@ -3,7 +3,7 @@ News in 0.7:
 * Fixes to the chat window (URL matching, clear chat)
 * New application icon from Dan Taylor
 * Chat window entry autoexpands instead of using a disclosure widget
-* Store state of contact list window (visability, position and size) between
+* Store state of contact list (visibility, position and size) between
   sessions
 * Don't show groups with no contacts
 * Presence setting system greatly improved
