@@ -1,3 +1,10 @@
+2004-06-15  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat.c:
+	- Automatically resize window after input text view shrinks. 
+	- Based on a patch from Lionel Henry
+	- Fixes bug #143797
+
 2004-06-15  Geert-Jan Van den Bogaerde  <geertjan@gnome.org>
  
 	* src/gossip-chat-window.c: (chat_window_create_label):

@@ -72,6 +72,12 @@ struct _GossipChatPriv {
 	
 	gboolean          is_online;
 	gboolean          groupchat_priv;
+
+	/* Used to automatically shrink a window that has temporary grown
+	 * due to long input */
+	gint              window_static_height;
+	gint              window_height;
+	gboolean          is_first_char;
 };
 
 static void            chat_class_init                   (GossipChatClass  *klass);
@@ -119,6 +125,9 @@ static void            chat_input_text_buffer_changed_cb (GtkTextBuffer    *buff
                                                           GossipChat       *chat);
 static gboolean	       chat_text_view_focus_in_event_cb  (GtkWidget        *widget,
 							  GdkEvent	   *event,
+							  GossipChat       *chat);
+static void            chat_text_view_size_allocate_cb   (GtkWidget        *widget,
+							  GtkAllocation    *allocation,
 							  GossipChat       *chat);
 static gboolean	       chat_delete_event_cb		 (GtkWidget	   *widget,
 							  GdkEvent	   *event,
@@ -214,6 +223,7 @@ chat_init (GossipChat *chat)
 	priv->window = NULL;
 	priv->request_composing_events = TRUE;
 	priv->is_online = FALSE;
+	priv->is_first_char = TRUE;
 	
 	chat->priv = priv;
 	
@@ -327,6 +337,10 @@ chat_create_gui (GossipChat *chat)
 	g_signal_connect (priv->view,
 			  "focus_in_event",
 			  G_CALLBACK (chat_text_view_focus_in_event_cb),
+			  chat);
+	g_signal_connect (priv->input_text_view,
+			  "size_allocate",
+			  G_CALLBACK (chat_text_view_size_allocate_cb),
 			  chat);
 	g_signal_connect (priv->widget,
 			  "delete_event",
@@ -997,18 +1011,21 @@ chat_error_dialog (GossipChat  *chat,
 static void
 chat_input_text_view_send (GossipChat *chat)
 {
-	GtkTextBuffer *buffer;
-	GtkTextIter    start, end;
-	gchar	      *msg;
-	gboolean       send_normal_value;
+	GossipChatPriv *priv;
+	GtkTextBuffer  *buffer;
+	GtkTextIter     start, end;
+	gchar	       *msg;
+	gboolean        send_normal_value;
 
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->priv->input_text_view));
+	priv = chat->priv;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
 
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	msg = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 
 	/* Clear the input field */
-	send_normal_value = chat->priv->send_composing_events;
+	send_normal_value = priv->send_composing_events;
 	chat->priv->send_composing_events = FALSE;
 	gtk_text_buffer_set_text (buffer, "", -1);
 	chat->priv->send_composing_events = send_normal_value;
@@ -1016,6 +1033,8 @@ chat_input_text_view_send (GossipChat *chat)
 	chat_send (chat, msg);
 
 	g_free (msg);
+
+	priv->is_first_char = TRUE;
 }
 
 void
@@ -1072,16 +1091,36 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
 }
 
 static void
-chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
-                                   GossipChat    *chat)
+chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 {
-        if (chat->priv->send_composing_events) {
+	GossipChatPriv *priv;
+
+	priv = chat->priv;
+
+        if (priv->send_composing_events) {
                 if (gtk_text_buffer_get_char_count (buffer) == 0) {
-                        chat_composing_stop (chat);
+			chat_composing_stop (chat);
                 } else {
                         chat_composing_start (chat);
                 }
         }
+
+	if (priv->is_first_char) {
+		GtkRequisition  req;
+		gint            window_height;
+		GtkWidget      *dialog;
+		
+		/* Save the window's size */
+		dialog = gossip_chat_window_get_dialog (priv->window);
+		gtk_window_get_size (GTK_WINDOW (dialog), 
+				     NULL, &window_height);
+
+		gtk_widget_size_request (priv->input_text_view, &req);
+
+		priv->window_static_height = window_height - req.height;
+		
+		chat->priv->is_first_char = FALSE;
+	}
 }
 
 static gboolean
@@ -1094,6 +1133,61 @@ chat_text_view_focus_in_event_cb (GtkWidget  *widget,
 	gtk_widget_grab_focus (priv->input_text_view);
 	
 	return TRUE;
+}
+
+typedef struct {
+	GtkWidget *window;
+	gint       width;
+	gint       height;
+} ChangeSizeData;
+
+static gboolean
+chat_change_size_in_idle_cb (ChangeSizeData *data)
+{
+	gtk_window_resize (GTK_WINDOW (data->window), 
+			   data->width, data->height);
+
+	return FALSE;
+}
+
+static void
+chat_text_view_size_allocate_cb (GtkWidget     *widget,
+				 GtkAllocation *allocation,
+				 GossipChat    *chat)
+{
+	GossipChatPriv *priv;
+	gint            width;
+	GtkWidget      *dialog;
+	static gint     last_height;
+	ChangeSizeData *data;
+	gint            window_height;
+
+	priv = chat->priv;
+
+	if (priv->window_static_height <= 0) {
+		return;
+	}
+
+	window_height = priv->window_static_height + allocation->height;
+	
+	if (last_height == window_height) {
+		return;
+	}
+
+	last_height = window_height;
+
+	/* Restore the window's size */
+	dialog = gossip_chat_window_get_dialog (priv->window);
+	gtk_window_get_size (GTK_WINDOW (dialog), &width, NULL);
+
+	data = g_new0 (ChangeSizeData, 1);
+	data->window = dialog;
+	data->width = width;
+	data->height = window_height;
+
+	g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, 
+			 (GSourceFunc) chat_change_size_in_idle_cb,
+			 data, g_free);
 }
 
 static gboolean
