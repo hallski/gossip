@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-17 23:49+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-20 10:20+0100\n"
 "PO-Revision-Date: 2003-07-16 14:10+0100\n"
 "Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:43
 msgid "Gossip"
@@ -24,18 +24,16 @@ msgid "Jabber Instant Messaging"
 msgstr "Negeseuo Parod Jabber"
 
 #: gossip.schemas.in.h:1
-#, fuzzy
 msgid "Auto away enabled"
-msgstr "Galluogi ymaith awtomatig"
+msgstr "Galluogwyd ymaith awtomatig"
 
 #: gossip.schemas.in.h:2
-#, fuzzy
 msgid "Auto away time"
 msgstr "Amser ymaith awtomatig"
 
 #: gossip.schemas.in.h:3
 msgid "Be silent when away"
-msgstr ""
+msgstr "Bod yn dawel wrth fod ymaith"
 
 #: gossip.schemas.in.h:4
 msgid "Extended autoaway time"
@@ -57,18 +55,16 @@ msgstr ""
 "awtomtig."
 
 #: gossip.schemas.in.h:7
-#, fuzzy
 msgid "Timestamp messages"
-msgstr "Neges cais"
+msgstr "Amseru negeseuon"
 
 #: gossip.schemas.in.h:8
-#, fuzzy
 msgid "Use graphical smileys"
-msgstr "Defnyddio gwynebau"
+msgstr "Defnyddio gwynebau graffigol"
 
 #: gossip.schemas.in.h:9
 msgid "Use notification sounds"
-msgstr ""
+msgstr "Defnyddio synau hysbysu"
 
 #: gossip.schemas.in.h:10
 msgid ""
@@ -85,16 +81,15 @@ msgstr ""
 
 #: gossip.schemas.in.h:12
 msgid "Whether or not to play a sound when messages arrive."
-msgstr ""
+msgstr "A ddylid chwarae cain pan mae negeseuon yn cyrraedd."
 
 #: gossip.schemas.in.h:13
 msgid "Whether or not to play sounds when away or busy."
-msgstr ""
+msgstr "A ddylid chwarae synau wrth fod ymaith neu'n brysur."
 
 #: gossip.schemas.in.h:14
-#, fuzzy
 msgid "Whether or not to timestamp all messages in conversations."
-msgstr "A ddylid trosi gwynebau i ddelweddau graffigol mewn sgyrsiau."
+msgstr "A ddylid rhoi amser ar bob neges mewn sgyrsiau."
 
 #: src/gossip-accounts-dialog.c:151
 msgid "New account"
@@ -274,12 +269,12 @@ msgstr ""
 "o'ch rhestr cyswllt?"
 
 #: src/gossip-roster.c:519
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
 "%s"
 msgstr ""
-"Os gwelwch yn dda, howch llysenw newydd ar gyfer y cyswllt\n"
+"Os gwelwch yn dda, rhowch llysenw newydd ar gyfer y cyswllt\n"
 "%s"
 
 #. Should user be able to set resource, account name and
@@ -313,7 +308,7 @@ msgstr "Rhowch eich cyfrinair os gwelwch yn dda:"
 
 #: src/gossip-utils.c:1210
 msgid "Remember Password?"
-msgstr ""
+msgstr "Cofio'r Cyfrinair?"
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:1 ui/group-chat.glade.h:1
 #: ui/main.glade.h:1
@@ -326,14 +321,12 @@ msgid "*"
 msgstr "*"
 
 #: ui/chat.glade.h:3
-#, fuzzy
 msgid "<b>Chat with: </b>"
-msgstr "<b>Sgwrs efo:</b>"
+msgstr "<b>Sgwrs efo: </b>"
 
 #: ui/chat.glade.h:4
-#, fuzzy
 msgid "Click to get the user's contact information"
-msgstr "Manylion cyswllt"
+msgstr "Cliciwch er mwyn gweld manylion cyswllt y defnyddiwr"
 
 #: ui/chat.glade.h:5
 msgid "From: "
@@ -413,7 +406,7 @@ msgstr "_Cofrestri..."
 
 #: ui/connect.glade.h:14
 msgid "Use SS_L"
-msgstr ""
+msgstr "Defnyddio SS_L"
 
 #: ui/connect.glade.h:15 ui/group-chat.glade.h:14
 msgid "_Add"
@@ -504,13 +497,12 @@ msgid "N_ickname:"
 msgstr "_Llysenw:"
 
 #: ui/group-chat.glade.h:12
-#, fuzzy
 msgid ""
 "Pick a favorite, or enter nickname, server name, and the name of the chat "
 "room to enter."
 msgstr ""
-"Dewiswch ffefryn, neu rhowch llysenw, a enw yr ystafell sgwrsio i'w ymuno ag "
-"ef."
+"Dewiswch ffefryn, neu rhowch llysenw, enw gweinydd, a enw yr ystafell "
+"sgwrsio i'w ymuno ag ef."
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
@@ -545,18 +537,16 @@ msgid "<b>Address</b>"
 msgstr "<b>Cyfeiriad</b>"
 
 #: ui/main.glade.h:5
-#, fuzzy
 msgid "<b>Auto away</b>"
-msgstr "<b>Gwlad:</b>"
+msgstr "<b>Ymaith awtomatig</b>"
 
 #: ui/main.glade.h:6
 msgid "<b>Client information</b>"
 msgstr "<b>Manylion cleient</b>"
 
 #: ui/main.glade.h:7
-#, fuzzy
 msgid "<b>Conversation</b>"
-msgstr "<b>Disgrifiad</b>"
+msgstr "<b>Sgwrs</b>"
 
 #: ui/main.glade.h:8
 msgid "<b>Country:</b>"
@@ -591,9 +581,8 @@ msgid "<b>Setup Finished</b>"
 msgstr "<b>Gorffenwyd Gosod</b>"
 
 #: ui/main.glade.h:16
-#, fuzzy
 msgid "<b>Sound</b>"
-msgstr "<b>Gwlad:</b>"
+msgstr "<b>Sain</b>"
 
 #: ui/main.glade.h:17
 msgid "<b>Status:</b>"
@@ -643,7 +632,7 @@ msgstr "Ychwanegu i'ch rhestr cysylltion"
 
 #: ui/main.glade.h:30
 msgid "Automatically enter away mode during inactivity"
-msgstr ""
+msgstr "Mynd i'r cyflwr ymaith yn awtomatig tra'n segur"
 
 #: ui/main.glade.h:32
 msgid "Choose a Server"
@@ -655,16 +644,15 @@ msgstr "Dewiswch o'r rhestr:"
 
 #: ui/main.glade.h:34
 msgid "Client:"
-msgstr ""
+msgstr "Cleient:"
 
 #: ui/main.glade.h:35
 msgid "Contact information"
 msgstr "Manylion cyswllt"
 
 #: ui/main.glade.h:36
-#, fuzzy
 msgid "Convert smileys to graphical images"
-msgstr "A ddylid trosi gwynebau i ddelweddau graffigol mewn sgyrsiau."
+msgstr "Trosi gwynebau i ddelweddau graffigol"
 
 #: ui/main.glade.h:37
 msgid "Dinner"
@@ -672,25 +660,23 @@ msgstr "Swper"
 
 #: ui/main.glade.h:38
 msgid "Disable sounds when busy or away"
-msgstr ""
+msgstr "Anallulogi synau tra'n brysur neu ymaith"
 
 #: ui/main.glade.h:39
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Oes cyfrif ar weinydd Jabber gennych eisioes?"
 
 #: ui/main.glade.h:40
-#, fuzzy
 msgid "Email:"
-msgstr "<b>Ebost:</b>"
+msgstr "Ebost:"
 
 #: ui/main.glade.h:41
 msgid "Enter away mode after"
-msgstr ""
+msgstr "Mynd i'r modd ymaith ar ôl "
 
 #: ui/main.glade.h:42
-#, fuzzy
 msgid "Enter extended away mode after "
-msgstr "Amser ymaith estynedig awtomatig"
+msgstr "Mynd i'r modd ymaith estynedig ar ôl "
 
 #: ui/main.glade.h:44
 msgid ""
@@ -754,16 +740,15 @@ msgstr "Na"
 
 #: ui/main.glade.h:57
 msgid "OS:"
-msgstr ""
+msgstr "System Weithredu:"
 
 #: ui/main.glade.h:58
 msgid "On what server do you have a Jabber account?"
 msgstr "Ar ba weinydd oes cyfrif Jabber gennych?"
 
 #: ui/main.glade.h:59
-#, fuzzy
 msgid "Preferences"
-msgstr "Presenoldeb:"
+msgstr "Hoffterau"
 
 #: ui/main.glade.h:60
 msgid "Presence:"
@@ -807,7 +792,7 @@ msgstr ""
 
 #: ui/main.glade.h:70
 msgid "Timestamp all messages"
-msgstr ""
+msgstr "Amseru pob neges"
 
 #: ui/main.glade.h:71
 msgid "Use a different server"
@@ -815,19 +800,19 @@ msgstr "Defnyddio gweinydd arall"
 
 #: ui/main.glade.h:72
 msgid "Use compact conversation style"
-msgstr ""
+msgstr "Defnyddio arddull sgwrsio cryno"
 
 #: ui/main.glade.h:73
 msgid "Use sounds to notify when new messages arrive"
-msgstr ""
+msgstr "Defnyddio synau er mwyn hysbysu pan mae negeseuon newydd yn cyrraedd"
 
 #: ui/main.glade.h:74
 msgid "Version:"
-msgstr "Fersiwn:"
+msgstr "Versiwn:"
 
 #: ui/main.glade.h:75
 msgid "Web site:"
-msgstr ""
+msgstr "Safle gwe:"
 
 #: ui/main.glade.h:76
 msgid "Welcome to Gossip"
@@ -915,7 +900,4 @@ msgstr "_Danfon neges siarad..."
 
 #: ui/main.glade.h:97
 msgid "minutes"
-msgstr ""
-
-#~ msgid "Operating system:"
-#~ msgstr "System weithredu:"
+msgstr "munudau"
