@@ -28,6 +28,7 @@
 #include <sys/types.h>
 #include <libgnome/gnome-i18n.h>
 #include <libgnome/gnome-url.h>
+#include <libgnomevfs/gnome-vfs-utils.h>
 #include <libxslt/xslt.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
@@ -74,11 +75,19 @@ log_get_filename (GossipJID *jid, const gchar *suffix)
 {
 	gchar *tmp;
 	gchar *ret;
+	gchar *case_folded_str;
+	gchar *escaped_str;
+
+	case_folded_str = g_utf8_casefold (gossip_jid_get_without_resource (jid), 
+					   -1);
+	escaped_str = gnome_vfs_escape_host_and_path_string (case_folded_str);
+	g_free (case_folded_str);
 	
 	tmp = g_build_filename (g_get_home_dir (),
 				".gnome2", "Gossip", "logs",
-				gossip_jid_get_without_resource (jid),
+				escaped_str,
 				NULL);
+	g_free (escaped_str);
 
 	ret = g_strconcat (tmp, suffix, NULL);
 	g_free (tmp);
