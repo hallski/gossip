@@ -572,7 +572,11 @@ roster_menu_rename_cb (gpointer   callback_data,
 					"jid", gossip_jid_get_without_resource (item->jid),
 					"name", str,
 					NULL);
-
+	
+	if (item->group && item->group[0]) {
+		lm_message_node_add_child (node, "group", item->group);
+	}
+	
 	g_free (str);
 	
 	lm_connection_send (priv->connection, m, NULL);

@@ -1,5 +1,8 @@
 2003-08-13  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-roster.c (roster_menu_rename_cb): Set the group child
+	node if we have a group. Fixes bug #119629.
+
 	* src/gossip-chat.c: (chat_dialog_notify_visible_cb): Send stop
 	composing event when the window is closed.
 	
