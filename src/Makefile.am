@@ -60,7 +60,7 @@ gossip_SOURCES = 				\
 	disclosure-widget.c			\
 	disclosure-widget.h
 
-gossip_LDADD = @GOSSIP_LIBS@ $(XSS_LIBS)
+gossip_LDADD = @GOSSIP_LIBS@
 gossip_LDFLAGS = -export-dynamic
 
 gossip-marshal.h: gossip-marshal.list
