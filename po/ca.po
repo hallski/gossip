@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-11-14 18:11+0100\n"
-"PO-Revision-Date: 2003-11-14 18:35+0100\n"
+"PO-Revision-Date: 2003-11-15 20:59+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -457,7 +457,7 @@ msgstr "En resposta a:"
 
 #: ui/chat.glade.h:14
 msgid "Lo_g"
-msgstr "Re_gistra"
+msgstr "Re_gistres"
 
 #: ui/chat.glade.h:15
 msgid "To:"
