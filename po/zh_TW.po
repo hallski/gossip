@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
-"POT-Creation-Date: 2004-03-18 23:04+0100\n"
+"POT-Creation-Date: 2004-03-19 11:36+0100\n"
 "PO-Revision-Date: 2003-11-12 01:10+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -124,15 +124,15 @@ msgstr "主視窗寬度"
 msgid "Y position of main window"
 msgstr "主視窗寬度"
 
-#: src/gossip-about.c:269
+#: src/gossip-about.c:277
 msgid "Written by:"
 msgstr ""
 
-#: src/gossip-about.c:279
+#: src/gossip-about.c:287
 msgid "Artwork by:"
 msgstr ""
 
-#: src/gossip-about.c:290
+#: src/gossip-about.c:298
 msgid "Translated by:"
 msgstr ""
 
@@ -141,7 +141,7 @@ msgstr ""
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:336
+#: src/gossip-about.c:344
 msgid "translator_credits"
 msgstr "Abel Cheung"
 

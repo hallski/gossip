@@ -1,3 +1,11 @@
+2004-03-19  Richard Hult  <richard@imendio.com>
+
+	* Release 0.7.4.
+
+	* configure.in: Bump version.
+
+	* src/gossip-about.c: Gah, fix stupid bug.
+
 2004-03-18  Richard Hult  <richard@imendio.com>
 
 	* Release 0.7.3.

@@ -191,35 +191,41 @@ expose_event_cb (GtkWidget      *widget,
 	GdkColormap    *colormap;
 	GdkColor        color;
 	GdkRectangle    rect;
-	GtkSettings    *settings;
 	gint            dpi;
 	gdouble         scale;
+	GError         *error = NULL;
 
 	/* Hack :/ We depend on getting a pixel size of the text, so scale
 	 * against the dpi, try the getting it from GTK+ first and fallback to
 	 * the gconf key.
 	 */
+#if 0
 	settings = gtk_settings_get_default ();
-	if (g_object_class_find_property (G_OBJECT_GET_CLASS (settings),
+	if (&& settings &&
+	    g_object_class_find_property (G_OBJECT_GET_CLASS (settings),
 					  "gtk-xft-dpi")) {
 		g_object_get (settings, "gtk-xft-dpi", &dpi, NULL);
-
+		
 		dpi /= 1024;
-	} else {
-		dpi = gconf_client_get_float (gconf_client,
-					      "/desktop/gnome/font_rendering/dpi",
-					      NULL);
 	}
-
-	if (dpi < 50 || dpi > 300) {
-		/* Be safe */
-		scale = 1;
-	} else {
-		scale = 96.0 / dpi;
+#endif
+	
+	dpi = gconf_client_get_float (gconf_client,
+				      "/desktop/gnome/font_rendering/dpi",
+				      &error);
+	
+	if (error) {
+		dpi = 96;
+		g_error_free (error);
 	}
 	
-	g_object_unref (settings);
-		
+	/* Be safe */
+	if (dpi < 50 || dpi > 300) {
+		dpi = 96;
+	}
+
+	scale = 96.0 / dpi;
+	
 	colormap = gtk_widget_get_colormap (widget);
 	
 	gdk_color_parse ("white", &color);

@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.6\n"
-"POT-Creation-Date: 2004-03-18 23:04+0100\n"
+"POT-Creation-Date: 2004-03-19 11:36+0100\n"
 "PO-Revision-Date: 2004-01-11 02:10+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
@@ -116,15 +116,15 @@ msgstr "Posição X da janela principal"
 msgid "Y position of main window"
 msgstr "Posição Y da janela principal"
 
-#: src/gossip-about.c:269
+#: src/gossip-about.c:277
 msgid "Written by:"
 msgstr ""
 
-#: src/gossip-about.c:279
+#: src/gossip-about.c:287
 msgid "Artwork by:"
 msgstr ""
 
-#: src/gossip-about.c:290
+#: src/gossip-about.c:298
 msgid "Translated by:"
 msgstr ""
 
@@ -133,7 +133,7 @@ msgstr ""
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:336
+#: src/gossip-about.c:344
 msgid "translator_credits"
 msgstr "Duarte Loreto"
 

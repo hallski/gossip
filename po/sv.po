@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2004-03-18 23:04+0100\n"
+"POT-Creation-Date: 2004-03-19 11:36+0100\n"
 "PO-Revision-Date: 2004-01-10 19:31+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -117,15 +117,15 @@ msgstr "X-positionen av huvudfönstret"
 msgid "Y position of main window"
 msgstr "Y-positionen av huvudfönstret"
 
-#: src/gossip-about.c:269
+#: src/gossip-about.c:277
 msgid "Written by:"
 msgstr "Skrivet av:"
 
-#: src/gossip-about.c:279
+#: src/gossip-about.c:287
 msgid "Artwork by:"
 msgstr "Grafik av:"
 
-#: src/gossip-about.c:290
+#: src/gossip-about.c:298
 msgid "Translated by:"
 msgstr "Översatt av:"
 
@@ -134,7 +134,7 @@ msgstr "Översatt av:"
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:336
+#: src/gossip-about.c:344
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"

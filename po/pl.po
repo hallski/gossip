@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip cvs\n"
-"POT-Creation-Date: 2004-03-18 23:04+0100\n"
+"POT-Creation-Date: 2004-03-19 11:36+0100\n"
 "PO-Revision-Date: 2003-07-17 23:49+0200\n"
 "Last-Translator: GNOME PL Team <translators@gnome.pl>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -125,15 +125,15 @@ msgstr "Szerokość głównego okna"
 msgid "Y position of main window"
 msgstr "Szerokość głównego okna"
 
-#: src/gossip-about.c:269
+#: src/gossip-about.c:277
 msgid "Written by:"
 msgstr ""
 
-#: src/gossip-about.c:279
+#: src/gossip-about.c:287
 msgid "Artwork by:"
 msgstr ""
 
-#: src/gossip-about.c:290
+#: src/gossip-about.c:298
 msgid "Translated by:"
 msgstr ""
 
@@ -142,7 +142,7 @@ msgstr ""
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:336
+#: src/gossip-about.c:344
 msgid "translator_credits"
 msgstr "GNOME PL Team"
 

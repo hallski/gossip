@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.7.2\n"
-"POT-Creation-Date: 2004-03-18 23:04+0100\n"
+"POT-Creation-Date: 2004-03-19 11:36+0100\n"
 "PO-Revision-Date: 2004-02-29 15:13+0100\n"
 "Last-Translator: Laurent Richard <laurent.richard@lilit.be>\n"
 "Language-Team: GNOME French team <gnomefr@traduc.org>\n"
@@ -118,15 +118,15 @@ msgstr "Position en X de la fenêtre principale"
 msgid "Y position of main window"
 msgstr "Position en Y de la fenêtre principale"
 
-#: src/gossip-about.c:269
+#: src/gossip-about.c:277
 msgid "Written by:"
 msgstr ""
 
-#: src/gossip-about.c:279
+#: src/gossip-about.c:287
 msgid "Artwork by:"
 msgstr "Graphisme par :"
 
-#: src/gossip-about.c:290
+#: src/gossip-about.c:298
 msgid "Translated by:"
 msgstr ""
 
@@ -135,7 +135,7 @@ msgstr ""
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:336
+#: src/gossip-about.c:344
 msgid "translator_credits"
 msgstr ""
 "Laurent Richard\n"
