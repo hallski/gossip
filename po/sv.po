@@ -8,25 +8,25 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-06-22 16:05+0200\n"
-"PO-Revision-Date: 2003-06-22 16:06+0200\n"
+"POT-Creation-Date: 2003-06-23 23:38+0200\n"
+"PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gossip-add-contact.c:249
+#: src/gossip-add-contact.c:252
 #, c-format
-msgid "What request message do you want to send to <b>%s</b>"
-msgstr "Vilket förfrågansmeddelande vill du skicka till <b>%s</b>"
+msgid "What request message do you want to send to %s?"
+msgstr "Vilket förfrågansmeddelande vill du skicka till %s?"
 
-#: src/gossip-add-contact.c:268
+#: src/gossip-add-contact.c:272
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s kommer att läggas till i din kontaktlista."
 
-#: src/gossip-add-contact.c:272
+#: src/gossip-add-contact.c:276
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
@@ -93,8 +93,8 @@ msgstr "Operativsystem:"
 
 #: src/gossip-contact-info.c:255
 #, c-format
-msgid "<b>Information about %s</b>"
-msgstr "<b>Information om %s</b>"
+msgid "Information about %s"
+msgstr "Information om %s"
 
 #: src/gossip-main.c:61
 msgid "Don't connect on startup."
@@ -659,8 +659,11 @@ msgstr "_Neka"
 msgid "_Send chat message..."
 msgstr "_Skicka chattmeddelande..."
 
-#~ msgid "What request message do you want to send to <b>%s</b>?"
-#~ msgstr "Vilket förfrågansmeddelande vill du skicka till <b>%s</b>?"
+#~ msgid "What request message do you want to send to <b>%s</b>"
+#~ msgstr "Vilket förfrågansmeddelande vill du skicka till <b>%s</b>"
+
+#~ msgid "<b>Information about %s</b>"
+#~ msgstr "<b>Information om %s</b>"
 
 #~ msgid "Name"
 #~ msgstr "Namn"
@@ -670,9 +673,6 @@ msgstr "_Skicka chattmeddelande..."
 
 #~ msgid "Operating system"
 #~ msgstr "Operativsystem"
-
-#~ msgid "Information about %s"
-#~ msgstr "Information om %s"
 
 #~ msgid "_Remove contact"
 #~ msgstr "_Ta bort kontakt"
