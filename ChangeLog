@@ -1,3 +1,18 @@
+2003-06-28  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am: Make it pass distcheck..
+
+	* Makefile.am: Dist intltool. Patch from Ross Burton
+	<ross@burtonini.com> to fix #590.
+
+	* src/gossip-app.c (app_iq_handler): Don't hard code OS. Fixes
+	#469.
+
+	* src/gossip-chat.c (chat_dialog_send): Detect /clear.
+	* src/gossip-group-chat.c (group_chat_send): Add some case
+	insensitivy-foo for /nick detection. Also detect /clear. Fixes
+	#359.
+
 2003-06-23  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-add-contact.c: (add_contact_prepare_page_3):
