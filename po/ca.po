@@ -5,15 +5,15 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip 0.8\n"
-"POT-Creation-Date: 2004-03-19 11:36+0100\n"
-"PO-Revision-Date: 2004-02-03 10:29+0100\n"
+"Project-Id-Version: gossip 0.7.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-03-20 23:28+0100\n"
+"PO-Revision-Date: 2004-03-20 23:30+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -115,24 +115,24 @@ msgstr "Posició X de la finestra principal"
 msgid "Y position of main window"
 msgstr "Posició Y de la finestra principal"
 
-#: src/gossip-about.c:277
+#: src/gossip-about.c:275
 msgid "Written by:"
-msgstr ""
+msgstr "Escrit per:"
 
-#: src/gossip-about.c:287
+#: src/gossip-about.c:285
 msgid "Artwork by:"
 msgstr "Art per:"
 
-#: src/gossip-about.c:298
+#: src/gossip-about.c:296
 msgid "Translated by:"
-msgstr ""
+msgstr "Traduït per:"
 
 #. Note to translators: put your name here so it will shop up in the
 #. * "about" box. Please add ONLY names, separated by newlines. No mail
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:344
+#: src/gossip-about.c:342
 msgid "translator_credits"
 msgstr "Jordi Mallach"
 
@@ -152,7 +152,7 @@ msgstr "S'afegirà a %s a la vostra llista de contactes."
 
 #: src/gossip-app.c:639
 msgid "Could not connect"
-msgstr ""
+msgstr "No s'ha pogut connectar"
 
 #: src/gossip-app.c:640
 msgid "Make sure that your account information is correct."
@@ -179,11 +179,10 @@ msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
 #: src/gossip-app.c:1348
-#, fuzzy
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
-msgstr "Assegureu-vos que la informació del vostre compte és correcta."
+msgstr "Assegureu-vos que la informació del vostre compte és correcta. El servidor també pot no estar disponible en aquest moment."
 
 #: src/gossip-app.c:1820
 msgid "Gossip, Instant Messaging Client"
@@ -982,14 +981,6 @@ msgstr "_Mostra la llista de contactes"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "Missatge d'e_stat"
-
-#, fuzzy
-#~ msgid "About Gossip"
-#~ msgstr "Gossip"
-
-#, fuzzy
-#~ msgid "translator_credits_old"
-#~ msgstr "Jordi Mallach <jordi@sindominio.net>"
 
 #~ msgid "An Instant Messaging Client for GNOME"
 #~ msgstr "Un client de missatgeria instantània per al GNOME"
