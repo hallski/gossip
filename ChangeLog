@@ -1,5 +1,9 @@
 2003-10-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.[ch]: Missed adding these
+
+2003-10-26  Mikael Hallendal  <micke@imendio.com>
+
 	* Long time planned cleanup. Now the chat text views are of the class
 	* GossipChatView which is a sub class of GtkTextView. All functions
 	* used from GossipChat and GossipGroupChat was put in gossip-utils. 
