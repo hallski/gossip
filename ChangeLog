@@ -1,3 +1,19 @@
+2005-01-21  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-contact-info.[ch]:
+	- Objectified
+	- Don't crash if closed before callbacks.
+	* src/gossip-jabber-helper.c:
+	(jabber_helper_async_get_version_cb):
+	- GOSSIP_ASYNC_OK when actually ok.
+	(gossip_jabber_helper_async_get_version):
+	- Include resource when asking for version. 
+	* src/gossip-jabber.c:
+	- Support replying to version requests.
+	* src/gossip-version-info.c: 
+	- Fixed a bunch of issues.
+	- Fixes bug #162620
+
 2005-01-20  Mikael Hallendal  <micke@imendio.com>
 
 	* src/*.[ch]: Updated Imendio HB -> Imendio AB.

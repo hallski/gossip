@@ -226,7 +226,7 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 					    lm_message_node_get_value (node));
 	}
 
-	((GossipAsyncVersionCallback )data->callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY,
+	((GossipAsyncVersionCallback )data->callback) (GOSSIP_ASYNC_OK,
 						       info,
 						       data->user_data);
 
@@ -251,14 +251,11 @@ gossip_jabber_helper_async_get_version (LmConnection                *connection,
 	const gchar       *id, *resource;
 	gchar             *jid_str;
 
-	g_print ("Getting version for %s\n",
-		 gossip_contact_get_name (contact));
-
 	p = gossip_contact_get_presence (contact);
 	resource = gossip_presence_get_resource (p);
 	id = gossip_contact_get_id (contact);
 
-	if (resource) {
+	if (resource && strcmp (resource, "") != 0) {
 		jid_str = g_strdup_printf ("%s/%s", id, resource);
 	} else {
 		jid_str = (gchar *) id;

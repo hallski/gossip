@@ -20,6 +20,8 @@
 
 #include <config.h>
 
+#include <sys/utsname.h>
+
 #include "gossip-version-info.h"
 
 #define GOSSIP_VERSION_INFO_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_VERSION_INFO, GossipVersionInfoPriv))
@@ -96,9 +98,9 @@ gossip_version_info_init (GossipVersionInfo *VERSION_INFO)
 
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (VERSION_INFO);
 
-	priv->name    = g_strdup ("");
-	priv->version = g_strdup ("");
-	priv->os      = g_strdup ("");
+	priv->name    = NULL;
+	priv->version = NULL;
+	priv->os      = NULL;
 }
 
 static void                
@@ -252,7 +254,25 @@ gossip_version_info_set_os (GossipVersionInfo *info, const gchar *os)
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (info);
 
 	g_free (priv->os);
-	priv->version = g_strdup (os);
+	priv->os = g_strdup (os);
 }
 
+GossipVersionInfo *
+gossip_version_info_get_own (void)
+{
+	static GossipVersionInfo *info = NULL;
+
+	if (!info) {
+		struct utsname osinfo;
+		
+		uname (&osinfo);
+		info = g_object_new (GOSSIP_TYPE_VERSION_INFO,
+				     "name", "Imendio Gossip",
+				     "version", PACKAGE_VERSION,
+				     "os", osinfo.sysname,
+				     NULL);
+	}
+
+	return info;
+}
 

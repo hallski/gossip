@@ -48,6 +48,9 @@
 
 #define d(x) x
 
+#define XMPP_VERSION_XMLNS "jabber:iq:version"
+#define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
+
 
 struct _GossipJabberPriv {
 	LmConnection          *connection;
@@ -164,6 +167,8 @@ static void            jabber_chatroom_change_nick           (GossipChatroomProv
 static void            jabber_chatroom_leave                 (GossipChatroomProvider       *provider,
 							      GossipChatroomId              id);
 static void            jabber_signal_logged_out              (GossipJabber                 *jabber);
+static void            jabber_version_request                (GossipJabber                 *jabber,
+							      LmMessage                    *m);
 
 extern GConfClient *gconf_client;
 
@@ -915,9 +920,21 @@ jabber_presence_handler (LmMessageHandler *handler,
 	
 	if (contact) {
 		GossipPresence *presence;
+		GossipJID      *jid;
 		
 		presence = jabber_get_presence (m);
+		if (!presence) {
+			return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+		}
+
+		jid = gossip_jid_new (from);
+		gossip_presence_set_resource (presence,
+					      gossip_jid_get_resource (jid));
+		gossip_jid_unref (jid);
+		
 		gossip_contact_set_presence (contact, presence);
+	
+
 		
 		if (presence) {
 			g_object_unref (presence);
@@ -955,7 +972,13 @@ jabber_iq_handler (LmMessageHandler *handler,
 	}
 
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
-	if (!xmlns || strcmp (xmlns, "jabber:iq:roster") != 0) {
+	
+	if (xmlns && strcmp (xmlns, XMPP_VERSION_XMLNS) == 0) {
+		jabber_version_request (jabber, m);
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+
+	if (!xmlns || strcmp (xmlns, XMPP_ROSTER_XMLNS) != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
@@ -1272,6 +1295,56 @@ jabber_signal_logged_out (GossipJabber *jabber)
 					     (GHRFunc) jabber_logout_contact_foreach,
 					     jabber);
 	}
+}
+
+static void
+jabber_version_request (GossipJabber *jabber, LmMessage *m)
+{
+	GossipJabberPriv  *priv;
+	LmMessage         *r;
+	const gchar       *from, *id;
+	LmMessageNode     *node;
+	GossipVersionInfo *info;
+
+	priv = jabber->priv;
+
+	from = lm_message_node_get_attribute (m->node, "from");
+	id = lm_message_node_get_attribute (m->node, "id");
+
+	g_print ("Version request from Richard\n");
+
+	r = lm_message_new_with_sub_type (from,
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_RESULT);
+	lm_message_node_set_attributes (r->node,
+					"id", id,
+					NULL);
+	info = gossip_version_info_get_own ();
+	node = lm_message_node_add_child (r->node, "query", NULL);
+	lm_message_node_set_attributes (node, 
+					"xmlns", XMPP_VERSION_XMLNS,
+					NULL);
+
+	if (gossip_version_info_get_name (info)) {
+		lm_message_node_add_child (node, 
+					   "name", 
+					   gossip_version_info_get_name (info));
+	}
+
+	if (gossip_version_info_get_version (info)) {
+		lm_message_node_add_child (node,
+					   "version",
+					   gossip_version_info_get_version (info));
+	}
+
+	if (gossip_version_info_get_os (info)) {
+		lm_message_node_add_child (node,
+					   "os",
+					   gossip_version_info_get_os (info));
+	}
+
+	lm_connection_send (priv->connection, r, NULL);
+	lm_message_unref (r);
 }
 
 LmConnection *

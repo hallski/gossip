@@ -54,5 +54,9 @@ void                gossip_version_info_set_version (GossipVersionInfo *info,
 const gchar *       gossip_version_info_get_os      (GossipVersionInfo *info);
 void                gossip_version_info_set_os      (GossipVersionInfo *info,
 						     const gchar       *os);
+
+/* Don't free the returned version info */
+GossipVersionInfo * gossip_version_info_get_own     (void);
+
 #endif /* __GOSSIP_VERSION_INFO_H__ */
 

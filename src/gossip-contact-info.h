@@ -18,18 +18,35 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_CONTACT_INFO_H__
-#define __GOSSIP_CONTACT_INFO_H__
+#ifndef __GOSSIP_CONTACT_INFO_INFO_H__
+#define __GOSSIP_CONTACT_INFO_INFO_H__
 
-#include <glib.h>
+#include <glib-object.h>
 
 #include "gossip-contact.h"
 
-typedef struct _GossipContactInfo GossipContactInfo;
+#define GOSSIP_TYPE_CONTACT_INFO         (gossip_contact_info_get_type ())
+#define GOSSIP_CONTACT_INFO(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT_INFO, GossipContactInfo))
+#define GOSSIP_CONTACT_INFO_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CONTACT_INFO, GossipContactInfoClass))
+#define GOSSIP_IS_CONTACT_INFO(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CONTACT_INFO))
+#define GOSSIP_IS_CONTACT_INFO_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT_INFO))
+#define GOSSIP_CONTACT_INFO_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONTACT_INFO, GossipContactInfoClass))
 
-GossipContactInfo * gossip_contact_info_new        (GossipContact *contact);
+typedef struct _GossipContactInfo      GossipContactInfo;
+typedef struct _GossipContactInfoClass GossipContactInfoClass;
+
+struct _GossipContactInfo {
+	GObject parent;
+};
+
+struct _GossipContactInfoClass {
+	GObjectClass parent_class;
+};
+
+GType               gossip_contact_info_get_type   (void) G_GNUC_CONST;
+GossipContactInfo * gossip_contact_info_new        (GossipContact     *c);
 
 GtkWidget *         gossip_contact_info_get_dialog (GossipContactInfo *info);
 
 
-#endif /* __GOSSIP_CONTACT_INFO_H__ */
+#endif /* __GOSSIP_CONTACT_INFO_INFO_H__ */
