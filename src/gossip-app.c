@@ -893,12 +893,19 @@ app_subscription_request_dialog_response_cb (GtkWidget *dialog,
 		g_warning ("Message not set on subscription request dialog\n");
 		return;
 	}
+
+	add_check_button = g_object_get_data (G_OBJECT (dialog), 
+					      "add_check_button");
+	add_user = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (add_check_button));
+
+	gtk_widget_destroy (dialog);
 	
 	switch (response) {
 	case REQUEST_RESPONSE_DECIDE_LATER:
 		/* Decide later. */
 	case GTK_RESPONSE_DELETE_EVENT:
 		/* Do nothing */
+		return;
 		break;
 	case GTK_RESPONSE_YES:
 		sub_type = LM_MESSAGE_SUB_TYPE_SUBSCRIBED;
@@ -911,12 +918,6 @@ app_subscription_request_dialog_response_cb (GtkWidget *dialog,
 		break;
 	};
 	
-	add_check_button = g_object_get_data (G_OBJECT (dialog), 
-					      "add_check_button");
-	add_user = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (add_check_button));
-
-	gtk_widget_destroy (dialog);
-
 	from = lm_message_node_get_attribute (m->node, "from");
 	
 	reply = lm_message_new_with_sub_type (from, 

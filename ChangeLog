@@ -1,5 +1,12 @@
 2003-12-13  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_subscription_request_dialog_response_cb):
+	- Don't send reply if user chose to ignore it for now
+	- Based on patch from Martyn Russel
+	- Fixes bug #127461
+
+2003-12-13  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-window.c:
 	(gossip_chat_window_init),
 	(chat_window_conv_activate_cb): 
