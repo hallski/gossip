@@ -1875,6 +1875,8 @@ app_update_show (void)
 	const gchar   *icon;
 	LmMessage     *m;
 	const gchar   *show = NULL;
+  /* default priority when  available */
+  gchar *priority = "50";
 	
 	priv = app->priv;
 	
@@ -1903,12 +1905,15 @@ app_update_show (void)
 	switch (app_get_effective_show()) {
 	case GOSSIP_SHOW_BUSY:
 		show = "dnd";
+    priority = "40";
 		break;
 	case GOSSIP_SHOW_AWAY:
 		show = "away";
+    priority = "30";
 		break;
 	case GOSSIP_SHOW_EXT_AWAY:
 		show = "xa";
+    priority = "0";
 		break;
 	default:
 		break;
@@ -1917,6 +1922,8 @@ app_update_show (void)
 	if (show) {
 		lm_message_node_add_child (m->node, "show", show);
 	}
+
+	lm_message_node_add_child (m->node, "priority", priority);
 
 	lm_message_node_add_child (m->node, "status", priv->status_text);
 	lm_connection_send (app->priv->connection, m, NULL);
