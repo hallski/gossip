@@ -59,7 +59,7 @@
 #define ADD_CONTACT_RESPONSE_ADD 1
 #define REQUEST_RESPONSE_DECIDE_LATER 1
 
-#define NONIDLE_TIME -6
+#define NONIDLE_TIME 30
 #define LEAVE_TIME 15
 #define	AUTO_AWAY_TIME (5*60)
 #define	AUTO_EXT_AWAY_TIME (30*60)
@@ -490,7 +490,7 @@ app_init (GossipApp *singleton_app)
 			  NULL);
 
 	/* Start the idle time checker. */
-	g_timeout_add (2000, (GSourceFunc) app_idle_check_cb, app);
+	g_timeout_add (10 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set window position */
  	x = gconf_client_get_int (gconf_client, 
@@ -1336,11 +1336,12 @@ app_idle_check_cb (GossipApp *app)
 		 idle > AUTO_AWAY_TIME) {
 		priv->auto_show = GOSSIP_SHOW_AWAY;
 	}
-	else if (idle <= NONIDLE_TIME) {
+	else if (idle < 0) {
+		gossip_idle_reset ();
 		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 		app_cancel_pending_leave ();
 	}
-
+	
 	if (show != app_get_effective_show ()) {
 		app_update_show ();
 	}
@@ -2253,7 +2254,9 @@ app_status_available_activate_cb (GtkWidget *item,
 
 	app_cancel_pending_leave ();
 
-	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
+	gossip_idle_reset ();
+
+	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
 	g_free (priv->status_text);
 	priv->status_text = NULL;

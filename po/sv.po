@@ -10,15 +10,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2004-01-10 19:31+0100\n"
+"POT-Creation-Date: 2004-01-17 02:09+0100\n"
 "PO-Revision-Date: 2004-01-10 19:31+0100\n"
-"Last-Translator: Christian Rose <menthos@menthos.com>\n"
+"Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:28
+#: gossip.desktop.in.h:1 ui/main.glade.h:29
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -161,7 +161,7 @@ msgstr "_Visa kontaktlista"
 msgid "_Hide Contact List"
 msgstr "_Dölj kontaktlista"
 
-#: src/gossip-app.c:460 ui/main.glade.h:59
+#: src/gossip-app.c:460
 msgid "Send _Message..."
 msgstr "Skicka _meddelande..."
 
@@ -169,70 +169,74 @@ msgstr "Skicka _meddelande..."
 msgid "_Quit"
 msgstr "_Avsluta"
 
+#: src/gossip-app.c:596
+msgid "Artwork by:"
+msgstr "Grafik av:"
+
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:599
+#: src/gossip-app.c:603
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:614
+#: src/gossip-app.c:618
 msgid "An Instant Messaging Client for GNOME"
 msgstr "En snabbmeddelandeklient för GNOME"
 
 # "Web site" är "webbplats". "Web page" är "webbsida".
-#: src/gossip-app.c:623
+#: src/gossip-app.c:627
 msgid "Gossip Website"
 msgstr "Gossip-webbplatsen"
 
-#: src/gossip-app.c:742
+#: src/gossip-app.c:746
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelande till."
 
-#: src/gossip-app.c:747 ui/main.glade.h:83
+#: src/gossip-app.c:751 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1006
+#: src/gossip-app.c:1010
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s vill bli meddelad om din närvaro."
 
-#: src/gossip-app.c:1249
+#: src/gossip-app.c:1251
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1398
+#: src/gossip-app.c:1404
 msgid "Make sure that your account information is correct."
 msgstr "Kontrollera att kontoinformationen är korrekt."
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1405
 msgid "The server may currently be unavailable."
 msgstr "Servern kan vara tillfälligt otillgänglig."
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1807
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1983
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-app.c:2541
+#: src/gossip-app.c:2549
 msgid "Custom Message..."
 msgstr "Eget meddelande..."
 
-#: src/gossip-app.c:2559
+#: src/gossip-app.c:2567
 msgid "Custom Busy Message..."
 msgstr "Eget upptagenmeddelande..."
 
-#: src/gossip-app.c:2566
+#: src/gossip-app.c:2574
 msgid "Leave..."
 msgstr "Gå iväg..."
 
@@ -289,6 +293,25 @@ msgstr "Kopplades ifrån"
 #, c-format
 msgid "Contact Information for %s"
 msgstr "Kontaktinformation för %s"
+
+#: src/gossip-edit-groups-dialog.c:164
+#, c-format
+msgid "<b>Edit the groups for %s</b>"
+msgstr "<b>Redigera grupper för %s</b>"
+
+#: src/gossip-edit-groups-dialog.c:230
+msgid "Select"
+msgstr "Markera"
+
+#: src/gossip-edit-groups-dialog.c:240
+msgid "Group"
+msgstr "Grupp"
+
+#. This needs to be done better, could have group_is_unsorted().
+#.
+#: src/gossip-edit-groups-dialog.c:336 src/gossip-roster.c:37
+msgid "Unsorted"
+msgstr "Osorterade"
 
 #: src/gossip-group-chat.c:802
 #, c-format
@@ -363,31 +386,36 @@ msgstr "Misslyckades med registrering av kontot"
 msgid "Reason:"
 msgstr "Orsak:"
 
-#: src/gossip-roster-view.c:178
+#: src/gossip-roster-view.c:183
 msgid "/Contact _Information"
 msgstr "/Kontakt_information"
 
-#: src/gossip-roster-view.c:186
+#: src/gossip-roster-view.c:191
 msgid "/Re_name contact"
 msgstr "/Byt _namn på kontakt"
 
-#: src/gossip-roster-view.c:194
+# Vi brukar förvisso låta R:et vara åtkomsttangent i "Redigera"
+#: src/gossip-roster-view.c:199
+msgid "/_Edit groups"
+msgstr "/R_edigera grupper"
+
+#: src/gossip-roster-view.c:207
 msgid "/Show _Log"
 msgstr "/Visa _logg"
 
-#: src/gossip-roster-view.c:210
+#: src/gossip-roster-view.c:223
 msgid "/_Remove contact"
 msgstr "/_Ta bort kontakt"
 
-#: src/gossip-roster-view.c:221
+#: src/gossip-roster-view.c:234
 msgid "/Re_name group"
 msgstr "/Byt _namn på grupp"
 
-#: src/gossip-roster-view.c:930
+#: src/gossip-roster-view.c:932
 msgid "Offline"
 msgstr "Frånkopplad"
 
-#: src/gossip-roster-view.c:1237
+#: src/gossip-roster-view.c:1239
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -398,7 +426,7 @@ msgstr ""
 "%s\n"
 "från din kontaktlista?"
 
-#: src/gossip-roster-view.c:1330
+#: src/gossip-roster-view.c:1332
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -407,7 +435,7 @@ msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
 "%s"
 
-#: src/gossip-roster-view.c:1417
+#: src/gossip-roster-view.c:1437
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -415,10 +443,6 @@ msgid ""
 msgstr ""
 "Ange ett nytt namn för gruppen\n"
 "%s"
-
-#: src/gossip-roster.c:37
-msgid "Unsorted"
-msgstr "Osorterade"
 
 # Dessa meddelanden slutar inte båda i punkt, borde kanske rapporteras
 #: src/gossip-startup-druid.c:254
@@ -747,14 +771,18 @@ msgid "Do you want to accept the request?"
 msgstr "Vill du acceptera begäran?"
 
 #: ui/main.glade.h:26
+msgid "Edit Groups"
+msgstr "Redigera grupper"
+
+#: ui/main.glade.h:27
 msgid "Email:"
 msgstr "E-post:"
 
-#: ui/main.glade.h:27
+#: ui/main.glade.h:28
 msgid "Enter the new message:"
 msgstr "Ange det nya meddelandet:"
 
-#: ui/main.glade.h:29
+#: ui/main.glade.h:30
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -770,7 +798,7 @@ msgstr ""
 "\n"
 "För att börja klickar du bara på \"Framåt\"."
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:35
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -780,11 +808,11 @@ msgstr ""
 "Du kan ändra dina kontoinställningar senare, genom att välja menyvalet "
 "Chatta->Anslut..."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:37
 msgid "I would like to add you to my contact list."
 msgstr "Jag vill lägga till dig i min kontaktlista."
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:38
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -794,87 +822,87 @@ msgstr ""
 "förfrågan att skickas. Användaren kommer alltid att visas som \"Frånkopplad"
 "\" i din kontaktlista till dess att denna förfrågan är godkänd."
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:39
 msgid "In which group do you want to place this contact?"
 msgstr "I vilken grupp vill du placera denna kontakt?"
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:40
 msgid "Information about ..."
 msgstr "Information om..."
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:41
 msgid "JID"
 msgstr "JID"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:42
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:43
 msgid "Jabber Account"
 msgstr "Jabberkonto"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:44
 msgid "Jabber ID:"
 msgstr "Jabber-id:"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:45
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:46
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:47
 msgid "Leave"
 msgstr "Gå iväg"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:48
 msgid "Name:"
 msgstr "Namn:"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:49
 msgid "No"
 msgstr "Nej"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:50
 msgid "OS:"
 msgstr "OS:"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:51
 msgid "On what server do you have a Jabber account?"
 msgstr "På vilken server har du ett Jabberkonto?"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:52
 msgid "Personal information"
 msgstr "Personlig information"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:53
 msgid "Play sound when messages arrive"
 msgstr "Spela ljud när meddelanden kommer"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:54
 msgid "Preferences"
 msgstr "Inställningar"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:55
 msgid "Preset messages for quickly setting away status."
 msgstr "Förinställda meddelanden för att snabbt välja frånvarostatus."
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:56
 msgid "Preset messages for quickly setting busy status."
 msgstr "Förinställda meddelanden för att snabbt välja upptagetläge."
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:57
 msgid "Reason for being busy:"
 msgstr "Orsak till upptagenhet:"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:58
 msgid "Reason for leaving:"
 msgstr "Orsak till frånvaro:"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:59
 msgid "Request message"
 msgstr "Förfrågansmeddelande"
 
@@ -992,66 +1020,24 @@ msgid "_Join Group Chat..."
 msgstr "_Gå in i gruppchatt..."
 
 #: ui/main.glade.h:90
+msgid "_New Message..."
+msgstr "_Nytt meddelande..."
+
+#: ui/main.glade.h:91
 msgid "_Preferences"
 msgstr "_Inställningar"
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:92
 msgid "_Remove"
 msgstr "Ta _bort"
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:93
 msgid "_Search..."
 msgstr "_Sök..."
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:94
 msgid "_Status Messages"
 msgstr "_Statusmeddelanden"
-
-#~ msgid "A Jabber Client for GNOME"
-#~ msgstr "En Jabber-klient för GNOME"
-
-#~ msgid "As _Windows"
-#~ msgstr "Som _fönster"
-
-#~ msgid "As a _List"
-#~ msgstr "Som en _lista"
-
-#~ msgid "Chat with:"
-#~ msgstr "Chatt med:"
-
-#~ msgid "D_etach"
-#~ msgstr "K_oppla loss"
-
-#~ msgid "_Go"
-#~ msgstr "_Gå"
-
-#~ msgid "_Next Conversation"
-#~ msgstr "_Nästa konversation"
-
-#~ msgid "Open conversations in single window with list view"
-#~ msgstr "Öppna konversationer i ensamt fönster med listvyn"
-
-#~ msgid "[Eating,Sleeping]"
-#~ msgstr "[Äter,Sover]"
-
-#~ msgid "[Working]"
-#~ msgstr "[Arbetar]"
-
-#~ msgid "Open conversations in a single window with _list view"
-#~ msgstr "Öppna konversationer i ett ensamt fönster med _listvyn"
-
-#~ msgid "Add"
-#~ msgstr "Lägg till"
-
-#~ msgid "Remove"
-#~ msgstr "Ta bort"
-
-#~ msgid "Timestamp all messages"
-#~ msgstr "Tidsstämpla alla meddelanden"
-
-#~ msgid "Whether or not to timestamp all messages in conversations."
-#~ msgstr ""
-#~ "Huruvida alla meddelanden ska tidsstämplas eller inte i konversationer."
 
 #~ msgid "Conversation"
 #~ msgstr "Konversation"
@@ -1088,15 +1074,6 @@ msgstr "_Statusmeddelanden"
 #~ msgid "_Disable sounds when busy or away"
 #~ msgstr "_Inaktivera ljud under upptaget- eller frånvaroläge"
 
-#~ msgid "_Send Chat Message..."
-#~ msgstr "Skicka _chattmeddelande..."
-
-#~ msgid "_Timestamp all messages"
-#~ msgstr "_Tidsstämpla alla meddelanden"
-
-#~ msgid "Log"
-#~ msgstr "Logg"
-
 #~ msgid "Custom Away Message..."
 #~ msgstr "Eget frånvaromeddelande..."
 
@@ -1105,42 +1082,6 @@ msgstr "_Statusmeddelanden"
 
 #~ msgid "Offline "
 #~ msgstr "Frånkopplade"
-
-#~ msgid "Others"
-#~ msgstr "Andra"
-
-#~ msgid "Get _Info"
-#~ msgstr "Hämta _information"
-
-#~ msgid "As Windows"
-#~ msgstr "Som fönster"
-
-#~ msgid "As a List"
-#~ msgstr "Som en lista"
-
-#~ msgid "Get Info"
-#~ msgstr "Hämta information"
-
-#~ msgid "Get Information"
-#~ msgstr "Hämta information"
-
-#~ msgid "Get _Information"
-#~ msgstr "Hämta _information"
-
-#~ msgid "Go"
-#~ msgstr "Gå"
-
-#~ msgid "Open conversations in a single window with list view"
-#~ msgstr "Öppna konversationer i ett ensamt fönster med listvyn"
-
-#~ msgid "<b>Chat with:</b>"
-#~ msgstr "<b>Chatt med:</b>"
-
-#~ msgid "Get information about this contact"
-#~ msgstr "Hämta information om denna kontakt"
-
-#~ msgid "Use ta_bs instead of windows for conversations"
-#~ msgstr "Använd _flikar istället för fönster för konversationer"
 
 #~ msgid "Available:"
 #~ msgstr "Tillgänglig:"
@@ -1161,45 +1102,6 @@ msgstr "_Statusmeddelanden"
 
 #~ msgid "_Edit List..."
 #~ msgstr "_Redigera listan..."
-
-#~ msgid "Busy..."
-#~ msgstr "Upptagen..."
-
-#~ msgid "_Leave..."
-#~ msgstr "_Gå iväg..."
-
-#~ msgid "I'm here"
-#~ msgstr "Jag är här"
-
-#~ msgid "[]"
-#~ msgstr "[]"
-
-#~ msgid "Auto away enabled"
-#~ msgstr "Autofrånvaro aktiverad"
-
-#~ msgid "Extended autoaway time"
-#~ msgstr "Tid för utökad autofrånvaro"
-
-#~ msgid ""
-#~ "The number of minutes of idle time before automatically going into \"away"
-#~ "\" mode."
-#~ msgstr ""
-#~ "Antalet minuter med tomgångstid innan frånvarandeläge automatiskt "
-#~ "aktiveras."
-
-#~ msgid ""
-#~ "The number of minutes of idle time before automatically going into "
-#~ "\"extended away\" mode."
-#~ msgstr ""
-#~ "Antalet minuter med tomgångstid innan utökat frånvarandeläge automatiskt "
-#~ "aktiveras."
-
-#~ msgid ""
-#~ "Whether or not to go into \"away\" mode automatically when a certain time "
-#~ "of idling has passed."
-#~ msgstr ""
-#~ "Huruvida frånvarandeläge automatiskt ska aktiveras eller inte efter en "
-#~ "viss tomgångstid."
 
 #~ msgid "Set your status:"
 #~ msgstr "Ställ in din status:"
@@ -1228,15 +1130,8 @@ msgstr "_Statusmeddelanden"
 #~ msgid "Information requested, Please wait..."
 #~ msgstr "Information begärd, var vänlig vänta..."
 
-#~ msgid "Having Lunch..."
-#~ msgstr "Äter lunch..."
-
-# Vi brukar förvisso låta R:et vara åtkomsttangent i "Redigera"
 #~ msgid "_Edit Account..."
 #~ msgstr "_Redigera konton..."
-
-#~ msgid "_Priority:"
-#~ msgstr "_Prioritet:"
 
 #~ msgid ""
 #~ "<b>Welcome to Gossip</b>\n"
@@ -1274,17 +1169,8 @@ msgstr "_Statusmeddelanden"
 #~ msgid "<b>Status:</b>"
 #~ msgstr "<b>Status:</b>"
 
-#~ msgid "Dinner"
-#~ msgstr "Middag"
-
-#~ msgid "I'm away eating dinner, bbiab..."
-#~ msgstr "Jag är och äter middag, är snart tillbaka..."
-
 #~ msgid "Message:"
 #~ msgstr "Meddelande:"
-
-#~ msgid "Priority:"
-#~ msgstr "Prioritet:"
 
 #~ msgid "Set status"
 #~ msgstr "Ställ in status"
@@ -1292,35 +1178,14 @@ msgstr "_Statusmeddelanden"
 #~ msgid "Set the status you want to use"
 #~ msgstr "Ställ in den status du vill använda"
 
-#~ msgid "_Edit statuses..."
-#~ msgstr "_Redigera statusar..."
-
 #~ msgid "_Status:"
 #~ msgstr "_Status:"
-
-#~ msgid "Free to chat"
-#~ msgstr "Ledig för chatt"
-
-#~ msgid "Extended away"
-#~ msgstr "Utökad frånvaro"
-
-#~ msgid "<b>Auto away</b>"
-#~ msgstr "<b>Autofrånvaro</b>"
 
 #~ msgid "<b>Conversation</b>"
 #~ msgstr "<b>Konversation</b>"
 
 #~ msgid "<b>Sound</b>"
 #~ msgstr "<b>Ljud</b>"
-
-#~ msgid "Automatically enter away mode during inactivity"
-#~ msgstr "Gå in i frånvaroläge automatiskt under inaktivitet"
-
-#~ msgid "Enter away mode after"
-#~ msgstr "Gå in i frånvaroläge efter"
-
-#~ msgid "minutes"
-#~ msgstr "minuter"
 
 #~ msgid "Online"
 #~ msgstr "Ansluten"
@@ -1361,9 +1226,6 @@ msgstr "_Statusmeddelanden"
 
 #~ msgid "_Defer"
 #~ msgstr "_Skjut upp"
-
-#~ msgid "_Reject"
-#~ msgstr "_Neka"
 
 #~ msgid "Could not open the address \"%s\": %s"
 #~ msgstr "Kunde inte öppna adressen \"%s\": %s"
@@ -1426,10 +1288,6 @@ msgstr "_Statusmeddelanden"
 #~ msgid "Gossip - Connect"
 #~ msgstr "Gossip - Anslut"
 
-# Vi brukar förvisso låta R:et vara åtkomsttangent i "Redigera"
-#~ msgid "_Edit accounts..."
-#~ msgstr "R_edigera konton..."
-
 #~ msgid "_User:"
 #~ msgstr "An_vändare:"
 
@@ -1448,20 +1306,8 @@ msgstr "_Statusmeddelanden"
 #~ msgid "Website:"
 #~ msgstr "Webbplats:"
 
-#~ msgid "Automatic away enabled"
-#~ msgstr "Automatisk frånvaro aktiverad"
-
-#~ msgid "Automatic away time"
-#~ msgstr "Tid för automatisk frånvaro"
-
-#~ msgid "Extended automatic away time"
-#~ msgstr "Tid för utökad automatisk frånvaro"
-
 #~ msgid "Chat - %s"
 #~ msgstr "Chatt - %s"
-
-#~ msgid "Available accounts"
-#~ msgstr "Tillgängliga konton"
 
 #~ msgid "Available chat rooms"
 #~ msgstr "Tillgängliga chattrum"
@@ -1477,15 +1323,6 @@ msgstr "_Statusmeddelanden"
 
 #~ msgid "Favorite:"
 #~ msgstr "Favorit:"
-
-#~ msgid "Auto away"
-#~ msgstr "Autofrånvaro"
-
-#~ msgid "<b>Automatic away</b>"
-#~ msgstr "<b>Automatisk frånvaro</b>"
-
-#~ msgid "Automatic away"
-#~ msgstr "Automatisk frånvaro"
 
 #~ msgid "Country"
 #~ msgstr "Land"

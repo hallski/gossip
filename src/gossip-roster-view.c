@@ -496,6 +496,7 @@ roster_view_item_updated (GossipRoster     *roster,
 
 		do {
 			GtkTreePath *path;
+			gboolean     last_child;
 
 			if (!roster_view_iter_equal_item (priv->model, &iter, item)) {
 				continue;
@@ -505,6 +506,8 @@ roster_view_item_updated (GossipRoster     *roster,
 			gtk_tree_model_row_changed (priv->model, path, &iter);
 			gtk_tree_path_free (path);
 
+			last_child = FALSE;
+			
 			for (l = gossip_roster_item_get_groups (item); l; l = l->next) {
 				GossipRosterGroup *group = l->data;
 
@@ -512,12 +515,19 @@ roster_view_item_updated (GossipRoster     *roster,
 					    gossip_roster_group_get_name (group)) == 0) {
 					continue;
 				}
-			} 
+				
+				if (!roster_view_remove_item_with_iter (view, &iter, item, e->group)) {
+					/* Ugly, but we need to break out of
+					 * both loops.
+					 */
+					last_child = TRUE;
+					break;
+				}
+			}
 
-			if (!roster_view_remove_item_with_iter (view, &iter, item, e->group)) {
+			if (last_child) {
 				break;
 			}
-			
 		} while (gtk_tree_model_iter_next (priv->model, &iter));
 	} while (gtk_tree_model_iter_next (priv->model, &group_iter));
 	

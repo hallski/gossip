@@ -4498,7 +4498,6 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		  <child>
 		    <widget class="GtkTreeView" id="groups_treeview">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Note: contacts can belong to multiple groups or they can be in no group at all.</property>
 		      <property name="can_focus">True</property>
 		      <property name="headers_visible">False</property>
 		      <property name="rules_hint">False</property>
@@ -4726,7 +4725,6 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		  <child>
 		    <widget class="GtkTreeView" id="groups_treeview">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Note: contacts can belong to multiple groups or they can be in no group at all.</property>
 		      <property name="can_focus">True</property>
 		      <property name="headers_visible">False</property>
 		      <property name="rules_hint">False</property>

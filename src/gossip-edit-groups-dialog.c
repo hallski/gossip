@@ -31,7 +31,6 @@
 
 
 struct _GossipEditGroups {
-
 	GtkWidget   *dialog;
 	GtkLabel    *contact_label;
 	GtkLabel    *jid_label;
@@ -61,7 +60,6 @@ typedef struct {
 typedef struct {
 	GossipEditGroups *info;
 	GList            *list;
-	
 } FindSelected;
 
 
@@ -199,26 +197,18 @@ groups_setup (GossipEditGroups *info)
 				    G_TYPE_BOOLEAN,  /* enabled */
 				    G_TYPE_BOOLEAN); /* editable */
 	
-	/* model */
 	model = GTK_TREE_MODEL (store);
 	gtk_tree_view_set_model (info->groups_treeview, model);
 	
-	/* selection */
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
-	/* populate columns */
 	groups_populate_columns (info);
 
-	/* properties */
 	gtk_tree_view_set_enable_search (info->groups_treeview, TRUE);
 	gtk_tree_view_set_search_column (info->groups_treeview, COL_EDIT_GROUPS_NAME); 
 	gtk_tree_view_set_rules_hint (info->groups_treeview, FALSE);
 	gtk_tree_view_set_headers_visible (info->groups_treeview, FALSE);
-	gtk_tree_view_set_headers_clickable (info->groups_treeview, FALSE);
-	gtk_tree_view_columns_autosize (info->groups_treeview);
-	gtk_tree_view_expand_all (info->groups_treeview);
 
-	/* clean up */
 	g_object_unref (model);
 }
 
@@ -228,12 +218,10 @@ groups_populate_columns (GossipEditGroups *info)
 	GtkTreeModel      *model;
 	GtkTreeViewColumn *column; 
 	GtkCellRenderer   *renderer;
-	
-	guint              col_offset = 0;
+	guint              col_offset;
 	
 	model = GTK_TREE_MODEL (gtk_tree_view_get_model (info->groups_treeview));
 	
-	/* COL_ROSTER_GROUP_ENABLED */
 	renderer = gtk_cell_renderer_toggle_new ();
 	g_signal_connect (renderer, "toggled", 
 			  G_CALLBACK (groups_cell_toggled), 
@@ -243,12 +231,10 @@ groups_populate_columns (GossipEditGroups *info)
 							   "active", COL_EDIT_GROUPS_ENABLED,
 							   NULL);
 	
-	/* set this column to a fixed size (of 50 pixels) */
 	gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column), GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 50);
 	gtk_tree_view_append_column (info->groups_treeview, column);
 	
-	/* COL_ROSTER_GROUP_NAME */
 	renderer = gtk_cell_renderer_text_new ();
 	col_offset = gtk_tree_view_insert_column_with_attributes (info->groups_treeview,
 								  -1, _("Group"),
@@ -256,7 +242,8 @@ groups_populate_columns (GossipEditGroups *info)
 								  "text", COL_EDIT_GROUPS_NAME,
 								  NULL);
 	
-	g_object_set_data (G_OBJECT (renderer), "column", GINT_TO_POINTER (COL_EDIT_GROUPS_NAME));
+	g_object_set_data (G_OBJECT (renderer), "column",
+			   GINT_TO_POINTER (COL_EDIT_GROUPS_NAME));
 	
 	column = gtk_tree_view_get_column (info->groups_treeview, col_offset - 1);
 	gtk_tree_view_column_set_sort_column_id (column, COL_EDIT_GROUPS_NAME);
@@ -267,14 +254,18 @@ groups_populate_columns (GossipEditGroups *info)
 static void
 groups_save (GossipEditGroups *info)
 {
-	GList            *groups;
-	LmConnection     *connection;
-	LmMessage        *m;
-	LmMessageNode    *node;
-	GList            *l;
+	GList         *groups;
+	LmConnection  *connection;
+	LmMessage     *m;
+	LmMessageNode *node;
+	GList         *l;
 
 	connection = gossip_app_get_connection ();
 
+	if (!lm_connection_is_open (connection)) {
+		return;
+	}
+	
 	g_return_if_fail (connection != NULL);
 	g_return_if_fail (info->jid_str != NULL);
 	g_return_if_fail (strlen (info->jid_str) > 0);
@@ -298,7 +289,6 @@ groups_save (GossipEditGroups *info)
 	if (!groups) {
 		d (g_print ("Associating '%s' with NO groups:\n", info->jid));
 	} else {
-
 		d (g_print ("Associating '%s' with %d groups:\n", info->jid, g_list_length (groups)));
 
 		for (l = groups; l; l = l->next) {
@@ -341,8 +331,7 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 		GossipRosterGroup *group = l->data;
 		const gchar       *group_str = gossip_roster_group_get_name (group);
 
-		/* This needs to be done better - could have
-		 * group_is_unsorted()
+		/* This needs to be done better, could have group_is_unsorted().
 		 */
 		if (strcmp (group_str, _("Unsorted")) == 0) {
 			continue;
@@ -365,9 +354,7 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 		}
 	}
 
-	if (my_groups) {
-		g_list_free (my_groups);
-	}
+	g_list_free (my_groups);
 }
 
 static gboolean 
@@ -406,7 +393,7 @@ groups_find_name_foreach (GtkTreeModel *model,
 			  GtkTreeIter  *iter, 
 			  FindName     *data) 
 {
-	gchar *name = NULL;
+	gchar *name;
 
 	gtk_tree_model_get (model, iter, 
 			    COL_EDIT_GROUPS_NAME, &name, 
@@ -419,9 +406,14 @@ groups_find_name_foreach (GtkTreeModel *model,
 	if (data->name && strcmp (data->name, name) == 0) {
 		data->found = TRUE;
 		data->found_iter = *iter;
+
+		g_free (name);
+		
 		return TRUE;
 	}
-  
+
+	g_free (name);
+	
 	return FALSE;
 }
 
@@ -449,7 +441,7 @@ groups_find_selected_foreach (GtkTreeModel *model,
 			      GtkTreeIter  *iter, 
 			      FindSelected *data) 
 {
-	gchar    *name = NULL;
+	gchar    *name;
 	gboolean  selected;
 
 	gtk_tree_model_get (model, iter, 
@@ -496,10 +488,7 @@ groups_cell_toggled (GtkCellRendererToggle *cell,
 
 	enabled ^= 1;
 
-	/* set new value */
 	gtk_list_store_set (store, &iter, COL_EDIT_GROUPS_ENABLED, enabled, -1);
-
-	/* clean up */
 	gtk_tree_path_free (path);
 
 	info->changes_made = TRUE;
@@ -512,9 +501,9 @@ add_entry_changed (GtkEditable *editable, GossipEditGroups *info)
 	GtkTreeIter  iter;
 	gchar       *group = NULL;
 	
-	g_return_if_fail(info != NULL);
+	g_return_if_fail (info != NULL);
 	
-	group = gtk_editable_get_chars(editable, 0, -1); 
+	group = gtk_editable_get_chars (editable, 0, -1); 
 	
 	if (groups_find_name (info, group, &iter)) {
 		gtk_widget_set_sensitive (GTK_WIDGET (info->add_button),  
@@ -525,23 +514,20 @@ add_entry_changed (GtkEditable *editable, GossipEditGroups *info)
 					  !(group == NULL || strlen(group) < 1));
 	}
 
-	g_free(group);
+	g_free (group);
 }
 
 static void 
 add_button_clicked (GtkButton *button, GossipEditGroups *info)
 {
-	GtkListStore         *store;
-	GtkTreeIter           iter;
-	
-	G_CONST_RETURN gchar *group;
+	GtkListStore *store;
+	GtkTreeIter   iter;
+	const gchar  *group;
 	
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->groups_treeview));
 	
-	/* get text */
 	group = gtk_entry_get_text (GTK_ENTRY (info->add_entry));
 	
-	/* add */
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter,    
 			    COL_EDIT_GROUPS_NAME, group,
@@ -549,7 +535,6 @@ add_button_clicked (GtkButton *button, GossipEditGroups *info)
 			    COL_EDIT_GROUPS_EDITABLE, TRUE,
 			    -1);
 	
-	/* remove text */
 	gtk_entry_set_text (GTK_ENTRY (info->add_entry), "");
 	
 	info->changes_made = TRUE;
