@@ -1,3 +1,7 @@
+2004-09-28  Abel Cheung  <maddog@linuxhall.org>
+
+	* configure.in: Added "tr" to ALL_LINGUAS.
+
 2004-09-18  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-disco.c:
