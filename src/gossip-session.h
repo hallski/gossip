@@ -46,12 +46,9 @@
 
 typedef struct _GossipSession      GossipSession;
 typedef struct _GossipSessionClass GossipSessionClass;
-typedef struct _GossipSessionPriv  GossipSessionPriv;
 
 struct _GossipSession {
 	GObject parent;
-
-	GossipSessionPriv *priv;
 };
 
 struct _GossipSessionClass {
@@ -103,7 +100,7 @@ void             gossip_session_update_contact (GossipSession *session,
                                                 GossipContact *contact);
 
 /* Add, remove, move */
-GList *         gossip_session_get_contacts   (GossipSession  *session);
+const GList *   gossip_session_get_contacts   (GossipSession  *session);
 GList *         gossip_session_get_groups     (GossipSession  *session);
 
 const gchar *   gossip_session_get_nickname   (GossipSession  *session);

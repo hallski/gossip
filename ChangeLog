@@ -1,3 +1,18 @@
+2004-12-31  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_new_message):
+	- Updated for new GossipSession API.
+	* src/gossip-contact-list.c:
+	(gossip_contact_list_set_show_offline):
+	- Started working on this.
+	* src/gossip-session.[ch]: (gossip_session_get_contacts):
+	- Returns a const list, also replaced internally with a list instead of 
+	  a hash table for now.
+	* src/gossip-transport-accounts.c:
+	(gossip_transport_account_count_contacts),
+	(gossip_transport_account_remove):
+	- Updated for new GossipSession API.
+
 2004-12-30  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jabber.c: (gossip_jabber_init):

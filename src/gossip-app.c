@@ -694,12 +694,12 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 {
 	GossipAppPriv    *priv;
 	const gchar      *selected_name = NULL;
-	GList            *l;
+	const GList      *l;
 	GList            *contacts = NULL;
 	GossipContact    *contact = NULL;
 	GtkWidget        *frame;
 	CompleteNameData *data;
-	GList            *all_contacts;
+	const GList      *all_contacts;
 	GtkWindow        *parent;
 	GtkListStore     *model;
 	GtkCellRenderer  *cell;

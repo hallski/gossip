@@ -467,7 +467,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	GtkTreeModel   *model;
 	GtkTreeIter     iter;
 
-	model    = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	if (!contact_list_find_contact (list, &iter, contact, NULL)) {
 		return;
@@ -1124,13 +1124,24 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 				      gboolean           show_offline)
 {
 	GossipContactListPriv *priv;
-	
+	GossipSession         *session;
+	const GList           *contacts;
+	const GList           *l;
+		
 	g_return_if_fail (GOSSIP_IS_CONTACT_LIST (list));
 
 	priv = list->priv;
 
 	priv->show_offline = show_offline;
 
-	/* FIXME: Update */
-}
+	session = gossip_app_get_session ();
+	contacts = gossip_session_get_contacts (session);
+	for (l = contacts; l; l = l->next) {
+		GossipContact *contact;
 
+		contact = GOSSIP_CONTACT (l->data);
+
+		contact_list_contact_presence_updated_cb (session, contact,
+							  list);
+	}
+}

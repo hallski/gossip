@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio HB
+ * Copyright (C) 2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,6 +25,9 @@
 #include "gossip-marshal.h"
 #include "gossip-session.h"
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
+
+typedef struct _GossipSessionPriv  GossipSessionPriv;
 struct _GossipSessionPriv {
 	GossipJabber   *default_jabber;
 	GList          *protocols;
@@ -33,7 +36,7 @@ struct _GossipSessionPriv {
 
 	GossipPresence *presence;
 
-	GHashTable     *contacts;
+	GList          *contacts;
 };
 
 static void     gossip_session_class_init     (GossipSessionClass *klass);
@@ -68,7 +71,6 @@ static gchar *  session_protocol_get_password    (GossipProtocol    *protocol,
 static GossipProtocol *
 session_get_protocol                             (GossipSession    *session,
 						  GossipContact    *contact);
-
 
 /* Signals */
 enum {
@@ -209,6 +211,8 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      gossip_marshal_STRING__POINTER,
 			      G_TYPE_STRING,
 			      1, G_TYPE_POINTER);
+	
+	g_type_class_add_private (object_class, sizeof (GossipSessionPriv));
 }
 
 static void
@@ -217,11 +221,9 @@ gossip_session_init (GossipSession *session)
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 	
-	priv = g_new0 (GossipSessionPriv, 1);
-	session->priv = priv;
+	priv = GET_PRIV (session);
 	
 	priv->protocols = NULL;
-	priv->contacts = NULL;
 
 	protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
 
@@ -234,22 +236,26 @@ gossip_session_init (GossipSession *session)
 static void
 session_finalize (GObject *object)
 {
-	GossipSession     *session;
 	GossipSessionPriv *priv;
 	GList             *l;
 
-	session = GOSSIP_SESSION (object);
-	priv = session->priv;
-
-	for (l = priv->protocols; l; l = l->next) {
-		g_object_unref (G_OBJECT (l->data));
+	priv = GET_PRIV (object);
+	
+	if (priv->protocols) {
+		for (l = priv->protocols; l; l = l->next) {
+			g_object_unref (G_OBJECT (l->data));
+		}
+		g_list_free (priv->protocols);
 	}
-
-	g_list_free (priv->protocols);
 	priv->default_jabber = NULL;
 
-	g_hash_table_destroy (priv->contacts);
-	g_free (priv);
+	if (priv->contacts) {
+		for (l = priv->contacts; l; l = l->next) {
+			g_object_unref (l->data);
+		}
+
+		g_list_free (priv->contacts);
+	}
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -312,10 +318,16 @@ session_protocol_contact_added (GossipProtocol *protocol,
 				GossipContact  *contact,
 				GossipSession  *session)
 {
-	/* Add to internal list */
+	GossipSessionPriv *priv;
+
 	g_print ("GossipSession: Contact added '%s'\n",
 		 gossip_contact_get_name (contact));
 
+	priv = GET_PRIV (session);
+	
+	priv->contacts = g_list_prepend (priv->contacts, 
+					 g_object_ref (contact));
+	
 	g_signal_emit (session, signals[CONTACT_ADDED], 0, contact);
 }
 
@@ -344,11 +356,17 @@ session_protocol_contact_removed (GossipProtocol *protocol,
 				  GossipContact  *contact,
 				  GossipSession  *session)
 {
+	GossipSessionPriv *priv;
+	
 	g_print ("GossipSession: Contact removed '%s'\n",
 		 gossip_contact_get_name (contact));
 
+	priv = GET_PRIV (session);
+	
 	g_signal_emit (session, signals[CONTACT_REMOVED], 0, contact);
-	/* Remove from internal list */
+
+	priv->contacts = g_list_remove (priv->contacts, contact);
+	g_object_unref (contact);
 }
 
 static gchar *
@@ -372,7 +390,7 @@ session_get_protocol (GossipSession *session, GossipContact *contact)
 	
 	/* FIXME: Look up which protocol backend handles a certain contact */
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 
 	return GOSSIP_PROTOCOL (priv->default_jabber);
 }
@@ -391,7 +409,7 @@ gossip_session_connect (GossipSession *session)
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 
 	/* Temporary */
 	priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
@@ -414,8 +432,8 @@ gossip_session_disconnect (GossipSession *session)
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-	
-	priv = session->priv;
+
+	priv = GET_PRIV (session);
 
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;
@@ -436,7 +454,7 @@ gossip_session_send_message (GossipSession *session, GossipMessage *message)
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (message != NULL);
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 	
 	contact = gossip_message_get_recipient (message);
 
@@ -463,7 +481,7 @@ gossip_session_get_presence (GossipSession *session)
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 	
 	return priv->presence;
 }
@@ -480,7 +498,7 @@ gossip_session_is_connected (GossipSession *session)
 	GossipSessionPriv *priv;
 	GList *l;
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 	
 	for (l = priv->protocols; l; l = l->next) {
 		if (gossip_protocol_is_connected (GOSSIP_PROTOCOL (l->data))) {
@@ -504,7 +522,7 @@ gossip_session_get_active_resource (GossipSession *session,
 	 * against a certain resource 
 	 */
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 
 	protocol = session_get_protocol (session, contact);
 	if (!protocol) {
@@ -520,8 +538,8 @@ gossip_session_get_chatroom_provider (GossipSession *session)
 	GossipSessionPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-	
-	priv = session->priv;
+
+	priv = GET_PRIV (session);
 
 	return GOSSIP_CHATROOM_PROVIDER (priv->default_jabber);
 }
@@ -548,8 +566,8 @@ gossip_session_add_contact (GossipSession *session,
         g_return_if_fail (name != NULL);
         g_return_if_fail (group != NULL);
         g_return_if_fail (message != NULL);
-	
-	priv = session->priv;
+
+	priv = GET_PRIV (session);
 
         /* FIXME: Lookup the correct protocol */
         gossip_protocol_add_contact (GOSSIP_PROTOCOL (priv->default_jabber),
@@ -572,7 +590,7 @@ gossip_session_rename_contact (GossipSession *session,
 	 * against a certain resource 
 	 */
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 
 	protocol = session_get_protocol (session, contact);
 	if (!protocol) {
@@ -596,7 +614,7 @@ gossip_session_remove_contact (GossipSession *session,
 	 * against a certain resource 
 	 */
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 
 	protocol = session_get_protocol (session, contact);
 	if (!protocol) {
@@ -613,13 +631,16 @@ gossip_session_update_contact (GossipSession *session,
         /* FIXME: Implement */
 }
 
-
-GList *
+const GList *
 gossip_session_get_contacts (GossipSession *session)
 {
-	/* FIXME: Implement */
-	
-	return NULL;
+	GossipSessionPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+
+	priv = GET_PRIV (session);
+
+	return priv->contacts;
 }
 
 GList *
@@ -655,8 +676,8 @@ gossip_session_async_register (GossipSession  *session,
 	g_return_val_if_fail (id != NULL, FALSE);
         g_return_val_if_fail (password != NULL, FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
-	
-	priv = session->priv;
+
+	priv = GET_PRIV (session);
 	
 	/* FIXME: Call set_vcard on all protocols?
 	 *        Currently only calling it on the main Jabber account
@@ -687,7 +708,7 @@ gossip_session_async_get_vcard (GossipSession             *session,
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
 
-	priv = session->priv;
+	priv = GET_PRIV (session);
 	
 	if (contact) {
 		protocol = session_get_protocol (session, contact);
@@ -720,7 +741,7 @@ gossip_session_async_set_vcard (GossipSession  *session,
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
 	
-	priv = session->priv;
+	priv = GET_PRIV (session);
 	
 	/* FIXME: Call set_vcard on all protocols?
 	 *        Currently only calling it on the main Jabber account

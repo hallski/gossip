@@ -433,8 +433,8 @@ gint
 gossip_transport_account_count_contacts (GossipTransportAccount *account)
 {
 	GossipSession *session;
-	GList         *items;
-	GList         *l;
+	const GList   *items;
+	const GList   *l;
 	const gchar   *service;
 	gint           count;
 
@@ -445,7 +445,7 @@ gossip_transport_account_count_contacts (GossipTransportAccount *account)
 
 	service = gossip_jid_get_without_resource (account->jid);
 
-	for (l=items, count=0; l; l=l->next) {
+	for (l = items, count = 0; l; l = l->next) {
 		GossipContact *item;
 		GossipJID     *jid;
 		const gchar   *id;
@@ -465,9 +465,6 @@ gossip_transport_account_count_contacts (GossipTransportAccount *account)
 
 		gossip_jid_unref (jid);
 	}
-
-	/* clean up */
-	g_list_free (items);
 
 	return count;
 }
@@ -551,8 +548,8 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 	LmMessage                  *m;
 	LmMessageNode              *node;
 
-	GList                      *items;
-	GList                      *l;
+	const GList                *items;
+	const GList                *l;
 
 	const gchar                *id;
 
