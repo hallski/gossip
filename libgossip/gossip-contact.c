@@ -129,7 +129,11 @@ const gchar *
 gossip_contact_get_name (GossipContact *contact)
 {
 	g_return_val_if_fail (contact != NULL, NULL);
-	
+
+	if (contact->name == NULL) {
+		return gossip_jid_get_without_resource (contact->jid);
+	}
+
 	return contact->name;
 }
 
