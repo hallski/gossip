@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-11 00:08+0200\n"
-"PO-Revision-Date: 2003-07-11 00:09+0200\n"
+"POT-Creation-Date: 2003-07-14 01:24+0200\n"
+"PO-Revision-Date: 2003-07-14 01:25+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -39,13 +39,17 @@ msgstr "Temps per a canviar a absent fa estona automàticament"
 msgid ""
 "The number of minutes of idle time before automatically going into \"away\" "
 "mode."
-msgstr "El nombre de minuts d'inactivitat abans de canviar automàticament al mode «absent»."
+msgstr ""
+"El nombre de minuts d'inactivitat abans de canviar automàticament al mode "
+"«absent»."
 
 #: gossip.schemas.in.h:5
 msgid ""
 "The number of minutes of idle time before automatically going into "
 "\"extended away\" mode."
-msgstr "El nombre de minuts d'inactivitat abans de canviar automàticament al mode «absent fa estona»."
+msgstr ""
+"El nombre de minuts d'inactivitat abans de canviar automàticament al mode "
+"«absent fa estona»."
 
 #: gossip.schemas.in.h:6
 msgid "Use smileys"
@@ -245,16 +249,25 @@ msgstr "/Rea_nomena el contacte"
 msgid "/_Remove contact"
 msgstr "/Sup_rimeix el contacte"
 
-#: src/gossip-roster.c:419
+#: src/gossip-roster.c:421
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
 "%s\n"
-"from you contact list?"
+"from your contact list?"
 msgstr ""
 "Voleu eliminar el contacte\n"
 "%s\n"
 "de la llista de contactes?"
+
+#: src/gossip-roster.c:519
+#, c-format
+msgid ""
+"Please enter a new nick for the contact\n"
+"%s"
+msgstr ""
+"Introduïu un àlias nou per al contacte\n"
+"%s"
 
 #. Should user be able to set resource, account name and
 #. * port?
