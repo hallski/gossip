@@ -1,5 +1,13 @@
 2003-07-06  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: Rework the nick completion dialog to be
+	modeless, fixes bug #116785 for real.
+
+	* ui/connect-chat.c: Add missing mnemonics. Fixes #116784.
+
+	* src/gossip-chat.c (chat_dialog_key_press_event_cb, chat_create):
+	Fix bug #112463.
+
 	* src/gossip-app.c (app_send_chat_message_cb): Remove grab_focus,
 	since it's not needed and also screwed up focus. Fixes bug
 	#116785 reported by Jordi Mallach.

@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-06 01:09+0200\n"
+"POT-Creation-Date: 2003-07-06 20:39+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -34,67 +34,67 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:316
+#: src/gossip-app.c:333
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:320
+#: src/gossip-app.c:337
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:324
+#: src/gossip-app.c:341
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:328 ui/main.glade.h:27
+#: src/gossip-app.c:345 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:332
+#: src/gossip-app.c:349
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:340
+#: src/gossip-app.c:357
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:405
+#: src/gossip-app.c:422
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:416
+#: src/gossip-app.c:433
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:534
+#: src/gossip-app.c:554
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelenade till."
 
-#: src/gossip-app.c:539
-msgid "_Start Chat"
-msgstr "_Starta chatt"
+#: src/gossip-app.c:559
+msgid "_Chat"
+msgstr "_Chatta"
 
-#: src/gossip-app.c:1109
+#: src/gossip-app.c:1138
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1368
+#: src/gossip-app.c:1397
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-chat.c:404
+#: src/gossip-chat.c:440
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:409
+#: src/gossip-chat.c:445
 msgid "Details:"
 msgstr "Detaljer:"
 
@@ -289,68 +289,68 @@ msgid "<b>_Account:</b>"
 msgstr "<b>_Konto:</b>"
 
 #: ui/connect.glade.h:7
-msgid "Account name:"
-msgstr "Kontonamn:"
+msgid "Account _name:"
+msgstr "_Kontonamn:"
 
 #: ui/connect.glade.h:8
-msgid "Add"
-msgstr "Lägg till"
-
-#: ui/connect.glade.h:9
 msgid "C_onnect"
 msgstr "A_nslut"
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:9
 msgid "Gossip - Connect"
 msgstr "Gossip - Anslut"
 
-#: ui/connect.glade.h:11
+#: ui/connect.glade.h:10
 msgid "Gossip - Edit Accounts"
 msgstr "Gossip - Redigera konton"
 
+#: ui/connect.glade.h:11
+msgid "Pass_word:"
+msgstr "Lösen_ord:"
+
 #: ui/connect.glade.h:12
-msgid "Password:"
-msgstr "Lösenord:"
+msgid "R_esource:"
+msgstr "R_esurs:"
 
 #: ui/connect.glade.h:13
-msgid "Port:"
-msgstr "Port:"
+msgid "Re_gister..."
+msgstr "Re_gistrera..."
 
-#: ui/connect.glade.h:14
-msgid "Register..."
-msgstr "Registrera..."
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:14
+msgid "_Add"
+msgstr "_Lägg till"
 
 #: ui/connect.glade.h:15
-msgid "Remove"
-msgstr "Ta bort"
-
-#: ui/connect.glade.h:16
-msgid "Resource:"
-msgstr "Resurs:"
-
-#: ui/connect.glade.h:17
-msgid "Server:"
-msgstr "Server:"
-
-#: ui/connect.glade.h:18
-msgid "User name:"
-msgstr "Användarnamn:"
-
-#: ui/connect.glade.h:19
 msgid "_Edit accounts..."
 msgstr "R_edigera konton..."
 
-#: ui/connect.glade.h:20
+#: ui/connect.glade.h:16
+msgid "_Port:"
+msgstr "_Port:"
+
+#: ui/connect.glade.h:17
 msgid "_Priority:"
 msgstr "_Prioritet:"
 
-#: ui/connect.glade.h:21
+#: ui/connect.glade.h:18
+msgid "_Remove"
+msgstr "Ta _bort"
+
+#: ui/connect.glade.h:19
 msgid "_Resource:"
 msgstr "_Resurs:"
 
+#: ui/connect.glade.h:20 ui/group-chat.glade.h:20
+msgid "_Server:"
+msgstr "_Server:"
+
+#: ui/connect.glade.h:21
+msgid "_User name:"
+msgstr "An_vändarnamn:"
+
 #: ui/connect.glade.h:22
 msgid "_User:"
-msgstr "A_nvändare:"
+msgstr "An_vändare:"
 
 #: ui/druid.glade.h:1
 msgid ""
@@ -401,7 +401,7 @@ msgstr "Gossip - Gå in i gruppchatt"
 
 #: ui/group-chat.glade.h:11
 msgid "N_ickname:"
-msgstr "_Smeknamn:"
+msgstr "Smek_namn:"
 
 #: ui/group-chat.glade.h:12
 msgid ""
@@ -413,15 +413,11 @@ msgstr ""
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
-msgstr "_Ta bort"
-
-#: ui/group-chat.glade.h:14
-msgid "_Add"
-msgstr "_Lägg till"
+msgstr "Ta _bort"
 
 #: ui/group-chat.glade.h:15
 msgid "_Edit favorites..."
-msgstr "_Redigera favoriter..."
+msgstr "Redigera _favoriter..."
 
 #: ui/group-chat.glade.h:16
 msgid "_Join"
@@ -429,15 +425,11 @@ msgstr "_Gå in"
 
 #: ui/group-chat.glade.h:17
 msgid "_Nickname:"
-msgstr "_Smeknamn:"
+msgstr "Smek_namn:"
 
 #: ui/group-chat.glade.h:18
 msgid "_Room:"
 msgstr "_Rum:"
-
-#: ui/group-chat.glade.h:20
-msgid "_Server:"
-msgstr "_Server:"
 
 #: ui/group-chat.glade.h:21
 msgid "_Topic:"
@@ -748,6 +740,12 @@ msgstr "_Skicka chattmeddelande..."
 #: gossip.desktop.in.h:2
 msgid "Jabber Instant Messaging"
 msgstr "Jabber Instant Messaging"
+
+#~ msgid "Add"
+#~ msgstr "Lägg till"
+
+#~ msgid "Server:"
+#~ msgstr "Server:"
 
 #~ msgid ""
 #~ "Gossip will now try to use your account:\n"

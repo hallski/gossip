@@ -68,6 +68,9 @@ static void     chat_input_text_buffer_changed_cb (GtkTextBuffer    *buffer,
 						   GossipChat       *chat);
 static void     chat_dialog_destroy_cb            (GtkWidget        *widget,
 						   GossipChat       *chat);
+static gboolean chat_dialog_key_press_event_cb    (GtkWidget        *dialog,
+						   GdkEventKey      *event,
+						   GossipChat       *chat);
 static void     chat_dialog_send                  (GossipChat       *chat,
 						   const gchar      *msg);
 static void     chat_dialog_send_multi_clicked_cb (GtkWidget        *unused,
@@ -197,7 +200,12 @@ chat_create (GossipApp *app, GossipJID *jid)
 			  "destroy",
 			  G_CALLBACK (chat_dialog_destroy_cb),
 			  chat);
-		
+
+	g_signal_connect (chat->dialog,
+			  "key_press_event",
+			  G_CALLBACK (chat_dialog_key_press_event_cb),
+			  chat);
+
 	g_signal_connect (chat->input_entry,
 			  "activate",
 			  G_CALLBACK (chat_input_activate_cb),
@@ -306,6 +314,34 @@ chat_dialog_destroy_cb (GtkWidget *widget, GossipChat *chat)
 	g_free (chat);
 }
 
+static gboolean
+chat_dialog_key_press_event_cb (GtkWidget   *dialog,
+				GdkEventKey *event,
+				GossipChat  *chat)
+{
+/*	GtkWidget *msg_dialog; 
+	gint       response;*/
+	
+	if ((event->state & GDK_CONTROL_MASK) && (event->keyval == GDK_w)) {
+		/*msg_dialog = gtk_message_dialog_new (GTK_WINDOW (dialog),
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_MESSAGE_QUESTION,
+						     GTK_BUTTONS_YES_NO,
+						     _("Do you want to close the chat window?"));
+		
+		response = gtk_dialog_run (GTK_DIALOG (msg_dialog));
+		gtk_widget_destroy (msg_dialog);
+
+		if (response == GTK_RESPONSE_YES) {*/
+		gtk_widget_destroy (dialog);
+		/*}*/
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+	
 static void
 chat_dialog_send (GossipChat *chat, const gchar *msg)
 {
@@ -581,7 +617,7 @@ gossip_chat_new (GossipApp *app, GossipJID *jid)
 	
 	gtk_window_set_title (GTK_WINDOW (chat->dialog), title);
 	g_free (title);
-	
+
 	return chat;
 }
 

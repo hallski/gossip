@@ -87,6 +87,20 @@ struct _GossipAppPriv {
 	GList               *enabled_disconnected_widgets;
 };
 
+typedef struct {
+	GossipApp   *app;
+	GCompletion *completion;
+	GList       *jids;
+	GList       *jid_strings;
+
+	guint        complete_idle_id;
+	gboolean     touched;
+	
+	GtkWidget   *combo;
+	GtkWidget   *entry;
+	GtkWidget   *dialog;
+} CompleteJIDData;
+
 enum {
 	CONNECTED,
 	DISCONNECTED,
@@ -172,17 +186,20 @@ app_setup_connection_dependent_menu_items           (GossipApp      *app,
 						     GladeXML       *glade);
 static void
 app_update_connection_dependent_menu_items          (GossipApp      *app);
-static gboolean  app_complete_jid_idle              (GtkCombo       *combo);
+static void      app_complete_jid_response_cb       (GtkWidget      *dialog,
+						     gint            response,
+						     CompleteJIDData *data);
+static gboolean  app_complete_jid_idle              (CompleteJIDData *data);
 static void      app_complete_jid_insert_text_cb    (GtkEntry       *entry, 
 						     const gchar    *text,
 						     gint            length,
 						     gint           *position,
-						     GtkCombo       *combo);
+						     CompleteJIDData *data);
 static gboolean  app_complete_jid_key_press_event_cb(GtkEntry       *entry,
 						     GdkEventKey    *event,
-						     GtkCombo       *combo);
+						     CompleteJIDData *data);
 static void      app_complete_jid_activate_cb       (GtkEntry       *entry,
-						     GtkDialog      *dialog);
+						     CompleteJIDData *data);
 static gchar *   app_complete_jid_to_string         (gpointer        data);
 
 
@@ -516,72 +533,83 @@ static void
 app_send_chat_message_cb (GtkWidget *widget,
 			  GossipApp *app)
 {
-	GossipAppPriv *priv;
-	GossipJID     *jid;
-	GtkWidget     *dialog, *frame;
-	GtkWidget     *combo;
-	GCompletion   *completion;
-	const gchar   *selected_jid = NULL;
-	GList         *jids, *l, *jid_strings = NULL;
-	gint           response;
+	GossipAppPriv   *priv;
+	GossipJID       *jid;
+	GtkWidget       *frame;
+	CompleteJIDData *data;
+	const gchar     *selected_jid = NULL;
+//	GList           *jids, *l, *jid_strings = NULL;
+	GList           *l;
+//	gint           response;
 
 	priv = app->priv;
+
+	data = g_new0 (CompleteJIDData, 1);
+	data->app = app;
+
+	data->dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
+					       0,
+					       GTK_MESSAGE_QUESTION,
+					       GTK_BUTTONS_NONE,
+					       _("Enter the user ID of the person you would "
+						 "like to send a chat message to."));
 	
-	dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
-					 0,
-					 GTK_MESSAGE_QUESTION,
-					 GTK_BUTTONS_NONE,
-					 _("Enter the user ID of the person you would "
-					 "like to send a chat message to."));
-	
-	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+	gtk_dialog_add_buttons (GTK_DIALOG (data->dialog),
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				_("_Start Chat"), GTK_RESPONSE_OK,
+				_("_Chat"), GTK_RESPONSE_OK,
 				NULL);
 	
-	gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-	
+	gtk_dialog_set_has_separator (GTK_DIALOG (data->dialog), FALSE);
+
 	frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_NONE);
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 4);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 8);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (data->dialog)->vbox),
+			    frame, TRUE, TRUE, 8);
 	gtk_widget_show (frame);
 	
-	combo = gtk_combo_new ();
-	gtk_combo_set_use_arrows (GTK_COMBO (combo), FALSE);
-	gtk_combo_disable_activate (GTK_COMBO (combo));
-	gtk_container_add (GTK_CONTAINER (frame), combo);
-	gtk_widget_show (combo);
+	data->combo = gtk_combo_new ();
+	gtk_combo_set_use_arrows (GTK_COMBO (data->combo), FALSE);
+	gtk_combo_disable_activate (GTK_COMBO (data->combo));
+	gtk_container_add (GTK_CONTAINER (frame), data->combo);
+	gtk_widget_show (data->combo);
 
-	g_signal_connect_after (GTK_COMBO (combo)->entry,
+	data->entry = GTK_COMBO (data->combo)->entry;
+
+	g_signal_connect_after (data->entry,
 				"insert_text",
 				G_CALLBACK (app_complete_jid_insert_text_cb),
-				combo);
+				data);
 	
-	g_signal_connect (GTK_COMBO (combo)->entry,
+	g_signal_connect (data->entry,
 			  "key_press_event",
 			  G_CALLBACK (app_complete_jid_key_press_event_cb),
-			  combo);
+			  data);
 
-	g_signal_connect (GTK_COMBO (combo)->entry,
+	g_signal_connect (data->entry,
 			  "activate",
 			  G_CALLBACK (app_complete_jid_activate_cb),
-			  dialog);
+			  data);
+
+	g_signal_connect (data->dialog,
+			  "response",
+			  G_CALLBACK (app_complete_jid_response_cb),
+			  data);
 	
-	completion = g_completion_new (app_complete_jid_to_string);
-	g_object_set_data (G_OBJECT (combo), "completion", completion);
+	data->completion = g_completion_new (app_complete_jid_to_string);
 
 	jid = gossip_roster_get_selected_jid (priv->roster);
 	if (jid) {
 		gossip_jid_ref (jid);
 	}
-	
-	jids = gossip_roster_get_jids (priv->roster);
-	for (l = jids; l; l = l->next) {
+
+	data->jid_strings = NULL;
+	data->jids = gossip_roster_get_jids (priv->roster);
+	for (l = data->jids; l; l = l->next) {
 		const gchar *str;
 				
-		str = gossip_jid_get_without_resource (l->data) ;
-		jid_strings = g_list_append (jid_strings, g_strdup (str));
+		str = gossip_jid_get_without_resource (l->data);
+		data->jid_strings = g_list_append (data->jid_strings, g_strdup (str));
 
 		if (jid && gossip_jid_equals_without_resource (jid, l->data)) {
 			/* Got the selected one, select it in the combo. */
@@ -589,27 +617,29 @@ app_send_chat_message_cb (GtkWidget *widget,
 		}
 	}
 	
-	if (jid_strings) {
-		gtk_combo_set_popdown_strings (GTK_COMBO (combo), jid_strings);
+	if (data->jid_strings) {
+		gtk_combo_set_popdown_strings (GTK_COMBO (data->combo),
+					       data->jid_strings);
 	}
 
-	if (jids) {
-		g_completion_add_items (completion, jids);
+	if (data->jids) {
+		g_completion_add_items (data->completion, data->jids);
 	}
 
 	if (selected_jid) {
-		gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), selected_jid);
-		gtk_editable_select_region (GTK_EDITABLE (GTK_COMBO (combo)->entry), 0, -1);
+		gtk_entry_set_text (GTK_ENTRY (data->entry), selected_jid);
+		gtk_editable_select_region (GTK_EDITABLE (data->entry), 0, -1);
 	} else {
-		gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), "");
+		gtk_entry_set_text (GTK_ENTRY (data->entry), "");
 	}
 
 	if (jid) {
 		gossip_jid_unref (jid);
 	}
 	
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-
+	//response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_show (data->dialog);
+#if 0
 	if (response == GTK_RESPONSE_OK) {
 		const gchar *str;
 
@@ -632,6 +662,7 @@ app_send_chat_message_cb (GtkWidget *widget,
 	g_list_free (jids);
 
 	gtk_widget_destroy (dialog);
+#endif
 }
 
 static void
@@ -1519,75 +1550,98 @@ app_update_connection_dependent_menu_items (GossipApp *app)
 	}
 }
 
-static gboolean 
-app_complete_jid_idle (GtkCombo *combo)
+static void
+app_complete_jid_response_cb (GtkWidget       *dialog,
+			      gint             response,
+			      CompleteJIDData *data)
 {
-	GCompletion *completion;
+	const gchar *str;
+	GossipJID   *jid;
+	GList       *l;
+
+	if (response == GTK_RESPONSE_OK) {
+		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
+		if (gossip_jid_string_is_valid_jid (str)) {
+			jid = gossip_jid_new (str);
+			app_get_chat_for_jid (data->app, jid);
+			gossip_jid_unref (jid);
+		} else {
+			/* FIXME: Display error dialog... */
+			g_warning ("'%s' is not a valid JID.", str);
+		}
+	}
+
+	for (l = data->jid_strings; l; l = l->next) {
+		g_free (l->data);
+	}
+	
+	g_list_free (data->jid_strings);
+	g_list_free (data->jids);
+	g_free (data);
+	
+	gtk_widget_destroy (dialog);	
+}
+
+static gboolean 
+app_complete_jid_idle (CompleteJIDData *data)
+{
 	const gchar *prefix;
 	gsize        len;
 	gchar       *new_prefix;
-	gboolean     touched;
 
-	completion = g_object_get_data (G_OBJECT (combo), "completion");
-	
-	prefix = gtk_entry_get_text (GTK_ENTRY (combo->entry));
+	prefix = gtk_entry_get_text (GTK_ENTRY (data->entry));
 	len = strlen (prefix);
 	
-	g_completion_complete (completion, 
+	g_completion_complete (data->completion, 
 			       (gchar *) prefix, 
 			       &new_prefix);
 
 	if (new_prefix) {
-		g_signal_handlers_block_by_func (combo->entry,
+		g_signal_handlers_block_by_func (data->entry,
 						 app_complete_jid_insert_text_cb,
-						 combo);
+						 data);
 		
-  		gtk_entry_set_text (GTK_ENTRY (combo->entry), new_prefix); 
+  		gtk_entry_set_text (GTK_ENTRY (data->entry), new_prefix); 
 					  
-		g_signal_handlers_unblock_by_func (combo->entry, 
+		g_signal_handlers_unblock_by_func (data->entry, 
 						   app_complete_jid_insert_text_cb,
-						   combo);
+						   data);
 
-		touched = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "touched"));
-		if (touched) {
-			gtk_editable_set_position (GTK_EDITABLE (combo->entry), len);
-			gtk_editable_select_region (GTK_EDITABLE (combo->entry), len, -1);
+		if (data->touched) {
+			gtk_editable_set_position (GTK_EDITABLE (data->entry), len);
+			gtk_editable_select_region (GTK_EDITABLE (data->entry), len, -1);
 		} else {
 			/* We want to leave the whole thing selected at first. */
-			gtk_editable_set_position (GTK_EDITABLE (combo->entry), -1);
-			gtk_editable_select_region (GTK_EDITABLE (combo->entry), 0, -1);
+			gtk_editable_set_position (GTK_EDITABLE (data->entry), -1);
+			gtk_editable_select_region (GTK_EDITABLE (data->entry), 0, -1);
 		}
 		
 		g_free (new_prefix);
 	}
 
-	g_object_set_data (G_OBJECT (combo), "complete_idle", GINT_TO_POINTER (0));
+	data->complete_idle_id = 0;
 
 	return FALSE;
 }
 
 static void
-app_complete_jid_insert_text_cb (GtkEntry         *entry, 
-				 const gchar      *text,
-				 gint              length,
-				 gint             *position,
-				 GtkCombo         *combo)
+app_complete_jid_insert_text_cb (GtkEntry        *entry, 
+				 const gchar     *text,
+				 gint             length,
+				 gint            *position,
+				 CompleteJIDData *data)
 {
-	guint id;
-
-	id = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (combo), "complete_idle"));
-	if (!id) {
-		id = g_idle_add ((GSourceFunc) app_complete_jid_idle, combo);
-		g_object_set_data (G_OBJECT (combo), "complete_idle", GINT_TO_POINTER (id));
+	if (!data->complete_idle_id) {
+		data->complete_idle_id = g_idle_add ((GSourceFunc) app_complete_jid_idle, data);
 	}
 }
 
 static gboolean
-app_complete_jid_key_press_event_cb (GtkEntry    *entry,
-				     GdkEventKey *event,
-				     GtkCombo    *combo)
+app_complete_jid_key_press_event_cb (GtkEntry        *entry,
+				     GdkEventKey     *event,
+				     CompleteJIDData *data)
 {
-	g_object_set_data (G_OBJECT (combo), "touched", GINT_TO_POINTER (TRUE));
+	data->touched = TRUE;
 	
 	if ((event->state & GDK_CONTROL_MASK) == 0 &&
 	    (event->state & GDK_SHIFT_MASK) == 0 && event->keyval == GDK_Tab) {
@@ -1601,10 +1655,10 @@ app_complete_jid_key_press_event_cb (GtkEntry    *entry,
 }
 
 static void
-app_complete_jid_activate_cb (GtkEntry  *entry,
-			      GtkDialog *dialog)
+app_complete_jid_activate_cb (GtkEntry        *entry,
+			      CompleteJIDData *data)
 {
-	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+	gtk_dialog_response (GTK_DIALOG (data->dialog), GTK_RESPONSE_OK);
 }
 
 static gchar *
@@ -1615,26 +1669,4 @@ app_complete_jid_to_string (gpointer data)
 	return (gchar *) gossip_jid_get_without_resource (jid);
 }
 
-
-
-
-#if 0
-static void app_tray_icon_push_notification (GossipApp   *app,
-					     const gchar *label);
-static void app_tray_icon_pop_notification (GossipApp   *app);
-
-static void
-app_tray_icon_push_notification (GossipApp   *app,
-				 const gchar *label)
-{
-
-}
-
-static void
-app_tray_icon_pop_notification (GossipApp   *app)
-{
-
-}
-
-#endif
 
