@@ -2010,7 +2010,7 @@
 		  <child>
 		    <widget class="GtkLabel" id="subscription_label">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">You are not subscribed to this contact's status. Press Subscribe to recieve their status.</property>
+		      <property name="label" translatable="yes">You are not subscribed to this contact's status. Press Subscribe to receive their status.</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4342,7 +4342,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
       <child>
 	<widget class="GnomeDruidPageStandard" id="page_2">
 	  <property name="visible">True</property>
-	  <property name="title" translatable="yes">Sever Details</property>
+	  <property name="title" translatable="yes">Server Details</property>
 
 	  <child internal-child="vbox">
 	    <widget class="GtkVBox" id="druid-vbox22">

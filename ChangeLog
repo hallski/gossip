@@ -1,3 +1,7 @@
+2004-08-31  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Fix two typos.
+
 2004-08-28  Mikael Hallendal  <micke@imendio.com>
 
 	* src/eggtrayicon.[ch]: 
