@@ -699,9 +699,8 @@ chat_window_update_tooltip (GossipChatWindow *window,
 		}
 	}
 
-	str = g_strdup_printf ("%s\n%s %s",
+	str = g_strdup_printf ("%s\n%s",
 			       gossip_jid_get_without_resource (jid),
-			       _("Status:"),
 			       status);
 
 	widget = g_object_get_data (G_OBJECT (chat), "chat-window-tooltip-widget");

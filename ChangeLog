@@ -1,5 +1,18 @@
 2004-01-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (gossip_app_status_force_nonaway):
+	* src/gossip-chat.c: (chat_send):
+	* src/gossip-group-chat.c: (group_chat_send): Return from away
+	status when we send something.
+
+	* src/gossip-preferences.c: Fix style.
+	* ui/main.glade: Tweak.
+
+2004-01-19  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (chat_window_update_tooltip): Remove
+	the "Status:" from the tooltip.
+
 	* src/gossip-app.c: (app_authentication_cb),
 	(app_client_disconnected_cb): Make the presence button sensitive
 	only when we're connected.

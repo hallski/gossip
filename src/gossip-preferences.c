@@ -639,11 +639,11 @@ gossip_preferences_show_status_editor (void)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_add_attribute (col, cell,  "pixbuf", COL_TYPE);
+	gtk_tree_view_column_add_attribute (col, cell, "pixbuf", COL_TYPE);
 	
 	cell = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
-	gtk_tree_view_column_add_attribute (col, cell,  "text", COL_STRING);
+	gtk_tree_view_column_add_attribute (col, cell, "text", COL_STRING);
 	
 	gtk_tree_view_append_column (GTK_TREE_VIEW (editor->treeview), col);
 

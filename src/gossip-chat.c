@@ -448,6 +448,8 @@ chat_send (GossipChat  *chat,
 
 	priv = chat->priv;
 
+	gossip_app_status_force_nonaway ();
+
         if (msg == NULL || msg[0] == '\0') {
                 return;
         }

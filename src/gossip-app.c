@@ -61,7 +61,7 @@
 #define	AUTO_AWAY_TIME (5*60)
 #define	AUTO_EXT_AWAY_TIME (30*60)
 #define FLASH_TIMEOUT 400
-#define STATUS_ENTRY_TIMEOUT (15*1000)
+#define STATUS_ENTRY_TIMEOUT (30*1000)
 
 #define d(x)
 
@@ -2151,6 +2151,26 @@ app_update_show (void)
 	g_free (status_text);
 }
 
+void
+gossip_app_status_force_nonaway (void)
+{
+	GossipAppPriv *priv = app->priv;
+
+	if (priv->auto_show != GOSSIP_SHOW_AWAY && priv->auto_show != GOSSIP_SHOW_EXT_AWAY) {
+		return;
+	}
+
+	gossip_idle_reset ();
+
+	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+
+	g_free (priv->overridden_away_message);
+	priv->overridden_away_message = NULL;
+
+	/* Force the idle check to be done so we don't get a 5 second delay. */
+	app_update_show ();
+}
+
 static void
 app_status_align_menu (GtkMenu  *menu,
 		       gint     *x,
@@ -2202,14 +2222,20 @@ app_status_available_activate_cb (GtkWidget *item,
 	gossip_idle_reset ();
 
 	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
-	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+//	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
 	str = g_object_get_data (G_OBJECT (item), "status");
 
 	g_free (priv->status_text);
 	priv->status_text = g_strdup (str);
 	
+	gossip_app_status_force_nonaway ();
+/*	
+	g_free (priv->overridden_away_message);
+	priv->overridden_away_message = NULL;
+	
 	app_update_show ();
+*/
 }
 
 static void
@@ -2222,14 +2248,19 @@ app_status_busy_activate_cb (GtkWidget *item,
 	gossip_idle_reset ();
 	
 	priv->explicit_show = GOSSIP_SHOW_BUSY;
-	priv->auto_show = GOSSIP_SHOW_BUSY;
+//	priv->auto_show = GOSSIP_SHOW_BUSY;
 	
 	str = g_object_get_data (G_OBJECT (item), "status");
 
 	g_free (priv->status_text);
 	priv->status_text = g_strdup (str);
+
+	gossip_app_status_force_nonaway ();
 	
-	app_update_show ();
+/*g_free (priv->overridden_away_message);
+	priv->overridden_away_message = NULL;
+*/
+//	app_update_show ();
 }
 
 static void
