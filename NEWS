@@ -1,17 +1,19 @@
 News in 0.7:
 ============
-* Fixes to chat window (URL matching, Clear chat supported).
-* New Application icon from Dan Taylor.
-* Made the chat window entry autoexpand instead of disclosure widget)
+* Fixes to chat window (URL matching, clear chat supported).
+* New application icon from Dan Taylor.
+* Made the chat window entry autoexpand instead of disclosure widget
 * Store state of contact list window (visability, position and size) between
   sessions.
 * Don't show groups with no contacts.
 * Presence setting system greatly improved.
 * Edit groups support added.
 * Made the autoback timeout longer (30 secs).
-* Better keynav support
-* Couple of crash fixes
-* Several smaller bugs fixed
+* Better keynav support.
+* A couple of crash fixes.
+* Several smaller bugs fixed.
+* Updated and new translations (ca, cs, da, es, eu, it, ms, nl, no, pt,
+  sr@Latn, sr, sv)
 
 News in 0.6:
 ============
