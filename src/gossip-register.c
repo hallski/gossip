@@ -111,7 +111,7 @@ register_connection_open_cb (LmConnection        *connection,
 
 	jid = gossip_account_get_jid (data->account);
 	
-	msg = lm_message_new_with_sub_type (gossip_jid_get_without_resource (jid),
+	msg = lm_message_new_with_sub_type (NULL,
 					    LM_MESSAGE_TYPE_IQ,
 					    LM_MESSAGE_SUB_TYPE_SET);
 	
