@@ -19,8 +19,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-03 02:24+0200\n"
-"PO-Revision-Date: 2003-08-03 02:32+0200\n"
+"POT-Creation-Date: 2003-08-05 16:01+0200\n"
+"PO-Revision-Date: 2003-08-05 16:02+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -106,7 +106,7 @@ msgid "Whether or not to timestamp all messages in conversations."
 msgstr ""
 "Huruvida alla meddelanden ska tidsstämplas eller inte i konversationer."
 
-#: src/gossip-accounts-dialog.c:151
+#: src/gossip-accounts-dialog.c:154
 msgid "New account"
 msgstr "Nytt konto"
 
@@ -175,39 +175,44 @@ msgstr ""
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:483
+#: src/gossip-app.c:484
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:610
+# "Web site" är "webbplats". "Web page" är "webbsida".
+#: src/gossip-app.c:492
+msgid "Gossip Website"
+msgstr "Gossip-webbplatsen"
+
+#: src/gossip-app.c:616
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelande till."
 
-#: src/gossip-app.c:615
+#: src/gossip-app.c:621
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1074
+#: src/gossip-app.c:1075
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1656
+#: src/gossip-app.c:1657
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1846
+#: src/gossip-app.c:1855
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-chat.c:561
+#: src/gossip-chat.c:642
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:566 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detaljer:"
@@ -218,7 +223,7 @@ msgstr "Detaljer:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:720
+#: src/gossip-chat.c:807
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
@@ -226,7 +231,7 @@ msgstr "%sChatt - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:725
+#: src/gossip-chat.c:812
 #, c-format
 msgid "%sChat"
 msgstr "%sChatta"
@@ -974,6 +979,12 @@ msgstr "_Skicka chattmeddelande..."
 #: ui/main.glade.h:97
 msgid "minutes"
 msgstr "minuter"
+
+#~ msgid "Website"
+#~ msgstr "Webbplats"
+
+#~ msgid "Website:"
+#~ msgstr "Webbplats:"
 
 #~ msgid "Automatic away enabled"
 #~ msgstr "Automatisk frånvaro aktiverad"
