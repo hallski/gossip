@@ -239,7 +239,7 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 {
 	gboolean       has_account;
 	const gchar   *jid;
-	gchar         *label_text;
+	gchar         *str;
 	GossipAccount *account;
 	
   	gnome_druid_set_show_finish (GNOME_DRUID (startup_druid->druid), TRUE);
@@ -249,15 +249,18 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 	jid = gossip_jid_get_without_resource (gossip_account_get_jid (account));
 
 	if (has_account) {
-		label_text = g_strdup_printf (_("Gossip will now try to use your account:\n<b>%s</b>"), jid);
+		str = g_strdup_printf ("%s\n<b>%s</b>.",
+				       _("Gossip will now try to use your account:"),
+				       jid);
 	} else {
-		label_text = g_strdup_printf (_("Gossip will now try to register the account:\n<b>%s</b>."), jid);
+		str = g_strdup_printf ("%s\n<b>%s</b>.",
+				       _("Gossip will now try to register the account:"),
+				       jid);
 	}
 
-	gtk_label_set_markup (GTK_LABEL (startup_druid->last_action_label),
-			      label_text);
+	gtk_label_set_markup (GTK_LABEL (startup_druid->last_action_label), str);
 	
-	g_free (label_text);
+	g_free (str);
 	gossip_account_store (account, NULL);
 	gossip_account_unref (account);
 }

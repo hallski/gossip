@@ -770,7 +770,6 @@ utils_url_event_cb (GtkTextTag    *tag,
 {
 	GtkTextIter  start, end;
 	gchar       *str;
-	GError      *error= NULL;                                            
 			
 	if (event->type == GDK_BUTTON_RELEASE && event->button.button == 1) {
 		start = end = *iter;
@@ -782,18 +781,7 @@ utils_url_event_cb (GtkTextTag    *tag,
 							&end,
 							FALSE);
 			
-			gnome_url_show (str, &error);
-			if (error) {                                                    
-				gchar *message;                                          
-				
-				message = g_strdup_printf (_("Could not open the address \"%s\": %s"),
-							   str, error->message);  
-				
-				/* FIXME: show dialog */
-				g_free (message);                                       
-				g_error_free (error);                                   
-			}                                                               
-			
+			gnome_url_show (str, NULL);
 			g_free (str);
 		}
 	}

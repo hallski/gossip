@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-18 23:49+0200\n"
+"POT-Creation-Date: 2003-08-19 13:00+0200\n"
 "PO-Revision-Date: 2003-08-05 16:02+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -337,34 +337,19 @@ msgstr ""
 "%s"
 
 # Dessa meddelanden slutar inte båda i punkt, borde kanske rapporteras
-#: src/gossip-startup-druid.c:252
-#, c-format
-msgid ""
-"Gossip will now try to use your account:\n"
-"<b>%s</b>"
-msgstr ""
-"Gossip kommer nu att försöka använda ditt konto:\n"
-"<b>%s</b>"
+#: src/gossip-startup-druid.c:253
+msgid "Gossip will now try to use your account:"
+msgstr "Gossip kommer nu att försöka använda ditt konto:"
 
-#: src/gossip-startup-druid.c:254
-#, c-format
-msgid ""
-"Gossip will now try to register the account:\n"
-"<b>%s</b>."
-msgstr ""
-"Gossip kommer nu att försöka registrera kontot:\n"
-"<b>%s</b>."
+#: src/gossip-startup-druid.c:257
+msgid "Gossip will now try to register the account:"
+msgstr "Gossip kommer nu att försöka registrera kontot:"
 
-#: src/gossip-utils.c:789
-#, c-format
-msgid "Could not open the address \"%s\": %s"
-msgstr "Kunde inte öppna adressen \"%s\": %s"
-
-#: src/gossip-utils.c:1246
+#: src/gossip-utils.c:1234
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
-#: src/gossip-utils.c:1248
+#: src/gossip-utils.c:1236
 msgid "Remember Password?"
 msgstr "Kom ihåg lösenord?"
 
@@ -379,17 +364,16 @@ msgid "*"
 msgstr "*"
 
 #: ui/chat.glade.h:3
-msgid "<b>Chat with: </b>"
-msgstr "<b>Chatt med: </b>"
+msgid "<b>Chat with:</b>"
+msgstr "<b>Chatt med:</b>"
 
 #: ui/chat.glade.h:4
-msgid "Click to get the user's contact information"
-msgstr "Klicka för att få användarens kontaktinformation"
+msgid "From:"
+msgstr "Från:"
 
-# Extra eftersläpande blanksteg är oftast onödiga och bör rapporteras
 #: ui/chat.glade.h:5
-msgid "From: "
-msgstr "Från: "
+msgid "Get information about this contact"
+msgstr "Hämta information om denna kontakt"
 
 #: ui/chat.glade.h:6
 msgid "Gossip - Chat"
@@ -877,76 +861,92 @@ msgid "What nickname do you want to use for this contact?"
 msgstr "Vilket smeknamn vill du använda för denna kontakt?"
 
 #: ui/main.glade.h:81
-msgid "What request message do you want to send to <b>micke</b>?"
-msgstr "Vilket förfrågansmeddelande vill du skicka till <b>micke</b>?"
-
-#: ui/main.glade.h:82
 msgid "What server do you want to use?"
 msgstr "Vilken server vill du använda?"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:82
 msgid "What username do you use?"
 msgstr "Vad använder du för användarnamn?"
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:83
 msgid "What username do you want to use?"
 msgstr "Vilket användarnamn vill du använda?"
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:84
 msgid "Yes"
 msgstr "Ja"
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:85
 msgid "Your Identity"
 msgstr "Din identitet"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:86
 msgid "_Actions"
 msgstr "_Åtgärder"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:87
 msgid "_Add Contact..."
 msgstr "_Lägg till kontakt..."
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:88
 msgid "_Approve"
 msgstr "_Godkänn"
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:89
 msgid "_Connect..."
 msgstr "_Anslut..."
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:90
 msgid "_Defer"
 msgstr "_Skjut upp"
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:91
 msgid "_Disconnect"
 msgstr "_Koppla ifrån"
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:92
 msgid "_Edit statuses..."
 msgstr "_Redigera statusar..."
 
-#: ui/main.glade.h:94
+#: ui/main.glade.h:93
 msgid "_Join Group Chat..."
 msgstr "_Gå in i gruppchatt..."
 
-#: ui/main.glade.h:95
+#: ui/main.glade.h:94
 msgid "_Reject"
 msgstr "_Neka"
 
-#: ui/main.glade.h:96
+#: ui/main.glade.h:95
 msgid "_Search..."
 msgstr "_Sök..."
 
-#: ui/main.glade.h:97
+#: ui/main.glade.h:96
 msgid "_Send Chat Message..."
 msgstr "Skicka _chattmeddelande..."
 
-#: ui/main.glade.h:98
+#: ui/main.glade.h:97
 msgid "minutes"
 msgstr "minuter"
+
+#~ msgid "Could not open the address \"%s\": %s"
+#~ msgstr "Kunde inte öppna adressen \"%s\": %s"
+
+#~ msgid ""
+#~ "Gossip will now try to register the account:\n"
+#~ "<b>%s</b>."
+#~ msgstr ""
+#~ "Gossip kommer nu att försöka registrera kontot:\n"
+#~ "<b>%s</b>."
+
+#, fuzzy
+#~ msgid "Retrieve contact information for the user"
+#~ msgstr "Kontaktinformation för %s"
+
+#~ msgid "<b>Chat with: </b>"
+#~ msgstr "<b>Chatt med: </b>"
+
+#~ msgid "Click to get the user's contact information"
+#~ msgstr "Klicka för att få användarens kontaktinformation"
 
 #~ msgid "<b>Account information</b>"
 #~ msgstr "<b>Kontoinformation</b>"
@@ -1096,9 +1096,6 @@ msgstr "minuter"
 #~ msgid "What request message do you want to send to <b>%s</b>?"
 #~ msgstr "Vilket förfrågansmeddelande vill du skicka till <b>%s</b>?"
 
-#~ msgid "<b>Chat with:</b>"
-#~ msgstr "<b>Chatt med:</b>"
-
 #~ msgid "Chat with: "
 #~ msgstr "Chatt med: "
 
@@ -1121,9 +1118,6 @@ msgstr "minuter"
 #~ msgstr ""
 #~ "Välj en favorit, eller ange smeknamn, servernamn och namnet på "
 #~ "chattrummet du vill gå in i."
-
-#~ msgid "Information about %s"
-#~ msgstr "Information om %s"
 
 #~ msgid "Add"
 #~ msgstr "Lägg till"
@@ -1171,16 +1165,6 @@ msgstr "minuter"
 
 #~ msgid "Contact _Information"
 #~ msgstr "Kontakt_information"
-
-#~ msgid ""
-#~ "Gossip will now try to register the account:\n"
-#~ "<b>%s</b>"
-#~ msgstr ""
-#~ "Gossip kommer nu att försöka registrera kontot:\n"
-#~ "<b>%s</b>"
-
-#~ msgid "From:"
-#~ msgstr "Från:"
 
 #~ msgid "What account do you want to use for this connection?"
 #~ msgstr "Vilket konto vill du använda för denna anslutning?"
