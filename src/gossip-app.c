@@ -183,6 +183,10 @@ static void     app_join_group_chat_cb               (GtkWidget          *widget
 static void     app_connection_open_cb               (LmConnection       *connection,
 						      gboolean            result,
 						      GossipApp          *app);
+static LmSSLResponse
+app_connection_ssl_func                              (LmConnection       *connection,
+						      LmSSLStatus         status,
+						      GossipApp          *app);
 static void     app_authentication_cb                (LmConnection       *connection,
 						      gboolean            result,
 						      GossipApp          *app);
@@ -1173,6 +1177,14 @@ app_connection_open_cb (LmConnection *connection,
 	g_free (password);
 }
 
+static LmSSLResponse
+app_connection_ssl_func (LmConnection *connection,
+			 LmSSLStatus   status,
+			 GossipApp    *app)
+{
+	return LM_SSL_RESPONSE_STOP;
+}
+
 static void
 app_client_disconnected_cb (LmConnection       *connection,
 			    LmDisconnectReason  reason, 
@@ -1300,6 +1312,7 @@ gossip_app_connect (void)
 	GossipAppPriv *priv;
 	GossipAccount *account;
 	GError        *error = NULL;
+	gboolean       result;
 
 	priv = app->priv;
 
@@ -1319,34 +1332,39 @@ gossip_app_connect (void)
 	
 	lm_connection_set_server (priv->connection, account->server);
 	lm_connection_set_port (priv->connection, account->port);
-	lm_connection_set_use_ssl (priv->connection, account->use_ssl);
+	
+	if (account->use_ssl) {
+		result = lm_connection_open_ssl (priv->connection,
+						 NULL,
+						 (LmSSLFunction) app_connection_ssl_func,
+						 (LmResultFunction) app_connection_open_cb,
+						 app, NULL, &error);
+	} else {
+		result = lm_connection_open (priv->connection,
+					     (LmResultFunction) app_connection_open_cb,
+					     app, NULL, &error);
+	}
 
- 	if (!lm_connection_open (priv->connection,
- 				 (LmResultFunction) app_connection_open_cb,
- 				 app, NULL, &error)) {
- 		
- 		if (error) {
- 			GtkWidget *dialog;
+	if (result == FALSE && error) {
+		GtkWidget *dialog;
+
+		d(g_print ("Failed to connect, error:%d, %s\n", error->code, error->reason));
+
+		dialog = gossip_hig_dialog_new (GTK_WINDOW (priv->window),
+						GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+						GTK_MESSAGE_ERROR,
+						GTK_BUTTONS_OK,
+						"Unable to connect",
+						"%s\n%s",
+						_("Make sure that your account information is correct."),
+						_("The server may currently be unavailable."));
 			
- 			d(g_print ("Failed to connect, error:%d, %s\n", error->code, error->reason));
 
-			dialog = gossip_hig_dialog_new (
-				GTK_WINDOW (priv->window),
-				GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
-				GTK_MESSAGE_ERROR,
-				GTK_BUTTONS_OK,
-				"Unable to connect",
-				"%s\n%s",
-				_("Make sure that your account information is correct."),
-				_("The server may currently be unavailable."));
-			
- 			
- 			gtk_dialog_run (GTK_DIALOG (dialog));
- 			gtk_widget_destroy (dialog);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
 
-			g_error_free (error);
- 		}
- 	}
+		g_error_free (error);
+	}
 }
 
 void
@@ -1399,7 +1417,6 @@ app_create_connection (void)
 
 	priv->connection = lm_connection_new (priv->account->server);
 	lm_connection_set_port (priv->connection, priv->account->port);
-	lm_connection_set_use_ssl (priv->connection, priv->account->use_ssl);
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) app_message_handler, 
 					  app, NULL);
@@ -1426,8 +1443,6 @@ app_create_connection (void)
 	lm_connection_set_disconnect_function (priv->connection, 
 			(LmDisconnectFunction) app_client_disconnected_cb, 
 			app, NULL);
-			
-
 }
 
 static void

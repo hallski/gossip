@@ -1,5 +1,13 @@
 2003-12-15  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c:
+	(app_connection_ssl_func),
+	(gossip_app_connect), 
+	(app_create_connection): Updated to compile with the new SSL-API in 
+	Loudmouth, please report any problems with the SSL parts.
+
+2003-12-15  Mikael Hallendal  <micke@imendio.com>
+
 	* gossip.desktop.in:  
 	* ui/pixmaps/Makefile.am: 
 	* ui/pixmaps/gossip.png:
