@@ -1,3 +1,18 @@
+2003-07-12  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-roster.c (roster_iq_handler): Remove user from the
+	tree store when we get "remove" subscription.
+	(roster_presence_handler): Don't do anything if we don't have the
+	user in the list.
+	(roster_menu_remove_cb): Remove item from roster.
+
+2003-07-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-roster.c (roster_menu_rename_cb): Popup dialog for
+	entering new name. Send rename message.
+
+	* src/gossip-utils.c (password_dialog_activate_cb): Fix prototype.
+
 2003-07-11  Jordi Mallach  <jordi@sindominio.net>
 
 	* gossip.schemas.in: Try to improve some strings removing redundant

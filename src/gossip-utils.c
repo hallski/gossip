@@ -1244,7 +1244,7 @@ gossip_utils_get_status_from_type_show (LmMessageSubType  type,
 }
 
 static void
-password_dialog_activate_cb (GtkWidget *entry, gpointer dialog)
+password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
 {
 	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
 }

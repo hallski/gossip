@@ -401,6 +401,8 @@ roster_menu_remove_cb (gpointer   callback_data,
 	GtkWidget        *dialog;
 	gint              response;
 	LmMessage        *m;
+	LmMessageNode    *node;
+	GossipJID        *jid;
 	
 	priv = roster->priv;
 
@@ -408,7 +410,7 @@ roster_menu_remove_cb (gpointer   callback_data,
 	if (!item) {
 		return;
 	}
-	
+
 	str = g_strdup_printf ("<b>%s</b>", 
 			       gossip_jid_get_without_resource (item->jid));
 
@@ -418,7 +420,7 @@ roster_menu_remove_cb (gpointer   callback_data,
 					 GTK_BUTTONS_YES_NO,
 					 _("Do you want to remove the contact\n"
 					   "%s\n"
-					   "from you contact list?"),
+					   "from your contact list?"),
 					 str);
 	
 	g_free (str);
@@ -435,13 +437,36 @@ roster_menu_remove_cb (gpointer   callback_data,
 		return;
 	}
 
+	jid = gossip_jid_ref (item->jid);
+	
+	/* Remove from roster. */
+ 	m = lm_message_new_with_sub_type (NULL,
+ 					  LM_MESSAGE_TYPE_IQ,
+ 					  LM_MESSAGE_SUB_TYPE_SET);
+	
+ 	node = lm_message_node_add_child (m->node, "query", NULL);
+ 	lm_message_node_set_attribute (node,
+				       "xmlns",
+				       "jabber:iq:roster");
+	
+ 	node = lm_message_node_add_child (node, "item", NULL);
+ 	lm_message_node_set_attributes (node,
+					"jid", gossip_jid_get_without_resource (jid),
+					"subscription", "remove",
+					NULL);
+ 	
+ 	lm_connection_send (priv->connection, m, NULL);
+ 	lm_message_unref (m);
+
 	/* Unsubscribe. */
-	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (item->jid),
+	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (jid),
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE);
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
-	
+
+	gossip_jid_unref (item->jid);
+
 	/* FIXME: if the selected item is an agent, we need to unregister too. */
 }
 
@@ -461,16 +486,95 @@ roster_menu_info_cb (gpointer   callback_data,
 }
 
 static void
+roster_rename_activate_cb (GtkWidget *entry, GtkDialog *dialog)
+{
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+}
+
+static void
 roster_menu_rename_cb (gpointer   callback_data,
 		       guint      action,
 		       GtkWidget *widget)
 {
 	GossipRoster     *roster = callback_data;
+	GossipRosterPriv *priv;
 	GossipRosterItem *item;
+	GtkWidget        *dialog;
+	GtkWidget        *entry, *hbox;
+	gchar            *str;
+	LmMessage        *m;
+	LmMessageNode    *node;
 
+	priv = roster->priv;
+	
 	item = roster_get_selected_item (roster);
 	
-	g_print ("FIXME: Rename user: '%s'\n", item->name);
+	str = g_strdup_printf ("<b>%s</b>", 
+			       gossip_jid_get_without_resource (item->jid));
+       	
+	dialog = gtk_message_dialog_new (NULL,
+					 0,
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_OK_CANCEL,
+					 _("Please enter a new nick for the contact\n%s"),
+					 str);
+
+	g_free (str);
+	
+	gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
+	
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
+		      "use-markup", TRUE,
+		      NULL);
+
+	entry = gtk_entry_new ();
+	gtk_widget_show (entry);
+
+	gtk_entry_set_text (GTK_ENTRY (entry), item->name);
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	
+	g_signal_connect (entry,
+			  "activate",
+			  G_CALLBACK (roster_rename_activate_cb),
+			  dialog);
+	
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox);
+	
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, TRUE, 4);
+	
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
+		str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+	} else {
+		str = NULL;
+	}
+	
+	gtk_widget_destroy (dialog);
+
+	if (!str || !str[0]) {
+		return;
+	}
+	
+	m = lm_message_new_with_sub_type (NULL, 
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
+	node = lm_message_node_add_child (m->node, "query", NULL);
+	lm_message_node_set_attributes (node,
+					"xmlns", "jabber:iq:roster",
+					NULL);
+
+	node = lm_message_node_add_child (node, "item", NULL);
+	lm_message_node_set_attributes (node, 
+					"jid", gossip_jid_get_without_resource (item->jid),
+					"name", str,
+					NULL);
+
+	g_free (str);
+	
+	lm_connection_send (priv->connection, m, NULL);
+	
+	lm_message_unref (m);
 }
 
 static gboolean
@@ -858,9 +962,6 @@ roster_presence_handler (LmMessageHandler *handler,
 		/* FIXME: We should probably remove the item from the list
 		 * here?
 		 */
-
-		g_print ("Roster got 'unsubscribed'\n");
-		
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 
 	default:
@@ -894,6 +995,10 @@ roster_presence_handler (LmMessageHandler *handler,
 
 	gossip_jid_unref (data.jid);
 	iter = data.found_iter;
+
+	if (!data.found) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 	
 	if (gtk_tree_model_iter_parent (model, &old_group_iter, &iter)) {
 		
@@ -1025,8 +1130,11 @@ roster_iq_handler (LmMessageHandler *handler,
 		   LmMessage        *m,
 		   GossipRoster     *roster)
 {
-	LmMessageNode *node;
-	const gchar   *xmlns;
+	GossipRosterPriv *priv;
+	LmMessageNode    *node;
+	const gchar      *xmlns;
+
+	priv = roster->priv;
 	
 	node = lm_message_node_get_child (m->node, "query");
 	if (!node) {
@@ -1055,22 +1163,44 @@ roster_iq_handler (LmMessageHandler *handler,
 			subscription = lm_message_node_get_attribute (
 				node, "subscription");
 			ask = lm_message_node_get_attribute (node, "ask");
-			
-			group_node = lm_message_node_get_child (node, "group");
-			if (group_node && group_node->value) {
-				group = group_node->value;
+
+			if (strcmp (subscription, "remove") == 0) {
+				GtkTreeModel *model;
+				FindUserData  data;
+				
+				model = gtk_tree_view_get_model (GTK_TREE_VIEW (roster));
+				
+				data.found = FALSE;
+				data.roster = roster;
+				data.jid = jid;
+				gtk_tree_model_foreach (
+					model,
+					(GtkTreeModelForeachFunc) roster_find_user_foreach,
+					&data);
+
+				if (data.found) {
+					gtk_tree_store_remove (GTK_TREE_STORE (model), &data.found_iter);
+				}
+				
+				g_hash_table_remove (priv->contacts,
+						     gossip_jid_get_without_resource (jid));
 			} else {
-				group = _(OTHERS_GROUP);
-			}
+				group_node = lm_message_node_get_child (node, "group");
+				if (group_node && group_node->value) {
+					group = group_node->value;
+				} else {
+					group = _(OTHERS_GROUP);
+				}
 
-			if (!name) {
+				if (!name) {
+					gossip_jid_unref (jid);
+					continue;
+				}
+				
+				roster_update_user (roster, jid, name, 
+						    subscription, ask, group);
 				gossip_jid_unref (jid);
-				continue;
 			}
-
-			roster_update_user (roster, jid, name, 
-					    subscription, ask, group);
-			gossip_jid_unref (jid);
 		}
 	}
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -1189,6 +1319,17 @@ roster_update_user (GossipRoster *roster,
 		return;
 	}
 
+/*	if (strcmp (subscription, "remove") == 0) {
+		find.roster = roster;
+		find.jid = jid;
+		gtk_tree_model_foreach (model,
+				(GtkTreeModelForeachFunc) roster_find_user_foreach,
+				&find);
+		iter = find.found_iter;
+		gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
+		g_hash_table_remove (priv->contacts, gossip_jid_get_without_resource (jid));
+	}
+*/
 	/* User is online and have changed group, we need to move him */
 	/* in the roster */
 	
