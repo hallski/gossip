@@ -1,3 +1,8 @@
+2004-01-13  Martyn Russell  <ginxd@btopenworld.com>
+
+	* src/gossip-edit-groups-dialog.c: 
+	- New module for editing groups.
+
 2004-01-12  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_about_cb): Updated gossip page url.

@@ -28,6 +28,7 @@
 #include "gossip-roster.h"
 #include "gossip-marshal.h"
 #include "gossip-contact-info.h"
+#include "gossip-edit-groups-dialog.h"
 #include "gossip-stock.h"
 #include "gossip-utils.h"
 #include "gossip-roster-view.h"
@@ -57,92 +58,95 @@ typedef struct {
 	guint    flash_timeout_id;
 } FlashData;
 
-static void     roster_view_class_init            (GossipRosterViewClass *klass);
-static void     roster_view_init                  (GossipRosterView      *view);
-static void     roster_view_finalize              (GObject               *object);
+static void     roster_view_class_init               (GossipRosterViewClass *klass);
+static void     roster_view_init                     (GossipRosterView      *view);
+static void     roster_view_finalize                 (GObject               *object);
 static GtkTreeModel *
-roster_view_create_store                          (GossipRosterView      *view);
-static void     roster_view_setup_tree            (GossipRosterView      *view);
-static void     roster_view_item_added            (GossipRoster          *roster,
-						   GossipRosterItem      *item,
-						   GossipRosterView      *view);
-static void     roster_view_item_updated          (GossipRoster          *roster,
-						   GossipRosterItem      *item,
-						   GossipRosterView      *view);
-static void     roster_view_item_presence_updated (GossipRoster          *roster,
-						   GossipRosterItem      *item,
-						   GossipRosterView      *view);
-static void     roster_view_item_removed          (GossipRoster          *roster,
-						   GossipRosterItem      *item,
-						   GossipRosterView      *view);
-static void     roster_view_group_added           (GossipRoster          *roster,
-						   GossipRosterGroup     *group,
-						   GossipRosterView      *view);
-static void     roster_view_group_removed         (GossipRoster          *roster,
-						   GossipRosterGroup     *group,
-						   GossipRosterView      *view);
-static gint     roster_view_iter_compare_func     (GtkTreeModel          *model,
-						   GtkTreeIter           *iter_a,
-						   GtkTreeIter           *iter_b,
-						   gpointer               user_data);
-static void     roster_view_pixbuf_cell_data_func (GtkTreeViewColumn     *tree_column,
-						   GtkCellRenderer       *cell,
-						   GtkTreeModel          *tree_model,
-						   GtkTreeIter           *iter,
-						   GossipRosterView      *view);
-static void     roster_view_name_cell_data_func   (GtkTreeViewColumn     *tree_column,
-						   GtkCellRenderer       *cell,
-						   GtkTreeModel          *tree_model,
-						   GtkTreeIter           *iter,
-						   GossipRosterView      *view);
-static gboolean roster_view_find_group            (GossipRosterView      *view,
-						   GtkTreeIter           *iter,
-						   const gchar           *name);
-static gboolean roster_view_find_item             (GossipRosterView      *view,
-						   GtkTreeIter           *iter,
-						   GossipRosterItem      *item,
-						   GossipRosterGroup     *group);
+roster_view_create_store                             (GossipRosterView      *view);
+static void     roster_view_setup_tree               (GossipRosterView      *view);
+static void     roster_view_item_added               (GossipRoster          *roster,
+						      GossipRosterItem      *item,
+						      GossipRosterView      *view);
+static void     roster_view_item_updated             (GossipRoster          *roster,
+						      GossipRosterItem      *item,
+						      GossipRosterView      *view);
+static void     roster_view_item_presence_updated    (GossipRoster          *roster,
+						      GossipRosterItem      *item,
+						      GossipRosterView      *view);
+static void     roster_view_item_removed             (GossipRoster          *roster,
+						      GossipRosterItem      *item,
+						      GossipRosterView      *view);
+static void     roster_view_group_added              (GossipRoster          *roster,
+						      GossipRosterGroup     *group,
+						      GossipRosterView      *view);
+static void     roster_view_group_removed            (GossipRoster          *roster,
+						      GossipRosterGroup     *group,
+						      GossipRosterView      *view);
+static gint     roster_view_iter_compare_func        (GtkTreeModel          *model,
+						      GtkTreeIter           *iter_a,
+						      GtkTreeIter           *iter_b,
+						      gpointer               user_data);
+static void     roster_view_pixbuf_cell_data_func    (GtkTreeViewColumn     *tree_column,
+						      GtkCellRenderer       *cell,
+						      GtkTreeModel          *tree_model,
+						      GtkTreeIter           *iter,
+						      GossipRosterView      *view);
+static void     roster_view_name_cell_data_func      (GtkTreeViewColumn     *tree_column,
+						      GtkCellRenderer       *cell,
+						      GtkTreeModel          *tree_model,
+						      GtkTreeIter           *iter,
+						      GossipRosterView      *view);
+static gboolean roster_view_find_group               (GossipRosterView      *view,
+						      GtkTreeIter           *iter,
+						      const gchar           *name);
+static gboolean roster_view_find_item                (GossipRosterView      *view,
+						      GtkTreeIter           *iter,
+						      GossipRosterItem      *item,
+						      GossipRosterGroup     *group);
 static gboolean
-roster_view_button_press_event_cb                 (GossipRosterView      *view,
-						   GdkEventButton        *event,
-						   gpointer               data);
-static void     roster_view_row_activated_cb      (GossipRosterView      *view,
-						   GtkTreePath           *path,
-						   GtkTreeViewColumn     *col,
-						   gpointer               data);
-static void     roster_view_item_menu_remove_cb   (gpointer               data,
-						   guint                  action,
-						   GtkWidget             *widget);
-static void     roster_view_item_menu_info_cb     (gpointer               data,
-						   guint                  action,
-						   GtkWidget             *widget);
-static void     roster_view_item_menu_log_cb      (gpointer               data,
-						   guint                  action,
-						   GtkWidget             *widget);
-static void     roster_view_item_menu_rename_cb   (gpointer               data,
-						   guint                  action,
-						   GtkWidget             *widget);
-static void     roster_view_group_menu_rename_cb  (gpointer               data,
-						   guint                  action,
-						   GtkWidget             *widget);
-static gchar *
-roster_view_item_factory_translate_func           (const gchar           *path,
-						   gpointer               data);
-static void     roster_view_flash_free_data       (FlashData             *data);
-static void     roster_view_add_item              (GossipRosterView      *view,
-						   GossipRosterItem      *item,
-						   GossipRosterGroup     *group);
+roster_view_button_press_event_cb                    (GossipRosterView      *view,
+						      GdkEventButton        *event,
+						      gpointer               data);
+static void     roster_view_row_activated_cb         (GossipRosterView      *view,
+						      GtkTreePath           *path,
+						      GtkTreeViewColumn     *col,
+						      gpointer               data);
+static void     roster_view_item_menu_remove_cb      (gpointer               data,
+						      guint                  action,
+						      GtkWidget             *widget);
+static void     roster_view_item_menu_info_cb        (gpointer               data,
+						      guint                  action,
+						      GtkWidget             *widget);
+static void     roster_view_item_menu_log_cb         (gpointer               data,
+						      guint                  action,
+						      GtkWidget             *widget);
+static void     roster_view_item_menu_rename_cb      (gpointer               data,
+						      guint                  action,
+						      GtkWidget             *widget);
+static void     roster_view_item_menu_edit_groups_cb (gpointer               data,
+						      guint                  action,
+						      GtkWidget             *widget);
+static void     roster_view_group_menu_rename_cb     (gpointer               data,
+						      guint                  action,
+						      GtkWidget             *widget);
+static gchar *  
+roster_view_item_factory_translate_func              (const gchar           *path,
+						      gpointer               data);
+static void     roster_view_flash_free_data          (FlashData             *data);
+static void     roster_view_add_item                 (GossipRosterView      *view,
+						      GossipRosterItem      *item,
+						      GossipRosterGroup     *group);
 static gboolean
-roster_view_remove_item_with_iter                 (GossipRosterView      *view,
-						   GtkTreeIter           *iter,
-						   GossipRosterItem      *item,
-						   GossipRosterGroup     *group);
-static void     roster_view_remove_item           (GossipRosterView      *view,
-						   GossipRosterItem      *item,
-						   GossipRosterGroup     *group);
-static gboolean roster_view_iter_equal_item       (GtkTreeModel          *model,
-						   GtkTreeIter           *iter,
-						   GossipRosterItem      *item);
+roster_view_remove_item_with_iter                    (GossipRosterView      *view,
+						      GtkTreeIter           *iter,
+						      GossipRosterItem      *item,
+						      GossipRosterGroup     *group);
+static void     roster_view_remove_item              (GossipRosterView      *view,
+						      GossipRosterItem      *item,
+						      GossipRosterGroup     *group);
+static gboolean roster_view_iter_equal_item          (GtkTreeModel          *model,
+						      GtkTreeIter           *iter,
+						      GossipRosterItem      *item);
 
 
 
@@ -157,6 +161,7 @@ enum {
 	ITEM_MENU_REMOVE,
 	ITEM_MENU_INFO,
 	ITEM_MENU_RENAME,
+	ITEM_MENU_EDIT_GROUPS,
 	ITEM_MENU_LOG
 };
 
@@ -187,6 +192,14 @@ static GtkItemFactoryEntry item_menu_items[] = {
 		NULL,
 		GIF_CB (roster_view_item_menu_rename_cb),
 		ITEM_MENU_RENAME,
+		"<Item>",
+		NULL
+	},
+	{
+		N_("/_Edit groups"),
+		NULL,
+		GIF_CB (roster_view_item_menu_edit_groups_cb),
+		ITEM_MENU_EDIT_GROUPS,
 		"<Item>",
 		NULL
 	},
@@ -1351,6 +1364,23 @@ roster_view_item_menu_rename_cb (gpointer   data,
 	gossip_roster_rename_item (priv->roster, item, str);
 }
 
+static void
+roster_view_item_menu_edit_groups_cb (gpointer   data,
+				      guint      action,
+				      GtkWidget *widget)
+{
+	GossipRosterItem *item;
+
+	item = gossip_roster_view_get_selected_item (GOSSIP_ROSTER_VIEW (data));
+	if (!item) {
+		return;
+	}
+
+	gossip_edit_groups_new (gossip_roster_item_get_jid (item),
+				gossip_roster_item_get_name (item),
+				gossip_roster_item_get_groups (item));
+}
+
 static void 
 roster_view_group_menu_rename_cb (gpointer   data,
 				  guint      action,
@@ -1372,6 +1402,7 @@ roster_view_group_menu_rename_cb (gpointer   data,
 	priv = view->priv;
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		return;
 	}
