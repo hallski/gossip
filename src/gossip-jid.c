@@ -201,4 +201,31 @@ gossip_jid_string_is_valid_jid (const gchar *str_jid)
 	return TRUE;
 }
 
+gboolean
+gossip_jid_equal (gconstpointer v1, gconstpointer v2)
+{
+	const gchar *a, *b;
+
+	g_return_val_if_fail (v1 != NULL, FALSE);
+	g_return_val_if_fail (v2 != NULL, FALSE);
+
+	a = gossip_jid_get_without_resource ((GossipJID *) v1);
+	b = gossip_jid_get_without_resource ((GossipJID *) v2);
+
+	return g_ascii_strcasecmp (a, b) == 0;
+}
+
+guint
+gossip_jid_hash (gconstpointer key)
+{
+	GossipJID *jid = (GossipJID *) key;
+	gchar     *lower;
+	guint      ret_val;
+
+	lower = g_ascii_strdown (gossip_jid_get_without_resource (jid), -1);
+	ret_val = g_str_hash (lower);
+	g_free (lower);
+
+	return ret_val;
+}
 

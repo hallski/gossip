@@ -373,10 +373,7 @@ static GdkPixbuf *
 chat_window_get_status_pixbuf (GossipChatWindow *window,
 			       GossipChat *chat)
 {
-	GdkPixbuf       *pixbuf;
-	GossipShow	 show;
-	gboolean	 offline;
-	const gchar	*icon;
+	GdkPixbuf   *pixbuf;
 
 	if (g_list_find (window->priv->chats_new_msg, chat)) {
 		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
@@ -385,18 +382,17 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
 	}
 	else {
-		g_object_get (chat, 
-			      "other_offline", &offline,
-			      "other_show", &show,
-			      NULL);
+		GossipRosterItem *item;
 
-		if (offline) {
-			icon = GOSSIP_STOCK_OFFLINE;
+		item = gossip_chat_get_item (chat);
+		if (gossip_roster_item_is_offline (item)) {
+			pixbuf = gossip_utils_get_pixbuf_offline ();
 		} else {
-			icon = gossip_get_icon_for_show_string (gossip_show_to_string (show));
+			GossipShow show;
+
+			show  = gossip_roster_item_get_show (item);
+			pixbuf = gossip_utils_get_pixbuf_from_show (show);
 		}
-		
-		pixbuf = gossip_utils_get_pixbuf_from_stock (icon);
 	}
 
 	return pixbuf;
@@ -543,11 +539,11 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 			     GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv = window->priv;
-	GossipJID	     *jid;
+	GossipRosterItem     *item;
 
-	g_object_get (priv->current_chat, "jid", &jid, NULL);
-
-	gossip_log_show (jid);
+	item = gossip_chat_get_item (priv->current_chat);
+	
+	gossip_log_show (gossip_roster_item_get_jid (item));
 }
 
 static void
@@ -555,13 +551,13 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipJID            *jid;
+	GossipRosterItem     *item;
 	
 	priv = window->priv;
 
-	g_object_get (window->priv->current_chat, "jid", &jid, NULL);
+	item = gossip_chat_get_item (priv->current_chat);
 
-	gossip_contact_info_new (jid, 
+	gossip_contact_info_new (gossip_roster_item_get_jid (item),
 				 chat_window_get_name (window, priv->current_chat));
 }
 
@@ -752,13 +748,11 @@ static const gchar *
 chat_window_get_name (GossipChatWindow *window, GossipChat *chat)
 {
 	GossipChatWindowPriv *priv;
-	GossipJID            *jid;
 	GossipRosterItem     *item;
 
 	priv = window->priv;
-	
-	g_object_get (chat, "jid", &jid, NULL);
-	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
+
+	item = gossip_chat_get_item (chat);
 
 	return gossip_roster_item_get_name (item);
 }
@@ -857,6 +851,8 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 			    COL_STATUS_ICON, pixbuf,
 			    COL_NICK, chat_window_get_name (window, chat),
 			    -1);
+	/* BEFORE COMMIT, CHECK!? */
+	g_object_unref (pixbuf);
 
 	path = gtk_tree_model_get_path (GTK_TREE_MODEL (window->priv->store),
 					&iter);

@@ -1158,7 +1158,7 @@ app_item_activated_cb (GossipRosterView *roster,
 {
 	GossipChat *chat;
 
-	chat = gossip_chat_get_for_jid (gossip_roster_item_get_jid (item));
+	chat = gossip_chat_get_for_item (item);
 	gossip_chat_present (chat);
 
 	app_tray_pop_message (gossip_roster_item_get_jid (item));
@@ -1468,10 +1468,12 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 	GList       *l;
 
 	if (response == GTK_RESPONSE_OK) {
+		GossipRosterItem *item;
 		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
 		if (gossip_jid_string_is_valid_jid (str)) {
 			jid = gossip_jid_new (str);
-			chat = gossip_chat_get_for_jid (jid);
+			item = gossip_roster_get_item (gossip_app_get_roster (), jid);
+			chat = gossip_chat_get_for_item (item);
 			gossip_chat_present (chat);
 			gossip_jid_unref (jid);
 		} else {
@@ -1791,7 +1793,7 @@ app_tray_pop_message (GossipJID *jid)
 {
 	GossipAppPriv    *priv;
 	const gchar      *without_resource;
-	GossipChat       *chat;
+	GossipChat       *chat = NULL;
 	GList            *l;
 	GossipRosterItem *item;
 
@@ -1807,10 +1809,14 @@ app_tray_pop_message (GossipJID *jid)
 		jid = gossip_jid_new (priv->tray_flash_icons->data);
 	}
 	
-	chat = gossip_chat_get_for_jid (jid);
-	if (!chat) {
-		gossip_jid_unref (jid);
-		return FALSE;
+	item = gossip_roster_get_item (priv->roster, jid);
+	
+	if (item) {
+		chat = gossip_chat_get_for_item (item);
+		if (!chat) {
+			gossip_jid_unref (jid);
+			return FALSE;
+		}
 	}
 
 	gossip_chat_present (chat);
@@ -1840,7 +1846,6 @@ app_tray_pop_message (GossipJID *jid)
 
 	app_tray_update_tooltip ();
 
-	item = gossip_roster_get_item (priv->roster, jid);
 	if (item) {
 		gossip_roster_view_flash_item (priv->roster_view, item, FALSE);
 	}
@@ -1998,7 +2003,7 @@ app_update_show (void)
 	eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
 					status_text);
 
-	show = gossip_show_to_string (effective_show);
+	show = gossip_utils_show_to_string (effective_show);
 
 	switch (effective_show) {
 	case GOSSIP_SHOW_BUSY:

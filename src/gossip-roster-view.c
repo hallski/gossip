@@ -485,7 +485,8 @@ roster_view_group_item_added (GossipRoster      *roster,
 	GossipRosterViewPriv *priv;
 	GtkTreeIter           group_iter;
 	GtkTreeIter           iter;
-	gboolean              expand = FALSE;	
+	gboolean              expand = FALSE;
+	const gchar          *name;
 	
 	d(g_print ("Item '%s' added to group '%s'\n",
 		 gossip_roster_item_get_name (item),
@@ -493,7 +494,7 @@ roster_view_group_item_added (GossipRoster      *roster,
 		
 	priv = view->priv;
 	
-	const gchar *name = gossip_roster_group_get_name (group);
+	name = gossip_roster_group_get_name (group);
 		
 	if (!roster_view_find_group (view, &group_iter, name)) {
 		d(g_assert ("Inconsistency between GossipRoster and GossipRosterView, please report!"));

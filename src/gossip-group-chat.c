@@ -1150,7 +1150,7 @@ gossip_group_chat_set_show (GossipShow show)
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 	
-	show_str = gossip_show_to_string (show);
+	show_str = gossip_utils_show_to_string (show);
 	if (show) {
 		lm_message_node_add_child (m->node, "show", show_str);
 	}

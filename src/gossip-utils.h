@@ -79,12 +79,12 @@ GtkWidget *  gossip_hig_dialog_new                   (GtkWindow        *parent,
 						      const gchar      *messagefmt,
 						      ...);
 
-gchar *      gossip_utils_substring                 (const gchar      *str,
+gchar *      gossip_utils_substring                  (const gchar      *str,
 						      gint              start,
 						      gint              end);
 
-const gchar *gossip_show_to_string                   (GossipShow        show);
-GossipShow   gossip_show_from_string                 (const gchar      *str);
+const gchar *gossip_utils_show_to_string             (GossipShow        show);
+GossipShow   gossip_utils_show_from_string           (const gchar      *str);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_stock      (const gchar      *stock);
 GdkPixbuf *  gossip_utils_get_pixbuf_offline         (void);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);

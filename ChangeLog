@@ -1,3 +1,33 @@
+2003-11-10  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c:
+	- Use GossipRosterItem to do things with GossipChat.
+	* src/gossip-chat-window.c:
+	- Changed so that it uses functions instead of object properties on 
+	  GossipChat. 
+	- Use chat_get_item and get stuff of the item instead of duplicating 
+	  the API in GossipChat.
+	* src/gossip-chat.c:
+	- Connect on item_updated on the roster instead of handling the
+	  presence message with own presence callback.
+	- Fixed issue where chat window had wrong icon after someone sent 
+	  'composing' event.
+	- Don't override object constructor, do the stuff in _init and in 
+	  get_for_item functions.
+	- Removed JID and PRIV_GROUP_CHAT properties.
+	- External API's use RosterItem instead of JID.
+	* src/gossip-jid.[ch] (gossip_jid_equal), (gossip_jid_hash): 
+	- Added, to be used in hash tables to be able to use JID's as keys.
+	* src/gossip-roster-view.c (roster_view_group_item_added): 
+	- Fixed a compile error reported by Edwin Mons, thanks!
+	* src/gossip-roster.c:
+	- Use JID's as keys in item hashtable.
+	- Fixes a problem where jid wheren't case insensitive reported by 
+	  Paul van Tilburg
+	* src/gossip-utils.c:
+	(gossip_utils_show_to_string),(gossip_utils_show_from_string):
+	- Fixed the names of two functions.
+
 2003-11-10  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (configure_event_idle_cb),

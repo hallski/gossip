@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2002 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -24,6 +25,7 @@
 #include <glib-object.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-app.h"
+#include "gossip-roster.h"
 #include "gossip-jid.h"
 
 G_BEGIN_DECLS
@@ -40,7 +42,7 @@ typedef struct _GossipChatClass GossipChatClass;
 typedef struct _GossipChatPriv GossipChatPriv;
 
 struct _GossipChat {
-        GObject parent;
+        GObject         parent;
         GossipChatPriv *priv;
 };
 
@@ -55,13 +57,14 @@ struct _GossipChatClass {
 };
 
 GType           gossip_chat_get_type            (void);
-GossipChat *    gossip_chat_get_for_jid         (GossipJID        *jid);
+GossipChat *    gossip_chat_get_for_item        (GossipRosterItem *item);
 GossipChat *    gossip_chat_get_for_group_chat  (GossipJID        *jid);
 void            gossip_chat_append_message      (GossipChat       *chat,
                                                  LmMessage        *message);
 void            gossip_chat_present             (GossipChat       *chat);
 LmHandlerResult gossip_chat_handle_message      (LmMessage        *message);
 GtkWidget *     gossip_chat_get_widget          (GossipChat       *chat);
+GossipRosterItem *gossip_chat_get_item          (GossipChat       *chat);
 
 G_END_DECLS
 

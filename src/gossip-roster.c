@@ -257,8 +257,9 @@ roster_init (GossipRoster *roster)
         priv = g_new0 (GossipRosterPriv, 1);
         roster->priv = priv;
 
-        priv->items  = g_hash_table_new_full (g_str_hash, g_str_equal,
-					      NULL,
+        priv->items  = g_hash_table_new_full (gossip_jid_hash, 
+					      gossip_jid_equal,
+					      (GDestroyNotify) gossip_jid_unref,
 					      (GDestroyNotify) gossip_roster_item_unref);
 	priv->groups = g_hash_table_new_full (g_str_hash, g_str_equal,
 					      NULL,
@@ -443,8 +444,7 @@ roster_presence_handler (LmMessageHandler *handler,
 
 	from = gossip_jid_new (lm_message_node_get_attribute (m->node, "from"));
 
-	item = (GossipRosterItem *) g_hash_table_lookup (priv->items,
-							 gossip_jid_get_without_resource (from));
+	item = (GossipRosterItem *) g_hash_table_lookup (priv->items, from);
 
 	if (!item) {
 		gossip_jid_unref (from);
@@ -503,7 +503,7 @@ roster_iq_handler (LmMessageHandler *handler,
 		jid = gossip_jid_new (jid_str);
 
 		item = (GossipRosterItem *) g_hash_table_lookup (priv->items, 
-								 gossip_jid_get_without_resource (jid));
+								 jid);
 		
 		subscription = lm_message_node_get_attribute (node, 
 							      "subscription");
@@ -521,8 +521,8 @@ roster_iq_handler (LmMessageHandler *handler,
 		item = roster_item_new (jid);
 		gossip_jid_unref (jid);
 	
-		g_hash_table_insert (priv->items, 
-				     (gpointer) gossip_jid_get_without_resource (item->jid),
+		g_hash_table_insert (priv->items,
+				     gossip_jid_ref (item->jid),
 				     item);
 		
 		g_signal_emit (roster, signals[ITEM_ADDED], 0, item);
@@ -666,7 +666,7 @@ roster_item_update_presence (GossipRoster     *roster,
 
 	node = lm_message_node_get_child (presence->node, "show");
 	if (node) {
-		con->show = gossip_show_from_string (node->value);
+		con->show = gossip_utils_show_from_string (node->value);
 	} else {
 		con->show = GOSSIP_SHOW_AVAILABLE;
 	}
@@ -704,8 +704,7 @@ roster_item_remove (GossipRoster *roster, GossipRosterItem *item)
 	priv = roster->priv;
 
 	gossip_roster_item_ref (item);
-	g_hash_table_remove (priv->items, 
-			     gossip_jid_get_without_resource (item->jid));
+	g_hash_table_remove (priv->items, item->jid);
 	g_signal_emit (roster, signals[ITEM_REMOVED], 0, item);
 
 	groups = g_list_copy (item->groups);
@@ -1034,8 +1033,7 @@ gossip_roster_get_item (GossipRoster *roster,
 
 	priv = roster->priv;
 	
-	return g_hash_table_lookup (priv->items,
-				    gossip_jid_get_without_resource (jid));
+	return g_hash_table_lookup (priv->items, jid);
 }
 
 void

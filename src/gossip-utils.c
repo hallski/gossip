@@ -429,7 +429,7 @@ gossip_get_icon_for_show_string (const gchar *str)
 }
 
 const gchar *
-gossip_show_to_string (GossipShow show)
+gossip_utils_show_to_string (GossipShow show)
 {
 	switch (show) {
 	case GOSSIP_SHOW_BUSY:
@@ -446,7 +446,7 @@ gossip_show_to_string (GossipShow show)
 }
 
 GossipShow 
-gossip_show_from_string (const gchar *str)
+gossip_utils_show_from_string (const gchar *str)
 {
 	if (!str) {
 		return GOSSIP_SHOW_AVAILABLE;
