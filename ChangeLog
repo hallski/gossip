@@ -1,5 +1,9 @@
 2003-07-18  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c (chat_dialog_info_clicked_cb): Use the nick,
+	not the jid. Fixes #117739 patch from thomasr@infograph.com
+	(Thomas Reynolds).
+
 	* Release 0.4.
 	
 	* gossip.spec.in: Install the schema.
