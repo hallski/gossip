@@ -1,5 +1,13 @@
 2005-04-04  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_event_added_cb), (app_event_removed_cb):
+	* src/gossip-group-chat.c: (group_chat_new_room_event_cb):
+	* src/gossip-private-chat.c: (gossip_private_chat_init),
+	(gossip_private_chat_append_message):
+	- Hide a bunch of print outs.
+
+2005-04-04  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	(gossip_chat_view_append_event_message): Renamed to be more consistent
 	* src/gossip-chatroom-provider.c: (chatroom_provider_base_init):

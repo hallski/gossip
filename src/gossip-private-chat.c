@@ -177,7 +177,7 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 	
         private_chat_create_gui (chat);
 
-	g_print ("Connecting\n");
+	d(g_print ("Connecting\n"));
 
 	g_signal_connect_object (gossip_app_get_session (),
 				 "connected",
@@ -1082,8 +1082,8 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	priv = chat->priv;
 	
-	g_print ("GossipPrivateChat::append_message ('%s')\n",
-		 gossip_contact_get_name (gossip_message_get_sender (m)));
+	d(g_print ("GossipPrivateChat::append_message ('%s')\n",
+		   gossip_contact_get_name (gossip_message_get_sender (m))));
 
 	sender = gossip_message_get_sender (m);
 	if (!gossip_contact_equal (priv->contact, sender)) {

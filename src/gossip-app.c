@@ -2298,7 +2298,7 @@ app_event_added_cb (GossipEventManager *manager,
 	GossipAppPriv *priv;
 	GList         *l;
 		
-	g_print ("Tray start blink\n");
+	d(g_print ("Tray start blink\n"));
 
 	priv = app->priv;
 	
@@ -2326,7 +2326,7 @@ app_event_removed_cb (GossipEventManager *manager,
 
 	priv = app->priv;
 
-	g_print ("Tray stop blink\n");
+	d(g_print ("Tray stop blink\n"));
 	l = g_list_find_custom (priv->tray_flash_icons, event,
 				gossip_event_compare);
 

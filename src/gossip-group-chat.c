@@ -811,7 +811,7 @@ group_chat_new_room_event_cb (GossipChatroomProvider *provider,
 	}
 
 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view,
-					       event, FALSE);
+					       event, TRUE);
 }
 
 static void
