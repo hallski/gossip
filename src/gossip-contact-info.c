@@ -343,9 +343,6 @@ contact_info_update_subscription_ui (GossipContactInfo *info,
 	subscription = gossip_roster_item_get_subscription (item);
 
 	if (strcmp(subscription, "none") == 0 || strcmp(subscription, "from") == 0) {
-		gtk_label_set_label (GTK_LABEL (info->subscription_label), 
-				     _("You are not subscribed to this contact's status. Press Subscribe to recieve their status."));
-		
 		gtk_widget_show_all (info->subscription_box);
 	
 		g_signal_connect (info->resubscribe_button,

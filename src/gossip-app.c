@@ -664,6 +664,7 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	CompleteNameData *data;
 	GtkWindow        *parent;
 	GList            *items;
+	GtkListStore     *model;
 	
 	priv = app->priv;
 
@@ -698,14 +699,14 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (data->dialog)->vbox),
 			    frame, TRUE, TRUE, 8);
 	gtk_widget_show (frame);
+
+	model = gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+	data->combo = gtk_combo_box_entry_new_with_model (GTK_TREE_MODEL (model), 1);
 	
-	data->combo = gtk_combo_new ();
-	gtk_combo_set_use_arrows (GTK_COMBO (data->combo), FALSE);
-	gtk_combo_disable_activate (GTK_COMBO (data->combo));
 	gtk_container_add (GTK_CONTAINER (frame), data->combo);
 	gtk_widget_show (data->combo);
 
-	data->entry = GTK_COMBO (data->combo)->entry;
+	data->entry = GTK_BIN (data->combo)->child;
 
 	g_signal_connect_after (data->entry,
 				"insert_text",
@@ -721,7 +722,6 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 			  "activate",
 			  G_CALLBACK (app_complete_name_activate_cb),
 			  data);
-
 	g_signal_connect (data->dialog,
 			  "response",
 			  G_CALLBACK (app_complete_name_response_cb),
@@ -750,9 +750,9 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 		c = gossip_roster_get_contact_from_item (priv->roster,
 							 roster_item);
 
-		data->names = g_list_prepend (data->names, 
+		/*data->names = g_list_prepend (data->names, 
 					      g_strdup (gossip_contact_get_name (c)));
-
+*/
 		if (contact && gossip_contact_equal (contact, c)) {
 			/* Got the selected one, select it in the combo. */
 			selected_name = gossip_contact_get_name (c);
@@ -762,19 +762,37 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 					   gossip_contact_ref (c));
 	}
 
+	contacts = g_list_sort (contacts, gossip_contact_name_case_compare);
+	for (l = contacts; l; l = l->next) {
+		GtkTreeIter     iter;
+		GossipPresence *presence;
+		GossipContact  *c;
+
+		c = GOSSIP_CONTACT (l->data);
+
+		gtk_list_store_append (model, &iter);
+
+		presence = gossip_contact_get_presence (c);
+		gtk_list_store_set (model, &iter,
+				    0, gossip_utils_get_pixbuf_from_presence (presence),
+				    1, gossip_contact_get_name (c),
+				    -1);
+	}
+#if 0	
 	data->names = g_list_sort (data->names, 
 				   (GCompareFunc) gossip_utils_str_case_cmp);
 	if (data->names) {
 		gtk_combo_set_popdown_strings (GTK_COMBO (data->combo),
 					       data->names);
 	}
-
+#endif
 	/* contacts = g_list_sort (contacts,
 				gossip_contact_name_case_compare);*/
 	if (contacts) {
 		g_completion_add_items (data->completion, contacts);
 	}
 
+#if 0
 	if (selected_name) {
 		gtk_entry_set_text (GTK_ENTRY (data->entry), selected_name);
 		gtk_editable_select_region (GTK_EDITABLE (data->entry), 0, -1);
@@ -783,7 +801,7 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	}
 
 	gtk_widget_grab_focus (data->entry);
-	
+#endif	
 	gtk_widget_show (data->dialog);
 }
 

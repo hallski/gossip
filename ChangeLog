@@ -1,5 +1,14 @@
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_new_message): 
+	- Use a GtkComboBoxEntry instead of deprecated GtkCombo
+	* src/gossip-contact-info.c: 
+	(contact_info_update_subscription_ui):
+	* ui/main.glade:
+	- Set the string from the glade file instead.
+
+2004-06-16  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c:
 	- Cleaned out some unused code.
 	(app_new_message):
