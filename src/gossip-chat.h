@@ -53,10 +53,12 @@ struct _GossipChatClass {
         GObjectClass parent;
 
         /* Signals */
-	void (*new_message)      (GossipChat *chat);
-        void (*composing)        (GossipChat *chat, 
-			          gboolean    composing);
+	void (*new_message)      (GossipChat  *chat);
+        void (*composing)        (GossipChat  *chat, 
+			          gboolean     composing);
 	void (*presence_changed) (GossipChat  *chat); 
+	void (*name_changed)     (GossipChat  *chat,
+				  const gchar *name);
 };
 
 GType           gossip_chat_get_type            (void);

@@ -1,5 +1,19 @@
 2003-12-20  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-window.c: 
+	(chat_window_create_label): set data on chat, not hbox
+	(chat_window_name_changed_cb): Added
+	(chat_window_tab_added_cb): Connect to name-changed
+	(chat_window_tab_removed_cb): Disconnect from name-changed
+	* src/gossip-chat.c:
+	(gossip_chat_class_init): Added name-changed signal
+	(gossip_chat_init): Listen to item-updated and item-removed
+	(chat_item_updated): Added
+	(chat_item_removed): Added, not implemented
+	- Fixed bug #121254
+
+2003-12-20  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_main_window_destroy_cb):
 	- exit instead of quitting main loop
 

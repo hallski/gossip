@@ -61,6 +61,8 @@ struct _GossipChatPriv {
         GtkTooltips      *tooltips;
 
         GossipRosterItem *item;
+	gchar            *name;
+	
 	gchar            *locked_resource;
 	gchar            *roster_resource;
 
@@ -94,7 +96,13 @@ static LmHandlerResult chat_message_handler              (LmMessageHandler *hand
 static void            chat_item_presence_updated        (gpointer          not_used,
 							  GossipRosterItem *item,
 							  GossipChat       *chat);
-static gboolean        chat_event_handler                (GossipChat       *chat,
+static void            chat_item_updated                 (gpointer          not_used,
+							  GossipRosterItem *item,
+							  GossipChat       *chat);
+static void            chat_item_removed                 (gpointer          not_used,
+							  GossipRosterItem *item,
+							  GossipChat       *chat);
+static gboolean      chat_event_handler                (GossipChat       *chat,
                                                           LmMessage        *m);
 static void            chat_error_dialog                 (GossipChat       *chat,
                                                           const gchar      *msg);
@@ -114,8 +122,9 @@ static gboolean	       chat_delete_event_cb		 (GtkWidget	   *widget,
 enum {
         COMPOSING,
         NEW_MESSAGE,
-        PRESENCE_CHANGED,
-        LAST_SIGNAL
+	PRESENCE_CHANGED,
+	NAME_CHANGED,
+	LAST_SIGNAL
 };
 
 static GObjectClass *parent_class = NULL;
@@ -178,7 +187,7 @@ gossip_chat_class_init (GossipChatClass *klass)
 			      G_TYPE_NONE,
 			      0);
 
-	chat_signals[PRESENCE_CHANGED] =
+	chat_signals[PRESENCE_CHANGED]=
 		g_signal_new ("presence-changed",
 			      G_OBJECT_CLASS_TYPE (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -187,6 +196,16 @@ gossip_chat_class_init (GossipChatClass *klass)
 			      g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE,
 			      0);
+	
+	chat_signals[NAME_CHANGED]=
+		g_signal_new ("name-changed",
+			      G_OBJECT_CLASS_TYPE (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GossipChatClass, name_changed),
+			      NULL, NULL,
+			      g_cclosure_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
 }
 
 static void
@@ -221,11 +240,15 @@ gossip_chat_init (GossipChat *chat)
 			  G_CALLBACK (chat_item_presence_updated),
 			  chat);
 
-	/*g_signal_connect (roster,
-			  "item_removed",
-			  G_CALLBACK (chat_item_removed_cb),
+	g_signal_connect (roster,
+			  "item_updated",
+			  G_CALLBACK (chat_item_updated),
 			  chat);
-			  */
+
+	g_signal_connect (roster,
+			  "item_removed",
+			  G_CALLBACK (chat_item_removed),
+			  chat);
 }
 
 static void
@@ -755,6 +778,47 @@ chat_item_presence_updated (gpointer          not_used,
 	g_signal_emit (chat, chat_signals[PRESENCE_CHANGED], 0);
 }
 
+static void
+chat_item_updated (gpointer          not_used,
+		   GossipRosterItem *item,
+		   GossipChat       *chat)
+{
+	GossipChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+	g_return_if_fail (item != NULL);
+	
+	priv = chat->priv;
+
+	if (item != priv->item) {
+		return;
+	}
+
+	if (strcmp (priv->name, gossip_roster_item_get_name (item)) != 0) {
+		g_free (priv->name);
+		priv->name = g_strdup (gossip_roster_item_get_name (item));
+		g_signal_emit (chat, chat_signals[NAME_CHANGED], 0, priv->name);
+	}
+}
+
+static void 
+chat_item_removed (gpointer          not_used,
+		   GossipRosterItem *item,
+		   GossipChat       *chat)
+{
+	GossipChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+	g_return_if_fail (item != NULL);
+	
+	priv = chat->priv;
+
+	if (item != priv->item) {
+		return;
+	}
+	/* Handle this, set as offline? */
+}
+
 static gboolean
 chat_event_handler (GossipChat *chat, LmMessage *m)
 {
@@ -941,6 +1005,7 @@ gossip_chat_get_for_item (GossipRosterItem *item)
 	
 	priv = chat->priv;
 	priv->item = gossip_roster_item_ref (item);
+	priv->name = g_strdup (gossip_roster_item_get_name (item));
 
 	if (gossip_roster_item_is_offline (priv->item)) {
 		priv->is_online = FALSE;

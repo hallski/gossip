@@ -77,6 +77,9 @@ static gboolean chat_window_delete_event_cb   (GtkWidget	     *dialog,
 					       GossipChatWindow	     *window);
 static void chat_window_presence_changed_cb   (GossipChat	     *chat,
 					       GossipChatWindow	     *window);
+static void chat_window_name_changed_cb       (GossipChat            *chat,
+					       const gchar           *name,
+					       GossipChatWindow      *window);
 static void chat_window_composing_cb	      (GossipChat	     *chat,
 					       gboolean		      is_composing,
 					       GossipChatWindow	     *window);
@@ -564,7 +567,7 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_misc_set_padding (GTK_MISC (name_label), 2, 0);
 	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
 
-	g_object_set_data (G_OBJECT (hbox), "label", name_label);
+	g_object_set_data (G_OBJECT (chat), "label", name_label); 
 		
 /*	g_signal_connect (priv->dialog,
 			  "size_request",
@@ -598,11 +601,10 @@ chat_window_create_label (GossipChatWindow *window,
 }
 
 static void
-chat_window_update_status (GossipChatWindow *window,
-			   GossipChat	    *chat)
+chat_window_update_status (GossipChatWindow *window, GossipChat *chat)
 {
-	GtkImage	    *image;
-	GdkPixbuf           *pixbuf;
+	GtkImage  *image;
+	GdkPixbuf *pixbuf;
 	
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
 	image = g_object_get_data (G_OBJECT (chat), "chat-window-status-img");
@@ -789,10 +791,21 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 }
 
 static void
-chat_window_presence_changed_cb (GossipChat       *chat,
-				 GossipChatWindow *window)
+chat_window_presence_changed_cb (GossipChat *chat, GossipChatWindow *window)
 {
 	chat_window_update_status (window, chat);
+}
+
+static void 
+chat_window_name_changed_cb (GossipChat       *chat,
+			     const gchar      *name,
+			     GossipChatWindow *window)
+{
+	GtkLabel *label;
+
+	label = g_object_get_data (G_OBJECT (chat), "label");
+	
+	gtk_label_set_text (label, name);
 }
 
 static void
@@ -876,6 +889,9 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	g_signal_connect (chat, "presence_changed",
 			  G_CALLBACK (chat_window_presence_changed_cb),
 			  window);
+	g_signal_connect (chat, "name_changed",
+			  G_CALLBACK (chat_window_name_changed_cb),
+			  window);
 	g_signal_connect (chat, "composing",
 			  G_CALLBACK (chat_window_composing_cb),
 			  window);
@@ -901,6 +917,9 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 
 	g_signal_handlers_disconnect_by_func (chat,
 					      G_CALLBACK (chat_window_presence_changed_cb),
+					      window);
+	g_signal_handlers_disconnect_by_func (chat,
+					      G_CALLBACK (chat_window_name_changed_cb),
 					      window);
 	g_signal_handlers_disconnect_by_func (chat,
 					      G_CALLBACK (chat_window_composing_cb),
