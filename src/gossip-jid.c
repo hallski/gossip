@@ -90,13 +90,13 @@ gossip_jid_get_without_resource (GossipJID *jid)
 const gchar *
 gossip_jid_get_resource (GossipJID *jid)
 {
-	g_return_val_if_fail (jid != NULL, "");
+	g_return_val_if_fail (jid != NULL, NULL);
 
 	if (jid->resource) {
 		return jid->resource;
 	}
 
-	return "";
+	return NULL;
 }
 
 gchar *
