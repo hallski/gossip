@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-18 04:02+0200\n"
+"POT-Creation-Date: 2004-08-19 12:02+0200\n"
 "PO-Revision-Date: 2004-07-05 19:23+0200\n"
 "Last-Translator: Laurent Dhima <laurenti@alblinux.net>\n"
 "Language-Team: Albanian <gnome-albanian-perkthyesit@lists.sourceforge.net>\n"
@@ -64,12 +64,10 @@ msgstr "Pozicioni X i dritares qendrore."
 msgid "The Y position of the main window."
 msgstr "Pozicioni Y i dritares qendrore."
 
-#. GRUT modified this item
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr "Lartësia e dritares kryesore."
 
-#. GRUT modified this item
 #: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr "Gjerësia e dritares kryesore."
@@ -421,9 +419,10 @@ msgstr ""
 msgid "Gossip will now try to register the account:"
 msgstr ""
 
+#. GRUT modified this item
 #: src/gossip-utils.c:438
 msgid "Please enter your password:"
-msgstr ""
+msgstr "Shkruani fjalëkalimin tuaj"
 
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
@@ -857,7 +856,6 @@ msgstr ""
 msgid "On what server do you have a Jabber account?"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:58
 msgid "Password:"
 msgstr "Fjalëkalimi:"
@@ -947,7 +945,7 @@ msgstr ""
 #. GRUT modified this item
 #: ui/main.glade.h:79
 msgid "Username:"
-msgstr "Emri i përdoruesit:"
+msgstr "Përdoruesi:"
 
 #: ui/main.glade.h:80
 msgid "Version:"
