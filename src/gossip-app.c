@@ -441,11 +441,11 @@ app_init (GossipApp *singleton_app)
 	priv->roster_view = gossip_roster_view_new (priv->roster);
 
 	show_offline = gconf_client_get_bool (gconf_client,
-					      "/apps/gossip/contact/show_offline",
+					      "/apps/gossip/contacts/show_offline",
 					      NULL);
 
 	gconf_client_notify_add (gconf_client,
-				 "/apps/gossip/contact/show_offline",
+				 "/apps/gossip/contacts/show_offline",
 				 app_show_offline_key_changed_cb,
 				 show_offline_widget,
 				 NULL, NULL);
@@ -869,7 +869,7 @@ app_show_offline_cb (GtkCheckMenuItem *item, GossipApp *app)
 	current = gtk_check_menu_item_get_active (item);
 
 	gconf_client_set_bool (gconf_client,
-			       "/apps/gossip/contact/show_offline",
+			       "/apps/gossip/contacts/show_offline",
 			       current,
 			       NULL);
 

@@ -1,3 +1,8 @@
+2004-11-18  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_init), (app_show_offline_cb):
+	- Use the correct gconf key
+
 2004-11-16  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_iq_handler): Don't reply to error messages.
