@@ -440,7 +440,7 @@ group_chat_send (GossipGroupChat *chat,
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 
-	gossip_app_status_force_nonaway ();
+	gossip_app_force_non_away ();
 }
 
 static void

@@ -89,9 +89,9 @@ send_ok_reply (DBusConnection *bus,
 }
 
 static DBusHandlerResult
-handle_set_status (DBusConnection *bus,
-		   DBusMessage    *message,
-		   GossipApp      *app)
+handle_set_presence (DBusConnection *bus,
+		     DBusMessage    *message,
+		     GossipApp      *app)
 {
 	DBusMessageIter  iter;
 	gint             show;
@@ -104,19 +104,24 @@ handle_set_status (DBusConnection *bus,
 		status = dbus_message_iter_get_string (&iter);
 	}
 	
-	switch (show) {
-	case GOSSIP_SHOW_AVAILABLE:
-		gossip_app_status_force_nonaway ();
-		break;
-	case GOSSIP_SHOW_AWAY:
-		gossip_app_set_away (status);
-		break;
-	default:
-		break;
+	gossip_app_set_presence (show, status);
+
+	if (status) {
+		dbus_free (status);
 	}
 	
-	dbus_free (status);
+	send_ok_reply (bus, message);
 
+	return DBUS_HANDLER_RESULT_HANDLED;
+}
+
+static DBusHandlerResult
+handle_force_non_away (DBusConnection *bus,
+		       DBusMessage    *message,
+		       GossipApp      *app)
+{
+	gossip_app_force_non_away ();
+	
 	send_ok_reply (bus, message);
 	
 	return DBUS_HANDLER_RESULT_HANDLED;
@@ -133,9 +138,15 @@ message_func (DBusConnection *connection,
 	
 	if (dbus_message_is_method_call (message,
 					 GOSSIP_INTERFACE,
-					 GOSSIP_SET_STATUS))
-		return handle_set_status (connection, message, app);
-	
+					 GOSSIP_SET_PRESENCE)) {
+		return handle_set_presence (connection, message, app);
+	}
+	else if (dbus_message_is_method_call (message,
+					      GOSSIP_INTERFACE,
+					      GOSSIP_FORCE_NON_AWAY)) {
+		return handle_force_non_away (connection, message, app);
+	}
+
 	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
 

@@ -62,8 +62,8 @@ GossipApp *      gossip_app_get                     (void);
 void             gossip_app_set_overridden_resource (const gchar   *resource);
 gboolean         gossip_app_is_connected            (void);
 GtkWidget *      gossip_app_get_window              (void);
-void             gossip_app_status_force_nonaway    (void);
-void             gossip_app_set_away                (const gchar   *status);
-
+void             gossip_app_force_non_away          (void);
+void             gossip_app_set_presence            (GossipShow     show,
+						     const gchar   *status);
 
 #endif /* __GOSSIP_APP_H__ */

@@ -1,3 +1,9 @@
+2004-02-01  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (gossip_app_set_presence): 
+	* src/gossip-dbus.c (handle_set_presence): More stuff in the dbus
+	interface.
+
 2004-01-31  Richard Hult  <richard@imendio.com>
 
 	* configure.in:

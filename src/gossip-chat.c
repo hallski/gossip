@@ -449,7 +449,7 @@ chat_send (GossipChat  *chat,
 
 	priv = chat->priv;
 
-	gossip_app_status_force_nonaway ();
+	gossip_app_force_non_away ();
 
         if (msg == NULL || msg[0] == '\0') {
                 return;

@@ -1199,7 +1199,7 @@ app_client_disconnected_cb (LmConnection       *connection,
 		 * trying maybe once a minute until it works.
 		 */
 		dialog = gtk_message_dialog_new (NULL,
-						 0,
+						 GTK_DIALOG_NO_SEPARATOR,
 						 GTK_MESSAGE_INFO,
 						 GTK_BUTTONS_YES_NO,
 						 _("You were disconnected from the server. "
@@ -2244,7 +2244,7 @@ app_status_flash_stop (void)
 }
 
 void
-gossip_app_status_force_nonaway (void)
+gossip_app_force_non_away (void)
 {
 	GossipAppPriv *priv = app->priv;
 
@@ -2260,15 +2260,45 @@ gossip_app_status_force_nonaway (void)
 
 /* Note: test function for the dbus stuff. */
 void
-gossip_app_set_away (const gchar *status)
+gossip_app_set_presence (GossipShow show, const gchar *status)
 {
 	GossipAppPriv *priv = app->priv;
 
-	gossip_idle_reset ();
-	priv->auto_show = GOSSIP_SHOW_AWAY;
+	switch (show) {
+	case GOSSIP_SHOW_AVAILABLE:
+		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+		priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 
-	g_free (priv->away_message);
-	priv->away_message = g_strdup (status);
+		g_free (priv->status_text);
+		priv->status_text = g_strdup (status);
+		
+		g_free (priv->away_message);
+		priv->away_message = NULL;
+		
+		app_status_clear_away ();
+		break;
+
+	case GOSSIP_SHOW_BUSY:
+		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
+		priv->explicit_show = GOSSIP_SHOW_BUSY;
+
+		g_free (priv->status_text);
+		priv->status_text = g_strdup (status);
+		
+		g_free (priv->away_message);
+		priv->away_message = NULL;
+
+		app_status_clear_away ();
+		break;
+
+	case GOSSIP_SHOW_AWAY:
+	case GOSSIP_SHOW_EXT_AWAY:
+		gossip_idle_reset ();
+		priv->auto_show = GOSSIP_SHOW_AWAY;
+		g_free (priv->away_message);
+		priv->away_message = g_strdup (status);
+		break;
+	}		
 	
 	app_update_show ();
 }

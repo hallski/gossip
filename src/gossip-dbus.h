@@ -26,7 +26,9 @@
 #define GOSSIP_SERVICE "org.imendio.gossip"
 #define GOSSIP_INTERFACE "org.imendio.Gossip"
 #define GOSSIP_OBJECT "/org/imendio/Gossip"
-#define GOSSIP_SET_STATUS "set_Status"
+
+#define GOSSIP_SET_PRESENCE "set_Presence"
+#define GOSSIP_FORCE_NON_AWAY "ForceNonAway"
 
 gboolean gossip_dbus_init (void);
 
