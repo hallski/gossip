@@ -1,3 +1,9 @@
+2004-09-29  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* nb.po: Updated
+	* no.po: Updated and fixed a problem noticed by Sindre Pedersen
+	Bjørdal. Thanks.
+
 2004-09-28  Abel Cheung  <maddog@linuxhall.org>
 
 	* zh_TW.po: Updated traditional Chinese translation by GNOME HK Team

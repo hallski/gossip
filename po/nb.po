@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-09-18 15:43+0200\n"
-"PO-Revision-Date: 2004-09-18 15:46+0200\n"
+"POT-Creation-Date: 2004-09-29 00:55+0200\n"
+"PO-Revision-Date: 2004-09-29 00:59+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -427,7 +427,7 @@ msgstr "Gossip vil prøve å registrere kontoen:"
 
 #: src/gossip-utils.c:438
 msgid "Please enter your password:"
-msgstr "Vennligst skriv inn dittpassord:"
+msgstr "Vennligst oppgi ditt passord:"
 
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
@@ -435,11 +435,11 @@ msgstr "Husk passordet?"
 
 #: src/gossip-vcard-dialog.c:126
 msgid "Requesting personal details, please wait..."
-msgstr ""
+msgstr "Spør etter personlige detaljer. Vennligst vent..."
 
 #: src/gossip-vcard-dialog.c:257
 msgid "Saving personal details, please wait..."
-msgstr ""
+msgstr "Lagrer personlige detaljer. Vennligst vent..."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
@@ -564,7 +564,7 @@ msgstr "Bruk krypt_ering (SSL):"
 
 #: ui/connect.glade.h:13
 msgid "Use system pro_xy"
-msgstr ""
+msgstr "Bruk systemets pro_xy"
 
 #: ui/connect.glade.h:14
 msgid "_Jabber ID:"
@@ -667,6 +667,8 @@ msgid ""
 "<b>Finding the best server...</b>\n"
 "This will take a few moments, please wait."
 msgstr ""
+"<b>Finner beste tjener...</b>\n"
+"Dette vil ta litt tid. Vennligst vent."
 
 #: ui/main.glade.h:7
 msgid "<b>Information requested, Please wait...</b>"
@@ -730,11 +732,11 @@ msgstr "Klient:"
 
 #: ui/main.glade.h:22
 msgid "Configuration Details"
-msgstr ""
+msgstr "Konfigurasjonsdetaljer"
 
 #: ui/main.glade.h:23
 msgid "Configuring Service"
-msgstr ""
+msgstr "Konfigurerer tjeneste"
 
 #: ui/main.glade.h:24
 msgid "Contact information"
@@ -801,6 +803,11 @@ msgid ""
 "\n"
 "To get started, just click \"Forward\"."
 msgstr ""
+"Gossip er en moderne klient for meldingssystemet Jabber.\n"
+"\n"
+"Denne veiviseren vil hjelpe deg med å konfigurere Gossip og å koble deg til din foretrukne Jabber-tjener.\n"
+"\n"
+"Klikk «Fremover» for å starte."
 
 #: ui/main.glade.h:43
 msgid ""
@@ -808,6 +815,8 @@ msgid ""
 "You can change your account settings later, by selecting the Chat-"
 ">Connect... menu item."
 msgstr ""
+"Gossip er nå konfigurert for ditt system.\n"
+"Du kan endre innstillingene for kontoen ved å velge menyoppføringen «Prat->Koble til» senere."
 
 #: ui/main.glade.h:45
 msgid "I would like to add you to my contact list."
