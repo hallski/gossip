@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-01-29 11:28+0100\n"
-"PO-Revision-Date: 2004-01-29 11:35+0100\n"
+"PO-Revision-Date: 2004-01-29 11:38+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -82,7 +82,7 @@ msgstr "Bruk varslingslyder"
 #: gossip.schemas.in.h:15
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
-msgstr "minutter"
+msgstr "Om smilefjes skal konverteres til grafikk i samtaler."
 
 #: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
@@ -98,7 +98,7 @@ msgstr "Om lyder skal spilles av når opptatt."
 
 #: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr ""
+msgstr "Om kontakter som er frakoblet skal vises i kontaktlisten."
 
 #: gossip.schemas.in.h:20
 msgid "Width of the main window"
@@ -376,11 +376,11 @@ msgstr "/E_ndre navn på kontakt"
 
 #: src/gossip-roster-view.c:199
 msgid "/_Edit groups"
-msgstr ""
+msgstr "/R_ediger grupper"
 
 #: src/gossip-roster-view.c:207
 msgid "/Show _Log"
-msgstr ""
+msgstr "/Vis _logg"
 
 #: src/gossip-roster-view.c:223
 msgid "/_Remove contact"
@@ -470,11 +470,11 @@ msgstr "I svar til:"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
-msgstr ""
+msgstr "Flytt fane til _venstre"
 
 #: ui/chat.glade.h:11
 msgid "Move Tab _Right"
-msgstr ""
+msgstr "Flytt fane til høy_re"
 
 #: ui/chat.glade.h:12
 msgid "To:"
@@ -482,7 +482,7 @@ msgstr "Til:"
 
 #: ui/chat.glade.h:13
 msgid "View Lo_g"
-msgstr ""
+msgstr "Vis lo_gg"
 
 #: ui/chat.glade.h:14
 msgid "_Conversation"
@@ -490,15 +490,15 @@ msgstr "_Samtale"
 
 #: ui/chat.glade.h:15
 msgid "_Detach Tab"
-msgstr ""
+msgstr "_Løsne fane"
 
 #: ui/chat.glade.h:16
 msgid "_Next Tab"
-msgstr ""
+msgstr "_Neste fane"
 
 #: ui/chat.glade.h:17
 msgid "_Previous Tab"
-msgstr ""
+msgstr "_Forrige fane"
 
 #: ui/chat.glade.h:18
 msgid "_Reply..."
@@ -510,7 +510,7 @@ msgstr "_Send"
 
 #: ui/chat.glade.h:20
 msgid "_Tabs"
-msgstr ""
+msgstr "Fa_ner"
 
 #: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
 msgid "    "
@@ -590,15 +590,15 @@ msgstr "_Navn på prat"
 
 #: ui/group-chat.glade.h:8
 msgid "Gossip - Edit Group Chats"
-msgstr ""
+msgstr "Gossip - rediger gruppesamtale"
 
 #: ui/group-chat.glade.h:9
 msgid "Gossip - Group Chat"
-msgstr ""
+msgstr "Gossip - gruppesamtale"
 
 #: ui/group-chat.glade.h:10
 msgid "Gossip - Join Group Chat"
-msgstr ""
+msgstr "Gossip - bli med i gruppesamtale"
 
 #: ui/group-chat.glade.h:11
 msgid "N_ickname:"
