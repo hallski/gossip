@@ -38,7 +38,6 @@ typedef struct {
 	GtkWidget    *silent_busy_checkbutton;
 	GtkWidget    *silent_away_checkbutton;
 	GtkWidget    *smileys_checkbutton;
-	GtkWidget    *list_checkbutton;
 	GtkWidget    *compact_checkbutton;
 	GtkWidget    *leaving_entry;
 	GtkWidget    *away_entry;
@@ -355,9 +354,6 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/graphical_smileys",
 			      preferences->smileys_checkbutton);
-	hookup_toggle_button (preferences,
-			      GCONF_PATH "/conversation/open_in_list",
-			      preferences->list_checkbutton);
 }
 
 GtkWidget *
@@ -377,7 +373,6 @@ gossip_preferences_show (GossipApp *app)
 				     "silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
 				     "silent_away_checkbutton", &preferences->silent_away_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
-				     "list_checkbutton", &preferences->list_checkbutton,
 				     NULL);
 
 	preferences_setup_widgets (preferences);

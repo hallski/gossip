@@ -1,5 +1,16 @@
 2003-11-14  Mikael Hallendal  <micke@imendio.com>
 
+	reviewed by: <delete if not using a buddy>
+
+	* src/gossip-chat.c: (gossip_chat_get_for_item):
+	- Initialize is_online correctly. Fixes #126760 
+	* src/gossip-preferences.c:
+	(preferences_setup_widgets),
+	(gossip_preferences_show): 
+	* ui/main.glade: Removed show new chats in list option.
+
+2003-11-14  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-roster-view.c: (roster_view_button_press_event_cb):
 	- Don't popup items right-click menu on empty groups. 
 	- Fixes #126556

@@ -1098,9 +1098,11 @@ gossip_chat_get_for_item (GossipRosterItem *item)
 
 	if (gossip_roster_item_is_offline (priv->item)) {
 		pixbuf = gossip_utils_get_pixbuf_offline ();
+		priv->is_online = FALSE;
 	} else {
 		GossipShow show = gossip_roster_item_get_show (item);
 		pixbuf = gossip_utils_get_pixbuf_from_show (show);
+		priv->is_online = TRUE;
 	}
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->status_image),
