@@ -1,3 +1,20 @@
+2004-04-21  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c (app_new_message): 
+	- Don't make dialog text selectable, fixes bug #121056
+
+	* src/gossip-group-chat.c (group_chat_key_press_event_cb):
+	- Fix case bug in group chat nick completion. Fixes bug #120876
+	  
+	* src/gossip-group-chat.c (group_chat_row_activated_cb):
+	- Re-enabled support for bringing up private chat with another person
+	  in a group chat. Fixes bug #130978
+	  
+	* src/gossip-chat-view.c (chat_view_check_nick_highlight): Added
+	* src/gossip-chat-view.c (gossip_chat_view_append_chat_message):
+	- More sophisticated nick highlighting code. 
+	- Fixes bug #132634
+	  
 2004-04-14  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-log.c (gossip_log_message): Handle no or empty

@@ -740,6 +740,54 @@ gossip_chat_view_scroll_down (GossipChatView *view)
 				      0);
 }
 
+static gboolean
+chat_view_check_nick_highlight (const gchar *msg, const gchar *to)
+{
+	gboolean  ret_val;
+	gchar    *cf_msg, *cf_to;
+	gchar    *ch;
+
+	ret_val = FALSE;
+	
+	cf_msg = g_utf8_casefold (msg, -1);
+	cf_to = g_utf8_casefold (to, -1);
+
+	ch = strstr (cf_msg, cf_to);
+
+	if (ch == NULL) {
+		goto finished;
+	}
+		
+	if (ch != cf_msg) {
+		/* Not first in the message */
+		if ((*(ch - 1) != ' ') &&
+		    (*(ch - 1) != ',') &&
+		    (*(ch - 1) != '.')) {
+			goto finished;
+		}
+	}
+
+	ch = ch + g_utf8_strlen (cf_to, -1);
+	if (ch >= cf_msg + g_utf8_strlen (cf_msg, -1)) {
+		ret_val = TRUE;
+		goto finished;
+	}
+
+	if ((*ch == ' ') ||
+	    (*ch == ',') ||
+	    (*ch == '.') ||
+	    (*ch == ':')) {
+		ret_val = TRUE;
+		goto finished;
+	}
+
+finished:
+	g_free (cf_msg);
+	g_free (cf_to);
+
+	return ret_val;
+}
+
 void
 gossip_chat_view_append_chat_message (GossipChatView *view,
 				      const gchar    *time_str,
@@ -775,7 +823,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			if (to && strcmp (from, to) == 0) {
 				nick_tag = "nick-me";
 			}
-			else if (to && strstr (msg, to)) {
+			else if (to && chat_view_check_nick_highlight (msg, to)) {
 				nick_tag = "nick-highlight";
 			} else {
 				nick_tag = "nick-other";

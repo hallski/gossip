@@ -695,6 +695,8 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 					       GTK_BUTTONS_NONE,
 					       _("Enter the user ID of the person you would "
 						 "like to send a chat message to."));
+	gtk_label_set_selectable (GTK_LABEL (GTK_MESSAGE_DIALOG (data->dialog)->label), 
+				  FALSE);
 	
 	gtk_dialog_add_buttons (GTK_DIALOG (data->dialog),
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,

@@ -1,8 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003      Imendio HB
- * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
- * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2002-2003 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -475,7 +473,7 @@ group_chat_row_activated_cb (GtkTreeView       *view,
 			    COL_JID,  &jid,
 			    -1);
 
-	/* group_chat_priv_chat_new (chat, jid); */
+	group_chat_priv_chat_new (chat, jid);
 }
 
 static void
@@ -630,18 +628,34 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 		g_free (nick);
 
 		if (completed) {
+			int    len;
+			gchar *text;
+			
 			gtk_editable_delete_text (GTK_EDITABLE (chat->input_entry),
 						  start_pos,
 						  pos);
 			
 			pos = start_pos;
-				
+			len = g_list_length (completed_list);
+
+			if (len == 1) {
+				/* If we only have one hit, use that text
+				 * instead of the text in completed since the 
+				 * completed text will use the typed string 
+				 * which might be cased all wrong. 
+				 * Fixes #120876
+				 * */
+				text = (gchar *) completed_list->data;
+			} else {
+				text = completed;
+			}
+			
 			gtk_editable_insert_text (GTK_EDITABLE (chat->input_entry),
-						  completed,
+						  text,
 						  -1,
 						  &pos);
 
-			if (g_list_length (completed_list) == 1) {
+			if (len == 1) {
 				if (start_pos == 0) {
 					gtk_editable_insert_text (GTK_EDITABLE (chat->input_entry),
 								  ", ",
