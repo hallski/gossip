@@ -167,6 +167,7 @@ src/Makefile
 src/sounds/Makefile
 protocols/Makefile
 po/Makefile.in
+gossip.desktop.in
 ])
 
 echo

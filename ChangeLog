@@ -1,3 +1,12 @@
+2004-11-25  Christoffer Olsen  <co@deworks.net>
+
+	* configure.in: Added gossip.desktop.in.in to AC_OUTPUT
+	* gossip.desktop.in: Moved to gossip.desktop.in.in
+	* gossip.desktop.in.in: Added X-GNOME-Bugzilla-Version header
+	* po/POTFILES.in: Now lists gossip.desktop.in.in instead
+
+	- Added support for Bug Buddy version number autocompletion
+
 2004-11-18  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_init), (app_show_offline_cb):

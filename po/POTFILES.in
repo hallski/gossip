@@ -1,6 +1,6 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-gossip.desktop.in
+gossip.desktop.in.in
 gossip.schemas.in
 src/gossip-about.c
 src/gossip-account-dialog.c
