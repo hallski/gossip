@@ -881,12 +881,7 @@ app_message_handler (LmMessageHandler *handler,
 	from = lm_message_node_get_attribute (m->node, "from");
 	
 	switch (type) {
-	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
-		/* FIXME: Hm, what is this for? Doesn't look right. */
-		gossip_message_handle_message (app, m);
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-
-		/* Is "not set" right? Gabber sends messages like that...  */
+	
 	case LM_MESSAGE_SUB_TYPE_NOT_SET:
 	case LM_MESSAGE_SUB_TYPE_NORMAL:
 	case LM_MESSAGE_SUB_TYPE_CHAT:
@@ -1738,12 +1733,20 @@ app_push_message (LmMessage *m)
 	GossipAppPriv *priv;
 	const gchar   *from;
 	GossipJID     *jid;
+	GList         *l;
 		
 	priv = app->priv;
 	
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
-		
+	
+	l = g_list_find_custom (priv->tray_flash_icons,
+				from,
+				(GCompareFunc) g_ascii_strcasecmp);
+	if (l) {
+		return;
+	}
+
 	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons,
 						g_strdup (from));
 

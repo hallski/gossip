@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -54,6 +56,9 @@ struct _GossipChat {
 
 	GossipJID        *jid;
 	gchar            *nick;
+
+	/* Chat exist but has been hidden by the user */
+	gboolean          hidden;
 };
 
 
@@ -73,6 +78,9 @@ static gboolean    chat_input_key_press_event_cb     (GtkWidget       *widget,
 static void        chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
 						      GossipChat      *chat);
 static void        chat_dialog_destroy_cb            (GtkWidget       *widget,
+						      GossipChat      *chat); 
+static gboolean    chat_dialog_delete_event_cb       (GtkWidget       *widget,
+						      GdkEvent        *event,
 						      GossipChat      *chat);
 static gboolean    chat_key_press_event_cb           (GtkWidget       *dialog,
 						      GdkEventKey     *event,
@@ -102,7 +110,7 @@ chat_presence_handler                                (LmMessageHandler *handler,
 						      gpointer          user_data);
 static void        chat_update_title                 (GossipChat       *chat,
 						      gboolean          new_message);
-
+static void        chat_hide                         (GossipChat       *chat);
 
 static GHashTable *chats = NULL;
 
@@ -137,6 +145,16 @@ chat_dialog_destroy_cb (GtkWidget *widget, GossipChat *chat)
 {
 	g_hash_table_remove (chats,
 			     gossip_jid_get_without_resource (chat->jid));
+}
+
+static gboolean
+chat_dialog_delete_event_cb (GtkWidget  *widget,
+			     GdkEvent   *event,
+			     GossipChat *chat)
+{
+	chat_hide (chat);
+
+	return TRUE;
 }
 
 static void
@@ -176,6 +194,7 @@ chat_get_for_jid (GossipJID  *jid,
 	chat = g_new0 (GossipChat, 1);
 	
 	chat->jid = gossip_jid_ref (jid);
+	chat->hidden = FALSE;
 
 	if (priv_group_chat) {
 		chat->nick = g_strdup (gossip_jid_get_resource (jid));
@@ -264,6 +283,11 @@ chat_create_gui (GossipChat *chat)
 	g_signal_connect (chat->dialog,
 			  "destroy",
 			  G_CALLBACK (chat_dialog_destroy_cb),
+			  chat);
+
+	g_signal_connect (chat->dialog,
+			  "delete_event",
+			  G_CALLBACK (chat_dialog_delete_event_cb),
 			  chat);
 
 	g_signal_connect (chat->info_button,
@@ -413,7 +437,7 @@ chat_key_press_event_cb (GtkWidget   *dialog,
 			 GossipChat  *chat)
 {
 	if ((event->state & GDK_CONTROL_MASK) && (event->keyval == GDK_w)) {
-		gtk_widget_destroy (dialog);
+		chat_hide (chat);
 		return TRUE;
 	}
 
@@ -636,6 +660,10 @@ chat_message_handler (LmMessageHandler *handler,
 	g_free (nick);
 	gossip_jid_unref (jid);
 
+	if (chat->hidden) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
@@ -730,6 +758,15 @@ chat_update_title (GossipChat *chat, gboolean new_message)
 	g_free (title);
 }
 
+static void
+chat_hide (GossipChat *chat) 
+{
+	/* g_print ("Remove all but the last 10 rows in the text area.\n"); */
+
+	gtk_widget_hide (chat->dialog);
+	chat->hidden = TRUE;
+}
+
 GossipChat *
 gossip_chat_get_for_jid (GossipJID *jid)
 {
@@ -751,7 +788,16 @@ gossip_chat_append_message (GossipChat *chat, LmMessage *m)
 	g_return_if_fail (m != NULL);
 
 	connection = gossip_app_get_connection ();
-	chat_message_handler (chat->message_handler, connection, m, chat);
+	
+	/* If the chat exists but has been hidden by the user we have handlers 
+	 * that has already appended the message, this is something of a 
+	 * work-around before we have logging that can be used to show last
+	 * couple of lines in a chat window.
+	 */
+	if (!chat->hidden) {
+		chat_message_handler (chat->message_handler,
+				      connection, m, chat);
+	}
 }
 
 LmHandlerResult

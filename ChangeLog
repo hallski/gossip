@@ -1,5 +1,17 @@
 2003-08-05  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c:
+	(app_message_handler): Removed bogus sub type check.
+	(app_push_message): Don't push blink if this user is already blinking.
+	* src/gossip-chat.c:
+	(chat_dialog_delete_event_cb): added
+	(chat_get_for_jid): initialize as not hidden.
+	(chat_create_gui): connect to delete_event.
+	(chat_key_press_event_cb): hide chat instead of destroying it.
+	(chat_message_handler): if hidden, allow more handlers.
+	(chat_hide): Added, hides the chat dialog
+	(gossip_chat_append_message): Don't append if message is hidden.
+
 	* src/gossip-app.c: (app_about_cb):
 	- Commited patch from Thomas Reynolds to add link to project page in
 	  about dialog. Fixes bug #117730
