@@ -1,3 +1,8 @@
+2004-01-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c (chat_input_key_press_event_cb): Page up/down
+	scrolls. Fixes bug #127595.
+
 2004-01-06  Geert-Jan Van den Bogaerde  <gvdbogaerde@pandora.be>
 
 	* src/gossip-chat.c:

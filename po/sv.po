@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-12-20 03:51+0100\n"
+"POT-Creation-Date: 2004-01-06 22:07+0100\n"
 "PO-Revision-Date: 2003-11-09 19:42+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -207,32 +207,32 @@ msgstr "%s vill bli meddelad om din närvaro."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1394
+#: src/gossip-app.c:1393
 msgid "Make sure that your account information is correct."
 msgstr "Kontrollera att kontoinformationen är korrekt."
 
-#: src/gossip-app.c:1395
+#: src/gossip-app.c:1394
 msgid "The server may currently be unavailable."
 msgstr "Servern kan vara tillfälligt otillgänglig."
 
-#: src/gossip-app.c:1797
+#: src/gossip-app.c:1796
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1973
+#: src/gossip-app.c:1972
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-app.c:2527
+#: src/gossip-app.c:2526
 msgid "Custom Message..."
 msgstr "Eget meddelande..."
 
-#: src/gossip-app.c:2545
+#: src/gossip-app.c:2544
 msgid "Custom Busy Message..."
 msgstr "Eget upptagenmeddelande..."
 
-#: src/gossip-app.c:2552
+#: src/gossip-app.c:2551
 msgid "Leave..."
 msgstr "Gå iväg..."
 
@@ -252,30 +252,38 @@ msgstr "_Öppna länk"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:622
+#: src/gossip-chat-window.c:638
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
 
-#: src/gossip-chat.c:664
+#: src/gossip-chat.c:674
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:669 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:679 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detaljer:"
 
-#: src/gossip-chat.c:755
+#: src/gossip-chat.c:765
 #, c-format
 msgid "%s went offline"
 msgstr "%s kopplade från"
 
-#: src/gossip-chat.c:769
+#: src/gossip-chat.c:779
 #, c-format
 msgid "%s comes online"
 msgstr "%s anslöt sig"
+
+#: src/gossip-chat.c:866
+msgid "Connected"
+msgstr "Anslöts"
+
+#: src/gossip-chat.c:881
+msgid "Disconnected"
+msgstr "Kopplades ifrån"
 
 #: src/gossip-contact-info.c:352
 #, c-format

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003      Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
@@ -994,13 +994,30 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
                                GdkEventKey *event,
                                GossipChat  *chat)
 {
+	GossipChatPriv *priv = chat->priv;
+	GtkAdjustment  *adj;
+	gdouble         val;
+		
 	/* Catch enter but not ctrl-enter */
 	if (IS_ENTER (event->keyval) && !(event->state & GDK_CONTROL_MASK)) {
 		chat_input_text_view_send (chat);
 
 		return TRUE;
 	}
+	else if (event->keyval == GDK_Page_Up) {
+		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
+		gtk_adjustment_set_value (adj, adj->value - adj->page_size);
+		
+		return TRUE;
+	}
+	else if (event->keyval == GDK_Page_Down) {
+		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
+		val = MIN (adj->value + adj->page_size, adj->upper - adj->page_size);  
+		gtk_adjustment_set_value (adj, val);
 
+		return TRUE;
+	}
+		
 	return FALSE;
 }
 
