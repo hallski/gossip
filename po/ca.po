@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-06-23 18:48+0200\n"
-"PO-Revision-Date: 2003-06-23 17:26+0200\n"
+"POT-Creation-Date: 2003-06-28 19:09+0200\n"
+"PO-Revision-Date: 2003-06-28 19:09+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -29,49 +29,49 @@ msgstr "S'afegirà a %s a la vostra llista de contactes."
 msgid "Contact will be added to your contact list"
 msgstr "S'afegirà el contacte a la vostra llista de contactes."
 
-#: src/gossip-app.c:287
+#: src/gossip-app.c:288
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:291
+#: src/gossip-app.c:292
 msgid "Free to chat"
 msgstr "Disponible per xerrar"
 
-#: src/gossip-app.c:295
+#: src/gossip-app.c:296
 msgid "Busy"
 msgstr "Ocupat"
 
-#: src/gossip-app.c:299 ui/main.glade.h:27
+#: src/gossip-app.c:300 ui/main.glade.h:27
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:303
+#: src/gossip-app.c:304
 msgid "Extended away"
 msgstr "Absent fa estona"
 
-#: src/gossip-app.c:311
+#: src/gossip-app.c:312
 msgid "Offline"
 msgstr "Desconnectat"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:371
+#: src/gossip-app.c:372
 msgid "translator_credits"
 msgstr "Jordi Mallach <jordi@sindominio.net>"
 
-#: src/gossip-app.c:382
+#: src/gossip-app.c:383
 msgid "A Jabber Client for GNOME"
 msgstr "Un client Jabber per al GNOME"
 
-#: src/gossip-app.c:893
+#: src/gossip-app.c:903
 msgid "Please enter your password:"
 msgstr "Si us plau, introduïu la vostra contrasenya:"
 
-#: src/gossip-app.c:963
+#: src/gossip-app.c:973
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 
-#: src/gossip-app.c:1221
+#: src/gossip-app.c:1231
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
@@ -92,13 +92,17 @@ msgstr "Sistema operatiu:"
 msgid "Information about %s"
 msgstr "Informació sobre %s"
 
-#: src/gossip-main.c:61
-msgid "Don't connect on startup."
-msgstr "No connectes en iniciar."
+#: src/gossip-main.c:67
+msgid "Don't connect on startup"
+msgstr "No connectes en iniciar"
 
-#: src/gossip-main.c:74 ui/main.glade.h:33
-msgid "Gossip"
-msgstr "Gossip"
+#: src/gossip-main.c:76
+msgid "Which account to connect to on startup"
+msgstr "A quin compte connectar en iniciar"
+
+#: src/gossip-main.c:77
+msgid "ACCOUNT-NAME"
+msgstr "NOM-COMPTE"
 
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
@@ -475,6 +479,10 @@ msgstr "Sopar"
 #: ui/main.glade.h:32
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Teniu ja un compte a un servidor de Jabber? "
+
+#: ui/main.glade.h:33
+msgid "Gossip"
+msgstr "Gossip"
 
 #: ui/main.glade.h:34
 msgid ""
