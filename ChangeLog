@@ -1,3 +1,8 @@
+2003-08-30  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-main.c: (setup_default_window_icon):
+	* ui/main.glade: Fix stale references to old image. Thanks boyens!
+
 2003-08-30  Christophe Merlet  <redfox@redfoxcenter.org>
 
 	* configure.in: Added "fr" to ALL_LINGUAS.

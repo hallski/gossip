@@ -41,7 +41,7 @@ setup_default_window_icon (void)
 	GList        *list;
 	GdkPixbuf    *pixbuf;
 
-	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/gossip-online.png", NULL);
+	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/gossip-available.png", NULL);
 
 	list = g_list_append (NULL, pixbuf);
 
