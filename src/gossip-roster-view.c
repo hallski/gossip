@@ -934,13 +934,10 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		pango_attr_list_insert (attr_list, attr_color);
 	}
 
-	/* FIXME: Try if this could work? */
-	if (0) {
-		attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
-		attr_size->start_index = attr_style->start_index;
-		attr_size->end_index = -1;
-		pango_attr_list_insert (attr_list, attr_size);
-	}
+	attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
+	attr_size->start_index = attr_style->start_index;
+	attr_size->end_index = -1;
+	pango_attr_list_insert (attr_list, attr_size);
 	
 	g_object_set (cell,
 		      "weight", PANGO_WEIGHT_NORMAL,
