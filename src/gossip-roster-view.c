@@ -40,15 +40,17 @@
 #define FLASH_TIMEOUT 500
 
 struct _GossipRosterViewPriv {
-	GtkTreeModel   *model;
-	GossipRoster   *roster;
+	GtkTreeModel        *model;
+	GossipRoster        *roster;
 
-	GtkItemFactory *item_popup_factory;
-	GtkItemFactory *group_popup_factory;
+	GtkItemFactory      *item_popup_factory;
+	GtkItemFactory      *group_popup_factory;
 
-	GHashTable     *flash_table;
+	GHashTable          *flash_table;
 
-	gboolean        show_offline;
+	gboolean             show_offline;
+
+	GtkTreeRowReference *drag_row;
 };
 
 typedef union {
@@ -60,6 +62,18 @@ typedef struct {
 	gboolean flash_on;
 	guint    flash_timeout_id;
 } FlashData;
+
+/* Drag & Drop types */
+enum DndDragType {
+	DND_DRAG_TYPE_JID,
+	NUM_DRAG_TYPES
+};
+
+static GtkTargetEntry drag_types[] = {
+	{ "text/jid", 0, DND_DRAG_TYPE_JID },
+};
+
+static GdkAtom drag_atoms[NUM_DRAG_TYPES];
 
 static void     roster_view_class_init               (GossipRosterViewClass *klass);
 static void     roster_view_init                     (GossipRosterView      *view);
@@ -150,9 +164,18 @@ static void     roster_view_remove_item              (GossipRosterView      *vie
 static gboolean roster_view_iter_equal_item          (GtkTreeModel          *model,
 						      GtkTreeIter           *iter,
 						      GossipRosterItem      *item);
-
-
-
+static void     roster_view_drag_begin               (GtkWidget             *widget,
+						      GdkDragContext        *context,
+						      gpointer               user_data);
+static void     roster_view_drag_data_get            (GtkWidget             *widget,
+						      GdkDragContext        *contact,
+						      GtkSelectionData      *selection,
+						      guint                  info,
+						      guint                  time,
+						      gpointer               user_data);
+static void     roster_view_drag_end                 (GtkWidget             *widget,
+						      GdkDragContext        *context,
+						      gpointer               user_data);
 
 enum {
 	CONTACT_ACTIVATED,
@@ -412,6 +435,7 @@ roster_view_setup_tree (GossipRosterView *view)
 	GossipRosterViewPriv *priv;
 	GtkCellRenderer      *cell;
 	GtkTreeViewColumn    *col;
+	static int            setup = 0;
 
 	priv = view->priv;
 	
@@ -437,7 +461,32 @@ roster_view_setup_tree (GossipRosterView *view)
 						 view,
 						 NULL);
 
+	if (!setup) {
+		int i;
+		
+		for (i = 0; i < NUM_DRAG_TYPES; ++i) {
+			drag_atoms[i] = gdk_atom_intern (drag_types[i].target,
+							 FALSE);
+		}
+
+		setup = 1;
+	}
+
 	gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
+
+	gtk_drag_source_set (GTK_WIDGET (view), GDK_BUTTON1_MASK, 
+			     drag_types, NUM_DRAG_TYPES, 
+			     GDK_ACTION_COPY);
+
+	g_signal_connect (GTK_TREE_VIEW (view), "drag-begin",
+			  G_CALLBACK (roster_view_drag_begin),
+			  NULL);
+	g_signal_connect (GTK_TREE_VIEW (view), "drag-data-get",
+			  G_CALLBACK (roster_view_drag_data_get),
+			  NULL);
+	g_signal_connect (GTK_TREE_VIEW (view), "drag-end",
+			  G_CALLBACK (roster_view_drag_end),
+			  NULL);
 }
 
 static void
@@ -1075,6 +1124,106 @@ roster_view_iter_equal_item (GtkTreeModel     *model,
 
 	return FALSE;
 }
+
+static void
+roster_view_drag_begin (GtkWidget      *widget,
+			GdkDragContext *context,
+			gpointer        user_data)
+{
+	GossipRosterViewPriv *priv;
+	GtkTreeSelection     *selection;
+	GtkTreeModel         *model;
+	GtkTreePath          *path;
+	GtkTreeIter           iter;
+
+	priv = GOSSIP_ROSTER_VIEW (widget)->priv;
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		return;
+	}
+
+	path = gtk_tree_model_get_path (model, &iter);
+	priv->drag_row = gtk_tree_row_reference_new (model, path);
+	gtk_tree_path_free (path);
+
+	/* FIXME: Set a nice icon */
+}
+
+static void
+roster_view_drag_data_get (GtkWidget             *widget,
+			   GdkDragContext        *contact,
+			   GtkSelectionData      *selection,
+			   guint                  info,
+			   guint                  time,
+			   gpointer               user_data)
+{
+	GossipRosterViewPriv *priv;
+	GtkTreePath          *src_path;
+	GtkTreeIter           iter;
+	GtkTreeModel         *model;
+	RosterElement        *e;
+	gboolean              is_group;
+	GossipJID            *jid;
+	const gchar          *str_jid;
+	
+	priv = GOSSIP_ROSTER_VIEW (widget)->priv;
+	
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
+	if (!priv->drag_row) {
+		return;
+	}
+
+	src_path = gtk_tree_row_reference_get_path (priv->drag_row);
+	if (!src_path) {
+		return;
+	}
+
+	if (!gtk_tree_model_get_iter (model, &iter, src_path)) {
+		gtk_tree_path_free (src_path);
+		return;
+	}
+
+	gtk_tree_path_free (src_path);
+
+	gtk_tree_model_get (model, &iter,
+			    COL_IS_GROUP, &is_group,
+			    COL_ELEMENT, &e,
+			    -1);
+	
+	if (is_group) {
+		return;
+	}
+
+	jid = gossip_roster_item_get_jid (e->item);
+	str_jid = gossip_jid_get_full (jid);
+	
+	switch (info) {
+	case DND_DRAG_TYPE_JID:
+		gtk_selection_data_set (selection, drag_atoms[info], 8, 
+					str_jid, strlen (str_jid) + 1);
+		break;
+	default:
+		return;
+	}
+	
+}
+
+static void
+roster_view_drag_end (GtkWidget      *widget,
+		      GdkDragContext *context,
+		      gpointer        user_data)
+{
+	GossipRosterViewPriv *priv;
+
+	priv = GOSSIP_ROSTER_VIEW (widget)->priv;
+
+	if (priv->drag_row) {
+		gtk_tree_row_reference_free (priv->drag_row);
+		priv->drag_row = NULL;
+	}
+}
+
 
 static gboolean
 roster_view_find_item (GossipRosterView  *view,

@@ -1,3 +1,16 @@
+2004-05-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c:
+	(gossip_chat_window_init): Setup drag & drop
+	(chat_window_drag_data_received): Added.
+	* src/gossip-roster-view.c:
+	(roster_view_setup_tree): Setup drag & drop
+	(roster_view_drag_begin): Added
+	(roster_view_drag_data_get): Added
+	(roster_view_drag_end): Added
+	- Support dragging contacts to chat windows to open chat with them
+	- Fixes bug #133864
+
 2004-05-02  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster.c (roster_item_update): 

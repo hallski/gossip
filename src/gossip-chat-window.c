@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
  *
  * This program is free software; you can redistribute it and/or
@@ -116,6 +116,14 @@ chat_window_focus_in_event_cb                 (GtkWidget	     *widget,
 static const gchar *
 chat_window_get_name                          (GossipChatWindow      *window, 
 					       GossipChat            *chat);
+static void    chat_window_drag_data_received (GtkWidget             *widget,
+					       GdkDragContext        *context,
+					       int                    x,
+					       int                    y, 
+					       GtkSelectionData      *selection,
+					       guint                  info, 
+					       guint                  time, 
+					       GossipChatWindow      *window);
 
 /* Called from Glade, so it shouldn't be static */
 GtkWidget * chat_window_create_notebook (gpointer data);
@@ -152,6 +160,14 @@ static guint tab_accel_keys[] = {
 	GDK_6, GDK_7, GDK_8, GDK_9, GDK_0
 };
 
+enum DndDropType {
+	DND_DROP_TYPE_JID,
+	NUM_DROP_TYPES
+};
+
+static GtkTargetEntry drop_types[] = {
+	{ "text/jid", 0, DND_DROP_TYPE_JID },
+};
 
 GType
 gossip_chat_window_get_type (void)
@@ -306,6 +322,14 @@ gossip_chat_window_init (GossipChatWindow *window)
 	g_signal_connect (gossip_app_get (),
 			  "disconnected",
 			  G_CALLBACK (chat_window_disconnected_cb),
+			  window);
+
+	gtk_drag_dest_set (GTK_WIDGET (priv->notebook), GTK_DEST_DEFAULT_ALL,
+			   drop_types, NUM_DROP_TYPES,
+			   GDK_ACTION_COPY);
+
+	g_signal_connect (priv->notebook, "drag-data-received",
+			  G_CALLBACK (chat_window_drag_data_received),
 			  window);
 
 	chat_windows = g_list_prepend (chat_windows, window);
@@ -939,6 +963,50 @@ chat_window_get_name (GossipChatWindow *window, GossipChat *chat)
 	contact = gossip_chat_get_contact (chat);
 
 	return gossip_contact_get_name (contact);
+}
+
+static void
+chat_window_drag_data_received (GtkWidget        *widget,
+				GdkDragContext   *context,
+				int               x,
+				int               y, 
+				GtkSelectionData *selection,
+				guint             info, 
+				guint             time, 
+				GossipChatWindow *window)
+{
+	GossipJID        *jid;
+	GossipRosterItem *item;
+	GossipContact    *contact;
+	GossipChat       *chat;
+	GossipChatWindow *old_window;
+	
+	jid = gossip_jid_new (selection->data);
+	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
+	gossip_jid_unref (jid);
+	
+	if (!item) {
+		return;
+	}
+
+	contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
+						       item);
+
+	chat = gossip_chat_get_for_contact (contact, TRUE);
+	old_window = gossip_chat_get_window (chat);
+	
+	if (old_window) {
+		if (old_window == window) {
+			goto finished;
+		}
+		
+		gossip_chat_window_remove_chat (old_window, chat);
+	}
+
+	gossip_chat_window_add_chat (window, chat);
+
+finished:
+	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
 }
 
 GtkWidget *
