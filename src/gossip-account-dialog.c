@@ -57,8 +57,6 @@ static void     account_dialog_destroy_cb          (GtkWidget            *widget
 static void     account_dialog_response_cb         (GtkWidget            *widget,
 						    gint                  response,
 						    GossipAccountDialog  *dialog);
-static void     account_dialog_register_account_cb (GtkWidget            *widget,
-						    GossipAccountDialog  *dialog);
 static gboolean account_dialog_focus_out_event_cb  (GtkWidget            *widget,
 						    GdkEventFocus        *event,
 						    GossipAccountDialog  *dialog);
@@ -92,13 +90,6 @@ account_dialog_response_cb (GtkWidget            *widget,
 	} else {
 		gtk_widget_destroy (widget);
 	}
-}
-
-static void
-account_dialog_register_account_cb (GtkWidget            *widget,
-				    GossipAccountDialog *dialog)
-{
-
 }
 
 static gboolean
@@ -269,9 +260,6 @@ gossip_account_dialog_show (void)
 	gossip_glade_connect (gui, dialog,
 			      "account_dialog", "response",
 			      G_CALLBACK (account_dialog_response_cb),
-			      
-			      "register_button", "clicked",
-			      G_CALLBACK (account_dialog_register_account_cb),
 			      
 			      "username_entry", "focus_out_event",
 			      G_CALLBACK (account_dialog_focus_out_event_cb),

@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-19 16:19+0200\n"
+"POT-Creation-Date: 2003-08-19 21:11+0200\n"
 "PO-Revision-Date: 2003-08-05 16:02+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -97,7 +97,7 @@ msgid "Whether or not to timestamp all messages in conversations."
 msgstr ""
 "Huruvida alla meddelanden ska tidsstämplas eller inte i konversationer."
 
-#: src/gossip-account.c:115 src/gossip-account-dialog.c:308
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:55
 msgid "Home"
 msgstr "Hemma"
 
@@ -115,95 +115,95 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:339
+#: src/gossip-app.c:350
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:343
+#: src/gossip-app.c:354
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:347
+#: src/gossip-app.c:358
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:351 ui/main.glade.h:32
+#: src/gossip-app.c:362 ui/main.glade.h:32
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:355
+#: src/gossip-app.c:366
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:363
+#: src/gossip-app.c:374
 msgid "Offline"
 msgstr "Frånkopplad"
 
-#: src/gossip-app.c:372
+#: src/gossip-app.c:383
 msgid "_Show Contact List"
 msgstr "_Visa kontaktlista"
 
 # Vi översätter "hide" med "dölj" i GNOME. Gömmer gör man något för att det
 # inte ska hittas, döljer gör man för att det inte ska synas.
-#: src/gossip-app.c:381
+#: src/gossip-app.c:392
 msgid "_Hide Contact List"
 msgstr "_Dölj kontaktlista"
 
-#: src/gossip-app.c:394
+#: src/gossip-app.c:405
 msgid "Send _Chat message..."
 msgstr "Skicka _chattmeddelande..."
 
-#: src/gossip-app.c:409
+#: src/gossip-app.c:420
 msgid "_Quit"
 msgstr "_Avsluta"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:477
+#: src/gossip-app.c:488
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:489
+#: src/gossip-app.c:500
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
 # "Web site" är "webbplats". "Web page" är "webbsida".
-#: src/gossip-app.c:497
+#: src/gossip-app.c:508
 msgid "Gossip Website"
 msgstr "Gossip-webbplatsen"
 
-#: src/gossip-app.c:621
+#: src/gossip-app.c:632
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelande till."
 
-#: src/gossip-app.c:626
+#: src/gossip-app.c:637
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: src/gossip-app.c:1083
+#: src/gossip-app.c:1107
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1670
+#: src/gossip-app.c:1698
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1872
+#: src/gossip-app.c:1900
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-chat.c:680
+#: src/gossip-chat.c:681
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:686 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detaljer:"
@@ -214,7 +214,7 @@ msgstr "Detaljer:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:846
+#: src/gossip-chat.c:852
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
@@ -222,7 +222,7 @@ msgstr "%sChatt - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:851
+#: src/gossip-chat.c:857
 #, c-format
 msgid "%sChat"
 msgstr "%sChatta"
@@ -268,7 +268,7 @@ msgstr "Tillgängliga konton:"
 msgid "[default]"
 msgstr "[standard]"
 
-#: src/gossip-main.c:162
+#: src/gossip-main.c:153
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Det finns inget konto med namnet \"%s\"."
@@ -337,11 +337,11 @@ msgstr ""
 "%s"
 
 # Dessa meddelanden slutar inte båda i punkt, borde kanske rapporteras
-#: src/gossip-startup-druid.c:253
+#: src/gossip-startup-druid.c:254
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip kommer nu att försöka använda ditt konto:"
 
-#: src/gossip-startup-druid.c:257
+#: src/gossip-startup-druid.c:258
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip kommer nu att försöka registrera kontot:"
 

@@ -57,8 +57,8 @@ main (int argc, char *argv[])
 	GnomeProgram       *program;
 	gboolean            no_connect = FALSE;
 	gboolean            list_accounts = FALSE;
-	gchar              *account_name = NULL;
 	poptContext         popt_context;
+	gchar              *account_name = NULL;
 	const gchar       **args;
 	struct poptOption   options[] = {
 		{
@@ -144,27 +144,29 @@ main (int argc, char *argv[])
 			      GCONF_CLIENT_PRELOAD_ONELEVEL,
 			      NULL);
 	
-	setup_default_window_icon ();
-	
-	gossip_app_create ();
+	if (account_name) {
+		GossipAccount *account;
 
-	if (!no_connect) {
-		if (!account_name) {
-			gossip_app_connect_default ();
-		} else {
-			GossipAccount *account;
-		
-			account = gossip_account_get (account_name);
-			if (account) {
-				gossip_app_connect (account);
-			} else {
-				fprintf (stderr,
-					 _("There is no account with the name '%s'."),
-					 account_name);
-				fprintf (stderr, "\n");
-				return 1;
-			}
+		account = gossip_account_get (account_name);
+		if (!account) {
+			fprintf (stderr,
+				 _("There is no account with the name '%s'."),
+				 account_name);
+			fprintf (stderr, "\n");
+			return 1;
 		}
+
+		/* Use the specified account as default account. */
+		gossip_account_set_overridden_default_name (account_name);
+
+		gossip_account_unref (account);
+	}
+
+	setup_default_window_icon ();
+	gossip_app_create ();
+	
+	if (!no_connect) {
+		gossip_app_connect ();
 	}
 	
 	gtk_main ();

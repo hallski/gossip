@@ -22,7 +22,10 @@
 #ifndef __GOSSIP_STARTUP_DRUID_H__
 #define __GOSSIP_STARTUP_DRUID_H__
 
-void  gossip_startup_druid_run (void);
+#include <glib.h>
+
+void     gossip_startup_druid_run       (void);
+gboolean gossip_startup_druid_is_needed (void);
 
 #endif /* __GOSSIP_STARTUP_DRUID_H__ */
 

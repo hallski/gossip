@@ -57,30 +57,20 @@ typedef enum {
 	GOSSIP_STATUS_OFFLINE   = 5
 } GossipStatus;
 
-GType          gossip_app_get_type        (void) G_GNUC_CONST;
 
-void           gossip_app_create          (void);
-
-void           gossip_app_connect         (GossipAccount *account);
-
-void           gossip_app_connect_default (void);
-
-void           gossip_app_join_group_chat (GossipApp     *app,
-					   const gchar   *room,
-					   const gchar   *server,
-					   const gchar   *nick);
-
-const gchar *  gossip_app_get_username    (void);
-
-GossipJID *    gossip_app_get_jid         (void);
-
-GossipRosterOld * gossip_app_get_roster      (void);
-
-LmConnection * gossip_app_get_connection  (void);
-
-GossipStatus   gossip_app_get_status      (void);
-
-GossipApp *    gossip_app_get             (void);
+GType            gossip_app_get_type        (void) G_GNUC_CONST;
+void             gossip_app_create                  (void);
+void             gossip_app_connect                 (void);
+void             gossip_app_join_group_chat         (const gchar   *room,
+						     const gchar   *server,
+						     const gchar   *nick);
+const gchar *    gossip_app_get_username            (void);
+GossipJID *      gossip_app_get_jid                 (void);
+GossipRosterOld *gossip_app_get_roster              (void);
+LmConnection *   gossip_app_get_connection          (void);
+GossipStatus     gossip_app_get_status              (void);
+GossipApp *      gossip_app_get                     (void);
+void             gossip_app_set_overridden_resource (const gchar   *resource);
 
 
 #endif /* __GOSSIP_APP_H__ */

@@ -87,22 +87,14 @@ connect_dialog_response_cb (GtkWidget           *widget,
 			    gint                 response,
 			    GossipConnectDialog *dialog)
 {
-	GossipAccount *account;
-	const gchar   *resource;
-	GtkWidget     *window;
+	const gchar *resource;
+	GtkWidget   *window;
 
 	switch (response) {
 	case RESPONSE_CONNECT:
-		account = gossip_account_get_default ();
-
 		resource = gtk_entry_get_text (dialog->resource_entry);
-		if (strcmp (resource, "") != 0) {
-			g_free (account->resource);
-			account->resource = g_strdup (resource);
-		}
-
-		gossip_app_connect (account);
-		gossip_account_unref (account);
+		gossip_app_set_overridden_resource (resource);
+		gossip_app_connect ();
 		break;
 
 	case RESPONSE_EDIT:

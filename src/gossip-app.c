@@ -52,7 +52,7 @@
 #include "gossip-app.h"
 
 
-#define DEFAULT_RESOURCE "Gossip"
+#define DEFAULT_RESOURCE N_("Home")
 #define ADD_CONTACT_RESPONSE_ADD 1
 
 #define d(x)
@@ -74,9 +74,10 @@ struct _GossipAppPriv {
 	GtkWidget           *show_popup_item;
 	GtkWidget           *hide_popup_item;
 	
-	GossipRosterOld        *roster;
+	GossipRosterOld     *roster;
 
 	GossipAccount       *account;
+	gchar               *overridden_resource;
 
 	GossipJID           *jid;
 
@@ -283,7 +284,6 @@ app_init (GossipApp *app)
         priv = g_new0 (GossipAppPriv, 1);
         app->priv = priv;
 
-	priv->account = gossip_account_get ("Default");
 	priv->status_to_set_on_connect = GOSSIP_STATUS_AVAILABLE;
 
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
@@ -312,14 +312,25 @@ app_init (GossipApp *app)
 
 	g_object_unref (glade);
 
-	if (!priv->account || g_getenv ("GOSSIP_FORCE_DRUID")) {
+	if (gossip_startup_druid_is_needed ()) {
 		gossip_startup_druid_run ();
-		priv->account = gossip_account_get_default ();
+	}
+
+	priv->account = gossip_account_get_default ();
+
+	/* If we still don't have an account, create an empty one, we don't save
+	 * it until it's edited though, so the druid will come up again.
+	 */
+	if (!priv->account) {
+		priv->account = gossip_account_new ("Default",
+						    NULL, NULL,
+						    _(DEFAULT_RESOURCE),
+						    NULL,
+						    LM_CONNECTION_DEFAULT_PORT,
+						    FALSE);
 	}
 	
-	if (priv->account) {
-		app_create_connection (app);
-	}
+	app_create_connection (app);
 	
 	priv->roster = gossip_roster_old_new (app);
 
@@ -1014,6 +1025,8 @@ app_connection_open_cb (LmConnection *connection,
 {
 	GossipAppPriv *priv;
 	gchar         *password;
+	GossipAccount *account;
+	const gchar   *resource = NULL;
 
 	g_return_if_fail (connection != NULL);
 	g_return_if_fail (GOSSIP_IS_APP (app));
@@ -1027,30 +1040,41 @@ app_connection_open_cb (LmConnection *connection,
 		return;
 	}
 
-	if (!priv->account->password || !priv->account->password[0]) {
-		password = gossip_password_dialog_run (priv->account, GTK_WINDOW (priv->window));
+	account = priv->account;
+	
+	if (!account->password || !account->password[0]) {
+		password = gossip_password_dialog_run (account,
+						       GTK_WINDOW (priv->window));
 		if (!password) {
 			app_disconnect (app);
 			return;
  		}
 	} else {
-		password = g_strdup (priv->account->password);
+		password = g_strdup (account->password);
 	}
 
-	if (!priv->account->resource || !priv->account->resource[0]) {
-		g_free (priv->account->resource);
-		priv->account->resource = g_strdup (DEFAULT_RESOURCE);
+	/* Try overridden resource, account resource, default resource in that
+	 * order.
+	 */
+	if (priv->overridden_resource) {
+		resource = priv->overridden_resource;
+	}
+	if (!resource || !resource[0]) {
+		resource = account->resource;
+	}
+	if (!resource || !resource[0]) {
+		resource = _(DEFAULT_RESOURCE);
 	}
 
 	if (priv->jid) {
 		gossip_jid_unref (priv->jid);
 	}
-	priv->jid = gossip_account_get_jid (priv->account);
+	priv->jid = gossip_account_get_jid (account);
 
 	lm_connection_authenticate (connection, 
-				    priv->account->username, 
+				    account->username, 
 				    password,
-				    priv->account->resource,
+				    resource,
 				    (LmResultFunction) app_authentication_cb,
 				    app, NULL, NULL);
 
@@ -1109,8 +1133,7 @@ app_user_activated_cb (GossipRosterOld *roster,
 }
 
 void
-gossip_app_join_group_chat (GossipApp   *app,
-			    const gchar *room,
+gossip_app_join_group_chat (const gchar *room,
 			    const gchar *server,
 			    const gchar *nick)
 {
@@ -1191,29 +1214,33 @@ app_idle_check_cb (GossipApp *app)
 }
 
 void
-gossip_app_connect (GossipAccount *account)
+gossip_app_connect (void)
 {
 	GossipAppPriv *priv;
+	GossipAccount *account;
 
-	g_return_if_fail (account != NULL);
-	
 	priv = app->priv;
 
-	app_disconnect (app);
-	
-	gossip_account_ref (account);
-
-	d(g_print ("Connecting to: %s\n", account->server));
-	
 	if (priv->account) {
 		gossip_account_unref (priv->account);
 	}
-	priv->account = account;
-
+	
+	priv->account = gossip_account_get_default ();
+	
+	if (!priv->account) {
+		return;
+	}
+	
+	app_disconnect (app);
+	
+	d(g_print ("Connecting to: %s\n", account->server));
+	
 	if (!priv->connection) {
 		app_create_connection (app);
 	}
 
+	account = priv->account;
+	
 	lm_connection_set_server (priv->connection, account->server);
 	lm_connection_set_port (priv->connection, account->port);
 	lm_connection_set_use_ssl (priv->connection, account->use_ssl);
@@ -1224,13 +1251,10 @@ gossip_app_connect (GossipAccount *account)
 }
 
 void
-gossip_app_connect_default (void)
+gossip_app_set_overridden_resource (const gchar *resource)
 {
-	GossipAppPriv *priv;
-
-	priv = app->priv;
-
-	gossip_app_connect (priv->account);
+	g_free (app->priv->overridden_resource);
+	app->priv->overridden_resource = g_strdup (resource);
 }
 
 void
@@ -1256,6 +1280,10 @@ app_set_status (GossipApp *app, GossipStatus status)
 	
 	priv = app->priv;
 
+	if (!priv->connection) {
+		return;
+	}
+	
 	d(g_print ("app_set_status\n"));
 
 	/* Disconnect. */
@@ -1273,7 +1301,7 @@ app_set_status (GossipApp *app, GossipStatus status)
 	if (!lm_connection_is_open (priv->connection)) {
 		priv->status_to_set_on_connect = status;
 
-		gossip_app_connect (priv->account);
+		gossip_app_connect ();
 		return;
 	}
 
@@ -1335,7 +1363,7 @@ app_set_status_indicator (GossipApp *app,
 					   app_status_item_activated_cb,
 					   app);
 
-	filename = gossip_status_to_icon_filename (status);
+	filename = gossip_status_to_icon_filename (GOSSIP_STATUS_AVAILABLE);
 	pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
 	gtk_window_set_icon (GTK_WINDOW (priv->window), pixbuf);
 	g_object_unref (pixbuf);

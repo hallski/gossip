@@ -59,6 +59,9 @@ struct _GossipChat {
 	GtkWidget        *from_label;
 	GtkWidget        *composing_image;
 
+	GtkTooltips      *tooltips;
+	GtkWidget        *from_eventbox;
+	
 	GossipJID        *jid;
 	gchar            *nick;
 
@@ -278,8 +281,6 @@ chat_create_gui (GossipChat *chat)
 	GossipRosterOld  *roster;
 	gchar         *name;
 	GtkTextBuffer *buffer;
-	GtkTooltips   *tooltips;
-	GtkWidget     *from_eventbox;
 	GdkPixbuf     *pixbuf;
 	
 	gossip_glade_get_file_simple (GLADEDIR "/chat.glade",
@@ -292,7 +293,7 @@ chat_create_gui (GossipChat *chat)
 				      "single_hbox", &chat->single_hbox,
 				      "multi_vbox", &chat->multi_vbox,
 				      "status_image", &chat->status_image,
-				      "from_eventbox", &from_eventbox,
+				      "from_eventbox", &chat->from_eventbox,
 				      "info_button", &chat->info_button,
 				      "from_label", &chat->from_label,
 				      "disclosure", &chat->disclosure,
@@ -323,10 +324,10 @@ chat_create_gui (GossipChat *chat)
 		g_free (name);
 	}
 	
-	tooltips = gtk_tooltips_new ();
+	chat->tooltips = gtk_tooltips_new ();
 
-	gtk_tooltips_set_tip (tooltips,
-			      from_eventbox,
+	gtk_tooltips_set_tip (chat->tooltips,
+			      chat->from_eventbox,
 			      gossip_jid_get_full (chat->jid),
 			      gossip_jid_get_full (chat->jid));
 	
@@ -799,8 +800,6 @@ chat_presence_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	gossip_jid_unref (jid);
-	
 	if (strcmp (type, "unavailable") == 0 || strcmp (type, "error") == 0) {
 		filename = gossip_status_to_icon_filename (GOSSIP_STATUS_OFFLINE);
 
@@ -813,6 +812,13 @@ chat_presence_handler (LmMessageHandler *handler,
 	}
 
 	gtk_image_set_from_file (GTK_IMAGE (chat->status_image), filename);
+
+	gtk_tooltips_set_tip (chat->tooltips,
+			      chat->from_eventbox,
+			      gossip_jid_get_full (jid),
+			      gossip_jid_get_full (jid));
+
+	gossip_jid_unref (jid);
 	
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }

@@ -164,7 +164,7 @@ join_dialog_response_cb (GtkWidget        *dialog,
 		lm_connection_send (join->connection, m, NULL);
 		lm_message_unref (m);
 
-		gossip_app_join_group_chat (join->app, room, server, nick);
+		gossip_app_join_group_chat (room, server, nick);
 		g_free (nick);
 		break;
 

@@ -32,6 +32,8 @@ static gchar *  account_get_value  (const gchar   *path,
 				    const gchar   *value_name);
 static void     account_free       (GossipAccount *account);
 
+static gchar *overridden_default_name = NULL;
+
 static gchar *
 account_get_value (const gchar *path, const gchar *value_name)
 {
@@ -101,23 +103,19 @@ gossip_account_get_default ()
 {
 	GossipAccount *account = NULL;
 	gchar         *name;
-	
-	name = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default");
 
-	if (name) {
-		account = gossip_account_get (name);
-		g_free (name);
+	if (overridden_default_name) {
+		account = gossip_account_get (overridden_default_name);
 	}
-	
+
 	if (!account) {
-		account = gossip_account_new ("Default",
-					      NULL, NULL,
-					      _("Home"),
-					      NULL,
-					      LM_CONNECTION_DEFAULT_PORT,
-					      FALSE);
+		name = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default");
+		if (name) {
+			account = gossip_account_get (name);
+			g_free (name);
+		}
 	}
-	
+
 	return account;
 }
 
@@ -280,10 +278,22 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 void
 gossip_account_set_default (GossipAccount *account)
 {
+	if (overridden_default_name) {
+		return;
+	}
+	
 	gnome_config_set_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default",
 				 account->name);
 
 	gnome_config_sync ();
 }
 
-
+/* Note: This is to emulate a different default account, mostly for debuggin
+ * purposes.
+ */
+void
+gossip_account_set_overridden_default_name (const gchar *name)
+{
+	g_free (overridden_default_name);
+	overridden_default_name = g_strdup (name);
+}

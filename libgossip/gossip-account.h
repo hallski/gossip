@@ -41,22 +41,24 @@ typedef struct {
 	gint   ref_count;
 } GossipAccount;
 
-GossipAccount * gossip_account_new          (const gchar   *name,
-					     const gchar   *username,
-					     const gchar   *password,
-					     const gchar   *resource,
-					     const gchar   *server,
-					     guint          port,
-					     gboolean       use_ssl);
-GossipAccount * gossip_account_get_default  (void);
-GSList *        gossip_account_get_all      (void);
-GossipAccount * gossip_account_get          (const gchar   *name);
-GossipJID *     gossip_account_get_jid      (GossipAccount *account);
-GossipAccount * gossip_account_ref          (GossipAccount *account);
-void            gossip_account_unref        (GossipAccount *account);
-void            gossip_account_store        (GossipAccount *account,
-					     gchar         *old_name);
-void            gossip_account_set_default  (GossipAccount *account);
+
+GossipAccount *gossip_account_new                         (const gchar   *name,
+							   const gchar   *username,
+							   const gchar   *password,
+							   const gchar   *resource,
+							   const gchar   *server,
+							   guint          port,
+							   gboolean       use_ssl);
+GossipAccount *gossip_account_get_default                 (void);
+GSList *       gossip_account_get_all                     (void);
+GossipAccount *gossip_account_get                         (const gchar   *name);
+GossipJID *    gossip_account_get_jid                     (GossipAccount *account);
+GossipAccount *gossip_account_ref                         (GossipAccount *account);
+void           gossip_account_unref                       (GossipAccount *account);
+void           gossip_account_store                       (GossipAccount *account,
+							   gchar         *old_name);
+void           gossip_account_set_default                 (GossipAccount *account);
+void           gossip_account_set_overridden_default_name (const gchar   *name);
 
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

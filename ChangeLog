@@ -1,5 +1,24 @@
 2003-08-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-account-dialog.c: 
+	* src/gossip-account.c: 
+	* src/gossip-app.c:
+	* src/gossip-join-dialog.c:
+	* src/gossip-main.c:
+	* src/gossip-startup-druid.c: Finish up the new account dialog and
+	do some cleaning that was made possible now that we only have one
+	account visible in the interface. It's still a bit crufty.
+
+	* src/gossip-connect-dialog.c: Use the specified resource.
+
+	* src/gossip-chat.c (chat_presence_handler): Update tooltip on
+	presence change (resource might be different).
+
+	* src/gossip-app.c (app_set_status_indicator): Don't set the
+	window icon depending on the status.
+
+2003-08-19  Richard Hult  <richard@imendio.com>
+
 	* ui/connect.glade: Hide priority and edit buttons for now.
 
 	* src/gossip-utils.c (utils_url_event_cb): Remove unecessary

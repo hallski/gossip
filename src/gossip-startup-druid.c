@@ -25,6 +25,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-druid.h>
+#include <libgnome/gnome-config.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
@@ -261,7 +262,7 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 	gtk_label_set_markup (GTK_LABEL (startup_druid->last_action_label), str);
 	
 	g_free (str);
-	gossip_account_store (account, NULL);
+
 	gossip_account_unref (account);
 }
 
@@ -270,6 +271,8 @@ startup_druid_last_page_finished (GnomeDruidPage     *page,
 				  GnomeDruid         *druid,
 				  GossipStartupDruid *startup_druid)
 {
+	g_print ("last page finished\n");
+
 	if (startup_druid_register_account (startup_druid)) {
 		gtk_widget_destroy (startup_druid->window);
 	}
@@ -434,17 +437,40 @@ startup_druid_register_account (GossipStartupDruid *druid)
 	GossipAccount *account;
 
 	has_account = startup_druid_get_account_info (druid, &account); 
-	if (has_account) {
-		/* Don't need to register. */
-		gossip_account_store (account, NULL);
-
-		/* FIXME: We could try and connect just to see if the
-		 * server/username is correct.
-		 */
-
-		gossip_account_unref (account);
-		return TRUE;
+	if (!has_account) {
+		if (!gossip_register_account (account, GTK_WINDOW (druid->window))) {
+			return FALSE;
+		}
 	}
 	
-	return gossip_register_account (account, GTK_WINDOW (druid->window));
+	gossip_account_store (account, NULL);
+	gossip_account_set_default (account);
+
+	/* FIXME: We could try and connect just to see if the server/username is
+	 * correct.
+	 */
+
+	gossip_account_unref (account);
+	
+	return TRUE;
+}
+
+gboolean
+gossip_startup_druid_is_needed (void)
+{
+	GossipAccount *account;
+
+	if (g_getenv ("GOSSIP_FORCE_DRUID")) {
+		return TRUE;
+	}
+
+	account = gossip_account_get_default ();
+
+	if (!account) {
+		return TRUE;
+	}
+
+	gossip_account_unref (account);
+
+	return FALSE;
 }
