@@ -1,3 +1,8 @@
+2003-12-20  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_main_window_destroy_cb):
+	- exit instead of quitting main loop
+
 2003-12-19  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_main_window_destroy_cb):

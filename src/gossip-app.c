@@ -572,7 +572,8 @@ app_main_window_destroy_cb (GtkWidget *window,
 		lm_connection_close (connection, NULL);
 	}
 	
-	gtk_main_quit ();
+	exit (0);
+	/* gtk_main_quit (); */
 }
 
 static void
