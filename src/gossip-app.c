@@ -757,11 +757,6 @@ app_message_handler (LmMessageHandler *handler,
 	LmMessageSubType  type;
 	GossipJID        *jid;
 	
-	g_return_val_if_fail (connection != NULL,
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
-	g_return_val_if_fail (GOSSIP_IS_APP (app),
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
-
 	priv = app->priv;
 
 	d(g_print ("App handle message\n"));
@@ -794,8 +789,10 @@ app_message_handler (LmMessageHandler *handler,
 		g_warning ("Unhandled error from: %s", from);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 		break;
+	
 	default: 
-		g_assert_not_reached ();
+		g_warning ("Unhandled subtype %d from: %s", type, from);
+		break;
 	}
 
 	d(g_print ("Unhandled message of type: %d\n", lm_message_get_type (m)));
@@ -812,11 +809,6 @@ app_presence_handler (LmMessageHandler *handler,
 	GossipAppPriv *priv;
 	const gchar   *type;
 	
-	g_return_val_if_fail (connection != NULL,
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
-	g_return_val_if_fail (GOSSIP_IS_APP (app),
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
-
 	priv = app->priv;
 
 	type = lm_message_node_get_attribute (m->node, "type");
@@ -1034,13 +1026,9 @@ gossip_app_connect (GossipAccount *account)
 {
 	GossipAppPriv *priv;
 
+	g_return_if_fail (account != NULL);
+	
 	priv = app->priv;
-
-	if (!account) {
-		/* FIXME: Handle this better */
-		g_warning ("NULL account\n");
-		return;
-	}
 
 	app_disconnect (app);
 	
@@ -1057,6 +1045,9 @@ gossip_app_connect (GossipAccount *account)
 		app_create_connection (app);
 	}
 
+	lm_connection_set_server (priv->connection, account->server);
+	lm_connection_set_port (priv->connection, account->port);
+	
 	lm_connection_open (priv->connection,
 			    (LmResultFunction) app_connection_open_cb,
 			    app, NULL, NULL);

@@ -54,7 +54,7 @@ account_free (GossipAccount *account)
 	g_free (account->password);
 	g_free (account->resource);
 	g_free (account->server);
-	
+
 	g_free (account);
 }
 

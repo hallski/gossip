@@ -1,7 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002 CodeFactory AB
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2003      Imendio HB
+ * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002      CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -54,6 +55,7 @@ main (int argc, char *argv[])
 {
 	GnomeProgram       *program;
 	gboolean            no_connect = FALSE;
+	gboolean            list_accounts = FALSE;
 	gchar              *account_name = NULL;
 	poptContext         popt_context;
 	const gchar       **args;
@@ -75,6 +77,15 @@ main (int argc, char *argv[])
 			0,
 			N_("Which account to connect to on startup"),
 			N_("ACCOUNT-NAME")
+		},
+		{
+			"list-accounts",
+			'l',
+			POPT_ARG_NONE,
+			&list_accounts,
+			0,
+			N_("List the available accounts"),
+			NULL
 		},
 
 		{ NULL, '\0', 0, NULL, 0, NULL, NULL }
@@ -99,6 +110,32 @@ main (int argc, char *argv[])
 
 	args = poptGetArgs (popt_context);
 
+	if (list_accounts) {
+		GSList        *accounts, *l;
+		GossipAccount *default_account;
+
+		accounts = gossip_account_get_all ();
+		default_account = gossip_account_get_default ();
+
+		g_print (_("Available accounts:"));
+		g_print ("\n");
+		
+		for (l = accounts; l; l = l->next) {
+			GossipAccount *account = l->data;
+			
+			g_print (" %s", account->name);
+			if (strcmp (account->name, default_account->name) == 0) {
+				g_print (" ");
+				g_print (_("[default]"));
+			}
+
+			g_print ("\n");
+		}
+
+		g_slist_free (accounts);
+		return 0;
+	}
+	
 	gconf_client = gconf_client_get_default ();
 
 	gconf_client_add_dir (gconf_client,
@@ -115,10 +152,16 @@ main (int argc, char *argv[])
 			gossip_app_connect_default ();
 		} else {
 			GossipAccount *account;
-			
+		
 			account = gossip_account_get (account_name);
 			if (account) {
 				gossip_app_connect (account);
+			} else {
+				fprintf (stderr,
+					 _("There is no account with the name '%s'."),
+					 account_name);
+				fprintf (stderr, "\n");
+				return 1;
 			}
 		}
 	}

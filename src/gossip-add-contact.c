@@ -190,9 +190,11 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	
 	g_completion_clear_items (contact->group_completion);
 	g_completion_add_items (contact->group_completion, groups);
-	
-	gtk_combo_set_popdown_strings (GTK_COMBO (contact->two_group_combo),
-				       groups);
+
+	if (groups) {
+		gtk_combo_set_popdown_strings (GTK_COMBO (contact->two_group_combo),
+					       groups);
+	}
 
 	gtk_entry_set_text (GTK_ENTRY (contact->two_group_entry), "");
 
@@ -301,16 +303,16 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 
 	jid = gtk_label_get_text (GTK_LABEL (contact->two_id_label));
 	
-	/* Request subscribe */
+	/* Request subscribe. */
 	m = lm_message_new_with_sub_type (jid,LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_SUBSCRIBE);
 	lm_message_node_add_child (m->node, "status", message);
 	g_free (message);
-
+	
 	lm_connection_send (contact->connection, m, NULL);
 	lm_message_unref (m);
 	
-	/* Add to roster */
+	/* Add to roster. */
 	group = gtk_entry_get_text (GTK_ENTRY (contact->two_group_entry));
 	m = lm_message_new_with_sub_type (NULL, LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);

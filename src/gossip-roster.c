@@ -191,10 +191,10 @@ static guint    roster_str_hash              (gconstpointer      key);
 
 static GtkItemFactoryEntry menu_items[] = {
 	{
-		N_("/_Remove contact"),
+		N_("/Contact _Information"),
 		NULL,
-		GIF_CB (roster_menu_remove_cb),
-		MENU_REMOVE,
+		GIF_CB (roster_menu_info_cb),
+		MENU_INFO,
 		"<Item>",
 		NULL
 	},
@@ -205,14 +205,22 @@ static GtkItemFactoryEntry menu_items[] = {
 		MENU_RENAME,
 		"<Item>",
 		NULL
-	}, 
+	},
 	{
-		N_("/Contact _Information"),
+		"/sep1",
 		NULL,
-		GIF_CB (roster_menu_info_cb),
-		MENU_INFO,
-		"<Item>",
+		NULL,
+		0,
+		"<Separator>",
 		NULL
+	},
+	{
+		N_("/_Remove contact"),
+		NULL,
+		GIF_CB (roster_menu_remove_cb),
+		MENU_REMOVE,
+		"<StockItem>",
+		GTK_STOCK_REMOVE
 	}
 };
 
@@ -389,23 +397,51 @@ roster_menu_remove_cb (gpointer   callback_data,
 	GossipRoster     *roster = callback_data;
 	GossipRosterPriv *priv;
 	GossipRosterItem *item;
+	gchar            *str;
+	GtkWidget        *dialog;
+	gint              response;
 	LmMessage        *m;
 	
 	priv = roster->priv;
+
 	item = roster_get_selected_item (roster);
-	
 	if (!item) {
 		return;
 	}
 	
-	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (item->jid),
-					  LM_MESSAGE_TYPE_MESSAGE,
-					  LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE);
+	str = g_strdup_printf ("<b>%s</b>", 
+			       gossip_jid_get_without_resource (item->jid));
+
+	dialog = gtk_message_dialog_new (NULL,
+					 0,
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_YES_NO,
+					 _("Do you want to remove the contact\n"
+					   "%s\n"
+					   "from you contact list?"),
+					 str);
 	
+	g_free (str);
+	
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
+		      "use-markup", TRUE,
+		      "wrap", FALSE,
+		      NULL);
+	
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+
+	if (response != GTK_RESPONSE_YES) {
+		return;
+	}
+
+	/* Unsubscribe. */
+	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (item->jid),
+					  LM_MESSAGE_TYPE_PRESENCE,
+					  LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE);
 	lm_connection_send (priv->connection, m, NULL);
-
 	lm_message_unref (m);
-
+	
 	/* FIXME: if the selected item is an agent, we need to unregister too. */
 }
 
@@ -806,9 +842,28 @@ roster_presence_handler (LmMessageHandler *handler,
 	d(g_print ("====> Roster presencehandler <====\n"));
 
 	type = lm_message_get_sub_type (m);
-	
-	if (type != LM_MESSAGE_SUB_TYPE_AVAILABLE && 
-	    type != LM_MESSAGE_SUB_TYPE_UNAVAILABLE) {
+
+	switch (type) {
+	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
+	case LM_MESSAGE_SUB_TYPE_UNAVAILABLE:
+		break;
+
+	case LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE:
+		/* FIXME: Do we need to handle this here? */
+
+		g_print ("Roster got 'unsubscribe'\n");
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+
+	case LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED:
+		/* FIXME: We should probably remove the item from the list
+		 * here?
+		 */
+
+		g_print ("Roster got 'unsubscribed'\n");
+		
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+
+	default:
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
@@ -821,8 +876,8 @@ roster_presence_handler (LmMessageHandler *handler,
 
 	d(g_print ("JID=%s\n", gossip_jid_get_full (data.jid)));
 
-	item = (GossipRosterItem *) g_hash_table_lookup (priv->contacts,
-							 gossip_jid_get_without_resource (data.jid));
+	item = g_hash_table_lookup (priv->contacts,
+				    gossip_jid_get_without_resource (data.jid));
 	
 	if (!item) {
 		d(g_print ("Didn't find the user in the hash table\n"));
@@ -973,9 +1028,6 @@ roster_iq_handler (LmMessageHandler *handler,
 	LmMessageNode *node;
 	const gchar   *xmlns;
 	
- 	g_return_val_if_fail (GOSSIP_IS_ROSTER (roster), 
-			      LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
-
 	node = lm_message_node_get_child (m->node, "query");
 	if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -1000,9 +1052,8 @@ roster_iq_handler (LmMessageHandler *handler,
 			from = lm_message_node_get_attribute (node, "jid");
 			jid  = gossip_jid_new (from);
 			name = lm_message_node_get_attribute (node, "name");
-			subscription = 
-				lm_message_node_get_attribute (node, 
-							       "subscription");
+			subscription = lm_message_node_get_attribute (
+				node, "subscription");
 			ask = lm_message_node_get_attribute (node, "ask");
 			
 			group_node = lm_message_node_get_child (node, "group");
@@ -1011,9 +1062,12 @@ roster_iq_handler (LmMessageHandler *handler,
 			} else {
 				group = _(OTHERS_GROUP);
 			}
+
 			if (!name) {
+				gossip_jid_unref (jid);
 				continue;
 			}
+
 			roster_update_user (roster, jid, name, 
 					    subscription, ask, group);
 			gossip_jid_unref (jid);
@@ -1091,8 +1145,8 @@ roster_update_user (GossipRoster *roster,
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (roster));
 
-	item = (GossipRosterItem *) g_hash_table_lookup (priv->contacts, 
-							 gossip_jid_get_without_resource (jid));
+	item = g_hash_table_lookup (priv->contacts, 
+				    gossip_jid_get_without_resource (jid));
 
 	if (!item) {
 		new_user = TRUE;

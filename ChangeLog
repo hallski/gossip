@@ -1,5 +1,25 @@
 2003-07-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-add-contact.c (add_contact_prepare_page_2): Don't set
+	NULL list as popdown strings, fixes runtime warning.
+
+	* src/gossip-app.c (app_message_handler): Don't crash on unhandled
+	messages, print out a warning.
+
+	* src/gossip-roster.c (roster_iq_handler): Plug leak.
+
+	* src/gossip-roster.c: Reorder popup menu and use stock items.
+
+	* src/gossip-app.c (gossip_app_connect): Use the server
+	and port from the specified account. Fixes -n usage.
+
+	* src/gossip-roster.c (roster_menu_remove_cb): Unsubscribe is
+	presence, not message. Ask for confirmation before removing.
+
+	* src/gossip-main.c (main): Add -l, --list-accounts option that
+	lists the available accounts and exist.
+	(main): Bail out if the specified account doesn't exist.
+
 	* ui/main.glade: Add disconnect menu item.
 	* src/gossip-app.c (app_disconnect_cb): Add.
 	Patch from Kevin Dougherty <gossip@kdough.net>.
@@ -8,7 +28,6 @@
 	(app_setup_connection_dependent_menu_items, app_init):
 	(app_update_connection_dependent_menu_items): Update sensitivity
 	of menu items depending on connected/disconnected state.
-
 
 	* src/gossip-roster.c (roster_finalize): Use
 	roster_reset_connection.
