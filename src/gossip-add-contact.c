@@ -218,19 +218,19 @@ add_contact_page_2_vcard_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
- 	node = lm_message_node_find_child (m->node, "fn");
+ 	node = lm_message_node_find_child (m->node, "FN");
 	if (node) {
 		gtk_label_set_text (GTK_LABEL (contact->two_name_label), 
 				    node->value);
 	}
 
-	node = lm_message_node_find_child (m->node, "email");
+	node = lm_message_node_find_child (m->node, "EMAIL");
 	if (node) {
 		gtk_label_set_text (GTK_LABEL (contact->two_email_label), 
 				    node->value);
 	}
 
-	node = lm_message_node_find_child (m->node, "country");
+	node = lm_message_node_find_child (m->node, "COUNTRY");
 	if (node) {
 		gtk_label_set_text (GTK_LABEL (contact->two_country_label), 
 				    node->value);

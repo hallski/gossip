@@ -1,3 +1,8 @@
+2003-06-14  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-add-contact.c: (add_contact_page_2_vcard_handler):
+	- fixed bug introduced when make loudmouth case-sensitive.
+
 2003-06-13  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-add-contact.c:
