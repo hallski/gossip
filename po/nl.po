@@ -1,15 +1,15 @@
 # Dutch translation of gossip.
-# Copyright (C) 2003 Free Software Foundation, Inc.
+# Copyright (C) 2003-2004 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gossip package.
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2003.
-# Elros Cyriatan <cyriatan@fastmail.fm>, 2003.
+# Elros Cyriatan <cyriatan@fastmail.fm>, 2003-2004.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-21 04:18+0100\n"
-"PO-Revision-Date: 2003-11-21 19:22+0100\n"
+"POT-Creation-Date: 2004-01-02 04:29+0100\n"
+"PO-Revision-Date: 2004-01-03 12:59+0100\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -53,57 +53,81 @@ msgid "Height of main window"
 msgstr "Hoogte van hoofdvenster"
 
 #: gossip.schemas.in.h:8
+msgid "Hide main window"
+msgstr "Hoofdvenster verbergen"
+
+#: gossip.schemas.in.h:9
+msgid "Hide the main window."
+msgstr "Het hoofdvenster niet weergeven."
+
+#: gossip.schemas.in.h:10
 msgid "Message to show before going away"
 msgstr "Bericht om weer te geven alvorens weg te gaan"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "Not at the computer"
 msgstr "Niet bij de computer"
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "Show offline contacts"
 msgstr "Offline contacten weergeven"
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
+msgid "The X position of the main window."
+msgstr "De X-positie van het hoofdvenster."
+
+#: gossip.schemas.in.h:14
+msgid "The Y position of the main window."
+msgstr "De Y-positie van het hoofdvenster."
+
+#: gossip.schemas.in.h:15
 msgid "The height of the main window."
 msgstr "De hoogte van het hoofdvenster."
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:16
 msgid "The width of the main window."
 msgstr "De breedte van het hoofdvenster."
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:17
 msgid "Use graphical smileys"
 msgstr "Grafische smileys gebruiken"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:18
 msgid "Use notification sounds"
 msgstr "Waarschuwingsgeluiden gebruiken"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:19
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Smileys in gesprekken converteren naar grafische smileys."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:20
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Een geluid afspelen als berichten aankomen."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:21
 msgid "Whether or not to play sounds when away."
 msgstr "Geluiden afspelen bij afwezig."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:22
 msgid "Whether or not to play sounds when busy."
 msgstr "Geluiden afspelen bij bezig."
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:23
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Contacten die offline zijn in de contactlijst wel of niet weergeven."
 
-#: gossip.schemas.in.h:20
-msgid "Width of main window"
-msgstr "Breedte van hoofdvenster"
+#: gossip.schemas.in.h:24
+msgid "Width of the main window"
+msgstr "Breedte van het hoofdvenster"
+
+#: gossip.schemas.in.h:25
+msgid "X position of main window"
+msgstr "X-positie van hoofdvenster"
+
+#: gossip.schemas.in.h:26
+msgid "Y position of main window"
+msgstr "Y-positie van hoofdvenster"
 
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
@@ -123,121 +147,125 @@ msgstr "%s zal aan uw contactlijst worden toegevoegd."
 msgid "Just about to leave..."
 msgstr "Op het punt om weg te gaan..."
 
-#: src/gossip-app.c:421
+#: src/gossip-app.c:438
 msgid "_Show Contact List"
 msgstr "Contactlijst _weergeven"
 
-#: src/gossip-app.c:430
+#: src/gossip-app.c:447
 msgid "_Hide Contact List"
 msgstr "Contactlijst _verbergen"
 
-#: src/gossip-app.c:443 ui/main.glade.h:59
+#: src/gossip-app.c:460 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "Bericht _verzenden..."
 
-#: src/gossip-app.c:458
+#: src/gossip-app.c:475
 msgid "_Quit"
 msgstr "A_fsluiten"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:560
+#: src/gossip-app.c:599
 msgid "translator_credits"
 msgstr ""
 "Vincent van Adrighem\n"
 "Elros Cyriatan"
 
-#: src/gossip-app.c:572
+#: src/gossip-app.c:611
 msgid "A Jabber Client for GNOME"
 msgstr "Een Jabber client voor GNOME"
 
-#: src/gossip-app.c:579
+#: src/gossip-app.c:618
 msgid "Gossip Website"
 msgstr "Gossip Webstek"
 
-#: src/gossip-app.c:683
+#: src/gossip-app.c:737
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Voer de gebruikers ID van de persoon in aan wie u een chatbericht wilt "
 "sturen."
 
-#: src/gossip-app.c:688 ui/main.glade.h:83
+#: src/gossip-app.c:742 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Chatten"
 
-#: src/gossip-app.c:935
+#: src/gossip-app.c:1001
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s wilt van uw aanwezigheid op de hoogte worden gehouden."
 
-#: src/gossip-app.c:1170
+#: src/gossip-app.c:1244
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "De verbinding met de server is verbroken. Wilt u opnieuw verbinden?"
 
-#: src/gossip-app.c:1321
+#: src/gossip-app.c:1393
 msgid "Make sure that your account information is correct."
 msgstr "Zorg er voor dat uw account informatie juist is."
 
-#: src/gossip-app.c:1322
+#: src/gossip-app.c:1394
 msgid "The server may currently be unavailable."
 msgstr "De server kan momenteel onbereikbaar zijn."
 
-#: src/gossip-app.c:1711
+#: src/gossip-app.c:1796
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabber client"
 
-#: src/gossip-app.c:1887
+#: src/gossip-app.c:1972
 #, c-format
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
 
-#: src/gossip-app.c:2429
+#: src/gossip-app.c:2526
 msgid "Custom Message..."
 msgstr "Aangepast bericht..."
 
-#: src/gossip-app.c:2447
+#: src/gossip-app.c:2544
 msgid "Custom Busy Message..."
 msgstr "Aangepast bezig-bericht..."
 
-#: src/gossip-app.c:2454
+#: src/gossip-app.c:2551
 msgid "Leave..."
 msgstr "Verlaten..."
 
-#: src/gossip-chat-view.c:323
+#: src/gossip-chat-view.c:320 ui/chat.glade.h:2
+msgid "C_lear"
+msgstr "_Wissen"
+
+#: src/gossip-chat-view.c:337
 msgid "_Copy Link Address"
 msgstr "Koppelingsadres _kopiëren"
 
-#: src/gossip-chat-view.c:331
+#: src/gossip-chat-view.c:345
 msgid "_Open Link"
 msgstr "Koppeling _openen"
 
-#: src/gossip-chat-view.c:674
+#: src/gossip-chat-view.c:695
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:564
+#: src/gossip-chat-window.c:622
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatten - %s"
 
-#: src/gossip-chat.c:685
+#: src/gossip-chat.c:664
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Er is een fout opgetreden bij het chatten met %s."
 
-#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:669 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:776
+#: src/gossip-chat.c:755
 #, c-format
 msgid "%s went offline"
 msgstr "%s ging offline"
 
-#: src/gossip-chat.c:790
+#: src/gossip-chat.c:769
 #, c-format
 msgid "%s comes online"
 msgstr "%s komt online"
@@ -408,37 +436,33 @@ msgstr "Aan het slapen"
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:2
+#: ui/chat.glade.h:3
 msgid "Chat"
 msgstr "Chatten"
 
-#: ui/chat.glade.h:3
+#: ui/chat.glade.h:4
 msgid "Contact _Information"
 msgstr "Contact _informatie"
 
-#: ui/chat.glade.h:4
+#: ui/chat.glade.h:5
 msgid "From:"
 msgstr "Van:"
 
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:6
 msgid "Gossip - Chat"
 msgstr "Gossip - Chatten"
 
-#: ui/chat.glade.h:6
+#: ui/chat.glade.h:7
 msgid "Gossip - Received Message"
 msgstr "Gossip - Bericht ontvangen"
 
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:8
 msgid "Gossip - Send Message"
 msgstr "Gossip - Bericht verzenden"
 
-#: ui/chat.glade.h:8
+#: ui/chat.glade.h:9
 msgid "In reply to:"
 msgstr "Antwoord op:"
-
-#: ui/chat.glade.h:9
-msgid "Lo_g"
-msgstr "Lo_g"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
@@ -453,30 +477,34 @@ msgid "To:"
 msgstr "Aan:"
 
 #: ui/chat.glade.h:13
+msgid "View Lo_g"
+msgstr "Lo_g weergeven"
+
+#: ui/chat.glade.h:14
 msgid "_Conversation"
 msgstr "_Gesprek"
 
-#: ui/chat.glade.h:14
+#: ui/chat.glade.h:15
 msgid "_Detach Tab"
 msgstr "Tabblad _losmaken"
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:16
 msgid "_Next Tab"
 msgstr "Vo_lgend tabblad"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:17
 msgid "_Previous Tab"
 msgstr "Vo_rig tabblad"
 
-#: ui/chat.glade.h:17
+#: ui/chat.glade.h:18
 msgid "_Reply..."
 msgstr "_Beantwoorden..."
 
-#: ui/chat.glade.h:18 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Verzenden"
 
-#: ui/chat.glade.h:19
+#: ui/chat.glade.h:20
 msgid "_Tabs"
 msgstr "_Tabbladen"
 
@@ -959,3 +987,4 @@ msgstr "_Zoeken..."
 #: ui/main.glade.h:93
 msgid "_Status Messages"
 msgstr "_Statusberichten"
+
