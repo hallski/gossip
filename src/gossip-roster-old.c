@@ -1573,6 +1573,28 @@ gossip_roster_old_get_status_pixbuf_for_jid (GossipRosterOld *roster,
 	return NULL;
 }
 
+gboolean  
+gossip_roster_old_get_is_offline (GossipRosterOld *roster, GossipJID *jid)
+{
+	GossipRosterOldPriv *priv;
+	GossipRosterOldItem *item;
+	
+	g_return_val_if_fail (GOSSIP_IS_ROSTER_OLD (roster), TRUE);
+	g_return_val_if_fail (jid != NULL, TRUE);
+
+	priv = roster->priv;
+
+	item = g_hash_table_lookup (priv->contacts, 
+				    gossip_jid_get_without_resource (jid));
+	
+	if (!item || item->status == GOSSIP_STATUS_OFFLINE) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 gboolean
 gossip_roster_old_have_jid (GossipRosterOld *roster, GossipJID *jid)
 {

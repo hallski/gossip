@@ -51,11 +51,13 @@ struct _GossipRosterOldClass {
 
 
 GType          gossip_roster_old_get_type           (void) G_GNUC_CONST;
-GossipRosterOld *gossip_roster_old_new                       (GossipApp    *app);
+GossipRosterOld *gossip_roster_old_new                 (GossipApp    *app);
 const gchar * gossip_roster_old_get_nick_from_jid         (GossipRosterOld *roster,
 						       GossipJID    *jid);
 GdkPixbuf *   gossip_roster_old_get_status_pixbuf_for_jid (GossipRosterOld *roster,
 						       GossipJID    *jid);
+gboolean      gossip_roster_old_get_is_offline        (GossipRosterOld *roster,
+						       GossipJID *jid);
 gboolean      gossip_roster_old_have_jid                  (GossipRosterOld *roster,
 						       GossipJID    *jid);
 GList *       gossip_roster_old_get_groups                (GossipRosterOld *roster);

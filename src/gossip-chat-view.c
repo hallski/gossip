@@ -38,8 +38,10 @@
 #define TIMESTAMP_INTERVAL 300
 
 struct _GossipChatViewPriv {
-	/* Stuff here */
-	GTimeVal last_timestamp;
+	GtkTextBuffer *buffer;
+	
+	GTimeVal       last_timestamp;
+	GDate         *last_datestamp;
 };
 
 typedef enum {
@@ -125,7 +127,7 @@ static void       chat_view_copy_address_cb (GtkMenuItem         *menuitem,
 					     const gchar         *url);
 static void       chat_view_realize_cb      (GossipChatView      *widget,
 					     gpointer             data);
-static gchar *    chat_view_get_stamp       (const gchar         *timestamp);
+static gchar *    chat_view_get_timestamp   (const gchar         *time_str);
 static gint       chat_view_url_regex_match (const gchar         *msg,
 					     GArray              *start,
 					     GArray              *end);
@@ -139,8 +141,11 @@ chat_view_insert_text_with_emoticons        (GtkTextBuffer       *buf,
 
 static GdkPixbuf *chat_view_get_smiley       (GossipSmiley          smiley);
 
-void              chat_view_append_timestamp (GossipChatView *view,
-					      const gchar    *timestamp);
+static void              
+chat_view_maybe_append_timestamp             (GossipChatView *view,
+					      const gchar    *time_str);
+static void
+chat_view_maybe_append_datestamp             (GossipChatView *view);
 
 
 static regex_t dingus;
@@ -186,7 +191,21 @@ chat_view_init (GossipChatView *view)
 	GossipChatViewPriv *priv;
 
 	priv = g_new0 (GossipChatViewPriv, 1);
+	view->priv = priv;
+	
+	priv->buffer = gtk_text_buffer_new (NULL);
+	gtk_text_view_set_buffer (GTK_TEXT_VIEW (view), priv->buffer);
+
+	g_object_set (view,
+		      "justification", GTK_JUSTIFY_LEFT,
+		      "wrap-mode", GTK_WRAP_WORD,
+		      "editable", FALSE,
+		      "cursor-visible", FALSE,
+		      NULL);
+	
 	priv->last_timestamp.tv_sec = priv->last_timestamp.tv_usec = 0;
+	priv->last_datestamp = g_date_new ();
+	g_date_set_time (priv->last_datestamp, time (NULL));
 
 	g_signal_connect (view,
 			  "populate_popup",
@@ -194,8 +213,6 @@ chat_view_init (GossipChatView *view)
 			  NULL);
 
 	chat_view_setup_tags (view);
-	
-	view->priv = priv;
 }
 
 static void
@@ -209,43 +226,43 @@ chat_view_finalize (GObject *object)
 static void
 chat_view_setup_tags (GossipChatView *view)
 {
-	GtkTextBuffer   *buffer;
-	GtkTextTag      *tag;
+	GossipChatViewPriv *priv;
+	GtkTextTag         *tag;
 	
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	priv = view->priv;
 	
-	gtk_text_buffer_create_tag (buffer,
+	gtk_text_buffer_create_tag (priv->buffer,
 				    "nick-me",
 				    "foreground", "sea green",
 				    NULL);	
 	
-	gtk_text_buffer_create_tag (buffer,
+	gtk_text_buffer_create_tag (priv->buffer,
 				    "nick-other",
 				    "foreground", "steelblue4",
 				    NULL);	
 	
-	gtk_text_buffer_create_tag (buffer,
+	gtk_text_buffer_create_tag (priv->buffer,
 				    "nick-highlight",
 				    "foreground", "indian red",
 				    NULL);	
 
-	gtk_text_buffer_create_tag (buffer,
+	gtk_text_buffer_create_tag (priv->buffer,
 				    "notice",
 				    "foreground", "steelblue4",
 				    NULL);
 
-	gtk_text_buffer_create_tag (buffer,
-				    "timestamp_irc",
+	gtk_text_buffer_create_tag (priv->buffer,
+				    "timestamp-irc",
 				    "foreground", "darkgrey",
 				    NULL);
-	
-	gtk_text_buffer_create_tag (buffer,
-				    "status",
+
+	gtk_text_buffer_create_tag (priv->buffer,
+				    "event-tag",
 				    "foreground", "darkgrey",
 				    "justification", GTK_JUSTIFY_CENTER,
 				    NULL);
 
-	tag = gtk_text_buffer_create_tag (buffer,
+	tag = gtk_text_buffer_create_tag (priv->buffer,
 					  "url",
 					  "foreground", "steelblue",
 					  "underline", PANGO_UNDERLINE_SINGLE,
@@ -254,7 +271,7 @@ chat_view_setup_tags (GossipChatView *view)
 	g_signal_connect (tag,
 			  "event",
 			  G_CALLBACK (chat_view_url_event_cb),
-			  buffer);
+			  priv->buffer);
 
 
 	g_signal_connect (view,
@@ -268,16 +285,17 @@ chat_view_populate_popup (GossipChatView *view,
 			  GtkMenu        *menu,
 			  gpointer        user_data)
 {
-	GtkTextBuffer   *buffer;
-	GtkTextTagTable *table;
-	GtkTextTag      *tag;
-	gint             x, y;
-	GtkTextIter      iter, start, end;
-	GtkWidget       *item;
-	gchar           *str = NULL;
+	GossipChatViewPriv *priv;
+	GtkTextTagTable    *table;
+	GtkTextTag         *tag;
+	gint                x, y;
+	GtkTextIter         iter, start, end;
+	GtkWidget          *item;
+	gchar              *str = NULL;
+
+	priv = view->priv;
 	
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-	table = gtk_text_buffer_get_tag_table (buffer);
+	table = gtk_text_buffer_get_tag_table (priv->buffer);
 	tag = gtk_text_tag_table_lookup (table, "url");
 
 	gtk_widget_get_pointer (GTK_WIDGET (view), &x, &y);
@@ -294,7 +312,8 @@ chat_view_populate_popup (GossipChatView *view,
 	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
 	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
 					
-		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
+		str = gtk_text_buffer_get_text (priv->buffer, 
+						&start, &end, FALSE);
 	}
 
 	if (!str || strlen (str) == 0) {
@@ -459,17 +478,17 @@ chat_view_realize_cb (GossipChatView *view, gpointer data)
 }
 
 static gchar *
-chat_view_get_stamp (const gchar *timestamp)
+chat_view_get_timestamp (const gchar *time_str)
 {
 	time_t     t;
 	struct tm *tm;
 	gchar      buf[128];
 
-	if (!timestamp) {
+	if (!time_str) {
 		t  = time (NULL);
 		tm = localtime (&t);
 	} else {
-		tm = lm_utils_get_localtime (timestamp);
+		tm = lm_utils_get_localtime (time_str);
 	}
 	
 	buf[0] = 0;
@@ -653,20 +672,19 @@ chat_view_get_smiley (GossipSmiley smiley)
 	return pixbufs[smiley];
 }
 
-void
-chat_view_append_timestamp (GossipChatView *view, const gchar *timestamp)
+static void
+chat_view_maybe_append_timestamp (GossipChatView *view, const gchar *time_str)
 {
 	GossipChatViewPriv *priv;
 	gchar              *stamp;
 	TimestampStyle      style;
-	gboolean            add_timestamp = FALSE;
 	
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = view->priv;
 	
 	style = chat_view_get_timestamp_style();
-	stamp = chat_view_get_stamp (timestamp);
+	stamp = chat_view_get_timestamp (time_str);
 
 	if (style == TIMESTAMP_STYLE_NORMAL) {
 		GTimeVal  cur_time;
@@ -675,50 +693,61 @@ chat_view_append_timestamp (GossipChatView *view, const gchar *timestamp)
 
 		if (priv->last_timestamp.tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec) {
 			priv->last_timestamp.tv_sec = cur_time.tv_sec;
-			add_timestamp = TRUE;
+
+			gossip_chat_view_append_event_msg (view, stamp);
 		} 
 	} else {
-		add_timestamp = TRUE;
-	}
-	
-	if (add_timestamp) {
-		GtkTextBuffer   *buffer;
-		GtkTextIter      iter;
-		GtkTextTagTable *tags;
-		GtkTextTag      *tag;
-		
+		GtkTextBuffer *buffer;
+		GtkTextIter    iter;
+
 		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 		gtk_text_buffer_get_end_iter (buffer, &iter);
 
 		if (!gtk_text_iter_starts_line (&iter)) {
-			gtk_text_buffer_insert (buffer,
-						&iter,
-						"\n",
-						1);
-		}
-
-		tags = gtk_text_buffer_get_tag_table(buffer);
-		if (style == TIMESTAMP_STYLE_NORMAL) {
-			tag = gtk_text_tag_table_lookup (tags, 
-							 "timestamp_normal");
-		} else {
-			tag = gtk_text_tag_table_lookup (tags,
-							 "timestamp_irc");
+			gtk_text_buffer_insert (buffer,	&iter, "\n", 1);
 		}
 		
-		gtk_text_buffer_insert_with_tags(buffer, &iter,
-						 stamp, -1, tag,
-						 NULL);
-
-		if (style == TIMESTAMP_STYLE_NORMAL) {
-			gtk_text_buffer_insert (buffer,
-						&iter,
-						"\n",
-						1);
-		}
-		
-		g_free (stamp);
+		gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
+							  stamp, -1, 
+							  "timestamp-irc",
+							  NULL);
 	}
+	
+	g_free (stamp);
+}
+
+static void
+chat_view_maybe_append_datestamp (GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+	GDate              *cur_date;
+	char                date_str[256];
+	char               *time_str;
+	char               *date_time_str;
+	GTimeVal            cur_time;
+
+	priv = view->priv;
+
+	cur_date = g_date_new ();
+	g_date_set_time (cur_date, time (NULL));
+
+	if (g_date_compare (cur_date, priv->last_datestamp) <= 0) {
+		return;
+	}
+
+	time_str = chat_view_get_timestamp (NULL);
+	g_date_strftime (date_str, 256, _("%A %d %B %Y"), cur_date);
+	date_time_str = g_strdup_printf (" %s - %s", date_str, time_str);
+	g_free (time_str);
+	
+	gossip_chat_view_append_event_msg (view, date_time_str);
+	g_free (date_time_str);
+
+	g_get_current_time (&cur_time);
+	priv->last_timestamp.tv_sec = cur_time.tv_sec;
+	
+	g_date_free (priv->last_datestamp);
+	priv->last_datestamp = cur_date;
 }
 
 GossipChatView * 
@@ -729,7 +758,7 @@ gossip_chat_view_new (void)
 
 void
 gossip_chat_view_append_chat_message (GossipChatView *view,
-				      const gchar    *timestamp,
+				      const gchar    *time_str,
 				      const gchar    *to,
 				      const gchar    *from,
 				      const gchar    *msg)
@@ -747,7 +776,8 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 		return;
 	}
 
-	chat_view_append_timestamp (view, timestamp);
+	chat_view_maybe_append_datestamp (view);
+	chat_view_maybe_append_timestamp (view, time_str);
 	
 	sw = gtk_widget_get_parent (GTK_WIDGET (view));
 	if (GTK_IS_SCROLLED_WINDOW (sw)) {
@@ -917,71 +947,23 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 }
 
 void
-gossip_chat_view_append_normal_message (GossipChatView *view, 
-					const gchar    *timestamp,
-					const gchar    *msg)
+gossip_chat_view_append_event_msg (GossipChatView *view, const gchar *str)
 {
-	GtkTextBuffer *buffer;
-	GtkTextIter    iter;
-	GtkTextMark   *mark;
-	gboolean       bottom = TRUE;
-	GtkWidget     *parent;
-
-	if (msg == NULL || msg[0] == 0) {
-		return;
-	}
-
-	chat_view_append_timestamp (view, timestamp);
-
-	parent = gtk_widget_get_parent (GTK_WIDGET (view));
-	if (GTK_IS_SCROLLED_WINDOW (parent)) {
-		GtkAdjustment *vadj;
-		
-		vadj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (parent));
-
-		if (vadj->value < vadj->upper - vadj->page_size) {
-			bottom = FALSE;
-		}
-	}
-
-	/* Turn off for now. */ 
-	bottom = TRUE;
+	GtkTextBuffer   *buffer;
+	GtkTextIter      iter;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
 	gtk_text_buffer_get_end_iter (buffer, &iter);
-	if (!gtk_text_iter_is_start (&iter)) {
-		gtk_text_buffer_insert (buffer,
-					&iter,
-					"\n",
-					1);
-		gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	if (!gtk_text_iter_starts_line (&iter)) {
+		gtk_text_buffer_insert (buffer,	&iter, "\n", 1);
 	}
 
-	chat_view_insert_text_with_emoticons (buffer, &iter, msg);
+	gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
+						  str, -1, "event-tag",
+						  NULL);
 
-	if (bottom) {
-		/* Scroll to the end of the newly inserted text. */
-		gtk_text_buffer_get_end_iter (buffer, &iter);
-		mark = gtk_text_buffer_create_mark (buffer,
-						    NULL,
-						    &iter,
-						    FALSE);
-		
-		gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-					      mark,
-					      0.0,
-					      FALSE,
-					      0,
-					      0);
-	}
-}
-
-void
-gossip_chat_view_append_status (GossipChatView *view,
-				const gchar    *status)
-{
-
+	gtk_text_buffer_insert (buffer, &iter, "\n", 1);
 }
 
 void

@@ -61,7 +61,7 @@ struct _GossipChat {
 	GtkWidget        *from_label;
 	GtkWidget        *composing_image;
 
-	GossipChatView   *text_view;
+	GossipChatView   *view;
 	
 	GtkTooltips      *tooltips;
 	GtkWidget        *from_eventbox;
@@ -73,6 +73,8 @@ struct _GossipChat {
 	gboolean          request_composing_events;
 	gboolean          send_composing_events;
 	gchar            *last_composing_id;
+
+	gboolean          other_offline;
 	
 	/* Chat exists but has been hidden by the user. */
 	gboolean          hidden;
@@ -231,6 +233,7 @@ chat_get_for_jid (GossipJID *jid, gboolean priv_group_chat)
 	const gchar      *without_resource;
 	LmMessageHandler *handler;
 	LmConnection     *connection;
+	GossipRosterOld  *roster;
 	
 	chat_init ();
 	
@@ -248,7 +251,10 @@ chat_get_for_jid (GossipJID *jid, gboolean priv_group_chat)
 	if (priv_group_chat) {
 		chat->nick = g_strdup (gossip_jid_get_resource (jid));
 	}
-		
+	
+	roster = gossip_app_get_roster ();
+	chat->other_offline = gossip_roster_old_get_is_offline (roster, jid);
+	
 	chat_create_gui (chat);
 
 	g_hash_table_insert (chats, (gchar *)without_resource, chat);
@@ -303,10 +309,10 @@ chat_create_gui (GossipChat *chat)
 				      "composing_image", &chat->composing_image,
 				      NULL);
 
-	chat->text_view = gossip_chat_view_new ();
+	chat->view = gossip_chat_view_new ();
 	gtk_container_add (GTK_CONTAINER (chat->text_view_sw), 
-			   GTK_WIDGET (chat->text_view));
-	gtk_widget_show (GTK_WIDGET (chat->text_view));
+			   GTK_WIDGET (chat->view));
+	gtk_widget_show (GTK_WIDGET (chat->view));
 
 	roster = gossip_app_get_roster ();
 
@@ -331,7 +337,7 @@ chat_create_gui (GossipChat *chat)
 		}
 
 		gtk_label_set_text (GTK_LABEL (chat->from_label), name);
-		g_free (name);
+		chat->nick = name;
 	}
 	
 	chat->tooltips = gtk_tooltips_new ();
@@ -402,7 +408,7 @@ chat_create_gui (GossipChat *chat)
 			  G_CALLBACK (chat_input_text_buffer_changed_cb),
 			  chat);
 
-	g_signal_connect (chat->text_view,
+	g_signal_connect (chat->view,
 			  "focus_in_event",
 			  G_CALLBACK (chat_text_view_focus_in_event_cb),
 			  chat);
@@ -412,7 +418,7 @@ chat_create_gui (GossipChat *chat)
 			  G_CALLBACK (chat_focus_in_event_cb),
 			  chat);
 
-	gossip_chat_view_set_margin (chat->text_view, 3);
+	gossip_chat_view_set_margin (chat->view, 3);
 
 	chat_update_title (chat, FALSE);
 		
@@ -575,7 +581,7 @@ chat_send (GossipChat *chat, const gchar *msg)
 	if (g_ascii_strcasecmp (msg, "/clear") == 0) {
 		GtkTextBuffer *buffer;
 		
-		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->text_view));
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->view));
 		gtk_text_buffer_set_text (buffer, "", -1);
 		
 		return;
@@ -585,7 +591,7 @@ chat_send (GossipChat *chat, const gchar *msg)
 
 	nick = gossip_jid_get_part_name (gossip_app_get_jid ());	
 
-	gossip_chat_view_append_chat_message (chat->text_view,
+	gossip_chat_view_append_chat_message (chat->view,
 					      NULL,
 					      gossip_app_get_username (),
 					      nick,
@@ -771,7 +777,7 @@ chat_message_handler (LmMessageHandler *handler,
 
 	chat_show_composing_icon (chat, FALSE);
 
-	gossip_chat_view_append_chat_message (chat->text_view,
+	gossip_chat_view_append_chat_message (chat->view,
 					      timestamp,
 					      gossip_app_get_username (),
 					      nick,
@@ -820,15 +826,34 @@ chat_presence_handler (LmMessageHandler *handler,
 	}
 
 	if (strcmp (type, "unavailable") == 0 || strcmp (type, "error") == 0) {
+		gchar *event_msg;
+		
 		icon = GOSSIP_STOCK_OFFLINE;
+		chat->other_offline = TRUE;
 		
 		chat_composing_remove_timeout (chat);
 		chat->send_composing_events = FALSE;
 		chat_show_composing_icon (chat, FALSE);
-		// Put a message about being away!
+
+		event_msg = g_strdup_printf (_("%s went offline"), chat->nick);
+		gossip_chat_view_append_event_msg (chat->view, event_msg);
+		g_free (event_msg);
 	} else {
+		GossipRosterOld *roster;
+		gchar           *event_msg;
+		
+		roster = gossip_app_get_roster ();
+		
 		icon = gossip_get_icon_for_show_string (show);
+	
+		if (chat->other_offline) {
+			event_msg = g_strdup_printf (_("%s comes online"), chat->nick);
+			gossip_chat_view_append_event_msg (chat->view, event_msg);
+			g_free (event_msg);
+			chat->other_offline = FALSE;
+		}
 	}
+	
 
 	gtk_image_set_from_stock (GTK_IMAGE (chat->status_image),
 				  icon,

@@ -1,8 +1,33 @@
 2003-10-26  Mikael Hallendal  <micke@imendio.com>
 
-	* src/gossip-chat-view.[ch]: Missed adding these
+	* src/gossip-chat-view.c:
+	- Added the buffer to priv, use priv->buffer instead of getting from 
+	  the view all the time.
+	(chat_view_init): Set wrap mode, this also solves the center
+	  justification on the event-tag. Sounds like a bug.
+	(chat_view_setup_tags):  (chat_view_populate_popup),
+	(chat_view_get_timestamp): renamed from _get_stamp
+	(chat_view_maybe_append_timestamp): 
+	- renamed from _view_append_timestamp
+	- use append_event_msg to display timestamps.
+	(chat_view_maybe_append_datestamp):
+	- added to date stamping when chat goes on over midnight.
+	- Fixes #124069
+	(gossip_chat_view_append_chat_message):
+	- maybe append datestamp.
+	(gossip_chat_view_append_event_msg): 
+	- outputs text centered in dark gray.
+	* src/gossip-chat.c: 
+	(chat_create_gui): keep track on if user is offline or not
+	(chat_presence_handler):
+	- output offline/online noticed in chat window.
+	* src/gossip-roster-old.c:
+	(gossip_roster_old_get_is_offline): 
+	- added, used when creating a gossip-chat window.
 
 2003-10-26  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-view.[ch]: Missed adding these
 
 	* Long time planned cleanup. Now the chat text views are of the class
 	* GossipChatView which is a sub class of GtkTextView. All functions
