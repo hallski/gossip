@@ -1,5 +1,11 @@
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c: (app_handle_subscription_request):
+	- Fixed a string that was a bit jabberish.
+	- Fixes bug #120790
+
+2004-06-16  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-contact-info.c:
 	- Implemented resubscription if you are not subscribed to the other
 	  contact.

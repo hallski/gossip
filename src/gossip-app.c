@@ -969,7 +969,7 @@ app_handle_subscription_request (GossipApp *app, LmMessage *m)
 	from = lm_message_node_get_attribute (m->node, "from");
 
 
-	tmp = g_strdup_printf (_("%s wants to be notified of your presence."), from);
+	tmp = g_strdup_printf (_("%s wants to be notified of your status."), from);
 	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", tmp);
 	g_free (tmp);
 
