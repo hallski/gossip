@@ -5,6 +5,9 @@
 
 2003-07-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-preferences.c (preferences_setup_widgets): Patch from
+	thomasr@infograph.com (Thomas Reynolds). Fixes bug #117696.
+
 	* src/gossip-app.c (app_iq_handler): Just use OS name, and not the
 	version or arch.
 

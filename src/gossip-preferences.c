@@ -262,7 +262,7 @@ preferences_setup_widgets (GossipPreferences *preferences)
 			    GCONF_PATH "/auto_away/idle_time",
 			    preferences->away_spinbutton);
 	hookup_sensitivity_controller (preferences,
-				       GCONF_PATH "/auto_away_enabled",
+				       GCONF_PATH "/auto_away/enabled",
 				       preferences->away_spinbutton);
 	
 	hookup_spin_button (preferences,
