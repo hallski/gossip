@@ -1,3 +1,13 @@
+2003-11-06  Ross Burton  <ross@burtonini.com>
+
+	* ui/main.c: (contact_information): Add a label for the JID, and
+	make the Description area fill and expand.
+
+	* src/gossip-contact-info.c: Set the JID in the Contact
+	Information dialogue.
+
+	* configure.in: Fix setting of CFLAGS.
+
 2003-11-04  Abel Cheung  <maddog@linux.org.hk>
 
 	* configure.in: Added "zh_TW" to ALL_LINGUAS.

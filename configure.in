@@ -70,7 +70,7 @@ dnl Check for XScreenSaver
 old_LIBS="$LIBS"
 old_CFLAGS="$CFLAGS"
 LIBS="$LIBS -L$x_libraries $GOSSIP_LIBS"
-CFLAGS="$CFLAGS -L$x_libraries $GOSSIP_CFLAGS"
+CFLAGS="$CFLAGS $x_includes $GOSSIP_CFLAGS"
 XSS_LIBS="no"
 XSS_HEADERS="no"
 AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])

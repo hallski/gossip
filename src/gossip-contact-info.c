@@ -41,6 +41,7 @@ struct _GossipContactInfo {
 
 	GtkWidget *dialog;
 	GtkWidget *title_label;
+	GtkWidget *jid_label;
 	GtkWidget *personal_not_avail_label;
 	GtkWidget *personal_table;
 	GtkWidget *name_label;
@@ -310,6 +311,7 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 				     NULL,
 				     "contact_information_dialog", &info->dialog,
 				     "title_label", &info->title_label,
+				     "jid_label", &info->jid_label,
 				     "personal_not_avail_label", &info->personal_not_avail_label,
 				     "personal_table", &info->personal_table,
 				     "name_label", &info->name_label,
@@ -355,6 +357,8 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 	g_free (tmp_str);
 	gtk_label_set_markup (GTK_LABEL (info->title_label), str);
 	g_free (str);
+
+	gtk_label_set_text (GTK_LABEL (info->jid_label), gossip_jid_get_without_resource (jid));
 	
 	g_signal_connect (info->close_button,
 			  "clicked",
