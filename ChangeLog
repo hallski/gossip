@@ -13,7 +13,7 @@
 	(app_tray_destroy_event_cb): Only show the window if the tray was
 	removed.
 
-	* src/gossip-app.c: (app_authentication_cb): Set the label for the
+	* src/gossip-app.c: (app_update_show): Set the label for the
 	status button to Offline when we're offline.
 	
 	* src/gossip-idle.c: (gossip_idle_get_seconds),
