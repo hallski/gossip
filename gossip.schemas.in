@@ -87,52 +87,40 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/status/available_message</key>
-      <applyto>/apps/gossip/status/available_message</applyto>
-      <owner>gossip</owner>
-      <type>string</type>
-      <locale name="C">
-        <default>I'm here</default>
-        <short></short>
-        <long>
-        </long>
-      </locale>
-    </schema>
-
-    <schema>
       <key>/schemas/apps/gossip/status/leaving_message</key>
       <applyto>/apps/gossip/status/leaving_message</applyto>
       <owner>gossip</owner>
       <type>string</type>
       <locale name="C">
-        <default>Just about to leave...</default>
-        <short></short>
+        <default>About to leave...</default>
+        <short>Message to show before going away</short>
         <long>
         </long>
       </locale>
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/status/away_message</key>
-      <applyto>/apps/gossip/status/away_message</applyto>
+      <key>/schemas/apps/gossip/status/auto_away_message</key>
+      <applyto>/apps/gossip/status/auto_away_message</applyto>
       <owner>gossip</owner>
       <type>string</type>
       <locale name="C">
-        <default>I'm not here right now</default>
-        <short></short>
+        <default>Not at the computer</default>
+        <short>Autoaway message</short>
         <long>
         </long>
       </locale>
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/status/custom_available_messages</key>
-      <applyto>/apps/gossip/status/custom_available_messages</applyto>
+      <key>/schemas/apps/gossip/status/custom_away_messages</key>
+      <applyto>/apps/gossip/status/custom_away_messages</applyto>
       <owner>gossip</owner>
       <type>list</type>
       <list_type>string</list_type>
       <locale name="C">
-        <short></short>
+        <default>[Eating,Sleeping]</default>
+        <short>Away messages</short>
         <long>
         </long>
       </locale>
@@ -145,7 +133,8 @@
       <type>list</type>
       <list_type>string</list_type>
       <locale name="C">
-        <short></short>
+        <default>[Working]</default>
+        <short>Busy messages</short>
         <long>
         </long>
       </locale>

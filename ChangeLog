@@ -1,3 +1,17 @@
+2003-11-02  Richard Hult  <richard@imendio.com>
+
+	* gossip.schemas.in:
+	* src/gossip-app.c: (app_init),
+	(app_update_show), (app_cancel_pending_leave),
+	(app_leave_flash_timeout_func), (app_leave_flash_start),
+	(app_status_available_activate_cb), (app_status_busy_activate_cb),
+	(app_status_leave_activate_cb),
+	(app_status_custom_leave_activate_cb),
+	(app_status_custom_busy_activate_cb), (add_status_image_menu_item),
+	(show_popup), (app_status_button_clicked_cb):
+	* ui/main.glade: Tweak status setting, we're hopefully getting
+	closer to the final thing.
+
 2003-10-30  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.c: Include sys/types.h for FreeBSD and

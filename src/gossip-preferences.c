@@ -33,15 +33,11 @@ typedef struct {
 	GossipApp    *app;
  	
 	GtkWidget    *dialog;
-	GtkWidget    *auto_away_checkbutton;
-	GtkWidget    *away_spinbutton;
-	GtkWidget    *extended_away_spinbutton;
 	GtkWidget    *sound_checkbutton;
 	GtkWidget    *silent_checkbutton;
 	GtkWidget    *smileys_checkbutton;
 	GtkWidget    *timestamp_checkbutton;
 	GtkWidget    *compact_checkbutton;
-	GtkWidget    *available_entry;
 	GtkWidget    *leaving_entry;
 	GtkWidget    *away_entry;
 	
@@ -334,24 +330,6 @@ hookup_sensitivity_controller (GossipPreferences *preferences,
 static void
 preferences_setup_widgets (GossipPreferences *preferences)
 {
-/*	hookup_toggle_button (preferences,
-			      GCONF_PATH "/auto_away/enabled",
-			      preferences->auto_away_checkbutton);
-	
-	hookup_spin_button (preferences,
-			    GCONF_PATH "/auto_away/idle_time",
-			    preferences->away_spinbutton);
-	hookup_sensitivity_controller (preferences,
-				       GCONF_PATH "/auto_away/enabled",
-				       preferences->away_spinbutton);
-	
-	hookup_spin_button (preferences,
-			    GCONF_PATH "/auto_away/extended_idle_time",
-			    preferences->extended_away_spinbutton);
-	hookup_sensitivity_controller (preferences,
-				       GCONF_PATH "/auto_away/enabled",
-				       preferences->extended_away_spinbutton);
-*/
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/sound/play_sounds",
 			      preferences->sound_checkbutton);
@@ -373,13 +351,10 @@ preferences_setup_widgets (GossipPreferences *preferences)
 			      preferences->timestamp_checkbutton);
 	
 	hookup_entry (preferences,
-		      GCONF_PATH "/status/available_message",
-		      preferences->available_entry);
-	hookup_entry (preferences,
 		      GCONF_PATH "/status/leaving_message",
 		      preferences->leaving_entry);
 	hookup_entry (preferences,
-		      GCONF_PATH "/status/away_message",
+		      GCONF_PATH "/status/auto_away_message",
 		      preferences->away_entry);
 }
 
@@ -396,15 +371,11 @@ gossip_preferences_show (GossipApp *app)
 				     "preferences_dialog",
 				     NULL,
 				     "preferences_dialog", &preferences->dialog,
-				     /*"auto_away_checkbutton", &preferences->auto_away_checkbutton,
-				     "away_spinbutton", &preferences->away_spinbutton,
-				     "extended_away_spinbutton", &preferences->extended_away_spinbutton,*/
 				     "sound_checkbutton", &preferences->sound_checkbutton,
 				     "silent_checkbutton", &preferences->silent_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
 				     "compact_checkbutton", &preferences->compact_checkbutton,
 				     "timestamp_checkbutton", &preferences->timestamp_checkbutton,
-				     "available_entry", &preferences->available_entry,
 				     "leaving_entry", &preferences->leaving_entry,
 				     "away_entry", &preferences->away_entry,
 				     NULL);
