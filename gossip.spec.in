@@ -51,6 +51,7 @@ gconftool-2 --makefile-install-rule %{_sysconfdir}/gconf/schemas/gossip.schemas 
 %{_bindir}/*
 %{_datadir}/applications
 %{_datadir}/gossip/*
+%{_sysconfdir}/gconf/schemas/*
 
 %changelog
 * Sat Jun 28 2003 Richard Hult <richard@imendio.com>

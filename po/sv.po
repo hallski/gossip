@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-17 23:29+0200\n"
+"POT-Creation-Date: 2003-07-17 23:49+0200\n"
 "PO-Revision-Date: 2003-07-17 23:30+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
