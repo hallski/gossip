@@ -41,6 +41,8 @@ gossip_SOURCES = 				\
 	gossip-jid.h                            \
 	gossip-join-dialog.c			\
 	gossip-join-dialog.h			\
+	gossip-log.c				\
+	gossip-log.h				\
 	gossip-main.c				\
 	gossip-marshal-main.c			\
 	gossip-preferences.c			\

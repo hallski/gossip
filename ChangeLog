@@ -1,3 +1,17 @@
+2003-11-03  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am: Add gossip-log.[ch]
+	* src/gossip-chat-view.c: (chat_view_maybe_append_timestamp),
+	(gossip_chat_view_append_event_msg):
+	* src/gossip-chat.c: (chat_send), (chat_message_handler):
+	* src/gossip-utils.c: (gossip_utils_get_timestamp):
+	* src/gossip-utils.h: Refactor timestamp code and add logging
+	stuff from Johan Wallenborg. Need to implement viewing of logs and
+	finalize the format.
+
+	* src/gossip-app.c: (app_status_leave_activate_cb), (show_popup):
+	Tweak more. Don't treat away/leave the same as busy.
+
 2003-11-02  Richard Hult  <richard@imendio.com>
 
 	* gossip.schemas.in:
@@ -20,7 +34,7 @@
 2003-10-30  Mikael Hallendal  <micke@imendio.com>
 
         * gossip.desktop.in: 
-	- Changed the GenericName suggested by Thomas Reynholds.
+	- Changed the GenericName suggested by Thomas Reynolds.
 
 2003-10-28  Richard Hult  <richard@imendio.com>
 

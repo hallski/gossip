@@ -29,7 +29,6 @@
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-i18n.h>
 #include <libgnome/gnome-url.h>
-
 #include "gossip-utils.h"
 #include "gossip-chat-view.h"
 
@@ -128,7 +127,6 @@ static void       chat_view_copy_address_cb (GtkMenuItem         *menuitem,
 					     const gchar         *url);
 static void       chat_view_realize_cb      (GossipChatView      *widget,
 					     gpointer             data);
-static gchar *    chat_view_get_timestamp   (const gchar         *time_str);
 static gint       chat_view_url_regex_match (const gchar         *msg,
 					     GArray              *start,
 					     GArray              *end);
@@ -483,27 +481,6 @@ chat_view_realize_cb (GossipChatView *view, gpointer data)
 	gdk_window_set_background (win, &GTK_WIDGET(view)->style->base[GTK_STATE_NORMAL]);
 }
 
-static gchar *
-chat_view_get_timestamp (const gchar *time_str)
-{
-	time_t     t;
-	struct tm *tm;
-	gchar      buf[128];
-
-	if (!time_str) {
-		t  = time (NULL);
-		tm = localtime (&t);
-	} else {
-		tm = lm_utils_get_localtime (time_str);
-	}
-	
-	buf[0] = 0;
-	
-	strftime (buf, sizeof (buf), "%H:%M ", tm);
-
-	return g_strdup (buf);
-}
-
 static gint
 chat_view_url_regex_match (const gchar *msg,
 			   GArray      *start,
@@ -689,8 +666,8 @@ chat_view_maybe_append_timestamp (GossipChatView *view, const gchar *time_str)
 
 	priv = view->priv;
 	
-	style = chat_view_get_timestamp_style();
-	stamp = chat_view_get_timestamp (time_str);
+	style = chat_view_get_timestamp_style ();
+	stamp = gossip_utils_get_timestamp (time_str);
 
 	if (style == TIMESTAMP_STYLE_NORMAL) {
 		GTimeVal  cur_time;
@@ -964,7 +941,7 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 	}
 
 	if (timestamp) {
-		stamp = chat_view_get_timestamp (NULL);
+		stamp = gossip_utils_get_timestamp (NULL);
 		msg = g_strdup_printf (" %s - %s", str, stamp);
 		g_free (stamp);
 	} else {

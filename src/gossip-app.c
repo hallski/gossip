@@ -114,6 +114,8 @@ struct _GossipAppPriv {
 	gchar               *overridden_away_message;
 	time_t               leaving_time;
 	guint                leave_flash_timeout_id;
+
+	guint                size_timeout_id;
 };
 
 typedef struct {
@@ -458,6 +460,18 @@ app_finalize (GObject *object)
 	
         app = GOSSIP_APP (object);
         priv = app->priv;
+
+	if (priv->size_timeout_id) {
+		g_source_remove (priv->size_timeout_id);
+	}
+
+	if (priv->leave_flash_timeout_id) {
+		g_source_remove (priv->leave_flash_timeout_id);
+	}
+
+	if (priv->tray_flash_timeout_id) {
+		g_source_remove (priv->tray_flash_timeout_id);
+	}
 
 	gossip_account_unref (priv->account);
 
@@ -2104,8 +2118,6 @@ app_status_leave_activate_cb (GtkWidget *item,
 
 	app_cancel_pending_leave ();
 
-	//priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
-
 	str = g_object_get_data (G_OBJECT (item), "status");
 
 	priv->overridden_away_message = str;
@@ -2122,30 +2134,51 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 {
 	GossipAppPriv *priv = app->priv;
 	GtkWidget     *dialog;
-	GtkWidget     *label;
-	GtkWidget     *entry;
+	GtkWidget     *combo;
 	gint           response;
 	gchar         *str;
+
+	GSList     *list, *l;
+	GList      *strings;
+	GConfValue *value;
+	gboolean    new_message = TRUE;
 	
 	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "status_reason_dialog",
+				      "status_leave_dialog",
 				      NULL,
-				      "status_reason_dialog", &dialog,
-				      "reason_label", &label,
-				      "reason_entry", &entry,
+				      "status_leave_dialog", &dialog,
+				      "leave_combo", &combo,
 				      NULL);
 
-	gtk_label_set_text (GTK_LABEL (label), _("Reason for leaving:"));
+	gtk_combo_disable_activate (GTK_COMBO (combo));
 	
-	str = gconf_client_get_string (gconf_client,
-				       "/apps/gossip/status/auto_away_message",
-				       NULL);
-	if (str) {
-		gtk_entry_set_text (GTK_ENTRY (entry), str);
-		g_free (str);
+	/* FIXME: Same workaround as below. */
+	value = gconf_client_get (gconf_client,
+				  "/apps/gossip/status/custom_away_messages",
+				  NULL);
+
+	if (!value) {
+		list = g_slist_append (NULL, g_strdup (_("Eating")));
+		list = g_slist_append (list, g_strdup (_("Sleeping")));
+	} else {
+		gconf_value_free (value);
+		
+		list = gconf_client_get_list (gconf_client,
+					      "/apps/gossip/status/custom_away_messages",
+					      GCONF_VALUE_STRING,
+					      NULL);
 	}
 
-	gtk_entry_select_region (GTK_ENTRY (entry), 0, -1);
+	strings = NULL;
+	for (l = list; l; l = l->next) {
+		strings = g_list_append (strings, l->data);
+	}
+
+	gtk_combo_set_popdown_strings (GTK_COMBO (combo), strings);
+	g_list_free (strings);
+
+	gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), "");
+	/*gtk_entry_select_region (GTK_ENTRY (GTK_COMBO (combo)->entry), 0, -1);*/
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response != GTK_RESPONSE_OK) {
@@ -2153,7 +2186,7 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 		return;
 	}
 
-	str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+	str = g_strdup (gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (combo)->entry)));
 	gtk_widget_destroy (dialog);
 
 	if (strlen (str) == 0) {
@@ -2162,8 +2195,41 @@ app_status_custom_leave_activate_cb (GtkWidget *item,
 		str = gconf_client_get_string (gconf_client,
 					       "/apps/gossip/status/auto_away_message",
 					       NULL);
+	} else {
+		for (l = list; l; l = l->next) {
+			if (strcmp (str, l->data) == 0) {
+				new_message = FALSE;
+				break;
+			}
+		}
+#if 0
+		if (new_message) {
+			list = g_slist_prepend (list, g_strdup (str));
+		}
+
+		if (g_slist_length (list) > 5) {
+			GSList *last;
+
+			last = g_slist_last (list);
+			
+			list = g_slist_remove_link (list, last);
+			g_free (last->data);
+			g_slist_free_1 (last);
+		}
+		
+		gconf_client_set_list (gconf_client,
+				       "/apps/gossip/status/custom_away_messages",
+				       GCONF_VALUE_STRING,
+				       list,
+				       NULL);
+#endif
 	}
 
+	for (l = list; l; l = l->next) {
+		g_free (l->data);
+	}
+	g_slist_free (list);
+	
 	app_cancel_pending_leave ();
 	
 	priv->overridden_away_message = str;
@@ -2180,21 +2246,17 @@ app_status_custom_busy_activate_cb (GtkWidget *item,
 {
 	GossipAppPriv *priv = app->priv;
 	GtkWidget     *dialog;
-	GtkWidget     *label;
 	GtkWidget     *entry;
 	gint           response;
 	gchar         *str;
 	
 	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "status_reason_dialog",
+				      "status_busy_dialog",
 				      NULL,
-				      "status_reason_dialog", &dialog,
-				      "reason_label", &label,
+				      "status_busy_dialog", &dialog,
 				      "reason_entry", &entry,
 				      NULL);
 
-	gtk_label_set_text (GTK_LABEL (label), _("Reason for being busy:"));
-	
 	/*str = gconf_client_get_string (gconf_client,
 				       "/apps/gossip/status/auto_away_message",
 				       NULL);
@@ -2375,6 +2437,7 @@ show_popup (void)
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
+#if 0
 	/* Leave messages. */
 
 	/* FIXME: Same workaround as above. */
@@ -2401,7 +2464,18 @@ show_popup (void)
 	g_slist_free (list);
 
 	add_status_image_menu_item (menu, _("Custom Away Message..."), GOSSIP_SHOW_AWAY, TRUE);
+#else
 
+	item = gtk_menu_item_new_with_label (_("Leave..."));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+
+	g_signal_connect (item,
+			  "activate",
+			  G_CALLBACK (app_status_custom_leave_activate_cb),
+			  NULL);
+#endif
+	
 	gtk_menu_popup (GTK_MENU (menu), NULL, NULL, app_status_align_menu,
 			NULL, 1, gtk_get_current_event_time ());
 }
@@ -2416,7 +2490,8 @@ app_status_button_clicked_cb (GtkButton *button,
 static gboolean
 configure_event_idle_cb (GtkWidget *widget)
 {
-	gint width, height;
+	GossipAppPriv *priv = app->priv;
+	gint           width, height;
 	
 	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
 	
@@ -2430,6 +2505,8 @@ configure_event_idle_cb (GtkWidget *widget)
 			      height,
 			      NULL);
 
+	priv->size_timeout_id = 0;
+	
 	return FALSE;
 }
 
@@ -2438,7 +2515,13 @@ app_window_configure_event_cb (GtkWidget         *widget,
 			       GdkEventConfigure *event,
 			       gpointer           data)
 {
-	g_idle_add ((GSourceFunc) configure_event_idle_cb, widget);
+	GossipAppPriv *priv = app->priv;
+	
+	if (!priv->size_timeout_id) {
+		priv->size_timeout_id = g_timeout_add (5000,
+						       (GSourceFunc) configure_event_idle_cb,
+						       widget);
+	}
 
 	return FALSE;
 }

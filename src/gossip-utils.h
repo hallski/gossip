@@ -57,6 +57,7 @@ void         gossip_glade_setup_size_group           (GladeXML         *gui,
 						      gchar            *first_widget, ...);
 
 const gchar *gossip_utils_get_timestamp_from_message (LmMessage        *message);
+gchar *      gossip_utils_get_timestamp              (const gchar      *time_str);
 const gchar *gossip_get_icon_for_show_string         (const gchar      *str);
 const gchar *gossip_show_to_string                   (GossipShow        show);
 GossipShow   gossip_show_from_string                 (const gchar      *str);

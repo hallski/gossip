@@ -36,6 +36,7 @@
 #include "gossip-contact-info.h"
 #include "gossip-stock.h"
 #include "disclosure-widget.h"
+#include "gossip-log.h"
 #include "gossip-chat.h"
 
 #define d(x) 
@@ -604,6 +605,8 @@ chat_send (GossipChat *chat, const gchar *msg)
 					  LM_MESSAGE_SUB_TYPE_CHAT);
 	lm_message_node_add_child (m->node, "body", msg);
 
+	gossip_log_message (m, FALSE);
+
 	if (chat->request_composing_events) {
 		chat_request_composing (m);
 	}
@@ -783,6 +786,8 @@ chat_message_handler (LmMessageHandler *handler,
 					      nick,
 					      body);
 
+	gossip_log_message (m, TRUE);
+	
 	g_free (nick);
 	gossip_jid_unref (jid);
 
