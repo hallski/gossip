@@ -23,9 +23,9 @@
 
 struct _GossipRoster {
         GHashTable       *items;
-        GHashTable       *groups;
+	GHashTable       *groups;
 
-        LmConnect        *connection;
+	LmConnect        *connection;
         LmMessageHandler *presence_handler;
         LmMessageHandler *iq_handler;
 };
@@ -58,6 +58,10 @@ static guint signals[LAST_SIGNAL];
 static void     roster_class_init            (GossipRosterClass *klass);
 static void     roster_init                  (GossipRoster      *roster);
 static void     roster_finalize              (GObject           *object);
+static void     roster_connected_cb          (GossipApp         *app,
+					      GossipRoster      *roster);
+static void     roster_disconnected_cb       (GossipApp         *app,
+					      GossipRoster      *roster);
 
 GType
 gossip_roster_get_type (void)
@@ -125,5 +129,18 @@ roster_finalize (GObject *object)
 
         g_hash_table_destroy (priv->items);
         g_hash_table_destroy (priv->groups);
+}
+
+static void
+roster_connected_cb (GossipApp *app, GossipRoster *roster)
+{
+	GossipRosterPriv *priv;
+
+	
+}
+
+static void
+roster_disconnected_cb (GossipApp *app, GossipRoster *roster)
+{
 }
 
