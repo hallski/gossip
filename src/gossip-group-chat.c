@@ -59,7 +59,8 @@ struct _GossipGroupChat {
 	GtkWidget    *tree;
 	GtkWidget    *disclosure;
 	GtkWidget    *single_hbox;
-	GtkWidget    *multi_hbox;
+	GtkWidget    *multi_vbox;
+	GtkWidget    *send_multi_button;
 
 	GossipJID    *jid;
 	gchar        *nick;
@@ -124,8 +125,6 @@ static void            group_chat_priv_chat_incoming            (GossipGroupChat
 								 LmMessage         *m);
 static void            group_chat_priv_chat_destroyed           (GtkWidget         *dialog,
 								 GossipGroupChat   *chat);
-static void            group_chat_dialog_send_single_clicked_cb (GtkWidget         *unused,
-								 GossipGroupChat   *chat);
 static void            group_chat_dialog_send_multi_clicked_cb  (GtkWidget         *unused,
 								 GossipGroupChat   *chat);
 GtkWidget *            group_chat_create_disclosure             (gpointer           data);
@@ -156,14 +155,14 @@ group_chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	
 	if (gtk_toggle_button_get_active (disclosure)) {
-		gtk_widget_show (chat->multi_hbox);
+		gtk_widget_show (chat->multi_vbox);
 		gtk_widget_hide (chat->single_hbox);
 
 		const_str = gtk_entry_get_text (GTK_ENTRY (chat->input_entry));
 		gtk_text_buffer_set_text (buffer, const_str, -1);
 	} else {
 		gtk_widget_show (chat->single_hbox);
-		gtk_widget_hide (chat->multi_hbox);
+		gtk_widget_hide (chat->multi_vbox);
 
 		gtk_text_buffer_get_bounds (buffer, &start, &end);
 		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
@@ -404,6 +403,19 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 	gchar *nick, *key, *tmp, *completed;
 	gint   len;
 	GList *list, *l, *completed_list;
+	
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (chat->disclosure))) {
+		/* Multi line entry. */
+		if ((event->state & GDK_CONTROL_MASK) &&
+		    (event->keyval == GDK_Return ||
+		     event->keyval == GDK_ISO_Enter ||
+		     event->keyval == GDK_KP_Enter)) {
+			gtk_widget_activate (chat->send_multi_button);
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 
 	if ((event->state & GDK_CONTROL_MASK) != GDK_CONTROL_MASK &&
 	    (event->state & GDK_SHIFT_MASK) != GDK_SHIFT_MASK &&
@@ -853,7 +865,8 @@ gossip_group_chat_new (GossipApp   *app, GossipJID *jid, const gchar *nick)
 				       "left_vbox", &focus_vbox,
 				       "disclosure", &chat->disclosure,
 				       "single_hbox", &chat->single_hbox,
-				       "multi_hbox", &chat->multi_hbox,
+				       "multi_vbox", &chat->multi_vbox,
+				       "send_multi_button", &chat->send_multi_button,
 				       NULL);
 	
 	gossip_glade_connect (
@@ -862,10 +875,10 @@ gossip_group_chat_new (GossipApp   *app, GossipJID *jid, const gchar *nick)
 		"group_chat_window", "destroy", group_chat_destroy_cb,
 		"input_entry", "activate", group_chat_activate_cb,
 		"input_entry", "key_press_event", group_chat_key_press_event_cb,
+		"input_textview", "key_press_event", group_chat_key_press_event_cb,
 		"chat_textview", "focus_in_event", group_chat_focus_in_event_cb,
 		"topic_entry", "activate", group_chat_topic_entry_activate_cb,
 		"disclosure", "toggled", group_chat_disclosure_toggled_cb,
-		"send_single_button", "clicked", group_chat_dialog_send_single_clicked_cb,
 		"send_multi_button", "clicked", group_chat_dialog_send_multi_clicked_cb,
 		NULL);
 
@@ -928,20 +941,6 @@ gossip_group_chat_get_window (GossipGroupChat *chat)
 	g_return_val_if_fail (chat != NULL, NULL);
 	
 	return chat->window;
-}
-
-static void
-group_chat_dialog_send_single_clicked_cb (GtkWidget       *unused,
-					  GossipGroupChat *chat)
-{
-	const gchar *msg;
-
-	msg = gtk_entry_get_text (GTK_ENTRY (chat->input_entry));
-	
-	group_chat_send (chat, msg);
-	
-	/* Clear the input field. */
-	gtk_entry_set_text (GTK_ENTRY (chat->input_entry), "");
 }
 
 static void

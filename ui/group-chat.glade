@@ -179,21 +179,6 @@
 			  <property name="fill">True</property>
 			</packing>
 		      </child>
-
-		      <child>
-			<widget class="GtkButton" id="send_single_button">
-			  <property name="visible">True</property>
-			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">_Send</property>
-			  <property name="use_underline">True</property>
-			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			</widget>
-			<packing>
-			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
-			</packing>
-		      </child>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -203,17 +188,17 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkHBox" id="multi_hbox">
+		    <widget class="GtkVBox" id="multi_vbox">
 		      <property name="homogeneous">False</property>
-		      <property name="spacing">2</property>
+		      <property name="spacing">4</property>
 
 		      <child>
 			<widget class="GtkScrolledWindow" id="scrolledwindow9">
 			  <property name="height_request">60</property>
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
-			  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+			  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+			  <property name="vscrollbar_policy">GTK_POLICY_ALWAYS</property>
 			  <property name="shadow_type">GTK_SHADOW_IN</property>
 			  <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
@@ -243,7 +228,7 @@
 		      </child>
 
 		      <child>
-			<widget class="GtkVBox" id="vbox10">
+			<widget class="GtkHBox" id="hbox19">
 			  <property name="visible">True</property>
 			  <property name="homogeneous">False</property>
 			  <property name="spacing">0</property>
@@ -266,8 +251,8 @@
 			</widget>
 			<packing>
 			  <property name="padding">0</property>
-			  <property name="expand">False</property>
-			  <property name="fill">False</property>
+			  <property name="expand">True</property>
+			  <property name="fill">True</property>
 			</packing>
 		      </child>
 		    </widget>

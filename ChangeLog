@@ -1,3 +1,14 @@
+2003-07-03  Richard Hult  <rhult@codefactory.se>
+
+	* ui/chat.glade: Remove send button from single line entry box.
+	* ui/group-chat.glade: Likewise.
+
+	* src/gossip-chat.c: (chat_create), (chat_input_activate_cb), 
+	(chat_input_key_press_event_cb)
+	* src/gossip-group-chat.c: (group_chat_key_press_event_cb), 
+	(gossip_group_chat_new): Remove send button when in single line
+	mode. Ctrl-Enter sends message for multiple line mode.
+
 2003-07-01  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-info.c (contact_info_vcard_reply_cb): Don't

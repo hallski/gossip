@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <gconf/gconf-client.h>
@@ -44,7 +45,8 @@ struct _GossipChat {
 	GtkWidget        *input_entry;
 	GtkWidget        *input_text_view;
 	GtkWidget        *single_hbox;
-	GtkWidget        *multi_hbox;
+	GtkWidget        *multi_vbox;
+	GtkWidget        *send_multi_button;
 	GtkWidget        *subject_entry;
 	GtkWidget        *status_image;
 	GtkWidget        *disclosure;
@@ -53,33 +55,36 @@ struct _GossipChat {
 	gchar            *nick;
 };
 
-static GossipChat *    chat_create                 (GossipApp        *app,
-						    GossipJID        *jid);
-static void            chat_input_activate_cb      (GtkWidget        *entry,
-						    GossipChat       *chat);
-static void
-chat_input_text_buffer_changed_cb                  (GtkTextBuffer    *buffer,
-						    GossipChat       *chat);
-static void            chat_dialog_destroy_cb      (GtkWidget        *widget,
-						    GossipChat       *chat);
-static void
-chat_dialog_send_single_clicked_cb                 (GtkWidget        *unused,
-						    GossipChat       *chat);
-static void
-chat_dialog_send_multi_clicked_cb                  (GtkWidget        *unused,
-						    GossipChat       *chat);
-static gboolean        chat_focus_in_event_cb      (GtkWidget        *widget,
-						    GdkEvent         *event,
-						    GossipChat       *chat);
-static LmHandlerResult chat_message_handler        (LmMessageHandler *handler,
-						    LmConnection     *connection,
-						    LmMessage        *m,
-						    GossipChat       *chat);
-static LmHandlerResult chat_presence_handler       (LmMessageHandler *handler,
-						    LmConnection     *connection,
-						    LmMessage        *m,
-						    GossipChat       *chat);
-GtkWidget *          chat_dialog_create_disclosure (gpointer          data);
+static GossipChat *
+chat_create                                       (GossipApp        *app,
+						   GossipJID        *jid);
+static void     chat_input_activate_cb            (GtkWidget        *entry,
+						   GossipChat       *chat);
+static gboolean chat_input_key_press_event_cb     (GtkWidget        *widget,
+						   GdkEventKey      *event,
+						   GossipChat       *chat);
+static void     chat_input_text_buffer_changed_cb (GtkTextBuffer    *buffer,
+						   GossipChat       *chat);
+static void     chat_dialog_destroy_cb            (GtkWidget        *widget,
+						   GossipChat       *chat);
+static void     chat_dialog_send                  (GossipChat       *chat,
+						   const gchar      *msg);
+static void     chat_dialog_send_multi_clicked_cb (GtkWidget        *unused,
+						   GossipChat       *chat);
+static gboolean chat_focus_in_event_cb            (GtkWidget        *widget,
+						   GdkEvent         *event,
+						   GossipChat       *chat);
+static LmHandlerResult
+chat_message_handler                              (LmMessageHandler *handler,
+						   LmConnection     *connection,
+						   LmMessage        *m,
+						   GossipChat       *chat);
+static LmHandlerResult
+chat_presence_handler                             (LmMessageHandler *handler,
+						   LmConnection     *connection,
+						   LmMessage        *m,
+						   GossipChat       *chat);
+GtkWidget *     chat_dialog_create_disclosure     (gpointer          data);
 
 
 GtkWidget *
@@ -106,14 +111,14 @@ chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	
 	if (gtk_toggle_button_get_active (disclosure)) {
-		gtk_widget_show (chat->multi_hbox);
+		gtk_widget_show (chat->multi_vbox);
 		gtk_widget_hide (chat->single_hbox);
 
 		const_str = gtk_entry_get_text (GTK_ENTRY (chat->input_entry));
 		gtk_text_buffer_set_text (buffer, const_str, -1);
 	} else {
 		gtk_widget_show (chat->single_hbox);
-		gtk_widget_hide (chat->multi_hbox);
+		gtk_widget_hide (chat->multi_vbox);
 
 		gtk_text_buffer_get_bounds (buffer, &start, &end);
 		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
@@ -127,7 +132,6 @@ chat_create (GossipApp *app, GossipJID *jid)
 {
 	GossipChat    *chat;
 	GtkWidget     *from_label;
-	GtkWidget     *send_single_button, *send_multi_button;
 	GossipRoster  *roster;
 	const gchar   *name;
 	GdkPixbuf     *pixbuf;
@@ -151,12 +155,11 @@ chat_create (GossipApp *app, GossipJID *jid)
 				      "input_entry", &chat->input_entry,
 				      "input_textview", &chat->input_text_view,
 				      "single_hbox", &chat->single_hbox,
-				      "multi_hbox", &chat->multi_hbox,
+				      "multi_vbox", &chat->multi_vbox,
 				      "from_label", &from_label,
 				      "status_image", &chat->status_image,
 				      "disclosure", &chat->disclosure,
-				      "send_single_button", &send_single_button,
-				      "send_multi_button", &send_multi_button,
+				      "send_multi_button", &chat->send_multi_button,
 				      NULL);
 
 	roster = gossip_app_get_roster ();
@@ -184,12 +187,7 @@ chat_create (GossipApp *app, GossipJID *jid)
 			  G_CALLBACK (chat_disclosure_toggled_cb),
 			  chat);
 	
- 	g_signal_connect (send_single_button,
-			  "clicked",
-			  G_CALLBACK (chat_dialog_send_single_clicked_cb),
-			  chat);
-
-	g_signal_connect (send_multi_button,
+	g_signal_connect (chat->send_multi_button,
 			  "clicked",
 			  G_CALLBACK (chat_dialog_send_multi_clicked_cb),
 			  chat);
@@ -202,6 +200,11 @@ chat_create (GossipApp *app, GossipJID *jid)
 	g_signal_connect (chat->input_entry,
 			  "activate",
 			  G_CALLBACK (chat_input_activate_cb),
+			  chat);
+
+	g_signal_connect (chat->input_text_view,
+			  "key_press_event",
+			  G_CALLBACK (chat_input_key_press_event_cb),
 			  chat);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
@@ -236,7 +239,37 @@ chat_create (GossipApp *app, GossipJID *jid)
 static void
 chat_input_activate_cb (GtkWidget *entry, GossipChat *chat)
 {
-	chat_dialog_send_single_clicked_cb (NULL, chat);
+	gchar *msg;
+
+	msg = gtk_editable_get_chars (GTK_EDITABLE (chat->input_entry), 0, -1);
+
+	/* Clear the input field. */
+	gtk_entry_set_text (GTK_ENTRY (chat->input_entry), "");
+
+	chat_dialog_send (chat, msg);
+
+	g_free (msg);
+}
+
+static gboolean
+chat_input_key_press_event_cb (GtkWidget   *widget,
+			       GdkEventKey *event,
+			       GossipChat  *chat)
+{
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (chat->disclosure))) {
+		/* Multi line entry. */
+		if ((event->state & GDK_CONTROL_MASK) &&
+		    (event->keyval == GDK_Return ||
+		     event->keyval == GDK_ISO_Enter ||
+		     event->keyval == GDK_KP_Enter)) {
+			gtk_widget_activate (chat->send_multi_button);
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+
+	return FALSE;
 }
 
 static void
@@ -304,21 +337,6 @@ chat_dialog_send (GossipChat *chat, const gchar *msg)
 	
 	lm_connection_send (chat->connection, m, NULL);
 	lm_message_unref (m);
-}
-
-static void
-chat_dialog_send_single_clicked_cb (GtkWidget *unused, GossipChat *chat)
-{
-	gchar *msg;
-
-	msg = gtk_editable_get_chars (GTK_EDITABLE (chat->input_entry), 0, -1);
-
-	/* Clear the input field. */
-	gtk_entry_set_text (GTK_ENTRY (chat->input_entry), "");
-
-	chat_dialog_send (chat, msg);
-
-	g_free (msg);
 }
 
 static void
