@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-04 16:32+0200\n"
+"POT-Creation-Date: 2003-07-05 17:58+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -16,66 +16,76 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gossip-add-contact.c:252
+#: src/gossip-add-contact.c:255
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Vilket förfrågansmeddelande vill du skicka till %s?"
 
-#: src/gossip-add-contact.c:272
+#: src/gossip-add-contact.c:275
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s kommer att läggas till i din kontaktlista."
 
-#: src/gossip-add-contact.c:276
+#: src/gossip-add-contact.c:279
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:304
+#: src/gossip-app.c:314
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:308
+#: src/gossip-app.c:318
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:312
+#: src/gossip-app.c:322
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:316 ui/main.glade.h:27
+#: src/gossip-app.c:326 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:320
+#: src/gossip-app.c:330
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:328
+#: src/gossip-app.c:338
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:393
+#: src/gossip-app.c:403
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:404
+#: src/gossip-app.c:414
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:934
+#: src/gossip-app.c:532
+msgid ""
+"Enter the user ID of the person you would like to send a chat message to."
+msgstr ""
+"Ange användarid för den person du vill skicka ett chattmeddelenade till."
+
+#: src/gossip-app.c:537
+msgid "Start Chat"
+msgstr "Starta chatt"
+
+#: src/gossip-app.c:1028
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
-#: src/gossip-app.c:1004
+#: src/gossip-app.c:1098
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1263
+#: src/gossip-app.c:1357
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -137,18 +147,18 @@ msgid "Others"
 msgstr "Andra"
 
 #: src/gossip-roster.c:194
-msgid "/_Remove contact"
-msgstr "/_Ta bort kontakt"
+msgid "/Contact _Information"
+msgstr "/Kontakt_information"
 
 #: src/gossip-roster.c:202
 msgid "/Re_name contact"
 msgstr "/Byt _namn på kontakt"
 
-#: src/gossip-roster.c:210
-msgid "/Contact _Information"
-msgstr "/Kontakt_information"
+#: src/gossip-roster.c:218
+msgid "/_Remove contact"
+msgstr "/_Ta bort kontakt"
 
-#: src/gossip-roster.c:411
+#: src/gossip-roster.c:419
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
