@@ -698,11 +698,11 @@ chat_view_is_scrolled_down (GossipChatView *view)
 	GtkWidget *sw;
 
 	/* Turn off for version before 2.2.3. */
-	if (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION == 2 &&
-	    GTK_MAJOR_VERSION < 3) {
+	if (GTK_MINOR_VERSION < 2 ||
+	    (GTK_MINOR_VERSION == 2 && GTK_MICRO_VERSION < 3)) {
 		return TRUE;
 	}
-	
+
 	sw = gtk_widget_get_parent (GTK_WIDGET (view));
 	if (GTK_IS_SCROLLED_WINDOW (sw)) {
 		GtkAdjustment *vadj;

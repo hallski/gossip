@@ -631,6 +631,8 @@ app_about_cb (GtkWidget *window,
 	
 	g_object_add_weak_pointer (G_OBJECT (about), (gpointer) &about);
 
+	gtk_dialog_set_default_response (GTK_DIALOG (about), GTK_RESPONSE_CLOSE);
+
 	gtk_window_set_transient_for (GTK_WINDOW (about), GTK_WINDOW (priv->window));
 	gtk_widget_show (about);
 }
@@ -726,8 +728,9 @@ app_new_message (gboolean use_roster_selection)
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				_("_Chat"), GTK_RESPONSE_OK,
 				NULL);
-	
-	gtk_dialog_set_has_separator (GTK_DIALOG (data->dialog), FALSE);
+
+	/* Results in warnings on GTK+ 2.3.x */
+	/*gtk_dialog_set_has_separator (GTK_DIALOG (data->dialog), FALSE);*/
 
 	frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_NONE);
@@ -804,6 +807,8 @@ app_new_message (gboolean use_roster_selection)
 		gtk_entry_set_text (GTK_ENTRY (data->entry), "");
 	}
 
+	gtk_widget_grab_focus (data->entry);
+	
 	gtk_widget_show (data->dialog);
 }
 

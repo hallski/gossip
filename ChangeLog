@@ -1,5 +1,10 @@
 2004-02-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_new_message): Grab focus on the entry.
+
+	* src/gossip-chat-view.c (chat_view_is_scrolled_down): Fix version
+	check.
+
 	* src/gossip-app.c: Flash the notification area when going to and
 	from away. Don't make the status popup transient when invoked from
 	the notification icon, fixes bug #133486.
