@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-10-29 15:27+0100\n"
-"PO-Revision-Date: 2003-10-29 20:59+0100\n"
+"POT-Creation-Date: 2003-11-02 15:17+0100\n"
+"PO-Revision-Date: 2003-11-02 19:05+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,8 +20,8 @@ msgid "Gossip"
 msgstr "Gossip"
 
 #: gossip.desktop.in.h:2
-msgid "Jabber Instant Messaging"
-msgstr "Instant Messaging Jabber"
+msgid "Instant Messenger"
+msgstr "Instant Messenger"
 
 #: gossip.schemas.in.h:1
 msgid "Be silent when away"
@@ -180,15 +180,15 @@ msgstr "Vlasní zpráva o zaneprázdnění..."
 msgid "_Edit List..."
 msgstr "_Upravit seznam..."
 
-#: src/gossip-chat-view.c:337
+#: src/gossip-chat-view.c:338
 msgid "_Copy Link Address"
 msgstr "_Kopírovat adresu odkazu"
 
-#: src/gossip-chat-view.c:345
+#: src/gossip-chat-view.c:346
 msgid "_Open Link"
 msgstr "_Otevřít odkaz"
 
-#: src/gossip-chat-view.c:741
+#: src/gossip-chat-view.c:742
 msgid "%A %d %B %Y"
 msgstr "%A %d. %B %Y"
 
@@ -748,7 +748,9 @@ msgstr "Stav"
 msgid ""
 "These messages are used to describe your status when you're available, about "
 "to leave and away."
-msgstr "Tyto zprávy se používají pro popis vašeho stavu, když jste k dispozici, odcházíte nebo pryč."
+msgstr ""
+"Tyto zprávy se používají pro popis vašeho stavu, když jste k dispozici, "
+"odcházíte nebo pryč."
 
 #: ui/main.glade.h:59
 msgid "Use a different server"
