@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-18 04:14+0200\n"
-"PO-Revision-Date: 2004-06-18 20:26+0200\n"
+"POT-Creation-Date: 2004-06-25 04:21+0200\n"
+"PO-Revision-Date: 2004-06-25 19:27+0200\n"
 "Last-Translator: Elros Cyriatan <cyriatan@fastmail.fm>\n"
 "Language-Team: Dutch <nl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -165,7 +165,7 @@ msgstr ""
 "Voer de gebruikers ID van de persoon in aan wie u een chatbericht wilt "
 "sturen."
 
-#: src/gossip-app.c:720 ui/main.glade.h:84
+#: src/gossip-app.c:720 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chatten"
 
@@ -437,6 +437,14 @@ msgstr "Geef alstublieft uw wachtwoord:"
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Wachtwoord onthouden?"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Bezig met opvragen persoonlijke details, even geduld a.u.b...."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Bezig met opslaan persoonlijke details, even geduld a.u.b...."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
@@ -901,7 +909,8 @@ msgstr "Inschrijvingsverzoek"
 
 #: ui/main.glade.h:67
 msgid "This name will be used to identify you in chat windows."
-msgstr "Deze naam zal worden gebruikt om u mee te identificeren in chatvensters."
+msgstr ""
+"Deze naam zal worden gebruikt om u mee te identificeren in chatvensters."
 
 #: ui/main.glade.h:68
 msgid "Use a different server"
@@ -952,78 +961,81 @@ msgid "Yes"
 msgstr "Ja"
 
 #: ui/main.glade.h:80
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"their status."
+msgstr ""
+"U bent niet ingeschreven voor de status van dit contact. Druk op Inschrijven om diens status te ontvangen."
+
+#: ui/main.glade.h:81
 msgid "Your Identity"
 msgstr "Uw identiteit"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:82
 msgid "_Accept"
 msgstr "_Accepteren"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:83
 msgid "_Account Information"
 msgstr "_Account informatie"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:84
 msgid "_Add Contact..."
 msgstr "_Nieuw Contact..."
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:86
 msgid "_Connect..."
 msgstr "_Verbinden..."
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:87
 msgid "_Deny"
 msgstr "_Weigeren"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:88
 msgid "_Disconnect"
 msgstr "Verbinding ver_breken"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:89
 msgid "_Hide Contact List"
 msgstr "Contactlijst _verbergen"
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:90
 msgid "_Jabber ID of new contact:"
 msgstr "_Jabber ID van nieuw contact:"
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:91
 msgid "_Join Group Chat..."
 msgstr "Groep-chat _binnengaan..."
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:92
 msgid "_New Message..."
 msgstr "_Nieuw bericht..."
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:93
 msgid "_Personal Details"
 msgstr "_Persoonlijke details"
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:94
 msgid "_Preferences"
 msgstr "_Voorkeuren"
 
-#: ui/main.glade.h:94
+#: ui/main.glade.h:95
 msgid "_Remove"
 msgstr "_Verwijderen"
 
-#: ui/main.glade.h:95
+#: ui/main.glade.h:96
 msgid "_Search..."
 msgstr "_Zoeken..."
 
-#: ui/main.glade.h:96
+#: ui/main.glade.h:97
 msgid "_Show Contact List"
 msgstr "Contactlijst _weergeven"
 
-#: ui/main.glade.h:97
+#: ui/main.glade.h:98
 msgid "_Status Messages"
 msgstr "_Statusberichten"
 
-#: ui/main.glade.h:98
+#: ui/main.glade.h:99
 msgid "_Subscribe"
 msgstr "_Inschrijven"
-
-#: ui/main.glade.h:99
-msgid "subscription_label"
-msgstr ""
 
