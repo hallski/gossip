@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-09-01 12:51+0200\n"
-"PO-Revision-Date: 2003-09-01 20:27+0200\n"
+"POT-Creation-Date: 2003-09-05 12:29+0200\n"
+"PO-Revision-Date: 2003-09-05 14:50+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:23
+#: gossip.desktop.in.h:1 ui/main.glade.h:24
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -93,12 +93,12 @@ msgstr "Jestli přidávat časové značky ke všem zprávám v konverzacích."
 msgid "Home"
 msgstr "Domů"
 
-#: src/gossip-add-contact.c:274
+#: src/gossip-add-contact.c:283
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Jakou zprávu požadavku chcete odeslat %s?"
 
-#: src/gossip-add-contact.c:292
+#: src/gossip-add-contact.c:301
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s bude přidán do vašeho seznamu kontaktů."
@@ -143,7 +143,7 @@ msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:627 ui/main.glade.h:69
+#: src/gossip-app.c:627 ui/main.glade.h:70
 msgid "_Chat"
 msgstr "_Diskuse"
 
@@ -156,28 +156,28 @@ msgstr "%s chce být upozorňován na vaši přítomnost."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1221
+#: src/gossip-app.c:1222
 msgid "Make sure that your account information is correct."
 msgstr "Zkontrolujte, že vaše informace o účtu jsou správné."
 
-#: src/gossip-app.c:1222
+#: src/gossip-app.c:1223
 msgid "The server may currently be unavailable."
 msgstr "Server teď možná není k dispozici."
 
-#: src/gossip-app.c:1598
+#: src/gossip-app.c:1599
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, klient Jabberu"
 
-#: src/gossip-app.c:1784
+#: src/gossip-app.c:1785
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2032
+#: src/gossip-app.c:2048
 msgid "Set your status:"
 msgstr "Nastavit váš stav:"
 
-#: src/gossip-app.c:2040
+#: src/gossip-app.c:2056
 msgid "_Busy"
 msgstr "Za_neprázdněn"
 
@@ -325,11 +325,11 @@ msgstr "Gossip se nyní pokusí použít váš účet:"
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip se nyní pokusí zaregistrovat účet:"
 
-#: src/gossip-utils.c:1034
+#: src/gossip-utils.c:1006
 msgid "Please enter your password:"
 msgstr "Zadejte prosím své heslo."
 
-#: src/gossip-utils.c:1036
+#: src/gossip-utils.c:1008
 msgid "Remember Password?"
 msgstr "Zapamatovat si heslo?"
 
@@ -512,82 +512,86 @@ msgid " "
 msgstr " "
 
 #: ui/main.glade.h:4
+msgid "<b>Information requested, Please wait...</b>"
+msgstr "<b>Požádal jsem o informace, čekejte prosím...</b>"
+
+#: ui/main.glade.h:5
 msgid "<i>Information not available</i>"
 msgstr "<i>Informace nejsou k dispozici</i>"
 
-#: ui/main.glade.h:5
+#: ui/main.glade.h:6
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Příklad: uživatel@jabber.org</span>"
 
-#: ui/main.glade.h:6
+#: ui/main.glade.h:7
 msgid "Account Information"
 msgstr "Informace o účtu"
 
-#: ui/main.glade.h:7
+#: ui/main.glade.h:8
 msgid "Add a contact"
 msgstr "Přidat kontakt"
 
-#: ui/main.glade.h:8
+#: ui/main.glade.h:9
 msgid "Add contact"
 msgstr "Přidat kontakt"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:10
 msgid "Add to your contact list"
 msgstr "Přidat do vašeho seznamu kontaktů"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:11
 msgid "Choose a Server"
 msgstr "Vyberte server"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:12
 msgid "Choose from list:"
 msgstr "Vyberte ze seznamu:"
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:13
 msgid "Client information"
 msgstr "Informace o klientovi"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:14
 msgid "Client:"
 msgstr "Klient:"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:15
 msgid "Contact information"
 msgstr "Informace o kontaktu"
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:16
 msgid "Conversation"
 msgstr "Konverzace"
 
-#: ui/main.glade.h:16
+#: ui/main.glade.h:17
 msgid "Convert smileys to graphical images"
 msgstr "Převádět smajlíky na grafické obrázky"
 
-#: ui/main.glade.h:17
+#: ui/main.glade.h:18
 msgid "Country:"
 msgstr "Země:"
 
-#: ui/main.glade.h:18
+#: ui/main.glade.h:19
 msgid "Description"
 msgstr "Popis"
 
-#: ui/main.glade.h:19
+#: ui/main.glade.h:20
 msgid "Disable sounds when busy or away"
 msgstr "Zakázat zvuky, když jsem zaneprázdněn nebo pryč"
 
-#: ui/main.glade.h:20
+#: ui/main.glade.h:21
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Máte již účet na serveru Jabberu? "
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:22
 msgid "Do you want to accept the request?"
 msgstr "Chcete přijmout tento požadavek?"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:23
 msgid "Email:"
 msgstr "E-mail"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:25
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -603,7 +607,7 @@ msgstr ""
 "\n"
 "Začněte kliknutím na \"Vpřed\"."
 
-#: ui/main.glade.h:29
+#: ui/main.glade.h:30
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -613,11 +617,11 @@ msgstr ""
 "Nastavení svého účtu můžete později změnit vybráním položky menu Diskuse-"
 ">Připojit..."
 
-#: ui/main.glade.h:31
+#: ui/main.glade.h:32
 msgid "I would like to add you to my contact list."
 msgstr "Rád bych vás přidal do svého seznamu kontaktů."
 
-#: ui/main.glade.h:32
+#: ui/main.glade.h:33
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -627,179 +631,179 @@ msgstr ""
 "požadavek. Dokud tento požadavek není potvrzen, uživatel bude ve vašem "
 "seznamu kontaktů vždy zobrazen jako \"Odpojen\"."
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:34
 msgid "In which group do you want to place this contact?"
 msgstr "Do které skupiny chcete umístit tento kontakt?"
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:35
 msgid "Information about ..."
 msgstr "Informace o ..."
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:36
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:37
 msgid "Jabber Account"
 msgstr "Účet Jabberu"
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:38
 msgid "Jabber ID:"
 msgstr "ID Jabberu:"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:39
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:40
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:41
 msgid "Name:"
 msgstr "Jméno:"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:42
 msgid "No"
 msgstr "Ne"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:43
 msgid "OS:"
 msgstr "OS:"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:44
 msgid "On what server do you have a Jabber account?"
 msgstr "Na kterém serveru máte účet Jabberu?"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:45
 msgid "Personal information"
 msgstr "Osobní informace"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:46
 msgid "Preferences"
 msgstr "Nastavení"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:47
 msgid "Request message"
 msgstr "Zpráva požadavku"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:48
 msgid "Sending request"
 msgstr "Odesílám požadavek"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:49
 msgid "Setup Finished"
 msgstr "Nastavení dokončeno"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:50
 msgid "Sound"
 msgstr "Zvuk"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:51
 msgid "Timestamp all messages"
 msgstr "Přidávat časovou značku ke všem zprávám"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:52
 msgid "Use a different server"
 msgstr "Použít jiný server"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:53
 msgid "Use compact conversation style"
 msgstr "Používat kompaktní styl konverzace"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:54
 msgid "Use sounds to notify when new messages arrive"
 msgstr "Používat zvuky pro upozornění, když přijdou nové zprávy"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:55
 msgid "Use tabs instead of windows for conversations"
 msgstr "Používat pro konverzace karty místo oken"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:56
 msgid "Version:"
 msgstr "Verze:"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:57
 msgid "Web site:"
 msgstr "WWW stránka:"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:58
 msgid "Welcome to Gossip"
 msgstr "Vítejte v Gossipu"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:59
 msgid "What instant messaging system does the contact use?"
 msgstr "Který systém instant message kontakt používá?"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:60
 msgid "What is your name?"
 msgstr "Jaké je vaše jméno?"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:61
 msgid "What nickname do you want to use for this contact?"
 msgstr "Jakou přezdívku chcete používat pro tento kontakt?"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:62
 msgid "What request message do you want to send to ...?"
 msgstr "Jakou zprávu požadavku chcete odeslat ...?"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:63
 msgid "What server do you want to use?"
 msgstr "Který server chcete používat?"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:64
 msgid "What username do you use?"
 msgstr "Jaké jméno uživatele používáte?"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:65
 msgid "What username do you want to use?"
 msgstr "Jaké jméno uživatele chcete používat?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:66
 msgid "Yes"
 msgstr "Ano"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:67
 msgid "Your Identity"
 msgstr "Vaše identita"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:68
 msgid "_Accept"
 msgstr "_Přijmout"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:69
 msgid "_Add Contact..."
 msgstr "_Přidat kontakt..."
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:71
 msgid "_Connect..."
 msgstr "_Připojit..."
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:72
 msgid "_Decide Later"
 msgstr "_Rozhodnout se později"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:73
 msgid "_Deny"
 msgstr "_Odmítnout"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:74
 msgid "_Disconnect"
 msgstr "_Odpojit"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:75
 msgid "_Jabber ID of new contact:"
 msgstr "ID _Jabberu nového kontaktu:"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:76
 msgid "_Join Group Chat..."
 msgstr "_Připojit se ke skupinové diskusi..."
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:77
 msgid "_Search..."
 msgstr "_Hledat..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:78
 msgid "_Send Chat Message..."
 msgstr "_Odeslat zprávu..."
 
