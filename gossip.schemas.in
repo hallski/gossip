@@ -59,47 +59,95 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/auto_away/enabled</key>
-      <applyto>/apps/gossip/auto_away/enabled</applyto>
+      <key>/schemas/apps/gossip/geometry/width</key>
+      <applyto>/apps/gossip/geometry/width</applyto>
       <owner>gossip</owner>
-      <type>bool</type>
-      <default>true</default>
+      <type>int</type>
+      <default>180</default>
       <locale name="C">
-         <short>Auto away enabled</short>
+         <short>Width of main window</short>
          <long>
-	 Whether or not to go into "away" mode automatically when a certain
-	 time of idling has passed.
+           The width of the main window.
          </long>
       </locale>
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/auto_away/idle_time</key>
-      <applyto>/apps/gossip/auto_away/idle_time</applyto>
+      <key>/schemas/apps/gossip/geometry/height</key>
+      <applyto>/apps/gossip/geometry/height</applyto>
       <owner>gossip</owner>
       <type>int</type>
-      <default>5</default>
+      <default>320</default>
       <locale name="C">
-         <short>Auto away time</short>
+         <short>Height of main window</short>
          <long>
-	 The number of minutes of idle time before automatically going
-	 into "away" mode.
+           The height of the main window.
          </long>
       </locale>
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/auto_away/extended_idle_time</key>
-      <applyto>/apps/gossip/auto_away/extended_idle_time</applyto>
+      <key>/schemas/apps/gossip/status/available_message</key>
+      <applyto>/apps/gossip/status/available_message</applyto>
       <owner>gossip</owner>
-      <type>int</type>
-      <default>30</default>
+      <type>string</type>
       <locale name="C">
-         <short>Extended autoaway time</short>
-         <long>
-	 The number of minutes of idle time before automatically going
-	 into "extended away" mode.
-         </long>
+        <default>I'm here</default>
+        <short></short>
+        <long>
+        </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/status/leaving_message</key>
+      <applyto>/apps/gossip/status/leaving_message</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>Just about to leave...</default>
+        <short></short>
+        <long>
+        </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/status/away_message</key>
+      <applyto>/apps/gossip/status/away_message</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <locale name="C">
+        <default>I'm not here right now</default>
+        <short></short>
+        <long>
+        </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/status/custom_available_messages</key>
+      <applyto>/apps/gossip/status/custom_available_messages</applyto>
+      <owner>gossip</owner>
+      <type>list</type>
+      <list_type>string</list_type>
+      <locale name="C">
+        <short></short>
+        <long>
+        </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/status/custom_busy_messages</key>
+      <applyto>/apps/gossip/status/custom_busy_messages</applyto>
+      <owner>gossip</owner>
+      <type>list</type>
+      <list_type>string</list_type>
+      <locale name="C">
+        <short></short>
+        <long>
+        </long>
       </locale>
     </schema>
 

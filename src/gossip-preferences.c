@@ -41,7 +41,10 @@ typedef struct {
 	GtkWidget    *smileys_checkbutton;
 	GtkWidget    *timestamp_checkbutton;
 	GtkWidget    *compact_checkbutton;
-
+	GtkWidget    *available_entry;
+	GtkWidget    *leaving_entry;
+	GtkWidget    *away_entry;
+	
 	GList        *ids;
 } GossipPreferences;
 
@@ -100,6 +103,20 @@ set_int_from_gconf (const gchar *key, GtkWidget *widget)
 }
 
 static void
+set_string_from_gconf (const gchar *key, GtkWidget *widget)
+{
+	gchar *value;
+	
+	g_return_if_fail (GTK_IS_ENTRY (widget));
+
+	value = gconf_client_get_string (gconf_client, key, NULL);
+	
+	gtk_entry_set_text (GTK_ENTRY (widget), value);
+
+	g_free (value);
+}
+
+static void
 spin_button_value_changed_cb (GtkWidget *button,
 			      gpointer   user_data)
 {
@@ -154,6 +171,64 @@ hookup_spin_button (GossipPreferences *preferences,
 	id = gconf_client_notify_add (gconf_client,
 				      key,
 				      int_notify_func,
+				      widget,
+				      NULL,
+				      NULL);
+	
+	preferences->ids = g_list_prepend (preferences->ids,
+					   GUINT_TO_POINTER (id));
+}
+
+static void
+entry_value_changed_cb (GtkWidget *entry,
+			gpointer   user_data)
+{
+	const gchar *key;
+
+	key = g_object_get_data (G_OBJECT (entry), "key");
+	
+	gconf_client_set_string (gconf_client,
+				 key,
+				 gtk_entry_get_text (GTK_ENTRY (entry)),
+				 NULL);
+}
+
+static void
+string_notify_func (GConfClient *client,
+		    guint        cnxn_id,
+		    GConfEntry  *entry,
+		    gpointer     user_data)
+{
+	GConfValue *value;
+	
+	value = gconf_entry_get_value (entry);
+
+	gtk_entry_set_text (GTK_ENTRY (user_data),
+			    gconf_value_get_string (value));
+}
+
+static void
+hookup_entry (GossipPreferences *preferences,
+	      const gchar       *key,
+	      GtkWidget         *widget)
+{
+	guint id;
+
+	g_return_if_fail (GTK_ENTRY (widget));
+
+	set_string_from_gconf (key, widget);
+
+	g_object_set_data_full (G_OBJECT (widget), "key",
+				g_strdup (key), g_free); 
+	
+	g_signal_connect (widget,
+			  "changed",
+			  G_CALLBACK (entry_value_changed_cb),
+			  NULL);
+
+	id = gconf_client_notify_add (gconf_client,
+				      key,
+				      string_notify_func,
 				      widget,
 				      NULL,
 				      NULL);
@@ -296,6 +371,16 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/timestamp_messages",
 			      preferences->timestamp_checkbutton);
+	
+	hookup_entry (preferences,
+		      GCONF_PATH "/status/available_message",
+		      preferences->available_entry);
+	hookup_entry (preferences,
+		      GCONF_PATH "/status/leaving_message",
+		      preferences->leaving_entry);
+	hookup_entry (preferences,
+		      GCONF_PATH "/status/away_message",
+		      preferences->away_entry);
 }
 
 GtkWidget *
@@ -319,6 +404,9 @@ gossip_preferences_show (GossipApp *app)
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
 				     "compact_checkbutton", &preferences->compact_checkbutton,
 				     "timestamp_checkbutton", &preferences->timestamp_checkbutton,
+				     "available_entry", &preferences->available_entry,
+				     "leaving_entry", &preferences->leaving_entry,
+				     "away_entry", &preferences->away_entry,
 				     NULL);
 
 	preferences_setup_widgets (preferences);

@@ -1,3 +1,44 @@
+2003-10-28  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_idle_check_cb), (app_update_show):
+	Implement simple "leaving timeout".
+	
+	* src/gossip-preferences.c: (set_string_from_gconf),
+	(entry_value_changed_cb), (string_notify_func), (hookup_entry),
+	(preferences_setup_widgets), (gossip_preferences_show): Add
+	support for string/entry widget and hookup status messages.
+
+2003-10-28  Richard Hult  <richard@imendio.com>
+
+	* gossip.schemas.in: Clean up some old obsolete schemas.
+
+	* src/gossip-app.c (app_update_show): Use away message when away.
+	(app_idle_check_cb): Remove stale autoaway preferences code, it's
+	all hardcoded now.
+
+	* ui/main.glade: Set hscroll automatic for the roster tree, to
+	stop the window from growing horizontally and get stuck very wide.
+	Also add a very simple (for now) leave dialog. Move around
+	preferences and add some experimental status message preferences.
+	
+2003-10-27  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_init), (app_status_edit_cb),
+	(app_status_align_menu), (app_status_entry_grab_cb),
+	(app_status_custom_activate_cb), (app_status_activate_cb),
+	(ellipsize_string), (add_status_image_menu_item), (show_popup),
+	(status_button_clicked_cb), (status_entry_activate_cb),
+	(status_entry_key_press_event_cb),
+	(status_entry_focus_out_event_cb), (status_busy_toggled_cb):
+	* ui/main.glade: Try another variation of status handling.
+	
+	* src/gossip-app.c (configure_event_idle_cb)
+	(app_window_configure_event_cb, app_init): Remember the size of
+	the roster window.
+
+	* gossip.schemas.in: Add width/height and messages for away,
+	available, busy and "leaving".
+
 2003-10-27  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.[ch]:
