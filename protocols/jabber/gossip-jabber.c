@@ -74,6 +74,9 @@ static void            gossip_jabber_init                    (GossipJabber      
 static void            jabber_finalize                       (GObject                      *obj);
 static void            jabber_login                          (GossipProtocol               *protocol);
 static void            jabber_logout                         (GossipProtocol               *protocol);
+static gboolean        jabber_logout_contact_foreach       (gpointer                      key,
+							    GossipContact                *contact,
+							    GossipJabber                 *jabber);
 static gboolean        jabber_is_connected                   (GossipProtocol               *protocol);
 static void            jabber_send_message                   (GossipProtocol               *protocol,
 							      GossipMessage                *message);
@@ -333,7 +336,24 @@ jabber_logout (GossipProtocol *protocol)
 
 	if (lm_connection_is_open (priv->connection)) {
 		lm_connection_close (priv->connection, NULL);
+		g_signal_emit_by_name (jabber, "logged-out");
+
+		/* signal removal of each contact */
+		if (priv->contacts) {
+			g_hash_table_foreach_remove (priv->contacts,
+						     (GHRFunc) jabber_logout_contact_foreach,
+						     jabber);
+		}
 	}
+}
+
+static gboolean
+jabber_logout_contact_foreach (gpointer       key,
+			       GossipContact *contact,
+			       GossipJabber  *jabber)
+{
+	g_signal_emit_by_name (jabber, "contact-removed", contact);
+	return TRUE;
 }
 
 static gboolean

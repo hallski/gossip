@@ -1,3 +1,13 @@
+2005-01-19  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-contact-list.c: 
+	- Update the messaging to make it more consistent with other
+	  modules (namely GossipSession). 
+	* src/gossip-jabber.c (jabber_logout): 
+	- Clean up roster when disconnected.
+	- Signal logged out when we have called lm_connection_close.
+	- Fixes bug #164255
+
 2005-01-16  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-cell-renderer-text.c (cell_renderer_text_update_text): 

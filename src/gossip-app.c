@@ -602,7 +602,10 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	
 	app_update_conn_dependent_menu_items ();
 	app_update_show ();
-/* FIXME: implement */
+
+	/* FIXME: implement */
+
+	
 }
 
 static gchar * 

@@ -430,7 +430,7 @@ contact_list_set_property (GObject      *object,
 static void
 contact_list_connected_cb (GossipSession *session, GossipContactList *list)
 {
-	g_print ("Contact List: connected\n");
+	g_print ("Contact List: Connected\n");
 }
 
 static void
@@ -444,7 +444,7 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	priv = list->priv;
 
-	g_print ("Contact List: contact added: %s\n",
+	g_print ("Contact List: Contact added: %s\n",
 		 gossip_contact_get_name (contact));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
@@ -481,7 +481,7 @@ contact_list_contact_updated_cb (GossipSession     *session,
 			    -1);
 	}
 
-	g_print ("Contact List: contact updated: %s\n",
+	g_print ("Contact List: Contact updated: %s\n",
 		 gossip_contact_get_name (contact));
 	
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
@@ -535,7 +535,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	}
 	}
 		
-	g_print ("Contact List: contact presence updated: %s '%s'\n",
+	g_print ("Contact List: Contact presence updated: %s '%s'\n",
 		 gossip_contact_get_name (contact),
 		 gossip_contact_get_status (contact));
 
@@ -548,7 +548,7 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	g_print ("Contact List: contact removed: %s\n",
+	g_print ("Contact List: Contact removed: %s\n",
 		 gossip_contact_get_name (contact));
 
 	contact_list_remove_contact (list, contact);
