@@ -347,7 +347,7 @@ msgstr "/Byt _namn på kontakt"
 
 #: src/gossip-roster-view.c:182
 msgid "/Show _Log"
-msgstr "/Visa _log"
+msgstr "/Visa _logg"
 
 #: src/gossip-roster-view.c:198
 msgid "/_Remove contact"
