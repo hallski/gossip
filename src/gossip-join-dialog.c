@@ -252,7 +252,7 @@ gossip_join_dialog_new (GossipApp *app)
         join = g_new0 (GossipJoinDialog, 1);
 
 	join->app = app;
-	join->connection = gossip_app_get_connection (app);
+	join->connection = gossip_app_get_connection ();
 	
 	gossip_glade_get_file_simple (GLADEDIR "/group-chat.glade",
 				      "join_group_chat_dialog",

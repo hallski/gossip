@@ -214,7 +214,6 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 		gtk_list_store_set (GTK_LIST_STORE (dialog->model),
 				    &iter,
 				    COL_NAME, account->name,
-				    //COL_ACCOUNT, account,
 				    -1);
 	}
 	else if (widget == GTK_WIDGET (dialog->username_entry)) {

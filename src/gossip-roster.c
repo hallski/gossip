@@ -862,7 +862,7 @@ roster_connected_cb (GossipApp *app, GossipRoster *roster)
 
 	priv = roster->priv;
 
-	priv->connection = lm_connection_ref (gossip_app_get_connection (app));
+	priv->connection = lm_connection_ref (gossip_app_get_connection ());
 	
 	priv->presence_handler = 
 		lm_message_handler_new ((LmHandleMessageFunction) roster_presence_handler,

@@ -70,14 +70,17 @@ void           gossip_app_join_group_chat (GossipApp     *app,
 					   const gchar   *server,
 					   const gchar   *nick);
 
-const gchar *  gossip_app_get_username    (GossipApp     *app);
+const gchar *  gossip_app_get_username    (void);
 
-GossipJID *    gossip_app_get_jid         (GossipApp     *app);
+GossipJID *    gossip_app_get_jid         (void);
 
 GossipRoster * gossip_app_get_roster      (void);
 
-LmConnection * gossip_app_get_connection  (GossipApp     *app);
+LmConnection * gossip_app_get_connection  (void);
 
 GossipStatus   gossip_app_get_status      (void);
+
+GossipApp *    gossip_app_get             (void);
+
 
 #endif /* __GOSSIP_APP_H__ */

@@ -126,7 +126,7 @@ gossip_message_send_dialog_new (GossipApp    *app,
 	message = g_new0 (GossipMessage, 1);
 	
 	message->app = app;
-	message->connection = lm_connection_ref (gossip_app_get_connection (app));
+	message->connection = lm_connection_ref (gossip_app_get_connection ());
 	
 	gossip_glade_get_file_simple (GLADEDIR "/chat.glade",
 				      "send_message_dialog",
@@ -216,7 +216,7 @@ message_new (GossipApp *app, LmMessage *m)
 	message = g_new0 (GossipMessage, 1);
 
 	message->app = app;
-	message->connection = lm_connection_ref (gossip_app_get_connection (app));
+	message->connection = lm_connection_ref (gossip_app_get_connection ());
 	message->jid = gossip_jid_new (lm_message_node_get_attribute (m->node, 
 								      "from"));
 	message->lm_message = lm_message_ref (m);

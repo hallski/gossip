@@ -27,13 +27,13 @@
 
 typedef struct _GossipChat GossipChat;
 
-GossipChat *  gossip_chat_new                  (GossipApp       *app,
-						GossipJID       *jid);
-GossipChat *  gossip_chat_new_from_group_chat  (GossipApp       *app,
-						GossipJID       *jid,
-						const gchar     *nick);
-void          gossip_chat_append_message       (GossipChat      *chat,
-						LmMessage       *message);
-GtkWidget *   gossip_chat_get_dialog           (GossipChat      *chat);
+GossipChat *    gossip_chat_get_for_jid        (GossipJID   *jid);
+GossipChat *    gossip_chat_get_for_group_chat (GossipJID   *jid);
+void            gossip_chat_append_message     (GossipChat  *chat,
+						LmMessage   *message);
+LmHandlerResult gossip_chat_handle_message     (LmMessage   *message);
+GtkWidget *     gossip_chat_get_dialog         (GossipChat  *chat);
+
+
 
 #endif /* __GOSSIP_CHAT_H__ */

@@ -1,3 +1,28 @@
+2003-08-01  Richard Hult  <rhult@codefactory.se>
+
+	Clean up a bit:
+
+	* src/*.[ch]: Don't pass around app since it can always be
+	accessed through gossip_app_get ().
+	
+	* src/gossip-app.c: Remove handling of chat and group chat windows
+	from here. Don't set "Online" as status.
+
+	* src/gossip-chat.c: Move handling of chat windows here.
+
+	* src/gossip-group-chat.c: Move handling of group chat windows
+	here. Fix nick completion to not lowercase the result. Make priv
+	chats display the right nick in the chat dialog. Make priv chat
+	dialogs insensitive if their group chat parent is closed.
+
+	* src/gossip-utils.c (utils_url_event_cb): Add the start of an
+	error dialog for when an URL can't be shown.
+
+2003-07-30  Richard Hult  <richard@imendio.com>
+
+	* ui/chat.glade: Don't set the size of the text view and make the
+	default dialog size a bit smaller.
+
 2003-07-30  Duarte Loreto <happyguy_pt@hotmail.com>
 
         * configure.in: Added Portuguese (pt) to ALL_LINGUAS.
@@ -12,7 +37,8 @@
 
 2003-07-22  Dafydd Harries  <daf@parnassus.ath.cx>
 
-	* src/gossip-chat.c: Marked chat window title strings translatable.
+	* src/gossip-chat.c: Marked chat window title strings
+	translatable.
 
 2003-07-18  Richard Hult  <richard@imendio.com>
 

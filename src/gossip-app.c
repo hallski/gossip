@@ -68,9 +68,6 @@ struct _GossipAppPriv {
 	
 	GossipRoster        *roster;
 
-	GHashTable          *one2one_chats;
-	GHashTable          *group_chats;
-
 	GossipAccount       *account;
 
 	GossipJID           *jid;
@@ -119,15 +116,6 @@ static void      app_init                           (GossipApp      *app);
 static void      app_finalize                       (GObject        *object);
 static void      app_main_window_destroy_cb         (GtkWidget      *window,
 						     GossipApp      *app);
-static GossipGroupChat *
-app_get_group_chat                                  (GossipApp      *app,
-						     const gchar    *room,
-						     const gchar    *server,
-						     const gchar    *nick,
-						     gboolean        create);
-static GossipChat *
-app_get_chat_for_jid                                (GossipApp      *app,
-						     GossipJID      *jid);
 static void      app_user_activated_cb              (GossipRoster   *roster,
 						     GossipJID      *jid,
 						     GossipApp      *app);
@@ -281,15 +269,6 @@ app_init (GossipApp *app)
 	priv->account = gossip_account_get_default ();
 	priv->status_to_set_on_connect = GOSSIP_STATUS_AVAILABLE;
 
-	priv->one2one_chats = g_hash_table_new_full (g_str_hash,
-						     g_str_equal,
-						     g_free, NULL);
-
-	priv->group_chats = g_hash_table_new_full (g_str_hash,
-						   g_str_equal,
-						   g_free,
-						   NULL);
-
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
 				       "main_window",
 				       NULL,
@@ -390,8 +369,6 @@ app_finalize (GObject *object)
         app = GOSSIP_APP (object);
         priv = app->priv;
 
-	g_hash_table_destroy (priv->one2one_chats);
-
 	gossip_account_unref (priv->account);
 
 	g_list_free (priv->enabled_connected_widgets);
@@ -445,10 +422,12 @@ app_about_cb (GtkWidget *window,
 				       _("A Jabber Client for GNOME"),
 				       authors,
 				       NULL,
-				       strcmp (translator_credits, "translator_credits") != 0 ? translator_credits : NULL,
+				       strcmp (translator_credits, "translator_credits") != 0 ?
+				       translator_credits : NULL,
 				       NULL);
 	
-	g_object_add_weak_pointer (G_OBJECT (priv->about), (gpointer *) &priv->about);
+	g_object_add_weak_pointer (G_OBJECT (priv->about),
+				   (gpointer) &priv->about);
 
 	gtk_widget_show (priv->about);
 }
@@ -550,9 +529,7 @@ app_send_chat_message_cb (GtkWidget *widget,
 	GtkWidget       *frame;
 	CompleteJIDData *data;
 	const gchar     *selected_jid = NULL;
-//	GList           *jids, *l, *jid_strings = NULL;
 	GList           *l;
-//	gint           response;
 
 	priv = app->priv;
 
@@ -649,32 +626,7 @@ app_send_chat_message_cb (GtkWidget *widget,
 		gossip_jid_unref (jid);
 	}
 	
-	//response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_show (data->dialog);
-#if 0
-	if (response == GTK_RESPONSE_OK) {
-		const gchar *str;
-
-		str = gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (combo)->entry));
-		if (gossip_jid_string_is_valid_jid (str)) {
-			jid = gossip_jid_new (str);
-			app_get_chat_for_jid (app, jid);
-			gossip_jid_unref (jid);
-		} else {
-			/* FIXME: Display error dialog... */
-			g_warning ("'%s' is not a valid JID.", str);
-		}
-	}
-
-	for (l = jid_strings; l; l = l->next) {
-		g_free (l->data);
-	}
-	
-	g_list_free (jid_strings);
-	g_list_free (jids);
-
-	gtk_widget_destroy (dialog);
-#endif
 }
 
 static void
@@ -820,116 +772,6 @@ app_handle_subscription_request (GossipApp *app, LmMessage *m)
 	gtk_widget_show (dialog);
 }
 
-typedef struct {
-	GossipApp *app;
-	GossipJID *jid;
-} DestroyData;
-
-static void
-app_chat_dialog_destroy_cb (GtkWidget   *dialog,
-			    DestroyData *data)
-{
-	g_hash_table_remove (data->app->priv->one2one_chats,
-			     gossip_jid_get_without_resource (data->jid));
-	gossip_jid_unref (data->jid);
-	g_free (data);
-}
-
-static GossipChat *
-app_get_chat_for_jid (GossipApp *app, GossipJID *jid)
-{
-	GossipAppPriv *priv;
-	GossipChat    *chat;
-	GtkWidget     *dialog;
-	DestroyData   *data;
-	
-	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
-
-	priv = app->priv;
-
-	chat = g_hash_table_lookup (priv->one2one_chats, 
-				    gossip_jid_get_without_resource (jid));
-	if (!chat) {
-		/* FIXME: flash the tray icon and the roster icon for this user */
-		chat = gossip_chat_new (app, jid);
-
-		dialog = gossip_chat_get_dialog (chat);
-
-		data = g_new (DestroyData, 1);
-		data->app = app;
-		data->jid = gossip_jid_ref (jid);
-		
-		g_signal_connect (dialog,
-				  "destroy",
-				  G_CALLBACK (app_chat_dialog_destroy_cb),
-				  data);
-
-		g_hash_table_insert (priv->one2one_chats,
-				     g_strdup (gossip_jid_get_without_resource (jid)),
-				     chat);
-	}
-
-	return chat;
-}
-
-static void
-app_group_chat_destroy_cb (GtkWidget   *dialog,
-			   DestroyData *data)
-{
-	g_hash_table_remove (data->app->priv->group_chats, 
-			     gossip_jid_get_without_resource (data->jid));
-	g_free (data);
-}
-
-static GossipGroupChat *
-app_get_group_chat (GossipApp   *app,
-		    const gchar *room,
-		    const gchar *server,
-		    const gchar *nick,
-		    gboolean     create)
-{
-	GossipAppPriv   *priv;
-	GossipGroupChat *chat;
-	GtkWidget       *window;
-	gchar           *str;
-	DestroyData     *data;
-	GossipJID       *jid;
-	
-	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
-	g_return_val_if_fail (room != NULL, NULL);
-	g_return_val_if_fail (server != NULL, NULL);
-	g_return_val_if_fail (!create || nick != NULL, NULL);
-
-	priv = app->priv;
-
-	str = g_strdup_printf ("%s@%s", room, server);
-	jid = gossip_jid_new (str);
-	g_free (str);
-	
-	chat = g_hash_table_lookup (priv->group_chats, 
-				    gossip_jid_get_without_resource (jid));
-	
-	if (create && !chat) {
-		data = g_new (DestroyData, 1);
-		data->app = app;
-		data->jid = jid;
-		
-		chat = gossip_group_chat_new (app, jid, nick);
-		window = gossip_group_chat_get_window (chat);
-
-		g_signal_connect (window,
-				  "destroy",
-				  G_CALLBACK (app_group_chat_destroy_cb),
-				  data);
-		
-		g_hash_table_insert (priv->group_chats,
-				     g_strdup (gossip_jid_get_without_resource (jid)),
-				     chat);
-	}
-
-	return chat;
-}
-
 static LmHandlerResult
 app_message_handler (LmMessageHandler *handler,
 		     LmConnection     *connection,
@@ -938,10 +780,8 @@ app_message_handler (LmMessageHandler *handler,
 {
 	GossipAppPriv    *priv;
 	const gchar      *from;
-	GossipChat       *chat;
 	LmMessageSubType  type;
-	GossipJID        *jid;
-	
+
 	priv = app->priv;
 
 	d(g_print ("App handle message\n"));
@@ -955,22 +795,12 @@ app_message_handler (LmMessageHandler *handler,
 		gossip_message_handle_message (app, m);
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 
-	case LM_MESSAGE_SUB_TYPE_CHAT:
-		jid = gossip_jid_new (from);
-		chat = app_get_chat_for_jid (app, jid);
-		gossip_jid_unref (jid);
-		gossip_chat_append_message (chat, m);
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-
+		/* Is "not set" right? Gabber sends messages like that...  */
 	case LM_MESSAGE_SUB_TYPE_NOT_SET:
 	case LM_MESSAGE_SUB_TYPE_NORMAL:
-		/* Is "not set" right? Gabber sends messages like that...  */
-		jid = gossip_jid_new (from);
-		chat = app_get_chat_for_jid (app, jid);
-		gossip_jid_unref (jid);
-		gossip_chat_append_message (chat, m);
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-		
+	case LM_MESSAGE_SUB_TYPE_CHAT:
+		return gossip_chat_handle_message (m);
+
 	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
 		g_warning ("Hmm .. looks like an unhandled group chat message "
 			   "from %s, this needs to be taken care of.", from);
@@ -1173,7 +1003,7 @@ app_user_activated_cb (GossipRoster *roster,
 		       GossipJID    *jid,
 		       GossipApp    *app)
 {
-	app_get_chat_for_jid (app, jid);
+	gossip_chat_get_for_jid (jid);
 }
 
 void
@@ -1182,7 +1012,14 @@ gossip_app_join_group_chat (GossipApp   *app,
 			    const gchar *server,
 			    const gchar *nick)
 {
-	app_get_group_chat (app, room, server, nick, TRUE);
+	gchar     *tmp;
+	GossipJID *jid;
+
+	tmp = g_strdup_printf ("%s@%s", room, server);
+	jid = gossip_jid_new (tmp);
+	g_free (tmp);
+	gossip_group_chat_new (jid, nick);
+	gossip_jid_unref (jid);
 }
 
 static gboolean
@@ -1300,29 +1137,19 @@ gossip_app_create (void)
 	app = g_object_new (GOSSIP_TYPE_APP, NULL);
 }
 
-typedef struct {
-	GossipApp *app;
-	LmMessage *m;
-} ForeachSetStatusData;
-
-static void
-app_set_status_group_chat_foreach (gchar                *key,
-				   gpointer              value,
-				   ForeachSetStatusData *data)
+GossipApp *
+gossip_app_get (void)
 {
-	GossipAppPriv *priv = data->app->priv;
-	LmMessage     *m = data->m;
+	g_assert (app != NULL);
 	
-	lm_message_node_set_attributes (m->node, "to", key, NULL);
-	lm_connection_send (priv->connection, m, NULL);
-};
+	return app;
+}
 
 static void
 app_set_status (GossipApp *app, GossipStatus status)
 {
 	GossipAppPriv        *priv;
 	LmMessage            *m;
-	ForeachSetStatusData *data;
 	
 	priv = app->priv;
 
@@ -1352,38 +1179,25 @@ app_set_status (GossipApp *app, GossipStatus status)
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 	
-	lm_message_node_add_child (m->node, 
-				   "show", gossip_status_to_string (status));
-	lm_message_node_add_child (m->node,
-				   "status", "Online");
+	lm_message_node_add_child (m->node, "show", gossip_status_to_string (status));
+	/*lm_message_node_add_child (m->node, "status", "Online");*/
 	lm_connection_send (priv->connection, m, NULL);
-	
-	data = g_new0 (ForeachSetStatusData, 1);
-	data->app = app;
-	data->m = m;
-
-	g_hash_table_foreach (priv->group_chats,
-			      (GHFunc) app_set_status_group_chat_foreach,
-			      data);
-	g_free (data);
 	lm_message_unref (m);
+
+	gossip_group_chat_set_status (status);
 	
 	app_set_status_indicator (app, status);
 }
 
 const gchar *
-gossip_app_get_username (GossipApp *app)
+gossip_app_get_username (void)
 {
-	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
-	
 	return app->priv->account->username;
 }
 
 GossipJID *
-gossip_app_get_jid (GossipApp *app)
+gossip_app_get_jid (void)
 {
-	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
-	
 	return app->priv->jid;
 }
 
@@ -1478,15 +1292,17 @@ app_create_tray_icon (GossipApp *app)
 	priv->tray_image = gtk_image_new_from_file (
 		gossip_status_to_icon_filename (GOSSIP_STATUS_OFFLINE));
 		
-	gtk_container_add (GTK_CONTAINER (priv->tray_event_box), priv->tray_image);
+	gtk_container_add (GTK_CONTAINER (priv->tray_event_box),
+			   priv->tray_image);
 
 	gtk_widget_show (priv->tray_event_box);
 	gtk_widget_show (priv->tray_image);
 
-	gtk_container_add (GTK_CONTAINER (priv->tray_icon), priv->tray_event_box);
+	gtk_container_add (GTK_CONTAINER (priv->tray_icon),
+			   priv->tray_event_box);
 	gtk_widget_show (GTK_WIDGET (priv->tray_icon));
 
-	gtk_widget_add_events (GTK_WIDGET (priv->tray_icon), 
+	gtk_widget_add_events (GTK_WIDGET (priv->tray_icon),
 			       GDK_BUTTON_PRESS_MASK);
 	
 	g_signal_connect (priv->tray_icon,
@@ -1569,10 +1385,8 @@ app_disconnect (GossipApp *app)
 }
 
 LmConnection *
-gossip_app_get_connection (GossipApp *app)
+gossip_app_get_connection (void)
 {
-	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
-	
 	return app->priv->connection;
 }
 
@@ -1642,7 +1456,7 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
 		if (gossip_jid_string_is_valid_jid (str)) {
 			jid = gossip_jid_new (str);
-			app_get_chat_for_jid (data->app, jid);
+			gossip_chat_get_for_jid (jid);
 			gossip_jid_unref (jid);
 		} else {
 			/* FIXME: Display error dialog... */

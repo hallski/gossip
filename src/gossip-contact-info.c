@@ -303,7 +303,7 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 	info = g_new0 (GossipContactInfo, 1);
 
 	info->app = app;
-	info->connection = gossip_app_get_connection (app);
+	info->connection = gossip_app_get_connection ();
 	
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "contact_information_dialog",

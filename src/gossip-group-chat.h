@@ -21,15 +21,14 @@
 #ifndef __GOSSIP_GROUP_CHAT_H__
 #define __GOSSIP_GROUP_CHAT_H__
 
+#include "gossip-jid.h"
 #include "gossip-app.h"
 
 typedef struct _GossipGroupChat GossipGroupChat;
 
-GossipGroupChat * gossip_group_chat_new             (GossipApp       *app,
-						     GossipJID       *jid,
-						     const gchar     *nick);
-
-GtkWidget *       gossip_group_chat_get_window      (GossipGroupChat *chat);
+GossipGroupChat *gossip_group_chat_new        (GossipJID    *jid,
+					       const gchar  *nick);
+void             gossip_group_chat_set_status (GossipStatus  status);
 
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */
