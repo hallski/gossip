@@ -1,3 +1,7 @@
+2003-05-19  Mikael Hallendal  <micke@imendo.com>
+
+	* Updated contact information
+
 2003-04-15  Richard Hult  <rhult@codefactory.se>
 
 	* src/gossip-chat.c: (chat_message_handler): Remove debug output.
