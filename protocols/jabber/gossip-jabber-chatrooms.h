@@ -36,7 +36,6 @@ gossip_jabber_chatrooms_new              (GossipJabber            *jabber,
 void gossip_jabber_chatrooms_free        (GossipJabberChatrooms   *chatrooms);
 
 void gossip_jabber_chatrooms_join        (GossipJabberChatrooms   *chatroom,
-					  GossipPresence          *presence,
 					  const gchar             *room,
 					  const gchar             *server,
 					  const gchar             *nick,
@@ -54,6 +53,11 @@ void gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms   *chatrooms,
 					  const gchar             *new_nick);
 void gossip_jabber_chatrooms_leave       (GossipJabberChatrooms   *chatrooms,
 					  GossipChatroomId         id);
+void gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,
+					   GossipPresence         *presence);
+gboolean
+gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
+					     const gchar           *jid_str);
 GossipContact * 
 gossip_jabber_chatrooms_get_contact      (GossipJabberChatrooms   *chatrooms,
 					  LmMessage               *message,

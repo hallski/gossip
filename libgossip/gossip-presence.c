@@ -379,6 +379,18 @@ gossip_presence_resource_equal (gconstpointer a, gconstpointer b)
 	priv1 = GET_PRIV (a);
 	priv2 = GET_PRIV (b);
 
+	if (!priv1->resource) {
+		if (!priv2->resource) {
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+
+	if (!priv2->resource) {
+		return FALSE;
+	}
+	
 	if (strcmp (priv1->resource, priv2->resource) == 0) {
 		return TRUE;
 	}

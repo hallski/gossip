@@ -48,7 +48,7 @@ typedef enum {
 	GOSSIP_CONTACT_TYPE_TEMPORARY,
 	GOSSIP_CONTACT_TYPE_CONTACTLIST,
 	GOSSIP_CONTACT_TYPE_CHATROOM,
-	GOSSIP_CONTACT_TYPE_USER /* Wonder what I had in mind for this one */
+	GOSSIP_CONTACT_TYPE_USER /* Represents the own user */
 } GossipContactType;
 
 typedef enum {

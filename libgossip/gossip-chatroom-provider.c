@@ -29,6 +29,7 @@ static void  chatroom_provider_base_init (gpointer g_class);
 
 enum {
 	CHATROOM_NEW_MESSAGE,
+	CHATROOM_NEW_ROOM_EVENT,
 	CHATROOM_TITLE_CHANGED,
 	CHATROOM_CONTACT_JOINED,
 	CHATROOM_CONTACT_LEFT,
@@ -84,7 +85,15 @@ chatroom_provider_base_init (gpointer g_class)
 				      gossip_marshal_VOID__INT_OBJECT,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_MESSAGE);
-				      
+		signals[CHATROOM_NEW_ROOM_EVENT] =
+			g_signal_new ("chatroom-new-room-event",
+				      G_TYPE_FROM_CLASS (g_class),
+				      G_SIGNAL_RUN_LAST,
+				      0,
+				      NULL, NULL,
+				      gossip_marshal_VOID__INT_STRING,
+				      G_TYPE_NONE,
+				      2, G_TYPE_INT, G_TYPE_STRING);
 		signals[CHATROOM_TITLE_CHANGED] = 
 			g_signal_new ("chatroom-title-changed",
 				      G_TYPE_FROM_CLASS (g_class),

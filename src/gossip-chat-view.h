@@ -53,7 +53,7 @@ void             gossip_chat_view_append_chat_message  (GossipChatView *view,
 							const gchar    *to,
 							const gchar    *from,
 							const gchar    *msg);
-void             gossip_chat_view_append_event_msg     (GossipChatView *view,
+void             gossip_chat_view_append_event_message (GossipChatView *view,
 							const gchar    *str,
 							gboolean        timestamp);
 void             gossip_chat_view_set_margin           (GossipChatView *view,

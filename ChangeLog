@@ -1,5 +1,19 @@
 2005-04-04  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.[ch]:
+	(gossip_chat_view_append_event_message): Renamed to be more consistent
+	* src/gossip-chatroom-provider.c: (chatroom_provider_base_init):
+	- Added chatroom event signal
+	* src/gossip-group-chat.c: 
+	(group_chat_new_room_event_cb): Added to handle room events (like 
+	  someone joining).
+	* src/gossip-jabber-chatrooms.[ch]:
+	- More work on adding own contact, more work on presences, emitting 
+	  room events etc.
+	- Fixes bug #166259.
+
+2005-04-04  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.[ch]: 
 	(app_create_status_menu), (app_tray_flash_timeout_func),
 	(app_tray_flash_maybe_stop):

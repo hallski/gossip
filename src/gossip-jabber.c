@@ -357,6 +357,8 @@ jabber_login (GossipProtocol *protocol)
 	priv->presence = gossip_presence_new ();
 	gossip_presence_set_state (priv->presence, 
 				   GOSSIP_PRESENCE_STATE_AVAILABLE);
+	gossip_jabber_chatrooms_set_presence (priv->chatrooms, priv->presence);
+
 	result = lm_connection_open (priv->connection, 
 				     (LmResultFunction) jabber_connection_open_cb,
 				     jabber, NULL, &error);
@@ -720,6 +722,8 @@ jabber_set_presence (GossipProtocol *protocol, GossipPresence *presence)
 	
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
+
+	gossip_jabber_chatrooms_set_presence (priv->chatrooms, presence);
 }
 
 static void
@@ -1142,6 +1146,11 @@ jabber_presence_handler (LmMessageHandler *handler,
 	from = lm_message_node_get_attribute (m->node, "from");
         d(g_print ("GossipJabber: New presence from: %s\n", 
 		   lm_message_node_get_attribute (m->node, "from")));
+
+	if (gossip_jabber_chatrooms_get_jid_is_chatroom (priv->chatrooms,
+							 from)) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 	
 	contact = jabber_get_contact_from_jid (jabber, from, &new_item); 
 
@@ -1331,7 +1340,6 @@ jabber_get_presence (LmMessage *m)
 	return presence;
 }
 
-
 static GossipContact *
 jabber_get_contact_from_jid (GossipJabber *jabber, 
 			     const gchar  *jid_str,
@@ -1460,7 +1468,6 @@ jabber_chatroom_join (GossipChatroomProvider      *provider,
 	priv   = jabber->priv;
 
 	gossip_jabber_chatrooms_join (priv->chatrooms,
-				      priv->presence,
 				      room, server, nick, password, 
 				      callback, user_data);
 }

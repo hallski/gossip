@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio AB
+ * Copyright (C) 2002-2005 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -111,6 +111,10 @@ static void             group_chat_new_message_cb               (GossipChatroomP
 								 gint id,
 								 GossipMessage *message,
 								 GossipGroupChat *chat);
+static void             group_chat_new_room_event_cb            (GossipChatroomProvider *provider,
+								 gint                    id,
+								 const gchar            *event,
+								 GossipGroupChat        *chat);
 static void             group_chat_title_changed_cb             (GossipChatroomProvider *provider,
 								 gint id,
 								 const gchar *title,
@@ -390,6 +394,9 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 
 	g_signal_connect (provider, "chatroom-new-message",
 			  G_CALLBACK (group_chat_new_message_cb),
+			  chat);
+	g_signal_connect (provider, "chatroom-new-room-event",
+			  G_CALLBACK (group_chat_new_room_event_cb),
 			  chat);
 	g_signal_connect (provider, "chatroom-title-changed",
 			  G_CALLBACK (group_chat_title_changed_cb),
@@ -787,6 +794,24 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 					      priv->nick,
 					      gossip_contact_get_name (sender),
 					      gossip_message_get_body (message));
+}
+
+static void 
+group_chat_new_room_event_cb (GossipChatroomProvider *provider,
+			      gint                    id,
+			      const gchar            *event,
+			      GossipGroupChat        *chat)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = chat->priv;
+
+	if (priv->room_id != id) {
+		return;
+	}
+
+	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view,
+					       event, FALSE);
 }
 
 static void
