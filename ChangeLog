@@ -1,5 +1,11 @@
 2004-01-26  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_authentication_cb):
+	(app_setup_conn_dependent_menu_items): Handle the sensitivity of
+	the status button automatically instead.
+
+2004-01-26  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c: (app_finalize),
 	(app_idle_check_cb),
 	(app_update_show), (app_status_clear_away),

@@ -743,7 +743,6 @@ app_authentication_cb (LmConnection *connection,
 
 	if (success) {
 		g_signal_emit (app, signals[CONNECTED], 0);
-		gtk_widget_set_sensitive (priv->status_button, TRUE);
 	}
 
 	app_update_conn_dependent_menu_items ();
@@ -1303,8 +1302,6 @@ app_client_disconnected_cb (LmConnection       *connection,
 		}
 	}
 
-	gtk_widget_set_sensitive (priv->status_button, FALSE);
-	
 	app_update_conn_dependent_menu_items ();
 	app_update_show ();
 }
@@ -1567,7 +1564,8 @@ app_setup_conn_dependent_menu_items (GladeXML *glade)
 		"actions_disconnect",
 		"actions_join_group_chat",
 		"actions_send_chat_message",
-		"actions_add_contact"
+		"actions_add_contact",
+		"status_button"
 	};
 	
 	const gchar *disconnect_widgets[] = {
