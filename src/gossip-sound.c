@@ -31,7 +31,7 @@ extern GConfClient *gconf_client;
 void
 gossip_sound_play (GossipSound sound)
 {
-	gboolean     enabled, silent;
+	gboolean     enabled, silent_busy, silent_away;
 	GossipShow   show;
 	const gchar *file;
 	gchar       *str;
@@ -43,31 +43,27 @@ gossip_sound_play (GossipSound sound)
 	enabled = gconf_client_get_bool (gconf_client,
 					 GCONF_PATH "/sound/play_sounds",
 					 NULL);
-	silent = gconf_client_get_bool (gconf_client,
-					GCONF_PATH "/sound/silent_away",
-					NULL);
+	silent_busy = gconf_client_get_bool (gconf_client,
+					     GCONF_PATH "/sound/silent_busy",
+					     NULL);
+	silent_away = gconf_client_get_bool (gconf_client,
+					     GCONF_PATH "/sound/silent_away",
+					     NULL);
 
 	if (!enabled) {
 		return;
 	}
-
-	if (silent) {
-		show = gossip_app_get_show ();
-		switch (show) {
-		case GOSSIP_SHOW_AVAILABLE:
-			break;
-			
-		case GOSSIP_SHOW_BUSY:
-		case GOSSIP_SHOW_AWAY:
-		case GOSSIP_SHOW_EXT_AWAY:
-			return;
-
-		default:
-			g_assert_not_reached ();
-			break;
-		}
-	}
 	
+	show = gossip_app_get_show ();
+	
+	if (silent_busy && show == GOSSIP_SHOW_BUSY) {
+		return;
+	}
+
+	if (silent_away && (show == GOSSIP_SHOW_AWAY || show == GOSSIP_SHOW_EXT_AWAY)) {
+		return;
+	}
+
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
 		file = "chat1.wav";

@@ -428,7 +428,7 @@ app_init (GossipApp *singleton_app)
         gtk_widget_show (item);
 	gtk_menu_shell_append (GTK_MENU_SHELL (priv->popup_menu), item);
 
-	item = gtk_image_menu_item_new_with_mnemonic (_("Send _Chat message..."));
+	item = gtk_image_menu_item_new_with_mnemonic (_("Send _Message..."));
         g_signal_connect (item,
 			  "activate",
 			  G_CALLBACK (app_popup_send_chat_message_cb),

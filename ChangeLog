@@ -1,5 +1,11 @@
 2003-11-12  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-sound.c (gossip_sound_play): Use silent_busy
+	preference.
+
+	* src/gossip-app.c (app_init): Deconfuse some more (send chat
+	message -> send message).
+
 	* ui/main.glade: Fix #121000 and #125566, unnecessary space and
 	confusing menu item.
 

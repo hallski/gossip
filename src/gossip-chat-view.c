@@ -809,7 +809,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 
 			if (s > last + 1) {
 				tmp = gossip_utils_substring (msg, last, s);
-				
+
 				gtk_text_buffer_get_end_iter (buffer, &iter);
 				chat_view_insert_text_with_emoticons (buffer,
 								      &iter,
@@ -818,7 +818,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			}
 
 			tmp = gossip_utils_substring (msg, s, e);
-			
+
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 			gtk_text_buffer_insert_with_tags_by_name (buffer,
 								  &iter,
@@ -834,7 +834,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 
 		if (e < strlen (msg)) {
 			tmp = gossip_utils_substring (msg, e, strlen (msg));
-			
+
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 			chat_view_insert_text_with_emoticons (buffer,
 							      &iter, tmp);
