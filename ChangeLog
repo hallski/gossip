@@ -1,3 +1,7 @@
+2003-11-17  Frederic Crozat  <fcrozat@mandrakesoft.com>
+
+	* autogen.sh: Handle GNOME2_DIR for aclocal path.
+
 2003-11-17  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-roster-view.c: (gossip_roster_view_flash_item):
