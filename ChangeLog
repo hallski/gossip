@@ -1,5 +1,8 @@
 2004-01-23  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c (setup_default_window_icon): 
+	* ui/chat.glade: Use the logo instead. Fixes bug #125663.
+
 	* src/gossip-app.c (app_init, app_have_tray): Only hide window if
 	there is a notification area.
 	(app_init): Don't let the window be too narrow.

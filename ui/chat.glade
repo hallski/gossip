@@ -559,7 +559,6 @@
   <property name="default_height">250</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
-  <property name="icon">gossip-message.png</property>
 
   <child>
     <widget class="GtkVBox" id="vbox5">

@@ -41,14 +41,12 @@ setup_default_window_icon (void)
 	GList        *list;
 	GdkPixbuf    *pixbuf;
 
-	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/gossip-available.png", NULL);
-
+	pixbuf = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/gossip.png", NULL);
 	list = g_list_append (NULL, pixbuf);
 
 	gtk_window_set_default_icon_list (list);
 
 	g_list_free (list);
-
 	g_object_unref (pixbuf);
 }
 
