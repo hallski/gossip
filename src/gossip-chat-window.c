@@ -880,10 +880,19 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 {
 	GossipChatWindow *new_window;
 	GossipChat	 *chat;
+	gint              x, y;
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	new_window = gossip_chat_window_new ();
 
+	gdk_display_get_pointer (gdk_display_get_default (),
+				 NULL,
+				 &x,
+				 &y,
+				 NULL);
+	
+	gtk_window_move (GTK_WINDOW (new_window->priv->dialog), x, y);
+	
 	gossip_chat_window_remove_chat (window, chat);
 	gossip_chat_window_add_chat (new_window, chat);
 }

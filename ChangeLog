@@ -1,5 +1,8 @@
 2004-01-27  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c (chat_window_tab_detached_cb): When
+	detaching a tab, put the new window at the pointer.
+
 	* src/gossip-log.c (log_urlify): Escape the href value.
 
 	* src/gossip-log.xsl: Disable output escaping for the href
