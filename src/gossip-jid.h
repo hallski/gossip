@@ -33,13 +33,10 @@ const gchar *   gossip_jid_get_resource            (GossipJID   *jid);
 gchar *         gossip_jid_get_part_name           (GossipJID   *jid);
 GossipJID *     gossip_jid_ref                     (GossipJID   *jid);
 void            gossip_jid_unref                   (GossipJID   *jid);
-
 gboolean        gossip_jid_equals                  (GossipJID   *jid_a,
 						    GossipJID   *jid_b);
 gboolean        gossip_jid_equals_without_resource (GossipJID   *jid_a,
 						    GossipJID   *jid_b);
-
-gboolean        gossip_jid_string_is_valid_jid  (const gchar *str_jid);
+gboolean        gossip_jid_string_is_valid_jid     (const gchar *str_jid);
 
 #endif /* __GOSSIP_JID_H__ */
-
