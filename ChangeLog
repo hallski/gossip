@@ -1,3 +1,19 @@
+2004-02-27  Martyn Russell  <ginxd@btopenworld.com>
+ 
+ 	* src/gossip-join-dialog.c (join_dialog_response_cb): 
+ 	- Added fix that sends your status when connecting instead of just
+ 	available.
+ 
+ 	* src/gossip-app.c (app_update_show): 
+ 	- Added fix for bug #128362.  Group Chat now gets status updates.
+	
+2004-02-26  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_authentication_cb): Show dialog when
+	authentication fails. Based on patch from Martyn Russell.
+	(app_tray_destroy_cb, app_tray_create): Use the correct signal to
+	catch when the tray is removed. Based on patch from Qball Cow.
+
 2004-02-10  Richard Hult  <richard@imendio.com>
 
 	* configure.in: Gah, revert the exslt change and really release.
