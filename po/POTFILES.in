@@ -11,6 +11,7 @@ src/gossip-chat-window.c
 src/gossip-chat.c
 src/gossip-connect-dialog.c
 src/gossip-contact-info.c
+src/gossip-edit-groups-dialog.c
 src/gossip-group-chat.c
 src/gossip-idle.c
 src/gossip-join-dialog.c
