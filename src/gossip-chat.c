@@ -1074,6 +1074,9 @@ gossip_chat_handle_message (LmMessage *m)
         jid = gossip_jid_new (from);
 
 	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
+	if (!item) {
+		item = gossip_roster_item_new (jid);
+	}
 	chat = (GossipChat *) g_hash_table_lookup (chats, jid);
 
 	if (chat) {

@@ -233,7 +233,7 @@ static void     app_complete_jid_activate_cb         (GtkEntry           *entry,
 static gchar *  app_complete_item_to_string          (gpointer            data);
 static void     app_toggle_visibility                (void);
 static void     app_tray_push_message                (LmMessage          *m);
-static gboolean app_tray_pop_message                 (GossipJID          *jid);
+static gboolean app_tray_pop_message                 (GossipRosterItem   *item);
 static void     app_tray_update_tooltip              (void);
 static void     app_status_button_clicked_cb         (GtkButton          *button,
 						      gpointer            user_data);
@@ -1192,7 +1192,7 @@ app_item_activated_cb (GossipRosterView *roster,
 	chat = gossip_chat_get_for_item (item);
 	gossip_chat_present (chat);
 
-	app_tray_pop_message (gossip_roster_item_get_jid (item));
+	app_tray_pop_message (item);
 }
 
 void
@@ -1774,7 +1774,6 @@ app_tray_push_message (LmMessage *m)
 	const gchar      *from;
 	GossipJID        *jid; 
 	GossipRosterItem *item;
-	const gchar      *without_resource;
 	GList            *l;
 		
 	priv = app->priv;
@@ -1782,17 +1781,21 @@ app_tray_push_message (LmMessage *m)
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
 
-	without_resource = gossip_jid_get_without_resource (jid);
-	
-	l = g_list_find_custom (priv->tray_flash_icons,
-				without_resource,
-				(GCompareFunc) g_ascii_strcasecmp);
+	item = gossip_roster_get_item (priv->roster, jid);
+	if (!item) {
+		item = gossip_roster_item_new (jid);
+	} else {
+		gossip_roster_item_ref (item);
+	}
+
+	l = g_list_find_custom (priv->tray_flash_icons, item,
+				(GCompareFunc) gossip_roster_item_compare);
 	if (l) {
 		return;
 	}
 
-	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons,
-						g_strdup (without_resource));
+	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons, 
+						gossip_roster_item_ref (item));
 
 	if (!priv->tray_flash_timeout_id) {
 		priv->tray_flash_timeout_id = g_timeout_add (FLASH_TIMEOUT,
@@ -1802,22 +1805,16 @@ app_tray_push_message (LmMessage *m)
 		app_tray_update_tooltip ();
 	}
 
-	item = gossip_roster_get_item (priv->roster, jid);
-	if (item) {
-		gossip_roster_view_flash_item (priv->roster_view, item, TRUE);
-	}
-
-	gossip_jid_unref (jid);
+	gossip_roster_view_flash_item (priv->roster_view, item, TRUE);
+	gossip_roster_item_unref (item);
 }
 
 static gboolean
-app_tray_pop_message (GossipJID *jid)
+app_tray_pop_message (GossipRosterItem *item)
 {
 	GossipAppPriv    *priv;
-	const gchar      *without_resource;
 	GossipChat       *chat = NULL;
 	GList            *l;
-	GossipRosterItem *item;
 
 	priv = app->priv;
 
@@ -1825,36 +1822,25 @@ app_tray_pop_message (GossipJID *jid)
 		return FALSE;
 	}
 
-	if (jid) {
-		gossip_jid_ref (jid);
-	} else {
-		jid = gossip_jid_new (priv->tray_flash_icons->data);
+	if (!item) {
+		item = priv->tray_flash_icons->data;
 	}
 	
-	item = gossip_roster_get_item (priv->roster, jid);
-	
-	if (item) {
-		chat = gossip_chat_get_for_item (item);
-		if (!chat) {
-			gossip_jid_unref (jid);
-			return FALSE;
-		}
+	/* if (item) { */
+	chat = gossip_chat_get_for_item (item);
+	if (!chat) {
+		return FALSE;
 	}
 
 	gossip_chat_present (chat);
 
-	without_resource = gossip_jid_get_without_resource (jid);
-	
-	l = g_list_find_custom (priv->tray_flash_icons,
-				without_resource,
-				(GCompareFunc) g_ascii_strcasecmp);
+	l = g_list_find_custom (priv->tray_flash_icons, item,
+				(GCompareFunc) gossip_roster_item_compare);
 
 	if (!l) {
-		gossip_jid_unref (jid);
 		return FALSE;
 	}
-	
-	g_free (l->data);
+
 	priv->tray_flash_icons = g_list_delete_link (priv->tray_flash_icons, l);
 
 	if (!priv->tray_flash_icons && priv->tray_flash_timeout_id) {
@@ -1871,7 +1857,8 @@ app_tray_pop_message (GossipJID *jid)
 	if (item) {
 		gossip_roster_view_flash_item (priv->roster_view, item, FALSE);
 	}
-	gossip_jid_unref (jid);
+	
+	gossip_roster_item_unref (item);
 
 	return TRUE;
 }
@@ -1880,8 +1867,6 @@ static void
 app_tray_update_tooltip (void)
 {
 	GossipAppPriv    *priv;
-	const gchar      *from;
-	GossipJID        *jid;
 	const gchar      *name;
 	gchar            *str;
 	GossipRosterItem *item;
@@ -1895,15 +1880,9 @@ app_tray_update_tooltip (void)
 		return;
 	}
 
-	from = priv->tray_flash_icons->data;
-	jid = gossip_jid_new (from);
+	item = priv->tray_flash_icons->data;
 	
-	item = gossip_roster_get_item (priv->roster, jid);
-	if (item) {
-		name = gossip_roster_item_get_name (item);
-	} else {
-		name = from;
-	}
+	name = gossip_roster_item_get_name (item);
 	
 	str = g_strdup_printf (_("New message from %s"), name);
 	
@@ -1912,7 +1891,6 @@ app_tray_update_tooltip (void)
 			      str, str);
 	
 	g_free (str);
-	gossip_jid_unref (jid);
 }	
 
 static GossipShow
@@ -2522,7 +2500,7 @@ app_window_configure_event_cb (GtkWidget         *widget,
 			       gpointer           data)
 {
 	GossipAppPriv *priv = app->priv;
-	
+
 	if (priv->size_timeout_id) {
 		g_source_remove (priv->size_timeout_id);
 	}

@@ -1300,5 +1300,22 @@ gossip_roster_item_unref (GossipRosterItem *item)
         }
 }
 
+gint
+gossip_roster_item_compare (GossipRosterItem *a, GossipRosterItem *b)
+{
+	const gchar *wo_resource_a, *wo_resource_b;
+
+	wo_resource_a = gossip_jid_get_without_resource (a->jid);
+	wo_resource_b = gossip_jid_get_without_resource (b->jid);
+	
+	return g_ascii_strcasecmp (wo_resource_a, wo_resource_b);
+}
+
+GossipRosterItem *
+gossip_roster_item_new (GossipJID *jid)
+{
+	return roster_item_new (jid);
+}
+
 
 

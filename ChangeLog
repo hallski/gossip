@@ -1,4 +1,21 @@
 2003-11-14  Mikael Hallendal  <micke@imendio.com>
+        
+        * Fixes, #120997, #125434, #126954
+
+	* src/gossip-app.c:
+	* src/gossip-chat.c: 
+	* src/gossip-roster-view.c:
+	- Handle messages from contacts not in the roster
+	- Send the RosterItem around more instead of converting to and 
+	  from jid.
+	* src/gossip-log.c: (gossip_log_message):
+	- Don't log from people not on the list.
+	* src/gossip-roster.c: 
+	(gossip_roster_item_compare),
+	(gossip_roster_item_new): Added, need when message arrives from 
+	  someone who is not in your roster.
+
+2003-11-14  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c:
 	(gossip_chat_init): Listen to new presence_updated signal

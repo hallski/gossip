@@ -824,63 +824,6 @@ roster_view_ellipsize_item_string (GossipRosterView *view,
 	g_object_unref (layout);
 }
 
-#if 0
-static void
-roster_view_ellipsize_item_strings (GossipRosterView *view,
-				    gchar            *name,
-				    gchar            *status,
-				    gint              width)
-{
-	PangoLayout    *layout;
-	PangoRectangle  rect;
-	gint            len_name, len_status;
-	gint            width_name, width_status;
-
-	len_name = g_utf8_strlen (name, -1);
-	len_status = g_utf8_strlen (status, -1);
-
-	/* Don't bother if we already have short strings. */
-	if (len_name < ELLIPSIS_LIMIT && len_status < ELLIPSIS_LIMIT) {
-		return;
-	}
-	
-	layout = gtk_widget_create_pango_layout (GTK_WIDGET (view), NULL);
-	
-	pango_layout_set_text (layout, name, -1);
-	pango_layout_get_extents (layout, NULL, &rect);
-	width_name = rect.width / PANGO_SCALE;
-
-	/* Note: if we ever use something more advanced than italic for the
-	 * status, like a smaller font, we need to take that in consideration
-	 * here.
-	 */
-	pango_layout_set_text (layout, status, -1);
-	pango_layout_get_extents (layout, NULL, &rect);
-	width_status = rect.width / PANGO_SCALE;
-
-	while (len_name >= ELLIPSIS_LIMIT && width_name > width) {
-		len_name--;
-		ellipsize_string (name, len_name);
-		
-		pango_layout_set_text (layout, name, -1);
-		pango_layout_get_extents (layout, NULL, &rect);
-		
-		width_name = rect.width / PANGO_SCALE;
-	}
-
-	while (len_status >= ELLIPSIS_LIMIT && width_status > width) {
-		len_status--;
-		ellipsize_string (status, len_status);
-
-		pango_layout_set_text (layout, status, -1);
-		pango_layout_get_extents (layout, NULL, &rect);
-		
-		width_status = rect.width / PANGO_SCALE;
-	}
-	
-	g_object_unref (layout);
-}
-#endif
 /* NOTE: We should write our own cell renderer instead of putting all these
  * nasty hacks here.
  */
@@ -1737,13 +1680,14 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 				     gossip_roster_item_ref (item),
 				     flash_data); 
 
+		/* Add to inbox */
 		roster_view_add_item (view, item, NULL);
-
-		/* Add contact to the top of the list */
 	}
 	else if (!flash && flash_data) {
-		roster_view_remove_item (view, item, NULL);
 		g_hash_table_remove (priv->flash_table, item);
+		
+		/* Remove from inbox */
+		roster_view_remove_item (view, item, NULL);
 	}
 }
 
