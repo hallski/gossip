@@ -22,6 +22,7 @@
 
 #include <string.h>
 
+#include "gossip-utils.h"
 #include "gossip-contact.h"
 
 struct _GossipContact {
@@ -212,19 +213,52 @@ gossip_contact_unref (GossipContact *contact)
 }
 
 gint
-gossip_contact_compare (gconstpointer *a, gconstpointer *b)
+gossip_contact_compare (gconstpointer a, gconstpointer b)
 {
 	GossipJID *jid_a;
 	GossipJID *jid_b;
 	
+	jid_a = gossip_contact_get_jid (GOSSIP_CONTACT (a));
+	jid_b = gossip_contact_get_jid (GOSSIP_CONTACT (b));
+
+	return gossip_jid_case_compare (jid_a, jid_b);
+}
+
+gint
+gossip_contact_name_compare (gconstpointer a, gconstpointer b)
+{
 	g_return_val_if_fail (a != NULL, 0);
 	g_return_val_if_fail (b != NULL, 0);
 
-	jid_a = gossip_contact_get_jid (GOSSIP_CONTACT (a));
-	jid_b = gossip_contact_get_jid (GOSSIP_CONTACT (b));
+	g_print ("COMPARE: %s vs. %s\n",
+		 gossip_contact_get_name (GOSSIP_CONTACT (a)),
+		 gossip_contact_get_name (GOSSIP_CONTACT (b)));
+
+	return strcmp (gossip_contact_get_name (GOSSIP_CONTACT (a)),
+		       gossip_contact_get_name (GOSSIP_CONTACT (b)));
+}
+
+gint           
+gossip_contact_name_case_compare (gconstpointer a, gconstpointer b)
+{
+	g_return_val_if_fail (a != NULL, 0);
+	g_return_val_if_fail (b != NULL, 0);
+
+	return gossip_contact_name_case_n_compare (a, b, -1);
+}
+
+gint           
+gossip_contact_name_case_n_compare (gconstpointer a, gconstpointer b, gsize n)
+{
+	const gchar *name_a, *name_b;
 	
-	return strcmp (gossip_jid_get_without_resource (jid_a),
-		       gossip_jid_get_without_resource (jid_b));
+	g_return_val_if_fail (a != NULL, 0);
+	g_return_val_if_fail (b != NULL, 0);
+
+	name_a = gossip_contact_get_name (GOSSIP_CONTACT (a));
+	name_b = gossip_contact_get_name (GOSSIP_CONTACT (b));
+					  
+	return gossip_utils_str_n_case_cmp (name_a, name_b, -1);
 }
 
 gboolean

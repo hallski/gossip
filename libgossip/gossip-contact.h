@@ -64,8 +64,15 @@ GList *            gossip_contact_get_groups     (GossipContact    *contact);
 GossipContact *    gossip_contact_ref            (GossipContact    *contact);
 void               gossip_contact_unref          (GossipContact    *contact);
 
-gint               gossip_contact_compare        (gconstpointer    *a,
-						  gconstpointer    *b);
+gint               gossip_contact_compare        (gconstpointer     a,
+						  gconstpointer     b);
+gint          gossip_contact_name_compare        (gconstpointer     a,
+						  gconstpointer     b);
+gint          gossip_contact_name_case_compare   (gconstpointer     a,
+						  gconstpointer     b);
+gint          gossip_contact_name_case_n_compare (gconstpointer     a,
+						  gconstpointer     b,
+						  gsize             n);
 gboolean           gossip_contact_equal          (gconstpointer     v1,
 						  gconstpointer     v2);
 guint              gossip_contact_hash           (gconstpointer     key);

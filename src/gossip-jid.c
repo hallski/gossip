@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "gossip-utils.h"
 #include "gossip-jid.h"
 
 struct GossipJID {
@@ -199,6 +200,17 @@ gossip_jid_string_is_valid_jid (const gchar *str_jid)
 	}
 
 	return TRUE;
+}
+
+gint
+gossip_jid_case_compare (gconstpointer a, gconstpointer  b)
+{
+	const gchar *str_a, *str_b;
+
+	str_a = gossip_jid_get_without_resource ((GossipJID *) a);
+	str_b = gossip_jid_get_without_resource ((GossipJID *) b);
+	
+	return gossip_utils_str_n_case_cmp (str_a, str_b, -1);
 }
 
 gboolean

@@ -37,7 +37,8 @@ gboolean        gossip_jid_equals                  (GossipJID     *jid_a,
 gboolean        gossip_jid_equals_without_resource (GossipJID     *jid_a,
 						    GossipJID     *jid_b);
 gboolean        gossip_jid_string_is_valid_jid     (const gchar   *str_jid);
-
+gint            gossip_jid_case_compare            (gconstpointer  a,
+						    gconstpointer  b);
 /* Used in Hash tables */
 gboolean        gossip_jid_equal                   (gconstpointer  v1,
 				 		    gconstpointer  v2);

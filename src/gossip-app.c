@@ -251,7 +251,6 @@ static gboolean app_complete_name_key_press_event_cb  (GtkEntry           *entry
 						      CompleteNameData    *data);
 static void     app_complete_name_activate_cb         (GtkEntry           *entry,
 						      CompleteNameData    *data);
-static gchar *  app_complete_item_to_string          (gpointer            data);
 static void     app_toggle_visibility                (void);
 static void     app_tray_push_message                (LmMessage          *m);
 static gboolean app_tray_pop_message                 (GossipContact      *contact);
@@ -653,22 +652,6 @@ app_authentication_cb (LmConnection *connection,
 	app_update_show ();
 }
 
-static gint
-app_name_complete_cmp_func (const gchar *s1, const gchar *s2, gsize n)
-{
-	gchar *u1, *u2;
-	gint   ret_val;
-	
-	u1 = g_utf8_casefold (s1, n);
-	u2 = g_utf8_casefold (s2, n);
-
-	ret_val = g_utf8_collate (u1, u2);
-	g_free (u1);
-	g_free (u2);
-
-	return ret_val;
-}
-
 static void
 app_new_message (gboolean use_roster_selection, gboolean be_transient)
 {
@@ -678,8 +661,9 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	GList            *contacts = NULL;
 	GossipContact    *contact = NULL;
 	GtkWidget        *frame;
-	CompleteNameData  *data;
-	GtkWindow         *parent;
+	CompleteNameData *data;
+	GtkWindow        *parent;
+	GList            *items;
 	
 	priv = app->priv;
 
@@ -743,9 +727,9 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 			  G_CALLBACK (app_complete_name_response_cb),
 			  data);
 	
-	data->completion = g_completion_new (app_complete_item_to_string);
+	data->completion = g_completion_new ((GCompletionFunc) gossip_contact_get_name);
 	g_completion_set_compare (data->completion, 
-				  app_name_complete_cmp_func);
+				  gossip_utils_str_n_case_cmp);
 
 	if (use_roster_selection) {
 		GossipRosterItem *item;
@@ -757,37 +741,36 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	} 
 
 	data->names = NULL;
+	items = gossip_roster_get_all_items (priv->roster);
+	for (l = items; l; l = l->next) {
+		GossipRosterItem *roster_item;
+		GossipContact    *c;
 
-	if (contact) {
-		GList *items;
+		roster_item = (GossipRosterItem *) l->data;
+		c = gossip_roster_get_contact_from_item (priv->roster,
+							 roster_item);
 
-		items = gossip_roster_get_all_items (priv->roster);
-		for (l = items; l; l = l->next) {
-			GossipRosterItem *roster_item;
-			GossipContact    *c;
-			
-			roster_item = (GossipRosterItem *) l->data;
-			c = gossip_roster_get_contact_from_item (priv->roster,
-								 roster_item);
-			
-			data->names = g_list_prepend (data->names, 
-						      g_strdup (gossip_contact_get_name (c)));
+		data->names = g_list_prepend (data->names, 
+					      g_strdup (gossip_contact_get_name (c)));
 
-			if (gossip_contact_equal (contact, c)) {
-				/* Got the selected one, select it in the combo. */
-				selected_name = gossip_contact_get_name (c);
-			}
-
-			contacts = g_list_prepend (contacts, 
-						   gossip_contact_ref (c));
+		if (contact && gossip_contact_equal (contact, c)) {
+			/* Got the selected one, select it in the combo. */
+			selected_name = gossip_contact_get_name (c);
 		}
+
+		contacts = g_list_prepend (contacts, 
+					   gossip_contact_ref (c));
 	}
-	
+
+	data->names = g_list_sort (data->names, 
+				   (GCompareFunc) gossip_utils_str_case_cmp);
 	if (data->names) {
 		gtk_combo_set_popdown_strings (GTK_COMBO (data->combo),
 					       data->names);
 	}
 
+	/* contacts = g_list_sort (contacts,
+				gossip_contact_name_case_compare);*/
 	if (contacts) {
 		g_completion_add_items (data->completion, contacts);
 	}
@@ -1539,23 +1522,27 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 		GossipContact    *contact;
 		
 		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
-		
-		item = gossip_roster_find_item (gossip_app_get_roster (), str);
-		if (!item) {
-			/* FIXME: Display error dialog... */
-			g_warning ("'%s' is not a valid JID or nick name.", str);
-		}
 
-		contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
+		if (str && strcmp (str, "") != 0) {
+			item = gossip_roster_find_item (gossip_app_get_roster (),
+							str);
+			if (!item) {
+				/* FIXME: Display error dialog... */
+				g_warning ("'%s' is not a valid JID or nick name.", str);
+			}
+
+			contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
 							       item);
-		chat = gossip_chat_get_for_contact (contact, TRUE);
-				
-		gossip_chat_present (chat);
+			chat = gossip_chat_get_for_contact (contact, TRUE);
+			
+			gossip_chat_present (chat);
+		}
 	}
 
 	for (l = data->names; l; l = l->next) {
 		g_free (l->data);
 	}
+
 	g_list_free (data->names);
 	g_free (data);
 	
@@ -1639,14 +1626,6 @@ app_complete_name_activate_cb (GtkEntry        *entry,
 			       CompleteNameData *data)
 {
 	gtk_dialog_response (GTK_DIALOG (data->dialog), GTK_RESPONSE_OK);
-}
-
-static gchar *
-app_complete_item_to_string (gpointer data)
-{
-	GossipContact *contact = (GossipContact *) data;
-
-	return (gchar *) gossip_contact_get_name (contact);
 }
 
 GossipShow 

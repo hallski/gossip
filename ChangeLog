@@ -1,5 +1,26 @@
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c:
+	- Cleaned out some unused code.
+	(app_new_message):
+	- This was acidently broken in CVS.
+	- Sort names alphabetically in list.
+	(app_complete_name_response_cb): 
+	- Don't try to start a chat if no contact is selected, prevents crash.
+	(app_complete_name_activate_cb):
+	* src/gossip-contact.[ch]: 
+	(gossip_contact_compare): Make case insensitive
+	(gossip_contact_name_compare), 
+	(gossip_contact_name_case_compare),
+	(gossip_contact_name_case_n_compare): Added
+	* src/gossip-jid.[ch]: 
+	(gossip_jid_case_compare): Added
+	* src/gossip-utils.[ch]: 
+	(gossip_utils_str_case_cmp),
+	(gossip_utils_str_n_case_cmp): Added
+
+2004-06-16  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_handle_subscription_request):
 	- Fixed a string that was a bit jabberish.
 	- Fixes bug #120790

@@ -115,6 +115,12 @@ const gchar *gossip_utils_get_stock_from_presence    (GossipPresence   *presence
 GdkPixbuf *  gossip_utils_get_pixbuf_from_presence   (GossipPresence   *presence);
 
 GossipPresenceType
-gossip_utils_get_presence_type_from_show_string      (const gchar *str);
+gossip_utils_get_presence_type_from_show_string      (const gchar *str); 
+gint         gossip_utils_str_case_cmp               (const gchar        *s1, 
+						      const gchar        *s2);
+gint         gossip_utils_str_n_case_cmp             (const gchar        *s1, 
+						      const gchar        *s2,
+						      gsize               n);
+
 
 #endif /*  __GOSSIP_UTILS_H__ */

@@ -969,3 +969,25 @@ gossip_utils_get_presence_type_from_show_string (const gchar *str)
 	return GOSSIP_PRESENCE_TYPE_AVAILABLE;
 }
 
+gint
+gossip_utils_str_case_cmp (const gchar *s1, const gchar *s2)
+{
+	return gossip_utils_str_n_case_cmp (s1, s2, -1);
+}	
+
+gint
+gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
+{
+	gchar *u1, *u2;
+	gint   ret_val;
+	
+	u1 = g_utf8_casefold (s1, n);
+	u2 = g_utf8_casefold (s2, n);
+
+	ret_val = g_utf8_collate (u1, u2);
+	g_free (u1);
+	g_free (u2);
+
+	return ret_val;
+}
+
