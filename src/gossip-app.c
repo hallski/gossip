@@ -1509,14 +1509,25 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 	GList       *l;
 
 	if (response == GTK_RESPONSE_OK) {
-		GossipRosterItem *item;
+		GossipRosterItem *item = NULL;
 		str = gtk_entry_get_text (GTK_ENTRY (data->entry));
 		if (gossip_jid_string_is_valid_jid (str)) {
 			jid = gossip_jid_new (str);
+
+
 			item = gossip_roster_get_item (gossip_app_get_roster (), jid);
-			chat = gossip_chat_get_for_item (item);
-			gossip_chat_present (chat);
-			gossip_jid_unref (jid);
+			if (!item) {
+				item = gossip_roster_item_new (jid);
+			}
+
+			if(item) {
+				chat = gossip_chat_get_for_item (item);
+				
+				gossip_chat_present (chat);
+				gossip_jid_unref (jid);
+			} else {
+				g_warning ("could not create roster item for JID '%s'", str); 
+			}
 		} else {
 			/* FIXME: Display error dialog... */
 			g_warning ("'%s' is not a valid JID.", str);
