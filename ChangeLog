@@ -1,5 +1,10 @@
 2004-01-24  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-view.c (chat_view_size_allocate): Scroll down
+	the window if it was scrolled down before we resized. Fixes bug
+	#128011.
+	(chat_view_finalize): Chain up.
+	
 	* src/gossip-utils.c: (gossip_utils_url_regex_match): Move here
 	from chat view.
 

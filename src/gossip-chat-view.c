@@ -95,6 +95,8 @@ static gint num_smileys = G_N_ELEMENTS (smileys);
 static void       chat_view_class_init      (GossipChatViewClass *klass);
 static void       chat_view_init            (GossipChatView      *view);
 static void       chat_view_finalize        (GObject             *object);
+static void       chat_view_size_allocate   (GtkWidget           *widget,
+					     GtkAllocation       *alloc);
 static void       chat_view_setup_tags      (GossipChatView      *view);
 static void       chat_view_populate_popup  (GossipChatView      *view,
 					     GtkMenu             *menu,
@@ -135,8 +137,11 @@ chat_view_maybe_append_timestamp             (GossipChatView *view,
 static void
 chat_view_maybe_append_datestamp             (GossipChatView *view);
 
+static gboolean chat_view_is_scrolled_down   (GossipChatView *view);
+
 
 extern GConfClient *gconf_client;
+static GObjectClass *parent_class = NULL;
 
 GType
 gossip_chat_view_get_type (void)
@@ -167,9 +172,13 @@ gossip_chat_view_get_type (void)
 static void
 chat_view_class_init (GossipChatViewClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GObjectClass   *object_class = G_OBJECT_CLASS (klass);
+	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
+
+	parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize = chat_view_finalize;
+	widget_class->size_allocate = chat_view_size_allocate;
 }
 
 static void
@@ -213,6 +222,23 @@ chat_view_finalize (GObject *object)
 	g_object_unref (priv->buffer);
 	
 	g_free (view->priv);
+
+	G_OBJECT_CLASS (parent_class)->finalize (object);
+}
+
+static void
+chat_view_size_allocate (GtkWidget     *widget,
+			 GtkAllocation *alloc)
+{
+	gboolean down;
+	
+	down = chat_view_is_scrolled_down (GOSSIP_CHAT_VIEW (widget));
+		
+	GTK_WIDGET_CLASS (parent_class)->size_allocate (widget, alloc);
+
+	if (down) {
+		gossip_chat_view_scroll_down (GOSSIP_CHAT_VIEW (widget));
+	}
 }
 
 static void
