@@ -1,3 +1,14 @@
+2004-01-07  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c: (gossip_chat_finalize): Remove composing
+	timeout. We never finalize the windows, but theoretically nice.
+	(chat_disconnected_cb): Reset the composing event sending
+	variables when we get disconnected.
+	(chat_handle_composing_event): Rename from chat_event_handler to
+	better reflect its function. Only enable composing events if the
+	sending party is online. Should fix bug #127592
+	(chat_message_handler): Update for name change.
+
 2004-01-06  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c (chat_input_key_press_event_cb): Page up/down

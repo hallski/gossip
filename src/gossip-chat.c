@@ -109,7 +109,7 @@ static void            chat_connected_cb		 (GossipApp	   *app,
 							  GossipChat	   *chat);
 static void            chat_disconnected_cb		 (GossipApp	   *app,
 							  GossipChat	   *chat);
-static gboolean        chat_event_handler                (GossipChat       *chat,
+static gboolean        chat_handle_composing_event       (GossipChat       *chat,
                                                           LmMessage        *m);
 static void            chat_error_dialog                 (GossipChat       *chat,
                                                           const gchar      *msg);
@@ -281,6 +281,8 @@ gossip_chat_finalize (GObject *object)
 
 	gossip_roster_item_unref (priv->item);
 
+	chat_composing_remove_timeout (chat);
+	
 	g_free (priv->composing_resource);
 	g_free (priv->last_composing_id);
 	
@@ -657,9 +659,7 @@ chat_message_handler (LmMessageHandler *handler,
         d(g_print ("Incoming message:: '%s' ?= '%s'\n",
                    gossip_jid_get_without_resource (from_jid),
                    gossip_jid_get_without_resource (jid)));
-
-	d(g_print ("from: '%s'\n", gossip_jid_get_full (from_jid)));
-
+	
         if (!gossip_jid_equals_without_resource (from_jid, jid)) {
                 gossip_jid_unref (from_jid);
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -668,7 +668,7 @@ chat_message_handler (LmMessageHandler *handler,
         type = lm_message_get_sub_type (m);
 
         if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-                gchar     *tmp, *str, *msg;
+                gchar *tmp, *str, *msg;
 
                 tmp = g_strdup_printf ("<b>%s</b>", from);
                 str = g_strdup_printf (_("An error occurred when chatting with %s."), tmp);
@@ -702,7 +702,7 @@ chat_message_handler (LmMessageHandler *handler,
 	
 	gossip_jid_unref (from_jid);
 
-        if (chat_event_handler (chat, m)) {
+        if (chat_handle_composing_event (chat, m)) {
                 return LM_HANDLER_RESULT_REMOVE_MESSAGE;
         }
 
@@ -879,10 +879,16 @@ chat_disconnected_cb (GossipApp  *app,
 	gtk_widget_set_sensitive (priv->input_text_view, FALSE);
 
 	gossip_chat_view_append_event_msg (priv->view, _("Disconnected"), TRUE);
+
+	priv->send_composing_events = FALSE;
+	chat_composing_remove_timeout (chat);
+
+	g_free (priv->composing_resource);
+	priv->composing_resource = NULL;
 }
 
 static gboolean
-chat_event_handler (GossipChat *chat, LmMessage *m)
+chat_handle_composing_event (GossipChat *chat, LmMessage *m)
 {
 	GossipChatPriv *priv = chat->priv;
         LmMessageNode  *x;
@@ -902,13 +908,13 @@ chat_event_handler (GossipChat *chat, LmMessage *m)
         }
 
         if (lm_message_node_get_child (m->node, "body")) {
-                if (lm_message_node_get_child (x, "composing")) {
+                if (priv->is_online && lm_message_node_get_child (x, "composing")) {
                         /* Handle request for composing events. */
 			priv->send_composing_events = TRUE;
-			
+
 			from = lm_message_node_get_attribute (m->node, "from");
 			jid = gossip_jid_new (from);
-			
+
 			g_free (priv->composing_resource);
 			priv->composing_resource =
 				g_strdup (gossip_jid_get_resource (jid));
