@@ -1649,35 +1649,22 @@ gossip_roster_get_selected_jid (GossipRoster *roster)
 }
 
 static gboolean
-flash_timeout_func (gpointer data)
+roster_jid_updated (GossipRoster *roster, GossipJID *jid)
 {
-	GossipRoster     *roster;
-	GossipRosterPriv *priv;
-	GossipRosterItem *item = data;
 	GtkTreeModel     *model;
-	GdkPixbuf        *pixbuf;
 	FindUserData      find;
 	GtkTreePath      *path;
-	
-	roster = gossip_app_get_roster ();
-	priv = roster->priv;
-	
-	if (item->flash_on) {
-		pixbuf = flash_pixbuf;
-	} else {
-		pixbuf = status_pixbufs[item->status];
-	}
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (roster)); 
 	
 	find.roster = roster;
-	find.jid = item->jid;
+	find.jid = jid;
+
 	gtk_tree_model_foreach (model,
 				(GtkTreeModelForeachFunc) roster_find_user_foreach,
 				&find);
 
 	if (!find.found) {
-		item->flash_timeout_id = 0;
 		return FALSE;
 	}
 
@@ -1685,7 +1672,26 @@ flash_timeout_func (gpointer data)
 	gtk_tree_model_row_changed (model, path, &find.found_iter);
 	gtk_tree_path_free (path);
 
+	return TRUE;
+}
+
+static gboolean
+flash_timeout_func (gpointer data)
+{
+	GossipRoster     *roster;
+	GossipRosterPriv *priv;
+	GossipRosterItem *item = data;
+	
+	roster = gossip_app_get_roster ();
+	priv = roster->priv;
+
 	item->flash_on = !item->flash_on;
+
+	if (!roster_jid_updated (roster, item->jid)) {
+		item->flash_timeout_id = 0;
+		item->flash_on = FALSE;
+		return FALSE;
+	}
 
 	return TRUE;
 }
@@ -1716,5 +1722,8 @@ gossip_roster_flash_jid (GossipRoster *roster,
 		/* Stop... */
 		g_source_remove (item->flash_timeout_id);
 		item->flash_timeout_id = 0;
+		item->flash_on = FALSE;
+
+		roster_jid_updated (roster, jid);
 	}
 }
