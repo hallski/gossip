@@ -1,5 +1,8 @@
 2003-10-25  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-utils.c: (gossip_text_view_setup_tags):
+	- missed to update tag names
+
 	* gossip.schemas.in: 
 	- Changed timestamp all messages to default to false
 	  

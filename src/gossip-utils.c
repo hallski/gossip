@@ -944,12 +944,12 @@ gossip_text_view_setup_tags (GtkTextView *view)
 				    NULL);
 
 	gtk_text_buffer_create_tag (buffer,
-				    "shadow",
+				    "timestamp_irc",
 				    "foreground", "darkgrey",
 				    NULL);
 	
 	gtk_text_buffer_create_tag (buffer,
-				    "normal_timestamp",
+				    "timestamp_normal",
 				    "foreground", "darkgrey",
 				    "justification", GTK_JUSTIFY_CENTER,
 				    NULL);
