@@ -34,11 +34,15 @@
 #include "gossip-app.h"
 #include "gossip-utils.h"
 
+#define DINGUS "(((mailto|news|telnet|nttp|file|http|sftp|ftp|https|dav|callto)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
+
 #define AVAILABLE_MESSAGE "Available"
 #define AWAY_MESSAGE "Away"
 #define BUSY_MESSAGE "Busy"
 
 extern GConfClient *gconf_client;
+
+static regex_t  dingus;
 
 typedef enum {
     TIMESTAMP_STYLE_IRC,
@@ -878,4 +882,40 @@ gossip_utils_free_status_messages (GList *list)
 {
 	g_list_foreach (list, (GFunc) free_entry, NULL);
 	g_list_free (list);
+}
+
+gint
+gossip_utils_url_regex_match (const gchar *msg,
+			      GArray      *start,
+			      GArray      *end)
+{
+	static gboolean inited = FALSE;
+	regmatch_t      matches[1];
+	gint            ret = 0;
+	gint            num_matches = 0;
+	gint            offset = 0;
+
+	if (!inited) {
+		memset (&dingus, 0, sizeof (regex_t));
+		regcomp (&dingus, DINGUS, REG_EXTENDED);
+		inited = TRUE;
+	}
+
+	while (!ret) {
+		ret = regexec (&dingus, msg + offset, 1, matches, 0);
+
+		if (ret == 0) {
+			gint s;
+			
+			num_matches++;
+
+			s = matches[0].rm_so + offset;
+			offset = matches[0].rm_eo + offset;
+			
+			g_array_append_val (start, s);
+			g_array_append_val (end, offset);
+		}
+	}
+		
+	return num_matches;
 }

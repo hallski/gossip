@@ -105,5 +105,8 @@ GList *      gossip_utils_get_status_messages        (void);
 void         gossip_utils_set_status_messages        (GList            *list);
 void         gossip_utils_free_status_messages       (GList            *list);
 
+gint         gossip_utils_url_regex_match            (const gchar      *msg,
+						      GArray           *start,
+						      GArray           *end);
 
 #endif /*  __GOSSIP_UTILS_H__ */

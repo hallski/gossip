@@ -1,6 +1,6 @@
 <xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
 
-  <xsl:output method="html" encoding="UTF-8" indent="yes" />
+  <xsl:output method="html" encoding="UTF-8" indent="yes"/>
 
   <xsl:template match="/">
     <html>
@@ -38,7 +38,7 @@
         <title><xsl:value-of select="$title"/></title>
       </head>
       <body>
-        <xsl:apply-templates />
+        <xsl:apply-templates/>
       </body>
     </html>
   </xsl:template>
@@ -73,6 +73,17 @@
       </xsl:call-template>
     </div>
   </xsl:template>  
+
+  <xsl:template match="a">
+    <xsl:text disable-output-escaping="yes">&lt;a href="</xsl:text>
+
+    <xsl:value-of select="@href"/>
+
+    <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
+    <xsl:value-of select="@href"/>
+    <xsl:text disable-output-escaping="yes">&lt;/a&gt;</xsl:text>
+  </xsl:template>
 
   <xsl:template match="gossip">
 
@@ -125,7 +136,8 @@
         &lt;<xsl:value-of select="@nick"/>&gt;
       </span>
  
-      <xsl:value-of select="."/><br/>
+      <xsl:apply-templates/>
+      <br/>
 
     </xsl:for-each>
 

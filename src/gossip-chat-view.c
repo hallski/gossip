@@ -19,10 +19,8 @@
  */
 
 #include <config.h>
-
 #include <glib.h>
 #include <sys/types.h>
-#include <regex.h>
 #include <string.h>
 #include <time.h>
 #include <gtk/gtk.h>
@@ -31,8 +29,6 @@
 #include <libgnome/gnome-url.h>
 #include "gossip-utils.h"
 #include "gossip-chat-view.h"
-
-#define DINGUS "(((mailto|news|telnet|nttp|file|http|ftp|https|dav)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes */
 #define TIMESTAMP_INTERVAL 300
@@ -126,9 +122,6 @@ static void       chat_view_realize_cb      (GossipChatView      *widget,
 static void       chat_view_clear_view_cb   (GtkMenuItem *menuitem,
 					     GossipChatView *view);
 
-static gint       chat_view_url_regex_match (const gchar         *msg,
-					     GArray              *start,
-					     GArray              *end);
 static void       
 chat_view_insert_text_with_emoticons        (GtkTextBuffer       *buf,
 					     GtkTextIter         *iter, 
@@ -143,7 +136,6 @@ static void
 chat_view_maybe_append_datestamp             (GossipChatView *view);
 
 
-static regex_t dingus;
 extern GConfClient *gconf_client;
 
 GType
@@ -491,42 +483,6 @@ chat_view_clear_view_cb (GtkMenuItem *menuitem, GossipChatView *view)
 	gossip_chat_view_clear (view);
 }
 
-static gint
-chat_view_url_regex_match (const gchar *msg,
-			   GArray      *start,
-			   GArray      *end)
-{
-	static gboolean inited = FALSE;
-	regmatch_t      matches[1];
-	gint            ret = 0;
-	gint            num_matches = 0;
-	gint            offset = 0;
-
-	if (!inited) {
-		memset (&dingus, 0, sizeof (regex_t));
-		regcomp (&dingus, DINGUS, REG_EXTENDED);
-		inited = TRUE;
-	}
-
-	while (!ret) {
-		ret = regexec (&dingus, msg + offset, 1, matches, 0);
-
-		if (ret == 0) {
-			gint s;
-			
-			num_matches++;
-
-			s = matches[0].rm_so + offset;
-			offset = matches[0].rm_eo + offset;
-			
-			g_array_append_val (start, s);
-			g_array_append_val (end, offset);
-		}
-	}
-		
-	return num_matches;
-}
-
 static void
 chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 				      GtkTextIter   *iter, 
@@ -848,7 +804,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	start = g_array_new (FALSE, FALSE, sizeof (gint));
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 	
-	num_matches = chat_view_url_regex_match (msg, start, end);
+	num_matches = gossip_utils_url_regex_match (msg, start, end);
 
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (buffer, &iter);

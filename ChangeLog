@@ -1,3 +1,13 @@
+2004-01-24  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-utils.c: (gossip_utils_url_regex_match): Move here
+	from chat view.
+
+	* src/gossip-log.xsl:
+	* src/gossip-chat-view.c: (gossip_chat_view_append_chat_message):
+	* src/gossip-log.c: (log_urlify), (gossip_log_message): And use it
+	here, make links clickable. Fixes bug #127156.
+
 2004-01-23  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Don't expand the buttons, fixes bug #132310.
