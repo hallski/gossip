@@ -1,3 +1,8 @@
+2004-12-31  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-jabber.c: (jabber_presence_handler):
+	- Handle contacts going offline correctly.
+
 2004-12-31  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-protocol.c: 

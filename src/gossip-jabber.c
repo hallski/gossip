@@ -879,15 +879,16 @@ jabber_presence_handler (LmMessageHandler *handler,
 		GossipPresence *presence;
 		
 		presence = jabber_get_presence (m);
+		gossip_contact_set_presence (contact, presence);
+		
 		if (presence) {
-                        gossip_contact_set_presence (contact, presence);
 			g_object_unref (presence);
-
-                        g_signal_emit_by_name (jabber,
-                                               "contact-presence-updated", 
-                                               contact);
-                }
-        }
+		}
+		
+		g_signal_emit_by_name (jabber,
+				       "contact-presence-updated", 
+				       contact);
+	}
 	
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 /*	return LM_HANDLER_RESULT_REMOVE_MESSAGE; */
