@@ -1039,7 +1039,7 @@ group_chat_iter_compare_func (GtkTreeModel *model,
 static GossipChat *
 group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 {
-	GossipChat       *priv_chat = NULL;;
+	GossipChat       *priv_chat = NULL;
 	GList            *l;
 	GossipRosterItem *item;
 /*	gchar            *name; */
