@@ -1,3 +1,19 @@
+2003-11-04  Mikael Hallendal  <micke@imendio.com>
+        
+        * Tabbed window patch from Geert-Jan Van den Bogaerde, you rock!
+
+	* gossip.schemas.in: open_in_list gconf-key.
+	* src/Makefile.am: Added new files gossip-chat-window.[ch]
+	* src/gossip-app.c: Updated to work with tabbed chat windows.
+	* src/gossip-chat.[ch]: Made into an object  
+	- This is now an object.
+	- Represenents a single chat. 
+	* src/gossip-group-chat.c: Updated for tabbed chat windows.
+	* src/gossip-preferences.c: Added setting for tabbed chat windows.
+	* src/gossip-chat-window.[ch]: added
+	* ui/chat.glade: tabbed window support
+	* ui/main.glade: added tabbed chat window setting to pref dialog
+
 2003-11-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_tray_destroy_event_cb),

@@ -1127,11 +1127,9 @@ app_user_activated_cb (GossipRosterOld *roster,
 		       GossipApp    *app)
 {
 	GossipChat *chat;
-	GtkWidget  *widget;
 
 	chat = gossip_chat_get_for_jid (jid);
-	widget = gossip_chat_get_dialog (chat);
-	gtk_window_present (GTK_WINDOW (widget));
+	gossip_chat_present (chat);
 
 	app_tray_pop_message (jid);
 }
@@ -1437,7 +1435,6 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 	const gchar *str;
 	GossipJID   *jid;
 	GossipChat  *chat;
-	GtkWidget   *widget;
 	GList       *l;
 
 	if (response == GTK_RESPONSE_OK) {
@@ -1445,8 +1442,7 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 		if (gossip_jid_string_is_valid_jid (str)) {
 			jid = gossip_jid_new (str);
 			chat = gossip_chat_get_for_jid (jid);
-			widget = gossip_chat_get_dialog (chat);
-			gtk_window_present (GTK_WINDOW (widget));
+			gossip_chat_present (chat);
 			gossip_jid_unref (jid);
 		} else {
 			/* FIXME: Display error dialog... */
@@ -1760,7 +1756,6 @@ app_tray_pop_message (GossipJID *jid)
 	GossipAppPriv *priv;
 	const gchar   *without_resource;
 	GossipChat    *chat;
-	GtkWidget     *widget;
 	GList         *l;
 
 	priv = app->priv;
@@ -1781,8 +1776,7 @@ app_tray_pop_message (GossipJID *jid)
 		return FALSE;
 	}
 
-	widget = gossip_chat_get_dialog (chat);
-	gtk_window_present (GTK_WINDOW (widget));
+	gossip_chat_present (chat);
 
 	without_resource = gossip_jid_get_without_resource (jid);
 	

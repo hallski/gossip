@@ -31,6 +31,21 @@
     </schema>
 
     <schema>
+      <key>/schemas/apps/gossip/conversation/open_in_list</key>
+      <applyto>/apps/gossip/conversation/open_in_tab</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Open conversations in single window with list view</short>
+	<long>
+	Whether or not to open conversations in a single window with list view.
+	</long>
+      </locale>
+    </schema>
+	
+
+    <schema>
       <key>/schemas/apps/gossip/sound/play_sounds</key>
       <applyto>/apps/gossip/sound/play_sounds</applyto>
       <owner>gossip</owner>

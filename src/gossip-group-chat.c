@@ -1044,7 +1044,6 @@ group_chat_priv_chat_new (GossipGroupChat *chat,
 	GossipChat  *priv_chat;
 	const gchar *nick;
 	gchar       *key;
-	GtkWidget   *dialog;
 
 	nick = gossip_jid_get_resource (jid);
 	
@@ -1058,11 +1057,9 @@ group_chat_priv_chat_new (GossipGroupChat *chat,
 	key = g_strdup (nick);
 	g_hash_table_insert (chat->priv_chats, key, priv_chat);
 
-	dialog = gossip_chat_get_dialog (priv_chat);
-	
-	g_object_set_data (G_OBJECT (dialog), "key", key);
+	g_object_set_data (G_OBJECT (chat), "key", key);
 
-	g_signal_connect (dialog,
+	g_signal_connect (chat,
 			  "destroy", 
 			  G_CALLBACK (group_chat_priv_chat_destroyed),
 			  chat);
@@ -1101,7 +1098,7 @@ group_chat_priv_chat_destroyed (GtkWidget *dialog, GossipGroupChat *chat)
 {
 	gchar *key;
 	
-	key = (gchar *) g_object_get_data (G_OBJECT (dialog), "key");
+	key = (gchar *) g_object_get_data (G_OBJECT (chat), "key");
 	
 	g_hash_table_remove (chat->priv_chats, key);
 }
@@ -1171,17 +1168,14 @@ disconnect_foreach (gpointer key,
 {
 	GossipGroupChat *chat;
 	GossipChat      *priv_chat;
-	GtkWidget       *dialog;
 
 	chat = data;
 	priv_chat = value;
 	
-	dialog = gossip_chat_get_dialog (value);
-
 	/* FIXME: This should ideally just make the entries unsensitive. */
-	gtk_widget_set_sensitive (dialog, FALSE);
+	gtk_widget_set_sensitive (gossip_chat_get_widget (priv_chat), FALSE);
 
-	g_signal_handlers_disconnect_by_func (dialog,
+	g_signal_handlers_disconnect_by_func (chat,
 					      group_chat_priv_chat_destroyed,
 					      data);
 }

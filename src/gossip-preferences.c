@@ -37,6 +37,7 @@ typedef struct {
 	GtkWidget    *silent_checkbutton;
 	GtkWidget    *smileys_checkbutton;
 	GtkWidget    *timestamp_checkbutton;
+	GtkWidget    *list_checkbutton;
 	GtkWidget    *compact_checkbutton;
 	GtkWidget    *leaving_entry;
 	GtkWidget    *away_entry;
@@ -349,6 +350,9 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/timestamp_messages",
 			      preferences->timestamp_checkbutton);
+	hookup_toggle_button (preferences,
+			      GCONF_PATH "/conversation/open_in_list",
+			      preferences->list_checkbutton);
 	
 	hookup_entry (preferences,
 		      GCONF_PATH "/status/leaving_message",
@@ -376,6 +380,7 @@ gossip_preferences_show (GossipApp *app)
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
 				     "compact_checkbutton", &preferences->compact_checkbutton,
 				     "timestamp_checkbutton", &preferences->timestamp_checkbutton,
+				     "list_checkbutton", &preferences->list_checkbutton,
 				     "leaving_entry", &preferences->leaving_entry,
 				     "away_entry", &preferences->away_entry,
 				     NULL);

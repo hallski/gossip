@@ -58,6 +58,8 @@ GdkPixbuf *   gossip_roster_old_get_status_pixbuf_for_jid (GossipRosterOld *rost
 						       GossipJID    *jid);
 gboolean      gossip_roster_old_get_is_offline        (GossipRosterOld *roster,
 						       GossipJID *jid);
+GossipShow    gossip_roster_old_get_show	      (GossipRosterOld *roster,
+						       GossipJID *jid);
 gboolean      gossip_roster_old_have_jid                  (GossipRosterOld *roster,
 						       GossipJID    *jid);
 GList *       gossip_roster_old_get_groups                (GossipRosterOld *roster);

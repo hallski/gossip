@@ -36,6 +36,14 @@ typedef struct _GossipApp      GossipApp;
 typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
 
+/* Note: We don't support "free to chat". */
+typedef enum {
+	GOSSIP_SHOW_AVAILABLE, /* available (null) */
+	GOSSIP_SHOW_BUSY,      /* busy (dnd) */
+	GOSSIP_SHOW_AWAY,      /* away (away) */
+	GOSSIP_SHOW_EXT_AWAY   /* extended away (xa) */
+} GossipShow;
+
 #include "gossip-roster-old.h"
 
 struct _GossipApp {
@@ -47,14 +55,6 @@ struct _GossipApp {
 struct _GossipAppClass {
         GObjectClass parent_class;
 };
-
-/* Note: We don't support "free to chat". */
-typedef enum {
-	GOSSIP_SHOW_AVAILABLE, /* available (null) */
-	GOSSIP_SHOW_BUSY,      /* busy (dnd) */
-	GOSSIP_SHOW_AWAY,      /* away (away) */
-	GOSSIP_SHOW_EXT_AWAY   /* extended away (xa) */
-} GossipShow;
 
 /*typedef enum {
 	GOSSIP_STATUS_AVAILABLE,

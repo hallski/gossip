@@ -1594,6 +1594,40 @@ gossip_roster_old_get_is_offline (GossipRosterOld *roster, GossipJID *jid)
 	return FALSE;
 }
 
+GossipShow
+gossip_roster_old_get_show (GossipRosterOld *roster, GossipJID *jid)
+{
+	GossipRosterOldPriv *priv;
+	GossipRosterOldItem *item;
+
+	priv = roster->priv;
+
+	item = g_hash_table_lookup (priv->contacts,
+				    gossip_jid_get_without_resource (jid));
+
+	if (!item) {
+		/* If there's no item yet is_offline will return true
+		 * so we can return anything here. */
+		return GOSSIP_STATUS_AVAILABLE;
+	}
+
+	/* This is somewhat of a hack until this status stuff gets sorted out. */
+	switch (item->status) {
+	case GOSSIP_STATUS_AVAILABLE:
+	case GOSSIP_STATUS_FREE:
+		return GOSSIP_SHOW_AVAILABLE;
+	case GOSSIP_STATUS_BUSY:
+		return GOSSIP_SHOW_BUSY;
+	case GOSSIP_STATUS_AWAY:
+		return GOSSIP_SHOW_AWAY;
+	case GOSSIP_STATUS_EXT_AWAY:
+		return GOSSIP_SHOW_EXT_AWAY;
+	default:
+		/* Offline status is checked through is_offline so
+		 * we can return anything here. */
+		return GOSSIP_STATUS_AVAILABLE;
+	}
+}
 
 gboolean
 gossip_roster_old_have_jid (GossipRosterOld *roster, GossipJID *jid)

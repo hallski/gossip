@@ -25,6 +25,8 @@ gossip_SOURCES = 				\
 	gossip-chat.h				\
 	gossip-chat-view.c                      \
 	gossip-chat-view.h                      \
+	gossip-chat-window.c			\
+	gossip-chat-window.h			\
 	gossip-connect-dialog.c			\
 	gossip-connect-dialog.h			\
 	gossip-contact-info.c                   \
