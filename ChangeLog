@@ -1,3 +1,8 @@
+2004-08-09  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (gossip_app_connect), (app_create_connection):
+	- Updated to the lm_connection_set_jid API.
+
 2004-08-08  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jid.c: Fixed some bugs when resource wasn't set. 

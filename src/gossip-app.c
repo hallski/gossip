@@ -1,8 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio HB
- * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
- * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2002-2004 Imendio HB
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
  *
  * This program is free software; you can redistribute it and/or
@@ -1380,8 +1378,10 @@ gossip_app_connect (void)
 	
 	account = priv->account;
 	
-	lm_connection_set_server (priv->connection, gossip_jid_get_part_host (priv->account->jid));
-	lm_connection_set_host (priv->connection, account->server);
+	lm_connection_set_server (priv->connection, account->server);
+	
+	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (account->jid));
+
 	lm_connection_set_port (priv->connection, account->port);
 	
 	if (account->use_ssl) {
@@ -1458,10 +1458,10 @@ app_create_connection (void)
 
 	priv = app->priv;
 
-	priv->connection = lm_connection_new (gossip_jid_get_part_host (priv->account->jid));
+	priv->connection = lm_connection_new (priv->account->server);
 
 	gossip_utils_set_proxy (priv->connection);
-	lm_connection_set_host (priv->connection, priv->account->server);
+	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (priv->account->jid));
 
 	lm_connection_set_port (priv->connection, priv->account->port);
 
