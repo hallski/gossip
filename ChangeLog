@@ -1,5 +1,8 @@
 2004-01-24  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c (chat_input_key_press_event_cb): Do nothing on
+	ctrl-enter, insert newline for shift-enter, and send on enter.
+
 	* src/gossip-app.c (app_init): 
 	* src/gossip-idle.c (gossip_idle_get_seconds): Lower the autoback
 	time to 15 seconds.

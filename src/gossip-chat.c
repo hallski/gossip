@@ -1046,11 +1046,20 @@ chat_input_key_press_event_cb (GtkWidget   *widget,
 	GtkAdjustment  *adj;
 	gdouble         val;
 		
-	/* Catch enter but not ctrl-enter */
-	if (IS_ENTER (event->keyval) && !(event->state & GDK_CONTROL_MASK)) {
+	/* Catch enter but not ctrl/shift-enter */
+	if (IS_ENTER (event->keyval) && !(event->state & GDK_CONTROL_MASK) &&
+	    !(event->state & GDK_SHIFT_MASK)) {
 		chat_input_text_view_send (chat);
-
+		
 		return TRUE;
+	}
+	if (IS_ENTER (event->keyval) && (event->state & GDK_CONTROL_MASK)) {
+		/* Do nothing for ctrl-enter. */
+		return TRUE;
+	}
+	if (IS_ENTER (event->keyval) && (event->state & GDK_SHIFT_MASK)) {
+		/* Newline for shift-enter. */
+		return FALSE;
 	}
 	else if (event->keyval == GDK_Page_Up) {
 		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
@@ -1088,16 +1097,7 @@ chat_text_view_focus_in_event_cb (GtkWidget  *widget,
 				  GossipChat *chat)
 {
 	GossipChatPriv *priv = chat->priv;
-/*
-	gint pos;
 
-	pos = gtk_editable_get_position (GTK_EDITABLE (chat->priv->input_entry));
-
-	gtk_widget_grab_focus (chat->priv->input_entry);
-	gtk_editable_select_region (GTK_EDITABLE (chat->priv->input_entry), 0, 0);
-
-	gtk_editable_set_position (GTK_EDITABLE (chat->priv->input_entry), pos);
-*/
 	gtk_widget_grab_focus (priv->input_text_view);
 	
 	return TRUE;
