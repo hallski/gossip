@@ -23,6 +23,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
+#include <libgnome/gnome-i18n.h>
 #include <gconf/gconf-client.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
@@ -382,16 +383,57 @@ chat_message_handler (LmMessageHandler *handler,
 		      LmMessage        *m,
 		      GossipChat       *chat)
 {
-	const gchar   *from;
-	GossipJID     *jid;
-	const gchar   *timestamp = NULL;
-	LmMessageNode *node;
-	const gchar   *body = "";
-	const gchar   *thread = "";
-	gboolean       focus;
-	gchar         *nick;
+	const gchar      *from;
+	LmMessageSubType  type;
+	GossipJID        *jid;
+	const gchar      *timestamp = NULL;
+	LmMessageNode    *node;
+	const gchar      *body = "";
+	const gchar      *thread = "";
+	gboolean          focus;
+	gchar            *nick;
 
 	from = lm_message_node_get_attribute (m->node, "from");
+
+	type = lm_message_get_sub_type (m);
+	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
+		GtkWidget *dialog;
+		gchar     *tmp, *str;
+
+		tmp = g_strdup_printf ("<b>%s</b>", from);
+		
+		node = lm_message_node_get_child (m->node, "error");
+		if (node && node->value && node->value[0]) {
+			str = g_strdup_printf ("%s\n%s.\n\n%s %s",
+					       _("An error occurred when chatting with"),
+					       tmp,
+					       _("Details:"),
+					       node->value);
+		} else {
+			str = g_strdup_printf ("%s\n%s.",
+					       _("An error occurred when chatting with"),
+					       tmp);
+		}
+
+		dialog = gtk_message_dialog_new (GTK_WINDOW (chat->dialog),
+						 GTK_DIALOG_DESTROY_WITH_PARENT,
+						 GTK_MESSAGE_ERROR,
+						 GTK_BUTTONS_CLOSE,
+						 str);
+
+		g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
+			      "use-markup", TRUE,
+			      NULL);
+		
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+
+		g_free (tmp);
+		g_free (str);
+		
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	}
+		
 	jid = gossip_jid_new (from);
 
 	d(g_print ("Incoming message:: '%s' ?= '%s'", 

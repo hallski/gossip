@@ -1,3 +1,11 @@
+2003-07-05  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c (chat_message_handler): Handle errors by
+	displaying them in a dialog.
+
+	* src/gossip-app.c (app_send_chat_message_cb): Open a chat
+	window for the selected JID.
+
 2003-07-05  Richard Hult  <rhult@codefactory.se>
 
 	* src/gossip-app.c: (app_send_chat_message_cb),

@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-05 17:58+0200\n"
+"POT-Creation-Date: 2003-07-05 19:45+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -30,64 +30,72 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:314
+#: src/gossip-app.c:316
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:318
+#: src/gossip-app.c:320
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:322
+#: src/gossip-app.c:324
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:326 ui/main.glade.h:27
+#: src/gossip-app.c:328 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:330
+#: src/gossip-app.c:332
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:338
+#: src/gossip-app.c:340
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:403
+#: src/gossip-app.c:405
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:414
+#: src/gossip-app.c:416
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:532
+#: src/gossip-app.c:534
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelenade till."
 
-#: src/gossip-app.c:537
-msgid "Start Chat"
-msgstr "Starta chatt"
+#: src/gossip-app.c:539
+msgid "_Start Chat"
+msgstr "_Starta chatt"
 
-#: src/gossip-app.c:1028
+#: src/gossip-app.c:1053
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
-#: src/gossip-app.c:1098
+#: src/gossip-app.c:1123
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1357
+#: src/gossip-app.c:1382
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
+
+#: src/gossip-chat.c:408 src/gossip-chat.c:414
+msgid "An error occurred when chatting with"
+msgstr "Ett fel inträffade under chatt med"
+
+#: src/gossip-chat.c:410
+msgid "Details:"
+msgstr "Detaljer:"
 
 #: src/gossip-contact-info.c:201
 msgid "Name:"

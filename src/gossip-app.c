@@ -181,6 +181,8 @@ static void      app_complete_jid_insert_text_cb    (GtkEntry       *entry,
 static gboolean  app_complete_jid_key_press_event_cb(GtkEntry       *entry,
 						     GdkEventKey    *event,
 						     GtkCombo       *combo);
+static void      app_complete_jid_activate_cb       (GtkEntry       *entry,
+						     GtkDialog      *dialog);
 static gchar *   app_complete_jid_to_string         (gpointer        data);
 
 
@@ -531,22 +533,23 @@ app_send_chat_message_cb (GtkWidget *widget,
 					 GTK_BUTTONS_NONE,
 					 _("Enter the user ID of the person you would "
 					 "like to send a chat message to."));
-
+	
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				_("Start Chat"), GTK_RESPONSE_OK,
+				_("_Start Chat"), GTK_RESPONSE_OK,
 				NULL);
 	
-	gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
+	gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
 	
 	frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_NONE);
-	gtk_container_set_border_width (GTK_CONTAINER (frame), 12);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (frame), 4);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), frame, TRUE, TRUE, 8);
 	gtk_widget_show (frame);
 	
 	combo = gtk_combo_new ();
 	gtk_combo_set_use_arrows (GTK_COMBO (combo), FALSE);
+	gtk_combo_disable_activate (GTK_COMBO (combo));
 	gtk_container_add (GTK_CONTAINER (frame), combo);
 	gtk_widget_show (combo);
 
@@ -560,10 +563,18 @@ app_send_chat_message_cb (GtkWidget *widget,
 			  G_CALLBACK (app_complete_jid_key_press_event_cb),
 			  combo);
 
+	g_signal_connect (GTK_COMBO (combo)->entry,
+			  "activate",
+			  G_CALLBACK (app_complete_jid_activate_cb),
+			  dialog);
+	
 	completion = g_completion_new (app_complete_jid_to_string);
 	g_object_set_data (G_OBJECT (combo), "completion", completion);
 
 	jid = gossip_roster_get_selected_jid (priv->roster);
+	if (jid) {
+		gossip_jid_ref (jid);
+	}
 	
 	jids = gossip_roster_get_jids (priv->roster);
 	for (l = jids; l; l = l->next) {
@@ -595,20 +606,34 @@ app_send_chat_message_cb (GtkWidget *widget,
 		gtk_entry_set_text (GTK_ENTRY (GTK_COMBO (combo)->entry), "");
 	}
 
+	if (jid) {
+		gossip_jid_unref (jid);
+	}
+	
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+	if (response == GTK_RESPONSE_OK) {
+		const gchar *str;
+
+		str = gtk_entry_get_text (GTK_ENTRY (GTK_COMBO (combo)->entry));
+		if (gossip_jid_string_is_valid_jid (str)) {
+			jid = gossip_jid_new (str);
+			app_get_chat_for_jid (app, jid);
+			gossip_jid_unref (jid);
+		} else {
+			/* FIXME: Display error dialog... */
+			g_warning ("'%s' is not a valid JID.", str);
+		}
+	}
 
 	for (l = jid_strings; l; l = l->next) {
 		g_free (l->data);
 	}
+	
+	g_list_free (jid_strings);
+	g_list_free (jids);
 
 	gtk_widget_destroy (dialog);
-	g_list_free (jids);
-	g_list_free (jid_strings);
-
-	if (response == GTK_RESPONSE_OK) {
-		// FIXME: get the jid.
-		//app_get_chat_for_jid (app, jid);
-	}
 }
 
 static void
@@ -1589,6 +1614,13 @@ app_complete_jid_key_press_event_cb (GtkEntry    *entry,
 	}
 	
 	return FALSE;
+}
+
+static void
+app_complete_jid_activate_cb (GtkEntry  *entry,
+			      GtkDialog *dialog)
+{
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
 }
 
 static gchar *
