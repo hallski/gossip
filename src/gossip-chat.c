@@ -441,6 +441,10 @@ chat_send (GossipChat *chat, const gchar *msg)
 	LmMessage *m;
 	gchar     *nick;
 
+	if (msg == NULL || msg[0] == '\0') {
+		return;
+	}
+	
 	if (g_ascii_strcasecmp (msg, "/clear") == 0) {
 		GtkTextBuffer *buffer;
 		

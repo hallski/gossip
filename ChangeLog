@@ -1,5 +1,23 @@
 2003-08-01  Richard Hult  <rhult@codefactory.se>
 
+	* src/gossip-app.c: (app_init), (app_show_hide_activate_cb),
+	(app_send_chat_message), (app_send_chat_message_cb),
+	(app_popup_send_chat_message_cb), (app_complete_jid_response_cb),
+	(app_toggle_visibility), (app_tray_icon_destroy_cb),
+	(app_tray_icon_button_press_cb), (app_create_tray_icon),
+	(app_tray_icon_set_status), (app_tray_icon_push_message),
+	(app_tray_icon_pop_message), (app_tray_icon_update_tooltip): Add
+	tooltip for new messages, lower the flash rate, add context menu
+	for the icon.
+
+	* src/gossip-roster.c: (get_jids_foreach),
+	(gossip_roster_get_jids), (gossip_roster_free_jid_list): Ref and
+	unref the jids.
+
+	* src/gossip-chat.c (chat_send): Don't send empty messages.
+
+2003-08-01  Richard Hult  <rhult@codefactory.se>
+
 	* src/gossip-app.c: (app_init), (app_authentication_cb),
 	(app_message_handler), (app_user_activated_cb), (app_set_status),
 	(app_tray_icon_button_press_cb),

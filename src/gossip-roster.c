@@ -1559,7 +1559,7 @@ get_jids_foreach (gpointer   key,
 {
 	GossipRosterItem *item = value;
 
-	*list = g_list_prepend (*list, item->jid);
+	*list = g_list_prepend (*list, gossip_jid_ref (item->jid));
 }
 
 GList *
@@ -1577,6 +1577,18 @@ gossip_roster_get_jids (GossipRoster *roster)
 			      &jids);
 	
 	return jids;
+}
+
+void
+gossip_roster_free_jid_list (GList *jids)
+{
+	GList *l;
+
+	for (l = jids; l; l = l->next) {
+		gossip_jid_unref (l->data);
+	}
+
+	g_list_free (jids);
 }
 
 static gboolean
