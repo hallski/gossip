@@ -792,6 +792,9 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 				     label,
 				     GOSSIP_NOTEBOOK_INSERT_LAST,
 				     TRUE);
+
+	/* FIXME: somewhat ugly */
+	g_object_ref (chat);
 }
 
 void
@@ -800,6 +803,8 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 {
 	gossip_notebook_remove_page (GOSSIP_NOTEBOOK (window->priv->notebook),
 				     gossip_chat_get_widget (chat));
+	/* FIXME: somewhat ugly */
+	g_object_unref (chat);
 }
 
 void

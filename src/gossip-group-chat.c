@@ -68,7 +68,7 @@ struct _GossipGroupChat {
 	GCompletion      *completion;
 
 	GTimeVal          last_timestamp;
-	GHashTable       *priv_chats;
+	GList            *priv_chats;
 };
 
 typedef struct {
@@ -135,8 +135,8 @@ static GossipChat *     group_chat_priv_chat_new                (GossipGroupChat
 static void             group_chat_priv_chat_incoming           (GossipGroupChat   *chat,
 								 GossipJID         *jid,
 								 LmMessage         *m);
-static void             group_chat_priv_chat_destroyed          (GtkWidget         *dialog,
-								 GossipGroupChat   *chat);
+static void             group_chat_priv_chat_removed            (GossipGroupChat *chat,
+								 GossipChat   *priv_chat);
 static void             group_chat_send_multi_clicked_cb        (GtkWidget         *unused,
 								 GossipGroupChat   *chat);
 static void             group_chat_priv_chats_disconnect        (GossipGroupChat   *chat);
@@ -178,7 +178,7 @@ destroy_group_chat (GossipGroupChat *chat)
 	g_free (chat->nick);
 	g_free (chat);
 
-	g_hash_table_destroy (chat->priv_chats);
+	g_list_free (chat->priv_chats);
 }
 
 static void
@@ -227,8 +227,7 @@ group_chat_get_for_jid (GossipJID *jid)
 	chat->inited = FALSE;
 	chat->last_timestamp.tv_sec = chat->last_timestamp.tv_usec = 0;
 
-	chat->priv_chats = g_hash_table_new_full (g_str_hash, g_str_equal,
-						  g_free, NULL);
+	chat->priv_chats = NULL;
 	
 	group_chat_create_gui (chat);
 
@@ -474,7 +473,7 @@ group_chat_row_activated_cb (GtkTreeView       *view,
 			    COL_JID,  &jid,
 			    -1);
 
-	group_chat_priv_chat_new (chat, jid);
+	/* group_chat_priv_chat_new (chat, jid); */
 }
 
 static void
@@ -1038,32 +1037,47 @@ group_chat_iter_compare_func (GtkTreeModel *model,
 }
 
 static GossipChat *
-group_chat_priv_chat_new (GossipGroupChat *chat, 
-			  GossipJID       *jid)
+group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 {
-	GossipChat  *priv_chat;
-	const gchar *nick;
-	gchar       *key;
+	GossipChat       *priv_chat = NULL;;
+	GList            *l;
+	GossipRosterItem *item;
+/*	gchar            *name; */
 
-	nick = gossip_jid_get_resource (jid);
+	for (l = chat->priv_chats; l; l = l->next) {
+		GossipChat       *p_chat = GOSSIP_CHAT (l->data);
+		GossipRosterItem *item = gossip_chat_get_item (p_chat);
+		GossipJID        *j = gossip_roster_item_get_jid (item);
+		
+		if (gossip_jid_equals (j, jid)) {
+			priv_chat = p_chat;
+			break;
+		}
+	}
 	
-	priv_chat = g_hash_table_lookup (chat->priv_chats, nick);
 	if (priv_chat) {
 		return priv_chat;
 	}
+
+	item = gossip_roster_item_new (jid);
+	/* name = g_strdup_printf ("%s@%s", gossip_jid_get_resource (jid),
+				gossip_jid_get_part_name (jid));
+	gossip_roster_item_set_name (item, name);
+	g_free (name); */
+
+	priv_chat = gossip_chat_get_for_group_chat (item);
+	gossip_roster_item_unref (item);
+
+	chat->priv_chats = g_list_prepend (chat->priv_chats, priv_chat);
 	
-	priv_chat = gossip_chat_get_for_group_chat (jid);
+	g_object_weak_ref (G_OBJECT (priv_chat),
+			   (GWeakNotify) group_chat_priv_chat_removed,
+			   chat);
 
-	key = g_strdup (nick);
-	g_hash_table_insert (chat->priv_chats, key, priv_chat);
+	gossip_chat_present (priv_chat);
 
-	g_object_set_data (G_OBJECT (chat), "key", key);
-
-	g_signal_connect (chat,
-			  "destroy", 
-			  G_CALLBACK (group_chat_priv_chat_destroyed),
-			  chat);
-
+	g_object_unref (priv_chat);
+	
 	return priv_chat;
 }
 
@@ -1073,34 +1087,16 @@ group_chat_priv_chat_incoming (GossipGroupChat *chat,
 			       LmMessage       *m)
 {
 	GossipChat  *priv_chat;
-	const gchar *nick;
-	const gchar *from;
 
-	nick = gossip_jid_get_resource (jid);
-	priv_chat = g_hash_table_lookup (chat->priv_chats, nick);
-	
-	if (!priv_chat) {
-		GossipJID *jid;
+	priv_chat = group_chat_priv_chat_new (chat, jid);
 
-		from = lm_message_node_get_attribute (m->node, "from");
-		jid = gossip_jid_new (from);
-
-		priv_chat = group_chat_priv_chat_new (chat, jid);
-
-		gossip_jid_unref (jid);
-	}
-	
 	gossip_chat_append_message (priv_chat, m);
 }
 
 static void
-group_chat_priv_chat_destroyed (GtkWidget *dialog, GossipGroupChat *chat)
+group_chat_priv_chat_removed (GossipGroupChat *chat, GossipChat *priv_chat)
 {
-	gchar *key;
-	
-	key = (gchar *) g_object_get_data (G_OBJECT (chat), "key");
-	
-	g_hash_table_remove (chat->priv_chats, key);
+	chat->priv_chats = g_list_remove (chat->priv_chats, priv_chat);
 }
 
 static void
@@ -1162,28 +1158,17 @@ gossip_group_chat_set_show (GossipShow show)
 }
 
 static void
-disconnect_foreach (gpointer key,
-		    gpointer value,
-		    gpointer data)
-{
-	GossipGroupChat *chat;
-	GossipChat      *priv_chat;
-
-	chat = data;
-	priv_chat = value;
-	
-	/* FIXME: This should ideally just make the entries unsensitive. */
-	gtk_widget_set_sensitive (gossip_chat_get_widget (priv_chat), FALSE);
-
-	g_signal_handlers_disconnect_by_func (chat,
-					      group_chat_priv_chat_destroyed,
-					      data);
-}
-
-static void
 group_chat_priv_chats_disconnect (GossipGroupChat *chat) 
 {
-	g_hash_table_foreach (chat->priv_chats,
-			      disconnect_foreach,
-			      chat);
-}
+	GList *l;
+
+	for (l = chat->priv_chats; l; l = l->next) {
+		GossipChat *priv_chat = GOSSIP_CHAT (l->data);
+		
+		gtk_widget_set_sensitive (gossip_chat_get_widget (priv_chat),
+					  FALSE);
+		g_object_weak_unref (G_OBJECT(priv_chat),
+				     (GWeakNotify) group_chat_priv_chat_removed,
+				     chat);
+	}
+}	

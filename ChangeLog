@@ -1,3 +1,15 @@
+2003-11-16  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c: 
+	(gossip_chat_window_add_chat): ref the chat
+	(gossip_chat_window_remove_chat): unref the chat
+	* src/gossip-chat.[ch]: 
+	(gossip_chat_get_for_group_chat): updated some for the new roster
+	  item stuff.
+	* src/gossip-group-chat.c:
+	- did some work to fix private chats in a group chat but decided
+	  that we need to look over this code some in the future instead.
+
 2003-11-16  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-roster-view.c (roster_view_ellipsize_item_string):

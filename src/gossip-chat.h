@@ -61,7 +61,7 @@ struct _GossipChatClass {
 
 GType           gossip_chat_get_type            (void);
 GossipChat *    gossip_chat_get_for_item        (GossipRosterItem *item);
-GossipChat *    gossip_chat_get_for_group_chat  (GossipJID        *jid);
+GossipChat *    gossip_chat_get_for_group_chat  (GossipRosterItem *item);
 void            gossip_chat_append_message      (GossipChat       *chat,
                                                  LmMessage        *message);
 void            gossip_chat_present             (GossipChat       *chat);

@@ -47,7 +47,6 @@ struct _GossipRosterPriv {
 };
    
 struct _GossipRosterGroup {
-	GossipRoster *roster;
         gchar        *name;
         GList        *items; /* List of RosterItems */
 
@@ -1221,7 +1220,7 @@ gossip_roster_item_get_jid (GossipRosterItem *item)
 }
 
 const gchar *
-gossip_roster_item_get_name      (GossipRosterItem  *item)
+gossip_roster_item_get_name (GossipRosterItem *item)
 {
 	g_return_val_if_fail (item != NULL, NULL);
 	

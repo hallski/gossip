@@ -1048,23 +1048,31 @@ gossip_chat_get_for_item (GossipRosterItem *item)
 }
 
 GossipChat *
-gossip_chat_get_for_group_chat (GossipJID *jid)
+gossip_chat_get_for_group_chat (GossipRosterItem *item)
 {
-	/*GossipChat *chat; */
+	GossipChat     *chat;
+	GossipChatPriv *priv;
+	GossipJID      *jid;
 
-	return NULL;
-#if 0
-	chat = chat_get_for_jid (jid);
+	chats_init ();
 
-	if (chat == NULL) {
-		chat = g_object_new (GOSSIP_TYPE_CHAT,
-				     "jid", jid,
-				     "priv_group_chat", TRUE,
-				     NULL);
+	jid = gossip_roster_item_get_jid (item);
+	chat = g_hash_table_lookup (chats, jid);
+	if (chat) {
+		return chat;
+	}
+
+	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
+	priv = chat->priv;
+	priv->item = gossip_roster_item_ref (item);
+	
+	if (gossip_roster_item_is_offline (priv->item)) {
+		priv->is_online = FALSE;
+	} else {
+		priv->is_online = TRUE;
 	}
 
 	return chat;
-#endif
 }
 
 void
