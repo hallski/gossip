@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -132,13 +132,29 @@ gossip_jid_get_part_name (GossipJID *jid)
 
 	g_return_val_if_fail (jid != NULL, "");
 	
-	for (ch = jid->full; *ch; ++ch) {
+	for (ch = jid->no_resource; *ch; ++ch) {
 		if (*ch == '@') {
-			return g_strndup (jid->full, ch - jid->full);
+			return g_strndup (jid->no_resource, ch - jid->no_resource);
 		}
 	}
 
 	return g_strdup (""); 
+}
+
+const gchar *
+gossip_jid_get_part_host (GossipJID *jid)
+{
+	gchar *ch;
+
+	g_return_val_if_fail (jid != NULL, "");
+	
+	for (ch = jid->no_resource; *ch; ++ch) {
+		if (*ch == '@') {
+			return ch + 1;
+		}
+	}
+
+	return "";
 }
 
 GossipJID *

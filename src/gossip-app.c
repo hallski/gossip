@@ -1380,7 +1380,8 @@ gossip_app_connect (void)
 	
 	account = priv->account;
 	
-	lm_connection_set_server (priv->connection, account->server);
+	lm_connection_set_server (priv->connection, gossip_jid_get_part_host (priv->account->jid));
+	lm_connection_set_host (priv->connection, account->server);
 	lm_connection_set_port (priv->connection, account->port);
 	
 	if (account->use_ssl) {
@@ -1457,8 +1458,10 @@ app_create_connection (void)
 
 	priv = app->priv;
 
-	priv->connection = lm_connection_new (priv->account->server);
+	priv->connection = lm_connection_new (gossip_jid_get_part_host (priv->account->jid));
+
 	gossip_utils_set_proxy (priv->connection);
+	lm_connection_set_host (priv->connection, priv->account->server);
 
 	lm_connection_set_port (priv->connection, priv->account->port);
 

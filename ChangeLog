@@ -1,5 +1,14 @@
 2004-08-08  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.in: Bumped loudmouth requirement to 0.17
+	* src/gossip-app.c: (gossip_app_connect), (app_create_connection):
+	- Set the host to connect to.
+	* src/gossip-jid.[ch]:
+	(gossip_jid_get_part_host): Added
+	- Allow connecting to another host than the host part of the jid.
+
+2004-08-08  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_create_connection):
 	* src/gossip-register.c: (gossip_register_account):
 	- Set proxy if user has set HTTP proxy in GNOME.

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -34,6 +34,7 @@ const gchar *   gossip_jid_get_full                (GossipJID     *jid);
 const gchar *   gossip_jid_get_without_resource    (GossipJID     *jid);
 const gchar *   gossip_jid_get_resource            (GossipJID     *jid);
 gchar *         gossip_jid_get_part_name           (GossipJID     *jid);
+const gchar *   gossip_jid_get_part_host           (GossipJID     *jid);
 GossipJID *     gossip_jid_ref                     (GossipJID     *jid);
 void            gossip_jid_unref                   (GossipJID     *jid);
 gboolean        gossip_jid_equals                  (GossipJID     *jid_a,
