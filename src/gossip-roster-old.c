@@ -681,11 +681,11 @@ roster_find_user_foreach (GtkTreeModel *model,
 		return FALSE;
 	}
 
-	d(g_print ("==> "));
+	/*d(g_print ("==> "));
 
 	d(g_print ("In foreach:: '%s' ?= '%s'\n", 
 		   gossip_jid_get_without_resource (data->jid), 
-		   gossip_jid_get_without_resource (item->jid)));
+		   gossip_jid_get_without_resource (item->jid)));*/
 	
 	if (gossip_jid_equals_without_resource (data->jid, item->jid)) {
 		data->found = TRUE;
@@ -924,6 +924,33 @@ roster_disconnected_cb (GossipApp *app, GossipRosterOld *roster)
 	roster_clear (roster);
 }
 
+static GossipStatus
+get_status_from_type_and_show (LmMessageSubType  type,
+			       const gchar      *show)
+{
+	if (type == LM_MESSAGE_SUB_TYPE_UNAVAILABLE) {
+		return GOSSIP_STATUS_OFFLINE;
+	}
+
+	if (!show) {
+		return GOSSIP_STATUS_AVAILABLE;
+	}
+	else if (strcmp (show, "chat") == 0) {
+		return GOSSIP_STATUS_AVAILABLE;
+	}
+	else if (strcmp (show, "away") == 0) {
+		return GOSSIP_STATUS_AWAY;
+	}
+	else if (strcmp (show, "xa") == 0) {
+		return GOSSIP_STATUS_EXT_AWAY;
+	}
+	else if (strcmp (show, "dnd") == 0) {
+		return GOSSIP_STATUS_BUSY;
+	}
+	
+	return GOSSIP_STATUS_AVAILABLE;
+}
+
 static LmHandlerResult
 roster_presence_handler (LmMessageHandler *handler,
 			 LmConnection     *connection,
@@ -1035,23 +1062,7 @@ roster_presence_handler (LmMessageHandler *handler,
 	if (type == LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED) {
 		status = GOSSIP_STATUS_OFFLINE;
 	} else {
-		if (!show || !show[0]) {
-			status = GOSSIP_STATUS_AVAILABLE;
-		}
-		else if (strcmp (show, "busy") == 0) {
-			status = GOSSIP_STATUS_BUSY;
-		}
-		else if (strcmp (show, "away") == 0) {
-			status = GOSSIP_STATUS_AWAY;
-		}
-		else if (strcmp (show, "xa") == 0) {
-			status = GOSSIP_STATUS_EXT_AWAY;
-		}
-		else if (strcmp (show, "chat") == 0) {
-			status = GOSSIP_STATUS_AVAILABLE;
-		} else {
-			status = GOSSIP_STATUS_AVAILABLE;
-		}
+		status = get_status_from_type_and_show (type, show);
 	}
 	
 	item->status = status;

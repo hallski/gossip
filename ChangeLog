@@ -1,3 +1,13 @@
+2003-09-01  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_idle_check_cb): Don't use the
+	preferences.
+
+	* src/gossip-roster-old.c (roster_presence_handler): Fix bug that
+	was introduced with the new status stuff.
+
+	* src/gossip-utils.c: Remove dead code.
+	
 2003-09-01  Metin Amiroff  <metin@karegen.com>
 
 	configure.in: Added "az" in ALL_LINGUAS.

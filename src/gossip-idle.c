@@ -19,7 +19,6 @@
  */
 
 #include <config.h>
-#include <gdk/gdk.h>
 #include "gossip-idle.h"
 
 #ifdef USE_SCREENSAVER
@@ -27,13 +26,14 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
-#endif /* USE_SCREENSAVER */
+#include <gdk/gdk.h>
+#endif
 
 gint
 gossip_idle_get_seconds (void)
 {
 	gint idle_secs = 0;
-
+	
 #ifdef USE_SCREENSAVER
 	static gboolean          inited = FALSE;
 	static XScreenSaverInfo *ss_info = NULL;
@@ -50,7 +50,7 @@ gossip_idle_get_seconds (void)
 
 	if (ss_info) {
 		XScreenSaverQueryInfo (GDK_DISPLAY (), DefaultRootWindow (GDK_DISPLAY ()), ss_info);
-		idle_secs = (ss_info->idle) / 1000;
+		idle_secs = ss_info->idle / 1000;
 	}
 #endif
 

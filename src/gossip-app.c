@@ -1132,10 +1132,10 @@ app_idle_check_cb (GossipApp *app)
 	GossipAppPriv *priv;
 	gboolean       enabled;
 	gint           idle;
-	gint           auto_away;
-	gint           auto_ext_away;
+	gint           auto_away = 5*60;
+	gint           auto_ext_away = 30*60;
 	GossipShow     show;
-	
+
 	priv = app->priv;
 
 	enabled =  gconf_client_get_bool (gconf_client,
@@ -1148,31 +1148,32 @@ app_idle_check_cb (GossipApp *app)
 		return TRUE;
 	}
 
-	auto_away = 60 * gconf_client_get_int (gconf_client,
-					       "/apps/gossip/auto_away/idle_time",
-					       NULL);
-	auto_ext_away = 60 * gconf_client_get_int (gconf_client,
-						   "/apps/gossip/auto_away/extended_idle_time",
-						   NULL);
+	/* auto_away = gconf_client_get_int (gconf_client,
+	   "/apps/gossip/auto_away/idle_time",
+	   NULL); */
 
-	idle = gossip_idle_get_seconds ();
+	/* auto_ext_away = gconf_client_get_int (gconf_client,
+	   "/apps/gossip/auto_away/extended_idle_time",
+	   NULL); */
+
+	idle = base + gossip_idle_get_seconds ();
 	show = app_get_effective_show ();
 
-	if (show != GOSSIP_SHOW_EXT_AWAY && idle > auto_ext_away) {
+	if (show != GOSSIP_SHOW_EXT_AWAY && idle >= auto_ext_away) {
 		priv->auto_show = GOSSIP_SHOW_EXT_AWAY;
 	}
 	else if (show != GOSSIP_SHOW_AWAY && show != GOSSIP_SHOW_EXT_AWAY && 
-		 idle > auto_away) {
+		 idle >= auto_away) {
 		priv->auto_show = GOSSIP_SHOW_AWAY;
 	}
 	else if (idle < auto_away) {
 		priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 	}
-
+	
 	if (show != app_get_effective_show ()) {
 		app_update_show ();
 	}
-	
+
 	return TRUE;
 }
 

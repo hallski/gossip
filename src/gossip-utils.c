@@ -985,34 +985,6 @@ gossip_utils_get_timestamp_from_message (LmMessage *m)
 	return timestamp;
 }
 
-/*
-GdkPixbuf *
-gossip_get_pixbuf_from_type_and_show (LmMessageSubType  type,
-				      const gchar      *show)
-{
-	if (type == LM_MESSAGE_SUB_TYPE_UNAVAILABLE) {
-		return GOSSIP_STATUS_OFFLINE;
-	}
-
-	if (!show) {
-		return GOSSIP_STATUS_AVAILABLE;
-	}
-	else if (strcmp (show, "chat") == 0) {
-		return GOSSIP_STATUS_AVAILABLE;
-	}
-	else if (strcmp (show, "away") == 0) {
-		return GOSSIP_STATUS_AWAY;
-	}
-	else if (strcmp (show, "xa") == 0) {
-		return GOSSIP_STATUS_EXT_AWAY;
-	}
-	else if (strcmp (show, "dnd") == 0) {
-		return GOSSIP_STATUS_BUSY;
-	}
-	
-	return GOSSIP_STATUS_AVAILABLE;
-}
-*/
 static void
 password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
 {
