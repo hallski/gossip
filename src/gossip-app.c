@@ -1203,7 +1203,7 @@ app_connection_ssl_func (LmConnection *connection,
 			 LmSSLStatus   status,
 			 GossipApp    *app)
 {
-	return LM_SSL_RESPONSE_STOP;
+	return LM_SSL_RESPONSE_CONTINUE;
 }
 
 static void
