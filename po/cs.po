@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-18 12:03+0200\n"
-"PO-Revision-Date: 2004-08-18 15:52+0200\n"
+"POT-Creation-Date: 2004-08-31 11:59+0200\n"
+"PO-Revision-Date: 2004-08-31 14:11+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -182,45 +182,45 @@ msgstr ""
 "Zkontrolujte, že vaše informace o účtu jsou správné. Možná server momentálně "
 "není dostupný."
 
-#: src/gossip-app.c:1892
+#: src/gossip-app.c:1895
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Klient Instant Messaging"
 
-#: src/gossip-app.c:2036
+#: src/gossip-app.c:2039
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2125 src/gossip-chat-window.c:793
-#: src/gossip-roster-view.c:986
+#: src/gossip-app.c:2128 src/gossip-chat-window.c:793
+#: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Odpojen"
 
-#: src/gossip-app.c:2524 src/gossip-preferences.c:638
+#: src/gossip-app.c:2527 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "K dispozici"
 
-#: src/gossip-app.c:2535 src/gossip-preferences.c:639
+#: src/gossip-app.c:2538 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/gossip-app.c:2546 src/gossip-preferences.c:640
+#: src/gossip-app.c:2549 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Pryč"
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2681
 msgid "Available..."
 msgstr "K dispozici..."
 
-#: src/gossip-app.c:2683
+#: src/gossip-app.c:2686
 msgid "Busy..."
 msgstr "Zaneprázdněn..."
 
-#: src/gossip-app.c:2688
+#: src/gossip-app.c:2691
 msgid "Away..."
 msgstr "Pryč..."
 
-#: src/gossip-app.c:2717
+#: src/gossip-app.c:2720
 msgid "Edit List..."
 msgstr "Upravit seznam..."
 
@@ -298,7 +298,7 @@ msgstr "Skupina"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:38
+#: src/gossip-roster.c:39
 msgid "Unsorted"
 msgstr "Nesetříděno"
 
@@ -365,31 +365,31 @@ msgstr "Nemohu zaregistrovat účet"
 msgid "Reason:"
 msgstr "Důvod:"
 
-#: src/gossip-roster-view.c:209
+#: src/gossip-roster-view.c:244
 msgid "/Contact _Information"
 msgstr "/_Informace o kontaktu"
 
-#: src/gossip-roster-view.c:217
+#: src/gossip-roster-view.c:252
 msgid "/Re_name contact"
 msgstr "/_Přejmenovat kontakt"
 
-#: src/gossip-roster-view.c:225
+#: src/gossip-roster-view.c:260
 msgid "/_Edit groups"
 msgstr "/_Upravit skupiny"
 
-#: src/gossip-roster-view.c:233
+#: src/gossip-roster-view.c:268
 msgid "/Show _Log"
 msgstr "/Zobrazit záz_nam"
 
-#: src/gossip-roster-view.c:249
+#: src/gossip-roster-view.c:284
 msgid "/_Remove contact"
 msgstr "/_Odstranit kontakt"
 
-#: src/gossip-roster-view.c:260
+#: src/gossip-roster-view.c:295
 msgid "/Re_name group"
 msgstr "/_Přejmenovat skupinu"
 
-#: src/gossip-roster-view.c:1397
+#: src/gossip-roster-view.c:1642
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -400,7 +400,7 @@ msgstr ""
 "%s\n"
 "ze svého seznamu kontaktů?"
 
-#: src/gossip-roster-view.c:1490
+#: src/gossip-roster-view.c:1735
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -409,7 +409,7 @@ msgstr ""
 "Zadejte prosím novou přezdívku pro kontakt\n"
 "%s"
 
-#: src/gossip-roster-view.c:1596
+#: src/gossip-roster-view.c:1841
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -912,12 +912,12 @@ msgid "Sending request"
 msgstr "Odesílám požadavek"
 
 #: ui/main.glade.h:67
-msgid "Setup Finished"
-msgstr "Nastavení dokončeno"
+msgid "Server Details"
+msgstr "Podrobnosti o serveru"
 
 #: ui/main.glade.h:68
-msgid "Sever Details"
-msgstr "Podrobnosti o serveru"
+msgid "Setup Finished"
+msgstr "Nastavení dokončeno"
 
 #: ui/main.glade.h:69
 msgid "Show _Offline Contacts"
@@ -1015,7 +1015,7 @@ msgstr "Ano"
 
 #: ui/main.glade.h:92
 msgid ""
-"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"You are not subscribed to this contact's status. Press Subscribe to receive "
 "their status."
 msgstr ""
 "Nejste přihlášeni ke stavu tohoto kontaktu. Jejich stav získejte kliknutím "
