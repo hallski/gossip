@@ -1,3 +1,8 @@
+2003-11-17  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c: (gossip_roster_view_flash_item):
+	- Always remove from inbox if flash = FALSE.
+
 2003-11-17  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-info.c (gossip_contact_info_new): Don't make

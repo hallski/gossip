@@ -1715,7 +1715,7 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 	
 	g_return_if_fail (GOSSIP_IS_ROSTER_VIEW (view));
 	g_return_if_fail (item != NULL);
-	
+
 	priv = view->priv;
 	
 	flash_data = g_hash_table_lookup (priv->flash_table, item);
@@ -1741,7 +1741,7 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 		/* Add to inbox */
 		roster_view_add_item (view, item, NULL);
 	}
-	else if (!flash && flash_data) {
+	else if (!flash) {
 		g_hash_table_remove (priv->flash_table, item);
 		
 		/* Remove from inbox */
