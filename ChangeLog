@@ -1,6 +1,11 @@
-2003-11-14  Mikael Hallendal  <micke@imendio.com>
+2003-11-14  Richard Hult  <richard@imendio.com>
 
-	reviewed by: <delete if not using a buddy>
+	* gossip.schemas.in: Remove open_in_list. Don't translate
+	away_messages and busy_messages, the user can do that with the
+	status editor if needed. This can never be perfect, unless we all
+	start speaking Esperanto.
+
+2003-11-14  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c: (gossip_chat_get_for_item):
 	- Initialize is_online correctly. Fixes #126760 

@@ -17,20 +17,6 @@
     </schema>
     
     <schema>
-      <key>/schemas/apps/gossip/conversation/open_in_list</key>
-      <applyto>/apps/gossip/conversation/open_in_tab</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>false</default>
-      <locale name="C">
-        <short>Open conversations in single window with list view</short>
-	<long>
-	Whether or not to open conversations in a single window with list view.
-	</long>
-      </locale>
-    </schema>
-	
-    <schema>
       <key>/schemas/apps/gossip/contacts/show_offline</key>
       <applyto>/apps/gossip/contacts/show_offline</applyto>
       <owner>gossip</owner>
@@ -146,8 +132,8 @@
       <owner>gossip</owner>
       <type>list</type>
       <list_type>string</list_type>
+      <default>[Eating,Sleeping]</default>
       <locale name="C">
-        <default>[Eating,Sleeping]</default>
         <short>Away messages</short>
         <long>
         </long>
@@ -160,8 +146,8 @@
       <owner>gossip</owner>
       <type>list</type>
       <list_type>string</list_type>
+      <default>[Working]</default>
       <locale name="C">
-        <default>[Working]</default>
         <short>Busy messages</short>
         <long>
         </long>
