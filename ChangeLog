@@ -1,5 +1,7 @@
 2003-07-17  Richard Hult  <richard@imendio.com>
 
+	* configure.in: Test for XScreenSaver extension by default.
+
 	* gossip.schemas.in: Add some entries and rearrange the old ones
 	to get a hierarchy instead of a flat structure.
 
