@@ -1,3 +1,12 @@
+2003-11-12  Ross Burton  <ross@burtonini.com>
+
+	* src/gossip-app.c: (app_init), (app_show_offline_cb):
+	* src/gossip-roster-view.c: (roster_view_init),
+	(roster_view_filter_visible_func),
+	(gossip_roster_view_set_show_offline),
+	(gossip_roster_view_get_show_offline): Implement showing/hiding
+	offline contacts.
+
 2003-11-12  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-preferences.c

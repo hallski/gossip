@@ -43,6 +43,8 @@ struct _GossipRosterViewPriv {
 
 	GtkItemFactory *item_popup_factory;
 	GtkItemFactory *group_popup_factory;
+
+	gboolean show_offline;
 };
 
 typedef struct {
@@ -279,6 +281,8 @@ roster_view_init (GossipRosterView *view)
 
 	priv = g_new0 (GossipRosterViewPriv, 1);
 	view->priv = priv;
+
+	priv->show_offline = FALSE;
 
 	priv->model = roster_view_create_store (view);
 	priv->filtered_model = egg_tree_model_filter_new (priv->model, NULL);
@@ -763,9 +767,16 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 		gchar            *markup;
 		
 		tmp = gossip_roster_item_get_status (item);
+
 		if (!tmp || strcmp (tmp, "") == 0) {
-			GossipShow show = gossip_roster_item_get_show (item);
-			status = g_strdup (gossip_utils_get_default_status (show));
+			GossipShow show;
+
+			if (!gossip_roster_item_is_offline (item)) {
+				show = gossip_roster_item_get_show (item);
+				status = g_strdup (gossip_utils_get_default_status (show));
+			} else {
+				status = g_strdup (_("Offline"));
+			}
 		} else {
 			status = g_strdup (tmp);
 		}
@@ -1294,7 +1305,7 @@ roster_view_filter_visible_func (GtkTreeModel     *model,
 
 	d(g_print("is_group=f\n"));
 
-	if (gossip_roster_item_is_offline (item)) {
+	if (!priv->show_offline && gossip_roster_item_is_offline (item)) {
 		return FALSE;
 	}
 
@@ -1472,3 +1483,28 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 	}
 }
 
+void
+gossip_roster_view_set_show_offline (GossipRosterView *view,
+				     gboolean show_offline)
+{
+	GossipRosterViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ROSTER_VIEW (view));
+
+	priv = view->priv;
+	
+	priv->show_offline = show_offline;
+	egg_tree_model_filter_refilter (EGG_TREE_MODEL_FILTER (priv->filtered_model));
+}
+
+gboolean
+gossip_roster_view_get_show_offline (GossipRosterView *view)
+{
+	GossipRosterViewPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ROSTER_VIEW (view), FALSE); /* TODO: or true? */
+
+	priv = view->priv;
+	
+	return priv->show_offline;
+}

@@ -393,6 +393,7 @@ app_init (GossipApp *singleton_app)
 	
 	priv->roster = gossip_roster_new ();
 	priv->roster_view = gossip_roster_view_new (priv->roster);
+	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view), FALSE);
 
 	gtk_widget_show (GTK_WIDGET (priv->roster_view));
 	gtk_container_add (GTK_CONTAINER (sw),
@@ -782,7 +783,13 @@ app_add_contact_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_show_offline_cb (GtkWidget *widget, GossipApp *app)
 {
-	g_print ("Switch Online/Offline\n");
+	GossipAppPriv *priv;
+	gboolean current;
+	
+	priv = app->priv;
+	
+	current = gossip_roster_view_get_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view));
+	gossip_roster_view_set_show_offline (GOSSIP_ROSTER_VIEW (priv->roster_view), !current);
 }
 
 static void
