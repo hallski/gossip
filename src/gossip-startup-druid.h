@@ -24,7 +24,7 @@
 
 #include <loudmouth/lm-connection.h>
 
-void  gossip_startup_druid_new (LmConnection *connection);
+void  gossip_startup_druid_run (LmConnection *connection);
 
 #endif /* __GOSSIP_STARTUP_DRUID_H__ */
 

@@ -100,7 +100,7 @@ gossip_account_get_default ()
 	gchar         *name;
 	
 	name = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default");
-	
+
 	if (!name) {
 		return NULL;
 	}
@@ -213,9 +213,10 @@ gossip_account_unref (GossipAccount *account)
 void
 gossip_account_store (GossipAccount *account, gchar *old_name)
 {
+	gchar *str;
 	gchar *path;
 	gchar *key;
-
+					 
 	if (old_name) {
 		gchar *old_path = g_strdup_printf ("%s/Account: %s",
 						   GOSSIP_ACCOUNTS_PATH,
@@ -248,6 +249,13 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 	g_free (key);
 
 	g_free (path);
+
+	str = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH"/Accounts/Default");
+	if (!str) {
+		gnome_config_set_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default",
+					 account->name);
+	}
+	g_free (str);
 
  	gnome_config_sync_file (GOSSIP_ACCOUNTS_PATH);
  	gnome_config_private_sync_file (GOSSIP_ACCOUNTS_PATH);

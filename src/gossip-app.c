@@ -258,16 +258,17 @@ app_init (GossipApp *app)
 
 	g_object_unref (glade);
 
-	if (priv->account) {
-		app_create_connection (app);
-	}
-
-	if (g_getenv ("GOSSIP_DRUID")) {
-		gossip_startup_druid_new (priv->connection);
-		gtk_main ();
-		g_error ("bye\n");
+	if (!priv->account) {
+		gossip_startup_druid_run (priv->connection);
+		priv->account = gossip_account_get_default ();
 	}
 	
+	if (!priv->account) {
+		g_error ("Get your act together dude!");
+	}
+		
+	app_create_connection (app);
+
 	priv->roster = gossip_roster_new (app);
 
 	gtk_widget_show (GTK_WIDGET (priv->roster));
@@ -1187,23 +1188,26 @@ app_tray_icon_destroy_cb (GtkWidget *widget,
 }
 
 static void
-app_tray_icon_button_press_cb (GtkWidget *widget, GdkEventButton *event, GossipApp *app)
+app_tray_icon_button_press_cb (GtkWidget      *widget, 
+			       GdkEventButton *event, 
+			       GossipApp      *app)
 {
 	GossipAppPriv *priv;
 	gboolean       visible;
+	static gint    x, y;
 
 	priv = app->priv;
 
-	g_object_get (priv->window, 
+	g_object_get (priv->window,
 		      "visible", &visible,
 		      NULL);
 
 	if (visible) {
-		/* TODO: save location */
+		gtk_window_get_position (GTK_WINDOW(priv->window), &x, &y);
 		gtk_widget_hide (priv->window);
 	} else {
-		/* TODO: restore location */
 		gtk_widget_show (priv->window);
+		gtk_window_move (GTK_WINDOW(priv->window), x, y);
 	}
 }
 	
@@ -1228,7 +1232,9 @@ app_create_tray_icon (GossipApp *app)
 	gtk_container_add (GTK_CONTAINER (priv->tray_icon), priv->tray_event_box);
 	gtk_widget_show (GTK_WIDGET (priv->tray_icon));
 
-	gtk_widget_add_events (GTK_WIDGET (priv->tray_icon), GDK_BUTTON_PRESS_MASK);
+	gtk_widget_add_events (GTK_WIDGET (priv->tray_icon), 
+			       GDK_BUTTON_PRESS_MASK);
+	
 	g_signal_connect (priv->tray_icon,
 			  "button_press_event",
 			  G_CALLBACK (app_tray_icon_button_press_cb),

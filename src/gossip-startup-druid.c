@@ -94,8 +94,7 @@ startup_druid_destroyed (GtkWidget          *unused,
 			 GossipStartupDruid *startup_druid)
 {
 	g_free (startup_druid);
-	
-	exit (1);
+	gtk_main_quit ();
 }
 
 static void
@@ -341,7 +340,7 @@ startup_druid_4_different_toggled (GtkToggleButton    *button,
 }
 
 void
-gossip_startup_druid_new (LmConnection *connection)
+gossip_startup_druid_run (LmConnection *connection)
 {
 	GossipStartupDruid *startup_druid;
 	GladeXML           *glade;
@@ -381,7 +380,6 @@ gossip_startup_druid_new (LmConnection *connection)
 		glade, startup_druid,
 		"startup_druid_window", "destroy", startup_druid_destroyed,
 		"startup_druid", "cancel", startup_druid_cancel,
-		/*"2_yes_radiobutton", "toggled", startup_druid_2_yes_radiobutton_toggled,*/
 		"3_nick_entry", "changed", startup_druid_3_entry_changed,
 		"4_server_entry", "changed", startup_druid_4_entry_changed,
 		"4_different_radiobutton", "toggled", startup_druid_4_different_toggled,
@@ -411,4 +409,5 @@ gossip_startup_druid_new (LmConnection *connection)
 				      startup_druid);
 
 	gtk_widget_show (startup_druid->window);
+	gtk_main ();
 }

@@ -1,3 +1,19 @@
+2003-06-18  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-account.c:
+	(gossip_account_get_default):
+	(gossip_account_store): if there are no default account set, 
+	  set the one currently storing as default.
+	* src/gossip-app.c: (app_init)
+	- show the druid if you don't have a default account set.
+	(app_tray_icon_button_press_cb): Store and restore position.
+	* src/gossip-startup-druid.c:
+	* src/gossip-startup-druid.h:
+	(startup_druid_destroyed),
+	(gossip_startup_druid_run): Rename gossip_startup_druid_new to _run 
+	  and make it run the application and save the account when user 
+	  entered all information.
+
 2003-06-15  Richard Hult  <richard@imendio.com>
 
 	Fix #345:
