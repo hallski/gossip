@@ -130,13 +130,11 @@
 
 		      <child>
 			<widget class="GtkMenuItem" id="separator1">
-			  <property name="visible">True</property>
 			</widget>
 		      </child>
 
 		      <child>
 			<widget class="GtkMenuItem" id="actions_discover_services">
-			  <property name="visible">True</property>
 			  <property name="sensitive">False</property>
 			  <property name="label" translatable="yes">Discover Services</property>
 			  <property name="use_underline">True</property>

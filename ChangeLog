@@ -1,3 +1,10 @@
+2004-09-02  Mikael Hallendal  <micke@imendio.com>
+
+	* Release 0.7.8
+	
+	* configure.in: Bumped to 0.7.8
+	* NEWS: Updated for 0.7.8
+
 2004-09-02  Ross Burton  <ross@burtonini.com>
  
 	* ui/connect.glade: Add a Use Proxy check button.

@@ -1,3 +1,9 @@
+News in 0.7.8:
+==============
+ * Add support for disabling system proxy (Ross Burton)
+ * Typo fixes (Richard)
+ * Updated translations (sv, en_CA)
+ 
 News in 0.7.7:
 ==============
  * Make the groupchat input area the same as in chats (Geert-Jan)
