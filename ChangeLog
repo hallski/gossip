@@ -1,3 +1,8 @@
+2003-07-17  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-contact-info.c: (gossip_contact_info_new):
+	* ui/main.glade: Remove additional information and address fields.
+
 2003-07-17  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_iq_handler): Just use OS name, and not the
@@ -13,13 +18,9 @@
 	* src/gossip-join-dialog.c: (join_dialog_response_cb): 
 	- Strip nickname before connecting. Fixes bug #116990
 
-2003-07-17  Mikael Hallendal  <micke@imendio.com>
-
 	* src/gossip-contact-info.c: Added support for cancelling requested
 	  information if user closes the window before the reply to vCard and
 	  version has been received.
-
-2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-account.c: 
 	* src/gossip-account.h:

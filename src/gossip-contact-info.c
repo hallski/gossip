@@ -39,10 +39,6 @@ struct _GossipContactInfo {
 	GtkWidget *title_label;
 	GtkWidget *personal_not_avail_label;
 	GtkWidget *personal_table;
-	GtkWidget *address_not_avail_label;
-	GtkWidget *address_table;
-	GtkWidget *additional_not_avail_label;
-	GtkWidget *additional_table;
 	GtkWidget *client_not_avail_label;
 	GtkWidget *client_table;
 	GtkWidget *description_textview;
@@ -285,10 +281,6 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 				      "title_label", &info->title_label,
 				      "personal_not_avail_label", &info->personal_not_avail_label,
 				      "personal_table", &info->personal_table,
-				      "address_not_avail_label", &info->address_not_avail_label,
-				      "address_table", &info->address_table,
-				      "additional_not_avail_label", &info->additional_not_avail_label,
-				      "additional_table", &info->additional_table,
 				      "client_not_avail_label", &info->client_not_avail_label,
 				      "client_table", &info->client_table,
 				      "close_button", &info->close_button,
