@@ -1,3 +1,11 @@
+2003-12-13  Jonatan Magnusson  <barfota@samvetet.lu.se>
+
+	* src/gossip-chat-view.c: 
+	(chat_view_url_regex_match): 
+	(gossip_chat_view_append_chat_message):
+	- Match correctly when two URL's are separated by space. 
+	- Fixes bug #126730
+
 2003-12-13  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-view.c: 

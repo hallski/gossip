@@ -512,17 +512,15 @@ chat_view_url_regex_match (const gchar *msg,
 		ret = regexec (&dingus, msg + offset, 1, matches, 0);
 
 		if (ret == 0) {
-			gint s, e;
+			gint s;
 			
 			num_matches++;
 
 			s = matches[0].rm_so + offset;
-			e = matches[0].rm_eo + offset;
+			offset = matches[0].rm_eo + offset;
 			
 			g_array_append_val (start, s);
-			g_array_append_val (end, e);
-
-			offset += e;
+			g_array_append_val (end, offset);
 		}
 	}
 		
@@ -843,7 +841,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			s = g_array_index (start, gint, i);
 			e = g_array_index (end, gint, i);
 
-			if (s > last + 1) {
+			if (s > last) {
 				tmp = gossip_utils_substring (msg, last, s);
 
 				gtk_text_buffer_get_end_iter (buffer, &iter);
