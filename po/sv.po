@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-07-03 23:21+0200\n"
+"POT-Creation-Date: 2003-07-04 11:37+0200\n"
 "PO-Revision-Date: 2003-06-23 23:38+0200\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -30,52 +30,52 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 msgid "Contact will be added to your contact list"
 msgstr "Kontakten kommer att läggas till i din kontaktlista"
 
-#: src/gossip-app.c:287
+#: src/gossip-app.c:304
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: src/gossip-app.c:291
+#: src/gossip-app.c:308
 msgid "Free to chat"
 msgstr "Ledig för chatt"
 
-#: src/gossip-app.c:295
+#: src/gossip-app.c:312
 msgid "Busy"
 msgstr "Upptagen"
 
-#: src/gossip-app.c:299 ui/main.glade.h:27
+#: src/gossip-app.c:316 ui/main.glade.h:27
 msgid "Away"
 msgstr "Frånvarande"
 
-#: src/gossip-app.c:303
+#: src/gossip-app.c:320
 msgid "Extended away"
 msgstr "Utökad frånvaro"
 
-#: src/gossip-app.c:311
+#: src/gossip-app.c:328
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:371
+#: src/gossip-app.c:393
 msgid "translator_credits"
 msgstr ""
 "Richard Hult\n"
 "Christian Rose\n"
 "Skicka synpunkter på översättningen till sv@li.org"
 
-#: src/gossip-app.c:382
+#: src/gossip-app.c:404
 msgid "A Jabber Client for GNOME"
 msgstr "En Jabber-klient för GNOME"
 
-#: src/gossip-app.c:902
+#: src/gossip-app.c:934
 msgid "Please enter your password:"
 msgstr "Ange ditt lösenord:"
 
-#: src/gossip-app.c:972
+#: src/gossip-app.c:1004
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1230
+#: src/gossip-app.c:1264
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
@@ -668,22 +668,26 @@ msgid "_Defer"
 msgstr "_Skjut upp"
 
 #: ui/main.glade.h:73
+msgid "_Disconnect"
+msgstr "_Koppla ifrån"
+
+#: ui/main.glade.h:74
 msgid "_Edit statuses..."
 msgstr "_Redigera status..."
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:75
 msgid "_Join group chat..."
 msgstr "_Gå in i gruppchatt..."
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:76
 msgid "_Reject"
 msgstr "_Neka"
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:77
 msgid "_Search..."
 msgstr "_Sök..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:78
 msgid "_Send chat message..."
 msgstr "_Skicka chattmeddelande..."
 
