@@ -378,7 +378,7 @@ private_chat_send (GossipPrivateChat *chat,
         nick = gossip_session_get_nickname (gossip_app_get_session ());
 
         gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
-                                              NULL,
+                                              -1,
 					      nick,
                                               nick,
                                               msg);
@@ -492,132 +492,6 @@ private_chat_should_play_sound (GossipPrivateChat *chat)
 	return play;
 }
 
-#if 0
-static LmHandlerResult
-private_chat_message_handler (LmMessageHandler *handler,
-                              LmConnection     *connection,
-                              LmMessage        *m,
-                              gpointer          user_data)
-{
-        GossipPrivateChat     *chat = GOSSIP_PRIVATE_CHAT (user_data);
-	GossipPrivateChatPriv *priv;
-        const gchar           *from;
-        LmMessageSubType       type;
-        GossipJID             *from_jid;
-        const gchar           *from_resource;
-	const gchar           *timestamp = NULL;
-        LmMessageNode         *node;
-        const gchar           *body = "";
-        const gchar           *thread = "";
-	GossipJID             *jid;
-
-	priv = chat->priv;
-
-        from = lm_message_node_get_attribute (m->node, "from");
-
-	if (!from) {
-		g_print ("Received message without from attribute");
-		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	}
-
-        from_jid = gossip_jid_new (from);
-	jid = gossip_contact_get_jid (priv->contact);
-
-	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_GROUPCHAT) {
-		d(g_print ("GROUP CHAT!\n"));
-		gossip_jid_unref (from_jid);
-		
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	}
-	
-        d(g_print ("Incoming message:: '%s' ?= '%s'\n",
-                   gossip_jid_get_full (from_jid),
-                   gossip_jid_get_full (jid)));
-
-        if ((!priv->groupchat_priv && !gossip_jid_equals_without_resource (from_jid, jid)) ||
-
-	    (priv->groupchat_priv && !gossip_jid_equals (from_jid, jid))) {
-		d(g_print ("GROUP CHAT2!\n"));
-		gossip_jid_unref (from_jid);
-		
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-        }
-
-        type = lm_message_get_sub_type (m);
-
-        if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-                gchar *tmp, *str, *msg;
-
-                tmp = g_strdup_printf ("<b>%s</b>", from);
-                str = g_strdup_printf (_("An error occurred when chatting with %s."), tmp);
-                g_free (tmp);
-
-                node = lm_message_node_get_child (m->node, "error");
-                if (node && node->value && node->value[0]) {
-                        msg = g_strconcat (str, "\n\n", _("Details:"), " ", node->value, NULL);
-                        g_free (str);
-                } else {
-                        msg = str;
-                }
-
-                private_chat_error_dialog (chat, msg);
-
-                g_free (msg);
-
-                return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-        }
-
-	from_resource = gossip_jid_get_resource (from_jid);
-	
-	if (!priv->groupchat_priv &&
-	    from_resource &&
-	    (!priv->locked_resource ||
-	     g_ascii_strcasecmp (from_resource, priv->locked_resource) != 0)) {
-
-		d(g_print ("New resource, relock\n"));
-		g_free (priv->locked_resource);
-		priv->locked_resource = g_strdup (from_resource);
-	}
-	
-	gossip_jid_unref (from_jid);
-
-        if (private_chat_handle_composing_event (chat, m)) {
-                return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-        }
-
-	timestamp = gossip_utils_get_timestamp_from_message (m);
-
-        node = lm_message_node_get_child (m->node, "body");
-        if (node) {
-                body = node->value;
-        }
-
-        node = lm_message_node_get_child (m->node, "thread");
-        if (node) {
-                thread = node->value;
-        }
-
-	gossip_log_message (m, TRUE);
-
-        gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
-                                              timestamp,
-					      NULL,
-                                              gossip_contact_get_name (priv->contact),
-                                              body);
-
-	g_signal_emit_by_name (chat, "new-message");
-	
-	if (private_chat_should_play_sound (chat)) {
-		gossip_sound_play (GOSSIP_SOUND_CHAT);
-	}
-
-	if (gossip_chat_get_window (GOSSIP_CHAT (chat)) == NULL) {
-		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	}
-
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-}
-#endif 
 static void
 private_chat_contact_presence_updated (gpointer           not_used,
 				       GossipContact     *contact,

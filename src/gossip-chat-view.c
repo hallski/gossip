@@ -27,7 +27,9 @@
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-i18n.h>
 #include <libgnome/gnome-url.h>
+
 #include "gossip-utils.h"
+#include "gossip-time.h"
 #include "gossip-chat-view.h"
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes */
@@ -133,7 +135,7 @@ static GdkPixbuf *chat_view_get_smiley       (GossipSmiley          smiley);
 
 static void              
 chat_view_maybe_append_timestamp             (GossipChatView *view,
-					      const gchar    *time_str);
+					      gossip_time_t   timestamp);
 static void
 chat_view_maybe_append_datestamp             (GossipChatView *view);
 
@@ -609,30 +611,33 @@ chat_view_get_smiley (GossipSmiley smiley)
 }
 
 static void
-chat_view_maybe_append_timestamp (GossipChatView *view, const gchar *time_str)
+chat_view_maybe_append_timestamp (GossipChatView *view, gossip_time_t timestamp)
 {
 	GossipChatViewPriv *priv;
-	gchar              *stamp;
 	GTimeVal            cur_time;
-
+	
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = view->priv;
-
-/* 
-	stamp = gossip_utils_get_timestamp (time_str);
-	*/
-	stamp = g_strdup ("TIME");
-
+	
 	g_get_current_time (&cur_time);
 
-	if (priv->last_timestamp.tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec) {
+	if (priv->last_timestamp.tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec){
+		gchar  *stamp;
+		time_t  t;
+		
 		priv->last_timestamp.tv_sec = cur_time.tv_sec;
 
+		if (timestamp < 0) {
+			t = gossip_time_get_current ();
+		} else {
+			t = timestamp;
+		}
+
+		stamp = gossip_time_to_timestamp (t);
 		gossip_chat_view_append_event_msg (view, stamp, FALSE);
+		g_free (stamp);
 	} 
-	
-	g_free (stamp);
 }
 
 static void
@@ -767,7 +772,7 @@ finished:
 
 void
 gossip_chat_view_append_chat_message (GossipChatView *view,
-				      const gchar    *time_str,
+				      gossip_time_t   timestamp,
 				      const gchar    *to,
 				      const gchar    *from,
 				      const gchar    *msg)
@@ -784,8 +789,8 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	}
 
 	chat_view_maybe_append_datestamp (view);
-	chat_view_maybe_append_timestamp (view, time_str);
-	
+	chat_view_maybe_append_timestamp (view, timestamp);
+
 	bottom = chat_view_is_scrolled_down (view);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
@@ -944,7 +949,7 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 	}
 
 	if (timestamp) {
-		stamp = gossip_utils_get_timestamp (NULL);
+		stamp = gossip_time_to_timestamp (-1);
 		msg = g_strdup_printf (" %s - %s", str, stamp);
 		g_free (stamp);
 	} else {

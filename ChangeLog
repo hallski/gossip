@@ -1,3 +1,33 @@
+2005-01-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-chat-view.c: (chat_view_maybe_append_timestamp),
+	(gossip_chat_view_append_chat_message),
+	(gossip_chat_view_append_event_msg):
+	* src/gossip-chat-view.h:
+	* src/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_message_handler):
+	* src/gossip-jabber-helper.c:
+	(gossip_jabber_helper_get_timestamp_from_lm_message):
+	* src/gossip-jabber-helper.h:
+	* src/gossip-jabber.c: (jabber_message_handler):
+	* src/gossip-log.c: (log_get_timestamp):
+	* src/gossip-message.c: (message_class_init), (message_init),
+	(gossip_message_get_timestamp), (gossip_message_set_timestamp):
+	* src/gossip-message.h:
+	* src/gossip-private-chat.c: (private_chat_send):
+	* src/gossip-time.c: (time_set_tz_utc), (time_reset_tz),
+	(gossip_time_from_tm), (gossip_time_to_tm),
+	(gossip_time_get_current), (gossip_time_to_timestamp),
+	(gossip_time_to_timestamp_full):
+	* src/gossip-time.h:
+	* src/gossip-utils.c:
+	* src/gossip-utils.h:
+	- Reshuffled code for time stamp handling
+	- Added gossip-time.[ch] for utility functions regarding gossip times.
+	- Readd timestamps to chats.
+	- Fixes bug #162563
+
 2005-01-02  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-jabber.c: (gossip_jabber_init):

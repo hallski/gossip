@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "gossip-version-info.h"
+#include "gossip-time.h"
 #include "gossip-jabber-helper.h"
 
 typedef struct {
@@ -317,22 +318,30 @@ gossip_jabber_helper_presence_state_from_str (const gchar *str)
 	return GOSSIP_PRESENCE_STATE_AVAILABLE;
 }
 
-const gchar *
-gossip_jabber_helper_get_timestamp_from_message (LmMessage *m)
+gossip_time_t
+gossip_jabber_helper_get_timestamp_from_lm_message (LmMessage *m)
 {
 	LmMessageNode *node;
-	const gchar   *timestamp = NULL;
+	const gchar   *timestamp_s = NULL;
 	const gchar   *xmlns;
+	struct tm     *tm;
 	
 	for (node = m->node->children; node; node = node->next) {
 		if (strcmp (node->name, "x") == 0) {
 			xmlns = lm_message_node_get_attribute (node, "xmlns");
 			if (xmlns && strcmp (xmlns, "jabber:x:delay") == 0) {
-                                timestamp = lm_message_node_get_attribute 
+                                timestamp_s = lm_message_node_get_attribute 
 					(node, "stamp");
-			}
-		}
-	}
+                        }
+                }
+        }
+
+	if (!timestamp_s) {
+		return gossip_time_get_current ();
+	} 
 	
-	return timestamp;
+	tm = lm_utils_get_localtime (timestamp_s);
+
+	return gossip_time_from_tm (tm);
 }
+

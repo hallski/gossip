@@ -383,27 +383,6 @@ gossip_utils_substring (const gchar *str, gint start, gint end)
 }
 
 gchar *
-gossip_utils_get_timestamp (const gchar *time_str)
-{
-	time_t     t;
-	struct tm *tm;
-	gchar      buf[128];
-
-	if (!time_str) {
-		t  = time (NULL);
-		tm = localtime (&t);
-	} else {
-		tm = lm_utils_get_localtime (time_str);
-	}
-	
-	buf[0] = 0;
-	
-	strftime (buf, sizeof (buf), "%H:%M ", tm);
-
-	return g_strdup (buf);
-}
-
-gchar *
 gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 {
 	GtkWidget *dialog;

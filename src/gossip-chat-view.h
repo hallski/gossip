@@ -23,6 +23,8 @@
 
 #include <gtk/gtktextview.h>
 
+#include "gossip-message.h"
+
 #define GOSSIP_TYPE_CHAT_VIEW         (gossip_chat_view_get_type ())
 #define GOSSIP_CHAT_VIEW(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_VIEW, GossipChatView))
 #define GOSSIP_CHAT_VIEW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewClass))
@@ -47,7 +49,7 @@ struct _GossipChatViewClass {
 GType            gossip_chat_view_get_type             (void) G_GNUC_CONST;
 GossipChatView * gossip_chat_view_new                  (void);
 void             gossip_chat_view_append_chat_message  (GossipChatView *view,
-							const gchar    *time_str,
+							gossip_time_t   timestamp,
 							const gchar    *to,
 							const gchar    *from,
 							const gchar    *msg);

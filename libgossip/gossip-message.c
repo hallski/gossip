@@ -33,7 +33,7 @@ struct _GossipMessagePriv {
 	gchar             *body;
 	gchar             *thread;
 
-	gchar             *timestamp;
+	gossip_time_t      timestamp;
 	
 	gboolean           request_composing;
 
@@ -155,11 +155,13 @@ message_class_init (GossipMessageClass *class)
 							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_TIMESTAMP,
-					 g_param_spec_string ("timestamp",
-							      "timestamp",
-							      "timestamp",
-							      NULL,
-							      G_PARAM_READWRITE));
+					 g_param_spec_long ("timestamp",
+							    "timestamp",
+							    "timestamp",
+							    -1,
+							    G_MAXLONG,
+							    -1,
+							    G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_REQUEST_COMPOSING,
@@ -185,7 +187,7 @@ message_init (GossipMessage *message)
 	priv->resource          = NULL;
 	priv->body              = NULL;
 	priv->thread            = NULL;
-	priv->timestamp         = NULL;
+	priv->timestamp         = gossip_time_get_current ();
 	priv->request_composing = FALSE;
 }
 
@@ -463,30 +465,33 @@ gossip_message_set_thread (GossipMessage *message, const gchar *thread)
 	}
 }
 
-/* What return value should we have here? */ 
-const gchar *  
+gossip_time_t
 gossip_message_get_timestamp (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
 	
-	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), "");
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), -1);
 
 	priv = GOSSIP_MESSAGE_GET_PRIV (message);
-	
+
 	return priv->timestamp;
 }
 
 void
-gossip_message_set_timestamp (GossipMessage *message, const gchar *timestamp)
+gossip_message_set_timestamp (GossipMessage *message, gossip_time_t timestamp)
 {
 	GossipMessagePriv *priv;
 	
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+	g_return_if_fail (timestamp >= -1);
 
 	priv = GOSSIP_MESSAGE_GET_PRIV (message);
-	
-	g_free (priv->timestamp);
-	priv->timestamp = g_strdup (timestamp);
+
+	if (timestamp <= 0) {
+		priv->timestamp = gossip_time_get_current ();
+	} else {
+		priv->timestamp = timestamp;
+	}
 }
 
 void         

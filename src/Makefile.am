@@ -63,6 +63,7 @@ gossip_SOURCES = 				                        	\
 	gossip-sound.c		           gossip-sound.h			\
 	gossip-startup-druid.c	           gossip-startup-druid.h		\
 	gossip-stock.c		           gossip-stock.h			\
+	gossip-time.c                      gossip-time.h                        \
 	gossip-utils.c		           gossip-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-version-info.c              gossip-version-info.h               	\

@@ -97,23 +97,10 @@ log_get_filename (GossipContact *contact, const gchar *suffix)
 static gchar *
 log_get_timestamp (GossipMessage *msg)
 {
-	const gchar *stamp;
-	time_t       t;
-	struct tm   *tm;
-	gchar        buf[128];
-	
-	stamp = gossip_message_get_timestamp (msg);
-	if (stamp) {
-		tm = lm_utils_get_localtime (stamp);
-	} else {
-		t  = time (NULL);
-		tm = localtime (&t);
-	}
-	
-	buf[0] = 0;
-	strftime (buf, sizeof (buf), "%Y%m%dT%H:%M:%S", tm);
+	gossip_time_t t;
 
-	return g_strdup (buf);
+	t = gossip_message_get_timestamp (msg);
+	return gossip_time_to_timestamp_full (t, "%Y%m%dT%H:%M:%S");
 }
 
 static gchar *

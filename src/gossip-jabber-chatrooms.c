@@ -141,13 +141,13 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
-		const gchar *timestamp;
+		gossip_time_t timestamp;
 
 		g_print ("Emitting\n");
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
 					      gossip_jabber_get_own_contact (chatrooms->jabber));
 
-		timestamp = gossip_jabber_helper_get_timestamp_from_message (m);
+		timestamp = gossip_jabber_helper_get_timestamp_from_lm_message (m);
 		gossip_message_set_timestamp (message, timestamp);
 
 		gossip_message_set_sender (message, contact);

@@ -25,6 +25,7 @@
 
 #include "gossip-async.h"
 #include "gossip-contact.h"
+#include "gossip-message.h"
 #include "gossip-vcard.h"
 
 gboolean        gossip_jabber_helper_async_get_vcard (LmConnection   *connection,
@@ -47,8 +48,9 @@ gossip_jabber_helper_presence_state_to_string       (GossipPresence *presence);
 
 GossipPresenceState
 gossip_jabber_helper_presence_state_from_str        (const gchar    *str);
-const gchar *
-gossip_jabber_helper_get_timestamp_from_message (LmMessage *message);
+
+gossip_time_t
+gossip_jabber_helper_get_timestamp_from_lm_message  (LmMessage *m);
 
 #endif /* __GOSSIP_JABBER_HELPER_H__ */
 

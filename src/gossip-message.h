@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gossip-contact.h"
+#include "gossip-time.h"
 
 #define GOSSIP_TYPE_MESSAGE         (gossip_message_get_gtype ())
 #define GOSSIP_MESSAGE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_MESSAGE, GossipMessage))
@@ -72,9 +73,9 @@ const gchar *     gossip_message_get_thread        (GossipMessage     *message);
 void              gossip_message_set_thread        (GossipMessage     *message,
 						    const gchar       *thread);
 /* What return value should we have here? */ 
-const gchar *     gossip_message_get_timestamp     (GossipMessage     *message);
+gossip_time_t     gossip_message_get_timestamp     (GossipMessage     *message);
 void              gossip_message_set_timestamp     (GossipMessage     *message,
-						    const gchar       *timestamp);
+						    gossip_time_t    timestamp);
 
 void              gossip_message_request_composing (GossipMessage     *message);
 gboolean    gossip_message_is_requesting_composing (GossipMessage     *message);

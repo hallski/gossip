@@ -158,8 +158,6 @@ static void            jabber_chatroom_change_nick           (GossipChatroomProv
 static void            jabber_chatroom_leave                 (GossipChatroomProvider       *provider,
 							      GossipChatroomId              id);
 
-
-
 extern GConfClient *gconf_client;
 
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
@@ -830,7 +828,10 @@ jabber_message_handler (LmMessageHandler *handler,
 			
 		gossip_message_set_body (message, body);
 		gossip_message_set_thread (message, thread);
-	
+
+		gossip_message_set_timestamp (message,
+					      gossip_jabber_helper_get_timestamp_from_lm_message (m));
+		
 		g_signal_emit_by_name (jabber, "new-message", message);
 
 		g_object_unref (message);

@@ -78,7 +78,6 @@ void         gossip_glade_setup_size_group           (GladeXML         *gui,
 						      GtkSizeGroupMode  mode,
 						      gchar            *first_widget, ...);
 
-gchar *      gossip_utils_get_timestamp              (const gchar      *time_str);
 gchar *      gossip_password_dialog_run              (GossipAccount    *account,
 						      GtkWindow        *parent);
 GtkWidget *  gossip_hig_dialog_new                   (GtkWindow        *parent,
