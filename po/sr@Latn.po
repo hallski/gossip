@@ -1,5 +1,5 @@
 # Serbian translation of gossip
-# Courtesy of Prevod.org team (http://www.prevod.org/) -- 2003.
+# Courtesy of Prevod.org team (http://www.prevod.org/) -- 2003, 2004.
 #
 # This file is distributed under the same license as the gossip package.
 #
@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-22 13:22+0100\n"
-"PO-Revision-Date: 2004-01-15 06:55+0100\n"
+"POT-Creation-Date: 2004-01-23 12:23+0100\n"
+"PO-Revision-Date: 2004-01-23 12:25+0100\n"
 "Last-Translator: Danilo Šegan <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -45,68 +45,77 @@ msgstr "Sakrij glavni prozor"
 msgid "Hide the main window."
 msgstr "Sakrij glavni prozor."
 
+# Pretpostaviti je nešto smatrati datim bez izričitog navođenja, upravo kao i ovde.
 #: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "Pretpostavljene poruke stanja"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "Pretpostavljene poruke stanja."
+
+#: gossip.schemas.in.h:8
 msgid "Show offline contacts"
 msgstr "Prikaži nepovezane kontakte"
 
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:9
 msgid "The X position of the main window."
 msgstr "Vodoravni položaj glavnog prozora."
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:10
 msgid "The Y position of the main window."
 msgstr "Uspravni položaj glavnog prozora."
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr "Visina glavnog prozora."
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr "Širina glavnog prozora."
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr "Prikaži grafički smešak"
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:14
 msgid "Use notification sounds"
 msgstr "Koristi zvuk za napomene"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:15
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Da li da pretvori smeške u grafičke slike u čavrljanju."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Da li da pusti zvuk kada poruka stigne."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away."
 msgstr "Da li da pusti zvuk kada je odsutan."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:18
 msgid "Whether or not to play sounds when busy."
 msgstr "Da li da pusti zvuk kada je zauzet."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Da li da prikažem nepovezane kontakte u spisku kontakata."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:20
 msgid "Width of the main window"
 msgstr "Širina glavnog prozora"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:21
 msgid "X position of main window"
 msgstr "Vodoravni položaj glavnog prozora"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:22
 msgid "Y position of main window"
 msgstr "Uspravni položaj glavnog prozora"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:56
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
 msgstr "Početak"
 
@@ -120,23 +129,23 @@ msgstr "Koju poruku sa zahtevom želite da pošaljete %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s će biti dodat u vašu listu drugara."
 
-#: src/gossip-app.c:448
+#: src/gossip-app.c:453
 msgid "_Show Contact List"
 msgstr "_Prikaži spisak kontakata"
 
-#: src/gossip-app.c:457
+#: src/gossip-app.c:462
 msgid "_Hide Contact List"
 msgstr "_Sakrij spisak kontakata"
 
-#: src/gossip-app.c:470
+#: src/gossip-app.c:475
 msgid "Send _Message..."
 msgstr "Pošalji po_ruku..."
 
-#: src/gossip-app.c:485
+#: src/gossip-app.c:490
 msgid "_Quit"
 msgstr "_Izađi"
 
-#: src/gossip-app.c:607
+#: src/gossip-app.c:613
 msgid "Artwork by:"
 msgstr "Crteži:"
 
@@ -145,86 +154,81 @@ msgstr "Crteži:"
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:614
+#: src/gossip-app.c:620
 msgid "translator_credits"
 msgstr "Dejan Matijević <dejan@ns.sympatico.ca>"
 
-#: src/gossip-app.c:629
+#: src/gossip-app.c:635
 msgid "An Instant Messaging Client for GNOME"
 msgstr "Brzi glasnik za Gnoma"
 
-#: src/gossip-app.c:638
+#: src/gossip-app.c:644
 msgid "Gossip Website"
 msgstr "Veb stranica Čavrljanja"
 
-#: src/gossip-app.c:759
+#: src/gossip-app.c:765
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
-"Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za "
-"čavrljanje."
+"Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za čavrljanje."
 
-#: src/gossip-app.c:764 ui/main.glade.h:75
+#: src/gossip-app.c:770 ui/main.glade.h:75
 msgid "_Chat"
 msgstr "_Razgovor"
 
-#: src/gossip-app.c:1023
+#: src/gossip-app.c:1029
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s želi obaveštenja o vašem prisustvu."
 
-#: src/gossip-app.c:1264
+#: src/gossip-app.c:1270
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vi ste razvezani sa servera.  Želiteli da se ponovo povežete?"
 
-#: src/gossip-app.c:1403
+#: src/gossip-app.c:1409
 msgid "Make sure that your account information is correct."
 msgstr "Proverite da li su podaci o nalogu ispravni."
 
-#: src/gossip-app.c:1404
+#: src/gossip-app.c:1410
 msgid "The server may currently be unavailable."
 msgstr "Možda je server trenutno nedostupan."
 
-#: src/gossip-app.c:1805
+#: src/gossip-app.c:1811
 msgid "Gossip, Jabber Client"
 msgstr "Čavrljanje, DŽaber Klijent"
 
-#: src/gossip-app.c:1981
+#: src/gossip-app.c:1987
 #, c-format
 msgid "New message from %s"
 msgstr "Nova poruka od %s"
 
-#: src/gossip-app.c:2331 src/gossip-preferences.c:629
+#: src/gossip-app.c:2337 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Dostupan"
 
-#: src/gossip-app.c:2338 src/gossip-preferences.c:630
+#: src/gossip-app.c:2344 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Zauzet"
 
-#: src/gossip-app.c:2345 src/gossip-preferences.c:631
+#: src/gossip-app.c:2351 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "Odsutan"
 
-#: src/gossip-app.c:2470
-#, fuzzy
+#: src/gossip-app.c:2476
 msgid "Available..."
-msgstr "Dostupan"
+msgstr "Dostupan..."
 
-#: src/gossip-app.c:2474
-#, fuzzy
+#: src/gossip-app.c:2480
 msgid "Busy..."
-msgstr "Zauzet"
+msgstr "Zauzet..."
 
-#: src/gossip-app.c:2478
-#, fuzzy
+#: src/gossip-app.c:2484
 msgid "Away..."
-msgstr "Odsutan"
+msgstr "Odsutan..."
 
-#: src/gossip-app.c:2504
-#, fuzzy
+#: src/gossip-app.c:2510
 msgid "Edit List..."
-msgstr "_Uredi spisak..."
+msgstr "Uredi spisak..."
 
 #: src/gossip-chat-view.c:320 ui/chat.glade.h:2
 msgid "C_lear"
@@ -285,9 +289,9 @@ msgid "Contact Information for %s"
 msgstr "Kontakt informacije za %s"
 
 #: src/gossip-edit-groups-dialog.c:182
-#, fuzzy, c-format
+#, c-format
 msgid "Edit groups for %s"
-msgstr "<b>Uredi grupe za %s</b>"
+msgstr "Uredi grupe za %s"
 
 #: src/gossip-edit-groups-dialog.c:246
 msgid "Select"
@@ -651,9 +655,8 @@ msgid "<b>Information requested, Please wait...</b>"
 msgstr "<b>Tražio je informacije, molim sačekajte...</b>"
 
 #: ui/main.glade.h:5
-#, fuzzy
 msgid "<b>Preset status messages</b>"
-msgstr "<b>Poruke za zauzeće</b>"
+msgstr "<b>Pretpostavljene poruke stanja</b>"
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
@@ -736,9 +739,8 @@ msgid "Email:"
 msgstr "E-pošta:"
 
 #: ui/main.glade.h:26
-#, fuzzy
 msgid "Enter status message:"
-msgstr "Poruka o stanju:"
+msgstr "Unesite poruku o stanju:"
 
 #: ui/main.glade.h:28
 msgid ""
@@ -751,8 +753,8 @@ msgid ""
 msgstr ""
 "Čavrljanje je moderan klijent za DŽaber sistem brzih poruka.\n"
 "\n"
-"Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i povežete se na vaš "
-"omiljen DŽaber server.\n"
+"Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i povežete se na vaš omiljen "
+"DŽaber server.\n"
 "\n"
 "Da počnete, samo kliknite „Napred“."
 
@@ -862,9 +864,8 @@ msgid "Sound"
 msgstr "Zvuk"
 
 #: ui/main.glade.h:57
-#, fuzzy
 msgid "Status Message"
-msgstr "Poruke o stanju"
+msgstr "Poruka o stanju"
 
 #: ui/main.glade.h:58
 msgid "Status Messages"
@@ -1121,8 +1122,8 @@ msgstr "Poruk_e o stanju"
 #~ "These messages are used to describe your status when you're available, "
 #~ "about to leave, or automatically set away due to inactivity."
 #~ msgstr ""
-#~ "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, "
-#~ "upravo odlazite ili ste odsutni usled neaktivnosti."
+#~ "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, upravo "
+#~ "odlazite ili ste odsutni usled neaktivnosti."
 
 #~ msgid "Use com_pact conversation style"
 #~ msgstr "Koristi stil sa_žetog razgovora"
@@ -1238,8 +1239,8 @@ msgstr "Poruk_e o stanju"
 #~ "\n"
 #~ "Čavrljanje je moderan klijent za DŽaber Trenutne Poruke.\n"
 #~ "\n"
-#~ "Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i konektujete se na "
-#~ "vaš omiljen DŽaber server."
+#~ "Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i konektujete se na vaš "
+#~ "omiljen DŽaber server."
 
 #~ msgid "<b>Additional information</b>"
 #~ msgstr "<b>Dodatne informacije</b>"
