@@ -91,6 +91,63 @@ gossip_option_menu_setup (GtkWidget     *option_menu,
 }
 
 void
+gossip_option_image_menu_setup (GtkWidget     *option_menu,
+				GCallback      func,
+				gpointer       user_data,
+				gconstpointer  str1, ...)
+{
+	GtkWidget     *menu;
+	GtkWidget     *item;
+	gint           i;
+	va_list        args;
+	gconstpointer  str;
+	gint           type;
+	
+       	menu = gtk_option_menu_get_menu (GTK_OPTION_MENU (option_menu));
+	if (menu) {
+		gtk_widget_destroy (menu);
+	}
+	
+	menu = gtk_menu_new ();
+
+	va_start (args, str1);
+	for (str = str1, i = 0; str != NULL; str = va_arg (args, gpointer), i++) {
+		if (*(gchar *)str == '\0') {
+			item = gtk_separator_menu_item_new ();
+			str = va_arg (args, gpointer);
+		} else {
+			item = gtk_image_menu_item_new_with_label (str);
+			str = va_arg (args, gpointer);
+			
+			if (str) {
+				gtk_image_menu_item_set_image (
+					GTK_IMAGE_MENU_ITEM (item),
+					gtk_image_new_from_stock (str, GTK_ICON_SIZE_MENU));
+			}
+		}
+
+		gtk_widget_show_all (item);
+		gtk_menu_append (GTK_MENU (menu), item);
+
+		type = va_arg (args, gint);
+		
+		g_object_set_data (G_OBJECT (item),
+				   "data",
+				   GINT_TO_POINTER (type));
+		if (func) {
+			g_signal_connect (item,
+					  "activate",
+					  func,
+					  user_data);
+		}
+	}
+	va_end (args);
+
+	gtk_widget_show (menu);
+	gtk_option_menu_set_menu (GTK_OPTION_MENU (option_menu), menu);
+}
+
+void
 gossip_option_menu_set_history (GtkOptionMenu *option_menu,
 				gpointer       user_data)
 {

@@ -1,3 +1,17 @@
+2004-01-18  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (app_init),
+	(app_status_available_activate_cb):
+	* src/gossip-utils.c: (gossip_option_image_menu_setup):
+	* src/gossip-utils.h:
+	* ui/main.glade: Prepare to implement the new presence design.
+	
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_create_label), (chat_window_presence_updated_cb),
+	(chat_window_update_tooltip):
+	* src/gossip-chat.c: (chat_create_gui): Add a tooltip on the name
+	label with the jid and status.
+
 2004-01-17  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-roster-view.c (roster_view_add_item): Expand groups

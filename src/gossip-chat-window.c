@@ -20,6 +20,7 @@
  */
 
 #include <config.h>
+#include <string.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
@@ -79,6 +80,8 @@ static gboolean chat_window_delete_event_cb   (GtkWidget	     *dialog,
 static void chat_window_presence_updated_cb   (gpointer               not_used,
 					       GossipRosterItem      *item,
 					       GossipChat	     *chat);
+static void chat_window_update_tooltip        (GossipChatWindow      *window,
+					       GossipChat            *chat);
 static void chat_window_name_changed_cb       (GossipChat            *chat,
 					       const gchar           *name,
 					       GossipChatWindow      *window);
@@ -118,25 +121,27 @@ chat_window_get_name                          (GossipChatWindow      *window,
 GtkWidget * chat_window_create_notebook (gpointer data);
 
 struct _GossipChatWindowPriv {
-	GList      *chats;
-	GList      *chats_new_msg;
-	GList      *chats_composing;
-	GossipChat *current_chat;
-	gboolean    new_msg;
+	GList       *chats;
+	GList       *chats_new_msg;
+	GList       *chats_composing;
+	GossipChat  *current_chat;
+	gboolean     new_msg;
 
-	GtkWidget  *dialog;
-	GtkWidget  *notebook;
-	
-	/* menu items */
-	GtkWidget  *m_conv_clear;
-	GtkWidget  *m_conv_log;
-	GtkWidget  *m_conv_info;
-	GtkWidget  *m_conv_close;
-	GtkWidget  *m_tabs_next;
-	GtkWidget  *m_tabs_prev;
-	GtkWidget  *m_tabs_left;
-	GtkWidget  *m_tabs_right;
-	GtkWidget  *m_tabs_detach;
+	GtkWidget   *dialog;
+	GtkWidget   *notebook;
+
+	GtkTooltips *tooltips;
+
+	/* Menu items. */
+	GtkWidget   *m_conv_clear;
+	GtkWidget   *m_conv_log;
+	GtkWidget   *m_conv_info;
+	GtkWidget   *m_conv_close;
+	GtkWidget   *m_tabs_next;
+	GtkWidget   *m_tabs_prev;
+	GtkWidget   *m_tabs_left;
+	GtkWidget   *m_tabs_right;
+	GtkWidget   *m_tabs_detach;
 };
 
 static gpointer parent_class;
@@ -226,6 +231,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 					 0,
 					 closure);
 	}
+
+	priv->tooltips = gtk_tooltips_new ();
 	
 	g_signal_connect (menu_conv,
 			  "activate",
@@ -398,161 +405,6 @@ chat_window_has_toplevel_focus (GossipChatWindow *window)
 
 #define TAB_MIN_WIDTH 130
 
-#if 0
-static void
-tab_label_set_size (GtkWidget *window, GtkWidget *label_hbox)
-{
-	GtkStyle         *style;
-	PangoFontMetrics *metrics;
-	PangoContext     *context;
-	PangoLanguage    *lang;
-	gint              char_width;
-	gint              max_width, min_width, width;
-	GtkWidget        *label;
-
-	GtkRequisition    requisition;
-	
-	label = g_object_get_data (G_OBJECT (label_hbox), "label");
-	gtk_widget_size_request (label, &requisition);
-
-	width = requisition.width;
-
-	style = gtk_widget_get_style (label);
-	context = gtk_widget_get_pango_context (label);
-	lang = pango_context_get_language (context);
-	metrics = pango_context_get_metrics (context, style->font_desc, lang);
-	char_width = pango_font_metrics_get_approximate_char_width (metrics);
-	pango_font_metrics_unref (metrics);
-	
-	max_width = MAX (PANGO_PIXELS (char_width * 20), window->allocation.width / 3);
-	min_width = MIN (5, width);
-	width = CLAMP (width, min_width, max_width);
-	
-	gtk_widget_set_size_request (label_hbox, width + 16 + 4 + 16, -1);
-}
-
-typedef struct {
-	GtkWidget *tab;
-	gint width;
-} TabWidth;
-
-static gint
-width_compare_func (gconstpointer a, gconstpointer b)
-{
-	TabWidth ta = *(TabWidth*)a;
-	TabWidth tb = *(TabWidth*)b;
-
-	if (ta.width > tb.width) {
-		return -1;
-	}
-	else if (ta.width < tb.width) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-static void
-tab_notebook_size_request_cb (GtkNotebook    *notebook,
-			      GtkRequisition *requisition,
-			      gpointer        userdata)
-{
-	gint num_pages;
-	gint thickness, focus_width;
-	gint width;
-
-	num_pages = gtk_notebook_get_n_pages (notebook);
-
-	gtk_widget_style_get (GTK_WIDGET (notebook), "focus-line-width", &focus_width, NULL);
-	thickness = GTK_WIDGET (notebook)->style->xthickness;
-	
-	width = 2 * thickness + num_pages * (TAB_MIN_WIDTH + 2 * thickness + 2 * focus_width);
-
-	requisition->width = width;
-}
-
-static void
-tab_label_size_request_cb (GtkWidget      *window,
-			   GtkRequisition *requisition,
-			   GtkNotebook    *notebook)
-{
-	gint           num_pages, num_overflow_pages, i;
-	GtkWidget      *page;
-	GtkWidget      *tab;
-	GtkRequisition  tab_req;
-	gint            total_width = 0;
-	gint            notebook_width;
-	gint            overflow;
-
-	TabWidth tab_width;
-	
-	GArray         *array;
-
-	gint thickness, focus_width;
-
-	gtk_widget_style_get (GTK_WIDGET (notebook), "focus-line-width", &focus_width, NULL);
-	thickness = GTK_WIDGET (notebook)->style->xthickness;
-	
-	num_pages = gtk_notebook_get_n_pages (notebook);
-	array = g_array_new (FALSE, FALSE, sizeof (TabWidth));
-
-	notebook_width = GTK_WIDGET (notebook)->allocation.width;
-
-	num_overflow_pages = 0;
-	
-	for (i = 0; i < num_pages; i++) {
-		page = gtk_notebook_get_nth_page (notebook, i);
-		
-		tab = gtk_notebook_get_tab_label (notebook, page);
-		
-		gtk_widget_set_size_request (tab, -1, -1);
-		gtk_widget_size_request (tab, &tab_req);
-
-		if (tab_req.width > TAB_MIN_WIDTH) {
-			tab_width.tab = tab;
-			tab_width.width = tab_req.width;
-			
-			g_array_append_val (array, tab_width);
-			
-			total_width += tab_req.width + (2 * thickness + 2 * focus_width);
-			num_overflow_pages++;
-		}
-	}
-
-	overflow = total_width - notebook_width;
-
-	if (overflow > 0) {
-		g_print ("overflow: %d\n", overflow);
-	}
-		
-	g_array_sort (array, width_compare_func);
-	
-	if (overflow > 0) {
-		for (i = 0; i < num_overflow_pages; i++) {
-			gint delta;
-			
-			tab_width = g_array_index (array, TabWidth, i);
-
-			delta = tab_width.width - TAB_MIN_WIDTH;
-
-			overflow -= delta;
-
-			if (overflow < 0) {
-				delta += overflow;
-			}
-			
-			gtk_widget_set_size_request (tab_width.tab, tab_width.width - delta, -1);
-			
-			if (overflow <= 0) {
-				break;
-			}
-		}
-	}
-
-	g_array_free (array, TRUE);
-}
-#endif
-
 static GtkWidget *
 chat_window_create_label (GossipChatWindow *window,
 			  GossipChat       *chat)
@@ -565,18 +417,24 @@ chat_window_create_label (GossipChatWindow *window,
 	GtkWidget            *status_img;
 	const gchar          *name;
 	gint	              w, h;
+	GtkWidget            *eventbox;
 	
 	priv = window->priv;
 	
 	hbox = gtk_hbox_new (FALSE, 0);
 
+	eventbox = gtk_event_box_new ();
+	
 	status_img = gtk_image_new ();
 	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
+	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", eventbox);
 
 	name = chat_window_get_name (window, chat);
-	/*name_label = eel_ellipsizing_label_new (name);*/
+
 	name_label = gtk_label_new (name);
 
+	chat_window_update_tooltip (window, chat);
+	
 	/* Set minimum size. */
 	gtk_widget_set_size_request (hbox, TAB_MIN_WIDTH, -1);
 	
@@ -585,16 +443,6 @@ chat_window_create_label (GossipChatWindow *window,
 
 	g_object_set_data (G_OBJECT (chat), "label", name_label); 
 		
-/*	g_signal_connect (priv->dialog,
-			  "size_request",
-			  G_CALLBACK (tab_label_size_request_cb),
-			  priv->notebook);
-
-	g_signal_connect (priv->notebook,
-			  "size_request",
-			  G_CALLBACK (tab_notebook_size_request_cb),
-			  NULL);
-*/
 	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
 	close_button = gtk_button_new ();
 	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
@@ -602,15 +450,17 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_widget_set_size_request (close_button, w, h);
 	gtk_container_add (GTK_CONTAINER (close_button), close_img);
 
+	gtk_container_add (GTK_CONTAINER (eventbox), name_label);
+
 	gtk_box_pack_start (GTK_BOX (hbox), status_img, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (hbox), name_label, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), eventbox, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 
 	g_signal_connect (close_button,
 			  "clicked",
 			  G_CALLBACK (chat_window_close_clicked_cb),
 			  chat);
-	
+
 	gtk_widget_show_all (hbox);
 
 	return hbox;
@@ -811,11 +661,76 @@ chat_window_presence_updated_cb (gpointer           not_used,
 				 GossipRosterItem  *item,
 				 GossipChat        *chat)
 { 
-	GossipChatWindow *window = gossip_chat_get_window (chat);
-
-	g_return_if_fail (window != NULL);
-
+	GossipChatWindow     *window;
+	GossipChatWindowPriv *priv;
+	GossipJID            *jid;
+	gchar                *str;
+	GtkWidget            *widget;
+	
+	window = gossip_chat_get_window (chat);
+	priv = window->priv;
+	
 	chat_window_update_status (window, chat);
+
+	jid = gossip_roster_item_get_jid (item);
+	
+	str = g_strdup_printf ("%s\n%s %s",
+			       gossip_jid_get_without_resource (jid),
+			       _("Status:"),
+			       gossip_roster_item_get_status (item));
+	
+	widget = g_object_get_data (G_OBJECT (chat), "chat-window-tooltip-widget");
+
+	gtk_tooltips_set_tip (priv->tooltips,
+			      widget,
+			      str,
+			      NULL);
+
+	g_free (str);
+}
+
+static void
+chat_window_update_tooltip (GossipChatWindow *window,
+			    GossipChat       *chat)
+{
+	GossipChatWindowPriv *priv;
+	GossipRosterItem     *item;
+	GossipJID            *jid;
+	gchar                *str;
+	const gchar          *status;
+	GtkWidget            *widget;
+	
+	priv = window->priv;
+	
+	item = gossip_chat_get_item (chat);
+	jid = gossip_roster_item_get_jid (item);
+
+	status = gossip_roster_item_get_status (item);
+	
+	if (!status || strcmp (status, "") == 0) {
+		GossipShow show;
+
+		if (!gossip_roster_item_is_offline (item)) {
+			show = gossip_roster_item_get_show (item);
+			status = gossip_utils_get_default_status (show);
+		} else {
+			status = _("Offline");
+		}
+	}
+
+	str = g_strdup_printf ("%s\n%s %s",
+			       gossip_jid_get_without_resource (jid),
+			       _("Status:"),
+			       status);
+
+	widget = g_object_get_data (G_OBJECT (chat), "chat-window-tooltip-widget");
+
+	gtk_tooltips_set_tip (priv->tooltips,
+			      widget,
+			      str,
+			      NULL);
+
+	g_free (str);
 }
 
 static void 

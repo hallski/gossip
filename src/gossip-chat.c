@@ -58,8 +58,6 @@ struct _GossipChatPriv {
 
 	GossipChatView   *view;
 
-        GtkTooltips      *tooltips;
-
         GossipRosterItem *item;
 	gchar            *name;
 	
@@ -335,8 +333,6 @@ chat_create_gui (GossipChat *chat)
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
         roster = gossip_app_get_roster ();
-
-	priv->tooltips = gtk_tooltips_new ();
 
 	g_signal_connect (priv->input_text_view,
 			  "key_press_event",

@@ -329,6 +329,8 @@ app_init (GossipApp *singleton_app)
 	gint            x, y;
 	gboolean        hidden;
 
+	GtkWidget *foo;
+
 	app = singleton_app;
 	
         priv = g_new0 (GossipAppPriv, 1);
@@ -346,8 +348,19 @@ app_init (GossipApp *singleton_app)
 				       "status_label_hbox", &status_label_hbox,
 				       "status_image", &priv->status_image,
 				       "actions_show_offline", &show_offline_widget,
+				       "status_optionmenu", &foo,
 				       NULL);
-
+	
+	gossip_option_image_menu_setup (foo, 
+					NULL, 
+					NULL,
+					"Available...", GOSSIP_STOCK_AVAILABLE, 0,
+					"Busy...", GOSSIP_STOCK_BUSY, 0,
+					"Away...", GOSSIP_STOCK_AWAY, 0,
+					"", NULL, 0,
+					"Edit List...", NULL, 0,
+					NULL);
+	
 	width = gconf_client_get_int (gconf_client,
 				      GCONF_PATH "/ui/main_window_width",
 				      NULL);
@@ -2256,6 +2269,7 @@ app_status_available_activate_cb (GtkWidget *item,
 
 	gossip_idle_reset ();
 
+	priv->explicit_show = GOSSIP_SHOW_AVAILABLE;
 	priv->auto_show = GOSSIP_SHOW_AVAILABLE;
 
 	g_free (priv->status_text);

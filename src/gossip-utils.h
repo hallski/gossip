@@ -45,6 +45,11 @@ void         gossip_option_menu_setup                (GtkWidget        *option_m
 						      gpointer          user_data,
 						      gconstpointer     str1,
 						      ...);
+void         gossip_option_image_menu_setup          (GtkWidget        *option_menu,
+						      GCallback         func,
+						      gpointer          user_data,
+						      gconstpointer     str1,
+						      ...);
 void         gossip_option_menu_set_history          (GtkOptionMenu    *option_menu,
 						      gpointer          user_data);
 gpointer     gossip_option_menu_get_history          (GtkOptionMenu    *option_menu);
