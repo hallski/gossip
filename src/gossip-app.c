@@ -165,6 +165,8 @@ static void     app_preferences_cb                   (GtkWidget          *widget
 						      GossipApp          *app);
 static void     app_account_information_cb           (GtkWidget          *widget,
 						      GossipApp          *app);
+static void     app_status_messages_cb               (GtkWidget          *widget,
+						      GossipApp          *app);
 static void     app_about_cb                         (GtkWidget          *widget,
 						      GossipApp          *app);
 static void     app_join_group_chat_cb               (GtkWidget          *widget,
@@ -301,12 +303,13 @@ app_class_init (GossipAppClass *klass)
 static void
 app_init (GossipApp *singleton_app)
 {
-        GossipAppPriv *priv;
-	GladeXML      *glade;
-	GtkWidget     *sw;
-	GtkWidget     *item;
-	GtkWidget     *status_label_hbox;
-	gint           width, height;
+        GossipAppPriv  *priv;
+	GladeXML       *glade;
+	GtkWidget      *sw;
+	GtkWidget      *item;
+	GtkWidget      *status_label_hbox;
+	gint            width, height;
+	GtkRequisition  req;
 
 	app = singleton_app;
 	
@@ -356,6 +359,7 @@ app_init (GossipApp *singleton_app)
 			      "actions_show_offline", "activate", app_show_offline_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "edit_account_information", "activate", app_account_information_cb,
+			      "edit_status_messages", "activate", app_status_messages_cb,
 			      "help_about", "activate", app_about_cb,
 			      "main_window", "destroy", app_main_window_destroy_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
@@ -456,6 +460,16 @@ app_init (GossipApp *singleton_app)
 	g_timeout_add (5000, (GSourceFunc) app_idle_check_cb, app);
 	
 	gtk_widget_show (priv->window);
+
+	/* Note: this is a hack that sets the minimal size of the window so it
+	 * doesn't allow resizing to a smaller width than the menubar takes
+	 * up. We must set a minimal size, otherwise the window won't shrink
+	 * beyond the longest string in the roster, which will cause the
+	 * ellipsizing cell renderer not to work. FIXME: needs to update this on
+	 * theme/font change.
+	 */
+	gtk_widget_size_request (priv->window, &req);
+	gtk_widget_set_size_request (priv->window, req.width, -1);
 }
 
 static void
@@ -788,6 +802,12 @@ static void
 app_account_information_cb (GtkWidget *widget, GossipApp *app)
 {
 	gossip_account_dialog_show ();
+}
+
+static void
+app_status_messages_cb (GtkWidget *widget, GossipApp *app)
+{
+	/* Do it... */
 }
 
 static void
@@ -2498,7 +2518,7 @@ configure_event_idle_cb (GtkWidget *widget)
 	gint           width, height;
 	
 	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
-	
+
 	gconf_client_set_int (gconf_client,
 			      "/apps/gossip/geometry/width",
 			      width,
@@ -2521,11 +2541,13 @@ app_window_configure_event_cb (GtkWidget         *widget,
 {
 	GossipAppPriv *priv = app->priv;
 	
-	if (!priv->size_timeout_id) {
-		priv->size_timeout_id = g_timeout_add (5000,
-						       (GSourceFunc) configure_event_idle_cb,
-						       widget);
+	if (priv->size_timeout_id) {
+		g_source_remove (priv->size_timeout_id);
 	}
+	
+	priv->size_timeout_id = g_timeout_add (1000,
+					       (GSourceFunc) configure_event_idle_cb,
+					       widget);
 
 	return FALSE;
 }

@@ -365,31 +365,28 @@ roster_view_create_store (GossipRosterView *view)
 static void 
 roster_view_setup_tree (GossipRosterView *view)
 {
-	GossipRosterViewPriv   *priv;
-	GtkCellRenderer        *cell;
-	GtkTreeViewColumn      *col;
+	GossipRosterViewPriv *priv;
+	GtkCellRenderer      *cell;
+	GtkTreeViewColumn    *col;
 
 	priv = view->priv;
 	
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 	/* gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (view), TRUE); */
 
-	/* FIXME: Connect to row_activated */
-
 	col = gtk_tree_view_column_new ();
-
+	
 	cell = gtk_cell_renderer_pixbuf_new ();
-	g_object_set (cell, "ypad", (guint) 1, NULL);
+	g_object_set (cell, "xpad", (guint) 2, NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_cell_data_func (col, cell, 
 						 (GtkTreeCellDataFunc) roster_view_pixbuf_cell_data_func,
 						 view, 
 						 NULL);
-	cell = gtk_cell_renderer_text_new ();
-	g_object_set (cell, "ypad", (guint) 1, NULL);
 
+	cell = gtk_cell_renderer_text_new ();
+	g_object_set (cell, "xpad", (guint) 0, NULL);
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
-	
 	gtk_tree_view_column_set_cell_data_func (col, cell,
 						 (GtkTreeCellDataFunc) roster_view_name_cell_data_func,
 						 view,
@@ -397,7 +394,6 @@ roster_view_setup_tree (GossipRosterView *view)
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (view), col);
 }
-
 
 static void
 roster_view_item_updated (GossipRoster     *roster,
@@ -645,6 +641,79 @@ roster_view_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 	g_object_unref (pixbuf);
 }
 
+static void
+ellipsize_string (gchar *str, gint len)
+{
+	gchar *tmp;
+
+	if (g_utf8_strlen (str, -1) > len + 4) {
+		tmp = g_utf8_offset_to_pointer (str, len);
+
+		tmp[0] = '.';
+		tmp[1] = '.';
+		tmp[2] = '.';
+		tmp[3] = '\0';
+	}
+}
+
+#define ELLIPSIS_LIMIT 6
+
+static void
+roster_view_ellipsize_item_strings (GossipRosterView *view,
+				    gchar            *name,
+				    gchar            *status,
+				    gint              width)
+{
+	PangoLayout    *layout;
+	PangoRectangle  rect;
+	gint            len_name, len_status;
+	gint            width_name, width_status;
+
+	len_name = g_utf8_strlen (name, -1);
+	len_status = g_utf8_strlen (status, -1);
+
+	/* Don't bother if we already have short strings. */
+	if (len_name < ELLIPSIS_LIMIT && len_status < ELLIPSIS_LIMIT) {
+		return;
+	}
+	
+	layout = gtk_widget_create_pango_layout (GTK_WIDGET (view), NULL);
+	
+	pango_layout_set_text (layout, name, -1);
+	pango_layout_get_extents (layout, NULL, &rect);
+	width_name = rect.width / PANGO_SCALE;
+
+	/* Note: if we ever use something more advanced than italic for the
+	 * status, like a smaller font, we need to take that in consideration
+	 * here.
+	 */
+	pango_layout_set_markup (layout, status, -1);
+	pango_layout_get_extents (layout, NULL, &rect);
+	width_status = rect.width / PANGO_SCALE;
+
+	while (len_name >= ELLIPSIS_LIMIT && width_name > width) {
+		len_name--;
+		ellipsize_string (name, len_name);
+		
+		pango_layout_set_text (layout, name, -1);
+		pango_layout_get_extents (layout, NULL, &rect);
+		
+		width_name = rect.width / PANGO_SCALE;
+	}
+
+	while (len_status >= ELLIPSIS_LIMIT && width_status > width) {
+		len_status--;
+		ellipsize_string (status, len_status);
+
+		pango_layout_set_text (layout, status, -1);
+		pango_layout_get_extents (layout, NULL, &rect);
+		
+		width_status = rect.width / PANGO_SCALE;
+	}
+	
+	g_object_unref (layout);
+}
+
 static void  
 roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 				 GtkCellRenderer   *cell,
@@ -655,8 +724,6 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	GossipRosterViewPriv *priv;
 	gboolean              is_group;
 	gpointer              pointer;
-	const gchar          *txt;
-	gint                  weight = PANGO_WEIGHT_NORMAL;
 	
 	priv = view->priv;
 
@@ -667,30 +734,46 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 
 	if (is_group) {
 		GossipRosterGroup *group = (GossipRosterGroup *) pointer;
-
-		txt = gossip_roster_group_get_name (group);
-		weight = PANGO_WEIGHT_BOLD;
+		
+		g_object_set (cell,
+			      "weight", PANGO_WEIGHT_BOLD,
+			      "markup", gossip_roster_group_get_name (group),
+			      NULL);
 	} else {
 		GossipRosterItem *item = (GossipRosterItem *) pointer;
-		const gchar      *status;
-		
-		status = gossip_roster_item_get_status (item);
-		if (!status || strcmp (status, "") == 0) {
+		const gchar      *tmp;
+		gchar            *status, *name, *markup;
+
+		tmp = gossip_roster_item_get_status (item);
+		if (!tmp || strcmp (tmp, "") == 0) {
 			GossipShow show = gossip_roster_item_get_show (item);
-			status = gossip_utils_get_default_status (show);
+			status = g_strdup (gossip_utils_get_default_status (show));
+		} else {
+			status = g_markup_escape_text (tmp, -1);
 		}
+			
+		name = g_strdup (gossip_roster_item_get_name (item));
 
-		txt = gossip_roster_item_get_name (item);
-		txt = g_strdup_printf ("%s\n<span foreground=\"gray\" style=\"italic\">%s</span>",
-				       gossip_roster_item_get_name (item),
-				       status);
+		/* FIXME: Figure out how to calculate the offset instead of
+		 * hardcoding it here (icon width + padding + indentation).
+		 */
+		roster_view_ellipsize_item_strings (view, name, status,
+						    GTK_WIDGET (view)->allocation.width -
+						    (16 + 2*2 + 35));
+		
+		markup = g_strdup_printf ("%s\n<span foreground=\"gray\" "
+					  "style=\"italic\">%s</span>",
+					  name, status);
+
+		g_object_set (cell,
+			      "weight", PANGO_WEIGHT_NORMAL,
+			      "markup", markup,
+			      NULL);
+
+		g_free (name);
+		g_free (status);
+		g_free (markup);
 	}
-
-	g_object_set (cell,
-		      "weight", weight,
-		      "markup", txt,
-		      "visible", TRUE,
-		      NULL);
 }
 
 typedef struct {
@@ -999,7 +1082,6 @@ roster_view_item_menu_rename_cb (gpointer   data,
 			       gossip_jid_get_without_resource (jid));
 
 	/* Translator: %s denotes the Jabber ID */
-	/* Translator: %s denotes the Jabber ID */
 	dialog = gtk_message_dialog_new (NULL,
 					 0,
 					 GTK_MESSAGE_QUESTION,
@@ -1086,7 +1168,6 @@ roster_view_group_menu_rename_cb (gpointer   data,
 	str = g_strdup_printf ("<b>%s</b>", 
 			       gossip_roster_group_get_name (group));
 
-	/* Translator: %s denotes the Jabber ID */
 	/* Translator: %s denotes the Jabber ID */
 	dialog = gtk_message_dialog_new (NULL,
 					 0,

@@ -1,3 +1,19 @@
+2003-11-10  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: (configure_event_idle_cb),
+	(app_window_configure_event_cb): Tweak the window size saving code
+	a bit, don't save until we've stopped resizing.
+	(app_init): Set the size request, part of roster item ellipsizing
+	hack.
+
+	* src/gossip-roster-view.c: (roster_view_setup_tree),
+	(ellipsize_string), (ellipsize_roster_item_strings),
+	(roster_view_name_cell_data_func): Weird hack to ellipsize the
+	name and status strings in the roster. Needs a bit more work.
+
+	* ui/main.glade: Add placeholder and menu item for status editor
+	list.
+
 2003-11-09  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_update_show),
