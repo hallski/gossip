@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-11-14 17:15+0100\n"
+"POT-Creation-Date: 2003-11-16 00:32+0100\n"
 "PO-Revision-Date: 2003-11-09 19:42+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -224,27 +224,27 @@ msgstr "_Öppna länk"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:510
+#: src/gossip-chat-window.c:470
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
 
-#: src/gossip-chat.c:683
+#: src/gossip-chat.c:674
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:688 src/gossip-group-chat.c:808
+#: src/gossip-chat.c:679 src/gossip-group-chat.c:808
 #: src/gossip-group-chat.c:911
 msgid "Details:"
 msgstr "Detaljer:"
 
-#: src/gossip-chat.c:759
+#: src/gossip-chat.c:752
 #, c-format
 msgid "%s went offline"
 msgstr "%s kopplade från"
 
-#: src/gossip-chat.c:770
+#: src/gossip-chat.c:766
 #, c-format
 msgid "%s comes online"
 msgstr "%s anslöt sig"
@@ -347,11 +347,11 @@ msgstr "/_Ta bort kontakt"
 msgid "/Re_name group"
 msgstr "/Byt _namn på grupp"
 
-#: src/gossip-roster-view.c:896
+#: src/gossip-roster-view.c:903
 msgid "Offline"
 msgstr "Frånkopplad"
 
-#: src/gossip-roster-view.c:1187
+#: src/gossip-roster-view.c:1203
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -362,7 +362,7 @@ msgstr ""
 "%s\n"
 "från din kontaktlista?"
 
-#: src/gossip-roster-view.c:1279
+#: src/gossip-roster-view.c:1295
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -371,7 +371,7 @@ msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
 "%s"
 
-#: src/gossip-roster-view.c:1366
+#: src/gossip-roster-view.c:1382
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -413,91 +413,86 @@ msgstr "Äter"
 msgid "Sleeping"
 msgstr "Sover"
 
-#: ui/chat.glade.h:1 ui/connect.glade.h:1 ui/group-chat.glade.h:1
-#: ui/main.glade.h:2
-msgid "    "
-msgstr "    "
-
-#: ui/chat.glade.h:2 ui/connect.glade.h:2 ui/group-chat.glade.h:3
+#: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:3
-msgid "As _Windows"
-msgstr "Som _fönster"
-
-#: ui/chat.glade.h:4
-msgid "As a _List"
-msgstr "Som en _lista"
-
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:2
 msgid "Chat"
 msgstr "Chatta"
 
-#: ui/chat.glade.h:6
-msgid "Chat with:"
-msgstr "Chatt med:"
-
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:3
 msgid "Contact _Information"
 msgstr "Kontakt_information"
 
-#: ui/chat.glade.h:8
-msgid "D_etach"
-msgstr "K_oppla loss"
-
-#: ui/chat.glade.h:9
+#: ui/chat.glade.h:4
 msgid "From:"
 msgstr "Från:"
 
-#: ui/chat.glade.h:10
+#: ui/chat.glade.h:5
 msgid "Gossip - Chat"
 msgstr "Gossip - Chatt"
 
-#: ui/chat.glade.h:11
+#: ui/chat.glade.h:6
 msgid "Gossip - Received Message"
 msgstr "Gossip - Mottaget meddelande"
 
-#: ui/chat.glade.h:12
+#: ui/chat.glade.h:7
 msgid "Gossip - Send Message"
 msgstr "Gossip - Skicka meddelande"
 
-#: ui/chat.glade.h:13
+#: ui/chat.glade.h:8
 msgid "In reply to:"
 msgstr "Svar på:"
 
-#: ui/chat.glade.h:14
+#: ui/chat.glade.h:9
 msgid "Lo_g"
 msgstr "Lo_gg"
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:10
+msgid "Move Tab _Left"
+msgstr "Flytta flik till _vänster"
+
+#: ui/chat.glade.h:11
+msgid "Move Tab _Right"
+msgstr "Flytta flik till _höger"
+
+#: ui/chat.glade.h:12
 msgid "To:"
 msgstr "Till:"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:13
 msgid "_Conversation"
 msgstr "_Konversation"
 
+#: ui/chat.glade.h:14
+msgid "_Detach Tab"
+msgstr "Koppla loss flik"
+
+#: ui/chat.glade.h:15
+msgid "_Next Tab"
+msgstr "_Nästa flik"
+
+#: ui/chat.glade.h:16
+msgid "_Previous Tab"
+msgstr "_Föregående flik"
+
 #: ui/chat.glade.h:17
-msgid "_Go"
-msgstr "_Gå"
-
-#: ui/chat.glade.h:18
-msgid "_Next Conversation"
-msgstr "_Nästa konversation"
-
-#: ui/chat.glade.h:19
-msgid "_Previous Conversation"
-msgstr "_Föregående konversation"
-
-#: ui/chat.glade.h:20
 msgid "_Reply..."
 msgstr "_Svara..."
 
-#: ui/chat.glade.h:21 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:18 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Skicka"
+
+#: ui/chat.glade.h:19
+msgid "_Tabs"
+msgstr "_Flikar"
+
+#: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
+msgid "    "
+msgstr "    "
 
 #: ui/connect.glade.h:3
 msgid "<b>Account Settings</b>"
@@ -976,6 +971,24 @@ msgstr "_Sök..."
 msgid "_Status Messages"
 msgstr "_Statusmeddelanden"
 
+#~ msgid "As _Windows"
+#~ msgstr "Som _fönster"
+
+#~ msgid "As a _List"
+#~ msgstr "Som en _lista"
+
+#~ msgid "Chat with:"
+#~ msgstr "Chatt med:"
+
+#~ msgid "D_etach"
+#~ msgstr "K_oppla loss"
+
+#~ msgid "_Go"
+#~ msgstr "_Gå"
+
+#~ msgid "_Next Conversation"
+#~ msgstr "_Nästa konversation"
+
 #~ msgid "Open conversations in single window with list view"
 #~ msgstr "Öppna konversationer i ensamt fönster med listvyn"
 
@@ -1065,9 +1078,6 @@ msgstr "_Statusmeddelanden"
 
 #~ msgid "As a List"
 #~ msgstr "Som en lista"
-
-#~ msgid "Detach"
-#~ msgstr "Koppla loss"
 
 #~ msgid "Get Info"
 #~ msgstr "Hämta information"
