@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-17 12:32-0400\n"
-"PO-Revision-Date: 2004-06-17 12:35-0400\n"
+"POT-Creation-Date: 2004-06-24 11:06-0400\n"
+"PO-Revision-Date: 2004-06-24 11:05-0400\n"
 "Last-Translator: Luiz Guaraldo <software.livre@terra.com.br>\n"
 "Language-Team: Gnome-BR <gnome-l10n-br@listas.cipsga.org.br>\n"
 "MIME-Version: 1.0\n"
@@ -137,7 +137,7 @@ msgstr "Traduzido por:"
 msgid "translator_credits"
 msgstr "Luiz Guaraldo <software.livre@terra.com.br>"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:65
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:64
 msgid "Home"
 msgstr "Início"
 
@@ -151,34 +151,34 @@ msgstr "Qual mensagem de solicitação você quer mandar para %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s será adicionado à sua lista de contatos."
 
-#: src/gossip-app.c:645
+#: src/gossip-app.c:644
 msgid "Could not connect"
 msgstr "Impossível conectar"
 
-#: src/gossip-app.c:646
+#: src/gossip-app.c:645
 msgid "Make sure that your account information is correct."
 msgstr "Tenha certeza que as informações de sua conta estão corretas."
 
-#: src/gossip-app.c:714
+#: src/gossip-app.c:713
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Adicione o ID de usuário da pessoa para quem quer enviar mensagem de chat."
 
-#: src/gossip-app.c:721 ui/main.glade.h:84
+#: src/gossip-app.c:720 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:1018
+#: src/gossip-app.c:1017
 #, c-format
 msgid "%s wants to be notified of your status."
 msgstr "%s quer ser notificado de seu status."
 
-#: src/gossip-app.c:1260
+#: src/gossip-app.c:1259
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Você foi desconectado do servidor. Você quer reconectar?"
 
-#: src/gossip-app.c:1415
+#: src/gossip-app.c:1414
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -186,45 +186,45 @@ msgstr ""
 "Tenha certeza que as informações de sua conta estão corretas. O servidor "
 "ainda pode estar indisponível no momento."
 
-#: src/gossip-app.c:1888
+#: src/gossip-app.c:1887
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Cliente de Mensagens Instantâneas"
 
-#: src/gossip-app.c:2032
+#: src/gossip-app.c:2031
 #, c-format
 msgid "New message from %s"
 msgstr "Nova mensagem de %s"
 
-#: src/gossip-app.c:2121 src/gossip-chat-window.c:782
+#: src/gossip-app.c:2120 src/gossip-chat-window.c:782
 #: src/gossip-roster-view.c:987
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2520 src/gossip-preferences.c:638
+#: src/gossip-app.c:2519 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Disponível"
 
-#: src/gossip-app.c:2531 src/gossip-preferences.c:639
+#: src/gossip-app.c:2530 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Ocupado"
 
-#: src/gossip-app.c:2542 src/gossip-preferences.c:640
+#: src/gossip-app.c:2541 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Longe"
 
-#: src/gossip-app.c:2674
+#: src/gossip-app.c:2673
 msgid "Available..."
 msgstr "Disponível..."
 
-#: src/gossip-app.c:2679
+#: src/gossip-app.c:2678
 msgid "Busy..."
 msgstr "Ocupado..."
 
-#: src/gossip-app.c:2684
+#: src/gossip-app.c:2683
 msgid "Away..."
 msgstr "Longe..."
 
-#: src/gossip-app.c:2713
+#: src/gossip-app.c:2712
 msgid "Edit List..."
 msgstr "Editar Lista..."
 
@@ -438,6 +438,14 @@ msgstr "Por favor, digite sua senha:"
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Lembrar senha?"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Solicitando detalhes pessoais, por favor aguarde..."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Salvando detalhes pessoais, por favor aguarde..."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
@@ -954,77 +962,81 @@ msgid "Yes"
 msgstr "Sim"
 
 #: ui/main.glade.h:80
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"their status."
+msgstr ""
+"Você não está inscrito para receber o estado deste contato. Pressione "
+"Inscrever-se para receber seu estado."
+
+#: ui/main.glade.h:81
 msgid "Your Identity"
 msgstr "Sua Identificação"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:82
 msgid "_Accept"
 msgstr "_Aceitar"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:83
 msgid "_Account Information"
 msgstr "Informação da Cont_a"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:84
 msgid "_Add Contact..."
 msgstr "_Adicionar Contato..."
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:86
 msgid "_Connect..."
 msgstr "_Conectar..."
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:87
 msgid "_Deny"
 msgstr "_Negar"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:88
 msgid "_Disconnect"
 msgstr "_desconectar"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:89
 msgid "_Hide Contact List"
 msgstr "_Ocultar Lista de Contatos"
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:90
 msgid "_Jabber ID of new contact:"
 msgstr "_ID Jabber do novo contato:"
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:91
 msgid "_Join Group Chat..."
 msgstr "_Juntar-se a Grupo de Chat..."
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:92
 msgid "_New Message..."
 msgstr "_Nova Mensagem..."
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:93
 msgid "_Personal Details"
 msgstr "_Detalhes pessoais"
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:94
 msgid "_Preferences"
 msgstr "_Preferências"
 
-#: ui/main.glade.h:94
+#: ui/main.glade.h:95
 msgid "_Remove"
 msgstr "_Remover"
 
-#: ui/main.glade.h:95
+#: ui/main.glade.h:96
 msgid "_Search..."
 msgstr "_Procurar..."
 
-#: ui/main.glade.h:96
+#: ui/main.glade.h:97
 msgid "_Show Contact List"
 msgstr "_Mostrar Lista de Contatos"
 
-#: ui/main.glade.h:97
+#: ui/main.glade.h:98
 msgid "_Status Messages"
 msgstr "Mensagem de _Status"
 
-#: ui/main.glade.h:98
+#: ui/main.glade.h:99
 msgid "_Subscribe"
 msgstr "In_screver-se"
-
-#: ui/main.glade.h:99
-msgid "subscription_label"
-msgstr "nome_da_inscrição"
