@@ -1,3 +1,8 @@
+2003-09-01  Pablo Gonzalo del Campo  <pablodc@bigfoot.com>
+
+        * es.po: Revision of Spanish translation by
+                 Francisco Javier F. Serrador <serrador@arrakis.es>.
+
 2003-09-01  Miloslav Trmac  <mitr@volny.cz>
 
 	* cs.po: Updated Czech translation.
@@ -21,14 +26,14 @@
 2003-08-30  Christophe Merlet  <redfox@redfoxcenter.org>
 
 	* fr.po: Added French translation by
-	Fr�d�ric Brin <duckx@mezimail.com>.
+	Frédéric Brin <duckx@mezimail.com>.
 
 2003-08-30  Wang Jian  <lark@linux.net.cn>
 
 	* zh_CN.po: Added Simplified Chinese translation by
 	Mai Hao Hui <mhh@ricetons.com>.
 
-2003-08-30  Danilo Šegan  <dsegan@gmx.net>
+2003-08-30  Danilo Å egan  <dsegan@gmx.net>
 
 	* sr.po, sr@Latn.po: Updated Serbian translation.
 
@@ -46,7 +51,7 @@
 
 	* cy.po: Updated Welsh translation.
 
-2003-08-29  Danilo Šegan  <dsegan@gmx.net>
+2003-08-29  Danilo Å egan  <dsegan@gmx.net>
 
 	* sr.po, sr@Latn.po: Updated Serbian translation.
 
@@ -66,7 +71,7 @@
 
 	* pl.po: Updated Polish translation.
 
-2003-08-25  Danilo Šegan  <dsegan@gmx.net>
+2003-08-25  Danilo Å egan  <dsegan@gmx.net>
 
 	* sr.po, sr@Latn.po: Updated Serbian translation.
 
@@ -132,7 +137,7 @@
 
 	* cy.po: Updated Welsh translation.
 
-2003-08-08  Danilo Šegan  <dsegan@gmx.net>
+2003-08-08  Danilo Å egan  <dsegan@gmx.net>
 
 	* sr.po, sr@Latn.po: Added Serbian translation by Serbian team
 	(Prevod.org).
@@ -274,7 +279,7 @@
 
 	* POTFILES.in: Add gossip-idle.c
 
-	* es.po: Added from Ezequiel Pérez.
+	* es.po: Added from Ezequiel PÃ©rez.
 
 2003-07-09  Jordi Mallach  <jordi@sindominio.net>
 
