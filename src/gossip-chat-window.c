@@ -88,7 +88,8 @@ static void chat_window_new_message_cb	      (GossipChat	     *chat,
 					       GossipChatWindow	     *window);
 static void chat_window_selection_changed_cb  (GtkTreeSelection	     *sel,
 					       GossipChatWindow	     *window);
-static void chat_window_focus_in_event_cb     (GtkWidget	     *widget,
+static gboolean
+chat_window_focus_in_event_cb                 (GtkWidget	     *widget,
 					       GdkEvent		     *event,
 					       GossipChatWindow      *window); 
 static const gchar *
@@ -736,13 +737,15 @@ chat_window_selection_changed_cb (GtkTreeSelection *sel,
 	chat_window_update_status (window, chat);
 }
 
-static void
+static gboolean
 chat_window_focus_in_event_cb (GtkWidget        *widget,
 			       GdkEvent         *event,
 			       GossipChatWindow *window)
 {
 	window->priv->new_msg = FALSE;
 	chat_window_update_title (window);
+
+	return FALSE;
 }
 
 static const gchar *

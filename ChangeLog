@@ -1,3 +1,8 @@
+2003-11-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (chat_window_focus_in_event_cb): Event
+	handlers must return a boolean, fixes the weird focus problems.
+
 2003-11-07  Mikael Hallendal  <micke@imendio.com>
 
         * src/gossip-roster.c (roster_clear_foreach_item):
