@@ -1,3 +1,15 @@
+2005-01-03  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-transport-add-window.c: 
+	- If we get a 404 Not Found when initiating service discovery, we
+	now look to 3rd party servers for transport support instead of
+	doing nothing.
+	- JEP 0070 now allows registering without a "key" xml element,
+	legacy services still require it so we use it when available. 
+	* src/gossip-transport-discover.c: 
+	- Add error checking, this is vital to know if the local server
+	supports service discovery.
+
 2005-01-03  Mikael Hallendal  <micke@imendio.com>
 
 	* src/Makefile.am:

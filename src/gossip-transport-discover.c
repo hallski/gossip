@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <stdlib.h>
 #include <gtk/gtk.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
@@ -36,24 +37,28 @@
 
 struct _GossipTransportDisco {
 	GossipJabber *jabber;
+	GossipJID *to;
 
         LmMessageHandler *message_handler;
 
-	GossipJID *to;
+	gpointer user_data;
 
+	/* items */
 	GossipTransportDiscoItemFunc item_func;
 
-	gpointer user_data;
- 
 	GList *items;
 	gint items_remaining;
 	gint items_total;
  
-	guint timeout_id;
-
+	/* flags */
 	gboolean item_lookup;
-
 	gboolean destroying;
+
+	/* errors */
+	GError *last_error;
+
+	/* misc */
+	guint timeout_id;
 };
 
 
@@ -96,13 +101,18 @@ static void                  transport_disco_destroy_info_foreach     (GossipTra
 								       gpointer                      user_data);
 static void                  transport_disco_destroy_ident_foreach    (GossipTransportDiscoIdentity *ident,
 								       gpointer                      user_data);
+static gboolean              transport_disco_find_item_func           (GossipJID                    *jid,
+								       GossipTransportDisco         *disco,
+								       GossipTransportDiscoItem     *item);
+static void                  transport_disco_set_last_error           (GossipTransportDisco         *disco,
+								       LmMessage                    *m);
 static LmHandlerResult       transport_disco_message_handler          (LmMessageHandler             *handler,
 								       LmConnection                 *connection,
 								       LmMessage                    *m,
 								       gpointer                      user_data);
 static void                  transport_disco_request_items            (GossipTransportDisco         *disco);
-static gboolean              transport_disco_request_items_timeout_cb (GossipTransportDisco         *disco);
 static gboolean              transport_disco_request_info_timeout_cb  (GossipTransportDiscoItem     *item);
+static gboolean              transport_disco_request_items_timeout_cb (GossipTransportDisco         *disco);
 static void                  transport_disco_handle_items             (GossipTransportDisco         *disco,
 								       LmMessage                    *m,
 								       gpointer                      user_data);
@@ -110,11 +120,6 @@ static void                  transport_disco_request_info             (GossipTra
 static void                  transport_disco_handle_info              (GossipTransportDisco         *disco,
 								       LmMessage                    *m,
 								       gpointer                      user_data);
-static gboolean              transport_disco_find_item_func           (GossipJID                    *jid,
-								       GossipTransportDisco         *disco,
-								       GossipTransportDiscoItem     *item);
-
-
 
 
 static GHashTable *discos = NULL; 
@@ -143,40 +148,21 @@ transport_disco_new (GossipJabber *jabber)
 	return disco;
 }
 
-void
-gossip_transport_disco_destroy (GossipTransportDisco *disco)
+static void
+transport_disco_init (void)
 {
-	LmConnection     *connection;
-        LmMessageHandler *handler;
+        static gboolean inited = FALSE;
 
-	/* we don't mind if NULL is supplied, an error message is
-	   unnecessary. */ 
-	if (!disco || disco->destroying) {
+	if (inited) {
 		return;
 	}
 
-	disco->destroying = TRUE;
+        inited = TRUE;
 
-        connection = gossip_jabber_get_connection (disco->jabber);
-
-        handler = disco->message_handler;
-        if (handler) {
-                lm_connection_unregister_message_handler (connection, 
-							  handler, 
-							  LM_MESSAGE_TYPE_IQ);
-                lm_message_handler_unref (handler);
-        }
-
-	g_list_foreach (disco->items, (GFunc)transport_disco_destroy_items_foreach, NULL);
-	g_list_free (disco->items);
-
-	if (disco->timeout_id) {
-		g_source_remove (disco->timeout_id);
-	}
-
-	g_object_unref (disco->jabber);
-
- 	g_hash_table_remove (discos, disco->to); 
+        discos = g_hash_table_new_full (gossip_jid_hash,
+					gossip_jid_equal,
+					(GDestroyNotify) gossip_jid_unref,
+					(GDestroyNotify) g_free);
 }
 
 static void 
@@ -239,65 +225,135 @@ transport_disco_find_item_func (GossipJID                *jid,
 }
 
 static void
-transport_disco_init (void)
+transport_disco_set_last_error (GossipTransportDisco *disco,
+				LmMessage            *m)
 {
-        static gboolean inited = FALSE;
+	LmMessageNode *node;
+	const gchar   *xmlns;
+	const gchar   *error_code;
+	const gchar   *error_reason;
 
-	if (inited) {
+	node = lm_message_node_get_child (m->node, "query");	
+	if (!node) {
 		return;
 	}
 
-        inited = TRUE;
+	xmlns = lm_message_node_get_attribute (node, "xmlns");
+	if (!xmlns) {
+		return;	
+	}
+	
+	if (strcmp (xmlns, "http://jabber.org/protocol/disco#items") != 0) {
+		/* FIXME: currently only handle errors for this namespace */ 
+		return;
+	}
+	
+	node = lm_message_node_get_child (m->node, "error");	
+	if (!node) {
+		return;
+	}
+	
+	error_code = lm_message_node_get_attribute (node, "code");
+	error_reason = lm_message_node_get_value (node);
 
-        discos = g_hash_table_new_full (gossip_jid_hash,
-					gossip_jid_equal,
-					(GDestroyNotify) gossip_jid_unref,
-					(GDestroyNotify) g_free);
+	if (error_code || error_reason) {
+		GQuark quark; 
+		GError *error;
+		
+		quark = g_quark_from_string ("gossip-transport-discover");
+		error = g_error_new_literal (quark,
+					     atoi (error_code), 
+					     error_reason);
+
+		if (disco->last_error) {
+			g_error_free (disco->last_error);
+			disco->last_error = NULL;
+		}
+
+		disco->last_error = error;
+	}
 }
 
-GossipTransportDisco *
-gossip_transport_disco_request (GossipJabber                 *jabber,
-				const char                   *to, 
-				GossipTransportDiscoItemFunc  item_func,
-				gpointer                      user_data)
+static LmHandlerResult
+transport_disco_message_handler (LmMessageHandler *handler,
+				 LmConnection     *connection,
+				 LmMessage        *m,
+				 gpointer          user_data)
 {
-	GossipTransportDisco *disco;
-	GossipJID            *jid;
+        GossipTransportDisco *disco;
+        GossipJID            *from_jid;
+        const gchar          *from;
+	LmMessageNode        *node; 
+	const char           *xmlns;
 
-	g_return_val_if_fail (jabber != NULL, NULL);
-	g_return_val_if_fail (to != NULL, NULL);
-	g_return_val_if_fail (item_func != NULL, NULL);
+        from = lm_message_node_get_attribute (m->node, "from");
+        from_jid = gossip_jid_new (from);
 
-	transport_disco_init ();
+	/* used for info look ups */
+	disco = g_hash_table_lookup (discos, from_jid);
 
-	jid = gossip_jid_new (to);
-
-	disco = g_hash_table_lookup (discos, jid);
-
-	if (disco) {
-		return disco;
+	/* if not listed under the from jid, try the user data */
+	if (!disco) {
+		disco = (GossipTransportDisco *) user_data; 
 	}
 
-	disco = transport_disco_new (jabber);
-	g_hash_table_insert (discos, gossip_jid_ref (jid), disco);
+	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT && 
+	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
+ 		gossip_jid_unref (from_jid); 
+		
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
+		
+	}
+	
+	node = lm_message_node_get_child (m->node, "query");
+        if (!node) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 
-	disco->to = jid;
+	xmlns = lm_message_node_get_attribute (node, "xmlns");
+	if (!xmlns) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;	
+	}
 
-	disco->item_func = item_func;
-	disco->user_data = user_data;
+	if (strcmp (xmlns, "http://jabber.org/protocol/disco#items") == 0) {
+		/* remove timeout: we do this because at this
+		   stage, the server has responded */
+		if (disco->timeout_id) {
+			g_source_remove (disco->timeout_id);
+			disco->timeout_id = 0;
+		}
 
-	disco->items_remaining = 1;
-	disco->items_total = 1;
+		if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_ERROR) {
+			transport_disco_set_last_error (disco, m);
+		
+			if (!disco->item_lookup && disco->items_remaining > 0) {
+				disco->items_remaining--;
+			}
+			
+			/* call callback and inform of last item */
+			if (disco->item_func) {
+				(disco->item_func) (disco, 
+						    NULL, 
+						    disco->items_remaining < 1 ? TRUE : FALSE,
+						    FALSE,
+						    disco->last_error,
+						    disco->user_data);
+			}
+			
+			if (!disco->item_lookup && disco->items_remaining < 1) {
+				gossip_transport_disco_destroy (disco);
+			}
+		} else {
+			transport_disco_handle_items (disco, m, user_data);
+			transport_disco_request_info (disco);
+		}
+	} else if (strcmp (xmlns, "http://jabber.org/protocol/disco#info") == 0) {
+		transport_disco_handle_info (disco, m, user_data);
+	} else {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 
-	/* start timeout */
-	disco->timeout_id = g_timeout_add (DISCO_TIMEOUT * 1000, 
-					   (GSourceFunc) transport_disco_request_items_timeout_cb,
-					   disco);
-
-	/* send initial request */
-	transport_disco_request_items (disco);
-
-	return disco;
+        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static void
@@ -341,6 +397,7 @@ transport_disco_request_items_timeout_cb (GossipTransportDisco *disco)
 				    NULL, 
 				    FALSE,
 				    TRUE,
+				    NULL,
 				    disco->user_data);
 	}
 
@@ -376,6 +433,7 @@ transport_disco_request_info_timeout_cb (GossipTransportDiscoItem *item)
 				    item, 
 				    disco->items_remaining < 1 ? TRUE : FALSE,
 				    TRUE,
+				    NULL,
 				    disco->user_data);
 	}
 
@@ -386,67 +444,6 @@ transport_disco_request_info_timeout_cb (GossipTransportDiscoItem *item)
 	return FALSE;
 }
 
-static LmHandlerResult
-transport_disco_message_handler (LmMessageHandler *handler,
-				 LmConnection     *connection,
-				 LmMessage        *m,
-				 gpointer          user_data)
-{
-        GossipTransportDisco *disco;
-        GossipJID            *from_jid;
-        const gchar          *from;
-	LmMessageNode        *node; 
-	const char           *xmlns;
-
-        from = lm_message_node_get_attribute (m->node, "from");
-        from_jid = gossip_jid_new (from);
-
-	/* used for info look ups */
-	disco = g_hash_table_lookup (discos, from_jid);
-
-	/* if not listed under the from jid, try the user data */
-	if (!disco) {
-		disco = (GossipTransportDisco *) user_data; 
-	}
-
-	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT && 
-	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-		gossip_jid_unref (from_jid);
-		
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	}
-	
-	node = lm_message_node_get_child (m->node, "query");
-        if (node) {
-		xmlns = lm_message_node_get_attribute (node, "xmlns");
-
-		if (!xmlns) {
-			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;	
-		}
-
-		if (strcmp (xmlns, "http://jabber.org/protocol/disco#items") == 0) {
-			/* remove timeout: we do this because at this
-			   stage, the server has responded */
-			if (disco->timeout_id) {
-				g_source_remove (disco->timeout_id);
-				disco->timeout_id = 0;
-			}
-
-			transport_disco_handle_items (disco, m, user_data);
-			transport_disco_request_info (disco);
-		} else if (strcmp (xmlns, "http://jabber.org/protocol/disco#info") == 0) {
-			transport_disco_handle_info (disco, m, user_data);
-		} else {
-			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-		}
-        }
-
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-}
-
-/*
- * items
- */
 static void
 transport_disco_handle_items (GossipTransportDisco *disco,
 			      LmMessage            *m,
@@ -480,74 +477,6 @@ transport_disco_handle_items (GossipTransportDisco *disco,
 		/* go to next item */
 		node = node->next;
 	}
-}
-
-GossipTransportDisco *
-gossip_transport_disco_request_info (GossipJabber                 *jabber,
-				     const char                   *to, 
-				     GossipTransportDiscoItemFunc  item_func,
-				     gpointer                      user_data)
-{
-	GossipTransportDisco     *disco;
-	GossipTransportDiscoItem *item;
-	GossipJID                *jid;
-	LmConnection             *connection;
-	LmMessageHandler         *handler;
-
-	g_return_val_if_fail (jabber != NULL, NULL);
-	g_return_val_if_fail (to != NULL, NULL);
-	g_return_val_if_fail (item_func != NULL, NULL);
-
-	transport_disco_init ();
-
-	jid = gossip_jid_new (to);
-
-	disco = g_hash_table_lookup (discos, jid);
-
-	if (disco) {
-		gossip_jid_unref (jid);
-		return disco;
-	}
-
-	/* create disco */
-	disco = g_new0 (GossipTransportDisco, 1);
-
-	disco->jabber = g_object_ref (jabber);
-
-	/* set up handler */
-	connection = gossip_jabber_get_connection (jabber);
-
-	handler = lm_message_handler_new (transport_disco_message_handler, disco, NULL);
-	disco->message_handler = handler;
-	lm_connection_register_message_handler (connection,
-						handler,
-						LM_MESSAGE_TYPE_IQ,
-						LM_HANDLER_PRIORITY_NORMAL);
-
-	/* add disco and configure members */
-	g_hash_table_insert (discos, gossip_jid_ref (jid), disco);
-
-	disco->to = jid;
-
-	disco->item_lookup = TRUE;
-
-	disco->item_func = item_func;
-	disco->user_data = user_data;
-
-	disco->items_remaining = 1;
-	disco->items_total = 1;
-
-	/* add item */
-	item = g_new0 (GossipTransportDiscoItem, 1);
-
-	item->jid = gossip_jid_ref (jid);
-
-	disco->items = g_list_append (disco->items, item);
-
-	/* send request for info */
-	transport_disco_request_info (disco);
-
-	return disco;
 }
 
 static void
@@ -698,12 +627,166 @@ transport_disco_handle_info (GossipTransportDisco *disco,
 				    item, 
 				    disco->items_remaining < 1 ? TRUE : FALSE,
 				    FALSE,
+				    NULL,
 				    disco->user_data);
 	}
 
 	if (!disco->item_lookup && disco->items_remaining < 1) {
 		gossip_transport_disco_destroy (disco);
 	}
+}
+
+GossipTransportDisco *
+gossip_transport_disco_request (GossipJabber                 *jabber,
+				const char                   *to, 
+				GossipTransportDiscoItemFunc  item_func,
+				gpointer                      user_data)
+{
+	GossipTransportDisco *disco;
+	GossipJID            *jid;
+
+	g_return_val_if_fail (jabber != NULL, NULL);
+	g_return_val_if_fail (to != NULL, NULL);
+	g_return_val_if_fail (item_func != NULL, NULL);
+
+	transport_disco_init ();
+
+	jid = gossip_jid_new (to);
+
+	disco = g_hash_table_lookup (discos, jid);
+
+	if (disco) {
+		return disco;
+	}
+
+	disco = transport_disco_new (jabber);
+	g_hash_table_insert (discos, gossip_jid_ref (jid), disco);
+
+	disco->to = jid;
+
+	disco->item_func = item_func;
+	disco->user_data = user_data;
+
+	disco->items_remaining = 1;
+	disco->items_total = 1;
+
+	/* start timeout */
+	disco->timeout_id = g_timeout_add (DISCO_TIMEOUT * 1000, 
+					   (GSourceFunc) transport_disco_request_items_timeout_cb,
+					   disco);
+
+	/* send initial request */
+	transport_disco_request_items (disco);
+
+	return disco;
+}
+
+void
+gossip_transport_disco_destroy (GossipTransportDisco *disco)
+{
+	LmConnection     *connection;
+        LmMessageHandler *handler;
+
+	/* we don't mind if NULL is supplied, an error message is
+	   unnecessary. */ 
+	if (!disco || disco->destroying) {
+		return;
+	}
+
+	disco->destroying = TRUE;
+
+        connection = gossip_jabber_get_connection (disco->jabber);
+
+        handler = disco->message_handler;
+        if (handler) {
+                lm_connection_unregister_message_handler (connection, 
+							  handler, 
+							  LM_MESSAGE_TYPE_IQ);
+                lm_message_handler_unref (handler);
+        }
+
+	g_list_foreach (disco->items, (GFunc)transport_disco_destroy_items_foreach, NULL);
+	g_list_free (disco->items);
+
+	if (disco->timeout_id) {
+		g_source_remove (disco->timeout_id);
+	}
+
+	if (disco->last_error) {
+		g_error_free (disco->last_error);
+	}
+
+	g_object_unref (disco->jabber);
+
+ 	g_hash_table_remove (discos, disco->to); 
+}
+
+GossipTransportDisco *
+gossip_transport_disco_request_info (GossipJabber                 *jabber,
+				     const char                   *to, 
+				     GossipTransportDiscoItemFunc  item_func,
+				     gpointer                      user_data)
+{
+	GossipTransportDisco     *disco;
+	GossipTransportDiscoItem *item;
+	GossipJID                *jid;
+	LmConnection             *connection;
+	LmMessageHandler         *handler;
+
+	g_return_val_if_fail (jabber != NULL, NULL);
+	g_return_val_if_fail (to != NULL, NULL);
+	g_return_val_if_fail (item_func != NULL, NULL);
+
+	transport_disco_init ();
+
+	jid = gossip_jid_new (to);
+
+	disco = g_hash_table_lookup (discos, jid);
+
+	if (disco) {
+		gossip_jid_unref (jid);
+		return disco;
+	}
+
+	/* create disco */
+	disco = g_new0 (GossipTransportDisco, 1);
+
+	disco->jabber = g_object_ref (jabber);
+
+	/* set up handler */
+	connection = gossip_jabber_get_connection (jabber);
+
+	handler = lm_message_handler_new (transport_disco_message_handler, disco, NULL);
+	disco->message_handler = handler;
+	lm_connection_register_message_handler (connection,
+						handler,
+						LM_MESSAGE_TYPE_IQ,
+						LM_HANDLER_PRIORITY_NORMAL);
+
+	/* add disco and configure members */
+	g_hash_table_insert (discos, gossip_jid_ref (jid), disco);
+
+	disco->to = jid;
+
+	disco->item_lookup = TRUE;
+
+	disco->item_func = item_func;
+	disco->user_data = user_data;
+
+	disco->items_remaining = 1;
+	disco->items_total = 1;
+
+	/* add item */
+	item = g_new0 (GossipTransportDiscoItem, 1);
+
+	item->jid = gossip_jid_ref (jid);
+
+	disco->items = g_list_append (disco->items, item);
+
+	/* send request for info */
+	transport_disco_request_info (disco);
+
+	return disco;
 }
 
 GList *

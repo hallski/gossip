@@ -165,12 +165,14 @@ static void     transport_add_window_check_local_cb                 (GossipTrans
 								     GossipTransportDiscoItem *item,
 								     gboolean                  last_item,
 								     gboolean                  timeout,
+								     GError                   *error,
 								     GossipTransportAddWindow *window);
 static void     transport_add_window_check_others                   (GossipTransportAddWindow *window);
 static void     transport_add_window_check_others_cb                (GossipTransportDisco     *disco,
 								     GossipTransportDiscoItem *item,
 								     gboolean                  last_item,
 								     gboolean                  timeout,
+								     GError                   *error,
 								     GossipTransportAddWindow *window);
 static void     transport_add_window_requirements                   (GossipTransportAddWindow *window,
 								     GossipJID                *jid);
@@ -373,6 +375,7 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 				     GossipTransportDiscoItem  *item, 
 				     gboolean                  last_item, 
 				     gboolean                  timeout,
+				     GError                   *error,
 				     GossipTransportAddWindow *window)
 {
 	GossipTransportAccount *account;
@@ -385,6 +388,16 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 
 	remaining = gossip_transport_disco_get_items_remaining (disco);
 	total = gossip_transport_disco_get_items_total (disco);
+
+	/* 404 = not found, service discovery not supported */
+	if (error && error->code == 404) {
+		d(g_print ("local server does not support service "
+			   "discovery, trying 3rd party services\n"));
+		transport_add_window_disco_cleanup (window);
+		transport_add_window_check_others (window);
+		
+		return;
+	}
 
 	/* show progress */
 	fraction = 1 - (remaining / total);
@@ -534,6 +547,7 @@ transport_add_window_check_others_cb (GossipTransportDisco     *disco,
 				      GossipTransportDiscoItem *item, 
 				      gboolean                  last_item,
 				      gboolean                  timeout,
+				      GError                   *error,
 				      GossipTransportAddWindow *window)
 {
 	GtkTreeView  *view;
@@ -676,6 +690,15 @@ transport_add_window_requirements_cb (GossipJID                *jid,
 		return;
 	}
 
+#if 0
+	/* This is strange:
+
+	   After looking at PSI and JEP-0077, registrations are now
+	   accepted without a "key", but older services still require
+	   a key.  To keep backwards compatibility, we will allow
+	   registration without a key.  
+	*/
+
 	if (!key) {
 		gchar *str;
 		
@@ -706,6 +729,7 @@ transport_add_window_requirements_cb (GossipJID                *jid,
 		g_free (str);
 		return;
 	}
+#endif
 
 	gtk_widget_hide (window->label_requirements_result);
 	gtk_widget_show (window->label_stub_service);

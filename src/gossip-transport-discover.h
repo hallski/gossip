@@ -36,6 +36,7 @@ typedef void (*GossipTransportDiscoItemFunc) (GossipTransportDisco     *disco,
 					      GossipTransportDiscoItem *item,
 					      gboolean                  last_item,
 					      gboolean                  timeout,
+					      GError                   *error,
 					      gpointer                  user_data);
 
 GossipTransportDisco *    gossip_transport_disco_request               (GossipJabber                 *jabber,
