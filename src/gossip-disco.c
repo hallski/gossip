@@ -631,6 +631,14 @@ gossip_disco_get_category_and_type (GossipDisco *disco,
 	return services;
 }
 
+gint
+gossip_disco_get_items_remaining (GossipDisco *disco)
+{
+	g_return_val_if_fail (disco != NULL, -1);
+
+	return disco->items_remaining;
+}
+
 GossipDiscoItem *
 gossip_disco_get_item (GossipDisco *disco,
 		       GossipJID   *jid)

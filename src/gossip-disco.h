@@ -47,6 +47,7 @@ GList            *gossip_disco_get_category          (GossipDisco         *disco
 GList            *gossip_disco_get_category_and_type (GossipDisco         *disco,
 						      const gchar         *category,
 						      const gchar         *type);
+gint              gossip_disco_get_items_remaining   (GossipDisco         *disco);
 
 GossipDiscoItem  *gossip_disco_get_item              (GossipDisco         *disco,
 						      GossipJID           *jid);

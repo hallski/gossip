@@ -1,0 +1,39 @@
+<!--
+  DTD for Gossips protocol definitions.
+  by Paul van Tilburg <paul@luon.net>
+
+  Root element: <transport/>
+  Revision: 0.4
+-->
+
+<!-- Root element of a protocol definition. -->
+<!ELEMENT protocol 
+   (name, disco-type, (stock-icon | icon), description, server-list)>
+
+<!-- The name of the protocol. -->
+<!ELEMENT name (#PCDATA)>
+
+<!-- The disco type coupled to this protocol definition. -->
+<!ELEMENT disco-type (#PCDATA)>
+
+<!-- The Gossip stock icon representing the protocol. -->
+<!ELEMENT stock-icon (#PCDATA)>
+
+<!-- A custom icon represening the protocol. -->
+<!ELEMENT icon (#PCDATA)>
+
+<!-- The description for the protocol. -->
+<!ELEMENT description (#PCDATA)>
+
+<!-- List of servers to use for service/protcol discovery.
+     Always carries an URL of a fallback server list. -->
+<!ELEMENT server-list (server+)>
+<!ATTLIST server-list url CDATA #REQUIRED>
+
+<!-- A server to be discovered on.
+     The port number is implied, defaults to 5222 (jabberc2s) -->
+<!ELEMENT server EMPTY>
+<!ATTLIST server
+   name CDATA #REQUIRED
+   host CDATA #REQUIRED
+   port CDATA #IMPLIED>

@@ -1,3 +1,47 @@
+2004-09-16  Martyn Russell  <ginxd@btopenworld.com>
+	
+	* Makefile.am (SUBDIRS): 
+	- Added new protocols directory into the mix.
+	* protocols/Makefile.am (image_DATA): 
+	- Added AIM/ICQ/MSN/Yahoo images into the build.
+	- Added the DTD from Paul van Tilburg (v0.4).
+	* src/Makefile.am (INCLUDES): 
+	- Added a PROTOCOLSDIR definition.
+	* src/gossip-disco-servers.c
+	(gossip_disco_protocols_get_supported),
+	(disco_protocols_validate_file), (disco_protocols_parse_file),
+	(disco_protocol_new), (gossip_disco_protocol_free),
+	(gossip_disco_protocol_get_name),
+	(gossip_disco_protocol_get_description),
+	(gossip_disco_protocol_get_disco_type),
+	(gossip_disco_protocol_get_icon),
+	(gossip_disco_protocol_get_stock_icon),
+	(gossip_disco_protocol_get_url),
+	(gossip_disco_protocol_get_servers), (disco_server_new),
+	(gossip_disco_server_free), (gossip_disco_server_get_name),
+	(gossip_disco_server_get_host), (gossip_disco_server_get_port):
+	- Added these functions to deal with the XML protocol files which
+	will be installed into <prefix>/share/gossip/protocols or
+	<homedir>/.gnome2/Gossip/protocols.  These XML files are now used
+	instead of the server list from jabber.org.
+	* src/gossip-disco-window.c (disco_window_search_failed),
+	(disco_window_check_local_cb),(disco_window_check_others_2_cb),
+	(disco_window_setup), (disco_window_setup_protocols_cb),
+	(disco_window_populate_columns),
+	(disco_window_pixbuf_cell_data_func),
+	(disco_window_name_cell_data_func),
+	(disco_window_selection_changed_cb),
+	(disco_window_model_foreach_cb): 
+	- Added a message for when all discos have returned and there is
+	nothing more to do.
+	- Added a progress bar for the user to have some feed back.
+	* src/gossip-disco-window.c (disco_window_setup),
+	(disco_window_populate_columns),
+	(disco_window_selection_changed_cb): 
+	- Changed the option buttons for the protocols to a list
+	* src/gossip-stock.c: 
+	- Added AIM/ICQ/MSN/Yahoo stock items.
+
 2004-09-15  Mikael Hallendal  <micke@imendio.com>
 
 	* gossip.desktop.in: Updated name

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE protocol SYSTEM "gossip-protocol.dtd">
+<protocol>
+  <name>MSN</name>
+  <disco-type>msn</disco-type>
+  <stock-icon>gossip-msn</stock-icon>
+  <description>Configure a Microsoft Hotmail account</description>
+  <server-list url="">
+    <server name="Chaos Computer Club (DE)" host="jabber.ccc.de"/>
+    <server name="Jabber Evil Realms" host="jabber.evilrealms.net"/>
+    <server name="Jabber Obsidian Co (ZA)" host="jabber.obsidian.co.za"/>
+    <server name="Jabber (RU)" host="jabber.ru"/>
+    <server name="Jabber TTN (RU)" host="jabber.ttn.ru"/>
+    <server name="Jabber ZIM Net (AU)" host="jabber.zim.net.au"/>
+    <server name="MyJabber Net (AU)" host="myjabber.net"/>
+    <server name="Pandion (BE)" host="pandion.be"/>
+    <server name="Syndicon (DE)" host="syndicon.de"/>
+  </server-list>
+</protocol>

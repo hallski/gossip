@@ -1,4 +1,4 @@
-SUBDIRS = ui src po
+SUBDIRS = ui src protocols po
 
 desktop_in_files=gossip.desktop.in
 desktop_files=$(desktop_in_files:.desktop.in=.desktop)

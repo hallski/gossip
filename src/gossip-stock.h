@@ -29,6 +29,11 @@
 #define GOSSIP_STOCK_MESSAGE    "gossip-message"
 #define GOSSIP_STOCK_TYPING     "gossip-typing"
 
+#define GOSSIP_STOCK_AIM        "gossip-aim"
+#define GOSSIP_STOCK_ICQ        "gossip-icq"
+#define GOSSIP_STOCK_MSN        "gossip-msn"
+#define GOSSIP_STOCK_YAHOO      "gossip-yahoo"
+
 void gossip_stock_init (void);
 
 #endif /* __GOSSIP_STOCK_ICONS_H__ */

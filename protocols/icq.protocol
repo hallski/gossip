@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE protocol SYSTEM "gossip-protocol.dtd">
+<protocol>
+  <name>ICQ</name>
+  <disco-type>icq</disco-type>
+  <stock-icon>gossip-icq</stock-icon>
+  <description>Configure an ICQ account</description>
+  <server-list url="">
+    <server name="Aster (PL)" host="jabber.aster.pl"/>
+    <server name="Chaos Computer Club (DE)" host="jabber.ccc.de"/>
+    <server name="Jabber Com (CN)" host="jabber.com.cn"/>
+    <server name="Syndicon (DE)" host="syndicon.de"/>
+    <server name="XMPP (RU)" host="xmpp.ru"/>
+  </server-list>
+</protocol>

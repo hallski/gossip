@@ -9,6 +9,7 @@ INCLUDES =	\
 	@GOSSIP_CFLAGS@				\
 	-DGLADEDIR=\"$(datadir)/gossip\"	\
 	-DIMAGEDIR=\"$(datadir)/gossip\"	\
+	-DPROTOCOLSDIR=\"$(datadir)/gossip/protocols\" 	\
 	-DSTYLESHEETDIR=\"$(datadir)/gossip\"	\
 	-DDBUS_API_SUBJECT_TO_CHANGE
 

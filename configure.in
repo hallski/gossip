@@ -165,6 +165,7 @@ ui/Makefile
 ui/pixmaps/Makefile
 src/Makefile
 src/sounds/Makefile
+protocols/Makefile
 po/Makefile.in
 ])
 
