@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.4\n"
 "Report-Msgid-Bugs-To: Duarte Loreto <happyguy_pt@hotmail.com>\n"
-"POT-Creation-Date: 2003-11-10 22:39+0000\n"
-"PO-Revision-Date: 2003-11-10 22:50+0000\n"
+"POT-Creation-Date: 2003-11-11 21:24+0000\n"
+"PO-Revision-Date: 2003-11-11 21:25+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -319,23 +319,27 @@ msgstr "Falha ao registar a conta"
 msgid "Reason:"
 msgstr "Motivo:"
 
-#: src/gossip-roster-view.c:157
+#: src/gossip-roster-view.c:164
 msgid "/Contact _Information"
 msgstr "/_Informação Contacto"
 
-#: src/gossip-roster-view.c:165
+#: src/gossip-roster-view.c:172
 msgid "/Re_name contact"
 msgstr "/Re_nomear contacto"
 
-#: src/gossip-roster-view.c:181
+#: src/gossip-roster-view.c:180
+msgid "/Show _Log"
+msgstr "/Mostrar _Registo"
+
+#: src/gossip-roster-view.c:196
 msgid "/_Remove contact"
 msgstr "/_Remover contacto"
 
-#: src/gossip-roster-view.c:192
+#: src/gossip-roster-view.c:207
 msgid "/Re_name group"
 msgstr "/Re_nomear grupo"
 
-#: src/gossip-roster-view.c:1021
+#: src/gossip-roster-view.c:1036
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -346,7 +350,7 @@ msgstr ""
 "%s\n"
 "da sua lista de contactos?"
 
-#: src/gossip-roster-view.c:1097
+#: src/gossip-roster-view.c:1128
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -355,7 +359,7 @@ msgstr ""
 "Introduza uma nova alcunha para o contacto\n"
 "%s"
 
-#: src/gossip-roster-view.c:1184
+#: src/gossip-roster-view.c:1215
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -888,17 +892,17 @@ msgid ""
 "These messages are used to describe your status when you're about to leave "
 "and when you're away."
 msgstr ""
-"Estas mensagens são utilizadas para descrever o seu estado quando está prestes "
-"a sair e quando está ausente."
+"Estas mensagens são utilizadas para descrever o seu estado quando está "
+"prestes a sair e quando está ausente."
 
 #: ui/main.glade.h:76
 msgid ""
 "These messages are used to describe your status when you're available, about "
 "to leave, or automatically set away due to inactivity."
 msgstr ""
-"Estas mensagens são utilizadas para descrever o seu estado quando se encontra "
-"disponível, prestes a sair ou automaticamente definido como ausente dado estar "
-"inactivo."
+"Estas mensagens são utilizadas para descrever o seu estado quando se "
+"encontra disponível, prestes a sair ou automaticamente definido como ausente "
+"dado estar inactivo."
 
 #: ui/main.glade.h:77
 msgid "Use a different server"
