@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2004-01-17 02:09+0100\n"
+"POT-Creation-Date: 2004-01-17 13:45+0100\n"
 "PO-Revision-Date: 2004-01-10 19:31+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -294,22 +294,23 @@ msgstr "Kopplades ifrån"
 msgid "Contact Information for %s"
 msgstr "Kontaktinformation för %s"
 
-#: src/gossip-edit-groups-dialog.c:164
+#: src/gossip-edit-groups-dialog.c:181
 #, c-format
-msgid "<b>Edit the groups for %s</b>"
-msgstr "<b>Redigera grupper för %s</b>"
+msgid "Edit groups for %s"
+msgstr "Redigera grupper för %s"
 
-#: src/gossip-edit-groups-dialog.c:230
+#: src/gossip-edit-groups-dialog.c:244
 msgid "Select"
 msgstr "Markera"
 
-#: src/gossip-edit-groups-dialog.c:240
+#: src/gossip-edit-groups-dialog.c:255
 msgid "Group"
 msgstr "Grupp"
 
 #. This needs to be done better, could have group_is_unsorted().
 #.
-#: src/gossip-edit-groups-dialog.c:336 src/gossip-roster.c:37
+#: src/gossip-edit-groups-dialog.c:354 src/gossip-edit-groups-dialog.c:367
+#: src/gossip-roster.c:37
 msgid "Unsorted"
 msgstr "Osorterade"
 

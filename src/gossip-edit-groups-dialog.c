@@ -32,16 +32,21 @@
 
 struct _GossipEditGroups {
 	GtkWidget   *dialog;
-	GtkLabel    *contact_label;
-	GtkLabel    *jid_label;
-	GtkEntry    *add_entry;
-	GtkButton   *add_button;
-	GtkButton   *ok_button;
-	GtkTreeView *groups_treeview;
+	GtkWidget   *contact_label;
+	GtkWidget   *jid_label;
+	GtkWidget   *add_entry;
+	GtkWidget   *add_button;
+
+	GtkWidget   *apply_button;
+	GtkWidget   *ok_button;
+
+	GtkTreeView *treeview;
 
 	gchar       *jid_str; 
 	gchar       *name;
 
+	GList       *restore_groups;
+	
 	gboolean     changes_made;
 };
 
@@ -71,40 +76,40 @@ enum {
 };
 
 
-static void     groups_setup                   (GossipEditGroups         *info);
-static void     groups_populate_columns        (GossipEditGroups         *info);
-static void     groups_add_groups              (GossipEditGroups         *info,
-						GList                    *groups);
-static void     groups_save                    (GossipEditGroups         *info);
-static gboolean groups_find_name               (GossipEditGroups         *info,
-						const gchar              *name, 
-						GtkTreeIter              *iter);
-
-static gboolean groups_find_name_foreach       (GtkTreeModel             *model, 
-						GtkTreePath              *path, 
-						GtkTreeIter              *iter, 
-						FindName                 *data);
-
-static GList *  groups_find_selected           (GossipEditGroups         *info);
-static gboolean groups_find_selected_foreach   (GtkTreeModel             *model, 
-						GtkTreePath              *path, 
-						GtkTreeIter              *iter, 
-						FindSelected             *data);
-
-static void     groups_cell_toggled            (GtkCellRendererToggle    *cell, 
-						gchar                    *path_string, 
-						GossipEditGroups         *info);
-
-static void     add_entry_changed              (GtkEditable              *editable, 
-					        GossipEditGroups         *info);
-static void     add_button_clicked             (GtkButton                *button, 
-						GossipEditGroups         *info);
-
-static void     edit_groups_dialog_destroy_cb  (GtkWidget                *widget, 
-						GossipEditGroups         *info);
-static void     edit_groups_dialog_response_cb (GtkWidget                *widget,
-						gint                      response,
-						GossipEditGroups         *info);
+static void     edit_groups_dialog_destroy_cb     (GtkWidget             *widget,
+						   GossipEditGroups      *info);
+static void     edit_groups_dialog_response_cb    (GtkWidget             *widget,
+						   gint                   response,
+						   GossipEditGroups      *info);
+static void     edit_groups_setup                 (GossipEditGroups      *info);
+static void     edit_groups_populate_columns      (GossipEditGroups      *info);
+static void     edit_groups_add_groups            (GossipEditGroups      *info,
+						   GList                 *groups);
+static void     edit_groups_set                   (GossipEditGroups      *info,
+						   GList                 *groups);
+static void     edit_groups_save                  (GossipEditGroups      *info);
+static void     edit_groups_restore               (GossipEditGroups      *info);
+static gboolean edit_groups_find_name             (GossipEditGroups      *info,
+						   const gchar           *name,
+						   GtkTreeIter           *iter);
+static gboolean edit_groups_find_name_foreach     (GtkTreeModel          *model,
+						   GtkTreePath           *path,
+						   GtkTreeIter           *iter,
+						   FindName              *data);
+static GList *  edit_groups_find_selected         (GossipEditGroups      *info);
+static gboolean edit_groups_find_selected_foreach (GtkTreeModel          *model,
+						   GtkTreePath           *path,
+						   GtkTreeIter           *iter,
+						   FindSelected          *data);
+static void     edit_groups_cell_toggled          (GtkCellRendererToggle *cell,
+						   gchar                 *path_string,
+						   GossipEditGroups      *info);
+static void     edit_groups_add_entry_changed     (GtkEditable           *editable,
+						   GossipEditGroups      *info);
+static void     edit_groups_add_entry_activated   (GtkWidget             *widget,
+						   GossipEditGroups      *info);
+static void     edit_groups_add_button_clicked    (GtkButton             *button,
+						   GossipEditGroups      *info);
 
 
 static void
@@ -113,6 +118,9 @@ edit_groups_dialog_destroy_cb (GtkWidget *widget, GossipEditGroups *info)
 	g_free (info->jid_str);
 	g_free (info->name);
 
+	g_list_foreach (info->restore_groups, (GFunc) g_free, NULL); 
+	g_list_free (info->restore_groups);
+	
  	g_free (info); 
 }
 
@@ -121,9 +129,16 @@ edit_groups_dialog_response_cb (GtkWidget *widget, gint response, GossipEditGrou
 {
 	if (response == GTK_RESPONSE_OK && info->changes_made) {
 		/* save groups if changes made */
-		groups_save (info);
+		edit_groups_save (info);
 	}
-
+	else if (response == GTK_RESPONSE_APPLY && info->changes_made) {
+		edit_groups_save (info);
+		return;
+	}
+	else if (response == GTK_RESPONSE_CANCEL && info->changes_made) {
+		edit_groups_restore (info);
+	}
+	
 	gtk_widget_destroy (info->dialog);
 }
 
@@ -132,7 +147,7 @@ gossip_edit_groups_new (GossipJID *jid, const gchar *name, GList *groups)
 {
 	GossipEditGroups *info;
 	GladeXML         *gui;
-	gchar            *str;
+	gchar            *str, *tmp;
 
 	info = g_new0 (GossipEditGroups, 1);
 
@@ -148,29 +163,36 @@ gossip_edit_groups_new (GossipJID *jid, const gchar *name, GList *groups)
 				     "add_entry", &info->add_entry,
 				     "add_button", &info->add_button,
 				     "ok_button", &info->ok_button,
-				     "groups_treeview", &info->groups_treeview,
+				     "apply_button", &info->apply_button,
+				     "groups_treeview", &info->treeview,
 				     NULL);
 
 	gossip_glade_connect (gui,
 			      info,
 			      "edit_groups_dialog", "response", edit_groups_dialog_response_cb,
 			      "edit_groups_dialog", "destroy", edit_groups_dialog_destroy_cb,
-			      "add_entry", "changed", add_entry_changed,
-			      "add_button", "clicked", add_button_clicked,
+			      "add_entry", "changed", edit_groups_add_entry_changed,
+			      "add_entry", "activate", edit_groups_add_entry_activated,
+			      "add_button", "clicked", edit_groups_add_button_clicked,
 			      NULL);
 
 	g_object_unref (gui);
 
-	str = g_strdup_printf (_("<b>Edit the groups for %s</b>"), name);
+	tmp = g_strdup_printf (_("Edit groups for %s"), name);
+	
+	str = g_strdup_printf ("<b>%s</b>", tmp);
 	gtk_label_set_markup (GTK_LABEL (info->contact_label), str);
 	g_free (str);
+	g_free (tmp);
 
-	gtk_label_set_text (GTK_LABEL (info->jid_label), gossip_jid_get_without_resource (jid));
+	if (strcmp (name, info->jid_str) != 0) {
+		gtk_label_set_text (GTK_LABEL (info->jid_label), info->jid_str);
+	} else {
+		gtk_widget_hide (GTK_WIDGET (info->jid_label));
+	}
 
-	groups_setup (info);
-	groups_add_groups (info, groups);
-
-	gtk_widget_set_sensitive (GTK_WIDGET (info->ok_button), FALSE);
+	edit_groups_setup (info);
+	edit_groups_add_groups (info, groups);
 
 	gtk_widget_show (info->dialog);
 
@@ -184,77 +206,69 @@ gossip_edit_groups_get_dialog (GossipEditGroups *info)
 }
 
 static void 
-groups_setup (GossipEditGroups *info)
+edit_groups_setup (GossipEditGroups *info)
 {
-	GtkTreeModel     *model;
 	GtkListStore     *store;
 	GtkTreeSelection *selection;
-	
-	selection = gtk_tree_view_get_selection (info->groups_treeview);
 
 	store = gtk_list_store_new (COL_EDIT_GROUPS_COUNT,
 				    G_TYPE_STRING,   /* name */
 				    G_TYPE_BOOLEAN,  /* enabled */
 				    G_TYPE_BOOLEAN); /* editable */
 	
-	model = GTK_TREE_MODEL (store);
-	gtk_tree_view_set_model (info->groups_treeview, model);
-	
+	gtk_tree_view_set_model (info->treeview, GTK_TREE_MODEL (store));
+
+	selection = gtk_tree_view_get_selection (info->treeview);
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	
+	edit_groups_populate_columns (info);
 
-	groups_populate_columns (info);
-
-	gtk_tree_view_set_enable_search (info->groups_treeview, TRUE);
-	gtk_tree_view_set_search_column (info->groups_treeview, COL_EDIT_GROUPS_NAME); 
-	gtk_tree_view_set_rules_hint (info->groups_treeview, FALSE);
-	gtk_tree_view_set_headers_visible (info->groups_treeview, FALSE);
-
-	g_object_unref (model);
+	g_object_unref (store);
 }
 
 static void 
-groups_populate_columns (GossipEditGroups *info)
+edit_groups_populate_columns (GossipEditGroups *info)
 {
 	GtkTreeModel      *model;
 	GtkTreeViewColumn *column; 
 	GtkCellRenderer   *renderer;
 	guint              col_offset;
 	
-	model = GTK_TREE_MODEL (gtk_tree_view_get_model (info->groups_treeview));
+	model = gtk_tree_view_get_model (info->treeview);
 	
 	renderer = gtk_cell_renderer_toggle_new ();
 	g_signal_connect (renderer, "toggled", 
-			  G_CALLBACK (groups_cell_toggled), 
+			  G_CALLBACK (edit_groups_cell_toggled), 
 			  info);
 	
 	column = gtk_tree_view_column_new_with_attributes (_("Select"), renderer,
 							   "active", COL_EDIT_GROUPS_ENABLED,
 							   NULL);
 	
-	gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column), GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 50);
-	gtk_tree_view_append_column (info->groups_treeview, column);
+	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
+	gtk_tree_view_column_set_fixed_width (column, 50);
+	gtk_tree_view_append_column (info->treeview, column);
 	
 	renderer = gtk_cell_renderer_text_new ();
-	col_offset = gtk_tree_view_insert_column_with_attributes (info->groups_treeview,
-								  -1, _("Group"),
-								  renderer, 
-								  "text", COL_EDIT_GROUPS_NAME,
-								  NULL);
+	col_offset = gtk_tree_view_insert_column_with_attributes (
+		info->treeview,
+		-1, _("Group"),
+		renderer, 
+		"text", COL_EDIT_GROUPS_NAME,
+		NULL);
 	
-	g_object_set_data (G_OBJECT (renderer), "column",
-			   GINT_TO_POINTER (COL_EDIT_GROUPS_NAME));
+	g_object_set_data (G_OBJECT (renderer),
+			   "column", GINT_TO_POINTER (COL_EDIT_GROUPS_NAME));
 	
-	column = gtk_tree_view_get_column (info->groups_treeview, col_offset - 1);
+	column = gtk_tree_view_get_column (info->treeview, col_offset - 1);
 	gtk_tree_view_column_set_sort_column_id (column, COL_EDIT_GROUPS_NAME);
 	gtk_tree_view_column_set_resizable (column,FALSE);
 	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
 }
 
 static void
-groups_save (GossipEditGroups *info)
+edit_groups_set (GossipEditGroups *info, GList *groups)
 {
-	GList         *groups;
 	LmConnection  *connection;
 	LmMessage     *m;
 	LmMessageNode *node;
@@ -284,29 +298,40 @@ groups_save (GossipEditGroups *info)
 					"name", info->name,
 					NULL);
 
-	groups = groups_find_selected (info); 
-
-	if (!groups) {
-		d (g_print ("Associating '%s' with NO groups:\n", info->jid));
-	} else {
-		d (g_print ("Associating '%s' with %d groups:\n", info->jid, g_list_length (groups)));
-
-		for (l = groups; l; l = l->next) {
-			gchar *group_str = l->data;
-			
-			lm_message_node_add_child (node, "group", group_str);
-		}	
-
-		g_list_foreach (groups, (GFunc)g_free, NULL); 
-		g_list_free (groups); 
-	}
-
+	for (l = groups; l; l = l->next) {
+		gchar *group_str = l->data;
+		
+		lm_message_node_add_child (node, "group", group_str);
+	}	
+	
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 }
 
 static void
-groups_add_groups (GossipEditGroups *info, GList *groups)
+edit_groups_save (GossipEditGroups *info)
+{
+	GList *groups;
+
+	groups = edit_groups_find_selected (info); 
+
+	edit_groups_set (info, groups);
+	
+	g_list_foreach (groups, (GFunc)g_free, NULL); 
+	g_list_free (groups);
+
+	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), FALSE);
+}
+
+static void
+edit_groups_restore (GossipEditGroups *info)
+{
+	edit_groups_set (info, info->restore_groups);
+	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), FALSE);
+}
+
+static void
+edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 {
 	GtkListStore *store;
 	GtkTreeIter   iter;	
@@ -315,7 +340,7 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 	GossipRoster *roster;
 	GList        *all_groups;
 
-	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->groups_treeview));
+	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->treeview));
 
 	roster = gossip_app_get_roster ();
 	all_groups = gossip_roster_get_all_groups (roster);
@@ -324,7 +349,13 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 		GossipRosterGroup *group = l->data;
 		const gchar       *group_str = gossip_roster_group_get_name (group);
 
-		my_groups = g_list_append (my_groups, (gchar*)group_str);
+		/* This needs to be done better, could have group_is_unsorted().
+		 */
+		if (strcmp (group_str, _("Unsorted")) == 0) {
+			continue;
+		}
+		
+		my_groups = g_list_append (my_groups, g_strdup (group_str));
 	}
 	
 	for (l = all_groups; l; l = l->next) {
@@ -344,7 +375,7 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 				    -1);
 
 		if (g_list_find_custom (my_groups, group_str, (GCompareFunc)strcmp)) {
-			if (groups_find_name (info, group_str, &iter)) {
+			if (edit_groups_find_name (info, group_str, &iter)) {
 				gtk_list_store_set (store, &iter,    
 						    COL_EDIT_GROUPS_ENABLED, TRUE,
 						    -1);
@@ -354,13 +385,13 @@ groups_add_groups (GossipEditGroups *info, GList *groups)
 		}
 	}
 
-	g_list_free (my_groups);
+	info->restore_groups = my_groups;
 }
 
 static gboolean 
-groups_find_name (GossipEditGroups *info, 
-		  const gchar      *name,
-		  GtkTreeIter      *iter)
+edit_groups_find_name (GossipEditGroups *info, 
+		       const gchar      *name,
+		       GtkTreeIter      *iter)
 {
 	GtkTreeModel *model;
 	FindName      data;
@@ -373,10 +404,10 @@ groups_find_name (GossipEditGroups *info,
 	data.name = name;
 	data.found = FALSE;
 	
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (info->groups_treeview));
+	model = gtk_tree_view_get_model (info->treeview);
 	
 	gtk_tree_model_foreach (model,
-				(GtkTreeModelForeachFunc) groups_find_name_foreach,
+				(GtkTreeModelForeachFunc) edit_groups_find_name_foreach,
 				&data);
 	
 	if (data.found == TRUE) {
@@ -388,10 +419,10 @@ groups_find_name (GossipEditGroups *info,
 }
 
 static gboolean 
-groups_find_name_foreach (GtkTreeModel *model, 
-			  GtkTreePath  *path, 
-			  GtkTreeIter  *iter, 
-			  FindName     *data) 
+edit_groups_find_name_foreach (GtkTreeModel *model, 
+			       GtkTreePath  *path, 
+			       GtkTreeIter  *iter, 
+			       FindName     *data) 
 {
 	gchar *name;
 
@@ -418,7 +449,7 @@ groups_find_name_foreach (GtkTreeModel *model,
 }
 
 static GList * 
-groups_find_selected (GossipEditGroups  *info)
+edit_groups_find_selected (GossipEditGroups  *info)
 {
 	GtkTreeModel *model;
 	FindSelected  data;
@@ -426,20 +457,20 @@ groups_find_selected (GossipEditGroups  *info)
 	data.info = info;
 	data.list = NULL;
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (info->groups_treeview));
+	model = gtk_tree_view_get_model (info->treeview);
 	
 	gtk_tree_model_foreach (model,
-				(GtkTreeModelForeachFunc) groups_find_selected_foreach,
+				(GtkTreeModelForeachFunc) edit_groups_find_selected_foreach,
 				&data);
 	
 	return data.list;
 }
 
 static gboolean 
-groups_find_selected_foreach (GtkTreeModel *model, 
-			      GtkTreePath  *path, 
-			      GtkTreeIter  *iter, 
-			      FindSelected *data) 
+edit_groups_find_selected_foreach (GtkTreeModel *model, 
+				   GtkTreePath  *path, 
+				   GtkTreeIter  *iter, 
+				   FindSelected *data) 
 {
 	gchar    *name;
 	gboolean  selected;
@@ -464,9 +495,9 @@ groups_find_selected_foreach (GtkTreeModel *model,
 }
 
 static void 
-groups_cell_toggled (GtkCellRendererToggle *cell, 
-		     gchar                 *path_string, 
-		     GossipEditGroups      *info)
+edit_groups_cell_toggled (GtkCellRendererToggle *cell, 
+			  gchar                 *path_string, 
+			  GossipEditGroups      *info)
 {
 	GtkTreeModel *model;
 	GtkListStore *store;
@@ -477,12 +508,11 @@ groups_cell_toggled (GtkCellRendererToggle *cell,
 
 	g_return_if_fail(info != NULL);
 
-	model = GTK_TREE_MODEL (gtk_tree_view_get_model (info->groups_treeview));
-	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->groups_treeview));
+	model = gtk_tree_view_get_model (info->treeview);
+	store = GTK_LIST_STORE (model);
 	
 	path = gtk_tree_path_new_from_string (path_string);
 
-	/* get toggled iter */
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, COL_EDIT_GROUPS_ENABLED, &enabled, -1);
 
@@ -492,11 +522,12 @@ groups_cell_toggled (GtkCellRendererToggle *cell,
 	gtk_tree_path_free (path);
 
 	info->changes_made = TRUE;
-	gtk_widget_set_sensitive (GTK_WIDGET (info->ok_button), info->changes_made);
+
+	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), info->changes_made);
 }
 
 static void 
-add_entry_changed (GtkEditable *editable, GossipEditGroups *info)
+edit_groups_add_entry_changed (GtkEditable *editable, GossipEditGroups *info)
 {
 	GtkTreeIter  iter;
 	gchar       *group = NULL;
@@ -505,7 +536,7 @@ add_entry_changed (GtkEditable *editable, GossipEditGroups *info)
 	
 	group = gtk_editable_get_chars (editable, 0, -1); 
 	
-	if (groups_find_name (info, group, &iter)) {
+	if (edit_groups_find_name (info, group, &iter)) {
 		gtk_widget_set_sensitive (GTK_WIDGET (info->add_button),  
 					  FALSE);
 	
@@ -518,13 +549,19 @@ add_entry_changed (GtkEditable *editable, GossipEditGroups *info)
 }
 
 static void 
-add_button_clicked (GtkButton *button, GossipEditGroups *info)
+edit_groups_add_entry_activated (GtkWidget *widget, GossipEditGroups *info)
+{
+	gtk_widget_activate (GTK_WIDGET (info->add_button));
+}
+
+static void 
+edit_groups_add_button_clicked (GtkButton *button, GossipEditGroups *info)
 {
 	GtkListStore *store;
 	GtkTreeIter   iter;
 	const gchar  *group;
 	
-	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->groups_treeview));
+	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->treeview));
 	
 	group = gtk_entry_get_text (GTK_ENTRY (info->add_entry));
 	
@@ -538,5 +575,7 @@ add_button_clicked (GtkButton *button, GossipEditGroups *info)
 	gtk_entry_set_text (GTK_ENTRY (info->add_entry), "");
 	
 	info->changes_made = TRUE;
-	gtk_widget_set_sensitive (GTK_WIDGET (info->ok_button), info->changes_made);
+
+	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), info->changes_made);
 }
+

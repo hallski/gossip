@@ -1,5 +1,18 @@
 2004-01-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-edit-groups-dialog.c: Clean up, namespace functions,
+	remove unecessary casts, don't set treeview properties with
+	code. Add support for applying and reverting changes. Don't
+	display both the name AND jid if they are the same. Don't mark
+	markup as translatable.
+ 	
+	* src/gossip-roster.c: (roster_group_remove): Remove empty groups.
+
+	* ui/main.glade: Add apply and cancel buttons to the group edit
+	dialog since it's not instant apply.
+
+2004-01-17  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-idle.c: (gossip_idle_get_seconds),
 	(gossip_idle_reset):
 	* src/gossip-idle.h:

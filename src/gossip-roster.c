@@ -874,8 +874,9 @@ roster_group_remove (GossipRoster *roster, GossipRosterGroup *group)
 
 	priv = roster->priv;
 
-	/* FIXME: Not sure if we should remove right away or not... */
-	return;
+	/* FIXME: Not sure if we should remove right away or not... /micke */
+	/* FIXME: I think we should /richard */
+	/*return; */ 
 
 	/* Don't need to worry about the items, if we get here there are no
 	 * items in this groups items list. */
