@@ -1,5 +1,11 @@
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-contact-info.c: Added support for cancelling requested
+	  information if user closes the window before the reply to vCard and
+	  version has been received.
+
+2003-07-17  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-account.c: 
 	* src/gossip-account.h:
 	* src/gossip-accounts-dialog.c:

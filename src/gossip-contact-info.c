@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003 Richard Hult <richard@imendio.com>
  *
@@ -46,6 +47,9 @@ struct _GossipContactInfo {
 	GtkWidget *client_table;
 	GtkWidget *description_textview;
 	GtkWidget *close_button;
+
+	LmMessageHandler *vcard_handler;
+	LmMessageHandler *version_handler;
 };
 
 static void contact_info_request_information (GossipContactInfo *info,
@@ -67,18 +71,16 @@ static void contact_info_dialog_close_cb     (GtkWidget         *widget,
 static void
 contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
 {
-	/* FIXME: Need a way to cancel pending replies from loudmouth here...
-	 */
-#if 0
 	if (info->vcard_handler) {
-		g_print ("Cancelled vcard: %d\n",
-			 lm_connection_cancel_... (info->connection, info->vcard_handler, NULL));
+		lm_message_handler_invalidate (info->vcard_handler);
+		lm_message_handler_unref (info->vcard_handler);
 	}
+
 	if (info->version_handler) {
-		g_print ("Cancelled version: %d\n",
-			 lm_connection_cancel_... (info->connection, info->version_handler, NULL));
+		lm_message_handler_invalidate (info->version_handler);
+		lm_message_handler_unref (info->version_handler);
 	}
-#endif	
+	
 	g_free (info);
 }
 
@@ -87,7 +89,6 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 {
 	LmMessage        *m;
 	LmMessageNode    *node;
-	LmMessageHandler *handler;
 	GError           *error = NULL;
 	
 	m = lm_message_new (gossip_jid_get_without_resource (jid),
@@ -95,37 +96,37 @@ contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
-	handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_vcard_reply_cb,
+	info->vcard_handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_vcard_reply_cb,
 					  info, NULL);
 					  
 	if (!lm_connection_send_with_reply (info->connection, m,
-					    handler, &error)) {
+					    info->vcard_handler, &error)) {
 		d(g_print ("Error while sending: %s\n", error->message));
 		lm_message_unref (m);
-		lm_message_handler_unref (handler);
+		lm_message_handler_unref (info->vcard_handler);
+		info->vcard_handler = NULL;
 		return;
 	}
 
 	lm_message_unref (m);
-	lm_message_handler_unref (handler);
 	
 	m = lm_message_new (gossip_jid_get_full (jid), LM_MESSAGE_TYPE_IQ);
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:version");
 
-	handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_version_reply_cb,
+	info->version_handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_version_reply_cb,
 					  info, NULL);
 
 	if (!lm_connection_send_with_reply (info->connection, m,
-					    handler, &error)) {
+					    info->version_handler, &error)) {
 		d(g_print ("Error while sending: %s\n", error->message));
 		lm_message_unref (m);
-		lm_message_handler_unref (handler);
+		lm_message_handler_unref (info->version_handler);
+		info->version_handler = NULL;
 		return;
 	}
 
 	lm_message_unref (m);
-	lm_message_handler_unref (handler);
 }
 
 static void
@@ -147,6 +148,9 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 
 	d(g_print ("Got a vcard response\n"));
 
+	lm_message_handler_unref (info->vcard_handler);
+	info->vcard_handler = NULL;
+	
 	vCard = lm_message_node_get_child (m->node, "vCard");
 	if (!vCard) {
 		d(g_print ("No vCard node\n"));
@@ -188,6 +192,10 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	GtkWidget     *name_label, *value_label;
 
 	d(g_print ("Version reply\n"));
+
+	lm_message_handler_unref (info->version_handler);
+	info->version_handler = NULL;
+
 	query = lm_message_node_get_child (m->node, "query");
 	if (!query) {
 		d(g_print ("No query node\n"));
