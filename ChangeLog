@@ -1,5 +1,11 @@
 2004-02-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: Flash the notification area when going to and
+	from away. Don't make the status popup transient when invoked from
+	the notification icon, fixes bug #133486.
+
+2004-02-07  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-roster-view.c (roster_view_ellipsize_item_string):
 	Limit the length of the status text where trying to
 	ellipsize. People using a string of 1688 (!) chars made this really 

@@ -85,6 +85,13 @@
 /* Minimum width of roster window if something goes wrong. */
 #define MIN_WIDTH 50
 
+#undef LEAVE_SLACK
+#undef BACK_SLACK
+#undef BACK_SLACK_NOFLASH
+#define	LEAVE_SLACK 5
+#define	BACK_SLACK 5
+#define	BACK_SLACK_NOFLASH 3
+
 #define d(x)
 
 extern GConfClient *gconf_client;
@@ -99,6 +106,7 @@ struct _GossipAppPriv {
 	GtkTooltips         *tray_tooltips;
 	GList               *tray_flash_icons;
 	guint                tray_flash_timeout_id;
+
 	GtkWidget           *popup_menu;
 	GtkWidget           *popup_menu_status_item;
 	GtkWidget           *show_popup_item;
@@ -258,7 +266,7 @@ static void     app_tray_push_message                (LmMessage          *m);
 static gboolean app_tray_pop_message                 (GossipRosterItem   *item);
 static void     app_tray_update_tooltip              (void);
 static GtkWidget *
-app_create_status_menu                               (void);
+app_create_status_menu                               (gboolean            from_window);
 static gboolean app_status_button_press_event_cb     (GtkButton          *button,
 						      GdkEventButton     *event,
 						      gpointer            user_data);
@@ -266,7 +274,8 @@ static void     app_status_button_clicked_cb         (GtkButton          *button
 						      GdkEventButton     *event,
 						      gpointer            user_data);
 static void     app_status_show_status_dialog        (GossipShow          show,
-						      const gchar        *str);
+						      const gchar        *str,
+						      gboolean            transient);
 static GossipShow app_get_explicit_show              (void);
 static GossipShow app_get_effective_show             (void);
 static void       app_update_show                    (void);
@@ -277,7 +286,9 @@ static const gchar * app_get_current_status_icon     (void);
 static gboolean      app_window_configure_event_cb   (GtkWidget          *widget,
 						      GdkEventConfigure  *event,
 						      gpointer            data);
-static gboolean      app_have_tray                   (void);
+static gboolean   app_have_tray                      (void);
+static void       app_tray_flash_start               (void);
+static void       app_tray_flash_maybe_stop          (void);
 
 
 static GObjectClass *parent_class;
@@ -1264,6 +1275,7 @@ app_idle_check_cb (GossipApp *app)
 
 		if (now - priv->leave_time > LEAVE_SLACK) {
 			priv->leave_time = 0;
+
 			app_status_flash_stop ();
 
 			gossip_idle_reset ();
@@ -1281,8 +1293,8 @@ app_idle_check_cb (GossipApp *app)
 		priv->auto_show = GOSSIP_SHOW_AWAY;
 	}
 	else if (show == GOSSIP_SHOW_AWAY || show == GOSSIP_SHOW_EXT_AWAY) {
+		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= -BACK_SLACK_NOFLASH) {
-			/* Allow some slack before returning from away. */
 			d(g_print ("Slack, do nothing.\n"));
 			app_status_flash_start ();
 		}
@@ -1746,6 +1758,7 @@ app_tray_button_press_cb (GtkWidget      *widget,
 			  GossipApp      *app)
 {
 	GossipAppPriv *priv;
+	GtkWidget     *submenu;
 
 	priv = app->priv;
 
@@ -1772,13 +1785,9 @@ app_tray_button_press_cb (GtkWidget      *widget,
 			gtk_widget_show (priv->show_popup_item);
 		}
 
-		{
-			GtkWidget *submenu;
-			
-			submenu = app_create_status_menu ();
-
-			gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->popup_menu_status_item), submenu);
-		}
+		submenu = app_create_status_menu (FALSE);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->popup_menu_status_item),
+					   submenu);
 		
                 gtk_menu_popup (GTK_MENU (priv->popup_menu), NULL, NULL, NULL,
 				NULL, event->button, event->time);
@@ -1871,30 +1880,6 @@ app_tray_create (void)
 			  priv->tray_event_box);
 }
 
-static gboolean
-app_tray_flash_timeout_func (gpointer data)
-{
-	GossipAppPriv   *priv;
-	static gboolean  on = FALSE;
-	const gchar     *icon;
-
-	priv = app->priv;
-	
-	if (on) {
-		icon = GOSSIP_STOCK_MESSAGE;
-	} else {
-		icon = app_get_current_status_icon ();
-	}
-	
-	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
-				  icon,
-				  GTK_ICON_SIZE_MENU);
-	
-	on = !on;
-
-	return TRUE;
-}
-
 static void
 app_tray_push_message (LmMessage *m)
 {
@@ -1927,13 +1912,9 @@ app_tray_push_message (LmMessage *m)
 	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons, 
 						gossip_roster_item_ref (item));
 
-	if (!priv->tray_flash_timeout_id) {
-		priv->tray_flash_timeout_id = g_timeout_add (FLASH_TIMEOUT,
-							     app_tray_flash_timeout_func,
-							     NULL);
 
-		app_tray_update_tooltip ();
-	}
+	app_tray_flash_start ();
+	app_tray_update_tooltip ();
 
 	gossip_roster_view_flash_item (priv->roster_view, item, TRUE);
 	gossip_roster_item_unref (item);
@@ -1972,15 +1953,7 @@ app_tray_pop_message (GossipRosterItem *item)
 
 	priv->tray_flash_icons = g_list_delete_link (priv->tray_flash_icons, l);
 
-	if (!priv->tray_flash_icons && priv->tray_flash_timeout_id) {
-		g_source_remove (priv->tray_flash_timeout_id);
-		priv->tray_flash_timeout_id = 0;
-		
-		gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
-					  app_get_current_status_icon (),
-					  GTK_ICON_SIZE_MENU);
-	}
-
+	app_tray_flash_maybe_stop ();
 	app_tray_update_tooltip ();
 
 	if (item) {
@@ -2223,6 +2196,8 @@ app_status_flash_start (void)
 							       app_status_flash_timeout_func,
 							       NULL);
 	}
+
+	app_tray_flash_start ();
 }
 
 static void
@@ -2241,6 +2216,8 @@ app_status_flash_stop (void)
 		g_source_remove (priv->status_flash_timeout_id);
 		priv->status_flash_timeout_id = 0;
 	}
+	
+	app_tray_flash_maybe_stop ();
 }
 
 void
@@ -2352,7 +2329,7 @@ app_status_available_activate_cb (GtkWidget *item,
 	gchar         *str;
 
 	app_status_flash_stop ();
-
+			
 	str = g_object_get_data (G_OBJECT (item), "status");
 	g_free (priv->status_text);
 	priv->status_text = g_strdup (str);
@@ -2407,7 +2384,9 @@ app_status_away_activate_cb (GtkWidget *item,
 }
 
 static void
-app_status_show_status_dialog (GossipShow show, const gchar *str)
+app_status_show_status_dialog (GossipShow   show,
+			       const gchar *str,
+			       gboolean     transient)
 {
         GossipAppPriv  *priv;
 	GladeXML       *glade;
@@ -2432,9 +2411,11 @@ app_status_show_status_dialog (GossipShow show, const gchar *str)
 				  gossip_utils_get_stock_from_show (show),
 				  GTK_ICON_SIZE_MENU);
 
-	gtk_window_set_transient_for (GTK_WINDOW (dialog),
-				      GTK_WINDOW (priv->window));
-
+	if (transient) {
+		gtk_window_set_transient_for (GTK_WINDOW (dialog),
+					      GTK_WINDOW (priv->window));
+	}
+	
 	gtk_widget_grab_focus (entry);
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -2486,21 +2467,33 @@ static void
 app_status_custom_available_activate_cb (GtkWidget *item,
 					 gpointer   user_data)
 {
-	app_status_show_status_dialog (GOSSIP_SHOW_AVAILABLE, _("Available"));
+	gboolean transient = GPOINTER_TO_INT (user_data);
+	
+	app_status_show_status_dialog (GOSSIP_SHOW_AVAILABLE,
+				       _("Available"),
+				       transient);
 }
 
 static void
 app_status_custom_busy_activate_cb (GtkWidget *item,
 				    gpointer   user_data)
 {
-	app_status_show_status_dialog (GOSSIP_SHOW_BUSY, _("Busy"));
+	gboolean transient = GPOINTER_TO_INT (user_data);
+
+	app_status_show_status_dialog (GOSSIP_SHOW_BUSY,
+				       _("Busy"),
+				       transient);
 }
 
 static void
 app_status_custom_away_activate_cb (GtkWidget *item,
 				    gpointer   user_data)
 {
-	app_status_show_status_dialog (GOSSIP_SHOW_AWAY, _("Away"));
+	gboolean transient = GPOINTER_TO_INT (user_data);
+
+	app_status_show_status_dialog (GOSSIP_SHOW_AWAY,
+				       _("Away"),
+				       transient);
 }
 
 static void
@@ -2534,7 +2527,8 @@ static void
 add_status_image_menu_item (GtkWidget   *menu,
 			    const gchar *str,
 			    GossipShow   show,
-			    gboolean     custom)
+			    gboolean     custom,
+			    gpointer     user_data)
 {
 	gchar       *shortened;
 	GtkWidget   *item;
@@ -2557,12 +2551,12 @@ add_status_image_menu_item (GtkWidget   *menu,
 			g_signal_connect (item,
 					  "activate",
 					  G_CALLBACK (app_status_custom_available_activate_cb),
-					  NULL);
+					  user_data);
 		} else {
 			g_signal_connect (item,
 					  "activate",
 					  G_CALLBACK (app_status_available_activate_cb),
-					  NULL);
+					  user_data);
 		}
 		break;
 		
@@ -2573,12 +2567,12 @@ add_status_image_menu_item (GtkWidget   *menu,
 			g_signal_connect (item,
 					  "activate",
 					  G_CALLBACK (app_status_custom_busy_activate_cb),
-					  NULL);
+					  user_data);
 		} else {
 			g_signal_connect (item,
 					  "activate",
 					  G_CALLBACK (app_status_busy_activate_cb),
-					  NULL);
+					  user_data);
 		}
 		break;
 
@@ -2589,12 +2583,12 @@ add_status_image_menu_item (GtkWidget   *menu,
 			g_signal_connect (item,
 					  "activate",
 					  G_CALLBACK (app_status_custom_away_activate_cb),
-					  NULL);
+					  user_data);
 		} else {
 			g_signal_connect (item,
 					  "activate",
 					  G_CALLBACK (app_status_away_activate_cb),
-					  NULL);
+					  user_data);
 		}
 		break;
 
@@ -2619,25 +2613,31 @@ add_status_image_menu_item (GtkWidget   *menu,
 }
 	
 static GtkWidget *
-app_create_status_menu (void)
+app_create_status_menu (gboolean from_window)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
 	GList     *list, *l;
+	gpointer   transient;
 
+	transient = GINT_TO_POINTER (from_window);
+	
 	menu = gtk_menu_new ();
 
 	add_status_image_menu_item (menu, _("Available..."),
 				    GOSSIP_SHOW_AVAILABLE,
-				    TRUE);
-
+				    TRUE,
+				    transient);
+	
 	add_status_image_menu_item (menu, _("Busy..."),
 				    GOSSIP_SHOW_BUSY,
-				    TRUE);
+				    TRUE,
+				    transient);
 
 	add_status_image_menu_item (menu, _("Away..."),
 				    GOSSIP_SHOW_AWAY,
-				    TRUE);
+				    TRUE,
+				    transient);
 	
 	/* Separator. */
 	item = gtk_menu_item_new ();
@@ -2649,7 +2649,9 @@ app_create_status_menu (void)
 	for (l = list; l; l = l->next) {
 		GossipStatusEntry *entry = l->data;
 		
-		add_status_image_menu_item (menu, entry->string, entry->show, FALSE);
+		add_status_image_menu_item (menu, entry->string,
+					    entry->show, FALSE,
+					    NULL);
 	}
 
 	/* Separator again if there are preset messages. */
@@ -2681,7 +2683,7 @@ app_status_popup_show (void)
 
 	priv = app->priv;
 	
-	menu = app_create_status_menu ();
+	menu = app_create_status_menu (TRUE);
 
 	gtk_widget_set_size_request (menu, priv->status_button->allocation.width, -1);
 	
@@ -2791,6 +2793,81 @@ app_have_tray (void)
 		return TRUE;
 	} else {
 		return FALSE;
+	}
+}
+
+static gboolean
+app_tray_flash_timeout_func (gpointer data)
+{
+	GossipAppPriv   *priv;
+	static gboolean  on = FALSE;
+	const gchar     *icon = NULL;
+
+	priv = app->priv;
+
+	if (priv->status_flash_timeout_id != 0) {
+		if (on) {
+			switch (priv->explicit_show) {
+			case GOSSIP_SHOW_BUSY:
+				icon = GOSSIP_STOCK_BUSY;
+				break;
+			case GOSSIP_SHOW_AVAILABLE:
+				icon = GOSSIP_STOCK_AVAILABLE;
+				break;
+			default:
+				g_assert_not_reached ();
+				break;
+			}
+		}
+	}
+	else if (priv->tray_flash_icons != NULL) {
+		if (on) {
+			icon = GOSSIP_STOCK_MESSAGE;
+		}
+	}
+
+	if (icon == NULL) {
+		icon = app_get_current_status_icon ();
+	}
+
+	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
+				  icon,
+				  GTK_ICON_SIZE_MENU);
+	
+	on = !on;
+
+	return TRUE;
+}
+
+static void
+app_tray_flash_start (void)
+{
+	GossipAppPriv *priv = app->priv;
+
+	if (!priv->tray_flash_timeout_id) {
+		priv->tray_flash_timeout_id = g_timeout_add (FLASH_TIMEOUT,
+							     app_tray_flash_timeout_func,
+							     NULL);
+	}
+}
+
+/* Stop if there are no flashing messages or status change. */
+static void
+app_tray_flash_maybe_stop (void)
+{
+	GossipAppPriv *priv = app->priv;
+	
+	if (priv->tray_flash_icons != NULL || priv->leave_time > 0) {
+		return;
+	}
+	
+	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
+				  app_get_current_status_icon (),
+				  GTK_ICON_SIZE_MENU);
+	
+	if (priv->tray_flash_timeout_id) {
+		g_source_remove (priv->tray_flash_timeout_id);
+		priv->tray_flash_timeout_id = 0;
 	}
 }
 
