@@ -5,3 +5,4 @@ Makefile
 gossip
 gossip-marshal.c
 gossip-marshal.h
+*.swp
