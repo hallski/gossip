@@ -423,8 +423,11 @@ chat_view_open_address (const gchar *url)
 	if (!url || strlen (url) == 0) {
 		return;
 	}
-	
-	if (strncmp (url, "http://", 7)) {
+
+	/* gnome_url_show doesn't work when there's no protocol, so we might
+	 * need to add one.
+	 */
+	if (strstr (url, "://") == NULL) {
 		gchar *tmp;
 		
 		tmp = g_strconcat ("http://", url, NULL);
@@ -688,6 +691,31 @@ gossip_chat_view_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
+static gboolean
+chat_view_is_scrolled_down (GossipChatView *view)
+{
+	GtkWidget *sw;
+
+	/* Turn off for version before 2.2.3. */
+	if (GTK_MAJOR_VERSION == 2 && GTK_MINOR_VERSION == 2 &&
+	    GTK_MAJOR_VERSION < 3) {
+		return TRUE;
+	}
+	
+	sw = gtk_widget_get_parent (GTK_WIDGET (view));
+	if (GTK_IS_SCROLLED_WINDOW (sw)) {
+		GtkAdjustment *vadj;
+		
+		vadj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sw));
+		
+		if (vadj->value < vadj->upper - vadj->page_size) {
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
 void
 gossip_chat_view_append_chat_message (GossipChatView *view,
 				      const gchar    *time_str,
@@ -701,8 +729,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	GtkTextMark   *mark;
 	gint           num_matches, i;
 	GArray        *start, *end;
-	gboolean       bottom = TRUE;
-	GtkWidget     *sw;
+	gboolean       bottom;
 
 	if (msg == NULL || msg[0] == 0) {
 		return;
@@ -711,19 +738,8 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	chat_view_maybe_append_datestamp (view);
 	chat_view_maybe_append_timestamp (view, time_str);
 	
-	sw = gtk_widget_get_parent (GTK_WIDGET (view));
-	if (GTK_IS_SCROLLED_WINDOW (sw)) {
-		GtkAdjustment *vadj;
+	bottom = chat_view_is_scrolled_down (view);
 
-		vadj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (sw));
-
-		if (vadj->value < vadj->upper - vadj->page_size) {
-			bottom = FALSE;
-		}
-	}
-	
-	/* Turn off this for now since it doesn't work. */
-	bottom = TRUE;
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
 	if (from) {
@@ -880,6 +896,9 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 	gchar         *stamp;
 	gchar         *msg;
 	GtkTextMark   *mark;
+	gboolean       bottom;
+
+	bottom = chat_view_is_scrolled_down (view);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	gtk_text_buffer_get_end_iter (buffer, &iter);
@@ -910,18 +929,20 @@ gossip_chat_view_append_event_msg (GossipChatView *view,
 				"\n",
 				1);
 
-	gtk_text_buffer_get_end_iter (buffer, &iter);
-	mark = gtk_text_buffer_create_mark (buffer,
-					    NULL,
-					    &iter,
-					    FALSE);
+	if (bottom) {
+		gtk_text_buffer_get_end_iter (buffer, &iter);
+		mark = gtk_text_buffer_create_mark (buffer,
+						    NULL,
+						    &iter,
+						    FALSE);
 		
-	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-				      mark,
-				      0.0,
-				      FALSE,
-				      0,
-				      0);
+		gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+					      mark,
+					      0.0,
+					      FALSE,
+					      0,
+					      0);
+	}
 }
 
 void

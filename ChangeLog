@@ -1,7 +1,15 @@
 2003-11-23  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-view.c (chat_view_open_address): Only prepend
+	http:// if there is no protocol specified at all. Fixes bug
+	#127571.
+	(gossip_chat_view_append_chat_message): Try enabling the
+	don't-scroll-down thing for recent gtk+ versions.
+	(gossip_chat_view_append_event_msg): Add it here too.
+
 	* src/gossip-chat-window.c (chat_window_accel_cb)
-	(gossip_chat_window_init): Add Alt-num accels for switching tabs.
+	(gossip_chat_window_init): Add Alt-num accels for switching tabs,
+	fixes bug #127157.
 
 2003-11-20  Ross Burton  <ross@burtonini.com>
 
