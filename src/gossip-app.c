@@ -1790,7 +1790,7 @@ app_pop_message (GossipJID *jid)
 
 	l = g_list_find_custom (priv->tray_flash_icons,
 				from,
-				(GCompareFunc) strcmp);
+				(GCompareFunc) g_ascii_strcasecmp);
 
 	if (!l) {
 		l = priv->tray_flash_icons;

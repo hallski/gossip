@@ -1,8 +1,9 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002 CodeFactory AB
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
- * Copyright (C) 2002 Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2003      Imendio HB
+ * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002      Mikael Hallendal <micke@imendio.com>
+ * Copyright (C) 2002      CodeFactory AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -75,15 +76,15 @@ static void favorites_dialog_selection_changed_cb   (GtkTreeSelection     *selec
 
 static void
 favorites_dialog_destroy_cb (GtkWidget            *widget,
-			       GossipFavoritesDialog *dialog)
+			     GossipFavoritesDialog *dialog)
 {
 	g_free (dialog);
 }
 
 static void
 favorites_dialog_response_cb (GtkWidget            *widget,
-				gint                  response,
-				GossipFavoritesDialog *dialog)
+			      gint                  response,
+			      GossipFavoritesDialog *dialog)
 {
 	switch (response) {
 	default:
@@ -131,7 +132,7 @@ favorites_dialog_set_favorite_information (GossipFavoritesDialog *dialog,
 
 static void
 favorites_dialog_add_favorite_cb (GtkWidget            *widget,
-				GossipFavoritesDialog *dialog)
+				  GossipFavoritesDialog *dialog)
 {
 	GtkTreeIter       iter;
 	GtkTreeSelection *selection;
@@ -156,7 +157,7 @@ favorites_dialog_add_favorite_cb (GtkWidget            *widget,
 
 static void
 favorites_dialog_remove_favorite_cb (GtkWidget            *widget,
-				       GossipFavoritesDialog *dialog)
+				     GossipFavoritesDialog *dialog)
 {
 	GossipFavorite    *favorite;
 	GtkTreeSelection *selection;
@@ -164,7 +165,9 @@ favorites_dialog_remove_favorite_cb (GtkWidget            *widget,
 	gchar            *path;
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->chats_list));
-	gtk_tree_selection_get_selected (selection, NULL, &iter);
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return;
+	}
 	
 	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
 			    &iter,
@@ -193,7 +196,9 @@ favorites_dialog_update_favorite_cb (GtkWidget             *widget,
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->chats_list));
 	
-	gtk_tree_selection_get_selected (selection, NULL, &iter);
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		return FALSE;
+	}
 	
 	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
 			    &iter,
@@ -272,7 +277,7 @@ favorites_dialog_rebuild_list (GossipFavoritesDialog *dialog)
 
 static void
 favorites_dialog_selection_changed_cb (GtkTreeSelection     *selection,
-				      GossipFavoritesDialog *dialog)
+				       GossipFavoritesDialog *dialog)
 {
 	GtkTreeIter    iter;
 	GossipFavorite *favorite;
@@ -293,8 +298,8 @@ favorites_dialog_selection_changed_cb (GtkTreeSelection     *selection,
 			    -1);
 
 	favorites_dialog_set_entries (dialog, 
-				     favorite->name, favorite->nick, 
-				     favorite->room, favorite->server);
+				      favorite->name, favorite->nick, 
+				      favorite->room, favorite->server);
 }
 
 GtkWidget *

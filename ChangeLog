@@ -1,3 +1,12 @@
+2003-08-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_pop_message): Do case insensitive compare.
+
+	* src/gossip-favorites-dialog.c
+	(favorites_dialog_remove_favorite_cb)
+	(favorites_dialog_update_favorite_cb): Don't try to do anything if
+	no favorite is selected. Fixes a crash.
+
 2003-08-02  Richard Hult  <rhult@codefactory.se>
 
 	* src/gossip-app.c: (app_message_handler), (app_user_activated_cb),
