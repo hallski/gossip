@@ -5,15 +5,15 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 2.4\n"
-"POT-Creation-Date: 2003-11-18 13:13+0100\n"
-"PO-Revision-Date: 2003-11-14 08:00+0000\n"
+"Project-Id-Version: 2.6\n"
+"Report-Msgid-Bugs-To: Duarte Loreto <happyguy_pt@hotmail.com>\n"
+"POT-Creation-Date: 2003-11-20 00:24+0000\n"
+"PO-Revision-Date: 2003-11-20 00:30+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -60,9 +60,8 @@ msgid "Not at the computer"
 msgstr "Não estou ao computador"
 
 #: gossip.schemas.in.h:10
-#, fuzzy
 msgid "Show offline contacts"
-msgstr "Mostrar Contactos _Desligados"
+msgstr "Mostrar contactos desligados"
 
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
@@ -98,9 +97,8 @@ msgid "Whether or not to play sounds when busy."
 msgstr "Se reproduzir ou não um sons quando ocupado."
 
 #: gossip.schemas.in.h:19
-#, fuzzy
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr "Se abrir ou não diálogos em janela única com vista de lista."
+msgstr "Se apresentar ou não na lista de contactos os contactos que estejam desligados."
 
 #: gossip.schemas.in.h:20
 msgid "Width of main window"
@@ -441,11 +439,11 @@ msgstr "Re_gisto"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
-msgstr ""
+msgstr "Mover Aba à _Esquerda"
 
 #: ui/chat.glade.h:11
 msgid "Move Tab _Right"
-msgstr ""
+msgstr "Mover Aba à _Direita"
 
 #: ui/chat.glade.h:12
 msgid "To:"
@@ -456,18 +454,16 @@ msgid "_Conversation"
 msgstr "_Diálogo"
 
 #: ui/chat.glade.h:14
-#, fuzzy
 msgid "_Detach Tab"
-msgstr "D_esanexar"
+msgstr "_Destacar Aba"
 
 #: ui/chat.glade.h:15
 msgid "_Next Tab"
-msgstr ""
+msgstr "Aba _Seguinte"
 
 #: ui/chat.glade.h:16
-#, fuzzy
 msgid "_Previous Tab"
-msgstr "Diálogo _Anterior"
+msgstr "Aba _Anterior"
 
 #: ui/chat.glade.h:17
 msgid "_Reply..."
@@ -479,7 +475,7 @@ msgstr "_Enviar"
 
 #: ui/chat.glade.h:19
 msgid "_Tabs"
-msgstr ""
+msgstr "_Abas"
 
 #: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
 msgid "    "
