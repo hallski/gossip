@@ -28,7 +28,7 @@
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-message.h"
-#include "gossip-roster.h"
+#include "gossip-roster-old.h"
 #include "gossip-app.h"
 
 struct _GossipMessage {
@@ -207,7 +207,7 @@ message_new (GossipApp *app, LmMessage *m)
 	GtkWidget     *from_label;
 	gchar         *from;
 	const gchar   *name;
-	GossipRoster  *roster;
+	GossipRosterOld  *roster;
 	LmMessageNode *node;
 	
 	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
@@ -230,7 +230,7 @@ message_new (GossipApp *app, LmMessage *m)
 				      NULL);
 
 	roster = gossip_app_get_roster ();
-	name = gossip_roster_get_nick_from_jid (roster, message->jid);
+	name = gossip_roster_old_get_nick_from_jid (roster, message->jid);
 	if (name) {
 		from = g_strdup_printf ("%s <%s>", name, 
 					gossip_jid_get_without_resource (message->jid));

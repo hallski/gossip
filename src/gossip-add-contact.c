@@ -154,7 +154,7 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
-	GossipRoster     *roster;
+	GossipRosterOld     *roster;
 	const gchar      *str_jid;
 	gchar            *str;
 	gint              changed;
@@ -198,7 +198,7 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	}
 
 	roster = gossip_app_get_roster ();
-	groups = gossip_roster_get_groups (roster);
+	groups = gossip_roster_old_get_groups (roster);
 	
 	g_completion_clear_items (contact->group_completion);
 

@@ -72,7 +72,7 @@ struct _GossipAppPriv {
 	GtkWidget           *show_popup_item;
 	GtkWidget           *hide_popup_item;
 	
-	GossipRoster        *roster;
+	GossipRosterOld        *roster;
 
 	GossipAccount       *account;
 
@@ -122,7 +122,7 @@ static void     app_init                             (GossipApp          *app);
 static void     app_finalize                         (GObject            *object);
 static void     app_main_window_destroy_cb           (GtkWidget          *window,
 						      GossipApp          *app);
-static void     app_user_activated_cb                (GossipRoster       *roster,
+static void     app_user_activated_cb                (GossipRosterOld       *roster,
 						      GossipJID          *jid,
 						      GossipApp          *app);
 static gboolean app_idle_check_cb                    (GossipApp          *app);
@@ -316,7 +316,7 @@ app_init (GossipApp *app)
 		app_create_connection (app);
 	}
 	
-	priv->roster = gossip_roster_new (app);
+	priv->roster = gossip_roster_old_new (app);
 
 	gtk_widget_show (GTK_WIDGET (priv->roster));
 	gtk_container_add (GTK_CONTAINER (sw),
@@ -661,7 +661,7 @@ app_send_chat_message (gboolean use_roster_selection)
 	data->completion = g_completion_new (app_complete_jid_to_string);
 
 	if (use_roster_selection) {
-		jid = gossip_roster_get_selected_jid (priv->roster);
+		jid = gossip_roster_old_get_selected_jid (priv->roster);
 		if (jid) {
 			gossip_jid_ref (jid);
 		}
@@ -670,7 +670,7 @@ app_send_chat_message (gboolean use_roster_selection)
 	}
 
 	data->jid_strings = NULL;
-	data->jids = gossip_roster_get_jids (priv->roster);
+	data->jids = gossip_roster_old_get_jids (priv->roster);
 	for (l = data->jids; l; l = l->next) {
 		const gchar *str;
 				
@@ -803,7 +803,7 @@ app_subscription_request_dialog_response_cb (GtkWidget *dialog,
 	lm_message_unref (reply);
 	
 	jid = gossip_jid_new (from);
-	subscribed = gossip_roster_have_jid (priv->roster, jid);
+	subscribed = gossip_roster_old_have_jid (priv->roster, jid);
 
 	if (add_user && !subscribed) {
 		gossip_add_contact_new (app->priv->connection, jid);
@@ -853,7 +853,7 @@ app_handle_subscription_request (GossipApp *app, LmMessage *m)
 			   "add_check_button", add_check_button);
 
 	jid = gossip_jid_new (from);
-	if (gossip_roster_have_jid (app->priv->roster, jid)) {
+	if (gossip_roster_old_have_jid (app->priv->roster, jid)) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (add_check_button),
 					      FALSE);
 		gtk_widget_set_sensitive (add_check_button, FALSE);
@@ -1086,7 +1086,7 @@ app_client_disconnected_cb (LmConnection       *connection,
 }
 
 static void
-app_user_activated_cb (GossipRoster *roster,
+app_user_activated_cb (GossipRosterOld *roster,
 		       GossipJID    *jid,
 		       GossipApp    *app)
 {
@@ -1300,7 +1300,7 @@ gossip_app_get_jid (void)
 	return app->priv->jid;
 }
 
-GossipRoster *
+GossipRosterOld *
 gossip_app_get_roster (void)
 {
 	return app->priv->roster;
@@ -1474,7 +1474,7 @@ app_complete_jid_response_cb (GtkWidget       *dialog,
 		g_free (l->data);
 	}
 	g_list_free (data->jid_strings);
-	gossip_roster_free_jid_list (data->jids);
+	gossip_roster_old_free_jid_list (data->jids);
 	g_free (data);
 	
 	gtk_widget_destroy (dialog);	
@@ -1766,7 +1766,7 @@ app_push_message (LmMessage *m)
 		app_tray_icon_update_tooltip ();
 	}
 
-	gossip_roster_flash_jid (priv->roster, jid, TRUE);
+	gossip_roster_old_flash_jid (priv->roster, jid, TRUE);
 
 	gossip_jid_unref (jid);
 }
@@ -1828,7 +1828,7 @@ app_pop_message (GossipJID *jid)
 
 	app_tray_icon_update_tooltip ();
 
-	gossip_roster_flash_jid (priv->roster, jid, FALSE);
+	gossip_roster_old_flash_jid (priv->roster, jid, FALSE);
 
 	gossip_jid_unref (jid);
 
@@ -1856,7 +1856,7 @@ app_tray_icon_update_tooltip (void)
 	from = priv->tray_flash_icons->data;
 	jid = gossip_jid_new (from);
 	
-	name = gossip_roster_get_nick_from_jid (priv->roster, jid);
+	name = gossip_roster_old_get_nick_from_jid (priv->roster, jid);
 	if (!name) {
 		name = from;
 	}

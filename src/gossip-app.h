@@ -36,7 +36,7 @@ typedef struct _GossipApp      GossipApp;
 typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
 
-#include "gossip-roster.h"
+#include "gossip-roster-old.h"
 
 struct _GossipApp {
         GObject        parent;
@@ -74,7 +74,7 @@ const gchar *  gossip_app_get_username    (void);
 
 GossipJID *    gossip_app_get_jid         (void);
 
-GossipRoster * gossip_app_get_roster      (void);
+GossipRosterOld * gossip_app_get_roster      (void);
 
 LmConnection * gossip_app_get_connection  (void);
 

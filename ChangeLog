@@ -1,3 +1,16 @@
+2003-08-15  Mikael Hallendal  <micke@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-add-contact.c: 
+	* src/gossip-app.c:
+	* src/gossip-app.h:
+	* src/gossip-chat.c:
+	* src/gossip-message.c: 
+	* src/gossip-roster-old.c:
+	* src/gossip-roster-old.h: 
+        - Moved gossip-roster.[ch] to gossip-roster-old.[ch] to make place for
+          hacking on the new implementation.
+
 2003-08-15  Richard Hult  <richard@imendio.com>
 
 	* configure.in: Bump version to 0.5, require loudmouth 0.13.2

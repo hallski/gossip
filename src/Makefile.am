@@ -23,8 +23,8 @@ gossip_SOURCES = 				\
 	gossip-contact-info.h                   \
 	gossip-idle.c				\
 	gossip-idle.h				\
-	gossip-roster.c				\
-	gossip-roster.h				\
+	gossip-roster-old.c			\
+	gossip-roster-old.h			\
 	gossip-register.c			\
 	gossip-register.h			\
 	gossip-message.c			\

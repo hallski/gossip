@@ -275,7 +275,7 @@ chat_get_for_jid (GossipJID  *jid,
 static void
 chat_create_gui (GossipChat *chat) 
 {
-	GossipRoster  *roster;
+	GossipRosterOld  *roster;
 	gchar         *name;
 	GtkTextBuffer *buffer;
 	GtkTooltips   *tooltips;
@@ -305,7 +305,7 @@ chat_create_gui (GossipChat *chat)
 	gtk_image_set_from_file (GTK_IMAGE (chat->composing_image),
 				 IMAGEDIR "/typing.png");
 	
-	pixbuf = gossip_roster_get_status_pixbuf_for_jid (roster, chat->jid);
+	pixbuf = gossip_roster_old_get_status_pixbuf_for_jid (roster, chat->jid);
 	if (pixbuf) {
 		gtk_image_set_from_pixbuf (GTK_IMAGE (chat->status_image),
 					   pixbuf);
@@ -314,7 +314,7 @@ chat_create_gui (GossipChat *chat)
 	if (chat->nick) {
 		gtk_label_set_text (GTK_LABEL (chat->from_label), chat->nick);
 	} else {
-		name = g_strdup (gossip_roster_get_nick_from_jid (roster, chat->jid));
+		name = g_strdup (gossip_roster_old_get_nick_from_jid (roster, chat->jid));
 		if (!name) {
 			name = gossip_jid_get_part_name (chat->jid);
 		}
@@ -537,12 +537,12 @@ static void
 chat_info_clicked_cb (GtkWidget  *widget,
 		      GossipChat *chat)
 {
-	GossipRoster *roster;
+	GossipRosterOld *roster;
 	const gchar  *name;
 
 	roster = gossip_app_get_roster ();
 	
-	name = gossip_roster_get_nick_from_jid (roster, chat->jid);
+	name = gossip_roster_old_get_nick_from_jid (roster, chat->jid);
 	if (name && name[0]) {
 		gossip_contact_info_new (gossip_app_get (), chat->jid, name);
 	}
@@ -745,7 +745,7 @@ chat_message_handler (LmMessageHandler *handler,
 	if (chat->nick) {
 		nick = g_strdup (chat->nick);
 	} else {
-		nick = g_strdup (gossip_roster_get_nick_from_jid (gossip_app_get_roster (), jid));
+		nick = g_strdup (gossip_roster_old_get_nick_from_jid (gossip_app_get_roster (), jid));
 	}
 	if (!nick) {
 		nick = gossip_jid_get_part_name (jid);
@@ -821,7 +821,7 @@ static void
 chat_update_title (GossipChat *chat, gboolean new_message)
 {
 	gchar        *nick = NULL, *title;
-	GossipRoster *roster;
+	GossipRosterOld *roster;
 	
 	if (chat->nick) {
 		nick = g_strdup (chat->nick);
@@ -829,7 +829,7 @@ chat_update_title (GossipChat *chat, gboolean new_message)
 	
 	if (!nick) {
 		roster = gossip_app_get_roster ();
-		nick = g_strdup (gossip_roster_get_nick_from_jid (roster, chat->jid));
+		nick = g_strdup (gossip_roster_old_get_nick_from_jid (roster, chat->jid));
 	}
 	
 	if (!nick) {
