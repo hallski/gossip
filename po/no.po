@@ -5,14 +5,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
-"POT-Creation-Date: 2004-03-19 11:36+0100\n"
-"PO-Revision-Date: 2004-01-29 11:39+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-04-03 10:42+0200\n"
+"PO-Revision-Date: 2004-04-03 10:43+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
@@ -112,26 +112,26 @@ msgstr "X-posisjon for hovedvinduet"
 msgid "Y position of main window"
 msgstr "Y-posisjon for hovedvinduet"
 
-#: src/gossip-about.c:277
+#: src/gossip-about.c:275
 msgid "Written by:"
-msgstr ""
+msgstr "Skrevet av:"
 
-#: src/gossip-about.c:287
+#: src/gossip-about.c:285
 msgid "Artwork by:"
 msgstr "Grafikk av:"
 
-#: src/gossip-about.c:298
+#: src/gossip-about.c:296
 msgid "Translated by:"
-msgstr ""
+msgstr "Oversatt av:"
 
 #. Note to translators: put your name here so it will shop up in the
 #. * "about" box. Please add ONLY names, separated by newlines. No mail
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:344
+#: src/gossip-about.c:342
 msgid "translator_credits"
-msgstr "Kjartan Maraas"
+msgstr "Kjartan Maraas <kmaraas@gnome.org>"
 
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
@@ -149,7 +149,7 @@ msgstr "%s vil bli lagt til i din kontaktliste."
 
 #: src/gossip-app.c:639
 msgid "Could not connect"
-msgstr ""
+msgstr "Kunne ikke koble til"
 
 #: src/gossip-app.c:640
 msgid "Make sure that your account information is correct."
@@ -174,11 +174,10 @@ msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du har blitt koblet fra tjeneren. Vil du koble til på nytt?"
 
 #: src/gossip-app.c:1348
-#, fuzzy
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
-msgstr "Sjekk at din kontoinformasjon er korrekt."
+msgstr "Sjekk at din kontoinformasjon er korrekt. Det er også mulig at tjeneren ikke er tilgjengelig for øyeblikket."
 
 #: src/gossip-app.c:1820
 msgid "Gossip, Instant Messaging Client"
@@ -602,6 +601,8 @@ msgid ""
 "Pick a favorite, or enter nickname, server name, and the name of the chat "
 "room to enter."
 msgstr ""
+"Velg en favoritt eller oppgi kallenavn, navn på tjener og navn på "
+"praterommet du vil gå inn i."
 
 #: ui/group-chat.glade.h:13
 msgid "R_emove"
@@ -637,11 +638,11 @@ msgstr " "
 
 #: ui/main.glade.h:4
 msgid "<b>Information requested, Please wait...</b>"
-msgstr ""
+msgstr "<b>Informasjon forespurt. Vennligst vent...</b>"
 
 #: ui/main.glade.h:5
 msgid "<b>Preset status messages</b>"
-msgstr ""
+msgstr "<b>Forhåndssatte statusmeldinger</b>"
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
@@ -746,7 +747,7 @@ msgstr ""
 
 #: ui/main.glade.h:35
 msgid "I would like to add you to my contact list."
-msgstr ""
+msgstr "Jeg ønsker å legge deg til i min kontaktliste."
 
 #: ui/main.glade.h:36
 msgid ""
@@ -765,7 +766,7 @@ msgstr "Informasjon om..."
 
 #: ui/main.glade.h:39
 msgid "JID"
-msgstr ""
+msgstr "JID"
 
 #: ui/main.glade.h:40
 msgid "Jabber"
@@ -836,9 +837,8 @@ msgid "Sound"
 msgstr "Lyd"
 
 #: ui/main.glade.h:57
-#, fuzzy
 msgid "Status"
-msgstr "Statusmelding"
+msgstr "Status"
 
 #: ui/main.glade.h:58
 msgid "Status Message"
@@ -866,7 +866,7 @@ msgstr "Velkommen til Gossip"
 
 #: ui/main.glade.h:64
 msgid "What instant messaging system does the contact use?"
-msgstr ""
+msgstr "Hvilket system for øyeblikksmeldinger bruker kontakten?"
 
 #: ui/main.glade.h:65
 msgid "What is your name?"
@@ -934,7 +934,7 @@ msgstr "S_kjul kontaktliste"
 
 #: ui/main.glade.h:82
 msgid "_Jabber ID of new contact:"
-msgstr ""
+msgstr "_Jabber-ID for den nye kontakten:"
 
 #: ui/main.glade.h:83
 msgid "_Join Group Chat..."
@@ -963,26 +963,3 @@ msgstr "Vi_s kontaktliste"
 #: ui/main.glade.h:89
 msgid "_Status Messages"
 msgstr "_Statusmeldinger"
-
-#, fuzzy
-#~ msgid "About Gossip"
-#~ msgstr "Gossip"
-
-#, fuzzy
-#~ msgid "translator_credits_old"
-#~ msgstr "Kjartan Maraas <kmaraas@gnome.org>"
-
-#~ msgid "An Instant Messaging Client for GNOME"
-#~ msgstr "En klient for øyeblikksmeldinger for GNOME"
-
-#~ msgid "Gossip Website"
-#~ msgstr "Gossip nettsted"
-
-#~ msgid "The server may currently be unavailable."
-#~ msgstr "Tjeneren kan være utilgjengelig for tiden."
-
-#~ msgid "Send _Message..."
-#~ msgstr "Send _melding..."
-
-#~ msgid "_Quit"
-#~ msgstr "A_vslutt"
