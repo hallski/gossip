@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-03 21:40-0400\n"
-"PO-Revision-Date: 2004-08-03 13:44-0400\n"
+"POT-Creation-Date: 2004-08-08 15:18-0400\n"
+"PO-Revision-Date: 2004-08-08 13:44-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: English/Canada <adamw@FreeBSD.org>\n"
 "MIME-Version: 1.0\n"
@@ -137,7 +137,7 @@ msgstr ""
 "Maintainer: Adam Weinberger <adamw@gnome.org>\n"
 "Alexander Winston <alexander.winston@comcast.net>"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:64
+#: src/gossip-account.c:292 src/gossip-app.c:64 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Home"
 
@@ -151,34 +151,34 @@ msgstr "What request message do you want to send to %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s will be added to your contact list."
 
-#: src/gossip-app.c:644
+#: src/gossip-app.c:639
 msgid "Could not connect"
 msgstr "Could not connect"
 
-#: src/gossip-app.c:645
+#: src/gossip-app.c:640
 msgid "Make sure that your account information is correct."
 msgstr "Make sure that your account information is correct."
 
-#: src/gossip-app.c:708
+#: src/gossip-app.c:703
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Enter the user ID of the person you would like to send a chat message to."
 
-#: src/gossip-app.c:715 ui/main.glade.h:85
+#: src/gossip-app.c:710 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:1012
+#: src/gossip-app.c:1007
 #, c-format
 msgid "%s wants to be notified of your status."
 msgstr "%s wants to be notified of your status."
 
-#: src/gossip-app.c:1254
+#: src/gossip-app.c:1253
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "You were disconnected from the server. Do you want to reconnect?"
 
-#: src/gossip-app.c:1409
+#: src/gossip-app.c:1408
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -186,45 +186,45 @@ msgstr ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 
-#: src/gossip-app.c:1882
+#: src/gossip-app.c:1877
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:2026
+#: src/gossip-app.c:2021
 #, c-format
 msgid "New message from %s"
 msgstr "New message from %s"
 
-#: src/gossip-app.c:2115 src/gossip-chat-window.c:798
+#: src/gossip-app.c:2110 src/gossip-chat-window.c:793
 #: src/gossip-roster-view.c:986
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2514 src/gossip-preferences.c:638
+#: src/gossip-app.c:2509 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Available"
 
-#: src/gossip-app.c:2525 src/gossip-preferences.c:639
+#: src/gossip-app.c:2520 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Busy"
 
-#: src/gossip-app.c:2536 src/gossip-preferences.c:640
+#: src/gossip-app.c:2531 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2668
+#: src/gossip-app.c:2663
 msgid "Available..."
 msgstr "Available..."
 
-#: src/gossip-app.c:2673
+#: src/gossip-app.c:2668
 msgid "Busy..."
 msgstr "Busy..."
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2673
 msgid "Away..."
 msgstr "Away..."
 
-#: src/gossip-app.c:2707
+#: src/gossip-app.c:2702
 msgid "Edit List..."
 msgstr "Edit List..."
 
@@ -244,40 +244,40 @@ msgstr "_Open Link"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:542
+#: src/gossip-chat-window.c:537
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChat - %s"
 
-#: src/gossip-chat-window.c:810
+#: src/gossip-chat-window.c:805
 msgid "Typing a message."
 msgstr "Typing a message."
 
-#: src/gossip-chat.c:715
+#: src/gossip-chat.c:719
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "An error occurred when chatting with %s."
 
-#: src/gossip-chat.c:720 src/gossip-group-chat.c:913
+#: src/gossip-chat.c:724 src/gossip-group-chat.c:913
 #: src/gossip-group-chat.c:1023
 msgid "Details:"
 msgstr "Details:"
 
-#: src/gossip-chat.c:811
+#: src/gossip-chat.c:815
 #, c-format
 msgid "%s went offline"
 msgstr "%s went offline"
 
-#: src/gossip-chat.c:825
+#: src/gossip-chat.c:829
 #, c-format
 msgid "%s comes online"
 msgstr "%s comes online"
 
-#: src/gossip-chat.c:906
+#: src/gossip-chat.c:910
 msgid "Connected"
 msgstr "Connected"
 
-#: src/gossip-chat.c:920
+#: src/gossip-chat.c:924
 msgid "Disconnected"
 msgstr "Disconnected"
 
@@ -353,19 +353,19 @@ msgstr "There is no account with the name '%s'."
 msgid "Unknown error"
 msgstr "Unknown error"
 
-#: src/gossip-register.c:182
+#: src/gossip-register.c:184
 msgid "Registering account"
 msgstr "Registering account"
 
-#: src/gossip-register.c:222
+#: src/gossip-register.c:224
 msgid "Successfully registered the account"
 msgstr "Successfully registered the account"
 
-#: src/gossip-register.c:243 src/gossip-register.c:249
+#: src/gossip-register.c:245 src/gossip-register.c:251
 msgid "Failed registering the account"
 msgstr "Failed registering the account"
 
-#: src/gossip-register.c:245
+#: src/gossip-register.c:247
 msgid "Reason:"
 msgstr "Reason:"
 
@@ -422,11 +422,11 @@ msgstr ""
 "Please enter a new name for the group\n"
 "%s"
 
-#: src/gossip-startup-druid.c:251
+#: src/gossip-startup-druid.c:257
 msgid "Gossip will now try to use your account:"
 msgstr "Gossip will now try to use your account:"
 
-#: src/gossip-startup-druid.c:255
+#: src/gossip-startup-druid.c:261
 msgid "Gossip will now try to register the account:"
 msgstr "Gossip will now try to register the account:"
 
@@ -564,20 +564,20 @@ msgid "Use _encryption (SSL)"
 msgstr "Use _encryption (SSL)"
 
 #: ui/connect.glade.h:12
+msgid "_Jabber ID:"
+msgstr "_Jabber ID:"
+
+#: ui/connect.glade.h:13
 msgid "_Password:"
 msgstr "_Password:"
 
-#: ui/connect.glade.h:13
+#: ui/connect.glade.h:14
 msgid "_Resource:"
 msgstr "_Resource:"
 
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:19
+#: ui/connect.glade.h:15 ui/group-chat.glade.h:19
 msgid "_Server:"
 msgstr "_Server:"
-
-#: ui/connect.glade.h:15
-msgid "_User name:"
-msgstr "_User name:"
 
 #: ui/group-chat.glade.h:2
 msgid "        "
