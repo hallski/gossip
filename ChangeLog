@@ -1,5 +1,8 @@
 2003-10-26  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat.c: (chat_presence_handler):
+	- Don't append online/offline messages if chat window is hidden.
+
 	* src/gossip-chat-view.c:
 	- Added the buffer to priv, use priv->buffer instead of getting from 
 	  the view all the time.

@@ -829,15 +829,19 @@ chat_presence_handler (LmMessageHandler *handler,
 		gchar *event_msg;
 		
 		icon = GOSSIP_STOCK_OFFLINE;
-		chat->other_offline = TRUE;
 		
 		chat_composing_remove_timeout (chat);
 		chat->send_composing_events = FALSE;
 		chat_show_composing_icon (chat, FALSE);
 
-		event_msg = g_strdup_printf (_("%s went offline"), chat->nick);
-		gossip_chat_view_append_event_msg (chat->view, event_msg);
-		g_free (event_msg);
+		if (!chat->hidden && !chat->other_offline) {
+			event_msg = g_strdup_printf (_("%s went offline"),
+						     chat->nick);
+			gossip_chat_view_append_event_msg (chat->view, 
+							   event_msg);
+			g_free (event_msg);
+		}
+		chat->other_offline = TRUE;
 	} else {
 		GossipRosterOld *roster;
 		gchar           *event_msg;
@@ -846,12 +850,12 @@ chat_presence_handler (LmMessageHandler *handler,
 		
 		icon = gossip_get_icon_for_show_string (show);
 	
-		if (chat->other_offline) {
+		if (!chat->hidden && chat->other_offline) {
 			event_msg = g_strdup_printf (_("%s comes online"), chat->nick);
 			gossip_chat_view_append_event_msg (chat->view, event_msg);
 			g_free (event_msg);
-			chat->other_offline = FALSE;
 		}
+		chat->other_offline = FALSE;
 	}
 	
 
