@@ -1,4 +1,9 @@
-2003-08-11  Richard Hult  <rhult@codefactory.se>
+2003-08-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_pop_message): Compare JID without
+	resource, should fix the stuck flashing icon.
+
+2003-08-11  Richard Hult  <richard@imendio.se>
 
 	* src/gossip-chat.c: Tweak the composing event code a bit.
 
@@ -22,7 +27,7 @@
 	- Don't set the show value if it's "normal". We were setting it to
 	  <show/> in that case which is wrong.
 
-2003-08-05  Richard Hult  <rhult@codefactory.se>
+2003-08-05  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Add icon for Add Contact... item, patch from
 	Thomas Reynolds <thomasr@infograph.com>.
@@ -32,7 +37,7 @@
 	* ui/chat.glade: Added compose_image to the glade-file. Otherwise you 
 	  can't open a window, might not be what Richard had in mind...
 
-2003-08-05  Richard Hult  <rhult@codefactory.se>
+2003-08-05  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c: (destroy_notify_cb),
 	(chat_dialog_notify_visible_cb), (chat_init), (chat_get_for_jid),
@@ -100,7 +105,7 @@
 	(favorites_dialog_update_favorite_cb): Don't try to do anything if
 	no favorite is selected. Fixes a crash.
 
-2003-08-02  Richard Hult  <rhult@codefactory.se>
+2003-08-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_message_handler), (app_user_activated_cb),
 	(app_complete_jid_response_cb), (app_tray_icon_button_press_cb),
@@ -117,7 +122,7 @@
 	(app_complete_jid_response_cb): Present the window instead of just
 	showing it.
 
-2003-08-01  Richard Hult  <rhult@codefactory.se>
+2003-08-01  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_init), (app_show_hide_activate_cb),
 	(app_send_chat_message), (app_send_chat_message_cb),
@@ -135,7 +140,7 @@
 
 	* src/gossip-chat.c (chat_send): Don't send empty messages.
 
-2003-08-01  Richard Hult  <rhult@codefactory.se>
+2003-08-01  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_init), (app_authentication_cb),
 	(app_message_handler), (app_user_activated_cb), (app_set_status),
@@ -149,7 +154,7 @@
 	notification area. Needs a bit more work like maybe a preference,
 	and making subscription request windows behave the same.
 
-2003-08-01  Richard Hult  <rhult@codefactory.se>
+2003-08-01  Richard Hult  <richard@imendio.com>
 
 	Clean up a bit:
 
@@ -498,7 +503,7 @@
 
 	* src/gossip-register.c: ...and put it here.
 
-2003-07-05  Richard Hult  <rhult@codefactory.se>
+2003-07-05  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-startup-druid.c: (startup_druid_get_account_info),
 	(startup_druid_prepare_page_last), (gossip_startup_druid_run): Put
@@ -514,7 +519,7 @@
 	* src/gossip-app.c (app_send_chat_message_cb): Open a chat
 	window for the selected JID.
 
-2003-07-05  Richard Hult  <rhult@codefactory.se>
+2003-07-05  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_send_chat_message_cb),
 	(app_complete_jid_idle), (app_complete_jid_insert_text_cb),

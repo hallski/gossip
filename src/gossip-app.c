@@ -1738,22 +1738,25 @@ app_push_message (LmMessage *m)
 	GossipAppPriv *priv;
 	const gchar   *from;
 	GossipJID     *jid;
+	const gchar   *without_resource;
 	GList         *l;
 		
 	priv = app->priv;
 	
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
+
+	without_resource = gossip_jid_get_without_resource (jid);
 	
 	l = g_list_find_custom (priv->tray_flash_icons,
-				gossip_jid_get_without_resource (jid),
+				without_resource,
 				(GCompareFunc) g_ascii_strcasecmp);
 	if (l) {
 		return;
 	}
 
 	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons,
-						g_strdup (from));
+						g_strdup (without_resource));
 
 	if (!priv->tray_flash_timeout_id) {
 		priv->tray_flash_timeout_id = g_timeout_add (350,
@@ -1772,7 +1775,7 @@ static gboolean
 app_pop_message (GossipJID *jid)
 {
 	GossipAppPriv *priv;
-	const gchar   *from;
+	const gchar   *without_resource;
 	GossipChat    *chat;
 	GtkWidget     *widget;
 	GossipStatus   status;
@@ -1800,18 +1803,19 @@ app_pop_message (GossipJID *jid)
 	widget = gossip_chat_get_dialog (chat);
 	gtk_window_present (GTK_WINDOW (widget));
 
-	from = gossip_jid_get_without_resource (jid);
-
+	without_resource = gossip_jid_get_without_resource (jid);
+	
 	l = g_list_find_custom (priv->tray_flash_icons,
-				from,
+				without_resource,
 				(GCompareFunc) g_ascii_strcasecmp);
 
 	if (!l) {
-		l = priv->tray_flash_icons;
+		gossip_jid_unref (jid);
+		return FALSE;
 	}
 	
-	priv->tray_flash_icons = g_list_delete_link (priv->tray_flash_icons, l);
 	g_free (l->data);
+	priv->tray_flash_icons = g_list_delete_link (priv->tray_flash_icons, l);
 
 	if (!priv->tray_flash_icons && priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
