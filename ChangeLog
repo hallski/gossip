@@ -1,5 +1,10 @@
 2005-03-30  Bastien Nocera  <hadess@hadess.net>
 
+	* src/gossip-app.c: (gossip_app_init): stop the startup notification
+	ourselves if we won't be creating a main window
+
+2005-03-30  Bastien Nocera  <hadess@hadess.net>
+
 	* .cvsignore: upd
 
 2005-03-29  Bastien Nocera  <hadess@hadess.net>

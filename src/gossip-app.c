@@ -503,6 +503,8 @@ gossip_app_init (GossipApp *singleton_app)
  	/* FIXME: See bug #132632, if (!hidden || !app_have_tray ()) {*/
  	if (!hidden) {
 		gtk_widget_show (priv->window);
+	} else {
+		gdk_notify_startup_complete ();
 	}
 
 	/* Note: this is a hack that sets the minimal size of the window so it
