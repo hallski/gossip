@@ -1,3 +1,11 @@
+2003-07-17  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_iq_handler): Just use OS name, and not the
+	version or arch.
+
+	* src/gossip-contact-info.c (contact_info_version_reply_cb): Fix a
+	string.
+
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-favorites-dialog.c: (favorites_dialog_update_favorite_cb): 

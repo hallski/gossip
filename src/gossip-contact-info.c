@@ -246,7 +246,7 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 
 	node = lm_message_node_get_child (query, "os");
 	if (node) {
-		name_label = gtk_label_new (_("Operating system:"));
+		name_label = gtk_label_new (_("OS:"));
 		value_label = gtk_label_new (node->value);
 		
 		gtk_misc_set_alignment (GTK_MISC (name_label), 0, 0.5);
