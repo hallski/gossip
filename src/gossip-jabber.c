@@ -242,6 +242,10 @@ gossip_jabber_init (GossipJabber *jabber)
 	priv->account = gossip_account_get_default ();
 
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER);
+
+	if (priv->account == NULL) {
+		return;
+	}
 	
 	name = gossip_jid_get_part_name (priv->account->jid);
 	g_object_set (priv->contact,
@@ -607,6 +611,10 @@ jabber_is_connected (GossipProtocol *protocol)
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv   = jabber->priv;
+
+	if (priv->connection == NULL) {
+		return FALSE;
+	}
 
 	return lm_connection_is_authenticated (priv->connection);
 }

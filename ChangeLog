@@ -1,3 +1,14 @@
+2005-03-29  Bastien Nocera  <hadess@hadess.net>
+
+	* autogen.sh: Fix missing po/Makefile.in.in on first build
+
+	* configure.ac: Fix XScreenSaver compile check, by adding the
+	X11/Xlib.h header to the test
+
+	* src/gossip-jabber.c: (gossip_jabber_init), (jabber_is_connected):
+	Fix crash on startup, and some warnings when no accounts have ever
+	been setup
+
 2005-03-29  Mikael Hallendal  <micke@imendio.com>
 
 	* acinclude.m4:

@@ -110,6 +110,7 @@ AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -l
 AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
 if test "x$XSS_LIBS" != "xno"; then
    AC_TRY_COMPILE([
+#include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
 		],[],[
 		AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
