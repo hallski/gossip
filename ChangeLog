@@ -1,5 +1,11 @@
 2003-11-12  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c: Include config.h, fixes #126569.
+
+	* src/gossip-roster-view.c (roster_view_name_cell_data_func):
+	Replace any occurances \n, \r and \t in name and status with
+	space, fixes #126767.
+
 	* src/gossip-app.c: (app_status_messages_cb), (app_idle_check_cb),
 	(app_update_show), (app_cancel_pending_leave),
 	(app_status_available_activate_cb),

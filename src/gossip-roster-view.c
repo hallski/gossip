@@ -772,6 +772,9 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 			
 		name = g_strdup (gossip_roster_item_get_name (item));
 
+		g_strdelimit (name, "\n\r\t", ' ');
+		g_strdelimit (status, "\n\r\t", ' ');
+		
 		/* FIXME: Figure out how to calculate the offset instead of
 		 * hardcoding it here (icon width + padding + indentation).
 		 */
