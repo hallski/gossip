@@ -189,11 +189,11 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	groups = gossip_roster_get_groups (roster);
 	
 	g_completion_clear_items (contact->group_completion);
-	g_completion_add_items (contact->group_completion, groups);
 
 	if (groups) {
 		gtk_combo_set_popdown_strings (GTK_COMBO (contact->two_group_combo),
 					       groups);
+		g_completion_add_items (contact->group_completion, groups);
 	}
 
 	gtk_entry_set_text (GTK_ENTRY (contact->two_group_entry), "");
@@ -205,7 +205,8 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 					   TRUE,
 					   TRUE,
 					   FALSE);
-	/* Check Jabber ID, if not valid show dialog */
+
+	/* FIXME: Check Jabber ID, if not valid show dialog. */
 }
 
 static LmHandlerResult * 

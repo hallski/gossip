@@ -1411,6 +1411,33 @@ gossip_roster_get_groups (GossipRoster *roster)
 	return priv->groups;
 }
 
+static void
+get_jids_foreach (gpointer   key,
+		  gpointer   value,
+		  GList    **list)
+{
+	GossipRosterItem *item = value;
+
+	*list = g_list_prepend (*list, item->jid);
+}
+
+GList *
+gossip_roster_get_jids (GossipRoster *roster)
+{
+	GossipRosterPriv *priv;
+	GList            *jids = NULL;
+	
+	g_return_val_if_fail (GOSSIP_IS_ROSTER (roster), NULL);
+
+	priv = roster->priv;
+
+	g_hash_table_foreach (priv->contacts,
+			      (GHFunc) get_jids_foreach,
+			      &jids);
+	
+	return jids;
+}
+
 static gboolean
 roster_str_equal (gconstpointer a, gconstpointer b)
 {
@@ -1433,4 +1460,17 @@ roster_str_hash (gconstpointer key)
 	}
 
 	return h;
+}
+
+GossipJID *
+gossip_roster_get_selected_jid (GossipRoster *roster)
+{
+	GossipRosterItem *item;
+
+	item = roster_get_selected_item (roster);
+	if (!item) {
+		return NULL;
+	}
+
+	return item->jid;
 }

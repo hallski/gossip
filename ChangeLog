@@ -1,3 +1,21 @@
+2003-07-05  Richard Hult  <rhult@codefactory.se>
+
+	* src/gossip-app.c: (app_send_chat_message_cb),
+	(app_complete_jid_idle), (app_complete_jid_insert_text_cb),
+	(app_complete_jid_key_press_event_cb),
+	(app_complete_jid_to_string): 
+	Implement a dialog for entering the JID of the person to start a
+	chat with. Autocompletes on JID, may change this to include nicks
+	as well.
+	
+	* src/gossip-roster.c: (get_jids_foreach),
+	(gossip_roster_get_jids), (gossip_roster_get_selected_jid):
+	* src/gossip-roster.h: Implement get_selected_jid and
+	get_jids, which is used for the above.
+
+	* src/gossip-add-contact.c (add_contact_prepare_page_2): Don't
+	pass NULL to g_completion_add_items.
+
 2003-07-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-add-contact.c (add_contact_prepare_page_2): Don't set

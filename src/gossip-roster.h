@@ -62,5 +62,7 @@ gossip_roster_get_status_pixbuf_for_jid         (GossipRoster *roster,
 gboolean       gossip_roster_have_jid           (GossipRoster *roster,
 						 GossipJID    *jid);
 GList *        gossip_roster_get_groups         (GossipRoster *roster);
+GList *        gossip_roster_get_jids           (GossipRoster *roster);
+GossipJID *    gossip_roster_get_selected_jid   (GossipRoster *roster);
 
 #endif /* __GOSSIP_ROSTER_H__ */
