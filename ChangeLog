@@ -1,4 +1,10 @@
-2004-07-02  Mikael Hallendal,,,  <micke@imendio.com>
+2004-07-03  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-utils.c: 
+	- Include {} in url regexp. 
+	- Patch from Johan Hammar.
+
+2004-07-02  Mikael Hallendal  <micke@imendio.com>
 
 	* src/Makefile.am:
 	* src/disclosure-widget.c:
