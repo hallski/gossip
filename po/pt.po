@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.4\n"
 "Report-Msgid-Bugs-To: Duarte Loreto <happyguy_pt@hotmail.com>\n"
-"POT-Creation-Date: 2003-09-09 13:13+0100\n"
-"PO-Revision-Date: 2003-09-09 13:20+0000\n"
+"POT-Creation-Date: 2003-09-10 05:05+0100\n"
+"PO-Revision-Date: 2003-09-10 05:10+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:24
+#: gossip.desktop.in.h:1 ui/main.glade.h:22
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -147,7 +147,7 @@ msgstr ""
 "Introduza o ID de utilizador da pessoa para quem deseja enviar uma mensagem "
 "de diálogo."
 
-#: src/gossip-app.c:627 ui/main.glade.h:70
+#: src/gossip-app.c:627 ui/main.glade.h:68
 msgid "_Chat"
 msgstr "_Diálogo"
 
@@ -528,74 +528,66 @@ msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Exemplo: utilizador@jabber.org</span>"
 
 #: ui/main.glade.h:7
-msgid "Account Information"
-msgstr "Informação Conta"
-
-#: ui/main.glade.h:8
 msgid "Add a contact"
 msgstr "Adicionar um contacto"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:8
 msgid "Add contact"
 msgstr "Adicionar contacto"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:9
 msgid "Add to your contact list"
 msgstr "Adicionar à sua lista de contactos"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:10
 msgid "Choose a Server"
 msgstr "Seleccione um Servidor"
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:11
 msgid "Choose from list:"
 msgstr "Seleccione da lista:"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:12
 msgid "Client information"
 msgstr "Informação Cliente"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:13
 msgid "Client:"
 msgstr "Cliente:"
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:14
 msgid "Contact information"
 msgstr "Informação contacto"
 
-#: ui/main.glade.h:16
+#: ui/main.glade.h:15
 msgid "Conversation"
 msgstr "Diálogo"
 
-#: ui/main.glade.h:17
-msgid "Convert smileys to graphical images"
-msgstr "Converter risonhos em imagens gráficas"
+#: ui/main.glade.h:16
+msgid "Convert _smileys to graphical images"
+msgstr "Converter ri_sonhos em imagens gráficas"
 
-#: ui/main.glade.h:18
+#: ui/main.glade.h:17
 msgid "Country:"
 msgstr "País:"
 
-#: ui/main.glade.h:19
+#: ui/main.glade.h:18
 msgid "Description"
 msgstr "Descrição"
 
-#: ui/main.glade.h:20
-msgid "Disable sounds when busy or away"
-msgstr "Desabilitar sons quando ausente ou ocupado"
-
-#: ui/main.glade.h:21
+#: ui/main.glade.h:19
 msgid "Do you already have an account on a Jabber server? "
 msgstr "Possui mesmo uma conta num servidor Jabber? "
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:20
 msgid "Do you want to accept the request?"
 msgstr "Deseja aceitar o pedido?"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:21
 msgid "Email:"
 msgstr "Email:"
 
-#: ui/main.glade.h:25
+#: ui/main.glade.h:23
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -612,21 +604,21 @@ msgstr ""
 "\n"
 "Para começar, prima \"Prosseguir\"."
 
-#: ui/main.glade.h:30
+#: ui/main.glade.h:28
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
 ">Connect... menu item."
 msgstr ""
 "Gossip está agora correctamente configurado para o seu sistema.\n"
-"Pode alterar as suas definições de conta mais tarde, seleccionando o "
-"item de menu Diálogo->Ligar..."
+"Pode alterar as suas definições de conta mais tarde, seleccionando o item de "
+"menu Diálogo->Ligar..."
 
-#: ui/main.glade.h:32
+#: ui/main.glade.h:30
 msgid "I would like to add you to my contact list."
 msgstr "Desejo adiciona-lo à minha lista de contactos."
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:31
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -636,173 +628,181 @@ msgstr ""
 "um pedido. Até que este pedido seja aprovado, o utilizador será sempre "
 "apresentado como \"Desligado\" na sua lista de contactos."
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:32
 msgid "In which group do you want to place this contact?"
 msgstr "Em que grupo deseja colocar este contacto?"
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:33
 msgid "Information about ..."
 msgstr "Informação sobre ..."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:34
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:35
 msgid "Jabber Account"
 msgstr "Conta Jabber"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:36
 msgid "Jabber ID:"
 msgstr "ID Jabber:"
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:37
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:38
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:39
 msgid "Name:"
 msgstr "Nome:"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:40
 msgid "No"
 msgstr "Não"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:41
 msgid "OS:"
 msgstr "SO:"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:42
 msgid "On what server do you have a Jabber account?"
 msgstr "Em que servidor possui uma conta Jabber?"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:43
 msgid "Personal information"
 msgstr "Informação pessoal"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:44
 msgid "Preferences"
 msgstr "Preferências"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:45
 msgid "Request message"
 msgstr "Mensagem de pedido"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:46
 msgid "Sending request"
 msgstr "A enviar pedido"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:47
 msgid "Setup Finished"
 msgstr "Configuração Terminada"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:48
 msgid "Sound"
 msgstr "Som"
 
-#: ui/main.glade.h:51
-msgid "Timestamp all messages"
-msgstr "Hora em todas as mensagens"
-
-#: ui/main.glade.h:52
+#: ui/main.glade.h:49
 msgid "Use a different server"
 msgstr "Utilizar outro servidor"
 
+#: ui/main.glade.h:50
+msgid "Use com_pact conversation style"
+msgstr "Utilizar estilo de diálogo com_pacto"
+
+#: ui/main.glade.h:51
+msgid "Use sounds to _notify when new messages arrive"
+msgstr "Utilizar sons para _notificar chegada de novas mensagens"
+
+#: ui/main.glade.h:52
+msgid "Use ta_bs instead of windows for conversations"
+msgstr "Utilizar a_bas em vez de janelas para diálogos"
+
 #: ui/main.glade.h:53
-msgid "Use compact conversation style"
-msgstr "Utilizar estilo de diálogo compacto"
-
-#: ui/main.glade.h:54
-msgid "Use sounds to notify when new messages arrive"
-msgstr "Utilizar sons para notificar chegada de novas mensagens"
-
-#: ui/main.glade.h:55
-msgid "Use tabs instead of windows for conversations"
-msgstr "Utilizar abas em vez de janelas para diálogos"
-
-#: ui/main.glade.h:56
 msgid "Version:"
 msgstr "Versão:"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:54
 msgid "Web site:"
 msgstr "Página web:"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:55
 msgid "Welcome to Gossip"
 msgstr "Bem vindo ao Gossip"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:56
 msgid "What instant messaging system does the contact use?"
 msgstr "Que sistema de mensagens instantâneas utiliza o contacto?"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:57
 msgid "What is your name?"
 msgstr "Qual é o seu nome?"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:58
 msgid "What nickname do you want to use for this contact?"
 msgstr "Que alcunha deseja utilizar para este contacto?"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:59
 msgid "What request message do you want to send to ...?"
 msgstr "Que mensagem de pedido deseja enviar para ...?"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:60
 msgid "What server do you want to use?"
 msgstr "Que servidor deseja utilizar?"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:61
 msgid "What username do you use?"
 msgstr "Que nome de utilizador utiliza?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:62
 msgid "What username do you want to use?"
 msgstr "Que nome de utilizador deseja utilizar?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:63
 msgid "Yes"
 msgstr "Sim"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:64
 msgid "Your Identity"
 msgstr "A Sua Identidade"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:65
 msgid "_Accept"
 msgstr "_Aceitar"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:66
+msgid "_Account Information"
+msgstr "Informação Cont_a"
+
+#: ui/main.glade.h:67
 msgid "_Add Contact..."
 msgstr "_Adicionar Contacto..."
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:69
 msgid "_Connect..."
 msgstr "_Ligar..."
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:70
 msgid "_Decide Later"
 msgstr "_Decidir Mais Tarde"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:71
 msgid "_Deny"
 msgstr "_Negar"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:72
+msgid "_Disable sounds when busy or away"
+msgstr "_Desabilitar sons quando ausente ou ocupado"
+
+#: ui/main.glade.h:73
 msgid "_Disconnect"
 msgstr "_Desligar"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:74
 msgid "_Jabber ID of new contact:"
 msgstr "ID _Jabber do novo contacto:"
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:75
 msgid "_Join Group Chat..."
 msgstr "_Juntar-se a Diálogo de Grupo..."
+
+#: ui/main.glade.h:76
+msgid "_Preferences"
+msgstr "_Preferências"
 
 #: ui/main.glade.h:77
 msgid "_Search..."
@@ -811,6 +811,10 @@ msgstr "_Procurar..."
 #: ui/main.glade.h:78
 msgid "_Send Chat Message..."
 msgstr "_Enviar Mensagem Diálogo..."
+
+#: ui/main.glade.h:79
+msgid "_Timestamp all messages"
+msgstr "Hora em _todas as mensagens"
 
 #~ msgid "New account"
 #~ msgstr "Nova conta"
