@@ -1,3 +1,7 @@
+2003-08-27  Ole Laursen  <olau@hardworking.dk>
+
+	* configure.in: Added "da" (Danish) to ALL_LINGUAS.
+
 2003-08-24  Abel Cheung  <maddog@linux.org.hk>
 
 	* src/gossip-roster-old.c: Add translator comment.
