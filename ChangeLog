@@ -1,3 +1,8 @@
+2004-01-13  Mikael Hallendal  <micke@imendio.com>
+
+	* ui/main.glade: Ctrl-N for sending new messages from main menu. Also
+	  changed the message text.
+
 2004-01-13  Martyn Russell  <ginxd@btopenworld.com>
 
 	* src/gossip-edit-groups-dialog.c: 
