@@ -1,5 +1,8 @@
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-add-contact.c:
+	- Cancel pending operation when dialog is destroyed.
+
 	* configure.in: Bumped loudmouth-dep to 0.12
 
 2003-07-17  Richard Hult  <richard@imendio.com>

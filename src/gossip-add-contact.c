@@ -60,9 +60,10 @@ typedef struct {
 
 	GtkWidget *last_page;
 	GtkWidget *last_label;
-	
-	GCompletion *group_completion;
-	guint        idle_complete;
+
+	LmMessageHandler *vcard_handler;
+	GCompletion      *group_completion;
+	guint             idle_complete;
 } GossipAddContact;
 
 enum {
@@ -116,16 +117,18 @@ add_contact_2_group_entry_text_inserted         (GtkEntry         *entry,
 static void
 add_contact_dialog_destroyed (GtkWidget *unused, GossipAddContact *contact)
 {
+	if (contact->vcard_handler) {
+		lm_message_handler_invalidate (contact->vcard_handler);
+		lm_message_handler_unref (contact->vcard_handler);
+	}
+
 	g_free (contact);
 }
 
 static void
 add_contact_cancel (GtkWidget *widget, GossipAddContact *contact)
 {
-	/* FIXME: destroy when we can cancel replies. */
-
-	/*gtk_widget_destroy (contact->dialog);*/
-	gtk_widget_hide (contact->dialog);
+	gtk_widget_destroy (contact->dialog);
 }
 
 static void
@@ -158,7 +161,6 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	GList            *groups = NULL;
 	LmMessage        *m;
 	LmMessageNode    *node;
-	LmMessageHandler *handler;
 	
 	str_jid = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
 	gtk_label_set_text (GTK_LABEL (contact->two_id_label), str_jid);
@@ -166,7 +168,11 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	changed = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (contact->two_nick_entry),
 						     "changed"));
 
-	handler = lm_message_handler_new 
+	if (contact->vcard_handler) {
+		lm_message_handler_invalidate (contact->vcard_handler);
+		lm_message_handler_unref (contact->vcard_handler);
+	}
+	contact->vcard_handler = lm_message_handler_new 
 		((LmHandleMessageFunction) add_contact_page_2_vcard_handler,
 		 contact, NULL);
 	
@@ -176,7 +182,8 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attributes (node, "xmlns", "vcard-temp", NULL);
 	
-	lm_connection_send_with_reply (contact->connection, m, handler, NULL);
+	lm_connection_send_with_reply (contact->connection, m, 
+				       contact->vcard_handler, NULL);
 	
 	lm_message_unref (m);
 	
@@ -221,6 +228,9 @@ add_contact_page_2_vcard_handler (LmMessageHandler *handler,
 				  GossipAddContact *contact)
 {
 	LmMessageNode *node;
+
+	lm_message_handler_unref (contact->vcard_handler);
+	contact->vcard_handler = NULL;
 	
 	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_ERROR) {
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -339,10 +349,7 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 	lm_connection_send (contact->connection, m, NULL);
 	lm_message_unref (m);
 
-	/* FIXME: destroy when we can cancel replies. */
-
-	/* gtk_widget_destroy (contact->dialog); */
-	gtk_widget_hide (contact->dialog);
+	gtk_widget_destroy (contact->dialog);
 }
 
 static void
@@ -455,6 +462,8 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 	
 	contact->connection = lm_connection_ref (connection);
 	contact->group_completion = g_completion_new (NULL);
+
+	contact->vcard_handler = NULL;
 	
 	glade = gossip_glade_get_file (
 		GLADEDIR "/main.glade",
