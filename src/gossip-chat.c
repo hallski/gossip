@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio AB
+ * Copyright (C) 2002-2005 Imendio AB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  * Copyright (C) 2004      Martyn Russell <mr@gnome.org>
  *
@@ -29,6 +29,7 @@
 #include "gossip-chat.h"
 #include "gossip-marshal.h"
 #include "gossip-chat-window.h"
+#include "gossip-utils.h"
 #include "gossip-spell.h"
 #include "gossip-spell-dialog.h"
 
@@ -694,7 +695,8 @@ gossip_chat_present (GossipChat *chat)
         }
 
         gossip_chat_window_switch_to_chat (priv->window, chat);
-        gtk_window_present (GTK_WINDOW (gossip_chat_window_get_dialog (priv->window)));
+	gossip_utils_window_present (
+		GTK_WINDOW (gossip_chat_window_get_dialog (priv->window)));
 
 	gtk_widget_grab_focus (chat->input_text_view);
 }

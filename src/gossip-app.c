@@ -220,7 +220,6 @@ static gboolean app_tray_destroy_cb                  (GtkWidget          *widget
 						      gpointer            user_data);
 static void     app_tray_create_menu                 (void);
 static void     app_tray_create                      (void);
-static gboolean app_is_visible                       (void);
 static void     app_disconnect                       (void);
 static void     app_setup_conn_dependent_menu_items  (GladeXML           *glade);
 static void     app_update_conn_dependent_menu_items (void);
@@ -1234,29 +1233,6 @@ gossip_app_is_connected (void)
 	return gossip_session_is_connected (app->priv->session);
 }
 
-static gboolean
-app_is_visible (void)
-{
-	GossipAppPriv *priv;
-	gboolean       visible;
-
-	priv = app->priv;
-	
-	g_object_get (priv->window,
-		      "visible", &visible,
-		      NULL);
-	
-	if (priv->window->window) {
-		GdkWindow *window;
-		
-		window = priv->window->window;
-		
-		visible = visible && !(gdk_window_get_state (window) & GDK_WINDOW_STATE_ICONIFIED);
-	}
-	
-	return visible;
-}
-
 static void
 app_toggle_visibility (void)
 {
@@ -1265,11 +1241,12 @@ app_toggle_visibility (void)
 
 	priv = app->priv;
 
-	visible = app_is_visible ();
+	visible = gossip_utils_window_get_is_visible (
+		GTK_WINDOW (priv->window));
 
 	if (visible) {
 		gtk_widget_hide (priv->window);
-
+		
 		gconf_client_set_bool (gconf_client, 
 				       GCONF_PATH "/ui/main_window_hidden", TRUE,
 				       NULL);
@@ -1287,7 +1264,7 @@ app_toggle_visibility (void)
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
 
-		gtk_window_present (GTK_WINDOW (priv->window));
+		gossip_utils_window_present (GTK_WINDOW (priv->window));
 
 		gconf_client_set_bool (gconf_client, 
 				       GCONF_PATH "/ui/main_window_hidden", FALSE,
@@ -1347,7 +1324,8 @@ app_tray_button_press_cb (GtkWidget      *widget,
 		break;
 
 	case 3:
-		if (app_is_visible ()) {
+		if (gossip_utils_window_get_is_visible (
+			    GTK_WINDOW (priv->window))) {
 			gtk_widget_show (priv->hide_popup_item);
 			gtk_widget_hide (priv->show_popup_item);
 		} else {

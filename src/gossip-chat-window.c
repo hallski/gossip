@@ -110,8 +110,6 @@ static void chat_window_tab_detached_cb       (GossipNotebook        *notebook,
 					       GossipChatWindow      *window);
 static void chat_window_tabs_reordered_cb     (GossipNotebook	     *notebook,
 					       GossipChatWindow      *window);
-static void chat_window_close_clicked_cb      (GtkWidget	     *button,
-					       GossipChat	     *chat);
 static gboolean
 chat_window_focus_in_event_cb                 (GtkWidget	     *widget,
 					       GdkEvent		     *event,
@@ -422,7 +420,7 @@ static GdkPixbuf *
 chat_window_get_status_pixbuf (GossipChatWindow *window,
 			       GossipChat *chat)
 {
-	GdkPixbuf   *pixbuf;
+	GdkPixbuf *pixbuf;
 
 	if (g_list_find (window->priv->chats_new_msg, chat)) {
 		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
@@ -469,64 +467,51 @@ chat_window_create_label (GossipChatWindow *window,
 {
 	GossipChatWindowPriv *priv;
 	GtkWidget            *hbox;
-	GtkWidget            *close_button;
-	GtkWidget            *close_img;
 	GtkWidget            *name_label;
 	GtkWidget            *status_img;
 	const gchar          *name;
-	gint	              w, h;
-	GtkWidget            *evbox_tooltip;
-	GtkWidget            *evbox_hbox;
-	
+	GtkWidget            *event_box;
+	PangoAttrList        *attr_list;
+	PangoAttribute       *attr;
+
 	priv = window->priv;
 	
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_hbox_new (FALSE, 2);
 
-	evbox_tooltip = gtk_event_box_new ();
-
-	/* Make the event box invisible. */
-	gtk_event_box_set_visible_window (GTK_EVENT_BOX (evbox_tooltip), FALSE);
+	event_box = gtk_event_box_new ();
+	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE);
 	
-	status_img = gtk_image_new ();
-	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
-	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget",
-			   evbox_tooltip);
-
-	name = gossip_chat_get_name (chat); 
-
+	name = gossip_chat_get_name (chat);
 	name_label = gtk_label_new (name);
 
-	chat_window_update_tooltip (window, chat);
+	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
 	
-	gtk_misc_set_padding (GTK_MISC (name_label), 2, 0);
+	attr_list = pango_attr_list_new ();
+	attr = pango_attr_scale_new (0.9);
+	attr->start_index = 0;
+	attr->end_index = -1;
+	pango_attr_list_insert (attr_list, attr);
+	gtk_label_set_attributes (GTK_LABEL (name_label), attr_list);
+	pango_attr_list_unref (attr_list);
+
 	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
-
 	g_object_set_data (G_OBJECT (chat), "label", name_label); 
-		
-	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
-	close_button = gtk_button_new ();
-	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
-	close_img = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtk_widget_set_size_request (close_button, w, h);
-	gtk_container_add (GTK_CONTAINER (close_button), close_img);
 
-	evbox_hbox = gtk_hbox_new (FALSE, 0);
+	status_img = gtk_image_new ();
 
-	gtk_box_pack_start (GTK_BOX (evbox_hbox), status_img, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (evbox_hbox), name_label, TRUE, TRUE, 0);
+	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
+	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", event_box);
 
-	gtk_container_add (GTK_CONTAINER (evbox_tooltip), evbox_hbox);
-	gtk_box_pack_start (GTK_BOX (hbox), evbox_tooltip, TRUE, TRUE, 0);
-	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+	chat_window_update_tooltip (window, chat);
 
-	g_signal_connect (close_button,
-			  "clicked",
-			  G_CALLBACK (chat_window_close_clicked_cb),
-			  chat);
+	gtk_box_pack_start (GTK_BOX (hbox), status_img, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (hbox), name_label, TRUE, TRUE, 0);
 
-	gtk_widget_show_all (hbox);
+	gtk_container_add (GTK_CONTAINER (event_box), hbox);
 
-	return hbox;
+	gtk_widget_show_all (event_box);
+
+	return event_box;
 }
 
 static void
@@ -534,7 +519,7 @@ chat_window_update_status (GossipChatWindow *window, GossipChat *chat)
 {
 	GtkImage  *image;
 	GdkPixbuf *pixbuf;
-	
+
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
 	image = g_object_get_data (G_OBJECT (chat), "chat-window-status-img");
 	gtk_image_set_from_pixbuf (image, pixbuf);
@@ -922,6 +907,9 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	label = chat_window_create_label (window, chat);
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), child, label);
 
+	gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (notebook), child,
+					    TRUE, TRUE, GTK_PACK_START);
+
 	g_signal_connect (chat, "status_changed",
 			  G_CALLBACK (chat_window_status_changed_cb),
 			  window);
@@ -1006,16 +994,6 @@ chat_window_tabs_reordered_cb (GossipNotebook   *notebook,
 	chat_window_update_menu (window);
 }
 
-static void
-chat_window_close_clicked_cb (GtkWidget  *button,
-			      GossipChat *chat)
-{
-	GossipChatWindow *window;
-
-	window = gossip_chat_get_window (chat);
-	gossip_chat_window_remove_chat (window, chat);
-}
-
 static gboolean
 chat_window_focus_in_event_cb (GtkWidget        *widget,
 			       GdkEvent         *event,
@@ -1071,7 +1049,7 @@ chat_window_create_notebook (gpointer data)
 	GtkWidget *notebook;
 
 	notebook = gossip_notebook_new ();
-	gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
+
 	gtk_widget_show (notebook);
 
 	return notebook;

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio AB
+ * Copyright (C) 2003-2005 Imendio AB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -815,4 +815,65 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 	g_free (u2);
 
 	return ret_val;
+}
+
+static gboolean
+utils_window_get_is_on_current_workspace (GtkWindow *window)
+{
+	GdkWindow *gdk_window;
+
+	gdk_window = GTK_WIDGET (window)->window;
+	if (gdk_window) {
+		return !(gdk_window_get_state (gdk_window) &
+			 GDK_WINDOW_STATE_ICONIFIED);
+	} else {
+		return FALSE;
+	}
+}
+
+/* Checks if the window is visible as in visible on the current workspace. */
+gboolean
+gossip_utils_window_get_is_visible (GtkWindow *window)
+{
+	gboolean visible;
+
+	g_object_get (window,
+		      "visible", &visible,
+		      NULL);
+
+	return visible && utils_window_get_is_on_current_workspace (window);
+}
+
+/* Takes care of moving the window to the current workspace. */
+void
+gossip_utils_window_present (GtkWindow *window)
+{
+	gboolean visible;
+	gboolean on_current;
+	gboolean show;
+
+	/* There are three cases: hidden, visible, visible on another
+	 * workspace.
+	 */
+
+	g_object_get (window,
+		      "visible", &visible,
+		      NULL);
+
+	on_current = utils_window_get_is_on_current_workspace (window);
+
+	if (!visible) {
+		show = TRUE;
+	}
+	else if (on_current) {
+		show = FALSE;
+	} else {
+		/* Hide it so present brings it to the current workspace. */
+		gtk_widget_hide (GTK_WIDGET (window));
+		show = TRUE;
+	}
+
+	if (show) {
+		gtk_window_present (window);
+	}
 }
