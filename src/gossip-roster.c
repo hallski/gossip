@@ -1284,9 +1284,17 @@ gossip_roster_item_get_jid (GossipRosterItem *item)
 const gchar *
 gossip_roster_item_get_name (GossipRosterItem *item)
 {
+	const gchar *name;
+	
 	g_return_val_if_fail (item != NULL, NULL);
 	
-	return item->name;
+	if (!item->name || strcmp (item->name, "") == 0) {
+		name = gossip_jid_get_without_resource (item->jid);
+	} else {
+		name = item->name;
+	}
+	
+	return name;
 }
 
 GossipShow

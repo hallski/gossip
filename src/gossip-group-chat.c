@@ -41,7 +41,7 @@ enum {
 	NUMBER_OF_COLS
 };
 
-struct _GossipGroupChat {
+struct _GossipGroupChatPriv {
 	gboolean          inited;
 	
 	LmMessageHandler *message_handler;
@@ -76,11 +76,12 @@ typedef struct {
 	GtkTreeIter      found_iter;
 } FindUserData;
 
-static void             destroy_group_chat                      (GossipGroupChat   *chat);
+static void             group_chat_class_init                   (GossipGroupChatClass  *klass);
+static void             group_chat_init                         (GossipGroupChat       *chat);
+static void             group_chat_finalize                     (GObject          *object);
 static void             group_chat_window_destroy_cb            (GtkWidget         *widget,
 								 GossipGroupChat   *chat);
-static void             group_chat_init                         (void);
-static GossipGroupChat *group_chat_get_for_jid                  (GossipJID         *jid);
+static void             group_chats_init                        (void);
 static void             group_chat_create_gui                   (GossipGroupChat   *chat);
 GtkWidget *             group_chat_create_disclosure            (gpointer           data);
 static void             group_chat_disclosure_toggled_cb        (GtkToggleButton   *disclosure,
@@ -142,52 +143,126 @@ static void             group_chat_priv_chats_disconnect        (GossipGroupChat
 
 static GHashTable *group_chats = NULL;
 
+GObjectClass *parent_class = NULL;
+
+GType
+gossip_group_chat_get_type (void)
+{
+	static GType type_id = 0;
+                                                                                
+        if (type_id == 0) {
+		const GTypeInfo type_info = {
+			sizeof (GossipGroupChatClass),
+                        NULL,
+                        NULL,
+                        (GClassInitFunc) group_chat_class_init,
+                        NULL,
+                        NULL,
+                        sizeof (GossipGroupChat),
+                        0,
+                        (GInstanceInitFunc) group_chat_init
+                };
+                                                                                
+                type_id = g_type_register_static (G_TYPE_OBJECT,
+                                                  "GossipGroupChat",
+                                                  &type_info,
+                                                  0);
+        }
+                                                                                
+        return type_id;
+}
 
 static void
-destroy_group_chat (GossipGroupChat *chat)
+group_chat_class_init (GossipGroupChatClass *klass)
 {
-	LmConnection     *connection;
-	LmMessageHandler *handler;
-	LmMessage        *m;
-	const gchar      *without_resource;
+        GObjectClass *object_class = G_OBJECT_CLASS (klass);
+                                                                                
+        parent_class = g_type_class_peek_parent (klass);
+                                                                                
+        object_class->finalize = group_chat_finalize;
+}
 
+static void
+group_chat_init (GossipGroupChat *chat)
+{
+        GossipGroupChatPriv *priv;
+                                                                                
+        priv = g_new0 (GossipGroupChatPriv, 1);
+                                                                                
+        chat->priv = priv;
+                                                                                
+        /*
+	g_signal_connect_object (gossip_app_get (),
+                                 "connected",
+                                 G_CALLBACK (chat_connected_cb),
+                                 chat, 0);
+                                                                                
+        g_signal_connect_object (gossip_app_get (),
+                                 "disconnected",
+                                 G_CALLBACK (chat_disconnected_cb),
+                                 chat, 0);
+	 */
+}
+
+static void
+group_chat_finalize (GObject *object)
+{
+	GossipGroupChat     *chat;
+	GossipGroupChatPriv *priv;
+	LmConnection        *connection;
+	LmMessageHandler    *handler;
+	LmMessage           *m;
+	const gchar         *without_resource;
+
+	chat = GOSSIP_GROUP_CHAT (object);
+	priv = chat->priv;
+	
 	group_chat_priv_chats_disconnect (chat);
 	
 	connection = gossip_app_get_connection ();
 
-	handler = chat->message_handler;
+	handler = priv->message_handler;
 	lm_connection_unregister_message_handler (connection,
 						  handler,
 						  LM_MESSAGE_TYPE_MESSAGE);
 
-	handler = chat->presence_handler;
+	handler = priv->presence_handler;
 	lm_connection_unregister_message_handler (connection,
 						  handler,
 						  LM_MESSAGE_TYPE_PRESENCE);
 
-	without_resource = gossip_jid_get_without_resource (chat->jid); 
+	without_resource = gossip_jid_get_without_resource (priv->jid); 
 	m = lm_message_new_with_sub_type (without_resource,
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_UNAVAILABLE);
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 
-	gossip_jid_unref (chat->jid);
-	g_free (chat->nick);
-	g_free (chat);
-
-	g_list_free (chat->priv_chats);
+	gossip_jid_unref (priv->jid);
+	g_free (priv->nick);
+	g_list_free (priv->priv_chats);
+	
+	g_free (priv);
 }
 
 static void
 group_chat_window_destroy_cb (GtkWidget *widget, GossipGroupChat *chat)
 {
+	GossipGroupChatPriv *priv;
+
+	priv = chat->priv;
+	
+	g_object_ref (chat);
+
 	g_hash_table_remove (group_chats,
-			     gossip_jid_get_without_resource (chat->jid));
+			     gossip_jid_get_without_resource (priv->jid));
+	
+	/* chat and priv will most likely be unvalid after this */
+	g_object_unref (chat); 
 }
 
 static void
-group_chat_init (void)
+group_chats_init (void)
 {
 	static gboolean inited = FALSE;
 
@@ -200,80 +275,36 @@ group_chat_init (void)
 	group_chats = g_hash_table_new_full (g_str_hash,
 					     g_str_equal,
 					     NULL,
-					     (GDestroyNotify) destroy_group_chat);
-}
-
-static GossipGroupChat *
-group_chat_get_for_jid (GossipJID *jid)
-{
-	GossipGroupChat  *chat;
-	const gchar      *without_resource;
-	LmMessageHandler *handler;
-	LmConnection     *connection;
-	
-	group_chat_init ();
-
-	without_resource = gossip_jid_get_without_resource (jid);
-	chat = g_hash_table_lookup (group_chats, without_resource);
-	if (chat) {
-		return chat;
-	}
-
-	chat = g_new0 (GossipGroupChat, 1);
-	
-	chat->jid = gossip_jid_ref (jid);
-	chat->inited = FALSE;
-	chat->last_timestamp.tv_sec = chat->last_timestamp.tv_usec = 0;
-
-	chat->priv_chats = NULL;
-	
-	group_chat_create_gui (chat);
-
-	g_hash_table_insert (group_chats, (gchar *)without_resource, chat);
-
-	connection = gossip_app_get_connection ();
-	
-	handler = lm_message_handler_new (group_chat_message_handler, chat, NULL);
-	chat->message_handler = handler;
-	lm_connection_register_message_handler (connection,
-						handler,
-						LM_MESSAGE_TYPE_MESSAGE,
-						LM_HANDLER_PRIORITY_NORMAL);
-
-	handler = lm_message_handler_new (group_chat_presence_handler, chat, NULL);
-	chat->presence_handler = handler;
-	lm_connection_register_message_handler (connection,
-						handler,
-						LM_MESSAGE_TYPE_PRESENCE,
-						LM_HANDLER_PRIORITY_NORMAL);
-
-	return chat;
+					     (GDestroyNotify) g_object_unref);
 }
 
 static void
 group_chat_create_gui (GossipGroupChat *chat)
 {
-	GladeXML      *glade;
-	GtkWidget     *focus_vbox;
-	GtkTextBuffer *buffer;
-	GList         *list;
-	gchar         *room;
-	gchar         *str;
+	GossipGroupChatPriv *priv;
+	GladeXML            *glade;
+	GtkWidget           *focus_vbox;
+	GtkTextBuffer       *buffer;
+	GList               *list;
+	gchar               *room;
+	gchar               *str;
 
+	priv = chat->priv;
+	
 	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
 				       "group_chat_window",
 				       NULL,
-				       "group_chat_window", &chat->window,
-				       "chat_view_sw", &chat->text_view_sw,
-				       "input_entry", &chat->input_entry,
-				       "input_textview", &chat->input_text_view,
-				       "topic_entry", &chat->topic_entry,
-				       "treeview", &chat->tree,
+				       "group_chat_window", &priv->window,
+				       "chat_view_sw", &priv->text_view_sw,
+				       "input_entry", &priv->input_entry,
+				       "input_textview", &priv->input_text_view,
+				       "topic_entry", &priv->topic_entry,
+				       "treeview", &priv->tree,
 				       "left_vbox", &focus_vbox,
-				       "disclosure", &chat->disclosure,
-				       "single_hbox", &chat->single_hbox,
-				       "multi_vbox", &chat->multi_vbox,
-				       "send_multi_button", &chat->send_multi_button,
+				       "disclosure", &priv->disclosure,
+				       "single_hbox", &priv->single_hbox,
+				       "multi_vbox", &priv->multi_vbox,
+				       "send_multi_button", &priv->send_multi_button,
 				       NULL);
 	
 	gossip_glade_connect (glade,
@@ -287,54 +318,102 @@ group_chat_create_gui (GossipGroupChat *chat)
 			      "send_multi_button", "clicked", group_chat_send_multi_clicked_cb,
 			      NULL);
 
-	chat->view = gossip_chat_view_new ();
-	gtk_container_add (GTK_CONTAINER (chat->text_view_sw), 
-			   GTK_WIDGET (chat->view));
-	gtk_widget_show (GTK_WIDGET (chat->view));
+	priv->view = gossip_chat_view_new ();
+	gtk_container_add (GTK_CONTAINER (priv->text_view_sw), 
+			   GTK_WIDGET (priv->view));
+	gtk_widget_show (GTK_WIDGET (priv->view));
 
-	g_signal_connect (chat->view,
+	g_signal_connect (priv->view,
 			  "focus_in_event",
 			  G_CALLBACK (group_chat_focus_in_event_cb),
 			  chat);
 			  
 	g_object_unref (glade);
 
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
 	g_signal_connect (buffer,
 			  "changed",
 			  G_CALLBACK (group_chat_input_text_buffer_changed_cb),
 			  chat);
 	
 	list = NULL;
-	list = g_list_append (list, chat->topic_entry);
-	list = g_list_append (list, chat->input_entry);
+	list = g_list_append (list, priv->topic_entry);
+	list = g_list_append (list, priv->input_entry);
 	
 	gtk_container_set_focus_chain (GTK_CONTAINER (focus_vbox), list);
 	
-	room = gossip_jid_get_part_name (chat->jid);
+	room = gossip_jid_get_part_name (priv->jid);
 	str = g_strconcat ("Gossip - ", room, NULL);
-	gtk_window_set_title (GTK_WINDOW (chat->window), str);
+	gtk_window_set_title (GTK_WINDOW (priv->window), str);
 	g_free (str);
 	g_free (room);
 
-	chat->completion = g_completion_new (NULL);
-	g_completion_set_compare (chat->completion,
+	priv->completion = g_completion_new (NULL);
+	g_completion_set_compare (priv->completion,
 				  group_chat_completion_compare);
 		
-	gtk_widget_grab_focus (chat->input_entry);
+	gtk_widget_grab_focus (priv->input_entry);
 	group_chat_setup_tree (chat);
 
-	gossip_chat_view_set_margin (chat->view, 3);
+	gossip_chat_view_set_margin (priv->view, 3);
 }
 
 GossipGroupChat *
-gossip_group_chat_new (GossipJID   *jid,
-		       const gchar *nick)
+gossip_group_chat_show (GossipJID *jid, const gchar *nick)
 {
-	GossipGroupChat *chat;
+	GossipGroupChat     *chat;
+	GossipGroupChatPriv *priv;
+	const gchar         *without_resource;
+	LmMessageHandler    *handler;
+	LmConnection        *connection;
+	
+	group_chats_init ();
 
-	chat = group_chat_get_for_jid (jid);
-	chat->nick = g_strdup (nick);
+	without_resource = gossip_jid_get_without_resource (jid);
+	chat = g_hash_table_lookup (group_chats, without_resource);
+	if (chat) {
+		priv = chat->priv;
+
+		if (priv->nick) {
+			g_free (priv->nick);
+		}
+
+		priv->nick = g_strdup (nick);
+		
+		return chat;
+	}
+
+	chat = g_object_new (GOSSIP_TYPE_GROUP_CHAT, NULL);
+	priv = chat->priv;
+	
+	priv->jid = gossip_jid_ref (jid);
+	priv->nick = g_strdup (nick);
+
+	priv->inited = FALSE;
+	priv->last_timestamp.tv_sec = priv->last_timestamp.tv_usec = 0;
+
+	priv->priv_chats = NULL;
+	
+	group_chat_create_gui (chat);
+
+	g_hash_table_insert (group_chats, (gchar *)without_resource,
+			     g_object_ref (chat));
+
+	connection = gossip_app_get_connection ();
+	
+	handler = lm_message_handler_new (group_chat_message_handler, chat, NULL);
+	priv->message_handler = handler;
+	lm_connection_register_message_handler (connection,
+						handler,
+						LM_MESSAGE_TYPE_MESSAGE,
+						LM_HANDLER_PRIORITY_NORMAL);
+
+	handler = lm_message_handler_new (group_chat_presence_handler, chat, NULL);
+	priv->presence_handler = handler;
+	lm_connection_register_message_handler (connection,
+						handler,
+						LM_MESSAGE_TYPE_PRESENCE,
+						LM_HANDLER_PRIORITY_NORMAL);
 
 	return chat;
 }
@@ -355,26 +434,29 @@ static void
 group_chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
 				  GossipGroupChat *chat)
 {
-	GtkTextBuffer *buffer;
-	GtkTextIter    start, end;
-	const gchar   *const_str; 
-	gchar         *str;
+	GossipGroupChatPriv *priv;
+	GtkTextBuffer       *buffer;
+	GtkTextIter          start, end;
+	const gchar         *const_str; 
+	gchar               *str;
 
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	priv = chat->priv;
+	
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
 	
 	if (gtk_toggle_button_get_active (disclosure)) {
-		gtk_widget_show (chat->multi_vbox);
-		gtk_widget_hide (chat->single_hbox);
+		gtk_widget_show (priv->multi_vbox);
+		gtk_widget_hide (priv->single_hbox);
 
-		const_str = gtk_entry_get_text (GTK_ENTRY (chat->input_entry));
+		const_str = gtk_entry_get_text (GTK_ENTRY (priv->input_entry));
 		gtk_text_buffer_set_text (buffer, const_str, -1);
 	} else {
-		gtk_widget_show (chat->single_hbox);
-		gtk_widget_hide (chat->multi_vbox);
+		gtk_widget_show (priv->single_hbox);
+		gtk_widget_hide (priv->multi_vbox);
 
 		gtk_text_buffer_get_bounds (buffer, &start, &end);
 		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
-		gtk_entry_set_text (GTK_ENTRY (chat->input_entry), str);
+		gtk_entry_set_text (GTK_ENTRY (priv->input_entry), str);
 		g_free (str);
 	}
 }
@@ -382,35 +464,40 @@ group_chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
 static void
 group_chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
 					 GossipGroupChat *chat)
-{
+{ 
+	GossipGroupChatPriv *priv;
+
+	priv = chat->priv;
+	
 	if (gtk_text_buffer_get_line_count (buffer) > 1) {
-		gtk_widget_set_sensitive (chat->disclosure, FALSE);
+		gtk_widget_set_sensitive (priv->disclosure, FALSE);
 	} else {
-		gtk_widget_set_sensitive (chat->disclosure, TRUE);
+		gtk_widget_set_sensitive (priv->disclosure, TRUE);
 	}
 }
 
 static void
-group_chat_send (GossipGroupChat *chat,
-		 const gchar     *msg)
+group_chat_send (GossipGroupChat *chat, const gchar *msg)
 {
-	LmConnection *connection;
-	LmMessage    *m;
-	const char   *without_resource;
+	GossipGroupChatPriv *priv;
+	LmConnection        *connection;
+	LmMessage           *m;
+	const char          *without_resource;
 
-	connection = gossip_app_get_connection ();
-
-	without_resource = gossip_jid_get_without_resource (chat->jid);
+	priv = chat->priv;
 	
+	connection = gossip_app_get_connection ();
+	without_resource = gossip_jid_get_without_resource (priv->jid);
+
 	if (g_ascii_strncasecmp (msg, "/nick ", 6) == 0 && strlen (msg) > 6) {
 		gchar *to;
 
-		g_free (chat->nick);
-		chat->nick = g_strdup (msg + 6);
+		g_free (priv->nick);
+		priv->nick = g_strdup (msg + 6);
 	
 		to = g_strdup_printf ("%s/%s",
 				      without_resource,
-				      chat->nick);
+				      priv->nick);
 		
 		m = lm_message_new (to, LM_MESSAGE_TYPE_PRESENCE);
 
@@ -423,7 +510,7 @@ group_chat_send (GossipGroupChat *chat,
 	else if (g_ascii_strcasecmp (msg, "/clear") == 0) {
 		GtkTextBuffer *buffer;
 
-		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->view));
+		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->view));
 		gtk_text_buffer_set_text (buffer, "", -1);
 		
 		return;
@@ -444,14 +531,17 @@ group_chat_send (GossipGroupChat *chat,
 static void
 group_chat_activate_cb (GtkWidget *entry, GossipGroupChat *chat)
 {
-	const gchar *msg;
+	GossipGroupChatPriv *priv;
+	const gchar         *msg;
+	
+	priv = chat->priv;
 	
 	msg = gtk_entry_get_text (GTK_ENTRY (entry));
 	
 	group_chat_send (chat, msg);
 
 	/* Clear the input field. */
-	gtk_entry_set_text (GTK_ENTRY (chat->input_entry), "");
+	gtk_entry_set_text (GTK_ENTRY (priv->input_entry), "");
 }
 
 static void
@@ -479,14 +569,16 @@ group_chat_row_activated_cb (GtkTreeView       *view,
 static void
 group_chat_setup_tree (GossipGroupChat *chat)
 {
-	GtkTreeView       *tree;
-	GtkTextView       *tv;
-	GtkListStore      *store;
-	GtkCellRenderer   *cell;	
-	GtkTreeViewColumn *col;
+	GossipGroupChatPriv *priv;
+	GtkTreeView         *tree;
+	GtkTextView         *tv;
+	GtkListStore        *store;
+	GtkCellRenderer     *cell;	
+	GtkTreeViewColumn   *col;
 
-	tree = GTK_TREE_VIEW (chat->tree);
-	tv = GTK_TEXT_VIEW (chat->view);
+	priv = chat->priv;
+	tree = GTK_TREE_VIEW (priv->tree);
+	tv = GTK_TEXT_VIEW (priv->view);
 
 	gtk_tree_view_set_headers_visible (tree, FALSE);
 	
@@ -586,18 +678,21 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 			       GdkEventKey     *event,
 			       GossipGroupChat *chat)
 {
-	gint   start_pos, pos;
-	gchar *nick, *completed;
-	gint   len;
-	GList *list, *l, *completed_list;
+	GossipGroupChatPriv *priv;
+	gint                 start_pos, pos;
+	gchar               *nick, *completed;
+	gint                 len;
+	GList               *list, *l, *completed_list;
 	
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (chat->disclosure))) {
+	priv = chat->priv;
+	
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (priv->disclosure))) {
 		/* Multi line entry. */
 		if ((event->state & GDK_CONTROL_MASK) &&
 		    (event->keyval == GDK_Return ||
 		     event->keyval == GDK_ISO_Enter ||
 		     event->keyval == GDK_KP_Enter)) {
-			gtk_widget_activate (chat->send_multi_button);
+			gtk_widget_activate (priv->send_multi_button);
 			return TRUE;
 		}
 
@@ -608,20 +703,20 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 	    (event->state & GDK_SHIFT_MASK) != GDK_SHIFT_MASK &&
 	    event->keyval == GDK_Tab) {
 		/* Get the start of the nick to complete. */
-		start_pos = group_chat_get_start_of_word (GTK_EDITABLE (chat->input_entry));
-		pos = gtk_editable_get_position (GTK_EDITABLE (chat->input_entry));
+		start_pos = group_chat_get_start_of_word (GTK_EDITABLE (priv->input_entry));
+		pos = gtk_editable_get_position (GTK_EDITABLE (priv->input_entry));
 
-		nick = gtk_editable_get_chars (GTK_EDITABLE (chat->input_entry), start_pos, pos);
+		nick = gtk_editable_get_chars (GTK_EDITABLE (priv->input_entry), start_pos, pos);
 
-		g_completion_clear_items (chat->completion);
+		g_completion_clear_items (priv->completion);
 		
 		len = strlen (nick);
 		
 		list = group_chat_get_nick_list (chat);
 
-		g_completion_add_items (chat->completion, list);
+		g_completion_add_items (priv->completion, list);
 
-		completed_list = g_completion_complete (chat->completion,
+		completed_list = g_completion_complete (priv->completion,
 							nick,
 							&completed);
 
@@ -631,7 +726,7 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 			int    len;
 			gchar *text;
 			
-			gtk_editable_delete_text (GTK_EDITABLE (chat->input_entry),
+			gtk_editable_delete_text (GTK_EDITABLE (priv->input_entry),
 						  start_pos,
 						  pos);
 			
@@ -650,27 +745,27 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 				text = completed;
 			}
 			
-			gtk_editable_insert_text (GTK_EDITABLE (chat->input_entry),
+			gtk_editable_insert_text (GTK_EDITABLE (priv->input_entry),
 						  text,
 						  -1,
 						  &pos);
 
 			if (len == 1) {
 				if (start_pos == 0) {
-					gtk_editable_insert_text (GTK_EDITABLE (chat->input_entry),
+					gtk_editable_insert_text (GTK_EDITABLE (priv->input_entry),
 								  ", ",
 								  2,
 								  &pos);
 				}
 			}
 			
-			gtk_editable_set_position (GTK_EDITABLE (chat->input_entry),
+			gtk_editable_set_position (GTK_EDITABLE (priv->input_entry),
 						   pos);
 			
 			g_free (completed);
 		}
 
-		g_completion_clear_items (chat->completion);
+		g_completion_clear_items (priv->completion);
 
 		for (l = list; l; l = l->next) {
 			g_free (l->data);
@@ -685,9 +780,7 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 }
 
 static gint
-group_chat_completion_compare (const gchar *s1,
-			       const gchar *s2,
-			       gsize        n)
+group_chat_completion_compare (const gchar *s1, const gchar *s2, gsize n)
 {
 	gchar *tmp, *nick1, *nick2;
 	gint   ret;
@@ -709,18 +802,19 @@ group_chat_completion_compare (const gchar *s1,
 }
 
 static gboolean
-group_chat_find_user (GossipGroupChat *chat,
-		      GossipJID       *jid,
-		      GtkTreeIter     *iter)
+group_chat_find_user (GossipGroupChat *chat, GossipJID *jid, GtkTreeIter *iter)
 {
-	FindUserData  data;
-	GtkTreeModel *model;
+	GossipGroupChatPriv *priv;
+	FindUserData         data;
+	GtkTreeModel        *model;
 
+	priv = chat->priv;
+	
 	data.found = FALSE;
 	data.jid = jid;
 	data.chat = chat;
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (chat->tree));
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->tree));
 
 	gtk_tree_model_foreach (model,
 				(GtkTreeModelForeachFunc) group_chat_find_user_foreach,
@@ -754,12 +848,14 @@ group_chat_get_nick_list_foreach (GtkTreeModel  *model,
 static GList *
 group_chat_get_nick_list (GossipGroupChat *chat)
 {
-	GtkTreeModel *model;
-	GList        *list;
-	
+	GossipGroupChatPriv *priv;
+	GtkTreeModel        *model;
+	GList               *list;
+
+	priv = chat->priv;
 	list = NULL;
 	
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (chat->tree));
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->tree));
 	
 	gtk_tree_model_foreach (model,
 				(GtkTreeModelForeachFunc) group_chat_get_nick_list_foreach,
@@ -773,14 +869,17 @@ group_chat_focus_in_event_cb (GtkWidget       *widget,
 			      GdkEvent        *event,
 			      GossipGroupChat *chat)
 {
-	gint pos;
+	GossipGroupChatPriv *priv;
+	gint                 pos;
 
-	pos = gtk_editable_get_position (GTK_EDITABLE (chat->input_entry));
+	priv = chat->priv;
+	
+	pos = gtk_editable_get_position (GTK_EDITABLE (priv->input_entry));
 
-	gtk_widget_grab_focus (chat->input_entry);
+	gtk_widget_grab_focus (priv->input_entry);
 
-	gtk_editable_select_region (GTK_EDITABLE (chat->input_entry), 0, 0);
-	gtk_editable_set_position (GTK_EDITABLE (chat->input_entry), pos);
+	gtk_editable_select_region (GTK_EDITABLE (priv->input_entry), 0, 0);
+	gtk_editable_set_position (GTK_EDITABLE (priv->input_entry), pos);
 	
 	return TRUE;
 }
@@ -791,22 +890,26 @@ group_chat_message_handler (LmMessageHandler *handler,
 			    LmMessage        *m,
 			    gpointer          user_data)
 {
-	GossipGroupChat  *chat = user_data;
-	const gchar      *from;
-	LmMessageSubType  type;
-	GtkWidget        *dialog;
-	gchar            *tmp, *str, *msg;
-	GossipJID        *jid;
-	LmMessageNode    *node;
-	const gchar      *timestamp;
+	GossipGroupChat     *chat;
+	GossipGroupChatPriv *priv;
+	const gchar         *from;
+	LmMessageSubType     type;
+	GtkWidget           *dialog;
+	gchar               *tmp, *str, *msg;
+	GossipJID           *jid;
+	LmMessageNode       *node;
+	const gchar         *timestamp;
 
+	chat = GOSSIP_GROUP_CHAT (user_data);
+	priv = chat->priv;
+	
 	from = lm_message_node_get_attribute (m->node, "from");
 	type = lm_message_get_sub_type (m);
 
 	jid  = gossip_jid_new (from);
 
 	/* Check that the message is for this group chat. */
-	if (!gossip_jid_equals_without_resource (jid, chat->jid)) {
+	if (!gossip_jid_equals_without_resource (jid, priv->jid)) {
 		gossip_jid_unref (jid);
 		
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -826,7 +929,7 @@ group_chat_message_handler (LmMessageHandler *handler,
 			msg = str;
 		}
 
-		dialog = gtk_message_dialog_new (GTK_WINDOW (chat->window),
+		dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
 						 GTK_DIALOG_DESTROY_WITH_PARENT,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
@@ -852,7 +955,7 @@ group_chat_message_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
 		node = lm_message_node_get_child (m->node, "subject");
 		if (node) {
-			gtk_entry_set_text (GTK_ENTRY (chat->topic_entry),
+			gtk_entry_set_text (GTK_ENTRY (priv->topic_entry),
 					    node->value);
 		}
 		
@@ -860,9 +963,9 @@ group_chat_message_handler (LmMessageHandler *handler,
 		if (node) {
 			timestamp = gossip_utils_get_timestamp_from_message (m);
 		
-			gossip_chat_view_append_chat_message (chat->view,
+			gossip_chat_view_append_chat_message (priv->view,
 							      timestamp,
-							      chat->nick,
+							      priv->nick,
 							      gossip_jid_get_resource (jid),
 							      node->value);
 		}
@@ -876,9 +979,9 @@ group_chat_message_handler (LmMessageHandler *handler,
 
 	gossip_jid_unref (jid);
 
-	if (!chat->inited) {
-		chat->inited = TRUE;
-		gtk_widget_show (chat->window);
+	if (!priv->inited) {
+		priv->inited = TRUE;
+		gtk_widget_show (priv->window);
 	}
 	
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -890,29 +993,33 @@ group_chat_presence_handler (LmMessageHandler *handler,
 			     LmMessage        *m,
 			     gpointer          user_data)
 {
-	GossipGroupChat  *chat = user_data;
-	const gchar      *from;
-	GossipJID        *jid;
-	GtkTreeModel     *model;
-	LmMessageSubType  type;
-	gchar            *tmp, *str, *msg;
-	GtkWidget        *dialog;
-	GdkPixbuf        *pixbuf;
-	GtkTreeIter       iter;
-	LmMessageNode    *node;
-	const gchar      *stock;
+	GossipGroupChat     *chat;
+	GossipGroupChatPriv *priv;
+	const gchar         *from;
+	GossipJID           *jid;
+	GtkTreeModel        *model;
+	LmMessageSubType     type;
+	gchar               *tmp, *str, *msg;
+	GtkWidget           *dialog;
+	GdkPixbuf           *pixbuf;
+	GtkTreeIter          iter;
+	LmMessageNode       *node;
+	const gchar         *stock;
+	
+	chat = GOSSIP_GROUP_CHAT (user_data);
+	priv = chat->priv;
 
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
 
 	/* Check that the presence is for this group chat. */
-	if (!gossip_jid_equals_without_resource (jid, chat->jid)) {
+	if (!gossip_jid_equals_without_resource (jid, priv->jid)) {
 		gossip_jid_unref (jid);
 
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (chat->tree));
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->tree));
 	
  	type = lm_message_get_sub_type (m);
 	switch (type) {
@@ -929,7 +1036,7 @@ group_chat_presence_handler (LmMessageHandler *handler,
 			msg = str;
 		}
 
-		dialog = gtk_message_dialog_new (GTK_WINDOW (chat->window),
+		dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
 						 GTK_DIALOG_DESTROY_WITH_PARENT,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
@@ -946,7 +1053,7 @@ group_chat_presence_handler (LmMessageHandler *handler,
 		g_free (msg);
 
 		gossip_jid_unref (jid);
-		gtk_widget_destroy (chat->window);
+		gtk_widget_destroy (priv->window);
 
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 
@@ -958,7 +1065,7 @@ group_chat_presence_handler (LmMessageHandler *handler,
 			stock = gossip_get_icon_for_show_string (NULL);
 		}
 		
-		pixbuf = gtk_widget_render_icon (chat->window,
+		pixbuf = gtk_widget_render_icon (priv->window,
 						 stock,
 						 GTK_ICON_SIZE_MENU,
 						 NULL);
@@ -994,9 +1101,9 @@ group_chat_presence_handler (LmMessageHandler *handler,
 
 	gossip_jid_unref (jid);
 
-	if (!chat->inited) {
-		chat->inited = TRUE;
-		gtk_widget_show (chat->window);
+	if (!priv->inited) {
+		priv->inited = TRUE;
+		gtk_widget_show (priv->window);
 	}
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -1005,16 +1112,19 @@ group_chat_presence_handler (LmMessageHandler *handler,
 static void
 group_chat_topic_activate_cb (GtkEntry *entry, GossipGroupChat *chat)
 {
-	LmMessage    *m;
-	gchar        *str;
-	const gchar  *without_resource;
-	const gchar  *topic;
-	LmConnection *connection;
+	GossipGroupChatPriv *priv;
+	LmMessage           *m;
+	gchar               *str;
+	const gchar         *without_resource;
+	const gchar         *topic;
+	LmConnection        *connection;
+	
+	priv = chat->priv;
 	
 	str = g_strdup_printf ("/me changed the topic to: %s", 
 			       gtk_entry_get_text (entry));
 
-	without_resource = gossip_jid_get_without_resource (chat->jid);
+	without_resource = gossip_jid_get_without_resource (priv->jid);
 	
 	m = lm_message_new_with_sub_type (without_resource,
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -1029,7 +1139,7 @@ group_chat_topic_activate_cb (GtkEntry *entry, GossipGroupChat *chat)
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
 	
-	gtk_widget_grab_focus (chat->input_entry);
+	gtk_widget_grab_focus (priv->input_entry);
 }
 
 static gint
@@ -1055,12 +1165,15 @@ group_chat_iter_compare_func (GtkTreeModel *model,
 static GossipChat *
 group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 {
-	GossipChat       *priv_chat = NULL;
-	GList            *l;
-	GossipRosterItem *item;
+	GossipGroupChatPriv *priv;
+	GossipChat          *priv_chat = NULL;
+	GList               *l;
+	GossipRosterItem    *item;
 /*	gchar            *name; */
 
-	for (l = chat->priv_chats; l; l = l->next) {
+	priv = chat->priv;
+	
+	for (l = priv->priv_chats; l; l = l->next) {
 		GossipChat       *p_chat = GOSSIP_CHAT (l->data);
 		GossipRosterItem *item = gossip_chat_get_item (p_chat);
 		GossipJID        *j = gossip_roster_item_get_jid (item);
@@ -1084,7 +1197,7 @@ group_chat_priv_chat_new (GossipGroupChat *chat, GossipJID *jid)
 	priv_chat = gossip_chat_get_for_group_chat (item);
 	gossip_roster_item_unref (item);
 
-	chat->priv_chats = g_list_prepend (chat->priv_chats, priv_chat);
+	priv->priv_chats = g_list_prepend (priv->priv_chats, priv_chat);
 	
 	g_object_weak_ref (G_OBJECT (priv_chat),
 			   (GWeakNotify) group_chat_priv_chat_removed,
@@ -1112,18 +1225,24 @@ group_chat_priv_chat_incoming (GossipGroupChat *chat,
 static void
 group_chat_priv_chat_removed (GossipGroupChat *chat, GossipChat *priv_chat)
 {
-	chat->priv_chats = g_list_remove (chat->priv_chats, priv_chat);
+	GossipGroupChatPriv *priv;
+
+	priv = chat->priv;
+	
+	priv->priv_chats = g_list_remove (priv->priv_chats, priv_chat);
 }
 
 static void
-group_chat_send_multi_clicked_cb (GtkWidget       *unused,
-				  GossipGroupChat *chat)
+group_chat_send_multi_clicked_cb (GtkWidget *unused, GossipGroupChat *chat)
 {
-	GtkTextBuffer *buffer;
-	GtkTextIter    start, end;
-	gchar         *msg;
-	
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	GossipGroupChatPriv *priv;
+	GtkTextBuffer       *buffer;
+	GtkTextIter          start, end;
+	gchar               *msg;
+
+	priv = chat->priv;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->input_text_view));
 	
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	msg = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
@@ -1156,7 +1275,7 @@ gossip_group_chat_set_show (GossipShow show)
 	LmMessage   *m;
 	const gchar *show_str;
 
-	group_chat_init ();
+	group_chats_init ();
 	
 	m = lm_message_new_with_sub_type (NULL, 
 					  LM_MESSAGE_TYPE_PRESENCE,
@@ -1176,9 +1295,12 @@ gossip_group_chat_set_show (GossipShow show)
 static void
 group_chat_priv_chats_disconnect (GossipGroupChat *chat) 
 {
-	GList *l;
+	GossipGroupChatPriv *priv;
+	GList               *l;
 
-	for (l = chat->priv_chats; l; l = l->next) {
+	priv = chat->priv;
+
+	for (l = priv->priv_chats; l; l = l->next) {
 		GossipChat *priv_chat = GOSSIP_CHAT (l->data);
 		
 		gtk_widget_set_sensitive (gossip_chat_get_widget (priv_chat),

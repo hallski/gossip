@@ -1,3 +1,20 @@
+News in 0.7.5:
+==============
+ 
+ * SSL support when registering (Ross Burton)
+ * Registering support for Jabberd 2 (Sjoerd Simons)
+ * Fixed the nick highlighting code (Micke)
+ * Re-enabled private chat through group chat (Micke)
+ * Fixed group chat nick completion code (Micke)
+ * Fixed crasher bug in logging code (Richard)
+ * New translations (pt_BR, en_GB, lt)
+ * Updated translations (cs, nl, da, ca, hr, zh_CN, no, es, cy)
+ 
+News in 0.7.4:
+==============
+
+ * Fixed a crasher bug in the new about box.
+
 News in 0.7.3:
 ==============
 

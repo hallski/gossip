@@ -73,9 +73,9 @@ struct _GossipChatPriv {
 	gboolean          groupchat_priv;
 };
 
-static void            gossip_chat_class_init            (GossipChatClass  *klass);
-static void            gossip_chat_init                  (GossipChat       *chat);
-static void            gossip_chat_finalize              (GObject          *object);
+static void            chat_class_init                   (GossipChatClass  *klass);
+static void            chat_init                         (GossipChat       *chat);
+static void            chat_finalize                     (GObject          *object);
 static void            chats_init                        (void);
 static void            chat_create_gui                   (GossipChat       *chat);
 static void            chat_send                         (GossipChat       *chat,
@@ -144,12 +144,12 @@ gossip_chat_get_type (void)
                         sizeof (GossipChatClass),
                         NULL,
                         NULL,
-                        (GClassInitFunc) gossip_chat_class_init,
+                        (GClassInitFunc) chat_class_init,
                         NULL,
                         NULL,
                         sizeof (GossipChat),
                         0,
-                        (GInstanceInitFunc) gossip_chat_init
+                        (GInstanceInitFunc) chat_init
                 };
 
                 type_id = g_type_register_static (G_TYPE_OBJECT,
@@ -162,13 +162,13 @@ gossip_chat_get_type (void)
 }
 
 static void
-gossip_chat_class_init (GossipChatClass *klass)
+chat_class_init (GossipChatClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
         parent_class = g_type_class_peek_parent (klass);
 
-        object_class->finalize = gossip_chat_finalize;
+        object_class->finalize = chat_finalize;
 
         chat_signals[COMPOSING] =
                 g_signal_new ("composing",
@@ -203,11 +203,10 @@ gossip_chat_class_init (GossipChatClass *klass)
 }
 
 static void
-gossip_chat_init (GossipChat *chat)
+chat_init (GossipChat *chat)
 {
         GossipChatPriv   *priv;
 	LmConnection     *connection;
-	GossipRoster     *roster;
 	LmMessageHandler *handler;
 	
 	priv = g_new0 (GossipChatPriv, 1);
@@ -220,7 +219,6 @@ gossip_chat_init (GossipChat *chat)
         chat_create_gui (chat);
 
 	connection = gossip_app_get_connection ();
-	roster = gossip_app_get_roster ();
 
 	handler = lm_message_handler_new (chat_message_handler, chat, NULL);
 	chat->priv->message_handler = handler;
@@ -228,26 +226,6 @@ gossip_chat_init (GossipChat *chat)
 						handler,
 						LM_MESSAGE_TYPE_MESSAGE,
 						LM_HANDLER_PRIORITY_NORMAL);
-
-	g_signal_connect_object (roster,
-				 "item_presence_updated",
-				 G_CALLBACK (chat_item_presence_updated),
-				 chat, 0);
-
-	g_signal_connect_object (roster,
-				 "item_updated",
-				 G_CALLBACK (chat_item_updated),
-				 chat, 0);
-
-	g_signal_connect_object (roster,
-				 "item_removed",
-				 G_CALLBACK (chat_item_removed),
-				 chat, 0);
-	
-	g_signal_connect_object (roster,
-				 "item_added",
-				 G_CALLBACK (chat_item_added),
-				 chat, 0);
 
 	g_signal_connect_object (gossip_app_get (), 
 				 "connected",
@@ -261,7 +239,7 @@ gossip_chat_init (GossipChat *chat)
 }
 
 static void
-gossip_chat_finalize (GObject *object)
+chat_finalize (GObject *object)
 {
         GossipChat       *chat = GOSSIP_CHAT (object);
 	GossipChatPriv   *priv;
@@ -1132,6 +1110,7 @@ gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
 	GossipChat     *chat;
 	GossipChatPriv *priv;
 	GossipJID      *jid;
+	GossipRoster   *roster;
 
 	chats_init ();
 
@@ -1142,8 +1121,9 @@ gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
 		return chat;
 	}
 
-	if (!create)
+	if (!create) {
 		return NULL;
+	}
 	
 	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
 	g_hash_table_insert (chats, gossip_jid_ref (jid), chat);
@@ -1152,6 +1132,29 @@ gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
 	priv->item = gossip_roster_item_ref (item);
 	priv->name = g_strdup (gossip_roster_item_get_name (item));
 	priv->groupchat_priv = FALSE;
+
+	roster = gossip_app_get_roster ();
+	
+	g_signal_connect_object (roster,
+				 "item_presence_updated",
+				 G_CALLBACK (chat_item_presence_updated),
+				 chat, 0);
+
+	g_signal_connect_object (roster,
+				 "item_updated",
+				 G_CALLBACK (chat_item_updated),
+				 chat, 0);
+
+	g_signal_connect_object (roster,
+				 "item_removed",
+				 G_CALLBACK (chat_item_removed),
+				 chat, 0);
+	
+	g_signal_connect_object (roster,
+				 "item_added",
+				 G_CALLBACK (chat_item_added),
+				 chat, 0);
+
 
 	if (gossip_roster_item_is_offline (priv->item)) {
 		priv->is_online = FALSE;

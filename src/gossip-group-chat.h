@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2003 Imendio HB
+ * Copyright (C) 2002-2004 Imendio HB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -24,11 +24,31 @@
 #include "gossip-jid.h"
 #include "gossip-app.h"
 
-typedef struct _GossipGroupChat GossipGroupChat;
+#define GOSSIP_TYPE_GROUP_CHAT         (gossip_group_chat_get_type ())
+#define GOSSIP_GROUP_CHAT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChat))
+#define GOSSIP_GROUP_CHAT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatClass))
+#define GOSSIP_IS_GROUP_CHAT(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_GROUP_CHAT))
+#define GOSSIP_IS_GROUP_CHAT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_GROUP_CHAT))
+#define GOSSIP_GROUP_CHAT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatClass))
 
-GossipGroupChat *gossip_group_chat_new      (GossipJID   *jid,
-					     const gchar *nick);
-void             gossip_group_chat_set_show (GossipShow   show);
+typedef struct _GossipGroupChat      GossipGroupChat;
+typedef struct _GossipGroupChatClass GossipGroupChatClass;
+typedef struct _GossipGroupChatPriv  GossipGroupChatPriv;
 
+struct _GossipGroupChat {
+	GObject   parent;
+
+	GossipGroupChatPriv *priv;
+};
+
+struct _GossipGroupChatClass {
+	GObjectClass parent_class;
+};
+
+GType              gossip_group_chat_get_type  (void) G_GNUC_CONST;
+
+GossipGroupChat *  gossip_group_chat_show      (GossipJID   *jid,
+						const gchar *nick);
+void               gossip_group_chat_set_show  (GossipShow   show);
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */

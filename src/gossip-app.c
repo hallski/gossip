@@ -1231,7 +1231,7 @@ gossip_app_join_group_chat (const gchar *room,
 	tmp = g_strdup_printf ("%s@%s", room, server);
 	jid = gossip_jid_new (tmp);
 	g_free (tmp);
-	gossip_group_chat_new (jid, nick);
+	gossip_group_chat_show (jid, nick);
 	gossip_jid_unref (jid);
 }
 
