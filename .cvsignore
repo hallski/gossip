@@ -16,3 +16,5 @@ aclocal.m4
 Makefile.in
 Makefile
 autom4te.cache
+gossip.desktop
+gossip.spec

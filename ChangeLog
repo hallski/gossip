@@ -1,3 +1,10 @@
+2003-06-30  Richard Hult  <richard@imendio.com>
+
+	* ui/chat.glade: 
+	* ui/group-chat.glade: Set vscroll policy of the text view to
+	always. Fixes a weird scrolling problem and some jerkyness when
+	the scrollbar appears.
+
 2003-06-29  Jordi Mallach  <jordi@sindominio.net>
 
 	* gossip.desktop.in: Add translation markers and StartupNotify entry.

@@ -2,6 +2,7 @@
 <!DOCTYPE glade-interface SYSTEM "http://glade.gnome.org/glade-2.0.dtd">
 
 <glade-interface>
+<requires lib="gnome"/>
 
 <widget class="GtkWindow" id="group_chat_window">
   <property name="title" translatable="yes">Gossip - Group Chat</property>
@@ -85,7 +86,7 @@
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
-	      <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
+	      <property name="vscrollbar_policy">GTK_POLICY_ALWAYS</property>
 	      <property name="shadow_type">GTK_SHADOW_IN</property>
 	      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
