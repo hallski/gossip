@@ -24,6 +24,7 @@ src/gossip-roster-view.c
 src/gossip-roster.c
 src/gossip-startup-druid.c
 src/gossip-utils.c
+src/gossip-vcard-dialog.c
 ui/chat.glade
 ui/connect.glade
 ui/group-chat.glade

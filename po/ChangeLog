@@ -1,3 +1,7 @@
+2004-06-23  Mikael Hallendal  <micke@imendio.com>
+
+	* POTFILES.in: Added gossip-vcard-dialog.c
+
 2004-06-19  Arafat Medini  <lumina@silverpen.de>
 
 	* ar.po: Added Arabic translation.
