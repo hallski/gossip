@@ -103,7 +103,7 @@ GETTEXT_PACKAGE=gossip
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
 
-ALL_LINGUAS="az ca cs cy da de es fr it ml nl no pl pt ru sr sr@Latn sv zh_CN"
+ALL_LINGUAS="az ca cs cy da de es fr it ml nl no pl pt ru sr sr@Latn sv zh_CN zh_TW"
 
 AM_GLIB_GNU_GETTEXT
 

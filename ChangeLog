@@ -1,3 +1,7 @@
+2003-11-04  Abel Cheung  <maddog@linux.org.hk>
+
+	* configure.in: Added "zh_TW" to ALL_LINGUAS.
+
 2003-11-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (gossip_chat_window_init):
