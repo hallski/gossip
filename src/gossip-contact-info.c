@@ -228,7 +228,7 @@ GossipContactInfo *
 gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 {
 	GossipContactInfo *info;
-	gchar             *str;
+	gchar             *str, *tmp_str;
 
 	info = g_new0 (GossipContactInfo, 1);
 
@@ -252,7 +252,9 @@ gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 				      "description_textview", &info->description_textview,
 				      NULL);
 
-	str = g_strdup_printf (_("<b>Information about %s</b>"), name);
+	tmp_str = g_strdup_printf (_("Information about %s"), name);
+	str = g_strdup_printf ("<b>%s</b>", tmp_str);
+	g_free (tmp_str);
 	gtk_label_set_markup (GTK_LABEL (info->title_label), str);
 	g_free (str);
 	
