@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "eggtreemodelfilter.h"
+#include "gossip-app.h"
 #include "gossip-roster.h"
 #include "gossip-marshal.h"
 #include "gossip-contact-info.h"
@@ -1120,7 +1121,7 @@ roster_view_item_menu_rename_cb (gpointer   data,
 			       gossip_jid_get_without_resource (jid));
 
 	/* Translator: %s denotes the Jabber ID */
-	dialog = gtk_message_dialog_new (NULL,
+	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_OK_CANCEL,
@@ -1206,8 +1207,8 @@ roster_view_group_menu_rename_cb (gpointer   data,
 	str = g_strdup_printf ("<b>%s</b>", 
 			       gossip_roster_group_get_name (group));
 
-	/* Translator: %s denotes the Jabber ID */
-	dialog = gtk_message_dialog_new (NULL,
+	/* Translator: %s denotes the group name */
+	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_OK_CANCEL,

@@ -1,3 +1,11 @@
+2003-11-11  Ross Burton  <ross@burtonini.com>
+
+	* gossip-contact-info.c:
+	* gossip-join-dialog.c:
+	* gossip-roster-view.c:
+	Everyone loves transient dialogs! Yet more calls to
+	set_transient_for! Yay!
+
 2003-11-11  Johan Hammar <johan.hammar@swipnet.se>
 
 	* src/gossip-roster-view.c: 

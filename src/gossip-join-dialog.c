@@ -295,6 +295,7 @@ gossip_join_dialog_new (GossipApp *app)
 		
 	join_dialog_update_option_menu (join);
 
+	gtk_window_set_transient_for (GTK_WINDOW (join->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (join->dialog);
 
 	return join;
