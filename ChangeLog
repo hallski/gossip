@@ -1,3 +1,10 @@
+2003-08-06  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_set_status): 
+	* src/gossip-group-chat.c: (gossip_group_chat_set_status):
+	- Don't set the show value if it's "normal". We were setting it to
+	  <show/> in that case which is wrong.
+
 2003-08-05  Richard Hult  <rhult@codefactory.se>
 
 	* ui/main.glade: Add icon for Add Contact... item, patch from

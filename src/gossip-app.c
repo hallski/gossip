@@ -1242,8 +1242,9 @@ gossip_app_get (void)
 static void
 app_set_status (GossipApp *app, GossipStatus status)
 {
-	GossipAppPriv        *priv;
-	LmMessage            *m;
+	GossipAppPriv *priv;
+	LmMessage     *m;
+	const gchar   *show;
 	
 	priv = app->priv;
 
@@ -1273,7 +1274,11 @@ app_set_status (GossipApp *app, GossipStatus status)
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 	
-	lm_message_node_add_child (m->node, "show", gossip_status_to_string (status));
+	show = gossip_status_to_string (status);
+	if (show) {
+		lm_message_node_add_child (m->node, "show", show);
+	}
+
 	/*lm_message_node_add_child (m->node, "status", "Online");*/
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);

@@ -1131,7 +1131,8 @@ set_status_foreach (gpointer key,
 void
 gossip_group_chat_set_status (GossipStatus status)
 {
-	LmMessage *m;
+	LmMessage   *m;
+	const gchar *show;
 
 	group_chat_init ();
 	
@@ -1139,9 +1140,12 @@ gossip_group_chat_set_status (GossipStatus status)
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 	
-	lm_message_node_add_child (m->node, "show", gossip_status_to_string (status));
+	show = gossip_status_to_string (status);
+	if (show) {
+		lm_message_node_add_child (m->node, "show", show);
+	}
+
 	/*lm_message_node_add_child (m->node, "status", "Online");*/
-	
 	g_hash_table_foreach (group_chats, set_status_foreach, m);
 
 	lm_message_unref (m);
