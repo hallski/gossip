@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-22 13:22+0100\n"
-"PO-Revision-Date: 2004-01-21 18:31+0100\n"
+"POT-Creation-Date: 2004-01-23 04:51+0100\n"
+"PO-Revision-Date: 2004-01-23 17:28+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -45,63 +45,71 @@ msgid "Hide the main window."
 msgstr "Skrýt hlavní okno."
 
 #: gossip.schemas.in.h:6
+msgid "Preset status messages"
+msgstr "Přednastavené zprávy o stavu"
+
+#: gossip.schemas.in.h:7
+msgid "Preset status messages."
+msgstr "Přednastavené zprávy o stavu."
+
+#: gossip.schemas.in.h:8
 msgid "Show offline contacts"
 msgstr "Zobrazovat odpojené kontakty"
 
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:9
 msgid "The X position of the main window."
 msgstr "Pozice X hlavního okna."
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:10
 msgid "The Y position of the main window."
 msgstr "Pozice Y hlavního okna."
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr "Výška hlavního okna."
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr "Šířka hlavního okna."
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr "Používat grafické smajlíky"
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:14
 msgid "Use notification sounds"
 msgstr "Používat zvuky upozornění"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:15
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Jestli převádět smajlíky v konverzacích na grafické smajlíky."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Jestli přehrávat zvuk, když přijdou zprávy."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away."
 msgstr "Jestli přehrávat zvuky, když jsem pryč."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:18
 msgid "Whether or not to play sounds when busy."
 msgstr "Jestli přehrávat zvuky, když jsem zaneprázdněn."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Jestli zobrazovat odpojené kontakty v seznamu kontaktů."
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:20
 msgid "Width of the main window"
 msgstr "Šířka hlavního okna"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:21
 msgid "X position of main window"
 msgstr "Pozice X hlavního okna"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:22
 msgid "Y position of main window"
 msgstr "Pozice Y hlavního okna"
 
@@ -725,9 +733,8 @@ msgid "Email:"
 msgstr "E-mail"
 
 #: ui/main.glade.h:26
-#, fuzzy
 msgid "Enter status message:"
-msgstr "Zpráva o stavu:"
+msgstr "Zadejte zprávu o stavu:"
 
 #: ui/main.glade.h:28
 msgid ""
@@ -850,9 +857,8 @@ msgid "Sound"
 msgstr "Zvuk"
 
 #: ui/main.glade.h:57
-#, fuzzy
 msgid "Status Message"
-msgstr "Zprávy o stavu"
+msgstr "Zpráva o stavu"
 
 #: ui/main.glade.h:58
 msgid "Status Messages"
