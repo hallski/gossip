@@ -1340,14 +1340,15 @@ gossip_chat_handle_message (LmMessage *m)
 void
 gossip_chat_present (GossipChat *chat)
 {
-
-        if (chat->priv->window == NULL) {
+	if (chat->priv->window == NULL) {
 		gossip_chat_window_add_chat (gossip_chat_window_get_default (),
 					     chat);
         }
 
         gossip_chat_window_switch_to_chat (chat->priv->window, chat);
         gtk_window_present (GTK_WINDOW (gossip_chat_window_get_dialog (chat->priv->window)));
+
+	gtk_widget_grab_focus (chat->priv->input_entry);
 }
 
 GtkWidget *
@@ -1355,3 +1356,4 @@ gossip_chat_get_widget (GossipChat *chat)
 {
         return chat->priv->widget;
 }
+

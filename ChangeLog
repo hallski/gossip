@@ -1,5 +1,8 @@
 2003-11-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c (gossip_chat_present): Grab focus on the
+	entry.
+
 	* src/gossip-chat-window.c (chat_window_focus_in_event_cb): Event
 	handlers must return a boolean, fixes the weird focus problems.
 
