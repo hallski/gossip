@@ -8,15 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-29 15:42+0200\n"
-"PO-Revision-Date: 2004-06-29 21:46+0100\n"
+"POT-Creation-Date: 2004-07-24 13:11+0100\n"
+"PO-Revision-Date: 2004-07-24 13:11+0100\n"
 "Last-Translator: Gareth Owen <gowen72@yahoo.comg>\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:30
+#: gossip.desktop.in.h:1
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -259,8 +259,8 @@ msgstr "Typing a message."
 msgid "An error occurred when chatting with %s."
 msgstr "An error occurred when chatting with %s."
 
-#: src/gossip-chat.c:720 src/gossip-group-chat.c:911
-#: src/gossip-group-chat.c:1021
+#: src/gossip-chat.c:720 src/gossip-group-chat.c:908
+#: src/gossip-group-chat.c:1018
 msgid "Details:"
 msgstr "Details:"
 
@@ -307,12 +307,12 @@ msgstr "Group"
 msgid "Unsorted"
 msgstr "Unsorted"
 
-#: src/gossip-group-chat.c:906
+#: src/gossip-group-chat.c:903
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "An error occurred when chatting in the group chat %s."
 
-#: src/gossip-group-chat.c:1016
+#: src/gossip-group-chat.c:1013
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Unable to enter the group chat %s."
@@ -516,7 +516,7 @@ msgstr "_Previous Tab"
 msgid "_Reply..."
 msgstr "_Reply..."
 
-#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19
 msgid "_Send"
 msgstr "_Send"
 
@@ -572,7 +572,7 @@ msgstr "_Password:"
 msgid "_Resource:"
 msgstr "_Resource:"
 
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:20
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:19
 msgid "_Server:"
 msgstr "_Server:"
 
@@ -605,12 +605,12 @@ msgid "Gossip - Edit Group Chats"
 msgstr "Gossip - Edit Group Chats"
 
 #: ui/group-chat.glade.h:9
-msgid "Gossip - Group Chat"
-msgstr "Gossip - Group Chat"
-
-#: ui/group-chat.glade.h:10
 msgid "Gossip - Join Group Chat"
 msgstr "Gossip - Join Group Chat"
+
+#: ui/group-chat.glade.h:10
+msgid "Imendio Gossip - Group Chat"
+msgstr "Imendio Gossip - Group Chat"
 
 #: ui/group-chat.glade.h:11
 msgid "N_ickname:"
@@ -648,7 +648,7 @@ msgstr "_Nickname:"
 msgid "_Room:"
 msgstr "_Room:"
 
-#: ui/group-chat.glade.h:21
+#: ui/group-chat.glade.h:20
 msgid "_Topic:"
 msgstr "_Topic:"
 
@@ -760,7 +760,7 @@ msgstr "Email:"
 msgid "Enter status message:"
 msgstr "Enter status message:"
 
-#: ui/main.glade.h:31
+#: ui/main.glade.h:30
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -776,7 +776,7 @@ msgstr ""
 "\n"
 "To get started, just click \"Forward\"."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:35
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -786,9 +786,13 @@ msgstr ""
 "You can change your account settings later, by selecting the Chat-"
 ">Connect... menu item."
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:37
 msgid "I would like to add you to my contact list."
 msgstr "I would like to add you to my contact list."
+
+#: ui/main.glade.h:38
+msgid "Imendio Gossip"
+msgstr "Imendio Gossip"
 
 #: ui/main.glade.h:39
 msgid ""
