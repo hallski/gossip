@@ -1742,7 +1742,9 @@ gossip_roster_view_flash_item (GossipRosterView *view,
 		roster_view_add_item (view, item, NULL);
 	}
 	else if (!flash) {
-		g_hash_table_remove (priv->flash_table, item);
+		if (flash_data) {
+			g_hash_table_remove (priv->flash_table, item);
+		}
 		
 		/* Remove from inbox */
 		roster_view_remove_item (view, item, NULL);
