@@ -90,6 +90,7 @@ gchar *      gossip_utils_substring                  (const gchar      *str,
 
 const gchar *gossip_utils_show_to_string             (GossipShow        show);
 GossipShow   gossip_utils_show_from_string           (const gchar      *str);
+const gchar *gossip_utils_get_stock_from_show        (GossipShow        show);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_stock      (const gchar      *stock);
 GdkPixbuf *  gossip_utils_get_pixbuf_offline         (void);
 GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);

@@ -722,8 +722,8 @@ gossip_utils_get_pixbuf_offline (void)
 	return gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
 }
 
-GdkPixbuf *
-gossip_utils_get_pixbuf_from_show (GossipShow show)
+const gchar *
+gossip_utils_get_stock_from_show (GossipShow show)
 {
 	const gchar *stock = NULL;
 	
@@ -742,6 +742,15 @@ gossip_utils_get_pixbuf_from_show (GossipShow show)
 		break;
 	}
 
+	return stock;
+}
+
+GdkPixbuf *
+gossip_utils_get_pixbuf_from_show (GossipShow show)
+{
+	const gchar *stock;
+
+	stock = gossip_utils_get_stock_from_show (show);
 	return gossip_utils_get_pixbuf_from_stock (stock);
 }
 

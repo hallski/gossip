@@ -709,7 +709,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
 	gtk_tooltips_set_tip (priv->tooltips,
 			      widget,
 			      str,
-			      str);
+			      NULL);
 
 	g_free (str);
 }

@@ -1,5 +1,16 @@
 2004-01-18  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: Implement the new presence stuff.
+
+	* src/gossip-chat-window.c: (chat_window_update_tooltip): Fix.
+
+	* src/gossip-utils.c: (gossip_utils_get_stock_from_show): Add.
+	(gossip_utils_get_pixbuf_from_show): Use the above.
+
+	* ui/main.glade: Tweak the presence entry.
+
+2004-01-18  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c: (app_init),
 	(app_status_available_activate_cb):
 	* src/gossip-utils.c: (gossip_option_image_menu_setup):
