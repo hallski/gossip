@@ -1,3 +1,7 @@
+2004-02-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c: Disable debug spew.
+
 2004-02-02  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat.c: (chat_update_locked_resource),

@@ -41,7 +41,7 @@
 #include "gossip-roster.h"
 #include "gossip-chat.h"
 
-#define d(x) x
+#define d(x)
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 #define COMPOSING_STOP_TIMEOUT 5
@@ -689,7 +689,7 @@ chat_message_handler (LmMessageHandler *handler,
 	jid = gossip_roster_item_get_jid (priv->item);
 
 	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_GROUPCHAT) {
-		g_print ("GROUP CHAT!\n");
+		d(g_print ("GROUP CHAT!\n"));
 		gossip_jid_unref (from_jid);
 		
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -702,7 +702,7 @@ chat_message_handler (LmMessageHandler *handler,
         if ((!priv->groupchat_priv && !gossip_jid_equals_without_resource (from_jid, jid)) ||
 
 	    (priv->groupchat_priv && !gossip_jid_equals (from_jid, jid))) {
-		g_print ("GROUP CHAT2!\n");
+		d(g_print ("GROUP CHAT2!\n"));
 		gossip_jid_unref (from_jid);
 		
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
