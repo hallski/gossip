@@ -699,7 +699,7 @@ chat_view_maybe_append_timestamp (GossipChatView *view, const gchar *time_str)
 		if (priv->last_timestamp.tv_sec + TIMESTAMP_INTERVAL < cur_time.tv_sec) {
 			priv->last_timestamp.tv_sec = cur_time.tv_sec;
 
-			gossip_chat_view_append_event_msg (view, stamp);
+			gossip_chat_view_append_event_msg (view, stamp, FALSE);
 		} 
 	} else {
 		GtkTextBuffer *buffer;
@@ -740,7 +740,7 @@ chat_view_maybe_append_datestamp (GossipChatView *view)
 
 	g_date_strftime (date_str, 256, _("%A %d %B %Y"), cur_date);
 	
-	gossip_chat_view_append_event_msg (view, date_str);
+	gossip_chat_view_append_event_msg (view, date_str, TRUE);
 
 	g_get_current_time (&cur_time);
 	priv->last_timestamp.tv_sec = cur_time.tv_sec;
@@ -946,7 +946,9 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 }
 
 void
-gossip_chat_view_append_event_msg (GossipChatView *view, const gchar *str)
+gossip_chat_view_append_event_msg (GossipChatView *view, 
+				   const gchar    *str, 
+				   gboolean        timestamp)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter    iter;
@@ -960,15 +962,22 @@ gossip_chat_view_append_event_msg (GossipChatView *view, const gchar *str)
 		gtk_text_buffer_insert (buffer,	&iter, "\n", 1);
 	}
 
-	stamp = chat_view_get_timestamp (NULL);
-	msg = g_strdup_printf (" %s - %s", str, stamp);
-	g_free (stamp);
+	if (timestamp) {
+		stamp = chat_view_get_timestamp (NULL);
+		msg = g_strdup_printf (" %s - %s", str, stamp);
+		g_free (stamp);
+	} else {
+		msg = (gchar *) str;
+	}
+	
 	
 	gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
 						  msg, -1, "event-tag",
 						  NULL);
-	g_free (msg);
-
+	if (msg != str) {
+		g_free (msg);
+	}
+		
 	gtk_text_buffer_insert (buffer, &iter, "\n", 1);
 }
 

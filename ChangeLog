@@ -1,5 +1,12 @@
 2003-10-27  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-chat-view.[ch]:
+	(gossip_chat_view_append_event_msg): 
+	- Added 'timestamp' argument to specify if the message should be 
+	  timestamped.
+
+2003-10-27  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_update_show): 
 	- Set priority depending on your show value. Patch from Sjoerd Simons.
 	- Fixes #121002

@@ -838,7 +838,8 @@ chat_presence_handler (LmMessageHandler *handler,
 			event_msg = g_strdup_printf (_("%s went offline"),
 						     chat->nick);
 			gossip_chat_view_append_event_msg (chat->view, 
-							   event_msg);
+							   event_msg,
+							   TRUE);
 			g_free (event_msg);
 		}
 		chat->other_offline = TRUE;
@@ -852,7 +853,8 @@ chat_presence_handler (LmMessageHandler *handler,
 	
 		if (!chat->hidden && chat->other_offline) {
 			event_msg = g_strdup_printf (_("%s comes online"), chat->nick);
-			gossip_chat_view_append_event_msg (chat->view, event_msg);
+			gossip_chat_view_append_event_msg (chat->view, 
+							   event_msg, TRUE);
 			g_free (event_msg);
 		}
 		chat->other_offline = FALSE;
