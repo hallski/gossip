@@ -1,3 +1,23 @@
+2004-08-22  Martyn Russell  <ginxd@btopenworld.com>
+
+	* src/gossip-roster-view.c (roster_view_pixbuf_cell_data_func),
+	(roster_view_name_cell_data_func),  
+	(roster_view_item_active_cb),
+	(roster_view_item_presence_updated), (roster_view_connected_cb),
+	(roster_view_show_active_users_cb),
+	(roster_view_set_cell_background): 
+ 	- Added a background colour to contacts when they are in an
+	"active" state (set by the gossip_roster_item_set_active
+	function) to show what has changed on the roster for 5 seconds or
+	so. 
+	- Make sure the active user background is not done when we change
+	between showing offline contacts and during the first 5 seconds
+	(after the connection is successful).
+	* src/gossip-roster.c (gossip_roster_item_set_flash_stock),
+	(gossip_roster_item_get_flash_stock),
+	- Added the ability to associate the flash stock icon used with a
+	roster item. 
+
 2004-08-19  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-dbus.c: (gossip_dbus_init):

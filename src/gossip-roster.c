@@ -32,6 +32,7 @@
 #include "gossip-utils.h"
 #include "gossip-marshal.h"
 #include "gossip-roster.h"
+#include "gossip-stock.h"
 
 #define d(x)
 
@@ -52,7 +53,7 @@ struct _GossipRosterPriv {
    
 struct _GossipRosterGroup {
         gchar        *name;
-        GList        *items; /* List of RosterItems */
+        GList        *items;          /* List of RosterItems */
 
 	gint          ref_count;
 };
@@ -63,10 +64,13 @@ struct _GossipRosterItem {
 	gboolean      online;
         gchar        *subscription;
         gchar        *ask;
-        GList        *groups;      /* List of groups */
-        GList        *connections; /* List of RosterConnection */
+        GList        *groups;         /* List of groups */
+        GList        *connections;    /* List of RosterConnection */
 
 	gint          ref_count;
+
+	gboolean      active;         /* If true, is drawn differently
+					 on roster to show change */
 };
    
 typedef struct {
@@ -74,7 +78,7 @@ typedef struct {
 	gint        priority;
 	gchar      *status;
 	GossipShow  show;
-	time_t      last_updated; /* Timestamp to tell when last updated */
+	time_t      last_updated;     /* Timestamp to tell when last updated */
 } RosterConnection;
 
 static void     roster_contact_list_init     (GossipContactListClass *iface);
@@ -84,6 +88,7 @@ static void     roster_connected_cb          (GossipApp         *app,
 static void     roster_disconnected_cb       (GossipApp         *app,
 					      GossipRoster      *roster); 
 static void     roster_reset_connection      (GossipRoster      *roster);
+
 static void     roster_clear                 (GossipRoster      *roster);
 static LmHandlerResult
 roster_presence_handler                      (LmMessageHandler  *handler,
@@ -1510,6 +1515,23 @@ gossip_roster_item_is_offline (GossipRosterItem *item)
 	g_return_val_if_fail (item != NULL, TRUE);
 	
 	return !item->online;
+}
+
+gboolean 
+gossip_roster_item_get_active (GossipRosterItem *item)
+{
+	g_return_val_if_fail (item != NULL, FALSE);
+	
+	return item->active;
+}
+
+void
+gossip_roster_item_set_active (GossipRosterItem *item,
+			       gboolean          active)
+{
+	g_return_if_fail (item != NULL);
+
+	item->active = active;
 }
 
 GossipRosterItem *

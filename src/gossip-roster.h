@@ -52,43 +52,48 @@ struct _GossipRosterClass {
         GObjectClass      parent_class;
 };
 
-GType              gossip_roster_get_type           (void) G_GNUC_CONST;
-GossipRoster *     gossip_roster_new                (void);
+GType              gossip_roster_get_type              (void) G_GNUC_CONST;
+GossipRoster *     gossip_roster_new                   (void);
 
-GossipRosterGroup * gossip_roster_get_group         (GossipRoster      *roster,
-						     const gchar       *name);
+GossipRosterGroup *gossip_roster_get_group             (GossipRoster      *roster,
+							const gchar       *name);
+GList *            gossip_roster_get_all_groups        (GossipRoster      *roster);
 
-GList *            gossip_roster_get_all_groups     (GossipRoster      *roster);
-void               gossip_roster_free_group_list    (GList             *list);
-GList *            gossip_roster_get_all_items      (GossipRoster      *roster);
-void               gossip_roster_free_item_list     (GList             *list);
-GossipRosterItem * gossip_roster_get_item           (GossipRoster      *roster,
-                                                     GossipJID         *jid);
+GossipRosterItem * gossip_roster_get_item              (GossipRoster      *roster,
+							GossipJID         *jid);
+GList *            gossip_roster_get_all_items         (GossipRoster      *roster);
+
+gboolean           gossip_roster_get_show_active_users (GossipRoster      *roster);
+void               gossip_roster_set_show_active_users (GossipRoster      *roster,
+							gboolean           show);
+
+void               gossip_roster_free_group_list       (GList             *list);
+void               gossip_roster_free_item_list        (GList             *list);
+
 /* Tries to find a roster by either trying str as a jid, and later checks 
  * all items and tries to match the item names */
-GossipRosterItem * gossip_roster_find_item          (GossipRoster      *roster,
-						     const gchar       *str);
-void               gossip_roster_remove_item        (GossipRoster      *roster,
-						     GossipRosterItem  *item);
-void               gossip_roster_rename_item        (GossipRoster      *roster,
-						     GossipRosterItem  *item,
-						     const gchar       *name);
-void               gossip_roster_rename_group       (GossipRoster      *roster,
-						     GossipRosterGroup *group,
-						     const gchar       *name);
+GossipRosterItem * gossip_roster_find_item             (GossipRoster      *roster,
+							const gchar       *str);
+void               gossip_roster_remove_item           (GossipRoster      *roster,
+							GossipRosterItem  *item);
+void               gossip_roster_rename_item           (GossipRoster      *roster,
+							GossipRosterItem  *item,
+							const gchar       *name);
+void               gossip_roster_rename_group          (GossipRoster      *roster,
+							GossipRosterGroup *group,
+							const gchar       *name);
 
 /* FIXME: GossipContact API will replace GossipRosterItem */
-GossipContact *    gossip_roster_get_contact_from_item (GossipRoster   *roster,
-							GossipRosterItem *item);
-
-const gchar *      gossip_roster_get_active_resource (GossipRoster     *roster,
-						      GossipContact    *contact);
+GossipContact *    gossip_roster_get_contact_from_item (GossipRoster      *roster,
+							GossipRosterItem  *item);
+const gchar *      gossip_roster_get_active_resource   (GossipRoster      *roster,
+							GossipContact     *contact);
 
 /* Group */
-const gchar *      gossip_roster_group_get_name     (GossipRosterGroup *group);
-GList *            gossip_roster_group_get_items    (GossipRosterGroup *group);
-GossipRosterGroup* gossip_roster_group_ref          (GossipRosterGroup *group);
-void               gossip_roster_group_unref        (GossipRosterGroup *group);
+const gchar *      gossip_roster_group_get_name        (GossipRosterGroup *group);
+GList *            gossip_roster_group_get_items       (GossipRosterGroup *group);
+GossipRosterGroup* gossip_roster_group_ref             (GossipRosterGroup *group);
+void               gossip_roster_group_unref           (GossipRosterGroup *group);
 
 
 /* Item */
@@ -96,23 +101,25 @@ void               gossip_roster_group_unref        (GossipRosterGroup *group);
 /* Returns the JID (with Resource) that has the highest priority 
  * (or connected last). 
  */
-GossipJID *    gossip_roster_item_get_jid          (GossipRosterItem  *item);
-const gchar *  gossip_roster_item_get_name         (GossipRosterItem  *item);
-GossipShow     gossip_roster_item_get_show         (GossipRosterItem  *item);
-const gchar *  gossip_roster_item_get_status       (GossipRosterItem  *item);
-const gchar *  gossip_roster_item_get_subscription (GossipRosterItem  *item);
-const gchar *  gossip_roster_item_get_ask          (GossipRosterItem  *item);
-GList *        gossip_roster_item_get_groups       (GossipRosterItem  *item);
-gboolean       gossip_roster_item_is_offline       (GossipRosterItem  *item);
-GossipRosterItem * 
-gossip_roster_item_ref                             (GossipRosterItem  *item);
-void           gossip_roster_item_unref            (GossipRosterItem  *item);
-gint           gossip_roster_item_compare          (GossipRosterItem  *a,
-						    GossipRosterItem  *b);
+GossipJID *       gossip_roster_item_get_jid           (GossipRosterItem *item);
+const gchar *     gossip_roster_item_get_name          (GossipRosterItem *item);
+GossipShow        gossip_roster_item_get_show          (GossipRosterItem *item);
+const gchar *     gossip_roster_item_get_status        (GossipRosterItem *item);
+const gchar *     gossip_roster_item_get_subscription  (GossipRosterItem *item);
+const gchar *     gossip_roster_item_get_ask           (GossipRosterItem *item);
+GList *           gossip_roster_item_get_groups        (GossipRosterItem *item);
+gboolean          gossip_roster_item_is_offline        (GossipRosterItem *item);
+GossipRosterItem *gossip_roster_item_ref               (GossipRosterItem *item);
+void              gossip_roster_item_unref             (GossipRosterItem *item);
+gint              gossip_roster_item_compare           (GossipRosterItem *a,
+							GossipRosterItem *b);
+
+gboolean          gossip_roster_item_get_active        (GossipRosterItem *item);
+void              gossip_roster_item_set_active        (GossipRosterItem *item,
+							gboolean          active);
 
 /* Used when receiving messages from a person not in the roster */
-GossipRosterItem *
-gossip_roster_item_new                             (GossipJID         *jid);
+GossipRosterItem * gossip_roster_item_new              (GossipJID         *jid);
 
 /* This is a way to be able to move to GossipContact in steps.
  * It will create a new GossipContact out of the data in the GossipRosterItem
