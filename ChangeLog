@@ -1,7 +1,12 @@
 2003-11-06  Ross Burton  <ross@burtonini.com>
 
-	* ui/main.c: (contact_information): Add a label for the JID, and
-	make the Description area fill and expand.
+	* ui/main.glade: (contact_information):
+	Make the JID selectable, forgot this.
+
+2003-11-06  Ross Burton  <ross@burtonini.com>
+
+	* ui/main.glade: (contact_information): Add a label for the JID,
+	and make the Description area fill and expand.
 
 	* src/gossip-contact-info.c: Set the JID in the Contact
 	Information dialogue.
