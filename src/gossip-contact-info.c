@@ -25,6 +25,8 @@
 #include <glade/glade.h>
 #include <gtk/gtklabel.h>
 #include <gtk/gtktable.h>
+#include <gtk/gtksizegroup.h>
+#include <gtk/gtkalignment.h>
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
 #include <loudmouth/loudmouth.h>
@@ -82,7 +84,7 @@ contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
 		lm_message_handler_invalidate (info->version_handler);
 		lm_message_handler_unref (info->version_handler);
 	}
-	
+
 	g_free (info);
 }
 
@@ -182,7 +184,7 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 	node = lm_message_node_get_child (vCard, "EMAIL");
 	if (node && lm_message_node_get_value (node) &&
 	    strcmp (lm_message_node_get_value (node), "") != 0) {
-		GtkWidget *href;
+		GtkWidget *href, *alignment;
 		gchar     *link;
 
 		show_personal = TRUE;
@@ -192,27 +194,39 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 		
 		href = gnome_href_new (link,
 				       lm_message_node_get_value (node));
+
+		alignment = gtk_alignment_new (0, 1, 0, 0.5);
+		gtk_container_add (GTK_CONTAINER (alignment), href);
 		
-		gtk_table_attach_defaults (GTK_TABLE (info->personal_table),
-					   href,
-					   1, 2,
-					   1, 2);
+		gtk_table_attach (GTK_TABLE (info->personal_table),
+				  alignment,
+				  1, 2,
+				  1, 2,
+				  GTK_FILL, GTK_FILL,
+				  0, 0);
+
 		g_free (link);
 	}
 	
 	node = lm_message_node_get_child (vCard, "URL");
 	if (node && lm_message_node_get_value (node) &&
 	    strcmp (lm_message_node_get_value (node), "") != 0) {
-		GtkWidget *href;
+		GtkWidget *href, *alignment;
 
 		show_personal = TRUE;
 
 		href = gnome_href_new (lm_message_node_get_value (node),
 				       lm_message_node_get_value (node));
-		gtk_table_attach_defaults (GTK_TABLE (info->personal_table),
-					   href, 
-					   1, 2,
-					   2, 3);
+
+		alignment = gtk_alignment_new (0, 1, 0, 0.5);
+		gtk_container_add (GTK_CONTAINER (alignment), href);
+
+		gtk_table_attach (GTK_TABLE (info->personal_table),
+				  alignment, 
+				  1, 2,
+				  2, 3,
+				  GTK_FILL, GTK_FILL,
+				  0, 0);
 	}
 
 	
@@ -282,30 +296,52 @@ GossipContactInfo *
 gossip_contact_info_new (GossipApp *app, GossipJID *jid, const gchar *name)
 {
 	GossipContactInfo *info;
+	GladeXML          *gui;
 	gchar             *str, *tmp_str;
+	GtkSizeGroup      *size_group;
 
 	info = g_new0 (GossipContactInfo, 1);
 
 	info->app = app;
 	info->connection = gossip_app_get_connection (app);
 	
-	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "contact_information_dialog",
-				      NULL,
-				      "contact_information_dialog", &info->dialog,
-				      "title_label", &info->title_label,
-				      "personal_not_avail_label", &info->personal_not_avail_label,
-				      "personal_table", &info->personal_table,
-				      "name_label", &info->name_label,
-				      "client_not_avail_label", &info->client_not_avail_label,
-				      "client_table", &info->client_table,
-				      "client_name_label", &info->client_name_label,
-				      "version_label", &info->version_label,
-				      "os_label", &info->os_label,
-				      "close_button", &info->close_button,
-				      "description_textview", &info->description_textview,
-				      NULL);
+	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+				     "contact_information_dialog",
+				     NULL,
+				     "contact_information_dialog", &info->dialog,
+				     "title_label", &info->title_label,
+				     "personal_not_avail_label", &info->personal_not_avail_label,
+				     "personal_table", &info->personal_table,
+				     "name_label", &info->name_label,
+				     "client_not_avail_label", &info->client_not_avail_label,
+				     "client_table", &info->client_table,
+				     "client_name_label", &info->client_name_label,
+				     "version_label", &info->version_label,
+				     "os_label", &info->os_label,
+				     "close_button", &info->close_button,
+				     "description_textview", &info->description_textview,
+				     NULL);
 
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+	/* A bit ugly, but the result is nice. Align the labels in the two
+	 * different tables.
+	 */
+	gtk_size_group_add_widget (
+		size_group, glade_xml_get_widget (gui, "personal_name_label"));
+	gtk_size_group_add_widget (
+		size_group, glade_xml_get_widget (gui, "personal_email_label"));
+	gtk_size_group_add_widget (
+		size_group, glade_xml_get_widget (gui, "personal_web_label"));
+	gtk_size_group_add_widget (
+		size_group, glade_xml_get_widget (gui, "client_client_label"));
+	gtk_size_group_add_widget (
+		size_group, glade_xml_get_widget (gui, "client_version_label"));
+	gtk_size_group_add_widget (
+		size_group, glade_xml_get_widget (gui, "client_os_label"));
+
+	g_object_unref (size_group);
+	
 	g_signal_connect (info->dialog,
 			  "destroy",
 			  G_CALLBACK (contact_info_dialog_destroy_cb),

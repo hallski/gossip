@@ -1,3 +1,14 @@
+2003-07-17  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-info.c (gossip_contact_info_new): Set up a
+	size group to align the labels in the two different tables.
+	(contact_info_vcard_reply_cb): Make the hrefs not expand and put
+	them inside alignments to line them up.
+
+	* ui/main.glade: Set default size, add padding for the close
+	button, make the boxes and tables not expand, enable word wrap for
+	the text view.
+
 2003-07-17  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-contact-info.c:
