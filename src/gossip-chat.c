@@ -41,7 +41,8 @@
 #include "gossip-roster.h"
 #include "gossip-chat.h"
 
-#define d(x)
+#define d(x) x
+
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 #define COMPOSING_STOP_TIMEOUT 5
 
@@ -71,6 +72,7 @@ struct _GossipChatPriv {
 	gchar            *composing_resource; 
 	
 	gboolean          is_online;
+	gboolean          groupchat_priv;
 };
 
 static void            gossip_chat_class_init            (GossipChatClass  *klass);
@@ -366,6 +368,10 @@ chat_update_locked_resource (GossipChat *chat)
 	GossipJID      *jid;
 	const gchar    *roster_resource;
 
+	if (priv->groupchat_priv) {
+		return;
+	}
+	
 	if (gossip_roster_item_is_offline (priv->item)) {
 		g_free (priv->roster_resource);
 		priv->roster_resource = NULL;
@@ -682,12 +688,23 @@ chat_message_handler (LmMessageHandler *handler,
         from_jid = gossip_jid_new (from);
 	jid = gossip_roster_item_get_jid (priv->item);
 
-        d(g_print ("Incoming message:: '%s' ?= '%s'\n",
-                   gossip_jid_get_without_resource (from_jid),
-                   gossip_jid_get_without_resource (jid)));
+	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_GROUPCHAT) {
+		g_print ("GROUP CHAT!\n");
+		gossip_jid_unref (from_jid);
+		
+                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
 	
-        if (!gossip_jid_equals_without_resource (from_jid, jid)) {
-                gossip_jid_unref (from_jid);
+        d(g_print ("Incoming message:: '%s' ?= '%s'\n",
+                   gossip_jid_get_full (from_jid),
+                   gossip_jid_get_full (jid)));
+
+        if ((!priv->groupchat_priv && !gossip_jid_equals_without_resource (from_jid, jid)) ||
+
+	    (priv->groupchat_priv && !gossip_jid_equals (from_jid, jid))) {
+		g_print ("GROUP CHAT2!\n");
+		gossip_jid_unref (from_jid);
+		
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
         }
 
@@ -1136,6 +1153,7 @@ gossip_chat_get_for_item (GossipRosterItem *item, gboolean create)
 	priv = chat->priv;
 	priv->item = gossip_roster_item_ref (item);
 	priv->name = g_strdup (gossip_roster_item_get_name (item));
+	priv->groupchat_priv = FALSE;
 
 	if (gossip_roster_item_is_offline (priv->item)) {
 		priv->is_online = FALSE;
@@ -1164,6 +1182,9 @@ gossip_chat_get_for_group_chat (GossipRosterItem *item)
 	chat = g_object_new (GOSSIP_TYPE_CHAT, NULL);
 	priv = chat->priv;
 	priv->item = gossip_roster_item_ref (item);
+	priv->groupchat_priv = TRUE;
+
+	priv->locked_resource = g_strdup (gossip_jid_get_resource (jid));
 	
 	if (gossip_roster_item_is_offline (priv->item)) {
 		priv->is_online = FALSE;
