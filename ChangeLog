@@ -1,3 +1,7 @@
+2004-03-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-log.c (log_transform): Plug leak.
+
 2004-03-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c (gossip_chat_init): Use _connect_object so we

@@ -283,15 +283,16 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 static gboolean
 log_transform (const gchar *infile, gint fd_outfile)
 {
-        xsltStylesheet *stylesheet;
-        xmlDoc         *xml_doc;
-        xmlDoc         *html_doc;
-	const gchar    *params[6];
+        xsltStylesheet  *stylesheet;
+        xmlDoc          *xml_doc;
+        xmlDoc          *html_doc;
+	gchar           *title;
+	const gchar     *params[6];
 
 	/* Setup libxml. */
-        xmlSubstituteEntitiesDefault (1);
-        xmlLoadExtDtdDefaultValue = 1;
-        exsltRegisterAll ();
+	xmlSubstituteEntitiesDefault (1);
+	xmlLoadExtDtdDefaultValue = 1;
+	exsltRegisterAll ();
 
         stylesheet = xsltParseStylesheetFile (STYLESHEETDIR "/gossip-log.xsl");
 	if (!stylesheet) {
@@ -303,24 +304,28 @@ log_transform (const gchar *infile, gint fd_outfile)
 		return FALSE;
 	}
 
+	title = g_strconcat ("\"", _("Conversation Log"), "\"", NULL);
+	
 	/* Set params to be passed to stylesheet. */
 	params[0] = "title";
-	params[1] = g_strconcat ("\"", _("Conversation Log"), "\"", NULL);
+	params[1] = title;
         params[2] = NULL;
 	
         html_doc = xsltApplyStylesheet (stylesheet, xml_doc, params);
 	if (!html_doc) {
-		xmlFree (xml_doc);
+		xmlFreeDoc (xml_doc);
 		return FALSE;
 	}
                                                                                 
-        xmlFree (xml_doc);
+        xmlFreeDoc (xml_doc);
 	
 	xsltSaveResultToFd (fd_outfile, html_doc, stylesheet);
 
 	xsltFreeStylesheet (stylesheet);
-        xmlFree (html_doc);
+        xmlFreeDoc (html_doc);
 
+	g_free (title);
+	
 	return TRUE;
 }
 
