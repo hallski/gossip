@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.4\n"
-"POT-Creation-Date: 2003-08-07 00:27+0100\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-08-07 00:30+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
@@ -182,17 +182,17 @@ msgstr "Foi desligado do servidor. Deseja ligar-se novamente?"
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Cliente Jabber"
 
-#: src/gossip-app.c:1860
+#: src/gossip-app.c:1864
 #, c-format
 msgid "New message from %s"
 msgstr "Nova mensagem de %s"
 
-#: src/gossip-chat.c:642
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ocorreu um erro durante o diálogo com %s."
 
-#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detalhes:"
@@ -203,7 +203,7 @@ msgstr "Detalhes:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:807
+#: src/gossip-chat.c:846
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sDiálogo - %s"
@@ -211,7 +211,7 @@ msgstr "%sDiálogo - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:851
 #, c-format
 msgid "%sChat"
 msgstr "%sDiálogo"

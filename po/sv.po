@@ -19,7 +19,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-05 16:01+0200\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-08-05 16:02+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -198,21 +198,21 @@ msgstr "_Chatta"
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du frånkopplades från servern. Vill du återansluta?"
 
-#: src/gossip-app.c:1657
+#: src/gossip-app.c:1662
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Jabberklient"
 
-#: src/gossip-app.c:1855
+#: src/gossip-app.c:1864
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: src/gossip-chat.c:642
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ett fel inträffade under chatt med %s."
 
-#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detaljer:"
@@ -223,7 +223,7 @@ msgstr "Detaljer:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:807
+#: src/gossip-chat.c:846
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
@@ -231,7 +231,7 @@ msgstr "%sChatt - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:851
 #, c-format
 msgid "%sChat"
 msgstr "%sChatta"

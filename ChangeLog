@@ -1,3 +1,9 @@
+2003-08-15  Richard Hult  <richard@imendio.com>
+
+	* configure.in: Bump version to 0.5, require loudmouth 0.13.2
+
+	Release 0.5
+
 2003-08-13  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-roster.c (roster_menu_rename_cb): Set the group child

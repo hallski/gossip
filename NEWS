@@ -1,3 +1,15 @@
+News in 0.5:
+============
+* Typing notification, JEP-0022
+* Flash an icon instead of popping up chat windows directly
+* Don't clear chat windows when closing them
+* Improve nick completion in group chat
+* Fix private chats in group chat
+* Set the right group when renaming a contact
+* Various small bug fixes
+* New translations (sr, sr@Latn, pt)
+* Updated translations (es, ca, cy, cs, sv)
+
 News in 0.4:
 ============
 * SSL support through Loudmouth/GnuTLS.

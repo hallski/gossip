@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip cvs\n"
-"POT-Creation-Date: 2003-07-17 23:49+0200\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-07-07 16:45+0100\n"
 "Last-Translator: Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -86,7 +86,7 @@ msgstr ""
 msgid "Whether or not to timestamp all messages in conversations."
 msgstr ""
 
-#: src/gossip-accounts-dialog.c:151
+#: src/gossip-accounts-dialog.c:154
 msgid "New account"
 msgstr ""
 
@@ -104,65 +104,109 @@ msgstr ""
 msgid "Contact will be added to your contact list"
 msgstr ""
 
-#: src/gossip-app.c:342
+#: src/gossip-app.c:334
 msgid "Available"
 msgstr ""
 
-#: src/gossip-app.c:346
+#: src/gossip-app.c:338
 msgid "Free to chat"
 msgstr ""
 
-#: src/gossip-app.c:350
+#: src/gossip-app.c:342
 msgid "Busy"
 msgstr "Bezig"
 
-#: src/gossip-app.c:354 ui/main.glade.h:31
+#: src/gossip-app.c:346 ui/main.glade.h:31
 msgid "Away"
 msgstr "Weg"
 
-#: src/gossip-app.c:358
+#: src/gossip-app.c:350
 msgid "Extended away"
 msgstr ""
 
-#: src/gossip-app.c:366
+#: src/gossip-app.c:358
 msgid "Offline"
 msgstr "Off-line"
 
+#: src/gossip-app.c:367
+msgid "_Show Contact List"
+msgstr ""
+
+#: src/gossip-app.c:376
+msgid "_Hide Contact List"
+msgstr ""
+
+#: src/gossip-app.c:389
+msgid "Send _Chat message..."
+msgstr ""
+
+#: src/gossip-app.c:404
+msgid "_Quit"
+msgstr ""
+
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:434
+#: src/gossip-app.c:472
 msgid "translator_credits"
 msgstr "Vincent van Adrighem"
 
-#: src/gossip-app.c:445
+#: src/gossip-app.c:484
 msgid "A Jabber Client for GNOME"
 msgstr ""
 
-#: src/gossip-app.c:566
+#: src/gossip-app.c:492
+msgid "Gossip Website"
+msgstr ""
+
+#: src/gossip-app.c:616
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 
-#: src/gossip-app.c:571
+#: src/gossip-app.c:621
 msgid "_Chat"
 msgstr ""
 
-#: src/gossip-app.c:1158
+#: src/gossip-app.c:1075
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr ""
 
-#: src/gossip-app.c:1475
+#: src/gossip-app.c:1662
 msgid "Gossip, Jabber Client"
 msgstr ""
 
-#: src/gossip-chat.c:501
+#: src/gossip-app.c:1864
+#, c-format
+msgid "New message from %s"
+msgstr ""
+
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr ""
 
-#: src/gossip-chat.c:506 src/gossip-group-chat.c:633
-#: src/gossip-group-chat.c:737
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
+#: src/gossip-group-chat.c:901
 msgid "Details:"
+msgstr ""
+
+#.
+#. Translators: This is for the title of the chat window. The
+#. first %s is an "* " that gets displayed if the chat window has
+#. new messages in it. (Please complain if this doesn't work well
+#. in your locale.)
+#.
+#: src/gossip-chat.c:846
+#, c-format
+msgid "%sChat - %s"
+msgstr ""
+
+#.
+#. Translators: See comment for "%sChat - %s".
+#.
+#: src/gossip-chat.c:851
+#, c-format
+msgid "%sChat"
 msgstr ""
 
 #: src/gossip-contact-info.c:350
@@ -170,12 +214,12 @@ msgstr ""
 msgid "Contact Information for %s"
 msgstr ""
 
-#: src/gossip-group-chat.c:628
+#: src/gossip-group-chat.c:793
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr ""
 
-#: src/gossip-group-chat.c:732
+#: src/gossip-group-chat.c:896
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr ""
@@ -232,27 +276,27 @@ msgstr "Reden:"
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
 #.
-#: src/gossip-roster.c:100
+#: src/gossip-roster.c:101
 msgid "Offline "
 msgstr ""
 
-#: src/gossip-roster.c:101
+#: src/gossip-roster.c:102
 msgid "Others"
 msgstr "Andere"
 
-#: src/gossip-roster.c:194
+#: src/gossip-roster.c:195
 msgid "/Contact _Information"
 msgstr ""
 
-#: src/gossip-roster.c:202
+#: src/gossip-roster.c:203
 msgid "/Re_name contact"
 msgstr ""
 
-#: src/gossip-roster.c:218
+#: src/gossip-roster.c:219
 msgid "/_Remove contact"
 msgstr ""
 
-#: src/gossip-roster.c:421
+#: src/gossip-roster.c:424
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -260,7 +304,7 @@ msgid ""
 "from your contact list?"
 msgstr ""
 
-#: src/gossip-roster.c:519
+#: src/gossip-roster.c:522
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -288,11 +332,16 @@ msgid ""
 "<b>%s</b>."
 msgstr ""
 
-#: src/gossip-utils.c:1208
+#: src/gossip-utils.c:762
+#, c-format
+msgid "Could not open the address \"%s\": %s"
+msgstr ""
+
+#: src/gossip-utils.c:1219
 msgid "Please enter your password:"
 msgstr ""
 
-#: src/gossip-utils.c:1210
+#: src/gossip-utils.c:1221
 msgid "Remember Password?"
 msgstr ""
 

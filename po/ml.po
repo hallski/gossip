@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version:gossip\n"
-"POT-Creation-Date: 2003-06-06 03:56+0200\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-07-05 10:29+0530\n"
 "Last-Translator: FSF-India <locale@gnu.org.in>\n"
 "Language-Team: Malayalam <locale@gnu.org.in>\n"
@@ -176,17 +176,17 @@ msgstr ""
 msgid "Gossip, Jabber Client"
 msgstr ""
 
-#: src/gossip-app.c:1860
+#: src/gossip-app.c:1864
 #, c-format
 msgid "New message from %s"
 msgstr ""
 
-#: src/gossip-chat.c:642
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr ""
 
-#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr ""
@@ -197,7 +197,7 @@ msgstr ""
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:807
+#: src/gossip-chat.c:846
 #, c-format
 msgid "%sChat - %s"
 msgstr ""
@@ -205,7 +205,7 @@ msgstr ""
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:851
 #, c-format
 msgid "%sChat"
 msgstr ""

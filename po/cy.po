@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-10 13:50+0100\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-08-10 13:51+0100\n"
 "Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
@@ -180,17 +180,17 @@ msgstr "Fe gafoch eich datgysylltu o'r gweinydd. A hoffech ailgysylltu?"
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Cleient Jabber"
 
-#: src/gossip-app.c:1860
+#: src/gossip-app.c:1864
 #, c-format
 msgid "New message from %s"
 msgstr "Neges newydd o %s"
 
-#: src/gossip-chat.c:642
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Digwyddod gwall wrth sgwrsio efo %s."
 
-#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Manylion:"
@@ -201,7 +201,7 @@ msgstr "Manylion:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:807
+#: src/gossip-chat.c:846
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sSgwrs - %s"
@@ -209,7 +209,7 @@ msgstr "%sSgwrs - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:851
 #, c-format
 msgid "%sChat"
 msgstr "%sSgwrs"

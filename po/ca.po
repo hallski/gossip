@@ -6,14 +6,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.4\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-10 23:16+0200\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-08-10 23:17+0200\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:43
 msgid "Gossip"
@@ -185,17 +185,17 @@ msgstr "Vos heu desconnectat del servidor. Voleu reconnectar?"
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, client de Jabber"
 
-#: src/gossip-app.c:1860
+#: src/gossip-app.c:1864
 #, c-format
 msgid "New message from %s"
 msgstr "Nou missatge de %s"
 
-#: src/gossip-chat.c:642
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "S'ha produït un error mentre es xerrava amb %s."
 
-#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Detalls:"
@@ -206,7 +206,7 @@ msgstr "Detalls:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:807
+#: src/gossip-chat.c:846
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sXerrada - %s"
@@ -214,7 +214,7 @@ msgstr "%sXerrada - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:851
 #, c-format
 msgid "%sChat"
 msgstr "%sXerrada"

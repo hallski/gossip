@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-08-08 02:17+0200\n"
+"POT-Creation-Date: 2003-08-15 10:57+0200\n"
 "PO-Revision-Date: 2003-08-08 02:19+0200\n"
 "Last-Translator: Дејан Матијевић <dejan@ns.sympatico.ca>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
@@ -185,17 +185,17 @@ msgstr "Ви сте развезани са сервера.  Желители д
 msgid "Gossip, Jabber Client"
 msgstr "Чаврљање, Џабер Клијент"
 
-#: src/gossip-app.c:1860
+#: src/gossip-app.c:1864
 #, c-format
 msgid "New message from %s"
 msgstr "Нова порука од %s"
 
-#: src/gossip-chat.c:642
+#: src/gossip-chat.c:680
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Догодила се грешка приликом чаврљање са %s."
 
-#: src/gossip-chat.c:647 src/gossip-group-chat.c:798
+#: src/gossip-chat.c:685 src/gossip-group-chat.c:798
 #: src/gossip-group-chat.c:901
 msgid "Details:"
 msgstr "Детаљи:"
@@ -206,7 +206,7 @@ msgstr "Детаљи:"
 #. new messages in it. (Please complain if this doesn't work well
 #. in your locale.)
 #.
-#: src/gossip-chat.c:807
+#: src/gossip-chat.c:846
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sЧаврљање - %s"
@@ -215,7 +215,7 @@ msgstr "%sЧаврљање - %s"
 #.
 #. Translators: See comment for "%sChat - %s".
 #.
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:851
 #, c-format
 msgid "%sChat"
 msgstr "%sЧаврљање"
