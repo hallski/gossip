@@ -29,10 +29,20 @@
 #include "gossip-contact-info.h"
 #include "gossip-marshal.h"
 #include "gossip-utils.h"
+#include "gossip-stock.h"
 #include "gossip-sound.h"
 #include "gossip-roster-old.h"
 
 #define d(x)
+
+typedef enum {
+        GOSSIP_STATUS_AVAILABLE,
+        GOSSIP_STATUS_FREE,
+        GOSSIP_STATUS_AWAY,
+        GOSSIP_STATUS_EXT_AWAY,
+        GOSSIP_STATUS_BUSY,
+        GOSSIP_STATUS_OFFLINE
+} GossipStatus;
 
 typedef struct {
 	GossipJID    *jid;
@@ -130,7 +140,6 @@ static void     roster_row_activated_cb      (GtkTreeView       *treeview,
 					      GtkTreeViewColumn *col,
 					      gpointer           data);
 static GtkTreeStore *roster_create_store     (GossipRosterOld      *roster);
-static void          roster_create_pixbufs   (GossipRosterOld      *roster);
 static GossipRosterOldItem *
 roster_get_selected_item                     (GossipRosterOld      *roster);
 static void     roster_reset_connection      (GossipRosterOld      *roster);
@@ -185,6 +194,10 @@ static void     roster_item_free             (GossipRosterOldItem  *item);
 static gboolean roster_str_equal             (gconstpointer      a,
 					      gconstpointer      b);
 static guint    roster_str_hash              (gconstpointer      key);
+static GdkPixbuf * roster_get_pixbuf_from_stock (GossipRosterOld *roster,
+						 const gchar     *stock);
+static GdkPixbuf *roster_get_pixbuf_from_status (GossipRosterOld *roster,
+						 GossipStatus     status);
 
 
 
@@ -228,8 +241,6 @@ static GtkItemFactoryEntry menu_items[] = {
 
 static GObjectClass *parent_class;
 static guint signals[LAST_SIGNAL];
-static GdkPixbuf *status_pixbufs[GOSSIP_STATUS_OFFLINE  + 1];
-static GdkPixbuf *flash_pixbuf = NULL;
 
 
 GType
@@ -297,7 +308,6 @@ roster_init (GossipRosterOld *roster)
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (roster), FALSE);
 
 	store = roster_create_store (roster);
-	roster_create_pixbufs (roster);
 	
 	gtk_tree_view_set_model (GTK_TREE_VIEW (roster), 
 				 GTK_TREE_MODEL (store));
@@ -716,25 +726,6 @@ roster_create_store (GossipRosterOld *roster)
 	return store;
 }
 
-static void
-roster_create_pixbufs (GossipRosterOld *roster)
-{
-	gint i;
-	
-	if (flash_pixbuf) {
-		return;
-	}
-	
-	for (i = 0; i <= GOSSIP_STATUS_OFFLINE; i++) {
-		const gchar *filename;
-		filename = gossip_status_to_icon_filename (i);
-		status_pixbufs[i] = gdk_pixbuf_new_from_file (filename,
-							      NULL);
-	}
-
-	flash_pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/message.png", NULL); 
-}
-
 static GossipRosterOldItem *
 roster_get_selected_item (GossipRosterOld *roster)
 {
@@ -967,7 +958,7 @@ roster_presence_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE:
 		/* FIXME: Do we need to handle this here? */
 
-		g_print ("Roster got 'unsubscribe'\n");
+		d(g_print ("Roster got 'unsubscribe'\n"));
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 
 	case LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED:
@@ -1040,8 +1031,29 @@ roster_presence_handler (LmMessageHandler *handler,
 	if (node) {
 		show = node->value;
 	}
+
+	if (type == LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED) {
+		status = GOSSIP_STATUS_OFFLINE;
+	} else {
+		if (!show || !show[0]) {
+			status = GOSSIP_STATUS_AVAILABLE;
+		}
+		else if (strcmp (show, "busy") == 0) {
+			status = GOSSIP_STATUS_BUSY;
+		}
+		else if (strcmp (show, "away") == 0) {
+			status = GOSSIP_STATUS_AWAY;
+		}
+		else if (strcmp (show, "xa") == 0) {
+			status = GOSSIP_STATUS_EXT_AWAY;
+		}
+		else if (strcmp (show, "chat") == 0) {
+			status = GOSSIP_STATUS_AVAILABLE;
+		} else {
+			status = GOSSIP_STATUS_AVAILABLE;
+		}
+	}
 	
-	status = gossip_utils_get_status_from_type_show (type, show);
 	item->status = status;
 
 	if (status == GOSSIP_STATUS_OFFLINE) {
@@ -1373,15 +1385,17 @@ roster_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 	}
 
 	if (item->flash_on) {
-		pixbuf = flash_pixbuf;
+		pixbuf = roster_get_pixbuf_from_stock (roster, GOSSIP_STOCK_MESSAGE);
 	} else {
-		pixbuf = status_pixbufs[item->status];
+		pixbuf = roster_get_pixbuf_from_status (roster, item->status);
 	}
 	
 	g_object_set (cell,
 		      "visible", TRUE,
  		      "pixbuf", pixbuf,
 		      NULL);
+
+	g_object_unref (pixbuf);
 }
 
 static void
@@ -1528,7 +1542,7 @@ gossip_roster_old_get_nick_from_jid (GossipRosterOld *roster, GossipJID *jid)
 
 GdkPixbuf *
 gossip_roster_old_get_status_pixbuf_for_jid (GossipRosterOld *roster,
-					 GossipJID    *jid)
+					     GossipJID    *jid)
 {
 	GossipRosterOldPriv *priv;
 	GossipRosterOldItem *item;
@@ -1542,7 +1556,7 @@ gossip_roster_old_get_status_pixbuf_for_jid (GossipRosterOld *roster,
 				    gossip_jid_get_without_resource (jid));
 	
 	if (item) {
-		return status_pixbufs[item->status];
+		return roster_get_pixbuf_from_status (roster, item->status);
 	}
 	
 	return NULL;
@@ -1732,4 +1746,42 @@ gossip_roster_old_flash_jid (GossipRosterOld *roster,
 
 		roster_jid_updated (roster, jid);
 	}
+}
+
+static GdkPixbuf *
+roster_get_pixbuf_from_stock (GossipRosterOld *roster,
+			      const gchar     *stock)
+{
+	return gtk_widget_render_icon (GTK_WIDGET (roster),
+				       stock,
+				       GTK_ICON_SIZE_MENU,
+				       NULL);
+}
+
+static GdkPixbuf *
+roster_get_pixbuf_from_status (GossipRosterOld *roster,
+			       GossipStatus     status)
+{
+	const gchar *stock = NULL;
+	
+	switch (status) {
+	case GOSSIP_STATUS_AVAILABLE:
+	case GOSSIP_STATUS_FREE:
+		stock = GOSSIP_STOCK_AVAILABLE;
+		break;
+	case GOSSIP_STATUS_OFFLINE:
+		stock = GOSSIP_STOCK_OFFLINE;
+		break;
+	case GOSSIP_STATUS_BUSY:
+		stock = GOSSIP_STOCK_BUSY;
+		break;
+	case GOSSIP_STATUS_AWAY:
+		stock = GOSSIP_STOCK_AWAY;
+		break;
+	case GOSSIP_STATUS_EXT_AWAY:
+		stock = GOSSIP_STOCK_EXT_AWAY;
+		break;
+	}
+
+	return roster_get_pixbuf_from_stock (roster, stock);
 }

@@ -53,6 +53,8 @@ gossip_SOURCES = 				\
 	gossip-sound.h				\
 	gossip-startup-druid.c			\
 	gossip-startup-druid.h			\
+	gossip-stock.c				\
+	gossip-stock.h				\
 	gossip-utils.c				\
 	gossip-utils.h				\
 						\

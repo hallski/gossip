@@ -34,6 +34,7 @@
 #include "gossip-chat.h"
 #include "gossip-app.h"
 #include "gossip-contact-info.h"
+#include "gossip-stock.h"
 #include "disclosure-widget.h"
 
 #define d(x) 
@@ -306,10 +307,12 @@ chat_create_gui (GossipChat *chat)
 	gtk_image_set_from_file (GTK_IMAGE (chat->composing_image),
 				 IMAGEDIR "/typing.png");
 	
-	pixbuf = gossip_roster_old_get_status_pixbuf_for_jid (roster, chat->jid);
+	pixbuf = gossip_roster_old_get_status_pixbuf_for_jid (roster,
+							      chat->jid);
 	if (pixbuf) {
 		gtk_image_set_from_pixbuf (GTK_IMAGE (chat->status_image),
 					   pixbuf);
+		g_object_unref (pixbuf);
 	}
 
 	if (chat->nick) {
@@ -779,7 +782,7 @@ chat_presence_handler (LmMessageHandler *handler,
 	const gchar   *show = NULL;
 	const gchar   *from;
 	GossipJID     *jid;
-	const gchar   *filename = NULL; 
+	const gchar   *icon;
 	LmMessageNode *node;
 	
 	type = lm_message_node_get_attribute (m->node, "type");
@@ -801,17 +804,18 @@ chat_presence_handler (LmMessageHandler *handler,
 	}
 
 	if (strcmp (type, "unavailable") == 0 || strcmp (type, "error") == 0) {
-		filename = gossip_status_to_icon_filename (GOSSIP_STATUS_OFFLINE);
-
+		icon = GOSSIP_STOCK_OFFLINE;
+		
 		chat_composing_remove_timeout (chat);
 		chat->send_composing_events = FALSE;
 		chat_show_composing_icon (chat, FALSE);
-	}
-	else if (strcmp (type, "available") == 0) {
-		filename = gossip_utils_get_show_filename (show);
+	} else {
+		icon = gossip_get_icon_for_show_string (show);
 	}
 
-	gtk_image_set_from_file (GTK_IMAGE (chat->status_image), filename);
+	gtk_image_set_from_stock (GTK_IMAGE (chat->status_image),
+				  icon,
+				  GTK_ICON_SIZE_MENU);
 
 	gtk_tooltips_set_tip (chat->tooltips,
 			      chat->from_eventbox,

@@ -31,10 +31,11 @@
 #include <libgnome/gnome-url.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
+#include "gossip-stock.h"
 #include "gossip-utils.h"
 
 
-#define DINGUS "(((mailto|news|telnet|nttp|file|http|ftp|https)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
+#define DINGUS "(((mailto|news|telnet|nttp|file|http|ftp|https|dav)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
 
 static regex_t dingus;
 extern GConfClient *gconf_client;
@@ -50,123 +51,6 @@ static gboolean utils_text_view_event_cb    (GtkTextView    *view,
 static void     utils_insert_with_emoticons (GtkTextBuffer *buf,
 					     GtkTextIter   *iter, 
 					     const gchar   *text);
-
-void
-gossip_status_menu_setup (GtkWidget     *option_menu,
-			  GCallback      func,
-			  gpointer       user_data,
-			  gconstpointer  str1, ...)
-{
-	GtkWidget     *menu;
-	GtkWidget     *item;
-	gint           i;
-	va_list        args;
-	gconstpointer  str;
-	gconstpointer  imagefile;
-	gint           type;
-	GtkWidget     *image;
-
-	GtkWidget     *hbox;
-	GtkWidget     *label;
-	
-       	menu = gtk_option_menu_get_menu (GTK_OPTION_MENU (option_menu));
-	if (menu) {
-		gtk_widget_destroy (menu);
-	}
-	
-	menu = gtk_menu_new ();
-
-	va_start (args, str1);
-	for (str = str1, i = 0; str != NULL; str = va_arg (args, gpointer), i++) {
-		imagefile = va_arg (args, gpointer);
-
-		if (((gchar *)str)[0] == 0) {
-			/* Separator item. */
-			item = gtk_separator_menu_item_new ();
-		} else {
-			/* Pack our own image menu item since we won't get the
-			 * image in the active option menu item
-			 * otherwise. (Using image menu items only shows the
-			 * icon when the menu is popped up, not as the active
-			 * menu item in the option menu otherwise.)
-			 */
-			hbox = gtk_hbox_new (FALSE, 4);
-			gtk_widget_show (hbox);
-						
-			image = gtk_image_new_from_file (imagefile);
-			gtk_widget_show (image);
-
-			gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, TRUE, 0);
-			
-			label = gtk_label_new (str);
-			gtk_widget_show (label);
-			gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
-			
-			item = gtk_menu_item_new ();
-			
-			gtk_container_add (GTK_CONTAINER (item), hbox);
-		}
-		
-		gtk_widget_show (item);
-		
-		gtk_menu_append (GTK_MENU (menu), item);
-
-		type = va_arg (args, gint);
-		
-		g_object_set_data (G_OBJECT (item),
-				   "data",
-				   GINT_TO_POINTER (type));
-		if (func) {
-			g_signal_connect (item,
-					  "activate",
-					  func,
-					  user_data);
-		}
-	}
-	va_end (args);
-
-	gtk_widget_show (menu);
-	gtk_option_menu_set_menu (GTK_OPTION_MENU (option_menu), menu);
-}
-
-void
-gossip_status_menu_set_status (GtkWidget    *option_menu,
-			       GossipStatus  status)
-{
-	GtkWidget *menu;
-	GtkWidget *item;
-	GList     *children, *l;
-	gint       i;
-	gpointer   ptr = GINT_TO_POINTER (status);
-	
-       	menu = gtk_option_menu_get_menu (GTK_OPTION_MENU (option_menu));
-
-	children = GTK_MENU_SHELL (menu)->children;
-	for (i = 0, l = children; l; i++, l = l->next) {
-		item = l->data;
-
-		if (ptr == g_object_get_data (G_OBJECT (item), "data")) {
-			gtk_option_menu_set_history (GTK_OPTION_MENU (option_menu), i);
-			break;
-		}
-	}
-}
-
-GossipStatus
-gossip_status_menu_get_status (GtkWidget *option_menu)
-{
-	GtkWidget    *menu;
-	GtkWidget    *item;
-	GossipStatus  status;
-	
-       	menu = gtk_option_menu_get_menu (GTK_OPTION_MENU (option_menu));
-
-	item = gtk_menu_get_active (GTK_MENU (menu));
-
-	status = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (item), "data"));
-
-	return status;
-}
 
 void
 gossip_option_menu_setup (GtkWidget     *option_menu,
@@ -248,6 +132,35 @@ gossip_option_menu_get_history (GtkOptionMenu *option_menu)
 	return g_object_get_data (G_OBJECT (item), "data");
 }
 
+static void
+tagify_bold_labels (GladeXML *xml)
+{
+        const gchar *str;
+        gchar       *s;
+        GtkWidget   *label;
+	GList       *labels, *l;
+
+	labels = glade_xml_get_widget_prefix (xml, "boldlabel");
+
+	for (l = labels; l; l = l->next) {
+		label = l->data;
+
+		if (!GTK_IS_LABEL (label)) {
+			g_warning ("Not a label, check your glade file.");
+			continue;
+		}
+ 
+		str = gtk_label_get_text (GTK_LABEL (label));
+
+		s = g_strdup_printf ("<b>%s</b>", str);
+		gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+		gtk_label_set_label (GTK_LABEL (label), s);
+		g_free (s);
+	}
+
+	g_list_free (labels);
+}
+
 static GladeXML *
 get_glade_file (const gchar *filename,
 		const gchar *root,
@@ -257,38 +170,30 @@ get_glade_file (const gchar *filename,
 	GladeXML   *gui;
 	const char *name;
 	GtkWidget **widget_ptr;
-	GList      *ptrs, *l;
 
-	if (!(gui = glade_xml_new (filename, root, domain))) {
+	gui = glade_xml_new (filename, root, domain);
+	if (!gui) {
 		g_warning ("Couldn't find necessary glade file '%s'", filename);
 		return NULL;
 	}
 
-	ptrs = NULL;
 	for (name = first_required_widget; name; name = va_arg (args, char *)) {
 		widget_ptr = va_arg (args, void *);
 		
 		*widget_ptr = glade_xml_get_widget (gui, name);
-
+		
 		if (!*widget_ptr) {
-			g_warning ("Glade file '%s' is missing widget '%s', aborting",
+			g_warning ("Glade file '%s' is missing widget '%s'.",
 				   filename, name);
-			
-			for (l = ptrs; l; l = l->next) {
-				*((gpointer *)l->data) = NULL;
-			}
-			g_list_free (ptrs);
-			g_object_unref (gui);
-			return NULL;
-		} else {
-			ptrs = g_list_prepend (ptrs, widget_ptr);
+			continue;
 		}
 	}
 
+	tagify_bold_labels (gui);
+	
 	return gui;
 }
 
-/* Stolen and modified from eel: */
 void
 gossip_glade_get_file_simple (const gchar *filename,
 			      const gchar *root,
@@ -1061,112 +966,6 @@ utils_insert_with_emoticons (GtkTextBuffer *buf,
 }
 
 const gchar *
-gossip_status_to_icon_filename (GossipStatus status)
-{
-	switch (status) {
-	case GOSSIP_STATUS_OFFLINE:
-		return IMAGEDIR "/gossip-offline.png";
-	case GOSSIP_STATUS_AVAILABLE:
-		return IMAGEDIR "/gossip-online.png";
-	case GOSSIP_STATUS_AWAY:
-		return IMAGEDIR "/gossip-away.png";
-	case GOSSIP_STATUS_EXT_AWAY:
-		return IMAGEDIR "/gossip-extended-away.png";
-	case GOSSIP_STATUS_BUSY:
-		return IMAGEDIR "/gossip-busy.png";
-	case GOSSIP_STATUS_FREE:
-		return IMAGEDIR "/gossip-chat.png";
-	default:
-		g_assert_not_reached ();
-	}
-
-	return NULL;
-}
-
-const gchar *
-gossip_status_to_string (GossipStatus status)
-{
-	switch (status) {
-	case GOSSIP_STATUS_AVAILABLE:
-		return NULL;
-		break;
-	case GOSSIP_STATUS_FREE:
-		return "chat";
-		break;
-	case GOSSIP_STATUS_AWAY:
-		return "away";
-		break;
-	case GOSSIP_STATUS_EXT_AWAY:
-		return "xa";
-		break;
-	case GOSSIP_STATUS_BUSY:
-		return "dnd";
-		break;
-	default:
-		return NULL;
-	}
-	
-	return NULL;
-}
-#if 0
-gboolean
-gossip_utils_is_valid_jid (const gchar *jid)
-{
-	const gchar *at;
-	const gchar *dot;
-	gint         jid_len;
-	
-	if (!jid || strcmp (jid, "") == 0) {
-		return FALSE;
-	}
-
-	jid_len = strlen (jid);
-
-	at = strchr (jid, '@');
-	if (!at || at == jid || at == jid + jid_len - 1) {
-		return FALSE;
-	}
-	
-	dot = strchr (at, '.');
-	if (dot == at + 1 
-	    || dot == jid + jid_len - 1 
-	    || dot == jid + jid_len - 2) {
-		return FALSE;
-	}
-
-	dot = strrchr (jid, '.');
-	if (dot == jid + jid_len - 1 ||
-	    dot == jid + jid_len - 2) {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-#endif
-
-const gchar *
-gossip_utils_get_show_filename (const gchar *show)
-{
-	if (!show) {
-		return IMAGEDIR "/gossip-online.png";
-	}
-	else if (strcmp (show, "chat") == 0) {
-		return IMAGEDIR "/gossip-chat.png";
-	}
-	else if (strcmp (show, "away") == 0) {
-		return IMAGEDIR "/gossip-away.png";
-	}
-	else if (strcmp (show, "xa") == 0) {
-		return IMAGEDIR "/gossip-extended-away.png";
-	}
-	else if (strcmp (show, "dnd") == 0) {
-		return IMAGEDIR "/gossip-busy.png";
-	}
-	
-	return IMAGEDIR "/gossip-online.png";
-}
-
-const gchar *
 gossip_utils_get_timestamp_from_message (LmMessage *m)
 {
 	LmMessageNode *node;
@@ -1186,9 +985,10 @@ gossip_utils_get_timestamp_from_message (LmMessage *m)
 	return timestamp;
 }
 
-GossipStatus
-gossip_utils_get_status_from_type_show (LmMessageSubType  type,
-					const gchar      *show)
+/*
+GdkPixbuf *
+gossip_get_pixbuf_from_type_and_show (LmMessageSubType  type,
+				      const gchar      *show)
 {
 	if (type == LM_MESSAGE_SUB_TYPE_UNAVAILABLE) {
 		return GOSSIP_STATUS_OFFLINE;
@@ -1198,7 +998,7 @@ gossip_utils_get_status_from_type_show (LmMessageSubType  type,
 		return GOSSIP_STATUS_AVAILABLE;
 	}
 	else if (strcmp (show, "chat") == 0) {
-		return GOSSIP_STATUS_FREE;
+		return GOSSIP_STATUS_AVAILABLE;
 	}
 	else if (strcmp (show, "away") == 0) {
 		return GOSSIP_STATUS_AWAY;
@@ -1212,7 +1012,7 @@ gossip_utils_get_status_from_type_show (LmMessageSubType  type,
 	
 	return GOSSIP_STATUS_AVAILABLE;
 }
-
+*/
 static void
 password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
 {
@@ -1268,4 +1068,44 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 	gtk_widget_destroy (dialog);
 
 	return password;
+}
+
+const gchar *
+gossip_get_icon_for_show_string (const gchar *str)
+{
+	if (!str || !str[0]) {
+		return GOSSIP_STOCK_AVAILABLE;
+	}
+	else if (strcmp (str, "dnd") == 0) {
+		return GOSSIP_STOCK_BUSY;
+	}
+	else if (strcmp (str, "away") == 0) {
+		return GOSSIP_STOCK_AWAY;
+	}
+	else if (strcmp (str, "xa") == 0) {
+		return GOSSIP_STOCK_EXT_AWAY;
+	}
+	/* We don't support chat, so treat it like available. */
+	else if (strcmp (str, "chat") == 0) {
+		return GOSSIP_STOCK_AVAILABLE;
+	}
+
+	return GOSSIP_STOCK_AVAILABLE;
+}
+
+const gchar *
+gossip_show_to_string (GossipShow show)
+{
+	switch (show) {
+	case GOSSIP_SHOW_BUSY:
+		return "dnd";
+	case GOSSIP_SHOW_AWAY:
+		return "away";
+	case GOSSIP_SHOW_EXT_AWAY:
+		return "xa";
+	case GOSSIP_SHOW_AVAILABLE:
+		return NULL;
+	}
+
+	return NULL;
 }

@@ -78,7 +78,7 @@
       <applyto>/apps/gossip/auto_away/idle_time</applyto>
       <owner>gossip</owner>
       <type>int</type>
-      <default>30</default>
+      <default>5</default>
       <locale name="C">
          <short>Auto away time</short>
          <long>
@@ -93,7 +93,7 @@
       <applyto>/apps/gossip/auto_away/extended_idle_time</applyto>
       <owner>gossip</owner>
       <type>int</type>
-      <default>60</default>
+      <default>30</default>
       <locale name="C">
          <short>Extended autoaway time</short>
          <long>

@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003 Imendio HB
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,17 +18,18 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_GROUP_CHAT_H__
-#define __GOSSIP_GROUP_CHAT_H__
+#ifndef __GOSSIP_STOCK_H__
+#define __GOSSIP_STOCK_H__
 
-#include "gossip-jid.h"
-#include "gossip-app.h"
+#define GOSSIP_STOCK_OFFLINE    "gossip-offline"
+#define GOSSIP_STOCK_AVAILABLE  "gossip-available"
+#define GOSSIP_STOCK_BUSY       "gossip-busy"
+#define GOSSIP_STOCK_AWAY       "gossip-away"
+#define GOSSIP_STOCK_EXT_AWAY   "gossip-extended-away"
+#define GOSSIP_STOCK_MESSAGE    "gossip-message"
+#define GOSSIP_STOCK_MESSAGE    "gossip-message"
+#define GOSSIP_STOCK_TYPING     "gossip-typing"
 
-typedef struct _GossipGroupChat GossipGroupChat;
+void gossip_stock_init (void);
 
-GossipGroupChat *gossip_group_chat_new      (GossipJID   *jid,
-					     const gchar *nick);
-void             gossip_group_chat_set_show (GossipShow   show);
-
-
-#endif /* __GOSSIP_GROUP_CHAT_H__ */
+#endif /* __GOSSIP_STOCK_ICONS_H__ */

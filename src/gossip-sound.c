@@ -26,17 +26,19 @@
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
-/* Use gconf pref for sound preferences later. */
-
 extern GConfClient *gconf_client;
 
 void
 gossip_sound_play (GossipSound sound)
 {
-	gboolean      enabled, silent;
-	GossipStatus  status;
-	const gchar  *file;
-	gchar        *str;
+	gboolean     enabled, silent;
+	GossipShow   show;
+	const gchar *file;
+	gchar       *str;
+
+	if (!gossip_app_is_connected ()) {
+		return;
+	}
 	
 	enabled = gconf_client_get_bool (gconf_client,
 					 GCONF_PATH "/sound/play_sounds",
@@ -50,16 +52,14 @@ gossip_sound_play (GossipSound sound)
 	}
 
 	if (silent) {
-		status = gossip_app_get_status ();
-		switch (status) {
-		case GOSSIP_STATUS_AVAILABLE:
-		case GOSSIP_STATUS_FREE:
+		show = gossip_app_get_show ();
+		switch (show) {
+		case GOSSIP_SHOW_AVAILABLE:
 			break;
 			
-		case GOSSIP_STATUS_BUSY:
-		case GOSSIP_STATUS_AWAY:
-		case GOSSIP_STATUS_EXT_AWAY:
-		case GOSSIP_STATUS_OFFLINE:
+		case GOSSIP_SHOW_BUSY:
+		case GOSSIP_SHOW_AWAY:
+		case GOSSIP_SHOW_EXT_AWAY:
 			return;
 
 		default:

@@ -20,7 +20,6 @@ src/gossip-startup-druid.c
 src/gossip-utils.c
 ui/chat.glade
 ui/connect.glade
-ui/druid.glade
 ui/group-chat.glade
 ui/main.glade
 

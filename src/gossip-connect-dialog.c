@@ -158,7 +158,7 @@ gossip_connect_dialog_show (GossipApp *app)
 				       GTK_SIZE_GROUP_HORIZONTAL,
 				       "server_label_label",
 				       "resource_label",
-				       "priority_label",
+				       /*"priority_label",*/
 				       NULL);
 
 	gtk_widget_show (dialog->dialog);

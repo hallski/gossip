@@ -133,9 +133,14 @@ hookup_spin_button (GossipPreferences *preferences,
 		    GtkWidget         *widget)
 {
 	guint id;
-	
+
 	g_return_if_fail (GTK_IS_SPIN_BUTTON (widget));
 
+	/* Silence warning. */
+	if (0) {
+		hookup_spin_button (preferences, key, widget);
+	}
+	
 	set_int_from_gconf (key, widget);
 
 	g_object_set_data_full (G_OBJECT (widget), "key",
@@ -254,7 +259,7 @@ hookup_sensitivity_controller (GossipPreferences *preferences,
 static void
 preferences_setup_widgets (GossipPreferences *preferences)
 {
-	hookup_toggle_button (preferences,
+/*	hookup_toggle_button (preferences,
 			      GCONF_PATH "/auto_away/enabled",
 			      preferences->auto_away_checkbutton);
 	
@@ -271,7 +276,7 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	hookup_sensitivity_controller (preferences,
 				       GCONF_PATH "/auto_away/enabled",
 				       preferences->extended_away_spinbutton);
-	
+*/
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/sound/play_sounds",
 			      preferences->sound_checkbutton);
@@ -306,9 +311,9 @@ gossip_preferences_show (GossipApp *app)
 				     "preferences_dialog",
 				     NULL,
 				     "preferences_dialog", &preferences->dialog,
-				     "auto_away_checkbutton", &preferences->auto_away_checkbutton,
+				     /*"auto_away_checkbutton", &preferences->auto_away_checkbutton,
 				     "away_spinbutton", &preferences->away_spinbutton,
-				     "extended_away_spinbutton", &preferences->extended_away_spinbutton,
+				     "extended_away_spinbutton", &preferences->extended_away_spinbutton,*/
 				     "sound_checkbutton", &preferences->sound_checkbutton,
 				     "silent_checkbutton", &preferences->silent_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,

@@ -30,6 +30,7 @@
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
 #include "gossip-preferences.h"
+#include "gossip-stock.h"
 #include "gossip-app.h"
 
 GConfClient *gconf_client = NULL;
@@ -162,6 +163,7 @@ main (int argc, char *argv[])
 		gossip_account_unref (account);
 	}
 
+	gossip_stock_init ();
 	setup_default_window_icon ();
 	gossip_app_create ();
 	

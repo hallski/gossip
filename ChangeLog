@@ -1,5 +1,63 @@
 2003-08-29  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_subscription_request_dialog_response_cb):
+	Remove markup from translations. Don't try to add contact if the
+	user deferred.
+
+	* src/gossip-stock.[ch]:
+	* src/Makefile.am: Add gossip-stock.
+
+	* src/gossip-add-contact.c: (add_contact_prepare_page_3),
+	(add_contact_prepare_page_last): Remove unnecessary markup.
+
+	* src/gossip-app.c: Clean up status handling and separate the
+	jabber-speak "show" from online/offline handling. Implement the
+	design for setting status that was discussed on the list. It's not
+	completed yet, but a good start to work from.
+
+	* src/gossip-chat.c: (chat_create_gui), (chat_presence_handler):
+	* src/gossip-group-chat.c: (group_chat_presence_handler),
+	(set_status_foreach), (gossip_group_chat_set_show): Use stock icons.
+
+	* src/gossip-main.c: (main): Register stock icons.
+
+	* src/gossip-preferences.c: (hookup_spin_button),
+	(preferences_setup_widgets), (gossip_preferences_show): Remove
+	autoaway preferences.
+	
+	* src/gossip-roster-old.c: Add plenty of ugly hacks to work with
+	the new status handling and stock icons. No use to do it nicely
+	since Mikael is working on a new roster anyway.
+
+	* src/gossip-sound.c: (gossip_sound_play): Make this work with the
+	new status handling.
+
+	* src/gossip-utils.c: (tagify_bold_labels), (get_glade_file):
+	Experiment a bit with getting less markup in translated strings.
+
+	* ui/main.glade: Remove some old crap that we don't use, to get
+	less strings to translate. Also try out the tagify stuff on a few
+	strings.
+
+	* ui/connect.glade: Tweak padding a bit and remove hidden
+	widgets. Make the connect button default button and make the entry
+	active the default.
+
+	* ui/pixmaps/*: Rename images and play around with some new ones
+	for status icons. Needs tweaking or replacing but still better
+	than the old ones, in that the different statuses are easier to
+	tell apart.
+
+2003-08-29  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-utils.c (tagify_bold_labels): Try this out. May work
+	pretty well.
+
+	* ui/main.glade: Try tagifying with a few dialogs.
+	
+	* gossip.schemas.in: Change default autoaway times to 5 and 30
+	minutes.
+
         * ui/main.glade: Don't mark test string as translatable.
 
 2003-08-29  Richard Hult  <richard@imendio.com>

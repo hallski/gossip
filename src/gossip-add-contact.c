@@ -262,16 +262,12 @@ add_contact_prepare_page_3 (GnomeDruidPage   *page,
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
-	gchar *str, *tmp_str;
-	
-	tmp_str = g_strdup_printf ("<b>%s</b>",
-				   gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry)));
+	gchar *str;
 	
 	str = g_strdup_printf (_("What request message do you want to send to %s?"),
-			       tmp_str);
-	g_free (tmp_str);
-
-	gtk_label_set_markup (GTK_LABEL (contact->three_message_label), str);
+			       gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry)));
+	
+	gtk_label_set_text (GTK_LABEL (contact->three_message_label), str);
 	g_free (str);
 }
 
@@ -280,9 +276,8 @@ add_contact_prepare_page_last (GnomeDruidPage   *page,
 			       GnomeDruid       *druid,
 			       GossipAddContact *contact)
 {
-	gchar       *str;
-	gchar       *str1;
 	const gchar *nick;
+	gchar       *str;
 
   	gnome_druid_set_show_finish (GNOME_DRUID (contact->druid), TRUE);
 	
@@ -290,13 +285,8 @@ add_contact_prepare_page_last (GnomeDruidPage   *page,
 	str = g_strdup_printf (_("%s will be added to your contact list."),
 			       nick);
 	
-	str1 = g_strdup_printf ("<b>%s</b>\n%s",
-				_("Contact will be added to your contact list"),
-				str);
+	gtk_label_set_text (GTK_LABEL (contact->last_label), str);
 	g_free (str);
-
-	gtk_label_set_markup (GTK_LABEL (contact->last_label), str1);
-	g_free (str1);
 }
 
 static void

@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2002-2003 CodeFactory AB
@@ -875,7 +876,7 @@ group_chat_presence_handler (LmMessageHandler *handler,
 	GdkPixbuf        *pixbuf;
 	GtkTreeIter       iter;
 	LmMessageNode    *node;
-	const gchar      *filename;
+	const gchar      *stock;
 
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
@@ -928,12 +929,15 @@ group_chat_presence_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
 		node = lm_message_node_get_child (m->node, "show");
 		if (node) {
-			filename = gossip_utils_get_show_filename (node->value);
+			stock = gossip_get_icon_for_show_string (node->value);
 		} else {
-			filename = gossip_utils_get_show_filename (NULL);
+			stock = gossip_get_icon_for_show_string (NULL);
 		}
-
-		pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
+		
+		pixbuf = gtk_widget_render_icon (chat->window,
+						 stock,
+						 GTK_ICON_SIZE_MENU,
+						 NULL);
 		
 		if (group_chat_find_user (chat, jid, &iter)) {
 			gtk_list_store_set (GTK_LIST_STORE (model),
@@ -1126,13 +1130,13 @@ set_status_foreach (gpointer key,
 	
 	lm_message_node_set_attributes (m->node, "to", key, NULL);
 	lm_connection_send (connection, m, NULL);
-};
+}
 
 void
-gossip_group_chat_set_status (GossipStatus status)
+gossip_group_chat_set_show (GossipShow show)
 {
 	LmMessage   *m;
-	const gchar *show;
+	const gchar *show_str;
 
 	group_chat_init ();
 	
@@ -1140,12 +1144,12 @@ gossip_group_chat_set_status (GossipStatus status)
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 	
-	show = gossip_status_to_string (status);
+	show_str = gossip_show_to_string (show);
 	if (show) {
-		lm_message_node_add_child (m->node, "show", show);
+		lm_message_node_add_child (m->node, "show", show_str);
 	}
 
-	/*lm_message_node_add_child (m->node, "status", "Online");*/
+	/* FIXME set status string, lm_message_node_add_child (m->node, "status", "Online");*/
 	g_hash_table_foreach (group_chats, set_status_foreach, m);
 
 	lm_message_unref (m);

@@ -48,17 +48,24 @@ struct _GossipAppClass {
         GObjectClass parent_class;
 };
 
+/* Note: We don't support "free to chat". */
 typedef enum {
-	GOSSIP_STATUS_AVAILABLE = 0,
-	GOSSIP_STATUS_FREE      = 1,
-	GOSSIP_STATUS_AWAY      = 2,
-	GOSSIP_STATUS_EXT_AWAY  = 3,
-	GOSSIP_STATUS_BUSY      = 4,
-	GOSSIP_STATUS_OFFLINE   = 5
+	GOSSIP_SHOW_AVAILABLE, /* available (null) */
+	GOSSIP_SHOW_BUSY,      /* busy (dnd) */
+	GOSSIP_SHOW_AWAY,      /* away (away) */
+	GOSSIP_SHOW_EXT_AWAY   /* extended away (xa) */
+} GossipShow;
+
+/*typedef enum {
+	GOSSIP_STATUS_AVAILABLE,
+	GOSSIP_STATUS_AWAY,
+	GOSSIP_STATUS_EXT_AWAY,
+	GOSSIP_STATUS_BUSY,
+	GOSSIP_STATUS_OFFLINE
 } GossipStatus;
+*/
 
-
-GType            gossip_app_get_type        (void) G_GNUC_CONST;
+GType            gossip_app_get_type                (void) G_GNUC_CONST;
 void             gossip_app_create                  (void);
 void             gossip_app_connect                 (void);
 void             gossip_app_join_group_chat         (const gchar   *room,
@@ -68,9 +75,10 @@ const gchar *    gossip_app_get_username            (void);
 GossipJID *      gossip_app_get_jid                 (void);
 GossipRosterOld *gossip_app_get_roster              (void);
 LmConnection *   gossip_app_get_connection          (void);
-GossipStatus     gossip_app_get_status              (void);
+GossipShow       gossip_app_get_show                (void);
 GossipApp *      gossip_app_get                     (void);
 void             gossip_app_set_overridden_resource (const gchar   *resource);
+gboolean         gossip_app_is_connected            (void);
 
 
 #endif /* __GOSSIP_APP_H__ */
