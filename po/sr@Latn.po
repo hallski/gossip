@@ -8,14 +8,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
-"POT-Creation-Date: 2003-11-18 13:13+0100\n"
-"PO-Revision-Date: 2003-11-16 05:55+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-12-14 13:39+0100\n"
+"PO-Revision-Date: 2003-12-14 13:40+0100\n"
 "Last-Translator: Danilo Šegan <danilo@prevod.org>\n"
 "Language-Team: Serbian (sr) <serbiangnome-lista@nongnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:28
 msgid "Gossip"
@@ -124,19 +124,19 @@ msgstr "%s će biti dodat u vašu listu drugara."
 msgid "Just about to leave..."
 msgstr "Upravo odlazim..."
 
-#: src/gossip-app.c:421
+#: src/gossip-app.c:433
 msgid "_Show Contact List"
 msgstr "_Prikaži spisak kontakata"
 
-#: src/gossip-app.c:430
+#: src/gossip-app.c:442
 msgid "_Hide Contact List"
 msgstr "_Sakrij spisak kontakata"
 
-#: src/gossip-app.c:443 ui/main.glade.h:59
+#: src/gossip-app.c:455 ui/main.glade.h:59
 msgid "Send _Message..."
 msgstr "Pošalji po_ruku..."
 
-#: src/gossip-app.c:458
+#: src/gossip-app.c:470
 msgid "_Quit"
 msgstr "_Izađi"
 
@@ -145,100 +145,103 @@ msgstr "_Izađi"
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:560
+#: src/gossip-app.c:572
 msgid "translator_credits"
 msgstr "Dejan Matijević <dejan@ns.sympatico.ca>"
 
-#: src/gossip-app.c:572
+#: src/gossip-app.c:584
 msgid "A Jabber Client for GNOME"
 msgstr "DŽaber klijent za Gnom"
 
-#: src/gossip-app.c:579
+#: src/gossip-app.c:591
 msgid "Gossip Website"
 msgstr "Veb stranica Čavrljanja"
 
-#: src/gossip-app.c:683
+#: src/gossip-app.c:695
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
-"Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za "
-"čavrljanje."
+"Unesite korisnički ID od osobe kojoj želite da pošanjete poruku za čavrljanje."
 
-#: src/gossip-app.c:688 ui/main.glade.h:83
+#: src/gossip-app.c:700 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Razgovor"
 
-#: src/gossip-app.c:935
+#: src/gossip-app.c:962
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s želi obaveštenja o vašem prisustvu."
 
-#: src/gossip-app.c:1170
+#: src/gossip-app.c:1197
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vi ste razvezani sa servera.  Želiteli da se ponovo povežete?"
 
-#: src/gossip-app.c:1321
+#: src/gossip-app.c:1340
 msgid "Make sure that your account information is correct."
 msgstr "Proverite da li su podaci o nalogu ispravni."
 
-#: src/gossip-app.c:1322
+#: src/gossip-app.c:1341
 msgid "The server may currently be unavailable."
 msgstr "Možda je server trenutno nedostupan."
 
-#: src/gossip-app.c:1711
+#: src/gossip-app.c:1746
 msgid "Gossip, Jabber Client"
 msgstr "Čavrljanje, DŽaber Klijent"
 
-#: src/gossip-app.c:1887
+#: src/gossip-app.c:1922
 #, c-format
 msgid "New message from %s"
 msgstr "Nova poruka od %s"
 
-#: src/gossip-app.c:2429
+#: src/gossip-app.c:2476
 msgid "Custom Message..."
 msgstr "Posebna poruka..."
 
-#: src/gossip-app.c:2447
+#: src/gossip-app.c:2494
 msgid "Custom Busy Message..."
 msgstr "Posebna poruka za zauzeće..."
 
-#: src/gossip-app.c:2454
+#: src/gossip-app.c:2501
 msgid "Leave..."
 msgstr "Napusti..."
 
-#: src/gossip-chat-view.c:323
+#: src/gossip-chat-view.c:320 ui/chat.glade.h:2
+msgid "C_lear"
+msgstr "Oč_isti"
+
+#: src/gossip-chat-view.c:337
 msgid "_Copy Link Address"
 msgstr "_Umnoži adresu veze"
 
-#: src/gossip-chat-view.c:331
+#: src/gossip-chat-view.c:345
 msgid "_Open Link"
 msgstr "_Otvori vezu"
 
-#: src/gossip-chat-view.c:674
+#: src/gossip-chat-view.c:695
 msgid "%A %d %B %Y"
 msgstr "%A, %d. %B %Y."
 
-#: src/gossip-chat-window.c:564
+#: src/gossip-chat-window.c:620
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sČavrljanje - %s"
 
-#: src/gossip-chat.c:685
+#: src/gossip-chat.c:641
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Dogodila se greška prilikom čavrljanje sa %s."
 
-#: src/gossip-chat.c:690 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:646 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detalji:"
 
-#: src/gossip-chat.c:776
+#: src/gossip-chat.c:732
 #, c-format
 msgid "%s went offline"
 msgstr "%s prekide vezu"
 
-#: src/gossip-chat.c:790
+#: src/gossip-chat.c:746
 #, c-format
 msgid "%s comes online"
 msgstr "%s se poveza"
@@ -410,37 +413,33 @@ msgstr "Spavam"
 msgid "*"
 msgstr "*"
 
-#: ui/chat.glade.h:2
+#: ui/chat.glade.h:3
 msgid "Chat"
 msgstr "Ćaskaj"
 
-#: ui/chat.glade.h:3
+#: ui/chat.glade.h:4
 msgid "Contact _Information"
 msgstr "Po_daci za kontakt"
 
-#: ui/chat.glade.h:4
+#: ui/chat.glade.h:5
 msgid "From:"
 msgstr "Od:"
 
-#: ui/chat.glade.h:5
+#: ui/chat.glade.h:6
 msgid "Gossip - Chat"
 msgstr "Čavrljanje - Čavrljaj"
 
-#: ui/chat.glade.h:6
+#: ui/chat.glade.h:7
 msgid "Gossip - Received Message"
 msgstr "Čavrljanje - Primi poruku"
 
-#: ui/chat.glade.h:7
+#: ui/chat.glade.h:8
 msgid "Gossip - Send Message"
 msgstr "Čavrljanje - Pošalji poruku"
 
-#: ui/chat.glade.h:8
+#: ui/chat.glade.h:9
 msgid "In reply to:"
 msgstr "Kao odgovor na:"
-
-#: ui/chat.glade.h:9
-msgid "Lo_g"
-msgstr "Dne_vnik"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
@@ -455,30 +454,34 @@ msgid "To:"
 msgstr "Kome:"
 
 #: ui/chat.glade.h:13
+msgid "View Lo_g"
+msgstr "Pogledaj dne_vnik"
+
+#: ui/chat.glade.h:14
 msgid "_Conversation"
 msgstr "_Razgovor"
 
-#: ui/chat.glade.h:14
+#: ui/chat.glade.h:15
 msgid "_Detach Tab"
 msgstr "_Odvoji list"
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:16
 msgid "_Next Tab"
 msgstr "_Sledeći list"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:17
 msgid "_Previous Tab"
 msgstr "P_rethodni list"
 
-#: ui/chat.glade.h:17
+#: ui/chat.glade.h:18
 msgid "_Reply..."
 msgstr "Odgo_vori..."
 
-#: ui/chat.glade.h:18 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "_Pošalji"
 
-#: ui/chat.glade.h:19
+#: ui/chat.glade.h:20
 msgid "_Tabs"
 msgstr "_Listovi"
 
@@ -721,8 +724,8 @@ msgid ""
 msgstr ""
 "Čavrljanje je moderan klijent za DŽaber sistem brzih poruka.\n"
 "\n"
-"Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i povežete se na vaš "
-"omiljen DŽaber server.\n"
+"Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i povežete se na vaš omiljen "
+"DŽaber server.\n"
 "\n"
 "Da počnete, samo kliknite „Napred“."
 
@@ -1040,8 +1043,8 @@ msgstr "Poruk_e o stanju"
 #~ "These messages are used to describe your status when you're available, "
 #~ "about to leave, or automatically set away due to inactivity."
 #~ msgstr ""
-#~ "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, "
-#~ "upravo odlazite ili ste odsutni usled neaktivnosti."
+#~ "Ove poruke se koriste za opisivanje vašeg stanja kada ste dostupni, upravo "
+#~ "odlazite ili ste odsutni usled neaktivnosti."
 
 #~ msgid "Use com_pact conversation style"
 #~ msgstr "Koristi stil sa_žetog razgovora"
@@ -1160,8 +1163,8 @@ msgstr "Poruk_e o stanju"
 #~ "\n"
 #~ "Čavrljanje je moderan klijent za DŽaber Trenutne Poruke.\n"
 #~ "\n"
-#~ "Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i konektujete se na "
-#~ "vaš omiljen DŽaber server."
+#~ "Ovaj pomoćnik će vam pomoći da podesite Čavrljanje i konektujete se na vaš "
+#~ "omiljen DŽaber server."
 
 #~ msgid "<b>Additional information</b>"
 #~ msgstr "<b>Dodatne informacije</b>"
