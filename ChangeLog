@@ -1,3 +1,8 @@
+2004-05-18  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c: (gossip_roster_view_flash_contact):
+	- Fix a crash
+
 2004-05-11  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_update_title):

@@ -1936,6 +1936,10 @@ gossip_roster_view_flash_contact (GossipRosterView *view,
 	
 	item = gossip_roster_get_item (priv->roster, 
 				       gossip_contact_get_jid (contact));
+
+	if (!item) {
+		item = gossip_roster_item_new (gossip_contact_get_jid (contact));
+	}
 	
 	flash_data = g_hash_table_lookup (priv->flash_table, item);
 
