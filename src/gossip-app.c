@@ -653,6 +653,31 @@ app_authentication_cb (LmConnection *connection,
 }
 
 static void
+app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
+				    GtkCellRenderer *cell,
+				    GtkTreeModel    *tree_model,
+				    GtkTreeIter     *iter,
+				    gpointer         unused)
+{
+	GossipContact *c;
+	GdkPixbuf     *pixbuf;
+	
+	gtk_tree_model_get (tree_model, iter, 0, &c, -1);
+
+	if (!gossip_contact_is_online (c)) {
+		pixbuf = gossip_utils_get_pixbuf_offline ();
+	} else {
+		GossipPresence *p;
+
+		p = gossip_contact_get_presence (c);
+		pixbuf = gossip_utils_get_pixbuf_from_presence (p);
+	}
+
+	g_object_set (cell, "pixbuf", pixbuf, NULL);
+	g_object_unref (pixbuf);
+}
+
+static void
 app_new_message (gboolean use_roster_selection, gboolean be_transient)
 {
 	GossipAppPriv    *priv;
@@ -665,6 +690,7 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	GtkWindow        *parent;
 	GList            *items;
 	GtkListStore     *model;
+	GtkCellRenderer  *cell;
 	
 	priv = app->priv;
 
@@ -700,8 +726,19 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 			    frame, TRUE, TRUE, 8);
 	gtk_widget_show (frame);
 
-	model = gtk_list_store_new (2, GDK_TYPE_PIXBUF, G_TYPE_STRING);
+	model = gtk_list_store_new (2, G_TYPE_POINTER, G_TYPE_STRING);
 	data->combo = gtk_combo_box_entry_new_with_model (GTK_TREE_MODEL (model), 1);
+
+	cell = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (data->combo), cell, FALSE);
+	/*gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (data->combo), cell,
+				       "pixbuf", 0); */
+	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (data->combo),
+					    cell, 
+					    app_new_message_presence_data_func,
+					    NULL, NULL);
+					    
+	gtk_cell_layout_reorder (GTK_CELL_LAYOUT (data->combo), cell, 0);
 	
 	gtk_container_add (GTK_CONTAINER (frame), data->combo);
 	gtk_widget_show (data->combo);
@@ -740,7 +777,6 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 		}
 	} 
 
-	data->names = NULL;
 	items = gossip_roster_get_all_items (priv->roster);
 	for (l = items; l; l = l->next) {
 		GossipRosterItem *roster_item;
@@ -765,16 +801,14 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 	contacts = g_list_sort (contacts, gossip_contact_name_case_compare);
 	for (l = contacts; l; l = l->next) {
 		GtkTreeIter     iter;
-		GossipPresence *presence;
 		GossipContact  *c;
-
+		
 		c = GOSSIP_CONTACT (l->data);
 
 		gtk_list_store_append (model, &iter);
 
-		presence = gossip_contact_get_presence (c);
 		gtk_list_store_set (model, &iter,
-				    0, gossip_utils_get_pixbuf_from_presence (presence),
+				    0, c,
 				    1, gossip_contact_get_name (c),
 				    -1);
 	}

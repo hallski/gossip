@@ -1,5 +1,12 @@
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-app.c:
+	(app_new_message_presence_data_func): Added
+	(app_new_message): 
+	- Show presence icon in popup list in new message dialog.
+
+2004-06-16  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-app.c: (app_new_message): 
 	- Use a GtkComboBoxEntry instead of deprecated GtkCombo
 	* src/gossip-contact-info.c: 
