@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-12-10 17:59+0200\n"
-"PO-Revision-Date: 2004-12-11 09:42+0200\n"
+"PO-Revision-Date: 2004-12-11 09:46+0200\n"
 "Last-Translator: Iassen Pramatarov <turin@fsa-bg.org>\n"
 "Language-Team: Bulgarian <dict@linux.zonebg.com>\n"
 "MIME-Version: 1.0\n"
@@ -125,7 +125,7 @@ msgstr "Графично оформление:"
 
 #: src/gossip-about.c:296
 msgid "Translated by:"
-msgstr "Превод"
+msgstr "Превод:"
 
 #. Note to translators: put your name here so it will shop up in the
 #. * "about" box. Please add ONLY names, separated by newlines. No mail
