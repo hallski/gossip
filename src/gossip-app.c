@@ -1279,6 +1279,10 @@ app_idle_check_cb (GossipApp *app)
 
 	priv = app->priv;
 
+	if (!gossip_app_is_connected ()) {
+		return TRUE;
+	}
+	
 	idle = gossip_idle_get_seconds ();
 	show = app_get_effective_show ();
 
@@ -1474,6 +1478,8 @@ app_disconnect (void)
 	if (lm_connection_is_open (priv->connection)) {
 		lm_connection_close (priv->connection, NULL);
 	}
+
+	app_status_flash_stop ();
 }
 
 LmConnection *

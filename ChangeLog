@@ -1,3 +1,9 @@
+2004-03-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_idle_check_cb): Fix bug #135944, don't do
+	anything if we're not connected.
+	(app_disconnect): Stop flashing the status when disconnected.
+
 2004-03-02  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.c: (app_new_message), (app_new_message_cb),
