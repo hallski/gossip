@@ -220,7 +220,8 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 		 */
 		*account = gossip_account_new (_("Default Account"), username, NULL, 
 					       "Gossip", server, 
-					       LM_CONNECTION_DEFAULT_PORT);
+					       LM_CONNECTION_DEFAULT_PORT, 
+					       FALSE);
 	}
 
 	/* FIXME: Set this in some settings-thingy... */

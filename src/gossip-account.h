@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003 Imendio HB
  * Copyright (C) 2002 CodeFactory AB
  * Copyright (C) 2002 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2003 Richard Hult <richard@imendio.com>
@@ -29,12 +30,13 @@
 #define GOSSIP_ACCOUNTS_PATH "/Gossip/Accounts"
 
 typedef struct {
-	gchar *name;
-	gchar *username;
-	gchar *resource;
-	gchar *password;
-	gchar *server;
-	guint  port;
+	gchar    *name;
+	gchar    *username;
+	gchar    *resource;
+	gchar    *password;
+	gchar    *server;
+	guint     port;
+	gboolean  use_ssl;
 	
 	gint   ref_count;
 } GossipAccount;
@@ -44,7 +46,8 @@ GossipAccount * gossip_account_new          (const gchar   *name,
 					     const gchar   *password,
 					     const gchar   *resource,
 					     const gchar   *server,
-					     guint          port);
+					     guint          port,
+					     gboolean       use_ssl);
 GossipAccount * gossip_account_get_default  (void);
 GSList *        gossip_account_get_all      (void);
 GossipAccount * gossip_account_get          (const gchar   *name);

@@ -64,7 +64,8 @@ gossip_account_new (const gchar *name,
 		    const gchar *password,
 		    const gchar *resource,
 		    const gchar *server,
-		    guint        port)
+		    guint        port,
+		    gboolean     use_ssl)
 {
 	GossipAccount *account;
 	const gchar   *str;
@@ -87,6 +88,7 @@ gossip_account_new (const gchar *name,
 	account->server = g_strdup (str);
 	
 	account->port = port;
+	account->use_ssl = use_ssl;
 
 	account->ref_count = 1;
 
@@ -135,10 +137,14 @@ gossip_account_get (const gchar *name)
 	g_free (key);
 
 	key = g_strdup_printf ("%s/port=%d", path, LM_CONNECTION_DEFAULT_PORT);
-	g_free (path);
-
 	account->port = gnome_config_get_int_with_default (key, NULL);
 	g_free (key);
+
+	key = g_strdup_printf ("%s/use_ssl=", path);
+	account->use_ssl = gnome_config_get_bool_with_default (key, FALSE);
+	g_free (key);
+	
+	g_free (path);
 	
 	account->ref_count = 1;
 	
@@ -246,6 +252,10 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 	
 	key = g_strdup_printf ("%s/password", path);
 	gnome_config_private_set_string (key, account->password);
+	g_free (key);
+
+	key = g_strdup_printf ("%s/use_ssl", path);
+	gnome_config_set_bool (key, account->use_ssl);
 	g_free (key);
 
 	g_free (path);

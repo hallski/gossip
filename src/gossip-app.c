@@ -1283,6 +1283,7 @@ gossip_app_connect (GossipAccount *account)
 
 	lm_connection_set_server (priv->connection, account->server);
 	lm_connection_set_port (priv->connection, account->port);
+	lm_connection_set_use_ssl (priv->connection, account->use_ssl);
 	
 	lm_connection_open (priv->connection,
 			    (LmResultFunction) app_connection_open_cb,
@@ -1532,6 +1533,7 @@ app_create_connection (GossipApp *app)
 
 	priv->connection = lm_connection_new (priv->account->server);
 	lm_connection_set_port (priv->connection, priv->account->port);
+	lm_connection_set_use_ssl (priv->connection, priv->account->use_ssl);
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) app_message_handler, 
 					  app, NULL);

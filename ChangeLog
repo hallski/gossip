@@ -1,3 +1,12 @@
+2003-07-17  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-account.c: 
+	* src/gossip-account.h:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-app.c: 
+	* src/gossip-startup-druid.c: 
+	* ui/connect.glade: Added support for SSL. Fixes bug #116421. 
+
 2003-07-17  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Make labels selectable in add contact

@@ -1,5 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2003      Imendio HB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2002-2003 Mikael Hallendal <micke@imendio.com>
  * Copyright (C) 2002 CodeFactory AB
@@ -45,8 +46,9 @@ typedef struct {
 	GtkEntry     *username_entry;
 	GtkEntry     *resource_entry;
 	GtkEntry     *server_entry;
-	GtkEntry     *port_entry;
 	GtkEntry     *password_entry;
+	GtkEntry     *port_entry;
+	GtkWidget    *use_ssl_cb;
 	GtkWidget    *add_button;
 	GtkWidget    *remove_button;
 	GtkWidget    *register_button;
@@ -60,6 +62,8 @@ enum {
 	NUM_COLS
 };
 
+static GossipAccount *
+accounts_dialog_get_current_account              (GossipAccountsDialog *dialog);
 static void accounts_dialog_destroy_cb           (GtkWidget            *widget,
 						  GossipAccountsDialog *dialog);
 static void accounts_dialog_response_cb          (GtkWidget            *widget,
@@ -81,7 +85,8 @@ static void accounts_dialog_set_entries          (GossipAccountsDialog *dialog,
 						  const gchar          *password,
 						  const gchar          *resource,
 						  const gchar          *server,
-						  guint                 port);
+						  guint                 port,
+						  gboolean              use_ssl);
 static void accounts_dialog_rebuild_list         (GossipAccountsDialog *dialog);
 static void accounts_dialog_selection_changed_cb (GtkTreeSelection     *selection,
 						  GossipAccountsDialog *dialog);
@@ -91,7 +96,27 @@ accounts_dialog_port_entry_insert_text_cb        (GtkEditable          *editable
 						  gint                  len,
 						  gint                 *position,
 						  GossipAccountsDialog *dialog);
+static void  accounts_dialog_use_ssl_toggled     (GtkToggleButton      *button,
+						  GossipAccountsDialog *dialog);
 
+
+static GossipAccount *
+accounts_dialog_get_current_account (GossipAccountsDialog *dialog)
+{
+	GossipAccount    *account;
+	GtkTreeIter       iter;
+	GtkTreeSelection *selection;
+	
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
+	gtk_tree_selection_get_selected (selection, NULL, &iter);
+	
+	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
+			    &iter,
+			    COL_ACCOUNT, &account,
+			    -1);
+
+	return account;
+}
 
 static void
 accounts_dialog_destroy_cb (GtkWidget            *widget,
@@ -125,7 +150,7 @@ accounts_dialog_add_account_cb (GtkWidget            *widget,
 
 	account = gossip_account_new (_("New account"),
 				      NULL, NULL, NULL, NULL, 
-				      LM_CONNECTION_DEFAULT_PORT);
+				      LM_CONNECTION_DEFAULT_PORT, FALSE);
 
 	gtk_list_store_set (GTK_LIST_STORE (dialog->model),
 			    &iter,
@@ -145,18 +170,10 @@ accounts_dialog_remove_account_cb (GtkWidget            *widget,
 				   GossipAccountsDialog *dialog)
 {
 	GossipAccount    *account;
-	GtkTreeSelection *selection;
-	GtkTreeIter       iter;
 	gchar            *path;
-	
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
-	gtk_tree_selection_get_selected (selection, NULL, &iter);
-	
-	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
-			    &iter,
-			    COL_ACCOUNT, &account,
-			    -1);
 
+	account = accounts_dialog_get_current_account (dialog);
+	
 	path = g_strdup_printf ("%s/Account: %s", 
 				GOSSIP_ACCOUNTS_PATH, account->name);
 	gnome_config_clean_section (path);
@@ -173,20 +190,9 @@ static void
 accounts_dialog_register_account_cb (GtkWidget            *widget,
 				     GossipAccountsDialog *dialog)
 {
-	GtkTreeSelection *selection;
-	GtkTreeIter       iter;
 	GossipAccount    *account;
-	
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
-	
-	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
-		return;
-	}
-	
-	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
-			    &iter,
-			    COL_ACCOUNT, &account,
-			    -1);
+
+	account = accounts_dialog_get_current_account (dialog);
 	
 	gossip_register_account (account, GTK_WINDOW (dialog->dialog));
 }
@@ -196,22 +202,12 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 				   GdkEventFocus        *event,
 				   GossipAccountsDialog *dialog)
 {
-	GtkTreeSelection *selection;
-	GtkTreeIter       iter;
 	GossipAccount    *account;
+	GtkTreeIter       iter;
 	gchar            *old_name = NULL;
 	
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->accounts_list));
+	account = accounts_dialog_get_current_account (dialog);
 
-	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
-		return FALSE;
-	}
-	
-	gtk_tree_model_get (GTK_TREE_MODEL (dialog->model),
-			    &iter,
-			    COL_ACCOUNT, &account,
-			    -1);
-	
 	if (widget == GTK_WIDGET (dialog->account_entry)) {
 		old_name = account->name;
 		account->name = g_strdup (gtk_entry_get_text (dialog->account_entry));
@@ -249,6 +245,13 @@ accounts_dialog_update_account_cb (GtkWidget            *widget,
 			g_free (str);
 		}
 	}
+	else if (widget == GTK_WIDGET (dialog->use_ssl_cb)) {
+		account->use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
+		/* Might need to reset the port aswell */
+		accounts_dialog_update_account_cb (GTK_WIDGET (dialog->port_entry), 
+						   event,
+						   dialog);
+	}
 
 	gossip_account_store (account, old_name);
 	g_free (old_name);
@@ -263,7 +266,8 @@ accounts_dialog_set_entries (GossipAccountsDialog *dialog,
 			     const gchar          *password,
 			     const gchar          *resource,
 			     const gchar          *server,
-			     guint                 port) 
+			     guint                 port,
+			     gboolean              use_ssl) 
 {
 	gchar *port_str;
 	
@@ -273,6 +277,13 @@ accounts_dialog_set_entries (GossipAccountsDialog *dialog,
 	gtk_widget_set_sensitive (GTK_WIDGET (dialog->resource_entry), TRUE);
 	gtk_widget_set_sensitive (GTK_WIDGET (dialog->server_entry), TRUE);
 	gtk_widget_set_sensitive (GTK_WIDGET (dialog->port_entry), TRUE);
+
+	if (lm_connection_supports_ssl ()) {
+		gtk_widget_set_sensitive (GTK_WIDGET (dialog->use_ssl_cb), TRUE);
+	} else {
+		use_ssl = FALSE;
+	}
+
 	gtk_entry_set_text (dialog->account_entry, account_name);
 	gtk_entry_set_text (dialog->username_entry, username);
 	gtk_entry_set_text (dialog->password_entry, password);
@@ -282,6 +293,9 @@ accounts_dialog_set_entries (GossipAccountsDialog *dialog,
 	port_str = g_strdup_printf ("%d", port);
 	gtk_entry_set_text (dialog->port_entry, port_str);
 	g_free (port_str);
+	
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->use_ssl_cb),
+				      use_ssl);
 }
  
 static void
@@ -320,7 +334,7 @@ accounts_dialog_selection_changed_cb (GtkTreeSelection     *selection,
 
 	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
 		gtk_widget_set_sensitive (dialog->remove_button, FALSE);
-		accounts_dialog_set_entries (dialog, "", "", "", "", "", LM_CONNECTION_DEFAULT_PORT);
+		accounts_dialog_set_entries (dialog, "", "", "", "", "", LM_CONNECTION_DEFAULT_PORT, FALSE);
 		return;
  	}
 	
@@ -334,7 +348,8 @@ accounts_dialog_selection_changed_cb (GtkTreeSelection     *selection,
 	accounts_dialog_set_entries (dialog,
 				     account->name, account->username, 
 				     account->password, account->resource,
-				     account->server, account->port);
+				     account->server, account->port, 
+				     account->use_ssl);
 }
 
 static void
@@ -353,6 +368,33 @@ accounts_dialog_port_entry_insert_text_cb (GtkEditable          *editable,
 							"insert-text");
 			return;
 		}
+	}
+}
+
+static void  
+accounts_dialog_use_ssl_toggled (GtkToggleButton      *button,
+				 GossipAccountsDialog *dialog)
+{
+	GossipAccount *account;
+	gboolean       active;
+	gboolean       changed = FALSE;
+
+	account = accounts_dialog_get_current_account (dialog);
+	active = gtk_toggle_button_get_active (button);
+
+	if (active && (account->port == LM_CONNECTION_DEFAULT_PORT)) {
+		account->port = LM_CONNECTION_DEFAULT_PORT_SSL;
+		changed = TRUE;
+	} 
+	else if (!active && (account->port == LM_CONNECTION_DEFAULT_PORT_SSL)) {
+		account->port = LM_CONNECTION_DEFAULT_PORT;
+		changed = TRUE;
+	}
+
+	if (changed) {
+		gchar *str = g_strdup_printf ("%d", account->port);
+		gtk_entry_set_text (dialog->port_entry, str);
+		g_free (str);
 	}
 }
 
@@ -375,8 +417,9 @@ gossip_accounts_dialog_show (GossipApp *app)
 				      "username_entry", &dialog->username_entry,
 				      "resource_entry", &dialog->resource_entry,
 				      "server_entry", &dialog->server_entry,
-				      "port_entry", &dialog->port_entry,
 				      "password_entry", &dialog->password_entry,
+				      "port_entry", &dialog->port_entry,
+				      "use_ssl_cb", &dialog->use_ssl_cb,
 				      "account_entry", &dialog->account_entry,
 				      "add_button", &dialog->add_button,
 				      "remove_button", &dialog->remove_button,
@@ -432,8 +475,13 @@ gossip_accounts_dialog_show (GossipApp *app)
 			  "focus-out-event",
 			  G_CALLBACK (accounts_dialog_update_account_cb),
 			  dialog);
-	
+
 	g_signal_connect (dialog->password_entry,
+			  "focus-out-event",
+			  G_CALLBACK (accounts_dialog_update_account_cb),
+			  dialog);
+
+	g_signal_connect (dialog->use_ssl_cb,
 			  "focus-out-event",
 			  G_CALLBACK (accounts_dialog_update_account_cb),
 			  dialog);
@@ -441,6 +489,11 @@ gossip_accounts_dialog_show (GossipApp *app)
 	g_signal_connect (dialog->port_entry,
 			  "insert-text",
 			  G_CALLBACK (accounts_dialog_port_entry_insert_text_cb),
+			  dialog);
+	
+	g_signal_connect (dialog->use_ssl_cb,
+			  "toggled",
+			  G_CALLBACK (accounts_dialog_use_ssl_toggled),
 			  dialog);
 	
 	dialog->model = gtk_list_store_new (NUM_COLS,
