@@ -1,6 +1,7 @@
 2003-09-09  Jordi Mallach  <jordi@sindominio.net>
 
-	* ui/main.glade: Add mnemonics to the Edit menu items.
+	* ui/main.glade: Add mnemonics to the Edit menu items and Prefs
+	dialog.
 
 2003-09-03  Mikael Hallendal  <micke@imendio.com>
 

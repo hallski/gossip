@@ -2950,7 +2950,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 			<widget class="GtkCheckButton" id="smileys_checkbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Convert smileys to graphical images</property>
+			  <property name="label" translatable="yes">Convert _smileys to graphical images</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
@@ -2968,7 +2968,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 			<widget class="GtkCheckButton" id="timestamp_checkbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Timestamp all messages</property>
+			  <property name="label" translatable="yes">_Timestamp all messages</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
@@ -2985,7 +2985,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		      <child>
 			<widget class="GtkCheckButton" id="compact_checkbutton">
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Use compact conversation style</property>
+			  <property name="label" translatable="yes">Use com_pact conversation style</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
@@ -3002,7 +3002,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 		      <child>
 			<widget class="GtkCheckButton" id="tabs_checkbutton">
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Use tabs instead of windows for conversations</property>
+			  <property name="label" translatable="yes">Use ta_bs instead of windows for conversations</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
@@ -3101,7 +3101,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 			<widget class="GtkCheckButton" id="sound_checkbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Use sounds to notify when new messages arrive</property>
+			  <property name="label" translatable="yes">Use sounds to _notify when new messages arrive</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
@@ -3119,7 +3119,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 			<widget class="GtkCheckButton" id="silent_checkbutton">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Disable sounds when busy or away</property>
+			  <property name="label" translatable="yes">_Disable sounds when busy or away</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="active">False</property>
