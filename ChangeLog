@@ -1,3 +1,11 @@
+2004-01-21  Mikael Hallendal  <micke@imendio.com>
+
+	* NEWS:
+	- Updated for 0.7
+	* configure.in:
+	- Bumped version to 0.7
+	- Updated Loudmouth deps to 0.15
+
 2004-01-21  Richard Hult  <richard@imendio.com>
 
 	* gossip.spec.in (BuildRequires): Add missing file.
