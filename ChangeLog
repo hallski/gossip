@@ -1,3 +1,9 @@
+2003-08-05  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.c: (app_about_cb):
+	- Commited patch from Thomas Reynolds to add link to project page in
+	  about dialog. Fixes bug #117730
+
 2003-08-03  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-accounts-dialog.c

@@ -32,7 +32,7 @@
 #include <gconf/gconf-client.h>
 #include <loudmouth/loudmouth.h>
 #include <libgnome/gnome-i18n.h>
-#include <libgnomeui/gnome-about.h>
+#include <libgnomeui/libgnomeui.h>
 #include "eggtrayicon.h"
 #include "gossip-add-contact.h"
 #include "gossip-jid.h"
@@ -470,6 +470,7 @@ app_about_cb (GtkWidget *window,
 	/* Note to translators: put here your name (and address) so it
 	 * will shop up in the "about" box */
 	gchar         *translator_credits = _("translator_credits");
+	GtkWidget     *href;
 
 	priv = app->priv;
 
@@ -479,13 +480,18 @@ app_about_cb (GtkWidget *window,
 	}
 	
 	priv->about = gnome_about_new ("Gossip", VERSION,
-				       "",
+				       "Copyright \xc2\xa9 2003 Imendio HB",
 				       _("A Jabber Client for GNOME"),
 				       authors,
 				       NULL,
 				       strcmp (translator_credits, "translator_credits") != 0 ?
 				       translator_credits : NULL,
 				       NULL);
+
+	href = gnome_href_new ("http://www.imendio.com/projects/gossip/",
+						   _("Gossip Website"));
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (priv->about)->vbox), href, FALSE, FALSE, 5);
+	gtk_widget_show (href);
 	
 	g_object_add_weak_pointer (G_OBJECT (priv->about),
 				   (gpointer) &priv->about);
