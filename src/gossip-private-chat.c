@@ -21,22 +21,22 @@
 
 #include <config.h>
 #include <string.h>
+#include <gconf/gconf-client.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
-#include <gconf/gconf-client.h>
-#include <loudmouth/loudmouth.h>
+
 #include "gossip-chat-window.h"
 #include "gossip-utils.h"
 #include "gossip-sound.h"
 #include "gossip-chat-view.h"
 #include "gossip-app.h"
+#include "gossip-message.h"
 #include "gossip-contact-info.h"
 #include "gossip-stock.h"
 #include "gossip-log.h"
-#include "gossip-roster.h"
 #include "gossip-chat.h"
 #include "gossip-private-chat.h"
 
@@ -46,8 +46,6 @@
 #define COMPOSING_STOP_TIMEOUT 5
 
 struct _GossipPrivateChatPriv {
-        LmMessageHandler *message_handler;
-
         GtkWidget        *widget;
 	GtkWidget	 *text_view_sw;
         GtkWidget        *single_hbox;
@@ -72,24 +70,30 @@ struct _GossipPrivateChatPriv {
 static GObjectClass *parent_class  = NULL;
 static GHashTable   *private_chats = NULL;
 
-static void            private_chat_class_init                   (GossipPrivateChatClass  *klass);
-static void            private_chat_init                         (GossipPrivateChat       *chat);
+static void            gossip_private_chat_class_init            (GossipPrivateChatClass  *klass);
+static void            gossip_private_chat_init                  (GossipPrivateChat       *chat);
 static void            private_chat_finalize                     (GObject                 *object);
 static void            private_chats_init                        (void);
 static void            private_chat_create_gui                   (GossipPrivateChat       *chat);
 static void            private_chat_send                         (GossipPrivateChat       *chat,
                                                                   const gchar      *msg);
+#if 0
 static void            private_chat_request_composing            (LmMessage        *m);
+#endif
+
 static void            private_chat_composing_start              (GossipPrivateChat       *chat);
 static void            private_chat_composing_stop               (GossipPrivateChat       *chat);
-static void            private_chat_composing_send_start_event   (GossipPrivateChat       *chat);
-static void            private_chat_composing_send_stop_event    (GossipPrivateChat       *chat);
 static void            private_chat_composing_remove_timeout     (GossipPrivateChat       *chat);
 static gboolean        private_chat_composing_stop_timeout_cb    (GossipPrivateChat       *chat);
+static gboolean        private_chat_should_play_sound            (GossipPrivateChat       *chat);
+
+#if 0
 static LmHandlerResult private_chat_message_handler              (LmMessageHandler        *handler,
                                                                   LmConnection            *connection,
                                                                   LmMessage               *m,
                                                                   gpointer                 user_data);
+#endif
+
 static void            private_chat_contact_presence_updated     (gpointer                 not_used,
 			   				          GossipContact           *contact,
 							          GossipPrivateChat       *chat);
@@ -102,14 +106,20 @@ static void            private_chat_contact_removed              (gpointer      
 static void            private_chat_contact_added		 (gpointer	           not_used,
 							          GossipContact           *contact,
 							          GossipPrivateChat       *chat);
-static void            private_chat_connected_cb		 (GossipApp	          *app,
+static void            private_chat_connected_cb		 (GossipSession	          *session,
 							          GossipPrivateChat	  *chat);
-static void            private_chat_disconnected_cb		 (GossipApp	          *app,
+static void            private_chat_disconnected_cb		 (GossipSession	          *session,
 							          GossipPrivateChat	  *chat);
+static void            private_chat_composing_event_cb          (GossipSession *session,
+								 GossipContact *contact,
+								 gboolean       composing,
+								 GossipChat    *chat);
+#if 0
 static gboolean        private_chat_handle_composing_event       (GossipPrivateChat       *chat,
                                                                   LmMessage               *m);
 static void            private_chat_error_dialog                 (GossipPrivateChat       *chat,
                                                                   const gchar             *msg);
+#endif
 static gboolean        private_chat_input_key_press_event_cb     (GtkWidget               *widget,
                                                                   GdkEventKey             *event,
                                                                   GossipPrivateChat       *chat);
@@ -129,36 +139,11 @@ static void            private_chat_get_geometry                 (GossipChat    
 								  int                     *height); 
 static GtkWidget *     private_chat_get_widget		         (GossipChat              *chat);
 static GossipContact * private_chat_get_contact                  (GossipChat              *chat);
-                      
-GType
-gossip_private_chat_get_type (void)
-{
-        static GType type_id = 0;
-
-        if (type_id == 0) {
-                const GTypeInfo type_info = {
-                        sizeof (GossipPrivateChatClass),
-                        NULL,
-                        NULL,
-                        (GClassInitFunc) private_chat_class_init,
-                        NULL,
-                        NULL,
-                        sizeof (GossipPrivateChat),
-                        0,
-                        (GInstanceInitFunc) private_chat_init
-                };
-
-                type_id = g_type_register_static (GOSSIP_TYPE_CHAT,
-                                                  "GossipPrivateChat",
-                                                  &type_info,
-                                                  0);
-        }
-
-        return type_id;
-}
+        
+G_DEFINE_TYPE (GossipPrivateChat, gossip_private_chat, GOSSIP_TYPE_CHAT);
 
 static void
-private_chat_class_init (GossipPrivateChatClass *klass)
+gossip_private_chat_class_init (GossipPrivateChatClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	GossipChatClass *chat_class = GOSSIP_CHAT_CLASS (klass);
@@ -176,11 +161,13 @@ private_chat_class_init (GossipPrivateChatClass *klass)
 }
 
 static void
-private_chat_init (GossipPrivateChat *chat)
+gossip_private_chat_init (GossipPrivateChat *chat)
 {
         GossipPrivateChatPriv *priv;
+#if 0
 	LmConnection          *connection;
 	LmMessageHandler      *handler;
+#endif
 	
 	priv = g_new0 (GossipPrivateChatPriv, 1);
 	priv->request_composing_events = TRUE;
@@ -190,23 +177,21 @@ private_chat_init (GossipPrivateChat *chat)
 	
         private_chat_create_gui (chat);
 
-	connection = gossip_app_get_connection ();
+	g_print ("Connecting\n");
 
-	handler = lm_message_handler_new (private_chat_message_handler, chat, NULL);
-	chat->priv->message_handler = handler;
-	lm_connection_register_message_handler (connection,
-						handler,
-						LM_MESSAGE_TYPE_MESSAGE,
-						LM_HANDLER_PRIORITY_NORMAL);
-
-	g_signal_connect_object (gossip_app_get (), 
+	g_signal_connect_object (gossip_app_get_session (),
 				 "connected",
 				 G_CALLBACK (private_chat_connected_cb),
 				 chat, 0);
-	
-	g_signal_connect_object (gossip_app_get (), 
+
+	g_signal_connect_object (gossip_app_get_session (),
 				 "disconnected",
 				 G_CALLBACK (private_chat_disconnected_cb),
+				 chat, 0);
+	
+	g_signal_connect_object (gossip_app_get_session (),
+				 "composing-event",
+				 G_CALLBACK (private_chat_composing_event_cb),
 				 chat, 0);
 }
 
@@ -215,20 +200,10 @@ private_chat_finalize (GObject *object)
 {
         GossipPrivateChat     *chat = GOSSIP_PRIVATE_CHAT (object);
 	GossipPrivateChatPriv *priv;
-	LmConnection          *connection;
-        LmMessageHandler      *handler;
 
 	priv = chat->priv;
-        connection = gossip_app_get_connection ();
 
-        handler = priv->message_handler;
-        if (handler) {
-                lm_connection_unregister_message_handler (
-                                connection, handler, LM_MESSAGE_TYPE_MESSAGE);
-                lm_message_handler_unref (handler);
-        }
-
-	gossip_contact_unref (priv->contact);
+	g_object_unref (priv->contact);
 
 	private_chat_composing_remove_timeout (chat);
 	
@@ -253,7 +228,7 @@ private_chats_init (void)
 
         private_chats = g_hash_table_new_full (gossip_contact_hash,
 				               gossip_contact_equal,
-                                               (GDestroyNotify) gossip_contact_unref,
+                                               (GDestroyNotify) g_object_unref,
                                                (GDestroyNotify) g_object_unref);
 }
 
@@ -261,7 +236,6 @@ static void
 private_chat_create_gui (GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
-        GossipRoster          *roster;
         GtkTextBuffer         *buffer;
 	GtkWidget             *input_text_view_sw;
 
@@ -286,8 +260,6 @@ private_chat_create_gui (GossipPrivateChat *chat)
 	g_object_ref (priv->widget);
 
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
-
-        roster = gossip_app_get_roster ();
 
 	g_signal_connect (GOSSIP_CHAT (chat)->input_text_view,
 			  "key_press_event",
@@ -333,9 +305,8 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 		return;
 	}
 
-	roster_resource = gossip_roster_get_active_resource (gossip_app_get_roster (),
-							     priv->contact);
-
+	roster_resource = gossip_session_get_active_resource (gossip_app_get_session (), 
+							      priv->contact);
 	/* It seems like some agents don't set a resource sometimes (ICQ for
 	 * example). I don't know if it's a bug or not, but we need to handle
 	 * those cases either way.
@@ -378,34 +349,16 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 	priv->send_composing_events = FALSE;
 }
 
-static gchar *
-private_chat_get_jid_with_resource (GossipPrivateChat *chat, 
-		                    const gchar       *resource)
-{
-	GossipPrivateChatPriv *priv = chat->priv;
-	GossipJID             *jid;
-
-	jid = gossip_contact_get_jid (priv->contact);
-
-	d(g_print ("Getting jid with resource: %s\n", resource));
-	
-	if (resource) {
-		return g_strconcat (gossip_jid_get_without_resource (jid),
-				    "/", resource, NULL);
-	}
-
-	return g_strdup (gossip_jid_get_without_resource (jid));
-}
-
 static void
 private_chat_send (GossipPrivateChat *chat,
                    const gchar       *msg)
 {
 	GossipPrivateChatPriv *priv;
+#if 0
         LmMessage             *m;
-        gchar                 *nick;
-	gchar                 *jid_string;
-	gchar                 *username;
+#endif
+	GossipMessage *m;
+        const gchar   *nick;
 
 	priv = chat->priv;
 
@@ -422,70 +375,56 @@ private_chat_send (GossipPrivateChat *chat,
 
         private_chat_composing_remove_timeout (chat);
 
-        nick = gossip_jid_get_part_name (gossip_app_get_jid ());
-
-	username = gossip_jid_get_part_name (gossip_app_get_jid ());
+        nick = gossip_session_get_nickname (gossip_app_get_session ());
 
         gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
                                               NULL,
-					      username,
+					      nick,
                                               nick,
                                               msg);
 
-	g_free (username);
-        g_free (nick);
-
 	private_chat_update_locked_resource (chat);
 	
-	jid_string = private_chat_get_jid_with_resource (chat, priv->locked_resource);
-        m = lm_message_new_with_sub_type (jid_string,
-                                          LM_MESSAGE_TYPE_MESSAGE,
-                                          LM_MESSAGE_SUB_TYPE_CHAT);
-
-	d(g_print ("to: %s (roster: %s)\n", jid_string, priv->roster_resource));
-	g_free (jid_string);
+	m = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, 
+				priv->contact);
+	if (priv->locked_resource) {
+		gossip_message_set_explicit_resource (m, priv->locked_resource);
+	}
 	
-	lm_message_node_add_child (m->node, "body", msg);
-        
-        if (gossip_contact_is_online (priv->contact) &&
+	gossip_message_set_body (m, msg);
+	
+	if (gossip_contact_is_online (priv->contact) && 
 	    priv->request_composing_events) {
-                private_chat_request_composing (m);
-        }
-	
+		gossip_message_request_composing (m);
+	}
+
 	gossip_log_message (m, FALSE);
 
-        lm_connection_send (gossip_app_get_connection (), m, NULL);
-        lm_message_unref (m);
-}
+	gossip_session_send_message (gossip_app_get_session (), m);
 
-static void
-private_chat_request_composing (LmMessage *m)
-{
-        LmMessageNode *x;
-
-        x = lm_message_node_add_child (m->node, "x", NULL);
-
-        lm_message_node_set_attribute (x,
-                                       "xmlns",
-                                       "jabber:x:event");
-        lm_message_node_add_child (x, "composing", NULL);
+	g_object_unref (m);
 }
 
 static void
 private_chat_composing_start (GossipPrivateChat *chat)
 {
-        if (!chat->priv->send_composing_events) {
+        GossipPrivateChatPriv *priv;
+
+        priv = chat->priv;
+
+        if (!priv->send_composing_events) {
                 return;
         }
 
-        if (chat->priv->composing_stop_timeout_id) {
+        if (priv->composing_stop_timeout_id) {
                 /* Just restart the timeout */
                 private_chat_composing_remove_timeout (chat);
         } else {
-                private_chat_composing_send_start_event (chat);
+                gossip_session_send_composing (gossip_app_get_session (),
+                                               priv->contact, TRUE);
         }
 
-        chat->priv->composing_stop_timeout_id = g_timeout_add (
+        priv->composing_stop_timeout_id = g_timeout_add (
                         1000 * COMPOSING_STOP_TIMEOUT,
                         (GSourceFunc) private_chat_composing_stop_timeout_cb,
                         chat);
@@ -494,77 +433,17 @@ private_chat_composing_start (GossipPrivateChat *chat)
 static void
 private_chat_composing_stop (GossipPrivateChat *chat)
 {
-	if (!chat->priv->send_composing_events) {
+        GossipPrivateChatPriv *priv;
+
+        priv = chat->priv;
+
+	if (!priv->send_composing_events) {
 		return;
 	}
 
 	private_chat_composing_remove_timeout (chat);
-	private_chat_composing_send_stop_event (chat);
-}
-
-static void
-private_chat_composing_send_start_event (GossipPrivateChat *chat)
-{
-	GossipPrivateChatPriv *priv;
-        LmConnection          *connection;
-        LmMessage             *m;
-        LmMessageNode         *x;
-	gchar                 *jid_string;
-
-	priv = chat->priv;
-
-        connection = gossip_app_get_connection ();
-        if (!lm_connection_is_open (connection)) {
-                return;
-        }
-
-	if (!gossip_contact_is_online (priv->contact)) {
-		return;
-	}
-	
-	jid_string = private_chat_get_jid_with_resource (chat, priv->composing_resource);
-		
-        m = lm_message_new_with_sub_type (jid_string,
-                                          LM_MESSAGE_TYPE_MESSAGE,
-                                          LM_MESSAGE_SUB_TYPE_CHAT);
-        x = lm_message_node_add_child (m->node, "x", NULL);
-        lm_message_node_set_attribute (x, "xmlns", "jabber:x:event");
-        lm_message_node_add_child (x, "id", priv->last_composing_id);
-        lm_message_node_add_child (x, "composing", NULL);
-
-        lm_connection_send (connection, m, NULL);
-        lm_message_unref (m);
-	g_free (jid_string);
-}
-
-static void
-private_chat_composing_send_stop_event (GossipPrivateChat *chat)
-{
-	GossipPrivateChatPriv *priv;
-	LmMessage             *m;
-        LmMessageNode         *x;
-        LmConnection          *connection;
-	gchar                 *jid_string;
-	
-	priv = chat->priv;
-	
-        connection = gossip_app_get_connection ();
-        if (!lm_connection_is_open (connection)) {
-                return;
-        }
-
-	jid_string = private_chat_get_jid_with_resource (chat, priv->composing_resource);
-
-        m = lm_message_new_with_sub_type (jid_string,
-                                          LM_MESSAGE_TYPE_MESSAGE,
-                                          LM_MESSAGE_SUB_TYPE_CHAT);
-        x = lm_message_node_add_child (m->node, "x", NULL);
-        lm_message_node_set_attribute (x, "xmlns", "jabber:x:event");
-        lm_message_node_add_child (x, "id", priv->last_composing_id);
-
-        lm_connection_send (connection, m, NULL);
-        lm_message_unref (m);
-	g_free (jid_string);
+        gossip_session_send_composing (gossip_app_get_session (),
+                                       priv->contact, FALSE);
 }
 
 static void
@@ -588,7 +467,8 @@ private_chat_composing_stop_timeout_cb (GossipPrivateChat *chat)
 	priv = chat->priv;
 	
         priv->composing_stop_timeout_id = 0;
-        private_chat_composing_send_stop_event (chat);
+        gossip_session_send_composing (gossip_app_get_session (),
+                                       priv->contact, FALSE);
 
         return FALSE;
 }
@@ -597,7 +477,6 @@ static gboolean
 private_chat_should_play_sound (GossipPrivateChat *chat)
 {
 	GossipChatWindow      *window;
-	GtkWidget             *toplevel;
 	gboolean               play = TRUE;
 
 	/* Play sounds if the window is not focused. */
@@ -608,20 +487,12 @@ private_chat_should_play_sound (GossipPrivateChat *chat)
 		return TRUE;
 	}
 
-	toplevel = gossip_chat_window_get_dialog (window);
-
-	/* The has-toplevel-focus property is new in GTK 2.2 so if we don't find it, we
-	 * pretend that the window doesn't have focus => always play sound.
-	 */
-	if (g_object_class_find_property (G_OBJECT_GET_CLASS (toplevel),
-					  "has-toplevel-focus")) {
-		g_object_get (toplevel, "has-toplevel-focus", &play, NULL);
-		play = !play;
-	}
+	play = !gossip_chat_window_has_focus (window);
 
 	return play;
 }
 
+#if 0
 static LmHandlerResult
 private_chat_message_handler (LmMessageHandler *handler,
                               LmConnection     *connection,
@@ -746,10 +617,10 @@ private_chat_message_handler (LmMessageHandler *handler,
 
         return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
-
+#endif 
 static void
 private_chat_contact_presence_updated (gpointer           not_used,
-			               GossipContact     *contact,
+				       GossipContact     *contact,
 			               GossipPrivateChat *chat)
 
 {
@@ -801,9 +672,9 @@ private_chat_contact_presence_updated (gpointer           not_used,
 }
 
 static void
-private_chat_contact_updated (gpointer              not_used, 
-		              GossipContact        *contact, 
-		              GossipPrivateChat    *chat)
+private_chat_contact_updated (gpointer           not_used,
+		              GossipContact     *contact, 
+		              GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
@@ -856,12 +727,12 @@ private_chat_contact_added (gpointer           not_user,
 		return;
 	}
 	
-	gossip_contact_unref (priv->contact);
-	priv->contact = gossip_contact_ref (contact);
+	g_object_unref (priv->contact);
+	priv->contact = g_object_ref (contact);
 }
 
 static void
-private_chat_connected_cb (GossipApp *app, GossipPrivateChat *chat)
+private_chat_connected_cb (GossipSession *session, GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
@@ -875,7 +746,7 @@ private_chat_connected_cb (GossipApp *app, GossipPrivateChat *chat)
 }
 
 static void
-private_chat_disconnected_cb (GossipApp *app, GossipPrivateChat *chat)
+private_chat_disconnected_cb (GossipSession *session, GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
@@ -894,6 +765,16 @@ private_chat_disconnected_cb (GossipApp *app, GossipPrivateChat *chat)
 	priv->composing_resource = NULL;
 }
 
+static void
+private_chat_composing_event_cb (GossipSession *session,
+				 GossipContact *contact,
+				 gboolean       composing,
+				 GossipChat    *chat)
+{
+	/* FIXME: Implement this */
+}
+
+#if 0
 static gboolean
 private_chat_handle_composing_event (GossipPrivateChat *chat, LmMessage *m)
 {
@@ -980,6 +861,7 @@ private_chat_error_dialog (GossipPrivateChat  *chat,
         gtk_dialog_run (GTK_DIALOG (dialog));
         gtk_widget_destroy (dialog);
 }
+#endif 
 
 static void
 private_chat_input_text_view_send (GossipPrivateChat *chat)
@@ -1114,10 +996,8 @@ private_chat_get_tooltip (GossipChat *chat)
 	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 	GossipContact         *contact;
-	GossipJID             *jid;
 	gchar                 *str;
 	const gchar           *status;
-	GossipPresence        *presence;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
@@ -1125,24 +1005,10 @@ private_chat_get_tooltip (GossipChat *chat)
 	priv   = p_chat->priv;
 
 	contact = gossip_chat_get_contact (chat);
-	jid = gossip_contact_get_jid (contact);
-
-	presence = gossip_contact_get_presence (contact);
-	status = gossip_presence_get_status (presence);
-
-	if (!status || strcmp(status, "") == 0) {
-		if (gossip_contact_is_online (contact)) {
-			GossipPresenceType p_type;
-
-			p_type = gossip_presence_get_type (presence);
-			status = gossip_utils_get_default_status (p_type);
-		} else {
-			status = _("Offline");
-		}
-	}
+	status = gossip_contact_get_status (contact);
 
 	str = g_strdup_printf ("%s\n%s",
-			       gossip_jid_get_without_resource (jid),
+			       gossip_contact_get_id (contact),
 			       status);
 
 	return str;
@@ -1205,51 +1071,35 @@ private_chat_get_widget (GossipChat *chat)
 }
 
 GossipPrivateChat *
-gossip_private_chat_get_for_contact (GossipContact *contact, gboolean create)
+gossip_private_chat_new (GossipContact *contact)
 {
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
-	GossipRoster          *roster;
 
-	private_chats_init ();
-
-	chat = g_hash_table_lookup (private_chats, contact);
-
-	if (chat) {
-		return chat;
-	}
-
-	if (!create) {
-		return NULL;
-	}
-	
 	chat = g_object_new (GOSSIP_TYPE_PRIVATE_CHAT, NULL);
-	g_hash_table_insert (private_chats, gossip_contact_ref (contact), chat);
-	
+
 	priv = chat->priv;
-	priv->contact = gossip_contact_ref (contact);
+	priv->contact = g_object_ref (contact);
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
 	priv->groupchat_priv = FALSE;
 
-	roster = gossip_app_get_roster ();
-
-	g_signal_connect_object (roster,
+	g_signal_connect_object (gossip_app_get_session (),
 				 "contact_presence_updated",
 				 G_CALLBACK (private_chat_contact_presence_updated),
 				 chat, 0);
 
-	g_signal_connect_object (roster,
+	g_signal_connect_object (gossip_app_get_session (),
 				 "contact_updated",
 				 G_CALLBACK (private_chat_contact_updated),
 				 chat, 0);
 
-	g_signal_connect_object (roster,
+	g_signal_connect_object (gossip_app_get_session (),
 				 "contact_removed",
 				 G_CALLBACK (private_chat_contact_removed),
 				 chat, 0);
 	
-	g_signal_connect_object (roster,
+	g_signal_connect_object (gossip_app_get_session (),
 				 "contact_added",
 				 G_CALLBACK (private_chat_contact_added),
 				 chat, 0);
@@ -1278,13 +1128,14 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 		return chat;
 	}
 	
-	jid = gossip_contact_get_jid (contact);
+	/* FIXME (session) */
+	jid = NULL;
 	
 	chat = g_object_new (GOSSIP_TYPE_PRIVATE_CHAT, NULL);
-	g_hash_table_insert (private_chats, gossip_contact_ref (contact), chat);
+	g_hash_table_insert (private_chats, g_object_ref (contact), chat);
 
 	priv = chat->priv;
-	priv->contact = gossip_contact_ref (contact);
+	priv->contact = g_object_ref (contact);
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 	priv->groupchat_priv = TRUE;
 
@@ -1347,19 +1198,53 @@ gossip_private_chat_get_history (GossipPrivateChat *chat, gint lines)
 }
 
 void
-gossip_private_chat_append_message (GossipPrivateChat *chat, LmMessage *m)
+gossip_private_chat_append_message (GossipPrivateChat *chat, 
+				    GossipMessage     *m)
 {
-        LmConnection *connection;
+	GossipPrivateChatPriv *priv;
+	GossipContact         *sender;
+	const gchar           *resource;
+	
+        g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
+        g_return_if_fail (GOSSIP_IS_MESSAGE (m));
 
-        g_return_if_fail (chat != NULL);
-        g_return_if_fail (m != NULL);
+	priv = chat->priv;
+	
+	g_print ("GossipPrivateChat::append_message ('%s')\n",
+		 gossip_contact_get_name (gossip_message_get_sender (m)));
 
-        connection = gossip_app_get_connection ();
+	sender = gossip_message_get_sender (m);
+	if (!gossip_contact_equal (priv->contact, sender)) {
+		return;
+	}
 
-        private_chat_message_handler (chat->priv->message_handler,
-                                      connection, m, chat);
+	resource = gossip_message_get_explicit_resource (m);
+
+	if (!priv->groupchat_priv &&
+	    resource &&
+	    (!priv->locked_resource ||
+	     g_ascii_strcasecmp (resource, priv->locked_resource) != 0)) {
+		g_free (priv->locked_resource);
+		priv->locked_resource = g_strdup (resource);
+	}
+
+	gossip_log_message (m, TRUE);
+
+	/* FIXME (session): Composing event */
+	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
+					      gossip_message_get_timestamp (m),
+					      NULL,
+					      gossip_contact_get_name (sender),
+					      gossip_message_get_body (m));
+
+	g_signal_emit_by_name (chat, "new-message");
+
+	if (private_chat_should_play_sound (chat)) {
+		gossip_sound_play (GOSSIP_SOUND_CHAT);
+	}
 }
 
+#if 0
 LmHandlerResult
 gossip_private_chat_handle_message (LmMessage *m)
 {
@@ -1379,7 +1264,7 @@ gossip_private_chat_handle_message (LmMessage *m)
 	if (item) {
 		contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
 							       item);
-		gossip_contact_ref (contact);
+		g_object_ref (contact);
 	} else {
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
 		gossip_contact_set_jid (contact, jid);
@@ -1399,8 +1284,8 @@ gossip_private_chat_handle_message (LmMessage *m)
 		result = LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
-	gossip_contact_unref (contact);
+	g_object_unref (contact);
 
         return result;
 }
-
+#endif

@@ -1,0 +1,24 @@
+
+TODO in session-rewrite-branch:
+-------------------------------
+
+Before merge:
+* Ask for password
+
+Can be done directly after merge:
+* Groups in contact list
+* Show offline/online
+* Registration
+
+Later:
+* Event inbox in contact list window
+* Event list in tray, rather than popping top event all the time.
+* Reconnect when disconnected
+
+Transports:
+* Fix vcard.
+* Fix add contact.
+* Handle multiple Jabber accounts in transports dialog.
+* Handle better the scenario when you are already registered to a
+local transport and you can not register another transport because of
+this. 

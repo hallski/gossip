@@ -78,7 +78,6 @@ void         gossip_glade_setup_size_group           (GladeXML         *gui,
 						      GtkSizeGroupMode  mode,
 						      gchar            *first_widget, ...);
 
-const gchar *gossip_utils_get_timestamp_from_message (LmMessage        *message);
 gchar *      gossip_utils_get_timestamp              (const gchar      *time_str);
 gchar *      gossip_password_dialog_run              (GossipAccount    *account,
 						      GtkWindow        *parent);
@@ -103,7 +102,6 @@ GdkPixbuf *  gossip_utils_get_pixbuf_from_show       (GossipShow        show);
 
 /* FIXME: Deprecate */
 const gchar *gossip_utils_get_default_status_show    (GossipShow        show);
-const gchar *gossip_utils_get_default_status         (GossipPresenceType type);
 GList *      gossip_utils_get_status_messages        (void);
 void         gossip_utils_set_status_messages        (GList            *list);
 void         gossip_utils_free_status_messages       (GList            *list);
@@ -111,13 +109,11 @@ void         gossip_utils_free_status_messages       (GList            *list);
 gint         gossip_utils_url_regex_match            (const gchar      *msg,
 						      GArray           *start,
 						      GArray           *end);
-GossipPresenceType
-gossip_utils_get_presence_type_from_show_string      (const gchar *str); 
+GossipPresenceState
+gossip_utils_get_presence_state_from_show_string     (const gchar *str); 
 gint         gossip_utils_str_case_cmp               (const gchar        *s1, 
 						      const gchar        *s2);
 gint         gossip_utils_str_n_case_cmp             (const gchar        *s1, 
 						      const gchar        *s2,
 						      gsize               n);
-void         gossip_utils_set_proxy                  (LmConnection       *conn);
-
 #endif /*  __GOSSIP_UTILS_H__ */

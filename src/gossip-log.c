@@ -35,7 +35,6 @@
 #include "libexslt/exslt.h"
 #include "gossip-utils.h"
 #include "gossip-app.h"
-#include "gossip-roster.h"
 #include "gossip-log.h"
 
 #define LOG_HEADER \
@@ -71,14 +70,14 @@ log_ensure_dir (void)
 }
 
 static gchar *
-log_get_filename (GossipJID *jid, const gchar *suffix)
+log_get_filename (GossipContact *contact, const gchar *suffix)
 {
 	gchar *tmp;
 	gchar *ret;
 	gchar *case_folded_str;
 	gchar *escaped_str;
 
-	case_folded_str = g_utf8_casefold (gossip_jid_get_without_resource (jid), 
+	case_folded_str = g_utf8_casefold (gossip_contact_get_id (contact),
 					   -1);
 	escaped_str = gnome_vfs_escape_host_and_path_string (case_folded_str);
 	g_free (case_folded_str);
@@ -96,14 +95,14 @@ log_get_filename (GossipJID *jid, const gchar *suffix)
 }
 
 static gchar *
-log_get_timestamp (LmMessage *msg)
+log_get_timestamp (GossipMessage *msg)
 {
 	const gchar *stamp;
 	time_t       t;
 	struct tm   *tm;
 	gchar        buf[128];
 	
-	stamp = gossip_utils_get_timestamp_from_message (msg);
+	stamp = gossip_message_get_timestamp (msg);
 	if (stamp) {
 		tm = lm_utils_get_localtime (stamp);
 	} else {
@@ -191,34 +190,25 @@ log_urlify (const gchar *msg)
 }
 
 void
-gossip_log_message (LmMessage *msg, gboolean incoming)
+gossip_log_message (GossipMessage *msg, gboolean incoming)
 {
-	const gchar   *jid_string;
-        GossipJID     *jid;
+	GossipContact *contact;
         gchar         *filename;
 	FILE          *file;
 	gchar         *body;
 	const gchar   *to_or_from;
 	gchar         *stamp;
-	LmMessageNode *body_node;
 	gchar         *nick;
 	const gchar   *resource;
 	
-	body_node = lm_message_node_get_child (msg->node, "body");
-	if (!body_node) {
-		return;
-	}
-	
 	if (incoming) {
-		jid_string = lm_message_node_get_attribute (msg->node, "from");
+		contact = gossip_message_get_sender (msg);
 	} else {
-		jid_string = lm_message_node_get_attribute (msg->node, "to");
+		contact = gossip_message_get_recipient (msg);
 	}
 
-	jid = gossip_jid_new (jid_string);
+	filename = log_get_filename (contact, ".log");
 	
-	filename = log_get_filename (jid, ".log");
-
 	log_ensure_dir ();
 	
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
@@ -232,58 +222,49 @@ gossip_log_message (LmMessage *msg, gboolean incoming)
 			fseek (file, - strlen (LOG_FOOTER), SEEK_END);
 		} 
 	}
-	
+
 	g_free (filename);
 	
-        if (!file) {
-		gossip_jid_unref (jid);
+	if (!file) {
 		return;
 	}
 	
 	stamp = log_get_timestamp (msg);
 
 	if (incoming) {
-		GossipRosterItem *item;
-
-		item = gossip_roster_get_item (gossip_app_get_roster (), jid);
-		if (!item) {
-			nick = gossip_jid_get_part_name (jid);
-		} else {
-			nick = g_strdup (gossip_roster_item_get_name (item));
-		}
+		nick = g_strdup (gossip_contact_get_name (contact));
 		
 		to_or_from = "from";
 	} else {
-		nick = gossip_jid_get_part_name (gossip_app_get_jid ());
+		nick = g_strdup (gossip_session_get_nickname (gossip_app_get_session ()));
 
 		to_or_from = "to";
 	}
 
-	if (body_node->value) {
-		body = log_urlify (body_node->value);
+        if (gossip_message_get_body (msg)) {
+		body = log_urlify (gossip_message_get_body (msg));
 	} else {
 		body = g_strdup ("");
 	}
 	
-	resource = gossip_jid_get_resource (jid);
+	resource = gossip_message_get_explicit_resource (msg);
 	if (!resource) {
 		resource = "";
 	}
-
+	
 	fprintf (file,
 		 "  <message time='%s' %s='%s' resource='%s' nick='%s'>\n"
 		 "    %s\n"
 		 "  </message>\n"
 		 LOG_FOOTER,
 		 stamp, to_or_from,
-		 gossip_jid_get_without_resource (jid),
+		 gossip_contact_get_id (contact),
 		 resource,
-		 nick,
+		 gossip_contact_get_name (contact),
 		 body);
 	
         fclose (file);
 
-	gossip_jid_unref (jid);
 	g_free (stamp);
 	g_free (nick);
 	g_free (body);
@@ -339,12 +320,12 @@ log_transform (const gchar *infile, gint fd_outfile)
 }
 
 gboolean
-gossip_log_exists (GossipJID *jid)
+gossip_log_exists (GossipContact *contact)
 {
 	gchar    *infile;
 	gboolean  exists;
 
-	infile = log_get_filename (jid, ".log");
+	infile = log_get_filename (contact, ".log");
 	exists = g_file_test (infile, G_FILE_TEST_EXISTS);
 	g_free (infile);
 
@@ -352,13 +333,13 @@ gossip_log_exists (GossipJID *jid)
 }	
 
 void
-gossip_log_show (GossipJID *jid)
+gossip_log_show (GossipContact *contact)
 {
 	gchar *infile, *outfile, *url;
 	FILE  *file;
 	int    fd;
 
-	infile = log_get_filename (jid, ".log");
+	infile = log_get_filename (contact, ".log");
 
 	if (!g_file_test (infile, G_FILE_TEST_EXISTS)) {
 		file = fopen (infile, "w+");

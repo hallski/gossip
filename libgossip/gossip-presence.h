@@ -21,40 +21,57 @@
 #ifndef __GOSSIP_PRESENCE_H__
 #define __GOSSIP_PRESENCE_H__
 
-#include <glib.h>
+#include <glib-object.h>
 #include <gdk/gdkpixbuf.h>
 
-typedef struct _GossipPresence GossipPresence;
+#define GOSSIP_TYPE_PRESENCE         (gossip_presence_get_type ())
+#define GOSSIP_PRESENCE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PRESENCE, GossipPresence))
+#define GOSSIP_PRESENCE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_PRESENCE, GossipPresenceClass))
+#define GOSSIP_IS_PRESENCE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_PRESENCE))
+#define GOSSIP_IS_PRESENCE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_PRESENCE))
+#define GOSSIP_PRESENCE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_PRESENCE, GossipPresenceClass))
+
+typedef struct _GossipPresence      GossipPresence;
+typedef struct _GossipPresenceClass GossipPresenceClass;
+
+struct _GossipPresence {
+	GObject parent;
+};
+
+struct _GossipPresenceClass {
+	GObjectClass parent_class;
+};
 
 typedef enum {
-	GOSSIP_PRESENCE_STATE_ONLINE,
-	GOSSIP_PRESENCE_STATE_OFFLINE
+	GOSSIP_PRESENCE_STATE_AVAILABLE, /* available (null) */
+	GOSSIP_PRESENCE_STATE_BUSY,      /* busy (dnd) */
+	GOSSIP_PRESENCE_STATE_AWAY,      /* away (away) */
+	GOSSIP_PRESENCE_STATE_EXT_AWAY   /* extended away (xa) */
 } GossipPresenceState;
 
-typedef enum {
-	GOSSIP_PRESENCE_TYPE_AVAILABLE, /* available (null) */
-	GOSSIP_PRESENCE_TYPE_BUSY,      /* busy (dnd) */
-	GOSSIP_PRESENCE_TYPE_AWAY,      /* away (away) */
-	GOSSIP_PRESENCE_TYPE_EXT_AWAY        /* extended away (xa) */
-} GossipPresenceType;
+GType               gossip_presence_get_type     (void) G_GNUC_CONST;
 
-GossipPresence *    gossip_presence_new          (GossipPresenceState state);
+GossipPresence *    gossip_presence_new          (void);
 GossipPresence *    gossip_presence_new_full     (GossipPresenceState state,
-						  GossipPresenceType  type,
 						  const gchar        *status);
+const gchar *       gossip_presence_get_resource (GossipPresence *presence);
+void                gossip_presence_set_resource (GossipPresence *presence,
+						  const gchar    *resource);
 GossipPresenceState gossip_presence_get_state    (GossipPresence *presence);
 void                gossip_presence_set_state    (GossipPresence *presence,
 						  GossipPresenceState state);
-GossipPresenceType  gossip_presence_get_type     (GossipPresence *presence);
-void                gossip_presence_set_type     (GossipPresence *presence,
-						  GossipPresenceType type);
 const gchar *       gossip_presence_get_status   (GossipPresence *presence);
 void                gossip_presence_set_status   (GossipPresence *presence,
 						  const gchar    *status);
-GossipPresence *    gossip_presence_ref          (GossipPresence *presence);
-void                gossip_presence_unref        (GossipPresence *presence);
+gint                gossip_presence_get_priority (GossipPresence *presence);
+void                gossip_presence_set_priority (GossipPresence *presence,
+						  gint            priority);
 
-GdkPixbuf *         gossip_presence_get_pixbuf     (GossipPresence *presence);
+GdkPixbuf *         gossip_presence_get_pixbuf   (GossipPresence *presence);
+
+/* Returns the default status message for presence's current state */
+const gchar *
+gossip_presence_get_default_status               (GossipPresence *presence);
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

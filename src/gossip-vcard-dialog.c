@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <ginxd@btopenworld.com>
+ * Copyright (C) 2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,16 +29,15 @@
 #include <unistd.h>
 
 #include "gossip-app.h"
+#include "gossip-session.h"
+#include "gossip-vcard.h"
 #include "gossip-vcard-dialog.h"
+#include "gossip-transport-accounts.h"
+#include "gossip-transport-register.h"
 
-#define d(x) 
+#define d(x) x
 
 struct _GossipVCardDialog {
-	LmConnection     *connection;
-
-	LmMessageHandler *vcard_get_handler;
-	LmMessageHandler *vcard_set_handler;
-
 	GtkWidget        *dialog;
 
 	GtkWidget        *label_status;
@@ -51,42 +51,53 @@ struct _GossipVCardDialog {
 	GtkWidget        *entry_email;
 
 	GtkWidget        *textview_description;
-};
 
+	gboolean          set_vcard;
+	gboolean          set_msn_nick;
+};
 
 typedef struct _GossipVCardDialog GossipVCardDialog;
 
 
-static void            vcard_dialog_get_vcard    (GossipVCardDialog *dialog);
-
-static LmHandlerResult vcard_dialog_get_vcard_cb (LmMessageHandler  *handler,
-						  LmConnection      *connection,
-						  LmMessage         *message,
+static void vcard_dialog_get_vcard_cb            (GossipAsyncResult  result,
+						  GossipVCard       *vcard,
 						  GossipVCardDialog *dialog);
-
-static void            vcard_dialog_set_vcard    (GossipVCardDialog *dialog);
-
-static LmHandlerResult vcard_dialog_set_vcard_cb (LmMessageHandler  *handler,
-						  LmConnection      *connection,
-						  LmMessage         *message,
+static void vcard_dialog_set_vcard               (GossipVCardDialog *dialog);
+static void vcard_dialog_set_vcard_cb            (GossipAsyncResult  result,
 						  GossipVCardDialog *dialog);
-
-static void            vcard_dialog_response_cb  (GtkDialog         *widget,
+static void vcard_dialog_set_msn_nick            (GossipVCardDialog *dialog);
+static void vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,
+						  const gchar       *key,
+						  const gchar       *username,
+						  const gchar       *password,
+						  const gchar       *nick,
+						  const gchar       *email,
+						  gboolean           require_username,
+						  gboolean           require_password,
+						  gboolean           require_nick,
+						  gboolean           require_email,
+						  gboolean           is_registered,
+						  const gchar       *error_code,
+						  const gchar       *error_reason,
+						  GossipVCardDialog *dialog);
+static void vcard_dialog_set_msn_nick_done_cb    (const gchar       *error_code,
+						  const gchar       *error_reason,
+						  GossipVCardDialog *dialog);
+static void vcard_dialog_check_all_set           (GossipVCardDialog *dialog);
+static void vcard_dialog_response_cb             (GtkDialog         *widget,
 						  gint               response,
 						  GossipVCardDialog *dialog);
-
-static void            vcard_dialog_destroy_cb   (GtkWidget         *widget,
+static void vcard_dialog_destroy_cb              (GtkWidget         *widget,
 						  GossipVCardDialog *dialog);
 
+
 void
-gossip_vcard_dialog_show ()
+gossip_vcard_dialog_show (void)
 {
 	GossipVCardDialog *dialog;
 	GladeXML          *gui;
 
 	dialog = g_new0 (GossipVCardDialog, 1);
-
-	dialog->connection = gossip_app_get_connection ();
 
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "vcard_dialog",
@@ -111,148 +122,161 @@ gossip_vcard_dialog_show ()
 	g_object_unref (gui);
 	
 	/* request current vCard */
-	vcard_dialog_get_vcard (dialog);
+	gossip_session_async_get_vcard (gossip_app_get_session (),
+					NULL,
+					(GossipAsyncVCardCallback) vcard_dialog_get_vcard_cb,
+					dialog,
+					NULL);
 }
 
 static void
-vcard_dialog_get_vcard (GossipVCardDialog *dialog)
-{
-	LmMessage     *m;
-	LmMessageNode *node;
-	GError        *error = NULL;
-	GossipJID     *jid;
-	gchar         *str;
-	
-	str = g_strdup_printf ("<b>%s</b>", _("Requesting personal details, please wait..."));
-	gtk_label_set_markup (GTK_LABEL (dialog->label_status), str);
-	gtk_widget_show (dialog->label_status);
-	g_free (str);
-
-	jid = gossip_app_get_jid ();
-
-	m = lm_message_new (NULL, LM_MESSAGE_TYPE_IQ);
-
-	node = lm_message_node_add_child (m->node, "vCard", NULL);
-	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
-
-	dialog->vcard_get_handler = lm_message_handler_new ((LmHandleMessageFunction) vcard_dialog_get_vcard_cb,
-							    dialog, NULL);
-					  
-	if (!lm_connection_send_with_reply (dialog->connection, m,
-					    dialog->vcard_get_handler, &error)) {
-		d(g_print ("Error while sending: %s\n", error->message));
-
-		lm_message_unref (m);
-		lm_message_handler_unref (dialog->vcard_get_handler);
-
-		dialog->vcard_get_handler = NULL;
-
-		return;
-	}
-
-	lm_message_unref (m);
-
-}
-
-static LmHandlerResult
-vcard_dialog_get_vcard_cb (LmMessageHandler  *handler,
-			   LmConnection      *connection,
-			   LmMessage         *m,
+vcard_dialog_get_vcard_cb (GossipAsyncResult  result,
+			   GossipVCard       *vcard,
 			   GossipVCardDialog *dialog)
 {
-	LmMessageNode *vCard, *node;
+	GtkTextBuffer *buffer;
 
 	d(g_print ("Got a vCard response\n"));
 
-	lm_message_handler_unref (dialog->vcard_get_handler);
-	dialog->vcard_get_handler = NULL;
-	
 	gtk_widget_hide (dialog->label_status);
 	gtk_widget_set_sensitive (dialog->vbox_personal_information, TRUE);
 	gtk_widget_set_sensitive (dialog->vbox_description, TRUE);
 
-	vCard = lm_message_node_get_child (m->node, "vCard");
-	if (!vCard) {
-		d(g_print ("No vCard node\n"));
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	if (result != GOSSIP_ASYNC_OK) {
+		d(g_print ("vCard result != GOSSIP_ASYNC_OK\n"));
+		return;
 	}
 
-	node = lm_message_node_get_child (vCard, "FN");
-	if (node) {
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
-				    lm_message_node_get_value (node)); 
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
+			    gossip_vcard_get_name (vcard));
 		
-		d(g_print ("Found the 'FN' tag\n"));
-	}
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname),
+			    gossip_vcard_get_nickname (vcard));
 
-	node = lm_message_node_get_child (vCard, "NICKNAME");
-	if (node) {
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname),
-				    lm_message_node_get_value (node)); 
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email),
+			    gossip_vcard_get_email (vcard));
 		
-		d(g_print ("Found the 'NICKNAME' tag\n"));
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_web_site),
+			    gossip_vcard_get_url (vcard));
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
+	gtk_text_buffer_set_text (buffer,
+				  gossip_vcard_get_description (vcard),
+				  -1);
+	g_object_unref (vcard);
+}
+
+static void
+vcard_dialog_set_msn_nick (GossipVCardDialog *dialog)
+{
+	GossipTransportAccount *account;
+	GossipJID              *jid;
+
+	const gchar            *nickname;
+
+	nickname = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+
+	if (!nickname || g_utf8_strlen (nickname, -1) < 1) {
+		d(g_print ("Nickname not set, no need to configure an the MSN nickname\n"));
+		dialog->set_msn_nick = TRUE;
+		return;	
 	}
 
-	node = lm_message_node_get_child (vCard, "EMAIL");
-	if (node) {
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_email),
-				    lm_message_node_get_value (node)); 
-		
-		d(g_print ("Found the 'EMAIL' tag\n"));
+#ifdef FIXME_MJR
+	account = gossip_transport_account_find_by_disco_type (al, "msn");
+	if (!account) {
+		d(g_print ("No MSN account, no need to configure an the MSN nickname\n"));
+		dialog->set_msn_nick = TRUE;
+		return;
 	}
 
-	node = lm_message_node_get_child (vCard, "URL");
-	if (node) {
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_web_site),
-				    lm_message_node_get_value (node)); 
-		
-		d(g_print ("Found the 'URL' tag\n"));
-	}
+	jid = gossip_transport_account_get_jid (account);
+#else
+	account = NULL;
+	jid = NULL;
+#endif
 
-	node = lm_message_node_get_child (vCard, "DESC");
-	if (node) {
-		GtkTextBuffer *buffer;
+	gossip_transport_requirements (NULL, 
+				       jid,
+				       (GossipTransportRequirementsFunc) vcard_dialog_set_msn_nick_details_cb,
+				       dialog);
+}
 
-		if (node->value) {
-			buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
-			gtk_text_buffer_set_text (buffer, node->value, -1);
-		}
-	}
+static void  
+vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,
+				      const gchar       *key,
+				      const gchar       *username,
+				      const gchar       *password,
+				      const gchar       *nick,
+				      const gchar       *email,
+				      gboolean           require_username,
+				      gboolean           require_password,
+				      gboolean           require_nick,
+				      gboolean           require_email,
+				      gboolean           is_registered,
+				      const gchar       *error_code,
+				      const gchar       *error_reason,
+				      GossipVCardDialog *dialog)
+{
+	const gchar *nickname;
 
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	nickname = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+
+	d(g_print ("Setting MSN nickname to %s, waiting for response...\n", nickname));
+
+	gossip_transport_register (NULL,
+				   jid, 
+				   key, 
+				   username,
+				   password, 
+				   nickname, 
+				   email,
+				   (GossipTransportRegisterFunc) vcard_dialog_set_msn_nick_done_cb,
+				   dialog);
+}
+
+static void
+vcard_dialog_set_msn_nick_done_cb (const gchar       *error_code,
+				   const gchar       *error_reason,
+				   GossipVCardDialog *dialog)
+{
+	d(g_print ("Setting MSN nickname complete.\n"));
+
+	dialog->set_msn_nick = TRUE;
+	vcard_dialog_check_all_set (dialog);
 }
 
 static void
 vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 {
-	LmMessage            *m;
-	LmMessageNode        *node;
-	GError               *error = NULL;
-
-	G_CONST_RETURN gchar *name;
-	G_CONST_RETURN gchar *nickname;
-	G_CONST_RETURN gchar *web_site;
-	G_CONST_RETURN gchar *email;
-	gchar                *description;
-
-	gchar                *str;
-
-	GtkTextBuffer        *buffer;
-	GtkTextIter           iter_begin, iter_end;
+	GError        *error = NULL;
+	gchar         *description;
+	gchar         *str;
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter_begin, iter_end;
+	GossipVCard   *vcard;
 
 	if (!gossip_app_is_connected ()) {
 		d(g_print ("Not connected, not setting vCard\n"));
 		return;
 	}
 
-	name = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
-	nickname = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
-	web_site = gtk_entry_get_text (GTK_ENTRY (dialog->entry_web_site));
-	email = gtk_entry_get_text (GTK_ENTRY (dialog->entry_email));
+	vcard = gossip_vcard_new ();
+
+	gossip_vcard_set_name (vcard,
+			       gtk_entry_get_text (GTK_ENTRY (dialog->entry_name)));
+	gossip_vcard_set_nickname (vcard,
+				   gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname)));
+	gossip_vcard_set_url (vcard,
+			      gtk_entry_get_text (GTK_ENTRY (dialog->entry_web_site)));
+	gossip_vcard_set_email (vcard,
+				gtk_entry_get_text (GTK_ENTRY (dialog->entry_email)));
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
 	gtk_text_buffer_get_bounds (buffer, &iter_begin, &iter_end);
 	description = gtk_text_buffer_get_text (buffer, &iter_begin, &iter_end, FALSE);
+	gossip_vcard_set_description (vcard, description);
+	g_free (description);
 
 	str = g_strdup_printf ("<b>%s</b>", _("Saving personal details, please wait..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->label_status), str);
@@ -262,63 +286,33 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gtk_widget_set_sensitive (dialog->vbox_personal_information, FALSE);
 	gtk_widget_set_sensitive (dialog->vbox_description, FALSE);
 
-	m = lm_message_new_with_sub_type (NULL,
-					  LM_MESSAGE_TYPE_IQ,
-					  LM_MESSAGE_SUB_TYPE_SET);
-
-	node = lm_message_node_add_child (m->node, "vCard", NULL);
-	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
-
-	lm_message_node_add_child (node, "FN", name);
-	lm_message_node_add_child (node, "NICKNAME", nickname);
-	lm_message_node_add_child (node, "URL", web_site);
-	lm_message_node_add_child (node, "EMAIL", email);
-	lm_message_node_add_child (node, "DESC", description);
-
-	g_free (description);
-
-	dialog->vcard_set_handler = lm_message_handler_new ((LmHandleMessageFunction) vcard_dialog_set_vcard_cb,
-							    dialog, NULL);
-					  
-	if (!lm_connection_send_with_reply (dialog->connection, m,
-					    dialog->vcard_set_handler, &error)) {
-		d(g_print ("Error while sending: %s\n", error->message));
-
-		lm_message_unref (m);
-		lm_message_handler_unref (dialog->vcard_set_handler);
-
-		dialog->vcard_set_handler = NULL;
-
-		return;
-	}
-
-	lm_message_unref (m);
+	gossip_session_async_set_vcard (gossip_app_get_session (),
+					vcard, 
+					(GossipAsyncResultCallback) vcard_dialog_set_vcard_cb,
+					dialog, &error);
 }
 
-static LmHandlerResult
-vcard_dialog_set_vcard_cb (LmMessageHandler  *handler,
-			   LmConnection      *connection,
-			   LmMessage         *m,
-			   GossipVCardDialog *dialog)
+static void
+vcard_dialog_set_vcard_cb (GossipAsyncResult result, GossipVCardDialog *dialog)
 {
-/* 	LmMessageNode *vCard, *node; */
+  
+  d(g_print ("Got a vCard response\n"));
+  
+  /* FIXME: need to put some sort of error checking in here */
 
-	d(g_print ("Got a vCard response\n"));
+	dialog->set_vcard = TRUE;
+	vcard_dialog_check_all_set (dialog);
+}
 
-	lm_message_handler_unref (dialog->vcard_set_handler);
-	dialog->vcard_set_handler = NULL;
+static void
+vcard_dialog_check_all_set (GossipVCardDialog *dialog)
+{
+	g_return_if_fail (dialog != NULL);
 
-/* 	vCard = lm_message_node_get_child (m->node, "vCard"); */
-/* 	if (!vCard) { */
-/* 		d(g_print ("No vCard node\n")); */
-/* 		return LM_HANDLER_RESULT_REMOVE_MESSAGE; */
-/* 	} */
-
-	/* !!! need to put some sort of error checking in here */
-
-	gtk_widget_destroy (dialog->dialog);
-
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	if (dialog->set_vcard &&
+	    dialog->set_msn_nick) {
+		gtk_widget_destroy (dialog->dialog);
+	}
 }
 
 static void
@@ -326,6 +320,7 @@ vcard_dialog_response_cb (GtkDialog *widget, gint response, GossipVCardDialog *d
 {
 	/* save vcard */
 	if (response == GTK_RESPONSE_OK) {
+		vcard_dialog_set_msn_nick (dialog);
 		vcard_dialog_set_vcard (dialog);
 		return;
 	}
@@ -336,15 +331,5 @@ vcard_dialog_response_cb (GtkDialog *widget, gint response, GossipVCardDialog *d
 static void
 vcard_dialog_destroy_cb (GtkWidget *widget, GossipVCardDialog *dialog)
 {
-	if (dialog->vcard_get_handler) {
-		lm_message_handler_invalidate (dialog->vcard_get_handler);
-		lm_message_handler_unref (dialog->vcard_get_handler);
-	}
-
-	if (dialog->vcard_set_handler) {
-		lm_message_handler_invalidate (dialog->vcard_set_handler);
-		lm_message_handler_unref (dialog->vcard_set_handler);
-	}
-
 	g_free (dialog);
 }

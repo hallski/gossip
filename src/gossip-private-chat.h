@@ -23,11 +23,10 @@
 #define __GOSSIP_PRIVATE_CHAT_H__
 
 #include <glib-object.h>
-#include <loudmouth/loudmouth.h>
+
 #include "gossip-app.h"
 #include "gossip-group-chat.h"
-#include "gossip-jid.h"
-#include "gossip-roster.h"
+#include "gossip-message.h"
 
 G_BEGIN_DECLS
 
@@ -54,14 +53,13 @@ struct _GossipPrivateChatClass {
 };
 
 GType               gossip_private_chat_get_type           (void);
-GossipPrivateChat * gossip_private_chat_get_for_contact    (GossipContact     *contact,
-						            gboolean           create);
+GossipPrivateChat * gossip_private_chat_new                (GossipContact     *contact);
 GossipPrivateChat * gossip_private_chat_get_for_group_chat (GossipContact     *contact,
 						            GossipGroupChat   *g_chat);
 void                gossip_private_chat_append_message     (GossipPrivateChat *chat,
-		  				            LmMessage         *message);
+							    GossipMessage     *message);
 void                gossip_private_chat_present            (GossipPrivateChat *chat);
-LmHandlerResult     gossip_private_chat_handle_message     (LmMessage         *message);
+void                gossip_private_chat_handle_message     (GossipMessage     *msg);
 gchar *             gossip_private_chat_get_history        (GossipPrivateChat *chat,
 		                                            gint               lines);
         

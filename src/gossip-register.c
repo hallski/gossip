@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,18 +22,17 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <libgnome/gnome-i18n.h>
-#include <loudmouth/loudmouth.h>
+
 #include "gossip-account.h"
+#include "gossip-app.h"
+#include "gossip-session.h"
 #include "gossip-utils.h"
 #include "gossip-register.h"
 
 typedef struct {
-	LmConnection  *connection;
 	GossipAccount *account;
 	GtkWidget     *dialog;
 
-	gchar         *password;
-	
 	gboolean       success;
 	gchar         *error_message;
 } RegisterAccountData;
@@ -42,138 +41,63 @@ static void
 register_dialog_destroy_cb (GtkWidget           *widget,
 			    RegisterAccountData *data)
 {
-	g_free (data->password);
 	data->dialog = NULL;
 
 	/*g_free (data); We leak this until we can cancel pending replies. */
 }
 
-static LmSSLResponse
-register_connection_ssl_func (LmSSL *ssl, LmSSLStatus status, gpointer user_data)
-{
-	return LM_SSL_RESPONSE_CONTINUE;
-}
-
-static LmHandlerResult
-register_register_handler (LmMessageHandler    *handler,
-			   LmConnection        *connection,
-			   LmMessage           *msg,
-			   RegisterAccountData *data)
-{
-	LmMessageSubType  sub_type;
-	LmMessageNode    *node;
-
-	sub_type = lm_message_get_sub_type (msg);
-	switch (sub_type) {
-	case LM_MESSAGE_SUB_TYPE_RESULT:
-		data->success = TRUE;
-
-		if (data->dialog) {
-			gtk_dialog_response (GTK_DIALOG (data->dialog),
-					     GTK_RESPONSE_NONE);
-		}
-		
-		break;
-
-	case LM_MESSAGE_SUB_TYPE_ERROR:
-	default:
-		node = lm_message_node_find_child (msg->node, "error");
-		if (node) {
-			data->error_message = g_strdup (lm_message_node_get_value (node));
-		} else {
-			data->error_message = g_strdup (_("Unknown error"));
-		}
-		
-		if (data->dialog) {
-			gtk_dialog_response (GTK_DIALOG (data->dialog),
-					     GTK_RESPONSE_NONE);
-		}
-		
-		break;
-	}
-
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-}	
-
 static void
-register_connection_open_cb (LmConnection        *connection,
-			     gboolean             result,
-			     RegisterAccountData *data)
+register_registration_done_cb (GossipAsyncResult   result, 
+                               const gchar         *err_message,
+                               RegisterAccountData *data)
 {
-	GossipJID        *jid;
-	LmMessage        *msg;
-	LmMessageNode    *node;
-	LmMessageHandler *handler;
-	
-	if (result != TRUE) {
-		data->error_message = g_strdup ("Could not connect to the server.");
+	switch (result) {
+        case GOSSIP_ASYNC_OK:
+                data->success = TRUE;
 
 		if (data->dialog) {
+                        gtk_dialog_response (GTK_DIALOG (data->dialog),
+                                             GTK_RESPONSE_NONE);
+                }
+		
+                break;
+        case GOSSIP_ASYNC_ERROR_REGISTRATION:
+	default:
+                data->error_message = g_strdup (err_message);
+		
+                if (data->dialog) {
 			gtk_dialog_response (GTK_DIALOG (data->dialog),
 					     GTK_RESPONSE_NONE);
 		}
-		return;
+		
+		break;
 	}
-
-	jid = gossip_jid_ref (data->account->jid);
-	
-	msg = lm_message_new_with_sub_type (NULL,
-					    LM_MESSAGE_TYPE_IQ,
-					    LM_MESSAGE_SUB_TYPE_SET);
-	
-	node = lm_message_node_add_child (msg->node, "query", NULL);
-	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
-	
-	lm_message_node_add_child (node, "username", gossip_jid_get_part_name (jid));
-	lm_message_node_add_child (node, "password", data->password);
-
-	handler = lm_message_handler_new ((LmHandleMessageFunction) register_register_handler,
-					  data, NULL);
-
-	lm_connection_send_with_reply (data->connection, msg, handler, NULL);
-	lm_message_unref (msg);
-	
-	gossip_jid_unref (jid);
-}
+}	
 
 gboolean
 gossip_register_account (GossipAccount *account,
 			 GtkWindow     *parent)
 {
-	gchar               *password;
-	GossipJID           *jid;
 	RegisterAccountData *data;
+	gchar               *password;
 	gint                 response;
 	gboolean             retval;
+        const gchar         *id;
 
 	if (!account->password || !account->password[0]) {
-		password = gossip_password_dialog_run (account, parent);
+                password = gossip_password_dialog_run (account, parent);
 
 		if (!password) {
 			return FALSE;
 		}
 	} else {
-		password = g_strdup (account->password);
+                password = g_strdup (account->password);
 	}
-	
-	jid = gossip_jid_ref (account->jid);
 
 	data = g_new0 (RegisterAccountData, 1);
 
+        id = gossip_jid_get_without_resource (account->jid);
 	data->account = account;
-	data->connection = lm_connection_new (account->server);
-	gossip_utils_set_proxy (data->connection);
-
-	lm_connection_set_port (data->connection, account->port);
-	if (account->use_ssl) {
-		LmSSL *ssl = lm_ssl_new (NULL,  
-					 (LmSSLFunction) register_connection_ssl_func,
-					 NULL,
-					 NULL);
-		lm_connection_set_ssl (data->connection, ssl);
-		lm_ssl_unref (ssl);
-	}
-	data->password = password;
 	
 	data->dialog = gtk_message_dialog_new (parent,
 					       GTK_DIALOG_MODAL |
@@ -182,7 +106,7 @@ gossip_register_account (GossipAccount *account,
 					       GTK_BUTTONS_CANCEL,
 					       "%s\n<b>%s</b>",
 					       _("Registering account"),
-					       gossip_jid_get_without_resource (jid));
+                                               id);
 
 	g_object_set (GTK_MESSAGE_DIALOG (data->dialog)->label,
 		      "use-markup", TRUE,
@@ -194,9 +118,14 @@ gossip_register_account (GossipAccount *account,
 			  G_CALLBACK (register_dialog_destroy_cb),
 			  data);
 	
-	lm_connection_open (data->connection,
-			    (LmResultFunction) register_connection_open_cb,
-			    data, NULL, NULL);
+        gossip_session_async_register (gossip_app_get_session (),
+                                       GOSSIP_ACCOUNT_TYPE_JABBER,
+                                       id,
+                                       password,
+                                       account->use_ssl,
+                                       (GossipAsyncRegisterCallback) register_registration_done_cb,
+                                       NULL, NULL);
+        g_free (password);
 
 	response = gtk_dialog_run (GTK_DIALOG (data->dialog));
 	switch (response) {
@@ -222,7 +151,7 @@ gossip_register_account (GossipAccount *account,
 						 GTK_BUTTONS_CLOSE,
 						 "%s\n<b>%s</b>",
 						 _("Successfully registered the account"),
-						 gossip_jid_get_without_resource (jid));
+                                                 id);
 
 		g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
 			      "use-markup", TRUE,
@@ -243,13 +172,13 @@ gossip_register_account (GossipAccount *account,
 		if (data->error_message) {
 			str = g_strdup_printf ("%s\n<b>%s</b>\n\n%s\n%s",
 					       _("Failed registering the account"),
-					       gossip_jid_get_without_resource (jid),
+                                               id,
 					       _("Reason:"),
 					       data->error_message);
 		} else {
 			str = g_strdup_printf ("%s\n<b>%s</b>",
 					       _("Failed registering the account"),
-					       gossip_jid_get_without_resource (jid));
+                                               id);
 		}
 
 		dialog = gtk_message_dialog_new (parent,
@@ -273,8 +202,6 @@ gossip_register_account (GossipAccount *account,
 		retval = FALSE;
 	}		
 
-	gossip_jid_unref (jid);
-	
 	gtk_widget_destroy (data->dialog);
 
 	return retval;

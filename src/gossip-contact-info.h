@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,12 +22,12 @@
 #define __GOSSIP_CONTACT_INFO_H__
 
 #include <glib.h>
-#include "gossip-jid.h"
+
+#include "gossip-contact.h"
 
 typedef struct _GossipContactInfo GossipContactInfo;
 
-GossipContactInfo * gossip_contact_info_new        (GossipJID         *jid,
-						    const gchar       *name);
+GossipContactInfo * gossip_contact_info_new        (GossipContact *contact);
 
 GtkWidget *         gossip_contact_info_get_dialog (GossipContactInfo *info);
 

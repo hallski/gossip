@@ -21,11 +21,9 @@
 #ifndef __GOSSIP_ADD_CONTACT_H__
 #define __GOSSIP_ADD_CONTACT_H__
 
-#include <loudmouth/loudmouth.h>
-#include "gossip-jid.h"
+#include <glib.h>
 
-void  gossip_add_contact_new (LmConnection *connection,
-			      GossipJID    *jid);
+void  gossip_add_contact_new (const gchar *id);
 
 #endif /* __GOSSIP_ADD_CONTACT_H__ */
 

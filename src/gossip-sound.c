@@ -23,6 +23,7 @@
 #include <libgnome/gnome-sound.h>
 #include "gossip-preferences.h"
 #include "gossip-app.h"
+#include "gossip-session.h"
 #include "gossip-sound.h"
 
 extern GConfClient *gconf_client;
@@ -30,12 +31,13 @@ extern GConfClient *gconf_client;
 void
 gossip_sound_play (GossipSound sound)
 {
-	gboolean     enabled, silent_busy, silent_away;
-	GossipShow   show;
-	const gchar *file;
-	gchar       *str;
+	gboolean             enabled, silent_busy, silent_away;
+	const gchar         *file;
+	gchar               *str;
+        GossipPresence      *p;
+        GossipPresenceState  state;
 
-	if (!gossip_app_is_connected ()) {
+	if (!gossip_session_is_connected (gossip_app_get_session ())) {
 		return;
 	}
 	
@@ -52,14 +54,15 @@ gossip_sound_play (GossipSound sound)
 	if (!enabled) {
 		return;
 	}
-	
-	show = gossip_app_get_show ();
-	
-	if (silent_busy && show == GOSSIP_SHOW_BUSY) {
+
+        p = gossip_session_get_presence (gossip_app_get_session ());
+        state = gossip_presence_get_state (p);
+
+        if (silent_busy && state == GOSSIP_PRESENCE_STATE_BUSY) {
 		return;
 	}
 
-	if (silent_away && (show == GOSSIP_SHOW_AWAY || show == GOSSIP_SHOW_EXT_AWAY)) {
+	if (silent_away && (state == GOSSIP_PRESENCE_STATE_AWAY || state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
 		return;
 	}
 

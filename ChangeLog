@@ -1,3 +1,65 @@
+2004-12-30  Mikael Hallendal  <micke@imendio.com>
+
+	* AUTHORS: Added Martyn
+	* configure.in:
+	* protocols/aim.protocol:
+	* protocols/gossip-protocol.dtd:
+	* protocols/icq.protocol:
+	* protocols/msn.protocol:
+	* protocols/yahoo.protocol:
+	* src/Makefile.am:
+	* src/gossip-account.c: 
+	* src/gossip-add-contact.[ch]: 
+	* src/gossip-app.[ch]: 
+	* src/gossip-async.h: New file
+	* src/gossip-cell-renderer-text.[ch]: New files
+	* src/gossip-chat-manager.[ch]: New files
+	* src/gossip-chat-view.c: 
+	* src/gossip-chat-window.[ch]: 
+	* src/gossip-chat.[ch]: 
+	* src/gossip-chatroom-provider.[ch]: New files
+	* src/gossip-contact-info.[ch]:
+	* src/gossip-contact-list-iface.[ch]: New files
+	* src/gossip-contact-list.[ch]:
+	* src/gossip-contact.[ch]: 
+	* src/gossip-disco-servers.[ch]:
+	* src/gossip-disco-window.c: 
+	* src/gossip-disco.[ch]:
+	* src/gossip-edit-groups-dialog.[ch]:
+	* src/gossip-event-manager.[ch]: New files
+	* src/gossip-event.[ch]: New files
+	* src/gossip-favorites-dialog.[ch]: 
+	* src/gossip-group-chat.[ch]: 
+	* src/gossip-jabber-chatrooms.[ch]: New files
+	* src/gossip-jabber-helper.[ch]:
+	* src/gossip-jabber.[ch]:
+	* src/gossip-join-dialog.c: 
+	* src/gossip-log.[ch]: 
+	* src/gossip-message.[ch]: New files
+	* src/gossip-presence.[ch]: 
+	* src/gossip-private-chat.[ch]: 
+	* src/gossip-protocol.[ch]: New files
+	* src/gossip-register.c: 
+	* src/gossip-session.[ch]: 
+	* src/gossip-sound.c: 
+	* src/gossip-stock.h:
+	* src/gossip-transport-accounts-window.[ch]: New files
+	* src/gossip-transport-accounts.[ch]: New files
+	* src/gossip-transport-add-window.[ch]: New files
+	* src/gossip-transport-discover.[ch]: New files
+	* src/gossip-transport-protocol.[ch]: New files
+	* src/gossip-transport-register.[ch]: New files
+	* src/gossip-tray.[ch]: New files
+	* src/gossip-utils.[ch]: New files
+	* src/gossip-vcard-dialog.c: 
+	* src/gossip-vcard.[ch]: New files
+	* src/gossip-version-info.[ch]: New files
+	* ui/main.glade:
+	- Major branch of both gossip-session-rewrite and gossip-transports.
+	- This code is still very young and a lot of know regressions and bugs
+	  but we will focus on fixing these during the development phase of
+	  Gossip 0.9.
+
 2004-12-27  Mikael Hallendal  <micke@imendio.com>
 
 	* Release 0.8

@@ -22,13 +22,12 @@
 #define __GOSSIP_EDIT_GROUPS_DIALOG_H__
 
 #include <glib.h>
-#include "gossip-jid.h"
+
+#include "gossip-contact.h"
 
 typedef struct _GossipEditGroups GossipEditGroups;
 
-GossipEditGroups * gossip_edit_groups_new        (GossipJID         *jid,
-						  const gchar       *name,
-						  GList             *groups);
+GossipEditGroups * gossip_edit_groups_new        (GossipContact *contact);
 
 GtkWidget *        gossip_edit_groups_get_dialog (GossipEditGroups  *info);
 

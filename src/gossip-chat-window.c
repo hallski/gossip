@@ -32,7 +32,6 @@
 #include "gossip-private-chat.h"
 #include "gossip-chat-window.h"
 #include "gossip-notebook.h"
-#include "gossip-roster.h"
 #include "gossip-utils.h"
 #include "gossip-stock.h"
 #include "gossip-sound.h"
@@ -50,8 +49,6 @@ static void chat_window_accel_cb              (GtkAccelGroup         *accelgroup
 					       guint                  key,
 					       GdkModifierType        mod,
 					       GossipChatWindow      *window);
-static gboolean 
-chat_window_has_toplevel_focus                (GossipChatWindow	     *window);
 static GtkWidget*
 chat_window_create_label		      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
@@ -175,31 +172,7 @@ static GtkTargetEntry drop_types[] = {
 	{ "text/jid", 0, DND_DROP_TYPE_JID },
 };
 
-GType
-gossip_chat_window_get_type (void)
-{
-        static GType type_id = 0;
-
-        if (type_id == 0) {
-                static const GTypeInfo type_info = {
-                        sizeof (GossipChatWindowClass),
-                        NULL,
-                        NULL,
-                        (GClassInitFunc) gossip_chat_window_class_init,
-                        NULL,
-                        NULL,
-                        sizeof (GossipChatWindow),
-                        0,
-                        (GInstanceInitFunc) gossip_chat_window_init
-                };
-
-                type_id = g_type_register_static (G_TYPE_OBJECT,
-                                                  "GossipChatWindow",
-                                                  &type_info, 0);
-        }
-
-        return type_id;
-}
+G_DEFINE_TYPE (GossipChatWindow, gossip_chat_window, G_TYPE_OBJECT);
 
 static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)
@@ -490,22 +463,6 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 	}
 }
 
-static gboolean
-chat_window_has_toplevel_focus (GossipChatWindow *window)
-{
-	gboolean focus = FALSE;
-	
-	/* The has-toplevel-focus property is new in GTK 2.2 so if we don't find it, we
-	 * pretend that the window doesn't have focus.
-	 */
-	if (g_object_class_find_property (G_OBJECT_GET_CLASS (window->priv->dialog),
-					  "has-toplevel-focus")) {
-		g_object_get (window->priv->dialog, "has-toplevel-focus", &focus, NULL);
-	}
-
-	return focus;
-}
-
 static GtkWidget *
 chat_window_create_label (GossipChatWindow *window,
 			  GossipChat       *chat)
@@ -644,14 +601,14 @@ chat_window_clear_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 }
 
 static void
-chat_window_log_activate_cb (GtkWidget *menuitem,GossipChatWindow *window)
+chat_window_log_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv = window->priv;
 	GossipContact        *contact;
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 	
-	gossip_log_show (gossip_contact_get_jid (contact));
+	gossip_log_show (contact);
 }
 
 static void
@@ -664,8 +621,7 @@ chat_window_info_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_contact_info_new (gossip_contact_get_jid (contact),
-				 gossip_chat_get_name (priv->current_chat));
+	gossip_contact_info_new (contact);
 }
 
 static void
@@ -681,7 +637,7 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 	contact = gossip_chat_get_contact (priv->current_chat);
 
 	if (contact != NULL) {
-		log_exists = gossip_log_exists (gossip_contact_get_jid (contact));
+		log_exists = gossip_log_exists (contact);
 	} else {
 		log_exists = FALSE;
 	}
@@ -887,7 +843,7 @@ static void
 chat_window_new_message_cb (GossipChat       *chat,
 			    GossipChatWindow *window)
 {
-	if (!chat_window_has_toplevel_focus (window)) {
+	if (!gossip_chat_window_has_focus (window)) {
 		window->priv->new_msg = TRUE;
 		chat_window_update_title (window);
 	}
@@ -1081,24 +1037,18 @@ chat_window_drag_data_received (GtkWidget        *widget,
 				guint             time, 
 				GossipChatWindow *window)
 {
-	GossipJID        *jid;
-	GossipRosterItem *item;
 	GossipContact    *contact;
 	GossipChat       *chat;
 	GossipChatWindow *old_window;
+
+	contact = gossip_session_find_contact (gossip_app_get_session (),
+					       selection->data);
 	
-	jid = gossip_jid_new (selection->data);
-	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
-	gossip_jid_unref (jid);
-	
-	if (!item) {
+	if (!contact) {
 		return;
 	}
 
-	contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
-						       item);
-
-	chat = GOSSIP_CHAT (gossip_private_chat_get_for_contact (contact, TRUE));
+	chat = GOSSIP_CHAT (gossip_chat_manager_get_chat (gossip_app_get_chat_manager (), contact));
 	old_window = gossip_chat_get_window (chat);
 	
 	if (old_window) {
@@ -1188,3 +1138,19 @@ gossip_chat_window_switch_to_chat (GossipChatWindow *window,
 	gtk_notebook_set_current_page (GTK_NOTEBOOK (window->priv->notebook),
 				       page_num);
 }
+
+gboolean
+gossip_chat_window_has_focus (GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	gboolean              has_focus;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT_WINDOW (window), FALSE);
+	
+	priv = window->priv;
+
+	g_object_get (priv->dialog, "has-toplevel-focus", &has_focus, NULL);
+
+	return has_focus;
+}
+

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio HB
+ * Copyright (C) 2002-2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,9 +22,13 @@
 #define __GOSSIP_APP_H__
 
 #include <glib-object.h>
+#include <gtk/gtkwidget.h>
 
 #include "gossip-account.h"
-#include "gossip-roster.h"
+#include "gossip-chat-manager.h"
+#include "gossip-event-manager.h"
+#include "gossip-session.h"
+#include "gossip-utils.h"
 
 #define GOSSIP_TYPE_APP         (gossip_app_get_type ())
 #define GOSSIP_APP(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_APP, GossipApp))
@@ -47,23 +51,19 @@ struct _GossipAppClass {
         GObjectClass parent_class;
 };
 
-GType            gossip_app_get_type                (void) G_GNUC_CONST;
-void             gossip_app_create                  (void);
-void             gossip_app_connect                 (void);
-void             gossip_app_join_group_chat         (const gchar   *room,
-						     const gchar   *server,
-						     const gchar   *nick);
-const gchar *    gossip_app_get_username            (void);
-GossipJID *      gossip_app_get_jid                 (void);
-GossipRoster *   gossip_app_get_roster              (void);
-LmConnection *   gossip_app_get_connection          (void);
-GossipShow       gossip_app_get_show                (void);
-GossipApp *      gossip_app_get                     (void);
-void             gossip_app_set_overridden_resource (const gchar   *resource);
-gboolean         gossip_app_is_connected            (void);
-GtkWidget *      gossip_app_get_window              (void);
-void             gossip_app_force_non_away          (void);
-void             gossip_app_set_presence            (GossipShow     show,
-						     const gchar   *status);
+GType               gossip_app_get_type                (void) G_GNUC_CONST;
+void                gossip_app_create                  (void);
+void                gossip_app_connect                 (void);
+const gchar *       gossip_app_get_username            (void);
+GossipApp *         gossip_app_get                     (void);
+void                gossip_app_set_overridden_resource (const gchar  *resource);
+gboolean            gossip_app_is_connected            (void);
+GtkWidget *         gossip_app_get_window              (void);
+void                gossip_app_force_non_away          (void);
+void                gossip_app_set_presence            (GossipShow    show,
+							const gchar  *status);
+GossipSession *     gossip_app_get_session             (void);
+GossipChatManager * gossip_app_get_chat_manager        (void);
+GossipEventManager *gossip_app_get_event_manager       (void);
 
 #endif /* __GOSSIP_APP_H__ */

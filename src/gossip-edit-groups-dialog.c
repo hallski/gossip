@@ -33,7 +33,7 @@
 struct _GossipEditGroups {
 	GtkWidget   *dialog;
 	GtkWidget   *contact_label;
-	GtkWidget   *jid_label;
+	GtkWidget   *id_label;
 	GtkWidget   *add_entry;
 	GtkWidget   *add_button;
 
@@ -42,8 +42,7 @@ struct _GossipEditGroups {
 
 	GtkTreeView *treeview;
 
-	gchar       *jid_str; 
-	gchar       *name;
+        GossipContact *contact;
 
 	GList       *restore_groups;
 	
@@ -58,7 +57,6 @@ typedef struct {
 	
 	gboolean          found;
 	GtkTreeIter       found_iter;
-	
 } FindName;
 
 
@@ -74,7 +72,6 @@ enum {
 	COL_EDIT_GROUPS_EDITABLE,
 	COL_EDIT_GROUPS_COUNT
 };
-
 
 static void     edit_groups_dialog_destroy_cb     (GtkWidget             *widget,
 						   GossipEditGroups      *info);
@@ -115,8 +112,7 @@ static void     edit_groups_add_button_clicked    (GtkButton             *button
 static void
 edit_groups_dialog_destroy_cb (GtkWidget *widget, GossipEditGroups *info)
 {
-	g_free (info->jid_str);
-	g_free (info->name);
+        g_object_unref (info->contact);
 
 	g_list_foreach (info->restore_groups, (GFunc) g_free, NULL); 
 	g_list_free (info->restore_groups);
@@ -143,23 +139,24 @@ edit_groups_dialog_response_cb (GtkWidget *widget, gint response, GossipEditGrou
 }
 
 GossipEditGroups *
-gossip_edit_groups_new (GossipJID *jid, const gchar *name, GList *groups)
+gossip_edit_groups_new (GossipContact *contact)
 {
 	GossipEditGroups *info;
 	GladeXML         *gui;
 	gchar            *str, *tmp;
+        GList            *groups;
 
 	info = g_new0 (GossipEditGroups, 1);
 
-	info->jid_str = g_strdup (gossip_jid_get_without_resource (jid));
-	info->name = g_strdup (name);
-
+        info->contact = g_object_ref (contact);
+        groups = gossip_contact_get_groups (contact);
+        
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "edit_groups_dialog",
 				     NULL,
 				     "edit_groups_dialog", &info->dialog,
 				     "contact_label", &info->contact_label,
-				     "jid_label", &info->jid_label,
+				     "jid_label", &info->id_label,
 				     "add_entry", &info->add_entry,
 				     "add_button", &info->add_button,
 				     "ok_button", &info->ok_button,
@@ -178,7 +175,7 @@ gossip_edit_groups_new (GossipJID *jid, const gchar *name, GList *groups)
 
 	g_object_unref (gui);
 
-	str = g_markup_escape_text (name, -1);
+	str = g_markup_escape_text (gossip_contact_get_name (contact), -1);
 	tmp = g_strdup_printf (_("Edit groups for %s"), str);
 	g_free (str);
 	
@@ -187,10 +184,12 @@ gossip_edit_groups_new (GossipJID *jid, const gchar *name, GList *groups)
 	g_free (str);
 	g_free (tmp);
 
-	if (strcmp (name, info->jid_str) != 0) {
-		gtk_label_set_text (GTK_LABEL (info->jid_label), info->jid_str);
+	if (strcmp (gossip_contact_get_name (contact),
+                    gossip_contact_get_id (contact)) != 0) {
+		gtk_label_set_text (GTK_LABEL (info->id_label), 
+                                    gossip_contact_get_id (info->contact));
 	} else {
-		gtk_widget_hide (GTK_WIDGET (info->jid_label));
+		gtk_widget_hide (GTK_WIDGET (info->id_label));
 	}
 
 	edit_groups_setup (info);
@@ -271,48 +270,9 @@ edit_groups_populate_columns (GossipEditGroups *info)
 static void
 edit_groups_set (GossipEditGroups *info, GList *groups)
 {
-	LmConnection  *connection;
-	LmMessage     *m;
-	LmMessageNode *node;
-	GList         *l;
-	gchar         *escaped;
-
-	connection = gossip_app_get_connection ();
-
-	if (!lm_connection_is_open (connection)) {
-		return;
-	}
-	
-	g_return_if_fail (connection != NULL);
-	g_return_if_fail (info->jid_str != NULL);
-	g_return_if_fail (strlen (info->jid_str) > 0);
-
-	m = lm_message_new_with_sub_type (NULL, 
-					  LM_MESSAGE_TYPE_IQ,
-					  LM_MESSAGE_SUB_TYPE_SET);
-	node = lm_message_node_add_child (m->node, "query", NULL);
-	lm_message_node_set_attributes (node,
-					"xmlns", "jabber:iq:roster",
-					NULL);
-				       
-	escaped = g_markup_escape_text (info->name, -1);
-	
-	node = lm_message_node_add_child (node, "item", NULL);
-	lm_message_node_set_attributes (node, 
-					"jid", info->jid_str,
-					"name", escaped,
-					NULL);
-
-	g_free (escaped);
-
-	for (l = groups; l; l = l->next) {
-		gchar *group_str = l->data;
-		
-		lm_message_node_add_child (node, "group", group_str);
-	}	
-	
-	lm_connection_send (connection, m, NULL);
-	lm_message_unref (m);
+        gossip_contact_set_groups (info->contact, groups);
+        gossip_session_update_contact (gossip_app_get_session (),
+                                       info->contact);
 }
 
 static void
@@ -344,17 +304,14 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 	GtkTreeIter   iter;	
 	GList        *l;
 	GList        *my_groups = NULL;
-	GossipRoster *roster;
 	GList        *all_groups;
 
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (info->treeview));
 
-	roster = gossip_app_get_roster ();
-	all_groups = gossip_roster_get_all_groups (roster);
+	all_groups = gossip_session_get_groups (gossip_app_get_session ());
 
 	for (l = groups; l; l = l->next) {
-		GossipRosterGroup *group = l->data;
-		const gchar       *group_str = gossip_roster_group_get_name (group);
+		const gchar *group_str = (const gchar *) l->data;
 
 		/* This needs to be done better, could have group_is_unsorted().
 		 */
@@ -366,8 +323,7 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 	}
 	
 	for (l = all_groups; l; l = l->next) {
-		GossipRosterGroup *group = l->data;
-		const gchar       *group_str = gossip_roster_group_get_name (group);
+		const gchar *group_str = (const gchar *) l->data;
 
 		/* This needs to be done better, could have group_is_unsorted().
 		 */

@@ -382,26 +382,6 @@ gossip_utils_substring (const gchar *str, gint start, gint end)
 	return g_strndup (str + start, end - start);
 }
 
-const gchar *
-gossip_utils_get_timestamp_from_message (LmMessage *m)
-{
-	LmMessageNode *node;
-	const gchar   *timestamp = NULL;
-	const gchar   *xmlns;
-	
-	for (node = m->node->children; node; node = node->next) {
-                if (strcmp (node->name, "x") == 0) {
-			xmlns = lm_message_node_get_attribute (node, "xmlns");
-			if (xmlns && strcmp (xmlns, "jabber:x:delay") == 0) {
-                                timestamp = lm_message_node_get_attribute 
-					(node, "stamp");
-                        }
-                }
-        }
-	
-	return timestamp;
-}
-
 gchar *
 gossip_utils_get_timestamp (const gchar *time_str)
 {
@@ -462,7 +442,7 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbox))) {
 			g_free (account->password);
-			account->password = password;
+			account->password = g_strdup (password);
 			gossip_account_store (account, NULL);
 		}
 	} else {
@@ -760,22 +740,6 @@ gossip_utils_get_default_status_show (GossipShow show)
         return _(AVAILABLE_MESSAGE);
 }
 
-const gchar *
-gossip_utils_get_default_status (GossipPresenceType type)
-{
-	switch (type) {
-	case GOSSIP_PRESENCE_TYPE_AVAILABLE:
-		return _(AVAILABLE_MESSAGE);
-	case GOSSIP_PRESENCE_TYPE_BUSY:
-		return _(BUSY_MESSAGE);
-	case GOSSIP_PRESENCE_TYPE_AWAY:
-	case GOSSIP_PRESENCE_TYPE_EXT_AWAY:
-		return _(AWAY_MESSAGE);
-	};
-
-	return _(AVAILABLE_MESSAGE);
-}
-
 GList *
 gossip_utils_get_status_messages (void)
 {
@@ -914,27 +878,27 @@ gossip_utils_url_regex_match (const gchar *msg,
 	return num_matches;
 }
 
-GossipPresenceType
-gossip_utils_get_presence_type_from_show_string (const gchar *str)
+GossipPresenceState
+gossip_utils_get_presence_state_from_show_string (const gchar *str)
 {
 	if (!str || !str[0]) {
-		return GOSSIP_PRESENCE_TYPE_AVAILABLE;
+		return GOSSIP_PRESENCE_STATE_AVAILABLE;
 	}
 	else if (strcmp (str, "dnd") == 0) {
-		return GOSSIP_PRESENCE_TYPE_BUSY;
+		return GOSSIP_PRESENCE_STATE_BUSY;
 	}
 	else if (strcmp (str, "away") == 0) {
-		return GOSSIP_PRESENCE_TYPE_AWAY;
+		return GOSSIP_PRESENCE_STATE_AWAY;
 	}
 	else if (strcmp (str, "xa") == 0) {
-		return GOSSIP_PRESENCE_TYPE_EXT_AWAY;
+		return GOSSIP_PRESENCE_STATE_EXT_AWAY;
 	}
 	/* We don't support chat, so treat it like available. */
 	else if (strcmp (str, "chat") == 0) {
-		return GOSSIP_PRESENCE_TYPE_AVAILABLE;
+		return GOSSIP_PRESENCE_STATE_AVAILABLE;
 	}
 
-	return GOSSIP_PRESENCE_TYPE_AVAILABLE;
+	return GOSSIP_PRESENCE_STATE_AVAILABLE;
 }
 
 gint
@@ -957,58 +921,4 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 	g_free (u2);
 
 	return ret_val;
-}
-
-#define CONF_HTTP_PROXY_PREFIX "/system/http_proxy"
-
-void
-gossip_utils_set_proxy (LmConnection *conn)
-{
-	gboolean  use_http_proxy;
-	
-	use_http_proxy = gconf_client_get_bool (gconf_client,
-						CONF_HTTP_PROXY_PREFIX "/use_http_proxy",
-						NULL);
-	if (use_http_proxy) {
-		LmProxy  *proxy;
-		gchar    *host;
-		gint      port;
-		gboolean  use_auth;
-			host = gconf_client_get_string (gconf_client,
-						CONF_HTTP_PROXY_PREFIX "/host",
-						NULL);
-
-		port = gconf_client_get_int (gconf_client,
-					     CONF_HTTP_PROXY_PREFIX "/port",
-					     NULL);
-
-		proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
-						  host, (guint) port);
-		g_free (host);
-
-		lm_connection_set_proxy (conn, proxy);
-
-		use_auth = gconf_client_get_bool (gconf_client,
-						  CONF_HTTP_PROXY_PREFIX "/use_authentication",
-						  NULL);
-		if (use_auth) {
-			gchar *username;
-			gchar *password;
-
-			username = gconf_client_get_string (gconf_client,
-							    CONF_HTTP_PROXY_PREFIX "/authentication_user",
-							    NULL);
-			password = gconf_client_get_string (gconf_client,
-							    CONF_HTTP_PROXY_PREFIX "/authentication_password",
-							    NULL);
-			lm_proxy_set_username (proxy, username);
-			lm_proxy_set_password (proxy, password);
-
-			g_free (username);
-			g_free (password);
-		}
-		
-		lm_proxy_unref (proxy);
-	}
-
 }

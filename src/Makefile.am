@@ -19,87 +19,64 @@ endif
 
 bin_PROGRAMS = gossip
 
-gossip_SOURCES = 				\
-	$(dbus_sources)				\
-	gossip-about.c				\
-	gossip-about.h				\
-	gossip-account.c			\
-	gossip-account.h			\
-	gossip-account-dialog.c			\
-	gossip-account-dialog.h			\
-	gossip-add-contact.c			\
-	gossip-add-contact.h			\
-	gossip-app.c				\
-	gossip-app.h				\
-	gossip-chat.c				\
-	gossip-chat.h				\
-	gossip-chat-view.c                      \
-	gossip-chat-view.h                      \
-	gossip-chat-window.c			\
-	gossip-chat-window.h			\
-	gossip-connect-dialog.c			\
-	gossip-connect-dialog.h			\
-	gossip-contact.c                        \
-	gossip-contact.h                        \
-	gossip-contact-info.c                   \
-	gossip-contact-info.h                   \
-	gossip-contact-list.c                   \
-	gossip-contact-list.h                   \
-	gossip-favorite.c			\
-	gossip-favorite.h			\
-	gossip-favorites-dialog.c		\
-	gossip-favorites-dialog.h		\
-	gossip-group-chat.c			\
-	gossip-group-chat.h			\
-	gossip-idle.c				\
-	gossip-idle.h				\
-	gossip-jid.c                            \
-	gossip-jid.h                            \
-	gossip-join-dialog.c			\
-	gossip-join-dialog.h			\
-	gossip-log.c				\
-	gossip-log.h				\
-	gossip-main.c				\
-	gossip-marshal-main.c			\
-	gossip-notebook.c			\
-	gossip-notebook.h			\
-	gossip-preferences.c			\
-	gossip-preferences.h	                \
-	gossip-presence.c                       \
-	gossip-presence.h                       \
-	gossip-private-chat.c                   \
-	gossip-private-chat.h                   \
-	gossip-roster.c                         \
-	gossip-roster.h                         \
-	gossip-roster-view.c                    \
-	gossip-roster-view.h                    \
-	gossip-register.c			\
-	gossip-register.h			\
-	gossip-sound.c				\
-	gossip-sound.h				\
-	gossip-startup-druid.c			\
-	gossip-startup-druid.h			\
-	gossip-stock.c				\
-	gossip-stock.h				\
-	gossip-utils.c				\
-	gossip-utils.h				\
-	gossip-edit-groups-dialog.c		\
-	gossip-edit-groups-dialog.h		\
-	gossip-vcard-dialog.c			\
-	gossip-vcard-dialog.h			\
-	gossip-disco.c				\
-	gossip-disco.h				\
-	gossip-disco-register.c   	 	\
-	gossip-disco-register.h		    	\
-	gossip-disco-servers.c			\
-	gossip-disco-servers.h			\
-	gossip-disco-window.c			\
-	gossip-disco-window.h			\
-	eel-ellipsizing-label.c			\
-	eel-ellipsizing-label.h			\
-	eggtrayicon.c				\
-	eggtrayicon.h
-	
+gossip_SOURCES = 				                        	\
+	$(dbus_sources)			     	                        	\
+	gossip-about.c                     gossip-about.h  			\
+	gossip-account.c                   gossip-account.h			\
+	gossip-account-dialog.c	           gossip-account-dialog.h		\
+	gossip-add-contact.c	           gossip-add-contact.h			\
+	gossip-app.c	 	           gossip-app.h				\
+	gossip-async.h                                                  	\
+	gossip-cell-renderer-text.c        gossip-cell-renderer-text.h          \
+	gossip-chat.c		           gossip-chat.h			\
+	gossip-chat-manager.c              gossip-chat-manager.h               	\
+	gossip-chatroom-provider.c         gossip-chatroom-provider.h          	\
+	gossip-chat-view.c                 gossip-chat-view.h                  	\
+	gossip-chat-window.c	           gossip-chat-window.h			\
+	gossip-connect-dialog.c	           gossip-connect-dialog.h		\
+	gossip-contact.c                   gossip-contact.h                    	\
+	gossip-contact-info.c              gossip-contact-info.h               	\
+	gossip-contact-list.c              gossip-contact-list.h               	\
+	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
+	gossip-event-manager.c             gossip-event-manager.h              	\
+	gossip-event.c                     gossip-event.h                      	\
+	gossip-favorite.c  	           gossip-favorite.h			\
+	gossip-favorites-dialog.c          gossip-favorites-dialog.h		\
+	gossip-group-chat.c	           gossip-group-chat.h			\
+	gossip-idle.c		           gossip-idle.h			\
+	gossip-jabber.c                    gossip-jabber.h                     	\
+	gossip-jabber-chatrooms.c          gossip-jabber-chatrooms.h           	\
+	gossip-jabber-helper.c             gossip-jabber-helper.h              	\
+	gossip-jid.c                       gossip-jid.h                        	\
+	gossip-join-dialog.c	           gossip-join-dialog.h			\
+	gossip-log.c		           gossip-log.h				\
+	gossip-main.c				                        	\
+	gossip-marshal-main.c			                        	\
+	gossip-message.c                   gossip-message.h                    	\
+	gossip-notebook.c	           gossip-notebook.h			\
+	gossip-preferences.c               gossip-preferences.h	        	\
+	gossip-presence.c                  gossip-presence.h                   	\
+	gossip-private-chat.c              gossip-private-chat.h               	\
+	gossip-protocol.c                  gossip-protocol.h                   	\
+	gossip-register.c	           gossip-register.h			\
+	gossip-session.c                   gossip-session.h                    	\
+	gossip-sound.c		           gossip-sound.h			\
+	gossip-startup-druid.c	           gossip-startup-druid.h		\
+	gossip-stock.c		           gossip-stock.h			\
+	gossip-utils.c		           gossip-utils.h			\
+	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
+	gossip-version-info.c              gossip-version-info.h               	\
+	gossip-vcard.c                     gossip-vcard.h                      	\
+	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
+	gossip-transport-accounts.c        gossip-transport-accounts.h		\
+	gossip-transport-accounts-window.c gossip-transport-accounts-window.h	\
+	gossip-transport-add-window.c      gossip-transport-add-window.h	\
+	gossip-transport-discover.c        gossip-transport-discover.h		\
+	gossip-transport-protocol.c        gossip-transport-protocol.h		\
+	gossip-transport-register.c   	   gossip-transport-register.h	   	\
+	eel-ellipsizing-label.c	    	   eel-ellipsizing-label.h		\
+	eggtrayicon.c		           eggtrayicon.h
+
 gossip_LDADD = @GOSSIP_LIBS@
 gossip_LDFLAGS = -export-dynamic
 

@@ -5,19 +5,20 @@
   <disco-type>yahoo</disco-type>
   <stock-icon>im-yahoo</stock-icon>
   <description>Configure a Yahoo! account</description>
+  <example>user@yahoo.com</example>
   <server-list url="">
-    <server name="Aster (PL)" host="jabber.aster.pl"/>
-    <server name="Autocom (PL)" host="jabber.autocom.pl"/>
-    <server name="Chaos Computer Club (DE)" host="jabber.ccc.de"/>
-    <server name="Jabber Com (CN)" host="jabber.com.cn"/>
-    <server name="Jabber (CZ)" host="jabber.cz"/>
-    <server name="Jabber Freenet (DE)" host="jabber.freenet.de"/>
-    <server name="Jabber Obsidian Co (ZA)" host="jabber.obsidian.co.za"/>
-    <server name="Jabber (RU)" host="jabber.ru"/>
-    <server name="Jabber TTN (RU)" host="jabber.ttn.ru"/>
-    <server name="Jabber Wiretrip Org" host="jabber.wiretrip.org"/>
-    <server name="JabberAfrica Org" host="jabberafrica.org"/>
-    <server name="MyJabber Net (AU)" host="myjabber.net"/>
-    <server name="Syndicon (DE)" host="syndicon.de"/>
+    <server name="Aster (PL)" host="yahoo.jabber.aster.pl"/>
+    <server name="Autocom (PL)" host="yahoo.jabber.autocom.pl"/>
+    <server name="Chaos Computer Club (DE)" host="yahoo.jabber.ccc.de"/>
+    <server name="Jabber Com (CN)" host="yahoo.jabber.com.cn"/>
+    <server name="Jabber (CZ)" host="yahoo.jabber.cz"/>
+    <server name="Jabber Freenet (DE)" host="yahoo.jabber.freenet.de"/>
+    <server name="Jabber Obsidian Co (ZA)" host="yahoo.jabber.obsidian.co.za"/>
+    <server name="Jabber (RU)" host="yahoo.jabber.ru"/>
+    <server name="Jabber TTN (RU)" host="yahoo.jabber.ttn.ru"/>
+    <server name="Jabber Wiretrip Org" host="yahoo.jabber.wiretrip.org"/>
+    <server name="JabberAfrica Org" host="yahoo.jabberafrica.org"/>
+    <server name="MyJabber Net (AU)" host="yahoo.myjabber.net"/>
+    <server name="Syndicon (DE)" host="yahoo.syndicon.de"/>
   </server-list>
 </protocol>

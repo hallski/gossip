@@ -3,12 +3,12 @@
   by Paul van Tilburg <paul@luon.net>
 
   Root element: <transport/>
-  Revision: 0.4
+  Revision: 0.5
 -->
 
 <!-- Root element of a protocol definition. -->
 <!ELEMENT protocol 
-   (name, disco-type, (stock-icon | icon), description, server-list)>
+   (name, disco-type, (stock-icon | icon), description, example, server-list)>
 
 <!-- The name of the protocol. -->
 <!ELEMENT name (#PCDATA)>
@@ -24,6 +24,9 @@
 
 <!-- The description for the protocol. -->
 <!ELEMENT description (#PCDATA)>
+
+<!-- The example for the protocol. -->
+<!ELEMENT example (#PCDATA)>
 
 <!-- List of servers to use for service/protcol discovery.
      Always carries an URL of a fallback server list. -->

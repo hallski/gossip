@@ -21,15 +21,16 @@
 #ifndef __GOSSIP_LOG_H__
 #define __GOSSIP_LOG_H__
 
-#include <loudmouth/loudmouth.h>
+#include <glib.h>
 #include "gossip-jid.h"
+#include "gossip-message.h"
 
-void     gossip_log_message (LmMessage *msg,
-			     gboolean   incoming);
+void     gossip_log_message (GossipMessage *msg,
+			     gboolean       incoming);
 
-gboolean gossip_log_exists  (GossipJID *jid);
+gboolean gossip_log_exists  (GossipContact *contact);
 
-void     gossip_log_show    (GossipJID *jid);
+void     gossip_log_show    (GossipContact *contact);
 
 
 #endif /* __GOSSIP_LOG_H__ */

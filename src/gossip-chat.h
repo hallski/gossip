@@ -23,11 +23,9 @@
 #define __GOSSIP_CHAT_H__
 
 #include <glib-object.h>
-#include <loudmouth/loudmouth.h>
-#include "gossip-app.h"
+
 #include "gossip-chat-view.h"
-#include "gossip-jid.h"
-#include "gossip-roster.h"
+#include "gossip-contact.h"
 
 G_BEGIN_DECLS
 

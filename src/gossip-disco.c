@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell (mr@gnome.org)
+ * Copyright (C) 2004 Martyn Russell (ginxd@btopenworld.com)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -37,19 +37,14 @@ struct _GossipDisco {
 
 	GossipJID           *to;
 
-	GossipDiscoItemFunc  item_func;
-
+	GossipDiscoItemFunc  func;
 	gpointer             user_data;
 
 	GList               *items;
 	gint                 items_remaining;
-	gint                 items_total;
 
 	guint                timeout_id;
-
-	gboolean             destroying;
 };
-
 
 typedef struct {
 	gchar *category;
@@ -57,48 +52,46 @@ typedef struct {
 	gchar *name;
 } GossipDiscoIdentity;
 
-
 typedef struct {
 	GList *identities;
 	GList *features;
 } GossipDiscoInfo;
 
-
 struct _GossipDiscoItem {
-	GossipJID       *jid;
+	GossipJID *jid;
 	
-	gchar           *node;
-	gchar           *name;
+	gchar     *node;
+	gchar     *name;
 	
 	GossipDiscoInfo *info;
 };
 
-
-static GossipDisco *   disco_new                      (void);
-static void            disco_init                     (void);
-static void            disco_destroy_items_foreach    (GossipDiscoItem     *item,
-						       gpointer             user_data);
-static void            disco_destroy_info_foreach     (GossipDiscoInfo     *info,
-						       gpointer             user_data);
-static void            disco_destroy_ident_foreach    (GossipDiscoIdentity *ident,
-						       gpointer             user_data);
-static LmHandlerResult disco_message_handler          (LmMessageHandler    *handler,
-						       LmConnection        *connection,
-						       LmMessage           *m,
-						       gpointer             user_data);
-static void            disco_request_items            (GossipDisco         *disco);
-static gboolean        disco_request_items_timeout_cb (GossipDisco         *disco);
-static void            disco_handle_items             (GossipDisco         *disco,
-						       LmMessage           *m,
-						       gpointer             user_data);
-static void            disco_request_info             (GossipDisco         *disco);
-static void            disco_handle_info              (GossipDisco         *disco,
-						       LmMessage           *m,
-						       gpointer             user_data);
-
+static GossipDisco *
+disco_new                                      (void);
+static void        disco_init                  (void);
+static void        disco_destroy_items_foreach (GossipDiscoItem     *item,
+						gpointer             user_data);
+static void        disco_destroy_info_foreach  (GossipDiscoInfo     *info,
+						gpointer             user_data);
+static void        disco_destroy_ident_foreach (GossipDiscoIdentity *ident,
+						gpointer             user_data);
+static LmHandlerResult 
+disco_message_handler                          (LmMessageHandler    *handler,
+						LmConnection        *connection,
+						LmMessage           *m,
+						gpointer             user_data);
+static void        disco_request_items         (GossipDisco         *disco);
+static gboolean  
+disco_request_items_timeout_cb                 (GossipDisco         *disco);
+static void        disco_handle_items          (GossipDisco         *disco,
+						LmMessage           *m,
+						gpointer             user_data);
+static void        disco_request_info          (GossipDisco         *disco);
+static void        disco_handle_info           (GossipDisco         *disco,
+						LmMessage           *m,
+						gpointer             user_data);
 
 static GHashTable *discos = NULL;
-
 
 static GossipDisco *
 disco_new (void)
@@ -127,13 +120,9 @@ gossip_disco_destroy (GossipDisco *disco)
 	LmConnection     *connection;
         LmMessageHandler *handler;
 
-	/* we don't mind if NULL is supplied, an error message is
-	   unnecessary. */ 
-	if (!disco || disco->destroying) {
+	if (!disco) {
 		return;
 	}
-
-	disco->destroying = TRUE;
 
         connection = gossip_app_get_connection ();
 
@@ -205,16 +194,17 @@ disco_init (void)
 
 GossipDisco *
 gossip_disco_request (const char          *to, 
-		      GossipDiscoItemFunc  item_func,
+		      GossipDiscoItemFunc  func,
 		      gpointer             user_data)
 {
 	GossipDisco *disco;
 	GossipJID   *jid;
 
-	g_return_val_if_fail (to != NULL, NULL);
-	g_return_val_if_fail (item_func != NULL, NULL);
-
 	disco_init ();
+
+	if (!to || !to[0]) {
+		return NULL;
+	}
 
 	jid = gossip_jid_new (to);
 
@@ -229,7 +219,7 @@ gossip_disco_request (const char          *to,
 
 	disco->to = jid;
 
-	disco->item_func = item_func;
+	disco->func = func;
 	disco->user_data = user_data;
 
 	/* start timeout */
@@ -254,7 +244,7 @@ disco_request_items (GossipDisco *disco)
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_GET);
 
-	d(g_print ("disco items to: %s\n", 
+	d(g_print ("to: %s (disco items request)\n", 
 		   gossip_jid_get_full (disco->to)));
 	
 	lm_message_node_add_child (m->node, "query", NULL);
@@ -269,19 +259,19 @@ disco_request_items (GossipDisco *disco)
 static gboolean
 disco_request_items_timeout_cb (GossipDisco *disco)
 {
-	d(g_print ("disco items to:'%s' have timed out after %d seconds, cleaning up...\n", 
+	d(g_print ("disco to:'%s' has timed out after %d seconds, cleaning up...\n", 
 		   gossip_jid_get_full (disco->to), TIMEOUT));
 
 	/* stop timeout */
 	disco->timeout_id = 0;
 
 	/* call callback and inform of last item */
-	if (disco->item_func) {
-		(disco->item_func) (disco, 
-				    NULL, 
-				    FALSE,
-				    TRUE,
-				    disco->user_data);
+	if (disco->func) {
+		(disco->func) (disco, 
+			       NULL, 
+			       FALSE,
+			       TRUE,
+			       disco->user_data);
 	}
 
 	/* remove disco */
@@ -388,7 +378,7 @@ disco_request_info (GossipDisco *disco)
 	
 	jid = gossip_jid_new ("users.jabber.org");
 
-	disco->items_total = disco->items_remaining = g_list_length (disco->items);
+	disco->items_remaining = g_list_length (disco->items);
 
 	for (l = disco->items; l; l = l->next) {
 		GossipDiscoItem *item;
@@ -412,7 +402,7 @@ disco_request_info (GossipDisco *disco)
 						  LM_MESSAGE_TYPE_IQ,
 						  LM_MESSAGE_SUB_TYPE_GET);
 		
-		d(g_print ("disco info to: %s\n", 
+		d(g_print ("to: %s (disco info request)\n", 
 			   gossip_jid_get_full (item->jid)));
 		
 		lm_message_node_add_child (m->node, "query", NULL);
@@ -506,12 +496,12 @@ disco_handle_info (GossipDisco *disco,
 
 	item->info = info;
 
-	if (disco->item_func) {
-		(disco->item_func) (disco, 
-				    item, 
-				    disco->items_remaining < 1 ? TRUE : FALSE,
-				    FALSE,
-				    disco->user_data);
+	if (disco->func) {
+		(disco->func) (disco, 
+			       item, 
+			       disco->items_remaining < 1 ? TRUE : FALSE,
+			       FALSE,
+			       disco->user_data);
 	}
 
 	if (disco->items_remaining < 1) {
@@ -647,14 +637,6 @@ gossip_disco_get_items_remaining (GossipDisco *disco)
 	g_return_val_if_fail (disco != NULL, -1);
 
 	return disco->items_remaining;
-}
-
-gint
-gossip_disco_get_items_total (GossipDisco *disco)
-{
-	g_return_val_if_fail (disco != NULL, -1);
-
-	return disco->items_total;
 }
 
 GossipDiscoItem *

@@ -230,6 +230,9 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 		g_free (old_path);
 	}
 
+	g_print ("account->name: %s\n", account->name);
+	g_print ("path: %s\n", GOSSIP_ACCOUNTS_PATH);
+
 	path = g_strdup_printf ("%s/Account: %s", 
 				GOSSIP_ACCOUNTS_PATH, account->name);
 	

@@ -30,8 +30,6 @@
 #include "gossip-favorite.h"
 
 typedef struct {
-	GossipApp    *app;
-	
 	GtkWidget    *dialog;
 	GtkWidget    *chats_list;
 	GtkEntry     *name_entry;
@@ -300,7 +298,7 @@ favorites_dialog_selection_changed_cb (GtkTreeSelection     *selection,
 }
 
 GtkWidget *
-gossip_favorites_dialog_show (GossipApp *app)
+gossip_favorites_dialog_show (void)
 {
 	GossipFavoritesDialog *dialog;
 	GtkTreeViewColumn     *column;
@@ -308,7 +306,6 @@ gossip_favorites_dialog_show (GossipApp *app)
 	GtkTreeSelection      *selection;
 	
         dialog = g_new0 (GossipFavoritesDialog, 1);
-	dialog->app = app;
 
 	gossip_glade_get_file_simple (GLADEDIR "/group-chat.glade",
 				      "favorites_dialog",

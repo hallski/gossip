@@ -62,6 +62,6 @@ void              gossip_chat_window_switch_to_chat  (GossipChatWindow *window,
 						      GossipChat       *chat);
 
 gint              gossip_chat_window_get_group_chats (GossipChatWindow *window);
-
+gboolean          gossip_chat_window_has_focus       (GossipChatWindow *window);
 
 #endif /* __GOSSIP_CHAT_WINDOW_H__ */

@@ -23,23 +23,24 @@
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-druid.h>
 #include <libgnome/gnome-i18n.h>
-#include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-app.h"
 #include "gossip-add-contact.h"
+#include "gossip-transport-accounts.h"
+#include "gossip-transport-protocol.h"
+
 
 typedef struct {
-	LmConnection *connection;
-	
 	GtkWidget *dialog;
 	GtkWidget *druid;
 	
 	/* Page one */
 	GtkWidget *one_page;
-	GtkWidget *one_system_option_menu;
+	GtkWidget *one_system_combobox;
 	GtkWidget *one_id_label;
 	GtkWidget *one_id_entry;
 	GtkWidget *one_search_button;
+	GtkWidget *one_example_label;
 
 	/* Page two */
 	GtkWidget *two_page;
@@ -49,6 +50,10 @@ typedef struct {
 	GtkWidget *two_name_label;
 	GtkWidget *two_email_label;
 	GtkWidget *two_country_label;
+	GtkWidget *two_id_stub_label;
+	GtkWidget *two_name_stub_label;
+	GtkWidget *two_email_stub_label;
+	GtkWidget *two_country_stub_label;
 	GtkWidget *two_nick_entry;
 	GtkWidget *two_group_combo;
 	GtkWidget *two_group_entry;
@@ -61,10 +66,12 @@ typedef struct {
 	GtkWidget *last_page;
 	GtkWidget *last_label;
 
-	LmMessageHandler *vcard_handler;
-	GCompletion      *group_completion;
-	guint             idle_complete;
+	GCompletion *group_completion;
+	guint        idle_complete;
+
+/* 	LmMessageHandler *vcard_handler; */
 } GossipAddContact;
+
 
 enum {
 	COL_NAME,
@@ -72,56 +79,102 @@ enum {
 };
 
 
-static void     add_contact_dialog_destroyed    (GtkWidget        *unused,
-						 GossipAddContact *contact);
-static void     add_contact_cancel              (GtkWidget        *unused,
-						 GossipAddContact *contact);
-static void     add_contact_prepare_page_1      (GnomeDruidPage   *page,
-						 GnomeDruid       *druid,
-						 GossipAddContact *contact);
-static void     add_contact_prepare_page_2      (GnomeDruidPage   *page,
-						 GnomeDruid       *druid,
-						 GossipAddContact *contact);
-static LmHandlerResult * 
-add_contact_page_2_vcard_handler                (LmMessageHandler *handler,
-						 LmConnection     *connection,
-						 LmMessage        *message,
-						 GossipAddContact *contact);
-static void add_contact_prepare_page_3          (GnomeDruidPage   *page,
-						 GnomeDruid       *druid,
-						 GossipAddContact *contact);
-static void add_contact_prepare_page_last       (GnomeDruidPage   *page,
-						 GnomeDruid       *druid,
-						 GossipAddContact *contact);
-static void add_contact_last_page_finished      (GnomeDruidPage   *page,
-						 GnomeDruid       *druid,
-						 GossipAddContact *contact);
-static void add_contact_1_id_entry_changed      (GtkEntry         *entry,
-						 GossipAddContact *contact);
-static void add_contact_1_search_button_clicked (GtkButton        *button,
-						 GossipAddContact *contact);
-static void add_contact_2_nick_entry_changed    (GtkEntry         *entry,
-						 GossipAddContact *contact);
-static gboolean
-add_contact_2_nick_entry_key_pressed            (GtkWidget        *entry,
-						 GdkEvent         *event,
-						 GossipAddContact *contact);
-static void
-add_contact_2_group_entry_text_inserted         (GtkEntry         *entry,
-						 const gchar      *text,
-						 gint              length,
-						 gint             *position,
-						 GossipAddContact *contact);
+/* static void     add_contact_dialog_destroyed    (GtkWidget        *unused, */
+/* 						 GossipAddContact *contact); */
+/* static void     add_contact_cancel              (GtkWidget        *unused, */
+/* 						 GossipAddContact *contact); */
+/* static void     add_contact_prepare_page_1      (GnomeDruidPage   *page, */
+/* 						 GnomeDruid       *druid, */
+/* 						 GossipAddContact *contact); */
+/* static void     add_contact_prepare_page_2      (GnomeDruidPage   *page, */
+/* 						 GnomeDruid       *druid, */
+/* 						 GossipAddContact *contact); */
+/* static void add_contact_prepare_page_3          (GnomeDruidPage   *page, */
+/* 						 GnomeDruid       *druid, */
+/* 						 GossipAddContact *contact); */
+/* static void add_contact_prepare_page_last       (GnomeDruidPage   *page, */
+/* 						 GnomeDruid       *druid, */
+/* 						 GossipAddContact *contact); */
+/* static void add_contact_last_page_finished      (GnomeDruidPage   *page, */
+/* 						 GnomeDruid       *druid, */
+/* 						 GossipAddContact *contact); */
+/* static void add_contact_1_id_entry_changed      (GtkEntry         *entry, */
+/* 						 GossipAddContact *contact); */
+/* static void add_contact_1_search_button_clicked (GtkButton        *button, */
+/* 						 GossipAddContact *contact); */
+/* static void add_contact_2_nick_entry_changed    (GtkEntry         *entry, */
+/* 						 GossipAddContact *contact); */
+/* static gboolean */
+/* add_contact_2_nick_entry_key_pressed            (GtkWidget        *entry, */
+/* 						 GdkEvent         *event, */
+/* 						 GossipAddContact *contact); */
+/* static void */
+/* add_contact_2_group_entry_text_inserted         (GtkEntry         *entry, */
+/* 						 const gchar      *text, */
+/* 						 gint              length, */
+/* 						 gint             *position, */
+/* 						 GossipAddContact *contact); */
+
+enum {
+	COL_SYS_IMAGE,
+	COL_SYS_TEXT,
+	COL_SYS_ACCOUNT,
+	COL_SYS_PROTOCOL,
+	COL_SYS_COUNT
+};
+
+
+static void             add_contact_dialog_destroyed            (GtkWidget        *unused,
+								 GossipAddContact *contact);
+static void             add_contact_cancel                      (GtkWidget        *unused,
+								 GossipAddContact *contact);
+static void             add_contact_setup_systems               (GList            *accounts,
+								 GossipAddContact *contact);
+static gboolean         add_contact_check_system_id_valid       (GossipAddContact *contact);
+static void             add_contact_prepare_page_1              (GnomeDruidPage   *page,
+								 GnomeDruid       *druid,
+								 GossipAddContact *contact);
+static void             add_contact_prepare_page_2              (GnomeDruidPage   *page,
+								 GnomeDruid       *druid,
+								 GossipAddContact *contact);
+static void             add_contact_prepare_page_3              (GnomeDruidPage   *page,
+								 GnomeDruid       *druid,
+								 GossipAddContact *contact);
+static void             add_contact_prepare_page_last           (GnomeDruidPage   *page,
+								 GnomeDruid       *druid,
+								 GossipAddContact *contact);
+static void             add_contact_last_page_finished          (GnomeDruidPage   *page,
+								 GnomeDruid       *druid,
+								 GossipAddContact *contact);
+static void             add_contact_1_id_entry_changed          (GtkEntry         *entry,
+								 GossipAddContact *contact);
+static void             add_contact_1_search_button_clicked     (GtkButton        *button,
+								 GossipAddContact *contact);
+static void             add_contact_1_system_combobox_changed   (GtkComboBox      *combo_box,
+								 GossipAddContact *contact);
+static void     add_contact_page_2_vcard_handler (GossipAsyncResult  result,
+                                                  GossipVCard       *vcard,
+                                                  GossipAddContact  *contact);
+
+static void             add_contact_2_nick_entry_changed        (GtkEntry         *entry,
+								 GossipAddContact *contact);
+static gboolean         add_contact_2_nick_entry_key_pressed    (GtkWidget        *entry,
+								 GdkEvent         *event,
+								 GossipAddContact *contact);
+static void             add_contact_2_group_entry_text_inserted (GtkEntry         *entry,
+								 const gchar      *text,
+								 gint              length,
+								 gint             *position,
+								 GossipAddContact *contact);
+static void             add_conact_protocol_id_cb               (GossipJID        *jid,
+								 const gchar      *id,
+								 GossipAddContact *contact);
+
 
 
 static void
 add_contact_dialog_destroyed (GtkWidget *unused, GossipAddContact *contact)
 {
-	if (contact->vcard_handler) {
-		lm_message_handler_invalidate (contact->vcard_handler);
-		lm_message_handler_unref (contact->vcard_handler);
-	}
-
 	g_free (contact);
 }
 
@@ -132,19 +185,176 @@ add_contact_cancel (GtkWidget *widget, GossipAddContact *contact)
 }
 
 static void
+add_contact_setup_systems (GList            *accounts,
+			   GossipAddContact *contact)
+{
+	GtkListStore    *store;
+	GtkTreeIter      iter;
+	GtkCellRenderer *renderer;
+	GtkComboBox     *combo_box;
+
+	GList           *l;
+
+	gint             w, h;
+	gint             size = 24;  /* default size */
+
+	GError          *error = NULL;
+	GtkIconTheme    *theme;
+
+	GdkPixbuf       *pixbuf;
+
+	/* set up combo box with new store */
+	combo_box = GTK_COMBO_BOX (contact->one_system_combobox);
+
+  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));  
+
+	store = gtk_list_store_new (COL_SYS_COUNT,
+				    GDK_TYPE_PIXBUF,
+				    G_TYPE_STRING,    /* name */
+				    G_TYPE_POINTER,   /* account */
+				    G_TYPE_POINTER);  /* protocol */
+
+	gtk_combo_box_set_model (GTK_COMBO_BOX (contact->one_system_combobox), 
+				 GTK_TREE_MODEL (store));
+		
+	/* get theme and size details */
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+		size = 48;
+	} else {
+		size = (w + h) / 2; 
+	}
+
+	/* show jabber protocol */
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   "im-jabber", /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+	if (!pixbuf) {
+		g_warning ("could not load icon: %s", error->message);
+		g_error_free (error);
+	}
+
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter, 
+			    COL_SYS_IMAGE, pixbuf, 
+			    COL_SYS_TEXT, _("Jabber"),
+			    COL_SYS_ACCOUNT, NULL,
+			    COL_SYS_PROTOCOL, NULL,
+			    -1);
+
+	gtk_combo_box_set_active_iter (combo_box, &iter);
+
+	/* populate accounts */
+	for (l=accounts; l; l=l->next) {
+		GossipTransportAccount  *account;
+		GossipTransportProtocol *protocol;
+
+		const gchar             *name;
+		const gchar             *disco_type;
+
+		const gchar             *icon = NULL;
+		const gchar             *stock_id = NULL;
+		const gchar             *core_icon = NULL;
+
+		account = l->data;
+
+		error = NULL; 
+		pixbuf = NULL;
+
+		name = gossip_transport_account_get_name (account);
+		disco_type = gossip_transport_account_get_disco_type (account);
+
+		protocol = gossip_transport_protocol_find_by_disco_type (disco_type);
+
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter, 
+				    COL_SYS_TEXT, name, 
+				    COL_SYS_ACCOUNT, account,
+				    COL_SYS_PROTOCOL, protocol,
+				    -1);
+
+		if (strcmp (disco_type, "aim") == 0) {
+			core_icon = "im-aim";
+		} else if (strcmp (disco_type, "icq") == 0) {
+			core_icon = "im-icq";
+		} else if (strcmp (disco_type, "msn") == 0) {
+			core_icon = "im-msn";
+		} else if (strcmp (disco_type, "yahoo") == 0) {
+			core_icon = "im-yahoo";
+		}
+
+		if (core_icon) {
+			pixbuf = gtk_icon_theme_load_icon (theme,
+							   core_icon, /* icon name */
+							   size,      /* size */
+							   0,         /* flags */
+							   &error);
+			if (!pixbuf) {
+				g_warning ("could not load icon: %s", error->message);
+				g_error_free (error);
+				continue;
+			}
+		} else if (stock_id) {
+			pixbuf = gtk_widget_render_icon (gossip_app_get_window (),
+							 stock_id, 
+							 GTK_ICON_SIZE_MENU,
+							 NULL);
+
+			if (!pixbuf) {
+				g_warning ("could not load stock icon: %s", stock_id);
+				continue;
+			}				
+		} else if (icon) {		
+			pixbuf = gdk_pixbuf_new_from_file_at_size (icon, w, h, &error);
+			
+			if (!pixbuf) {
+				g_warning ("could not load icon: %s", error->message);
+				g_error_free (error);
+				continue;
+			}
+		}
+		
+ 		gtk_list_store_set (store, &iter, COL_SYS_IMAGE, pixbuf, -1); 
+		g_object_unref (pixbuf);
+	}
+	
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+					"pixbuf", COL_SYS_IMAGE,
+					NULL);
+
+/*  	gtk_cell_layout_reorder (GTK_CELL_LAYOUT (combo_box), renderer, 0);  */
+	
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+					"text", COL_SYS_TEXT,
+					NULL);
+
+/*  	gtk_cell_layout_reorder (GTK_CELL_LAYOUT (combo_box), renderer, 1);  */
+
+	g_object_unref (store);
+}
+
+static void
 add_contact_prepare_page_1 (GnomeDruidPage   *page, 
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
+        gboolean     valid = FALSE;
 	const gchar *str;
-	
+
 	str = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
+        if (strcmp (str, "") != 0) {
+                valid = TRUE;
+        }
 
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
-					   FALSE,
-					   gossip_jid_string_is_valid_jid (str),
-					   TRUE,
-					   FALSE);
+					   FALSE, valid, TRUE, FALSE);
 		
 	gtk_widget_grab_focus (contact->one_id_entry);
 }
@@ -154,64 +364,76 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 			    GnomeDruid       *druid, 
 			    GossipAddContact *contact)
 {
-	GossipRoster     *roster;
-	const gchar      *str_jid;
-	gchar            *str;
-	gint              changed;
-	GList            *groups = NULL;
-	GList            *l;
-	GList            *group_strings = NULL;
-	LmMessage        *m;
-	LmMessageNode    *node;
+        GossipContact           *c;
 	
-	str_jid = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
-	gtk_label_set_text (GTK_LABEL (contact->two_id_label), str_jid);
+	GossipTransportProtocol *protocol = NULL;
+	GtkTreeModel            *model;
+	GtkTreeIter              iter;
+
+	const gchar             *id;
+	gchar                   *str;
+	GList                   *groups = NULL;
+	GList                   *l;
+	GList                   *group_strings = NULL;
+	gint                     changed;
+	
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (contact->one_system_combobox));
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (contact->one_system_combobox) , &iter);
+	gtk_tree_model_get (model, &iter, COL_SYS_PROTOCOL, &protocol, -1);
+
+	id = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
+	gtk_label_set_text (GTK_LABEL (contact->two_id_label), id);
 
 	changed = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (contact->two_nick_entry),
 						      "changed"));
-
-	if (contact->vcard_handler) {
-		lm_message_handler_invalidate (contact->vcard_handler);
-		lm_message_handler_unref (contact->vcard_handler);
-	}
-
-	gtk_widget_show(contact->two_waiting_label);
-	gtk_widget_hide(contact->two_information_table);
-
-	contact->vcard_handler = lm_message_handler_new 
-		((LmHandleMessageFunction) add_contact_page_2_vcard_handler,
-		 contact, NULL);
-	
-	m = lm_message_new_with_sub_type (str_jid, 
-					  LM_MESSAGE_TYPE_IQ, 
-					  LM_MESSAGE_SUB_TYPE_GET);
-	node = lm_message_node_add_child (m->node, "vCard", NULL);
-	lm_message_node_set_attributes (node, "xmlns", "vcard-temp", NULL);
-	
-	lm_connection_send_with_reply (contact->connection, m, 
-				       contact->vcard_handler, NULL);
-	
-	lm_message_unref (m);
-
-	if (!changed) {
+                                        
+	/* if the nick has NOT been changed */
+	if (!changed) { 
 		GossipJID *jid;
-		
-		jid = gossip_jid_new (str_jid);
+
+		/* set up name */
+		jid = gossip_jid_new (id);
 		str = gossip_jid_get_part_name (jid);
 		gtk_entry_set_text (GTK_ENTRY (contact->two_nick_entry), str);
 		g_free (str);
 		gossip_jid_unref (jid);
+
+		/* vcard */
+		c = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
+		gossip_contact_set_id (c, id);
+		
+		gossip_session_async_get_vcard (gossip_app_get_session (), c, 
+						(GossipAsyncVCardCallback) add_contact_page_2_vcard_handler,
+						contact, NULL);
+	}
+
+	if (protocol) {
+		/* translate ID to JID */
+		gossip_transport_protocol_id_to_jid (protocol, 
+						     id, 
+						     (GossipTransportProtocolIDFunc)add_conact_protocol_id_cb,
+						     contact);
+	} else {
+#ifdef DEPRECATED		
+		LmMessage      *m;
+		LmMessageNode  *node;
+
+		if (contact->vcard_handler) {
+			lm_message_handler_invalidate (contact->vcard_handler);
+			lm_message_handler_unref (contact->vcard_handler);
+		}
+#endif
+		
+		gtk_widget_show(contact->two_waiting_label);
+		gtk_widget_hide(contact->two_information_table);
 	}
 	
-	roster = gossip_app_get_roster ();
-	groups = gossip_roster_get_all_groups (roster);
-	
+	groups = gossip_session_get_groups (gossip_app_get_session ());
 	g_completion_clear_items (contact->group_completion);
 
 	for (l = groups; l; l = l->next) {
-		GossipRosterGroup *group = (GossipRosterGroup *) l->data;
 		group_strings = g_list_prepend (group_strings, 
-						(gchar *)gossip_roster_group_get_name (group));
+						(gchar *) l->data);
 	}
 
 	group_strings = g_list_sort (group_strings, (GCompareFunc) strcmp);
@@ -224,6 +446,7 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 
 	gtk_entry_set_text (GTK_ENTRY (contact->two_group_entry), "");
 
+	/* set focus and buttons up */
 	gtk_widget_grab_focus (contact->two_nick_entry);
 
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
@@ -232,53 +455,68 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 					   TRUE,
 					   FALSE);
 
-	/* FIXME: Check Jabber ID, if not valid show dialog. */
+	/* FIXME: check Jabber ID, if not valid show dialog. */
 }
 
-static LmHandlerResult * 
-add_contact_page_2_vcard_handler (LmMessageHandler *handler,
-				  LmConnection     *connection,
-				  LmMessage        *m,
-				  GossipAddContact *contact)
+static void
+add_conact_protocol_id_cb (GossipJID *jid, 
+			   const gchar *id,
+			   GossipAddContact *contact)
 {
-	LmMessageNode *node;
+	/* set up name */
+	gtk_label_set_text (GTK_LABEL (contact->two_id_label), 
+			    gossip_jid_get_full (jid));
+}
 
-	lm_message_handler_unref (contact->vcard_handler);
-	contact->vcard_handler = NULL;
-	
-	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_ERROR) {
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	}
+static void
+add_contact_page_2_vcard_handler (GossipAsyncResult  result,
+                                  GossipVCard       *vcard,
+                                  GossipAddContact  *contact)
+{
+	const gchar *str = NULL;
 
- 	node = lm_message_node_find_child (m->node, "FN");
-	if (node) {
-		gtk_label_set_text (GTK_LABEL (contact->two_name_label), 
-				    node->value);
+        if (result != GOSSIP_ASYNC_OK) {
+                return;
+        }
+
+	/* name */
+	str = gossip_vcard_get_name (vcard);
+	if (str && g_utf8_strlen (str, -1) > 0) {
+		gtk_widget_show (contact->two_name_label);
+		gtk_widget_show (contact->two_name_stub_label);
+		gtk_label_set_text (GTK_LABEL (contact->two_name_label), str);
 	} else {
+		gtk_widget_hide (contact->two_name_label);
+		gtk_widget_hide (contact->two_name_stub_label);
 		gtk_label_set_text (GTK_LABEL (contact->two_name_label), "");	
 	}
 	
-	node = lm_message_node_find_child (m->node, "EMAIL");
-	if (node) {
-		gtk_label_set_text (GTK_LABEL (contact->two_email_label), 
-				    node->value);
+	/* email */
+	str = gossip_vcard_get_email (vcard);
+	if (str && g_utf8_strlen (str, -1) > 0) {
+		gtk_widget_show (contact->two_email_label);
+		gtk_widget_show (contact->two_email_stub_label);
+		gtk_label_set_text (GTK_LABEL (contact->two_email_label), str);
 	} else {
+		gtk_widget_hide (contact->two_email_label);
+		gtk_widget_hide (contact->two_email_stub_label);
 		gtk_label_set_text (GTK_LABEL (contact->two_email_label), "");	
 	}
-	
-	node = lm_message_node_find_child (m->node, "COUNTRY");
-	if (node) {
-		gtk_label_set_text (GTK_LABEL (contact->two_country_label), 
-				    node->value);
+
+	/* country */
+	str = gossip_vcard_get_country (vcard);
+	if (str && g_utf8_strlen (str, -1) > 0) {
+		gtk_widget_show (contact->two_country_label);
+		gtk_widget_show (contact->two_country_stub_label);
+		gtk_label_set_text (GTK_LABEL (contact->two_country_label), str);
 	} else {
+		gtk_widget_hide (contact->two_country_label);
+		gtk_widget_hide (contact->two_country_stub_label);
 		gtk_label_set_text (GTK_LABEL (contact->two_country_label), "");	
 	}
-     
 
 	gtk_widget_hide(contact->two_waiting_label);
 	gtk_widget_show(contact->two_information_table);
-
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static void
@@ -318,10 +556,9 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 				GnomeDruid       *druid,
 				GossipAddContact *contact)
 {
- 	LmMessage     *m;
+	const gchar   *id;
+        const gchar   *name;
  	const gchar   *group;
- 	LmMessageNode *node;
-	const gchar   *jid;
 	GtkTextBuffer *buffer;
 	GtkTextIter    start, end;
 	gchar         *message;
@@ -331,37 +568,13 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 
 	message = gtk_text_buffer_get_text (buffer, &start, &end, TRUE);
 
-	jid = gtk_label_get_text (GTK_LABEL (contact->two_id_label));
-	
-	/* Request subscribe. */
-	m = lm_message_new_with_sub_type (jid,LM_MESSAGE_TYPE_PRESENCE,
-					  LM_MESSAGE_SUB_TYPE_SUBSCRIBE);
-	lm_message_node_add_child (m->node, "status", message);
-	g_free (message);
-	
-	lm_connection_send (contact->connection, m, NULL);
-	lm_message_unref (m);
-	
-	/* Add to roster. */
-	group = gtk_entry_get_text (GTK_ENTRY (contact->two_group_entry));
-	m = lm_message_new_with_sub_type (NULL, LM_MESSAGE_TYPE_IQ,
-					  LM_MESSAGE_SUB_TYPE_SET);
-	node = lm_message_node_add_child (m->node, "query", NULL);
-	lm_message_node_set_attributes (node,
-					"xmlns", "jabber:iq:roster", NULL);
-	node = lm_message_node_add_child (node, "item", NULL);
-	lm_message_node_set_attributes (node, 
-					"jid", jid,
-					"subscription", "none",
-					"ask", "subscribe",
-					"name", gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry)),
-					NULL);
-	if (strcmp (group, "") != 0) {
-		lm_message_node_add_child (node, "group", group);
-	}
-	
-	lm_connection_send (contact->connection, m, NULL);
-	lm_message_unref (m);
+	id = gtk_label_get_text (GTK_LABEL (contact->two_id_label));
+        name = gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry));
+        group = gtk_entry_get_text (GTK_ENTRY (contact->two_group_entry));
+        
+        gossip_session_add_contact (gossip_app_get_session (),
+                                    id, name, group, message);
+        g_free (message);
 
 	gtk_widget_destroy (contact->dialog);
 }
@@ -369,21 +582,154 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 static void
 add_contact_1_id_entry_changed (GtkEntry *entry, GossipAddContact *contact)
 {
-	const gchar *str;
-	
-	str = gtk_entry_get_text (GTK_ENTRY (entry));	
+	gboolean valid;
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
-					   FALSE,
-					   gossip_jid_string_is_valid_jid (str),
-					   TRUE,
-					   FALSE);
+	valid = add_contact_check_system_id_valid (contact);
+        gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
+                                           FALSE, valid, TRUE, FALSE);
+}
+
+/* should this be in one of the gossip-transport-* files? */
+static gboolean
+add_contact_check_system_id_valid (GossipAddContact *contact)
+{
+	GossipTransportProtocol *protocol = NULL;
+
+	GtkTreeModel            *model;
+	GtkTreeIter              iter;
+
+	const gchar             *str;
+	const gchar             *disco_type;
+
+	str = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
+
+	if (!str || strlen (str) < 1) {
+		return FALSE;
+	}
+
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (contact->one_system_combobox));
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (contact->one_system_combobox), &iter);
+
+	gtk_tree_model_get (model, &iter, COL_SYS_PROTOCOL, &protocol, -1);
+	
+	if (!protocol) {
+		return gossip_jid_string_is_valid_jid (str);
+	}
+	
+	disco_type = gossip_transport_protocol_get_disco_type (protocol);
+	if (!disco_type) {
+		/* not sure what protocol it is, we assume its OK */
+		return TRUE;
+	}
+
+	/* icq */
+	if (strcmp (disco_type, "icq") == 0) {
+		const gchar *p;
+
+		p = str;
+
+		while (*p) {
+			gunichar c;
+			
+			c = g_utf8_get_char (p);
+			
+			if (!g_unichar_isdigit (c)) {
+				return FALSE;
+			}
+
+			p = g_utf8_next_char (p);
+		}
+	}
+		
+	/* other core transports */
+	if (strcmp (disco_type, "aim") == 0 ||
+	    strcmp (disco_type, "msn") == 0 ||
+	    strcmp (disco_type, "yahoo") == 0) {
+		const gchar *at;
+		const gchar *dot;
+		gint         len;
+
+		len = strlen (str);
+		
+		at = strchr (str, '@');
+		if (!at || at == str || at == str + len - 1) {
+			return FALSE;
+		}
+		
+		dot = strchr (at, '.');
+		if (dot == at + 1 
+		    || dot == str + len - 1 
+		    || dot == str + len - 2) {
+			return FALSE;
+		}
+		
+		dot = strrchr (str, '.');
+		if (dot == str + len - 1) {
+			return FALSE;
+		}
+	}
+	
+	/* everything else */
+	return TRUE;
 }
 
 static void
 add_contact_1_search_button_clicked (GtkButton        *button,
 				     GossipAddContact *contact)
 {
+}
+
+static void
+add_contact_1_system_combobox_changed (GtkComboBox      *combo_box,
+				       GossipAddContact *contact)
+{
+	GossipTransportProtocol *protocol = NULL;
+
+	GtkTreeModel            *model;
+	GtkTreeIter              iter;
+
+	gchar                   *name;
+
+	gchar                   *str;
+	gchar                   *example;
+
+	gboolean                 valid;
+
+	model = gtk_combo_box_get_model (combo_box);
+	gtk_combo_box_get_active_iter (combo_box, &iter);
+
+	gtk_tree_model_get (model, &iter, 
+			    COL_SYS_TEXT, &name, 
+			    COL_SYS_PROTOCOL, &protocol,
+			    -1);
+
+	str = g_strdup_printf (_("%s ID of new contact:"), name);
+	gtk_label_set_text (GTK_LABEL (contact->one_id_label), str);
+	g_free (str);
+
+	if (!protocol) {
+		/* must be a jabber system selected */
+		example = g_strdup_printf (_("Example: %s"), "user@jabber.org");
+	} else {
+		example = g_strdup_printf (_("Example: %s"), 
+					   gossip_transport_protocol_get_example (protocol));
+	}
+
+	str = g_strdup_printf ("<span size=\"smaller\">%s</span>", example);
+	gtk_label_set_markup (GTK_LABEL (contact->one_example_label), str);
+	g_free (str);
+
+	g_free (example);
+	g_free (name);
+
+	/* check entry is valid or not */
+	valid = add_contact_check_system_id_valid (contact);
+
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
+					   TRUE,
+					   valid,
+					   TRUE,
+					   FALSE);
 }
 
 static void
@@ -465,20 +811,16 @@ add_contact_2_group_entry_text_inserted (GtkEntry         *entry,
 }
 
 void
-gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
+gossip_add_contact_new (const gchar *id)
 {
 	GossipAddContact *contact;
 	GladeXML         *glade;
+	GList            *accounts;
 
-	g_return_if_fail (connection != NULL);
-	
 	contact = g_new0 (GossipAddContact, 1);
 	
-	contact->connection = lm_connection_ref (connection);
 	contact->group_completion = g_completion_new (NULL);
 
-	contact->vcard_handler = NULL;
-	
 	glade = gossip_glade_get_file (
 		GLADEDIR "/main.glade",
 		"add_contact_dialog",
@@ -486,10 +828,11 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 		"add_contact_dialog", &contact->dialog,
 		"add_contact_druid", &contact->druid,
 		"1_page", &contact->one_page,
-		"1_system_option_menu", &contact->one_system_option_menu,
+		"1_system_combobox", &contact->one_system_combobox,
 		"1_id_label", &contact->one_id_label,
 		"1_id_entry", &contact->one_id_entry,
 		"1_search_button", &contact->one_search_button,
+		"1_example_label", &contact->one_example_label,
 		"2_page", &contact->two_page,
 		"2_waiting_label", &contact->two_waiting_label,
 		"2_information_table", &contact->two_information_table,
@@ -497,6 +840,10 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 		"2_name_label", &contact->two_name_label,
 		"2_email_label", &contact->two_email_label,
 		"2_country_label", &contact->two_country_label,
+		"2_id_stub_label", &contact->two_id_stub_label,
+		"2_name_stub_label", &contact->two_name_stub_label,
+		"2_email_stub_label", &contact->two_email_stub_label,
+		"2_country_stub_label", &contact->two_country_stub_label,
 		"2_nick_entry", &contact->two_nick_entry,
 		"2_group_combo", &contact->two_group_combo,
 		"2_group_entry", &contact->two_group_entry,
@@ -513,6 +860,7 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 		"add_contact_druid", "cancel", add_contact_cancel,
 		"1_id_entry", "changed", add_contact_1_id_entry_changed,
 		"1_search_button", "clicked", add_contact_1_search_button_clicked,
+		"1_system_combobox", "changed", add_contact_1_system_combobox_changed,
 		"2_nick_entry", "changed", add_contact_2_nick_entry_changed,
 		"2_nick_entry", "key_press_event", add_contact_2_nick_entry_key_pressed,
 		"last_page", "finish", add_contact_last_page_finished,
@@ -539,9 +887,8 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 	g_object_set_data (G_OBJECT (contact->two_nick_entry), 
 			   "changed", GINT_TO_POINTER (0));
 
-	if (jid) {
-		gtk_entry_set_text (GTK_ENTRY (contact->one_id_entry), 
-				    gossip_jid_get_without_resource (jid));
+	if (id) {
+                gtk_entry_set_text (GTK_ENTRY (contact->one_id_entry), id);
 		gnome_druid_set_page (GNOME_DRUID (contact->druid),
 				      GNOME_DRUID_PAGE (contact->two_page));
 		add_contact_prepare_page_2 (GNOME_DRUID_PAGE (contact->two_page),
@@ -549,7 +896,15 @@ gossip_add_contact_new (LmConnection *connection, GossipJID *jid)
 	} else {
 		add_contact_prepare_page_1 (GNOME_DRUID_PAGE (contact->one_page), 
 					    GNOME_DRUID (contact->druid), contact);
-	}
 
+#ifdef FIXME_MJR
+		/* set up systems combo box */
+ 		accounts = gossip_transport_accounts_get (al); 
+#else
+		accounts = NULL;
+#endif
+		add_contact_setup_systems (accounts, contact);
+	}
+	
 	gtk_widget_show (contact->dialog);
 }

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002-2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -24,7 +24,8 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-config.h>
-#include <loudmouth/loudmouth.h>
+
+#include "gossip-chatroom-provider.h"
 #include "gossip-utils.h"
 #include "gossip-group-chat.h"
 #include "gossip-app.h"
@@ -37,9 +38,6 @@
 typedef struct _GossipJoinDialog GossipJoinDialog;
 
 struct _GossipJoinDialog {
-	GossipApp    *app;
-	LmConnection *connection;
-	
 	GtkWidget    *dialog;
 	GtkEntry     *nick_entry;
 	GtkEntry     *server_entry;
@@ -60,6 +58,18 @@ static void join_dialog_entries_changed_cb (GtkWidget        *widget,
 					    GossipJoinDialog *join);
 static void join_dialog_update_option_menu (GossipJoinDialog *join);
 
+static void
+join_dialog_join_cb (GossipChatroomProvider   *provider,
+		     GossipJoinChatroomResult  result,
+		     gint                      id,
+		     gpointer                  user_data)
+{
+	g_print ("Join callback: %d\n", id);
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
+	/* FIXME: Check return value */
+	gossip_group_chat_show (provider, id);
+}
 
 static void
 join_dialog_update_option_menu (GossipJoinDialog *join)
@@ -141,36 +151,26 @@ join_dialog_response_cb (GtkWidget        *dialog,
 			 gint              response,
 			 GossipJoinDialog *join)
 {
+	GossipChatroomProvider *ch_provider;
 	const gchar *room;
 	const gchar *server;
-	gchar *nick;
-	gchar       *to;
-	LmMessage   *m;
-	GossipShow   show;
-	const gchar *show_str;
+	gchar       *nick;
+
+	ch_provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
 	
 	switch (response) {
 	case GTK_RESPONSE_OK:
 		nick = g_strdup (gtk_entry_get_text (join->nick_entry));
 		g_strstrip (nick);
+
 		server = gtk_entry_get_text (join->server_entry);
-		room = gtk_entry_get_text (join->room_entry);
-		
-		to = g_strdup_printf ("%s@%s/%s", room, server, nick);
-		m = lm_message_new_with_sub_type (to, LM_MESSAGE_TYPE_PRESENCE,
-						  LM_MESSAGE_SUB_TYPE_AVAILABLE);
-		g_free (to);
+		room   = gtk_entry_get_text (join->room_entry);
 
-		show = gossip_app_get_show ();
-		show_str = gossip_utils_show_to_string (show);
-		if (show) {
-			lm_message_node_add_child (m->node, "show", show_str);
-		}
-
-		lm_connection_send (join->connection, m, NULL);
-		lm_message_unref (m);
-
-		gossip_app_join_group_chat (room, server, nick);
+		gossip_chatroom_provider_join (ch_provider,
+					       room, server, nick, NULL,
+					       join_dialog_join_cb,
+					       NULL);
+	
 		g_free (nick);
 		break;
 
@@ -196,7 +196,7 @@ join_dialog_edit_clicked_cb (GtkWidget        *widget,
 {
 	GtkWidget *window;
 
-	window = gossip_favorites_dialog_show (dialog->app);
+	window = gossip_favorites_dialog_show ();
 
  	g_signal_connect (window, "destroy",
  			  G_CALLBACK (join_dialog_favorites_dialog_destroy_cb),
@@ -262,9 +262,6 @@ gossip_join_dialog_show (void)
 	
         join = g_new0 (GossipJoinDialog, 1);
 
-	join->app = gossip_app_get ();
-	join->connection = gossip_app_get_connection ();
-	
 	gossip_glade_get_file_simple (GLADEDIR "/group-chat.glade",
 				      "join_group_chat_dialog",
 				      NULL,

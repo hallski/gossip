@@ -92,8 +92,8 @@ static GossipSmileyPattern smileys[] = {
 
 static gint num_smileys = G_N_ELEMENTS (smileys);
 
-static void       chat_view_class_init      (GossipChatViewClass *klass);
-static void       chat_view_init            (GossipChatView      *view);
+static void       gossip_chat_view_class_init (GossipChatViewClass *klass);
+static void       gossip_chat_view_init       (GossipChatView      *view);
 static void       chat_view_finalize        (GObject             *object);
 static void       chat_view_size_allocate   (GtkWidget           *widget,
 					     GtkAllocation       *alloc);
@@ -143,34 +143,10 @@ static gboolean chat_view_is_scrolled_down   (GossipChatView *view);
 extern GConfClient *gconf_client;
 static GObjectClass *parent_class = NULL;
 
-GType
-gossip_chat_view_get_type (void)
-{
-	static GType object_type = 0;
-	
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (GossipChatViewClass),
-			NULL,		/* base_init */
-			NULL,		/* base_finalize */
-			(GClassInitFunc) chat_view_class_init,
-			NULL,		/* class_finalize */
-			NULL,		/* class_data */
-			sizeof (GossipChatView),
-			0,              /* n_preallocs */
-			(GInstanceInitFunc) chat_view_init,
-		};
-
-		object_type = g_type_register_static (GTK_TYPE_TEXT_VIEW,
-                                                      "GossipChatView", 
-                                                      &object_info, 0);
-	}
-
-	return object_type;
-}
+G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
 
 static void
-chat_view_class_init (GossipChatViewClass *klass)
+gossip_chat_view_class_init (GossipChatViewClass *klass)
 {
 	GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
@@ -182,7 +158,7 @@ chat_view_class_init (GossipChatViewClass *klass)
 }
 
 static void
-chat_view_init (GossipChatView *view)
+gossip_chat_view_init (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
 
@@ -642,8 +618,11 @@ chat_view_maybe_append_timestamp (GossipChatView *view, const gchar *time_str)
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = view->priv;
-	
+
+/* 
 	stamp = gossip_utils_get_timestamp (time_str);
+	*/
+	stamp = g_strdup ("TIME");
 
 	g_get_current_time (&cur_time);
 

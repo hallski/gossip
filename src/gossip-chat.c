@@ -35,8 +35,8 @@ struct _GossipChatPriv {
 	gint              last_input_height;
 };
 
-static void     chat_class_init                   (GossipChatClass *klass);
-static void     chat_init                         (GossipChat      *chat);
+static void     gossip_chat_class_init            (GossipChatClass *klass);
+static void     gossip_chat_init                  (GossipChat      *chat);
 static void     chat_finalize                     (GObject         *object);
 static void     chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 		                                   GossipChat    *chat);
@@ -55,35 +55,10 @@ enum {
 static GObjectClass *parent_class = NULL;
 static guint         chat_signals[LAST_SIGNAL] = { 0 };
 
-GType
-gossip_chat_get_type (void)
-{
-	static GType type_id = 0;
-
-	if (type_id == 0) {
-		const GTypeInfo type_info = {
-			sizeof (GossipChatClass),
-			NULL,
-			NULL,
-			(GClassInitFunc) chat_class_init,
-			NULL,
-			NULL,
-			sizeof (GossipChat),
-			0,
-			(GInstanceInitFunc) chat_init
-		};
-
-		type_id = g_type_register_static (G_TYPE_OBJECT,
-						  "GossipChat",
-						  &type_info,
-						  G_TYPE_FLAG_ABSTRACT);
-	}
-
-	return type_id;
-}
+G_DEFINE_TYPE (GossipChat, gossip_chat, G_TYPE_OBJECT);
 
 static void
-chat_class_init (GossipChatClass *klass)
+gossip_chat_class_init (GossipChatClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -134,7 +109,7 @@ chat_class_init (GossipChatClass *klass)
 }
 
 static void
-chat_init (GossipChat *chat)
+gossip_chat_init (GossipChat *chat)
 {
 	GossipChatPriv *priv;
 	GtkTextBuffer  *buffer;

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio HB
+ * Copyright (C) 2003-2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,130 +27,66 @@
 #include <gtk/gtkalignment.h>
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
-#include <loudmouth/loudmouth.h>
 
 #include "gossip-app.h"
+#include "gossip-contact.h"
+#include "gossip-session.h"
 #include "gossip-utils.h"
 #include "gossip-contact-info.h"
 
 #define d(x) 
 
 struct _GossipContactInfo {
-	LmConnection *connection;
+	GossipContact *contact;
 
-	GossipJID *jid;
+	GtkWidget     *dialog;
+	GtkWidget     *title_label;
+	GtkWidget     *jid_label;
+	GtkWidget     *personal_not_avail_label;
+	GtkWidget     *personal_table;
+	GtkWidget     *name_label;
+	GtkWidget     *client_not_avail_label;
+	GtkWidget     *client_table;
+	GtkWidget     *client_name_label;
+	GtkWidget     *version_label;
+	GtkWidget     *os_label;
+	GtkWidget     *description_textview;
+	GtkWidget     *subscription_box;
+	GtkWidget     *subscription_label;
+	GtkWidget     *resubscribe_button;
+	GtkWidget     *close_button;
 
-	GtkWidget *dialog;
-	GtkWidget *title_label;
-	GtkWidget *jid_label;
-	GtkWidget *personal_not_avail_label;
-	GtkWidget *personal_table;
-	GtkWidget *name_label;
-	GtkWidget *client_not_avail_label;
-	GtkWidget *client_table;
-	GtkWidget *client_name_label;
-	GtkWidget *version_label;
-	GtkWidget *os_label;
-	GtkWidget *description_textview;
-	GtkWidget *subscription_box;
-	GtkWidget *subscription_label;
-	GtkWidget *resubscribe_button;
-	GtkWidget *close_button;
-
-	LmMessageHandler *vcard_handler;
-	LmMessageHandler *version_handler;
-	gulong presence_signal_handler;
+	gulong         presence_signal_handler;
 };
 
 static void contact_info_dialog_destroy_cb   (GtkWidget         *widget,
 					      GossipContactInfo *info);
-static void contact_info_request_information (GossipContactInfo *info,
-					      GossipJID         *jid);
 static void contact_info_dialog_close_cb     (GtkWidget         *widget, 
 					      GossipContactInfo *info);
-static LmHandlerResult
-contact_info_vcard_reply_cb                  (LmMessageHandler  *handler,
-					      LmConnection      *connection,
-					      LmMessage         *message,
+static void contact_info_get_vcard_cb        (GossipAsyncResult  result,
+					      GossipVCard       *vcard,
 					      GossipContactInfo *info);
-static LmHandlerResult
-contact_info_version_reply_cb                (LmMessageHandler  *handler,
-					      LmConnection      *connection,
-					      LmMessage         *message,
+static void contact_info_get_version_cb      (GossipAsyncResult  result,
+					      GossipVersionInfo *version_info,
 					      GossipContactInfo *info);
 static void contact_info_resubscribe_cb      (GtkWidget         *widget,
 					      GossipContactInfo *info);
 static void 
 contact_info_update_subscription_ui          (GossipContactInfo *info,
-					      GossipRosterItem  *item);
-static void contact_info_presence_updated_cb (GossipRoster      *roster,
-					      GossipRosterItem  *item,
+					      GossipContact     *contact);
+static void contact_info_contact_updated_cb  (GossipSession     *session,
+					      GossipContact     *contact,
 					      GossipContactInfo *info);
 
 static void
 contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
 {
-	if (info->vcard_handler) {
-		lm_message_handler_invalidate (info->vcard_handler);
-		lm_message_handler_unref (info->vcard_handler);
-	}
-
-	if (info->version_handler) {
-		lm_message_handler_invalidate (info->version_handler);
-		lm_message_handler_unref (info->version_handler);
-	}
-
 	if (info->presence_signal_handler) {
-		g_signal_handler_disconnect (gossip_app_get_roster (), 
+		g_signal_handler_disconnect (gossip_app_get_session (), 
 					     info->presence_signal_handler);
 	}
 
 	g_free (info);
-}
-
-static void
-contact_info_request_information (GossipContactInfo *info, GossipJID *jid)
-{
-	LmMessage        *m;
-	LmMessageNode    *node;
-	GError           *error = NULL;
-	
-	m = lm_message_new (gossip_jid_get_without_resource (jid),
-			    LM_MESSAGE_TYPE_IQ);
-	node = lm_message_node_add_child (m->node, "vCard", NULL);
-	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
-
-	info->vcard_handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_vcard_reply_cb,
-						      info, NULL);
-					  
-	if (!lm_connection_send_with_reply (info->connection, m,
-					    info->vcard_handler, &error)) {
-		d(g_print ("Error while sending: %s\n", error->message));
-		lm_message_unref (m);
-		lm_message_handler_unref (info->vcard_handler);
-		info->vcard_handler = NULL;
-		return;
-	}
-
-	lm_message_unref (m);
-	
-	m = lm_message_new (gossip_jid_get_full (jid), LM_MESSAGE_TYPE_IQ);
-	node = lm_message_node_add_child (m->node, "query", NULL);
-	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:version");
-
-	info->version_handler = lm_message_handler_new ((LmHandleMessageFunction) contact_info_version_reply_cb,
-							info, NULL);
-
-	if (!lm_connection_send_with_reply (info->connection, m,
-					    info->version_handler, &error)) {
-		d(g_print ("Error while sending: %s\n", error->message));
-		lm_message_unref (m);
-		lm_message_handler_unref (info->version_handler);
-		info->version_handler = NULL;
-		return;
-	}
-
-	lm_message_unref (m);
 }
 
 static void
@@ -159,61 +95,42 @@ contact_info_dialog_close_cb (GtkWidget *widget, GossipContactInfo *info)
 	gtk_widget_destroy (info->dialog);
 }
 
-static LmHandlerResult
-contact_info_vcard_reply_cb (LmMessageHandler  *handler,
-			     LmConnection      *connection,
-			     LmMessage         *m,
-			     GossipContactInfo *info)
+static void
+contact_info_get_vcard_cb (GossipAsyncResult  result,
+			   GossipVCard       *vcard,
+			   GossipContactInfo *info)
 {
-	LmMessageNode *vCard, *node;
+	GtkTextBuffer *buffer;
 	gboolean       show_personal = FALSE;
 
-	d(g_print ("Got a vcard response\n"));
-
-	lm_message_handler_unref (info->vcard_handler);
-	info->vcard_handler = NULL;
+	g_print ("vcard callback ()\n");
 	
-	vCard = lm_message_node_get_child (m->node, "vCard");
-	if (!vCard) {
-		d(g_print ("No vCard node\n"));
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	if (result != GOSSIP_ASYNC_OK) {
+		return;
 	}
 
-	node = lm_message_node_get_child (vCard, "DESC");
-	if (node) {
-		GtkTextBuffer *buffer;
-
-		if (node->value) {
-			buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (info->description_textview));
-			gtk_text_buffer_set_text (buffer, node->value, -1);
-		}
-	} else {
-		gtk_widget_set_sensitive (info->description_textview, FALSE);
-	}
-
-	node = lm_message_node_get_child (vCard, "FN");
-	if (node) {
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (info->description_textview));
+	gtk_text_buffer_set_text (buffer, 
+				  gossip_vcard_get_description (vcard), -1);
+	
+	if (strcmp (gossip_vcard_get_name (vcard), "") != 0) {
 		show_personal = TRUE;
 		
 		gtk_label_set_text (GTK_LABEL (info->name_label),
-				    lm_message_node_get_value (node)); 
-		
-		d(g_print ("Found the 'FN' tag\n"));
+				    gossip_vcard_get_name (vcard));
 	}
-
-	node = lm_message_node_get_child (vCard, "EMAIL");
-	if (node && lm_message_node_get_value (node) &&
-	    strcmp (lm_message_node_get_value (node), "") != 0) {
+	
+	if (strcmp (gossip_vcard_get_email (vcard), "") != 0) {
 		GtkWidget *href, *alignment;
 		gchar     *link;
 
 		show_personal = TRUE;
 
 		link = g_strdup_printf ("mailto:%s", 
-					lm_message_node_get_value (node));
+					gossip_vcard_get_email (vcard));
 		
 		href = gnome_href_new (link,
-				       lm_message_node_get_value (node));
+				       gossip_vcard_get_email (vcard));
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -227,16 +144,14 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 
 		g_free (link);
 	}
-	
-	node = lm_message_node_get_child (vCard, "URL");
-	if (node && lm_message_node_get_value (node) &&
-	    strcmp (lm_message_node_get_value (node), "") != 0) {
+
+	if (strcmp (gossip_vcard_get_url (vcard) , "") != 0) {
 		GtkWidget *href, *alignment;
 
 		show_personal = TRUE;
 
-		href = gnome_href_new (lm_message_node_get_value (node),
-				       lm_message_node_get_value (node));
+		href = gnome_href_new (gossip_vcard_get_url (vcard),
+				       gossip_vcard_get_url (vcard));
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -249,58 +164,44 @@ contact_info_vcard_reply_cb (LmMessageHandler  *handler,
 				  0, 0);
 	}
 
-	
-
 	if (show_personal) {
 		gtk_widget_hide (info->personal_not_avail_label);
 		gtk_widget_show_all (info->personal_table);
 	}
-
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
-static LmHandlerResult
-contact_info_version_reply_cb (LmMessageHandler  *handler,
-			       LmConnection      *connection,
-			       LmMessage         *m,
-			       GossipContactInfo *info)
+static void
+contact_info_get_version_cb (GossipAsyncResult  result,
+			     GossipVersionInfo *version_info,
+			     GossipContactInfo *info)
 {
-	LmMessageNode *query, *node;
-	gboolean       show_client_info = FALSE;
+	gboolean show_client_info = FALSE;
 
-	d(g_print ("Version reply\n"));
+	g_print ("version callback ()\n");
 
-	lm_message_handler_unref (info->version_handler);
-	info->version_handler = NULL;
-
-	query = lm_message_node_get_child (m->node, "query");
-	if (!query) {
-		d(g_print ("No query node\n"));
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	if (result != GOSSIP_ASYNC_OK) {
+		return;
 	}
 
-	node = lm_message_node_get_child (query, "name");
-	if (node) {
+	if (strcmp (gossip_version_info_get_name (version_info),  "") != 0) {
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (info->client_name_label),
-				    lm_message_node_get_value (node));
+				    gossip_version_info_get_name (version_info));
 	}
 
-	node = lm_message_node_get_child (query, "version");
-	if (node) {
+	if (strcmp (gossip_version_info_get_version (version_info), "") != 0) {
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (info->version_label),
-				    lm_message_node_get_value (node));
+				    gossip_version_info_get_version (version_info));
 	}
 
-	node = lm_message_node_get_child (query, "os");
-	if (node) {
+	if (strcmp (gossip_version_info_get_os (version_info), "") != 0) {
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (info->os_label),
-				    lm_message_node_get_value (node));
+				    gossip_version_info_get_os (version_info));
 	}
 
 	if (show_client_info) {
@@ -308,13 +209,13 @@ contact_info_version_reply_cb (LmMessageHandler  *handler,
 	
 		gtk_widget_show_all (info->client_table);
 	}
-
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static void
 contact_info_resubscribe_cb (GtkWidget *widget, GossipContactInfo *info)
 {
+	/* FIXME (session): Readd */
+#if 0
 	LmMessage *m;
 	GError *error = NULL;
 
@@ -329,20 +230,22 @@ contact_info_resubscribe_cb (GtkWidget *widget, GossipContactInfo *info)
 	}
 
 	lm_message_unref (m);
+#endif
 }
 
 static void
 contact_info_update_subscription_ui (GossipContactInfo *info,
-				     GossipRosterItem  *item)
+				     GossipContact     *contact)
 {
-	const gchar *subscription;
+	GossipSubscription subscription;
 
-	g_return_if_fail (item != NULL);
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (info != NULL);
 
-	subscription = gossip_roster_item_get_subscription (item);
+	subscription = gossip_contact_get_subscription (contact);
 
-	if (strcmp(subscription, "none") == 0 || strcmp(subscription, "from") == 0) {
+	if (subscription == GOSSIP_SUBSCRIPTION_NONE ||
+	    subscription == GOSSIP_SUBSCRIPTION_FROM) {
 		gtk_widget_show_all (info->subscription_box);
 	
 		g_signal_connect (info->resubscribe_button,
@@ -355,32 +258,28 @@ contact_info_update_subscription_ui (GossipContactInfo *info,
 }
 
 static void
-contact_info_presence_updated_cb (GossipRoster *roster, GossipRosterItem *item, GossipContactInfo *info)
+contact_info_contact_updated_cb (GossipSession     *session,
+				 GossipContact     *contact,
+				 GossipContactInfo *info)
 {
-	g_return_if_fail (item != NULL);
-	g_return_if_fail (info != NULL);
-	
-	if (!gossip_jid_equals_without_resource (gossip_roster_item_get_jid (item), info->jid)) {
+	if (!gossip_contact_equal (contact, info->contact)) {
 		return;
 	}
 	
-	contact_info_update_subscription_ui (info, item);
+	contact_info_update_subscription_ui (info, contact);
 }
 
 GossipContactInfo *
-gossip_contact_info_new (GossipJID *jid, const gchar *name)
+gossip_contact_info_new (GossipContact *contact)
 {
 	GossipContactInfo *info;
 	GladeXML          *gui;
 	gchar             *str, *tmp_str;
 	GtkSizeGroup      *size_group;
-	GossipRoster *roster;
-	GossipRosterItem *item;
 
 	info = g_new0 (GossipContactInfo, 1);
 
-	info->connection = gossip_app_get_connection ();
-	info->jid = jid;
+	info->contact = contact;
 
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "contact_information_dialog",
@@ -428,7 +327,8 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 			  G_CALLBACK (contact_info_dialog_destroy_cb),
 			  info);
 
-	tmp_str = g_strdup_printf (_("Contact Information for %s"), name);
+	tmp_str = g_strdup_printf (_("Contact Information for %s"), 
+				   gossip_contact_get_name (contact));
 
 	gtk_window_set_title (GTK_WINDOW (info->dialog), tmp_str);
 
@@ -440,23 +340,30 @@ gossip_contact_info_new (GossipJID *jid, const gchar *name)
 	gtk_label_set_markup (GTK_LABEL (info->title_label), tmp_str);
 	g_free (tmp_str);
 
-	gtk_label_set_text (GTK_LABEL (info->jid_label), gossip_jid_get_without_resource (jid));
+	gtk_label_set_text (GTK_LABEL (info->jid_label), 
+			    gossip_contact_get_id (contact));
 	
-	roster = gossip_app_get_roster ();
-	item = gossip_roster_get_item (roster, jid);
-	contact_info_update_subscription_ui (info, item);
+	contact_info_update_subscription_ui (info, contact);
 		
-	info->presence_signal_handler = g_signal_connect(roster, 
-							 "item_updated", 
-							 G_CALLBACK(contact_info_presence_updated_cb), 
-							 info);
+	info->presence_signal_handler = g_signal_connect (gossip_app_get_session (),
+							  "contact-updated",
+							  G_CALLBACK (contact_info_contact_updated_cb), 
+							  info);
 
 	g_signal_connect (info->close_button,
 			  "clicked",
 			  G_CALLBACK (contact_info_dialog_close_cb),
 			  info);
-	
-	contact_info_request_information (info, jid);
+
+	gossip_session_async_get_vcard (gossip_app_get_session (),
+					contact,
+					(GossipAsyncVCardCallback) contact_info_get_vcard_cb,
+					info, NULL);
+
+	gossip_session_async_get_version (gossip_app_get_session (),
+					  contact,
+					  (GossipAsyncVersionCallback) contact_info_get_version_cb,
+					  info, NULL);
 
 	gtk_widget_show (info->dialog);
 

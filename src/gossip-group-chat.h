@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio HB
+ * Copyright (C) 2002-2004 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,8 +22,8 @@
 #define __GOSSIP_GROUP_CHAT_H__
 
 #include "gossip-chat.h"
-#include "gossip-jid.h"
-#include "gossip-app.h"
+#include "gossip-chatroom-provider.h"
+#include "gossip-utils.h"
 
 #define GOSSIP_TYPE_GROUP_CHAT         (gossip_group_chat_get_type ())
 #define GOSSIP_GROUP_CHAT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChat))
@@ -48,8 +48,8 @@ struct _GossipGroupChatClass {
 
 GType              gossip_group_chat_get_type  (void) G_GNUC_CONST;
 
-GossipGroupChat *  gossip_group_chat_show      (GossipJID   *jid,
-						const gchar *nick);
+GossipGroupChat *  gossip_group_chat_show      (GossipChatroomProvider *provider,
+						GossipChatroomId        id);
 void               gossip_group_chat_set_show  (GossipShow   show);
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */
