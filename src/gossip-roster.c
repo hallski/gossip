@@ -828,11 +828,16 @@ roster_item_sort_connections (gconstpointer a, gconstpointer b)
 		return -1;
 	} 
 	else if (con_a->priority == con_b->priority) {
-		if (con_a->last_updated > con_b->last_updated) {
+		if (con_a->show < con_b->show) {
 			return -1;
 		}
+		else if (con_a->show == con_b->show) {
+			if (con_a->last_updated > con_b->last_updated) {
+				return -1;
+			}
+		}
 	}
-
+	
 	return 1;
 }
 

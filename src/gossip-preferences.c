@@ -494,6 +494,9 @@ status_add_away_clicked_cb (GtkWidget          *button,
 	GtkTreeIter   iter;
 
 	str = get_new_message (editor->dialog, _("New Away Message"));
+	if (!str) {
+		return;
+	}
 
 	list = gossip_utils_get_away_messages ();
 

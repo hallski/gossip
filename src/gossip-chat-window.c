@@ -651,14 +651,16 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 			     GdkEvent         *event,
 			     GossipChatWindow *window)
 {
-	GList *l = g_list_copy (window->priv->chats);
+	GList *list, *l;
 
-	for (; l != NULL; l = g_list_next (l)) {
+	list = g_list_copy (window->priv->chats);
+
+	for (l = list; l; l = l->next) {
 		GossipChat *chat = l->data;
 		gossip_chat_window_remove_chat (window, chat);
 	}
 
-	g_list_free (l);
+	g_list_free (list);
 
 	return TRUE;
 }

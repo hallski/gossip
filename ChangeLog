@@ -1,3 +1,27 @@
+2003-11-14  Vincent Untz  <vincent@vuntz.net>
+
+	* src/gossip-preferences.c: (status_add_away_clicked_cb): don't try
+	to add a new away message in gconf if the user did not type a message.
+
+2003-11-14  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_delete_event_cb):
+	* src/gossip-chat.c: (gossip_chat_finalize), (chat_create_gui),
+	(chat_update_locked_resource), (chat_get_jid_with_resource),
+	(chat_send), (chat_composing_send_start_event),
+	(chat_composing_send_stop_event), (chat_message_handler),
+	(chat_item_presence_updated), (chat_event_handler),
+	(gossip_chat_present): Always send messages to a specific
+	resource. Lock the resource to the last received message, change
+	resource when the resource has changed in the roster. Don't send
+	composing events to a resource that didn't request any.
+	
+	* src/gossip-roster-view.c: (roster_view_name_cell_data_func):
+	Move a comment.
+
+	* src/gossip-roster.c: (roster_item_sort_connections): Sort
+	according to show as well.
+
 2003-11-14  Mikael Hallendal  <micke@imendio.com>
         
         * Fixes, #120997, #125434, #126954

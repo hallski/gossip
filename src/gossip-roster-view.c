@@ -862,6 +862,10 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 			      NULL);
 		return;
 	} 
+
+	/* FIXME: Figure out how to calculate the offset instead of
+	 * hardcoding it here (icon width + padding + indentation).
+	 */
 	width = GTK_WIDGET (view)->allocation.width - (16 + 4*2 + 30);
 
 	if (!gtk_tree_model_iter_parent (model, &parent, iter)) {
@@ -900,9 +904,6 @@ roster_view_name_cell_data_func (GtkTreeViewColumn *tree_column,
 	g_strdelimit (name, "\n\r\t", ' ');
 	g_strdelimit (status, "\n\r\t", ' ');
 
-	/* FIXME: Figure out how to calculate the offset instead of
-	 * hardcoding it here (icon width + padding + indentation).
-	 */
 	roster_view_ellipsize_item_string (view, name, width);
 	roster_view_ellipsize_item_string (view, status, width);
 	

@@ -70,11 +70,15 @@ struct _GossipChatPriv {
         GtkWidget        *from_eventbox;
 
         GossipRosterItem *item;
+	gchar            *locked_resource;
+	gchar            *roster_resource;
 
         guint             composing_stop_timeout_id;
         gboolean          request_composing_events;
         gboolean          send_composing_events;
         gchar            *last_composing_id;
+	gchar            *composing_resource; 
+	
 	gboolean          is_online;
 };
 
@@ -267,8 +271,12 @@ gossip_chat_finalize (GObject *object)
         }
 
 	gossip_roster_item_unref (priv->item);
-        
+
+	g_free (priv->composing_resource);
+	g_free (priv->last_composing_id);
+	
         g_free (priv);
+
         G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
@@ -301,18 +309,18 @@ chat_create_gui (GossipChat *chat)
         gossip_glade_get_file_simple (GLADEDIR "/chat.glade",
                                       "chat_widget",
                                       NULL,
-                                      "chat_widget", &chat->priv->widget,
-				      "status_box", &chat->priv->status_box,
-                                      "chat_view_sw", &chat->priv->text_view_sw,
-                                      "input_entry", &chat->priv->input_entry,
-                                      "input_textview", &chat->priv->input_text_view,
-                                      "single_hbox", &chat->priv->single_hbox,
-                                      "multi_vbox", &chat->priv->multi_vbox,
-                                      "status_image", &chat->priv->status_image,
-                                      "from_eventbox", &chat->priv->from_eventbox,
-                                      "from_label", &chat->priv->from_label,
-                                      "disclosure", &chat->priv->disclosure,
-                                      "send_multi_button", &chat->priv->send_multi_button,
+                                      "chat_widget", &priv->widget,
+				      "status_box", &priv->status_box,
+                                      "chat_view_sw", &priv->text_view_sw,
+                                      "input_entry", &priv->input_entry,
+                                      "input_textview", &priv->input_text_view,
+                                      "single_hbox", &priv->single_hbox,
+                                      "multi_vbox", &priv->multi_vbox,
+                                      "status_image", &priv->status_image,
+                                      "from_eventbox", &priv->from_eventbox,
+                                      "from_label", &priv->from_label,
+                                      "disclosure", &priv->disclosure,
+                                      "send_multi_button", &priv->send_multi_button,
                                       NULL);
 
 	priv->view = gossip_chat_view_new ();
@@ -377,13 +385,67 @@ chat_create_gui (GossipChat *chat)
 }
 
 static void
+chat_update_locked_resource (GossipChat *chat)
+{
+	GossipChatPriv *priv = chat->priv;
+	GossipJID      *jid;
+	const gchar    *roster_resource;
+
+	jid = gossip_roster_item_get_jid (priv->item);
+
+	roster_resource = gossip_jid_get_resource (jid);
+
+	if (!priv->roster_resource) {
+		priv->roster_resource = g_strdup (roster_resource);
+	}
+
+	if (!priv->locked_resource) {
+		priv->locked_resource = g_strdup (roster_resource);
+	}
+	
+	if (g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
+		d(g_print ("Roster unchanged\n"));
+		return;
+	}
+	
+	d(g_print ("New roster resource: %s\n", roster_resource));
+	
+	g_free (priv->roster_resource);
+	priv->roster_resource = g_strdup (roster_resource);
+
+	g_free (priv->locked_resource);
+	priv->locked_resource = g_strdup (roster_resource);
+
+	/* Stop sending compose events since the resource changed. */
+	priv->send_composing_events = FALSE;
+}
+
+static gchar *
+chat_get_jid_with_resource (GossipChat *chat, const gchar *resource)
+{
+	GossipChatPriv *priv = chat->priv;
+	GossipJID      *jid;
+
+	jid = gossip_roster_item_get_jid (priv->item);
+
+	if (resource) {
+		return g_strconcat (gossip_jid_get_without_resource (jid),
+				    "/", resource, NULL);
+	}
+
+	/* Should never happen but play safe. */
+	d(g_assert_not_reached ());
+	return g_strdup (gossip_jid_get_without_resource (jid));
+}
+
+static void
 chat_send (GossipChat  *chat,
            const gchar *msg)
 {
 	GossipChatPriv *priv;
         LmMessage      *m;
         gchar          *nick;
-	GossipJID      *jid;
+	gchar          *jid_string;
 
 	priv = chat->priv;
 
@@ -412,11 +474,16 @@ chat_send (GossipChat  *chat,
 
         g_free (nick);
 
-	jid = gossip_roster_item_get_jid (priv->item);
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+	chat_update_locked_resource (chat);
+	
+	jid_string = chat_get_jid_with_resource (chat, priv->locked_resource);
+        m = lm_message_new_with_sub_type (jid_string,
                                           LM_MESSAGE_TYPE_MESSAGE,
                                           LM_MESSAGE_SUB_TYPE_CHAT);
-        
+
+	d(g_print ("to: %s (roster: %s)\n", jid_string, priv->roster_resource));
+	g_free (jid_string);
+	
 	lm_message_node_add_child (m->node, "body", msg);
         
         if (priv->request_composing_events) {
@@ -480,7 +547,7 @@ chat_composing_send_start_event (GossipChat *chat)
         LmConnection   *connection;
         LmMessage      *m;
         LmMessageNode  *x;
-	GossipJID      *jid;
+	gchar          *jid_string;
 
 	priv = chat->priv;
 
@@ -488,9 +555,10 @@ chat_composing_send_start_event (GossipChat *chat)
         if (!lm_connection_is_open (connection)) {
                 return;
         }
-	
-	jid = gossip_roster_item_get_jid (priv->item);
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+
+	jid_string = chat_get_jid_with_resource (chat, priv->composing_resource);
+		
+        m = lm_message_new_with_sub_type (jid_string,
                                           LM_MESSAGE_TYPE_MESSAGE,
                                           LM_MESSAGE_SUB_TYPE_CHAT);
         x = lm_message_node_add_child (m->node, "x", NULL);
@@ -500,6 +568,7 @@ chat_composing_send_start_event (GossipChat *chat)
 
         lm_connection_send (connection, m, NULL);
         lm_message_unref (m);
+	g_free (jid_string);
 }
 
 static void
@@ -509,7 +578,7 @@ chat_composing_send_stop_event (GossipChat *chat)
 	LmMessage      *m;
         LmMessageNode  *x;
         LmConnection   *connection;
-	GossipJID      *jid;
+	gchar          *jid_string;
 	
 	priv = chat->priv;
 	
@@ -518,8 +587,9 @@ chat_composing_send_stop_event (GossipChat *chat)
                 return;
         }
 
-	jid = gossip_roster_item_get_jid (priv->item);
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+	jid_string = chat_get_jid_with_resource (chat, priv->composing_resource);
+
+        m = lm_message_new_with_sub_type (jid_string,
                                           LM_MESSAGE_TYPE_MESSAGE,
                                           LM_MESSAGE_SUB_TYPE_CHAT);
         x = lm_message_node_add_child (m->node, "x", NULL);
@@ -528,6 +598,7 @@ chat_composing_send_stop_event (GossipChat *chat)
 
         lm_connection_send (connection, m, NULL);
         lm_message_unref (m);
+	g_free (jid_string);
 }
 
 static void
@@ -567,7 +638,8 @@ chat_message_handler (LmMessageHandler *handler,
         const gchar      *from;
         LmMessageSubType  type;
         GossipJID        *from_jid;
-        const gchar      *timestamp = NULL;
+        const gchar      *from_resource;
+	const gchar      *timestamp = NULL;
         LmMessageNode    *node;
         const gchar      *body = "";
         const gchar      *thread = "";
@@ -580,15 +652,26 @@ chat_message_handler (LmMessageHandler *handler,
         from_jid = gossip_jid_new (from);
 	jid = gossip_roster_item_get_jid (priv->item);
 
-        d(g_print ("Incoming message:: '%s' ?= '%s'",
+        d(g_print ("Incoming message:: '%s' ?= '%s'\n",
                    gossip_jid_get_without_resource (from_jid),
                    gossip_jid_get_without_resource (jid)));
+
+	d(g_print ("from: %s'\n", gossip_jid_get_full (from_jid)));
 
         if (!gossip_jid_equals_without_resource (from_jid, jid)) {
                 gossip_jid_unref (from_jid);
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
         }
 
+	from_resource = gossip_jid_get_resource (from_jid);
+
+	if (!priv->locked_resource ||
+	    g_ascii_strcasecmp (from_resource, priv->locked_resource)) {
+		d(g_print ("New resource, relock\n"));
+		g_free (priv->locked_resource);
+		priv->locked_resource = g_strdup (from_resource);
+	}
+	
 	gossip_jid_unref (from_jid);
 
         type = lm_message_get_sub_type (m);
@@ -679,7 +762,6 @@ chat_item_presence_updated (gpointer          not_used,
 							   msg, TRUE);
 			g_free (msg);
 		}
-		
 		priv->is_online = FALSE;
 	} else {
 		if (!priv->is_online) {
@@ -693,7 +775,6 @@ chat_item_presence_updated (gpointer          not_used,
 		}
 		priv->is_online = TRUE;
 	}
-
 
 	if (gossip_roster_item_is_offline (priv->item)) {
 		pixbuf = gossip_utils_get_pixbuf_offline ();
@@ -713,9 +794,12 @@ chat_item_presence_updated (gpointer          not_used,
 static gboolean
 chat_event_handler (GossipChat *chat, LmMessage *m)
 {
-        LmMessageNode *x;
-        const gchar   *xmlns;
-        const gchar   *new_id;
+	GossipChatPriv *priv = chat->priv;
+        LmMessageNode  *x;
+        const gchar    *xmlns;
+        const gchar    *new_id;
+        const gchar    *from;
+	GossipJID      *jid;
 
         x = lm_message_node_get_child (m->node, "x");
         if (!x) {
@@ -730,12 +814,21 @@ chat_event_handler (GossipChat *chat, LmMessage *m)
         if (lm_message_node_get_child (m->node, "body")) {
                 if (lm_message_node_get_child (x, "composing")) {
                         /* Handle request for composing events. */
-                        chat->priv->send_composing_events = TRUE;
-                        
-                        g_free (chat->priv->last_composing_id);
+                        priv->send_composing_events = TRUE;
+
+			from = lm_message_node_get_attribute (m->node, "from");
+			jid = gossip_jid_new (from);
+			
+			g_free (priv->composing_resource);
+			priv->composing_resource =
+				g_strdup (gossip_jid_get_resource (jid));
+			
+			gossip_jid_unref (jid);
+					      
+                        g_free (priv->last_composing_id);
                         new_id = lm_message_node_get_attribute (m->node, "id");
                         if (new_id) {
-                                chat->priv->last_composing_id = g_strdup (new_id);
+                                priv->last_composing_id = g_strdup (new_id);
                         }
                 }
 
@@ -1098,15 +1191,21 @@ gossip_chat_handle_message (LmMessage *m)
 void
 gossip_chat_present (GossipChat *chat)
 {
-	if (chat->priv->window == NULL) {
-		gossip_chat_window_add_chat (gossip_chat_window_get_default (),
-					     chat);
+	GossipChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	priv = chat->priv;
+	
+	if (priv->window == NULL) {
+		gossip_chat_window_add_chat (
+			gossip_chat_window_get_default (), chat);
         }
 
-        gossip_chat_window_switch_to_chat (chat->priv->window, chat);
-        gtk_window_present (GTK_WINDOW (gossip_chat_window_get_dialog (chat->priv->window)));
+        gossip_chat_window_switch_to_chat (priv->window, chat);
+        gtk_window_present (GTK_WINDOW (gossip_chat_window_get_dialog (priv->window)));
 
-	gtk_widget_grab_focus (chat->priv->input_entry);
+	gtk_widget_grab_focus (priv->input_entry);
 }
 
 GtkWidget *
