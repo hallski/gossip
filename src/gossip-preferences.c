@@ -387,6 +387,7 @@ gossip_preferences_show (GossipApp *app)
 			      "preferences_dialog", "response", preferences_response_cb,
 			      NULL);
 	
+	gtk_window_set_transient_for (GTK_WINDOW (preferences->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (preferences->dialog);
 
  	return preferences->dialog;

@@ -161,6 +161,7 @@ gossip_connect_dialog_show (GossipApp *app)
 				       /*"priority_label",*/
 				       NULL);
 
+	gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (dialog->dialog);
 }
 

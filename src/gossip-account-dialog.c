@@ -228,7 +228,7 @@ gossip_account_dialog_show (void)
 		return dialog->dialog;
 	}
 	
-        dialog = g_new0 (GossipAccountDialog, 1);
+	dialog = g_new0 (GossipAccountDialog, 1);
 
 	gui = gossip_glade_get_file (GLADEDIR "/connect.glade",
 				     "account_dialog",
@@ -301,6 +301,7 @@ gossip_account_dialog_show (void)
 	
 	account_dialog_setup (dialog);
 	
+	gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (dialog->dialog);
 
 	return dialog->dialog;
