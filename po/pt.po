@@ -1,14 +1,14 @@
-# gossip Portuguese translation
-# Copyright (C) 2003 gossip
+# gossip's Portuguese translation
+# Copyright (C) 2003, 2004 gossip
 # This file is distributed under the same license as the gossip package.
-# Duarte Loreto <happyguy_pt@hotmail.com>, 2003.
+# Duarte Loreto <happyguy_pt@hotmail.com>, 2003, 2004.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 2.6\n"
 "Report-Msgid-Bugs-To: Duarte Loreto <happyguy_pt@hotmail.com>\n"
-"POT-Creation-Date: 2003-12-24 00:53+0000\n"
-"PO-Revision-Date: 2003-12-24 00:55+0000\n"
+"POT-Creation-Date: 2004-01-11 02:09+0000\n"
+"PO-Revision-Date: 2004-01-11 02:10+0000\n"
 "Last-Translator: Duarte Loreto <happyguy_pt@hotmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -171,60 +171,60 @@ msgstr "_Sair"
 msgid "translator_credits"
 msgstr "Duarte Loreto <happyguy_pt@hotmail.com>"
 
-#: src/gossip-app.c:611
-msgid "A Jabber Client for GNOME"
-msgstr "Um Cliente Jabber para o GNOME"
+#: src/gossip-app.c:614
+msgid "An Instant Messaging Client for GNOME"
+msgstr "Um Cliente de Mensagens Instantâneas para o GNOME"
 
-#: src/gossip-app.c:618
+#: src/gossip-app.c:623
 msgid "Gossip Website"
 msgstr "Página Web Gossip"
 
-#: src/gossip-app.c:737
+#: src/gossip-app.c:742
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduza o ID de utilizador da pessoa para quem deseja enviar uma mensagem "
 "de diálogo."
 
-#: src/gossip-app.c:742 ui/main.glade.h:83
+#: src/gossip-app.c:747 ui/main.glade.h:83
 msgid "_Chat"
 msgstr "_Diálogo"
 
-#: src/gossip-app.c:1001
+#: src/gossip-app.c:1006
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s deseja ser notificado da sua presença."
 
-#: src/gossip-app.c:1244
+#: src/gossip-app.c:1249
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Foi desligado do servidor. Deseja ligar-se novamente?"
 
-#: src/gossip-app.c:1394
+#: src/gossip-app.c:1398
 msgid "Make sure that your account information is correct."
 msgstr "Certifique-se de que a sua informação de conta está correcta."
 
-#: src/gossip-app.c:1395
+#: src/gossip-app.c:1399
 msgid "The server may currently be unavailable."
 msgstr "O servidor pode estar de momento indisponível."
 
-#: src/gossip-app.c:1797
+#: src/gossip-app.c:1801
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Cliente Jabber"
 
-#: src/gossip-app.c:1973
+#: src/gossip-app.c:1977
 #, c-format
 msgid "New message from %s"
 msgstr "Nova mensagem de %s"
 
-#: src/gossip-app.c:2527
+#: src/gossip-app.c:2541
 msgid "Custom Message..."
 msgstr "Mensagem Personalizada..."
 
-#: src/gossip-app.c:2545
+#: src/gossip-app.c:2559
 msgid "Custom Busy Message..."
 msgstr "Mensagem Personalizada de Ocupado..."
 
-#: src/gossip-app.c:2552
+#: src/gossip-app.c:2566
 msgid "Leave..."
 msgstr "Ausentar-se..."
 
@@ -244,30 +244,38 @@ msgstr "_Abrir Atalho"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:622
+#: src/gossip-chat-window.c:638
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sDiálogo - %s"
 
-#: src/gossip-chat.c:664
+#: src/gossip-chat.c:701
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Ocorreu um erro durante o diálogo com %s."
 
-#: src/gossip-chat.c:669 src/gossip-group-chat.c:807
+#: src/gossip-chat.c:706 src/gossip-group-chat.c:807
 #: src/gossip-group-chat.c:910
 msgid "Details:"
 msgstr "Detalhes:"
 
-#: src/gossip-chat.c:755
+#: src/gossip-chat.c:796
 #, c-format
 msgid "%s went offline"
 msgstr "%s desligou-se"
 
-#: src/gossip-chat.c:769
+#: src/gossip-chat.c:810
 #, c-format
 msgid "%s comes online"
 msgstr "%s está ligado(a)"
+
+#: src/gossip-chat.c:897
+msgid "Connected"
+msgstr "Ligado"
+
+#: src/gossip-chat.c:912
+msgid "Disconnected"
+msgstr "Desligado"
 
 #: src/gossip-contact-info.c:352
 #, c-format
@@ -284,7 +292,7 @@ msgstr "Ocorreu um erro durante o diálogo em grupo %s."
 msgid "Unable to enter the group chat %s."
 msgstr "Incapaz de se juntar ao diálogo em grupo %s."
 
-#: src/gossip-log.c:233
+#: src/gossip-log.c:227
 msgid "Conversation Log"
 msgstr "Registo de Diálogo"
 
