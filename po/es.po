@@ -1,19 +1,68 @@
+# translation of gossip.HEAD.es.po to Spanish
 # Gossip spanish translation.
 # Copyright (C) 2003 Free Software Foundation
 # This file is distributed under the same license as the Gossip package.
 # Ezequiel Pérez <eazel7@yahoo.com.ar>, 2003.
+# Francisco Javier F. Serrador <serrador@arrakis.es>, 2003
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip 0.3\n"
-"POT-Creation-Date: 2003-07-10 00:28+0200\n"
-"PO-Revision-Date: 2003-07-08 15:25-0300\n"
-"Last-Translator: Ezequiel Pérez <eazel7@yahoo.com.ar>\n"
-"Language-Team: Spanish <mbarreiro@red.madritel.es>\n"
+"Project-Id-Version: gossip.HEAD.es\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-12 21:08+0200\n"
+"PO-Revision-Date: 2003-07-13 03:51+0200\n"
+"Last-Translator: Francisco Javier F. Serrador <serrador@arrakis.es>\n"
+"Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: Ezequiel Pérez <eazel7@yahoo.com.ar>\n"
+"X-Generator: KBabel 1.0.1\n"
+
+#: gossip.desktop.in.h:1 ui/main.glade.h:33
+msgid "Gossip"
+msgstr "Gossip"
+
+#: gossip.desktop.in.h:2
+msgid "Jabber Instant Messaging"
+msgstr "Mensajería Instantánea Jabber"
+
+#: gossip.schemas.in.h:1
+msgid "Autoaway enabled"
+msgstr "Auto-ausencia activada"
+
+#: gossip.schemas.in.h:2
+msgid "Autoaway time"
+msgstr "Tiempo de auto-ausencia"
+
+#: gossip.schemas.in.h:3
+msgid "Extended autoaway time"
+msgstr "Teiempo de autoausencia extendido"
+
+#: gossip.schemas.in.h:4
+msgid ""
+"The number of minutes of idle time before automatically going into \"away\" "
+"mode."
+msgstr "El número de minutos de tiempo inactivo antes de entrar en modo «ausencia»"
+
+#: gossip.schemas.in.h:5
+msgid ""
+"The number of minutes of idle time before automatically going into "
+"\"extended away\" mode."
+msgstr "El número de minutos de tiempo inactivo antes de entrar en modo «ausencia extendida»"
+
+#: gossip.schemas.in.h:6
+msgid "Use smileys"
+msgstr "Usar emoticonos"
+
+#: gossip.schemas.in.h:7
+msgid "Whether or not to convert smileys into graphical images in conversations."
+msgstr "Indica si debe o no debe convertir los emoticonos en imágenes gráficas en las conversaciones."
+
+#: gossip.schemas.in.h:8
+msgid ""
+"Whether or not to go into \"away\" mode automatically when a certain time of "
+"idling has passed."
+msgstr "Indica si debe o no ir a modo «ausente» automáticamente después de que pase un período de tiempo inactivo."
 
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
@@ -33,55 +82,53 @@ msgstr "Se ha agregado %s a tu lista de contactos."
 msgid "Contact will be added to your contact list"
 msgstr "El contacto será agregado a tu lista de contactos"
 
-#: src/gossip-app.c:333
+#: src/gossip-app.c:338
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:337
+#: src/gossip-app.c:342
 msgid "Free to chat"
 msgstr "Libre para charlar"
 
-#: src/gossip-app.c:341
+#: src/gossip-app.c:346
 msgid "Busy"
 msgstr "Ocupado"
 
-#: src/gossip-app.c:345 ui/main.glade.h:27
+#: src/gossip-app.c:350 ui/main.glade.h:27
 msgid "Away"
 msgstr "Ausente"
 
-#: src/gossip-app.c:349
+#: src/gossip-app.c:354
 msgid "Extended away"
 msgstr "Ausencia extendida"
 
-#: src/gossip-app.c:357
+#: src/gossip-app.c:362
 msgid "Offline"
 msgstr "Desconectado"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:422
+#: src/gossip-app.c:430
 msgid "translator_credits"
 msgstr "Ezequiel Pérez <eazel7@yahoo.com.ar>"
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:441
 msgid "A Jabber Client for GNOME"
 msgstr "Un cliente de Jabber para GNOME"
 
-#: src/gossip-app.c:554
-msgid ""
-"Enter the user ID of the person you would like to send a chat message to."
-msgstr ""
-"Ingrese el id de la persona a la que quieres enviarle un mensaje de charla."
+#: src/gossip-app.c:562
+msgid "Enter the user ID of the person you would like to send a chat message to."
+msgstr "Ingrese el id de la persona a la que quieres enviarle un mensaje de charla."
 
-#: src/gossip-app.c:559
+#: src/gossip-app.c:567
 msgid "_Chat"
 msgstr "_Charla"
 
-#: src/gossip-app.c:1138
+#: src/gossip-app.c:1143
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Has sido desconectado del servidor. ¿Quisieras reconectarte?"
 
-#: src/gossip-app.c:1397
+#: src/gossip-app.c:1470
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, cliente de Jabber"
 
@@ -108,19 +155,19 @@ msgid "Operating system:"
 msgstr "Sistema operativo:"
 
 #: src/gossip-contact-info.c:295
-#, fuzzy, c-format
+#, c-format
 msgid "Contact Information for %s"
-msgstr "/_Información del contacto"
+msgstr "Información del contacto para %s"
 
 #: src/gossip-group-chat.c:628
-#, fuzzy, c-format
+#, c-format
 msgid "An error occurred when chatting in the group chat %s."
-msgstr "Ha habido un error en la charla con %s."
+msgstr "Ha habido un error al charlar en el grupo de charla %s."
 
 #: src/gossip-group-chat.c:732
 #, c-format
-msgid "The group chat %s could not be entered."
-msgstr ""
+msgid "Unable to enter the group chat %s."
+msgstr "no se puede entrar en el grupo de charla %s."
 
 #: src/gossip-main.c:69
 msgid "Don't connect on startup"
@@ -194,16 +241,25 @@ msgstr "/Re_nombrar contacto"
 msgid "/_Remove contact"
 msgstr "/Quita_r contacto"
 
-#: src/gossip-roster.c:419
+#: src/gossip-roster.c:421
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
 "%s\n"
-"from you contact list?"
+"from your contact list?"
 msgstr ""
-"¿Quieres eliminar el contacto\n"
+"¿Quiere eliminar el contacto\n"
 "%s\n"
 "de tu lista de contactos?"
+
+#: src/gossip-roster.c:519
+#, c-format
+msgid ""
+"Please enter a new nick for the contact\n"
+"%s"
+msgstr ""
+"Introduzca un apodo nuevo para el contacto\n"
+"%s"
 
 #. Should user be able to set resource, account name and
 #. * port?
@@ -230,7 +286,7 @@ msgstr ""
 "Gossip intentará registrar la cuenta:\n"
 "<b>%s</b>"
 
-#: src/gossip-utils.c:1252
+#: src/gossip-utils.c:1263
 msgid "Please enter your password:"
 msgstr "Por favor, ingresa tu contraseña:"
 
@@ -556,10 +612,6 @@ msgstr "Cena"
 msgid "Do you already have an account on a Jabber server? "
 msgstr "¿Tiene cuenta en un servidor Jabber?"
 
-#: ui/main.glade.h:33 gossip.desktop.in.h:1
-msgid "Gossip"
-msgstr "Gossip"
-
 #: ui/main.glade.h:34
 msgid ""
 "Gossip is now configured properly for your system.\n"
@@ -748,9 +800,6 @@ msgstr "Bu_scar..."
 msgid "_Send chat message..."
 msgstr "_Enviar mensaje de charla..."
 
-#: gossip.desktop.in.h:2
-msgid "Jabber Instant Messaging"
-msgstr "Mensajería Instantánea Jabber"
-
 #~ msgid "Information about %s"
 #~ msgstr "Información acerca de %s"
+
