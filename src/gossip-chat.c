@@ -24,12 +24,14 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-i18n.h>
+#include <libgnomeui/gnome-href.h>
 #include <gconf/gconf-client.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-utils.h"
 #include "gossip-sound.h"
 #include "gossip-chat.h"
 #include "gossip-app.h"
+#include "gossip-contact-info.h"
 #include "disclosure-widget.h"
 
 #define d(x) 
@@ -51,6 +53,7 @@ struct _GossipChat {
 	GtkWidget        *subject_entry;
 	GtkWidget        *status_image;
 	GtkWidget        *disclosure;
+	GtkWidget        *info_button;
 
 	GossipJID        *jid;
 	gchar            *nick;
@@ -71,6 +74,8 @@ static void     chat_dialog_destroy_cb            (GtkWidget        *widget,
 						   GossipChat       *chat);
 static gboolean chat_dialog_key_press_event_cb    (GtkWidget        *dialog,
 						   GdkEventKey      *event,
+						   GossipChat       *chat);
+static void     chat_dialog_info_clicked_cb       (GtkWidget        *widget,
 						   GossipChat       *chat);
 static void     chat_dialog_send                  (GossipChat       *chat,
 						   const gchar      *msg);
@@ -140,12 +145,13 @@ static GossipChat *
 chat_create (GossipApp *app, GossipJID *jid) 
 {
 	GossipChat    *chat;
-	GtkWidget     *from_label;
 	GossipRoster  *roster;
-	const gchar   *name;
+	gchar         *name;
 	GdkPixbuf     *pixbuf;
-	gchar         *from;
 	GtkTextBuffer *buffer;
+	GtkTooltips   *tooltips;
+	GtkWidget     *from_label;
+	GtkWidget     *from_eventbox;
 	
 	g_return_val_if_fail (GOSSIP_IS_APP (app), NULL);
 
@@ -165,8 +171,10 @@ chat_create (GossipApp *app, GossipJID *jid)
 				      "input_textview", &chat->input_text_view,
 				      "single_hbox", &chat->single_hbox,
 				      "multi_vbox", &chat->multi_vbox,
-				      "from_label", &from_label,
 				      "status_image", &chat->status_image,
+				      "from_eventbox", &from_eventbox,
+				      "info_button", &chat->info_button,
+				      "from_label", &from_label,
 				      "disclosure", &chat->disclosure,
 				      "send_multi_button", &chat->send_multi_button,
 				      NULL);
@@ -179,18 +187,26 @@ chat_create (GossipApp *app, GossipJID *jid)
 					   pixbuf);
 	}
 
-	name = gossip_roster_get_nick_from_jid (roster, jid);
-	if (name) {
-		from = g_strdup_printf ("%s <%s>", name, gossip_jid_get_full (jid));
-	} else {
-		from = (gchar *) gossip_jid_get_full (jid);
+	name = g_strdup (gossip_roster_get_nick_from_jid (roster, jid));
+	if (!name) {
+		name = gossip_jid_get_part_name (jid);
 	}
 
-	gtk_label_set_text (GTK_LABEL (from_label), from);
-	if (from != gossip_jid_get_full (jid)) {
-		g_free (from);
-	}
-		
+	gtk_label_set_text (GTK_LABEL (from_label), name);
+	g_free (name);
+	
+	tooltips = gtk_tooltips_new ();
+
+	gtk_tooltips_set_tip (tooltips,
+			      from_eventbox,
+			      gossip_jid_get_full (jid),
+			      gossip_jid_get_full (jid));
+
+	g_signal_connect (chat->info_button,
+			  "clicked",
+			  G_CALLBACK (chat_dialog_info_clicked_cb),
+			  chat);
+
 	g_signal_connect (chat->disclosure,
 			  "toggled",
 			  G_CALLBACK (chat_disclosure_toggled_cb),
@@ -241,7 +257,7 @@ chat_create (GossipApp *app, GossipJID *jid)
 	gossip_text_view_setup_tags (GTK_TEXT_VIEW (chat->text_view));
 
 	gtk_widget_show (chat->dialog);
-	
+
 	gtk_widget_grab_focus (chat->input_entry);
 
 	chat->presence_handler = lm_message_handler_new (
@@ -352,6 +368,18 @@ chat_dialog_key_press_event_cb (GtkWidget   *dialog,
 	return FALSE;
 }
 	
+static void
+chat_dialog_info_clicked_cb (GtkWidget  *widget,
+			     GossipChat *chat)
+{
+	const gchar *name;
+
+	name = gossip_jid_get_without_resource (chat->jid);
+	if (name && name[0]) {
+		gossip_contact_info_new (chat->app, chat->jid, name);
+	}
+}
+
 static void
 chat_dialog_send (GossipChat *chat, const gchar *msg)
 {

@@ -1,6 +1,16 @@
 2003-07-17  Richard Hult  <richard@imendio.com>
 
-	* src/gossip-chat.c (chat_dialog_focus_in_event_cb)
+	* ui/chat.glade: 
+	* src/gossip-chat.c (chat_create, chat_dialog_info_clicked_cb):
+	Add a small button that brings up contact info for the user. Based
+	on patch from Dafydd Harries and fixes bug #116982.
+
+	Also don't show the full JID in the dialog, just the nickname or
+	username, and add a tooltip with the full JID.
+
+2003-07-17  Richard Hult  <richard@imendio.com>
+
+ 	* src/gossip-chat.c (chat_dialog_focus_in_event_cb)
 	(chat_message_handler, chat_update_title, gossip_chat_new): Prefix
 	window title with an asterisk when new messages has arrived and
 	the window is not focused. Fixes bug #117663.
