@@ -1189,8 +1189,8 @@ app_client_disconnected_cb (LmConnection       *connection,
 		/* FIXME: Remove this dialog, it's stupid to ask. Just keep
 		 * trying maybe once a minute until it works.
 		 */
-		dialog = gtk_message_dialog_new (GTK_WINDOW (priv->window),
-						 GTK_DIALOG_DESTROY_WITH_PARENT,
+		dialog = gtk_message_dialog_new (NULL,
+						 0,
 						 GTK_MESSAGE_INFO,
 						 GTK_BUTTONS_YES_NO,
 						 _("You were disconnected from the server. "

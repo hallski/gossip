@@ -632,10 +632,7 @@ gossip_preferences_show_status_editor (void)
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (editor->dialog), (gpointer) &editor);
-	
-	gtk_window_set_transient_for (GTK_WINDOW (editor->dialog),
-				      GTK_WINDOW (gossip_app_get_window ()));
-	
+
 	gossip_option_image_menu_setup (editor->type_menu,
 					NULL,
 					NULL,

@@ -1,6 +1,10 @@
 2004-01-30  Richard Hult  <richard@imendio.com>
 
-	* src/gossip-app.c:
+	* src/gossip-preferences.c (gossip_preferences_show_status_editor): 
+	* src/gossip-app.c: (app_client_disconnected_cb): Don't set
+	transient, doesn't work since they can both be shown when the
+	contact list is on another workspace.
+
 	* src/gossip-join-dialog.c:
 	* src/gossip-preferences.c:
 	* ui/main.glade: Add status submenu to the notification area icon
