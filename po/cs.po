@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-07-18 12:37+0200\n"
-"PO-Revision-Date: 2003-07-18 22:15+0200\n"
+"POT-Creation-Date: 2003-07-23 12:42+0200\n"
+"PO-Revision-Date: 2003-07-23 22:31+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -167,6 +167,25 @@ msgstr "Při diskusi s %s došlo k chybě."
 #: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr "Detaily:"
+
+#.
+#. Translators: This is for the title of the chat window. The
+#. first %s is an "* " that gets displayed if the chat window has
+#. new messages in it. (Please complain if this doesn't work well
+#. in your locale.)
+#.
+#: src/gossip-chat.c:659
+#, c-format
+msgid "%sChat - %s"
+msgstr "%sDiskuse - %s"
+
+#.
+#. Translators: See comment for "%sChat - %s".
+#.
+#: src/gossip-chat.c:664
+#, c-format
+msgid "%sChat"
+msgstr "%sDiskuse"
 
 #: src/gossip-contact-info.c:350
 #, c-format
