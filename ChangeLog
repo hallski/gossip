@@ -1,3 +1,16 @@
+2003-10-14  Mikael Hallendal  <micke@imendio.com>
+
+	* autogen.sh: Added LIBTOOL, couldn't autogen.
+	
+	* configure.in: Require CVS Loudmouth
+	
+	* src/gossip-chat.c: 
+	(chat_input_activate_cb): 
+	- don't send end-of-compose-event when clearing text entry.
+	(chat_send_multi_clicked_cb): same
+	(chat_message_handler): request compose events.
+	(chat_request_composing): Don't invent message id's here.
+
 2003-10-13  Mikael Hallendal  <micke@imendio.com>
 
 	* autogen.sh: Added patch from Edwin Mons to make it easier to use

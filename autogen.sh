@@ -7,6 +7,7 @@
 : ${ACLOCAL=aclocal}
 : ${LIBTOOLIZE=libtoolize}
 : ${INTLTOOLIZE=intltoolize}
+: ${LIBTOOL=libtool}
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.

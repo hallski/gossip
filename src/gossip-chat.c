@@ -457,13 +457,17 @@ chat_disclosure_toggled_cb (GtkToggleButton *disclosure,
 static void
 chat_input_activate_cb (GtkWidget *entry, GossipChat *chat)
 {
-	gchar *msg;
+	gchar    *msg;
+	gboolean  send_normal_value;
 
 	msg = gtk_editable_get_chars (GTK_EDITABLE (chat->input_entry), 0, -1);
 
 	/* Clear the input field. */
+	send_normal_value = chat->send_composing_events;
+	chat->send_composing_events = FALSE;
 	gtk_entry_set_text (GTK_ENTRY (chat->input_entry), "");
-
+	chat->send_composing_events = send_normal_value;
+	
 	chat_send (chat, msg);
 
 	g_free (msg);
@@ -603,6 +607,7 @@ chat_send_multi_clicked_cb (GtkWidget *unused, GossipChat *chat)
 	GtkTextBuffer *buffer;
 	GtkTextIter    start, end;
 	gchar         *msg;
+	gboolean       send_normal_value;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	
@@ -610,7 +615,10 @@ chat_send_multi_clicked_cb (GtkWidget *unused, GossipChat *chat)
 	msg = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 
 	/* Clear the input field. */
+	send_normal_value = chat->send_composing_events;
+	chat->send_composing_events = FALSE;
 	gtk_text_buffer_set_text (buffer, "", -1);
+	chat->send_composing_events = send_normal_value;
 
 	chat_send (chat, msg);
 
@@ -660,6 +668,7 @@ chat_message_handler (LmMessageHandler *handler,
 	const gchar      *thread = "";
 	gboolean          focus;
 	gchar            *nick;
+	LmMessage        *compose_req;
 
 	from = lm_message_node_get_attribute (m->node, "from");
 
@@ -756,11 +765,21 @@ chat_message_handler (LmMessageHandler *handler,
 		nick = gossip_jid_get_part_name (jid);
 	}
 
+	chat_show_composing_icon (chat, FALSE);
+	
 	gossip_text_view_append_chat_message (GTK_TEXT_VIEW (chat->text_view),
 					      timestamp,
 					      gossip_app_get_username (),
 					      nick,
 					      body);
+
+	compose_req = lm_message_new_with_sub_type (gossip_jid_get_full (chat->jid),
+						    LM_MESSAGE_TYPE_MESSAGE,
+						    LM_MESSAGE_SUB_TYPE_CHAT);
+
+	chat_request_composing (compose_req);
+	lm_connection_send (gossip_app_get_connection(), compose_req, NULL);
+	lm_message_unref (compose_req);
 
 	g_free (nick);
 	gossip_jid_unref (jid);
@@ -944,8 +963,6 @@ gossip_chat_get_dialog (GossipChat *chat)
 static void
 chat_request_composing (LmMessage  *m)
 {
-	static guint id = 0;
-	static gchar str_id[16];
 	LmMessageNode *x;
 
 	x = lm_message_node_add_child (m->node, "x", NULL);
@@ -954,10 +971,6 @@ chat_request_composing (LmMessage  *m)
 				       "xmlns",
 				       "jabber:x:event");
 	lm_message_node_add_child (x, "composing", NULL);
-	
-	g_snprintf (str_id, 16, "m_%d", id++);
-
-	lm_message_node_set_attribute (m->node, "id", str_id);
 }
 
 static gboolean
