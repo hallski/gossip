@@ -32,7 +32,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 
 #include "gossip-account.h"
 #include "gossip-chatroom-provider.h"
@@ -217,6 +217,8 @@ gossip_jabber_init (GossipJabber *jabber)
 
 	priv->connection = lm_connection_new (priv->account->server);
 	lm_connection_set_port (priv->connection, priv->account->port);
+	lm_connection_set_jid (priv->connection, 
+			       gossip_jid_get_without_resource (priv->account->jid));
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_message_handler,
 					  jabber, NULL);

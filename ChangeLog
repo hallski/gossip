@@ -1,5 +1,10 @@
 2004-12-30  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-jabber.c: (gossip_jabber_init):
+	- Work when JID-host isn't the same as connection server.
+
+2004-12-30  Mikael Hallendal  <micke@imendio.com>
+
 	* configure.in:
 	* gossip.desktop.in: 
 	- Removed again, had forgotten the patch from Christoffer Olsen 
