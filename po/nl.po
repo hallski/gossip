@@ -6,7 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gossip cvs\n"
-"POT-Creation-Date: 2003-07-07 18:14+0200\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2003-07-16 15:39+0200\n"
 "PO-Revision-Date: 2003-07-07 16:45+0100\n"
 "Last-Translator: Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>\n"
 "Language-Team: Dutch <nl@li.org>\n"
@@ -14,81 +15,129 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: gossip.desktop.in.h:1 ui/main.glade.h:33
+msgid "Gossip"
+msgstr ""
+
+#: gossip.desktop.in.h:2
+msgid "Jabber Instant Messaging"
+msgstr ""
+
+#: gossip.schemas.in.h:1
+msgid "Autoaway enabled"
+msgstr ""
+
+#: gossip.schemas.in.h:2
+msgid "Autoaway time"
+msgstr ""
+
+#: gossip.schemas.in.h:3
+msgid "Extended autoaway time"
+msgstr ""
+
+#: gossip.schemas.in.h:4
+msgid ""
+"The number of minutes of idle time before automatically going into \"away\" "
+"mode."
+msgstr ""
+
+#: gossip.schemas.in.h:5
+msgid ""
+"The number of minutes of idle time before automatically going into "
+"\"extended away\" mode."
+msgstr ""
+
+#: gossip.schemas.in.h:6
+msgid "Use smileys"
+msgstr ""
+
+#: gossip.schemas.in.h:7
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr ""
+
+#: gossip.schemas.in.h:8
+msgid ""
+"Whether or not to go into \"away\" mode automatically when a certain time of "
+"idling has passed."
+msgstr ""
+
 #: src/gossip-accounts-dialog.c:126
 msgid "New account"
 msgstr ""
 
-#: src/gossip-add-contact.c:255
+#: src/gossip-add-contact.c:260
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr ""
 
-#: src/gossip-add-contact.c:275
+#: src/gossip-add-contact.c:280
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr ""
 
-#: src/gossip-add-contact.c:279
+#: src/gossip-add-contact.c:284
 msgid "Contact will be added to your contact list"
 msgstr ""
 
-#: src/gossip-app.c:333
+#: src/gossip-app.c:338
 msgid "Available"
 msgstr ""
 
-#: src/gossip-app.c:337
+#: src/gossip-app.c:342
 msgid "Free to chat"
 msgstr ""
 
-#: src/gossip-app.c:341
+#: src/gossip-app.c:346
 msgid "Busy"
 msgstr "Bezig"
 
-#: src/gossip-app.c:345 ui/main.glade.h:27
+#: src/gossip-app.c:350 ui/main.glade.h:27
 msgid "Away"
 msgstr "Weg"
 
-#: src/gossip-app.c:349
+#: src/gossip-app.c:354
 msgid "Extended away"
 msgstr ""
 
-#: src/gossip-app.c:357
+#: src/gossip-app.c:362
 msgid "Offline"
 msgstr "Off-line"
 
 #. Note to translators: put here your name (and address) so it
 #. * will shop up in the "about" box
-#: src/gossip-app.c:422
+#: src/gossip-app.c:430
 msgid "translator_credits"
 msgstr "Vincent van Adrighem"
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:441
 msgid "A Jabber Client for GNOME"
 msgstr ""
 
-#: src/gossip-app.c:554
+#: src/gossip-app.c:562
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 
-#: src/gossip-app.c:559
+#: src/gossip-app.c:567
 msgid "_Chat"
 msgstr ""
 
-#: src/gossip-app.c:1138
+#: src/gossip-app.c:1143
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr ""
 
-#: src/gossip-app.c:1397
+#: src/gossip-app.c:1470
 msgid "Gossip, Jabber Client"
 msgstr ""
 
-#: src/gossip-chat.c:440
+#: src/gossip-chat.c:453
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr ""
 
-#: src/gossip-chat.c:445
+#: src/gossip-chat.c:458 src/gossip-group-chat.c:633
+#: src/gossip-group-chat.c:737
 msgid "Details:"
 msgstr ""
 
@@ -106,7 +155,17 @@ msgstr ""
 
 #: src/gossip-contact-info.c:295
 #, c-format
-msgid "Information about %s"
+msgid "Contact Information for %s"
+msgstr ""
+
+#: src/gossip-group-chat.c:628
+#, c-format
+msgid "An error occurred when chatting in the group chat %s."
+msgstr ""
+
+#: src/gossip-group-chat.c:732
+#, c-format
+msgid "Unable to enter the group chat %s."
 msgstr ""
 
 #: src/gossip-main.c:69
@@ -140,7 +199,7 @@ msgstr ""
 
 #: src/gossip-register.c:79
 msgid "Unknown error"
-msgstr ""
+msgstr "Onbekende fout"
 
 #: src/gossip-register.c:168
 msgid "Registering account"
@@ -156,7 +215,7 @@ msgstr ""
 
 #: src/gossip-register.c:231
 msgid "Reason:"
-msgstr ""
+msgstr "Reden:"
 
 #. The extra space is to differentiate the string from Offline as status. It
 #. * might need a different translation, at least in Swedish.
@@ -181,12 +240,19 @@ msgstr ""
 msgid "/_Remove contact"
 msgstr ""
 
-#: src/gossip-roster.c:419
+#: src/gossip-roster.c:421
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
 "%s\n"
-"from you contact list?"
+"from your contact list?"
+msgstr ""
+
+#: src/gossip-roster.c:519
+#, c-format
+msgid ""
+"Please enter a new nick for the contact\n"
+"%s"
 msgstr ""
 
 #. Should user be able to set resource, account name and
@@ -210,7 +276,7 @@ msgid ""
 "<b>%s</b>."
 msgstr ""
 
-#: src/gossip-utils.c:1238
+#: src/gossip-utils.c:1263
 msgid "Please enter your password:"
 msgstr ""
 
@@ -245,7 +311,7 @@ msgstr ""
 
 #: ui/chat.glade.h:8
 msgid "To:"
-msgstr "Naar:"
+msgstr "Aan:"
 
 #: ui/chat.glade.h:9
 msgid "_Reply..."
@@ -293,7 +359,7 @@ msgstr ""
 
 #: ui/connect.glade.h:11
 msgid "Pass_word:"
-msgstr ""
+msgstr "_Wachtwoord:"
 
 #: ui/connect.glade.h:12
 msgid "R_esource:"
@@ -305,7 +371,7 @@ msgstr ""
 
 #: ui/connect.glade.h:14 ui/group-chat.glade.h:14
 msgid "_Add"
-msgstr ""
+msgstr "_Toevoegen"
 
 #: ui/connect.glade.h:15
 msgid "_Edit accounts..."
@@ -313,7 +379,7 @@ msgstr ""
 
 #: ui/connect.glade.h:16
 msgid "_Port:"
-msgstr ""
+msgstr "_Poort:"
 
 #: ui/connect.glade.h:17
 msgid "_Priority:"
@@ -321,7 +387,7 @@ msgstr "_Prioriteit:"
 
 #: ui/connect.glade.h:18
 msgid "_Remove"
-msgstr ""
+msgstr "_Verwijderen"
 
 #: ui/connect.glade.h:19
 msgid "_Resource:"
@@ -518,10 +584,6 @@ msgstr ""
 msgid "Do you already have an account on a Jabber server? "
 msgstr ""
 
-#: ui/main.glade.h:33 gossip.desktop.in.h:1
-msgid "Gossip"
-msgstr ""
-
 #: ui/main.glade.h:34
 msgid ""
 "Gossip is now configured properly for your system.\n"
@@ -680,7 +742,7 @@ msgstr ""
 
 #: ui/main.glade.h:73
 msgid "_Disconnect"
-msgstr ""
+msgstr "Verbinding verbre_ken"
 
 #: ui/main.glade.h:74
 msgid "_Edit statuses..."
@@ -700,8 +762,4 @@ msgstr ""
 
 #: ui/main.glade.h:78
 msgid "_Send chat message..."
-msgstr ""
-
-#: gossip.desktop.in.h:2
-msgid "Jabber Instant Messaging"
 msgstr ""
