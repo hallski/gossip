@@ -304,7 +304,7 @@ disco_window_check_others_1_cb (const GList       *servers,
 	rand = g_rand_new ();
 	
 	/* browse 5 servers */
-	for (i=0; i<5 && l != NULL; i++) {
+	for (i = 0; i < 5 && l != NULL; i++) {
 		guint        j;
 		const gchar *jid_str;
 
@@ -387,10 +387,10 @@ disco_window_requirements (GossipDiscoWindow *window)
 static void
 disco_window_register (GossipDiscoWindow *window)
 {
-	G_CONST_RETURN gchar *username = NULL;
-	G_CONST_RETURN gchar *password = NULL;
-	G_CONST_RETURN gchar *email = NULL;
-	G_CONST_RETURN gchar *nickname = NULL;
+	const gchar *username;
+	const gchar *password;
+	const gchar *email;
+	const gchar *nickname;
 
 	username = gtk_entry_get_text (GTK_ENTRY (window->entry_username));
 	password = gtk_entry_get_text (GTK_ENTRY (window->entry_password));
@@ -420,7 +420,7 @@ disco_window_register_1_cb (GossipDiscoRegister *reg,
 	gtk_widget_show (window->label_register_result);
 
 	if (error_code || error_reason) {
-		gchar *str = NULL;
+		gchar *str;
 
 		str = g_strdup_printf ("%s\n\n%s",
 				       _("Unable to Register"),
@@ -481,12 +481,12 @@ disco_window_register_2_cb (GossipDiscoRegister *reg,
 			    const gchar         *error_reason,
 			    GossipDiscoWindow   *window)
 {
-	gchar *str = NULL;
-
 	gtk_widget_hide (window->label_register_response);
 	gtk_widget_show (window->label_register_result);
 
 	if (error_code || error_reason) {
+		gchar *str;
+
 		str = g_strdup_printf ("<b>%s</b>\n\n%s",
 				       _("Unable to Register"),
 				       error_reason);
@@ -499,6 +499,8 @@ disco_window_register_2_cb (GossipDiscoRegister *reg,
 						   FALSE, FALSE, TRUE, TRUE); 
 
 	} else {
+		gchar *str;
+
 		str = g_strdup_printf ("<b>%s</b>\n\n%s",
 				       _("Registration Successful!"),
 				       _("You are now able to add contacts using this transport."));
@@ -598,10 +600,10 @@ static void
 disco_window_entry_details_changed (GtkEntry          *entry,
 				    GossipDiscoWindow *window)
 {
-	G_CONST_RETURN gchar *username = NULL;
-	G_CONST_RETURN gchar *password = NULL;
-	G_CONST_RETURN gchar *email = NULL;
-	G_CONST_RETURN gchar *nickname = NULL;
+	const gchar *username;
+	const gchar *password;
+	const gchar *email;
+	const gchar *nickname;
 
 	username = gtk_entry_get_text (GTK_ENTRY (window->entry_username));
 	password = gtk_entry_get_text (GTK_ENTRY (window->entry_password));

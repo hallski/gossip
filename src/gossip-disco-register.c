@@ -96,7 +96,7 @@ disco_register_init (void)
 static GossipDiscoRegister *
 disco_register_new (void)
 {
-	GossipDiscoRegister *reg = NULL;
+	GossipDiscoRegister *reg;
 	LmConnection        *connection;
 	LmMessageHandler    *handler;
 	
@@ -230,8 +230,8 @@ gossip_disco_register_request (GossipDiscoRegister     *reg,
 static void
 disco_register_request (GossipDiscoRegister *reg)
 {
-        LmMessage       *m;
-	LmMessageNode   *node;
+        LmMessage     *m;
+	LmMessageNode *node;
 
 	/* create message */
         m = lm_message_new_with_sub_type (gossip_jid_get_full (reg->to),
@@ -273,11 +273,13 @@ disco_register_message_handler (LmMessageHandler *handler,
 				  LmMessage      *m,
 				  gpointer        user_data)
 {
-        GossipDiscoRegister *reg = (GossipDiscoRegister*) user_data;
+        GossipDiscoRegister *reg;
         const gchar         *from;
         GossipJID           *from_jid;
 	LmMessageNode       *node; 
 	const char          *xmlns;
+
+	reg = (GossipDiscoRegister *) user_data;
 
         from = lm_message_node_get_attribute (m->node, "from");
         from_jid = gossip_jid_new (from);
@@ -313,8 +315,8 @@ disco_register_handle_response (GossipDiscoRegister *reg,
 				gpointer             user_data)
 {
 	LmMessageNode *node;
-	const gchar   *error_code = NULL;
-	const gchar   *error_reason = NULL;
+	const gchar   *error_code;
+	const gchar   *error_reason;
 
 	node = lm_message_node_find_child (m->node, "instructions");
 	if (node) {
@@ -358,6 +360,7 @@ disco_register_handle_response (GossipDiscoRegister *reg,
 	/* handle error conditions */
 	node = lm_message_node_find_child (m->node, "error");
 
+	error_code = error_reason = NULL;
 	if (node) {
 		error_code = lm_message_node_get_attribute (node, "code");
 		error_reason = lm_message_node_get_value (node);

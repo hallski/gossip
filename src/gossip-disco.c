@@ -104,7 +104,7 @@ static GHashTable *discos = NULL;
 static GossipDisco *
 disco_new (void)
 {
-	GossipDisco      *disco = NULL;
+	GossipDisco      *disco;
 	LmConnection     *connection;
 	LmMessageHandler *handler;
 	
@@ -205,8 +205,8 @@ gossip_disco_request (const char          *to,
 		      GossipDiscoItemFunc  func,
 		      gpointer             user_data)
 {
-	GossipDisco     *disco;
-	GossipJID       *jid;
+	GossipDisco *disco;
+	GossipJID   *jid;
 
 	disco_init ();
 
@@ -244,8 +244,8 @@ gossip_disco_request (const char          *to,
 static void
 disco_request_items (GossipDisco *disco)
 {
-        LmMessage       *m;
-	LmMessageNode   *node;
+        LmMessage     *m;
+	LmMessageNode *node;
 
 	/* create message */
         m = lm_message_new_with_sub_type (gossip_jid_get_full (disco->to),
@@ -295,11 +295,13 @@ disco_message_handler (LmMessageHandler *handler,
 		       LmMessage        *m,
 		       gpointer          user_data)
 {
-        GossipDisco      *disco = (GossipDisco*) user_data;
-        const gchar      *from;
-        GossipJID        *from_jid;
-	LmMessageNode    *node; 
-	const char       *xmlns;
+        GossipDisco   *disco;
+        const gchar   *from;
+        GossipJID     *from_jid;
+	LmMessageNode *node; 
+	const char    *xmlns;
+
+	disco = (GossipDisco *) user_data;
 
         from = lm_message_node_get_attribute (m->node, "from");
         from_jid = gossip_jid_new (from);
@@ -383,14 +385,18 @@ static void
 disco_request_info (GossipDisco *disco)
 {
 	GList     *l;
-	GossipJID *jid = gossip_jid_new ("users.jabber.org");
+	GossipJID *jid;
+	
+	jid = gossip_jid_new ("users.jabber.org");
 
 	disco->items_remaining = g_list_length (disco->items);
 
 	for (l = disco->items; l; l = l->next) {
-		GossipDiscoItem *item = l->data;
+		GossipDiscoItem *item;
 		LmMessage       *m;
 		LmMessageNode   *node;
+
+		item = l->data;
 
 		/* NOTE: This is a temporary measure to ignore the
 		   users.jabber.org JID because it never seems to
@@ -428,16 +434,13 @@ disco_handle_info (GossipDisco *disco,
 		   gpointer     user_data)
 {
  	GossipDiscoInfo *info; 
-	GossipDiscoItem *item = NULL;
+	GossipDiscoItem *item;
  	LmMessageNode   *node; 
 	GList           *l;
-
 	const char      *from;
-	
 	const char      *category;
 	const char      *type;
 	const char      *name;
-
 	const char      *feature;
 	
 	disco->items_remaining--;
@@ -445,6 +448,7 @@ disco_handle_info (GossipDisco *disco,
         from = lm_message_node_get_attribute (m->node, "from");
 	d(g_print ("sorting disco info for:'%s'....\n", from));
 
+	item = NULL;
 	for (l = disco->items; l; l = l->next) {
 		const gchar *jid;
 
@@ -520,24 +524,29 @@ GList *
 gossip_disco_get_category (GossipDisco *disco, 
 			   const char  *category)
 {
-	GList           *l1;
-	GList           *l2;
-	GList           *services = NULL;
+	GList *l1;
+	GList *services;
 
 	g_return_val_if_fail (disco != NULL, NULL);
 	g_return_val_if_fail (category != NULL, NULL);
+	 
+	services = NULL;
 
 	for (l1 = disco->items; l1; l1 = l1->next) {
-		GossipDiscoItem *item = l1->data;
-		GossipDiscoInfo *info = item->info;
+		GossipDiscoItem *item;
+		GossipDiscoInfo *info;
+		gboolean         have_category;
+		gboolean         can_register;
+		GList           *l2;
 
-		gboolean         have_category = FALSE;
-		gboolean         can_register = FALSE;
-
+		item = l1->data;
+		info = item->info;
+		
 		if (!info) {
 			continue;
 		}
 
+		have_category = FALSE;
 		for (l2 = info->identities; l2; l2 = l2->next) {
 			GossipDiscoIdentity *ident = l2->data;
 			
@@ -547,6 +556,7 @@ gossip_disco_get_category (GossipDisco *disco,
 			}
 		}
 
+		can_register = FALSE;
 		for (l2 = info->features; l2; l2 = l2->next) {
 			const gchar *features = l2->data;
 
@@ -569,25 +579,32 @@ gossip_disco_get_category_and_type (GossipDisco *disco,
 				    const gchar *category,
 				    const gchar *type)
 {
-	GList           *l1;
-	GList           *l2;
-	GList           *services = NULL;
+	GList *l1;
+	GList *services;
 
 	g_return_val_if_fail (disco != NULL, NULL);
 	g_return_val_if_fail (category != NULL, NULL);
 	g_return_val_if_fail (type != NULL, NULL);
 
+	services = NULL;
 	for (l1 = disco->items; l1; l1 = l1->next) {
-		GossipDiscoItem *item = l1->data;
-		GossipDiscoInfo *info = item->info;
+		GossipDiscoItem *item;
+		GossipDiscoInfo *info;
+		GList           *l2;
+		gboolean         have_category; /* e.g. gateway */
+		gboolean         have_type;     /* e.g. icq or msn, etc */
+		gboolean         can_register;  /* server allows registration */
 
-		gboolean         have_category = FALSE;     /* e.g. gateway */
-		gboolean         have_type = FALSE;         /* e.g. icq or msn, etc */
-		gboolean         can_register = FALSE;      /* server allows registration */
+		item = l1->data;
+		info = item->info;
 
 		if (!info) {
 			continue;
 		}
+
+		have_category = FALSE;
+		have_type     = FALSE;
+		can_register  = FALSE;
 
 		for (l2 = info->identities; l2; l2 = l2->next) {
 			GossipDiscoIdentity *ident = l2->data;
@@ -634,7 +651,9 @@ gossip_disco_get_item (GossipDisco *disco,
 	g_return_val_if_fail (disco != NULL, NULL);
 	
 	for (l = disco->items; l; l = l->next) {
-		GossipDiscoItem *item = l->data;
+		GossipDiscoItem *item;
+		
+		item = l->data;
 
 		if (gossip_jid_equals (item->jid, jid)) {
 			return item;
@@ -673,14 +692,16 @@ gboolean
 gossip_disco_item_has_category (GossipDiscoItem *item,
 				const gchar     *category)
 {
-	GList *l = NULL;
+	GList *l;
 	
 	g_return_val_if_fail (item != NULL, FALSE);
 	g_return_val_if_fail (item->info != NULL, FALSE);
 	g_return_val_if_fail (category != NULL, FALSE);
 	
 	for (l = item->info->identities; l; l = l->next) {
-		GossipDiscoIdentity *ident = l->data;
+		GossipDiscoIdentity *ident;
+		
+		ident = l->data;
 
 		if (strcmp (ident->category, category) == 0) {
 			return TRUE;
@@ -694,14 +715,16 @@ gboolean
 gossip_disco_item_has_type (GossipDiscoItem *item,
 			    const gchar     *type)
 {
-	GList *l = NULL;
+	GList *l;
 	
 	g_return_val_if_fail (item != NULL, FALSE);
 	g_return_val_if_fail (item->info != NULL, FALSE);
 	g_return_val_if_fail (type != NULL, FALSE);
 	
 	for (l = item->info->identities; l; l = l->next) {
-		GossipDiscoIdentity *ident = l->data;
+		GossipDiscoIdentity *ident;
+		
+		ident = l->data;
 
 		if (strcmp (ident->type, type) == 0) {
 			return TRUE;
@@ -715,14 +738,16 @@ gboolean
 gossip_disco_item_has_feature (GossipDiscoItem *item,
 			       const gchar     *feature)
 {
-	GList *l = NULL;
+	GList *l;
 	
 	g_return_val_if_fail (item != NULL, FALSE);
 	g_return_val_if_fail (item->info != NULL, FALSE);
 	g_return_val_if_fail (feature != NULL, FALSE);
 	
 	for (l = item->info->features; l; l = l->next) {
-		const char *str = l->data;
+		const char *str;
+		
+		str = l->data;
 
 		if (strcmp (str, feature) == 0) {
 			return TRUE;

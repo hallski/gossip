@@ -1,5 +1,21 @@
 2004-08-18  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-disco-register.c: (disco_register_new),
+	(disco_register_request), (disco_register_message_handler),
+	(disco_register_handle_response):
+	* src/gossip-disco-window.c: (disco_window_check_others_1_cb),
+	(disco_window_register), (disco_window_register_1_cb),
+	(disco_window_register_2_cb), (disco_window_entry_details_changed):
+	* src/gossip-disco.c: (disco_new), (gossip_disco_request),
+	(disco_request_items), (disco_message_handler),
+	(disco_request_info), (disco_handle_info),
+	(gossip_disco_get_category), (gossip_disco_get_category_and_type),
+	(gossip_disco_get_item), (gossip_disco_item_has_category),
+	(gossip_disco_item_has_type), (gossip_disco_item_has_feature):
+	- Style fixes
+
+2004-08-18  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-disco-servers.c:
 	(gossip_disco_servers_fetch): Don't need to call gnome_vfs_init here.
 	(disco_servers_print_error), (disco_servers_parse):
