@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnomeicu 0.95.5\n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-11-30 00:07+0730\n"
 "Last-Translator: Hasbullah Bin Pit <sebol@ikhlas.com>\n"
 "Language-Team: Bahasa Melayu <gabai-penyumbang@lists.sourceforge.net>\n"
@@ -22,113 +22,89 @@ msgid "Instant Messenger"
 msgstr "Pesanan Segera"
 
 #: gossip.schemas.in.h:1
-msgid "About to leave..."
-msgstr "Akan keluar..."
-
-#: gossip.schemas.in.h:2
-msgid "Autoaway message"
-msgstr "Mesej auto away"
-
-#: gossip.schemas.in.h:3
-msgid "Away messages"
-msgstr "Mesej away"
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "Senyap bila away"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 msgid "Be silent when busy"
 msgstr "Senyap bila sibuk"
 
-#: gossip.schemas.in.h:6
-msgid "Busy messages"
-msgstr "Mesej sibuk"
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "Tinggi tetingkap utama"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 #, fuzzy
 msgid "Hide main window"
 msgstr "Lebar bagi tetingkap utama"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 #, fuzzy
 msgid "Hide the main window."
 msgstr "Lebar bagi tetingkap utama"
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr "Mesej untuk dipapar sebelum away"
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr "Tiada di sisi komputer"
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 msgid "Show offline contacts"
 msgstr "Papar kenalan luartalian"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 #, fuzzy
 msgid "The X position of the main window."
 msgstr "Lebar bagi tetingkap utama."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 #, fuzzy
 msgid "The Y position of the main window."
 msgstr "Lebar bagi tetingkap utama."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr "Tinggi bagi tetingkap utama."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr "Lebar bagi tetingkap utama."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr ""
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "Guna bunyi pemakluman"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Samada memainkan bunyi ketika mesej tiba atau tidak."
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 msgid "Whether or not to play sounds when away."
 msgstr "Samada memainkan bunyi ketika away atau tidak."
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play sounds when busy."
 msgstr "Samada memainkan bunyi ketika sibuk atau tidak."
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Samada memapar senarai kenalan yang luartalian pada senarai kenalan."
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 #, fuzzy
 msgid "Width of the main window"
 msgstr "Lebar bagi tetingkap utama"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 #, fuzzy
 msgid "X position of main window"
 msgstr "Lebar bagi tetingkap utama"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 #, fuzzy
 msgid "Y position of main window"
 msgstr "Lebar bagi tetingkap utama"
@@ -203,51 +179,51 @@ msgstr "%s ingin dimaklumkan dengan kehadiran anda"
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Anda diputuskan drpd pelayan. Adakah anda ingin ulangsambung?"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr "Pastikan maklumat akaun anda betul"
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "Pelayan mungkin kini tidak berfungsi."
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Klien Jabber"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "Mesej baru dari %s"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Ada"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Sibuk"
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "Ada"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 #, fuzzy
 msgid "Busy..."
 msgstr "Sibuk"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "Away"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "_Edit Kegemaran..."
@@ -1002,6 +978,24 @@ msgstr "_Cari:"
 #: ui/main.glade.h:86
 msgid "_Status Messages"
 msgstr "Mesej _Status"
+
+#~ msgid "About to leave..."
+#~ msgstr "Akan keluar..."
+
+#~ msgid "Autoaway message"
+#~ msgstr "Mesej auto away"
+
+#~ msgid "Away messages"
+#~ msgstr "Mesej away"
+
+#~ msgid "Busy messages"
+#~ msgstr "Mesej sibuk"
+
+#~ msgid "Message to show before going away"
+#~ msgstr "Mesej untuk dipapar sebelum away"
+
+#~ msgid "Not at the computer"
+#~ msgstr "Tiada di sisi komputer"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "Baru nak keluar..."

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-11-10 12:53+0300\n"
 "Last-Translator: Grigory Bakunov <black@asplinux.ru>\n"
 "Language-Team: RUSSIAN <ru@li.org>\n"
@@ -22,122 +22,98 @@ msgid "Instant Messenger"
 msgstr "Приложение для обмена сообщениями"
 
 #: gossip.schemas.in.h:1
-msgid "About to leave..."
-msgstr "О причине ухода..."
-
-#: gossip.schemas.in.h:2
-msgid "Autoaway message"
-msgstr "Сообщение для режима \"отсутствую\""
-
-#: gossip.schemas.in.h:3
-msgid "Away messages"
-msgstr "Сообщения режима \"отсутсвую\""
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr ""
 "Не посылать сообщения\n"
 "в состоянии \"отсутствую\""
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 #, fuzzy
 msgid "Be silent when busy"
 msgstr ""
 "Не посылать сообщения\n"
 "в состоянии \"отсутствую\""
 
-#: gossip.schemas.in.h:6
-msgid "Busy messages"
-msgstr "Сообщения режима \"занят\""
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "Высота главного окна"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 #, fuzzy
 msgid "Hide main window"
 msgstr "Ширина главного окна"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 #, fuzzy
 msgid "Hide the main window."
 msgstr "Ширина главного окна"
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr "Сообщение, которое будет показываться перед уходом"
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr "Не за компьютером"
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 #, fuzzy
 msgid "Show offline contacts"
 msgstr "_Показывать отсутствующих"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 #, fuzzy
 msgid "The X position of the main window."
 msgstr "Ширина главного окна."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 #, fuzzy
 msgid "The Y position of the main window."
 msgstr "Ширина главного окна."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr "Высота главного окна."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr "Ширина главного окна."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr "Использовать графические смайлы"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "Использовать звуки"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Конвертировать смайлы в их графическое изображение."
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Проигрывать звук при приходе сообщения."
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 #, fuzzy
 msgid "Whether or not to play sounds when away."
 msgstr "Проигрывать звуки в состоянии \"отсутвую\" и \"занят\"."
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 #, fuzzy
 msgid "Whether or not to play sounds when busy."
 msgstr "Проигрывать звуки в состоянии \"отсутвую\" и \"занят\"."
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 #, fuzzy
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Использовать ли одно окно с списком разговоров."
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 #, fuzzy
 msgid "Width of the main window"
 msgstr "Ширина главного окна"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 #, fuzzy
 msgid "X position of main window"
 msgstr "Ширина главного окна"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 #, fuzzy
 msgid "Y position of main window"
 msgstr "Ширина главного окна"
@@ -214,53 +190,53 @@ msgstr ""
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Произошло разсоединение с сервером. Восстановить соединение?"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr "Убедитесь что данные по учетной записи корректны."
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "Сервер может быть недоступен."
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, клиент для Jabber"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "Новое сообщение от %s"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 #, fuzzy
 msgid "Available"
 msgstr "Доступные учетные записи:"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Занят"
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 #, fuzzy
 msgid "Away"
 msgstr "Отсутствую:"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "Доступные учетные записи:"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 #, fuzzy
 msgid "Busy..."
 msgstr "Занят"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "Отсутствую:"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "_Редактировать предпочтения..."
@@ -1027,6 +1003,24 @@ msgstr "_Поиск..."
 #, fuzzy
 msgid "_Status Messages"
 msgstr "Сообщения режима \"занят\""
+
+#~ msgid "About to leave..."
+#~ msgstr "О причине ухода..."
+
+#~ msgid "Autoaway message"
+#~ msgstr "Сообщение для режима \"отсутствую\""
+
+#~ msgid "Away messages"
+#~ msgstr "Сообщения режима \"отсутсвую\""
+
+#~ msgid "Busy messages"
+#~ msgstr "Сообщения режима \"занят\""
+
+#~ msgid "Message to show before going away"
+#~ msgstr "Сообщение, которое будет показываться перед уходом"
+
+#~ msgid "Not at the computer"
+#~ msgstr "Не за компьютером"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "Просто ушел..."

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-11-12 01:10+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -23,117 +23,93 @@ msgid "Instant Messenger"
 msgstr "即時通訊程式"
 
 #: gossip.schemas.in.h:1
-msgid "About to leave..."
-msgstr "準備離開..."
-
-#: gossip.schemas.in.h:2
-msgid "Autoaway message"
-msgstr "自動進入「離開」狀態時顯示的訊息"
-
-#: gossip.schemas.in.h:3
-msgid "Away messages"
-msgstr "表示「離開」狀態時顯示的訊息"
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "離開時不發出音效"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 #, fuzzy
 msgid "Be silent when busy"
 msgstr "離開時不發出音效"
 
-#: gossip.schemas.in.h:6
-msgid "Busy messages"
-msgstr "表示「忙碌」狀態時顯示的訊息"
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "主視窗高度"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 #, fuzzy
 msgid "Hide main window"
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 #, fuzzy
 msgid "Hide the main window."
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr ""
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr ""
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 #, fuzzy
 msgid "Show offline contacts"
 msgstr "顯示已離線的好友(_O)"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 #, fuzzy
 msgid "The X position of the main window."
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 #, fuzzy
 msgid "The Y position of the main window."
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr "主視窗高度"
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr "使用表情圖示"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "使用音效來通知收到訊息"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "在對話時，是否將代表表情圖示的字符轉換為真正的圖示。"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "將收到訊息時，是否播放音效。"
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 #, fuzzy
 msgid "Whether or not to play sounds when away."
 msgstr "當「離開」或「忙碌」時是否播放音效。"
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 #, fuzzy
 msgid "Whether or not to play sounds when busy."
 msgstr "當「離開」或「忙碌」時是否播放音效。"
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 #, fuzzy
 msgid "Width of the main window"
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 #, fuzzy
 msgid "X position of main window"
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 #, fuzzy
 msgid "Y position of main window"
 msgstr "主視窗寬度"
@@ -211,51 +187,51 @@ msgstr "%s 希望可以在您連線時獲得通知。"
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "伺服器方面已經中斷連線。是否重新連線？"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr "請確保您的戶口的資訊正確無誤。"
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "伺服器可能暫時無法運作。"
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip，Jabber 通訊軟體"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "收到來自 %s 的訊息"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "已連線"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "忙碌"
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "離開"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "已連線"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 #, fuzzy
 msgid "Busy..."
 msgstr "忙碌"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "離開"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "修改戶口資料(_E)..."
@@ -1011,6 +987,18 @@ msgstr "搜尋(_S)..."
 #: ui/main.glade.h:86
 msgid "_Status Messages"
 msgstr ""
+
+#~ msgid "About to leave..."
+#~ msgstr "準備離開..."
+
+#~ msgid "Autoaway message"
+#~ msgstr "自動進入「離開」狀態時顯示的訊息"
+
+#~ msgid "Away messages"
+#~ msgstr "表示「離開」狀態時顯示的訊息"
+
+#~ msgid "Busy messages"
+#~ msgstr "表示「忙碌」狀態時顯示的訊息"
 
 #~ msgid "Custom Busy Message..."
 #~ msgstr "自行設定表示「忙碌」的訊息..."

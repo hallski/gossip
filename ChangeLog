@@ -1,5 +1,13 @@
 2004-01-22  Richard Hult  <richard@imendio.com>
 
+	* Release 0.7.1.
+
+	* gossip.schemas.in: Remove unused schemas, remove duplicate
+	entry, fix y position entry, add preset status messages.
+
+	* configure.in: AC_SUBST the libxml and libxslt version
+	requirement variables.
+
 	* src/gossip-app.c (app_idle_check_cb): Reset away message when we
 	get auto-back.
 

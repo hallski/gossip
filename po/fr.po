@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-11-17 21:55+0100\n"
 "Last-Translator: Lionel Henry <yoplait@tuxfamily.org>\n"
 "Language-Team: GNOME French team <gnomefr@traduc.org>\n"
@@ -25,115 +25,91 @@ msgid "Instant Messenger"
 msgstr "Messagerie instantanée"
 
 #: gossip.schemas.in.h:1
-msgid "About to leave..."
-msgstr "Je suis sur le point de partir..."
-
-#: gossip.schemas.in.h:2
-msgid "Autoaway message"
-msgstr "Message automatique d'absence"
-
-#: gossip.schemas.in.h:3
-msgid "Away messages"
-msgstr "Messages d'absence"
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "Être silencieux lors d'une absence"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 msgid "Be silent when busy"
 msgstr "Être silencieux lorsque vous êtes indisponible"
 
-#: gossip.schemas.in.h:6
-msgid "Busy messages"
-msgstr "Messages d'indisponibilité"
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "Hauteur de la fenêtre principale"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 #, fuzzy
 msgid "Hide main window"
 msgstr "Largeur de la fenêtre principale"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 #, fuzzy
 msgid "Hide the main window."
 msgstr "Largeur de la fenêtre principale"
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr "Message à afficher avant une absence"
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr "Je ne suis pas devant l'ordinateur"
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 msgid "Show offline contacts"
 msgstr "Afficher les contacts hors ligne"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 #, fuzzy
 msgid "The X position of the main window."
 msgstr "La largeur de la fenêtre principale."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 #, fuzzy
 msgid "The Y position of the main window."
 msgstr "La largeur de la fenêtre principale."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr "La hauteur de la fenêtre principale."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr "La largeur de la fenêtre principale."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr "Utiliser des binettes graphiques"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "Utiliser des sons de notification"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Indique si il faut changer les binettes en images graphiques dans les "
 "conversations ou non."
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Indique si il faut jouer un son quand un message arrive ou non."
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 msgid "Whether or not to play sounds when away."
 msgstr "Indique si il faut jouer un son en cas d'absence ou non."
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play sounds when busy."
 msgstr "Indique si il faut jouer un son en cas d'indisponibilité ou non."
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Indique si il faut aficher les contacts qui sont hors ligne ou non."
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 #, fuzzy
 msgid "Width of the main window"
 msgstr "Largeur de la fenêtre principale"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 #, fuzzy
 msgid "X position of main window"
 msgstr "Largeur de la fenêtre principale"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 #, fuzzy
 msgid "Y position of main window"
 msgstr "Largeur de la fenêtre principale"
@@ -211,52 +187,52 @@ msgstr "%s souhaite être notifié de votre présence."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vous avez été déconnecté du serveur. Souhaitez-vous vous reconnecter ?"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr ""
 "Veuillez vous assurer que les informations de votre compte sont correctes."
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "Le serveur peut actuellement être indisponible."
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Client Jabber"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "Nouveau message de %s"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr "Indisponible"
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "Disponible"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 #, fuzzy
 msgid "Busy..."
 msgstr "Indisponible"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "Absent"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "_Éditer les états"
@@ -1018,6 +994,24 @@ msgstr "_Rechercher..."
 #: ui/main.glade.h:86
 msgid "_Status Messages"
 msgstr "_États"
+
+#~ msgid "About to leave..."
+#~ msgstr "Je suis sur le point de partir..."
+
+#~ msgid "Autoaway message"
+#~ msgstr "Message automatique d'absence"
+
+#~ msgid "Away messages"
+#~ msgstr "Messages d'absence"
+
+#~ msgid "Busy messages"
+#~ msgstr "Messages d'indisponibilité"
+
+#~ msgid "Message to show before going away"
+#~ msgstr "Message à afficher avant une absence"
+
+#~ msgid "Not at the computer"
+#~ msgstr "Je ne suis pas devant l'ordinateur"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "Sur le point de partir..."

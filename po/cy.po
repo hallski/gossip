@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-10-30 18:55+0000\n"
 "Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
@@ -24,121 +24,93 @@ msgid "Instant Messenger"
 msgstr "Negesydd Parod"
 
 #: gossip.schemas.in.h:1
-#, fuzzy
-msgid "About to leave..."
-msgstr "Rydw I ar fin gadael..."
-
-#: gossip.schemas.in.h:2
-#, fuzzy
-msgid "Autoaway message"
-msgstr "Amser ymaith awtomatig"
-
-#: gossip.schemas.in.h:3
-#, fuzzy
-msgid "Away messages"
-msgstr "Negeseuon"
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "Bod yn dawel wrth fod ymaith"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 #, fuzzy
 msgid "Be silent when busy"
 msgstr "Bod yn dawel wrth fod ymaith"
 
-#: gossip.schemas.in.h:6
-#, fuzzy
-msgid "Busy messages"
-msgstr "Neges cais"
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "Uchder y prif ffenest"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 #, fuzzy
 msgid "Hide main window"
 msgstr "Lled y prif ffenest"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 #, fuzzy
 msgid "Hide the main window."
 msgstr "Lled y prif ffenest"
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr ""
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr ""
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 #, fuzzy
 msgid "Show offline contacts"
 msgstr "_Dangos y Rhestr Cysylltion"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 #, fuzzy
 msgid "The X position of the main window."
 msgstr "Lled y prif ffenest."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 #, fuzzy
 msgid "The Y position of the main window."
 msgstr "Lled y prif ffenest."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr "Uchder y prif ffenest."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr "Lled y prif ffenest."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr "Defnyddio gwynebau graffigol"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "Defnyddio synau hysbysu"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "A ddylid trosi gwynebau i ddelweddau graffigol mewn sgyrsiau."
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "A ddylid chwarae cain pan mae negeseuon yn cyrraedd."
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 #, fuzzy
 msgid "Whether or not to play sounds when away."
 msgstr "A ddylid chwarae synau wrth fod ymaith neu'n brysur."
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 #, fuzzy
 msgid "Whether or not to play sounds when busy."
 msgstr "A ddylid chwarae synau wrth fod ymaith neu'n brysur."
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 #, fuzzy
 msgid "Width of the main window"
 msgstr "Lled y prif ffenest"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 #, fuzzy
 msgid "X position of main window"
 msgstr "Lled y prif ffenest"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 #, fuzzy
 msgid "Y position of main window"
 msgstr "Lled y prif ffenest"
@@ -212,53 +184,53 @@ msgstr "Mae %s eisiau cael eu hysbysebu os ydych yn bresenol ai peidio."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Fe gafoch eich datgysylltu o'r gweinydd. A hoffech ailgysylltu?"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr "Sicrhewch fod eich manylion cyfrif yn gywir."
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "Efallai nid yw'r gweinydd ar gael ar hyn o bryd."
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip, Cleient Jabber"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "Neges newydd o %s"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Ar Gael"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 #, fuzzy
 msgid "Busy"
 msgstr "_Prysur"
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 #, fuzzy
 msgid "Away"
 msgstr "Ymaith:"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "Ar Gael"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 #, fuzzy
 msgid "Busy..."
 msgstr "_Prysur"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "Ymaith:"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "_Golygu Rhestr..."
@@ -1028,6 +1000,22 @@ msgstr "_Chwilio..."
 #, fuzzy
 msgid "_Status Messages"
 msgstr "Negeseuon"
+
+#, fuzzy
+#~ msgid "About to leave..."
+#~ msgstr "Rydw I ar fin gadael..."
+
+#, fuzzy
+#~ msgid "Autoaway message"
+#~ msgstr "Amser ymaith awtomatig"
+
+#, fuzzy
+#~ msgid "Away messages"
+#~ msgstr "Negeseuon"
+
+#, fuzzy
+#~ msgid "Busy messages"
+#~ msgstr "Neges cais"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "Rydw I ar fin gadael..."

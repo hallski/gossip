@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-11-20 01:05+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian <no@li.org>\n"
@@ -24,122 +24,94 @@ msgid "Instant Messenger"
 msgstr "Instant Messaging"
 
 #: gossip.schemas.in.h:1
-#, fuzzy
-msgid "About to leave..."
-msgstr "I ferd med å dra..."
-
-#: gossip.schemas.in.h:2
-#, fuzzy
-msgid "Autoaway message"
-msgstr "Spør etter melding"
-
-#: gossip.schemas.in.h:3
-#, fuzzy
-msgid "Away messages"
-msgstr "Meldinger"
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "Vær stille når borte"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 #, fuzzy
 msgid "Be silent when busy"
 msgstr "Vær stille når borte"
 
-#: gossip.schemas.in.h:6
-#, fuzzy
-msgid "Busy messages"
-msgstr "Spør etter melding"
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr "Høyde på hovedvinduet"
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 #, fuzzy
 msgid "Hide main window"
 msgstr "Bredden på hovedvinduet"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 #, fuzzy
 msgid "Hide the main window."
 msgstr "Bredden på hovedvinduet"
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr ""
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr ""
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 #, fuzzy
 msgid "Show offline contacts"
 msgstr "Vi_s kontaktliste"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 #, fuzzy
 msgid "The X position of the main window."
 msgstr "Bredden på hovedvinduet."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 #, fuzzy
 msgid "The Y position of the main window."
 msgstr "Bredden på hovedvinduet."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr "Høyden på hovedvinduet."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr "Bredden på hovedvinduet."
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr "Vis smilefjes som grafikk"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "Bruk varslingslyder"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "minutter"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 #, fuzzy
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Om lyder skal spilles av for hendelser."
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 #, fuzzy
 msgid "Whether or not to play sounds when away."
 msgstr "Om lyder skal spilles av for hendelser."
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 #, fuzzy
 msgid "Whether or not to play sounds when busy."
 msgstr "Om lyder skal spilles av for hendelser."
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 #, fuzzy
 msgid "Width of the main window"
 msgstr "Bredden på hovedvinduet"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 #, fuzzy
 msgid "X position of main window"
 msgstr "Bredden på hovedvinduet"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 #, fuzzy
 msgid "Y position of main window"
 msgstr "Bredden på hovedvinduet"
@@ -213,51 +185,51 @@ msgstr "%s ønsker å få melding om ditt nærvær."
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Du har blitt koblet fra tjeneren. Vil du koble til på nytt?"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr "Sjekk at din kontoinformasjon er korrekt."
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "Tjeneren kan være utilgjengelig for tiden."
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip Jabber-klient"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "Ny melding fra %s"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "Tilgjengelig"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 msgid "Busy"
 msgstr ""
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 #, fuzzy
 msgid "Away"
 msgstr "Borte:"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "Tilgjengelig"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 msgid "Busy..."
 msgstr ""
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "Borte:"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "R_ediger liste..."
@@ -1016,6 +988,22 @@ msgstr "_Søk..."
 #, fuzzy
 msgid "_Status Messages"
 msgstr "Meldinger"
+
+#, fuzzy
+#~ msgid "About to leave..."
+#~ msgstr "I ferd med å dra..."
+
+#, fuzzy
+#~ msgid "Autoaway message"
+#~ msgstr "Spør etter melding"
+
+#, fuzzy
+#~ msgid "Away messages"
+#~ msgstr "Meldinger"
+
+#, fuzzy
+#~ msgid "Busy messages"
+#~ msgstr "Spør etter melding"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "I ferd med å dra..."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-21 22:52+0100\n"
+"POT-Creation-Date: 2004-01-22 13:22+0100\n"
 "PO-Revision-Date: 2003-08-30 18:56+0800\n"
 "Last-Translator: Mai Hao Hui <mhh@ricetons.com>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
@@ -26,114 +26,87 @@ msgid "Instant Messenger"
 msgstr "Jabber 即时通讯程序"
 
 #: gossip.schemas.in.h:1
-msgid "About to leave..."
-msgstr ""
-
-#: gossip.schemas.in.h:2
-#, fuzzy
-msgid "Autoaway message"
-msgstr "自动进入“离开”状态前的时间"
-
-#: gossip.schemas.in.h:3
-#, fuzzy
-msgid "Away messages"
-msgstr "将消息加上时间戳"
-
-#: gossip.schemas.in.h:4
 msgid "Be silent when away"
 msgstr "离开时不发出声音"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:2
 #, fuzzy
 msgid "Be silent when busy"
 msgstr "离开时不发出声音"
 
-#: gossip.schemas.in.h:6
-#, fuzzy
-msgid "Busy messages"
-msgstr "请求消息"
-
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:3
 msgid "Height of main window"
 msgstr ""
 
-#: gossip.schemas.in.h:8
+#: gossip.schemas.in.h:4
 msgid "Hide main window"
 msgstr ""
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:5
 msgid "Hide the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:10
-msgid "Message to show before going away"
-msgstr ""
-
-#: gossip.schemas.in.h:11
-msgid "Not at the computer"
-msgstr ""
-
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:6
 #, fuzzy
 msgid "Show offline contacts"
 msgstr "显示联系人清单(_S)"
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:7
 msgid "The X position of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:8
 msgid "The Y position of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:9
 msgid "The height of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:10
 msgid "The width of the main window."
 msgstr ""
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:11
 msgid "Use graphical smileys"
 msgstr "使用表情图示"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:12
 msgid "Use notification sounds"
 msgstr "通知收到消息时发出声音"
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:13
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "对话时是否将代表表情图示的字符转换为真正的图示。"
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:14
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "收到消息时是否播放声音。"
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:15
 #, fuzzy
 msgid "Whether or not to play sounds when away."
 msgstr "“离开”或“忙碌”时是否播放声音。"
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:16
 #, fuzzy
 msgid "Whether or not to play sounds when busy."
 msgstr "“离开”或“忙碌”时是否播放声音。"
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:17
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr ""
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:18
 msgid "Width of the main window"
 msgstr ""
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:19
 msgid "X position of main window"
 msgstr ""
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:20
 msgid "Y position of main window"
 msgstr ""
 
@@ -206,52 +179,52 @@ msgstr "当您在线时，%s 想收到通知"
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "服务器方面已经中断连接。是否重新连接？"
 
-#: src/gossip-app.c:1399
+#: src/gossip-app.c:1403
 msgid "Make sure that your account information is correct."
 msgstr "请确保您的帐号信息是正确的。"
 
-#: src/gossip-app.c:1400
+#: src/gossip-app.c:1404
 msgid "The server may currently be unavailable."
 msgstr "服务器也许现在不可用。"
 
-#: src/gossip-app.c:1801
+#: src/gossip-app.c:1805
 msgid "Gossip, Jabber Client"
 msgstr "Gossip，Jabber 通讯软件"
 
-#: src/gossip-app.c:1977
+#: src/gossip-app.c:1981
 #, c-format
 msgid "New message from %s"
 msgstr "收到来自 %s 的消息"
 
-#: src/gossip-app.c:2327 src/gossip-preferences.c:629
+#: src/gossip-app.c:2331 src/gossip-preferences.c:629
 msgid "Available"
 msgstr "可用"
 
-#: src/gossip-app.c:2334 src/gossip-preferences.c:630
+#: src/gossip-app.c:2338 src/gossip-preferences.c:630
 #, fuzzy
 msgid "Busy"
 msgstr "忙碌(_B)"
 
-#: src/gossip-app.c:2341 src/gossip-preferences.c:631
+#: src/gossip-app.c:2345 src/gossip-preferences.c:631
 msgid "Away"
 msgstr "离开"
 
-#: src/gossip-app.c:2466
+#: src/gossip-app.c:2470
 #, fuzzy
 msgid "Available..."
 msgstr "可用"
 
-#: src/gossip-app.c:2470
+#: src/gossip-app.c:2474
 #, fuzzy
 msgid "Busy..."
 msgstr "忙碌(_B)"
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2478
 #, fuzzy
 msgid "Away..."
 msgstr "离开"
 
-#: src/gossip-app.c:2500
+#: src/gossip-app.c:2504
 #, fuzzy
 msgid "Edit List..."
 msgstr "编辑收藏夹(_E)..."
@@ -1018,6 +991,18 @@ msgstr "搜索(_S)..."
 #, fuzzy
 msgid "_Status Messages"
 msgstr "发送聊天消息(_S)..."
+
+#, fuzzy
+#~ msgid "Autoaway message"
+#~ msgstr "自动进入“离开”状态前的时间"
+
+#, fuzzy
+#~ msgid "Away messages"
+#~ msgstr "将消息加上时间戳"
+
+#, fuzzy
+#~ msgid "Busy messages"
+#~ msgstr "请求消息"
 
 #, fuzzy
 #~ msgid "Custom Message..."
