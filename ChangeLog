@@ -1,3 +1,7 @@
+2003-10-16  Richard Hult  <richard@imendio.com>
+
+	* acinclude.m4: Remove -sign-promo since that's not usable for C.
+
 2003-10-15  Mikael Hallendal  <micke@imendio.com>
 
 	* ui/svg/emoticon-face1.svg:
