@@ -1094,13 +1094,19 @@ roster_view_button_press_event_cb (GossipRosterView *view,
 							    &path, 
 							    NULL, NULL, NULL);
 		if (row_exists) {
+			gboolean is_group;
+			
 			gtk_tree_selection_unselect_all (selection);
 			gtk_tree_selection_select_path (selection, path);
 
 			gtk_tree_model_get_iter (model, &iter, path);
 			gtk_tree_path_free (path);
 
-			if (gtk_tree_model_iter_has_child (model, &iter)) {
+			gtk_tree_model_get (model, &iter,
+					    COL_IS_GROUP, &is_group,
+					    -1);
+
+			if (is_group) {
 				d(g_print ("This is a group!\n"));
 				factory = priv->group_popup_factory;
 			} else {

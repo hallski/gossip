@@ -1,7 +1,14 @@
+2003-11-14  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-roster-view.c: (roster_view_button_press_event_cb):
+	- Don't popup items right-click menu on empty groups. 
+	- Fixes #126556
+
 2003-11-14  Vincent Untz  <vincent@vuntz.net>
 
-	* src/gossip-preferences.c: (status_add_away_clicked_cb): don't try
-	to add a new away message in gconf if the user did not type a message.
+	* src/gossip-preferences.c: (status_add_away_clicked_cb): 
+	- don't try to add a new away message in gconf if the user did 
+	  not type a message.
 
 2003-11-14  Richard Hult  <richard@imendio.com>
 
