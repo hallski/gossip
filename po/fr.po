@@ -1,25 +1,26 @@
 # French translation of gossip.
 # Copyright (C) 2003-2004 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the gossip package.
-# 
+#
 # Frédéric Brin <duckx@mezimail.com>, 2003.
 # Lionel Henry <yoplait@tuxfamily.org>, 2003.
 # maintainer: Laurent Richard <laurent.richard@lilit.be>, 2004.
 # Christophe Merlet (RedFox) <redfox@redfoxcenter.org>, 2004.
+# Audrey Simons <asimons@redhat.com>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip 0.7.2\n"
-"POT-Creation-Date: 2004-03-19 11:36+0100\n"
-"PO-Revision-Date: 2004-02-29 15:13+0100\n"
-"Last-Translator: Laurent Richard <laurent.richard@lilit.be>\n"
-"Language-Team: GNOME French team <gnomefr@traduc.org>\n"
+"Project-Id-Version: gossip 0.7.8\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-09-04 00:34+0200\n"
+"PO-Revision-Date: 2004-09-04 00:26+0200\n"
+"Last-Translator: Audrey Simons <asimons@redhat.com>\n"
+"Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:27
+#: gossip.desktop.in.h:1
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -104,7 +105,7 @@ msgstr "Indique si il faut jouer un son en cas d'indisponibilité ou non."
 
 #: gossip.schemas.in.h:19
 msgid "Whether or not to show contacts that are offline in the contact list."
-msgstr "Indique si il faut aficher les contacts qui sont hors ligne ou non."
+msgstr "Indique si il faut afficher les contacts qui sont hors ligne ou non."
 
 #: gossip.schemas.in.h:20
 msgid "Width of the main window"
@@ -118,176 +119,180 @@ msgstr "Position en X de la fenêtre principale"
 msgid "Y position of main window"
 msgstr "Position en Y de la fenêtre principale"
 
-#: src/gossip-about.c:277
+#: src/gossip-about.c:275
 msgid "Written by:"
-msgstr ""
+msgstr "Écrit par :"
 
-#: src/gossip-about.c:287
+#: src/gossip-about.c:285
 msgid "Artwork by:"
 msgstr "Graphisme par :"
 
-#: src/gossip-about.c:298
+#: src/gossip-about.c:296
 msgid "Translated by:"
-msgstr ""
+msgstr "Traduit par :"
 
 #. Note to translators: put your name here so it will shop up in the
 #. * "about" box. Please add ONLY names, separated by newlines. No mail
 #. * addresses, empty lines, full sentences or years. Just the
 #. * names. Thanks!
 #.
-#: src/gossip-about.c:344
+#: src/gossip-about.c:342
 msgid "translator_credits"
 msgstr ""
 "Laurent Richard\n"
 "Frédéric Brin\n"
 "Lionel Henry\n"
-"Christophe Merlet"
+"Christophe Merlet\n"
+"Audrey Simons"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+#: src/gossip-account.c:302 src/gossip-app.c:64 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Domicile"
 
-#: src/gossip-add-contact.c:293
+#: src/gossip-add-contact.c:291
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr ""
 "Pour votre demande d'autorisation à %s, quel message souhaitez-vous lui "
 "envoyer ?"
 
-#: src/gossip-add-contact.c:311
+#: src/gossip-add-contact.c:309
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s va être ajouté à votre liste de contacts."
 
-#: src/gossip-app.c:639
+#: src/gossip-app.c:642
 msgid "Could not connect"
-msgstr ""
+msgstr "Impossible de se connecter"
 
-#: src/gossip-app.c:640
+#: src/gossip-app.c:643
 msgid "Make sure that your account information is correct."
 msgstr ""
 "Veuillez vous assurer que les informations de votre compte sont correctes."
 
-#: src/gossip-app.c:696
+#: src/gossip-app.c:706
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Saisissez l'identifiant de l'utilisateur avec qui vous souhaitez discuter."
 
-#: src/gossip-app.c:701 ui/main.glade.h:76
+#: src/gossip-app.c:713 ui/main.glade.h:98
 msgid "_Chat"
 msgstr "_Discuter"
 
-#: src/gossip-app.c:952
+#: src/gossip-app.c:1016
 #, c-format
-msgid "%s wants to be notified of your presence."
-msgstr "%s souhaite être notifié de votre présence."
+msgid "%s wants to be notified of your status."
+msgstr "%s souhaite être notifié de votre état."
 
-#: src/gossip-app.c:1193
+#: src/gossip-app.c:1262
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vous avez été déconnecté du serveur. Souhaitez-vous vous reconnecter ?"
 
-#: src/gossip-app.c:1348
-#, fuzzy
+#: src/gossip-app.c:1448
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 msgstr ""
-"Veuillez vous assurer que les informations de votre compte telles que votre "
-"nom d'utilisateur ainsi que votre mot de passe sont correctes."
+"Veuillez vous assurer que les informations de votre compte sont correctes. "
+"Il se peut également que le serveur soit actuellement indisponible."
 
-#: src/gossip-app.c:1820
+#: src/gossip-app.c:1922
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, un client de messagerie instantanée"
 
-#: src/gossip-app.c:1962
+#: src/gossip-app.c:2066
 #, c-format
 msgid "New message from %s"
 msgstr "Nouveau message de %s"
 
-#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:938
+#: src/gossip-app.c:2155 src/gossip-chat-window.c:793
+#: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Déconnecté"
 
-#: src/gossip-app.c:2450 src/gossip-preferences.c:639
+#: src/gossip-app.c:2554 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:2461 src/gossip-preferences.c:640
+#: src/gossip-app.c:2565 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Occupé"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:641
+#: src/gossip-app.c:2576 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:2604
+#: src/gossip-app.c:2708
 msgid "Available..."
 msgstr "Disponible..."
 
-#: src/gossip-app.c:2609
+#: src/gossip-app.c:2713
 msgid "Busy..."
 msgstr "Occupé..."
 
-#: src/gossip-app.c:2614
+#: src/gossip-app.c:2718
 msgid "Away..."
 msgstr "Absent..."
 
-#: src/gossip-app.c:2643
+#: src/gossip-app.c:2747
 msgid "Edit List..."
 msgstr "Éditer la liste..."
 
-#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
+#: src/gossip-chat-view.c:340 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr "_Nettoyer"
 
-#: src/gossip-chat-view.c:356
+#: src/gossip-chat-view.c:357
 msgid "_Copy Link Address"
 msgstr "Copier l'adresse du _lien"
 
-#: src/gossip-chat-view.c:364
+#: src/gossip-chat-view.c:365
 msgid "_Open Link"
 msgstr "_Ouvrir le lien"
 
-#: src/gossip-chat-view.c:678
+#: src/gossip-chat-view.c:676
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:490
+#: src/gossip-chat-window.c:537
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sConversation - %s"
 
-#: src/gossip-chat.c:717
+#: src/gossip-chat-window.c:805
+msgid "Typing a message."
+msgstr "Saisie d'un message."
+
+#: src/gossip-chat.c:719
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Une erreur est survenue lors de la conversation avec %s."
 
-#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
-#: src/gossip-group-chat.c:912
+#: src/gossip-chat.c:724 src/gossip-group-chat.c:913
+#: src/gossip-group-chat.c:1023
 msgid "Details:"
 msgstr "Détails :"
 
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:815
 #, c-format
 msgid "%s went offline"
 msgstr "%s s'est déconnecté"
 
-#: src/gossip-chat.c:826
+#: src/gossip-chat.c:829
 #, c-format
 msgid "%s comes online"
 msgstr "%s s'est connecté"
 
-#: src/gossip-chat.c:913
+#: src/gossip-chat.c:910
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/gossip-chat.c:928
+#: src/gossip-chat.c:924
 msgid "Disconnected"
 msgstr "Déconnecté"
 
-#: src/gossip-contact-info.c:352
+#: src/gossip-contact-info.c:431
 #, c-format
 msgid "Contact Information for %s"
 msgstr "Informations sur le contact %s"
@@ -299,7 +304,7 @@ msgstr "Édition des groupes de discussion pour %s"
 
 #: src/gossip-edit-groups-dialog.c:246
 msgid "Select"
-msgstr "Selectionner"
+msgstr "Sélectionner"
 
 #: src/gossip-edit-groups-dialog.c:257
 msgid "Group"
@@ -308,100 +313,100 @@ msgstr "Groupe"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:37
+#: src/gossip-roster.c:39
 msgid "Unsorted"
 msgstr "Non trié"
 
-#: src/gossip-group-chat.c:804
+#: src/gossip-group-chat.c:908
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr ""
-"Une erreur est survenue lorsque vous discutiez dans le groupe de discussion %"
-"s."
+"Une erreur est survenue lorsque vous discutiez dans le groupe de discussions "
+"%s."
 
-#: src/gossip-group-chat.c:907
+#: src/gossip-group-chat.c:1018
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Impossible d'entrer dans le groupe de discussions %s."
 
-#: src/gossip-log.c:307
+#: src/gossip-log.c:316
 msgid "Conversation Log"
 msgstr "Archives de la conversation"
 
-#: src/gossip-main.c:69
+#: src/gossip-main.c:67
 msgid "Don't connect on startup"
 msgstr "Ne pas se connecter au démarrage"
 
-#: src/gossip-main.c:78
+#: src/gossip-main.c:76
 msgid "Which account to connect to on startup"
 msgstr "Quel compte souhaitez-vous utiliser pour vous connecter au démarrage ?"
 
-#: src/gossip-main.c:79
+#: src/gossip-main.c:77
 msgid "ACCOUNT-NAME"
 msgstr "NOM-DU-COMPTE"
 
-#: src/gossip-main.c:87
+#: src/gossip-main.c:85
 msgid "List the available accounts"
 msgstr "Énumère les comptes disponibles"
 
-#: src/gossip-main.c:120
+#: src/gossip-main.c:118
 msgid "Available accounts:"
 msgstr "Comptes disponibles :"
 
-#: src/gossip-main.c:129
+#: src/gossip-main.c:127
 msgid "[default]"
 msgstr "[défaut]"
 
-#: src/gossip-main.c:152
+#: src/gossip-main.c:150
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Il n'y a pas de compte associé au nom « %s »."
 
-#: src/gossip-register.c:79
+#: src/gossip-register.c:84
 msgid "Unknown error"
 msgstr "Erreur inconnue"
 
-#: src/gossip-register.c:168
+#: src/gossip-register.c:184
 msgid "Registering account"
 msgstr "Enregistrement du compte en cours"
 
-#: src/gossip-register.c:208
+#: src/gossip-register.c:224
 msgid "Successfully registered the account"
 msgstr "Votre compte a été enregistré avec succès"
 
-#: src/gossip-register.c:229 src/gossip-register.c:235
+#: src/gossip-register.c:245 src/gossip-register.c:251
 msgid "Failed registering the account"
 msgstr "L'enregistrement du compte a échoué"
 
-#: src/gossip-register.c:231
+#: src/gossip-register.c:247
 msgid "Reason:"
 msgstr "Raison :"
 
-#: src/gossip-roster-view.c:186
+#: src/gossip-roster-view.c:244
 msgid "/Contact _Information"
 msgstr "/_Informations sur le contact"
 
-#: src/gossip-roster-view.c:194
+#: src/gossip-roster-view.c:252
 msgid "/Re_name contact"
 msgstr "/_Renommer le contact"
 
-#: src/gossip-roster-view.c:202
+#: src/gossip-roster-view.c:260
 msgid "/_Edit groups"
 msgstr "/_Édition des groupes de discussion"
 
-#: src/gossip-roster-view.c:210
+#: src/gossip-roster-view.c:268
 msgid "/Show _Log"
 msgstr "/_Afficher les archives"
 
-#: src/gossip-roster-view.c:226
+#: src/gossip-roster-view.c:284
 msgid "/_Remove contact"
 msgstr "/_Supprimer le contact"
 
-#: src/gossip-roster-view.c:237
+#: src/gossip-roster-view.c:295
 msgid "/Re_name group"
 msgstr "/_Renommer le groupe"
 
-#: src/gossip-roster-view.c:1245
+#: src/gossip-roster-view.c:1642
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -412,7 +417,7 @@ msgstr ""
 "%s\n"
 "de votre liste de contacts ?"
 
-#: src/gossip-roster-view.c:1338
+#: src/gossip-roster-view.c:1735
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -421,7 +426,7 @@ msgstr ""
 "Veuillez saisir un nouveau pseudonyme pour le contact\n"
 "%s"
 
-#: src/gossip-roster-view.c:1444
+#: src/gossip-roster-view.c:1841
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -430,11 +435,11 @@ msgstr ""
 "Veuillez saisir un nouveau nom pour le groupe\n"
 "%s"
 
-#: src/gossip-startup-druid.c:254
+#: src/gossip-startup-druid.c:258
 msgid "Gossip will now try to use your account:"
 msgstr "À présent, Gossip va essayer d'utiliser votre compte :"
 
-#: src/gossip-startup-druid.c:258
+#: src/gossip-startup-druid.c:262
 msgid "Gossip will now try to register the account:"
 msgstr "À présent, Gossip va essayer d'enregistrer le compte :"
 
@@ -445,6 +450,14 @@ msgstr "Veuillez saisir votre mot de passe :"
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Se souvenir du mot de passe ?"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Requête d'informations personnelles, veuillez patienter..."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Enregistrement des informations personnelles, veuillez patienter..."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
@@ -515,7 +528,7 @@ msgstr "Onglet _précédent"
 msgid "_Reply..."
 msgstr "_Répondre..."
 
-#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19
 msgid "_Send"
 msgstr "_Envoyer"
 
@@ -544,40 +557,44 @@ msgid "Connect"
 msgstr "Connexion"
 
 #: ui/connect.glade.h:7
+msgid "Connect _Server:"
+msgstr "_Se connecter au serveur :"
+
+#: ui/connect.glade.h:8
 msgid "Edit Account Information"
 msgstr "Éditer les paramètres du compte"
 
-#: ui/connect.glade.h:8
+#: ui/connect.glade.h:9
 msgid "P_ort:"
 msgstr "_Port :"
 
-#: ui/connect.glade.h:9
+#: ui/connect.glade.h:10
 msgid "Re_gister..."
 msgstr "_Enregistrer..."
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:11
 msgid "Server:"
 msgstr "Serveur :"
 
-#: ui/connect.glade.h:11
+#: ui/connect.glade.h:12
 msgid "Use _encryption (SSL)"
 msgstr "Utiliser le _chiffrement SSL"
 
-#: ui/connect.glade.h:12
+#: ui/connect.glade.h:13
+msgid "Use system pro_xy"
+msgstr "Utiliser le _proxy du système"
+
+#: ui/connect.glade.h:14
+msgid "_Jabber ID:"
+msgstr "ID _Jabber :"
+
+#: ui/connect.glade.h:15
 msgid "_Password:"
 msgstr "_Mot de passe :"
 
-#: ui/connect.glade.h:13
+#: ui/connect.glade.h:16
 msgid "_Resource:"
 msgstr "_Ressource :"
-
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:20
-msgid "_Server:"
-msgstr "_Serveur :"
-
-#: ui/connect.glade.h:15
-msgid "_User name:"
-msgstr "_Nom d'utilisateur :"
 
 #: ui/group-chat.glade.h:2
 msgid "        "
@@ -604,12 +621,12 @@ msgid "Gossip - Edit Group Chats"
 msgstr "Gossip - Édition des groupes de discussions"
 
 #: ui/group-chat.glade.h:9
-msgid "Gossip - Group Chat"
-msgstr "Gossip - Groupe de discussions"
-
-#: ui/group-chat.glade.h:10
 msgid "Gossip - Join Group Chat"
 msgstr "Gossip - Rejoindre un groupe de discussions"
+
+#: ui/group-chat.glade.h:10
+msgid "Imendio Gossip - Group Chat"
+msgstr "Imendio Gossip - Groupe de discussions"
 
 #: ui/group-chat.glade.h:11
 msgid "N_ickname:"
@@ -647,7 +664,11 @@ msgstr "_Pseudonyme :"
 msgid "_Room:"
 msgstr "_Groupe :"
 
-#: ui/group-chat.glade.h:21
+#: ui/group-chat.glade.h:19
+msgid "_Server:"
+msgstr "_Serveur :"
+
+#: ui/group-chat.glade.h:20
 msgid "_Topic:"
 msgstr "_Sujet :"
 
@@ -656,98 +677,130 @@ msgid " "
 msgstr " "
 
 #: ui/main.glade.h:4
+msgid "<b>Description</b>"
+msgstr "<b>Description</b>"
+
+#: ui/main.glade.h:5
+msgid ""
+"<b>Finding the best server...</b>\n"
+"This will take a few moments, please wait."
+msgstr ""
+"<b>Trouver le meilleur serveur...</b>\n"
+"Veuillez patienter quelques instants."
+
+#: ui/main.glade.h:7
 msgid "<b>Information requested, Please wait...</b>"
 msgstr "<b>Requête des informations, veuillez patienter...</b>"
 
-#: ui/main.glade.h:5
-msgid "<b>Preset status messages</b>"
-msgstr "<b>Messages d'état personalisé</b>"
+#: ui/main.glade.h:8
+msgid "<b>Personal information</b>"
+msgstr "<b>Informations personnelles</b>"
 
-#: ui/main.glade.h:6
+#: ui/main.glade.h:9
+msgid "<b>Preset status messages</b>"
+msgstr "<b>Messages d'état personnalisé</b>"
+
+#: ui/main.glade.h:10
+msgid "<b>Waiting for server response...</b>"
+msgstr "<b>Attente de la réponse du serveur...</b>"
+
+#: ui/main.glade.h:11
 msgid "<i>Information not available</i>"
 msgstr "<i>Information non disponible</i>"
 
-#: ui/main.glade.h:7
+#: ui/main.glade.h:12
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Exemple : toto@jabber.org</span>"
 
-#: ui/main.glade.h:8
+#: ui/main.glade.h:13
+msgid "Add Another Account"
+msgstr "Ajout d'un autre compte"
+
+#: ui/main.glade.h:14
 msgid "Add a contact"
 msgstr "Ajout d'un contact"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:15
 msgid "Add contact"
 msgstr "Ajout d'un contact"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:16
 msgid "Add to your contact list"
 msgstr "Ajouter à votre liste de contacts"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:17
 msgid "Appearance"
 msgstr "Apparence"
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:18
 msgid "Choose a Server"
 msgstr "Choisir un serveur"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:19
 msgid "Choose from list:"
 msgstr "Choisir dans la liste :"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:20
 msgid "Client information"
 msgstr "Informations sur le client"
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:21
 msgid "Client:"
 msgstr "Client :"
 
-#: ui/main.glade.h:16
+#: ui/main.glade.h:22
 msgid "Contact information"
-msgstr "Infomations sur le contact"
+msgstr "Informations sur le contact"
 
-#: ui/main.glade.h:17
+#: ui/main.glade.h:23
 msgid "Convert _smileys to graphical images"
 msgstr "_Convertir les frimousses en images graphiques"
 
-#: ui/main.glade.h:18
+#: ui/main.glade.h:24
 msgid "Country:"
 msgstr "Pays :"
 
-#: ui/main.glade.h:19
+#: ui/main.glade.h:25
+msgid "Decide _Later"
+msgstr "Décider p_lus tard"
+
+#: ui/main.glade.h:26
 msgid "Description"
 msgstr "Description"
 
-#: ui/main.glade.h:20
+#: ui/main.glade.h:27
 msgid "Disable sounds when _away"
 msgstr "Désactiver les sons lorsque vous êtes _absent"
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:28
 msgid "Disable sounds when _busy"
 msgstr "Désactiver les sons lorsque vous êtes _indisponible"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:29
+msgid "Discover Services"
+msgstr "Découvrir les services"
+
+#: ui/main.glade.h:30
 msgid "Do you already have an account on a Jabber server?"
 msgstr "Possédez-vous un compte sur un serveur Jabber ?"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:31
 msgid "Do you want to accept the request?"
 msgstr "Acceptez-vous la requête ?"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:32
 msgid "Edit Groups"
 msgstr "Édition des groupes de discussions"
 
-#: ui/main.glade.h:25
+#: ui/main.glade.h:33
 msgid "Email:"
 msgstr "Courrier électronique :"
 
-#: ui/main.glade.h:26
+#: ui/main.glade.h:34
 msgid "Enter status message:"
 msgstr "Saisissez le message d'état :"
 
-#: ui/main.glade.h:28
+#: ui/main.glade.h:35
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -764,21 +817,25 @@ msgstr ""
 "\n"
 "Pour commencer, cliquez sur « Suivant »."
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:40
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
 ">Connect... menu item."
 msgstr ""
 "Gossip est maintenant proprement configuré pour votre ordinateur.\n"
-"Vous pouvez changer vos paramêtres de connexion plus tard en selectionnant "
+"Vous pouvez changer vos paramètres de connexion plus tard en sélectionnant "
 "le menu Actions->Connecter..."
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:42
 msgid "I would like to add you to my contact list."
 msgstr "Je voudrais vous ajouter à ma liste de contacts."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:43
+msgid "Imendio Gossip"
+msgstr "Imendio Gossip"
+
+#: ui/main.glade.h:44
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -788,237 +845,291 @@ msgstr ""
 "demande lui sera envoyée. Jusqu'à ce que cette demande soit approuvée, "
 "l'utilisateur sera notifié « Déconnecté » dans votre liste de contacts."
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:45
 msgid "In which group do you want to place this contact?"
 msgstr "Dans quel groupe souhaitez-vous placer le contact ?"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:46
 msgid "Information about ..."
 msgstr "Informations sur..."
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:47
 msgid "JID"
 msgstr "JID"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:48
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:49
 msgid "Jabber Account"
 msgstr "Compte Jabber"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:50
 msgid "Jabber ID:"
 msgstr "ID Jabber :"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:51
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:52
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:53
 msgid "Name:"
 msgstr "Nom :"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:54
+msgid "Nickname:"
+msgstr "Pseudonyme :"
+
+#: ui/main.glade.h:55
 msgid "No"
 msgstr "Non"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:56
 msgid "OS:"
 msgstr "OS :"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:57
 msgid "On what server do you have a Jabber account?"
 msgstr "Sur quel serveur possédez-vous un compte Jabber ?"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:58
+msgid "Password:"
+msgstr "Mot de passe :"
+
+#: ui/main.glade.h:59
+msgid "Personal Details"
+msgstr "Détails personnels"
+
+#: ui/main.glade.h:60
 msgid "Personal information"
 msgstr "Informations personnelles"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:61
 msgid "Play sound when messages arrive"
 msgstr "Jouer un son lors de la réception d'un message"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:62
 msgid "Preferences"
 msgstr "Préférences"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:63
+msgid "Registering Service"
+msgstr "Enregistrement du service en cours"
+
+#: ui/main.glade.h:64
+msgid "Registration Details"
+msgstr "Détails de l'enregistrement"
+
+#: ui/main.glade.h:65
 msgid "Request message"
 msgstr "Demande de notification"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:66
 msgid "Sending request"
 msgstr "Envoi de la requête"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:67
+msgid "Server Details"
+msgstr "Détails du serveur"
+
+#: ui/main.glade.h:68
 msgid "Setup Finished"
 msgstr "Configuration terminée"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:69
 msgid "Show _Offline Contacts"
 msgstr "_Afficher les contacts hors ligne"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:70
 msgid "Sound"
 msgstr "Son"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:71
 msgid "Status"
 msgstr "État"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:72
 msgid "Status Message"
 msgstr "Message d'état"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:73
 msgid "Status Messages"
 msgstr "États"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:74
+msgid "Subscription"
+msgstr "Abonnement"
+
+#: ui/main.glade.h:75
+msgid "Subscription Request"
+msgstr "Requête d'abonnement"
+
+#: ui/main.glade.h:76
+msgid "This name will be used to identify you in chat windows."
+msgstr ""
+"Ce nom sera utilisé pour vous identifier dans les fenêtres de discussion."
+
+#: ui/main.glade.h:77
+msgid ""
+"This wizard will allow you to configure your account settings for another "
+"protocol. "
+msgstr ""
+"Cet assistant vous permet de configurer les paramètres de votre compte pour "
+"un autre protocole."
+
+#: ui/main.glade.h:78
 msgid "Use a different server"
 msgstr "Utiliser un autre serveur"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:79
+msgid "Username:"
+msgstr "Nom d'utilisateur :"
+
+#: ui/main.glade.h:80
 msgid "Version:"
 msgstr "Version :"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:81
 msgid "Web site:"
 msgstr "Le site Web :"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:82
 msgid "Welcome to Gossip"
 msgstr "Bienvenue dans Gossip"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:83
 msgid "What instant messaging system does the contact use?"
 msgstr "Quel système de messagerie instantanée utilise votre contact ?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:84
 msgid "What is your name?"
 msgstr "Quel est votre nom ?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:85
 msgid "What nickname do you want to use for this contact?"
 msgstr "Quel surnom souhaitez-vous utiliser pour ce contact ?"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:86
 msgid "What request message do you want to send to ...?"
 msgstr "Quel message souhaitez-vous lui envoyer ?"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:87
 msgid "What server do you want to use?"
 msgstr "Quel serveur souhaitez-vous utiliser ?"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:88
 msgid "What username do you use?"
 msgstr "Quel nom d'utilisateur utilisez-vous ?"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:89
 msgid "What username do you want to use?"
 msgstr "Quel nom d'utilisateur souhaitez-vous utiliser ?"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:90
+msgid "Which protocol would you like to set up? "
+msgstr "Quel protocole souhaitez-vous configurer ?"
+
+#: ui/main.glade.h:91
 msgid "Yes"
 msgstr "Oui"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:92
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to receive "
+"their status."
+msgstr ""
+"Vous n'êtes pas abonné à l'état de ce contact. Appuyez sur Abonner pour "
+"recevoir leur état."
+
+#: ui/main.glade.h:93
 msgid "Your Identity"
 msgstr "Votre identité"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:94
+msgid "_AIM"
+msgstr "_AIM"
+
+#: ui/main.glade.h:95
 msgid "_Accept"
 msgstr "_Accepter"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:96
 msgid "_Account Information"
 msgstr "_Informations sur le compte"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:97
 msgid "_Add Contact..."
 msgstr "A_jouter un contact..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:99
 msgid "_Connect..."
 msgstr "_Connecter..."
 
-#: ui/main.glade.h:78
-msgid "_Decide Later"
-msgstr "_Décider plus tard"
-
-#: ui/main.glade.h:79
+#: ui/main.glade.h:100
 msgid "_Deny"
 msgstr "_Interdire"
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:101
 msgid "_Disconnect"
 msgstr "_Déconnecter"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:102
 msgid "_Hide Contact List"
 msgstr "_Cacher la liste des contacts"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:103
+msgid "_ICQ"
+msgstr "_ICQ"
+
+#: ui/main.glade.h:104
 msgid "_Jabber ID of new contact:"
 msgstr "ID _Jabber du nouveau contact :"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:105
 msgid "_Join Group Chat..."
 msgstr "_Rejoindre un groupe de discussions..."
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:106
+msgid "_MSN"
+msgstr "_MSN"
+
+#: ui/main.glade.h:107
 msgid "_New Message..."
 msgstr "_Entamer une conversation... "
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:108
+msgid "_Personal Details"
+msgstr "Détails _personnels"
+
+#: ui/main.glade.h:109
 msgid "_Preferences"
 msgstr "_Préférences"
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:110
 msgid "_Remove"
 msgstr "_Supprimer"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:111
 msgid "_Search..."
 msgstr "_Rechercher..."
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:112
 msgid "_Show Contact List"
 msgstr "_Afficher la liste des contacts"
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:113
 msgid "_Status Messages"
 msgstr "Messages d'_états"
 
-#, fuzzy
-#~ msgid "About Gossip"
-#~ msgstr "Gossip"
+#: ui/main.glade.h:114
+msgid "_Subscribe"
+msgstr "_Abonner"
 
-#, fuzzy
-#~ msgid "translator_credits_old"
-#~ msgstr ""
-#~ "Mainteneur :\n"
-#~ "Laurent Richard <laurent.richard@lilit.be>\n"
-#~ "\n"
-#~ "Contributeurs :\n"
-#~ "Frédéric Brin <duckx@mezimail.com>\n"
-#~ "Lionel Henry <yoplait@tuxfamily.org>\n"
-#~ "Christophe Merlet (RedFox) <redfox@redfoxcenter.org>"
-
-#~ msgid "An Instant Messaging Client for GNOME"
-#~ msgstr "Un client de messagerie instantanée pour GNOME"
-
-#~ msgid "Gossip Website"
-#~ msgstr "Le site web de Gossip"
-
-#~ msgid "Unable to Authenticate"
-#~ msgstr "Impossible de vous authentifier"
-
-#~ msgid "The server may currently be unavailable."
-#~ msgstr "Le serveur peut actuellement être indisponible."
+#: ui/main.glade.h:115
+msgid "_Yahoo!"
+msgstr "_Yahoo!"
