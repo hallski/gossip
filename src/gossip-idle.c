@@ -61,7 +61,7 @@ gossip_idle_get_seconds (void)
 	if (idle_secs < 3) {
 		gint t = timestamp - time (NULL);
 
-		if (t <= -30) {
+		if (t <= -15) {
 			t = -1;
 		} else {
 			t = 0;

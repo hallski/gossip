@@ -511,7 +511,7 @@ app_init (GossipApp *singleton_app)
 			  NULL);
 
 	/* Start the idle time checker. */
-	g_timeout_add (5 * 1000, (GSourceFunc) app_idle_check_cb, app);
+	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set window position */
  	x = gconf_client_get_int (gconf_client, 
