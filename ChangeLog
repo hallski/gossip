@@ -1,5 +1,7 @@
 2004-01-23  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Don't expand the buttons, fixes bug #132310.
+
 	* src/gossip-chat-window.c (chat_window_tab_added_cb): Scroll the
 	textview all the way down.
 
