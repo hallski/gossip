@@ -23,7 +23,7 @@
 	* src/gossip-chat.c:
 	(gossip_chat_class_init), (gossip_chat_init),
 	(chat_presence_handler):
-	* src/gossip-chat.c:
+	* src/gossip-chat.h:
 	- Get rid of PRESENCE_UPDATED signal on GossipChat.
 
 2003-12-28  Mikael Hallendal  <micke@imendio.com>
