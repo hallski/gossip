@@ -1,3 +1,10 @@
+2004-08-25  Mikael Hallendal  <micke@imendio.com>
+
+	* configure.in: 
+	- Removed 'ga' translation since the po-file was missed in commit.
+	* src/gossip-app.c: (app_create_connection):
+	- Set a keep alive rate of 30 seconds for the loudmouth connection.
+
 2004-08-24 Alastair McKinstry <mckinstry@debian.org>
 
 	* configure.in: Added 'ga' (Irish) to ALL_LINGUAS

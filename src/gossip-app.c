@@ -1471,6 +1471,9 @@ app_create_connection (void)
 
 	priv->connection = lm_connection_new (priv->account->server);
 
+	// Setup the connection to send keep alive messages every 30 second.
+	lm_connection_set_keep_alive_rate (priv->connection, 30);
+
 	gossip_utils_set_proxy (priv->connection);
 	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (priv->account->jid));
 
