@@ -139,7 +139,8 @@ static GossipContact *  group_chat_get_contact                  (GossipChat     
 static void             group_chat_get_geometry                 (GossipChat        *chat,
 		                                                 gint              *width,
 								 gint              *height);
-
+static gboolean         group_chat_get_group_chat               (GossipChat        *chat);
+		                                                 
 
 static GHashTable *group_chats = NULL;
 
@@ -162,6 +163,8 @@ gossip_group_chat_class_init (GossipGroupChatClass *klass)
 	chat_class->get_contact       = group_chat_get_contact;
 	chat_class->get_geometry      = group_chat_get_geometry;
 	chat_class->get_widget        = group_chat_get_widget;
+
+	chat_class->get_group_chat    = group_chat_get_group_chat;
 }
 
 static void
@@ -1316,4 +1319,12 @@ group_chat_get_geometry (GossipChat *chat,
 {
 	*width  = 600;
 	*height = 400;
+}
+
+static gboolean
+group_chat_get_group_chat (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
+
+	return TRUE;
 }

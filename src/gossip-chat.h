@@ -78,6 +78,7 @@ struct _GossipChatClass {
 			                        gint       *width,
 					        gint       *height);
 	GtkWidget *      (*get_widget)         (GossipChat *chat);
+	gboolean         (*get_group_chat)     (GossipChat *chat);
 };
 
 GType             gossip_chat_get_type           (void);
@@ -100,6 +101,7 @@ GossipChatView *  gossip_chat_get_view           (GossipChat       *chat);
 void              gossip_chat_get_geometry       (GossipChat       *chat,
 		                                  int              *width,
 						  int              *height);
+gboolean          gossip_chat_get_group_chat     (GossipChat       *chat);
 
 G_END_DECLS
 

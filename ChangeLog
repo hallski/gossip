@@ -1,5 +1,13 @@
 2004-09-16  Martyn Russell  <ginxd@btopenworld.com>
-	
+
+	* src/gossip-group-chat.c (gossip_group_chat_class_init),
+	(group_chat_get_group_chat): 
+	* src/gossip-chat-window.c (gossip_chat_window_get_group_chats),
+	(gossip_chat_window_get_default):
+	* src/gossip-chat.c (gossip_chat_present), (gossip_chat_get_group_chat): 
+	- Group chats and normal chats now appear in their own windows
+	instead of sometimes appearing together in separate tabs. 
+
 	* Makefile.am (SUBDIRS): 
 	- Added new protocols directory into the mix.
 	* protocols/Makefile.am (image_DATA): 

@@ -364,6 +364,18 @@ gossip_chat_get_widget (GossipChat *chat)
 	return NULL;
 }
 
+gboolean
+gossip_chat_get_group_chat (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), FALSE);
+
+	if (GOSSIP_CHAT_GET_CLASS (chat)->get_group_chat) {
+		return GOSSIP_CHAT_GET_CLASS (chat)->get_group_chat (chat);
+	}
+
+	return FALSE;
+}
+
 void
 gossip_chat_clear (GossipChat *chat)
 {
@@ -456,9 +468,14 @@ gossip_chat_present (GossipChat *chat)
 	
 	if (priv->window == NULL) {
 		GossipChatWindow *window;
+		gboolean          for_group_chat;
 
-		window = gossip_chat_window_get_default ();
-		
+		for_group_chat = gossip_chat_get_group_chat (chat);
+
+		/* get the default window for either group chats or
+		   normal chats, we do not want to mix them */
+		window = gossip_chat_window_get_default (for_group_chat);
+
 		if (!window) {
 			window = gossip_chat_window_new ();
 		}

@@ -364,7 +364,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 /* Returns the window to open a new tab in if there is only one window visble */
 /* Otherwise, returns NULL indicating that a new window should be added       */
 GossipChatWindow *
-gossip_chat_window_get_default (void)
+gossip_chat_window_get_default (gboolean for_group_chats)
 {
 	GossipChatWindow *default_chat_window = NULL;
 	GList            *l;
@@ -374,8 +374,15 @@ gossip_chat_window_get_default (void)
 		GtkWidget        *dialog;
 		GdkWindow        *window;
 		gboolean          visible;
+		gint              count;
 
 		chat_window = l->data;
+
+		count = gossip_chat_window_get_group_chats (chat_window);
+		if ((count < 1 && for_group_chats) || (count > 0 && !for_group_chats)) {
+			continue;
+		}
+
 		dialog = gossip_chat_window_get_dialog (chat_window);
 		window = dialog->window;
 
@@ -396,6 +403,30 @@ gossip_chat_window_get_default (void)
 	}
 
 	return default_chat_window;
+}
+
+gint 
+gossip_chat_window_get_group_chats (GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+ 	GList                *l;
+	gint                  count;
+
+	g_return_val_if_fail (window != NULL, 0);
+
+	priv = window->priv;
+	
+	for (l=priv->chats, count=0; l; l=l->next) {
+		GossipChat *chat;
+
+		chat = GOSSIP_CHAT (l->data);
+
+		if (gossip_chat_get_group_chat (chat)) {
+			count++;
+		}
+	}
+
+	return count;
 }
 
 static void
