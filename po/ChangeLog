@@ -1,10 +1,12 @@
+2003-08-19  Richard Hult  <richard@imendio.com>
+
+	* sv.po: Updated.
+
 2003-08-18  Artur Flinta  <aflinta@cvs.gnome.org>
 
 	* pl.po: Updated Polish translation.
 
 2003-08-15  Mikael Hallendal  <micke@imendio.com>
-
-	reviewed by: <delete if not using a buddy>
 
 	* POTFILES.in:
 

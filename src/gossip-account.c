@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include <libgnome/gnome-config.h>
+#include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
 #include "gossip-account.h"
 
@@ -98,17 +99,24 @@ gossip_account_new (const gchar *name,
 GossipAccount *
 gossip_account_get_default ()
 {
-	GossipAccount *account;
+	GossipAccount *account = NULL;
 	gchar         *name;
 	
 	name = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default");
 
-	if (!name) {
-		return NULL;
+	if (name) {
+		account = gossip_account_get (name);
+		g_free (name);
 	}
-
-	account = gossip_account_get (name);
-	g_free (name);
+	
+	if (!account) {
+		account = gossip_account_new ("Default",
+					      NULL, NULL,
+					      _("Home"),
+					      NULL,
+					      LM_CONNECTION_DEFAULT_PORT,
+					      FALSE);
+	}
 	
 	return account;
 }
@@ -169,7 +177,6 @@ gossip_account_get_jid (GossipAccount *account)
 
 	return jid;
 }
-
 
 GSList *
 gossip_account_get_all (void)
@@ -267,8 +274,16 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 	}
 	g_free (str);
 
- 	gnome_config_sync_file (GOSSIP_ACCOUNTS_PATH);
- 	gnome_config_private_sync_file (GOSSIP_ACCOUNTS_PATH);
+ 	gnome_config_sync ();
+}
+
+void
+gossip_account_set_default (GossipAccount *account)
+{
+	gnome_config_set_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default",
+				 account->name);
+
+	gnome_config_sync ();
 }
 
 

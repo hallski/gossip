@@ -64,7 +64,7 @@
 		      <child>
 			<widget class="GtkMenuItem" id="actions_join_group_chat">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_Join group chat...</property>
+			  <property name="label" translatable="yes">_Join Group Chat...</property>
 			  <property name="use_underline">True</property>
 			</widget>
 		      </child>
@@ -72,7 +72,7 @@
 		      <child>
 			<widget class="GtkMenuItem" id="actions_send_chat_message">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_Send chat message...</property>
+			  <property name="label" translatable="yes">_Send Chat Message...</property>
 			  <property name="use_underline">True</property>
 			</widget>
 		      </child>
@@ -86,11 +86,11 @@
 		      <child>
 			<widget class="GtkImageMenuItem" id="actions_add_contact">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_Add contact...</property>
+			  <property name="label" translatable="yes">_Add Contact...</property>
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image12">
+			    <widget class="GtkImage" id="image13">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
 			      <property name="icon_size">1</property>
@@ -129,13 +129,27 @@
 		    <widget class="GtkMenu" id="edit_menu">
 
 		      <child>
+			<widget class="GtkMenuItem" id="edit_account_information">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">Account Information</property>
+			  <property name="use_underline">True</property>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkMenuItem" id="avskiljare4">
+			  <property name="visible">True</property>
+			</widget>
+		      </child>
+
+		      <child>
 			<widget class="GtkImageMenuItem" id="edit_preferences">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">Preferences</property>
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image13">
+			    <widget class="GtkImage" id="image14">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-preferences</property>
 			      <property name="icon_size">1</property>

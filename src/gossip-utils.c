@@ -362,16 +362,43 @@ gossip_glade_connect (GladeXML *gui,
 		if (!widget) {
 			g_warning ("Glade file is missing widget '%s', aborting",
 				   name);
-			
-			g_object_unref (gui);
-			return;
-		} else {
-			g_signal_connect (widget,
-					  signal,
-					  G_CALLBACK (callback),
-					  user_data);
+			continue;
 		}
+
+		g_signal_connect (widget,
+				  signal,
+				  G_CALLBACK (callback),
+				  user_data);
 	}
+
+	va_end (args);
+}
+
+void
+gossip_glade_setup_size_group (GladeXML         *gui,
+			       GtkSizeGroupMode  mode,
+			       gchar            *first_widget, ...)
+{
+	va_list       args;
+	GtkWidget    *widget;
+	GtkSizeGroup *size_group;
+	const gchar  *name;
+
+	va_start (args, first_widget);
+
+	size_group = gtk_size_group_new (mode);
+	
+	for (name = first_widget; name; name = va_arg (args, char *)) {
+		widget = glade_xml_get_widget (gui, name);
+		if (!widget) {
+			g_warning ("Glade file is missing widget '%s'", name);
+			continue;
+		}
+
+		gtk_size_group_add_widget (size_group, widget);
+	}
+
+	g_object_unref (size_group);
 
 	va_end (args);
 }

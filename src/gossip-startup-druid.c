@@ -218,8 +218,10 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 		/* Should user be able to set resource, account name and
 		 * port?
 		 */
-		*account = gossip_account_new (_("Default Account"), username, NULL, 
-					       "Gossip", server, 
+		*account = gossip_account_new ("Default",
+					       username, NULL, 
+					       "Gossip",
+					       server, 
 					       LM_CONNECTION_DEFAULT_PORT, 
 					       FALSE);
 	}

@@ -1,10 +1,36 @@
+2003-08-18  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am: Clean up a bit.
+
+	* src/gossip-account.c: (gossip_account_get_default),
+	(gossip_account_store), (gossip_account_set_default):
+	* src/gossip-account.h: Always return a default account, fix
+	syncing after changing accounts.
+	
+	* src/gossip-app.c: (app_preferences_cb): Simplify.
+	(app_account_information_cb): Implement.
+	
+	* src/gossip-connect-dialog.c: (account_dialog_destroy_cb),
+	(connect_dialog_destroy_cb), (connect_dialog_response_cb),
+	(gossip_connect_dialog_show): Implement.
+
+	* src/gossip-startup-druid.c: (startup_druid_get_account_info):
+	Change default name.
+	
+	* src/gossip-utils.c: (gossip_glade_setup_size_group): Add, sets
+	up a size group for a number of named widgets.
+	(gossip_glade_connect): Just skip missing widgets, makes debugging
+	easier.
+	
+	* ui/connect.glade: 
+	* ui/main.glade: Add menu item and dialog for editing account
+	information. Simplify the connect dialog.
+
 2003-08-18  Artur Flinta  <aflinta@cvs.gnome.org>
 
 	* configure.in: Added "pl" to ALL_LINGUAS.
 
 2003-08-16  Mikael Hallendal  <micke@imendio.com>
-
-	reviewed by: <delete if not using a buddy>
 
 	* src/gossip-app.c: (app_message_handler):
         - handle headline messages like any other for now.

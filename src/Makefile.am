@@ -1,6 +1,6 @@
 SUBDIRS = sounds
 
-INCLUDES =					\
+INCLUDES =	\
 	-DGNOMELOCALEDIR=\""$(datadir)/locale"\" \
 	-DPREFIX="\"$(prefix)"\"		\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"        \
@@ -13,48 +13,49 @@ INCLUDES =					\
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				\
-	gossip-marshal-main.c			\
-	gossip-main.c				\
+	gossip-account.c			\
+	gossip-account.h			\
+	gossip-account-dialog.c			\
+	gossip-account-dialog.h			\
 	gossip-add-contact.c			\
 	gossip-add-contact.h			\
 	gossip-app.c				\
 	gossip-app.h				\
-	gossip-contact-info.c                   \
-	gossip-contact-info.h                   \
-	gossip-idle.c				\
-	gossip-idle.h				\
-	gossip-roster-old.c			\
-	gossip-roster-old.h			\
-	gossip-register.c			\
-	gossip-register.h			\
-	gossip-message.c			\
-	gossip-message.h			\
 	gossip-chat.c				\
 	gossip-chat.h				\
-	gossip-group-chat.c			\
-	gossip-group-chat.h			\
+	gossip-connect-dialog.c			\
+	gossip-connect-dialog.h			\
+	gossip-contact-info.c                   \
+	gossip-contact-info.h                   \
 	gossip-favorite.c			\
 	gossip-favorite.h			\
 	gossip-favorites-dialog.c		\
 	gossip-favorites-dialog.h		\
+	gossip-group-chat.c			\
+	gossip-group-chat.h			\
+	gossip-idle.c				\
+	gossip-idle.h				\
 	gossip-jid.c                            \
 	gossip-jid.h                            \
-	gossip-startup-druid.c			\
-	gossip-startup-druid.h			\
 	gossip-join-dialog.c			\
 	gossip-join-dialog.h			\
-	gossip-connect-dialog.c			\
-	gossip-connect-dialog.h			\
-	gossip-accounts-dialog.c		\
-	gossip-accounts-dialog.h		\
-	gossip-account.c			\
-	gossip-account.h			\
-	gossip-utils.c				\
-	gossip-utils.h				\
+	gossip-main.c				\
+	gossip-marshal-main.c			\
+	gossip-message.c			\
+	gossip-message.h			\
 	gossip-preferences.c			\
 	gossip-preferences.h			\
+	gossip-roster-old.c			\
+	gossip-roster-old.h			\
+	gossip-register.c			\
+	gossip-register.h			\
 	gossip-sound.c				\
 	gossip-sound.h				\
+	gossip-startup-druid.c			\
+	gossip-startup-druid.h			\
+	gossip-utils.c				\
+	gossip-utils.h				\
+						\
 	eggtrayicon.c				\
 	eggtrayicon.h				\
 	disclosure-widget.c			\

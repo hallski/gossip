@@ -58,6 +58,9 @@ void         gossip_glade_connect                    (GladeXML         *gui,
 						      gpointer          user_data,
 						      gchar            *first_widget,
 						      ...);
+void         gossip_glade_setup_size_group           (GladeXML         *gui,
+						      GtkSizeGroupMode  mode,
+						      gchar            *first_widget, ...);
 void         gossip_text_view_set_margin             (GtkTextView      *tv,
 						      gint              margin);
 void         gossip_text_view_append_chat_message    (GtkTextView      *text_view,

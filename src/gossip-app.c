@@ -48,7 +48,9 @@
 #include "gossip-idle.h"
 #include "gossip-startup-druid.h"
 #include "gossip-preferences.h"
+#include "gossip-account-dialog.h"
 #include "gossip-app.h"
+
 
 #define DEFAULT_RESOURCE "Gossip"
 #define ADD_CONTACT_RESPONSE_ADD 1
@@ -137,6 +139,8 @@ static void     app_popup_send_chat_message_cb       (GtkWidget          *widget
 static void     app_add_contact_cb                   (GtkWidget          *widget,
 						      GossipApp          *app);
 static void     app_preferences_cb                   (GtkWidget          *widget,
+						      GossipApp          *app);
+static void     app_account_information_cb           (GtkWidget          *widget,
 						      GossipApp          *app);
 static void     app_about_cb                         (GtkWidget          *widget,
 						      GossipApp          *app);
@@ -279,7 +283,7 @@ app_init (GossipApp *app)
         priv = g_new0 (GossipAppPriv, 1);
         app->priv = priv;
 
-	priv->account = gossip_account_get_default ();
+	priv->account = gossip_account_get ("Default");
 	priv->status_to_set_on_connect = GOSSIP_STATUS_AVAILABLE;
 
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
@@ -301,6 +305,7 @@ app_init (GossipApp *app)
 			      "actions_send_chat_message", "activate", app_send_chat_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
+			      "edit_account_information", "activate", app_account_information_cb,
 			      "help_about", "activate", app_about_cb,
 			      "main_window", "destroy", app_main_window_destroy_cb,
 			      NULL);
@@ -742,6 +747,12 @@ app_preferences_cb (GtkWidget *widget, GossipApp *app)
 
 	g_object_add_weak_pointer (G_OBJECT (priv->preferences_dialog),
 				   (gpointer) &priv->preferences_dialog);
+}
+
+static void
+app_account_information_cb (GtkWidget *widget, GossipApp *app)
+{
+	gossip_account_dialog_show ();
 }
 
 static void

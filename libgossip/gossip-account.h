@@ -56,5 +56,7 @@ GossipAccount * gossip_account_ref          (GossipAccount *account);
 void            gossip_account_unref        (GossipAccount *account);
 void            gossip_account_store        (GossipAccount *account,
 					     gchar         *old_name);
+void            gossip_account_set_default  (GossipAccount *account);
+
 
 #endif /* __GOSSIP_ACCOUNT_H__ */
