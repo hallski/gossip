@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-23 05:12+0200\n"
+"POT-Creation-Date: 2004-07-07 04:40+0200\n"
 "PO-Revision-Date: 2004-07-05 19:23+0200\n"
 "Last-Translator: Laurent Dhima <laurenti@alblinux.net>\n"
 "Language-Team: Albanian <gnome-albanian-perkthyesit@lists.sourceforge.net>\n"
@@ -64,12 +64,10 @@ msgstr "Pozicioni X i dritares qendrore."
 msgid "The Y position of the main window."
 msgstr "Pozicioni Y i dritares qendrore."
 
-#. GRUT modified this item
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
 msgstr "Gjatësia e dritares kryesore."
 
-#. GRUT modified this item
 #: gossip.schemas.in.h:12
 msgid "The width of the main window."
 msgstr "Gjerësia e dritares krysore."
@@ -83,7 +81,8 @@ msgid "Use notification sounds"
 msgstr "Përdor tingujt njoftues"
 
 #: gossip.schemas.in.h:15
-msgid "Whether or not to convert smileys into graphical images in conversations."
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 
 #: gossip.schemas.in.h:16
@@ -153,15 +152,19 @@ msgstr "%s do të shtohet tek lista juaj e kontakteve."
 msgid "Could not connect"
 msgstr "E pamundur lidhja"
 
+#. GRUT modified this item
 #: src/gossip-app.c:645
 msgid "Make sure that your account information is correct."
-msgstr "Sigurhu që ke dhënë informacionet korrekte të llogarisë tuaj."
+msgstr "Sigurohu që ke dhënë informacionet korrekte të llogarisë tuaj."
 
 #: src/gossip-app.c:713
-msgid "Enter the user ID of the person you would like to send a chat message to."
-msgstr "Shkruaj ID e përdoruesit të personit të cilit dëshironi t'i dërgoni mesazh chat."
+msgid ""
+"Enter the user ID of the person you would like to send a chat message to."
+msgstr ""
+"Shkruaj ID e përdoruesit të personit të cilit dëshironi t'i dërgoni mesazh "
+"chat."
 
-#: src/gossip-app.c:720 ui/main.glade.h:84
+#: src/gossip-app.c:720 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chat"
 
@@ -189,7 +192,6 @@ msgstr "Gossip, Klient për Mesazhe direkte"
 msgid "New message from %s"
 msgstr "Mesazh i ri nga %s"
 
-#. GRUT modified this item
 #: src/gossip-app.c:2120 src/gossip-chat-window.c:782
 #: src/gossip-roster-view.c:987
 msgid "Offline"
@@ -199,14 +201,14 @@ msgstr "Jashtë linje"
 msgid "Available"
 msgstr "Në dispozicion"
 
-#. GRUT modified this item
 #: src/gossip-app.c:2530 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "I zënë"
 
+#. GRUT modified this item
 #: src/gossip-app.c:2541 src/gossip-preferences.c:640
 msgid "Away"
-msgstr "Jo këtu"
+msgstr "Nuk jam këtu"
 
 #: src/gossip-app.c:2673
 msgid "Available..."
@@ -224,22 +226,18 @@ msgstr "Nuk jam këtu..."
 msgid "Edit List..."
 msgstr "Ndrysho listën..."
 
-#. GRUT modified this item
 #: src/gossip-chat-view.c:340 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr "P_astro"
 
-#. GRUT modified this item
 #: src/gossip-chat-view.c:357
 msgid "_Copy Link Address"
 msgstr "_Kopjo adresën e lidhjes"
 
-#. GRUT modified this item
 #: src/gossip-chat-view.c:365
 msgid "_Open Link"
 msgstr "_Hap adresën"
 
-#. GRUT modified this item
 #: src/gossip-chat-view.c:676
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
@@ -258,8 +256,8 @@ msgstr "Duke shkruar një mesazh."
 msgid "An error occurred when chatting with %s."
 msgstr ""
 
-#: src/gossip-chat.c:720 src/gossip-group-chat.c:911
-#: src/gossip-group-chat.c:1021
+#: src/gossip-chat.c:720 src/gossip-group-chat.c:908
+#: src/gossip-group-chat.c:1018
 msgid "Details:"
 msgstr ""
 
@@ -273,12 +271,10 @@ msgstr ""
 msgid "%s comes online"
 msgstr ""
 
-#. GRUT modified this item
 #: src/gossip-chat.c:906
 msgid "Connected"
 msgstr "I lidhur"
 
-#. GRUT modified this item
 #: src/gossip-chat.c:920
 msgid "Disconnected"
 msgstr "I shkëputur"
@@ -293,7 +289,6 @@ msgstr ""
 msgid "Edit groups for %s"
 msgstr ""
 
-#. GRUT modified this item
 #: src/gossip-edit-groups-dialog.c:246
 msgid "Select"
 msgstr "Zgjidh"
@@ -309,12 +304,12 @@ msgstr ""
 msgid "Unsorted"
 msgstr ""
 
-#: src/gossip-group-chat.c:906
+#: src/gossip-group-chat.c:903
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr ""
 
-#: src/gossip-group-chat.c:1016
+#: src/gossip-group-chat.c:1013
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr ""
@@ -352,7 +347,6 @@ msgstr ""
 msgid "There is no account with the name '%s'."
 msgstr ""
 
-#. GRUT modified this item
 #: src/gossip-register.c:84
 msgid "Unknown error"
 msgstr "Gabim i panjohur"
@@ -435,13 +429,19 @@ msgstr ""
 msgid "Remember Password?"
 msgstr ""
 
-#. GRUT modified this item
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr ""
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr ""
+
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
 msgid "*"
 msgstr "*"
 
-#. GRUT modified this item
 #: ui/chat.glade.h:3
 msgid "Chat"
 msgstr "Bisedë në linjë"
@@ -450,7 +450,6 @@ msgstr "Bisedë në linjë"
 msgid "Contact _Information"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/chat.glade.h:5
 msgid "From:"
 msgstr "Nga:"
@@ -471,17 +470,14 @@ msgstr ""
 msgid "In reply to:"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
 msgstr "Lëviz skedën _majtas"
 
-#. GRUT modified this item
 #: ui/chat.glade.h:11
 msgid "Move Tab _Right"
 msgstr "Lëviz skedën _djathtas"
 
-#. GRUT modified this item
 #: ui/chat.glade.h:12
 msgid "To:"
 msgstr "Për:"
@@ -494,17 +490,14 @@ msgstr ""
 msgid "_Conversation"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/chat.glade.h:15
 msgid "_Detach Tab"
 msgstr "_Shkëpute skedën"
 
-#. GRUT modified this item
 #: ui/chat.glade.h:16
 msgid "_Next Tab"
 msgstr "Skeda në _Vazhdim"
 
-#. GRUT modified this item
 #: ui/chat.glade.h:17
 msgid "_Previous Tab"
 msgstr "Skeda _Paraardhëse"
@@ -513,17 +506,14 @@ msgstr "Skeda _Paraardhëse"
 msgid "_Reply..."
 msgstr ""
 
-#. GRUT modified this item
-#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19
 msgid "_Send"
 msgstr "_Dërgo"
 
-#. GRUT modified this item
 #: ui/chat.glade.h:20
 msgid "_Tabs"
 msgstr "_Skedat"
 
-#. GRUT modified this item
 #: ui/connect.glade.h:1 ui/group-chat.glade.h:1 ui/main.glade.h:2
 msgid "    "
 msgstr "    "
@@ -536,12 +526,10 @@ msgstr ""
 msgid "<b>Connect to server</b>"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/connect.glade.h:5
 msgid "C_onnect"
 msgstr "Li_dhu"
 
-#. GRUT modified this item
 #: ui/connect.glade.h:6
 msgid "Connect"
 msgstr "Lidhu"
@@ -558,7 +546,6 @@ msgstr ""
 msgid "Re_gister..."
 msgstr ""
 
-#. GRUT modified this item
 #: ui/connect.glade.h:10
 msgid "Server:"
 msgstr "Server-i:"
@@ -567,7 +554,6 @@ msgstr "Server-i:"
 msgid "Use _encryption (SSL)"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/connect.glade.h:12
 msgid "_Password:"
 msgstr "_Fjalëkalimi:"
@@ -576,8 +562,7 @@ msgstr "_Fjalëkalimi:"
 msgid "_Resource:"
 msgstr ""
 
-#. GRUT modified this item
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:20
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:19
 msgid "_Server:"
 msgstr "_Serveri:"
 
@@ -631,7 +616,6 @@ msgstr ""
 msgid "R_emove"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/group-chat.glade.h:14
 msgid "_Add"
 msgstr "_Shto"
@@ -644,7 +628,6 @@ msgstr ""
 msgid "_Join"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/group-chat.glade.h:17
 msgid "_Nickname:"
 msgstr "_Nickname:"
@@ -653,16 +636,14 @@ msgstr "_Nickname:"
 msgid "_Room:"
 msgstr ""
 
-#: ui/group-chat.glade.h:21
+#: ui/group-chat.glade.h:20
 msgid "_Topic:"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:1
 msgid " "
 msgstr " "
 
-#. GRUT modified this item
 #: ui/main.glade.h:4
 msgid "<b>Description</b>"
 msgstr "<b>Përshkrimi</b>"
@@ -699,7 +680,6 @@ msgstr ""
 msgid "Add to your contact list"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:13
 msgid "Appearance"
 msgstr "Paraqitja"
@@ -728,7 +708,6 @@ msgstr ""
 msgid "Convert _smileys to graphical images"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:20
 msgid "Country:"
 msgstr "Shteti:"
@@ -737,7 +716,6 @@ msgstr "Shteti:"
 msgid "Decide _Later"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:22
 msgid "Description"
 msgstr "Përshkrimi"
@@ -762,7 +740,6 @@ msgstr ""
 msgid "Edit Groups"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:28
 msgid "Email:"
 msgstr "Email:"
@@ -811,7 +788,6 @@ msgstr ""
 msgid "JID"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:43
 msgid "Jabber"
 msgstr "Jabber"
@@ -832,7 +808,6 @@ msgstr ""
 msgid "Jabber.org"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:48
 msgid "Name:"
 msgstr "Emri:"
@@ -841,7 +816,6 @@ msgstr "Emri:"
 msgid "Nickname:"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:50
 msgid "No"
 msgstr "Jo"
@@ -866,7 +840,6 @@ msgstr ""
 msgid "Play sound when messages arrive"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:56
 msgid "Preferences"
 msgstr "Preferimet"
@@ -887,12 +860,10 @@ msgstr ""
 msgid "Show _Offline Contacts"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:61
 msgid "Sound"
 msgstr "Zëri"
 
-#. GRUT modified this item
 #: ui/main.glade.h:62
 msgid "Status"
 msgstr "Gjendja"
@@ -921,7 +892,6 @@ msgstr ""
 msgid "Use a different server"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:69
 msgid "Version:"
 msgstr "Versioni:"
@@ -962,90 +932,85 @@ msgstr ""
 msgid "What username do you want to use?"
 msgstr ""
 
-#. GRUT modified this item
 #: ui/main.glade.h:79
 msgid "Yes"
 msgstr "Po"
 
 #: ui/main.glade.h:80
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"their status."
+msgstr ""
+
+#: ui/main.glade.h:81
 msgid "Your Identity"
 msgstr ""
 
-#. GRUT modified this item
-#: ui/main.glade.h:81
+#: ui/main.glade.h:82
 msgid "_Accept"
 msgstr "_Prano"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:83
 msgid "_Account Information"
 msgstr ""
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:84
 msgid "_Add Contact..."
 msgstr ""
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:86
 msgid "_Connect..."
 msgstr ""
 
-#. GRUT modified this item
-#: ui/main.glade.h:86
+#: ui/main.glade.h:87
 msgid "_Deny"
 msgstr "_Moho"
 
-#. GRUT modified this item
-#: ui/main.glade.h:87
+#: ui/main.glade.h:88
 msgid "_Disconnect"
 msgstr "_Shkëputu"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:89
 msgid "_Hide Contact List"
 msgstr ""
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:90
 msgid "_Jabber ID of new contact:"
 msgstr ""
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:91
 msgid "_Join Group Chat..."
 msgstr ""
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:92
 msgid "_New Message..."
 msgstr ""
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:93
 msgid "_Personal Details"
 msgstr ""
 
-#. GRUT modified this item
-#: ui/main.glade.h:93
+#: ui/main.glade.h:94
 msgid "_Preferences"
 msgstr "_Preferimet"
 
-#. GRUT modified this item
-#: ui/main.glade.h:94
+#: ui/main.glade.h:95
 msgid "_Remove"
 msgstr "_Hiqe"
 
-#: ui/main.glade.h:95
+#: ui/main.glade.h:96
 msgid "_Search..."
 msgstr ""
 
-#: ui/main.glade.h:96
+#: ui/main.glade.h:97
 msgid "_Show Contact List"
 msgstr ""
 
-#: ui/main.glade.h:97
+#: ui/main.glade.h:98
 msgid "_Status Messages"
 msgstr ""
 
-#. GRUT modified this item
-#: ui/main.glade.h:98
+#: ui/main.glade.h:99
 msgid "_Subscribe"
 msgstr "_Abonohu"
-
-#: ui/main.glade.h:99
-msgid "subscription_label"
-msgstr ""
 
