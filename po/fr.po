@@ -1,20 +1,23 @@
 # French translation of gossip.
-# Copyright (C) 2003 The Free Software Foundation, Inc.
+# Copyright (C) 2003-2004 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the gossip package.
+# 
 # Frédéric Brin <duckx@mezimail.com>, 2003.
 # Lionel Henry <yoplait@tuxfamily.org>, 2003.
+# maintainer: Laurent Richard <laurent.richard@lilit.be>, 2004.
+# Christophe Merlet (RedFox) <redfox@redfoxcenter.org>, 2004.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip 0.5\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
-"PO-Revision-Date: 2003-11-17 21:55+0100\n"
-"Last-Translator: Lionel Henry <yoplait@tuxfamily.org>\n"
+"Project-Id-Version: gossip 0.7.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-02-29 15:20+0100\n"
+"PO-Revision-Date: 2004-02-29 15:13+0100\n"
+"Last-Translator: Laurent Richard <laurent.richard@lilit.be>\n"
 "Language-Team: GNOME French team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -37,38 +40,32 @@ msgid "Height of main window"
 msgstr "Hauteur de la fenêtre principale"
 
 #: gossip.schemas.in.h:4
-#, fuzzy
 msgid "Hide main window"
-msgstr "Largeur de la fenêtre principale"
+msgstr "Cacher la fenêtre principale"
 
 #: gossip.schemas.in.h:5
-#, fuzzy
 msgid "Hide the main window."
-msgstr "Largeur de la fenêtre principale"
+msgstr "Cache la fenêtre principale."
 
 #: gossip.schemas.in.h:6
-#, fuzzy
 msgid "Preset status messages"
-msgstr "État personnalisé :"
+msgstr "Messages d'état personnalisé"
 
 #: gossip.schemas.in.h:7
-#, fuzzy
 msgid "Preset status messages."
-msgstr "État personnalisé :"
+msgstr "Messages d'état personnalisé."
 
 #: gossip.schemas.in.h:8
 msgid "Show offline contacts"
 msgstr "Afficher les contacts hors ligne"
 
 #: gossip.schemas.in.h:9
-#, fuzzy
 msgid "The X position of the main window."
-msgstr "La largeur de la fenêtre principale."
+msgstr "La position en X de la fenêtre principale."
 
 #: gossip.schemas.in.h:10
-#, fuzzy
 msgid "The Y position of the main window."
-msgstr "La largeur de la fenêtre principale."
+msgstr "La position en Y de la fenêtre principale."
 
 #: gossip.schemas.in.h:11
 msgid "The height of the main window."
@@ -80,7 +77,7 @@ msgstr "La largeur de la fenêtre principale."
 
 #: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
-msgstr "Utiliser des binettes graphiques"
+msgstr "Utiliser des frimousses graphiques"
 
 #: gossip.schemas.in.h:14
 msgid "Use notification sounds"
@@ -90,7 +87,7 @@ msgstr "Utiliser des sons de notification"
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
-"Indique si il faut changer les binettes en images graphiques dans les "
+"Indique si il faut changer les frimousses en images graphiques dans les "
 "conversations ou non."
 
 #: gossip.schemas.in.h:16
@@ -110,23 +107,20 @@ msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Indique si il faut aficher les contacts qui sont hors ligne ou non."
 
 #: gossip.schemas.in.h:20
-#, fuzzy
 msgid "Width of the main window"
 msgstr "Largeur de la fenêtre principale"
 
 #: gossip.schemas.in.h:21
-#, fuzzy
 msgid "X position of main window"
-msgstr "Largeur de la fenêtre principale"
+msgstr "Position en X de la fenêtre principale"
 
 #: gossip.schemas.in.h:22
-#, fuzzy
 msgid "Y position of main window"
-msgstr "Largeur de la fenêtre principale"
+msgstr "Position en Y de la fenêtre principale"
 
 #: src/gossip-account-dialog.c:296 src/gossip-app.c:61
 msgid "Home"
-msgstr "Maison"
+msgstr "Domicile"
 
 #: src/gossip-add-contact.c:293
 #, c-format
@@ -140,106 +134,117 @@ msgstr ""
 msgid "%s will be added to your contact list."
 msgstr "%s va être ajouté à votre liste de contacts."
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:590
 msgid "Artwork by:"
-msgstr ""
+msgstr "Graphisme par :"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:598
+#: src/gossip-app.c:597
 msgid "translator_credits"
 msgstr ""
+"Mainteneur :\n"
+"Laurent Richard <laurent.richard@lilit.be>\n"
+"\n"
+"Contributeurs :\n"
 "Frédéric Brin <duckx@mezimail.com>\n"
-"Lionel Henry <yoplait@tuxfamily.org>"
+"Lionel Henry <yoplait@tuxfamily.org>\n"
+"Christophe Merlet (RedFox) <redfox@redfoxcenter.org>"
 
-#: src/gossip-app.c:613
-#, fuzzy
+#: src/gossip-app.c:612
 msgid "An Instant Messaging Client for GNOME"
-msgstr "Un client Jabber pour GNOME"
+msgstr "Un client de messagerie instantanée pour GNOME"
 
-#: src/gossip-app.c:622
+#: src/gossip-app.c:621
 msgid "Gossip Website"
 msgstr "Le site web de Gossip"
 
-#: src/gossip-app.c:718
+#: src/gossip-app.c:680
+msgid "Unable to Authenticate"
+msgstr "Impossible de vous authentifier"
+
+#: src/gossip-app.c:681
+msgid ""
+"Make sure that your account information is correct, such as your username "
+"and password."
+msgstr ""
+"Veuillez vous assurer que les informations de votre compte telles que votre "
+"nom d'utilisateur ainsi que votre mot de passe sont correctes."
+
+#: src/gossip-app.c:731
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Saisissez l'identifiant de l'utilisateur avec qui vous souhaitez discuter."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:736 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Discuter"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:987
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s souhaite être notifié de votre présence."
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1228
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Vous avez été déconnecté du serveur. Souhaitez-vous vous reconnecter ?"
 
-#: src/gossip-app.c:1375
+#: src/gossip-app.c:1388
 msgid "Make sure that your account information is correct."
 msgstr ""
 "Veuillez vous assurer que les informations de votre compte sont correctes."
 
-#: src/gossip-app.c:1376
+#: src/gossip-app.c:1389
 msgid "The server may currently be unavailable."
 msgstr "Le serveur peut actuellement être indisponible."
 
-#: src/gossip-app.c:1847
-#, fuzzy
+#: src/gossip-app.c:1859
 msgid "Gossip, Instant Messaging Client"
-msgstr "Un client Jabber pour GNOME"
+msgstr "Gossip, un client de messagerie instantanée"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:2001
 #, c-format
 msgid "New message from %s"
 msgstr "Nouveau message de %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
+#: src/gossip-app.c:2090 src/gossip-chat-window.c:698
 #: src/gossip-roster-view.c:935
 msgid "Offline"
 msgstr "Déconnecté"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2488 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "Disponible"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2499 src/gossip-preferences.c:640
 msgid "Busy"
-msgstr "Indisponible"
+msgstr "Occupé"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2510 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "Absent"
 
-#: src/gossip-app.c:2626
-#, fuzzy
+#: src/gossip-app.c:2642
 msgid "Available..."
-msgstr "Disponible"
+msgstr "Disponible..."
 
-#: src/gossip-app.c:2631
-#, fuzzy
+#: src/gossip-app.c:2647
 msgid "Busy..."
-msgstr "Indisponible"
+msgstr "Occupé..."
 
-#: src/gossip-app.c:2636
-#, fuzzy
+#: src/gossip-app.c:2652
 msgid "Away..."
-msgstr "Absent"
+msgstr "Absent..."
 
-#: src/gossip-app.c:2665
-#, fuzzy
+#: src/gossip-app.c:2681
 msgid "Edit List..."
-msgstr "_Éditer les états"
+msgstr "Éditer la liste..."
 
 #: src/gossip-chat-view.c:339 ui/chat.glade.h:2
 msgid "C_lear"
-msgstr ""
+msgstr "_Nettoyer"
 
 #: src/gossip-chat-view.c:356
 msgid "_Copy Link Address"
@@ -279,14 +284,12 @@ msgid "%s comes online"
 msgstr "%s s'est connecté"
 
 #: src/gossip-chat.c:913
-#, fuzzy
 msgid "Connected"
-msgstr "Connexion"
+msgstr "Connecté"
 
 #: src/gossip-chat.c:928
-#, fuzzy
 msgid "Disconnected"
-msgstr "_Déconnecter"
+msgstr "Déconnecté"
 
 #: src/gossip-contact-info.c:352
 #, c-format
@@ -296,16 +299,15 @@ msgstr "Informations sur le contact %s"
 #: src/gossip-edit-groups-dialog.c:182
 #, c-format
 msgid "Edit groups for %s"
-msgstr ""
+msgstr "Édition des groupes de discussion pour %s"
 
 #: src/gossip-edit-groups-dialog.c:246
-#, fuzzy
 msgid "Select"
-msgstr "_Rejeter"
+msgstr "Selectionner"
 
 #: src/gossip-edit-groups-dialog.c:257
 msgid "Group"
-msgstr ""
+msgstr "Groupe"
 
 #. This needs to be done better, could have group_is_unsorted().
 #.
@@ -340,7 +342,7 @@ msgstr "Quel compte souhaitez-vous utiliser pour vous connecter au démarrage ?
 
 #: src/gossip-main.c:79
 msgid "ACCOUNT-NAME"
-msgstr "NOM-COMPTE"
+msgstr "NOM-DU-COMPTE"
 
 #: src/gossip-main.c:87
 msgid "List the available accounts"
@@ -365,7 +367,7 @@ msgstr "Erreur inconnue"
 
 #: src/gossip-register.c:168
 msgid "Registering account"
-msgstr "Enregistrement du compte"
+msgstr "Enregistrement du compte en cours"
 
 #: src/gossip-register.c:208
 msgid "Successfully registered the account"
@@ -373,7 +375,7 @@ msgstr "Votre compte a été enregistré avec succès"
 
 #: src/gossip-register.c:229 src/gossip-register.c:235
 msgid "Failed registering the account"
-msgstr "Votre compte n'a pas pu être enregistré"
+msgstr "L'enregistrement du compte a échoué"
 
 #: src/gossip-register.c:231
 msgid "Reason:"
@@ -389,7 +391,7 @@ msgstr "/_Renommer le contact"
 
 #: src/gossip-roster-view.c:199
 msgid "/_Edit groups"
-msgstr ""
+msgstr "/_Édition des groupes de discussion"
 
 #: src/gossip-roster-view.c:207
 msgid "/Show _Log"
@@ -471,15 +473,15 @@ msgstr "Gossip - Conversation"
 
 #: ui/chat.glade.h:7
 msgid "Gossip - Received Message"
-msgstr "Gossip - Message Reçu"
+msgstr "Gossip - Message reçu"
 
 #: ui/chat.glade.h:8
 msgid "Gossip - Send Message"
-msgstr "Gossip - Message Envoyé"
+msgstr "Gossip - Message envoyé"
 
 #: ui/chat.glade.h:9
 msgid "In reply to:"
-msgstr "En réponse à:"
+msgstr "En réponse à :"
 
 #: ui/chat.glade.h:10
 msgid "Move Tab _Left"
@@ -494,9 +496,8 @@ msgid "To:"
 msgstr "À :"
 
 #: ui/chat.glade.h:13
-#, fuzzy
 msgid "View Lo_g"
-msgstr "_Archives"
+msgstr "_Afficher les archives"
 
 #: ui/chat.glade.h:14
 msgid "_Conversation"
@@ -664,7 +665,7 @@ msgstr "<b>Requête des informations, veuillez patienter...</b>"
 
 #: ui/main.glade.h:5
 msgid "<b>Preset status messages</b>"
-msgstr ""
+msgstr "<b>Messages d'état personalisé</b>"
 
 #: ui/main.glade.h:6
 msgid "<i>Information not available</i>"
@@ -712,7 +713,7 @@ msgstr "Infomations sur le contact"
 
 #: ui/main.glade.h:17
 msgid "Convert _smileys to graphical images"
-msgstr "_Convertir les binettes en images graphiques"
+msgstr "_Convertir les frimousses en images graphiques"
 
 #: ui/main.glade.h:18
 msgid "Country:"
@@ -739,18 +740,16 @@ msgid "Do you want to accept the request?"
 msgstr "Acceptez-vous la requête ?"
 
 #: ui/main.glade.h:24
-#, fuzzy
 msgid "Edit Groups"
-msgstr "Gossip - Édition des groupes de discussions"
+msgstr "Édition des groupes de discussions"
 
 #: ui/main.glade.h:25
 msgid "Email:"
 msgstr "Courrier électronique :"
 
 #: ui/main.glade.h:26
-#, fuzzy
 msgid "Enter status message:"
-msgstr "État personnalisé :"
+msgstr "Saisissez le message d'état :"
 
 #: ui/main.glade.h:28
 msgid ""
@@ -878,9 +877,8 @@ msgid "Status"
 msgstr "État"
 
 #: ui/main.glade.h:58
-#, fuzzy
 msgid "Status Message"
-msgstr "États"
+msgstr "Message d'état"
 
 #: ui/main.glade.h:59
 msgid "Status Messages"
@@ -979,7 +977,6 @@ msgid "_Join Group Chat..."
 msgstr "_Rejoindre un groupe de discussions..."
 
 #: ui/main.glade.h:84
-#, fuzzy
 msgid "_New Message..."
 msgstr "_Entamer une conversation... "
 
@@ -1001,277 +998,4 @@ msgstr "_Afficher la liste des contacts"
 
 #: ui/main.glade.h:89
 msgid "_Status Messages"
-msgstr "_États"
-
-#~ msgid "Send _Message..."
-#~ msgstr "_Entamer une conversation... "
-
-#~ msgid "_Quit"
-#~ msgstr "_Quitter"
-
-#~ msgid "Gossip, Jabber Client"
-#~ msgstr "Gossip, Client Jabber"
-
-#~ msgid "About to leave..."
-#~ msgstr "Je suis sur le point de partir..."
-
-#~ msgid "Autoaway message"
-#~ msgstr "Message automatique d'absence"
-
-#~ msgid "Away messages"
-#~ msgstr "Messages d'absence"
-
-#~ msgid "Busy messages"
-#~ msgstr "Messages d'indisponibilité"
-
-#~ msgid "Message to show before going away"
-#~ msgstr "Message à afficher avant une absence"
-
-#~ msgid "Not at the computer"
-#~ msgstr "Je ne suis pas devant l'ordinateur"
-
-#~ msgid "Just about to leave..."
-#~ msgstr "Sur le point de partir..."
-
-#~ msgid "Custom Message..."
-#~ msgstr "Message personnalisé..."
-
-#~ msgid "Custom Busy Message..."
-#~ msgstr "Message personnalisé d'indisponibilité..."
-
-#~ msgid "Leave..."
-#~ msgstr "Partir..."
-
-#~ msgid "New Busy Message"
-#~ msgstr "Nouvel état pour une indisponibilité"
-
-#~ msgid "New Away Message"
-#~ msgstr "Nouvel état pour une absence"
-
-#~ msgid "Working"
-#~ msgstr "Je travaille"
-
-#~ msgid "Eating"
-#~ msgstr "Je mange"
-
-#~ msgid "Sleeping"
-#~ msgstr "Je dors"
-
-#~ msgid "Enter the new message:"
-#~ msgstr "Saisir un nouvel état :"
-
-#~ msgid "Leave"
-#~ msgstr "Partir"
-
-#~ msgid "Preset messages for quickly setting away status."
-#~ msgstr "États personnalisés pour saisir rapidement la raison d'une absence."
-
-#~ msgid "Preset messages for quickly setting busy status."
-#~ msgstr ""
-#~ "États personnalisés pour saisir rapidement la raison d'une "
-#~ "indisponibilité."
-
-#~ msgid "Reason for being busy:"
-#~ msgstr "Raison de votre indisponibilité :"
-
-#~ msgid "Reason for leaving:"
-#~ msgstr "Raison de votre départ :"
-
-#~ msgid "Open conversations in single window with list view"
-#~ msgstr "Ouvrir les conversations dans une fenêtre unique avec une vue liste"
-
-#~ msgid "Timestamp all messages"
-#~ msgstr "Horodater tous les messages"
-
-#~ msgid "Whether or not to timestamp all messages in conversations."
-#~ msgstr ""
-#~ "Indique si il faut horodater tous les messages des conversations ou non."
-
-#~ msgid "[Eating,Sleeping]"
-#~ msgstr "[Je mange,Je dors]"
-
-#~ msgid "[Working]"
-#~ msgstr "Je travaille"
-
-#~ msgid "Custom Away Message..."
-#~ msgstr "Message d'absence personnalisé..."
-
-#~ msgid "%sChat"
-#~ msgstr "%sConversation"
-
-#~ msgid "Offline "
-#~ msgstr "Déconnecté "
-
-#~ msgid "Others"
-#~ msgstr "Autres"
-
-#~ msgid "As _Windows"
-#~ msgstr "Comme une _fenêtre"
-
-#~ msgid "As a _List"
-#~ msgstr "Comme une _liste"
-
-#~ msgid "Chat with:"
-#~ msgstr "Discuter avec :"
-
-#~ msgid "_Go"
-#~ msgstr "A_ller"
-
-#~ msgid "_Next Conversation"
-#~ msgstr "Conversation _suivante"
-
-#~ msgid "Leaving:"
-#~ msgstr "Sur le point de partir :"
-
-#~ msgid "Messages"
-#~ msgstr "Messages"
-
-#~ msgid "Notification"
-#~ msgstr "Notification"
-
-#~ msgid "Open conversations in a single window with _list view"
-#~ msgstr ""
-#~ "Ouvrir les conversations dans une fenêtre unique avec une _vue liste"
-
-#~ msgid ""
-#~ "These messages are used to describe your status when you're about to "
-#~ "leave and when you're away."
-#~ msgstr ""
-#~ "Ces messages seront utilisés pour déterminer votre état lorsque vous "
-#~ "serez surle point de partir ainsi que lors de vos abscences."
-
-#~ msgid "Use com_pact conversation style"
-#~ msgstr "Utiliser un _style compact pour les conversations"
-
-#~ msgid "Use sounds to _notify when new messages arrive"
-#~ msgstr "Utiliser des sons pour _notifier l'arrivée de nouveaux messages"
-
-#~ msgid "_Send Chat Message..."
-#~ msgstr "D_iscuter avec..."
-
-#~ msgid "_Timestamp all messages"
-#~ msgstr "_Horodater tous les messages"
-
-#~ msgid "Get information about this contact"
-#~ msgstr "Obtenir des informations sur ce contact"
-
-#~ msgid "Use ta_bs instead of windows for conversations"
-#~ msgstr ""
-#~ "Utiliser des _onglets à la place des fenêtres pour les conversations"
-
-#~ msgid "Auto away enabled"
-#~ msgstr "Absence automatique activée"
-
-#~ msgid "Extended autoaway time"
-#~ msgstr "Temps pour activer l'état « absence étendue »"
-
-#~ msgid ""
-#~ "The number of minutes of idle time before automatically going into \"away"
-#~ "\" mode."
-#~ msgstr "Le nombre de minutes avant de passer à l'état « absent »."
-
-#~ msgid ""
-#~ "The number of minutes of idle time before automatically going into "
-#~ "\"extended away\" mode."
-#~ msgstr "Le nombre de minutes avant de passer à l'état « absence étendue »."
-
-#~ msgid ""
-#~ "Whether or not to go into \"away\" mode automatically when a certain time "
-#~ "of idling has passed."
-#~ msgstr ""
-#~ "Indique si on peut passer en mode « absent » après un moment "
-#~ "d'inactivitéou non"
-
-#~ msgid "Set your status:"
-#~ msgstr "Définir votre status :"
-
-#~ msgid "Contact will be added to your contact list"
-#~ msgstr "Le contact va être ajouté à votre liste de contacts"
-
-#~ msgid "Free to chat"
-#~ msgstr "Libre pour discuter"
-
-#~ msgid "Extended away"
-#~ msgstr "Absence étendue"
-
-#~ msgid "_Edit Account..."
-#~ msgstr "_Éditer le compte..."
-
-#~ msgid "_Priority:"
-#~ msgstr "_Priorité :"
-
-#~ msgid ""
-#~ "<b>Welcome to Gossip</b>\n"
-#~ "\n"
-#~ "Gossip is a modern client for the Jabber Instant Message system.\n"
-#~ "\n"
-#~ "This assistant will help you configure Gossip and connect you to your "
-#~ "favorite Jabber server."
-#~ msgstr ""
-#~ "<b>Bienvenue dans Gossip</b>\n"
-#~ "\n"
-#~ "Gossip est un client moderne pour le système de Messagerie Instantannée "
-#~ "Jabber.\n"
-#~ "\n"
-#~ "Cet assistant va vous aider à configurer Gossip et vous permettre de vous "
-#~ "connecter à votre serveur favori"
-
-#~ msgid "<b>Additional information</b>"
-#~ msgstr "<b>Informations complémentaires</b>"
-
-#~ msgid "<b>Address</b>"
-#~ msgstr "<b>Adresse</b>"
-
-#~ msgid "<b>Auto away</b>"
-#~ msgstr "<b>Absence automatique</b>"
-
-#~ msgid "<b>Email:</b>"
-#~ msgstr "<b>Courrier électronique :</b>"
-
-#~ msgid "<b>Jabber ID:</b>"
-#~ msgstr "<b>ID Jabber :</b>"
-
-#~ msgid "<b>Name:</b>"
-#~ msgstr "<b>Nom :</b>"
-
-#~ msgid "<b>Setup Finished</b>"
-#~ msgstr "<b>Configuration Terminée</b>"
-
-#~ msgid "<b>Sound</b>"
-#~ msgstr "<b>Son</b>"
-
-#~ msgid "Automatically enter away mode during inactivity"
-#~ msgstr "Etre automatiquement absent en cas d'inactivité"
-
-#~ msgid "Dinner"
-#~ msgstr "Dîner"
-
-#~ msgid "Enter away mode after"
-#~ msgstr "Passer « absent » après"
-
-#~ msgid "I'm away eating dinner, bbiab..."
-#~ msgstr "Je suis parti manger, je suis de retour bientôt"
-
-#~ msgid "Presence:"
-#~ msgstr "Présence:"
-
-#~ msgid "Priority:"
-#~ msgstr "Priorité:"
-
-#~ msgid "Set the status you want to use"
-#~ msgstr "Définissez l'état que vous souhaitez utiliser"
-
-#~ msgid "Subscription request"
-#~ msgstr "Requête d'enregistrement"
-
-#~ msgid "_Actions"
-#~ msgstr "_Actions"
-
-#~ msgid "_Approve"
-#~ msgstr "_Accepter"
-
-#~ msgid "_Defer"
-#~ msgstr "_Reporter"
-
-#~ msgid "minutes"
-#~ msgstr "minutes"
+msgstr "Messages d'_états"
