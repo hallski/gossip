@@ -4,6 +4,7 @@
 	(app_new_message_presence_data_func): Added
 	(app_new_message): 
 	- Show presence icon in popup list in new message dialog.
+	- Fixes bug #133194
 
 2004-06-16  Mikael Hallendal  <micke@imendio.com>
 
