@@ -7,14 +7,14 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
-"POT-Creation-Date: 2004-02-10 11:55+0100\n"
-"PO-Revision-Date: 2004-01-30 12:28+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-03-01 04:16+0100\n"
+"PO-Revision-Date: 2004-03-01 15:24+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
 
 #: gossip.desktop.in.h:1 ui/main.glade.h:27
 msgid "Gossip"
@@ -127,90 +127,100 @@ msgstr "Jakou zprávu požadavku chcete odeslat %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s bude přidán do vašeho seznamu kontaktů."
 
-#: src/gossip-app.c:591
+#: src/gossip-app.c:590
 msgid "Artwork by:"
 msgstr "Grafika od:"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:598
+#: src/gossip-app.c:597
 msgid "translator_credits"
 msgstr "Miloslav Trmač <mitr@volny.cz>"
 
-#: src/gossip-app.c:613
+#: src/gossip-app.c:612
 msgid "An Instant Messaging Client for GNOME"
 msgstr "Klient Instant Messaging pro GNOME"
 
-#: src/gossip-app.c:622
+#: src/gossip-app.c:621
 msgid "Gossip Website"
 msgstr "WWW stránka Gossipu:"
 
-#: src/gossip-app.c:718
+#: src/gossip-app.c:680
+msgid "Unable to Authenticate"
+msgstr "Nemohu se autentizovat"
+
+#: src/gossip-app.c:681
+msgid ""
+"Make sure that your account information is correct, such as your username "
+"and password."
+msgstr "Zkontrolujte, že vaše informace o účtu, například jméno uživatele a heslo, jsou správné."
+
+#: src/gossip-app.c:731
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:723 ui/main.glade.h:76
+#: src/gossip-app.c:736 ui/main.glade.h:76
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: src/gossip-app.c:974
+#: src/gossip-app.c:987
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s chce být upozorňován na vaši přítomnost."
 
-#: src/gossip-app.c:1215
+#: src/gossip-app.c:1228
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1375
+#: src/gossip-app.c:1388
 msgid "Make sure that your account information is correct."
 msgstr "Zkontrolujte, že vaše informace o účtu jsou správné."
 
-#: src/gossip-app.c:1376
+#: src/gossip-app.c:1389
 msgid "The server may currently be unavailable."
 msgstr "Server teď možná není k dispozici."
 
-#: src/gossip-app.c:1847
+#: src/gossip-app.c:1859
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Klient Instant Messaging"
 
-#: src/gossip-app.c:1988
+#: src/gossip-app.c:2001
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2077 src/gossip-chat-window.c:698
+#: src/gossip-app.c:2090 src/gossip-chat-window.c:698
 #: src/gossip-roster-view.c:935
 msgid "Offline"
 msgstr "Odpojen"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:639
+#: src/gossip-app.c:2488 src/gossip-preferences.c:639
 msgid "Available"
 msgstr "K dispozici"
 
-#: src/gossip-app.c:2483 src/gossip-preferences.c:640
+#: src/gossip-app.c:2499 src/gossip-preferences.c:640
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/gossip-app.c:2494 src/gossip-preferences.c:641
+#: src/gossip-app.c:2510 src/gossip-preferences.c:641
 msgid "Away"
 msgstr "Pryč"
 
-#: src/gossip-app.c:2626
+#: src/gossip-app.c:2642
 msgid "Available..."
 msgstr "K dispozici..."
 
-#: src/gossip-app.c:2631
+#: src/gossip-app.c:2647
 msgid "Busy..."
 msgstr "Zaneprázdněn..."
 
-#: src/gossip-app.c:2636
+#: src/gossip-app.c:2652
 msgid "Away..."
 msgstr "Pryč..."
 
-#: src/gossip-app.c:2665
+#: src/gossip-app.c:2681
 msgid "Edit List..."
 msgstr "Upravit seznam..."
 
