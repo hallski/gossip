@@ -1,5 +1,14 @@
 2003-11-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c: (chat_update_locked_resource), (chat_send),
+	(chat_composing_send_start_event), (chat_message_handler),
+	(chat_event_handler): Don't relock on error messages, don't send
+	typing notification to offline contacts, and don't request typing
+	notification from them either. Also handle when we don't get a
+	resource, it seems to happen with some transports(?).
+
+2003-11-17  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c: (tab_notebook_size_request_cb),
 	(tab_label_size_request_cb), (chat_window_create_label): Set
 	minimum size for tab labels, and add some experimental commented

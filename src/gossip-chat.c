@@ -385,19 +385,36 @@ chat_update_locked_resource (GossipChat *chat)
 	}
 
 	jid = gossip_roster_item_get_jid (priv->item);
-	
+
 	roster_resource = gossip_jid_get_resource (jid);
 
-	if (!priv->roster_resource) {
-		priv->roster_resource = g_strdup (roster_resource);
-	}
+	/* It seems like some agents don't set a resource sometimes (ICQ for
+	 * example). I don't know if it's a bug or not, but we need to handle
+	 * those cases either way.
+	 */
+	if (!roster_resource) {
+		g_free (priv->roster_resource);
+		priv->roster_resource = NULL;
 
-	if (!priv->locked_resource) {
-		priv->locked_resource = g_strdup (roster_resource);
+		g_free (priv->locked_resource);
+		priv->locked_resource = NULL;
+
+		/* Make sure we don't try to send composing events if the
+		 * resource somehow got lost.
+		 */
+		priv->send_composing_events = FALSE;
+
+		return;
 	}
 	
-	if (g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
+	if (priv->roster_resource &&
+	    g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
 		d(g_print ("Roster unchanged\n"));
+
+		if (!priv->locked_resource) {
+			priv->locked_resource = g_strdup (roster_resource);
+		}
+		
 		return;
 	}
 	
@@ -477,10 +494,11 @@ chat_send (GossipChat  *chat,
 	
 	lm_message_node_add_child (m->node, "body", msg);
         
-        if (priv->request_composing_events) {
+        if (!gossip_roster_item_is_offline (priv->item) &&
+	    priv->request_composing_events) {
                 chat_request_composing (m);
         }
-
+	
 	gossip_log_message (m, FALSE);
 
         lm_connection_send (gossip_app_get_connection (), m, NULL);
@@ -547,6 +565,10 @@ chat_composing_send_start_event (GossipChat *chat)
                 return;
         }
 
+	if (gossip_roster_item_is_offline (priv->item)) {
+		return;
+	}
+	
 	jid_string = chat_get_jid_with_resource (chat, priv->composing_resource);
 		
         m = lm_message_new_with_sub_type (jid_string,
@@ -647,23 +669,12 @@ chat_message_handler (LmMessageHandler *handler,
                    gossip_jid_get_without_resource (from_jid),
                    gossip_jid_get_without_resource (jid)));
 
-	d(g_print ("from: %s'\n", gossip_jid_get_full (from_jid)));
+	d(g_print ("from: '%s'\n", gossip_jid_get_full (from_jid)));
 
         if (!gossip_jid_equals_without_resource (from_jid, jid)) {
                 gossip_jid_unref (from_jid);
                 return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
         }
-
-	from_resource = gossip_jid_get_resource (from_jid);
-
-	if (!priv->locked_resource ||
-	    g_ascii_strcasecmp (from_resource, priv->locked_resource)) {
-		d(g_print ("New resource, relock\n"));
-		g_free (priv->locked_resource);
-		priv->locked_resource = g_strdup (from_resource);
-	}
-	
-	gossip_jid_unref (from_jid);
 
         type = lm_message_get_sub_type (m);
 
@@ -689,11 +700,24 @@ chat_message_handler (LmMessageHandler *handler,
                 return LM_HANDLER_RESULT_REMOVE_MESSAGE;
         }
 
+	from_resource = gossip_jid_get_resource (from_jid);
+	
+	if (from_resource &&
+	    (!priv->locked_resource ||
+	     g_ascii_strcasecmp (from_resource, priv->locked_resource) != 0)) {
+
+		d(g_print ("New resource, relock\n"));
+		g_free (priv->locked_resource);
+		priv->locked_resource = g_strdup (from_resource);
+	}
+	
+	gossip_jid_unref (from_jid);
+
         if (chat_event_handler (chat, m)) {
                 return LM_HANDLER_RESULT_REMOVE_MESSAGE;
         }
 
-        timestamp = gossip_utils_get_timestamp_from_message (m);
+	timestamp = gossip_utils_get_timestamp_from_message (m);
 
         node = lm_message_node_get_child (m->node, "body");
         if (node) {
@@ -798,8 +822,8 @@ chat_event_handler (GossipChat *chat, LmMessage *m)
         if (lm_message_node_get_child (m->node, "body")) {
                 if (lm_message_node_get_child (x, "composing")) {
                         /* Handle request for composing events. */
-                        priv->send_composing_events = TRUE;
-
+			priv->send_composing_events = TRUE;
+			
 			from = lm_message_node_get_attribute (m->node, "from");
 			jid = gossip_jid_new (from);
 			
@@ -808,13 +832,13 @@ chat_event_handler (GossipChat *chat, LmMessage *m)
 				g_strdup (gossip_jid_get_resource (jid));
 			
 			gossip_jid_unref (jid);
-					      
-                        g_free (priv->last_composing_id);
-                        new_id = lm_message_node_get_attribute (m->node, "id");
-                        if (new_id) {
-                                priv->last_composing_id = g_strdup (new_id);
-                        }
-                }
+			
+			g_free (priv->last_composing_id);
+			new_id = lm_message_node_get_attribute (m->node, "id");
+			if (new_id) {
+				priv->last_composing_id = g_strdup (new_id);
+			}
+		}
 
                 g_signal_emit (chat, chat_signals[COMPOSING], 0, FALSE);
 
