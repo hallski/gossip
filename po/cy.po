@@ -1,21 +1,20 @@
-# gossip yn Gymraeg.
-# Copyright (C) 2003, The Free Software Foundation
+# Gossip yn Gymraeg.
 # This file is distributed under the same license as the gossip package.
-# Dafydd Harries <daf@parnassus.ath.cx>, 2003.
+# Dafydd Harries <daf@muse.19inch.net>, 2003 2004.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-12 23:46+0100\n"
-"PO-Revision-Date: 2004-04-13 00:13+0100\n"
-"Last-Translator: Dafydd Harries <daf@parnassus.ath.cx>\n"
+"POT-Creation-Date: 2004-07-05 13:05+0100\n"
+"PO-Revision-Date: 2004-07-05 16:41+0100\n"
+"Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Cymraeg <gnome-cy@www.linux.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:27
+#: gossip.desktop.in.h:1 ui/main.glade.h:30
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -133,145 +132,150 @@ msgstr "Cyfieithwyd gan:"
 msgid "translator_credits"
 msgstr "Dafydd Harries"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:61
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:64
 msgid "Home"
 msgstr "Adref"
 
-#: src/gossip-add-contact.c:293
+#: src/gossip-add-contact.c:291
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr "Pa neges cais hoffwch chi anfon at %s?"
 
-#: src/gossip-add-contact.c:311
+#: src/gossip-add-contact.c:309
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "Caiff %s ei ychwanegu i'ch restr cyswllt."
 
-#: src/gossip-app.c:639
+#: src/gossip-app.c:644
 msgid "Could not connect"
 msgstr "Methwyd cysylltu"
 
-#: src/gossip-app.c:640
+#: src/gossip-app.c:645
 msgid "Make sure that your account information is correct."
 msgstr "Sicrhewch fod eich manylion cyfrif yn gywir."
 
-#: src/gossip-app.c:696
+#: src/gossip-app.c:713
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Rhowch ID defnyddiwr y person hoffwch anfon neges sgwrs atynt."
 
-#: src/gossip-app.c:701 ui/main.glade.h:76
+#: src/gossip-app.c:720 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Sgwrs"
 
-#: src/gossip-app.c:952
+#: src/gossip-app.c:1017
 #, c-format
-msgid "%s wants to be notified of your presence."
-msgstr "Mae %s eisiau cael eu hysbysebu os ydych yn bresenol ai peidio."
+msgid "%s wants to be notified of your status."
+msgstr "Mae %s eisiau cael eu hysbysu o'ch cyflwr."
 
-#: src/gossip-app.c:1193
+#: src/gossip-app.c:1259
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Fe gafoch eich datgysylltu o'r gweinydd. A hoffech ailgysylltu?"
 
-#: src/gossip-app.c:1348
+#: src/gossip-app.c:1414
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
-msgstr "Sicrhewch fod eich manylion cyfrif yn gywir. Hefyd, efallai nid yw'r "
+msgstr ""
+"Sicrhewch fod eich manylion cyfrif yn gywir. Hefyd, efallai nid yw'r "
 "gweinydd ar gael."
 
-#: src/gossip-app.c:1820
+#: src/gossip-app.c:1887
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Cleient Negeseuo Cyflym"
 
-#: src/gossip-app.c:1962
+#: src/gossip-app.c:2031
 #, c-format
 msgid "New message from %s"
 msgstr "Neges newydd o %s"
 
-#: src/gossip-app.c:2051 src/gossip-chat-window.c:698
-#: src/gossip-roster-view.c:938
+#: src/gossip-app.c:2120 src/gossip-chat-window.c:782
+#: src/gossip-roster-view.c:987
 msgid "Offline"
 msgstr "All-lein"
 
-#: src/gossip-app.c:2450 src/gossip-preferences.c:639
+#: src/gossip-app.c:2519 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Ar Gael"
 
-#: src/gossip-app.c:2461 src/gossip-preferences.c:640
+#: src/gossip-app.c:2530 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Prysur"
 
-#: src/gossip-app.c:2472 src/gossip-preferences.c:641
+#: src/gossip-app.c:2541 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Ymaith"
 
-#: src/gossip-app.c:2604
+#: src/gossip-app.c:2673
 msgid "Available..."
 msgstr "Ar Gael..."
 
-#: src/gossip-app.c:2609
+#: src/gossip-app.c:2678
 msgid "Busy..."
 msgstr "Prysur..."
 
-#: src/gossip-app.c:2614
+#: src/gossip-app.c:2683
 msgid "Away..."
 msgstr "Ymaith..."
 
-#: src/gossip-app.c:2643
+#: src/gossip-app.c:2712
 msgid "Edit List..."
 msgstr "Golygu'r Rhestr..."
 
-#: src/gossip-chat-view.c:339 ui/chat.glade.h:2
+#: src/gossip-chat-view.c:340 ui/chat.glade.h:2
 msgid "C_lear"
 msgstr "C_lirio"
 
-#: src/gossip-chat-view.c:356
+#: src/gossip-chat-view.c:357
 msgid "_Copy Link Address"
 msgstr "_Copïo Cyfeiriad y Cyswllt"
 
-#: src/gossip-chat-view.c:364
+#: src/gossip-chat-view.c:365
 msgid "_Open Link"
 msgstr "_Agor y Cyswllt"
 
-#: src/gossip-chat-view.c:678
+#: src/gossip-chat-view.c:676
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-window.c:490
+#: src/gossip-chat-window.c:539
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sSgwrs - %s"
 
-#: src/gossip-chat.c:717
+#: src/gossip-chat-window.c:794
+msgid "Typing a message."
+msgstr "Yn teipio neges."
+
+#: src/gossip-chat.c:715
 #, c-format
 msgid "An error occurred when chatting with %s."
 msgstr "Digwyddod gwall wrth sgwrsio efo %s."
 
-#: src/gossip-chat.c:722 src/gossip-group-chat.c:809
-#: src/gossip-group-chat.c:912
+#: src/gossip-chat.c:720 src/gossip-group-chat.c:908
+#: src/gossip-group-chat.c:1018
 msgid "Details:"
 msgstr "Manylion:"
 
-#: src/gossip-chat.c:812
+#: src/gossip-chat.c:811
 #, c-format
 msgid "%s went offline"
 msgstr "Aeth %s all-lein"
 
-#: src/gossip-chat.c:826
+#: src/gossip-chat.c:825
 #, c-format
 msgid "%s comes online"
 msgstr "Mae %s yn dod arlein"
 
-#: src/gossip-chat.c:913
+#: src/gossip-chat.c:906
 msgid "Connected"
 msgstr "Wedi Cysylltu"
 
-#: src/gossip-chat.c:928
+#: src/gossip-chat.c:920
 msgid "Disconnected"
 msgstr "Wedi Datgysylltu"
 
-#: src/gossip-contact-info.c:352
+#: src/gossip-contact-info.c:431
 #, c-format
 msgid "Contact Information for %s"
 msgstr "Gwybodaeth Cyswllt ar gyfer %s"
@@ -292,98 +296,98 @@ msgstr "Grŵp"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:37
+#: src/gossip-roster.c:38
 msgid "Unsorted"
 msgstr "Heb eu trefnu"
 
-#: src/gossip-group-chat.c:804
+#: src/gossip-group-chat.c:903
 #, c-format
 msgid "An error occurred when chatting in the group chat %s."
 msgstr "Digwyddod gwall wrth sgwrsio yn y sgwrs grŵp %s."
 
-#: src/gossip-group-chat.c:907
+#: src/gossip-group-chat.c:1013
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr "Ni ellir cyrchu'r sgwrs grŵp %s."
 
-#: src/gossip-log.c:307
+#: src/gossip-log.c:316
 msgid "Conversation Log"
 msgstr "Cofnod Sgwrs"
 
-#: src/gossip-main.c:69
+#: src/gossip-main.c:67
 msgid "Don't connect on startup"
 msgstr "Peidio a chysylltu wrth gychwyn"
 
-#: src/gossip-main.c:78
+#: src/gossip-main.c:76
 msgid "Which account to connect to on startup"
 msgstr "Pa gyfrif i gysylltu iddo wrth gychwyn"
 
-#: src/gossip-main.c:79
+#: src/gossip-main.c:77
 msgid "ACCOUNT-NAME"
 msgstr "ENW-CYFRIF"
 
-#: src/gossip-main.c:87
+#: src/gossip-main.c:85
 msgid "List the available accounts"
 msgstr "Rhestru'r cyfrifon sydd ar gael"
 
-#: src/gossip-main.c:120
+#: src/gossip-main.c:118
 msgid "Available accounts:"
 msgstr "Cyfrifon sydd ar gael:"
 
-#: src/gossip-main.c:129
+#: src/gossip-main.c:127
 msgid "[default]"
 msgstr "[rhagosodiad]"
 
-#: src/gossip-main.c:152
+#: src/gossip-main.c:150
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Does dim cyfrif gyda'r enw '%s'."
 
-#: src/gossip-register.c:79
+#: src/gossip-register.c:84
 msgid "Unknown error"
 msgstr "Gwall anhysbys"
 
-#: src/gossip-register.c:168
+#: src/gossip-register.c:182
 msgid "Registering account"
 msgstr "Yn cofrestru cyfrif"
 
-#: src/gossip-register.c:208
+#: src/gossip-register.c:222
 msgid "Successfully registered the account"
 msgstr "Cofrestrwyd cyfrif yn llwyddianus"
 
-#: src/gossip-register.c:229 src/gossip-register.c:235
+#: src/gossip-register.c:243 src/gossip-register.c:249
 msgid "Failed registering the account"
 msgstr "Methwyd cofrestru cyfrif"
 
-#: src/gossip-register.c:231
+#: src/gossip-register.c:245
 msgid "Reason:"
 msgstr "Rheswm:"
 
-#: src/gossip-roster-view.c:186
+#: src/gossip-roster-view.c:209
 msgid "/Contact _Information"
 msgstr "/_Gwybodaeth Cyswllt"
 
-#: src/gossip-roster-view.c:194
+#: src/gossip-roster-view.c:217
 msgid "/Re_name contact"
 msgstr "/_Ailenwi'r cyswllt"
 
-#: src/gossip-roster-view.c:202
+#: src/gossip-roster-view.c:225
 msgid "/_Edit groups"
 msgstr "/_Golygu grŵpiau"
 
-#: src/gossip-roster-view.c:210
+#: src/gossip-roster-view.c:233
 msgid "/Show _Log"
 msgstr "/Dangos _Cofnod"
 
-#: src/gossip-roster-view.c:226
+#: src/gossip-roster-view.c:249
 msgid "/_Remove contact"
 msgstr "/_Tynnu'r cyswllt"
 
-#: src/gossip-roster-view.c:237
+#: src/gossip-roster-view.c:260
 msgid "/Re_name group"
 msgstr "/_Ailenwi'r grŵp"
 
-#: src/gossip-roster-view.c:1245
+#: src/gossip-roster-view.c:1398
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -394,7 +398,7 @@ msgstr ""
 "%s\n"
 "o'ch rhestr cyswllt?"
 
-#: src/gossip-roster-view.c:1338
+#: src/gossip-roster-view.c:1491
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -403,7 +407,7 @@ msgstr ""
 "Os gwelwch yn dda, rhowch llysenw newydd ar gyfer y cyswllt\n"
 "%s"
 
-#: src/gossip-roster-view.c:1444
+#: src/gossip-roster-view.c:1597
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -412,11 +416,11 @@ msgstr ""
 "Os gwelwch yn dda, rhowch enw newydd ar gyfer y grŵp\n"
 "%s"
 
-#: src/gossip-startup-druid.c:254
+#: src/gossip-startup-druid.c:251
 msgid "Gossip will now try to use your account:"
 msgstr "Fe fydd Gossip yn awr yn ceisio defnyddio eich cyfrif:"
 
-#: src/gossip-startup-druid.c:258
+#: src/gossip-startup-druid.c:255
 msgid "Gossip will now try to register the account:"
 msgstr "Fe fydd Gossip yn awr yn ceisio cofrestru'r cyfrif:"
 
@@ -427,6 +431,14 @@ msgstr "Rhowch eich cyfrinair os gwelwch yn dda:"
 #: src/gossip-utils.c:440
 msgid "Remember Password?"
 msgstr "Cofio'r Cyfrinair?"
+
+#: src/gossip-vcard-dialog.c:126
+msgid "Requesting personal details, please wait..."
+msgstr "Gofyn am fanylion personol..."
+
+#: src/gossip-vcard-dialog.c:257
+msgid "Saving personal details, please wait..."
+msgstr "Arbed manylion personol..."
 
 #: ui/chat.glade.h:1 ui/connect.glade.h:2 ui/group-chat.glade.h:3
 #: ui/main.glade.h:3
@@ -497,7 +509,7 @@ msgstr "Tab _Cynt"
 msgid "_Reply..."
 msgstr "_Ateb..."
 
-#: ui/chat.glade.h:19 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:19
 msgid "_Send"
 msgstr "_Anfon"
 
@@ -553,7 +565,7 @@ msgstr "_Cyfrinair:"
 msgid "_Resource:"
 msgstr "_Adnodd:"
 
-#: ui/connect.glade.h:14 ui/group-chat.glade.h:20
+#: ui/connect.glade.h:14 ui/group-chat.glade.h:19
 msgid "_Server:"
 msgstr "_Gweinydd:"
 
@@ -595,7 +607,7 @@ msgstr "Gossip - Ymuno a Sgwrs Grŵp"
 
 #: ui/group-chat.glade.h:11
 msgid "N_ickname:"
-msgstr "_Llysenw:"
+msgstr "Llysenw:"
 
 #: ui/group-chat.glade.h:12
 msgid ""
@@ -629,7 +641,7 @@ msgstr "_Llysenw:"
 msgid "_Room:"
 msgstr "_Ystafell:"
 
-#: ui/group-chat.glade.h:21
+#: ui/group-chat.glade.h:20
 msgid "_Topic:"
 msgstr "_Testun:"
 
@@ -638,98 +650,110 @@ msgid " "
 msgstr " "
 
 #: ui/main.glade.h:4
+msgid "<b>Description</b>"
+msgstr "<b>Disgrifiad</b>"
+
+#: ui/main.glade.h:5
 msgid "<b>Information requested, Please wait...</b>"
 msgstr "<b>Gofynnwyd gwybodaeth, arhoswch os gwelwch yn dda...</b>"
 
-#: ui/main.glade.h:5
+#: ui/main.glade.h:6
+msgid "<b>Personal information</b>"
+msgstr "<b>Manylion personol</b>"
+
+#: ui/main.glade.h:7
 msgid "<b>Preset status messages</b>"
 msgstr "<b>Negeseuon cyflwr rhagosod</b>"
 
-#: ui/main.glade.h:6
+#: ui/main.glade.h:8
 msgid "<i>Information not available</i>"
 msgstr "<i>Nid yw'r gwybodaeth ar gael</i>"
 
-#: ui/main.glade.h:7
+#: ui/main.glade.h:9
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Enghraifft: cyfrif@jabber.org</span>"
 
-#: ui/main.glade.h:8
+#: ui/main.glade.h:10
 msgid "Add a contact"
 msgstr "Ychwanegu cyswllt"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:11
 msgid "Add contact"
 msgstr "Ychwanegu cyswllt"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:12
 msgid "Add to your contact list"
 msgstr "Ychwanegu i'ch rhestr cysylltion"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:13
 msgid "Appearance"
 msgstr "Ymddangosiad"
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:14
 msgid "Choose a Server"
 msgstr "Dewiswch Weinydd"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:15
 msgid "Choose from list:"
 msgstr "Dewiswch o'r rhestr:"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:16
 msgid "Client information"
 msgstr "Manylion cleient"
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:17
 msgid "Client:"
 msgstr "Cleient:"
 
-#: ui/main.glade.h:16
+#: ui/main.glade.h:18
 msgid "Contact information"
 msgstr "Manylion cyswllt"
 
-#: ui/main.glade.h:17
+#: ui/main.glade.h:19
 msgid "Convert _smileys to graphical images"
 msgstr "Trosi _gwynebau i ddelweddau graffigol"
 
-#: ui/main.glade.h:18
+#: ui/main.glade.h:20
 msgid "Country:"
 msgstr "Gwlad:"
 
-#: ui/main.glade.h:19
+#: ui/main.glade.h:21
+msgid "Decide _Later"
+msgstr "Penderfynu _Wedyn"
+
+#: ui/main.glade.h:22
 msgid "Description"
 msgstr "Disgrifiad"
 
-#: ui/main.glade.h:20
+#: ui/main.glade.h:23
 msgid "Disable sounds when _away"
 msgstr "Analluogi synau wrth fod _ymaith"
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:24
 msgid "Disable sounds when _busy"
 msgstr "Analluogi synau wrth fod yn _brysur"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:25
 msgid "Do you already have an account on a Jabber server?"
 msgstr "A oes cyfrif ar weinydd Jabber gennych eisioes?"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:26
 msgid "Do you want to accept the request?"
 msgstr "Ydych chi eisiau derbyn yr ymgais?"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:27
 msgid "Edit Groups"
 msgstr "Golygu Grŵpiau"
 
-#: ui/main.glade.h:25
+#: ui/main.glade.h:28
 msgid "Email:"
 msgstr "Ebost:"
 
-#: ui/main.glade.h:26
+#: ui/main.glade.h:29
 msgid "Enter status message:"
 msgstr "Rhowch neges cyflwr:"
 
-#: ui/main.glade.h:28
+#: ui/main.glade.h:31
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -745,7 +769,7 @@ msgstr ""
 "\n"
 "Er mwyn cychwyn, cliciwch \"Ymlaen\"."
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:36
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -755,11 +779,11 @@ msgstr ""
 "Fe allwch newid eich gosodiadau cyfrif yn hwyrach, gan ddewis yr eitem "
 "dewislen Sgwrs->Cysylltu..."
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:38
 msgid "I would like to add you to my contact list."
 msgstr "Hoffwn eich ychwanegu at fy rhestr cysylltion."
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:39
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -769,225 +793,245 @@ msgstr ""
 "anfon cais. Tan i'r cais yma gael ei dderbyn, fe gaiff y defnyddiwr ei "
 "ddangos fel \"All-lein\" wastad yn eich rhestr cysylltion."
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:40
 msgid "In which group do you want to place this contact?"
 msgstr "Ym mha grŵp hoffech roi'r cyswllt hwn?"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:41
 msgid "Information about ..."
 msgstr "Gwybodaeth ynghylch ..."
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:42
 msgid "JID"
 msgstr "JID"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:43
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:44
 msgid "Jabber Account"
 msgstr "Cyfrif Jabber"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:45
 msgid "Jabber ID:"
 msgstr "ID Jabber:"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:46
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:47
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:48
 msgid "Name:"
 msgstr "Enw:"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:49
+msgid "Nickname:"
+msgstr "Llysenw:"
+
+#: ui/main.glade.h:50
 msgid "No"
 msgstr "Na"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:51
 msgid "OS:"
 msgstr "System Weithredu:"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:52
 msgid "On what server do you have a Jabber account?"
 msgstr "Ar ba weinydd oes cyfrif Jabber gennych?"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:53
+msgid "Personal Details"
+msgstr "Manylion Personol"
+
+#: ui/main.glade.h:54
 msgid "Personal information"
 msgstr "Manylion personol"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:55
 msgid "Play sound when messages arrive"
 msgstr "Chwarae sain pan mae negeseuon yn cyrraedd"
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:56
 msgid "Preferences"
 msgstr "Hoffterau"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:57
 msgid "Request message"
 msgstr "Neges cais"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:58
 msgid "Sending request"
 msgstr "Yn anfon cais"
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:59
 msgid "Setup Finished"
 msgstr "Gorffenwyd Cyflunio"
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:60
 msgid "Show _Offline Contacts"
 msgstr "Dangos Cysylltion All-lein"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:61
 msgid "Sound"
 msgstr "Sain"
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:62
 msgid "Status"
 msgstr "Cyflwr"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:63
 msgid "Status Message"
 msgstr "Neges Cyflwr"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:64
 msgid "Status Messages"
 msgstr "Negeseuon Cyflwr"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:65
+msgid "Subscription"
+msgstr "Tanysgrifiad"
+
+#: ui/main.glade.h:66
+msgid "Subscription Request"
+msgstr "Cais Tanysgrifiad"
+
+#: ui/main.glade.h:67
+msgid "This name will be used to identify you in chat windows."
+msgstr "Defnyddir yr enw hwn i'ch adnabod chi mewn ffenestri sgwrs."
+
+#: ui/main.glade.h:68
 msgid "Use a different server"
 msgstr "Defnyddio gweinydd arall"
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:69
 msgid "Version:"
 msgstr "Fersiwn:"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:70
 msgid "Web site:"
 msgstr "Safle gwe:"
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:71
 msgid "Welcome to Gossip"
 msgstr "Croeso i Gossip"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:72
 msgid "What instant messaging system does the contact use?"
 msgstr "Pa system negeseuo parod yw'r cyswllt yn ei ddefnyddio?"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:73
 msgid "What is your name?"
 msgstr "Beth yw eich enw?"
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:74
 msgid "What nickname do you want to use for this contact?"
 msgstr "Pa llysenw hoffwch ddefnyddio ar gyfer y cyswllt hwn?"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:75
 msgid "What request message do you want to send to ...?"
 msgstr "Pa neges cais hoffwch chi anfon at ...?"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:76
 msgid "What server do you want to use?"
 msgstr "Pa weinydd hoffech ddefnyddio?"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:77
 msgid "What username do you use?"
 msgstr "Pa enw cyfrif ydych chi'n ei ddefnyddio?"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:78
 msgid "What username do you want to use?"
 msgstr "Pa enw cyfrif hoffech chi ddefnyddio?"
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:79
 msgid "Yes"
 msgstr "Ie"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:80
+msgid ""
+"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"their status."
+msgstr ""
+"Nid ydych wedi tanysgrifio at gyflwr y cyswllt hwn. Gwasgwch Tanysgrifio er "
+"mwyn derbyn eu cyflwr."
+
+#: ui/main.glade.h:81
 msgid "Your Identity"
 msgstr "Eich Hunaniaeth"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:82
 msgid "_Accept"
 msgstr "_Derbyn"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:83
 msgid "_Account Information"
 msgstr "Manylion _Cyfrif"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:84
 msgid "_Add Contact..."
 msgstr "_Ychwanegu Cyswllt..."
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:86
 msgid "_Connect..."
 msgstr "_Cysylltu..."
 
-#: ui/main.glade.h:78
-msgid "_Decide Later"
-msgstr "_Penderfynu Wedyn"
-
-#: ui/main.glade.h:79
+#: ui/main.glade.h:87
 msgid "_Deny"
 msgstr "_Gwrthod"
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:88
 msgid "_Disconnect"
 msgstr "_Datgysylltu"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:89
 msgid "_Hide Contact List"
 msgstr "_Cuddio y Rhestr Cysylltion"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:90
 msgid "_Jabber ID of new contact:"
 msgstr "ID _Jabber y cyswllt newydd:"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:91
 msgid "_Join Group Chat..."
 msgstr "_Ymuno â Sgwrs Grŵp..."
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:92
 msgid "_New Message..."
 msgstr "Neges _Newydd..."
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:93
+msgid "_Personal Details"
+msgstr "Manylion _Personol"
+
+#: ui/main.glade.h:94
 msgid "_Preferences"
 msgstr "_Hoffterau"
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:95
 msgid "_Remove"
 msgstr "_Tynnu"
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:96
 msgid "_Search..."
 msgstr "_Chwilio..."
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:97
 msgid "_Show Contact List"
 msgstr "_Dangos y Rhestr Cysylltion"
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:98
 msgid "_Status Messages"
 msgstr "Negeseuon _Cyflwr"
 
-#, fuzzy
-#~ msgid "About Gossip"
-#~ msgstr "Gossip"
-
-#, fuzzy
-#~ msgid "translator_credits_old"
-#~ msgstr "Dafydd Harries <daf@parnassus.ath.cx>"
-
-#, fuzzy
-#~ msgid "An Instant Messaging Client for GNOME"
-#~ msgstr "Cleient Jabber ar gyfer GNOME"
+#: ui/main.glade.h:99
+msgid "_Subscribe"
+msgstr "_Tanysgrifio"
 
 #~ msgid "Gossip Website"
 #~ msgstr "Safle Gwe Gossip"
@@ -995,31 +1039,11 @@ msgstr "Negeseuon _Cyflwr"
 #~ msgid "The server may currently be unavailable."
 #~ msgstr "Efallai nid yw'r gweinydd ar gael ar hyn o bryd."
 
-#, fuzzy
-#~ msgid "Send _Message..."
-#~ msgstr "Danfon neges _Sgwrs..."
-
 #~ msgid "_Quit"
 #~ msgstr "_Gadael"
 
 #~ msgid "Gossip, Jabber Client"
 #~ msgstr "Gossip, Cleient Jabber"
-
-#, fuzzy
-#~ msgid "About to leave..."
-#~ msgstr "Rydw I ar fin gadael..."
-
-#, fuzzy
-#~ msgid "Autoaway message"
-#~ msgstr "Amser ymaith awtomatig"
-
-#, fuzzy
-#~ msgid "Away messages"
-#~ msgstr "Negeseuon"
-
-#, fuzzy
-#~ msgid "Busy messages"
-#~ msgstr "Neges cais"
 
 #~ msgid "Just about to leave..."
 #~ msgstr "Rydw I ar fin gadael..."
@@ -1029,18 +1053,6 @@ msgstr "Negeseuon _Cyflwr"
 
 #~ msgid "Custom Busy Message..."
 #~ msgstr "Neges Prysur Addasiedig..."
-
-#, fuzzy
-#~ msgid "Leave..."
-#~ msgstr "_Gadael..."
-
-#, fuzzy
-#~ msgid "New Busy Message"
-#~ msgstr "Neges Prysur Addasiedig..."
-
-#, fuzzy
-#~ msgid "Enter the new message:"
-#~ msgstr "Mynd i'r modd ymaith estynedig ar ôl "
 
 #~ msgid "Leave"
 #~ msgstr "Gadael"
@@ -1214,9 +1226,6 @@ msgstr "Negeseuon _Cyflwr"
 #~ msgid "<b>Setup Finished</b>"
 #~ msgstr "<b>Gorffenwyd Gosod</b>"
 
-#~ msgid "Subscription request"
-#~ msgstr "Cais tanysgrifio"
-
 #~ msgid ""
 #~ "This user wants to subscribe to your presence.\n"
 #~ "Do you approve?"
@@ -1274,6 +1283,3 @@ msgstr "Negeseuon _Cyflwr"
 
 #~ msgid "What request message do you want to send to <b>micke</b>?"
 #~ msgstr "Pa neges cais hoffwch chi anfon i <b>micke</b>?"
-
-#~ msgid "_Send chat message..."
-#~ msgstr "_Danfon neges sgwrs..."
