@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-11-05 04:50+0800\n"
-"PO-Revision-Date: 2003-11-05 04:47+0800\n"
+"POT-Creation-Date: 2003-11-12 00:49+0800\n"
+"PO-Revision-Date: 2003-11-12 01:10+0800\n"
 "Last-Translator: Abel Cheung <maddog@linux.org.hk>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gossip.desktop.in.h:1 ui/main.glade.h:25
+#: gossip.desktop.in.h:1 ui/main.glade.h:33
 msgid "Gossip"
 msgstr "Gossip"
 
@@ -24,7 +24,7 @@ msgstr "即時通訊程式"
 
 #: gossip.schemas.in.h:1
 msgid "About to leave..."
-msgstr ""
+msgstr "準備離開..."
 
 #: gossip.schemas.in.h:2
 msgid "Autoaway message"
@@ -67,92 +67,80 @@ msgid "The width of the main window."
 msgstr "主視窗寬度"
 
 #: gossip.schemas.in.h:12
-msgid "Timestamp all messages"
-msgstr "將所有訊息標上時間"
-
-#: gossip.schemas.in.h:13
 msgid "Use graphical smileys"
 msgstr "使用表情圖示"
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:13
 msgid "Use notification sounds"
 msgstr "使用音效來通知收到訊息"
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:14
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr "在對話時，是否將代表表情圖示的字符轉換為真正的圖示。"
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:15
 msgid "Whether or not to open conversations in a single window with list view."
 msgstr ""
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:16
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "將收到訊息時，是否播放音效。"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:17
 msgid "Whether or not to play sounds when away or busy."
 msgstr "當「離開」或「忙碌」時是否播放音效。"
 
-#: gossip.schemas.in.h:19
-msgid "Whether or not to timestamp all messages in conversations."
-msgstr "是否將對話中的所有訊息加上時間標記。"
-
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:18
 msgid "Width of main window"
 msgstr "主視窗寬度"
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:19
 msgid "[Eating,Sleeping]"
 msgstr "[用膳,睡覺]"
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:20
 msgid "[Working]"
 msgstr "[工作中]"
 
-#: src/gossip-account-dialog.c:296 src/gossip-app.c:56
+#: src/gossip-account-dialog.c:296 src/gossip-app.c:57
 msgid "Home"
 msgstr "首頁"
 
-#: src/gossip-add-contact.c:283
+#: src/gossip-add-contact.c:293
 #, c-format
 msgid "What request message do you want to send to %s?"
 msgstr ""
 
-#: src/gossip-add-contact.c:301
+#: src/gossip-add-contact.c:311
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s 將會被加入至您的好友名單"
 
-#: src/gossip-app.c:54
+#: src/gossip-app.c:56
 msgid "Just about to leave..."
 msgstr ""
 
-#: src/gossip-app.c:55
-msgid "Available"
-msgstr "已連線"
-
-#: src/gossip-app.c:396
+#: src/gossip-app.c:405
 msgid "_Show Contact List"
 msgstr "顯示好友名單(_S)"
 
-#: src/gossip-app.c:405
+#: src/gossip-app.c:414
 msgid "_Hide Contact List"
 msgstr "隱藏好友名單(_H)"
 
-#: src/gossip-app.c:418
+#: src/gossip-app.c:427
 msgid "Send _Chat message..."
 msgstr "送出聊天訊息(_C)"
 
-#: src/gossip-app.c:433
+#: src/gossip-app.c:442
 msgid "_Quit"
 msgstr "結束(_Q)"
 
 #. Note to translators: put here your name and email so it
 #. * will shop up in the "about" box
 #.
-#: src/gossip-app.c:525
+#: src/gossip-app.c:544
 msgid "translator_credits"
 msgstr ""
 "i18n 程式中文化計劃\n"
@@ -160,122 +148,111 @@ msgstr ""
 "\n"
 "Abel Cheung <maddog@linux.org.hk>, 2003"
 
-#: src/gossip-app.c:537
+#: src/gossip-app.c:556
 msgid "A Jabber Client for GNOME"
 msgstr "適用於 GNOME 的 Jabber 即時通訊程式"
 
-#: src/gossip-app.c:544
+#: src/gossip-app.c:563
 msgid "Gossip Website"
 msgstr "Gossip 網頁"
 
-#: src/gossip-app.c:646
+#: src/gossip-app.c:667
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 
-#: src/gossip-app.c:651 ui/main.glade.h:79
+#: src/gossip-app.c:672 ui/main.glade.h:95
 msgid "_Chat"
 msgstr "聊天(_C)"
 
-#: src/gossip-app.c:874
+#: src/gossip-app.c:905
 #, c-format
 msgid "%s wants to be notified of your presence."
 msgstr "%s 希望可以在您連線時獲得通知。"
 
-#: src/gossip-app.c:1109
+#: src/gossip-app.c:1140
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "伺服器方面已經中斷連線。是否重新連線？"
 
-#: src/gossip-app.c:1269
+#: src/gossip-app.c:1300
 msgid "Make sure that your account information is correct."
 msgstr "請確保您的戶口的資訊正確無誤。"
 
-#: src/gossip-app.c:1270
+#: src/gossip-app.c:1301
 msgid "The server may currently be unavailable."
 msgstr "伺服器可能暫時無法運作。"
 
-#: src/gossip-app.c:1655
+#: src/gossip-app.c:1690
 msgid "Gossip, Jabber Client"
 msgstr "Gossip，Jabber 通訊軟體"
 
-#: src/gossip-app.c:1839
+#: src/gossip-app.c:1887
 #, c-format
 msgid "New message from %s"
 msgstr "收到來自 %s 的訊息"
 
-#: src/gossip-app.c:2167 src/gossip-app.c:2455
+#: src/gossip-app.c:2209
 msgid "Eating"
 msgstr "用膳"
 
-#: src/gossip-app.c:2168 src/gossip-app.c:2456
+#: src/gossip-app.c:2210
 msgid "Sleeping"
 msgstr "睡覺"
 
-#: src/gossip-app.c:2423
+#: src/gossip-app.c:2462
+msgid "Custom Message..."
+msgstr ""
+
+#: src/gossip-app.c:2480
 msgid "Working"
 msgstr "工作中"
 
-#: src/gossip-app.c:2439
+#: src/gossip-app.c:2496
 msgid "Custom Busy Message..."
 msgstr "自行設定表示「忙碌」的訊息..."
 
-#: src/gossip-app.c:2472
-msgid "Custom Away Message..."
-msgstr "自行設定表示「離開」的訊息(_S)..."
-
-#: src/gossip-app.c:2475
+#: src/gossip-app.c:2503
 msgid "Leave..."
 msgstr ""
 
-#: src/gossip-chat.c:771
-#, c-format
-msgid "An error occurred when chatting with %s."
-msgstr "當和 %s 聊天時發生錯誤"
-
-#: src/gossip-chat.c:776 src/gossip-group-chat.c:808
-#: src/gossip-group-chat.c:911
-msgid "Details:"
-msgstr "詳細資料："
-
-#: src/gossip-chat.c:873
-#, c-format
-msgid "%s went offline"
-msgstr "%s 已離線"
-
-#: src/gossip-chat.c:888
-#, c-format
-msgid "%s comes online"
-msgstr "%s 已連線"
-
-#: src/gossip-chat-view.c:336
+#: src/gossip-chat-view.c:323
 msgid "_Copy Link Address"
 msgstr "複製鏈結地址(_C)"
 
-#: src/gossip-chat-view.c:344
+#: src/gossip-chat-view.c:331
 msgid "_Open Link"
 msgstr "開啟鏈結(_O)"
 
-#: src/gossip-chat-view.c:719
+#: src/gossip-chat-view.c:674
 msgid "%A %d %B %Y"
 msgstr "%Y-%m-%d (%A)"
 
-#. Translators: This is for the title of the chat window. The
-#. * first %s is an "* " that gets displayed if the chat window
-#. * has new messages in it. (Please complain if this doens't work well
-#. * in your locale.)
-#.
-#: src/gossip-chat-window.c:537
+#: src/gossip-chat-window.c:509
 #, c-format
 msgid "%sChat - %s"
 msgstr "%s聊天 - %s"
 
-#. Translators: see comments for "%sChat - %s"
-#: src/gossip-chat-window.c:540
+#: src/gossip-chat.c:600
 #, c-format
-msgid "%sChat"
-msgstr "%s聊天"
+msgid "An error occurred when chatting with %s."
+msgstr "當和 %s 聊天時發生錯誤"
 
-#: src/gossip-contact-info.c:350
+#: src/gossip-chat.c:605 src/gossip-group-chat.c:808
+#: src/gossip-group-chat.c:911
+msgid "Details:"
+msgstr "詳細資料："
+
+#: src/gossip-chat.c:676
+#, c-format
+msgid "%s went offline"
+msgstr "%s 已離線"
+
+#: src/gossip-chat.c:688
+#, c-format
+msgid "%s comes online"
+msgstr "%s 已連線"
+
+#: src/gossip-contact-info.c:352
 #, c-format
 msgid "Contact Information for %s"
 msgstr "有關 %s 的資訊"
@@ -289,6 +266,10 @@ msgstr ""
 #, c-format
 msgid "Unable to enter the group chat %s."
 msgstr ""
+
+#: src/gossip-log.c:222
+msgid "Conversation Log"
+msgstr "對話紀錄"
 
 #: src/gossip-main.c:71
 msgid "Don't connect on startup"
@@ -339,30 +320,27 @@ msgstr "註冊戶口不成功"
 msgid "Reason:"
 msgstr "原因："
 
-#. The extra space is to differentiate the string from Offline as status. It
-#. * might need a different translation, at least in Swedish.
-#.
-#: src/gossip-roster-old.c:111
-msgid "Offline "
-msgstr "離線"
-
-#: src/gossip-roster-old.c:112
-msgid "Others"
-msgstr "其它"
-
-#: src/gossip-roster-old.c:208
+#: src/gossip-roster-view.c:164
 msgid "/Contact _Information"
 msgstr "/好友資訊(_I)"
 
-#: src/gossip-roster-old.c:216
+#: src/gossip-roster-view.c:172
 msgid "/Re_name contact"
 msgstr "/更改好友名稱(_N)"
 
-#: src/gossip-roster-old.c:232
+#: src/gossip-roster-view.c:180
+msgid "/Show _Log"
+msgstr "/顯示對話紀錄(_L)"
+
+#: src/gossip-roster-view.c:196
 msgid "/_Remove contact"
 msgstr "/移除好友(_R)"
 
-#: src/gossip-roster-old.c:435
+#: src/gossip-roster-view.c:207
+msgid "/Re_name group"
+msgstr "/更改群組名稱(_N)"
+
+#: src/gossip-roster-view.c:1036
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -372,7 +350,7 @@ msgstr ""
 "您是否想從名單中移除以下的好友？\n"
 "%s"
 
-#: src/gossip-roster-old.c:534
+#: src/gossip-roster-view.c:1128
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -380,6 +358,19 @@ msgid ""
 msgstr ""
 "請輸入以下好友的稱呼\n"
 "%s"
+
+#: src/gossip-roster-view.c:1215
+#, c-format
+msgid ""
+"Please enter a new name for the group\n"
+"%s"
+msgstr ""
+"請為新的群組命名\n"
+"%s"
+
+#: src/gossip-roster.c:37
+msgid "Unsorted"
+msgstr ""
 
 #: src/gossip-startup-druid.c:254
 msgid "Gossip will now try to use your account:"
@@ -389,11 +380,11 @@ msgstr "Gossip 現在會嘗試使用這個戶口："
 msgid "Gossip will now try to register the account:"
 msgstr "現在 Gossip 會嘗試註冊戶口："
 
-#: src/gossip-utils.c:364
+#: src/gossip-utils.c:369
 msgid "Please enter your password:"
 msgstr "請輸入密碼："
 
-#: src/gossip-utils.c:366
+#: src/gossip-utils.c:371
 msgid "Remember Password?"
 msgstr "是否記下密碼？"
 
@@ -424,16 +415,16 @@ msgid "Chat with:"
 msgstr ""
 
 #: ui/chat.glade.h:7
-msgid "D_etach"
-msgstr ""
+msgid "Contact _Information"
+msgstr "連絡資訊(_I)"
 
 #: ui/chat.glade.h:8
-msgid "From:"
-msgstr "寄件者："
+msgid "D_etach"
+msgstr "脫離(_E)"
 
 #: ui/chat.glade.h:9
-msgid "Get _Info"
-msgstr ""
+msgid "From:"
+msgstr "寄件者："
 
 #: ui/chat.glade.h:10
 msgid "Gossip - Chat"
@@ -452,30 +443,34 @@ msgid "In reply to:"
 msgstr ""
 
 #: ui/chat.glade.h:14
+msgid "Lo_g"
+msgstr "對話紀錄(_G)"
+
+#: ui/chat.glade.h:15
 msgid "To:"
 msgstr "收件者："
 
-#: ui/chat.glade.h:15
+#: ui/chat.glade.h:16
 msgid "_Conversation"
 msgstr "對話(_C)"
 
-#: ui/chat.glade.h:16
+#: ui/chat.glade.h:17
 msgid "_Go"
 msgstr "前往(_G)"
 
-#: ui/chat.glade.h:17
+#: ui/chat.glade.h:18
 msgid "_Next Conversation"
 msgstr ""
 
-#: ui/chat.glade.h:18
+#: ui/chat.glade.h:19
 msgid "_Previous Conversation"
 msgstr ""
 
-#: ui/chat.glade.h:19
+#: ui/chat.glade.h:20
 msgid "_Reply..."
 msgstr "回覆(_R)..."
 
-#: ui/chat.glade.h:20 ui/group-chat.glade.h:19
+#: ui/chat.glade.h:21 ui/group-chat.glade.h:19
 msgid "_Send"
 msgstr "寄出(_S)"
 
@@ -606,90 +601,122 @@ msgid " "
 msgstr " "
 
 #: ui/main.glade.h:4
+msgid "<b>Away messages</b>"
+msgstr "<b>「離開」狀態訊息</b>"
+
+#: ui/main.glade.h:5
+msgid "<b>Busy messages</b>"
+msgstr "<b>「忙碌」狀態訊息</b>"
+
+#: ui/main.glade.h:6
+msgid "<b>Default messages</b>"
+msgstr "<b>預設訊息</b>"
+
+#: ui/main.glade.h:7
 msgid "<b>Information requested, Please wait...</b>"
 msgstr ""
 
-#: ui/main.glade.h:5
+#: ui/main.glade.h:8
 msgid "<i>Information not available</i>"
 msgstr "<i>無法提供資訊</i>"
 
-#: ui/main.glade.h:6
+#: ui/main.glade.h:9
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">範例：user@jabber.org</span>"
 
-#: ui/main.glade.h:7
+#: ui/main.glade.h:10
+msgid "Add"
+msgstr "加入"
+
+#: ui/main.glade.h:11
 msgid "Add a contact"
 msgstr "加入好友"
 
-#: ui/main.glade.h:8
+#: ui/main.glade.h:12
 msgid "Add contact"
 msgstr "加入好友"
 
-#: ui/main.glade.h:9
+#: ui/main.glade.h:13
 msgid "Add to your contact list"
 msgstr "加入至您的好友名單"
 
-#: ui/main.glade.h:10
+#: ui/main.glade.h:14
 msgid "Appearance"
-msgstr ""
+msgstr "外觀"
 
-#: ui/main.glade.h:11
+#: ui/main.glade.h:15
+msgid "Available"
+msgstr "已連線"
+
+#: ui/main.glade.h:16
+msgid "Available:"
+msgstr "已連線："
+
+#: ui/main.glade.h:17
+msgid "Away"
+msgstr "離開"
+
+#: ui/main.glade.h:18
 msgid "Away:"
 msgstr "離開："
 
-#: ui/main.glade.h:12
+#: ui/main.glade.h:19
 msgid "Busy"
 msgstr "忙碌"
 
-#: ui/main.glade.h:13
+#: ui/main.glade.h:20
 msgid "Choose a Server"
 msgstr "選取伺服器"
 
-#: ui/main.glade.h:14
+#: ui/main.glade.h:21
 msgid "Choose from list:"
 msgstr "從名單中選取："
 
-#: ui/main.glade.h:15
+#: ui/main.glade.h:22
 msgid "Client information"
 msgstr ""
 
-#: ui/main.glade.h:16
+#: ui/main.glade.h:23
 msgid "Client:"
 msgstr ""
 
-#: ui/main.glade.h:17
+#: ui/main.glade.h:24
 msgid "Contact information"
 msgstr "好友資訊"
 
-#: ui/main.glade.h:18
+#: ui/main.glade.h:25
 msgid "Conversation"
 msgstr "對話"
 
-#: ui/main.glade.h:19
+#: ui/main.glade.h:26
 msgid "Convert _smileys to graphical images"
 msgstr "將代表表情圖示的字符轉換為圖形(_S)"
 
-#: ui/main.glade.h:20
+#: ui/main.glade.h:27
 msgid "Country:"
 msgstr "國籍："
 
-#: ui/main.glade.h:21
+#: ui/main.glade.h:28
+msgid "Default"
+msgstr "預設"
+
+#: ui/main.glade.h:29
 msgid "Description"
 msgstr "描述"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:30
 msgid "Do you already have an account on a Jabber server? "
 msgstr "您是不是已經有 Jabber 伺服器的戶口了？"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:31
 msgid "Do you want to accept the request?"
-msgstr ""
+msgstr "您是否接受這個要求？"
 
-#: ui/main.glade.h:24
+#: ui/main.glade.h:32
 msgid "Email:"
 msgstr "電郵："
 
-#: ui/main.glade.h:26
+#: ui/main.glade.h:34
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -704,7 +731,7 @@ msgstr ""
 "\n"
 "如果準備好，請按「下一頁」。"
 
-#: ui/main.glade.h:31
+#: ui/main.glade.h:39
 msgid ""
 "Gossip is now configured properly for your system.\n"
 "You can change your account settings later, by selecting the Chat-"
@@ -713,238 +740,293 @@ msgstr ""
 "設定 Gossip 的程序已經正確完成。\n"
 "稍後您可以在選單中選取「聊天→連線...」，更改戶口設定。"
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:41
 msgid "I would like to add you to my contact list."
 msgstr "我希望可以將您加入我的好友名單之內。"
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:42
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
 msgstr ""
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:43
 msgid "In which group do you want to place this contact?"
 msgstr "您想將這個好友加入哪個群組之內？"
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:44
 msgid "Information about ..."
 msgstr "關於 ... 的資訊"
 
-#: ui/main.glade.h:37
+#: ui/main.glade.h:45
+msgid "JID"
+msgstr ""
+
+#: ui/main.glade.h:46
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ui/main.glade.h:38
+#: ui/main.glade.h:47
 msgid "Jabber Account"
 msgstr "Jabber 戶口"
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:48
 msgid "Jabber ID:"
 msgstr "Jabber ID："
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:49
 msgid "Jabber.com"
 msgstr "Jabber.com"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:50
 msgid "Jabber.org"
 msgstr "Jabber.org"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:51
 msgid "Leave"
 msgstr ""
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:52
 msgid "Leaving:"
 msgstr ""
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:53
 msgid "Messages"
 msgstr "訊息"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:54
 msgid "Name:"
 msgstr "名稱："
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:55
 msgid "No"
 msgstr "否"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:56
 msgid "Notification"
 msgstr "通知收到訊息"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:57
 msgid "OS:"
 msgstr "作業系統："
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:58
 msgid "On what server do you have a Jabber account?"
 msgstr "您在哪個伺服器有 Jabber 戶口？"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:59
 msgid "Open conversations in a single window with _list view"
 msgstr ""
 
-#: ui/main.glade.h:51
+#: ui/main.glade.h:60
 msgid "Personal information"
 msgstr "個人資訊"
 
-#: ui/main.glade.h:52
+#: ui/main.glade.h:61
 msgid "Preferences"
 msgstr "偏好設定"
 
-#: ui/main.glade.h:53
+#: ui/main.glade.h:62
+msgid "Preset messages for quickly setting away status."
+msgstr ""
+
+#: ui/main.glade.h:63
+msgid "Preset messages for quickly setting busy status."
+msgstr ""
+
+#: ui/main.glade.h:64
 msgid "Reason for being busy:"
-msgstr ""
+msgstr "忙碌的原因："
 
-#: ui/main.glade.h:54
+#: ui/main.glade.h:65
 msgid "Reason for leaving:"
-msgstr ""
+msgstr "離開的原因："
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:66
+msgid "Remove"
+msgstr "移除"
+
+#: ui/main.glade.h:67
 msgid "Request message"
 msgstr ""
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:68
 msgid "Sending request"
 msgstr ""
 
-#: ui/main.glade.h:57
+#: ui/main.glade.h:69
 msgid "Setup Finished"
 msgstr "完成設定"
 
-#: ui/main.glade.h:58
+#: ui/main.glade.h:70
+msgid "Show _Offline Contacts"
+msgstr "顯示已離線的好友(_O)"
+
+#: ui/main.glade.h:71
 msgid "Sound"
 msgstr "音效"
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:72
 msgid "Status"
 msgstr "狀態"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:73
+msgid "Status Messages"
+msgstr ""
+
+#: ui/main.glade.h:74
+msgid "Status message:"
+msgstr ""
+
+#: ui/main.glade.h:75
 msgid ""
 "These messages are used to describe your status when you're about to leave "
 "and when you're away."
 msgstr ""
 
-#: ui/main.glade.h:61
+#: ui/main.glade.h:76
+msgid ""
+"These messages are used to describe your status when you're available, about "
+"to leave, or automatically set away due to inactivity."
+msgstr ""
+
+#: ui/main.glade.h:77
 msgid "Use a different server"
 msgstr "使用另一個伺服器"
 
-#: ui/main.glade.h:62
+#: ui/main.glade.h:78
 msgid "Use com_pact conversation style"
 msgstr ""
 
-#: ui/main.glade.h:63
+#: ui/main.glade.h:79
 msgid "Use sounds to _notify when new messages arrive"
 msgstr "收到新訊息時播放音效(_N)"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:80
 msgid "Version:"
 msgstr "版本："
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:81
 msgid "Web site:"
 msgstr "網站："
 
-#: ui/main.glade.h:66
+#: ui/main.glade.h:82
 msgid "Welcome to Gossip"
 msgstr "歡迎使用 Gossip"
 
-#: ui/main.glade.h:67
+#: ui/main.glade.h:83
 msgid "What instant messaging system does the contact use?"
 msgstr "該好友使用哪種即時通訊系統？"
 
-#: ui/main.glade.h:68
+#: ui/main.glade.h:84
 msgid "What is your name?"
-msgstr ""
+msgstr "怎樣稱呼您？"
 
-#: ui/main.glade.h:69
+#: ui/main.glade.h:85
 msgid "What nickname do you want to use for this contact?"
 msgstr "您想使用甚麼稱呼來代表這個好友？"
 
-#: ui/main.glade.h:70
+#: ui/main.glade.h:86
 msgid "What request message do you want to send to ...?"
 msgstr ""
 
-#: ui/main.glade.h:71
+#: ui/main.glade.h:87
 msgid "What server do you want to use?"
 msgstr "您想使用哪個伺服器？"
 
-#: ui/main.glade.h:72
+#: ui/main.glade.h:88
 msgid "What username do you use?"
 msgstr "您使用甚麼名稱？"
 
-#: ui/main.glade.h:73
+#: ui/main.glade.h:89
 msgid "What username do you want to use?"
 msgstr "您想使用甚麼用戶名稱？"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:90
 msgid "Yes"
 msgstr "是"
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:91
 msgid "Your Identity"
 msgstr "您的身分"
 
-#: ui/main.glade.h:76
+#: ui/main.glade.h:92
 msgid "_Accept"
 msgstr "接受(_A)"
 
-#: ui/main.glade.h:77
+#: ui/main.glade.h:93
 msgid "_Account Information"
 msgstr "戶口資訊(_A)"
 
-#: ui/main.glade.h:78
+#: ui/main.glade.h:94
 msgid "_Add Contact..."
 msgstr "加入好友(_A)..."
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:96
 msgid "_Connect..."
 msgstr "連線(_C)..."
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:97
 msgid "_Decide Later"
 msgstr "稍後才決定(_D)"
 
-#: ui/main.glade.h:82
+#: ui/main.glade.h:98
 msgid "_Deny"
 msgstr "拒絕(_D)"
 
-#: ui/main.glade.h:83
+#: ui/main.glade.h:99
 msgid "_Disable sounds when busy or away"
 msgstr "當「忙碌」或「離開」時關閉音效(_D)"
 
-#: ui/main.glade.h:84
+#: ui/main.glade.h:100
 msgid "_Disconnect"
 msgstr "斷線(_D)"
 
-#: ui/main.glade.h:85
+#: ui/main.glade.h:101
 msgid "_Jabber ID of new contact:"
 msgstr "新的好友的 _Jabber ID："
 
-#: ui/main.glade.h:86
+#: ui/main.glade.h:102
 msgid "_Join Group Chat..."
 msgstr ""
 
-#: ui/main.glade.h:87
+#: ui/main.glade.h:103
 msgid "_Preferences"
 msgstr "偏好設定(_P)"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:104
 msgid "_Search..."
 msgstr "搜尋(_S)..."
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:105
 msgid "_Send Chat Message..."
 msgstr "送出聊天訊息(_S)..."
 
-#: ui/main.glade.h:90
-msgid "_Timestamp all messages"
-msgstr "將所有訊息加上時間標記(_T)"
+#: ui/main.glade.h:106
+msgid "_Status Messages"
+msgstr ""
+
+#~ msgid "Timestamp all messages"
+#~ msgstr "將所有訊息標上時間"
+
+#~ msgid "Whether or not to timestamp all messages in conversations."
+#~ msgstr "是否將對話中的所有訊息加上時間標記。"
+
+#~ msgid "Custom Away Message..."
+#~ msgstr "自行設定表示「離開」的訊息(_S)..."
+
+#~ msgid "%sChat"
+#~ msgstr "%s聊天"
+
+#~ msgid "Offline "
+#~ msgstr "離線"
+
+#~ msgid "Others"
+#~ msgstr "其它"
+
+#~ msgid "_Timestamp all messages"
+#~ msgstr "將所有訊息加上時間標記(_T)"
 
 #~ msgid "Get information about this contact"
 #~ msgstr "獲取有關這個好友的資訊"
