@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-19 13:11-0400\n"
-"PO-Revision-Date: 2004-08-19 13:44-0400\n"
+"POT-Creation-Date: 2004-08-31 14:19-0400\n"
+"PO-Revision-Date: 2004-08-31 13:44-0400\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: English/Canada <adamw@FreeBSD.org>\n"
 "MIME-Version: 1.0\n"
@@ -186,45 +186,45 @@ msgstr ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
 
-#: src/gossip-app.c:1892
+#: src/gossip-app.c:1895
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:2036
+#: src/gossip-app.c:2039
 #, c-format
 msgid "New message from %s"
 msgstr "New message from %s"
 
-#: src/gossip-app.c:2125 src/gossip-chat-window.c:793
-#: src/gossip-roster-view.c:986
+#: src/gossip-app.c:2128 src/gossip-chat-window.c:793
+#: src/gossip-roster-view.c:1230
 msgid "Offline"
 msgstr "Offline"
 
-#: src/gossip-app.c:2524 src/gossip-preferences.c:638
+#: src/gossip-app.c:2527 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "Available"
 
-#: src/gossip-app.c:2535 src/gossip-preferences.c:639
+#: src/gossip-app.c:2538 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Busy"
 
-#: src/gossip-app.c:2546 src/gossip-preferences.c:640
+#: src/gossip-app.c:2549 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2678
+#: src/gossip-app.c:2681
 msgid "Available..."
 msgstr "Available..."
 
-#: src/gossip-app.c:2683
+#: src/gossip-app.c:2686
 msgid "Busy..."
 msgstr "Busy..."
 
-#: src/gossip-app.c:2688
+#: src/gossip-app.c:2691
 msgid "Away..."
 msgstr "Away..."
 
-#: src/gossip-app.c:2717
+#: src/gossip-app.c:2720
 msgid "Edit List..."
 msgstr "Edit List..."
 
@@ -302,7 +302,7 @@ msgstr "Group"
 #. This needs to be done better, could have group_is_unsorted().
 #.
 #: src/gossip-edit-groups-dialog.c:361 src/gossip-edit-groups-dialog.c:374
-#: src/gossip-roster.c:38
+#: src/gossip-roster.c:39
 msgid "Unsorted"
 msgstr "Unsorted"
 
@@ -369,31 +369,31 @@ msgstr "Failed registering the account"
 msgid "Reason:"
 msgstr "Reason:"
 
-#: src/gossip-roster-view.c:209
+#: src/gossip-roster-view.c:244
 msgid "/Contact _Information"
 msgstr "/Contact _Information"
 
-#: src/gossip-roster-view.c:217
+#: src/gossip-roster-view.c:252
 msgid "/Re_name contact"
 msgstr "/Re_name contact"
 
-#: src/gossip-roster-view.c:225
+#: src/gossip-roster-view.c:260
 msgid "/_Edit groups"
 msgstr "/_Edit groups"
 
-#: src/gossip-roster-view.c:233
+#: src/gossip-roster-view.c:268
 msgid "/Show _Log"
 msgstr "/Show _Log"
 
-#: src/gossip-roster-view.c:249
+#: src/gossip-roster-view.c:284
 msgid "/_Remove contact"
 msgstr "/_Remove contact"
 
-#: src/gossip-roster-view.c:260
+#: src/gossip-roster-view.c:295
 msgid "/Re_name group"
 msgstr "/Re_name group"
 
-#: src/gossip-roster-view.c:1397
+#: src/gossip-roster-view.c:1642
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -404,7 +404,7 @@ msgstr ""
 "%s\n"
 "from your contact list?"
 
-#: src/gossip-roster-view.c:1490
+#: src/gossip-roster-view.c:1735
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -413,7 +413,7 @@ msgstr ""
 "Please enter a new nickname for the contact\n"
 "%s"
 
-#: src/gossip-roster-view.c:1596
+#: src/gossip-roster-view.c:1841
 #, c-format
 msgid ""
 "Please enter a new name for the group\n"
@@ -916,12 +916,12 @@ msgid "Sending request"
 msgstr "Sending request"
 
 #: ui/main.glade.h:67
-msgid "Setup Finished"
-msgstr "Setup Finished"
+msgid "Server Details"
+msgstr "Server Details"
 
 #: ui/main.glade.h:68
-msgid "Sever Details"
-msgstr "Sever Details"
+msgid "Setup Finished"
+msgstr "Setup Finished"
 
 #: ui/main.glade.h:69
 msgid "Show _Offline Contacts"
@@ -1021,10 +1021,10 @@ msgstr "Yes"
 
 #: ui/main.glade.h:92
 msgid ""
-"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"You are not subscribed to this contact's status. Press Subscribe to receive "
 "their status."
 msgstr ""
-"You are not subscribed to this contact's status. Press Subscribe to recieve "
+"You are not subscribed to this contact's status. Press Subscribe to receive "
 "their status."
 
 #: ui/main.glade.h:93
