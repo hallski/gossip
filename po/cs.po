@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-08 19:59+0200\n"
-"PO-Revision-Date: 2004-08-08 23:39+0200\n"
+"POT-Creation-Date: 2004-08-10 19:59+0200\n"
+"PO-Revision-Date: 2004-08-11 00:02+0200\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -134,7 +134,7 @@ msgstr "Přeložili:"
 msgid "translator_credits"
 msgstr "Miloslav Trmač"
 
-#: src/gossip-account.c:292 src/gossip-app.c:64 src/gossip-startup-druid.c:219
+#: src/gossip-account.c:292 src/gossip-app.c:62 src/gossip-startup-druid.c:219
 msgid "Home"
 msgstr "Domů"
 
@@ -148,33 +148,33 @@ msgstr "Jakou zprávu požadavku chcete odeslat %s?"
 msgid "%s will be added to your contact list."
 msgstr "%s bude přidán do vašeho seznamu kontaktů."
 
-#: src/gossip-app.c:639
+#: src/gossip-app.c:637
 msgid "Could not connect"
 msgstr "Nemohu se připojit"
 
-#: src/gossip-app.c:640
+#: src/gossip-app.c:638
 msgid "Make sure that your account information is correct."
 msgstr "Zkontrolujte, že vaše informace o účtu jsou správné."
 
-#: src/gossip-app.c:703
+#: src/gossip-app.c:701
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr "Zadejte ID uživatele, kterému chcete odeslat zprávu."
 
-#: src/gossip-app.c:710 ui/main.glade.h:85
+#: src/gossip-app.c:708 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Diskuse"
 
-#: src/gossip-app.c:1007
+#: src/gossip-app.c:1005
 #, c-format
 msgid "%s wants to be notified of your status."
 msgstr "%s chce být upozorňován na váš stav."
 
-#: src/gossip-app.c:1253
+#: src/gossip-app.c:1251
 msgid "You were disconnected from the server. Do you want to reconnect?"
 msgstr "Byli jste odpojeni od serveru. Chcete se znovu připojit?"
 
-#: src/gossip-app.c:1408
+#: src/gossip-app.c:1409
 msgid ""
 "Make sure that your account information is correct. The server may also "
 "currently be unavailable."
@@ -182,45 +182,45 @@ msgstr ""
 "Zkontrolujte, že vaše informace o účtu jsou správné. Možná server momentálně "
 "není dostupný."
 
-#: src/gossip-app.c:1877
+#: src/gossip-app.c:1880
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Klient Instant Messaging"
 
-#: src/gossip-app.c:2021
+#: src/gossip-app.c:2024
 #, c-format
 msgid "New message from %s"
 msgstr "Nová zpráva od %s"
 
-#: src/gossip-app.c:2110 src/gossip-chat-window.c:793
+#: src/gossip-app.c:2113 src/gossip-chat-window.c:793
 #: src/gossip-roster-view.c:986
 msgid "Offline"
 msgstr "Odpojen"
 
-#: src/gossip-app.c:2509 src/gossip-preferences.c:638
+#: src/gossip-app.c:2512 src/gossip-preferences.c:638
 msgid "Available"
 msgstr "K dispozici"
 
-#: src/gossip-app.c:2520 src/gossip-preferences.c:639
+#: src/gossip-app.c:2523 src/gossip-preferences.c:639
 msgid "Busy"
 msgstr "Zaneprázdněn"
 
-#: src/gossip-app.c:2531 src/gossip-preferences.c:640
+#: src/gossip-app.c:2534 src/gossip-preferences.c:640
 msgid "Away"
 msgstr "Pryč"
 
-#: src/gossip-app.c:2663
+#: src/gossip-app.c:2666
 msgid "Available..."
 msgstr "K dispozici..."
 
-#: src/gossip-app.c:2668
+#: src/gossip-app.c:2671
 msgid "Busy..."
 msgstr "Zaneprázdněn..."
 
-#: src/gossip-app.c:2673
+#: src/gossip-app.c:2676
 msgid "Away..."
 msgstr "Pryč..."
 
-#: src/gossip-app.c:2702
+#: src/gossip-app.c:2705
 msgid "Edit List..."
 msgstr "Upravit seznam..."
 
@@ -540,40 +540,40 @@ msgid "Connect"
 msgstr "Připojit"
 
 #: ui/connect.glade.h:7
+msgid "Connect _Server:"
+msgstr "Připojit se k _serveru:"
+
+#: ui/connect.glade.h:8
 msgid "Edit Account Information"
 msgstr "Upravit informace o účtu"
 
-#: ui/connect.glade.h:8
+#: ui/connect.glade.h:9
 msgid "P_ort:"
 msgstr "_Port:"
 
-#: ui/connect.glade.h:9
+#: ui/connect.glade.h:10
 msgid "Re_gister..."
 msgstr "Za_registrovat..."
 
-#: ui/connect.glade.h:10
+#: ui/connect.glade.h:11
 msgid "Server:"
 msgstr "Server:"
 
-#: ui/connect.glade.h:11
+#: ui/connect.glade.h:12
 msgid "Use _encryption (SSL)"
 msgstr "Používat _šifrování (SSL)"
 
-#: ui/connect.glade.h:12
+#: ui/connect.glade.h:13
 msgid "_Jabber ID:"
 msgstr "ID _Jabberu:"
 
-#: ui/connect.glade.h:13
+#: ui/connect.glade.h:14
 msgid "_Password:"
 msgstr "_Heslo:"
 
-#: ui/connect.glade.h:14
+#: ui/connect.glade.h:15
 msgid "_Resource:"
 msgstr "Z_droj:"
-
-#: ui/connect.glade.h:15 ui/group-chat.glade.h:19
-msgid "_Server:"
-msgstr "_Server:"
 
 #: ui/group-chat.glade.h:2
 msgid "        "
@@ -642,6 +642,10 @@ msgstr "_Přezdívka:"
 #: ui/group-chat.glade.h:18
 msgid "_Room:"
 msgstr "_Místnost:"
+
+#: ui/group-chat.glade.h:19
+msgid "_Server:"
+msgstr "_Server:"
 
 #: ui/group-chat.glade.h:20
 msgid "_Topic:"
