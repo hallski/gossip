@@ -398,29 +398,28 @@ chat_message_handler (LmMessageHandler *handler,
 	type = lm_message_get_sub_type (m);
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
 		GtkWidget *dialog;
-		gchar     *tmp, *str;
+		gchar     *tmp, *str, *msg;
 
 		tmp = g_strdup_printf ("<b>%s</b>", from);
+		str = g_strdup_printf (_("An error occurred when chatting with %s."), tmp);
+		g_free (tmp);
 		
 		node = lm_message_node_get_child (m->node, "error");
 		if (node && node->value && node->value[0]) {
-			str = g_strdup_printf ("%s\n%s.\n\n%s %s",
-					       _("An error occurred when chatting with"),
-					       tmp,
-					       _("Details:"),
-					       node->value);
+			msg = g_strconcat (str, "\n\n", _("Details:"), " ", node->value, NULL);
+			g_free (str);
 		} else {
-			str = g_strdup_printf ("%s\n%s.",
-					       _("An error occurred when chatting with"),
-					       tmp);
+			msg = str;
 		}
 
 		dialog = gtk_message_dialog_new (GTK_WINDOW (chat->dialog),
 						 GTK_DIALOG_DESTROY_WITH_PARENT,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
-						 str);
+						 msg);
 
+		gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
+		
 		g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
 			      "use-markup", TRUE,
 			      NULL);
@@ -428,8 +427,7 @@ chat_message_handler (LmMessageHandler *handler,
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
-		g_free (tmp);
-		g_free (str);
+		g_free (msg);
 		
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}

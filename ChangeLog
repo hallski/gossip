@@ -1,5 +1,12 @@
 2003-07-06  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat.c (chat_message_handler): It doesn't matter how
+	many <b> you strip out of strings, they will always find something
+	else to complain about! ;)
+
+	* src/gossip-app.c (app_message_handler): Treat normal messages
+	like chat messages for now, so we don't just drop them.
+
 	* src/gossip-register.c (register_connection_open_cb): Use the
 	real password.
 	(gossip_register_account): Ask for a password if we don't have

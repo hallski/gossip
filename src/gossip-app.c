@@ -893,36 +893,46 @@ app_message_handler (LmMessageHandler *handler,
 	
 	switch (type) {
 	case LM_MESSAGE_SUB_TYPE_AVAILABLE:
+		/* FIXME: Hm, what is this for? Doesn't look right. */
 		gossip_message_handle_message (app, m);
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-		break;
+
 	case LM_MESSAGE_SUB_TYPE_CHAT:
 		jid = gossip_jid_new (from);
 		chat = app_get_chat_for_jid (app, jid);
 		gossip_jid_unref (jid);
 		gossip_chat_append_message (chat, m);
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-		break;
-	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
-		g_print ("Hmm .. looks like an unhandled group chat message from %s, "
-			 "this needs to be taken care of\n", from);
+
+	case LM_MESSAGE_SUB_TYPE_NOT_SET:
+	case LM_MESSAGE_SUB_TYPE_NORMAL:
+		/* Is "not set" right? Gabber sends messages like that...  */
+		jid = gossip_jid_new (from);
+		chat = app_get_chat_for_jid (app, jid);
+		gossip_jid_unref (jid);
+		gossip_chat_append_message (chat, m);
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-		break;
+		
+	case LM_MESSAGE_SUB_TYPE_GROUPCHAT:
+		g_warning ("Hmm .. looks like an unhandled group chat message "
+			   "from %s, this needs to be taken care of.", from);
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+
 	case LM_MESSAGE_SUB_TYPE_HEADLINE:
-		g_print ("Unhandled headline!\n");
+		g_warning ("Unhandled headline.");
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-		break;
+
 	case LM_MESSAGE_SUB_TYPE_ERROR:
-		g_warning ("Unhandled error from: %s", from);
+		g_warning ("Unhandled error from: %s.", from);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-		break;
 	
 	default: 
-		g_warning ("Unhandled subtype %d from: %s", type, from);
+		g_warning ("Unhandled subtype %d from: %s.", type, from);
 		break;
 	}
 
-	d(g_print ("Unhandled message of type: %d\n", lm_message_get_type (m)));
+	d(g_print ("Unhandled message of type: %d.\n",
+		   lm_message_get_type (m)));
 
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
