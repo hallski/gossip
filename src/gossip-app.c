@@ -1174,6 +1174,7 @@ gossip_app_connect (void)
 {
 	GossipAppPriv *priv;
 	GossipAccount *account;
+	GError        *error = NULL;
 
 	priv = app->priv;
 
@@ -1194,10 +1195,32 @@ gossip_app_connect (void)
 	lm_connection_set_server (priv->connection, account->server);
 	lm_connection_set_port (priv->connection, account->port);
 	lm_connection_set_use_ssl (priv->connection, account->use_ssl);
-	
-	lm_connection_open (priv->connection,
-			    (LmResultFunction) app_connection_open_cb,
-			    app, NULL, NULL);
+
+ 	if (!lm_connection_open (priv->connection,
+ 				 (LmResultFunction) app_connection_open_cb,
+ 				 app, NULL, &error)) {
+ 		
+ 		if (error) {
+ 			GtkWidget *dialog;
+			
+ 			d(g_print ("Failed to connect, error:%d, %s\n", error->code, error->reason));
+
+			dialog = gossip_hig_dialog_new (GTK_WINDOW (priv->window),
+							GTK_DIALOG_DESTROY_WITH_PARENT | GTK_DIALOG_MODAL,
+							GTK_MESSAGE_ERROR,
+							GTK_BUTTONS_OK,
+							"Unable to connect",
+ 							 "%s\n%s",
+							_("Make sure that your account information is correct."),
+							_("The server may currently be unavailable."));
+
+ 			
+ 			gtk_dialog_run (GTK_DIALOG (dialog));
+ 			gtk_widget_destroy (dialog);
+
+			g_error_free (error);
+ 		}
+ 	}
 }
 
 void

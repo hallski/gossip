@@ -1,5 +1,17 @@
 2003-08-29  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-utils.c (gossip_hig_dialog_new): Add.
+
+	* src/gossip-app.c: (gossip_app_connect): Use if here for the
+	error message mentioned below.
+	
+2003-08-29  Martyn Russell <ginxd@btopenworld.com>
+
+	* src/gossip-app.c: (gossip_app_connect): Display an error message
+	if we can't connect.
+
+2003-08-29  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c (app_subscription_request_dialog_response_cb):
 	Remove markup from translations. Don't try to add contact if the
 	user deferred.

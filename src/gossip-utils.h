@@ -25,6 +25,7 @@
 #include <gtk/gtkoptionmenu.h>
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktextview.h>
+#include <gtk/gtkmessagedialog.h>
 #include <glade/glade.h>
 #include "gossip-app.h"
 
@@ -68,6 +69,13 @@ const gchar *gossip_get_icon_for_show_string         (const gchar      *str);
 const gchar *gossip_show_to_string                   (GossipShow        show);
 gchar *      gossip_password_dialog_run              (GossipAccount    *account,
 						      GtkWindow        *parent);
+GtkWidget *  gossip_hig_dialog_new                   (GtkWindow        *parent,
+						      GtkDialogFlags    flags,
+						      GtkMessageType    type,
+						      GtkButtonsType    buttons,
+						      const gchar      *header,
+						      const gchar      *messagefmt,
+						      ...);
 
 
 #endif /*  __GOSSIP_UTILS_H__ */
