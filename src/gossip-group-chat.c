@@ -31,6 +31,7 @@
 #include "gossip-chat-view.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-contact-list-iface.h"
+#include "gossip-cell-renderer-text.h"
 #include "gossip-message.h"
 #include "gossip-private-chat.h"
 #include "gossip-stock.h"
@@ -57,6 +58,7 @@ struct _GossipGroupChatPriv {
 	GtkWidget        *text_view_sw;
 	GtkWidget        *topic_entry;
 	GtkWidget        *tree;
+	GtkWidget        *hpaned;
 
 	gchar            *name;
 
@@ -67,6 +69,9 @@ struct _GossipGroupChatPriv {
 	GossipContact    *own_contact;
 	GHashTable       *contacts;
 	GList            *priv_chats;
+
+	gint              contacts_width;
+	gboolean          contacts_visible;
 };
 
 typedef struct {
@@ -157,6 +162,9 @@ static void             group_chat_get_geometry                 (GossipChat     
 		                                                 gint              *width,
 								 gint              *height);
 static gboolean         group_chat_get_group_chat               (GossipChat        *chat);
+static gboolean         group_chat_get_show_contacts            (GossipChat        *chat);
+static void             group_chat_set_show_contacts            (GossipChat        *chat,
+								 gboolean           show);
 		                                                 
 
 static GHashTable *group_chats = NULL;
@@ -180,8 +188,9 @@ gossip_group_chat_class_init (GossipGroupChatClass *klass)
 	chat_class->get_contact       = group_chat_get_contact;
 	chat_class->get_geometry      = group_chat_get_geometry;
 	chat_class->get_widget        = group_chat_get_widget;
-
 	chat_class->get_group_chat    = group_chat_get_group_chat;
+	chat_class->get_show_contacts = group_chat_get_show_contacts;
+	chat_class->set_show_contacts = group_chat_set_show_contacts;
 }
 
 static void
@@ -195,6 +204,8 @@ gossip_group_chat_init (GossipGroupChat *chat)
 
 	priv->own_contact = NULL;
                                                                                 
+	priv->contacts_visible = TRUE;
+
         /*
 	g_signal_connect_object (gossip_app_get (),
                                  "connected",
@@ -306,6 +317,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 				       "topic_entry", &priv->topic_entry,
 				       "treeview", &priv->tree,
 				       "left_vbox", &focus_vbox,
+				       "hpaned", &priv->hpaned,
 				       NULL);
 	
 	gossip_glade_connect (glade,
@@ -506,10 +518,10 @@ group_chat_setup_tree (GossipGroupChat *chat)
 							NULL);
 	gtk_tree_view_append_column (tree, col);
 
-	cell = gtk_cell_renderer_text_new ();
+	cell = gossip_cell_renderer_text_new ();
 	col = gtk_tree_view_column_new_with_attributes ("",
 							cell,
-							"text", COL_NAME,
+							"name", COL_NAME,
 							NULL);
 	
 	gtk_tree_view_append_column (tree, col);
@@ -1162,4 +1174,38 @@ group_chat_get_group_chat (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
 
 	return TRUE;
+}
+
+static gboolean
+group_chat_get_show_contacts (GossipChat *chat)
+{
+	GossipGroupChatPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
+
+	priv = GOSSIP_GROUP_CHAT (chat)->priv;
+	
+	return priv->contacts_visible;
+}
+
+static void
+group_chat_set_show_contacts (GossipChat *chat, 
+			      gboolean    show)
+{
+	GossipGroupChatPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (chat));
+
+	priv = GOSSIP_GROUP_CHAT (chat)->priv;
+	
+	priv->contacts_visible = show;
+
+	if (show) {
+		gtk_paned_set_position (GTK_PANED (priv->hpaned), 
+					priv->contacts_width);
+	} else {
+		priv->contacts_width = gtk_paned_get_position (GTK_PANED (priv->hpaned));
+		gtk_paned_set_position (GTK_PANED (priv->hpaned), 
+					GTK_PANED (priv->hpaned)->max_position);
+	}
 }

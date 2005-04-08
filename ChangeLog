@@ -1,3 +1,23 @@
+2005-04-08  Martyn Russel  <mr@gnome.org>
+
+	* src/gossip-cell-renderer-text.c:
+	(cell_renderer_text_update_text):
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_update_menu), (chat_window_conv_activate_cb),
+	(chat_window_show_contacts_toggled_cb):
+	* src/gossip-chat.c: (gossip_chat_get_show_contacts),
+	(gossip_chat_set_show_contacts):
+	* src/gossip-chat.h:
+	* src/gossip-group-chat.c: (gossip_group_chat_class_init),
+	(gossip_group_chat_init), (group_chat_create_gui),
+	(group_chat_setup_tree), (group_chat_get_group_chat),
+	(group_chat_get_show_contacts), (group_chat_set_show_contacts):
+	* ui/chat.glade:
+	* ui/group-chat.glade:
+	- Make group chat contacts list width adjustable.
+	- Make it possible to fully hide the contacts.
+	- Fixes #130977.
+
 2005-04-06  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-group-chat.c (group_chat_create_gui): Put the chat

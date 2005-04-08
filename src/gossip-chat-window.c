@@ -41,16 +41,14 @@
 static void gossip_chat_window_class_init     (GossipChatWindowClass *klass);
 static void gossip_chat_window_init	      (GossipChatWindow      *window);
 static void gossip_chat_window_finalize       (GObject		     *object);
-static GdkPixbuf * 
-chat_window_get_status_pixbuf		      (GossipChatWindow	     *window,
+static GdkPixbuf *chat_window_get_status_pixbuf        (GossipChatWindow      *window,
 					       GossipChat	     *chat);
 static void chat_window_accel_cb              (GtkAccelGroup         *accelgroup,
 					       GObject               *object,
 					       guint                  key,
 					       GdkModifierType        mod,
 					       GossipChatWindow      *window);
-static GtkWidget*
-chat_window_create_label		      (GossipChatWindow	     *window,
+static GtkWidget *chat_window_create_label             (GossipChatWindow      *window,
 					       GossipChat	     *chat);
 static void chat_window_update_status	      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
@@ -64,6 +62,8 @@ static void chat_window_log_activate_cb       (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_conv_activate_cb      (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
+static void       chat_window_show_contacts_toggled_cb (GtkWidget             *menuitem,
+							GossipChatWindow      *window);
 static void chat_window_close_activate_cb     (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_cut_activate_cb       (GtkWidget             *menuitem,
@@ -110,8 +110,7 @@ static void chat_window_tab_detached_cb       (GossipNotebook        *notebook,
 					       GossipChatWindow      *window);
 static void chat_window_tabs_reordered_cb     (GossipNotebook	     *notebook,
 					       GossipChatWindow      *window);
-static gboolean
-chat_window_focus_in_event_cb                 (GtkWidget	     *widget,
+static gboolean   chat_window_focus_in_event_cb        (GtkWidget             *widget,
 					       GdkEvent		     *event,
 					       GossipChatWindow      *window); 
 static void    chat_window_drag_data_received (GtkWidget             *widget,
@@ -142,6 +141,8 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *m_conv_clear;
 	GtkWidget   *m_conv_log;
 	GtkWidget   *m_conv_info;
+	GtkWidget   *s_conv_show_contacts;
+	GtkWidget   *m_conv_show_contacts;
 	GtkWidget   *m_conv_close;
 	GtkWidget   *m_edit_cut;
 	GtkWidget   *m_edit_copy;
@@ -203,6 +204,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_conv_clear", &priv->m_conv_clear,
 				       "menu_conv_info", &priv->m_conv_info,
 				       "menu_conv_log", &priv->m_conv_log,
+				       "sep_conv_show_contacts", &priv->s_conv_show_contacts,
+				       "menu_conv_show_contacts", &priv->m_conv_show_contacts,
 				       "menu_conv_close", &priv->m_conv_close,
 				       "menu_edit_cut", &priv->m_edit_cut,
 				       "menu_edit_copy", &priv->m_edit_copy,
@@ -246,6 +249,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 	g_signal_connect (priv->m_conv_info,
 			  "activate",
 			  G_CALLBACK (chat_window_info_activate_cb),
+			  window);
+	g_signal_connect (priv->m_conv_show_contacts,
+			  "toggled",
+			  G_CALLBACK (chat_window_show_contacts_toggled_cb),
 			  window);
 	g_signal_connect (priv->m_conv_close,
 			  "activate",
@@ -560,6 +567,10 @@ chat_window_update_menu (GossipChatWindow *window)
 	gint                  num_pages;
 	gint                  page_num;
 	
+	/* group chat menu details */
+	gboolean              is_group_chat;
+	gboolean              show_contacts;
+
 	priv = window->priv;
 
 	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
@@ -575,6 +586,37 @@ chat_window_update_menu (GossipChatWindow *window)
 	gtk_widget_set_sensitive (priv->m_tabs_left, !first_page);
 	gtk_widget_set_sensitive (priv->m_tabs_right, !last_page);
 	gtk_widget_set_sensitive (priv->m_conv_info, contact != NULL);
+
+	is_group_chat = gossip_chat_get_group_chat (priv->current_chat);
+	if (is_group_chat) {
+		gtk_widget_show (priv->s_conv_show_contacts);
+		gtk_widget_show (priv->m_conv_show_contacts);
+
+		show_contacts = gossip_chat_get_show_contacts (priv->current_chat);
+
+		/* we need to block the signal here because all we are
+		   really trying to do is check or uncheck the menu
+		   item.
+
+		   if we don't do this we get funny behaviour with 2
+		   or more group chat windows where showing contacts
+		   doesn't do anything. */
+
+		g_signal_handlers_block_by_func (priv->m_conv_show_contacts, 
+						 chat_window_show_contacts_toggled_cb, 
+						 window);
+		
+		g_object_set (priv->m_conv_show_contacts, 
+			      "active", show_contacts,
+			      NULL);
+
+		g_signal_handlers_unblock_by_func (priv->m_conv_show_contacts, 
+						   chat_window_show_contacts_toggled_cb,
+						   window);
+	} else {
+		gtk_widget_hide (priv->s_conv_show_contacts);
+		gtk_widget_hide (priv->m_conv_show_contacts);
+	}
 }
 
 static void
@@ -628,6 +670,21 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 	}
 
 	gtk_widget_set_sensitive (priv->m_conv_log, log_exists);
+}
+
+static void
+chat_window_show_contacts_toggled_cb (GtkWidget        *menuitem,
+				      GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	gboolean              show;
+
+	priv = window->priv;
+
+	g_return_if_fail (priv->current_chat != NULL);
+	
+	show = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (priv->m_conv_show_contacts)); 
+	gossip_chat_set_show_contacts (priv->current_chat, show);
 }
 
 static void

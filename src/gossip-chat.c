@@ -587,6 +587,29 @@ gossip_chat_get_group_chat (GossipChat *chat)
 	return FALSE;
 }
 
+gboolean 
+gossip_chat_get_show_contacts (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), FALSE);
+
+	if (GOSSIP_CHAT_GET_CLASS (chat)->get_show_contacts) {
+		return GOSSIP_CHAT_GET_CLASS (chat)->get_show_contacts (chat);
+	}
+
+	return FALSE;
+}
+
+void 
+gossip_chat_set_show_contacts (GossipChat *chat, 
+			       gboolean    show)
+{
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	if (GOSSIP_CHAT_GET_CLASS (chat)->set_show_contacts) {
+		GOSSIP_CHAT_GET_CLASS (chat)->set_show_contacts (chat, show);
+	}
+}
+
 void
 gossip_chat_clear (GossipChat *chat)
 {

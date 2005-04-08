@@ -29,6 +29,11 @@
       <property name="spacing">6</property>
 
       <child>
+	<widget class="GtkHPaned" id="hpaned">
+	  <property name="visible">True</property>
+	  <property name="can_focus">True</property>
+
+	  <child>
 	<widget class="GtkVBox" id="left_vbox">
 	  <property name="visible">True</property>
 	  <property name="homogeneous">False</property>
@@ -129,15 +134,14 @@
 	  </child>
 	</widget>
 	<packing>
-	  <property name="padding">0</property>
-	  <property name="expand">True</property>
-	  <property name="fill">True</property>
+	      <property name="shrink">True</property>
+	      <property name="resize">True</property>
 	</packing>
       </child>
 
       <child>
-	<widget class="GtkScrolledWindow" id="scrolledwindow8">
-	  <property name="width_request">150</property>
+	    <widget class="GtkScrolledWindow" id="contacts_sw">
+	      <property name="width_request">125</property>
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
 	  <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
@@ -157,8 +161,14 @@
 	  </child>
 	</widget>
 	<packing>
+	      <property name="shrink">True</property>
+	      <property name="resize">False</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
 	  <property name="padding">0</property>
-	  <property name="expand">False</property>
+	  <property name="expand">True</property>
 	  <property name="fill">True</property>
 	</packing>
       </child>

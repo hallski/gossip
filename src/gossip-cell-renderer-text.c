@@ -281,6 +281,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	GtkStyle                   *style;
 	GdkColor                    color;
 	gchar                      *str;
+	gboolean                    show_status = FALSE;
 
 	priv = cell->priv;
 
@@ -298,10 +299,15 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		return;
 	}
 
+
+	if (!priv->is_group && (priv->status && strlen (priv->status) > 0)) {
+		show_status = TRUE;
+	} 
+
 	str = g_strdup_printf ("%s%s%s", 
 			       priv->name, 
-			       priv->is_group ? "" : "\n",
-			       priv->is_group ? "" : priv->status);
+			       !show_status ? "" : "\n",
+			       !show_status ? "" : priv->status);
 
  	style = gtk_widget_get_style (widget);
 	color = style->text_aa[GTK_STATE_NORMAL];

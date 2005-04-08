@@ -78,6 +78,10 @@ struct _GossipChatClass {
 					        gint       *height);
 	GtkWidget *      (*get_widget)         (GossipChat *chat);
 	gboolean         (*get_group_chat)     (GossipChat *chat);
+
+	gboolean         (*get_show_contacts)  (GossipChat *chat);
+	void             (*set_show_contacts)  (GossipChat *chat,
+						gboolean    show);
 };
 
 GType             gossip_chat_get_type           (void);
@@ -101,6 +105,9 @@ void              gossip_chat_get_geometry       (GossipChat       *chat,
 		                                  int              *width,
 						  int              *height);
 gboolean          gossip_chat_get_group_chat     (GossipChat       *chat);
+gboolean          gossip_chat_get_show_contacts  (GossipChat       *chat);
+void              gossip_chat_set_show_contacts  (GossipChat       *chat,
+						  gboolean          show);
 
 /* for spell checker dialog to correct the misspelled word */
 void              gossip_chat_correct_word       (GossipChat       *chat,
