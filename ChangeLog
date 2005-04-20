@@ -1,3 +1,7 @@
+2005-04-20  Mikael Hallendal  <micke@imendio.com>
+
+	* autogen.sh: Use automake 1.9
+
 2005-04-08  Martyn Russel  <mr@gnome.org>
 
 	* src/gossip-cell-renderer-text.c:
