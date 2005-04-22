@@ -1,3 +1,12 @@
+2005-04-22  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-add-contact.c: (add_contact_prepare_page_2),
+	(add_contact_page_2_vcard_handler), (gossip_add_contact_new):
+	* ui/main.glade:
+	- Fixes bug #117554.
+	- Have a retreiving information label when adding a contact and
+	  requesting vcard.
+
 2005-04-20  Mikael Hallendal  <micke@imendio.com>
 
 	* autogen.sh: Use automake 1.9

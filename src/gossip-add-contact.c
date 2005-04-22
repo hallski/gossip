@@ -44,7 +44,7 @@ typedef struct {
 
 	/* Page two */
 	GtkWidget *two_page;
-	GtkWidget *two_waiting_label;
+	GtkWidget *two_vcard_label;
 	GtkWidget *two_information_table;
 	GtkWidget *two_id_label;
 	GtkWidget *two_name_label;
@@ -371,11 +371,11 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	GtkTreeIter              iter;
 
 	const gchar             *id;
-	gchar                   *str;
 	GList                   *groups = NULL;
 	GList                   *l;
 	GList                   *group_strings = NULL;
 	gint                     changed;
+	gchar                   *str;
 	
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (contact->one_system_combobox));
 	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (contact->one_system_combobox) , &iter);
@@ -397,15 +397,19 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 		gtk_entry_set_text (GTK_ENTRY (contact->two_nick_entry), str);
 		g_free (str);
 		gossip_jid_unref (jid);
+	}
 
 		/* vcard */
 		c = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
 		gossip_contact_set_id (c, id);
-		
 		gossip_session_async_get_vcard (gossip_app_get_session (), c, 
 						(GossipAsyncVCardCallback) add_contact_page_2_vcard_handler,
 						contact, NULL);
-	}
+	
+	str = g_strdup_printf ("<b>%s</b>",
+			       _("Information requested, please wait..."));
+	gtk_label_set_markup (GTK_LABEL (contact->two_vcard_label), str);
+	g_free (str);
 
 	if (protocol) {
 		/* translate ID to JID */
@@ -414,17 +418,7 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 						     (GossipTransportProtocolIDFunc)add_conact_protocol_id_cb,
 						     contact);
 	} else {
-#ifdef DEPRECATED		
-		LmMessage      *m;
-		LmMessageNode  *node;
-
-		if (contact->vcard_handler) {
-			lm_message_handler_invalidate (contact->vcard_handler);
-			lm_message_handler_unref (contact->vcard_handler);
-		}
-#endif
-		
-		gtk_widget_show(contact->two_waiting_label);
+		gtk_widget_show(contact->two_vcard_label);
 		gtk_widget_hide(contact->two_information_table);
 	}
 	
@@ -473,9 +467,15 @@ add_contact_page_2_vcard_handler (GossipAsyncResult  result,
                                   GossipVCard       *vcard,
                                   GossipAddContact  *contact)
 {
+	gchar       *text;
+
 	const gchar *str = NULL;
+	const gchar *no_info = _("No information is available for this contact.");
 
         if (result != GOSSIP_ASYNC_OK) {
+		text = g_strdup_printf ("<b>%s</b>", no_info);
+		gtk_label_set_markup (GTK_LABEL (contact->two_vcard_label), text);
+		g_free (text);
                 return;
         }
 
@@ -515,8 +515,19 @@ add_contact_page_2_vcard_handler (GossipAsyncResult  result,
 		gtk_label_set_text (GTK_LABEL (contact->two_country_label), "");	
 	}
 
-	gtk_widget_hide(contact->two_waiting_label);
+	if (!gossip_vcard_get_name (vcard) &&
+	    !gossip_vcard_get_email (vcard) && 
+	    !gossip_vcard_get_country (vcard)) {
+		text = g_strdup_printf ("<b>%s</b>", no_info);
+		gtk_label_set_markup (GTK_LABEL (contact->two_vcard_label), text);
+		g_free (text);
+
+		gtk_widget_show(contact->two_vcard_label);
+		gtk_widget_hide(contact->two_information_table);
+	} else {
+		gtk_widget_hide(contact->two_vcard_label);
 	gtk_widget_show(contact->two_information_table);
+	}
 }
 
 static void
@@ -834,7 +845,7 @@ gossip_add_contact_new (const gchar *id)
 		"1_search_button", &contact->one_search_button,
 		"1_example_label", &contact->one_example_label,
 		"2_page", &contact->two_page,
-		"2_waiting_label", &contact->two_waiting_label,
+		"2_vcard_label", &contact->two_vcard_label,
 		"2_information_table", &contact->two_information_table,
 		"2_id_label", &contact->two_id_label,
 		"2_name_label", &contact->two_name_label,
