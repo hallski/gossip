@@ -2,4 +2,3 @@ src/eggtreemodelfilter.c
 src/eggtrayicon.c
 src/gossip-accounts-dialog.c
 src/gossip-disco-window.c
-gossip.desktop.in
