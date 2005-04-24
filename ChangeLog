@@ -1,3 +1,8 @@
+2005-04-24  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_drag_data_received):
+	- Added a cast to make gcc 4 happy.
+
 2005-04-22  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-add-contact.c: (add_contact_prepare_page_2),

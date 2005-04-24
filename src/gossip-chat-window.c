@@ -41,14 +41,14 @@
 static void gossip_chat_window_class_init     (GossipChatWindowClass *klass);
 static void gossip_chat_window_init	      (GossipChatWindow      *window);
 static void gossip_chat_window_finalize       (GObject		     *object);
-static GdkPixbuf *chat_window_get_status_pixbuf        (GossipChatWindow      *window,
+static GdkPixbuf *chat_window_get_status_pixbuf(GossipChatWindow     *window,
 					       GossipChat	     *chat);
 static void chat_window_accel_cb              (GtkAccelGroup         *accelgroup,
 					       GObject               *object,
 					       guint                  key,
 					       GdkModifierType        mod,
 					       GossipChatWindow      *window);
-static GtkWidget *chat_window_create_label             (GossipChatWindow      *window,
+static GtkWidget *chat_window_create_label    (GossipChatWindow      *window,
 					       GossipChat	     *chat);
 static void chat_window_update_status	      (GossipChatWindow	     *window,
 					       GossipChat	     *chat);
@@ -62,8 +62,8 @@ static void chat_window_log_activate_cb       (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_conv_activate_cb      (GtkWidget             *menuitem,
 					       GossipChatWindow      *window);
-static void       chat_window_show_contacts_toggled_cb (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
+static void chat_window_show_contacts_toggled_cb (GtkWidget          *menuitem,
+						  GossipChatWindow   *window);
 static void chat_window_close_activate_cb     (GtkWidget	     *menuitem,
 					       GossipChatWindow      *window);
 static void chat_window_cut_activate_cb       (GtkWidget             *menuitem,
@@ -110,7 +110,7 @@ static void chat_window_tab_detached_cb       (GossipNotebook        *notebook,
 					       GossipChatWindow      *window);
 static void chat_window_tabs_reordered_cb     (GossipNotebook	     *notebook,
 					       GossipChatWindow      *window);
-static gboolean   chat_window_focus_in_event_cb        (GtkWidget             *widget,
+static gboolean chat_window_focus_in_event_cb (GtkWidget             *widget,
 					       GdkEvent		     *event,
 					       GossipChatWindow      *window); 
 static void    chat_window_drag_data_received (GtkWidget             *widget,
@@ -1077,7 +1077,7 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	GossipChatWindow *old_window;
 
 	contact = gossip_session_find_contact (gossip_app_get_session (),
-					       selection->data);
+					       (gchar *) selection->data);
 	
 	if (!contact) {
 		return;
