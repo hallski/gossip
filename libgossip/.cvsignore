@@ -1,0 +1,5 @@
+Makefile
+Makefile.in
+gossip-marshal.c
+gossip-marshal.h
+*.loT
