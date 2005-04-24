@@ -23,7 +23,6 @@
 #include <glib/gi18n.h>
 #include <string.h>
 
-#include "gossip-stock.h"
 #include "gossip-utils.h"
 #include "gossip-presence.h"
 
@@ -358,15 +357,6 @@ gossip_presence_set_priority (GossipPresence *presence,
 	priv->priority = priority;
 }
 
-GdkPixbuf *
-gossip_presence_get_pixbuf (GossipPresence *presence)
-{
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
-			      gossip_utils_get_pixbuf_offline ());
-
-	return gossip_presence_state_get_pixbuf (gossip_presence_get_state (presence));
-}
-
 gboolean
 gossip_presence_resource_equal (gconstpointer a, gconstpointer b)
 {
@@ -418,27 +408,3 @@ gossip_presence_state_get_default_status (GossipPresenceState state)
 {
 	return presence_get_default_status (state);
 }
-
-GdkPixbuf *
-gossip_presence_state_get_pixbuf (GossipPresenceState state)
-{
-	const gchar *stock = NULL; 
-
-	switch (state) {
-	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		stock = GOSSIP_STOCK_AVAILABLE;
-		break;
-	case GOSSIP_PRESENCE_STATE_BUSY:
-		stock = GOSSIP_STOCK_BUSY;
-		break;
-	case GOSSIP_PRESENCE_STATE_AWAY:
-		stock = GOSSIP_STOCK_AWAY;
-		break;
-	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-		stock = GOSSIP_STOCK_EXT_AWAY;
-		break;
-	}
-
-	return gossip_utils_get_pixbuf_from_stock (stock);
-}
-

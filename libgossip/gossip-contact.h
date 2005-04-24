@@ -23,7 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-jid.h"
 #include "gossip-presence.h"
 
 #define GOSSIP_TYPE_CONTACT         (gossip_contact_get_gtype ())
@@ -110,7 +109,6 @@ gboolean           gossip_contact_equal          (gconstpointer     v1,
 guint              gossip_contact_hash           (gconstpointer     key);
 
 /* -- Convenience functions -- */
-GdkPixbuf *        gossip_contact_get_pixbuf     (GossipContact    *contact);
 const gchar *      gossip_contact_get_status     (GossipContact    *contact);
 
 #endif /* __GOSSIP_CONTACT_H__ */

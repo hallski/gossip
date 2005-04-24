@@ -22,7 +22,6 @@
 #define __GOSSIP_PRESENCE_H__
 
 #include <glib-object.h>
-#include <gdk/gdkpixbuf.h>
 
 #define GOSSIP_TYPE_PRESENCE         (gossip_presence_get_type ())
 #define GOSSIP_PRESENCE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PRESENCE, GossipPresence))
@@ -67,8 +66,6 @@ gint                gossip_presence_get_priority (GossipPresence *presence);
 void                gossip_presence_set_priority (GossipPresence *presence,
 						  gint            priority);
 
-GdkPixbuf *         gossip_presence_get_pixbuf   (GossipPresence *presence);
-
 gboolean            gossip_presence_resource_equal     (gconstpointer a,
 							gconstpointer b);
 gint                gossip_presence_priority_sort_func (gconstpointer a,
@@ -76,7 +73,6 @@ gint                gossip_presence_priority_sort_func (gconstpointer a,
 /* Returns the default status message for presence state */
 const gchar *
 gossip_presence_state_get_default_status     (GossipPresenceState state);
-GdkPixbuf * gossip_presence_state_get_pixbuf (GossipPresenceState state);
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

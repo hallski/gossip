@@ -1,3 +1,19 @@
+2005-04-25  Mikael Hallendal  <micke@imendio.com>
+
+	* configure.ac:
+	- Added LIBGOSSIP pkg check
+	* libgossip/Makefile.am:
+	* libgossip/gossip-account.[ch]:
+	- Don't use GossipJID.
+	* libgossip/gossip-contact.[ch]:
+	* libgossip/gossip-presence.[ch]:
+	- Removed GUI dependency.
+	* libgossip/gossip-utils.[ch]:
+	- Added
+	- The non-GUI parts from src/gossip-utils.[ch]
+	* src/gossip-ui-utils.[ch]:
+	- The GUI parts from gossip-utils.[ch]
+
 2005-04-24  Mikael Hallendal  <micke@imendio.com>
 
 	* configure.ac:

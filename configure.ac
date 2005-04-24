@@ -66,7 +66,7 @@ AC_SUBST(GTK_REQUIRED, 2.6.0)
 AC_SUBST(LIBGLADE_REQUIRED, 2.0.0)
 AC_SUBST(LOUDMOUTH_REQUIRED, 0.17)
 AC_SUBST(GCONF_REQUIRED, 1.2.0)
-AC_SUBST(LIBGNOMEUI_REQUIRED, 2.0.0)
+AC_SUBST(LIBGNOME_REQUIRED, 2.0.0)
 AC_SUBST(LIBGNOMEVFS_REQUIRED, 2.0.0)
 AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
 
@@ -77,6 +77,13 @@ dnl -----------------------------------------------------------
 dnl ================================
 dnl | Pkg-Config dependency checks |---------------------------
 dnl ================================
+
+PKG_CHECK_MODULES(LIBGOSSIP, [
+	glib-2.0 >= $GLIB_REQUIRED
+	gobject-2.0
+	libgnome-2.0 >= $LIBGNOME_REQUIRED
+])
+
 PKG_CHECK_MODULES(GOSSIP,
 [
 	libxml-2.0 >= $LIBXML_REQUIRED
@@ -87,7 +94,7 @@ PKG_CHECK_MODULES(GOSSIP,
 	libglade-2.0 >= $LIBGLADE_REQUIRED 
 	loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
 	gconf-2.0 >= $GCONF_REQUIRED
-	libgnomeui-2.0 >= $LIBGNOMEUI_REQUIRED
+	libgnomeui-2.0 >= $LIBGNOME_REQUIRED
 	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
 	$dbus_pkgconfig
 ])

@@ -634,23 +634,6 @@ gossip_contact_hash (gconstpointer key)
 }
 
 /* -- Convenience functions -- */
-GdkPixbuf *
-gossip_contact_get_pixbuf (GossipContact *contact)
-{
-	GossipContactPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 
-			      gossip_utils_get_pixbuf_offline ());
-
-	priv = GET_PRIV (contact);
-
-	if (priv->presences) {
-		return gossip_presence_get_pixbuf (GOSSIP_PRESENCE (priv->presences->data));
-	} 
-
-	return gossip_utils_get_pixbuf_offline ();
-}
-
 const gchar *
 gossip_contact_get_status (GossipContact *contact)
 {

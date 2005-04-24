@@ -16,6 +16,7 @@ libgossip_la_SOURCES =             \
 	gossip-protocol.c          \
 	gossip-session.c           \
 	gossip-time.c              \
+	gossip-utils               \
 	gossip-vcard.c             \
 	gossip-version-info.c
 
@@ -32,7 +33,8 @@ libgossipinclude_HEADERS =         \
 	gossip-session.h           \
 	gossip-time.h              \
 	gossip-vcard.h             \
-	gossip-version-info.h
+	gossip-version-info.h      \
+	gossip-utils.h
 
 libgossip_la_LIBADD =              \
 	$(LIBGOSSIP_LIBS)

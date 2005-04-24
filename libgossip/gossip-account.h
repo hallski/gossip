@@ -22,13 +22,14 @@
 #define __GOSSIP_ACCOUNT_H__
 
 #include <glib.h>
-#include "gossip-jid.h"
 
 #define GOSSIP_ACCOUNTS_PATH "/Gossip/Accounts"
 
 typedef struct {
 	gchar     *name;
-	GossipJID *jid;
+	gchar     *username;
+	gchar     *host;
+	gchar     *resource;
 	gchar     *password;
 	gchar     *server;
 	guint      port;
@@ -38,9 +39,10 @@ typedef struct {
 	gint   ref_count;
 } GossipAccount;
 
-
 GossipAccount *gossip_account_new                         (const gchar   *name,
-							   GossipJID     *jid,
+							   const gchar   *username,
+							   const gchar   *host,
+							   const gchar   *resource,
 							   const gchar   *password,
 							   const gchar   *server,
 							   guint          port,

@@ -1,0 +1,126 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+/*
+ * Copyright (C) 2003-2005 Imendio AB
+ * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#include <config.h>
+#include <string.h>
+#include <time.h>
+#include <sys/types.h>
+#include <regex.h>
+#include <gtk/gtk.h>
+#include <glade/glade.h>
+#include <libgnome/gnome-url.h>
+#include <libgnome/gnome-i18n.h>
+#include "gossip-utils.h"
+
+#define DINGUS "(((mailto|news|telnet|nttp|file|http|sftp|ftp|https|dav|callto)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:{}@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
+
+#define AVAILABLE_MESSAGE "Available"
+#define AWAY_MESSAGE "Away"
+#define BUSY_MESSAGE "Busy"
+
+static regex_t  dingus;
+
+gchar *
+gossip_utils_substring (const gchar *str, gint start, gint end)
+{
+	return g_strndup (str + start, end - start);
+}
+
+gint
+gossip_utils_url_regex_match (const gchar *msg,
+			      GArray      *start,
+			      GArray      *end)
+{
+	static gboolean inited = FALSE;
+	regmatch_t      matches[1];
+	gint            ret = 0;
+	gint            num_matches = 0;
+	gint            offset = 0;
+
+	if (!inited) {
+		memset (&dingus, 0, sizeof (regex_t));
+		regcomp (&dingus, DINGUS, REG_EXTENDED);
+		inited = TRUE;
+	}
+
+	while (!ret) {
+		ret = regexec (&dingus, msg + offset, 1, matches, 0);
+
+		if (ret == 0) {
+			gint s;
+			
+			num_matches++;
+
+			s = matches[0].rm_so + offset;
+			offset = matches[0].rm_eo + offset;
+			
+			g_array_append_val (start, s);
+			g_array_append_val (end, offset);
+		}
+	}
+		
+	return num_matches;
+}
+
+GossipPresenceState
+gossip_utils_get_presence_state_from_show_string (const gchar *str)
+{
+	if (!str || !str[0]) {
+		return GOSSIP_PRESENCE_STATE_AVAILABLE;
+	}
+	else if (strcmp (str, "dnd") == 0) {
+		return GOSSIP_PRESENCE_STATE_BUSY;
+	}
+	else if (strcmp (str, "away") == 0) {
+		return GOSSIP_PRESENCE_STATE_AWAY;
+	}
+	else if (strcmp (str, "xa") == 0) {
+		return GOSSIP_PRESENCE_STATE_EXT_AWAY;
+	}
+	/* We don't support chat, so treat it like available. */
+	else if (strcmp (str, "chat") == 0) {
+		return GOSSIP_PRESENCE_STATE_AVAILABLE;
+	}
+
+	return GOSSIP_PRESENCE_STATE_AVAILABLE;
+}
+
+gint
+gossip_utils_str_case_cmp (const gchar *s1, const gchar *s2)
+{
+	return gossip_utils_str_n_case_cmp (s1, s2, -1);
+}	
+
+gint
+gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
+{
+	gchar *u1, *u2;
+	gint   ret_val;
+	
+	u1 = g_utf8_casefold (s1, n);
+	u2 = g_utf8_casefold (s2, n);
+
+	ret_val = g_utf8_collate (u1, u2);
+	g_free (u1);
+	g_free (u2);
+
+	return ret_val;
+}

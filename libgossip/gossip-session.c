@@ -21,7 +21,6 @@
 #include <config.h>
 
 #include "gossip-account.h"
-#include "gossip-jabber.h"
 #include "gossip-marshal.h"
 #include "gossip-session.h"
 
@@ -31,7 +30,7 @@
 
 typedef struct _GossipSessionPriv  GossipSessionPriv;
 struct _GossipSessionPriv {
-	GossipJabber   *default_jabber;
+	GossipProtocol *default_jabber;
 
 	GList          *protocols;
 
