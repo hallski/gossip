@@ -21,8 +21,7 @@
 #ifndef __GOSSIP_IDLE_H__
 #define __GOSSIP_IDLE_H__
 
-#include "glib.h"
-#include "gossip-app.h"
+#include <glib.h>
 
 gint32		gossip_idle_get_seconds	    (void);
 void            gossip_idle_reset           (void);

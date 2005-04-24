@@ -52,7 +52,6 @@
 #define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
 #define XMPP_REGISTER_XMLNS "jabber:iq:register"
 
-
 struct _GossipJabberPriv {
 	LmConnection          *connection;
 	
@@ -222,7 +221,6 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->async_get_vcard     = jabber_async_get_vcard;
 	protocol_class->async_set_vcard     = jabber_async_set_vcard;
 	protocol_class->async_get_version   = jabber_async_get_version;
-
 }
 
 static void

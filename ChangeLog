@@ -1,5 +1,22 @@
 2005-04-24  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-disco-register.c:
+	* src/gossip-disco-register.h:
+	* src/gossip-disco-servers.c:
+	* src/gossip-disco-servers.h:
+	* src/gossip-disco-window.c:
+	* src/gossip-disco-window.h:
+	* src/gossip-disco.c:
+	* src/gossip-disco.h:
+	- Removed, not used any more
+	* src/gossip-favorite.c:
+	* src/gossip-favorite.h:
+	* src/gossip-idle.h:
+	* src/gossip-jabber.c:
+	- Removed unneccessary includes.
+
+2005-04-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-chat-window.c: (chat_window_drag_data_received):
 	- Added a cast to make gcc 4 happy.
 

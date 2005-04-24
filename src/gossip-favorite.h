@@ -21,8 +21,7 @@
 #ifndef __GOSSIP_FAVORITE_H__
 #define __GOSSIP_FAVORITE_H__
 
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtkentry.h>
+#include <glib.h>
 
 #define GOSSIP_FAVORITES_PATH "/Gossip/Favorites"
 
