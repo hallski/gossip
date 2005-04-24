@@ -167,9 +167,11 @@ AC_OUTPUT([
 Makefile
 ui/Makefile
 ui/pixmaps/Makefile
+libgossip/Makefile
 src/Makefile
 src/sounds/Makefile
 protocols/Makefile
+protocols/jabber/Makefile
 po/Makefile.in
 gossip.desktop.in
 ])

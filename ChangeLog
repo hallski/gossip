@@ -1,5 +1,18 @@
 2005-04-24  Mikael Hallendal  <micke@imendio.com>
 
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* libgossip/gossip-marshal-main.c:
+	* libgossip/gossip-marshal.list:
+	* protocols/jabber/Makefile.am:
+	* src/Makefile.am:
+	- Started working on second phase of my long-term Gossip code
+	  restructuring. Thanks Anders with help on moving the files.
+	- Splitting code into three different parts, the core in libgossip,
+	  the ui in src and the jabber implementation in protocols/jabber.
+
+2005-04-24  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-disco-register.c:
 	* src/gossip-disco-register.h:
 	* src/gossip-disco-servers.c:
