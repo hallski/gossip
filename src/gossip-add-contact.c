@@ -59,11 +59,6 @@ typedef struct {
 	GtkWidget *two_group_combo;
 	GtkWidget *two_group_entry;
 	
-	/* Page three */
-	GtkWidget *three_page;
-	GtkWidget *three_message_label;
-	GtkWidget *three_message_text_view;
-
 	GtkWidget *last_page;
 	GtkWidget *last_label;
 
@@ -138,9 +133,6 @@ static void             add_contact_prepare_page_1              (GnomeDruidPage 
 								 GnomeDruid       *druid,
 								 GossipAddContact *contact);
 static void             add_contact_prepare_page_2              (GnomeDruidPage   *page,
-								 GnomeDruid       *druid,
-								 GossipAddContact *contact);
-static void             add_contact_prepare_page_3              (GnomeDruidPage   *page,
 								 GnomeDruid       *druid,
 								 GossipAddContact *contact);
 static void             add_contact_prepare_page_last           (GnomeDruidPage   *page,
@@ -545,20 +537,6 @@ add_contact_page_2_vcard_handler (GossipAsyncResult  result,
 }
 
 static void
-add_contact_prepare_page_3 (GnomeDruidPage   *page,
-			    GnomeDruid       *druid, 
-			    GossipAddContact *contact)
-{
-	gchar *str;
-	
-	str = g_strdup_printf (_("What request message do you want to send to %s?"),
-			       gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry)));
-	
-	gtk_label_set_text (GTK_LABEL (contact->three_message_label), str);
-	g_free (str);
-}
-
-static void
 add_contact_prepare_page_last (GnomeDruidPage   *page,
 			       GnomeDruid       *druid,
 			       GossipAddContact *contact)
@@ -584,14 +562,9 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
 	const gchar   *id;
         const gchar   *name;
  	const gchar   *group;
-	GtkTextBuffer *buffer;
-	GtkTextIter    start, end;
-	gchar         *message;
+	const gchar *message;
 
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (contact->three_message_text_view));
-	gtk_text_buffer_get_bounds (buffer, &start, &end);
-
-	message = gtk_text_buffer_get_text (buffer, &start, &end, TRUE);
+	message = _("I would like to add you to my contact list.");
 
 	id = gtk_label_get_text (GTK_LABEL (contact->two_id_label));
         name = gtk_entry_get_text (GTK_ENTRY (contact->two_nick_entry));
@@ -599,7 +572,6 @@ add_contact_last_page_finished (GnomeDruidPage   *page,
         
         gossip_session_add_contact (gossip_app_get_session (),
                                     id, name, group, message);
-        g_free (message);
 
 	gtk_widget_destroy (contact->dialog);
 }
@@ -886,9 +858,6 @@ gossip_add_contact_new (const gchar *id)
 		"2_nick_entry", &contact->two_nick_entry,
 		"2_group_combo", &contact->two_group_combo,
 		"2_group_entry", &contact->two_group_entry,
-		"3_page", &contact->three_page,
-		"3_message_label", &contact->three_message_label,
-		"3_message_text_view", &contact->three_message_text_view,
 		"last_page", &contact->last_page,
 		"last_label", &contact->last_label,
 		NULL);
@@ -912,9 +881,6 @@ gossip_add_contact_new (const gchar *id)
 				contact);
 	g_signal_connect_after (contact->two_page, "prepare",
 				G_CALLBACK (add_contact_prepare_page_2),
-				contact);
-	g_signal_connect_after (contact->three_page, "prepare",
-				G_CALLBACK (add_contact_prepare_page_3),
 				contact);
 	g_signal_connect_after (contact->last_page, "prepare",
 				G_CALLBACK (add_contact_prepare_page_last),

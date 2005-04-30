@@ -1,5 +1,13 @@
 2005-05-01  Martyn Russel  <mr@gnome.org>
 
+	* src/gossip-add-contact.c: (add_contact_last_page_finished),
+	(gossip_add_contact_new):
+	* ui/main.glade:
+	- Remove the reason field from the add new contact wizard.
+	- Fixes #157866
+
+2005-05-01  Martyn Russel  <mr@gnome.org>
+
 	* src/gossip-chat-view.c: (gossip_chat_view_init),
 	(chat_view_populate_popup), (chat_view_buffer_changed_cb):
 	- Set chat buffer to 500 lines.
