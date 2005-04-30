@@ -36,6 +36,10 @@
 /* Number of seconds between timestamps when using normal mode, 5 minutes */
 #define TIMESTAMP_INTERVAL 300
 
+/* Maximum lines in any chat buffer, see bug #141292 */
+#define MAX_LINES 500
+
+
 struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
 
@@ -104,6 +108,8 @@ static void       chat_view_setup_tags      (GossipChatView      *view);
 static void       chat_view_populate_popup  (GossipChatView      *view,
 					     GtkMenu             *menu,
 					     gpointer             user_data); 
+static void       chat_view_buffer_changed_cb          (GtkTextBuffer       *buffer,
+							GossipChatView      *view);
 static gboolean   chat_view_event_cb        (GossipChatView      *view,
 					     GdkEventMotion      *event,
 					     GtkTextTag          *tag);
@@ -123,23 +129,15 @@ static void       chat_view_copy_address_cb (GtkMenuItem         *menuitem,
 					     const gchar         *url);
 static void       chat_view_realize_cb      (GossipChatView      *widget,
 					     gpointer             data);
-
 static void       chat_view_clear_view_cb   (GtkMenuItem *menuitem,
 					     GossipChatView *view);
-
-static void       
-chat_view_insert_text_with_emoticons        (GtkTextBuffer       *buf,
+static void       chat_view_insert_text_with_emoticons (GtkTextBuffer       *buf,
 					     GtkTextIter         *iter, 
 					     const gchar         *str);
-
 static GdkPixbuf *chat_view_get_smiley       (GossipSmiley          smiley);
-
-static void              
-chat_view_maybe_append_timestamp             (GossipChatView *view,
+static void       chat_view_maybe_append_timestamp     (GossipChatView      *view,
 					      gossip_time_t   timestamp);
-static void
-chat_view_maybe_append_datestamp             (GossipChatView *view);
-
+static void       chat_view_maybe_append_datestamp     (GossipChatView      *view);
 static gboolean chat_view_is_scrolled_down   (GossipChatView *view);
 
 
@@ -170,6 +168,11 @@ gossip_chat_view_init (GossipChatView *view)
 	
 	priv->buffer = gtk_text_buffer_new (NULL);
 	
+	g_signal_connect (priv->buffer,
+			  "changed",
+			  G_CALLBACK (chat_view_buffer_changed_cb),
+			  view);
+
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW (view), priv->buffer);
 
 	g_object_set (view,
@@ -348,6 +351,37 @@ chat_view_populate_popup (GossipChatView *view,
 			  str);
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
+}
+
+static void
+chat_view_buffer_changed_cb (GtkTextBuffer  *buffer, 
+			     GossipChatView *view)
+{
+	GossipChatViewPriv *priv;
+	GtkTextIter         top, bottom;
+	gint                line;
+	gint                remove;
+	
+	priv = view->priv;
+
+	gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (priv->buffer), &bottom);
+	line = gtk_text_iter_get_line (&bottom);
+
+	if (line < MAX_LINES) {
+		return;
+	}
+
+	remove = line - MAX_LINES;
+	gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (priv->buffer), &top);
+
+	bottom = top;
+	if (!gtk_text_iter_forward_lines (&bottom, remove)) {
+		/* couldn't move iter 'n' lines down */
+		return;
+	}
+
+ 	gtk_text_buffer_delete (GTK_TEXT_BUFFER (priv->buffer),  
+ 				&top, &bottom); 
 }
 
 static gboolean

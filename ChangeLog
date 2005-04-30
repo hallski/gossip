@@ -1,3 +1,10 @@
+2005-05-01  Martyn Russel  <mr@gnome.org>
+
+	* src/gossip-chat-view.c: (gossip_chat_view_init),
+	(chat_view_populate_popup), (chat_view_buffer_changed_cb):
+	- Set chat buffer to 500 lines.
+	- Fixes #141292
+
 2005-05-01  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/.cvsignore:
