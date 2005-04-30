@@ -20,8 +20,8 @@
 
 #include <config.h>
 
+#include "libgossip-marshal.h"
 #include "gossip-account.h"
-#include "gossip-marshal.h"
 #include "gossip-protocol.h"
 
 /* Temporary */
@@ -120,7 +120,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0, 
 			      NULL, NULL,
-			      gossip_marshal_VOID__VOID,
+			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
 	signals[DISCONNECTED] = 
@@ -129,7 +129,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0, 
 			      NULL, NULL,
-			      gossip_marshal_VOID__VOID,
+			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
 	signals[PROTOCOL_CONNECTED] = 
@@ -138,7 +138,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE, 
 			      1, G_TYPE_POINTER);
 	
@@ -148,7 +148,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE, 
 			      1, G_TYPE_POINTER);
 	
@@ -158,7 +158,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 
@@ -168,7 +168,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 	signals[CONTACT_UPDATED] = 
@@ -177,7 +177,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 	
@@ -187,7 +187,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 
@@ -197,7 +197,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 	signals[COMPOSING_EVENT] =
@@ -206,7 +206,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER_BOOLEAN,
+			      libgossip_marshal_VOID__POINTER_BOOLEAN,
 			      G_TYPE_NONE,
 			      2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 	signals[GET_PASSWORD] =
@@ -215,7 +215,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      gossip_marshal_STRING__POINTER,
+			      libgossip_marshal_STRING__POINTER,
 			      G_TYPE_STRING,
 			      1, G_TYPE_POINTER);
 	

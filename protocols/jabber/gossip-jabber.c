@@ -35,7 +35,6 @@
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-marshal.h>
 #include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-chatroom-provider.h>

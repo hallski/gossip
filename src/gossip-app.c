@@ -40,7 +40,6 @@
 #include <libgossip/gossip-utils.h>
 
 #include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-marshal.h>
 #include <libgossip/gossip-presence.h>
 
 #include "eggtrayicon.h"
@@ -56,6 +55,7 @@
 #include "gossip-join-dialog.h"
 #include "gossip-sound.h"
 #include "gossip-idle.h"
+#include "gossip-marshal.h"
 #include "gossip-startup-druid.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"

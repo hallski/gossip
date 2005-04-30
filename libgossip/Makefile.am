@@ -12,7 +12,6 @@ libgossip_la_SOURCES =             \
 	gossip-contact.c           \
 	gossip-event-manager.c     \
 	gossip-event.c             \
-	gossip-marshal-main.c      \
 	gossip-message.c           \
 	gossip-presence.c          \
 	gossip-protocol.c          \
@@ -20,7 +19,8 @@ libgossip_la_SOURCES =             \
 	gossip-time.c              \
 	gossip-utils.c             \
 	gossip-vcard.c             \
-	gossip-version-info.c
+	gossip-version-info.c      \
+	libgossip-marshal-main.c 
 
 libgossipinclude_HEADERS =         \
 	gossip-account.h           \
@@ -46,25 +46,25 @@ libgossipincludedir = $(includedir)/gossip/
 
 GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
 
-gossip-marshal.h: gossip-marshal.list
+libgossip-marshal.h: libgossip-marshal.list
 	(cd $(srcdir) && \
-	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \
-	&& (cmp -s xgen-gmh gossip-marshal.h || cp xgen-gmh gossip-marshal.h) \
+	$(GLIB_GENMARSHAL) --prefix=libgossip_marshal libgossip-marshal.list --header) > xgen-gmh \
+	&& (cmp -s xgen-gmh libgossip-marshal.h || cp xgen-gmh libgossip-marshal.h) \
 	&& rm -f xgen-gmh xgen-gmh~
 
-gossip-marshal.c: gossip-marshal.list
+libgossip-marshal.c: libgossip-marshal.list
 	(cd $(srcdir) && \
-	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --body) > xgen-gmc \
-	&& cp xgen-gmc gossip-marshal.c \
+	$(GLIB_GENMARSHAL) --prefix=libgossip_marshal libgossip-marshal.list --body) > xgen-gmc \
+	&& cp xgen-gmc libgossip-marshal.c \
 	&& rm -f xgen-gmc xgen-gmc~
 
-gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
+libgossip-marshal-main.c: libgossip-marshal.c libgossip-marshal.h
 
 BUILT_SOURCES = 					\
-	gossip-marshal.h				\
-	gossip-marshal.c
+	libgossip-marshal.h				\
+	libgossip-marshal.c
 
 EXTRA_DIST =                                            \
-	gossip-marshal.list
+	libgossip-marshal.list
 
 CLEANFILES = $(BUILT_SOURCES)

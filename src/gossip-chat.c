@@ -27,9 +27,8 @@
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-marshal.h>
-
 #include "gossip-chat-window.h"
+#include "gossip-marshal.h"
 #include "gossip-spell.h"
 #include "gossip-spell-dialog.h"
 #include "gossip-ui-utils.h"

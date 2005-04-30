@@ -21,7 +21,7 @@
 #include <config.h>
 
 #include "gossip-contact.h"
-#include "gossip-marshal.h"
+#include "libgossip-marshal.h"
 #include "gossip-message.h"
 #include "gossip-chatroom-provider.h"
 
@@ -82,7 +82,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_OBJECT,
+				      libgossip_marshal_VOID__INT_OBJECT,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_MESSAGE);
 		signals[CHATROOM_NEW_ROOM_EVENT] =
@@ -91,7 +91,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_STRING,
+				      libgossip_marshal_VOID__INT_STRING,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, G_TYPE_STRING);
 		signals[CHATROOM_TITLE_CHANGED] = 
@@ -100,7 +100,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_STRING,
+				      libgossip_marshal_VOID__INT_STRING,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, G_TYPE_STRING);
 		
@@ -110,7 +110,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_OBJECT,
+				      libgossip_marshal_VOID__INT_OBJECT,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 		
@@ -120,7 +120,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_OBJECT,
+				      libgossip_marshal_VOID__INT_OBJECT,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 
@@ -130,7 +130,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_OBJECT,
+				      libgossip_marshal_VOID__INT_OBJECT,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 
@@ -140,7 +140,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      gossip_marshal_VOID__INT_OBJECT,
+				      libgossip_marshal_VOID__INT_OBJECT,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 

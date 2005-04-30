@@ -1,5 +1,5 @@
 Makefile
 Makefile.in
-gossip-marshal.c
-gossip-marshal.h
+libgossip-marshal.c
+libgossip-marshal.h
 *.loT

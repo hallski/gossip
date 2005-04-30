@@ -25,7 +25,6 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip-marshal.h>
 #include <libgossip/gossip-session.h>
 
 #include "gossip-app.h"
@@ -33,6 +32,7 @@
 #include "gossip-contact-info.h"
 #include "gossip-edit-groups-dialog.h"
 #include "gossip-log.h"
+#include "gossip-marshal.h"
 #include "gossip-stock.h"
 #include "gossip-contact-list.h"
 

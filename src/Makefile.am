@@ -43,6 +43,7 @@ gossip_SOURCES = 				                        	\
 	gossip-join-dialog.c	           gossip-join-dialog.h			\
 	gossip-log.c		           gossip-log.h				\
 	gossip-main.c				                        	\
+	gossip-marshal-main.c                                                   \
 	gossip-notebook.c	           gossip-notebook.h			\
 	gossip-preferences.c               gossip-preferences.h	        	\
 	gossip-private-chat.c              gossip-private-chat.h               	\
@@ -65,8 +66,30 @@ gossip_LDFLAGS = -export-dynamic
 
 stylesheetdir = $(datadir)/gossip
 stylesheet_DATA = gossip-log.xsl
+GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
+
+gossip-marshal.h: gossip-marshal.list
+	(cd $(srcdir) && \
+	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \
+	&& (cmp -s xgen-gmh gossip-marshal.h || cp xgen-gmh gossip-marshal.h) \
+	&& rm -f xgen-gmh xgen-gmh~
+
+gossip-marshal.c: gossip-marshal.list
+	(cd $(srcdir) && \
+	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --body) > xgen-gmc \
+	&& cp xgen-gmc gossip-marshal.c \
+	&& rm -f xgen-gmc xgen-gmc~
+
+gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
+
+BUILT_SOURCES = 					\
+	gossip-marshal.h				\
+	gossip-marshal.c
+
+CLEANFILES = $(BUILT_SOURCES)
 
 EXTRA_DIST =						\
 	gossip-log.xsl					\
+	gossip-marshal.list                             \
 	$(dbus_sources)
 

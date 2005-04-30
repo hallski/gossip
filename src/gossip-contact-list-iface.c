@@ -20,7 +20,7 @@
 
 #include <config.h>
 
-#include <libgossip/gossip-marshal.h>
+#include "gossip-marshal.h"
 #include "gossip-contact-list-iface.h"
 
 static void   contact_list_base_init   (gpointer klass);

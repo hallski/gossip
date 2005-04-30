@@ -20,7 +20,7 @@
 
 #include <config.h>
 
-#include "gossip-marshal.h"
+#include "libgossip-marshal.h"
 #include "gossip-event-manager.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT_MANAGER, GossipEventManagerPriv))
@@ -61,7 +61,7 @@ gossip_event_manager_class_init (GossipEventManagerClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
                               NULL, NULL,
-			      gossip_marshal_VOID__OBJECT,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_EVENT);
         signals[EVENT_REMOVED] = 
@@ -70,7 +70,7 @@ gossip_event_manager_class_init (GossipEventManagerClass *klass)
                               G_SIGNAL_RUN_LAST,
 			      0, 
 			      NULL, NULL,
-			      gossip_marshal_VOID__OBJECT,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_EVENT);
 

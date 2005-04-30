@@ -1,3 +1,19 @@
+2005-05-01  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/.cvsignore:
+	* libgossip/Makefile.am:
+	* libgossip/gossip-marshal-main.c:
+	* libgossip/gossip-marshal.list:
+	* libgossip/libgossip-marshal-main.c:
+	* libgossip/libgossip-marshal.list:
+	- Renamed to libgossip-marshal.*
+	* protocols/jabber/gossip-jabber.c:
+	- Remove include of gossip-marshal.h
+	* src/Makefile.am:
+	* src/gossip-marshal-main.c:
+	* src/gossip-marshal.list:
+	- Added this for the UI.
+
 2005-04-30  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-log.c: (log_transform):

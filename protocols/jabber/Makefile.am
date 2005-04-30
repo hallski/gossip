@@ -26,5 +26,4 @@ libgossip_jabber_la_SOURCES =                   \
 	gossip-transport-protocol.h             \
 	gossip-transport-register.c             \
 	gossip-transport-register.h
-	
 
