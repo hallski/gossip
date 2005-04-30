@@ -48,6 +48,16 @@ GossipAccount *gossip_account_new                         (const gchar   *name,
 							   guint          port,
 							   gboolean       use_ssl,
 							   gboolean       use_proxy);
+
+void           gossip_account_set_username                (GossipAccount *account,
+							   const gchar   *str);
+void           gossip_account_set_host                    (GossipAccount *account,
+							   const gchar   *str);
+void           gossip_account_set_resource                (GossipAccount *account,
+							   const gchar   *str);
+void           gossip_account_set_password                (GossipAccount *account,
+							   const gchar   *str);
+
 GossipAccount *gossip_account_get_default                 (void);
 GSList *       gossip_account_get_all                     (void);
 GossipAccount *gossip_account_get                         (const gchar   *name);

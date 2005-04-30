@@ -273,7 +273,7 @@ log_transform (const gchar *infile, gint fd_outfile)
 	xmlLoadExtDtdDefaultValue = 1;
 	exsltRegisterAll ();
 
-        stylesheet = xsltParseStylesheetFile (STYLESHEETDIR "/gossip-log.xsl");
+        stylesheet = xsltParseStylesheetFile ((const xmlChar *)STYLESHEETDIR "/gossip-log.xsl");
 	if (!stylesheet) {
 		return FALSE;
 	}

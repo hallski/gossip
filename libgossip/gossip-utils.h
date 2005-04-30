@@ -24,6 +24,15 @@
 #include "gossip-account.h"
 #include "gossip-presence.h"
 
+typedef struct {
+	GossipPresenceState  state;
+	gchar               *string;
+} GossipStatusEntry;
+
+GList *      gossip_utils_get_status_messages        (void);
+void         gossip_utils_set_status_messages        (GList            *list);
+void         gossip_utils_free_status_messages       (GList            *list);
+
 gchar *      gossip_utils_substring                  (const gchar      *str,
 						      gint              start,
 						      gint              end);
@@ -38,4 +47,10 @@ gint         gossip_utils_str_case_cmp               (const gchar      *s1,
 gint         gossip_utils_str_n_case_cmp             (const gchar      *s1, 
 						      const gchar      *s2,
 						      gsize             n);
+const gchar *gossip_utils_jid_str_locate_resource    (const gchar      *str);
+gchar *      gossip_utils_jid_str_get_part_name      (const gchar      *jid);
+
+gchar *      gossip_utils_jid_str_get_part_host      (const gchar      *jid);
+
+
 #endif /*  __GOSSIP_UTILS_H__ */

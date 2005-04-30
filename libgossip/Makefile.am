@@ -12,12 +12,13 @@ libgossip_la_SOURCES =             \
 	gossip-contact.c           \
 	gossip-event-manager.c     \
 	gossip-event.c             \
+	gossip-marshal-main.c      \
 	gossip-message.c           \
 	gossip-presence.c          \
 	gossip-protocol.c          \
 	gossip-session.c           \
 	gossip-time.c              \
-	gossip-utils               \
+	gossip-utils.c             \
 	gossip-vcard.c             \
 	gossip-version-info.c
 

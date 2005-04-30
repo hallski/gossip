@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
 #include "gossip-async.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-contact.h"
@@ -107,7 +108,7 @@ const gchar *   gossip_session_get_nickname   (GossipSession  *session);
 /* Async operations */
 gboolean        gossip_session_async_register  (GossipSession  *session,
                                                 GossipAccountType type,
-						    GossipAccount                *account,
+						GossipAccount  *account,
                                                 GossipAsyncRegisterCallback callback,
                                                 gpointer        user_data,
                                                 GError        **error);

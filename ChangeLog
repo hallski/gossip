@@ -1,5 +1,30 @@
 2005-04-30  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-log.c: (log_transform):
+	- Fix for gcc 4.
+
+2005-04-30  Mikael Hallendal  <micke@imendio.com>
+
+	* configure.ac:
+	- Added GOSSIP_JABBER check for the jabber module.
+	* libgossip/Makefile.am:
+	* libgossip/gossip-account.[ch]: 
+	- Don't use GossipJID, it's now private in the jabber module.
+	* libgossip/gossip-utils.[ch]: 
+	- Finished the split of gossip-ui-utils and gossip-utils.
+	* src/Makefile.am:
+	* src/*.[ch]:
+	- Removed code that has been move to libgossip/ and protocols/jabber.
+	- Make all code use libgossip instead of using the files that has
+	  been removed.
+	- Temporarily disable the transports (again...)
+	- Everything has now been brought up after the refactoring except 
+	  transports which requires adding an interface in libgossip that 
+	  can be implement by the Jabber backend (which will most likely be
+	  the only backend ever implementing this interface).
+
+2005-04-30  Mikael Hallendal  <micke@imendio.com>
+
 	* Makefile.am:
 	* configure.ac:
 	* libgossip/Makefile.am:

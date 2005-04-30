@@ -24,9 +24,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <regex.h>
-#include <gtk/gtk.h>
-#include <glade/glade.h>
-#include <libgnome/gnome-url.h>
+#include <gconf/gconf-client.h>
 #include <libgnome/gnome-i18n.h>
 #include "gossip-utils.h"
 
@@ -37,6 +35,117 @@
 #define BUSY_MESSAGE "Busy"
 
 static regex_t  dingus;
+
+GList *
+gossip_utils_get_status_messages (void)
+{
+	GConfClient       *gconf_client;
+	GSList            *list, *l;
+	GList             *ret = NULL;
+	GossipStatusEntry *entry;
+	const gchar       *status;
+	
+	gconf_client = gconf_client_get_default ();
+	
+	list = gconf_client_get_list (gconf_client,
+				      "/apps/gossip/status/preset_messages",
+				      GCONF_VALUE_STRING,
+				      NULL);
+
+	g_object_unref (gconf_client);
+
+	/* This is really ugly, but we can't store a list of pairs and a dir
+	 * with entries wouldn't work since we have no guarantee on the order of
+	 * entries.
+	 */
+	
+	for (l = list; l; l = l->next) {
+		entry = g_new (GossipStatusEntry, 1);
+
+		status = l->data;
+
+		if (strncmp (status, "available/", 10) == 0) {
+			entry->string = g_strdup (&status[10]);
+			entry->state = GOSSIP_PRESENCE_STATE_AVAILABLE;
+		}
+		else if (strncmp (status, "busy/", 5) == 0) {
+			entry->string = g_strdup (&status[5]);
+			entry->state = GOSSIP_PRESENCE_STATE_BUSY;
+		}
+		else if (strncmp (status, "away/", 5) == 0) {
+			entry->string = g_strdup (&status[5]);
+			entry->state = GOSSIP_PRESENCE_STATE_AWAY;
+		} else {
+			continue;
+		}
+		
+		ret = g_list_append (ret, entry);
+	}
+	
+	g_slist_foreach (list, (GFunc) g_free, NULL);
+	g_slist_free (list);
+	
+	return ret;
+
+}
+
+void 
+gossip_utils_set_status_messages (GList *list)
+{
+	GConfClient       *gconf_client;
+	GList             *l;
+	GossipStatusEntry *entry;
+	GSList            *slist = NULL;
+	const gchar       *state;
+	gchar             *str;
+	
+	for (l = list; l; l = l->next) {
+		entry = l->data;
+
+		switch (entry->state) {
+		case GOSSIP_PRESENCE_STATE_AVAILABLE:
+			state = "available";
+			break;
+		case GOSSIP_PRESENCE_STATE_BUSY:
+			state = "busy";
+			break;
+		case GOSSIP_PRESENCE_STATE_AWAY:
+			state = "away";
+			break;
+		default:
+			state = NULL;
+			g_assert_not_reached ();
+		}
+		
+		str = g_strdup_printf ("%s/%s", state, entry->string);
+		slist = g_slist_append (slist, str);
+	}
+
+	gconf_client = gconf_client_get_default ();
+	gconf_client_set_list (gconf_client,
+			       "/apps/gossip/status/preset_messages",
+			       GCONF_VALUE_STRING,
+			       slist,
+			       NULL);
+	g_object_unref (gconf_client);
+
+	g_slist_foreach (slist, (GFunc) g_free, NULL);
+	g_slist_free (slist);
+}
+
+static void
+free_entry (GossipStatusEntry *entry)
+{
+	g_free (entry->string);
+	g_free (entry);
+}
+
+void
+gossip_utils_free_status_messages (GList *list)
+{
+	g_list_foreach (list, (GFunc) free_entry, NULL);
+	g_list_free (list);
+}
 
 gchar *
 gossip_utils_substring (const gchar *str, gint start, gint end)
@@ -124,3 +233,58 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 
 	return ret_val;
 }
+
+const gchar *
+gossip_utils_jid_str_locate_resource (const gchar *str)
+{
+	gchar *ch;
+	
+	ch = strchr (str, '/');
+	if (ch) {
+		return (const gchar *) (ch + 1);
+	}
+
+	return NULL;
+}
+
+gchar *
+gossip_utils_jid_str_get_part_name (const gchar *jid_str)
+{
+	const gchar *ch;
+
+	g_return_val_if_fail (jid_str != NULL, "");
+
+	for (ch = jid_str; *ch; ++ch) {
+		if (*ch == '@') {
+			return g_strndup (jid_str, ch - jid_str);
+		}
+	}
+
+	return g_strdup (""); 
+}
+
+gchar *
+gossip_utils_jid_str_get_part_host (const gchar *jid_str) 
+{
+	const gchar *r_loc;
+	const gchar *ch;
+
+	g_return_val_if_fail (jid_str != NULL, "");
+
+	r_loc = gossip_utils_jid_str_locate_resource (jid_str);
+	for (ch = jid_str; *ch; ++ch) {
+		if (*ch == '@') {
+			ch++;
+
+			if (r_loc) {
+				return g_strndup (ch, r_loc - 1 - ch);
+			} 
+
+			return g_strdup (ch);
+		}
+	}
+
+	return g_strdup (""); 
+
+}
+

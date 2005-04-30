@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <libgnome/gnome-config.h>
 #include <libgnome/gnome-i18n.h>
+
+#include "gossip-utils.h"
 #include "gossip-account.h"
 
 #define DEFAULT_JABBER_PORT 5222
@@ -94,14 +96,59 @@ gossip_account_new (const gchar *name,
 	
 	str = server ? server : "";
 	account->server = g_strdup (str);
-	
-	account->port = port;
+
+	if (port == 0) {
+		account->port = DEFAULT_JABBER_PORT;
+	} else {
+		account->port = port;
+	}
+
 	account->use_ssl = use_ssl;
 	account->use_proxy = use_proxy;
 	
 	account->ref_count = 1;
 
 	return account;
+}
+
+void
+gossip_account_set_username (GossipAccount *account,
+			     const gchar   *str)
+{
+	g_return_if_fail (account != NULL);
+
+	g_free (account->username);
+	account->username = g_strdup (str);
+}
+
+void 
+gossip_account_set_host (GossipAccount *account,
+			 const gchar   *str)
+{
+	g_return_if_fail (account != NULL);
+	
+	g_free (account->host);
+	account->host = g_strdup (str);
+}
+
+void
+gossip_account_set_resource (GossipAccount *account,
+			     const gchar   *str)
+{
+	g_return_if_fail (account != NULL);
+	
+	g_free (account->resource);
+	account->resource = g_strdup (str);
+}
+
+void
+gossip_account_set_password (GossipAccount *account,
+			     const gchar   *str)
+{
+	g_return_if_fail (account != NULL);
+	
+	g_free (account->password);
+	account->password = g_strdup (str);
 }
 
 GossipAccount *
@@ -125,59 +172,6 @@ gossip_account_get_default ()
 	return account;
 }
 
-static const gchar *
-account_jid_locate_resource (const gchar *str)
-{
-	gchar *ch;
-	
-	ch = strchr (str, '/');
-	if (ch) {
-		return (const gchar *) (ch + 1);
-	}
-
-	return NULL;
-}
-
-static gchar *
-account_jid_get_part_name (const gchar *jid_str)
-{
-	const gchar *ch;
-
-	g_return_val_if_fail (jid_str != NULL, "");
-
-	for (ch = jid_str; *ch; ++ch) {
-		if (*ch == '@') {
-			return g_strndup (jid_str, ch - jid_str);
-		}
-	}
-
-	return g_strdup (""); 
-}
-
-static gchar *
-account_jid_get_part_host (const gchar *jid_str) 
-{
-	const gchar *r_loc;
-	const gchar *ch;
-
-	g_return_val_if_fail (jid_str != NULL, "");
-
-	r_loc = account_jid_locate_resource (jid_str);
-	for (ch = jid_str; *ch; ++ch) {
-		if (*ch == '@') {
-			ch++;
-
-			if (r_loc) {
-				return g_strndup (ch, r_loc - 1 - ch);
-			} 
-
-			return g_strdup (ch);
-		}
-	}
-
-	return g_strdup (""); 
-
-}
 GossipAccount *
 gossip_account_get (const gchar *name)
 {
@@ -199,10 +193,10 @@ gossip_account_get (const gchar *name)
 	if (jid_str && strcmp (jid_str, "") != 0) {
 		const gchar *r;
 		
-		account->username = account_jid_get_part_name (jid_str);
-		account->host = account_jid_get_part_host (jid_str);
+		account->username = gossip_utils_jid_str_get_part_name (jid_str);
+		account->host = gossip_utils_jid_str_get_part_host (jid_str);
 		
-		r = account_jid_locate_resource (jid_str);
+		r = gossip_utils_jid_str_locate_resource (jid_str);
 		if (r) {
 			account->resource = g_strdup (r);
 		} else {
