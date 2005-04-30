@@ -23,12 +23,7 @@
 #include <gtk/gtk.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
 #include "gossip-app.h"
-#include "gossip-transport-accounts.h"
-#include "gossip-transport-accounts-window.h"
-#include "gossip-transport-add-window.h"
-#include "gossip-transport-register.h"
 #include "gossip-stock.h"
 #include "gossip-add-contact.h"
 

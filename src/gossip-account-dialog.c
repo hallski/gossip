@@ -28,11 +28,14 @@
 #include <libgnome/gnome-config.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
+
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-utils.h>
+
+#include "gossip-ui-utils.h"
 #include "gossip-app.h"
-#include "gossip-account-dialog.h"
 #include "gossip-register.h"
-#include "gossip-account.h"
+#include "gossip-account-dialog.h"
 
 #define RESPONSE_REGISTER 1
 
@@ -103,16 +106,28 @@ account_dialog_focus_out_event_cb (GtkWidget            *widget,
 	account = dialog->account;
 
 	if (widget == GTK_WIDGET (dialog->jid_entry)) {
-		GossipJID *tmp_jid = gossip_jid_new (gtk_entry_get_text (dialog->jid_entry));
-		gossip_jid_set_without_resource (account->jid, gossip_jid_get_without_resource (tmp_jid));
-		gossip_jid_unref (tmp_jid);
+		const gchar *str;
+		gchar       *username;
+		gchar       *host;
+
+		str = gtk_entry_get_text (dialog->jid_entry);
+
+		username = gossip_utils_jid_str_get_part_name (str);
+		host = gossip_utils_jid_str_get_part_host (str);
+
+		gossip_account_set_username (account, username);
+		gossip_account_set_host (account, host);
+	
+		g_free (username);
+		g_free (host);
 	}
 	else if (widget == GTK_WIDGET (dialog->password_entry)) {
-		g_free (account->password);
-		account->password = g_strdup (gtk_entry_get_text (dialog->password_entry));
+		gossip_account_set_password (account,
+					     gtk_entry_get_text (dialog->password_entry));
 	}
 	else if (widget == GTK_WIDGET (dialog->resource_entry)) {
-		gossip_jid_set_resource (account->jid, gtk_entry_get_text (dialog->resource_entry));
+		gossip_account_set_resource (account,
+					     gtk_entry_get_text (dialog->resource_entry));
 	}
 	else if (widget == GTK_WIDGET (dialog->server_entry)) {
 		g_free (account->server);
@@ -153,6 +168,7 @@ account_dialog_setup (GossipAccountDialog *dialog)
 {
 	GossipAccount *account;
 	gchar         *port_str;
+	gchar         *jid_str;
 
 	account = dialog->account;
 	
@@ -163,11 +179,12 @@ account_dialog_setup (GossipAccountDialog *dialog)
 		gtk_widget_set_sensitive (GTK_WIDGET (dialog->ssl_checkbutton),
 					  FALSE);
 	}
-	
-	gtk_entry_set_text (dialog->jid_entry, gossip_jid_get_without_resource (account->jid));
+
+	jid_str = g_strdup_printf ("%s@%s", account->username, account->host);
+	gtk_entry_set_text (dialog->jid_entry, jid_str);
+	g_free (jid_str);
 	gtk_entry_set_text (dialog->password_entry, account->password);
-	gtk_entry_set_text (dialog->resource_entry, 
-			    gossip_jid_get_resource (account->jid));
+	gtk_entry_set_text (dialog->resource_entry, account->resource);
 	gtk_entry_set_text (dialog->server_entry, account->server);
 
 	port_str = g_strdup_printf ("%d", account->port);

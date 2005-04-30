@@ -25,8 +25,7 @@
 #include <glade/glade.h>
 #include <libgnome/gnome-config.h>
 
-#include "gossip-chatroom-provider.h"
-#include "gossip-utils.h"
+#include <libgossip/gossip-chatroom-provider.h>
 #include "gossip-group-chat.h"
 #include "gossip-app.h"
 #include "gossip-favorite.h"

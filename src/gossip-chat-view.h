@@ -23,7 +23,7 @@
 
 #include <gtk/gtktextview.h>
 
-#include "gossip-message.h"
+#include <libgossip/gossip-message.h>
 
 #define GOSSIP_TYPE_CHAT_VIEW         (gossip_chat_view_get_type ())
 #define GOSSIP_CHAT_VIEW(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_VIEW, GossipChatView))

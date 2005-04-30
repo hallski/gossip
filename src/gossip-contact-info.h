@@ -23,7 +23,7 @@
 
 #include <glib-object.h>
 
-#include "gossip-contact.h"
+#include <libgossip/gossip-contact.h>
 
 #define GOSSIP_TYPE_CONTACT_INFO         (gossip_contact_info_get_type ())
 #define GOSSIP_CONTACT_INFO(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT_INFO, GossipContactInfo))

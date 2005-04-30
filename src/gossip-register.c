@@ -23,10 +23,10 @@
 #include <gtk/gtk.h>
 #include <libgnome/gnome-i18n.h>
 
-#include "gossip-account.h"
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-session.h>
+
 #include "gossip-app.h"
-#include "gossip-session.h"
-#include "gossip-utils.h"
 #include "gossip-register.h"
 
 typedef struct {
@@ -82,7 +82,7 @@ gossip_register_account (GossipAccount *account,
 	gchar               *password;
 	gint                 response;
 	gboolean             retval;
-        const gchar         *id;
+	gchar               *id;
 
 	if (!account->password || !account->password[0]) {
                 password = gossip_password_dialog_run (account, parent);
@@ -96,7 +96,7 @@ gossip_register_account (GossipAccount *account,
 
 	data = g_new0 (RegisterAccountData, 1);
 
-        id = gossip_jid_get_without_resource (account->jid);
+        id = g_strdup_printf ("%s@%s", account->username, account->host);
 	data->account = account;
 	
 	data->dialog = gtk_message_dialog_new (parent,
@@ -200,6 +200,7 @@ gossip_register_account (GossipAccount *account,
 		retval = FALSE;
 	}		
 
+	g_free (id);
 	gtk_widget_destroy (data->dialog);
 
 	return retval;

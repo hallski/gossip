@@ -22,7 +22,7 @@
 #define __GOSSIP_REGISTER_H__
 
 #include <gtk/gtkwindow.h>
-#include "gossip-account.h"
+#include <libgossip/gossip-account.h>
 
 gboolean gossip_register_account (GossipAccount *account,
 				  GtkWindow     *parent);

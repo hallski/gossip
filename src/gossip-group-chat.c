@@ -26,16 +26,17 @@
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-i18n.h>
 
+#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-message.h>
+
 #include "gossip-app.h"
 #include "gossip-chat.h"
 #include "gossip-chat-view.h"
-#include "gossip-chatroom-provider.h"
 #include "gossip-contact-list-iface.h"
 #include "gossip-cell-renderer-text.h"
-#include "gossip-message.h"
 #include "gossip-private-chat.h"
 #include "gossip-stock.h"
-#include "gossip-utils.h"
+#include "gossip-ui-utils.h"
 #include "gossip-group-chat.h"
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
@@ -864,7 +865,7 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 		priv->own_contact = g_object_ref (contact);
 	}
 	
-	pixbuf = gossip_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
 	
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->tree));
 	gtk_list_store_append (GTK_LIST_STORE (model), &iter);
@@ -924,7 +925,7 @@ group_chat_contact_presence_updated_cb (GossipChatroomProvider *provider,
 		GdkPixbuf    *pixbuf;
 		GtkTreeModel *model;
 		
-		pixbuf = gossip_contact_get_pixbuf (contact);
+		pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
 
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->tree));
 		gtk_list_store_set (GTK_LIST_STORE (model),

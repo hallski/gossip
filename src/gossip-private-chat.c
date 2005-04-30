@@ -28,16 +28,17 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
 
+#include <libgossip/gossip-message.h>
+
 #include "gossip-chat-window.h"
-#include "gossip-utils.h"
 #include "gossip-sound.h"
 #include "gossip-chat-view.h"
 #include "gossip-app.h"
-#include "gossip-message.h"
 #include "gossip-contact-info.h"
 #include "gossip-stock.h"
 #include "gossip-log.h"
 #include "gossip-chat.h"
+#include "gossip-ui-utils.h"
 #include "gossip-private-chat.h"
 
 #define d(x)
@@ -902,7 +903,7 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 
 	contact = gossip_chat_get_contact (chat);
 
-	return gossip_contact_get_pixbuf (contact);
+	return gossip_ui_utils_contact_get_pixbuf (contact);
 }
 
 static GossipContact *
@@ -991,7 +992,6 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 {
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
-	GossipJID             *jid;
 
 	private_chats_init ();
 
@@ -999,9 +999,6 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 	if (chat) {
 		return chat;
 	}
-	
-	/* FIXME (session) */
-	jid = NULL;
 	
 	chat = g_object_new (GOSSIP_TYPE_PRIVATE_CHAT, NULL);
 	g_hash_table_insert (private_chats, g_object_ref (contact), chat);
@@ -1011,7 +1008,7 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 	priv->groupchat_priv = TRUE;
 
-	priv->locked_resource = g_strdup (gossip_jid_get_resource (jid));
+	priv->locked_resource = g_strdup (gossip_presence_get_resource (gossip_contact_get_active_presence (contact)));
 	
 	if (gossip_contact_is_online (priv->contact)) {
 		priv->is_online = TRUE;

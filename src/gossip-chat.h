@@ -25,7 +25,7 @@
 #include <glib-object.h>
 
 #include "gossip-chat-view.h"
-#include "gossip-contact.h"
+#include <libgossip/gossip-contact.h>
 
 G_BEGIN_DECLS
 

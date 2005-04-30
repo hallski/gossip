@@ -33,31 +33,31 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/libgnomeui.h>
 
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-event-manager.h>
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-utils.h>
+
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-marshal.h>
+#include <libgossip/gossip-presence.h>
+
 #include "eggtrayicon.h"
 #include "eel-ellipsizing-label.h"
-#include "gossip-transport-accounts.h"
-#include "gossip-transport-accounts-window.h"
-#include "gossip-transport-discover.h"
 #include "gossip-vcard-dialog.h"
 #include "gossip-add-contact.h"
-#include "gossip-event-manager.h"
-#include "gossip-contact.h"
-#include "gossip-marshal.h"
-#include "gossip-utils.h"
+#include "gossip-ui-utils.h"
 #include "gossip-group-chat.h"
 #include "gossip-chat.h"
 #include "gossip-private-chat.h"
-#include "gossip-account.h"
 #include "gossip-connect-dialog.h"
 #include "gossip-contact-list.h"
 #include "gossip-join-dialog.h"
 #include "gossip-sound.h"
 #include "gossip-idle.h"
-#include "gossip-jabber.h"
-#include "gossip-protocol.h"
 #include "gossip-startup-druid.h"
 #include "gossip-preferences.h"
-#include "gossip-presence.h"
 #include "gossip-private-chat.h"
 #include "gossip-account-dialog.h"
 #include "gossip-stock.h"
@@ -104,8 +104,6 @@ struct _GossipAppPriv {
 
 	GossipContactList *contact_list;
 
-	/* FIXME: Shouldn't have an LmConnection here */
-	LmConnection      *connection;
 	GtkWidget         *window;
 
 	EggTrayIcon       *tray_icon;
@@ -423,9 +421,6 @@ gossip_app_init (GossipApp *singleton_app)
 		priv->account = gossip_account_create_empty ();
 	}
 
-#if 0
-	app_create_connection ();
-#endif	
 	priv->contact_list = gossip_contact_list_new ();
 
 	g_signal_connect (priv->contact_list, "contact-activated",
@@ -554,19 +549,15 @@ static void
 app_main_window_destroy_cb (GtkWidget *window,
 			    GossipApp *app)
 {
-	LmConnection *connection;
+	GossipAppPriv *priv;
 
-	connection = app->priv->connection;
+	priv = app->priv;
 
-	if (connection != NULL &&
-	    lm_connection_get_state (connection) == LM_CONNECTION_STATE_OPENING) {
-		lm_connection_cancel_open (connection);
-	} else if (connection != NULL && lm_connection_is_open (connection)) {
-		lm_connection_close (connection, NULL);
+	if (gossip_session_is_connected (priv->session)) {
+		gossip_session_disconnect (priv->session);
 	}
 	
 	exit (0);
-	/* gtk_main_quit (); */
 }
 
 static void
@@ -586,7 +577,6 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	/* FIXME: implement */
 
-	priv->connection = gossip_jabber_get_connection (GOSSIP_JABBER (protocol));
 	app_update_conn_dependent_menu_items ();
 	app_presence_updated ();
 }
@@ -684,7 +674,7 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 
 	gtk_tree_model_get (tree_model, iter, 0, &c, -1);
 
-	pixbuf = gossip_contact_get_pixbuf (c);
+	pixbuf = gossip_ui_utils_contact_get_pixbuf (c);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);
@@ -921,7 +911,9 @@ app_status_messages_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_configure_transports_cb (GtkWidget *widget, GossipApp *app)
 {
+#if 0 /* TRANSPORTS */
 	gossip_transport_accounts_window_show ();
+#endif
 }
 
 static gboolean
@@ -1241,8 +1233,8 @@ app_toggle_visibility (void)
 
 	priv = app->priv;
 
-	visible = gossip_utils_window_get_is_visible (
-		GTK_WINDOW (priv->window));
+	visible = gossip_ui_utils_window_get_is_visible (
+			GTK_WINDOW (priv->window));
 
 	if (visible) {
 		gtk_widget_hide (priv->window);
@@ -1264,7 +1256,7 @@ app_toggle_visibility (void)
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
 
-		gossip_utils_window_present (GTK_WINDOW (priv->window));
+		gossip_ui_utils_window_present (GTK_WINDOW (priv->window));
 
 		gconf_client_set_bool (gconf_client, 
 				       GCONF_PATH "/ui/main_window_hidden", FALSE,
@@ -1324,7 +1316,7 @@ app_tray_button_press_cb (GtkWidget      *widget,
 		break;
 
 	case 3:
-		if (gossip_utils_window_get_is_visible (
+		if (gossip_ui_utils_window_get_is_visible (
 			    GTK_WINDOW (priv->window))) {
 			gtk_widget_show (priv->hide_popup_item);
 			gtk_widget_hide (priv->show_popup_item);
@@ -1515,11 +1507,11 @@ app_get_current_status_pixbuf (void)
 	priv = app->priv;
 
 	if (!gossip_session_is_connected (priv->session)) {
-		return gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
+		return gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
 	}
 	
 	presence = app_get_effective_presence ();
-	return gossip_presence_get_pixbuf (presence);
+	return gossip_ui_utils_presence_get_pixbuf (presence);
 }
 
 static void
@@ -1584,7 +1576,7 @@ app_status_flash_timeout_func (gpointer data)
 	GdkPixbuf       *pixbuf;
 
 	if (on) {
-		pixbuf = gossip_presence_get_pixbuf (priv->presence);
+		pixbuf = gossip_ui_utils_presence_get_pixbuf (priv->presence);
 	} else {
 		pixbuf = app_get_current_status_pixbuf ();
 	}
@@ -1807,7 +1799,7 @@ app_status_show_status_dialog (GossipPresenceState  state,
 
 	gtk_entry_set_text (GTK_ENTRY (entry), str);
 
-	pixbuf = gossip_presence_state_get_pixbuf (state);
+	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
 	
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
@@ -2214,12 +2206,12 @@ app_tray_flash_timeout_func (gpointer data)
 	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
-			pixbuf = gossip_presence_get_pixbuf (priv->presence);
+			pixbuf = gossip_ui_utils_presence_get_pixbuf (priv->presence);
 		}
 	}
 	else if (priv->tray_flash_icons != NULL) {
 		if (on) {
-			pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+			pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 		}
 	}
 

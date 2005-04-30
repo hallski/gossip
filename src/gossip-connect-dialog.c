@@ -22,12 +22,12 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <libgnome/gnome-config.h>
-#include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
+
+#include <libgossip/gossip-account.h>
+
 #include "gossip-app.h"
-#include "gossip-connect-dialog.h"
 #include "gossip-account-dialog.h"
-#include "gossip-account.h"
+#include "gossip-connect-dialog.h"
 
 #define RESPONSE_CONNECT 1
 #define RESPONSE_EDIT 2
@@ -58,8 +58,8 @@ account_dialog_destroy_cb (GtkWidget           *widget,
 
 	account = gossip_account_get_default ();
 	gtk_label_set_text (GTK_LABEL (dialog->server_label), account->server);
-	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry), 
-			    gossip_jid_get_resource (account->jid));
+	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry),
+			    account->resource);
 	gossip_account_unref (account);
 }
 
@@ -140,7 +140,7 @@ gossip_connect_dialog_show (GossipApp *app)
 	account = gossip_account_get_default ();
 	gtk_label_set_text (GTK_LABEL (dialog->server_label), account->server);
 	gtk_entry_set_text (GTK_ENTRY (dialog->resource_entry), 
-			    gossip_jid_get_resource (account->jid));
+			    account->resource);
 	gossip_account_unref (account);
 	
 	g_signal_connect (dialog->dialog,

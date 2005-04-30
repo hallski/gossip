@@ -28,8 +28,9 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnome/gnome-url.h>
 
-#include "gossip-utils.h"
-#include "gossip-time.h"
+#include <libgossip/gossip-time.h>
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-chat-view.h"
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes */

@@ -21,9 +21,11 @@
 #include <config.h>
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-sound.h>
+
+#include <libgossip/gossip-session.h>
+
 #include "gossip-preferences.h"
 #include "gossip-app.h"
-#include "gossip-session.h"
 #include "gossip-sound.h"
 
 extern GConfClient *gconf_client;

@@ -22,8 +22,7 @@
 #define __GOSSIP_LOG_H__
 
 #include <glib.h>
-#include "gossip-jid.h"
-#include "gossip-message.h"
+#include <libgossip/gossip-message.h>
 
 void     gossip_log_message (GossipMessage *msg,
 			     gboolean       incoming);

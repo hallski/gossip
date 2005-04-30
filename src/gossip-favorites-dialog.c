@@ -24,10 +24,10 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-config.h>
-#include "gossip-utils.h"
+
 #include "gossip-app.h"
-#include "gossip-favorites-dialog.h"
 #include "gossip-favorite.h"
+#include "gossip-favorites-dialog.h"
 
 typedef struct {
 	GtkWidget    *dialog;

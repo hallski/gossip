@@ -26,16 +26,17 @@
 #include <glade/glade.h>
 #include <libgnome/gnome-i18n.h>
 #include <gconf/gconf-client.h>
+
 #include "gossip-app.h"
 #include "gossip-contact-info.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
 #include "gossip-chat-window.h"
 #include "gossip-notebook.h"
-#include "gossip-utils.h"
 #include "gossip-stock.h"
 #include "gossip-sound.h"
 #include "gossip-log.h"
+#include "gossip-ui-utils.h"
 #include "eel-ellipsizing-label.h"
 
 static void gossip_chat_window_class_init     (GossipChatWindowClass *klass);
@@ -430,14 +431,14 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	GdkPixbuf *pixbuf;
 
 	if (g_list_find (window->priv->chats_new_msg, chat)) {
-		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 	}
 	else if (g_list_find (window->priv->chats_composing, chat)) {
-		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
+		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
 	}
 	else if (!gossip_app_is_connected ()) {
 		/* Always show offline if we're not connected */
-		pixbuf = gossip_utils_get_pixbuf_offline ();
+		pixbuf = gossip_ui_utils_get_pixbuf_offline ();
 	}
 	else {
 		pixbuf = gossip_chat_get_status_pixbuf (chat);
@@ -549,7 +550,7 @@ chat_window_update_title (GossipChatWindow *window)
 
 	gtk_window_set_title (GTK_WINDOW (window->priv->dialog), title);
 	if (window->priv->new_msg) {
-		pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), pixbuf);
         } else {
 		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), NULL);

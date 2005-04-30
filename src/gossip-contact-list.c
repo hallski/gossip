@@ -25,15 +25,15 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#include <libgossip/gossip-marshal.h>
+#include <libgossip/gossip-session.h>
+
 #include "gossip-app.h"
 #include "gossip-cell-renderer-text.h"
 #include "gossip-contact-info.h"
 #include "gossip-edit-groups-dialog.h"
 #include "gossip-log.h"
-#include "gossip-marshal.h"
-#include "gossip-session.h"
 #include "gossip-stock.h"
-
 #include "gossip-contact-list.h"
 
 #define d(x)
@@ -531,7 +531,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	} else {
 		for (l = iters; l; l = l->next) {
 			gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
-				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    -1);
 	}
@@ -643,7 +643,7 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 	if (!groups) {
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
 				    MODEL_COL_NAME, gossip_contact_get_name (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_CONTACT, g_object_ref (contact),
@@ -661,7 +661,7 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    MODEL_COL_PIXBUF, gossip_contact_get_pixbuf (contact),
+				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
 				    MODEL_COL_NAME, gossip_contact_get_name (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_CONTACT, g_object_ref (contact),
@@ -1223,7 +1223,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	
 	contact = t_data->contact;
 
-	pixbuf = gossip_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
 		
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {
@@ -1237,7 +1237,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 		data->flash_on = !data->flash_on;
 
 		if (data->flash_on) {
-			pixbuf = gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+			pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 		} 
 
 		ret_val = TRUE;
@@ -1331,7 +1331,7 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		return;
 	}
 	
-	pixbuf = gossip_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	for (l = iters; l; l = l->next) {

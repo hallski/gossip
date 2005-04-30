@@ -29,13 +29,9 @@
 #include <gtk/gtksizegroup.h>
 #include <glade/glade.h>
 
-#include "gossip-account.h"
-#include "gossip-presence.h"
-
-typedef struct {
-	GossipPresenceState  state;
-	gchar               *string;
-} GossipStatusEntry;
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-presence.h>
 
 void         gossip_option_menu_setup                (GtkWidget        *option_menu,
 						      GCallback         func,

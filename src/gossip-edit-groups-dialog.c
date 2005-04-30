@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
+
 #include "gossip-app.h"
 #include "gossip-edit-groups-dialog.h"
 

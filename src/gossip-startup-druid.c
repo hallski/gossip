@@ -25,7 +25,7 @@
 #include <libgnome/gnome-config.h>
 #include <libgnome/gnome-i18n.h>
 #include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
+
 #include "gossip-app.h"
 #include "gossip-register.h"
 #include "gossip-startup-druid.h"
@@ -191,8 +191,6 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 	gboolean         has_account;
 	gboolean         predefined_server;
 	GtkOptionMenu   *option_menu;
-	GossipJID       *tmp_jid;
-	gchar           *tmp_jid_str;
 	
 	toggle = GTK_TOGGLE_BUTTON (startup_druid->two_yes_radiobutton);
 	has_account = gtk_toggle_button_get_active (toggle);
@@ -215,18 +213,14 @@ startup_druid_get_account_info (GossipStartupDruid  *startup_druid,
 			server = gtk_entry_get_text (GTK_ENTRY (startup_druid->four_server_entry));
 		}
 		
-		tmp_jid_str = g_strdup_printf ("%s@%s/%s", username, server, 
-					       _("Home"));
-		tmp_jid = gossip_jid_new (tmp_jid_str);
-		g_free (tmp_jid_str);
-		
 		/* Should user be able to set resource, account name and
 		 * port?
 		 */
 		*account = gossip_account_new ("Default",
-					       tmp_jid, NULL, 
+					       username, server, _("Home"),
+					       NULL, 
 					       server, 
-					       LM_CONNECTION_DEFAULT_PORT, 
+					       0,
 					       FALSE,
 					       FALSE);
 	}
@@ -243,15 +237,15 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 				 GossipStartupDruid *startup_druid)
 {
 	gboolean       has_account;
-	const gchar   *jid_str;
+	 gchar        *jid_str;
 	gchar         *str;
 	GossipAccount *account;
 	
   	gnome_druid_set_show_finish (GNOME_DRUID (startup_druid->druid), TRUE);
 
 	has_account = startup_druid_get_account_info (startup_druid, &account);
-	
-	jid_str = gossip_jid_get_without_resource (account->jid);
+
+	jid_str = g_strdup_printf ("%s@%s", account->username, account->host);
 
 	if (has_account) {
 		str = g_strdup_printf ("%s\n<b>%s</b>.",
@@ -263,6 +257,7 @@ startup_druid_prepare_page_last (GnomeDruidPage     *page,
 				       jid_str);
 	}
 
+	g_free (jid_str);
 	gtk_label_set_markup (GTK_LABEL (startup_druid->last_action_label), str);
 	
 	g_free (str);

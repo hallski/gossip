@@ -28,10 +28,10 @@
 #include <libgnome/gnome-i18n.h>
 #include <libgnomeui/gnome-href.h>
 
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-session.h>
+
 #include "gossip-app.h"
-#include "gossip-contact.h"
-#include "gossip-session.h"
-#include "gossip-utils.h"
 #include "gossip-contact-info.h"
 
 #define d(x) 

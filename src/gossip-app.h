@@ -24,11 +24,12 @@
 #include <glib-object.h>
 #include <gtk/gtkwidget.h>
 
-#include "gossip-account.h"
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-event-manager.h>
+#include <libgossip/gossip-session.h>
+
 #include "gossip-chat-manager.h"
-#include "gossip-event-manager.h"
-#include "gossip-session.h"
-#include "gossip-utils.h"
+#include "gossip-ui-utils.h"
 
 #define GOSSIP_TYPE_APP         (gossip_app_get_type ())
 #define GOSSIP_APP(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_APP, GossipApp))

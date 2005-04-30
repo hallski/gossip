@@ -21,9 +21,10 @@
 #ifndef __GOSSIP_GROUP_CHAT_H__
 #define __GOSSIP_GROUP_CHAT_H__
 
+#include <libgossip/gossip-chatroom-provider.h>
+
 #include "gossip-chat.h"
-#include "gossip-chatroom-provider.h"
-#include "gossip-utils.h"
+#include "gossip-ui-utils.h"
 
 #define GOSSIP_TYPE_GROUP_CHAT         (gossip_group_chat_get_type ())
 #define GOSSIP_GROUP_CHAT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChat))

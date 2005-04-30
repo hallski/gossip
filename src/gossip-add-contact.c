@@ -23,11 +23,12 @@
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-druid.h>
 #include <libgnome/gnome-i18n.h>
-#include "gossip-utils.h"
+
+#include <libgossip/gossip-utils.h>
+
+#include "gossip-ui-utils.h"
 #include "gossip-app.h"
 #include "gossip-add-contact.h"
-#include "gossip-transport-accounts.h"
-#include "gossip-transport-protocol.h"
 
 
 typedef struct {
@@ -130,7 +131,9 @@ static void             add_contact_cancel                      (GtkWidget      
 								 GossipAddContact *contact);
 static void             add_contact_setup_systems               (GList            *accounts,
 								 GossipAddContact *contact);
+#if 0 /* TRANSPORTS */
 static gboolean         add_contact_check_system_id_valid       (GossipAddContact *contact);
+#endif
 static void             add_contact_prepare_page_1              (GnomeDruidPage   *page,
 								 GnomeDruid       *druid,
 								 GossipAddContact *contact);
@@ -166,11 +169,11 @@ static void             add_contact_2_group_entry_text_inserted (GtkEntry       
 								 gint              length,
 								 gint             *position,
 								 GossipAddContact *contact);
-static void             add_conact_protocol_id_cb               (GossipJID        *jid,
+#if 0 /* TRANSPORTS */
+static void             add_contact_protocol_id_cb              (GossipJID        *jid,
 								 const gchar      *id,
 								 GossipAddContact *contact);
-
-
+#endif
 
 static void
 add_contact_dialog_destroyed (GtkWidget *unused, GossipAddContact *contact)
@@ -249,6 +252,7 @@ add_contact_setup_systems (GList            *accounts,
 
 	/* populate accounts */
 	for (l=accounts; l; l=l->next) {
+#if 0 /* TRANSPORTS */
 		GossipTransportAccount  *account;
 		GossipTransportProtocol *protocol;
 
@@ -319,6 +323,7 @@ add_contact_setup_systems (GList            *accounts,
 		
  		gtk_list_store_set (store, &iter, COL_SYS_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);
+#endif
 	}
 	
 	renderer = gtk_cell_renderer_pixbuf_new ();
@@ -365,8 +370,9 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 			    GossipAddContact *contact)
 {
         GossipContact           *c;
-	
+#if 0 /* TRANSPORTS */
 	GossipTransportProtocol *protocol = NULL;
+#endif
 	GtkTreeModel            *model;
 	GtkTreeIter              iter;
 
@@ -379,7 +385,9 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (contact->one_system_combobox));
 	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (contact->one_system_combobox) , &iter);
+#if 0 /* TRANSPORTS */
 	gtk_tree_model_get (model, &iter, COL_SYS_PROTOCOL, &protocol, -1);
+#endif
 
 	id = gtk_entry_get_text (GTK_ENTRY (contact->one_id_entry));
 	gtk_label_set_text (GTK_LABEL (contact->two_id_label), id);
@@ -388,39 +396,43 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 						      "changed"));
                                         
 	/* if the nick has NOT been changed */
-	if (!changed) { 
-		GossipJID *jid;
+	if (!changed) {
+		gchar *username;
 
+		username = gossip_utils_jid_str_get_part_name (id);
+		
 		/* set up name */
-		jid = gossip_jid_new (id);
-		str = gossip_jid_get_part_name (jid);
-		gtk_entry_set_text (GTK_ENTRY (contact->two_nick_entry), str);
-		g_free (str);
-		gossip_jid_unref (jid);
+		gtk_entry_set_text (GTK_ENTRY (contact->two_nick_entry),
+				    username);
+		g_free (username);
 	}
 
-		/* vcard */
-		c = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
-		gossip_contact_set_id (c, id);
-		gossip_session_async_get_vcard (gossip_app_get_session (), c, 
-						(GossipAsyncVCardCallback) add_contact_page_2_vcard_handler,
-						contact, NULL);
-	
+	/* vcard */
+	c = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
+	gossip_contact_set_id (c, id);
+	gossip_session_async_get_vcard (gossip_app_get_session (), c, 
+					(GossipAsyncVCardCallback) add_contact_page_2_vcard_handler,
+					contact, NULL);
+
 	str = g_strdup_printf ("<b>%s</b>",
 			       _("Information requested, please wait..."));
 	gtk_label_set_markup (GTK_LABEL (contact->two_vcard_label), str);
 	g_free (str);
 
+#if 0 /* TRANSPORTS */
 	if (protocol) {
 		/* translate ID to JID */
 		gossip_transport_protocol_id_to_jid (protocol, 
 						     id, 
-						     (GossipTransportProtocolIDFunc)add_conact_protocol_id_cb,
+						     (GossipTransportProtocolIDFunc)add_contact_protocol_id_cb,
 						     contact);
 	} else {
+#endif
 		gtk_widget_show(contact->two_vcard_label);
 		gtk_widget_hide(contact->two_information_table);
+#if 0 /* TRANSPORTS */
 	}
+#endif
 	
 	groups = gossip_session_get_groups (gossip_app_get_session ());
 	g_completion_clear_items (contact->group_completion);
@@ -452,8 +464,9 @@ add_contact_prepare_page_2 (GnomeDruidPage   *page,
 	/* FIXME: check Jabber ID, if not valid show dialog. */
 }
 
+#if 0
 static void
-add_conact_protocol_id_cb (GossipJID *jid, 
+add_contact_protocol_id_cb (GossipJID *jid, 
 			   const gchar *id,
 			   GossipAddContact *contact)
 {
@@ -461,6 +474,7 @@ add_conact_protocol_id_cb (GossipJID *jid,
 	gtk_label_set_text (GTK_LABEL (contact->two_id_label), 
 			    gossip_jid_get_full (jid));
 }
+#endif
 
 static void
 add_contact_page_2_vcard_handler (GossipAsyncResult  result,
@@ -595,11 +609,16 @@ add_contact_1_id_entry_changed (GtkEntry *entry, GossipAddContact *contact)
 {
 	gboolean valid;
 
+#if 0 /* TRANSPORTS */
 	valid = add_contact_check_system_id_valid (contact);
+#else 
+	valid = TRUE;
+#endif
         gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
                                            FALSE, valid, TRUE, FALSE);
 }
 
+#if 0 /* TRNASPORTS */
 /* should this be in one of the gossip-transport-* files? */
 static gboolean
 add_contact_check_system_id_valid (GossipAddContact *contact)
@@ -683,6 +702,7 @@ add_contact_check_system_id_valid (GossipAddContact *contact)
 	/* everything else */
 	return TRUE;
 }
+#endif
 
 static void
 add_contact_1_search_button_clicked (GtkButton        *button,
@@ -694,7 +714,9 @@ static void
 add_contact_1_system_combobox_changed (GtkComboBox      *combo_box,
 				       GossipAddContact *contact)
 {
+#if 0 /* TRANSPORTS */
 	GossipTransportProtocol *protocol = NULL;
+#endif
 
 	GtkTreeModel            *model;
 	GtkTreeIter              iter;
@@ -711,19 +733,21 @@ add_contact_1_system_combobox_changed (GtkComboBox      *combo_box,
 
 	gtk_tree_model_get (model, &iter, 
 			    COL_SYS_TEXT, &name, 
-			    COL_SYS_PROTOCOL, &protocol,
+		/*	    COL_SYS_PROTOCOL, &protocol, */ /* TRANSPORTS */
 			    -1);
 
 	str = g_strdup_printf (_("%s ID of new contact:"), name);
 	gtk_label_set_text (GTK_LABEL (contact->one_id_label), str);
 	g_free (str);
 
-	if (!protocol) {
+	if (1 /* TRANSPORTS */ /*!protocol */) {
 		/* must be a jabber system selected */
 		example = g_strdup_printf (_("Example: %s"), "user@jabber.org");
 	} else {
+#if 0 /* TRANSPORTS */
 		example = g_strdup_printf (_("Example: %s"), 
 					   gossip_transport_protocol_get_example (protocol));
+#endif
 	}
 
 	str = g_strdup_printf ("<span size=\"smaller\">%s</span>", example);
@@ -734,7 +758,11 @@ add_contact_1_system_combobox_changed (GtkComboBox      *combo_box,
 	g_free (name);
 
 	/* check entry is valid or not */
+#if 0 /* TRANSPORTS */
 	valid = add_contact_check_system_id_valid (contact);
+#else
+	valid = TRUE;
+#endif
 
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (contact->druid),
 					   TRUE,

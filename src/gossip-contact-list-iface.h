@@ -20,7 +20,7 @@
 
 #include <glib-object.h>
 
-#include "gossip-contact.h"
+#include <libgossip/gossip-contact.h>
 
 #ifndef __GOSSIP_CONTACT_LIST_IFACE_H__
 #define __GOSSIP_CONTACT_LIST_IFACE_H__

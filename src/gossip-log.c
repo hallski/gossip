@@ -33,7 +33,9 @@
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 #include "libexslt/exslt.h"
-#include "gossip-utils.h"
+
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-app.h"
 #include "gossip-log.h"
 

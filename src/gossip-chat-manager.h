@@ -23,7 +23,7 @@
 
 #include <glib-object.h>
 
-#include "gossip-contact.h"
+#include <libgossip/gossip-contact.h>
 
 #define GOSSIP_TYPE_CHAT_MANAGER         (gossip_chat_manager_get_type ())
 #define GOSSIP_CHAT_MANAGER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManager))

@@ -20,10 +20,15 @@
 
 #include <config.h>
 #include <string.h>
-#include <gtk/gtk.h>
+
+#include <gtk/gtkcellrenderertext.h>
+#include <gtk/gtklabel.h>
+#include <gtk/gtkliststore.h>
+#include <gtk/gtktreeview.h>
 #include <libgnome/gnome-i18n.h>
+
+#include "gossip-ui-utils.h"
 #include "gossip-spell-dialog.h"
-#include "gossip-utils.h"
 
 #define d(x)
 

@@ -24,9 +24,12 @@
 #include <glade/glade.h>
 #include <libgnome/gnome-i18n.h>
 #include <gconf/gconf-client.h>
-#include "gossip-utils.h"
+
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-app.h"
 #include "gossip-stock.h"
+#include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
 
 enum {
@@ -463,7 +466,7 @@ status_add_clicked_cb (GtkWidget          *button,
 
 	gossip_utils_set_status_messages (list);
 
-	pixbuf = gossip_presence_state_get_pixbuf (state);
+	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
 
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (editor->treeview)));
 	gtk_list_store_append (store, &iter);
@@ -668,7 +671,7 @@ gossip_preferences_show_status_editor (void)
 
 		entry = l->data;
 
-		pixbuf = gossip_presence_state_get_pixbuf (entry->state);
+		pixbuf = gossip_ui_utils_presence_state_get_pixbuf (entry->state);
 		
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,

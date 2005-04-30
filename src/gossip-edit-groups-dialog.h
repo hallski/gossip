@@ -23,7 +23,7 @@
 
 #include <glib.h>
 
-#include "gossip-contact.h"
+#include <libgossip/gossip-contact.h>
 
 typedef struct _GossipEditGroups GossipEditGroups;
 

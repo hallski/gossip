@@ -28,12 +28,11 @@
 #include <loudmouth/loudmouth.h>
 #include <unistd.h>
 
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-vcard.h>
+
 #include "gossip-app.h"
-#include "gossip-session.h"
-#include "gossip-vcard.h"
 #include "gossip-vcard-dialog.h"
-#include "gossip-transport-accounts.h"
-#include "gossip-transport-register.h"
 
 #define d(x) x
 
@@ -65,6 +64,9 @@ static void vcard_dialog_get_vcard_cb            (GossipAsyncResult  result,
 static void vcard_dialog_set_vcard               (GossipVCardDialog *dialog);
 static void vcard_dialog_set_vcard_cb            (GossipAsyncResult  result,
 						  GossipVCardDialog *dialog);
+#if 0 /* TRANSPORTS */
+/* This should be removed anyway in my opinion /Micke
+ */
 static void vcard_dialog_set_msn_nick            (GossipVCardDialog *dialog);
 static void vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,
 						  const gchar       *key,
@@ -83,6 +85,7 @@ static void vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,
 static void vcard_dialog_set_msn_nick_done_cb    (const gchar       *error_code,
 						  const gchar       *error_reason,
 						  GossipVCardDialog *dialog);
+#endif
 static void vcard_dialog_check_all_set           (GossipVCardDialog *dialog);
 static void vcard_dialog_response_cb             (GtkDialog         *widget,
 						  gint               response,
@@ -166,6 +169,7 @@ vcard_dialog_get_vcard_cb (GossipAsyncResult  result,
 	g_object_unref (vcard);
 }
 
+#if 0 /* TRANSPORTS */
 static void
 vcard_dialog_set_msn_nick (GossipVCardDialog *dialog)
 {
@@ -246,6 +250,8 @@ vcard_dialog_set_msn_nick_done_cb (const gchar       *error_code,
 	vcard_dialog_check_all_set (dialog);
 }
 
+#endif
+
 static void
 vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 {
@@ -320,7 +326,9 @@ vcard_dialog_response_cb (GtkDialog *widget, gint response, GossipVCardDialog *d
 {
 	/* save vcard */
 	if (response == GTK_RESPONSE_OK) {
+#if 0 /* TRANSPORTS */
 		vcard_dialog_set_msn_nick (dialog);
+#endif
 		vcard_dialog_set_vcard (dialog);
 		return;
 	}

@@ -30,7 +30,7 @@
 #include <libgnome/gnome-i18n.h>
 #include "gossip-stock.h"
 #include "gossip-app.h"
-#include "gossip-utils.h"
+#include "gossip-ui-utils.h"
 
 #define DINGUS "(((mailto|news|telnet|nttp|file|http|sftp|ftp|https|dav|callto)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:{}@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
 
@@ -605,7 +605,7 @@ gossip_hig_dialog_new (GtkWindow      *parent,
 }
 
 GdkPixbuf *
-gossip_utils_get_pixbuf_from_stock (const gchar *stock)
+gossip_ui_utils_get_pixbuf_from_stock (const gchar *stock)
 {
 	return gtk_widget_render_icon (gossip_app_get_window (),
 				       stock, 
@@ -614,196 +614,13 @@ gossip_utils_get_pixbuf_from_stock (const gchar *stock)
 }
 
 GdkPixbuf *
-gossip_utils_get_pixbuf_offline (void)
+gossip_ui_utils_get_pixbuf_offline (void)
 {
-	return gossip_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
-}
-
-GList *
-gossip_utils_get_status_messages (void)
-{
-	GSList            *list, *l;
-	GList             *ret = NULL;
-	GossipStatusEntry *entry;
-	const gchar       *status;
-	
-	list = gconf_client_get_list (gconf_client,
-				      "/apps/gossip/status/preset_messages",
-				      GCONF_VALUE_STRING,
-				      NULL);
-
-	/* This is really ugly, but we can't store a list of pairs and a dir
-	 * with entries wouldn't work since we have no guarantee on the order of
-	 * entries.
-	 */
-	
-	for (l = list; l; l = l->next) {
-		entry = g_new (GossipStatusEntry, 1);
-
-		status = l->data;
-
-		if (strncmp (status, "available/", 10) == 0) {
-			entry->string = g_strdup (&status[10]);
-			entry->state = GOSSIP_PRESENCE_STATE_AVAILABLE;
-		}
-		else if (strncmp (status, "busy/", 5) == 0) {
-			entry->string = g_strdup (&status[5]);
-			entry->state = GOSSIP_PRESENCE_STATE_BUSY;
-		}
-		else if (strncmp (status, "away/", 5) == 0) {
-			entry->string = g_strdup (&status[5]);
-			entry->state = GOSSIP_PRESENCE_STATE_AWAY;
-		} else {
-			continue;
-		}
-		
-		ret = g_list_append (ret, entry);
-	}
-	
-	g_slist_foreach (list, (GFunc) g_free, NULL);
-	g_slist_free (list);
-	
-	return ret;
-}
-
-void
-gossip_utils_set_status_messages (GList *list)
-{
-	GList             *l;
-	GossipStatusEntry *entry;
-	GSList            *slist = NULL;
-	const gchar       *state;
-	gchar             *str;
-	
-	for (l = list; l; l = l->next) {
-		entry = l->data;
-
-		switch (entry->state) {
-		case GOSSIP_PRESENCE_STATE_AVAILABLE:
-			state = "available";
-			break;
-		case GOSSIP_PRESENCE_STATE_BUSY:
-			state = "busy";
-			break;
-		case GOSSIP_PRESENCE_STATE_AWAY:
-			state = "away";
-			break;
-		default:
-			state = NULL;
-			g_assert_not_reached ();
-		}
-		
-		str = g_strdup_printf ("%s/%s", state, entry->string);
-		slist = g_slist_append (slist, str);
-	}
-
-	gconf_client_set_list (gconf_client,
-			       "/apps/gossip/status/preset_messages",
-			       GCONF_VALUE_STRING,
-			       slist,
-			       NULL);
-
-	g_slist_foreach (slist, (GFunc) g_free, NULL);
-	g_slist_free (slist);
-}
-
-static void
-free_entry (GossipStatusEntry *entry)
-{
-	g_free (entry->string);
-	g_free (entry);
-}
-
-void
-gossip_utils_free_status_messages (GList *list)
-{
-	g_list_foreach (list, (GFunc) free_entry, NULL);
-	g_list_free (list);
-}
-
-gint
-gossip_utils_url_regex_match (const gchar *msg,
-			      GArray      *start,
-			      GArray      *end)
-{
-	static gboolean inited = FALSE;
-	regmatch_t      matches[1];
-	gint            ret = 0;
-	gint            num_matches = 0;
-	gint            offset = 0;
-
-	if (!inited) {
-		memset (&dingus, 0, sizeof (regex_t));
-		regcomp (&dingus, DINGUS, REG_EXTENDED);
-		inited = TRUE;
-	}
-
-	while (!ret) {
-		ret = regexec (&dingus, msg + offset, 1, matches, 0);
-
-		if (ret == 0) {
-			gint s;
-			
-			num_matches++;
-
-			s = matches[0].rm_so + offset;
-			offset = matches[0].rm_eo + offset;
-			
-			g_array_append_val (start, s);
-			g_array_append_val (end, offset);
-		}
-	}
-		
-	return num_matches;
-}
-
-GossipPresenceState
-gossip_utils_get_presence_state_from_show_string (const gchar *str)
-{
-	if (!str || !str[0]) {
-		return GOSSIP_PRESENCE_STATE_AVAILABLE;
-	}
-	else if (strcmp (str, "dnd") == 0) {
-		return GOSSIP_PRESENCE_STATE_BUSY;
-	}
-	else if (strcmp (str, "away") == 0) {
-		return GOSSIP_PRESENCE_STATE_AWAY;
-	}
-	else if (strcmp (str, "xa") == 0) {
-		return GOSSIP_PRESENCE_STATE_EXT_AWAY;
-	}
-	/* We don't support chat, so treat it like available. */
-	else if (strcmp (str, "chat") == 0) {
-		return GOSSIP_PRESENCE_STATE_AVAILABLE;
-	}
-
-	return GOSSIP_PRESENCE_STATE_AVAILABLE;
-}
-
-gint
-gossip_utils_str_case_cmp (const gchar *s1, const gchar *s2)
-{
-	return gossip_utils_str_n_case_cmp (s1, s2, -1);
-}	
-
-gint
-gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
-{
-	gchar *u1, *u2;
-	gint   ret_val;
-	
-	u1 = g_utf8_casefold (s1, n);
-	u2 = g_utf8_casefold (s2, n);
-
-	ret_val = g_utf8_collate (u1, u2);
-	g_free (u1);
-	g_free (u2);
-
-	return ret_val;
+	return gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
 }
 
 static gboolean
-utils_window_get_is_on_current_workspace (GtkWindow *window)
+ui_utils_window_get_is_on_current_workspace (GtkWindow *window)
 {
 	GdkWindow *gdk_window;
 
@@ -818,7 +635,7 @@ utils_window_get_is_on_current_workspace (GtkWindow *window)
 
 /* Checks if the window is visible as in visible on the current workspace. */
 gboolean
-gossip_utils_window_get_is_visible (GtkWindow *window)
+gossip_ui_utils_window_get_is_visible (GtkWindow *window)
 {
 	gboolean visible;
 
@@ -826,12 +643,12 @@ gossip_utils_window_get_is_visible (GtkWindow *window)
 		      "visible", &visible,
 		      NULL);
 
-	return visible && utils_window_get_is_on_current_workspace (window);
+	return visible && ui_utils_window_get_is_on_current_workspace (window);
 }
 
 /* Takes care of moving the window to the current workspace. */
 void
-gossip_utils_window_present (GtkWindow *window)
+gossip_ui_utils_window_present (GtkWindow *window)
 {
 	gboolean visible;
 	gboolean on_current;
@@ -845,7 +662,7 @@ gossip_utils_window_present (GtkWindow *window)
 		      "visible", &visible,
 		      NULL);
 
-	on_current = utils_window_get_is_on_current_workspace (window);
+	on_current = ui_utils_window_get_is_on_current_workspace (window);
 
 	if (!visible) {
 		show = TRUE;
@@ -889,12 +706,14 @@ gossip_ui_utils_presence_state_get_pixbuf (GossipPresenceState state)
 GdkPixbuf *
 gossip_ui_utils_presence_get_pixbuf (GossipPresence *presence)
 {
-	GossipPresenceState state;
+	GossipPresenceState state; 
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
 			      gossip_ui_utils_get_pixbuf_offline ());
 
-	
+	state = gossip_presence_get_state (presence);
+
+	return gossip_ui_utils_presence_state_get_pixbuf (state);
 }
 
 GdkPixbuf *  
@@ -909,7 +728,7 @@ gossip_ui_utils_contact_get_pixbuf (GossipContact *contact)
 	presence = gossip_contact_get_active_presence (contact);
 
 	if (presence) {
-		gossip_ui_utils_presence_get_pixbuf (presence);
+		return gossip_ui_utils_presence_get_pixbuf (presence);
 	}
 
 	return gossip_ui_utils_get_pixbuf_offline ();
