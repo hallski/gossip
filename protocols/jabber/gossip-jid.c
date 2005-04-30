@@ -21,7 +21,8 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "gossip-utils.h"
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-jid.h"
 
 struct GossipJID {

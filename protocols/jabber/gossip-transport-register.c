@@ -19,12 +19,12 @@
  */
 
 #include <config.h>
+
 #include <string.h>
-#include <gtk/gtk.h>
 #include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
-#include "gossip-app.h"
-#include "gossip-log.h"
+#include <libgossip/gossip-utils.h>
+
+#include "gossip-jabber-private.h"
 #include "gossip-transport-register.h"
 
 #define d(x) x
@@ -144,7 +144,7 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 		   gossip_jid_get_full (jid)));
 
 	/* set up handler */
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_unregister_message_handler, 
 					  NULL, NULL);
@@ -356,7 +356,7 @@ gossip_transport_requirements (GossipJabber                    *jabber,
 	g_hash_table_insert (requirements, trq->jid, trq);
 
 	/* set up handler */
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_requirements_message_handler, 
 					  NULL, NULL);
@@ -373,8 +373,6 @@ gossip_transport_requirements (GossipJabber                    *jabber,
 
 	d(g_print ("disco register to: %s (requirements)\n", gossip_jid_get_full (jid)));
 
-	connection = gossip_jabber_get_connection (jabber);
-	
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
 
@@ -576,7 +574,7 @@ gossip_transport_register (GossipJabber                *jabber,
 	g_hash_table_insert (registers, trg->jid, trg);
 
 	/* set up handler */
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_register_message_handler, 
 					  NULL, NULL);
@@ -593,8 +591,6 @@ gossip_transport_register (GossipJabber                *jabber,
 
 	d(g_print ("disco register to: %s (register)\n", gossip_jid_get_full (jid)));
 
-	connection = gossip_jabber_get_connection (jabber);
-	
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
 

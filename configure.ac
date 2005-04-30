@@ -99,6 +99,15 @@ PKG_CHECK_MODULES(GOSSIP,
 	$dbus_pkgconfig
 ])
 
+PKG_CHECK_MODULES(GOSSIP_JABBER,
+[
+        glib-2.0 >= $GLIB_REQUIRED
+	gobject-2.0
+	loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
+	gconf-2.0 >= $GCONF_REQUIRED
+	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
+	libxml-2.0 >= $LIBXML_REQUIRED
+])
 # Sucks that we need to do this
 GOSSIP_LIBS="$GOSSIP_LIBS -lexslt"
 

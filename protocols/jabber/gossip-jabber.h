@@ -21,11 +21,9 @@
 #ifndef __GOSSIP_JABBER_H__
 #define __GOSSIP_JABBER_H__ 
 
-#include <loudmouth/loudmouth.h> 
-
-#include "gossip-async.h"
-#include "gossip-presence.h"
-#include "gossip-protocol.h"
+#include <libgossip/gossip-async.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-protocol.h>
 
 #define GOSSIP_TYPE_JABBER         (gossip_jabber_get_type ())
 #define GOSSIP_JABBER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
@@ -60,7 +58,6 @@ struct _GossipJabberClass {
 
   
 GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
-LmConnection * gossip_jabber_get_connection            (GossipJabber             *jabber);
 gboolean       gossip_jabber_get_vcard                 (GossipJabber             *jabber,
 							GossipContact            *contact,
 							GossipAsyncVCardCallback  callback);

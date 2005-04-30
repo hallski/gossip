@@ -20,13 +20,16 @@
 
 #include <string.h>
 
-#include "gossip-transport-accounts.h"
+#include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-session.h>
+
 #include "gossip-transport-discover.h"
 #include "gossip-transport-register.h"
 #include "gossip-jabber.h"
-#include "gossip-app.h"
+#include "gossip-jabber-private.h"
 #include "gossip-jid.h"
-#include "gossip-protocol.h"
+
+#include "gossip-transport-accounts.h"
 
 #define d(x) x
 
@@ -90,7 +93,7 @@ static void                    transport_account_unregister_cb          (GossipJ
 									 const gchar                *error_code,
 									 const gchar                *error_reason,
 									 gpointer                    user_data);
-
+static GossipJabber *         transport_account_get_jabber              (GossipTransportAccount     *account);
 
 static GList *account_lists = NULL;
 
@@ -432,7 +435,7 @@ gossip_transport_account_get_password (GossipTransportAccount *account)
 gint
 gossip_transport_account_count_contacts (GossipTransportAccount *account)
 {
-	GossipSession *session;
+	GossipJabber  *jabber;
 	const GList   *items;
 	const GList   *l;
 	const gchar   *service;
@@ -440,8 +443,8 @@ gossip_transport_account_count_contacts (GossipTransportAccount *account)
 
 	g_return_val_if_fail (account != NULL, 0);
 	
-	session = gossip_app_get_session ();
-	items = gossip_session_get_contacts (session);
+	jabber = transport_account_get_jabber (account);
+	items = gossip_protocol_get_contacts (GOSSIP_PROTOCOL (jabber));
 
 	service = gossip_jid_get_without_resource (account->jid);
 
@@ -538,12 +541,10 @@ transport_account_update_username_cb (GossipJID              *jid,
 void
 gossip_transport_account_remove (GossipTransportAccount *account)
 {
-	GossipTransportAccountList *al;
 	GossipJabber               *jabber;
 	GossipJID                  *service_jid;
 	GossipJID                  *from_jid;
 	GossipContact              *own_contact;
-	GossipSession              *session;
 
 	LmConnection               *connection;
 	LmMessage                  *m;
@@ -556,9 +557,8 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 
 	g_return_if_fail (account != NULL);
 
-	al = gossip_transport_account_list_find (account);
-	jabber = gossip_transport_account_list_get_jabber (al);
-	connection = gossip_jabber_get_connection (jabber);
+	jabber = transport_account_get_jabber (account);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	service_jid = gossip_transport_account_get_jid (account);
 	own_contact = gossip_jabber_get_own_contact (jabber);
@@ -576,8 +576,7 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 		   gossip_jid_get_full (service_jid)));
 
 	/* remove contacts associated with the service from roster */
-	session = gossip_app_get_session ();
-	items = gossip_session_get_contacts (session);
+	items = gossip_protocol_get_contacts (GOSSIP_PROTOCOL (jabber));
 
 	for (l=items; l; l=l->next) {
 		GossipContact *item;
@@ -662,5 +661,17 @@ transport_account_unregister_cb (GossipJID   *jid,
 {
 	d(g_print ("request disco unregister - response (jid:'%s', error:'%s'->'%s')\n",
 		   gossip_jid_get_full (jid), error_code, error_reason));
+}
+
+static GossipJabber *
+transport_account_get_jabber (GossipTransportAccount *account)
+{
+	GossipTransportAccountList *al;
+	GossipJabber               *jabber;
+
+	al = gossip_transport_account_list_find (account);
+	jabber = gossip_transport_account_list_get_jabber (al);
+
+	return jabber;
 }
 

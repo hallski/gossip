@@ -21,11 +21,11 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
-#include <gtk/gtk.h>
 #include <loudmouth/loudmouth.h>
-#include "gossip-utils.h"
-#include "gossip-app.h"
-#include "gossip-log.h"
+#include <libgossip/gossip-utils.h>
+
+#include "gossip-jabber-private.h"
+
 #include "gossip-transport-discover.h"
 
 #define d(x) x
@@ -136,7 +136,7 @@ transport_disco_new (GossipJabber *jabber)
 
 	disco->jabber = g_object_ref (jabber);
 
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_disco_message_handler, disco, NULL);
 	disco->message_handler = handler;
@@ -371,7 +371,7 @@ transport_disco_request_items (GossipTransportDisco *disco)
 	d(g_print ("disco items to: %s\n", 
 		   gossip_jid_get_full (disco->to)));
 	
-	connection = gossip_jabber_get_connection (disco->jabber);
+	connection = _gossip_jabber_get_connection (disco->jabber);
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
@@ -486,7 +486,7 @@ transport_disco_request_info (GossipTransportDisco *disco)
 	GList        *l;
 	GossipJID    *jid;
 	
-	connection = gossip_jabber_get_connection (disco->jabber);
+	connection = _gossip_jabber_get_connection (disco->jabber);
 	jid = gossip_jid_new ("users.jabber.org");
 
 	disco->items_total = disco->items_remaining = g_list_length (disco->items);
@@ -695,7 +695,7 @@ gossip_transport_disco_destroy (GossipTransportDisco *disco)
 
 	disco->destroying = TRUE;
 
-        connection = gossip_jabber_get_connection (disco->jabber);
+        connection = _gossip_jabber_get_connection (disco->jabber);
 
         handler = disco->message_handler;
         if (handler) {
@@ -754,7 +754,7 @@ gossip_transport_disco_request_info (GossipJabber                 *jabber,
 	disco->jabber = g_object_ref (jabber);
 
 	/* set up handler */
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_disco_message_handler, disco, NULL);
 	disco->message_handler = handler;

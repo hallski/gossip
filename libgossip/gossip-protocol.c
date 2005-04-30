@@ -299,6 +299,21 @@ gossip_protocol_remove_contact (GossipProtocol *protocol,
 	}
 }
 
+const GList *
+gossip_protocol_get_contacts (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_contacts) {
+		return klass->get_contacts (protocol);
+	}
+
+	return NULL;
+}
+
 const gchar * 
 gossip_protocol_get_active_resource (GossipProtocol *protocol,
 				     GossipContact  *contact)

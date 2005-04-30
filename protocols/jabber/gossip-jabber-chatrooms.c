@@ -23,7 +23,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "gossip-app.h"
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-jid.h"
 #include "gossip-jabber-helper.h"
 #include "gossip-jabber-chatrooms.h"

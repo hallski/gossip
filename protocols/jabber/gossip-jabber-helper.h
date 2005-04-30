@@ -23,10 +23,10 @@
 
 #include <loudmouth/loudmouth.h>
 
-#include "gossip-async.h"
-#include "gossip-contact.h"
-#include "gossip-message.h"
-#include "gossip-vcard.h"
+#include <libgossip/gossip-async.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-vcard.h>
 
 gboolean        gossip_jabber_helper_async_get_vcard (LmConnection   *connection,
 						      const gchar    *jid_str,

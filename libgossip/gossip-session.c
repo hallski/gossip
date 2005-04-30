@@ -22,6 +22,11 @@
 
 #include "gossip-account.h"
 #include "gossip-marshal.h"
+#include "gossip-protocol.h"
+
+/* Temporary */
+#include "gossip-jabber.h"
+
 #include "gossip-session.h"
 
 #define d(x)
@@ -229,7 +234,7 @@ gossip_session_init (GossipSession *session)
 
 	protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
 
-	priv->default_jabber = GOSSIP_JABBER (protocol);
+	priv->default_jabber = protocol;
 	session_connect_protocol (session, protocol);
 	
 	priv->protocols = g_list_prepend (priv->protocols, protocol);
@@ -683,7 +688,7 @@ gossip_session_get_nickname (GossipSession *session)
 
 	priv = GET_PRIV (session);
 
-	contact = gossip_jabber_get_own_contact (priv->default_jabber);
+	contact = gossip_jabber_get_own_contact (GOSSIP_JABBER (priv->default_jabber));
 
 	return gossip_contact_get_name (contact);
 }

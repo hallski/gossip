@@ -22,8 +22,9 @@
 
 #include <string.h>
 
-#include "gossip-version-info.h"
-#include "gossip-time.h"
+#include <libgossip/gossip-version-info.h>
+#include <libgossip/gossip-time.h>
+
 #include "gossip-jabber-helper.h"
 
 typedef struct {

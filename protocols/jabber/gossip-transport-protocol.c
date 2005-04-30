@@ -25,12 +25,11 @@
 #include <libxml/xmlreader.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <gnome.h>
 #include <loudmouth/loudmouth.h>
 
-#include "gossip-transport-protocol.h"
+#include "gossip-jabber-private.h"
 #include "gossip-transport-accounts.h"
-#include "gossip-app.h"
+#include "gossip-transport-protocol.h"
 
 #define d(x) x
 
@@ -661,7 +660,7 @@ gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
 	pi = transport_protocol_id_new (id, protocol, func, user_data);
 
 	/* set up message handler */
-	connection = gossip_jabber_get_connection (jabber);
+	connection = _gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_protocol_message_handler, 
 					  pi, 

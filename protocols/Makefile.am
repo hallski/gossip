@@ -1,3 +1,5 @@
+SUBDIRS = jabber
+
 protocolsdir = $(datadir)/gossip/protocols
 
 protocols_DATA =		\

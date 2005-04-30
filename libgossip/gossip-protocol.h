@@ -73,7 +73,7 @@ struct _GossipProtocolClass {
                                                 const gchar    *new_name);
         void          (*remove_contact)        (GossipProtocol *protocol,
                                                 GossipContact  *contact);
-
+	const GList * (*get_contacts)          (GossipProtocol *protocol);
 	const gchar * (*get_active_resource)  (GossipProtocol *protocol,
 					       GossipContact  *contact);
 
@@ -126,6 +126,7 @@ void          gossip_protocol_rename_contact (GossipProtocol *protocol,
                                               const gchar    *new_name);
 void          gossip_protocol_remove_contact (GossipProtocol *protocol,
                                               GossipContact  *contact);
+const GList * gossip_protocol_get_contacts   (GossipProtocol *protocol);
 const gchar *gossip_protocol_get_active_resource (GossipProtocol               *protocol,
 					      GossipContact  *contact);
 

@@ -23,10 +23,11 @@
 
 #include <loudmouth/loudmouth.h>
 
-#include "gossip-chatroom-provider.h"
-#include "gossip-contact.h"
+#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-presence.h>
+
 #include "gossip-jabber.h"
-#include "gossip-presence.h"
 
 typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 

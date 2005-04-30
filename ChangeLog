@@ -1,3 +1,29 @@
+2005-04-30  Mikael Hallendal  <micke@imendio.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* libgossip/gossip-protocol.c: (gossip_protocol_get_contacts):
+	* libgossip/gossip-protocol.h:
+	* libgossip/gossip-session.c: (gossip_session_init),
+	(gossip_session_get_nickname):
+	- More work, on the refactoring out of libgossip. 
+	- Now builds, next step will be to make the gossip app use this.
+	* protocols/Makefile.am:
+	* protocols/jabber/Makefile.am:
+	* protocols/jabber/gossip-jabber-chatrooms.[ch]:
+	* protocols/jabber/gossip-jabber-helper.[ch]:
+	* protocols/jabber/gossip-jabber-private.h: added temporarily
+	* protocols/jabber/gossip-jabber.[ch]:
+	* protocols/jabber/gossip-jabber.h:
+	* protocols/jabber/gossip-jid.c:
+	* protocols/jabber/gossip-transport-accounts.c:
+	* protocols/jabber/gossip-transport-discover.[ch]:
+	* protocols/jabber/gossip-transport-protocol.c:
+	* protocols/jabber/gossip-transport-register.c:
+	- Fixed lots of include issues that shows when splitting out into own
+	  directory.
+
 2005-04-25  Mikael Hallendal  <micke@imendio.com>
 
 	* configure.ac:

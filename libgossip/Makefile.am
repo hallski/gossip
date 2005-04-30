@@ -1,6 +1,7 @@
 AM_CPPFLAGS =                                             \
 	-I.                                               \
 	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\"   \
+	-I$(top_srcdir)/protocols/jabber                  \
 	$(LIBGOSSIP_CFLAGS)
 
 lib_LTLIBRARIES = libgossip.la
@@ -37,7 +38,8 @@ libgossipinclude_HEADERS =         \
 	gossip-utils.h
 
 libgossip_la_LIBADD =              \
-	$(LIBGOSSIP_LIBS)
+	$(LIBGOSSIP_LIBS)          \
+	$(top_builddir)/protocols/jabber/libgossip-jabber.la
 
 libgossipincludedir = $(includedir)/gossip/
 
