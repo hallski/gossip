@@ -6,7 +6,7 @@ gossip.schemas.in
 libgossip/gossip-account.c
 libgossip/gossip-contact.c
 
-protocol/jabber/gossip-jabber.c
+protocols/jabber/gossip-jabber.c
 
 src/gossip-about.c
 src/gossip-account-dialog.c
