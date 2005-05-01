@@ -3,8 +3,12 @@
 gossip.desktop.in.in
 gossip.schemas.in
 
+libgossip/gossip-account.c
+libgossip/gossip-contact.c
+
+protocol/jabber/gossip-jabber.c
+
 src/gossip-about.c
-src/gossip-account.c
 src/gossip-account-dialog.c
 src/gossip-add-contact.c
 src/gossip-app.c
@@ -14,27 +18,23 @@ src/gossip-chat-manager.c
 src/gossip-chat-view.c
 src/gossip-chat-window.c
 src/gossip-connect-dialog.c
-src/gossip-contact.c
 src/gossip-contact-info.c
 src/gossip-contact-list.c
 src/gossip-edit-groups-dialog.c
 src/gossip-group-chat.c
 src/gossip-idle.c
-src/gossip-jabber.c
 src/gossip-join-dialog.c
 src/gossip-log.c
 src/gossip-main.c
 src/gossip-preferences.c
 src/gossip-private-chat.c
 src/gossip-register.c
-src/gossip-roster.c
-src/gossip-roster-view.c
 src/gossip-spell-dialog.c
 src/gossip-startup-druid.c
 src/gossip-transport-accounts-window.c
 src/gossip-transport-add-window.c
 src/gossip-tray.c
-src/gossip-utils.c
+src/gossip-ui-utils.c
 src/gossip-vcard-dialog.c
 
 ui/chat.glade

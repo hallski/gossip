@@ -1,3 +1,7 @@
+2005-05-01  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-accounts-dialog.[ch]: Unused, removed.
+
 2005-05-01  Martyn Russel  <mr@gnome.org>
 
 	* src/gossip-add-contact.c: (add_contact_last_page_finished),
