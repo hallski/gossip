@@ -59,7 +59,11 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->set_presence        = NULL;
         klass->add_contact         = NULL;
         klass->rename_contact      = NULL;
+        klass->remove_contact      = NULL;
+	klass->update_contact      = NULL;
+	klass->rename_group        = NULL;
 	klass->get_active_resource = NULL;
+	klass->get_groups          = NULL;
 	klass->async_get_vcard     = NULL;
 	klass->async_set_vcard     = NULL;
 
@@ -314,6 +318,35 @@ gossip_protocol_get_contacts (GossipProtocol *protocol)
 	return NULL;
 }
 
+void
+gossip_protocol_update_contact (GossipProtocol *protocol,
+                                GossipContact  *contact)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->update_contact) {
+		klass->update_contact (protocol, contact);
+	}
+}
+
+void
+gossip_protocol_rename_group (GossipProtocol *protocol,
+			      const gchar    *group,
+			      const gchar    *new_name)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->rename_group) {
+		klass->rename_group (protocol, group, new_name);
+	}
+}
+
 const gchar * 
 gossip_protocol_get_active_resource (GossipProtocol *protocol,
 				     GossipContact  *contact)
@@ -325,6 +358,21 @@ gossip_protocol_get_active_resource (GossipProtocol *protocol,
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->get_active_resource) {
 		return klass->get_active_resource (protocol, contact);
+	}
+
+	return NULL;
+}
+
+GList * 
+gossip_protocol_get_groups (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_groups) {
+		return klass->get_groups (protocol);
 	}
 
 	return NULL;

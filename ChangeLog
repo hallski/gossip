@@ -1,5 +1,17 @@
 2005-05-05  Martyn Russel  <mr@gnome.org>
 
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-protocol.[ch]
+	* libgossip/gossip-session.h:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-contact-list.[ch]
+	* src/gossip-edit-groups-dialog.c: 
+	* ui/main.glade:
+	- Fixed group editing after code restructure and move to libgossip.
+	- Fixes bug #155735
+
+2005-05-05  Martyn Russel  <mr@gnome.org>
+
 	* src/gossip-log.c: (gossip_log_message):
 	- Fixes bug #163145
 	- Don't set the same name for both contacts in logs.
@@ -167,7 +179,7 @@
 
 	* autogen.sh: Use automake 1.9
 
-2005-04-08  Martyn Russel  <mr@gnome.org>
+2005-04-08  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-cell-renderer-text.c:
 	(cell_renderer_text_update_text):

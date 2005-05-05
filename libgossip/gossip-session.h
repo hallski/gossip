@@ -98,8 +98,10 @@ void             gossip_session_remove_contact (GossipSession *session,
                                                 GossipContact *contact);
 void             gossip_session_update_contact (GossipSession *session,
                                                 GossipContact *contact);
+void             gossip_session_rename_group   (GossipSession *session,
+						const gchar   *group,
+						const gchar   *new_name);
 
-/* Add, remove, move */
 const GList *   gossip_session_get_contacts   (GossipSession  *session);
 GList *         gossip_session_get_groups     (GossipSession  *session);
 

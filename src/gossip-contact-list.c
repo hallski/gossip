@@ -465,29 +465,27 @@ contact_list_contact_updated_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	GtkTreeModel   *model;
+	GossipContactListPriv *priv;
 	GossipPresence *presence;
-	GList          *iters, *l;
+	GtkTreeModel   *model;
+
+	priv = list->priv;
 
 	model    = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	presence = gossip_contact_get_active_presence (contact);
 
-	iters = contact_list_find_contact (list, contact);
-	if (!iters) {
-		return;
-	}
-
-	for (l = iters; l; l = l->next) {
-		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
-			    MODEL_COL_NAME, gossip_contact_get_name (contact),
-			    -1);
-	}
-
 	d(g_print ("Contact List: Contact updated: %s\n",
 		   gossip_contact_get_name (contact)));
 	
-	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
-	g_list_free (iters);
+	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
+		return;
+	}
+
+	/* we do this to make sure the groups are correct, if not, we
+	   would have to check the groups already set up for each
+	   contact and then see what has been updated */
+	contact_list_remove_contact (list, contact);
+	contact_list_add_contact (list, contact);
 }
 
 static void 
@@ -993,7 +991,9 @@ contact_list_find_contact_foreach (GtkTreeModel *model,
 		fc->iters = g_list_append (fc->iters, gtk_tree_iter_copy (iter));
 	}
 	
-	return fc->found;
+	/* we want to find ALL contacts that match, this means if we
+	   have the same contact in 3 groups, all iters should be returned. */
+	return FALSE;
 }
 
 static gchar *
@@ -1176,7 +1176,71 @@ contact_list_group_menu_rename_cb (gpointer   data,
                                    guint      action,
                                    GtkWidget *widget)
 {
-	d(g_print ("FIXME: Implement group::rename\n"));
+	GossipContactList *list;
+	GtkWidget         *dialog;
+	GtkWidget         *entry;
+	GtkWidget         *hbox;
+	gchar             *str;
+	gchar             *group;
+
+        list = GOSSIP_CONTACT_LIST (data);
+
+        group = gossip_contact_list_get_selected_group (list);
+	if (!group) {
+		return;
+	}
+
+	str = g_strdup_printf ("<b>%s</b>", group);
+
+	/* Translator: %s denotes the contact ID */
+	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
+					 0,
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_OK_CANCEL,
+					 _("Please enter a new name for the group:\n%s"),
+					 str);
+	
+	g_free (str);
+
+	gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
+	
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
+		      "use-markup", TRUE,
+		      NULL);
+
+        entry = gtk_entry_new ();
+	gtk_widget_show (entry);
+
+	gtk_entry_set_text (GTK_ENTRY (entry), group);
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+
+	g_signal_connect (entry,
+			  "activate",
+			  G_CALLBACK (contact_list_rename_entry_activate_cb),
+			  dialog);
+	
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox);
+	
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), 
+			    hbox, FALSE, TRUE, 4);
+	
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
+		str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+	} else {
+		str = NULL;
+	}
+	
+	gtk_widget_destroy (dialog);
+
+	if (!str || !str[0]) {
+		g_free (group);
+		return;
+	}
+	
+	gossip_session_rename_group (gossip_app_get_session (), group, str);
+	g_free (group);
 }
 
 typedef struct {
@@ -1376,6 +1440,37 @@ gossip_contact_list_get_selected (GossipContactList *list)
 			    -1);
 
 	return contact;
+}
+
+char *
+gossip_contact_list_get_selected_group (GossipContactList *list)
+{
+        GossipContactListPriv *priv;
+	GtkTreeSelection      *selection;
+	GtkTreeIter            iter;
+	GtkTreeModel          *model;
+	gboolean               is_group;
+	gchar                 *name;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
+	
+	priv = list->priv;
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
+        if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+                return NULL;
+        }
+
+        gtk_tree_model_get (model, &iter,
+                            MODEL_COL_IS_GROUP, &is_group,
+			    MODEL_COL_NAME, &name,
+			    -1);
+
+	if (!is_group) {
+		return NULL;
+	}
+
+	return name;
 }
 
 gboolean

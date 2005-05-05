@@ -50,6 +50,7 @@ GType               gossip_contact_list_get_type     (void) G_GNUC_CONST;
 GossipContactList * gossip_contact_list_new (void);
 
 GossipContact *  gossip_contact_list_get_selected  (GossipContactList *list);
+char *           gossip_contact_list_get_selected_group (GossipContactList *list);
 
 gboolean     gossip_contact_list_get_show_offline (GossipContactList *list);
 void         gossip_contact_list_set_show_offline (GossipContactList *list,

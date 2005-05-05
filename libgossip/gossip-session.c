@@ -683,7 +683,42 @@ void
 gossip_session_update_contact (GossipSession *session,
                                GossipContact *contact)
 {
-        /* FIXME: Implement */
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+        g_return_if_fail (contact != NULL);
+	
+	priv = GET_PRIV (session);
+
+	protocol = session_get_protocol (session, NULL);
+	if (!protocol) {
+		return;
+	}
+	
+        gossip_protocol_update_contact (protocol, contact);
+}
+
+void
+gossip_session_rename_group (GossipSession *session,
+			     const gchar   *group,
+			     const gchar   *new_name)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+        g_return_if_fail (group != NULL);
+        g_return_if_fail (new_name != NULL);
+	
+	priv = GET_PRIV (session);
+
+	protocol = session_get_protocol (session, NULL);
+	if (!protocol) {
+		return;
+	}
+	
+        gossip_protocol_rename_group (protocol, group, new_name);
 }
 
 const GList *
@@ -701,9 +736,23 @@ gossip_session_get_contacts (GossipSession *session)
 GList *
 gossip_session_get_groups (GossipSession *session)
 {
-	/* FIXME: Implement */
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
 	
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+
+	priv = GET_PRIV (session);
+
+	protocol = session_get_protocol (session, NULL);
+	if (!protocol) {
 	return NULL;
+	}
+
+	/* FIXME: currently this will only use the session protocol,
+	   but if there were 3 protocols running we should really call
+	   this to all each one and merge the list */
+
+	return gossip_protocol_get_groups (protocol);
 }
 
 const gchar *

@@ -81,6 +81,15 @@ typedef struct {
 	gpointer               user_data;
 } RegisterAccountData;
 
+
+typedef struct {
+	GossipJabber          *jabber;
+	gchar                 *group;
+	gchar                 *new_name;
+} RenameGroupData;
+
+
+
 static void            gossip_jabber_class_init              (GossipJabberClass            *klass);
 static void            gossip_jabber_init                    (GossipJabber                 *jabber);
 static void            jabber_finalize                       (GObject                      *obj);
@@ -117,9 +126,21 @@ static void            jabber_rename_contact                 (GossipProtocol    
 							      const gchar                  *new_name);
 static void            jabber_remove_contact                 (GossipProtocol               *protocol,
 							      GossipContact                *contact);
+static void            jabber_update_contact                 (GossipProtocol               *protocol,
+ 							      GossipContact                *contact);
+static void            jabber_rename_group                   (GossipProtocol               *protocol,
+ 							      const gchar                  *group,
+ 							      const gchar                  *new_name);
+static void            jabber_rename_group_foreach_cb        (const gchar                  *jid,
+ 							      GossipContact                *contact,
+ 							      RenameGroupData              *rg);
 static const GList *   jabber_get_contacts                   (GossipProtocol               *protocol);
 static const gchar *   jabber_get_active_resource            (GossipProtocol               *protocol,
 							      GossipContact                *contact);
+static GList *         jabber_get_groups                     (GossipProtocol               *protocol);
+static void            jabber_get_groups_foreach_cb          (const gchar                  *jid,
+ 							      GossipContact                *contact,
+ 							      GList                       **list);
 static gboolean        jabber_async_get_vcard                (GossipProtocol               *protocol,
 							      GossipContact                *contact,
 							      GossipAsyncVCardCallback      callback,
@@ -147,8 +168,6 @@ static LmSSLResponse   jabber_ssl_func                       (LmConnection      
 static void            jabber_disconnect_func                (LmConnection                 *connection,
 							      LmDisconnectReason            reason,
 							      GossipJabber                 *jabber);
-static gboolean        jabber_update_contact                 (GossipContact                *contact,
-							      LmMessageNode                *node);
 static LmHandlerResult jabber_message_handler                (LmMessageHandler             *handler,
 							      LmConnection                 *conn,
 							      LmMessage                    *message,
@@ -218,8 +237,11 @@ gossip_jabber_class_init (GossipJabberClass *klass)
         protocol_class->add_contact         = jabber_add_contact;
         protocol_class->rename_contact      = jabber_rename_contact;
         protocol_class->remove_contact      = jabber_remove_contact;
+	protocol_class->update_contact      = jabber_update_contact;
+ 	protocol_class->rename_group        = jabber_rename_group;
 	protocol_class->get_contacts        = jabber_get_contacts;
 	protocol_class->get_active_resource = jabber_get_active_resource;
+ 	protocol_class->get_groups          = jabber_get_groups;
 	protocol_class->async_get_vcard     = jabber_async_get_vcard;
 	protocol_class->async_set_vcard     = jabber_async_set_vcard;
 	protocol_class->async_get_version   = jabber_async_get_version;
@@ -808,7 +830,8 @@ jabber_rename_contact (GossipProtocol *protocol,
 }
 
 static void
-jabber_remove_contact (GossipProtocol *protocol, GossipContact *contact)
+jabber_remove_contact (GossipProtocol *protocol, 
+		       GossipContact  *contact)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -850,12 +873,161 @@ jabber_get_contacts (GossipProtocol *protocol)
 	return NULL;
 }
 
+static void
+jabber_update_contact (GossipProtocol *protocol, 
+		       GossipContact  *contact)
+{
+	/* we set the groups _and_ the name here, the rename function
+	   will do exactly what we want to do so just call that */
+	jabber_rename_contact (protocol, 
+			       contact, 
+			       gossip_contact_get_name (contact));
+}
+
+static void
+jabber_rename_group (GossipProtocol *protocol,
+		     const gchar    *group,
+		     const gchar    *new_name)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	RenameGroupData  *rg;
+
+	jabber = GOSSIP_JABBER (protocol);
+	priv = jabber->priv;
+	
+	rg = g_new0 (RenameGroupData, 1);
+	
+	rg->jabber = jabber;
+	rg->group = g_strdup (group);
+	rg->new_name = g_strdup (new_name);
+
+	g_hash_table_foreach (priv->contacts, 
+			      (GHFunc)jabber_rename_group_foreach_cb, 
+			      rg);
+
+	g_free (rg->group);
+	g_free (rg->new_name);
+	g_free (rg);
+}
+
+static void
+jabber_rename_group_foreach_cb (const gchar     *jid,
+				GossipContact   *contact,
+				RenameGroupData *rg)
+{
+	GossipJabberPriv *priv;
+	LmMessage        *m;
+        LmMessageNode    *node;
+	gchar            *escaped;
+	GList            *l; 
+	gboolean          found = FALSE;
+
+	priv = rg->jabber->priv;
+
+        for (l = gossip_contact_get_groups (contact); l && !found; l = l->next) {
+		gchar *group = (gchar*)l->data;
+
+		if (group && strcmp (group, rg->group) == 0) {
+			found = TRUE;
+		}
+	}
+	
+	if (!found) {
+		return;
+	}
+
+	m = lm_message_new_with_sub_type (NULL, 
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
+	node = lm_message_node_add_child (m->node, "query", NULL);
+	lm_message_node_set_attributes (node,
+					"xmlns", "jabber:iq:roster",
+					NULL);
+	
+	escaped = g_markup_escape_text (gossip_contact_get_name (contact), -1);
+	
+	node = lm_message_node_add_child (node, "item", NULL);
+	lm_message_node_set_attributes (node, 
+					"jid", gossip_contact_get_id (contact),
+					"name", escaped,
+					NULL);
+	g_free (escaped);
+	
+	for (l = gossip_contact_get_groups (contact); l; l = l->next) {
+		const gchar *group = (const gchar*) l->data;
+		
+		/* do not include the group we are renaming */
+		if (group && strcmp (group, rg->group) == 0) {
+			continue;
+		}
+
+		escaped = g_markup_escape_text (group, -1);
+		lm_message_node_add_child (node, "group", escaped);
+		g_free (escaped);
+	}	
+
+	/* add the new group name */
+	escaped = g_markup_escape_text (rg->new_name, -1);
+	lm_message_node_add_child (node, "group", escaped);
+	g_free (escaped);
+	
+	lm_connection_send (priv->connection, m, NULL);
+	lm_message_unref (m);
+}
+
 static const gchar *
 jabber_get_active_resource (GossipProtocol *protocol,
 			    GossipContact  *contact)
 {
 	/* FIXME: Get the active resource */
 	return NULL;
+}
+
+static GList *
+jabber_get_groups (GossipProtocol *protocol)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+	GList            *list = NULL;
+
+	jabber = GOSSIP_JABBER (protocol);
+	priv = jabber->priv;
+	
+	g_hash_table_foreach (priv->contacts, 
+			      (GHFunc)jabber_get_groups_foreach_cb, 
+			      &list);
+
+	list = g_list_sort (list, (GCompareFunc)strcmp);
+
+	return list;
+}
+
+static void
+jabber_get_groups_foreach_cb (const gchar    *jid,
+			      GossipContact  *contact,
+			      GList         **list)
+{
+	GList *l;
+
+	if (!gossip_contact_get_groups (contact)) {
+		return;
+	}
+
+	for (l = gossip_contact_get_groups (contact); l; l = l->next) {
+		gchar *group;
+		GList *found;
+
+		group = (gchar*) l->data;
+		found = g_list_find_custom (*list, 
+					    group, 
+					    (GCompareFunc)strcmp);
+		
+		if (!found) {
+			*list = g_list_prepend (*list, g_strdup (group));
+		}
+	}
 }
 
 static gboolean
@@ -1014,54 +1186,6 @@ jabber_disconnect_func (LmConnection       *connection,
 	jabber_signal_logged_out (jabber);
 }
 
-static gboolean
-jabber_update_contact (GossipContact *contact, LmMessageNode *node)
-{
-	/*const gchar   *subscription;
-	const gchar   *ask; */
-	const gchar   *name;
-	LmMessageNode *child;
-	GList         *categories = NULL;
-	gboolean       updated, categories_updated;
-
-	updated = categories_updated = FALSE;
-
-	/* Update the item, can be name change, group change, etc.. */
-	/* FIXME: Do we really need this in the contact? 
-	 *
-	 subscription = lm_message_node_get_attribute (node, "subscription");
-	 if (subscription) {
-	 g_free (item->subscription);
-	 item->subscription = g_strdup (subscription);
-	 }
-	
-	ask = lm_message_node_get_attribute (node, "ask");
-	if (ask) {
-		g_free (item->ask);
-		item->ask = g_strdup (ask);
-	}
-	 */
-		
-	name = lm_message_node_get_attribute (node, "name");
-	if (name) {
-		updated = TRUE;
-		gossip_contact_set_name (contact, name);
-	}
-
-	for (child = node->children; child; child = child->next) {
-		if (strcmp (child->name, "group") == 0 && child->value) {
-			categories = g_list_append (categories, child->value);
-		}
-	}
-
-	if (categories) {
-		/* does not get free'd */
-	categories_updated = gossip_contact_set_groups (contact, categories);
-	}
-
-	return updated || categories_updated;
-}
-
 static LmHandlerResult
 jabber_message_handler (LmMessageHandler *handler,
 			LmConnection     *conn,
@@ -1217,6 +1341,7 @@ jabber_iq_handler (LmMessageHandler *handler,
 	priv = jabber->priv;
 	
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GET &&
+	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_SET &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
@@ -1244,7 +1369,13 @@ jabber_iq_handler (LmMessageHandler *handler,
 		gboolean       new_item = FALSE;
 		gboolean       updated;
 		LmMessageNode *subnode;
+		LmMessageNode *child;
 		GList         *groups = NULL;
+
+		const gchar   *name;
+		GList         *new_groups = NULL;
+		gboolean       name_updated, groups_updated;
+		
 
 		if (strcmp (node->name, "item") != 0) {
 			continue;
@@ -1266,6 +1397,7 @@ jabber_iq_handler (LmMessageHandler *handler,
 			groups = g_list_append (groups, subnode->value);
 		}
 		
+		/* FIXME: why is this here if we set the groups below */
 		if (groups) {
 			gossip_contact_set_groups (contact, groups);
 		}
@@ -1283,13 +1415,33 @@ jabber_iq_handler (LmMessageHandler *handler,
 			continue;
 		}
 		
-		updated = jabber_update_contact (contact, node);
+		/* find out if any thing has updated */
+		name_updated = groups_updated = FALSE;
+
+		name = lm_message_node_get_attribute (node, "name");
+		if (name) {
+			name_updated = TRUE;
+			gossip_contact_set_name (contact, name);
+		}
+
+		for (child = node->children; child; child = child->next) {
+			if (strcmp (child->name, "group") == 0 && child->value) {
+				new_groups = g_list_append (new_groups, child->value);
+			}
+		}
+
+		if (new_groups) {
+			/* does not get free'd */
+			groups_updated = gossip_contact_set_groups (contact, new_groups);
+		}
+
+		updated = (name_updated || groups_updated);
+
 		
 		if (new_item) {
 			g_signal_emit_by_name (jabber, 
 					       "contact-added", contact);
-		} 
-		else if (updated) {
+		} else if (updated) {
 			g_signal_emit_by_name (jabber, 
 					       "contact-updated", contact);
 		}

@@ -514,7 +514,6 @@ gossip_contact_set_groups (GossipContact *contact, GList *groups)
 	GList             *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
-	g_return_val_if_fail (groups != NULL, FALSE);
 	
 	priv = GET_PRIV (contact);
 

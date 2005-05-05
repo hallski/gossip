@@ -37,15 +37,12 @@ struct _GossipEditGroups {
 	GtkWidget   *add_entry;
 	GtkWidget   *add_button;
 
-	GtkWidget   *apply_button;
 	GtkWidget   *ok_button;
 
 	GtkTreeView *treeview;
 
         GossipContact *contact;
 
-	GList       *restore_groups;
-	
 	gboolean     changes_made;
 };
 
@@ -85,7 +82,6 @@ static void     edit_groups_add_groups            (GossipEditGroups      *info,
 static void     edit_groups_set                   (GossipEditGroups      *info,
 						   GList                 *groups);
 static void     edit_groups_save                  (GossipEditGroups      *info);
-static void     edit_groups_restore               (GossipEditGroups      *info);
 static gboolean edit_groups_find_name             (GossipEditGroups      *info,
 						   const gchar           *name,
 						   GtkTreeIter           *iter);
@@ -114,25 +110,14 @@ edit_groups_dialog_destroy_cb (GtkWidget *widget, GossipEditGroups *info)
 {
         g_object_unref (info->contact);
 
-	g_list_foreach (info->restore_groups, (GFunc) g_free, NULL); 
-	g_list_free (info->restore_groups);
-	
  	g_free (info); 
 }
 
 static void
 edit_groups_dialog_response_cb (GtkWidget *widget, gint response, GossipEditGroups *info)
 {
-	if (response == GTK_RESPONSE_OK && info->changes_made) {
-		/* save groups if changes made */
+	if (info->changes_made && response == GTK_RESPONSE_OK) {
 		edit_groups_save (info);
-	}
-	else if (response == GTK_RESPONSE_APPLY && info->changes_made) {
-		edit_groups_save (info);
-		return;
-	}
-	else if (response == GTK_RESPONSE_CANCEL && info->changes_made) {
-		edit_groups_restore (info);
 	}
 	
 	gtk_widget_destroy (info->dialog);
@@ -160,7 +145,6 @@ gossip_edit_groups_new (GossipContact *contact)
 				     "add_entry", &info->add_entry,
 				     "add_button", &info->add_button,
 				     "ok_button", &info->ok_button,
-				     "apply_button", &info->apply_button,
 				     "groups_treeview", &info->treeview,
 				     NULL);
 
@@ -286,15 +270,6 @@ edit_groups_save (GossipEditGroups *info)
 	
 	g_list_foreach (groups, (GFunc)g_free, NULL); 
 	g_list_free (groups);
-
-	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), FALSE);
-}
-
-static void
-edit_groups_restore (GossipEditGroups *info)
-{
-	edit_groups_set (info, info->restore_groups);
-	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), FALSE);
 }
 
 static void
@@ -313,8 +288,6 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 	for (l = groups; l; l = l->next) {
 		const gchar *group_str = (const gchar *) l->data;
 
-		/* This needs to be done better, could have group_is_unsorted().
-		 */
 		if (strcmp (group_str, _("Unsorted")) == 0) {
 			continue;
 		}
@@ -325,8 +298,6 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 	for (l = all_groups; l; l = l->next) {
 		const gchar *group_str = (const gchar *) l->data;
 
-		/* This needs to be done better, could have group_is_unsorted().
-		 */
 		if (strcmp (group_str, _("Unsorted")) == 0) {
 			continue;
 		}
@@ -348,7 +319,8 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 		}
 	}
 
-	info->restore_groups = my_groups;
+	g_list_foreach (my_groups, (GFunc) g_free, NULL); 
+	g_list_free (my_groups);
 }
 
 static gboolean 
@@ -485,8 +457,6 @@ edit_groups_cell_toggled (GtkCellRendererToggle *cell,
 	gtk_tree_path_free (path);
 
 	info->changes_made = TRUE;
-
-	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), info->changes_made);
 }
 
 static void 
@@ -538,7 +508,5 @@ edit_groups_add_button_clicked (GtkButton *button, GossipEditGroups *info)
 	gtk_entry_set_text (GTK_ENTRY (info->add_entry), "");
 	
 	info->changes_made = TRUE;
-
-	gtk_widget_set_sensitive (GTK_WIDGET (info->apply_button), info->changes_made);
 }
 

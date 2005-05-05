@@ -73,9 +73,16 @@ struct _GossipProtocolClass {
                                                 const gchar    *new_name);
         void          (*remove_contact)        (GossipProtocol *protocol,
                                                 GossipContact  *contact);
+        void          (*update_contact)        (GossipProtocol *protocol,
+						GossipContact  *contact);
+        void          (*rename_group)          (GossipProtocol *protocol,
+						const gchar    *group,
+						const gchar    *new_name);
 	const GList * (*get_contacts)          (GossipProtocol *protocol);
 	const gchar * (*get_active_resource)  (GossipProtocol *protocol,
 					       GossipContact  *contact);
+ 	GList *       (*get_groups)            (GossipProtocol *protocol);
+
 
 	gboolean      (*async_register)       (GossipProtocol *protocol,
 					       GossipAccount  *account,
@@ -127,8 +134,16 @@ void          gossip_protocol_rename_contact (GossipProtocol *protocol,
 void          gossip_protocol_remove_contact (GossipProtocol *protocol,
                                               GossipContact  *contact);
 const GList * gossip_protocol_get_contacts   (GossipProtocol *protocol);
-const gchar *gossip_protocol_get_active_resource (GossipProtocol               *protocol,
+
+void          gossip_protocol_update_contact (GossipProtocol *protocol,
+  					      GossipContact  *contact);
+void          gossip_protocol_rename_group   (GossipProtocol *protocol,
+					      const gchar    *group,
+					      const gchar    *new_name);
+
+ const gchar *gossip_protocol_get_active_resource (GossipProtocol *protocol,
 					      GossipContact  *contact);
+ GList *      gossip_protocol_get_groups          (GossipProtocol *protocol);
 
 
 /* Async functions */
