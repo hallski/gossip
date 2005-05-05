@@ -1,3 +1,10 @@
+2005-05-05  Mikael Hallendal  <micke@imendio.com>
+
+	* protocols/jabber/gossip-transport-protocol.c:
+	(transport_protocol_file_parse):
+	- Fix some casts caught by gcc-4
+	- Patch from Thomas Reynolds.
+
 2005-05-05  Martyn Russel  <mr@gnome.org>
 
 	* libgossip/gossip-protocol.[ch]:

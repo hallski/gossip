@@ -285,7 +285,7 @@ transport_protocol_file_parse (const gchar *filename)
 		return NULL;
 	}
 
-        if (xmlTextReaderPreservePattern(reader, "preserved", NULL) < 0) {
+        if (xmlTextReaderPreservePattern(reader, (xmlChar *) "preserved", NULL) < 0) {
 		g_warning ("could not preserve pattern for file:'%s' filename",
 			   filename);
 		return NULL;
@@ -301,7 +301,7 @@ transport_protocol_file_parse (const gchar *filename)
 		const gchar *node = NULL;
 		const gchar *value = NULL;
 
-		if (!(node = xmlTextReaderConstName(reader))) {
+		if (!(node = (const gchar *) xmlTextReaderConstName(reader))) {
 			continue;
 		}
 			
@@ -317,10 +317,10 @@ transport_protocol_file_parse (const gchar *filename)
 				break;
 			}
 			
-			node_text = xmlTextReaderConstName(reader);
+			node_text = (const gchar *) xmlTextReaderConstName(reader);
 			
 			if (!value && strcmp (node_text, "#text") == 0) {
-				value = xmlTextReaderConstValue(reader);
+				value = (const gchar *) xmlTextReaderConstValue(reader);
 			}
 		}
 
@@ -328,10 +328,10 @@ transport_protocol_file_parse (const gchar *filename)
 			xmlChar *url;
 
 			/* get attributes */
-			url = xmlTextReaderGetAttribute (reader, "url");
+			url = xmlTextReaderGetAttribute (reader, (xmlChar *) "url");
 
 			if (url) {
-				protocol->url = g_strdup (url);
+				protocol->url = g_strdup ((gchar *) url);
 				xmlFree (url);
 			}
 			
@@ -340,21 +340,21 @@ transport_protocol_file_parse (const gchar *filename)
 				xmlChar               *name, *host, *port;
 				const gchar           *server_node; 
 
-				server_node = xmlTextReaderConstName(reader);
+				server_node = (const gchar *) xmlTextReaderConstName(reader);
 
 				if (!server_node || strcmp (server_node, "server") != 0) {
 					continue;
 				}
 
 				/* get attributes */
-				name = xmlTextReaderGetAttribute (reader, "name");
-				host = xmlTextReaderGetAttribute (reader, "host");
-				port = xmlTextReaderGetAttribute (reader, "port");
+				name = xmlTextReaderGetAttribute (reader, (xmlChar *) "name");
+				host = xmlTextReaderGetAttribute (reader, (xmlChar *) "host");
+				port = xmlTextReaderGetAttribute (reader, (xmlChar *) "port");
 
-				service = transport_service_new (name, host);
+				service = transport_service_new ((gchar *) name, (gchar *) host);
 
 				if (service && port) {
-					service->port = g_strdup (port);
+					service->port = g_strdup ((gchar *) port);
 				}
 
 				/* add to list */
