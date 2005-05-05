@@ -5,7 +5,7 @@
 	- Fix some casts caught by gcc-4
 	- Patch from Thomas Reynolds.
 
-2005-05-05  Martyn Russel  <mr@gnome.org>
+2005-05-05  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-protocol.[ch]:
 	* libgossip/gossip-session.c:
@@ -18,7 +18,7 @@
 	  dialogs.
 	- Fixes bug #162619
 
-2005-05-05  Martyn Russel  <mr@gnome.org>
+2005-05-05  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-contact.c:
 	* libgossip/gossip-protocol.[ch]
@@ -30,7 +30,7 @@
 	- Fixed group editing after code restructure and move to libgossip.
 	- Fixes bug #155735
 
-2005-05-05  Martyn Russel  <mr@gnome.org>
+2005-05-05  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-log.c: (gossip_log_message):
 	- Fixes bug #163145
@@ -53,7 +53,7 @@
 
 	* src/gossip-accounts-dialog.[ch]: Unused, removed.
 
-2005-05-01  Martyn Russel  <mr@gnome.org>
+2005-05-01  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-add-contact.c: (add_contact_last_page_finished),
 	(gossip_add_contact_new):
@@ -61,7 +61,7 @@
 	- Remove the reason field from the add new contact wizard.
 	- Fixes #157866
 
-2005-05-01  Martyn Russel  <mr@gnome.org>
+2005-05-01  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-chat-view.c: (gossip_chat_view_init),
 	(chat_view_populate_popup), (chat_view_buffer_changed_cb):
