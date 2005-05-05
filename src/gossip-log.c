@@ -187,7 +187,7 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 	gchar         *body;
 	const gchar   *to_or_from;
 	gchar         *stamp;
-	gchar         *nick;
+	const gchar   *nick;
 	const gchar   *resource;
 	
 	if (incoming) {
@@ -221,13 +221,11 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 	stamp = log_get_timestamp (msg);
 
 	if (incoming) {
-		nick = g_strdup (gossip_contact_get_name (contact));
-		
 		to_or_from = "from";
+		nick = gossip_contact_get_name (contact);
 	} else {
-		nick = g_strdup (gossip_session_get_nickname (gossip_app_get_session ()));
-
 		to_or_from = "to";
+ 		nick = gossip_session_get_nickname (gossip_app_get_session ()); 
 	}
 
         if (gossip_message_get_body (msg)) {
@@ -249,13 +247,12 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 		 stamp, to_or_from,
 		 gossip_contact_get_id (contact),
 		 resource,
-		 gossip_contact_get_name (contact),
+		 nick,
 		 body);
 	
         fclose (file);
 
 	g_free (stamp);
-	g_free (nick);
 	g_free (body);
 }
 

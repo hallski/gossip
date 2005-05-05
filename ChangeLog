@@ -1,3 +1,9 @@
+2005-05-05  Martyn Russel  <mr@gnome.org>
+
+	* src/gossip-log.c: (gossip_log_message):
+	- Fixes bug #163145
+	- Don't set the same name for both contacts in logs.
+
 2005-05-05  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-session.c: (gossip_session_init),
