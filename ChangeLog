@@ -1,3 +1,16 @@
+2005-05-05  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-session.c: (gossip_session_init),
+	(session_protocol_logged_in), (session_protocol_logged_out),
+	(gossip_session_is_connected):
+	* protocols/jabber/gossip-jabber.c: (jabber_logout):
+	* src/gossip-group-chat.c: (gossip_group_chat_show),
+	(group_chat_connected_cb), (group_chat_disconnected_cb):
+	- Fixed the connect/disconnect for group chats
+	- Also fixed some issues when disconnecting from the server.
+	- Based on patch from Martyn with some changes.
+	- Fixes bug #127464.
+
 2005-05-01  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-accounts-dialog.[ch]: Unused, removed.

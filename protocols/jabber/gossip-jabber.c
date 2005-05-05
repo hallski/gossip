@@ -386,8 +386,6 @@ jabber_logout (GossipProtocol *protocol)
 
 	if (lm_connection_is_open (priv->connection)) {
 		lm_connection_close (priv->connection, NULL);
-
-		jabber_signal_logged_out (jabber);
 	}
 }
 

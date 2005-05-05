@@ -89,6 +89,10 @@ static void             group_chat_widget_destroy_cb            (GtkWidget      
 								 GossipGroupChat   *chat);
 static void             group_chats_init                        (void);
 static void             group_chat_create_gui                   (GossipGroupChat   *chat);
+static void             group_chat_connected_cb                 (GossipSession     *session, 
+								 GossipGroupChat   *chat);
+static void             group_chat_disconnected_cb              (GossipSession     *session, 
+								 GossipGroupChat   *chat);
 static void             group_chat_send                         (GossipGroupChat   *chat,
 								 const gchar       *msg);
 static void             group_chat_row_activated_cb             (GtkTreeView       *view,
@@ -422,12 +426,44 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 			  G_CALLBACK (group_chat_contact_updated_cb),
 			  chat);
 
+
+	g_signal_connect_object (gossip_app_get_session (),
+				 "connected",
+				 G_CALLBACK (group_chat_connected_cb),
+				 chat, 0);
+
+	g_signal_connect_object (gossip_app_get_session (),
+				 "disconnected",
+				 G_CALLBACK (group_chat_disconnected_cb),
+				 chat, 0);
+
 	priv->provider = provider;
 	
 	gossip_chat_present (GOSSIP_CHAT (chat));
 
 	return chat;
 }
+
+static void
+group_chat_connected_cb (GossipSession *session, GossipGroupChat *chat)
+{
+ 	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (chat)); 
+
+ 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); 
+
+ 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Connected"), TRUE); 
+}
+
+static void
+group_chat_disconnected_cb (GossipSession *session, GossipGroupChat *chat)
+{
+ 	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (chat)); 
+
+ 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE); 
+
+ 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Disconnected"), TRUE); 
+}
+
 
 static void
 group_chat_send (GossipGroupChat *chat, const gchar *msg)

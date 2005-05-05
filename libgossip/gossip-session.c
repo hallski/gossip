@@ -44,6 +44,8 @@ struct _GossipSessionPriv {
 	GossipPresence *presence;
 
 	GList          *contacts;
+
+	guint           connected_counter;
 };
 
 static void     gossip_session_class_init     (GossipSessionClass *klass);
@@ -235,6 +237,8 @@ gossip_session_init (GossipSession *session)
 	protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
 
 	priv->default_jabber = protocol;
+	priv->connected_counter = 0;
+
 	session_connect_protocol (session, protocol);
 	
 	priv->protocols = g_list_prepend (priv->protocols, protocol);
@@ -299,22 +303,46 @@ session_connect_protocol (GossipSession *session, GossipProtocol *protocol)
 static void
 session_protocol_logged_in (GossipProtocol *protocol, GossipSession *session)
 {
+	GossipSessionPriv *priv;
+	
 	d(g_print ("Session: Protocol logged in\n"));
 
+	priv = GET_PRIV (session);
+	
 	/* Update some status? */
+	priv->connected_counter++;
+
 	g_signal_emit (session, signals[PROTOCOL_CONNECTED], 0, protocol);
+
+	if (priv->connected_counter == 1) {
+		/* Before this connect the session was set to be DISCONNECTED */
+		g_signal_emit (session, signals[CONNECTED], 0);
+	}
 }
 
 static void
 session_protocol_logged_out (GossipProtocol *protocol, GossipSession *session) 
 {
+	GossipSessionPriv *priv;
+	
 	d(g_print ("Session: Protocol logged out\n"));
 
+	priv = GET_PRIV (session);
+	
 	/* Update some status? */
-	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, protocol);
+	if (priv->connected_counter <= 0) {
+		g_warning ("We have some issues in the connection counting");
+		return;
+	}
 
-	/* For now, we currently only have one protocol */
-	g_signal_emit (session, signals[DISCONNECTED], 0);
+	priv->connected_counter--;
+	
+	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, protocol);
+	
+	if (priv->connected_counter == 0) {
+		/* Last connected protocol was disconnected */
+		g_signal_emit (session, signals[DISCONNECTED], 0);
+	}
 }
 
 static void
@@ -523,17 +551,17 @@ gboolean
 gossip_session_is_connected (GossipSession *session)
 {
 	GossipSessionPriv *priv;
-	GList *l;
+	gboolean           is_connected;
 
 	priv = GET_PRIV (session);
-	
-	for (l = priv->protocols; l; l = l->next) {
-		if (gossip_protocol_is_connected (GOSSIP_PROTOCOL (l->data))) {
-			return TRUE;
-		}
+
+	if (priv->connected_counter > 0) {
+		is_connected = TRUE;
+	} else {
+		is_connected = FALSE;
 	}
-		
-	return FALSE;
+
+	return is_connected;
 }
 
 const gchar *
