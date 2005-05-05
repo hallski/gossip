@@ -156,6 +156,13 @@ typedef struct {
 	GtkWidget   *dialog;
 } CompleteNameData;
 
+typedef struct {
+	GossipProtocol *protocol;
+	GossipContact  *contact;
+	GossipVCard    *vcard;
+} SubscriptionData;
+
+
 enum {
 	CONNECTED,
 	DISCONNECTED,
@@ -238,8 +245,7 @@ static void     app_complete_name_activate_cb         (GtkEntry           *entry
 static void     app_toggle_visibility                (void);
 static gboolean app_tray_pop_event                   (void);
 static void     app_tray_update_tooltip              (void);
-static GtkWidget *
-app_create_status_menu                               (gboolean            from_window);
+static GtkWidget *     app_create_status_menu               (gboolean             from_window);
 static gboolean app_status_button_press_event_cb     (GtkButton          *button,
 						      GdkEventButton     *event,
 						      gpointer            user_data);
@@ -249,13 +255,13 @@ static void     app_status_button_clicked_cb         (GtkButton          *button
 static void     app_status_show_status_dialog        (GossipPresenceState state,
 						      const gchar        *str,
 						      gboolean            transient);
-static GossipPresence * app_get_effective_presence   (void);
+static GossipPresence *app_get_effective_presence           (void);
 static void       app_set_away                       (const gchar        *status);
 static void       app_presence_updated               (void);
 static void       app_status_clear_away              (void);
 static void       app_status_flash_start             (void);
 static void       app_status_flash_stop              (void);
-static GdkPixbuf *app_get_current_status_pixbuf      (void);
+static GdkPixbuf *     app_get_current_status_pixbuf        (void);
 static gboolean      app_window_configure_event_cb   (GtkWidget          *widget,
 						      GdkEventConfigure  *event,
 						      gpointer            data);
@@ -273,6 +279,17 @@ static void       app_event_removed_cb               (GossipEventManager *manage
 static void       app_contact_activated_cb           (GossipContactList  *contact_list,
 						      GossipContact      *contact,
 						      gpointer            unused);
+static void            app_subscription_request_cb          (GossipProtocol      *protocol,
+							     GossipContact       *contact,
+							     gpointer             user_data);
+static void            app_subscription_vcard_cb            (GossipAsyncResult    result,
+							     GossipVCard         *vcard,
+							     SubscriptionData    *data);
+static void            app_subscription_request_dialog_cb   (GtkWidget           *dialog,
+							     gint                 response,
+							     SubscriptionData    *data);
+
+
 
 static GObjectClass *parent_class;
 static GossipApp    *app;
@@ -579,6 +596,12 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	app_update_conn_dependent_menu_items ();
 	app_presence_updated ();
+
+	/* is this the right place for setting up protocol signals? */
+	g_signal_connect (protocol,
+                          "subscription-request",
+                          G_CALLBACK (app_subscription_request_cb),
+                          NULL);
 }
 
 static void
@@ -594,8 +617,9 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	app_presence_updated ();
 
 	/* FIXME: implement */
-
-	
+	g_signal_handlers_disconnect_by_func (protocol, 
+					      app_subscription_request_cb, 
+					      NULL);
 }
 
 static gchar * 
@@ -2324,6 +2348,170 @@ app_contact_activated_cb (GossipContactList *contact_list,
 	priv = app->priv;
 
 	gossip_chat_manager_show_chat (priv->chat_manager, contact);
+}
+
+static void
+app_subscription_request_cb (GossipProtocol *protocol,
+			     GossipContact  *contact,
+			     gpointer        user_data)
+{
+	SubscriptionData *data;
+
+	data = g_new0 (SubscriptionData, 1);
+
+	data->protocol = g_object_ref (protocol);
+	data->contact = g_object_ref (contact);
+
+	gossip_session_async_get_vcard (gossip_app_get_session (),
+					contact,
+					(GossipAsyncVCardCallback) app_subscription_vcard_cb,
+					data, NULL);
+}
+
+static void
+app_subscription_vcard_cb (GossipAsyncResult  result,
+			   GossipVCard       *vcard,
+			   SubscriptionData  *data)
+{
+	GtkWidget   *dialog;
+	GtkWidget   *who_label;
+	GtkWidget   *question_label;
+	GtkWidget   *jid_label;
+ 	GtkWidget   *website_label;
+ 	GtkWidget   *personal_table;
+	const gchar *name;
+	const gchar *url;
+	gchar       *who;
+	gchar       *question;
+	gchar       *str;
+	gint         num_matches = 0;
+
+	if (GOSSIP_IS_VCARD (vcard)) {
+		data->vcard = g_object_ref (vcard);
+	}
+
+	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
+				      "subscription_request_dialog",
+				      NULL,
+				      "subscription_request_dialog", &dialog,
+				      "who_label", &who_label,
+				      "question_label", &question_label,
+				      "jid_label", &jid_label,
+				      "website_label", &website_label,
+				      "personal_table", &personal_table,
+				      NULL);
+
+	name = gossip_vcard_get_name (vcard);
+	if (name) {
+		who = g_strdup_printf (_("%s wants to be added to your contact list."), 
+				       name);
+		question = g_strdup_printf (_("Do you want to add %s to your contact list?"),
+					    name);
+	} else {
+		who = g_strdup (_("Someone wants to be added to your contact list."));
+		question = g_strdup (_("Do you want to add this person to your contact list?"));
+	}
+
+	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
+	gtk_label_set_markup (GTK_LABEL (who_label), str);
+	gtk_label_set_use_markup (GTK_LABEL (who_label), TRUE);
+	g_free (str);
+	g_free (who);
+
+	gtk_label_set_text (GTK_LABEL (question_label), question);
+	g_free (question);
+
+	gtk_label_set_text (GTK_LABEL (jid_label), gossip_contact_get_id (data->contact));
+
+	url = gossip_vcard_get_url (vcard);
+	if (url && strlen (url) > 0) {
+		GArray *start, *end;
+
+		start = g_array_new (FALSE, FALSE, sizeof (gint));
+		end = g_array_new (FALSE, FALSE, sizeof (gint));
+		
+		num_matches = gossip_utils_url_regex_match (url, start, end);
+	}
+
+	if (num_matches > 0) {
+		GtkWidget *href;
+		GtkWidget *alignment;
+
+		href = gnome_href_new (url, url);
+
+		alignment = gtk_alignment_new (0, 1, 0, 0.5);
+		gtk_container_add (GTK_CONTAINER (alignment), href);
+
+		gtk_table_attach (GTK_TABLE (personal_table),
+				  alignment, 
+				  1, 2,
+				  1, 2,
+				  GTK_FILL, GTK_FILL,
+				  0, 0);
+		
+		gtk_widget_show_all (personal_table);
+	} else {
+		gtk_widget_hide (website_label);
+	}
+
+	g_signal_connect (dialog,
+			  "response",
+			  G_CALLBACK (app_subscription_request_dialog_cb),
+			  data);
+
+	gtk_widget_show (dialog);
+}
+
+static void
+app_subscription_request_dialog_cb (GtkWidget        *dialog,
+				    gint              response,
+				    SubscriptionData *data)
+{
+	gboolean add_user;
+
+	g_return_if_fail (GTK_IS_DIALOG (dialog));
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (data->protocol));
+	g_return_if_fail (GOSSIP_IS_CONTACT (data->contact));
+	g_return_if_fail (GOSSIP_IS_VCARD (data->vcard));
+
+	add_user = (gossip_contact_get_type (data->contact) == GOSSIP_CONTACT_TYPE_TEMPORARY);
+
+	gtk_widget_destroy (dialog);
+	
+	if (response == GTK_RESPONSE_YES ||
+	    response == GTK_RESPONSE_NO) {
+		gboolean subscribe;
+
+		subscribe = (response == GTK_RESPONSE_YES);
+		gossip_protocol_contact_set_subscription (data->protocol, 
+							  data->contact, 
+							  subscribe);
+
+		if (subscribe && add_user) {
+			const gchar *id, *name, *message;
+			
+			id = gossip_contact_get_id (data->contact);
+			name = gossip_vcard_get_name (data->vcard);
+
+			message = _("I would like to add you to my contact list.");
+					
+			/* FIXME: how is session related to an IM account? */
+			/* micke, hmm .. this feels a bit wrong, should be
+			 * signalled from the protocol when we do 
+			 * set_subscribed
+			 */
+			gossip_protocol_add_contact (data->protocol,
+						     id, name, NULL,
+						     message);
+		}
+	}
+	
+	g_object_unref (data->protocol);
+	g_object_unref (data->contact);
+	g_object_unref (data->vcard);
+
+	g_free (data);
 }
 
 GossipSession *

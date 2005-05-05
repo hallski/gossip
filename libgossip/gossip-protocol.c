@@ -39,7 +39,7 @@ enum {
 	/* Used for protocols to request information from user */
 	GET_PASSWORD,
 	
-	SUBSCRIBE_REQUEST,
+	SUBSCRIPTION_REQUEST,
 
 	LAST_SIGNAL
 };
@@ -154,16 +154,15 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_STRING,
 			      1, G_TYPE_POINTER);
 
-	signals[SUBSCRIBE_REQUEST] =
-		g_signal_new ("subscribe-request",
+        signals[SUBSCRIPTION_REQUEST] =
+                g_signal_new ("subscription-request",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_STRING__POINTER,
+                              libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
-
 }
 
 static void
@@ -213,6 +212,22 @@ gossip_protocol_is_connected (GossipProtocol *protocol)
 	}
 
 	return FALSE;
+}
+
+void
+gossip_protocol_contact_set_subscription (GossipProtocol *protocol,
+					  GossipContact  *contact,
+					  gboolean        subscribed)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->contact_set_subscription) {
+		klass->contact_set_subscription (protocol, contact, 
+						 subscribed);
+	}
 }
 
 void

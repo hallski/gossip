@@ -1,5 +1,18 @@
 2005-05-05  Martyn Russel  <mr@gnome.org>
 
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-app.c:
+	* ui/main.glade:
+	- Readd subscription requests which has been disabled since large
+	  rewrite earlier this year.
+	- Reworked the subscription request dialog and the add contact
+	  dialogs.
+	- Fixes bug #162619
+
+2005-05-05  Martyn Russel  <mr@gnome.org>
+
 	* libgossip/gossip-contact.c:
 	* libgossip/gossip-protocol.[ch]
 	* libgossip/gossip-session.h:

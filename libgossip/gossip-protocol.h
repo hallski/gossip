@@ -56,6 +56,11 @@ struct _GossipProtocolClass {
 	void          (*login)                 (GossipProtocol *protocol);
 	void          (*logout)                (GossipProtocol *protocol);
 	gboolean      (*is_connected)          (GossipProtocol *protocol);
+
+	void          (*contact_set_subscription) (GossipProtocol *protocol,
+						   GossipContact  *contact,
+						   gboolean        subscribed);
+
 	void          (*send_message)          (GossipProtocol *protocol,
 						GossipMessage  *message);
 	void          (*send_composing)        (GossipProtocol *protocol,
@@ -112,8 +117,12 @@ GType          gossip_protocol_get_type       (void) G_GNUC_CONST;
 /* Do we need an error code to be returned? */
 void          gossip_protocol_login          (GossipProtocol *protocol);
 void          gossip_protocol_logout         (GossipProtocol *protocol); 
-
 gboolean      gossip_protocol_is_connected   (GossipProtocol *protocol);
+void          
+gossip_protocol_contact_set_subscription     (GossipProtocol *protocol,
+					      GossipContact  *contact,
+					      gboolean        subscribed);
+
 
 /* Send chat messages */
 void          gossip_protocol_send_message   (GossipProtocol *protocol,

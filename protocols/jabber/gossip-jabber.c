@@ -112,6 +112,9 @@ static LmHandlerResult jabber_register_message_handler     (LmMessageHandler    
 							    LmMessage                    *m,
 							    RegisterAccountData          *ra);
 static gboolean        jabber_is_connected                   (GossipProtocol               *protocol);
+static void            jabber_contact_set_subscription      (GossipProtocol               *protocol,
+							    GossipContact                *contact,
+							    gboolean                      subscribed);
 static void            jabber_send_message                   (GossipProtocol               *protocol,
 							      GossipMessage                *message);
 static void            jabber_set_presence                   (GossipProtocol               *protocol,
@@ -232,6 +235,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->logout              = jabber_logout;
 	protocol_class->async_register      = jabber_register;
 	protocol_class->is_connected        = jabber_is_connected;
+	protocol_class->contact_set_subscription  = jabber_contact_set_subscription;
 	protocol_class->send_message        = jabber_send_message;
 	protocol_class->set_presence        = jabber_set_presence;
         protocol_class->add_contact         = jabber_add_contact;
@@ -640,6 +644,24 @@ jabber_is_connected (GossipProtocol *protocol)
 }
 
 static void
+jabber_contact_set_subscription (GossipProtocol *protocol,
+				 GossipContact  *contact,
+				 gboolean        subscribed)
+{
+	GossipJabber     *jabber;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+
+	jabber = GOSSIP_JABBER (protocol);
+
+	if (subscribed) {
+		gossip_jabber_send_subscribed (jabber, contact);
+	} else {
+		gossip_jabber_send_unsubscribed (jabber, contact);
+	}
+}
+
+static void
 jabber_send_message (GossipProtocol *protocol, GossipMessage *message)
 {
 	GossipJabber     *jabber;
@@ -779,7 +801,7 @@ jabber_add_contact (GossipProtocol *protocol,
                                         "ask", "subscribe",
                                         "name", name,
                                         NULL);
-        if (strcmp (group, "") != 0) {
+        if (group && strcmp (group, "") != 0) {
                 lm_message_node_add_child (node, "group", group);
         }
 
@@ -1282,12 +1304,11 @@ jabber_presence_handler (LmMessageHandler *handler,
 	}
 
 	if (strcmp (type, "subscribe") == 0) {
-		g_signal_emit_by_name (jabber, "subscribe-request", 
+		g_signal_emit_by_name (jabber, "subscription-request", 
 				       contact, NULL);
 
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	} 
-	else if (strcmp (type, "subscribed") == 0) {
+	} else if (strcmp (type, "subscribed") == 0) {
 		/* Handle this? */
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
@@ -1387,6 +1408,7 @@ jabber_iq_handler (LmMessageHandler *handler,
 		}
 
 		contact = jabber_get_contact_from_jid (jabber, jid_str, &new_item);
+		g_object_set (contact, "type", GOSSIP_CONTACT_TYPE_CONTACTLIST, NULL);
 
 		/* groups */
 		for (subnode = node->children; subnode; subnode = subnode->next) {
@@ -1441,7 +1463,8 @@ jabber_iq_handler (LmMessageHandler *handler,
 		if (new_item) {
 			g_signal_emit_by_name (jabber, 
 					       "contact-added", contact);
-		} else if (updated) {
+		}
+		else if (updated) {
 			g_signal_emit_by_name (jabber, 
 					       "contact-updated", contact);
 		}
@@ -1512,7 +1535,7 @@ jabber_get_contact_from_jid (GossipJabber *jabber,
 
 	if (!contact) {
 		d(g_print ("New contact\n"));
-		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_CONTACTLIST);
+		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
 		gossip_contact_set_id (contact, 
 				       gossip_jid_get_without_resource (jid));
 

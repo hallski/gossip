@@ -59,11 +59,6 @@ static gboolean transport_accounts_window_model_foreach_cb       (GtkTreeModel  
 								  GtkTreePath                   *path,
 								  GtkTreeIter                   *iter,
 								  gpointer                       data);
-static void     transport_accounts_window_subscription_cb        (GossipProtocol                *protocol,
-								  GossipContact                 *contact);
-static void     transport_accounts_window_subscription_dialog_cb (GtkWidget                     *dialog,
-								  gint                           response,
-								  gpointer                       user_data);
 static void     transport_accounts_window_selection_changed_cb   (GtkTreeSelection              *treeselection,
 								  GossipTransportAccountsWindow *window);
 static void     transport_accounts_window_pixbuf_cell_data_func  (GtkTreeViewColumn             *tree_column,
@@ -145,11 +140,6 @@ gossip_transport_accounts_window_show (void)
 	g_signal_connect (GOSSIP_PROTOCOL (jabber),
 			  "contact-removed",
 			  G_CALLBACK (transport_accounts_window_roster_update_cb),
-			  window);
-
-	g_signal_connect (GOSSIP_PROTOCOL (jabber),
-			  "subscribe-request",
-			  G_CALLBACK (transport_accounts_window_subscription_cb),
 			  window);
 
 	return window;
@@ -292,100 +282,6 @@ transport_accounts_window_populate_columns (GossipTransportAccountsWindow *windo
 						 NULL);
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview_accounts), column);
-}
-
-static void
-transport_accounts_window_subscription_cb (GossipProtocol *protocol,
-					   GossipContact  *contact)
-{
-	GtkWidget        *dialog;
-	GtkWidget        *jid_label;
-	GtkWidget        *add_check_button;
-	gchar            *str, *tmp;
-	const gchar      *from;
-
-	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "subscription_request_dialog",
-				      NULL,
-				      "subscription_request_dialog", &dialog,
-				      "jid_label", &jid_label,
-				      "add_check_button", &add_check_button,
-				      NULL);
-
-	
-	
-	from = gossip_contact_get_id (contact);
-	tmp = g_strdup_printf (_("%s wants to be notified of your status."), from);
-	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", tmp);
-	g_free (tmp);
-
-	gtk_label_set_text (GTK_LABEL (jid_label), str);
-	gtk_label_set_use_markup (GTK_LABEL (jid_label), TRUE);
-	g_free (str);
-
-	g_signal_connect (dialog,
-			  "response",
-			  G_CALLBACK (transport_accounts_window_subscription_dialog_cb),
-			  NULL);
-	g_object_set_data (G_OBJECT (dialog), 
-			   "protocol", g_object_ref (protocol));
-	g_object_set_data (G_OBJECT (dialog), 
-			   "contact", g_object_ref (contact));
-	g_object_set_data (G_OBJECT (dialog),
-			   "add_check_button", add_check_button);
-
-	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (add_check_button), TRUE); 
-		gtk_widget_set_sensitive (add_check_button, TRUE);
-	}
-
-	gtk_widget_show (dialog);
-}
-
-static void
-transport_accounts_window_subscription_dialog_cb (GtkWidget      *dialog,
-						  gint            response,
-						  gpointer        user_data)
-{
-	GossipProtocol *protocol;
-	GossipContact  *contact;
-
-	gboolean        add_user;
-	GtkWidget      *widget;
-
-	g_return_if_fail (GTK_IS_DIALOG (dialog));
-
-	protocol = g_object_get_data (G_OBJECT (dialog), "protocol");
-	contact = g_object_get_data (G_OBJECT (dialog), "contact");
-	widget = g_object_get_data (G_OBJECT (dialog), "add_check_button");
-	
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
-	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
-
-	add_user = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
-
-	gtk_widget_destroy (dialog);
-	
-	switch (response) {
-	case GTK_RESPONSE_YES:
-		gossip_jabber_send_subscribed (GOSSIP_JABBER (protocol), contact);
-		break;
-	case GTK_RESPONSE_NO:
-		gossip_jabber_send_unsubscribed (GOSSIP_JABBER (protocol), contact);
-		break;
-	default:
-		break;
-	}
-
-	if (response == GTK_RESPONSE_YES && add_user) {
-		const gchar *id;
-
-		id = gossip_contact_get_id (contact);
-		gossip_add_contact_new (id);
-	}
-
-	g_object_unref (protocol);
-	g_object_unref (contact);
 }
 
 static void  

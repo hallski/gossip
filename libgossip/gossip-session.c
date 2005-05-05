@@ -619,7 +619,6 @@ gossip_session_add_contact (GossipSession *session,
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
         g_return_if_fail (id != NULL);
         g_return_if_fail (name != NULL);
-        g_return_if_fail (group != NULL);
         g_return_if_fail (message != NULL);
 
 	priv = GET_PRIV (session);
