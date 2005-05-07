@@ -1,3 +1,8 @@
+2005-05-07  Mikael Hallendal  <micke@imendio.com>
+
+	* MAINTAINERS: Added a maintainers file with me and Martyn.
+	* AUTHORS: Added Martyn.
+
 2005-05-05  Mikael Hallendal  <micke@imendio.com>
 
 	* protocols/jabber/gossip-transport-protocol.c:
