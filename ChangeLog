@@ -1,5 +1,28 @@
 2005-05-08  Martyn Russell  <mr@gnome.org>
 
+	* libgossip/gossip-account.[ch]: 
+	- Added gossip_account_remove.
+	- Don't set default account if already the default.
+	* libgossip/gossip-protocol.[ch]: 
+	* libgossip/gossip-session.[ch]: 
+	* protocol/jabber/gossip-jabber.c: 
+	- Added _setup() functions.  The init() functions used the
+	default account before, now they use the account passed in
+	_setup() but would be better passed on init().  Restarting Gossip
+	after changing account details is no longer needed to use them. 
+	* src/gossip-account-dialog.c: 
+	- Updated the code and fixed a bug where changing an entry and
+	clicking OK would not use the new value unless moving to another
+	widget prior to that.
+	* src/gossip-app.c: 
+	- Added a message dialog when trying to connect with no IM acounts
+	set up.  Added this instead of disabling the "connect" item
+	because this connect is attempted after the startup druid
+	finishes.
+	- Fixes bug #172029.
+
+2005-05-08  Martyn Russell  <mr@gnome.org>
+
 	* MAINTAINERS:
 	* AUTHORS:
 	- Updated name.

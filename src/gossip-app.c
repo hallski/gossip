@@ -667,7 +667,8 @@ app_connect_cb (GtkWidget *window,
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
-	gossip_connect_dialog_show (app);
+/* 	gossip_connect_dialog_show (app); */
+	gossip_app_connect ();
 }
 
 static void
@@ -1013,27 +1014,37 @@ void
 gossip_app_connect (void)
 {
 	GossipAppPriv *priv;
-	GossipAccount *account;
-#if 0
-	GError        *error = NULL;
-	gboolean       result;
-#endif
 
 	priv = app->priv;
-
 	if (priv->account) {
 		gossip_account_unref (priv->account);
 	}
 	
 	priv->account = gossip_account_get_default ();
-	
 	if (!priv->account) {
+		GtkWidget *dialog;
+
+		/* show message dialog and the account dialog */
+		dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
+							     GTK_DIALOG_MODAL |
+							     GTK_DIALOG_DESTROY_WITH_PARENT,
+							     GTK_MESSAGE_INFO,
+							     GTK_BUTTONS_CLOSE,
+							     "<b>%s</b>\n\n%s",
+							     _("You have no Instant Messaging accounts "
+							       "configured!"),
+							     _("Next you will be presented with the "
+							       "Account Information dialog to set your "
+							       "details up.")); 
+
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+
+		gossip_account_dialog_show ();
 		return;
 	}
 	
 	app_disconnect ();
-	
-	account = priv->account;
 	
 	gossip_session_connect (priv->session);
 }

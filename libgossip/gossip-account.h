@@ -63,6 +63,7 @@ GSList *       gossip_account_get_all                     (void);
 GossipAccount *gossip_account_get                         (const gchar   *name);
 GossipAccount *gossip_account_ref                         (GossipAccount *account);
 void           gossip_account_unref                       (GossipAccount *account);
+void           gossip_account_remove                      (GossipAccount *account);
 void           gossip_account_store                       (GossipAccount *account,
 							   gchar         *old_name);
 void           gossip_account_set_default                 (GossipAccount *account);

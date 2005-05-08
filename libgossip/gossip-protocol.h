@@ -53,6 +53,8 @@ struct _GossipProtocolClass {
 	GObjectClass parent_class;
 
 	/* virtual functions */
+	void          (*setup)                 (GossipProtocol *protocol,
+						GossipAccount  *account);
 	void          (*login)                 (GossipProtocol *protocol);
 	void          (*logout)                (GossipProtocol *protocol);
 	gboolean      (*is_connected)          (GossipProtocol *protocol);
@@ -116,6 +118,9 @@ struct _GossipProtocolClass {
 GType          gossip_protocol_get_type       (void) G_GNUC_CONST;
 
 /* Do we need an error code to be returned? */
+void          gossip_protocol_setup          (GossipProtocol *protocol,
+					      GossipAccount  *account);
+
 void          gossip_protocol_login          (GossipProtocol *protocol);
 void          gossip_protocol_logout         (GossipProtocol *protocol); 
 gboolean      gossip_protocol_is_connected   (GossipProtocol *protocol);

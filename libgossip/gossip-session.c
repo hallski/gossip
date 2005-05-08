@@ -448,10 +448,13 @@ gossip_session_connect (GossipSession *session)
 {
 	GossipSessionPriv *priv;
 	GList            *l;
+	GossipAccount     *account;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
 	priv = GET_PRIV (session);
+
+	account = gossip_account_get_default ();
 
 	/* Temporary */
 	priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
@@ -462,6 +465,15 @@ gossip_session_connect (GossipSession *session)
 		GossipProtocol *protocol;
 
 		protocol = GOSSIP_PROTOCOL (l->data);
+
+		/* I'm thinking perhaps the account should be what we
+		   are iterating here? (mr) 
+
+		   Also - can we not just pass the GossipAccount on
+		   the GObject init?
+		*/
+		gossip_protocol_setup (protocol, account);
+
 		/* Setup the network connection */
 		gossip_protocol_login (protocol);
 	}

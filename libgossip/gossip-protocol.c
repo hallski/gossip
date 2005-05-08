@@ -51,6 +51,7 @@ G_DEFINE_TYPE (GossipProtocol, gossip_protocol, G_TYPE_OBJECT);
 static void
 gossip_protocol_class_init (GossipProtocolClass *klass)
 {
+	klass->setup               = NULL;
 	klass->login               = NULL;
 	klass->logout              = NULL;
 	klass->async_register      = NULL;
@@ -173,6 +174,21 @@ gossip_protocol_init (GossipProtocol *protocol)
 }
 
 void
+gossip_protocol_setup (GossipProtocol *protocol,
+		       GossipAccount  *account)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	g_return_if_fail (account != NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->setup) {
+		klass->setup (protocol, account);
+	}
+}
+
+void
 gossip_protocol_login (GossipProtocol *protocol)
 {
 	GossipProtocolClass *klass;
@@ -181,8 +197,6 @@ gossip_protocol_login (GossipProtocol *protocol)
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->login) {
-		/* FIXME: Send account information here? */
-		/* Or should it be properties? */
 		klass->login (protocol);
 	}
 }

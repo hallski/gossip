@@ -29,7 +29,7 @@
 
 #define DEFAULT_JABBER_PORT 5222
 
-static gchar *  account_get_value  (const gchar   *path,
+static gchar *account_get_value (const gchar   *path,
 				    const gchar   *value_name);
 static void     account_free       (GossipAccount *account);
 
@@ -40,6 +40,9 @@ account_get_value (const gchar *path, const gchar *value_name)
 {
 	gchar *key;
 	gchar *str;
+	
+	g_return_val_if_fail (path != NULL, NULL);
+	g_return_val_if_fail (value_name != NULL, NULL);
 	
 	key = g_strdup_printf ("%s/%s=", path, value_name);
 	str = gnome_config_get_string_with_default (key, NULL);
@@ -152,7 +155,7 @@ gossip_account_set_password (GossipAccount *account,
 }
 
 GossipAccount *
-gossip_account_get_default ()
+gossip_account_get_default (void)
 {
 	GossipAccount *account = NULL;
 	gchar         *name;
@@ -179,6 +182,8 @@ gossip_account_get (const gchar *name)
 	gchar         *path;
 	gchar         *key;
 	gchar         *jid_str;
+	
+	g_return_val_if_fail (name != NULL, NULL);
 	
 	path = g_strdup_printf ("%s/Account: %s", GOSSIP_ACCOUNTS_PATH, name);
 
@@ -287,6 +292,8 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 	gchar *key;
 	gchar *value;
 					 
+	g_return_if_fail (account != NULL);
+					 
 	if (old_name) {
 		gchar *old_path = g_strdup_printf ("%s/Account: %s",
 						   GOSSIP_ACCOUNTS_PATH,
@@ -294,9 +301,6 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 		gnome_config_clean_section (old_path);
 		g_free (old_path);
 	}
-
-	g_print ("account->name: %s\n", account->name);
-	g_print ("path: %s\n", GOSSIP_ACCOUNTS_PATH);
 
 	path = g_strdup_printf ("%s/Account: %s", 
 				GOSSIP_ACCOUNTS_PATH, account->name);
@@ -346,10 +350,21 @@ gossip_account_store (GossipAccount *account, gchar *old_name)
 void
 gossip_account_set_default (GossipAccount *account)
 {
+	const gchar *current_default;
+
+	g_return_if_fail (account != NULL);
+
 	if (overridden_default_name) {
 		return;
 	}
 	
+	current_default = gnome_config_get_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default");
+	if (current_default && account->name &&
+	    strcmp (current_default, account->name) == 0) {
+		/* do nothing if the same */
+		return;
+	}
+
 	gnome_config_set_string (GOSSIP_ACCOUNTS_PATH "/Accounts/Default",
 				 account->name);
 
@@ -362,6 +377,8 @@ gossip_account_set_default (GossipAccount *account)
 void
 gossip_account_set_overridden_default_name (const gchar *name)
 {
+	g_return_if_fail (name != NULL);
+
 	g_free (overridden_default_name);
 	overridden_default_name = g_strdup (name);
 }
@@ -381,3 +398,18 @@ gossip_account_create_empty (void)
 
 	return account;
 }	
+
+void
+gossip_account_remove (GossipAccount *account)
+{
+	gchar *path;
+
+	g_return_if_fail (account != NULL);
+
+	path = g_strdup_printf ("%s/Account: %s",
+				GOSSIP_ACCOUNTS_PATH,
+				account->name);
+
+	gnome_config_clean_section (path);
+	gnome_config_sync ();
+}

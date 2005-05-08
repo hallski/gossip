@@ -93,6 +93,8 @@ typedef struct {
 static void            gossip_jabber_class_init              (GossipJabberClass            *klass);
 static void            gossip_jabber_init                    (GossipJabber                 *jabber);
 static void            jabber_finalize                       (GObject                      *obj);
+static void            jabber_setup                        (GossipProtocol               *protocol,
+							    GossipAccount                *account);
 static void            jabber_login                          (GossipProtocol               *protocol);
 static void            jabber_logout                         (GossipProtocol               *protocol);
 static gboolean        jabber_logout_contact_foreach       (gpointer                      key,
@@ -234,6 +236,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	
 	object_class->finalize = jabber_finalize;
 
+	protocol_class->setup               = jabber_setup;
 	protocol_class->login               = jabber_login;
 	protocol_class->logout              = jabber_logout;
 	protocol_class->async_register      = jabber_register;
@@ -260,8 +263,6 @@ static void
 gossip_jabber_init (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
-	LmMessageHandler *handler;
-	gchar            *id;
 
 	priv = g_new0 (GossipJabberPriv, 1);
 	jabber->priv = priv;
@@ -271,14 +272,45 @@ gossip_jabber_init (GossipJabber *jabber)
 				       g_str_equal,
 				       (GDestroyNotify) g_free,
 				       (GDestroyNotify) g_object_unref);
+}
 	
-	priv->account = gossip_account_get_default ();
+static void
+jabber_finalize (GObject *obj)
+{
+ 	GossipJabber     *jabber;
+ 	GossipJabberPriv *priv;
 
-	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER);
+ 	jabber = GOSSIP_JABBER (obj);
+ 	priv   = jabber->priv;
 
-	if (priv->account == NULL) {
-		return;
-	}
+ 	gossip_account_unref (priv->account);
+	
+ 	g_hash_table_destroy (priv->contacts);
+ 	gossip_jabber_chatrooms_free (priv->chatrooms);
+	
+ 	gossip_transport_account_list_free (priv->account_list);
+	
+ 	g_free (priv);
+}
+
+static void
+jabber_setup (GossipProtocol *protocol,
+ 	      GossipAccount  *account)
+{
+ 	GossipJabber     *jabber;
+ 	GossipJabberPriv *priv;
+ 	LmMessageHandler *handler;
+ 	gchar            *id;
+	
+ 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+  	g_return_if_fail (account != NULL);
+	
+ 	jabber = GOSSIP_JABBER (protocol);
+ 	priv   = jabber->priv;
+ 	
+ 	priv->account = gossip_account_ref (account);
+ 
+ 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER);
 
 	id = g_strdup_printf ("%s@%s", 
 			      priv->account->username, priv->account->host);
@@ -289,7 +321,7 @@ gossip_jabber_init (GossipJabber *jabber)
 
 	priv->connection = lm_connection_new (priv->account->server);
 
-	// Setup the connection to send keep alive messages every 30 second.
+	/* setup the connection to send keep alive messages every 30 seconds */
         lm_connection_set_keep_alive_rate (priv->connection, 30);
 
 	lm_connection_set_disconnect_function (priv->connection,
@@ -330,23 +362,6 @@ gossip_jabber_init (GossipJabber *jabber)
 	/* initialise the jabber accounts module which is necessary to
 	   watch roster changes to know which services are set up */
 	priv->account_list = gossip_transport_account_list_new (jabber);
-}
-
-static void
-jabber_finalize (GObject *obj)
-{
-	GossipJabber     *jabber;
-	GossipJabberPriv *priv;
-
-	jabber = GOSSIP_JABBER (obj);
-	priv   = jabber->priv;
-	
-	g_hash_table_destroy (priv->contacts);
-	gossip_jabber_chatrooms_free (priv->chatrooms);
-
-	gossip_transport_account_list_free (priv->account_list);
-
-	g_free (priv);
 }
 
 static void
@@ -414,7 +429,8 @@ jabber_logout (GossipProtocol *protocol)
 	jabber = GOSSIP_JABBER (protocol);
 	priv   = jabber->priv;
 
-	if (lm_connection_is_open (priv->connection)) {
+	if (priv->connection && 
+	    lm_connection_is_open (priv->connection)) {
 		lm_connection_close (priv->connection, NULL);
 	}
 }
