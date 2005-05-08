@@ -1,3 +1,20 @@
+2005-05-08  Martyn Russell  <mr@gnome.org>
+
+	* MAINTAINERS:
+	* AUTHORS:
+	- Updated name.
+	* protocols/jabber/gossip-jabber.c:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.c:
+	- Implemented the _find_contact functions for chat drag and drop.
+	* src/gossip-contact-list.c: 
+	* src/gossip-chat-window.c:
+	- Added support for drag and drop to chat windows and to move
+	contacts between groups on the roster (based on the patch from
+	#300586). 
+	- Fixes bug #300586.
+	- Fixed bug #142521.
+
 2005-05-07  Mikael Hallendal  <micke@imendio.com>
 
 	* MAINTAINERS: Added a maintainers file with me and Martyn.
