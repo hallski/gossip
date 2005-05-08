@@ -68,6 +68,8 @@ struct _GossipProtocolClass {
 						gboolean        typing);
 	void          (*set_presence)          (GossipProtocol *protocol,
 						GossipPresence *presence);
+        GossipContact * (*find_contact)          (GossipProtocol *protocol,
+						  const gchar    *id);
         void          (*add_contact)           (GossipProtocol *protocol,
                                                 const gchar    *id,
                                                 const gchar    *name,
@@ -94,7 +96,6 @@ struct _GossipProtocolClass {
 					       GossipAsyncRegisterCallback callback,
 					       gpointer        user_data,
 					       GError        **error);
-	
 	gboolean      (*async_get_vcard)      (GossipProtocol  *protocol,
 					       GossipContact   *contact,
 					       GossipAsyncVCardCallback callback,
@@ -132,6 +133,8 @@ void          gossip_protocol_send_composing (GossipProtocol *protocol,
 					      gboolean        typing);
 void          gossip_protocol_set_presence   (GossipProtocol *protocol,
 					      GossipPresence *presence);
+GossipContact *gossip_protocol_find_contact        (GossipProtocol *protocol,
+						    const gchar    *id);
 void          gossip_protocol_add_contact    (GossipProtocol *protocol,
                                               const gchar    *id,
                                               const gchar    *name,
@@ -149,10 +152,10 @@ void          gossip_protocol_update_contact (GossipProtocol *protocol,
 void          gossip_protocol_rename_group   (GossipProtocol *protocol,
 					      const gchar    *group,
 					      const gchar    *new_name);
-
- const gchar *gossip_protocol_get_active_resource (GossipProtocol *protocol,
+const gchar *  gossip_protocol_get_active_resource (GossipProtocol *protocol,
 					      GossipContact  *contact);
- GList *      gossip_protocol_get_groups          (GossipProtocol *protocol);
+GList *        gossip_protocol_get_groups          (GossipProtocol *protocol);
+
 
 
 /* Async functions */

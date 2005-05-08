@@ -600,11 +600,19 @@ gossip_session_get_chatroom_provider (GossipSession *session)
 }
 
 GossipContact *
-gossip_session_find_contact (GossipSession *session, const gchar *str)
+gossip_session_find_contact (GossipSession *session, 
+			     const gchar   *id)
 {
-	/* FIXME: Implement */
+	GossipSessionPriv *priv;
 
-	return NULL;
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+        g_return_val_if_fail (id != NULL, NULL);
+
+	priv = GET_PRIV (session);
+
+        /* FIXME: Lookup the correct protocol */
+        return gossip_protocol_find_contact (GOSSIP_PROTOCOL (priv->default_jabber),
+					     id);
 }
 
 void

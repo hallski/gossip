@@ -57,6 +57,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->is_connected        = NULL;
 	klass->send_message        = NULL;
 	klass->set_presence        = NULL;
+        klass->find_contact        = NULL;
         klass->add_contact         = NULL;
         klass->rename_contact      = NULL;
         klass->remove_contact      = NULL;
@@ -270,6 +271,22 @@ gossip_protocol_set_presence (GossipProtocol *protocol,
 	if (klass->set_presence) {
 		klass->set_presence (protocol, presence);
 	}
+}
+
+GossipContact *
+gossip_protocol_find_contact (GossipProtocol *protocol,
+			      const gchar    *id)
+{
+        GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->find_contact) {
+                return klass->find_contact (protocol, id);
+        }
+
+	return NULL;
 }
 
 void

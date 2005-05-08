@@ -163,16 +163,19 @@ static guint tab_accel_keys[] = {
 	GDK_6, GDK_7, GDK_8, GDK_9, GDK_0
 };
 
+
 enum DndDropType {
-	DND_DROP_TYPE_JID,
-	NUM_DROP_TYPES
+	DND_DROP_TYPE_CONTACT_ID,
 };
+
 
 static GtkTargetEntry drop_types[] = {
-	{ "text/jid", 0, DND_DROP_TYPE_JID },
+	{ "text/contact-id", 0, DND_DROP_TYPE_CONTACT_ID },
 };
 
+
 G_DEFINE_TYPE (GossipChatWindow, gossip_chat_window, G_TYPE_OBJECT);
+
 
 static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)
@@ -324,11 +327,14 @@ gossip_chat_window_init (GossipChatWindow *window)
 			  G_CALLBACK (chat_window_disconnected_cb),
 			  window);
 
-	gtk_drag_dest_set (GTK_WIDGET (priv->notebook), GTK_DEST_DEFAULT_ALL,
-			   drop_types, NUM_DROP_TYPES,
+	gtk_drag_dest_set (GTK_WIDGET (priv->notebook), 
+			   GTK_DEST_DEFAULT_ALL,
+			   drop_types, 
+			   G_N_ELEMENTS (drop_types),
 			   GDK_ACTION_COPY);
 
-	g_signal_connect (priv->notebook, "drag-data-received",
+	g_signal_connect (priv->notebook, 
+			  "drag-data-received",
 			  G_CALLBACK (chat_window_drag_data_received),
 			  window);
 
@@ -1076,11 +1082,15 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	GossipContact    *contact;
 	GossipChat       *chat;
 	GossipChatWindow *old_window;
+	const gchar      *id;
 
-	contact = gossip_session_find_contact (gossip_app_get_session (),
-					       (gchar *) selection->data);
+	id = (const gchar*) selection->data;
+	g_print ("Received drag & drop contact from roster with id:'%s'\n", id);
+
+	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	
 	if (!contact) {
+		g_print ("No contact found associated with drag & drop\n");
 		return;
 	}
 
@@ -1089,7 +1099,8 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	
 	if (old_window) {
 		if (old_window == window) {
-			goto finished;
+			gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
+			return;
 		}
 		
 		gossip_chat_window_remove_chat (old_window, chat);
@@ -1097,7 +1108,6 @@ chat_window_drag_data_received (GtkWidget        *widget,
 
 	gossip_chat_window_add_chat (window, chat);
 
-finished:
 	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
 }
 

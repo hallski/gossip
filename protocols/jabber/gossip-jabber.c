@@ -119,6 +119,9 @@ static void            jabber_send_message                   (GossipProtocol    
 							      GossipMessage                *message);
 static void            jabber_set_presence                   (GossipProtocol               *protocol,
 							      GossipPresence               *presence);
+static GossipContact * jabber_find_contact                   (GossipProtocol               *protocol,
+							      const gchar                  *id);
+
 static void            jabber_add_contact                    (GossipProtocol               *protocol,
 							      const gchar                  *id,
 							      const gchar                  *name,
@@ -238,6 +241,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->contact_set_subscription  = jabber_contact_set_subscription;
 	protocol_class->send_message        = jabber_send_message;
 	protocol_class->set_presence        = jabber_set_presence;
+        protocol_class->find_contact        = jabber_find_contact;
         protocol_class->add_contact         = jabber_add_contact;
         protocol_class->rename_contact      = jabber_rename_contact;
         protocol_class->remove_contact      = jabber_remove_contact;
@@ -764,6 +768,27 @@ jabber_set_presence (GossipProtocol *protocol, GossipPresence *presence)
 	lm_message_unref (m);
 
 	gossip_jabber_chatrooms_set_presence (priv->chatrooms, presence);
+}
+
+static GossipContact *
+jabber_find_contact (GossipProtocol *protocol,
+		     const gchar    *id)
+{
+        GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+	GossipJID        *jid;
+	GossipContact    *contact;
+
+        jabber = GOSSIP_JABBER (protocol);
+	priv = jabber->priv;
+
+	jid = gossip_jid_new (id);
+	contact =  g_hash_table_lookup (priv->contacts, 
+					gossip_jid_get_without_resource (jid));
+
+	gossip_jid_unref (jid);
+
+	return contact;
 }
 
 static void
@@ -1416,7 +1441,9 @@ jabber_iq_handler (LmMessageHandler *handler,
 				continue;
 			}
 			
-			groups = g_list_append (groups, subnode->value);
+			if (subnode->value) {
+				groups = g_list_append (groups, subnode->value);
+			}
 		}
 		
 		/* FIXME: why is this here if we set the groups below */
