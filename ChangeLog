@@ -1,3 +1,9 @@
+2005-05-12  Martyn Russell  <mr@gnome.org>
+
+	* gossip.desktop.in.in:
+	- Updated the name to reflect what type of application Gossip is.
+	- Fixes bug #303602.
+
 2005-05-08  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-account.[ch]: 
