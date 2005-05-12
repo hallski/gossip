@@ -22,7 +22,7 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-druid.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 
 #include <libgossip/gossip-utils.h>
 

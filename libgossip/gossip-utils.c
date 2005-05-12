@@ -25,7 +25,7 @@
 #include <sys/types.h>
 #include <regex.h>
 #include <gconf/gconf-client.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include "gossip-utils.h"
 
 #define DINGUS "(((mailto|news|telnet|nttp|file|http|sftp|ftp|https|dav|callto)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:{}@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"

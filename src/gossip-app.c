@@ -30,7 +30,7 @@
 #include <glade/glade.h>
 #include <gconf/gconf-client.h>
 #include <loudmouth/loudmouth.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include <libgnomeui/libgnomeui.h>
 
 #include <libgossip/gossip-account.h>

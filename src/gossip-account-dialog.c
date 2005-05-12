@@ -27,7 +27,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnome/gnome-config.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include <loudmouth/loudmouth.h>
 
 #include <libgossip/gossip-account.h>

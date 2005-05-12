@@ -25,7 +25,7 @@
 #include <gtk/gtktable.h>
 #include <gtk/gtksizegroup.h>
 #include <gtk/gtkalignment.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include <libgnomeui/gnome-href.h>
 
 #include <libgossip/gossip-contact.h>

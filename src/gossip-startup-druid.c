@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-druid.h>
 #include <libgnome/gnome-config.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include <loudmouth/loudmouth.h>
 
 #include "gossip-app.h"

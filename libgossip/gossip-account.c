@@ -22,7 +22,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <libgnome/gnome-config.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 
 #include "gossip-utils.h"
 #include "gossip-account.h"

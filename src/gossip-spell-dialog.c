@@ -25,7 +25,7 @@
 #include <gtk/gtklabel.h>
 #include <gtk/gtkliststore.h>
 #include <gtk/gtktreeview.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 
 #include "gossip-ui-utils.h"
 #include "gossip-spell-dialog.h"

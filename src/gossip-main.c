@@ -24,7 +24,7 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkmain.h>
 #include <gconf/gconf-client.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
 #include "gossip-preferences.h"
@@ -88,12 +88,12 @@ main (int argc, char *argv[])
 
 		{ NULL, '\0', 0, NULL, 0, NULL, NULL }
 	};
-	
-	bindtextdomain (PACKAGE_TARNAME, GNOMELOCALEDIR);
-        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (PACKAGE_TARNAME);
 
-	program = gnome_program_init (PACKAGE_TARNAME, PACKAGE_VERSION,
+	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
+        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+
+	program = gnome_program_init ("gossip", PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,

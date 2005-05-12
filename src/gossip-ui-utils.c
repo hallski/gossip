@@ -27,7 +27,7 @@
 #include <glade/glade.h>
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-url.h>
-#include <libgnome/gnome-i18n.h>
+#include <glib/gi18n.h>
 #include "gossip-stock.h"
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"

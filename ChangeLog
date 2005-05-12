@@ -1,3 +1,11 @@
+2005-05-12  Richard Hult  <richard@imendio.com>
+
+	* libgossip/*:
+	* src/*: Use the i18n headers from glib instead of libgnome.
+
+	* src/gossip-main.c: Don't use the tarball package name as gettext
+	domain, makes translations work again.
+
 2005-05-12  Martyn Russell  <mr@gnome.org>
 
 	* gossip.desktop.in.in:

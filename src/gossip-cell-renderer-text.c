@@ -22,8 +22,6 @@
 
 #include <config.h>
 
-#include <libgnome/gnome-i18n.h>
-
 #include "gossip-cell-renderer-text.h"
 
 struct _GossipCellRendererTextPriv {
@@ -100,22 +98,22 @@ gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
 					 g_param_spec_string ("name",
-							      _("Name"),
-							      _("Contact name"),
+							      "Name",
+							      "Contact name",
 							      NULL,
 							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_STATUS,
 					 g_param_spec_string ("status",
-							      _("Status"),
-							      _("Contact status string"),
+							      "Status",
+							      "Contact status string",
 							      NULL,
 							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_IS_GROUP,
 					 g_param_spec_boolean ("is_group",
-							       _("Is group"),
-							       _("Whether this cell is a group"),
+							       "Is group",
+							       "Whether this cell is a group",
 							       FALSE,
 							       G_PARAM_READWRITE));
 }
