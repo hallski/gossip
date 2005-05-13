@@ -22,6 +22,8 @@
 
 #include <config.h>
 
+#include <glib/gi18n.h>
+
 #include "gossip-cell-renderer-text.h"
 
 struct _GossipCellRendererTextPriv {
@@ -36,46 +38,51 @@ struct _GossipCellRendererTextPriv {
 };
 
 static void gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass);
-static void gossip_cell_renderer_text_init  (GossipCellRendererText *cell);
-static void cell_renderer_text_finalize     (GObject                *object);
-static void cell_renderer_text_get_property (GObject                *object,
-					     guint                   param_id,
-					     GValue                 *value,
-					     GParamSpec             *pspec);
-static void cell_renderer_text_set_property (GObject                *object,
-					     guint                   param_id,
-					     const GValue           *value,
-					     GParamSpec             *pspec);
-static void cell_renderer_text_get_size     (GtkCellRenderer        *cell,
-					     GtkWidget              *widget,
-					     GdkRectangle           *cell_area,
-					     gint                   *x_offset,
-					     gint                   *y_offset,
-					     gint                   *width,
-					     gint                   *height);
-static void cell_renderer_text_render       (GtkCellRenderer      *cell,
-					     GdkDrawable          *window,
-					     GtkWidget            *widget,
-					     GdkRectangle         *background_area,
-					     GdkRectangle         *cell_area,
-					     GdkRectangle         *expose_area,
-					     GtkCellRendererState  flags);
-static void cell_renderer_text_update_text  (GossipCellRendererText *cell,
-					     GtkWidget              *widget,
-					     gint                    new_width,
-					     gboolean                selected);
+static void gossip_cell_renderer_text_init       (GossipCellRendererText      *cell);
+static void cell_renderer_text_finalize          (GObject                     *object);
+static void cell_renderer_text_get_property      (GObject                     *object,
+						  guint                        param_id,
+						  GValue                      *value,
+						  GParamSpec                  *pspec);
+static void cell_renderer_text_set_property      (GObject                     *object,
+						  guint                        param_id,
+						  const GValue                *value,
+						  GParamSpec                  *pspec);
+static void cell_renderer_text_get_size          (GtkCellRenderer             *cell,
+						  GtkWidget                   *widget,
+						  GdkRectangle                *cell_area,
+						  gint                        *x_offset,
+						  gint                        *y_offset,
+						  gint                        *width,
+						  gint                        *height);
+static void cell_renderer_text_render            (GtkCellRenderer             *cell,
+						  GdkDrawable                 *window,
+						  GtkWidget                   *widget,
+						  GdkRectangle                *background_area,
+						  GdkRectangle                *cell_area,
+						  GdkRectangle                *expose_area,
+						  GtkCellRendererState         flags);
+static void cell_renderer_text_update_text       (GossipCellRendererText      *cell,
+						  GtkWidget                   *widget,
+						  gint                         new_width,
+						  gboolean                     selected);
 
-/* -- Properties -- */
+
+/* Properties */
 enum {
 	PROP_0,
 	PROP_NAME,
 	PROP_STATUS,
-	PROP_IS_GROUP
+	PROP_IS_GROUP,
 };
+
 
 G_DEFINE_TYPE (GossipCellRendererText, gossip_cell_renderer_text, GTK_TYPE_CELL_RENDERER_TEXT);
 
+
 static gpointer parent_class;
+
+
 static void 
 gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 {
@@ -231,7 +238,7 @@ cell_renderer_text_get_size (GtkCellRenderer *cell,
 	priv     = celltext->priv;
 	
 	cell_renderer_text_update_text (celltext, widget, 0, 0);
-	
+
 	(GTK_CELL_RENDERER_CLASS (parent_class)->get_size) (cell, widget,
 							    cell_area, 
 							    x_offset, y_offset,
@@ -249,7 +256,6 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 {
 	GossipCellRendererText     *celltext;
 	GossipCellRendererTextPriv *priv;
-//	PangoLayout                *layout;
 
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
 	priv     = celltext->priv;
@@ -257,8 +263,6 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 	cell_renderer_text_update_text (celltext, widget, 
 					cell_area->width,
 					(flags & GTK_CELL_RENDERER_SELECTED));
-
-//	layout = cell_renderer_text_get_layout (celltext, widget, TRUE, flags);
 
 	(GTK_CELL_RENDERER_CLASS (parent_class)->render) (cell, window, 
 							  widget, 
@@ -297,7 +301,6 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		return;
 	}
 
-
 	if (!priv->is_group && (priv->status && strlen (priv->status) > 0)) {
 		show_status = TRUE;
 	} 
@@ -335,82 +338,11 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		      "text", str,
 		      "attributes", attr_list,
 		      NULL);
-       
+      
 	pango_attr_list_unref (attr_list);
 
 	g_free (str);
 }
-
-#if 0
-static PangoLayout*
-cell_renderer_text_get_layout (GossipCellRendererText *cell,
-			       GtkWidget              *widget,
-			       gboolean                will_render,
-			       GtkCellRendererState    flags)
-{
-	/*
-	PangoAttrList              *attr_list;
-	*/
-	PangoLayout                *layout;
-	/*
-	 PangoUnderline              uline;
-	 */
-	GossipCellRendererTextPriv *priv;
-
-	priv = cell->priv;
-  
-	layout = gtk_widget_create_pango_layout (widget, priv->name);
-
-	//add_attr (attr_list, pango_attr_font_desc_new (celltext->font));
-
-/*	if (celltext->scale_set && celltext->font_scale != 1.0) {
-		add_attr (attr_list, 
-			  pango_attr_scale_new (celltext->font_scale));
-	}
-  */
-	/*
-	if (celltext->underline_set) {
-		uline = celltext->underline_style;
-	} else {
-		uline = PANGO_UNDERLINE_NONE;
-	}
-*/
-	/*
-	if (priv->language_set) {
-		add_attr (attr_list, pango_attr_language_new (priv->language));
-	}
-*/
-	/*
-	if ((flags & GTK_CELL_RENDERER_PRELIT) == GTK_CELL_RENDERER_PRELIT) {
-		switch (uline) {
-		case PANGO_UNDERLINE_NONE:
-			uline = PANGO_UNDERLINE_SINGLE;
-			break;
-		case PANGO_UNDERLINE_SINGLE:
-			uline = PANGO_UNDERLINE_DOUBLE;
-			break;
-		default:
-			break;
-		}
-	}
-*/
-	/*
-	if (uline != PANGO_UNDERLINE_NONE) {
-		add_attr (attr_list, pango_attr_underline_new (celltext->underline_style));
-	}
-
-	if (celltext->rise_set) {
-		add_attr (attr_list, pango_attr_rise_new (celltext->rise));
-	}
-	pango_layout_set_attributes (layout, attr_list);
-*/
-	pango_layout_set_width (layout, -1);
-	/*
-	pango_attr_list_unref (attr_list);
-	*/
-	return layout;
-}
-#endif 
 
 GtkCellRenderer * 
 gossip_cell_renderer_text_new (void)

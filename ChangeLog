@@ -1,3 +1,13 @@
+2005-05-13  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-cell-renderer-text.c:
+	- Cleaned up the code a little and added the i18n header for glib
+	that Richard forgot to add to this file.
+	* src/gossip-contact-list.c:
+	- Re-added and reimplemented in places the feature where contacts
+	that change state or come online/offline are highlighted for 5
+	seconds or so as an indication to the user. 
+
 2005-05-12  Richard Hult  <richard@imendio.com>
 
 	* libgossip/*:
