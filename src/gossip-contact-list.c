@@ -729,16 +729,13 @@ contact_list_contact_set_active (GossipContactList *list,
 	GtkTreeModel *model;
 	GList        *iters, *l;
 
-	gint          count = 0;
-
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	iters = contact_list_find_contact (list, contact);
 	for (l = iters; l; l = l->next) {
-/* 		GtkTreePath *path; */
+ 		GtkTreePath *path; 
  		GtkTreeIter *iter; 
 		
-		count++;
 		iter = l->data;
 		
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
@@ -746,15 +743,13 @@ contact_list_contact_set_active (GossipContactList *list,
 				    -1);
 		d(g_print ("Contact List: Set item %s\n", active ? "active" : "inactive"));
 	
-/* 		if (set_changed) { */
-/* 			path = gtk_tree_model_get_path (model, iter); */
-/* 			gtk_tree_model_row_changed (model, path, iter);  */
-/* 			gtk_tree_path_free (path); */
-/* 		} */
+ 		if (set_changed) { 
+ 			path = gtk_tree_model_get_path (model, iter); 
+ 			gtk_tree_model_row_changed (model, path, iter);  
+ 			gtk_tree_path_free (path); 
+ 		} 
 	}
 	
-	d(g_print ("Contact List: Set %2.2d items %s\n", count, active ? "active" : "inactive"));
-
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free (iters);
 }
@@ -1048,8 +1043,6 @@ contact_list_setup_view (GossipContactList *list)
 					    "status", MODEL_COL_STATUS);
 	gtk_tree_view_column_add_attribute (col, cell,
 					    "is_group", MODEL_COL_IS_GROUP);
-	gtk_tree_view_column_add_attribute (col, cell,
-					    "is_active", MODEL_COL_IS_ACTIVE);
 
 	gtk_tree_view_column_set_cell_data_func (col, cell, 
 						 (GtkTreeCellDataFunc)contact_list_text_cell_data_func,

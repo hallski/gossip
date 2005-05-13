@@ -1,5 +1,14 @@
 2005-05-13  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-contact-list.c (contact_list_setup_view): 
+	- Removed use of MODEL_COL_IS_ACTIVE being associated with an
+	attribute for the renderer.
+	* src/gossip-app.c (app_subscription_request_dialog_cb): 
+	- Don't depend on a Vcard here, if we do and we couldn't get it,
+	then you can't do anything in the dialog - Doh!
+
+2005-05-13  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-cell-renderer-text.c:
 	- Cleaned up the code a little and added the i18n header for glib
 	that Richard forgot to add to this file.

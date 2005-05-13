@@ -2484,7 +2484,6 @@ app_subscription_request_dialog_cb (GtkWidget        *dialog,
 
 	g_return_if_fail (GOSSIP_IS_PROTOCOL (data->protocol));
 	g_return_if_fail (GOSSIP_IS_CONTACT (data->contact));
-	g_return_if_fail (GOSSIP_IS_VCARD (data->vcard));
 
 	add_user = (gossip_contact_get_type (data->contact) == GOSSIP_CONTACT_TYPE_TEMPORARY);
 
