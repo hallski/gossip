@@ -35,6 +35,7 @@
 #include "gossip-marshal.h"
 #include "gossip-stock.h"
 #include "gossip-contact-list.h"
+#include "gossip-sound.h"
 
 #define d(x)
 
@@ -595,12 +596,12 @@ contact_list_contact_updated_cb (GossipSession     *session,
 
 	priv = list->priv;
 
-	model    = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	presence = gossip_contact_get_active_presence (contact);
 
 	d(g_print ("Contact List: Contact updated: %s\n",
 		   gossip_contact_get_name (contact)));
-	
+
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
 		return;
 	}
@@ -651,6 +652,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		return;
 	}
 	else if (in_list && !should_be_in_list) {
+		gossip_sound_play (GOSSIP_SOUND_OFFLINE);
+
 		if (priv->show_active) {
 			do_remove = TRUE;
 			do_set_active = TRUE;
@@ -664,6 +667,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		}
 	}
 	else if (!in_list && should_be_in_list) {
+		gossip_sound_play (GOSSIP_SOUND_ONLINE);
 		contact_list_add_contact (list, contact);
 	
 		if (priv->show_active) {

@@ -1,0 +1,14 @@
+[__section_info__]
+description=Gossip
+
+[Chat]
+file=gossip/chat1.wav
+_description=Chat
+
+[Online]
+file=gossip/online.wav
+_description=Contact goes online
+
+[Offline]
+file=gossip/offline.wav
+_description=Contact goes offline

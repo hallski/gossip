@@ -21,6 +21,7 @@
 #include <config.h>
 #include <gconf/gconf-client.h>
 #include <libgnome/gnome-sound.h>
+#include <libgnome/gnome-triggers.h>
 
 #include <libgossip/gossip-session.h>
 
@@ -28,14 +29,14 @@
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
+#define d(x)
+
 extern GConfClient *gconf_client;
 
 void
 gossip_sound_play (GossipSound sound)
 {
 	gboolean             enabled, silent_busy, silent_away;
-	const gchar         *file;
-	gchar               *str;
         GossipPresence      *p;
         GossipPresenceState  state;
 
@@ -70,26 +71,20 @@ gossip_sound_play (GossipSound sound)
 
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
-		file = "chat1.wav";
+		d(g_print ("Sound: Triggering 'Chat' event.\n"));
+		gnome_triggers_do (NULL, NULL, "gossip", "Chat", NULL);
 		break;
 	case GOSSIP_SOUND_ONLINE:
-		/* Disable for now, it's annoying. */
-		return;
-
-		file = "online.wav";
+		d(g_print ("Sound: Triggering 'Online' event.\n"));
+		gnome_triggers_do (NULL, NULL, "gossip", "Online", NULL);
 		break;
 	case GOSSIP_SOUND_OFFLINE:
-		/* Disable for now, it's annoying. */
-		return;
-
-		file = "offline.wav";
+		d(g_print ("Sound: Triggering 'Offline' event.\n"));
+		gnome_triggers_do (NULL, NULL, "gossip", "Offline", NULL);
 		break;
 	default:
+		d(g_print ("Sound: Unknown sound type.\n"));
 		return;
 	}
-
-	str = g_build_filename (DATADIR "/gossip", file, NULL);
-	gnome_sound_play (str);
-	g_free (str);
 }		
 

@@ -1,3 +1,20 @@
+2005-05-14  Jonatan Magnusson  <jonatan@pnx.se>
+
+	* src/gossip-contact-list.c (contact_list_contact_presence_updated_cb): 
+	- Added sound triggers for online/offline.
+	* src/gossip-sound.c:
+	- Make use of gnome_trigger_do() instead of playing sounds
+	directly with gnome_sound_play this way it is configurable in
+	Gnome what sounds are played for which events.
+	- Added debugging (off by default).
+	* src/sounds/Makefile.am:
+	* src/sounds/gossip.soundlist.in:
+	- Added soundlist which is installed to $(sysconfig)/sound/events,
+	unfortunately, from my investigation into this, when you change
+	the preferences and install the sound file, you need to restart
+	gdm for the changes to occur (on Gnome 2.8).
+	- Fixes bug #171044.
+	
 2005-05-13  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-contact-list.c (contact_list_setup_view): 
