@@ -370,7 +370,7 @@ jabber_login (GossipProtocol *protocol)
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 	gboolean          result;
-	GError           *error;
+	GError           *error = NULL;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
 	

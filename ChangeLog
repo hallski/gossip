@@ -1,3 +1,8 @@
+2005-05-15  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: (jabber_login): Initialize the
+	GError, fixes login crash when there's no network.
+
 2005-05-14  Jonatan Magnusson  <jonatan@pnx.se>
 
 	* src/gossip-contact-list.c (contact_list_contact_presence_updated_cb): 
