@@ -276,6 +276,15 @@ group_chat_widget_destroy_cb (GtkWidget *widget, GossipGroupChat *chat)
 
 	priv = chat->priv;
 	
+	/* disconnect signals */
+	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
+					      group_chat_connected_cb,
+					      chat);
+
+	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
+					      group_chat_disconnected_cb,
+					      chat);
+
 	g_object_ref (chat);
 
 	gossip_chatroom_provider_leave (priv->provider, priv->room_id);

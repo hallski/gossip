@@ -37,7 +37,7 @@ gossip_SOURCES = 				                        	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
 	gossip-contact-info.c              gossip-contact-info.h                \
 	gossip-favorite.c  	           gossip-favorite.h			\
-	gossip-favorites-dialog.c          gossip-favorites-dialog.h		\
+	gossip-edit-favorite-dialog.c      gossip-edit-favorite-dialog.h	\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
 	gossip-join-dialog.c	           gossip-join-dialog.h			\

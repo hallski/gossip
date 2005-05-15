@@ -25,6 +25,7 @@
 
 #define GOSSIP_FAVORITES_PATH "/Gossip/Favorites"
 
+
 typedef struct {
 	gchar *name;
 	gchar *nick;
@@ -34,15 +35,19 @@ typedef struct {
 	gint   ref_count;
 } GossipFavorite;
 
-GossipFavorite * gossip_favorite_new          (const gchar    *name,
-					       const gchar    *nick,
-					       const gchar    *room,
-					       const gchar    *server);
-GossipFavorite * gossip_favorite_get_default  (void);
-GSList *         gossip_favorite_get_all      (void);
-GossipFavorite * gossip_favorite_get          (const gchar    *name);
-GossipFavorite * gossip_favorite_ref          (GossipFavorite *favorite);
-void             gossip_favorite_unref        (GossipFavorite *favorite);
+
+GossipFavorite *gossip_favorite_new         (const gchar    *name,
+					     const gchar    *nick,
+					     const gchar    *room,
+					     const gchar    *server);
+GossipFavorite *gossip_favorite_get_default (void);
+GSList *        gossip_favorite_get_all     (void);
+GossipFavorite *gossip_favorite_get         (const gchar    *name);
+GossipFavorite *gossip_favorite_ref         (GossipFavorite *favorite);
+void            gossip_favorite_unref       (GossipFavorite *favorite);
+GossipFavorite *gossip_favorite_find        (const gchar    *nick,
+					     const gchar    *server,
+					     const gchar    *room);
 
 
 #endif /* __GOSSIP_FAVORITE_H__ */

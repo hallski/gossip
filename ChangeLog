@@ -1,3 +1,22 @@
+2005-05-15  Martyn Russell  <mr@gnome.org>
+
+	* po/POTFILES.in:
+	* src/Makefile.am:
+ 	- Added new gossip-edit-favorite.
+	* src/gossip-favorites-dialog.[ch]:
+	- No longer used.
+	* src/gossip-edit-favorite.[ch]:
+	* src/gossip-favorite.c (gossip_favorite_find): 
+	- Added.
+	* src/gossip-group-chat.c (group_chat_widget_destroy_cb): 
+	- Disconnect signal handlers when we destroy the chat object.
+	Fixes a crash calling a disconnect handler when exiting.
+	* ui/group-chat.glade:
+	* src/gossip-join-dialog.c:
+	- Reworked the group chat join dialog and its favourites. 
+	- Show progressbar after 2 seconds if we are not successfully set up.
+	- Fixes bug #141579.
+
 2005-05-15  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c: (jabber_login): Initialize the

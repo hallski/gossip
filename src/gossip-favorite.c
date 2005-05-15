@@ -167,3 +167,35 @@ gossip_favorite_unref (GossipFavorite *favorite)
 	}
 }
 
+GossipFavorite *
+gossip_favorite_find (const gchar *nick,
+		      const gchar *server,
+		      const gchar *room)
+{
+	GSList         *favorites, *l;
+	GossipFavorite *favorite = NULL;
+	gint            i;
+
+	g_return_val_if_fail (nick != NULL, NULL);
+	g_return_val_if_fail (server != NULL, NULL);
+	g_return_val_if_fail (room != NULL, NULL);
+
+	favorites = gossip_favorite_get_all ();
+	for (i = 0, l = favorites; l; i++, l = l->next) {
+		favorite = l->data;
+
+		if (!favorite->nick ||
+		    !favorite->server ||
+		    !favorite->room) {
+			continue;
+		}
+
+		if (!strcmp (favorite->nick, nick) &&
+		    !strcmp (favorite->server, server) &&
+		    !strcmp (favorite->room, room)) {
+			return favorite;
+		}
+	}
+
+	return NULL;
+}
