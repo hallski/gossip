@@ -36,6 +36,7 @@ src/gossip-transport-add-window.c
 src/gossip-tray.c
 src/gossip-ui-utils.c
 src/gossip-vcard-dialog.c
+src/sounds/gossip.soundlist.in
 
 ui/chat.glade
 ui/connect.glade
