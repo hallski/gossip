@@ -1,5 +1,10 @@
 2005-05-17  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-status-presets-dialog.c:
+	- Forgot to cvs add the files lastnight.
+	
+2005-05-17  Martyn Russell  <mr@gnome.org>
+
 	* src/Makefile.am: 
 	- Added gossip-status-presets-dialog.[ch].
 	* ui/main.glade:
