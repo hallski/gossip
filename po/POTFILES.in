@@ -32,6 +32,7 @@ src/gossip-private-chat.c
 src/gossip-register.c
 src/gossip-spell-dialog.c
 src/gossip-startup-druid.c
+src/gossip-status-presets-dialog.c
 src/gossip-transport-accounts-window.c
 src/gossip-transport-add-window.c
 src/gossip-tray.c

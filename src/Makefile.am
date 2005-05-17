@@ -53,6 +53,7 @@ gossip_SOURCES = 				                        	\
 	gossip-stock.c		           gossip-stock.h			\
 	gossip-spell.c                     gossip-spell.h                       \
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
+	gossip-status-presets-dialog.c	   gossip-status-presets-dialog.h       \
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\

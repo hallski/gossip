@@ -58,6 +58,7 @@
 #include "gossip-marshal.h"
 #include "gossip-startup-druid.h"
 #include "gossip-preferences.h"
+#include "gossip-status-presets-dialog.h"
 #include "gossip-private-chat.h"
 #include "gossip-account-dialog.h"
 #include "gossip-stock.h"
@@ -930,7 +931,7 @@ app_account_information_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_status_messages_cb (GtkWidget *widget, GossipApp *app)
 {
-	gossip_preferences_show_status_editor ();
+ 	gossip_status_presets_dialog_show (); 
 }
 
 static void
@@ -1923,7 +1924,7 @@ static void
 app_status_edit_activate_cb (GtkWidget *item,
 			     gpointer   user_data)
 {
-	gossip_preferences_show_status_editor ();
+	gossip_status_presets_dialog_show ();
 }
 
 static gchar *
