@@ -1,3 +1,18 @@
+2005-05-17  Martyn Russell  <mr@gnome.org>
+
+	* src/Makefile.am: 
+	- Added gossip-status-presets-dialog.[ch].
+	* ui/main.glade:
+	* src/gossip-app.c:
+	* src/gossip-preferences.c:
+	* src/gossip-status-presets-dialog.[ch]:
+	- Moves the status presets out of the preferences module and into
+	its own module. 
+	- Updated the status presets dialog to be better looking and made
+	use of the GtkCellRendererCombo for the list of presets when
+	configuring the type of presence (the status message is also
+	editable). 
+
 2005-05-15  Martyn Russell  <mr@gnome.org>
 
 	* po/POTFILES.in:
