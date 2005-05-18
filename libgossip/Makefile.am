@@ -4,7 +4,7 @@ AM_CPPFLAGS =                                             \
 	-I$(top_srcdir)/protocols/jabber                  \
 	$(LIBGOSSIP_CFLAGS)
 
-lib_LTLIBRARIES = libgossip.la
+noinst_LTLIBRARIES = libgossip.la
 
 libgossip_la_SOURCES =             \
 	gossip-account.c           \
@@ -20,9 +20,7 @@ libgossip_la_SOURCES =             \
 	gossip-utils.c             \
 	gossip-vcard.c             \
 	gossip-version-info.c      \
-	libgossip-marshal-main.c 
-
-libgossipinclude_HEADERS =         \
+	libgossip-marshal-main.c   \
 	gossip-account.h           \
 	gossip-async.h             \
 	gossip-chatroom-provider.h \
