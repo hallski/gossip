@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio AB
+ * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,11 +27,6 @@
 
 #include <libgossip/gossip-utils.h> 
 
-/*#include "gossip-app.h" 
-  #include "gossip-stock.h"
-  #include "gossip-preferences.h"
-*/
-
 #include "gossip-ui-utils.h"
 #include "gossip-status-presets-dialog.h"
 
@@ -39,6 +34,8 @@
 typedef struct {
 	GtkWidget *dialog;
 	GtkWidget *treeview;
+	GtkWidget *status_combobox;
+	GtkWidget *message_entry;
 	GtkWidget *remove_button;
 	GtkWidget *add_button;
 } GossipStatusPresetsDialog;
@@ -46,59 +43,100 @@ typedef struct {
 
 enum {
 	COL_TYPE,
-	COL_TYPE_STR,
 	COL_STRING,
 	COL_STATE,
-	COL_NEW,
 	NUM_COLS
 };
 
-static const gchar *types[] = { N_("Available"), 
-				N_("Busy"), 
-				N_("Away") };
 
-
-static void     status_presets_setup                    (GossipStatusPresetsDialog *dialog);
-static void     status_presets_type_edited_cb           (GtkCellRendererText       *cell,
-							 const gchar               *path,
-							 const gchar               *value,
-							 GtkListStore              *store);
-static void     status_presets_type_edit_started_cb     (GtkCellRenderer           *renderer,
-							 GtkCellEditable           *editable,
-							 gchar                     *path,
-							 gpointer                   user_data);
-static void     status_presets_string_edited_cb         (GtkCellRendererText       *cell,
-							 const gchar               *path,
-							 const gchar               *value,
-							 GtkListStore              *store);
-static void     status_presets_string_edit_canceled_cb  (GtkCellRendererText       *cell,
-							 GtkListStore              *store);
-static gboolean status_presets_delete_canceled_cb       (GtkTreeModel              *model,
-							 GtkTreePath               *path,
-							 GtkTreeIter               *iter,
-							 gpointer                   data);
-static void     status_presets_selection_changed_cb     (GtkTreeSelection          *selection,
-							 GossipStatusPresetsDialog *dialog);
-static void     status_presets_remove_button_clicked_cb (GtkWidget                 *button,
-							 GossipStatusPresetsDialog *dialog);
-static void     status_presets_response_cb              (GtkWidget                 *widget,
-							 gint                       response,
-							 gpointer                   user_data);
-static void     status_presets_destroy_cb               (GtkWidget                 *widget,
-							 GossipStatusPresetsDialog *editor);
+static void status_presets_setup                     (GossipStatusPresetsDialog *dialog);
+static void status_presets_selection_changed_cb      (GtkTreeSelection          *selection,
+						      GossipStatusPresetsDialog *dialog);
+static void status_presets_remove_button_clicked_cb  (GtkWidget                 *button,
+						      GossipStatusPresetsDialog *dialog);
+static void status_presets_message_entry_changed_cb  (GtkWidget                 *widget,
+						      GossipStatusPresetsDialog *dialog);
+static void status_presets_message_entry_activate_cb (GtkWidget                 *widget,
+						      GossipStatusPresetsDialog *dialog);
+static void status_presets_response_cb               (GtkWidget                 *widget,
+						      gint                       response,
+						      gpointer                   user_data);
+static void status_presets_destroy_cb                (GtkWidget                 *widget,
+						      GossipStatusPresetsDialog *editor);
 
 
 static void 
 status_presets_setup (GossipStatusPresetsDialog *dialog)
 {
-	GtkTreeView       *view;
-	GtkTreeViewColumn *column;
-	GtkTreeSelection  *selection;
-	GtkListStore      *store, *store_types;
-	GtkTreeIter        iter;
-	GtkCellRenderer   *renderer;
- 	GList             *list, *l; 
-	gint               i = 0;
+	GtkComboBox         *combobox;
+	GtkTreeView         *view;
+	GtkTreeViewColumn   *column;
+	GtkTreeSelection    *selection;
+	GtkListStore        *store;
+	GtkTreeIter          iter;
+	GtkCellRenderer     *renderer;
+ 	GList               *list, *l; 
+	GdkPixbuf           *pixbuf;
+	GossipPresenceState  state;
+
+	combobox = GTK_COMBO_BOX (dialog->status_combobox);
+
+  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combobox));  
+
+	store = gtk_list_store_new (3, 
+				    GDK_TYPE_PIXBUF, 
+				    G_TYPE_STRING, 
+				    G_TYPE_INT);
+
+	gtk_combo_box_set_model (combobox, GTK_TREE_MODEL (store));
+
+	/* set up status' */
+	state = GOSSIP_PRESENCE_STATE_AVAILABLE;
+	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
+	
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter, 
+			    0, pixbuf,
+			    1, _("Available"),
+			    2, state,
+			    -1);
+
+	state = GOSSIP_PRESENCE_STATE_BUSY;
+	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
+	
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter, 
+			    0, pixbuf,
+			    1, _("Busy"),
+			    2, state,
+			    -1);
+
+	state = GOSSIP_PRESENCE_STATE_AWAY;
+	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
+	
+	gtk_list_store_append (store, &iter);
+	gtk_list_store_set (store, &iter, 
+			    0, pixbuf,
+			    1, _("Away"),
+			    2, state,
+			    -1);
+	
+	/* use Away as the default */
+	gtk_combo_box_set_active_iter (combobox, &iter);
+
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
+					"pixbuf", 0,
+					NULL);
+	
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
+					"text", 1,
+					NULL);
+
+	g_object_unref (store);
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 
@@ -110,73 +148,23 @@ status_presets_setup (GossipStatusPresetsDialog *dialog)
 	store = gtk_list_store_new (NUM_COLS, 
 				    GDK_TYPE_PIXBUF, 
 				    G_TYPE_STRING,
-				    G_TYPE_STRING, 
-				    G_TYPE_INT,
-				    G_TYPE_BOOLEAN);
+				    G_TYPE_INT);
 
-	/* create the combo box cell renderer */
-	renderer = gtk_cell_renderer_combo_new ();
-	store_types = gtk_list_store_new (2, 
-					  GDK_TYPE_PIXBUF, 
-					  G_TYPE_STRING, 
-					  G_TYPE_STRING);
-	while (i < G_N_ELEMENTS (types)) {
-		GdkPixbuf *pixbuf;
+	column = gtk_tree_view_column_new ();
 
-		pixbuf = gossip_ui_utils_presence_state_get_pixbuf (i);
-
-		gtk_list_store_append (store_types, &iter);
-		gtk_list_store_set (store_types, &iter, 
-				    0, pixbuf,
-				    1, types[i], 
-				    -1);
-		i++;
-
-		g_object_unref (pixbuf);
-	}
-	
-	g_object_set (renderer, 
-		      "model", store_types,
-		      "has-entry", FALSE,
-		      "text-column", 1,
-		      "editable", TRUE,
-		      NULL);
- 	g_signal_connect (renderer, "edited", 
- 			  G_CALLBACK (status_presets_type_edited_cb), store); 
- 	g_signal_connect (renderer, "editing-started", 
- 			  G_CALLBACK (status_presets_type_edit_started_cb), store); 
-
-	gtk_tree_view_insert_column_with_attributes (view,
-						     COL_TYPE_STR, "",
-						     renderer,
-						     NULL);
-	g_object_unref (store_types);
-
-	/* create editable column for the actual statu text */
-	renderer = gtk_cell_renderer_text_new (); 
-	g_object_set (renderer, 
-		      "editable", TRUE,
-		      NULL);
-	g_signal_connect (renderer, "edited", 
-			  G_CALLBACK (status_presets_string_edited_cb), store); 
- 	g_signal_connect (renderer, "editing-canceled", 
- 			  G_CALLBACK (status_presets_string_edit_canceled_cb), store); 
-
-	gtk_tree_view_insert_column_with_attributes (view,
-						     COL_STRING, "",
-						     renderer,
-						     "text", COL_STRING, 
-						     NULL);
-
-	/* add pixbuf to the combo column, that way, the both the
-	   image and the empty text column will create the popup menu */
-	column = gtk_tree_view_get_column (view, 0);
-	
 	renderer = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, renderer, FALSE);
 	gtk_tree_view_column_set_attributes (column, renderer,
-					     "pixbuf", 0,
+					     "pixbuf", COL_TYPE,
 					     NULL);
+	
+	renderer = gtk_cell_renderer_text_new (); 
+	gtk_tree_view_column_pack_start (column, renderer, TRUE);
+	gtk_tree_view_column_set_attributes (column, renderer,
+					     "text", COL_STRING, 
+					     NULL);
+
+	gtk_tree_view_insert_column (view, column, 0);
 
 	/* insert data */
 	list = gossip_utils_get_status_messages ();
@@ -192,10 +180,8 @@ status_presets_setup (GossipStatusPresetsDialog *dialog)
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,
 				    COL_TYPE, pixbuf,
-				    COL_TYPE_STR, types[entry->state],
 				    COL_STRING, entry->string,
 				    COL_STATE, entry->state,
-				    COL_NEW, FALSE,
 				    -1);
 
 		g_object_unref (pixbuf);
@@ -206,180 +192,6 @@ status_presets_setup (GossipStatusPresetsDialog *dialog)
 	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
 
 	g_object_unref (store);
-}
-
-static void
-status_presets_type_edited_cb (GtkCellRendererText *cell, 
-			       const gchar         *path,
-			       const gchar         *value, 
-			       GtkListStore        *store)
-{
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	guint       i = -1;
-	
-	model = GTK_TREE_MODEL (store);
-	
-	if (!gtk_tree_model_get_iter_from_string (model, &iter, path)) {
-		return;
-	}
-	
-	while (++i < G_N_ELEMENTS (types)) {
-		GList               *list, *l;
-		GdkPixbuf           *pixbuf;
-		gchar               *string;
-		GossipPresenceState  old_state;
-
-		if (g_utf8_collate (value, types[i]) != 0) {
-			continue;
-		}
-
-		gtk_tree_model_get (model, &iter,
-				    COL_STRING, &string,
-				    COL_STATE, &old_state,
-				    -1);
-
-		/* save presets */
-		list = gossip_utils_get_status_messages ();
-		for (l = list; l; l = l->next) {
-			GossipStatusEntry *entry = l->data;
-			
-			if (old_state == entry->state && 
-			    !strcmp (string, entry->string)) {
-				entry->state = i;
-				break;
-			}
-		}
-
-		g_free (string);
-
-		gossip_utils_set_status_messages (list);
-		gossip_utils_free_status_messages (list);
-		
-		/* set model */
-		pixbuf = gossip_ui_utils_presence_state_get_pixbuf (i);
-		
-		gtk_list_store_set (store, &iter, 
-				    COL_TYPE, pixbuf, 
-				    COL_STATE, i,
-				    -1);
-		
-		g_object_unref (pixbuf);
-	}
-}
-
-static void 
-status_presets_type_edit_started_cb (GtkCellRenderer *renderer,
-				     GtkCellEditable *editable,
-				     gchar           *path,
-				     gpointer         user_data)
-{
-	GtkComboBox *combobox;
-
-	if (!GTK_IS_COMBO_BOX (editable)) {
-		return;
-	}
-
-	combobox = GTK_COMBO_BOX (editable);
-
-	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combobox));  
-	
-	renderer = gtk_cell_renderer_pixbuf_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, FALSE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
-					"pixbuf", 0,
-					NULL);
-	
-	renderer = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, TRUE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
-					"text", 1,
-					NULL);
-}
-
-static void
-status_presets_string_edited_cb (GtkCellRendererText *cell, 
-				 const gchar         *path,
-				 const gchar         *value, 
-				 GtkListStore        *store)
-{
-	GtkTreeModel        *model;
-	GtkTreeIter          iter;
-	GList               *list;
-	GossipStatusEntry   *entry;
-	GossipPresenceState  state;
-	gboolean             is_new;
-	gchar               *old_string;
-	
-	model = GTK_TREE_MODEL (store);
-
-	if (!gtk_tree_model_get_iter_from_string (model, &iter, path)) {
-		return;
-	}
-
-	gtk_tree_model_get (model, &iter,
-			    COL_NEW, &is_new,
-			    COL_STRING, &old_string,
-			    COL_STATE, &state, 
-			    -1);
-	
-	list = gossip_utils_get_status_messages ();
-
-	if (is_new) {
-		entry = g_new (GossipStatusEntry, 1);
-		entry->string = g_strdup (value);
-		entry->state = state;
-		
-		list = g_list_prepend (list, entry);
-	} else {
-		GList *l;
-
-		for (l = list; l; l = l->next) {
-			GossipStatusEntry *entry = l->data;
-			
-			if (state == entry->state && 
-			    !strcmp (old_string, entry->string)) {
-				g_free (entry->string);
-				entry->string = g_strdup (value);
-				break;
-			}
-		}
-	}
-
-	g_free (old_string);
-
-	gossip_utils_set_status_messages (list);
-	gossip_utils_free_status_messages (list);
-
-	gtk_list_store_set (store, &iter, 
-			    COL_STRING, value, 
-			    COL_NEW, FALSE,
-			    -1);
-}
-
-static void
-status_presets_string_edit_canceled_cb (GtkCellRendererText *cell, 
-					GtkListStore        *store)
-{
-	gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-				(GtkTreeModelForeachFunc) status_presets_delete_canceled_cb,
-				NULL);
-}
-
-static gboolean
-status_presets_delete_canceled_cb (GtkTreeModel *model,
-				   GtkTreePath  *path,
-				   GtkTreeIter  *iter,
-				   gpointer      data)
-{
-	gboolean is_new;
-
-	gtk_tree_model_get (model, iter, COL_NEW, &is_new, -1);
-	if (is_new) {
-		gtk_list_store_remove (GTK_LIST_STORE (model), iter);
-	}
-
-	return TRUE;
 }
 
 static void
@@ -399,38 +211,61 @@ status_presets_add_button_clicked_cb (GtkWidget                 *button,
 				      GossipStatusPresetsDialog *dialog)
 {
 	GtkTreeModel        *model;
-	GtkTreeViewColumn   *column;
 	GtkListStore        *store;
+	GtkTreeViewColumn   *column;
 	GtkTreePath         *path;
 	GtkTreeIter          iter;
 	GossipPresenceState  state;
 	GdkPixbuf           *pixbuf;
+	const gchar         *string;
+	GList               *list;
+	GossipStatusEntry   *entry;
 
-	state = GOSSIP_PRESENCE_STATE_AWAY;
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->status_combobox));
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (dialog->status_combobox), &iter);
+	
+	gtk_tree_model_get (model, &iter, 2, &state, -1);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->treeview));
 	store = GTK_LIST_STORE (model);
 
 	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
 
+	string = gtk_entry_get_text (GTK_ENTRY (dialog->message_entry));
+
+	/* save preset */
+	list = gossip_utils_get_status_messages ();
+
+	entry = g_new (GossipStatusEntry, 1);
+	entry->string = g_strdup (string);
+	entry->state = state;
+	
+	list = g_list_prepend (list, entry);
+
+	gossip_utils_set_status_messages (list);
+	gossip_utils_free_status_messages (list);
+
+	/* set model */
 	gtk_list_store_prepend (store, &iter);
 	gtk_list_store_set (store, &iter,
 			    COL_TYPE, pixbuf,
-			    COL_TYPE_STR, types[state],
-			    COL_STRING, "",
+			    COL_STRING, string,
 			    COL_STATE, state,
-			    COL_NEW, TRUE,
 			    -1);
 
-	g_object_unref (pixbuf);
+	path = gtk_tree_model_get_path (model, &iter);
+	column = gtk_tree_view_get_column (GTK_TREE_VIEW (dialog->treeview), 0);
+	gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (dialog->treeview),
+				      path,
+                                      column,
+				      TRUE,
+                                      0.5,
+				      0);
 
-	/* set it to be editable */
-	path = gtk_tree_path_new_from_string ("0");
-	column = gtk_tree_view_get_column (GTK_TREE_VIEW (dialog->treeview), 1);
-	gtk_tree_view_set_cursor (GTK_TREE_VIEW (dialog->treeview),
-				  path, column, TRUE);
-	
+	gtk_entry_set_text (GTK_ENTRY (dialog->message_entry), "");
+
 	gtk_tree_path_free (path);
+	g_object_unref (pixbuf);
 }
 
 static void
@@ -476,6 +311,23 @@ status_presets_remove_button_clicked_cb (GtkWidget                 *button,
 }
 
 static void
+status_presets_message_entry_changed_cb (GtkWidget                 *widget,
+					 GossipStatusPresetsDialog *dialog)
+{
+	const gchar *str;
+
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+ 	gtk_widget_set_sensitive (dialog->add_button, (str && strlen (str) > 0));
+}
+
+static void
+status_presets_message_entry_activate_cb (GtkWidget                 *widget,
+					  GossipStatusPresetsDialog *dialog)
+{
+	status_presets_add_button_clicked_cb (dialog->add_button, dialog);	
+}
+
+static void
 status_presets_response_cb (GtkWidget *widget,
 			    gint       response,
 			    gpointer   user_data)
@@ -484,7 +336,7 @@ status_presets_response_cb (GtkWidget *widget,
 }
 
 static void
-status_presets_destroy_cb (GtkWidget          *widget,
+status_presets_destroy_cb (GtkWidget                 *widget,
 			   GossipStatusPresetsDialog *dialog)
 {
 	g_free (dialog);
@@ -495,6 +347,7 @@ gossip_status_presets_dialog_show (void)
 {
 	static GossipStatusPresetsDialog *dialog = NULL;
 	GladeXML                         *gui;
+ 	GtkSizeGroup                     *sizegroup; 
 
 	if (dialog) {
 		gtk_window_present (GTK_WINDOW (dialog->dialog));
@@ -508,19 +361,27 @@ gossip_status_presets_dialog_show (void)
 				     NULL,
 				     "status_presets_dialog", &dialog->dialog,
 				     "treeview", &dialog->treeview,
+				     "status_combobox", &dialog->status_combobox,
+				     "message_entry", &dialog->message_entry,
 				     "remove_button", &dialog->remove_button,
-				     "add_button", &dialog->add_button,
+ 				     "add_button", &dialog->add_button,
 				     NULL);
 	
 	gossip_glade_connect (gui,
 			      dialog,
 			      "status_presets_dialog", "response", status_presets_response_cb,
 			      "status_presets_dialog", "destroy", status_presets_destroy_cb,
+			      "message_entry", "changed", status_presets_message_entry_changed_cb,
+			      "message_entry", "activate", status_presets_message_entry_activate_cb,
  			      "add_button", "clicked", status_presets_add_button_clicked_cb, 
  			      "remove_button", "clicked", status_presets_remove_button_clicked_cb, 
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
+
+ 	sizegroup = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL); 
+ 	gtk_size_group_add_widget (sizegroup, dialog->add_button); 
+ 	gtk_size_group_add_widget (sizegroup, dialog->remove_button); 
 
 	status_presets_setup (dialog);
 }

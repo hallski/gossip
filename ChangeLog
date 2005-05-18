@@ -1,3 +1,11 @@
+2005-05-19  Martyn Russell  <mr@gnome.org>
+
+	* ui/main.glade:
+	* src/gossip-status-presets-dialog.c: 
+	- Reverted the changes so the dialog looks like it did.  After
+	further talks with Micke usability wise, it is better the way it
+	was. 
+
 2005-05-18  Mikael Hallendal  <micke@imendio.com>
 
 	* MAINTAINERS: Updated
