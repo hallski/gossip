@@ -1,5 +1,11 @@
 2005-05-19  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-chat-view.c: 
+	- Added support for backwards smileys.
+	- Fixes bug #304096.
+
+2005-05-19  Martyn Russell  <mr@gnome.org>
+
 	* ui/main.glade:
 	* src/gossip-status-presets-dialog.c: 
 	- Reverted the changes so the dialog looks like it did.  After

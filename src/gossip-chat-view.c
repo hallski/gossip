@@ -94,7 +94,29 @@ static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_SHOCKED,     ":o", 0 },
 	{ GOSSIP_SMILEY_SHOCKED,     ":O", 0 },
 	{ GOSSIP_SMILEY_COOL,        "8)", 0 },
-	{ GOSSIP_SMILEY_COOL,        "B)", 0 }
+	{ GOSSIP_SMILEY_COOL,        "B)", 0 },
+
+	/* backward smiley's */
+	{ GOSSIP_SMILEY_NORMAL,     "(:",  0 },
+	{ GOSSIP_SMILEY_WINK,       "(;",  0 },
+	{ GOSSIP_SMILEY_WINK,       "(-;", 0 },
+	{ GOSSIP_SMILEY_BIGEYE,     "(=",  0 },
+	{ GOSSIP_SMILEY_NOSE,       "(-:", 0 },
+	{ GOSSIP_SMILEY_CRY,        ")':", 0 },
+	{ GOSSIP_SMILEY_SAD,        "):",  0 },
+	{ GOSSIP_SMILEY_SAD,        ")-:", 0 },
+	{ GOSSIP_SMILEY_SCEPTICAL,  "/:",  0 },
+	{ GOSSIP_SMILEY_SCEPTICAL,  "//:",  0 },
+	{ GOSSIP_SMILEY_INDIFFERENT, "|:", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      "d:", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      "d-:", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      "d;", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,      "d-;", 0 },
+	{ GOSSIP_SMILEY_SHOCKED,     "o:", 0 },
+	{ GOSSIP_SMILEY_SHOCKED,     "O:", 0 },
+	{ GOSSIP_SMILEY_COOL,        "(8", 0 },
+	{ GOSSIP_SMILEY_COOL,        "(B", 0 }
+	
 };
 
 static gint num_smileys = G_N_ELEMENTS (smileys);
