@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell (mr@gnome.org)
+ * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -35,10 +35,7 @@ gboolean     gossip_spell_check       (GossipSpell *spell,
 				       const gchar *word);
 GList *      gossip_spell_suggestions (GossipSpell *spell,
 				       const gchar *word);
-
-
-
-
+gboolean     gossip_spell_supported   (void);
 
 G_END_DECLS
 

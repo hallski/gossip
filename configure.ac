@@ -23,8 +23,10 @@ IMENDIO_COMPILE_WARNINGS
 
 AM_GCONF_SOURCE_2
 
+dnl -----------------------------------------------------------
 dnl D-BUS
-dnl ==========================
+dnl -----------------------------------------------------------
+
 AC_ARG_ENABLE(dbus,
               AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
                              [compile with d-bus support]), ,
@@ -50,11 +52,11 @@ fi
 
 AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
 
-dnl ==========================================================================
+dnl -----------------------------------------------------------
 dnl
 dnl Library Dependencies, uses pkg-config to detect correct version, etc
 dnl
-dnl ==========================================================================
+dnl -----------------------------------------------------------
 
 dnl AC_SUBST is required to ensure that the versions number end up into the
 dnl spec file.
@@ -72,11 +74,11 @@ AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
 
 dnl To make the egg stuff build properly, should have a real test...
 AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
-dnl -----------------------------------------------------------
 
-dnl ================================
-dnl | Pkg-Config dependency checks |---------------------------
-dnl ================================
+
+dnl -----------------------------------------------------------
+dnl Pkg-Config dependency checks
+dnl -----------------------------------------------------------
 
 PKG_CHECK_MODULES(LIBGOSSIP, [
 	glib-2.0 >= $GLIB_REQUIRED
@@ -148,12 +150,10 @@ GOSSIP_LIBS="$GOSSIP_LIBS $XSS_LIBS"
 
 AC_SUBST(GOSSIP_CFLAGS)
 AC_SUBST(GOSSIP_LIBS)
+
 dnl -----------------------------------------------------------
-
-
-dnl  ------------------
-dnl | Language Support |---------------------------------------
-dnl  ------------------
+dnl Language Support
+dnl -----------------------------------------------------------
 GETTEXT_PACKAGE=gossip
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
@@ -161,19 +161,38 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
 ALL_LINGUAS="ar az bg ca cs cy da de en_CA en_GB eo es eu fr ga hr it lt ml ms nb nl no pl pt pt_BR ru sq sr sr@Latn sv tr uk zh_CN zh_TW"
 
 AM_GLIB_GNU_GETTEXT
-dnl -----------------------------------------------------------
+
 
 dnl -----------------------------------------------------------
 dnl ASpell
 dnl -----------------------------------------------------------
 
-AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
+AC_ARG_ENABLE(aspell,
+              AS_HELP_STRING([--enable-aspell=@<:@no/yes/auto@:>@],
+                             [compile with aspell support]), ,
+              enable_aspell=yes)
 
-if test "x$have_aspell" = "xyes"; then
-  AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
+if test "x$enable_aspell" != "xno"; then
 
-  GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
+	AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
+	
+	if test "x$have_aspell" = "xyes"; then
+  		AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
+		GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
+	else
+   		have_aspell=no
+	fi
+else
+	have_aspell=no
 fi
+
+if test "x$enable_aspell" = "xyes"; then
+   if test "x$have_aspell" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find aspell.])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
 
 dnl -----------------------------------------------------------
 

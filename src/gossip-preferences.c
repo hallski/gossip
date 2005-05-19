@@ -31,25 +31,27 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
+#include "gossip-spell.h"
 
 
 extern GConfClient *gconf_client;
 
 
 typedef struct {
-	GossipApp    *app;
+	GossipApp *app;
  	
-	GtkWidget    *dialog;
-	GtkWidget    *sound_checkbutton;
-	GtkWidget    *silent_busy_checkbutton;
-	GtkWidget    *silent_away_checkbutton;
-	GtkWidget    *smileys_checkbutton;
-	GtkWidget    *compact_checkbutton;
-	GtkWidget    *leaving_entry;
-	GtkWidget    *away_entry;
-	GtkWidget    *spell_checker_checkbutton;
+	GtkWidget *dialog;
+	GtkWidget *sound_checkbutton;
+	GtkWidget *silent_busy_checkbutton;
+	GtkWidget *silent_away_checkbutton;
+	GtkWidget *smileys_checkbutton;
+	GtkWidget *compact_checkbutton;
+	GtkWidget *leaving_entry;
+	GtkWidget *away_entry;
+	GtkWidget *spell_checker_vbox;
+	GtkWidget *spell_checker_checkbutton;
 	
-	GList        *ids;
+	GList     *ids;
 } GossipPreferences;
 
 
@@ -391,6 +393,7 @@ gossip_preferences_show (void)
 				     "silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
 				     "silent_away_checkbutton", &preferences->silent_away_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
+				     "spell_checker_vbox", &preferences->spell_checker_vbox,
 				     "spell_checker_checkbutton", &preferences->spell_checker_checkbutton,
 				     NULL);
 
@@ -404,6 +407,10 @@ gossip_preferences_show (void)
 			      "preferences_dialog", "response", preferences_response_cb,
 			      NULL);
 	
+	if (!gossip_spell_supported ()) {
+		gtk_widget_hide (preferences->spell_checker_vbox);
+	}
+
 	gtk_window_set_transient_for (GTK_WINDOW (preferences->dialog), GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (preferences->dialog);
 }

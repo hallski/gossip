@@ -3294,7 +3294,7 @@ You can change your account settings later, by selecting the Chat-&gt;Connect...
 	  </child>
 
 	  <child>
-	    <widget class="GtkVBox" id="vbox126">
+	    <widget class="GtkVBox" id="spell_checker_vbox">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">6</property>

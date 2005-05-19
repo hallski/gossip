@@ -257,7 +257,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 		return;
 	}
 
-	if (!gossip_spell_has_backend (priv->spell)) {
+	if (!gossip_spell_supported () || !gossip_spell_has_backend (priv->spell)) {
 		return;
 	}
 	

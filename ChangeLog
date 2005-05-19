@@ -1,5 +1,21 @@
 2005-05-19  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-preferences.c:
+	* ui/main.glade:
+	- Actually hide the "Enable Spell Checker" option when there is no
+	spell checking available.
+	* src/gossip-chat.c (chat_input_text_buffer_changed_cb): 
+	- Added extra check to make sure there are errors on each key
+	press when there is no spell backend.
+	* configure.ac:
+	- Based on a patch from Fryderyk Dziarmagowski, the ASpell feature
+	can now be turned off.
+	- I have not made it default to disable aspell as the bug reporter
+	suggests.
+	- Fixes bug #304301.
+
+2005-05-19  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-chat-view.c: 
 	- Added support for backwards smileys.
 	- Fixes bug #304096.
