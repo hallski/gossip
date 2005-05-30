@@ -1,3 +1,9 @@
+2005-05-30  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-join-dialog.c (gossip_join_dialog_show): 
+	- Fixed crash when clicking properties on the separator.
+	- Separator now not shown when there are no favorites.
+
 2005-05-19  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-preferences.c:

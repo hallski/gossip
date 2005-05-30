@@ -149,11 +149,17 @@ join_dialog_setup_favorites (GossipJoinDialog *dialog,
                             1, _("Custom"),
                             -1);
 
-        gtk_list_store_append (store, &iter);
-        gtk_list_store_set (store, &iter,
-                            0, NULL,
-                            1, "separator",
-                            -1);
+	gtk_combo_box_set_active_iter (GTK_COMBO_BOX (dialog->favorite_combobox), 
+				       &iter);
+
+	favorites = gossip_favorite_get_all ();
+	if (favorites) {
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter,
+				    0, NULL,
+				    1, "separator",
+				    -1);
+	}
 
 	if (!reload) {
 		g_object_unref (store);
@@ -162,7 +168,6 @@ join_dialog_setup_favorites (GossipJoinDialog *dialog,
 	default_name = gnome_config_get_string (GOSSIP_FAVORITES_PATH 
 						"/Favorites/Default");
 
-	favorites = gossip_favorite_get_all ();
 	for (i = 0, l = favorites; l; i++, l = l->next) {
 		GossipFavorite *favorite;
 
@@ -258,7 +263,11 @@ join_dialog_is_separator_cb (GtkTreeModel *model,
 {
 	GtkTreePath *path;
 	gboolean     result;
-	
+
+	if (!gossip_favorite_get_all ()) {
+		return FALSE;
+	}
+
 	path = gtk_tree_model_get_path (model, iter);
 	result = (gtk_tree_path_get_indices (path)[0] == 1);
 	gtk_tree_path_free (path);
@@ -573,6 +582,8 @@ gossip_join_dialog_show (void)
 			      "room_entry", "changed", join_dialog_entry_changed_cb,
 			      "nickname_entry", "changed", join_dialog_entry_changed_cb,
 			      NULL);
+
+	gtk_widget_set_sensitive (dialog->join_button, FALSE);
 
 	join_dialog_setup_favorites (dialog, FALSE);
 
