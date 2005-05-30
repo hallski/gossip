@@ -1,8 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2002-2005 Imendio AB
+ * Copyright (C) 2004-2005 Martyn Russell <mr@gnome.org>
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
- * Copyright (C) 2004      Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -93,7 +93,7 @@
 #define MIN_WIDTH 50
 
 
-#define d(x)
+#define d(x) 
 
 extern GConfClient *gconf_client;
 
@@ -961,6 +961,9 @@ app_idle_check_cb (GossipApp *app)
 	presence = app_get_effective_presence ();
 	state = gossip_presence_get_state (presence);
 
+	d(g_print ("Idle for:%d\n", 
+		   idle));
+
 	/* We're going away, allow some slack. */
 	if (priv->leave_time > 0) {
 		if (time (NULL) - priv->leave_time > LEAVE_SLACK) {
@@ -975,7 +978,14 @@ app_idle_check_cb (GossipApp *app)
 	}
 	else if (state != GOSSIP_PRESENCE_STATE_EXT_AWAY && 
 		 idle > EXT_AWAY_TIME) {
+ 		/* Presence may be idle if the screensaver has been
+		   started and hence no away_presence set. */
+		if (!priv->away_presence) {
+			priv->away_presence = gossip_presence_new ();
+		}
+
 		/* Presence will already be away */
+		d(g_print ("Going to ext away...\n"));
 		gossip_presence_set_state (priv->away_presence, 
 					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
 		presence_changed = TRUE;
@@ -983,6 +993,13 @@ app_idle_check_cb (GossipApp *app)
 	else if (state != GOSSIP_PRESENCE_STATE_AWAY && 
 		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
+ 		/* Presence may be idle if the screensaver has been
+		   started and hence no away_presence set. */
+		if (!priv->away_presence) {
+			priv->away_presence = gossip_presence_new ();
+		}
+
+		d(g_print ("Going to away...\n"));
 		app_set_away (NULL);
 		presence_changed = TRUE;
 	}

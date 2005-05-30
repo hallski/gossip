@@ -1,5 +1,13 @@
 2005-05-30  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-app.c (app_idle_check_cb): 
+	- Fixed a bug where starting xscreensaver would set your state to
+	extended away and Gossip would presume to be in an Away state. The
+	up shot of this was Gossip would send Available constantly every
+	second or so.  Now the user goes into the correct Away state.
+
+2005-05-30  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-join-dialog.c (gossip_join_dialog_show): 
 	- Fixed crash when clicking properties on the separator.
 	- Separator now not shown when there are no favorites.
