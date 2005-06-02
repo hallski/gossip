@@ -1,3 +1,9 @@
+2005-06-03  Mikael Hallendal  <micke@imendio.com>
+
+	* configure.ac: 
+	- Make aspell configuration default to auto not, yes. Otherwise build
+	  fails when aspell is not installed.
+
 2005-05-30  Paul van Tilburg  <paul@luon.net>
 
 	* src/gossip-app.c (app_idle_check_cb): 

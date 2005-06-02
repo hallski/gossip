@@ -170,7 +170,7 @@ dnl -----------------------------------------------------------
 AC_ARG_ENABLE(aspell,
               AS_HELP_STRING([--enable-aspell=@<:@no/yes/auto@:>@],
                              [compile with aspell support]), ,
-              enable_aspell=yes)
+			     enable_aspell=auto)
 
 if test "x$enable_aspell" != "xno"; then
 
