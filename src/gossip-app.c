@@ -75,7 +75,7 @@
 #define REQUEST_RESPONSE_DECIDE_LATER 1
 
 /* Number of seconds before entering autoaway and extended autoaway. */
-#define	AWAY_TIME (5*60)
+#define	AWAY_TIME (5*60) 
 #define	EXT_AWAY_TIME (30*60)
 
 /* Number of seconds to flash the icon when explicitly entering away status
@@ -993,12 +993,6 @@ app_idle_check_cb (GossipApp *app)
 	else if (state != GOSSIP_PRESENCE_STATE_AWAY && 
 		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
- 		/* Presence may be idle if the screensaver has been
-		   started and hence no away_presence set. */
-		if (!priv->away_presence) {
-			priv->away_presence = gossip_presence_new ();
-		}
-
 		d(g_print ("Going to away...\n"));
 		app_set_away (NULL);
 		presence_changed = TRUE;

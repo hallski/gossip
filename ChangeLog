@@ -1,5 +1,14 @@
 2005-06-04  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-app.c (app_set_away): 
+	- Thought this bug was fixed, but not in all cases it would seem.
+	As Paul van Tilburg pointed out, if you were in a busy state and
+	waited to go into an auto away state, it would set you too
+	Available instead. 
+	- Fixes bug #306374.
+	
+2005-06-04  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-app.c (app_status_show_status_dialog): 
 	- Set presence status even if it is NULL since gossip-presence can
 	now handle a NULL value.  Now setting presence to the default will
