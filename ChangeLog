@@ -1,3 +1,11 @@
+2005-06-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_subscription_request_dialog_cb): Only use
+	the vcard if there is one, otherwise use the ID as name. Don't
+	unref the vcard if there is none.
+	(app_subscription_vcard_cb): Likewise, only access the vcard if
+	there is one.
+
 2005-06-04  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c (app_set_away): 

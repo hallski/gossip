@@ -2392,8 +2392,8 @@ app_subscription_vcard_cb (GossipAsyncResult  result,
 	GtkWidget   *jid_label;
  	GtkWidget   *website_label;
  	GtkWidget   *personal_table;
-	const gchar *name;
-	const gchar *url;
+	const gchar *name = NULL;
+	const gchar *url = NULL;
 	gchar       *who;
 	gchar       *question;
 	gchar       *str;
@@ -2401,6 +2401,9 @@ app_subscription_vcard_cb (GossipAsyncResult  result,
 
 	if (GOSSIP_IS_VCARD (vcard)) {
 		data->vcard = g_object_ref (vcard);
+
+		name = gossip_vcard_get_name (vcard);
+		url = gossip_vcard_get_url (vcard);
 	}
 
 	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
@@ -2414,7 +2417,6 @@ app_subscription_vcard_cb (GossipAsyncResult  result,
 				      "personal_table", &personal_table,
 				      NULL);
 
-	name = gossip_vcard_get_name (vcard);
 	if (name) {
 		who = g_strdup_printf (_("%s wants to be added to your contact list."), 
 				       name);
@@ -2436,7 +2438,6 @@ app_subscription_vcard_cb (GossipAsyncResult  result,
 
 	gtk_label_set_text (GTK_LABEL (jid_label), gossip_contact_get_id (data->contact));
 
-	url = gossip_vcard_get_url (vcard);
 	if (url && strlen (url) > 0) {
 		GArray *start, *end;
 
@@ -2504,8 +2505,12 @@ app_subscription_request_dialog_cb (GtkWidget        *dialog,
 			const gchar *id, *name, *message;
 			
 			id = gossip_contact_get_id (data->contact);
-			name = gossip_vcard_get_name (data->vcard);
-
+			if (data->vcard) {
+				name = gossip_vcard_get_name (data->vcard);
+			} else {
+				name = id;
+			}
+			
 			message = _("I would like to add you to my contact list.");
 					
 			/* FIXME: how is session related to an IM account? */
@@ -2521,8 +2526,10 @@ app_subscription_request_dialog_cb (GtkWidget        *dialog,
 	
 	g_object_unref (data->protocol);
 	g_object_unref (data->contact);
-	g_object_unref (data->vcard);
-
+	if (data->vcard) {
+		g_object_unref (data->vcard);
+	}
+	
 	g_free (data);
 }
 
