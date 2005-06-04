@@ -1,3 +1,11 @@
+2005-06-04  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-app.c (app_status_show_status_dialog): 
+	- Set presence status even if it is NULL since gossip-presence can
+	now handle a NULL value.  Now setting presence to the default will
+	actually change the status text.
+	- Fixes bug #306367.
+
 2005-06-03  Mikael Hallendal  <micke@imendio.com>
 
 	* configure.ac: 

@@ -1873,7 +1873,6 @@ app_status_show_status_dialog (GossipPresenceState  state,
 	}
 		
 	str = gtk_entry_get_text (GTK_ENTRY (entry));
-
 	if (strcmp (str, gossip_presence_state_get_default_status (state)) == 0) {
 		str = NULL;
 	}
@@ -1882,19 +1881,10 @@ app_status_show_status_dialog (GossipPresenceState  state,
 		app_status_flash_stop ();
 	
 		gossip_presence_set_state (priv->presence, state);
-		if (str) {
-			gossip_presence_set_status (priv->presence, str);
-		}
+		gossip_presence_set_status (priv->presence, str);
 
 		app_status_clear_away ();
 	} else {
-#if 0/* If we are already away, don't go back to available, just
-		 * change the message.
-		 */
-		if (!priv->away_presence) {
-		}
-#endif
-
 		app_status_flash_start ();
 		app_set_away (str);
 	}
