@@ -1,5 +1,12 @@
 2005-06-05  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-join-dialog.c (join_dialog_timeout_cb): 
+	- Added message dialog if joining a group chat times out after 20
+	seconds. 
+	- Fixes bug #306507.
+
+2005-06-05  Martyn Russell  <mr@gnome.org>
+
 	* src/Makefile.am (AM_CPPFLAGS): 
 	- Include new files
 	- Add DTDDIR definition.

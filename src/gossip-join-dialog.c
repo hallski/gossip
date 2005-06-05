@@ -35,6 +35,7 @@
 
 #define FAVORITES_PATH "/apps/gossip/group_chat_favorites"
 
+#define JOIN_TIMEOUT   20000
 
 typedef struct _GossipJoinDialog GossipJoinDialog;
 
@@ -54,6 +55,7 @@ struct _GossipJoinDialog {
 
 	guint         wait_id;
 	guint         pulse_id;
+	guint         timeout_id;
 
 	gboolean      changed;
 	gboolean      joining;
@@ -68,8 +70,10 @@ typedef struct {
 
 static void     join_dialog_setup_favorites       (GossipJoinDialog         *dialog,
 						   gboolean                  reload);
+static void     join_dialog_cancel                (GossipJoinDialog         *dialog);
 static gboolean join_dialog_progress_pulse_cb     (GtkWidget                *progressbar);
 static gboolean join_dialog_wait_cb               (GossipJoinDialog         *dialog);
+static gboolean join_dialog_timeout_cb            (GossipJoinDialog         *dialog);
 static gboolean join_dialog_select_favorite_cb    (GtkTreeModel             *model,
 						   GtkTreePath              *path,
 						   GtkTreeIter              *iter,
@@ -92,7 +96,6 @@ static void     join_dialog_response_cb           (GtkWidget                *wid
 						   GossipJoinDialog         *dialog);
 static void     join_dialog_destroy_cb            (GtkWidget                *unused,
 						   GossipJoinDialog         *dialog);
-
 
 
 static GossipJoinDialog *current_dialog = NULL;
@@ -190,6 +193,33 @@ join_dialog_setup_favorites (GossipJoinDialog *dialog,
 	}
 }
 
+static void
+join_dialog_cancel (GossipJoinDialog *dialog)
+{
+	gtk_widget_set_sensitive (dialog->preamble_label, TRUE);
+	gtk_widget_set_sensitive (dialog->details_table, TRUE);
+	gtk_widget_set_sensitive (dialog->join_button, TRUE);
+	
+	gtk_widget_hide (dialog->joining_vbox);
+	
+	if (dialog->wait_id != 0) {
+		g_source_remove (dialog->wait_id);
+		dialog->wait_id = 0;
+	}
+	
+	if (dialog->pulse_id != 0) {
+		g_source_remove (dialog->pulse_id);
+		dialog->pulse_id = 0;
+	}
+
+	if (dialog->timeout_id != 0) {
+		g_source_remove (dialog->timeout_id);
+		dialog->timeout_id = 0;
+	}
+	
+	dialog->joining = FALSE;
+}
+
 static gboolean 
 join_dialog_progress_pulse_cb (GtkWidget *progressbar)
 {
@@ -208,6 +238,29 @@ join_dialog_wait_cb (GossipJoinDialog *dialog)
 					  (GSourceFunc)join_dialog_progress_pulse_cb, 
 					  dialog->joining_progressbar);
 
+	return FALSE;
+}
+
+static gboolean
+join_dialog_timeout_cb (GossipJoinDialog *dialog)
+{
+	GtkWidget *md;
+
+	join_dialog_cancel (dialog);
+	
+	/* show message dialog and the account dialog */
+	md = gtk_message_dialog_new_with_markup (GTK_WINDOW (dialog->dialog),
+						 GTK_DIALOG_MODAL |
+						 GTK_DIALOG_DESTROY_WITH_PARENT,
+						 GTK_MESSAGE_INFO,
+						 GTK_BUTTONS_CLOSE,
+						 "<b>%s</b>\n\n%s",
+						 _("The chat room you are trying is not responding."),
+						 _("Check your details and try again."));
+	
+	gtk_dialog_run (GTK_DIALOG (md));
+	gtk_widget_destroy (md);
+	
 	return FALSE;
 }
 	
@@ -482,29 +535,17 @@ join_dialog_response_cb (GtkWidget        *widget,
 						 (GSourceFunc)join_dialog_wait_cb,
 						 dialog);
 
+		dialog->timeout_id = g_timeout_add (JOIN_TIMEOUT, 
+						    (GSourceFunc)join_dialog_timeout_cb,
+						    dialog);
+
 		dialog->joining = TRUE;
 		return;
 	}
 
 	if (response == GTK_RESPONSE_CANCEL && dialog->joining) {
 		/* change widgets so they are unsensitive */
-		gtk_widget_set_sensitive (dialog->preamble_label, TRUE);
-		gtk_widget_set_sensitive (dialog->details_table, TRUE);
-		gtk_widget_set_sensitive (dialog->join_button, TRUE);
-
-		gtk_widget_hide (dialog->joining_vbox);
-
-		if (dialog->wait_id != 0) {
-			g_source_remove (dialog->wait_id);
-			dialog->wait_id = 0;
-		}
-
-		if (dialog->pulse_id != 0) {
-			g_source_remove (dialog->pulse_id);
-			dialog->pulse_id = 0;
-		}
-
-		dialog->joining = FALSE;
+		join_dialog_cancel (dialog);
 		return;
 	}
 
