@@ -1,3 +1,15 @@
+2005-06-05  Martyn Russell  <mr@gnome.org>
+
+	* src/Makefile.am (AM_CPPFLAGS): 
+	- Include new files
+	- Add DTDDIR definition.
+	* src/gossip-contact-groups.[ch]:
+	* src/gossip-contact-groups.dtd:
+	- Added.
+	* src/gossip-contact-list.c:
+	- Hooked up new code to expand/collapse callbacks.
+	- Fixes bug #305198.
+	
 2005-06-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_subscription_request_dialog_cb): Only use

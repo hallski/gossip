@@ -34,6 +34,7 @@
 #include "gossip-log.h"
 #include "gossip-marshal.h"
 #include "gossip-stock.h"
+#include "gossip-contact-groups.h"
 #include "gossip-contact-list.h"
 #include "gossip-sound.h"
 
@@ -138,6 +139,7 @@ static ShowActiveData *contact_list_contact_active_new          (GossipContactLi
 								 gboolean                remove);
 static void            contact_list_contact_active_free         (ShowActiveData         *data);
 static gboolean        contact_list_contact_active_cb           (ShowActiveData         *data);
+
 static void            contact_list_get_group                   (GossipContactList      *list,
 								 const gchar            *name,
 								 GtkTreeIter            *iter_to_set,
@@ -200,6 +202,10 @@ static void            contact_list_row_activated_cb            (GossipContactLi
 								 GtkTreePath            *path,
 								 GtkTreeViewColumn      *col,
 								 gpointer                unused);
+static void            contact_list_row_expand_or_collapse_cb   (GossipContactList      *list,
+								 GtkTreeIter            *iter,
+								 GtkTreePath            *path,
+								 gpointer                unused);
 static gint            contact_list_sort_func                   (GtkTreeModel           *model,
 								 GtkTreeIter            *iter_a,
 								 GtkTreeIter            *iter_b,
@@ -237,6 +243,7 @@ static void            contact_list_event_removed_cb            (GossipEventMana
 								 GossipEvent            *event,
 								 GossipContactList      *list);
 static void            contact_list_flash_free_data             (FlashData              *data);
+
 
 
 
@@ -425,6 +432,9 @@ gossip_contact_list_init (GossipContactList *list)
 	contact_list_create_model (list);
 	contact_list_setup_view (list);
 
+	/* get saved group states */
+	gossip_contact_groups_get_all ();
+
         /* -- Context menues -- */
         priv->item_popup_factory = gtk_item_factory_new (GTK_TYPE_MENU,
 							 "<main>", NULL);
@@ -492,6 +502,14 @@ gossip_contact_list_init (GossipContactList *list)
 			  "row-activated",
 			  G_CALLBACK (contact_list_row_activated_cb),
 			  NULL);
+	g_signal_connect (list,
+			  "row-expanded",
+			  G_CALLBACK (contact_list_row_expand_or_collapse_cb),
+			  GINT_TO_POINTER (TRUE));
+	g_signal_connect (list,
+			  "row-collapsed",
+			  G_CALLBACK (contact_list_row_expand_or_collapse_cb),
+			  GINT_TO_POINTER (FALSE));
 }
 
 static void
@@ -817,6 +835,15 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	return FALSE;
 }
 
+#if 0
+static gboolean
+contact_list_group_expanded_cb (gchar *name) 
+{
+
+	return FALSE;
+}
+#endif
+
 static void
 contact_list_get_group (GossipContactList *list, 
 			const gchar       *name,
@@ -839,15 +866,14 @@ contact_list_get_group (GossipContactList *list,
 		if (created) {
 			*created = TRUE;
 		}
-		
+	       
 		gtk_tree_store_append (GTK_TREE_STORE (model), iter_to_set, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter_to_set,
 				    MODEL_COL_PIXBUF, NULL,
 				    MODEL_COL_NAME, name,
 				    MODEL_COL_IS_GROUP, TRUE,
 				    MODEL_COL_IS_ACTIVE, FALSE,
-				    -1);
-		
+				    -1);	
 	} else {
 		if (created) {
 			*created = FALSE;
@@ -941,8 +967,26 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 			
 			path = gtk_tree_model_get_path (model, &iter_group);
 			if (path) {
-				gtk_tree_view_expand_row (GTK_TREE_VIEW (list),
-							  path, FALSE);
+				if (gossip_contact_group_get_expanded (name)) {
+					g_signal_handlers_block_by_func (GTK_TREE_VIEW (list), 
+									 contact_list_row_expand_or_collapse_cb,
+									 GINT_TO_POINTER (TRUE));
+					gtk_tree_view_expand_row (GTK_TREE_VIEW (list),
+								  path, TRUE);
+					g_signal_handlers_unblock_by_func (GTK_TREE_VIEW (list), 
+									   contact_list_row_expand_or_collapse_cb,
+									   GINT_TO_POINTER (TRUE));
+				} else {
+					g_signal_handlers_block_by_func (GTK_TREE_VIEW (list), 
+									 contact_list_row_expand_or_collapse_cb,
+									 GINT_TO_POINTER (FALSE));
+					gtk_tree_view_collapse_row (GTK_TREE_VIEW (list),
+								    path);
+					g_signal_handlers_unblock_by_func (GTK_TREE_VIEW (list), 
+									   contact_list_row_expand_or_collapse_cb,
+									   GINT_TO_POINTER (FALSE));
+				}
+
 				gtk_tree_path_free (path);
 			}
 		}
@@ -993,6 +1037,7 @@ contact_list_create_model (GossipContactList *list)
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
 						    G_TYPE_POINTER,
+						    G_TYPE_BOOLEAN,
 						    G_TYPE_BOOLEAN,
 						    G_TYPE_BOOLEAN));
 	
@@ -1544,6 +1589,26 @@ contact_list_row_activated_cb (GossipContactList *list,
 	}
 
 	g_signal_emit (list, signals[CONTACT_ACTIVATED], 0, contact);
+}
+
+static void 
+contact_list_row_expand_or_collapse_cb (GossipContactList *list,
+					GtkTreeIter       *iter,
+					GtkTreePath       *path,
+					gpointer           user_data)
+{
+	GtkTreeModel          *model;
+	gchar                 *name;
+	gboolean               expanded;
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+
+	gtk_tree_model_get (model, iter,
+			    MODEL_COL_NAME, &name,
+			    -1);
+
+	expanded = GPOINTER_TO_INT (user_data);
+	gossip_contact_group_set_expanded (name, expanded);
 }
 
 static gint

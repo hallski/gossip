@@ -12,6 +12,7 @@ AM_CPPFLAGS =	                                 \
 	-DIMAGEDIR=\"$(datadir)/gossip\"	\
 	-DPROTOCOLSDIR=\"$(datadir)/gossip/protocols\" 	\
 	-DSTYLESHEETDIR=\"$(datadir)/gossip\"	\
+	-DDTDDIR=\"$(datadir)/gossip\"		\
 	-DDBUS_API_SUBJECT_TO_CHANGE
 
 if HAVE_DBUS
@@ -33,6 +34,7 @@ gossip_SOURCES = 				                        	\
 	gossip-chat-view.c                 gossip-chat-view.h                  	\
 	gossip-chat-window.c	           gossip-chat-window.h			\
 	gossip-connect-dialog.c	           gossip-connect-dialog.h		\
+	gossip-contact-groups.c	           gossip-contact-groups.h		\
 	gossip-contact-list.c              gossip-contact-list.h               	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
 	gossip-contact-info.c              gossip-contact-info.h                \
@@ -65,8 +67,12 @@ gossip_LDADD = @GOSSIP_LIBS@                            \
 
 gossip_LDFLAGS = -export-dynamic
 
+dtddir = $(datadir)/gossip
+dtd_DATA = gossip-contact-groups.dtd
+
 stylesheetdir = $(datadir)/gossip
 stylesheet_DATA = gossip-log.xsl
+
 GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
 
 gossip-marshal.h: gossip-marshal.list
@@ -92,5 +98,6 @@ CLEANFILES = $(BUILT_SOURCES)
 EXTRA_DIST =						\
 	gossip-log.xsl					\
 	gossip-marshal.list                             \
+	$(dtd_DATA)					\
 	$(dbus_sources)
 
