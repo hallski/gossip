@@ -356,7 +356,7 @@
 		  <child>
 		    <widget class="GtkLabel" id="label46">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Favourite:</property>
+		      <property name="label" translatable="yes">Favorite:</property>
 		      <property name="use_underline">False</property>
 		      <property name="use_markup">False</property>
 		      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -456,7 +456,7 @@
 		  <child>
 		    <widget class="GtkButton" id="properties_button">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Edit or Delete this favourite.</property>
+		      <property name="tooltip" translatable="yes">Edit or Delete this favorite.</property>
 		      <property name="can_focus">True</property>
 		      <property name="label">gtk-properties</property>
 		      <property name="use_stock">True</property>
@@ -477,7 +477,7 @@
 		    <widget class="GtkCheckButton" id="add_checkbutton">
 		      <property name="visible">True</property>
 		      <property name="can_focus">True</property>
-		      <property name="label" translatable="yes">_Add to Favourites</property>
+		      <property name="label" translatable="yes">_Add to Favorites</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
@@ -568,7 +568,7 @@
 </widget>
 
 <widget class="GtkDialog" id="favorites_dialog">
-  <property name="title" translatable="yes">Gossip - Edit Group Chat Favourites</property>
+  <property name="title" translatable="yes">Gossip - Edit Group Chat Favorites</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>

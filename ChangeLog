@@ -1,3 +1,11 @@
+2005-06-07  Frank Arnold  <frank@scirocco-5v-turbo.de>
+
+	* ui/group-chat.glade.h:
+	* ui/main.glade.h:
+	* src/gossip-transport-add-window.c:
+	- Fixed typos.
+	- Fixes bug #305123.
+
 2005-06-05  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-join-dialog.c (join_dialog_timeout_cb): 

@@ -604,7 +604,7 @@ transport_add_window_check_others_cb (GossipTransportDisco     *disco,
 							   FALSE, FALSE, TRUE, TRUE); 
 		} else {
 			str = g_strdup_printf ("%s\n%s",
-					       _("Select your prefered service."),
+					       _("Select your preferred service."),
 					       _("This will be used to configure your account details."));
 
 			gtk_widget_show (window->scrolledwindow_service);
