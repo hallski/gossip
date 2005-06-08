@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-05 22:12-0400\n"
-"PO-Revision-Date: 2005-06-05 20:31-0500\n"
+"POT-Creation-Date: 2005-06-08 17:39-0400\n"
+"PO-Revision-Date: 2005-06-08 20:31-0500\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -616,7 +616,7 @@ msgstr ""
 "configure. Please try again later."
 
 #: src/gossip-transport-add-window.c:607
-msgid "Select your prefered service."
+msgid "Select your preferred service."
 msgstr "Select your preferred service."
 
 #: src/gossip-transport-add-window.c:608
@@ -843,7 +843,7 @@ msgid "Chat Na_me:"
 msgstr "Chat Na_me:"
 
 #: ui/group-chat.glade.h:3
-msgid "Edit or Delete this favourite."
+msgid "Edit or Delete this favorite."
 msgstr "Edit or Delete this favourite."
 
 #: ui/group-chat.glade.h:4
@@ -851,7 +851,7 @@ msgid "Edit your favorite group chat room details:"
 msgstr "Edit your favourite group chat room details:"
 
 #: ui/group-chat.glade.h:5
-msgid "Favourite:"
+msgid "Favorite:"
 msgstr "Favourite:"
 
 #: ui/group-chat.glade.h:6
@@ -859,7 +859,7 @@ msgid "Gossip - Edit Favorite"
 msgstr "Gossip - Edit Favorite"
 
 #: ui/group-chat.glade.h:7
-msgid "Gossip - Edit Group Chat Favourites"
+msgid "Gossip - Edit Group Chat Favorites"
 msgstr "Gossip - Edit Group Chat Favourites"
 
 #: ui/group-chat.glade.h:8
@@ -887,7 +887,7 @@ msgid "Trying to join chat room, please wait..."
 msgstr "Trying to join chat room, please wait..."
 
 #: ui/group-chat.glade.h:13
-msgid "_Add to Favourites"
+msgid "_Add to Favorites"
 msgstr "_Add to Favourites"
 
 #: ui/group-chat.glade.h:14
@@ -935,7 +935,7 @@ msgid "<b>Personal information</b>"
 msgstr "<b>Personal information</b>"
 
 #: ui/main.glade.h:10
-msgid "<b>Prefered Service</b>"
+msgid "<b>Preferred Service</b>"
 msgstr "<b>Preferred Service</b>"
 
 #: ui/main.glade.h:11
