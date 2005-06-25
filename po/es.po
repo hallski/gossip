@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-06 23:14+0200\n"
-"PO-Revision-Date: 2005-06-06 23:21+0200\n"
+"POT-Creation-Date: 2005-06-22 12:01+0000\n"
+"PO-Revision-Date: 2005-06-22 14:33+0200\n"
 "Last-Translator: Maria Majadas <maria.majadas@hispalinux.es>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -88,8 +88,7 @@ msgid "Use notification sounds"
 msgstr "Usar sonidos de notificación"
 
 #: ../gossip.schemas.in.h:16
-msgid ""
-"Whether or not to convert smileys into graphical images in conversations."
+msgid "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Indica si debe o no debe convertir los emoticonos en imágenes gráficas en "
 "las conversaciones."
@@ -276,10 +275,8 @@ msgid "Example: %s"
 msgstr "Ejemplo: %s"
 
 #: ../src/gossip-app.c:738
-msgid ""
-"Enter the user ID of the person you would like to send a chat message to."
-msgstr ""
-"Introduzca el id de la persona a la que quiere enviarle un mensaje de charla."
+msgid "Enter the user ID of the person you would like to send a chat message to."
+msgstr "Introduzca el id de la persona a la que quiere enviarle un mensaje de charla."
 
 #: ../src/gossip-app.c:745 ../ui/main.glade.h:110
 msgid "_Chat"
@@ -573,7 +570,9 @@ msgstr ""
 msgid ""
 "If you continue, you will not be able to add or talk to contacts using this "
 "transport!"
-msgstr "Si continua, no podrá añadir o hablar con los contactos que usen este transporte "
+msgstr ""
+"Si continua, no podrá añadir o hablar con los contactos que usen este "
+"transporte "
 
 #: ../src/gossip-transport-accounts-window.c:600
 #, c-format
@@ -623,8 +622,8 @@ msgstr ""
 "está intentando configurar. Por favor, inténtelo más tarde."
 
 #: ../src/gossip-transport-add-window.c:607
-msgid "Select your prefered service."
-msgstr "Selecione su servicio preferido."
+msgid "Select your preferred service."
+msgstr "Seleccione su servicio preferido."
 
 #: ../src/gossip-transport-add-window.c:608
 msgid "This will be used to configure your account details."
@@ -647,7 +646,9 @@ msgstr "El servicio confirmó que el usuario «%s» ya está registrado."
 msgid ""
 "When registering a token is provided by the service to register with, in "
 "this case, the token has not been sent."
-msgstr "Al registrarse, el servicio propociona un ticket con el que registrarse, en este caso, el ticket no se ha enviado."
+msgstr ""
+"Al registrarse, el servicio propociona un ticket con el que registrarse, en "
+"este caso, el ticket no se ha enviado."
 
 #: ../src/gossip-transport-add-window.c:716
 #: ../src/gossip-transport-add-window.c:724
@@ -852,15 +853,15 @@ msgid "Chat Na_me:"
 msgstr "_Nombre de charla:"
 
 #: ../ui/group-chat.glade.h:3
-msgid "Edit or Delete this favourite."
-msgstr "Editar o borrar este favorito"
+msgid "Edit or Delete this favorite."
+msgstr "Edita o borra este favorito"
 
 #: ../ui/group-chat.glade.h:4
 msgid "Edit your favorite group chat room details:"
 msgstr "Editar detalles de su grupo de charla favorito"
 
 #: ../ui/group-chat.glade.h:5
-msgid "Favourite:"
+msgid "Favorite:"
 msgstr "Favorito:"
 
 #: ../ui/group-chat.glade.h:6
@@ -868,8 +869,8 @@ msgid "Gossip - Edit Favorite"
 msgstr "Gossip - Editar favoritos"
 
 #: ../ui/group-chat.glade.h:7
-msgid "Gossip - Edit Group Chat Favourites"
-msgstr "Gossip - Editar grupos de charlas favoritos"
+msgid "Gossip - Edit Group Chat Favorites"
+msgstr "Gossip - Editar Grupos de Charlas Favoritos"
 
 #: ../ui/group-chat.glade.h:8
 msgid "Gossip - Join Group Chat"
@@ -896,8 +897,8 @@ msgid "Trying to join chat room, please wait..."
 msgstr "Intentando entrar en la sala de charla, por favor espere..."
 
 #: ../ui/group-chat.glade.h:13
-msgid "_Add to Favourites"
-msgstr "_Añadir a favoritos"
+msgid "_Add to Favorites"
+msgstr "_Añadir a Favoritos"
 
 #: ../ui/group-chat.glade.h:14
 msgid "_Favorite:"
@@ -944,7 +945,7 @@ msgid "<b>Personal information</b>"
 msgstr "<b>Información personal</b>"
 
 #: ../ui/main.glade.h:10
-msgid "<b>Prefered Service</b>"
+msgid "<b>Preferred Service</b>"
 msgstr "<b>Servicio preferido</b>"
 
 #: ../ui/main.glade.h:11
@@ -1111,8 +1112,7 @@ msgstr ""
 "Charla->Conectar..."
 
 #: ../ui/main.glade.h:52
-msgid ""
-"If you chose to decide later you will be asked the next time you log on."
+msgid "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 "Si elige decidir más tarde se le preguntará la próxima vez que inicie una "
 "sesión."
@@ -1414,3 +1414,4 @@ msgstr "Mensaje de e_stado"
 #: ../ui/main.glade.h:123
 msgid "_Subscribe"
 msgstr "_Suscribirse"
+
