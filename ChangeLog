@@ -1,3 +1,30 @@
+2005-06-26  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-ui-utils.c: 
+ 	- Removed DINGUS for regex work as it is already defined in
+	gossip-utils.c 
+	* libgossip/gossip-protocol.[ch]: 
+	- Added error handling with gossip_protocol_error() which emits
+	the new "error" signal with a GError. 
+	* libgossip/gossip-session.c:
+	- Added "protocol-error" signal which is propagated by listening
+	to protocol "error" signals.
+	* protocols/jabber/gossip-jabber.c:
+	- Added calls into gossip_protocol_error() where needed so that
+	now we get all errors reflected up the code stack.
+	- Cleaned up the code in places.
+	* src/Makefile.am:
+	* src/gossip-connect-dialog.c: 
+	* ui/connect.glade:
+	- Removed gossip-connect-dialog and all references to it; this has
+	not been in use for some time now. 
+	* src/gossip-app.[ch]: 
+	- Removed the need for GossipAccount to be saved in the GossipApp
+	priv.
+	- Added handler for "protocol-error" signal so we can present
+	dialogs for authentication failures and other connection errors.
+	- Cleaned up the code in places.
+
 2005-06-07  Frank Arnold  <frank@scirocco-5v-turbo.de>
 
 	* ui/group-chat.glade.h:

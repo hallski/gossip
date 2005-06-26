@@ -33,7 +33,6 @@ gossip_SOURCES = 				                        	\
 	gossip-chat-manager.c              gossip-chat-manager.h               	\
 	gossip-chat-view.c                 gossip-chat-view.h                  	\
 	gossip-chat-window.c	           gossip-chat-window.h			\
-	gossip-connect-dialog.c	           gossip-connect-dialog.h		\
 	gossip-contact-groups.c	           gossip-contact-groups.h		\
 	gossip-contact-list.c              gossip-contact-list.h               	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\

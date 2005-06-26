@@ -29,7 +29,7 @@
 
 #include "gossip-session.h"
 
-#define d(x)
+#define d(x) x
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
 
@@ -77,6 +77,9 @@ static void     session_protocol_contact_removed (GossipProtocol    *protocol,
 static gchar *  session_protocol_get_password    (GossipProtocol    *protocol,
 						  GossipAccount     *account,
 						  GossipSession     *session);
+static void     session_protocol_error           (GossipProtocol    *protocol,
+						  GError            *error,
+						  GossipSession     *session);
 static GossipProtocol *
 session_get_protocol                             (GossipSession    *session,
 						  GossipContact    *contact);
@@ -87,6 +90,7 @@ enum {
 	DISCONNECTED,
 	PROTOCOL_CONNECTED,
 	PROTOCOL_DISCONNECTED,
+	PROTOCOL_ERROR,
 	NEW_MESSAGE,
 	CONTACT_ADDED,
 	CONTACT_UPDATED,
@@ -154,6 +158,16 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_NONE, 
 			      1, G_TYPE_POINTER);
 	
+	signals[PROTOCOL_ERROR] = 
+		g_signal_new ("protocol-error",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__POINTER_POINTER,
+			      G_TYPE_NONE, 
+			      2, G_TYPE_POINTER, G_TYPE_POINTER);
+
 	signals[NEW_MESSAGE] = 
 		g_signal_new ("new-message",
 			      G_TYPE_FROM_CLASS (klass),
@@ -298,6 +312,9 @@ session_connect_protocol (GossipSession *session, GossipProtocol *protocol)
 	g_signal_connect (protocol, "get-password",
 			  G_CALLBACK (session_protocol_get_password),
 			  session);
+	g_signal_connect (protocol, "error", 
+			  G_CALLBACK (session_protocol_error),
+			  session);
 }
 
 static void
@@ -418,11 +435,23 @@ session_protocol_get_password (GossipProtocol *protocol,
 {
 	gchar *password;
 
-	d(g_print ("Get password\n"));
+	d(g_print ("Session: Get password\n"));
 
 	g_signal_emit (session, signals[GET_PASSWORD], 0, account, &password);
 	
 	return password;
+}
+
+static void
+session_protocol_error (GossipProtocol *protocol,
+			GError         *error,
+			GossipSession  *session)
+{
+
+	d(g_print ("Session: Error:%d->'%s'\n", 
+		   error->code, error->message));
+
+	g_signal_emit (session, signals[PROTOCOL_ERROR], 0, protocol, error); 
 }
 
 static GossipProtocol *
@@ -447,7 +476,7 @@ void
 gossip_session_connect (GossipSession *session)
 {
 	GossipSessionPriv *priv;
-	GList            *l;
+	GList             *l;
 	GossipAccount     *account;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -890,4 +919,3 @@ gossip_session_async_get_version (GossipSession               *session,
 						  callback, user_data,
 						  error);
 }
-

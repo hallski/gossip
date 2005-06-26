@@ -89,14 +89,13 @@ typedef struct {
 } RenameGroupData;
 
 
-
-static void            gossip_jabber_class_init              (GossipJabberClass            *klass);
-static void            gossip_jabber_init                    (GossipJabber                 *jabber);
-static void            jabber_finalize                       (GObject                      *obj);
+static void            gossip_jabber_class_init            (GossipJabberClass            *klass);
+static void            gossip_jabber_init                  (GossipJabber                 *jabber);
+static void            jabber_finalize                     (GObject                      *obj);
 static void            jabber_setup                        (GossipProtocol               *protocol,
 							    GossipAccount                *account);
-static void            jabber_login                          (GossipProtocol               *protocol);
-static void            jabber_logout                         (GossipProtocol               *protocol);
+static void            jabber_login                        (GossipProtocol               *protocol);
+static void            jabber_logout                       (GossipProtocol               *protocol);
 static gboolean        jabber_logout_contact_foreach       (gpointer                      key,
 							    GossipContact                *contact,
 							    GossipJabber                 *jabber);
@@ -113,114 +112,113 @@ static LmHandlerResult jabber_register_message_handler     (LmMessageHandler    
 							    LmConnection                 *conn,
 							    LmMessage                    *m,
 							    RegisterAccountData          *ra);
-static gboolean        jabber_is_connected                   (GossipProtocol               *protocol);
-static void            jabber_contact_set_subscription      (GossipProtocol               *protocol,
+static gboolean        jabber_is_connected                 (GossipProtocol               *protocol);
+static void            jabber_contact_set_subscription     (GossipProtocol               *protocol,
 							    GossipContact                *contact,
 							    gboolean                      subscribed);
-static void            jabber_send_message                   (GossipProtocol               *protocol,
-							      GossipMessage                *message);
-static void            jabber_set_presence                   (GossipProtocol               *protocol,
-							      GossipPresence               *presence);
-static GossipContact * jabber_find_contact                   (GossipProtocol               *protocol,
-							      const gchar                  *id);
-
-static void            jabber_add_contact                    (GossipProtocol               *protocol,
-							      const gchar                  *id,
-							      const gchar                  *name,
-							      const gchar                  *group,
-							      const gchar                  *message);
-static void            jabber_rename_contact                 (GossipProtocol               *protocol,
-							      GossipContact                *contact,
-							      const gchar                  *new_name);
-static void            jabber_remove_contact                 (GossipProtocol               *protocol,
-							      GossipContact                *contact);
-static void            jabber_update_contact                 (GossipProtocol               *protocol,
- 							      GossipContact                *contact);
-static void            jabber_rename_group                   (GossipProtocol               *protocol,
- 							      const gchar                  *group,
- 							      const gchar                  *new_name);
-static void            jabber_rename_group_foreach_cb        (const gchar                  *jid,
- 							      GossipContact                *contact,
- 							      RenameGroupData              *rg);
-static const GList *   jabber_get_contacts                   (GossipProtocol               *protocol);
-static const gchar *   jabber_get_active_resource            (GossipProtocol               *protocol,
-							      GossipContact                *contact);
-static GList *         jabber_get_groups                     (GossipProtocol               *protocol);
-static void            jabber_get_groups_foreach_cb          (const gchar                  *jid,
- 							      GossipContact                *contact,
- 							      GList                       **list);
-static gboolean        jabber_async_get_vcard                (GossipProtocol               *protocol,
-							      GossipContact                *contact,
-							      GossipAsyncVCardCallback      callback,
-							      gpointer                      user_data,
-							      GError                      **error);
-static gboolean        jabber_async_set_vcard                (GossipProtocol               *protocol,
-							      GossipVCard                  *vcard,
-							      GossipAsyncResultCallback     callback,
-							      gpointer                      user_data,
-							      GError                      **error);
-static gboolean        jabber_async_get_version              (GossipProtocol               *protocol,
-							      GossipContact                *contact,
-							      GossipAsyncVersionCallback    callback,
-							      gpointer                      user_data,
-							      GError                      **error);
-static void            jabber_connection_open_cb             (LmConnection                 *connection,
-							      gboolean                      result,
-							      GossipJabber                 *jabber);
-static void            jabber_connection_auth_cb             (LmConnection                 *connection,
-							      gboolean                      result,
-							      GossipJabber                 *jabber);
-static LmSSLResponse   jabber_ssl_func                       (LmConnection                 *connection,
-							      LmSSLStatus                   status,
-							      GossipJabber                 *jabber);
-static void            jabber_disconnect_func                (LmConnection                 *connection,
-							      LmDisconnectReason            reason,
-							      GossipJabber                 *jabber);
-static LmHandlerResult jabber_message_handler                (LmMessageHandler             *handler,
-							      LmConnection                 *conn,
-							      LmMessage                    *message,
-							      GossipJabber                 *jabber);
-static LmHandlerResult jabber_presence_handler               (LmMessageHandler             *handler,
-							      LmConnection                 *conn,
-							      LmMessage                    *message,
-							      GossipJabber                 *jabber);
-static LmHandlerResult jabber_iq_handler                     (LmMessageHandler             *handler,
-							      LmConnection                 *conn,
-							      LmMessage                    *message,
-							      GossipJabber                 *jabber);
-static GossipPresence *jabber_get_presence                   (LmMessage                    *message);
-static GossipContact * jabber_get_contact_from_jid           (GossipJabber                 *jabber,
-							      const gchar                  *jid,
-							      gboolean                     *new_item);
-static void            jabber_set_proxy                      (LmConnection                 *conn);
-static LmHandlerResult jabber_subscription_message_handler   (LmMessageHandler             *handler,
-							      LmConnection                 *connection,
-							      LmMessage                    *m,
-							      GossipJabber                 *jabber);
-static void            jabber_chatroom_init                  (GossipChatroomProviderIface  *iface);
-static void            jabber_chatroom_join                  (GossipChatroomProvider       *provider,
-							      const gchar                  *room,
-							      const gchar                  *server,
-							      const gchar                  *nick,
-							      const gchar                  *password,
-							      GossipJoinChatroomCb          callback,
-							      gpointer                      user_data);
-static void            jabber_chatroom_send                  (GossipChatroomProvider       *provider,
-							      GossipChatroomId              id,
-							      const gchar                  *message);
-static void            jabber_chatroom_set_title             (GossipChatroomProvider       *provider,
-							      GossipChatroomId              id,
-							      const gchar                  *new_title);
-static void            jabber_chatroom_change_nick           (GossipChatroomProvider       *provider,
-							      GossipChatroomId              id,
-							      const gchar                  *new_nick);
-static void            jabber_chatroom_leave                 (GossipChatroomProvider       *provider,
-							      GossipChatroomId              id);
-static const gchar *   jabber_chatroom_get_room_name         (GossipChatroomProvider       *provider,
-							      GossipChatroomId              id);
-static void            jabber_signal_logged_out              (GossipJabber                 *jabber);
-static void            jabber_version_request                (GossipJabber                 *jabber,
-							      LmMessage                    *m);
+static void            jabber_send_message                 (GossipProtocol               *protocol,
+							    GossipMessage                *message);
+static void            jabber_set_presence                 (GossipProtocol               *protocol,
+							    GossipPresence               *presence);
+static GossipContact * jabber_find_contact                 (GossipProtocol               *protocol,
+							    const gchar                  *id);
+static void            jabber_add_contact                  (GossipProtocol               *protocol,
+							    const gchar                  *id,
+							    const gchar                  *name,
+							    const gchar                  *group,
+							    const gchar                  *message);
+static void            jabber_rename_contact               (GossipProtocol               *protocol,
+							    GossipContact                *contact,
+							    const gchar                  *new_name);
+static void            jabber_remove_contact               (GossipProtocol               *protocol,
+							    GossipContact                *contact);
+static void            jabber_update_contact               (GossipProtocol               *protocol,
+							    GossipContact                *contact);
+static void            jabber_rename_group                 (GossipProtocol               *protocol,
+							    const gchar                  *group,
+							    const gchar                  *new_name);
+static void            jabber_rename_group_foreach_cb      (const gchar                  *jid,
+							    GossipContact                *contact,
+							    RenameGroupData              *rg);
+static const GList *   jabber_get_contacts                 (GossipProtocol               *protocol);
+static const gchar *   jabber_get_active_resource          (GossipProtocol               *protocol,
+							    GossipContact                *contact);
+static GList *         jabber_get_groups                   (GossipProtocol               *protocol);
+static void            jabber_get_groups_foreach_cb        (const gchar                  *jid,
+							    GossipContact                *contact,
+							    GList                       **list);
+static gboolean        jabber_async_get_vcard              (GossipProtocol               *protocol,
+							    GossipContact                *contact,
+							    GossipAsyncVCardCallback      callback,
+							    gpointer                      user_data,
+							    GError                      **error);
+static gboolean        jabber_async_set_vcard              (GossipProtocol               *protocol,
+							    GossipVCard                  *vcard,
+							    GossipAsyncResultCallback     callback,
+							    gpointer                      user_data,
+							    GError                      **error);
+static gboolean        jabber_async_get_version            (GossipProtocol               *protocol,
+							    GossipContact                *contact,
+							    GossipAsyncVersionCallback    callback,
+							    gpointer                      user_data,
+							    GError                      **error);
+static void            jabber_connection_open_cb           (LmConnection                 *connection,
+							    gboolean                      result,
+							    GossipJabber                 *jabber);
+static void            jabber_connection_auth_cb           (LmConnection                 *connection,
+							    gboolean                      result,
+							    GossipJabber                 *jabber);
+static LmSSLResponse   jabber_ssl_func                     (LmConnection                 *connection,
+							    LmSSLStatus                   status,
+							    GossipJabber                 *jabber);
+static void            jabber_disconnect_func              (LmConnection                 *connection,
+							    LmDisconnectReason            reason,
+							    GossipJabber                 *jabber);
+static LmHandlerResult jabber_message_handler              (LmMessageHandler             *handler,
+							    LmConnection                 *conn,
+							    LmMessage                    *message,
+							    GossipJabber                 *jabber);
+static LmHandlerResult jabber_presence_handler             (LmMessageHandler             *handler,
+							    LmConnection                 *conn,
+							    LmMessage                    *message,
+							    GossipJabber                 *jabber);
+static LmHandlerResult jabber_iq_handler                   (LmMessageHandler             *handler,
+							    LmConnection                 *conn,
+							    LmMessage                    *message,
+							    GossipJabber                 *jabber);
+static GossipPresence *jabber_get_presence                 (LmMessage                    *message);
+static GossipContact * jabber_get_contact_from_jid         (GossipJabber                 *jabber,
+							    const gchar                  *jid,
+							    gboolean                     *new_item);
+static void            jabber_set_proxy                    (LmConnection                 *conn);
+static LmHandlerResult jabber_subscription_message_handler (LmMessageHandler             *handler,
+							    LmConnection                 *connection,
+							    LmMessage                    *m,
+							    GossipJabber                 *jabber);
+static void            jabber_chatroom_init                (GossipChatroomProviderIface  *iface);
+static void            jabber_chatroom_join                (GossipChatroomProvider       *provider,
+							    const gchar                  *room,
+							    const gchar                  *server,
+							    const gchar                  *nick,
+							    const gchar                  *password,
+							    GossipJoinChatroomCb          callback,
+							    gpointer                      user_data);
+static void            jabber_chatroom_send                (GossipChatroomProvider       *provider,
+							    GossipChatroomId              id,
+							    const gchar                  *message);
+static void            jabber_chatroom_set_title           (GossipChatroomProvider       *provider,
+							    GossipChatroomId              id,
+							    const gchar                  *new_title);
+static void            jabber_chatroom_change_nick         (GossipChatroomProvider       *provider,
+							    GossipChatroomId              id,
+							    const gchar                  *new_nick);
+static void            jabber_chatroom_leave               (GossipChatroomProvider       *provider,
+							    GossipChatroomId              id);
+static const gchar *   jabber_chatroom_get_room_name       (GossipChatroomProvider       *provider,
+							    GossipChatroomId              id);
+static void            jabber_signal_logged_out            (GossipJabber                 *jabber);
+static void            jabber_version_request              (GossipJabber                 *jabber,
+							    LmMessage                    *m);
 
 extern GConfClient *gconf_client;
 
@@ -369,15 +367,15 @@ jabber_login (GossipProtocol *protocol)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
-	gboolean          result;
 	GError           *error = NULL;
+	gboolean          result;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
 	
 	jabber = GOSSIP_JABBER (protocol);
 	priv   = jabber->priv;
 
-	d(g_print ("Logging in Jabber\n"));
+	d(g_print ("Protocol: Logging in Jabber\n"));
 	
 	if (priv->account->use_ssl) {
 		LmSSL *ssl = lm_ssl_new (NULL,
@@ -398,8 +396,11 @@ jabber_login (GossipProtocol *protocol)
 		lm_proxy_unref (proxy);
 	}
 
-	if (priv->connection == NULL) {
-		d(g_print ("Foo!!!\n"));
+	if (!priv->connection) {
+		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
+				       GossipProtocolErrorNoConnection,
+				       _("Could not open connection"));
+		return;
 	}
 
 	priv->presence = gossip_presence_new ();
@@ -411,11 +412,19 @@ jabber_login (GossipProtocol *protocol)
 				     (LmResultFunction) jabber_connection_open_cb,
 				     jabber, NULL, &error);
 
-	if (result == FALSE && error) {
-		/* Handle error */
-		g_error_free (error);
+	if (result && !error) {
+		return;
 	}
 
+	if (error->code == 1 && 
+	    strcmp (error->message, "getaddrinfo() failed") == 0) {
+		/* host lookup failed */
+		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
+				       GossipProtocolErrorNoSuchHost,
+				       _("Could not find the server you wanted to use"));
+	}
+
+	g_error_free (error);
 }
 
 static void
@@ -470,7 +479,7 @@ jabber_register (GossipProtocol               *protocol,
 	ra->callback = callback;
 	ra->user_data = user_data;
 
-	d(g_print ("Registering with Jabber server...\n"));
+	d(g_print ("Protocol: Registering with Jabber server...\n"));
 
 	if (account->use_ssl) {
 		LmSSL *ssl = lm_ssl_new (NULL,
@@ -494,13 +503,13 @@ jabber_register (GossipProtocol               *protocol,
 	if (ra->connection == NULL) {
 		if (error) {
 			*error = g_error_new_literal (g_quark_from_string ("gossip-jabber"),
-						      0, "Connection could not be created");
+						      0, _("Connection could not be created"));
 		}
 
 		gossip_account_unref (account);
 		g_free (ra);
 
-		d(g_print ("Connection could not be created\n"));
+		d(g_print ("Protocol: Connection could not be created\n"));
 		return FALSE;
 	}
 
@@ -512,7 +521,7 @@ jabber_register (GossipProtocol               *protocol,
 		gossip_account_unref (ra->account);
 		g_free (ra);
 
-		d(g_print ("Connection could not be opened\n"));
+		d(g_print ("Protocol: Connection could not be opened\n"));
 		return FALSE;
 	}
 
@@ -531,7 +540,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 	
 	if (result == FALSE) {
 		str = _("Connection could not be opened");
-		d(g_print ("%s\n", str));
+		d(g_print ("Protocol: %s\n", str));
 
 		if (ra->callback) {
 			(ra->callback) (GOSSIP_ASYNC_ERROR_REGISTRATION, 
@@ -543,7 +552,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 
 		return;
 	} else {
-		d(g_print ("Connection open!\n"));
+		d(g_print ("Protocol: Connection open!\n"));
 	}
 
 	ra->message_handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_register_message_handler,
@@ -567,7 +576,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 
 	if (!ok) {
 		str = _("Couldn't send message!");
-		d(g_print ("%s\n", str));
+		d(g_print ("Protocol: %s\n", str));
 
 		if (ra->callback) {
 			(ra->callback) (GOSSIP_ASYNC_ERROR_REGISTRATION, 
@@ -577,7 +586,7 @@ jabber_register_connection_open_cb (LmConnection        *connection,
 		gossip_account_unref (ra->account);
 		g_free (ra);
 	} else {
-		d(g_print ("Sent registration details\n"));
+		d(g_print ("Protocol: Sent registration details\n"));
 	}
 }
 
@@ -626,10 +635,10 @@ jabber_register_message_handler (LmMessageHandler     *handler,
 		error_code = lm_message_node_get_attribute (node, "code");
 		error_reason = jabber_register_error_to_str (atoi (error_code));
 
-		d(g_print ("Registration failed with error:%s->'%s'\n",
+		d(g_print ("Protocol: Registration failed with error:%s->'%s'\n",
 			   error_code, error_reason));
 	} else {
-		d(g_print ("Registration success\n"));
+		d(g_print ("Protocol: Registration success\n"));
 	}
 
 	if (ra->callback) {
@@ -711,7 +720,7 @@ jabber_send_message (GossipProtocol *protocol, GossipMessage *message)
 		jid_str = (gchar *) id;
 	}
 
-	d(g_print ("Jabber::SendMessage, to: '%s'\n", jid_str));
+	d(g_print ("Protocol: Sending message to: '%s'\n", jid_str));
 	
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -1167,13 +1176,14 @@ jabber_connection_open_cb (LmConnection *connection,
 	
 	priv = jabber->priv;
 
-	d(g_print ("Connection open!\n"));
-
 	if (result == FALSE) {
-			       
-		/* FIXME: Show this as an error */
-		g_print ("Couldn't connect, handle this better!\n");
+		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
+				       GossipProtocolErrorNoConnection,
+				       _("Could not open connection"));
+		return;
 	}
+
+	d(g_print ("Protocol: Connection open!\n"));
 
 	account = priv->account;
 	if (!account->password || !account->password[0]) {
@@ -1205,12 +1215,13 @@ jabber_connection_auth_cb (LmConnection *connection,
 	priv = jabber->priv;
 	
 	if (result == FALSE) {
-		/* FIXME: Show this with an error */
-		g_print ("AUTH FAILED, SHOW DIALOG\n");
+		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
+				       GossipProtocolErrorAuthFailed,
+				       _("Authentication failed"));
 		return;
 	}
 
-	d(g_print ("LOGGED IN!\n"));
+	d(g_print ("Protocol: Connection logged in!\n"));
 
 	/* Request roster */
 	m = lm_message_new_with_sub_type (NULL,
@@ -1265,7 +1276,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	
 	priv = jabber->priv;
 	
-	d(g_print ("GossipJabber: New message from: %s\n", 
+	d(g_print ("Protocol: New message from: %s\n", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
 	switch (lm_message_get_sub_type (m)) {
@@ -1329,7 +1340,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 	priv = jabber->priv;
 
 	from = lm_message_node_get_attribute (m->node, "from");
-        d(g_print ("GossipJabber: New presence from: %s\n", 
+        d(g_print ("Protocol: New presence from: %s\n", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
 	if (gossip_jabber_chatrooms_get_jid_is_chatroom (priv->chatrooms,
@@ -1571,13 +1582,13 @@ jabber_get_contact_from_jid (GossipJabber *jabber,
 	priv = jabber->priv;
 
 	jid = gossip_jid_new (jid_str);
-	d(g_print ("Get contact: %s\n", gossip_jid_get_without_resource (jid)));
+	d(g_print ("Protocol: Get contact: %s\n", gossip_jid_get_without_resource (jid)));
 
 	contact = g_hash_table_lookup (priv->contacts, 
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
-		d(g_print ("New contact\n"));
+		d(g_print ("Protocol: New contact\n"));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
 		gossip_contact_set_id (contact, 
 				       gossip_jid_get_without_resource (jid));
@@ -1798,7 +1809,7 @@ jabber_version_request (GossipJabber *jabber, LmMessage *m)
 	from = lm_message_node_get_attribute (m->node, "from");
 	id = lm_message_node_get_attribute (m->node, "id");
 
-	d(g_print ("Version request from Richard\n"));
+	d(g_print ("Protocol: Version request from:'%s'\n", from));
 
 	r = lm_message_new_with_sub_type (from,
 					  LM_MESSAGE_TYPE_IQ,
@@ -1909,7 +1920,7 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	lm_message_handler_invalidate (handler);
 	
 	/* send subscribed to them */
-	d(g_print ("sending subscribed message to new service:'%s'\n", to));
+	d(g_print ("Protocol: Sending subscribed message to new service:'%s'\n", to));
 	new_message = lm_message_new_with_sub_type (to,
 						    LM_MESSAGE_TYPE_PRESENCE,
 						    LM_MESSAGE_SUB_TYPE_SUBSCRIBED);
