@@ -139,7 +139,9 @@ static ShowActiveData *contact_list_contact_active_new          (GossipContactLi
 								 gboolean                remove);
 static void            contact_list_contact_active_free         (ShowActiveData         *data);
 static gboolean        contact_list_contact_active_cb           (ShowActiveData         *data);
-
+static gchar *         contact_list_get_parent_group            (GtkTreeModel           *model,
+								 GtkTreePath            *path,
+								 gboolean               *path_is_group);
 static void            contact_list_get_group                   (GossipContactList      *list,
 								 const gchar            *name,
 								 GtkTreeIter            *iter_to_set,
@@ -243,6 +245,7 @@ static void            contact_list_event_removed_cb            (GossipEventMana
 								 GossipEvent            *event,
 								 GossipContactList      *list);
 static void            contact_list_flash_free_data             (FlashData              *data);
+
 
 
 
@@ -835,14 +838,51 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	return FALSE;
 }
 
-#if 0
-static gboolean
-contact_list_group_expanded_cb (gchar *name) 
+static gchar *
+contact_list_get_parent_group (GtkTreeModel *model,
+			       GtkTreePath  *path,
+			       gboolean     *path_is_group)
 {
+	GtkTreeIter  parent_iter, iter;
+	gchar       *name;
+	gboolean     is_group;
 
-	return FALSE;
+	g_return_val_if_fail (model != NULL, NULL);
+	g_return_val_if_fail (path != NULL, NULL);
+	g_return_val_if_fail (path_is_group != NULL, NULL);
+
+	if (!gtk_tree_model_get_iter (model, &iter, path)) {
+		return NULL;
+	}
+	
+	gtk_tree_model_get (model, &iter,
+			    MODEL_COL_IS_GROUP, &is_group,
+			    -1);
+
+	if (!is_group) {
+		if (!gtk_tree_model_iter_parent (model, &parent_iter, &iter)) {
+			return NULL;
+		}
+		
+		iter = parent_iter;
+			
+		gtk_tree_model_get (model, &iter,
+				    MODEL_COL_IS_GROUP, &is_group,
+				    -1);
+		
+		if (!is_group) {
+			return NULL;
+		}
+
+		*path_is_group = TRUE;
+	}
+		
+	gtk_tree_model_get (model, &iter,
+			    MODEL_COL_NAME, &name,
+			    -1);
+
+	return name;
 }
-#endif
 
 static void
 contact_list_get_group (GossipContactList *list, 
@@ -1114,7 +1154,7 @@ contact_list_setup_view (GossipContactList *list)
 			     GDK_BUTTON1_MASK, 
 			     drag_types_source, 
 			     G_N_ELEMENTS (drag_types_source), 
-			     GDK_ACTION_COPY);
+			     GDK_ACTION_MOVE | GDK_ACTION_COPY);
 
 	gtk_drag_dest_set (GTK_WIDGET (list), 
 			   GTK_DEST_DEFAULT_ALL, 
@@ -1126,10 +1166,14 @@ contact_list_setup_view (GossipContactList *list)
 			  "drag-data-received",
 			  G_CALLBACK (contact_list_drag_data_received), 
 			  NULL);
-	g_signal_connect (GTK_WIDGET (list), 
-			  "drag-motion",
-			  G_CALLBACK (contact_list_drag_motion),
-			  NULL);
+
+	/* FIXME: noticed but when you drag the row over the treeview
+	   fast, it seems to stop redrawing itself, if we don't
+	   connect this signal, all is fine. */
+ 	g_signal_connect (GTK_WIDGET (list),  
+ 			  "drag-motion", 
+ 			  G_CALLBACK (contact_list_drag_motion), 
+ 			  NULL); 
 
 	g_signal_connect (GTK_WIDGET (list), 
 			  "drag-begin",
@@ -1155,17 +1199,23 @@ contact_list_drag_data_received (GtkWidget         *widget,
 				 guint              time,
 				 gpointer           user_data)
 {
+	GossipContactListPriv   *priv;
 	GtkTreeModel            *model;
 	GtkTreePath             *path;
-	GtkTreeIter              iter;
 	GtkTreeViewDropPosition  position;
 	GossipContact           *contact;
 	GList                   *groups;
 	const gchar             *id;
+	gchar                   *old_group;
 	gboolean                 is_row;
+	gboolean                 drag_success = TRUE;
+	gboolean                 drag_del = FALSE;
 
 	id = (const gchar*) selection->data;
-	g_print ("Received drag & drop contact from roster with id:'%s'\n", id);
+	g_print ("Received %s%s drag & drop contact from roster with id:'%s'\n", 
+		 context->action == GDK_ACTION_MOVE ? "move" : "", 
+		 context->action == GDK_ACTION_COPY ? "copy" : "", 
+		 id);
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	if (!contact) {
@@ -1194,61 +1244,67 @@ contact_list_drag_data_received (GtkWidget         *widget,
 
 		gossip_contact_set_groups (contact, NULL);
 	} else {
-		GtkTreeIter  parent_iter;
 		GList       *l, *new_groups;
 		gchar       *name;
 		gboolean     is_group;
 
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
+		name = contact_list_get_parent_group (model, path, &is_group); 
 		
-		if (!gtk_tree_model_get_iter (model, &iter, path)) {
-			return;
-		}
-		
-		gtk_tree_model_get (model, &iter,
-				    MODEL_COL_IS_GROUP, &is_group,
-				    -1);
-		
-		if (!is_group) {
-			if (!gtk_tree_model_iter_parent (model, &parent_iter, &iter)) {
-				return;
-			}
-			
-			iter = parent_iter;
-			
-			gtk_tree_model_get (model, &iter,
-					    MODEL_COL_IS_GROUP, &is_group,
-					    -1);
-			
-			if (!is_group) {
-				return;
-			}
-		}
-		
-		gtk_tree_model_get (model, &iter,
-				    MODEL_COL_NAME, &name,
-				    -1);
-
-		if (g_list_find_custom (groups, name, (GCompareFunc)strcmp)) {
+		if (groups && name && 
+		    g_list_find_custom (groups, name, (GCompareFunc)strcmp)) {
 			g_free (name);
 			return;
 		}
 
-		for (l = groups, new_groups = NULL; l; l = l->next) {
-			gchar *str;
+		/* get source group information */
+		priv = GOSSIP_CONTACT_LIST (widget)->priv;
+		if (!priv->drag_row) {
+			return;
+		}
 
+		path = gtk_tree_row_reference_get_path (priv->drag_row);
+		if (!path) {
+			return;
+		}
+
+		old_group = contact_list_get_parent_group (model, path, &is_group); 
+		gtk_tree_path_free (path);
+	
+		if (!name && old_group && GDK_ACTION_MOVE) {
+			drag_success = FALSE;
+		}
+
+		if (context->action == GDK_ACTION_MOVE) {
+			drag_del = TRUE;
+		}
+
+		/* create new groups GList */
+		for (l = groups, new_groups = NULL; l && drag_success; l = l->next) {
+			gchar *str;
+			
 			str = l->data;
+			if (context->action == GDK_ACTION_MOVE && 
+			    old_group != NULL && 
+			    strcmp (str, old_group) == 0) {
+				continue;
+			}
+			
 			new_groups = g_list_append (new_groups, g_strdup (str));
 		}
 		
-		new_groups = g_list_append (new_groups, name);
-		gossip_contact_set_groups (contact, new_groups);
+		if (drag_success) {
+			new_groups = g_list_append (new_groups, name);
+			gossip_contact_set_groups (contact, new_groups);
+		}
 	}
 
-	gossip_session_update_contact (gossip_app_get_session (),
-				       contact);
+	if (drag_success) {
+		gossip_session_update_contact (gossip_app_get_session (),
+					       contact);
+	}
 
-	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
+	gtk_drag_finish (context, drag_success, drag_del, GDK_CURRENT_TIME);
 }
 
 static gboolean 

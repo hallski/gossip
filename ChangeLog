@@ -1,5 +1,10 @@
 2005-06-26  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-contact-list.c (contact_list_drag_data_received): 
+	- Respect the MOVE and COPY actions (was doing COPY every time before).
+
+2005-06-26  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-ui-utils.c: 
  	- Removed DINGUS for regex work as it is already defined in
 	gossip-utils.c 
