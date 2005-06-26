@@ -25,14 +25,16 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus-glib.h>
 
-#define GOSSIP_SERVICE "org.imendio.gossip"
-#define GOSSIP_INTERFACE "org.imendio.Gossip"
-#define GOSSIP_OBJECT "/org/imendio/Gossip"
+#include <libgossip/gossip-session.h>
 
-#define GOSSIP_SET_PRESENCE "set_Presence"
-#define GOSSIP_FORCE_NON_AWAY "ForceNonAway"
+#define GOSSIP_DBUS_SERVICE        "org.imendio.gossip"
+#define GOSSIP_DBUS_INTERFACE      "org.imendio.Gossip"
+#define GOSSIP_DBUS_OBJECT         "/org/imendio/Gossip"
 
-gboolean gossip_dbus_init (void);
+#define GOSSIP_DBUS_SET_PRESENCE   "set_Presence"
+#define GOSSIP_DBUS_FORCE_NON_AWAY "ForceNonAway"
+
+gboolean gossip_dbus_init (GossipSession *session);
 
 
 #endif /* __DBUS_H__ */

@@ -20,30 +20,56 @@
 
 #include <config.h>
 #include <string.h>
+
 #include "gossip-app.h"
 #include "gossip-dbus.h"
 
-static void              unregistered_func (DBusConnection *connection,
-					    gpointer        user_data);
-static DBusHandlerResult message_func      (DBusConnection *connection,
-					    DBusMessage    *message,
-					    gpointer        user_data);
+
+static void              dbus_unregistered_func     (DBusConnection *connection,
+						     gpointer        user_data);
+static void              dbus_send_ok_reply         (DBusConnection *bus,
+						     DBusMessage    *message);
+static DBusHandlerResult dbus_handle_set_presence   (DBusConnection *bus,
+						     DBusMessage    *message);
+static DBusHandlerResult dbus_handle_force_non_away (DBusConnection *bus,
+						     DBusMessage    *message);
+static DBusHandlerResult dbus_message_func          (DBusConnection *connection,
+						     DBusMessage    *message,
+						     gpointer        user_data);
 
 
-static const char     *object_path = "/org/imendio/Gossip";
+static GossipSession *saved_session = NULL;
 
 static DBusObjectPathVTable vtable = {
-	unregistered_func,
-	message_func,
+	dbus_unregistered_func,
+	dbus_message_func,
 	NULL,
 };
 
 
 gboolean
-gossip_dbus_init (void)
+gossip_dbus_init (GossipSession *session)
 {
-	DBusConnection *bus;
-	DBusError       error;
+	DBusConnection  *bus;
+	DBusError        error;
+
+	static gboolean  inited = FALSE;
+
+	g_return_val_if_fail (session != NULL, FALSE);
+
+	/* FIXME: better way to do this? */
+	if (saved_session) {
+		g_object_unref (saved_session);
+		saved_session = NULL;
+	}
+	
+	saved_session = g_object_ref (session);
+
+	if (inited) {
+		return TRUE;
+	}
+
+	inited = TRUE;
 
 	bus = dbus_bus_get(DBUS_BUS_SESSION, NULL);
 	if (!bus) {
@@ -56,9 +82,9 @@ gossip_dbus_init (void)
 		g_warning ("Failed to setup dbus connection");
 		dbus_error_free (&error);
 		return FALSE;
-  }
+	}
 
-	dbus_bus_acquire_service (bus, GOSSIP_SERVICE, 0, &error);
+	dbus_bus_request_name (bus, GOSSIP_DBUS_SERVICE, 0, &error);
 	if (dbus_error_is_set (&error)) {
 		g_warning ("Failed to acquire gossip service.");
 		dbus_error_free (&error);
@@ -66,7 +92,7 @@ gossip_dbus_init (void)
 	}
 	
 	if (!dbus_connection_register_object_path (bus,
-						   object_path,
+						   GOSSIP_DBUS_OBJECT,
 						   &vtable,
 						   NULL)) {
 		g_warning ("Failed to register object path.");
@@ -77,14 +103,14 @@ gossip_dbus_init (void)
 }
 
 static void
-unregistered_func (DBusConnection *connection,
-		   gpointer        user_data)
+dbus_unregistered_func (DBusConnection *connection,
+			gpointer        user_data)
 {
 }
 
 static void
-send_ok_reply (DBusConnection *bus,
-	       DBusMessage    *message)
+dbus_send_ok_reply (DBusConnection *bus,
+		    DBusMessage    *message)
 {
 	DBusMessage *reply;
 	
@@ -95,62 +121,60 @@ send_ok_reply (DBusConnection *bus,
 }
 
 static DBusHandlerResult
-handle_set_presence (DBusConnection *bus,
-		     DBusMessage    *message,
-		     GossipApp      *app)
+dbus_handle_set_presence (DBusConnection *bus,
+			  DBusMessage    *message)
 {
 	DBusMessageIter  iter;
+	GossipPresence  *presence;
 	gint             show;
 	gchar           *status = NULL;
 	
 	dbus_message_iter_init (message, &iter);
 
-	show = dbus_message_iter_get_uint32 (&iter);
+	dbus_message_iter_get_basic (&iter, &show);
 	if (dbus_message_iter_next (&iter)) {
-		status = dbus_message_iter_get_string (&iter);
+		dbus_message_iter_get_basic (&iter, &status);
 	}
-	
-	gossip_app_set_presence (show, status);
+
+	presence = gossip_presence_new_full (show, status);
+	gossip_session_set_presence (saved_session, presence);
+	g_object_unref (presence);
 
 	if (status) {
 		dbus_free (status);
 	}
 	
-	send_ok_reply (bus, message);
+	dbus_send_ok_reply (bus, message);
 
 	return DBUS_HANDLER_RESULT_HANDLED;
 }
 
 static DBusHandlerResult
-handle_force_non_away (DBusConnection *bus,
-		       DBusMessage    *message,
-		       GossipApp      *app)
-{
+dbus_handle_force_non_away (DBusConnection *bus,
+			    DBusMessage    *message)
+{	
 	gossip_app_force_non_away ();
 	
-	send_ok_reply (bus, message);
+	dbus_send_ok_reply (bus, message);
 	
 	return DBUS_HANDLER_RESULT_HANDLED;
 }
 
 static DBusHandlerResult
-message_func (DBusConnection *connection,
-	      DBusMessage    *message,
-	      gpointer        user_data)
+dbus_message_func (DBusConnection *connection,
+		   DBusMessage    *message,
+		   gpointer        user_data)
 {
-	GossipApp *app;
-	
-	app = gossip_app_get ();
-	
+
 	if (dbus_message_is_method_call (message,
-					 GOSSIP_INTERFACE,
-					 GOSSIP_SET_PRESENCE)) {
-		return handle_set_presence (connection, message, app);
+					 GOSSIP_DBUS_INTERFACE,
+					 GOSSIP_DBUS_SET_PRESENCE)) {
+		return dbus_handle_set_presence (connection, message);
 	}
 	else if (dbus_message_is_method_call (message,
-					      GOSSIP_INTERFACE,
-					      GOSSIP_FORCE_NON_AWAY)) {
-		return handle_force_non_away (connection, message, app);
+					      GOSSIP_DBUS_INTERFACE,
+					      GOSSIP_DBUS_FORCE_NON_AWAY)) {
+		return dbus_handle_force_non_away (connection, message);
 	}
 
 	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;

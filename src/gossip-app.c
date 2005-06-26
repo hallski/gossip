@@ -335,10 +335,6 @@ gossip_app_init (GossipApp *singleton_app)
 	gint            x, y;
 	gboolean        hidden;
 
-#ifdef HAVE_DBUS
-	gossip_dbus_init ();
-#endif
-
 	app = singleton_app;
 	
         priv = g_new0 (GossipAppPriv, 1);

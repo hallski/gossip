@@ -243,7 +243,7 @@ gossip_session_init (GossipSession *session)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
-	
+
 	priv = GET_PRIV (session);
 	
 	priv->protocols = NULL;
@@ -256,6 +256,10 @@ gossip_session_init (GossipSession *session)
 	session_connect_protocol (session, protocol);
 	
 	priv->protocols = g_list_prepend (priv->protocols, protocol);
+
+#ifdef HAVE_DBUS
+	gossip_dbus_init (session);
+#endif
 }
 
 static void

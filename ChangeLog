@@ -1,5 +1,19 @@
 2005-06-26  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-app.c:
+	* libgossip/gossip-session.c:
+	- Moved dbus initiation to session creation.
+	* configure.ac:
+	* src/gossip-dbus.c: 
+	- Require dbus 0.34 when enabled.
+	- Cleaned the code up in places and make sure it compiles with
+	todays code since it didn't due to code reorgs. 
+	- Fix build issues with the latest dbus API (based on a patch from
+	Julien Puydt).
+	- Fixes bug #303187.
+	
+2005-06-26  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-contact-list.c (contact_list_drag_data_received): 
 	- Respect the MOVE and COPY actions (was doing COPY every time before).
 

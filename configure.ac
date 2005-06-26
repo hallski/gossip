@@ -33,7 +33,7 @@ AC_ARG_ENABLE(dbus,
               enable_dbus=no)
 
 if test "x$enable_dbus" != "xno"; then
-   dbus_pkgconfig_tmp="dbus-1 >= 0.22 dbus-glib-1"
+   dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
    PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
    if test x$have_dbus = xyes; then
       AC_DEFINE(HAVE_DBUS, 1, d-bus support)
