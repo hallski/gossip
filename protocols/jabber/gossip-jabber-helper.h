@@ -52,5 +52,9 @@ gossip_jabber_helper_presence_state_from_str        (const gchar    *str);
 gossip_time_t
 gossip_jabber_helper_get_timestamp_from_lm_message  (LmMessage *m);
 
+const gchar *
+gossip_jabber_helper_get_conference_from_lm_message (LmMessage *m);
+
+
 #endif /* __GOSSIP_JABBER_HELPER_H__ */
 

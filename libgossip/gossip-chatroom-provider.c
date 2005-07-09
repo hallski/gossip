@@ -49,14 +49,14 @@ gossip_chatroom_provider_get_type (void)
 	if (!type) {
 		static const GTypeInfo info =
 		{
-			sizeof (GossipChatroomProviderIface),/* class_size */
-			chatroom_provider_base_init,        /* base_init */
-			NULL,                           /* base_finalize */
+			sizeof (GossipChatroomProviderIface),
+			chatroom_provider_base_init,       
+			NULL,                           
 			NULL,
-			NULL,                           /* class_finalize */
-			NULL,                           /* class_data */
+			NULL,                          
+			NULL,                          
 			0,
-			0,                              /* n_preallocs */
+			0,                              
 			NULL
 		};
 
@@ -150,12 +150,12 @@ chatroom_provider_base_init (gpointer g_class)
 
 void
 gossip_chatroom_provider_join (GossipChatroomProvider *provider,
-				const gchar            *room,
-				const gchar            *server,
-				const gchar            *nick,
-				const gchar            *password,
-				GossipJoinChatroomCb    callback,
-				gpointer                user_data)
+			       const gchar            *room,
+			       const gchar            *server,
+			       const gchar            *nick,
+			       const gchar            *password,
+			       GossipJoinChatroomCb    callback,
+			       gpointer                user_data)
 {
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (room != NULL);
@@ -247,4 +247,30 @@ gossip_chatroom_provider_get_room_name (GossipChatroomProvider *provider,
 	return NULL;
 }
 
+void
+gossip_chatroom_provider_invite (GossipChatroomProvider *provider,
+				 GossipChatroomId        id,
+				 const gchar            *contact_id)
+{
+	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
+	g_return_if_fail (id > 0);
+	g_return_if_fail (contact_id != NULL);
 
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite) {
+		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite (provider,
+								       id,
+								       contact_id);
+	}
+}
+
+GList *
+gossip_chatroom_provider_get_rooms (GossipChatroomProvider *provider)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
+
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_rooms) {
+		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->get_rooms (provider);
+	}
+
+	return NULL;
+}

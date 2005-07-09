@@ -380,6 +380,7 @@ private_chat_send (GossipPrivateChat *chat,
 
         gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
                                               -1,
+					      NULL,
 					      nick,
                                               nick,
                                               msg);
@@ -1102,6 +1103,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	/* FIXME (session): Composing event */
 	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
 					      gossip_message_get_timestamp (m),
+					      gossip_message_get_invite (m),
 					      NULL,
 					      gossip_contact_get_name (sender),
 					      gossip_message_get_body (m));

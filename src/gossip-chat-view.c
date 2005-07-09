@@ -30,8 +30,11 @@
 
 #include <libgossip/gossip-time.h>
 #include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-chatroom-provider.h>
 
 #include "gossip-chat-view.h"
+#include "gossip-app.h"
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes */
 #define TIMESTAMP_INTERVAL 300
@@ -46,6 +49,7 @@ struct _GossipChatViewPriv {
 	GTimeVal       last_timestamp;
 	GDate         *last_datestamp;
 };
+
 
 typedef enum {
 	GOSSIP_SMILEY_NORMAL,      /*  :)   */
@@ -63,11 +67,13 @@ typedef enum {
 	NUM_SMILEYS
 } GossipSmiley;
 
+
 typedef struct {
 	GossipSmiley  smiley;
 	gchar        *pattern;
 	gint          index;
 } GossipSmileyPattern;
+
 
 static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_NORMAL,     ":)",  0 },
@@ -119,54 +125,60 @@ static GossipSmileyPattern smileys[] = {
 	
 };
 
+
 static gint num_smileys = G_N_ELEMENTS (smileys);
 
-static void       gossip_chat_view_class_init (GossipChatViewClass *klass);
-static void       gossip_chat_view_init       (GossipChatView      *view);
-static void       chat_view_finalize        (GObject             *object);
-static void       chat_view_size_allocate   (GtkWidget           *widget,
-					     GtkAllocation       *alloc);
-static void       chat_view_setup_tags      (GossipChatView      *view);
-static void       chat_view_populate_popup  (GossipChatView      *view,
-					     GtkMenu             *menu,
-					     gpointer             user_data); 
-static void       chat_view_buffer_changed_cb          (GtkTextBuffer       *buffer,
-							GossipChatView      *view);
-static gboolean   chat_view_event_cb        (GossipChatView      *view,
-					     GdkEventMotion      *event,
-					     GtkTextTag          *tag);
-static gboolean   chat_view_url_event_cb    (GtkTextTag          *tag,
-					     GObject             *object,
-					     GdkEvent            *event,
-					     GtkTextIter         *iter,
-					     GtkTextBuffer       *buffer);
-
-static void       chat_view_open_address    (const gchar         *url);
-
-
-static void       chat_view_open_address_cb (GtkMenuItem         *menuitem,
-					     const gchar         *url);
-
-static void       chat_view_copy_address_cb (GtkMenuItem         *menuitem,
-					     const gchar         *url);
-static void       chat_view_realize_cb      (GossipChatView      *widget,
-					     gpointer             data);
-static void       chat_view_clear_view_cb   (GtkMenuItem *menuitem,
-					     GossipChatView *view);
-static void       chat_view_insert_text_with_emoticons (GtkTextBuffer       *buf,
-					     GtkTextIter         *iter, 
-					     const gchar         *str);
-static GdkPixbuf *chat_view_get_smiley       (GossipSmiley          smiley);
-static void       chat_view_maybe_append_timestamp     (GossipChatView      *view,
-					      gossip_time_t   timestamp);
-static void       chat_view_maybe_append_datestamp     (GossipChatView      *view);
-static gboolean chat_view_is_scrolled_down   (GossipChatView *view);
+static void       gossip_chat_view_class_init          (GossipChatViewClass      *klass);
+static void       gossip_chat_view_init                (GossipChatView           *view);
+static void       chat_view_finalize                   (GObject                  *object);
+static void       chat_view_size_allocate              (GtkWidget                *widget,
+							GtkAllocation            *alloc);
+static void       chat_view_setup_tags                 (GossipChatView           *view);
+static void       chat_view_populate_popup             (GossipChatView           *view,
+							GtkMenu                  *menu,
+							gpointer                  user_data);
+static void       chat_view_buffer_changed_cb          (GtkTextBuffer            *buffer,
+							GossipChatView           *view);
+static gboolean   chat_view_event_cb                   (GossipChatView           *view,
+							GdkEventMotion           *event,
+							GtkTextTag               *tag);
+static gboolean   chat_view_url_event_cb               (GtkTextTag               *tag,
+							GObject                  *object,
+							GdkEvent                 *event,
+							GtkTextIter              *iter,
+							GtkTextBuffer            *buffer);
+static void       chat_view_open_address               (const gchar              *url);
+static void       chat_view_open_address_cb            (GtkMenuItem              *menuitem,
+							const gchar              *url);
+static void       chat_view_copy_address_cb            (GtkMenuItem              *menuitem,
+							const gchar              *url);
+static void       chat_view_realize_cb                 (GossipChatView           *widget,
+							gpointer                  data);
+static void       chat_view_clear_view_cb              (GtkMenuItem              *menuitem,
+							GossipChatView           *view);
+static void       chat_view_insert_text_with_emoticons (GtkTextBuffer            *buf,
+							GtkTextIter              *iter,
+							const gchar              *tag,
+							const gchar              *str);
+static GdkPixbuf *chat_view_get_smiley                 (GossipSmiley              smiley);
+static void       chat_view_maybe_append_timestamp     (GossipChatView           *view,
+							gossip_time_t             timestamp);
+static void       chat_view_maybe_append_datestamp     (GossipChatView           *view);
+static gboolean   chat_view_is_scrolled_down           (GossipChatView           *view);
+static void       chat_view_invite_accept_cb           (GtkWidget                *button,
+							gchar                    *invite);
+static void       chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
+							GossipJoinChatroomResult  result,
+							gint                      id,
+							gpointer                  user_data);
 
 
 extern GConfClient *gconf_client;
 static GObjectClass *parent_class = NULL;
 
+
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
+
 
 static void
 gossip_chat_view_class_init (GossipChatViewClass *klass)
@@ -281,6 +293,11 @@ chat_view_setup_tags (GossipChatView *view)
 				    "justification", GTK_JUSTIFY_CENTER,
 				    NULL);
 
+	gtk_text_buffer_create_tag (priv->buffer,
+				    "invite",
+				    "foreground", "sienna",
+				    NULL);
+
 	tag = gtk_text_buffer_create_tag (priv->buffer,
 					  "url",
 					  "foreground", "steelblue",
@@ -298,8 +315,6 @@ chat_view_setup_tags (GossipChatView *view)
 			  G_CALLBACK (chat_view_event_cb),
 			  tag);
 }
-
-
 
 static void
 chat_view_populate_popup (GossipChatView *view,
@@ -546,6 +561,7 @@ chat_view_clear_view_cb (GtkMenuItem *menuitem, GossipChatView *view)
 static void
 chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 				      GtkTextIter   *iter, 
+				      const gchar   *tag,
 				      const gchar   *str)
 {
 	const gchar *p;
@@ -561,7 +577,13 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 		NULL);
 	
 	if (!use_smileys) {
-		gtk_text_buffer_insert (buf, iter, str, -1);
+		gtk_text_buffer_insert_with_tags_by_name (buf,
+							  iter,
+							  str,
+							  -1,
+							  tag,
+							  NULL);
+/* 		gtk_text_buffer_insert (buf, iter, str, -1); */
 		return;
 	}
 	
@@ -613,14 +635,32 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 
 			if (start > str) {
 				len = start - str;
-				gtk_text_buffer_insert (buf, iter, str, len);
+/* 				gtk_text_buffer_insert (buf, iter, str, len); */
+				gtk_text_buffer_insert_with_tags_by_name (buf,
+									  iter,
+									  str,
+									  len,
+									  tag,
+									  NULL);
 			}
 			
 			pixbuf = chat_view_get_smiley (smileys[match].smiley);
 			gtk_text_buffer_insert_pixbuf (buf, iter, pixbuf);
-			gtk_text_buffer_insert (buf, iter, " ", 1);
+			gtk_text_buffer_insert_with_tags_by_name (buf,
+								  iter,
+								  " ",
+								  -1,
+								  tag,
+								  NULL);
+/* 			gtk_text_buffer_insert (buf, iter, " ", 1); */
 		} else {
-			gtk_text_buffer_insert (buf, iter, str, -1);
+			gtk_text_buffer_insert_with_tags_by_name (buf,
+								  iter,
+								  str,
+								  -1,
+								  tag,
+								  NULL);
+/* 			gtk_text_buffer_insert (buf, iter, str, -1); */
 			return;
 		}
 
@@ -824,13 +864,14 @@ finished:
 void
 gossip_chat_view_append_chat_message (GossipChatView *view,
 				      gossip_time_t   timestamp,
+				      const gchar    *invite,
 				      const gchar    *to,
 				      const gchar    *from,
 				      const gchar    *msg)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter    iter;
-	gchar         *nick_tag;
+	gchar         *nick_tag, *body_tag = NULL;
 	gint           num_matches, i;
 	GArray        *start, *end;
 	gboolean       bottom;
@@ -913,32 +954,62 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 	
 	num_matches = gossip_utils_url_regex_match (msg, start, end);
-
+	if (invite) {
+		num_matches = 0;
+		body_tag = "invite";
+	}
+		
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (buffer, &iter);
-		chat_view_insert_text_with_emoticons (buffer, &iter, msg);
+		chat_view_insert_text_with_emoticons (buffer, &iter, body_tag, msg);
+		
+		if (invite) {
+			GtkWidget          *widget;
+			GtkTextChildAnchor *anchor;
+			
+			gtk_text_buffer_insert (buffer,
+						&iter,
+						"\n\n",
+						1);
+			
+			gtk_text_buffer_get_end_iter (buffer, &iter);
+
+			anchor = gtk_text_buffer_create_child_anchor (buffer, &iter);
+			widget = gtk_button_new_with_label (_("Accept"));
+			
+			g_signal_connect (widget, "clicked",
+					  G_CALLBACK (chat_view_invite_accept_cb),
+					  g_strdup (invite));
+
+			gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
+							   widget,
+							   anchor);
+			
+			gtk_widget_show_all (widget);
+		}
 	} else {
 		gint   last = 0;
 		gint   s = 0, e = 0;
 		gchar *tmp;
-
+		
 		for (i = 0; i < num_matches; i++) {
-
+			
 			s = g_array_index (start, gint, i);
 			e = g_array_index (end, gint, i);
-
+			
 			if (s > last) {
 				tmp = gossip_utils_substring (msg, last, s);
-
+				
 				gtk_text_buffer_get_end_iter (buffer, &iter);
 				chat_view_insert_text_with_emoticons (buffer,
 								      &iter,
+								      NULL,
 								      tmp);
 				g_free (tmp);
 			}
-
+			
 			tmp = gossip_utils_substring (msg, s, e);
-
+			
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 			gtk_text_buffer_insert_with_tags_by_name (buffer,
 								  &iter,
@@ -946,22 +1017,24 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 								  -1,
 								  "url",
 								  NULL);
-
+			
 			g_free (tmp);
-
+			
 			last = e;
 		}
-
+		
 		if (e < strlen (msg)) {
 			tmp = gossip_utils_substring (msg, e, strlen (msg));
-
+			
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 			chat_view_insert_text_with_emoticons (buffer,
-							      &iter, tmp);
+							      &iter,  
+							      NULL, 
+							      tmp);
 			g_free (tmp);
 		}
 	}
-
+	
 	g_array_free (start, TRUE);
 	g_array_free (end, TRUE);
 	
@@ -1082,3 +1155,41 @@ gossip_chat_view_copy_clipboard (GossipChatView *view)
 	gtk_text_buffer_copy_clipboard (buffer, clipboard);
 }
 
+static void
+chat_view_invite_accept_cb (GtkWidget *button, 
+			    gchar     *invite)
+{
+	GossipChatroomProvider *ch_provider;
+	gchar                  *room = NULL;
+	const gchar            *server;
+	const gchar            *nickname;
+
+	gtk_widget_set_sensitive (button, FALSE);
+
+	ch_provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
+
+	server = strstr (invite, "@");
+	if (server) {
+		room = g_strndup (invite, server - invite);
+		server++;
+	}
+
+	nickname = gossip_session_get_nickname (gossip_app_get_session ());
+	
+	gossip_chatroom_provider_join (ch_provider,
+				       room, server, nickname, NULL,
+				       chat_view_invite_join_cb,
+				       NULL);
+	
+	g_free (room);
+	g_free (invite);
+}
+
+static void
+chat_view_invite_join_cb (GossipChatroomProvider   *provider, 
+			  GossipJoinChatroomResult  result,
+			  gint                      id,
+			  gpointer                  user_data)
+{
+	gossip_group_chat_show (provider, id);
+}

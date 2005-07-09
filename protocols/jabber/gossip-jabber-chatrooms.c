@@ -23,15 +23,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <glib/gi18n.h>
+
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jid.h"
 #include "gossip-jabber-helper.h"
 #include "gossip-jabber-chatrooms.h"
 
-#define JOIN_MSG_ID_PREFIX "gc_join_"
-
 #define d(x) 
+
+#define JOIN_MSG_ID_PREFIX "gc_join_"
 
 struct _GossipJabberChatrooms {
 	GossipJabber   *jabber;
@@ -52,37 +54,35 @@ typedef struct {
 	GSList        *contacts;
 } JabberChatroom;
 
+
 typedef struct {
 	GossipJabberChatrooms *chatrooms;
         gpointer               callback;
         gpointer               user_data;
 } AsyncCallbackData;
 
-static JabberChatroom * jabber_chatrooms_chatroom_new  (const gchar    *room_name,
-							const gchar    *server,
-							const gchar    *nick);
-static void             jabber_chatrooms_chatroom_free (JabberChatroom *room);
-static LmHandlerResult
-jabber_chatrooms_message_handler     (LmMessageHandler      *handler,
-				      LmConnection          *conn,
-				      LmMessage             *message,
-				      GossipJabberChatrooms *chatrooms);
-static LmHandlerResult
-jabber_chatrooms_presence_handler    (LmMessageHandler      *handler,
-				      LmConnection          *conn,
-				      LmMessage             *message,
-				      GossipJabberChatrooms *chatrooms);
-
-static LmHandlerResult jabber_chatrooms_join_cb (LmMessageHandler  *handler,
-						 LmConnection      *connection,
-						 LmMessage         *message,
-						 AsyncCallbackData *data);
-static GossipContact * jabber_chatrooms_get_contact (JabberChatroom *room,
-						     GossipJID      *jid,
-						     gboolean       *new_contact);
-static void   jabber_chatrooms_foreach_set_presence (gpointer               key,
-						     JabberChatroom        *room, 
-						     GossipJabberChatrooms *chatrooms);
+static JabberChatroom *jabber_chatrooms_chatroom_new         (const gchar           *room_name,
+							      const gchar           *server,
+							      const gchar           *nick);
+static void            jabber_chatrooms_chatroom_free        (JabberChatroom        *room);
+static LmHandlerResult jabber_chatrooms_message_handler      (LmMessageHandler      *handler,
+							      LmConnection          *conn,
+							      LmMessage             *message,
+							      GossipJabberChatrooms *chatrooms);
+static LmHandlerResult jabber_chatrooms_presence_handler     (LmMessageHandler      *handler,
+							      LmConnection          *conn,
+							      LmMessage             *message,
+							      GossipJabberChatrooms *chatrooms);
+static LmHandlerResult jabber_chatrooms_join_cb              (LmMessageHandler      *handler,
+							      LmConnection          *connection,
+							      LmMessage             *message,
+							      AsyncCallbackData     *data);
+static GossipContact * jabber_chatrooms_get_contact          (JabberChatroom        *room,
+							      GossipJID             *jid,
+							      gboolean              *new_contact);
+static void            jabber_chatrooms_foreach_set_presence (gpointer               key,
+							      JabberChatroom        *room,
+							      GossipJabberChatrooms *chatrooms);
 
 static JabberChatroom *
 jabber_chatrooms_chatroom_new (const gchar *room_name, 
@@ -198,6 +198,7 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 
 }
+
 static LmHandlerResult
 jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 				   LmConnection          *conn,
@@ -635,6 +636,47 @@ gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
 
 	return room->name;
 }
+
+void 
+gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
+				GossipChatroomId       id,
+				const gchar           *contact_id)
+{
+	LmMessage      *m;
+	LmMessageNode  *n;
+	JabberChatroom *room;
+
+	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
+						       GINT_TO_POINTER (id));
+	if (!room) {
+		g_warning ("Unknown chatroom id: %d", id);
+		return;
+	}
+
+	d(g_print ("Inviting contact:'%s' to chatroom: %d\n", 
+		   contact_id, id));
+
+	m = lm_message_new (contact_id,
+			    LM_MESSAGE_TYPE_MESSAGE);
+	lm_message_node_add_child (m->node, "body", 
+				   _("You have been invited to join a chat conference."));
+	
+	n = lm_message_node_add_child (m->node, "x", NULL);
+	lm_message_node_set_attributes (n, 
+					"jid", gossip_jid_get_full (room->jid),
+					"xmlns", "jabber:x:conference",
+					NULL);
+
+	lm_connection_send (chatrooms->connection, m, NULL);
+	lm_message_unref (m);
+}
+
+GList * 
+gossip_jabber_chatrooms_get_rooms (GossipJabberChatrooms *chatrooms)
+{
+	return NULL;
+}
+
 
 void
 gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,

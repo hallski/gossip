@@ -34,6 +34,8 @@ struct _GossipMessagePriv {
 	gchar             *thread;
 
 	gossip_time_t      timestamp;
+
+	gchar             *invite;
 	
 	gboolean           request_composing;
 
@@ -491,6 +493,36 @@ gossip_message_set_timestamp (GossipMessage *message, gossip_time_t timestamp)
 		priv->timestamp = gossip_time_get_current ();
 	} else {
 		priv->timestamp = timestamp;
+	}
+}
+
+const gchar *
+gossip_message_get_invite (GossipMessage *message)
+{
+	GossipMessagePriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
+	
+	priv = GOSSIP_MESSAGE_GET_PRIV (message);
+
+	return priv->invite;
+}
+
+void       
+gossip_message_set_invite (GossipMessage *message, const gchar *invite)
+{
+	GossipMessagePriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+	
+	priv = GOSSIP_MESSAGE_GET_PRIV (message);
+
+	g_free (priv->invite);
+
+	if (invite) {
+		priv->invite = g_strdup (invite);
+	} else {
+		priv->invite = NULL;
 	}
 }
 

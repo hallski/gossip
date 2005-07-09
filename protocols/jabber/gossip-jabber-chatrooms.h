@@ -29,41 +29,44 @@
 
 #include "gossip-jabber.h"
 
+
 typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 
-GossipJabberChatrooms * 
-gossip_jabber_chatrooms_new              (GossipJabber            *jabber,
-					  LmConnection            *connection);
-void gossip_jabber_chatrooms_free        (GossipJabberChatrooms   *chatrooms);
 
-void gossip_jabber_chatrooms_join        (GossipJabberChatrooms   *chatroom,
-					  const gchar             *room,
-					  const gchar             *server,
-					  const gchar             *nick,
-					  const gchar             *password,
-					  GossipJoinChatroomCb     callback,
-					  gpointer                 user_data);
-void gossip_jabber_chatrooms_send        (GossipJabberChatrooms   *chatrooms, 
-					  GossipChatroomId         id,
-					  const gchar             *message);
-void gossip_jabber_chatrooms_set_title   (GossipJabberChatrooms   *chatrooms,
-					  GossipChatroomId         id,
-					  const gchar             *new_title);
-void gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms   *chatrooms,
-					  GossipChatroomId         id,
-					  const gchar             *new_nick);
-void gossip_jabber_chatrooms_leave       (GossipJabberChatrooms   *chatrooms,
-					  GossipChatroomId         id);
-const gchar * gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
-						     GossipChatroomId       id);
-void gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,
-					   GossipPresence         *presence);
-gboolean
-gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
-					     const gchar           *jid_str);
-GossipContact * 
-gossip_jabber_chatrooms_get_contact      (GossipJabberChatrooms   *chatrooms,
-					  LmMessage               *message,
-					  gint                    *chat_id);
+GossipJabberChatrooms *gossip_jabber_chatrooms_new                 (GossipJabber          *jabber,
+								    LmConnection          *connection);
+void                   gossip_jabber_chatrooms_free                (GossipJabberChatrooms *chatrooms);
+void                   gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatroom,
+								    const gchar           *room,
+								    const gchar           *server,
+								    const gchar           *nick,
+								    const gchar           *password,
+								    GossipJoinChatroomCb   callback,
+								    gpointer               user_data);
+void                   gossip_jabber_chatrooms_send                (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id,
+								    const gchar           *message);
+void                   gossip_jabber_chatrooms_set_title           (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id,
+								    const gchar           *new_title);
+void                   gossip_jabber_chatrooms_change_nick         (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id,
+								    const gchar           *new_nick);
+void                   gossip_jabber_chatrooms_leave               (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id);
+const gchar *          gossip_jabber_chatrooms_get_room_name       (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id);
+void                   gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id,
+								    const gchar           *contact_id);
+GList *                gossip_jabber_chatrooms_get_rooms           (GossipJabberChatrooms *chatrooms);
+void                   gossip_jabber_chatrooms_set_presence        (GossipJabberChatrooms *chatrooms,
+								    GossipPresence        *presence);
+gboolean               gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
+								    const gchar           *jid_str);
+GossipContact *        gossip_jabber_chatrooms_get_contact         (GossipJabberChatrooms *chatrooms,
+								    LmMessage             *message,
+								    gint                  *chat_id);
+
 
 #endif /* __GOSSIP_JABBER_CHATROOM_H__ */

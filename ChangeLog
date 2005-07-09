@@ -1,5 +1,29 @@
 2005-07-09  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-chat-view.[ch]: 
+	* src/gossip-private-chat.c: 
+	- Added basics to show a button for a conference invite, this
+	still needs a bit of work and some checking in places.  Plus it is
+	not completely abstract and needs to be.
+	* src/gossip-group-view.[ch]: 
+	- Added DND so you can drag someone off your roster into the
+	contacts list in a group chat window and it will send an invite.
+	- Cleaned up the code.
+	* libgossip/gossip-chatroom-provider.[ch]: 
+	- Provided _invite and _get_rooms functions.
+	- Cleaned up the code.
+	* libgossip/gossip-message.[ch]:
+	- Added _get_invite and _set_invite.
+	* protocols/jabber/gossip-jabber-helper.[ch]:
+	- Added gossip_jabber_helper_get_conference_from_lm_message to get
+	the jabber:x:conference part of a Jabber message.
+	* protocols/jabber/gossip-jabber.c (jabber_unknown_request): 
+	- Respond with error if we don't recognise the
+	jabber:iq:... namespace. 
+	- Fixes bug #128358.
+	
+2005-07-09  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-contact-groups.c (contact_groups_file_save): 
 	* src/gossip-contact-list.c (contact_list_drag_data_get): 
 	- Fixed GCC4 Warnings since it is more pedantic now especially

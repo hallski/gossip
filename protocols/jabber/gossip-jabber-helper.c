@@ -354,3 +354,23 @@ gossip_jabber_helper_get_timestamp_from_lm_message (LmMessage *m)
 	return gossip_time_from_tm (tm);
 }
 
+const gchar *
+gossip_jabber_helper_get_conference_from_lm_message (LmMessage *m)
+{
+	LmMessageNode *node;
+	const gchar   *xmlns;
+	const gchar   *conference = NULL;
+	
+	for (node = m->node->children; node; node = node->next) {
+		if (strcmp (node->name, "x") == 0) {
+			xmlns = lm_message_node_get_attribute (node, "xmlns");
+			if (xmlns && strcmp (xmlns, "jabber:x:conference") == 0) {
+                                conference = lm_message_node_get_attribute 
+					(node, "jid");
+                        }
+                }
+        }
+
+	return conference;
+}
+

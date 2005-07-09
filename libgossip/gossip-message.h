@@ -50,34 +50,35 @@ typedef enum {
 	GOSSIP_MESSAGE_TYPE_HEADLINE
 } GossipMessageType;
 
-GType             gossip_message_get_gtype         (void) G_GNUC_CONST;
-GossipMessage *   gossip_message_new               (GossipMessageType  type,
-						    GossipContact     *to);
-GossipMessageType gossip_message_get_type          (GossipMessage     *message);
+GType             gossip_message_get_gtype               (void) G_GNUC_CONST;
+GossipMessage *   gossip_message_new                     (GossipMessageType  type,
+							  GossipContact     *to);
+GossipMessageType gossip_message_get_type                (GossipMessage     *message);
+GossipContact *   gossip_message_get_recipient           (GossipMessage     *message);
+void              gossip_message_set_recipient           (GossipMessage     *message,
+							  GossipContact     *contact);
+const gchar *     gossip_message_get_explicit_resource   (GossipMessage     *message);
+void              gossip_message_set_explicit_resource   (GossipMessage     *message,
+							  const gchar       *resource);
+GossipContact *   gossip_message_get_sender              (GossipMessage     *message);
+void              gossip_message_set_sender              (GossipMessage     *message,
+							  GossipContact     *contact);
+const gchar *     gossip_message_get_body                (GossipMessage     *message);
+void              gossip_message_set_body                (GossipMessage     *message,
+							  const gchar       *body);
+const gchar *     gossip_message_get_thread              (GossipMessage     *message);
+void              gossip_message_set_thread              (GossipMessage     *message,
+							  const gchar       *thread);
 
-GossipContact *   gossip_message_get_recipient     (GossipMessage     *message);
-void              gossip_message_set_recipient     (GossipMessage     *message,
-						    GossipContact     *contact);
-const gchar *     gossip_message_get_explicit_resource (GossipMessage *message);
-void              gossip_message_set_explicit_resource (GossipMessage *message,
-							const gchar   *resource);
-GossipContact *   gossip_message_get_sender        (GossipMessage     *message);
-void              gossip_message_set_sender        (GossipMessage     *message,
-						    GossipContact     *contact);
-
-const gchar *     gossip_message_get_body          (GossipMessage     *message);
-void              gossip_message_set_body          (GossipMessage     *message,
-						    const gchar       *body);
-
-const gchar *     gossip_message_get_thread        (GossipMessage     *message);
-void              gossip_message_set_thread        (GossipMessage     *message,
-						    const gchar       *thread);
 /* What return value should we have here? */ 
-gossip_time_t     gossip_message_get_timestamp     (GossipMessage     *message);
-void              gossip_message_set_timestamp     (GossipMessage     *message,
-						    gossip_time_t    timestamp);
+gossip_time_t     gossip_message_get_timestamp           (GossipMessage     *message);
+void              gossip_message_set_timestamp           (GossipMessage     *message,
+							  gossip_time_t      timestamp);
+const gchar *     gossip_message_get_invite              (GossipMessage     *message);
+void              gossip_message_set_invite              (GossipMessage     *message,
+							  const gchar       *conference);
+void              gossip_message_request_composing       (GossipMessage     *message);
+gboolean          gossip_message_is_requesting_composing (GossipMessage     *message);
 
-void              gossip_message_request_composing (GossipMessage     *message);
-gboolean    gossip_message_is_requesting_composing (GossipMessage     *message);
 
 #endif /* __GOSSIP_MESSAGE_H__ */

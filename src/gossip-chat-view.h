@@ -32,9 +32,11 @@
 #define GOSSIP_IS_CHAT_VIEW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT_VIEW))
 #define GOSSIP_CHAT_VIEW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewClass))
 
+
 typedef struct _GossipChatView      GossipChatView;
 typedef struct _GossipChatViewClass GossipChatViewClass;
 typedef struct _GossipChatViewPriv  GossipChatViewPriv;
+
 
 struct _GossipChatView {
 	GtkTextView         parent;
@@ -42,14 +44,17 @@ struct _GossipChatView {
 	GossipChatViewPriv *priv;
 };
 
+
 struct _GossipChatViewClass {
 	GtkTextViewClass    parent_class;
 };
+
 
 GType            gossip_chat_view_get_type             (void) G_GNUC_CONST;
 GossipChatView * gossip_chat_view_new                  (void);
 void             gossip_chat_view_append_chat_message  (GossipChatView *view,
 							gossip_time_t   timestamp,
+							const gchar    *invite,
 							const gchar    *to,
 							const gchar    *from,
 							const gchar    *msg);
