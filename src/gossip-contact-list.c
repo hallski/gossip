@@ -1448,7 +1448,7 @@ contact_list_drag_data_get (GtkWidget             *widget,
 	switch (info) {
 	case DND_DRAG_TYPE_CONTACT_ID:
 		gtk_selection_data_set (selection, drag_atoms_source[info], 8, 
-					id, strlen (id) + 1);
+					(guchar*)id, strlen (id) + 1);
 		break;
 
 	default:

@@ -1,3 +1,10 @@
+2005-07-09  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-contact-groups.c (contact_groups_file_save): 
+	* src/gossip-contact-list.c (contact_list_drag_data_get): 
+	- Fixed GCC4 Warnings since it is more pedantic now especially
+	about signed and unsigned differences.
+
 2005-06-26  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c:

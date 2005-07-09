@@ -159,26 +159,26 @@ contact_groups_file_parse (const gchar *filename)
 	ret = xmlTextReaderRead (reader);
 
 	while (ret == 1) {
-		const gchar *node = NULL;
+		const xmlChar *node = NULL;
 
-		if (!(node = (const gchar *) xmlTextReaderConstName (reader))) {
+		if (!(node = xmlTextReaderConstName (reader))) {
 			continue;
 		}
 			
-		if (strcmp (node, "group") == 0) {
+		if (xmlStrcmp (node, BAD_CAST "group") == 0) {
 			xmlChar *attr_name = NULL;
 			xmlChar *attr_expanded = NULL;
 
-			attr_name = xmlTextReaderGetAttribute (reader, (xmlChar*) "name");
-			attr_expanded = xmlTextReaderGetAttribute (reader, (xmlChar*) "expanded");
+			attr_name = xmlTextReaderGetAttribute (reader, BAD_CAST "name");
+			attr_expanded = xmlTextReaderGetAttribute (reader, BAD_CAST "expanded");
 
-			if (attr_name && strlen (attr_name) > 0 &&
-			    attr_expanded && strlen (attr_expanded) > 0) {
+			if (attr_name && xmlStrlen (attr_name) > 0 &&
+			    attr_expanded && xmlStrlen (attr_expanded) > 0) {
 				ContactGroup *cg;
 				gboolean expanded;
 
-				expanded = (strcasecmp (attr_expanded, "yes") == 0 ? TRUE : FALSE);
-				cg = contact_group_new (attr_name, expanded);
+				expanded = (xmlStrcasecmp (attr_expanded, BAD_CAST "yes") == 0 ? TRUE : FALSE);
+				cg = contact_group_new ((gchar*)attr_name, expanded);
 
 				groups = g_list_append (groups, cg);
 			}
@@ -256,14 +256,14 @@ contact_groups_file_save (void)
 
 	dtd_file = g_build_filename (DTDDIR, CONTACT_GROUPS_DTD_FILENAME, NULL);
 
-	doc = xmlNewDoc ("1.0");
-	root = xmlNewNode (NULL, "contacts");
+	doc = xmlNewDoc (BAD_CAST "1.0");
+	root = xmlNewNode (NULL, BAD_CAST "contacts");
 	xmlDocSetRootElement (doc, root);
 
-	dtd = xmlCreateIntSubset (doc, "contacts", NULL, dtd_file);
+	dtd = xmlCreateIntSubset (doc, BAD_CAST "contacts", NULL, BAD_CAST dtd_file);
 
-	node = xmlNewChild (root, NULL, "account", NULL);
-	xmlNewProp (node,  "name", "Default");
+	node = xmlNewChild (root, NULL, BAD_CAST "account", NULL);
+	xmlNewProp (node, BAD_CAST "name", BAD_CAST "Default");
 
 	for (l = groups; l; l = l->next) {
 		ContactGroup *cg;
@@ -271,9 +271,9 @@ contact_groups_file_save (void)
 
 		cg = l->data;
 		
-		subnode = xmlNewChild (node, NULL, "group", NULL);
-		xmlNewProp (subnode,  "expanded", cg->expanded ? "yes" : "no");	
-		xmlNewProp (subnode,  "name", cg->name);
+		subnode = xmlNewChild (node, NULL, BAD_CAST "group", NULL);
+		xmlNewProp (subnode, BAD_CAST "expanded", BAD_CAST (cg->expanded ? "yes" : "no"));	
+		xmlNewProp (subnode, BAD_CAST "name", BAD_CAST cg->name);
 	}
 
 	d(g_print ("Saving file:'%s'\n", xml_file));
