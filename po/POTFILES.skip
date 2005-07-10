@@ -1,4 +1,5 @@
 src/eggtreemodelfilter.c
 src/eggtrayicon.c
 
+protocols/jabber/gossip-jabber-chatrooms.c
 gossip.desktop.in
