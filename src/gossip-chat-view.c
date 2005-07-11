@@ -876,7 +876,8 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	GArray        *start, *end;
 	gboolean       bottom;
 
-	if (msg == NULL || msg[0] == 0) {
+	if ((!msg || msg[0] == 0) && 
+	    (!invite || invite[0] == 0)) {
 		return;
 	}
 
@@ -959,19 +960,37 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 		body_tag = "invite";
 	}
 		
+		
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (buffer, &iter);
-		chat_view_insert_text_with_emoticons (buffer, &iter, body_tag, msg);
-		
+
 		if (invite) {
 			GtkWidget          *widget;
 			GtkTextChildAnchor *anchor;
+			const gchar        *used_msg;
+			const gchar        *used_invite;
+			gchar              *str;
 			
-			gtk_text_buffer_insert (buffer,
-						&iter,
-						"\n\n",
-						1);
+			used_msg = (msg && strlen (msg) > 0) ? 
+				msg : _("You have been invited to join a chat conference.");
 			
+			/* don't include the invite in the chat window
+			   if it is part of the actual request - some
+			   chat clients send this and it looks weird
+			   repeated */
+			used_invite = (!strstr (msg, invite)) ? 
+				invite : NULL;
+
+			str = g_strdup_printf ("\n%s\n%s%s%s%s--\n",
+					       used_msg,
+					       used_invite ? "(" : "",
+					       used_invite ? used_invite : "",
+					       used_invite ? ")" : "",
+					       used_invite ? "\n" : "");
+
+			chat_view_insert_text_with_emoticons (buffer, &iter, body_tag, str);
+			g_free (str);
+
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 
 			anchor = gtk_text_buffer_create_child_anchor (buffer, &iter);
@@ -986,6 +1005,10 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 							   anchor);
 			
 			gtk_widget_show_all (widget);
+
+		} else {
+			/* insert text as normal */
+			chat_view_insert_text_with_emoticons (buffer, &iter, body_tag, msg);
 		}
 	} else {
 		gint   last = 0;
@@ -1159,29 +1182,23 @@ static void
 chat_view_invite_accept_cb (GtkWidget *button, 
 			    gchar     *invite)
 {
-	GossipChatroomProvider *ch_provider;
-	gchar                  *room = NULL;
-	const gchar            *server;
+	GossipSession          *session;
+	GossipChatroomProvider *provider;
 	const gchar            *nickname;
 
 	gtk_widget_set_sensitive (button, FALSE);
-
-	ch_provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
-
-	server = strstr (invite, "@");
-	if (server) {
-		room = g_strndup (invite, server - invite);
-		server++;
-	}
-
-	nickname = gossip_session_get_nickname (gossip_app_get_session ());
 	
-	gossip_chatroom_provider_join (ch_provider,
-				       room, server, nickname, NULL,
-				       chat_view_invite_join_cb,
-				       NULL);
+	/* FIXME: should really have a session associated with the
+	   chatview */ 
+	session = gossip_app_get_session ();
+	provider = gossip_session_get_chatroom_provider (session);
+	nickname = gossip_session_get_nickname (session);
+
+	gossip_chatroom_provider_invite_accept (provider,
+						chat_view_invite_join_cb,
+						nickname,
+						invite);
 	
-	g_free (room);
 	g_free (invite);
 }
 

@@ -640,7 +640,8 @@ gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
 void 
 gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 				GossipChatroomId       id,
-				const gchar           *contact_id)
+				const gchar           *contact_id,
+				const gchar           *invite)
 {
 	LmMessage      *m;
 	LmMessageNode  *n;
@@ -658,17 +659,51 @@ gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 
 	m = lm_message_new (contact_id,
 			    LM_MESSAGE_TYPE_MESSAGE);
-	lm_message_node_add_child (m->node, "body", 
-				   _("You have been invited to join a chat conference."));
+
+	if (invite) {
+		lm_message_node_add_child (m->node, "body", invite); 
+	}
 	
 	n = lm_message_node_add_child (m->node, "x", NULL);
 	lm_message_node_set_attributes (n, 
-					"jid", gossip_jid_get_full (room->jid),
+					"jid", gossip_jid_get_without_resource (room->jid),
 					"xmlns", "jabber:x:conference",
 					NULL);
 
 	lm_connection_send (chatrooms->connection, m, NULL);
 	lm_message_unref (m);
+}
+
+void 
+gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
+				       GossipJoinChatroomCb   callback,
+				       const gchar           *nickname,
+				       const gchar           *invite_id)
+{
+	gchar       *room = NULL;
+	const gchar *server;
+
+	g_return_if_fail (invite_id != NULL);
+	g_return_if_fail (callback != NULL);
+	server = strstr (invite_id, "@");
+
+	g_return_if_fail (server != NULL);
+	g_return_if_fail (nickname != NULL);
+	
+	if (server) {
+		room = g_strndup (invite_id, server - invite_id);
+		server++;
+	}
+
+	gossip_jabber_chatrooms_join (chatrooms,
+				      room,
+				      server,
+				      nickname,
+				      NULL,
+				      callback,
+				      NULL);
+
+	g_free (room);
 }
 
 GList * 

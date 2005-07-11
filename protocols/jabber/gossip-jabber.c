@@ -219,7 +219,12 @@ static const gchar *   jabber_chatroom_get_room_name       (GossipChatroomProvid
 							    GossipChatroomId              id);
 static void            jabber_chatroom_invite              (GossipChatroomProvider       *provider,
 							    GossipChatroomId              id,
-							    const gchar                  *contact_id);
+							    const gchar                  *contact_id,
+							    const gchar                  *invite);
+static void            jabber_chatroom_invite_accept       (GossipChatroomProvider       *provider,
+							    GossipJoinChatroomCb          callback,
+							    const gchar                  *nickname,
+							    const gchar                  *invite_id);
 static GList *         jabber_chatroom_get_rooms           (GossipChatroomProvider       *provider);
 static void            jabber_signal_logged_out            (GossipJabber                 *jabber);
 static void            jabber_version_request              (GossipJabber                 *jabber,
@@ -1716,17 +1721,18 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->leave = jabber_chatroom_leave;
 	iface->get_room_name = jabber_chatroom_get_room_name;
 	iface->invite = jabber_chatroom_invite;
+	iface->invite_accept = jabber_chatroom_invite_accept;
 	iface->get_rooms = jabber_chatroom_get_rooms;
 }
 
 static void
 jabber_chatroom_join (GossipChatroomProvider      *provider,
-		       const gchar                 *room,
-		       const gchar                 *server,
-		       const gchar                 *nick,
-		       const gchar                 *password,
-		       GossipJoinChatroomCb         callback,
-		       gpointer                     user_data)
+		      const gchar                 *room,
+		      const gchar                 *server,
+		      const gchar                 *nick,
+		      const gchar                 *password,
+		      GossipJoinChatroomCb         callback,
+		      gpointer                     user_data)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -1822,7 +1828,8 @@ jabber_chatroom_get_room_name (GossipChatroomProvider *provider,
 static void
 jabber_chatroom_invite (GossipChatroomProvider *provider,
 			GossipChatroomId        id,
-			const gchar            *contact_id)
+			const gchar            *contact_id,
+			const gchar            *invite)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -1832,7 +1839,27 @@ jabber_chatroom_invite (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv   = jabber->priv;
 
-	gossip_jabber_chatrooms_invite (priv->chatrooms, id, contact_id);
+	gossip_jabber_chatrooms_invite (priv->chatrooms, id, contact_id, invite);
+}
+
+static void
+jabber_chatroom_invite_accept (GossipChatroomProvider *provider,
+			       GossipJoinChatroomCb    callback,
+			       const gchar            *nickname,
+			       const gchar            *invite_id)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (provider));
+
+	jabber = GOSSIP_JABBER (provider);
+	priv   = jabber->priv;
+
+	gossip_jabber_chatrooms_invite_accept (priv->chatrooms, 
+					       callback, 
+					       nickname, 
+					       invite_id);
 }
 
 static GList *
@@ -2055,6 +2082,7 @@ jabber_unknown_request (GossipJabber *jabber, LmMessage *m)
 	
 	node = lm_message_node_add_child (new_m->node, "error", NULL);
 	lm_message_node_set_attribute (node, "type", "cancel");
+	lm_message_node_set_attribute (node, "code", "503");
 
 	node = lm_message_node_add_child (node, "service-unavailable", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
@@ -2079,10 +2107,6 @@ gossip_jabber_get_own_contact (GossipJabber *jabber)
 
 	return jabber->priv->contact;
 }
-
-/* 
- * added by mjr for branch merge
- */
 
 void
 gossip_jabber_subscription_allow_all (GossipJabber *jabber)

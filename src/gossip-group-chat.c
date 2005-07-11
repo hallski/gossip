@@ -85,6 +85,13 @@ typedef struct {
 } FindUserData;
 
 
+typedef struct {
+	GossipGroupChat *chat;
+	GossipContact   *contact;
+	GtkWidget       *entry;
+} ChatInviteData;
+
+
 enum DndDragType {
 	DND_DRAG_TYPE_CONTACT_ID,
 };
@@ -137,6 +144,11 @@ static void               group_chat_drag_data_received          (GtkWidget     
 								  guint                        info,
 								  guint                        time,
 								  GossipGroupChat             *chat);
+static void               group_chat_invite_dialog_response_cb   (GtkWidget                   *dialog,
+								  gint                         response,
+								  ChatInviteData              *cid);
+static void               group_chat_invite_entry_activate_cb    (GtkWidget                   *entry,
+								  GtkDialog                   *dialog);
 static void               group_chat_new_message_cb              (GossipChatroomProvider      *provider,
 								  gint                         id,
 								  GossipMessage               *message,
@@ -190,8 +202,6 @@ static gboolean           group_chat_get_show_contacts           (GossipChat    
 static void               group_chat_set_show_contacts           (GossipChat                  *chat,
 								  gboolean                     show);
 
-
-		                                                 
 
 static GHashTable *group_chats = NULL;
 
@@ -859,6 +869,11 @@ group_chat_drag_data_received (GtkWidget        *widget,
 	GossipContact       *contact;
 	const gchar         *id;
 	gchar               *str;
+	ChatInviteData      *cid;
+
+	GtkWidget           *dialog;
+	GtkWidget           *entry;
+	GtkWidget           *hbox;
 
 	priv = chat->priv;
 
@@ -872,6 +887,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
 		return;
 	}
 
+	/* send event to chat window */
 	str = g_strdup_printf (_("Invited %s to join this chat conference."),
 			       gossip_contact_get_id (contact));
 
@@ -880,11 +896,97 @@ group_chat_drag_data_received (GtkWidget        *widget,
 					       TRUE);
 	g_free (str);
 
-	gossip_chatroom_provider_invite (priv->provider,
-					 priv->room_id,
-					 gossip_contact_get_id (contact));
+	/* construct dialog for invitiation text */
+	str = g_strdup_printf ("<b>%s</b>", gossip_contact_get_name (contact));
 
+	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
+					 0,
+					 GTK_MESSAGE_INFO,
+					 GTK_BUTTONS_OK_CANCEL,
+					 _("Please enter your invitation message to:\n%s"),
+					 str);
+	
+	g_free (str);
+
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
+		      "use-markup", TRUE,
+		      NULL);
+
+        entry = gtk_entry_new ();
+	gtk_widget_show (entry);
+
+	gtk_entry_set_text (GTK_ENTRY (entry), 
+                            _("You have been invited to join a chat conference."));
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	
+	g_signal_connect (entry,
+			  "activate",
+			  G_CALLBACK (group_chat_invite_entry_activate_cb),
+			  dialog);
+
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_widget_show (hbox);
+	
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), 
+			    hbox, FALSE, TRUE, 4);
+
+	/* save details to pass on to response callback */
+	cid = g_new0 (ChatInviteData, 1);
+
+	cid->chat = g_object_ref (chat);
+	cid->contact = g_object_ref (contact);
+
+	cid->entry = g_object_ref (entry);
+
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (group_chat_invite_dialog_response_cb),
+			  cid);
+
+	gtk_widget_show (dialog);
+
+	/* clean up dnd */
 	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
+}
+
+static void 
+group_chat_invite_dialog_response_cb (GtkWidget      *dialog, 
+				      gint            response, 
+				      ChatInviteData *cid) 
+{
+	GossipGroupChat     *chat;
+	GossipGroupChatPriv *priv;
+	const gchar         *invite;
+
+	chat = cid->chat;
+	priv = chat->priv;
+
+	if (response == GTK_RESPONSE_OK) {
+		invite = gtk_entry_get_text (GTK_ENTRY (cid->entry));
+
+		/* NULL uses the other end (in their language) */
+		invite = (strlen (invite) > 0) ? invite : NULL;
+
+		gossip_chatroom_provider_invite (priv->provider,
+						 priv->room_id,
+						 gossip_contact_get_id (cid->contact),
+						 invite);
+	}
+	
+	g_object_unref (cid->contact);
+	g_object_unref (cid->chat);
+	g_object_unref (cid->entry);
+
+	g_free (cid);
+
+	gtk_widget_destroy (dialog);
+}
+
+static void
+group_chat_invite_entry_activate_cb (GtkWidget *entry, 
+				     GtkDialog *dialog)
+{
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
 }
 
 static void 

@@ -1,3 +1,22 @@
+2005-07-11  Martyn Russell  <mr@gnome.org>
+
+	* protocols/jabber/gossip-jabber.c (jabber_unknown_request): 
+	- Added error code for legacy support.
+	* protocols/jabber/gossip-jabber-chatrooms.c
+	(gossip_jabber_chatrooms_invite_accept): 
+	- Added to push the invite_id back to the backend so they know how
+	to connect to it (e.g. if it is room@conference.jabber.org, then
+	the jabber backend will know how to connect to it).
+	- Use no <body> tag if there is no invite message.
+	* src/gossip-chat-view.c (gossip_chat_view_append_chat_message): 
+	- Added a bit more logic to show the invite id only if it is not
+	in the message body.
+	- Use a generic message in the recipients language if there is no
+	invitiation message and support a custom message from the sender.
+	* src/gossip-group-chat.c:
+	- Added a message dialog to ask the user for the invite text when
+	asking a contact to a join a group chat session.  
+
 2005-07-09  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-chat-view.[ch]: 

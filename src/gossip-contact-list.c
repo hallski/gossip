@@ -247,9 +247,6 @@ static void            contact_list_event_removed_cb            (GossipEventMana
 static void            contact_list_flash_free_data             (FlashData              *data);
 
 
-
-
-
 /* signals */
 enum {
         CONTACT_ACTIVATED,

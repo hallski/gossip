@@ -36,18 +36,22 @@
 
 #define d(x) x
 
+
 extern GConfClient *gconf_client;
+
 
 struct _GossipChatPriv {
 	GossipChatWindow *window;
 
 	GossipSpell      *spell;
-	/* Used to automatically shrink a window that has temporarily grown
-	 * due to long input */
+
+	/* Used to automatically shrink a window that has temporarily
+	   grown due to long input */
 	gint              padding_height;
 	gint              default_window_height;
 	gint              last_input_height;
 };
+
 
 typedef struct {
 	GossipChat  *chat;
@@ -58,14 +62,14 @@ typedef struct {
 } GossipChatSpell;
 
 
-static void     gossip_chat_class_init            (GossipChatClass *klass);
-static void     gossip_chat_init                  (GossipChat      *chat);
-static void     chat_finalize                     (GObject         *object);
-static void     chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
-		                                   GossipChat    *chat);
-static void     chat_text_view_size_allocate_cb   (GtkWidget       *widget,
-		                                   GtkAllocation   *allocation,
-					           GossipChat      *chat);
+static void      gossip_chat_class_init            (GossipChatClass *klass);
+static void      gossip_chat_init                  (GossipChat      *chat);
+static void      chat_finalize                     (GObject         *object);
+static void      chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
+						    GossipChat      *chat);
+static void      chat_text_view_size_allocate_cb   (GtkWidget       *widget,
+						    GtkAllocation   *allocation,
+						    GossipChat      *chat);
 static void      chat_text_populate_popup_cb       (GtkTextView     *view,
 						    GtkMenu         *menu,
 						    GossipChat      *chat);
@@ -78,8 +82,6 @@ GossipChatSpell *chat_spell_new                    (GossipChat      *chat,
 static void      chat_spell_free                   (GossipChatSpell *chat_spell);
 
 
-
-
 enum {
 	COMPOSING,
 	NEW_MESSAGE,
@@ -88,10 +90,13 @@ enum {
 	LAST_SIGNAL
 };
 
+
 static GObjectClass *parent_class = NULL;
 static guint         chat_signals[LAST_SIGNAL] = { 0 };
 
+
 G_DEFINE_TYPE (GossipChat, gossip_chat, G_TYPE_OBJECT);
+
 
 static void
 gossip_chat_class_init (GossipChatClass *klass)

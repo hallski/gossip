@@ -69,7 +69,12 @@ struct _GossipChatroomProviderIface {
 					GossipChatroomId        id);
 	void          (*invite)        (GossipChatroomProvider *provider,
 					GossipChatroomId        id,
-					const gchar            *contact_id);
+					const gchar            *contact_id,
+					const gchar            *invite);
+	void          (*invite_accept) (GossipChatroomProvider *provider,
+					GossipJoinChatroomCb    callback,
+					const gchar            *nickname,
+					const gchar            *invite_id);
 	GList *       (*get_rooms)     (GossipChatroomProvider *provider);
 
 	/* send_invitation */
@@ -99,7 +104,12 @@ const gchar *gossip_chatroom_provider_get_room_name (GossipChatroomProvider *pro
 						     GossipChatroomId        id);
 void         gossip_chatroom_provider_invite        (GossipChatroomProvider *provider,
 						     GossipChatroomId        id,
-						     const gchar            *contact_id);
+						     const gchar            *contact_id,
+						     const gchar            *invite);
+void         gossip_chatroom_provider_invite_accept (GossipChatroomProvider *provider,
+						     GossipJoinChatroomCb    callback,
+						     const gchar            *nickname,
+						     const gchar            *invite_id);
 GList *      gossip_chatroom_provider_get_rooms     (GossipChatroomProvider *provider);
 
 

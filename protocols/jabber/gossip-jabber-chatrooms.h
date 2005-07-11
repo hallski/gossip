@@ -58,7 +58,12 @@ const gchar *          gossip_jabber_chatrooms_get_room_name       (GossipJabber
 								    GossipChatroomId       id);
 void                   gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
 								    GossipChatroomId       id,
-								    const gchar           *contact_id);
+								    const gchar           *contact_id,
+								    const gchar           *invite);
+void                   gossip_jabber_chatrooms_invite_accept       (GossipJabberChatrooms *chatrooms,
+								    GossipJoinChatroomCb   callback,
+								    const gchar           *nickname,
+								    const gchar           *invite);
 GList *                gossip_jabber_chatrooms_get_rooms           (GossipJabberChatrooms *chatrooms);
 void                   gossip_jabber_chatrooms_set_presence        (GossipJabberChatrooms *chatrooms,
 								    GossipPresence        *presence);
