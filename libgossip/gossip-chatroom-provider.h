@@ -28,89 +28,100 @@
 #define GOSSIP_IS_CHATROOM_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER))
 #define GOSSIP_CHATROOM_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER, GossipChatroomProviderIface))
 
+
 typedef struct _GossipChatroomProvider      GossipChatroomProvider;
 typedef struct _GossipChatroomProviderIface GossipChatroomProviderIface;
 
 typedef gint GossipChatroomId;
-typedef enum {
-	GOSSIP_JOIN_CHATROOM_OK,
-	GOSSIP_JOIN_CHATROOM_NICK_IN_USE,
-	GOSSIP_JOIN_CHATROOM_NEED_PASSWORD
-} GossipJoinChatroomResult;
 
-typedef void (*GossipJoinChatroomCb) (GossipChatroomProvider   *provider,
-				      GossipJoinChatroomResult  result,
+typedef enum {
+	GOSSIP_CHATROOM_JOIN_OK,
+	GOSSIP_CHATROOM_JOIN_NICK_IN_USE,
+	GOSSIP_CHATROOM_JOIN_NEED_PASSWORD,
+	GOSSIP_CHATROOM_JOIN_ALREADY_OPEN,
+	GOSSIP_CHATROOM_JOIN_TIMED_OUT,
+	GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST,
+	GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR
+} GossipChatroomJoinResult;
+
+
+typedef void (*GossipChatroomJoinCb) (GossipChatroomProvider   *provider,
+				      GossipChatroomJoinResult  result,
                                       gint                      id,
 				      gpointer                  user_data);
+
 
 struct _GossipChatroomProviderIface {
 	GTypeInterface g_iface;
 
 	/* Virtual Table */
-	void          (*join)          (GossipChatroomProvider *provider,
-					const gchar            *room,
-					const gchar            *server,
-					const gchar            *nick,
-					const gchar            *password,
-					GossipJoinChatroomCb    callback,
-					gpointer                user_data);
-	void          (*send)          (GossipChatroomProvider *provider,
-					GossipChatroomId        id,
-					const gchar            *message);
-	void          (*set_title)     (GossipChatroomProvider *provider,
-					GossipChatroomId        id,
-					const gchar            *new_title);
-	void          (*change_nick)   (GossipChatroomProvider *provider,
-					GossipChatroomId        id,
-					const gchar            *new_nick);
-	void          (*leave)         (GossipChatroomProvider *provider,
-					GossipChatroomId        id);
-	const gchar * (*get_room_name) (GossipChatroomProvider *provider,
-					GossipChatroomId        id);
-	void          (*invite)        (GossipChatroomProvider *provider,
-					GossipChatroomId        id,
-					const gchar            *contact_id,
-					const gchar            *invite);
-	void          (*invite_accept) (GossipChatroomProvider *provider,
-					GossipJoinChatroomCb    callback,
-					const gchar            *nickname,
-					const gchar            *invite_id);
-	GList *       (*get_rooms)     (GossipChatroomProvider *provider);
-
-	/* send_invitation */
+	GossipChatroomId (*join)          (GossipChatroomProvider *provider,
+					   const gchar            *room,
+					   const gchar            *server,
+					   const gchar            *nick,
+					   const gchar            *password,
+					   GossipChatroomJoinCb    callback,
+					   gpointer                user_data);
+	void             (*cancel)        (GossipChatroomProvider *provider,
+					   GossipChatroomId        id);
+	void             (*send)          (GossipChatroomProvider *provider,
+					   GossipChatroomId        id,
+					   const gchar            *message);
+	void             (*set_title)     (GossipChatroomProvider *provider,
+					   GossipChatroomId        id,
+					   const gchar            *new_title);
+	void             (*change_nick)   (GossipChatroomProvider *provider,
+					   GossipChatroomId        id,
+					   const gchar            *new_nick);
+	void             (*leave)         (GossipChatroomProvider *provider,
+					   GossipChatroomId        id);
+	const gchar *    (*get_room_name) (GossipChatroomProvider *provider,
+					   GossipChatroomId        id);
+	void             (*invite)        (GossipChatroomProvider *provider,
+					   GossipChatroomId        id,
+					   const gchar            *contact_id,
+					   const gchar            *invite);
+	void             (*invite_accept) (GossipChatroomProvider *provider,
+					   GossipChatroomJoinCb    callback,
+					   const gchar            *nickname,
+					   const gchar            *invite_id);
+	GList *          (*get_rooms)     (GossipChatroomProvider *provider);
 };
 
-GType        gossip_chatroom_provider_get_type      (void) G_GNUC_CONST;
 
-void         gossip_chatroom_provider_join          (GossipChatroomProvider *provider,
-						     const gchar            *room,
-						     const gchar            *server,
-						     const gchar            *nick,
-						     const gchar            *password,
-						     GossipJoinChatroomCb    callback,
-						     gpointer                user_data);
-void         gossip_chatroom_provider_send          (GossipChatroomProvider *provider,
-						     GossipChatroomId        id,
-						     const gchar            *message);
-void         gossip_chatroom_provider_set_title     (GossipChatroomProvider *provider,
-						     GossipChatroomId        id,
-						     const gchar            *new_title);
-void         gossip_chatroom_provider_change_nick   (GossipChatroomProvider *provider,
-						     GossipChatroomId        id,
-						     const gchar            *new_nick);
-void         gossip_chatroom_provider_leave         (GossipChatroomProvider *provider,
-						     GossipChatroomId        id);
-const gchar *gossip_chatroom_provider_get_room_name (GossipChatroomProvider *provider,
-						     GossipChatroomId        id);
-void         gossip_chatroom_provider_invite        (GossipChatroomProvider *provider,
-						     GossipChatroomId        id,
-						     const gchar            *contact_id,
-						     const gchar            *invite);
-void         gossip_chatroom_provider_invite_accept (GossipChatroomProvider *provider,
-						     GossipJoinChatroomCb    callback,
-						     const gchar            *nickname,
-						     const gchar            *invite_id);
-GList *      gossip_chatroom_provider_get_rooms     (GossipChatroomProvider *provider);
+GType            gossip_chatroom_provider_get_type      (void) G_GNUC_CONST;
+
+GossipChatroomId gossip_chatroom_provider_join          (GossipChatroomProvider *provider,
+							 const gchar            *room,
+							 const gchar            *server,
+							 const gchar            *nick,
+							 const gchar            *password,
+							 GossipChatroomJoinCb    callback,
+							 gpointer                user_data);
+void             gossip_chatroom_provider_cancel        (GossipChatroomProvider *provider,
+							 GossipChatroomId        id);
+void             gossip_chatroom_provider_send          (GossipChatroomProvider *provider,
+							 GossipChatroomId        id,
+							 const gchar            *message);
+void             gossip_chatroom_provider_set_title     (GossipChatroomProvider *provider,
+							 GossipChatroomId        id,
+							 const gchar            *new_title);
+void             gossip_chatroom_provider_change_nick   (GossipChatroomProvider *provider,
+							 GossipChatroomId        id,
+							 const gchar            *new_nick);
+void             gossip_chatroom_provider_leave         (GossipChatroomProvider *provider,
+							 GossipChatroomId        id);
+const gchar *    gossip_chatroom_provider_get_room_name (GossipChatroomProvider *provider,
+							 GossipChatroomId        id);
+void             gossip_chatroom_provider_invite        (GossipChatroomProvider *provider,
+							 GossipChatroomId        id,
+							 const gchar            *contact_id,
+							 const gchar            *invite);
+void             gossip_chatroom_provider_invite_accept (GossipChatroomProvider *provider,
+							 GossipChatroomJoinCb    callback,
+							 const gchar            *nickname,
+							 const gchar            *invite_id);
+GList *          gossip_chatroom_provider_get_rooms     (GossipChatroomProvider *provider);
 
 
 #endif /* __GOSSIP_CHATROOM_PROVIDER_H__ */

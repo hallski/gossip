@@ -168,7 +168,7 @@ static gboolean   chat_view_is_scrolled_down           (GossipChatView          
 static void       chat_view_invite_accept_cb           (GtkWidget                *button,
 							gchar                    *invite);
 static void       chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
-							GossipJoinChatroomResult  result,
+							GossipChatroomJoinResult  result,
 							gint                      id,
 							gpointer                  user_data);
 
@@ -1204,7 +1204,7 @@ chat_view_invite_accept_cb (GtkWidget *button,
 
 static void
 chat_view_invite_join_cb (GossipChatroomProvider   *provider, 
-			  GossipJoinChatroomResult  result,
+			  GossipChatroomJoinResult  result,
 			  gint                      id,
 			  gpointer                  user_data)
 {

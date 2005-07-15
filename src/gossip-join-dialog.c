@@ -40,25 +40,28 @@
 typedef struct _GossipJoinDialog GossipJoinDialog;
 
 struct _GossipJoinDialog {
-	GtkWidget    *dialog;
-	GtkWidget    *preamble_label;
-	GtkWidget    *details_table;
-	GtkWidget    *favorite_combobox;
-	GtkWidget    *nickname_entry;
-	GtkWidget    *server_entry;
-	GtkWidget    *room_entry;
-	GtkWidget    *properties_button;
-	GtkWidget    *add_checkbutton;
-	GtkWidget    *joining_vbox;
-	GtkWidget    *joining_progressbar;
-	GtkWidget    *join_button;
+	GtkWidget        *dialog;
+	GtkWidget        *preamble_label;
+	GtkWidget        *details_table;
+	GtkWidget        *favorite_combobox;
+	GtkWidget        *nickname_entry;
+	GtkWidget        *server_entry;
+	GtkWidget        *room_entry;
+	GtkWidget        *edit_button;
+	GtkWidget        *delete_button;
+	GtkWidget        *add_checkbutton;
+	GtkWidget        *joining_vbox;
+	GtkWidget        *joining_progressbar;
+	GtkWidget        *join_button;
 
-	guint         wait_id;
-	guint         pulse_id;
-	guint         timeout_id;
+	guint             wait_id;
+	guint             pulse_id;
+	guint             timeout_id; 
 
-	gboolean      changed;
-	gboolean      joining;
+	gboolean          changed;
+	gboolean          joining;
+
+	GossipChatroomId  joining_id;
 };
 
 
@@ -70,7 +73,9 @@ typedef struct {
 
 static void     join_dialog_setup_favorites       (GossipJoinDialog         *dialog,
 						   gboolean                  reload);
-static void     join_dialog_cancel                (GossipJoinDialog         *dialog);
+static void     join_dialog_cancel                (GossipJoinDialog         *dialog,
+						   gboolean                  cleanup_ui,
+						   gboolean                  cancel_join);
 static gboolean join_dialog_progress_pulse_cb     (GtkWidget                *progressbar);
 static gboolean join_dialog_wait_cb               (GossipJoinDialog         *dialog);
 static gboolean join_dialog_timeout_cb            (GossipJoinDialog         *dialog);
@@ -82,10 +87,12 @@ static gboolean join_dialog_is_separator_cb       (GtkTreeModel             *mod
 						   GtkTreeIter              *iter,
 						   gpointer                  data);
 static void     join_dialog_join_cb               (GossipChatroomProvider   *provider,
-						   GossipJoinChatroomResult  result,
-						   gint                      id,
+						   GossipChatroomJoinResult  result,
+						   GossipChatroomId          id,
 						   gpointer                  user_data);
-static void     join_dialog_properties_clicked_cb (GtkWidget                *widget,
+static void     join_dialog_edit_clicked_cb       (GtkWidget                *widget,
+						   GossipJoinDialog         *dialog);
+static void     join_dialog_delete_clicked_cb     (GtkWidget                *widget,
 						   GossipJoinDialog         *dialog);
 static void     join_dialog_entry_changed_cb      (GtkWidget                *widget,
 						   GossipJoinDialog         *dialog);
@@ -105,14 +112,14 @@ static void
 join_dialog_setup_favorites (GossipJoinDialog *dialog, 
 			     gboolean          reload)
 {
-	GtkListStore *store;
- 	GtkTreeIter   iter; 
- 	GSList       *favorites, *l; 
- 	gchar        *default_name; 
- 	gint          i; 
+	GtkListStore   *store;
+ 	GtkTreeIter     iter; 
+ 	GSList         *favorites, *l; 
+ 	gchar          *default_name; 
+ 	gint            i; 
 
         GtkCellRenderer *renderer;
-	GtkComboBox *combobox;
+	GtkComboBox     *combobox;
 
 	combobox = GTK_COMBO_BOX (dialog->favorite_combobox);
 
@@ -194,13 +201,17 @@ join_dialog_setup_favorites (GossipJoinDialog *dialog,
 }
 
 static void
-join_dialog_cancel (GossipJoinDialog *dialog)
+join_dialog_cancel (GossipJoinDialog *dialog, 
+		    gboolean          cleanup_ui,
+		    gboolean          cancel_join)
 {
-	gtk_widget_set_sensitive (dialog->preamble_label, TRUE);
-	gtk_widget_set_sensitive (dialog->details_table, TRUE);
-	gtk_widget_set_sensitive (dialog->join_button, TRUE);
+	if (cleanup_ui) {
+		gtk_widget_set_sensitive (dialog->preamble_label, TRUE);
+		gtk_widget_set_sensitive (dialog->details_table, TRUE);
+		gtk_widget_set_sensitive (dialog->join_button, TRUE);
 	
-	gtk_widget_hide (dialog->joining_vbox);
+		gtk_widget_hide (dialog->joining_vbox);
+	}
 	
 	if (dialog->wait_id != 0) {
 		g_source_remove (dialog->wait_id);
@@ -216,8 +227,18 @@ join_dialog_cancel (GossipJoinDialog *dialog)
 		g_source_remove (dialog->timeout_id);
 		dialog->timeout_id = 0;
 	}
-	
-	dialog->joining = FALSE;
+
+	if (dialog->joining_id > 0) {
+		GossipChatroomProvider *provider;
+			
+		if (cancel_join) {
+			provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
+			gossip_chatroom_provider_cancel (provider, dialog->joining_id);
+		}
+
+		dialog->joining_id = 0;
+		dialog->joining = FALSE;
+	}
 }
 
 static gboolean 
@@ -246,7 +267,7 @@ join_dialog_timeout_cb (GossipJoinDialog *dialog)
 {
 	GtkWidget *md;
 
-	join_dialog_cancel (dialog);
+	join_dialog_cancel (dialog, TRUE, TRUE);
 	
 	/* show message dialog and the account dialog */
 	md = gtk_message_dialog_new_with_markup (GTK_WINDOW (dialog->dialog),
@@ -258,8 +279,9 @@ join_dialog_timeout_cb (GossipJoinDialog *dialog)
 						 _("The chat room you are trying is not responding."),
 						 _("Check your details and try again."));
 	
-	gtk_dialog_run (GTK_DIALOG (md));
-	gtk_widget_destroy (md);
+	g_signal_connect_swapped (md, "response",
+				  G_CALLBACK (gtk_widget_destroy), md);
+	gtk_widget_show (md);
 	
 	return FALSE;
 }
@@ -291,22 +313,73 @@ join_dialog_select_favorite_cb (GtkTreeModel *model,
 
 static void
 join_dialog_join_cb (GossipChatroomProvider   *provider,
-		     GossipJoinChatroomResult  result,
-		     gint                      id,
+		     GossipChatroomJoinResult  result,
+		     GossipChatroomId          id,
 		     gpointer                  user_data)
 {
+	GossipJoinDialog *dialog;
+	GtkWidget        *md;
+	const gchar      *str1 = NULL;
+	const gchar      *str2 = NULL;
+
+	/* FIXME: should be better */
+	dialog = current_dialog;
+
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
+	g_return_if_fail (dialog != NULL);
 
-	/* FIXME: check return value */
+	switch (result) {
+		/* FIXME: show dialog */
+	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
+		str1 = _("The nickname you have chosen is already in use.");
+		str2 = _("Select another and try again");
+		break;
 
-	if (current_dialog) {
-		join_dialog_response_cb (current_dialog->dialog,
-					 GTK_RESPONSE_CANCEL,
-					 current_dialog);
-		gtk_widget_destroy (current_dialog->dialog); 
+	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
+		str1 = _("The chat room you tried to join requires a password.");
+		str2 = _("This is currently unsupported.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
+		str1 = _("The remote conference server did not respond in a sensible time.");
+		str2 = _("Perhaps the conference server is busy, try again later.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
+		str1 = _("The conference server you tried to join could not be found.");
+		str2 = _("Check the server host name is correct and is available.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
+		str1 = _("An unknown error occured.");
+		str2 = _("Check your details are correct.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_OK:
+	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
+		gossip_group_chat_show (provider, id);
+		gtk_widget_destroy (dialog->dialog);
+
+		break;
 	}
 
-	gossip_group_chat_show (provider, id);
+	if (str1 && str2) {
+		join_dialog_cancel (dialog, TRUE, FALSE);
+		
+		/* show message dialog and the account dialog */
+		md = gtk_message_dialog_new_with_markup (GTK_WINDOW (dialog->dialog),
+							 GTK_DIALOG_MODAL |
+							 GTK_DIALOG_DESTROY_WITH_PARENT,
+							 GTK_MESSAGE_INFO,
+							 GTK_BUTTONS_CLOSE,
+							 "<b>%s</b>\n\n%s",
+							 str1,
+							 str2);
+		
+		g_signal_connect_swapped (md, "response",
+					  G_CALLBACK (gtk_widget_destroy), md);
+		gtk_widget_show (md);
+	}
 }
 
 static gboolean
@@ -329,8 +402,8 @@ join_dialog_is_separator_cb (GtkTreeModel *model,
 }
 
 static void
-join_dialog_properties_clicked_cb (GtkWidget        *widget,
-				   GossipJoinDialog *dialog)
+join_dialog_edit_clicked_cb (GtkWidget        *widget,
+			     GossipJoinDialog *dialog)
 {
 	GtkTreeModel   *model;
 	GtkTreeIter     iter;
@@ -344,7 +417,6 @@ join_dialog_properties_clicked_cb (GtkWidget        *widget,
 	gtk_tree_model_get (model, &iter, 1, &name, -1);
 
 	favorite = gossip_favorite_get (name);
-	
 	g_free (name);
 
 	window = gossip_edit_favorite_dialog_show (favorite);
@@ -356,6 +428,35 @@ join_dialog_properties_clicked_cb (GtkWidget        *widget,
 
 	gtk_window_set_transient_for (GTK_WINDOW (window), 
 				      GTK_WINDOW (dialog->dialog));
+
+}
+
+static void
+join_dialog_delete_clicked_cb (GtkWidget        *widget,
+			       GossipJoinDialog *dialog)
+{
+	GtkTreeModel   *model;
+	GtkTreeIter     iter;
+	GossipFavorite *favorite;
+	gchar          *name;
+	gchar          *path;
+
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->favorite_combobox));
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (dialog->favorite_combobox), &iter);
+
+	gtk_tree_model_get (model, &iter, 1, &name, -1);
+
+	favorite = gossip_favorite_get (name);
+	g_free (name);
+
+	path = g_strdup_printf ("%s/Favorite: %s", 
+				GOSSIP_FAVORITES_PATH, favorite->name);
+	gnome_config_clean_section (path);
+	g_free (path);
+
+	gnome_config_sync_file (GOSSIP_FAVORITES_PATH);
+
+	join_dialog_setup_favorites (dialog, TRUE);	
 }
 
 static void
@@ -382,9 +483,11 @@ join_dialog_favorite_combobox_changed_cb (GtkWidget        *widget,
 
 	if (!custom) {
 		gtk_widget_set_sensitive (dialog->join_button, TRUE);
-		gtk_widget_set_sensitive (dialog->properties_button, TRUE);
+		gtk_widget_set_sensitive (dialog->edit_button, TRUE);
+		gtk_widget_set_sensitive (dialog->delete_button, TRUE);
 	} else {
-		gtk_widget_set_sensitive (dialog->properties_button, FALSE);
+		gtk_widget_set_sensitive (dialog->edit_button, FALSE);
+		gtk_widget_set_sensitive (dialog->delete_button, FALSE);
 	}
 
 	if (custom && dialog->changed) {
@@ -472,28 +575,15 @@ join_dialog_response_cb (GtkWidget        *widget,
 			 GossipJoinDialog *dialog)
 {
 	if (response == GTK_RESPONSE_OK) {
-		GossipChatroomProvider *ch_provider;
+		GossipChatroomProvider *provider;
+		GossipChatroomId        id;
 		const gchar            *room;
 		const gchar            *server;
 		const gchar            *nickname;
-		gchar                  *str;
-
-		ch_provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
-
-
+	
 		nickname = gtk_entry_get_text (GTK_ENTRY (dialog->nickname_entry));
-		str = g_strdup (nickname);
-		g_strstrip (str);
-
 		server = gtk_entry_get_text (GTK_ENTRY (dialog->server_entry));
 		room   = gtk_entry_get_text (GTK_ENTRY (dialog->room_entry));
-
-		gossip_chatroom_provider_join (ch_provider,
-					       room, server, str, NULL,
-					       join_dialog_join_cb,
-					       NULL);
-	
-		g_free (str);
 
 		/* should we add to favourites? */
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->add_checkbutton))) {
@@ -522,8 +612,15 @@ join_dialog_response_cb (GtkWidget        *widget,
 			g_free (key);
 			
 			g_free (path);
-			
+
+			/* set default */
+			gnome_config_set_string (GOSSIP_FAVORITES_PATH "/Favorites/Default",
+						 favorite->name);
+
+			/* save all */
 			gnome_config_sync_file (GOSSIP_FAVORITES_PATH);
+
+			join_dialog_setup_favorites (dialog, TRUE);
 		}
 
 		/* change widgets so they are unsensitive */
@@ -539,13 +636,24 @@ join_dialog_response_cb (GtkWidget        *widget,
 						    (GSourceFunc)join_dialog_timeout_cb,
 						    dialog);
 
+		/* now do the join */
+		provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
+
+		id = gossip_chatroom_provider_join (provider,
+						    room, server, nickname, NULL,
+						    join_dialog_join_cb,
+						    NULL);
+
 		dialog->joining = TRUE;
+		dialog->joining_id = id;
+
 		return;
 	}
 
 	if (response == GTK_RESPONSE_CANCEL && dialog->joining) {
 		/* change widgets so they are unsensitive */
-		join_dialog_cancel (dialog);
+		join_dialog_cancel (dialog, TRUE, TRUE);
+
 		return;
 	}
 
@@ -563,15 +671,7 @@ static void
 join_dialog_destroy_cb (GtkWidget        *widget, 
 			GossipJoinDialog *dialog)
 {
-	if (dialog->wait_id != 0) {
-		g_source_remove (dialog->wait_id);
-		dialog->wait_id = 0;
-	}
-
-	if (dialog->pulse_id != 0) {
-		g_source_remove (dialog->pulse_id);
-		dialog->pulse_id = 0;
-	}
+	join_dialog_cancel (dialog, FALSE, FALSE);
 
 	g_free (dialog);
 	
@@ -601,7 +701,8 @@ gossip_join_dialog_show (void)
 				     "nickname_entry", &dialog->nickname_entry,
 				     "server_entry", &dialog->server_entry,
 				     "room_entry", &dialog->room_entry,
-				     "properties_button", &dialog->properties_button,
+				     "edit_button", &dialog->edit_button,
+				     "delete_button", &dialog->delete_button,
 				     "add_checkbutton", &dialog->add_checkbutton,
 				     "joining_vbox", &dialog->joining_vbox,
 				     "joining_progressbar", &dialog->joining_progressbar,
@@ -617,7 +718,8 @@ gossip_join_dialog_show (void)
 			      "join_group_chat_dialog", "destroy", join_dialog_destroy_cb,
 			      "join_group_chat_dialog", "response", join_dialog_response_cb,
 			      "favorite_combobox", "changed", join_dialog_favorite_combobox_changed_cb,
-			      "properties_button", "clicked", join_dialog_properties_clicked_cb,
+			      "edit_button", "clicked", join_dialog_edit_clicked_cb,
+			      "delete_button", "clicked", join_dialog_delete_clicked_cb,
 			      "nickname_entry", "changed", join_dialog_entry_changed_cb,
 			      "server_entry", "changed", join_dialog_entry_changed_cb,
 			      "room_entry", "changed", join_dialog_entry_changed_cb,

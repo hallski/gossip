@@ -30,9 +30,6 @@
 #include "gossip-edit-favorite-dialog.h"
 #include "gossip-join-dialog.h"
 
-#define RESPONSE_SAVE   1
-#define RESPONSE_DELETE 2
-
 
 typedef struct {
 	GtkWidget      *dialog;
@@ -47,7 +44,6 @@ typedef struct {
 
 
 static void edit_favorite_dialog_set              (GossipEditFavoriteDialog *dialog);
-static void edit_favorite_dialog_remove           (GossipEditFavoriteDialog *dialog);
 static void edit_favorite_dialog_entry_changed_cb (GtkWidget                *widget,
 						   GossipEditFavoriteDialog *dialog);
 static void edit_favorite_dialog_response_cb      (GtkWidget                *widget,
@@ -116,19 +112,6 @@ edit_favorite_dialog_set (GossipEditFavoriteDialog *dialog)
 }
 
 static void
-edit_favorite_dialog_remove (GossipEditFavoriteDialog *dialog)
-{
-	gchar *path;
-	
-	path = g_strdup_printf ("%s/Favorite: %s", 
-				GOSSIP_FAVORITES_PATH, dialog->favorite->name);
-	gnome_config_clean_section (path);
-	g_free (path);
-
-	gnome_config_sync_file (GOSSIP_FAVORITES_PATH);
-}
-
-static void
 edit_favorite_dialog_entry_changed_cb (GtkWidget                *widget,
 				       GossipEditFavoriteDialog *dialog)
 {
@@ -153,11 +136,8 @@ edit_favorite_dialog_response_cb (GtkWidget                *widget,
 				  GossipEditFavoriteDialog *dialog)
 {
 	switch (response) {
-	case RESPONSE_SAVE:
+	case GTK_RESPONSE_OK:
 		edit_favorite_dialog_set (dialog);
-		break;
-	case RESPONSE_DELETE:
-		edit_favorite_dialog_remove (dialog);
 		break;
 	}
 

@@ -36,13 +36,15 @@ typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 GossipJabberChatrooms *gossip_jabber_chatrooms_new                 (GossipJabber          *jabber,
 								    LmConnection          *connection);
 void                   gossip_jabber_chatrooms_free                (GossipJabberChatrooms *chatrooms);
-void                   gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatroom,
+GossipChatroomId       gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatroom,
 								    const gchar           *room,
 								    const gchar           *server,
 								    const gchar           *nick,
 								    const gchar           *password,
-								    GossipJoinChatroomCb   callback,
+								    GossipChatroomJoinCb   callback,
 								    gpointer               user_data);
+void                   gossip_jabber_chatrooms_cancel              (GossipJabberChatrooms *chatrooms,
+								    GossipChatroomId       id);
 void                   gossip_jabber_chatrooms_send                (GossipJabberChatrooms *chatrooms,
 								    GossipChatroomId       id,
 								    const gchar           *message);
@@ -61,7 +63,7 @@ void                   gossip_jabber_chatrooms_invite              (GossipJabber
 								    const gchar           *contact_id,
 								    const gchar           *invite);
 void                   gossip_jabber_chatrooms_invite_accept       (GossipJabberChatrooms *chatrooms,
-								    GossipJoinChatroomCb   callback,
+								    GossipChatroomJoinCb   callback,
 								    const gchar           *nickname,
 								    const gchar           *invite);
 GList *                gossip_jabber_chatrooms_get_rooms           (GossipJabberChatrooms *chatrooms);

@@ -148,27 +148,42 @@ chatroom_provider_base_init (gpointer g_class)
 	}
 }
 
-void
+GossipChatroomId
 gossip_chatroom_provider_join (GossipChatroomProvider *provider,
 			       const gchar            *room,
 			       const gchar            *server,
 			       const gchar            *nick,
 			       const gchar            *password,
-			       GossipJoinChatroomCb    callback,
+			       GossipChatroomJoinCb    callback,
 			       gpointer                user_data)
 {
-	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
-	g_return_if_fail (room != NULL);
-	g_return_if_fail (callback != NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), 0);
+	g_return_val_if_fail (room != NULL, 0);
+	g_return_val_if_fail (callback != NULL, 0);
 
 	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->join) {
-		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->join (provider,
-								      room,
-								      server,
-								      nick,
-								      password,
-								      callback,
-								      user_data);
+		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->join (provider,
+									    room,
+									    server,
+									    nick,
+									    password,
+									    callback,
+									    user_data);
+	}
+
+	return 0;
+}
+
+void
+gossip_chatroom_provider_cancel (GossipChatroomProvider *provider,
+				 GossipChatroomId        id)
+{
+	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
+	g_return_if_fail (id > 0);
+
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->cancel) {
+		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->cancel (provider,
+								       id);
 	}
 }
 
@@ -269,7 +284,7 @@ gossip_chatroom_provider_invite (GossipChatroomProvider *provider,
 
 void
 gossip_chatroom_provider_invite_accept (GossipChatroomProvider *provider,
-					GossipJoinChatroomCb    callback,
+					GossipChatroomJoinCb    callback,
 					const gchar            *nickname,
 					const gchar            *invite_id)
 {

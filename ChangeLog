@@ -1,3 +1,40 @@
+2005-07-15  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-join-dialog.c:
+	- Added support for most conditions (including NICK_IN_USE,
+	NEED_PASSWORD, TIMED_OUT, UNKNOWN_HOST, UNKNOWN_ERROR,
+	ALREADY_OPEN and OK). 
+	- Fixed a crash reported by Paul van Tilburg, fixes bug #306382.
+	- Fixed condition where some servers don't reply to joining group
+	chat with the ID in the presence message they were sent with
+	(reproducible with Paul van Tilburg's server).
+	- When adding as a favourite, make it the_last_ favourite and
+	select it in the combobox.
+	- Cancel join process properly when closing the dialog during
+	joining or when actually clicking cancel.
+	- Cleaned up the code.
+	* src/gossip-edit-favorite-dialog.c: 
+	- Moved the 'delete' button for group chat favourites from this
+	dialog to the main join dialog.
+	* protocols/jabber/gossip-jabber.c: 
+	- Cleaned the code up in places.
+	- Changed all message handler priorities to NORMAL as ALL handlers
+	were using HIGH.  
+	* libgossip/gossip-chatroom-provider.[ch]: 
+	- Added gossip_chatroom_provider_cancel (stops joining).
+	- Return GossipChatroomId directly from _join.
+	- Added a bunch of join result conditions including TIMED_OUT,
+	UNKNOWN_HOST, UNKNOWN_ERROR, ALREADY_OPEN.
+	* ui/group-chat.glade:
+	- Improved the join group chat dialog.
+
+2005-07-12  Martyn Russell  <mr@gnome.org>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c (gossip_jabber_chatrooms_join): 
+	- Added checks for already open chat rooms before blindly opening
+	a new room.  If one already exists, we just return _ALREADY_OPEN
+	with the currently open room id. 
+
 2005-07-11  Martyn Russell  <mr@gnome.org>
 
 	* protocols/jabber/gossip-jabber.c (jabber_unknown_request): 
