@@ -47,13 +47,14 @@ struct _GossipJabberChatrooms {
 
 
 typedef struct {
-	gint           id;
-	GossipJID     *jid;
-	gchar         *name;
+	gint              id;
+	GossipJID        *jid;
+	gchar            *name;
 
-	GossipContact *own_contact;
+	GossipContact    *own_contact;
+	LmMessageHandler *join_handler;
 	
-	GSList        *contacts;
+	GSList           *contacts;
 } JabberChatroom;
 
 
@@ -129,6 +130,8 @@ jabber_chatrooms_chatroom_free (JabberChatroom *room)
 
 	g_object_unref (room->own_contact);
 	g_slist_free (room->contacts);
+
+	lm_message_handler_unref (room->join_handler);
 
 	g_free (room);
 }
@@ -340,7 +343,9 @@ jabber_chatrooms_join_cb (LmMessageHandler  *handler,
 		jid = gossip_jid_new (jid_str);
 		room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
 		gossip_jid_unref (jid);
-	} else {
+	} 
+
+	if (!room) {
 		/* can't do much else, but should we respond to async
 		   callback with error? */
  		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
@@ -349,8 +354,6 @@ jabber_chatrooms_join_cb (LmMessageHandler  *handler,
 	lm_connection_unregister_message_handler (connection, 
 						  handler, 
 						  LM_MESSAGE_TYPE_PRESENCE);
-
-	g_return_val_if_fail (room != NULL, LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS);
 
         /* check for error */
 	type = lm_message_get_sub_type (m);
@@ -557,7 +560,6 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	LmMessage         *m;
 	const gchar       *show = NULL;
         AsyncCallbackData *data;
-        LmMessageHandler  *handler;
         gchar             *id_str;
 	JabberChatroom    *room, *existing_room;
 	
@@ -604,11 +606,12 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
         data->callback = callback;
         data->user_data = user_data;
 
-        handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_chatrooms_join_cb,
-                                          data, g_free);
-
+        room->join_handler = lm_message_handler_new ((LmHandleMessageFunction) 
+						     jabber_chatrooms_join_cb,
+						     data, g_free);
+	
 	lm_connection_register_message_handler (chatrooms->connection,
-						handler, 
+						room->join_handler, 
 						LM_MESSAGE_TYPE_PRESENCE,
 						LM_HANDLER_PRIORITY_FIRST);
         
@@ -617,7 +620,6 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
  	lm_connection_send (chatrooms->connection, m,  NULL);
 
 	lm_message_unref (m);
-        lm_message_handler_unref (handler);
 
 	return room->id;
 }

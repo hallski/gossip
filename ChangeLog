@@ -1,5 +1,12 @@
 2005-07-15  Martyn Russell  <mr@gnome.org>
 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	- Do nothing if there is no room, but actually work.
+	- Make sure if we cancel the join that we clean up the message
+	handlers associated with the join.
+
+2005-07-15  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-join-dialog.c:
 	- Added support for most conditions (including NICK_IN_USE,
 	NEED_PASSWORD, TIMED_OUT, UNKNOWN_HOST, UNKNOWN_ERROR,
