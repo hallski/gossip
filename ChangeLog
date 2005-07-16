@@ -1,3 +1,17 @@
+2005-07-16  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-contact-list.c: 
+	- Added support to invite contacts to a chat room.
+	- Updated the context menu so things are more logically grouped.
+	- Edit Groups now uses the Edit stock item.
+	* ui/chat.glade:
+	* src/gossip-chat-window.c: 
+	- Added the beginings of an Invite menu to the chat window.
+	* protocols/jabber/gossip-jabber-chatrooms.c: 
+	- Added backend support for get_rooms function.
+	* libgossip/gossip-contact.h (gossip_contact_get_status): 
+	- Cleaned up.
+
 2005-07-15  Martyn Russell  <mr@gnome.org>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c:

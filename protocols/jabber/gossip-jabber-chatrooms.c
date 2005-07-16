@@ -65,28 +65,31 @@ typedef struct {
 } AsyncCallbackData;
 
 
-static JabberChatroom *jabber_chatrooms_chatroom_new         (const gchar           *room_name,
-							      const gchar           *server,
-							      const gchar           *nick);
-static void            jabber_chatrooms_chatroom_free        (JabberChatroom        *room);
-static LmHandlerResult jabber_chatrooms_message_handler      (LmMessageHandler      *handler,
-							      LmConnection          *conn,
-							      LmMessage             *message,
-							      GossipJabberChatrooms *chatrooms);
-static LmHandlerResult jabber_chatrooms_presence_handler     (LmMessageHandler      *handler,
-							      LmConnection          *conn,
-							      LmMessage             *message,
-							      GossipJabberChatrooms *chatrooms);
-static LmHandlerResult jabber_chatrooms_join_cb              (LmMessageHandler      *handler,
-							      LmConnection          *connection,
-							      LmMessage             *message,
-							      AsyncCallbackData     *data);
-static GossipContact * jabber_chatrooms_get_contact          (JabberChatroom        *room,
-							      GossipJID             *jid,
-							      gboolean              *new_contact);
-static void            jabber_chatrooms_foreach_set_presence (gpointer               key,
-							      JabberChatroom        *room,
-							      GossipJabberChatrooms *chatrooms);
+static JabberChatroom *jabber_chatrooms_chatroom_new         (const gchar            *room_name,
+							      const gchar            *server,
+							      const gchar            *nick);
+static void            jabber_chatrooms_chatroom_free        (JabberChatroom         *room);
+static LmHandlerResult jabber_chatrooms_message_handler      (LmMessageHandler       *handler,
+							      LmConnection           *conn,
+							      LmMessage              *message,
+							      GossipJabberChatrooms  *chatrooms);
+static LmHandlerResult jabber_chatrooms_presence_handler     (LmMessageHandler       *handler,
+							      LmConnection           *conn,
+							      LmMessage              *message,
+							      GossipJabberChatrooms  *chatrooms);
+static LmHandlerResult jabber_chatrooms_join_cb              (LmMessageHandler       *handler,
+							      LmConnection           *connection,
+							      LmMessage              *message,
+							      AsyncCallbackData      *data);
+static GossipContact * jabber_chatrooms_get_contact          (JabberChatroom         *room,
+							      GossipJID              *jid,
+							      gboolean               *new_contact);
+static void            jabber_chatrooms_get_rooms_foreach    (gpointer                key,
+							      JabberChatroom         *room,
+							      GList                 **list);
+static void            jabber_chatrooms_set_presence_foreach (gpointer                key,
+							      JabberChatroom         *room,
+							      GossipJabberChatrooms  *chatrooms);
 
 
 static JabberChatroom *
@@ -300,129 +303,6 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
-static LmHandlerResult
-jabber_chatrooms_join_cb (LmMessageHandler  *handler,
-                          LmConnection      *connection,
-                          LmMessage         *m,
-                          AsyncCallbackData *data)
-{
-	GossipJabberChatrooms    *chatrooms;
-	GossipChatroomJoinResult  result = GOSSIP_CHATROOM_JOIN_OK;
-	GossipChatroomJoinCb      callback;	
-	JabberChatroom           *room;
-	LmMessageSubType          type;
-	LmMessageNode            *node;
-	const gchar              *jid_str;
-	const gchar              *id_str;
-        gint                      id;
-
-	chatrooms = data->chatrooms;
-
-	id_str = lm_message_node_get_attribute (m->node, "id");
-	jid_str = lm_message_node_get_attribute (m->node, "from");
-
-	/* some servers don't use the ID in the response, so this
-	   fails, so we check the JID too */
-	if (id_str) {
-		gchar *int_str;
-
-		if (strlen (id_str) < strlen (JOIN_MSG_ID_PREFIX)) {
-			g_warning ("Wrong id string when joining chatroom");
-			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-		}
-
-		int_str = g_strdup (id_str + strlen (JOIN_MSG_ID_PREFIX));
-		id = atoi (int_str);
-		g_free (int_str);
-
-		room = g_hash_table_lookup (chatrooms->room_id_hash, 
-					    GINT_TO_POINTER (id));
-	} else if (jid_str) {
-		GossipJID *jid;
-
-		jid = gossip_jid_new (jid_str);
-		room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
-		gossip_jid_unref (jid);
-	} 
-
-	if (!room) {
-		/* can't do much else, but should we respond to async
-		   callback with error? */
- 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
-	}
-
-	lm_connection_unregister_message_handler (connection, 
-						  handler, 
-						  LM_MESSAGE_TYPE_PRESENCE);
-
-        /* check for error */
-	type = lm_message_get_sub_type (m);
-	
-	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-		node = lm_message_node_get_child (m->node, "error");
-		if (node) {
-			const gchar *str;
-			gint         code;
-
-			str = lm_message_node_get_attribute (node, "code");
-			code = str ? atoi (str) : 0;
-			
-			switch (code) {
-			case 409: {
-				/* conflicting nickname */
-				d(g_print ("Chatrooms: Conflicting nickname\n"));
-				result = GOSSIP_CHATROOM_JOIN_NICK_IN_USE;
-				break;
-			}
-
-			case 502: {
-				/* unresolved hostname */
-				d(g_print ("Chatrooms: Unable to resolve hostname\n"));
-				result = GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST;
-				break;
-			}
-
-			case 504: {
-				/* remote server timeout */
-				d(g_print ("Chatrooms: Join timed out\n"));
-				result = GOSSIP_CHATROOM_JOIN_TIMED_OUT;
-				break;
-			}
-
-			default:
-				d(g_print ("Chatrooms: Unhandled presence error:%d\n", code));
-				result = GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR;
-				break;
-			}
-		}
-	} 
-
-	callback = data->callback;
-	(callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
-		    result,
-		    room->id,
-		    data->user_data); 
-
-	if (result == GOSSIP_CHATROOM_JOIN_OK) {
-		gossip_contact_add_presence (room->own_contact, chatrooms->presence);
-		
-		g_signal_emit_by_name (chatrooms->jabber,
-				       "chatroom-contact-joined",
-				       room->id,
-				       room->own_contact);
-
-	} else {
-		/* clean up */
-		g_hash_table_remove (chatrooms->room_id_hash, 
-				     GINT_TO_POINTER (room->id));
-		g_hash_table_remove (chatrooms->room_jid_hash, room->jid);
-		jabber_chatrooms_chatroom_free (room);
-		
-	}
-
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
-}
-
 static GossipContact *
 jabber_chatrooms_get_contact (JabberChatroom *room, 
 			      GossipJID      *jid, 
@@ -461,39 +341,6 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 	room->contacts = g_slist_prepend (room->contacts, c);
 
 	return c;
-}
-
-static void
-jabber_chatrooms_foreach_set_presence (gpointer               key,
-				       JabberChatroom        *room, 
-				       GossipJabberChatrooms *chatrooms)
-{
-	LmConnection   *connection;
-	LmMessage      *m;
-	const gchar    *show;
-	const gchar    *status;
-	GossipPresence *presence;
-	
-	connection = chatrooms->connection;
-	presence = chatrooms->presence;
-
-	show   = gossip_jabber_helper_presence_state_to_string (presence);
-	status = gossip_presence_get_status (presence);
-
-	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),
-					  LM_MESSAGE_TYPE_PRESENCE,
-					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
-
-	if (show) {
-		lm_message_node_add_child (m->node, "show", show);
-	}
-
-	if (status) {
-		lm_message_node_add_child (m->node, "status", status);
-	}
-	
-	lm_connection_send (connection, m, NULL);
-	lm_message_unref (m);
 }
 
 GossipJabberChatrooms *
@@ -622,6 +469,129 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	lm_message_unref (m);
 
 	return room->id;
+}
+
+static LmHandlerResult
+jabber_chatrooms_join_cb (LmMessageHandler  *handler,
+                          LmConnection      *connection,
+                          LmMessage         *m,
+                          AsyncCallbackData *data)
+{
+	GossipJabberChatrooms    *chatrooms;
+	GossipChatroomJoinResult  result = GOSSIP_CHATROOM_JOIN_OK;
+	GossipChatroomJoinCb      callback;	
+	JabberChatroom           *room;
+	LmMessageSubType          type;
+	LmMessageNode            *node;
+	const gchar              *jid_str;
+	const gchar              *id_str;
+        gint                      id;
+
+	chatrooms = data->chatrooms;
+
+	id_str = lm_message_node_get_attribute (m->node, "id");
+	jid_str = lm_message_node_get_attribute (m->node, "from");
+
+	/* some servers don't use the ID in the response, so this
+	   fails, so we check the JID too */
+	if (id_str) {
+		gchar *int_str;
+
+		if (strlen (id_str) < strlen (JOIN_MSG_ID_PREFIX)) {
+			g_warning ("Wrong id string when joining chatroom");
+			return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		}
+
+		int_str = g_strdup (id_str + strlen (JOIN_MSG_ID_PREFIX));
+		id = atoi (int_str);
+		g_free (int_str);
+
+		room = g_hash_table_lookup (chatrooms->room_id_hash, 
+					    GINT_TO_POINTER (id));
+	} else if (jid_str) {
+		GossipJID *jid;
+
+		jid = gossip_jid_new (jid_str);
+		room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+		gossip_jid_unref (jid);
+	} 
+
+	if (!room) {
+		/* can't do much else, but should we respond to async
+		   callback with error? */
+ 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
+	}
+
+	lm_connection_unregister_message_handler (connection, 
+						  handler, 
+						  LM_MESSAGE_TYPE_PRESENCE);
+
+        /* check for error */
+	type = lm_message_get_sub_type (m);
+	
+	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
+		node = lm_message_node_get_child (m->node, "error");
+		if (node) {
+			const gchar *str;
+			gint         code;
+
+			str = lm_message_node_get_attribute (node, "code");
+			code = str ? atoi (str) : 0;
+			
+			switch (code) {
+			case 409: {
+				/* conflicting nickname */
+				d(g_print ("Chatrooms: Conflicting nickname\n"));
+				result = GOSSIP_CHATROOM_JOIN_NICK_IN_USE;
+				break;
+			}
+
+			case 502: {
+				/* unresolved hostname */
+				d(g_print ("Chatrooms: Unable to resolve hostname\n"));
+				result = GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST;
+				break;
+			}
+
+			case 504: {
+				/* remote server timeout */
+				d(g_print ("Chatrooms: Join timed out\n"));
+				result = GOSSIP_CHATROOM_JOIN_TIMED_OUT;
+				break;
+			}
+
+			default:
+				d(g_print ("Chatrooms: Unhandled presence error:%d\n", code));
+				result = GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR;
+				break;
+			}
+		}
+	} 
+
+	callback = data->callback;
+	(callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
+		    result,
+		    room->id,
+		    data->user_data); 
+
+	if (result == GOSSIP_CHATROOM_JOIN_OK) {
+		gossip_contact_add_presence (room->own_contact, chatrooms->presence);
+		
+		g_signal_emit_by_name (chatrooms->jabber,
+				       "chatroom-contact-joined",
+				       room->id,
+				       room->own_contact);
+
+	} else {
+		/* clean up */
+		g_hash_table_remove (chatrooms->room_id_hash, 
+				     GINT_TO_POINTER (room->id));
+		g_hash_table_remove (chatrooms->room_jid_hash, room->jid);
+		jabber_chatrooms_chatroom_free (room);
+		
+	}
+
+        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 void
@@ -845,9 +815,22 @@ gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
 GList * 
 gossip_jabber_chatrooms_get_rooms (GossipJabberChatrooms *chatrooms)
 {
-	return NULL;
+	GList *list = NULL;
+
+	g_hash_table_foreach (chatrooms->room_id_hash, 
+			      (GHFunc) jabber_chatrooms_get_rooms_foreach,
+			      &list);	
+	
+	return list;
 }
 
+static void
+jabber_chatrooms_get_rooms_foreach (gpointer               key,
+				    JabberChatroom        *room, 
+				    GList                **list)
+{
+	*list = g_list_append (*list, key);
+}
 
 void
 gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,
@@ -856,11 +839,45 @@ gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,
 	if (chatrooms->presence) {
 		g_object_unref (chatrooms->presence);
 	}
+
 	chatrooms->presence = g_object_ref (presence);
 
 	g_hash_table_foreach (chatrooms->room_id_hash, 
-			      (GHFunc) jabber_chatrooms_foreach_set_presence,
+			      (GHFunc) jabber_chatrooms_set_presence_foreach,
 			      chatrooms);
+}
+
+static void
+jabber_chatrooms_set_presence_foreach (gpointer               key,
+				       JabberChatroom        *room, 
+				       GossipJabberChatrooms *chatrooms)
+{
+	LmConnection   *connection;
+	LmMessage      *m;
+	const gchar    *show;
+	const gchar    *status;
+	GossipPresence *presence;
+	
+	connection = chatrooms->connection;
+	presence = chatrooms->presence;
+
+	show   = gossip_jabber_helper_presence_state_to_string (presence);
+	status = gossip_presence_get_status (presence);
+
+	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),
+					  LM_MESSAGE_TYPE_PRESENCE,
+					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
+
+	if (show) {
+		lm_message_node_add_child (m->node, "show", show);
+	}
+
+	if (status) {
+		lm_message_node_add_child (m->node, "status", status);
+	}
+	
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
 }
 
 gboolean
