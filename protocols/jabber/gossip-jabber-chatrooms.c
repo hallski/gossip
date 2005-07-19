@@ -492,6 +492,7 @@ jabber_chatrooms_join_cb (LmMessageHandler  *handler,
 	id_str = lm_message_node_get_attribute (m->node, "id");
 	jid_str = lm_message_node_get_attribute (m->node, "from");
 
+	room = NULL;
 	/* some servers don't use the ID in the response, so this
 	   fails, so we check the JID too */
 	if (id_str) {

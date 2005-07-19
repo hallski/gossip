@@ -1,3 +1,8 @@
+2005-07-19  Mikael Hallendal  <micke@imendio.com>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chattroms_join_cb): Initialize room.
+
 2005-07-16  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-contact-list.c: 
