@@ -21,50 +21,98 @@
 #include <config.h>
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <libgossip/gossip-version-info.h>
 #include <libgossip/gossip-time.h>
 
 #include "gossip-jabber-helper.h"
 
+#define d(x) x
+
+
 typedef struct {
 	gpointer callback;
 	gpointer user_data;
 } AsyncCallbackData;
 
+
 static LmHandlerResult 
-jabber_helper_async_get_vcard_cb (LmMessageHandler *handler,
-				  LmConnection     *connection,
-				  LmMessage        *m,
-				  AsyncCallbackData   *data)
+jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
+				  LmConnection      *connection,
+				  LmMessage         *m,
+				  AsyncCallbackData *data)
 {
-	GossipVCard   *vcard;
-	LmMessageNode *top_node, *node;
+	GossipVCard              *vcard;
+	GossipAsyncVCardCallback  callback;
+	LmMessageNode            *vcard_node, *node;
+	LmMessageSubType          type;
 
-	if (!data->callback) {
+	callback = data->callback;
+	if (!callback) {
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
-	top_node = lm_message_node_get_child (m->node, "vCard");
-	if (!top_node) {
-		((GossipAsyncVCardCallback) data->callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY, NULL,
-				  data->user_data);
+        /* check for error */
+	type = lm_message_get_sub_type (m);
+
+	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
+		GossipAsyncResult result;
+
+		node = lm_message_node_get_child (m->node, "error");
+		if (node) {
+			const gchar *str;
+			gint         code;
+
+			str = lm_message_node_get_attribute (node, "code");
+			code = str ? atoi (str) : 0;
+			
+			switch (code) {
+			case 404: {
+				/* receipient unavailable */
+				d(g_print ("VCard: Receipient is unavailable\n"));
+				result = GOSSIP_ASYNC_ERROR_UNAVAILABLE;
+				break;
+			}
+
+			default:
+				d(g_print ("VCard: Unhandled presence error:%d\n", code));
+				result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
+				break;
+			}
+		}
+
+		(callback) (result, 
+			    NULL,
+			    data->user_data);
+
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	} 
+
+	/* no vcard node */
+	vcard_node = lm_message_node_get_child (m->node, "vCard");
+	if (!vcard_node) {
+		(callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY, 
+			    NULL,
+			    data->user_data);
+
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
-	
+
+	/* everything else must be OK */
 	vcard = gossip_vcard_new ();
 	
-	node = lm_message_node_get_child (top_node, "FN");
+	node = lm_message_node_get_child (vcard_node, "FN");
 	if (node) {
 		gossip_vcard_set_name (vcard, node->value);
 	}
 
-	node = lm_message_node_get_child (top_node, "NICKNAME");
+	node = lm_message_node_get_child (vcard_node, "NICKNAME");
 	if (node) {
 		gossip_vcard_set_nickname (vcard, node->value);
 	}
 
-	node = lm_message_node_get_child (top_node, "EMAIL");
+	node = lm_message_node_get_child (vcard_node, "EMAIL");
 	if (node) {
 		gchar *email = NULL;
 
@@ -80,17 +128,17 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler *handler,
 		gossip_vcard_set_email (vcard, email);
 	}
 
-	node = lm_message_node_get_child (top_node, "URL");
+	node = lm_message_node_get_child (vcard_node, "URL");
 	if (node) {
 		gossip_vcard_set_url (vcard, node->value);
 	}
 
-	node = lm_message_node_get_child (top_node, "DESC");
+	node = lm_message_node_get_child (vcard_node, "DESC");
 	if (node) {
 		gossip_vcard_set_description (vcard, node->value);
 	}
 
-	((GossipAsyncVCardCallback)data->callback) (GOSSIP_ASYNC_OK, vcard, data->user_data);
+	(callback) (GOSSIP_ASYNC_OK, vcard, data->user_data);
 
 	g_object_unref (vcard);
 
@@ -195,47 +243,98 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 				    LmMessage         *m,
 				    AsyncCallbackData *data)
 {
-	GossipVersionInfo *info;
-	LmMessageNode     *query, *node;
+	GossipVersionInfo          *info;
+	GossipAsyncVersionCallback  callback;
+	LmMessageNode              *query_node, *node;
+	LmMessageSubType            type;
 
-	query = lm_message_node_get_child (m->node, "query");
-	if (!query) {
-		((GossipAsyncVersionCallback )data->callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY,
-							       NULL,
-							       data->user_data);
+	callback = data->callback;
+	if (!callback) {
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	}
+
+        /* check for error */
+	type = lm_message_get_sub_type (m);
+
+	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
+		GossipAsyncResult result;
+
+		node = lm_message_node_get_child (m->node, "error");
+		if (node) {
+			const gchar *str;
+			gint         code;
+
+			str = lm_message_node_get_attribute (node, "code");
+			code = str ? atoi (str) : 0;
 			
+			switch (code) {
+			case 404: {
+				/* not found */
+				d(g_print ("Version: Not found\n"));
+				result = GOSSIP_ASYNC_ERROR_UNAVAILABLE;
+				break;
+			}
+
+			case 502: {
+				/* service not available */
+				d(g_print ("Version: Service not available\n"));
+				result = GOSSIP_ASYNC_ERROR_UNAVAILABLE;
+				break;
+			}
+
+			default:
+				d(g_print ("Version: Unhandled presence error:%d\n", code));
+				result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
+				break;
+			}
+		}
+
+		(callback) (result, 
+			    NULL,
+			    data->user_data);
+
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	}
+
+	/* no vcard node */
+	query_node = lm_message_node_get_child (m->node, "query");
+	if (!query_node) {
+		(callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY, 
+			    NULL,
+			    data->user_data);
+
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
 	info = gossip_version_info_new ();
 
-	node = lm_message_node_get_child (query, "name");
+	node = lm_message_node_get_child (query_node, "name");
 	if (node) {
 		gossip_version_info_set_name (info, 
 					      lm_message_node_get_value (node));
 	}
-
-	node = lm_message_node_get_child (query, "version");
+	
+	node = lm_message_node_get_child (query_node, "version");
 	if (node) {
 		gossip_version_info_set_version (info,
 						 lm_message_node_get_value (node));
 	}
-
-	node = lm_message_node_get_child (query, "os");
+	
+	node = lm_message_node_get_child (query_node, "os");
 	if (node) {
 		gossip_version_info_set_os (info,
 					    lm_message_node_get_value (node));
 	}
-
-	((GossipAsyncVersionCallback )data->callback) (GOSSIP_ASYNC_OK,
-						       info,
-						       data->user_data);
-
+	
+	(callback) (GOSSIP_ASYNC_OK,
+		    info,
+		    data->user_data);
+	
 	g_object_unref (info);
 	
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
-
+ 
 gboolean
 gossip_jabber_helper_async_get_version (LmConnection                *connection,
 					GossipContact               *contact,

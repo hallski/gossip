@@ -1,3 +1,29 @@
+2005-07-21  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/gossip-async.h: 
+	* protocols/jabber/gossip-jabber.c: 
+	* protocols/jabber/gossip-jabber-helper.c: 
+	- Actually set the subscription type for a contact, this also
+	fixes the subscription being NONE and every contact info dialog
+	having the resubscribe text/buttons, etc.
+	- Look at the errors returned for vcard/version lookups and
+	provide that back to the async callback.
+	* src/gossip-contact-list.c:
+	* src/gossip-stock.[ch]:
+	* ui/pixmaps/vcard_16.png:
+	* ui/pixmaps/Makefile.am: 
+	- Added vcard_16.png for contact information context menu.
+	* src/gossip-contact-info.[ch]:
+	- Added subscribe functionality back.
+	* ui/chat.glade:
+	* ui/connect.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	- Make sure dialogs/windows look consistent. 
+	- Removed send_message_dialog and recv_message_dialog since they
+	are no longer in use.
+	- Improved the contact-info dialog.
+
 2005-07-19  Mikael Hallendal  <micke@imendio.com>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c:

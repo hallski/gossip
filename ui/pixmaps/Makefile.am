@@ -15,6 +15,7 @@ image_DATA =			\
 	my-user_48.png		\
 	query_48.png		\
 	watermark.png		\
+	vcard_16.png		\
 	vcard_48.png		\
 	emoticon-face1.png 	\
 	emoticon-face2.png 	\

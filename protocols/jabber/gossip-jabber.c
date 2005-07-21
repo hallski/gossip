@@ -1922,16 +1922,31 @@ jabber_roster_request (GossipJabber *jabber, LmMessage *m)
 
 		/* subscription */
 		subscription = lm_message_node_get_attribute (node, "subscription");
-		if (contact && subscription && strcmp (subscription, "remove") == 0) {
-			g_object_ref (contact);
-			g_hash_table_remove (priv->contacts, 
-					     gossip_contact_get_id (contact));
-			
-			g_signal_emit_by_name (jabber,
-					       "contact-removed", contact);
-			g_object_unref (contact);
-			continue;
-		}
+		if (contact && subscription) {
+			GossipSubscription type;
+
+			if (strcmp (subscription, "remove") == 0) {
+				g_object_ref (contact);
+				g_hash_table_remove (priv->contacts, 
+						     gossip_contact_get_id (contact));
+				
+				g_signal_emit_by_name (jabber,
+						       "contact-removed", contact);
+				g_object_unref (contact);
+				continue;
+			} else if (strcmp (subscription, "both") == 0) {
+				type = GOSSIP_SUBSCRIPTION_BOTH;
+			} else if (strcmp (subscription, "to") == 0) {
+				type = GOSSIP_SUBSCRIPTION_TO;
+			} else if (strcmp (subscription, "from") == 0) {
+				type = GOSSIP_SUBSCRIPTION_FROM;
+			} else {
+				type = GOSSIP_SUBSCRIPTION_NONE;
+			}
+
+			gossip_contact_set_subscription (contact, 
+							 type);
+		} 
 		
 		/* find out if any thing has updated */
 		name_updated = groups_updated = FALSE;

@@ -28,7 +28,8 @@ typedef enum {
 	GOSSIP_ASYNC_OK,
 	GOSSIP_ASYNC_ERROR_INVALID_REPLY,
 	GOSSIP_ASYNC_ERROR_TIMEOUT,
-        GOSSIP_ASYNC_ERROR_REGISTRATION
+        GOSSIP_ASYNC_ERROR_REGISTRATION,
+	GOSSIP_ASYNC_ERROR_UNAVAILABLE
 } GossipAsyncResult;
 
 typedef void (*GossipAsyncRegisterCallback) (GossipAsyncResult  result,

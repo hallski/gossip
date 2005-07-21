@@ -38,51 +38,68 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_INFO, GossipContactInfoPriv))
 
+
 typedef struct _GossipContactInfoPriv GossipContactInfoPriv;
 struct _GossipContactInfoPriv {
 	GossipContact *contact;
 
 	GtkWidget     *dialog;
-	GtkWidget     *title_label;
-	GtkWidget     *jid_label;
-	GtkWidget     *personal_not_avail_label;
-	GtkWidget     *personal_table;
+	GtkWidget     *id_label;
 	GtkWidget     *name_label;
-	GtkWidget     *client_not_avail_label;
-	GtkWidget     *client_table;
-	GtkWidget     *client_name_label;
+	GtkWidget     *client_label;
 	GtkWidget     *version_label;
 	GtkWidget     *os_label;
+	GtkWidget     *personal_table;
+	GtkWidget     *description_vbox;
 	GtkWidget     *description_textview;
-	GtkWidget     *subscription_box;
+	GtkWidget     *client_not_avail_label;
+	GtkWidget     *client_table;
+	GtkWidget     *stub_id_label;
+	GtkWidget     *stub_name_label;
+	GtkWidget     *stub_email_label;
+	GtkWidget     *stub_web_label;
+	GtkWidget     *stub_client_label;
+	GtkWidget     *stub_version_label;
+	GtkWidget     *stub_os_label;
+	GtkWidget     *subscription_hbox;
 	GtkWidget     *subscription_label;
-	GtkWidget     *resubscribe_button;
-	GtkWidget     *close_button;
+	GtkWidget     *subscribe_button;
+
+	GtkWidget     *personal_status_label;
+	GtkWidget     *personal_status_hbox;
+	GtkWidget     *client_status_label;
+	GtkWidget     *client_status_hbox;
+	GtkWidget     *client_vbox;
 
 	gulong         presence_signal_handler;
 };
 
-static void contact_info_dialog_destroy_cb   (GtkWidget         *widget,
-					      GossipContactInfo *info);
-static void contact_info_dialog_close_cb     (GtkWidget         *widget, 
-					      GossipContactInfo *info);
-static void contact_info_get_vcard_cb        (GossipAsyncResult  result,
-					      GossipVCard       *vcard,
-					      GossipContactInfo *info);
-static void contact_info_get_version_cb      (GossipAsyncResult  result,
-					      GossipVersionInfo *version_info,
-					      GossipContactInfo *info);
-static void contact_info_resubscribe_cb      (GtkWidget         *widget,
-					      GossipContactInfo *info);
-static void 
-contact_info_update_subscription_ui          (GossipContactInfo *info,
-					      GossipContact     *contact);
-static void contact_info_contact_updated_cb  (GossipSession     *session,
-					      GossipContact     *contact,
-					      GossipContactInfo *info);
+
+static void contact_info_dialog_destroy_cb      (GtkWidget         *widget,
+						 GossipContactInfo *info);
+static void contact_info_dialog_response_cb     (GtkWidget         *widget,
+						 gint               response,
+						 GossipContactInfo *info);
+static void contact_info_get_vcard_cb           (GossipAsyncResult  result,
+						 GossipVCard       *vcard,
+						 GossipContactInfo *info);
+static void contact_info_get_version_cb         (GossipAsyncResult  result,
+						 GossipVersionInfo *version_info,
+						 GossipContactInfo *info);
+static void contact_info_subscribe_cb           (GtkWidget         *widget,
+						 GossipContactInfo *info);
+static void contact_info_update_subscription_ui (GossipContactInfo *info,
+						 GossipContact     *contact);
+static void contact_info_contact_updated_cb     (GossipSession     *session,
+						 GossipContact     *contact,
+						 GossipContactInfo *info);
+
 
 G_DEFINE_TYPE (GossipContactInfo, gossip_contact_info, G_TYPE_OBJECT);
+
+
 static gpointer parent_class = NULL;
+
 
 static void
 gossip_contact_info_class_init (GossipContactInfoClass *class)
@@ -99,7 +116,8 @@ gossip_contact_info_init (GossipContactInfo *info)
 }
 
 static void
-contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
+contact_info_dialog_destroy_cb (GtkWidget         *widget,
+				GossipContactInfo *info)
 {
 	GossipContactInfoPriv *priv;
 
@@ -110,13 +128,17 @@ contact_info_dialog_destroy_cb (GtkWidget *widget, GossipContactInfo *info)
 					     priv->presence_signal_handler);
 	}
 
+	g_object_unref (priv->contact);
+
 	priv->dialog = NULL;
 
 	g_object_unref (info);
 }
 
 static void
-contact_info_dialog_close_cb (GtkWidget *widget, GossipContactInfo *info)
+contact_info_dialog_response_cb (GtkWidget         *widget, 
+				 gint               response,
+				 GossipContactInfo *info)
 {
 	GossipContactInfoPriv *priv;
 
@@ -129,14 +151,25 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 			   GossipVCard       *vcard,
 			   GossipContactInfo *info)
 {
-	GtkTextBuffer *buffer;
-	gboolean       show_personal = FALSE;
-	const gchar   *str;
 	GossipContactInfoPriv *priv;
-
-	priv = GET_PRIV (info);
+	GtkTextBuffer         *buffer;
+	gboolean               show_personal = FALSE;
+	const gchar           *str;
 	
+	priv = GET_PRIV (info);
+
 	if (result != GOSSIP_ASYNC_OK || !priv->dialog) {
+/* 		gchar *status; */
+
+/* 		status = g_strdup_printf ("<i>%s</i>",  */
+/* 				       _("Information Not Available")); */
+/* 		gtk_label_set_markup (GTK_LABEL (priv->personal_status_label), status); */
+/* 		g_free (status); */
+		
+		if (priv->dialog) {
+			gtk_widget_hide (priv->personal_status_hbox);
+		}
+
 		g_object_unref (info);
 		return;
 	}
@@ -144,21 +177,26 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->description_textview));
 	str = gossip_vcard_get_description (vcard);
 
-	if (!str) {
-		str = "";
+	if (str && strlen (str) > 0) {
+		gtk_text_buffer_set_text (buffer, str, -1);
+		gtk_widget_show (priv->description_vbox);
+	} else {
+		gtk_widget_hide (priv->description_vbox);
 	}
 	
-	gtk_text_buffer_set_text (buffer, str, -1);
-
 	str = gossip_vcard_get_name (vcard);
-	if (str && strcmp (str, "") != 0) {
-		show_personal = TRUE;
-
+	if (str && strlen (str) > 0) {
 		gtk_label_set_text (GTK_LABEL (priv->name_label), str);
+
+		gtk_label_set_text (GTK_LABEL (priv->stub_name_label),
+				    _("Name:"));
+	} else {
+		gtk_label_set_text (GTK_LABEL (priv->stub_name_label),
+				    _("Alias:"));
 	}
 	
 	str = gossip_vcard_get_email (vcard);
-	if (str && strcmp (str, "") != 0) {
+	if (str && strlen (str) > 0) {
 		GtkWidget *href, *alignment;
 		gchar     *link;
 
@@ -174,15 +212,20 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 		gtk_table_attach (GTK_TABLE (priv->personal_table),
 				  alignment,
 				  1, 2,
-				  1, 2,
+				  0, 1,
 				  GTK_FILL, GTK_FILL,
 				  0, 0);
 
 		g_free (link);
+
+		gtk_widget_show_all (alignment);
+		gtk_widget_show (priv->stub_email_label);
+	} else {
+		gtk_widget_hide (priv->stub_email_label);
 	}
 
 	str = gossip_vcard_get_url (vcard);
-	if (str && strcmp (str, "") != 0) {
+	if (str && strlen (str) > 0) {
 		GtkWidget *href, *alignment;
 
 		show_personal = TRUE;
@@ -195,14 +238,26 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 		gtk_table_attach (GTK_TABLE (priv->personal_table),
 				  alignment, 
 				  1, 2,
-				  2, 3,
+				  1, 2,
 				  GTK_FILL, GTK_FILL,
 				  0, 0);
+
+		gtk_widget_show_all (alignment);
+		gtk_widget_show (priv->stub_web_label);
+	} else {
+		gtk_widget_hide (priv->stub_web_label);
 	}
 
 	if (show_personal) {
-		gtk_widget_hide (priv->personal_not_avail_label);
-		gtk_widget_show_all (priv->personal_table);
+		GtkSizeGroup *size_group;
+
+		gtk_widget_hide (priv->personal_status_hbox);
+		gtk_widget_show (priv->personal_table);
+
+		size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+		gtk_size_group_add_widget (size_group, priv->stub_id_label);
+		gtk_size_group_add_widget (size_group, priv->stub_email_label);
+		g_object_unref (size_group);
 	}
 	
 	g_object_unref (info);
@@ -213,13 +268,25 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 			     GossipVersionInfo *version_info,
 			     GossipContactInfo *info)
 {
-	const gchar           *str;
-	gboolean               show_client_info = FALSE;
 	GossipContactInfoPriv *priv;
+	gboolean               show_client_info = FALSE;
+	const gchar           *str;
 
 	priv = GET_PRIV (info);
-	
+
 	if (result != GOSSIP_ASYNC_OK || !priv->dialog) {
+/* 		gchar *status; */
+
+/* 		status = g_strdup_printf ("<i>%s</i>",  */
+/* 				       _("Information Not Available")); */
+/* 		gtk_label_set_markup (GTK_LABEL (priv->client_status_label), status); */
+/* 		g_free (status); */
+
+		if (priv->dialog) {
+			gtk_widget_hide (priv->client_status_hbox);
+			gtk_widget_hide (priv->client_vbox);
+		}
+
 		g_object_unref (info);
 		return;
 	}
@@ -228,7 +295,10 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 	if (str && strcmp (str,  "") != 0) {
 		show_client_info = TRUE;
 
-		gtk_label_set_text (GTK_LABEL (priv->client_name_label), str);
+		gtk_label_set_text (GTK_LABEL (priv->client_label), str);
+		gtk_widget_show (priv->stub_client_label);
+	} else {
+		gtk_widget_hide (priv->stub_client_label);
 	}
 
 	str = gossip_version_info_get_version (version_info);
@@ -236,6 +306,9 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (priv->version_label), str);
+		gtk_widget_show (priv->stub_version_label);
+	} else {
+		gtk_widget_hide (priv->stub_version_label);
 	}
 
 	str = gossip_version_info_get_os (version_info);
@@ -243,37 +316,44 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (priv->os_label), str);
+		gtk_widget_show (priv->stub_os_label);
+	} else {
+		gtk_widget_hide (priv->stub_os_label);
 	}
 
 	if (show_client_info) {
-		gtk_widget_hide (priv->client_not_avail_label);
-	
-		gtk_widget_show_all (priv->client_table);
-	}
+		GtkSizeGroup *size_group;
+
+		gtk_widget_hide (priv->client_status_hbox);
+		gtk_widget_show (priv->client_table);
+
+		size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+		gtk_size_group_add_widget (size_group, priv->stub_id_label);
+		gtk_size_group_add_widget (size_group, priv->stub_client_label);
+		g_object_unref (size_group);
+	} 
 
 	g_object_unref (info);
 }
 
 static void
-contact_info_resubscribe_cb (GtkWidget *widget, GossipContactInfo *info)
+contact_info_subscribe_cb (GtkWidget         *widget, 
+			   GossipContactInfo *info)
 {
-	/* FIXME (session): Readd */
-#if 0
-	LmMessage *m;
-	GError *error = NULL;
+	GossipContactInfoPriv *priv;
+	const gchar           *message;
 
-	m = lm_message_new (gossip_jid_get_without_resource (priv->jid), 
-			    LM_MESSAGE_TYPE_PRESENCE);
-	lm_message_node_set_attribute (m->node, "type", "subscribe");
+	g_return_if_fail (info != NULL);
 
-	if (!lm_connection_send (priv->connection, m, &error)) {
-		d(g_print ("Error while sending: %s\n", error->message));
-		lm_message_unref (m);
-		return;
-	}
+	priv = GET_PRIV (info);
 
-	lm_message_unref (m);
-#endif
+	message = _("I would like to add you to my contact list.");
+
+        gossip_session_add_contact (gossip_app_get_session (),
+                                    gossip_contact_get_id (priv->contact), 
+				    gossip_contact_get_name (priv->contact),
+				    NULL, /* group */
+				    message);
 }
 
 static void
@@ -283,23 +363,23 @@ contact_info_update_subscription_ui (GossipContactInfo *info,
 	GossipSubscription subscription;
 	GossipContactInfoPriv *priv;
 
-	priv = GET_PRIV (info);
-
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (info != NULL);
+
+	priv = GET_PRIV (info);
 
 	subscription = gossip_contact_get_subscription (contact);
 
 	if (subscription == GOSSIP_SUBSCRIPTION_NONE ||
 	    subscription == GOSSIP_SUBSCRIPTION_FROM) {
-		gtk_widget_show_all (priv->subscription_box);
+		gtk_widget_show_all (priv->subscription_hbox);
 	
-		g_signal_connect (priv->resubscribe_button,
+		g_signal_connect (priv->subscribe_button,
 				  "clicked",
-				  G_CALLBACK (contact_info_resubscribe_cb),
+				  G_CALLBACK (contact_info_subscribe_cb),
 				  info);
 	} else {
-		gtk_widget_hide (priv->subscription_box);
+		gtk_widget_hide (priv->subscription_hbox);
 	}
 }
 
@@ -331,70 +411,77 @@ gossip_contact_info_new (GossipContact *contact)
 
 	priv = GET_PRIV (info);
 	
-	priv->contact = contact;
+	priv->contact = g_object_ref (contact);
 
 	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
 				     "contact_information_dialog",
 				     NULL,
 				     "contact_information_dialog", &priv->dialog,
-				     "title_label", &priv->title_label,
-				     "jid_label", &priv->jid_label,
-				     "personal_not_avail_label", &priv->personal_not_avail_label,
-				     "personal_table", &priv->personal_table,
+				     "id_label", &priv->id_label,
 				     "name_label", &priv->name_label,
-				     "client_not_avail_label", &priv->client_not_avail_label,
-				     "client_table", &priv->client_table,
-				     "client_name_label", &priv->client_name_label,
+				     "client_label", &priv->client_label,
 				     "version_label", &priv->version_label,
 				     "os_label", &priv->os_label,
-				     "close_button", &priv->close_button,
+				     "personal_table", &priv->personal_table,
+				     "description_vbox", &priv->description_vbox,
 				     "description_textview", &priv->description_textview,
-				     "subscription_box", &priv->subscription_box,
+				     "client_table", &priv->client_table,
+				     "stub_id_label", &priv->stub_id_label,
+				     "stub_name_label", &priv->stub_name_label,
+				     "stub_email_label", &priv->stub_email_label,
+				     "stub_web_label", &priv->stub_web_label,
+				     "stub_client_label", &priv->stub_client_label,
+				     "stub_version_label", &priv->stub_version_label,
+				     "stub_os_label", &priv->stub_os_label,
+				     "personal_status_label", &priv->personal_status_label,
+				     "personal_status_hbox", &priv->personal_status_hbox,
+				     "client_status_label", &priv->client_status_label,
+				     "client_status_hbox", &priv->client_status_hbox,
+				     "client_vbox", &priv->client_vbox,
+				     "subscription_hbox", &priv->subscription_hbox,
 				     "subscription_label", &priv->subscription_label,
-				     "resubscribe_button", &priv->resubscribe_button,
+				     "subscribe_button", &priv->subscribe_button,
 				     NULL);
 
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
-	/* A bit ugly, but the result is nice. Align the labels in the two
-	 * different tables.
-	 */
-	gtk_size_group_add_widget (
-		size_group, glade_xml_get_widget (gui, "personal_name_label"));
-	gtk_size_group_add_widget (
-		size_group, glade_xml_get_widget (gui, "personal_email_label"));
-	gtk_size_group_add_widget (
-		size_group, glade_xml_get_widget (gui, "personal_web_label"));
-	gtk_size_group_add_widget (
-		size_group, glade_xml_get_widget (gui, "client_client_label"));
-	gtk_size_group_add_widget (
-		size_group, glade_xml_get_widget (gui, "client_version_label"));
-	gtk_size_group_add_widget (
-		size_group, glade_xml_get_widget (gui, "client_os_label"));
-
-	g_object_unref (size_group);
-	
 	g_signal_connect (priv->dialog,
 			  "destroy",
 			  G_CALLBACK (contact_info_dialog_destroy_cb),
 			  info);
 
+	g_signal_connect (priv->dialog,
+			  "response",
+			  G_CALLBACK (contact_info_dialog_response_cb),
+			  info);
+
+	/* A bit ugly, but the result is nice. Align the labels in the
+	   two different tables. */
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+	gtk_size_group_add_widget (size_group, priv->stub_name_label);
+	gtk_size_group_add_widget (size_group, priv->stub_email_label);
+	gtk_size_group_add_widget (size_group, priv->stub_web_label);
+	gtk_size_group_add_widget (size_group, priv->stub_client_label);
+	gtk_size_group_add_widget (size_group, priv->stub_version_label);
+	gtk_size_group_add_widget (size_group, priv->stub_os_label);
+
+	g_object_unref (size_group);
+	
+	/* set labels */
 	tmp_str = g_strdup_printf (_("Contact Information for %s"), 
 				   gossip_contact_get_name (contact));
-
-	gtk_window_set_title (GTK_WINDOW (priv->dialog), tmp_str);
 
 	str = g_markup_escape_text (tmp_str, -1);
 	g_free (tmp_str);
 	
-	tmp_str = g_strdup_printf ("<b>%s</b>", str);
-	g_free (str);
-	gtk_label_set_markup (GTK_LABEL (priv->title_label), tmp_str);
-	g_free (tmp_str);
-
-	gtk_label_set_text (GTK_LABEL (priv->jid_label), 
+	gtk_label_set_text (GTK_LABEL (priv->id_label), 
 			    gossip_contact_get_id (contact));
-	
+
+	gtk_label_set_text (GTK_LABEL (priv->stub_name_label),
+			    _("Alias:"));
+	gtk_label_set_text (GTK_LABEL (priv->name_label), 
+			    gossip_contact_get_name (contact));
+
+	/* subscription listener */
 	contact_info_update_subscription_ui (info, contact);
 		
 	priv->presence_signal_handler = g_signal_connect (gossip_app_get_session (),
@@ -402,10 +489,12 @@ gossip_contact_info_new (GossipContact *contact)
 							  G_CALLBACK (contact_info_contact_updated_cb), 
 							  info);
 
-	g_signal_connect (priv->close_button,
-			  "clicked",
-			  G_CALLBACK (contact_info_dialog_close_cb),
-			  info);
+	/* get vcard and version info */
+	str = g_strdup_printf ("<i>%s</i>", 
+			       _("Requested Information"));
+	gtk_label_set_markup (GTK_LABEL (priv->personal_status_label), str);
+	gtk_label_set_markup (GTK_LABEL (priv->client_status_label), str);
+	g_free (str);
 
 	gossip_session_async_get_vcard (gossip_app_get_session (),
 					contact,

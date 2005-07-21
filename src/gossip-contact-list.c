@@ -311,14 +311,15 @@ enum {
 };
 
 
-#define GIF_CB(x) ((GtkItemFactoryCallback)(x))
+#define GIF_CB(x)    ((GtkItemFactoryCallback)(x))
+
 static GtkItemFactoryEntry item_menu_items[] = {
 	{ N_("/Contact _Information"),
 	  NULL,
 	  GIF_CB (contact_list_item_menu_info_cb),
 	  ITEM_MENU_INFO,
-	  "<Item>",
-	  NULL },
+	  "<StockItem>",
+	  GOSSIP_STOCK_CONTACT_INFORMATION },
 	{ "/sep1",
 	  NULL,
 	  NULL,
