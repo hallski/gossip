@@ -57,7 +57,7 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
 	type = lm_message_get_sub_type (m);
 
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-		GossipAsyncResult result;
+		GossipAsyncResult result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
 
 		node = lm_message_node_get_child (m->node, "error");
 		if (node) {
@@ -257,7 +257,7 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 	type = lm_message_get_sub_type (m);
 
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-		GossipAsyncResult result;
+		GossipAsyncResult result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
 
 		node = lm_message_node_get_child (m->node, "error");
 		if (node) {

@@ -1,5 +1,11 @@
 2005-07-21  Martyn Russell  <mr@gnome.org>
 
+	* protocols/jabber/gossip-jabber-helper.c:
+	- Fixed 2 instances of the compiler complaining about
+	uninitialised variables.
+
+2005-07-21  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-status-presets.[ch]:
 	* src/gossip-status-presets.dtd:
 	- Added to handle XML file .gnome2/Gossip/StatusPresets
