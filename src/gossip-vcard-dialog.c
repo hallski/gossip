@@ -66,6 +66,9 @@ static void vcard_dialog_set_vcard_cb            (GossipAsyncResult  result,
 						  GossipVCardDialog *dialog);
 #if 0 /* TRANSPORTS */
 /* This should be removed anyway in my opinion /Micke
+
+   :-O all that hard work for nothing :-/  /Martyn
+
  */
 static void vcard_dialog_set_msn_nick            (GossipVCardDialog *dialog);
 static void vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,

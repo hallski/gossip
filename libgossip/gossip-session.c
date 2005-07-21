@@ -196,7 +196,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
-	
+
 	signals[CONTACT_PRESENCE_UPDATED] = 
 		g_signal_new ("contact-presence-updated",
 			      G_TYPE_FROM_CLASS (klass),

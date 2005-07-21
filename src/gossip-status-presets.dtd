@@ -1,0 +1,13 @@
+<!--
+  DTD for Gossips status presets.
+  by Martyn Russell <mr@gnome.org>
+-->
+
+<!-- Root element. -->
+<!ELEMENT presets (status+)>
+
+<!ELEMENT status (#PCDATA)>
+<!ATTLIST status
+    name CDATA #IMPLIED
+    presence (available|busy|away|ext_away) "available">
+

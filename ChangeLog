@@ -1,5 +1,16 @@
 2005-07-21  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-status-presets.[ch]:
+	* src/gossip-status-presets.dtd:
+	- Added to handle XML file .gnome2/Gossip/StatusPresets
+	* ui/main.glade: 
+	* src/gossip-app.c (app_status_show_status_dialog): 
+	- Changed the operation to use async callbacks with response
+	signals, etc instead of using gtk_dialog_run.
+	- Use a GtkComboBoxEntry now with 5 presets in the drop down.
+
+2005-07-21  Martyn Russell  <mr@gnome.org>
+
 	* libgossip/gossip-async.h: 
 	* protocols/jabber/gossip-jabber.c: 
 	* protocols/jabber/gossip-jabber-helper.c: 

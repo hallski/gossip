@@ -54,6 +54,7 @@ gossip_SOURCES = 				                        	\
 	gossip-stock.c		           gossip-stock.h			\
 	gossip-spell.c                     gossip-spell.h                       \
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
+	gossip-status-presets.c		   gossip-status-presets.h	       	\
 	gossip-status-presets-dialog.c	   gossip-status-presets-dialog.h       \
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
@@ -61,13 +62,15 @@ gossip_SOURCES = 				                        	\
 	eel-ellipsizing-label.c	    	   eel-ellipsizing-label.h		\
 	eggtrayicon.c		           eggtrayicon.h
 
-gossip_LDADD = @GOSSIP_LIBS@                            \
+gossip_LDADD = @GOSSIP_LIBS@                            			\
 	       $(top_builddir)/libgossip/libgossip.la
 
 gossip_LDFLAGS = -export-dynamic
 
 dtddir = $(datadir)/gossip
-dtd_DATA = gossip-contact-groups.dtd
+dtd_DATA = 									\
+	gossip-contact-groups.dtd						\
+	gossip-status-presets.dtd
 
 stylesheetdir = $(datadir)/gossip
 stylesheet_DATA = gossip-log.xsl
@@ -88,15 +91,15 @@ gossip-marshal.c: gossip-marshal.list
 
 gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
 
-BUILT_SOURCES = 					\
-	gossip-marshal.h				\
+BUILT_SOURCES = 								\
+	gossip-marshal.h							\
 	gossip-marshal.c
 
 CLEANFILES = $(BUILT_SOURCES)
 
-EXTRA_DIST =						\
-	gossip-log.xsl					\
-	gossip-marshal.list                             \
-	$(dtd_DATA)					\
+EXTRA_DIST =									\
+	gossip-log.xsl								\
+	gossip-marshal.list                             			\
+	$(dtd_DATA)								\
 	$(dbus_sources)
 
