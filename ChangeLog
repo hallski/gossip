@@ -1,3 +1,8 @@
+2005-07-22  Martyn Russell  <martyn.russell@bt.com>
+
+	* src/gossip-account-dialog.c: 
+	- Fixed register button not actually doing anything.
+
 2005-07-21  Martyn Russell  <mr@gnome.org>
 
 	* protocols/jabber/gossip-jabber-helper.c:

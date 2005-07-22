@@ -38,6 +38,8 @@
 #include "gossip-register.h"
 #include "gossip-account-dialog.h"
 
+#define RESPONSE_REGISTER 1
+
 
 typedef struct {
 	GtkWidget     *dialog;
@@ -62,11 +64,9 @@ static void     account_dialog_destroy_cb          (GtkWidget            *widget
 static void     account_dialog_response_cb         (GtkWidget            *widget,
 						    gint                  response,
 						    GossipAccountDialog  *dialog);
-static void           account_dialog_register_clicked        (GtkWidget            *button,
-							      GossipAccountDialog  *dialog);
-static void           account_dialog_changed_cb              (GtkWidget            *widget,
-							      GossipAccountDialog  *dialog);
-static gboolean       account_dialog_focus_out_event         (GtkWidget            *widget,
+static void     account_dialog_changed_cb          (GtkWidget            *widget,
+						    GossipAccountDialog  *dialog);
+static gboolean account_dialog_focus_out_event     (GtkWidget            *widget,
 						    GdkEventFocus        *event,
 						    GossipAccountDialog  *dialog);
 static void     account_dialog_port_insert_text_cb (GtkEditable          *editable,
@@ -74,12 +74,11 @@ static void     account_dialog_port_insert_text_cb (GtkEditable          *editab
 						    gint                  len,
 						    gint                 *position,
 						    GossipAccountDialog  *dialog);
-static void           account_dialog_toggled_cb              (GtkWidget            *widget,
+static void     account_dialog_toggled_cb          (GtkWidget            *widget,
 						    GossipAccountDialog  *dialog);
-static void           account_dialog_save                    (GossipAccountDialog  *dialog);
-static void           account_dialog_setup                   (GossipAccountDialog  *dialog,
-							      GossipAccount        *account);
-
+static void     account_dialog_save                (GossipAccountDialog  *dialog);
+static void     account_dialog_setup               (GossipAccountDialog  *dialog,
+						    GossipAccount        *account);
 
 
 static void
@@ -93,10 +92,16 @@ account_dialog_destroy_cb (GtkWidget            *widget,
 }
 
 static void
-account_dialog_response_cb (GtkWidget            *widget,
-			    gint                  response,
+account_dialog_response_cb (GtkWidget           *widget,
+			    gint                 response,
 			    GossipAccountDialog *dialog)
 {
+	if (response == RESPONSE_REGISTER) {
+		gossip_register_account (dialog->account, 
+					 GTK_WINDOW (dialog->dialog));
+		return;
+	}
+
  	if (dialog->account_changed) {
  		account_dialog_save (dialog);
 	}
@@ -105,16 +110,8 @@ account_dialog_response_cb (GtkWidget            *widget,
 }
 
 static void
-account_dialog_register_clicked (GtkWidget           *button,
- 				 GossipAccountDialog *dialog)
-{
- 	gossip_register_account (dialog->account, 
- 				 GTK_WINDOW (dialog->dialog));
-}
-
-static void
 account_dialog_changed_cb (GtkWidget           *widget,
-				   GossipAccountDialog *dialog)
+			   GossipAccountDialog *dialog)
 {
 	GossipAccount *account;
  	const gchar   *str = NULL;
@@ -161,13 +158,13 @@ account_dialog_changed_cb (GtkWidget           *widget,
 			port_str = g_strdup_printf ("%d", account->port);
  			g_signal_handlers_block_by_func (dialog->port_entry, 
  							 account_dialog_changed_cb, 
-						   dialog);
+							 dialog);
  			gtk_entry_set_text (GTK_ENTRY (widget), port_str);
  			g_signal_handlers_unblock_by_func (dialog->port_entry, 
  							   account_dialog_changed_cb, 
  							   dialog);
 			g_free (port_str);
-	}
+		}
 	}
 
 	gossip_account_store (account, NULL);
@@ -195,7 +192,7 @@ account_dialog_port_insert_text_cb (GtkEditable          *editable,
 
 static void  
 account_dialog_toggled_cb (GtkWidget           *widget,
-			    GossipAccountDialog *dialog)
+			   GossipAccountDialog *dialog)
 {
 	gboolean       active;
 	gboolean       changed = FALSE;
@@ -208,19 +205,19 @@ account_dialog_toggled_cb (GtkWidget           *widget,
 	if (widget == dialog->ssl_checkbutton) {
 		account->use_ssl = active;
 	
-	if (active && (account->port == LM_CONNECTION_DEFAULT_PORT)) {
-		account->port = LM_CONNECTION_DEFAULT_PORT_SSL;
-		changed = TRUE;
+		if (active && (account->port == LM_CONNECTION_DEFAULT_PORT)) {
+			account->port = LM_CONNECTION_DEFAULT_PORT_SSL;
+			changed = TRUE;
 		} else if (!active && (account->port == LM_CONNECTION_DEFAULT_PORT_SSL)) {
-		account->port = LM_CONNECTION_DEFAULT_PORT;
-		changed = TRUE;
-	}
+			account->port = LM_CONNECTION_DEFAULT_PORT;
+			changed = TRUE;
+		}
 
-	if (changed) {
-		gchar *port_str = g_strdup_printf ("%d", account->port);
-		gtk_entry_set_text (GTK_ENTRY (dialog->port_entry), port_str);
-		g_free (port_str);
-	}
+		if (changed) {
+			gchar *port_str = g_strdup_printf ("%d", account->port);
+			gtk_entry_set_text (GTK_ENTRY (dialog->port_entry), port_str);
+			g_free (port_str);
+		}
 	} else if (widget == dialog->proxy_checkbutton) {
 		account->use_proxy = active;
 	}
@@ -279,13 +276,20 @@ account_dialog_setup (GossipAccountDialog *dialog,
 	gtk_widget_set_sensitive (dialog->register_button, TRUE);
 	
 	/* block signals first */
-	g_signal_handlers_block_by_func (dialog->jid_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_block_by_func (dialog->password_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_block_by_func (dialog->resource_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_block_by_func (dialog->server_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_block_by_func (dialog->port_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_block_by_func (dialog->ssl_checkbutton, account_dialog_toggled_cb, dialog);
-	g_signal_handlers_block_by_func (dialog->proxy_checkbutton, account_dialog_toggled_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->jid_entry, 
+					 account_dialog_changed_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->password_entry, 
+					 account_dialog_changed_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->resource_entry, 
+					 account_dialog_changed_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->server_entry, 
+					 account_dialog_changed_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->port_entry, 
+					 account_dialog_changed_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->ssl_checkbutton, 
+					 account_dialog_toggled_cb, dialog);
+	g_signal_handlers_block_by_func (dialog->proxy_checkbutton, 
+					 account_dialog_toggled_cb, dialog);
 
 	if (lm_ssl_is_supported ()) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->ssl_checkbutton),
@@ -319,14 +323,20 @@ account_dialog_setup (GossipAccountDialog *dialog,
 				      account->use_proxy);
 
 	/* unblock signals */
-	g_signal_handlers_unblock_by_func (dialog->jid_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_unblock_by_func (dialog->password_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_unblock_by_func (dialog->resource_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_unblock_by_func (dialog->server_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_unblock_by_func (dialog->port_entry, account_dialog_changed_cb, dialog);
-	g_signal_handlers_unblock_by_func (dialog->ssl_checkbutton, account_dialog_toggled_cb, dialog);
-	g_signal_handlers_unblock_by_func (dialog->proxy_checkbutton, account_dialog_toggled_cb, dialog);
-
+	g_signal_handlers_unblock_by_func (dialog->jid_entry, 
+					   account_dialog_changed_cb, dialog);
+	g_signal_handlers_unblock_by_func (dialog->password_entry,
+					   account_dialog_changed_cb, dialog);
+	g_signal_handlers_unblock_by_func (dialog->resource_entry, 
+					   account_dialog_changed_cb, dialog);
+	g_signal_handlers_unblock_by_func (dialog->server_entry, 
+					   account_dialog_changed_cb, dialog);
+	g_signal_handlers_unblock_by_func (dialog->port_entry, 
+					   account_dialog_changed_cb, dialog);
+	g_signal_handlers_unblock_by_func (dialog->ssl_checkbutton, 
+					   account_dialog_toggled_cb, dialog);
+	g_signal_handlers_unblock_by_func (dialog->proxy_checkbutton, 
+					   account_dialog_toggled_cb, dialog);
 }
 
 GtkWidget *
@@ -371,8 +381,7 @@ gossip_account_dialog_show (void)
 			      "port_entry", "insert_text", account_dialog_port_insert_text_cb,
 			      "proxy_checkbutton", "toggled", account_dialog_toggled_cb,
 			      "ssl_checkbutton", "toggled", account_dialog_toggled_cb,
-			      "register_button", "clicked", account_dialog_register_clicked,
-				       NULL);
+			      NULL);
 	
 	g_signal_connect (dialog->dialog,
 			  "destroy",
