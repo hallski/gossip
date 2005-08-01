@@ -1,3 +1,15 @@
+2005-08-01  Martyn Russell  <mr@gnome.org>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c
+	(jabber_chatrooms_presence_handler): 
+	- Removed warning about invalid chatroom ID since a lot of
+	presence messages will NOT be for a chatroom.
+
+	* protocols/jabber/gossip-jabber.c (jabber_setup): 
+	- #ifdef'd out the transport initiation code since it serves no
+	purpose at the moment and generates a lot of extra unnecessary
+	traffic. 
+
 2005-07-22  Martyn Russell  <martyn.russell@bt.com>
 
 	* src/gossip-account-dialog.c: 

@@ -231,7 +231,6 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		
 	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
 	if (!room) {
-		d(g_print ("Chatrooms: Not a chatroom ID:'%s'\n", from));
 		gossip_jid_unref (jid);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}

@@ -303,8 +303,9 @@ jabber_finalize (GObject *obj)
  	g_hash_table_destroy (priv->contacts);
  	gossip_jabber_chatrooms_free (priv->chatrooms);
 	
+#ifdef USE_TRANSPORTS
  	gossip_transport_account_list_free (priv->account_list);
-	
+#endif	
  	g_free (priv);
 }
 
@@ -374,9 +375,11 @@ jabber_setup (GossipProtocol *protocol,
 	priv->chatrooms = gossip_jabber_chatrooms_new (jabber, 
 						       priv->connection);
 
+#ifdef USE_TRANSPORTS
 	/* initialise the jabber accounts module which is necessary to
 	   watch roster changes to know which services are set up */
 	priv->account_list = gossip_transport_account_list_new (jabber);
+#endif
 }
 
 static void
