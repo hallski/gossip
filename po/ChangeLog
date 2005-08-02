@@ -1,3 +1,8 @@
+2005-08-02  Žygimantas Beručka  <zygis@gnome.org>
+
+	* POTFILES.in: Removed erroneous src/gossip-connect-dialog.c entry,
+	since this file doesn't seem to exist any longer.
+
 2005-07-10  Mikael Hallendal  <micke@imendio.com>
 
 	* POTFILES.skip: Added protocols/jabber/gossip-jabber-chatrooms.c
