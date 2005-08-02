@@ -1,3 +1,9 @@
+2005-08-02  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-contact-list.c (contact_list_contact_presence_updated_cb): 
+	- changed roster behaviour so we don't highlight the roster for
+	simple presence changes, only online/offline changes. 
+
 2005-08-01  Martyn Russell  <mr@gnome.org>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c

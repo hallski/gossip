@@ -721,7 +721,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 	} else {
 		if (priv->show_active) {
-			do_set_active = TRUE;
+			do_set_active = FALSE; /* was TRUE for presence updates */
 			do_set_refresh = TRUE;
 
 			d(g_print ("Contact List: Set active (contact updated)!\n")); 
