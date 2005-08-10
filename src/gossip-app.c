@@ -95,7 +95,9 @@
 
 #define d(x)
 
+
 extern GConfClient *gconf_client;
+
 
 struct _GossipAppPriv {
 	GossipSession      *session;
@@ -144,6 +146,7 @@ struct _GossipAppPriv {
 	guint               size_timeout_id;
 };
 
+
 typedef struct {
 	GCompletion *completion;
 	GList       *names;
@@ -155,6 +158,7 @@ typedef struct {
 	GtkWidget   *entry;
 	GtkWidget   *dialog;
 } CompleteNameData;
+
 
 typedef struct {
 	GossipProtocol *protocol;
@@ -169,7 +173,9 @@ enum {
 	LAST_SIGNAL
 };
 
+
 static guint signals[LAST_SIGNAL] = { 0 };
+
 
 static void            gossip_app_class_init                     (GossipAppClass      *klass);
 static void            gossip_app_init                           (GossipApp           *app);
@@ -287,6 +293,9 @@ static void            app_contact_activated_cb                  (GossipContactL
 static void            app_subscription_request_cb               (GossipProtocol      *protocol,
 								  GossipContact       *contact,
 								  gpointer             user_data);
+static void            app_subscription_event_activated_cb       (GossipEventManager  *event_manager,
+								  GossipEvent         *event,
+								  GossipProtocol      *protocol);
 static void            app_subscription_vcard_cb                 (GossipAsyncResult    result,
 								  GossipVCard         *vcard,
 								  SubscriptionData    *data);
@@ -2421,7 +2430,35 @@ app_subscription_request_cb (GossipProtocol *protocol,
 			     GossipContact  *contact,
 			     gpointer        user_data)
 {
+	GossipEvent      *event;
+	gchar            *str;
+
+	event = gossip_event_new (GOSSIP_EVENT_SUBSCRIPTION_REQUEST);
+
+	str = g_strdup_printf (_("New subscription request from %s"), 
+			       gossip_contact_get_name (contact));
+
+	g_object_set (event, 
+		      "message", str, 
+		      "data", contact,
+		      NULL);
+	g_free (str);
+
+	gossip_event_manager_add (gossip_app_get_event_manager (),
+				  event, 
+				  (GossipEventActivatedFunction)app_subscription_event_activated_cb,
+				  G_OBJECT (protocol));
+}
+
+static void
+app_subscription_event_activated_cb (GossipEventManager *event_manager,
+				     GossipEvent        *event,
+				     GossipProtocol     *protocol)
+{
+	GossipContact    *contact;
 	SubscriptionData *data;
+
+	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
 
 	data = g_new0 (SubscriptionData, 1);
 
@@ -2429,7 +2466,7 @@ app_subscription_request_cb (GossipProtocol *protocol,
 	data->contact = g_object_ref (contact);
 
 	gossip_session_async_get_vcard (gossip_app_get_session (),
-					contact,
+					data->contact,
 					(GossipAsyncVCardCallback) app_subscription_vcard_cb,
 					data, NULL);
 }

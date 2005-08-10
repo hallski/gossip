@@ -1,3 +1,10 @@
+2005-08-10  Martyn Russell  <martyn.russell@bt.com>
+
+	* src/gossip-app.c (app_subscription_request_cb): 
+	- Make use of the event manager for subscriptions (instead of just
+	popping a dialog).
+	- Fixes bug #120245.
+
 2005-08-02  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-contact-list.c (contact_list_contact_presence_updated_cb): 
