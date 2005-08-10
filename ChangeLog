@@ -1,4 +1,11 @@
-2005-08-10  Martyn Russell  <martyn.russell@bt.com>
+2005-08-10  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-chat-view.c (chat_view_copy_address_cb): 
+	- "Copy Link Address" context menu now copies to both PRIMARY and
+	CLIPBOARD.
+	- Fixes bug #152479.
+
+2005-08-10  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c (app_subscription_request_cb): 
 	- Make use of the event manager for subscriptions (instead of just
@@ -23,7 +30,7 @@
 	purpose at the moment and generates a lot of extra unnecessary
 	traffic. 
 
-2005-07-22  Martyn Russell  <martyn.russell@bt.com>
+2005-07-22  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-account-dialog.c: 
 	- Fixed register button not actually doing anything.
@@ -915,7 +922,7 @@
 	* src/gossip-jabber.c: (gossip_jabber_init):
 	- Set keep alive rate on Loudmouth connection, reported by Richard.
 
-2005-01-27  Martyn Russell  <martyn.russell@bt.com>
+2005-01-27  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-session.[ch]:
 	* src/gossip-protocol.[ch]:

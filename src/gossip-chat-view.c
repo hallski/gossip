@@ -536,6 +536,9 @@ chat_view_copy_address_cb (GtkMenuItem *menuitem, const gchar *url)
 
 	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_set_text (clipboard, url, -1);
+
+	clipboard = gtk_clipboard_get (GDK_SELECTION_PRIMARY);
+	gtk_clipboard_set_text (clipboard, url, -1);
 }
 
 static void
