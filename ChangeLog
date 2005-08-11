@@ -1,5 +1,14 @@
 2005-08-11  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-contact-list.c
+	(contact_list_contact_presence_updated_cb):   
+	- Earlier code change to ONLY highlight online/offline contacts on
+	the roster was not working when showing offline contacts.  I have
+	retested the code and it seems to work better.
+	- Fixes bug #312407.
+
+2005-08-11  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-chat-window.c (gossip_chat_window_init): 
 	- Connect disconnected signal to session not app, so now we get
 	the disconnected signal and update the chat window contact

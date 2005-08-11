@@ -281,6 +281,7 @@ enum {
 	MODEL_COL_CONTACT,
 	MODEL_COL_IS_GROUP,
 	MODEL_COL_IS_ACTIVE,
+	MODEL_COL_IS_ONLINE,
 	NUMBER_OF_COLS
 };
 
@@ -665,7 +666,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	GtkTreeModel          *model;
 	gboolean               in_list;
 	gboolean               should_be_in_list;
-	gboolean               set_state = FALSE;
+	gboolean               was_online = TRUE;
+	gboolean               now_online = FALSE;
+	gboolean               set_model = FALSE;
 	gboolean               do_remove = FALSE;
 	gboolean               do_set_active = FALSE;
 	gboolean               do_set_refresh = FALSE;
@@ -688,8 +691,11 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		should_be_in_list = FALSE;
 	}
 
+	/* get online state now */
+	now_online = gossip_contact_is_online (contact);
+
 	if (!in_list && !should_be_in_list) {
-		/* Nothing to do */
+		/* nothing to do */
 		g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 		g_list_free (iters);
 		return;
@@ -702,8 +708,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			do_set_active = TRUE;
 			do_set_refresh = TRUE;
 
-			set_state = TRUE;
-			d(g_print ("Contact List: Remove item (after timeout)!\n")); 
+			set_model = TRUE;
+			d(g_print ("Contact List: Remove item (after timeout)\n")); 
 		} else {
 			d(g_print ("Contact List: Remove item (now)!\n")); 
 			contact_list_remove_contact (list, contact);
@@ -716,35 +722,64 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (priv->show_active) {
 			do_set_active = TRUE;
 
-			d(g_print ("Contact List: Set active (contact added)!\n")); 
+			d(g_print ("Contact List: Set active (contact added)\n")); 
 		}
 
 	} else {
-		if (priv->show_active) {
-			do_set_active = FALSE; /* was TRUE for presence updates */
-			do_set_refresh = TRUE;
-
-			d(g_print ("Contact List: Set active (contact updated)!\n")); 
+		/* get online state before */
+		if (iters && g_list_length (iters) > 0) {
+			GtkTreeIter *iter;
+			
+			iter = g_list_nth_data (iters, 0);
+			gtk_tree_model_get (model, iter, MODEL_COL_IS_ONLINE, &was_online, -1);
 		}
 
-		set_state = TRUE;
+		/* is this really an update or an online/offline */
+		if (priv->show_active) {
+			if (was_online != now_online) {
+				gchar *str;
+
+				do_set_active = TRUE;
+				do_set_refresh = TRUE;
+
+				if (was_online) {
+					str = "online  -> offline"; 
+				} else {
+					str = "offline -> online"; 
+				}
+
+				d(g_print ("Contact List: Set active (contact updated %s)\n", str)); 
+
+			} else {
+				/* was TRUE for presence updates */
+				/* do_set_active = FALSE;  */
+				do_set_refresh = TRUE;
+				
+				d(g_print ("Contact List: Set active (contact updated)\n")); 
+			}
+		}
+
+		set_model = TRUE;
 	}
 
-	for (l = iters; l && set_state; l = l->next) {
+	for (l = iters; l && set_model; l = l->next) {
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
 				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_IS_ACTIVE, priv->show_active,
+				    MODEL_COL_IS_ONLINE, now_online,
 				    -1);
 	}
 
 	if (priv->show_active) {
-		data = contact_list_contact_active_new (list, contact, do_remove);
 		contact_list_contact_set_active (list, contact, do_set_active, do_set_refresh);  
-		
-		g_timeout_add (ACTIVE_USER_SHOW_TIME, 
-			       (GSourceFunc) contact_list_contact_active_cb,
-			       data);
+
+		if (do_set_active) {
+			data = contact_list_contact_active_new (list, contact, do_remove);
+			g_timeout_add (ACTIVE_USER_SHOW_TIME, 
+				       (GSourceFunc) contact_list_contact_active_cb,
+				       data);
+		}
 	}
 
 	/* FIXME: when someone goes online then offline quickly, the
@@ -999,6 +1034,7 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 				    MODEL_COL_CONTACT, g_object_ref (contact),
 				    MODEL_COL_IS_GROUP, FALSE,
 				    MODEL_COL_IS_ACTIVE, FALSE,
+				    MODEL_COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    -1);
 	}
 
@@ -1022,6 +1058,7 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 				    MODEL_COL_CONTACT, g_object_ref (contact),
 				    MODEL_COL_IS_GROUP, FALSE,
 				    MODEL_COL_IS_ACTIVE, FALSE,
+				    MODEL_COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    -1);
 
 		if (created) {
