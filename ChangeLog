@@ -1,3 +1,16 @@
+2005-08-11  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-chat-window.c (gossip_chat_window_init): 
+	- Connect disconnected signal to session not app, so now we get
+	the disconnected signal and update the chat window contact
+	states.  This should really operate on a per protocol basis not a
+	per session (since contacts are bound to accounts not the whole
+	session which may have 3 accounts).
+	- Fixes bug #306381.
+
+	* libgossip/gossip-session.c: 
+	- Turn off debugging output.
+
 2005-08-10  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-chat-view.c (chat_view_copy_address_cb): 

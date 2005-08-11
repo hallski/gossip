@@ -334,7 +334,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 			  "tabs_reordered",
 			  G_CALLBACK (chat_window_tabs_reordered_cb),
 			  window);
-	g_signal_connect (gossip_app_get (),
+	g_signal_connect (gossip_app_get_session (),
 			  "disconnected",
 			  G_CALLBACK (chat_window_disconnected_cb),
 			  window);
@@ -446,7 +446,10 @@ static GdkPixbuf *
 chat_window_get_status_pixbuf (GossipChatWindow *window,
 			       GossipChat *chat)
 {
-	GdkPixbuf *pixbuf;
+	GossipSession *session;
+	GdkPixbuf     *pixbuf;
+
+	session = gossip_app_get_session ();
 
 	if (g_list_find (window->priv->chats_new_msg, chat)) {
 		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
@@ -454,8 +457,12 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	else if (g_list_find (window->priv->chats_composing, chat)) {
 		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
 	}
-	else if (!gossip_app_is_connected ()) {
-		/* Always show offline if we're not connected */
+	else if (!gossip_session_is_connected (session)) {
+		/* FIXME: should use protocol for contact since the
+		   protocol we use to send the image may not be online
+		   and a session may cover multiple accounts */
+
+		/* always offline if disconnected */
 		pixbuf = gossip_ui_utils_get_pixbuf_offline ();
 	}
 	else {
@@ -496,7 +503,7 @@ chat_window_create_label (GossipChatWindow *window,
 	GtkWidget            *name_label;
 	GtkWidget            *status_img;
 	const gchar          *name;
-	GtkWidget            *event_box;
+	GtkWidget            *event_box; 
 	PangoAttrList        *attr_list;
 	PangoAttribute       *attr;
 
@@ -504,9 +511,9 @@ chat_window_create_label (GossipChatWindow *window,
 	
 	hbox = gtk_hbox_new (FALSE, 2);
 
-	event_box = gtk_event_box_new ();
-	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE);
-	
+ 	event_box = gtk_event_box_new (); 
+ 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE); 
+
 	name = gossip_chat_get_name (chat);
 	name_label = gtk_label_new (name);
 
@@ -526,16 +533,16 @@ chat_window_create_label (GossipChatWindow *window,
 	status_img = gtk_image_new ();
 
 	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
-	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", event_box);
+  	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", event_box);
 
 	chat_window_update_tooltip (window, chat);
 
 	gtk_box_pack_start (GTK_BOX (hbox), status_img, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (hbox), name_label, TRUE, TRUE, 0);
 
-	gtk_container_add (GTK_CONTAINER (event_box), hbox);
+ 	gtk_container_add (GTK_CONTAINER (event_box), hbox);
 
-	gtk_widget_show_all (event_box);
+ 	gtk_widget_show_all (event_box);
 
 	return event_box;
 }
@@ -549,7 +556,7 @@ chat_window_update_status (GossipChatWindow *window, GossipChat *chat)
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
 	image = g_object_get_data (G_OBJECT (chat), "chat-window-status-img");
 	gtk_image_set_from_pixbuf (image, pixbuf);
-
+	
 	chat_window_update_tooltip (window, chat);
 }
 
@@ -1018,6 +1025,9 @@ chat_window_disconnected_cb (GossipApp        *app,
 
 	priv = window->priv;
 
+	/* FIXME: this works for now, but should operate on a PER
+	   protocol basis not ALL connections since some tabs will
+	   belong to contacts on accounts which might still be online */ 
 	for (l = priv->chats; l != NULL; l = g_list_next (l)) {
 		GossipChat *chat = GOSSIP_CHAT (l->data);
 		chat_window_update_status (window, chat);
