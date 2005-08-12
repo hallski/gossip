@@ -38,7 +38,7 @@
 #include "gossip-contact-list.h"
 #include "gossip-sound.h"
 
-#define d(x)
+#define d(x) x
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
@@ -663,7 +663,10 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 					  GossipContactList *list)
 {
 	GossipContactListPriv *priv;
+	GossipContactType      type;
+	ShowActiveData        *data;
 	GtkTreeModel          *model;
+	GList                 *iters, *l;
 	gboolean               in_list;
 	gboolean               should_be_in_list;
 	gboolean               was_online = TRUE;
@@ -672,11 +675,17 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	gboolean               do_remove = FALSE;
 	gboolean               do_set_active = FALSE;
 	gboolean               do_set_refresh = FALSE;
-	GList                 *iters, *l;
-	ShowActiveData        *data;
 
 	priv = list->priv;
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+
+	type = gossip_contact_get_type (contact);
+	if (type == GOSSIP_CONTACT_TYPE_TEMPORARY ||
+	    type == GOSSIP_CONTACT_TYPE_CHATROOM) {
+		d(g_print ("Contact List: Presence from %s contact (doing nothing)\n",
+			   type == GOSSIP_CONTACT_TYPE_TEMPORARY ? "temporary" : "chatroom")); 
+		return;
+	}
 
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {

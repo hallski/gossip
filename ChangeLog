@@ -1,5 +1,14 @@
 2005-08-12  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-contact-list.c
+	(contact_list_contact_presence_updated_cb):  
+	- Only update presence for contacts which are on our roster to
+	stop receiving presence from people we don't want to see presence
+	from. 
+	- Fixes bug #312906.
+
+2005-08-12  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-chat-window.c (gossip_chat_window_finalize): 
 	- Disconnect the the "disconnected" function callback properly.
 	- Fixes bug #306381 (again).
