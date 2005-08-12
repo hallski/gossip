@@ -1,3 +1,9 @@
+2005-08-12  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-chat-window.c (gossip_chat_window_finalize): 
+	- Disconnect the the "disconnected" function callback properly.
+	- Fixes bug #306381 (again).
+
 2005-08-11  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-contact-list.c

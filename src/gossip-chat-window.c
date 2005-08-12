@@ -431,7 +431,7 @@ gossip_chat_window_finalize (GObject *object)
 {
 	GossipChatWindow *window = GOSSIP_CHAT_WINDOW (object);
 
-	g_signal_handlers_disconnect_by_func (gossip_app_get (),
+	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
 					      chat_window_disconnected_cb,
 					      window);
 
