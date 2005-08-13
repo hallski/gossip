@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-03 01:47-0400\n"
-"PO-Revision-Date: 2005-08-03 20:31-0500\n"
+"POT-Creation-Date: 2005-08-13 14:25-0400\n"
+"PO-Revision-Date: 2005-08-13 20:31-0500\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -127,7 +127,7 @@ msgstr "Y position of main window"
 msgid "Home"
 msgstr "Home"
 
-#: libgossip/gossip-contact.c:656 src/gossip-app.c:1620
+#: libgossip/gossip-contact.c:656 src/gossip-app.c:1629
 msgid "Offline"
 msgstr "Offline"
 
@@ -266,7 +266,7 @@ msgstr "No information is available for this contact."
 msgid "%s will be added to your contact list."
 msgstr "%s will be added to your contact list."
 
-#: src/gossip-add-contact.c:567 src/gossip-app.c:2567
+#: src/gossip-add-contact.c:567 src/gossip-app.c:2604
 #: src/gossip-contact-info.c:350
 msgid "I would like to add you to my contact list."
 msgstr "I would like to add you to my contact list."
@@ -284,19 +284,19 @@ msgstr "%s ID of new contact:"
 msgid "Example: %s"
 msgstr "Example: %s"
 
-#: src/gossip-app.c:630
+#: src/gossip-app.c:639
 msgid "Unknown error."
 msgstr "Unknown error."
 
-#: src/gossip-app.c:631
+#: src/gossip-app.c:640
 msgid "Check your connection details."
 msgstr "Check your connection details."
 
-#: src/gossip-app.c:636
+#: src/gossip-app.c:645
 msgid "Connection refused."
 msgstr "Connection refused."
 
-#: src/gossip-app.c:637
+#: src/gossip-app.c:646
 msgid ""
 "Perhaps you are trying to connect to the wrong port?\n"
 "Perhaps the service is not currently running?"
@@ -304,41 +304,41 @@ msgstr ""
 "Perhaps you are trying to connect to the wrong port?\n"
 "Perhaps the service is not currently running?"
 
-#: src/gossip-app.c:642
+#: src/gossip-app.c:651
 msgid "Server address could not be resolved."
 msgstr "Server address could not be resolved."
 
-#: src/gossip-app.c:646
+#: src/gossip-app.c:655
 msgid "Connection timed out."
 msgstr "Connection timed out."
 
-#: src/gossip-app.c:647
+#: src/gossip-app.c:656
 msgid "Perhaps the server is not running this service."
 msgstr "Perhaps the server is not running this service."
 
-#: src/gossip-app.c:651
+#: src/gossip-app.c:660
 msgid "Authentication failed."
 msgstr "Authentication failed."
 
-#: src/gossip-app.c:652
+#: src/gossip-app.c:661
 msgid "Check your username and password are correct."
 msgstr "Ensure that your username and password are correct."
 
-#: src/gossip-app.c:782
+#: src/gossip-app.c:791
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Enter the user ID of the person you would like to send a chat message to."
 
-#: src/gossip-app.c:789 ui/main.glade.h:120
+#: src/gossip-app.c:798 ui/main.glade.h:120
 msgid "_Chat"
 msgstr "_Chat"
 
-#: src/gossip-app.c:1088
+#: src/gossip-app.c:1097
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "You have no Instant Messaging accounts configured!"
 
-#: src/gossip-app.c:1090
+#: src/gossip-app.c:1099
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -346,53 +346,58 @@ msgstr ""
 "Next you will be presented with the Account Information dialogue to set up "
 "your details."
 
-#: src/gossip-app.c:1473 src/gossip-tray.c:210
+#: src/gossip-app.c:1482 src/gossip-tray.c:210
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:1951 src/gossip-status-presets-dialog.c:100
+#: src/gossip-app.c:1960 src/gossip-status-presets-dialog.c:100
 msgid "Available"
 msgstr "Available"
 
-#: src/gossip-app.c:1962 src/gossip-status-presets-dialog.c:110
+#: src/gossip-app.c:1971 src/gossip-status-presets-dialog.c:110
 msgid "Busy"
 msgstr "Busy"
 
-#: src/gossip-app.c:1973 src/gossip-status-presets-dialog.c:120
+#: src/gossip-app.c:1982 src/gossip-status-presets-dialog.c:120
 msgid "Away"
 msgstr "Away"
 
-#: src/gossip-app.c:2105
+#: src/gossip-app.c:2114
 msgid "Available..."
 msgstr "Available..."
 
-#: src/gossip-app.c:2110
+#: src/gossip-app.c:2119
 msgid "Busy..."
 msgstr "Busy..."
 
-#: src/gossip-app.c:2115
+#: src/gossip-app.c:2124
 msgid "Away..."
 msgstr "Away..."
 
-#: src/gossip-app.c:2144
+#: src/gossip-app.c:2153
 msgid "Edit List..."
 msgstr "Edit List..."
 
-#: src/gossip-app.c:2474
+#: src/gossip-app.c:2438
+#, c-format
+msgid "New subscription request from %s"
+msgstr "New subscription request from %s"
+
+#: src/gossip-app.c:2511
 #, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "%s wants to be added to your contact list."
 
-#: src/gossip-app.c:2476
+#: src/gossip-app.c:2513
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Do you want to add %s to your contact list?"
 
-#: src/gossip-app.c:2479
+#: src/gossip-app.c:2516
 msgid "Someone wants to be added to your contact list."
 msgstr "Someone wants to be added to your contact list."
 
-#: src/gossip-app.c:2480
+#: src/gossip-app.c:2517
 msgid "Do you want to add this person to your contact list?"
 msgstr "Do you want to add this person to your contact list?"
 
@@ -417,25 +422,25 @@ msgstr "_Copy Link Address"
 msgid "_Open Link"
 msgstr "_Open Link"
 
-#: src/gossip-chat-view.c:757
+#: src/gossip-chat-view.c:760
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: src/gossip-chat-view.c:975 src/gossip-contact-list.c:1305
+#: src/gossip-chat-view.c:978 src/gossip-contact-list.c:1351
 #: src/gossip-group-chat.c:919
 msgid "You have been invited to join a chat conference."
 msgstr "You have been invited to join a chat conference."
 
-#: src/gossip-chat-view.c:997
+#: src/gossip-chat-view.c:1000
 msgid "Accept"
 msgstr "Accept"
 
-#: src/gossip-chat-window.c:565
+#: src/gossip-chat-window.c:572
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChat - %s"
 
-#: src/gossip-chat-window.c:953
+#: src/gossip-chat-window.c:960
 msgid "Typing a message."
 msgstr "Typing a message."
 
@@ -458,35 +463,35 @@ msgstr "Contact Information for %s"
 msgid "Requested Information"
 msgstr "Requested Information"
 
-#: src/gossip-contact-list.c:317
+#: src/gossip-contact-list.c:318
 msgid "/Contact _Information"
 msgstr "/Contact _Information"
 
-#: src/gossip-contact-list.c:329
+#: src/gossip-contact-list.c:330
 msgid "/Re_name Contact"
 msgstr "/Re_name Contact"
 
-#: src/gossip-contact-list.c:335
+#: src/gossip-contact-list.c:336
 msgid "/_Edit Groups"
 msgstr "/_Edit Groups"
 
-#: src/gossip-contact-list.c:341
+#: src/gossip-contact-list.c:342
 msgid "/_Remove Contact"
 msgstr "/_Remove Contact"
 
-#: src/gossip-contact-list.c:353
+#: src/gossip-contact-list.c:354
 msgid "/_Invite to Chat Conference"
 msgstr "/_Invite to Chat Conference"
 
-#: src/gossip-contact-list.c:365
+#: src/gossip-contact-list.c:366
 msgid "/Show _Log"
 msgstr "/Show _Log"
 
-#: src/gossip-contact-list.c:376
+#: src/gossip-contact-list.c:377
 msgid "/Re_name group"
 msgstr "/Re_name group"
 
-#: src/gossip-contact-list.c:1292 src/gossip-group-chat.c:906
+#: src/gossip-contact-list.c:1338 src/gossip-group-chat.c:906
 #, c-format
 msgid ""
 "Please enter your invitation message to:\n"
@@ -495,7 +500,7 @@ msgstr ""
 "Please enter your invitation message to:\n"
 "%s"
 
-#: src/gossip-contact-list.c:2030
+#: src/gossip-contact-list.c:2076
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -504,7 +509,7 @@ msgstr ""
 "Please enter a new nickname for the contact\n"
 "%s"
 
-#: src/gossip-contact-list.c:2128
+#: src/gossip-contact-list.c:2174
 #, c-format
 msgid ""
 "Do you want to remove the contact\n"
@@ -515,7 +520,7 @@ msgstr ""
 "%s\n"
 "from your contact list?"
 
-#: src/gossip-contact-list.c:2178
+#: src/gossip-contact-list.c:2224
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
