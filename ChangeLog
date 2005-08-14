@@ -1,3 +1,12 @@
+2005-08-14  Mikael Hallendal  <micke@imendio.com>
+
+	* configure.ac:
+	- Bumped Loudmouth requirement to 1.0
+	- Bumped version to 0.9
+	* src/gossip-about.c: (button_press_event_cb):
+	* ui/pixmaps/gossip-about.png:
+	- Updated project URL.
+
 2005-08-12  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-contact-list.c

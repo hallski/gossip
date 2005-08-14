@@ -96,7 +96,7 @@ button_press_event_cb (GtkWidget      *widget,
 	if (event->x > LINK_LEFT && event->x < LINK_RIGHT &&
 	    event->y > LINK_TOP && event->y < LINK_BOTTOM) {
 
-		gnome_url_show ("http://projects.imendio.com/gossip/", NULL);
+		gnome_url_show ("http://developer.imendio.com/wiki/gossip", NULL);
 		return FALSE;
 	}
 	
