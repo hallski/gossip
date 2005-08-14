@@ -1,3 +1,11 @@
+2005-08-14  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-join-dialog.c (gossip_join_dialog_show): 
+	- Fixed a bug where the join group chat dialog crashes if you
+	click Cancel after immediately loading it.  This is due to the
+	weak reference to the dialog added at setup time.
+	- Fixes bug #313486.
+
 2005-08-14  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-manager.c: (chat_manager_new_message_cb),

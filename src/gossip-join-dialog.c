@@ -709,10 +709,6 @@ gossip_join_dialog_show (void)
 				     "join_button", &dialog->join_button,
 				     NULL);
 	
-	g_object_add_weak_pointer (G_OBJECT (dialog->dialog),
-				   (gpointer) &dialog);
-	
-
 	gossip_glade_connect (gui, 
 			      dialog,
 			      "join_group_chat_dialog", "destroy", join_dialog_destroy_cb,
