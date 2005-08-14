@@ -27,6 +27,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerPriv))
 
+#define d(x) 
+
 typedef struct _GossipChatManagerPriv GossipChatManagerPriv;
 struct _GossipChatManagerPriv {
 	GHashTable *chats;
@@ -115,7 +117,7 @@ chat_manager_new_message_cb (GossipSession     *session,
 	/* Add event to event manager if one doesn't exist already. */
 
 	if (!chat) {
-		g_print ("new chat for: %s\n", gossip_contact_get_id (sender));
+		d(g_print ("new chat for: %s\n", gossip_contact_get_id (sender)));
 		chat = gossip_chat_manager_get_chat (manager, sender);
 
 		if (!old_event) {
@@ -191,8 +193,8 @@ gossip_chat_manager_get_chat (GossipChatManager *manager, GossipContact *contact
 		g_hash_table_insert (priv->chats, 
 				     g_object_ref (contact),
 				     chat);
-		g_print ("Creating a new chat: %s\n",
-			 gossip_contact_get_id (contact));
+		d(g_print ("Creating a new chat: %s\n",
+			   gossip_contact_get_id (contact)));
 	}
 
 	return chat;

@@ -1,3 +1,15 @@
+2005-08-14  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-manager.c: (chat_manager_new_message_cb),
+	(gossip_chat_manager_get_chat):
+	* src/gossip-contact-list.c:
+	* src/sounds/.cvsignore:
+	- Turn of printouts.
+
+2005-08-14  Mikael Hallendal  <micke@imendio.com>
+
+	* Release 0.9
+
 2005-08-14  Martyn Russell  <mr@gnome.org>
 
 	* ui/main.glade: 
@@ -5,8 +17,6 @@
 	them at the moment.
 
 2005-08-14  Mikael Hallendal  <micke@imendio.com>
-
-	* Release 0.9
 
 	* acinclude.m4:
 	* configure.ac:

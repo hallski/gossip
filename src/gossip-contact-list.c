@@ -38,7 +38,7 @@
 #include "gossip-contact-list.h"
 #include "gossip-sound.h"
 
-#define d(x) x
+#define d(x) 
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
