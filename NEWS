@@ -1,3 +1,11 @@
+News in 0.9:
+============
+ * This release features a large refactoring to make further development easier.
+ * Part of the works has also been to make the current features more stable
+   and better implement.
+ * Most of the work on this release has been carried out by Mikael Hallendal and   Martyn Russel.
+ * UPDATE NOW!
+
 News in 0.8:
 ============
  * Fixed #151737 (Martyn)
