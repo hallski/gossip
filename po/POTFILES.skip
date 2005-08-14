@@ -1,5 +1,8 @@
 src/eggtreemodelfilter.c
 src/eggtrayicon.c
+src/gossip-tray.c
+src/gossip-transport-accounts-window.c
+src/gossip-transport-add-window.c
 
 protocols/jabber/gossip-jabber-chatrooms.c
 gossip.desktop.in

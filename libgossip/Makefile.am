@@ -1,5 +1,6 @@
 AM_CPPFLAGS =                                             \
 	-I.                                               \
+	-I$(top_srcdir)                                   \
 	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\"   \
 	-I$(top_srcdir)/protocols/jabber                  \
 	$(LIBGOSSIP_CFLAGS)

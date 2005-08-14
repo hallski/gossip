@@ -1,3 +1,9 @@
+2005-08-14  Mikael Hallendal  <micke@imendio.com>
+
+	* POTFILES.in:
+	* POTFILES.skip:
+	- Distcheck.
+
 2005-08-13  Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
 
 	* es.po: Updated Spanish translation.

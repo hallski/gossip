@@ -14,3 +14,5 @@ soundlist_DATA = $(soundlist_in_files:.soundlist.in=.soundlist)
 EXTRA_DIST = 		\
 	$(sound_DATA) 	\
 	$(soundlist_in_files)
+
+CLEANFILES  = gossip.soundlist
