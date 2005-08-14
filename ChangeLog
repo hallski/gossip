@@ -1,3 +1,9 @@
+2005-08-14  Martyn Russell  <mr@gnome.org>
+
+	* ui/main.glade: 
+	- Last minute fix to disable transports since we are not using
+	them at the moment.
+
 2005-08-14  Mikael Hallendal  <micke@imendio.com>
 
 	* Release 0.9

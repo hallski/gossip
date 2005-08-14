@@ -131,13 +131,13 @@
 
 		      <child>
 			<widget class="GtkSeparatorMenuItem" id="separator1">
-			  <property name="visible">True</property>
+			  <property name="visible">False</property>
 			</widget>
 		      </child>
 
 		      <child>
 			<widget class="GtkMenuItem" id="actions_configure_transports">
-			  <property name="visible">True</property>
+			  <property name="visible">False</property>
 			  <property name="sensitive">False</property>
 			  <property name="label" translatable="yes">Configure Transports</property>
 			  <property name="use_underline">True</property>
