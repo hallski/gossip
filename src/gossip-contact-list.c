@@ -775,12 +775,11 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
 				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-				    MODEL_COL_IS_ACTIVE, priv->show_active,
 				    MODEL_COL_IS_ONLINE, now_online,
 				    -1);
 	}
 
-	if (priv->show_active) {
+	if (priv->show_active && do_set_active) {
 		contact_list_contact_set_active (list, contact, do_set_active, do_set_refresh);  
 
 		if (do_set_active) {

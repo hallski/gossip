@@ -1,3 +1,14 @@
+2005-08-14  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c
+	(contact_list_contact_presence_updated_cb):  
+	- Only update pertinent information for contact, not the active
+	status, this is done is	contact_list_contact_set_active() anyway.
+	- Some servers send presence after sending available which meant
+	the active state would be set to FALSE immediately after it was
+	set TRUE and nothing appears to happen on the roster. 
+	- Fixes bug #312906 (again).
+	
 2005-08-14  Mikael Hallendal  <micke@imendio.com>
 
 	* configure.ac:
