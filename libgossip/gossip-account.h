@@ -54,7 +54,7 @@ typedef enum {
 } GossipAccountType;
 
 
-GType             gossip_account_get_gtype     (void) G_GNUC_CONST;
+GType             gossip_account_get_gtype               (void) G_GNUC_CONST;
 
 GossipAccountType gossip_account_get_type                (GossipAccount     *account);
 const gchar *     gossip_account_get_name                (GossipAccount     *account);
@@ -71,7 +71,7 @@ void              gossip_account_set_name                (GossipAccount     *acc
 							  const gchar       *name);
 void              gossip_account_set_id                  (GossipAccount     *account,
 							  const gchar       *id);
-void           gossip_account_set_password                (GossipAccount *account,
+void              gossip_account_set_password            (GossipAccount     *account,
 							  const gchar       *password);
 void              gossip_account_set_server              (GossipAccount     *account,
 							  const gchar       *server);
@@ -83,6 +83,8 @@ void              gossip_account_set_use_ssl             (GossipAccount     *acc
 							  gboolean           use_ssl);
 void              gossip_account_set_use_proxy           (GossipAccount     *account,
 							  gboolean           use_proxy);
+gboolean          gossip_account_name_equals             (GossipAccount     *a,
+							  GossipAccount     *b);
 
 /* config operations */
 const GList *     gossip_accounts_get_all                (const gchar       *filename);

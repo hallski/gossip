@@ -30,6 +30,7 @@ gossip_SOURCES = 				                        	\
 	gossip-app.c	 	           gossip-app.h				\
 	gossip-cell-renderer-text.c        gossip-cell-renderer-text.h          \
 	gossip-chat.c		           gossip-chat.h			\
+	gossip-chat-invite.c	           gossip-chat-invite.h			\
 	gossip-chat-manager.c              gossip-chat-manager.h               	\
 	gossip-chat-view.c                 gossip-chat-view.h                  	\
 	gossip-chat-window.c	           gossip-chat-window.h			\

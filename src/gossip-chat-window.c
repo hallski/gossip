@@ -34,6 +34,7 @@
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
 #include "gossip-chat-window.h"
+#include "gossip-chat-invite.h"
 #include "gossip-notebook.h"
 #include "gossip-stock.h"
 #include "gossip-sound.h"
@@ -644,100 +645,57 @@ chat_window_update_menu (GossipChatWindow *window)
 		gtk_widget_hide (priv->m_conv_show_contacts);
 	}
 
-	chat_window_invite_menu_setup (window); 
+ 	chat_window_invite_menu_setup (window);  
 }
 
 static void
-chat_window_invite_menu_setup (GossipChatWindow *window)
+chat_window_invite_menu_setup (GossipChatWindow *window) 
 {
-	/* FIXME: needs finishing */
-#if 0
-	GossipChatWindowPriv   *priv;
-	GossipSession          *session;
-	GossipChatroomProvider *provider;
-	GList                  *list = NULL;
-
-	gboolean                is_group_chat;
+	GossipChatWindowPriv *priv;
+	GossipContact        *contact;
+	GtkWidget            *menu = NULL;
+	gboolean              is_group_chat;
 
 	priv = window->priv;
-
-	session = gossip_app_get_session ();
-	provider = gossip_session_get_chatroom_provider (session);
+	
+	contact = gossip_chat_get_own_contact (priv->current_chat);
+	
+	if (!contact) {
+		/* use the other contact if we don't have ourselves */
+		contact = gossip_chat_get_contact (priv->current_chat);
+	}
 
 	is_group_chat = gossip_chat_get_group_chat (priv->current_chat);
 
 	if (is_group_chat) {
-		GossipProtocol *protocol = NULL;
-		const GList    *contacts;
-		const GList    *l;
+		GossipChatroomId id;
 
-		contacts = gossip_protocol_get_contacts (protocol);
-		for (l = contacts; l; l = l->next) {
-			GossipContact *contact;
-
-			contact = l->data;
-
-			if (!gossip_contact_is_online (contact)) {
-				continue;
-			}
-
-			list = g_list_append (list, contact);
-		}
+		id = gossip_group_chat_get_room_id (GOSSIP_GROUP_CHAT (priv->current_chat));
+		menu = gossip_chat_invite_groupchat_menu (contact, id);
 	} else {
-		list = gossip_chatroom_provider_get_rooms (provider);
+ 		menu = gossip_chat_invite_contact_menu (contact); 
 	}
 
-	if (0) {
-/* 	if (g_list_length (list) > 0) { */
-		GtkWidget *rooms_menu;
-		GList     *l;
-
+	if (menu) {
 		gtk_widget_show (priv->s_conv_invite_contacts);
 		gtk_widget_show (priv->m_conv_invite_contacts);
 
-		rooms_menu = gtk_menu_new ();
+		gtk_widget_show_all (menu);
+		
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->m_conv_invite_contacts),
+					   menu);
 
-		for (l = list; l; l = l->next) {
-			GossipChatroomId  id;
-			GossipContact    *contact;
-			const gchar      *name;
-			GtkWidget        *item;
-
-			if (is_group_chat) {
-				contact = l->data;
-				name = gossip_contact_get_name (contact);
-			} else {
-				id = GPOINTER_TO_INT(l->data);
-				name = gossip_chatroom_provider_get_room_name (provider, id);
-			}
-
-			if (!name) {
-				continue;
-			}
-
-			item = gtk_menu_item_new_with_label (name);
-			gtk_menu_shell_append (GTK_MENU_SHELL (rooms_menu), item);
-			
-			gtk_widget_show_all (rooms_menu);
-			
-			gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->m_conv_invite_contacts),
-						   rooms_menu);
-		}
 	} else {
+		gtk_menu_item_remove_submenu (GTK_MENU_ITEM (priv->m_conv_invite_contacts));
+
 		gtk_widget_hide (priv->s_conv_invite_contacts);
 		gtk_widget_hide (priv->m_conv_invite_contacts);
-
-		gtk_menu_item_remove_submenu (GTK_MENU_ITEM (priv->m_conv_invite_contacts));
 	}
-
-	if (is_group_chat) {
-		g_list_free (list);
-	}
-#endif
 }
 
 static void
-chat_window_clear_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
+chat_window_clear_activate_cb (GtkWidget        *menuitem, 
+			       GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv = window->priv;
 
@@ -745,7 +703,8 @@ chat_window_clear_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 }
 
 static void
-chat_window_log_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
+chat_window_log_activate_cb (GtkWidget        *menuitem, 
+			     GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv = window->priv;
 	GossipContact        *contact;
@@ -756,7 +715,8 @@ chat_window_log_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
 }
 
 static void
-chat_window_info_activate_cb (GtkWidget *menuitem, GossipChatWindow *window)
+chat_window_info_activate_cb (GtkWidget        *menuitem, 
+			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GossipContact        *contact;
@@ -815,7 +775,7 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 
 static void
 chat_window_cut_activate_cb (GtkWidget        *menuitem,
-			      GossipChatWindow *window)
+			     GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	

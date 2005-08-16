@@ -47,9 +47,11 @@ struct _GossipGroupChatClass {
 	GossipChatClass parent_class;
 };
 
-GType              gossip_group_chat_get_type  (void) G_GNUC_CONST;
+GType            gossip_group_chat_get_type    (void) G_GNUC_CONST;
 
-GossipGroupChat *  gossip_group_chat_show      (GossipChatroomProvider *provider,
+GossipGroupChat *gossip_group_chat_show        (GossipChatroomProvider *provider,
 						GossipChatroomId        id);
+GossipChatroomId gossip_group_chat_get_room_id (GossipGroupChat        *groupchat);
+
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */

@@ -557,6 +557,18 @@ gossip_chat_get_contact (GossipChat *chat)
 	return NULL;
 }
 
+GossipContact *
+gossip_chat_get_own_contact (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), NULL);
+
+	if (GOSSIP_CHAT_GET_CLASS (chat)->get_own_contact) {
+		return GOSSIP_CHAT_GET_CLASS (chat)->get_own_contact (chat);
+	}
+
+	return NULL;
+}
+
 void
 gossip_chat_get_geometry (GossipChat *chat,
 		          int        *width,

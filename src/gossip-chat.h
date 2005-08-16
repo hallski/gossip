@@ -24,7 +24,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-chat-view.h"
 #include <libgossip/gossip-contact.h>
 
 G_BEGIN_DECLS
@@ -36,12 +35,15 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CHAT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT))
 #define GOSSIP_CHAT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT, GossipChatClass))
 
+
 typedef struct _GossipChat GossipChat;
 typedef struct _GossipChatClass GossipChatClass;
 typedef struct _GossipChatPriv GossipChatPriv;
 
+#include "gossip-chat-view.h"
 #include "gossip-chat-window.h"
 #include "gossip-spell.h"
+
 
 struct _GossipChat {
         GObject         parent;
@@ -55,55 +57,60 @@ struct _GossipChat {
         GossipChatPriv *priv;
 };
 
+
 struct _GossipChatClass {
         GObjectClass parent;
 
         /* Signals */
 
-	void             (*new_message)       (GossipChat  *chat);
-        void             (*composing)         (GossipChat  *chat, 
-			                       gboolean     composing);
-	void             (*name_changed)      (GossipChat  *chat,
-				               const gchar *name);
-	void             (*status_changed)    (GossipChat  *chat);
+	void             (*new_message)      (GossipChat  *chat);
+        void             (*composing)        (GossipChat  *chat, 
+					      gboolean     composing);
+	void             (*name_changed)     (GossipChat  *chat,
+				              const gchar *name);
+	void             (*status_changed)   (GossipChat  *chat);
 
 	/* vtable */
 
-	const gchar *    (*get_name)           (GossipChat *chat);
-	gchar *          (*get_tooltip)        (GossipChat *chat);
-	GdkPixbuf *      (*get_status_pixbuf)  (GossipChat *chat);
-	GossipContact *  (*get_contact)        (GossipChat *chat);
-	void             (*get_geometry)       (GossipChat *chat,
-			                        gint       *width,
-					        gint       *height);
-	GtkWidget *      (*get_widget)         (GossipChat *chat);
-	gboolean         (*get_group_chat)     (GossipChat *chat);
+	const gchar *    (*get_name)         (GossipChat  *chat);
+	gchar *          (*get_tooltip)      (GossipChat  *chat);
+	GdkPixbuf *      (*get_status_pixbuf)(GossipChat  *chat);
+	GossipContact *  (*get_contact)      (GossipChat  *chat);
+	GossipContact *  (*get_own_contact)  (GossipChat  *chat);
+	void             (*get_geometry)     (GossipChat  *chat,
+					      gint        *width,
+					      gint        *height);
+	GtkWidget *      (*get_widget)       (GossipChat  *chat);
+	gboolean         (*get_group_chat)   (GossipChat  *chat); 
 
-	gboolean         (*get_show_contacts)  (GossipChat *chat);
-	void             (*set_show_contacts)  (GossipChat *chat,
-						gboolean    show);
+	gboolean         (*get_show_contacts)(GossipChat  *chat);
+	void             (*set_show_contacts)(GossipChat  *chat,
+					      gboolean     show);
 };
 
+
 GType             gossip_chat_get_type           (void);
-void              gossip_chat_present            (GossipChat       *chat);
-GtkWidget *       gossip_chat_get_widget         (GossipChat       *chat);
-GossipContact *   gossip_chat_get_contact        (GossipChat       *chat);
+
+GossipChatView *  gossip_chat_get_view           (GossipChat       *chat);
+GossipChatWindow *gossip_chat_get_window         (GossipChat       *chat);
 void              gossip_chat_set_window         (GossipChat       *chat,
 						  GossipChatWindow *window);
-GossipChatWindow *gossip_chat_get_window         (GossipChat       *chat);
+void              gossip_chat_present            (GossipChat       *chat);
 void              gossip_chat_clear              (GossipChat       *chat);
 void              gossip_chat_scroll_down        (GossipChat       *chat);
 void              gossip_chat_cut                (GossipChat       *chat);
 void              gossip_chat_copy               (GossipChat       *chat);
 void              gossip_chat_paste              (GossipChat       *chat);
+
 const gchar *     gossip_chat_get_name		 (GossipChat       *chat);
 gchar *           gossip_chat_get_tooltip        (GossipChat       *chat);
 GdkPixbuf *       gossip_chat_get_status_pixbuf  (GossipChat       *chat);
-GtkWidget *       gossip_chat_get_widget         (GossipChat       *chat);
-GossipChatView *  gossip_chat_get_view           (GossipChat       *chat);
+GossipContact *   gossip_chat_get_contact        (GossipChat       *chat);
+GossipContact *   gossip_chat_get_own_contact    (GossipChat       *chat);
 void              gossip_chat_get_geometry       (GossipChat       *chat,
 		                                  int              *width,
 						  int              *height);
+GtkWidget *       gossip_chat_get_widget         (GossipChat       *chat);
 gboolean          gossip_chat_get_group_chat     (GossipChat       *chat);
 gboolean          gossip_chat_get_show_contacts  (GossipChat       *chat);
 void              gossip_chat_set_show_contacts  (GossipChat       *chat,
@@ -114,7 +121,6 @@ void              gossip_chat_correct_word       (GossipChat       *chat,
 						  GtkTextIter       start,
 						  GtkTextIter       end,
 						  const gchar      *new_word);
-
 
 G_END_DECLS
 

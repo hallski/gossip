@@ -34,7 +34,10 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE, GossipPresencePriv))
 
+
 typedef struct _GossipPresencePriv GossipPresencePriv;
+
+
 struct _GossipPresencePriv {
 	GossipPresenceState  state;
 	gchar               *status;
@@ -44,19 +47,20 @@ struct _GossipPresencePriv {
 	gint                 priority;
 };
 
-static void presence_finalize          (GObject *object);
-static void presence_get_property      (GObject              *object,
-					guint                 param_id,
-					GValue               *value,
-					GParamSpec           *pspec);
-static void presence_set_property      (GObject              *object,
-					guint                 param_id,
-					const GValue         *value,
-					GParamSpec           *pspec);
-static const gchar *
-presence_get_default_status            (GossipPresenceState   state);
 
-/* -- Properties -- */
+static void         presence_finalize           (GObject             *object);
+static void         presence_get_property       (GObject             *object,
+						 guint                param_id,
+						 GValue              *value,
+						 GParamSpec          *pspec);
+static void         presence_set_property       (GObject             *object,
+						 guint                param_id,
+						 const GValue        *value,
+						 GParamSpec          *pspec);
+static const gchar *presence_get_default_status (GossipPresenceState  state);
+
+
+/* properties */
 enum {
 	PROP_0,
 	PROP_STATE,
@@ -65,9 +69,12 @@ enum {
 	PROP_PRIORITY
 };
 
+
 G_DEFINE_TYPE (GossipPresence, gossip_presence, G_TYPE_OBJECT);
 
+
 static gpointer parent_class = NULL;
+
 
 static void
 gossip_presence_class_init (GossipPresenceClass *class)
@@ -230,7 +237,8 @@ gossip_presence_new (void)
 }
 
 GossipPresence *
-gossip_presence_new_full (GossipPresenceState state, const gchar *status)
+gossip_presence_new_full (GossipPresenceState  state,
+			  const gchar         *status)
 {
 	return g_object_new (GOSSIP_TYPE_PRESENCE, 
 			     "state", state,
@@ -255,7 +263,8 @@ gossip_presence_get_resource (GossipPresence *presence)
 }
 
 void
-gossip_presence_set_resource (GossipPresence *presence, const gchar *resource)
+gossip_presence_set_resource (GossipPresence *presence, 
+			      const gchar    *resource)
 {
 	GossipPresencePriv *priv;
 
@@ -282,7 +291,8 @@ gossip_presence_get_state (GossipPresence *presence)
 }
 
 void
-gossip_presence_set_state (GossipPresence *presence, GossipPresenceState state)
+gossip_presence_set_state (GossipPresence      *presence, 
+			   GossipPresenceState  state)
 {
 	GossipPresencePriv *priv;
 
@@ -317,7 +327,8 @@ if (priv->status) {
 #endif
 
 void
-gossip_presence_set_status (GossipPresence *presence, const gchar *status)
+gossip_presence_set_status (GossipPresence *presence, 
+			    const gchar    *status)
 {
 	GossipPresencePriv *priv;
 
@@ -358,7 +369,8 @@ gossip_presence_set_priority (GossipPresence *presence,
 }
 
 gboolean
-gossip_presence_resource_equal (gconstpointer a, gconstpointer b)
+gossip_presence_resource_equal (gconstpointer a, 
+				gconstpointer b)
 {
 	GossipPresencePriv *priv1;
 	GossipPresencePriv *priv2;
@@ -389,7 +401,8 @@ gossip_presence_resource_equal (gconstpointer a, gconstpointer b)
 }
 
 gint
-gossip_presence_priority_sort_func (gconstpointer a, gconstpointer b)
+gossip_presence_priority_sort_func (gconstpointer a,
+				    gconstpointer b)
 {
 	GossipPresencePriv *priv1;
 	GossipPresencePriv *priv2;

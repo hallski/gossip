@@ -55,50 +55,47 @@ typedef struct {
 } FindAccount;
 
 
-static void     gossip_session_class_init     (GossipSessionClass *klass);
-static void     gossip_session_init           (GossipSession      *session);
-
-static void     session_finalize              (GObject            *object);
-static void     session_connect_protocol      (GossipSession      *session,
-					       GossipProtocol     *protocol);
+static void            gossip_session_class_init                 (GossipSessionClass  *klass);
+static void            gossip_session_init                       (GossipSession       *session);
+static void            session_finalize                          (GObject             *object);
+static void            session_connect_protocol                  (GossipSession       *session,
+								  GossipProtocol      *protocol);
 static void            session_connect_foreach_cb                (gchar               *account_name,
 								  GossipProtocol      *protocol,
 								  GossipSession       *session);
-static void     session_protocol_logged_in     (GossipProtocol     *protocol,
-						GossipSession      *session);
-static void     session_protocol_logged_out    (GossipProtocol     *protocol,
-						GossipSession      *session);
-static void     session_protocol_new_message   (GossipProtocol     *protocol,
-						GossipMessage      *message,
-						GossipSession      *session);
-static void     session_protocol_contact_added (GossipProtocol     *protocol,
-						GossipContact      *contact,
-						GossipSession      *session);
-static void     session_protocol_contact_updated (GossipProtocol   *protocol,
-						  GossipContact    *contact,
-						  GossipSession    *session);
+static void            session_protocol_logged_in                (GossipProtocol      *protocol,
+								  GossipSession       *session);
+static void            session_protocol_logged_out               (GossipProtocol      *protocol,
+								  GossipSession       *session);
+static void            session_protocol_new_message              (GossipProtocol      *protocol,
+								  GossipMessage       *message,
+								  GossipSession       *session);
+static void            session_protocol_contact_added            (GossipProtocol      *protocol,
+								  GossipContact       *contact,
+								  GossipSession       *session);
+static void            session_protocol_contact_updated          (GossipProtocol      *protocol,
+								  GossipContact       *contact,
+								  GossipSession       *session);
 static void            session_protocol_contact_presence_updated (GossipProtocol      *protocol,
-						  GossipContact     *contact,
-						  GossipSession     *session);
-static void     session_protocol_contact_removed (GossipProtocol    *protocol,
-						  GossipContact     *contact,
-						  GossipSession     *session);
-static gchar *  session_protocol_get_password    (GossipProtocol    *protocol,
-						  GossipAccount     *account,
-						  GossipSession     *session);
-static void     session_protocol_error           (GossipProtocol    *protocol,
-						  GError            *error,
-						  GossipSession     *session);
+								  GossipContact       *contact,
+								  GossipSession       *session);
+static void            session_protocol_contact_removed          (GossipProtocol      *protocol,
+								  GossipContact       *contact,
+								  GossipSession       *session);
+static gchar *         session_protocol_get_password             (GossipProtocol      *protocol,
+								  GossipAccount       *account,
+								  GossipSession       *session);
+static void            session_protocol_error                    (GossipProtocol      *protocol,
+								  GError              *error,
+								  GossipSession       *session);
 static GossipProtocol *session_get_protocol                      (GossipSession       *session,
-						  GossipContact    *contact);
+								  GossipContact       *contact);
 static void            session_get_accounts_foreach_cb           (const gchar         *account_name,
 								  GossipProtocol      *protocol,
 								  GList              **list);
 static void            session_find_account_foreach_cb           (const gchar         *account_name,
 								  GossipProtocol      *protocol,
 								  FindAccount         *fa);
-
-
 
 
 /* signals */
@@ -1040,7 +1037,7 @@ gossip_session_rename_group (GossipSession *session,
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol = GOSSIP_PROTOCOL (l->data);
 	
-        gossip_protocol_rename_group (protocol, group, new_name);
+		gossip_protocol_rename_group (protocol, group, new_name);
 	}
 }
 
@@ -1054,6 +1051,36 @@ gossip_session_get_contacts (GossipSession *session)
 	priv = GET_PRIV (session);
 
 	return priv->contacts;
+}
+
+GList *
+gossip_session_get_contacts_by_account (GossipSession *session,
+					GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GList             *l, *list = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (session);
+
+	for (l = priv->contacts; l; l = l->next) {
+		GossipContact *contact;
+		GossipAccount *this_account;
+		
+		contact = l->data;
+
+		this_account = gossip_contact_get_account (contact);
+
+		if (!gossip_account_name_equals (this_account, account)) {
+			continue;
+		}
+
+		list = g_list_append (list, contact);
+	}
+	
+	return list;
 }
 
 GList *

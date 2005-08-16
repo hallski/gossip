@@ -46,6 +46,7 @@
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 #define COMPOSING_STOP_TIMEOUT 5
 
+
 struct _GossipPrivateChatPriv {
         GtkWidget        *widget;
 	GtkWidget	 *text_view_sw;
@@ -53,6 +54,7 @@ struct _GossipPrivateChatPriv {
         GtkWidget        *subject_entry;
 
         GossipContact    *contact;
+        GossipContact    *own_contact;
 	gchar            *name;
 	
 	gchar            *locked_resource;
@@ -68,8 +70,10 @@ struct _GossipPrivateChatPriv {
 	gboolean          groupchat_priv;
 };
 
+
 static GObjectClass *parent_class  = NULL;
 static GHashTable   *private_chats = NULL;
+ 
 
 static void            gossip_private_chat_class_init            (GossipPrivateChatClass  *klass);
 static void            gossip_private_chat_init                  (GossipPrivateChat       *chat);
@@ -140,8 +144,11 @@ static void            private_chat_get_geometry                 (GossipChat    
 								  int                     *height); 
 static GtkWidget *     private_chat_get_widget		         (GossipChat              *chat);
 static GossipContact * private_chat_get_contact                  (GossipChat              *chat);
+static GossipContact * private_chat_get_own_contact              (GossipChat              *chat);
         
+
 G_DEFINE_TYPE (GossipPrivateChat, gossip_private_chat, GOSSIP_TYPE_CHAT);
+
 
 static void
 gossip_private_chat_class_init (GossipPrivateChatClass *klass)
@@ -157,6 +164,7 @@ gossip_private_chat_class_init (GossipPrivateChatClass *klass)
 	chat_class->get_tooltip       = private_chat_get_tooltip;
 	chat_class->get_status_pixbuf = private_chat_get_status_pixbuf;
 	chat_class->get_contact       = private_chat_get_contact;
+	chat_class->get_own_contact   = private_chat_get_own_contact;
 	chat_class->get_geometry      = private_chat_get_geometry;
 	chat_class->get_widget        = private_chat_get_widget;
 }
@@ -201,6 +209,10 @@ private_chat_finalize (GObject *object)
 	priv = chat->priv;
 
 	g_object_unref (priv->contact);
+
+	if (priv->own_contact) {
+		g_object_unref (priv->own_contact);
+	}
 
 	private_chat_composing_remove_timeout (chat);
 	
@@ -911,6 +923,14 @@ private_chat_get_contact (GossipChat *chat)
 	priv   = p_chat->priv;
 
 	return priv->contact;
+}
+
+static GossipContact *
+private_chat_get_own_contact (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
+
+	return NULL;
 }
 
 static void

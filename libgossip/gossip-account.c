@@ -552,6 +552,22 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	priv->use_proxy = use_proxy;
 }
 
+
+gboolean 
+gossip_account_name_equals (GossipAccount *a, 
+			    GossipAccount *b)
+{
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), FALSE); 
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), FALSE); 
+
+	g_return_val_if_fail (gossip_account_get_name (a) != NULL, FALSE); 
+	g_return_val_if_fail (gossip_account_get_name (b) != NULL, FALSE); 
+
+	/* FIXME: this can't be the best way? */
+	return (strcmp (gossip_account_get_name (a), 
+			gossip_account_get_name (b)) == 0);
+}
+
 /*
  * API to save accounts to file.
  */
@@ -913,7 +929,7 @@ accounts_check_exists (GossipAccount *account)
 		if (strcmp (gossip_account_get_name (this_account), 
 			    gossip_account_get_name (account)) == 0) {
 			return TRUE;
-	}
+		}
 	}
 
 	return FALSE;

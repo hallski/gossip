@@ -1,5 +1,26 @@
 2005-08-16  Martyn Russell  <mr@gnome.org>
 
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-session.[ch]:
+	- Added gossip_session_get_contacts_by_account().
+	- Added gossip_account_equal()
+	
+	* src/Makefile.am:
+	* src/gossip-chat-invite.[ch]: 
+	* src/gossip-chat-window.[ch]:
+	* src/gossip-chat.[ch]:
+	* src/gossip-contact-list.[ch]:
+	* src/gossip-private-chat.c:
+	- Added to handle invite message dialog and invite menu generation
+	instead of repeating the code in 3/4 different places. 
+	- Added support to invite contact to a group chat from the chat
+	window using a the menu bar.
+
+	* src/gossip-main.c:
+	- Only get accounts once.
+
+2005-08-16  Martyn Russell  <mr@gnome.org>
+
 	* ui/connect.glade:
 	* ui/group-chat.glade:
 	* ui/main.glade:

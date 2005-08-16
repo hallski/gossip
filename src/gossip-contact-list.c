@@ -37,6 +37,7 @@
 #include "gossip-contact-groups.h"
 #include "gossip-contact-list.h"
 #include "gossip-sound.h"
+#include "gossip-chat-invite.h"
 
 #define d(x) 
 
@@ -106,13 +107,6 @@ typedef struct {
 } ShowActiveData;
 
 
-typedef struct {
-	GossipChatroomId  id;
-	GossipContact    *contact;
-	GtkWidget        *entry;
-} ChatInviteData;
-
-
 static void            gossip_contact_list_class_init           (GossipContactListClass *klass);
 static void            gossip_contact_list_init                 (GossipContactList      *list);
 static void            contact_list_finalize                    (GObject                *object);
@@ -165,15 +159,6 @@ static void            contact_list_remove_contact              (GossipContactLi
 								 GossipContact          *contact);
 static void            contact_list_create_model                (GossipContactList      *list);
 static void            contact_list_setup_view                  (GossipContactList      *list);
-static GtkWidget *     contact_list_setup_invite_menu           (GossipContactList      *list,
-								 GossipContact          *contact);
-static void            contact_list_invite_menu_cb              (GtkMenuItem            *item,
-								 gpointer                user_data);
-static void            contact_list_invite_dialog_response_cb   (GtkWidget              *dialog,
-								 gint                    response,
-								 ChatInviteData         *cid);
-static void            contact_list_invite_entry_activate_cb    (GtkWidget              *entry,
-								 GtkDialog              *dialog);
 static void            contact_list_drag_data_received          (GtkWidget              *widget,
 								 GdkDragContext         *context,
 								 gint                    x,
@@ -1264,170 +1249,6 @@ contact_list_setup_view (GossipContactList *list)
 			  NULL);
 }
 
-static GtkWidget *
-contact_list_setup_invite_menu (GossipContactList *list,
-				GossipContact     *contact)
-{
-	GossipSession          *session;
-	GossipAccount          *account;
-	GossipChatroomProvider *provider;
-	GList                  *rooms = NULL;
-	GtkWidget              *menu = NULL;
-
-	g_return_val_if_fail (list != NULL, NULL);
-	g_return_val_if_fail (contact != NULL, NULL);
-
-	/* FIXME: should get provider better than this. */
-	session = gossip_app_get_session ();
-	account = gossip_contact_get_account (contact);
-	provider = gossip_session_get_chatroom_provider (session, account);
-
-	rooms = gossip_chatroom_provider_get_rooms (provider);
-
-	if (g_list_length (rooms) > 0) {
-		GList *l;
-
-		menu = gtk_menu_new ();
-
-		for (l = rooms; l; l = l->next) {
-			GossipChatroomId  id;
-			GtkWidget        *item;
-			const gchar      *name;
-
-			id = GPOINTER_TO_INT(l->data);
-			name = gossip_chatroom_provider_get_room_name (provider, id);
-
-			if (!name && strlen (name) > 0) {
-				continue;
-			}
-
-			item = gtk_menu_item_new_with_label (name);
-			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-
-			g_object_set_data_full (G_OBJECT (item), "contact", 
-						g_object_ref (contact),
-						g_object_unref);
-			g_object_set_data (G_OBJECT (item), "chatroom_id", l->data);
-			
-			g_signal_connect (GTK_MENU_ITEM (item), "activate",
-					  G_CALLBACK (contact_list_invite_menu_cb),
-					  NULL);
-		}
-	}
-	
-	return menu;
-}
-
-static void
-contact_list_invite_menu_cb (GtkMenuItem *item,
-			     gpointer     user_data)
-{
-	GossipContact    *contact;
-	GossipChatroomId  id;
-	ChatInviteData   *cid;
-	gpointer          pid;
-	gchar            *str;
-
-	GtkWidget        *dialog;
-	GtkWidget        *entry;
-	GtkWidget        *hbox;
-
-	contact = g_object_get_data (G_OBJECT (item), "contact");
-	pid = g_object_get_data (G_OBJECT (item), "chatroom_id");
-	
-	id = GPOINTER_TO_INT (pid);
-
-	/* construct dialog for invitiation text */
-	str = g_strdup_printf ("<b>%s</b>", gossip_contact_get_name (contact));
-
-	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
-					 0,
-					 GTK_MESSAGE_INFO,
-					 GTK_BUTTONS_OK_CANCEL,
-					 _("Please enter your invitation message to:\n%s"),
-					 str);
-	
-	g_free (str);
-
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
-		      "use-markup", TRUE,
-		      NULL);
-
-        entry = gtk_entry_new ();
-	gtk_widget_show (entry);
-
-	gtk_entry_set_text (GTK_ENTRY (entry), 
-                            _("You have been invited to join a chat conference."));
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-	
-	g_signal_connect (entry,
-			  "activate",
-			  G_CALLBACK (contact_list_invite_entry_activate_cb),
-			  dialog);
-
-	hbox = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox);
-	
-	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), 
-			    hbox, FALSE, TRUE, 4);
-
-	/* save details to pass on to response callback */
-	cid = g_new0 (ChatInviteData, 1);
-
-	cid->id = id;
-	cid->contact = contact;
-	cid->entry = g_object_ref (entry);
-
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (contact_list_invite_dialog_response_cb),
-			  cid);
-
-	gtk_widget_show (dialog);
-}
-
-static void 
-contact_list_invite_dialog_response_cb (GtkWidget      *dialog, 
-					gint            response, 
-					ChatInviteData *cid) 
-{
-	const gchar *invite;
-
-	if (response == GTK_RESPONSE_OK) {
-		GossipSession          *session;
-		GossipAccount          *account;
-		GossipChatroomProvider *provider;
-
-		session = gossip_app_get_session ();
-		account = gossip_contact_get_account (cid->contact);
-		provider = gossip_session_get_chatroom_provider (session, account);
-
-		invite = gtk_entry_get_text (GTK_ENTRY (cid->entry));
-
-		/* NULL uses the other end (in their language) */
-		invite = (strlen (invite) > 0) ? invite : NULL;
-
-		gossip_chatroom_provider_invite (provider,
-						 cid->id,
-						 gossip_contact_get_id (cid->contact),
-						 invite);
-	}
-	
-	g_object_unref (cid->contact);
-	g_object_unref (cid->entry);
-
-	g_free (cid);
-
-	gtk_widget_destroy (dialog);
-}
-
-static void
-contact_list_invite_entry_activate_cb (GtkWidget *entry, 
-				       GtkDialog *dialog)
-{
-	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
-}
-
 static void
 contact_list_drag_data_received (GtkWidget         *widget, 
 				 GdkDragContext    *context, 
@@ -1848,7 +1669,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				gtk_widget_set_sensitive (log_item, log_exists);
 
 				/* set up invites menu */
-				menu = contact_list_setup_invite_menu (list, contact);
+				menu = gossip_chat_invite_contact_menu (contact);
 				invite_item = gtk_item_factory_get_item (factory,
 									 "/Invite to Chat Conference");
 				invite_sep = gtk_item_factory_get_item (factory,

@@ -32,9 +32,11 @@
 #define GOSSIP_IS_CONTACT_LIST_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT_LIST))
 #define GOSSIP_CONTACT_LIST_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONTACT_LIST, GossipContactListClass))
 
+
 typedef struct _GossipContactList      GossipContactList;
 typedef struct _GossipContactListClass GossipContactListClass;
 typedef struct _GossipContactListPriv  GossipContactListPriv;
+
 
 struct _GossipContactList {
 	GtkTreeView            parent;
@@ -42,19 +44,20 @@ struct _GossipContactList {
 	GossipContactListPriv *priv;
 };
 
+
 struct _GossipContactListClass {
 	GtkTreeViewClass       parent_class;
 };
 
-GType               gossip_contact_list_get_type     (void) G_GNUC_CONST;
-GossipContactList * gossip_contact_list_new (void);
 
-GossipContact *  gossip_contact_list_get_selected  (GossipContactList *list);
-char *           gossip_contact_list_get_selected_group (GossipContactList *list);
+GType              gossip_contact_list_get_type     (void) G_GNUC_CONST;
 
-gboolean     gossip_contact_list_get_show_offline (GossipContactList *list);
-void         gossip_contact_list_set_show_offline (GossipContactList *list,
-						   gboolean           show_offline);
+GossipContactList *gossip_contact_list_new                (void);
+GossipContact *    gossip_contact_list_get_selected       (GossipContactList *list);
+char *             gossip_contact_list_get_selected_group (GossipContactList *list);
+gboolean           gossip_contact_list_get_show_offline   (GossipContactList *list);
+void               gossip_contact_list_set_show_offline   (GossipContactList *list,
+							   gboolean           show_offline);
 
 #endif /* __GOSSIP_CONTACT_LIST_H__ */
 

@@ -148,7 +148,6 @@ main (int argc, char *argv[])
 	if (account_name) {
 		GossipAccount *account;
 
-		accounts = gossip_accounts_get_all (NULL);
 		account = gossip_accounts_get_by_name (account_name);
 		if (!account) {
 			fprintf (stderr,
