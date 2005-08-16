@@ -36,234 +36,360 @@
 
 #define d(x) x
 
+#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
+
+#define VCARD_TIMEOUT 20000
+
+
 struct _GossipVCardDialog {
-	GtkWidget        *dialog;
+	GtkWidget *dialog;
 
-	GtkWidget        *label_status;
+	GtkWidget *table_account;
+	GtkWidget *label_account;
+	GtkWidget *combobox_account;
 
-	GtkWidget        *vbox_personal_information;
-	GtkWidget        *vbox_description;
+	GtkWidget *table_vcard;
 
-	GtkWidget        *entry_name;
-	GtkWidget        *entry_nickname;
-	GtkWidget        *entry_web_site;
-	GtkWidget        *entry_email;
+	GtkWidget *label_name;
+	GtkWidget *label_nickname;
+	GtkWidget *label_web_site;
+	GtkWidget *label_email;
+	GtkWidget *label_description;
 
-	GtkWidget        *textview_description;
+	GtkWidget *entry_name;
+	GtkWidget *entry_nickname;
+	GtkWidget *entry_web_site;
+	GtkWidget *entry_email;
 
-	gboolean          set_vcard;
-	gboolean          set_msn_nick;
+	GtkWidget *textview_description;
+
+	GtkWidget *vbox_waiting;
+	GtkWidget *progressbar_waiting;
+
+	GtkWidget *button_ok;
+
+	guint      wait_id;
+	guint      pulse_id;
+	guint      timeout_id; 
+
+	gboolean   requesting_vcard;
+
+	gint       last_account_selected;
 };
+
 
 typedef struct _GossipVCardDialog GossipVCardDialog;
 
 
-static void vcard_dialog_get_vcard_cb            (GossipAsyncResult  result,
-						  GossipVCard       *vcard,
-						  GossipVCardDialog *dialog);
-static void vcard_dialog_set_vcard               (GossipVCardDialog *dialog);
-static void vcard_dialog_set_vcard_cb            (GossipAsyncResult  result,
-						  GossipVCardDialog *dialog);
-#if 0 /* TRANSPORTS */
-/* This should be removed anyway in my opinion /Micke
+enum {
+	COL_ACCOUNT_IMAGE,
+	COL_ACCOUNT_TEXT,
+	COL_ACCOUNT_POINTER,
+	COL_ACCOUNT_COUNT
+};
 
-   :-O all that hard work for nothing :-/  /Martyn
-
- */
-static void vcard_dialog_set_msn_nick            (GossipVCardDialog *dialog);
-static void vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,
-						  const gchar       *key,
-						  const gchar       *username,
-						  const gchar       *password,
-						  const gchar       *nick,
-						  const gchar       *email,
-						  gboolean           require_username,
-						  gboolean           require_password,
-						  gboolean           require_nick,
-						  gboolean           require_email,
-						  gboolean           is_registered,
-						  const gchar       *error_code,
-						  const gchar       *error_reason,
-						  GossipVCardDialog *dialog);
-static void vcard_dialog_set_msn_nick_done_cb    (const gchar       *error_code,
-						  const gchar       *error_reason,
-						  GossipVCardDialog *dialog);
-#endif
-static void vcard_dialog_check_all_set           (GossipVCardDialog *dialog);
-static void vcard_dialog_response_cb             (GtkDialog         *widget,
-						  gint               response,
-						  GossipVCardDialog *dialog);
-static void vcard_dialog_destroy_cb              (GtkWidget         *widget,
-						  GossipVCardDialog *dialog);
+static void           vcard_dialog_setup_accounts              (GList             *accounts,
+								GossipVCardDialog *dialog);
+static GossipAccount *vcard_dialog_get_account_selected        (GossipVCardDialog *dialog);
+static gint           vcard_dialog_get_account_count           (GossipVCardDialog *dialog);
+static void           vcard_dialog_set_account_to_last         (GossipVCardDialog *dialog);
+static void           vcard_dialog_lookup_start                (GossipVCardDialog *dialog);
+static void           vcard_dialog_lookup_stop                 (GossipVCardDialog *dialog);
+static void           vcard_dialog_get_vcard_cb                (GossipResult       result,
+								GossipVCard       *vcard,
+								GossipVCardDialog *dialog);
+static void           vcard_dialog_set_vcard                   (GossipVCardDialog *dialog);
+static void           vcard_dialog_set_vcard_cb                (GossipResult       result,
+								GossipVCardDialog *dialog);
+static gboolean       vcard_dialog_progress_pulse_cb           (GtkWidget         *progressbar);
+static gboolean       vcard_dialog_wait_cb                     (GossipVCardDialog *dialog);
+static gboolean       vcard_dialog_timeout_cb                  (GossipVCardDialog *dialog);
+static gboolean       vcard_dialog_account_foreach             (GtkTreeModel      *model,
+								GtkTreePath       *path,
+								GtkTreeIter       *iter,
+								gpointer           user_data);
+static void           vcard_dialog_combobox_account_changed_cb (GtkWidget         *combobox,
+								GossipVCardDialog *dialog);
+static void           vcard_dialog_response_cb                 (GtkDialog         *widget,
+								gint               response,
+								GossipVCardDialog *dialog);
+static void           vcard_dialog_destroy_cb                  (GtkWidget         *widget,
+								GossipVCardDialog *dialog);
 
 
-void
-gossip_vcard_dialog_show (void)
+
+static void
+vcard_dialog_setup_accounts (GList             *accounts,
+			     GossipVCardDialog *dialog)
 {
-	GossipVCardDialog *dialog;
-	GladeXML          *gui;
+	GtkListStore    *store;
+	GtkTreeIter      iter;
+	GtkCellRenderer *renderer;
+	GtkComboBox     *combo_box;
 
-	dialog = g_new0 (GossipVCardDialog, 1);
+	GList           *l;
 
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
-				     "vcard_dialog",
-				     NULL,
-				     "vcard_dialog", &dialog->dialog,
-				     "label_status", &dialog->label_status,
-				     "vbox_personal_information", &dialog->vbox_personal_information,
-				     "vbox_description", &dialog->vbox_description,
-				     "entry_name", &dialog->entry_name,
-				     "entry_nickname", &dialog->entry_nickname,
-				     "entry_web_site", &dialog->entry_web_site,
-				     "entry_email", &dialog->entry_email,
-				     "textview_description", &dialog->textview_description,
-				     NULL);
+	gint             w, h;
+	gint             size = 24;  /* default size */
 
-	gossip_glade_connect (gui, 
-			      dialog,
-			      "vcard_dialog", "destroy", vcard_dialog_destroy_cb,
-			      "vcard_dialog", "response", vcard_dialog_response_cb,
-			      NULL);
+	GError          *error = NULL;
+	GtkIconTheme    *theme;
 
-	g_object_unref (gui);
+	GdkPixbuf       *pixbuf;
 	
-	/* request current vCard */
-	gossip_session_async_get_vcard (gossip_app_get_session (),
-					NULL,
-					(GossipAsyncVCardCallback) vcard_dialog_get_vcard_cb,
-					dialog,
+	/* set up combo box with new store */
+	combo_box = GTK_COMBO_BOX (dialog->combobox_account);
+
+  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));  
+
+	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
+				    GDK_TYPE_PIXBUF, 
+				    G_TYPE_STRING,   /* name */
+				    G_TYPE_POINTER);    
+
+	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->combobox_account), 
+				 GTK_TREE_MODEL (store));
+		
+	/* get theme and size details */
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+		size = 48;
+	} else {
+		size = (w + h) / 2; 
+	}
+
+	/* show jabber protocol */
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   "im-jabber", /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+	if (!pixbuf) {
+		g_warning ("could not load icon: %s", error->message);
+		g_error_free (error);
+	}
+
+	/* populate accounts */
+	for (l = accounts; l; l = l->next) {
+		GossipAccount *account;
+		const gchar   *icon_id = NULL;
+
+		account = l->data;
+
+		error = NULL; 
+		pixbuf = NULL;
+
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter, 
+				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
+				    COL_ACCOUNT_POINTER, g_object_ref (account),
+				    -1);
+
+		switch (gossip_account_get_type (account)) {
+		case GOSSIP_ACCOUNT_TYPE_JABBER:
+			icon_id = "im-jabber";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_AIM:
+			icon_id = "im-aim";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_ICQ:
+			icon_id = "im-icq";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_MSN:
+			icon_id = "im-msn";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_YAHOO:
+			icon_id = "im-yahoo";
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+
+		pixbuf = gtk_icon_theme_load_icon (theme,
+						   icon_id,     /* icon name */
+						   size,        /* size */
+						   0,           /* flags */
+						   &error);
+
+		if (!pixbuf) {
+			g_warning ("could not load stock icon: %s", icon_id);
+			continue;
+		}				
+
+		
+ 		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
+		g_object_unref (pixbuf);
+	}
+	
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+					"pixbuf", COL_ACCOUNT_IMAGE,
 					NULL);
+
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+					"text", COL_ACCOUNT_TEXT,
+					NULL);
+
+	g_object_unref (store);
+}
+
+static GossipAccount *
+vcard_dialog_get_account_selected (GossipVCardDialog *dialog) 
+{
+	GossipAccount *account;
+	GtkTreeModel  *model;
+	GtkTreeIter    iter;
+
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->combobox_account));
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (dialog->combobox_account), &iter);
+
+	gtk_tree_model_get (model, &iter, COL_ACCOUNT_POINTER, &account, -1);
+
+	return account;
+}
+
+static gint
+vcard_dialog_get_account_count (GossipVCardDialog *dialog) 
+{
+	GtkTreeModel *model;
+		
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->combobox_account));
+        return gtk_tree_model_iter_n_children  (model, NULL);
 }
 
 static void
-vcard_dialog_get_vcard_cb (GossipAsyncResult  result,
-			   GossipVCard       *vcard,
-			   GossipVCardDialog *dialog)
+vcard_dialog_set_account_to_last (GossipVCardDialog *dialog) 
 {
-	GtkTextBuffer *buffer;
-
-	d(g_print ("Got a vCard response\n"));
-
-	gtk_widget_hide (dialog->label_status);
-	gtk_widget_set_sensitive (dialog->vbox_personal_information, TRUE);
-	gtk_widget_set_sensitive (dialog->vbox_description, TRUE);
-
-	if (result != GOSSIP_ASYNC_OK) {
-		d(g_print ("vCard result != GOSSIP_ASYNC_OK\n"));
-		return;
-	}
-
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
-			    gossip_vcard_get_name (vcard));
+	g_signal_handlers_block_by_func (dialog->combobox_account, 
+					 vcard_dialog_combobox_account_changed_cb, 
+					 dialog);
 		
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname),
-			    gossip_vcard_get_nickname (vcard));
+	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->combobox_account), 
+				  dialog->last_account_selected);
 
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email),
-			    gossip_vcard_get_email (vcard));
-		
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_web_site),
-			    gossip_vcard_get_url (vcard));
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
-	gtk_text_buffer_set_text (buffer,
-				  gossip_vcard_get_description (vcard),
-				  -1);
-	g_object_unref (vcard);
+	g_signal_handlers_unblock_by_func (dialog->combobox_account, 
+					   vcard_dialog_combobox_account_changed_cb, 
+					   dialog);
 }
 
-#if 0 /* TRANSPORTS */
 static void
-vcard_dialog_set_msn_nick (GossipVCardDialog *dialog)
+vcard_dialog_lookup_start (GossipVCardDialog *dialog) 
 {
-	GossipTransportAccount *account;
-	GossipJID              *jid;
+	GossipSession *session;
+	GossipAccount *account;
 
-	const gchar            *nickname;
+	/* update widgets */
+	gtk_widget_set_sensitive (dialog->table_vcard, FALSE);
+	gtk_widget_set_sensitive (dialog->combobox_account, FALSE);
+	gtk_widget_set_sensitive (dialog->button_ok, FALSE);
 
-	nickname = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+	/* set up timers */
+	dialog->wait_id = g_timeout_add (2000, 
+					 (GSourceFunc)vcard_dialog_wait_cb,
+					 dialog);
 
-	if (!nickname || g_utf8_strlen (nickname, -1) < 1) {
-		d(g_print ("Nickname not set, no need to configure an the MSN nickname\n"));
-		dialog->set_msn_nick = TRUE;
-		return;	
-	}
+	dialog->timeout_id = g_timeout_add (VCARD_TIMEOUT, 
+					    (GSourceFunc)vcard_dialog_timeout_cb,
+					    dialog);
 
-#ifdef FIXME_MJR
-	account = gossip_transport_account_find_by_disco_type (al, "msn");
-	if (!account) {
-		d(g_print ("No MSN account, no need to configure an the MSN nickname\n"));
-		dialog->set_msn_nick = TRUE;
-		return;
-	}
+	/* get selected and look it up */
+	session = gossip_app_get_session ();
+	account = vcard_dialog_get_account_selected (dialog);
 
-	jid = gossip_transport_account_get_jid (account);
-#else
-	account = NULL;
-	jid = NULL;
-#endif
+	/* request current vCard */
+	gossip_session_get_vcard (session,
+				  account,
+				  NULL,
+				  (GossipVCardCallback) vcard_dialog_get_vcard_cb,
+				  dialog,
+				  NULL);
 
-	gossip_transport_requirements (NULL, 
-				       jid,
-				       (GossipTransportRequirementsFunc) vcard_dialog_set_msn_nick_details_cb,
-				       dialog);
+	dialog->requesting_vcard = TRUE;
 }
 
 static void  
-vcard_dialog_set_msn_nick_details_cb (GossipJID         *jid,
-				      const gchar       *key,
-				      const gchar       *username,
-				      const gchar       *password,
-				      const gchar       *nick,
-				      const gchar       *email,
-				      gboolean           require_username,
-				      gboolean           require_password,
-				      gboolean           require_nick,
-				      gboolean           require_email,
-				      gboolean           is_registered,
-				      const gchar       *error_code,
-				      const gchar       *error_reason,
-				      GossipVCardDialog *dialog)
+vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 {
-	const gchar *nickname;
+	dialog->requesting_vcard = FALSE;
 
-	nickname = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+	/* update widgets */
+	gtk_widget_set_sensitive (dialog->table_vcard, TRUE);
+	gtk_widget_set_sensitive (dialog->combobox_account, TRUE);
+	gtk_widget_set_sensitive (dialog->button_ok, TRUE);
 
-	d(g_print ("Setting MSN nickname to %s, waiting for response...\n", nickname));
+	gtk_widget_hide (dialog->vbox_waiting); 
 
-	gossip_transport_register (NULL,
-				   jid, 
-				   key, 
-				   username,
-				   password, 
-				   nickname, 
-				   email,
-				   (GossipTransportRegisterFunc) vcard_dialog_set_msn_nick_done_cb,
-				   dialog);
+	/* clean up timers */
+	if (dialog->wait_id != 0) {
+		g_source_remove (dialog->wait_id);
+		dialog->wait_id = 0;
+	}
+
+	if (dialog->pulse_id != 0) {
+		g_source_remove (dialog->pulse_id);
+		dialog->pulse_id = 0;
+	}
+
+	if (dialog->timeout_id != 0) {
+		g_source_remove (dialog->timeout_id);
+		dialog->timeout_id = 0;
+	}
+
 }
 
 static void
-vcard_dialog_set_msn_nick_done_cb (const gchar       *error_code,
-				   const gchar       *error_reason,
+vcard_dialog_get_vcard_cb (GossipResult       result,
+			   GossipVCard       *vcard,
 				   GossipVCardDialog *dialog)
 {
-	d(g_print ("Setting MSN nickname complete.\n"));
+	GtkComboBox   *combobox;
+	GtkTextBuffer *buffer;
+	const gchar   *str;
 
-	dialog->set_msn_nick = TRUE;
-	vcard_dialog_check_all_set (dialog);
+	d(g_print ("Got a vCard response\n"));
+
+	vcard_dialog_lookup_stop (dialog);
+
+	if (result != GOSSIP_RESULT_OK) {
+		d(g_print ("vCard result != GOSSIP_RESULT_OK\n"));
+		return;
+	}
+
+	str = gossip_vcard_get_name (vcard);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), STRING_EMPTY (str) ? "" : str);
+		
+	str = gossip_vcard_get_nickname (vcard);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), STRING_EMPTY (str) ? "" : str);
+
+	str = gossip_vcard_get_email (vcard);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email), STRING_EMPTY (str) ? "" : str);
+
+	str = gossip_vcard_get_url (vcard);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_web_site), STRING_EMPTY (str) ? "" : str);
+
+	str = gossip_vcard_get_description (vcard);
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
+	gtk_text_buffer_set_text (buffer, STRING_EMPTY (str) ? "" : str, -1);
+
+	/* save position incase the next lookup fails */
+	combobox = GTK_COMBO_BOX (dialog->combobox_account);
+	dialog->last_account_selected = gtk_combo_box_get_active (combobox);
 }
-
-#endif
 
 static void
 vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 {
+	GossipVCard   *vcard;
+	GossipAccount *account;
 	GError        *error = NULL;
-	gchar         *description;
-	gchar         *str;
 	GtkTextBuffer *buffer;
 	GtkTextIter    iter_begin, iter_end;
-	GossipVCard   *vcard;
+	gchar         *description;
+	const gchar   *str;
 
 	if (!gossip_app_is_connected ()) {
 		d(g_print ("Not connected, not setting vCard\n"));
@@ -272,14 +398,17 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 
 	vcard = gossip_vcard_new ();
 
-	gossip_vcard_set_name (vcard,
-			       gtk_entry_get_text (GTK_ENTRY (dialog->entry_name)));
-	gossip_vcard_set_nickname (vcard,
-				   gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname)));
-	gossip_vcard_set_url (vcard,
-			      gtk_entry_get_text (GTK_ENTRY (dialog->entry_web_site)));
-	gossip_vcard_set_email (vcard,
-				gtk_entry_get_text (GTK_ENTRY (dialog->entry_email)));
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
+	gossip_vcard_set_name (vcard, str);
+
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
+	gossip_vcard_set_nickname (vcard, str);
+
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_web_site));
+	gossip_vcard_set_url (vcard, str);
+
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_email));
+	gossip_vcard_set_email (vcard, str);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
 	gtk_text_buffer_get_bounds (buffer, &iter_begin, &iter_end);
@@ -287,60 +416,214 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gossip_vcard_set_description (vcard, description);
 	g_free (description);
 
-	str = g_strdup_printf ("<b>%s</b>", _("Saving personal details, please wait..."));
-	gtk_label_set_markup (GTK_LABEL (dialog->label_status), str);
-	gtk_widget_show (dialog->label_status);
-	g_free (str);
+	/* NOTE: if account is NULL, all accounts will get the same vcard */
+	account = vcard_dialog_get_account_selected (dialog);
 
-	gtk_widget_set_sensitive (dialog->vbox_personal_information, FALSE);
-	gtk_widget_set_sensitive (dialog->vbox_description, FALSE);
-
-	gossip_session_async_set_vcard (gossip_app_get_session (),
+	gossip_session_set_vcard (gossip_app_get_session (),
+				  account,
 					vcard, 
-					(GossipAsyncResultCallback) vcard_dialog_set_vcard_cb,
+				  (GossipResultCallback) vcard_dialog_set_vcard_cb,
 					dialog, &error);
 }
 
 static void
-vcard_dialog_set_vcard_cb (GossipAsyncResult result, GossipVCardDialog *dialog)
+vcard_dialog_set_vcard_cb (GossipResult       result, 
+			   GossipVCardDialog *dialog)
 {
   
   d(g_print ("Got a vCard response\n"));
   
-  /* FIXME: need to put some sort of error checking in here */
-
-	dialog->set_vcard = TRUE;
-	vcard_dialog_check_all_set (dialog);
-}
-
-static void
-vcard_dialog_check_all_set (GossipVCardDialog *dialog)
-{
-	g_return_if_fail (dialog != NULL);
-
-	if (dialog->set_vcard &&
-	    dialog->set_msn_nick) {
+	/* if multiple accounts, wait for the close button */
+	if (vcard_dialog_get_account_count (dialog) <= 1) {
 		gtk_widget_destroy (dialog->dialog);
 	}
 }
 
-static void
-vcard_dialog_response_cb (GtkDialog *widget, gint response, GossipVCardDialog *dialog)
+
+static gboolean 
+vcard_dialog_progress_pulse_cb (GtkWidget *progressbar)
 {
-	/* save vcard */
+	g_return_val_if_fail (progressbar != NULL, FALSE);
+	gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progressbar));
+
+	return TRUE;
+}
+
+static gboolean
+vcard_dialog_wait_cb (GossipVCardDialog *dialog)
+{
+	gtk_widget_show (dialog->vbox_waiting);
+
+	dialog->pulse_id = g_timeout_add (50, 
+					  (GSourceFunc)vcard_dialog_progress_pulse_cb, 
+					  dialog->progressbar_waiting);
+
+	return FALSE;
+}
+
+static gboolean
+vcard_dialog_timeout_cb (GossipVCardDialog *dialog)
+{
+	GtkWidget *md;
+
+	vcard_dialog_lookup_stop (dialog);
+
+	/* select last successfull account */
+	vcard_dialog_set_account_to_last (dialog);
+
+	/* show message dialog and the account dialog */
+	md = gtk_message_dialog_new_with_markup (GTK_WINDOW (dialog->dialog),
+						 GTK_DIALOG_MODAL |
+						 GTK_DIALOG_DESTROY_WITH_PARENT,
+						 GTK_MESSAGE_INFO,
+						 GTK_BUTTONS_CLOSE,
+						 "<b>%s</b>\n\n%s",
+						 _("The server does not seem to be responding."),
+						 _("Try again later."));
+	
+	g_signal_connect_swapped (md, "response",
+				  G_CALLBACK (gtk_widget_destroy), md);
+	gtk_widget_show (md);
+	
+	return FALSE;
+}
+
+static gboolean
+vcard_dialog_account_foreach (GtkTreeModel *model,
+			     GtkTreePath  *path,
+			     GtkTreeIter  *iter,
+			     gpointer      user_data)
+{
+	GossipAccount *account;
+
+	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account, -1);
+	g_object_unref (account);
+
+	return FALSE;
+}
+
+static void
+vcard_dialog_combobox_account_changed_cb (GtkWidget         *combobox,
+					  GossipVCardDialog *dialog)
+{
+	vcard_dialog_lookup_start (dialog);
+}
+
+static void
+vcard_dialog_response_cb (GtkDialog         *widget, 
+			  gint               response, 
+			  GossipVCardDialog *dialog)
+{
+	GtkTreeModel *model;
+
 	if (response == GTK_RESPONSE_OK) {
-#if 0 /* TRANSPORTS */
-		vcard_dialog_set_msn_nick (dialog);
-#endif
 		vcard_dialog_set_vcard (dialog);
 		return;
 	}
 
+	if (response == GTK_RESPONSE_CANCEL && dialog->requesting_vcard) {
+		/* change widgets so they are unsensitive */
+		vcard_dialog_lookup_stop (dialog);
+
+		/* select last successfull account */
+		vcard_dialog_set_account_to_last (dialog);
+		return;
+	}
+
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->combobox_account));
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) vcard_dialog_account_foreach, 
+				NULL);
+	
 	gtk_widget_destroy (dialog->dialog);
 }
 
 static void
-vcard_dialog_destroy_cb (GtkWidget *widget, GossipVCardDialog *dialog)
+vcard_dialog_destroy_cb (GtkWidget         *widget, 
+			 GossipVCardDialog *dialog)
 {
+	vcard_dialog_lookup_stop (dialog);
 	g_free (dialog);
+}
+
+void
+gossip_vcard_dialog_show (void)
+{
+	GossipSession     *session;
+	GossipVCardDialog *dialog;
+	GladeXML          *glade;
+	GList             *accounts;
+	GtkSizeGroup      *size_group;
+
+	dialog = g_new0 (GossipVCardDialog, 1);
+
+	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+				       "vcard_dialog",
+				       NULL,
+				       "vcard_dialog", &dialog->dialog,
+				       "table_account", &dialog->table_account,
+				       "label_account", &dialog->label_account,
+				       "combobox_account", &dialog->combobox_account,
+				       "table_vcard", &dialog->table_vcard,
+				       "label_name", &dialog->label_name,
+				       "label_nickname", &dialog->label_nickname,
+				       "label_web_site", &dialog->label_web_site,
+				       "label_email", &dialog->label_email,
+				       "label_description", &dialog->label_description,
+				       "entry_name", &dialog->entry_name,
+				       "entry_nickname", &dialog->entry_nickname,
+				       "entry_web_site", &dialog->entry_web_site,
+				       "entry_email", &dialog->entry_email,
+				       "textview_description", &dialog->textview_description,
+				       "vbox_waiting", &dialog->vbox_waiting,
+				       "progressbar_waiting", &dialog->progressbar_waiting,
+				       "button_ok", &dialog->button_ok,
+				       NULL);
+
+	gossip_glade_connect (glade, 
+			      dialog,
+			      "vcard_dialog", "destroy", vcard_dialog_destroy_cb,
+			      "vcard_dialog", "response", vcard_dialog_response_cb,
+			      "combobox_account", "changed", vcard_dialog_combobox_account_changed_cb,
+			      NULL);
+
+	g_object_unref (glade);
+
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+	gtk_size_group_add_widget (size_group, dialog->label_account);
+	gtk_size_group_add_widget (size_group, dialog->label_name);
+	gtk_size_group_add_widget (size_group, dialog->label_nickname);
+	gtk_size_group_add_widget (size_group, dialog->label_email);
+	gtk_size_group_add_widget (size_group, dialog->label_web_site);
+	gtk_size_group_add_widget (size_group, dialog->label_description);
+
+	g_object_unref (size_group);
+
+	/* sort out accounts */
+	session = gossip_app_get_session ();
+	accounts = gossip_session_get_accounts (session);
+
+	/* populate */
+	vcard_dialog_setup_accounts (accounts, dialog);
+
+	/* select first */
+	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->combobox_account), 0);
+		
+	if (g_list_length (accounts) > 1) {
+		gtk_widget_show (dialog->table_account);
+
+		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
+		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-apply");
+	} else {
+		/* show no accounts combo box */	
+		gtk_widget_hide (dialog->table_account);
+
+		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
+		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-ok");
+
+	}
+
+	/* start look up */
+/* 	vcard_dialog_lookup_start (dialog); */
 }

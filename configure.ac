@@ -81,6 +81,7 @@ dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
 
 PKG_CHECK_MODULES(LIBGOSSIP, [
+	libxml-2.0 >= $LIBXML_REQUIRED
 	glib-2.0 >= $GLIB_REQUIRED
 	gobject-2.0
 	libgnome-2.0 >= $LIBGNOME_REQUIRED

@@ -997,6 +997,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 {
 	GossipGroupChatPriv *priv;
 	GossipContact       *sender;
+	const gchar         *invite;
 
 	priv = chat->priv;
 
@@ -1008,12 +1009,21 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 
 	sender = gossip_message_get_sender (message);
 	
+	invite = gossip_message_get_invite (message);
+	if (invite) {
+		gossip_chat_view_append_invite_message (GOSSIP_CHAT (chat)->view,
+							sender,
+							gossip_message_get_timestamp (message),
+							invite,
+							gossip_message_get_body (message));
+		
+	} else {
 	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
 					      gossip_message_get_timestamp (message),
-					      gossip_message_get_invite (message),
 					      gossip_contact_get_name (priv->own_contact),
 					      gossip_contact_get_name (sender),
 					      gossip_message_get_body (message));
+	}
 }
 
 static void 

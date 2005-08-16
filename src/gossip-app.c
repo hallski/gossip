@@ -60,7 +60,7 @@
 #include "gossip-status-presets.h"
 #include "gossip-status-presets-dialog.h"
 #include "gossip-private-chat.h"
-#include "gossip-account-dialog.h"
+#include "gossip-accounts-dialog.h"
 #include "gossip-stock.h"
 #include "gossip-about.h"
 #include "gossip-app.h"
@@ -296,7 +296,7 @@ static void            app_subscription_request_cb               (GossipProtocol
 static void            app_subscription_event_activated_cb       (GossipEventManager  *event_manager,
 								  GossipEvent         *event,
 								  GossipProtocol      *protocol);
-static void            app_subscription_vcard_cb                 (GossipAsyncResult    result,
+static void            app_subscription_vcard_cb                 (GossipResult         result,
 								  GossipVCard         *vcard,
 								  SubscriptionData    *data);
 static void            app_subscription_request_dialog_cb        (GtkWidget           *dialog,
@@ -350,12 +350,17 @@ gossip_app_init (GossipApp *singleton_app)
 	gint            x, y;
 	gboolean        hidden;
 
+	/* do we need first time start up druid? */
+	if (gossip_startup_druid_is_needed ()) {
+		gossip_startup_druid_show ();
+	}
+
 	app = singleton_app;
 	
         priv = g_new0 (GossipAppPriv, 1);
         app->priv = priv;
 
-	priv->session = gossip_session_new ();
+	priv->session = gossip_session_new (NULL);
 	priv->chat_manager = gossip_chat_manager_new ();
 	priv->event_manager = gossip_event_manager_new ();
 
@@ -420,11 +425,6 @@ gossip_app_init (GossipApp *singleton_app)
 	app_update_conn_dependent_menu_items ();
 
 	g_object_unref (glade);
-
-	/* do we need first time start up druid? */
-	if (gossip_startup_druid_is_needed ()) {
-		gossip_startup_druid_run ();
-	}
 
 	/* set up contact list */
 	priv->contact_list = gossip_contact_list_new ();
@@ -609,7 +609,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 	g_signal_connect (protocol,
                           "subscription-request",
                           G_CALLBACK (app_subscription_request_cb),
-                          NULL);
+                          session);
 }
 
 static void
@@ -627,7 +627,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	/* FIXME: implement */
 	g_signal_handlers_disconnect_by_func (protocol, 
 					      app_subscription_request_cb, 
-					      NULL);
+					      session);
 }
 
 static void
@@ -748,12 +748,12 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 				    GtkTreeIter     *iter,
 				    gpointer         unused)
 {
-	GossipContact  *c;
+	GossipContact  *contact;
 	GdkPixbuf      *pixbuf;
 
-	gtk_tree_model_get (tree_model, iter, 0, &c, -1);
+	gtk_tree_model_get (tree_model, iter, 0, &contact, -1);
 
-	pixbuf = gossip_ui_utils_contact_get_pixbuf (c);
+	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);
@@ -798,9 +798,6 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 				_("_Chat"), GTK_RESPONSE_OK,
 				NULL);
 
-	/* Results in warnings on GTK+ 2.3.x */
-	/*gtk_dialog_set_has_separator (GTK_DIALOG (data->dialog), FALSE);*/
-
 	frame = gtk_frame_new (NULL);
 	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_NONE);
 	gtk_container_set_border_width (GTK_CONTAINER (frame), 4);
@@ -813,8 +810,7 @@ app_new_message (gboolean use_roster_selection, gboolean be_transient)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (data->combo), cell, FALSE);
-	/*gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (data->combo), cell,
-				       "pixbuf", 0); */
+
 	gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (data->combo),
 					    cell, 
 					    app_new_message_presence_data_func,
@@ -978,7 +974,7 @@ app_personal_details_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_account_information_cb (GtkWidget *widget, GossipApp *app)
 {
-	gossip_account_dialog_show ();
+	gossip_accounts_dialog_show ();
 }
 
 static void
@@ -1083,7 +1079,7 @@ gossip_app_connect (void)
 
 	priv = app->priv;
 
-	account = gossip_account_get_default ();
+	account = gossip_accounts_get_default ();
 	if (!account) {
 		GtkWidget *dialog;
 
@@ -1103,7 +1099,7 @@ gossip_app_connect (void)
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
-		gossip_account_dialog_show ();
+		gossip_accounts_dialog_show ();
 		return;
 	}
 	
@@ -1221,7 +1217,10 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 							       str);
 
 			if (!contact) {
-				contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
+				/* FIXME: need to ask which account we
+				   should be sending from if the
+				   contact is not known */
+				contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, NULL);
 				gossip_contact_set_id (contact, str);
 			}
 
@@ -2465,14 +2464,16 @@ app_subscription_event_activated_cb (GossipEventManager *event_manager,
 	data->protocol = g_object_ref (protocol);
 	data->contact = g_object_ref (contact);
 
-	gossip_session_async_get_vcard (gossip_app_get_session (),
-					data->contact,
-					(GossipAsyncVCardCallback) app_subscription_vcard_cb,
-					data, NULL);
+	gossip_session_get_vcard (gossip_app_get_session (),
+				  NULL,
+				  data->contact,
+				  (GossipVCardCallback) app_subscription_vcard_cb,
+				  data, 
+				  NULL);
 }
 
 static void
-app_subscription_vcard_cb (GossipAsyncResult  result,
+app_subscription_vcard_cb (GossipResult      result,
 			   GossipVCard       *vcard,
 			   SubscriptionData  *data)
 {
@@ -2616,6 +2617,7 @@ app_subscription_request_dialog_cb (GtkWidget        *dialog,
 	
 	g_object_unref (data->protocol);
 	g_object_unref (data->contact);
+
 	if (data->vcard) {
 		g_object_unref (data->vcard);
 	}

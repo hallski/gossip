@@ -20,12 +20,14 @@
  */
 
 #include <config.h>
+
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
 #include <glib/gi18n.h>
 #include <libgnome/gnome-url.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
@@ -58,13 +60,13 @@ log_ensure_dir (void)
 	}
 	g_free (dir);
 	
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", NULL);
+	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 	g_free (dir);
 
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", "logs", NULL);
+	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, "logs", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
@@ -85,7 +87,7 @@ log_get_filename (GossipContact *contact, const gchar *suffix)
 	g_free (case_folded_str);
 	
 	tmp = g_build_filename (g_get_home_dir (),
-				".gnome2", "Gossip", "logs",
+				".gnome2", PACKAGE_NAME, "logs",
 				escaped_str,
 				NULL);
 	g_free (escaped_str);

@@ -80,10 +80,10 @@ static void contact_info_dialog_destroy_cb      (GtkWidget         *widget,
 static void contact_info_dialog_response_cb     (GtkWidget         *widget,
 						 gint               response,
 						 GossipContactInfo *info);
-static void contact_info_get_vcard_cb           (GossipAsyncResult  result,
+static void contact_info_get_vcard_cb           (GossipResult       result,
 						 GossipVCard       *vcard,
 						 GossipContactInfo *info);
-static void contact_info_get_version_cb         (GossipAsyncResult  result,
+static void contact_info_get_version_cb         (GossipResult       result,
 						 GossipVersionInfo *version_info,
 						 GossipContactInfo *info);
 static void contact_info_subscribe_cb           (GtkWidget         *widget,
@@ -147,7 +147,7 @@ contact_info_dialog_response_cb (GtkWidget         *widget,
 }
 
 static void
-contact_info_get_vcard_cb (GossipAsyncResult  result,
+contact_info_get_vcard_cb (GossipResult       result,
 			   GossipVCard       *vcard,
 			   GossipContactInfo *info)
 {
@@ -158,7 +158,7 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 	
 	priv = GET_PRIV (info);
 
-	if (result != GOSSIP_ASYNC_OK || !priv->dialog) {
+	if (result != GOSSIP_RESULT_OK || !priv->dialog) {
 /* 		gchar *status; */
 
 /* 		status = g_strdup_printf ("<i>%s</i>",  */
@@ -264,7 +264,7 @@ contact_info_get_vcard_cb (GossipAsyncResult  result,
 }
 
 static void
-contact_info_get_version_cb (GossipAsyncResult  result,
+contact_info_get_version_cb (GossipResult       result,
 			     GossipVersionInfo *version_info,
 			     GossipContactInfo *info)
 {
@@ -274,7 +274,7 @@ contact_info_get_version_cb (GossipAsyncResult  result,
 
 	priv = GET_PRIV (info);
 
-	if (result != GOSSIP_ASYNC_OK || !priv->dialog) {
+	if (result != GOSSIP_RESULT_OK || !priv->dialog) {
 /* 		gchar *status; */
 
 /* 		status = g_strdup_printf ("<i>%s</i>",  */
@@ -341,6 +341,8 @@ contact_info_subscribe_cb (GtkWidget         *widget,
 			   GossipContactInfo *info)
 {
 	GossipContactInfoPriv *priv;
+	GossipSession         *session;
+	GossipAccount         *account;
 	const gchar           *message;
 
 	g_return_if_fail (info != NULL);
@@ -349,7 +351,11 @@ contact_info_subscribe_cb (GtkWidget         *widget,
 
 	message = _("I would like to add you to my contact list.");
 
-        gossip_session_add_contact (gossip_app_get_session (),
+	session = gossip_app_get_session ();
+	account = gossip_session_find_account (session, priv->contact);
+
+        gossip_session_add_contact (session,
+				    account,
                                     gossip_contact_get_id (priv->contact), 
 				    gossip_contact_get_name (priv->contact),
 				    NULL, /* group */
@@ -403,9 +409,14 @@ gossip_contact_info_new (GossipContact *contact)
 {
 	GossipContactInfo     *info;
 	GossipContactInfoPriv *priv;
+	GossipSession         *session;
+	GossipAccount         *account;
 	GladeXML              *gui;
 	gchar                 *str, *tmp_str;
 	GtkSizeGroup          *size_group;
+
+	session = gossip_app_get_session ();
+	account = gossip_session_find_account (session, contact);
 
 	info = g_object_new (GOSSIP_TYPE_CONTACT_INFO, NULL);
 
@@ -484,7 +495,7 @@ gossip_contact_info_new (GossipContact *contact)
 	/* subscription listener */
 	contact_info_update_subscription_ui (info, contact);
 		
-	priv->presence_signal_handler = g_signal_connect (gossip_app_get_session (),
+	priv->presence_signal_handler = g_signal_connect (session,
 							  "contact-updated",
 							  G_CALLBACK (contact_info_contact_updated_cb), 
 							  info);
@@ -496,15 +507,18 @@ gossip_contact_info_new (GossipContact *contact)
 	gtk_label_set_markup (GTK_LABEL (priv->client_status_label), str);
 	g_free (str);
 
-	gossip_session_async_get_vcard (gossip_app_get_session (),
+	gossip_session_get_vcard (session,
+				  account,
 					contact,
-					(GossipAsyncVCardCallback) contact_info_get_vcard_cb,
-					g_object_ref (info), NULL);
+				  (GossipVCardCallback) contact_info_get_vcard_cb,
+				  g_object_ref (info), 
+				  NULL);
 
-	gossip_session_async_get_version (gossip_app_get_session (),
+	gossip_session_get_version (session,
 					  contact,
-					  (GossipAsyncVersionCallback) contact_info_get_version_cb,
-					  g_object_ref (info), NULL);
+				    (GossipVersionCallback) contact_info_get_version_cb,
+				    g_object_ref (info), 
+				    NULL);
 	
 	gtk_widget_show (priv->dialog);
 

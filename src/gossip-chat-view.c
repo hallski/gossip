@@ -166,7 +166,7 @@ static void       chat_view_maybe_append_timestamp     (GossipChatView          
 static void       chat_view_maybe_append_datestamp     (GossipChatView           *view);
 static gboolean   chat_view_is_scrolled_down           (GossipChatView           *view);
 static void       chat_view_invite_accept_cb           (GtkWidget                *button,
-							gchar                    *invite);
+							gpointer                  user_data);
 static void       chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
 							GossipChatroomJoinResult  result,
 							gint                      id,
@@ -865,22 +865,100 @@ finished:
 }
 
 void
-gossip_chat_view_append_chat_message (GossipChatView *view,
+gossip_chat_view_append_invite_message (GossipChatView *view,
+					GossipContact  *contact,
 				      gossip_time_t   timestamp,
 				      const gchar    *invite,
+					const gchar    *msg)
+{
+	GtkTextBuffer      *buffer;
+	GtkTextChildAnchor *anchor;
+	GtkTextIter         iter;
+	GtkWidget          *widget;
+	const gchar        *used_msg;
+	const gchar        *used_invite;
+	gchar              *str;
+	gboolean            bottom;
+
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+	g_return_if_fail (invite != NULL);
+
+	chat_view_maybe_append_datestamp (view);
+	chat_view_maybe_append_timestamp (view, timestamp);
+
+	bottom = chat_view_is_scrolled_down (view);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	used_msg = (msg && strlen (msg) > 0) ? 
+		msg : _("You have been invited to join a chat conference.");
+	
+	/* don't include the invite in the chat window
+	   if it is part of the actual request - some
+	   chat clients send this and it looks weird
+	   repeated */
+	used_invite = (!strstr (msg, invite)) ? 
+		invite : NULL;
+	
+	str = g_strdup_printf ("\n%s\n%s%s%s%s--\n",
+			       used_msg,
+			       used_invite ? "(" : "",
+			       used_invite ? used_invite : "",
+			       used_invite ? ")" : "",
+			       used_invite ? "\n" : "");
+	
+	chat_view_insert_text_with_emoticons (buffer, &iter, "invite", str);
+	g_free (str);
+	
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	
+	anchor = gtk_text_buffer_create_child_anchor (buffer, &iter);
+	widget = gtk_button_new_with_label (_("Accept"));
+	
+	g_object_set_data_full (G_OBJECT (widget), "invite", 
+				g_strdup (invite), g_free);
+ 	g_object_set_data_full (G_OBJECT (widget), "contact",  
+ 				g_object_ref (contact), g_object_unref); 
+	
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (chat_view_invite_accept_cb),
+			  NULL);
+	
+	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
+					   widget,
+					   anchor);
+	
+	gtk_widget_show_all (widget);	
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer,
+				&iter,
+				"\n",
+				1);
+
+	/* scroll to the end of the newly inserted text, if we were at
+	   the bottom before. */
+	if (bottom) {
+		gossip_chat_view_scroll_down (view);
+	}
+}
+
+void
+gossip_chat_view_append_chat_message (GossipChatView *view,
+				      gossip_time_t   timestamp,
 				      const gchar    *to,
 				      const gchar    *from,
 				      const gchar    *msg)
 {
 	GtkTextBuffer *buffer;
 	GtkTextIter    iter;
-	gchar         *nick_tag, *body_tag = NULL;
+	gchar         *nick_tag;
 	gint           num_matches, i;
 	GArray        *start, *end;
 	gboolean       bottom;
 
-	if ((!msg || msg[0] == 0) && 
-	    (!invite || invite[0] == 0)) {
+	if ((!msg || msg[0] == 0)) {
 		return;
 	}
 
@@ -890,13 +968,10 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	bottom = chat_view_is_scrolled_down (view);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_buffer_get_end_iter (buffer, &iter);
 
 	if (from) {
 		if (strncmp (msg, "/me ", 4) != 0) {
-			/* Regular message. */
-			
-			gtk_text_buffer_get_end_iter (buffer, &iter);
-
 			/* FIXME: This only works if nick == name... */
 			if (to && strcmp (from, to) == 0) {
 				nick_tag = "nick-me";
@@ -923,7 +998,6 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 								  NULL);
 		} else {
 			/* /me style message. */
-			gtk_text_buffer_get_end_iter (buffer, &iter);
 			gtk_text_buffer_insert_with_tags_by_name (buffer,
 								  &iter,
 								  " * ",
@@ -945,7 +1019,6 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			msg += 3;
 		}
 	} else {
-		gtk_text_buffer_get_end_iter (buffer, &iter);
 		gtk_text_buffer_insert_with_tags_by_name (buffer,
 							  &iter,
 							  " - ",
@@ -958,61 +1031,12 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 	
 	num_matches = gossip_utils_url_regex_match (msg, start, end);
-	if (invite) {
-		num_matches = 0;
-		body_tag = "invite";
-	}
-		
 		
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (buffer, &iter);
 
-		if (invite) {
-			GtkWidget          *widget;
-			GtkTextChildAnchor *anchor;
-			const gchar        *used_msg;
-			const gchar        *used_invite;
-			gchar              *str;
-			
-			used_msg = (msg && strlen (msg) > 0) ? 
-				msg : _("You have been invited to join a chat conference.");
-			
-			/* don't include the invite in the chat window
-			   if it is part of the actual request - some
-			   chat clients send this and it looks weird
-			   repeated */
-			used_invite = (!strstr (msg, invite)) ? 
-				invite : NULL;
-
-			str = g_strdup_printf ("\n%s\n%s%s%s%s--\n",
-					       used_msg,
-					       used_invite ? "(" : "",
-					       used_invite ? used_invite : "",
-					       used_invite ? ")" : "",
-					       used_invite ? "\n" : "");
-
-			chat_view_insert_text_with_emoticons (buffer, &iter, body_tag, str);
-			g_free (str);
-
-			gtk_text_buffer_get_end_iter (buffer, &iter);
-
-			anchor = gtk_text_buffer_create_child_anchor (buffer, &iter);
-			widget = gtk_button_new_with_label (_("Accept"));
-			
-			g_signal_connect (widget, "clicked",
-					  G_CALLBACK (chat_view_invite_accept_cb),
-					  g_strdup (invite));
-
-			gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
-							   widget,
-							   anchor);
-			
-			gtk_widget_show_all (widget);
-
-		} else {
 			/* insert text as normal */
-			chat_view_insert_text_with_emoticons (buffer, &iter, body_tag, msg);
-		}
+		chat_view_insert_text_with_emoticons (buffer, &iter, NULL, msg);
 	} else {
 		gint   last = 0;
 		gint   s = 0, e = 0;
@@ -1070,9 +1094,8 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 				"\n",
 				1);
 
-	/* Scroll to the end of the newly inserted text, if we were at the
-	 * bottom before.
-	 */
+	/* scroll to the end of the newly inserted text, if we were at
+	   the bottom before. */
 	if (bottom) {
 		gossip_chat_view_scroll_down (view);
 	}
@@ -1183,26 +1206,29 @@ gossip_chat_view_copy_clipboard (GossipChatView *view)
 
 static void
 chat_view_invite_accept_cb (GtkWidget *button, 
-			    gchar     *invite)
+			    gpointer   user_data)
 {
 	GossipSession          *session;
+	GossipAccount          *account;
+	GossipContact          *contact;
 	GossipChatroomProvider *provider;
 	const gchar            *nickname;
+	const gchar            *invite;
+
+	invite = g_object_get_data (G_OBJECT (button), "invite");
+	contact = g_object_get_data (G_OBJECT (button), "contact");
 
 	gtk_widget_set_sensitive (button, FALSE);
 	
-	/* FIXME: should really have a session associated with the
-	   chatview */ 
 	session = gossip_app_get_session ();
-	provider = gossip_session_get_chatroom_provider (session);
+	account = gossip_contact_get_account (contact);
+	provider = gossip_session_get_chatroom_provider (session, account);
 	nickname = gossip_session_get_nickname (session);
 
 	gossip_chatroom_provider_invite_accept (provider,
 						chat_view_invite_join_cb,
 						nickname,
 						invite);
-	
-	g_free (invite);
 }
 
 static void

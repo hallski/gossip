@@ -56,7 +56,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->setup               = NULL;
 	klass->login               = NULL;
 	klass->logout              = NULL;
-	klass->async_register      = NULL;
+	klass->register_account    = NULL;
 	klass->is_connected        = NULL;
 	klass->send_message        = NULL;
 	klass->set_presence        = NULL;
@@ -68,8 +68,8 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->rename_group        = NULL;
 	klass->get_active_resource = NULL;
 	klass->get_groups          = NULL;
-	klass->async_get_vcard     = NULL;
-	klass->async_set_vcard     = NULL;
+	klass->get_vcard           = NULL;
+	klass->set_vcard           = NULL;
 
 	signals[LOGGED_IN] = 
 		g_signal_new ("logged-in",
@@ -259,7 +259,8 @@ gossip_protocol_contact_set_subscription (GossipProtocol *protocol,
 }
 
 void
-gossip_protocol_send_message (GossipProtocol *protocol, GossipMessage *message)
+gossip_protocol_send_message (GossipProtocol *protocol, 
+			      GossipMessage  *message)
 {
 	GossipProtocolClass *klass;
 
@@ -438,9 +439,9 @@ gossip_protocol_get_groups (GossipProtocol *protocol)
 }
 
 gboolean
-gossip_protocol_async_register (GossipProtocol               *protocol,
+gossip_protocol_register_account (GossipProtocol                *protocol,
 				GossipAccount                *account,
-				GossipAsyncRegisterCallback   callback,
+				  GossipRegisterCallback   callback,
 				gpointer                      user_data,
 				GError                      **error)
 {
@@ -450,8 +451,8 @@ gossip_protocol_async_register (GossipProtocol               *protocol,
 	g_return_val_if_fail (callback != NULL, FALSE);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->async_register) {
-		return klass->async_register (protocol, account, 
+	if (klass->register_account) {
+		return klass->register_account (protocol, account, 
 					      callback, user_data, 
 					      error);
 	}
@@ -460,9 +461,9 @@ gossip_protocol_async_register (GossipProtocol               *protocol,
 }
 
 gboolean
-gossip_protocol_async_get_vcard (GossipProtocol            *protocol,
+gossip_protocol_get_vcard (GossipProtocol             *protocol,
 				 GossipContact             *contact,
-				 GossipAsyncVCardCallback   callback,
+				 GossipVCardCallback   callback,
 				 gpointer                   user_data,
 				 GError                   **error)
 {
@@ -471,8 +472,8 @@ gossip_protocol_async_get_vcard (GossipProtocol            *protocol,
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->async_get_vcard) {
-		return klass->async_get_vcard (protocol, contact,
+	if (klass->get_vcard) {
+		return klass->get_vcard (protocol, contact,
 					       callback, user_data, 
 					       error);
 	}
@@ -482,9 +483,9 @@ gossip_protocol_async_get_vcard (GossipProtocol            *protocol,
 }
 
 gboolean 
-gossip_protocol_async_set_vcard (GossipProtocol             *protocol,
+gossip_protocol_set_vcard (GossipProtocol        *protocol,
 				 GossipVCard                *vcard,
-				 GossipAsyncResultCallback   callback,
+			   GossipResultCallback   callback,
 				 gpointer                    user_data,
 				 GError                    **error)
 {
@@ -493,8 +494,8 @@ gossip_protocol_async_set_vcard (GossipProtocol             *protocol,
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->async_set_vcard) {
-		return klass->async_set_vcard (protocol, vcard,
+	if (klass->set_vcard) {
+		return klass->set_vcard (protocol, vcard,
 					       callback, user_data, 
 					       error);
 	}
@@ -504,9 +505,9 @@ gossip_protocol_async_set_vcard (GossipProtocol             *protocol,
 }
 
 gboolean
-gossip_protocol_async_get_version (GossipProtocol              *protocol,
+gossip_protocol_get_version (GossipProtocol         *protocol,
 				   GossipContact               *contact,
-				   GossipAsyncVersionCallback   callback,
+			     GossipVersionCallback   callback,
 				   gpointer                     user_data,
 				   GError                     **error)
 {
@@ -515,8 +516,8 @@ gossip_protocol_async_get_version (GossipProtocol              *protocol,
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->async_get_version) {
-		return klass->async_get_version (protocol, contact,
+	if (klass->get_version) {
+		return klass->get_version (protocol, contact,
 						 callback, user_data, 
 						 error);
 	}

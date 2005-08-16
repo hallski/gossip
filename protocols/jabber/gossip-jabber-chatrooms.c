@@ -65,7 +65,8 @@ typedef struct {
 } AsyncCallbackData;
 
 
-static JabberChatroom *jabber_chatrooms_chatroom_new         (const gchar            *room_name,
+static JabberChatroom *jabber_chatrooms_chatroom_new         (GossipJabberChatrooms  *chatrooms,
+							      const gchar            *room_name,
 							      const gchar            *server,
 							      const gchar            *nick);
 static void            jabber_chatrooms_chatroom_free        (JabberChatroom         *room);
@@ -93,13 +94,22 @@ static void            jabber_chatrooms_set_presence_foreach (gpointer          
 
 
 static JabberChatroom *
-jabber_chatrooms_chatroom_new (const gchar *room_name, 
+jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
+			       const gchar           *room_name, 
 			       const gchar *server,
 			       const gchar *nick)
 {
+	GossipJabber   *jabber;
+	GossipContact  *own_contact;
+	GossipAccount  *account;
 	JabberChatroom *room;
 	gchar          *jid_str;
 	static int      id = 1;
+
+	/* FIXME: can we use the own contact instead of creating a new one? */
+	jabber = chatrooms->jabber;
+	own_contact = gossip_jabber_get_own_contact (jabber);
+	account = gossip_contact_get_account (own_contact);
 
 	room = g_new0 (JabberChatroom, 1);
 
@@ -113,6 +123,7 @@ jabber_chatrooms_chatroom_new (const gchar *room_name,
 	room->contacts = NULL;
 	
 	room->own_contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_USER,
+						     account,
 						     gossip_jid_get_full (room->jid),
 						     gossip_jid_get_resource (room->jid));
 
@@ -335,7 +346,9 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 		*new_contact = TRUE;
 	}
 
-	c = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM, id, 
+	c = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM, 
+				     gossip_contact_get_account (room->own_contact),
+				     id, 
 				     gossip_jid_get_resource (jid));
 	room->contacts = g_slist_prepend (room->contacts, c);
 
@@ -412,7 +425,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
         d(g_print ("Chatrooms: Join chat room:'%s' on server:'%s'\n", 
 		   room_name, server));
 
-	room = jabber_chatrooms_chatroom_new (room_name, server, nick);
+	room = jabber_chatrooms_chatroom_new (chatrooms, room_name, server, nick);
 	existing_room = g_hash_table_lookup (chatrooms->room_jid_hash, room->jid);
 
 	if (existing_room) {

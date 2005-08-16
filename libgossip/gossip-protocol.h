@@ -103,24 +103,24 @@ struct _GossipProtocolClass {
 	GList *       (*get_groups)            (GossipProtocol  *protocol);
 	
 	
-	gboolean      (*async_register)        (GossipProtocol  *protocol,
+	gboolean      (*register_account)      (GossipProtocol  *protocol,
 					        GossipAccount   *account,
-					        GossipAsyncRegisterCallback callback,
+					        GossipRegisterCallback callback,
 					        gpointer         user_data,
 					        GError         **error);
-	gboolean      (*async_get_vcard)       (GossipProtocol  *protocol,
+	gboolean      (*get_vcard)             (GossipProtocol  *protocol,
 					        GossipContact   *contact,
-					        GossipAsyncVCardCallback callback,
+					        GossipVCardCallback callback,
 					        gpointer         user_data,
 					        GError         **error);
-	gboolean      (*async_set_vcard)       (GossipProtocol  *protocol,
+	gboolean      (*set_vcard)             (GossipProtocol  *protocol,
 					        GossipVCard     *vcard,
-					        GossipAsyncResultCallback callback,
+						GossipResultCallback callback,
 					        gpointer         user_data,
 					        GError         **error);
-	gboolean      (*async_get_version)     (GossipProtocol  *protocol,
+	gboolean      (*get_version)           (GossipProtocol  *protocol,
 					        GossipContact   *contact,
-					        GossipAsyncVersionCallback callback,
+						GossipVersionCallback callback,
 					        gpointer                   user_data,
 					        GError         **error);
 };
@@ -164,24 +164,24 @@ void           gossip_protocol_rename_group             (GossipProtocol         
 const gchar *  gossip_protocol_get_active_resource      (GossipProtocol               *protocol,
 							 GossipContact                *contact);
 GList *        gossip_protocol_get_groups               (GossipProtocol               *protocol);
-gboolean       gossip_protocol_async_register           (GossipProtocol               *protocol,
+gboolean       gossip_protocol_register_account         (GossipProtocol               *protocol,
 							 GossipAccount                *account,
-							 GossipAsyncRegisterCallback   callback,
+							 GossipRegisterCallback   callback,
 							 gpointer                      user_data,
 							 GError                      **error);
-gboolean       gossip_protocol_async_get_vcard          (GossipProtocol               *protocol,
+gboolean       gossip_protocol_get_vcard                (GossipProtocol               *protocol,
 							 GossipContact                *contact,
-							 GossipAsyncVCardCallback      callback,
+							 GossipVCardCallback      callback,
 							 gpointer                      user_data,
 							 GError                      **error);
-gboolean       gossip_protocol_async_set_vcard          (GossipProtocol               *protocol,
+gboolean       gossip_protocol_set_vcard                (GossipProtocol               *protocol,
 							 GossipVCard                  *vcard,
-							 GossipAsyncResultCallback     callback,
+							 GossipResultCallback     callback,
 							 gpointer                      user_data,
 							 GError                      **error);
-gboolean       gossip_protocol_async_get_version        (GossipProtocol               *protocol,
+gboolean       gossip_protocol_get_version              (GossipProtocol               *protocol,
 							 GossipContact                *contact,
-							 GossipAsyncVersionCallback    callback,
+							 GossipVersionCallback    callback,
 							 gpointer                      user_data,
 							 GError                      **error);
 void           gossip_protocol_error                    (GossipProtocol               *protocol,

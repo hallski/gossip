@@ -54,10 +54,14 @@ GType            gossip_chat_view_get_type             (void) G_GNUC_CONST;
 GossipChatView * gossip_chat_view_new                  (void);
 void             gossip_chat_view_append_chat_message  (GossipChatView *view,
 							gossip_time_t   timestamp,
-							const gchar    *invite,
 							const gchar    *to,
 							const gchar    *from,
 							const gchar    *msg);
+void             gossip_chat_view_append_invite_message (GossipChatView *view,
+							 GossipContact  *contact,
+							 gossip_time_t   timestamp,
+							 const gchar    *invite,
+							 const gchar    *msg);
 void             gossip_chat_view_append_event_message (GossipChatView *view,
 							const gchar    *str,
 							gboolean        timestamp);

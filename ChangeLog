@@ -1,3 +1,46 @@
+2005-08-16  Martyn Russell  <mr@gnome.org>
+
+	* ui/connect.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	* src/gossip-vcard-dialog.c:
+	* src/gossip-ui-utils.c:
+	* src/gossip-startup-druid.c:
+	* src/gossip-register.c:
+	* src/gossip-private-chat.c:
+	* src/gossip-main.c:
+	* src/gossip-join-dialog.c: 
+	* src/gossip-group-chat.c: 
+	* src/gossip-contact-list.c: 
+	* src/gossip-contact-info.c: 
+	* src/gossip-chat-view.[ch]:
+	* src/gossip-app.c:
+	* src/gossip-add-contact.c
+	* protocols/jabber/gossip-jabber.c: 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	- Repercussions of updates to libgossip.
+
+	* libgossip/gossip-session.[ch]: 
+	- Updated to work with n accounts instead of just ONE account.
+	* libgossip/gossip-contact.[ch]: 
+	- Added account property, to tie contacts to an account.
+	* libgossip/gossip-account.[ch]: 
+	- Reworked GossipAccount to make better use of GObject and to use
+	an XML file which is DTD verified. 
+
+	* libgossip/Makefile.am: 
+	- Added DTD details for accounts XML work.
+	* configure.ac: 
+	- Added libxml dependency for libgossip.
+
+	* src/gossip-status-presets.c:
+	* src/gossip-main.c:
+	* src/gossip-log.c:
+	* src/gossip-contact-groups.c:
+	* src/gossip-about.c:
+	* protocols/jabber/gossip-transport-protocol.c:
+	- Use PACKAGE_NAME instead of "Gossip".
+
 2005-08-14  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-join-dialog.c (gossip_join_dialog_show): 

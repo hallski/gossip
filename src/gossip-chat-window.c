@@ -650,6 +650,8 @@ chat_window_update_menu (GossipChatWindow *window)
 static void
 chat_window_invite_menu_setup (GossipChatWindow *window)
 {
+	/* FIXME: needs finishing */
+#if 0
 	GossipChatWindowPriv   *priv;
 	GossipSession          *session;
 	GossipChatroomProvider *provider;
@@ -731,6 +733,7 @@ chat_window_invite_menu_setup (GossipChatWindow *window)
 	if (is_group_chat) {
 		g_list_free (list);
 	}
+#endif
 }
 
 static void

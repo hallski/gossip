@@ -28,21 +28,22 @@
 #include <libgossip/gossip-message.h>
 #include <libgossip/gossip-vcard.h>
 
-gboolean        gossip_jabber_helper_async_get_vcard (LmConnection   *connection,
+gboolean gossip_jabber_helper_get_vcard   (LmConnection           *connection,
 						      const gchar    *jid_str,
-						      GossipAsyncVCardCallback callback,
+					   GossipVCardCallback     callback,
 						      gpointer        user_data,
 						      GError         **error);
-gboolean        gossip_jabber_helper_async_set_vcard (LmConnection   *connection,
+gboolean gossip_jabber_helper_set_vcard   (LmConnection           *connection,
 						      GossipVCard    *vcard,
-						      GossipAsyncResultCallback callback,
+					   GossipResultCallback    callback,
 						      gpointer        user_data,
 						      GError         **error);
-gboolean        gossip_jabber_helper_async_get_version (LmConnection   *connection,
+gboolean gossip_jabber_helper_get_version (LmConnection           *connection,
 							GossipContact  *contact,
-							GossipAsyncVersionCallback callback,
+					   GossipVersionCallback   callback,
 							gpointer        user_data,
 							GError         **error);
+
 const gchar * 
 gossip_jabber_helper_presence_state_to_string       (GossipPresence *presence);
 

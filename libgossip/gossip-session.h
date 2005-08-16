@@ -60,79 +60,89 @@ struct _GossipSessionClass {
 };
 
 
-typedef enum {
-        GOSSIP_ACCOUNT_TYPE_JABBER
-} GossipAccountType;
-
-
 GType           gossip_session_get_type            (void) G_GNUC_CONST;
-GossipSession * gossip_session_new                 (void);
-void            gossip_session_connect             (GossipSession                *session);
-void            gossip_session_disconnect          (GossipSession                *session);
-void            gossip_session_send_message        (GossipSession                *session,
-						    GossipMessage                *message);
-void            gossip_session_send_composing      (GossipSession                *session,
-						    GossipContact                *contact,
-						    gboolean                      composing);
-GossipPresence *gossip_session_get_presence        (GossipSession                *session);
-void            gossip_session_set_presence        (GossipSession                *session,
-						    GossipPresence               *presence);
-gboolean        gossip_session_is_connected        (GossipSession                *session);
-const gchar *   gossip_session_get_active_resource (GossipSession                *session,
-						    GossipContact                *contact);
+GossipSession * gossip_session_new                 (const gchar             *accounts_file);
 
-/* Should be a list so that the user can choose which account to join a 
- * group chat in */
+
+/* accounts */
+GList *         gossip_session_get_accounts        (GossipSession           *session);
+gboolean        gossip_session_add_account         (GossipSession           *session,
+						    GossipAccount           *account);
+gboolean        gossip_session_remove_account      (GossipSession           *session,
+						    GossipAccount           *account);
+GossipAccount * gossip_session_find_account        (GossipSession           *session,
+						    GossipContact           *contact);
+void            gossip_session_connect             (GossipSession           *session);
+void            gossip_session_disconnect          (GossipSession           *session);
+void            gossip_session_send_message        (GossipSession           *session,
+						    GossipMessage           *message);
+void            gossip_session_send_composing      (GossipSession           *session,
+						    GossipContact           *contact,
+						    gboolean                 composing);
+GossipPresence *gossip_session_get_presence        (GossipSession           *session);
+void            gossip_session_set_presence        (GossipSession           *session,
+						    GossipPresence          *presence);
+gboolean        gossip_session_is_connected        (GossipSession           *session);
+const gchar *   gossip_session_get_active_resource (GossipSession           *session,
+						    GossipContact           *contact);
+
+
+/* misc */
 GossipChatroomProvider *
-gossip_session_get_chatroom_provider               (GossipSession                *session);
-/* Contact management */
-GossipContact * gossip_session_find_contact        (GossipSession                *session,
-						    const gchar                  *str);
-
-/* FIXME: Include the account to add to */
-void            gossip_session_add_contact         (GossipSession                *session,
-						    const gchar                  *id,
-						    const gchar                  *name,
-						    const gchar                  *group,
-						    const gchar                  *message);
-void            gossip_session_rename_contact      (GossipSession                *session,
-						    GossipContact                *contact,
-						    const gchar                  *new_name);
-void            gossip_session_remove_contact      (GossipSession                *session,
-						    GossipContact                *contact);
-void            gossip_session_update_contact      (GossipSession                *session,
-						    GossipContact                *contact);
-void            gossip_session_rename_group        (GossipSession                *session,
-						    const gchar                  *group,
-						    const gchar                  *new_name);
-const GList *   gossip_session_get_contacts        (GossipSession                *session);
-GList *         gossip_session_get_groups          (GossipSession                *session);
-const gchar *   gossip_session_get_nickname        (GossipSession                *session);
+gossip_session_get_chatroom_provider               (GossipSession           *session,
+						    GossipAccount           *account);
 
 
-/* Async operations */
-gboolean        gossip_session_async_register      (GossipSession                *session,
-						    GossipAccountType             type,
-						    GossipAccount                *account,
-						    GossipAsyncRegisterCallback   callback,
-						    gpointer                      user_data,
-						    GError                      **error);
-gboolean        gossip_session_async_get_vcard     (GossipSession                *session,
-						    GossipContact                *contact,
-						    GossipAsyncVCardCallback      callback,
-						    gpointer                      user_data,
-						    GError                      **error);
-gboolean        gossip_session_async_set_vcard     (GossipSession                *session,
-						    GossipVCard                  *vcard,
-						    GossipAsyncResultCallback     callback,
-						    gpointer                      user_data,
-						    GError                      **error);
-gboolean        gossip_session_async_get_version   (GossipSession                *session,
-						    GossipContact                *contact,
-						    GossipAsyncVersionCallback    callback,
-						    gpointer                      user_data,
-						    GError                      **error);
+/* contact management */
+GossipContact * gossip_session_find_contact        (GossipSession           *session,
+						    const gchar             *str);
+void            gossip_session_add_contact         (GossipSession           *session,
+						    GossipAccount           *account,
+						    const gchar             *id,
+						    const gchar             *name,
+						    const gchar             *group,
+						    const gchar             *message);
+void            gossip_session_rename_contact      (GossipSession           *session,
+						    GossipContact           *contact,
+						    const gchar             *new_name);
+void            gossip_session_remove_contact      (GossipSession           *session,
+						    GossipContact           *contact);
+void            gossip_session_update_contact      (GossipSession           *session,
+						    GossipContact           *contact);
+void            gossip_session_rename_group        (GossipSession           *session,
+						    const gchar             *group,
+						    const gchar             *new_name);
+const GList *   gossip_session_get_contacts        (GossipSession           *session);
+GList *         gossip_session_get_groups          (GossipSession           *session);
+const gchar *   gossip_session_get_nickname        (GossipSession           *session);
 
+
+
+
+/* async operations */
+gboolean        gossip_session_register_account    (GossipSession           *session,
+						    GossipAccountType        type,
+						    GossipAccount           *account,
+						    GossipRegisterCallback   callback,
+						    gpointer                 user_data,
+						    GError                 **error);
+gboolean        gossip_session_get_vcard           (GossipSession           *session,
+						    GossipAccount           *account,
+						    GossipContact           *contact,
+						    GossipVCardCallback      callback,
+						    gpointer                 user_data,
+						    GError                 **error);
+gboolean        gossip_session_set_vcard           (GossipSession           *session,
+						    GossipAccount           *account,
+						    GossipVCard             *vcard,
+						    GossipResultCallback     callback,
+						    gpointer                 user_data,
+						    GError                 **error);
+gboolean        gossip_session_get_version         (GossipSession           *session,
+						    GossipContact           *contact,
+						    GossipVersionCallback    callback,
+						    gpointer                 user_data,
+						    GError                 **error);
 
 #endif /* __GOSSIP_SESSION_H__ */
 

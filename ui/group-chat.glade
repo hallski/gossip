@@ -255,7 +255,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="preamble_label">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Pick a favorite or enter nickname, server name and the name of the chat room to join.</property>
+	      <property name="label" translatable="yes">Pick a favorite or enter your nickname, server name and chat room to join.</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -269,6 +269,65 @@
 	      <property name="width_chars">-1</property>
 	      <property name="single_line_mode">False</property>
 	      <property name="angle">0</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkTable" id="account_table">
+	      <property name="n_rows">1</property>
+	      <property name="n_columns">2</property>
+	      <property name="homogeneous">False</property>
+	      <property name="row_spacing">6</property>
+	      <property name="column_spacing">6</property>
+
+	      <child>
+		<widget class="GtkLabel" id="account_label">
+		  <property name="visible">True</property>
+		  <property name="label" translatable="yes">Account:</property>
+		  <property name="use_underline">False</property>
+		  <property name="use_markup">False</property>
+		  <property name="justify">GTK_JUSTIFY_LEFT</property>
+		  <property name="wrap">False</property>
+		  <property name="selectable">False</property>
+		  <property name="xalign">0</property>
+		  <property name="yalign">0.5</property>
+		  <property name="xpad">0</property>
+		  <property name="ypad">0</property>
+		  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+		  <property name="width_chars">-1</property>
+		  <property name="single_line_mode">False</property>
+		  <property name="angle">0</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">0</property>
+		  <property name="right_attach">1</property>
+		  <property name="top_attach">0</property>
+		  <property name="bottom_attach">1</property>
+		  <property name="x_options">fill</property>
+		  <property name="y_options"></property>
+		</packing>
+	      </child>
+
+	      <child>
+		<widget class="GtkComboBox" id="account_combobox">
+		  <property name="visible">True</property>
+		  <property name="items" translatable="yes"></property>
+		  <property name="add_tearoffs">False</property>
+		  <property name="focus_on_click">True</property>
+		</widget>
+		<packing>
+		  <property name="left_attach">1</property>
+		  <property name="right_attach">2</property>
+		  <property name="top_attach">0</property>
+		  <property name="bottom_attach">1</property>
+		  <property name="y_options">fill</property>
+		</packing>
+	      </child>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -293,7 +352,7 @@
 		  <property name="column_spacing">6</property>
 
 		  <child>
-		    <widget class="GtkLabel" id="label46">
+		    <widget class="GtkLabel" id="favorite_label">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Favorite:</property>
 		      <property name="use_underline">False</property>
@@ -482,7 +541,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label5">
+		    <widget class="GtkLabel" id="room_label">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Room:</property>
 		      <property name="use_underline">True</property>
@@ -511,7 +570,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label4">
+		    <widget class="GtkLabel" id="server_label">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Server:</property>
 		      <property name="use_underline">True</property>
@@ -540,7 +599,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label3">
+		    <widget class="GtkLabel" id="nickname_label">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Nickname:</property>
 		      <property name="use_underline">True</property>

@@ -60,9 +60,8 @@ struct _GossipJabberClass {
 GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
 gboolean       gossip_jabber_get_vcard                 (GossipJabber             *jabber,
 							GossipContact            *contact,
-							GossipAsyncVCardCallback  callback);
+							GossipVCardCallback  callback);
 GossipContact *gossip_jabber_get_own_contact           (GossipJabber             *jabber);
-
 void           gossip_jabber_send_subscribed           (GossipJabber             *jabber,
 							GossipContact            *contact);
 void           gossip_jabber_send_unsubscribed         (GossipJabber             *jabber,

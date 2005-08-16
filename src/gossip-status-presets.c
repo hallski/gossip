@@ -18,6 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
+
 #include <string.h>
 
 #include <glib.h>
@@ -70,7 +72,7 @@ gossip_status_presets_get_all (void)
 		presets = NULL;
 	}
 
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", NULL);
+	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
@@ -271,7 +273,7 @@ status_presets_file_save (void)
 	gchar      *xml_file;
 	gint        count[4] = { 0, 0, 0, 0};
 
-	xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", NULL);
+	xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (xml_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}

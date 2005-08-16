@@ -41,18 +41,20 @@ static void
 register_dialog_destroy_cb (GtkWidget           *widget,
 			    RegisterAccountData *data)
 {
+	g_object_unref (data->account);
+	
 	data->dialog = NULL;
 
 	/*g_free (data); We leak this until we can cancel pending replies. */
 }
 
 static void
-register_registration_done_cb (GossipAsyncResult   result, 
+register_registration_done_cb (GossipResult   result, 
                                const gchar         *err_message,
                                RegisterAccountData *data)
 {
 	switch (result) {
-        case GOSSIP_ASYNC_OK:
+        case GOSSIP_RESULT_OK:
                 data->success = TRUE;
 
 		if (data->dialog) {
@@ -61,7 +63,7 @@ register_registration_done_cb (GossipAsyncResult   result,
                 }
 		
                 break;
-        case GOSSIP_ASYNC_ERROR_REGISTRATION:
+        case GOSSIP_RESULT_ERROR_REGISTRATION:
 	default:
                 data->error_message = g_strdup (err_message);
 		
@@ -80,24 +82,25 @@ gossip_register_account (GossipAccount *account,
 {
 	RegisterAccountData *data;
 	gchar               *password;
+	const gchar         *account_password;
 	gint                 response;
 	gboolean             retval;
-	gchar               *id;
 
-	if (!account->password || !account->password[0]) {
+	account_password = gossip_account_get_password (account);
+
+	if (!account_password || !strlen (account_password) < 1) {
                 password = gossip_password_dialog_run (account, parent);
 
 		if (!password) {
 			return FALSE;
 		}
 	} else {
-                password = g_strdup (account->password);
+                password = g_strdup (account_password);
 	}
 
 	data = g_new0 (RegisterAccountData, 1);
 
-        id = g_strdup_printf ("%s@%s", account->username, account->host);
-	data->account = account;
+	data->account = g_object_ref (account);
 	
 	data->dialog = gtk_message_dialog_new (parent,
 					       GTK_DIALOG_MODAL |
@@ -106,7 +109,7 @@ gossip_register_account (GossipAccount *account,
 					       GTK_BUTTONS_CANCEL,
 					       "%s\n<b>%s</b>",
 					       _("Registering account"),
-                                               id);
+                                               gossip_account_get_id (account));
 
 	g_object_set (GTK_MESSAGE_DIALOG (data->dialog)->label,
 		      "use-markup", TRUE,
@@ -118,10 +121,10 @@ gossip_register_account (GossipAccount *account,
 			  G_CALLBACK (register_dialog_destroy_cb),
 			  data);
 	
-        gossip_session_async_register (gossip_app_get_session (),
+        gossip_session_register_account (gossip_app_get_session (),
                                        GOSSIP_ACCOUNT_TYPE_JABBER,
                                        account,
-                                       (GossipAsyncRegisterCallback) register_registration_done_cb,
+					 (GossipRegisterCallback) register_registration_done_cb,
                                        data, NULL);
         g_free (password);
 
@@ -149,7 +152,7 @@ gossip_register_account (GossipAccount *account,
 						 GTK_BUTTONS_CLOSE,
 						 "%s\n<b>%s</b>",
 						 _("Successfully registered the account"),
-                                                 id);
+                                                 gossip_account_get_id (account));
 
 		g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
 			      "use-markup", TRUE,
@@ -160,7 +163,7 @@ gossip_register_account (GossipAccount *account,
 		gtk_widget_destroy (dialog);
 	
 		/* Add account information */
-		gossip_account_store (data->account, NULL);
+		gossip_accounts_store (data->account);
 
 		retval = TRUE;
 	} else {
@@ -170,13 +173,13 @@ gossip_register_account (GossipAccount *account,
 		if (data->error_message) {
 			str = g_strdup_printf ("%s\n<b>%s</b>\n\n%s\n%s",
 					       _("Failed registering the account"),
-                                               id,
+					       gossip_account_get_id (account),
 					       _("Reason:"),
 					       data->error_message);
 		} else {
 			str = g_strdup_printf ("%s\n<b>%s</b>",
 					       _("Failed registering the account"),
-                                               id);
+                                               gossip_account_get_id (account));
 		}
 
 		dialog = gtk_message_dialog_new (parent,
@@ -200,7 +203,6 @@ gossip_register_account (GossipAccount *account,
 		retval = FALSE;
 	}		
 
-	g_free (id);
 	gtk_widget_destroy (data->dialog);
 
 	return retval;

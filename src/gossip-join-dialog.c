@@ -42,11 +42,21 @@ typedef struct _GossipJoinDialog GossipJoinDialog;
 struct _GossipJoinDialog {
 	GtkWidget        *dialog;
 	GtkWidget        *preamble_label;
+
+	GtkWidget        *account_table;
+	GtkWidget        *account_label;
+	GtkWidget        *account_combobox;
+
 	GtkWidget        *details_table;
+	GtkWidget        *favorite_label;
 	GtkWidget        *favorite_combobox;
+	GtkWidget        *nickname_label;
 	GtkWidget        *nickname_entry;
+	GtkWidget        *server_label;
 	GtkWidget        *server_entry;
+	GtkWidget        *room_label;
 	GtkWidget        *room_entry;
+
 	GtkWidget        *edit_button;
 	GtkWidget        *delete_button;
 	GtkWidget        *add_checkbutton;
@@ -71,6 +81,17 @@ typedef struct {
 } FindFavorite;
 
 
+enum {
+	COL_ACCOUNT_IMAGE,
+	COL_ACCOUNT_TEXT,
+	COL_ACCOUNT_POINTER,
+	COL_ACCOUNT_COUNT
+};
+
+
+static void           join_dialog_setup_accounts       (GList                    *accounts,
+							GossipJoinDialog         *dialog);
+static GossipAccount *join_dialog_get_account_selected (GossipJoinDialog         *dialog);
 static void     join_dialog_setup_favorites       (GossipJoinDialog         *dialog,
 						   gboolean                  reload);
 static void     join_dialog_cancel                (GossipJoinDialog         *dialog,
@@ -98,6 +119,10 @@ static void     join_dialog_entry_changed_cb      (GtkWidget                *wid
 						   GossipJoinDialog         *dialog);
 static void     join_dialog_reload_config_cb      (GtkWidget                *widget,
 						   GossipJoinDialog         *dialog);
+static gboolean       join_dialog_account_foreach      (GtkTreeModel             *model,
+							GtkTreePath              *path,
+							GtkTreeIter              *iter,
+							gpointer                  user_data);
 static void     join_dialog_response_cb           (GtkWidget                *widget,
 						   gint                      response,
 						   GossipJoinDialog         *dialog);
@@ -107,6 +132,140 @@ static void     join_dialog_destroy_cb            (GtkWidget                *unu
 
 static GossipJoinDialog *current_dialog = NULL;
 
+
+static void
+join_dialog_setup_accounts (GList            *accounts,
+			    GossipJoinDialog *dialog)
+{
+	GtkListStore    *store;
+	GtkTreeIter      iter;
+	GtkCellRenderer *renderer;
+	GtkComboBox     *combo_box;
+
+	GList           *l;
+
+	gint             w, h;
+	gint             size = 24;  /* default size */
+
+	GError          *error = NULL;
+	GtkIconTheme    *theme;
+
+	GdkPixbuf       *pixbuf;
+
+	/* set up combo box with new store */
+	combo_box = GTK_COMBO_BOX (dialog->account_combobox);
+
+  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));  
+
+	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
+				    GDK_TYPE_PIXBUF, 
+				    G_TYPE_STRING,   /* name */
+				    G_TYPE_POINTER);    
+
+	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->account_combobox), 
+				 GTK_TREE_MODEL (store));
+		
+	/* get theme and size details */
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+		size = 48;
+	} else {
+		size = (w + h) / 2; 
+	}
+
+	/* show jabber protocol */
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   "im-jabber", /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+	if (!pixbuf) {
+		g_warning ("could not load icon: %s", error->message);
+		g_error_free (error);
+	}
+
+	/* populate accounts */
+	for (l = accounts; l; l = l->next) {
+		GossipAccount *account;
+		const gchar   *icon_id = NULL;
+
+		account = l->data;
+
+		error = NULL; 
+		pixbuf = NULL;
+
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter, 
+				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
+				    COL_ACCOUNT_POINTER, g_object_ref (account),
+				    -1);
+
+		switch (gossip_account_get_type (account)) {
+		case GOSSIP_ACCOUNT_TYPE_JABBER:
+			icon_id = "im-jabber";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_AIM:
+			icon_id = "im-aim";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_ICQ:
+			icon_id = "im-icq";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_MSN:
+			icon_id = "im-msn";
+			break;
+		case GOSSIP_ACCOUNT_TYPE_YAHOO:
+			icon_id = "im-yahoo";
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+
+		pixbuf = gtk_icon_theme_load_icon (theme,
+						   icon_id,     /* icon name */
+						   size,        /* size */
+						   0,           /* flags */
+						   &error);
+
+		if (!pixbuf) {
+			g_warning ("could not load stock icon: %s", icon_id);
+			continue;
+		}				
+
+		
+ 		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
+		g_object_unref (pixbuf);
+	}
+	
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+					"pixbuf", COL_ACCOUNT_IMAGE,
+					NULL);
+
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+					"text", COL_ACCOUNT_TEXT,
+					NULL);
+
+	g_object_unref (store);
+}
+
+static GossipAccount *
+join_dialog_get_account_selected (GossipJoinDialog *dialog) 
+{
+	GossipAccount *account;
+	GtkTreeModel  *model;
+	GtkTreeIter    iter;
+
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->account_combobox));
+	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (dialog->account_combobox), &iter);
+
+	gtk_tree_model_get (model, &iter, COL_ACCOUNT_POINTER, &account, -1);
+
+	return account;
+}
 
 static void
 join_dialog_setup_favorites (GossipJoinDialog *dialog, 
@@ -206,6 +365,7 @@ join_dialog_cancel (GossipJoinDialog *dialog,
 		    gboolean          cancel_join)
 {
 	if (cleanup_ui) {
+		gtk_widget_set_sensitive (dialog->account_table, TRUE);
 		gtk_widget_set_sensitive (dialog->preamble_label, TRUE);
 		gtk_widget_set_sensitive (dialog->details_table, TRUE);
 		gtk_widget_set_sensitive (dialog->join_button, TRUE);
@@ -229,10 +389,15 @@ join_dialog_cancel (GossipJoinDialog *dialog,
 	}
 
 	if (dialog->joining_id > 0) {
+		if (cancel_join) {
+			GossipSession          *session;
+			GossipAccount          *account;
 		GossipChatroomProvider *provider;
 			
-		if (cancel_join) {
-			provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
+			session = gossip_app_get_session ();
+			account = join_dialog_get_account_selected (dialog);
+			provider = gossip_session_get_chatroom_provider (session, account);
+			
 			gossip_chatroom_provider_cancel (provider, dialog->joining_id);
 		}
 
@@ -575,6 +740,8 @@ join_dialog_response_cb (GtkWidget        *widget,
 			 GossipJoinDialog *dialog)
 {
 	if (response == GTK_RESPONSE_OK) {
+		GossipSession          *session;
+		GossipAccount          *account;
 		GossipChatroomProvider *provider;
 		GossipChatroomId        id;
 		const gchar            *room;
@@ -624,6 +791,7 @@ join_dialog_response_cb (GtkWidget        *widget,
 		}
 
 		/* change widgets so they are unsensitive */
+		gtk_widget_set_sensitive (dialog->account_table, FALSE);
 		gtk_widget_set_sensitive (dialog->preamble_label, FALSE);
 		gtk_widget_set_sensitive (dialog->details_table, FALSE);
 		gtk_widget_set_sensitive (dialog->join_button, FALSE);
@@ -637,7 +805,10 @@ join_dialog_response_cb (GtkWidget        *widget,
 						    dialog);
 
 		/* now do the join */
-		provider = gossip_session_get_chatroom_provider (gossip_app_get_session ());
+		session = gossip_app_get_session ();
+		account = join_dialog_get_account_selected (dialog);
+
+		provider = gossip_session_get_chatroom_provider (session, account);
 
 		id = gossip_chatroom_provider_join (provider,
 						    room, server, nickname, NULL,
@@ -667,12 +838,32 @@ join_dialog_reload_config_cb (GtkWidget        *widget,
 	join_dialog_setup_favorites (dialog, TRUE);	
 }
 
+static gboolean
+join_dialog_account_foreach (GtkTreeModel *model,
+			     GtkTreePath  *path,
+			     GtkTreeIter  *iter,
+			     gpointer      user_data)
+{
+	GossipAccount *account;
+
+	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account, -1);
+	g_object_unref (account);
+
+	return FALSE;
+}
+
 static void 
 join_dialog_destroy_cb (GtkWidget        *widget, 
 			GossipJoinDialog *dialog)
 {
+	GtkTreeModel *model;
+
 	join_dialog_cancel (dialog, FALSE, FALSE);
 
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->account_combobox));
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) join_dialog_account_foreach, 
+				NULL);
 	g_free (dialog);
 	
 	current_dialog = NULL;
@@ -681,8 +872,11 @@ join_dialog_destroy_cb (GtkWidget        *widget,
 void
 gossip_join_dialog_show (void)
 {
+	GossipSession     *session;
 	GossipJoinDialog *dialog;
-	GladeXML         *gui;
+	GladeXML          *glade;
+	GList             *accounts;
+	GtkSizeGroup      *size_group;
 
 	if (current_dialog) {
 		gtk_window_present (GTK_WINDOW (current_dialog->dialog));
@@ -691,15 +885,22 @@ gossip_join_dialog_show (void)
 	
         current_dialog = dialog = g_new0 (GossipJoinDialog, 1);
 
-	gui = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
+	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
 				     "join_group_chat_dialog",
 				     NULL,
 				     "join_group_chat_dialog", &dialog->dialog,
+				       "account_table", &dialog->account_table,
+				       "account_label", &dialog->account_label,
+				       "account_combobox", &dialog->account_combobox,
 				     "preamble_label", &dialog->preamble_label,
 				     "details_table", &dialog->details_table,
+				       "favorite_label", &dialog->favorite_label,
 				     "favorite_combobox", &dialog->favorite_combobox,
+				       "nickname_label", &dialog->nickname_label,
 				     "nickname_entry", &dialog->nickname_entry,
+				       "server_label", &dialog->server_label,
 				     "server_entry", &dialog->server_entry,
+				       "room_label", &dialog->room_label,
 				     "room_entry", &dialog->room_entry,
 				     "edit_button", &dialog->edit_button,
 				     "delete_button", &dialog->delete_button,
@@ -709,7 +910,7 @@ gossip_join_dialog_show (void)
 				     "join_button", &dialog->join_button,
 				     NULL);
 	
-	gossip_glade_connect (gui, 
+	gossip_glade_connect (glade, 
 			      dialog,
 			      "join_group_chat_dialog", "destroy", join_dialog_destroy_cb,
 			      "join_group_chat_dialog", "response", join_dialog_response_cb,
@@ -722,10 +923,40 @@ gossip_join_dialog_show (void)
 			      "nickname_entry", "changed", join_dialog_entry_changed_cb,
 			      NULL);
 
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+	gtk_size_group_add_widget (size_group, dialog->account_label);
+	gtk_size_group_add_widget (size_group, dialog->favorite_label);
+	gtk_size_group_add_widget (size_group, dialog->nickname_label);
+	gtk_size_group_add_widget (size_group, dialog->server_label);
+	gtk_size_group_add_widget (size_group, dialog->room_label);
+
+	g_object_unref (size_group);
+
+	/* sort out accounts */
+	session = gossip_app_get_session ();
+	accounts = gossip_session_get_accounts (session);
+
+	/* populate */
+	join_dialog_setup_accounts (accounts, dialog);
+
+	/* select first */
+	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->account_combobox), 0);
+		
+	if (g_list_length (accounts) > 1) {
+		gtk_widget_show (dialog->account_table);
+	} else {
+		/* show no accounts combo box */	
+		gtk_widget_hide (dialog->account_table);
+	}
+
+	/* set FALSE _BEFORE_ setting favs */
 	gtk_widget_set_sensitive (dialog->join_button, FALSE);
 
+	/* set up favorites */
 	join_dialog_setup_favorites (dialog, FALSE);
 
+	/* last touches */
 	gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), 
 				      GTK_WINDOW (gossip_app_get_window ()));
 

@@ -38,13 +38,13 @@ typedef struct {
 
 
 static LmHandlerResult 
-jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
+jabber_helper_get_vcard_cb (LmMessageHandler  *handler,
 				  LmConnection      *connection,
 				  LmMessage         *m,
 				  AsyncCallbackData *data)
 {
 	GossipVCard              *vcard;
-	GossipAsyncVCardCallback  callback;
+	GossipVCardCallback  callback;
 	LmMessageNode            *vcard_node, *node;
 	LmMessageSubType          type;
 
@@ -57,7 +57,7 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
 	type = lm_message_get_sub_type (m);
 
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-		GossipAsyncResult result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
+		GossipResult result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 
 		node = lm_message_node_get_child (m->node, "error");
 		if (node) {
@@ -71,13 +71,13 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
 			case 404: {
 				/* receipient unavailable */
 				d(g_print ("VCard: Receipient is unavailable\n"));
-				result = GOSSIP_ASYNC_ERROR_UNAVAILABLE;
+				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			default:
 				d(g_print ("VCard: Unhandled presence error:%d\n", code));
-				result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
+				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 				break;
 			}
 		}
@@ -92,7 +92,7 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
 	/* no vcard node */
 	vcard_node = lm_message_node_get_child (m->node, "vCard");
 	if (!vcard_node) {
-		(callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY, 
+		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY, 
 			    NULL,
 			    data->user_data);
 
@@ -138,7 +138,7 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
 		gossip_vcard_set_description (vcard, node->value);
 	}
 
-	(callback) (GOSSIP_ASYNC_OK, vcard, data->user_data);
+	(callback) (GOSSIP_RESULT_OK, vcard, data->user_data);
 
 	g_object_unref (vcard);
 
@@ -146,9 +146,9 @@ jabber_helper_async_get_vcard_cb (LmMessageHandler  *handler,
 }
 
 gboolean
-gossip_jabber_helper_async_get_vcard (LmConnection              *connection,
+gossip_jabber_helper_get_vcard (LmConnection         *connection,
 				      const gchar               *jid_str, 
-				      GossipAsyncVCardCallback   callback,
+				GossipVCardCallback   callback,
 				      gpointer                   user_data,
 				      GError                   **error)
 {
@@ -165,7 +165,7 @@ gossip_jabber_helper_async_get_vcard (LmConnection              *connection,
 	data->callback = callback;
 	data->user_data = user_data;
 	
-	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_helper_async_get_vcard_cb,
+	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_helper_get_vcard_cb,
 					  data, g_free);
 	
 	if (!lm_connection_send_with_reply (connection, m, 
@@ -183,21 +183,21 @@ gossip_jabber_helper_async_get_vcard (LmConnection              *connection,
 }
 
 static LmHandlerResult 
-jabber_helper_async_set_vcard_cb (LmMessageHandler  *handler,
+jabber_helper_set_vcard_cb (LmMessageHandler  *handler,
 				  LmConnection      *connection,
 				  LmMessage         *m,
 				  AsyncCallbackData *data)
 {
 	/* FIXME: Error checking and reply error if failed */
-	((GossipAsyncResultCallback )data->callback) (GOSSIP_ASYNC_OK, data->user_data);
+	((GossipResultCallback )data->callback) (GOSSIP_RESULT_OK, data->user_data);
 	
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
-gossip_jabber_helper_async_set_vcard (LmConnection               *connection,
+gossip_jabber_helper_set_vcard (LmConnection          *connection,
 				      GossipVCard                *vcard,
-				      GossipAsyncResultCallback   callback,
+				GossipResultCallback   callback,
 				      gpointer                    user_data,
 				      GError                    **error)
 {
@@ -226,7 +226,7 @@ gossip_jabber_helper_async_set_vcard (LmConnection               *connection,
 	data->callback = callback;
 	data->user_data = user_data;
 	
-	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_helper_async_set_vcard_cb,
+	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_helper_set_vcard_cb,
 					  data, g_free);
  
 	result = lm_connection_send_with_reply (connection, m, handler, error);
@@ -238,13 +238,13 @@ gossip_jabber_helper_async_set_vcard (LmConnection               *connection,
 }
 
 static LmHandlerResult 
-jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
+jabber_helper_get_version_cb (LmMessageHandler  *handler,
 				    LmConnection      *connection,
 				    LmMessage         *m,
 				    AsyncCallbackData *data)
 {
 	GossipVersionInfo          *info;
-	GossipAsyncVersionCallback  callback;
+	GossipVersionCallback  callback;
 	LmMessageNode              *query_node, *node;
 	LmMessageSubType            type;
 
@@ -257,7 +257,7 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 	type = lm_message_get_sub_type (m);
 
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
-		GossipAsyncResult result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
+		GossipResult result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 
 		node = lm_message_node_get_child (m->node, "error");
 		if (node) {
@@ -271,20 +271,20 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 			case 404: {
 				/* not found */
 				d(g_print ("Version: Not found\n"));
-				result = GOSSIP_ASYNC_ERROR_UNAVAILABLE;
+				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			case 502: {
 				/* service not available */
 				d(g_print ("Version: Service not available\n"));
-				result = GOSSIP_ASYNC_ERROR_UNAVAILABLE;
+				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			default:
 				d(g_print ("Version: Unhandled presence error:%d\n", code));
-				result = GOSSIP_ASYNC_ERROR_INVALID_REPLY;
+				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 				break;
 			}
 		}
@@ -299,7 +299,7 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 	/* no vcard node */
 	query_node = lm_message_node_get_child (m->node, "query");
 	if (!query_node) {
-		(callback) (GOSSIP_ASYNC_ERROR_INVALID_REPLY, 
+		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY, 
 			    NULL,
 			    data->user_data);
 
@@ -326,7 +326,7 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 					    lm_message_node_get_value (node));
 	}
 	
-	(callback) (GOSSIP_ASYNC_OK,
+	(callback) (GOSSIP_RESULT_OK,
 		    info,
 		    data->user_data);
 	
@@ -336,9 +336,9 @@ jabber_helper_async_get_version_cb (LmMessageHandler  *handler,
 }
  
 gboolean
-gossip_jabber_helper_async_get_version (LmConnection                *connection,
+gossip_jabber_helper_get_version (LmConnection           *connection,
 					GossipContact               *contact,
-					GossipAsyncVersionCallback   callback,
+				  GossipVersionCallback   callback,
 					gpointer                     user_data,
 					GError                     **error)
 {
@@ -374,7 +374,7 @@ gossip_jabber_helper_async_get_version (LmConnection                *connection,
 	data->callback = callback;
 	data->user_data = user_data;
 	
-	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_helper_async_get_version_cb,
+	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_helper_get_version_cb,
 					  data, g_free);
 	
 	result = lm_connection_send_with_reply (connection, m, handler, error);

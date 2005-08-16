@@ -2,6 +2,7 @@ AM_CPPFLAGS =                                             \
 	-I.                                               \
 	-I$(top_srcdir)                                   \
 	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\"   \
+	-DDTDDIR=\"$(datadir)/gossip\"			\
 	-I$(top_srcdir)/protocols/jabber                  \
 	$(LIBGOSSIP_CFLAGS)
 
@@ -42,6 +43,10 @@ libgossip_la_LIBADD =              \
 	$(top_builddir)/protocols/jabber/libgossip-jabber.la
 
 libgossipincludedir = $(includedir)/gossip/
+
+dtddir = $(datadir)/gossip
+dtd_DATA = 						\
+	gossip-account.dtd
 
 GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
 

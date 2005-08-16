@@ -27,6 +27,8 @@
 #include <libxml/tree.h>
 #include <loudmouth/loudmouth.h>
 
+#include <config.h>
+
 #include "gossip-jabber-private.h"
 #include "gossip-transport-accounts.h"
 #include "gossip-transport-protocol.h"
@@ -160,7 +162,7 @@ gossip_transport_protocol_get_all (void)
 	/* 
 	 * look up user files in ~/.gnome2/Gossip/protocols 
 	 */
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", "protocols", NULL);
+	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, "protocols", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}

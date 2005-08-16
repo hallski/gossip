@@ -18,6 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
+
 #include <string.h>
 
 #include <glib.h>
@@ -66,7 +68,7 @@ gossip_contact_groups_get_all (void)
 		groups = NULL;
 	}
 
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", NULL);
+	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
@@ -246,7 +248,7 @@ contact_groups_file_save (void)
 	gchar      *xml_dir;
 	gchar      *xml_file;
 
-	xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", "Gossip", NULL);
+	xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (xml_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}

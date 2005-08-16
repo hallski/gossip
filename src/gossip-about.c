@@ -20,12 +20,15 @@
 
 #include <config.h>
 #include <string.h>
+
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
+
 #include <libgnome/gnome-url.h>
+
 #include "gossip-about.h"
 
 extern GConfClient *gconf_client;
@@ -356,7 +359,7 @@ gossip_about_new (void)
 	gtk_window_set_resizable (GTK_WINDOW (window), FALSE);
 	gtk_window_set_type_hint (GTK_WINDOW (window), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
 
-	gtk_window_set_title (GTK_WINDOW (window), "Gossip");
+	gtk_window_set_title (GTK_WINDOW (window), PACKAGE_NAME);
 	
 	image = gtk_image_new_from_file (IMAGEDIR "/gossip-about.png");
 	gtk_container_add (GTK_CONTAINER (window), image);

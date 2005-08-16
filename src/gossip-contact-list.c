@@ -60,6 +60,7 @@ struct _GossipContactListPriv {
 	gboolean             show_offline;
 	gboolean             show_active;
 
+	/* protocol to group association */
 	GHashTable          *groups;
 
         GtkItemFactory      *item_popup_factory;
@@ -447,8 +448,10 @@ gossip_contact_list_init (GossipContactList *list)
 	priv = g_new0 (GossipContactListPriv, 1);
 	list->priv = priv;
 
-	priv->groups = g_hash_table_new_full (g_str_hash, g_str_equal,
-					      g_free, NULL);
+	priv->groups = g_hash_table_new_full (g_str_hash, 
+					      g_str_equal,
+					      g_free, 
+					      g_object_unref);
 
 	priv->flash_table = g_hash_table_new_full (gossip_contact_hash,
 						   gossip_contact_equal,
@@ -1020,7 +1023,8 @@ contact_list_get_group_foreach (GtkTreeModel *model,
 }
 
 static void
-contact_list_add_contact (GossipContactList *list, GossipContact *contact)
+contact_list_add_contact (GossipContactList *list, 
+			  GossipContact     *contact)
 {
 	GossipContactListPriv *priv;
 	GtkTreeIter            iter, iter_group;
@@ -1048,6 +1052,7 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 
 	/* else add to each group */
 	for (l = groups; l; l = l->next) {
+		GtkTreePath *path;
 		const gchar *name;
 		gboolean     created;
 
@@ -1069,11 +1074,15 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 				    MODEL_COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    -1);
 
-		if (created) {
-			GtkTreePath *path;
+		if (!created) {
+			continue;
+		}
 			
 			path = gtk_tree_model_get_path (model, &iter_group);
-			if (path) {
+		if (!path) {
+			continue;
+		}
+		
 				if (gossip_contact_group_get_expanded (name)) {
 					g_signal_handlers_block_by_func (GTK_TREE_VIEW (list), 
 									 contact_list_row_expand_or_collapse_cb,
@@ -1096,12 +1105,11 @@ contact_list_add_contact (GossipContactList *list, GossipContact *contact)
 
 				gtk_tree_path_free (path);
 			}
-		}
-	}
 }
 
 static void
-contact_list_remove_contact (GossipContactList *list, GossipContact *contact)
+contact_list_remove_contact (GossipContactList *list,
+			     GossipContact     *contact)
 {
 	GossipContactListPriv *priv;
 	GtkTreeModel          *model;
@@ -1261,6 +1269,7 @@ contact_list_setup_invite_menu (GossipContactList *list,
 				GossipContact     *contact)
 {
 	GossipSession          *session;
+	GossipAccount          *account;
 	GossipChatroomProvider *provider;
 	GList                  *rooms = NULL;
 	GtkWidget              *menu = NULL;
@@ -1270,7 +1279,8 @@ contact_list_setup_invite_menu (GossipContactList *list,
 
 	/* FIXME: should get provider better than this. */
 	session = gossip_app_get_session ();
-	provider = gossip_session_get_chatroom_provider (session);
+	account = gossip_contact_get_account (contact);
+	provider = gossip_session_get_chatroom_provider (session, account);
 
 	rooms = gossip_chatroom_provider_get_rooms (provider);
 
@@ -1385,11 +1395,12 @@ contact_list_invite_dialog_response_cb (GtkWidget      *dialog,
 
 	if (response == GTK_RESPONSE_OK) {
 		GossipSession          *session;
+		GossipAccount          *account;
 		GossipChatroomProvider *provider;
 
-		/* FIXME: should get provider better than this. */
 		session = gossip_app_get_session ();
-		provider = gossip_session_get_chatroom_provider (session);
+		account = gossip_contact_get_account (cid->contact);
+		provider = gossip_session_get_chatroom_provider (session, account);
 
 		invite = gtk_entry_get_text (GTK_ENTRY (cid->entry));
 
@@ -2215,7 +2226,7 @@ contact_list_group_menu_rename_cb (gpointer   data,
 
 	str = g_strdup_printf ("<b>%s</b>", group);
 
-	/* Translator: %s denotes the contact ID */
+	/* translator: %s denotes the contact ID */
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,

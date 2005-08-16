@@ -24,25 +24,29 @@
 #include "gossip-vcard.h"
 #include "gossip-version-info.h"
 
-typedef enum {
-	GOSSIP_ASYNC_OK,
-	GOSSIP_ASYNC_ERROR_INVALID_REPLY,
-	GOSSIP_ASYNC_ERROR_TIMEOUT,
-        GOSSIP_ASYNC_ERROR_REGISTRATION,
-	GOSSIP_ASYNC_ERROR_UNAVAILABLE
-} GossipAsyncResult;
 
-typedef void (*GossipAsyncRegisterCallback) (GossipAsyncResult  result,
+typedef enum {
+	GOSSIP_RESULT_OK,
+	GOSSIP_RESULT_ERROR_INVALID_REPLY,
+	GOSSIP_RESULT_ERROR_TIMEOUT,
+        GOSSIP_RESULT_ERROR_REGISTRATION,
+	GOSSIP_RESULT_ERROR_UNAVAILABLE
+} GossipResult;
+
+
+typedef void (*GossipRegisterCallback) (GossipResult       result,
                                              const gchar       *err_message,
                                              gpointer           user_data);
-typedef void (*GossipAsyncVCardCallback)    (GossipAsyncResult  result,
+
+typedef void (*GossipVCardCallback)    (GossipResult       result,
                                              GossipVCard       *vcard,
                                              gpointer           user_data);
 
-typedef void (*GossipAsyncResultCallback)   (GossipAsyncResult  result,
-                                             gpointer           user_data);
-typedef void (*GossipAsyncVersionCallback)  (GossipAsyncResult  result,
+typedef void (*GossipVersionCallback)  (GossipResult       result,
                                              GossipVersionInfo *info,
                                              gpointer           user_data);
+
+typedef void (*GossipResultCallback)   (GossipResult       result,
+					gpointer           user_data);
 
 #endif /* __GOSSIP_ASYNC_H__ */

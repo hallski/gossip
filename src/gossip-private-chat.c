@@ -165,10 +165,6 @@ static void
 gossip_private_chat_init (GossipPrivateChat *chat)
 {
         GossipPrivateChatPriv *priv;
-#if 0
-	LmConnection          *connection;
-	LmMessageHandler      *handler;
-#endif
 	
 	priv = g_new0 (GossipPrivateChatPriv, 1);
 	priv->request_composing_events = TRUE;
@@ -178,7 +174,7 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 	
         private_chat_create_gui (chat);
 
-	d(g_print ("Connecting\n"));
+	d(g_print ("Private Chat: Connecting\n"));
 
 	g_signal_connect_object (gossip_app_get_session (),
 				 "connected",
@@ -329,7 +325,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 	
 	if (priv->roster_resource &&
 	    g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
-		d(g_print ("Roster unchanged\n"));
+		d(g_print ("Private Chat: Roster unchanged\n"));
 
 		if (!priv->locked_resource) {
 			priv->locked_resource = g_strdup (roster_resource);
@@ -338,7 +334,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 		return;
 	}
 	
-	d(g_print ("New roster resource: %s\n", roster_resource));
+	d(g_print ("Private Chat: New roster resource: %s\n", roster_resource));
 	
 	g_free (priv->roster_resource);
 	priv->roster_resource = g_strdup (roster_resource);
@@ -355,9 +351,6 @@ private_chat_send (GossipPrivateChat *chat,
                    const gchar       *msg)
 {
 	GossipPrivateChatPriv *priv;
-#if 0
-        LmMessage             *m;
-#endif
 	GossipMessage *m;
         const gchar   *nick;
 
@@ -380,7 +373,6 @@ private_chat_send (GossipPrivateChat *chat,
 
         gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
                                               -1,
-					      NULL,
 					      nick,
                                               nick,
                                               msg);
@@ -1074,13 +1066,14 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	GossipPrivateChatPriv *priv;
 	GossipContact         *sender;
 	const gchar           *resource;
+	const gchar           *invite;
 	
         g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
         g_return_if_fail (GOSSIP_IS_MESSAGE (m));
 
 	priv = chat->priv;
 	
-	d(g_print ("GossipPrivateChat::append_message ('%s')\n",
+	d(g_print ("Private Chat: Appending message ('%s')\n",
 		   gossip_contact_get_name (gossip_message_get_sender (m))));
 
 	sender = gossip_message_get_sender (m);
@@ -1101,12 +1094,22 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	gossip_log_message (m, TRUE);
 
 	/* FIXME (session): Composing event */
+
+	invite = gossip_message_get_invite (m);
+	if (invite) {
+		gossip_chat_view_append_invite_message (GOSSIP_CHAT (chat)->view,
+							sender,
+							gossip_message_get_timestamp (m),
+							invite,
+							gossip_message_get_body (m));
+		
+	} else {
 	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
 					      gossip_message_get_timestamp (m),
-					      gossip_message_get_invite (m),
 					      NULL,
 					      gossip_contact_get_name (sender),
 					      gossip_message_get_body (m));
+	}
 
 	g_signal_emit_by_name (chat, "new-message");
 
@@ -1114,49 +1117,3 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 }
-
-#if 0
-LmHandlerResult
-gossip_private_chat_handle_message (LmMessage *m)
-{
-        const gchar       *from;
-        GossipJID         *jid;
-        GossipPrivateChat *chat;
-        LmHandlerResult    result;
-	GossipRosterItem  *item;
-	GossipContact     *contact;
-
-	private_chats_init ();
-
-        from = lm_message_node_get_attribute (m->node, "from");
-        jid = gossip_jid_new (from);
-
-	item = gossip_roster_get_item (gossip_app_get_roster (), jid);
-	if (item) {
-		contact = gossip_roster_get_contact_from_item (gossip_app_get_roster (),
-							       item);
-		g_object_ref (contact);
-	} else {
-		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
-		gossip_contact_set_jid (contact, jid);
-	}
-
-	gossip_jid_unref (jid);
-
-	chat = (GossipPrivateChat *) g_hash_table_lookup (private_chats, contact);
-
-	if (chat) {
-		/* The existing message handler will catch it. */
-		result = LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	} else {
-		chat = gossip_private_chat_get_for_contact (contact, TRUE);
-		
-		gossip_private_chat_append_message (chat, m);
-		result = LM_HANDLER_RESULT_REMOVE_MESSAGE;
-	}
-
-	g_object_unref (contact);
-
-        return result;
-}
-#endif

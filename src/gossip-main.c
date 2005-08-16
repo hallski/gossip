@@ -20,13 +20,19 @@
 
 #include <config.h>
 #include <string.h>
+#include <stdlib.h>
+
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkmain.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
+
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
+
+#include <libgossip/gossip-account.h>
+
 #include "gossip-preferences.h"
 #include "gossip-stock.h"
 #include "gossip-app.h"
@@ -57,34 +63,30 @@ main (int argc, char *argv[])
 	poptContext         popt_context;
 	gchar              *account_name = NULL;
 	const gchar       **args;
+	const GList        *accounts;
+
 	struct poptOption   options[] = {
-		{
-			"no-connect",
+		{ "no-connect",
 			'n',
 			POPT_ARG_NONE,
 			&no_connect,
 			0,
 			N_("Don't connect on startup"),
-			NULL
-		},
-		{
-			"account",
+		  NULL },
+		{ "account",
 			'a',
 			POPT_ARG_STRING,
 			&account_name,
 			0,
 			N_("Which account to connect to on startup"),
-			N_("ACCOUNT-NAME")
-		},
-		{
-			"list-accounts",
+		  N_("ACCOUNT-NAME") },
+		{ "list-accounts",
 			'l',
 			POPT_ARG_NONE,
 			&list_accounts,
 			0,
 			N_("List the available accounts"),
-			NULL
-		},
+		  NULL },
 
 		{ NULL, '\0', 0, NULL, 0, NULL, NULL }
 	};
@@ -98,10 +100,10 @@ main (int argc, char *argv[])
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,
 				      GNOME_PARAM_POPT_TABLE, options,
-				      GNOME_PARAM_HUMAN_READABLE_NAME, "Gossip",
+				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
 
-	g_set_application_name ("Gossip");
+	g_set_application_name (PACKAGE_NAME);
 
 	g_object_get (program,
 		      GNOME_PARAM_POPT_CONTEXT,
@@ -110,21 +112,29 @@ main (int argc, char *argv[])
 
 	args = poptGetArgs (popt_context);
 
-	if (list_accounts) {
-		GSList        *accounts, *l;
-		GossipAccount *default_account;
+	/* get all accounts */
+	accounts = gossip_accounts_get_all (NULL);
 
-		accounts = gossip_account_get_all ();
-		default_account = gossip_account_get_default ();
+	if (list_accounts) {
+		const GList   *l;
+		GossipAccount *default_account = NULL;
+
+		if (g_list_length ((GList*)accounts) < 1) {
+			g_print (_("No accounts available."));
+			g_print ("\n");
+		} else {
+			default_account = gossip_accounts_get_default ();
 
 		g_print (_("Available accounts:"));
 		g_print ("\n");
+		}
 		
 		for (l = accounts; l; l = l->next) {
 			GossipAccount *account = l->data;
 			
-			g_print (" %s", account->name);
-			if (strcmp (account->name, default_account->name) == 0) {
+			g_print (" %s", gossip_account_get_name (account));
+			if (strcmp (gossip_account_get_name (account), 
+				    gossip_account_get_name (default_account)) == 0) {
 				g_print (" ");
 				g_print (_("[default]"));
 			}
@@ -132,34 +142,32 @@ main (int argc, char *argv[])
 			g_print ("\n");
 		}
 
-		g_slist_free (accounts);
-		return 0;
+		return EXIT_SUCCESS;
 	}
 	
+	if (account_name) {
+		GossipAccount *account;
+
+		accounts = gossip_accounts_get_all (NULL);
+		account = gossip_accounts_get_by_name (account_name);
+		if (!account) {
+			fprintf (stderr,
+				 _("There is no account with the name '%s'."),
+				 account_name);
+			fprintf (stderr, "\n");
+			return EXIT_FAILURE;
+		}
+
+		/* use the specified account as default account. */
+		gossip_accounts_set_overridden_default (account_name);
+	}
+
 	gconf_client = gconf_client_get_default ();
 
 	gconf_client_add_dir (gconf_client,
 			      GCONF_PATH,
 			      GCONF_CLIENT_PRELOAD_ONELEVEL,
 			      NULL);
-	
-	if (account_name) {
-		GossipAccount *account;
-
-		account = gossip_account_get (account_name);
-		if (!account) {
-			fprintf (stderr,
-				 _("There is no account with the name '%s'."),
-				 account_name);
-			fprintf (stderr, "\n");
-			return 1;
-		}
-
-		/* Use the specified account as default account. */
-		gossip_account_set_overridden_default_name (account_name);
-
-		gossip_account_unref (account);
-	}
 
 	gossip_stock_init ();
 	setup_default_window_icon ();
@@ -173,5 +181,5 @@ main (int argc, char *argv[])
 
 	g_object_unref (gconf_client);
 
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -23,7 +23,7 @@
 
 #include <glib.h>
 
-void     gossip_startup_druid_run       (void);
+void     gossip_startup_druid_show      (void);
 gboolean gossip_startup_druid_is_needed (void);
 
 #endif /* __GOSSIP_STARTUP_DRUID_H__ */

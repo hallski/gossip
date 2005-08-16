@@ -243,49 +243,6 @@ tray_create (GossipTray *tray)
 			  priv->tray_event_box);
 }
 
-#if 0
-static void
-tray_push_message (LmMessage *m)
-{
-	GossipTrayPriv    *priv;
-	const gchar      *from;
-	GossipJID        *jid; 
-	GossipRosterItem *item;
-	GossipContact    *contact;
-	GList            *l;
-		
-	priv = GET_PRIV (widget);
-	
-	from = lm_message_node_get_attribute (m->node, "from");
-	jid = gossip_jid_new (from);
-
-	item = gossip_roster_get_item (priv->roster, jid);
-	if (!item) {
-		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY);
-		gossip_contact_set_jid (contact, jid);
-	} else {
-		contact = gossip_roster_get_contact_from_item (priv->roster,
-							       item);
-		gossip_contact_ref (contact);
-	}
-
-	gossip_jid_unref (jid);
-	
-	l = g_list_find_custom (priv->tray_flash_icons, contact,
-				(GCompareFunc) gossip_contact_compare);
-	if (l) {
-		return;
-	}
-
-	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons, contact);
-
-	tray_flash_start ();
-	tray_update_tooltip ();
-
-	gossip_roster_view_flash_contact (priv->roster_view, contact, TRUE);
-}
-#endif
-
 static gboolean
 tray_pop_message (GossipTray *tray, GossipContact *contact)
 {
