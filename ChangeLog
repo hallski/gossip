@@ -1,5 +1,10 @@
 2005-08-16  Martyn Russell  <mr@gnome.org>
 
+	* libgossip/gossip-account.dtd: 
+	- Forgot to cvs add this file.
+	
+2005-08-16  Martyn Russell  <mr@gnome.org>
+
 	* libgossip/gossip-account.[ch]:
 	* libgossip/gossip-session.[ch]:
 	- Added gossip_session_get_contacts_by_account().

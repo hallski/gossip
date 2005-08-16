@@ -1,0 +1,23 @@
+<!--
+  DTD for Gossips accounts.
+  by Martyn Russell <mr@gnome.org>
+-->
+
+<!-- Root element. -->
+<!ELEMENT accounts ((default),account+)>
+
+<!ELEMENT default (#PCDATA)>
+
+<!ELEMENT account 
+    (type,name,id,(resource?),(password?),(server?),port,(auto_connect?),(use_ssl?),(use_proxy?))>
+
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT id (#PCDATA)>
+<!ELEMENT password (#PCDATA)>
+<!ELEMENT server (#PCDATA)>
+<!ELEMENT port (#PCDATA)>
+<!ELEMENT auto_connect (#PCDATA)>
+<!ELEMENT use_ssl (#PCDATA)>
+<!ELEMENT use_proxy (#PCDATA)>
+
