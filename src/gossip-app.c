@@ -1105,15 +1105,12 @@ gossip_app_connect (void)
 	
 	app_disconnect ();
 	
-/* 	app_setup_conn_widgets (); */
-
 	gossip_session_connect (priv->session);
 }
 
 void
 gossip_app_create (void)
 {
-	/* create singleton "app" */
 	g_object_new (GOSSIP_TYPE_APP, NULL);
 }
 
@@ -1133,12 +1130,6 @@ app_disconnect (void)
 	gossip_session_disconnect (priv->session);
 	app_status_flash_stop ();
 }
-
-/* static void */
-/* app_setup_conn_widgets (void) */
-/* { */
-	
-/* } */
 
 static void
 app_setup_conn_dependent_menu_items (GladeXML *glade)
@@ -1825,17 +1816,18 @@ app_status_show_status_dialog (GossipPresenceState  state,
 			       const gchar         *str,
 			       gboolean             transient)
 {
-        GossipAppPriv *priv;
-	GladeXML      *glade;
-	GtkWidget     *dialog;
-	GtkWidget     *image;
-	GtkWidget     *comboboxentry;
-	GtkWidget     *entry;
-	GdkPixbuf     *pixbuf;
-	GtkListStore  *store;
-
-	GList         *presets, *l;
-
+        GossipAppPriv      *priv;
+	GladeXML           *glade;
+	GtkWidget          *dialog;
+	GtkWidget          *image;
+	GtkWidget          *comboboxentry;
+	GtkWidget          *entry;
+	GtkEntryCompletion *completion;
+	GdkPixbuf          *pixbuf;
+	GtkListStore       *store;
+  
+	GList              *presets, *l;
+ 
         priv = app->priv;
 
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
@@ -1849,6 +1841,11 @@ app_status_show_status_dialog (GossipPresenceState  state,
 	entry = GTK_BIN (comboboxentry)->child;
 	gtk_entry_set_text (GTK_ENTRY (entry), str);
 	gtk_entry_set_width_chars (GTK_ENTRY (entry), 35);
+
+	/* set up completion */
+	completion = gtk_entry_completion_new ();
+	gtk_entry_set_completion (GTK_ENTRY (entry), completion);
+	g_object_unref (completion);
 
 	/* set up state pixbuf for dialog */
 	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
@@ -1876,7 +1873,12 @@ app_status_show_status_dialog (GossipPresenceState  state,
 
 	g_object_unref (store);
 
+	/* set up combo box */
 	gtk_combo_box_entry_set_text_column (GTK_COMBO_BOX_ENTRY (comboboxentry), 0);
+
+	/* set up completion model */
+	gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
+	gtk_entry_completion_set_text_column (completion, 0);
 
 	/* set up transient window */
 	if (transient) {

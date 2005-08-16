@@ -1,5 +1,12 @@
 2005-08-16  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-app.c (app_status_show_status_dialog): 
+	- Added completion as well as a combo option for the last 5
+	status'. 
+	- Fixes bug #156285.
+
+2005-08-16  Martyn Russell  <mr@gnome.org>
+
 	* libgossip/gossip-account.dtd: 
 	- Forgot to cvs add this file.
 	
