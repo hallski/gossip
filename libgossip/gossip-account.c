@@ -31,7 +31,7 @@
 #include "gossip-account.h"
 
 #define ACCOUNTS_XML_FILENAME "Accounts"
-#define ACCOUNTS_DTD_FILENAME "gossip-accounts.dtd"
+#define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
 #define GOSSIP_ACCOUNT_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
 
