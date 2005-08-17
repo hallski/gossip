@@ -32,42 +32,48 @@
 
 
 typedef struct {
-	GtkWidget *dialog;
-	GtkWidget *druid;
+	GtkWidget   *dialog;
+	GtkWidget   *druid;
 	
 	/* Page one */
-	GtkWidget *one_page;
-	GtkWidget *one_accounts_vbox;
-	GtkWidget *one_accounts_combobox;
-	GtkWidget *one_system_vbox;
-	GtkWidget *one_system_combobox;
-	GtkWidget *one_id_label;
-	GtkWidget *one_id_entry;
-	GtkWidget *one_search_button;
-	GtkWidget *one_example_label;
+	GtkWidget   *one_page;
+	GtkWidget   *one_accounts_vbox;
+	GtkWidget   *one_accounts_combobox;
+	GtkWidget   *one_system_vbox;
+	GtkWidget   *one_system_combobox;
+	GtkWidget   *one_id_label;
+	GtkWidget   *one_id_entry;
+	GtkWidget   *one_search_button;
+	GtkWidget   *one_example_label;
 
 	/* Page two */
-	GtkWidget *two_page;
-	GtkWidget *two_vcard_label;
-	GtkWidget *two_information_table;
-	GtkWidget *two_id_label;
-	GtkWidget *two_name_label;
-	GtkWidget *two_email_label;
-	GtkWidget *two_country_label;
-	GtkWidget *two_id_stub_label;
-	GtkWidget *two_name_stub_label;
-	GtkWidget *two_email_stub_label;
-	GtkWidget *two_country_stub_label;
-	GtkWidget *two_nick_entry;
-	GtkWidget *two_group_combo;
-	GtkWidget *two_group_entry;
+	GtkWidget   *two_page;
+	GtkWidget   *two_vcard_label;
+	GtkWidget   *two_information_table;
+	GtkWidget   *two_id_label;
+	GtkWidget   *two_name_label;
+	GtkWidget   *two_email_label;
+	GtkWidget   *two_country_label;
+	GtkWidget   *two_id_stub_label;
+	GtkWidget   *two_name_stub_label;
+	GtkWidget   *two_email_stub_label;
+	GtkWidget   *two_country_stub_label;
+	GtkWidget   *two_nick_entry;
+	GtkWidget   *two_group_combo;
+	GtkWidget   *two_group_entry;
 	
-	GtkWidget *last_page;
-	GtkWidget *last_label;
+	GtkWidget   *last_page;
+	GtkWidget   *last_label;
 
 	GCompletion *group_completion;
 	guint        idle_complete;
 } GossipAddContact;
+
+
+typedef struct {
+	GossipAccount *account;
+	GtkComboBox   *combobox;
+} SetAccountData;
 
 
 enum {
@@ -93,50 +99,55 @@ enum {
 };
 
 
-static void           add_contact_setup_accounts              (GList            *accounts,
-							       GossipAddContact *dialog);
-static void           add_contact_setup_systems               (GList            *accounts,
-							       GossipAddContact *dialog);
-static GossipAccount *add_contact_get_selected_account        (GossipAddContact *dialog);
-static gboolean       add_contact_complete_group_idle         (GossipAddContact *dialog);
-static void           add_contact_vcard_handler               (GossipResult      result,
-							       GossipVCard      *vcard,
-							       GossipAddContact *contact);
-static void           add_contact_1_prepare                   (GnomeDruidPage   *page,
-							       GnomeDruid       *druid,
-							       GossipAddContact *dialog);
-static void           add_contact_2_prepare                   (GnomeDruidPage   *page,
-							       GnomeDruid       *druid,
-							       GossipAddContact *dialog);
-static void           add_contact_last_prepare                (GnomeDruidPage   *page,
-							       GnomeDruid       *druid,
-							       GossipAddContact *dialog);
-static void           add_contact_last_finished               (GnomeDruidPage   *page,
-							       GnomeDruid       *druid,
-							       GossipAddContact *dialog);
-static void           add_contact_1_id_entry_changed          (GtkEntry         *entry,
-							       GossipAddContact *dialog);
-static void           add_contact_1_system_combobox_changed   (GtkComboBox      *combo_box,
-							       GossipAddContact *dialog);
-static void           add_contact_2_nick_entry_changed        (GtkEntry         *entry,
-							       GossipAddContact *dialog);
-static gboolean       add_contact_2_nick_entry_key_pressed    (GtkWidget        *entry,
-							       GdkEvent         *event,
-							       GossipAddContact *dialog);
-static void           add_contact_2_group_entry_text_inserted (GtkEntry         *entry,
-							       const gchar      *text,
-							       gint              length,
-							       gint             *position,
-							       GossipAddContact *dialog);
-static gboolean       add_contact_account_foreach             (GtkTreeModel     *model,
-							       GtkTreePath      *path,
-							       GtkTreeIter      *iter,
-							       gpointer          user_data);
-static void           add_contact_destroy                     (GtkWidget        *unused,
-							       GossipAddContact *dialog);
-static void           add_contact_cancel                      (GtkWidget        *unused,
-							       GossipAddContact *dialog);
-
+static void           add_contact_setup_accounts               (GList            *accounts,
+								GossipAddContact *dialog);
+static void           add_contact_setup_systems                (GList            *accounts,
+								GossipAddContact *dialog);
+static GossipAccount *add_contact_get_selected_account         (GossipAddContact *dialog);
+static void           add_contact_set_selected_account         (GossipAddContact *dialog,
+								GossipAccount    *account);
+static gboolean       add_contact_set_selected_account_foreach (GtkTreeModel     *model,
+								GtkTreePath      *path,
+								GtkTreeIter      *iter,
+								SetAccountData   *data);
+static gboolean       add_contact_complete_group_idle          (GossipAddContact *dialog);
+static void           add_contact_vcard_handler                (GossipResult      result,
+								GossipVCard      *vcard,
+								GossipAddContact *contact);
+static void           add_contact_1_prepare                    (GnomeDruidPage   *page,
+								GnomeDruid       *druid,
+								GossipAddContact *dialog);
+static void           add_contact_2_prepare                    (GnomeDruidPage   *page,
+								GnomeDruid       *druid,
+								GossipAddContact *dialog);
+static void           add_contact_last_prepare                 (GnomeDruidPage   *page,
+								GnomeDruid       *druid,
+								GossipAddContact *dialog);
+static void           add_contact_last_finished                (GnomeDruidPage   *page,
+								GnomeDruid       *druid,
+								GossipAddContact *dialog);
+static void           add_contact_1_id_entry_changed           (GtkEntry         *entry,
+								GossipAddContact *dialog);
+static void           add_contact_1_system_combobox_changed    (GtkComboBox      *combo_box,
+								GossipAddContact *dialog);
+static void           add_contact_2_nick_entry_changed         (GtkEntry         *entry,
+								GossipAddContact *dialog);
+static gboolean       add_contact_2_nick_entry_key_pressed     (GtkWidget        *entry,
+								GdkEvent         *event,
+								GossipAddContact *dialog);
+static void           add_contact_2_group_entry_text_inserted  (GtkEntry         *entry,
+								const gchar      *text,
+								gint              length,
+								gint             *position,
+								GossipAddContact *dialog);
+static gboolean       add_contact_account_foreach              (GtkTreeModel     *model,
+								GtkTreePath      *path,
+								GtkTreeIter      *iter,
+								gpointer          user_data);
+static void           add_contact_destroy                      (GtkWidget        *unused,
+								GossipAddContact *dialog);
+static void           add_contact_cancel                       (GtkWidget        *unused,
+								GossipAddContact *dialog);
 
 
 static void
@@ -349,6 +360,57 @@ add_contact_get_selected_account (GossipAddContact *dialog)
 	return account;
 }
 
+static void
+add_contact_set_selected_account (GossipAddContact *dialog,
+				  GossipAccount    *account) 
+{
+	GtkComboBox    *combobox;
+	GtkTreeModel   *model;
+	GtkTreeIter     iter;
+
+	SetAccountData *data;
+
+	combobox = GTK_COMBO_BOX (dialog->one_accounts_combobox);
+	model = gtk_combo_box_get_model (combobox);
+	gtk_combo_box_get_active_iter (combobox, &iter);
+
+	data = g_new0 (SetAccountData, 1);
+
+	data->account = g_object_ref (account);
+	data->combobox = g_object_ref (combobox);
+
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) add_contact_set_selected_account_foreach, 
+				data);
+	
+	g_object_unref (data->account);
+	g_object_unref (data->combobox);
+
+	g_free (data);
+}
+
+static gboolean
+add_contact_set_selected_account_foreach (GtkTreeModel   *model,
+					  GtkTreePath    *path,
+					  GtkTreeIter    *iter,
+					  SetAccountData *data)
+{
+	GossipAccount *account1, *account2;
+
+	account1 = GOSSIP_ACCOUNT (data->account);
+	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
+
+	if (gossip_account_name_equals (account1, account2)) {
+		GtkComboBox *combobox;
+
+		combobox = GTK_COMBO_BOX (data->combobox);
+		gtk_combo_box_set_active_iter (combobox, iter);
+		return TRUE;
+	}
+		
+	return FALSE;
+}
+
 static gboolean 
 add_contact_complete_group_idle (GossipAddContact *dialog)
 {
@@ -387,7 +449,7 @@ add_contact_complete_group_idle (GossipAddContact *dialog)
 
 
 static void
-add_contact_vcard_handler (GossipResult  result,
+add_contact_vcard_handler (GossipResult       result,
 			   GossipVCard       *vcard,
 			   GossipAddContact  *dialog)
 {
@@ -456,7 +518,7 @@ add_contact_vcard_handler (GossipResult  result,
 
 static void
 add_contact_1_prepare (GnomeDruidPage   *page, 
-			    GnomeDruid       *druid, 
+		       GnomeDruid       *druid, 
 		       GossipAddContact *dialog)
 {
         gboolean     valid = FALSE;
@@ -475,7 +537,7 @@ add_contact_1_prepare (GnomeDruidPage   *page,
 
 static void
 add_contact_2_prepare (GnomeDruidPage   *page,
-			    GnomeDruid       *druid, 
+		       GnomeDruid       *druid, 
 		       GossipAddContact *dialog)
 {
         GossipContact           *contact;
@@ -565,7 +627,7 @@ add_contact_2_prepare (GnomeDruidPage   *page,
 
 static void
 add_contact_last_prepare (GnomeDruidPage   *page,
-			       GnomeDruid       *druid,
+			  GnomeDruid       *druid,
 			  GossipAddContact *dialog)
 {
 	const gchar *nick;
@@ -583,7 +645,7 @@ add_contact_last_prepare (GnomeDruidPage   *page,
 
 static void
 add_contact_last_finished (GnomeDruidPage   *page,
-				GnomeDruid       *druid,
+			   GnomeDruid       *druid,
 			   GossipAddContact *dialog)
 {
 	GossipAccount *account;
@@ -667,7 +729,7 @@ add_contact_1_system_combobox_changed (GtkComboBox      *combo_box,
 
 static void
 add_contact_2_nick_entry_changed (GtkEntry         *entry,
-				    GossipAddContact *dialog)
+				  GossipAddContact *dialog)
 {
 	const gchar     *str;
 	gboolean         forward_sensitive = TRUE;
@@ -745,12 +807,13 @@ add_contact_cancel (GtkWidget        *widget,
 }
 
 void
-gossip_add_contact_new (const gchar *id)
+gossip_add_contact_show (GossipContact *contact)
 {
 	GossipSession    *session;
 	GossipAddContact *dialog;
 	GladeXML         *glade;
 	GList            *accounts;
+	GnomeDruid       *druid;
 
 	dialog = g_new0 (GossipAddContact, 1);
 	
@@ -818,27 +881,17 @@ gossip_add_contact_new (const gchar *id)
 	g_object_set_data (G_OBJECT (dialog->two_nick_entry), 
 			   "changed", GINT_TO_POINTER (0));
 
-	if (id) {
-                gtk_entry_set_text (GTK_ENTRY (dialog->one_id_entry), id);
-		gnome_druid_set_page (GNOME_DRUID (dialog->druid),
-				      GNOME_DRUID_PAGE (dialog->two_page));
-		add_contact_2_prepare (GNOME_DRUID_PAGE (dialog->two_page),
-				       GNOME_DRUID (dialog->druid), 
-				       dialog);
-	} else {
-		add_contact_1_prepare (GNOME_DRUID_PAGE (dialog->one_page), 
-				       GNOME_DRUID (dialog->druid),
-				       dialog);
-
-
-		accounts = NULL;
-		add_contact_setup_systems (accounts, dialog);
-	}
-
+	druid = GNOME_DRUID (dialog->druid);
+	
+	g_object_set (G_OBJECT (druid->next), 
+		      "can-default", TRUE,
+		      "has-default", TRUE,
+		      NULL);
+	
 	session = gossip_app_get_session ();
 	accounts = gossip_session_get_accounts (session);
 
-	/* populate */
+	/* populate accounts */
 	add_contact_setup_accounts (accounts, dialog);
 
 	/* select first */
@@ -850,6 +903,31 @@ gossip_add_contact_new (const gchar *id)
 		/* show no accounts combo box */
 		gtk_widget_hide (dialog->one_accounts_vbox);
 	}
-	
+
+	/* populate systems */
+	accounts = NULL;
+	add_contact_setup_systems (accounts, dialog);
+
+	/* do we skip a stage? */
+	if (contact) {
+		GossipAccount *account;
+
+		account = gossip_contact_get_account (contact);
+		add_contact_set_selected_account (dialog, account);
+
+                gtk_entry_set_text (GTK_ENTRY (dialog->one_id_entry), 
+				    gossip_contact_get_id (contact));
+		gnome_druid_set_page (GNOME_DRUID (dialog->druid),
+				      GNOME_DRUID_PAGE (dialog->two_page));
+		add_contact_2_prepare (GNOME_DRUID_PAGE (dialog->two_page),
+				       GNOME_DRUID (dialog->druid), 
+				       dialog);
+	} else {
+		add_contact_1_prepare (GNOME_DRUID_PAGE (dialog->one_page), 
+				       GNOME_DRUID (dialog->druid),
+				       dialog);
+	}
+
+
 	gtk_widget_show (dialog->dialog);
 }

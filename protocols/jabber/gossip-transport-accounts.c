@@ -31,7 +31,7 @@
 
 #include "gossip-transport-accounts.h"
 
-#define d(x) x
+#define d(x)
 
 
 struct _GossipTransportAccountList {

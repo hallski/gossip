@@ -34,7 +34,7 @@
 #include "gossip-stock.h"
 #include "gossip-contact.h"
 
-#define d(x) x
+#define d(x)
 
 #define SEARCH_MAX 15
 

@@ -33,7 +33,7 @@
 #include "gossip-transport-accounts.h"
 #include "gossip-transport-protocol.h"
 
-#define d(x) x
+#define d(x)
 
 
 struct _GossipTransportProtocol {

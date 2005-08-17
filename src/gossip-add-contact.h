@@ -21,9 +21,9 @@
 #ifndef __GOSSIP_ADD_CONTACT_H__
 #define __GOSSIP_ADD_CONTACT_H__
 
-#include <glib.h>
+#include <libgossip/gossip-contact.h>
 
-void  gossip_add_contact_new (const gchar *id);
+void  gossip_add_contact_show (GossipContact *contact);
 
 #endif /* __GOSSIP_ADD_CONTACT_H__ */
 

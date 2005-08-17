@@ -34,7 +34,7 @@
 #include "gossip-app.h"
 #include "gossip-vcard-dialog.h"
 
-#define d(x) x
+#define d(x)
 
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
@@ -421,9 +421,9 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 
 	gossip_session_set_vcard (gossip_app_get_session (),
 				  account,
-					vcard, 
+				  vcard, 
 				  (GossipResultCallback) vcard_dialog_set_vcard_cb,
-					dialog, &error);
+				  dialog, &error);
 }
 
 static void

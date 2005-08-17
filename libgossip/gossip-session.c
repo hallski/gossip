@@ -367,7 +367,7 @@ session_protocol_logged_out (GossipProtocol *protocol, GossipSession *session)
 	priv = GET_PRIV (session);
 	
 	/* Update some status? */
-	if (priv->connected_counter <= 0) {
+	if (priv->connected_counter < 0) {
 		g_warning ("We have some issues in the connection counting");
 		return;
 	}

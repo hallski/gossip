@@ -28,7 +28,7 @@
 
 #include "gossip-spell.h"
 
-#define d(x) x
+#define d(x)
 
 struct _GossipSpell {
 	gint                ref_count;

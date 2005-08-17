@@ -924,7 +924,7 @@ app_popup_new_message_cb (GtkWidget *widget,
 static void
 app_add_contact_cb (GtkWidget *widget, GossipApp *app)
 {
-	gossip_add_contact_new (NULL);
+	gossip_add_contact_show (NULL);
 }
 
 static void

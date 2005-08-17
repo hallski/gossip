@@ -28,7 +28,7 @@
 
 #include "gossip-jabber-helper.h"
 
-#define d(x) x
+#define d(x)
 
 
 typedef struct {

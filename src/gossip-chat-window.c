@@ -40,7 +40,7 @@
 #include "gossip-sound.h"
 #include "gossip-log.h"
 #include "gossip-ui-utils.h"
-#include "eel-ellipsizing-label.h"
+#include "gossip-add-contact.h"
 
 
 static void       gossip_chat_window_class_init        (GossipChatWindowClass *klass);
@@ -63,6 +63,8 @@ static void       chat_window_invite_menu_setup        (GossipChatWindow      *w
 static void       chat_window_clear_activate_cb        (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
 static void       chat_window_info_activate_cb         (GtkWidget             *menuitem,
+							GossipChatWindow      *window);
+static void       chat_window_add_contact_activate_cb  (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
 static void       chat_window_log_activate_cb          (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
@@ -147,6 +149,7 @@ struct _GossipChatWindowPriv {
 
 	/* Menu items. */
 	GtkWidget   *m_conv_clear;
+	GtkWidget   *m_conv_add_contact;
 	GtkWidget   *m_conv_log;
 	GtkWidget   *m_conv_info;
 	GtkWidget   *s_conv_show_contacts;
@@ -217,8 +220,9 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "chats_notebook", &priv->notebook,
 				       "menu_conv", &menu_conv,
 				       "menu_conv_clear", &priv->m_conv_clear,
-				       "menu_conv_info", &priv->m_conv_info,
+				       "menu_conv_add_contact", &priv->m_conv_add_contact,
 				       "menu_conv_log", &priv->m_conv_log,
+				       "menu_conv_info", &priv->m_conv_info,
 				       "sep_conv_show_contacts", &priv->s_conv_show_contacts,
 				       "menu_conv_show_contacts", &priv->m_conv_show_contacts,
 				       "sep_conv_invite_contacts", &priv->s_conv_invite_contacts,
@@ -258,6 +262,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 	g_signal_connect (priv->m_conv_clear,
 			  "activate",
 			  G_CALLBACK (chat_window_clear_activate_cb),
+			  window);
+	g_signal_connect (priv->m_conv_add_contact,
+			  "activate",
+			  G_CALLBACK (chat_window_add_contact_activate_cb),
 			  window);
 	g_signal_connect (priv->m_conv_log,
 			  "activate",
@@ -641,8 +649,18 @@ chat_window_update_menu (GossipChatWindow *window)
 						   chat_window_show_contacts_toggled_cb,
 						   window);
 	} else {
+		GossipContactType type;
+
 		gtk_widget_hide (priv->s_conv_show_contacts);
 		gtk_widget_hide (priv->m_conv_show_contacts);
+
+		type = gossip_contact_get_type (contact);
+		if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST &&
+		    type != GOSSIP_CONTACT_TYPE_USER) {
+			gtk_widget_show (priv->m_conv_add_contact);
+		} else {
+			gtk_widget_hide (priv->m_conv_add_contact);
+		}
 	}
 
  	chat_window_invite_menu_setup (window);  
@@ -700,6 +718,18 @@ chat_window_clear_activate_cb (GtkWidget        *menuitem,
 	GossipChatWindowPriv *priv = window->priv;
 
 	gossip_chat_clear (priv->current_chat);
+}
+
+static void
+chat_window_add_contact_activate_cb (GtkWidget        *menuitem, 
+				     GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv = window->priv;
+	GossipContact        *contact;
+
+	contact = gossip_chat_get_contact (priv->current_chat);
+
+	gossip_add_contact_show (contact);
 }
 
 static void

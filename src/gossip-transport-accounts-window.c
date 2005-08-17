@@ -27,7 +27,7 @@
 #include "gossip-stock.h"
 #include "gossip-add-contact.h"
 
-#define d(x) x
+#define d(x)
 
 
 struct _GossipTransportAccountsWindow {

@@ -28,7 +28,7 @@
 
 #include "gossip-transport-discover.h"
 
-#define d(x) x
+#define d(x)
 
 /* in seconds */
 #define DISCO_TIMEOUT      20

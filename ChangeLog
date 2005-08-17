@@ -1,5 +1,35 @@
 2005-08-17  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-vcard-dialog.c:
+	* src/gossip-transport-add-window.c:
+	* src/gossip-transport-accounts-window.c:
+	* src/gossip-spell.c:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber-helper.c:
+	* protocols/jabber/gossip-transport-accounts.c:
+	* protocols/jabber/gossip-transport-discover.c:
+	* protocols/jabber/gossip-transport-protocol.c:
+	* protocols/jabber/gossip-transport-register.c
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-account.c: 
+	- Turned off debugging d(x) x
+
+	* libgossip/gossip-session.c (session_protocol_logged_out): 
+	- Fixed counting issue, caused unnecessary warnings.
+
+	* ui/main.glade:
+	* src/gossip-add-contact.c (gossip_add_contact_new): 
+	- Set the next button to be default when pressing enter.
+	- Fixes bug #160216.
+	- Fix adding contacts from chat windows with multiple acocunts.
+
+	* ui/chat.glade:
+	* src/gossip-chat-window.c:
+	- Add ability to add contacts from a chat conversation window.
+	- Fixes bug #141787.
+
+2005-08-17  Martyn Russell  <mr@gnome.org>
+
 	* libgossip/gossip-account.c (ACCOUNTS_DTD_FILENAME): 
 	- Was incorrect.
 

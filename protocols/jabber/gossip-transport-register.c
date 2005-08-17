@@ -27,7 +27,7 @@
 #include "gossip-jabber-private.h"
 #include "gossip-transport-register.h"
 
-#define d(x) x
+#define d(x)
 
 
 typedef struct {

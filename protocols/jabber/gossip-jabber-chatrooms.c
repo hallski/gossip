@@ -31,7 +31,7 @@
 #include "gossip-jabber-helper.h"
 #include "gossip-jabber-chatrooms.h"
 
-#define d(x) x 
+#define d(x)
 
 #define JOIN_MSG_ID_PREFIX "gc_join_"
 

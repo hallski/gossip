@@ -34,7 +34,7 @@
 #include "gossip-ui-utils.h"
 #include "gossip-chat.h"
 
-#define d(x) x
+#define d(x)
 
 
 extern GConfClient *gconf_client;
