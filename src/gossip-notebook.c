@@ -79,6 +79,7 @@ struct _GossipNotebookPriv
 {
         gulong          motion_notify_handler_id;
         gboolean        drag_in_progress;
+	GossipNotebook *last_dest;
         GossipNotebook *src_notebook;
         gint            src_page;
         gint            x_start;
@@ -269,7 +270,6 @@ find_notebook_at_pointer (gint abs_x, gint abs_y)
                     is_in_notebook_window (nb, abs_x, abs_y)) {
                         return nb;
                 }
-
         }
 
         return NULL;
@@ -392,19 +392,9 @@ move_tab_to_another_notebook (GossipNotebook *src,
         cur_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (src));
         child    = gtk_notebook_get_nth_page (GTK_NOTEBOOK (src), cur_page);
 
-	drag_stop (src);
-	gtk_grab_remove (GTK_WIDGET (src));
+ 	drag_stop (src); 
 	
         gossip_notebook_move_page (src, dest, child, dest_page);
-
-        /* "Give" drag handling to the new notebook. */
-        drag_start (dest, src->priv->src_notebook, src->priv->src_page);
-
-        dest->priv->motion_notify_handler_id =
-                g_signal_connect (G_OBJECT (dest),
-                                  "motion-notify-event",
-                                  G_CALLBACK (motion_notify_cb),
-                                  NULL);
 }
 
 static void
@@ -413,6 +403,7 @@ drag_start (GossipNotebook *notebook,
             gint            src_page)
 {
         notebook->priv->drag_in_progress = TRUE;
+	notebook->priv->last_dest        = NULL;
         notebook->priv->src_notebook     = src_notebook;
         notebook->priv->src_page         = src_page;
 
@@ -423,6 +414,7 @@ drag_start (GossipNotebook *notebook,
 
         /* grab the pointer */
         gtk_grab_add (GTK_WIDGET (notebook));
+
         if (!gdk_pointer_is_grabbed ()) {
                 gdk_pointer_grab (GTK_WIDGET (notebook)->window,
                                   FALSE,
@@ -439,6 +431,7 @@ drag_stop (GossipNotebook *notebook)
         }
 
         notebook->priv->drag_in_progress = FALSE;
+	notebook->priv->last_dest        = NULL;
         notebook->priv->src_notebook     = NULL;
         notebook->priv->src_page         = -1;
 
@@ -447,6 +440,13 @@ drag_stop (GossipNotebook *notebook)
                                              notebook->priv->motion_notify_handler_id);
                 notebook->priv->motion_notify_handler_id = 0;
         }
+
+	/* ungrab the pointer if it's grabbed. */
+ 	gtk_grab_remove (GTK_WIDGET (notebook));
+
+	if (gdk_pointer_is_grabbed ()) {
+		gdk_pointer_ungrab (GDK_CURRENT_TIME);
+	}
 }
 
 /* callbacks */
@@ -457,8 +457,9 @@ motion_notify_cb (GossipNotebook *notebook,
                   gpointer        data)
 {
         GossipNotebook *dest;
-        gint page_num;
-        gint result;
+        gint            page;
+        gint            result;
+	gboolean        highlighted = FALSE;
 
 	if (notebook->priv->drag_in_progress == FALSE) {
 		if (gtk_drag_check_threshold (GTK_WIDGET (notebook),
@@ -476,17 +477,33 @@ motion_notify_cb (GossipNotebook *notebook,
 	
         result = find_notebook_and_tab_at_pos ((gint) event->x_root,
                                                (gint) event->y_root,
-                                               &dest, &page_num);
+                                               &dest, &page);
 
         if (result != NOT_IN_APP_WINDOWS) {
                 if (dest != notebook) {
-                        move_tab_to_another_notebook (notebook, dest, page_num);
-                }
-                else {
-                        g_assert (page_num >= -1);
-                        move_tab (notebook, page_num);
+			if (notebook->priv->last_dest != NULL && 
+			    notebook->priv->last_dest != dest) {
+				gtk_drag_unhighlight (GTK_WIDGET (notebook->priv->last_dest));
+			}
+
+			gtk_drag_highlight (GTK_WIDGET (dest));
+
+			notebook->priv->last_dest = dest;
+
+			highlighted = TRUE;
+                } else {
+                        g_assert (page >= -1);
+                        move_tab (notebook, page);
                 }
         }
+
+	if (!highlighted) {
+		if (notebook->priv->last_dest) {
+			gtk_drag_unhighlight (GTK_WIDGET (notebook->priv->last_dest));
+		}
+		
+		notebook->priv->last_dest = NULL;
+	}
 
         return FALSE;
 }
@@ -504,26 +521,36 @@ button_release_cb (GossipNotebook *notebook,
                 cur_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 
                                                       cur_page_num);
 
-                if (!is_in_notebook_window (notebook, event->x_root, event->y_root) &&
-	            gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)) > 1) {
-                        /* Tab was detached */
-                        g_signal_emit (G_OBJECT (notebook),
-                                       signals[TAB_DETACHED],
-                                       0, cur_page);
-                }
+                if (!is_in_notebook_window (notebook, event->x_root, event->y_root)) {
+			GossipNotebook *dest;
+			gint            page;
 
-                /* Ungrab the pointer if it's grabbed. */
-                if (gdk_pointer_is_grabbed ()) {
-                        gdk_pointer_ungrab (GDK_CURRENT_TIME);
-                }
+			find_notebook_and_tab_at_pos ((gint) event->x_root,
+						      (gint) event->y_root,
+						      &dest, &page);
+			
+			if (GOSSIP_IS_NOTEBOOK (dest)) {
+				gtk_drag_unhighlight (GTK_WIDGET (dest));
 
-		if (gtk_grab_get_current () == GTK_WIDGET (notebook)) {
-			gtk_grab_remove (GTK_WIDGET (notebook));
-		}
+				if (dest != notebook) {
+					move_tab_to_another_notebook (notebook, dest, page);
+				}
+				else {
+					g_assert (page >= -1);
+					move_tab (notebook, page);
+				}
+				
+				/* tab was detached */
+				g_signal_emit (G_OBJECT (notebook),
+					       signals[TAB_DETACHED],
+					       0, cur_page);
+			}
+                }
 	}
 
-        /* This must be called even if a drag isn't happening. */
+        /* this must be called even if a drag isn't happening. */
         drag_stop (notebook);
+
         return FALSE;
 }
 

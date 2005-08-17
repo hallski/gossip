@@ -1,5 +1,16 @@
 2005-08-17  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-notebook.c: 
+	- Fixed up the gossip notebook so it would actually show the
+	target you are going to drag to and ONLY commit when the button is
+	released instead of immediately.
+	- Fixes bug #142192 (Sjoerd Simons).
+
+	* src/gossip-chat-window.c:
+	- Added debugging definition d(x).
+
+2005-08-17  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-chat-window.c (chat_window_drag_data_received): 
 	- Stop flashing when dragging a contact to a chat window.
 	- Fixes bug #151859 (Paul van Tilburg).

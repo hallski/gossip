@@ -42,6 +42,7 @@
 #include "gossip-ui-utils.h"
 #include "gossip-add-contact.h"
 
+#define d(x)
 
 static void       gossip_chat_window_class_init        (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init              (GossipChatWindow      *window);
