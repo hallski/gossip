@@ -61,7 +61,7 @@ dnl -----------------------------------------------------------
 dnl AC_SUBST is required to ensure that the versions number end up into the
 dnl spec file.
 
-AC_SUBST(LIBXML_REQUIRED, 2.6.20)
+AC_SUBST(LIBXML_REQUIRED, 2.6.18)
 AC_SUBST(LIBXSLT_REQUIRED, 1.0.0)
 AC_SUBST(GLIB_REQUIRED, 2.6.0)
 AC_SUBST(GTK_REQUIRED, 2.6.0)

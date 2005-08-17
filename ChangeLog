@@ -1,13 +1,14 @@
 2005-08-17  Martyn Russell  <mr@gnome.org>
 
-	* src/gossip-notebook.c: 
-	- Fixed crash when moving a tab from a window with n + 1 tabs to a
-	window with only 1 tab.
+	* src/gossip-app.c: 
+	- Use OK/Cancel for quitting with unread events, makes more sence.
+	- If quitting from the Chat->Quit menu use the same path as
+	closing the window. 
 
 2005-08-17  Martyn Russell  <mr@gnome.org>
 
 	* configure.ac: 
-	- Bumped requirement of libxml2 to 2.6.20 after Ross reported
+	- Bumped requirement of libxml2 to 2.6.18 after Ross reported
 	problems with 2.6.17 (Unimplemented block at xmlreader.c:1610).
 	
 	* src/gossip-app.c (app_main_window_destroy_cb): 

@@ -180,11 +180,13 @@ static guint signals[LAST_SIGNAL] = { 0 };
 static void            gossip_app_class_init                     (GossipAppClass      *klass);
 static void            gossip_app_init                           (GossipApp           *app);
 static void            app_finalize                              (GObject             *object);
-static gboolean        app_main_window_delete_event_cb           (GtkWidget           *window,
-								  GdkEvent            *event,     
-								  GossipApp           *app);
-static void            app_main_window_delete_event_confirm_cb   (GtkWidget           *dialog,
+static gboolean        app_main_window_quit_confirm              (GossipApp           *app,
+								  GtkWidget           *window);
+static void            app_main_window_quit_confirm_cb           (GtkWidget           *dialog,
 								  gint                 response,
+								  GossipApp           *app);
+static gboolean        app_main_window_delete_event_cb           (GtkWidget           *window,
+								  GdkEvent            *event,
 								  GossipApp           *app);
 static void            app_main_window_destroy_cb                (GtkWidget           *window,
 								  GossipApp           *app);
@@ -577,10 +579,9 @@ app_finalize (GObject *object)
         }
 }
 
-static gboolean
-app_main_window_delete_event_cb (GtkWidget *window,
-				 GdkEvent  *event,
-				 GossipApp *app)
+static gboolean 
+app_main_window_quit_confirm (GossipApp *app,
+			      GtkWidget *window)
 {
 	GossipAppPriv *priv;
 	GList         *events;
@@ -670,13 +671,13 @@ app_main_window_delete_event_cb (GtkWidget *window,
 		dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
 							     0,
 							     GTK_MESSAGE_WARNING,
-							     GTK_BUTTONS_YES_NO,
+							     GTK_BUTTONS_OK_CANCEL,
 							     "<b>%s</b>\n\n%s",
 							     _("If you quit, you will loose all unread information."), 
 							     str);
 	
 		g_signal_connect (dialog, "response",
-				  G_CALLBACK (app_main_window_delete_event_confirm_cb),
+				  G_CALLBACK (app_main_window_quit_confirm_cb),
 				  app);
 		
 		gtk_widget_show (dialog);
@@ -688,9 +689,9 @@ app_main_window_delete_event_cb (GtkWidget *window,
 }
 
 static void
-app_main_window_delete_event_confirm_cb (GtkWidget *dialog,
-					 gint       response,
-					 GossipApp *app) 
+app_main_window_quit_confirm_cb (GtkWidget *dialog,
+				 gint       response,
+				 GossipApp *app) 
 {
 	GossipAppPriv *priv;
 	
@@ -698,9 +699,17 @@ app_main_window_delete_event_confirm_cb (GtkWidget *dialog,
 
 	gtk_widget_destroy (dialog);
 
-	if (response == GTK_RESPONSE_YES) {
+	if (response == GTK_RESPONSE_OK) {
 		gtk_widget_destroy (priv->window);
 	}
+}
+
+static gboolean
+app_main_window_delete_event_cb (GtkWidget *window,
+				 GdkEvent  *event,
+				 GossipApp *app)
+{
+	return app_main_window_quit_confirm (app, window);
 }
 
 static void
@@ -718,14 +727,15 @@ app_main_window_destroy_cb (GtkWidget *window,
 	exit (EXIT_SUCCESS);
 }
 
-static void
-app_quit_cb (GtkWidget *widget, GossipApp *app)
+static void 
+app_quit_cb (GtkWidget *window,
+	     GossipApp *app)
 {
 	GossipAppPriv *priv;
 	
 	priv = app->priv;
 
-	gtk_widget_destroy (priv->window);
+	app_main_window_quit_confirm (app, priv->window);
 }
 
 static void
