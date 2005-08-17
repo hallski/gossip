@@ -395,6 +395,16 @@ move_tab_to_another_notebook (GossipNotebook *src,
  	drag_stop (src); 
 	
         gossip_notebook_move_page (src, dest, child, dest_page);
+
+#if 0
+        drag_start (dest, src->priv->src_notebook, src->priv->src_page);
+
+        dest->priv->motion_notify_handler_id =
+                g_signal_connect (G_OBJECT (dest),
+                                  "motion-notify-event",
+                                  G_CALLBACK (motion_notify_cb),
+                                  NULL);
+#endif
 }
 
 static void
@@ -516,36 +526,42 @@ button_release_cb (GossipNotebook *notebook,
         if (notebook->priv->drag_in_progress) {
                 gint cur_page_num;
                 GtkWidget *cur_page;
+		GossipNotebook *dest;
+		gint            page;
 
                 cur_page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook));
                 cur_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 
                                                       cur_page_num);
 
-                if (!is_in_notebook_window (notebook, event->x_root, event->y_root)) {
-			GossipNotebook *dest;
-			gint            page;
+#if 0
+		/* NOTE: mr, things work fine without this, infact
+		   this complicates things, is it absolutely
+		   necessary? */
+                if (!is_in_notebook_window (notebook, event->x_root, event->y_root) &&
+		    gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)) > 1) {
+			/* tab was detached */
+			g_signal_emit (G_OBJECT (notebook),
+				       signals[TAB_DETACHED],
+				       0, cur_page);
+		}
+#endif
 
-			find_notebook_and_tab_at_pos ((gint) event->x_root,
-						      (gint) event->y_root,
-						      &dest, &page);
+		find_notebook_and_tab_at_pos ((gint) event->x_root,
+					      (gint) event->y_root,
+					      &dest, &page);
+		
+		if (GOSSIP_IS_NOTEBOOK (dest)) {
+			gtk_drag_unhighlight (GTK_WIDGET (dest));
 			
-			if (GOSSIP_IS_NOTEBOOK (dest)) {
-				gtk_drag_unhighlight (GTK_WIDGET (dest));
-
-				if (dest != notebook) {
-					move_tab_to_another_notebook (notebook, dest, page);
-				}
-				else {
-					g_assert (page >= -1);
-					move_tab (notebook, page);
-				}
-				
-				/* tab was detached */
-				g_signal_emit (G_OBJECT (notebook),
-					       signals[TAB_DETACHED],
-					       0, cur_page);
+			if (dest != notebook) {
+				move_tab_to_another_notebook (notebook, dest, page);
 			}
-                }
+			else {
+				g_assert (page >= -1);
+				move_tab (notebook, page);
+			}
+			
+		}
 	}
 
         /* this must be called even if a drag isn't happening. */
