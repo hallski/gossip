@@ -1182,22 +1182,24 @@ chat_window_drag_data_received (GtkWidget        *widget,
 				guint             time, 
 				GossipChatWindow *window)
 {
-	GossipContact    *contact;
-	GossipChat       *chat;
-	GossipChatWindow *old_window;
-	const gchar      *id;
+	GossipChatManager *manager;
+	GossipContact     *contact;
+	GossipChat        *chat;
+	GossipChatWindow  *old_window;
+	const gchar       *id;
 
 	id = (const gchar*) selection->data;
-	g_print ("Received drag & drop contact from roster with id:'%s'\n", id);
+	d(g_print ("Received drag & drop contact from roster with id:'%s'\n", id));
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	
 	if (!contact) {
-		g_print ("No contact found associated with drag & drop\n");
+		d(g_print ("No contact found associated with drag & drop\n"));
 		return;
 	}
 
-	chat = GOSSIP_CHAT (gossip_chat_manager_get_chat (gossip_app_get_chat_manager (), contact));
+	manager = gossip_app_get_chat_manager ();
+	chat = GOSSIP_CHAT (gossip_chat_manager_get_chat (manager, contact));
 	old_window = gossip_chat_get_window (chat);
 	
 	if (old_window) {
@@ -1211,6 +1213,9 @@ chat_window_drag_data_received (GtkWidget        *widget,
 
 	gossip_chat_window_add_chat (window, chat);
 
+	/* added to take care of any outstanding chat events */
+	gossip_chat_manager_show_chat (manager, contact);
+	
 	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
 }
 
