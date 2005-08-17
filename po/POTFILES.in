@@ -9,11 +9,12 @@ libgossip/gossip-contact.c
 protocols/jabber/gossip-jabber.c
 
 src/gossip-about.c
-src/gossip-account-dialog.c
+src/gossip-accounts-dialog.c
 src/gossip-add-contact.c
 src/gossip-app.c
 src/gossip-cell-renderer-text.c
 src/gossip-chat.c
+src/gossip-chat-invite.c
 src/gossip-chat-manager.c
 src/gossip-chat-view.c
 src/gossip-chat-window.c
