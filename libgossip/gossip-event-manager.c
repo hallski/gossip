@@ -21,21 +21,29 @@
 #include <config.h>
 
 #include "libgossip-marshal.h"
+
 #include "gossip-event-manager.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT_MANAGER, GossipEventManagerPriv))
 
+
 typedef struct _GossipEventManagerPriv GossipEventManagerPriv;
+
+
 struct _GossipEventManagerPriv {
 	GHashTable *events;
 };
+
 
 enum {
 	EVENT_ADDED,
 	EVENT_REMOVED, 
 	LAST_SIGNAL
 };
+
+
 static guint signals[LAST_SIGNAL] = {0};
+
 
 typedef struct {
 	GossipEvent                  *event;
@@ -43,10 +51,16 @@ typedef struct {
 	GObject                      *issuer;
 } EventData;
 
+
+static void event_manager_finalize              (GObject      *object);
+static void event_manager_free_event            (EventData    *data);
+static void event_manager_get_events_foreach_cb (GossipEvent  *event,
+						 EventData    *data,
+						 GList       **list);
+
+
 G_DEFINE_TYPE (GossipEventManager, gossip_event_manager, G_TYPE_OBJECT);
 
-static void event_manager_finalize        (GObject   *object);
-static void event_manager_free_event_data (EventData *data);
 
 static void
 gossip_event_manager_class_init (GossipEventManagerClass *klass)
@@ -88,7 +102,7 @@ gossip_event_manager_init (GossipEventManager *manager)
 	priv->events = g_hash_table_new_full (gossip_event_hash, 
 					      gossip_event_equal,
 					      g_object_unref,
-					      (GDestroyNotify) event_manager_free_event_data);
+					      (GDestroyNotify) event_manager_free_event);
 }
 
 static void
@@ -102,7 +116,7 @@ event_manager_finalize (GObject *object)
 }
 
 static void
-event_manager_free_event_data (EventData *data)
+event_manager_free_event (EventData *data)
 {
 	g_object_unref (data->event);
 	g_object_unref (data->issuer);
@@ -110,7 +124,6 @@ event_manager_free_event_data (EventData *data)
 	g_free (data);
 }
 
-/* -- Public functions -- */
 GossipEventManager *
 gossip_event_manager_new (void)
 {
@@ -186,4 +199,43 @@ gossip_event_manager_activate (GossipEventManager *manager, GossipEvent *event)
 	(data->callback) (manager, event, data->issuer);
 
 	gossip_event_manager_remove (manager, event, data->issuer);
+}
+
+GList *
+gossip_event_manager_get_events (GossipEventManager *manager)
+{
+	GossipEventManagerPriv *priv;
+	GList                  *list = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_EVENT_MANAGER (manager), NULL);
+
+	priv = GET_PRIV (manager);
+
+	g_hash_table_foreach (priv->events, 
+			      (GHFunc)event_manager_get_events_foreach_cb,
+			      &list);
+
+	return list;
+}
+
+static void
+event_manager_get_events_foreach_cb (GossipEvent  *event,
+				     EventData    *data,
+				     GList       **list)
+{
+	if (list) {
+		*list = g_list_append (*list, event);
+	}
+}
+
+guint 
+gossip_event_manager_get_event_count (GossipEventManager *manager)
+{
+	GossipEventManagerPriv *priv;
+	
+	g_return_val_if_fail (GOSSIP_IS_EVENT_MANAGER (manager), 0);
+	
+	priv = GET_PRIV (manager);
+	
+	return g_hash_table_size (priv->events);
 }

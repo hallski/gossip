@@ -180,6 +180,12 @@ static guint signals[LAST_SIGNAL] = { 0 };
 static void            gossip_app_class_init                     (GossipAppClass      *klass);
 static void            gossip_app_init                           (GossipApp           *app);
 static void            app_finalize                              (GObject             *object);
+static gboolean        app_main_window_delete_event_cb           (GtkWidget           *window,
+								  GdkEvent            *event,     
+								  GossipApp           *app);
+static void            app_main_window_delete_event_confirm_cb   (GtkWidget           *dialog,
+								  gint                 response,
+								  GossipApp           *app);
 static void            app_main_window_destroy_cb                (GtkWidget           *window,
 								  GossipApp           *app);
 static gboolean        app_idle_check_cb                         (GossipApp           *app);
@@ -416,6 +422,7 @@ gossip_app_init (GossipApp *singleton_app)
 			      "edit_account_information", "activate", app_account_information_cb,
 			      "edit_status_messages", "activate", app_status_messages_cb,
 			      "help_about", "activate", app_about_cb,
+			      "main_window", "delete_event", app_main_window_delete_event_cb,
 			      "main_window", "destroy", app_main_window_destroy_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      NULL);
@@ -570,12 +577,138 @@ app_finalize (GObject *object)
         }
 }
 
+static gboolean
+app_main_window_delete_event_cb (GtkWidget *window,
+				 GdkEvent  *event,
+				 GossipApp *app)
+{
+	GossipAppPriv *priv;
+	GList         *events;
+	
+	priv = app->priv;
+
+	events = gossip_event_manager_get_events (priv->event_manager);
+
+	if (g_list_length ((GList*)events) > 0) {
+		GList     *l;
+		gint       i;
+		gint       count[GOSSIP_EVENT_ERROR];
+
+		GtkWidget *dialog;
+		gchar     *str;
+		gchar     *oldstr = NULL;
+
+		str = g_strconcat (_("To summarize:"), "\n", NULL);
+
+		for (i = 0; i < GOSSIP_EVENT_ERROR; i++) {
+			count[i] = 0;
+		}
+
+		for (l = events; l; l = l->next) {
+			GossipEvent     *event;
+			GossipEventType  type; 
+
+			event = l->data;
+			type = gossip_event_get_event_type (event);
+
+			count[type]++;
+		}
+		
+		for (i = 0; i < GOSSIP_EVENT_ERROR; i++) {
+			gchar *str_single = NULL;
+			gchar *str_plural = NULL;
+			gchar *info;
+
+			if (count[i] < 1) {
+				continue;
+			}
+			
+			if (i == GOSSIP_EVENT_TYPING) {
+				continue;
+			}
+
+			switch (i) {
+			case GOSSIP_EVENT_NEW_MESSAGE: 
+				str_single = "%d New message";
+				str_plural = "%d New messages";
+				break;
+			case GOSSIP_EVENT_UNFOCUSED_MESSAGE: 
+				str_single = "%d Unfocused message";
+				str_plural = "%d Unfocused messages";
+				break;
+			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST: 
+				str_single = "%d Subscription request";
+				str_plural = "%d Subscription requests";
+				break;
+			case GOSSIP_EVENT_SERVER_MESSAGE: 
+				str_single = "%d Server message";
+				str_plural = "%d Server messages";
+				break;
+			case GOSSIP_EVENT_ERROR: 
+				str_single = "%d Error";
+				str_plural = "%d Errors";
+				break;
+			}
+
+			info = g_strdup_printf (ngettext (str_single,
+							  str_plural,
+							  count[i]),
+						count[i]);
+
+			if (oldstr) {
+				g_free (oldstr);
+			}
+
+			oldstr = str;
+
+			str = g_strconcat (str, "\n", "\t", info, NULL);
+			g_free (info);
+		}
+
+		g_list_free (events);
+
+		dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
+							     0,
+							     GTK_MESSAGE_WARNING,
+							     GTK_BUTTONS_YES_NO,
+							     "<b>%s</b>\n\n%s",
+							     _("If you quit, you will loose all unread information."), 
+							     str);
+	
+		g_signal_connect (dialog, "response",
+				  G_CALLBACK (app_main_window_delete_event_confirm_cb),
+				  app);
+		
+		gtk_widget_show (dialog);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+app_main_window_delete_event_confirm_cb (GtkWidget *dialog,
+					 gint       response,
+					 GossipApp *app) 
+{
+	GossipAppPriv *priv;
+	
+	priv = app->priv;
+
+	gtk_widget_destroy (dialog);
+
+	if (response == GTK_RESPONSE_YES) {
+		gtk_widget_destroy (priv->window);
+	}
+}
+
 static void
 app_main_window_destroy_cb (GtkWidget *window,
 			    GossipApp *app)
 {
 	GossipAppPriv *priv;
-
+	
 	priv = app->priv;
 
 	if (gossip_session_is_connected (priv->session)) {
@@ -588,7 +721,11 @@ app_main_window_destroy_cb (GtkWidget *window,
 static void
 app_quit_cb (GtkWidget *widget, GossipApp *app)
 {
-	gtk_widget_destroy (app->priv->window);
+	GossipAppPriv *priv;
+	
+	priv = app->priv;
+
+	gtk_widget_destroy (priv->window);
 }
 
 static void

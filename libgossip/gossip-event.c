@@ -238,6 +238,8 @@ gossip_event_get_event_type (GossipEvent *event)
 {
         GossipEventPriv *priv;
 
+	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
+
         priv = GET_PRIV (event);
 
         return priv->type;

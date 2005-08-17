@@ -48,21 +48,20 @@ typedef void (* GossipEventActivatedFunction) (GossipEventManager *manager,
 					       GObject            *object);
 
 GType        gossip_event_manager_get_type        (void) G_GNUC_CONST;
-GossipEventManager * gossip_event_manager_new     (void);
+GossipEventManager *
+             gossip_event_manager_new              (void);
+void         gossip_event_manager_add              (GossipEventManager           *manager,
+						    GossipEvent                  *event,
+						    GossipEventActivatedFunction  callback,
+						    GObject                      *object);
+void         gossip_event_manager_remove           (GossipEventManager           *manager,
+						    GossipEvent                  *event,
+						    GObject                      *object);
+void         gossip_event_manager_activate         (GossipEventManager           *manager,
+						    GossipEvent                  *event);
+GossipEvent *gossip_event_manager_get_first        (GossipEventManager           *manager);
+GList       *gossip_event_manager_get_events       (GossipEventManager           *manager);
+guint        gossip_event_manager_get_event_count  (GossipEventManager           *manager);
 
-void         gossip_event_manager_add             (GossipEventManager *manager,
-						   GossipEvent        *event,
-						   GossipEventActivatedFunction callback,
-						   GObject            *object);
-GossipEvent *gossip_event_manager_get_first       (GossipEventManager *manager);
-
-/* Should be the same object as sent to _add */
-void         gossip_event_manager_remove          (GossipEventManager *manager,
-						   GossipEvent        *event,
-						   GObject            *object);
-void         gossip_event_manager_activate        (GossipEventManager *manager,
-						   GossipEvent        *event);
-const GList *gossip_event_manager_get_events      (GossipEventManager *manager);
-gint        gossip_event_maanger_get_nr_of_events (GossipEventManager *manager);
 
 #endif /* __GOSSIP_EVENT_MANAGER_H__ */
