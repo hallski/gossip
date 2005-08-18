@@ -1,3 +1,22 @@
+2005-08-18  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/gossip-account.c:
+	(gossip_accounts_get_default): 
+	- Check name in this special case, prevents an expected warning.
+
+	* src/gossip-chat-window.c:
+	- Added some debugging.
+
+	* src/gossip-app.c:
+	- Fixed quitting from the menu when there are NO events pending.
+	
+	* src/gossip-contact-groups.c:
+	* src/gossip-status-presets.c: 
+	- Renamed files to include .xml
+	- This has been done so there is a distinction between the old
+	gconf config files and the new XML files and should mean Gossip
+	0.9 and other versions can co-exist. 
+
 2005-08-17  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c: 

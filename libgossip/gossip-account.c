@@ -30,7 +30,7 @@
 
 #include "gossip-account.h"
 
-#define ACCOUNTS_XML_FILENAME "Accounts"
+#define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
 #define GOSSIP_ACCOUNT_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
@@ -948,7 +948,7 @@ gossip_accounts_get_default (void)
 		name = default_name;
 
 		/* check it exists, if not use the first one we find */
-		if (!gossip_accounts_get_by_name (name)) {
+		if (name && !gossip_accounts_get_by_name (name)) {
 			name = NULL;
 		}
 	}

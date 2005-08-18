@@ -735,7 +735,9 @@ app_quit_cb (GtkWidget *window,
 	
 	priv = app->priv;
 
-	app_main_window_quit_confirm (app, priv->window);
+	if (!app_main_window_quit_confirm (app, priv->window)) {
+		gtk_widget_destroy (priv->window);
+	}
 }
 
 static void

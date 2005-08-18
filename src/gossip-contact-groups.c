@@ -31,7 +31,7 @@
 
 #include "gossip-contact-groups.h"
 
-#define CONTACT_GROUPS_XML_FILENAME "ContactGroups"
+#define CONTACT_GROUPS_XML_FILENAME "contact-groups.xml"
 #define CONTACT_GROUPS_DTD_FILENAME "gossip-contact-groups.dtd"
 
 #define d(x)

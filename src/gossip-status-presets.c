@@ -31,7 +31,7 @@
 
 #include "gossip-status-presets.h"
 
-#define STATUS_PRESETS_XML_FILENAME "StatusPresets"
+#define STATUS_PRESETS_XML_FILENAME "status-presets.xml"
 #define STATUS_PRESETS_DTD_FILENAME "gossip-status-presets.dtd"
 
 /* this is per type of presence */
