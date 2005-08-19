@@ -1153,8 +1153,8 @@ jabber_get_vcard (GossipProtocol       *protocol,
 	}
 	
 	return gossip_jabber_helper_get_vcard (priv->connection,
-						     jid_str,
-						     callback, user_data, error);
+					       jid_str,
+					       callback, user_data, error);
 }
 
 static gboolean

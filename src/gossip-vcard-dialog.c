@@ -29,6 +29,7 @@
 #include <unistd.h>
 
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-vcard.h>
 
 #include "gossip-app.h"
@@ -84,6 +85,7 @@ typedef struct _GossipVCardDialog GossipVCardDialog;
 enum {
 	COL_ACCOUNT_IMAGE,
 	COL_ACCOUNT_TEXT,
+	COL_ACCOUNT_CONNECTED,
 	COL_ACCOUNT_POINTER,
 	COL_ACCOUNT_COUNT
 };
@@ -95,6 +97,12 @@ static gint           vcard_dialog_get_account_count           (GossipVCardDialo
 static void           vcard_dialog_set_account_to_last         (GossipVCardDialog *dialog);
 static void           vcard_dialog_lookup_start                (GossipVCardDialog *dialog);
 static void           vcard_dialog_lookup_stop                 (GossipVCardDialog *dialog);
+static void           vcard_dialog_protocol_disconnected_cb    (GossipSession     *session,
+								GossipProtocol    *protocol,
+								GossipVCardDialog *dialog);
+static void           vcard_dialog_protocol_disconnected_cb    (GossipSession     *session,
+								GossipProtocol    *protocol,
+								GossipVCardDialog *dialog);
 static void           vcard_dialog_get_vcard_cb                (GossipResult       result,
 								GossipVCard       *vcard,
 								GossipVCardDialog *dialog);
@@ -117,11 +125,12 @@ static void           vcard_dialog_destroy_cb                  (GtkWidget       
 								GossipVCardDialog *dialog);
 
 
-
 static void
 vcard_dialog_setup_accounts (GList             *accounts,
 			     GossipVCardDialog *dialog)
 {
+	GossipSession   *session;
+
 	GtkListStore    *store;
 	GtkTreeIter      iter;
 	GtkCellRenderer *renderer;
@@ -136,6 +145,10 @@ vcard_dialog_setup_accounts (GList             *accounts,
 	GtkIconTheme    *theme;
 
 	GdkPixbuf       *pixbuf;
+
+	gboolean         active_item_set = FALSE;
+
+	session = gossip_app_get_session ();
 	
 	/* set up combo box with new store */
 	combo_box = GTK_COMBO_BOX (dialog->combobox_account);
@@ -145,6 +158,7 @@ vcard_dialog_setup_accounts (GList             *accounts,
 	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
 				    GDK_TYPE_PIXBUF, 
 				    G_TYPE_STRING,   /* name */
+				    G_TYPE_BOOLEAN,  /* connected */
 				    G_TYPE_POINTER);    
 
 	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->combobox_account), 
@@ -174,15 +188,19 @@ vcard_dialog_setup_accounts (GList             *accounts,
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account;
 		const gchar   *icon_id = NULL;
+		gboolean       is_connected;
 
 		account = l->data;
 
 		error = NULL; 
 		pixbuf = NULL;
 
+		is_connected = gossip_session_is_connected (session, account);
+
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
 				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
+				    COL_ACCOUNT_CONNECTED, is_connected,
 				    COL_ACCOUNT_POINTER, g_object_ref (account),
 				    -1);
 
@@ -220,18 +238,26 @@ vcard_dialog_setup_accounts (GList             *accounts,
 		
  		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);
+
+		/* set first connected account as active account */
+		if (!active_item_set && is_connected) {
+			active_item_set = TRUE;
+			gtk_combo_box_set_active_iter (combo_box, &iter); 
+		}
 	}
 	
 	renderer = gtk_cell_renderer_pixbuf_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"pixbuf", COL_ACCOUNT_IMAGE,
+					"sensitive", COL_ACCOUNT_CONNECTED,
 					NULL);
 
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"text", COL_ACCOUNT_TEXT,
+					"sensitive", COL_ACCOUNT_CONNECTED,
 					NULL);
 
 	g_object_unref (store);
@@ -338,13 +364,28 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 		g_source_remove (dialog->timeout_id);
 		dialog->timeout_id = 0;
 	}
+}
 
+static void
+vcard_dialog_protocol_connected_cb (GossipSession     *session,
+				    GossipProtocol    *protocol,
+				    GossipVCardDialog *dialog)
+{
+	/* need account here first */
+}
+
+static void
+vcard_dialog_protocol_disconnected_cb (GossipSession     *session,
+				       GossipProtocol    *protocol,
+				       GossipVCardDialog *dialog)
+{
+	/* need account here first */
 }
 
 static void
 vcard_dialog_get_vcard_cb (GossipResult       result,
 			   GossipVCard       *vcard,
-				   GossipVCardDialog *dialog)
+			   GossipVCardDialog *dialog)
 {
 	GtkComboBox   *combobox;
 	GtkTextBuffer *buffer;
@@ -431,7 +472,7 @@ vcard_dialog_set_vcard_cb (GossipResult       result,
 			   GossipVCardDialog *dialog)
 {
   
-  d(g_print ("Got a vCard response\n"));
+	d(g_print ("Got a vCard response\n"));
   
 	/* if multiple accounts, wait for the close button */
 	if (vcard_dialog_get_account_count (dialog) <= 1) {
@@ -542,7 +583,19 @@ static void
 vcard_dialog_destroy_cb (GtkWidget         *widget, 
 			 GossipVCardDialog *dialog)
 {
+	GossipSession *session;
+
 	vcard_dialog_lookup_stop (dialog);
+
+	session = gossip_app_get_session ();
+
+	g_signal_handlers_disconnect_by_func (session, 
+					      vcard_dialog_protocol_connected_cb, 
+					      dialog);
+	g_signal_handlers_disconnect_by_func (session, 
+					      vcard_dialog_protocol_disconnected_cb, 
+					      dialog);
+
 	g_free (dialog);
 }
 
@@ -608,7 +661,6 @@ gossip_vcard_dialog_show (void)
 	vcard_dialog_setup_accounts (accounts, dialog);
 
 	/* select first */
-	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->combobox_account), 0);
 		
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (dialog->table_account);
@@ -621,9 +673,13 @@ gossip_vcard_dialog_show (void)
 
 		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
 		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-ok");
-
 	}
 
-	/* start look up */
-/* 	vcard_dialog_lookup_start (dialog); */
+	g_signal_connect (session, "protocol-connected",
+			  G_CALLBACK (vcard_dialog_protocol_connected_cb),
+			  dialog);
+
+	g_signal_connect (session, "protocol-disconnected",
+			  G_CALLBACK (vcard_dialog_protocol_disconnected_cb),
+			  dialog);
 }

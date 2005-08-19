@@ -720,7 +720,7 @@ app_main_window_destroy_cb (GtkWidget *window,
 	
 	priv = app->priv;
 
-	if (gossip_session_is_connected (priv->session)) {
+	if (gossip_session_is_connected (priv->session, NULL)) {
 		gossip_session_disconnect (priv->session);
 	}
 	
@@ -1325,7 +1325,7 @@ app_update_conn_dependent_menu_items (void)
 
 	priv = app->priv;
 	
-	connected = gossip_session_is_connected (priv->session);
+	connected = gossip_session_is_connected (priv->session, NULL);
 
 	for (l = priv->enabled_connected_widgets; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, connected);
@@ -1461,7 +1461,7 @@ app_complete_name_activate_cb (GtkEntry        *entry,
 gboolean
 gossip_app_is_connected (void)
 {
-	return gossip_session_is_connected (app->priv->session);
+	return gossip_session_is_connected (app->priv->session, NULL);
 }
 
 static void
@@ -1738,7 +1738,7 @@ app_get_current_status_pixbuf (void)
 
 	priv = app->priv;
 
-	if (!gossip_session_is_connected (priv->session)) {
+	if (!gossip_session_is_connected (priv->session, NULL)) {
 		return gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
 	}
 	
@@ -1763,7 +1763,7 @@ app_presence_updated (void)
 	
 	g_object_unref (pixbuf);
 	
-	if (!gossip_session_is_connected (priv->session)) {
+	if (!gossip_session_is_connected (priv->session, NULL)) {
 		eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
 						_("Offline"));
 		return;

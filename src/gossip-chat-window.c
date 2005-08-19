@@ -467,7 +467,7 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	else if (g_list_find (window->priv->chats_composing, chat)) {
 		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
 	}
-	else if (!gossip_session_is_connected (session)) {
+	else if (!gossip_session_is_connected (session, NULL)) {
 		/* FIXME: should use protocol for contact since the
 		   protocol we use to send the image may not be online
 		   and a session may cover multiple accounts */

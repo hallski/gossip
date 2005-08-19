@@ -147,10 +147,10 @@ jabber_helper_get_vcard_cb (LmMessageHandler  *handler,
 
 gboolean
 gossip_jabber_helper_get_vcard (LmConnection         *connection,
-				      const gchar               *jid_str, 
+				const gchar          *jid_str, 
 				GossipVCardCallback   callback,
-				      gpointer                   user_data,
-				      GError                   **error)
+				gpointer              user_data,
+				GError              **error)
 {
 	LmMessage         *m;
 	LmMessageNode     *node;
@@ -177,6 +177,7 @@ gossip_jabber_helper_get_vcard (LmConnection         *connection,
 
 	/* FIXME: Set a timeout */
 	
+	lm_message_unref (m);
 	lm_message_handler_unref (handler);
 
 	return TRUE;

@@ -36,11 +36,14 @@ extern GConfClient *gconf_client;
 void
 gossip_sound_play (GossipSound sound)
 {
-	gboolean             enabled, silent_busy, silent_away;
+	GossipSession       *session;
         GossipPresence      *p;
         GossipPresenceState  state;
+	gboolean             enabled, silent_busy, silent_away;
 
-	if (!gossip_session_is_connected (gossip_app_get_session ())) {
+	session = gossip_app_get_session ();
+
+	if (!gossip_session_is_connected (session, NULL)) {
 		return;
 	}
 	

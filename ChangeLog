@@ -1,5 +1,25 @@
 2005-08-19  Martyn Russell  <mr@gnome.org>
 
+	* protocols/jabber/gossip-jabber-helper.c
+	(gossip_jabber_helper_get_vcard): 
+	- Clean up loose reference.
+
+	* src/gossip-app.c:
+	* src/gossip-chat-window.c:
+	* src/gossip-sound.c:
+	* libgossip/gossip-session.[ch]: 
+	- If GossipAccount is supplied, get connected status of that, if
+	not get overall connected status based on connection logged in count.
+
+	* src/gossip-vcard-dialog.c (vcard_dialog_setup_accounts): 
+	- Set active first connected account.
+	- Disable any disconnected accounts.
+
+	* ui/connect.glade:
+	- Better positioning for accounts window/dialog.
+
+2005-08-19  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-account-info-dialog.[ch]:
 	* src/gossip-accounts-window.[ch]:
 	- Added to handle multiple accounts.

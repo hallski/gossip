@@ -474,8 +474,8 @@ gossip_protocol_get_vcard (GossipProtocol             *protocol,
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->get_vcard) {
 		return klass->get_vcard (protocol, contact,
-					       callback, user_data, 
-					       error);
+					 callback, user_data, 
+					 error);
 	}
 
 	/* Don't report error if protocol doesn't implement this */

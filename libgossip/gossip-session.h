@@ -85,7 +85,8 @@ void            gossip_session_send_composing          (GossipSession           
 GossipPresence *gossip_session_get_presence            (GossipSession           *session);
 void            gossip_session_set_presence            (GossipSession           *session,
 							GossipPresence          *presence);
-gboolean        gossip_session_is_connected            (GossipSession           *session);
+gboolean        gossip_session_is_connected            (GossipSession           *session, 
+							GossipAccount           *account);
 const gchar *   gossip_session_get_active_resource     (GossipSession           *session,
 							GossipContact           *contact);
 

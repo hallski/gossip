@@ -306,7 +306,8 @@ session_finalize (GObject *object)
 }
 
 static void
-session_connect_protocol (GossipSession *session, GossipProtocol *protocol)
+session_connect_protocol (GossipSession  *session, 
+			  GossipProtocol *protocol)
 {
 	g_signal_connect (protocol, "logged-in", 
 			  G_CALLBACK (session_protocol_logged_in),
@@ -338,7 +339,8 @@ session_connect_protocol (GossipSession *session, GossipProtocol *protocol)
 }
 
 static void
-session_protocol_logged_in (GossipProtocol *protocol, GossipSession *session)
+session_protocol_logged_in (GossipProtocol *protocol, 
+			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
 	
@@ -358,7 +360,8 @@ session_protocol_logged_in (GossipProtocol *protocol, GossipSession *session)
 }
 
 static void
-session_protocol_logged_out (GossipProtocol *protocol, GossipSession *session) 
+session_protocol_logged_out (GossipProtocol *protocol,
+			     GossipSession  *session) 
 {
 	GossipSessionPriv *priv;
 	
@@ -818,7 +821,8 @@ gossip_session_get_presence (GossipSession *session)
 }
 
 void 
-gossip_session_set_presence (GossipSession *session, GossipPresence *presence)
+gossip_session_set_presence (GossipSession  *session,
+			     GossipPresence *presence)
 {
 	GossipSessionPriv *priv;
 	GList            *l;
@@ -837,20 +841,27 @@ gossip_session_set_presence (GossipSession *session, GossipPresence *presence)
 }
 
 gboolean
-gossip_session_is_connected (GossipSession *session)
+gossip_session_is_connected (GossipSession *session,
+			     GossipAccount *account)
 {
 	GossipSessionPriv *priv;
-	gboolean           is_connected;
+	GossipProtocol    *protocol;
 
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
+	
 	priv = GET_PRIV (session);
 
-	if (priv->connected_counter > 0) {
-		is_connected = TRUE;
-	} else {
-		is_connected = FALSE;
-	}
+	if (account) {
+		protocol = g_hash_table_lookup (priv->accounts, 
+						gossip_account_get_name (account));
+		
+		g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+		
+		return gossip_protocol_is_connected (protocol);
+	} 
 
-	return is_connected;
+	/* fall back to counter if no account is provided */
+	return (priv->connected_counter > 0);
 }
 
 const gchar *
@@ -879,8 +890,8 @@ GossipChatroomProvider *
 gossip_session_get_chatroom_provider (GossipSession *session,
 				      GossipAccount *account)
 {
-	GossipProtocol    *protocol;
 	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
@@ -1229,8 +1240,8 @@ gossip_session_get_vcard (GossipSession        *session,
 		g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
 		return gossip_protocol_get_vcard (protocol, NULL,
-						callback, user_data,
-						error);
+						  callback, user_data,
+						  error);
 	}
 
 	return FALSE;

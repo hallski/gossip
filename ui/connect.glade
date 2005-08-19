@@ -7,7 +7,7 @@
   <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Accounts</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_MOUSE</property>
   <property name="modal">False</property>
   <property name="default_width">325</property>
   <property name="default_height">200</property>
@@ -127,7 +127,7 @@
   <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Account Information</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_MOUSE</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
