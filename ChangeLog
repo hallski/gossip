@@ -23,6 +23,7 @@
 	* src/gossip-account-info-dialog.[ch]:
 	* src/gossip-accounts-window.[ch]:
 	- Added to handle multiple accounts.
+	- Fixes bug #165519.
 
 	* src/gossip-accounts-dialog.[ch]:
 	* src/gossip-startup-druid.[ch]:
