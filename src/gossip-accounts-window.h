@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio AB
+ * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,13 +18,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_STARTUP_DRUID_H__
-#define __GOSSIP_STARTUP_DRUID_H__
+#ifndef __GOSSIP_ACCOUNTS_WINDOW_H__
+#define __GOSSIP_ACCOUNTS_WINDOW_H__
 
-#include <glib.h>
+void gossip_accounts_window_show (void);
 
-void     gossip_startup_druid_show      (void);
-gboolean gossip_startup_druid_is_needed (void);
-
-#endif /* __GOSSIP_STARTUP_DRUID_H__ */
-
+#endif /* __GOSSIP_ACCOUNTS_WINDOW_H__ */

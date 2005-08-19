@@ -38,9 +38,11 @@
 #define GOSSIP_IS_APP_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_APP))
 #define GOSSIP_APP_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_APP, GossipAppClass))
 
+
 typedef struct _GossipApp      GossipApp;
 typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
+
 
 struct _GossipApp {
         GObject        parent;
@@ -48,22 +50,25 @@ struct _GossipApp {
         GossipAppPriv *priv;
 };
 
+
 struct _GossipAppClass {
         GObjectClass parent_class;
 };
 
-GType               gossip_app_get_type                (void) G_GNUC_CONST;
-void                gossip_app_create                  (void);
-void                gossip_app_connect                 (void);
-const gchar *       gossip_app_get_username            (void);
-GossipApp *         gossip_app_get                     (void);
-gboolean            gossip_app_is_connected            (void);
-GtkWidget *         gossip_app_get_window              (void);
-void                gossip_app_force_non_away          (void);
-void                gossip_app_set_presence            (GossipPresenceState state,
-							const gchar  *status);
-GossipSession *     gossip_app_get_session             (void);
-GossipChatManager * gossip_app_get_chat_manager        (void);
-GossipEventManager *gossip_app_get_event_manager       (void);
+
+GType               gossip_app_get_type          (void) G_GNUC_CONST;
+void                gossip_app_create            (void);
+void                gossip_app_connect           (gboolean             startup);
+const gchar *       gossip_app_get_username      (void);
+GossipApp *         gossip_app_get               (void);
+gboolean            gossip_app_is_connected      (void);
+GtkWidget *         gossip_app_get_window        (void);
+void                gossip_app_force_non_away    (void);
+void                gossip_app_set_presence      (GossipPresenceState  state,
+						  const gchar         *status);
+GossipSession *     gossip_app_get_session       (void);
+GossipChatManager * gossip_app_get_chat_manager  (void);
+GossipEventManager *gossip_app_get_event_manager (void);
+
 
 #endif /* __GOSSIP_APP_H__ */

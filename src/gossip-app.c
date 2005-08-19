@@ -55,12 +55,12 @@
 #include "gossip-sound.h"
 #include "gossip-idle.h"
 #include "gossip-marshal.h"
-#include "gossip-startup-druid.h"
+#include "gossip-new-account-window.h"
 #include "gossip-preferences.h"
 #include "gossip-status-presets.h"
 #include "gossip-status-presets-dialog.h"
 #include "gossip-private-chat.h"
-#include "gossip-accounts-dialog.h"
+#include "gossip-accounts-window.h"
 #include "gossip-stock.h"
 #include "gossip-about.h"
 #include "gossip-app.h"
@@ -359,8 +359,8 @@ gossip_app_init (GossipApp *singleton_app)
 	gboolean        hidden;
 
 	/* do we need first time start up druid? */
-	if (gossip_startup_druid_is_needed ()) {
-		gossip_startup_druid_show ();
+	if (gossip_new_account_window_is_needed ()) {
+		gossip_new_account_window_show ();
 	}
 
 	app = singleton_app;
@@ -867,11 +867,11 @@ app_show_hide_activate_cb (GtkWidget *widget,
 
 static void
 app_connect_cb (GtkWidget *window,
-		 GossipApp *app)
+		GossipApp *app)
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
-	gossip_app_connect ();
+	gossip_app_connect (FALSE);
 }
 
 static void
@@ -1123,7 +1123,7 @@ app_personal_details_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_account_information_cb (GtkWidget *widget, GossipApp *app)
 {
-	gossip_accounts_dialog_show ();
+	gossip_accounts_window_show ();
 }
 
 static void
@@ -1221,7 +1221,7 @@ app_idle_check_cb (GossipApp *app)
 }
 
 void
-gossip_app_connect (void)
+gossip_app_connect (gboolean startup)
 {
 	GossipAppPriv *priv;
 	GossipAccount *account;
@@ -1248,13 +1248,13 @@ gossip_app_connect (void)
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
-		gossip_accounts_dialog_show ();
+		gossip_accounts_window_show ();
 		return;
 	}
 	
 	app_disconnect ();
-	
-	gossip_session_connect (priv->session);
+
+	gossip_session_connect (priv->session, startup);
 }
 
 void

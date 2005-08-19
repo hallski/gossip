@@ -2728,8 +2728,8 @@
   </child>
 </widget>
 
-<widget class="GtkWindow" id="startup_druid_window">
-  <property name="title" translatable="yes">Gossip - Welcome</property>
+<widget class="GtkWindow" id="new_account_window">
+  <property name="title" translatable="yes">Gossip - New Account</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -2743,7 +2743,7 @@
   <property name="focus_on_map">True</property>
 
   <child>
-    <widget class="GnomeDruid" id="startup_druid">
+    <widget class="GnomeDruid" id="druid">
       <property name="border_width">6</property>
       <property name="visible">True</property>
       <property name="show_help">False</property>
@@ -2798,7 +2798,7 @@ To get started, just click &quot;Forward&quot;.</property>
       <child>
 	<widget class="GnomeDruidPageStandard" id="2_page">
 	  <property name="visible">True</property>
-	  <property name="title" translatable="yes">Jabber Account</property>
+	  <property name="title" translatable="yes">Your Account</property>
 	  <property name="logo">query_48.png</property>
 	  <property name="top_watermark">watermark.png</property>
 
@@ -2812,7 +2812,7 @@ To get started, just click &quot;Forward&quot;.</property>
 	      <child>
 		<widget class="GtkLabel" id="label357">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">Do you already have an account on a Jabber server?</property>
+		  <property name="label" translatable="yes">Do you already have an account set up on a server?</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">False</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -2995,7 +2995,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">*</property>
-		      <property name="activates_default">False</property>
+		      <property name="activates_default">True</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -3065,7 +3065,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">*</property>
-		      <property name="activates_default">False</property>
+		      <property name="activates_default">True</property>
 		    </widget>
 		    <packing>
 		      <property name="padding">0</property>
@@ -3177,7 +3177,7 @@ To get started, just click &quot;Forward&quot;.</property>
 				<widget class="GtkRadioButton" id="4_list_radiobutton">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Choose from list:</property>
+				  <property name="label" translatable="yes">Choose _from list:</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">True</property>
@@ -3270,7 +3270,7 @@ To get started, just click &quot;Forward&quot;.</property>
 				<widget class="GtkRadioButton" id="4_different_radiobutton">
 				  <property name="visible">True</property>
 				  <property name="can_focus">True</property>
-				  <property name="label" translatable="yes">Use a different server</property>
+				  <property name="label" translatable="yes">Use a _different server</property>
 				  <property name="use_underline">True</property>
 				  <property name="relief">GTK_RELIEF_NORMAL</property>
 				  <property name="focus_on_click">True</property>
@@ -3315,7 +3315,7 @@ To get started, just click &quot;Forward&quot;.</property>
 				      <property name="text" translatable="yes"></property>
 				      <property name="has_frame">True</property>
 				      <property name="invisible_char">*</property>
-				      <property name="activates_default">False</property>
+				      <property name="activates_default">True</property>
 				    </widget>
 				    <packing>
 				      <property name="padding">0</property>

@@ -18,11 +18,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_ACCOUNTS_DIALOG_H__
-#define __GOSSIP_ACCOUNTS_DIALOG_H__
+#ifndef __GOSSIP_NEW_ACCOUNT_WINDOW_H__
+#define __GOSSIP_NEW_ACCOUNT_WINDOW_H__
 
-#include <gtk/gtkwidget.h>
+#include <glib.h>
 
-GtkWidget * gossip_accounts_dialog_show (void);
+void     gossip_new_account_window_show      (void);
+gboolean gossip_new_account_window_is_needed (void);
 
-#endif /* __GOSSIP_ACCOUNTS_DIALOG_H__ */
+#endif /* __GOSSIP_NEW_ACCOUNT_WINDOW_H__ */
+

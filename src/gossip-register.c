@@ -163,7 +163,7 @@ gossip_register_account (GossipAccount *account,
 		gtk_widget_destroy (dialog);
 	
 		/* Add account information */
-		gossip_accounts_store (data->account);
+		gossip_accounts_store ();
 
 		retval = TRUE;
 	} else {

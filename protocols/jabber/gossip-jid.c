@@ -172,7 +172,7 @@ gossip_jid_get_part_name (GossipJID *jid)
 {
 	gchar *ch;
 
-	g_return_val_if_fail (jid != NULL, "");
+	g_return_val_if_fail (jid != NULL, g_strdup (""));
 
 	for (ch = jid->full; *ch; ++ch) {
 		if (*ch == '@') {

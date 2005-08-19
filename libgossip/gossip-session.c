@@ -62,7 +62,7 @@ static void            session_connect_protocol                  (GossipSession 
 								  GossipProtocol      *protocol);
 static void            session_connect_foreach_cb                (gchar               *account_name,
 								  GossipProtocol      *protocol,
-								  GossipSession       *session);
+								  gpointer            *pstartup);
 static void            session_protocol_logged_in                (GossipProtocol      *protocol,
 								  GossipSession       *session);
 static void            session_protocol_logged_out               (GossipProtocol      *protocol,
@@ -682,7 +682,8 @@ session_find_account_foreach_cb (const gchar    *account_name,
 }
 
 void
-gossip_session_connect (GossipSession *session)
+gossip_session_connect (GossipSession *session,
+			gboolean       startup)
 {
 	GossipSessionPriv *priv;
 	
@@ -698,23 +699,30 @@ gossip_session_connect (GossipSession *session)
 
 	g_hash_table_foreach (priv->accounts,
 			      (GHFunc)session_connect_foreach_cb,
-			      session);
+			      GINT_TO_POINTER (startup));
 }
 
 static void
 session_connect_foreach_cb (gchar          *account_name,
 			    GossipProtocol *protocol,
-			    GossipSession  *session)
+			    gpointer       *pstartup)
 {
 	GossipAccount *account;
+	gboolean       startup;
+
+	startup = GPOINTER_TO_INT (pstartup);
 
 	account = gossip_accounts_get_by_name (account_name);
-
+	
+	if (startup && !gossip_account_get_auto_connect (account)) {
+		return;
+	}
+	
 	/* can we not just pass the GossipAccount on the GObject init? */
-		gossip_protocol_setup (protocol, account);
-
+	gossip_protocol_setup (protocol, account);
+		
 	/* setup the network connection */
-		gossip_protocol_login (protocol);
+	gossip_protocol_login (protocol);
 }
 
 void

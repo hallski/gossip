@@ -362,6 +362,9 @@ gossip_jabber_chatrooms_new (GossipJabber   *jabber,
 	GossipJabberChatrooms *chatrooms;
 	LmMessageHandler      *handler;
 
+	g_return_val_if_fail (jabber != NULL, NULL);
+	g_return_val_if_fail (connection != NULL, NULL);
+
 	chatrooms = g_new0 (GossipJabberChatrooms, 1);
 	
 	chatrooms->jabber     = jabber;
@@ -397,6 +400,8 @@ gossip_jabber_chatrooms_new (GossipJabber   *jabber,
 void
 gossip_jabber_chatrooms_free (GossipJabberChatrooms *chatrooms)
 {
+	g_return_if_fail (chatrooms != NULL);
+
 	g_hash_table_destroy (chatrooms->room_id_hash);
 	g_hash_table_destroy (chatrooms->room_jid_hash);
 
@@ -422,6 +427,12 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
         gchar             *id_str;
 	JabberChatroom    *room, *existing_room;
 	
+	g_return_val_if_fail (chatrooms != NULL, 0);
+	g_return_val_if_fail (room_name != NULL, 0);
+	g_return_val_if_fail (server != NULL, 0);
+	g_return_val_if_fail (nick != NULL, 0);
+	g_return_val_if_fail (callback != NULL, 0);
+
         d(g_print ("Chatrooms: Join chat room:'%s' on server:'%s'\n", 
 		   room_name, server));
 
@@ -613,7 +624,9 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 {
 	JabberChatroom *room;
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
+	g_return_if_fail (chatrooms != NULL);
+
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("Unknown chatroom id: %d", id);
@@ -636,7 +649,10 @@ gossip_jabber_chatrooms_send (GossipJabberChatrooms *chatrooms,
 	LmMessage      *m;
 	JabberChatroom *room;
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
+	g_return_if_fail (chatrooms != NULL);
+	g_return_if_fail (message != NULL);
+
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("Unknown chatroom id: %d", id);
@@ -663,7 +679,10 @@ gossip_jabber_chatrooms_set_title (GossipJabberChatrooms *chatrooms,
 	const gchar    *without_resource;
 	LmMessage      *m;
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
+	g_return_if_fail (chatrooms != NULL);
+	g_return_if_fail (new_title != NULL);
+
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("Unknown chatroom id: %d", id);
@@ -692,7 +711,10 @@ gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms *chatrooms,
 	LmMessage      *m;
 	JabberChatroom *room;
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
+	g_return_if_fail (chatrooms != NULL);
+	g_return_if_fail (new_nick != NULL);
+
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("Unknown chatroom id: %d", id);
@@ -718,7 +740,9 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 	LmMessage      *m;
 	JabberChatroom *room;
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
+	g_return_if_fail (chatrooms != NULL);
+
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("Unknown chatroom id: %d", id);
@@ -746,8 +770,10 @@ gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
 {
 	JabberChatroom *room;
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash,
-						       GINT_TO_POINTER (id));
+	g_return_val_if_fail (chatrooms != NULL, NULL);
+
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash,
+						      GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("Unknown chatroom id: %d", id);
 		return NULL;
@@ -765,6 +791,9 @@ gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 	LmMessage      *m;
 	LmMessageNode  *n;
 	JabberChatroom *room;
+
+	g_return_if_fail (chatrooms != NULL);
+	g_return_if_fail (contact_id != NULL);
 
 	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
@@ -804,6 +833,7 @@ gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
 
 	g_return_if_fail (invite_id != NULL);
 	g_return_if_fail (callback != NULL);
+
 	server = strstr (invite_id, "@");
 
 	g_return_if_fail (server != NULL);
@@ -830,6 +860,8 @@ gossip_jabber_chatrooms_get_rooms (GossipJabberChatrooms *chatrooms)
 {
 	GList *list = NULL;
 
+	g_return_val_if_fail (chatrooms != NULL, NULL);
+
 	g_hash_table_foreach (chatrooms->room_id_hash, 
 			      (GHFunc) jabber_chatrooms_get_rooms_foreach,
 			      &list);	
@@ -849,6 +881,8 @@ void
 gossip_jabber_chatrooms_set_presence (GossipJabberChatrooms  *chatrooms,
 				      GossipPresence         *presence)
 {
+	g_return_if_fail (chatrooms != NULL);
+	
 	if (chatrooms->presence) {
 		g_object_unref (chatrooms->presence);
 	}

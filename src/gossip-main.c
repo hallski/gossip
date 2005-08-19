@@ -173,7 +173,7 @@ main (int argc, char *argv[])
 	gossip_app_create ();
 	
 	if (!no_connect) {
-		gossip_app_connect ();
+		gossip_app_connect (TRUE);
 	}
 	
 	gtk_main ();

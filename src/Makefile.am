@@ -22,10 +22,13 @@ endif
 
 bin_PROGRAMS = gossip
 
+#	gossip-accounts-dialog.c           gossip-accounts-dialog.h		
+
 gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	gossip-about.c                     gossip-about.h  			\
-	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
+	gossip-accounts-window.c           gossip-accounts-window.h		\
+	gossip-account-info-dialog.c       gossip-account-info-dialog.h		\
 	gossip-add-contact.c	           gossip-add-contact.h			\
 	gossip-app.c	 	           gossip-app.h				\
 	gossip-cell-renderer-text.c        gossip-cell-renderer-text.h          \
@@ -46,12 +49,12 @@ gossip_SOURCES = 				                        	\
 	gossip-log.c		           gossip-log.h				\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \
+	gossip-new-account-window.c        gossip-new-account-window.h		\
 	gossip-notebook.c	           gossip-notebook.h			\
 	gossip-preferences.c               gossip-preferences.h	        	\
 	gossip-private-chat.c              gossip-private-chat.h               	\
 	gossip-register.c	           gossip-register.h			\
 	gossip-sound.c		           gossip-sound.h			\
-	gossip-startup-druid.c	           gossip-startup-druid.h		\
 	gossip-stock.c		           gossip-stock.h			\
 	gossip-spell.c                     gossip-spell.h                       \
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \

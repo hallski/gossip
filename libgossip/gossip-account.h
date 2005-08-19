@@ -88,11 +88,16 @@ gboolean          gossip_account_name_equals             (GossipAccount     *a,
 
 /* config operations */
 const GList *     gossip_accounts_get_all                (const gchar       *filename);
+
 GossipAccount *   gossip_accounts_get_default            (void);
 GossipAccount *   gossip_accounts_get_by_name            (const gchar       *name);
 void              gossip_accounts_set_overridden_default (const gchar       *name);
 void              gossip_accounts_set_default            (GossipAccount     *account);
-gboolean          gossip_accounts_store                  (GossipAccount     *account);
+
+gboolean          gossip_accounts_add                    (GossipAccount     *account);
+void              gossip_accounts_remove                 (GossipAccount     *account);
+
+gboolean          gossip_accounts_store                  (void);
 
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

@@ -404,7 +404,7 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbox))) {
 			gossip_account_set_password (account, password);
-			gossip_accounts_store (account);
+			gossip_accounts_store ();
 		}
 	} else {
 		password = NULL;

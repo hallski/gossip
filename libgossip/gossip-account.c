@@ -746,14 +746,14 @@ accounts_file_parse (const gchar *filename)
 						node_server = value;
 					} else if (xmlStrcmp (key, BAD_CAST "port") == 0) {
 						node_port = value;
-					} else if (xmlStrcmp (key, BAD_CAST "auto-connect") == 0) {
+					} else if (xmlStrcmp (key, BAD_CAST "auto_connect") == 0) {
 						node_auto_connect = value;
 					} else if (xmlStrcmp (key, BAD_CAST "use_ssl") == 0) {
 						node_use_ssl = value;
 					} else if (xmlStrcmp (key, BAD_CAST "use_proxy") == 0) {
 						node_use_proxy = value;
 					} 
-	}
+				}
 
 			       	ret = xmlTextReaderRead (reader);
 				key = xmlTextReaderConstName (reader);
@@ -1016,18 +1016,34 @@ gossip_accounts_set_default (GossipAccount *account)
 	default_name = g_strdup (name);
 
 	/* save */
-	gossip_accounts_store (account);
+	gossip_accounts_add (account);
 }
 
-gboolean
-gossip_accounts_store (GossipAccount *account)
+gboolean          
+gossip_accounts_add (GossipAccount *account)
 {
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
-	if (!accounts_check_exists (account)) {
-		accounts = g_list_append (accounts, g_object_ref (account));
-	}
+	/* don't add more than once */
+ 	if (!accounts_check_exists (account)) { 
+		accounts = g_list_append (accounts, account);
+		return TRUE;
+	} 
 
+	return FALSE;
+}
+
+void          
+gossip_accounts_remove (GossipAccount *account)
+{
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	accounts = g_list_remove (accounts, account);
+}
+
+gboolean
+gossip_accounts_store (void)
+{
 	return accounts_file_save ();
 }
 

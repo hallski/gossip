@@ -40,6 +40,8 @@
 typedef struct _GossipJoinDialog GossipJoinDialog;
 
 struct _GossipJoinDialog {
+	gpointer         *p;
+
 	GtkWidget        *dialog;
 	GtkWidget        *preamble_label;
 
@@ -92,45 +94,42 @@ enum {
 static void           join_dialog_setup_accounts       (GList                    *accounts,
 							GossipJoinDialog         *dialog);
 static GossipAccount *join_dialog_get_account_selected (GossipJoinDialog         *dialog);
-static void     join_dialog_setup_favorites       (GossipJoinDialog         *dialog,
-						   gboolean                  reload);
-static void     join_dialog_cancel                (GossipJoinDialog         *dialog,
-						   gboolean                  cleanup_ui,
-						   gboolean                  cancel_join);
-static gboolean join_dialog_progress_pulse_cb     (GtkWidget                *progressbar);
-static gboolean join_dialog_wait_cb               (GossipJoinDialog         *dialog);
-static gboolean join_dialog_timeout_cb            (GossipJoinDialog         *dialog);
-static gboolean join_dialog_select_favorite_cb    (GtkTreeModel             *model,
-						   GtkTreePath              *path,
-						   GtkTreeIter              *iter,
-						   FindFavorite             *ff);
-static gboolean join_dialog_is_separator_cb       (GtkTreeModel             *model,
-						   GtkTreeIter              *iter,
-						   gpointer                  data);
-static void     join_dialog_join_cb               (GossipChatroomProvider   *provider,
-						   GossipChatroomJoinResult  result,
-						   GossipChatroomId          id,
-						   gpointer                  user_data);
-static void     join_dialog_edit_clicked_cb       (GtkWidget                *widget,
-						   GossipJoinDialog         *dialog);
-static void     join_dialog_delete_clicked_cb     (GtkWidget                *widget,
-						   GossipJoinDialog         *dialog);
-static void     join_dialog_entry_changed_cb      (GtkWidget                *widget,
-						   GossipJoinDialog         *dialog);
-static void     join_dialog_reload_config_cb      (GtkWidget                *widget,
-						   GossipJoinDialog         *dialog);
+static void           join_dialog_setup_favorites      (GossipJoinDialog         *dialog,
+							gboolean                  reload);
+static void           join_dialog_cancel               (GossipJoinDialog         *dialog,
+							gboolean                  cleanup_ui,
+							gboolean                  cancel_join);
+static gboolean       join_dialog_progress_pulse_cb    (GtkWidget                *progressbar);
+static gboolean       join_dialog_wait_cb              (GossipJoinDialog         *dialog);
+static gboolean       join_dialog_timeout_cb           (GossipJoinDialog         *dialog);
+static gboolean       join_dialog_select_favorite_cb   (GtkTreeModel             *model,
+							GtkTreePath              *path,
+							GtkTreeIter              *iter,
+							FindFavorite             *ff);
+static gboolean       join_dialog_is_separator_cb      (GtkTreeModel             *model,
+							GtkTreeIter              *iter,
+							gpointer                  data);
+static void           join_dialog_join_cb              (GossipChatroomProvider   *provider,
+							GossipChatroomJoinResult  result,
+							GossipChatroomId          id,
+							GossipJoinDialog         *dialog);
+static void           join_dialog_edit_clicked_cb      (GtkWidget                *widget,
+							GossipJoinDialog         *dialog);
+static void           join_dialog_delete_clicked_cb    (GtkWidget                *widget,
+							GossipJoinDialog         *dialog);
+static void           join_dialog_entry_changed_cb     (GtkWidget                *widget,
+							GossipJoinDialog         *dialog);
+static void           join_dialog_reload_config_cb     (GtkWidget                *widget,
+							GossipJoinDialog         *dialog);
 static gboolean       join_dialog_account_foreach      (GtkTreeModel             *model,
 							GtkTreePath              *path,
 							GtkTreeIter              *iter,
 							gpointer                  user_data);
-static void     join_dialog_response_cb           (GtkWidget                *widget,
-						   gint                      response,
-						   GossipJoinDialog         *dialog);
-static void     join_dialog_destroy_cb            (GtkWidget                *unused,
-						   GossipJoinDialog         *dialog);
-
-
-static GossipJoinDialog *current_dialog = NULL;
+static void           join_dialog_response_cb          (GtkWidget                *widget,
+							gint                      response,
+							GossipJoinDialog         *dialog);
+static void           join_dialog_destroy_cb           (GtkWidget                *unused,
+							GossipJoinDialog         *dialog);
 
 
 static void
@@ -480,15 +479,11 @@ static void
 join_dialog_join_cb (GossipChatroomProvider   *provider,
 		     GossipChatroomJoinResult  result,
 		     GossipChatroomId          id,
-		     gpointer                  user_data)
+		     GossipJoinDialog         *dialog)
 {
-	GossipJoinDialog *dialog;
 	GtkWidget        *md;
 	const gchar      *str1 = NULL;
 	const gchar      *str2 = NULL;
-
-	/* FIXME: should be better */
-	dialog = current_dialog;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (dialog != NULL);
@@ -812,8 +807,8 @@ join_dialog_response_cb (GtkWidget        *widget,
 
 		id = gossip_chatroom_provider_join (provider,
 						    room, server, nickname, NULL,
-						    join_dialog_join_cb,
-						    NULL);
+						    (GossipChatroomJoinCb)join_dialog_join_cb,
+						    dialog);
 
 		dialog->joining = TRUE;
 		dialog->joining_id = id;
@@ -864,51 +859,54 @@ join_dialog_destroy_cb (GtkWidget        *widget,
 	gtk_tree_model_foreach (model, 
 				(GtkTreeModelForeachFunc) join_dialog_account_foreach, 
 				NULL);
+
+	*dialog->p = NULL;
+
 	g_free (dialog);
-	
-	current_dialog = NULL;
 }
 
 void
 gossip_join_dialog_show (void)
 {
-	GossipSession     *session;
-	GossipJoinDialog *dialog;
-	GladeXML          *glade;
-	GList             *accounts;
-	GtkSizeGroup      *size_group;
+	static GossipJoinDialog *dialog = NULL;
+	GladeXML                *glade;
+	GossipSession           *session;
+	GList                   *accounts;
+	GtkSizeGroup            *size_group;
 
-	if (current_dialog) {
-		gtk_window_present (GTK_WINDOW (current_dialog->dialog));
+	if (dialog) {
+		gtk_window_present (GTK_WINDOW (dialog->dialog));
 		return;
 	}		
 	
-        current_dialog = dialog = g_new0 (GossipJoinDialog, 1);
+        dialog = g_new0 (GossipJoinDialog, 1);
+
+	dialog->p = (gpointer) &dialog;
 
 	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
-				     "join_group_chat_dialog",
-				     NULL,
-				     "join_group_chat_dialog", &dialog->dialog,
+				       "join_group_chat_dialog",
+				       NULL,
+				       "join_group_chat_dialog", &dialog->dialog,
 				       "account_table", &dialog->account_table,
 				       "account_label", &dialog->account_label,
 				       "account_combobox", &dialog->account_combobox,
-				     "preamble_label", &dialog->preamble_label,
-				     "details_table", &dialog->details_table,
+				       "preamble_label", &dialog->preamble_label,
+				       "details_table", &dialog->details_table,
 				       "favorite_label", &dialog->favorite_label,
-				     "favorite_combobox", &dialog->favorite_combobox,
+				       "favorite_combobox", &dialog->favorite_combobox,
 				       "nickname_label", &dialog->nickname_label,
-				     "nickname_entry", &dialog->nickname_entry,
+				       "nickname_entry", &dialog->nickname_entry,
 				       "server_label", &dialog->server_label,
-				     "server_entry", &dialog->server_entry,
+				       "server_entry", &dialog->server_entry,
 				       "room_label", &dialog->room_label,
-				     "room_entry", &dialog->room_entry,
-				     "edit_button", &dialog->edit_button,
-				     "delete_button", &dialog->delete_button,
-				     "add_checkbutton", &dialog->add_checkbutton,
-				     "joining_vbox", &dialog->joining_vbox,
-				     "joining_progressbar", &dialog->joining_progressbar,
-				     "join_button", &dialog->join_button,
-				     NULL);
+				       "room_entry", &dialog->room_entry,
+				       "edit_button", &dialog->edit_button,
+				       "delete_button", &dialog->delete_button,
+				       "add_checkbutton", &dialog->add_checkbutton,
+				       "joining_vbox", &dialog->joining_vbox,
+				       "joining_progressbar", &dialog->joining_progressbar,
+				       "join_button", &dialog->join_button,
+				       NULL);
 	
 	gossip_glade_connect (glade, 
 			      dialog,

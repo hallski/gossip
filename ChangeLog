@@ -1,3 +1,44 @@
+2005-08-19  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-account-info-dialog.[ch]:
+	* src/gossip-accounts-window.[ch]:
+	- Added to handle multiple accounts.
+
+	* src/gossip-accounts-dialog.[ch]:
+	* src/gossip-startup-druid.[ch]:
+	- Removed.
+
+	* src/gossip-new-account-window.[ch]:
+	- Added to replace gossip-startup-druid since we use the same
+	wizard when adding new accounts now (except we skip the	welcome
+	page). 
+
+	* ui/connect.glade:
+	* ui/main.glade:
+	- Reflect new files gossip-account-info-dialog and
+	gossip-accounts-window.
+	
+	* src/gossip-app.c:
+	* src/gossip-main.c:
+	* libgossip/gossip-session.c: 
+	- Only start accounts on startup if they have the "auto_connect"
+	flag is set. 
+
+	* src/gossip-register.c:
+	* src/gossip-ui-utils.c:
+	* libgossip/gossip-account.[ch]: 
+	- Improved API to be able to add/remove accounts.
+	- Fixed xml parser to read in the auto_connect flag properly.
+
+	* protocols/jabber/gossip-jabber-chatrooms.c: 
+	- Added a lot of checks before dereferencing pointers.
+
+	* protocols/jabber/gossip-jid.c (gossip_jid_get_part_name): 
+	- Fixed crash when returning "" instead of g_strdup("") on error.
+
+	* src/gossip-join-dialog.c:
+	- Improved method for only showing one join dialog.
+	
 2005-08-18  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-account.c:

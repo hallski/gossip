@@ -74,7 +74,8 @@ gboolean        gossip_session_remove_account          (GossipSession           
 							GossipAccount           *account);
 GossipAccount * gossip_session_find_account            (GossipSession           *session,
 							GossipContact           *contact);
-void            gossip_session_connect                 (GossipSession           *session);
+void            gossip_session_connect                 (GossipSession           *session,
+							gboolean                 startup);
 void            gossip_session_disconnect              (GossipSession           *session);
 void            gossip_session_send_message            (GossipSession           *session,
 							GossipMessage           *message);
