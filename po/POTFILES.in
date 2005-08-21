@@ -9,7 +9,8 @@ libgossip/gossip-contact.c
 protocols/jabber/gossip-jabber.c
 
 src/gossip-about.c
-src/gossip-accounts-dialog.c
+src/gossip-account-info-dialog.c
+src/gossip-accounts-window.c
 src/gossip-add-contact.c
 src/gossip-app.c
 src/gossip-cell-renderer-text.c
@@ -26,12 +27,12 @@ src/gossip-group-chat.c
 src/gossip-idle.c
 src/gossip-join-dialog.c
 src/gossip-log.c
+src/gossip-new-account-window.c
 src/gossip-main.c
 src/gossip-preferences.c
 src/gossip-private-chat.c
 src/gossip-register.c
 src/gossip-spell-dialog.c
-src/gossip-startup-druid.c
 src/gossip-status-presets-dialog.c
 src/gossip-ui-utils.c
 src/gossip-vcard-dialog.c
