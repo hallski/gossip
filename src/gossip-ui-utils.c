@@ -366,7 +366,8 @@ password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
 }
 
 gchar *
-gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
+gossip_password_dialog_run (GossipAccount *account, 
+			    GtkWindow     *parent)
 {
 	GtkWidget *dialog;
 	GtkWidget *checkbox;
@@ -403,8 +404,14 @@ gossip_password_dialog_run (GossipAccount *account, GtkWindow *parent)
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
 		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbox))) {
+			GossipSession        *session;
+			GossipAccountManager *manager;
+			
+			session = gossip_app_get_session ();
+			manager = gossip_session_get_account_manager (session);
+
 			gossip_account_set_password (account, password);
-			gossip_accounts_store ();
+			gossip_account_manager_store (manager);
 		}
 	} else {
 		password = NULL;

@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gossip-account.h"
+#include "gossip-account-manager.h"
 #include "gossip-async.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-contact.h"
@@ -61,12 +62,11 @@ struct _GossipSessionClass {
 
 
 GType           gossip_session_get_type                (void) G_GNUC_CONST;
-GossipSession * gossip_session_new                     (const gchar             *accounts_file);
-
-
-
+GossipSession * gossip_session_new                     (GossipAccountManager    *manager);
 
 /* accounts */
+GossipAccountManager *
+                gossip_session_get_account_manager     (GossipSession           *session);
 GList *         gossip_session_get_accounts            (GossipSession           *session);
 gboolean        gossip_session_add_account             (GossipSession           *session,
 							GossipAccount           *account);

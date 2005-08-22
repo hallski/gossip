@@ -400,7 +400,7 @@ add_contact_set_selected_account_foreach (GtkTreeModel   *model,
 	account1 = GOSSIP_ACCOUNT (data->account);
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
 
-	if (gossip_account_name_equals (account1, account2)) {
+	if (gossip_account_equal (account1, account2)) {
 		GtkComboBox *combobox;
 
 		combobox = GTK_COMBO_BOX (data->combobox);

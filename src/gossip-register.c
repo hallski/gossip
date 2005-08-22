@@ -29,6 +29,7 @@
 #include "gossip-app.h"
 #include "gossip-register.h"
 
+
 typedef struct {
 	GossipAccount *account;
 	GtkWidget     *dialog;
@@ -36,6 +37,7 @@ typedef struct {
 	gboolean       success;
 	gchar         *error_message;
 } RegisterAccountData;
+
 
 static void
 register_dialog_destroy_cb (GtkWidget           *widget,
@@ -122,10 +124,10 @@ gossip_register_account (GossipAccount *account,
 			  data);
 	
         gossip_session_register_account (gossip_app_get_session (),
-                                       GOSSIP_ACCOUNT_TYPE_JABBER,
-                                       account,
+					 GOSSIP_ACCOUNT_TYPE_JABBER,
+					 account,
 					 (GossipRegisterCallback) register_registration_done_cb,
-                                       data, NULL);
+					 data, NULL);
         g_free (password);
 
 	response = gtk_dialog_run (GTK_DIALOG (data->dialog));
@@ -143,7 +145,10 @@ gossip_register_account (GossipAccount *account,
 	}
 	
 	if (data->success) {
-		GtkWidget *dialog;
+		GossipSession        *session;
+		GossipAccountManager *manager;
+		
+		GtkWidget            *dialog;
 		
 		dialog = gtk_message_dialog_new (parent,
 						 GTK_DIALOG_MODAL |
@@ -161,9 +166,12 @@ gossip_register_account (GossipAccount *account,
 		
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
-	
+
 		/* Add account information */
-		gossip_accounts_store ();
+		session = gossip_app_get_session ();
+		manager = gossip_session_get_account_manager (session);
+		
+		gossip_account_manager_store (manager);
 
 		retval = TRUE;
 	} else {

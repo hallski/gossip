@@ -38,14 +38,16 @@ typedef struct _GossipSessionPriv  GossipSessionPriv;
 
 
 struct _GossipSessionPriv {
-	GHashTable     *accounts;
-	GList          *protocols;
+ 	GossipAccountManager *account_manager; 
 
-	GossipPresence *presence;
+	GHashTable           *accounts;
+	GList                *protocols;
 
-	GList          *contacts;
+	GossipPresence       *presence;
 
-	guint           connected_counter;
+	GList                *contacts;
+
+	guint                 connected_counter;
 };
 
 
@@ -55,6 +57,18 @@ typedef struct {
 } FindAccount;
 
 
+typedef struct {
+	GossipSession *session;
+	GList         *accounts;
+} GetAccounts;
+
+
+typedef struct {
+	GossipSession *session;
+	gboolean       startup;
+} ConnectAccounts;
+
+
 static void            gossip_session_class_init                 (GossipSessionClass  *klass);
 static void            gossip_session_init                       (GossipSession       *session);
 static void            session_finalize                          (GObject             *object);
@@ -62,7 +76,7 @@ static void            session_connect_protocol                  (GossipSession 
 								  GossipProtocol      *protocol);
 static void            session_connect_foreach_cb                (gchar               *account_name,
 								  GossipProtocol      *protocol,
-								  gpointer            *pstartup);
+								  ConnectAccounts     *data);
 static void            session_protocol_logged_in                (GossipProtocol      *protocol,
 								  GossipSession       *session);
 static void            session_protocol_logged_out               (GossipProtocol      *protocol,
@@ -92,7 +106,7 @@ static GossipProtocol *session_get_protocol                      (GossipSession 
 								  GossipContact       *contact);
 static void            session_get_accounts_foreach_cb           (const gchar         *account_name,
 								  GossipProtocol      *protocol,
-								  GList              **list);
+								  GetAccounts         *data);
 static void            session_find_account_foreach_cb           (const gchar         *account_name,
 								  GossipProtocol      *protocol,
 								  FindAccount         *fa);
@@ -285,7 +299,7 @@ session_finalize (GObject *object)
 	
 	if (priv->accounts) {
 		g_hash_table_destroy (priv->accounts);
-		}
+	}
 
 	if (priv->protocols) {
 		g_list_foreach (priv->protocols, 
@@ -301,6 +315,10 @@ session_finalize (GObject *object)
 
 		g_list_free (priv->contacts);
 	}
+
+ 	if (priv->account_manager) { 
+ 		g_object_unref (priv->account_manager); 
+ 	} 
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -516,14 +534,21 @@ session_get_protocol (GossipSession *session,
 }
 
 GossipSession *
-gossip_session_new (const gchar *accounts_file)
+gossip_session_new (GossipAccountManager *manager)
 {
-	GossipSession *session;
-	const GList   *accounts, *l;
+	GossipSession     *session;
+	GossipSessionPriv *priv;
+	const GList       *accounts, *l;
+ 
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 
 	session = g_object_new (GOSSIP_TYPE_SESSION, NULL);
 
-	accounts = gossip_accounts_get_all (accounts_file);
+	priv = GET_PRIV (session);
+
+	priv->account_manager = g_object_ref (manager);
+
+	accounts = gossip_account_manager_get_accounts (manager);
 	
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
@@ -534,19 +559,40 @@ gossip_session_new (const gchar *accounts_file)
 	return session;
 }
 
+GossipAccountManager *
+gossip_session_get_account_manager (GossipSession *session) 
+{
+	GossipSessionPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+
+	priv = GET_PRIV (session);
+
+	return priv->account_manager;
+}
+
 GList *
 gossip_session_get_accounts (GossipSession *session)
 {
 	GossipSessionPriv *priv;
-	GList             *list = NULL;
+	GetAccounts       *data;
+	GList             *list;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	
 	priv = GET_PRIV (session);
 
+	data = g_new0 (GetAccounts, 1);
+
+	data->session = session;
+
 	g_hash_table_foreach (priv->accounts, 
 			      (GHFunc)session_get_accounts_foreach_cb,
-			      &list);
+			      data);
+
+	list = data->accounts;
+
+	g_free (data);
 
 	return list;
 }
@@ -554,13 +600,16 @@ gossip_session_get_accounts (GossipSession *session)
 static void
 session_get_accounts_foreach_cb (const gchar     *account_name,
 				 GossipProtocol  *protocol,
-				 GList          **list)
+				 GetAccounts     *data)
 {
-	GossipAccount *account;
+	GossipSessionPriv *priv;
+	GossipAccount     *account;
 
-	account = gossip_accounts_get_by_name (account_name);
+	priv = GET_PRIV (data->session);
+
+	account = gossip_account_manager_find (priv->account_manager, account_name);
 	if (account) {
-		*list = g_list_append (*list, account);
+		data->accounts = g_list_append (data->accounts, account);
 	}
 }
 
@@ -664,7 +713,8 @@ gossip_session_find_account (GossipSession *session,
 			      fa);
 
 	if (fa->account_name) {
-		account = gossip_accounts_get_by_name (fa->account_name);
+		account = gossip_account_manager_find (priv->account_manager,
+						       fa->account_name);
 	}
 
 	g_free (fa->contact_id);
@@ -689,6 +739,7 @@ gossip_session_connect (GossipSession *session,
 			gboolean       startup)
 {
 	GossipSessionPriv *priv;
+	ConnectAccounts   *data;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
@@ -700,24 +751,34 @@ gossip_session_connect (GossipSession *session,
 	priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
 						   NULL);
 
+	
+	data = g_new0 (ConnectAccounts, 1);
+
+	data->session = session;
+	data->startup = startup;
+
 	g_hash_table_foreach (priv->accounts,
 			      (GHFunc)session_connect_foreach_cb,
-			      GINT_TO_POINTER (startup));
+			      data);
+
+	g_free (data);
 }
 
 static void
-session_connect_foreach_cb (gchar          *account_name,
-			    GossipProtocol *protocol,
-			    gpointer       *pstartup)
+session_connect_foreach_cb (gchar           *account_name,
+			    GossipProtocol  *protocol,
+			    ConnectAccounts *data)
 {
-	GossipAccount *account;
-	gboolean       startup;
+	GossipSessionPriv *priv;
+	GossipAccount     *account;
 
-	startup = GPOINTER_TO_INT (pstartup);
+	priv = GET_PRIV (data->session);
 
-	account = gossip_accounts_get_by_name (account_name);
+	account = gossip_account_manager_find (priv->account_manager,
+					       account_name);
 	
-	if (startup && !gossip_account_get_auto_connect (account)) {
+	if (data->startup && 
+	    !gossip_account_get_auto_connect (account)) {
 		return;
 	}
 	
@@ -1092,7 +1153,7 @@ gossip_session_get_contacts_by_account (GossipSession *session,
 
 		this_account = gossip_contact_get_account (contact);
 
-		if (!gossip_account_name_equals (this_account, account)) {
+		if (!gossip_account_equal (this_account, account)) {
 			continue;
 		}
 

@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <gtk/gtkwidget.h>
 
-#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-event-manager.h>
 #include <libgossip/gossip-session.h>
 
@@ -57,18 +57,21 @@ struct _GossipAppClass {
 
 
 GType               gossip_app_get_type          (void) G_GNUC_CONST;
-void                gossip_app_create            (void);
-void                gossip_app_connect           (gboolean             startup);
+
+void                gossip_app_create            (GossipAccountManager *manager);
+void                gossip_app_connect           (gboolean              startup);
 const gchar *       gossip_app_get_username      (void);
 GossipApp *         gossip_app_get               (void);
 gboolean            gossip_app_is_connected      (void);
 GtkWidget *         gossip_app_get_window        (void);
 void                gossip_app_force_non_away    (void);
-void                gossip_app_set_presence      (GossipPresenceState  state,
-						  const gchar         *status);
+void                gossip_app_set_presence      (GossipPresenceState   state,
+						  const gchar          *status);
 GossipSession *     gossip_app_get_session       (void);
-GossipChatManager * gossip_app_get_chat_manager  (void);
+GossipChatManager  *gossip_app_get_chat_manager  (void);
 GossipEventManager *gossip_app_get_event_manager (void);
+
+
 
 
 #endif /* __GOSSIP_APP_H__ */

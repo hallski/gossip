@@ -56,48 +56,40 @@ typedef enum {
 
 GType             gossip_account_get_gtype               (void) G_GNUC_CONST;
 
-GossipAccountType gossip_account_get_type                (GossipAccount     *account);
-const gchar *     gossip_account_get_name                (GossipAccount     *account);
-const gchar *     gossip_account_get_id                  (GossipAccount     *account);
-const gchar *     gossip_account_get_password            (GossipAccount     *account);
-const gchar *     gossip_account_get_server              (GossipAccount     *account);
-guint16           gossip_account_get_port                (GossipAccount     *account);
-gboolean          gossip_account_get_auto_connect        (GossipAccount     *account);
-gboolean          gossip_account_get_use_ssl             (GossipAccount     *account);
-gboolean          gossip_account_get_use_proxy           (GossipAccount     *account);
-void              gossip_account_set_type                (GossipAccount     *account,
-							  GossipAccountType  type);
-void              gossip_account_set_name                (GossipAccount     *account,
-							  const gchar       *name);
-void              gossip_account_set_id                  (GossipAccount     *account,
-							  const gchar       *id);
-void              gossip_account_set_password            (GossipAccount     *account,
-							  const gchar       *password);
-void              gossip_account_set_server              (GossipAccount     *account,
-							  const gchar       *server);
-void              gossip_account_set_port                (GossipAccount     *account,
-							  guint16            port);
-void              gossip_account_set_auto_connect        (GossipAccount     *account,
-							  gboolean           auto_connect);
-void              gossip_account_set_use_ssl             (GossipAccount     *account,
-							  gboolean           use_ssl);
-void              gossip_account_set_use_proxy           (GossipAccount     *account,
-							  gboolean           use_proxy);
-gboolean          gossip_account_name_equals             (GossipAccount     *a,
-							  GossipAccount     *b);
+GossipAccountType gossip_account_get_type         (GossipAccount     *account);
+const gchar *     gossip_account_get_name         (GossipAccount     *account);
+const gchar *     gossip_account_get_id           (GossipAccount     *account);
+const gchar *     gossip_account_get_password     (GossipAccount     *account);
+const gchar *     gossip_account_get_server       (GossipAccount     *account);
+guint16           gossip_account_get_port         (GossipAccount     *account);
+gboolean          gossip_account_get_auto_connect (GossipAccount     *account);
+gboolean          gossip_account_get_use_ssl      (GossipAccount     *account);
+gboolean          gossip_account_get_use_proxy    (GossipAccount     *account);
+void              gossip_account_set_type         (GossipAccount     *account,
+						   GossipAccountType  type);
+void              gossip_account_set_name         (GossipAccount     *account,
+						   const gchar       *name);
+void              gossip_account_set_id           (GossipAccount     *account,
+						   const gchar       *id);
+void              gossip_account_set_password     (GossipAccount     *account,
+						   const gchar       *password);
+void              gossip_account_set_server       (GossipAccount     *account,
+						   const gchar       *server);
+void              gossip_account_set_port         (GossipAccount     *account,
+						   guint16            port);
+void              gossip_account_set_auto_connect (GossipAccount     *account,
+						   gboolean           auto_connect);
+void              gossip_account_set_use_ssl      (GossipAccount     *account,
+						   gboolean           use_ssl);
+void              gossip_account_set_use_proxy    (GossipAccount     *account,
+						   gboolean           use_proxy);
 
-/* config operations */
-const GList *     gossip_accounts_get_all                (const gchar       *filename);
+gboolean          gossip_account_equal            (gconstpointer      v1,
+						   gconstpointer      v2);
+guint             gossip_account_hash             (gconstpointer      key);
+gint              gossip_account_compare          (gconstpointer      a,
+						   gconstpointer      b);
 
-GossipAccount *   gossip_accounts_get_default            (void);
-GossipAccount *   gossip_accounts_get_by_name            (const gchar       *name);
-void              gossip_accounts_set_overridden_default (const gchar       *name);
-void              gossip_accounts_set_default            (GossipAccount     *account);
-
-gboolean          gossip_accounts_add                    (GossipAccount     *account);
-void              gossip_accounts_remove                 (GossipAccount     *account);
-
-gboolean          gossip_accounts_store                  (void);
 
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

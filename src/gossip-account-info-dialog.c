@@ -147,15 +147,20 @@ account_info_dialog_setup (GossipAccountInfoDialog *dialog)
 static void
 account_info_dialog_save (GossipAccountInfoDialog *dialog) 
 {
- 	const gchar   *str;
-	gchar         *id_to_save;
-	const gchar   *resource;
-	gint           pnr;
-	gboolean       bool;
+	GossipSession        *session;
+	GossipAccountManager *manager;
+ 	const gchar          *str;
+	gchar                *id_to_save;
+	const gchar          *resource;
+	gint                  pnr;
+	gboolean              bool;
+
+	session = gossip_app_get_session ();
+ 	manager = gossip_session_get_account_manager (session);
 
 	/* set name */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
-	gossip_account_set_name (dialog->account, str);
+ 	gossip_account_set_name (dialog->account, str); 
 
 	/* set id */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
@@ -194,7 +199,7 @@ account_info_dialog_save (GossipAccountInfoDialog *dialog)
 	gossip_account_set_use_ssl (dialog->account, bool);
 	
 	/* save */
-	gossip_accounts_store ();
+	gossip_account_manager_store (manager);
 }
 
 static void  

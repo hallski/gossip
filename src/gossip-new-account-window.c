@@ -275,7 +275,7 @@ new_account_window_prepare_page_last (GnomeDruidPage         *page,
 	}
 
 	gtk_label_set_markup (GTK_LABEL (window->last_action_label), str);
-	
+
 	g_free (str);
 
 	g_object_unref (account);
@@ -371,11 +371,13 @@ new_account_window_4_different_toggled (GtkToggleButton        *button,
 static gboolean
 new_account_window_setup_account (GossipNewAccountWindow *druid)
 {
-	GossipAccount *account;
-	const GList   *accounts;
-	gboolean       has_account;
+	GossipSession        *session;
+	GossipAccountManager *manager;
+	GossipAccount        *account;
+	gboolean              has_account;
 
-	accounts = gossip_accounts_get_all (NULL);
+	session = gossip_app_get_session ();
+	manager = gossip_session_get_account_manager (session);
 
 	has_account = new_account_window_get_account_info (druid, &account); 
 	if (!has_account) {
@@ -384,12 +386,13 @@ new_account_window_setup_account (GossipNewAccountWindow *druid)
 		}
 	}
 	
-	if (g_list_length ((GList*)accounts) < 1) {
-		gossip_accounts_set_default (account);
+	if (gossip_account_manager_get_count (manager) < 1) {
+		gossip_account_manager_set_default (manager, account);
 	}
 
-	gossip_accounts_add (account);
-	gossip_accounts_store ();
+	gossip_account_manager_add (manager, account);
+	gossip_account_manager_store (manager);
+
 	g_object_unref (account);
 	
 	return TRUE;
@@ -398,14 +401,24 @@ new_account_window_setup_account (GossipNewAccountWindow *druid)
 gboolean
 gossip_new_account_window_is_needed (void)
 {
-	GossipAccount *account;
+	GossipSession          *session;
+	GossipAccountManager   *manager;
 
 	if (g_getenv ("GOSSIP_FORCE_DRUID")) {
 		return TRUE;
 	}
 
-	account = gossip_accounts_get_default ();
-	if (!account) {
+	session = gossip_app_get_session ();
+	if (!session) {
+		return FALSE;
+	}
+
+	manager = gossip_session_get_account_manager (session);
+	if (!manager) {
+		return FALSE;
+	}
+
+	if (gossip_account_manager_get_count (manager) < 1) {
 		return TRUE;
 	}
 
@@ -499,6 +512,7 @@ gossip_new_account_window_show (void)
 		      NULL);
 
 	gtk_widget_show (window->window);
+
 
 	if (!gossip_new_account_window_is_needed ()) {
 		/* skip the first page */

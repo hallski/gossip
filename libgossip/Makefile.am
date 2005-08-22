@@ -10,10 +10,11 @@ noinst_LTLIBRARIES = libgossip.la
 
 libgossip_la_SOURCES =             \
 	gossip-account.c           \
+	gossip-account-manager.c   \
 	gossip-chatroom-provider.c \
 	gossip-contact.c           \
-	gossip-event-manager.c     \
 	gossip-event.c             \
+	gossip-event-manager.c     \
 	gossip-message.c           \
 	gossip-presence.c          \
 	gossip-protocol.c          \
@@ -24,6 +25,7 @@ libgossip_la_SOURCES =             \
 	gossip-version-info.c      \
 	libgossip-marshal-main.c   \
 	gossip-account.h           \
+	gossip-account-manager.h   \
 	gossip-async.h             \
 	gossip-chatroom-provider.h \
 	gossip-contact.h           \

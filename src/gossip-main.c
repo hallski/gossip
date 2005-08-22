@@ -31,6 +31,7 @@
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
 
+#include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-account.h>
 
 #include "gossip-preferences.h"
@@ -57,13 +58,14 @@ setup_default_window_icon (void)
 int
 main (int argc, char *argv[])
 {
-	GnomeProgram       *program;
-	gboolean            no_connect = FALSE;
-	gboolean            list_accounts = FALSE;
-	poptContext         popt_context;
-	gchar              *account_name = NULL;
-	const gchar       **args;
-	const GList        *accounts;
+	GnomeProgram          *program;
+	GossipAccountManager  *account_manager;
+	gboolean               no_connect = FALSE;
+	gboolean               list_accounts = FALSE;
+	poptContext            popt_context;
+	gchar                 *account_name = NULL;
+	const gchar          **args;
+	const GList           *accounts;
 
 	struct poptOption   options[] = {
 		{ "no-connect",
@@ -113,28 +115,29 @@ main (int argc, char *argv[])
 	args = poptGetArgs (popt_context);
 
 	/* get all accounts */
-	accounts = gossip_accounts_get_all (NULL);
+ 	account_manager = gossip_account_manager_new (NULL);
+
+	accounts = gossip_account_manager_get_accounts (account_manager);
 
 	if (list_accounts) {
 		const GList   *l;
-		GossipAccount *default_account = NULL;
+		GossipAccount *def = NULL;
 
 		if (g_list_length ((GList*)accounts) < 1) {
 			g_print (_("No accounts available."));
 			g_print ("\n");
 		} else {
-			default_account = gossip_accounts_get_default ();
-
-		g_print (_("Available accounts:"));
-		g_print ("\n");
+			def = gossip_account_manager_get_default (account_manager);
+			
+			g_print (_("Available accounts:"));
+			g_print ("\n");
 		}
 		
 		for (l = accounts; l; l = l->next) {
 			GossipAccount *account = l->data;
 			
 			g_print (" %s", gossip_account_get_name (account));
-			if (strcmp (gossip_account_get_name (account), 
-				    gossip_account_get_name (default_account)) == 0) {
+			if (gossip_account_equal (account, def)) {
 				g_print (" ");
 				g_print (_("[default]"));
 			}
@@ -148,7 +151,8 @@ main (int argc, char *argv[])
 	if (account_name) {
 		GossipAccount *account;
 
-		account = gossip_accounts_get_by_name (account_name);
+		account = gossip_account_manager_find (account_manager,
+						       account_name);
 		if (!account) {
 			fprintf (stderr,
 				 _("There is no account with the name '%s'."),
@@ -158,7 +162,8 @@ main (int argc, char *argv[])
 		}
 
 		/* use the specified account as default account. */
-		gossip_accounts_set_overridden_default (account_name);
+		gossip_account_manager_set_overridden_default (account_manager,
+							       account_name);
 	}
 
 	gconf_client = gconf_client_get_default ();
@@ -170,7 +175,7 @@ main (int argc, char *argv[])
 
 	gossip_stock_init ();
 	setup_default_window_icon ();
-	gossip_app_create ();
+	gossip_app_create (account_manager);
 	
 	if (!no_connect) {
 		gossip_app_connect (TRUE);
@@ -178,6 +183,7 @@ main (int argc, char *argv[])
 	
 	gtk_main ();
 
+	g_object_unref (account_manager);
 	g_object_unref (gconf_client);
 
 	return EXIT_SUCCESS;

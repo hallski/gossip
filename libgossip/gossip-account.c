@@ -23,22 +23,18 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <libgnomevfs/gnome-vfs.h>
-#include <libxml/xmlreader.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
+
+#include "libgossip-marshal.h"
 
 #include "gossip-account.h"
 
-#define ACCOUNTS_XML_FILENAME "accounts.xml"
-#define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
-
 #define GOSSIP_ACCOUNT_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
 
-#define d(x)
+#define d(x) x
 
 
 typedef struct _GossipAccountPriv GossipAccountPriv;
+
 
 struct _GossipAccountPriv {
 	GossipAccountType  type;
@@ -66,10 +62,6 @@ static void     account_set_property   (GObject            *object,
 					guint               param_id,
 					const GValue       *value,
 					GParamSpec         *pspec);
-static gboolean accounts_file_parse    (const gchar        *filename);
-static gboolean accounts_file_validate (const gchar        *filename);
-static gboolean accounts_file_save     (void);
-static gboolean accounts_check_exists  (GossipAccount      *account);
 
 
 enum {
@@ -86,11 +78,13 @@ enum {
 };
 
 
-static GList    *accounts = NULL;
+enum {
+	CHANGED,
+	LAST_SIGNAL
+};
 
-static gchar    *accounts_file_name = NULL;
-static gchar    *default_name = NULL;
-static gchar    *default_name_override = NULL;
+
+static guint     signals[LAST_SIGNAL] = {0};
 
 static gpointer  parent_class = NULL;
 
@@ -133,6 +127,10 @@ account_class_init (GossipAccountClass *class)
 	object_class->finalize     = account_finalize;
 	object_class->get_property = account_get_property;
 	object_class->set_property = account_set_property;
+
+	/* 
+	 * properties 
+	 */
 
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
@@ -212,6 +210,21 @@ account_class_init (GossipAccountClass *class)
 							       G_PARAM_READWRITE));
 	
 	
+	/*
+	 * signals
+	 */
+
+        signals[CHANGED] = 
+		g_signal_new ("changed",
+			      G_TYPE_FROM_CLASS (object_class),
+                              G_SIGNAL_RUN_LAST,
+			      0, 
+			      NULL, NULL,
+			      libgossip_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+
+
 	g_type_class_add_private (object_class, sizeof (GossipAccountPriv));
 }
 
@@ -305,6 +318,7 @@ account_set_property (GObject      *object,
 	switch (param_id) {
 	case PROP_TYPE:
 		priv->type = g_value_get_int (value);
+		g_signal_emit (GOSSIP_ACCOUNT (object), signals[CHANGED], 0);
 		break;
 	case PROP_NAME:
 		gossip_account_set_name (GOSSIP_ACCOUNT (object),
@@ -457,6 +471,9 @@ gossip_account_set_name (GossipAccount *account,
 	
 	g_free (priv->name);
 	priv->name = g_strdup (name);
+
+	g_object_notify (G_OBJECT (account), "name");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -472,6 +489,9 @@ gossip_account_set_id (GossipAccount *account,
 
 	g_free (priv->id);
 	priv->id = g_strdup (id);
+
+	g_object_notify (G_OBJECT (account), "id");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -487,6 +507,9 @@ gossip_account_set_password (GossipAccount *account,
 	
 	g_free (priv->password);
 	priv->password = g_strdup (password);
+
+	g_object_notify (G_OBJECT (account), "password");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -502,6 +525,9 @@ gossip_account_set_server (GossipAccount *account,
 	
 	g_free (priv->server);
 	priv->server = g_strdup (server);
+
+	g_object_notify (G_OBJECT (account), "server");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -514,6 +540,9 @@ gossip_account_set_port (GossipAccount *account,
 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
 	priv->port = port;
+
+	g_object_notify (G_OBJECT (account), "port");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -526,6 +555,9 @@ gossip_account_set_auto_connect (GossipAccount *account,
 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
 	priv->auto_connect = auto_connect;
+
+	g_object_notify (G_OBJECT (account), "auto_connect");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -538,6 +570,9 @@ gossip_account_set_use_ssl (GossipAccount *account,
 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
 	priv->use_ssl = use_ssl;
+
+	g_object_notify (G_OBJECT (account), "use_ssl");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -550,501 +585,52 @@ gossip_account_set_use_proxy (GossipAccount *account,
 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
 	priv->use_proxy = use_proxy;
-}
 
-
-gboolean 
-gossip_account_name_equals (GossipAccount *a, 
-			    GossipAccount *b)
-{
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), FALSE); 
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), FALSE); 
-
-	g_return_val_if_fail (gossip_account_get_name (a) != NULL, FALSE); 
-	g_return_val_if_fail (gossip_account_get_name (b) != NULL, FALSE); 
-
-	/* FIXME: this can't be the best way? */
-	return (strcmp (gossip_account_get_name (a), 
-			gossip_account_get_name (b)) == 0);
-}
-
-/*
- * API to save accounts to file.
- */
-
-const GList *
-gossip_accounts_get_all (const gchar *filename)
-{
-	gchar *dir;
-	gchar *file_with_path = NULL;
-
-	g_free (accounts_file_name);
-	accounts_file_name = NULL;
-
-	if (filename) {
-		gboolean file_exists; 
-
-		file_exists = g_file_test (filename, G_FILE_TEST_EXISTS);
-		g_return_val_if_fail (file_exists, NULL);
-
-		file_with_path = g_strdup (filename);
-		
-		/* remember for saving */
-		accounts_file_name = g_strdup (filename);
-	}
-
-	/* if already set up clean up first */
-	if (accounts) {
-		g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
-		g_list_free (accounts);
-		accounts = NULL;
-	}
-
-	/* use default if no file specified */
-	if (!file_with_path) {
-		dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-		if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		}
-
-		file_with_path = g_build_filename (dir, ACCOUNTS_XML_FILENAME, NULL);
-		g_free (dir);
-	}
-
-	/* read file in */
-	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
-		if (accounts_file_validate (file_with_path)) {
-			accounts_file_parse (file_with_path);
-		}
-	}
-	
-	g_free (file_with_path);
-
-	return accounts;
-}
-
-static gboolean
-accounts_file_validate (const char *filename)
-{
-	xmlParserCtxtPtr ctxt;
-	xmlDocPtr        doc; 
-	gboolean         success = FALSE;
-	
-	g_return_val_if_fail (filename != NULL, FALSE);
-	
-	d(g_print ("Attempting to validate file (against DTD):'%s'\n", 
-		   filename));
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt ();
-	if (ctxt == NULL) {
-		g_warning ("Failed to allocate parser context for file:'%s'", 
-			   filename);
-		return FALSE;
-	}
-	
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);
-
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		g_warning ("Failed to parse file:'%s'", 
-			   filename);
-	} else {
-		/* check if validation suceeded */
-		if (ctxt->valid == 0) {
-			g_warning ("Failed to validate file:'%s'", 
-				   filename);
-		} else {
-			success = TRUE;
-		}
-
-		/* free up the resulting document */
-		xmlFreeDoc(doc);
-	} 
-
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-
-	return success;
-}
-
-static gboolean
-accounts_file_parse (const gchar *filename) 
-{
-	xmlDocPtr         doc;
-	xmlTextReaderPtr  reader;
-	int               ret;
-
-	g_return_val_if_fail (filename != NULL, FALSE);
-	
-	d(g_print ("Attempting to parse file:'%s'...\n", filename));
-	
-	reader = xmlReaderForFile (filename, NULL, 0);
-	if (reader == NULL) {
-		g_warning ("could not create xml reader for file:'%s' filename",
-			   filename);
-		return FALSE;
-	}
-	
-        if (xmlTextReaderPreservePattern (reader, (xmlChar*) "preserved", NULL) < 0) {
-		g_warning ("could not preserve pattern for file:'%s' filename",
-			   filename);
-		return FALSE;
-	}
-
-	ret = xmlTextReaderRead (reader);
- 	
-	while (ret == 1) {
-		const xmlChar *node = NULL;
-
-		if (!(node = xmlTextReaderConstName (reader))) {
-			continue;
-		}
-
-		if (xmlStrcmp (node, BAD_CAST "default") == 0) {
-			xmlChar *value;
-			
-			value = xmlTextReaderReadString (reader);
-			if (value && xmlStrlen (value) > 0) {
-				default_name = g_strdup ((gchar*)value);
-		}
-		}
-
-		if (xmlStrcmp (node, BAD_CAST "account") == 0) {
-			xmlChar       *node_type = NULL;
-			xmlChar       *node_name = NULL;
-			xmlChar       *node_id = NULL;
-			xmlChar       *node_password = NULL;
-			xmlChar       *node_server = NULL;
-			xmlChar       *node_port = NULL;
-			xmlChar       *node_auto_connect = NULL;
-			xmlChar       *node_use_ssl = NULL;
-			xmlChar       *node_use_proxy = NULL;
-
-			const xmlChar *key = NULL;
-			xmlChar       *value;
-
-			/* get all elements */
-
-			ret = xmlTextReaderRead (reader);
- 			key = xmlTextReaderConstName (reader); 
- 			value = xmlTextReaderReadString (reader); 
-
-			while (key && xmlStrcmp (key, BAD_CAST "account") != 0 && ret == 1) {
-				if (key && value && 
-				    xmlStrlen (key) > 0 && xmlStrlen (value) > 0) {
-					if (xmlStrcmp (key, BAD_CAST "type") == 0) {
-						node_type = value;
-					} else if (xmlStrcmp (key, BAD_CAST "name") == 0) {
-						node_name = value;
-					} else if (xmlStrcmp (key, BAD_CAST "id") == 0) {
-						node_id = value;
-					} else if (xmlStrcmp (key, BAD_CAST "password") == 0) {
-						node_password = value;
-					} else if (xmlStrcmp (key, BAD_CAST "server") == 0) {
-						node_server = value;
-					} else if (xmlStrcmp (key, BAD_CAST "port") == 0) {
-						node_port = value;
-					} else if (xmlStrcmp (key, BAD_CAST "auto_connect") == 0) {
-						node_auto_connect = value;
-					} else if (xmlStrcmp (key, BAD_CAST "use_ssl") == 0) {
-						node_use_ssl = value;
-					} else if (xmlStrcmp (key, BAD_CAST "use_proxy") == 0) {
-						node_use_proxy = value;
-					} 
-				}
-
-			       	ret = xmlTextReaderRead (reader);
-				key = xmlTextReaderConstName (reader);
-				value = xmlTextReaderReadString (reader);
-			}
-
-			if (node_name && node_id && node_server) {
-				GossipAccount     *account;
-				GossipAccountType  type = GOSSIP_ACCOUNT_TYPE_JABBER;
-				guint16            port;
-				gboolean           auto_connect, use_ssl, use_proxy;
-	
-				if (node_type) {
-					if (xmlStrcmp (node_type, BAD_CAST "jabber") == 0) {
-						type = GOSSIP_ACCOUNT_TYPE_JABBER;
-					}
-				}
-
-				port = (node_port ? atoi ((char*)node_port) : 5222);
-
-				auto_connect = (xmlStrcasecmp (node_auto_connect, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-				use_ssl = (xmlStrcasecmp (node_use_ssl, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-				use_proxy = (xmlStrcasecmp (node_use_proxy, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-	
-				account = g_object_new (GOSSIP_TYPE_ACCOUNT, 
-							"type", type,
-							"name", (gchar*)node_name,
-							"id", (gchar*)node_id,
-							"port", port,
-							"auto_connect", auto_connect,
-							"use_ssl", use_ssl,
-							"use_proxy", use_proxy,
-							NULL);
-	
-				if (node_server) {
-					gossip_account_set_server (account, (gchar*)node_server);
-	}
-
-				if (node_password) {
-					gossip_account_set_password (account, (gchar*)node_password);
-				}
-
-				accounts = g_list_append (accounts, account);
-			}
-
-			xmlFree (node_type);
-			xmlFree (node_name);
-			xmlFree (node_id);
-			xmlFree (node_password);
-			xmlFree (node_server);
-			xmlFree (node_port);
-			xmlFree (node_auto_connect);
-			xmlFree (node_use_ssl);
-			xmlFree (node_use_proxy);
-		}
-
-		ret = xmlTextReaderRead (reader);
-	}
-	
-	if (ret != 0) {
-		g_warning ("Could not parse file:'%s' filename",
-			   filename);
-		xmlFreeTextReader(reader);
-		return FALSE;
-	}
-
-	d(g_print ("Parsed %d accounts\n", g_list_length (accounts)));
-	
-	d(g_print ("Cleaning up parser for file:'%s'\n\n", filename));
-	  
-	doc = xmlTextReaderCurrentDoc(reader);
-	xmlFreeDoc(doc);
-
-	xmlCleanupParser();
-	xmlFreeTextReader(reader);
-	
-	return TRUE;
-}
-
-static gboolean
-accounts_file_save (void)
-{
-	xmlDocPtr      doc;  
-	xmlDtdPtr      dtd;  
-	xmlNodePtr     root;
-	GList         *l;
-	gchar         *dtd_file;
-	gchar         *xml_dir;
-	gchar         *xml_file;
-					 
-	if (accounts_file_name) {
-		xml_file = g_strdup (accounts_file_name);
-	} else {
-		xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-		if (!g_file_test (xml_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			mkdir (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		}
-					 
-		xml_file = g_build_filename (xml_dir, ACCOUNTS_XML_FILENAME, NULL);
-		g_free (xml_dir);
-	}
-
-	dtd_file = g_build_filename (DTDDIR, ACCOUNTS_DTD_FILENAME, NULL);
-
-	doc = xmlNewDoc (BAD_CAST "1.0");
-	root = xmlNewNode (NULL, BAD_CAST "accounts");
-	xmlDocSetRootElement (doc, root);
-
-	dtd = xmlCreateIntSubset (doc, BAD_CAST "accounts", NULL, BAD_CAST dtd_file);
-
-	if (!default_name) {
-		default_name = g_strdup ("Default");
-	}
-	
-	xmlNewChild (root, NULL, 
-		     BAD_CAST "default", 
-		     BAD_CAST default_name);
-
-	for (l = accounts; l; l = l->next) {
-		GossipAccount *account;
-		gchar         *type, *port;
-		xmlNodePtr     node;
-	
-		account = l->data;
-
-		switch (gossip_account_get_type (account)) {
-		case GOSSIP_ACCOUNT_TYPE_JABBER:
-		default:
-			type = g_strdup_printf ("jabber");
-			break;
-		}
-	
-		port = g_strdup_printf ("%d", gossip_account_get_port (account));
-
-		node = xmlNewChild (root, NULL, BAD_CAST "account", NULL);
-		xmlNewChild (node, NULL, BAD_CAST "type", BAD_CAST type);
-		xmlNewChild (node, NULL, BAD_CAST "name", BAD_CAST gossip_account_get_name (account));
-		xmlNewChild (node, NULL, BAD_CAST "id", BAD_CAST gossip_account_get_id (account));
-
-		xmlNewChild (node, NULL, BAD_CAST "password", BAD_CAST gossip_account_get_password (account));
-		xmlNewChild (node, NULL, BAD_CAST "server", BAD_CAST gossip_account_get_server (account));
-		xmlNewChild (node, NULL, BAD_CAST "port", BAD_CAST port);
-
-		xmlNewChild (node, NULL, BAD_CAST "auto_connect", BAD_CAST (gossip_account_get_auto_connect (account) ? "yes" : "no"));
-		xmlNewChild (node, NULL, BAD_CAST "use_ssl", BAD_CAST (gossip_account_get_use_ssl (account) ? "yes" : "no"));
-		xmlNewChild (node, NULL, BAD_CAST "use_proxy", BAD_CAST (gossip_account_get_use_proxy (account) ? "yes" : "no"));
-
-		g_free (type);
-		g_free (port);
-	}
-
-	d(g_print ("Saving file:'%s'\n", xml_file));
-	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
-	xmlFreeDoc (doc);
-
-	xmlCleanupParser ();
-
-	xmlMemoryDump ();
-	
-	g_free (xml_file);
-
-	return TRUE;
-}
-
-static gboolean 
-accounts_check_exists (GossipAccount *account)
-{
-	GList *l;
-
-	for (l = accounts; l; l = l->next) {
-		GossipAccount *this_account = l->data;
-
-		if (strcmp (gossip_account_get_name (this_account), 
-			    gossip_account_get_name (account)) == 0) {
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
-
-GossipAccount *
-gossip_accounts_get_default (void)
-{
-	const gchar *name;
-
-	/* use override name first */
-	name = default_name_override;
-
-	/* use default name second */
-	if (!name) {
-		name = default_name;
-
-		/* check it exists, if not use the first one we find */
-		if (name && !gossip_accounts_get_by_name (name)) {
-			name = NULL;
-		}
-	}
-
-	if (!name) {
-		/* if one or more entries, use that */
-		if (g_list_length (accounts) >= 1) {
-			GossipAccount *account;
-			account = g_list_nth_data (accounts, 0);
-			name = gossip_account_get_name (account);
-
-			gossip_accounts_set_default (account);
-
-			return account;
-		}
-	} else {
-		return gossip_accounts_get_by_name (name);
-	}
-
-	return NULL;
-}
-
-GossipAccount *
-gossip_accounts_get_by_name (const gchar *name)
-{
-	GList *l;
-	
-	g_return_val_if_fail (name != NULL, NULL);
-
-	for (l = accounts; l; l = l->next) {
-		GossipAccount *account;
-		const gchar   *account_name;
-
-		account = l->data;
-		account_name = gossip_account_get_name (account);
-
-		if (account_name && strcmp (account_name, name) == 0) {
-			return account;
-		}
-	}
-	
-	return NULL;
-}	
-
-void
-gossip_accounts_set_overridden_default (const gchar *name)
-{
-	g_return_if_fail (name != NULL);
-
-	g_free (default_name_override);
-	default_name_override = g_strdup (name);
-}
-
-void 
-gossip_accounts_set_default (GossipAccount *account)
-{
-	const gchar *name;
-
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-
-	name = gossip_account_get_name (account);
-	g_return_if_fail (name != NULL);
-
-	g_free (default_name);
-	default_name = g_strdup (name);
-
-	/* save */
-	gossip_accounts_add (account);
-}
-
-gboolean          
-gossip_accounts_add (GossipAccount *account)
-{
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
-
-	/* don't add more than once */
- 	if (!accounts_check_exists (account)) { 
-		accounts = g_list_append (accounts, account);
-		return TRUE;
-	} 
-
-	return FALSE;
-}
-
-void          
-gossip_accounts_remove (GossipAccount *account)
-{
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-
-	accounts = g_list_remove (accounts, account);
+	g_object_notify (G_OBJECT (account), "use_proxy");
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 gboolean
-gossip_accounts_store (void)
+gossip_account_equal (gconstpointer v1, 
+		      gconstpointer v2)
 {
-	return accounts_file_save ();
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (v1), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (v2), FALSE);
+
+	return (gossip_account_compare (v1, v2) == 0);
+}
+
+guint 
+gossip_account_hash (gconstpointer key)
+{
+	const gchar *name;
+	
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (key), 0);
+
+	name = gossip_account_get_name (GOSSIP_ACCOUNT (key));
+	
+	return g_str_hash (name);
+}
+
+gint
+gossip_account_compare (gconstpointer a, 
+			gconstpointer b)
+{
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), 0);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), 0);
+
+	a = gossip_account_get_name (GOSSIP_ACCOUNT (a));
+	b = gossip_account_get_name (GOSSIP_ACCOUNT (b));
+
+	if (!a) {
+		return -1;
+	}
+
+	if (!b) {
+		return 1;
+	}
+	
+	return strcmp (a, b);
 }
 
 

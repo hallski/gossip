@@ -1,3 +1,29 @@
+2005-08-22  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account-manager.[ch]:
+	* libgossip/gossip-session.[ch]:
+	- Removed all the file parsing and multiple account handling out
+	and put it into gossip-account-manager. 
+	- Linked the account manager to the session.
+
+	* src/gossip-account-info-dialog.c
+	* src/gossip-accounts-window.c:
+	* src/gossip-add-contact.c:
+	* src/gossip-app.[ch]:
+	* src/gossip-main.c:
+	* src/gossip-new-account-window.c:
+	* src/gossip-register.c:
+	* src/gossip-ui-utils.c:
+	- Changes to reflect account work.
+
+	* ui/connect.glade:
+	* ui/main.glade:
+	- Cleaned up some duplicate mnemonics.
+	- Made use of CAN_DEFAULT.
+	- Added close button to accounts window.
+
 2005-08-19  Martyn Russell  <mr@gnome.org>
 
 	* protocols/jabber/gossip-jabber-helper.c
