@@ -633,5 +633,18 @@ gossip_account_compare (gconstpointer a,
 	return strcmp (a, b);
 }
 
+const gchar *
+gossip_account_get_type_as_str (GossipAccountType type)
+{
+	switch (type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER: return "Jabber";
+	case GOSSIP_ACCOUNT_TYPE_AIM:    return "AIM";
+	case GOSSIP_ACCOUNT_TYPE_ICQ:    return "ICQ";
+	case GOSSIP_ACCOUNT_TYPE_MSN:    return "MSN";
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:  return "Yahoo!";
+	}
+
+	return "";
+}
 
 

@@ -91,10 +91,12 @@ const gchar *   gossip_session_get_active_resource     (GossipSession           
 							GossipContact           *contact);
 
 
+
+
 /* misc */
 GossipChatroomProvider *
-gossip_session_get_chatroom_provider                   (GossipSession           *session,
-							GossipAccount           *account);
+gossip_session_get_chatroom_provider                    (GossipSession           *session,
+							 GossipAccount           *account);
 
 
 /* contact management */
@@ -124,6 +126,8 @@ const gchar *   gossip_session_get_nickname            (GossipSession           
 
 
 
+
+
 /* async operations */
 gboolean        gossip_session_register_account        (GossipSession           *session,
 							GossipAccountType        type,
@@ -148,6 +152,7 @@ gboolean        gossip_session_get_version             (GossipSession           
 							GossipVersionCallback    callback,
 							gpointer                 user_data,
 							GError                 **error);
+
 
 
 

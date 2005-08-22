@@ -70,13 +70,9 @@ static gboolean account_manager_file_validate        (GossipAccountManager  *man
 static gboolean account_manager_file_parse           (GossipAccountManager  *manager,
 						      const gchar           *filename);
 static gboolean account_manager_file_save            (GossipAccountManager  *manager);
-static gboolean account_manager_check_exists         (GossipAccountManager  *manager,
-						      GossipAccount         *account);
 
 
 static guint  signals[LAST_SIGNAL] = {0};
-
-static GList *accounts = NULL;
 
 
 G_DEFINE_TYPE (GossipAccountManager, gossip_account_manager, G_TYPE_OBJECT);
@@ -183,7 +179,8 @@ gossip_account_manager_add (GossipAccountManager *manager,
 	priv = GET_PRIV (manager);
 
 	/* don't add more than once */
- 	if (!account_manager_check_exists (manager, account)) { 
+ 	if (!g_hash_table_lookup (priv->accounts, 
+				  gossip_account_get_name (account))) { 
 		const gchar *name;
 
 		d(g_print ("Account Manager: Adding account with name:'%s'\n", 
@@ -346,11 +343,15 @@ gossip_account_manager_get_default (GossipAccountManager *manager)
 
 	if (!name) {
 		/* if one or more entries, use that */
-		if (g_list_length (accounts) >= 1) {
+		if (gossip_account_manager_get_count (manager) >= 1) {
 			GossipAccount *account;
-			account = g_list_nth_data (accounts, 0);
-			name = gossip_account_get_name (account);
+			GList         *l;
 
+			l = gossip_account_manager_get_accounts (manager);
+			account = g_list_nth_data (l, 0);
+			g_list_free (l);
+
+			name = gossip_account_get_name (account);
 			gossip_account_manager_set_default (manager, account);
 
 			return account;
@@ -619,8 +620,11 @@ account_manager_file_parse (GossipAccountManager *manager,
 
 	d(g_print ("Account Manager: Parsed %d accounts\n", 
 		   g_hash_table_size (priv->accounts)));
+
+	d(g_print ("Account Manager: Default account is:'%s'\n", 
+		   priv->default_name));
 	
-	d(g_print ("Account Manager: Cleaning up parser for file:'%s'\n\n", 
+	d(g_print ("Account Manager: Cleaning up parser for file:'%s'\n", 
 		   filename));
 	
 	doc = xmlTextReaderCurrentDoc(reader);
@@ -725,22 +729,4 @@ account_manager_file_save (GossipAccountManager *manager)
 	return TRUE;
 }
 
-static gboolean 
-account_manager_check_exists (GossipAccountManager *manager,
-			      GossipAccount        *account)
-{
-	GList *l;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
-
-	for (l = accounts; l; l = l->next) {
-		GossipAccount *this_account = l->data;
-
-		if (gossip_account_equal (this_account, account)) {
-			return TRUE;
-		}
-	}
-
-	return FALSE;
- }
 

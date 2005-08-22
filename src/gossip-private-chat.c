@@ -1124,11 +1124,11 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 							gossip_message_get_body (m));
 		
 	} else {
-	gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
-					      gossip_message_get_timestamp (m),
-					      NULL,
-					      gossip_contact_get_name (sender),
-					      gossip_message_get_body (m));
+		gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
+						      gossip_message_get_timestamp (m),
+						      NULL,
+						      gossip_contact_get_name (sender),
+						      gossip_message_get_body (m));
 	}
 
 	g_signal_emit_by_name (chat, "new-message");

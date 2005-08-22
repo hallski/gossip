@@ -77,8 +77,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
+			      libgossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE, 
+			      1, G_TYPE_POINTER);
 
 	/* Maybe include a reason for disconnect? */
 	signals[LOGGED_OUT] = 
@@ -87,8 +88,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
+			      libgossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE, 
+			      1, G_TYPE_POINTER);
 
 	signals[NEW_MESSAGE] = 
 		g_signal_new ("new-message",
@@ -439,11 +441,11 @@ gossip_protocol_get_groups (GossipProtocol *protocol)
 }
 
 gboolean
-gossip_protocol_register_account (GossipProtocol                *protocol,
-				GossipAccount                *account,
+gossip_protocol_register_account (GossipProtocol          *protocol,
+				  GossipAccount           *account,
 				  GossipRegisterCallback   callback,
-				gpointer                      user_data,
-				GError                      **error)
+				  gpointer                 user_data,
+				  GError                 **error)
 {
 	GossipProtocolClass *klass;
 
@@ -461,11 +463,11 @@ gossip_protocol_register_account (GossipProtocol                *protocol,
 }
 
 gboolean
-gossip_protocol_get_vcard (GossipProtocol             *protocol,
-				 GossipContact             *contact,
-				 GossipVCardCallback   callback,
-				 gpointer                   user_data,
-				 GError                   **error)
+gossip_protocol_get_vcard (GossipProtocol       *protocol,
+			   GossipContact        *contact,
+			   GossipVCardCallback   callback,
+			   gpointer              user_data,
+			   GError              **error)
 {
 	GossipProtocolClass *klass;
 
@@ -484,10 +486,10 @@ gossip_protocol_get_vcard (GossipProtocol             *protocol,
 
 gboolean 
 gossip_protocol_set_vcard (GossipProtocol        *protocol,
-				 GossipVCard                *vcard,
+			   GossipVCard           *vcard,
 			   GossipResultCallback   callback,
-				 gpointer                    user_data,
-				 GError                    **error)
+			   gpointer               user_data,
+			   GError               **error)
 {
 	GossipProtocolClass *klass;
 
@@ -506,10 +508,10 @@ gossip_protocol_set_vcard (GossipProtocol        *protocol,
 
 gboolean
 gossip_protocol_get_version (GossipProtocol         *protocol,
-				   GossipContact               *contact,
+			     GossipContact          *contact,
 			     GossipVersionCallback   callback,
-				   gpointer                     user_data,
-				   GError                     **error)
+			     gpointer                user_data,
+			     GError                **error)
 {
 	GossipProtocolClass *klass;
 

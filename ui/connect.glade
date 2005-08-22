@@ -9,7 +9,7 @@
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_MOUSE</property>
   <property name="modal">False</property>
-  <property name="default_width">325</property>
+  <property name="default_width">350</property>
   <property name="default_height">200</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
@@ -109,7 +109,8 @@
 
 	      <child>
 		<widget class="GtkButton" id="button_default">
-		  <property name="sensitive">False</property>
+		  <property name="visible">True</property>
+		  <property name="tooltip" translatable="yes">The default account is used for information like your name in chat windows.</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="label" translatable="yes">Default</property>

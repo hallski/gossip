@@ -54,7 +54,7 @@ typedef enum {
 } GossipAccountType;
 
 
-GType             gossip_account_get_gtype               (void) G_GNUC_CONST;
+GType             gossip_account_get_gtype        (void) G_GNUC_CONST;
 
 GossipAccountType gossip_account_get_type         (GossipAccount     *account);
 const gchar *     gossip_account_get_name         (GossipAccount     *account);
@@ -90,6 +90,6 @@ guint             gossip_account_hash             (gconstpointer      key);
 gint              gossip_account_compare          (gconstpointer      a,
 						   gconstpointer      b);
 
-
+const gchar *     gossip_account_get_type_as_str  (GossipAccountType  type);
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

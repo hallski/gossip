@@ -78,8 +78,10 @@ static void            session_connect_foreach_cb                (gchar         
 								  GossipProtocol      *protocol,
 								  ConnectAccounts     *data);
 static void            session_protocol_logged_in                (GossipProtocol      *protocol,
+								  GossipAccount       *account,
 								  GossipSession       *session);
 static void            session_protocol_logged_out               (GossipProtocol      *protocol,
+								  GossipAccount       *account,
 								  GossipSession       *session);
 static void            session_protocol_new_message              (GossipProtocol      *protocol,
 								  GossipMessage       *message,
@@ -174,9 +176,9 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER_POINTER,
 			      G_TYPE_NONE, 
-			      1, G_TYPE_POINTER);
+			      2, G_TYPE_POINTER, G_TYPE_POINTER);
 	
 	signals[PROTOCOL_DISCONNECTED] = 
 		g_signal_new ("protocol-disconnected",
@@ -184,9 +186,9 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER_POINTER,
 			      G_TYPE_NONE, 
-			      1, G_TYPE_POINTER);
+			      2, G_TYPE_POINTER, G_TYPE_POINTER);
 	
 	signals[PROTOCOL_ERROR] = 
 		g_signal_new ("protocol-error",
@@ -357,7 +359,8 @@ session_connect_protocol (GossipSession  *session,
 }
 
 static void
-session_protocol_logged_in (GossipProtocol *protocol, 
+session_protocol_logged_in (GossipProtocol *protocol,
+			    GossipAccount  *account,
 			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
@@ -369,7 +372,7 @@ session_protocol_logged_in (GossipProtocol *protocol,
 	/* Update some status? */
 	priv->connected_counter++;
 
-	g_signal_emit (session, signals[PROTOCOL_CONNECTED], 0, protocol);
+	g_signal_emit (session, signals[PROTOCOL_CONNECTED], 0, account, protocol);
 
 	if (priv->connected_counter == 1) {
 		/* Before this connect the session was set to be DISCONNECTED */
@@ -378,7 +381,8 @@ session_protocol_logged_in (GossipProtocol *protocol,
 }
 
 static void
-session_protocol_logged_out (GossipProtocol *protocol,
+session_protocol_logged_out (GossipProtocol *protocol, 
+			     GossipAccount  *account,
 			     GossipSession  *session) 
 {
 	GossipSessionPriv *priv;
@@ -395,7 +399,7 @@ session_protocol_logged_out (GossipProtocol *protocol,
 
 	priv->connected_counter--;
 	
-	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, protocol);
+	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
 	
 	if (priv->connected_counter == 0) {
 		/* Last connected protocol was disconnected */
@@ -538,7 +542,7 @@ gossip_session_new (GossipAccountManager *manager)
 {
 	GossipSession     *session;
 	GossipSessionPriv *priv;
-	const GList       *accounts, *l;
+	GList             *accounts, *l;
  
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 
@@ -555,6 +559,8 @@ gossip_session_new (GossipAccountManager *manager)
 		
 		gossip_session_add_account (session, account);
 	}
+
+	g_list_free (accounts);
 
 	return session;
 }
@@ -1213,13 +1219,19 @@ gossip_session_get_nickname (GossipSession *session)
 			continue;
 		}
 
+		if (!gossip_protocol_is_connected (protocol)) {
+			continue;
+		}
+
+#if 1
 		/* FIXME: for now, use the first jabber account */
 		if (!GOSSIP_IS_JABBER (protocol)) {
 			continue;
 		}
+#endif
 
 		contact = gossip_jabber_get_own_contact (GOSSIP_JABBER (protocol));
-	return gossip_contact_get_name (contact);
+		return gossip_contact_get_name (contact);
 	}
 
 	return "";

@@ -42,6 +42,7 @@
 				      GOSSIP_TYPE_PROTOCOL, \
 				      GossipProtocolClass))
 
+
 typedef enum {
 	GossipProtocolErrorNoConnection,
 	GossipProtocolErrorNoSuchHost,
@@ -52,12 +53,15 @@ typedef enum {
 
 } GossipProtocolError;
 
+
 typedef struct _GossipProtocol      GossipProtocol;
 typedef struct _GossipProtocolClass GossipProtocolClass;
+
 
 struct _GossipProtocol {
 	GObject parent;
 };
+
 
 struct _GossipProtocolClass {
 	GObjectClass parent_class;
@@ -121,7 +125,7 @@ struct _GossipProtocolClass {
 	gboolean      (*get_version)           (GossipProtocol  *protocol,
 					        GossipContact   *contact,
 						GossipVersionCallback callback,
-					        gpointer                   user_data,
+					        gpointer         user_data,
 					        GError         **error);
 };
 

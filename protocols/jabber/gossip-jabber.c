@@ -1285,7 +1285,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 
-	g_signal_emit_by_name (jabber, "logged-in");
+	g_signal_emit_by_name (jabber, "logged-in", priv->account);
 }
 
 static LmSSLResponse 
@@ -1832,7 +1832,7 @@ jabber_signal_logged_out (GossipJabber *jabber)
 
 	priv = jabber->priv;
 
-	g_signal_emit_by_name (jabber, "logged-out");
+	g_signal_emit_by_name (jabber, "logged-out", priv->account);
 
 	/* signal removal of each contact */
 	if (priv->contacts) {

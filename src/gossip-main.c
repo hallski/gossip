@@ -65,7 +65,7 @@ main (int argc, char *argv[])
 	poptContext            popt_context;
 	gchar                 *account_name = NULL;
 	const gchar          **args;
-	const GList           *accounts;
+	GList                 *accounts;
 
 	struct poptOption   options[] = {
 		{ "no-connect",
@@ -120,7 +120,7 @@ main (int argc, char *argv[])
 	accounts = gossip_account_manager_get_accounts (account_manager);
 
 	if (list_accounts) {
-		const GList   *l;
+		GList         *l;
 		GossipAccount *def = NULL;
 
 		if (g_list_length ((GList*)accounts) < 1) {
@@ -145,6 +145,8 @@ main (int argc, char *argv[])
 			g_print ("\n");
 		}
 
+		g_list_free (accounts);
+
 		return EXIT_SUCCESS;
 	}
 	
@@ -154,10 +156,12 @@ main (int argc, char *argv[])
 		account = gossip_account_manager_find (account_manager,
 						       account_name);
 		if (!account) {
-			fprintf (stderr,
-				 _("There is no account with the name '%s'."),
+			g_print (_("There is no account with the name '%s'."),
 				 account_name);
-			fprintf (stderr, "\n");
+			g_print ("\n");
+
+			g_list_free (accounts);
+
 			return EXIT_FAILURE;
 		}
 
@@ -165,6 +169,8 @@ main (int argc, char *argv[])
 		gossip_account_manager_set_overridden_default (account_manager,
 							       account_name);
 	}
+
+	g_list_free (accounts);
 
 	gconf_client = gconf_client_get_default ();
 

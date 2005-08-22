@@ -57,6 +57,19 @@ typedef struct {
 static void           accounts_window_setup                     (GossipAccountsWindow *window);
 static void           accounts_window_model_setup               (GossipAccountsWindow *window);
 static void           accounts_window_model_add_columns         (GossipAccountsWindow *window);
+
+static void  
+accounts_window_model_name_cell_data_func (GtkTreeViewColumn     *tree_column,
+					   GtkCellRenderer       *cell,
+					   GtkTreeModel          *model,
+					   GtkTreeIter           *iter,
+					   GossipAccountsWindow  *window);
+static void  
+accounts_window_model_pixbuf_cell_data_func (GtkTreeViewColumn    *tree_column,
+					     GtkCellRenderer      *cell,
+					     GtkTreeModel         *model,
+					     GtkTreeIter          *iter,
+					     GossipAccountsWindow *window);
 static GossipAccount *accounts_window_model_get_selected        (GossipAccountsWindow *window);
 static void           accounts_window_model_set_selected        (GossipAccountsWindow *window,
 								 GossipAccount        *account);
@@ -97,6 +110,7 @@ static void           accounts_window_destroy_cb                (GtkWidget      
 enum {
 	COL_NAME,
 	COL_EDITABLE,
+	COL_DEFAULT,
 	COL_ACCOUNT_POINTER,
 	COL_COUNT
 };
@@ -113,12 +127,10 @@ accounts_window_setup (GossipAccountsWindow *window)
 	GtkTreeSelection     *selection;
 	GtkTreeIter           iter;
 
-	const GList          *accounts, *l;
+	GList                *accounts, *l;
 	GossipAccount        *default_account = NULL;
-	const gchar          *default_name = NULL;
 
-	gboolean              editable = TRUE;
-	gboolean              selected = FALSE;
+	gboolean              is_editable = TRUE;
 
 	view = GTK_TREE_VIEW (window->treeview);
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
@@ -128,16 +140,12 @@ accounts_window_setup (GossipAccountsWindow *window)
  	manager = gossip_session_get_account_manager (session);
 	accounts = gossip_account_manager_get_accounts (manager); 
 
-	if (accounts) {
-		default_account = gossip_account_manager_get_default (manager); 
-		if (default_account) {
-			default_name = gossip_account_get_name (default_account);
-		}
-	}
+	default_account = gossip_account_manager_get_default (manager);
 
 	for (l = accounts; l; l = l->next) {
  		GossipAccount *account; 
 		const gchar   *name;
+		gboolean       is_default = FALSE;
 
 		account = l->data;
 
@@ -146,26 +154,18 @@ accounts_window_setup (GossipAccountsWindow *window)
 			continue;
 		}
 
+		is_default = (gossip_account_equal (account, default_account));
+
 		gtk_list_store_append (store, &iter); 
 		gtk_list_store_set (store, &iter, 
 				    COL_NAME, name,
-				    COL_EDITABLE, editable,
+				    COL_EDITABLE, is_editable,
+				    COL_DEFAULT, is_default,
 				    COL_ACCOUNT_POINTER, g_object_ref (account),
 				    -1);
-
-		g_signal_connect (account, "notify::name",
-				  G_CALLBACK (accounts_window_account_name_changed_cb), 
-				  window);
-
-		if (!default_account && selected == FALSE) {
-			gtk_tree_selection_select_iter (selection, &iter);
-			selected = TRUE;
-		} else {
-			if (default_name && strcmp (name, default_name) == 0) {
-				gtk_tree_selection_select_iter (selection, &iter);
-			} 
-		}
 	}
+
+	g_list_free (accounts);
 }
 
 static void 
@@ -177,6 +177,7 @@ accounts_window_model_setup (GossipAccountsWindow *window)
 	store = gtk_list_store_new (COL_COUNT,
 				    G_TYPE_STRING,   /* name */
 				    G_TYPE_BOOLEAN,  /* editable */
+				    G_TYPE_BOOLEAN,  /* default */
 				    G_TYPE_POINTER); /* account */ 
 	
 	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview), 
@@ -184,8 +185,10 @@ accounts_window_model_setup (GossipAccountsWindow *window)
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+
 	g_signal_connect (selection, "changed", 
 			  G_CALLBACK (accounts_window_model_selection_changed), window);
+
 
 	accounts_window_model_add_columns (window);
 
@@ -195,6 +198,36 @@ accounts_window_model_setup (GossipAccountsWindow *window)
 static void 
 accounts_window_model_add_columns (GossipAccountsWindow *window)
 {
+	GtkTreeViewColumn *column; 
+	GtkCellRenderer   *cell;
+	
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (window->treeview), FALSE);
+
+	column = gtk_tree_view_column_new ();
+	
+	cell = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_column_pack_start (column, cell, FALSE);
+	gtk_tree_view_column_set_cell_data_func (column, cell, 
+						 (GtkTreeCellDataFunc) 
+						 accounts_window_model_pixbuf_cell_data_func,
+						 window, 
+						 NULL);
+
+	cell = gtk_cell_renderer_text_new ();
+	gtk_tree_view_column_pack_start (column, cell, TRUE);
+	gtk_tree_view_column_set_cell_data_func (column, cell,
+						 (GtkTreeCellDataFunc) 
+						 accounts_window_model_name_cell_data_func,
+						 window,
+						 NULL);
+
+	g_signal_connect (cell, "edited",
+			  G_CALLBACK (accounts_window_model_cell_edited), 
+			  window);
+
+	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
+
+#if 0
 	GtkTreeView       *view;
 	GtkTreeModel      *model;
 	GtkTreeViewColumn *column; 
@@ -218,9 +251,116 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 			  window);
 	g_object_set_data (G_OBJECT (renderer),
 			   "column", GINT_TO_POINTER (COL_NAME));
-	
 	column = gtk_tree_view_get_column (view, col_offset - 1);
 	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
+#endif
+}
+
+static void  
+accounts_window_model_name_cell_data_func (GtkTreeViewColumn     *tree_column,
+					   GtkCellRenderer       *cell,
+					   GtkTreeModel          *model,
+					   GtkTreeIter           *iter,
+					   GossipAccountsWindow  *window)
+{
+	gchar    *name;
+	gboolean  is_editable;
+	gboolean  is_default;
+	gchar    *str;
+
+	gtk_tree_model_get (model, iter, 
+			    COL_NAME, &name,
+			    COL_EDITABLE, &is_editable,
+			    COL_DEFAULT, &is_default, 
+			    -1);
+
+	str = g_strdup_printf ("%s%s%s%s", 
+			       name, 
+			       is_default ? " [" : "",
+			       is_default ? _("Default") : "",
+			       is_default ? "] " : "");
+
+	g_object_set (cell,
+		      "visible", TRUE,
+		      "editable", is_editable,
+		      "text", str,
+		      NULL);
+
+	g_free (str);
+	g_free (name);
+}
+
+static void  
+accounts_window_model_pixbuf_cell_data_func (GtkTreeViewColumn    *tree_column,
+					     GtkCellRenderer      *cell,
+					     GtkTreeModel         *model,
+					     GtkTreeIter          *iter,
+					     GossipAccountsWindow *window)
+{
+	GossipAccount *account;
+	GError        *error = NULL;
+	GtkIconTheme  *theme;
+	GdkPixbuf     *pixbuf = NULL;
+	gint           w, h;
+	gint           size = 48;  /* default size */
+	const gchar   *icon_id = NULL;
+
+	gtk_tree_model_get (model, iter, 
+			    COL_ACCOUNT_POINTER, &account, 
+			    -1);
+
+	/* get theme and size details */
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+		size = 48;
+	} else {
+		size = (w + h) / 2; 
+	}
+
+	/* show jabber protocol */
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   "im-jabber", /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+	if (!pixbuf) {
+		g_warning ("could not load icon: %s", error->message);
+		g_error_free (error);
+	}
+
+	switch (gossip_account_get_type (account)) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER:
+		icon_id = "im-jabber";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_AIM:
+		icon_id = "im-aim";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_ICQ:
+		icon_id = "im-icq";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_MSN:
+		icon_id = "im-msn";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:
+		icon_id = "im-yahoo";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   icon_id,     /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+
+	g_return_if_fail (pixbuf != NULL);
+
+	g_object_set (cell, 
+		      "visible", TRUE,
+		      "pixbuf", pixbuf,
+		      NULL); 
 }
 
 static GossipAccount *
@@ -359,16 +499,21 @@ accounts_window_account_added_cb (GossipAccountManager *manager,
 				  GossipAccount        *account,
 				  GossipAccountsWindow *window)
 {
-	GtkTreeView  *view;
-	GtkTreeModel *model;
-	GtkListStore *store;
-	GtkTreeIter   iter;
-	const gchar  *name;
+	GtkTreeView   *view;
+	GtkTreeModel  *model;
+	GtkListStore  *store;
+	GtkTreeIter    iter;
+	const gchar   *name;
+	GossipAccount *default_account;
+	gboolean       is_default;
 
 	view = GTK_TREE_VIEW (window->treeview);
 	model = gtk_tree_view_get_model (view);
 	store = GTK_LIST_STORE (model);
-	
+
+	default_account = gossip_account_manager_get_default (manager);
+	is_default = (gossip_account_equal (account, default_account));
+
 	name = gossip_account_get_name (account);
 	
 	g_return_if_fail (name != NULL);
@@ -377,12 +522,9 @@ accounts_window_account_added_cb (GossipAccountManager *manager,
 	gtk_list_store_set (store, &iter, 
 			    COL_NAME, name,
 			    COL_EDITABLE, TRUE,
+			    COL_DEFAULT, is_default,
 			    COL_ACCOUNT_POINTER, g_object_ref (account),
 			    -1);
-
-	g_signal_connect (account, "notify::name",
-			  G_CALLBACK (accounts_window_account_name_changed_cb), 
-			  window);
 }
 
 static void
@@ -466,11 +608,16 @@ static void
 accounts_window_button_default_clicked_cb (GtkWidget            *button,
 					   GossipAccountsWindow *window)
 {
-/* 	GossipAccount *account; */
+	GossipSession        *session;
+	GossipAccountManager *manager;
+	GossipAccount        *account;
 
-/* 	account = accounts_window_model_get_selected (window); */
-/* 	gossip_accounts_set_default (account); */
-/* 	gossip_accounts_store (); */
+	session = gossip_app_get_session ();
+ 	manager = gossip_session_get_account_manager (session);
+
+	account = accounts_window_model_get_selected (window);
+	gossip_account_manager_set_default (manager, account);
+	gossip_account_manager_store (manager);
 }
 
 static void

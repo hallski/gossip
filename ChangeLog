@@ -1,5 +1,25 @@
 2005-08-22  Martyn Russell  <mr@gnome.org>
 
+	* ui/main.glade:
+	* src/gossip-app.c: 
+	- If we have more than 2 accounts configured, show an
+	online/offline status in the top righ of the window so we know
+	which ones are connected.
+	- Add/Remove accounts based on account-manager signals.
+	
+	* protocols/jabber/gossip-jabber.c: 
+	* libgossip/gossip-session.[ch]: 
+	* libgossip/gossip-protocol.[ch]: 
+	- Return the GossipAccount with connected/disconnected signals.
+
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account-manager.c (gossip_account_manager_get_default): 
+	- Fixed getting the default account.
+	* ui/connect.glade:
+	- We can now set the default account (window doesn't update yet).
+
+2005-08-22  Martyn Russell  <mr@gnome.org>
+
 	* libgossip/Makefile.am:
 	* libgossip/gossip-account.[ch]:
 	* libgossip/gossip-account-manager.[ch]:
@@ -86,6 +106,12 @@
 	* src/gossip-join-dialog.c:
 	- Improved method for only showing one join dialog.
 	
+2005-08-18  Martyn Russell  <mr@gnome.org>
+
+	* protocols/jabber/gossip-jid.c (gossip_jid_get_part_name): 
+	- On error "" is returned and it is not allocated memory, g_free
+	doesn't like this :)
+
 2005-08-18  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-account.c:
