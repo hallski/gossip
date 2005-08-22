@@ -1346,7 +1346,7 @@ app_connection_items_setup (GladeXML *glade)
 		"actions_add_contact",
 		"status_button",
 		"actions_configure_transports",
-		"edit_personal_details"
+		"edit_personal_information"
 	};
 	
 	const gchar *disconnect_widgets[] = {

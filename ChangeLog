@@ -1,3 +1,8 @@
+2005-08-22  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_connection_items_setup): Fix runtime
+	warning.
+
 2005-08-22  Martyn Russell  <mr@gnome.org>
 
 	* ui/main.glade:
