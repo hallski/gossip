@@ -72,11 +72,8 @@ typedef struct {
 static void            gossip_session_class_init                 (GossipSessionClass  *klass);
 static void            gossip_session_init                       (GossipSession       *session);
 static void            session_finalize                          (GObject             *object);
-static void            session_connect_protocol                  (GossipSession       *session,
+static void            session_protocol_signals_setup            (GossipSession       *session,
 								  GossipProtocol      *protocol);
-static void            session_connect_foreach_cb                (gchar               *account_name,
-								  GossipProtocol      *protocol,
-								  ConnectAccounts     *data);
 static void            session_protocol_logged_in                (GossipProtocol      *protocol,
 								  GossipAccount       *account,
 								  GossipSession       *session);
@@ -112,6 +109,11 @@ static void            session_get_accounts_foreach_cb           (const gchar   
 static void            session_find_account_foreach_cb           (const gchar         *account_name,
 								  GossipProtocol      *protocol,
 								  FindAccount         *fa);
+static void            session_connect                           (GossipSession       *session,
+								  GossipAccount       *account);
+static void            session_connect_foreach_cb                (gchar               *account_name,
+								  GossipProtocol      *protocol,
+								  ConnectAccounts     *data);
 
 
 /* signals */
@@ -326,8 +328,8 @@ session_finalize (GObject *object)
 }
 
 static void
-session_connect_protocol (GossipSession  *session, 
-			  GossipProtocol *protocol)
+session_protocol_signals_setup (GossipSession  *session, 
+				GossipProtocol *protocol)
 {
 	g_signal_connect (protocol, "logged-in", 
 			  G_CALLBACK (session_protocol_logged_in),
@@ -662,7 +664,7 @@ gossip_session_add_account (GossipSession *session,
 			     g_object_ref (protocol));
 
 	/* connect up all signals */ 
-	session_connect_protocol (session, protocol);
+	session_protocol_signals_setup (session, protocol);
 			
 	return TRUE;
 }
@@ -742,6 +744,7 @@ session_find_account_foreach_cb (const gchar    *account_name,
 
 void
 gossip_session_connect (GossipSession *session,
+			GossipAccount *account,
 			gboolean       startup)
 {
 	GossipSessionPriv *priv;
@@ -754,10 +757,20 @@ gossip_session_connect (GossipSession *session,
 	g_return_if_fail (priv->accounts != NULL);
 
 	/* temporary */
-	priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
-						   NULL);
+	if (!priv->presence) {
+		priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
+							   NULL);
+	}
 
-	
+	/* connect one account if provided */
+	if (account) {
+		g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+		
+		session_connect (session, account);
+		return;
+	}
+
+	/* connect ALL accounts if no one account is specified */
 	data = g_new0 (ConnectAccounts, 1);
 
 	data->session = session;
@@ -768,6 +781,28 @@ gossip_session_connect (GossipSession *session,
 			      data);
 
 	g_free (data);
+}
+
+static void
+session_connect (GossipSession *session,
+		 GossipAccount *account) 
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	priv = GET_PRIV (session);
+	
+	protocol = g_hash_table_lookup (priv->accounts, 
+					gossip_account_get_name (account));
+	
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	
+
+	/* can we not just pass the GossipAccount on the GObject init? */
+	gossip_protocol_setup (protocol, account);
+	
+	/* setup the network connection */
+	gossip_protocol_login (protocol);
 }
 
 static void
@@ -788,15 +823,12 @@ session_connect_foreach_cb (gchar           *account_name,
 		return;
 	}
 	
-	/* can we not just pass the GossipAccount on the GObject init? */
-	gossip_protocol_setup (protocol, account);
-		
-	/* setup the network connection */
-	gossip_protocol_login (protocol);
+	session_connect (data->session, account);
 }
 
 void
-gossip_session_disconnect (GossipSession *session)
+gossip_session_disconnect (GossipSession *session,
+			   GossipAccount *account)
 {
 	GossipSessionPriv *priv;
 	GList             *l;
@@ -805,6 +837,22 @@ gossip_session_disconnect (GossipSession *session)
 
 	priv = GET_PRIV (session);
 
+	/* connect one account if provided */
+	if (account) {
+		GossipProtocol    *protocol;
+
+		g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+		
+		protocol = g_hash_table_lookup (priv->accounts, 
+						gossip_account_get_name (account));
+		
+		g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	
+		gossip_protocol_logout (protocol);
+		return;
+	}
+
+	/* disconnect ALL accounts if no one account is specified */
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;
 

@@ -167,21 +167,10 @@ vcard_dialog_setup_accounts (GList             *accounts,
 	/* get theme and size details */
 	theme = gtk_icon_theme_get_default ();
 
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
 		size = 48;
 	} else {
 		size = (w + h) / 2; 
-	}
-
-	/* show jabber protocol */
-	pixbuf = gtk_icon_theme_load_icon (theme,
-					   "im-jabber", /* icon name */
-					   size,        /* size */
-					   0,           /* flags */
-					   &error);
-	if (!pixbuf) {
-		g_warning ("could not load icon: %s", error->message);
-		g_error_free (error);
 	}
 
 	/* populate accounts */
@@ -235,6 +224,10 @@ vcard_dialog_setup_accounts (GList             *accounts,
 			continue;
 		}				
 
+		gdk_pixbuf_saturate_and_pixelate (pixbuf,
+						  pixbuf,
+						  is_connected ? 1.5 : 0,
+						  FALSE);
 		
  		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);

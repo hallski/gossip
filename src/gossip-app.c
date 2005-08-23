@@ -772,7 +772,7 @@ app_main_window_destroy_cb (GtkWidget *window,
 	priv = app->priv;
 
 	if (gossip_session_is_connected (priv->session, NULL)) {
-		gossip_session_disconnect (priv->session);
+		gossip_session_disconnect (priv->session, NULL);
 	}
 	
 	exit (EXIT_SUCCESS);
@@ -1308,7 +1308,7 @@ gossip_app_connect (gboolean startup)
 	
 	app_disconnect ();
 
-	gossip_session_connect (priv->session, startup);
+	gossip_session_connect (priv->session, NULL, startup);
 }
 
 void
@@ -1334,7 +1334,7 @@ app_disconnect (void)
 {
 	GossipAppPriv *priv = app->priv;
 
-	gossip_session_disconnect (priv->session);
+	gossip_session_disconnect (priv->session, NULL);
 	app_status_flash_stop ();
 }
 
@@ -1812,7 +1812,7 @@ app_accounts_set_status (GossipAccount  *account,
 	/* get theme and size details */
 	theme = gtk_icon_theme_get_default ();
 
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
 		size = 48;
 	} else {
 		size = (w + h) / 2; 
@@ -1876,7 +1876,6 @@ app_accounts_add (GossipAccount *account)
 	gtk_box_pack_start (GTK_BOX (priv->accounts_hbox), eventbox, FALSE, FALSE, 0);
 	
 	image = gtk_image_new (); 
-	g_object_set (image, "icon-size", GTK_ICON_SIZE_MENU, NULL);
 	
 	gtk_widget_show (image);
 	gtk_container_add (GTK_CONTAINER (eventbox), image);

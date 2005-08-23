@@ -9,8 +9,8 @@
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_MOUSE</property>
   <property name="modal">False</property>
-  <property name="default_width">350</property>
-  <property name="default_height">200</property>
+  <property name="default_width">450</property>
+  <property name="default_height">250</property>
   <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>
@@ -110,6 +110,7 @@
 	      <child>
 		<widget class="GtkButton" id="button_default">
 		  <property name="visible">True</property>
+		  <property name="sensitive">False</property>
 		  <property name="tooltip" translatable="yes">The default account is used for information like your name in chat windows.</property>
 		  <property name="can_default">True</property>
 		  <property name="can_focus">True</property>
@@ -122,6 +123,46 @@
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkFixed" id="fixed2">
+	      <property name="visible">True</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">3</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkButton" id="button_connect">
+	      <property name="visible">True</property>
+	      <property name="sensitive">False</property>
+	      <property name="can_default">True</property>
+	      <property name="can_focus">True</property>
+	      <property name="label" translatable="yes">Connect</property>
+	      <property name="use_underline">True</property>
+	      <property name="relief">GTK_RELIEF_NORMAL</property>
+	      <property name="focus_on_click">True</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">0</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkFixed" id="fixed1">
+	      <property name="visible">True</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">3</property>
 	      <property name="expand">True</property>
 	      <property name="fill">True</property>
 	    </packing>

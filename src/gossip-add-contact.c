@@ -94,6 +94,7 @@ enum {
 enum {
 	COL_ACCOUNT_IMAGE,
 	COL_ACCOUNT_TEXT,
+	COL_ACCOUNT_CONNECTED,
 	COL_ACCOUNT_POINTER,
 	COL_ACCOUNT_COUNT
 };
@@ -154,20 +155,23 @@ static void
 add_contact_setup_accounts (GList            *accounts,
 			    GossipAddContact *dialog)
 {
+	GossipSession   *session;
+
 	GtkListStore    *store;
 	GtkTreeIter      iter;
 	GtkCellRenderer *renderer;
 	GtkComboBox     *combo_box;
 
 	GList           *l;
-
 	gint             w, h;
 	gint             size = 24;  /* default size */
-
 	GError          *error = NULL;
 	GtkIconTheme    *theme;
-
 	GdkPixbuf       *pixbuf;
+
+	gboolean         active_item_set = FALSE;
+
+	session = gossip_app_get_session ();
 
 	/* set up combo box with new store */
 	combo_box = GTK_COMBO_BOX (dialog->one_accounts_combobox);
@@ -177,44 +181,37 @@ add_contact_setup_accounts (GList            *accounts,
 	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
 				    GDK_TYPE_PIXBUF,
 				    G_TYPE_STRING,    /* name */
+				    G_TYPE_BOOLEAN,
 				    G_TYPE_POINTER);    
 
-	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->one_accounts_combobox), 
-				 GTK_TREE_MODEL (store));
-		
+	gtk_combo_box_set_model (combo_box, GTK_TREE_MODEL (store));
+
 	/* get theme and size details */
 	theme = gtk_icon_theme_get_default ();
 
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
 		size = 48;
 	} else {
 		size = (w + h) / 2; 
-	}
-
-	/* show jabber protocol */
-	pixbuf = gtk_icon_theme_load_icon (theme,
-					   "im-jabber", /* icon name */
-					   size,        /* size */
-					   0,           /* flags */
-					   &error);
-	if (!pixbuf) {
-		g_warning ("could not load icon: %s", error->message);
-		g_error_free (error);
 	}
 
 	/* populate accounts */
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account;
 		const gchar   *icon_id = NULL;
+		gboolean       is_connected;
 
 		account = l->data;
 
 		error = NULL; 
 		pixbuf = NULL;
 
+		is_connected = gossip_session_is_connected (session, account);
+
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
 				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
+				    COL_ACCOUNT_CONNECTED, is_connected,
 				    COL_ACCOUNT_POINTER, g_object_ref (account),
 				    -1);
 
@@ -238,32 +235,44 @@ add_contact_setup_accounts (GList            *accounts,
 			g_assert_not_reached ();
 		}
 
-			pixbuf = gtk_icon_theme_load_icon (theme,
+		pixbuf = gtk_icon_theme_load_icon (theme,
 						   icon_id,     /* icon name */
-							   size,      /* size */
-							   0,         /* flags */
-							   &error);
-
-			if (!pixbuf) {
+						   size,      /* size */
+						   0,         /* flags */
+						   &error);
+		
+		if (!pixbuf) {
 			g_warning ("could not load stock icon: %s", icon_id);
-				continue;
-			}
+			continue;
+		}	
 
+		gdk_pixbuf_saturate_and_pixelate (pixbuf,
+						  pixbuf,
+						  is_connected ? 1.5 : 0,
+						  FALSE);
 		
  		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);
+
+		/* set first connected account as active account */
+		if (!active_item_set && is_connected) {
+			active_item_set = TRUE;
+			gtk_combo_box_set_active_iter (combo_box, &iter); 
+		}	
 	}
 	
 	renderer = gtk_cell_renderer_pixbuf_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"pixbuf", COL_ACCOUNT_IMAGE,
-							 NULL);
+					"sensitive", COL_ACCOUNT_CONNECTED,
+					NULL);
 
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"text", COL_ACCOUNT_TEXT,
+					"sensitive", COL_ACCOUNT_CONNECTED,
 					NULL);
 
 	g_object_unref (store);
@@ -303,7 +312,7 @@ add_contact_setup_systems (GList            *accounts,
 	/* get theme and size details */
 	theme = gtk_icon_theme_get_default ();
 
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
 		size = 48;
 	} else {
 		size = (w + h) / 2; 
@@ -315,10 +324,10 @@ add_contact_setup_systems (GList            *accounts,
 					   size,        /* size */
 					   0,           /* flags */
 					   &error);
-			if (!pixbuf) {
-				g_warning ("could not load icon: %s", error->message);
-				g_error_free (error);
-		}
+	if (!pixbuf) {
+		g_warning ("could not load icon: %s", error->message);
+		g_error_free (error);
+	}
 		
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter, 
@@ -894,9 +903,6 @@ gossip_add_contact_show (GossipContact *contact)
 	/* populate accounts */
 	add_contact_setup_accounts (accounts, dialog);
 
-	/* select first */
-	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->one_accounts_combobox), 0);
-		
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (dialog->one_accounts_vbox);
 	} else {

@@ -1,5 +1,26 @@
 2005-08-23  Martyn Russell  <mr@gnome.org>
 
+	* ui/connect.glade:
+	* src/gossip-accounts-window.c: 
+	- You can now connect/disconnect individule accounts.
+	- You can now edit the auto connect property in this window.
+	- Account state is followed.
+
+	* src/gossip-add-contact.c:
+	* src/gossip-app.c:
+	* src/gossip-join-dialog.c:
+	* src/gossip-vcard-dialog.c:
+	- Account state is reflected and you can not select offline
+	accounts now.
+	- Used bigger size icon (GTK_ICON_SIZE_BUTTON), instead of MENU.
+
+	* libgossip/gossip-session.[ch]: 
+	- gossip_session_connect() and gossip_session_disconnect() now
+	take an account if you don't want to connect or disconnect ALL
+	accounts. 
+
+2005-08-23  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-notebook.c (button_release_cb): 
 	- Fixed drag to detach a tab, spotted by Richard.
 
