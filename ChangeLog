@@ -1,3 +1,14 @@
+2005-08-23  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-app.c: 
+	- Make use of gdk_pixbuf_saturate_and_pixelate() as suggested by
+	Ross to show the protocol image in black and white or colour. 
+	- Clicking on the accounts now shows the accounts window.
+
+	* src/gossip-accounts-window.c
+	(accounts_window_model_add_columns): 
+	- Removed some unused code.
+
 2005-08-22  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_connection_items_setup): Fix runtime

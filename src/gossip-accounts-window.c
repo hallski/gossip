@@ -226,34 +226,6 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 			  window);
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
-
-#if 0
-	GtkTreeView       *view;
-	GtkTreeModel      *model;
-	GtkTreeViewColumn *column; 
-	GtkCellRenderer   *renderer;
-	guint              col_offset;
-	
-	view = GTK_TREE_VIEW (window->treeview);
-	model = gtk_tree_view_get_model (view);
-	
-	renderer = gtk_cell_renderer_text_new ();
-
-	col_offset = gtk_tree_view_insert_column_with_attributes (view,
-								  -1, _("Account"),
-								  renderer, 
-								  "text", COL_NAME,
-								  "editable", COL_EDITABLE,
-								  NULL);
-
-	g_signal_connect (renderer, "edited",
-			  G_CALLBACK (accounts_window_model_cell_edited), 
-			  window);
-	g_object_set_data (G_OBJECT (renderer),
-			   "column", GINT_TO_POINTER (COL_NAME));
-	column = gtk_tree_view_get_column (view, col_offset - 1);
-	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
-#endif
 }
 
 static void  

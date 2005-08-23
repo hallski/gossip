@@ -261,17 +261,19 @@ static void            app_toggle_visibility                (void);
 static gboolean        app_tray_pop_event                   (void);
 static void            app_tray_update_tooltip              (void);
 static void            app_accounts_create                  (void);
-
-static void app_accounts_set_status (GossipAccount  *account,
-				     gboolean        online);
-static void app_accounts_add (GossipAccount *account);
-static void app_accounts_remove (GossipAccount *account);
-static void app_accounts_account_added_cb (GossipAccountManager *manager,
-				 GossipAccount        *account,
-					   gpointer              user_data);
-static void app_accounts_account_removed_cb (GossipAccountManager *manager,
-				 GossipAccount        *account,
-					     gpointer              user_data);
+static void            app_accounts_set_status              (GossipAccount        *account,
+							     gboolean              online);
+static void            app_accounts_add                     (GossipAccount        *account);
+static void            app_accounts_remove                  (GossipAccount        *account);
+static void            app_accounts_button_press_event_cb   (GtkWidget            *hbox,
+							     GdkEventButton       *event,
+							     gpointer              user_data);
+static void            app_accounts_account_added_cb        (GossipAccountManager *manager,
+							     GossipAccount        *account,
+							     gpointer              user_data);
+static void            app_accounts_account_removed_cb      (GossipAccountManager *manager,
+							     GossipAccount        *account,
+							     gpointer              user_data);
 static GtkWidget *     app_create_status_menu               (gboolean              from_window);
 static gboolean        app_status_button_press_event_cb     (GtkButton            *button,
 							     GdkEventButton       *event,
@@ -1773,6 +1775,10 @@ app_accounts_create (void)
 	gtk_widget_show (fixed);
 	gtk_box_pack_start (GTK_BOX (priv->accounts_hbox), fixed, TRUE, TRUE, 0);
 
+	g_signal_connect (GTK_WIDGET (priv->accounts_hbox), "button_press_event", 
+			  G_CALLBACK (app_accounts_button_press_event_cb), NULL);
+
+
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
 
@@ -1793,19 +1799,63 @@ static void
 app_accounts_set_status (GossipAccount  *account,
 			 gboolean        online)
 {
-	GtkImage *image;
+	GtkIconTheme  *theme;
+	GtkImage      *image;
+	GdkPixbuf     *pixbuf = NULL;
+	GError        *error = NULL;
+	gint           w, h;
+	gint           size = 48;  /* default size */
+	const gchar   *icon_id = NULL;
 
 	image = g_object_get_data (G_OBJECT (account), "image");
-	
-	if (online) {
-		gtk_image_set_from_stock (image, 
-					  GOSSIP_STOCK_AVAILABLE, 
-					  GTK_ICON_SIZE_MENU);
+
+	/* get theme and size details */
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h)) {
+		size = 48;
 	} else {
-		gtk_image_set_from_stock (image, 
-					  GOSSIP_STOCK_OFFLINE, 
-					  GTK_ICON_SIZE_MENU);
+		size = (w + h) / 2; 
 	}
+
+	switch (gossip_account_get_type (account)) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER:
+		icon_id = "im-jabber";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_AIM:
+		icon_id = "im-aim";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_ICQ:
+		icon_id = "im-icq";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_MSN:
+		icon_id = "im-msn";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:
+		icon_id = "im-yahoo";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   icon_id,     /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+
+	g_return_if_fail (pixbuf != NULL);
+
+	
+	/* set image to gray scale */
+	gdk_pixbuf_saturate_and_pixelate
+		(pixbuf,
+		 pixbuf,
+		 online ? 1.5 : 0,
+		 FALSE);
+
+	gtk_image_set_from_pixbuf (image, pixbuf); 
+
 }
 
 static void
@@ -1881,6 +1931,13 @@ app_accounts_remove (GossipAccount *account)
 	g_list_free (children);
 }
 
+static void
+app_accounts_button_press_event_cb (GtkWidget      *hbox,
+				    GdkEventButton *event,
+				    gpointer        user_data)
+{
+	gossip_accounts_window_show ();
+}
 
 static void
 app_accounts_account_added_cb (GossipAccountManager *manager,
