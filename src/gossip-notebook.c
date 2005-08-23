@@ -395,16 +395,6 @@ move_tab_to_another_notebook (GossipNotebook *src,
  	drag_stop (src); 
 	
         gossip_notebook_move_page (src, dest, child, dest_page);
-
-#if 0
-        drag_start (dest, src->priv->src_notebook, src->priv->src_page);
-
-        dest->priv->motion_notify_handler_id =
-                g_signal_connect (G_OBJECT (dest),
-                                  "motion-notify-event",
-                                  G_CALLBACK (motion_notify_cb),
-                                  NULL);
-#endif
 }
 
 static void
@@ -458,8 +448,6 @@ drag_stop (GossipNotebook *notebook)
 		gdk_pointer_ungrab (GDK_CURRENT_TIME);
 	}
 }
-
-/* callbacks */
 
 static gboolean
 motion_notify_cb (GossipNotebook *notebook,
@@ -533,19 +521,6 @@ button_release_cb (GossipNotebook *notebook,
                 cur_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), 
                                                       cur_page_num);
 
-#if 0
-		/* NOTE: mr, things work fine without this, infact
-		   this complicates things, is it absolutely
-		   necessary? */
-                if (!is_in_notebook_window (notebook, event->x_root, event->y_root) &&
-		    gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)) > 1) {
-			/* tab was detached */
-			g_signal_emit (G_OBJECT (notebook),
-				       signals[TAB_DETACHED],
-				       0, cur_page);
-		}
-#endif
-
 		find_notebook_and_tab_at_pos ((gint) event->x_root,
 					      (gint) event->y_root,
 					      &dest, &page);
@@ -560,7 +535,13 @@ button_release_cb (GossipNotebook *notebook,
 				g_assert (page >= -1);
 				move_tab (notebook, page);
 			}
-			
+		} else {
+			if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook)) > 1) {
+				/* detach tab */
+				g_signal_emit (G_OBJECT (notebook),
+					       signals[TAB_DETACHED],
+					       0, cur_page);
+			}
 		}
 	}
 
@@ -596,8 +577,6 @@ button_press_cb (GossipNotebook *notebook,
 
         return FALSE;
 }
-
-/* public methods */
 
 GtkWidget *
 gossip_notebook_new (void)
