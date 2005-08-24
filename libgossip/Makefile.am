@@ -70,7 +70,8 @@ BUILT_SOURCES = 					\
 	libgossip-marshal.h				\
 	libgossip-marshal.c
 
-EXTRA_DIST =                                            \
+EXTRA_DIST =						\
+	$(dtd_DATA)					\
 	libgossip-marshal.list
 
 CLEANFILES = $(BUILT_SOURCES)
