@@ -797,7 +797,10 @@ session_connect (GossipSession *session,
 	
 	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
 	
-
+	if (gossip_protocol_is_connected (protocol)) {
+		return;
+	}
+	
 	/* can we not just pass the GossipAccount on the GObject init? */
 	gossip_protocol_setup (protocol, account);
 	
@@ -848,6 +851,10 @@ gossip_session_disconnect (GossipSession *session,
 		
 		g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
 	
+		if (!gossip_protocol_is_connected (protocol)) {
+			return;
+		}
+
 		gossip_protocol_logout (protocol);
 		return;
 	}
@@ -858,8 +865,60 @@ gossip_session_disconnect (GossipSession *session,
 
 		protocol = GOSSIP_PROTOCOL (l->data);
 
+		if (!gossip_protocol_is_connected (protocol)) {
+			continue;
+		}
+
 		gossip_protocol_logout (protocol);
 	}
+}
+
+guint
+gossip_session_count_connected (GossipSession *session)
+{
+	GossipSessionPriv *priv;
+	GList             *l;
+	guint              count = 0;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
+
+	priv = GET_PRIV (session);
+
+	for (l = priv->protocols; l; l = l->next) {
+		GossipProtocol *protocol;
+
+		protocol = GOSSIP_PROTOCOL (l->data);
+
+		if (gossip_protocol_is_connected (protocol)) {
+			count++;
+		}
+	}
+
+	return count;
+}
+
+guint
+gossip_session_count_disconnected (GossipSession *session)
+{
+	GossipSessionPriv *priv;
+	GList             *l;
+	guint              count = 0;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
+
+	priv = GET_PRIV (session);
+
+	for (l = priv->protocols; l; l = l->next) {
+		GossipProtocol *protocol;
+
+		protocol = GOSSIP_PROTOCOL (l->data);
+
+		if (!gossip_protocol_is_connected (protocol)) {
+			count++;
+		}
+	}
+
+	return count;
 }
 
 void 

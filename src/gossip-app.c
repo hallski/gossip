@@ -1306,8 +1306,6 @@ gossip_app_connect (gboolean startup)
 		return;
 	}
 	
-	app_disconnect ();
-
 	gossip_session_connect (priv->session, NULL, startup);
 }
 
@@ -1379,18 +1377,20 @@ app_connection_items_update (void)
 {
 	GossipAppPriv *priv;
 	GList         *l;
-	gboolean       connected;
+	guint          connected;
+	guint          disconnected;
 
 	priv = app->priv;
 	
-	connected = gossip_session_is_connected (priv->session, NULL);
-
+	connected = gossip_session_count_connected (priv->session);
+	disconnected = gossip_session_count_disconnected (priv->session);
+	
 	for (l = priv->enabled_connected_widgets; l; l = l->next) {
-		gtk_widget_set_sensitive (l->data, connected);
+		gtk_widget_set_sensitive (l->data, (connected > 0));
 	}
 
 	for (l = priv->enabled_disconnected_widgets; l; l = l->next) {
-		gtk_widget_set_sensitive (l->data, !connected);
+		gtk_widget_set_sensitive (l->data, (disconnected > 0));
 	}
 }
 

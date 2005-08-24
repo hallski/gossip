@@ -79,6 +79,8 @@ void            gossip_session_connect                 (GossipSession           
 							gboolean                 startup);
 void            gossip_session_disconnect              (GossipSession           *session,
 							GossipAccount           *account);
+guint           gossip_session_count_connected         (GossipSession           *session);
+guint           gossip_session_count_disconnected      (GossipSession           *session);
 void            gossip_session_send_message            (GossipSession           *session,
 							GossipMessage           *message);
 void            gossip_session_send_composing          (GossipSession           *session,
@@ -87,19 +89,15 @@ void            gossip_session_send_composing          (GossipSession           
 GossipPresence *gossip_session_get_presence            (GossipSession           *session);
 void            gossip_session_set_presence            (GossipSession           *session,
 							GossipPresence          *presence);
-gboolean        gossip_session_is_connected            (GossipSession           *session, 
+gboolean        gossip_session_is_connected            (GossipSession           *session,
 							GossipAccount           *account);
 const gchar *   gossip_session_get_active_resource     (GossipSession           *session,
 							GossipContact           *contact);
-
-
-
 
 /* misc */
 GossipChatroomProvider *
 gossip_session_get_chatroom_provider                    (GossipSession           *session,
 							 GossipAccount           *account);
-
 
 /* contact management */
 GossipContact * gossip_session_find_contact            (GossipSession           *session,
@@ -127,9 +125,6 @@ GList *         gossip_session_get_groups              (GossipSession           
 const gchar *   gossip_session_get_nickname            (GossipSession           *session);
 
 
-
-
-
 /* async operations */
 gboolean        gossip_session_register_account        (GossipSession           *session,
 							GossipAccountType        type,
@@ -154,9 +149,6 @@ gboolean        gossip_session_get_version             (GossipSession           
 							GossipVersionCallback    callback,
 							gpointer                 user_data,
 							GError                 **error);
-
-
-
 
 #endif /* __GOSSIP_SESSION_H__ */
 
