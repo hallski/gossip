@@ -1,3 +1,19 @@
+2005-08-24  Martyn Russell  <mr@gnome.org>
+
+	* ui/main.glade:
+	* src/gossip-new-account-window.c:
+	* protocols/jabber/gossip-jabber.c: 
+	- Added some SSL debugging.
+	- Fixed not registering with SSL in Jabber back end.
+	- Added use SSL / use proxy options into new account wizard (or
+	welcome druid).
+	- Fixes bug #165404.
+	- Fixes bug #117856.
+
+	* libgossip/gossip-session.c: 
+	- Added some checks before sending presence and messages to
+	offline accounts, stops expected warnings.
+
 2005-08-23  Martyn Russell  <mr@gnome.org>
 
 	* ui/connect.glade:

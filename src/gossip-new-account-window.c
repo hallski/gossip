@@ -31,25 +31,20 @@
 #include "gossip-new-account-window.h"
 
 
-typedef struct {
-	gchar  *label;
-	gchar  *address;
-} ServerEntry;
-
-
 /* default servers to fall back on */
-static ServerEntry servers[] = {
-	{ "Jabber.com", "jabber.com" },
-	{ "Jabber.cn", "jabber.cn" },
-	{ "Jabber.cz", "jabber.cz" },
-	{ "Jabber.dk", "jabber.dk" },
-	{ "Jabber.fr", "jabber.fr" },
-	{ "Jabber.hu", "jabber.hu" },
-	{ "Jabber.no", "jabber.no" },
-	{ "Jabber.org", "jabber.org" },
-	{ "Jabber.org.uk", "jabber.org.uk" },
-	{ "Jabber.ru", "jabber.ru" },
-	{ "Jabber.sk", "jabber.sk" }
+static const gchar *servers[] = {
+	"jabber.com",
+	"jabber.cn",
+	"jabber.cz",
+	"jabber.dk",
+	"jabber.fr",
+	"jabber.hu",
+	"jabber.no",
+	"jabber.org",
+	"jabber.org.uk",
+	"jabber.ru",
+	"jabber.sk",
+	NULL
 };
 
 
@@ -79,9 +74,10 @@ typedef struct {
 	GtkWidget    *four_page;
 	GtkWidget    *four_no_account_label;
 	GtkWidget    *four_account_label;
-	GtkWidget    *four_server_optionmenu;
-	GtkWidget    *four_different_radiobutton;
+	GtkWidget    *four_server_comboboxentry;
 	GtkWidget    *four_server_entry;
+	GtkWidget    *four_ssl_checkbutton;
+	GtkWidget    *four_proxy_checkbutton;
 
 	/* Last page */
 	GtkWidget    *last_page;
@@ -89,47 +85,148 @@ typedef struct {
 } GossipNewAccountWindow;
 
 
-static void     new_account_window_destroyed          (GtkWidget              *widget,
-						       GossipNewAccountWindow *window);
-static void     new_account_window_cancel             (GtkWidget              *widget,
-						       GossipNewAccountWindow *window);
-static void     new_account_window_prepare_page_1     (GnomeDruidPage         *page,
-						       GnomeDruid             *druid,
-						       GossipNewAccountWindow *window);
-static void     new_account_window_prepare_page_3     (GnomeDruidPage         *page,
-						       GnomeDruid             *druid,
-						       GossipNewAccountWindow *window);
-static void     new_account_window_prepare_page_last  (GnomeDruidPage         *page,
-						       GnomeDruid             *druid,
-						       GossipNewAccountWindow *window);
-static void     new_account_window_last_page_finished (GnomeDruidPage         *page,
-						       GnomeDruid             *druid,
-						       GossipNewAccountWindow *window);
-static void     new_account_window_3_entry_changed    (GtkEntry               *entry,
-						       GossipNewAccountWindow *window);
-static gboolean new_account_window_setup_account      (GossipNewAccountWindow *druid);
+static void     new_account_window_setup_servers      (GossipNewAccountWindow  *window);
+static gboolean new_account_window_setup_account      (GossipNewAccountWindow  *window);
+static gboolean new_account_window_get_account_info   (GossipNewAccountWindow  *window,
+						       GossipAccount          **account);
+static void     new_account_window_1_prepare          (GnomeDruidPage          *page,
+						       GnomeDruid              *druid,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_3_prepare          (GnomeDruidPage          *page,
+						       GnomeDruid              *druid,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_3_entry_changed    (GtkEntry                *entry,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_4_entry_changed    (GtkEntry                *entry,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_last_page_prepare  (GnomeDruidPage          *page,
+						       GnomeDruid              *druid,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_last_page_finished (GnomeDruidPage          *page,
+						       GnomeDruid              *druid,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_cancel             (GtkWidget               *widget,
+						       GossipNewAccountWindow  *window);
+static void     new_account_window_destroy            (GtkWidget               *widget,
+						       GossipNewAccountWindow  *window);
+
 
 
 static void
-new_account_window_destroyed (GtkWidget              *widget,
-			      GossipNewAccountWindow *window)
+new_account_window_setup_servers (GossipNewAccountWindow *window)
 {
-	if (window->gtk_main_started) {
-		gtk_main_quit ();
+	GtkComboBox  *combobox;
+	GtkListStore *store;
+ 	GtkTreeIter   iter; 
+ 	gint          i = 0; 
+
+	combobox = GTK_COMBO_BOX (window->four_server_comboboxentry);
+
+	store = gtk_list_store_new (1, G_TYPE_STRING);
+	
+	gtk_combo_box_set_model (combobox,
+				 GTK_TREE_MODEL (store));
+
+	gtk_combo_box_entry_set_text_column (GTK_COMBO_BOX_ENTRY (combobox), 0);
+
+	while (servers[i]) {
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter, 0, servers[i++], -1);
 	}
 
-	g_free (window);
+	g_object_unref (store);
 }
 
-static void
-new_account_window_cancel (GtkWidget              *widget,
-			   GossipNewAccountWindow *window)
+static gboolean
+new_account_window_setup_account (GossipNewAccountWindow *druid)
 {
-	gtk_widget_destroy (window->window);
+	GossipSession        *session;
+	GossipAccountManager *manager;
+	GossipAccount        *account;
+	gboolean              has_account;
+
+	session = gossip_app_get_session ();
+	manager = gossip_session_get_account_manager (session);
+
+	has_account = new_account_window_get_account_info (druid, &account); 
+	if (!has_account) {
+		if (!gossip_register_account (account, GTK_WINDOW (druid->window))) {
+			return FALSE;
+		}
+	}
+	
+	if (gossip_account_manager_get_count (manager) < 1) {
+		gossip_account_manager_set_default (manager, account);
+	}
+
+	gossip_account_manager_add (manager, account);
+	gossip_account_manager_store (manager);
+
+	g_object_unref (account);
+	
+	return TRUE;
+}
+
+static gboolean
+new_account_window_get_account_info (GossipNewAccountWindow  *window,
+				     GossipAccount          **account)
+{
+	GtkToggleButton *toggle;
+	gboolean         has_account;
+
+	toggle = GTK_TOGGLE_BUTTON (window->two_yes_radiobutton);
+	has_account = gtk_toggle_button_get_active (toggle);
+
+	if (account) {
+		const gchar *username;
+		const gchar *server = "";
+		gchar       *name;
+		gchar       *id;
+		guint16      port;
+		gboolean     ssl;
+		gboolean     proxy;
+
+		*account = NULL;
+
+		username = gtk_entry_get_text (GTK_ENTRY (window->three_nick_entry));
+		server = gtk_entry_get_text (GTK_ENTRY (window->four_server_entry));
+		
+		name = g_strdup_printf ("%s at %s", 
+				       username, server);
+
+		toggle = GTK_TOGGLE_BUTTON (window->four_ssl_checkbutton);
+		ssl = gtk_toggle_button_get_active (toggle);
+
+		toggle = GTK_TOGGLE_BUTTON (window->four_proxy_checkbutton);
+		proxy = gtk_toggle_button_get_active (toggle);
+
+		/* FIXME: Jabber specific - start */
+		id = g_strdup_printf ("%s@%s/%s",
+				      username, server, _("Home"));
+		port = ssl ? 5223 : 5222;
+		/* FIXME: Jabber specific - end */
+		
+		*account = g_object_new (GOSSIP_TYPE_ACCOUNT,
+					 "name", name,
+					 "id", id,
+					 "server", server, 
+					 "port", port,
+					 "use_ssl", ssl,
+					 "use_proxy", proxy,
+					 NULL);
+
+		g_free (name);
+		g_free (id);
+	}
+
+	/* FIXME: Set this in some settings-thingy... */
+	/* *realname = gtk_entry_get_text (GTK_ENTRY (window->three_name_entry)); */
+
+	return has_account;
 }
 
 static void
-new_account_window_prepare_page_1 (GnomeDruidPage         *page, 
+new_account_window_1_prepare (GnomeDruidPage         *page, 
 				   GnomeDruid             *druid, 
 				   GossipNewAccountWindow *window)
 {
@@ -137,7 +234,7 @@ new_account_window_prepare_page_1 (GnomeDruidPage         *page,
 }
 
 static void
-new_account_window_prepare_page_3 (GnomeDruidPage         *page,
+new_account_window_3_prepare (GnomeDruidPage         *page,
 				   GnomeDruid             *druid, 
 				   GossipNewAccountWindow *window)
 {
@@ -173,7 +270,24 @@ new_account_window_prepare_page_3 (GnomeDruidPage         *page,
 }
 
 static void
-new_account_window_prepare_page_4 (GnomeDruidPage         *page,
+new_account_window_3_entry_changed (GtkEntry               *entry,
+				    GossipNewAccountWindow *window)
+{
+	gboolean     ok = TRUE;
+	const gchar *str;
+	
+	str = gtk_entry_get_text (GTK_ENTRY (window->three_nick_entry));
+	ok &= str && str[0];
+
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   TRUE,
+					   ok,
+					   TRUE,
+					   FALSE);
+}
+
+static void
+new_account_window_4_prepare (GnomeDruidPage         *page,
 				   GnomeDruid             *druid,
 				   GossipNewAccountWindow *window) 
 {
@@ -190,69 +304,29 @@ new_account_window_prepare_page_4 (GnomeDruidPage         *page,
 		gtk_widget_hide (window->four_account_label);
 	}
 }
-
-static gboolean
-new_account_window_get_account_info (GossipNewAccountWindow  *window,
-				     GossipAccount          **account)
-{
-	GtkToggleButton *toggle;
-	gboolean         has_account;
-	gboolean         predefined_server;
-	GtkOptionMenu   *option_menu;
-	
-	toggle = GTK_TOGGLE_BUTTON (window->two_yes_radiobutton);
-	has_account = gtk_toggle_button_get_active (toggle);
-	toggle = GTK_TOGGLE_BUTTON (window->four_different_radiobutton);
-	predefined_server = !gtk_toggle_button_get_active (toggle);
-
-	if (account) {
-		const gchar *username;
-		const gchar *server = "";
-		gchar       *name;
-		gchar       *id;
-
-		*account = NULL;
-
-		username = gtk_entry_get_text (GTK_ENTRY (window->three_nick_entry));
-		if (predefined_server) {
-			ServerEntry *server_entry;
 			
-			option_menu = GTK_OPTION_MENU (window->four_server_optionmenu);
-			server_entry = gossip_option_menu_get_history (option_menu);
 
-			server = server_entry->address;
-		} else {
-			server = gtk_entry_get_text (GTK_ENTRY (window->four_server_entry));
-		}
-		
-		name = g_strdup_printf ("%s at %s", 
-				       username, server);
-
-		/* FIXME: Jabber specific... */
-		id = g_strdup_printf ("%s@%s/%s",
-				      username, server, _("Home"));
-
-		*account = g_object_new (GOSSIP_TYPE_ACCOUNT,
-					 "name", name,
-					 "id", id,
-					 "server", server, 
-					 "port", 5222,
-					 "use_ssl", FALSE,
-					 "use_proxy", FALSE,
-					 NULL);
-
-		g_free (name);
-		g_free (id);
-	}
-
-	/* FIXME: Set this in some settings-thingy... */
-	/* *realname = gtk_entry_get_text (GTK_ENTRY (window->three_name_entry)); */
-
-	return has_account;
-}
-				
 static void
-new_account_window_prepare_page_last (GnomeDruidPage         *page,
+new_account_window_4_entry_changed (GtkEntry               *entry, 
+				    GossipNewAccountWindow *window) 
+{
+	const gchar *str;
+	gboolean     ok = TRUE;
+
+	str = gtk_entry_get_text (GTK_ENTRY (window->four_server_entry));
+
+	ok &= (str != NULL);
+	ok &= (strlen (str) > 0);
+	
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   TRUE,
+					   ok,
+					   TRUE,
+					   FALSE);
+}
+
+static void
+new_account_window_last_page_prepare (GnomeDruidPage         *page,
 				      GnomeDruid             *druid,
 				      GossipNewAccountWindow *window)
 {
@@ -286,116 +360,27 @@ new_account_window_last_page_finished (GnomeDruidPage         *page,
 				       GnomeDruid             *druid,
 				       GossipNewAccountWindow *window)
 {
-	g_print ("last page finished\n");
-
 	if (new_account_window_setup_account (window)) {
 		gtk_widget_destroy (window->window);
 	}
 }
 
 static void
-new_account_window_3_entry_changed (GtkEntry               *entry,
-				    GossipNewAccountWindow *window)
+new_account_window_cancel (GtkWidget              *widget,
+			   GossipNewAccountWindow *window)
 {
-	gboolean     ok = TRUE;
-	const gchar *str;
-	
-	str = gtk_entry_get_text (GTK_ENTRY (window->three_nick_entry));
-	ok &= str && str[0];
-
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
-					   TRUE,
-					   ok,
-					   TRUE,
-					   FALSE);
+	gtk_widget_destroy (window->window);
 }
 
 static void
-new_account_window_4_entry_changed (GtkEntry               *entry, 
-				    GossipNewAccountWindow *window) 
+new_account_window_destroy (GtkWidget              *widget,
+			    GossipNewAccountWindow *window)
 {
-	gboolean other;
-	gboolean ok = TRUE;
-
-	other = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (window->four_different_radiobutton));
-
-	if (other) {
-		const gchar *str;
-
-		str = gtk_entry_get_text (GTK_ENTRY (window->four_server_entry));
-		
-		if (!str || strcmp (str, "") == 0) {
-			ok = FALSE;
-		}
-	} 
-	
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
-					   TRUE,
-					   ok,
-					   TRUE,
-					   FALSE);
-}
-
-static void
-new_account_window_4_different_toggled (GtkToggleButton        *button, 
-					GossipNewAccountWindow *window) 
-{
-	gboolean ok = TRUE;
-	
-	if (gtk_toggle_button_get_active (button)) {
-		const gchar *str;
-
-		gtk_widget_set_sensitive (window->four_server_optionmenu,
-					  FALSE);
-		gtk_widget_set_sensitive (window->four_server_entry,
-					  TRUE);
-		
-		str = gtk_entry_get_text (GTK_ENTRY (window->four_server_entry));
-		if (!str || strcmp (str, "") == 0) {
-			ok = FALSE;
-		}
-	} else {
-		gtk_widget_set_sensitive (window->four_server_optionmenu,
-					  TRUE);
-		gtk_widget_set_sensitive (window->four_server_entry,
-					  FALSE);
+	if (window->gtk_main_started) {
+		gtk_main_quit ();
 	}
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
-					   TRUE,
-					   ok,
-					   TRUE,
-					   FALSE);
-}
-
-static gboolean
-new_account_window_setup_account (GossipNewAccountWindow *druid)
-{
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	GossipAccount        *account;
-	gboolean              has_account;
-
-	session = gossip_app_get_session ();
-	manager = gossip_session_get_account_manager (session);
-
-	has_account = new_account_window_get_account_info (druid, &account); 
-	if (!has_account) {
-		if (!gossip_register_account (account, GTK_WINDOW (druid->window))) {
-			return FALSE;
-		}
-	}
-	
-	if (gossip_account_manager_get_count (manager) < 1) {
-		gossip_account_manager_set_default (manager, account);
-	}
-
-	gossip_account_manager_add (manager, account);
-	gossip_account_manager_store (manager);
-
-	g_object_unref (account);
-	
-	return TRUE;
+	g_free (window);
 }
 
 gboolean
@@ -434,73 +419,57 @@ gossip_new_account_window_show (void)
 
 	window = g_new0 (GossipNewAccountWindow, 1);
 	
-	glade = gossip_glade_get_file (
-		GLADEDIR "/main.glade",
-		"new_account_window",
-		NULL,
-		"new_account_window", &window->window,
-		"druid", &window->druid,
-		"1_page", &window->one_page,
-		"2_page", &window->two_page,
-		"2_yes_radiobutton", &window->two_yes_radiobutton,
-		"2_no_radiobutton", &window->two_no_radiobutton,
-		"3_page", &window->three_page,
-		"3_account_label", &window->three_account_label,
-		"3_no_account_label", &window->three_no_account_label,
-		"3_nick_entry", &window->three_nick_entry,
-		"3_name_label", &window->three_name_label,
-		"3_name_entry", &window->three_name_entry,
-		"4_page", &window->four_page,
-		"4_no_account_label", &window->four_no_account_label,
-		"4_account_label", &window->four_account_label,
-		"4_server_optionmenu", &window->four_server_optionmenu,
-		"4_different_radiobutton", &window->four_different_radiobutton,
-		"4_server_entry", &window->four_server_entry,
-		"last_page", &window->last_page,
-		"last_action_label", &window->last_action_label,
-		NULL);
-	
-	gossip_glade_connect (
-		glade, window,
-		"new_account_window", "destroy", new_account_window_destroyed,
-		"druid", "cancel", new_account_window_cancel,
-		"3_nick_entry", "changed", new_account_window_3_entry_changed,
-		"4_server_entry", "changed", new_account_window_4_entry_changed,
-		"4_different_radiobutton", "toggled", new_account_window_4_different_toggled,
-		"last_page", "finish", new_account_window_last_page_finished,
-		NULL);
-	
-	gossip_option_menu_setup (window->four_server_optionmenu,
-				  NULL, NULL,
-				  servers[0].label, &servers[0], 
-				  servers[1].label, &servers[1], 
-				  servers[2].label, &servers[2], 
-				  servers[3].label, &servers[3], 
-				  servers[4].label, &servers[4], 
-				  servers[5].label, &servers[5], 
-				  servers[6].label, &servers[6], 
-				  servers[7].label, &servers[7], 
-				  servers[8].label, &servers[8], 
-				  servers[9].label, &servers[9], 
-				  servers[10].label, &servers[10], 
-				  NULL);
-		
+	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+				       "new_account_window",
+				       NULL,
+				       "new_account_window", &window->window,
+				       "druid", &window->druid,
+				       "1_page", &window->one_page,
+				       "2_page", &window->two_page,
+				       "2_yes_radiobutton", &window->two_yes_radiobutton,
+				       "2_no_radiobutton", &window->two_no_radiobutton,
+				       "3_page", &window->three_page,
+				       "3_account_label", &window->three_account_label,
+				       "3_no_account_label", &window->three_no_account_label,
+				       "3_nick_entry", &window->three_nick_entry,
+				       "3_name_label", &window->three_name_label,
+				       "3_name_entry", &window->three_name_entry,
+				       "4_page", &window->four_page,
+				       "4_no_account_label", &window->four_no_account_label,
+				       "4_account_label", &window->four_account_label,
+				       "4_server_comboboxentry", &window->four_server_comboboxentry,
+				       "4_ssl_checkbutton", &window->four_ssl_checkbutton,
+				       "4_proxy_checkbutton", &window->four_proxy_checkbutton,
+				       "last_page", &window->last_page,
+				       "last_action_label", &window->last_action_label,
+				       NULL);
+
+	gossip_glade_connect (glade, 
+			      window,
+			      "new_account_window", "destroy", new_account_window_destroy,
+			      "druid", "cancel", new_account_window_cancel,
+			      "3_nick_entry", "changed", new_account_window_3_entry_changed,
+			      "last_page", "finish", new_account_window_last_page_finished,
+			      NULL);
+
 	g_object_unref (glade);
+
+	window->four_server_entry = GTK_BIN (window->four_server_comboboxentry)->child;
+
+	g_signal_connect (window->four_server_entry, "changed",
+			  G_CALLBACK (new_account_window_4_entry_changed), window);
 	
-	g_signal_connect_after (window->one_page, "prepare",
-				G_CALLBACK (new_account_window_prepare_page_1),
-				window);
 	g_signal_connect_after (window->three_page, "prepare",
-				G_CALLBACK (new_account_window_prepare_page_3),
+				G_CALLBACK (new_account_window_3_prepare),
 				window);
 	g_signal_connect_after (window->four_page, "prepare",
-				G_CALLBACK (new_account_window_prepare_page_4),
+				G_CALLBACK (new_account_window_4_prepare),
 				window);
 	g_signal_connect_after (window->last_page, "prepare",
-				G_CALLBACK (new_account_window_prepare_page_last),
+				G_CALLBACK (new_account_window_last_page_prepare),
 				window);
 
-	new_account_window_prepare_page_1 (GNOME_DRUID_PAGE (window->one_page),
+	new_account_window_1_prepare (GNOME_DRUID_PAGE (window->one_page),
 				      GNOME_DRUID (window->druid),
 				      window);
 
@@ -511,8 +480,16 @@ gossip_new_account_window_show (void)
 		      "has-default", TRUE,
 		      NULL);
 
-	gtk_widget_show (window->window);
+	/* set up list */
+	new_account_window_setup_servers (window);
 
+	gtk_combo_box_set_active (GTK_COMBO_BOX (window->four_server_comboboxentry), 0);
+
+	/* can we use ssl */
+	gtk_widget_set_sensitive (window->four_ssl_checkbutton, lm_ssl_is_supported ());
+
+	/* show window */
+	gtk_widget_show (window->window);
 
 	if (!gossip_new_account_window_is_needed ()) {
 		/* skip the first page */
@@ -523,4 +500,3 @@ gossip_new_account_window_show (void)
 		gtk_main ();
 	}
 }
-

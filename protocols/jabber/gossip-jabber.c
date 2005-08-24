@@ -45,7 +45,7 @@
 #include "gossip-jabber-private.h"
 #include "gossip-jabber.h"
 
-#define d(x) 
+#define d(x)
 
 #define XMPP_VERSION_XMLNS "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
@@ -408,14 +408,26 @@ jabber_login (GossipProtocol *protocol)
 	d(g_print ("Protocol: Logging in Jabber\n"));
 	
 	if (gossip_account_get_use_ssl (priv->account)) {
-		LmSSL *ssl = lm_ssl_new (NULL,
-					 (LmSSLFunction) jabber_ssl_func,
-					 jabber, NULL);
+		LmSSL *ssl;
+
+		d(g_print ("Protocol: Using SSL\n"));
+
+		ssl = lm_ssl_new (NULL,
+				  (LmSSLFunction) jabber_ssl_func,
+				  jabber, NULL);
+
 		lm_connection_set_ssl (priv->connection, ssl);
+		lm_connection_set_port (priv->connection,
+					gossip_account_get_port (priv->account));
+
+		/* LM_CONNECTION_DEFAULT_PORT_SSL */
+
 		lm_ssl_unref (ssl);
 	}
 
 	if (gossip_account_get_use_proxy (priv->account)) {
+		d(g_print ("Protocol: Using proxy\n"));
+
 		jabber_set_proxy (priv->connection);
 	} else {
 		/* FIXME: Just pass NULL when Loudmouth > 0.17.1 */
@@ -485,10 +497,10 @@ jabber_logout_contact_foreach (gpointer       key,
 
 static gboolean            
 jabber_register_account (GossipProtocol               *protocol,
-		 GossipAccount                *account,
-			 GossipRegisterCallback   callback,
-		 gpointer                      user_data,
-		 GError                      **error)
+			 GossipAccount                *account,
+			 GossipRegisterCallback        callback,
+			 gpointer                      user_data,
+			 GError                      **error)
 {
 	GossipJabber         *jabber;
 	GossipJabberPriv     *priv;
@@ -512,14 +524,23 @@ jabber_register_account (GossipProtocol               *protocol,
 	d(g_print ("Protocol: Registering with Jabber server...\n"));
 
 	if (gossip_account_get_use_ssl (account)) {
-		LmSSL *ssl = lm_ssl_new (NULL,
-					 (LmSSLFunction) jabber_ssl_func,
-					 jabber, NULL);
+		LmSSL *ssl;
+		
+		d(g_print ("Protocol: Using SSL\n"));
+
+		ssl = lm_ssl_new (NULL,
+				  (LmSSLFunction) jabber_ssl_func,
+				  jabber, NULL);
 		lm_connection_set_ssl (ra->connection, ssl);
+		lm_connection_set_port (ra->connection,
+					gossip_account_get_port (account));
+
 		lm_ssl_unref (ssl);
 	}
 
 	if (gossip_account_get_use_proxy (account)) {
+		d(g_print ("Protocol: Using proxy\n"));
+
 		jabber_set_proxy (ra->connection);
 	} else {
 		/* FIXME: Just pass NULL when Loudmouth > 0.17.1 */
@@ -1293,6 +1314,37 @@ jabber_ssl_func (LmConnection *connection,
 		 LmSSLStatus   status,
 		 GossipJabber *jabber)
 {
+	const gchar *str = "";
+
+	switch (status) {
+	case LM_SSL_STATUS_NO_CERT_FOUND: 
+		str = "No certificate found";
+		break;
+	case LM_SSL_STATUS_UNTRUSTED_CERT: 
+		str = "Untrusted certificate";
+		break;
+	case LM_SSL_STATUS_CERT_EXPIRED: 
+		str = "Certificate expired";
+		break;
+	case LM_SSL_STATUS_CERT_NOT_ACTIVATED: 
+		str = "Certificate not activated";
+		break;
+	case LM_SSL_STATUS_CERT_HOSTNAME_MISMATCH: 
+		str = "Certificate host mismatch";
+		break;
+	case LM_SSL_STATUS_CERT_FINGERPRINT_MISMATCH: 
+		str = "Certificate fingerprint mismatch";
+		break;
+	case LM_SSL_STATUS_GENERIC_ERROR:
+		str = "Generic error";
+		break;
+	default: 
+		str = "Unknown error:";
+		break;
+	}
+
+	d(g_print ("Protocol: %s\n", str));
+
 	return LM_SSL_RESPONSE_CONTINUE;
 }
 

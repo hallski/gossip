@@ -897,6 +897,10 @@ gossip_session_send_message (GossipSession *session,
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol = GOSSIP_PROTOCOL (l->data);
 
+		if (!gossip_protocol_is_connected (protocol)) {
+			continue;
+		}
+
 		gossip_protocol_send_message (protocol, message);
 	}
 }
@@ -917,6 +921,11 @@ gossip_session_send_composing (GossipSession  *session,
 		GossipProtocol *protocol;
 
 		protocol = GOSSIP_PROTOCOL (l->data);
+
+		if (!gossip_protocol_is_connected (protocol)) {
+			continue;
+		}
+
 		gossip_protocol_send_composing (protocol,
 						contact,
 						composing);
@@ -951,6 +960,11 @@ gossip_session_set_presence (GossipSession  *session,
 		GossipProtocol *protocol;
 
 		protocol = GOSSIP_PROTOCOL (l->data);
+
+		if (!gossip_protocol_is_connected (protocol)) {
+			continue;
+		}
+
 		gossip_protocol_set_presence (protocol, presence);
 	}
 }
@@ -1301,6 +1315,9 @@ gossip_session_register_account (GossipSession           *session,
 	g_return_val_if_fail (callback != NULL, FALSE);
 
 	priv = GET_PRIV (session);
+
+	/* make sure we have added the account to our list */
+	gossip_session_add_account (session, account);
 	
 	protocol = g_hash_table_lookup (priv->accounts, 
 					gossip_account_get_name (account));
@@ -1309,7 +1326,7 @@ gossip_session_register_account (GossipSession           *session,
 	
         return gossip_protocol_register_account (protocol, account, 
 						 callback, user_data,
-                                               error);
+						 error);
 }
 
 gboolean
