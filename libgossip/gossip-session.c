@@ -25,7 +25,7 @@
 #include "gossip-protocol.h"
 
 /* Temporary */
-#include "gossip-jabber.h"
+#include <gossip-jabber.h>
 
 #include "gossip-session.h"
 

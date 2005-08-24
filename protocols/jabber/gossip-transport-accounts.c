@@ -61,39 +61,41 @@ struct _GossipTransportAccount {
 
 
 
-static void                    transport_accounts_contact_added_cb      (GossipProtocol             *protocol,
-									 GossipContact              *contact,
-									 GossipTransportAccountList *al);
-static void                    transport_accounts_contact_removed_cb    (GossipProtocol             *protocol,
-									 GossipContact              *contact,
-									 GossipTransportAccountList *al);
-static GossipTransportAccount *transport_account_new                    (GossipJID                  *jid);
-static void                    transport_account_free                   (GossipTransportAccount     *account);
-static void                    transport_account_update_info_cb         (GossipTransportDisco       *disco,
-									 GossipTransportDiscoItem   *item,
-									 gboolean                    last_item,
-									 gboolean                    timeout,
-									 GError                     *error,
-									 GossipTransportAccount     *account);
-static void                    transport_account_update_username_cb     (GossipJID                  *jid,
-									 const gchar                *key,
-									 const gchar                *username,
-									 const gchar                *password,
-									 const gchar                *nick,
-									 const gchar                *email,
-									 gboolean                    require_username,
-									 gboolean                    require_password,
-									 gboolean                    require_nick,
-									 gboolean                    require_email,
-									 gboolean                    is_registered,
-									 const gchar                *error_code,
-									 const gchar                *error_reason,
-									 GossipTransportAccount     *account);
-static void                    transport_account_unregister_cb          (GossipJID                  *jid,
-									 const gchar                *error_code,
-									 const gchar                *error_reason,
-									 gpointer                    user_data);
-static GossipJabber *         transport_account_get_jabber              (GossipTransportAccount     *account);
+static void          transport_accounts_contact_added_cb   (GossipProtocol             *protocol,
+							    GossipContact              *contact,
+							    GossipTransportAccountList *al);
+static void          transport_accounts_contact_removed_cb (GossipProtocol             *protocol,
+							    GossipContact              *contact,
+							    GossipTransportAccountList *al);
+static GossipTransportAccount *
+                     transport_account_new                 (GossipJID                  *jid);
+static void          transport_account_free               (GossipTransportAccount   *account);
+static void          transport_account_update_info_cb     (GossipTransportDisco     *disco,
+							   GossipTransportDiscoItem *item,
+							   gboolean                  last_item,
+							   gboolean                  timeout,
+							   GError                   *error,
+							   GossipTransportAccount   *account);
+static void          transport_account_update_username_cb (GossipJID                *jid,
+							   const gchar              *key,
+							   const gchar              *username,
+							   const gchar              *password,
+							   const gchar              *nick,
+							   const gchar              *email,
+							   gboolean                  require_username,
+							   gboolean                  require_password,
+							   gboolean                  require_nick,
+							   gboolean                  require_email,
+							   gboolean                  is_registered,
+							   const gchar              *error_code,
+							   const gchar              *error_reason,
+							   GossipTransportAccount   *account);
+static void          transport_account_unregister_cb      (GossipJID                *jid,
+							   const gchar              *error_code,
+							   const gchar              *error_reason,
+							   gpointer                  user_data);
+static GossipJabber *transport_account_get_jabber         (GossipTransportAccount   *account);
+
 
 static GList *account_lists = NULL;
 

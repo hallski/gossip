@@ -14,8 +14,12 @@ libgossip_jabber_la_SOURCES =                   \
 	gossip-jabber-private.h                 \
 	gossip-jabber-chatrooms.c               \
 	gossip-jabber-chatrooms.h               \
-	gossip-jabber-helper.c                  \
-	gossip-jabber-helper.h                  \
+	gossip-jabber-vcard.c			\
+	gossip-jabber-vcard.h			\
+	gossip-jabber-services.c		\
+	gossip-jabber-services.h		\
+	gossip-jabber-utils.c			\
+	gossip-jabber-utils.h			\
 	gossip-jid.c                            \
 	gossip-jid.h                            \
 	gossip-transport-accounts.c             \

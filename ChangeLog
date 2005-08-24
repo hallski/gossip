@@ -1,5 +1,25 @@
 2005-08-24  Martyn Russell  <mr@gnome.org>
 
+	* protocols/jabber/gossip-jabber-helper.[ch]:
+	- Removed.
+
+	* protocols/jabber/gossip-jabber-services.[ch]:
+	* protocols/jabber/gossip-jabber-utils.[ch]:
+	* protocols/jabber/gossip-jabber-vcard.[ch]:
+	- Added.
+
+	* libgossip/gossip-async.h:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.c:
+	* src/gossip-app.c:
+	- Small updates to the API.
+	
+	* protocols/jabber/gossip-jabber.[ch]:
+	* protocols/jabber/gossip-transport-accounts.c:
+	- Cleaned up the code and things are grouped better .
+	
+2005-08-24  Martyn Russell  <mr@gnome.org>
+
 	* libgossip/Makefile.am (EXTRA_DIST): 
 	- Added dtd_DATA to EXTRA_DIST (Paul van Tilburg).
 

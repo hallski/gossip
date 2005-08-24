@@ -245,18 +245,17 @@ gossip_protocol_is_connected (GossipProtocol *protocol)
 }
 
 void
-gossip_protocol_contact_set_subscription (GossipProtocol *protocol,
-					  GossipContact  *contact,
-					  gboolean        subscribed)
+gossip_protocol_set_subscription (GossipProtocol *protocol,
+				  GossipContact  *contact,
+				  gboolean        subscribed)
 {
 	GossipProtocolClass *klass;
 
 	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->contact_set_subscription) {
-		klass->contact_set_subscription (protocol, contact, 
-						 subscribed);
+	if (klass->set_subscription) {
+		klass->set_subscription (protocol, contact, subscribed);
 	}
 }
 

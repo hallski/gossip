@@ -28,8 +28,8 @@
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jid.h"
-#include "gossip-jabber-helper.h"
 #include "gossip-jabber-chatrooms.h"
+#include "gossip-jabber-utils.h"
 
 #define d(x)
 
@@ -188,12 +188,12 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 
 			contact = jabber_chatrooms_get_contact (room, jid, 
 								NULL);
-			timestamp = gossip_jabber_helper_get_timestamp_from_lm_message (m);
+			timestamp = gossip_jabber_get_message_timestamp (m);
 
 			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
 						      room->own_contact);
 			
-			timestamp = gossip_jabber_helper_get_timestamp_from_lm_message (m);
+			timestamp = gossip_jabber_get_message_timestamp (m);
 			gossip_message_set_timestamp (message, timestamp);
 			
 			gossip_message_set_sender (message, contact);
@@ -460,7 +460,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 			     GINT_TO_POINTER (room->id), room);
 	g_hash_table_insert (chatrooms->room_jid_hash, room->jid, room);
 
-        show = gossip_jabber_helper_presence_state_to_string (chatrooms->presence);
+        show = gossip_jabber_presence_state_to_str (chatrooms->presence);
 
 	if (show) {
                 lm_message_node_add_child (m->node, "show", show);
@@ -908,7 +908,7 @@ jabber_chatrooms_set_presence_foreach (gpointer               key,
 	connection = chatrooms->connection;
 	presence = chatrooms->presence;
 
-	show   = gossip_jabber_helper_presence_state_to_string (presence);
+	show   = gossip_jabber_presence_state_to_str (presence);
 	status = gossip_presence_get_status (presence);
 
 	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),

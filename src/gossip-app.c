@@ -3007,9 +3007,9 @@ app_subscription_request_dialog_cb (GtkWidget        *dialog,
 		gboolean subscribe;
 
 		subscribe = (response == GTK_RESPONSE_YES);
-		gossip_protocol_contact_set_subscription (data->protocol, 
-							  data->contact, 
-							  subscribe);
+		gossip_protocol_set_subscription (data->protocol, 
+						  data->contact, 
+						  subscribe);
 
 		if (subscribe && add_user) {
 			const gchar *id, *name, *message;

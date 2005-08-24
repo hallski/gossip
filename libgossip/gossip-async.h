@@ -34,17 +34,23 @@ typedef enum {
 } GossipResult;
 
 
+typedef struct {
+	gpointer callback;
+	gpointer user_data;
+} GossipCallbackData;
+
+
 typedef void (*GossipRegisterCallback) (GossipResult       result,
-                                             const gchar       *err_message,
-                                             gpointer           user_data);
+					const gchar       *err_message,
+					gpointer           user_data);
 
 typedef void (*GossipVCardCallback)    (GossipResult       result,
-                                             GossipVCard       *vcard,
-                                             gpointer           user_data);
+					GossipVCard       *vcard,
+					gpointer           user_data);
 
 typedef void (*GossipVersionCallback)  (GossipResult       result,
-                                             GossipVersionInfo *info,
-                                             gpointer           user_data);
+					GossipVersionInfo *info,
+					gpointer           user_data);
 
 typedef void (*GossipResultCallback)   (GossipResult       result,
 					gpointer           user_data);

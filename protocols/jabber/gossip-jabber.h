@@ -57,17 +57,18 @@ struct _GossipJabberClass {
 };
 
   
-GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
-gboolean       gossip_jabber_get_vcard                 (GossipJabber             *jabber,
-							GossipContact            *contact,
-							GossipVCardCallback  callback);
-GossipContact *gossip_jabber_get_own_contact           (GossipJabber             *jabber);
-void           gossip_jabber_send_subscribed           (GossipJabber             *jabber,
-							GossipContact            *contact);
-void           gossip_jabber_send_unsubscribed         (GossipJabber             *jabber,
-							GossipContact            *contact);
+GType               gossip_jabber_get_type                  (void) G_GNUC_CONST;
 
-void           gossip_jabber_subscription_allow_all    (GossipJabber             *jabber);
-void           gossip_jabber_subscription_disallow_all (GossipJabber             *jabber);
+gboolean            gossip_jabber_get_vcard                 (GossipJabber        *jabber,
+							     GossipContact       *contact,
+							     GossipVCardCallback  callback);
+GossipContact *     gossip_jabber_get_own_contact           (GossipJabber        *jabber);
+void                gossip_jabber_send_subscribed           (GossipJabber        *jabber,
+							     GossipContact       *contact);
+void                gossip_jabber_send_unsubscribed         (GossipJabber        *jabber,
+							     GossipContact       *contact);
+void                gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
+void                gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
+
 
 #endif /* __GOSSIP_JABBER_H__ */
