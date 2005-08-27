@@ -1408,9 +1408,8 @@ msgid "_Accept"
 msgstr "_Acceptera"
 
 #: ../ui/main.glade.h:109
-#, fuzzy
 msgid "_Accounts"
-msgstr "Konto"
+msgstr "_Konton"
 
 #: ../ui/main.glade.h:112
 msgid "_Connect..."
@@ -1443,14 +1442,12 @@ msgid "_New Message..."
 msgstr "_Nytt meddelande..."
 
 #: ../ui/main.glade.h:119
-#, fuzzy
 msgid "_No"
-msgstr "Nej"
+msgstr "_Nej"
 
 #: ../ui/main.glade.h:120
-#, fuzzy
 msgid "_Personal Information"
-msgstr "Personlig information"
+msgstr "_Personlig information"
 
 #: ../ui/main.glade.h:121
 msgid "_Preferences"
@@ -1473,9 +1470,8 @@ msgid "_Subscribe"
 msgstr "_Prenumerera"
 
 #: ../ui/main.glade.h:126
-#, fuzzy
 msgid "_Yes"
-msgstr "Ja"
+msgstr "_Ja"
 
 #, fuzzy
 #~ msgid "Choose _from list:"
