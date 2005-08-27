@@ -156,6 +156,20 @@
     </schema>
 
     <schema>
+       <key>/schemas/apps/gossip/ui/separate_chat_windows</key>
+       <applyto>/apps/gossip/ui/separate_chat_windows</applyto>
+       <owner>gossip</owner>
+       <type>bool</type>
+       <default>false</default>
+       <locale name="C">
+          <short>Open new chats in separate windows</short>
+          <long>
+	    Always open a separate chat window for new chats.
+          </long>
+       </locale>
+    </schema>
+
+    <schema>
       <key>/schemas/apps/gossip/status/preset_messages</key>
       <applyto>/apps/gossip/status/preset_messages</applyto>
       <owner>gossip</owner>

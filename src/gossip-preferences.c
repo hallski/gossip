@@ -45,6 +45,7 @@ typedef struct {
 	GtkWidget *silent_busy_checkbutton;
 	GtkWidget *silent_away_checkbutton;
 	GtkWidget *smileys_checkbutton;
+        GtkWidget *separate_windows_checkbutton;
 	GtkWidget *compact_checkbutton;
 	GtkWidget *leaving_entry;
 	GtkWidget *away_entry;
@@ -362,9 +363,13 @@ preferences_setup_widgets (GossipPreferences *preferences)
 				       GCONF_PATH "/sound/play_sounds",
 				       preferences->silent_busy_checkbutton);
 
-	hookup_toggle_button (preferences,
+        hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/graphical_smileys",
 			      preferences->smileys_checkbutton);
+
+        hookup_toggle_button (preferences,
+                              GCONF_PATH "/ui/separate_chat_windows",
+                              preferences->separate_windows_checkbutton);
 
 	hookup_toggle_button (preferences,
 			      GCONF_PATH "/conversation/enable_spell_checker",
@@ -393,6 +398,7 @@ gossip_preferences_show (void)
 				     "silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
 				     "silent_away_checkbutton", &preferences->silent_away_checkbutton,
 				     "smileys_checkbutton", &preferences->smileys_checkbutton,
+				     "separate_windows_checkbutton", &preferences->separate_windows_checkbutton,
 				     "spell_checker_vbox", &preferences->spell_checker_vbox,
 				     "spell_checker_checkbutton", &preferences->spell_checker_checkbutton,
 				     NULL);

@@ -371,69 +371,53 @@ gossip_chat_window_init (GossipChatWindow *window)
 /* Returns the window to open a new tab in if there is only one window visble */
 /* Otherwise, returns NULL indicating that a new window should be added       */
 GossipChatWindow *
-gossip_chat_window_get_default (gboolean for_group_chats)
+gossip_chat_window_get_default (void)
 {
-	GossipChatWindow *default_chat_window = NULL;
-	GList            *l;
+	GList       *l;
+        gboolean     separate_windows = TRUE;
+        GConfClient *gconf;
+        GError      *error;
+        
+        gconf = gconf_client_get_default ();
 
-	for (l=chat_windows; l; l=l->next) {
+        error = NULL;
+        separate_windows = gconf_client_get_bool (gconf,
+                                                  "/apps/gossip/ui/separate_chat_windows",
+                                                  &error);
+        if (error) {
+                separate_windows = FALSE;
+                g_error_free (error);
+        }
+
+        if (separate_windows) {
+                /* Always create a new window */
+                return NULL;
+        }
+
+	for (l = chat_windows; l; l = l->next) {
 		GossipChatWindow *chat_window;
 		GtkWidget        *dialog;
 		GdkWindow        *window;
 		gboolean          visible;
-		gint              count;
 
 		chat_window = l->data;
-
-		count = gossip_chat_window_get_group_chats (chat_window);
-		if ((count < 1 && for_group_chats) || (count > 0 && !for_group_chats)) {
-			continue;
-		}
-
+                
 		dialog = gossip_chat_window_get_dialog (chat_window);
-		window = dialog->window;
+                window = dialog->window;
 
 		g_object_get (dialog, 
 			      "visible", &visible,
 			      NULL);
 		
 		visible = visible && !(gdk_window_get_state (window) & GDK_WINDOW_STATE_ICONIFIED);
-
-		/* more than one visible window */
-		if (visible && default_chat_window) {
-			return NULL;
-		}
-
-		if (visible) {
-			default_chat_window = chat_window;
-		}
+                
+                if (visible) {
+                        /* Found a visible window on this desktop */
+                        return chat_window;
+                }
 	}
 
-	return default_chat_window;
-}
-
-gint 
-gossip_chat_window_get_group_chats (GossipChatWindow *window)
-{
-	GossipChatWindowPriv *priv;
- 	GList                *l;
-	gint                  count;
-
-	g_return_val_if_fail (window != NULL, 0);
-
-	priv = window->priv;
-	
-	for (l=priv->chats, count=0; l; l=l->next) {
-		GossipChat *chat;
-
-		chat = GOSSIP_CHAT (l->data);
-
-		if (gossip_chat_get_group_chat (chat)) {
-			count++;
-		}
-	}
-
-	return count;
+        return NULL;
 }
 
 static void

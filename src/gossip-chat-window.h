@@ -53,7 +53,7 @@ struct _GossipChatWindowClass {
 
 
 GType             gossip_chat_window_get_type        (void);
-GossipChatWindow *gossip_chat_window_get_default     (gboolean          for_group_chat);
+GossipChatWindow *gossip_chat_window_get_default     (void);
 
 GossipChatWindow *gossip_chat_window_new             (void);
 
@@ -66,7 +66,6 @@ void              gossip_chat_window_remove_chat     (GossipChatWindow *window,
 void              gossip_chat_window_switch_to_chat  (GossipChatWindow *window,
 						      GossipChat       *chat);
 
-gint              gossip_chat_window_get_group_chats (GossipChatWindow *window);
 gboolean          gossip_chat_window_has_focus       (GossipChatWindow *window);
 
 

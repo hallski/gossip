@@ -1,3 +1,15 @@
+2005-08-27  Mikael Hallendal  <micke@imendio.com>
+
+	* gossip.schemas.in:
+	* src/gossip-chat-window.c: (gossip_chat_window_get_default):
+	- Modified to give a new window or not depending on the new setting.
+	* src/gossip-chat-window.h:
+	* src/gossip-chat.c: (gossip_chat_present):
+	* src/gossip-preferences.c: (preferences_setup_widgets),
+	(gossip_preferences_show):
+	* ui/main.glade:
+	- Added setting on whether to always open chats in new window or not.
+
 2005-08-24  Martyn Russell  <mr@gnome.org>
 
 	* protocols/jabber/gossip-jabber-helper.[ch]:

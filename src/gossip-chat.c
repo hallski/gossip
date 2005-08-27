@@ -726,7 +726,7 @@ gossip_chat_present (GossipChat *chat)
 
 		/* get the default window for either group chats or
 		   normal chats, we do not want to mix them */
-		window = gossip_chat_window_get_default (for_group_chat);
+		window = gossip_chat_window_get_default ();
 
 		if (!window) {
 			window = gossip_chat_window_new ();
