@@ -25,7 +25,6 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <libgnomevfs/gnome-vfs.h>
-#include <libxml/xmlreader.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -34,7 +33,7 @@
 #define CONTACT_GROUPS_XML_FILENAME "contact-groups.xml"
 #define CONTACT_GROUPS_DTD_FILENAME "gossip-contact-groups.dtd"
 
-#define d(x)
+#define d(x) 
 
 
 typedef struct {
@@ -43,8 +42,7 @@ typedef struct {
 } ContactGroup;
 
 
-static ContactGroup *contact_groups_file_parse    (const gchar  *filename);
-static gboolean      contact_groups_file_validate (const gchar  *filename);
+static void          contact_groups_file_parse    (const gchar  *filename);
 static gboolean      contact_groups_file_save     (void);
 
 static ContactGroup *contact_group_new            (const gchar  *name,
@@ -58,8 +56,8 @@ static GList *groups = NULL;
 void
 gossip_contact_groups_get_all (void)
 {
-	gchar    *dir;
-	gchar    *file_with_path;
+	gchar *dir;
+	gchar *file_with_path;
 
 	/* if already set up clean up first */
 	if (groups) {
@@ -77,139 +75,90 @@ gossip_contact_groups_get_all (void)
 	g_free (dir);
 
 	if (g_file_test(file_with_path, G_FILE_TEST_EXISTS)) {
-		if (contact_groups_file_validate (file_with_path)) {
-			contact_groups_file_parse (file_with_path);
-		}
+		contact_groups_file_parse (file_with_path);
 	}
 	
 	g_free (file_with_path);
 }
 
-static gboolean
-contact_groups_file_validate (const char *filename)
-{
-
-	xmlParserCtxtPtr ctxt;
-	xmlDocPtr        doc; 
-	gboolean         success = FALSE;
-
-	g_return_val_if_fail (filename != NULL, FALSE);
-
-	d(g_print ("Attempting to validate file (against DTD):'%s'\n", 
-		   filename));
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt ();
-	if (ctxt == NULL) {
-		g_warning ("Failed to allocate parser context for file:'%s'", 
-			   filename);
-		return FALSE;
-	}
-
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);
-
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		g_warning ("Failed to parse file:'%s'", 
-			   filename);
-	} else {
-		/* check if validation suceeded */
-		if (ctxt->valid == 0) {
-			g_warning ("Failed to validate file:'%s'", 
-				   filename);
-		} else {
-			success = TRUE;
-		}
-
-		/* free up the resulting document */
-		xmlFreeDoc(doc);
-	}
-
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-
-	return success;
-}
-
-static ContactGroup *
+static void
 contact_groups_file_parse (const gchar *filename) 
 {
-	ContactGroup *group = NULL;
-
-	xmlDocPtr                doc;
-	xmlTextReaderPtr         reader;
-	int                      ret;
-
-	g_return_val_if_fail (filename != NULL, FALSE);
+	xmlParserCtxtPtr  ctxt;
+	xmlDocPtr         doc;
+	xmlNodePtr        contacts;
+	xmlNodePtr        account;
+	xmlNodePtr        node;
+	
+	g_return_if_fail (filename != NULL);
 
 	d(g_print ("Attempting to parse file:'%s'...\n", filename));
 	
-	reader = xmlReaderForFile (filename, NULL, 0);
-	if (reader == NULL) {
-		g_warning ("could not create xml reader for file:'%s' filename",
-			   filename);
-		return NULL;
+ 	ctxt = xmlNewParserCtxt ();
+
+	/* Parse and validate the file. */
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	if (!doc) {
+		g_warning ("Failed to parse file:'%s'", filename);
+		xmlFreeParserCtxt (ctxt);
+		return;
 	}
 
-        if (xmlTextReaderPreservePattern (reader, (xmlChar*) "preserved", NULL) < 0) {
-		g_warning ("could not preserve pattern for file:'%s' filename",
-			   filename);
-		return NULL;
+	if (!ctxt->valid) {
+		g_warning ("Failed to validate file:'%s'",  filename);
+		xmlFreeDoc(doc);
+		xmlFreeParserCtxt (ctxt);
+		return;
 	}
 
-	ret = xmlTextReaderRead (reader);
+	/* The root node, contacts. */
+	contacts = xmlDocGetRootElement (doc);
 
-	while (ret == 1) {
-		const xmlChar *node = NULL;
-
-		if (!(node = xmlTextReaderConstName (reader))) {
-			continue;
+	account = NULL;
+	node = contacts->children;
+	while (node) {
+		if (strcmp (node->name, "account") == 0) {
+			account = node;
+			break;
 		}
+		node = node->next;
+	}
+
+	node = NULL;
+	if (account) {
+		node = account->children;
+	}
+
+	while (node) {
+		if (strcmp (node->name, "group") == 0) {
+			gchar        *name;
+			gchar        *expanded_str;
+			gboolean      expanded;
+			ContactGroup *contact_group;
+
+			name = xmlGetProp (node, "name");
+			expanded_str = xmlGetProp (node, "expanded");
 			
-		if (xmlStrcmp (node, BAD_CAST "group") == 0) {
-			xmlChar *attr_name = NULL;
-			xmlChar *attr_expanded = NULL;
-
-			attr_name = xmlTextReaderGetAttribute (reader, BAD_CAST "name");
-			attr_expanded = xmlTextReaderGetAttribute (reader, BAD_CAST "expanded");
-
-			if (attr_name && xmlStrlen (attr_name) > 0 &&
-			    attr_expanded && xmlStrlen (attr_expanded) > 0) {
-				ContactGroup *cg;
-				gboolean expanded;
-
-				expanded = (xmlStrcasecmp (attr_expanded, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-				cg = contact_group_new ((gchar*)attr_name, expanded);
-
-				groups = g_list_append (groups, cg);
+			if (expanded_str && strcmp (expanded_str, "yes") == 0) {
+				expanded = TRUE;
+			} else {
+				expanded = FALSE;
 			}
 			
-			xmlFree (attr_name);
-			xmlFree (attr_expanded);
+			contact_group = contact_group_new (name, expanded);
+			groups = g_list_append (groups, contact_group);
+
+			xmlFree (name);
+			xmlFree (expanded_str);
 		}
 
-		ret = xmlTextReaderRead (reader);
+		node = node->next;
 	}
 	
-	if (ret != 0) {
-		g_warning ("Could not parse file:'%s' filename",
-			   filename);
-		xmlFreeTextReader(reader);
-		return NULL;
-	}
-
 	d(g_print ("Parsed %d contact groups\n", g_list_length (groups)));
-	
-	d(g_print ("Cleaning up parser for file:'%s'\n\n", filename));
 	  
-	doc = xmlTextReaderCurrentDoc(reader);
 	xmlFreeDoc(doc);
-
-	xmlCleanupParser();
-	xmlFreeTextReader(reader);
-	
-	return group;
+	xmlFreeParserCtxt (ctxt);
 }
 
 static ContactGroup *

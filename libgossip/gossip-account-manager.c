@@ -22,7 +22,6 @@
 #include <string.h>
 
 #include <libgnomevfs/gnome-vfs.h>
-#include <libxml/xmlreader.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -33,7 +32,7 @@
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
-#define d(x)
+#define d(x) 
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
@@ -65,8 +64,6 @@ static void     account_manager_get_accounts_foreach (const gchar           *nam
 						      GossipAccount         *account,
 						      GList                **list);
 static gboolean account_manager_get_all              (GossipAccountManager  *manager);
-static gboolean account_manager_file_validate        (GossipAccountManager  *manager,
-						      const gchar           *filename);
 static gboolean account_manager_file_parse           (GossipAccountManager  *manager,
 						      const gchar           *filename);
 static gboolean account_manager_file_save            (GossipAccountManager  *manager);
@@ -383,91 +380,158 @@ account_manager_get_all (GossipAccountManager *manager)
 	GossipAccountManagerPriv *priv;
 	gchar                    *dir;
 	gchar                    *file_with_path = NULL;
-	gboolean                  ok = TRUE;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 
 	priv = GET_PRIV (manager);
 
-	/* use default if no file specified */
+	/* Use default if no file specified. */
 	if (!priv->accounts_file_name) {
 		dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 		if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 			mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		}
-
+		
 		file_with_path = g_build_filename (dir, ACCOUNTS_XML_FILENAME, NULL);
 		g_free (dir);
+	} else {
+		file_with_path = g_strdup (priv->accounts_file_name);
 	}
 
 	/* read file in */
-	if ((ok &= g_file_test (file_with_path, G_FILE_TEST_EXISTS))) {
-		if ((ok &= account_manager_file_validate (manager, file_with_path))) {;
-			ok &= account_manager_file_parse (manager, file_with_path);
-		}
+	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS) &&
+	    !account_manager_file_parse (manager, file_with_path)) {
+		g_free (file_with_path);
+		return FALSE;
 	}
 	
 	g_free (file_with_path);
 
-	return ok;
- }
+	return TRUE;
+}
 
-static gboolean
-account_manager_file_validate (GossipAccountManager *manager,
-			       const char           *filename)
+static void
+account_manager_parse_account (GossipAccountManager *manager,
+			       xmlNodePtr            node)
 {
-	xmlParserCtxtPtr ctxt;
-	xmlDocPtr        doc; 
-	gboolean         success = FALSE;
-	
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
-	
- 	d(g_print ("Account Manager: Attempting to validate file (against DTD):'%s'\n",  
- 		   filename)); 
-	
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt ();
-	if (ctxt == NULL) {
-		g_warning ("Failed to allocate parser context for file:'%s'", 
-			   filename);
-		return FALSE;
+	GossipAccount     *account;
+	xmlNodePtr         child;
+	gchar             *str;
+	GossipAccountType  type;
+	gchar             *name, *id, *password;
+	gchar             *server;
+	guint16            port;
+	gboolean           auto_connect, use_ssl, use_proxy;
+
+	/* Default values. */
+	type = GOSSIP_ACCOUNT_TYPE_JABBER;
+	name = NULL;
+	id = NULL;
+	password = NULL;
+	server = NULL;
+	port = 5222;
+	auto_connect = TRUE;
+	use_ssl = FALSE;
+	use_proxy = FALSE;
+
+	child = node->children;
+	while (child) {
+		str = xmlNodeGetContent (child);
+
+		if (strcmp (child->name, "type") == 0) {
+			if (strcmp (str, "jabber") == 0) {
+				type = GOSSIP_ACCOUNT_TYPE_JABBER;
+				xmlFree (str);
+			}
+		}
+		else if (strcmp (child->name, "name") == 0) {
+			name = str;
+		}
+		else if (strcmp (child->name, "id") == 0) {
+			id = str;
+		}
+		else if (strcmp (child->name, "password") == 0) {
+			password = str;
+		}
+		else if (strcmp (child->name, "server") == 0) {
+			server = str;
+		}
+		else if (strcmp (child->name, "port") == 0) {
+			guint tmp_port;
+			
+			tmp_port = atoi (str);
+			if (tmp_port != 0) {
+				port = tmp_port;
+			}
+			xmlFree (str);
+		}
+		else if (strcmp (child->name, "auto_connect") == 0) {
+			if (strcmp (str, "yes") == 0) {
+				auto_connect = TRUE;
+			} else {
+				auto_connect = FALSE;
+			}
+			xmlFree (str);
+		}
+		else if (strcmp (child->name, "use_ssl") == 0) {
+			if (strcmp (str, "yes") == 0) {
+				use_ssl = TRUE;
+			} else {
+				use_ssl = FALSE;
+			}
+			xmlFree (str);
+		}
+		else if (strcmp (child->name, "use_proxy") == 0) {
+			if (strcmp (str, "yes") == 0) {
+				use_proxy = TRUE;
+			} else {
+				use_proxy = FALSE;
+			}
+			xmlFree (str);
+		}
+
+		child = child->next;
 	}
-	
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);
-	
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		g_warning ("Failed to parse file:'%s'", 
-			   filename);
-	} else {
-		/* check if validation suceeded */
-		if (ctxt->valid == 0) {
-			g_warning ("Failed to validate file:'%s'", 
-				   filename);
-		} else {
-			success = TRUE;
+
+	if (name && id) {
+		account = g_object_new (GOSSIP_TYPE_ACCOUNT, 
+					"type", type,
+					"name", name,
+					"id", id,
+					"port", port,
+					"auto_connect", auto_connect,
+					"use_ssl", use_ssl,
+					"use_proxy", use_proxy,
+					NULL);
+		
+		if (server) {
+			gossip_account_set_server (account, server);
 		}
 		
-		/* free up the resulting document */
-		xmlFreeDoc(doc);
-	} 
+		if (password) {
+			gossip_account_set_password (account, password);
+		}
+		
+		gossip_account_manager_add (manager, account);
+		
+		g_object_unref (account);
+	}
 	
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-	
-	return success;
- }
- 
+	xmlFree (name);
+	xmlFree (id);
+	xmlFree (server);
+}
+
 static gboolean
 account_manager_file_parse (GossipAccountManager *manager, 
 			    const gchar          *filename) 
 {
 	GossipAccountManagerPriv *priv;
+ 	xmlParserCtxtPtr          ctxt;
 	xmlDocPtr                 doc;
-	xmlTextReaderPtr          reader;
-	int                       ret;
+	xmlNodePtr                accounts;
+	xmlNodePtr                node;
+	gchar                    *str;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
@@ -475,167 +539,56 @@ account_manager_file_parse (GossipAccountManager *manager,
 	priv = GET_PRIV (manager);
 	
 	d(g_print ("Account Manager: Attempting to parse file:'%s'...\n", filename));
-	
-	reader = xmlReaderForFile (filename, NULL, 0);
-	if (reader == NULL) {
-		g_warning ("could not create xml reader for file:'%s' filename",
-			   filename);
-		return FALSE;
-	}
-	
-        if (xmlTextReaderPreservePattern (reader, (xmlChar*) "preserved", NULL) < 0) {
-		g_warning ("could not preserve pattern for file:'%s' filename",
-			   filename);
+
+ 	ctxt = xmlNewParserCtxt ();
+
+	/* Parse and validate the file. */
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	if (!doc) {
+		g_warning ("Failed to parse file:'%s'", filename);
+		xmlFreeParserCtxt (ctxt);
 		return FALSE;
 	}
 
-	ret = xmlTextReaderRead (reader);
- 	
-	while (ret == 1) {
-		const xmlChar *node = NULL;
-
-		if (!(node = xmlTextReaderConstName (reader))) {
-			continue;
-		}
-
-		if (xmlStrcmp (node, BAD_CAST "default") == 0) {
-			xmlChar *value;
-			
-			value = xmlTextReaderReadString (reader);
-			if (value && xmlStrlen (value) > 0) {
-				priv->default_name = g_strdup ((gchar*)value);
-			}
-		}
-
-		if (xmlStrcmp (node, BAD_CAST "account") == 0) {
-			xmlChar       *node_type = NULL;
-			xmlChar       *node_name = NULL;
-			xmlChar       *node_id = NULL;
-			xmlChar       *node_password = NULL;
-			xmlChar       *node_server = NULL;
-			xmlChar       *node_port = NULL;
-			xmlChar       *node_auto_connect = NULL;
-			xmlChar       *node_use_ssl = NULL;
-			xmlChar       *node_use_proxy = NULL;
-
-			const xmlChar *key = NULL;
-			xmlChar       *value;
-
-			/* get all elements */
-
-			ret = xmlTextReaderRead (reader);
- 			key = xmlTextReaderConstName (reader); 
- 			value = xmlTextReaderReadString (reader); 
-
-			while (key && xmlStrcmp (key, BAD_CAST "account") != 0 && ret == 1) {
-				if (key && 
-				    value && 
-				    xmlStrlen (key) > 0 &&
-				    xmlStrlen (value) > 0) {
-					if (xmlStrcmp (key, BAD_CAST "type") == 0) {
-						node_type = value;
-					} else if (xmlStrcmp (key, BAD_CAST "name") == 0) {
-						node_name = value;
-					} else if (xmlStrcmp (key, BAD_CAST "id") == 0) {
-						node_id = value;
-					} else if (xmlStrcmp (key, BAD_CAST "password") == 0) {
-						node_password = value;
-					} else if (xmlStrcmp (key, BAD_CAST "server") == 0) {
-						node_server = value;
-					} else if (xmlStrcmp (key, BAD_CAST "port") == 0) {
-						node_port = value;
-					} else if (xmlStrcmp (key, BAD_CAST "auto_connect") == 0) {
-						node_auto_connect = value;
-					} else if (xmlStrcmp (key, BAD_CAST "use_ssl") == 0) {
-						node_use_ssl = value;
-					} else if (xmlStrcmp (key, BAD_CAST "use_proxy") == 0) {
-						node_use_proxy = value;
-					} 
-				}
-					
-				ret = xmlTextReaderRead (reader);
-				key = xmlTextReaderConstName (reader);
-				value = xmlTextReaderReadString (reader);
-			}
-
-			if (node_name && node_id && node_server) {
-				GossipAccount     *account;
-				GossipAccountType  type = GOSSIP_ACCOUNT_TYPE_JABBER;
-				guint16            port;
-				gboolean           auto_connect, use_ssl, use_proxy;
-	
-				if (node_type && xmlStrcmp (node_type, BAD_CAST "jabber") == 0) {
-					type = GOSSIP_ACCOUNT_TYPE_JABBER;
-				}
-
-				port = (node_port ? atoi ((char*)node_port) : 5222);
-
-				auto_connect = (xmlStrcasecmp (node_auto_connect, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-				use_ssl = (xmlStrcasecmp (node_use_ssl, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-				use_proxy = (xmlStrcasecmp (node_use_proxy, BAD_CAST "yes") == 0 ? TRUE : FALSE);
-	
-				account = g_object_new (GOSSIP_TYPE_ACCOUNT, 
-							"type", type,
-							"name", (gchar*)node_name,
-							"id", (gchar*)node_id,
-							"port", port,
-							"auto_connect", auto_connect,
-							"use_ssl", use_ssl,
-							"use_proxy", use_proxy,
-							NULL);
-	
-				if (node_server) {
-					gossip_account_set_server (account, (gchar*)node_server);
-				}
-
-				if (node_password) {
-					gossip_account_set_password (account, (gchar*)node_password);
-				}
-
-				gossip_account_manager_add (manager, account);
-
-				g_object_unref (account);
-			}
-
-			xmlFree (node_type);
-			xmlFree (node_name);
-			xmlFree (node_id);
-			xmlFree (node_password);
-			xmlFree (node_server);
-			xmlFree (node_port);
-			xmlFree (node_auto_connect);
-			xmlFree (node_use_ssl);
-			xmlFree (node_use_proxy);
-		}
-
-		ret = xmlTextReaderRead (reader);
-	}
-	
-	if (ret != 0) {
-		g_warning ("Could not parse file:'%s' filename",
-			   filename);
-		xmlFreeTextReader(reader);
+	if (!ctxt->valid) {
+		g_warning ("Failed to validate file:'%s'",  filename);
+		xmlFreeDoc(doc);
+		xmlFreeParserCtxt (ctxt);
 		return FALSE;
 	}
 
+	/* The root node, accounts. */
+	accounts = xmlDocGetRootElement (doc);
+	
+	node = accounts->children;
+	while (node) {
+		if (strcmp (node->name, "default") == 0) {
+			/* Get the default account. */
+			str = xmlNodeGetContent (node);
+
+			g_free (priv->default_name);
+			priv->default_name = g_strdup (str);
+			xmlFree (str);
+		}
+		else if (strcmp (node->name, "account") == 0) {
+			account_manager_parse_account (manager, node);
+		}
+
+		node = node->next;
+	}
+	
 	d(g_print ("Account Manager: Parsed %d accounts\n", 
 		   g_hash_table_size (priv->accounts)));
 
 	d(g_print ("Account Manager: Default account is:'%s'\n", 
 		   priv->default_name));
 	
-	d(g_print ("Account Manager: Cleaning up parser for file:'%s'\n", 
-		   filename));
-	
-	doc = xmlTextReaderCurrentDoc(reader);
 	xmlFreeDoc(doc);
-	
-	xmlCleanupParser();
-	xmlFreeTextReader(reader);
+	xmlFreeParserCtxt (ctxt);
 	
 	return TRUE;
- }
- 
+}
+
 static gboolean
 account_manager_file_save (GossipAccountManager *manager)
 {

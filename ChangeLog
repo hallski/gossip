@@ -1,3 +1,19 @@
+2005-08-27  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Set the libml requirement back to 2.6.16.
+	
+	* libgossip/gossip-account-manager.c: (account_manager_get_all),
+	(account_manager_parse_account), (account_manager_file_parse): Use
+	the regular DOM API instead of xmlReader to read the accounts
+	XML. Simpplify a bit and do DTD validation and parsing at the same
+	time.
+
+	* src/gossip-contact-groups.c: (gossip_contact_groups_get_all),
+	(contact_groups_file_parse): As above.
+	
+	* src/gossip-status-presets.c: (gossip_status_presets_get_all),
+	(status_presets_file_parse): As above.
+
 2005-08-27  Mikael Hallendal  <micke@imendio.com>
 
 	* gossip.schemas.in:

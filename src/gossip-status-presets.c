@@ -25,7 +25,6 @@
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <libgnomevfs/gnome-vfs.h>
-#include <libxml/xmlreader.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -37,7 +36,7 @@
 /* this is per type of presence */
 #define STATUS_PRESETS_MAX_EACH     5  
 
-#define d(x)
+#define d(x) x
 
 
 typedef struct {
@@ -47,8 +46,7 @@ typedef struct {
 } StatusPreset;
 
 
-static StatusPreset *status_presets_file_parse    (const gchar         *filename);
-static gboolean      status_presets_file_validate (const gchar         *filename);
+static void          status_presets_file_parse    (const gchar         *filename);
 static gboolean      status_presets_file_save     (void);
 static StatusPreset *status_preset_new            (const gchar         *name,
 						   const gchar         *status,
@@ -81,157 +79,96 @@ gossip_status_presets_get_all (void)
 	g_free (dir);
 
 	if (g_file_test(file_with_path, G_FILE_TEST_EXISTS)) {
-		if (status_presets_file_validate (file_with_path)) {
-			status_presets_file_parse (file_with_path);
-		}
+		status_presets_file_parse (file_with_path);
 	}
 	
 	g_free (file_with_path);
 }
 
-static gboolean
-status_presets_file_validate (const char *filename)
-{
-
-	xmlParserCtxtPtr ctxt;
-	xmlDocPtr        doc; 
-	gboolean         success = FALSE;
-
-	g_return_val_if_fail (filename != NULL, FALSE);
-
-	d(g_print ("Attempting to validate file (against DTD):'%s'\n", 
-		   filename));
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt ();
-	if (ctxt == NULL) {
-		g_warning ("Failed to allocate parser context for file:'%s'", 
-			   filename);
-		return FALSE;
-	}
-
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);
-
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		g_warning ("Failed to parse file:'%s'", 
-			   filename);
-	} else {
-		/* check if validation suceeded */
-		if (ctxt->valid == 0) {
-			g_warning ("Failed to validate file:'%s'", 
-				   filename);
-		} else {
-			success = TRUE;
-		}
-
-		/* free up the resulting document */
-		xmlFreeDoc(doc);
-	}
-
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-
-	return success;
-}
-
-static StatusPreset *
+static void
 status_presets_file_parse (const gchar *filename) 
 {
-	StatusPreset     *preset = NULL;
-
+	xmlParserCtxtPtr  ctxt;
 	xmlDocPtr         doc;
-	xmlTextReaderPtr  reader;
-	int               ret;
+	xmlNodePtr        presets_node;
+	xmlNodePtr        node;
 	gint              count[4] = { 0, 0, 0, 0};
-
-	g_return_val_if_fail (filename != NULL, FALSE);
+	
+	g_return_if_fail (filename != NULL);
 
 	d(g_print ("Attempting to parse file:'%s'...\n", filename));
+
+ 	ctxt = xmlNewParserCtxt ();
+
+	/* Parse and validate the file. */
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	if (!doc) {
+		g_warning ("Failed to parse file:'%s'", filename);
+		xmlFreeParserCtxt (ctxt);
+		return;
+	}
+
+	if (!ctxt->valid) {
+		g_warning ("Failed to validate file:'%s'",  filename);
+		xmlFreeDoc(doc);
+		xmlFreeParserCtxt (ctxt);
+		return;
+	}
 	
-	reader = xmlReaderForFile (filename, NULL, 0);
-	if (reader == NULL) {
-		g_warning ("could not create xml reader for file:'%s' filename",
-			   filename);
-		return NULL;
-	}
+	/* The root node, presets. */
+	presets_node = xmlDocGetRootElement (doc);
 
-        if (xmlTextReaderPreservePattern (reader, (xmlChar*) "preserved", NULL) < 0) {
-		g_warning ("could not preserve pattern for file:'%s' filename",
-			   filename);
-		return NULL;
-	}
+	node = presets_node->children;
+	while (node) {
+		if (strcmp (node->name, "status") == 0) {
+			gchar               *status;
+			gchar               *name;
+			gchar               *presence_str;
+			GossipPresenceState  presence;
+			StatusPreset        *preset;
 
-	ret = xmlTextReaderRead (reader);
+			status = xmlNodeGetContent (node);
+			name = xmlGetProp (node, "name");
 
-	while (ret == 1) {
-		const xmlChar *node = NULL;
-
-		if (!(node = xmlTextReaderConstName (reader))) {
-			continue;
-		}
-
-		if (xmlStrcmp (node, BAD_CAST "status") == 0) {
-			const xmlChar *node_status = NULL;
-			xmlChar       *attr_name = NULL;
-			xmlChar       *attr_presence = NULL;
-
-			node_status = xmlTextReaderReadString (reader);
-			attr_name = xmlTextReaderGetAttribute (reader, BAD_CAST "name");
-			attr_presence = xmlTextReaderGetAttribute (reader, BAD_CAST "presence");
-
-			if (node_status && xmlStrlen (node_status) > 0 &&
-			    attr_presence && xmlStrlen (attr_presence) > 0) {
-				StatusPreset        *sp;
-				GossipPresenceState  presence = GOSSIP_PRESENCE_STATE_AVAILABLE;
-
-				if (xmlStrcmp (attr_presence, BAD_CAST "available") == 0) {
+			presence_str = xmlGetProp (node, "presence");
+			if (presence_str) {
+				if (strcmp (presence_str, "available") == 0) {
 					presence = GOSSIP_PRESENCE_STATE_AVAILABLE;
-				} else if (xmlStrcmp (attr_presence, BAD_CAST "busy") == 0) {
+				}
+				else if (strcmp (presence_str, "busy") == 0) {
 					presence = GOSSIP_PRESENCE_STATE_BUSY;
-				} else if (xmlStrcmp (attr_presence, BAD_CAST "away") == 0) {
+				}
+				else if (strcmp (presence_str, "away") == 0) {
 					presence = GOSSIP_PRESENCE_STATE_AWAY;
-				} else if (xmlStrcmp (attr_presence, BAD_CAST "ext_away") == 0) {
+				}
+				else if (strcmp (presence_str, "ext_away") == 0) {
 					presence = GOSSIP_PRESENCE_STATE_EXT_AWAY;
+				} else {
+					presence = GOSSIP_PRESENCE_STATE_AVAILABLE;
 				}
 				
 				count[presence]++;
 				if (count[presence] <= STATUS_PRESETS_MAX_EACH) {
-					sp = status_preset_new ((gchar*)attr_name, 
-								(gchar*)node_status,
-								presence);
+					preset = status_preset_new (name, 
+								    "koko", //status,
+								    presence);
 					
-					presets = g_list_append (presets, sp);
+					presets = g_list_append (presets, preset);
 				}
-
 			}
-			
-			xmlFree (attr_name);
-			xmlFree (attr_presence);
+
+			xmlFree (status);
+			xmlFree (name);
+			xmlFree (presence_str);
 		}
 
-		ret = xmlTextReaderRead (reader);
+		node = node->next;
 	}
 	
-	if (ret != 0) {
-		g_warning ("Could not parse file:'%s' filename",
-			   filename);
-		xmlFreeTextReader(reader);
-		return NULL;
-	}
-
 	d(g_print ("Parsed %d status presets\n", g_list_length (presets)));
-	
-	d(g_print ("Cleaning up parser for file:'%s'\n\n", filename));
-	  
-	doc = xmlTextReaderCurrentDoc(reader);
-	xmlFreeDoc(doc);
 
-	xmlCleanupParser();
-	xmlFreeTextReader(reader);
-	
-	return preset;
+	xmlFreeDoc (doc);
+	xmlFreeParserCtxt (ctxt);
 }
 
 static StatusPreset *
