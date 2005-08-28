@@ -120,17 +120,17 @@ status_presets_file_parse (const gchar *filename)
 
 	node = presets_node->children;
 	while (node) {
-		if (strcmp (node->name, "status") == 0) {
+		if (strcmp ((gchar *) node->name, "status") == 0) {
 			gchar               *status;
 			gchar               *name;
 			gchar               *presence_str;
 			GossipPresenceState  presence;
 			StatusPreset        *preset;
 
-			status = xmlNodeGetContent (node);
-			name = xmlGetProp (node, "name");
+			status = (gchar *) xmlNodeGetContent (node);
+			name = (gchar *) xmlGetProp (node, BAD_CAST ("name"));
 
-			presence_str = xmlGetProp (node, "presence");
+			presence_str = (gchar *) xmlGetProp (node, BAD_CAST ("presence"));
 			if (presence_str) {
 				if (strcmp (presence_str, "available") == 0) {
 					presence = GOSSIP_PRESENCE_STATE_AVAILABLE;

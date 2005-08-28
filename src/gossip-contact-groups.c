@@ -117,7 +117,7 @@ contact_groups_file_parse (const gchar *filename)
 	account = NULL;
 	node = contacts->children;
 	while (node) {
-		if (strcmp (node->name, "account") == 0) {
+		if (strcmp ((gchar *) node->name, "account") == 0) {
 			account = node;
 			break;
 		}
@@ -130,14 +130,14 @@ contact_groups_file_parse (const gchar *filename)
 	}
 
 	while (node) {
-		if (strcmp (node->name, "group") == 0) {
+		if (strcmp ((gchar *) node->name, "group") == 0) {
 			gchar        *name;
 			gchar        *expanded_str;
 			gboolean      expanded;
 			ContactGroup *contact_group;
 
-			name = xmlGetProp (node, "name");
-			expanded_str = xmlGetProp (node, "expanded");
+			name = (gchar *) xmlGetProp (node, BAD_CAST ("name"));
+			expanded_str = (gchar *) xmlGetProp (node, BAD_CAST ("expanded"));
 			
 			if (expanded_str && strcmp (expanded_str, "yes") == 0) {
 				expanded = TRUE;

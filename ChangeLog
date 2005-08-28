@@ -1,3 +1,9 @@
+2005-08-29  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* src/gossip-contact-groups.c:
+	* src/gossip-status-presets.c:  Gah, use BAD_CAST.
+
 2005-08-27  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Set the libml requirement back to 2.6.16.

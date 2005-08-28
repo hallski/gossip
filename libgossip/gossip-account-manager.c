@@ -436,27 +436,30 @@ account_manager_parse_account (GossipAccountManager *manager,
 
 	child = node->children;
 	while (child) {
-		str = xmlNodeGetContent (child);
+		gchar *tag;
 
-		if (strcmp (child->name, "type") == 0) {
+		tag = (gchar *) child->name;
+		str = (gchar *) xmlNodeGetContent (child);
+
+		if (strcmp (tag, "type") == 0) {
 			if (strcmp (str, "jabber") == 0) {
 				type = GOSSIP_ACCOUNT_TYPE_JABBER;
 				xmlFree (str);
 			}
 		}
-		else if (strcmp (child->name, "name") == 0) {
+		else if (strcmp (tag, "name") == 0) {
 			name = str;
 		}
-		else if (strcmp (child->name, "id") == 0) {
+		else if (strcmp (tag, "id") == 0) {
 			id = str;
 		}
-		else if (strcmp (child->name, "password") == 0) {
+		else if (strcmp (tag, "password") == 0) {
 			password = str;
 		}
-		else if (strcmp (child->name, "server") == 0) {
+		else if (strcmp (tag, "server") == 0) {
 			server = str;
 		}
-		else if (strcmp (child->name, "port") == 0) {
+		else if (strcmp (tag, "port") == 0) {
 			guint tmp_port;
 			
 			tmp_port = atoi (str);
@@ -465,7 +468,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 			}
 			xmlFree (str);
 		}
-		else if (strcmp (child->name, "auto_connect") == 0) {
+		else if (strcmp (tag, "auto_connect") == 0) {
 			if (strcmp (str, "yes") == 0) {
 				auto_connect = TRUE;
 			} else {
@@ -473,7 +476,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 			}
 			xmlFree (str);
 		}
-		else if (strcmp (child->name, "use_ssl") == 0) {
+		else if (strcmp (tag, "use_ssl") == 0) {
 			if (strcmp (str, "yes") == 0) {
 				use_ssl = TRUE;
 			} else {
@@ -481,7 +484,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 			}
 			xmlFree (str);
 		}
-		else if (strcmp (child->name, "use_proxy") == 0) {
+		else if (strcmp (tag, "use_proxy") == 0) {
 			if (strcmp (str, "yes") == 0) {
 				use_proxy = TRUE;
 			} else {
@@ -562,15 +565,15 @@ account_manager_file_parse (GossipAccountManager *manager,
 	
 	node = accounts->children;
 	while (node) {
-		if (strcmp (node->name, "default") == 0) {
+		if (strcmp ((gchar *) node->name, "default") == 0) {
 			/* Get the default account. */
-			str = xmlNodeGetContent (node);
+			str = (gchar *) xmlNodeGetContent (node);
 
 			g_free (priv->default_name);
 			priv->default_name = g_strdup (str);
 			xmlFree (str);
 		}
-		else if (strcmp (node->name, "account") == 0) {
+		else if (strcmp ((gchar *) node->name, "account") == 0) {
 			account_manager_parse_account (manager, node);
 		}
 
