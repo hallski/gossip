@@ -599,14 +599,14 @@ msgstr "Dienste von Dritten werden gesucht (%d von %d)"
 
 #: ../src/gossip-transport-add-window.c:594
 msgid "Sorry, no services found at this time."
-msgstr "Zur Zeit sind leider keine Dienste verfügbar."
+msgstr "Zurzeit sind leider keine Dienste verfügbar."
 
 #: ../src/gossip-transport-add-window.c:595
 msgid ""
 "Currently no providers are available for the account type you are trying to "
 "configure. Please try again later."
 msgstr ""
-"Zur Zeit ist kein Anbieter für den zu konfigurierenden Kontentyp verfügbar. "
+"Zurzeit ist kein Anbieter für den zu konfigurierenden Kontentyp verfügbar. "
 "Bitte versuchen Sie es später noch einmal."
 
 #: ../src/gossip-transport-add-window.c:607
@@ -1470,7 +1470,7 @@ msgstr "_Benachrichtigen"
 #~ "currently be unavailable."
 #~ msgstr ""
 #~ "Stellen Sie sicher, dass Ihre Konto-Informationen korrekt sind."
-#~ "Möglicherweise ist der Server zur Zeit nicht erreichbar"
+#~ "Möglicherweise ist der Server zurzeit nicht erreichbar"
 
 #~ msgid "An error occurred when chatting with %s."
 #~ msgstr "Beim Unterhalten mit %s ist ein Fehler aufgetreten."
