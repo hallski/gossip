@@ -4,10 +4,9 @@
 -->
 
 <!-- Root element. -->
-<!ELEMENT presets (status+)>
+<!ELEMENT presets (status*)>
 
 <!ELEMENT status (#PCDATA)>
 <!ATTLIST status
-    name CDATA #IMPLIED
     presence (available|busy|away|ext_away) "available">
 

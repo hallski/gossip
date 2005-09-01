@@ -1,3 +1,19 @@
+2005-09-02  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am: Add presence chooser.
+
+	* src/gossip-app.c: Remove lots of code that handles the presence
+	chooser button and put it into its own class. Clean up some long
+	lines and similar.
+
+	* src/gossip-status-presets.c: Rework a bit to better fit the new
+	presence chooser. Remove dups, put the last used one at the top.
+
+	* src/gossip-status-presets.dtd: Don't require statuses to be
+	saved, don't use a name property.
+
+	* ui/main.glade: Change to use the new presence chooser.
+
 2005-09-01  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_invite_menu_setup): Get

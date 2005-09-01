@@ -32,25 +32,20 @@
 
 #define STATUS_PRESETS_XML_FILENAME "status-presets.xml"
 #define STATUS_PRESETS_DTD_FILENAME "gossip-status-presets.dtd"
+#define STATUS_PRESETS_MAX_EACH     4
 
-/* this is per type of presence */
-#define STATUS_PRESETS_MAX_EACH     5  
-
-#define d(x) x
-
+#define d(x) 
 
 typedef struct {
-	gchar               *name;
 	gchar               *status;
-	GossipPresenceState  presence;
+	GossipPresenceState  state;
 } StatusPreset;
 
 
 static void          status_presets_file_parse    (const gchar         *filename);
 static gboolean      status_presets_file_save     (void);
-static StatusPreset *status_preset_new            (const gchar         *name,
-						   const gchar         *status,
-						   GossipPresenceState  presence);
+static StatusPreset *status_preset_new            (const gchar         *status,
+						   GossipPresenceState  state);
 static void          status_preset_free           (StatusPreset        *status);
 
 
@@ -60,10 +55,10 @@ static GList *presets = NULL;
 void
 gossip_status_presets_get_all (void)
 {
-	gchar    *dir;
-	gchar    *file_with_path;
+	gchar *dir;
+	gchar *file_with_path;
 
-	/* if already set up clean up first */
+	/* If already set up clean up first. */
 	if (presets) {
 		g_list_foreach (presets, (GFunc)status_preset_free, NULL);
 		g_list_free (presets);
@@ -122,44 +117,40 @@ status_presets_file_parse (const gchar *filename)
 	while (node) {
 		if (strcmp ((gchar *) node->name, "status") == 0) {
 			gchar               *status;
-			gchar               *name;
-			gchar               *presence_str;
-			GossipPresenceState  presence;
+			gchar               *state_str;
+			GossipPresenceState  state;
 			StatusPreset        *preset;
 
 			status = (gchar *) xmlNodeGetContent (node);
-			name = (gchar *) xmlGetProp (node, BAD_CAST ("name"));
+			state_str = (gchar *) xmlGetProp (node, BAD_CAST ("presence"));
 
-			presence_str = (gchar *) xmlGetProp (node, BAD_CAST ("presence"));
-			if (presence_str) {
-				if (strcmp (presence_str, "available") == 0) {
-					presence = GOSSIP_PRESENCE_STATE_AVAILABLE;
+			if (state_str) {
+				if (strcmp (state_str, "available") == 0) {
+					state = GOSSIP_PRESENCE_STATE_AVAILABLE;
 				}
-				else if (strcmp (presence_str, "busy") == 0) {
-					presence = GOSSIP_PRESENCE_STATE_BUSY;
+				else if (strcmp (state_str, "busy") == 0) {
+					state = GOSSIP_PRESENCE_STATE_BUSY;
 				}
-				else if (strcmp (presence_str, "away") == 0) {
-					presence = GOSSIP_PRESENCE_STATE_AWAY;
+				else if (strcmp (state_str, "away") == 0) {
+					state = GOSSIP_PRESENCE_STATE_AWAY;
 				}
-				else if (strcmp (presence_str, "ext_away") == 0) {
-					presence = GOSSIP_PRESENCE_STATE_EXT_AWAY;
+				else if (strcmp (state_str, "ext_away") == 0) {
+					state = GOSSIP_PRESENCE_STATE_EXT_AWAY;
 				} else {
-					presence = GOSSIP_PRESENCE_STATE_AVAILABLE;
+					state = GOSSIP_PRESENCE_STATE_AVAILABLE;
 				}
 				
-				count[presence]++;
-				if (count[presence] <= STATUS_PRESETS_MAX_EACH) {
-					preset = status_preset_new (name, 
-								    "koko", //status,
-								    presence);
+				count[state]++;
+				if (count[state] <= STATUS_PRESETS_MAX_EACH) {
+					preset = status_preset_new (status,
+								    state);
 					
 					presets = g_list_append (presets, preset);
 				}
 			}
 
 			xmlFree (status);
-			xmlFree (name);
-			xmlFree (presence_str);
+			xmlFree (state_str);
 		}
 
 		node = node->next;
@@ -172,17 +163,15 @@ status_presets_file_parse (const gchar *filename)
 }
 
 static StatusPreset *
-status_preset_new (const gchar         *name,
-		   const gchar         *status,
-		   GossipPresenceState  presence)
+status_preset_new (const gchar         *status,
+		   GossipPresenceState  state)
 {
 	StatusPreset *preset;
 
 	preset = g_new0 (StatusPreset, 1);
 	
-	preset->name = g_strdup (name);
-	preset->status = g_strdup (status);;
-	preset->presence = presence;
+	preset->status = g_strdup (status);
+	preset->state = state;
 
 	return preset;
 }
@@ -190,11 +179,7 @@ status_preset_new (const gchar         *name,
 static void
 status_preset_free (StatusPreset *preset)
 {
-	g_return_if_fail (preset != NULL);
-	
-	g_free (preset->name);
 	g_free (preset->status);
-	
 	g_free (preset);
 }
 
@@ -233,7 +218,7 @@ status_presets_file_save (void)
 
 		sp = l->data;
 
-		switch (sp->presence) {
+		switch (sp->state) {
 		case GOSSIP_PRESENCE_STATE_AVAILABLE:
 			state = BAD_CAST "available";
 			break;
@@ -250,13 +235,12 @@ status_presets_file_save (void)
 			continue;
 		}
 
-		count[sp->presence]++;
-		if (count[sp->presence] > STATUS_PRESETS_MAX_EACH) {
+		count[sp->state]++;
+		if (count[sp->state] > STATUS_PRESETS_MAX_EACH) {
 			continue;
 		}
 		
 		subnode = xmlNewChild (root, NULL, BAD_CAST "status", BAD_CAST sp->status);
-		xmlNewProp (subnode, BAD_CAST "name", BAD_CAST sp->name);
 		xmlNewProp (subnode, BAD_CAST "presence", state);	
 	}
 
@@ -264,17 +248,13 @@ status_presets_file_save (void)
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 
-	xmlCleanupParser ();
-
-	xmlMemoryDump ();
-	
 	g_free (xml_file);
 
 	return TRUE;
 }
 
 GList *
-gossip_status_presets_get (GossipPresenceState presence)
+gossip_status_presets_get (GossipPresenceState state)
 {
 	GList *list = NULL;
 	GList *l;
@@ -284,10 +264,10 @@ gossip_status_presets_get (GossipPresenceState presence)
 
 		sp = l->data;
 
-		if (sp->presence != presence) {
+		if (sp->state != state) {
 			continue;
 		}
-
+		
 		list = g_list_append (list, sp->status);
 	}
 
@@ -295,40 +275,56 @@ gossip_status_presets_get (GossipPresenceState presence)
 }
 
 void
-gossip_status_presets_set_last (const gchar         *name,
-				const gchar         *status,
-				GossipPresenceState  presence)
+gossip_status_presets_set_last (const gchar         *status,
+				GossipPresenceState  state)
 {
 	GList        *l;
-	gboolean      found = FALSE;
+	StatusPreset *preset;
+	gint          num;
 
-	g_return_if_fail (status != NULL);
-
-	/* make sure this is not a duplicate*/
+	/* Remove any duplicate. */
 	for (l = presets; l; l = l->next) {
-		StatusPreset *sp = l->data;
+		preset = l->data;
 
-		if (!sp) {
+		if (state == preset->state) {
+			if (strcmp (status, preset->status) == 0) {
+				status_preset_free (preset);
+				presets = g_list_delete_link (presets, l);
+				break;
+			}
+		}
+	}
+
+	preset = status_preset_new (status, state);
+	presets = g_list_prepend (presets, preset);
+
+	num = 0;
+	for (l = presets; l; l = l->next) {
+		preset = l->data;
+
+		if (state != preset->state) {
 			continue;
 		}
 
-		if (sp->name && name && strcmp (sp->name, name) == 0) {
-			found = TRUE;
-			break;
-		}
-
-		if (sp->status && status && strcmp (sp->status, status) == 0) {
-			found = TRUE;
+		num++;
+		
+		if (num > STATUS_PRESETS_MAX_EACH) {
+			status_preset_free (preset);
+			presets = g_list_delete_link (presets, l);
 			break;
 		}
 	}
 
-	if (!found) {
-		StatusPreset *sp;
+	status_presets_file_save ();
+}
 
-		sp = status_preset_new (name, status, presence);
-		presets = g_list_prepend (presets, sp);
+void
+gossip_status_presets_reset (void)
+{
+	g_list_foreach (presets, (GFunc) status_preset_free, NULL);
+	g_list_free (presets);
 
-		status_presets_file_save ();
-	}
+	presets = NULL;
+
+	status_presets_file_save ();
 }

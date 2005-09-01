@@ -55,6 +55,7 @@
 #include "gossip-marshal.h"
 #include "gossip-new-account-window.h"
 #include "gossip-preferences.h"
+#include "gossip-presence-chooser.h"
 #include "gossip-status-presets.h"
 #include "gossip-status-presets-dialog.h"
 #include "gossip-private-chat.h"
@@ -91,7 +92,7 @@
 #define MIN_WIDTH 50
 
 /* Debugging */
-#define d(x)
+#define d(x) 
 
 
 extern GConfClient *gconf_client;
@@ -128,10 +129,8 @@ struct _GossipAppPriv {
 
 	/* status popup */
 	GtkWidget          *status_button_hbox;
-	GtkWidget          *status_button;
-	GtkWidget          *status_popup;
-	GtkWidget          *status_label;
 	GtkWidget          *status_image;
+	GtkWidget          *presence_chooser;
 
 	guint               status_flash_timeout_id;
 	time_t              leave_time;
@@ -274,21 +273,6 @@ static void            app_accounts_account_added_cb        (GossipAccountManage
 static void            app_accounts_account_removed_cb      (GossipAccountManager *manager,
 							     GossipAccount        *account,
 							     gpointer              user_data);
-static GtkWidget *     app_create_status_menu               (gboolean              from_window);
-static gboolean        app_status_button_press_event_cb     (GtkButton            *button,
-							     GdkEventButton       *event,
-							     gpointer              user_data);
-static void            app_status_button_clicked_cb         (GtkButton            *button,
-							     GdkEventButton       *event,
-							     gpointer              user_data);
-static void            app_status_dialog                    (GossipPresenceState   state,
-							     const gchar          *str,
-							     gboolean              transient);
-static void            app_status_dialog_activate_cb        (GtkWidget            *entry,
-							     GtkWidget            *dialog);
-static void            app_status_dialog_response_cb        (GtkWidget            *dialog,
-							     gint                  response,
-							     GtkWidget            *entry);
 static GossipPresence *app_get_effective_presence           (void);
 static void            app_set_away                         (const gchar          *status);
 static void            app_presence_updated                 (void);
@@ -296,6 +280,10 @@ static void            app_status_clear_away                (void);
 static void            app_status_flash_start               (void);
 static void            app_status_flash_stop                (void);
 static GdkPixbuf *     app_get_current_status_pixbuf        (void);
+static void            app_presence_chooser_changed_cb      (GtkWidget            *chooser,
+							     GossipPresenceState   state,
+							     const gchar          *status,
+							     gpointer              data);
 static gboolean        app_window_configure_event_cb        (GtkWidget            *widget,
 							     GdkEventConfigure    *event,
 							     gpointer              data);
@@ -422,7 +410,6 @@ app_setup (GossipAccountManager *manager)
         GossipAppPriv  *priv;
 	GladeXML       *glade;
 	GtkWidget      *sw;
-	GtkWidget      *status_label_hbox;
 	gint            width, height;
 	GtkRequisition  req;
 	gboolean        show_offline;
@@ -483,8 +470,6 @@ app_setup (GossipAccountManager *manager)
 				       "accounts_hbox", &priv->accounts_hbox,
 				       "roster_scrolledwindow", &sw,
 				       "status_button_hbox", &priv->status_button_hbox,
-				       "status_button", &priv->status_button,
-				       "status_label_hbox", &status_label_hbox,
 				       "status_image", &priv->status_image,
 				       "actions_show_offline", &show_offline_widget,
 				       NULL);
@@ -509,55 +494,52 @@ app_setup (GossipAccountManager *manager)
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      NULL);
 
-	/* set up connection related widgets */
+	priv->presence_chooser = gossip_presence_chooser_new ();
+	gtk_box_pack_start (GTK_BOX (priv->status_button_hbox), priv->presence_chooser,
+			    TRUE, TRUE, 0);
+	g_signal_connect (priv->presence_chooser,
+			  "changed",
+			  G_CALLBACK (app_presence_chooser_changed_cb),
+			  NULL);
+	gtk_widget_show (priv->presence_chooser);
+
+	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);
-	app_connection_items_update ();
 
 	g_object_unref (glade);
 
-	/* set up contact list */
+	/* Set up contact list. */
 	priv->contact_list = gossip_contact_list_new ();
 
 	g_signal_connect (priv->contact_list, "contact-activated",
 			  G_CALLBACK (app_contact_activated_cb),
 			  NULL);
 
-
-	/* get saved presence presets */
+	/* Get saved presence presets. */
 	gossip_status_presets_get_all ();
 
-	/* set up saved presence information */
+	/* Set up saved presence information. */
 	priv->presence = gossip_presence_new ();
 	gossip_presence_set_state (priv->presence, 
 				   GOSSIP_PRESENCE_STATE_AVAILABLE);
 	priv->away_presence = NULL;
 	
-	/* finish setting up contact list */
+	/* Finish setting up contact list. */
 	gtk_widget_show (GTK_WIDGET (priv->contact_list));
 	gtk_container_add (GTK_CONTAINER (sw),
 			   GTK_WIDGET (priv->contact_list));
 
-	/* set up notification area / tray */
+	/* Set up notification area / tray. */
 	app_tray_create_menu ();
 	app_tray_create ();
 
-	g_signal_connect (priv->status_button,
-			  "button_press_event",
-			  G_CALLBACK (app_status_button_press_event_cb),
-			  NULL);
-
-	g_signal_connect (priv->status_button,
-			  "clicked",
-			  G_CALLBACK (app_status_button_clicked_cb),
-			  NULL);
-
-	/* set up accounts area */
+	/* Set up accounts area. */
 	app_accounts_create ();
 
-	/* set the idle time checker. */
+	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
-	/* set window position */
+	/* Set window position. */
  	x = gconf_client_get_int (gconf_client, 
 				  GCONF_PATH "/ui/main_window_position_x",
 				  NULL);
@@ -570,7 +552,7 @@ app_setup (GossipAccountManager *manager)
  		gtk_window_move (GTK_WINDOW (priv->window), x, y);
 	}
 
-	/* set window size */
+	/* Set window size. */
 	width = gconf_client_get_int (gconf_client,
 				      GCONF_PATH "/ui/main_window_width",
 				      NULL);
@@ -582,15 +564,10 @@ app_setup (GossipAccountManager *manager)
 	width = MAX (width, MIN_WIDTH);
 	gtk_window_set_default_size (GTK_WINDOW (priv->window), width, height);
 	
-	priv->status_label = eel_ellipsizing_label_new (NULL);
-	gtk_misc_set_alignment (GTK_MISC (priv->status_label), 0, 0.5);
-	gtk_box_pack_start (GTK_BOX (status_label_hbox), priv->status_label, TRUE, TRUE, 0);
-	gtk_widget_show (priv->status_label);
-
-	/* set up current presence */
+	/* Set up current presence. */
 	app_presence_updated ();
 
-	/* set up 'show_offline' config hooks to know when it changes */
+	/* Set up 'show_offline' config hooks to know when it changes. */
 	show_offline = gconf_client_get_bool (gconf_client,
 					      GCONF_PATH "/contacts/show_offline",
 					      NULL);
@@ -604,7 +581,7 @@ app_setup (GossipAccountManager *manager)
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
 					show_offline);
 
-	/* set window to be hidden / shown */
+	/* Set window to be hidden / shown. */
 	hidden = gconf_client_get_bool (gconf_client, 
 					GCONF_PATH "/ui/main_window_hidden", 
 					NULL);
@@ -616,18 +593,18 @@ app_setup (GossipAccountManager *manager)
 		gdk_notify_startup_complete ();
 	}
 
-	/* 
-	   This is a hack that sets the minimal size of the window so it
-	   doesn't allow resizing to a smaller width than the menubar takes
-	   up. We must set a minimal size, otherwise the window won't shrink
-	   beyond the longest string in the roster, which will cause the
-	   ellipsizing cell renderer not to work. FIXME: needs to update this on
-	   theme/font change. 
-	*/
-
+	/* This is a hack that sets the minimal size of the window so it doesn't
+	 * allow resizing to a smaller width than the menubar takes up. We must
+	 * set a minimal size, otherwise the window won't shrink beyond the
+	 * longest string in the roster, which will cause the ellipsizing cell
+	 * renderer not to work. FIXME: needs to update this on theme/font
+	 * change.
+	 */
 	gtk_widget_size_request (priv->window, &req);
 	req.width = MAX (req.width, MIN_WIDTH);
 	gtk_widget_set_size_request (priv->window, req.width, -1);
+
+	app_connection_items_update ();
 }
 
 static gboolean 
@@ -1213,10 +1190,9 @@ app_idle_check_cb (GossipApp *app)
 	presence = app_get_effective_presence ();
 	state = gossip_presence_get_state (presence);
 
-	d(g_print ("Idle for:%d\n", 
-		   idle));
+	/* d(g_print ("Idle for:%d\n", idle)); */
 
-	/* we're going away, allow some slack. */
+	/* We're going away, allow some slack. */
 	if (priv->leave_time > 0) {
 		if (time (NULL) - priv->leave_time > LEAVE_SLACK) {
 			priv->leave_time = 0;
@@ -1230,13 +1206,14 @@ app_idle_check_cb (GossipApp *app)
 	}
 	else if (state != GOSSIP_PRESENCE_STATE_EXT_AWAY && 
 		 idle > EXT_AWAY_TIME) {
- 		/* presence may be idle if the screensaver has been
-		   started and hence no away_presence set. */
+ 		/* Presence may be idle if the screensaver has been started and
+		 * hence no away_presence set.
+		 */
 		if (!priv->away_presence) {
 			priv->away_presence = gossip_presence_new ();
 		}
 
-		/* presence will already be away */
+		/* Presence will already be away. */
 		d(g_print ("Going to ext away...\n"));
 		gossip_presence_set_state (priv->away_presence, 
 					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
@@ -1251,7 +1228,7 @@ app_idle_check_cb (GossipApp *app)
 	}
 	else if (state == GOSSIP_PRESENCE_STATE_AWAY ||
 		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
-		/* allow some slack before returning from away. */
+		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= 0) {
 			d(g_print ("Slack, do nothing.\n"));
 			app_status_flash_start ();
@@ -1286,19 +1263,19 @@ gossip_app_connect (gboolean startup)
 	if (gossip_account_manager_get_count (manager) < 1) {
 		GtkWidget *dialog;
 
-		/* show message dialog and the account dialog */
-		dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
-							     GTK_DIALOG_MODAL |
-							     GTK_DIALOG_DESTROY_WITH_PARENT,
-							     GTK_MESSAGE_INFO,
-							     GTK_BUTTONS_CLOSE,
-							     "<b>%s</b>\n\n%s",
-							     _("You have no Instant Messaging accounts "
-							       "configured!"),
-							     _("Next you will be presented with the "
-							       "Account Information dialog to set your "
-							       "details up.")); 
-
+		dialog = gtk_message_dialog_new_with_markup (
+			GTK_WINDOW (gossip_app_get_window ()),
+			GTK_DIALOG_MODAL |
+			GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_MESSAGE_INFO,
+			GTK_BUTTONS_CLOSE,
+			"<b>%s</b>\n\n%s",
+			_("You have no Instant Messaging accounts "
+			  "configured!"),
+			_("Next you will be presented with the "
+			  "Account Information dialog to set your "
+			  "details up.")); 
+		
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
@@ -1339,29 +1316,30 @@ app_disconnect (void)
 static void
 app_connection_items_setup (GladeXML *glade)
 {
-	const gchar *connect_widgets[] = {
+	GossipAppPriv *priv = app->priv;
+	const gchar   *connect_widgets[] = {
 		"actions_disconnect",
 		"actions_join_group_chat",
 		"actions_send_chat_message",
 		"actions_add_contact",
-		"status_button",
 		"actions_configure_transports",
 		"edit_personal_information"
 	};
-	
-	const gchar *disconnect_widgets[] = {
+	const gchar   *disconnect_widgets[] = {
 		"actions_connect"
 	};
-	
-	GList     *list;
-	GtkWidget *w;
-	gint       i;
+	GList         *list;
+	GtkWidget     *w;
+	gint           i;
 
 	list = NULL;
 	for (i = 0; i < G_N_ELEMENTS (connect_widgets); i++) {
 		w = glade_xml_get_widget (glade, connect_widgets[i]);
 		list = g_list_prepend (list, w);
 	}
+
+	list = g_list_prepend (list, priv->presence_chooser);
+
 	app->priv->enabled_connected_widgets = list;
 
 	list = NULL;
@@ -1415,13 +1393,14 @@ app_complete_name_response_cb (GtkWidget        *dialog,
 							       str);
 
 			if (!contact) {
-				/* FIXME: need to ask which account we
-				   should be sending from if the
-				   contact is not known */
-				contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, NULL);
+				/* FIXME: need to ask which account we should be
+				 * sending from if the contact is not known.
+				 */
+				contact = gossip_contact_new (
+					GOSSIP_CONTACT_TYPE_TEMPORARY, NULL);
 				gossip_contact_set_id (contact, str);
 			}
-
+			
 			gossip_chat_manager_show_chat (priv->chat_manager, 
 						       contact);
 		}
@@ -1621,7 +1600,8 @@ app_tray_button_press_cb (GtkWidget      *widget,
 			gtk_widget_show (priv->show_popup_item);
 		}
 
-		submenu = app_create_status_menu (FALSE);
+		submenu = gossip_presence_chooser_create_menu (
+			GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->popup_menu_status_item),
 					   submenu);
 		
@@ -1658,7 +1638,7 @@ app_tray_create_menu (void)
 			      "tray_new_message", "activate", app_popup_new_message_cb,
 			      "tray_quit", "activate", app_quit_cb,
 			      NULL);
-	
+
 	priv->enabled_connected_widgets = g_list_prepend (priv->enabled_connected_widgets,
 							  priv->popup_menu_status_item);
 
@@ -2032,8 +2012,9 @@ app_presence_updated (void)
 	g_object_unref (pixbuf);
 	
 	if (!gossip_session_is_connected (priv->session, NULL)) {
-		eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
-						_("Offline"));
+		gossip_presence_chooser_set_status (
+			GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
+			_("Offline"));
 		return;
 	}
 
@@ -2041,12 +2022,14 @@ app_presence_updated (void)
 
 	status = gossip_presence_get_status (presence);
 	if (!status) {
-		status = gossip_presence_state_get_default_status (gossip_presence_get_state (presence));
+		status = gossip_presence_state_get_default_status (
+			gossip_presence_get_state (presence));
 	}
 
-	eel_ellipsizing_label_set_text (EEL_ELLIPSIZING_LABEL (priv->status_label),
-					status);
-
+	gossip_presence_chooser_set_status (
+		GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
+		status);
+		
 	gossip_session_set_presence (priv->session, presence);
 }
 
@@ -2095,9 +2078,10 @@ app_status_flash_start (void)
 	GossipAppPriv *priv = app->priv;
 
 	if (!priv->status_flash_timeout_id) {
-		priv->status_flash_timeout_id = g_timeout_add (FLASH_TIMEOUT,
-							       app_status_flash_timeout_func,
-							       NULL);
+		priv->status_flash_timeout_id = g_timeout_add (
+			FLASH_TIMEOUT,
+			app_status_flash_timeout_func,
+			NULL);
 	}
 
 	app_tray_flash_start ();
@@ -2137,489 +2121,40 @@ gossip_app_force_non_away (void)
 }
 
 static void
-app_status_align_menu (GtkMenu  *menu,
-		       gint     *x,
-		       gint     *y,
-		       gboolean *push_in,
-		       gpointer  user_data)
-{
-	GossipAppPriv  *priv = app->priv;
-	GtkWidget      *button;
-	GtkRequisition  req;
-	GdkScreen      *screen;
-	gint            width, height;
-	gint            screen_height;
-
-	button = priv->status_button;
-	
-	gtk_widget_size_request (GTK_WIDGET (menu), &req);
-  
-	gdk_window_get_origin (GTK_BUTTON (button)->event_window, x, y);
-	gdk_drawable_get_size (GTK_BUTTON (button)->event_window, &width, &height);
-
-	*x -= req.width - width;
-	*y += height;
-
-	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
-	
-	/* clamp to screen size. */
-	screen_height = gdk_screen_get_height (screen) - *y;	
-	if (req.height > screen_height) {
-		/* it doesn't fit, so we see if we have the minimum space needed. */
-		if (req.height > screen_height && *y - height > screen_height) {
-			/* put the menu above the button instead. */
-			screen_height = *y - height;
-			*y -= (req.height + height);
-			if (*y < 0) {
-				*y = 0;
-			}
-		}
-	}
-}
-
-static void
-app_status_available_activate_cb (GtkWidget *item,
-				  gpointer   user_data)
-{
-	GossipAppPriv *priv = app->priv;
-	gchar         *str;
-
-	app_status_flash_stop ();
-			
-	str = g_object_get_data (G_OBJECT (item), "status");
-
-	g_object_set (priv->presence,
-		      "state", GOSSIP_PRESENCE_STATE_AVAILABLE,
-		      "status", str,
-		      NULL);
-	
-	app_status_clear_away ();
-}
-
-static void
-app_status_busy_activate_cb (GtkWidget *item,
-			     gpointer   user_data)
-{
-	GossipAppPriv *priv = app->priv;
-	gchar         *str;
-
-	app_status_flash_stop ();
-	
-	str = g_object_get_data (G_OBJECT (item), "status");
-
-	g_object_set (priv->presence,
-		      "state", GOSSIP_PRESENCE_STATE_BUSY,
-		      "status", str,
-		      NULL);
-	
-	app_status_clear_away ();
-}
-
-static void
-app_status_away_activate_cb (GtkWidget *item,
-			     gpointer   user_data)
-{
-	gchar *status;
-
-	status = g_object_get_data (G_OBJECT (item), "status");
-
-	app_status_flash_start ();
-	app_set_away (status);
-	app_presence_updated ();
-}
-
-static void
-app_status_dialog (GossipPresenceState  state,
-		   const gchar         *str,
-		   gboolean             transient)
-{
-        GossipAppPriv      *priv;
-	GladeXML           *glade;
-	GtkWidget          *dialog;
-	GtkWidget          *image;
-	GtkWidget          *comboboxentry;
-	GtkWidget          *entry;
-	GtkEntryCompletion *completion;
-	GdkPixbuf          *pixbuf;
-	GtkListStore       *store;
-  
-	GList              *presets, *l;
- 
-        priv = app->priv;
-
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
-				       "status_message_dialog",
-				       NULL,
-				       "status_message_dialog", &dialog,
-				       "status_comboboxentry", &comboboxentry,
-				       "status_image", &image,
-				       NULL);
-
-	entry = GTK_BIN (comboboxentry)->child;
-	gtk_entry_set_text (GTK_ENTRY (entry), str);
-	gtk_entry_set_width_chars (GTK_ENTRY (entry), 35);
-
-	/* set up completion */
-	completion = gtk_entry_completion_new ();
-	gtk_entry_set_completion (GTK_ENTRY (entry), completion);
-	g_object_unref (completion);
-
-	/* set up state pixbuf for dialog */
-	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
-	
-	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-	g_object_unref (pixbuf);
-
-	/* set up store */
-	store = gtk_list_store_new (1, G_TYPE_STRING);
-
-	presets = gossip_status_presets_get (state);
-	for (l = presets; l; l = l->next) {
-		GtkTreeIter  iter;
-		const gchar *status;
-
-		status = l->data;
-		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, status, -1);
-	}
-
-	g_list_free (presets);
-
-	gtk_combo_box_set_model (GTK_COMBO_BOX (comboboxentry), 
-				 GTK_TREE_MODEL (store));
-
-	g_object_unref (store);
-
-	/* set up combo box */
-	gtk_combo_box_entry_set_text_column (GTK_COMBO_BOX_ENTRY (comboboxentry), 0);
-
-	/* set up completion model */
-	gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
-	gtk_entry_completion_set_text_column (completion, 0);
-
-	/* set up transient window */
-	if (transient) {
-		gtk_window_set_transient_for (GTK_WINDOW (dialog),
-					      GTK_WINDOW (priv->window));
-	}
-	
-	g_object_set_data (G_OBJECT (dialog), "state", GINT_TO_POINTER (state));
-
-	g_signal_connect (entry, "activate", 
-			  G_CALLBACK (app_status_dialog_activate_cb),
-			  dialog);
-
-	g_signal_connect (dialog, "response", 
-			  G_CALLBACK (app_status_dialog_response_cb),
-			  entry);
-
-	gtk_widget_show_all (dialog);
-	gtk_widget_grab_focus (entry);
-}
-
-static void
-app_status_dialog_activate_cb (GtkWidget *entry,
-			       GtkWidget *dialog)
-{
-	app_status_dialog_response_cb (dialog,
-				       GTK_RESPONSE_OK, 
-				       entry);
-}
-
-
-static void
-app_status_dialog_response_cb (GtkWidget *dialog,
-			       gint       response,
-			       GtkWidget *entry)
-{
-	if (response == GTK_RESPONSE_OK) {
-		GossipAppPriv       *priv;
-		GossipPresenceState  state;
-		gpointer             p_state;
-		const gchar         *str;
-
-		priv = app->priv;
-
-		p_state = g_object_get_data (G_OBJECT (dialog), "state");
-		state = GPOINTER_TO_INT (p_state);
-
-		str = gtk_entry_get_text (GTK_ENTRY (entry));
-		gossip_status_presets_set_last (NULL, str, state);
-		
-		if (strcmp (str, gossip_presence_state_get_default_status (state)) == 0) {
-			str = NULL;
-		}
-		
-		if (state != GOSSIP_PRESENCE_STATE_AWAY) {
-			app_status_flash_stop ();
-			
-			gossip_presence_set_state (priv->presence, state);
-			gossip_presence_set_status (priv->presence, str);
-			
-			app_status_clear_away ();
-		} else {
-			app_status_flash_start ();
-			app_set_away (str);
-		}
-		
-		app_presence_updated ();
-	}
-
-	gtk_widget_destroy (dialog); 	
-}
-
-static void
-app_status_custom_available_activate_cb (GtkWidget *item,
-					 gpointer   user_data)
-{
-	gboolean transient = GPOINTER_TO_INT (user_data);
-	
-	app_status_dialog (GOSSIP_PRESENCE_STATE_AVAILABLE,
-			   _("Available"),
-			   transient);
-}
-
-static void
-app_status_custom_busy_activate_cb (GtkWidget *item,
-				    gpointer   user_data)
-{
-	gboolean transient = GPOINTER_TO_INT (user_data);
-
-	app_status_dialog (GOSSIP_PRESENCE_STATE_BUSY,
-			   _("Busy"),
-			   transient);
-}
-
-static void
-app_status_custom_away_activate_cb (GtkWidget *item,
-				    gpointer   user_data)
-{
-	gboolean transient = GPOINTER_TO_INT (user_data);
-
-	app_status_dialog (GOSSIP_PRESENCE_STATE_AWAY,
-			   _("Away"),
-			   transient);
-}
-
-static void
-app_status_edit_activate_cb (GtkWidget *item,
-			     gpointer   user_data)
-{
-	gossip_status_presets_dialog_show ();
-}
-
-static gchar *
-ellipsize_string (const gchar *str, gint len)
-{
-	gchar *copy;
-	gchar *tmp;
-
-	copy = g_strdup (str);
-	
-	if (g_utf8_strlen (copy, -1) > len + 4) {
-		tmp = g_utf8_offset_to_pointer (copy, len);
-		
-		tmp[0] = '.';
-		tmp[1] = '.';
-		tmp[2] = '.';
-		tmp[3] = '\0';
-	}
-
-	return copy;
-}
-
-static void
-add_status_image_menu_item (GtkWidget           *menu,
-			    const gchar         *str,
-			    GossipPresenceState  state,
-			    gboolean             custom,
-			    gpointer             user_data)
-{
-	gchar       *shortened;
-	GtkWidget   *item;
-	GtkWidget   *image;
-	const gchar *stock;
-
-	g_return_if_fail (state == GOSSIP_PRESENCE_STATE_AVAILABLE ||
-			  state == GOSSIP_PRESENCE_STATE_BUSY ||
-			  state == GOSSIP_PRESENCE_STATE_AWAY);
-
-	shortened = ellipsize_string (str, 25);
-	
-	item = gtk_image_menu_item_new_with_label (shortened);
-
-	switch (state) {
-	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		stock = GOSSIP_STOCK_AVAILABLE;
-
-		if (custom) {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_custom_available_activate_cb),
-					  user_data);
-		} else {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_available_activate_cb),
-					  user_data);
-		}
-		break;
-		
-	case GOSSIP_PRESENCE_STATE_BUSY:
-		stock = GOSSIP_STOCK_BUSY;
-
-		if (custom) {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_custom_busy_activate_cb),
-					  user_data);
-		} else {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_busy_activate_cb),
-					  user_data);
-		}
-		break;
-
-	case GOSSIP_PRESENCE_STATE_AWAY:
-		stock = GOSSIP_STOCK_AWAY;
-
-		if (custom) {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_custom_away_activate_cb),
-					  user_data);
-		} else {
-			g_signal_connect (item,
-					  "activate",
-					  G_CALLBACK (app_status_away_activate_cb),
-					  user_data);
-		}
-		break;
-
-	default:
-		g_assert_not_reached ();
-		stock = NULL;
-		break;
-	}
-	
-	image = gtk_image_new_from_stock (stock, GTK_ICON_SIZE_MENU);
-	gtk_widget_show (image);
-	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-	gtk_widget_show (item);
-
-	g_object_set_data_full (G_OBJECT (item),
-				"status", g_strdup (str),
-				(GDestroyNotify) g_free);
-
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-
-	g_free (shortened);
-}
-	
-static GtkWidget *
-app_create_status_menu (gboolean from_window)
-{
-	GtkWidget *menu;
-	GtkWidget *item;
-	GList     *list, *l;
-	gpointer   transient;
-
-	transient = GINT_TO_POINTER (from_window);
-	
-	menu = gtk_menu_new ();
-
-	add_status_image_menu_item (menu, _("Available..."),
-				    GOSSIP_PRESENCE_STATE_AVAILABLE,
-				    TRUE,
-				    transient);
-	
-	add_status_image_menu_item (menu, _("Busy..."),
-				    GOSSIP_PRESENCE_STATE_BUSY,
-				    TRUE,
-				    transient);
-
-	add_status_image_menu_item (menu, _("Away..."),
-				    GOSSIP_PRESENCE_STATE_AWAY,
-				    TRUE,
-				    transient);
-	
-	/* Separator. */
-	item = gtk_menu_item_new ();
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-
-	/* Preset messages. */
-	list = gossip_utils_get_status_messages ();
-	for (l = list; l; l = l->next) {
-		GossipStatusEntry *entry = l->data;
-		
-		add_status_image_menu_item (menu, entry->string,
-					    entry->state, FALSE,
-					    NULL);
-	}
-
-	/* Separator again if there are preset messages. */
-	if (list) {
-		item = gtk_menu_item_new ();
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-		gtk_widget_show (item);
-	}
-
-	gossip_utils_free_status_messages (list);
-
-	item = gtk_menu_item_new_with_label (_("Edit List..."));
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-	
-	g_signal_connect (item,
-			  "activate",
-			  G_CALLBACK (app_status_edit_activate_cb),
-			  NULL);
-
-	return menu;
-}
-
-static void
-app_status_popup_show (void)
+app_presence_chooser_changed_cb (GtkWidget           *chooser,
+				 GossipPresenceState  state,
+				 const gchar         *status,
+				 gpointer             data)
 {
 	GossipAppPriv *priv;
-	GtkWidget     *menu;
 
 	priv = app->priv;
-	
-	menu = app_create_status_menu (TRUE);
 
-	gtk_widget_set_size_request (menu, priv->status_button->allocation.width, -1);
-	
-	gtk_menu_popup (GTK_MENU (menu), NULL, NULL, app_status_align_menu,
-			NULL, 1, gtk_get_current_event_time ());
-}
+	if (state != GOSSIP_PRESENCE_STATE_AWAY) {
+		const gchar *default_status;
 
-static gboolean
-app_status_button_press_event_cb (GtkButton      *button,
-				  GdkEventButton *event,
-				  gpointer        user_data)
-{
-	if (event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS) {
-		return FALSE;
+		/* Send NULL if it's not changed from default status string. We
+		 * do this so that the translated default strings will work
+		 * across two Gossips.
+		 */
+		default_status = gossip_presence_state_get_default_status (state);
+		if (strcmp (status, default_status) == 0) {
+			status = NULL;
+		}
+		
+		g_object_set (priv->presence,
+			      "state", state,
+			      "status", status,
+			      NULL);
+
+		app_status_flash_stop ();
+		app_status_clear_away ();
+	} else {
+		app_status_flash_start ();
+		app_set_away (status);
 	}
-	
-	if (event->button != 1) {
-		return FALSE;
-	}
-	
-	app_status_popup_show ();
 
-	return TRUE;
-}
-
-static void
-app_status_button_clicked_cb (GtkButton      *button,
-			      GdkEventButton *event,
-			      gpointer        user_data)
-{
-	app_status_popup_show ();
+	app_presence_updated ();
 }
 
 static gboolean
@@ -2680,7 +2215,6 @@ gossip_app_get_window (void)
 {
 	return app->priv->window;
 }
-
 
 static gboolean
 app_have_tray (void)
