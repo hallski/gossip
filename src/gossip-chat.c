@@ -159,13 +159,13 @@ gossip_chat_init (GossipChat *chat)
 	chat->input_text_view = gtk_text_view_new ();
 	chat->is_first_char = TRUE;
 
-	g_object_set (G_OBJECT (chat->input_text_view),
+	g_object_set (chat->input_text_view,
 		      "pixels-above-lines", 2,
 		      "pixels-below-lines", 2,
 		      "pixels-inside-wrap", 1,
 		      "right-margin", 2,
 		      "left-margin", 2,
-		      "wrap-mode", GTK_WRAP_WORD,
+		      "wrap-mode", GTK_WRAP_WORD_CHAR,
 		      NULL);
 
 	priv = g_new0 (GossipChatPriv, 1);

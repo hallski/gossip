@@ -666,6 +666,13 @@ chat_window_invite_menu_setup (GossipChatWindow *window)
 	if (!contact) {
 		/* use the other contact if we don't have ourselves */
 		contact = gossip_chat_get_contact (priv->current_chat);
+
+		/* FIXME: Don't know if this is correct, but it fixes two
+		 * critical warnings when joining a group chat.
+		 */
+		if (!contact) {
+			return;
+		}
 	}
 
 	is_group_chat = gossip_chat_get_group_chat (priv->current_chat);

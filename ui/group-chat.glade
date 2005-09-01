@@ -12,7 +12,7 @@
   <property name="modal">False</property>
   <property name="default_width">600</property>
   <property name="default_height">400</property>
-  <property name="resizable">False</property>
+  <property name="resizable">True</property>
   <property name="destroy_with_parent">False</property>
   <property name="icon">gossip-group-message.png</property>
   <property name="decorated">True</property>
@@ -139,14 +139,14 @@
 	      </child>
 	    </widget>
 	    <packing>
-	      <property name="shrink">True</property>
+	      <property name="shrink">False</property>
 	      <property name="resize">True</property>
 	    </packing>
 	  </child>
 
 	  <child>
 	    <widget class="GtkScrolledWindow" id="contacts_sw">
-	      <property name="width_request">125</property>
+	      <property name="width_request">0</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
@@ -158,10 +158,10 @@
 		<widget class="GtkTreeView" id="treeview">
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
-		  <property name="headers_visible">True</property>
+		  <property name="headers_visible">False</property>
 		  <property name="rules_hint">False</property>
 		  <property name="reorderable">False</property>
-		  <property name="enable_search">True</property>
+		  <property name="enable_search">False</property>
 		  <property name="fixed_height_mode">False</property>
 		  <property name="hover_selection">False</property>
 		  <property name="hover_expand">False</property>
@@ -169,7 +169,7 @@
 	      </child>
 	    </widget>
 	    <packing>
-	      <property name="shrink">True</property>
+	      <property name="shrink">False</property>
 	      <property name="resize">False</property>
 	    </packing>
 	  </child>

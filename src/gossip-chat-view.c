@@ -211,7 +211,7 @@ gossip_chat_view_init (GossipChatView *view)
 
 	g_object_set (view,
 		      "justification", GTK_JUSTIFY_LEFT,
-		      "wrap-mode", GTK_WRAP_WORD,
+		      "wrap-mode", GTK_WRAP_WORD_CHAR,
 		      "editable", FALSE,
 		      "cursor-visible", FALSE,
 		      NULL);

@@ -61,6 +61,7 @@ struct _GossipGroupChatPriv {
 	GtkWidget              *textview_sw;
 	GtkWidget              *topic_entry;
 	GtkWidget              *treeview;
+	GtkWidget              *contacts_sw;
 	GtkWidget              *hpaned;
 
 	gchar                  *name;
@@ -349,10 +350,11 @@ group_chat_create_gui (GossipGroupChat *chat)
 				       "input_text_view_sw", &input_textview_sw,
 				       "topic_entry", &priv->topic_entry,
 				       "treeview", &priv->treeview,
+				       "contacts_sw", &priv->contacts_sw,
 				       "left_vbox", &focus_vbox,
 				       "hpaned", &priv->hpaned,
 				       NULL);
-	
+
 	gossip_glade_connect (glade,
 			      chat,
 			      "group_chat_widget", "destroy", group_chat_widget_destroy_cb,
@@ -584,8 +586,6 @@ group_chat_setup_tree (GossipGroupChat *chat)
 	tree = GTK_TREE_VIEW (priv->treeview);
 	tv = GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->view);
 
-	gtk_tree_view_set_headers_visible (tree, FALSE);
-	
 	store = gtk_list_store_new (NUMBER_OF_COLS,
 				    GDK_TYPE_PIXBUF,
 				    G_TYPE_STRING,
@@ -601,19 +601,21 @@ group_chat_setup_tree (GossipGroupChat *chat)
 	
 	gtk_tree_view_set_model (tree, GTK_TREE_MODEL (store));
 	
+	col = gtk_tree_view_column_new ();
+	gtk_tree_view_column_set_sizing (col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+
 	cell = gtk_cell_renderer_pixbuf_new ();
-	col = gtk_tree_view_column_new_with_attributes ("",
-							cell,
-							"pixbuf", COL_STATUS,
-							NULL);
-	gtk_tree_view_append_column (tree, col);
+	gtk_tree_view_column_pack_start (col, cell, FALSE);
+	gtk_tree_view_column_add_attribute (col,
+					    cell,
+					    "pixbuf", COL_STATUS);
 
 	cell = gossip_cell_renderer_text_new ();
-	col = gtk_tree_view_column_new_with_attributes ("",
-							cell,
-							"name", COL_NAME,
-							NULL);
-	
+	gtk_tree_view_column_pack_start (col, cell, TRUE);
+	gtk_tree_view_column_add_attribute (col,
+					    cell,
+					    "name", COL_NAME);
+
 	gtk_tree_view_append_column (tree, col);
 
 	g_signal_connect (tree,
@@ -1277,7 +1279,7 @@ group_chat_get_tooltip (GossipChat *chat)
 	g_chat = GOSSIP_GROUP_CHAT (chat);
 	priv   = g_chat->priv;
 
-	return g_strdup ("group chat");
+	return g_strdup (priv->name);
 #if 0 /* FIXME: (session-rewrite) */
 	return g_strdup (gossip_jid_get_without_resource (priv->jid));
 #endif
@@ -1360,11 +1362,12 @@ group_chat_set_show_contacts (GossipChat *chat,
 	priv->contacts_visible = show;
 
 	if (show) {
-		gtk_paned_set_position (GTK_PANED (priv->hpaned), 
+		gtk_widget_show (priv->contacts_sw);
+		gtk_paned_set_position (GTK_PANED (priv->hpaned),
 					priv->contacts_width);
 	} else {
 		priv->contacts_width = gtk_paned_get_position (GTK_PANED (priv->hpaned));
-		gtk_paned_set_position (GTK_PANED (priv->hpaned), 
-					GTK_PANED (priv->hpaned)->max_position);
+		gtk_widget_hide (priv->contacts_sw);
 	}
 }
+
