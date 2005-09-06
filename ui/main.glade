@@ -81,7 +81,7 @@
 			  <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image81">
+			    <widget class="GtkImage" id="image83">
 			      <property name="visible">True</property>
 			      <property name="pixbuf">gossip-message.png</property>
 			      <property name="xalign">0.5</property>
@@ -106,7 +106,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image82">
+			    <widget class="GtkImage" id="image84">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
 			      <property name="icon_size">1</property>
@@ -184,14 +184,6 @@
 		      </child>
 
 		      <child>
-			<widget class="GtkMenuItem" id="edit_status_messages">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">_Status Messages</property>
-			  <property name="use_underline">True</property>
-			</widget>
-		      </child>
-
-		      <child>
 			<widget class="GtkSeparatorMenuItem" id="avskiljare4">
 			  <property name="visible">True</property>
 			</widget>
@@ -204,7 +196,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image83">
+			    <widget class="GtkImage" id="image85">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-preferences</property>
 			      <property name="icon_size">1</property>

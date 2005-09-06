@@ -41,7 +41,6 @@
 #include <libgossip/gossip-presence.h>
 
 #include "eggtrayicon.h"
-#include "eel-ellipsizing-label.h"
 #include "gossip-vcard-dialog.h"
 #include "gossip-add-contact.h"
 #include "gossip-ui-utils.h"
@@ -57,7 +56,6 @@
 #include "gossip-preferences.h"
 #include "gossip-presence-chooser.h"
 #include "gossip-status-presets.h"
-#include "gossip-status-presets-dialog.h"
 #include "gossip-private-chat.h"
 #include "gossip-accounts-window.h"
 #include "gossip-stock.h"
@@ -67,11 +65,6 @@
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
 #endif
-
-#define DEFAULT_RESOURCE _("Home")
-
-#define ADD_CONTACT_RESPONSE_ADD 1
-#define REQUEST_RESPONSE_DECIDE_LATER 1
 
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
@@ -218,8 +211,6 @@ static void            app_show_offline_key_changed_cb      (GConfClient        
 static void            app_accounts_cb                      (GtkWidget            *widget,
 							     GossipApp            *app);
 static void            app_personal_information_cb          (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_status_messages_cb               (GtkWidget            *widget,
 							     GossipApp            *app);
 static void            app_preferences_cb                   (GtkWidget            *widget,
 							     GossipApp            *app);
@@ -486,7 +477,6 @@ app_setup (GossipAccountManager *manager)
 			      "actions_configure_transports", "activate", app_configure_transports_cb,
 			      "edit_accounts", "activate", app_accounts_cb,
 			      "edit_personal_information", "activate", app_personal_information_cb,
-			      "edit_status_messages", "activate", app_status_messages_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "help_about", "activate", app_about_cb,
 			      "main_window", "delete_event", app_main_window_delete_event_cb,
@@ -1152,12 +1142,6 @@ app_accounts_cb (GtkWidget *widget, GossipApp *app)
 }
 
 static void
-app_status_messages_cb (GtkWidget *widget, GossipApp *app)
-{
- 	gossip_status_presets_dialog_show (); 
-}
-
-static void
 app_preferences_cb (GtkWidget *widget, GossipApp *app)
 {
 	gossip_preferences_show ();
@@ -1738,9 +1722,7 @@ app_accounts_create (void)
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
-
 	GtkWidget            *fixed;
-
 	GList                *accounts;
 	GList                *l;
 	gint                  count;
@@ -1755,9 +1737,10 @@ app_accounts_create (void)
 	gtk_widget_show (fixed);
 	gtk_box_pack_start (GTK_BOX (priv->accounts_hbox), fixed, TRUE, TRUE, 0);
 
-	g_signal_connect (GTK_WIDGET (priv->accounts_hbox), "button_press_event", 
-			  G_CALLBACK (app_accounts_button_press_event_cb), NULL);
-
+	g_signal_connect (GTK_WIDGET (priv->accounts_hbox),
+			  "button_press_event", 
+			  G_CALLBACK (app_accounts_button_press_event_cb),
+			  NULL);
 
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
@@ -1825,7 +1808,6 @@ app_accounts_set_status (GossipAccount  *account,
 					   &error);
 
 	g_return_if_fail (pixbuf != NULL);
-
 	
 	/* set image to gray scale */
 	gdk_pixbuf_saturate_and_pixelate
@@ -1836,6 +1818,7 @@ app_accounts_set_status (GossipAccount  *account,
 
 	gtk_image_set_from_pixbuf (image, pixbuf); 
 
+	g_object_unref (pixbuf);
 }
 
 static void
@@ -1845,7 +1828,6 @@ app_accounts_add (GossipAccount *account)
 	GossipAccountType  type;
 	GtkTooltips       *tooltips;
 	gchar             *str;
-
 	GtkWidget         *eventbox;
 	GtkWidget         *image;
 	
@@ -1883,7 +1865,6 @@ static void
 app_accounts_remove (GossipAccount *account)
 {
 	GossipAppPriv *priv;
-
 	GList         *children;
 	GList         *l;
 

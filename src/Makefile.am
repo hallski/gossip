@@ -16,7 +16,7 @@ AM_CPPFLAGS =	                                 \
 	-DDBUS_API_SUBJECT_TO_CHANGE
 
 if HAVE_DBUS
-dbus_sources =                                                         \
+dbus_sources =					\
        gossip-dbus.c                   gossip-dbus.h
 endif
 
@@ -60,15 +60,13 @@ gossip_SOURCES = 				                        	\
 	gossip-spell.c                     gossip-spell.h                       \
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
 	gossip-status-presets.c		   gossip-status-presets.h	       	\
-	gossip-status-presets-dialog.c	   gossip-status-presets-dialog.h       \
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
-	eel-ellipsizing-label.c	    	   eel-ellipsizing-label.h		\
 	eggtrayicon.c		           eggtrayicon.h
 
 gossip_LDADD = @GOSSIP_LIBS@                            			\
-	       $(top_builddir)/libgossip/libgossip.la
+	$(top_builddir)/libgossip/libgossip.la
 
 gossip_LDFLAGS = -export-dynamic
 

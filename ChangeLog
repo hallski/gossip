@@ -1,3 +1,20 @@
+2005-09-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_accounts_set_status): Unref the icon.
+
+	* src/Makefile.am:
+	* src/eggtreemodelfilter.c:
+	* src/eggtreemodelfilter.h:
+	* src/eel-ellipsizing-label.c:
+	* src/eel-ellipsizing-label.h: Remove old unused files.
+
+	* src/eggtrayicon.c:
+	* src/eggtrayicon.h: Update from libegg.
+
+	* src/gossip-app.c: (app_setup), (app_accounts_cb):
+	* ui/main.glade: Remove the status presets dialog. We can add it
+	back if needed, but it needs some work.
+
 2005-09-02  Richard Hult  <richard@imendio.com>
 
 	* src/Makefile.am: Add presence chooser.

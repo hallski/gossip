@@ -29,6 +29,7 @@ src/gossip-join-dialog.c
 src/gossip-log.c
 src/gossip-new-account-window.c
 src/gossip-main.c
+src/gossip-presence-chooser.c
 src/gossip-preferences.c
 src/gossip-private-chat.c
 src/gossip-register.c
