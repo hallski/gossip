@@ -287,10 +287,6 @@ gossip_session_init (GossipSession *session)
 	priv->protocols = NULL;
 
 	priv->connected_counter = 0;
-
-#ifdef HAVE_DBUS
-	gossip_dbus_init (session);
-#endif
 }
 
 static void

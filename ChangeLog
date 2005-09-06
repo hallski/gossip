@@ -1,3 +1,9 @@
+2005-09-06  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-app.c (app_setup): 
+	- Added dbus init, removed this from libgossip.
+	- Fixes bug #315181 (Brian Pepple).
+
 2005-09-06  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_accounts_set_status): Unref the icon.

@@ -412,6 +412,12 @@ app_setup (GossipAccountManager *manager)
 
 	priv->session = gossip_session_new (manager);
 
+	/* is this the best place for this, 
+	   perhaps in gossip-main.c? */
+#ifdef HAVE_DBUS
+        gossip_dbus_init (priv->session);
+#endif
+
 	/* do we need first time start up druid? */
 	if (gossip_new_account_window_is_needed ()) {
 		gossip_new_account_window_show ();
