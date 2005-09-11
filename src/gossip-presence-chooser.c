@@ -205,7 +205,7 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 
 	store = gtk_list_store_new (1, G_TYPE_STRING);
 
-	presets = gossip_status_presets_get (state);
+	presets = gossip_status_presets_get (state, -1);
 	for (l = presets; l; l = l->next) {
 		const gchar *status;
 
@@ -455,7 +455,7 @@ gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser)
 
 	menu = gtk_menu_new ();
 
-	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_AVAILABLE);
+	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_AVAILABLE, 4);
 	for (l = list; l; l = l->next) {
 		presence_chooser_add_item (chooser,
 					   menu,
@@ -476,7 +476,7 @@ gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser)
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
-	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_BUSY);
+	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_BUSY, 4);
 	for (l = list; l; l = l->next) {
 		presence_chooser_add_item (chooser,
 					   menu,
@@ -497,7 +497,7 @@ gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser)
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
-	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_AWAY);
+	list = gossip_status_presets_get (GOSSIP_PRESENCE_STATE_AWAY, 4);
 	for (l = list; l; l = l->next) {
 		presence_chooser_add_item (chooser,
 					   menu,

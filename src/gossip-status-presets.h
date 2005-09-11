@@ -26,7 +26,8 @@ G_BEGIN_DECLS
 #include <libgossip/gossip-presence.h>
 
 void   gossip_status_presets_get_all    (void);
-GList *gossip_status_presets_get        (GossipPresenceState  state);
+GList *gossip_status_presets_get        (GossipPresenceState  state,
+					 gint                 max_number);
 void   gossip_status_presets_set_last   (const gchar         *status,
 					 GossipPresenceState  state);
 void   gossip_status_presets_reset      (void);

@@ -1,3 +1,15 @@
+2005-09-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-presence-chooser.c: (presence_chooser_show_dialog),
+	(gossip_presence_chooser_create_menu): Get all presets for the
+	completion entry, only the most recent 4 for the menu.
+	
+	* src/gossip-status-presets.c: (gossip_status_presets_get_all),
+	(status_presets_file_parse), (status_presets_file_save),
+	(gossip_status_presets_get), (gossip_status_presets_set_last):
+	* src/gossip-status-presets.h: Add an argument for specifying how
+	many presets to get, and allow saving 10 per type instead of 4.
+
 2005-09-06  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c (app_setup): 

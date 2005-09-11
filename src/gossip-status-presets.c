@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2005 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,7 +22,6 @@
 #include <config.h>
 
 #include <string.h>
-
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <libgnomevfs/gnome-vfs.h>
@@ -32,7 +32,7 @@
 
 #define STATUS_PRESETS_XML_FILENAME "status-presets.xml"
 #define STATUS_PRESETS_DTD_FILENAME "gossip-status-presets.dtd"
-#define STATUS_PRESETS_MAX_EACH     4
+#define STATUS_PRESETS_MAX_EACH     10
 
 #define d(x) 
 
@@ -60,7 +60,7 @@ gossip_status_presets_get_all (void)
 
 	/* If already set up clean up first. */
 	if (presets) {
-		g_list_foreach (presets, (GFunc)status_preset_free, NULL);
+		g_list_foreach (presets, (GFunc) status_preset_free, NULL);
 		g_list_free (presets);
 		presets = NULL;
 	}
@@ -87,10 +87,7 @@ status_presets_file_parse (const gchar *filename)
 	xmlDocPtr         doc;
 	xmlNodePtr        presets_node;
 	xmlNodePtr        node;
-	gint              count[4] = { 0, 0, 0, 0};
 	
-	g_return_if_fail (filename != NULL);
-
 	d(g_print ("Attempting to parse file:'%s'...\n", filename));
 
  	ctxt = xmlNewParserCtxt ();
@@ -140,13 +137,8 @@ status_presets_file_parse (const gchar *filename)
 					state = GOSSIP_PRESENCE_STATE_AVAILABLE;
 				}
 				
-				count[state]++;
-				if (count[state] <= STATUS_PRESETS_MAX_EACH) {
-					preset = status_preset_new (status,
-								    state);
-					
-					presets = g_list_append (presets, preset);
-				}
+				preset = status_preset_new (status, state);
+				presets = g_list_append (presets, preset);
 			}
 
 			xmlFree (status);
@@ -240,7 +232,10 @@ status_presets_file_save (void)
 			continue;
 		}
 		
-		subnode = xmlNewChild (root, NULL, BAD_CAST "status", BAD_CAST sp->status);
+		subnode = xmlNewChild (root,
+				       NULL,
+				       BAD_CAST "status",
+				       BAD_CAST sp->status);
 		xmlNewProp (subnode, BAD_CAST "presence", state);	
 	}
 
@@ -254,11 +249,13 @@ status_presets_file_save (void)
 }
 
 GList *
-gossip_status_presets_get (GossipPresenceState state)
+gossip_status_presets_get (GossipPresenceState state, gint max_number)
 {
 	GList *list = NULL;
 	GList *l;
-	
+	gint   i;
+
+	i = 0;
 	for (l = presets; l; l = l->next) {
 		StatusPreset *sp;
 
@@ -269,6 +266,11 @@ gossip_status_presets_get (GossipPresenceState state)
 		}
 		
 		list = g_list_append (list, sp->status);
+		i++;
+
+		if (max_number != -1 && i >= max_number) {
+			break;
+		}
 	}
 
 	return list;
