@@ -236,7 +236,7 @@ gossip_transport_add_window_show (GossipTransportAccountList *al)
 	/* FIXME: need a better way of doing this. */
 	window->al = al;
 
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+	gui = gossip_glade_get_file (GLADEDIR "/transports.glade",
 				     "transport_add_window",
 				     NULL,
 				     "transport_add_window", &window->window,

@@ -1,3 +1,8 @@
+2005-09-11  Richard Hult  <richard@imendio.com>
+
+	* POTFILES.skip: Update.
+	* sv.po: Update.
+
 2005-09-07  Adam Weinberger  <adamw@gnome.org>
 
 	* POTFILES.skup: Remove missing files, sort.

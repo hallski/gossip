@@ -110,7 +110,7 @@ gossip_transport_accounts_window_show (void)
 	/* set up window */
 	current_window = window = g_new0 (GossipTransportAccountsWindow, 1);
 
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+	gui = gossip_glade_get_file (GLADEDIR "/transports.glade",
 				     "transport_accounts_window",
 				     NULL,
 				     "transport_accounts_window", &window->window,
