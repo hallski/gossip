@@ -24,72 +24,224 @@
 
 #ifdef HAVE_ASPELL
 #include <aspell.h>
-#endif
+#endif /* HAVE_ASPELL */
+
+#include <glib/gi18n.h>
 
 #include "gossip-spell.h"
 
-#define d(x)
+#define d(x) x
+	
+
+typedef struct {
+#ifdef HAVE_ASPELL
+	AspellConfig       *spell_config;
+	AspellCanHaveError *spell_possible_err;
+        AspellSpeller      *spell_checker;
+#endif /* HAVE_ASPELL */
+} SpellLanguage;
+
 
 struct _GossipSpell {
 	gint                ref_count;
 
-	gchar              *language;
+	GList              *languages;
 	
 	gboolean            has_backend;
-
-#ifdef HAVE_ASPELL
-	/* aspell */
-	AspellConfig       *spell_config;
-	AspellCanHaveError *spell_possible_err;
-        AspellSpeller      *spell_checker;
-#endif
 };
 
 
 static void spell_free (GossipSpell *spell);
 
 
+/* 
+   can we get this from somewhere else?
+
+   Evolution uses Corba and all that jazz to talk to GnomeSpell, it is
+   pretty horrible really, plus their list of languages is not as
+   extensive as the one below.
+
+   The list below is a combination of the GnomeSpell list and the list
+   of languages from the Gnome Translation Project. 
+*/
+
+const gchar *languages[] = {
+	"af", N_("Afrikaans"),
+	"am", N_("Amharic"),
+	"ar", N_("Arabic"),
+	"az", N_("Azerbaijani"),
+	"be", N_("Belarusian"),
+	"bg", N_("Bulgarian"),
+	"bn", N_("Bengali"),
+	"br", N_("Breton"),
+	"bs", N_("Bosnian"),
+	"ca", N_("Catalan"),
+	"cs", N_("Czech"),
+	"cy", N_("Welsh"),
+	"da", N_("Danish"),
+	"de", N_("German"),
+	"de_AT", N_("German (Austria)"),
+	"de_DE", N_("German (Germany)"),
+	"de_CH", N_("German (Swiss)"),
+	"el", N_("Greek"),
+	"en", N_("English"),
+	"en_CA", N_("English (Canadian)"),
+	"en_GB", N_("English (British)"),
+	"en_US", N_("English (American)"),
+	"eo", N_("Esperanto"),
+	"es", N_("Spanish"),
+	"et", N_("Estonian"),
+	"eu", N_("Basque"),
+	"fa", N_("Persian"),
+	"fi", N_("Finnish"),
+	"fo", N_("Faroese"),
+	"fr", N_("French"),
+	"fr_FR", N_("French (France)"),
+	"fr_CH", N_("French (Swiss)"),
+	"ga", N_("Irish Gaelic"),
+	"gd", N_("Scots Gaelic"),
+	"gl", N_("Galician"),
+	"gu", N_("Gujarati"),
+	"gv", N_("Manx Gaelic"),
+	"he", N_("Hebrew"),
+	"hi", N_("Hindi"),
+	"hr", N_("Croatian"),
+	"hu", N_("Hungarian"),
+	"id", N_("Indonesian"),
+	"is", N_("Icelandic"),
+	"it", N_("Italian"),
+	"ja", N_("Japanese"),
+	"ka", N_("Georgian"),
+	"kn", N_("Kannada"),
+	"ko", N_("Korean"),
+	"ku", N_("Kurdish"),
+	"kw", N_("Cornish"),
+	"li", N_("Limburgish"),
+	"lt", N_("Lithuanian"),
+	"lv", N_("Latvian"),
+	"mi", N_("Maori"),
+	"mk", N_("Macedonian"),
+	"ml", N_("Malayalam"),
+	"mn", N_("Mongolian"),
+	"mr", N_("Marathi"),
+	"ms", N_("Malay"),
+	"nb", N_("Norwegian (Bokmal)"),
+	"nb_NO", N_("Norwegian (Bokmal)"),
+	"ne", N_("Nepali"),
+	"nl", N_("Dutch"),
+	"no", N_("Norwegian"),
+	"nn", N_("Norwegian (Nynorsk)"),
+	"nn_NO", N_("Norwegian (Nyorsk)"),
+	"or", N_("Oriya"),
+	"pa", N_("Punjabi"),
+	"pl", N_("Polish"),
+	"pt", N_("Portuguese"),
+	"pt_PT", N_("Portuguese (Portugal)"),
+	"pt_BR", N_("Portuguese (Brazil)"),
+	"ro", N_("Romanian"),
+	"ru", N_("Russian"),
+	"rw", N_("Kinyarwanda"),
+	"sk", N_("Slovak"),
+	"sl", N_("Slovenian"),
+	"sq", N_("Albanian"),
+	"sr", N_("Serbian"),
+	"sv", N_("Swedish"),
+	"ta", N_("Tamil"),
+	"te", N_("Telugu"),
+	"th", N_("Thai"),
+	"tk", N_("Turkmen"),
+	"tr", N_("Turkish"),
+	"uk", N_("Ukrainian"),
+	"vi", N_("Vietnamese"),
+	"wa", N_("Wallon"),
+	"xh", N_("Xhosa"),
+	"yi", N_("Yiddish"),
+	"zh_CN", N_("Chinese Simplified"),
+	"zh_TW", N_("Chinese Traditional"),
+	NULL
+};
+
+
 GossipSpell * 
-gossip_spell_new (const gchar *language)
+gossip_spell_new (GList *languages)
 {
-	GossipSpell *spell;
-	
 #ifndef HAVE_ASPELL
 	return NULL;
-#endif
+#else 
+	GossipSpell *spell;
+	
+	GList       *l;
+
+	d(g_print ("Spell: Initiating\n")); 
 
 	spell = g_new0 (GossipSpell, 1);
 
 	spell->ref_count = 1;
 
-	if (!language) {
-		const gchar *lang = NULL;
+	if (!languages) {
+		SpellLanguage *lang;
+		const gchar   *language = NULL;
 
-		lang = getenv ("LANG");
-		if (!lang) {
-			lang = "en_US";
+		language = getenv ("LANG");
+		if (!language) {
+			language = "en";
+			d(g_print ("Spell: Using default language ('%s')\n", language)); 
+		} else {
+			d(g_print ("Spell: Using language from environment variable LANG ('%s')\n", language)); 
 		}
 
-		spell->language = g_strdup (lang);
+		
+		lang = g_new0 (SpellLanguage, 1);
+
+		lang->spell_config = new_aspell_config();
+		
+		aspell_config_replace (lang->spell_config, "encoding", "utf-8");
+		aspell_config_replace (lang->spell_config, "lang", language);
+		
+		lang->spell_possible_err = new_aspell_speller (lang->spell_config);
+		
+		if (aspell_error_number (lang->spell_possible_err) == 0) {
+			lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
+			spell->has_backend = TRUE;
+			
+			d(g_print ("Spell: Using ASpell back end for language:'%s'\n", language)); 
 	} else {
-		spell->language = g_strdup (language);
+			d(g_print ("Spell: No back end supported\n")); 
 	}
 
-#ifdef HAVE_ASPELL
-	spell->spell_config = new_aspell_config();
+ 		spell->languages = g_list_append (spell->languages, lang);
 
-	aspell_config_replace (spell->spell_config, "lang", spell->language);
-	aspell_config_replace (spell->spell_config, "encoding", "utf-8");
+	} else {
+		for (l = languages; l; l = l->next) {
+			SpellLanguage *lang;
+			const gchar   *language;
 
-	spell->spell_possible_err = new_aspell_speller (spell->spell_config);
+			language = l->data;
 
-	if (aspell_error_number (spell->spell_possible_err) == 0) {
-		spell->spell_checker = to_aspell_speller (spell->spell_possible_err);
+			d(g_print ("Spell: Using language:'%s'\n", language)); 
+
+			lang = g_new0 (SpellLanguage, 1);
+			
+			lang->spell_config = new_aspell_config();
+			
+			aspell_config_replace (lang->spell_config, "encoding", "utf-8");
+			aspell_config_replace (lang->spell_config, "lang", language);
+
+			lang->spell_possible_err = new_aspell_speller (lang->spell_config);
+
+			if (aspell_error_number (lang->spell_possible_err) == 0) {
+				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
 		spell->has_backend = TRUE;
+				
+				d(g_print ("Spell: Using ASpell back end for language:'%s'\n", language)); 
+			}
+
+			spell->languages = g_list_append (spell->languages, lang);
+		}
 	}
-#endif
 
 	return spell;
+#endif /* HAVE_ASPELL */
 }
 
 static void
@@ -97,7 +249,9 @@ spell_free (GossipSpell *spell)
 {
 	g_return_if_fail (spell != NULL);
 	
-	g_free (spell->language);
+	g_list_foreach (spell->languages, (GFunc)g_free, NULL);
+	g_list_free (spell->languages);
+
 	g_free (spell);
 }	
 
@@ -129,61 +283,165 @@ gossip_spell_has_backend (GossipSpell *spell)
 	return spell->has_backend;
 }
 
+const gchar *
+gossip_spell_get_language_name (const gchar *code)
+{
+	gint i;
+
+	for (i = 0; code && languages[i] && languages[i+1]; i+=2) {
+		const char *lang_code = languages[i];
+
+		if (code && lang_code && strcmp (code, lang_code) == 0) {
+			return languages[i+1];
+		}
+	} 
+	
+	return "";
+}
+
+GList *
+gossip_spell_get_language_codes (GossipSpell *spell)
+{
+#ifdef HAVE_ASPELL
+	AspellConfig              *config;
+	AspellDictInfoList        *dlist;
+	AspellDictInfoEnumeration *dels;
+
+	const AspellDictInfo      *entry;
+
+	GList                     *codes = NULL;
+
+	g_return_val_if_fail (spell != NULL, FALSE);
+
+	d(g_print ("Spell: Listing available language codes:\n"));
+
+	config = new_aspell_config ();
+
+	/* the returned pointer should _not_ need to be deleted */
+	dlist = get_aspell_dict_info_list (config);
+
+	/* config is no longer needed */
+	delete_aspell_config (config);
+
+	dels = aspell_dict_info_list_elements (dlist);
+
+	while ((entry = aspell_dict_info_enumeration_next (dels)) != 0) {
+		if (g_list_find_custom (codes, entry->code, (GCompareFunc)strcmp)) {
+			continue;
+		}
+
+		d(g_print ("Spell:  + %s (%s)\n", 
+			   entry->code, 
+			   gossip_spell_get_language_name (entry->code)));
+		codes = g_list_append (codes, g_strdup (entry->code));
+	}
+
+	delete_aspell_dict_info_enumeration (dels);
+
+	d(g_print ("Spell: %d language codes in total:\n", g_list_length (codes)));
+
+	return codes;
+#else  /* HAVE_ASPELL */
+	return NULL;
+#endif /* HAVE_ASPELL */
+}
+
 gboolean
 gossip_spell_check (GossipSpell *spell, const gchar *word)
 {
-	gboolean correct = FALSE;
+#ifdef HAVE_ASPELL
+	GList    *l;
+#endif /* HAVE_ASPELL */
+
+	gint      langs;
+	gboolean  correct = FALSE;
 
 	g_return_val_if_fail (spell != NULL, FALSE);
 	g_return_val_if_fail (word != NULL, FALSE);
 	g_return_val_if_fail (strlen (word) > 0, FALSE);
 
+	langs = g_list_length (spell->languages);
+
+	if (langs < 1) {
+		return FALSE;
+	}
+
 #ifdef HAVE_ASPELL
-	correct = aspell_speller_check (spell->spell_checker, 
+	for (l = spell->languages; l; l = l->next) {
+		SpellLanguage *lang;
+
+		lang = l->data;
+		if (!lang) {
+			continue;
+		}
+
+		correct = aspell_speller_check (lang->spell_checker, 
 					word, strlen (word));
-#endif
+		
+		if (langs > 1 && correct) {
+			break;
+		}
+	}
+#endif /* HAVE_ASPELL */
 
 	return correct;
 }
 
 GList *
-gossip_spell_suggestions (GossipSpell *spell, const gchar *word)
+gossip_spell_suggestions (GossipSpell *spell, 
+			  const gchar *word)
 {
-	GList *l = NULL;
+#ifdef HAVE_ASPELL
+	GList *l1;
+#endif /* HAVE_ASPELL */
+	GList *l2 = NULL;
 
 #ifdef HAVE_ASPELL
 	AspellWordList *suggestions = NULL;
 	AspellStringEnumeration *elements = NULL;
 
 	const char *next = NULL;
-#endif
+#endif /* HAVE_ASPELL */
 
 	g_return_val_if_fail (spell != NULL, NULL);
 	g_return_val_if_fail (word != NULL, NULL);
 	g_return_val_if_fail (strlen (word) > 0, NULL);
 
 #ifdef HAVE_ASPELL
-	suggestions = (AspellWordList*) aspell_speller_suggest (spell->spell_checker,
+	for (l1 = spell->languages; l1; l1 = l1->next) {
+		SpellLanguage *lang;
+
+		lang = l1->data;
+		if (!lang) {
+			continue;
+		}
+
+		suggestions = (AspellWordList*) aspell_speller_suggest (lang->spell_checker,
 								word, strlen (word));
 
 	elements = aspell_word_list_elements (suggestions);
 	
 	while ((next = aspell_string_enumeration_next (elements)) != NULL) {
-		l = g_list_append (l, g_strdup (next));
+			l2 = g_list_append (l2, g_strdup (next));
+		}
 	}
 	
 	delete_aspell_string_enumeration (elements);
-#endif
+#endif /* HAVE_ASPELL */
 
-	return l;
+	return l2;
 }
 
 gboolean
 gossip_spell_supported (void)
 {
+	if (g_getenv ("GOSSIP_SPELL_DISABLED")) {
+		return FALSE;
+	}
+
 #ifdef HAVE_ASPELL
 	return TRUE;
-#else 
+#else  /* HAVE_ASPELL */
 	return FALSE;
-#endif
+#endif /* HAVE_ASPELL */
 }

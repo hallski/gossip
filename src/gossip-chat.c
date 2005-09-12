@@ -32,6 +32,7 @@
 #include "gossip-spell.h"
 #include "gossip-spell-dialog.h"
 #include "gossip-ui-utils.h"
+#include "gossip-preferences.h"
 #include "gossip-chat.h"
 
 #define d(x)
@@ -155,6 +156,9 @@ gossip_chat_init (GossipChat *chat)
 	GossipChatPriv *priv;
 	GtkTextBuffer  *buffer;
 
+	gchar          *value;
+	GList          *languages = NULL;
+
 	chat->view = gossip_chat_view_new ();
 	chat->input_text_view = gtk_text_view_new ();
 	chat->is_first_char = TRUE;
@@ -197,7 +201,33 @@ gossip_chat_init (GossipChat *chat)
 				    "underline", PANGO_UNDERLINE_ERROR,
 				    NULL);
 
-	priv->spell = gossip_spell_new (NULL);
+	/* get spelling languages */
+	value = gconf_client_get_string (gconf_client, 					  
+					 GCONF_PATH "/conversation/spell_checker_languages", 
+					 NULL);
+	
+	if (value) {
+		gchar **vlanguages;
+		gchar  *lang;
+		gint    i;
+
+		vlanguages = g_strsplit (value, ",", -1);
+		
+		for (i = 0, lang = vlanguages[i]; lang; lang = vlanguages[++i]) {
+			languages = g_list_append (languages, g_strdup (lang));
+		}
+
+		g_strfreev (vlanguages);
+	}
+	
+	g_free (value);
+	
+	priv->spell = gossip_spell_new (languages);
+	
+	if (languages) {
+		g_list_foreach (languages, (GFunc)g_free, NULL);
+		g_list_free (languages);
+	}
 }
 
 static void
@@ -211,8 +241,10 @@ chat_finalize (GObject *object)
 	chat = GOSSIP_CHAT (object);
 	priv = chat->priv;
 
-	gossip_spell_unref (priv->spell);
-	g_free (priv);
+	if (priv->spell) {
+		gossip_spell_unref (priv->spell);
+		g_free (priv);
+	}
 
 	G_OBJECT_CLASS (parent_class)->finalize (object);
 }

@@ -28,6 +28,20 @@
 	</long>
       </locale>
     </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/conversation/spell_checker_languages</key>
+      <applyto>/apps/gossip/conversation/spell_checker_languages</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <default>en</default>
+      <locale name="C">
+	<short>Spell checking languages</short>
+	<long>
+	  Comma separated list of spell checker languages to use (e.g. en, fr, nl).
+	</long>
+      </locale>
+    </schema>
     
     <schema>
       <key>/schemas/apps/gossip/contacts/show_offline</key>

@@ -1,3 +1,16 @@
+2005-09-12  Martyn Russell  <mr@gnome.org>
+
+	* gossip.schemas.in: 
+	- Added list of spell checker languages used.
+	* src/gossip-chat.c:
+	* src/gossip-spell.[ch]:
+	- Use multiple languages instead of a singular language to check
+	spelling when chatting.  
+	* ui/main.glade:
+	* src/gossip-preferences.c:
+	- Updated to show a list of languages install on the machine which
+	the user will choose to check against when chatting.
+
 2005-09-11  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-transport-accounts-window.c:
