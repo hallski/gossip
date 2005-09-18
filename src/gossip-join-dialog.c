@@ -230,8 +230,8 @@ join_dialog_setup_accounts (GList            *accounts,
 
 		gdk_pixbuf_saturate_and_pixelate (pixbuf,
 						  pixbuf,
-						  is_connected ? 1.5 : 0,
-						  FALSE);
+						  1.0,
+						  !is_connected);
 		
  		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);

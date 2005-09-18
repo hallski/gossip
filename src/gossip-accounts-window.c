@@ -405,8 +405,8 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 
 	gdk_pixbuf_saturate_and_pixelate (pixbuf,
 					  pixbuf,
-					  is_connected ? 1.5 : 0,
-					  FALSE);
+					  1.0,
+					  !is_connected);
 
 	g_object_set (cell, 
 		      "visible", TRUE,

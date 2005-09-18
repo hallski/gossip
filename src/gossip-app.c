@@ -1816,12 +1816,15 @@ app_accounts_set_status (GossipAccount  *account,
 	g_return_if_fail (pixbuf != NULL);
 	
 	/* set image to gray scale */
+#if 0
 	gdk_pixbuf_saturate_and_pixelate
 		(pixbuf,
 		 pixbuf,
 		 online ? 1.5 : 0,
 		 FALSE);
-
+#endif
+	
+	gdk_pixbuf_saturate_and_pixelate (pixbuf, pixbuf, 1.0, !online);
 	gtk_image_set_from_pixbuf (image, pixbuf); 
 
 	g_object_unref (pixbuf);

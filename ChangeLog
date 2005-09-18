@@ -1,5 +1,18 @@
 2005-09-12  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-accounts-window.c:
+	* src/gossip-add-contact.c:
+	* src/gossip-app.c:
+	* src/gossip-join-dialog.c:
+	* src/gossip-vcard-dialog.c:
+	- As requested by Tommi Komulainen, improved on the
+	pixelation/saturation for showing online/offline accounts in
+	Gossip.  This was mainly to have a clearer distinction between the
+	icons and now things look much better.
+	- Fixes bug #316621 (Tommi Komulainen).
+
+2005-09-12  Martyn Russell  <mr@gnome.org>
+
 	* gossip.schemas.in: 
 	- Added list of spell checker languages used.
 	* src/gossip-chat.c:

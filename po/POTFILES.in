@@ -33,6 +33,7 @@ src/gossip-presence-chooser.c
 src/gossip-preferences.c
 src/gossip-private-chat.c
 src/gossip-register.c
+src/gossip-spell.c
 src/gossip-spell-dialog.c
 src/gossip-status-presets-dialog.c
 src/gossip-ui-utils.c
