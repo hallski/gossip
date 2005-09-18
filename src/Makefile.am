@@ -78,8 +78,6 @@ dtd_DATA = 									\
 stylesheetdir = $(datadir)/gossip
 stylesheet_DATA = gossip-log.xsl
 
-GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
-
 gossip-marshal.h: gossip-marshal.list
 	(cd $(srcdir) && \
 	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \

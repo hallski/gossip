@@ -50,8 +50,6 @@ dtddir = $(datadir)/gossip
 dtd_DATA = 						\
 	gossip-account.dtd
 
-GLIB_GENMARSHAL = $(shell pkg-config glib-2.0 --variable=glib_genmarshal)
-
 libgossip-marshal.h: libgossip-marshal.list
 	(cd $(srcdir) && \
 	$(GLIB_GENMARSHAL) --prefix=libgossip_marshal libgossip-marshal.list --header) > xgen-gmh \

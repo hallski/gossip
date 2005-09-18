@@ -115,6 +115,9 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
 # Sucks that we need to do this
 GOSSIP_LIBS="$GOSSIP_LIBS -lexslt"
 
+GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
+AC_SUBST(GLIB_GENMARSHAL)
+
 dnl -----------------------------------------------------------
 dnl Check for autoaway
 dnl -----------------------------------------------------------

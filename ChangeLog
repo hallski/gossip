@@ -1,4 +1,13 @@
-2005-09-12  Martyn Russell  <mr@gnome.org>
+2005-09-18  Tommi Komulainen  <tommi.komulainen@iki.fi>
+
+	* configure.ac:
+	* libgossip/Makefile.am:
+	* src/Makefile.am:
+	- Use `pkg-config` instead of $(shell pkg-config ...) to stop
+	autoreconf complaining.
+	- Fixes bug #316625 (Tommi Komulainen).
+
+2005-09-18  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-accounts-window.c:
 	* src/gossip-add-contact.c:
