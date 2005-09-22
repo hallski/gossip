@@ -1,3 +1,9 @@
+2005-09-22  Ross Burton  <ross@burtonini.com>
+
+	* libgossip/gossip-session.c:
+	- Added "presence-changed" signal needed for Galago work.
+	- Fixes bug #316917 (Ross Burton).
+
 2005-09-18  Tommi Komulainen  <tommi.komulainen@iki.fi>
 
 	* configure.ac:

@@ -124,6 +124,7 @@ enum {
 	PROTOCOL_DISCONNECTED,
 	PROTOCOL_ERROR,
 	NEW_MESSAGE,
+	PRESENCE_CHANGED,
 	CONTACT_ADDED,
 	CONTACT_UPDATED,
 	CONTACT_PRESENCE_UPDATED,
@@ -204,6 +205,16 @@ gossip_session_class_init (GossipSessionClass *klass)
 
 	signals[NEW_MESSAGE] = 
 		g_signal_new ("new-message",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__POINTER,
+			      G_TYPE_NONE,
+			      1, G_TYPE_POINTER);
+
+	signals[PRESENCE_CHANGED] = 
+		g_signal_new ("presence-changed",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -1022,6 +1033,8 @@ gossip_session_set_presence (GossipSession  *session,
 
 		gossip_protocol_set_presence (protocol, presence);
 	}
+
+	g_signal_emit (session, signals[PRESENCE_CHANGED], 0, presence);
 }
 
 gboolean
