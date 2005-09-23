@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-07 10:42-0400\n"
+"POT-Creation-Date: 2005-09-23 09:50-0400\n"
 "PO-Revision-Date: 2005-08-27 20:31-0500\n"
 "Last-Translator: Adam Weinberger <adamw@gnome.org>\n"
 "Language-Team: Canadian English <adamw@gnome.org>\n"
@@ -37,100 +37,110 @@ msgid "Be silent when busy"
 msgstr "Be silent when busy"
 
 #: gossip.schemas.in.h:4
+msgid ""
+"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgstr ""
+"Comma-separated list of spell checker languages to use (e.g. en, fr, nl)."
+
+#: gossip.schemas.in.h:5
 msgid "Enable spell checking"
 msgstr "Enable spell checking"
 
-#: gossip.schemas.in.h:5
+#: gossip.schemas.in.h:6
 msgid "Height of main window"
 msgstr "Height of main window"
 
-#: gossip.schemas.in.h:6
+#: gossip.schemas.in.h:7
 msgid "Hide main window"
 msgstr "Hide main window"
 
-#: gossip.schemas.in.h:7
+#: gossip.schemas.in.h:8
 msgid "Hide the main window."
 msgstr "Hide the main window."
 
-#: gossip.schemas.in.h:8 ui/main.glade.h:66
+#: gossip.schemas.in.h:9
 msgid "Open new chats in separate windows"
 msgstr "Open new chats in separate windows"
 
-#: gossip.schemas.in.h:9
+#: gossip.schemas.in.h:10
 msgid "Preset status messages"
 msgstr "Preset status messages"
 
-#: gossip.schemas.in.h:10
+#: gossip.schemas.in.h:11
 msgid "Preset status messages."
 msgstr "Preset status messages."
 
-#: gossip.schemas.in.h:11
+#: gossip.schemas.in.h:12
 msgid "Show offline contacts"
 msgstr "Show offline contacts"
 
-#: gossip.schemas.in.h:12
+#: gossip.schemas.in.h:13
+msgid "Spell checking languages"
+msgstr "Spell checking languages"
+
+#: gossip.schemas.in.h:14
 msgid "The X position of the main window."
 msgstr "The X position of the main window."
 
-#: gossip.schemas.in.h:13
+#: gossip.schemas.in.h:15
 msgid "The Y position of the main window."
 msgstr "The Y position of the main window."
 
-#: gossip.schemas.in.h:14
+#: gossip.schemas.in.h:16
 msgid "The height of the main window."
 msgstr "The height of the main window."
 
-#: gossip.schemas.in.h:15
+#: gossip.schemas.in.h:17
 msgid "The width of the main window."
 msgstr "The width of the main window."
 
-#: gossip.schemas.in.h:16
+#: gossip.schemas.in.h:18
 msgid "Use graphical smileys"
 msgstr "Use graphical smileys"
 
-#: gossip.schemas.in.h:17
+#: gossip.schemas.in.h:19
 msgid "Use notification sounds"
 msgstr "Use notification sounds"
 
-#: gossip.schemas.in.h:18
+#: gossip.schemas.in.h:20
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Whether or not to convert smileys into graphical images in conversations."
 
-#: gossip.schemas.in.h:19
+#: gossip.schemas.in.h:21
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Whether or not to play a sound when messages arrive."
 
-#: gossip.schemas.in.h:20
+#: gossip.schemas.in.h:22
 msgid "Whether or not to play sounds when away."
 msgstr "Whether or not to play sounds when away."
 
-#: gossip.schemas.in.h:21
+#: gossip.schemas.in.h:23
 msgid "Whether or not to play sounds when busy."
 msgstr "Whether or not to play sounds when busy."
 
-#: gossip.schemas.in.h:22
+#: gossip.schemas.in.h:24
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Whether or not to show contacts that are offline in the contact list."
 
-#: gossip.schemas.in.h:23
+#: gossip.schemas.in.h:25
 msgid "Whether spell checking should be turned on."
 msgstr "Whether spell checking should be enabled."
 
-#: gossip.schemas.in.h:24
+#: gossip.schemas.in.h:26
 msgid "Width of the main window"
 msgstr "Width of the main window"
 
-#: gossip.schemas.in.h:25
+#: gossip.schemas.in.h:27
 msgid "X position of main window"
 msgstr "X position of main window"
 
-#: gossip.schemas.in.h:26
+#: gossip.schemas.in.h:28
 msgid "Y position of main window"
 msgstr "Y position of main window"
 
-#: libgossip/gossip-contact.c:730 src/gossip-app.c:2004
+#: libgossip/gossip-contact.c:730 src/gossip-app.c:2007
 msgid "Offline"
 msgstr "Offline"
 
@@ -295,7 +305,7 @@ msgstr "Information requested, please wait..."
 msgid "%s will be added to your contact list."
 msgstr "%s will be added to your contact list."
 
-#: src/gossip-add-contact.c:666 src/gossip-app.c:2545
+#: src/gossip-add-contact.c:666 src/gossip-app.c:2548
 #: src/gossip-contact-info.c:352
 msgid "I would like to add you to my contact list."
 msgstr "I would like to add you to my contact list."
@@ -365,7 +375,7 @@ msgid ""
 msgstr ""
 "Enter the user ID of the person you would like to send a chat message to."
 
-#: src/gossip-app.c:974 ui/main.glade.h:108
+#: src/gossip-app.c:974 ui/main.glade.h:85
 msgid "_Chat"
 msgstr "_Chat"
 
@@ -385,30 +395,30 @@ msgstr ""
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, Instant Messaging Client"
 
-#: src/gossip-app.c:2377
+#: src/gossip-app.c:2380
 #, c-format
 msgid "New subscription request from %s"
 msgstr "New subscription request from %s"
 
-#: src/gossip-app.c:2452
+#: src/gossip-app.c:2455
 #, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "%s wants to be added to your contact list."
 
-#: src/gossip-app.c:2454
+#: src/gossip-app.c:2457
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Do you want to add %s to your contact list?"
 
-#: src/gossip-app.c:2457
+#: src/gossip-app.c:2460
 msgid "Someone wants to be added to your contact list."
 msgstr "Someone wants to be added to your contact list."
 
-#: src/gossip-app.c:2458
+#: src/gossip-app.c:2461
 msgid "Do you want to add this person to your contact list?"
 msgstr "Do you want to add this person to your contact list?"
 
-#: src/gossip-chat.c:436
+#: src/gossip-chat.c:468
 msgid "_Check Word Spelling..."
 msgstr "_Check Word Spelling..."
 
@@ -455,16 +465,16 @@ msgstr "Accept"
 msgid "%sChat - %s"
 msgstr "%sChat - %s"
 
-#: src/gossip-chat-window.c:947
+#: src/gossip-chat-window.c:953
 msgid "Typing a message."
 msgstr "Typing a message."
 
-#: src/gossip-contact-info.c:192 ui/main.glade.h:61
+#: src/gossip-contact-info.c:192 ui/main.glade.h:50
 msgid "Name:"
 msgstr "Name:"
 
 #: src/gossip-contact-info.c:195 src/gossip-contact-info.c:491
-#: ui/main.glade.h:21
+#: ui/main.glade.h:13
 msgid "Alias:"
 msgstr "Alias:"
 
@@ -540,7 +550,7 @@ msgstr ""
 msgid "Edit groups for %s"
 msgstr "Edit groups for %s"
 
-#: src/gossip-edit-groups-dialog.c:229
+#: src/gossip-edit-groups-dialog.c:229 src/gossip-preferences.c:195
 msgid "Select"
 msgstr "Select"
 
@@ -675,6 +685,10 @@ msgstr "Away..."
 msgid "Clear List"
 msgstr "Clear List"
 
+#: src/gossip-preferences.c:205
+msgid "Language"
+msgstr "Language"
+
 #: src/gossip-private-chat.c:530
 #, c-format
 msgid "%s went offline"
@@ -700,6 +714,370 @@ msgstr "Failed registering the account"
 #: src/gossip-register.c:185
 msgid "Reason:"
 msgstr "Reason:"
+
+#: src/gossip-spell.c:69
+msgid "Afrikaans"
+msgstr "Afrikaans"
+
+#: src/gossip-spell.c:70
+msgid "Amharic"
+msgstr "Amharic"
+
+#: src/gossip-spell.c:71
+msgid "Arabic"
+msgstr "Arabic"
+
+#: src/gossip-spell.c:72
+msgid "Azerbaijani"
+msgstr "Azerbaijani"
+
+#: src/gossip-spell.c:73
+msgid "Belarusian"
+msgstr "Belarusian"
+
+#: src/gossip-spell.c:74
+msgid "Bulgarian"
+msgstr "Bulgarian"
+
+#: src/gossip-spell.c:75
+msgid "Bengali"
+msgstr "Bengali"
+
+#: src/gossip-spell.c:76
+msgid "Breton"
+msgstr "Breton"
+
+#: src/gossip-spell.c:77
+msgid "Bosnian"
+msgstr "Bosnian"
+
+#: src/gossip-spell.c:78
+msgid "Catalan"
+msgstr "Catalan"
+
+#: src/gossip-spell.c:79
+msgid "Czech"
+msgstr "Czech"
+
+#: src/gossip-spell.c:80
+msgid "Welsh"
+msgstr "Welsh"
+
+#: src/gossip-spell.c:81
+msgid "Danish"
+msgstr "Danish"
+
+#: src/gossip-spell.c:82
+msgid "German"
+msgstr "German"
+
+#: src/gossip-spell.c:83
+msgid "German (Austria)"
+msgstr "German (Austria)"
+
+#: src/gossip-spell.c:84
+msgid "German (Germany)"
+msgstr "German (Germany)"
+
+#: src/gossip-spell.c:85
+msgid "German (Swiss)"
+msgstr "German (Swiss)"
+
+#: src/gossip-spell.c:86
+msgid "Greek"
+msgstr "Greek"
+
+#: src/gossip-spell.c:87
+msgid "English"
+msgstr "English"
+
+#: src/gossip-spell.c:88
+msgid "English (Canadian)"
+msgstr "English (Canadian)"
+
+#: src/gossip-spell.c:89
+msgid "English (British)"
+msgstr "English (British)"
+
+#: src/gossip-spell.c:90
+msgid "English (American)"
+msgstr "English (American)"
+
+#: src/gossip-spell.c:91
+msgid "Esperanto"
+msgstr "Esperanto"
+
+#: src/gossip-spell.c:92
+msgid "Spanish"
+msgstr "Spanish"
+
+#: src/gossip-spell.c:93
+msgid "Estonian"
+msgstr "Estonian"
+
+#: src/gossip-spell.c:94
+msgid "Basque"
+msgstr "Basque"
+
+#: src/gossip-spell.c:95
+msgid "Persian"
+msgstr "Persian"
+
+#: src/gossip-spell.c:96
+msgid "Finnish"
+msgstr "Finnish"
+
+#: src/gossip-spell.c:97
+msgid "Faroese"
+msgstr "Faroese"
+
+#: src/gossip-spell.c:98
+msgid "French"
+msgstr "French"
+
+#: src/gossip-spell.c:99
+msgid "French (France)"
+msgstr "French (France)"
+
+#: src/gossip-spell.c:100
+msgid "French (Swiss)"
+msgstr "French (Swiss)"
+
+#: src/gossip-spell.c:101
+msgid "Irish Gaelic"
+msgstr "Irish Gaelic"
+
+#: src/gossip-spell.c:102
+msgid "Scots Gaelic"
+msgstr "Scots Gaelic"
+
+#: src/gossip-spell.c:103
+msgid "Galician"
+msgstr "Galician"
+
+#: src/gossip-spell.c:104
+msgid "Gujarati"
+msgstr "Gujarati"
+
+#: src/gossip-spell.c:105
+msgid "Manx Gaelic"
+msgstr "Manx Gaelic"
+
+#: src/gossip-spell.c:106
+msgid "Hebrew"
+msgstr "Hebrew"
+
+#: src/gossip-spell.c:107
+msgid "Hindi"
+msgstr "Hindi"
+
+#: src/gossip-spell.c:108
+msgid "Croatian"
+msgstr "Croatian"
+
+#: src/gossip-spell.c:109
+msgid "Hungarian"
+msgstr "Hungarian"
+
+#: src/gossip-spell.c:110
+msgid "Indonesian"
+msgstr "Indonesian"
+
+#: src/gossip-spell.c:111
+msgid "Icelandic"
+msgstr "Icelandic"
+
+#: src/gossip-spell.c:112
+msgid "Italian"
+msgstr "Italian"
+
+#: src/gossip-spell.c:113
+msgid "Japanese"
+msgstr "Japanese"
+
+#: src/gossip-spell.c:114
+msgid "Georgian"
+msgstr "Georgian"
+
+#: src/gossip-spell.c:115
+msgid "Kannada"
+msgstr "Kannada"
+
+#: src/gossip-spell.c:116
+msgid "Korean"
+msgstr "Korean"
+
+#: src/gossip-spell.c:117
+msgid "Kurdish"
+msgstr "Kurdish"
+
+#: src/gossip-spell.c:118
+msgid "Cornish"
+msgstr "Cornish"
+
+#: src/gossip-spell.c:119
+msgid "Limburgish"
+msgstr "Limburgish"
+
+#: src/gossip-spell.c:120
+msgid "Lithuanian"
+msgstr "Lithuanian"
+
+#: src/gossip-spell.c:121
+msgid "Latvian"
+msgstr "Latvian"
+
+#: src/gossip-spell.c:122
+msgid "Maori"
+msgstr "Maori"
+
+#: src/gossip-spell.c:123
+msgid "Macedonian"
+msgstr "Macedonian"
+
+#: src/gossip-spell.c:124
+msgid "Malayalam"
+msgstr "Malayalam"
+
+#: src/gossip-spell.c:125
+msgid "Mongolian"
+msgstr "Mongolian"
+
+#: src/gossip-spell.c:126
+msgid "Marathi"
+msgstr "Marathi"
+
+#: src/gossip-spell.c:127
+msgid "Malay"
+msgstr "Malay"
+
+#: src/gossip-spell.c:128 src/gossip-spell.c:129
+msgid "Norwegian (Bokmal)"
+msgstr "Norwegian (Bokmal)"
+
+#: src/gossip-spell.c:130
+msgid "Nepali"
+msgstr "Nepali"
+
+#: src/gossip-spell.c:131
+msgid "Dutch"
+msgstr "Dutch"
+
+#: src/gossip-spell.c:132
+msgid "Norwegian"
+msgstr "Norwegian"
+
+#: src/gossip-spell.c:133
+msgid "Norwegian (Nynorsk)"
+msgstr "Norwegian (Nynorsk)"
+
+#: src/gossip-spell.c:134
+msgid "Norwegian (Nyorsk)"
+msgstr "Norwegian (Nyorsk)"
+
+#: src/gossip-spell.c:135
+msgid "Oriya"
+msgstr "Oriya"
+
+#: src/gossip-spell.c:136
+msgid "Punjabi"
+msgstr "Punjabi"
+
+#: src/gossip-spell.c:137
+msgid "Polish"
+msgstr "Polish"
+
+#: src/gossip-spell.c:138
+msgid "Portuguese"
+msgstr "Portuguese"
+
+#: src/gossip-spell.c:139
+msgid "Portuguese (Portugal)"
+msgstr "Portuguese (Portugal)"
+
+#: src/gossip-spell.c:140
+msgid "Portuguese (Brazil)"
+msgstr "Portuguese (Brazil)"
+
+#: src/gossip-spell.c:141
+msgid "Romanian"
+msgstr "Romanian"
+
+#: src/gossip-spell.c:142
+msgid "Russian"
+msgstr "Russian"
+
+#: src/gossip-spell.c:143
+msgid "Kinyarwanda"
+msgstr "Kinyarwanda"
+
+#: src/gossip-spell.c:144
+msgid "Slovak"
+msgstr "Slovak"
+
+#: src/gossip-spell.c:145
+msgid "Slovenian"
+msgstr "Slovenian"
+
+#: src/gossip-spell.c:146
+msgid "Albanian"
+msgstr "Albanian"
+
+#: src/gossip-spell.c:147
+msgid "Serbian"
+msgstr "Serbian"
+
+#: src/gossip-spell.c:148
+msgid "Swedish"
+msgstr "Swedish"
+
+#: src/gossip-spell.c:149
+msgid "Tamil"
+msgstr "Tamil"
+
+#: src/gossip-spell.c:150
+msgid "Telugu"
+msgstr "Telugu"
+
+#: src/gossip-spell.c:151
+msgid "Thai"
+msgstr "Thai"
+
+#: src/gossip-spell.c:152
+msgid "Turkmen"
+msgstr "Turkmen"
+
+#: src/gossip-spell.c:153
+msgid "Turkish"
+msgstr "Turkish"
+
+#: src/gossip-spell.c:154
+msgid "Ukrainian"
+msgstr "Ukrainian"
+
+#: src/gossip-spell.c:155
+msgid "Vietnamese"
+msgstr "Vietnamese"
+
+#: src/gossip-spell.c:156
+msgid "Wallon"
+msgstr "Wallon"
+
+#: src/gossip-spell.c:157
+msgid "Xhosa"
+msgstr "Xhosa"
+
+#: src/gossip-spell.c:158
+msgid "Yiddish"
+msgstr "Yiddish"
+
+#: src/gossip-spell.c:159
+msgid "Chinese Simplified"
+msgstr "Chinese Simplified"
+
+#: src/gossip-spell.c:160
+msgid "Chinese Traditional"
+msgstr "Chinese Traditional"
 
 #: src/gossip-spell-dialog.c:111
 msgid "Suggestions for the word"
@@ -769,7 +1147,7 @@ msgstr "Move Tab _Right"
 msgid "View Lo_g"
 msgstr "View Lo_g"
 
-#: ui/chat.glade.h:7 ui/main.glade.h:107
+#: ui/chat.glade.h:7 ui/main.glade.h:84
 msgid "_Add Contact..."
 msgstr "_Add Contact..."
 
@@ -843,11 +1221,11 @@ msgid ""
 msgstr ""
 "The default account is used for information like your name in chat windows."
 
-#: ui/connect.glade.h:13 ui/main.glade.h:84
+#: ui/connect.glade.h:13 ui/main.glade.h:64
 msgid "Use _encryption (SSL)"
 msgstr "Use _encryption (SSL)"
 
-#: ui/connect.glade.h:14 ui/main.glade.h:85
+#: ui/connect.glade.h:14 ui/main.glade.h:65
 msgid "Use system pro_xy"
 msgstr "Use system pro_xy"
 
@@ -863,7 +1241,7 @@ msgstr "_Password:"
 msgid "_Resource:"
 msgstr "_Resource:"
 
-#: ui/group-chat.glade.h:1 ui/main.glade.h:17
+#: ui/group-chat.glade.h:1 ui/main.glade.h:11
 msgid "Account:"
 msgstr "Account:"
 
@@ -954,178 +1332,138 @@ msgid "<b>Client Information</b>"
 msgstr "<b>Client Information</b>"
 
 #: ui/main.glade.h:5
-msgid ""
-"<b>Configuring your new service...</b>\n"
-"This will take a few moments, please wait."
-msgstr ""
-"<b>Configuring your new service...</b>\n"
-"This will take a few moments, please wait."
-
-#: ui/main.glade.h:7
 msgid "<b>Information requested, please wait...</b>"
 msgstr "<b>Information requested, please wait...</b>"
+
+#: ui/main.glade.h:6
+msgid "<b>Languages</b>"
+msgstr "<b>Languages</b>"
+
+#: ui/main.glade.h:7
+msgid "<b>Options</b>"
+msgstr "<b>Options</b>"
 
 #: ui/main.glade.h:8
 msgid "<b>Personal Information</b>"
 msgstr "<b>Personal Information</b>"
 
 #: ui/main.glade.h:9
-msgid "<b>Preferred Service</b>"
-msgstr "<b>Preferred Service</b>"
-
-#: ui/main.glade.h:10
-msgid "<b>Recommended Services</b>"
-msgstr "<b>Recommended Services</b>"
-
-#: ui/main.glade.h:11
-msgid ""
-"<b>Requested service requirements...</b>\n"
-"This will take a few moments, please wait."
-msgstr ""
-"<b>Requested service requirements...</b>\n"
-"This will take a few moments, please wait."
-
-#: ui/main.glade.h:13
 msgid "<b>Sound</b>"
 msgstr "<b>Sound</b>"
 
-#: ui/main.glade.h:14
-msgid "<b>Spell Checking</b>"
-msgstr "<b>Spell Checking</b>"
-
-#: ui/main.glade.h:15
-msgid "<span size=\"smaller\">Example: msn.server.com</span>"
-msgstr "<span size=\"smaller\">Example: msn.server.com</span>"
-
-#: ui/main.glade.h:16
+#: ui/main.glade.h:10
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Example: user@jabber.org</span>"
 
-#: ui/main.glade.h:18
-msgid "Add Account"
-msgstr "Add Account"
-
-#: ui/main.glade.h:19
-msgid "Add Another Account"
-msgstr "Add Another Account"
-
-#: ui/main.glade.h:20
+#: ui/main.glade.h:12
 msgid "Add a contact"
 msgstr "Add a contact"
 
-#: ui/main.glade.h:22
+#: ui/main.glade.h:14
+msgid "Check spelling while I _type"
+msgstr "Check spelling while I _type"
+
+#: ui/main.glade.h:15
 msgid "Choose a Server"
 msgstr "Choose a Server"
 
-#: ui/main.glade.h:23
+#: ui/main.glade.h:16
 msgid "Client:"
 msgstr "Client:"
 
-#: ui/main.glade.h:24
-msgid "Configuration Details"
-msgstr "Configuration Details"
-
-#: ui/main.glade.h:25
-msgid "Configure Transport"
-msgstr "Configure Transport"
-
-#: ui/main.glade.h:26
+#: ui/main.glade.h:17
 msgid "Configure Transports"
 msgstr "Configure Transports"
 
-#: ui/main.glade.h:27
-msgid "Configuring Service"
-msgstr "Configuring Service"
-
-#: ui/main.glade.h:28
+#: ui/main.glade.h:18
 msgid "Contact information"
 msgstr "Contact information"
 
-#: ui/main.glade.h:29
+#: ui/main.glade.h:19
 msgid "Convert _smileys to graphical images"
 msgstr "Convert _smileys to graphical images"
 
-#: ui/main.glade.h:30
+#: ui/main.glade.h:20
 msgid "Country:"
 msgstr "Country:"
 
-#: ui/main.glade.h:31
+#: ui/main.glade.h:21
 msgid "Decide _Later"
 msgstr "Decide _Later"
 
-#: ui/main.glade.h:32
+#: ui/main.glade.h:22
 msgid "Description:"
 msgstr "Description:"
 
-#: ui/main.glade.h:33
+#: ui/main.glade.h:23
 msgid "Disable sounds when _away"
 msgstr "Disable sounds when _away"
 
-#: ui/main.glade.h:34
+#: ui/main.glade.h:24
 msgid "Disable sounds when _busy"
 msgstr "Disable sounds when _busy"
 
-#: ui/main.glade.h:35
+#: ui/main.glade.h:25
 msgid "Do you already have an account set up on a server?"
 msgstr "Do you already have an account set up on a server?"
 
-#: ui/main.glade.h:36
+#: ui/main.glade.h:26
 msgid "Email:"
 msgstr "Email:"
 
-#: ui/main.glade.h:37
-msgid "Enable"
-msgstr "Enable"
-
-#: ui/main.glade.h:38
+#: ui/main.glade.h:27
 msgid "Enter status message:"
 msgstr "Enter status message:"
 
-#: ui/main.glade.h:39
+#: ui/main.glade.h:28
 msgid "Finished"
 msgstr "Finished"
 
-#: ui/main.glade.h:40
+#: ui/main.glade.h:29
+msgid "General"
+msgstr "General"
+
+#: ui/main.glade.h:30
 msgid "Gossip"
 msgstr "Gossip"
 
-#: ui/main.glade.h:41
+#: ui/main.glade.h:31
 msgid "Gossip - Add contact"
 msgstr "Gossip - Add contact"
 
-#: ui/main.glade.h:42
+#: ui/main.glade.h:32
 msgid "Gossip - Contact Information"
 msgstr "Gossip - Contact Information"
 
-#: ui/main.glade.h:43
+#: ui/main.glade.h:33
 msgid "Gossip - Edit Groups"
 msgstr "Gossip - Edit Groups"
 
-#: ui/main.glade.h:44
+#: ui/main.glade.h:34
 msgid "Gossip - New Account"
 msgstr "Gossip - New Account"
 
-#: ui/main.glade.h:45
+#: ui/main.glade.h:35
 msgid "Gossip - Personal Details"
 msgstr "Gossip - Personal Details"
 
-#: ui/main.glade.h:46
+#: ui/main.glade.h:36
 msgid "Gossip - Preferences"
 msgstr "Gossip - Preferences"
 
-#: ui/main.glade.h:47
+#: ui/main.glade.h:37
 msgid "Gossip - Spell Checker"
 msgstr "Gossip - Spell Checker"
 
-#: ui/main.glade.h:48
+#: ui/main.glade.h:38
 msgid "Gossip - Status Message"
 msgstr "Gossip - Status Message"
 
-#: ui/main.glade.h:49
+#: ui/main.glade.h:39
 msgid "Gossip - Subscription Request"
 msgstr "Gossip - Subscription Request"
 
-#: ui/main.glade.h:50
+#: ui/main.glade.h:40
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -1141,21 +1479,17 @@ msgstr ""
 "\n"
 "To get started, just click \"Forward\"."
 
-#: ui/main.glade.h:55
+#: ui/main.glade.h:45
 msgid "ID:"
 msgstr "ID:"
 
-#: ui/main.glade.h:56
+#: ui/main.glade.h:46
 msgid ""
 "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 "If you chose to decide later you will be asked the next time you log on."
 
-#: ui/main.glade.h:57
-msgid "If you prefer, you can specify your own service:"
-msgstr "If you prefer, you can specify your own service:"
-
-#: ui/main.glade.h:58
+#: ui/main.glade.h:47
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -1165,159 +1499,119 @@ msgstr ""
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
 
-#: ui/main.glade.h:59
+#: ui/main.glade.h:48
 msgid "In which group do you want to place this contact?"
 msgstr "In which group do you want to place this contact?"
 
-#: ui/main.glade.h:60
+#: ui/main.glade.h:49
 msgid "Jabber ID:"
 msgstr "Jabber ID:"
 
-#: ui/main.glade.h:62
-msgid "Nick name:"
-msgstr "Nickname:"
-
-#: ui/main.glade.h:63
+#: ui/main.glade.h:51
 msgid "Nickname:"
 msgstr "Nickname:"
 
-#: ui/main.glade.h:64
+#: ui/main.glade.h:52
 msgid "OS:"
 msgstr "OS:"
 
-#: ui/main.glade.h:65
+#: ui/main.glade.h:53
 msgid "On what server do you have an account?"
 msgstr "On what server do you have an account?"
 
-#: ui/main.glade.h:67
-msgid "Password:"
-msgstr "Password:"
-
-#: ui/main.glade.h:68
-msgid "Play sound when messages arrive"
-msgstr "Play sound when messages arrive"
-
-#: ui/main.glade.h:69
-msgid "Please complete the details below to set up your account:  "
-msgstr "Please complete the details below to set up your account:  "
-
-#: ui/main.glade.h:70
-msgid "Populating services..."
-msgstr "Populating services..."
-
-#: ui/main.glade.h:71
+#: ui/main.glade.h:54
 msgid "Press Subscribe to request to receive their status."
 msgstr "Press Subscribe to request to receive their status."
 
-#: ui/main.glade.h:72
-msgid "Remove Account"
-msgstr "Remove Account"
-
-#: ui/main.glade.h:73
+#: ui/main.glade.h:55
 msgid "Requested information"
 msgstr "Requested information"
 
-#: ui/main.glade.h:74
+#: ui/main.glade.h:56
 msgid "Requesting contact information, please wait..."
 msgstr "Requesting contact information, please wait..."
 
-#: ui/main.glade.h:75
+#: ui/main.glade.h:57
 msgid "Sending request"
 msgstr "Sending request"
 
-#: ui/main.glade.h:76
-msgid "Service Details"
-msgstr "Service Details"
-
-#: ui/main.glade.h:77
-msgid "Service:"
-msgstr "Service:"
-
-#: ui/main.glade.h:78
+#: ui/main.glade.h:58
 msgid "Show _Offline Contacts"
 msgstr "Show _Offline Contacts"
 
-#: ui/main.glade.h:79
+#: ui/main.glade.h:59
+msgid "Spell Checking"
+msgstr "Spell Checking"
+
+#: ui/main.glade.h:60
 msgid "Status"
 msgstr "Status"
 
-#: ui/main.glade.h:80
+#: ui/main.glade.h:61
 msgid "Suggestions for the word:"
 msgstr "Suggestions for the word:"
 
-#: ui/main.glade.h:81
+#: ui/main.glade.h:62
+msgid ""
+"The list of languages here reflects only the languages for which you have a "
+"dictionary installed."
+msgstr ""
+"The list of languages here reflects only the languages for which you have a "
+"dictionary installed."
+
+#: ui/main.glade.h:63
 msgid "This name will be used to identify you in chat windows."
 msgstr "This name will be used to identify you in chat windows."
 
-#: ui/main.glade.h:82
-msgid ""
-"This wizard will allow you to configure your account settings for another "
-"protocol. "
-msgstr ""
-"This wizard will allow you to configure your account settings for another "
-"protocol. "
-
-#: ui/main.glade.h:83
-msgid "Transport Accounts"
-msgstr "Transport Accounts"
-
-#: ui/main.glade.h:86
-msgid "User name:"
-msgstr "Username:"
-
-#: ui/main.glade.h:87
+#: ui/main.glade.h:66
 msgid "Version:"
 msgstr "Version:"
 
-#: ui/main.glade.h:88
+#: ui/main.glade.h:67
 msgid "Waiting for server to respond, please wait..."
 msgstr "Waiting for server to respond; please wait..."
 
-#: ui/main.glade.h:89
+#: ui/main.glade.h:68
 msgid "Web site:"
 msgstr "Web site:"
 
-#: ui/main.glade.h:90
+#: ui/main.glade.h:69
 msgid "Welcome to Gossip"
 msgstr "Welcome to Gossip"
 
-#: ui/main.glade.h:91
+#: ui/main.glade.h:70
 msgid "What instant messaging system does the contact use?"
 msgstr "Which instant messaging system does the contact use?"
 
-#: ui/main.glade.h:92
+#: ui/main.glade.h:71
 msgid "What is your name?"
 msgstr "What is your name?"
 
-#: ui/main.glade.h:93
+#: ui/main.glade.h:72
 msgid "What nickname do you want to use for this contact?"
 msgstr "What nickname do you want to use for this contact?"
 
-#: ui/main.glade.h:94
+#: ui/main.glade.h:73
 msgid "What server do you want to use?"
 msgstr "What server do you want to use?"
 
-#: ui/main.glade.h:95
+#: ui/main.glade.h:74
 msgid "What username do you use?"
 msgstr "What username do you use?"
 
-#: ui/main.glade.h:96
+#: ui/main.glade.h:75
 msgid "What username do you want to use?"
 msgstr "Which username do you want to use?"
 
-#: ui/main.glade.h:97
+#: ui/main.glade.h:76
 msgid "Which account do you want to add this contact to?"
 msgstr "To which account do you want to add this contact?"
 
-#: ui/main.glade.h:98
-msgid "Which protocol would you like to set up? "
-msgstr "Which protocol would you like to configure? "
-
-#: ui/main.glade.h:99
+#: ui/main.glade.h:77
 msgid "You are not subscribed to this contact."
 msgstr "You are not subscribed to this contact."
 
-#: ui/main.glade.h:100
+#: ui/main.glade.h:78
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
@@ -1325,82 +1619,86 @@ msgstr ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
 
-#: ui/main.glade.h:101
-msgid "You currently have the following accounts set up:"
-msgstr "You currently have the following accounts set up:"
-
-#: ui/main.glade.h:102
+#: ui/main.glade.h:79
 msgid "Your Account"
 msgstr "Your Account"
 
-#: ui/main.glade.h:103
+#: ui/main.glade.h:80
 msgid "Your Identity"
 msgstr "Your Identity"
 
-#: ui/main.glade.h:104
+#: ui/main.glade.h:81
 msgid "Your new account has now been set up."
 msgstr "Your new account has now been set up."
 
-#: ui/main.glade.h:105
+#: ui/main.glade.h:82
 msgid "_Accept"
 msgstr "_Accept"
 
-#: ui/main.glade.h:106
+#: ui/main.glade.h:83
 msgid "_Accounts"
 msgstr "_Accounts"
 
-#: ui/main.glade.h:109
+#: ui/main.glade.h:86
 msgid "_Connect..."
 msgstr "_Connect..."
 
-#: ui/main.glade.h:110
+#: ui/main.glade.h:87
 msgid "_Deny"
 msgstr "_Deny"
 
-#: ui/main.glade.h:111
+#: ui/main.glade.h:88
 msgid "_Disconnect"
 msgstr "_Disconnect"
 
-#: ui/main.glade.h:112
+#: ui/main.glade.h:89
 msgid "_Hide Contact List"
 msgstr "_Hide Contact List"
 
-#: ui/main.glade.h:113
+#: ui/main.glade.h:90
 msgid "_Jabber ID of new contact:"
 msgstr "_Jabber ID of new contact:"
 
-#: ui/main.glade.h:114
+#: ui/main.glade.h:91
 msgid "_Join Group Chat..."
 msgstr "_Join Group Chat..."
 
-#: ui/main.glade.h:115
+#: ui/main.glade.h:92
 msgid "_New Message..."
 msgstr "_New Message..."
 
-#: ui/main.glade.h:116
+#: ui/main.glade.h:93
 msgid "_No"
 msgstr "_No"
 
-#: ui/main.glade.h:117
+#: ui/main.glade.h:94
+msgid "_Open new chats in separate windows"
+msgstr "_Open new chats in separate windows"
+
+#: ui/main.glade.h:95
 msgid "_Personal Information"
 msgstr "_Personal Information"
 
-#: ui/main.glade.h:118
+#: ui/main.glade.h:96
+msgid "_Play sound when messages arrive"
+msgstr "_Play sound when messages arrive"
+
+#: ui/main.glade.h:97
 msgid "_Preferences"
 msgstr "_Preferences"
 
-#: ui/main.glade.h:119
+#: ui/main.glade.h:98
 msgid "_Search..."
 msgstr "_Search..."
 
-#: ui/main.glade.h:120
+#: ui/main.glade.h:99
 msgid "_Show Contact List"
 msgstr "_Show Contact List"
 
-#: ui/main.glade.h:121
+#: ui/main.glade.h:100
 msgid "_Subscribe"
 msgstr "_Subscribe"
 
-#: ui/main.glade.h:122
+#: ui/main.glade.h:101
 msgid "_Yes"
 msgstr "_Yes"
