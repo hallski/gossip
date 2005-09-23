@@ -571,8 +571,14 @@ chat_window_update_title (GossipChatWindow *window)
 	if (window->priv->new_msg) {
 		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
 		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), pixbuf);
+#if HAVE_GTK_URGENCY
+		gtk_window_set_urgency_hint (GTK_WINDOW (window->priv->dialog), TRUE);
+#endif
         } else {
 		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), NULL);
+#if HAVE_GTK_URGENCY
+		gtk_window_set_urgency_hint (GTK_WINDOW (window->priv->dialog), FALSE);
+#endif
 	}
 	g_free (title);
 }

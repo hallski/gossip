@@ -75,7 +75,6 @@ AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
 dnl To make the egg stuff build properly, should have a real test...
 AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
 
-
 dnl -----------------------------------------------------------
 dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
@@ -117,6 +116,12 @@ GOSSIP_LIBS="$GOSSIP_LIBS -lexslt"
 
 GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
 AC_SUBST(GLIB_GENMARSHAL)
+
+dnl Check for gtk_window_set_urgency
+PKG_CHECK_MODULES(GTK_VER, gtk+-2.0 >= 2.7.0,
+                 GTK_VER="-DHAVE_GTK_URGENCY",
+                 GTK_VER="-UHAVE_GTK_URGENCY")
+AC_SUBST(GTK_VER)
 
 dnl -----------------------------------------------------------
 dnl Check for autoaway

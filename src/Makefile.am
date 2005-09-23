@@ -13,7 +13,8 @@ AM_CPPFLAGS =	                                 \
 	-DPROTOCOLSDIR=\"$(datadir)/gossip/protocols\" 	\
 	-DSTYLESHEETDIR=\"$(datadir)/gossip\"	\
 	-DDTDDIR=\"$(datadir)/gossip\"		\
-	-DDBUS_API_SUBJECT_TO_CHANGE
+	-DDBUS_API_SUBJECT_TO_CHANGE		\
+	@GTK_VER@
 
 if HAVE_DBUS
 dbus_sources =					\
