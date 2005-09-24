@@ -1,3 +1,14 @@
+2005-09-24  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-ui-utils.c: 
+	- Removed the gossip_option_menu_ functions which are no longer
+	used in Gossip. 
+	- Fixed bug where double clicking on a contact on the roster would
+	show a new chat window but would not present focus to the chat
+	window.  This happens if there is already a window and the contact
+	is a second, third, etc tab being added.
+	- Fixes bug #316340 (Keywan Najafi Tonekaboni)
+
 2005-09-23  Ross Burton  <ross@burtonini.com>
 
 	* configure.ac:
