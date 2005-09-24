@@ -174,6 +174,8 @@ static gboolean        app_main_window_quit_confirm         (GossipApp          
 static void            app_main_window_quit_confirm_cb      (GtkWidget            *dialog,
 							     gint                  response,
 							     GossipApp            *app);
+static gboolean        app_main_window_key_press_event_cb   (GtkWidget            *window,
+					                     GdkEventKey          *event);
 static gboolean        app_main_window_delete_event_cb      (GtkWidget            *window,
 							     GdkEvent             *event,
 							     GossipApp            *app);
@@ -485,11 +487,13 @@ app_setup (GossipAccountManager *manager)
 			      "edit_personal_information", "activate", app_personal_information_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "help_about", "activate", app_about_cb,
+			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
 			      "main_window", "delete_event", app_main_window_delete_event_cb,
 			      "main_window", "destroy", app_main_window_destroy_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      NULL);
 
+	/* Set up presence chooser */
 	priv->presence_chooser = gossip_presence_chooser_new ();
 	gtk_box_pack_start (GTK_BOX (priv->status_button_hbox), priv->presence_chooser,
 			    TRUE, TRUE, 0);
@@ -726,6 +730,17 @@ app_main_window_quit_confirm_cb (GtkWidget *dialog,
 	if (response == GTK_RESPONSE_OK) {
 		gtk_widget_destroy (priv->window);
 	}
+}
+
+static gboolean
+app_main_window_key_press_event_cb (GtkWidget   *window, 
+				    GdkEventKey *event) 
+{
+	if (event->keyval == GDK_Escape) {
+		gtk_widget_hide (window);
+	}
+
+	return FALSE;
 }
 
 static gboolean

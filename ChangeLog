@@ -1,5 +1,11 @@
 2005-09-24  Martyn Russell  <mr@gnome.org>
 
+	* src/gossip-app.c (app_main_window_key_press_event_cb): 
+	- Added shortcut (Escape) to hide main window.
+	- Fixes bug #135472 (Edd Dumbill).
+
+2005-09-24  Martyn Russell  <mr@gnome.org>
+
 	* src/gossip-ui-utils.c: 
 	- Removed the gossip_option_menu_ functions which are no longer
 	used in Gossip. 
