@@ -137,6 +137,7 @@
 	(group_chat_set_show_contacts): Try to improve the input entry and
 	its interaction with the contact list. Now the window doesn't grow
 	when you type a lot of text.
+	- Fixes bug #153110 (Sven Salzwedel).
 	(group_chat_get_tooltip): Use the name as temporary tooltip
 	instead of a hardcoded English string.
 	(group_chat_setup_tree): Don't use two columns, use one and pack
