@@ -1,3 +1,23 @@
+2005-09-25  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-presence-chooser.c:
+	* src/gossip-private-chat.c: 
+	* src/gossip-ui-utils.c:
+	* src/gossip-ui-utils.h:
+	* ui/main.glade:
+	- Moved common code to get the protocol online/offline pixbuf into
+	the ui-utils file.
+	- Cleaned up the ui-utils API too.
+	- Applied parts of a patch by Tommi Komulainen to use a menu for
+	each connection shown at the top of the main window (reworked it
+	to use a GtkMenu instead of popping up a menu from a normal
+	button).  There is no longer a tooltip, so some work is still
+	needed to be able to identify the account without using the menu.   
+	- Fixes bug #317107 (Tommi Komulainen).
+
 2005-09-24  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c (app_main_window_key_press_event_cb): 

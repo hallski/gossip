@@ -199,7 +199,7 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 			  G_CALLBACK (gtk_widget_destroyed),
 			  &dialog);
 		
-	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
+	pixbuf = gossip_ui_utils_get_pixbuf_for_presence_state (state);
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 

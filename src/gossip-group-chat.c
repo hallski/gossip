@@ -1009,7 +1009,7 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 		priv->own_contact = g_object_ref (contact);
 	}
 	
-	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
 	
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
 	gtk_list_store_append (GTK_LIST_STORE (model), &iter);
@@ -1069,7 +1069,7 @@ group_chat_contact_presence_updated_cb (GossipChatroomProvider *provider,
 		GdkPixbuf    *pixbuf;
 		GtkTreeModel *model;
 		
-		pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
+		pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
 
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
 		gtk_list_store_set (GTK_LIST_STORE (model),

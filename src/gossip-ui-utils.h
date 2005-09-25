@@ -2,6 +2,7 @@
 /*
  * Copyright (C) 2003-2005 Imendio AB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2005      Martyn Russell <mr@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -33,55 +34,47 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-presence.h>
 
-void         gossip_option_menu_setup                (GtkWidget        *option_menu,
-						      GCallback         func,
-						      gpointer          user_data,
-						      gconstpointer     str1,
-						      ...);
-void         gossip_option_image_menu_setup          (GtkWidget        *option_menu,
-						      GCallback         func,
-						      gpointer          user_data,
-						      gconstpointer     str1,
-						      ...);
-void         gossip_option_menu_set_history          (GtkOptionMenu    *option_menu,
-						      gpointer          user_data);
-gpointer     gossip_option_menu_get_history          (GtkOptionMenu    *option_menu);
-void         gossip_glade_get_file_simple            (const gchar      *filename,
-						      const gchar      *root,
-						      const gchar      *domain,
-						      const gchar      *first_required_widget,
-						      ...);
-GladeXML *   gossip_glade_get_file                   (const gchar      *filename,
-						      const gchar      *root,
-						      const gchar      *domain,
-						      const gchar      *first_required_widget,
-						      ...);
-void         gossip_glade_connect                    (GladeXML         *gui,
-						      gpointer          user_data,
-						      gchar            *first_widget,
-						      ...);
-void         gossip_glade_setup_size_group           (GladeXML         *gui,
-						      GtkSizeGroupMode  mode,
-						      gchar            *first_widget, ...);
 
-gchar *      gossip_password_dialog_run              (GossipAccount    *account,
-						      GtkWindow        *parent);
-GtkWidget *  gossip_hig_dialog_new                   (GtkWindow        *parent,
-						      GtkDialogFlags    flags,
-						      GtkMessageType    type,
-						      GtkButtonsType    buttons,
-						      const gchar      *header,
-						      const gchar      *messagefmt,
-						      ...);
+/* glade */
+void       gossip_glade_get_file_simple                   (const gchar         *filename,
+							   const gchar         *root,
+							   const gchar         *domain,
+							   const gchar         *first_required_widget,
+							   ...);
+GladeXML * gossip_glade_get_file                          (const gchar         *filename,
+							   const gchar         *root,
+							   const gchar         *domain,
+							   const gchar         *first_required_widget,
+							   ...);
+void       gossip_glade_connect                           (GladeXML            *gui,
+							   gpointer             user_data,
+							   gchar               *first_widget,
+							   ...);
+void       gossip_glade_setup_size_group                  (GladeXML            *gui,
+							   GtkSizeGroupMode     mode,
+							   gchar               *first_widget,
+							   ...);
 
-GdkPixbuf *  gossip_ui_utils_get_pixbuf_from_stock   (const gchar      *stock);
-GdkPixbuf *  gossip_ui_utils_get_pixbuf_offline      (void);
 
-gboolean     gossip_ui_utils_window_get_is_visible   (GtkWindow        *window);
-void         gossip_ui_utils_window_present          (GtkWindow        *window);
+/* dialogs */
+gchar *    gossip_password_dialog_run                     (GossipAccount       *account,
+							   GtkWindow           *parent);
 
-GdkPixbuf * gossip_ui_utils_presence_state_get_pixbuf(GossipPresenceState state);
-GdkPixbuf *  gossip_ui_utils_presence_get_pixbuf     (GossipPresence   *presence);
-GdkPixbuf *  gossip_ui_utils_contact_get_pixbuf      (GossipContact    *contact);
+
+/* pixbufs */
+GdkPixbuf *gossip_ui_utils_get_pixbuf_from_stock          (const gchar         *stock);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_offline             (void);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount       *account,
+							   gboolean             online);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence_state  (GossipPresenceState  state);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence        (GossipPresence      *presence);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_for_contact         (GossipContact       *contact);
+
+
+/* windows */
+gboolean   gossip_ui_utils_window_get_is_visible          (GtkWindow           *window);
+void       gossip_ui_utils_window_present                 (GtkWindow           *window);
+
+
 
 #endif /*  __GOSSIP_UI_UTILS_H__ */

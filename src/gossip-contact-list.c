@@ -761,7 +761,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 	for (l = iters; l && set_model; l = l->next) {
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
-				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
+				    MODEL_COL_PIXBUF, gossip_ui_utils_get_pixbuf_for_contact (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_IS_ONLINE, now_online,
 				    -1);
@@ -1025,7 +1025,7 @@ contact_list_add_contact (GossipContactList *list,
 	if (!groups) {
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
+				    MODEL_COL_PIXBUF, gossip_ui_utils_get_pixbuf_for_contact (contact),
 				    MODEL_COL_NAME, gossip_contact_get_name (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_CONTACT, g_object_ref (contact),
@@ -1050,7 +1050,7 @@ contact_list_add_contact (GossipContactList *list,
 
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    MODEL_COL_PIXBUF, gossip_ui_utils_contact_get_pixbuf (contact),
+				    MODEL_COL_PIXBUF, gossip_ui_utils_get_pixbuf_for_contact (contact),
 				    MODEL_COL_NAME, gossip_contact_get_name (contact),
 				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
 				    MODEL_COL_CONTACT, g_object_ref (contact),
@@ -2142,7 +2142,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	
 	contact = t_data->contact;
 
-	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
 		
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {
@@ -2250,7 +2250,7 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		return;
 	}
 	
-	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	for (l = iters; l; l = l->next) {

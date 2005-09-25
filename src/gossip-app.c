@@ -58,6 +58,7 @@
 #include "gossip-status-presets.h"
 #include "gossip-private-chat.h"
 #include "gossip-accounts-window.h"
+#include "gossip-account-info-dialog.h"
 #include "gossip-stock.h"
 #include "gossip-about.h"
 #include "gossip-app.h"
@@ -102,7 +103,12 @@ struct _GossipAppPriv {
 	GtkWidget          *window;
 
 	GtkWidget          *main_vbox;
-	GtkWidget          *accounts_hbox;
+
+	GtkWidget          *accounts_menubar;
+
+	GtkWidget          *accounts_toolbar;
+	GtkWidget          *accounts_toolbutton;
+	GtkWidget          *accounts_separatortoolitem;
 
 	EggTrayIcon        *tray_icon;
 	GtkWidget          *tray_event_box;
@@ -253,13 +259,16 @@ static void            app_toggle_visibility                (void);
 static gboolean        app_tray_pop_event                   (void);
 static void            app_tray_update_tooltip              (void);
 static void            app_accounts_create                  (void);
-static void            app_accounts_set_status              (GossipAccount        *account,
-							     gboolean              online);
 static void            app_accounts_add                     (GossipAccount        *account);
 static void            app_accounts_remove                  (GossipAccount        *account);
-static void            app_accounts_button_press_event_cb   (GtkWidget            *hbox,
-							     GdkEventButton       *event,
-							     gpointer              user_data);
+static GtkWidget *     app_accounts_get_account_menu        (GossipAccount        *account);
+static GtkWidget *     app_accounts_get_item                (GossipAccount        *account);
+static void            app_accounts_set_status              (GossipAccount        *account,
+							     gboolean              online);
+static void            app_accounts_edit_activate_cb        (GtkWidget            *menuitem,
+							     GossipAccount        *account);
+static void            app_accounts_connection_activate_cb  (GtkWidget            *menuitem,
+							     GossipAccount        *account);
 static void            app_accounts_account_added_cb        (GossipAccountManager *manager,
 							     GossipAccount        *account,
 							     gpointer              user_data);
@@ -466,7 +475,7 @@ app_setup (GossipAccountManager *manager)
 				       NULL,
 				       "main_window", &priv->window,
 				       "main_vbox", &priv->main_vbox,
-				       "accounts_hbox", &priv->accounts_hbox,
+				       "accounts_menubar", &priv->accounts_menubar,
 				       "roster_scrolledwindow", &sw,
 				       "status_button_hbox", &priv->status_button_hbox,
 				       "status_image", &priv->status_image,
@@ -475,6 +484,10 @@ app_setup (GossipAccountManager *manager)
 
 	gossip_glade_connect (glade,
 			      app,
+			      "main_window", "destroy", app_main_window_destroy_cb,
+			      "main_window", "delete_event", app_main_window_delete_event_cb,
+			      "main_window", "configure_event", app_window_configure_event_cb,
+			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
 			      "file_quit", "activate", app_quit_cb,
 			      "actions_connect", "activate", app_connect_cb,
 			      "actions_disconnect", "activate", app_disconnect_cb,
@@ -487,10 +500,6 @@ app_setup (GossipAccountManager *manager)
 			      "edit_personal_information", "activate", app_personal_information_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "help_about", "activate", app_about_cb,
-			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
-			      "main_window", "delete_event", app_main_window_delete_event_cb,
-			      "main_window", "destroy", app_main_window_destroy_cb,
-			      "main_window", "configure_event", app_window_configure_event_cb,
 			      NULL);
 
 	/* Set up presence chooser */
@@ -812,7 +821,8 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	priv = app->priv;
 	
 	app_accounts_set_status (account, FALSE);
-	app_connection_items_update ();
+
+ 	app_connection_items_update ();
 	app_presence_updated ();
 
 	/* FIXME: implement */
@@ -944,7 +954,7 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 
 	gtk_tree_model_get (tree_model, iter, 0, &contact, -1);
 
-	pixbuf = gossip_ui_utils_contact_get_pixbuf (contact);
+	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);
@@ -1738,30 +1748,27 @@ app_tray_update_tooltip (void)
 			      gossip_event_get_message (event));
 }	
 
+/*
+ * toolbar for accounts
+ */
+
 static void
 app_accounts_create (void)
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
-	GtkWidget            *fixed;
 	GList                *accounts;
 	GList                *l;
 	gint                  count;
+
+/* 	GtkTooltips       *tooltips; */
+/* 	gchar             *str; */
 
 	priv = app->priv;
 
 	manager = gossip_session_get_account_manager (priv->session);
 	accounts = gossip_account_manager_get_accounts (manager);
 	count = gossip_account_manager_get_count (manager);
-
-	fixed = gtk_fixed_new ();
-	gtk_widget_show (fixed);
-	gtk_box_pack_start (GTK_BOX (priv->accounts_hbox), fixed, TRUE, TRUE, 0);
-
-	g_signal_connect (GTK_WIDGET (priv->accounts_hbox),
-			  "button_press_event", 
-			  G_CALLBACK (app_accounts_button_press_event_cb),
-			  NULL);
 
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
@@ -1771,78 +1778,22 @@ app_accounts_create (void)
 
 	/* show accounts if we have more than one */
 	if (count < 2) {
-		gtk_widget_hide (priv->accounts_hbox);
+		gtk_widget_hide (priv->accounts_menubar);
 	} else {
-		gtk_widget_show (priv->accounts_hbox);
+		gtk_widget_show (priv->accounts_menubar);
 	}
+
+/* 	str = g_strdup_printf ("Account: %s\n" */
+/* 			       "ID: %s", */
+/* 			       gossip_account_get_name (account), */
+/* 			       gossip_account_get_id (account)); */
+/* 	str = g_strdup_printf ("asdasad"); */
+/* 	tooltips = gtk_tooltips_new (); */
+/* 	gtk_tooltips_set_tip (tooltips, priv->accounts_menubar, str, NULL); */
+/* 	g_free (str); */
+
 
 	g_list_free (accounts);
-}
-
-static void
-app_accounts_set_status (GossipAccount  *account,
-			 gboolean        online)
-{
-	GtkIconTheme  *theme;
-	GtkImage      *image;
-	GdkPixbuf     *pixbuf = NULL;
-	GError        *error = NULL;
-	gint           w, h;
-	gint           size = 48;  /* default size */
-	const gchar   *icon_id = NULL;
-
-	image = g_object_get_data (G_OBJECT (account), "image");
-
-	/* get theme and size details */
-	theme = gtk_icon_theme_get_default ();
-
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
-		size = 48;
-	} else {
-		size = (w + h) / 2; 
-	}
-
-	switch (gossip_account_get_type (account)) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER:
-		icon_id = "im-jabber";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_AIM:
-		icon_id = "im-aim";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_ICQ:
-		icon_id = "im-icq";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_MSN:
-		icon_id = "im-msn";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_YAHOO:
-		icon_id = "im-yahoo";
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-
-	pixbuf = gtk_icon_theme_load_icon (theme,
-					   icon_id,     /* icon name */
-					   size,        /* size */
-					   0,           /* flags */
-					   &error);
-
-	g_return_if_fail (pixbuf != NULL);
-	
-	/* set image to gray scale */
-#if 0
-	gdk_pixbuf_saturate_and_pixelate
-		(pixbuf,
-		 pixbuf,
-		 online ? 1.5 : 0,
-		 FALSE);
-#endif
-	
-	gdk_pixbuf_saturate_and_pixelate (pixbuf, pixbuf, 1.0, !online);
-	gtk_image_set_from_pixbuf (image, pixbuf); 
-
-	g_object_unref (pixbuf);
 }
 
 static void
@@ -1850,77 +1801,168 @@ app_accounts_add (GossipAccount *account)
 {
 	GossipAppPriv     *priv;
 	GossipAccountType  type;
-	GtkTooltips       *tooltips;
-	gchar             *str;
-	GtkWidget         *eventbox;
 	GtkWidget         *image;
-	
+ 	GtkWidget         *item; 
+
 	priv = app->priv;
 
-	eventbox = gtk_event_box_new ();
-	gtk_widget_show (eventbox);
-	gtk_box_pack_start (GTK_BOX (priv->accounts_hbox), eventbox, FALSE, FALSE, 0);
-	
-	image = gtk_image_new (); 
-	
-	gtk_widget_show (image);
-	gtk_container_add (GTK_CONTAINER (eventbox), image);
-	
+ 	item = gtk_image_menu_item_new_with_label (""); 
+
+ 	image = gtk_image_new ();  
+ 	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image); 
+
 	type = gossip_account_get_type (account);
 	
-	str = g_strdup_printf ("Account: %s\n"
-			       "ID: %s",
-			       gossip_account_get_name (account),
-			       gossip_account_get_id (account));
-	tooltips = gtk_tooltips_new ();
-	gtk_tooltips_set_tip (tooltips, eventbox, str, NULL);
-	g_free (str);
-	
+	gtk_widget_show_all (GTK_WIDGET (item));
+
 	g_object_set_data_full (G_OBJECT (account), "image", 
 				g_object_ref (image), g_object_unref);
-
-	g_object_set_data_full (G_OBJECT (eventbox), "account", 
+	g_object_set_data_full (G_OBJECT (item), "account", 
 				g_object_ref (account), g_object_unref);
-	
+
+	gtk_container_add (GTK_CONTAINER (priv->accounts_menubar), item);
+
 	app_accounts_set_status (account, FALSE);
 }
 
 static void
 app_accounts_remove (GossipAccount *account)
 {
+	GtkWidget *item;
+
+	item = app_accounts_get_item (account);
+	if (item) {
+		gtk_widget_destroy (GTK_WIDGET (item));
+	}
+}
+
+static GtkWidget *
+app_accounts_get_account_menu (GossipAccount *account)
+{
+	GossipSession *session;
+	GtkWidget     *menuitem;
+	GtkWidget     *menu;
+	GtkWidget     *item;
+	gboolean       is_connected;
+	gchar         *str;
+
+	session = gossip_app_get_session ();
+	menuitem = app_accounts_get_item (account);
+
+	g_return_val_if_fail (menuitem != NULL, NULL);
+
+	menu = gtk_menu_new ();
+	
+	is_connected = gossip_session_is_connected (session, account);
+	if (!is_connected) {
+				      
+		item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CONNECT, NULL);
+		gtk_label_set_text (GTK_LABEL (GTK_BIN (item)->child), _("Connect"));
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+ 		g_signal_connect (item, "activate",  
+ 				  G_CALLBACK (app_accounts_connection_activate_cb), account); 
+	} else {
+		item = gtk_image_menu_item_new_from_stock (GTK_STOCK_DISCONNECT, NULL);
+		gtk_label_set_text (GTK_LABEL (GTK_BIN (item)->child), _("Disconnect"));
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+ 		g_signal_connect (item, "activate",  
+ 				  G_CALLBACK (app_accounts_connection_activate_cb), account); 
+	}
+
+	item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+
+	item = gtk_image_menu_item_new_from_stock (GTK_STOCK_EDIT, NULL);
+	str = g_strdup_printf ("%s (%s)", 
+			       _("Edit"),
+			       gossip_account_get_name (account));
+	gtk_label_set_text (GTK_LABEL (GTK_BIN (item)->child), str);
+	g_free (str);
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+ 	g_signal_connect (item, "activate", 
+			  G_CALLBACK (app_accounts_edit_activate_cb), account); 
+
+	gtk_widget_show_all (menu);
+
+	return menu;
+}
+
+static GtkWidget *
+app_accounts_get_item (GossipAccount *account)
+{
 	GossipAppPriv *priv;
 	GList         *children;
 	GList         *l;
+ 	GtkWidget     *item = NULL; 
 
 	priv = app->priv;
 
-	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_hbox));
+	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_menubar));
 	
 	for (l = children; l; l = l->next) {
 		GtkWidget     *child;
 		GossipAccount *ref_account;
 
 		child = l->data;
-		ref_account = g_object_get_data (G_OBJECT (child), "account");
 
+		ref_account = g_object_get_data (G_OBJECT (child), "account");
 		if (!ref_account) {
 			continue;
 		}
 
 		if (gossip_account_equal (account, ref_account)) {
-			gtk_widget_destroy (child);
+			item = child;
 		}
 	}
 
 	g_list_free (children);
+	
+	return item;
 }
 
 static void
-app_accounts_button_press_event_cb (GtkWidget      *hbox,
-				    GdkEventButton *event,
-				    gpointer        user_data)
+app_accounts_set_status (GossipAccount  *account,
+			 gboolean        online)
 {
-	gossip_accounts_window_show ();
+	GtkImage  *image;
+	GdkPixbuf *pixbuf = NULL;
+	GtkWidget *item, *submenu;
+
+	image = g_object_get_data (G_OBJECT (account), "image");
+
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, online);
+	gtk_image_set_from_pixbuf (image, pixbuf);
+	g_object_unref (pixbuf);
+
+/* 	gtk_menu_item_remove_submenu (GTK_MENU_ITEM (menu)); */
+	item = app_accounts_get_item (account);
+	submenu = app_accounts_get_account_menu (account);
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), 
+				   GTK_WIDGET (submenu));
+}
+
+static void
+app_accounts_edit_activate_cb (GtkWidget     *menuitem,
+			      GossipAccount *account)
+{
+       gossip_account_info_dialog_show (account);
+}
+
+static void
+app_accounts_connection_activate_cb (GtkWidget     *menuitem,
+				     GossipAccount *account)
+{
+	GossipSession *session;
+	gboolean       is_connected;
+
+	session = gossip_app_get_session ();
+	is_connected = gossip_session_is_connected (session, account);
+
+	if (!is_connected) {
+		gossip_session_connect (session, account, FALSE);
+	} else {
+		gossip_session_disconnect (session, account);
+	}
 }
 
 static void
@@ -1938,15 +1980,6 @@ app_accounts_account_removed_cb (GossipAccountManager *manager,
 {
 	app_accounts_remove (account);
 }
-
-#if 0
-static void
-app_accounts_set_active (GossipAccount *account,
-			 gboolean       active)
-{
-	
-}
-#endif
 
 static GossipPresence *
 app_get_effective_presence (void)
@@ -1996,7 +2029,7 @@ app_get_current_status_pixbuf (void)
 	}
 	
 	presence = app_get_effective_presence ();
-	return gossip_ui_utils_presence_get_pixbuf (presence);
+	return gossip_ui_utils_get_pixbuf_for_presence (presence);
 }
 
 static void
@@ -2064,7 +2097,7 @@ app_status_flash_timeout_func (gpointer data)
 	GdkPixbuf       *pixbuf;
 
 	if (on) {
-		pixbuf = gossip_ui_utils_presence_get_pixbuf (priv->presence);
+		pixbuf = gossip_ui_utils_get_pixbuf_for_presence (priv->presence);
 	} else {
 		pixbuf = app_get_current_status_pixbuf ();
 	}
@@ -2262,7 +2295,7 @@ app_tray_flash_timeout_func (gpointer data)
 	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
-			pixbuf = gossip_ui_utils_presence_get_pixbuf (priv->presence);
+			pixbuf = gossip_ui_utils_get_pixbuf_for_presence (priv->presence);
 		}
 	}
 	else if (priv->tray_flash_icons != NULL) {

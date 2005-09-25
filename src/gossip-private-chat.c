@@ -908,7 +908,7 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 
 	contact = gossip_chat_get_contact (chat);
 
-	return gossip_ui_utils_contact_get_pixbuf (contact);
+	return gossip_ui_utils_get_pixbuf_for_contact (contact);
 }
 
 static GossipContact *

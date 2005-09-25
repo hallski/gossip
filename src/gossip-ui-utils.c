@@ -278,9 +278,6 @@ gossip_password_dialog_run (GossipAccount *account,
 	return password;
 }
 
-/*#define ve_string_empty(x) ((x)==NULL||(x)[0]=='\0')*/
-
-
 GdkPixbuf *
 gossip_ui_utils_get_pixbuf_from_stock (const gchar *stock)
 {
@@ -294,6 +291,60 @@ GdkPixbuf *
 gossip_ui_utils_get_pixbuf_offline (void)
 {
 	return gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
+}
+
+GdkPixbuf *
+gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount  *account,
+						gboolean        online)
+{
+	GtkIconTheme  *theme;
+	GdkPixbuf     *pixbuf = NULL;
+	GError        *error = NULL;
+	gint           w, h;
+	gint           size = 48;  /* default size */
+	const gchar   *icon_id = NULL;
+
+	/* get theme and size details */
+	theme = gtk_icon_theme_get_default ();
+
+	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
+		size = 48;
+	} else {
+		size = (w + h) / 2; 
+	}
+
+	switch (gossip_account_get_type (account)) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER:
+		icon_id = "im-jabber";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_AIM:
+		icon_id = "im-aim";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_ICQ:
+		icon_id = "im-icq";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_MSN:
+		icon_id = "im-msn";
+		break;
+	case GOSSIP_ACCOUNT_TYPE_YAHOO:
+		icon_id = "im-yahoo";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+
+	pixbuf = gtk_icon_theme_load_icon (theme,
+					   icon_id,     /* icon name */
+					   size,        /* size */
+					   0,           /* flags */
+					   &error);
+
+	g_return_val_if_fail (pixbuf != NULL, NULL);
+	
+	/* set image to gray scale */
+	gdk_pixbuf_saturate_and_pixelate (pixbuf, pixbuf, 1.0, !online);
+
+	return pixbuf;
 }
 
 static gboolean
@@ -349,7 +400,7 @@ gossip_ui_utils_window_present (GtkWindow *window)
 }
 
 GdkPixbuf *
-gossip_ui_utils_presence_state_get_pixbuf (GossipPresenceState state)
+gossip_ui_utils_get_pixbuf_for_presence_state (GossipPresenceState state)
 {
 	const gchar *stock = NULL; 
 
@@ -372,7 +423,7 @@ gossip_ui_utils_presence_state_get_pixbuf (GossipPresenceState state)
 }
 
 GdkPixbuf *
-gossip_ui_utils_presence_get_pixbuf (GossipPresence *presence)
+gossip_ui_utils_get_pixbuf_for_presence (GossipPresence *presence)
 {
 	GossipPresenceState state; 
 
@@ -381,11 +432,11 @@ gossip_ui_utils_presence_get_pixbuf (GossipPresence *presence)
 
 	state = gossip_presence_get_state (presence);
 
-	return gossip_ui_utils_presence_state_get_pixbuf (state);
+	return gossip_ui_utils_get_pixbuf_for_presence_state (state);
 }
 
 GdkPixbuf *  
-gossip_ui_utils_contact_get_pixbuf (GossipContact *contact)
+gossip_ui_utils_get_pixbuf_for_contact (GossipContact *contact)
 {
 	GossipPresence *presence;
 	
@@ -396,7 +447,7 @@ gossip_ui_utils_contact_get_pixbuf (GossipContact *contact)
 	presence = gossip_contact_get_active_presence (contact);
 
 	if (presence) {
-		return gossip_ui_utils_presence_get_pixbuf (presence);
+		return gossip_ui_utils_get_pixbuf_for_presence (presence);
 	}
 
 	return gossip_ui_utils_get_pixbuf_offline ();
