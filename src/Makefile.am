@@ -29,6 +29,7 @@ gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	gossip-about.c                     gossip-about.h  			\
 	gossip-accounts-window.c           gossip-accounts-window.h		\
+	gossip-account-button.c		   gossip-account-button.h		\
 	gossip-account-info-dialog.c       gossip-account-info-dialog.h		\
 	gossip-add-contact.c	           gossip-add-contact.h			\
 	gossip-app.c	 	           gossip-app.h				\

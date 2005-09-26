@@ -84,11 +84,9 @@ void              gossip_account_set_use_ssl      (GossipAccount     *account,
 void              gossip_account_set_use_proxy    (GossipAccount     *account,
 						   gboolean           use_proxy);
 
+guint             gossip_account_hash             (gconstpointer      key);
 gboolean          gossip_account_equal            (gconstpointer      v1,
 						   gconstpointer      v2);
-guint             gossip_account_hash             (gconstpointer      key);
-gint              gossip_account_compare          (gconstpointer      a,
-						   gconstpointer      b);
 
 const gchar *     gossip_account_get_type_as_str  (GossipAccountType  type);
 

@@ -590,16 +590,6 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	g_signal_emit (account, signals[CHANGED], 0);
 }
 
-gboolean
-gossip_account_equal (gconstpointer v1, 
-		      gconstpointer v2)
-{
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (v1), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (v2), FALSE);
-
-	return (gossip_account_compare (v1, v2) == 0);
-}
-
 guint 
 gossip_account_hash (gconstpointer key)
 {
@@ -607,30 +597,32 @@ gossip_account_hash (gconstpointer key)
 	
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (key), 0);
 
-	name = gossip_account_get_name (GOSSIP_ACCOUNT (key));
+	name = gossip_account_get_id (GOSSIP_ACCOUNT (key));
 	
 	return g_str_hash (name);
 }
 
-gint
-gossip_account_compare (gconstpointer a, 
-			gconstpointer b)
+gboolean
+gossip_account_equal (gconstpointer a, 
+		      gconstpointer b)
 {
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), 0);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), 0);
+	const gchar *name_a, *name_b;
 
-	a = gossip_account_get_name (GOSSIP_ACCOUNT (a));
-	b = gossip_account_get_name (GOSSIP_ACCOUNT (b));
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), -1);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), 1);
 
-	if (!a) {
+	name_a = gossip_account_get_name (GOSSIP_ACCOUNT (a));
+	name_b = gossip_account_get_name (GOSSIP_ACCOUNT (b));
+
+	if (!name_a) {
 		return -1;
 	}
 
-	if (!b) {
+	if (!name_b) {
 		return 1;
 	}
 	
-	return strcmp (a, b);
+	return g_str_equal (name_a, name_b);
 }
 
 const gchar *

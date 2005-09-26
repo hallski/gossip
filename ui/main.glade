@@ -84,7 +84,7 @@
 			  <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image87">
+			    <widget class="GtkImage" id="image95">
 			      <property name="visible">True</property>
 			      <property name="pixbuf">gossip-message.png</property>
 			      <property name="xalign">0.5</property>
@@ -109,7 +109,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image88">
+			    <widget class="GtkImage" id="image96">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
 			      <property name="icon_size">1</property>
@@ -199,7 +199,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image89">
+			    <widget class="GtkImage" id="image97">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-preferences</property>
 			      <property name="icon_size">1</property>
@@ -254,10 +254,12 @@
 	  <property name="spacing">6</property>
 
 	  <child>
-	    <widget class="GtkMenuBar" id="accounts_menubar">
+	    <widget class="GtkToolbar" id="accounts_toolbar">
 	      <property name="visible">True</property>
-	      <property name="pack_direction">GTK_PACK_DIRECTION_LTR</property>
-	      <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>
+	      <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
+	      <property name="toolbar_style">GTK_TOOLBAR_ICONS</property>
+	      <property name="tooltips">True</property>
+	      <property name="show_arrow">True</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>

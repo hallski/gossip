@@ -1,3 +1,19 @@
+2005-09-27  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-app.c:
+	* src/gossip-account-button.[ch]:
+	* ui/main.glade:
+	- Added new widget (based on GtkButton) to deal with accounts and
+	their menus.
+	- Use a GtkToolbar instead of that monstrosity GtkMenu I did on
+	the w/e, I think it looks and works much better.
+	- Simplified the code in gossip-app.
+	* libgossip/gossip-account.[ch]: 
+	- Removed gossip_account_compare() since it did the same as
+	_equals(), plus fixed _equals() to return a boolean not a guint,
+	this is why using it in hash tables was failing.
+	
+
 2005-09-25  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c:
