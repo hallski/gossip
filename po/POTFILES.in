@@ -9,6 +9,7 @@ libgossip/gossip-contact.c
 protocols/jabber/gossip-jabber.c
 
 src/gossip-about.c
+src/gossip-account-button.c
 src/gossip-account-info-dialog.c
 src/gossip-accounts-window.c
 src/gossip-add-contact.c
