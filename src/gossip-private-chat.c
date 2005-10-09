@@ -41,9 +41,10 @@
 #include "gossip-ui-utils.h"
 #include "gossip-private-chat.h"
 
-#define d(x)
+#define d(x) x
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
+
 #define COMPOSING_STOP_TIMEOUT 5
 
 
@@ -61,10 +62,6 @@ struct _GossipPrivateChatPriv {
 	gchar            *roster_resource;
 
         guint             composing_stop_timeout_id;
-        gboolean          request_composing_events;
-        gboolean          send_composing_events;
-        gchar            *last_composing_id;
-	gchar            *composing_resource; 
 	
 	gboolean          is_online;
 	gboolean          groupchat_priv;
@@ -82,22 +79,11 @@ static void            private_chats_init                        (void);
 static void            private_chat_create_gui                   (GossipPrivateChat       *chat);
 static void            private_chat_send                         (GossipPrivateChat       *chat,
                                                                   const gchar      *msg);
-#if 0
-static void            private_chat_request_composing            (LmMessage        *m);
-#endif
-
 static void            private_chat_composing_start              (GossipPrivateChat       *chat);
 static void            private_chat_composing_stop               (GossipPrivateChat       *chat);
 static void            private_chat_composing_remove_timeout     (GossipPrivateChat       *chat);
 static gboolean        private_chat_composing_stop_timeout_cb    (GossipPrivateChat       *chat);
 static gboolean        private_chat_should_play_sound            (GossipPrivateChat       *chat);
-
-#if 0
-static LmHandlerResult private_chat_message_handler              (LmMessageHandler        *handler,
-                                                                  LmConnection            *connection,
-                                                                  LmMessage               *m,
-                                                                  gpointer                 user_data);
-#endif
 
 static void            private_chat_contact_presence_updated     (gpointer                 not_used,
 			   				          GossipContact           *contact,
@@ -119,12 +105,7 @@ static void            private_chat_composing_event_cb          (GossipSession *
 								 GossipContact *contact,
 								 gboolean       composing,
 								 GossipChat    *chat);
-#if 0
-static gboolean        private_chat_handle_composing_event       (GossipPrivateChat       *chat,
-                                                                  LmMessage               *m);
-static void            private_chat_error_dialog                 (GossipPrivateChat       *chat,
-                                                                  const gchar             *msg);
-#endif
+
 static gboolean        private_chat_input_key_press_event_cb     (GtkWidget               *widget,
                                                                   GdkEventKey             *event,
                                                                   GossipPrivateChat       *chat);
@@ -175,7 +156,6 @@ gossip_private_chat_init (GossipPrivateChat *chat)
         GossipPrivateChatPriv *priv;
 	
 	priv = g_new0 (GossipPrivateChatPriv, 1);
-	priv->request_composing_events = TRUE;
 	priv->is_online = FALSE;
 
 	chat->priv = priv;
@@ -215,9 +195,6 @@ private_chat_finalize (GObject *object)
 	}
 
 	private_chat_composing_remove_timeout (chat);
-	
-	g_free (priv->composing_resource);
-	g_free (priv->last_composing_id);
 	
         g_free (priv);
 
@@ -326,12 +303,6 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 
 		g_free (priv->locked_resource);
 		priv->locked_resource = NULL;
-
-		/* Make sure we don't try to send composing events if the
-		 * resource somehow got lost.
-		 */
-		priv->send_composing_events = FALSE;
-
 		return;
 	}
 	
@@ -353,9 +324,6 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 
 	g_free (priv->locked_resource);
 	priv->locked_resource = g_strdup (roster_resource);
-
-	/* Stop sending compose events since the resource changed. */
-	priv->send_composing_events = FALSE;
 }
 
 static void
@@ -398,11 +366,7 @@ private_chat_send (GossipPrivateChat *chat,
 	}
 	
 	gossip_message_set_body (m, msg);
-	
-	if (gossip_contact_is_online (priv->contact) && 
-	    priv->request_composing_events) {
-		gossip_message_request_composing (m);
-	}
+	gossip_message_request_composing (m);
 
 	gossip_log_message (m, FALSE);
 
@@ -417,10 +381,6 @@ private_chat_composing_start (GossipPrivateChat *chat)
         GossipPrivateChatPriv *priv;
 
         priv = chat->priv;
-
-        if (!priv->send_composing_events) {
-                return;
-        }
 
         if (priv->composing_stop_timeout_id) {
                 /* Just restart the timeout */
@@ -442,10 +402,6 @@ private_chat_composing_stop (GossipPrivateChat *chat)
         GossipPrivateChatPriv *priv;
 
         priv = chat->priv;
-
-	if (!priv->send_composing_events) {
-		return;
-	}
 
 	private_chat_composing_remove_timeout (chat);
         gossip_session_send_composing (gossip_app_get_session (),
@@ -519,11 +475,7 @@ private_chat_contact_presence_updated (gpointer           not_used,
 
 	if (!gossip_contact_is_online (contact)) {
 		private_chat_composing_remove_timeout (chat);
-		priv->send_composing_events = FALSE;
 
-		g_free (priv->composing_resource);
-		priv->composing_resource = NULL;
-		
 		if (priv->is_online) {
 			gchar *msg;
 			
@@ -638,11 +590,7 @@ private_chat_disconnected_cb (GossipSession *session, GossipPrivateChat *chat)
 
 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Disconnected"), TRUE);
 
-	priv->send_composing_events = FALSE;
 	private_chat_composing_remove_timeout (chat);
-
-	g_free (priv->composing_resource);
-	priv->composing_resource = NULL;
 }
 
 static void
@@ -651,97 +599,8 @@ private_chat_composing_event_cb (GossipSession *session,
 				 gboolean       composing,
 				 GossipChat    *chat)
 {
-	/* FIXME: Implement this */
+	g_signal_emit_by_name (chat, "composing", contact, composing);
 }
-
-#if 0
-static gboolean
-private_chat_handle_composing_event (GossipPrivateChat *chat, LmMessage *m)
-{
-	GossipPrivateChatPriv *priv = chat->priv;
-        LmMessageNode         *x;
-        const gchar           *xmlns;
-        const gchar           *new_id;
-        const gchar           *from;
-	GossipJID             *jid;
-
-        x = lm_message_node_get_child (m->node, "x");
-        if (!x) {
-                return FALSE;
-        }
-
-        xmlns = lm_message_node_get_attribute (x, "xmlns");
-        if (strcmp (xmlns, "jabber:x:event") != 0) {
-                return FALSE;
-        }
-
-        if (lm_message_node_get_child (m->node, "body")) {
-                if (priv->is_online && lm_message_node_get_child (x, "composing")) {
-                        /* Handle request for composing events. */
-			priv->send_composing_events = TRUE;
-
-			from = lm_message_node_get_attribute (m->node, "from");
-			jid = gossip_jid_new (from);
-
-			g_free (priv->composing_resource);
-			priv->composing_resource =
-				g_strdup (gossip_jid_get_resource (jid));
-			
-			gossip_jid_unref (jid);
-			
-			g_free (priv->last_composing_id);
-			new_id = lm_message_node_get_attribute (m->node, "id");
-			if (new_id) {
-				priv->last_composing_id = g_strdup (new_id);
-			}
-		}
-
-                g_signal_emit_by_name (chat, "composing", FALSE);
-
-                return FALSE;
-        }
-
-        if (lm_message_node_get_child (x, "composing")) {
-                g_signal_emit_by_name (chat, "composing", TRUE);
-        } else {
-                g_signal_emit_by_name (chat, "composing", FALSE);
-        }
-
-        return TRUE;
-}
-
-static void
-private_chat_error_dialog (GossipPrivateChat  *chat, 
-                           const gchar        *msg)
-{
-	GossipChatWindow *chat_window;
-        GtkWindow        *window = NULL;
-        GtkWidget        *dialog;
-
-        g_return_if_fail (chat != NULL);
-
-	chat_window = gossip_chat_get_window (GOSSIP_CHAT (chat));
-
-        if (chat_window) {
-                window = GTK_WINDOW (gossip_chat_window_get_dialog (chat_window));
-        }
-
-        dialog = gtk_message_dialog_new (window,
-                                         GTK_DIALOG_DESTROY_WITH_PARENT,
-                                         GTK_MESSAGE_ERROR,
-                                         GTK_BUTTONS_CLOSE,
-                                         msg);
-
-        gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-
-        g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
-                      "use-markup", TRUE,
-                      NULL);
-
-        gtk_dialog_run (GTK_DIALOG (dialog));
-        gtk_widget_destroy (dialog);
-}
-#endif 
 
 static void
 private_chat_input_text_view_send (GossipPrivateChat *chat)
@@ -750,7 +609,6 @@ private_chat_input_text_view_send (GossipPrivateChat *chat)
 	GtkTextBuffer         *buffer;
 	GtkTextIter            start, end;
 	gchar	              *msg;
-	gboolean               send_normal_value;
 
 	priv = chat->priv;
 
@@ -759,11 +617,8 @@ private_chat_input_text_view_send (GossipPrivateChat *chat)
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	msg = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 
-	/* Clear the input field */
-	send_normal_value = priv->send_composing_events;
-	priv->send_composing_events = FALSE;
+	/* clear the input field */
 	gtk_text_buffer_set_text (buffer, "", -1);
-	priv->send_composing_events = send_normal_value;
 
 	private_chat_send (chat, msg);
 
@@ -829,13 +684,11 @@ private_chat_input_text_buffer_changed_cb (GtkTextBuffer     *buffer,
 
 	priv = chat->priv;
 
-        if (priv->send_composing_events) {
-                if (gtk_text_buffer_get_char_count (buffer) == 0) {
-			private_chat_composing_stop (chat);
-                } else {
-                        private_chat_composing_start (chat);
-                }
-        }
+	if (gtk_text_buffer_get_char_count (buffer) == 0) {
+		private_chat_composing_stop (chat);
+	} else {
+		private_chat_composing_start (chat);
+	}
 }
 
 static gboolean
@@ -1006,6 +859,9 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
 
+	GossipPresence        *active_presence;
+	const gchar           *active_resource;
+
 	private_chats_init ();
 
 	chat = g_hash_table_lookup (private_chats, contact);
@@ -1021,7 +877,9 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 	priv->groupchat_priv = TRUE;
 
-	priv->locked_resource = g_strdup (gossip_presence_get_resource (gossip_contact_get_active_presence (contact)));
+	active_presence = gossip_contact_get_active_presence (contact);
+	active_resource = gossip_presence_get_resource (active_presence);
+	priv->locked_resource = g_strdup (active_resource);
 	
 	if (gossip_contact_is_online (priv->contact)) {
 		priv->is_online = TRUE;

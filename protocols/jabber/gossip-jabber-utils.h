@@ -23,9 +23,11 @@
 #include <libgossip/gossip-time.h>
 
 /* utils */
-const gchar *       gossip_jabber_presence_state_to_str     (GossipPresence      *presence);
-GossipPresenceState gossip_jabber_presence_state_from_str   (const gchar         *str);
-gossip_time_t       gossip_jabber_get_message_timestamp     (LmMessage           *m);
-const gchar *       gossip_jabber_get_message_conference    (LmMessage           *m);
+const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence *presence);
+GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar    *str);
+gossip_time_t       gossip_jabber_get_message_timestamp    (LmMessage      *m);
+const gchar *       gossip_jabber_get_message_conference   (LmMessage      *m);
+gboolean            gossip_jabber_get_message_is_event     (LmMessage      *m);
+gboolean            gossip_jabber_get_message_is_composing (LmMessage      *m);
 
 #endif /* __GOSSIP_JABBER_UTILS_H__ */

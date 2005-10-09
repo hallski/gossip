@@ -1,3 +1,19 @@
+2005-10-09  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/gossip-protocol.c: 
+	* libgossip/gossip-session.c: 
+	- Make sure composing event is traversed up/down the stack. 
+	* protocols/jabber/gossip-jabber-utils.[ch]:
+	(gossip_jabber_get_message_is_event),
+	(gossip_jabber_get_message_is_composing):
+	- Added to identify jabber event notifications.
+	* protocols/jabber/gossip-jabber.c: 
+	- Added composing feature back.
+	- Don't send a new-message event on jabber x events.
+	- Fixes bug #316172 (Ross Burton).
+	* src/gossip-private-chat.c: 
+	- Clean up composing code and removed unused functions.
+
 2005-09-27  Martyn Russell  <mr@gnome.org>
 
 	* src/gossip-app.c:

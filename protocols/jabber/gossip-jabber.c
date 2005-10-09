@@ -47,7 +47,7 @@
 #include "gossip-transport-accounts.h"
 #include "gossip-jabber.h"
 
-#define d(x)
+#define d(x) x
 
 #define XMPP_VERSION_XMLNS "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
@@ -58,14 +58,16 @@ struct _GossipJabberPriv {
 	LmConnection          *connection;
 	
 	GossipContact         *contact;
-	
-	/* Replace this */
 	GossipAccount         *account;
 	GossipPresence        *presence;
 
+	GHashTable            *contacts;
+
 	GossipJabberChatrooms *chatrooms;
 
-	GHashTable            *contacts;
+	/* used to hold a list of composing message ids, this is so we
+	   can send the cancelation to the last message id */
+	GHashTable            *composing_ids;
 
 	/* transport stuff... is this in the right place? */
 	GossipTransportAccountList *account_list;
@@ -130,6 +132,9 @@ static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler   
 static gboolean         jabber_is_connected                 (GossipProtocol               *protocol);
 static void             jabber_send_message                 (GossipProtocol               *protocol,
 							     GossipMessage                *message);
+static void             jabber_send_composing               (GossipProtocol               *protocol,
+							     GossipContact                *contact,
+							     gboolean                      typing);
 static void             jabber_set_presence                 (GossipProtocol               *protocol,
 							     GossipPresence               *presence);
 static void             jabber_set_subscription             (GossipProtocol               *protocol,
@@ -182,7 +187,6 @@ static gboolean         jabber_set_vcard                    (GossipProtocol     
 							     gpointer                      user_data,
 							     GError                      **error);
 static void             jabber_set_proxy                    (LmConnection                 *conn);
-
 static LmHandlerResult  jabber_message_handler              (LmMessageHandler             *handler,
 							     LmConnection                 *conn,
 							     LmMessage                    *message,
@@ -205,6 +209,7 @@ static void             jabber_request_roster               (GossipJabber       
 							     LmMessage                    *m);
 static void             jabber_request_unknown              (GossipJabber                 *jabber,
 							     LmMessage                    *m);
+
 
 /* chatrooms */
 static void             jabber_chatroom_init                (GossipChatroomProviderIface  *iface);
@@ -241,7 +246,6 @@ static void             jabber_chatroom_invite_accept       (GossipChatroomProvi
 static GList *          jabber_chatroom_get_rooms           (GossipChatroomProvider       *provider);
 
 
-
 extern GConfClient *gconf_client;
 
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
@@ -263,6 +267,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->is_connected        = jabber_is_connected;
 	protocol_class->set_subscription    = jabber_set_subscription;
 	protocol_class->send_message        = jabber_send_message;
+	protocol_class->send_composing      = jabber_send_composing;
 	protocol_class->set_presence        = jabber_set_presence;
         protocol_class->find_contact        = jabber_contact_find;
         protocol_class->add_contact         = jabber_contact_add;
@@ -291,6 +296,12 @@ gossip_jabber_init (GossipJabber *jabber)
 				       g_str_equal,
 				       (GDestroyNotify) g_free,
 				       (GDestroyNotify) g_object_unref);
+
+	priv->composing_ids = 
+		g_hash_table_new_full (gossip_contact_hash,
+				       gossip_contact_equal,
+				       (GDestroyNotify) g_object_unref,
+				       (GDestroyNotify) g_free);
 }
 	
 static void
@@ -305,7 +316,10 @@ jabber_finalize (GObject *obj)
  	g_object_unref (priv->account);
 	
  	g_hash_table_destroy (priv->contacts);
+
  	gossip_jabber_chatrooms_free (priv->chatrooms);
+
+ 	g_hash_table_destroy (priv->composing_ids);
 	
 #ifdef USE_TRANSPORTS
  	gossip_transport_account_list_free (priv->account_list);
@@ -888,15 +902,14 @@ jabber_is_connected (GossipProtocol *protocol)
 }
 
 static void
-jabber_send_message (GossipProtocol *protocol, GossipMessage *message)
+jabber_send_message (GossipProtocol *protocol, 
+		     GossipMessage  *message)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 	GossipContact    *recipient;
 	LmMessage        *m;
-	gboolean          result;
-	GError           *error = NULL;
-	const gchar      *id;
+	const gchar      *recipient_id;
 	const gchar      *resource;
 	gchar            *jid_str;
 
@@ -908,13 +921,13 @@ jabber_send_message (GossipProtocol *protocol, GossipMessage *message)
 	recipient = gossip_message_get_recipient (message);
 
 	/* FIXME: Create a full JID (with resource) and send to that */
-	id = gossip_contact_get_id (recipient);
+	recipient_id = gossip_contact_get_id (recipient);
 	resource = gossip_message_get_explicit_resource (message);
 
 	if (resource) {
-		jid_str = g_strdup_printf ("%s/%s", id, resource);
+		jid_str = g_strdup_printf ("%s/%s", recipient_id, resource);
 	} else {
-		jid_str = (gchar *) id;
+		jid_str = g_strdup (recipient_id);
 	}
 
 	d(g_print ("Protocol: Sending message to: '%s'\n", jid_str));
@@ -922,18 +935,89 @@ jabber_send_message (GossipProtocol *protocol, GossipMessage *message)
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,
 					  LM_MESSAGE_SUB_TYPE_CHAT);
-	if (jid_str != id) {
-		g_free (jid_str);
-	}
 
 	lm_message_node_add_child (m->node, "body",
 				   gossip_message_get_body (message));
-	result = lm_connection_send (priv->connection, m, &error);
+
+	/* if we have had a request for composing then we send the
+	   other side composing details with every message */
+	if (gossip_message_is_requesting_composing (message)) {
+		LmMessageNode *node;
+
+		node = lm_message_node_add_child (m->node, "x", NULL);
+		lm_message_node_set_attribute (node, "xmlns", "jabber:x:event");
+		lm_message_node_add_child (node, "composing", NULL);
+	}
+
+	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 
-	if (!result) {
-		g_warning ("lm_connection_send failed");
+	g_free (jid_str);
+}
+
+static void
+jabber_send_composing (GossipProtocol *protocol,
+		       GossipContact  *contact,
+		       gboolean        typing)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+	LmMessage        *m;
+	LmMessageNode    *node;
+	const gchar      *id = NULL;
+	const gchar      *contact_id;
+	const gchar      *resource = NULL;
+	gchar            *jid_str;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
+	jabber = GOSSIP_JABBER (protocol);
+	priv   = jabber->priv;
+
+	contact_id = gossip_contact_get_id (contact);
+
+	d(g_print ("Protocol: Sending %s to contact:'%s'\n", 
+		   typing ? "composing" : "not composing",
+		   contact_id));
+	
+	/* FIXME: Create a full JID (with resource) and send to that */
+/* 	resource = gossip_message_get_explicit_resource (message); */
+
+	if (resource) {
+		jid_str = g_strdup_printf ("%s/%s", contact_id, resource);
+	} else {
+		jid_str = g_strdup (contact_id);
 	}
+
+	m = lm_message_new_with_sub_type (jid_str,
+					  LM_MESSAGE_TYPE_MESSAGE,
+					  LM_MESSAGE_SUB_TYPE_CHAT);
+	node = lm_message_node_add_child (m->node, "x", NULL);
+	lm_message_node_set_attribute (node, "xmlns", "jabber:x:event");
+	
+	if (typing) {
+		id = lm_message_node_get_attribute (m->node, "id"); 
+
+		g_hash_table_insert (priv->composing_ids, 
+				     g_object_ref (contact),
+				     g_strdup (id));
+
+		lm_message_node_add_child (node, "composing", NULL);
+		lm_message_node_add_child (node, "id", id); 
+	} else {
+		id = g_hash_table_lookup (priv->composing_ids, contact);
+		lm_message_node_add_child (node, "id", id); 
+
+		if (id) {
+			g_hash_table_remove (priv->composing_ids, contact);
+		}
+	}
+
+	lm_connection_send (priv->connection, m, NULL);
+	lm_message_unref (m);
+
+	g_free (jid_str);
 }
 
 static void
@@ -953,6 +1037,7 @@ jabber_set_presence (GossipProtocol *protocol,
 	if (priv->presence) {
 		g_object_unref (priv->presence);
 	}
+
 	priv->presence = g_object_ref (presence);
 	
 	m = lm_message_new_with_sub_type (NULL, 
@@ -977,6 +1062,9 @@ jabber_set_presence (GossipProtocol *protocol,
 		break;
 	}
 
+	d(g_print ("Protocol: Settting presence to:'%s', status:'%s'\n", 
+		   show, gossip_presence_get_status (presence)));
+
 	if (show) {
 		lm_message_node_add_child (m->node, "show", show);
 	}
@@ -998,11 +1086,16 @@ jabber_set_subscription (GossipProtocol *protocol,
 			 GossipContact  *contact,
 			 gboolean        subscribed)
 {
-	GossipJabber     *jabber;
+	GossipJabber *jabber;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
 	jabber = GOSSIP_JABBER (protocol);
+
+	d(g_print ("Protocol: Settting subscription for contact:'%s' as %s\n", 
+		   gossip_contact_get_id (contact),
+		   subscribed ? "subscribed" : "unsubscribed"));
 
 	if (subscribed) {
 		gossip_jabber_send_subscribed (jabber, contact);
@@ -1024,8 +1117,8 @@ jabber_contact_find (GossipProtocol *protocol,
 	priv = jabber->priv;
 
 	jid = gossip_jid_new (id);
-	contact =  g_hash_table_lookup (priv->contacts, 
-					gossip_jid_get_without_resource (jid));
+	contact = g_hash_table_lookup (priv->contacts, 
+				       gossip_jid_get_without_resource (jid));
 
 	gossip_jid_unref (jid);
 
@@ -1552,6 +1645,17 @@ jabber_message_handler (LmMessageHandler *handler,
 		
 		gossip_message_set_sender (message, from);
 
+		/* if event, then we can ignore the rest */
+		if (gossip_jabber_get_message_is_event (m)) {
+			gboolean composing;
+
+			composing = gossip_jabber_get_message_is_composing (m);
+
+			g_signal_emit_by_name (jabber, "composing-event", 
+					       from, composing);
+			break;
+		}
+
 		node = lm_message_node_get_child (m->node, "body");
 		if (node) {
 			body = node->value;
@@ -1570,13 +1674,12 @@ jabber_message_handler (LmMessageHandler *handler,
 		
 		gossip_message_set_invite (message,
 					   gossip_jabber_get_message_conference (m));
-
+		
 		g_signal_emit_by_name (jabber, "new-message", message);
-
+		g_signal_emit_by_name (jabber, "composing-event", 
+				       from, FALSE);
 		g_object_unref (message);
 
-		/* FIXME: Set timestamp, composing request */
-		/* Do the stuff */
 		break;
 	case LM_MESSAGE_SUB_TYPE_ERROR:
 		/* FIXME: Emit error */

@@ -70,7 +70,11 @@ gossip_jabber_get_message_timestamp (LmMessage *m)
 	const gchar   *xmlns;
 	struct tm     *tm;
 	
-	for (node = m->node->children; node; node = node->next) {
+	g_return_val_if_fail (m != NULL, gossip_time_get_current ());
+	g_return_val_if_fail (m->node != NULL, gossip_time_get_current ());
+	g_return_val_if_fail (m->node->children != NULL, gossip_time_get_current ());
+
+	for (node = m->node->children; node && node->name; node = node->next) {
 		if (strcmp (node->name, "x") != 0) {
 			continue;
 		}
@@ -97,8 +101,12 @@ gossip_jabber_get_message_conference (LmMessage *m)
 	LmMessageNode *node;
 	const gchar   *xmlns;
 	const gchar   *conference = NULL;
+
+	g_return_val_if_fail (m != NULL, NULL);
+	g_return_val_if_fail (m->node != NULL, NULL);
+	g_return_val_if_fail (m->node->children != NULL, NULL);
 	
-	for (node = m->node->children; node; node = node->next) {
+	for (node = m->node->children; node && node->name; node = node->next) {
 		if (strcmp (node->name, "x") != 0) {
 			continue;
 		}
@@ -111,4 +119,61 @@ gossip_jabber_get_message_conference (LmMessage *m)
         }
 
 	return conference;
+}
+
+gboolean
+gossip_jabber_get_message_is_event (LmMessage *m)
+{
+	LmMessageNode *node;
+	const gchar   *xmlns;
+	
+	g_return_val_if_fail (m != NULL, FALSE);
+	g_return_val_if_fail (m->node != NULL, FALSE);
+	g_return_val_if_fail (m->node->children != NULL, FALSE);
+
+	if (lm_message_node_find_child (m->node, "body")) {
+		return FALSE;
+	}
+
+	for (node = m->node->children; node && node->name; node = node->next) {
+		if (strcmp (node->name, "x") != 0) {
+			continue;
+		}
+
+		xmlns = lm_message_node_get_attribute (node, "xmlns");
+		if (xmlns && strcmp (xmlns, "jabber:x:event") == 0) {
+			return TRUE;
+		}
+        }
+
+	return FALSE;	
+}
+
+gboolean
+gossip_jabber_get_message_is_composing (LmMessage *m)
+{
+	LmMessageNode *node;
+	const gchar   *xmlns;
+	
+	g_return_val_if_fail (m != NULL, FALSE);
+	g_return_val_if_fail (m->node != NULL, FALSE);
+	g_return_val_if_fail (m->node->children != NULL, FALSE);
+
+	for (node = m->node->children; node && node->name; node = node->next) {
+		if (strcmp (node->name, "x") != 0) {
+			continue;
+		}
+
+		xmlns = lm_message_node_get_attribute (node, "xmlns");
+		if (xmlns && strcmp (xmlns, "jabber:x:event") == 0) {
+			LmMessageNode *composing;
+
+			composing = lm_message_node_find_child (node, "composing");
+			if (composing) {
+				return TRUE;
+			}
+		}
+        }
+
+	return FALSE;	
 }

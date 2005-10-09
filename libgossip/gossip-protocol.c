@@ -59,6 +59,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->register_account    = NULL;
 	klass->is_connected        = NULL;
 	klass->send_message        = NULL;
+	klass->send_composing      = NULL;
 	klass->set_presence        = NULL;
         klass->find_contact        = NULL;
         klass->add_contact         = NULL;
