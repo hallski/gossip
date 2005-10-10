@@ -89,6 +89,7 @@ static void            private_chat_contact_presence_updated     (gpointer      
 			   				          GossipContact           *contact,
 							          GossipPrivateChat       *chat);
 static void            private_chat_contact_updated              (gpointer                 not_used,
+							          GossipContact           *contact,
 							          GossipPrivateChat       *chat);
 static void            private_chat_contact_added		 (gpointer	           not_used,
 							          GossipContact           *contact,

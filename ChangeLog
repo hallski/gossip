@@ -1,3 +1,12 @@
+2005-10-10  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/gossip-session.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-private-chat.c: 
+	- Fixed composing being stuck, was passing GossipContact which is
+	not needed by the GossipChat "composing" signal.
+	- Turned off debugging.
+	
 2005-10-09  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-protocol.c: 

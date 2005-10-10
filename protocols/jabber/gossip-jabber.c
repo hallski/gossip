@@ -47,7 +47,7 @@
 #include "gossip-transport-accounts.h"
 #include "gossip-jabber.h"
 
-#define d(x) x
+#define d(x)
 
 #define XMPP_VERSION_XMLNS "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
