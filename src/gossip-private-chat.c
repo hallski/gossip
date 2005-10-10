@@ -543,7 +543,8 @@ private_chat_contact_added (gpointer           not_user,
 }
 
 static void
-private_chat_connected_cb (GossipSession *session, GossipPrivateChat *chat)
+private_chat_connected_cb (GossipSession     *session, 
+			   GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
@@ -557,7 +558,8 @@ private_chat_connected_cb (GossipSession *session, GossipPrivateChat *chat)
 }
 
 static void
-private_chat_disconnected_cb (GossipSession *session, GossipPrivateChat *chat)
+private_chat_disconnected_cb (GossipSession     *session, 
+			      GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
@@ -578,11 +580,21 @@ private_chat_composing_event_cb (GossipSession *session,
 				 gboolean       composing,
 				 GossipChat    *chat)
 {
-	d(g_print ("Private Chat: Contact:'%s' %s typing\n",
-		   gossip_contact_get_name (contact),
-		   composing ? "is" : "is not"));
+	GossipPrivateChat     *p_chat;
+	GossipPrivateChatPriv *priv;
 
-	g_signal_emit_by_name (chat, "composing", composing);
+	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
+
+	p_chat = GOSSIP_PRIVATE_CHAT (chat);
+	priv   = p_chat->priv;
+
+	if (gossip_contact_equal (contact, priv->contact)) {
+		d(g_print ("Private Chat: Contact:'%s' %s typing\n",
+			   gossip_contact_get_name (contact),
+			   composing ? "is" : "is not"));
+
+		g_signal_emit_by_name (chat, "composing", composing);
+	}
 }
 
 static void

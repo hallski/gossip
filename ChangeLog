@@ -6,7 +6,9 @@
 	- Fixed composing being stuck, was passing GossipContact which is
 	not needed by the GossipChat "composing" signal.
 	- Turned off debugging.
-	
+	- Only signal "composing" if the contact is associated with the
+	GossipPrivateChat.
+
 2005-10-09  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-protocol.c: 
