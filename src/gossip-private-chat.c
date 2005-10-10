@@ -41,7 +41,7 @@
 #include "gossip-ui-utils.h"
 #include "gossip-private-chat.h"
 
-#define d(x) x
+#define d(x)
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
@@ -89,10 +89,6 @@ static void            private_chat_contact_presence_updated     (gpointer      
 			   				          GossipContact           *contact,
 							          GossipPrivateChat       *chat);
 static void            private_chat_contact_updated              (gpointer                 not_used,
-							          GossipContact           *contact,
-							          GossipPrivateChat       *chat);
-static void            private_chat_contact_removed              (gpointer                 not_used,
-							          GossipContact           *contact,
 							          GossipPrivateChat       *chat);
 static void            private_chat_contact_added		 (gpointer	           not_used,
 							          GossipContact           *contact,
@@ -458,7 +454,6 @@ static void
 private_chat_contact_presence_updated (gpointer           not_used,
 				       GossipContact     *contact,
 			               GossipPrivateChat *chat)
-
 {
 	GossipPrivateChatPriv *priv;
 
@@ -526,23 +521,6 @@ private_chat_contact_updated (gpointer           not_used,
 	}
 }
 
-static void 
-private_chat_contact_removed (gpointer           not_used,
-		              GossipContact     *contact,
-		              GossipPrivateChat *chat)
-{
-	GossipPrivateChatPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
-	g_return_if_fail (contact != NULL);
-	
-	priv = chat->priv;
-
-	if (!gossip_contact_equal (contact, priv->contact)) {
-		return;
-	}
-}
-
 static void
 private_chat_contact_added (gpointer           not_user,
 		            GossipContact     *contact,
@@ -599,7 +577,11 @@ private_chat_composing_event_cb (GossipSession *session,
 				 gboolean       composing,
 				 GossipChat    *chat)
 {
-	g_signal_emit_by_name (chat, "composing", contact, composing);
+	d(g_print ("Private Chat: Contact:'%s' %s typing\n",
+		   gossip_contact_get_name (contact),
+		   composing ? "is" : "is not"));
+
+	g_signal_emit_by_name (chat, "composing", composing);
 }
 
 static void
@@ -640,13 +622,16 @@ private_chat_input_key_press_event_cb (GtkWidget         *widget,
 
 	/* Catch enter but not ctrl/shift-enter */
 	if (IS_ENTER (event->keyval) && !(event->state & GDK_SHIFT_MASK)) {
+		GtkTextView *view;
 
 		/* This is to make sure that kinput2 gets the enter. And if 
 		 * it's handled there we shouldn't send on it. This is because
 		 * kinput2 uses Enter to commit letters. See:
 		 * http://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=104299
 		 */
-		if (gtk_im_context_filter_keypress (GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view)->im_context, event)) {
+
+		view = GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view);
+		if (gtk_im_context_filter_keypress (view->im_context, event)) {
 			GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view)->need_im_reset = TRUE;
 			return TRUE;
 		}
@@ -834,11 +819,6 @@ gossip_private_chat_new (GossipContact *contact)
 				 chat, 0);
 
 	g_signal_connect_object (gossip_app_get_session (),
-				 "contact_removed",
-				 G_CALLBACK (private_chat_contact_removed),
-				 chat, 0);
-	
-	g_signal_connect_object (gossip_app_get_session (),
 				 "contact_added",
 				 G_CALLBACK (private_chat_contact_added),
 				 chat, 0);
@@ -897,11 +877,6 @@ gossip_private_chat_get_for_group_chat (GossipContact   *contact,
 				 G_CALLBACK (private_chat_contact_updated),
 				 chat, 0);
 
-	g_signal_connect_object (g_chat,
-				 "contact_removed",
-				 G_CALLBACK (private_chat_contact_removed),
-				 chat, 0);
-	
 	g_signal_connect_object (g_chat,
 				 "contact_added",
 				 G_CALLBACK (private_chat_contact_added),
