@@ -294,25 +294,25 @@ gossip_ui_utils_get_pixbuf_offline (void)
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account (GossipAccount  *account)
+gossip_ui_utils_get_pixbuf_from_account_type (GossipAccountType type,
+					      GtkIconSize       icon_size)
 {
 	GtkIconTheme  *theme;
 	GdkPixbuf     *pixbuf = NULL;
 	GError        *error = NULL;
 	gint           w, h;
-	gint           size = 48;  /* default size */
+	gint           size = 48;  
 	const gchar   *icon_id = NULL;
 
-	/* get theme and size details */
 	theme = gtk_icon_theme_get_default ();
 
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
+	if (!gtk_icon_size_lookup (icon_size, &w, &h)) {
 		size = 48;
 	} else {
 		size = (w + h) / 2; 
 	}
 
-	switch (gossip_account_get_type (account)) {
+	switch (type) {
 	case GOSSIP_ACCOUNT_TYPE_JABBER:
 		icon_id = "im-jabber";
 		break;
@@ -338,21 +338,52 @@ gossip_ui_utils_get_pixbuf_from_account (GossipAccount  *account)
 					   0,           /* flags */
 					   &error);
 
-	g_return_val_if_fail (pixbuf != NULL, NULL);
-	
 	return pixbuf;
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount  *account,
-						gboolean        online)
+gossip_ui_utils_get_pixbuf_from_account (GossipAccount *account,
+					 GtkIconSize    icon_size)
+{
+	GossipAccountType  type;
+	GdkPixbuf         *pixbuf = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	type = gossip_account_get_type (account);
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account_type (type, icon_size);
+
+	return pixbuf;
+}
+
+GdkPixbuf *
+gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount *account,
+						GtkIconSize    icon_size,
+						gboolean       online)
 {
 	GdkPixbuf *pixbuf = NULL;
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account (account);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account (account, icon_size);
 	g_return_val_if_fail (pixbuf != NULL, NULL);
 
-	gdk_pixbuf_saturate_and_pixelate (pixbuf, pixbuf, 1.0, !online);
+	if (!online) {
+		GdkPixbuf *modded_pixbuf;
+
+		modded_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+						TRUE,
+						8,
+						gdk_pixbuf_get_width (pixbuf), 
+						gdk_pixbuf_get_height (pixbuf));
+
+		gdk_pixbuf_saturate_and_pixelate (pixbuf,
+						  modded_pixbuf,
+						  1.0,
+						  TRUE);
+		g_object_unref (pixbuf);
+		pixbuf = modded_pixbuf;
+	}
 
 	return pixbuf;
 }

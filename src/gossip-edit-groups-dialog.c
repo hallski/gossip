@@ -64,10 +64,10 @@ typedef struct {
 
 
 enum {
-	COL_EDIT_GROUPS_NAME,
-	COL_EDIT_GROUPS_ENABLED,
-	COL_EDIT_GROUPS_EDITABLE,
-	COL_EDIT_GROUPS_COUNT
+	COL_NAME,
+	COL_ENABLED,
+	COL_EDITABLE,
+	COL_COUNT
 };
 
 static void     edit_groups_dialog_destroy_cb     (GtkWidget             *widget,
@@ -196,7 +196,7 @@ edit_groups_setup (GossipEditGroups *info)
 	GtkListStore     *store;
 	GtkTreeSelection *selection;
 
-	store = gtk_list_store_new (COL_EDIT_GROUPS_COUNT,
+	store = gtk_list_store_new (COL_COUNT,
 				    G_TYPE_STRING,   /* name */
 				    G_TYPE_BOOLEAN,  /* enabled */
 				    G_TYPE_BOOLEAN); /* editable */
@@ -207,6 +207,9 @@ edit_groups_setup (GossipEditGroups *info)
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 	
 	edit_groups_populate_columns (info);
+
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), 
+					      COL_NAME, GTK_SORT_ASCENDING);
 
 	g_object_unref (store);
 }
@@ -227,7 +230,7 @@ edit_groups_populate_columns (GossipEditGroups *info)
 			  info);
 	
 	column = gtk_tree_view_column_new_with_attributes (_("Select"), renderer,
-							   "active", COL_EDIT_GROUPS_ENABLED,
+							   "active", COL_ENABLED,
 							   NULL);
 	
 	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
@@ -239,14 +242,14 @@ edit_groups_populate_columns (GossipEditGroups *info)
 		info->treeview,
 		-1, _("Group"),
 		renderer, 
-		"text", COL_EDIT_GROUPS_NAME,
+		"text", COL_NAME,
 		NULL);
 	
 	g_object_set_data (G_OBJECT (renderer),
-			   "column", GINT_TO_POINTER (COL_EDIT_GROUPS_NAME));
+			   "column", GINT_TO_POINTER (COL_NAME));
 	
 	column = gtk_tree_view_get_column (info->treeview, col_offset - 1);
-	gtk_tree_view_column_set_sort_column_id (column, COL_EDIT_GROUPS_NAME);
+	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
 	gtk_tree_view_column_set_resizable (column,FALSE);
 	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
 }
@@ -304,14 +307,14 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 	
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter,    
-				    COL_EDIT_GROUPS_NAME, group_str,
-				    COL_EDIT_GROUPS_EDITABLE, TRUE,
+				    COL_NAME, group_str,
+				    COL_EDITABLE, TRUE,
 				    -1);
 
 		if (g_list_find_custom (my_groups, group_str, (GCompareFunc)strcmp)) {
 			if (edit_groups_find_name (info, group_str, &iter)) {
 				gtk_list_store_set (store, &iter,    
-						    COL_EDIT_GROUPS_ENABLED, TRUE,
+						    COL_ENABLED, TRUE,
 						    -1);
 			} else {
 				d (g_assert_not_reached ());
@@ -362,7 +365,7 @@ edit_groups_find_name_foreach (GtkTreeModel *model,
 	gchar *name;
 
 	gtk_tree_model_get (model, iter, 
-			    COL_EDIT_GROUPS_NAME, &name, 
+			    COL_NAME, &name, 
 			    -1);
   
 	if (!name) {
@@ -411,8 +414,8 @@ edit_groups_find_selected_foreach (GtkTreeModel *model,
 	gboolean  selected;
 
 	gtk_tree_model_get (model, iter, 
-			    COL_EDIT_GROUPS_NAME, &name, 
-			    COL_EDIT_GROUPS_ENABLED, &selected, 
+			    COL_NAME, &name, 
+			    COL_ENABLED, &selected, 
 			    -1);
   
 	if (!name) {
@@ -449,11 +452,11 @@ edit_groups_cell_toggled (GtkCellRendererToggle *cell,
 	path = gtk_tree_path_new_from_string (path_string);
 
 	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter, COL_EDIT_GROUPS_ENABLED, &enabled, -1);
+	gtk_tree_model_get (model, &iter, COL_ENABLED, &enabled, -1);
 
 	enabled ^= 1;
 
-	gtk_list_store_set (store, &iter, COL_EDIT_GROUPS_ENABLED, enabled, -1);
+	gtk_list_store_set (store, &iter, COL_ENABLED, enabled, -1);
 	gtk_tree_path_free (path);
 
 	info->changes_made = TRUE;
@@ -500,9 +503,9 @@ edit_groups_add_button_clicked (GtkButton *button, GossipEditGroups *info)
 	
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter,    
-			    COL_EDIT_GROUPS_NAME, group,
-			    COL_EDIT_GROUPS_ENABLED, TRUE,
-			    COL_EDIT_GROUPS_EDITABLE, TRUE,
+			    COL_NAME, group,
+			    COL_ENABLED, TRUE,
+			    COL_EDITABLE, TRUE,
 			    -1);
 	
 	gtk_entry_set_text (GTK_ENTRY (info->add_entry), "");

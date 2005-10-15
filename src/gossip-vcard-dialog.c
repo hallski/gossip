@@ -40,6 +40,7 @@
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
 #define VCARD_TIMEOUT 20000
+#define SAVED_TIMEOUT 10000
 
 
 struct _GossipVCardDialog {
@@ -67,11 +68,15 @@ struct _GossipVCardDialog {
 	GtkWidget *vbox_waiting;
 	GtkWidget *progressbar_waiting;
 
+	GtkWidget *hbox_saved;
+
+	GtkWidget *button_cancel;
 	GtkWidget *button_ok;
 
 	guint      wait_id;
 	guint      pulse_id;
 	guint      timeout_id; 
+	guint      saved_id;
 
 	gboolean   requesting_vcard;
 
@@ -112,6 +117,7 @@ static void           vcard_dialog_set_vcard_cb                (GossipResult    
 static gboolean       vcard_dialog_progress_pulse_cb           (GtkWidget         *progressbar);
 static gboolean       vcard_dialog_wait_cb                     (GossipVCardDialog *dialog);
 static gboolean       vcard_dialog_timeout_cb                  (GossipVCardDialog *dialog);
+static gboolean       vcard_dialog_saved_cb                    (GtkWidget         *widget);
 static gboolean       vcard_dialog_account_foreach             (GtkTreeModel      *model,
 								GtkTreePath       *path,
 								GtkTreeIter       *iter,
@@ -138,11 +144,7 @@ vcard_dialog_setup_accounts (GList             *accounts,
 
 	GList           *l;
 
-	gint             w, h;
-	gint             size = 24;  /* default size */
-
 	GError          *error = NULL;
-	GtkIconTheme    *theme;
 
 	GdkPixbuf       *pixbuf;
 
@@ -163,20 +165,10 @@ vcard_dialog_setup_accounts (GList             *accounts,
 
 	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->combobox_account), 
 				 GTK_TREE_MODEL (store));
-		
-	/* get theme and size details */
-	theme = gtk_icon_theme_get_default ();
-
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
-		size = 48;
-	} else {
-		size = (w + h) / 2; 
-	}
 
 	/* populate accounts */
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account;
-		const gchar   *icon_id = NULL;
 		gboolean       is_connected;
 
 		account = l->data;
@@ -185,51 +177,18 @@ vcard_dialog_setup_accounts (GList             *accounts,
 		pixbuf = NULL;
 
 		is_connected = gossip_session_is_connected (session, account);
+		pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, 
+									 GTK_ICON_SIZE_MENU,
+									 is_connected);
 
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
+				    COL_ACCOUNT_IMAGE, pixbuf,
 				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
 				    COL_ACCOUNT_CONNECTED, is_connected,
 				    COL_ACCOUNT_POINTER, g_object_ref (account),
 				    -1);
 
-		switch (gossip_account_get_type (account)) {
-		case GOSSIP_ACCOUNT_TYPE_JABBER:
-			icon_id = "im-jabber";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_AIM:
-			icon_id = "im-aim";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_ICQ:
-			icon_id = "im-icq";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_MSN:
-			icon_id = "im-msn";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_YAHOO:
-			icon_id = "im-yahoo";
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-
-		pixbuf = gtk_icon_theme_load_icon (theme,
-						   icon_id,     /* icon name */
-						   size,        /* size */
-						   0,           /* flags */
-						   &error);
-
-		if (!pixbuf) {
-			g_warning ("could not load stock icon: %s", icon_id);
-			continue;
-		}				
-
-		gdk_pixbuf_saturate_and_pixelate (pixbuf,
-						  pixbuf,
-						  1.0,
-						  !is_connected);
-		
- 		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);
 
 		/* set first connected account as active account */
@@ -357,6 +316,11 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 		g_source_remove (dialog->timeout_id);
 		dialog->timeout_id = 0;
 	}
+
+	if (dialog->saved_id != 0) {
+		g_source_remove (dialog->saved_id);
+		dialog->saved_id = 0;
+	}
 }
 
 static void
@@ -412,6 +376,8 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	/* save position incase the next lookup fails */
 	combobox = GTK_COMBO_BOX (dialog->combobox_account);
 	dialog->last_account_selected = gtk_combo_box_get_active (combobox);
+
+
 }
 
 static void
@@ -464,15 +430,21 @@ static void
 vcard_dialog_set_vcard_cb (GossipResult       result, 
 			   GossipVCardDialog *dialog)
 {
-  
 	d(g_print ("Got a vCard response\n"));
   
 	/* if multiple accounts, wait for the close button */
 	if (vcard_dialog_get_account_count (dialog) <= 1) {
 		gtk_widget_destroy (dialog->dialog);
+		return;
 	}
-}
 
+	/* inform the user */
+	gtk_widget_show (dialog->hbox_saved);
+
+	dialog->pulse_id = g_timeout_add (SAVED_TIMEOUT, 
+					  (GSourceFunc)vcard_dialog_saved_cb, 
+					  dialog->hbox_saved);
+}
 
 static gboolean 
 vcard_dialog_progress_pulse_cb (GtkWidget *progressbar)
@@ -518,6 +490,14 @@ vcard_dialog_timeout_cb (GossipVCardDialog *dialog)
 	g_signal_connect_swapped (md, "response",
 				  G_CALLBACK (gtk_widget_destroy), md);
 	gtk_widget_show (md);
+	
+	return FALSE;
+}
+
+static gboolean 
+vcard_dialog_saved_cb (GtkWidget *widget)
+{
+	gtk_widget_hide (widget);
 	
 	return FALSE;
 }
@@ -623,6 +603,8 @@ gossip_vcard_dialog_show (void)
 				       "textview_description", &dialog->textview_description,
 				       "vbox_waiting", &dialog->vbox_waiting,
 				       "progressbar_waiting", &dialog->progressbar_waiting,
+				       "hbox_saved", &dialog->hbox_saved,
+				       "button_cancel", &dialog->button_cancel,
 				       "button_ok", &dialog->button_ok,
 				       NULL);
 
@@ -654,15 +636,20 @@ gossip_vcard_dialog_show (void)
 	vcard_dialog_setup_accounts (accounts, dialog);
 
 	/* select first */
-		
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (dialog->table_account);
+
+		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_cancel), TRUE);
+		gtk_button_set_label (GTK_BUTTON (dialog->button_cancel), "gtk-close");
 
 		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
 		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-apply");
 	} else {
 		/* show no accounts combo box */	
 		gtk_widget_hide (dialog->table_account);
+
+		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_cancel), TRUE);
+		gtk_button_set_label (GTK_BUTTON (dialog->button_cancel), "gtk-cancel");
 
 		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
 		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-ok");

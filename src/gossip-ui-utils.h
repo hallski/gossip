@@ -64,8 +64,12 @@ gchar *    gossip_password_dialog_run                     (GossipAccount       *
 /* pixbufs */
 GdkPixbuf *gossip_ui_utils_get_pixbuf_from_stock          (const gchar         *stock);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_offline             (void);
-GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account        (GossipAccount       *account);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_type   (GossipAccountType    type,
+							   GtkIconSize          icon_size);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account        (GossipAccount       *account,
+							   GtkIconSize          icon_size);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount       *account,
+							   GtkIconSize          icon_size,
 							   gboolean             online);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence_state  (GossipPresenceState  state);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence        (GossipPresence      *presence);

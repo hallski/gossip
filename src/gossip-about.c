@@ -333,8 +333,8 @@ gossip_about_new (void)
 	data->written_by =
 		"Mikael Hallendal\n"
 		"Richard Hult\n"
-		"Geert-Jan Van den Bogaerde\n"
 		"Martyn Russell\n"
+		"Geert-Jan Van den Bogaerde\n"
 		"Kevin Dougherty";
 
 	/* Note to translators: put your name here so it will shop up in the

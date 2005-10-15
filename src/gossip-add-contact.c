@@ -163,10 +163,7 @@ add_contact_setup_accounts (GList            *accounts,
 	GtkComboBox     *combo_box;
 
 	GList           *l;
-	gint             w, h;
-	gint             size = 24;  /* default size */
 	GError          *error = NULL;
-	GtkIconTheme    *theme;
 	GdkPixbuf       *pixbuf;
 
 	gboolean         active_item_set = FALSE;
@@ -186,19 +183,9 @@ add_contact_setup_accounts (GList            *accounts,
 
 	gtk_combo_box_set_model (combo_box, GTK_TREE_MODEL (store));
 
-	/* get theme and size details */
-	theme = gtk_icon_theme_get_default ();
-
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
-		size = 48;
-	} else {
-		size = (w + h) / 2; 
-	}
-
 	/* populate accounts */
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account;
-		const gchar   *icon_id = NULL;
 		gboolean       is_connected;
 
 		account = l->data;
@@ -207,51 +194,18 @@ add_contact_setup_accounts (GList            *accounts,
 		pixbuf = NULL;
 
 		is_connected = gossip_session_is_connected (session, account);
+		pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, 
+									 GTK_ICON_SIZE_MENU,
+									 is_connected);
 
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
+				    COL_ACCOUNT_IMAGE, pixbuf, 
 				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
 				    COL_ACCOUNT_CONNECTED, is_connected,
 				    COL_ACCOUNT_POINTER, g_object_ref (account),
 				    -1);
 
-		switch (gossip_account_get_type (account)) {
-		case GOSSIP_ACCOUNT_TYPE_JABBER:
-			icon_id = "im-jabber";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_AIM:
-			icon_id = "im-aim";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_ICQ:
-			icon_id = "im-icq";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_MSN:
-			icon_id = "im-msn";
-			break;
-		case GOSSIP_ACCOUNT_TYPE_YAHOO:
-			icon_id = "im-yahoo";
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-
-		pixbuf = gtk_icon_theme_load_icon (theme,
-						   icon_id,     /* icon name */
-						   size,      /* size */
-						   0,         /* flags */
-						   &error);
-		
-		if (!pixbuf) {
-			g_warning ("could not load stock icon: %s", icon_id);
-			continue;
-		}	
-
-		gdk_pixbuf_saturate_and_pixelate (pixbuf,
-						  pixbuf,
-						  1.0,
-						  !is_connected);
-		
- 		gtk_list_store_set (store, &iter, COL_ACCOUNT_IMAGE, pixbuf, -1); 
 		g_object_unref (pixbuf);
 
 		/* set first connected account as active account */
@@ -287,12 +241,6 @@ add_contact_setup_systems (GList            *accounts,
 	GtkCellRenderer *renderer;
 	GtkComboBox     *combo_box;
 
-	gint             w, h;
-	gint             size = 24;  /* default size */
-
-	GError          *error = NULL;
-	GtkIconTheme    *theme;
-
 	GdkPixbuf       *pixbuf;
 
 	/* set up combo box with new store */
@@ -309,26 +257,9 @@ add_contact_setup_systems (GList            *accounts,
 	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->one_system_combobox), 
 				 GTK_TREE_MODEL (store));
 		
-	/* get theme and size details */
-	theme = gtk_icon_theme_get_default ();
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account_type (GOSSIP_ACCOUNT_TYPE_JABBER,
+							       GTK_ICON_SIZE_MENU);
 
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
-		size = 48;
-	} else {
-		size = (w + h) / 2; 
-			}				
-			
-	/* show jabber protocol */
-	pixbuf = gtk_icon_theme_load_icon (theme,
-					   "im-jabber", /* icon name */
-					   size,        /* size */
-					   0,           /* flags */
-					   &error);
-	if (!pixbuf) {
-		g_warning ("could not load icon: %s", error->message);
-		g_error_free (error);
-	}
-		
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter, 
 			    COL_SYS_IMAGE, pixbuf, 
@@ -336,6 +267,8 @@ add_contact_setup_systems (GList            *accounts,
 			    COL_SYS_ACCOUNT, NULL,
 			    COL_SYS_PROTOCOL, NULL,
 			    -1);
+
+	g_object_unref (pixbuf);
 
 	gtk_combo_box_set_active_iter (combo_box, &iter);
 	

@@ -1,3 +1,32 @@
+2005-10-15  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-add-contact.c: 
+	* src/gossip-join-dialog.c: 
+	* src/gossip-vcard-dialog.c:
+	* src/gossip-account-button.c:
+	* src/gossip-accounts-window.c
+	- Use gossip-ui-utils functions to get the IM theme Pixbuf instead
+	of repeating the same code.
+
+	* src/gossip-accounts-window.c
+	- Sort names.
+	- Remove clickable sortable columns, clutters the UI.
+
+	* src/gossip-edit-groups-dialog.c:
+	- Sort names.
+	
+	* ui/main.glade:
+	* src/gossip-vcard-dialog.c (gossip_vcard_dialog_show): 
+	- Added some polish so we inform the user when details are saved
+	with multiple accounts.  
+	- Use 'Close' instead of Cancel with multiple accounts.
+
+	* src/gossip-ui-utils.[ch]:
+	- Use new code Richard worked on in here.
+
+	* ui/connect.glade:
+	- Added correct spacing for new VButtonBox.
+
 2005-10-15  Richard Hult  <richard@imendio.com>
 
 	* ui/connect.glade: Make the hscroll policy automatic again.

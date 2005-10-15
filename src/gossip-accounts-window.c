@@ -106,7 +106,6 @@ static gboolean       accounts_window_foreach                   (GtkTreeModel   
 								 GtkTreePath           *path,
 								 GtkTreeIter           *iter,
 								 GossipAccountsWindow  *window);
-
 static void           accounts_window_destroy_cb                (GtkWidget             *widget,
 								 GossipAccountsWindow  *window);
 
@@ -239,7 +238,9 @@ accounts_window_model_setup (GossipAccountsWindow *window)
 	g_signal_connect (selection, "changed", 
 			  G_CALLBACK (accounts_window_model_selection_changed), window);
 
-
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), 
+					      COL_NAME, GTK_SORT_ASCENDING);
+	 
 	accounts_window_model_add_columns (window);
 
 	g_object_unref (store);
@@ -278,9 +279,6 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 			  window);
 
 	gtk_tree_view_column_set_expand (column, TRUE);
-	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
-	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
-
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
 
 	/* Default account. */
@@ -299,9 +297,6 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 			  G_CALLBACK (accounts_window_model_default_toggled), 
 			  window);
 
-	gtk_tree_view_column_set_sort_column_id (column, COL_DEFAULT);
-	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
-
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
 
 	/* Auto connect */
@@ -319,10 +314,6 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 	
  	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_AUTOSIZE); 
 	gtk_tree_view_column_set_expand (column, FALSE);
-
-	gtk_tree_view_column_set_sort_column_id (column, COL_AUTO_CONNECT);
-	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
-
 	gtk_tree_view_append_column (view, column);
 }
 
@@ -334,12 +325,7 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 					GossipAccountsWindow *window)
 {
 	GossipAccount *account;
-	GError        *error = NULL;
-	GtkIconTheme  *theme;
 	GdkPixbuf     *pixbuf;
-	gint           w, h;
-	gint           size;
-	const gchar   *icon_id;
 	gboolean       is_connected;
 
 	gtk_tree_model_get (model, iter, 
@@ -347,42 +333,7 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 			    COL_ACCOUNT_POINTER, &account, 
 			    -1);
 
-	/* get theme and size details */
-	theme = gtk_icon_theme_get_default ();
-
-	if (!gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &w, &h)) {
-		size = 48;
-	} else {
-		size = (w + h) / 2; 
-	}
-
-	switch (gossip_account_get_type (account)) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER:
-		icon_id = "im-jabber";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_AIM:
-		icon_id = "im-aim";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_ICQ:
-		icon_id = "im-icq";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_MSN:
-		icon_id = "im-msn";
-		break;
-	case GOSSIP_ACCOUNT_TYPE_YAHOO:
-		icon_id = "im-yahoo";
-		break;
-	default:
-		icon_id = NULL;
-		g_assert_not_reached ();
-	}
-
-	pixbuf = gtk_icon_theme_load_icon (theme,
-					   icon_id,     /* icon name */
-					   size,        /* size */
-					   0,           /* flags */
-					   &error);
-
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account (account, GTK_ICON_SIZE_BUTTON);
 	g_return_if_fail (pixbuf != NULL);
 
 	if (!is_connected) {
@@ -391,7 +342,8 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 		modded_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
 						TRUE,
 						8,
-						size, size);
+						gdk_pixbuf_get_width (pixbuf), 
+						gdk_pixbuf_get_height (pixbuf));
 
 		gdk_pixbuf_saturate_and_pixelate (pixbuf,
 						  modded_pixbuf,

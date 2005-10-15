@@ -224,21 +224,15 @@ account_button_button_press_event_cb (GtkButton           *button,
 				      GdkEventButton      *event,
 				      GossipAccountButton *account_button)
 {
-	GossipAccountButtonPriv *priv;
-
 	if (event->type == GDK_2BUTTON_PRESS ||
 	    event->type == GDK_3BUTTON_PRESS) {
 		return FALSE;
 	}
 
-	priv = GET_PRIV (account_button);
-	
 	switch (event->button) {
 	case 1:
-		account_button_show_popup (account_button);
-		break;
 	case 3:
-		gossip_account_info_dialog_show (priv->account);
+		account_button_show_popup (account_button);
 		break;
 	default:
 		return FALSE;
@@ -342,8 +336,9 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 	
 	priv->pixelate = !priv->pixelate;
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account (priv->account);
-	gdk_pixbuf_saturate_and_pixelate (pixbuf, pixbuf, 1.0, priv->pixelate);
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (priv->account, 
+								 GTK_ICON_SIZE_BUTTON, 
+								 priv->pixelate);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
@@ -521,7 +516,9 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 		gtk_button_set_image (GTK_BUTTON (account_button), image);
 	}
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (priv->account, online);
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (priv->account, 
+								 GTK_ICON_SIZE_BUTTON,
+								 online);
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 }
