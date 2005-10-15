@@ -294,8 +294,7 @@ gossip_ui_utils_get_pixbuf_offline (void)
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount  *account,
-						gboolean        online)
+gossip_ui_utils_get_pixbuf_from_account (GossipAccount  *account)
 {
 	GtkIconTheme  *theme;
 	GdkPixbuf     *pixbuf = NULL;
@@ -341,7 +340,18 @@ gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount  *account,
 
 	g_return_val_if_fail (pixbuf != NULL, NULL);
 	
-	/* set image to gray scale */
+	return pixbuf;
+}
+
+GdkPixbuf *
+gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount  *account,
+						gboolean        online)
+{
+	GdkPixbuf *pixbuf = NULL;
+
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account (account);
+	g_return_val_if_fail (pixbuf != NULL, NULL);
+
 	gdk_pixbuf_saturate_and_pixelate (pixbuf, pixbuf, 1.0, !online);
 
 	return pixbuf;

@@ -122,8 +122,10 @@ static void            session_connect_foreach_cb                (gchar         
 
 /* signals */
 enum {
+	CONNECTING,
 	CONNECTED,
 	DISCONNECTED,
+	PROTOCOL_CONNECTING,
 	PROTOCOL_CONNECTED,
 	PROTOCOL_DISCONNECTED,
 	PROTOCOL_ERROR,
@@ -159,6 +161,16 @@ gossip_session_class_init (GossipSessionClass *klass)
 
 	object_class->finalize = session_finalize;
 
+	signals[CONNECTING] = 
+		g_signal_new ("connecting",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0, 
+			      NULL, NULL,
+			      libgossip_marshal_VOID__BOOLEAN,
+			      G_TYPE_NONE, 
+			      1, G_TYPE_BOOLEAN);
+
 	signals[CONNECTED] = 
 		g_signal_new ("connected",
 			      G_TYPE_FROM_CLASS (klass),
@@ -176,6 +188,16 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
+
+	signals[PROTOCOL_CONNECTING] = 
+		g_signal_new ("protocol-connecting",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__POINTER_BOOLEAN,
+			      G_TYPE_NONE, 
+			      2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 
 	signals[PROTOCOL_CONNECTED] = 
 		g_signal_new ("protocol-connected",
@@ -388,10 +410,12 @@ session_protocol_logged_in (GossipProtocol *protocol,
 	/* Update some status? */
 	priv->connected_counter++;
 
+	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, FALSE);
 	g_signal_emit (session, signals[PROTOCOL_CONNECTED], 0, account, protocol);
 
 	if (priv->connected_counter == 1) {
 		/* Before this connect the session was set to be DISCONNECTED */
+		g_signal_emit (session, signals[CONNECTING], 0, FALSE);
 		g_signal_emit (session, signals[CONNECTED], 0);
 	}
 }
@@ -415,10 +439,12 @@ session_protocol_logged_out (GossipProtocol *protocol,
 
 	priv->connected_counter--;
 	
+	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, FALSE);
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
 	
 	if (priv->connected_counter == 0) {
 		/* Last connected protocol was disconnected */
+		g_signal_emit (session, signals[CONNECTING], 0, FALSE);
 		g_signal_emit (session, signals[DISCONNECTED], 0);
 	}
 }
@@ -787,6 +813,8 @@ gossip_session_connect (GossipSession *session,
 
 	g_return_if_fail (priv->accounts != NULL);
 
+	g_signal_emit (session, signals[CONNECTING], 0, TRUE);
+
 	/* temporary */
 	if (!priv->presence) {
 		priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
@@ -832,6 +860,8 @@ session_connect (GossipSession *session,
 		return;
 	}
 	
+	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, TRUE);
+
 	/* can we not just pass the GossipAccount on the GObject init? */
 	gossip_protocol_setup (protocol, account);
 	

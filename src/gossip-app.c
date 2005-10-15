@@ -101,13 +101,19 @@ struct _GossipAppPriv {
 
 	GossipContactList  *contact_list;
 
+	/* main widgets */
 	GtkWidget          *window;
-
 	GtkWidget          *main_vbox;
 
+	/* menu widgets */
+	GtkWidget          *actions_connect;
+	GtkWidget          *actions_disconnect;
+
+	/* accounts toolbar */
 	GtkWidget          *accounts_toolbar;
 	GHashTable         *accounts;
 
+	/* tray */
 	EggTrayIcon        *tray_icon;
 	GtkWidget          *tray_event_box;
 	GtkWidget          *tray_image;
@@ -132,12 +138,13 @@ struct _GossipAppPriv {
 	guint               status_flash_timeout_id;
 	time_t              leave_time;
 
-	/* set by the user (available/busy) */
+	/* presence set by the user (available/busy) */
 	GossipPresence     *presence;
 
 	/* away presence (away/xa), overrides priv->presence */
 	GossipPresence     *away_presence;
 	
+	/* misc */
 	guint               size_timeout_id;
 };
 
@@ -259,8 +266,6 @@ static void            app_tray_update_tooltip              (void);
 static void            app_accounts_create                  (void);
 static void            app_accounts_add                     (GossipAccount        *account);
 static void            app_accounts_remove                  (GossipAccount        *account);
-static void            app_accounts_update                  (GossipAccount        *account,
-							     gboolean              online);
 static void            app_accounts_account_added_cb        (GossipAccountManager *manager,
 							     GossipAccount        *account,
 							     gpointer              user_data);
@@ -416,6 +421,7 @@ app_setup (GossipAccountManager *manager)
 	GtkWidget      *show_offline_widget;
 	gint            x, y;
 	gboolean        hidden;
+	GtkWidget      *image;
 
 	priv = app->priv;
 
@@ -473,6 +479,8 @@ app_setup (GossipAccountManager *manager)
 				       NULL,
 				       "main_window", &priv->window,
 				       "main_vbox", &priv->main_vbox,
+				       "actions_connect", &priv->actions_connect,
+				       "actions_disconnect", &priv->actions_disconnect,
 				       "accounts_toolbar", &priv->accounts_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       "status_button_hbox", &priv->status_button_hbox,
@@ -488,7 +496,7 @@ app_setup (GossipAccountManager *manager)
 			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
 			      "file_quit", "activate", app_quit_cb,
 			      "actions_connect", "activate", app_connect_cb,
-			      "actions_disconnect", "activate", app_disconnect_cb,
+ 			      "actions_disconnect", "activate", app_disconnect_cb, 
 			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
 			      "actions_send_chat_message", "activate", app_new_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
@@ -499,6 +507,17 @@ app_setup (GossipAccountManager *manager)
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "help_about", "activate", app_about_cb,
 			      NULL);
+
+	/* Set up menu */
+	g_object_get (GTK_IMAGE_MENU_ITEM (priv->actions_connect), "image", &image, NULL);
+	gtk_image_set_from_stock (GTK_IMAGE (image), GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
+	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_connect)->child), 
+					  _("_Connect"));
+
+	g_object_get (GTK_IMAGE_MENU_ITEM (priv->actions_disconnect), "image", &image, NULL);
+	gtk_image_set_from_stock (GTK_IMAGE (image), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_MENU);
+	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_disconnect)->child), 
+					  _("_Disconnect"));
 
 	/* Set up presence chooser */
 	priv->presence_chooser = gossip_presence_chooser_new ();
@@ -796,8 +815,6 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	priv = app->priv;
 
- 	app_accounts_update (account, TRUE); 
-
 	app_connection_items_update ();
 	app_presence_updated ();
 
@@ -818,8 +835,6 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	
 	priv = app->priv;
 	
- 	app_accounts_update (account, FALSE); 
-
  	app_connection_items_update ();
 	app_presence_updated ();
 
@@ -921,7 +936,10 @@ app_connect_cb (GtkWidget *window,
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
-	gossip_app_connect (FALSE);
+	/* currently we pass TRUE even though this is not a startup
+	   call to connect, but if we pass FALSE then *ALL* accounts
+	   will be connected. */
+	gossip_app_connect (TRUE);
 }
 
 static void
@@ -1826,23 +1844,6 @@ app_accounts_remove (GossipAccount *account)
 	priv = app->priv;
 
 	g_hash_table_remove (priv->accounts, account);
-}
-
-static void
-app_accounts_update (GossipAccount *account,
-		     gboolean       online)
-{
-	GossipAppPriv *priv;
-	GtkWidget     *account_button;
-
-	priv = app->priv;
-
-	account_button = g_hash_table_lookup (priv->accounts, account);
-	if (!account_button) {
-		return;
-	}
-
-	gossip_account_button_set_status (GOSSIP_ACCOUNT_BUTTON (account_button), online);	
 }
 
 static void

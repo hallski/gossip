@@ -1,3 +1,18 @@
+2005-10-15  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/gossip-session.c:
+	- Added signals for "connecting" and "protocol-connecting".
+	* src/gossip-account-button.c: (gossip_account_button_init),
+	- Moved the code that was setting the status based on
+	connected/disconnected signals to here.
+	- Added visual effect of flashing when we receive the "connecting"
+	signal.
+	* ui/main.glade:
+	* src/gossip-app.c:
+	- Use the GTK stock images for connect/disconnect.
+	- Only connect accounts which are set to autoconnect and NOT all
+	accounts when clicking Chat->Connect.
+
 2005-10-10  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-session.c:
