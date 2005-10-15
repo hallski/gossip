@@ -738,8 +738,8 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 	GossipContact        *contact;
 
 	contact = gossip_chat_get_contact (priv->current_chat);
-	
-	gossip_log_show (contact);
+
+	gossip_log_show (GTK_WIDGET (priv->dialog), contact);
 }
 
 static void

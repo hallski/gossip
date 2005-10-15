@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio AB
+ * Copyright (C) 2003-2005 Imendio AB
  * Copyright (C) 2003      Johan Wallenborg <johan.wallenborg@fishpins.se>
  *
  * This program is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libgnome/gnome-url.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
@@ -53,13 +54,13 @@ static void
 log_ensure_dir (void)
 {
 	gchar *dir;
-	
+
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 	g_free (dir);
-	
+
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -85,7 +86,7 @@ log_get_filename (GossipContact *contact, const gchar *suffix)
 					   -1);
 	escaped_str = gnome_vfs_escape_host_and_path_string (case_folded_str);
 	g_free (case_folded_str);
-	
+
 	tmp = g_build_filename (g_get_home_dir (),
 				".gnome2", PACKAGE_NAME, "logs",
 				escaped_str,
@@ -116,10 +117,10 @@ log_urlify (const gchar *msg)
 	gchar   *esc;
 
 	ret = g_string_new (NULL);
-	
+
 	start = g_array_new (FALSE, FALSE, sizeof (gint));
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
-	
+
 	num_matches = gossip_utils_url_regex_match (msg, start, end);
 
 	if (num_matches == 0) {
@@ -159,7 +160,7 @@ log_urlify (const gchar *msg)
 			g_free (esc);
 
 			g_string_append (ret, "</a>");
-			
+
 			last = e;
 
 			g_free (tmp);
@@ -176,7 +177,7 @@ log_urlify (const gchar *msg)
 
 	g_array_free (start, TRUE);
 	g_array_free (end, TRUE);
-	
+
 	return g_string_free (ret, FALSE);
 }
 
@@ -191,7 +192,7 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 	gchar         *stamp;
 	const gchar   *nick;
 	const gchar   *resource;
-	
+
 	if (incoming) {
 		contact = gossip_message_get_sender (msg);
 	} else {
@@ -199,9 +200,9 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 	}
 
 	filename = log_get_filename (contact, ".log");
-	
+
 	log_ensure_dir ();
-	
+
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		file = fopen (filename, "w+");
 		if (file) {
@@ -211,15 +212,15 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 		file = fopen (filename, "r+");
 		if (file) {
 			fseek (file, - strlen (LOG_FOOTER), SEEK_END);
-		} 
+		}
 	}
 
 	g_free (filename);
-	
+
 	if (!file) {
 		return;
 	}
-	
+
 	stamp = log_get_timestamp (msg);
 
 	if (incoming) {
@@ -227,7 +228,7 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 		nick = gossip_contact_get_name (contact);
 	} else {
 		to_or_from = "to";
- 		nick = gossip_session_get_nickname (gossip_app_get_session ()); 
+ 		nick = gossip_session_get_nickname (gossip_app_get_session ());
 	}
 
         if (gossip_message_get_body (msg)) {
@@ -235,12 +236,12 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 	} else {
 		body = g_strdup ("");
 	}
-	
+
 	resource = gossip_message_get_explicit_resource (msg);
 	if (!resource) {
 		resource = "";
 	}
-	
+
 	fprintf (file,
 		 "  <message time='%s' %s='%s' resource='%s' nick='%s'>\n"
 		 "    %s\n"
@@ -251,7 +252,7 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 		 resource,
 		 nick,
 		 body);
-	
+
         fclose (file);
 
 	g_free (stamp);
@@ -283,27 +284,27 @@ log_transform (const gchar *infile, gint fd_outfile)
 	}
 
 	title = g_strconcat ("\"", _("Conversation Log"), "\"", NULL);
-	
+
 	/* Set params to be passed to stylesheet. */
 	params[0] = "title";
 	params[1] = title;
         params[2] = NULL;
-	
+
         html_doc = xsltApplyStylesheet (stylesheet, xml_doc, params);
 	if (!html_doc) {
 		xmlFreeDoc (xml_doc);
 		return FALSE;
 	}
-                                                                                
+
         xmlFreeDoc (xml_doc);
-	
+
 	xsltSaveResultToFd (fd_outfile, html_doc, stylesheet);
 
 	xsltFreeStylesheet (stylesheet);
         xmlFreeDoc (html_doc);
 
 	g_free (title);
-	
+
 	return TRUE;
 }
 
@@ -315,13 +316,91 @@ gossip_log_exists (GossipContact *contact)
 
 	infile = log_get_filename (contact, ".log");
 	exists = g_file_test (infile, G_FILE_TEST_EXISTS);
+
 	g_free (infile);
 
 	return exists;
-}	
+}
 
-void
-gossip_log_show (GossipContact *contact)
+/* Copyright (C) 1991, 1992, 1996, 1998 Free Software Foundation, Inc.
+ * This file is derived from mkstemp.c from the GNU C Library.
+ */
+
+#include <sys/types.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/time.h>
+
+#ifndef TMP_MAX
+#define TMP_MAX 16384
+#endif
+
+static int
+our_mkstemps (char *template, int suffix_len)
+{
+	static const char letters[]
+		= "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	static guint64 value;
+	struct timeval tv;
+	char *XXXXXX;
+	size_t len;
+	int count;
+
+	len = strlen (template);
+
+	if ((int) len < 6 + suffix_len
+	    || strncmp (&template[len - 6 - suffix_len], "XXXXXX", 6))
+	{
+		return -1;
+	}
+
+	XXXXXX = &template[len - 6 - suffix_len];
+
+	/* Get some more or less random data.  */
+	gettimeofday (&tv, NULL);
+	value += ((guint64) tv.tv_usec << 16) ^ tv.tv_sec ^ getpid ();
+
+	for (count = 0; count < TMP_MAX; ++count)
+	{
+		guint64 v = value;
+		int fd;
+
+		/* Fill in the random bits.  */
+		XXXXXX[0] = letters[v % 62];
+		v /= 62;
+		XXXXXX[1] = letters[v % 62];
+		v /= 62;
+		XXXXXX[2] = letters[v % 62];
+		v /= 62;
+		XXXXXX[3] = letters[v % 62];
+		v /= 62;
+		XXXXXX[4] = letters[v % 62];
+		v /= 62;
+		XXXXXX[5] = letters[v % 62];
+
+		fd = open (template, O_RDWR|O_CREAT|O_EXCL, 0600);
+		if (fd >= 0)
+			/* The file does not exist.  */
+			return fd;
+
+		/* This is a random value.  It is only necessary that the next
+		   TMP_MAX values generated by adding 7777 to VALUE are different
+		   with (module 2^32).  */
+		value += 7777;
+	}
+
+	/* We return the null string if we can't find a unique file name.  */
+	template[0] = '\0';
+
+	return -1;
+}
+
+static void
+log_show (GossipContact *contact)
 {
 	gchar *infile, *outfile, *url;
 	FILE  *file;
@@ -342,24 +421,26 @@ gossip_log_show (GossipContact *contact)
 		return;
 	}
 
-	outfile = g_build_filename (g_get_tmp_dir (), "gossip-log-XXXXXX", NULL);
+	outfile = g_build_filename (g_get_tmp_dir (),
+				    "gossip-log-XXXXXX.html",
+				    NULL);
 
-	fd = mkstemp (outfile);
+	fd = our_mkstemps (outfile, 5);
 	if (fd == -1) {
 		g_free (outfile);
 		return;
 	}
-	
+
 	if (!log_transform (infile, fd)) {
 		/* Error dialog... */
-		
+
 		g_free (infile);
 		g_free (outfile);
 		return;
 	}
 
 	close (fd);
-	
+
 	url = g_strconcat ("file://", outfile, NULL);
 	if (!gnome_url_show (url, NULL)) {
 		/* Error dialog... */
@@ -368,3 +449,24 @@ gossip_log_show (GossipContact *contact)
 	g_free (url);
 	g_free (outfile);
 }
+
+void
+gossip_log_show (GtkWidget *window, GossipContact *contact)
+{
+	GdkCursor *cursor;
+
+	cursor = gdk_cursor_new (GDK_WATCH);
+
+	gdk_window_set_cursor (window->window, cursor);
+	gdk_cursor_unref (cursor);
+
+	/* Let the UI redraw before we start the slow transformation. */
+	while (gtk_events_pending ()) {
+		gtk_main_iteration ();
+	}
+
+	log_show (contact);
+
+	gdk_window_set_cursor (window->window, NULL);
+}
+

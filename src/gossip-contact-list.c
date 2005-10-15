@@ -1976,7 +1976,7 @@ contact_list_item_menu_log_cb (gpointer   data,
                 return;
         }
 
-        gossip_log_show (contact);
+        gossip_log_show (GTK_WIDGET (data), contact);
 }
 
 static void

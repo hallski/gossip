@@ -1,5 +1,12 @@
 2005-10-15  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-spell.c: Turn debugging off.
+
+	* src/gossip-log.c (gossip_log_show, log_show, our_mkstemps): Make
+	the logs have an .html extension to get the mime type detection
+	working better and also make the UI look less locked-up while
+	transforming.
+
 	* ui/connect.glade:
 	* src/gossip-accounts-window.c: Don't edit pixbufs returned from
 	the icon theme, plug leak. Only saturate and pixelate when

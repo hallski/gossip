@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio AB
+ * Copyright (C) 2003-2005 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,10 +26,8 @@
 
 void     gossip_log_message (GossipMessage *msg,
 			     gboolean       incoming);
-
 gboolean gossip_log_exists  (GossipContact *contact);
-
-void     gossip_log_show    (GossipContact *contact);
-
+void     gossip_log_show    (GtkWidget     *window,
+			     GossipContact *contact);
 
 #endif /* __GOSSIP_LOG_H__ */

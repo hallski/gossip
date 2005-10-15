@@ -30,7 +30,7 @@
 
 #include "gossip-spell.h"
 
-#define d(x) x
+#define d(x) 
 	
 
 typedef struct {
