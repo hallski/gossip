@@ -1,5 +1,11 @@
 2005-10-15  Richard Hult  <richard@imendio.com>
 
+	* ui/connect.glade: Make the hscroll policy automatic again.
+	
+	* src/gossip-accounts-window.c
+	(accounts_window_model_add_columns): Don't make the columns
+	resizable.
+
 	* src/gossip-spell.c: Turn debugging off.
 
 	* src/gossip-log.c (gossip_log_show, log_show, our_mkstemps): Make

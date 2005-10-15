@@ -277,11 +277,8 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 			  G_CALLBACK (accounts_window_model_cell_edited), 
 			  window);
 
- 	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_GROW_ONLY);
 	gtk_tree_view_column_set_expand (column, TRUE);
-
 	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
-	gtk_tree_view_column_set_resizable (column, TRUE);
 	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
@@ -324,7 +321,6 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 	gtk_tree_view_column_set_expand (column, FALSE);
 
 	gtk_tree_view_column_set_sort_column_id (column, COL_AUTO_CONNECT);
-	gtk_tree_view_column_set_resizable (column, FALSE);
 	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
 
 	gtk_tree_view_append_column (view, column);
