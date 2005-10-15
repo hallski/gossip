@@ -36,17 +36,13 @@
 
 
 typedef struct {
-	gpointer  *p;
-
 	GtkWidget *window;
 
 	GtkWidget *treeview;
 	GtkWidget *button_add;
 	GtkWidget *button_edit;
 	GtkWidget *button_remove;
-	GtkWidget *button_default;
 	GtkWidget *button_connect;
-	GtkWidget *button_close;
 } GossipAccountsWindow;
 
 
@@ -60,11 +56,6 @@ static void           accounts_window_setup                     (GossipAccountsW
 static void           accounts_window_update_connect_button     (GossipAccountsWindow  *window);
 static void           accounts_window_model_setup               (GossipAccountsWindow  *window);
 static void           accounts_window_model_add_columns         (GossipAccountsWindow  *window);
-static void           accounts_window_model_name_data_func      (GtkTreeViewColumn     *tree_column,
-								 GtkCellRenderer       *cell,
-								 GtkTreeModel          *model,
-								 GtkTreeIter           *iter,
-								 GossipAccountsWindow  *window);
 static void           accounts_window_model_pixbuf_data_func    (GtkTreeViewColumn     *tree_column,
 								 GtkCellRenderer       *cell,
 								 GtkTreeModel          *model,
@@ -76,7 +67,10 @@ static void           accounts_window_model_set_selected        (GossipAccountsW
 static gboolean       accounts_window_model_remove_selected     (GossipAccountsWindow  *window);
 static void           accounts_window_model_selection_changed   (GtkTreeSelection      *selection,
 								 GossipAccountsWindow  *window);
-static void           accounts_window_model_cell_toggled        (GtkCellRendererToggle *cell,
+static void           accounts_window_model_default_toggled     (GtkCellRendererToggle *cell,
+								 gchar                 *path_string,
+								 GossipAccountsWindow  *window);
+static void           accounts_window_model_auto_toggled        (GtkCellRendererToggle *cell,
 								 gchar                 *path_string,
 								 GossipAccountsWindow  *window);
 static void           accounts_window_model_cell_edited         (GtkCellRendererText   *cell,
@@ -105,8 +99,6 @@ static void           accounts_window_button_add_clicked_cb     (GtkWidget      
 static void           accounts_window_button_edit_clicked_cb    (GtkWidget             *button,
 								 GossipAccountsWindow  *window);
 static void           accounts_window_button_remove_clicked_cb  (GtkWidget             *button,
-								 GossipAccountsWindow  *window);
-static void           accounts_window_button_default_clicked_cb (GtkWidget             *button,
 								 GossipAccountsWindow  *window);
 static void           accounts_window_button_close_clicked_cb   (GtkWidget             *button,
 								 GossipAccountsWindow  *window);
@@ -193,7 +185,9 @@ accounts_window_update_connect_button (GossipAccountsWindow *window)
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
-	const gchar      *new_stock_id;
+	GtkWidget        *image;
+	const gchar      *stock_id;
+	const gchar      *label;
 	gboolean          is_connected;
 
 	view = GTK_TREE_VIEW (window->treeview);
@@ -205,18 +199,21 @@ accounts_window_update_connect_button (GossipAccountsWindow *window)
 
 	gtk_tree_model_get (model, &iter, COL_CONNECTED, &is_connected, -1);
 	
-	/* are we connected */
+	/* The stock items are not defined correctly in GTK+ so we do it
+	 * ourselves (#318939). 
+	 */
 	if (is_connected) {
-		new_stock_id = _("Disconnect");
+		label = _("Disconnect");
+		stock_id = "gtk-disconnect";
 	} else {
-		new_stock_id = _("Connect");
+		label = _("Connect");
+		stock_id = "gtk-connect";
 	}
 
-	/* FIXME: for some reason, stock for connect/disconnect is not working */
-	gtk_button_set_use_stock (GTK_BUTTON (window->button_connect), TRUE);
-	gtk_button_set_label (GTK_BUTTON (window->button_connect), 
-			      new_stock_id);
+	image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
 
+	gtk_button_set_label (GTK_BUTTON (window->button_connect), label);
+	gtk_button_set_image (GTK_BUTTON (window->button_connect), image);
 }
 
 static void 
@@ -258,7 +255,7 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 	view = GTK_TREE_VIEW (window->treeview);
 	gtk_tree_view_set_headers_visible (view, TRUE);
 
-	/* account name/status */
+	/* Account name/status */
 	column = gtk_tree_view_column_new ();
 	gtk_tree_view_column_set_title (column, _("Account"));
 
@@ -271,13 +268,11 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 						 NULL);
 
 	cell = gtk_cell_renderer_text_new ();
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_tree_view_column_pack_start (column, cell, TRUE);
-	gtk_tree_view_column_set_cell_data_func (column, cell,
-						 (GtkTreeCellDataFunc) 
-						 accounts_window_model_name_data_func,
-						 window,
-						 NULL);
-
+	gtk_tree_view_column_add_attribute (column,
+					    cell,
+					    "text", COL_NAME);
 	g_signal_connect (cell, "edited",
 			  G_CALLBACK (accounts_window_model_cell_edited), 
 			  window);
@@ -291,10 +286,34 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
 
-	/* auto connect */
+	/* Default account. */
 	cell = gtk_cell_renderer_toggle_new ();
+	g_object_set (cell, 
+		      "radio", TRUE, 
+		      "xalign", 0.0,
+		      NULL);
+
+	column = gtk_tree_view_column_new_with_attributes (_("Default"), cell, 
+							   "active", COL_DEFAULT, 
+							   NULL);
+	
+	g_signal_connect (cell, 
+			  "toggled",
+			  G_CALLBACK (accounts_window_model_default_toggled), 
+			  window);
+
+	gtk_tree_view_column_set_sort_column_id (column, COL_DEFAULT);
+	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
+
+	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview), column);
+
+	/* Auto connect */
+	cell = gtk_cell_renderer_toggle_new ();
+	g_object_set (cell, 
+		      "xalign", 0.0,
+		      NULL);
 	g_signal_connect (cell, "toggled", 
-			  G_CALLBACK (accounts_window_model_cell_toggled), 
+			  G_CALLBACK (accounts_window_model_auto_toggled), 
 			  window);
 	
 	column = gtk_tree_view_column_new_with_attributes (_("Auto Connect"), cell,
@@ -312,40 +331,6 @@ accounts_window_model_add_columns (GossipAccountsWindow *window)
 }
 
 static void  
-accounts_window_model_name_data_func (GtkTreeViewColumn     *tree_column,
-				      GtkCellRenderer       *cell,
-				      GtkTreeModel          *model,
-				      GtkTreeIter           *iter,
-				      GossipAccountsWindow  *window)
-{
-	gchar    *name;
-	gboolean  is_editable;
-	gboolean  is_default;
-	gchar    *str;
-
-	gtk_tree_model_get (model, iter, 
-			    COL_NAME, &name,
-			    COL_EDITABLE, &is_editable,
-			    COL_DEFAULT, &is_default, 
-			    -1);
-
-	str = g_strdup_printf ("%s%s%s%s", 
-			       name, 
-			       is_default ? " [" : "",
-			       is_default ? _("Default") : "",
-			       is_default ? "] " : "");
-
-	g_object_set (cell,
-		      "visible", TRUE,
-		      "editable", is_editable,
-		      "text", str,
-		      NULL);
-
-	g_free (str);
-	g_free (name);
-}
-
-static void  
 accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 					GtkCellRenderer      *cell,
 					GtkTreeModel         *model,
@@ -355,10 +340,10 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 	GossipAccount *account;
 	GError        *error = NULL;
 	GtkIconTheme  *theme;
-	GdkPixbuf     *pixbuf = NULL;
+	GdkPixbuf     *pixbuf;
 	gint           w, h;
-	gint           size = 48;  /* default size */
-	const gchar   *icon_id = NULL;
+	gint           size;
+	const gchar   *icon_id;
 	gboolean       is_connected;
 
 	gtk_tree_model_get (model, iter, 
@@ -392,6 +377,7 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 		icon_id = "im-yahoo";
 		break;
 	default:
+		icon_id = NULL;
 		g_assert_not_reached ();
 	}
 
@@ -403,15 +389,28 @@ accounts_window_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 
 	g_return_if_fail (pixbuf != NULL);
 
-	gdk_pixbuf_saturate_and_pixelate (pixbuf,
-					  pixbuf,
-					  1.0,
-					  !is_connected);
+	if (!is_connected) {
+		GdkPixbuf *modded_pixbuf;
+
+		modded_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
+						TRUE,
+						8,
+						size, size);
+
+		gdk_pixbuf_saturate_and_pixelate (pixbuf,
+						  modded_pixbuf,
+						  1.0,
+						  TRUE);
+		g_object_unref (pixbuf);
+		pixbuf = modded_pixbuf;
+	}
 
 	g_object_set (cell, 
 		      "visible", TRUE,
 		      "pixbuf", pixbuf,
 		      NULL); 
+
+	g_object_unref (pixbuf);
 }
 
 static GossipAccount *
@@ -447,7 +446,7 @@ accounts_window_model_set_selected (GossipAccountsWindow *window,
 	selection = gtk_tree_view_get_selection (view);
 	model = gtk_tree_view_get_model (view);
 
-	/* nothing in list */
+	/* Nothing in list. */
 	if (!gtk_tree_model_get_iter_first (model, &iter)) {
 		return;
 	}
@@ -496,14 +495,58 @@ accounts_window_model_selection_changed (GtkTreeSelection    *selection,
 
 	gtk_widget_set_sensitive (window->button_edit, is_selection);
 	gtk_widget_set_sensitive (window->button_remove, is_selection);
-	gtk_widget_set_sensitive (window->button_default, is_selection);
 	gtk_widget_set_sensitive (window->button_connect, is_selection);
 
 	accounts_window_update_connect_button (window);
 }
 
 static void 
-accounts_window_model_cell_toggled (GtkCellRendererToggle *cell, 
+accounts_window_model_default_toggled (GtkCellRendererToggle *cell, 
+				       gchar                 *path_string, 
+				       GossipAccountsWindow  *window)
+{
+	GossipSession        *session;
+	GossipAccountManager *manager;
+	GossipAccount        *account;
+	GtkTreeView          *view;
+	GtkTreeModel         *model;
+	GtkListStore         *store;
+	GtkTreePath          *path;
+	GtkTreeIter           iter;
+
+	view = GTK_TREE_VIEW (window->treeview);
+	model = gtk_tree_view_get_model (view);
+	store = GTK_LIST_STORE (model);
+
+	if (gtk_tree_model_get_iter_first (model, &iter)) {
+		do {
+			gtk_list_store_set (store, &iter, 
+					    COL_DEFAULT, FALSE,
+					    -1);
+		} while (gtk_tree_model_iter_next (model, &iter));
+	}
+	
+	path = gtk_tree_path_new_from_string (path_string);
+	gtk_tree_model_get_iter (model, &iter, path);
+	gtk_tree_path_free (path);
+
+	gtk_tree_model_get (model, &iter, 
+			    COL_ACCOUNT_POINTER, &account,
+			    -1);
+
+	session = gossip_app_get_session ();
+ 	manager = gossip_session_get_account_manager (session);
+
+	gossip_account_manager_set_default (manager, account);
+	gossip_account_manager_store (manager);
+
+	gtk_list_store_set (store, &iter, 
+			    COL_DEFAULT, TRUE,
+			    -1);
+}
+
+static void 
+accounts_window_model_auto_toggled (GtkCellRendererToggle *cell, 
 				    gchar                 *path_string, 
 				    GossipAccountsWindow  *window)
 {
@@ -511,7 +554,6 @@ accounts_window_model_cell_toggled (GtkCellRendererToggle *cell,
 	GossipAccountManager *manager;
 	GossipAccount        *account;
 	gboolean              enabled;
-
 	GtkTreeView          *view;
 	GtkTreeModel         *model;
 	GtkListStore         *store;
@@ -530,7 +572,7 @@ accounts_window_model_cell_toggled (GtkCellRendererToggle *cell,
 			    COL_ACCOUNT_POINTER, &account,
 			    -1);
 
-	enabled ^= 1;
+	enabled = !enabled;
 
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
@@ -793,42 +835,22 @@ accounts_window_button_remove_clicked_cb (GtkWidget            *button,
 }
 
 static void
-accounts_window_button_default_clicked_cb (GtkWidget            *button,
-					   GossipAccountsWindow *window)
-{
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	GossipAccount        *account;
-
-	session = gossip_app_get_session ();
- 	manager = gossip_session_get_account_manager (session);
-
-	account = accounts_window_model_get_selected (window);
-	gossip_account_manager_set_default (manager, account);
-	gossip_account_manager_store (manager);
-}
-
-static void
 accounts_window_button_connect_clicked_cb (GtkWidget            *button,
 					   GossipAccountsWindow *window)
 {
 	GossipSession        *session;
 	GossipAccountManager *manager;
 	GossipAccount        *account;
-	const gchar          *text;
 
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
 
 	account = accounts_window_model_get_selected (window);
 
-	text = gtk_button_get_label (GTK_BUTTON (button));
-	g_return_if_fail (text != NULL);
-
-	if (strcmp (text, _("Connect")) == 0) {
-		gossip_session_connect (session, account, FALSE);
-	} else if (strcmp (text, _("Disconnect")) == 0) {
+	if (gossip_session_is_connected (session, account)) {
 		gossip_session_disconnect (session, account);
+	} else {
+		gossip_session_connect (session, account, FALSE);
 	}
 }
 
@@ -889,7 +911,6 @@ accounts_window_destroy_cb (GtkWidget            *widget,
 				(GtkTreeModelForeachFunc) accounts_window_foreach, 
 				window);
 
-	*window->p = NULL;
 	g_free (window);
 }
 
@@ -900,6 +921,7 @@ gossip_accounts_window_show (void)
 	GossipAccountManager        *manager;
 	static GossipAccountsWindow *window = NULL;
 	GladeXML                    *glade;
+	GtkWidget                   *bbox, *button_close;
 
 	if (window) {
 		gtk_window_present (GTK_WINDOW (window->window));
@@ -908,19 +930,21 @@ gossip_accounts_window_show (void)
 	
 	window = g_new0 (GossipAccountsWindow, 1);
 
-	window->p = (gpointer) &window;
-
 	glade = gossip_glade_get_file (GLADEDIR "/connect.glade",
 				       "accounts_window",
 				       NULL,
 				       "accounts_window", &window->window,
 				       "treeview", &window->treeview,
+				       "bbox", &bbox,
 				       "button_add", &window->button_add,
 				       "button_edit", &window->button_edit,
 				       "button_remove", &window->button_remove,
-				       "button_default", &window->button_default,
 				       "button_connect", &window->button_connect,
+				       "button_close", &button_close,
 				       NULL);
+
+	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (bbox), 
+					    button_close, TRUE);
 
 	gossip_glade_connect (glade, 
 			      window,
@@ -928,10 +952,11 @@ gossip_accounts_window_show (void)
 			      "button_add", "clicked", accounts_window_button_add_clicked_cb,
 			      "button_edit", "clicked", accounts_window_button_edit_clicked_cb,
 			      "button_remove", "clicked", accounts_window_button_remove_clicked_cb,
-			      "button_default", "clicked", accounts_window_button_default_clicked_cb,
 			      "button_connect", "clicked", accounts_window_button_connect_clicked_cb,
 			      "button_close", "clicked", accounts_window_button_close_clicked_cb,
 			      NULL);
+
+	g_object_add_weak_pointer (G_OBJECT (window->window), (gpointer) &window);
 	
 	g_object_unref (glade);
 
@@ -939,16 +964,20 @@ gossip_accounts_window_show (void)
 	manager = gossip_session_get_account_manager (session);
 
 	g_signal_connect (manager, "account_added",
-			  G_CALLBACK (accounts_window_account_added_cb), window);
+			  G_CALLBACK (accounts_window_account_added_cb), 
+			  window);
 
 	g_signal_connect (manager, "account_removed",
-			  G_CALLBACK (accounts_window_account_removed_cb), window);
+			  G_CALLBACK (accounts_window_account_removed_cb), 
+			  window);
 
 	g_signal_connect (session, "protocol-connected",
-			  G_CALLBACK (accounts_window_protocol_connected_cb), window);
+			  G_CALLBACK (accounts_window_protocol_connected_cb), 
+			  window);
 
 	g_signal_connect (session, "protocol-disconnected",
-			  G_CALLBACK (accounts_window_protocol_disconnected_cb), window);
+			  G_CALLBACK (accounts_window_protocol_disconnected_cb), 
+			  window);
 
 	accounts_window_model_setup (window);
 	accounts_window_setup (window);

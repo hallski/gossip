@@ -1,3 +1,13 @@
+2005-10-15  Richard Hult  <richard@imendio.com>
+
+	* ui/connect.glade:
+	* src/gossip-accounts-window.c: Don't edit pixbufs returned from
+	the icon theme, plug leak. Only saturate and pixelate when
+	needed. Don't use the label contents to decide when to
+	connect/disconnect. Add a column for the default property and
+	remove the button for that. Make the account name ellipsized, use
+	a button box for the buttons.
+
 2005-10-15  Martyn Russell  <mr@gnome.org>
 
 	* libgossip/gossip-session.c:

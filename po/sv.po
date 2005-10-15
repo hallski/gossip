@@ -286,7 +286,7 @@ msgstr "Konto"
 
 #: ../src/gossip-accounts-window.c:300
 msgid "Auto Connect"
-msgstr "Anslut automatiskt"
+msgstr "Autoanslut"
 
 #: ../src/gossip-accounts-window.c:335 ../ui/connect.glade.h:7
 msgid "Default"
