@@ -1,3 +1,7 @@
+2005-10-18  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Make "add to list" enabled by default.
+
 2005-10-17  Richard Hult  <richard@imendio.com>
 
 	* ui/connect.glade: Change hscroll policy back to never now that
