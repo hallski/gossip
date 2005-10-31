@@ -32,7 +32,7 @@
 
 #define STATUS_PRESETS_XML_FILENAME "status-presets.xml"
 #define STATUS_PRESETS_DTD_FILENAME "gossip-status-presets.dtd"
-#define STATUS_PRESETS_MAX_EACH     10
+#define STATUS_PRESETS_MAX_EACH     15
 
 #define d(x) 
 

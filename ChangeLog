@@ -1,3 +1,16 @@
+2005-10-31  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-presence-chooser.c:
+	(gossip_presence_chooser_create_menu): Allow 5 presets per status.
+
+	* src/gossip-status-presets.c: Save 15 presets each.
+
+	* ui/main.glade: Make the checkbutton for saving status presets
+	disabled by default again.
+
+2005-10-31  Richard Hult  <richard@imendio.com>
+
+
 2005-10-18  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Make "add to list" enabled by default.
