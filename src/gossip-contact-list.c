@@ -39,7 +39,7 @@
 #include "gossip-sound.h"
 #include "gossip-chat-invite.h"
 
-#define d(x) 
+#define d(x) x
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
@@ -55,6 +55,10 @@
         
 /* time after connecting which we wait before active users are enabled */
 #define ACTIVE_USER_WAIT_TO_ENABLE_TIME 5000    
+
+/* time to wait before we use sounds for an account after it has gone
+   online/offline, so we don't spam the sound with online's, etc */
+#define SOUNDS_ENABLED_WAIT_TIME 10000   
 
 
 struct _GossipContactListPriv {
@@ -664,6 +668,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	gboolean               do_set_active = FALSE;
 	gboolean               do_set_refresh = FALSE;
 
+	GossipAccount         *account;
+	gdouble                seconds;
+
 	priv = list->priv;
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
@@ -698,7 +705,12 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		return;
 	}
 	else if (in_list && !should_be_in_list) {
-		gossip_sound_play (GOSSIP_SOUND_OFFLINE);
+		account = gossip_session_find_account (session, contact);
+		seconds = gossip_session_get_connected_time (session, account);
+
+		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
+			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
+		}
 
 		if (priv->show_active) {
 			do_remove = TRUE;
@@ -713,7 +725,13 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		}
 	}
 	else if (!in_list && should_be_in_list) {
-		gossip_sound_play (GOSSIP_SOUND_ONLINE);
+		account = gossip_session_find_account (session, contact);
+		seconds = gossip_session_get_connected_time (session, account);
+
+		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
+			gossip_sound_play (GOSSIP_SOUND_ONLINE);
+		}
+
 		contact_list_add_contact (list, contact);
 	
 		if (priv->show_active) {

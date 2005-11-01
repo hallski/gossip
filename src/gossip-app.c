@@ -1111,7 +1111,13 @@ app_show_offline_cb (GtkCheckMenuItem *item, GossipApp *app)
 			       current,
 			       NULL);
 
+	/* turn off while we alter the contact list */
+	gossip_sound_toggle (FALSE);
+
 	g_object_set (priv->contact_list, "show_offline", current, NULL);
+
+	/* turn on back to normal */
+	gossip_sound_toggle (TRUE);
 }
 
 static void

@@ -1,5 +1,21 @@
 2005-11-01  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-session.[ch]:
+	- Added _get_connected_time () API.
+
+	* src/gossip-accounts-dialog.c:
+	- Don't include resource label in size group for connection
+	labels, server and port.
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-sound.[ch]:
+	- Don't play online/offline sounds within 10 seconds of the
+	account becoming connected.
+	- Disable sound when showing/hiding offline contacts.
+	- Fixes bug #314848.
+
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
 	* ui/connect.glade: 
 	- Moved the SSL checkbutton to the "Connection" tab in the
 	Accounts dialog.

@@ -29,9 +29,14 @@
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
-#define d(x)
+#define d(x) x
+
 
 extern GConfClient *gconf_client;
+
+/* is sound toggled on or off */
+static gboolean sound_enabled = TRUE;
+
 
 void
 gossip_sound_play (GossipSound sound)
@@ -43,23 +48,27 @@ gossip_sound_play (GossipSound sound)
 
 	session = gossip_app_get_session ();
 
-	if (!gossip_session_is_connected (session, NULL)) {
+	/* this is the internal sound enable/disable for when events
+	   happen that we need to mute sound - e.g. changing roster contacts */
+	if (!sound_enabled) {
+		d(g_print ("Sound: Play request ignored, sound currently disabled.\n"));
 		return;
 	}
-	
+
 	enabled = gconf_client_get_bool (gconf_client,
 					 GCONF_PATH "/sound/play_sounds",
 					 NULL);
+	if (!enabled) {
+		d(g_print ("Sound: Preferences have sound disabled.\n"));
+		return;
+	}
+
 	silent_busy = gconf_client_get_bool (gconf_client,
 					     GCONF_PATH "/sound/silent_busy",
 					     NULL);
 	silent_away = gconf_client_get_bool (gconf_client,
 					     GCONF_PATH "/sound/silent_away",
 					     NULL);
-
-	if (!enabled) {
-		return;
-	}
 
         p = gossip_session_get_presence (gossip_app_get_session ());
         state = gossip_presence_get_state (p);
@@ -68,7 +77,8 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 
-	if (silent_away && (state == GOSSIP_PRESENCE_STATE_AWAY || state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
+	if (silent_away && (state == GOSSIP_PRESENCE_STATE_AWAY || 
+			    state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
 		return;
 	}
 
@@ -91,3 +101,7 @@ gossip_sound_play (GossipSound sound)
 	}
 }		
 
+void gossip_sound_toggle (gboolean enabled)
+{
+	sound_enabled = enabled;
+}

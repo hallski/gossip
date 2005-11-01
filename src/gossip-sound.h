@@ -23,12 +23,16 @@
 
 #include "gossip-app.h"
 
+
 typedef enum {
 	GOSSIP_SOUND_CHAT,
 	GOSSIP_SOUND_OFFLINE,
 	GOSSIP_SOUND_ONLINE
 } GossipSound;
 
-void gossip_sound_play       (GossipSound sound);
+
+void gossip_sound_play   (GossipSound sound);
+void gossip_sound_toggle (gboolean    enabled);
+
 
 #endif /* __GOSSIP_SOUND_H__ */

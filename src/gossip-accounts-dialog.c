@@ -1295,7 +1295,6 @@ gossip_accounts_dialog_show (GossipAccount *optional_account)
 
 	gtk_size_group_add_widget (size_group, label_server);
 	gtk_size_group_add_widget (size_group, label_port);
-	gtk_size_group_add_widget (size_group, label_resource);
 
 	g_object_unref (size_group);
 

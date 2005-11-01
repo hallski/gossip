@@ -36,7 +36,7 @@
 
 #include "gossip-session.h"
 
-#define d(x)
+#define d(x) x
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
 
@@ -55,6 +55,8 @@ struct _GossipSessionPriv {
 	GList                *contacts;
 
 	guint                 connected_counter;
+
+	GHashTable           *timers; /* connected time */
 };
 
 
@@ -354,6 +356,12 @@ gossip_session_init (GossipSession *session)
 	priv->protocols = NULL;
 
 	priv->connected_counter = 0;
+
+	priv->timers = g_hash_table_new_full (gossip_account_hash, 
+					      gossip_account_equal,
+					      g_object_unref,
+					      (GDestroyNotify)g_timer_destroy);
+
 }
 
 static void
@@ -381,6 +389,10 @@ session_finalize (GObject *object)
 		}
 
 		g_list_free (priv->contacts);
+	}
+
+	if (priv->timers) {
+		g_hash_table_destroy (priv->timers);
 	}
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
@@ -440,12 +452,21 @@ session_protocol_logged_in (GossipProtocol *protocol,
 			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
-	
+	GTimer            *timer;
+
 	d(g_print ("Session: Protocol logged in\n"));
 
 	priv = GET_PRIV (session);
+
+	/* setup timer */
+	timer = g_timer_new ();
+	g_timer_start (timer);
+
+	g_hash_table_insert (priv->timers, 
+			     g_object_ref (account), 
+			     timer);
 	
-	/* Update some status? */
+	/* update some status? */
 	priv->connected_counter++;
 
 	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, FALSE);
@@ -464,12 +485,17 @@ session_protocol_logged_out (GossipProtocol *protocol,
 			     GossipSession  *session) 
 {
 	GossipSessionPriv *priv;
-	
-	d(g_print ("Session: Protocol logged out\n"));
+	gdouble            seconds;
+
+	seconds = gossip_session_get_connected_time (session, account);
+	d(g_print ("Session: Protocol logged out (after %.2f seconds)\n", seconds));
 
 	priv = GET_PRIV (session);
-	
-	/* Update some status? */
+
+	/* remove timer */
+	g_hash_table_remove (priv->timers, account);
+
+	/* update some status? */
 	if (priv->connected_counter < 0) {
 		g_warning ("We have some issues in the connection counting");
 		return;
@@ -719,6 +745,27 @@ session_get_accounts_foreach_cb (const gchar     *account_name,
 	if (account) {
 		data->accounts = g_list_append (data->accounts, account);
 	}
+}
+
+gdouble
+gossip_session_get_connected_time (GossipSession *session,
+				   GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GTimer            *timer;
+	gulong             ms;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), 0);
+
+	priv = GET_PRIV (session);
+
+	timer = g_hash_table_lookup (priv->timers, account);
+	if (!timer) {
+		return 0;
+	}
+
+	return g_timer_elapsed (timer, &ms);
 }
 
 guint 

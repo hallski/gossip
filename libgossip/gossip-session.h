@@ -68,6 +68,8 @@ GossipSession * gossip_session_new                     (GossipAccountManager    
 GossipAccountManager *
                 gossip_session_get_account_manager     (GossipSession           *session);
 GList *         gossip_session_get_accounts            (GossipSession           *session);
+gdouble         gossip_session_get_connected_time      (GossipSession           *session,
+							GossipAccount           *account);
 guint           gossip_session_count_accounts          (GossipSession           *session,
 							gboolean                 connected,
 							gboolean                 enabled);
