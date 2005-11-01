@@ -1,5 +1,10 @@
 2005-11-01  Martyn Russell  <martyn@imendio.com>
 
+	* ui/connect.glade:
+	- Some tweaks to the accounts dialog sizing.
+
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c:
 	- Fixed the widgets that are updated by connection so you can
 	still do things to accounts that are not enabled but ARE online.
