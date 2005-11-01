@@ -1,3 +1,10 @@
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: 
+	- Removed src/gossip-account-info.c
+	- Removed src/gossip-accounts-window.c
+	- Added src/gossip-accounts-dialog.c
+
 2005-10-26  Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
 
 	* es.po: Updated Spanish translation by María Majadas.

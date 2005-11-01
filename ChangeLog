@@ -1,5 +1,14 @@
 2005-11-01  Martyn Russell  <martyn@imendio.com>
 
+	* ui/connect.glade: 
+	- Moved the SSL checkbutton to the "Connection" tab in the
+	Accounts dialog.
+	
+	* ui/group-chat.glade: 
+	- Removed old edit favourites dialog.
+
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account-manager.c:
 	* libgossip/gossip-account.[ch]:
 	* libgossip/gossip-account.dtd:
