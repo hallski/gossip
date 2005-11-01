@@ -1,5 +1,17 @@
 2005-11-01  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	- Fixed the widgets that are updated by connection so you can
+	still do things to accounts that are not enabled but ARE online.
+	We have still maintained the fact that the connect and disconnect
+	menu items will only operate on enabled accounts.
+
+	* src/gossip-galago.[ch]:
+	- Updated init function so we pass GossipSession to it like we do
+	the dbus module.
+	
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac:
 	* src/gossip-app.c:
 	* src/gossip-galago.[ch]: 

@@ -128,10 +128,11 @@ struct _GossipAppPriv {
 	GtkWidget          *popup_menu_status_item;
 	GtkWidget          *show_popup_item;
 	GtkWidget          *hide_popup_item;
-	
+	 
 	/* widgets that are enabled when we're connected/disconnected */
-	GList              *enabled_connected_widgets;
-	GList              *enabled_disconnected_widgets;
+	GList              *widgets_connected_all;
+	GList              *widgets_connected;
+	GList              *widgets_disconnected;
 
 	/* status popup */
 	GtkWidget          *status_button_hbox;
@@ -402,8 +403,9 @@ app_finalize (GObject *object)
 					      NULL);
 
 
-	g_list_free (priv->enabled_connected_widgets);
-	g_list_free (priv->enabled_disconnected_widgets);
+	g_list_free (priv->widgets_connected_all);
+	g_list_free (priv->widgets_connected);
+	g_list_free (priv->widgets_disconnected);
 	
 	g_free (priv);
 	app->priv = NULL;
@@ -435,6 +437,10 @@ app_setup (GossipAccountManager *manager)
 	   perhaps in gossip-main.c? */
 #ifdef HAVE_DBUS
         gossip_dbus_init (priv->session);
+#endif
+
+#ifdef HAVE_GALAGO
+	gossip_galago_init (priv->session);
 #endif
 
 	/* do we need first time start up druid? */
@@ -522,6 +528,10 @@ app_setup (GossipAccountManager *manager)
 	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_disconnect)->child), 
 					  _("_Disconnect"));
 
+	/* Set up connection related widgets. */
+	app_connection_items_setup (glade);
+	g_object_unref (glade);
+
 	/* Set up presence chooser */
 	priv->presence_chooser = gossip_presence_chooser_new ();
 	gtk_box_pack_start (GTK_BOX (priv->status_button_hbox), priv->presence_chooser,
@@ -532,10 +542,8 @@ app_setup (GossipAccountManager *manager)
 			  NULL);
 	gtk_widget_show (priv->presence_chooser);
 
-	/* Set up connection related widgets. */
-	app_connection_items_setup (glade);
-
-	g_object_unref (glade);
+	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
+						      priv->presence_chooser);
 
 	/* Set up contact list. */
 	priv->contact_list = gossip_contact_list_new ();
@@ -633,9 +641,6 @@ app_setup (GossipAccountManager *manager)
 	req.width = MAX (req.width, MIN_WIDTH);
 	gtk_widget_set_size_request (priv->window, req.width, -1);
 
-#ifdef HAVE_GALAGO
-	gossip_galago_init ();
-#endif
 	app_connection_items_update ();
 }
 
@@ -1312,18 +1317,20 @@ app_disconnect (void)
 static void
 app_connection_items_setup (GladeXML *glade)
 {
-	GossipAppPriv *priv = app->priv;
+	GossipAppPriv *priv;
 
-	const gchar   *connect_widgets[] = {
-		"actions_disconnect",
+	const gchar   *widgets_connected_all[] = {
 		"actions_join_group_chat",
 		"actions_send_chat_message",
 		"actions_add_contact",
-		"actions_configure_transports",
 		"edit_personal_information"
 	};
 
-	const gchar   *disconnect_widgets[] = {
+	const gchar   *widgets_connected[] = {
+		"actions_disconnect"
+	};
+
+	const gchar   *widgets_disconnected[] = {
 		"actions_connect"
 	};
 
@@ -1331,22 +1338,28 @@ app_connection_items_setup (GladeXML *glade)
 	GtkWidget     *w;
 	gint           i;
 
-	list = NULL;
-	for (i = 0; i < G_N_ELEMENTS (connect_widgets); i++) {
-		w = glade_xml_get_widget (glade, connect_widgets[i]);
+	priv = app->priv;
+
+	for (i = 0, list = NULL; i < G_N_ELEMENTS (widgets_connected_all); i++) {
+		w = glade_xml_get_widget (glade, widgets_connected_all[i]);
 		list = g_list_prepend (list, w);
 	}
 
-	list = g_list_prepend (list, priv->presence_chooser);
+	priv->widgets_connected_all = list;
 
-	app->priv->enabled_connected_widgets = list;
-
-	list = NULL;
-	for (i = 0; i < G_N_ELEMENTS (disconnect_widgets); i++) {
-		w = glade_xml_get_widget (glade, disconnect_widgets[i]);
+	for (i = 0, list = NULL; i < G_N_ELEMENTS (widgets_connected); i++) {
+		w = glade_xml_get_widget (glade, widgets_connected[i]);
 		list = g_list_prepend (list, w);
 	}
-	app->priv->enabled_disconnected_widgets = list;
+
+	priv->widgets_connected = list;
+
+	for (i = 0, list = NULL; i < G_N_ELEMENTS (widgets_disconnected); i++) {
+		w = glade_xml_get_widget (glade, widgets_disconnected[i]);
+		list = g_list_prepend (list, w);
+	}
+
+	priv->widgets_disconnected = list;
 }
 
 static void
@@ -1354,19 +1367,33 @@ app_connection_items_update (void)
 {
 	GossipAppPriv *priv;
 	GList         *l;
+	guint          connected_all;
 	guint          connected;
 	guint          disconnected;
 
 	priv = app->priv;
-	
+
+	/* get account count for: 
+	   - connected and disabled, 
+	   - connected and enabled 
+	   - disabled and enabled 
+	*/
+	connected_all = gossip_session_count_accounts (priv->session, TRUE, FALSE);
 	connected = gossip_session_count_accounts (priv->session, TRUE, TRUE);
 	disconnected = gossip_session_count_accounts (priv->session, FALSE, TRUE);
-	
-	for (l = priv->enabled_connected_widgets; l; l = l->next) {
+
+	/* this is a count of accounts connected (enabled or not) */
+	connected_all += connected;
+
+	for (l = priv->widgets_connected_all; l; l = l->next) {
+		gtk_widget_set_sensitive (l->data, (connected_all > 0));
+	}
+
+	for (l = priv->widgets_connected; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, (connected > 0));
 	}
 
-	for (l = priv->enabled_disconnected_widgets; l; l = l->next) {
+	for (l = priv->widgets_disconnected; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, (disconnected > 0));
 	}
 }
@@ -1638,12 +1665,12 @@ app_tray_create_menu (void)
 			      "tray_quit", "activate", app_quit_cb,
 			      NULL);
 
-	priv->enabled_connected_widgets = g_list_prepend (priv->enabled_connected_widgets,
-							  priv->popup_menu_status_item);
-
-	priv->enabled_connected_widgets = g_list_prepend (priv->enabled_connected_widgets,
-							  message_item);
-
+	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
+						      priv->popup_menu_status_item);
+	
+	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
+						      message_item);
+	
 	g_object_unref (glade);
 }
 

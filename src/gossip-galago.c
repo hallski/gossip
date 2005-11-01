@@ -312,18 +312,16 @@ galago_setup_accounts (GossipSession *session)
 }
 
 void
-gossip_galago_init (void)
+gossip_galago_init (GossipSession *session)
 {
-	GossipSession *session;
-
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	
 	d(g_print ("Galago: Initiating...\n"));
 
 	if (!galago_glib_init (PACKAGE_NAME, TRUE, NULL)) {
 		g_warning ("Cannot initialise Galago integration");
 		return;
 	}
-
-	session = gossip_app_get_session ();
 
 	me = galago_person_me_new (TRUE);
 	person_table = g_hash_table_new (gossip_contact_hash, 
