@@ -92,6 +92,9 @@ static gboolean new_account_window_get_account_info   (GossipNewAccountWindow  *
 static void     new_account_window_1_prepare          (GnomeDruidPage          *page,
 						       GnomeDruid              *druid,
 						       GossipNewAccountWindow  *window);
+static void     new_account_window_2_prepare          (GnomeDruidPage          *page,
+						       GnomeDruid              *druid,
+						       GossipNewAccountWindow  *window);
 static void     new_account_window_3_prepare          (GnomeDruidPage          *page,
 						       GnomeDruid              *druid,
 						       GossipNewAccountWindow  *window);
@@ -227,10 +230,21 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 
 static void
 new_account_window_1_prepare (GnomeDruidPage         *page, 
-				   GnomeDruid             *druid, 
-				   GossipNewAccountWindow *window)
+			      GnomeDruid             *druid, 
+			      GossipNewAccountWindow *window)
 {
 	gnome_druid_set_buttons_sensitive (druid, FALSE, TRUE, TRUE, FALSE);
+}
+
+static void
+new_account_window_2_prepare (GnomeDruidPage         *page,
+			      GnomeDruid             *druid, 
+			      GossipNewAccountWindow *window)
+{
+	gboolean first_time;
+
+	first_time = gossip_new_account_window_is_needed ();
+	gnome_druid_set_buttons_sensitive (druid, first_time, TRUE, TRUE, FALSE);
 }
 
 static void
@@ -288,8 +302,8 @@ new_account_window_3_entry_changed (GtkEntry               *entry,
 
 static void
 new_account_window_4_prepare (GnomeDruidPage         *page,
-				   GnomeDruid             *druid,
-				   GossipNewAccountWindow *window) 
+			      GnomeDruid             *druid,
+			      GossipNewAccountWindow *window) 
 {
 	GtkToggleButton *toggle;
 	gboolean         has_account;
@@ -303,8 +317,9 @@ new_account_window_4_prepare (GnomeDruidPage         *page,
 		gtk_widget_show (window->four_no_account_label);
 		gtk_widget_hide (window->four_account_label);
 	}
+
+	gtk_widget_grab_focus (window->four_server_entry);
 }
-			
 
 static void
 new_account_window_4_entry_changed (GtkEntry               *entry, 
@@ -458,7 +473,13 @@ gossip_new_account_window_show (void)
 
 	g_signal_connect (window->four_server_entry, "changed",
 			  G_CALLBACK (new_account_window_4_entry_changed), window);
-	
+
+	g_signal_connect_after (window->one_page, "prepare",
+				G_CALLBACK (new_account_window_1_prepare),
+				window);
+	g_signal_connect_after (window->two_page, "prepare",
+				G_CALLBACK (new_account_window_2_prepare),
+				window);
 	g_signal_connect_after (window->three_page, "prepare",
 				G_CALLBACK (new_account_window_3_prepare),
 				window);
@@ -482,7 +503,6 @@ gossip_new_account_window_show (void)
 
 	/* set up list */
 	new_account_window_setup_servers (window);
-
 	gtk_combo_box_set_active (GTK_COMBO_BOX (window->four_server_comboboxentry), 0);
 
 	/* can we use ssl */
@@ -496,6 +516,11 @@ gossip_new_account_window_show (void)
 		gnome_druid_set_page (GNOME_DRUID (window->druid),
 				      GNOME_DRUID_PAGE (window->two_page));
 	} else {
+		/* FIXME: disable the back button on the first page, there is
+		   a bug here where it doesn't get set right if we call this
+		   function before we set the combo box index active??? */
+		gnome_druid_set_buttons_sensitive (druid, FALSE, TRUE, TRUE, FALSE);
+
 		window->gtk_main_started = TRUE;
 		gtk_main ();
 	}

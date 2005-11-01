@@ -71,6 +71,9 @@ GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account        (GossipAccount       *
 GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount       *account,
 							   GtkIconSize          icon_size,
 							   gboolean             online);
+GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_error  (GossipAccount       *account,
+							   GtkIconSize          icon_size);
+
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence_state  (GossipPresenceState  state);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence        (GossipPresence      *presence);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_contact         (GossipContact       *contact);

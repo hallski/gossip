@@ -177,9 +177,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__POINTER_POINTER,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      2, G_TYPE_POINTER, G_TYPE_POINTER);
 
 }
 
@@ -528,22 +528,3 @@ gossip_protocol_get_version (GossipProtocol         *protocol,
 	return TRUE;
 }
  
-void
-gossip_protocol_error (GossipProtocol      *protocol, 
-		       GossipProtocolError  code,
-		       const gchar         *reason)
-{
-	GError        *error;
-	static GQuark  quark = 0;
-
-	g_return_if_fail (protocol != NULL);
-	g_return_if_fail (reason != NULL);
-
-	if (!quark) {
-		quark = g_quark_from_static_string ("gossip-protocol");
-	}
-	
-	error = g_error_new_literal (quark, code, reason);
-	g_signal_emit_by_name (protocol, "error", error);
- 	g_error_free (error); 
-}

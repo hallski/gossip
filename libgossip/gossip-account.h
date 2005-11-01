@@ -62,6 +62,7 @@ const gchar *     gossip_account_get_id           (GossipAccount     *account);
 const gchar *     gossip_account_get_password     (GossipAccount     *account);
 const gchar *     gossip_account_get_server       (GossipAccount     *account);
 guint16           gossip_account_get_port         (GossipAccount     *account);
+gboolean          gossip_account_get_enabled      (GossipAccount     *account);
 gboolean          gossip_account_get_auto_connect (GossipAccount     *account);
 gboolean          gossip_account_get_use_ssl      (GossipAccount     *account);
 gboolean          gossip_account_get_use_proxy    (GossipAccount     *account);
@@ -77,6 +78,8 @@ void              gossip_account_set_server       (GossipAccount     *account,
 						   const gchar       *server);
 void              gossip_account_set_port         (GossipAccount     *account,
 						   guint16            port);
+void              gossip_account_set_enabled      (GossipAccount     *account,
+						   gboolean           enabled);
 void              gossip_account_set_auto_connect (GossipAccount     *account,
 						   gboolean           auto_connect);
 void              gossip_account_set_use_ssl      (GossipAccount     *account,

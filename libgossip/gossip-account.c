@@ -45,6 +45,7 @@ struct _GossipAccountPriv {
 	gchar             *password;
 	gchar             *server;
 	guint16            port;
+	gboolean           enabled;
 	gboolean           auto_connect;
 	gboolean           use_ssl;
 	gboolean           use_proxy;
@@ -72,6 +73,7 @@ enum {
 	PROP_PASSWORD,
 	PROP_SERVER,
 	PROP_PORT,
+	PROP_ENABLED,
 	PROP_AUTO_CONNECT,
 	PROP_USE_SSL,
 	PROP_USE_PROXY
@@ -186,6 +188,14 @@ account_class_init (GossipAccountClass *class)
 							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_ENABLED,
+					 g_param_spec_boolean ("enabled",
+							       "Account is Enabled",
+							       "Use Account for connect/disconnect operations",
+							       TRUE,
+							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_AUTO_CONNECT,
 					 g_param_spec_boolean ("auto_connect",
 							       "Account Auto Connect",
@@ -241,6 +251,7 @@ account_init (GossipAccount *account)
 	priv->password     = NULL;
 	priv->server       = NULL;
 	priv->port         = 0;
+	priv->enabled      = TRUE;
 	priv->auto_connect = TRUE;
 	priv->use_ssl      = FALSE;
 	priv->use_proxy    = FALSE;
@@ -289,6 +300,9 @@ account_get_property (GObject    *object,
 		break;
 	case PROP_PORT:
 		g_value_set_int (value, priv->port);
+		break;
+	case PROP_ENABLED:
+		g_value_set_boolean (value, priv->enabled);
 		break;
 	case PROP_AUTO_CONNECT:
 		g_value_set_boolean (value, priv->auto_connect);
@@ -339,6 +353,10 @@ account_set_property (GObject      *object,
 	case PROP_PORT:
 		gossip_account_set_port (GOSSIP_ACCOUNT (object),
 					 g_value_get_int (value));
+		break;
+	case PROP_ENABLED:
+		gossip_account_set_enabled (GOSSIP_ACCOUNT (object),
+					    g_value_get_boolean (value));
 		break;
 	case PROP_AUTO_CONNECT:
 		gossip_account_set_auto_connect (GOSSIP_ACCOUNT (object),
@@ -422,6 +440,17 @@ gossip_account_get_port (GossipAccount *account)
 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
 	return priv->port;
+}
+
+gboolean
+gossip_account_get_enabled (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+
+	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
+	return priv->enabled;
 }
 
 gboolean
@@ -542,6 +571,21 @@ gossip_account_set_port (GossipAccount *account,
 	priv->port = port;
 
 	g_object_notify (G_OBJECT (account), "port");
+	g_signal_emit (account, signals[CHANGED], 0);
+}
+
+void
+gossip_account_set_enabled (GossipAccount *account,
+			    gboolean       enabled)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
+	priv->enabled = enabled;
+
+	g_object_notify (G_OBJECT (account), "enabled");
 	g_signal_emit (account, signals[CHANGED], 0);
 }
 

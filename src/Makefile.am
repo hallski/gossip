@@ -23,14 +23,11 @@ endif
 
 bin_PROGRAMS = gossip
 
-#	gossip-accounts-dialog.c           gossip-accounts-dialog.h		
-
 gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	gossip-about.c                     gossip-about.h  			\
-	gossip-accounts-window.c           gossip-accounts-window.h		\
+	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-button.c		   gossip-account-button.h		\
-	gossip-account-info-dialog.c       gossip-account-info-dialog.h		\
 	gossip-add-contact.c	           gossip-add-contact.h			\
 	gossip-app.c	 	           gossip-app.h				\
 	gossip-cell-renderer-text.c        gossip-cell-renderer-text.h          \

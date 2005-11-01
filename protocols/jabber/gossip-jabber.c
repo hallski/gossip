@@ -49,9 +49,13 @@
 
 #define d(x)
 
-#define XMPP_VERSION_XMLNS "jabber:iq:version"
-#define XMPP_ROSTER_XMLNS  "jabber:iq:roster"
+#define XMPP_VERSION_XMLNS  "jabber:iq:version"
+#define XMPP_ROSTER_XMLNS   "jabber:iq:roster"
 #define XMPP_REGISTER_XMLNS "jabber:iq:register"
+
+/* 3.5 minutes, we use this because if the port is just wrong then it
+   will timeout before then with that error */
+#define CONNECT_TIMEOUT     210 
 
 
 struct _GossipJabberPriv {
@@ -73,6 +77,9 @@ struct _GossipJabberPriv {
 	GossipTransportAccountList *account_list;
 
 	LmMessageHandler      *subscription_handler;
+
+	guint                  connection_timeout_id;
+	gboolean               disconnect_request;
 };
 
 
@@ -100,10 +107,15 @@ static void             jabber_finalize                     (GObject            
 static void             jabber_setup                        (GossipProtocol               *protocol,
 							     GossipAccount                *account);
 static void             jabber_login                        (GossipProtocol               *protocol);
+static gboolean         jabber_login_timeout_cb             (GossipJabber                 *jabber);
+
 static void             jabber_logout                       (GossipProtocol               *protocol);
 static gboolean         jabber_logout_contact_foreach       (gpointer                      key,
 							     GossipContact                *contact,
 							     GossipJabber                 *jabber);
+static void             jabber_error                        (GossipProtocol               *protocol,
+							     GossipProtocolError           code,
+							     const gchar                  *reason);
 static void             jabber_connection_open_cb           (LmConnection                 *connection,
 							     gboolean                      result,
 							     GossipJabber                 *jabber);
@@ -320,6 +332,11 @@ jabber_finalize (GObject *obj)
  	gossip_jabber_chatrooms_free (priv->chatrooms);
 
  	g_hash_table_destroy (priv->composing_ids);
+
+	if (priv->connection_timeout_id != 0) {
+		g_source_remove (priv->connection_timeout_id);
+		priv->connection_timeout_id = 0;
+	}
 	
 #ifdef USE_TRANSPORTS
  	gossip_transport_account_list_free (priv->account_list);
@@ -432,6 +449,8 @@ jabber_login (GossipProtocol *protocol)
 	priv   = jabber->priv;
 
 	d(g_print ("Protocol: Logging in Jabber\n"));
+
+	priv->disconnect_request = FALSE;
 	
 	if (gossip_account_get_use_ssl (priv->account)) {
 		LmSSL *ssl;
@@ -465,9 +484,9 @@ jabber_login (GossipProtocol *protocol)
 	}
 
 	if (!priv->connection) {
-		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
-				       GossipProtocolErrorNoConnection,
-				       _("Could not open connection"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), 
+			      GossipProtocolErrorNoConnection,
+			      _("Could not open connection"));
 		return;
 	}
 
@@ -481,18 +500,43 @@ jabber_login (GossipProtocol *protocol)
 				     jabber, NULL, &error);
 
 	if (result && !error) {
+		/* FIXME: add timeout incase we get nothing back from
+		   Loudmouth, this happens with current CVS loudmouth
+		   1.01 where you connect to port 5222 using SSL, the
+		   error is not reflecting back into Gossip so we just
+		   hang around waiting. */
+		priv->connection_timeout_id = g_timeout_add (CONNECT_TIMEOUT * 1000,
+							     (GSourceFunc)jabber_login_timeout_cb,
+							     jabber);
+		
 		return;
 	}
 
 	if (error->code == 1 && 
 	    strcmp (error->message, "getaddrinfo() failed") == 0) {
 		/* host lookup failed */
-		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
-				       GossipProtocolErrorNoSuchHost,
-				       _("Could not find the server you wanted to use"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), 
+			      GossipProtocolErrorNoSuchHost,
+			      _("Could not find the server you wanted to use"));
 	}
 
 	g_error_free (error);
+}
+
+static gboolean 
+jabber_login_timeout_cb (GossipJabber *jabber)
+{
+	GossipJabberPriv *priv;
+
+	priv = jabber->priv;
+
+	priv->connection_timeout_id = 0;
+
+	jabber_error (GOSSIP_PROTOCOL (jabber), 
+		      GossipProtocolErrorTimedOut,
+		      _("Connection to the server failed."));
+
+	return FALSE;
 }
 
 static void
@@ -505,6 +549,13 @@ jabber_logout (GossipProtocol *protocol)
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv   = jabber->priv;
+
+	if (priv->connection_timeout_id != 0) {
+		g_source_remove (priv->connection_timeout_id);
+		priv->connection_timeout_id = 0;
+	}
+
+	priv->disconnect_request = TRUE;
 
 	if (priv->connection && 
 	    lm_connection_is_open (priv->connection)) {
@@ -522,6 +573,31 @@ jabber_logout_contact_foreach (gpointer       key,
 }
 
 static void
+jabber_error (GossipProtocol      *protocol, 
+	      GossipProtocolError  code,
+	      const gchar         *reason)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+	GError           *error;
+	static GQuark     quark = 0;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+	g_return_if_fail (reason != NULL);
+
+	jabber = GOSSIP_JABBER (protocol);
+	priv   = jabber->priv;
+
+	if (!quark) {
+		quark = g_quark_from_static_string ("gossip-jabber");
+	}
+	
+	error = g_error_new_literal (quark, code, reason);
+	g_signal_emit_by_name (protocol, "error", priv->account, error);
+ 	g_error_free (error); 
+}
+
+static void
 jabber_connection_open_cb (LmConnection *connection,
 			   gboolean      result,
 			   GossipJabber *jabber)
@@ -536,10 +612,21 @@ jabber_connection_open_cb (LmConnection *connection,
 	
 	priv = jabber->priv;
 
+	if (priv->connection_timeout_id != 0) {
+		g_source_remove (priv->connection_timeout_id);
+		priv->connection_timeout_id = 0;
+	}
+
+	if (priv->disconnect_request) {
+		/* this is so we go no further that way we don't issue
+		   warnings for connections we stopped ourselves */
+		return;
+	}
+
 	if (result == FALSE) {
-		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
-				       GossipProtocolErrorNoConnection,
-				       _("Could not open connection"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), 
+			      GossipProtocolErrorNoConnection,
+			      _("Could not open connection"));
 		return;
 	}
 
@@ -585,9 +672,9 @@ jabber_connection_auth_cb (LmConnection *connection,
 	priv = jabber->priv;
 	
 	if (result == FALSE) {
-		gossip_protocol_error (GOSSIP_PROTOCOL (jabber), 
-				       GossipProtocolErrorAuthFailed,
-				       _("Authentication failed"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), 
+			      GossipProtocolErrorAuthFailed,
+			      _("Authentication failed"));
 		return;
 	}
 
@@ -622,6 +709,11 @@ jabber_disconnect_cb (LmConnection       *connection,
 	GossipJabberPriv *priv;
 
 	priv = jabber->priv;
+
+	if (priv->connection_timeout_id != 0) {
+		g_source_remove (priv->connection_timeout_id);
+		priv->connection_timeout_id = 0;
+	}
 
 	g_signal_emit_by_name (jabber, "logged-out", priv->account);
 

@@ -292,7 +292,7 @@ gossip_spell_get_language_name (const gchar *code)
 		const char *lang_code = languages[i];
 
 		if (code && lang_code && strcmp (code, lang_code) == 0) {
-			return languages[i+1];
+			return _(languages[i+1]);
 		}
 	} 
 	

@@ -1,3 +1,69 @@
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account.dtd:
+	- Implemented "Enabled" property.
+	- Added "account-enabled" signal to the manager.
+	- Removed the "account-changed" signal from the manager.
+	
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.[ch]:
+	* libgossip/libgossip-marshal.list:
+	- Include GossipAccount in protocol-error signal.
+	- More powerfull search for accounts dis/connected and enabled.
+	- Watch account manager for account_added|removed signals for updates.
+	- Clean up logic for dis/connecting accounts.
+	- Emit "protocol-connecting" signal (with FALSE) when we
+	disconnect. 
+	- Removed a lot of unnecessary GOSSIP_IS_PROTOCOL checks in
+	GossipSession.
+	
+	* protocols/jabber/gossip-jabber.c:
+	- Added a connect timeout to get around a Loudmouth bug.  If you
+	try to connect to port 5222 using SSL, it fails but doesn't error
+	it back up the stack.  
+	- Don't error after we have requested to disconnect (say on a
+	timeout).
+	
+	* src/Makefile.am:
+	* src/gossip-account-info-dialog.[ch]:
+	* src/gossip-accounts-window.[ch]:
+	- Removed.
+
+	* src/Makefile.am:
+	* src/gossip-accounts-dialog.[ch]:
+	- Added.
+
+	* src/gossip-ui-utils.[ch]:
+	* src/gossip-account-button.c:
+	- Update tooltips and include connection state and last error so
+	we no longer present the user with an error dialog. 
+	- Show a "Stop Connecting" option when in a connecting state. 
+	- For errors, compose the error stock image over the theme
+	protocol image (in this case always Jabber).
+
+	* src/gossip-app.c:
+	- Update the dis/connected widgets on "account-enabled" signal.
+	- Use the new gossip_session_count_accounts() API to only show
+	connect when there are *enabled* accounts to connect and only show
+	disconnect when there are *enabled* accounts to disconnect.
+	- Disable the error dialog on "protocol-error" signals.
+
+	* src/gossip-new-account-window.c: 
+	- Don't allow the back button when on the first page.
+	- Don't allow the back button when it is not a first time
+	assistant (which would show the Welcome to Gossip page).
+	- Set focus to the server GtkComboBoxEntry on "prepare" signal.
+
+	* src/gossip-spell.c: 
+	- Make sure we return a translated string in _get_language_name().
+
+	* src/gossip-accounts-dialog.[ch]:
+	* ui/connect.glade:
+	- Reworked the accounts dialog to show a list and a notebook so it
+	is all configurable from one place.
+
 2005-10-31  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-presence-chooser.c:
@@ -7,9 +73,6 @@
 
 	* ui/main.glade: Make the checkbutton for saving status presets
 	disabled by default again.
-
-2005-10-31  Richard Hult  <richard@imendio.com>
-
 
 2005-10-18  Richard Hult  <richard@imendio.com>
 

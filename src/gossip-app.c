@@ -57,8 +57,7 @@
 #include "gossip-presence-chooser.h"
 #include "gossip-status-presets.h"
 #include "gossip-private-chat.h"
-#include "gossip-accounts-window.h"
-#include "gossip-account-info-dialog.h"
+#include "gossip-accounts-dialog.h"
 #include "gossip-account-button.h"
 #include "gossip-stock.h"
 #include "gossip-about.h"
@@ -203,9 +202,6 @@ static void            app_session_protocol_disconnected_cb (GossipSession      
 							     GossipAccount        *account,
 							     GossipProtocol       *protocol,
 							     gpointer              unused);
-static void            app_session_protocol_error_cb        (GossipSession        *session,
-							     GossipProtocol       *protocol,
-							     GError               *error);
 static gchar *         app_session_get_password_cb          (GossipSession        *session,
 							     GossipAccount        *account,
 							     gpointer              unused);
@@ -266,10 +262,14 @@ static void            app_tray_update_tooltip              (void);
 static void            app_accounts_create                  (void);
 static void            app_accounts_add                     (GossipAccount        *account);
 static void            app_accounts_remove                  (GossipAccount        *account);
+static void            app_accounts_update_toolbar          (void);
 static void            app_accounts_account_added_cb        (GossipAccountManager *manager,
 							     GossipAccount        *account,
 							     gpointer              user_data);
 static void            app_accounts_account_removed_cb      (GossipAccountManager *manager,
+							     GossipAccount        *account,
+							     gpointer              user_data);
+static void            app_accounts_account_enabled_cb      (GossipAccountManager *manager,
 							     GossipAccount        *account,
 							     gpointer              user_data);
 static GossipPresence *app_get_effective_presence           (void);
@@ -449,6 +449,9 @@ app_setup (GossipAccountManager *manager)
 			  G_CALLBACK (app_accounts_account_removed_cb), 
 			  NULL);
 
+	g_signal_connect (manager, "account_enabled",
+			  G_CALLBACK (app_accounts_account_enabled_cb), 
+			  NULL);
 
 	g_signal_connect (priv->session, "protocol-connected",
 			  G_CALLBACK (app_session_protocol_connected_cb),
@@ -456,10 +459,6 @@ app_setup (GossipAccountManager *manager)
 
 	g_signal_connect (priv->session, "protocol-disconnected",
 			  G_CALLBACK (app_session_protocol_disconnected_cb),
-			  NULL);
-
-	g_signal_connect (priv->session, "protocol-error",
-			  G_CALLBACK (app_session_protocol_error_cb),
 			  NULL);
 
 	g_signal_connect (priv->session, "get-password",
@@ -844,53 +843,6 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 					      session);
 }
 
-static void
-app_session_protocol_error_cb (GossipSession  *session,
-			       GossipProtocol *protocol,
-			       GError         *error)
-{
-	GtkWidget   *dialog;
-	const gchar *str1 = _("Unknown error.");
-	const gchar *str2 = _("Check your connection details.");
-	
-	switch (error->code) {
-	case GossipProtocolErrorNoConnection:
-		d(g_print ("App: Could not create connection, check host/port, etc!\n"));
-		str1 = _("Connection refused.");
-		str2 = _("Perhaps you are trying to connect to the wrong port?\n"
-			 "Perhaps the service is not currently running?");
-		break;
-	case GossipProtocolErrorNoSuchHost:
-		d(g_print ("App: No such host while trying to connect!\n"));
-		str1 = _("Server address could not be resolved.");
-		break;
-	case GossipProtocolErrorTimedOut:
-		d(g_print ("App: Log in timed out!\n"));
-		str1 = _("Connection timed out.");
-		str2 = _("Perhaps the server is not running this service.");
-		break;
-	case GossipProtocolErrorAuthFailed:
-		d(g_print ("App: Authentication failed!\n"));
-		str1 = _("Authentication failed.");
-		str2 = _("Check your username and password are correct.");
-		break;
-	}
-
-	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
-						     GTK_DIALOG_MODAL |
-						     GTK_DIALOG_DESTROY_WITH_PARENT,
-						     GTK_MESSAGE_ERROR,
-						     GTK_BUTTONS_CLOSE,
-						     "<b>%s</b>\n\n%s",
-						     str1, str2);
-	
-	g_signal_connect_swapped (dialog, "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  dialog);
-
-	gtk_widget_show (dialog);
-}
-
 static gchar * 
 app_session_get_password_cb (GossipSession *session,
 			     GossipAccount *account,
@@ -939,7 +891,7 @@ app_connect_cb (GtkWidget *window,
 	/* currently we pass TRUE even though this is not a startup
 	   call to connect, but if we pass FALSE then *ALL* accounts
 	   will be connected. */
-	gossip_app_connect (TRUE);
+	gossip_app_connect (FALSE);
 }
 
 static void
@@ -1185,7 +1137,7 @@ app_personal_information_cb (GtkWidget *widget, GossipApp *app)
 static void
 app_accounts_cb (GtkWidget *widget, GossipApp *app)
 {
-	gossip_accounts_window_show ();
+	gossip_accounts_dialog_show (NULL);
 }
 
 static void
@@ -1310,7 +1262,7 @@ gossip_app_connect (gboolean startup)
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
-		gossip_accounts_window_show ();
+		gossip_accounts_dialog_show (NULL);
 		return;
 	}
 	
@@ -1348,6 +1300,7 @@ static void
 app_connection_items_setup (GladeXML *glade)
 {
 	GossipAppPriv *priv = app->priv;
+
 	const gchar   *connect_widgets[] = {
 		"actions_disconnect",
 		"actions_join_group_chat",
@@ -1356,9 +1309,11 @@ app_connection_items_setup (GladeXML *glade)
 		"actions_configure_transports",
 		"edit_personal_information"
 	};
+
 	const gchar   *disconnect_widgets[] = {
 		"actions_connect"
 	};
+
 	GList         *list;
 	GtkWidget     *w;
 	gint           i;
@@ -1391,8 +1346,8 @@ app_connection_items_update (void)
 
 	priv = app->priv;
 	
-	connected = gossip_session_count_connected (priv->session);
-	disconnected = gossip_session_count_disconnected (priv->session);
+	connected = gossip_session_count_accounts (priv->session, TRUE, TRUE);
+	disconnected = gossip_session_count_accounts (priv->session, FALSE, TRUE);
 	
 	for (l = priv->enabled_connected_widgets; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, (connected > 0));
@@ -1775,13 +1730,11 @@ app_accounts_create (void)
 	GossipAccountManager *manager;
 	GList                *accounts;
 	GList                *l;
-	gint                  count;
 
 	priv = app->priv;
 
 	manager = gossip_session_get_account_manager (priv->session);
 	accounts = gossip_account_manager_get_accounts (manager);
-	count = gossip_account_manager_get_count (manager);
 
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
@@ -1789,14 +1742,30 @@ app_accounts_create (void)
 		app_accounts_add (account);
 	}
 
+	g_list_free (accounts);
+
+	/* show/hide toolbar */
+	app_accounts_update_toolbar ();
+}
+
+static void 
+app_accounts_update_toolbar (void)
+{
+	GossipAppPriv        *priv;
+	GossipAccountManager *manager;
+	gint                  count;
+
+	priv = app->priv;
+
+	manager = gossip_session_get_account_manager (priv->session);
+	count = gossip_account_manager_get_count (manager);
+
 	/* show accounts if we have more than one */
 	if (count < 2) {
 		gtk_widget_hide (priv->accounts_toolbar);
 	} else {
 		gtk_widget_show (priv->accounts_toolbar);
 	}
-
-	g_list_free (accounts);
 }
 
 static void
@@ -1806,9 +1775,6 @@ app_accounts_add (GossipAccount *account)
 	GtkWidget     *account_button;
 
 	GtkWidget     *toolitem;
-
- 	GtkTooltips   *tooltips; 
- 	gchar         *str; 
 
 	priv = app->priv;
 
@@ -1824,16 +1790,11 @@ app_accounts_add (GossipAccount *account)
 	toolitem = (GtkWidget*) gtk_tool_item_new ();
 	gtk_container_add (GTK_CONTAINER (priv->accounts_toolbar), toolitem);
 
-	str = g_strdup_printf ("Account: %s\n"
-			       "ID: %s",
-			       gossip_account_get_name (account),
-			       gossip_account_get_id (account));
-	tooltips = gtk_tooltips_new ();
-	gtk_tooltips_set_tip (tooltips, account_button, str, NULL);
-	g_free (str);
-
 	gtk_container_add (GTK_CONTAINER (toolitem), account_button);
 	gtk_widget_show_all (toolitem);
+
+	/* show/hide toolbar */
+	app_accounts_update_toolbar ();
 }
 
 static void
@@ -1844,6 +1805,9 @@ app_accounts_remove (GossipAccount *account)
 	priv = app->priv;
 
 	g_hash_table_remove (priv->accounts, account);
+
+	/* show/hide toolbar */
+	app_accounts_update_toolbar ();
 }
 
 static void
@@ -1860,6 +1824,14 @@ app_accounts_account_removed_cb (GossipAccountManager *manager,
 				 gpointer              user_data)
 {
 	app_accounts_remove (account);
+}
+
+static void
+app_accounts_account_enabled_cb (GossipAccountManager *manager,
+				 GossipAccount        *account,
+				 gpointer              user_data)
+{
+	app_connection_items_update ();
 }
 
 static GossipPresence *

@@ -388,6 +388,38 @@ gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount *account,
 	return pixbuf;
 }
 
+GdkPixbuf *
+gossip_ui_utils_get_pixbuf_from_account_error (GossipAccount *account,
+					       GtkIconSize    icon_size)
+{
+	GdkPixbuf *pixbuf;
+	GdkPixbuf *pixbuf_error;
+
+	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, 
+								 icon_size,
+								 FALSE);
+	if (!pixbuf) {
+		return NULL;
+	}
+
+	pixbuf_error = gossip_ui_utils_get_pixbuf_from_stock (GTK_STOCK_DIALOG_ERROR);
+	if (!pixbuf_error) {
+		return NULL;
+	}
+
+	gdk_pixbuf_composite (pixbuf_error, 
+			      pixbuf, 
+			      0,0, 
+			      gdk_pixbuf_get_width (pixbuf),
+			      gdk_pixbuf_get_height (pixbuf),
+			      0,0,
+			      1,1,
+			      GDK_INTERP_BILINEAR,
+			      255);
+
+	return pixbuf;
+}
+
 static gboolean
 ui_utils_window_get_is_on_current_workspace (GtkWindow *window)
 {

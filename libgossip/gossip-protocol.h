@@ -188,9 +188,5 @@ gboolean       gossip_protocol_get_version              (GossipProtocol         
 							 GossipVersionCallback    callback,
 							 gpointer                      user_data,
 							 GError                      **error);
-void           gossip_protocol_error                    (GossipProtocol               *protocol,
-							 GossipProtocolError           code,
-							 const gchar                  *reason);
-
 
 #endif /* __GOSSIP_PROTOCOL_H__ */

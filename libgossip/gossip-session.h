@@ -68,6 +68,9 @@ GossipSession * gossip_session_new                     (GossipAccountManager    
 GossipAccountManager *
                 gossip_session_get_account_manager     (GossipSession           *session);
 GList *         gossip_session_get_accounts            (GossipSession           *session);
+guint           gossip_session_count_accounts          (GossipSession           *session,
+							gboolean                 connected,
+							gboolean                 enabled);
 gboolean        gossip_session_add_account             (GossipSession           *session,
 							GossipAccount           *account);
 gboolean        gossip_session_remove_account          (GossipSession           *session,
@@ -79,8 +82,6 @@ void            gossip_session_connect                 (GossipSession           
 							gboolean                 startup);
 void            gossip_session_disconnect              (GossipSession           *session,
 							GossipAccount           *account);
-guint           gossip_session_count_connected         (GossipSession           *session);
-guint           gossip_session_count_disconnected      (GossipSession           *session);
 void            gossip_session_send_message            (GossipSession           *session,
 							GossipMessage           *message);
 void            gossip_session_send_composing          (GossipSession           *session,
