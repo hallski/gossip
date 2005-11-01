@@ -38,7 +38,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
 	GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonPriv))
 
-#define d(x) x
+#define d(x)
 
 
 typedef struct {

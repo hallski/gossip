@@ -53,6 +53,35 @@ fi
 AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
 
 dnl -----------------------------------------------------------
+dnl Galago
+dnl -----------------------------------------------------------
+
+AC_ARG_ENABLE(galago,
+              AS_HELP_STRING([--enable-galago=@<:@no/yes/auto@:>@],
+                             [compile with Galago support]), ,
+              enable_galago=no)
+
+if test "x$enable_galago" != "xno"; then
+   galago_pkgconfig_tmp="libgalago"
+   PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
+   if test x$have_galago = xyes; then
+      AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
+      galago_pkgconfig=$galago_pkgconfig_tmp
+  fi
+else
+   have_galago=no
+   galago_pkgconfig=
+fi
+
+if test "x$enable_galago" = "xyes"; then
+   if test "x$have_galago" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find Galago])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
+
+dnl -----------------------------------------------------------
 dnl
 dnl Library Dependencies, uses pkg-config to detect correct version, etc
 dnl
@@ -100,11 +129,12 @@ PKG_CHECK_MODULES(GOSSIP,
 	libgnomeui-2.0 >= $LIBGNOME_REQUIRED
 	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
 	$dbus_pkgconfig
+	$galago_pkgconfig
 ])
 
 PKG_CHECK_MODULES(GOSSIP_JABBER,
 [
-        glib-2.0 >= $GLIB_REQUIRED
+	glib-2.0 >= $GLIB_REQUIRED
 	gobject-2.0
 	loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
 	gconf-2.0 >= $GCONF_REQUIRED
@@ -224,5 +254,6 @@ gossip.desktop.in
 echo
 echo "Gossip prefix: $prefix"
 echo "D-BUS        : $have_dbus"
+echo "Galago       : $have_galago"
 echo "ASpell       : $have_aspell"
 echo

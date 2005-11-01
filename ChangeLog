@@ -1,5 +1,20 @@
 2005-11-01  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac:
+	* src/gossip-app.c:
+	* src/gossip-galago.[ch]: 
+	- Added support for Galago into Gossip (patch by Ross).
+	- Tested with "libgalago/tests/get-presence jabber <contact>"
+	- Fixes bug #316925 (Ross Burton).
+
+	* libgossip/gossip-session.c:
+	* src/gossip-account-button.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-sound.c:
+	- Disabled debugging.
+
+2005-11-01  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.[ch]:
 	- Added _get_connected_time () API.
 

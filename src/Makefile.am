@@ -1,30 +1,38 @@
 SUBDIRS = sounds
 
-AM_CPPFLAGS =	                                 \
-	-I$(top_srcdir)                          \
-	-DGNOMELOCALEDIR=\""$(datadir)/locale"\" \
-	-DPREFIX="\"$(prefix)"\"		\
-	-DSYSCONFDIR=\""$(sysconfdir)"\"        \
-	-DDATADIR=\""$(datadir)"\"              \
-	-DLIBDIR=\""$(libdir)"\"		\
-	@GOSSIP_CFLAGS@				\
-	-DGLADEDIR=\"$(datadir)/gossip\"	\
-	-DIMAGEDIR=\"$(datadir)/gossip\"	\
+AM_CPPFLAGS =	                                 	\
+	-I$(top_srcdir)                          	\
+	-DGNOMELOCALEDIR=\""$(datadir)/locale"\" 	\
+	-DPREFIX="\"$(prefix)"\"			\
+	-DSYSCONFDIR=\""$(sysconfdir)"\"        	\
+	-DDATADIR=\""$(datadir)"\"              	\
+	-DLIBDIR=\""$(libdir)"\"			\
+	-DGLADEDIR=\"$(datadir)/gossip\"		\
+	-DIMAGEDIR=\"$(datadir)/gossip\"		\
 	-DPROTOCOLSDIR=\"$(datadir)/gossip/protocols\" 	\
-	-DSTYLESHEETDIR=\"$(datadir)/gossip\"	\
-	-DDTDDIR=\"$(datadir)/gossip\"		\
-	-DDBUS_API_SUBJECT_TO_CHANGE		\
+	-DSTYLESHEETDIR=\"$(datadir)/gossip\"		\
+	-DDTDDIR=\"$(datadir)/gossip\"			\
+	-DDBUS_API_SUBJECT_TO_CHANGE			\
+	@GOSSIP_CFLAGS@					\
 	@GTK_VER@
 
+
 if HAVE_DBUS
-dbus_sources =					\
-       gossip-dbus.c                   gossip-dbus.h
+dbus_sources =									\
+       gossip-dbus.c                   	   gossip-dbus.h
 endif
+
+if HAVE_GALAGO
+galago_sources =			                                        \
+       gossip-galago.c                     gossip-galago.h
+endif
+
 
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
+	$(galago_sources)		     	                        	\
 	gossip-about.c                     gossip-about.h  			\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-button.c		   gossip-account-button.h		\
@@ -91,15 +99,15 @@ gossip-marshal.c: gossip-marshal.list
 
 gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
 
-BUILT_SOURCES = 								\
-	gossip-marshal.h							\
+BUILT_SOURCES = 					\
+	gossip-marshal.h				\
 	gossip-marshal.c
 
 CLEANFILES = $(BUILT_SOURCES)
 
-EXTRA_DIST =									\
-	gossip-log.xsl								\
-	gossip-marshal.list                             			\
-	$(dtd_DATA)								\
+EXTRA_DIST =						\
+	gossip-log.xsl					\
+	gossip-marshal.list                             \
+	$(dtd_DATA)					\
 	$(dbus_sources)
 

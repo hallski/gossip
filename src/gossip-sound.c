@@ -29,7 +29,7 @@
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
-#define d(x) x
+#define d(x)
 
 
 extern GConfClient *gconf_client;

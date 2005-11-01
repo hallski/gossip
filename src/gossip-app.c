@@ -67,6 +67,10 @@
 #include "gossip-dbus.h"
 #endif
 
+#ifdef HAVE_GALAGO
+#include "gossip-galago.h"
+#endif
+
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
 #define	EXT_AWAY_TIME (30*60)
@@ -629,6 +633,9 @@ app_setup (GossipAccountManager *manager)
 	req.width = MAX (req.width, MIN_WIDTH);
 	gtk_widget_set_size_request (priv->window, req.width, -1);
 
+#ifdef HAVE_GALAGO
+	gossip_galago_init ();
+#endif
 	app_connection_items_update ();
 }
 

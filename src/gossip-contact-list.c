@@ -39,7 +39,7 @@
 #include "gossip-sound.h"
 #include "gossip-chat-invite.h"
 
-#define d(x) x
+#define d(x)
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
