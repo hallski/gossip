@@ -50,28 +50,65 @@ struct _GossipChatViewClass {
 };
 
 
-GType            gossip_chat_view_get_type             (void) G_GNUC_CONST;
-GossipChatView * gossip_chat_view_new                  (void);
-void             gossip_chat_view_append_chat_message  (GossipChatView *view,
+typedef enum {
+	GOSSIP_SMILEY_NORMAL,       /*  :)   */
+	GOSSIP_SMILEY_WINK,         /*  ;)   */
+	GOSSIP_SMILEY_BIGEYE,       /*  =)   */
+	GOSSIP_SMILEY_NOSE,         /*  :-)  */
+	GOSSIP_SMILEY_CRY,          /*  :'(  */
+	GOSSIP_SMILEY_SAD,          /*  :(   */
+	GOSSIP_SMILEY_SCEPTICAL,    /*  :/   */
+	GOSSIP_SMILEY_BIGSMILE,     /*  :D   */
+	GOSSIP_SMILEY_INDIFFERENT,  /*  :|   */
+	GOSSIP_SMILEY_TOUNGE,       /*  :p   */
+	GOSSIP_SMILEY_SHOCKED,      /*  :o   */
+	GOSSIP_SMILEY_COOL,         /*  8)   */
+	GOSSIP_SMILEY_SORRY,        /*  *|   */
+	GOSSIP_SMILEY_KISS,         /*  :*   */
+	GOSSIP_SMILEY_SHUTUP,       /*  :#   */
+	GOSSIP_SMILEY_YAWN,         /*  |O   */
+	GOSSIP_SMILEY_CONFUSED,     /*  :$   */
+	GOSSIP_SMILEY_ANGEL,        /*  <)   */
+	GOSSIP_SMILEY_OOOH,         /*  :x   */
+	GOSSIP_SMILEY_LOOKAWAY,     /*  *)   */
+	GOSSIP_SMILEY_BLUSH,        /*  *S   */
+	GOSSIP_SMILEY_COOLBIGSMILE, /*  8D   */ 
+	GOSSIP_SMILEY_ANGRY,        /*  :@   */
+	GOSSIP_SMILEY_BOSS,         /*  @)   */
+	GOSSIP_SMILEY_MONKEY,       /*  #)   */
+	GOSSIP_SMILEY_SILLY,        /*  O)   */
+	GOSSIP_SMILEY_SICK,         /*  +o(  */
+						
+	NUM_SMILEYS
+} GossipSmiley;
+
+
+GType           gossip_chat_view_get_type              (void) G_GNUC_CONST;
+GossipChatView *gossip_chat_view_new                   (void);
+void            gossip_chat_view_append_chat_message   (GossipChatView *view,
 							gossip_time_t   timestamp,
 							const gchar    *to,
 							const gchar    *from,
 							const gchar    *msg);
-void             gossip_chat_view_append_invite_message (GossipChatView *view,
-							 GossipContact  *contact,
-							 gossip_time_t   timestamp,
-							 const gchar    *invite,
-							 const gchar    *msg);
-void             gossip_chat_view_append_event_message (GossipChatView *view,
+void            gossip_chat_view_append_invite_message (GossipChatView *view,
+							GossipContact  *contact,
+							gossip_time_t   timestamp,
+							const gchar    *invite,
+							const gchar    *msg);
+void            gossip_chat_view_append_event_message  (GossipChatView *view,
 							const gchar    *str,
 							gboolean        timestamp);
-void             gossip_chat_view_set_margin           (GossipChatView *view,
+void            gossip_chat_view_append_time_message   (GossipChatView *view,
+							const gchar    *str);
+void            gossip_chat_view_set_margin            (GossipChatView *view,
 							gint            margin);
-void             gossip_chat_view_clear                (GossipChatView *view);
-void             gossip_chat_view_scroll_down          (GossipChatView *view);
-gboolean         gossip_chat_view_get_selection_bounds (GossipChatView *view,
+void            gossip_chat_view_clear                 (GossipChatView *view);
+void            gossip_chat_view_scroll_down           (GossipChatView *view);
+gboolean        gossip_chat_view_get_selection_bounds  (GossipChatView *view,
 							GtkTextIter    *start,
 							GtkTextIter    *end);
-void             gossip_chat_view_copy_clipboard       (GossipChatView *view);
+void            gossip_chat_view_copy_clipboard        (GossipChatView *view);
+
+
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

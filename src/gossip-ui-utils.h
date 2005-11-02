@@ -34,6 +34,7 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-presence.h>
 
+#include "gossip-chat-view.h"
 
 /* glade */
 void       gossip_glade_get_file_simple                   (const gchar         *filename,
@@ -74,6 +75,8 @@ GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount       *
 GdkPixbuf *gossip_ui_utils_get_pixbuf_from_account_error  (GossipAccount       *account,
 							   GtkIconSize          icon_size);
 
+GdkPixbuf *gossip_ui_utils_get_pixbuf_from_smiley         (GossipSmiley         type,
+							   GtkIconSize          icon_size);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence_state  (GossipPresenceState  state);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_presence        (GossipPresence      *presence);
 GdkPixbuf *gossip_ui_utils_get_pixbuf_for_contact         (GossipContact       *contact);

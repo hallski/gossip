@@ -1,3 +1,27 @@
+2005-11-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-ui-utils.[ch]: 
+	- Added gossip_ui_utils_get_pixbuf_from_smiley() to get the theme
+	smileys instead of using our own packaged up smileys.
+	* src/gossip-chat-view.[ch]:
+	- Added a whole bunch of new smileys which we use from the
+	installed theme, some of these include kiss, confused, angel,
+	oooh, lookaway, blush, silly and sick.
+
+	* ui/group-chat.glade:
+	- Made the roster treeview a minimum width which works better.
+
+2005-11-02  Martyn Russell  <mr@gnome.org>
+
+	* src/gossip-chat-view.c: (chat_view_setup_tags),
+	(chat_view_maybe_append_timestamp),
+	(chat_view_maybe_append_datestamp),
+	(gossip_chat_view_append_chat_message),
+	(gossip_chat_view_append_event_message),
+	(gossip_chat_view_append_time_message):
+	* src/gossip-chat-view.h:
+	* ui/group-chat.glade:
+
 2005-11-02  Ross Burton  <ross@openedhand.com>
 
 	* configure.ac:

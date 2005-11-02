@@ -157,6 +157,7 @@
 
 	      <child>
 		<widget class="GtkTreeView" id="treeview">
+		  <property name="width_request">85</property>
 		  <property name="visible">True</property>
 		  <property name="can_focus">True</property>
 		  <property name="headers_visible">False</property>
@@ -488,7 +489,7 @@
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">*</property>
-		      <property name="activates_default">False</property>
+		      <property name="activates_default">True</property>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -509,7 +510,7 @@
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">*</property>
-		      <property name="activates_default">False</property>
+		      <property name="activates_default">True</property>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -530,7 +531,7 @@
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
 		      <property name="invisible_char">*</property>
-		      <property name="activates_default">False</property>
+		      <property name="activates_default">True</property>
 		      <property name="width_chars">35</property>
 		    </widget>
 		    <packing>

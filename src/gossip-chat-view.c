@@ -51,23 +51,6 @@ struct _GossipChatViewPriv {
 };
 
 
-typedef enum {
-	GOSSIP_SMILEY_NORMAL,      /*  :)   */
-	GOSSIP_SMILEY_WINK,        /*  ;)   */
-	GOSSIP_SMILEY_BIGEYE,      /*  =)   */
-	GOSSIP_SMILEY_NOSE,        /*  :-)  */
-	GOSSIP_SMILEY_CRY,         /*  :'(  */
-	GOSSIP_SMILEY_SAD,         /*  :(   */
-	GOSSIP_SMILEY_SCEPTICAL,   /*  :/   */
-	GOSSIP_SMILEY_BIGSMILE,    /*  :D   */
-	GOSSIP_SMILEY_INDIFFERENT, /*  :|   */
-	GOSSIP_SMILEY_TOUNGE,      /*  :p   */
-	GOSSIP_SMILEY_SHOCKED,     /*  :o   */
-	GOSSIP_SMILEY_COOL,        /*  8)   */
-	NUM_SMILEYS
-} GossipSmiley;
-
-
 typedef struct {
 	GossipSmiley  smiley;
 	gchar        *pattern;
@@ -76,57 +59,99 @@ typedef struct {
 
 
 static GossipSmileyPattern smileys[] = {
-	{ GOSSIP_SMILEY_NORMAL,     ":)",  0 },
-	{ GOSSIP_SMILEY_WINK,       ";)",  0 },
-	{ GOSSIP_SMILEY_WINK,       ";-)", 0 },
-	{ GOSSIP_SMILEY_BIGEYE,     "=)",  0 },
-	{ GOSSIP_SMILEY_NOSE,       ":-)", 0 },
-	{ GOSSIP_SMILEY_CRY,        ":'(", 0 },
-	{ GOSSIP_SMILEY_SAD,        ":(",  0 },
-	{ GOSSIP_SMILEY_SAD,        ":-(", 0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,  ":/",  0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,  ":\\",  0 },
-	{ GOSSIP_SMILEY_BIGSMILE,   ":D",  0 },
-	{ GOSSIP_SMILEY_BIGSMILE,   ":-D",  0 },
-	{ GOSSIP_SMILEY_INDIFFERENT, ":|", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ":p", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ":-p", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ":P", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ":-P", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ";p", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ";-p", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ";P", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      ";-P", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,     ":o", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,     ":O", 0 },
-	{ GOSSIP_SMILEY_COOL,        "8)", 0 },
-	{ GOSSIP_SMILEY_COOL,        "B)", 0 },
+	{ GOSSIP_SMILEY_NORMAL,       ":)",  0 },
+	{ GOSSIP_SMILEY_WINK,         ";)",  0 },
+	{ GOSSIP_SMILEY_WINK,         ";-)", 0 },
+	{ GOSSIP_SMILEY_BIGEYE,       "=)",  0 },
+	{ GOSSIP_SMILEY_NOSE,         ":-)", 0 },
+	{ GOSSIP_SMILEY_CRY,          ":'(", 0 },
+	{ GOSSIP_SMILEY_SAD,          ":(",  0 },
+	{ GOSSIP_SMILEY_SAD,          ":-(", 0 },
+	{ GOSSIP_SMILEY_SCEPTICAL,    ":/",  0 },
+	{ GOSSIP_SMILEY_SCEPTICAL,    ":\\", 0 },
+	{ GOSSIP_SMILEY_BIGSMILE,     ":D",  0 },
+	{ GOSSIP_SMILEY_BIGSMILE,     ":-D", 0 },
+	{ GOSSIP_SMILEY_INDIFFERENT,  ":|",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ":p",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ":-p", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ":P",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ":-P", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ";p",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ";-p", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ";P",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       ";-P", 0 },
+	{ GOSSIP_SMILEY_SHOCKED,      ":o",  0 },
+	{ GOSSIP_SMILEY_SHOCKED,      ":-o", 0 },
+	{ GOSSIP_SMILEY_SHOCKED,      ":O",  0 },
+	{ GOSSIP_SMILEY_SHOCKED,      ":-O", 0 },
+	{ GOSSIP_SMILEY_COOL,         "8)",  0 },
+	{ GOSSIP_SMILEY_COOL,         "B)",  0 },
+	{ GOSSIP_SMILEY_SORRY,        "*|",  0 },
+	{ GOSSIP_SMILEY_KISS,         ":*",  0 },
+	{ GOSSIP_SMILEY_SHUTUP,       ":#",  0 },
+	{ GOSSIP_SMILEY_SHUTUP,       ":-#", 0 },
+	{ GOSSIP_SMILEY_YAWN,         "|O",  0 },
+	{ GOSSIP_SMILEY_CONFUSED,     ":S",  0 },
+	{ GOSSIP_SMILEY_CONFUSED,     ":s",  0 },
+	{ GOSSIP_SMILEY_ANGEL,        "<)",  0 },
+	{ GOSSIP_SMILEY_OOOH,         ":x",  0 },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "*)",  0 },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "*-)", 0 },
+	{ GOSSIP_SMILEY_BLUSH,        "*S",  0 },
+	{ GOSSIP_SMILEY_BLUSH,        "*s",  0 },
+	{ GOSSIP_SMILEY_BLUSH,        "*$",  0 },
+	{ GOSSIP_SMILEY_COOLBIGSMILE, "8D",  0 }, 
+	{ GOSSIP_SMILEY_ANGRY,        ":@",  0 },
+	{ GOSSIP_SMILEY_BOSS,         "@)",  0 },
+	{ GOSSIP_SMILEY_MONKEY,       "#)",  0 },
+	{ GOSSIP_SMILEY_SILLY,        "O)",  0 },
+	{ GOSSIP_SMILEY_SICK,         "+o(", 0 },
 
 	/* backward smiley's */
-	{ GOSSIP_SMILEY_NORMAL,     "(:",  0 },
-	{ GOSSIP_SMILEY_WINK,       "(;",  0 },
-	{ GOSSIP_SMILEY_WINK,       "(-;", 0 },
-	{ GOSSIP_SMILEY_BIGEYE,     "(=",  0 },
-	{ GOSSIP_SMILEY_NOSE,       "(-:", 0 },
-	{ GOSSIP_SMILEY_CRY,        ")':", 0 },
-	{ GOSSIP_SMILEY_SAD,        "):",  0 },
-	{ GOSSIP_SMILEY_SAD,        ")-:", 0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,  "/:",  0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,  "//:",  0 },
-	{ GOSSIP_SMILEY_INDIFFERENT, "|:", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      "d:", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      "d-:", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      "d;", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,      "d-;", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,     "o:", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,     "O:", 0 },
-	{ GOSSIP_SMILEY_COOL,        "(8", 0 },
-	{ GOSSIP_SMILEY_COOL,        "(B", 0 }
-	
+	{ GOSSIP_SMILEY_NORMAL,       "(:",  0 },
+	{ GOSSIP_SMILEY_WINK,         "(;",  0 },
+	{ GOSSIP_SMILEY_WINK,         "(-;", 0 },
+	{ GOSSIP_SMILEY_BIGEYE,       "(=",  0 },
+	{ GOSSIP_SMILEY_NOSE,         "(-:", 0 },
+	{ GOSSIP_SMILEY_CRY,          ")':", 0 },
+	{ GOSSIP_SMILEY_SAD,          "):",  0 },
+	{ GOSSIP_SMILEY_SAD,          ")-:", 0 },
+	{ GOSSIP_SMILEY_SCEPTICAL,    "/:",  0 },
+	{ GOSSIP_SMILEY_SCEPTICAL,    "//:", 0 },
+	{ GOSSIP_SMILEY_INDIFFERENT,  "|:",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       "d:",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       "d-:", 0 },
+	{ GOSSIP_SMILEY_TOUNGE,       "d;",  0 },
+	{ GOSSIP_SMILEY_TOUNGE,       "d-;", 0 },
+	{ GOSSIP_SMILEY_SHOCKED,      "o:",  0 },
+	{ GOSSIP_SMILEY_SHOCKED,      "O:",  0 },
+	{ GOSSIP_SMILEY_COOL,         "(8",  0 },
+	{ GOSSIP_SMILEY_COOL,         "(B",  0 },
+	{ GOSSIP_SMILEY_SORRY,        "|*",  0 },
+	{ GOSSIP_SMILEY_KISS,         "*:",  0 },
+	{ GOSSIP_SMILEY_SHUTUP,       "#:",  0 },
+	{ GOSSIP_SMILEY_SHUTUP,       "#-:", 0 },
+	{ GOSSIP_SMILEY_YAWN,         "O|",  0 },
+	{ GOSSIP_SMILEY_CONFUSED,     "S:",  0 },
+	{ GOSSIP_SMILEY_CONFUSED,     "s:",  0 },
+	{ GOSSIP_SMILEY_ANGEL,        "(>",  0 },
+	{ GOSSIP_SMILEY_OOOH,         "x:",  0 },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "(*",  0 },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "(-*", 0 },
+	{ GOSSIP_SMILEY_BLUSH,        "S*",  0 },
+	{ GOSSIP_SMILEY_BLUSH,        "s*",  0 },
+	{ GOSSIP_SMILEY_BLUSH,        "$*",  0 },
+	{ GOSSIP_SMILEY_ANGRY,        "@:",  0 },
+	{ GOSSIP_SMILEY_BOSS,         "(@",  0 },
+	{ GOSSIP_SMILEY_MONKEY,       "#)",  0 },
+	{ GOSSIP_SMILEY_SILLY,        "(O",  0 },
+	{ GOSSIP_SMILEY_SICK,         ")o+", 0 }
+
 };
 
 
 static gint num_smileys = G_N_ELEMENTS (smileys);
+
 
 static void       gossip_chat_view_class_init          (GossipChatViewClass      *klass);
 static void       gossip_chat_view_init                (GossipChatView           *view);
@@ -279,18 +304,25 @@ chat_view_setup_tags (GossipChatView *view)
 	
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "nick-highlight",
-				    "foreground", "indian red",
+				    "foreground", "gold3",
+/* 				    "foreground", "indian red", */
 				    NULL);	
 
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "notice",
-				    "foreground", "steelblue4",
+				    "foreground", "medium orchid",
 				    NULL);
 
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "event-tag",
-				    "foreground", "darkgrey",
-				    "justification", GTK_JUSTIFY_CENTER,
+/* 				    "foreground", "medium orchid", */
+ 				    "foreground", "brown4", 
+				    NULL);
+
+	gtk_text_buffer_create_tag (priv->buffer,
+				    "time-tag",
+ 				    "foreground", "darkgrey", 
+ 				    "justification", GTK_JUSTIFY_CENTER, 
 				    NULL);
 
 	gtk_text_buffer_create_tag (priv->buffer,
@@ -586,7 +618,6 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 							  -1,
 							  tag,
 							  NULL);
-/* 		gtk_text_buffer_insert (buf, iter, str, -1); */
 		return;
 	}
 	
@@ -679,6 +710,7 @@ chat_view_get_smiley (GossipSmiley smiley)
 
 	
 	if (!inited) {
+#if 0
 		pixbufs[GOSSIP_SMILEY_NORMAL] =
 			gdk_pixbuf_new_from_file (IMAGEDIR "/emoticon-face1.png", NULL);
 		pixbufs[GOSSIP_SMILEY_WINK] =
@@ -703,6 +735,13 @@ chat_view_get_smiley (GossipSmiley smiley)
 			gdk_pixbuf_new_from_file (IMAGEDIR "/emoticon-face5.png", NULL);
 		pixbufs[GOSSIP_SMILEY_COOL] =
 			gdk_pixbuf_new_from_file (IMAGEDIR "/emoticon-face12.png", NULL);
+#else
+		gint i;
+
+		for (i = 0; i < NUM_SMILEYS; i++) {
+			pixbufs[i] = gossip_ui_utils_get_pixbuf_from_smiley (i, GTK_ICON_SIZE_MENU);
+		}
+#endif
 
 		inited = TRUE;
 	}
@@ -735,7 +774,7 @@ chat_view_maybe_append_timestamp (GossipChatView *view, gossip_time_t timestamp)
 		}
 
 		stamp = gossip_time_to_timestamp (t);
-		gossip_chat_view_append_event_message (view, stamp, FALSE);
+		gossip_chat_view_append_time_message (view, stamp);
 		g_free (stamp);
 	} 
 }
@@ -759,7 +798,7 @@ chat_view_maybe_append_datestamp (GossipChatView *view)
 
 	g_date_strftime (date_str, 256, _("%A %d %B %Y"), cur_date);
 	
-	gossip_chat_view_append_event_message (view, date_str, TRUE);
+	gossip_chat_view_append_time_message (view, date_str);
 
 	g_get_current_time (&cur_time);
 	priv->last_timestamp.tv_sec = cur_time.tv_sec;
@@ -954,6 +993,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	GtkTextBuffer *buffer;
 	GtkTextIter    iter;
 	gchar         *nick_tag;
+	const gchar   *text_tag = NULL;
 	gint           num_matches, i;
 	GArray        *start, *end;
 	gboolean       bottom;
@@ -997,12 +1037,14 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 								  nick_tag,
 								  NULL);
 		} else {
+			text_tag = "notice";
+
 			/* /me style message. */
 			gtk_text_buffer_insert_with_tags_by_name (buffer,
 								  &iter,
 								  " * ",
 								  3,
-								  "notice",
+								  text_tag,
 								  NULL);
 			
 			gtk_text_buffer_get_end_iter (buffer, &iter);
@@ -1012,7 +1054,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 								  &iter,
 								  from,
 								  -1,
-								  "notice",
+								  text_tag,
 								  NULL);
 
 			/* Remove the /me. */
@@ -1035,15 +1077,14 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (buffer, &iter);
 
-			/* insert text as normal */
-		chat_view_insert_text_with_emoticons (buffer, &iter, NULL, msg);
+		/* insert text as normal */
+		chat_view_insert_text_with_emoticons (buffer, &iter, text_tag, msg);
 	} else {
 		gint   last = 0;
 		gint   s = 0, e = 0;
 		gchar *tmp;
 		
 		for (i = 0; i < num_matches; i++) {
-			
 			s = g_array_index (start, gint, i);
 			e = g_array_index (end, gint, i);
 			
@@ -1053,7 +1094,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 				gtk_text_buffer_get_end_iter (buffer, &iter);
 				chat_view_insert_text_with_emoticons (buffer,
 								      &iter,
-								      NULL,
+								      text_tag,
 								      tmp);
 				g_free (tmp);
 			}
@@ -1079,7 +1120,7 @@ gossip_chat_view_append_chat_message (GossipChatView *view,
 			gtk_text_buffer_get_end_iter (buffer, &iter);
 			chat_view_insert_text_with_emoticons (buffer,
 							      &iter,  
-							      NULL, 
+							      text_tag, 
 							      tmp);
 			g_free (tmp);
 		}
@@ -1123,10 +1164,10 @@ gossip_chat_view_append_event_message (GossipChatView *view,
 
 	if (timestamp) {
 		stamp = gossip_time_to_timestamp (-1);
-		msg = g_strdup_printf (" %s - %s", str, stamp);
+		msg = g_strdup_printf ("%s - %s", stamp, str);
 		g_free (stamp);
 	} else {
-		msg = (gchar *) str;
+		msg = (gchar*) str;
 	}
 	
 	
@@ -1137,6 +1178,47 @@ gossip_chat_view_append_event_message (GossipChatView *view,
 		g_free (msg);
 	}
 		
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer,
+				&iter,
+				"\n",
+				1);
+
+	if (bottom) {
+		gossip_chat_view_scroll_down (view);
+	}
+}
+
+void
+gossip_chat_view_append_time_message (GossipChatView *view, 
+				      const gchar    *str)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	gchar         *stamp;
+	gboolean       bottom;
+
+	bottom = chat_view_is_scrolled_down (view);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+
+	if (!gtk_text_iter_starts_line (&iter)) {
+		gtk_text_buffer_insert (buffer,	&iter, "\n", 1);
+	}
+
+	if (!str) {
+		stamp = gossip_time_to_timestamp (-1);
+		gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
+							  stamp, -1, "time-tag",
+							  NULL);
+		g_free (stamp);
+	} else {
+		gtk_text_buffer_insert_with_tags_by_name (buffer, &iter,
+							  str, -1, "time-tag",
+							  NULL);
+	}
+
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 	gtk_text_buffer_insert (buffer,
 				&iter,
