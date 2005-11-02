@@ -56,12 +56,12 @@ dnl -----------------------------------------------------------
 dnl Galago
 dnl -----------------------------------------------------------
 
-AC_ARG_ENABLE(galago,
-              AS_HELP_STRING([--enable-galago=@<:@no/yes/auto@:>@],
+AC_ARG_WITH(galago,
+              AS_HELP_STRING([--with-galago=@<:@no/yes/auto@:>@],
                              [compile with Galago support]), ,
-              enable_galago=no)
+              with_galago=no)
 
-if test "x$enable_galago" != "xno"; then
+if test "x$with_galago" != "xno"; then
    galago_pkgconfig_tmp="libgalago"
    PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
    if test x$have_galago = xyes; then
@@ -73,7 +73,7 @@ else
    galago_pkgconfig=
 fi
 
-if test "x$enable_galago" = "xyes"; then
+if test "x$with_galago" = "xyes"; then
    if test "x$have_galago" != "xyes"; then
       AC_MSG_ERROR([Couldn't find Galago])
    fi

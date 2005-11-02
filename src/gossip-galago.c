@@ -23,6 +23,8 @@
 #include "config.h"
 #endif
 
+#include <glib/gi18n.h>
+
 #include <libgalago/galago.h>
 
 #include <dbus/dbus-glib-lowlevel.h>
@@ -128,37 +130,43 @@ galago_set_status (GalagoAccount  *account,
 	GalagoStatusType     type;
 	char                *id;
 	const char          *status;
-	
-	state = gossip_presence_get_state (presence);
 
-	d(g_print ("Galago: Setting status to %s\n",
-		   gossip_presence_state_get_default_status (state)));
-
-	galago_presence = galago_presence_new (account);
-  
-	switch (state) {
-	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		type = GALAGO_STATUS_AVAILABLE;
-		id = GALAGO_STATUS_ID_AVAILABLE;
-		break;
-	case GOSSIP_PRESENCE_STATE_BUSY:
-		type = GALAGO_STATUS_AVAILABLE;
-		id = GALAGO_STATUS_ID_BUSY;
-		break;
-	case GOSSIP_PRESENCE_STATE_AWAY:
-		type = GALAGO_STATUS_AWAY;
-		id = GALAGO_STATUS_ID_AWAY;
-		break;
-	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-		type = GALAGO_STATUS_EXTENDED_AWAY;
-		id = GALAGO_STATUS_ID_EXTENDED_AWAY;
-		break;
-	default:
-		g_assert_not_reached ();
+	if (presence) {
+		state = gossip_presence_get_state (presence);
+		
+		d(g_print ("Galago: Setting status to %s\n",
+			   gossip_presence_state_get_default_status (state)));
+				
+		switch (state) {
+		case GOSSIP_PRESENCE_STATE_AVAILABLE:
+			type = GALAGO_STATUS_AVAILABLE;
+			id = GALAGO_STATUS_ID_AVAILABLE;
+			break;
+		case GOSSIP_PRESENCE_STATE_BUSY:
+			type = GALAGO_STATUS_AVAILABLE;
+			id = GALAGO_STATUS_ID_BUSY;
+			break;
+		case GOSSIP_PRESENCE_STATE_AWAY:
+			type = GALAGO_STATUS_AWAY;
+			id = GALAGO_STATUS_ID_AWAY;
+			break;
+		case GOSSIP_PRESENCE_STATE_EXT_AWAY:
+			type = GALAGO_STATUS_EXTENDED_AWAY;
+			id = GALAGO_STATUS_ID_EXTENDED_AWAY;
+			break;
+		default:
+			g_assert_not_reached ();
+		}
+		
+		status = gossip_presence_get_status (presence);
+	} else {
+		d(g_print ("Galago: Setting status to offline\n"));
+		type = GALAGO_STATUS_OFFLINE;
+		id = GALAGO_STATUS_ID_OFFLINE;
+		status = _("Offline");
 	}
 
-	status = gossip_presence_get_status (presence);
-
+	galago_presence = galago_presence_new (account);
 	galago_presence_clear_statuses (galago_presence);
 	galago_presence_add_status (galago_presence, 
 				    galago_status_new (type, id, status, TRUE));
@@ -210,6 +218,7 @@ galago_contact_added_cb (GossipSession     *session,
 				       gossip_contact_get_id (contact));
 	galago_account_set_display_name (gaccount, 
 					 gossip_contact_get_name (contact));
+	galago_set_status (gaccount, gossip_contact_get_active_presence (contact));
 
 	galago_account_add_contact (my_gaccount, gaccount);
 }
@@ -241,7 +250,6 @@ galago_contact_presence_updated_cb (GossipSession     *session,
 	my_gaccount = galago_get_account (gossip_contact_get_account (contact));
 
 	presence = gossip_contact_get_active_presence (contact);
-	g_return_if_fail (presence != NULL);
 
 	person = g_hash_table_lookup (person_table, contact);
 	if (!person) { 
