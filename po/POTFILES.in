@@ -23,6 +23,7 @@ src/gossip-contact-info.c
 src/gossip-contact-list.c
 src/gossip-edit-groups-dialog.c
 src/gossip-edit-favorite-dialog.c
+src/gossip-galago.c
 src/gossip-group-chat.c
 src/gossip-idle.c
 src/gossip-join-dialog.c
