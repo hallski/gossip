@@ -310,13 +310,12 @@ chat_view_setup_tags (GossipChatView *view)
 
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "notice",
-				    "foreground", "medium orchid",
+				    "foreground", "brown4",
 				    NULL);
 
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "event-tag",
-/* 				    "foreground", "medium orchid", */
- 				    "foreground", "brown4", 
+ 				    "foreground", "darkgrey", 
 				    NULL);
 
 	gtk_text_buffer_create_tag (priv->buffer,
@@ -1164,7 +1163,7 @@ gossip_chat_view_append_event_message (GossipChatView *view,
 
 	if (timestamp) {
 		stamp = gossip_time_to_timestamp (-1);
-		msg = g_strdup_printf ("%s - %s", stamp, str);
+		msg = g_strdup_printf ("[%s] %s", stamp, str);
 		g_free (stamp);
 	} else {
 		msg = (gchar*) str;

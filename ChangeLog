@@ -1,3 +1,8 @@
+2005-11-03  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.c: (chat_view_setup_tags):
+	- Trying another variation of the chat colours.
+
 2005-11-02  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-ui-utils.[ch]: 
