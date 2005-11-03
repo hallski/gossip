@@ -74,12 +74,10 @@ static GHashTable *accounts = NULL;
 static const char *
 galago_generate_person_id (GossipContact *contact)
 {
-	static int  id = 0;
+	static int id = 0;
 	static char temp[64];
-  
 	g_return_val_if_fail (contact != NULL, NULL);
 	g_snprintf (temp, sizeof (temp), "person-%d", id++);
-
 	return temp;
 }
 
@@ -133,10 +131,7 @@ galago_set_status (GalagoAccount  *account,
 
 	if (presence) {
 		state = gossip_presence_get_state (presence);
-		
-		d(g_print ("Galago: Setting status to %s\n",
-			   gossip_presence_state_get_default_status (state)));
-				
+						
 		switch (state) {
 		case GOSSIP_PRESENCE_STATE_AVAILABLE:
 			type = GALAGO_STATUS_AVAILABLE;
@@ -159,6 +154,9 @@ galago_set_status (GalagoAccount  *account,
 		}
 		
 		status = gossip_presence_get_status (presence);
+		if (!status)
+			status = gossip_presence_state_get_default_status (state);
+		d(g_print ("Galago: Setting status to %s\n", status));
 	} else {
 		d(g_print ("Galago: Setting status to offline\n"));
 		type = GALAGO_STATUS_OFFLINE;
