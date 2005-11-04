@@ -60,6 +60,8 @@ GType               gossip_app_get_type          (void) G_GNUC_CONST;
 
 void                gossip_app_create            (GossipAccountManager *manager);
 void                gossip_app_connect           (gboolean              startup);
+void                gossip_app_net_down          (void);
+void                gossip_app_net_up            (void);
 const gchar *       gossip_app_get_username      (void);
 GossipApp *         gossip_app_get               (void);
 gboolean            gossip_app_is_connected      (void);

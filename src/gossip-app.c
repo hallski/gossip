@@ -95,7 +95,6 @@
 
 extern GConfClient *gconf_client;
 
-
 struct _GossipAppPriv {
 	GossipSession      *session;
 
@@ -1285,6 +1284,61 @@ gossip_app_connect (gboolean startup)
 	}
 	
 	gossip_session_connect (priv->session, NULL, startup);
+}
+
+/* Test hack to add support for disconnecting all accounts and then connect 
+ * them again due to if the net goes up and down.
+ */
+static GSList *tmp_account_list = NULL;
+void 
+gossip_app_net_down (void)
+{
+	GossipAppPriv *priv;
+	GList         *accounts, *l;
+
+	priv = app->priv;
+
+	/* Disconnect all and store a list */
+	accounts = gossip_session_get_accounts (priv->session);
+	for (l = accounts; l; l = l->next) {
+		GossipAccount *account = GOSSIP_ACCOUNT (l->data);
+
+		if (!gossip_session_is_connected (priv->session, account)) {
+			continue;
+		}
+
+		tmp_account_list = g_slist_prepend (tmp_account_list,
+						    g_object_ref (account));
+
+		gossip_session_disconnect (priv->session, account);
+	}
+
+	g_list_free (accounts);
+}
+
+void
+gossip_app_net_up (void)
+{
+	GossipAppPriv *priv;
+	GSList        *l;
+
+	priv = app->priv;
+
+	/* Connect all that went down before */
+	if (!tmp_account_list) {
+		/* Nothing to connect */
+		return;
+	}
+
+	for (l = tmp_account_list; l; l = l->next) {
+		GossipAccount *account = GOSSIP_ACCOUNT (l->data);
+		
+		gossip_session_connect (priv->session, account, FALSE);
+		g_object_unref (account);
+	}
+
+	g_slist_free (tmp_account_list);
+	tmp_account_list = NULL;
 }
 
 void

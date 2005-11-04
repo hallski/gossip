@@ -27,14 +27,15 @@
 
 #include <libgossip/gossip-session.h>
 
-#define GOSSIP_DBUS_SERVICE        "org.imendio.gossip"
+#define GOSSIP_DBUS_SERVICE        "org.imendio.Gossip"
 #define GOSSIP_DBUS_INTERFACE      "org.imendio.Gossip"
 #define GOSSIP_DBUS_OBJECT         "/org/imendio/Gossip"
 
-#define GOSSIP_DBUS_SET_PRESENCE   "set_Presence"
+#define GOSSIP_DBUS_SET_PRESENCE   "SetPresence"
 #define GOSSIP_DBUS_FORCE_NON_AWAY "ForceNonAway"
+#define GOSSIP_DBUS_PRE_NET_DOWN   "SignalPreNetDown"
+#define GOSSIP_DBUS_POST_NET_UP    "SignalPostNetUp"
 
 gboolean gossip_dbus_init (GossipSession *session);
-
 
 #endif /* __DBUS_H__ */

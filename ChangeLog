@@ -1,3 +1,14 @@
+2005-11-04  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-app.[ch]:  (gossip_app_net_down), (gossip_app_net_up):
+	- Added to test new D-BUS API for pre-net-down and post-net-up.
+	- Saves a list of online accounts when pre-net-down is received and 
+	  restores them when post-net-up is received.
+	* src/gossip-dbus.[ch]: (dbus_handle_pre_net_down),
+	(dbus_handle_post_net_up), (dbus_message_func):
+	- Added methods for signalling from outside that the net is about to
+	  go down and that it's online again.
+
 2005-11-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-view.c: (chat_view_setup_tags):

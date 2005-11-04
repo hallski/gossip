@@ -24,7 +24,6 @@
 #include "gossip-app.h"
 #include "gossip-dbus.h"
 
-
 static void              dbus_unregistered_func     (DBusConnection *connection,
 						     gpointer        user_data);
 static void              dbus_send_ok_reply         (DBusConnection *bus,
@@ -37,6 +36,11 @@ static DBusHandlerResult dbus_message_func          (DBusConnection *connection,
 						     DBusMessage    *message,
 						     gpointer        user_data);
 
+static DBusHandlerResult dbus_handle_pre_net_down   (DBusConnection *bus,
+						     DBusMessage    *message);
+
+static DBusHandlerResult dbus_handle_post_net_up    (DBusConnection *bus, 
+						     DBusMessage    *message);
 
 static GossipSession *saved_session = NULL;
 
@@ -161,6 +165,28 @@ dbus_handle_force_non_away (DBusConnection *bus,
 }
 
 static DBusHandlerResult
+dbus_handle_pre_net_down (DBusConnection *bus, DBusMessage *message)
+{	
+	g_print ("Pre net down\n");
+	gossip_app_net_down ();
+
+	dbus_send_ok_reply (bus, message);
+	
+	return DBUS_HANDLER_RESULT_HANDLED;
+}
+
+static DBusHandlerResult
+dbus_handle_post_net_up (DBusConnection *bus, DBusMessage *message)
+{	
+	g_print ("Post net up\n");
+	gossip_app_net_up ();
+
+	dbus_send_ok_reply (bus, message);
+	
+	return DBUS_HANDLER_RESULT_HANDLED;
+}
+
+static DBusHandlerResult
 dbus_message_func (DBusConnection *connection,
 		   DBusMessage    *message,
 		   gpointer        user_data)
@@ -175,6 +201,16 @@ dbus_message_func (DBusConnection *connection,
 					      GOSSIP_DBUS_INTERFACE,
 					      GOSSIP_DBUS_FORCE_NON_AWAY)) {
 		return dbus_handle_force_non_away (connection, message);
+	}
+	else if (dbus_message_is_method_call (message,
+					      GOSSIP_DBUS_INTERFACE,
+					      GOSSIP_DBUS_PRE_NET_DOWN)) {
+		return dbus_handle_pre_net_down (connection, message);
+	}
+	else if (dbus_message_is_method_call (message,
+					      GOSSIP_DBUS_INTERFACE,
+					      GOSSIP_DBUS_POST_NET_UP)) {
+		return dbus_handle_post_net_up (connection, message);
 	}
 
 	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
