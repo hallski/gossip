@@ -38,7 +38,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
 	GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonPriv))
 
-#define d(x)
+#define d(x) x
 
 
 typedef struct {
@@ -55,37 +55,40 @@ typedef struct {
 } GossipAccountButtonPriv;
 
 
-static void       account_button_finalize                 (GObject             *object);
-static GtkWidget *account_button_create_menu              (GossipAccountButton *account_button);
-static void       account_button_update_tooltip           (GossipAccountButton *account_button);
-static gboolean   account_button_button_press_event_cb    (GtkButton           *button,
-							   GdkEventButton      *event,
-							   GossipAccountButton *account_button);
-static void       account_button_edit_activate_cb         (GtkWidget           *menuitem,
-							   GossipAccount       *account);
-static void       account_button_connection_activate_cb   (GtkWidget           *menuitem,
-							   GossipAccountButton *account_button);
-static gboolean   account_button_connecting_timeout_cb    (GossipAccountButton *account_button);
-static void       account_button_protocol_connecting_cb   (GossipSession       *session,
-							   GossipAccount       *account,
-							   gboolean             connecting,
-							   GossipAccountButton *account_button);
-static void       account_button_protocol_connected_cb    (GossipSession       *session,
-							   GossipAccount       *account,
-							   GossipProtocol      *protocol,
-							   GossipAccountButton *account_button);
-static void       account_button_protocol_disconnected_cb (GossipSession       *session,
-							   GossipAccount       *account,
-							   GossipProtocol      *protocol,
-							   GossipAccountButton *account_button);
-static void       account_button_protocol_error_cb        (GossipSession       *session,
-							   GossipProtocol      *protocol,
-							   GossipAccount       *account,
-							   GError              *error,
-							   GossipAccountButton *account_button);
-static void       account_button_account_name_changed_cb  (GossipAccount       *account,
-							   GParamSpec          *param,
-							   GossipAccountButton *account_button);
+static void       account_button_finalize                  (GObject             *object);
+static GtkWidget *account_button_create_menu               (GossipAccountButton *account_button);
+static void       account_button_update_tooltip            (GossipAccountButton *account_button);
+static gboolean   account_button_button_press_event_cb     (GtkButton           *button,
+							    GdkEventButton      *event,
+							    GossipAccountButton *account_button);
+static void       account_button_edit_activate_cb          (GtkWidget           *menuitem,
+							    GossipAccount       *account);
+static void       account_button_connection_activate_cb    (GtkWidget           *menuitem,
+							    GossipAccountButton *account_button);
+static gboolean   account_button_connecting_timeout_cb     (GossipAccountButton *account_button);
+static void       account_button_protocol_connecting_cb    (GossipSession       *session,
+							    GossipAccount       *account,
+							    GossipAccountButton *account_button);
+static void       account_button_protocol_disconnecting_cb (GossipSession       *session,
+							    GossipAccount       *account,
+							    GossipAccountButton *account_button);
+static void       account_button_protocol_connected_cb     (GossipSession       *session,
+							    GossipAccount       *account,
+							    GossipProtocol      *protocol,
+							    GossipAccountButton *account_button);
+static void       account_button_protocol_disconnected_cb  (GossipSession       *session,
+							    GossipAccount       *account,
+							    GossipProtocol      *protocol,
+							    GossipAccountButton *account_button);
+static void       account_button_protocol_error_cb         (GossipSession       *session,
+							    GossipProtocol      *protocol,
+							    GossipAccount       *account,
+							    GError              *error,
+							    GossipAccountButton *account_button);
+static void       account_button_account_name_changed_cb   (GossipAccount       *account,
+							    GParamSpec          *param,
+							    GossipAccountButton *account_button);
+
 
 
 G_DEFINE_TYPE (GossipAccountButton, gossip_account_button, GTK_TYPE_BUTTON);
@@ -122,6 +125,10 @@ gossip_account_button_init (GossipAccountButton *account_button)
 
 	g_signal_connect (session, "protocol-connected",
 			  G_CALLBACK (account_button_protocol_connected_cb),
+			  account_button);
+
+	g_signal_connect (session, "protocol-disconnecting",
+			  G_CALLBACK (account_button_protocol_disconnecting_cb),
 			  account_button);
 
 	g_signal_connect (session, "protocol-disconnected",
@@ -167,6 +174,9 @@ account_button_finalize (GObject *object)
 					      account_button);
 	g_signal_handlers_disconnect_by_func (session, 
 					      account_button_protocol_connected_cb, 
+					      account_button);
+	g_signal_handlers_disconnect_by_func (session, 
+					      account_button_protocol_disconnecting_cb, 
 					      account_button);
 	g_signal_handlers_disconnect_by_func (session, 
 					      account_button_protocol_disconnected_cb, 
@@ -471,7 +481,6 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 static void
 account_button_protocol_connecting_cb (GossipSession       *session,
 				       GossipAccount       *account,
-				       gboolean             connecting,
 				       GossipAccountButton *account_button)
 {
 	GossipAccountButtonPriv *priv;
@@ -490,22 +499,40 @@ account_button_protocol_connecting_cb (GossipSession       *session,
 	}
 
 	priv->connected = FALSE;
-	priv->connecting = connecting;
+	priv->connecting = TRUE;
 
 	if (priv->timeout_id) {
 		g_source_remove (priv->timeout_id); 
 		priv->timeout_id = 0; 
 	}
 
-	if (connecting) {
-		priv->pixelate = FALSE;
-		priv->timeout_id = g_timeout_add (CONNECTING_DRAW_TIME, 
-						  (GSourceFunc)account_button_connecting_timeout_cb,
-						  account_button);
-	} else {
-		gossip_account_button_set_status (account_button, FALSE);
+	priv->pixelate = FALSE;
+	priv->timeout_id = g_timeout_add (CONNECTING_DRAW_TIME, 
+					  (GSourceFunc)account_button_connecting_timeout_cb,
+					  account_button);
+
+	account_button_update_tooltip (account_button);
+}
+
+static void 
+account_button_protocol_disconnecting_cb (GossipSession       *session,
+					  GossipAccount       *account,
+					  GossipAccountButton *account_button)
+{
+	GossipAccountButtonPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button));
+
+	priv = GET_PRIV (account_button);
+
+	if (!gossip_account_equal (account, priv->account)) {
+		return;
 	}
 
+	priv->connected = FALSE;
+	priv->connecting = FALSE;
+	
+	gossip_account_button_set_status (account_button, FALSE);
 	account_button_update_tooltip (account_button);
 }
 
@@ -529,6 +556,7 @@ account_button_protocol_connected_cb (GossipSession       *session,
 	}
 
 	priv->connected = TRUE;
+	priv->connecting = FALSE;
 
 	gossip_account_button_set_status (account_button, TRUE);
 	account_button_update_tooltip (account_button);
@@ -554,6 +582,7 @@ account_button_protocol_disconnected_cb (GossipSession       *session,
 	}
 
 	priv->connected = FALSE;
+	priv->connecting = FALSE;
 
 	gossip_account_button_set_status (account_button, FALSE);
 	account_button_update_tooltip (account_button);

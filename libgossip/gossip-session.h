@@ -70,9 +70,11 @@ GossipAccountManager *
 GList *         gossip_session_get_accounts            (GossipSession           *session);
 gdouble         gossip_session_get_connected_time      (GossipSession           *session,
 							GossipAccount           *account);
-guint           gossip_session_count_accounts          (GossipSession           *session,
-							gboolean                 connected,
-							gboolean                 enabled);
+
+guint           gossip_session_count_all_connected     (GossipSession           *session);
+guint           gossip_session_count_connected         (GossipSession           *session);
+guint           gossip_session_count_disconnected      (GossipSession           *session);
+
 gboolean        gossip_session_add_account             (GossipSession           *session,
 							GossipAccount           *account);
 gboolean        gossip_session_remove_account          (GossipSession           *session,

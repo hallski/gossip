@@ -1,3 +1,19 @@
+2005-11-05  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-session.[ch]:
+	* src/gossip-account-button.c:
+	* src/gossip-app.c:
+	- Used a cleaner API to return the count of accounts enabled/disable
+	and connected/disconnected.
+	- Used cleaner signaling so instead of "protocol-connecting" with
+	a TRUE or FALSE, now we have another signal "protocol-disconnecting". 
+
+	* ui/group-chat.glade:
+	- Made the treeview minimum width smaller since Richard said it
+	was too big.  Need a better solution for this since for I can see
+	1/2 the contact's names and for others it is fine depending on the
+	font sizes, etc. 
+
 2005-11-04  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-app.[ch]:  (gossip_app_net_down), (gossip_app_net_up):

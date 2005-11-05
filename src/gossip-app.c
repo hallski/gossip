@@ -1432,12 +1432,9 @@ app_connection_items_update (void)
 	   - connected and enabled 
 	   - disabled and enabled 
 	*/
-	connected_all = gossip_session_count_accounts (priv->session, TRUE, FALSE);
-	connected = gossip_session_count_accounts (priv->session, TRUE, TRUE);
-	disconnected = gossip_session_count_accounts (priv->session, FALSE, TRUE);
-
-	/* this is a count of accounts connected (enabled or not) */
-	connected_all += connected;
+	connected_all = gossip_session_count_all_connected (priv->session);
+	connected = gossip_session_count_connected (priv->session);
+	disconnected = gossip_session_count_disconnected (priv->session);
 
 	for (l = priv->widgets_connected_all; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, (connected_all > 0));
