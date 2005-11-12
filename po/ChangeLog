@@ -1,3 +1,10 @@
+2005-11-12  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: 
+	* POTFILES.skip:
+	- Moved gossip-status-presets-dialog.c 
+	(it was failing make distcheck). 
+
 2005-11-11  Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
 
 	* es.po: Updated Spanish translation.

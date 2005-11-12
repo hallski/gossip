@@ -231,6 +231,8 @@ static void            app_configure_transports_cb          (GtkWidget          
 							     GossipApp            *app);
 static void            app_about_cb                         (GtkWidget            *widget,
 							     GossipApp            *app);
+static void	       app_help_cb			    (GtkWidget		  *widget,
+							     GossipApp		  *app);
 static void            app_join_group_chat_cb               (GtkWidget            *widget,
 							     GossipApp            *app);
 static void            app_show_hide_activate_cb            (GtkWidget            *widget,
@@ -514,6 +516,7 @@ app_setup (GossipAccountManager *manager)
 			      "edit_personal_information", "activate", app_personal_information_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
 			      "help_about", "activate", app_about_cb,
+			      "help_contents", "activate", app_help_cb,
 			      NULL);
 
 	/* Set up menu */
@@ -884,6 +887,37 @@ app_about_cb (GtkWidget *window,
 	about = gossip_about_new ();
 	g_object_add_weak_pointer (G_OBJECT (about), (gpointer) &about);
 	gtk_widget_show (about);
+}
+
+static void
+app_help_cb (GtkWidget *window,
+	     GossipApp *app)
+{
+	gboolean   ok;
+
+	GtkWidget *dialog;
+	GError    *err = NULL;
+
+	ok = gnome_help_display ("gossip.xml", NULL, &err);
+	if (ok) {
+		return;
+	}
+
+	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_MESSAGE_ERROR,
+						     GTK_BUTTONS_CLOSE,
+						     "<b>%s</b>\n\n%s",
+						     _("Could not display the help contents."),
+						     err->message);
+	
+	g_signal_connect_swapped (dialog, "response",
+				  G_CALLBACK (gtk_widget_destroy),
+				  dialog);
+
+	gtk_widget_show (dialog);
+		
+	g_error_free (err);
 }
 
 static void

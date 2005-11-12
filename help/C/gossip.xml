@@ -1,0 +1,709 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+  <!ENTITY legal SYSTEM "legal.xml">
+  <!ENTITY appversion "0.9">
+  <!ENTITY manrevision "2.1">
+  <!ENTITY date "November 2005">
+  <!ENTITY app "Gossip">
+]>
+<!-- 
+      (Do not remove this comment block.)
+  Maintained by the GNOME Documentation Project
+  http://developer.gnome.org/projects/gdp
+  Template version: 2.0 beta
+  Template last modified Apr 11, 2002
+-->
+<!-- =============Document Header ============================= -->
+<article id="index" lang="en">
+<!-- please do not change the id; for translations, change lang to -->
+<!-- appropriate code -->
+  <articleinfo> 
+    <title>&app; Manual V&manrevision;</title>       
+
+    <copyright> 
+      <year>2004</year>
+      <holder>Daniel Taylor</holder> 
+    </copyright>
+    <copyright> 
+      <year>2004</year> 
+      <holder>Keywan Najafi Tonekaboni</holder> 
+    </copyright> 
+    <copyright>
+      <year>2005</year>
+      <holder>Brian Pepple</holder>
+    </copyright>
+    
+<!-- translators: uncomment this:
+
+  <copyright>
+   <year>2002</year>
+   <holder>ME-THE-TRANSLATOR (Latin translation)</holder>
+  </copyright>
+
+   -->
+<!-- An address can be added to the publisher information.  If a role is 
+     not specified, the publisher/author is the same for all versions of the 
+     document.  -->
+    <publisher> 
+      <publishername> GNOME Documentation Project </publishername> 
+    </publisher> 
+
+   &legal;
+   <!-- This file  contains link to license for the documentation (GNU FDL), and 
+        other legal stuff such as "NO WARRANTY" statement. Please do not change 
+	any of this. -->
+
+    <authorgroup> 
+      <author> 
+		<firstname>Daniel</firstname> 
+		<surname>Taylor</surname> 
+		<affiliation> 
+	  		<orgname>GNOME Documentation Project</orgname> 
+	  		<address> <email>dantaylor@web.de</email> </address> 
+		</affiliation> 
+      </author> 
+      <author> 
+		<firstname>Keywan</firstname> 
+		<surname>Najafi Tonekaboni</surname> 
+		<affiliation> 
+	  		<orgname>GNOME Documentation Project</orgname> 
+	  		<address> <email>keywan@uni-duisburg.de</email> </address> 
+		</affiliation> 
+      </author> 
+      <author>
+	        <firstname>Brian</firstname>
+	        <surname>Pepple</surname>
+	        <affiliation>
+	                <orgname>Fedora Extras Project</orgname>
+	                <address> <email>bdpepple@gmail.com</email> </address>
+	        </affiliation>
+      </author>
+      
+<!-- This is appropriate place for other contributors: translators,
+     maintainers,  etc. Commented out by default.
+     
+      <othercredit role="translator">
+		<firstname>Latin</firstname> 
+		<surname>Translator 1</surname> 
+		<affiliation> 
+	  		<orgname>Latin Translation Team</orgname> 
+	  		<address> <email>translator@gnome.org</email> </address> 
+		</affiliation>
+		<contrib>Latin translation</contrib>
+      </othercredit>
+-->
+    </authorgroup>
+
+
+<!-- According to GNU FDL, revision history is mandatory if you are -->
+<!-- modifying/reusing someone else's document.  If not, you can omit it. -->
+<!-- Remember to remove the &manrevision; entity from the revision entries other
+-->
+<!-- than the current revision. -->
+<!-- The revision numbering system for GNOME manuals is as follows: -->
+<!-- * the revision number consists of two components -->
+<!-- * the first component of the revision number reflects the release version of the GNOME desktop. -->
+<!-- * the second component of the revision number is a decimal unit that is incremented with each revision of the manual. -->
+<!-- For example, if the GNOME desktop release is V2.x, the first version of the manual that -->
+<!-- is written in that desktop timeframe is V2.0, the second version of the manual is V2.1, etc. -->
+<!-- When the desktop release version changes to V3.x, the revision number of the manual changes -->
+<!-- to V3.0, and so on. -->  
+    <revhistory>
+      <revision> 
+		<revnumber>&app; Manual V&manrevision;</revnumber> 
+		<date>&date;</date> 
+		<revdescription> 
+	  		<para role="author">Brian Pepple
+	    	<email>bdpepple@gmail.com</email>
+	  		</para>
+	  		<para role="publisher">GNOME Documentation Project</para>
+		</revdescription> 
+      </revision>
+
+      <revision> 
+		<revnumber>&app; Manual V2.0</revnumber> 
+		<date>October 2004</date> 
+		<revdescription> 
+	  		<para role="author">Daniel Taylor 
+	    	<email>dantaylor@web.de</email>
+	  		</para>
+	  		<para role="publisher">GNOME Documentation Project</para>
+		</revdescription> 
+      </revision> 
+    </revhistory> 
+
+    <releaseinfo>This manual describes version &appversion; of MY-GNOME-APPLICATION.
+    </releaseinfo> 
+    <legalnotice> 
+      <title>Feedback</title> 
+      <para>To report a bug or make a suggestion regarding the &app; application or
+      this manual, follow the directions in the <ulink url="ghelp:gnome-feedback"
+	  type="help">GNOME Feedback Page</ulink>. 
+      </para>
+<!-- Translators may also add here feedback address for translations -->
+    </legalnotice> 
+  </articleinfo> 
+
+  <indexterm zone="index"> 
+    <primary>&app;</primary> 
+  </indexterm> 
+
+<!-- ============= Document Body ============================= -->
+<!-- ============= Introduction ============================== -->
+<!-- Use the Introduction section to give a brief overview of what
+     the application is and what it does. -->
+  <sect1 id="introduction"> 
+    <title>Introduction</title> 
+
+    <sect2 id="what-client"> 
+    <title>What is &app;</title>
+    <para>Gossip is an instant messaging program for the GNOME Desktop. It allows instant communication across a network using the Jabber protocol. Gossip is written to be as simple to use as possible and to allow users of the GNOME Desktop to easily keep in touch with friends.
+    </para>
+  </sect2>
+  <sect2 id="what-jabber"> 
+    <title>What is Jabber</title>
+    <para>Jabber is an open instant messaging protocol standard which allows a 
+    group of interconnected servers to pass messages to one another in a similar 
+    fashion to email. 
+    </para>
+    <para>
+    Some features of the Jabber protocol include:
+    <itemizedlist>
+        
+        <listitem>
+          <para>Open, Free, and Public</para>
+        </listitem>
+        <listitem>
+          <para>Internet Engineering Task Force (IETF) Standard</para>
+        </listitem>
+        <listitem>
+          <para>Proven and working since 1998</para>
+        </listitem>
+        <listitem>
+          <para>Decentralized and Secure</para>
+        </listitem>
+        <listitem>
+          <para>Extensible with Custom Functionality</para>
+        </listitem>
+        <listitem>
+          <para>Flexible and can be used in Diverse situations</para>
+        </listitem>
+    </itemizedlist>
+	More information on the Jabber protocol can be found on the Website of the  
+	<ulink url="http://www.jabber.org">Jabber Software Fondation</ulink>.
+    </para>
+  </sect2>
+  </sect1>
+
+<!-- =========== Getting Started ============================== -->
+<!-- Use the Getting Started section to describe the steps required
+     to start the application and to describe the user interface components
+     of the application. If there is other information that it is important
+     for readers to know before they start using the application, you should
+     also include this information here. 
+     If the information about how to get started is very short, you can 
+     include it in the Introduction and omit this section. -->
+
+  <sect1 id="gossip-getting-started"> 
+    <title>Getting Started</title> 
+
+    <sect2 id="gossip-start">
+    <title>To Start &app;</title>
+    <para>You can start <application>&app;</application> in the following ways:
+    </para> 
+    <variablelist>
+    	<varlistentry>
+    		<term><guimenu>Applications</guimenu> menu</term>
+    		<listitem>
+    		  <para>Choose 
+    		    <menuchoice>
+    		      <guisubmenu>Internet</guisubmenu>
+    		      <guimenuitem>Gossip Instant Messenger</guimenuitem>
+    		    </menuchoice>.
+                  </para>
+    		</listitem>
+    	</varlistentry>
+    	<varlistentry>
+    		<term>Command line</term>
+    		<listitem>
+    		<para>To start <application>&app;</application> from a command line, type <command>gossip</command> and then press <keycap>Return</keycap>.</para>
+    		</listitem>
+    	</varlistentry>
+    </variablelist>
+    </sect2>
+    
+    <sect2 id="gossip-start-first">
+    <title>When You Start &app; the first time</title>
+    <para>When you start <application>&app;</application> the first time, the following window is displayed.</para>
+
+    <!-- ==== Figure ==== -->
+      <figure id="firstwindow-fig"> 
+	<title>&app; First Start Up Window</title> 
+	<screenshot> 
+	  <mediaobject> 
+	    <imageobject><imagedata
+		fileref="figures/gossip_first_start_window.png" format="PNG"/> 
+	    </imageobject>
+	    <!-- EPS versions of the figures are not required at the moment. -->
+            <!-- 
+		    <imageobject>
+      		<imagedata fileref="figures/image.eps" format="EPS"/>
+    		    </imageobject>
+	    -->
+	    <textobject> 
+	      <phrase>Shows &app;s first start window which is a wizard to set up Gossip.</phrase> 
+	    </textobject> 
+	  </mediaobject> 
+	</screenshot> 
+      </figure>
+    <!-- ==== End of Figure ==== -->
+
+    <!-- Include any descriptions of the GUI immediately after the screenshot of the main UI, -->
+    <!-- for example, the items on the menubar and on the toolbar. This section is optional. -->
+
+    	<para>
+    		This window is an assistant to set up &app;. With this wizard you 
+    		can set up Gossip in few steps. You can use it to get a new Jabber
+    		Account or setting up Gossip for using an existing Jabber Account.
+    	</para>
+    </sect2>
+ 
+    <sect2 id="gossip-get-a-jabber-acount">
+      <title>Getting a Jabber Account</title>
+      <para>Gossip will help set up a new Jabber account:</para>
+      <orderedlist>
+	<listitem>
+	  <para>
+            When first running Gossip, answer <guibutton>No</guibutton> to
+            the <guilabel>"Do you already have an account on a Jabber server?"
+    	    </guilabel> question and click <guibutton>Next</guibutton>. 
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+    	    Fill in desired user name and actual name and click 
+    	    <guibutton>Next</guibutton>.
+    	  </para>
+	</listitem>
+	<listitem>
+	  <para>Add the server information.</para>
+            <para>
+            <itemizedlist>
+	      <listitem>
+		<para>
+                  Choose the correct server for the account from the list, or type
+                  in a custom server if needed.
+                </para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  Select the <guilabel>Use encryption (SSL)</guilabel> option if your
+                  server requires it.
+                </para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  Select the <guilabel>Use system proxy</guilabel> option if you use a proxy.
+                </para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  Once all options are set, click <guibutton>Next</guibutton>.
+                </para>
+	      </listitem>
+	    </itemizedlist>
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            Review the information and click <guibutton>Apply</guibutton>.
+    	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+            When prompted on first connection with the account, enter desired 
+    	    password.
+          </para>
+	</listitem>
+      </orderedlist>
+    </sect2>
+
+    <sect2 id="gossip-existing-jabber-acount">
+      <title>Setting up Gossip to Use an existing Jabber Account</title>
+      <para>Gossip will let you use an existing Jabber account:</para>
+      <orderedlist>
+	<listitem>
+	  <para>
+            When first running Gossip, answer <guibutton>Yes</guibutton> to
+            the <guilabel>"Do you already have an account set up on a server?"</guilabel>
+    	    question and click <guibutton>Next</guibutton>.
+     	  </para> 
+	</listitem>
+	<listitem>
+	  <para>
+            Fill in the user name of the account and click <guibutton>Next</guibutton>.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>Add the server information.</para>
+	  <para>
+            <itemizedlist>
+	      <listitem>
+		<para>
+                  Choose the correct server for the account from the list, or type
+                  in a custom server if needed.
+                </para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  Select the <guilabel>Use encryption (SSL)</guilabel> option if your
+                  server requires it.
+                </para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  Select the <guilabel>Use system proxy</guilabel> option if you use a proxy.
+                </para>
+	      </listitem>
+	      <listitem>
+		<para>
+                  Once all options are set, click <guibutton>Next</guibutton>.
+                </para>
+	      </listitem>
+	    </itemizedlist>
+           </para>
+	</listitem>
+	<listitem>
+	  <para>
+            Review the information and click <guibutton>Apply</guibutton>.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            When prompted on first connection with the account, enter desired password.
+          </para>
+	</listitem>
+      </orderedlist>
+    </sect2>   		
+
+    <sect2 id="gossip-when-start">
+    <title>When You Start &app;</title>
+    <para>When you start <application>&app;</application>, the following window is displayed.</para>
+
+    <!-- ==== Figure ==== -->
+      <figure id="mainwindow-fig"> 
+	<title>&app; main window</title> 
+	<screenshot> 
+	  <mediaobject> 
+	    <imageobject><imagedata
+		fileref="figures/gossip_roster.png" format="PNG"/> 
+	    </imageobject>
+	    <!-- EPS versions of the figures are not required at the moment. -->
+            <!-- 
+		    <imageobject>
+      		<imagedata fileref="figures/image.eps" format="EPS"/>
+    		    </imageobject>
+	    -->
+	    <textobject> 
+	      <phrase>Shows &app; main window. Contains titlebar,
+	      menubar, contact list, status icon and status drop-down list.
+	      Menubar contains Chat, Edit and Help menus. </phrase> 
+	    </textobject> 
+	  </mediaobject> 
+	</screenshot> 
+      </figure>
+    <!-- ==== End of Figure ==== -->
+
+    <!-- Include any descriptions of the GUI immediately after the screenshot of the main UI, -->
+    <!-- for example, the items on the menubar and on the toolbar. This section is optional. -->
+
+    <para>The &app; window contains the following elements:
+    </para>
+      <variablelist>
+	<varlistentry>
+	  <term>Menubar.</term>
+	  <listitem>
+	    <para>The menus on the menubar contain all of the commands you needed
+              to connect to servers and manage accounts, contacts, and preferences in  
+	      <application>&app;</application>.
+            </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>Accounts Toolbar</term>
+	  <listitem>
+	    <para>The buttons on the account toolbar allow you, depending on account state, to
+              connect, disconnect, and edit an account.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>Contact List</term>
+	  <listitem>
+	    <para>The Contact List shows all available contacts and their assosiated statuses.</para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>Status Icon. </term>
+	  <listitem>
+	    <para> This shows the current status of the user. </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>Status Drop-Down List. </term>
+	    <listitem>
+	      <para> You can use this selector to change your online state. </para>
+	    </listitem>
+	</varlistentry>
+      </variablelist>
+    </sect2>
+  </sect1>
+<!-- ================ Usage ================================ -->
+<!-- Use this section to describe how to use the application to perform the tasks for 
+  which the application is designed. -->
+  <sect1 id="gossip-usage"> 
+    <title>Usage</title> 
+    <para>You can use the &app; application to perform the following tasks:</para>
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-connect"> 
+      <title>Connect to the Server </title>
+      <para>To connect to the server, choose 
+	<menuchoice> 
+	  <guimenu>Chat</guimenu> 
+	  <guimenuitem>Connect...</guimenuitem> 
+	</menuchoice>
+	from the MenuBar.
+      </para>
+    </sect2>     
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-disconnect"> 
+      <title>Disconnect from the Server </title>
+      <para>To disconnect to the server, choose 
+	<menuchoice> 
+	  <guimenu>Chat</guimenu> 
+	  <guimenuitem>Disconnect</guimenuitem> 
+	</menuchoice>
+	from the MenuBar.
+      </para>
+    </sect2> 
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-add-contact"> 
+      <title>Adding a Contact</title> 
+      <para>
+        If you add a contact to your contact list, you can see when this 
+     	person is online.  To add a contact, perform the following steps:
+      </para>
+      <orderedlist>
+	<listitem>
+	  <para>
+    	    Select
+            <menuchoice>
+	      <guimenu>Chat</guimenu> 
+	      <guimenuitem>Add Contact</guimenuitem> 
+	    </menuchoice>
+            from the MenuBar.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+            Enter the contact's Jabber ID (JID) and click <guibutton>Forward</guibutton>.
+          </para>
+	  <note>
+	    <para>
+              The Jabber ID looks like an email-address. Example: name@host.domain
+            </para>
+	  </note>
+	</listitem>
+	<listitem>
+	  <para>
+            Enter a desired nickname and group name for the contact. The nickname will
+            be displayed in the Contact List under the chosen group name. Click
+            <guibutton>Forward</guibutton> when finished.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+            You need the authorization from the contact, to add him or her to the 
+            Contact List. Also everybody who wants add you, needs your authorization.
+	    Enter a desired request message that will be sent to the contact and click
+            <guibutton>Forward</guibutton>.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    Review the information displayed and click <guibutton>Apply.</guibutton>.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            When the user has permited your request, you can see the user in your
+            contact list as <guilabel>Avaible</guilabel>, <guilabel>Busy</guilabel>or
+            <guilabel>Away</guilabel>.
+          </para>
+	</listitem>
+      </orderedlist>
+    </sect2> 
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-contact-info"> 
+      <title>Accessing a Contact's Information</title> 
+      <para>Right Click a contact's nickname in the Contact List and select Contact Information.</para> 
+    </sect2>
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-rename-contact"> 
+      <title>Renaming a Contact</title> 
+      <para>
+        Right Click a contact's nickname in the Contact List and select Rename Contact.
+	Enter new name and click <guibutton>Ok</guibutton> to apply, or
+        <guibutton>Cancel</guibutton> to discard all changes.
+      </para>
+    </sect2> 
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-removing-contact"> 
+      <title>Removing a Contact</title> 
+      <para>
+        Right Click a contact's nickname in the Contact List and select Remove Contact.
+	Click <guibutton>Yes</guibutton> when prompted to finish removal.
+      </para>
+    </sect2> 
+  </sect1>
+  <!-- ============= Customization ============================= -->
+  <!-- Use this section to describe how to customize the application. -->
+  <sect1 id="gossip-prefs"> 
+    <title>Settings</title> 
+    <para>
+      To configure &app;, choose
+      <menuchoice> 
+	<guimenu>Edit</guimenu> 
+	<guimenuitem>Preferences</guimenuitem> 
+      </menuchoice>.
+      The <guilabel>Preferences</guilabel> dialog contains the following tabbed sections:
+    </para> 
+    <itemizedlist> 
+      <listitem> 
+	<para> 
+	  <xref linkend="gossip-prefs-general"/>
+        </para> 
+      </listitem> 
+      <listitem> 
+	<para> 
+	  <xref linkend="gossip-prefs-spelling"/>
+        </para> 
+      </listitem> 
+    </itemizedlist>
+<!-- =============== Customization Subsection ================ -->
+<!-- Use a new section to describe different tabbed sections on the Settings or Preferences
+	     dialog. -->
+    <sect2 id="gossip-prefs-general"> 
+      <title>General</title> 
+      <variablelist> 
+	<varlistentry> 
+	  <term> <guilabel>Appearance and Behavior</guilabel> </term> 
+	  <listitem> 
+	    <itemizedlist> 
+	      <listitem> 
+		<para>Select the <guilabel>Convert smileys to graphical images</guilabel> option,
+                  to enable graphical images.</para> 
+	      </listitem> 
+	      <listitem> 
+		<para>Select the <guilabel>Open new chats in separate windows</guilabel> option,
+                  to open chats in separate windows.</para>
+	      </listitem>  
+	    </itemizedlist>  
+	  </listitem> 
+	</varlistentry> 
+	<varlistentry> 
+	  <term> <guilabel>Sound</guilabel> </term> 
+	  <listitem> 
+	    <itemizedlist> 
+	      <listitem> 
+		<para>Select the <guilabel>Play sound when messages arrive</guilabel>
+                  option to enable sounds.</para> 
+	      </listitem> 
+	      <listitem> 
+		<para>Select the <guilabel>Disable sounds when busy</guilabel> option
+                  to disable sounds when busy.</para> 
+	      </listitem> 
+	      <listitem> 
+		<para>Select the <guilabel>Disable sounds when away</guilabel> option
+                  to idsable sounds when away.</para> 
+	      </listitem> 
+	    </itemizedlist> 
+	  </listitem> 
+	</varlistentry> 
+      </variablelist> 
+    </sect2>
+    <!-- ============= Customization Subsection ===================== -->
+    <!-- Another tabbed section on the Preferences dialog. -->
+    <sect2 id="gossip-prefs-spelling"> 
+      <title>Spell Checking</title> 
+      <variablelist> 
+	<varlistentry> 
+	  <term> <guilabel>Languages</guilabel> </term> 
+	  <listitem> 
+	    <itemizedlist> 
+	      <listitem>
+		<para>Select the languages you wish to enable for spell checking</para>
+	      </listitem>
+	    </itemizedlist>
+	    <note>
+	      <para>The list of languages only reflect the languages that have a 
+                dictionary installed.
+              </para>
+	    </note>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term> <guilabel>Options</guilabel> </term>
+          <listitem>
+	    <itemizedlist>
+	      <listitem>
+		<para>Select the <guilabel>Check spelling while I type</guilabel>
+                  option, to enable spell checking.</para>
+	      </listitem>
+	    </itemizedlist>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </sect2> 
+  </sect1>
+<!-- ============= Bugs ================================== -->
+<!-- This section is optional and is commented out by default. 
+     You can use it to describe known bugs and limitations of the 
+	  program if there are any - please be frank and list all
+     problems you know of. 
+  
+  <sect1 id="mayapp-bugs">
+  <title>Known Bugs and Limitations</title>
+  <para> </para>
+ </sect1>
+-->
+<!-- ============= About ================================== -->
+<!-- This section contains info about the program (not docs), such as
+      author's name(s), web page, license, feedback address. This
+      section is optional: primary place for this info is "About.." box of
+      the program. However, if you do wish to include this info in the
+      manual, this is the place to put it. Alternatively, you can put this information in the title page.-->
+  <sect1 id="gossip-about"> 
+    <title>About &app;</title> 
+    <para> &app; was written by Mikael Hallendal, Richard Hult,
+      Martyn Russell, Geert-Jan Van den Bogaerde, and Kevin Dougherty.
+      To find more information about
+      &app;, please visit the 
+      <ulink url="http://developer.imendio.com/wiki/Gossip" type="http">&app; Developer
+	Page</ulink>.
+    </para>
+    <para>
+      To report a bug or make a suggestion regarding this application or
+      this manual, follow the directions in this 
+      <ulink url="ghelp:gnome-feedback"   type="help">document</ulink>.
+    </para>
+
+    <para> This program is distributed under the terms of the GNU
+      General Public license as published by the Free Software
+      Foundation; either version 2 of the License, or (at your option)
+      any later version. A copy of this license can be found at this
+      <ulink url="ghelp:gpl" type="help">link</ulink>, or in the file
+      COPYING included with the source code of this program. </para>
+
+  </sect1> 
+</article>

@@ -36,7 +36,6 @@ src/gossip-private-chat.c
 src/gossip-register.c
 src/gossip-spell.c
 src/gossip-spell-dialog.c
-src/gossip-status-presets-dialog.c
 src/gossip-ui-utils.c
 src/gossip-vcard-dialog.c
 src/sounds/gossip.soundlist.in

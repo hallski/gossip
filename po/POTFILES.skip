@@ -8,3 +8,4 @@ src/eggtrayicon.c
 src/gossip-tray.c
 src/gossip-transport-accounts-window.c
 src/gossip-transport-add-window.c
+src/gossip-status-presets-dialog.c

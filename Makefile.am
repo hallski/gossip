@@ -1,4 +1,4 @@
-SUBDIRS = ui protocols libgossip src po
+SUBDIRS = ui protocols libgossip src po help
 
 desktop_in_files=gossip.desktop.in
 desktop_files=$(desktop_in_files:.desktop.in=.desktop)
@@ -21,6 +21,8 @@ EXTRA_DIST = 			\
         ChangeLog               \
         README                  \
 	CONTRIBUTORS            \
+	xmldocs.make		\
+	omf.make		\
 	$(desktop_in_files)	\
 	$(desktop_files)	\
 	$(schemas_in_files)	\

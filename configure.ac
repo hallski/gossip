@@ -248,6 +248,8 @@ src/sounds/Makefile
 protocols/Makefile
 protocols/jabber/Makefile
 po/Makefile.in
+help/Makefile
+help/C/Makefile
 gossip.desktop.in
 ])
 

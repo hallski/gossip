@@ -1,3 +1,23 @@
+2005-11-12  Martyn Russell  <martyn@imendio.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* help/.cvsignore:
+	* help/C/.cvsignore:
+	* help/C/Makefile.am:
+	* help/C/figures/gossip_first_start_window.png:
+	* help/C/figures/gossip_roster.png:
+	* help/C/gossip-C.omf:
+	* help/C/gossip.xml:
+	* help/C/legal.xml:
+	* help/Makefile.am:
+	* src/gossip-app.c:
+	* ui/main.glade:
+	* xmldocs.make:
+	* omf.make:
+	- Add Help section using Gnome Help (patch from Brian Pepple).
+	- Fixes bug #155140 (Brian Pepple).
+
 2005-11-05  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-session.[ch]:
