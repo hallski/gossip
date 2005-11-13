@@ -1,3 +1,13 @@
+2005-11-13  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: 
+	- Added Scrollkeeper dependency since we need it to build the
+	help (patch by Brian Pepple).
+
+	* help/C/gossip.xml: 
+	- Use entities for app name, etc. 
+	- Fix some small errors (patch by Keywan Najafi Tonekaboni).
+
 2005-11-12  Martyn Russell  <martyn@imendio.com>
 
 	* Makefile.am:

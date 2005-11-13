@@ -132,8 +132,7 @@
 		</revdescription> 
       </revision> 
     </revhistory> 
-
-    <releaseinfo>This manual describes version &appversion; of MY-GNOME-APPLICATION.
+    <releaseinfo>This manual describes version &appversion; of &app;.
     </releaseinfo> 
     <legalnotice> 
       <title>Feedback</title> 
@@ -158,7 +157,8 @@
 
     <sect2 id="what-client"> 
     <title>What is &app;</title>
-    <para>Gossip is an instant messaging program for the GNOME Desktop. It allows instant communication across a network using the Jabber protocol. Gossip is written to be as simple to use as possible and to allow users of the GNOME Desktop to easily keep in touch with friends.
+    <para>
+	&app; is an instant messaging program for the GNOME Desktop. It allows instant communication across a network using the Jabber protocol. &app; is written to be as simple to use as possible and to allow users of the GNOME Desktop to easily keep in touch with friends.
     </para>
   </sect2>
   <sect2 id="what-jabber"> 
@@ -234,7 +234,7 @@
     </sect2>
     
     <sect2 id="gossip-start-first">
-    <title>When You Start &app; the first time</title>
+    <title>When You Start &app; the First Time</title>
     <para>When you start <application>&app;</application> the first time, the following window is displayed.</para>
 
     <!-- ==== Figure ==== -->
@@ -252,7 +252,7 @@
     		    </imageobject>
 	    -->
 	    <textobject> 
-	      <phrase>Shows &app;s first start window which is a wizard to set up Gossip.</phrase> 
+	      <phrase>Shows &app;s first start window which is a wizard to set up &app;.</phrase> 
 	    </textobject> 
 	  </mediaobject> 
 	</screenshot> 
@@ -264,18 +264,18 @@
 
     	<para>
     		This window is an assistant to set up &app;. With this wizard you 
-    		can set up Gossip in few steps. You can use it to get a new Jabber
-    		Account or setting up Gossip for using an existing Jabber Account.
+    		can set up &app; in few steps. You can use it to get a new Jabber
+    		account or setting up &app; for using an existing Jabber account.
     	</para>
     </sect2>
  
     <sect2 id="gossip-get-a-jabber-acount">
       <title>Getting a Jabber Account</title>
-      <para>Gossip will help set up a new Jabber account:</para>
+      <para>&app; will help set up a new Jabber account:</para>
       <orderedlist>
 	<listitem>
 	  <para>
-            When first running Gossip, answer <guibutton>No</guibutton> to
+            When first running &app;, answer <guibutton>No</guibutton> to
             the <guilabel>"Do you already have an account on a Jabber server?"
     	    </guilabel> question and click <guibutton>Next</guibutton>. 
           </para>
@@ -299,7 +299,7 @@
 	      <listitem>
 		<para>
                   Select the <guilabel>Use encryption (SSL)</guilabel> option if your
-                  server requires it.
+                  server supports it or requires it.
                 </para>
 	      </listitem>
 	      <listitem>
@@ -330,12 +330,12 @@
     </sect2>
 
     <sect2 id="gossip-existing-jabber-acount">
-      <title>Setting up Gossip to Use an existing Jabber Account</title>
-      <para>Gossip will let you use an existing Jabber account:</para>
+      <title>Setting Up &app; to use an Existing Jabber Account</title>
+      <para>&app; will let you use an existing Jabber account:</para>
       <orderedlist>
 	<listitem>
 	  <para>
-            When first running Gossip, answer <guibutton>Yes</guibutton> to
+            When first running &app;, answer <guibutton>Yes</guibutton> to
             the <guilabel>"Do you already have an account set up on a server?"</guilabel>
     	    question and click <guibutton>Next</guibutton>.
      	  </para> 
@@ -393,7 +393,7 @@
 
     <!-- ==== Figure ==== -->
       <figure id="mainwindow-fig"> 
-	<title>&app; main window</title> 
+	<title>&app; Main Window</title> 
 	<screenshot> 
 	  <mediaobject> 
 	    <imageobject><imagedata
@@ -466,7 +466,7 @@
     <para>You can use the &app; application to perform the following tasks:</para>
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-connect"> 
-      <title>Connect to the Server </title>
+      <title>Connecting</title>
       <para>To connect to the server, choose 
 	<menuchoice> 
 	  <guimenu>Chat</guimenu> 
@@ -477,8 +477,8 @@
     </sect2>     
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-disconnect"> 
-      <title>Disconnect from the Server </title>
-      <para>To disconnect to the server, choose 
+      <title>Disconnecting</title>
+      <para>To disconnect from the server, choose 
 	<menuchoice> 
 	  <guimenu>Chat</guimenu> 
 	  <guimenuitem>Disconnect</guimenuitem> 
@@ -537,7 +537,7 @@
 	<listitem>
 	  <para>
             When the user has permited your request, you can see the user in your
-            contact list as <guilabel>Avaible</guilabel>, <guilabel>Busy</guilabel>or
+            contact list as <guilabel>Avaible</guilabel>, <guilabel>Busy</guilabel> or
             <guilabel>Away</guilabel>.
           </para>
 	</listitem>
@@ -546,13 +546,13 @@
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-contact-info"> 
       <title>Accessing a Contact's Information</title> 
-      <para>Right Click a contact's nickname in the Contact List and select Contact Information.</para> 
+      <para>Right Click a contact's nickname in the Contact List and select <guimenuitem>Contact Information</guimenuitem>.</para> 
     </sect2>
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-rename-contact"> 
       <title>Renaming a Contact</title> 
       <para>
-        Right Click a contact's nickname in the Contact List and select Rename Contact.
+        Right Click a contact's nickname in the Contact List and select <guimenuitem>Rename Contact</guimenuitem>.
 	Enter new name and click <guibutton>Ok</guibutton> to apply, or
         <guibutton>Cancel</guibutton> to discard all changes.
       </para>

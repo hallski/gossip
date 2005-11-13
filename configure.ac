@@ -24,64 +24,6 @@ IDT_COMPILE_WARNINGS
 AM_GCONF_SOURCE_2
 
 dnl -----------------------------------------------------------
-dnl D-BUS
-dnl -----------------------------------------------------------
-
-AC_ARG_ENABLE(dbus,
-              AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
-                             [compile with d-bus support]), ,
-              enable_dbus=no)
-
-if test "x$enable_dbus" != "xno"; then
-   dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
-   PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
-   if test x$have_dbus = xyes; then
-      AC_DEFINE(HAVE_DBUS, 1, d-bus support)
-      dbus_pkgconfig=$dbus_pkgconfig_tmp
-  fi
-else
-   have_dbus=no
-   dbus_pkgconfig=
-fi
-
-if test "x$enable_dbus" = "xyes"; then
-   if test "x$have_dbus" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find d-bus.])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
-
-dnl -----------------------------------------------------------
-dnl Galago
-dnl -----------------------------------------------------------
-
-AC_ARG_WITH(galago,
-              AS_HELP_STRING([--with-galago=@<:@no/yes/auto@:>@],
-                             [compile with Galago support]), ,
-              with_galago=no)
-
-if test "x$with_galago" != "xno"; then
-   galago_pkgconfig_tmp="libgalago"
-   PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
-   if test x$have_galago = xyes; then
-      AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
-      galago_pkgconfig=$galago_pkgconfig_tmp
-  fi
-else
-   have_galago=no
-   galago_pkgconfig=
-fi
-
-if test "x$with_galago" = "xyes"; then
-   if test "x$have_galago" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find Galago])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
-
-dnl -----------------------------------------------------------
 dnl
 dnl Library Dependencies, uses pkg-config to detect correct version, etc
 dnl
@@ -141,6 +83,7 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
 	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
 	libxml-2.0 >= $LIBXML_REQUIRED
 ])
+
 # Sucks that we need to do this
 GOSSIP_LIBS="$GOSSIP_LIBS -lexslt"
 
@@ -191,6 +134,102 @@ AC_SUBST(GOSSIP_CFLAGS)
 AC_SUBST(GOSSIP_LIBS)
 
 dnl -----------------------------------------------------------
+dnl Scrollkeeper
+dnl -----------------------------------------------------------
+AC_PATH_PROG(SK_CONFIG,scrollkeeper-config,no)
+if test x$SK_CONFIG = xno; then
+  AC_MSG_ERROR(Couldn't find scrollkeeper-config. Please install the
+scrollkeeper package: http://scrollkeeper.sourceforge.net)
+fi
+
+dnl -----------------------------------------------------------
+dnl D-BUS
+dnl -----------------------------------------------------------
+
+AC_ARG_ENABLE(dbus,
+              AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
+                             [compile with d-bus support]), ,
+              enable_dbus=no)
+
+if test "x$enable_dbus" != "xno"; then
+   dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
+   PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
+   if test x$have_dbus = xyes; then
+      AC_DEFINE(HAVE_DBUS, 1, d-bus support)
+      dbus_pkgconfig=$dbus_pkgconfig_tmp
+  fi
+else
+   have_dbus=no
+   dbus_pkgconfig=
+fi
+
+if test "x$enable_dbus" = "xyes"; then
+   if test "x$have_dbus" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find d-bus.])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
+
+dnl -----------------------------------------------------------
+dnl Galago
+dnl -----------------------------------------------------------
+
+AC_ARG_WITH(galago,
+              AS_HELP_STRING([--with-galago=@<:@no/yes/auto@:>@],
+                             [compile with Galago support]), ,
+              with_galago=no)
+
+if test "x$with_galago" != "xno"; then
+   galago_pkgconfig_tmp="libgalago"
+   PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
+   if test x$have_galago = xyes; then
+      AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
+      galago_pkgconfig=$galago_pkgconfig_tmp
+  fi
+else
+   have_galago=no
+   galago_pkgconfig=
+fi
+
+if test "x$with_galago" = "xyes"; then
+   if test "x$have_galago" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find Galago])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
+
+dnl -----------------------------------------------------------
+dnl ASpell
+dnl -----------------------------------------------------------
+
+AC_ARG_ENABLE(aspell,
+              AS_HELP_STRING([--enable-aspell=@<:@no/yes/auto@:>@],
+                             [compile with aspell support]), ,
+                             enable_aspell=auto)
+
+if test "x$enable_aspell" != "xno"; then
+
+        AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
+
+        if test "x$have_aspell" = "xyes"; then
+                AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
+                GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
+        else
+                have_aspell=no
+        fi
+else
+        have_aspell=no
+fi
+
+if test "x$enable_aspell" = "xyes"; then
+   if test "x$have_aspell" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find aspell.])
+   fi
+fi
+
+dnl -----------------------------------------------------------
 dnl Language Support
 dnl -----------------------------------------------------------
 GETTEXT_PACKAGE=gossip
@@ -201,40 +240,7 @@ ALL_LINGUAS="ar az bg ca cs cy da de en_CA en_GB eo es eu fr ga hr hu it lt ml m
 
 AM_GLIB_GNU_GETTEXT
 
-
 dnl -----------------------------------------------------------
-dnl ASpell
-dnl -----------------------------------------------------------
-
-AC_ARG_ENABLE(aspell,
-              AS_HELP_STRING([--enable-aspell=@<:@no/yes/auto@:>@],
-                             [compile with aspell support]), ,
-			     enable_aspell=auto)
-
-if test "x$enable_aspell" != "xno"; then
-
-	AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
-	
-	if test "x$have_aspell" = "xyes"; then
-  		AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
-		GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
-	else
-   		have_aspell=no
-	fi
-else
-	have_aspell=no
-fi
-
-if test "x$enable_aspell" = "xyes"; then
-   if test "x$have_aspell" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find aspell.])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
-
-dnl -----------------------------------------------------------
-
 
 CFLAGS="$CFLAGS $WARN_CFLAGS"
 
