@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-11 22:41+0100\n"
-"PO-Revision-Date: 2005-11-11 22:44+0100\n"
+"POT-Creation-Date: 2005-11-13 16:06+0100\n"
+"PO-Revision-Date: 2005-11-13 16:06+0100\n"
 "Last-Translator: Maria Majadas <maria.majadas@hispalinux.es>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -148,7 +148,7 @@ msgstr "Posición X de la ventana principal"
 msgid "Y position of main window"
 msgstr "Posición Y de la ventana principal"
 
-#: ../libgossip/gossip-contact.c:730 ../src/gossip-app.c:1999
+#: ../libgossip/gossip-contact.c:730 ../src/gossip-app.c:2033
 #: ../src/gossip-galago.c:164
 msgid "Offline"
 msgstr "Desconectado"
@@ -386,7 +386,7 @@ msgstr "Información solicitada, espere por favor..."
 msgid "%s will be added to your contact list."
 msgstr "Se añadirá a %s a su lista de contactos."
 
-#: ../src/gossip-add-contact.c:599 ../src/gossip-app.c:2540
+#: ../src/gossip-add-contact.c:599 ../src/gossip-app.c:2574
 #: ../src/gossip-contact-info.c:352
 msgid "I would like to add you to my contact list."
 msgstr "Quisiera agregarle a mi lista de contactos."
@@ -402,37 +402,41 @@ msgstr "Id de %s del contacto nuevo:"
 msgid "Example: %s"
 msgstr "Ejemplo: %s"
 
-#: ../src/gossip-app.c:523 ../ui/main.glade.h:88
+#: ../src/gossip-app.c:526 ../ui/main.glade.h:88
 msgid "_Connect"
 msgstr "Conec_tar"
 
-#: ../src/gossip-app.c:528 ../ui/main.glade.h:90
+#: ../src/gossip-app.c:531 ../ui/main.glade.h:91
 msgid "_Disconnect"
 msgstr "_Desconectar"
 
-#: ../src/gossip-app.c:666
+#: ../src/gossip-app.c:669
 msgid "To summarize:"
 msgstr "Para resumir:"
 
-#: ../src/gossip-app.c:740
+#: ../src/gossip-app.c:743
 msgid "If you quit, you will loose all unread information."
 msgstr "Si sale, usted perderá toda la información no leída."
 
-#: ../src/gossip-app.c:971
+#: ../src/gossip-app.c:911
+msgid "Could not display the help contents."
+msgstr "No se pudo mostrar el contenido de la ayuda."
+
+#: ../src/gossip-app.c:1005
 msgid ""
 "Enter the user ID of the person you would like to send a chat message to."
 msgstr ""
 "Introduzca el id de la persona a la que quiere enviarle un mensaje de charla."
 
-#: ../src/gossip-app.c:978 ../ui/main.glade.h:87
+#: ../src/gossip-app.c:1012 ../ui/main.glade.h:87
 msgid "_Chat"
 msgstr "_Chat"
 
-#: ../src/gossip-app.c:1273
+#: ../src/gossip-app.c:1307
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "No tiene ninguna cuenta de mensajería intantánea configurada"
 
-#: ../src/gossip-app.c:1275
+#: ../src/gossip-app.c:1309
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -440,30 +444,30 @@ msgstr ""
 "A continuación se le presentará el diálogo de «Información de cuentas» para "
 "configurar sus detalles."
 
-#: ../src/gossip-app.c:1736
+#: ../src/gossip-app.c:1770
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, un cliente de Mensajería Instantánea"
 
-#: ../src/gossip-app.c:2372
+#: ../src/gossip-app.c:2406
 #, c-format
 msgid "New subscription request from %s"
 msgstr "Solicitud de subscripción de %s"
 
-#: ../src/gossip-app.c:2447
+#: ../src/gossip-app.c:2481
 #, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "%s quiere que le añada a su lista de contactos."
 
-#: ../src/gossip-app.c:2449
+#: ../src/gossip-app.c:2483
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "¿Quiere añadir a %s a su lista de contactos?"
 
-#: ../src/gossip-app.c:2452
+#: ../src/gossip-app.c:2486
 msgid "Someone wants to be added to your contact list."
 msgstr "Alguien quiere ser añadido a su lista de contactos."
 
-#: ../src/gossip-app.c:2453
+#: ../src/gossip-app.c:2487
 msgid "Do you want to add this person to your contact list?"
 msgstr "¿Quiere añadir a esta persona a su lista de contactos?"
 
@@ -1138,18 +1142,6 @@ msgstr "Sugerencias para la palabra"
 msgid "Word"
 msgstr "Palabra"
 
-#: ../src/gossip-status-presets-dialog.c:100
-msgid "Available"
-msgstr "Disponible"
-
-#: ../src/gossip-status-presets-dialog.c:110
-msgid "Busy"
-msgstr "Ocupado"
-
-#: ../src/gossip-status-presets-dialog.c:120
-msgid "Away"
-msgstr "Ausente"
-
 #: ../src/gossip-ui-utils.c:237
 msgid "Please enter your password:"
 msgstr "Introduzca su contraseña:"
@@ -1680,60 +1672,73 @@ msgid "_Accounts"
 msgstr "_Cuentas"
 
 #: ../ui/main.glade.h:89
+msgid "_Contents"
+msgstr "_Contenido"
+
+#: ../ui/main.glade.h:90
 msgid "_Deny"
 msgstr "_Denegar"
 
-#: ../ui/main.glade.h:91
+#: ../ui/main.glade.h:92
 msgid "_Hide Contact List"
 msgstr "_Ocultar lista de contactos"
 
-#: ../ui/main.glade.h:92
+#: ../ui/main.glade.h:93
 msgid "_Jabber ID of new contact:"
 msgstr "Id _Jabber del contacto nuevo:"
 
-#: ../ui/main.glade.h:93
+#: ../ui/main.glade.h:94
 msgid "_Join Group Chat..."
 msgstr "_Unirse al grupo de charla..."
 
-#: ../ui/main.glade.h:94
+#: ../ui/main.glade.h:95
 msgid "_New Message..."
 msgstr "Mensaje _nuevo..."
 
-#: ../ui/main.glade.h:95
+#: ../ui/main.glade.h:96
 msgid "_No"
 msgstr "_No"
 
-#: ../ui/main.glade.h:96
+#: ../ui/main.glade.h:97
 msgid "_Open new chats in separate windows"
 msgstr "A_brir chats nuevos en ventanas separadas"
 
-#: ../ui/main.glade.h:97
+#: ../ui/main.glade.h:98
 msgid "_Personal Information"
 msgstr "Información per_sonal"
 
-#: ../ui/main.glade.h:98
+#: ../ui/main.glade.h:99
 msgid "_Play sound when messages arrive"
 msgstr "Repro_ducir sonido cuando lleguen mensajes"
 
-#: ../ui/main.glade.h:99
+#: ../ui/main.glade.h:100
 msgid "_Preferences"
 msgstr "_Preferencias"
 
-#: ../ui/main.glade.h:100
+#: ../ui/main.glade.h:101
 msgid "_Search..."
 msgstr "Bu_scar..."
 
-#: ../ui/main.glade.h:101
+#: ../ui/main.glade.h:102
 msgid "_Show Contact List"
 msgstr "Mo_strar lista de contactos"
 
-#: ../ui/main.glade.h:102
+#: ../ui/main.glade.h:103
 msgid "_Subscribe"
 msgstr "_Suscribirse"
 
-#: ../ui/main.glade.h:103
+#: ../ui/main.glade.h:104
 msgid "_Yes"
 msgstr "_Sí"
+
+#~ msgid "Available"
+#~ msgstr "Disponible"
+
+#~ msgid "Busy"
+#~ msgstr "Ocupado"
+
+#~ msgid "Away"
+#~ msgstr "Ausente"
 
 #~ msgid "Default"
 #~ msgstr "Predeterminada"
