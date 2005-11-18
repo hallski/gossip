@@ -29,18 +29,19 @@
 
 #include <libgossip/gossip-protocol.h>
 
+#include "gossip-add-contact-window.h"
 #include "gossip-app.h"
+#include "gossip-chat-invite.h"
+#include "gossip-chat-window.h"
 #include "gossip-contact-info.h"
+#include "gossip-log.h"
+#include "gossip-notebook.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
-#include "gossip-chat-window.h"
-#include "gossip-chat-invite.h"
-#include "gossip-notebook.h"
-#include "gossip-stock.h"
 #include "gossip-sound.h"
-#include "gossip-log.h"
+#include "gossip-stock.h"
 #include "gossip-ui-utils.h"
-#include "gossip-add-contact.h"
+
 
 #define d(x)
 
@@ -727,7 +728,7 @@ chat_window_add_contact_activate_cb (GtkWidget        *menuitem,
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_add_contact_show (contact);
+	gossip_add_contact_window_show (NULL, contact);
 }
 
 static void

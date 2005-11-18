@@ -23,7 +23,7 @@
 
 #include <glib.h>
 
-void     gossip_new_account_window_show      (void);
+void     gossip_new_account_window_show      (GtkWindow *parent);
 gboolean gossip_new_account_window_is_needed (void);
 
 #endif /* __GOSSIP_NEW_ACCOUNT_WINDOW_H__ */

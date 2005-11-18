@@ -573,7 +573,7 @@ vcard_dialog_destroy_cb (GtkWidget         *widget,
 }
 
 void
-gossip_vcard_dialog_show (void)
+gossip_vcard_dialog_show (GtkWindow *parent)
 {
 	GossipSession     *session;
 	GossipVCardDialog *dialog;
@@ -653,6 +653,10 @@ gossip_vcard_dialog_show (void)
 
 		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
 		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-ok");
+	}
+
+	if (parent) {
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
 	}
 
 	g_signal_connect (session, "protocol-connected",

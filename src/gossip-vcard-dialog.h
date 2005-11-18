@@ -23,6 +23,6 @@
 
 #include "gossip-app.h"
 
-void gossip_vcard_dialog_show (void);
+void gossip_vcard_dialog_show (GtkWindow *parent);
 
 #endif /* __GOSSIP_VCARD_DIALOG_H__ */

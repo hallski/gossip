@@ -426,7 +426,7 @@ gossip_new_account_window_is_needed (void)
 }
 
 void
-gossip_new_account_window_show (void)
+gossip_new_account_window_show (GtkWindow *parent)
 {
 	GossipNewAccountWindow *window;
 	GladeXML               *glade;
@@ -507,6 +507,15 @@ gossip_new_account_window_show (void)
 
 	/* can we use ssl */
 	gtk_widget_set_sensitive (window->four_ssl_checkbutton, lm_ssl_is_supported ());
+
+	/* set the position, either center on screen on startup, or on the parent window */
+	if (parent != NULL) {
+		gtk_window_set_transient_for (GTK_WINDOW (window->window), 
+					      parent);
+	} else {
+		gtk_window_set_position (GTK_WINDOW (window->window), 
+					 GTK_WIN_POS_CENTER);
+	}
 
 	/* show window */
 	gtk_widget_show (window->window);

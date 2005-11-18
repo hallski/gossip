@@ -34,34 +34,33 @@
 #include <libgnomeui/libgnomeui.h>
 
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-presence.h>
 
 #include "eggtrayicon.h"
-#include "gossip-vcard-dialog.h"
-#include "gossip-add-contact.h"
-#include "gossip-ui-utils.h"
-#include "gossip-group-chat.h"
+
+#include "gossip-about.h"
+#include "gossip-account-button.h"
+#include "gossip-accounts-dialog.h"
+#include "gossip-add-contact-window.h"
+#include "gossip-app.h"
 #include "gossip-chat.h"
-#include "gossip-private-chat.h"
 #include "gossip-contact-list.h"
-#include "gossip-join-dialog.h"
-#include "gossip-sound.h"
+#include "gossip-group-chat.h"
 #include "gossip-idle.h"
+#include "gossip-join-dialog.h"
 #include "gossip-marshal.h"
 #include "gossip-new-account-window.h"
 #include "gossip-preferences.h"
 #include "gossip-presence-chooser.h"
-#include "gossip-status-presets.h"
 #include "gossip-private-chat.h"
-#include "gossip-accounts-dialog.h"
-#include "gossip-account-button.h"
+#include "gossip-sound.h"
+#include "gossip-status-presets.h"
 #include "gossip-stock.h"
-#include "gossip-about.h"
-#include "gossip-app.h"
+#include "gossip-ui-utils.h"
+#include "gossip-vcard-dialog.h"
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
@@ -446,7 +445,7 @@ app_setup (GossipAccountManager *manager)
 
 	/* do we need first time start up druid? */
 	if (gossip_new_account_window_is_needed ()) {
-		gossip_new_account_window_show ();
+		gossip_new_account_window_show (NULL);
 	}
 
 	priv->chat_manager = gossip_chat_manager_new ();
@@ -974,7 +973,8 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 }
 
 static void
-app_new_message (gboolean use_roster_selection, gboolean be_transient)
+app_new_message (gboolean use_roster_selection,
+		 gboolean be_transient)
 {
 	GossipAppPriv    *priv;
 	const gchar      *selected_name = NULL;
@@ -1136,13 +1136,19 @@ app_popup_new_message_cb (GtkWidget *widget,
 }
 
 static void
-app_add_contact_cb (GtkWidget *widget, GossipApp *app)
+app_add_contact_cb (GtkWidget *widget, 
+		    GossipApp *app)
 {
-	gossip_add_contact_show (NULL);
+	GossipAppPriv *priv;
+
+	priv = app->priv;
+
+	gossip_add_contact_window_show (GTK_WINDOW (priv->window), NULL);
 }
 
 static void
-app_show_offline_cb (GtkCheckMenuItem *item, GossipApp *app)
+app_show_offline_cb (GtkCheckMenuItem *item, 
+		     GossipApp        *app)
 {
 	GossipAppPriv *priv;
 	gboolean       current;
@@ -1182,7 +1188,11 @@ app_show_offline_key_changed_cb (GConfClient *client,
 static void
 app_personal_information_cb (GtkWidget *widget, GossipApp *app)
 {
-	gossip_vcard_dialog_show ();
+	GossipAppPriv *priv;
+
+	priv = app->priv;
+	
+	gossip_vcard_dialog_show (GTK_WINDOW (priv->window));
 }
 
 static void
@@ -1609,7 +1619,11 @@ app_complete_name_activate_cb (GtkEntry        *entry,
 gboolean
 gossip_app_is_connected (void)
 {
-	return gossip_session_is_connected (app->priv->session, NULL);
+	GossipAppPriv *priv;
+
+	priv = app->priv;
+
+	return gossip_session_is_connected (priv->session, NULL);
 }
 
 static void

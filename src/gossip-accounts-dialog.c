@@ -1079,7 +1079,7 @@ static void
 accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 				       GossipAccountsDialog *dialog)
 {
-	gossip_new_account_window_show ();
+	gossip_new_account_window_show (GTK_WINDOW (dialog->window));
 }
 
 static void
@@ -1186,7 +1186,7 @@ accounts_dialog_destroy_cb (GtkWidget            *widget,
 }
 
 void
-gossip_accounts_dialog_show (GossipAccount *optional_account)
+gossip_accounts_dialog_show (GossipAccount *account)
 {
 	GossipSession               *session;
 	GossipAccountManager        *manager;
@@ -1307,9 +1307,9 @@ gossip_accounts_dialog_show (GossipAccount *optional_account)
 
 	gtk_widget_set_sensitive (dialog->notebook, FALSE);
 
-	if (GOSSIP_IS_ACCOUNT (optional_account)) {
+	if (GOSSIP_IS_ACCOUNT (account)) {
 		/* if account was specified then we select it */
-		accounts_dialog_model_set_selected (dialog, optional_account);
+		accounts_dialog_model_set_selected (dialog, account);
 	} else {
 		accounts_dialog_model_select_first (dialog);
 	}

@@ -389,10 +389,10 @@
   </child>
 </widget>
 
-<widget class="GtkWindow" id="add_contact_dialog">
+<widget class="GtkWindow" id="add_contact_window">
   <property name="title" translatable="yes">Gossip - Add contact</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
@@ -405,7 +405,7 @@
   <property name="urgency_hint">False</property>
 
   <child>
-    <widget class="GnomeDruid" id="add_contact_druid">
+    <widget class="GnomeDruid" id="druid">
       <property name="border_width">6</property>
       <property name="visible">True</property>
       <property name="show_help">False</property>
@@ -1177,7 +1177,7 @@
 <widget class="GtkDialog" id="contact_information_dialog">
   <property name="title" translatable="yes">Gossip - Contact Information</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_MOUSE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
@@ -2226,14 +2226,14 @@
 <widget class="GtkDialog" id="subscription_request_dialog">
   <property name="title" translatable="yes">Gossip - Subscription Request</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
@@ -2685,14 +2685,14 @@
 <widget class="GtkWindow" id="new_account_window">
   <property name="title" translatable="yes">Gossip - New Account</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_MOUSE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
@@ -3297,7 +3297,7 @@ To get started, just click &quot;Forward&quot;.</property>
 <widget class="GtkDialog" id="preferences_dialog">
   <property name="title" translatable="yes">Gossip - Preferences</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_MOUSE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
@@ -4083,7 +4083,7 @@ To get started, just click &quot;Forward&quot;.</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Edit Groups</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="default_width">275</property>
   <property name="default_height">325</property>
@@ -4559,7 +4559,7 @@ To get started, just click &quot;Forward&quot;.</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Personal Details</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="default_width">325</property>
   <property name="resizable">True</property>
@@ -4567,7 +4567,7 @@ To get started, just click &quot;Forward&quot;.</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
@@ -5086,7 +5086,7 @@ To get started, just click &quot;Forward&quot;.</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Spell Checker</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
-  <property name="window_position">GTK_WIN_POS_NONE</property>
+  <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">True</property>
   <property name="default_width">275</property>
   <property name="default_height">225</property>

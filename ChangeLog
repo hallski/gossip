@@ -1,3 +1,22 @@
+2005-11-18  Martyn Russell  <martyn@imendio.com>
+
+	* po/POTFILES.in:
+	* src/Makefile.am:
+	* src/gossip-add-contact-window.[ch]:
+	* src/gossip-add-contact.[ch]:
+	- Renamed module to be consistent.
+
+	* src/gossip-app.c:
+	* src/gossip-accounts-dialog.[ch]:
+	* src/gossip-add-contact-window.[ch]:
+	* src/gossip-chat-window.c:
+	* src/gossip-new-account-window.[ch]:
+	* src/gossip-vcard-dialog.[ch]:
+	* ui/main.glade:
+	- Fixed usability so that transient parents are used and windows
+	are positioned centered on their parents (patch by Christian Neumair).
+	- Fixes bug 321538 (Christian Neumair, Martyn Russell).
+
 2005-11-13  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: 
