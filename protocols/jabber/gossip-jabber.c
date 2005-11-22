@@ -258,8 +258,6 @@ static void             jabber_chatroom_invite_accept       (GossipChatroomProvi
 static GList *          jabber_chatroom_get_rooms           (GossipChatroomProvider       *provider);
 
 
-extern GConfClient *gconf_client;
-
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CHATROOM_PROVIDER,
 						jabber_chatroom_init));
@@ -1656,7 +1654,10 @@ jabber_set_vcard (GossipProtocol        *protocol,
 void
 jabber_set_proxy (LmConnection *conn)
 {
-	gboolean  use_http_proxy;
+	gboolean     use_http_proxy;
+	GConfClient *gconf_client;
+
+	gconf_client = gconf_client_get_default ();
 	
 	use_http_proxy = gconf_client_get_bool (gconf_client,
 						CONF_HTTP_PROXY_PREFIX "/use_http_proxy",
@@ -1703,6 +1704,8 @@ jabber_set_proxy (LmConnection *conn)
 		
 		lm_proxy_unref (proxy);
 	}
+
+	g_object_unref (gconf_client);
 }
 
 static LmHandlerResult
