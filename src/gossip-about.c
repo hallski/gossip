@@ -30,8 +30,7 @@
 #include <libgnome/gnome-url.h>
 
 #include "gossip-about.h"
-
-extern GConfClient *gconf_client;
+#include "gossip-app.h"
 
 #define TOP       48
 #define LEFT      225
@@ -213,7 +212,7 @@ expose_event_cb (GtkWidget      *widget,
 	}
 #endif
 	
-	dpi = gconf_client_get_float (gconf_client,
+	dpi = gconf_client_get_float (gossip_app_get_gconf_client (),
 				      "/desktop/gnome/font_rendering/dpi",
 				      &error);
 	

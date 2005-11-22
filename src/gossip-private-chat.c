@@ -263,8 +263,6 @@ private_chat_create_gui (GossipPrivateChat *chat)
 			  G_CALLBACK (private_chat_delete_event_cb),
 			  NULL);
 
-	gossip_chat_view_set_margin (GOSSIP_CHAT (chat)->view, 3);
-
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
@@ -328,8 +326,7 @@ private_chat_send (GossipPrivateChat *chat,
                    const gchar       *msg)
 {
 	GossipPrivateChatPriv *priv;
-	GossipMessage *m;
-        const gchar   *nick;
+	GossipMessage         *m;
 
 	priv = chat->priv;
 
@@ -346,18 +343,10 @@ private_chat_send (GossipPrivateChat *chat,
 
         private_chat_composing_remove_timeout (chat);
 
-        nick = gossip_session_get_nickname (gossip_app_get_session ());
-
-        gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
-                                              -1,
-					      nick,
-                                              nick,
-                                              msg);
-
 	private_chat_update_locked_resource (chat);
 	
-	m = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, 
-				priv->contact);
+	m = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, priv->contact);
+
 	if (priv->locked_resource) {
 		gossip_message_set_explicit_resource (m, priv->locked_resource);
 	}
@@ -367,8 +356,10 @@ private_chat_send (GossipPrivateChat *chat,
 
 	gossip_log_message (m, FALSE);
 
-	gossip_session_send_message (gossip_app_get_session (), m);
+	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view, m, NULL);
 
+	gossip_session_send_message (gossip_app_get_session (), m);
+	
 	g_object_unref (m);
 }
 
@@ -477,8 +468,8 @@ private_chat_contact_presence_updated (gpointer           not_used,
 			
 			msg = g_strdup_printf (_("%s went offline"),
 					       gossip_contact_get_name (priv->contact));
-			gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, 
-							       msg, TRUE);
+			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
+						       msg);
 			g_free (msg);
 		}
 		priv->is_online = FALSE;
@@ -491,8 +482,8 @@ private_chat_contact_presence_updated (gpointer           not_used,
 		
 			msg = g_strdup_printf (_("%s comes online"),
 					       gossip_contact_get_name (priv->contact));
-			gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view,
-							       msg, TRUE);
+			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
+						       msg);
 			g_free (msg);
 		}
 		priv->is_online = TRUE;
@@ -554,7 +545,7 @@ private_chat_connected_cb (GossipSession     *session,
 
 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE);
 
-	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Connected"), TRUE);
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected"));
 }
 
 static void
@@ -569,7 +560,7 @@ private_chat_disconnected_cb (GossipSession     *session,
 
 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE);
 
-	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Disconnected"), TRUE);
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected"));
 
 	private_chat_composing_remove_timeout (chat);
 }
@@ -963,18 +954,12 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	invite = gossip_message_get_invite (m);
 	if (invite) {
-		gossip_chat_view_append_invite_message (GOSSIP_CHAT (chat)->view,
-							sender,
-							gossip_message_get_timestamp (m),
-							invite,
-							gossip_message_get_body (m));
-		
+		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
+						m);
 	} else {
-		gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
-						      gossip_message_get_timestamp (m),
-						      NULL,
-						      gossip_contact_get_name (sender),
-						      gossip_message_get_body (m));
+		gossip_chat_view_append_message_from_other (GOSSIP_CHAT (chat)->view,
+							    m,
+							    FALSE);
 	}
 
 	g_signal_emit_by_name (chat, "new-message");

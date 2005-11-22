@@ -68,8 +68,6 @@ struct _GossipGroupChatPriv {
 
 	GCompletion            *completion;
 
-	GTimeVal                last_timestamp;
-
 	GossipContact          *own_contact;
 	GHashTable             *contacts;
 	GList                  *priv_chats;
@@ -407,8 +405,6 @@ group_chat_create_gui (GossipGroupChat *chat)
 		
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 	group_chat_setup_tree (chat);
-
-	gossip_chat_view_set_margin (GOSSIP_CHAT (chat)->view, 3);
 }
 
 GossipGroupChat *
@@ -437,7 +433,6 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 	priv->name = g_strdup (gossip_chatroom_provider_get_room_name (provider, id));
 
 	priv->inited = FALSE;
-	priv->last_timestamp.tv_sec = priv->last_timestamp.tv_usec = 0;
 
 	priv->priv_chats = NULL;
 	
@@ -505,7 +500,7 @@ group_chat_connected_cb (GossipSession   *session,
 
  	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); 
 
- 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Connected"), TRUE); 
+ 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected")); 
 }
 
 static void
@@ -516,7 +511,7 @@ group_chat_disconnected_cb (GossipSession   *session,
 
  	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE); 
 
- 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, _("Disconnected"), TRUE); 
+ 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected")); 
 }
 
 static void
@@ -900,10 +895,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
 	/* send event to chat window */
 	str = g_strdup_printf (_("Invited %s to join this chat conference."),
 			       gossip_contact_get_id (contact));
-
- 	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view, 
-					       str, 
-					       TRUE);
+ 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
 	g_free (str);
 
 	gossip_chat_invite_dialog (contact, priv->room_id);
@@ -929,23 +921,24 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	}
 
 	g_signal_emit_by_name (chat, "new-message");
-
-	sender = gossip_message_get_sender (message);
 	
 	invite = gossip_message_get_invite (message);
 	if (invite) {
-		gossip_chat_view_append_invite_message (GOSSIP_CHAT (chat)->view,
-							sender,
-							gossip_message_get_timestamp (message),
-							invite,
-							gossip_message_get_body (message));
-		
+		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
+						message);
 	} else {
-		gossip_chat_view_append_chat_message (GOSSIP_CHAT (chat)->view,
-						      gossip_message_get_timestamp (message),
-						      gossip_contact_get_name (priv->own_contact),
-						      gossip_contact_get_name (sender),
-						      gossip_message_get_body (message));
+		sender = gossip_message_get_sender (message);
+		if (gossip_contact_equal (sender, priv->own_contact)) {
+			gossip_chat_view_append_message_from_self (
+				GOSSIP_CHAT (chat)->view,
+				message,
+				priv->own_contact);
+		} else {
+			gossip_chat_view_append_message_from_other (
+				GOSSIP_CHAT (chat)->view,
+				message,
+				priv->own_contact);
+		}
 	}
 }
 
@@ -963,8 +956,7 @@ group_chat_new_room_event_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	gossip_chat_view_append_event_message (GOSSIP_CHAT (chat)->view,
-					       event, TRUE);
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
 }
 
 static void

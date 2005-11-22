@@ -25,7 +25,6 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkmain.h>
-#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
 #include <libgnome/gnome-program.h>
@@ -38,20 +37,13 @@
 #include "gossip-stock.h"
 #include "gossip-app.h"
 
-GConfClient *gconf_client = NULL;
-
 static void
 setup_default_window_icon (void)
 {
-	GList        *list;
-	GdkPixbuf    *pixbuf;
+	GdkPixbuf *pixbuf;
 
 	pixbuf = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/gossip.png", NULL);
-	list = g_list_append (NULL, pixbuf);
-
-	gtk_window_set_default_icon_list (list);
-
-	g_list_free (list);
+	gtk_window_set_default_icon (pixbuf);
 	g_object_unref (pixbuf);
 }
 
@@ -172,13 +164,6 @@ main (int argc, char *argv[])
 
 	g_list_free (accounts);
 
-	gconf_client = gconf_client_get_default ();
-
-	gconf_client_add_dir (gconf_client,
-			      GCONF_PATH,
-			      GCONF_CLIENT_PRELOAD_ONELEVEL,
-			      NULL);
-
 	gossip_stock_init ();
 	setup_default_window_icon ();
 	gossip_app_create (account_manager);
@@ -190,7 +175,6 @@ main (int argc, char *argv[])
 	gtk_main ();
 
 	g_object_unref (account_manager);
-	g_object_unref (gconf_client);
 
 	return EXIT_SUCCESS;
 }

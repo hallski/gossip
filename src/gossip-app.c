@@ -28,7 +28,6 @@
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
-#include <gconf/gconf-client.h>
 #include <loudmouth/loudmouth.h>
 #include <glib/gi18n.h>
 #include <libgnomeui/libgnomeui.h>
@@ -92,11 +91,11 @@
 #define d(x) 
 
 
-extern GConfClient *gconf_client;
-
 struct _GossipAppPriv {
 	GossipSession      *session;
 
+	GConfClient        *gconf_client;
+	
 	GossipChatManager  *chat_manager;
         GossipEventManager *event_manager;
 
@@ -431,6 +430,13 @@ app_setup (GossipAccountManager *manager)
 
 	priv = app->priv;
 
+	priv->gconf_client = gconf_client_get_default ();
+
+	gconf_client_add_dir (priv->gconf_client,
+			      GCONF_PATH,
+			      GCONF_CLIENT_PRELOAD_ONELEVEL,
+			      NULL);
+	
 	priv->session = gossip_session_new (manager);
 
 	/* is this the best place for this, 
@@ -578,11 +584,11 @@ app_setup (GossipAccountManager *manager)
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set window position. */
- 	x = gconf_client_get_int (gconf_client, 
+ 	x = gconf_client_get_int (priv->gconf_client, 
 				  GCONF_PATH "/ui/main_window_position_x",
 				  NULL);
 
-	y = gconf_client_get_int (gconf_client, 
+	y = gconf_client_get_int (priv->gconf_client, 
 				  GCONF_PATH "/ui/main_window_position_y", 
 				  NULL);
  
@@ -591,11 +597,11 @@ app_setup (GossipAccountManager *manager)
 	}
 
 	/* Set window size. */
-	width = gconf_client_get_int (gconf_client,
+	width = gconf_client_get_int (priv->gconf_client,
 				      GCONF_PATH "/ui/main_window_width",
 				      NULL);
 
-	height = gconf_client_get_int (gconf_client,
+	height = gconf_client_get_int (priv->gconf_client,
 				       GCONF_PATH "/ui/main_window_height",
 				       NULL);
 
@@ -606,11 +612,11 @@ app_setup (GossipAccountManager *manager)
 	app_presence_updated ();
 
 	/* Set up 'show_offline' config hooks to know when it changes. */
-	show_offline = gconf_client_get_bool (gconf_client,
+	show_offline = gconf_client_get_bool (priv->gconf_client,
 					      GCONF_PATH "/contacts/show_offline",
 					      NULL);
 
-	gconf_client_notify_add (gconf_client,
+	gconf_client_notify_add (priv->gconf_client,
 				 GCONF_PATH "/contacts/show_offline",
 				 app_show_offline_key_changed_cb,
 				 show_offline_widget,
@@ -620,7 +626,7 @@ app_setup (GossipAccountManager *manager)
 					show_offline);
 
 	/* Set window to be hidden / shown. */
-	hidden = gconf_client_get_bool (gconf_client, 
+	hidden = gconf_client_get_bool (priv->gconf_client, 
 					GCONF_PATH "/ui/main_window_hidden", 
 					NULL);
 
@@ -1157,7 +1163,7 @@ app_show_offline_cb (GtkCheckMenuItem *item,
 
 	current = gtk_check_menu_item_get_active (item);
 
-	gconf_client_set_bool (gconf_client,
+	gconf_client_set_bool (priv->gconf_client,
 			       GCONF_PATH "/contacts/show_offline",
 			       current,
 			       NULL);
@@ -1391,7 +1397,7 @@ gossip_app_create (GossipAccountManager *manager)
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 	
 	g_object_new (GOSSIP_TYPE_APP, NULL);
-
+	
 	app_setup (manager);
 }
 
@@ -1640,16 +1646,16 @@ app_toggle_visibility (void)
 	if (visible) {
 		gtk_widget_hide (priv->window);
 		
-		gconf_client_set_bool (gconf_client, 
+		gconf_client_set_bool (priv->gconf_client, 
 				       GCONF_PATH "/ui/main_window_hidden", TRUE,
 				       NULL);
 	} else {
 		gint x, y;
 
-		x = gconf_client_get_int (gconf_client, 
+		x = gconf_client_get_int (priv->gconf_client, 
 					  GCONF_PATH "/ui/main_window_position_x",
 					  NULL);
-		y = gconf_client_get_int (gconf_client, 
+		y = gconf_client_get_int (priv->gconf_client, 
 					  GCONF_PATH "/ui/main_window_position_y",
 					  NULL);
 		
@@ -1659,7 +1665,7 @@ app_toggle_visibility (void)
 
 		gossip_ui_utils_window_present (GTK_WINDOW (priv->window));
 
-		gconf_client_set_bool (gconf_client, 
+		gconf_client_set_bool (priv->gconf_client, 
 				       GCONF_PATH "/ui/main_window_hidden", FALSE,
 				       NULL);
 	}
@@ -2197,22 +2203,22 @@ configure_event_idle_cb (GtkWidget *widget)
 	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
 	gtk_window_get_position (GTK_WINDOW(app->priv->window), &x, &y);
 
-	gconf_client_set_int (gconf_client,
+	gconf_client_set_int (priv->gconf_client,
 			      GCONF_PATH "/ui/main_window_width",
 			      width,
 			      NULL);
 
-	gconf_client_set_int (gconf_client,
+	gconf_client_set_int (priv->gconf_client,
 			      GCONF_PATH "/ui/main_window_height",
 			      height,
 			      NULL);
 	
-	gconf_client_set_int (gconf_client,
+	gconf_client_set_int (priv->gconf_client,
  			      GCONF_PATH "/ui/main_window_position_x",
  			      x,
  			      NULL);
  
- 	gconf_client_set_int (gconf_client,
+ 	gconf_client_set_int (priv->gconf_client,
  			      GCONF_PATH "/ui/main_window_position_y",
  			      y,
  			      NULL);
@@ -2244,6 +2250,12 @@ GtkWidget *
 gossip_app_get_window (void)
 {
 	return app->priv->window;
+}
+
+GConfClient *
+gossip_app_get_gconf_client (void)
+{
+	return app->priv->gconf_client;
 }
 
 static gboolean

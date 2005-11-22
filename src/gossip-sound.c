@@ -19,7 +19,6 @@
  */
 
 #include <config.h>
-#include <gconf/gconf-client.h>
 #include <libgnome/gnome-sound.h>
 #include <libgnome/gnome-triggers.h>
 
@@ -30,9 +29,6 @@
 #include "gossip-sound.h"
 
 #define d(x)
-
-
-extern GConfClient *gconf_client;
 
 /* is sound toggled on or off */
 static gboolean sound_enabled = TRUE;
@@ -55,7 +51,7 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 
-	enabled = gconf_client_get_bool (gconf_client,
+	enabled = gconf_client_get_bool (gossip_app_get_gconf_client (),
 					 GCONF_PATH "/sound/play_sounds",
 					 NULL);
 	if (!enabled) {
@@ -63,10 +59,10 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 
-	silent_busy = gconf_client_get_bool (gconf_client,
+	silent_busy = gconf_client_get_bool (gossip_app_get_gconf_client (),
 					     GCONF_PATH "/sound/silent_busy",
 					     NULL);
-	silent_away = gconf_client_get_bool (gconf_client,
+	silent_away = gconf_client_get_bool (gossip_app_get_gconf_client (),
 					     GCONF_PATH "/sound/silent_away",
 					     NULL);
 

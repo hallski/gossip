@@ -19,12 +19,12 @@ AM_CPPFLAGS =	                                 	\
 
 if HAVE_DBUS
 dbus_sources =									\
-       gossip-dbus.c                   	   gossip-dbus.h
+	gossip-dbus.c                  	    gossip-dbus.h
 endif
 
 if HAVE_GALAGO
 galago_sources =			                                        \
-       gossip-galago.c                     gossip-galago.h
+	gossip-galago.c                     gossip-galago.h
 endif
 
 

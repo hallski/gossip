@@ -1,5 +1,30 @@
 2005-11-22  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: 
+	* src/gossip-app.h: Setup a gconf_client here and add a getter for it.
+	
+	* gossip.schemas.in:
+	* src/gossip-chat-view.c:
+	* src/gossip-chat-view.h: Add support for using different sets of
+	tags in the text view, and clean up the text insertion code.
+	
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Adapt to the changes in the chat
+	view above.
+	
+	* src/gossip-main.c: (setup_default_window_icon): Set one default
+	icon, not a list.
+	(main): Don't setup the gconf client here.
+	
+	* src/gossip-about.c:
+	* src/gossip-chat.c:
+	* src/gossip-preferences.c:
+	* src/gossip-sound.c:
+	* src/gossip-ui-utils.c: Cleanup: use the gconf client in
+	GossipApp instead of poking at an external one.
+
+2005-11-22  Richard Hult  <richard@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c (jabber_set_proxy): Don't poke
 	at the gconf_client from the app here, create our own.
 

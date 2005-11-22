@@ -99,6 +99,20 @@
       </locale>
     </schema>
 
+   <schema>
+      <key>/schemas/apps/gossip/ui/theme</key>
+      <applyto>/apps/gossip/ui/theme</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <default>classic</default>
+      <locale name="C">
+         <short>Chat window theme</short>
+         <long>
+           The theme that is used to display the conversation in chat windows.
+         </long>
+      </locale>
+    </schema>
+
     <schema>
       <key>/schemas/apps/gossip/ui/main_window_width</key>
       <applyto>/apps/gossip/ui/main_window_width</applyto>

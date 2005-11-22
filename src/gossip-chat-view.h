@@ -83,32 +83,28 @@ typedef enum {
 } GossipSmiley;
 
 
-GType           gossip_chat_view_get_type              (void) G_GNUC_CONST;
-GossipChatView *gossip_chat_view_new                   (void);
-void            gossip_chat_view_append_chat_message   (GossipChatView *view,
-							gossip_time_t   timestamp,
-							const gchar    *to,
-							const gchar    *from,
-							const gchar    *msg);
-void            gossip_chat_view_append_invite_message (GossipChatView *view,
-							GossipContact  *contact,
-							gossip_time_t   timestamp,
-							const gchar    *invite,
-							const gchar    *msg);
-void            gossip_chat_view_append_event_message  (GossipChatView *view,
-							const gchar    *str,
-							gboolean        timestamp);
-void            gossip_chat_view_append_time_message   (GossipChatView *view,
-							const gchar    *str);
-void            gossip_chat_view_set_margin            (GossipChatView *view,
-							gint            margin);
-void            gossip_chat_view_clear                 (GossipChatView *view);
-void            gossip_chat_view_scroll_down           (GossipChatView *view);
-gboolean        gossip_chat_view_get_selection_bounds  (GossipChatView *view,
-							GtkTextIter    *start,
-							GtkTextIter    *end);
-void            gossip_chat_view_copy_clipboard        (GossipChatView *view);
-
-
+GType           gossip_chat_view_get_type                  (void) G_GNUC_CONST;
+GossipChatView *gossip_chat_view_new                       (void);
+void            gossip_chat_view_append_message_from_self  (GossipChatView *view,
+							    GossipMessage  *msg,
+							    GossipContact  *my_contact);
+void            gossip_chat_view_append_message_from_other (GossipChatView *view,
+							    GossipMessage  *msg,
+							    GossipContact  *my_contact);
+void            gossip_chat_view_append_invite             (GossipChatView *view,
+							    GossipMessage  *message);
+void            gossip_chat_view_append_event              (GossipChatView *view,
+							    const gchar    *str);
+void            gossip_chat_view_set_margin                (GossipChatView *view,
+							    gint            margin);
+void            gossip_chat_view_clear                     (GossipChatView *view);
+void            gossip_chat_view_scroll_down               (GossipChatView *view);
+gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view,
+							    GtkTextIter    *start,
+							    GtkTextIter    *end);
+void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
+void            gossip_chat_view_set_irc_style             (GossipChatView *view,
+							    gboolean        irc_style);
+gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

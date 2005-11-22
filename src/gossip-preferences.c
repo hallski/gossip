@@ -23,7 +23,6 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
-#include <gconf/gconf-client.h>
 
 #include <libgossip/gossip-utils.h>
 
@@ -32,9 +31,6 @@
 #include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
 #include "gossip-spell.h"
-
-
-extern GConfClient *gconf_client;
 
 
 typedef struct {
@@ -280,7 +276,7 @@ preferences_languages_save (GossipPreferences *preferences)
 		languages = g_strdup ("en");
 	}
 	
-	gconf_client_set_string (gconf_client, 					  
+	gconf_client_set_string (gossip_app_get_gconf_client (),
 				 GCONF_PATH "/conversation/spell_checker_languages", 
 				 languages,
 				 NULL);
@@ -333,9 +329,10 @@ preferences_languages_load (GossipPreferences *preferences)
 	gchar          *value;
 	gchar         **vlanguages;
 
-	value = gconf_client_get_string (gconf_client, 					  
-					 GCONF_PATH "/conversation/spell_checker_languages", 
-					 NULL);
+	value = gconf_client_get_string (
+		gossip_app_get_gconf_client (),
+		GCONF_PATH "/conversation/spell_checker_languages", 
+		NULL);
 	
 	if (!value) {
 		return;
@@ -420,9 +417,7 @@ preferences_set_boolean_from_gconf (const gchar *key, GtkWidget *widget)
 {
 	gboolean value;
 	
-	g_return_if_fail (GTK_IS_TOGGLE_BUTTON (widget));
-
-	value = gconf_client_get_bool (gconf_client, key, NULL);
+	value = gconf_client_get_bool (gossip_app_get_gconf_client (), key, NULL);
 	
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), value);
 }
@@ -432,9 +427,7 @@ preferences_set_int_from_gconf (const gchar *key, GtkWidget *widget)
 {
 	gint value;
 	
-	g_return_if_fail (GTK_IS_SPIN_BUTTON (widget));
-
-	value = gconf_client_get_int (gconf_client, key, NULL);
+	value = gconf_client_get_int (gossip_app_get_gconf_client (), key, NULL);
 	
 	gtk_spin_button_set_value (GTK_SPIN_BUTTON (widget), value);
 }
@@ -444,9 +437,7 @@ preferences_set_string_from_gconf (const gchar *key, GtkWidget *widget)
 {
 	gchar *value;
 	
-	g_return_if_fail (GTK_IS_ENTRY (widget));
-
-	value = gconf_client_get_string (gconf_client, key, NULL);
+	value = gconf_client_get_string (gossip_app_get_gconf_client (), key, NULL);
 	
 	gtk_entry_set_text (GTK_ENTRY (widget), value);
 
@@ -516,8 +507,6 @@ preferences_hookup_spin_button (GossipPreferences *preferences,
 {
 	guint id;
 
-	g_return_if_fail (GTK_IS_SPIN_BUTTON (widget));
-
 	/* Silence warning. */
 	if (0) {
 		preferences_hookup_spin_button (preferences, key, widget);
@@ -533,7 +522,7 @@ preferences_hookup_spin_button (GossipPreferences *preferences,
 			  G_CALLBACK (preferences_spin_button_value_changed_cb),
 			  NULL);
 
-	id = gconf_client_notify_add (gconf_client,
+	id = gconf_client_notify_add (gossip_app_get_gconf_client (),
 				      key,
 				      preferences_notify_int_cb,
 				      widget,
@@ -551,8 +540,6 @@ preferences_hookup_entry (GossipPreferences *preferences,
 {
 	guint id;
 
-	g_return_if_fail (GTK_ENTRY (widget));
-
 	if (0) {  /* Silent warning before we use this function. */
 		preferences_hookup_entry (preferences, key, widget);
 	}
@@ -567,7 +554,7 @@ preferences_hookup_entry (GossipPreferences *preferences,
 			  G_CALLBACK (preferences_entry_value_changed_cb),
 			  NULL);
 
-	id = gconf_client_notify_add (gconf_client,
+	id = gconf_client_notify_add (gossip_app_get_gconf_client (),
 				      key,
 				      preferences_notify_string_cb,
 				      widget,
@@ -585,8 +572,6 @@ preferences_hookup_toggle_button (GossipPreferences *preferences,
 {
 	guint id;
 	
-	g_return_if_fail (GTK_IS_TOGGLE_BUTTON (widget));
-
 	preferences_set_boolean_from_gconf (key, widget);
 	
 	g_object_set_data_full (G_OBJECT (widget), "key",
@@ -597,7 +582,7 @@ preferences_hookup_toggle_button (GossipPreferences *preferences,
 			  G_CALLBACK (preferences_toggle_button_toggled_cb),
 			  NULL);
 
-	id = gconf_client_notify_add (gconf_client,
+	id = gconf_client_notify_add (gossip_app_get_gconf_client (),
 				      key,
 				      preferences_notify_bool_cb,
 				      widget,
@@ -616,10 +601,10 @@ preferences_hookup_sensitivity (GossipPreferences *preferences,
 	gboolean value;
 	guint    id;
 
-	value = gconf_client_get_bool (gconf_client, key, NULL);
+	value = gconf_client_get_bool (gossip_app_get_gconf_client (), key, NULL);
 	gtk_widget_set_sensitive (widget, value);
 	
-	id = gconf_client_notify_add (gconf_client,
+	id = gconf_client_notify_add (gossip_app_get_gconf_client (),
 				      key,
 				      preferences_notify_sensitivity_cb,
 				      widget,
@@ -638,7 +623,7 @@ preferences_spin_button_value_changed_cb (GtkWidget *button,
 
 	key = g_object_get_data (G_OBJECT (button), "key");
 
-	gconf_client_set_int (gconf_client,
+	gconf_client_set_int (gossip_app_get_gconf_client (),
 			      key,
 			      gtk_spin_button_get_value (GTK_SPIN_BUTTON (button)),
 			      NULL);
@@ -652,7 +637,7 @@ preferences_entry_value_changed_cb (GtkWidget *entry,
 
 	key = g_object_get_data (G_OBJECT (entry), "key");
 	
-	gconf_client_set_string (gconf_client,
+	gconf_client_set_string (gossip_app_get_gconf_client (),
 				 key,
 				 gtk_entry_get_text (GTK_ENTRY (entry)),
 				 NULL);
@@ -667,7 +652,7 @@ preferences_toggle_button_toggled_cb (GtkWidget *button,
 
 	key = g_object_get_data (G_OBJECT (button), "key");
 
-	gconf_client_set_bool (gconf_client,
+	gconf_client_set_bool (gossip_app_get_gconf_client (),
 			       key,
 			       gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)),
 			       NULL);
@@ -682,7 +667,7 @@ preferences_destroy_cb (GtkWidget         *widget,
 	for (l = preferences->ids; l; l = l->next) {
 		guint id = GPOINTER_TO_UINT (l->data);
 
-		gconf_client_notify_remove (gconf_client, id);
+		gconf_client_notify_remove (gossip_app_get_gconf_client (), id);
 	}
 
 	g_list_free (preferences->ids);

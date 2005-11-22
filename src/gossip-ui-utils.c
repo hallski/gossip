@@ -25,7 +25,6 @@
 #include <regex.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
-#include <gconf/gconf-client.h>
 #include <libgnome/gnome-url.h>
 #include <glib/gi18n.h>
 #include "gossip-stock.h"
@@ -35,8 +34,6 @@
 #define AVAILABLE_MESSAGE "Available"
 #define AWAY_MESSAGE "Away"
 #define BUSY_MESSAGE "Busy"
-
-extern GConfClient *gconf_client;
 
 
 static void
@@ -428,8 +425,8 @@ gossip_ui_utils_get_pixbuf_from_smiley (GossipSmiley type,
 	GdkPixbuf     *pixbuf = NULL;
 	GError        *error = NULL;
 	gint           w, h;
-	gint           size = 48;  
-	const gchar   *icon_id = NULL;
+	gint           size;  
+	const gchar   *icon_id;
 
 	theme = gtk_icon_theme_get_default ();
 
@@ -524,6 +521,7 @@ gossip_ui_utils_get_pixbuf_from_smiley (GossipSmiley type,
 
 	default: 
 		g_assert_not_reached ();
+		icon_id = NULL;
 	}
 
 	pixbuf = gtk_icon_theme_load_icon (theme,

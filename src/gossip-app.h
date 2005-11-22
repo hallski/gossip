@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 #include <gtk/gtkwidget.h>
+#include <gconf/gconf-client.h>
 
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-event-manager.h>
@@ -66,6 +67,7 @@ const gchar *       gossip_app_get_username      (void);
 GossipApp *         gossip_app_get               (void);
 gboolean            gossip_app_is_connected      (void);
 GtkWidget *         gossip_app_get_window        (void);
+GConfClient *       gossip_app_get_gconf_client  (void);
 void                gossip_app_force_non_away    (void);
 void                gossip_app_set_presence      (GossipPresenceState   state,
 						  const gchar          *status);

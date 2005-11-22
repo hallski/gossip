@@ -34,12 +34,9 @@
 #include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
 #include "gossip-chat.h"
+#include "gossip-app.h"
 
 #define d(x)
-
-
-extern GConfClient *gconf_client;
-
 
 struct _GossipChatPriv {
 	GossipChatWindow *window;
@@ -193,8 +190,6 @@ gossip_chat_init (GossipChat *chat)
 			  G_CALLBACK (chat_text_populate_popup_cb),
 			  chat);
 
-	gossip_chat_view_set_margin (chat->view, 3);
-
 	/* create misspelt words identification tag */
 	gtk_text_buffer_create_tag (buffer,
 				    "misspelled",
@@ -202,7 +197,7 @@ gossip_chat_init (GossipChat *chat)
 				    NULL);
 
 	/* get spelling languages */
-	value = gconf_client_get_string (gconf_client, 					  
+	value = gconf_client_get_string (gossip_app_get_gconf_client (),
 					 GCONF_PATH "/conversation/spell_checker_languages", 
 					 NULL);
 	
@@ -260,7 +255,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 
 	priv = chat->priv;
 
- 	spell_checker = gconf_client_get_bool (gconf_client, 
+ 	spell_checker = gconf_client_get_bool (gossip_app_get_gconf_client (), 
 					       "/apps/gossip/conversation/enable_spell_checker", 
 					       NULL); 
 
