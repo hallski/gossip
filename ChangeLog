@@ -1,3 +1,8 @@
+2005-11-22  Richard Hult  <richard@imendio.com>
+
+	* ui/pixmaps/Makefile.am (imagedir): Don't install the smiley
+	images now that we use the ones from the icon theme.
+
 2005-11-18  Martyn Russell  <martyn@imendio.com>
 
 	* po/POTFILES.in:
