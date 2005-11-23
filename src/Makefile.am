@@ -70,6 +70,7 @@ gossip_SOURCES = 				                        	\
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
+	gossip-theme-manager.c	    	   gossip-theme-manager.h		\
 	eggtrayicon.c		           eggtrayicon.h
 
 gossip_LDADD = @GOSSIP_LIBS@                            			\

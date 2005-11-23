@@ -1,3 +1,12 @@
+2005-11-23  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-theme-manager.[ch]: New files that handles theme
+	switching. Just the hardcoded themes for now.
+
+	* src/gossip-chat-view.c: Move the themes from here to the
+	manager.
+
 2005-11-22  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: 

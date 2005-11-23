@@ -34,6 +34,7 @@
 #include <libgossip/gossip-chatroom-provider.h>
 
 #include "gossip-chat-view.h"
+#include "gossip-theme-manager.h"
 #include "gossip-app.h"
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
@@ -200,6 +201,8 @@ static void       chat_view_invite_join_cb             (GossipChatroomProvider  
 							GossipChatroomJoinResult  result,
 							gint                      id,
 							gpointer                  user_data);
+static void       theme_manager_theme_changed_cb       (GossipThemeManager       *manager,
+							GossipChatView           *view);
 static void       chat_view_maybe_append_date_and_time (GossipChatView           *view,
 							GossipMessage            *msg);
 static void       chat_view_append_spacing             (GossipChatView           *view);
@@ -260,14 +263,20 @@ gossip_chat_view_init (GossipChatView *view)
 		      "cursor-visible", FALSE,
 		      NULL);
 
-	gossip_chat_view_set_irc_style (view, TRUE);
-	
 	chat_view_setup_tags (view);
 
+	gossip_theme_manager_apply (gossip_theme_manager_get (), view);
+	
 	g_signal_connect (view,
-			  "populate_popup",
+			  "populate-popup",
 			  G_CALLBACK (chat_view_populate_popup),
 			  NULL);
+
+	g_signal_connect_object (gossip_theme_manager_get (),
+				 "theme-changed",
+				 G_CALLBACK (theme_manager_theme_changed_cb),
+				 view,
+				 0);
 }
 
 static void
@@ -323,188 +332,6 @@ chat_view_setup_tags (GossipChatView *view)
 			  "event",
 			  G_CALLBACK (chat_view_event_cb),
 			  tag);
-
-	/* Fancy style */
-	
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-spacing",
-				    "size", 3000,
-				    NULL);
-
-#define FANCY_BODY_SELF "#dcdcdc"
-#define FANCY_HEAD_SELF "#b9b9b9"
-#define FANCY_LINE_SELF "#aeaeae"
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-header-self",
-				    "foreground", "black",
-				    "paragraph-background", FANCY_HEAD_SELF,
-				    "weight", PANGO_WEIGHT_BOLD,
-				    "pixels-above-lines", 2,
-				    "pixels-below-lines", 2,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-line-self",
-				    "size", 1,
-				    "paragraph-background", FANCY_LINE_SELF,
-				    NULL);
-	
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-body-self",
-				    "foreground", "black",
-				    "paragraph-background", FANCY_BODY_SELF,
-				    "pixels-above-lines", 2,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-action-self",
-				    "foreground", "brown4",
-				    "style", PANGO_STYLE_ITALIC,
-				    "paragraph-background", FANCY_BODY_SELF,
-				    "pixels-above-lines", 2,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-highlight-self",
-				    "foreground", "black",
-				    "weight", PANGO_WEIGHT_BOLD,
-				    "paragraph-background", FANCY_BODY_SELF,
-				    "pixels-above-lines", 2,
-				    NULL);			    
-	
-#define FANCY_BODY_OTHER "#adbdc8"
-#define FANCY_HEAD_OTHER "#88a2b4"
-#define FANCY_LINE_OTHER "#7f96a4"
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-header-other",
-				    "foreground", "black",
-				    "paragraph-background", FANCY_HEAD_OTHER,
-				    "weight", PANGO_WEIGHT_BOLD,
-				    "pixels-above-lines", 2,
-				    "pixels-below-lines", 2,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-line-other",
-				    "size", 1,
-				    "paragraph-background", FANCY_LINE_OTHER,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-body-other",
-				    "foreground", "black",
-				    "paragraph-background", FANCY_BODY_OTHER,
-				    "pixels-above-lines", 2,
-				    NULL);
-	
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-action-other",
-				    "foreground", "brown4",
-				    "style", PANGO_STYLE_ITALIC,
-				    "paragraph-background", FANCY_BODY_OTHER,
-				    "pixels-above-lines", 2,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-highlight-other",
-				    "foreground", "black",
-				    "weight", PANGO_WEIGHT_BOLD,
-				    "paragraph-background", FANCY_BODY_OTHER,
-				    "pixels-above-lines", 2,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-time",
-				    "foreground", "darkgrey",
-				    "justification", GTK_JUSTIFY_CENTER,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-event",
-				    "foreground", "darkgrey",
-				    "justification", GTK_JUSTIFY_CENTER,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-invite",
-				    "foreground", "sienna",
-				    NULL);
-	
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "fancy-link",
-				    "foreground", "#49789e",
-				    "underline", PANGO_UNDERLINE_SINGLE,
-				    NULL);
-
-	/* IRC style */
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-spacing",
-				    "size", 2000,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-nick-self",
-				    "foreground", "sea green",
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-body-self",
-				    "foreground", "black",
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-action-self",
-				    "foreground", "brown4",
-				    "style", PANGO_STYLE_ITALIC,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-nick-highlight",
-				    "foreground", "indian red",
-				    "weight", PANGO_WEIGHT_BOLD,
-				    NULL);			    
-	
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-nick-other",
-				    "foreground", "skyblue4",
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-body-other",
-				    "foreground", "black",
-				    NULL);
-	
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-action-other",
-				    "foreground", "brown4",
-				    "style", PANGO_STYLE_ITALIC,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-time",
-				    "foreground", "darkgrey",
-				    "justification", GTK_JUSTIFY_CENTER,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-event",
-				    "foreground", "darkgrey",
-				    "justification", GTK_JUSTIFY_CENTER,
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-invite",
-				    "foreground", "sienna",
-				    NULL);
-
-	gtk_text_buffer_create_tag (priv->buffer,
-				    "irc-link",
-				    "foreground", "steelblue",
-				    "underline", PANGO_UNDERLINE_SINGLE,
-				    NULL);
 }
 
 static void
@@ -1772,6 +1599,19 @@ chat_view_invite_join_cb (GossipChatroomProvider   *provider,
 			  gpointer                  user_data)
 {
 	gossip_group_chat_show (provider, id);
+}
+
+static void
+theme_manager_theme_changed_cb (GossipThemeManager *manager,
+				GossipChatView     *view)
+{
+	GossipChatViewPriv *priv;
+	
+	priv = view->priv;
+	
+	priv->last_block_type = BLOCK_TYPE_NONE;
+	
+	gossip_theme_manager_apply (manager, view);
 }
 
 void
