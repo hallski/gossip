@@ -19,14 +19,13 @@ src/gossip-chat-invite.c
 src/gossip-chat-manager.c
 src/gossip-chat-view.c
 src/gossip-chat-window.c
+src/gossip-chatrooms-dialog.c
 src/gossip-contact-info.c
 src/gossip-contact-list.c
 src/gossip-edit-groups-dialog.c
-src/gossip-edit-favorite-dialog.c
 src/gossip-galago.c
 src/gossip-group-chat.c
 src/gossip-idle.c
-src/gossip-join-dialog.c
 src/gossip-log.c
 src/gossip-new-account-window.c
 src/gossip-main.c

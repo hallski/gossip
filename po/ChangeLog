@@ -1,3 +1,10 @@
+2005-11-24  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in:
+	- Removed gossip-join-dialog.c.
+	- Removed gossip-edit-favorite-dialog.c.
+	- Added	gossip-chatrooms-dialog.c. 
+
 2005-11-22  Richard Hult  <richard@imendio.com>
 
 	* sv.po: Updated.

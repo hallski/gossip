@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2002 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,13 +18,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_EDIT_FAVORITE_DIALOG_H__
-#define __GOSSIP_EDIT_FAVORITE_DIALOG_H__
+#ifndef __GOSSIP_CHATROOMS_DIALOG_H__
+#define __GOSSIP_CHATROOMS_DIALOG_H__
 
-#include <gtk/gtkwidget.h>
+void gossip_chatrooms_dialog_show (void);
 
-#include "gossip-favorite.h"
-
-GtkWidget * gossip_edit_favorite_dialog_show (GossipFavorite *favorite);
-
-#endif /* __GOSSIP_EDIT_FAVORITE_DIALOG_H__ */
+#endif /* __GOSSIP_CHATROOMS_DIALOG_H__ */

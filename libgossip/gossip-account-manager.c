@@ -41,12 +41,12 @@ typedef struct _GossipAccountManagerPriv GossipAccountManagerPriv;
 
 
 struct _GossipAccountManagerPriv {
-	GHashTable *accounts;
+	GList *accounts;
 
-	gchar      *accounts_file_name;
+	gchar *accounts_file_name;
 
-	gchar      *default_name;
-	gchar      *default_name_override;
+	gchar *default_name;
+	gchar *default_name_override;
 };
 
 
@@ -63,9 +63,6 @@ static void     account_manager_finalize             (GObject               *obj
 static void     account_manager_account_enabled_cb   (GossipAccount         *account,
 						      GParamSpec            *arg1,
 						      GossipAccountManager  *manager);
-static void     account_manager_get_accounts_foreach (const gchar           *name,
-						      GossipAccount         *account,
-						      GList                **list);
 static gboolean account_manager_get_all              (GossipAccountManager  *manager);
 static gboolean account_manager_file_parse           (GossipAccountManager  *manager,
 						      const gchar           *filename);
@@ -130,14 +127,6 @@ gossip_account_manager_class_init (GossipAccountManagerClass *klass)
 static void
 gossip_account_manager_init (GossipAccountManager *manager)
 {
-	GossipAccountManagerPriv *priv;
-
-	priv = GET_PRIV (manager);
-
-	priv->accounts = g_hash_table_new_full (g_str_hash, 
-						g_str_equal,
-						g_free,
-						g_object_unref);
 }
 
 static void
@@ -147,7 +136,8 @@ account_manager_finalize (GObject *object)
 	
 	priv = GET_PRIV (object);
 
-	g_hash_table_destroy (priv->accounts);
+	g_list_foreach (priv->accounts, (GFunc)g_object_unref, NULL);
+	g_list_free (priv->accounts);
 
 	g_free (priv->accounts_file_name);
 
@@ -188,8 +178,7 @@ gossip_account_manager_add (GossipAccountManager *manager,
 	priv = GET_PRIV (manager);
 
 	/* don't add more than once */
- 	if (!g_hash_table_lookup (priv->accounts, 
-				  gossip_account_get_name (account))) { 
+ 	if (!gossip_account_manager_find (manager, gossip_account_get_name (account))) { 
 		const gchar       *name;
 		GossipAccountType  type;
 
@@ -204,9 +193,7 @@ gossip_account_manager_add (GossipAccountManager *manager,
 		g_signal_connect (account, "notify::enabled", 
 				  G_CALLBACK (account_manager_account_enabled_cb), manager);
 
-		g_hash_table_insert (priv->accounts, 
-				     g_strdup (name),
-				     g_object_ref (account));
+		priv->accounts = g_list_append (priv->accounts, g_object_ref (account));
 
 		g_signal_emit (manager, signals[ACCOUNT_ADDED], 0, account);
 
@@ -234,10 +221,11 @@ gossip_account_manager_remove (GossipAccountManager *manager,
 					      account_manager_account_enabled_cb, 
 					      manager);
 
-	g_hash_table_remove (priv->accounts, 
-			     gossip_account_get_name (account));
-
+	priv->accounts = g_list_remove (priv->accounts, account);
+	
 	g_signal_emit (manager, signals[ACCOUNT_REMOVED], 0, account);
+
+	g_object_unref (account);
 }
 
 static void
@@ -252,27 +240,16 @@ GList *
 gossip_account_manager_get_accounts (GossipAccountManager *manager)
 {
 	GossipAccountManagerPriv *priv;
-	GList                    *list = NULL;
+	GList                    *accounts;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 
 	priv = GET_PRIV (manager);
 
-	g_hash_table_foreach (priv->accounts, 
-			      (GHFunc)account_manager_get_accounts_foreach,
-			      &list);
+	accounts = g_list_copy (priv->accounts);
+	g_list_foreach (accounts, (GFunc)g_object_ref, NULL);
 
-	return list;
-}
-
-static void
-account_manager_get_accounts_foreach (const gchar   *name,
-				      GossipAccount *account,
-				      GList         **list)
-{
-	if (list) {
-		*list = g_list_append (*list, account);
-	}
+	return accounts;
 }
 
 guint 
@@ -284,7 +261,7 @@ gossip_account_manager_get_count (GossipAccountManager *manager)
 	
 	priv = GET_PRIV (manager);
 	
-	return g_hash_table_size (priv->accounts);
+	return g_list_length (priv->accounts);
 }
 
 
@@ -293,13 +270,26 @@ gossip_account_manager_find (GossipAccountManager *manager,
 			     const gchar          *name)
 {
 	GossipAccountManagerPriv *priv;
+	GList                    *l;
 	
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 	g_return_val_if_fail (name != NULL, NULL);
-
+	
 	priv = GET_PRIV (manager);
 
-	return g_hash_table_lookup (priv->accounts, name);
+	for (l = priv->accounts; l; l = l->next) {
+		GossipAccount *account;
+		const gchar   *account_name;
+
+		account = l->data;
+		account_name = gossip_account_get_name (account);
+
+		if (strcmp (account_name, name) == 0) {
+			return account;
+		}
+	}
+
+	return NULL;
 }	
 
 void
@@ -623,7 +613,7 @@ account_manager_file_parse (GossipAccountManager *manager,
 	}
 	
 	d(g_print ("Account Manager: Parsed %d accounts\n", 
-		   g_hash_table_size (priv->accounts)));
+		   g_list_length (priv->accounts)));
 
 	d(g_print ("Account Manager: Default account is:'%s'\n", 
 		   priv->default_name));

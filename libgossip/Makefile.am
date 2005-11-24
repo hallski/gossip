@@ -11,7 +11,9 @@ noinst_LTLIBRARIES = libgossip.la
 libgossip_la_SOURCES =             \
 	gossip-account.c           \
 	gossip-account-manager.c   \
+	gossip-chatroom.c	   \
 	gossip-chatroom-provider.c \
+	gossip-chatroom-manager.c  \
 	gossip-contact.c           \
 	gossip-event.c             \
 	gossip-event-manager.c     \
@@ -27,7 +29,9 @@ libgossip_la_SOURCES =             \
 	gossip-account.h           \
 	gossip-account-manager.h   \
 	gossip-async.h             \
+	gossip-chatroom.h	   \
 	gossip-chatroom-provider.h \
+	gossip-chatroom-manager.h  \
 	gossip-contact.h           \
 	gossip-event.h             \
 	gossip-event-manager.h     \
@@ -48,7 +52,8 @@ libgossipincludedir = $(includedir)/gossip/
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 						\
-	gossip-account.dtd
+	gossip-account.dtd				\
+	gossip-chatroom.dtd
 
 libgossip-marshal.h: libgossip-marshal.list
 	(cd $(srcdir) && \

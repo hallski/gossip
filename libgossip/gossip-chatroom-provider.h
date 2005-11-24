@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+#include "gossip-chatroom.h"
+
 #define GOSSIP_TYPE_CHATROOM_PROVIDER           (gossip_chatroom_provider_get_type ())
 #define GOSSIP_CHATROOM_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER, GossipChatroomProvider))
 #define GOSSIP_IS_CHATROOM_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER))
@@ -31,8 +33,6 @@
 
 typedef struct _GossipChatroomProvider      GossipChatroomProvider;
 typedef struct _GossipChatroomProviderIface GossipChatroomProviderIface;
-
-typedef gint GossipChatroomId;
 
 typedef enum {
 	GOSSIP_CHATROOM_JOIN_OK,

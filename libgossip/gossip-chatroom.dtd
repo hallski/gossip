@@ -1,0 +1,21 @@
+<!--
+  DTD for Gossips Chat Rooms.
+  by Martyn Russell <mr@gnome.org>
+-->
+
+<!-- Root element. -->
+<!ELEMENT chatrooms ((default),chatroom+)>
+
+<!ELEMENT default (#PCDATA)>
+
+<!ELEMENT chatroom 
+    (type,name,(nick?),server,room,(password?),(auto_connect?))>
+
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT nick (#PCDATA)>
+<!ELEMENT server (#PCDATA)>
+<!ELEMENT room (#PCDATA)>
+<!ELEMENT password (#PCDATA)>
+<!ELEMENT auto_connect (#PCDATA)>
+

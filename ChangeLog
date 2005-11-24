@@ -1,3 +1,43 @@
+2005-11-24  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	- Switched from hash tables to lists, this is because the hash
+	table uses name which changes and cocks everything up (this is not
+	finished, the hash table in GossipSession needs to be updated to
+	work this way too).
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-chatroom-manager.[ch]:
+	- Added.
+
+	* libgossip/gossip-chatroom-provider.h:
+	- Move the GossipChatroomId to the GossipChatroom module.
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-chatroom.[ch]:
+	* libgossip/gossip-chatroom.dtd:
+	- This replaces the old back end (gconf) with the same method we
+	are using everywhere else (XML files). 
+	- THIS DOES MEAN GROUP CHATS WILL NEED TO BE SET UP AGAIN!
+
+	* src/gossip-app.[ch]:
+	- Added chatroom manager object to the stack of other managers.
+
+	* src/gossip-chatrooms-dialog.[ch]:
+	- Use gossip_chatroom_() and gossip_chatroom_manager_() APIs.
+	- Make the code more efficient to avoid unnecessary disk writes.
+	- Fix some issues and probably created a whole load more :)
+
+	* src/Makefile.am:
+	* src/gossip-edit-favorite-dialog.[ch]:
+	* src/gossip-favorite.[ch]:
+	* src/gossip-join-dialog.[ch]:
+	- Removed.
+	
+	* ui/group-chat.glade:
+	- An expander is now used to hide the chatroom details unless you
+	are configuring a custom room.
+
 2005-11-23  Richard Hult  <richard@imendio.com>
 
 	* src/Makefile.am:

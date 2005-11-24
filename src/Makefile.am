@@ -44,15 +44,13 @@ gossip_SOURCES = 				                        	\
 	gossip-chat-manager.c              gossip-chat-manager.h               	\
 	gossip-chat-view.c                 gossip-chat-view.h                  	\
 	gossip-chat-window.c	           gossip-chat-window.h			\
+	gossip-chatrooms-dialog.c          gossip-chatrooms-dialog.h		\
 	gossip-contact-groups.c	           gossip-contact-groups.h		\
 	gossip-contact-list.c              gossip-contact-list.h               	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
 	gossip-contact-info.c              gossip-contact-info.h                \
-	gossip-favorite.c  	           gossip-favorite.h			\
-	gossip-edit-favorite-dialog.c      gossip-edit-favorite-dialog.h	\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
-	gossip-join-dialog.c	           gossip-join-dialog.h			\
 	gossip-log.c		           gossip-log.h				\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \

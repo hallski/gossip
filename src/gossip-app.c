@@ -37,7 +37,6 @@
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 
-
 #include "eggtrayicon.h"
 
 #include "gossip-about.h"
@@ -46,10 +45,10 @@
 #include "gossip-add-contact-window.h"
 #include "gossip-app.h"
 #include "gossip-chat.h"
+#include "gossip-chatrooms-dialog.h"
 #include "gossip-contact-list.h"
 #include "gossip-group-chat.h"
 #include "gossip-idle.h"
-#include "gossip-join-dialog.h"
 #include "gossip-marshal.h"
 #include "gossip-new-account-window.h"
 #include "gossip-preferences.h"
@@ -92,61 +91,63 @@
 
 
 struct _GossipAppPriv {
-	GossipSession      *session;
+	GossipSession         *session;
 
-	GConfClient        *gconf_client;
+	GossipChatroomManager *chatroom_manager;
+
+	GossipChatManager     *chat_manager;
+        GossipEventManager    *event_manager;
 	
-	GossipChatManager  *chat_manager;
-        GossipEventManager *event_manager;
+	GossipContactList     *contact_list;
 
-	GossipContactList  *contact_list;
+	GConfClient           *gconf_client;
 
 	/* main widgets */
-	GtkWidget          *window;
-	GtkWidget          *main_vbox;
+	GtkWidget             *window;
+	GtkWidget             *main_vbox;
 
 	/* menu widgets */
-	GtkWidget          *actions_connect;
-	GtkWidget          *actions_disconnect;
+	GtkWidget             *actions_connect;
+	GtkWidget             *actions_disconnect;
 
 	/* accounts toolbar */
-	GtkWidget          *accounts_toolbar;
-	GHashTable         *accounts;
+	GtkWidget             *accounts_toolbar;
+	GHashTable            *accounts;
 
 	/* tray */
-	EggTrayIcon        *tray_icon;
-	GtkWidget          *tray_event_box;
-	GtkWidget          *tray_image;
-	GtkTooltips        *tray_tooltips;
-	GList              *tray_flash_icons;
-	guint               tray_flash_timeout_id;
+	EggTrayIcon           *tray_icon;
+	GtkWidget             *tray_event_box;
+	GtkWidget             *tray_image;
+	GtkTooltips           *tray_tooltips;
+	GList                 *tray_flash_icons;
+	guint                  tray_flash_timeout_id;
 
-	GtkWidget          *popup_menu;
-	GtkWidget          *popup_menu_status_item;
-	GtkWidget          *show_popup_item;
-	GtkWidget          *hide_popup_item;
+	GtkWidget             *popup_menu;
+	GtkWidget             *popup_menu_status_item;
+	GtkWidget             *show_popup_item;
+	GtkWidget             *hide_popup_item;
 	 
 	/* widgets that are enabled when we're connected/disconnected */
-	GList              *widgets_connected_all;
-	GList              *widgets_connected;
-	GList              *widgets_disconnected;
+	GList                 *widgets_connected_all;
+	GList                 *widgets_connected;
+	GList                 *widgets_disconnected;
 
 	/* status popup */
-	GtkWidget          *status_button_hbox;
-	GtkWidget          *status_image;
-	GtkWidget          *presence_chooser;
+	GtkWidget             *status_button_hbox;
+	GtkWidget             *status_image;
+	GtkWidget             *presence_chooser;
 
-	guint               status_flash_timeout_id;
-	time_t              leave_time;
+	guint                  status_flash_timeout_id;
+	time_t                 leave_time;
 
 	/* presence set by the user (available/busy) */
-	GossipPresence     *presence;
+	GossipPresence        *presence;
 
 	/* away presence (away/xa), overrides priv->presence */
-	GossipPresence     *away_presence;
+	GossipPresence        *away_presence;
 	
 	/* misc */
-	guint               size_timeout_id;
+	guint                  size_timeout_id;
 };
 
 
@@ -391,6 +392,10 @@ app_finalize (GObject *object)
 		g_source_remove (priv->status_flash_timeout_id);
 	}
 
+	if (priv->chatroom_manager) {
+		g_object_unref (priv->chatroom_manager);
+	}
+
 	manager = gossip_session_get_account_manager (priv->session);
 	
 	g_signal_handlers_disconnect_by_func (manager,
@@ -453,6 +458,8 @@ app_setup (GossipAccountManager *manager)
 	if (gossip_new_account_window_is_needed ()) {
 		gossip_new_account_window_show (NULL);
 	}
+
+	priv->chatroom_manager = gossip_chatroom_manager_new (NULL);
 
 	priv->chat_manager = gossip_chat_manager_new ();
  	priv->event_manager = gossip_event_manager_new (); 
@@ -957,7 +964,7 @@ static void
 app_join_group_chat_cb (GtkWidget *window,
 			GossipApp *app)
 {
-	gossip_join_dialog_show ();
+	gossip_chatrooms_dialog_show ();
 }
 
 static void
@@ -2624,6 +2631,12 @@ GossipSession *
 gossip_app_get_session (void)
 {
 	return app->priv->session;
+}
+
+GossipChatroomManager *
+gossip_app_get_chatroom_manager (void)
+{
+	return app->priv->chatroom_manager;
 }
 
 GossipChatManager *
