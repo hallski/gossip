@@ -1,3 +1,11 @@
+2005-11-26  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chatrooms-dialog.c:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	- Fixed a crasher by making sure things are properly referenced
+	and the join a chatroom loudmouth handler is properly
+	cleaned up. 
+	
 2005-11-24  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:

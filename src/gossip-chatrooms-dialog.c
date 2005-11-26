@@ -618,7 +618,7 @@ chatrooms_dialog_join_cb (GossipChatroomProvider   *provider,
 	case GOSSIP_CHATROOM_JOIN_OK:
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
 		gossip_group_chat_show (provider, id);
-		gtk_widget_destroy (dialog->dialog);
+ 		gtk_widget_destroy (dialog->dialog); 
 
 		break;
 	}
