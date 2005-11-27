@@ -37,6 +37,8 @@ typedef struct _GossipAccountPriv GossipAccountPriv;
 
 
 struct _GossipAccountPriv {
+	gint               unique_id;
+
 	GossipAccountType  type;
 
 	gchar             *name;
@@ -242,8 +244,11 @@ static void
 account_init (GossipAccount *account)
 {
 	GossipAccountPriv *priv;
-	
+	static gint        id = 1;
+ 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
+
+	priv->unique_id    = id++;
 
 	priv->type         = 0;
 	priv->name         = NULL;
@@ -637,36 +642,37 @@ gossip_account_set_use_proxy (GossipAccount *account,
 guint 
 gossip_account_hash (gconstpointer key)
 {
-	const gchar *name;
+	GossipAccountPriv *priv;
 	
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (key), 0);
 
-	name = gossip_account_get_id (GOSSIP_ACCOUNT (key));
-	
-	return g_str_hash (name);
+	priv = GOSSIP_ACCOUNT_GET_PRIV (key);
+
+	return g_int_hash (&priv->unique_id);
 }
 
 gboolean
 gossip_account_equal (gconstpointer a, 
-		      gconstpointer b)
+		       gconstpointer b)
 {
-	const gchar *name_a, *name_b;
+	GossipAccountPriv *priv1;
+	GossipAccountPriv *priv2;
 
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), -1);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), 1);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), FALSE);
 
-	name_a = gossip_account_get_name (GOSSIP_ACCOUNT (a));
-	name_b = gossip_account_get_name (GOSSIP_ACCOUNT (b));
+	priv1 = GOSSIP_ACCOUNT_GET_PRIV (a);
+	priv2 = GOSSIP_ACCOUNT_GET_PRIV (b);
 
-	if (!name_a) {
-		return -1;
+	if (!priv1) {
+		return FALSE;
 	}
 
-	if (!name_b) {
-		return 1;
+	if (!priv2) {
+		return FALSE;
 	}
 	
-	return g_str_equal (name_a, name_b);
+	return (priv1->unique_id == priv2->unique_id);
 }
 
 const gchar *

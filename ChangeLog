@@ -1,3 +1,30 @@
+2005-11-27  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.c: 
+	* libgossip/gossip-chatroom.c:
+	* libgossip/gossip-session.c:
+	- Fixed account and chatroom code to use a unique ID for
+	hash comparison since using "name" doesn't work because it can
+	change and isn't unique.
+	- Fixed bug where you connect, change an account name, then can't
+	do anything with that account (like disconnect) because the name
+	changed and the hash tables were not up to date.
+	
+	* src/gossip-accounts-dialog.c: 
+	* src/gossip-add-contact-window.c:
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-status-presets-dialog.c:
+	* src/gossip-transport-accounts-window.c:
+	* src/gossip-vcard-dialog.c:
+	- Cleaned up my misuse of gtk_tree_model_get () and
+	gtk_list/tree_store_set () API.  A lot of GObjects were being
+	referenced as I used _set() and not being unreferenced every time
+	I did _get().
+	- Fixed some other memory leaks along the way, so if anything
+	crashes, it is probably my fault :)
+	
 2005-11-26  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chatrooms-dialog.c:

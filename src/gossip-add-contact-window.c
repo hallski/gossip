@@ -141,10 +141,6 @@ static void           add_contact_window_2_group_entry_text_inserted  (GtkEntry 
 								       gint              length,
 								       gint             *position,
 								       GossipAddContact *window);
-static gboolean       add_contact_window_account_foreach              (GtkTreeModel     *model,
-								       GtkTreePath      *path,
-								       GtkTreeIter      *iter,
-								       gpointer          user_data);
 static void           add_contact_window_destroy                      (GtkWidget        *unused,
 								       GossipAddContact *window);
 static void           add_contact_window_cancel                       (GtkWidget        *unused,
@@ -180,7 +176,7 @@ add_contact_window_setup_accounts (GList            *accounts,
 				    GDK_TYPE_PIXBUF,
 				    G_TYPE_STRING,    /* name */
 				    G_TYPE_BOOLEAN,
-				    G_TYPE_POINTER);    
+				    GOSSIP_TYPE_ACCOUNT);    
 
 	gtk_combo_box_set_model (combo_box, GTK_TREE_MODEL (store));
 
@@ -251,9 +247,9 @@ add_contact_window_setup_systems (GList            *accounts,
 
 	store = gtk_list_store_new (COL_SYS_COUNT,
 				    GDK_TYPE_PIXBUF,
-				    G_TYPE_STRING,    /* name */
-				    G_TYPE_POINTER,   /* account */
-				    G_TYPE_POINTER);  /* protocol */
+				    G_TYPE_STRING,          /* name */
+				    GOSSIP_TYPE_ACCOUNT,    /* account */
+				    G_TYPE_POINTER);        /* protocol */
 
 	gtk_combo_box_set_model (GTK_COMBO_BOX (window->one_system_combobox), 
 				 GTK_TREE_MODEL (store));
@@ -339,19 +335,22 @@ add_contact_window_set_selected_account_foreach (GtkTreeModel   *model,
 						 SetAccountData *data)
 {
 	GossipAccount *account1, *account2;
+	gboolean       equal;
 
 	account1 = GOSSIP_ACCOUNT (data->account);
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
 
-	if (gossip_account_equal (account1, account2)) {
+	equal = gossip_account_equal (account1, account2);
+	g_object_unref (account2);
+
+	if (equal) {
 		GtkComboBox *combobox;
 
 		combobox = GTK_COMBO_BOX (data->combobox);
 		gtk_combo_box_set_active_iter (combobox, iter);
-		return TRUE;
 	}
 		
-	return FALSE;
+	return equal;
 }
 
 static gboolean 
@@ -566,6 +565,8 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 					   FALSE);
 
 	/* FIXME: check Jabber ID, if not valid show window. */
+
+	g_object_unref (account);
 }
 
 static void
@@ -610,6 +611,8 @@ add_contact_window_last_finished (GnomeDruidPage   *page,
 				    id, name, group, message);
 
 	gtk_widget_destroy (window->window);
+
+	g_object_unref (account);
 }
 
 static void
@@ -713,32 +716,11 @@ add_contact_window_2_group_entry_text_inserted (GtkEntry         *entry,
 				    window);
 	}
 }
-
-static gboolean
-add_contact_window_account_foreach (GtkTreeModel *model,
-				    GtkTreePath  *path,
-				    GtkTreeIter  *iter,
-				    gpointer      user_data)
-{
-	GossipAccount *account;
-
-	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account, -1);
-	g_object_unref (account);
-		
-	return FALSE;
-}
-					  
+			  
 static void
 add_contact_window_destroy (GtkWidget        *widget,
 			    GossipAddContact *window)
 {
-	GtkTreeModel *model;
-
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (window->one_accounts_combobox));
-	gtk_tree_model_foreach (model, 
-				(GtkTreeModelForeachFunc) add_contact_window_account_foreach, 
-				NULL);
-
 	g_free (window);
 }
 

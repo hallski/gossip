@@ -532,13 +532,13 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 guint 
 gossip_chatroom_hash (gconstpointer key)
 {
-	const gchar *name;
+	GossipChatroomPriv *priv;
 	
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (key), 0);
 
-	name = gossip_chatroom_get_name (GOSSIP_CHATROOM (key));
-	
-	return g_str_hash (name);
+	priv = GOSSIP_CHATROOM_GET_PRIV (key);
+
+	return g_int_hash (&priv->id);
 }
 
 gboolean
@@ -548,8 +548,8 @@ gossip_chatroom_equal (gconstpointer a,
 	GossipChatroomPriv *priv1;
 	GossipChatroomPriv *priv2;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (a), -1);
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (b), 1);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (a), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (b), FALSE);
 
 	priv1 = GOSSIP_CHATROOM_GET_PRIV (a);
 	priv2 = GOSSIP_CHATROOM_GET_PRIV (b);

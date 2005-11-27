@@ -101,6 +101,8 @@ status_presets_setup (GossipStatusPresetsDialog *dialog)
 			    2, state,
 			    -1);
 
+	g_object_unref (pixbuf);
+
 	state = GOSSIP_PRESENCE_STATE_BUSY;
 	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
 	
@@ -111,6 +113,8 @@ status_presets_setup (GossipStatusPresetsDialog *dialog)
 			    2, state,
 			    -1);
 
+	g_object_unref (pixbuf);
+
 	state = GOSSIP_PRESENCE_STATE_AWAY;
 	pixbuf = gossip_ui_utils_presence_state_get_pixbuf (state);
 	
@@ -120,6 +124,8 @@ status_presets_setup (GossipStatusPresetsDialog *dialog)
 			    1, _("Away"),
 			    2, state,
 			    -1);
+
+	g_object_unref (pixbuf);
 	
 	/* use Away as the default */
 	gtk_combo_box_set_active_iter (combobox, &iter);
@@ -308,6 +314,8 @@ status_presets_remove_button_clicked_cb (GtkWidget                 *button,
 	gossip_utils_free_status_messages (list);
 	
 	gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+
+	g_free (str);
 }
 
 static void

@@ -238,8 +238,8 @@ transport_accounts_window_setup (GossipTransportAccountsWindow *window)
 	GtkTreeSelection *selection;
 
 	store = gtk_list_store_new (COL_TRANSPORT_ACC_COUNT,
-				    G_TYPE_POINTER,  /* object */
-				    G_TYPE_BOOLEAN); /* editable */
+				    GOSSIP_TYPE_ACCOUNT,  /* object */
+				    G_TYPE_BOOLEAN);      /* editable */
 	
 	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_accounts), 
 				 GTK_TREE_MODEL (store));

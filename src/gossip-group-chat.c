@@ -565,6 +565,8 @@ group_chat_row_activated_cb (GtkTreeView       *view,
 			    -1);
 
 	group_chat_priv_chat_new (chat, contact);
+
+	g_object_unref (contact);
 }
 
 static void
@@ -626,19 +628,22 @@ group_chat_find_user_foreach (GtkTreeModel *model,
 			      FindUserData *data)
 {
 	GossipContact *contact;
+	gboolean       equal;
 
 	gtk_tree_model_get (model,
 			    iter,
 			    COL_CONTACT, &contact,
 			    -1);
 
-	if (gossip_contact_equal (data->contact, contact)) {
+	equal = gossip_contact_equal (data->contact, contact);
+	g_object_unref (contact);
+
+	if (equal) {
 		data->found = TRUE;
 		data->found_iter = *iter;
-		return TRUE;
 	}
-	
-	return FALSE;
+
+	return equal;
 }
 
 static gboolean

@@ -118,10 +118,6 @@ static gboolean       vcard_dialog_progress_pulse_cb           (GtkWidget       
 static gboolean       vcard_dialog_wait_cb                     (GossipVCardDialog *dialog);
 static gboolean       vcard_dialog_timeout_cb                  (GossipVCardDialog *dialog);
 static gboolean       vcard_dialog_saved_cb                    (GtkWidget         *widget);
-static gboolean       vcard_dialog_account_foreach             (GtkTreeModel      *model,
-								GtkTreePath       *path,
-								GtkTreeIter       *iter,
-								gpointer           user_data);
 static void           vcard_dialog_combobox_account_changed_cb (GtkWidget         *combobox,
 								GossipVCardDialog *dialog);
 static void           vcard_dialog_response_cb                 (GtkDialog         *widget,
@@ -161,7 +157,7 @@ vcard_dialog_setup_accounts (GList             *accounts,
 				    GDK_TYPE_PIXBUF, 
 				    G_TYPE_STRING,   /* name */
 				    G_TYPE_BOOLEAN,  /* connected */
-				    G_TYPE_POINTER);    
+				    GOSSIP_TYPE_ACCOUNT);    
 
 	gtk_combo_box_set_model (GTK_COMBO_BOX (dialog->combobox_account), 
 				 GTK_TREE_MODEL (store));
@@ -186,7 +182,7 @@ vcard_dialog_setup_accounts (GList             *accounts,
 				    COL_ACCOUNT_IMAGE, pixbuf,
 				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
 				    COL_ACCOUNT_CONNECTED, is_connected,
-				    COL_ACCOUNT_POINTER, g_object_ref (account),
+				    COL_ACCOUNT_POINTER, account,
 				    -1);
 
 		g_object_unref (pixbuf);
@@ -287,6 +283,8 @@ vcard_dialog_lookup_start (GossipVCardDialog *dialog)
 				  NULL);
 
 	dialog->requesting_vcard = TRUE;
+
+	g_object_unref (account);
 }
 
 static void  
@@ -424,6 +422,8 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 				  vcard, 
 				  (GossipResultCallback) vcard_dialog_set_vcard_cb,
 				  dialog, &error);
+
+	g_object_unref (account);
 }
 
 static void
@@ -502,20 +502,6 @@ vcard_dialog_saved_cb (GtkWidget *widget)
 	return FALSE;
 }
 
-static gboolean
-vcard_dialog_account_foreach (GtkTreeModel *model,
-			     GtkTreePath  *path,
-			     GtkTreeIter  *iter,
-			     gpointer      user_data)
-{
-	GossipAccount *account;
-
-	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account, -1);
-	g_object_unref (account);
-
-	return FALSE;
-}
-
 static void
 vcard_dialog_combobox_account_changed_cb (GtkWidget         *combobox,
 					  GossipVCardDialog *dialog)
@@ -528,8 +514,6 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 			  gint               response, 
 			  GossipVCardDialog *dialog)
 {
-	GtkTreeModel *model;
-
 	if (response == GTK_RESPONSE_OK) {
 		vcard_dialog_set_vcard (dialog);
 		return;
@@ -544,11 +528,6 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 		return;
 	}
 
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->combobox_account));
-	gtk_tree_model_foreach (model, 
-				(GtkTreeModelForeachFunc) vcard_dialog_account_foreach, 
-				NULL);
-	
 	gtk_widget_destroy (dialog->dialog);
 }
 

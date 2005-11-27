@@ -983,6 +983,7 @@ app_new_message_presence_data_func (GtkCellLayout   *cell_layout,
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);
+	g_object_unref (contact);
 }
 
 static void
