@@ -1,3 +1,10 @@
+2005-11-27  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: 
+	- Added src/gossip-ft-window.c
+	- Added src/gossip-subscription-dialog.c
+	- Added ui/file-transfer.glade
+
 2005-11-25  Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
 
 	* es.po: Updated Spanish translation.

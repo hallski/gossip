@@ -1,5 +1,66 @@
 2005-11-27  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-event.h:
+	- Added File Transfer event type.
+	
+	* libgossip/Makefile.am:
+	* libgossip/gossip-ft.[ch]:
+	* libgossip/gossip-ft-provider.[ch]: 
+	- Added.
+
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.[ch]:
+	* libgossip/libgossip-marshal.list:
+	- Added file transfer initiation API.
+
+	* protocols/jabber/gossip-jabber-ft-utils.[ch]:
+	* protocols/jabber/gossip-jabber-ft.[ch]:
+	- Added.
+	
+	* protocols/jabber/gossip-jabber-private.h:
+	* protocols/jabber/gossip-jabber.[ch]:
+	- Added file transfer infrastructure (like the chatroom provider
+	work).
+	- Use the FULL JID instead of a JID without the resource.  We
+	needed this in so many places (after using it for a while it
+	didn't seem to break anything :). 
+
+	* protocols/jabber/gossip-jabber-chatrooms.c
+	- Now using a ref from own contact on the GossipJabber object
+	instead of creating a new GossipContact.
+
+	* src/gossip-contact-list.c:
+	- Added context menu item for sending files (currently not visible
+	since this is not available yet).
+	
+	* src/Makefile.am:
+	* src/gossip-ft-window.[ch]: 
+	- Added, this handles inbound requests so far and shows a dialog
+	like the subscription dialog and so far you can only Deny requests.
+
+	* src/gossip-app.c:
+	* src/gossip-subscription-dialog.[ch]:
+	- Added, this code has been moved out of gossip-app.
+
+	* ui/Makefile.am:
+	* ui/file-transfer.glade:
+	* ui/file-transfer.gladep:
+	- Added for file transfer windows/dialogs.
+	
+	* ui/main.glade:
+	- Use "ID" instead of "Jabber ID" on the subscription dialog.
+	- Removed the transport item on the main "Chat" menu.
+
+	* ALL:
+	- This adds very basic file transfer initiation support.  
+	- That means that you will get a dialog pop up when someone tries
+	to send you a file, and you have the chance to deny it ONLY.
+	- At present, more work is needed to do the actual file transfer
+	back end (SOCKS) work.  
+	- You can follow the progress on this by watching bug #141569.  
+
+2005-11-27  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.c: 
 	* libgossip/gossip-chatroom.c:
 	* libgossip/gossip-session.c:
@@ -164,6 +225,7 @@
 	- Add Help section using Gnome Help (patch from Brian Pepple).
 	- Fixes bug #155140 (Brian Pepple).
 
+>>>>>>> 1.584
 2005-11-05  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-session.[ch]:

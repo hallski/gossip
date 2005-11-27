@@ -2,9 +2,10 @@ SUBDIRS = pixmaps
 
 gladedir = $(datadir)/gossip
 glade_DATA = 				\
-	main.glade                      \
 	chat.glade                      \
+	connect.glade			\
 	group-chat.glade		\
-	connect.glade
+	file-transfer.glade		\
+	main.glade
 
 EXTRA_DIST = $(glade_DATA)

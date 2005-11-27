@@ -49,6 +49,7 @@ gossip_SOURCES = 				                        	\
 	gossip-contact-list.c              gossip-contact-list.h               	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
 	gossip-contact-info.c              gossip-contact-info.h                \
+	gossip-ft-window.c		   gossip-ft-window.h			\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
 	gossip-log.c		           gossip-log.h				\
@@ -65,6 +66,7 @@ gossip_SOURCES = 				                        	\
 	gossip-spell.c                     gossip-spell.h                       \
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
 	gossip-status-presets.c		   gossip-status-presets.h	       	\
+	gossip-subscription-dialog.c       gossip-subscription-dialog.h		\
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\

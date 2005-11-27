@@ -82,6 +82,9 @@ struct _GossipProtocolClass {
 	void          (*send_composing)        (GossipProtocol  *protocol,
 						GossipContact   *contact,
 						gboolean         typing);
+	void          (*send_file)             (GossipProtocol  *protocol,
+						GossipContact   *contact,
+						const gchar     *file);
 	void          (*set_presence)          (GossipProtocol  *protocol,
 						GossipPresence  *presence);
 	GossipContact * (*find_contact)        (GossipProtocol  *protocol,
@@ -145,6 +148,9 @@ void           gossip_protocol_send_message             (GossipProtocol         
 void           gossip_protocol_send_composing           (GossipProtocol               *protocol,
 							 GossipContact                *contact,
 							 gboolean                      typing);
+void           gossip_protocol_send_file                (GossipProtocol               *protocol,
+							 GossipContact                *contact,
+							 const gchar                  *file);
 void           gossip_protocol_set_presence             (GossipProtocol               *protocol,
 							 GossipPresence               *presence);
 GossipContact *gossip_protocol_find_contact             (GossipProtocol               *protocol,

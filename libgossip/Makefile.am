@@ -1,51 +1,55 @@
-AM_CPPFLAGS =                                             \
-	-I.                                               \
-	-I$(top_srcdir)                                   \
-	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\"   \
+AM_CPPFLAGS =                                           \
+	-I.                                             \
+	-I$(top_srcdir)                                 \
+	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\" \
 	-DDTDDIR=\"$(datadir)/gossip\"			\
-	-I$(top_srcdir)/protocols/jabber                  \
+	-I$(top_srcdir)/protocols/jabber                \
 	$(LIBGOSSIP_CFLAGS)
 
 noinst_LTLIBRARIES = libgossip.la
 
-libgossip_la_SOURCES =             \
-	gossip-account.c           \
-	gossip-account-manager.c   \
-	gossip-chatroom.c	   \
-	gossip-chatroom-provider.c \
-	gossip-chatroom-manager.c  \
-	gossip-contact.c           \
-	gossip-event.c             \
-	gossip-event-manager.c     \
-	gossip-message.c           \
-	gossip-presence.c          \
-	gossip-protocol.c          \
-	gossip-session.c           \
-	gossip-time.c              \
-	gossip-utils.c             \
-	gossip-vcard.c             \
-	gossip-version-info.c      \
-	libgossip-marshal-main.c   \
-	gossip-account.h           \
-	gossip-account-manager.h   \
-	gossip-async.h             \
-	gossip-chatroom.h	   \
-	gossip-chatroom-provider.h \
-	gossip-chatroom-manager.h  \
-	gossip-contact.h           \
-	gossip-event.h             \
-	gossip-event-manager.h     \
-	gossip-message.h           \
-	gossip-presence.h          \
-	gossip-protocol.h          \
-	gossip-session.h           \
-	gossip-time.h              \
-	gossip-vcard.h             \
-	gossip-version-info.h      \
-	gossip-utils.h
+libgossip_la_SOURCES =             			\
+	gossip-account.c           			\
+	gossip-account.h           			\
+	gossip-account-manager.c   			\
+	gossip-account-manager.h   			\
+	gossip-async.h             			\
+	gossip-chatroom.c				\
+	gossip-chatroom.h				\
+	gossip-chatroom-manager.c 			\
+	gossip-chatroom-manager.h 			\
+	gossip-chatroom-provider.c 			\
+	gossip-chatroom-provider.h 			\
+	gossip-contact.c           			\
+	gossip-contact.h           			\
+	gossip-event.c             			\
+	gossip-event.h             			\
+	gossip-event-manager.c     			\
+	gossip-event-manager.h     			\
+	gossip-ft.c		 			\
+	gossip-ft.h 					\
+	gossip-ft-provider.c	 			\
+	gossip-ft-provider.h 				\
+	gossip-message.c           			\
+	gossip-message.h           			\
+	gossip-presence.c          			\
+	gossip-presence.h          			\
+	gossip-protocol.c          			\
+	gossip-protocol.h          			\
+	gossip-session.c           			\
+	gossip-session.h           			\
+	gossip-time.c              			\
+	gossip-time.h              			\
+	gossip-utils.c             			\
+	gossip-utils.h					\
+	gossip-vcard.c             			\
+	gossip-vcard.h             			\
+	gossip-version-info.c      			\
+	gossip-version-info.h      			\
+	libgossip-marshal-main.c
 
-libgossip_la_LIBADD =              \
-	$(LIBGOSSIP_LIBS)          \
+libgossip_la_LIBADD =              			\
+	$(LIBGOSSIP_LIBS)          			\
 	$(top_builddir)/protocols/jabber/libgossip-jabber.la
 
 libgossipincludedir = $(includedir)/gossip/

@@ -662,7 +662,7 @@ gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
 	pi = transport_protocol_id_new (id, protocol, func, user_data);
 
 	/* set up message handler */
-	connection = _gossip_jabber_get_connection (jabber);
+	connection = gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_protocol_message_handler, 
 					  pi, 

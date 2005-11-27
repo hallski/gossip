@@ -33,6 +33,7 @@
 #include <libgnomeui/libgnomeui.h>
 
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
@@ -47,6 +48,7 @@
 #include "gossip-chat.h"
 #include "gossip-chatrooms-dialog.h"
 #include "gossip-contact-list.h"
+#include "gossip-ft-window.h"
 #include "gossip-group-chat.h"
 #include "gossip-idle.h"
 #include "gossip-marshal.h"
@@ -57,6 +59,7 @@
 #include "gossip-sound.h"
 #include "gossip-status-presets.h"
 #include "gossip-stock.h"
+#include "gossip-subscription-dialog.h"
 #include "gossip-ui-utils.h"
 #include "gossip-vcard-dialog.h"
 
@@ -164,13 +167,6 @@ typedef struct {
 } CompleteNameData;
 
 
-typedef struct {
-	GossipProtocol *protocol;
-	GossipContact  *contact;
-	GossipVCard    *vcard;
-} SubscriptionData;
-
-
 enum {
 	CONNECTED,
 	DISCONNECTED,
@@ -225,8 +221,6 @@ static void            app_accounts_cb                      (GtkWidget          
 static void            app_personal_information_cb          (GtkWidget            *widget,
 							     GossipApp            *app);
 static void            app_preferences_cb                   (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_configure_transports_cb          (GtkWidget            *widget,
 							     GossipApp            *app);
 static void            app_about_cb                         (GtkWidget            *widget,
 							     GossipApp            *app);
@@ -303,18 +297,7 @@ static void            app_event_removed_cb                 (GossipEventManager 
 static void            app_contact_activated_cb             (GossipContactList    *contact_list,
 							     GossipContact        *contact,
 							     gpointer              unused);
-static void            app_subscription_request_cb          (GossipProtocol       *protocol,
-							     GossipContact        *contact,
-							     gpointer              user_data);
-static void            app_subscription_event_activated_cb  (GossipEventManager   *event_manager,
-							     GossipEvent          *event,
-							     GossipProtocol       *protocol);
-static void            app_subscription_vcard_cb            (GossipResult          result,
-							     GossipVCard          *vcard,
-							     SubscriptionData     *data);
-static void            app_subscription_request_dialog_cb   (GtkWidget            *dialog,
-							     gint                  response,
-							     SubscriptionData     *data);
+
 
 
 static guint         signals[LAST_SIGNAL] = { 0 };
@@ -392,25 +375,55 @@ app_finalize (GObject *object)
 		g_source_remove (priv->status_flash_timeout_id);
 	}
 
-	if (priv->chatroom_manager) {
-		g_object_unref (priv->chatroom_manager);
-	}
+	g_list_free (priv->widgets_connected_all);
+	g_list_free (priv->widgets_connected);
+	g_list_free (priv->widgets_disconnected);
 
 	manager = gossip_session_get_account_manager (priv->session);
 	
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_added_cb, 
 					      NULL);
-
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_removed_cb, 
 					      NULL);
+	g_signal_handlers_disconnect_by_func (manager,
+					      app_accounts_account_enabled_cb, 
+					      NULL);
 
+	g_signal_handlers_disconnect_by_func (priv->session,
+					      app_session_protocol_connected_cb, 
+					      NULL);
+	g_signal_handlers_disconnect_by_func (priv->session,
+					      app_session_protocol_disconnected_cb, 
+					      NULL);
+	g_signal_handlers_disconnect_by_func (priv->session,
+					      app_session_get_password_cb, 
+					      NULL);
 
-	g_list_free (priv->widgets_connected_all);
-	g_list_free (priv->widgets_connected);
-	g_list_free (priv->widgets_disconnected);
+	g_signal_handlers_disconnect_by_func (priv->event_manager,
+					      app_event_added_cb, 
+					      NULL);
+	g_signal_handlers_disconnect_by_func (priv->event_manager,
+					      app_event_removed_cb, 
+					      NULL);
+
 	
+	if (priv->event_manager) {
+		g_object_unref (priv->event_manager);
+	}
+
+	if (priv->chat_manager) {
+		g_object_unref (priv->chat_manager);
+	}
+
+	/* call init session dependent modules */
+	gossip_ft_window_finalize (priv->session);
+	gossip_subscription_dialog_finalize (priv->session);
+
+/* 	gossip_galago_finalize (priv->session); */
+/*      gossip_dbus_finalize (priv->session); */
+
 	g_free (priv);
 	app->priv = NULL;
 
@@ -453,6 +466,10 @@ app_setup (GossipAccountManager *manager)
 #ifdef HAVE_GALAGO
 	gossip_galago_init (priv->session);
 #endif
+
+	/* call init session dependent modules */
+	gossip_subscription_dialog_init (priv->session);
+	gossip_ft_window_init (priv->session);
 
 	/* do we need first time start up druid? */
 	if (gossip_new_account_window_is_needed ()) {
@@ -523,7 +540,6 @@ app_setup (GossipAccountManager *manager)
 			      "actions_send_chat_message", "activate", app_new_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "actions_show_offline", "toggled", app_show_offline_cb,
-			      "actions_configure_transports", "activate", app_configure_transports_cb,
 			      "edit_accounts", "activate", app_accounts_cb,
 			      "edit_personal_information", "activate", app_personal_information_cb,
 			      "edit_preferences", "activate", app_preferences_cb,
@@ -703,22 +719,18 @@ app_main_window_quit_confirm (GossipApp *app,
 				continue;
 			}
 			
-			if (i == GOSSIP_EVENT_TYPING) {
-				continue;
-			}
-
 			switch (i) {
 			case GOSSIP_EVENT_NEW_MESSAGE: 
 				str_single = "%d New message";
 				str_plural = "%d New messages";
 				break;
-			case GOSSIP_EVENT_UNFOCUSED_MESSAGE: 
-				str_single = "%d Unfocused message";
-				str_plural = "%d Unfocused messages";
-				break;
 			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST: 
 				str_single = "%d Subscription request";
 				str_plural = "%d Subscription requests";
+				break;
+			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST: 
+				str_single = "%d File transfer request";
+				str_plural = "%d File transfer requests";
 				break;
 			case GOSSIP_EVENT_SERVER_MESSAGE: 
 				str_single = "%d Server message";
@@ -842,12 +854,6 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	app_connection_items_update ();
 	app_presence_updated ();
-
-	/* is this the right place for setting up protocol signals? */
-	g_signal_connect (protocol,
-                          "subscription-request",
-                          G_CALLBACK (app_subscription_request_cb),
-                          session);
 }
 
 static void
@@ -862,11 +868,6 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	
  	app_connection_items_update ();
 	app_presence_updated ();
-
-	/* FIXME: implement */
-	g_signal_handlers_disconnect_by_func (protocol, 
-					      app_subscription_request_cb, 
-					      session);
 }
 
 static gchar * 
@@ -1219,14 +1220,6 @@ static void
 app_preferences_cb (GtkWidget *widget, GossipApp *app)
 {
 	gossip_preferences_show ();
-}
-
-static void
-app_configure_transports_cb (GtkWidget *widget, GossipApp *app)
-{
-#if 0 /* TRANSPORTS */
-	gossip_transport_accounts_window_show ();
-#endif
 }
 
 static gboolean
@@ -2425,207 +2418,6 @@ app_contact_activated_cb (GossipContactList *contact_list,
 	priv = app->priv;
 
 	gossip_chat_manager_show_chat (priv->chat_manager, contact);
-}
-
-static void
-app_subscription_request_cb (GossipProtocol *protocol,
-			     GossipContact  *contact,
-			     gpointer        user_data)
-{
-	GossipEvent      *event;
-	gchar            *str;
-
-	event = gossip_event_new (GOSSIP_EVENT_SUBSCRIPTION_REQUEST);
-
-	str = g_strdup_printf (_("New subscription request from %s"), 
-			       gossip_contact_get_name (contact));
-
-	g_object_set (event, 
-		      "message", str, 
-		      "data", contact,
-		      NULL);
-	g_free (str);
-
-	gossip_event_manager_add (gossip_app_get_event_manager (),
-				  event, 
-				  (GossipEventActivatedFunction)app_subscription_event_activated_cb,
-				  G_OBJECT (protocol));
-}
-
-static void
-app_subscription_event_activated_cb (GossipEventManager *event_manager,
-				     GossipEvent        *event,
-				     GossipProtocol     *protocol)
-{
-	GossipContact    *contact;
-	SubscriptionData *data;
-
-	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
-
-	data = g_new0 (SubscriptionData, 1);
-
-	data->protocol = g_object_ref (protocol);
-	data->contact = g_object_ref (contact);
-
-	gossip_session_get_vcard (gossip_app_get_session (),
-				  NULL,
-				  data->contact,
-				  (GossipVCardCallback) app_subscription_vcard_cb,
-				  data, 
-				  NULL);
-}
-
-static void
-app_subscription_vcard_cb (GossipResult      result,
-			   GossipVCard       *vcard,
-			   SubscriptionData  *data)
-{
-	GtkWidget   *dialog;
-	GtkWidget   *who_label;
-	GtkWidget   *question_label;
-	GtkWidget   *jid_label;
- 	GtkWidget   *website_label;
- 	GtkWidget   *personal_table;
-	const gchar *name = NULL;
-	const gchar *url = NULL;
-	gchar       *who;
-	gchar       *question;
-	gchar       *str;
-	gint         num_matches = 0;
-
-	if (GOSSIP_IS_VCARD (vcard)) {
-		data->vcard = g_object_ref (vcard);
-
-		name = gossip_vcard_get_name (vcard);
-		url = gossip_vcard_get_url (vcard);
-	}
-
-	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
-				      "subscription_request_dialog",
-				      NULL,
-				      "subscription_request_dialog", &dialog,
-				      "who_label", &who_label,
-				      "question_label", &question_label,
-				      "jid_label", &jid_label,
-				      "website_label", &website_label,
-				      "personal_table", &personal_table,
-				      NULL);
-
-	if (name) {
-		who = g_strdup_printf (_("%s wants to be added to your contact list."), 
-				       name);
-		question = g_strdup_printf (_("Do you want to add %s to your contact list?"),
-					    name);
-	} else {
-		who = g_strdup (_("Someone wants to be added to your contact list."));
-		question = g_strdup (_("Do you want to add this person to your contact list?"));
-	}
-
-	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
-	gtk_label_set_markup (GTK_LABEL (who_label), str);
-	gtk_label_set_use_markup (GTK_LABEL (who_label), TRUE);
-	g_free (str);
-	g_free (who);
-
-	gtk_label_set_text (GTK_LABEL (question_label), question);
-	g_free (question);
-
-	gtk_label_set_text (GTK_LABEL (jid_label), gossip_contact_get_id (data->contact));
-
-	if (url && strlen (url) > 0) {
-		GArray *start, *end;
-
-		start = g_array_new (FALSE, FALSE, sizeof (gint));
-		end = g_array_new (FALSE, FALSE, sizeof (gint));
-		
-		num_matches = gossip_utils_url_regex_match (url, start, end);
-	}
-
-	if (num_matches > 0) {
-		GtkWidget *href;
-		GtkWidget *alignment;
-
-		href = gnome_href_new (url, url);
-
-		alignment = gtk_alignment_new (0, 1, 0, 0.5);
-		gtk_container_add (GTK_CONTAINER (alignment), href);
-
-		gtk_table_attach (GTK_TABLE (personal_table),
-				  alignment, 
-				  1, 2,
-				  1, 2,
-				  GTK_FILL, GTK_FILL,
-				  0, 0);
-		
-		gtk_widget_show_all (personal_table);
-	} else {
-		gtk_widget_hide (website_label);
-	}
-
-	g_signal_connect (dialog,
-			  "response",
-			  G_CALLBACK (app_subscription_request_dialog_cb),
-			  data);
-
-	gtk_widget_show (dialog);
-}
-
-static void
-app_subscription_request_dialog_cb (GtkWidget        *dialog,
-				    gint              response,
-				    SubscriptionData *data)
-{
-	gboolean add_user;
-
-	g_return_if_fail (GTK_IS_DIALOG (dialog));
-
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (data->protocol));
-	g_return_if_fail (GOSSIP_IS_CONTACT (data->contact));
-
-	add_user = (gossip_contact_get_type (data->contact) == GOSSIP_CONTACT_TYPE_TEMPORARY);
-
-	gtk_widget_destroy (dialog);
-	
-	if (response == GTK_RESPONSE_YES ||
-	    response == GTK_RESPONSE_NO) {
-		gboolean subscribe;
-
-		subscribe = (response == GTK_RESPONSE_YES);
-		gossip_protocol_set_subscription (data->protocol, 
-						  data->contact, 
-						  subscribe);
-
-		if (subscribe && add_user) {
-			const gchar *id, *name, *message;
-			
-			id = gossip_contact_get_id (data->contact);
-			if (data->vcard) {
-				name = gossip_vcard_get_name (data->vcard);
-			} else {
-				name = id;
-			}
-			
-			message = _("I would like to add you to my contact list.");
-					
-			/* FIXME: how is session related to an IM account? */
-			/* micke, hmm .. this feels a bit wrong, should be
-			 * signalled from the protocol when we do 
-			 * set_subscribed
-			 */
-			gossip_protocol_add_contact (data->protocol,
-						     id, name, NULL,
-						     message);
-		}
-	}
-	
-	g_object_unref (data->protocol);
-	g_object_unref (data->contact);
-
-	if (data->vcard) {
-		g_object_unref (data->vcard);
-	}
-	
-	g_free (data);
 }
 
 GossipSession *

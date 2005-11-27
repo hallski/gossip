@@ -28,6 +28,7 @@
 #include "gossip-async.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-contact.h"
+#include "gossip-ft-provider.h"
 #include "gossip-message.h"
 #include "gossip-presence.h"
 #include "gossip-vcard.h"
@@ -99,9 +100,12 @@ gboolean        gossip_session_is_connected            (GossipSession           
 const gchar *   gossip_session_get_active_resource     (GossipSession           *session,
 							GossipContact           *contact);
 
-/* misc */
+/* providers */
 GossipChatroomProvider *
 gossip_session_get_chatroom_provider                    (GossipSession           *session,
+							 GossipAccount           *account);
+GossipFTProvider *
+gossip_session_get_ft_provider                          (GossipSession           *session,
 							 GossipAccount           *account);
 
 /* contact management */

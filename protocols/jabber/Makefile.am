@@ -11,9 +11,13 @@ libgossip_jabber_la_LIBADD = $(GOSSIP_JABBER_LIBS)
 libgossip_jabber_la_SOURCES =                   \
 	gossip-jabber.c                         \
 	gossip-jabber.h                         \
-	gossip-jabber-private.h                 \
 	gossip-jabber-chatrooms.c               \
 	gossip-jabber-chatrooms.h               \
+	gossip-jabber-ft.c			\
+	gossip-jabber-ft.h			\
+	gossip-jabber-ft-utils.c		\
+	gossip-jabber-ft-utils.h		\
+	gossip-jabber-private.h                 \
 	gossip-jabber-vcard.c			\
 	gossip-jabber-vcard.h			\
 	gossip-jabber-services.c		\

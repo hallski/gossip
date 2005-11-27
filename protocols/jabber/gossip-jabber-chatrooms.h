@@ -33,9 +33,8 @@
 typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 
 
-GossipJabberChatrooms *gossip_jabber_chatrooms_new                 (GossipJabber          *jabber,
-								    LmConnection          *connection);
-void                   gossip_jabber_chatrooms_free                (GossipJabberChatrooms *chatrooms);
+GossipJabberChatrooms *gossip_jabber_chatrooms_init                (GossipJabber          *jabber);
+void                   gossip_jabber_chatrooms_finalize            (GossipJabberChatrooms *chatrooms);
 GossipChatroomId       gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatroom,
 								    const gchar           *room,
 								    const gchar           *server,

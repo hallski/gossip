@@ -119,7 +119,6 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 			     gpointer                       user_data)
 {
 	TransportUnregister *tu;
-
 	LmConnection        *connection;
 	LmMessageHandler    *handler;
         LmMessage           *m;
@@ -144,7 +143,7 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 		   gossip_jid_get_full (jid)));
 
 	/* set up handler */
-	connection = _gossip_jabber_get_connection (jabber);
+	connection = gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_unregister_message_handler, 
 					  NULL, NULL);
@@ -356,7 +355,7 @@ gossip_transport_requirements (GossipJabber                    *jabber,
 	g_hash_table_insert (requirements, trq->jid, trq);
 
 	/* set up handler */
-	connection = _gossip_jabber_get_connection (jabber);
+	connection = gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_requirements_message_handler, 
 					  NULL, NULL);
@@ -574,7 +573,7 @@ gossip_transport_register (GossipJabber                *jabber,
 	g_hash_table_insert (registers, trg->jid, trg);
 
 	/* set up handler */
-	connection = _gossip_jabber_get_connection (jabber);
+	connection = gossip_jabber_get_connection (jabber);
 
 	handler = lm_message_handler_new (transport_register_message_handler, 
 					  NULL, NULL);

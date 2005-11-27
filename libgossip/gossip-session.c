@@ -1259,6 +1259,78 @@ gossip_session_send_composing (GossipSession  *session,
 	}
 }
 
+#if 0
+void
+gossip_session_ft_start (GossipSession  *session,
+			 GossipContact  *contact,
+			 const gchar    *file)
+{
+	GossipSessionPriv *priv;
+	GossipAccount     *account;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+
+	priv = GET_PRIV (session);
+
+	account = gossip_session_find_account (session, contact);
+	protocol = g_hash_table_lookup (priv->accounts, 
+					gossip_account_get_name (account));
+	
+	gossip_protocol_ft_start (protocol, contact, file);
+}
+
+void            gossip_session_ft_start                (GossipSession           *session,
+							GossipContact           *contact,
+							const gchar             *file);
+void            gossip_session_ft_accept               (GossipSession           *session,
+							GossipContact           *contact,
+							const gchar             *file);
+void            gossip_session_ft_decline              (GossipSession           *session,
+							GossipContact           *contact,
+							const gchar             *file);
+
+void
+gossip_session_ft_accept (GossipSession  *session,
+			  GossipContact  *contact,
+			  const gchar    *file)
+{
+	GossipSessionPriv *priv;
+	GossipAccount     *account;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+
+	priv = GET_PRIV (session);
+
+	account = gossip_session_find_account (session, contact);
+	protocol = g_hash_table_lookup (priv->accounts, 
+					gossip_account_get_name (account));
+	
+	gossip_protocol_ft_accept (protocol, contact, file);
+}
+
+void
+gossip_session_ft_decline (GossipSession  *session,
+			   GossipContact  *contact,
+			   const gchar    *file)
+{
+	GossipSessionPriv *priv;
+	GossipAccount     *account;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+
+	priv = GET_PRIV (session);
+
+	account = gossip_session_find_account (session, contact);
+	protocol = g_hash_table_lookup (priv->accounts, 
+					gossip_account_get_name (account));
+	
+	gossip_protocol_ft_accept (protocol, contact, file);
+}
+#endif
+
 GossipPresence *
 gossip_session_get_presence (GossipSession *session)
 {
@@ -1358,6 +1430,26 @@ gossip_session_get_chatroom_provider (GossipSession *session,
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
 
 	return GOSSIP_CHATROOM_PROVIDER (protocol);
+}
+
+GossipFTProvider *
+gossip_session_get_ft_provider (GossipSession *session,
+				GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, 
+					gossip_account_get_name (account));
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	return GOSSIP_FT_PROVIDER (protocol);
 }
 
 GossipContact *

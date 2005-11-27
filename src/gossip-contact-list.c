@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2005 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,15 +29,16 @@
 
 #include "gossip-app.h"
 #include "gossip-cell-renderer-text.h"
+#include "gossip-chat-invite.h"
+#include "gossip-contact-groups.h"
 #include "gossip-contact-info.h"
+#include "gossip-contact-list.h"
 #include "gossip-edit-groups-dialog.h"
+#include "gossip-ft-window.h"
 #include "gossip-log.h"
 #include "gossip-marshal.h"
-#include "gossip-stock.h"
-#include "gossip-contact-groups.h"
-#include "gossip-contact-list.h"
 #include "gossip-sound.h"
-#include "gossip-chat-invite.h"
+#include "gossip-stock.h"
 
 #define d(x)
 
@@ -236,6 +237,9 @@ static void            contact_list_item_menu_rename_cb         (gpointer       
 static void            contact_list_item_menu_edit_groups_cb    (gpointer                data,
 								 guint                   action,
 								 GtkWidget              *widget);
+static void            contact_list_item_menu_send_file_cb      (gpointer                data,
+								 guint                   action,
+								 GtkWidget              *widget);
 static void            contact_list_item_menu_log_cb            (gpointer                data,
 								 guint                   action,
 								 GtkWidget              *widget);
@@ -291,6 +295,7 @@ enum {
         ITEM_MENU_EDIT_GROUPS,
         ITEM_MENU_REMOVE,
 	ITEM_MENU_INVITE,
+	ITEM_MENU_SEND_FILE,
         ITEM_MENU_LOG
 };
 
@@ -347,7 +352,19 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  ITEM_MENU_INVITE,
 	  "<Item>",
 	  NULL },
-	{ "/sep2",
+	{ "/sep-ft",
+	  NULL,
+	  NULL,
+	  0,
+	  "<Separator>",
+	  NULL },
+	{ N_("/_Send File..."),
+	  NULL,
+	  GIF_CB (contact_list_item_menu_send_file_cb),
+	  ITEM_MENU_SEND_FILE,
+	  "<Item>",
+	  NULL },
+	{ "/sep-log",
 	  NULL,
 	  NULL,
 	  0,
@@ -1678,6 +1695,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 							    NULL, NULL, NULL);
 		if (row_exists) {
                         GossipContact *contact;
+			GtkWidget     *ft_item;
 			
 			gtk_tree_selection_unselect_all (selection);
 			gtk_tree_selection_select_path (selection, path);
@@ -1725,6 +1743,15 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				}
 			}
 			
+			/* FIXME: disable file transfer until finished */
+			ft_item = gtk_item_factory_get_item (factory,
+							     "/Send File...");
+			gtk_widget_hide (ft_item);
+			ft_item = gtk_item_factory_get_item (factory,
+							     "/sep-ft");
+			gtk_widget_hide (ft_item);
+
+			/* show */
 			gtk_item_factory_popup (factory,
 						event->x_root, event->y_root,
 						event->button, event->time);
@@ -2012,6 +2039,21 @@ contact_list_item_menu_edit_groups_cb (gpointer   data,
         gossip_edit_groups_new (contact);
 
 	g_object_unref (contact);
+}
+
+static void
+contact_list_item_menu_send_file_cb (gpointer   data,
+				     guint      action,
+				     GtkWidget *widget)
+{
+        GossipContact *contact;
+
+        contact = gossip_contact_list_get_selected (GOSSIP_CONTACT_LIST (data));
+        if (!contact) {
+                return;
+        }
+	
+        gossip_ft_window_send_file (contact);
 }
 
 static void

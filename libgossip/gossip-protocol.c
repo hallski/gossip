@@ -36,7 +36,7 @@ enum {
 	CONTACT_REMOVED,
 	COMPOSING_EVENT,
 
-	/* Used for protocols to request information from user */
+	/* use to get password from user */
 	GET_PASSWORD,
 	
 	SUBSCRIPTION_REQUEST,
@@ -60,6 +60,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->is_connected        = NULL;
 	klass->send_message        = NULL;
 	klass->send_composing      = NULL;
+	klass->send_file           = NULL;
 	klass->set_presence        = NULL;
         klass->find_contact        = NULL;
         klass->add_contact         = NULL;
@@ -112,6 +113,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      libgossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
+
 	signals[CONTACT_UPDATED] = 
 		g_signal_new ("contact-updated",
 			      G_TYPE_FROM_CLASS (klass),
@@ -151,6 +153,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      libgossip_marshal_VOID__POINTER_BOOLEAN,
 			      G_TYPE_NONE,
 			      2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
+
 	signals[GET_PASSWORD] =
 		g_signal_new ("get-password",
 			      G_TYPE_FROM_CLASS (klass),

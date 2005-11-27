@@ -560,7 +560,7 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 	g_return_if_fail (account != NULL);
 
 	jabber = transport_account_get_jabber (account);
-	connection = _gossip_jabber_get_connection (jabber);
+	connection = gossip_jabber_get_connection (jabber);
 
 	service_jid = gossip_transport_account_get_jid (account);
 	own_contact = gossip_jabber_get_own_contact (jabber);

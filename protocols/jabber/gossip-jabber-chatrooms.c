@@ -27,9 +27,10 @@
 
 #include <libgossip/gossip-utils.h>
 
-#include "gossip-jid.h"
 #include "gossip-jabber-chatrooms.h"
+#include "gossip-jid.h"
 #include "gossip-jabber-utils.h"
+#include "gossip-jabber-private.h"
 
 #define d(x)
 
@@ -98,6 +99,69 @@ static void            jabber_chatrooms_set_presence_foreach (gpointer          
 							      GossipJabberChatrooms  *chatrooms);
 
 
+
+GossipJabberChatrooms *
+gossip_jabber_chatrooms_init (GossipJabber *jabber)
+{
+	GossipJabberChatrooms *chatrooms;
+	LmConnection          *connection;
+	LmMessageHandler      *handler;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
+
+	connection = gossip_jabber_get_connection (jabber);
+	g_return_val_if_fail (connection != NULL, NULL);
+
+	chatrooms = g_new0 (GossipJabberChatrooms, 1);
+	
+	chatrooms->jabber     = g_object_ref (jabber);
+	chatrooms->connection = lm_connection_ref (connection);
+	chatrooms->presence   = NULL;
+	chatrooms->room_id_hash = g_hash_table_new (NULL, NULL);
+	chatrooms->room_jid_hash = g_hash_table_new_full (gossip_jid_hash,
+							  gossip_jid_equal,
+							  (GDestroyNotify) gossip_jid_unref,
+							  NULL);
+
+	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_chatrooms_message_handler,
+					  chatrooms, NULL);
+
+	lm_connection_register_message_handler (chatrooms->connection,
+						handler, 
+						LM_MESSAGE_TYPE_MESSAGE,
+						LM_HANDLER_PRIORITY_NORMAL);
+	lm_message_handler_unref (handler);
+	
+	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_chatrooms_presence_handler,
+					  chatrooms, NULL);
+
+	lm_connection_register_message_handler (chatrooms->connection,
+						handler, 
+						LM_MESSAGE_TYPE_PRESENCE,
+						LM_HANDLER_PRIORITY_FIRST);
+	lm_message_handler_unref (handler);
+
+	return chatrooms;
+}	
+
+void
+gossip_jabber_chatrooms_finalize (GossipJabberChatrooms *chatrooms)
+{
+	g_return_if_fail (chatrooms != NULL);
+
+	g_hash_table_destroy (chatrooms->room_id_hash);
+	g_hash_table_destroy (chatrooms->room_jid_hash);
+
+	if (chatrooms->presence) {
+		g_object_unref (chatrooms->presence);
+	}
+
+	lm_connection_unref (chatrooms->connection);
+	g_object_unref (chatrooms->jabber);
+	
+	g_free (chatrooms);
+}
+
 static JabberChatroom *
 jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
 			       const gchar           *room_name, 
@@ -106,15 +170,13 @@ jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
 {
 	GossipJabber   *jabber;
 	GossipContact  *own_contact;
-	GossipAccount  *account;
 	JabberChatroom *room;
 	gchar          *jid_str;
 	static int      id = 1;
 
-	/* FIXME: can we use the own contact instead of creating a new one? */
 	jabber = chatrooms->jabber;
+
 	own_contact = gossip_jabber_get_own_contact (jabber);
-	account = gossip_contact_get_account (own_contact);
 
 	room = g_new0 (JabberChatroom, 1);
 
@@ -129,10 +191,7 @@ jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
 
 	room->contacts = NULL;
 	
-	room->own_contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_USER,
-						     account,
-						     gossip_jid_get_full (room->jid),
-						     gossip_jid_get_resource (room->jid));
+	room->own_contact = g_object_ref (own_contact);
 
 	return room;
 }
@@ -385,74 +444,6 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 	room->contacts = g_slist_prepend (room->contacts, c);
 
 	return c;
-}
-
-GossipJabberChatrooms *
-gossip_jabber_chatrooms_new (GossipJabber   *jabber,
-			     LmConnection   *connection)
-{
-	GossipJabberChatrooms *chatrooms;
-	LmMessageHandler      *handler;
-
-	g_return_val_if_fail (jabber != NULL, NULL);
-	g_return_val_if_fail (connection != NULL, NULL);
-
-	chatrooms = g_new0 (GossipJabberChatrooms, 1);
-	
-	chatrooms->jabber     = g_object_ref (jabber);
-	chatrooms->connection = lm_connection_ref (connection);
-	chatrooms->presence   = NULL;
-	chatrooms->room_id_hash = g_hash_table_new_full (NULL, 
-							 NULL, 
-							 NULL, 
-							 (GDestroyNotify) jabber_chatrooms_chatroom_unref);
-	chatrooms->room_jid_hash = g_hash_table_new_full (gossip_jid_hash,
-							  gossip_jid_equal,
-							  (GDestroyNotify) gossip_jid_unref,
-							  (GDestroyNotify) jabber_chatrooms_chatroom_unref);
-
-	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_chatrooms_message_handler,
-					  chatrooms, NULL);
-
-	lm_connection_register_message_handler (connection,
-						handler, 
-						LM_MESSAGE_TYPE_MESSAGE,
-						LM_HANDLER_PRIORITY_NORMAL);
-	lm_message_handler_unref (handler);
-	
-	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_chatrooms_presence_handler,
-					  chatrooms, NULL);
-
-	lm_connection_register_message_handler (connection,
-						handler, 
-						LM_MESSAGE_TYPE_PRESENCE,
-						LM_HANDLER_PRIORITY_FIRST);
-	lm_message_handler_unref (handler);
-
-	return chatrooms;
-}	
-
-void
-gossip_jabber_chatrooms_free (GossipJabberChatrooms *chatrooms)
-{
-	g_return_if_fail (chatrooms != NULL);
-
-	if (chatrooms->jabber) {
-		g_object_unref (chatrooms->jabber);
-	}
-
-	if (chatrooms->connection) {
-		lm_connection_unref (chatrooms->connection);
-	}
-     
-	if (chatrooms->presence) {
-		g_object_unref (chatrooms->presence);
-	}
-
-	g_hash_table_destroy (chatrooms->room_id_hash);
-	g_hash_table_destroy (chatrooms->room_jid_hash);
-	
-	g_free (chatrooms);
 }
 
 GossipChatroomId

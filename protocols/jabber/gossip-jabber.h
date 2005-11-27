@@ -24,30 +24,21 @@
 #include <libgossip/gossip-async.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-protocol.h>
+#include <libgossip/gossip-account.h>
 
 #define GOSSIP_TYPE_JABBER         (gossip_jabber_get_type ())
-#define GOSSIP_JABBER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
- 			            GOSSIP_TYPE_JABBER, GossipJabber))
-#define GOSSIP_JABBER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				    GOSSIP_TYPE_JABBER, \
-			            GossipJabberClass))
-#define GOSSIP_IS_JABBER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o),\
-			            GOSSIP_TYPE_JABBER))
-#define GOSSIP_IS_JABBER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
-				    GOSSIP_TYPE_JABBER))
-#define GOSSIP_JABBER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),\
-				    GOSSIP_TYPE_JABBER, \
-				    GossipJabberClass))
-
+#define GOSSIP_JABBER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_JABBER, GossipJabber))
+#define GOSSIP_JABBER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_JABBER, GossipJabberClass))
+#define GOSSIP_IS_JABBER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_JABBER))
+#define GOSSIP_IS_JABBER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_JABBER))
+#define GOSSIP_JABBER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_JABBER, GossipJabberClass))
 
 typedef struct _GossipJabber      GossipJabber;
 typedef struct _GossipJabberClass GossipJabberClass;
 typedef struct _GossipJabberPriv  GossipJabberPriv;
 
-
 struct _GossipJabber {
 	GossipProtocol    parent;
-
 	GossipJabberPriv *priv;
 };
 
@@ -57,18 +48,25 @@ struct _GossipJabberClass {
 };
 
   
-GType               gossip_jabber_get_type                  (void) G_GNUC_CONST;
+GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
+gboolean       gossip_jabber_get_vcard                 (GossipJabber        *jabber,
+							GossipContact       *contact,
+							GossipVCardCallback  callback);
+GossipAccount *gossip_jabber_get_account               (GossipJabber        *jabber);
 
-gboolean            gossip_jabber_get_vcard                 (GossipJabber        *jabber,
-							     GossipContact       *contact,
-							     GossipVCardCallback  callback);
-GossipContact *     gossip_jabber_get_own_contact           (GossipJabber        *jabber);
-void                gossip_jabber_send_subscribed           (GossipJabber        *jabber,
-							     GossipContact       *contact);
-void                gossip_jabber_send_unsubscribed         (GossipJabber        *jabber,
-							     GossipContact       *contact);
-void                gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
-void                gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
+GossipContact *gossip_jabber_get_own_contact           (GossipJabber        *jabber);
+GossipContact *gossip_jabber_get_contact_from_jid      (GossipJabber        *jabber,
+							const gchar         *jid,
+							gboolean            *new_item);
+void           gossip_jabber_send_subscribed           (GossipJabber        *jabber,
+							GossipContact       *contact);
+void           gossip_jabber_send_unsubscribed         (GossipJabber        *jabber,
+							GossipContact       *contact);
+void           gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
+void           gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
+
+
+
 
 
 #endif /* __GOSSIP_JABBER_H__ */
