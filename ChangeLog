@@ -1,3 +1,42 @@
+2005-11-29  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-chatroom.c:
+	* protocols/jabber/gossip-jabber-ft-utils.c:
+	* protocols/jabber/gossip-jabber-ft.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-account-button.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-ft-window.c:
+	- Disabled debugging.
+
+	* src/Makefile.am:
+	* src/gossip-add-contact-window.c:
+	* src/gossip-chatrooms-dialog.c:
+	* src/gossip-vcard-dialog.c:
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	- Added GossipAccountChooser.
+	- The GossipAccountChooser is used when adding contacts, changing
+	personal information and when joining a chatroom, it is derived
+	from a GtkComboBox but handles accounts connecting/disconnecting,
+	name changes and being added or removed all dynamically.
+	
+	* src/gossip-galago.c:
+	- Fixed some memory leaks.
+
+	* libgossip/gossip-session.[ch]: 
+	* src/gossip-app.c: 
+	- Fixed gossip_session_count_accounts() API.
+
+	* src/gossip-chatrooms-dialog.c: 
+	- Don't show the separator when there is just the "Custom" entry.
+	- Add the separator entry when you add the first chatroom.
+	- Cleaned up some other minor usability issues.
+
+	* libgossip/gossip-chatroom.dtd: 
+	- Fixed so you can have NO chatrooms and it is valid.
+
 2005-11-27  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-event.h:

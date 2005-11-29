@@ -29,7 +29,7 @@
 
 #define GOSSIP_CHATROOM_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM, GossipChatroomPriv))
 
-#define d(x) x
+#define d(x)
 
 
 typedef struct _GossipChatroomPriv GossipChatroomPriv;

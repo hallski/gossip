@@ -1323,14 +1323,14 @@ contact_list_drag_data_received (GtkWidget         *widget,
 	gboolean                 drag_del = FALSE;
 
 	id = (const gchar*) selection->data;
-	g_print ("Received %s%s drag & drop contact from roster with id:'%s'\n", 
-		 context->action == GDK_ACTION_MOVE ? "move" : "", 
-		 context->action == GDK_ACTION_COPY ? "copy" : "", 
-		 id);
+	d(g_print ("Contact List: Received %s%s drag & drop contact from roster with id:'%s'\n", 
+		   context->action == GDK_ACTION_MOVE ? "move" : "", 
+		   context->action == GDK_ACTION_COPY ? "copy" : "", 
+		   id));
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	if (!contact) {
-		g_print ("No contact found associated with drag & drop\n");
+		d(g_print ("Contact List: No contact found associated with drag & drop\n"));
 		return;
 	}
 

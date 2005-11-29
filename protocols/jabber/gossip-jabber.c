@@ -49,7 +49,7 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define d(x) x
+#define d(x)
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 

@@ -66,13 +66,12 @@ typedef struct {
 } FindAccount;
 
 
-typedef struct {
+struct CountAccounts {
 	GossipSession *session;
-	gboolean       connected;
-	gboolean       enabled;
-	gboolean       ignore_enabled;
-	guint          count;
-} CountAccounts;
+	guint          connected;
+	guint          connected_total;
+	guint          disconnected;
+};
 
 
 typedef struct {
@@ -131,7 +130,7 @@ static void            session_get_accounts_foreach_cb           (GossipAccount 
 								  GetAccounts          *data);
 static void            session_count_accounts_foreach_cb         (GossipAccount        *account,
 								  GossipProtocol       *protocol,
-								  CountAccounts        *ca);
+								  struct CountAccounts *ca);
 static void            session_find_account_foreach_cb           (GossipAccount        *account,
 								  GossipProtocol       *protocol,
 								  FindAccount          *fa);
@@ -761,7 +760,7 @@ session_get_accounts_foreach_cb (GossipAccount   *account,
 
 	priv = GET_PRIV (data->session);
 
-	data->accounts = g_list_append (data->accounts, account);
+	data->accounts = g_list_append (data->accounts, g_object_ref (account));
 }
 
 gdouble
@@ -785,124 +784,65 @@ gossip_session_get_connected_time (GossipSession *session,
 	return g_timer_elapsed (timer, &ms);
 }
 
-guint 
-gossip_session_count_connected (GossipSession *session)
+void 
+gossip_session_count_accounts (GossipSession *session,
+			       guint         *connected,
+			       guint         *connected_total,
+			       guint         *disconnected)
 {
-	GossipSessionPriv *priv;
-	CountAccounts     *ca;
-	guint              count;
-
-	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
+	GossipSessionPriv    *priv;
+	struct CountAccounts  ca;
+	
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	g_return_if_fail (connected != NULL &&
+			  connected_total != NULL &&
+			  disconnected != NULL);
 	
 	priv = GET_PRIV (session);
 
-	ca = g_new0 (CountAccounts, 1);
-	
-	ca->session = g_object_ref (session);
+	ca.session = session;
 
-	ca->connected = TRUE;
-	ca->enabled = TRUE;
-
-	ca->count = 0;
+	ca.connected = 0;
+	ca.connected_total = 0;
+	ca.disconnected = 0;
 
 	g_hash_table_foreach (priv->accounts, 
 			      (GHFunc)session_count_accounts_foreach_cb,
-			      ca);
+			      &ca);
 
-	count = ca->count;
+	if (connected) {
+		*connected = ca.connected;
+	}
 
-	g_object_unref (ca->session);
+	if (connected_total) {
+		*connected_total = ca.connected_total;
+	}
 
-	g_free (ca);
-
-	return count;
-}
-
-guint 
-gossip_session_count_disconnected (GossipSession *session)
-{
-	GossipSessionPriv *priv;
-	CountAccounts     *ca;
-	guint              count;
-
-	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
-	
-	priv = GET_PRIV (session);
-
-	ca = g_new0 (CountAccounts, 1);
-	
-	ca->session = g_object_ref (session);
-
-	ca->connected = FALSE;
-	ca->enabled = TRUE;
-
-	ca->count = 0;
-
-	g_hash_table_foreach (priv->accounts, 
-			      (GHFunc)session_count_accounts_foreach_cb,
-			      ca);
-
-	count = ca->count;
-
-	g_object_unref (ca->session);
-
-	g_free (ca);
-
-	return count;
-}
-
-guint 
-gossip_session_count_all_connected (GossipSession *session)
-{
-	GossipSessionPriv *priv;
-	CountAccounts     *ca;
-	guint              count;
-
-	g_return_val_if_fail (GOSSIP_IS_SESSION (session), 0);
-	
-	priv = GET_PRIV (session);
-
-	ca = g_new0 (CountAccounts, 1);
-	
-	ca->session = g_object_ref (session);
-
-	ca->connected = TRUE;
-	ca->ignore_enabled = TRUE;
-
-	ca->count = 0;
-
-	g_hash_table_foreach (priv->accounts, 
-			      (GHFunc)session_count_accounts_foreach_cb,
-			      ca);
-
-	count = ca->count;
-
-	g_object_unref (ca->session);
-
-	g_free (ca);
-
-	return count;
+	if (disconnected) {
+		*disconnected = ca.disconnected;
+	}
 }
 
 static void
-session_count_accounts_foreach_cb (GossipAccount  *account,
-				   GossipProtocol *protocol,
-				   CountAccounts  *ca)
+session_count_accounts_foreach_cb (GossipAccount        *account,
+				   GossipProtocol       *protocol,
+				   struct CountAccounts *ca)
 {
 	GossipSessionPriv *priv;
 
 	priv = GET_PRIV (ca->session);
 
-	if (ca->connected != gossip_protocol_is_connected (protocol)) {
-		return;
-	}
-	
-	if (!ca->ignore_enabled && 
-	    gossip_account_get_enabled (account) != ca->enabled) {
-		return;
-	}
+	if (gossip_protocol_is_connected (protocol)) {
+		if (gossip_account_get_enabled (account)) {
+			ca->connected++;
+		}
 
-	ca->count++;
+		ca->connected_total++;
+	} else {
+		if (gossip_account_get_enabled (account)) {
+			ca->disconnected++;
+		}
+	}
 }
 
 gboolean 

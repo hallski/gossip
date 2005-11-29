@@ -4,7 +4,7 @@
 -->
 
 <!-- Root element. -->
-<!ELEMENT chatrooms ((default),chatroom+)>
+<!ELEMENT chatrooms ((default),chatroom*)>
 
 <!ELEMENT default (#PCDATA)>
 

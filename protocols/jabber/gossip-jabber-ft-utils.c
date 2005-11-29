@@ -24,7 +24,7 @@
 
 #include "gossip-jabber-ft-utils.h"
 
-#define d(x) x
+#define d(x)
 
 
 static void base64_init (void);

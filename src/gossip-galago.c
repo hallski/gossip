@@ -175,11 +175,14 @@ galago_presence_changed_cb (GossipSession  *gossip_session,
 			    GossipPresence *gossip_presence, 
 			    gpointer        userdata)
 {
+	GList *accounts;
 	GList *l;
 
 	d(g_print ("Galago: Session presence changed\n"));
 
-	for (l = gossip_session_get_accounts (gossip_session); l != NULL; l = l->next) {
+	accounts = gossip_session_get_accounts (gossip_session);
+
+	for (l = accounts; l != NULL; l = l->next) {
 		GossipAccount *gossip_account;
 		GalagoAccount *galago_account;
 
@@ -187,6 +190,9 @@ galago_presence_changed_cb (GossipSession  *gossip_session,
 		galago_account = galago_get_account (gossip_account);
 		galago_set_status (galago_account, gossip_presence);
 	}
+
+	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_free (accounts);
 }
 
 static void
@@ -295,11 +301,14 @@ galago_contact_removed_cb (GossipSession     *session,
 static void
 galago_setup_accounts (GossipSession *session)
 {
+	GList *accounts;
 	GList *l;
 
 	d(g_print ("Galago: Setting up accounts\n"));
 
-	for (l = gossip_session_get_accounts (session); l != NULL; l = l->next) {
+	accounts = gossip_session_get_accounts (session);
+
+	for (l = accounts; l != NULL; l = l->next) {
 		GossipAccount  *account;
 		GossipPresence *presence = NULL;
 		GalagoAccount  *galago_account;
@@ -315,6 +324,9 @@ galago_setup_accounts (GossipSession *session)
 			galago_presence_changed_cb (session, presence, NULL);
 		}
 	}
+
+	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_free (accounts);
 }
 
 void

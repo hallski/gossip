@@ -30,7 +30,7 @@
 #include "gossip-ft-window.h"
 #include "gossip-app.h"
 
-#define d(x) x
+#define d(x)
 
 
 typedef struct {

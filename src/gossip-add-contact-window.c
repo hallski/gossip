@@ -26,9 +26,10 @@
 
 #include <libgossip/gossip-utils.h>
 
+#include "gossip-account-chooser.h"
 #include "gossip-add-contact-window.h"
-#include "gossip-ui-utils.h"
 #include "gossip-app.h"
+#include "gossip-ui-utils.h"
 
 
 typedef struct {
@@ -38,7 +39,7 @@ typedef struct {
 	/* Page one */
 	GtkWidget   *one_page;
 	GtkWidget   *one_accounts_vbox;
-	GtkWidget   *one_accounts_combobox;
+	GtkWidget   *one_accounts_chooser;
 	GtkWidget   *one_system_vbox;
 	GtkWidget   *one_system_combobox;
 	GtkWidget   *one_id_label;
@@ -70,12 +71,6 @@ typedef struct {
 } GossipAddContact;
 
 
-typedef struct {
-	GossipAccount *account;
-	GtkComboBox   *combobox;
-} SetAccountData;
-
-
 enum {
 	COL_NAME,
 	NUM_OF_COLS
@@ -91,26 +86,8 @@ enum {
 };
 
 
-enum {
-	COL_ACCOUNT_IMAGE,
-	COL_ACCOUNT_TEXT,
-	COL_ACCOUNT_CONNECTED,
-	COL_ACCOUNT_POINTER,
-	COL_ACCOUNT_COUNT
-};
-
-
-static void           add_contact_window_setup_accounts               (GList            *accounts,
-								       GossipAddContact *window);
 static void           add_contact_window_setup_systems                (GList            *accounts,
 								       GossipAddContact *window);
-static GossipAccount *add_contact_window_get_selected_account         (GossipAddContact *window);
-static void           add_contact_window_set_selected_account         (GossipAddContact *window,
-								       GossipAccount    *account);
-static gboolean       add_contact_window_set_selected_account_foreach (GtkTreeModel     *model,
-								       GtkTreePath      *path,
-								       GtkTreeIter      *iter,
-								       SetAccountData   *data);
 static gboolean       add_contact_window_complete_group_idle          (GossipAddContact *window);
 static void           add_contact_window_vcard_handler                (GossipResult      result,
 								       GossipVCard      *vcard,
@@ -146,88 +123,6 @@ static void           add_contact_window_destroy                      (GtkWidget
 static void           add_contact_window_cancel                       (GtkWidget        *unused,
 								       GossipAddContact *window);
 
-
-
-static void
-add_contact_window_setup_accounts (GList            *accounts,
-				   GossipAddContact *window)
-{
-	GossipSession   *session;
-
-	GtkListStore    *store;
-	GtkTreeIter      iter;
-	GtkCellRenderer *renderer;
-	GtkComboBox     *combo_box;
-
-	GList           *l;
-	GError          *error = NULL;
-	GdkPixbuf       *pixbuf;
-
-	gboolean         active_item_set = FALSE;
-
-	session = gossip_app_get_session ();
-
-	/* set up combo box with new store */
-	combo_box = GTK_COMBO_BOX (window->one_accounts_combobox);
-
-  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));  
-
-	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
-				    GDK_TYPE_PIXBUF,
-				    G_TYPE_STRING,    /* name */
-				    G_TYPE_BOOLEAN,
-				    GOSSIP_TYPE_ACCOUNT);    
-
-	gtk_combo_box_set_model (combo_box, GTK_TREE_MODEL (store));
-
-	/* populate accounts */
-	for (l = accounts; l; l = l->next) {
-		GossipAccount *account;
-		gboolean       is_connected;
-
-		account = l->data;
-
-		error = NULL; 
-		pixbuf = NULL;
-
-		is_connected = gossip_session_is_connected (session, account);
-		pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, 
-									 GTK_ICON_SIZE_MENU,
-									 is_connected);
-
-		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 
-				    COL_ACCOUNT_IMAGE, pixbuf, 
-				    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
-				    COL_ACCOUNT_CONNECTED, is_connected,
-				    COL_ACCOUNT_POINTER, g_object_ref (account),
-				    -1);
-
-		g_object_unref (pixbuf);
-
-		/* set first connected account as active account */
-		if (!active_item_set && is_connected) {
-			active_item_set = TRUE;
-			gtk_combo_box_set_active_iter (combo_box, &iter); 
-		}	
-	}
-	
-	renderer = gtk_cell_renderer_pixbuf_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
-					"pixbuf", COL_ACCOUNT_IMAGE,
-					"sensitive", COL_ACCOUNT_CONNECTED,
-					NULL);
-
-	renderer = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
-					"text", COL_ACCOUNT_TEXT,
-					"sensitive", COL_ACCOUNT_CONNECTED,
-					NULL);
-
-	g_object_unref (store);
-}
 
 static void
 add_contact_window_setup_systems (GList            *accounts,
@@ -282,75 +177,6 @@ add_contact_window_setup_systems (GList            *accounts,
 					NULL);
 
 	g_object_unref (store);
-}
-
-static GossipAccount *
-add_contact_window_get_selected_account (GossipAddContact *window) 
-{
-	GossipAccount *account;
-	GtkTreeModel  *model;
-	GtkTreeIter    iter;
-
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (window->one_accounts_combobox));
-	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (window->one_accounts_combobox), &iter);
-
-	gtk_tree_model_get (model, &iter, COL_ACCOUNT_POINTER, &account, -1);
-
-	return account;
-}
-
-static void
-add_contact_window_set_selected_account (GossipAddContact *window,
-					 GossipAccount    *account) 
-{
-	GtkComboBox    *combobox;
-	GtkTreeModel   *model;
-	GtkTreeIter     iter;
-
-	SetAccountData *data;
-
-	combobox = GTK_COMBO_BOX (window->one_accounts_combobox);
-	model = gtk_combo_box_get_model (combobox);
-	gtk_combo_box_get_active_iter (combobox, &iter);
-
-	data = g_new0 (SetAccountData, 1);
-
-	data->account = g_object_ref (account);
-	data->combobox = g_object_ref (combobox);
-
-	gtk_tree_model_foreach (model, 
-				(GtkTreeModelForeachFunc) add_contact_window_set_selected_account_foreach, 
-				data);
-	
-	g_object_unref (data->account);
-	g_object_unref (data->combobox);
-
-	g_free (data);
-}
-
-static gboolean
-add_contact_window_set_selected_account_foreach (GtkTreeModel   *model,
-						 GtkTreePath    *path,
-						 GtkTreeIter    *iter,
-						 SetAccountData *data)
-{
-	GossipAccount *account1, *account2;
-	gboolean       equal;
-
-	account1 = GOSSIP_ACCOUNT (data->account);
-	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
-
-	equal = gossip_account_equal (account1, account2);
-	g_object_unref (account2);
-
-	if (equal) {
-		GtkComboBox *combobox;
-
-		combobox = GTK_COMBO_BOX (data->combobox);
-		gtk_combo_box_set_active_iter (combobox, iter);
-	}
-		
-	return equal;
 }
 
 static gboolean 
@@ -482,18 +308,19 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 			      GnomeDruid       *druid, 
 			      GossipAddContact *window)
 {
-        GossipContact           *contact;
-	GossipAccount           *account;
+        GossipContact        *contact;
+	GossipAccount        *account;
+	GossipAccountChooser *account_chooser;
 
-	GtkTreeModel            *model;
-	GtkTreeIter              iter;
-
-	const gchar             *id;
-	GList                   *groups = NULL;
-	GList                   *l;
-	GList                   *group_strings = NULL;
-	gint                     changed;
-	gchar                   *str;
+	GtkTreeModel         *model;
+	GtkTreeIter           iter;
+	
+	const gchar          *id;
+	GList                *groups = NULL;
+	GList                *l;
+	GList                *group_strings = NULL;
+	gint                  changed;
+	gchar                *str;
 	
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (window->one_system_combobox));
 	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (window->one_system_combobox) , &iter);
@@ -517,7 +344,8 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 	}
 
 	/* vcard */
-	account = add_contact_window_get_selected_account (window);
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->one_accounts_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
 
 	contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
 	gossip_contact_set_id (contact, id);
@@ -592,15 +420,17 @@ add_contact_window_last_finished (GnomeDruidPage   *page,
 				  GnomeDruid       *druid,
 				  GossipAddContact *window)
 {
-	GossipAccount *account;
-	const gchar   *id;
-        const gchar   *name;
- 	const gchar   *group;
-	const gchar *message;
+	GossipAccount        *account;
+	GossipAccountChooser *account_chooser;
+	const gchar          *id;
+        const gchar          *name;
+ 	const gchar          *group;
+	const gchar          *message;
 
 	message = _("I would like to add you to my contact list.");
 
-	account = add_contact_window_get_selected_account (window);
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->one_accounts_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
 
 	id = gtk_label_get_text (GTK_LABEL (window->two_id_label));
         name = gtk_entry_get_text (GTK_ENTRY (window->two_nick_entry));
@@ -753,7 +583,6 @@ gossip_add_contact_window_show (GtkWindow     *parent,
 				       "druid", &window->druid,
 				       "1_page", &window->one_page,
 				       "1_accounts_vbox", &window->one_accounts_vbox,
-				       "1_accounts_combobox", &window->one_accounts_combobox,
 				       "1_system_vbox", &window->one_system_vbox,
 				       "1_system_combobox", &window->one_system_combobox,
 				       "1_id_label", &window->one_id_label,
@@ -813,30 +642,37 @@ gossip_add_contact_window_show (GtkWindow     *parent,
 		      "can-default", TRUE,
 		      "has-default", TRUE,
 		      NULL);
-	
+
 	session = gossip_app_get_session ();
+
+	window->one_accounts_chooser = gossip_account_chooser_new (session);
+	gtk_box_pack_start (GTK_BOX (window->one_accounts_vbox), 
+			    window->one_accounts_chooser,
+			    TRUE, TRUE, 0);
+	gtk_widget_show (window->one_accounts_chooser);
+	
 	accounts = gossip_session_get_accounts (session);
-
-	/* populate accounts */
-	add_contact_window_setup_accounts (accounts, window);
-
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (window->one_accounts_vbox);
 	} else {
 		/* show no accounts combo box */
 		gtk_widget_hide (window->one_accounts_vbox);
 	}
+	
+	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_free (accounts);
 
 	/* populate systems */
-	accounts = NULL;
-	add_contact_window_setup_systems (accounts, window);
+	add_contact_window_setup_systems (NULL, window);
 
 	/* do we skip a stage? */
 	if (contact) {
-		GossipAccount *account;
+		GossipAccount        *account;
+		GossipAccountChooser *account_chooser;
 
 		account = gossip_contact_get_account (contact);
-		add_contact_window_set_selected_account (window, account);
+		account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->one_accounts_chooser);
+		gossip_account_chooser_set_account (account_chooser, account);
 
                 gtk_entry_set_text (GTK_ENTRY (window->one_id_entry), 
 				    gossip_contact_get_id (contact));

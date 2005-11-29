@@ -72,9 +72,10 @@ GList *         gossip_session_get_accounts            (GossipSession           
 gdouble         gossip_session_get_connected_time      (GossipSession           *session,
 							GossipAccount           *account);
 
-guint           gossip_session_count_all_connected     (GossipSession           *session);
-guint           gossip_session_count_connected         (GossipSession           *session);
-guint           gossip_session_count_disconnected      (GossipSession           *session);
+void            gossip_session_count_accounts          (GossipSession           *session,
+							guint                   *connected,
+							guint                   *connected_total,
+							guint                   *disconnected);
 
 gboolean        gossip_session_add_account             (GossipSession           *session,
 							GossipAccount           *account);

@@ -30,7 +30,7 @@
 #include "gossip-jabber-private.h"
 #include "gossip-jid.h"
 
-#define d(x) x
+#define d(x)
 
 #define XMPP_FILE_TRANSFER_XMLNS        "http://jabber.org/protocol/si"
 #define XMPP_FILE_TRANSFER_PROFILE      "http://jabber.org/protocol/si/profile/file-transfer"

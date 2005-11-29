@@ -537,7 +537,7 @@ app_setup (GossipAccountManager *manager)
 			      "actions_connect", "activate", app_connect_cb,
  			      "actions_disconnect", "activate", app_disconnect_cb, 
 			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
-			      "actions_send_chat_message", "activate", app_new_message_cb,
+			      "actions_new_message", "activate", app_new_message_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "actions_show_offline", "toggled", app_show_offline_cb,
 			      "edit_accounts", "activate", app_accounts_cb,
@@ -1364,6 +1364,7 @@ gossip_app_net_down (void)
 		gossip_session_disconnect (priv->session, account);
 	}
 
+	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
 	g_list_free (accounts);
 }
 
@@ -1426,7 +1427,7 @@ app_connection_items_setup (GladeXML *glade)
 
 	const gchar   *widgets_connected_all[] = {
 		"actions_join_group_chat",
-		"actions_send_chat_message",
+		"actions_new_message",
 		"actions_add_contact",
 		"edit_personal_information"
 	};
@@ -1472,9 +1473,9 @@ app_connection_items_update (void)
 {
 	GossipAppPriv *priv;
 	GList         *l;
-	guint          connected_all;
-	guint          connected;
-	guint          disconnected;
+	guint          connected = 0;
+	guint          connected_total = 0;
+	guint          disconnected = 0;
 
 	priv = app->priv;
 
@@ -1483,12 +1484,13 @@ app_connection_items_update (void)
 	   - connected and enabled 
 	   - disabled and enabled 
 	*/
-	connected_all = gossip_session_count_all_connected (priv->session);
-	connected = gossip_session_count_connected (priv->session);
-	disconnected = gossip_session_count_disconnected (priv->session);
+	gossip_session_count_accounts (priv->session,
+				       &connected, 
+				       &connected_total,
+				       &disconnected);
 
 	for (l = priv->widgets_connected_all; l; l = l->next) {
-		gtk_widget_set_sensitive (l->data, (connected_all > 0));
+		gtk_widget_set_sensitive (l->data, (connected_total > 0));
 	}
 
 	for (l = priv->widgets_connected; l; l = l->next) {
