@@ -425,12 +425,13 @@ transport_accounts_window_name_cell_data_func (GtkTreeViewColumn             *tr
 	username = gossip_transport_account_get_username (account);
 	count = gossip_transport_account_count_contacts (account);
 	
-	if (count == 1) {
-		contacts = g_strdup_printf (_("1 contact"));
-	} else if (count < 1) {
+	if (count >= 1) {
+		contacts = g_strdup_printf (ngettext (
+			"1 contact",
+			"%d contacts",
+		count), count);
+	} else {
 		contacts = g_strdup_printf (_("No contacts"));
-	} else if (count > 1) {
-		contacts = g_strdup_printf (_("%d contacts"), count);
 	}
 
 	/* should get this from the protocol API */
@@ -590,17 +591,15 @@ transport_accounts_window_button_remove_clicked (GtkButton                     *
 	gtk_tree_model_get (model, &iter, COL_TRANSPORT_ACC_DATA, &account, -1);
 	count = gossip_transport_account_count_contacts (account);
 
-	if (count == 1) {
-		str = g_strdup_printf (_("If you continue, you will not be able to talk "
-					 "to the 1 contact you are using this account for!"));
-	} else if (count < 1) {
+	if (count >= 1) {
+		str = g_strdup_printf (ngettext(
+					"If you continue, you will not be able to talk to the 1 contact you are using this account for!",
+					"If you continue, you will not be able to talk to the %d contacts you are using this account for!",
+		count), count);
+	} else {
 		str = g_strdup_printf (_("If you continue, you will not be able to add "
 					 "or talk to contacts using this transport!"));
-	} else if (count > 1) {
-		str = g_strdup_printf (_("If you continue, you will not be able to talk "
-					 "to the %d contacts you are using this account for!"), 
-				       count);
-	}
+	} 
 		
 	dialog = gtk_message_dialog_new (NULL,
 					 0,

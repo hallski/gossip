@@ -1,5 +1,11 @@
 2005-11-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-transport-accounts-window.c:
+	- Fixed translation bug, now ngettext is used.
+	- Patch by Gabor Kelemen, fixes #305103 (Gabor Kelemen).
+
+2005-11-29  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: 
 	- Fixed build when including dbus and galago, patch by Brian
 	Pepple, this fixes bug #322712 (Brian Pepple).
