@@ -1,5 +1,10 @@
 2005-11-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-account-chooser.[ch]: 
+	- More specific about what we include (i.e. not all of GTK).  
+
+2005-11-29  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-manager.c:
 	* libgossip/gossip-chatroom.c:
 	* protocols/jabber/gossip-jabber-ft-utils.c:

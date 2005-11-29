@@ -33,12 +33,12 @@
 #include "gossip-accounts-dialog.h"
 #include "gossip-account-button.h"
 
+#define d(x)
+
 #define CONNECTING_DRAW_TIME      500 /* ms */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
 	GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonPriv))
-
-#define d(x)
 
 
 typedef struct {

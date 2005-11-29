@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_ACCOUNT_CHOOSER_H__
 #define __GOSSIP_ACCOUNT_CHOOSER_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtkcombobox.h>
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-session.h>

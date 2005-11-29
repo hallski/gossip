@@ -29,10 +29,10 @@
 #include "gossip-ui-utils.h"
 #include "gossip-account-chooser.h"
 
+#define d(x)
+
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
 	GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserPriv))
-
-#define d(x)
 
 
 typedef struct {
