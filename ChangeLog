@@ -1,5 +1,11 @@
 2005-11-29  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: 
+	- Fixed build when including dbus and galago, patch by Brian
+	Pepple, this fixes bug #322712 (Brian Pepple).
+
+2005-11-29  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-account-chooser.[ch]: 
 	- More specific about what we include (i.e. not all of GTK).  
 

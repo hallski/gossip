@@ -47,6 +47,64 @@ dnl To make the egg stuff build properly, should have a real test...
 AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
 
 dnl -----------------------------------------------------------
+dnl D-BUS
+dnl -----------------------------------------------------------
+
+AC_ARG_ENABLE(dbus,
+              AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
+                             [compile with d-bus support]), ,
+              enable_dbus=no)
+
+if test "x$enable_dbus" != "xno"; then
+   dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
+   PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
+   if test x$have_dbus = xyes; then
+      AC_DEFINE(HAVE_DBUS, 1, d-bus support)
+      dbus_pkgconfig=$dbus_pkgconfig_tmp
+  fi
+else
+   have_dbus=no
+   dbus_pkgconfig=
+fi
+
+if test "x$enable_dbus" = "xyes"; then
+   if test "x$have_dbus" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find d-bus.])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
+
+dnl -----------------------------------------------------------
+dnl Galago
+dnl -----------------------------------------------------------
+
+AC_ARG_WITH(galago,
+              AS_HELP_STRING([--with-galago=@<:@no/yes/auto@:>@],
+                             [compile with Galago support]), ,
+              with_galago=no)
+
+if test "x$with_galago" != "xno"; then
+   galago_pkgconfig_tmp="libgalago"
+   PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
+   if test x$have_galago = xyes; then
+      AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
+      galago_pkgconfig=$galago_pkgconfig_tmp
+  fi
+else
+   have_galago=no
+   galago_pkgconfig=
+fi
+
+if test "x$with_galago" = "xyes"; then
+   if test "x$have_galago" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find Galago])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
+
+dnl -----------------------------------------------------------
 dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
 
@@ -141,64 +199,6 @@ if test x$SK_CONFIG = xno; then
   AC_MSG_ERROR(Couldn't find scrollkeeper-config. Please install the
 scrollkeeper package: http://scrollkeeper.sourceforge.net)
 fi
-
-dnl -----------------------------------------------------------
-dnl D-BUS
-dnl -----------------------------------------------------------
-
-AC_ARG_ENABLE(dbus,
-              AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
-                             [compile with d-bus support]), ,
-              enable_dbus=no)
-
-if test "x$enable_dbus" != "xno"; then
-   dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
-   PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
-   if test x$have_dbus = xyes; then
-      AC_DEFINE(HAVE_DBUS, 1, d-bus support)
-      dbus_pkgconfig=$dbus_pkgconfig_tmp
-  fi
-else
-   have_dbus=no
-   dbus_pkgconfig=
-fi
-
-if test "x$enable_dbus" = "xyes"; then
-   if test "x$have_dbus" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find d-bus.])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
-
-dnl -----------------------------------------------------------
-dnl Galago
-dnl -----------------------------------------------------------
-
-AC_ARG_WITH(galago,
-              AS_HELP_STRING([--with-galago=@<:@no/yes/auto@:>@],
-                             [compile with Galago support]), ,
-              with_galago=no)
-
-if test "x$with_galago" != "xno"; then
-   galago_pkgconfig_tmp="libgalago"
-   PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
-   if test x$have_galago = xyes; then
-      AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
-      galago_pkgconfig=$galago_pkgconfig_tmp
-  fi
-else
-   have_galago=no
-   galago_pkgconfig=
-fi
-
-if test "x$with_galago" = "xyes"; then
-   if test "x$have_galago" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find Galago])
-   fi
-fi
-
-AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
 
 dnl -----------------------------------------------------------
 dnl ASpell
