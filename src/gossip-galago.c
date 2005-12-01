@@ -291,6 +291,11 @@ galago_contact_removed_cb (GossipSession     *session,
 	service = galago_account_get_service (my_galago_account);
 
 	galago_person = g_hash_table_lookup (person_table, contact);
+	if (!person) { 
+		g_warning ("Cannot find person"); 
+		return;
+	}
+	
 	galago_account = galago_person_get_account (galago_person, 
 						    service, 
 						    gossip_contact_get_id (contact), 

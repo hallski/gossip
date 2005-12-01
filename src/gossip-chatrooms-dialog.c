@@ -272,6 +272,7 @@ chatrooms_dialog_chatrooms_setup (GossipChatroomsDialog *dialog)
 							 dialog);
 
 			gtk_combo_box_set_active_iter (combobox, &iter);
+			chatrooms_dialog_chatroom_show_details (dialog, chatroom);
 
 			g_signal_handlers_unblock_by_func (dialog->chatroom_combobox, 
 							   chatrooms_dialog_chatroom_combobox_changed_cb, 
@@ -281,6 +282,7 @@ chatrooms_dialog_chatrooms_setup (GossipChatroomsDialog *dialog)
 		if (gossip_chatroom_equal (chatroom, default_chatroom)) {
 			/* if set use the default item as first selection */
 			gtk_combo_box_set_active_iter (combobox, &iter);
+			chatrooms_dialog_chatroom_show_details (dialog, chatroom);
 		}
 
 		g_signal_connect (chatroom, "notify::name",

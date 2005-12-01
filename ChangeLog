@@ -1,3 +1,18 @@
+2005-12-01  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chatrooms-dialog.c
+	(chatrooms_dialog_chatrooms_setup): 
+	- Remember to set the entry details when setting up the chatrooms
+	for the first time.  This was broken meaning you would have to
+	select a room before it would fill the details in.
+
+	* src/gossip-galago.c (galago_contact_removed_cb): 
+	- Added test to avoid unnecessary warnings.
+
+	* protocols/jabber/gossip-jabber-ft.c:
+	- Fixed using g_object_[un]ref on an LmConnection, this was
+	causing GLib-GObject-CRITICAL messages on startup.
+
 2005-11-29  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-transport-accounts-window.c:

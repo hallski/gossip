@@ -90,7 +90,7 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 	fts = g_new0 (GossipJabberFTs, 1);
 
 	fts->jabber     = g_object_ref (jabber);
-	fts->connection = g_object_ref (connection);
+	fts->connection = lm_connection_ref (connection);
 
 	fts->str_ids = g_hash_table_new_full (g_direct_hash,
 					      g_direct_equal,
@@ -127,7 +127,7 @@ gossip_jabber_ft_finalize (GossipJabberFTs *fts)
  	g_hash_table_destroy (fts->ft_ids); 
  	g_hash_table_destroy (fts->remote_ids); 
 
-	g_object_unref (fts->connection);
+	lm_connection_unref (fts->connection);
 	g_object_unref (fts->jabber);
 	
 	g_free (fts);
