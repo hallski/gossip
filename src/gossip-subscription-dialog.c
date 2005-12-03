@@ -35,10 +35,23 @@
 
 
 typedef struct {
+	GtkWidget      *dialog;
+	GtkWidget      *who_label;
+	GtkWidget      *question_label;
+	GtkWidget      *id_label;
+	GtkWidget      *id_label_value;
+ 	GtkWidget      *website_label;
+	GtkWidget      *name_label;
+	GtkWidget      *name_entry;
+	GtkWidget      *group_label;
+	GtkWidget      *group_comboboxentry;
+ 	GtkWidget      *personal_table;
+
 	GossipProtocol *protocol;
 	GossipContact  *contact;
 	GossipVCard    *vcard;
-} SubscriptionData;
+
+} GossipSubscriptionDialog;
 
 
 static void subscription_dialog_protocol_connected_cb    (GossipSession      *session,
@@ -55,12 +68,13 @@ static void subscription_dialog_request_cb               (GossipProtocol     *pr
 static void subscription_dialog_event_activated_cb       (GossipEventManager *event_manager,
 							  GossipEvent        *event,
 							  GossipProtocol     *protocol);
+static void subscription_dialog_setup_groups             (GtkComboBoxEntry   *comboboxentry);
 static void subscription_dialog_vcard_cb                 (GossipResult        result,
 							  GossipVCard        *vcard,
-							  SubscriptionData   *data);
+							  GossipSubscriptionDialog   *data);
 static void subscription_dialog_request_dialog_cb        (GtkWidget          *dialog,
 							  gint                response,
-							  SubscriptionData   *data);
+							  GossipSubscriptionDialog   *data);
 
 
 void
@@ -141,44 +155,80 @@ subscription_dialog_event_activated_cb (GossipEventManager *event_manager,
 					GossipEvent        *event,
 					GossipProtocol     *protocol)
 {
-	GossipContact    *contact;
-	SubscriptionData *data;
+	GossipContact            *contact;
+	GossipSubscriptionDialog *dialog;
 
 	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
 
-	data = g_new0 (SubscriptionData, 1);
+	dialog = g_new0 (GossipSubscriptionDialog, 1);
 
-	data->protocol = g_object_ref (protocol);
-	data->contact = g_object_ref (contact);
+	dialog->protocol = g_object_ref (protocol);
+	dialog->contact = g_object_ref (contact);
 
 	gossip_session_get_vcard (gossip_app_get_session (),
 				  NULL,
-				  data->contact,
+				  dialog->contact,
 				  (GossipVCardCallback) subscription_dialog_vcard_cb,
-				  data, 
+				  dialog, 
 				  NULL);
 }
 
 static void
-subscription_dialog_vcard_cb (GossipResult      result,
-			      GossipVCard       *vcard,
-			      SubscriptionData  *data)
+subscription_dialog_setup_groups (GtkComboBoxEntry *comboboxentry)
 {
-	GtkWidget   *dialog;
-	GtkWidget   *who_label;
-	GtkWidget   *question_label;
-	GtkWidget   *id_label;
- 	GtkWidget   *website_label;
- 	GtkWidget   *personal_table;
-	const gchar *name = NULL;
-	const gchar *url = NULL;
-	gchar       *who;
-	gchar       *question;
-	gchar       *str;
-	gint         num_matches = 0;
+	GtkListStore    *store;
+	GtkCellRenderer *renderer;
+	GtkTreeIter      iter;	
+	GList           *l;
+	GList           *groups;
+
+	store = gtk_list_store_new (1, G_TYPE_STRING);
+
+	groups = gossip_session_get_groups (gossip_app_get_session ());
+
+	for (l = groups; l; l = l->next) {
+		const gchar *group;
+		
+		group = l->data;
+
+		if (strcmp (group, _("Unsorted")) == 0) {
+			continue;
+		}
+	
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter, 0, group, -1);
+	}
+
+	gtk_combo_box_set_model (GTK_COMBO_BOX (comboboxentry), 
+				 GTK_TREE_MODEL (store));
+	gtk_combo_box_entry_set_text_column (comboboxentry, 0);
+
+	gtk_cell_layout_clear (GTK_CELL_LAYOUT (comboboxentry));  
+
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (comboboxentry), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (comboboxentry), renderer,
+					"text", 0,
+					NULL);
+
+	g_object_unref (store);
+}
+
+static void
+subscription_dialog_vcard_cb (GossipResult              result,
+			      GossipVCard              *vcard,
+			      GossipSubscriptionDialog *dialog)
+{
+	GtkSizeGroup *size_group;
+	const gchar  *name = NULL;
+	const gchar  *url = NULL;
+	gchar        *who;
+	gchar        *question;
+	gchar        *str;
+	gint          num_matches = 0;
 
 	if (GOSSIP_IS_VCARD (vcard)) {
-		data->vcard = g_object_ref (vcard);
+		dialog->vcard = g_object_ref (vcard);
 
 		name = gossip_vcard_get_name (vcard);
 		url = gossip_vcard_get_url (vcard);
@@ -187,35 +237,66 @@ subscription_dialog_vcard_cb (GossipResult      result,
 	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
 				      "subscription_request_dialog",
 				      NULL,
-				      "subscription_request_dialog", &dialog,
-				      "who_label", &who_label,
-				      "question_label", &question_label,
-				      "id_label", &id_label,
-				      "website_label", &website_label,
-				      "personal_table", &personal_table,
+				      "subscription_request_dialog", &dialog->dialog,
+				      "who_label", &dialog->who_label,
+				      "question_label", &dialog->question_label,
+				      "id_label", &dialog->id_label,
+				      "id_label_value", &dialog->id_label_value,
+				      "website_label", &dialog->website_label,
+				      "name_label", &dialog->name_label,
+				      "name_entry", &dialog->name_entry,
+				      "group_label", &dialog->group_label,
+				      "group_comboboxentry", &dialog->group_comboboxentry,
+				      "personal_table", &dialog->personal_table,
 				      NULL);
 
+	/* look and feel - aligning... */
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+	gtk_size_group_add_widget (size_group, dialog->id_label);
+	gtk_size_group_add_widget (size_group, dialog->website_label);
+	gtk_size_group_add_widget (size_group, dialog->name_label);
+	gtk_size_group_add_widget (size_group, dialog->group_label);
+
+	g_object_unref (size_group);
+
+	/* set labels based on known name */
 	if (name) {
+		gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
+
 		who = g_strdup_printf (_("%s wants to be added to your contact list."), 
 				       name);
 		question = g_strdup_printf (_("Do you want to add %s to your contact list?"),
 					    name);
 	} else {
+		gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), 
+				    gossip_contact_get_id (dialog->contact));
+
 		who = g_strdup (_("Someone wants to be added to your contact list."));
 		question = g_strdup (_("Do you want to add this person to your contact list?"));
 	}
 
+	/* set focus for entry */
+	gtk_widget_grab_focus (dialog->name_entry);
+
+	/* set groups */
+	subscription_dialog_setup_groups (GTK_COMBO_BOX_ENTRY (dialog->group_comboboxentry));
+
+	/* set labels */
 	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
-	gtk_label_set_markup (GTK_LABEL (who_label), str);
-	gtk_label_set_use_markup (GTK_LABEL (who_label), TRUE);
+	gtk_label_set_markup (GTK_LABEL (dialog->who_label), str);
+	gtk_label_set_use_markup (GTK_LABEL (dialog->who_label), TRUE);
 	g_free (str);
 	g_free (who);
 
-	gtk_label_set_text (GTK_LABEL (question_label), question);
+	gtk_label_set_text (GTK_LABEL (dialog->question_label), 
+			    question);
 	g_free (question);
 
-	gtk_label_set_text (GTK_LABEL (id_label), gossip_contact_get_id (data->contact));
+	gtk_label_set_text (GTK_LABEL (dialog->id_label_value), 
+			    gossip_contact_get_id (dialog->contact));
 
+	/* set up url button */
 	if (url && strlen (url) > 0) {
 		GArray *start, *end;
 
@@ -225,6 +306,7 @@ subscription_dialog_vcard_cb (GossipResult      result,
 		num_matches = gossip_utils_url_regex_match (url, start, end);
 	}
 
+	/* add url button to table */
 	if (num_matches > 0) {
 		GtkWidget *href;
 		GtkWidget *alignment;
@@ -234,80 +316,75 @@ subscription_dialog_vcard_cb (GossipResult      result,
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
 
-		gtk_table_attach (GTK_TABLE (personal_table),
+		gtk_table_attach (GTK_TABLE (dialog->personal_table),
 				  alignment, 
 				  1, 2,
 				  1, 2,
 				  GTK_FILL, GTK_FILL,
 				  0, 0);
 		
-		gtk_widget_show_all (personal_table);
+		gtk_widget_show_all (dialog->personal_table);
 	} else {
-		gtk_widget_hide (website_label);
+		gtk_widget_hide (dialog->website_label);
 	}
 
-	g_signal_connect (dialog,
+	g_signal_connect (dialog->dialog,
 			  "response",
 			  G_CALLBACK (subscription_dialog_request_dialog_cb),
-			  data);
+			  dialog);
 
-	gtk_widget_show (dialog);
+	gtk_widget_show (dialog->dialog);
 }
 
 static void
-subscription_dialog_request_dialog_cb (GtkWidget        *dialog,
-				       gint              response,
-				       SubscriptionData *data)
+subscription_dialog_request_dialog_cb (GtkWidget                *widget,
+				       gint                      response,
+				       GossipSubscriptionDialog *dialog)
 {
 	gboolean add_user;
 
-	g_return_if_fail (GTK_IS_DIALOG (dialog));
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (dialog->protocol));
+	g_return_if_fail (GOSSIP_IS_CONTACT (dialog->contact));
 
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (data->protocol));
-	g_return_if_fail (GOSSIP_IS_CONTACT (data->contact));
+	add_user = (gossip_contact_get_type (dialog->contact) == GOSSIP_CONTACT_TYPE_TEMPORARY);
 
-	add_user = (gossip_contact_get_type (data->contact) == GOSSIP_CONTACT_TYPE_TEMPORARY);
-
-	gtk_widget_destroy (dialog);
-	
 	if (response == GTK_RESPONSE_YES ||
 	    response == GTK_RESPONSE_NO) {
 		gboolean subscribe;
 
 		subscribe = (response == GTK_RESPONSE_YES);
-		gossip_protocol_set_subscription (data->protocol, 
-						  data->contact, 
+		gossip_protocol_set_subscription (dialog->protocol, 
+						  dialog->contact, 
 						  subscribe);
 
 		if (subscribe && add_user) {
-			const gchar *id, *name, *message;
+			GtkWidget   *group_entry;
+			const gchar *name;
+			const gchar *group;
+			const gchar *message;
 			
-			id = gossip_contact_get_id (data->contact);
-			if (data->vcard) {
-				name = gossip_vcard_get_name (data->vcard);
-			} else {
-				name = id;
-			}
-			
+			group_entry = GTK_BIN (dialog->group_comboboxentry)->child;
+
+			name = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
+			group = gtk_entry_get_text (GTK_ENTRY (group_entry));
+
 			message = _("I would like to add you to my contact list.");
 					
-			/* FIXME: how is session related to an IM account? */
-			/* micke, hmm .. this feels a bit wrong, should be
-			 * signalled from the protocol when we do 
-			 * set_subscribed
-			 */
-			gossip_protocol_add_contact (data->protocol,
-						     id, name, NULL,
+			gossip_protocol_add_contact (dialog->protocol,
+						     gossip_contact_get_id (dialog->contact),
+						     name, group,
 						     message);
 		}
 	}
-	
-	g_object_unref (data->protocol);
-	g_object_unref (data->contact);
 
-	if (data->vcard) {
-		g_object_unref (data->vcard);
-	}
+	gtk_widget_destroy (widget);
 	
-	g_free (data);
+	g_object_unref (dialog->protocol);
+	g_object_unref (dialog->contact);
+
+	if (dialog->vcard) {
+		g_object_unref (dialog->vcard);
+	}
+
+	g_free (dialog);
 }

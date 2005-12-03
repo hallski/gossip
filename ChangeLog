@@ -1,3 +1,12 @@
+2005-12-03  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-subscription-dialog.c:
+	* ui/main.glade:
+	- Allow the name and group to be customisable when receiving a
+	subscription request from another contact instead of using the
+	VCard name and no group.
+	- Fixes bug #323099 (Maciej Katafiasz).
+
 2005-12-01  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chatrooms-dialog.c
