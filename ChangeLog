@@ -1,3 +1,23 @@
+2005-12-04  Martyn Russell  <martyn@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-new-message-dialog.[ch]:
+	* ui/main.glade:
+	- Fixed a crasher when using the combo box in the new message
+	dialog which was in GossipApp and has now been moved into
+	gossip-new-message-dialog.[ch].
+	- The new message dialog is a new implementation which lists all
+	your contacts and filters based on the text you put into the entry
+	box. This can be used to list everyone on "jabber.org" OR everyone
+	with the name "Martyn".
+	- Fixes bug #322775 (Brian Pepple).
+
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	- Cleaned up in places.	
+
 2005-12-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-subscription-dialog.c:

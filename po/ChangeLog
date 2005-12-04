@@ -1,3 +1,8 @@
+2005-12-04  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: 
+	- Added src/gossip-new-message-dialog.c.
+
 2005-12-03  Adam Weinberger  <adamw@gnome.org>
 
 	* en_CA.po: Updated Canadian English translation.

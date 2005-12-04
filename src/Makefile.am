@@ -57,6 +57,7 @@ gossip_SOURCES = 				                        	\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \
 	gossip-new-account-window.c        gossip-new-account-window.h		\
+	gossip-new-message-dialog.c        gossip-new-message-dialog.h		\
 	gossip-notebook.c	           gossip-notebook.h			\
 	gossip-presence-chooser.c          gossip-presence-chooser.h        	\
 	gossip-preferences.c               gossip-preferences.h	        	\

@@ -269,14 +269,14 @@ static guint signals[LAST_SIGNAL];
 
 /* model columns */
 enum {
-	MODEL_COL_PIXBUF,
-	MODEL_COL_NAME,
-	MODEL_COL_STATUS,
-	MODEL_COL_CONTACT,
-	MODEL_COL_IS_GROUP,
-	MODEL_COL_IS_ACTIVE,
-	MODEL_COL_IS_ONLINE,
-	NUMBER_OF_COLS
+	COL_PIXBUF,
+	COL_NAME,
+	COL_STATUS,
+	COL_CONTACT,
+	COL_IS_GROUP,
+	COL_IS_ACTIVE,
+	COL_IS_ONLINE,
+	COL_COUNT
 };
 
 
@@ -763,7 +763,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			GtkTreeIter *iter;
 			
 			iter = g_list_nth_data (iters, 0);
-			gtk_tree_model_get (model, iter, MODEL_COL_IS_ONLINE, &was_online, -1);
+			gtk_tree_model_get (model, iter, COL_IS_ONLINE, &was_online, -1);
 		}
 
 		/* is this really an update or an online/offline */
@@ -800,9 +800,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
 		
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
-				    MODEL_COL_PIXBUF, pixbuf,
-				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-				    MODEL_COL_IS_ONLINE, now_online,
+				    COL_PIXBUF, pixbuf,
+				    COL_STATUS, gossip_contact_get_status (contact),
+				    COL_IS_ONLINE, now_online,
 				    -1);
 		
 		g_object_unref (pixbuf);
@@ -858,7 +858,7 @@ contact_list_contact_set_active (GossipContactList *list,
 		iter = l->data;
 		
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
-				    MODEL_COL_IS_ACTIVE, active,
+				    COL_IS_ACTIVE, active,
 				    -1);
 		d(g_print ("Contact List: Set item %s\n", active ? "active" : "inactive"));
 	
@@ -950,7 +950,7 @@ contact_list_get_parent_group (GtkTreeModel *model,
 	}
 	
 	gtk_tree_model_get (model, &iter,
-			    MODEL_COL_IS_GROUP, &is_group,
+			    COL_IS_GROUP, &is_group,
 			    -1);
 
 	if (!is_group) {
@@ -961,7 +961,7 @@ contact_list_get_parent_group (GtkTreeModel *model,
 		iter = parent_iter;
 			
 		gtk_tree_model_get (model, &iter,
-				    MODEL_COL_IS_GROUP, &is_group,
+				    COL_IS_GROUP, &is_group,
 				    -1);
 		
 		if (!is_group) {
@@ -972,7 +972,7 @@ contact_list_get_parent_group (GtkTreeModel *model,
 	}
 		
 	gtk_tree_model_get (model, &iter,
-			    MODEL_COL_NAME, &name,
+			    COL_NAME, &name,
 			    -1);
 
 	return name;
@@ -1003,10 +1003,10 @@ contact_list_get_group (GossipContactList *list,
 	       
 		gtk_tree_store_append (GTK_TREE_STORE (model), iter_to_set, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter_to_set,
-				    MODEL_COL_PIXBUF, NULL,
-				    MODEL_COL_NAME, name,
-				    MODEL_COL_IS_GROUP, TRUE,
-				    MODEL_COL_IS_ACTIVE, FALSE,
+				    COL_PIXBUF, NULL,
+				    COL_NAME, name,
+				    COL_IS_GROUP, TRUE,
+				    COL_IS_ACTIVE, FALSE,
 				    -1);	
 	} else {
 		if (created) {
@@ -1035,8 +1035,8 @@ contact_list_get_group_foreach (GtkTreeModel *model,
 	}
 	
 	gtk_tree_model_get (model, iter, 
-			    MODEL_COL_NAME, &str, 
-			    MODEL_COL_IS_GROUP, &is_group,
+			    COL_NAME, &str, 
+			    COL_IS_GROUP, &is_group,
 			    -1);
 	if (is_group && strcmp (str, fg->name) == 0) {
 		fg->found = TRUE;
@@ -1070,13 +1070,13 @@ contact_list_add_contact (GossipContactList *list,
 		
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    MODEL_COL_PIXBUF, pixbuf,
-				    MODEL_COL_NAME, gossip_contact_get_name (contact),
-				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-				    MODEL_COL_CONTACT, contact,
-				    MODEL_COL_IS_GROUP, FALSE,
-				    MODEL_COL_IS_ACTIVE, FALSE,
-				    MODEL_COL_IS_ONLINE, gossip_contact_is_online (contact),
+				    COL_PIXBUF, pixbuf,
+				    COL_NAME, gossip_contact_get_name (contact),
+				    COL_STATUS, gossip_contact_get_status (contact),
+				    COL_CONTACT, contact,
+				    COL_IS_GROUP, FALSE,
+				    COL_IS_ACTIVE, FALSE,
+				    COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    -1);
 
 		g_object_unref (pixbuf);
@@ -1100,13 +1100,13 @@ contact_list_add_contact (GossipContactList *list,
 
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    MODEL_COL_PIXBUF, pixbuf,
-				    MODEL_COL_NAME, gossip_contact_get_name (contact),
-				    MODEL_COL_STATUS, gossip_contact_get_status (contact),
-				    MODEL_COL_CONTACT, contact,
-				    MODEL_COL_IS_GROUP, FALSE,
-				    MODEL_COL_IS_ACTIVE, FALSE,
-				    MODEL_COL_IS_ONLINE, gossip_contact_is_online (contact),
+				    COL_PIXBUF, pixbuf,
+				    COL_NAME, gossip_contact_get_name (contact),
+				    COL_STATUS, gossip_contact_get_status (contact),
+				    COL_CONTACT, contact,
+				    COL_IS_GROUP, FALSE,
+				    COL_IS_ACTIVE, FALSE,
+				    COL_IS_ONLINE, gossip_contact_is_online (contact),
 				    -1);
 
 		g_object_unref (pixbuf);
@@ -1183,7 +1183,7 @@ contact_list_create_model (GossipContactList *list)
 {
 	GtkTreeModel *model;
 
-	model = GTK_TREE_MODEL (gtk_tree_store_new (NUMBER_OF_COLS,
+	model = GTK_TREE_MODEL (gtk_tree_store_new (COL_COUNT,
 						    GDK_TYPE_PIXBUF,
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
@@ -1193,12 +1193,12 @@ contact_list_create_model (GossipContactList *list)
 						    G_TYPE_BOOLEAN));
 	
 	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (model),
-					 MODEL_COL_NAME,
+					 COL_NAME,
 					 contact_list_sort_func,
 					 list, NULL);
 	
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (model),
-					      MODEL_COL_NAME, 
+					      COL_NAME, 
 					      GTK_SORT_ASCENDING);
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (list), model);
@@ -1238,11 +1238,11 @@ contact_list_setup_view (GossipContactList *list)
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_add_attribute (col, cell, 
-					    "name", MODEL_COL_NAME);
+					    "name", COL_NAME);
 	gtk_tree_view_column_add_attribute (col, cell,
-					    "status", MODEL_COL_STATUS);
+					    "status", COL_STATUS);
 	gtk_tree_view_column_add_attribute (col, cell,
-					    "is_group", MODEL_COL_IS_GROUP);
+					    "is_group", COL_IS_GROUP);
 
 	gtk_tree_view_column_set_cell_data_func (col, cell, 
 						 (GtkTreeCellDataFunc)contact_list_text_cell_data_func,
@@ -1632,9 +1632,9 @@ contact_list_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 	gboolean   is_active;
 
 	gtk_tree_model_get (model, iter, 
-			    MODEL_COL_IS_GROUP, &is_group, 
-			    MODEL_COL_IS_ACTIVE, &is_active, 
-			    MODEL_COL_PIXBUF, &pixbuf,
+			    COL_IS_GROUP, &is_group, 
+			    COL_IS_ACTIVE, &is_active, 
+			    COL_PIXBUF, &pixbuf,
 			    -1);
 
 	g_object_set (cell, 
@@ -1660,8 +1660,8 @@ contact_list_text_cell_data_func (GtkTreeViewColumn *tree_column,
 	gboolean   is_active;
 
 	gtk_tree_model_get (model, iter, 
-			    MODEL_COL_IS_GROUP, &is_group, 
-			    MODEL_COL_IS_ACTIVE, &is_active, 
+			    COL_IS_GROUP, &is_group, 
+			    COL_IS_ACTIVE, &is_active, 
 			    -1);
 
 	contact_list_cell_set_background (list, cell, is_group, is_active);
@@ -1704,7 +1704,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 			gtk_tree_path_free (path);
 
 			gtk_tree_model_get (model, &iter,
-                                            MODEL_COL_CONTACT, &contact,
+                                            COL_CONTACT, &contact,
                                             -1);
 
 			if (!contact) {
@@ -1780,7 +1780,7 @@ contact_list_row_activated_cb (GossipContactList *list,
 
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter,
-			    MODEL_COL_CONTACT, &contact,
+			    COL_CONTACT, &contact,
 			    -1);
 
 	if (!contact) { 
@@ -1805,7 +1805,7 @@ contact_list_row_expand_or_collapse_cb (GossipContactList *list,
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	gtk_tree_model_get (model, iter,
-			    MODEL_COL_NAME, &name,
+			    COL_NAME, &name,
 			    -1);
 
 	expanded = GPOINTER_TO_INT (user_data);
@@ -1825,12 +1825,12 @@ contact_list_sort_func (GtkTreeModel *model,
 	gint           ret_val;
 
 	gtk_tree_model_get (model, iter_a,
-			    MODEL_COL_NAME, &name_a,
-			    MODEL_COL_CONTACT, &contact_a, 
+			    COL_NAME, &name_a,
+			    COL_CONTACT, &contact_a, 
 			    -1);
 	gtk_tree_model_get (model, iter_b,
-			    MODEL_COL_NAME, &name_b,
-			    MODEL_COL_CONTACT, &contact_b,
+			    COL_NAME, &name_b,
+			    COL_CONTACT, &contact_b,
 			    -1);
 	
 	/* If contact is NULL it means it's a group */
@@ -1866,7 +1866,7 @@ contact_list_iter_equal_contact (GtkTreeModel  *model,
 	gboolean       equal;
 	
 	gtk_tree_model_get (model, iter, 
-			    MODEL_COL_CONTACT, &c,
+			    COL_CONTACT, &c,
 			    -1);
 	
 	if (!c) {
@@ -2262,7 +2262,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	for (l = iters; l; l = l->next) {
 		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    l->data, 
-				    MODEL_COL_PIXBUF, pixbuf,
+				    COL_PIXBUF, pixbuf,
 				    -1);
 	}
 
@@ -2353,7 +2353,7 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 	for (l = iters; l; l = l->next) {
 		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    l->data, 
-				    MODEL_COL_PIXBUF, pixbuf,
+				    COL_PIXBUF, pixbuf,
 				    -1);
 	}
 
@@ -2388,7 +2388,7 @@ gossip_contact_list_get_selected (GossipContactList *list)
         }
 
         gtk_tree_model_get (model, &iter,
-                            MODEL_COL_CONTACT, &contact,
+                            COL_CONTACT, &contact,
 			    -1);
 
 	return contact;
@@ -2414,8 +2414,8 @@ gossip_contact_list_get_selected_group (GossipContactList *list)
         }
 
         gtk_tree_model_get (model, &iter,
-                            MODEL_COL_IS_GROUP, &is_group,
-			    MODEL_COL_NAME, &name,
+                            COL_IS_GROUP, &is_group,
+			    COL_NAME, &name,
 			    -1);
 
 	if (!is_group) {
