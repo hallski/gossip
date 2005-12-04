@@ -1,5 +1,11 @@
 2005-12-04  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-new-message-dialog.c
+	- If there is only one contact after the filter, select it. 
+	- Chat with contact on "row-activated" signal from treeview.
+
+2005-12-04  Martyn Russell  <martyn@imendio.com>
+
 	* src/Makefile.am:
 	* src/gossip-app.c:
 	* src/gossip-contact-list.c:

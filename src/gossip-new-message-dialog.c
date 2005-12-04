@@ -48,6 +48,7 @@ enum {
 	COL_COUNT
 };
 
+
 static void     new_message_dialog_update_buttons     (GossipNewMessageDialog *dialog);
 static void     new_message_dialog_pixbuf_data_func   (GtkCellLayout          *cell_layout,
 						       GtkCellRenderer        *cell,
@@ -61,6 +62,10 @@ static void     new_message_dialog_text_data_func     (GtkCellLayout          *c
 						       GossipNewMessageDialog *dialog);
 static gboolean new_message_dialog_filter_func        (GtkTreeModel           *model,
 						       GtkTreeIter            *iter,
+						       GossipNewMessageDialog *dialog);
+static void     new_message_dialog_row_activated      (GtkTreeView            *view,
+						       GtkTreePath            *path,
+						       GtkTreeViewColumn      *column,
 						       GossipNewMessageDialog *dialog);
 static void     new_message_dialog_selection_changed  (GtkTreeSelection       *selection,
 						       GossipNewMessageDialog *dialog);
@@ -78,15 +83,15 @@ static void     new_message_dialog_response           (GtkWidget              *w
 static void
 new_message_dialog_update_buttons (GossipNewMessageDialog *dialog)
 {
-	GtkTreeView      *treeview;
+	GtkTreeView      *view;
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
 	gboolean          can_chat = FALSE;
 	const gchar      *text;       
 
-	treeview = GTK_TREE_VIEW (dialog->treeview);
-	selection = gtk_tree_view_get_selection (treeview);
+	view = GTK_TREE_VIEW (dialog->treeview);
+	selection = gtk_tree_view_get_selection (view);
 
 	text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 
@@ -177,6 +182,17 @@ new_message_dialog_filter_func (GtkTreeModel           *model,
 	return found;
 }
 
+static void 
+new_message_dialog_row_activated (GtkTreeView            *view,
+				  GtkTreePath            *path,
+				  GtkTreeViewColumn      *column,
+				  GossipNewMessageDialog *dialog)
+{
+	new_message_dialog_response (dialog->dialog, 
+				     GTK_RESPONSE_OK,
+				     dialog);
+}
+
 static void
 new_message_dialog_selection_changed (GtkTreeSelection       *selection,
 				      GossipNewMessageDialog *dialog)
@@ -210,7 +226,7 @@ new_message_dialog_setup_contacts (GossipNewMessageDialog *dialog)
 static void 
 new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 {
-	GtkTreeView       *treeview;
+	GtkTreeView       *view;
 	GtkTreeModel      *model, *filter;
 	GtkTreeSelection  *selection;
 	GtkTreeSortable   *sortable;
@@ -218,8 +234,8 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 	GtkListStore      *store;
 	GtkCellRenderer   *cell;	
 
-	treeview = GTK_TREE_VIEW (dialog->treeview);
-	selection = gtk_tree_view_get_selection (treeview);
+	view = GTK_TREE_VIEW (dialog->treeview);
+	selection = gtk_tree_view_get_selection (view);
 
 	/* new store */
 	store = gtk_list_store_new (COL_COUNT,
@@ -238,7 +254,7 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 						dialog,
 						NULL);
 
-	gtk_tree_view_set_model (treeview, filter);
+	gtk_tree_view_set_model (view, filter);
 
 	/* new column */
 	column = gtk_tree_view_column_new ();
@@ -260,19 +276,19 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 						 dialog, 
 						 NULL);
 
-	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_append_column (view, column);
 
 	/* set up treeview properties */
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-
-/* 	gtk_tree_sortable_set_default_sort_func (sortable, */
-/* 						 group_chat_iter_compare_func, */
-/* 						 chat, */
-/* 						 NULL); */
-
-	gtk_tree_sortable_set_sort_column_id (sortable, COL_NAME, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (sortable, 
+					      COL_NAME, 
+					      GTK_SORT_ASCENDING);
 
 	/* set up signals */
+	g_signal_connect (view, "row-activated", 
+			  G_CALLBACK (new_message_dialog_row_activated), 
+			  dialog);
+
 	g_signal_connect (selection, "changed", 
 			  G_CALLBACK (new_message_dialog_selection_changed), 
 			  dialog);
@@ -286,7 +302,22 @@ static void
 new_message_dialog_name_entry_changed (GtkEntry               *entry, 
 				       GossipNewMessageDialog *dialog)
 {
+	GtkTreeView  *view;
+	GtkTreeModel *model;
+
 	gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (dialog->filter));
+
+	view = GTK_TREE_VIEW (dialog->treeview);
+	model = gtk_tree_view_get_model (view);
+
+        if (gtk_tree_model_iter_n_children (model, NULL) == 1) {
+		GtkTreeSelection *selection;
+		GtkTreeIter       iter;
+
+		selection = gtk_tree_view_get_selection (view);
+		gtk_tree_model_get_iter_first (model, &iter);
+		gtk_tree_selection_select_iter (selection, &iter);
+	}
 
 	new_message_dialog_update_buttons (dialog);
 }
@@ -312,7 +343,7 @@ new_message_dialog_response (GtkWidget              *widget,
 			     GossipNewMessageDialog *dialog)
 {
 	if (response == GTK_RESPONSE_OK) {
-		GtkTreeView       *treeview;
+		GtkTreeView       *view;
 		GtkTreeModel      *model;
 		GtkTreeSelection  *selection;
 		GtkTreeIter        iter;
@@ -323,8 +354,8 @@ new_message_dialog_response (GtkWidget              *widget,
 
 		gboolean           created = FALSE;
 
-		treeview = GTK_TREE_VIEW (dialog->treeview);
-		selection = gtk_tree_view_get_selection (treeview);
+		view = GTK_TREE_VIEW (dialog->treeview);
+		selection = gtk_tree_view_get_selection (view);
 
 		session = gossip_app_get_session ();
 		chat_manager = gossip_app_get_chat_manager ();
