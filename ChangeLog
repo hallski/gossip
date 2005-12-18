@@ -1,3 +1,8 @@
+2005-12-18  Richard Hult  <richard@imendio.com>
+
+	* Makefile.am:
+	* omf.make: Fix build and distcheck.
+
 2005-12-04  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-new-message-dialog.c
