@@ -1,17 +1,19 @@
+# translation of gossip1.HEAD.po to español
 # Copyright (C) 2003 Free Software Foundation
 # This file is distributed under the same license as the Gossip package.
 # Ezequiel Pérez <eazel7@yahoo.com.ar>, 2003.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2003, 2004.
 # Maria Majadas <maria.majadas@hispalinux.es>, 2005.
+# maria <maria.majadas@hispalinux.es>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip.HEAD\n"
+"Project-Id-Version: gossip1.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-11 12:08+0100\n"
-"PO-Revision-Date: 2005-12-11 22:40+0100\n"
-"Last-Translator: Maria Majadas <maria.majadas@hispalinux.es>\n"
-"Language-Team: Spanish Translation Team <traductores@es.gnome.org>\n"
+"POT-Creation-Date: 2005-12-20 20:08+0100\n"
+"PO-Revision-Date: 2005-12-21 13:25+0100\n"
+"Last-Translator: maria <maria.majadas@hispalinux.es>\n"
+"Language-Team: español <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -653,7 +655,7 @@ msgstr "Nueva solicitud de transferencia de archivo desde %s"
 
 #: ../src/gossip-ft-window.c:177
 msgid "File transfer is not supported by both parties."
-msgstr "La transferencia de archivo no está soportada por ambas partes."
+msgstr "La transferencia de archivos no está soportada por ambas partes."
 
 #: ../src/gossip-ft-window.c:181
 msgid "Your file transfer offer declined."
@@ -1458,9 +1460,7 @@ msgstr "<b>Sonido</b>"
 
 #: ../ui/main.glade.h:10
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
-msgstr ""
-"<span size=\"smaller\">Ejemplo: Mikael o "
-"usuario@servidor.org</span>"
+msgstr "<span size=\"smaller\">Ejemplo: Mikael o usuario@servidor.org</span>"
 
 #: ../ui/main.glade.h:11
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
@@ -1532,7 +1532,9 @@ msgstr "Introduzca mensaje de estado:"
 
 #: ../ui/main.glade.h:30
 msgid "Enter the name or contact ID of the person you want to chat to below:"
-msgstr "Introduzca el nombre o el ID de contacto de la persona con la que quiera hablar abajo:"
+msgstr ""
+"Introduzca abajo el nombre o el ID de contacto de la persona con la que quiera "
+"hablar:"
 
 #: ../ui/main.glade.h:31
 msgid "Enter the user's contact ID:"
@@ -1696,7 +1698,10 @@ msgid ""
 "This acts as a filter to the contact list below.  You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
-msgstr "Esto actúa como un filtro para la lista de contactos de arriba.  Puede utilizar segmentos del nombre del contacto o del ID, por ejemplo, \"jabber.org\" listará a todo el mundo usando ese servidor."
+msgstr ""
+"Esto actúa como un filtro para la lista de contactos de abajo.  Puede "
+"utilizar segmentos del nombre del contacto o del ID, por ejemplo, «jabber"
+"org» listará a todo el mundo usando ese servidor."
 
 #: ../ui/main.glade.h:71
 msgid "This is the name that will be used on your roster for this contact."
