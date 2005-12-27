@@ -1,3 +1,4 @@
+# translation of gossip.HEAD.po to español
 # translation of gossip1.HEAD.po to español
 # Copyright (C) 2003 Free Software Foundation
 # This file is distributed under the same license as the Gossip package.
@@ -8,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip1.HEAD\n"
+"Project-Id-Version: gossip.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-20 20:08+0100\n"
-"PO-Revision-Date: 2005-12-21 13:25+0100\n"
+"POT-Creation-Date: 2005-12-26 12:04+0100\n"
+"PO-Revision-Date: 2005-12-26 18:33+0100\n"
 "Last-Translator: maria <maria.majadas@hispalinux.es>\n"
 "Language-Team: español <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -135,7 +136,7 @@ msgstr "Indica si debe o no reproducir sonidos cuando esté ocupado."
 #: ../gossip.schemas.in.h:26
 msgid "Whether or not to show contacts that are offline in the contact list"
 msgstr ""
-"Indica si debe mostrar o no los contactos desconectados en la lista de "
+"Indica si debe o no mostrar los contactos que están desconectados en la lista de "
 "contactos."
 
 #: ../gossip.schemas.in.h:27
@@ -1533,8 +1534,8 @@ msgstr "Introduzca mensaje de estado:"
 #: ../ui/main.glade.h:30
 msgid "Enter the name or contact ID of the person you want to chat to below:"
 msgstr ""
-"Introduzca abajo el nombre o el ID de contacto de la persona con la que quiera "
-"hablar:"
+"Introduzca abajo el nombre o el ID de contacto de la persona con la que "
+"quiera hablar:"
 
 #: ../ui/main.glade.h:31
 msgid "Enter the user's contact ID:"
@@ -1700,8 +1701,8 @@ msgid ""
 "that server. "
 msgstr ""
 "Esto actúa como un filtro para la lista de contactos de abajo.  Puede "
-"utilizar segmentos del nombre del contacto o del ID, por ejemplo, «jabber"
-"org» listará a todo el mundo usando ese servidor."
+"utilizar segmentos del nombre del contacto o del ID, por ejemplo, "
+"«jabber.org» listará a todo el mundo usando ese servidor."
 
 #: ../ui/main.glade.h:71
 msgid "This is the name that will be used on your roster for this contact."
