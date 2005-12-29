@@ -1,5 +1,12 @@
 2005-12-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-vcard-dialog.c: 
+	- Make sure we look up the first vcard selected in the
+	GossipAccountChooser. 
+	- Fixes bug #325258 (Brian Pepple).
+
+2005-12-29  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-info-dialog.[ch]:
 	* ui/main.glade:
 	- Reworked the code here, no need for the contact info dialog to
