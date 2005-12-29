@@ -1,3 +1,8 @@
+2005-12-29  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: 
+	- Updated for gossip-contact-info-dialog name change.
+
 2005-12-27  Francisco Javier F. Serrador  <serrador@cvs.gnome.org>
 
 	* es.po: Updated Spanish translation.

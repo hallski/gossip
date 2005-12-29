@@ -21,7 +21,7 @@ src/gossip-chat-manager.c
 src/gossip-chatrooms-dialog.c
 src/gossip-chat-view.c
 src/gossip-chat-window.c
-src/gossip-contact-info.c
+src/gossip-contact-info-dialog.c
 src/gossip-contact-list.c
 src/gossip-edit-groups-dialog.c
 src/gossip-ft-window.c
