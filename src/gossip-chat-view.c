@@ -742,54 +742,6 @@ chat_view_get_my_name (GossipContact *my_contact)
 	}
 }
 
-static gboolean
-chat_view_check_nick_highlight (const gchar *msg, const gchar *to)
-{
-	gboolean  ret_val;
-	gchar    *cf_msg, *cf_to;
-	gchar    *ch;
-
-	ret_val = FALSE;
-
-	cf_msg = g_utf8_casefold (msg, -1);
-	cf_to = g_utf8_casefold (to, -1);
-
-	ch = strstr (cf_msg, cf_to);
-
-	if (ch == NULL) {
-		goto finished;
-	}
-
-	if (ch != cf_msg) {
-		/* Not first in the message */
-		if ((*(ch - 1) != ' ') &&
-		    (*(ch - 1) != ',') &&
-		    (*(ch - 1) != '.')) {
-			goto finished;
-		}
-	}
-
-	ch = ch + g_utf8_strlen (cf_to, -1);
-	if (ch >= cf_msg + g_utf8_strlen (cf_msg, -1)) {
-		ret_val = TRUE;
-		goto finished;
-	}
-
-	if ((*ch == ' ') ||
-	    (*ch == ',') ||
-	    (*ch == '.') ||
-	    (*ch == ':')) {
-		ret_val = TRUE;
-		goto finished;
-	}
-
-finished:
-	g_free (cf_msg);
-	g_free (cf_to);
-
-	return ret_val;
-}
-
 void
 gossip_chat_view_append_invite (GossipChatView *view,
 				GossipMessage  *message)
@@ -1299,18 +1251,9 @@ chat_view_append_irc_message (GossipChatView *view,
 		nick_tag = "irc-nick-self";
 		body_tag = "irc-body-self";
 	} else {
-		const gchar *my_name;
-
 		name = gossip_contact_get_name (gossip_message_get_sender (msg));
 
-		if (my_contact) {
-			my_name = gossip_contact_get_name (my_contact);
-		} else {
-			my_name = gossip_contact_get_name (
-				gossip_message_get_recipient (msg));
-		}
-		
-		if (chat_view_check_nick_highlight (body, my_name)) {
+		if (gossip_chat_should_highlight_nick (msg, my_contact)) {
 			nick_tag = "irc-nick-highlight";
 		} else {
 			nick_tag = "irc-nick-other";

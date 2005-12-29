@@ -1,3 +1,16 @@
+2005-12-29  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.c: 
+	* src/gossip-chat.[ch]: 
+	* src/gossip-group-chat.c: 
+	* src/gossip-private-chat.c:
+	- Made gossip_chat_should_play_sound() public so it can be used by
+	private chat and group chat modules. 
+	- Made gossip_chat_should_highlight_nick() public so it can be
+	used from inside the gossip-chat-view.c and from the group chat
+	module.
+	- Play sound when our nick is mentioned in group chat conversations.
+
 2005-12-18  Richard Hult  <richard@imendio.com>
 
 	* Makefile.am:

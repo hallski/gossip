@@ -30,16 +30,16 @@
 
 #include <libgossip/gossip-message.h>
 
-#include "gossip-chat-window.h"
-#include "gossip-sound.h"
-#include "gossip-chat-view.h"
 #include "gossip-app.h"
-#include "gossip-contact-info.h"
-#include "gossip-stock.h"
-#include "gossip-log.h"
+#include "gossip-chat-window.h"
+#include "gossip-chat-view.h"
 #include "gossip-chat.h"
-#include "gossip-ui-utils.h"
+#include "gossip-contact-info.h"
+#include "gossip-log.h"
 #include "gossip-private-chat.h"
+#include "gossip-sound.h"
+#include "gossip-stock.h"
+#include "gossip-ui-utils.h"
 
 #define d(x)
 
@@ -83,7 +83,6 @@ static void            private_chat_composing_start              (GossipPrivateC
 static void            private_chat_composing_stop               (GossipPrivateChat       *chat);
 static void            private_chat_composing_remove_timeout     (GossipPrivateChat       *chat);
 static gboolean        private_chat_composing_stop_timeout_cb    (GossipPrivateChat       *chat);
-static gboolean        private_chat_should_play_sound            (GossipPrivateChat       *chat);
 
 static void            private_chat_contact_presence_updated     (gpointer                 not_used,
 			   				          GossipContact           *contact,
@@ -421,25 +420,6 @@ private_chat_composing_stop_timeout_cb (GossipPrivateChat *chat)
                                        priv->contact, FALSE);
 
         return FALSE;
-}
-
-static gboolean
-private_chat_should_play_sound (GossipPrivateChat *chat)
-{
-	GossipChatWindow      *window;
-	gboolean               play = TRUE;
-
-	/* Play sounds if the window is not focused. */
-
-	window = gossip_chat_get_window (GOSSIP_CHAT (chat));
-	
-	if (!window) {
-		return TRUE;
-	}
-
-	play = !gossip_chat_window_has_focus (window);
-
-	return play;
 }
 
 static void
@@ -950,21 +930,19 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	gossip_log_message (m, TRUE);
 
-	/* FIXME (session): Composing event */
-
 	invite = gossip_message_get_invite (m);
 	if (invite) {
 		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
-						m);
+					m);
 	} else {
 		gossip_chat_view_append_message_from_other (GOSSIP_CHAT (chat)->view,
 							    m,
 							    FALSE);
 	}
 
-	g_signal_emit_by_name (chat, "new-message");
-
-	if (private_chat_should_play_sound (chat)) {
+	if (gossip_chat_should_play_sound (GOSSIP_CHAT (chat))) {
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
+
+	g_signal_emit_by_name (chat, "new-message");
 }

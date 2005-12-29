@@ -769,3 +769,83 @@ gossip_chat_present (GossipChat *chat)
 	gtk_widget_grab_focus (chat->input_text_view);
 }
 
+gboolean
+gossip_chat_should_play_sound (GossipChat *chat)
+{
+	GossipChatWindow *window;
+	gboolean          play = TRUE;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), FALSE);
+
+	window = gossip_chat_get_window (GOSSIP_CHAT (chat));
+	if (!window) {
+		return TRUE; 
+	}
+
+	play = !gossip_chat_window_has_focus (window);
+
+	return play;
+}
+
+gboolean
+gossip_chat_should_highlight_nick (GossipMessage *message,
+				   GossipContact *my_contact)
+{
+	GossipContact *contact;
+	const gchar   *msg, *to;
+	gchar         *cf_msg, *cf_to;
+	gchar         *ch;
+	gboolean       ret_val;
+
+	ret_val = FALSE;
+
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
+
+	msg = gossip_message_get_body (message);
+
+	if (my_contact) {
+		contact = my_contact;
+	} else {
+		contact = gossip_message_get_recipient (message);
+	}
+
+	to = gossip_contact_get_name (contact);
+
+	cf_msg = g_utf8_casefold (msg, -1);
+	cf_to = g_utf8_casefold (to, -1);
+
+	ch = strstr (cf_msg, cf_to);
+
+	if (ch == NULL) {
+		goto finished;
+	}
+
+	if (ch != cf_msg) {
+		/* Not first in the message */
+		if ((*(ch - 1) != ' ') &&
+		    (*(ch - 1) != ',') &&
+		    (*(ch - 1) != '.')) {
+			goto finished;
+		}
+	}
+
+	ch = ch + g_utf8_strlen (cf_to, -1);
+	if (ch >= cf_msg + g_utf8_strlen (cf_msg, -1)) {
+		ret_val = TRUE;
+		goto finished;
+	}
+
+	if ((*ch == ' ') ||
+	    (*ch == ',') ||
+	    (*ch == '.') ||
+	    (*ch == ':')) {
+		ret_val = TRUE;
+		goto finished;
+	}
+
+finished:
+	g_free (cf_msg);
+	g_free (cf_to);
+
+	return ret_val;
+}

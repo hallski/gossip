@@ -30,15 +30,16 @@
 #include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
-#include "gossip-chat.h"
-#include "gossip-chat-view.h"
-#include "gossip-chat-invite.h"
-#include "gossip-contact-list-iface.h"
 #include "gossip-cell-renderer-text.h"
+#include "gossip-chat.h"
+#include "gossip-chat-invite.h"
+#include "gossip-chat-view.h"
+#include "gossip-contact-list-iface.h"
+#include "gossip-group-chat.h"
 #include "gossip-private-chat.h"
+#include "gossip-sound.h"
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
-#include "gossip-group-chat.h"
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
@@ -916,7 +917,6 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 			   GossipGroupChat        *chat)
 {
 	GossipGroupChatPriv *priv;
-	GossipContact       *sender;
 	const gchar         *invite;
 
 	priv = chat->priv;
@@ -925,13 +925,13 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	g_signal_emit_by_name (chat, "new-message");
-	
 	invite = gossip_message_get_invite (message);
 	if (invite) {
 		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
 						message);
 	} else {
+		GossipContact *sender;
+
 		sender = gossip_message_get_sender (message);
 		if (gossip_contact_equal (sender, priv->own_contact)) {
 			gossip_chat_view_append_message_from_self (
@@ -945,6 +945,13 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 				priv->own_contact);
 		}
 	}
+	
+	if (gossip_chat_should_play_sound (GOSSIP_CHAT (chat)) &&
+	    gossip_chat_should_highlight_nick (message, priv->own_contact)) {
+		gossip_sound_play (GOSSIP_SOUND_CHAT);
+	}
+
+	g_signal_emit_by_name (chat, "new-message");
 }
 
 static void 
