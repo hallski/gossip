@@ -34,7 +34,6 @@
 #include "gossip-chat-window.h"
 #include "gossip-chat-view.h"
 #include "gossip-chat.h"
-#include "gossip-contact-info.h"
 #include "gossip-log.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"

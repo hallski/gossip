@@ -31,7 +31,7 @@
 #include "gossip-cell-renderer-text.h"
 #include "gossip-chat-invite.h"
 #include "gossip-contact-groups.h"
-#include "gossip-contact-info.h"
+#include "gossip-contact-info-dialog.h"
 #include "gossip-contact-list.h"
 #include "gossip-edit-groups-dialog.h"
 #include "gossip-ft-window.h"
@@ -1941,7 +1941,7 @@ contact_list_item_menu_info_cb (gpointer   data,
                 return;
         }
 
-        gossip_contact_info_new (contact);
+        gossip_contact_info_dialog_show (contact);
 
 	g_object_unref (contact);
 }

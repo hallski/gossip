@@ -1,5 +1,19 @@
 2005-12-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-info-dialog.[ch]:
+	* ui/main.glade:
+	- Reworked the code here, no need for the contact info dialog to
+	be a type in its own right as it was since nothing outside uses
+	it.
+	- Added resource states into the contact info dialog.
+	- Fixes bug #141225 (jon@tgpsolutions.com).
+
+	* src/gossip-chat-window.c:
+	* src/gossip-contact-list.c
+	- Updated API to call _show() instead of _new().
+
+2005-12-29  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-provider.[ch]:
 	* protocols/jabber/gossip-jabber-chatrooms.[ch]:
 	* protocols/jabber/gossip-jabber.c: 

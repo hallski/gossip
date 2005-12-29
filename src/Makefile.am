@@ -49,7 +49,7 @@ gossip_SOURCES = 				                        	\
 	gossip-contact-groups.c	           gossip-contact-groups.h		\
 	gossip-contact-list.c              gossip-contact-list.h               	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
-	gossip-contact-info.c              gossip-contact-info.h                \
+	gossip-contact-info-dialog.c       gossip-contact-info-dialog.h         \
 	gossip-ft-window.c		   gossip-ft-window.h			\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\

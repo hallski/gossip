@@ -33,7 +33,7 @@
 #include "gossip-app.h"
 #include "gossip-chat-invite.h"
 #include "gossip-chat-window.h"
-#include "gossip-contact-info.h"
+#include "gossip-contact-info-dialog.h"
 #include "gossip-log.h"
 #include "gossip-notebook.h"
 #include "gossip-preferences.h"
@@ -754,7 +754,7 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_contact_info_new (contact);
+	gossip_contact_info_dialog_show (contact);
 }
 
 static void
