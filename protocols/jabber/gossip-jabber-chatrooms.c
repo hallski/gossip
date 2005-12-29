@@ -714,16 +714,16 @@ gossip_jabber_chatrooms_send (GossipJabberChatrooms *chatrooms,
 }
 
 void
-gossip_jabber_chatrooms_set_title (GossipJabberChatrooms *chatrooms,
-				   GossipChatroomId       id,
-				   const gchar           *new_title)
+gossip_jabber_chatrooms_change_topic (GossipJabberChatrooms *chatrooms,
+				      GossipChatroomId       id,
+				      const gchar           *new_topic)
 {
 	JabberChatroom *room;
 	const gchar    *without_resource;
 	LmMessage      *m;
 
 	g_return_if_fail (chatrooms != NULL);
-	g_return_if_fail (new_title != NULL);
+	g_return_if_fail (new_topic != NULL);
 
 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
@@ -731,7 +731,7 @@ gossip_jabber_chatrooms_set_title (GossipJabberChatrooms *chatrooms,
 		g_warning ("Unknown chatroom id: %d", id);
 		return;
 	}
-	d(g_print ("Protocol Chatrooms: ID[%d] Set chatroom title to:'%s'\n", 
+	d(g_print ("Protocol Chatrooms: ID[%d] Change topic to:'%s'\n", 
 		   id, new_title));
 	
 	without_resource = gossip_jid_get_without_resource (room->jid);
@@ -740,7 +740,7 @@ gossip_jabber_chatrooms_set_title (GossipJabberChatrooms *chatrooms,
 					  LM_MESSAGE_TYPE_MESSAGE,
 					  LM_MESSAGE_SUB_TYPE_GROUPCHAT);
 	
-	lm_message_node_add_child (m->node, "subject", new_title);
+	lm_message_node_add_child (m->node, "subject", new_topic);
 
 	lm_connection_send (chatrooms->connection, m, NULL);
 	lm_message_unref (m);

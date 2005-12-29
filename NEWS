@@ -1,9 +1,64 @@
-News in 0.9:
+News in 0.9.1:
+==============
+ * Added support for changing topics in group chat (Martyn).
+ * Added support incoming message sound if your name is used in group chat (Martyn).
+ * Reworked the chat code in places and added the beginings of a theme engine (Richard).
+ * Reworked the group chat join code (Martyn).
+ * Reworked the group chat configuration to use an XML file (Martyn).
+ * Reworked the status preset code (Richard).
+ * Reworked the status preset configuration to use an XML file (Martyn, Richard).
+ * Added *VERY* basic support for file transfer (this means you can respond to incoming requests, but you can not accept or initiate them) (Martyn).
+ * Added Help->Contents (Brian Pepple and Keywan Najafi Tonekaboni).
+ * Added new DBus API for post-net-up and pre-net-down so things can clean up (Mikael).
+ * Use the Gnome smiley theme so there are now more emote icons that can be used in chat (Martyn):
+	:*  = Kiss
+	:s  = Confused
+	*|  = Sorry
+	*)  = Look Away
+	:x  = Oooh
+	*s  = Blush
+	8D  = Cool Big Smile
+	<)  = Angel
+	@)  = Boss
+	#)  = Monkey
+	O)  = Silly
+	+o( = Sick
+
+ * Added "composing" support back into Gossip (Martyn).
+ * Added "auto_connect" feature for accounts when starting Gossip (Martyn).
+ * Clean up unused ellipsize and tree model filter code borrowed from libegg which is now in GTK+ (Richard).
+ * Fixed #322775 - Reworked the Chat->New Message dialog (Martyn, Brian Pepple).
+ * Fixed #323099 - Made name and group configurable on new subscriptions (Maciej Katafiasz).
+ * Fixed #305103 - Translation bugs in jabber transport modules (Gabor Kelemen). * Fixed #322712 - Build issues with DBus and Galago (Brian Pepple).
+ * Fixed #321538 - Windows and dialogs have transients to positioned children over their parents (Christian Neumair, Martyn).
+ * Fixed #316925 - Added support for Galago (Ross Burton).
+ * Fixed #314848 - Disable sound when showing/hiding offline contacts (Martyn).
+ * Fixed #316172 - Stop sending blank messages with "composing" information (Ross Burton).
+ * Fixed #317107 - Fixed GossipAccountButton implementation (Martyn, Tommi Komulainen).
+ * Fixed #135472 - Added shortcut (Escape) to hide main window (Edd Dumbill).
+ * Fixed #316340 - Make sure newly opened chat windows get focus (Keywan Najafi Tonekaboni).
+ * Fixed #316917 - Added "presence-changed" signal to the session for Galago (Ross Burton).
+ * Fixed #316625 - Resolved build issues with pkg-config (Tommi Komulainen).
+ * Fixed #316621 - Make the offline GossipAccountButton icon clearer (Tommi Komulainen).
+ * Fixed #315181 - Moved DBus initiation out of libgossip (Brian Pepple).
+ * Fixed #153110 - Resolved group chat text wrapping issues (Sven Salzwedel).
+ * Fixed #165404 - Support registering using SSL (Martyn, Mikael, skadz@mindstorm.com).
+ * Fixed #165519 - Support configuring multiple accounts (Martyn).
+ * Fixed #314140 - Resolved "Login" grammar error (Adam Weinberger).
+ * Fixed #155135 - Added confirmation dialog when trying to quit with unread messages, subscriptions, etc (Keywan Najafi Tonekaboni).
+ * Fixed #142192 - Make dragging contacts into chat windows highlight the target to make things clearer and only drop when the button is released (Sjoerd Simons).
+ * Fixed #151859 - Stop the new message icon flashing on a contact when dragging them to a chat window (Paul van Tilburg).
+ * Fixed #160216 - Make the add contact druid continue when pressing Next (bram@luon.net).
+ * Fixed #141787 - Support adding contacts from a chat window (Brad Taylor).
+ * Fixed #156285 - Added completion to the status preset dialogs (Martyn).
+ * Fixed #313486 - Stop crash when joining a group chat and canceling it immediately after (Brian Pepple).
+
+New in 0.9:
 ============
  * This release features a large refactoring to make further development easier.
  * Part of the works has also been to make the current features more stable
    and better implement.
- * Most of the work on this release has been carried out by Mikael Hallendal and   Martyn Russel.
+ * Most of the work on this release has been carried out by Mikael Hallendal and   Martyn Russell.
  * UPDATE NOW!
 
 News in 0.8:

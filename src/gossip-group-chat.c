@@ -43,7 +43,6 @@
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
-
 enum {
 	COL_STATUS,
 	COL_NAME,
@@ -530,6 +529,15 @@ group_chat_send (GossipGroupChat *chat,
 		gossip_chatroom_provider_change_nick (priv->provider,
 						      priv->room_id,
 						      nick);
+		return;
+	}
+	else if (g_ascii_strncasecmp (msg, "/topic ", 7) == 0 && strlen (msg) > 7) {
+		const gchar *topic;
+
+		topic = msg + 7;
+		gossip_chatroom_provider_change_topic (priv->provider,
+						       priv->room_id,
+						       topic);
 		return;
 	}
 	else if (g_ascii_strcasecmp (msg, "/clear") == 0) {
@@ -1123,8 +1131,9 @@ group_chat_topic_activate_cb (GtkEntry *entry, GossipGroupChat *chat)
 	
 	priv = chat->priv;
 	
-	gossip_chatroom_provider_set_title (priv->provider, priv->room_id,
-					    gtk_entry_get_text (entry));
+	gossip_chatroom_provider_change_topic (priv->provider, 
+					       priv->room_id,
+					       gtk_entry_get_text (entry));
 	
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }

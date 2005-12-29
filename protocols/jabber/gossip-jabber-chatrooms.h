@@ -47,9 +47,9 @@ void                   gossip_jabber_chatrooms_cancel              (GossipJabber
 void                   gossip_jabber_chatrooms_send                (GossipJabberChatrooms *chatrooms,
 								    GossipChatroomId       id,
 								    const gchar           *message);
-void                   gossip_jabber_chatrooms_set_title           (GossipJabberChatrooms *chatrooms,
+void                   gossip_jabber_chatrooms_change_topic        (GossipJabberChatrooms *chatrooms,
 								    GossipChatroomId       id,
-								    const gchar           *new_title);
+								    const gchar           *new_topic);
 void                   gossip_jabber_chatrooms_change_nick         (GossipJabberChatrooms *chatrooms,
 								    GossipChatroomId       id,
 								    const gchar           *new_nick);

@@ -204,18 +204,18 @@ gossip_chatroom_provider_send (GossipChatroomProvider *provider,
 }
 
 void
-gossip_chatroom_provider_set_title (GossipChatroomProvider *provider,
-				    GossipChatroomId        id,
-				    const gchar            *new_title)
+gossip_chatroom_provider_change_topic (GossipChatroomProvider *provider,
+				       GossipChatroomId        id,
+				       const gchar            *new_topic)
 {
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (id > 0);
-	g_return_if_fail (new_title != NULL);
+	g_return_if_fail (new_topic != NULL);
 
-	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->set_title) {
-		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->set_title(provider,
-									 id,
-									 new_title);
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->change_topic) {
+		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->change_topic(provider,
+									    id,
+									    new_topic);
 	}
 }
 

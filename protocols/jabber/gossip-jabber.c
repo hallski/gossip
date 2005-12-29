@@ -241,9 +241,9 @@ static void             jabber_chatroom_cancel              (GossipChatroomProvi
 static void             jabber_chatroom_send                (GossipChatroomProvider       *provider,
 							     GossipChatroomId              id,
 							     const gchar                  *message);
-static void             jabber_chatroom_set_title           (GossipChatroomProvider       *provider,
+static void             jabber_chatroom_change_topic        (GossipChatroomProvider       *provider,
 							     GossipChatroomId              id,
-							     const gchar                  *new_title);
+							     const gchar                  *new_topic);
 static void             jabber_chatroom_change_nick         (GossipChatroomProvider       *provider,
 							     GossipChatroomId              id,
 							     const gchar                  *new_nick);
@@ -2163,7 +2163,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->join  = jabber_chatroom_join;
 	iface->cancel  = jabber_chatroom_cancel;
 	iface->send  = jabber_chatroom_send;
-	iface->set_title = jabber_chatroom_set_title;
+	iface->change_topic = jabber_chatroom_change_topic;
 	iface->change_nick = jabber_chatroom_change_nick;
 	iface->leave = jabber_chatroom_leave;
 	iface->get_room_name = jabber_chatroom_get_room_name;
@@ -2227,9 +2227,9 @@ jabber_chatroom_send (GossipChatroomProvider *provider,
 }
 
 static void
-jabber_chatroom_set_title (GossipChatroomProvider *provider,
-			   GossipChatroomId        id,
-			   const gchar            *new_title)
+jabber_chatroom_change_topic (GossipChatroomProvider *provider,
+			      GossipChatroomId        id,
+			      const gchar            *new_topic)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -2239,7 +2239,7 @@ jabber_chatroom_set_title (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	gossip_jabber_chatrooms_set_title (priv->chatrooms, id, new_title);
+	gossip_jabber_chatrooms_change_topic (priv->chatrooms, id, new_topic);
 }
 
 static void

@@ -67,9 +67,9 @@ struct _GossipChatroomProviderIface {
 	void             (*send)          (GossipChatroomProvider *provider,
 					   GossipChatroomId        id,
 					   const gchar            *message);
-	void             (*set_title)     (GossipChatroomProvider *provider,
+	void             (*change_topic)  (GossipChatroomProvider *provider,
 					   GossipChatroomId        id,
-					   const gchar            *new_title);
+					   const gchar            *new_topic);
 	void             (*change_nick)   (GossipChatroomProvider *provider,
 					   GossipChatroomId        id,
 					   const gchar            *new_nick);
@@ -103,9 +103,9 @@ void             gossip_chatroom_provider_cancel        (GossipChatroomProvider 
 void             gossip_chatroom_provider_send          (GossipChatroomProvider *provider,
 							 GossipChatroomId        id,
 							 const gchar            *message);
-void             gossip_chatroom_provider_set_title     (GossipChatroomProvider *provider,
+void             gossip_chatroom_provider_change_topic  (GossipChatroomProvider *provider,
 							 GossipChatroomId        id,
-							 const gchar            *new_title);
+							 const gchar            *new_topic);
 void             gossip_chatroom_provider_change_nick   (GossipChatroomProvider *provider,
 							 GossipChatroomId        id,
 							 const gchar            *new_nick);

@@ -1,5 +1,18 @@
 2005-12-29  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-provider.[ch]:
+	* protocols/jabber/gossip-jabber-chatrooms.[ch]:
+	* protocols/jabber/gossip-jabber.c: 
+	- Changed _set_title to _change_topic.
+	* src/gossip-group-chat.c: 
+	- Hook up the "/topic" command with the _change_topic function.
+
+	* NEWS:
+	- Added all the bugs fixes and all the major changes for the next
+	release that we do.
+
+2005-12-29  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.c: 
 	* src/gossip-chat.[ch]: 
 	* src/gossip-group-chat.c: 
@@ -9,7 +22,8 @@
 	- Made gossip_chat_should_highlight_nick() public so it can be
 	used from inside the gossip-chat-view.c and from the group chat
 	module.
-	- Play sound when our nick is mentioned in group chat conversations.
+	- Play sound when our nick is mentioned in group chat
+	conversations.
 
 2005-12-18  Richard Hult  <richard@imendio.com>
 
@@ -349,7 +363,6 @@
 	- Add Help section using Gnome Help (patch from Brian Pepple).
 	- Fixes bug #155140 (Brian Pepple).
 
->>>>>>> 1.584
 2005-11-05  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-session.[ch]:
@@ -394,17 +407,6 @@
 
 	* ui/group-chat.glade:
 	- Made the roster treeview a minimum width which works better.
-
-2005-11-02  Martyn Russell  <mr@gnome.org>
-
-	* src/gossip-chat-view.c: (chat_view_setup_tags),
-	(chat_view_maybe_append_timestamp),
-	(chat_view_maybe_append_datestamp),
-	(gossip_chat_view_append_chat_message),
-	(gossip_chat_view_append_event_message),
-	(gossip_chat_view_append_time_message):
-	* src/gossip-chat-view.h:
-	* ui/group-chat.glade:
 
 2005-11-02  Ross Burton  <ross@openedhand.com>
 
