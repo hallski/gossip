@@ -113,6 +113,7 @@ struct _GossipAppPriv {
 	/* menu widgets */
 	GtkWidget             *actions_connect;
 	GtkWidget             *actions_disconnect;
+	GtkWidget             *actions_show_list;
 
 	/* accounts toolbar */
 	GtkWidget             *accounts_toolbar;
@@ -128,8 +129,7 @@ struct _GossipAppPriv {
 
 	GtkWidget             *popup_menu;
 	GtkWidget             *popup_menu_status_item;
-	GtkWidget             *show_popup_item;
-	GtkWidget             *hide_popup_item;
+	GtkWidget             *popup_menu_show_list_item;
 	 
 	/* widgets that are enabled when we're connected/disconnected */
 	GList                 *widgets_connected_all;
@@ -214,7 +214,7 @@ static void            app_session_protocol_disconnected_cb (GossipSession      
 static gchar *         app_session_get_password_cb          (GossipSession        *session,
 							     GossipAccount        *account,
 							     gpointer              user_data);
-static void            app_show_hide_activate_cb            (GtkWidget            *widget,
+static void            app_show_list_cb                     (GtkWidget            *widget,
 							     GossipApp            *app);
 static void            app_popup_new_message_cb             (GtkWidget            *widget,
 							     gpointer              user_data);
@@ -500,11 +500,12 @@ app_setup (GossipAccountManager *manager)
 				       "main_vbox", &priv->main_vbox,
 				       "actions_connect", &priv->actions_connect,
 				       "actions_disconnect", &priv->actions_disconnect,
+				       "actions_show_offline", &show_offline_widget,
+				       "actions_show_list", &priv->actions_show_list,
 				       "accounts_toolbar", &priv->accounts_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       "status_button_hbox", &priv->status_button_hbox,
 				       "status_image", &priv->status_image,
-				       "actions_show_offline", &show_offline_widget,
 				       NULL);
 
 	gossip_glade_connect (glade,
@@ -537,6 +538,9 @@ app_setup (GossipAccountManager *manager)
 	gtk_image_set_from_stock (GTK_IMAGE (image), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_MENU);
 	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_disconnect)->child), 
 					  _("_Disconnect"));
+
+	g_signal_connect (priv->actions_show_list, "toggled", 
+			  G_CALLBACK (app_show_list_cb), app);
 
 	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);
@@ -632,6 +636,9 @@ app_setup (GossipAccountManager *manager)
 	hidden = gconf_client_get_bool (priv->gconf_client, 
 					GCONF_PATH "/ui/main_window_hidden", 
 					NULL);
+
+	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
+					show_offline);
 
  	/* FIXME: See bug #132632, if (!hidden || !app_have_tray ()) */
  	if (!hidden) {
@@ -1024,20 +1031,6 @@ app_session_get_password_cb (GossipSession *session,
  * notification area signals
  */
 static void
-app_show_hide_activate_cb (GtkWidget *widget,
-			   GossipApp *app)
-{
-	app_toggle_visibility ();
-}
-
-static void
-app_popup_new_message_cb (GtkWidget *widget,
-			  gpointer   user_data)
-{
-	gossip_new_message_dialog_show (NULL);
-}
-
-static void
 app_toggle_visibility (void)
 {
 	GossipAppPriv *priv;
@@ -1045,8 +1038,7 @@ app_toggle_visibility (void)
 
 	priv = app->priv;
 
-	visible = gossip_ui_utils_window_get_is_visible (
-							 GTK_WINDOW (priv->window));
+	visible = gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window));
 
 	if (visible) {
 		gtk_widget_hide (priv->window);
@@ -1056,6 +1048,8 @@ app_toggle_visibility (void)
 				       NULL);
 	} else {
 		gint x, y;
+		gint width, height;
+		gint screen_width, screen_height;
 
 		x = gconf_client_get_int (priv->gconf_client, 
 					  GCONF_PATH "/ui/main_window_position_x",
@@ -1063,8 +1057,20 @@ app_toggle_visibility (void)
 		y = gconf_client_get_int (priv->gconf_client, 
 					  GCONF_PATH "/ui/main_window_position_y",
 					  NULL);
+
+		width = gconf_client_get_int (priv->gconf_client,
+					      GCONF_PATH "/ui/main_window_width",
+					      NULL);
 		
-		if (x >= 0 && y >= 0) {
+		height = gconf_client_get_int (priv->gconf_client,
+					       GCONF_PATH "/ui/main_window_height",
+					       NULL);
+	
+		screen_width = gdk_screen_width ();
+		screen_height = gdk_screen_height ();
+
+		if (x >= 0 && (x - width < screen_width) &&
+		    y >= 0 && (y - height < screen_height)) {
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
 
@@ -1074,6 +1080,20 @@ app_toggle_visibility (void)
 				       GCONF_PATH "/ui/main_window_hidden", FALSE,
 				       NULL);
 	}
+}
+
+static void
+app_show_list_cb (GtkWidget *widget,
+		  GossipApp *app)
+{
+	app_toggle_visibility ();
+}
+
+static void
+app_popup_new_message_cb (GtkWidget *widget,
+			  gpointer   user_data)
+{
+	gossip_new_message_dialog_show (NULL);
 }
 
 static gboolean
@@ -1128,13 +1148,16 @@ app_tray_button_press_cb (GtkWidget      *widget,
 			app_toggle_visibility ();
 		}
 	} else if (event->button == 3) {
-		if (gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window))) {
-			gtk_widget_show (priv->hide_popup_item);
-			gtk_widget_hide (priv->show_popup_item);
-		} else {
-			gtk_widget_hide (priv->hide_popup_item);
-			gtk_widget_show (priv->show_popup_item);
-		}
+		gboolean show;
+
+		show = gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window));
+		
+		g_signal_handlers_block_by_func (priv->popup_menu_show_list_item, 
+						 app_show_list_cb, app);
+		gtk_check_menu_item_set_active 
+			(GTK_CHECK_MENU_ITEM (priv->popup_menu_show_list_item), show);
+		g_signal_handlers_unblock_by_func (priv->popup_menu_show_list_item, 
+						   app_show_list_cb, app);
 
 		submenu = gossip_presence_chooser_create_menu (
 			GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
@@ -1161,19 +1184,19 @@ app_tray_create_menu (void)
 				       "tray_menu",
 				       NULL,
 				       "tray_menu", &priv->popup_menu,
-				       "tray_show_list", &priv->show_popup_item,
-				       "tray_hide_list", &priv->hide_popup_item,
+				       "tray_show_list", &priv->popup_menu_show_list_item,
 				       "tray_new_message", &message_item,
 				       "tray_status", &priv->popup_menu_status_item,
 				       NULL);
 
 	gossip_glade_connect (glade,
 			      app,
-			      "tray_show_list", "activate", app_show_hide_activate_cb,
-			      "tray_hide_list", "activate", app_show_hide_activate_cb,
 			      "tray_new_message", "activate", app_popup_new_message_cb,
 			      "tray_quit", "activate", app_quit_cb,
 			      NULL);
+
+	g_signal_connect (priv->popup_menu_show_list_item, "toggled", 
+			  G_CALLBACK (app_show_list_cb), app);
 
 	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
 						      priv->popup_menu_status_item);
@@ -1918,6 +1941,7 @@ configure_event_idle_cb (GtkWidget *widget)
 	GossipAppPriv *priv = app->priv;
 	gint           width, height;
 	gint           x, y;
+	gboolean       show;
 	
 	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
 	gtk_window_get_position (GTK_WINDOW(app->priv->window), &x, &y);
@@ -1943,6 +1967,16 @@ configure_event_idle_cb (GtkWidget *widget)
  			      NULL);
 
 	priv->size_timeout_id = 0;
+
+	/* Update the show list menu item */
+	show = gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window));
+
+	g_signal_handlers_block_by_func (priv->actions_show_list, 
+					 app_show_list_cb, app);
+	gtk_check_menu_item_set_active 
+		(GTK_CHECK_MENU_ITEM (priv->actions_show_list), show);
+	g_signal_handlers_unblock_by_func (priv->actions_show_list, 
+					   app_show_list_cb, app);
 	
 	return FALSE;
 }

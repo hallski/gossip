@@ -1,5 +1,16 @@
 2005-12-30  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	* ui/main.glade:
+	- Made the show/hide contact list a toggle based check menu item
+	in the notification area. 
+	- Added the same check menu item into the main menu (Chat->Show
+	Contact List) so it is configurable without the need of a
+	notification area.
+	- Fixes bug #308041 (Radomir Dopieralski).
+
+2005-12-30  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.c: 
 	- Only send "composing" notification from the account a contact is
 	attached to instead of from every connected account.
