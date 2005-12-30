@@ -1,5 +1,12 @@
 2005-12-30  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-session.c: 
+	- Only send "composing" notification from the account a contact is
+	attached to instead of from every connected account.
+	- Fixes bug #321801 (Ross Burton).
+
+2005-12-30  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-presence.c: 
 	- Return NULL resource instead of "" on error or if not set.
 	

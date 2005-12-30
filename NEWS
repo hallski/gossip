@@ -27,6 +27,8 @@ News in 0.9.1:
  * Added "composing" support back into Gossip (Martyn).
  * Added "auto_connect" feature for accounts when starting Gossip (Martyn).
  * Clean up unused ellipsize and tree model filter code borrowed from libegg which is now in GTK+ (Richard).
+ * Fixed #321801 - Don't send "composing" notification from every account, only from the account that has that contact (Ross Burton).
+ * Fixed #319713 - Make sure private chats started by double clicking on contacts in group chats actually work (Ross Burton).
  * Fixed #119971 - Support inviting people to group chat rooms (Mikael Hallendal).
  * Fixed #325258 - Make sure the default vcard is looked up when showing the Personal Information dialog (Brian Pepple).
  * Fixed #141225 - Added status and resource information to the Contact Information dialog (jon@tgpsolutions.com).

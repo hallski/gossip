@@ -482,12 +482,10 @@ session_protocol_logged_in (GossipProtocol *protocol,
 	/* update some status? */
 	priv->connected_counter++;
 
-/* 	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, FALSE); */
 	g_signal_emit (session, signals[PROTOCOL_CONNECTED], 0, account, protocol);
 
 	if (priv->connected_counter == 1) {
 		/* Before this connect the session was set to be DISCONNECTED */
-/* 		g_signal_emit (session, signals[CONNECTING], 0, FALSE); */
 		g_signal_emit (session, signals[CONNECTED], 0);
 	}
 }
@@ -516,12 +514,10 @@ session_protocol_logged_out (GossipProtocol *protocol,
 
 	priv->connected_counter--;
 	
-/* 	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, FALSE); */
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
 	
 	if (priv->connected_counter == 0) {
 		/* Last connected protocol was disconnected */
-/* 		g_signal_emit (session, signals[CONNECTING], 0, FALSE); */
 		g_signal_emit (session, signals[DISCONNECTED], 0);
 	}
 }
@@ -1171,25 +1167,22 @@ gossip_session_send_composing (GossipSession  *session,
 			       gboolean        composing)
 {
 	GossipSessionPriv *priv;
-	GList             *l;
+	GossipProtocol    *protocol;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
 	priv = GET_PRIV (session);
 
-	for (l = priv->protocols; l; l = l->next) {
-		GossipProtocol *protocol;
+	protocol = session_get_protocol (session, contact);
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
 
-		protocol = GOSSIP_PROTOCOL (l->data);
-
-		if (!gossip_protocol_is_connected (protocol)) {
-			continue;
-		}
-
-		gossip_protocol_send_composing (protocol,
-						contact,
-						composing);
+	if (!gossip_protocol_is_connected (protocol)) {
+		return;
 	}
+
+	gossip_protocol_send_composing (protocol,
+					contact,
+					composing);
 }
 
 #if 0
