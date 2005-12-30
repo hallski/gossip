@@ -251,7 +251,7 @@ gossip_presence_get_resource (GossipPresence *presence)
 {
 	GossipPresencePriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), "");
+	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), NULL);
 
 	priv = GET_PRIV (presence);
 	
@@ -259,7 +259,7 @@ gossip_presence_get_resource (GossipPresence *presence)
 		return priv->resource;
 	}
 
-	return "";
+	return NULL;
 }
 
 void
@@ -315,16 +315,6 @@ gossip_presence_get_status (GossipPresence *presence)
 
 	return priv->status;
 }
-#if 0
-if (priv->status) {
-		return priv->status;
-	} else {
-		return presence_get_default_status (priv->state);
-	}
-
-	return _(AVAILABLE_MESSAGE);
-}
-#endif
 
 void
 gossip_presence_set_status (GossipPresence *presence, 

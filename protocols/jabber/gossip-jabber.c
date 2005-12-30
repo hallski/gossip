@@ -19,13 +19,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/** FIXMES
- *
- *  Need to keep an internal list of resources a contact is logged in from
- *  so that we know where to send messages...
- *
- **/
-
 #include <config.h>
 
 #include <stdlib.h>
@@ -2466,7 +2459,7 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 	priv = GET_PRIV (jabber);
 
 	jid = gossip_jid_new (jid_str);
-	d(g_print ("Protocol: Get contact: %s\n", gossip_jid_get_without_resource (jid)));
+	d(g_print ("Protocol: Get contact: %s\n", gossip_jid_get_full (jid)));
 
 	contact = g_hash_table_lookup (priv->contacts, 
 				       gossip_jid_get_without_resource (jid));
@@ -2476,7 +2469,7 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
 					      priv->account);
 		gossip_contact_set_id (contact, 
-				       gossip_jid_get_without_resource (jid));
+				       gossip_jid_get_full (jid));
 
 		name = gossip_jid_get_part_name (jid);
 		gossip_contact_set_name (contact, name);

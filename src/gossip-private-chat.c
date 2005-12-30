@@ -63,18 +63,15 @@ struct _GossipPrivateChatPriv {
         guint             composing_stop_timeout_id;
 	
 	gboolean          is_online;
-	gboolean          groupchat_priv;
 };
 
 
 static GObjectClass *parent_class  = NULL;
-static GHashTable   *private_chats = NULL;
  
 
 static void            gossip_private_chat_class_init            (GossipPrivateChatClass  *klass);
 static void            gossip_private_chat_init                  (GossipPrivateChat       *chat);
 static void            private_chat_finalize                     (GObject                 *object);
-static void            private_chats_init                        (void);
 static void            private_chat_create_gui                   (GossipPrivateChat       *chat);
 static void            private_chat_send                         (GossipPrivateChat       *chat,
                                                                   const gchar      *msg);
@@ -197,23 +194,6 @@ private_chat_finalize (GObject *object)
 }
 
 static void
-private_chats_init (void)
-{
-        static gboolean inited = FALSE;
-
-	if (inited) {
-		return;
-	}
-
-        inited = TRUE;
-
-        private_chats = g_hash_table_new_full (gossip_contact_hash,
-				               gossip_contact_equal,
-                                               (GDestroyNotify) g_object_unref,
-                                               (GDestroyNotify) g_object_unref);
-}
-
-static void
 private_chat_create_gui (GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
@@ -270,10 +250,6 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 	GossipPrivateChatPriv *priv = chat->priv;
 	const gchar           *roster_resource;
 
-	if (priv->groupchat_priv) {
-		return;
-	}
-	
 	if (!gossip_contact_is_online (priv->contact)) {
 		g_free (priv->roster_resource);
 		priv->roster_resource = NULL;
@@ -789,8 +765,6 @@ gossip_private_chat_new (GossipContact *contact)
 	priv->contact = g_object_ref (contact);
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
-	priv->groupchat_priv = FALSE;
-
 	g_signal_connect_object (gossip_app_get_session (),
 				 "contact_presence_updated",
 				 G_CALLBACK (private_chat_contact_presence_updated),
@@ -812,59 +786,6 @@ gossip_private_chat_new (GossipContact *contact)
 		priv->is_online = FALSE;
 	}
 
-	return chat;
-}
-
-GossipPrivateChat *
-gossip_private_chat_get_for_group_chat (GossipContact   *contact, 
-				        GossipGroupChat *g_chat)
-{
-	GossipPrivateChat     *chat;
-	GossipPrivateChatPriv *priv;
-
-	GossipPresence        *active_presence;
-	const gchar           *active_resource;
-
-	private_chats_init ();
-
-	chat = g_hash_table_lookup (private_chats, contact);
-	if (chat) {
-		return chat;
-	}
-	
-	chat = g_object_new (GOSSIP_TYPE_PRIVATE_CHAT, NULL);
-	g_hash_table_insert (private_chats, g_object_ref (contact), chat);
-
-	priv = chat->priv;
-	priv->contact = g_object_ref (contact);
-	priv->name = g_strdup (gossip_contact_get_name (contact));
-	priv->groupchat_priv = TRUE;
-
-	active_presence = gossip_contact_get_active_presence (contact);
-	active_resource = gossip_presence_get_resource (active_presence);
-	priv->locked_resource = g_strdup (active_resource);
-	
-	if (gossip_contact_is_online (priv->contact)) {
-		priv->is_online = TRUE;
-	} else {
-		priv->is_online = FALSE;
-	}
-
-	g_signal_connect_object (g_chat,
-				 "contact_presence_updated",
-				 G_CALLBACK (private_chat_contact_presence_updated),
-				 chat, 0);
-
-	g_signal_connect_object (g_chat,
-				 "contact_updated",
-				 G_CALLBACK (private_chat_contact_updated),
-				 chat, 0);
-
-	g_signal_connect_object (g_chat,
-				 "contact_added",
-				 G_CALLBACK (private_chat_contact_added),
-				 chat, 0);
-	
 	return chat;
 }
 
@@ -919,12 +840,15 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	resource = gossip_message_get_explicit_resource (m);
 
-	if (!priv->groupchat_priv &&
-	    resource &&
-	    (!priv->locked_resource ||
-	     g_ascii_strcasecmp (resource, priv->locked_resource) != 0)) {
-		g_free (priv->locked_resource);
-		priv->locked_resource = g_strdup (resource);
+	if (resource) {
+		gboolean is_different;
+
+		is_different = g_ascii_strcasecmp (resource, priv->locked_resource) != 0;
+
+		if (!priv->locked_resource || is_different) {
+			g_free (priv->locked_resource);
+			priv->locked_resource = g_strdup (resource);
+		}
 	}
 
 	gossip_log_message (m, TRUE);

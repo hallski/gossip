@@ -18,13 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*
- * FIXME: We REALLY need to handle "notify::name" for GossipAccount
- * since if the name changes we need to update the hash table too
- * otherwise lookups fail all over the place and we get a lot of
- * warnings (MR).
- */
-
 #include <config.h>
 
 #include "libgossip-marshal.h"

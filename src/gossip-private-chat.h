@@ -26,6 +26,7 @@
 
 #include "gossip-app.h"
 #include "gossip-group-chat.h"
+
 #include <libgossip/gossip-message.h>
 
 G_BEGIN_DECLS

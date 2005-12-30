@@ -30,13 +30,13 @@
 #define d(x) 
 
 typedef struct _GossipChatManagerPriv GossipChatManagerPriv;
+
 struct _GossipChatManagerPriv {
 	GHashTable *chats;
 
 	GHashTable *events;
 };
 
-/* -- Private functions -- */
 static void chat_manager_finalize           (GObject            *object);
 static void chat_manager_new_message_cb     (GossipSession      *session,
 					     GossipMessage      *msg,
@@ -114,8 +114,8 @@ chat_manager_new_message_cb (GossipSession     *session,
 	chat = g_hash_table_lookup (priv->chats, sender);
 
 	old_event = g_hash_table_lookup (priv->events, sender);
-	/* Add event to event manager if one doesn't exist already. */
 
+	/* Add event to event manager if one doesn't exist already. */
 	if (!chat) {
 		d(g_print ("new chat for: %s\n", gossip_contact_get_id (sender)));
 		chat = gossip_chat_manager_get_chat (manager, sender);
@@ -176,7 +176,8 @@ gossip_chat_manager_new (void)
 }
 
 GossipPrivateChat *
-gossip_chat_manager_get_chat (GossipChatManager *manager, GossipContact *contact)
+gossip_chat_manager_get_chat (GossipChatManager *manager,
+			      GossipContact     *contact)
 {
 	GossipChatManagerPriv *priv;
 	GossipPrivateChat     *chat;

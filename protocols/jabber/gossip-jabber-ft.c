@@ -404,7 +404,7 @@ jabber_ft_get_contact_last_jid (GossipContact *contact)
 
 	to = g_strdup_printf ("%s/%s", 
 			      gossip_contact_get_id (contact),
-			      resource);
+			      resource ? resource : "");
 
 	return to;
 }

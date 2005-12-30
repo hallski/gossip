@@ -1,3 +1,21 @@
+2005-12-30  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-presence.c: 
+	- Return NULL resource instead of "" on error or if not set.
+	
+	* protocols/jabber/gossip-jabber-ft.c:
+	- Make sure NULL resource is handled.
+
+	* protocols/jabber/gossip-jabber.c:
+	- When creating GossipContact's include the resource in the ID.
+
+	* src/gossip-chat-manager.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.[ch]: 
+	- Cleaned up the code and fixed some memory leaks along the way.
+	- Handle private chats from group chat roster.
+	- Fixes bug #319713 (Ross Burton).
+
 2005-12-29  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-vcard-dialog.c: 
