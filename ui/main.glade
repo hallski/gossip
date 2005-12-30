@@ -53,7 +53,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image125">
+			    <widget class="GtkImage" id="image181">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-execute</property>
 			      <property name="icon_size">1</property>
@@ -73,7 +73,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image126">
+			    <widget class="GtkImage" id="image182">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-execute</property>
 			      <property name="icon_size">1</property>
@@ -108,7 +108,7 @@
 			  <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image127">
+			    <widget class="GtkImage" id="image183">
 			      <property name="visible">True</property>
 			      <property name="pixbuf">gossip-message.png</property>
 			      <property name="xalign">0.5</property>
@@ -133,7 +133,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image128">
+			    <widget class="GtkImage" id="image184">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-add</property>
 			      <property name="icon_size">1</property>
@@ -147,12 +147,27 @@
 		      </child>
 
 		      <child>
+			<widget class="GtkSeparatorMenuItem" id="separator3">
+			  <property name="visible">True</property>
+			</widget>
+		      </child>
+
+		      <child>
 			<widget class="GtkCheckMenuItem" id="actions_show_offline">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">Show _Offline Contacts</property>
 			  <property name="use_underline">True</property>
 			  <property name="active">False</property>
 			  <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+			</widget>
+		      </child>
+
+		      <child>
+			<widget class="GtkCheckMenuItem" id="actions_show_list">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">_Show Contact List</property>
+			  <property name="use_underline">True</property>
+			  <property name="active">True</property>
 			</widget>
 		      </child>
 
@@ -210,7 +225,7 @@
 			  <property name="use_underline">True</property>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image129">
+			    <widget class="GtkImage" id="image185">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-preferences</property>
 			      <property name="icon_size">1</property>
@@ -243,7 +258,7 @@
 			  <accelerator key="F1" modifiers="0" signal="activate"/>
 
 			  <child internal-child="image">
-			    <widget class="GtkImage" id="image137">
+			    <widget class="GtkImage" id="image186">
 			      <property name="visible">True</property>
 			      <property name="stock">gtk-help</property>
 			      <property name="icon_size">1</property>
@@ -4754,23 +4769,16 @@ To get started, just click &quot;Forward&quot;.</property>
 <widget class="GtkMenu" id="tray_menu">
 
   <child>
-    <widget class="GtkMenuItem" id="tray_show_list">
+    <widget class="GtkCheckMenuItem" id="tray_show_list">
       <property name="visible">True</property>
       <property name="label" translatable="yes">_Show Contact List</property>
       <property name="use_underline">True</property>
+      <property name="active">False</property>
     </widget>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="tray_hide_list">
-      <property name="visible">True</property>
-      <property name="label" translatable="yes">_Hide Contact List</property>
-      <property name="use_underline">True</property>
-    </widget>
-  </child>
-
-  <child>
-    <widget class="GtkMenuItem" id="avskiljare5">
+    <widget class="GtkSeparatorMenuItem" id="avskiljare5">
       <property name="visible">True</property>
     </widget>
   </child>
@@ -4782,7 +4790,7 @@ To get started, just click &quot;Forward&quot;.</property>
       <property name="use_underline">True</property>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image37">
+	<widget class="GtkImage" id="image170">
 	  <property name="visible">True</property>
 	  <property name="pixbuf">gossip-message.png</property>
 	  <property name="xalign">0.5</property>
@@ -4803,7 +4811,7 @@ To get started, just click &quot;Forward&quot;.</property>
   </child>
 
   <child>
-    <widget class="GtkMenuItem" id="avskiljare6">
+    <widget class="GtkSeparatorMenuItem" id="avskiljare6">
       <property name="visible">True</property>
     </widget>
   </child>
