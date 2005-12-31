@@ -1,3 +1,9 @@
+2005-12-31  Brian Pepple  <bdpepple@ameritech.net>
+
+	* help/C/gossip.xml:
+	- Updated help documentation to reflect the latest GUI changes.
+	- Fixes bug #325378 (Brian Pepple).
+
 2005-12-30  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:

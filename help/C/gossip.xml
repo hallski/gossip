@@ -191,7 +191,7 @@
         </listitem>
     </itemizedlist>
 	More information on the Jabber protocol can be found on the Website of the  
-	<ulink url="http://www.jabber.org">Jabber Software Fondation</ulink>.
+	<ulink url="http://www.jabber.org">Jabber Software Foundation</ulink>.
     </para>
   </sect2>
   </sect1>
@@ -252,7 +252,7 @@
     		    </imageobject>
 	    -->
 	    <textobject> 
-	      <phrase>Shows &app;s first start window which is a wizard to set up &app;.</phrase> 
+	      <phrase>Shows &app;s first start window which is an assistant to set up &app;.</phrase> 
 	    </textobject> 
 	  </mediaobject> 
 	</screenshot> 
@@ -263,13 +263,13 @@
     <!-- for example, the items on the menubar and on the toolbar. This section is optional. -->
 
     	<para>
-    		This window is an assistant to set up &app;. With this wizard you 
+    		This window is an assistant to set up &app;. With this assistant you 
     		can set up &app; in few steps. You can use it to get a new Jabber
     		account or setting up &app; for using an existing Jabber account.
     	</para>
     </sect2>
  
-    <sect2 id="gossip-get-a-jabber-acount">
+    <sect2 id="gossip-get-a-jabber-account">
       <title>Getting a Jabber Account</title>
       <para>&app; will help set up a new Jabber account:</para>
       <orderedlist>
@@ -329,7 +329,7 @@
       </orderedlist>
     </sect2>
 
-    <sect2 id="gossip-existing-jabber-acount">
+    <sect2 id="gossip-existing-jabber-account">
       <title>Setting Up &app; to use an Existing Jabber Account</title>
       <para>&app; will let you use an existing Jabber account:</para>
       <orderedlist>
@@ -433,14 +433,22 @@
 	<varlistentry>
 	  <term>Accounts Toolbar</term>
 	  <listitem>
-	    <para>The buttons on the account toolbar allow you, depending on account state, to
-              connect, disconnect, and edit an account.</para>
+	    <para>
+              The buttons on the account toolbar allow you, depending on account state, to
+              connect, disconnect, and edit an account.
+            </para>
+	    <note>
+	      <para>
+                The accounts toolbar is only visible if you have more than two Jabbers accounts
+                set-up in &app;.
+              </para>
+	    </note>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
 	  <term>Contact List</term>
 	  <listitem>
-	    <para>The Contact List shows all available contacts and their assosiated statuses.</para>
+	    <para>The Contact List shows all available contacts and their associated statuses.</para>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
@@ -466,26 +474,61 @@
     <para>You can use the &app; application to perform the following tasks:</para>
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-connect"> 
-      <title>Connecting</title>
-      <para>To connect to the server, choose 
+      <title>Connect to a Jabber Server</title>
+      <para>To connect to a Jabber server, choose 
 	<menuchoice> 
 	  <guimenu>Chat</guimenu> 
-	  <guimenuitem>Connect...</guimenuitem> 
+	  <guimenuitem>Connect</guimenuitem> 
 	</menuchoice>
-	from the MenuBar.
+	from the Menubar.
       </para>
     </sect2>     
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-disconnect"> 
-      <title>Disconnecting</title>
-      <para>To disconnect from the server, choose 
+      <title>Disconnect from a Jabber Server</title>
+      <para>To disconnect from a Jabber server, choose 
 	<menuchoice> 
 	  <guimenu>Chat</guimenu> 
 	  <guimenuitem>Disconnect</guimenuitem> 
 	</menuchoice>
-	from the MenuBar.
+	from the Menubar.
       </para>
-    </sect2> 
+    </sect2>
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-new-message">
+      <title>Sending An Instant Message</title>
+      <para>You can send instant messages to a contact, in the following ways:</para>
+      <itemizedlist>
+	<listitem>
+	  <para>Double click on the contact's nickname in the Contact List, to open the chat window.</para>
+	</listitem>
+	<listitem>
+	  <para>Choose 
+            <menuchoice>
+	      <shortcut>
+		<keycombo>
+		  <keycap>Ctrl</keycap>
+		  <keycap>N</keycap>
+		</keycombo>
+	      </shortcut>
+	      <guimenu>Chat</guimenu> 
+	      <guimenuitem>New Message</guimenuitem>
+	    </menuchoice>
+            .  A <interface>question</interface> dialog while be displayed, asking for the user ID of
+            the person you wish to send an instant message to.  Select the contact that you wish to send
+            an instant message to from the drop-down box, and click <guibutton>Chat</guibutton>.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            Right click on &app;'s Notification Area icon, and select <guilabel>New Message</guilabel>.
+            A <interface>question</interface> dialog while be displayed, asking for the user ID of
+            the person you wish to send an instant message to.  Select the contact that you wish to send
+            an instant message to from the drop-down box, and click <guibutton>Chat</guibutton>.
+          </para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-add-contact"> 
       <title>Adding a Contact</title> 
@@ -496,75 +539,167 @@
       <orderedlist>
 	<listitem>
 	  <para>
-    	    Select
+    	    Choose
             <menuchoice>
 	      <guimenu>Chat</guimenu> 
 	      <guimenuitem>Add Contact</guimenuitem> 
 	    </menuchoice>
-            from the MenuBar.
+            from the Menubar, to open the <interface>Add Contact</interface> dialog.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-            Enter the contact's Jabber ID (JID) and click <guibutton>Forward</guibutton>.
+	    Use the <guilabel>Which account do you want to add this contact to?</guilabel>
+	    drop-down box to specify which account to add a contact to.
           </para>
-	  <note>
-	    <para>
-              The Jabber ID looks like an email-address. Example: name@host.domain
-            </para>
-	  </note>
 	</listitem>
 	<listitem>
 	  <para>
-            Enter a desired nickname and group name for the contact. The nickname will
-            be displayed in the Contact List under the chosen group name. Click
+            Enter the <guilabel>Jabber ID of new contact</guilabel>, and then
+            click <guibutton>Forward</guibutton>.
+          </para>
+	  <tip>
+	    <para>
+              The Jabber ID (JID) looks like an email-address. Example: name@host.domain
+            </para>
+	  </tip>
+	</listitem>
+	<listitem>
+	  <para>
+            Enter <guilabel>What nickname do you want to use for this contact?</guilabel>,
+            this is the nickname that will be displayed in the Contact List.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            Use the <guilabel>In which group do you want to place this contact?</guilabel>
+            drop-down box to choose a group for this contact.  The contact will be
+            displayed in the Contact List under the chosen group name. Click
             <guibutton>Forward</guibutton> when finished.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-            You need the authorization from the contact, to add him or her to the 
-            Contact List. Also everybody who wants add you, needs your authorization.
-	    Enter a desired request message that will be sent to the contact and click
-            <guibutton>Forward</guibutton>.
-          </para>
-	</listitem>
-	<listitem>
-	  <para>
 	    Review the information displayed and click <guibutton>Apply.</guibutton>.
           </para>
+	  <note>
+	    <para>
+              A request will sent to the contact, asking to subscribe to their 
+              presence notifications.   Until this request is approved, the user will be
+              shown as "Offline" in your Contact List.  In addition, everybody who
+              wants to add you to their Contact List, needs your authorization.
+            </para>
+	  </note>
+	</listitem>
+      </orderedlist>
+    </sect2> 
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-offline-contact">
+      <title>Show Offline Contact's</title>
+      <para>To show offline contact's in the Contact list, choose
+        <menuchoice>
+	  <shortcut>
+	    <keycombo>
+	      <keycap>Ctrl</keycap>
+	      <keycap>O</keycap>
+            </keycombo>
+	  </shortcut>
+	  <guimenu>Chat</guimenu> 
+	  <guimenuitem>Show Offline Contacts</guimenuitem>
+	</menuchoice>
+      </para>
+    </sect2>
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-contact-info"> 
+      <title>Accessing a Contact's Information</title> 
+      <para>
+        To access a contact's information, right click a contact's nickname
+        in the Contact List and select <guimenuitem>Contact Information</guimenuitem>.
+      </para> 
+    </sect2>
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-rename-contact"> 
+      <title>Renaming a Contact</title> 
+      <para>To rename a contact in the Contact List, perform the following steps:</para>
+      <orderedlist>
+	<listitem>
+	  <para>
+            Right click a contact's nickname in the Contact List and select
+            <guimenuitem>Rename Contact</guimenuitem>.
+          </para>
 	</listitem>
 	<listitem>
 	  <para>
-            When the user has permited your request, you can see the user in your
-            contact list as <guilabel>Avaible</guilabel>, <guilabel>Busy</guilabel> or
-            <guilabel>Away</guilabel>.
+            Enter a new name and click <guibutton>OK</guibutton> to apply, or
+            <guibutton>Cancel</guibutton> to discard all changes.
           </para>
 	</listitem>
       </orderedlist>
     </sect2> 
     <!-- ================ Usage Subsection ================================ -->
-    <sect2 id="gossip-contact-info"> 
-      <title>Accessing a Contact's Information</title> 
-      <para>Right Click a contact's nickname in the Contact List and select <guimenuitem>Contact Information</guimenuitem>.</para> 
-    </sect2>
-    <!-- ================ Usage Subsection ================================ -->
-    <sect2 id="gossip-rename-contact"> 
-      <title>Renaming a Contact</title> 
-      <para>
-        Right Click a contact's nickname in the Contact List and select <guimenuitem>Rename Contact</guimenuitem>.
-	Enter new name and click <guibutton>Ok</guibutton> to apply, or
-        <guibutton>Cancel</guibutton> to discard all changes.
-      </para>
-    </sect2> 
-    <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-removing-contact"> 
       <title>Removing a Contact</title> 
       <para>
-        Right Click a contact's nickname in the Contact List and select Remove Contact.
-	Click <guibutton>Yes</guibutton> when prompted to finish removal.
+        To remove a contact, right click a contact's nickname in
+        the Contact List and select <guilabel>Remove Contact</guilabel>.
+        Click <guibutton>Yes</guibutton> when prompted to finish removal.
       </para>
     </sect2> 
+    <!-- ================ Usage Subsection ================================ -->
+    <sect2 id="gossip-edit-information">
+      <title>Edit Account Personal Information</title>
+      <para>
+        To edit an accounts personal information, choose
+        <menuchoice>
+	  <guimenu>Edit</guimenu>
+	  <guimenuitem>Personal Information</guimenuitem>
+	</menuchoice>
+        from the Menubar.  This will open the <interface>Personal Details</interface> dialog,
+        which will allow you to provide the following information:
+      </para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+            Select the <guilabel>Account</guilabel> you wish to edit from the 
+            drop-down box.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            To edit your name, edit the contents of the <guilabel>Name</guilabel> text box.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            To edit your nickname, edit the contents of the <guilabel>Nickname</guilabel>
+            text box.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            To edit your e-mail address, edit the contents of the <guilabel>Email</guilabel>
+            text box.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            To edit your web address, edit the contents of the <guilabel>Web site</guilabel>
+            text box.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            To edit your description, edit the contents of the <guilabel>Description</guilabel>
+            text box.
+          </para>
+	</listitem>
+	<listitem>
+	  <para>
+            After reviewing the information, click <guibutton>Apply</guibutton>.
+          </para>
+	</listitem>
+      </itemizedlist>
+    </sect2>	  
   </sect1>
   <!-- ============= Customization ============================= -->
   <!-- Use this section to describe how to customize the application. -->
@@ -625,7 +760,7 @@
 	      </listitem> 
 	      <listitem> 
 		<para>Select the <guilabel>Disable sounds when away</guilabel> option
-                  to idsable sounds when away.</para> 
+                  to disable sounds when away.</para> 
 	      </listitem> 
 	    </itemizedlist> 
 	  </listitem> 
@@ -636,6 +771,12 @@
     <!-- Another tabbed section on the Preferences dialog. -->
     <sect2 id="gossip-prefs-spelling"> 
       <title>Spell Checking</title> 
+      <note>
+	<para>
+          These setting might not be available if spell checking capabilities
+          were not compiled into &app;.
+        </para>
+      </note>
       <variablelist> 
 	<varlistentry> 
 	  <term> <guilabel>Languages</guilabel> </term> 
@@ -645,11 +786,11 @@
 		<para>Select the languages you wish to enable for spell checking</para>
 	      </listitem>
 	    </itemizedlist>
-	    <note>
+	    <tip>
 	      <para>The list of languages only reflect the languages that have a 
                 dictionary installed.
               </para>
-	    </note>
+	    </tip>
 	  </listitem>
 	</varlistentry>
 	<varlistentry>

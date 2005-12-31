@@ -27,6 +27,7 @@ News in 0.9.1:
  * Added "composing" support back into Gossip (Martyn).
  * Added "auto_connect" feature for accounts when starting Gossip (Martyn).
  * Clean up unused ellipsize and tree model filter code borrowed from libegg which is now in GTK+ (Richard).
+ * Fixed #325378 - Updated help documentation to reflect the latest user interface changes (Brian Pepple).
  * Fixed #308041 - Made the show/hide contact list configurable from the main menu not just the notification area (Radomir Dopieralski).
  * Fixed #321801 - Don't send "composing" notification from every account, only from the account that has that contact (Ross Burton).
  * Fixed #319713 - Make sure private chats started by double clicking on contacts in group chats actually work (Ross Burton).
