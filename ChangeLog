@@ -1,3 +1,8 @@
+2006-01-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c: (gossip_chat_should_highlight_nick): Fix
+	crash.
+
 2005-12-31  Brian Pepple  <bdpepple@ameritech.net>
 
 	* help/C/gossip.xml:

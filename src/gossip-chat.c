@@ -802,7 +802,10 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
 
 	msg = gossip_message_get_body (message);
-
+	if (!msg) {
+		return FALSE;
+	}
+		
 	if (my_contact) {
 		contact = my_contact;
 	} else {
@@ -810,12 +813,14 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 	}
 
 	to = gossip_contact_get_name (contact);
+	if (!to) {
+		return FALSE;
+	}
 
 	cf_msg = g_utf8_casefold (msg, -1);
 	cf_to = g_utf8_casefold (to, -1);
 
 	ch = strstr (cf_msg, cf_to);
-
 	if (ch == NULL) {
 		goto finished;
 	}
