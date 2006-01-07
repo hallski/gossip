@@ -1,3 +1,9 @@
+2006-01-07  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-group-chat.c: (group_chat_finalize):
+	- Make sure we clean up all signals.
+	- Fixes bug #325740.
+
 2006-01-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c: (gossip_chat_should_highlight_nick): Fix

@@ -261,6 +261,9 @@ group_chat_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (priv->provider, 
 					      group_chat_new_message_cb, chat);
 	g_signal_handlers_disconnect_by_func (priv->provider,
+					      group_chat_new_room_event_cb, 
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->provider,
 					      group_chat_title_changed_cb, 
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->provider,
