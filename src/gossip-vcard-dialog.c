@@ -96,28 +96,28 @@ enum {
 	COL_ACCOUNT_COUNT
 };
 
-static gint           vcard_dialog_get_account_count           (GossipVCardDialog *dialog);
-static void           vcard_dialog_set_account_to_last         (GossipVCardDialog *dialog);
-static void           vcard_dialog_lookup_start                (GossipVCardDialog *dialog);
-static void           vcard_dialog_lookup_stop                 (GossipVCardDialog *dialog);
-static void           vcard_dialog_get_vcard_cb                (GossipResult       result,
-								GossipVCard       *vcard,
-								GossipVCardDialog *dialog);
-static void           vcard_dialog_set_vcard                   (GossipVCardDialog *dialog);
-static void           vcard_dialog_set_vcard_cb                (GossipResult       result,
-								GossipVCardDialog *dialog);
-static gboolean       vcard_dialog_progress_pulse_cb           (GtkWidget         *progressbar);
-static gboolean       vcard_dialog_wait_cb                     (GossipVCardDialog *dialog);
-static gboolean       vcard_dialog_timeout_cb                  (GossipVCardDialog *dialog);
-static gboolean       vcard_dialog_saved_cb                    (GtkWidget         *widget);
-static void           vcard_dialog_account_chooser_changed_cb  (GtkWidget         *combo_box,
-								GossipVCardDialog *dialog);
-static void           vcard_dialog_response_cb                 (GtkDialog         *widget,
-								gint               response,
-								GossipVCardDialog *dialog);
-static void           vcard_dialog_destroy_cb                  (GtkWidget         *widget,
-								GossipVCardDialog *dialog);
 
+static gint     vcard_dialog_get_account_count   (GossipVCardDialog *dialog);
+static void     vcard_dialog_set_account_to_last (GossipVCardDialog *dialog);
+static void     vcard_dialog_lookup_start        (GossipVCardDialog *dialog);
+static void     vcard_dialog_lookup_stop         (GossipVCardDialog *dialog);
+static void     vcard_dialog_get_vcard_cb        (GossipResult       result,
+						  GossipVCard       *vcard,
+						  GossipVCardDialog *dialog);
+static void     vcard_dialog_set_vcard           (GossipVCardDialog *dialog);
+static void     vcard_dialog_set_vcard_cb        (GossipResult       result,
+						  GossipVCardDialog *dialog);
+static gboolean vcard_dialog_progress_pulse_cb   (GtkWidget         *progressbar);
+static gboolean vcard_dialog_wait_cb             (GossipVCardDialog *dialog);
+static gboolean vcard_dialog_timeout_cb          (GossipVCardDialog *dialog);
+static gboolean vcard_dialog_saved_cb            (GtkWidget         *widget);
+static void     vcard_dialog_account_changed_cb  (GtkWidget         *combo_box,
+						  GossipVCardDialog *dialog);
+static void     vcard_dialog_response_cb         (GtkDialog         *widget,
+						  gint               response,
+						  GossipVCardDialog *dialog);
+static void     vcard_dialog_destroy_cb          (GtkWidget         *widget,
+						  GossipVCardDialog *dialog);
 
 
 static gint
@@ -133,14 +133,14 @@ static void
 vcard_dialog_set_account_to_last (GossipVCardDialog *dialog) 
 {
 	g_signal_handlers_block_by_func (dialog->account_chooser, 
-					 vcard_dialog_account_chooser_changed_cb, 
+					 vcard_dialog_account_changed_cb, 
 					 dialog);
 		
 	gtk_combo_box_set_active (GTK_COMBO_BOX (dialog->account_chooser), 
 				  dialog->last_account_selected);
 
 	g_signal_handlers_unblock_by_func (dialog->account_chooser, 
-					   vcard_dialog_account_chooser_changed_cb, 
+					   vcard_dialog_account_changed_cb, 
 					   dialog);
 }
 
@@ -383,7 +383,7 @@ vcard_dialog_saved_cb (GtkWidget *widget)
 }
 
 static void
-vcard_dialog_account_chooser_changed_cb (GtkWidget         *combo_box,
+vcard_dialog_account_changed_cb (GtkWidget         *combo_box,
 					 GossipVCardDialog *dialog)
 {
 	vcard_dialog_lookup_start (dialog);
@@ -487,7 +487,7 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			    TRUE, TRUE, 0);
 
 	g_signal_connect (dialog->account_chooser, "changed",
-			  G_CALLBACK (vcard_dialog_account_chooser_changed_cb),
+			  G_CALLBACK (vcard_dialog_account_changed_cb),
 			  dialog);
 
 	gtk_widget_show (dialog->account_chooser);

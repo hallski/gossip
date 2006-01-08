@@ -1,3 +1,17 @@
+2006-01-08  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-chatroom-manager.[ch]:
+	* libgossip/gossip-chatroom.[ch]:
+	* libgossip/gossip-chatroom.dtd:
+	* src/gossip-app.c: 
+	* src/gossip-chatrooms-dialog.c:
+	* ui/group-chat.glade:
+	- Every chat room is now associated with an account instead of
+	being available across ALL accounts. This is the first step
+	towards auto connecting group chats on startup, next is a GUI
+	update. 
+
 2006-01-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-group-chat.c: (group_chat_finalize):

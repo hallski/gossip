@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 
+#include "gossip-account-manager.h"
 #include "gossip-chatroom.h"
 
 #define GOSSIP_TYPE_CHATROOM_MANAGER         (gossip_chatroom_manager_get_type ())
@@ -49,12 +50,14 @@ struct _GossipChatroomManagerClass {
 
 GType           gossip_chatroom_manager_get_type      (void) G_GNUC_CONST;
 GossipChatroomManager *
-                gossip_chatroom_manager_new           (const gchar           *filename);
+                gossip_chatroom_manager_new           (GossipAccountManager  *manager,
+						       const gchar           *filename);
 gboolean        gossip_chatroom_manager_add           (GossipChatroomManager *manager,
 						       GossipChatroom        *chatroom);
 void            gossip_chatroom_manager_remove        (GossipChatroomManager *manager,
 						       GossipChatroom        *chatroom);
-GList *         gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager);
+GList *         gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
+						       GossipAccount         *account);
 guint           gossip_chatroom_manager_get_count     (GossipChatroomManager *manager);
 GossipChatroom *gossip_chatroom_manager_get_default   (GossipChatroomManager *manager);
 GossipChatroom *gossip_chatroom_manager_find          (GossipChatroomManager *manager,

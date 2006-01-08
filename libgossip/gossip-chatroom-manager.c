@@ -41,11 +41,13 @@ typedef struct _GossipChatroomManagerPriv GossipChatroomManagerPriv;
 
 
 struct _GossipChatroomManagerPriv {
-	GList *chatrooms;
+	GList                *chatrooms;
 
-	gchar *chatrooms_file_name;
+	GossipAccountManager *account_manager;
 
-	gchar *default_name;
+	gchar                *chatrooms_file_name;
+
+	gchar                *default_name;
 };
 
 enum {
@@ -140,22 +142,31 @@ chatroom_manager_finalize (GObject *object)
 	g_list_foreach (priv->chatrooms, (GFunc)g_object_unref, NULL);
 	g_list_free (priv->chatrooms);
 
+	if (priv->account_manager) {
+		g_object_unref (priv->account_manager);
+	}
+
 	g_free (priv->chatrooms_file_name);
 
 	g_free (priv->default_name);
 }
 
 GossipChatroomManager *
-gossip_chatroom_manager_new (const gchar *filename)
+gossip_chatroom_manager_new (GossipAccountManager *account_manager,
+			     const gchar          *filename)
 {
 	
 	GossipChatroomManager     *manager;
 	GossipChatroomManagerPriv *priv;
-
+	
 	manager = g_object_new (GOSSIP_TYPE_CHATROOM_MANAGER, NULL);
 
 	priv = GET_PRIV (manager);
-	
+
+	if (account_manager) {
+		priv->account_manager = g_object_ref (account_manager);
+	}
+
 	if (filename) {
 		priv->chatrooms_file_name = g_strdup (filename);
 	}
@@ -239,17 +250,35 @@ chatroom_manager_chatroom_enabled_cb (GossipChatroom        *chatroom,
 }
 
 GList *
-gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager)
+gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
+				       GossipAccount         *account)
 {
 	GossipChatroomManagerPriv *priv;
-	GList                     *chatrooms;
+	GList                     *chatrooms, *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
 
 	priv = GET_PRIV (manager);
 
-	chatrooms = g_list_copy (priv->chatrooms);
-	g_list_foreach (chatrooms, (GFunc)g_object_ref, NULL);
+	if (!account) {
+		return chatrooms = g_list_copy (priv->chatrooms);
+	}	
+
+	for (l = priv->chatrooms; l; l = l->next) {
+		GossipChatroom *chatroom;
+		GossipAccount  *this_account;
+		
+		chatroom = l->data;
+		
+		this_account = gossip_chatroom_get_account (chatroom);
+		if (!this_account) {
+			continue;
+		}
+
+		if (gossip_account_equal (account, this_account)) {
+			chatrooms = g_list_append (chatrooms, chatroom);
+		}
+	}
 
 	return chatrooms;
 }
@@ -405,8 +434,8 @@ static gboolean
 chatroom_manager_get_all (GossipChatroomManager *manager)
 {
 	GossipChatroomManagerPriv *priv;
-	gchar                    *dir;
-	gchar                    *file_with_path = NULL;
+	gchar                     *dir;
+	gchar                     *file_with_path = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 
@@ -439,16 +468,20 @@ chatroom_manager_get_all (GossipChatroomManager *manager)
 
 static void
 chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
-				 xmlNodePtr            node)
+				 xmlNodePtr             node)
 {
-	GossipChatroom     *chatroom;
-	xmlNodePtr          child;
-	gchar              *str;
-	GossipChatroomType  type;
-	gchar              *name, *nick, *server, *room, *password;
-	gboolean            auto_connect;
+	GossipChatroomManagerPriv *priv;
+	GossipChatroom            *chatroom;
+	xmlNodePtr                 child;
+	gchar                     *str;
+	GossipChatroomType         type;
+	gchar                     *name, *nick, *server;
+	gchar                     *room, *password, *account_name;
+	gboolean                   auto_connect;
 
-	/* Default values. */
+	priv = GET_PRIV (manager);
+
+	/* default values. */
 	type = GOSSIP_CHATROOM_TYPE_NORMAL;
 	name = NULL;
 	nick = NULL;
@@ -456,8 +489,10 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	room = NULL;
 	password = NULL;
 	auto_connect = TRUE;
+	account_name = NULL;
 
 	child = node->children;
+
 	while (child) {
 		gchar *tag;
 
@@ -491,6 +526,9 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 			}
 			xmlFree (str);
 		}
+		else if (strcmp (tag, "account") == 0) {
+			account_name = str;
+		}
 
 		child = child->next;
 	}
@@ -511,6 +549,19 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 		if (password) {
 			gossip_chatroom_set_password (chatroom, password);
 		}
+
+		if (account_name) {
+			GossipAccount *account = NULL;
+
+			if (priv->account_manager) {
+				account = gossip_account_manager_find (priv->account_manager, 
+								       account_name);
+			}
+
+			if (account) {
+				gossip_chatroom_set_account (chatroom, account);
+			}
+		}
 		
 		gossip_chatroom_manager_add (manager, chatroom);
 		
@@ -522,6 +573,7 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 	xmlFree (server);
 	xmlFree (room);
 	xmlFree (password);
+	xmlFree (account_name);
 }
 
 static gboolean
@@ -636,10 +688,11 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		     BAD_CAST "default", 
 		     BAD_CAST priv->default_name);
 
-	chatrooms = gossip_chatroom_manager_get_chatrooms (manager);
+	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, NULL);
 
 	for (l = chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
+		GossipAccount  *account;
 		gchar          *type;
 		xmlNodePtr      node;
 	
@@ -662,6 +715,12 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 		xmlNewChild (node, NULL, BAD_CAST "password", BAD_CAST gossip_chatroom_get_password (chatroom));
 		xmlNewChild (node, NULL, BAD_CAST "auto_connect", BAD_CAST (gossip_chatroom_get_auto_connect (chatroom) ? "yes" : "no"));
+
+		account = gossip_chatroom_get_account (chatroom);
+		if (account) {
+			xmlNewChild (node, NULL, BAD_CAST "account", BAD_CAST gossip_account_get_name (account));
+			g_object_unref (account);
+		}
 
 		g_free (type);
 	}

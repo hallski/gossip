@@ -9,7 +9,7 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT chatroom 
-    (type,name,(nick?),server,room,(password?),(auto_connect?))>
+    (type,name,(nick?),server,room,(password?),(auto_connect?),(account?))>
 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
@@ -18,4 +18,5 @@
 <!ELEMENT room (#PCDATA)>
 <!ELEMENT password (#PCDATA)>
 <!ELEMENT auto_connect (#PCDATA)>
+<!ELEMENT account (#PCDATA)>
 

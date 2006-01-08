@@ -46,6 +46,8 @@ struct _GossipChatroomPriv {
 	gchar              *room;
 	gchar              *password;
 	gboolean            auto_connect;
+	
+	GossipAccount      *account;
 };
 
 
@@ -72,6 +74,7 @@ enum {
 	PROP_ROOM,
 	PROP_PASSWORD,
 	PROP_AUTO_CONNECT,
+	PROP_ACCOUNT,
 };
 
 
@@ -197,6 +200,14 @@ chatroom_class_init (GossipChatroomClass *class)
 							       FALSE,
 							       G_PARAM_READWRITE));
 
+	g_object_class_install_property (object_class,
+					 PROP_ACCOUNT,
+					 g_param_spec_object ("account",
+							      "Chatroom Account",
+							      "The account associated with an chatroom",
+							      GOSSIP_TYPE_ACCOUNT,
+							      G_PARAM_READWRITE));
+
 	/*
 	 * signals
 	 */
@@ -232,6 +243,7 @@ chatroom_init (GossipChatroom *chatroom)
 	priv->room         = NULL;
 	priv->password     = NULL;
 	priv->auto_connect = TRUE;
+	priv->account      = NULL;
 }
 
 static void
@@ -246,6 +258,10 @@ chatroom_finalize (GObject *object)
 	g_free (priv->server);
 	g_free (priv->room);
 	g_free (priv->password);
+	
+	if (priv->account) {
+		g_object_unref (priv->account);
+	}
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -284,6 +300,9 @@ chatroom_get_property (GObject    *object,
 		break;
 	case PROP_AUTO_CONNECT:
 		g_value_set_boolean (value, priv->auto_connect);
+		break;
+	case PROP_ACCOUNT:
+		g_value_set_object (value, priv->account);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -329,6 +348,10 @@ chatroom_set_property (GObject      *object,
 	case PROP_AUTO_CONNECT:
 		gossip_chatroom_set_auto_connect (GOSSIP_CHATROOM (object),
 						 g_value_get_boolean (value));
+		break;
+	case PROP_ACCOUNT:
+		gossip_chatroom_set_account (GOSSIP_CHATROOM (object),
+					     g_value_get_object (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -422,6 +445,22 @@ gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 
 	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
 	return priv->auto_connect;
+}
+
+GossipAccount *
+gossip_chatroom_get_account (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
+	
+	if (!priv->account) {
+		return NULL;
+	}
+
+	return g_object_ref (priv->account);
 }
 
 void 
@@ -526,6 +565,26 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 	priv->auto_connect = auto_connect;
 
 	g_object_notify (G_OBJECT (chatroom), "auto_connect");
+	g_signal_emit (chatroom, signals[CHANGED], 0);
+}
+
+void
+gossip_chatroom_set_account (GossipChatroom *chatroom,
+			     GossipAccount  *account)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
+	if (priv->account) {
+		g_object_unref (priv->account);
+	}
+		
+	priv->account = g_object_ref (account);
+
+	g_object_notify (G_OBJECT (chatroom), "account");
 	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 

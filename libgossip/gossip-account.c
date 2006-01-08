@@ -653,7 +653,7 @@ gossip_account_hash (gconstpointer key)
 
 gboolean
 gossip_account_equal (gconstpointer a, 
-		       gconstpointer b)
+		      gconstpointer b)
 {
 	GossipAccountPriv *priv1;
 	GossipAccountPriv *priv2;

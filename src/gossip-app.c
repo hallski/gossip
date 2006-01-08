@@ -456,7 +456,7 @@ app_setup (GossipAccountManager *manager)
 		gossip_new_account_window_show (NULL);
 	}
 
-	priv->chatroom_manager = gossip_chatroom_manager_new (NULL);
+	priv->chatroom_manager = gossip_chatroom_manager_new (manager, NULL);
 
 	priv->chat_manager = gossip_chat_manager_new ();
  	priv->event_manager = gossip_event_manager_new (); 

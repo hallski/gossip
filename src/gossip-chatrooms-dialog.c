@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2005 Imendio AB
+ * Copyright (C) 2002-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -169,6 +169,8 @@ static gboolean       chatrooms_dialog_chatroom_foreach             (GtkTreeMode
 								     GtkTreePath              *path,
 								     GtkTreeIter              *iter,
 								     GossipChatroomsDialog    *dialog);
+static void           chatrooms_dialog_account_changed_cb           (GtkWidget                *combo_box,
+								     GossipChatroomsDialog    *dialog);
 static void           chatrooms_dialog_response_cb                  (GtkWidget                *widget,
 								     gint                      response,
 								     GossipChatroomsDialog    *dialog);
@@ -193,6 +195,9 @@ chatrooms_dialog_chatrooms_setup (GossipChatroomsDialog *dialog)
 {
 	GossipChatroomManager *manager;
 	GossipChatroom        *default_chatroom;
+	GossipAccount         *account;
+	GossipAccountChooser  *account_chooser;
+
 	GList                 *chatrooms, *l;
 
 	GtkListStore          *store;
@@ -239,7 +244,10 @@ chatrooms_dialog_chatrooms_setup (GossipChatroomsDialog *dialog)
 					   dialog);
 
 	/* look up chatrooms */
-	chatrooms = gossip_chatroom_manager_get_chatrooms (manager);
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
+	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, account);
+	g_object_unref (account);
 
 	default_chatroom = gossip_chatroom_manager_get_default (manager);
 	if (default_chatroom) {
@@ -455,6 +463,7 @@ chatrooms_dialog_cancel (GossipChatroomsDialog *dialog,
 
 			session = gossip_app_get_session ();
 			provider = gossip_session_get_chatroom_provider (session, account);
+			g_object_unref (account);
 			
 			gossip_chatroom_provider_cancel (provider, dialog->joining_id);
 		}
@@ -962,6 +971,13 @@ chatrooms_dialog_chatroom_foreach (GtkTreeModel          *model,
 }
 
 static void
+chatrooms_dialog_account_changed_cb (GtkWidget             *combo_box,
+				     GossipChatroomsDialog *dialog)
+{
+	chatrooms_dialog_chatrooms_setup (dialog);
+}
+
+static void
 chatrooms_dialog_response_cb (GtkWidget             *widget,
 			      gint                   response,
 			      GossipChatroomsDialog *dialog)
@@ -976,6 +992,9 @@ chatrooms_dialog_response_cb (GtkWidget             *widget,
 		const gchar            *room;
 		const gchar            *server;
 		const gchar            *nickname;
+
+		account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+		account = gossip_account_chooser_get_account (account_chooser);
 	
 		nickname = gtk_entry_get_text (GTK_ENTRY (dialog->nickname_entry));
 		server = gtk_entry_get_text (GTK_ENTRY (dialog->server_entry));
@@ -987,12 +1006,13 @@ chatrooms_dialog_response_cb (GtkWidget             *widget,
 			GossipChatroom        *chatroom;
 			gchar                 *tmpname;
 
-			tmpname = g_strdup_printf ("%s@%s as %s", room, server, nickname);
+			tmpname = g_strdup_printf ("%s@%s", room, server);
 			chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
 						 "name", tmpname, 
 						 "nick", nickname, 
 						 "server", server,
 						 "room", room, 
+						 "account", account,
 						 NULL);
 			g_free (tmpname);
 
@@ -1020,11 +1040,10 @@ chatrooms_dialog_response_cb (GtkWidget             *widget,
 						    dialog);
 
 		/* now do the join */
-		account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
-		account = gossip_account_chooser_get_account (account_chooser);
-
 		session = gossip_app_get_session ();
 		provider = gossip_session_get_chatroom_provider (session, account);
+
+		g_object_unref (account);
 
 		id = gossip_chatroom_provider_join (provider,
 						    room, server, nickname, NULL,
@@ -1152,6 +1171,10 @@ gossip_chatrooms_dialog_show (void)
 	gtk_box_pack_start (GTK_BOX (dialog->account_hbox), 
 			    dialog->account_chooser,
 			    TRUE, TRUE, 0);
+
+	g_signal_connect (dialog->account_chooser, "changed",
+			  G_CALLBACK (chatrooms_dialog_account_changed_cb),
+			  dialog);
 
 	gtk_widget_show (dialog->account_chooser);
 

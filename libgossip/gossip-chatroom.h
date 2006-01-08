@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+#include "gossip-account.h"
+
 #define GOSSIP_TYPE_CHATROOM         (gossip_chatroom_get_gtype ())
 #define GOSSIP_CHATROOM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM, GossipChatroom))
 #define GOSSIP_CHATROOM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
@@ -60,6 +62,7 @@ const gchar *      gossip_chatroom_get_server       (GossipChatroom     *chatroo
 const gchar *      gossip_chatroom_get_room         (GossipChatroom     *chatroom);
 const gchar *      gossip_chatroom_get_password     (GossipChatroom     *chatroom);
 gboolean           gossip_chatroom_get_auto_connect (GossipChatroom     *chatroom);
+GossipAccount *    gossip_chatroom_get_account      (GossipChatroom     *chatroom);
 void               gossip_chatroom_set_type         (GossipChatroom     *chatroom,
 						     GossipChatroomType  type);
 void               gossip_chatroom_set_name         (GossipChatroom     *chatroom,
@@ -74,6 +77,8 @@ void               gossip_chatroom_set_password     (GossipChatroom     *chatroo
 						     const gchar        *password);
 void               gossip_chatroom_set_auto_connect (GossipChatroom     *chatroom,
 						     gboolean            auto_connect);
+void               gossip_chatroom_set_account      (GossipChatroom     *chatroom,
+						     GossipAccount      *account);
 guint              gossip_chatroom_hash             (gconstpointer       key);
 gboolean           gossip_chatroom_equal            (gconstpointer       v1,
 						     gconstpointer       v2);
