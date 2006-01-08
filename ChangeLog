@@ -1,5 +1,11 @@
 2006-01-08  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-manager.c:
+	(gossip_chatroom_manager_get_chatrooms):
+	- Fixed variable initialisation error.
+
+2006-01-08  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.c:
 	* libgossip/gossip-chatroom-manager.[ch]:
 	* libgossip/gossip-chatroom.[ch]:

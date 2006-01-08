@@ -254,7 +254,8 @@ gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
 				       GossipAccount         *account)
 {
 	GossipChatroomManagerPriv *priv;
-	GList                     *chatrooms, *l;
+	GList                     *chatrooms = NULL;
+	GList                     *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
 
