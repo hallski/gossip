@@ -763,7 +763,7 @@ gossip_chat_present (GossipChat *chat)
         }
 
         gossip_chat_window_switch_to_chat (priv->window, chat);
-	gossip_ui_utils_window_present (
+	gossip_window_present (
 		GTK_WINDOW (gossip_chat_window_get_dialog (priv->window)));
 
 	gtk_widget_grab_focus (chat->input_text_view);

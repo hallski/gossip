@@ -31,9 +31,9 @@
 
 #include "gossip-status-presets.h"
 
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-	GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj),		          \
+						    GOSSIP_TYPE_PRESENCE_CHOOSER, \
+						    GossipPresenceChooserPriv))
 
 typedef struct {
 	GtkWidget  *button;
@@ -41,20 +41,21 @@ typedef struct {
 } GossipPresenceChooserPriv;
 
 
+static void     presence_chooser_finalize              (GObject               *object);
+static void     presence_chooser_show_dialog           (GossipPresenceChooser *chooser,
+							GossipPresenceState    state);
+static gboolean presence_chooser_button_press_event_cb (GtkButton             *button,
+							GdkEventButton        *event,
+							GossipPresenceChooser *chooser);
+
+
 enum {
         CHANGED,
         LAST_SIGNAL
 };
 
+
 static guint signals[LAST_SIGNAL];
-
-
-static void presence_chooser_finalize                  (GObject               *object);
-static void presence_chooser_show_dialog               (GossipPresenceChooser *chooser,
-							GossipPresenceState    state);
-static gboolean presence_chooser_button_press_event_cb (GtkButton             *button,
-							GdkEventButton        *event,
-							GossipPresenceChooser *chooser);
 
 
 G_DEFINE_TYPE (GossipPresenceChooser, gossip_presence_chooser, GTK_TYPE_HBOX);
@@ -208,7 +209,7 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 			  G_CALLBACK (gtk_widget_destroyed),
 			  &dialog);
 
-	pixbuf = gossip_ui_utils_get_pixbuf_for_presence_state (state);
+	pixbuf = gossip_pixbuf_for_presence_state (state);
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 

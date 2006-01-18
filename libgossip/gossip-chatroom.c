@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include <glib.h>
+#include <glib/gi18n.h>
 
 #include "libgossip-marshal.h"
 
@@ -36,18 +37,21 @@ typedef struct _GossipChatroomPriv GossipChatroomPriv;
 
 
 struct _GossipChatroomPriv {
-	GossipChatroomType  type;
+	GossipChatroomType    type;
 
-	GossipChatroomId    id;
+	GossipChatroomId      id;
 	
-	gchar              *name;
-	gchar              *nick;
-	gchar              *server;
-	gchar              *room;
-	gchar              *password;
-	gboolean            auto_connect;
+	gchar                *name;
+	gchar                *nick;
+	gchar                *server;
+	gchar                *room;
+	gchar                *password;
+	gboolean              auto_connect;
 	
-	GossipAccount      *account;
+	GossipChatroomStatus  status;
+	gchar                *last_error;
+
+	GossipAccount        *account;
 };
 
 
@@ -74,6 +78,8 @@ enum {
 	PROP_ROOM,
 	PROP_PASSWORD,
 	PROP_AUTO_CONNECT,
+	PROP_STATUS,
+	PROP_LAST_ERROR,
 	PROP_ACCOUNT,
 };
 
@@ -201,6 +207,24 @@ chatroom_class_init (GossipChatroomClass *class)
 							       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_STATUS,
+					 g_param_spec_int ("status",
+							   "Chatroom Status",
+							   "Status of the room, open, closed, etc",
+							   G_MININT,
+							   G_MAXINT,
+							   GOSSIP_CHATROOM_UNKNOWN,
+							   G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_LAST_ERROR,
+					 g_param_spec_string ("last_error",
+							      "Last Error",
+							      "The last error that was given when trying to connect",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_ACCOUNT,
 					 g_param_spec_object ("account",
 							      "Chatroom Account",
@@ -242,7 +266,9 @@ chatroom_init (GossipChatroom *chatroom)
 	priv->server       = NULL;
 	priv->room         = NULL;
 	priv->password     = NULL;
-	priv->auto_connect = TRUE;
+	priv->auto_connect = FALSE;
+	priv->status       = GOSSIP_CHATROOM_CLOSED;
+	priv->last_error   = NULL;
 	priv->account      = NULL;
 }
 
@@ -258,6 +284,8 @@ chatroom_finalize (GObject *object)
 	g_free (priv->server);
 	g_free (priv->room);
 	g_free (priv->password);
+
+	g_free (priv->last_error);
 	
 	if (priv->account) {
 		g_object_unref (priv->account);
@@ -300,6 +328,12 @@ chatroom_get_property (GObject    *object,
 		break;
 	case PROP_AUTO_CONNECT:
 		g_value_set_boolean (value, priv->auto_connect);
+		break;
+	case PROP_STATUS:
+		g_value_set_int (value, priv->status);
+		break;
+	case PROP_LAST_ERROR:
+		g_value_set_string (value, priv->last_error);
 		break;
 	case PROP_ACCOUNT:
 		g_value_set_object (value, priv->account);
@@ -348,6 +382,14 @@ chatroom_set_property (GObject      *object,
 	case PROP_AUTO_CONNECT:
 		gossip_chatroom_set_auto_connect (GOSSIP_CHATROOM (object),
 						 g_value_get_boolean (value));
+		break;
+	case PROP_STATUS:
+		gossip_chatroom_set_status (GOSSIP_CHATROOM (object),
+					    g_value_get_int (value));
+		break;
+	case PROP_LAST_ERROR:
+		gossip_chatroom_set_last_error (GOSSIP_CHATROOM (object),
+						g_value_get_string (value));
 		break;
 	case PROP_ACCOUNT:
 		gossip_chatroom_set_account (GOSSIP_CHATROOM (object),
@@ -445,6 +487,29 @@ gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 
 	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
 	return priv->auto_connect;
+}
+
+GossipChatroomStatus
+gossip_chatroom_get_status (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), GOSSIP_CHATROOM_UNKNOWN);
+
+	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
+	
+	return priv->status;
+}
+
+const gchar *
+gossip_chatroom_get_last_error (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
+	return priv->last_error;
 }
 
 GossipAccount *
@@ -569,6 +634,43 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 }
 
 void
+gossip_chatroom_set_status (GossipChatroom       *chatroom,
+			    GossipChatroomStatus  status)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+
+	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
+
+	priv->status = status;
+
+	g_object_notify (G_OBJECT (chatroom), "status");
+	g_signal_emit (chatroom, signals[CHANGED], 0);
+}
+
+void
+gossip_chatroom_set_last_error (GossipChatroom *chatroom,
+				const gchar    *last_error)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	
+	priv = GOSSIP_CHATROOM_GET_PRIV (chatroom);
+	
+	g_free (priv->last_error);
+	if (last_error) {
+		priv->last_error = g_strdup (last_error);
+	} else {
+		priv->last_error = NULL;
+	}
+
+	g_object_notify (G_OBJECT (chatroom), "last_error");
+	g_signal_emit (chatroom, signals[CHANGED], 0);
+}
+
+void
 gossip_chatroom_set_account (GossipChatroom *chatroom,
 			     GossipAccount  *account)
 {
@@ -628,10 +730,22 @@ const gchar *
 gossip_chatroom_get_type_as_str (GossipChatroomType type)
 {
 	switch (type) {
-	case GOSSIP_CHATROOM_TYPE_NORMAL: return "Normal";
+	case GOSSIP_CHATROOM_TYPE_NORMAL: return _("Normal");
 	}
 
 	return "";
 }
 
+const gchar *
+gossip_chatroom_get_status_as_str (GossipChatroomStatus status)
+{
+	switch (status) {
+	case GOSSIP_CHATROOM_CONNECTING: return _("Connecting...");
+	case GOSSIP_CHATROOM_OPEN: return _("Open");
+	case GOSSIP_CHATROOM_CLOSED: return _("Closed");
+	case GOSSIP_CHATROOM_UNKNOWN: return _("Unknown");
+	case GOSSIP_CHATROOM_ERROR: return _("Error");
+	}
 
+	return "";
+}

@@ -37,8 +37,9 @@
 
 #define CONNECTING_DRAW_TIME      500 /* ms */
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-	GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj),		        \
+						    GOSSIP_TYPE_ACCOUNT_BUTTON, \
+						    GossipAccountButtonPriv))
 
 
 typedef struct {
@@ -273,7 +274,7 @@ static void
 account_button_edit_activate_cb (GtkWidget     *menuitem,
 				 GossipAccount *account)
 {
-       gossip_accounts_dialog_show (account);
+	gossip_accounts_dialog_show (account);
 }
 
 static void
@@ -468,9 +469,9 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 	
 	priv->pixelate = !priv->pixelate;
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (priv->account, 
-								 GTK_ICON_SIZE_BUTTON, 
-								 priv->pixelate);
+	pixbuf = gossip_pixbuf_from_account_status (priv->account, 
+						    GTK_ICON_SIZE_BUTTON, 
+						    priv->pixelate);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
@@ -623,8 +624,8 @@ account_button_protocol_error_cb (GossipSession       *session,
 		gtk_button_set_image (GTK_BUTTON (account_button), image);
 	}
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_error (priv->account, 
-								GTK_ICON_SIZE_BUTTON);
+	pixbuf = gossip_pixbuf_from_account_error (priv->account, 
+						   GTK_ICON_SIZE_BUTTON);
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 	
@@ -716,9 +717,9 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 		gtk_button_set_image (GTK_BUTTON (account_button), image);
 	}
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (priv->account, 
-								 GTK_ICON_SIZE_BUTTON,
-								 online);
+	pixbuf = gossip_pixbuf_from_account_status (priv->account, 
+						    GTK_ICON_SIZE_BUTTON,
+						    online);
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 }

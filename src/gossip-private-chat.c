@@ -66,59 +66,57 @@ struct _GossipPrivateChatPriv {
 };
 
 
-static GObjectClass *parent_class  = NULL;
- 
+static void           gossip_private_chat_class_init            (GossipPrivateChatClass *klass);
+static void           gossip_private_chat_init                  (GossipPrivateChat      *chat);
+static void           private_chat_finalize                     (GObject                *object);
+static void           private_chat_create_gui                   (GossipPrivateChat      *chat);
+static void           private_chat_send                         (GossipPrivateChat      *chat,
+								 const gchar            *msg);
+static void           private_chat_composing_start              (GossipPrivateChat      *chat);
+static void           private_chat_composing_stop               (GossipPrivateChat      *chat);
+static void           private_chat_composing_remove_timeout     (GossipPrivateChat      *chat);
+static gboolean       private_chat_composing_stop_timeout_cb    (GossipPrivateChat      *chat);
+static void           private_chat_contact_presence_updated     (gpointer                not_used,
+								 GossipContact          *contact,
+								 GossipPrivateChat      *chat);
+static void           private_chat_contact_updated              (gpointer                not_used,
+								 GossipContact          *contact,
+								 GossipPrivateChat      *chat);
+static void           private_chat_contact_added                (gpointer                not_used,
+								 GossipContact          *contact,
+								 GossipPrivateChat      *chat);
+static void           private_chat_connected_cb                 (GossipSession          *session,
+								 GossipPrivateChat      *chat);
+static void           private_chat_disconnected_cb              (GossipSession          *session,
+								 GossipPrivateChat      *chat);
+static void           private_chat_composing_event_cb           (GossipSession          *session,
+								 GossipContact          *contact,
+								 gboolean                composing,
+								 GossipChat             *chat);
+static gboolean       private_chat_input_key_press_event_cb     (GtkWidget              *widget,
+								 GdkEventKey            *event,
+								 GossipPrivateChat      *chat);
+static void           private_chat_input_text_buffer_changed_cb (GtkTextBuffer          *buffer,
+								 GossipPrivateChat      *chat);
+static gboolean       private_chat_text_view_focus_in_event_cb  (GtkWidget              *widget,
+								 GdkEvent               *event,
+								 GossipPrivateChat      *chat);
+static gboolean       private_chat_delete_event_cb              (GtkWidget              *widget,
+								 GdkEvent               *event,
+								 GossipPrivateChat      *chat);
+static const gchar *  private_chat_get_name                     (GossipChat             *chat);
+static gchar *        private_chat_get_tooltip                  (GossipChat             *chat);
+static GdkPixbuf *    private_chat_get_status_pixbuf            (GossipChat             *chat);
+static void           private_chat_get_geometry                 (GossipChat             *chat,
+								 int                    *width,
+								 int                    *height);
+static GtkWidget *    private_chat_get_widget                   (GossipChat             *chat);
+static GossipContact *private_chat_get_contact                  (GossipChat             *chat);
+static GossipContact *private_chat_get_own_contact              (GossipChat             *chat);
 
-static void            gossip_private_chat_class_init            (GossipPrivateChatClass  *klass);
-static void            gossip_private_chat_init                  (GossipPrivateChat       *chat);
-static void            private_chat_finalize                     (GObject                 *object);
-static void            private_chat_create_gui                   (GossipPrivateChat       *chat);
-static void            private_chat_send                         (GossipPrivateChat       *chat,
-                                                                  const gchar      *msg);
-static void            private_chat_composing_start              (GossipPrivateChat       *chat);
-static void            private_chat_composing_stop               (GossipPrivateChat       *chat);
-static void            private_chat_composing_remove_timeout     (GossipPrivateChat       *chat);
-static gboolean        private_chat_composing_stop_timeout_cb    (GossipPrivateChat       *chat);
-
-static void            private_chat_contact_presence_updated     (gpointer                 not_used,
-			   				          GossipContact           *contact,
-							          GossipPrivateChat       *chat);
-static void            private_chat_contact_updated              (gpointer                 not_used,
-							          GossipContact           *contact,
-							          GossipPrivateChat       *chat);
-static void            private_chat_contact_added		 (gpointer	           not_used,
-							          GossipContact           *contact,
-							          GossipPrivateChat       *chat);
-static void            private_chat_connected_cb		 (GossipSession	          *session,
-							          GossipPrivateChat	  *chat);
-static void            private_chat_disconnected_cb		 (GossipSession	          *session,
-							          GossipPrivateChat	  *chat);
-static void            private_chat_composing_event_cb          (GossipSession *session,
-								 GossipContact *contact,
-								 gboolean       composing,
-								 GossipChat    *chat);
-
-static gboolean        private_chat_input_key_press_event_cb     (GtkWidget               *widget,
-                                                                  GdkEventKey             *event,
-                                                                  GossipPrivateChat       *chat);
-static void            private_chat_input_text_buffer_changed_cb (GtkTextBuffer           *buffer,
-                                                                  GossipPrivateChat       *chat);
-static gboolean	       private_chat_text_view_focus_in_event_cb  (GtkWidget               *widget,
-							          GdkEvent	          *event,
-							          GossipPrivateChat       *chat);
-static gboolean	       private_chat_delete_event_cb		 (GtkWidget	          *widget,
-							          GdkEvent	          *event,
-							          GossipPrivateChat       *chat);
-static const gchar *   private_chat_get_name                     (GossipChat              *chat);
-static gchar *         private_chat_get_tooltip                  (GossipChat              *chat);
-static GdkPixbuf *     private_chat_get_status_pixbuf            (GossipChat              *chat);
-static void            private_chat_get_geometry                 (GossipChat              *chat,
-		                                                  int                     *width,
-								  int                     *height); 
-static GtkWidget *     private_chat_get_widget		         (GossipChat              *chat);
-static GossipContact * private_chat_get_contact                  (GossipChat              *chat);
-static GossipContact * private_chat_get_own_contact              (GossipChat              *chat);
         
+static GObjectClass *parent_class  = NULL;
+
 
 G_DEFINE_TYPE (GossipPrivateChat, gossip_private_chat, GOSSIP_TYPE_CHAT);
 
@@ -353,9 +351,9 @@ private_chat_composing_start (GossipPrivateChat *chat)
         }
 
         priv->composing_stop_timeout_id = g_timeout_add (
-                        1000 * COMPOSING_STOP_TIMEOUT,
-                        (GSourceFunc) private_chat_composing_stop_timeout_cb,
-                        chat);
+		1000 * COMPOSING_STOP_TIMEOUT,
+		(GSourceFunc) private_chat_composing_stop_timeout_cb,
+		chat);
 }
 
 static void
@@ -705,7 +703,7 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 
 	contact = gossip_chat_get_contact (chat);
 
-	return gossip_ui_utils_get_pixbuf_for_contact (contact);
+	return gossip_pixbuf_for_contact (contact);
 }
 
 static GossipContact *
@@ -856,7 +854,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	invite = gossip_message_get_invite (m);
 	if (invite) {
 		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
-					m);
+						m);
 	} else {
 		gossip_chat_view_append_message_from_other (GOSSIP_CHAT (chat)->view,
 							    m,

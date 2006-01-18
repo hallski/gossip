@@ -1,7 +1,73 @@
+2006-01-18  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/libgossip-marshal.list:
+	* libgossip/gossip-chatroom-manager.[ch]:
+	- Pass the session when creating a new object so we can add
+	"protocol-connected" signal hooks for auto joining chat rooms. 
+	- New signal "chatroom-auto-connected" created.
+	
+	* libgossip/gossip-chatroom-provider.[ch]:
+	- Added some convience functions for i18n translations on
+	GossipChatroomJoinResult. 
+
+	* libgossip/gossip-chatroom.[ch]: 
+	- Added properties and functions for the chat room status.
+	
+	* libgossip/gossip-session.c:
+	- Fixed not accepting NULL for one or more parameters in
+	gossip_session_count_accounts().
+	
+	* protocols/jabber/gossip-jabber.c:
+	* protocols/jabber/gossip-jabber-chatrooms.[ch]:
+	- Fixed a whole bunch of stuff here, making sure that the callback
+	is called in every error condition so the caller gets some
+	response and cleaning up properly.
+
+	* src/Makefile.am:
+	* src/gossip-chat-window.[ch]:
+	- Added in favour of gossip-chatrooms-dialog.[ch]
+
+	* src/gossip-chat-dialog.[ch]:
+	- Removed.
+
+	* src/gossip-app.c: 
+	- Added code to handle auto-join signal from the chatroom manager.
+	
+	* src/gossip-account-button.c:
+	* src/gossip-account-chooser.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-add-contact-window.c:
+	* src/gossip-chat-view.c:
+	* src/gossip-chat.c: 
+	* src/gossip-chatrooms-dialog.c:
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-new-message-dialog.c:
+	* src/gossip-presence-chooser.c:
+	* src/gossip-private-chat.c:
+	* src/gossip-ui-utils.[ch]:
+	- Added function to get pixbuf from GossipChatroom state.
+	- Changed the function stub to not include _ui_utils because
+	functions were getting too long.
+
+	* src/gossip-stock.[ch]:
+	- Added GOSSIP_STOCK_GROUP_MESSAGE for the group chat icon, now
+	also used in the join group chat window.
+	
+	* ui/group-chat.glade:
+	- New and improved :) chat room window.
+
 2006-01-14  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
 
 	* configure.ac: Added "zh_HK" to ALL_LINGUAS.
 	
+2006-01-08  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-group-chat.c (group_chat_get_status_pixbuf): 
+	- Fixed static gossip-group-message.png lookup and made it a stock
+	item since it is used in a couple of places.
+
 2006-01-08  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c:

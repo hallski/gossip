@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2002-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,9 +18,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_CHATROOMS_DIALOG_H__
-#define __GOSSIP_CHATROOMS_DIALOG_H__
+#ifndef __GOSSIP_CHATROOMS_WINDOW_H__
+#define __GOSSIP_CHATROOMS_WINDOW_H__
 
-void gossip_chatrooms_dialog_show (void);
+void gossip_chatrooms_window_show (gboolean show_chatrooms);
 
-#endif /* __GOSSIP_CHATROOMS_DIALOG_H__ */
+#endif /* __GOSSIP_CHATROOMS_WINDOW_H__ */

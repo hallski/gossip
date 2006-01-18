@@ -630,7 +630,7 @@ chat_view_get_smiley (GossipSmiley smiley)
 		gint i;
 
 		for (i = 0; i < NUM_SMILEYS; i++) {
-			pixbufs[i] = gossip_ui_utils_get_pixbuf_from_smiley (
+			pixbufs[i] = gossip_pixbuf_from_smiley (
 				i, GTK_ICON_SIZE_MENU);
 		}
 

@@ -20,10 +20,12 @@
 
 #include <config.h>
 
+#include <glib/gi18n.h>
+
 #include "gossip-contact.h"
-#include "libgossip-marshal.h"
 #include "gossip-message.h"
 #include "gossip-chatroom-provider.h"
+#include "libgossip-marshal.h"
 
 static void  chatroom_provider_base_init (gpointer g_class);
 
@@ -150,23 +152,17 @@ chatroom_provider_base_init (gpointer g_class)
 
 GossipChatroomId
 gossip_chatroom_provider_join (GossipChatroomProvider *provider,
-			       const gchar            *room,
-			       const gchar            *server,
-			       const gchar            *nick,
-			       const gchar            *password,
+			       GossipChatroom         *chatroom,
 			       GossipChatroomJoinCb    callback,
 			       gpointer                user_data)
 {
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), 0);
-	g_return_val_if_fail (room != NULL, 0);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
 	g_return_val_if_fail (callback != NULL, 0);
 
 	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->join) {
 		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->join (provider,
-									    room,
-									    server,
-									    nick,
-									    password,
+									    chatroom,
 									    callback,
 									    user_data);
 	}
@@ -311,4 +307,37 @@ gossip_chatroom_provider_get_rooms (GossipChatroomProvider *provider)
 	}
 
 	return NULL;
+}
+
+const gchar *
+gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result)
+{
+	const gchar *last_error = NULL;
+
+	switch (result) {
+	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
+		last_error = _("The nickname you have chosen is already in use.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
+		last_error = _("The chat room you tried to join requires a password.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
+		last_error = _("The remote conference server did not respond in a sensible time.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
+		last_error = _("The conference server you tried to join could not be found.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
+		last_error = _("An unknown error occured, check your details are correct.");
+		break;
+
+	default:
+		break;
+	}
+
+	return last_error;
 }

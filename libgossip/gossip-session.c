@@ -783,9 +783,6 @@ gossip_session_count_accounts (GossipSession *session,
 	struct CountAccounts  ca;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-	g_return_if_fail (connected != NULL &&
-			  connected_total != NULL &&
-			  disconnected != NULL);
 	
 	priv = GET_PRIV (session);
 

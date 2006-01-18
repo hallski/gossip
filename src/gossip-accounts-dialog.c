@@ -608,7 +608,7 @@ accounts_dialog_model_pixbuf_data_func (GtkTreeViewColumn    *tree_column,
 			    COL_ACCOUNT_POINTER, &account, 
 			    -1);
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account (account, GTK_ICON_SIZE_BUTTON);
+	pixbuf = gossip_pixbuf_from_account (account, GTK_ICON_SIZE_BUTTON);
 
 	if (pixbuf && !is_connected) {
 		GdkPixbuf *modded_pixbuf;

@@ -36,6 +36,8 @@
 #define GOSSIP_STOCK_MSN                 "gossip-msn"
 #define GOSSIP_STOCK_YAHOO               "gossip-yahoo"
 
+#define GOSSIP_STOCK_GROUP_MESSAGE       "gossip-group-message"
+
 void gossip_stock_init (void);
 
 #endif /* __GOSSIP_STOCK_ICONS_H__ */

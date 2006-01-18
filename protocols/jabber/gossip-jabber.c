@@ -223,10 +223,7 @@ static void             jabber_request_unknown              (GossipJabber       
 /* chatrooms */
 static void             jabber_chatroom_init                (GossipChatroomProviderIface  *iface);
 static GossipChatroomId jabber_chatroom_join                (GossipChatroomProvider       *provider,
-							     const gchar                  *room,
-							     const gchar                  *server,
-							     const gchar                  *nick,
-							     const gchar                  *password,
+							     GossipChatroom               *chatroom,
 							     GossipChatroomJoinCb          callback,
 							     gpointer                      user_data);
 static void             jabber_chatroom_cancel              (GossipChatroomProvider       *provider,
@@ -2153,24 +2150,21 @@ jabber_request_unknown (GossipJabber *jabber,
 static void
 jabber_chatroom_init (GossipChatroomProviderIface *iface)
 {
-	iface->join  = jabber_chatroom_join;
-	iface->cancel  = jabber_chatroom_cancel;
-	iface->send  = jabber_chatroom_send;
-	iface->change_topic = jabber_chatroom_change_topic;
-	iface->change_nick = jabber_chatroom_change_nick;
-	iface->leave = jabber_chatroom_leave;
-	iface->get_room_name = jabber_chatroom_get_room_name;
-	iface->invite = jabber_chatroom_invite;
-	iface->invite_accept = jabber_chatroom_invite_accept;
-	iface->get_rooms = jabber_chatroom_get_rooms;
+	iface->join            = jabber_chatroom_join;
+	iface->cancel          = jabber_chatroom_cancel;
+	iface->send            = jabber_chatroom_send;
+	iface->change_topic    = jabber_chatroom_change_topic;
+	iface->change_nick     = jabber_chatroom_change_nick;
+	iface->leave           = jabber_chatroom_leave;
+	iface->get_room_name   = jabber_chatroom_get_room_name;
+	iface->invite          = jabber_chatroom_invite;
+	iface->invite_accept   = jabber_chatroom_invite_accept;
+	iface->get_rooms       = jabber_chatroom_get_rooms;
 }
 
 static GossipChatroomId
 jabber_chatroom_join (GossipChatroomProvider      *provider,
-		      const gchar                 *room,
-		      const gchar                 *server,
-		      const gchar                 *nick,
-		      const gchar                 *password,
+		      GossipChatroom              *chatroom,
 		      GossipChatroomJoinCb         callback,
 		      gpointer                     user_data)
 {
@@ -2178,12 +2172,12 @@ jabber_chatroom_join (GossipChatroomProvider      *provider,
 	GossipJabberPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_JABBER (provider), 0);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
 
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_chatrooms_join (priv->chatrooms,
-					     room, server, nick, password, 
+	return gossip_jabber_chatrooms_join (priv->chatrooms, chatroom, 
 					     callback, user_data);
 }
 

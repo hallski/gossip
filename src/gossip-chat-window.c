@@ -447,10 +447,12 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	session = gossip_app_get_session ();
 
 	if (g_list_find (window->priv->chats_new_msg, chat)) {
-		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, 
+						   GTK_ICON_SIZE_MENU);
 	}
 	else if (g_list_find (window->priv->chats_composing, chat)) {
-		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_TYPING);
+		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING, 
+						   GTK_ICON_SIZE_MENU);
 	}
 	else if (!gossip_session_is_connected (session, NULL)) {
 		/* FIXME: should use protocol for contact since the
@@ -458,7 +460,7 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 		   and a session may cover multiple accounts */
 
 		/* always offline if disconnected */
-		pixbuf = gossip_ui_utils_get_pixbuf_offline ();
+		pixbuf = gossip_pixbuf_offline ();
 	}
 	else {
 		pixbuf = gossip_chat_get_status_pixbuf (chat);
@@ -570,7 +572,8 @@ chat_window_update_title (GossipChatWindow *window)
 
 	gtk_window_set_title (GTK_WINDOW (window->priv->dialog), title);
 	if (window->priv->new_msg) {
-		pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
+						   GTK_ICON_SIZE_MENU);
 		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), pixbuf);
 #if HAVE_GTK_URGENCY
 		gtk_window_set_urgency_hint (GTK_WINDOW (window->priv->dialog), TRUE);

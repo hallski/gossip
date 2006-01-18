@@ -797,7 +797,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	for (l = iters; l && set_model; l = l->next) {
 		GdkPixbuf *pixbuf;
 		
-		pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
+		pixbuf = gossip_pixbuf_for_contact (contact);
 		
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
 				    COL_PIXBUF, pixbuf,
@@ -820,9 +820,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	}
 
 	/* FIXME: when someone goes online then offline quickly, the
-		first timeout sets the user to be inactive and the
-		second timeout removes the user from the contact
-		list, really we should remove the first timeout. */
+	   first timeout sets the user to be inactive and the
+	   second timeout removes the user from the contact
+	   list, really we should remove the first timeout. */
 		
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free (iters);
@@ -1066,7 +1066,7 @@ contact_list_add_contact (GossipContactList *list,
 	if (!groups) {
 		GdkPixbuf *pixbuf;
 
-		pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
+		pixbuf = gossip_pixbuf_for_contact (contact);
 		
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
@@ -1094,7 +1094,7 @@ contact_list_add_contact (GossipContactList *list,
 			continue;
 		}
 
-		pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
+		pixbuf = gossip_pixbuf_for_contact (contact);
 
 		contact_list_get_group (list, name, &iter_group, &created);
 
@@ -1651,10 +1651,10 @@ contact_list_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 
 static void  
 contact_list_text_cell_data_func (GtkTreeViewColumn *tree_column,
-				    GtkCellRenderer   *cell,
-				    GtkTreeModel      *model,
-				    GtkTreeIter       *iter,
-				    GossipContactList *list)
+				  GtkCellRenderer   *cell,
+				  GtkTreeModel      *model,
+				  GtkTreeIter       *iter,
+				  GossipContactList *list)
 {
 	gboolean   is_group;
 	gboolean   is_active;
@@ -2242,7 +2242,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 		return FALSE;
 	}
 
-	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
+	pixbuf = gossip_pixbuf_for_contact (contact);
 	
 	data = g_hash_table_lookup (priv->flash_table, contact);
 	if (!data) {
@@ -2251,7 +2251,8 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 		data->flash_on = !data->flash_on;
 
 		if (data->flash_on) {
-			pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+			pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
+							   GTK_ICON_SIZE_MENU);
 		} 
 
 		ret_val = TRUE;
@@ -2347,7 +2348,7 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		return;
 	}
 	
-	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
+	pixbuf = gossip_pixbuf_for_contact (contact);
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	for (l = iters; l; l = l->next) {

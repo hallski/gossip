@@ -74,28 +74,28 @@ typedef struct {
 } GossipContactInfoDialog;
 
 
-static void       contact_info_dialog_init                   (void);
-static void       contact_info_dialog_update_subscription    (GossipContactInfoDialog *dialog);
-static void       contact_info_dialog_update_presences       (GossipContactInfoDialog *dialog);
-static void       contact_info_dialog_get_vcard_cb           (GossipResult             result,
-							      GossipVCard             *vcard,
-							      GossipContact           *contact);
-static void       contact_info_dialog_get_version_cb         (GossipResult             result,
-							      GossipVersionInfo       *version_info,
-							      GossipContact           *contact);
-static void       contact_info_dialog_subscribe_cb           (GtkWidget               *widget,
-							      GossipContact           *contact);
-static void       contact_info_dialog_contact_updated_cb     (GossipSession           *session,
-							      GossipContact           *contact,
-							      gpointer                 user_data);
-static void       contact_info_dialog_presence_updated_cb    (GossipSession           *session,
-							      GossipContact           *contact,
-							      gpointer                 user_data);
-static void       contact_info_dialog_destroy_cb             (GtkWidget               *widget,
-							      GossipContactInfoDialog *dialog);
-static void       contact_info_dialog_response_cb            (GtkWidget               *widget,
-							      gint                     response,
-							      GossipContactInfoDialog *dialog);
+static void contact_info_dialog_init                (void);
+static void contact_info_dialog_update_subscription (GossipContactInfoDialog *dialog);
+static void contact_info_dialog_update_presences    (GossipContactInfoDialog *dialog);
+static void contact_info_dialog_get_vcard_cb        (GossipResult             result,
+						     GossipVCard             *vcard,
+						     GossipContact           *contact);
+static void contact_info_dialog_get_version_cb      (GossipResult             result,
+						     GossipVersionInfo       *version_info,
+						     GossipContact           *contact);
+static void contact_info_dialog_subscribe_cb        (GtkWidget               *widget,
+						     GossipContact           *contact);
+static void contact_info_dialog_contact_updated_cb  (GossipSession           *session,
+						     GossipContact           *contact,
+						     gpointer                 user_data);
+static void contact_info_dialog_presence_updated_cb (GossipSession           *session,
+						     GossipContact           *contact,
+						     gpointer                 user_data);
+static void contact_info_dialog_destroy_cb          (GtkWidget               *widget,
+						     GossipContactInfoDialog *dialog);
+static void contact_info_dialog_response_cb         (GtkWidget               *widget,
+						     gint                     response,
+						     GossipContactInfoDialog *dialog);
 
 
 static GHashTable *contact_info_dialogs = NULL;
@@ -167,7 +167,7 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 	if (!presences) {
 		GtkWidget *widget;
 
-		pixbuf = gossip_ui_utils_get_pixbuf_offline ();
+		pixbuf = gossip_pixbuf_offline ();
 		status = _("Offline");
 
 		widget = gtk_image_new_from_pixbuf (pixbuf);
@@ -199,7 +199,7 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 		presence = l->data;
 
 		if (presence) {
-			pixbuf = gossip_ui_utils_get_pixbuf_for_presence (presence);
+			pixbuf = gossip_pixbuf_for_presence (presence);
 			
 			status = gossip_presence_get_status (presence);
 			if (!status) {

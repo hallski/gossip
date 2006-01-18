@@ -41,14 +41,6 @@ typedef struct {
 } GossipNewMessageDialog;
 
 
-enum {
-	COL_STATUS,
-	COL_NAME,
-	COL_POINTER,
-	COL_COUNT
-};
-
-
 static void     new_message_dialog_update_buttons     (GossipNewMessageDialog *dialog);
 static void     new_message_dialog_pixbuf_data_func   (GtkCellLayout          *cell_layout,
 						       GtkCellRenderer        *cell,
@@ -78,6 +70,14 @@ static void     new_message_dialog_destroy            (GtkWidget              *w
 static void     new_message_dialog_response           (GtkWidget              *widget,
 						       gint                    response,
 						       GossipNewMessageDialog *dialog);
+
+
+enum {
+	COL_STATUS,
+	COL_NAME,
+	COL_POINTER,
+	COL_COUNT
+};
 
 
 static void
@@ -113,7 +113,7 @@ new_message_dialog_pixbuf_data_func (GtkCellLayout          *cell_layout,
 
 	gtk_tree_model_get (tree_model, iter, COL_POINTER, &contact, -1);
 
-	pixbuf = gossip_ui_utils_get_pixbuf_for_contact (contact);
+	pixbuf = gossip_pixbuf_for_contact (contact);
 
 	g_object_set (cell, "pixbuf", pixbuf, NULL);
 	g_object_unref (pixbuf);

@@ -276,23 +276,16 @@ gossip_password_dialog_run (GossipAccount *account,
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_stock (const gchar *stock)
+gossip_pixbuf_from_stock (const gchar *stock,
+			  GtkIconSize  size)
 {
 	return gtk_widget_render_icon (gossip_app_get_window (),
-				       stock, 
-				       GTK_ICON_SIZE_MENU,
-				       NULL);
+				       stock, size, NULL);
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_offline (void)
-{
-	return gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
-}
-
-GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account_type (GossipAccountType type,
-					      GtkIconSize       icon_size)
+gossip_pixbuf_from_account_type (GossipAccountType type,
+				 GtkIconSize       icon_size)
 {
 	GtkIconTheme  *theme;
 	GdkPixbuf     *pixbuf = NULL;
@@ -339,8 +332,8 @@ gossip_ui_utils_get_pixbuf_from_account_type (GossipAccountType type,
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account (GossipAccount *account,
-					 GtkIconSize    icon_size)
+gossip_pixbuf_from_account (GossipAccount *account,
+			    GtkIconSize    icon_size)
 {
 	GossipAccountType  type;
 	GdkPixbuf         *pixbuf = NULL;
@@ -348,21 +341,21 @@ gossip_ui_utils_get_pixbuf_from_account (GossipAccount *account,
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
 	type = gossip_account_get_type (account);
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_type (type, icon_size);
+	pixbuf = gossip_pixbuf_from_account_type (type, icon_size);
 
 	return pixbuf;
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount *account,
-						GtkIconSize    icon_size,
-						gboolean       online)
+gossip_pixbuf_from_account_status (GossipAccount *account,
+				   GtkIconSize    icon_size,
+				   gboolean       online)
 {
 	GdkPixbuf *pixbuf = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account (account, icon_size);
+	pixbuf = gossip_pixbuf_from_account (account, icon_size);
 	g_return_val_if_fail (pixbuf != NULL, NULL);
 
 	if (!online) {
@@ -386,20 +379,21 @@ gossip_ui_utils_get_pixbuf_from_account_status (GossipAccount *account,
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_account_error (GossipAccount *account,
-					       GtkIconSize    icon_size)
+gossip_pixbuf_from_account_error (GossipAccount *account,
+				  GtkIconSize    icon_size)
 {
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *pixbuf_error;
 
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, 
-								 icon_size,
-								 FALSE);
+	pixbuf = gossip_pixbuf_from_account_status (account, 
+						    icon_size,
+						    FALSE);
 	if (!pixbuf) {
 		return NULL;
 	}
 
-	pixbuf_error = gossip_ui_utils_get_pixbuf_from_stock (GTK_STOCK_DIALOG_ERROR);
+	pixbuf_error = gossip_pixbuf_from_stock (GTK_STOCK_DIALOG_ERROR,
+						 GTK_ICON_SIZE_MENU);
 	if (!pixbuf_error) {
 		return NULL;
 	}
@@ -418,8 +412,8 @@ gossip_ui_utils_get_pixbuf_from_account_error (GossipAccount *account,
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_from_smiley (GossipSmiley type,
-					GtkIconSize  icon_size)
+gossip_pixbuf_from_smiley (GossipSmiley type,
+			   GtkIconSize  icon_size)
 {
 	GtkIconTheme  *theme;
 	GdkPixbuf     *pixbuf = NULL;
@@ -533,9 +527,15 @@ gossip_ui_utils_get_pixbuf_from_smiley (GossipSmiley type,
 	return pixbuf;
 }
 
+GdkPixbuf *
+gossip_pixbuf_offline (void)
+{
+	return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE, 
+					 GTK_ICON_SIZE_MENU);
+}
 
 static gboolean
-ui_utils_window_get_is_on_current_workspace (GtkWindow *window)
+window_get_is_on_current_workspace (GtkWindow *window)
 {
 	GdkWindow *gdk_window;
 
@@ -550,7 +550,7 @@ ui_utils_window_get_is_on_current_workspace (GtkWindow *window)
 
 /* Checks if the window is visible as in visible on the current workspace. */
 gboolean
-gossip_ui_utils_window_get_is_visible (GtkWindow *window)
+gossip_window_get_is_visible (GtkWindow *window)
 {
 	gboolean visible;
 
@@ -558,12 +558,12 @@ gossip_ui_utils_window_get_is_visible (GtkWindow *window)
 		      "visible", &visible,
 		      NULL);
 
-	return visible && ui_utils_window_get_is_on_current_workspace (window);
+	return visible && window_get_is_on_current_workspace (window);
 }
 
 /* Takes care of moving the window to the current workspace. */
 void
-gossip_ui_utils_window_present (GtkWindow *window)
+gossip_window_present (GtkWindow *window)
 {
 	gboolean visible;
 	gboolean on_current;
@@ -576,7 +576,7 @@ gossip_ui_utils_window_present (GtkWindow *window)
 		      "visible", &visible,
 		      NULL);
 
-	on_current = ui_utils_window_get_is_on_current_workspace (window);
+	on_current = window_get_is_on_current_workspace (window);
 
 	if (visible && !on_current) {
 		/* Hide it so present brings it to the current workspace. */
@@ -587,7 +587,7 @@ gossip_ui_utils_window_present (GtkWindow *window)
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_for_presence_state (GossipPresenceState state)
+gossip_pixbuf_for_presence_state (GossipPresenceState state)
 {
 	const gchar *stock = NULL; 
 
@@ -606,37 +606,70 @@ gossip_ui_utils_get_pixbuf_for_presence_state (GossipPresenceState state)
 		break;
 	}
 
-	return gossip_ui_utils_get_pixbuf_from_stock (stock);
+	return gossip_pixbuf_from_stock (stock, GTK_ICON_SIZE_MENU);
 }
 
 GdkPixbuf *
-gossip_ui_utils_get_pixbuf_for_presence (GossipPresence *presence)
+gossip_pixbuf_for_presence (GossipPresence *presence)
 {
 	GossipPresenceState state; 
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
-			      gossip_ui_utils_get_pixbuf_offline ());
+			      gossip_pixbuf_offline ());
 
 	state = gossip_presence_get_state (presence);
 
-	return gossip_ui_utils_get_pixbuf_for_presence_state (state);
+	return gossip_pixbuf_for_presence_state (state);
 }
 
 GdkPixbuf *  
-gossip_ui_utils_get_pixbuf_for_contact (GossipContact *contact)
+gossip_pixbuf_for_contact (GossipContact *contact)
 {
 	GossipPresence *presence;
 	
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 
-			      gossip_ui_utils_get_pixbuf_offline ());
+			      gossip_pixbuf_offline ());
 
 	presence = gossip_contact_get_active_presence (contact);
 
 	if (presence) {
-		return gossip_ui_utils_get_pixbuf_for_presence (presence);
+		return gossip_pixbuf_for_presence (presence);
 	}
 
-	return gossip_ui_utils_get_pixbuf_offline ();
+	return gossip_pixbuf_offline ();
 }
 
+GdkPixbuf *
+gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
+				   GtkIconSize     icon_size)
+{
+	GossipChatroomStatus  status;
+	GdkPixbuf            *pixbuf;
+	const gchar          *stock_id;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	status = gossip_chatroom_get_status (chatroom);
+	
+	switch (status) {
+	case GOSSIP_CHATROOM_CONNECTING:
+		stock_id = GTK_STOCK_EXECUTE;
+		break;
+	case GOSSIP_CHATROOM_OPEN:
+		stock_id = GOSSIP_STOCK_GROUP_MESSAGE;
+		break;
+	case GOSSIP_CHATROOM_ERROR:
+		stock_id = GTK_STOCK_DIALOG_ERROR;
+		break;	
+	default:
+	case GOSSIP_CHATROOM_CLOSED:
+	case GOSSIP_CHATROOM_UNKNOWN:
+		stock_id = GTK_STOCK_CLOSE;
+		break;
+	}
+
+	pixbuf = gossip_pixbuf_from_stock (stock_id, icon_size);
+
+	return pixbuf;
+}

@@ -31,8 +31,9 @@
 
 #define d(x)
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-	GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj),		         \
+						    GOSSIP_TYPE_ACCOUNT_CHOOSER, \
+						    GossipAccountChooserPriv))
 
 
 typedef struct {
@@ -222,9 +223,9 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 	store = GTK_LIST_STORE (gtk_combo_box_get_model (combo_box));
 
 	is_connected = gossip_session_is_connected (priv->session, account);
-	pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (account, 
-								 GTK_ICON_SIZE_MENU,
-								 is_connected);
+	pixbuf = gossip_pixbuf_from_account_status (account, 
+						    GTK_ICON_SIZE_MENU,
+						    is_connected);
 	
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter, 
@@ -346,9 +347,9 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
  
 		is_connected = gossip_session_is_connected (priv->session, 
 							    data->account);
-		pixbuf = gossip_ui_utils_get_pixbuf_from_account_status (data->account, 
-									 GTK_ICON_SIZE_MENU,
-									 is_connected);
+		pixbuf = gossip_pixbuf_from_account_status (data->account, 
+							    GTK_ICON_SIZE_MENU,
+							    is_connected);
 		
 		gtk_list_store_set (store, iter, 
 				    COL_ACCOUNT_IMAGE, pixbuf, 

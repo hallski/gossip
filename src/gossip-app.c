@@ -46,7 +46,7 @@
 #include "gossip-add-contact-window.h"
 #include "gossip-app.h"
 #include "gossip-chat.h"
-#include "gossip-chatrooms-dialog.h"
+#include "gossip-chatrooms-window.h"
 #include "gossip-contact-list.h"
 #include "gossip-ft-window.h"
 #include "gossip-group-chat.h"
@@ -162,122 +162,127 @@ enum {
 };
 
 
-static void            gossip_app_class_init                (GossipAppClass       *klass);
-static void            gossip_app_init                      (GossipApp            *singleton_app);
-static void            app_finalize                         (GObject              *object);
-static void            app_setup                            (GossipAccountManager *manager);
-static gboolean        app_main_window_quit_confirm         (GossipApp            *app,
-							     GtkWidget            *window);
-static void            app_main_window_quit_confirm_cb      (GtkWidget            *dialog,
-							     gint                  response,
-							     GossipApp            *app);
-static void            app_main_window_destroy_cb           (GtkWidget            *window,
-							     GossipApp            *app);
-static gboolean        app_main_window_delete_event_cb      (GtkWidget            *window,
-							     GdkEvent             *event,
-							     GossipApp            *app);
-static gboolean        app_main_window_key_press_event_cb   (GtkWidget            *window,
-							     GdkEventKey          *event,
-							     GossipApp            *app);
-static void            app_quit_cb                          (GtkWidget            *window,
-							     GossipApp            *app);
-static void            app_connect_cb                       (GtkWidget            *window,
-							     GossipApp            *app);
-static void            app_disconnect_cb                    (GtkWidget            *window,
-							     GossipApp            *app);
-static void            app_join_group_chat_cb               (GtkWidget            *window,
-							     GossipApp            *app);
-static void            app_new_message_cb                   (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_add_contact_cb                   (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_show_offline_cb                  (GtkCheckMenuItem     *item,
-							     GossipApp            *app);
-static void            app_accounts_cb                      (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_personal_information_cb          (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_preferences_cb                   (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_about_cb                         (GtkWidget            *window,
-							     GossipApp            *app);
-static void            app_help_cb                          (GtkWidget            *window,
-							     GossipApp            *app);
-static void            app_session_protocol_connected_cb    (GossipSession        *session,
-							     GossipAccount        *account,
-							     GossipProtocol       *protocol,
-							     gpointer              user_data);
-static void            app_session_protocol_disconnected_cb (GossipSession        *session,
-							     GossipAccount        *account,
-							     GossipProtocol       *protocol,
-							     gpointer              user_data);
-static gchar *         app_session_get_password_cb          (GossipSession        *session,
-							     GossipAccount        *account,
-							     gpointer              user_data);
-static void            app_show_list_cb                     (GtkWidget            *widget,
-							     GossipApp            *app);
-static void            app_popup_new_message_cb             (GtkWidget            *widget,
-							     gpointer              user_data);
+static void            gossip_app_class_init                (GossipAppClass           *klass);
+static void            gossip_app_init                      (GossipApp                *singleton_app);
+static void            app_finalize                         (GObject                  *object);
+static void            app_setup                            (GossipAccountManager     *manager);
+static gboolean        app_main_window_quit_confirm         (GossipApp                *app,
+							     GtkWidget                *window);
+static void            app_main_window_quit_confirm_cb      (GtkWidget                *dialog,
+							     gint                      response,
+							     GossipApp                *app);
+static void            app_main_window_destroy_cb           (GtkWidget                *window,
+							     GossipApp                *app);
+static gboolean        app_main_window_delete_event_cb      (GtkWidget                *window,
+							     GdkEvent                 *event,
+							     GossipApp                *app);
+static gboolean        app_main_window_key_press_event_cb   (GtkWidget                *window,
+							     GdkEventKey              *event,
+							     GossipApp                *app);
+static void            app_quit_cb                          (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_connect_cb                       (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_disconnect_cb                    (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_join_group_chat_cb               (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_new_message_cb                   (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_add_contact_cb                   (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_show_offline_cb                  (GtkCheckMenuItem         *item,
+							     GossipApp                *app);
+static void            app_accounts_cb                      (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_personal_information_cb          (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_preferences_cb                   (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_about_cb                         (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_help_cb                          (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_session_protocol_connected_cb    (GossipSession            *session,
+							     GossipAccount            *account,
+							     GossipProtocol           *protocol,
+							     gpointer                  user_data);
+static void            app_session_protocol_disconnected_cb (GossipSession            *session,
+							     GossipAccount            *account,
+							     GossipProtocol           *protocol,
+							     gpointer                  user_data);
+static gchar *         app_session_get_password_cb          (GossipSession            *session,
+							     GossipAccount            *account,
+							     gpointer                  user_data);
+static void            app_show_list_cb                     (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_popup_new_message_cb             (GtkWidget                *widget,
+							     gpointer                  user_data);
 static void            app_toggle_visibility                (void);
-static gboolean        app_tray_destroy_cb                  (GtkWidget            *widget,
-							     gpointer              user_data);
-static gboolean        app_tray_button_press_cb             (GtkWidget            *widget,
-							     GdkEventButton       *event,
-							     GossipApp            *app);
+static gboolean        app_tray_destroy_cb                  (GtkWidget                *widget,
+							     gpointer                  user_data);
+static gboolean        app_tray_button_press_cb             (GtkWidget                *widget,
+							     GdkEventButton           *event,
+							     GossipApp                *app);
 static void            app_tray_create_menu                 (void);
 static void            app_tray_create                      (void);
 static gboolean        app_tray_pop_event                   (void);
 static void            app_tray_update_tooltip              (void);
-static gboolean        app_status_flash_timeout_func        (gpointer              data);
+static gboolean        app_status_flash_timeout_func        (gpointer                  data);
 static void            app_status_flash_start               (void);
 static void            app_status_flash_stop                (void);
-static void            app_show_offline_key_changed_cb      (GConfClient          *client,
-							     guint                 cnxn_id,
-							     GConfEntry           *entry,
-							     gpointer              check_menu_item);
-static gboolean        app_idle_check_cb                    (GossipApp            *app);
+static void            app_show_offline_key_changed_cb      (GConfClient              *client,
+							     guint                     cnxn_id,
+							     GConfEntry               *entry,
+							     gpointer                  check_menu_item);
+static gboolean        app_idle_check_cb                    (GossipApp                *app);
 static void            app_disconnect                       (void);
-static void            app_connection_items_setup           (GladeXML             *glade);
+static void            app_connection_items_setup           (GladeXML                 *glade);
 static void            app_connection_items_update          (void);
 static void            app_accounts_create                  (void);
 static void            app_accounts_update_toolbar          (void);
-static void            app_accounts_add                     (GossipAccount        *account);
-static void            app_accounts_remove                  (GossipAccount        *account);
-static void            app_accounts_account_added_cb        (GossipAccountManager *manager,
-							     GossipAccount        *account,
-							     gpointer              user_data);
-static void            app_accounts_account_removed_cb      (GossipAccountManager *manager,
-							     GossipAccount        *account,
-							     gpointer              user_data);
-static void            app_accounts_account_enabled_cb      (GossipAccountManager *manager,
-							     GossipAccount        *account,
-							     gpointer              user_data);
+static void            app_accounts_add                     (GossipAccount            *account);
+static void            app_accounts_remove                  (GossipAccount            *account);
+static void            app_accounts_account_added_cb        (GossipAccountManager     *manager,
+							     GossipAccount            *account,
+							     gpointer                  user_data);
+static void            app_accounts_account_removed_cb      (GossipAccountManager     *manager,
+							     GossipAccount            *account,
+							     gpointer                  user_data);
+static void            app_accounts_account_enabled_cb      (GossipAccountManager     *manager,
+							     GossipAccount            *account,
+							     gpointer                  user_data);
 static GossipPresence *app_get_effective_presence           (void);
-static void            app_set_away                         (const gchar          *status);
+static void            app_set_away                         (const gchar              *status);
 static GdkPixbuf *     app_get_current_status_pixbuf        (void);
 static void            app_presence_updated                 (void);
 static void            app_status_clear_away                (void);
-static void            app_presence_chooser_changed_cb      (GtkWidget            *chooser,
-							     GossipPresenceState   state,
-							     const gchar          *status,
-							     gpointer              data);
-static gboolean        configure_event_idle_cb              (GtkWidget            *widget);
-static gboolean        app_window_configure_event_cb        (GtkWidget            *widget,
-							     GdkEventConfigure    *event,
-							     GossipApp            *app);
+static void            app_presence_chooser_changed_cb      (GtkWidget                *chooser,
+							     GossipPresenceState       state,
+							     const gchar              *status,
+							     gpointer                  data);
+static gboolean        configure_event_idle_cb              (GtkWidget                *widget);
+static gboolean        app_window_configure_event_cb        (GtkWidget                *widget,
+							     GdkEventConfigure        *event,
+							     GossipApp                *app);
 static gboolean        app_have_tray                        (void);
-static gboolean        app_tray_flash_timeout_func          (gpointer              data);
+static gboolean        app_tray_flash_timeout_func          (gpointer                  data);
 static void            app_tray_flash_start                 (void);
 static void            app_tray_flash_maybe_stop            (void);
-static void            app_event_added_cb                   (GossipEventManager   *manager,
-							     GossipEvent          *event,
-							     gpointer              user_data);
-static void            app_event_removed_cb                 (GossipEventManager   *manager,
-							     GossipEvent          *event,
-							     gpointer              user_data);
-static void            app_contact_activated_cb             (GossipContactList    *contact_list,
-							     GossipContact        *contact,
-							     gpointer              user_data);
+static void            app_chatroom_auto_connected_cb       (GossipChatroomManager    *manager,
+							     GossipChatroomProvider   *provider,
+							     GossipChatroomId          id,
+							     GossipChatroomJoinResult  result,
+							     gpointer                  user_data);
+static void            app_event_added_cb                   (GossipEventManager       *manager,
+							     GossipEvent              *event,
+							     gpointer                  user_data);
+static void            app_event_removed_cb                 (GossipEventManager       *manager,
+							     GossipEvent              *event,
+							     gpointer                  user_data);
+static void            app_contact_activated_cb             (GossipContactList        *contact_list,
+							     GossipContact            *contact,
+							     gpointer                  user_data);
 
 
 static guint         signals[LAST_SIGNAL] = { 0 };
@@ -381,6 +386,10 @@ app_finalize (GObject *object)
 					      app_session_get_password_cb, 
 					      NULL);
 
+	g_signal_handlers_disconnect_by_func (priv->chatroom_manager,
+					      app_chatroom_auto_connected_cb, 
+					      NULL);
+
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
 					      app_event_added_cb, 
 					      NULL);
@@ -456,7 +465,9 @@ app_setup (GossipAccountManager *manager)
 		gossip_new_account_window_show (NULL);
 	}
 
-	priv->chatroom_manager = gossip_chatroom_manager_new (manager, NULL);
+	priv->chatroom_manager = gossip_chatroom_manager_new (manager, 
+							      priv->session, 
+							      NULL);
 
 	priv->chat_manager = gossip_chat_manager_new ();
  	priv->event_manager = gossip_event_manager_new (); 
@@ -483,6 +494,10 @@ app_setup (GossipAccountManager *manager)
 
 	g_signal_connect (priv->session, "get-password",
 			  G_CALLBACK (app_session_get_password_cb),
+			  NULL);
+
+	g_signal_connect (priv->chatroom_manager, "chatroom-auto-connected",
+			  G_CALLBACK (app_chatroom_auto_connected_cb),
 			  NULL);
 
 	g_signal_connect (priv->event_manager, "event-added",
@@ -858,7 +873,7 @@ static void
 app_join_group_chat_cb (GtkWidget *window,
 			GossipApp *app)
 {
-	gossip_chatrooms_dialog_show ();
+	gossip_chatrooms_window_show (FALSE);
 }
 
 static void
@@ -1038,7 +1053,7 @@ app_toggle_visibility (void)
 
 	priv = app->priv;
 
-	visible = gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window));
+	visible = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 
 	if (visible) {
 		gtk_widget_hide (priv->window);
@@ -1074,7 +1089,7 @@ app_toggle_visibility (void)
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
 
-		gossip_ui_utils_window_present (GTK_WINDOW (priv->window));
+		gossip_window_present (GTK_WINDOW (priv->window));
 
 		gconf_client_set_bool (priv->gconf_client, 
 				       GCONF_PATH "/ui/main_window_hidden", FALSE,
@@ -1150,7 +1165,7 @@ app_tray_button_press_cb (GtkWidget      *widget,
 	} else if (event->button == 3) {
 		gboolean show;
 
-		show = gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window));
+		show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 		
 		g_signal_handlers_block_by_func (priv->popup_menu_show_list_item, 
 						 app_show_list_cb, app);
@@ -1300,7 +1315,7 @@ app_status_flash_timeout_func (gpointer data)
 	GdkPixbuf       *pixbuf;
 
 	if (on) {
-		pixbuf = gossip_ui_utils_get_pixbuf_for_presence (priv->presence);
+		pixbuf = gossip_pixbuf_for_presence (priv->presence);
 	} else {
 		pixbuf = app_get_current_status_pixbuf ();
 	}
@@ -1819,11 +1834,12 @@ app_get_current_status_pixbuf (void)
 	priv = app->priv;
 
 	if (!gossip_session_is_connected (priv->session, NULL)) {
-		return gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE);
+		return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE, 
+						 GTK_ICON_SIZE_MENU);
 	}
 	
 	presence = app_get_effective_presence ();
-	return gossip_ui_utils_get_pixbuf_for_presence (presence);
+	return gossip_pixbuf_for_presence (presence);
 }
 
 static void
@@ -1969,7 +1985,7 @@ configure_event_idle_cb (GtkWidget *widget)
 	priv->size_timeout_id = 0;
 
 	/* Update the show list menu item */
-	show = gossip_ui_utils_window_get_is_visible (GTK_WINDOW (priv->window));
+	show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 
 	g_signal_handlers_block_by_func (priv->actions_show_list, 
 					 app_show_list_cb, app);
@@ -2041,23 +2057,26 @@ app_tray_flash_timeout_func (gpointer data)
 
 #if 0
 	/* Debug code */
-	if (priv->tray_flash_icons == NULL && priv->status_flash_timeout_id == 0) {
+	if (priv->tray_flash_icons == NULL && 
+	    priv->status_flash_timeout_id == 0) {
 		g_print ("no flash\n");
 	}
 
-	if (priv->status_flash_timeout_id != 0 && priv->explicit_show == priv->auto_show) {
+	if (priv->status_flash_timeout_id != 0 && 
+	    priv->explicit_show == priv->auto_show) {
 		g_print ("expl == auto, flashing\n");
 	}
 #endif
 	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
-			pixbuf = gossip_ui_utils_get_pixbuf_for_presence (priv->presence);
+			pixbuf = gossip_pixbuf_for_presence (priv->presence);
 		}
 	}
 	else if (priv->tray_flash_icons != NULL) {
 		if (on) {
-			pixbuf = gossip_ui_utils_get_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE);
+			pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, 
+							   GTK_ICON_SIZE_MENU);
 		}
 	}
 
@@ -2103,6 +2122,32 @@ app_tray_flash_maybe_stop (void)
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
 		priv->tray_flash_timeout_id = 0;
+	}
+}
+
+static void
+app_chatroom_auto_connected_cb (GossipChatroomManager    *manager,
+				GossipChatroomProvider   *provider,
+				GossipChatroomId          id,
+				GossipChatroomJoinResult  result,
+				gpointer                  user_data)
+{
+	switch (result) {
+	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
+	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
+	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
+	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
+	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
+		gossip_chatrooms_window_show (TRUE);
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_OK:
+	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
+		gossip_group_chat_show (provider, id);
+		break;
+
+ 	case GOSSIP_CHATROOM_JOIN_CANCELED:
+		break;
 	}
 }
 
