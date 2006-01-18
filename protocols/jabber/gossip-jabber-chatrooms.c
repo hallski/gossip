@@ -500,6 +500,11 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 
 	room->timeout_id = 0;
 
+	if (room->join_handler) {
+		lm_message_handler_unref (room->join_handler);
+		room->join_handler = NULL;
+	}
+
 	id = jabber_chatrooms_chatroom_get_id (room);
 	d(g_print ("Protocol Chatrooms: ID[%d] Join timed out (internally)\n", id));
 
@@ -567,7 +572,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 			    GOSSIP_CHATROOM_JOIN_ALREADY_OPEN,
 			    id,
 			    user_data); 
-		
+ 		
 		return id;
 	}
 
@@ -652,7 +657,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 	LmMessageSubType          type;
 	LmMessageNode            *node = NULL;
 
-	if (!room) {
+	if (!room || !room->join_handler) {
  		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
 	}
 
@@ -666,9 +671,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 
 	/* clean up handler */
 	if (room->join_handler) {
-		lm_connection_unregister_message_handler (room->connection, 
-							  room->join_handler, 
-							  LM_MESSAGE_TYPE_PRESENCE);	
+		lm_message_handler_unref (room->join_handler);
 		room->join_handler = NULL;
 	}
 
@@ -754,7 +757,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 				     room->jid);
 	}
 
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+        return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
 void
@@ -780,9 +783,7 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 	}
 
 	if (room->join_handler) {
-		lm_connection_unregister_message_handler (room->connection, 
-							  room->join_handler, 
-							  LM_MESSAGE_TYPE_PRESENCE);	
+		lm_message_handler_unref (room->join_handler);
 		room->join_handler = NULL;
 	}
 
