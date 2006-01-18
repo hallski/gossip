@@ -40,11 +40,11 @@ typedef struct _GossipAccountButton      GossipAccountButton;
 typedef struct _GossipAccountButtonClass GossipAccountButtonClass;
 
 struct _GossipAccountButton {
-        GtkButton parent;
+        GtkToggleButton parent;
 };
 
 struct _GossipAccountButtonClass {
-        GtkButtonClass parent_class;
+        GtkToggleButtonClass parent_class;
 };
 
 GType      gossip_account_button_get_type    (void) G_GNUC_CONST;

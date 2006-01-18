@@ -1,5 +1,13 @@
 2006-01-18  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-account-button.[ch]:
+	- Fixed the button part so that it is a derived from a
+	GtkToggleButton and remains toggled until the menu is hidden.
+	This means the account button feels like the menu is part of it,
+	not some side effect by some second rate coder :)
+
+2006-01-18  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/libgossip-marshal.list:
 	* libgossip/gossip-chatroom-manager.[ch]:
 	- Pass the session when creating a new object so we can add

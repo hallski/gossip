@@ -57,11 +57,20 @@ typedef struct {
 
 
 static void       account_button_finalize                  (GObject             *object);
+static void       account_button_align_menu_func           (GtkMenu             *menu,
+							    gint                *x,
+							    gint                *y,
+							    gboolean            *push_in,
+							    GossipAccountButton *account_button);
+static void       account_button_menu_popdown              (GtkWidget           *menu,
+							    GossipAccountButton *account_button);
+static void       account_button_menu_detach               (GtkWidget           *attach_widget,
+							    GtkMenu             *menu);
+static void       account_button_menu_popup                (GossipAccountButton *account_button);
+static void       account_button_clicked_cb                (GtkButton           *button,
+							    GossipAccountButton *account_button);
 static GtkWidget *account_button_create_menu               (GossipAccountButton *account_button);
 static void       account_button_update_tooltip            (GossipAccountButton *account_button);
-static gboolean   account_button_button_press_event_cb     (GtkButton           *button,
-							    GdkEventButton      *event,
-							    GossipAccountButton *account_button);
 static void       account_button_edit_activate_cb          (GtkWidget           *menuitem,
 							    GossipAccount       *account);
 static void       account_button_connection_activate_cb    (GtkWidget           *menuitem,
@@ -91,8 +100,7 @@ static void       account_button_account_name_changed_cb   (GossipAccount       
 							    GossipAccountButton *account_button);
 
 
-
-G_DEFINE_TYPE (GossipAccountButton, gossip_account_button, GTK_TYPE_BUTTON);
+G_DEFINE_TYPE (GossipAccountButton, gossip_account_button, GTK_TYPE_TOGGLE_BUTTON);
 
 
 static void
@@ -110,13 +118,9 @@ gossip_account_button_init (GossipAccountButton *account_button)
 {
 	GossipSession *session;
 
-	/* We use this instead of "clicked" to get the button to disappear when
-	 * clicking on the label inside the button.
-	 */
-	g_signal_connect (GTK_BUTTON (account_button),
-			  "button-press-event",
-			  G_CALLBACK (account_button_button_press_event_cb),
-			  account_button);
+        g_signal_connect (account_button, "clicked",
+                          G_CALLBACK (account_button_clicked_cb),
+                          account_button);
 
 	session = gossip_app_get_session ();
 
@@ -196,78 +200,93 @@ account_button_align_menu_func (GtkMenu             *menu,
 				gboolean            *push_in,
 				GossipAccountButton *account_button)
 {
-	GtkWidget      *button;
+	GtkWidget      *widget;
 	GtkRequisition  req;
 	GdkScreen      *screen;
-	gint            width, height;
 	gint            screen_height;
 
-	button = GTK_WIDGET (account_button);
-	
-	gtk_widget_size_request (GTK_WIDGET (menu), &req);
-  
-	gdk_window_get_origin (GTK_BUTTON (button)->event_window, x, y);
-	gdk_drawable_get_size (GTK_BUTTON (button)->event_window, &width, &height);
+	widget = GTK_WIDGET (account_button);
 
-	*y += height;
+	gtk_widget_size_request (GTK_WIDGET (menu), &req);
+
+	gdk_window_get_origin (widget->window, x, y); 
+
+	*x += widget->allocation.x;
+	*y += widget->allocation.y;
 
 	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
-	
-	/* Clamp to screen size. */
-	screen_height = gdk_screen_get_height (screen) - *y;	
+	screen_height = gdk_screen_get_height (screen);	
+
 	if (req.height > screen_height) {
-		/* It doesn't fit, so we see if we have the minimum space
-		 * needed.
-		 */
-		if (req.height > screen_height && *y - height > screen_height) {
-			/* Put the menu above the button instead. */
-			screen_height = *y - height;
-			*y -= (req.height + height);
-			if (*y < 0) {
-				*y = 0;
-			}
-		}
+		/* too big for screen height anyway */
+		*y = 0;
+		return;
 	}
+
+	if ((*y + req.height + widget->allocation.height) > screen_height) {
+		/* can't put it below the button */
+		*y -= req.height;
+	} else {
+		/* put menu below button */
+		*y += widget->allocation.height;
+	}
+
+	*push_in = FALSE;
 }
 
 static void
-account_button_show_popup (GossipAccountButton *account_button)
+account_button_menu_popdown (GtkWidget           *menu,
+			     GossipAccountButton *account_button)
 {
-	GossipAccountButtonPriv *priv;
-	GtkWidget               *menu;
+	g_signal_handlers_block_by_func (account_button,
+					 account_button_clicked_cb,
+					 account_button);
 
-	priv = GET_PRIV (account_button);
-	
+	gtk_toggle_button_set_active (
+		GTK_TOGGLE_BUTTON (account_button), FALSE);
+
+	g_signal_handlers_unblock_by_func (account_button,
+					   account_button_clicked_cb,
+					   account_button);
+}
+
+static void   
+account_button_menu_detach (GtkWidget *attach_widget,
+			    GtkMenu   *menu)
+{
+	/* We don't need to do anything, but attaching the menu means
+	 * we don't own the ref count and it is cleaned up properly. 
+	 */
+}
+
+static void
+account_button_menu_popup (GossipAccountButton *account_button)
+{
+	GtkWidget *menu;
+
 	menu = account_button_create_menu (account_button);
+
+	g_signal_connect (menu, "hide", 
+			  G_CALLBACK (account_button_menu_popdown),
+			  account_button);
+
+	gtk_menu_attach_to_widget (GTK_MENU (menu), 
+				   GTK_WIDGET (account_button), 
+				   account_button_menu_detach);
 
 	gtk_menu_popup (GTK_MENU (menu),
 			NULL, NULL,
-			(GtkMenuPositionFunc)account_button_align_menu_func,
+			(GtkMenuPositionFunc) account_button_align_menu_func,
 			account_button,
 			1,
 			gtk_get_current_event_time ());
 }
 
-static gboolean
-account_button_button_press_event_cb (GtkButton           *button,
-				      GdkEventButton      *event,
-				      GossipAccountButton *account_button)
+static void
+account_button_clicked_cb (GtkButton           *button,
+			   GossipAccountButton *account_button)
 {
-	if (event->type == GDK_2BUTTON_PRESS ||
-	    event->type == GDK_3BUTTON_PRESS) {
-		return FALSE;
-	}
-
-	switch (event->button) {
-	case 1:
-	case 3:
-		account_button_show_popup (account_button);
-		break;
-	default:
-		return FALSE;
-	}
-
-	return TRUE;
+	account_button_menu_popup (account_button);
 }
 
 static void
