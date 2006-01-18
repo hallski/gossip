@@ -65,6 +65,7 @@
 	
 	* ui/group-chat.glade:
 	- New and improved :) chat room window.
+	- Fixes bug #325841 (Martyn, Ross Burton).
 
 2006-01-14  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
 
