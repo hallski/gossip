@@ -1,3 +1,8 @@
+2006-01-20  Johan Dahlin  <johan@gnome.org>
+
+	* src/gossip-presence-chooser.c: (presence_chooser_add_item):
+	Set ellipsize on the label in the menu aswell.
+	
 2006-01-18  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c:
