@@ -239,10 +239,6 @@ static gboolean        app_idle_check_cb                    (GossipApp          
 static void            app_disconnect                       (void);
 static void            app_connection_items_setup           (GladeXML                 *glade);
 static void            app_connection_items_update          (void);
-static void            app_accounts_create                  (void);
-static void            app_accounts_update_toolbar          (void);
-static void            app_accounts_add                     (GossipAccount            *account);
-static void            app_accounts_remove                  (GossipAccount            *account);
 static void            app_accounts_account_added_cb        (GossipAccountManager     *manager,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
@@ -252,6 +248,14 @@ static void            app_accounts_account_removed_cb      (GossipAccountManage
 static void            app_accounts_account_enabled_cb      (GossipAccountManager     *manager,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
+static gint            app_accounts_sort_func               (GossipAccount            *a, 
+							     GossipAccount            *b);
+static void            app_accounts_rearrage                (void);
+static void            app_accounts_create                  (void);
+static void            app_accounts_update_separator        (void);
+static void            app_accounts_update_toolbar          (void);
+static void            app_accounts_add                     (GossipAccount            *account);
+static void            app_accounts_remove                  (GossipAccount            *account);
 static GossipPresence *app_get_effective_presence           (void);
 static void            app_set_away                         (const gchar              *status);
 static GdkPixbuf *     app_get_current_status_pixbuf        (void);
@@ -716,6 +720,7 @@ app_main_window_quit_confirm (GossipApp *app,
 			gchar *str_single = NULL;
 			gchar *str_plural = NULL;
 			gchar *info;
+			gchar *format;
 
 			if (count[i] < 1) {
 				continue;
@@ -744,10 +749,8 @@ app_main_window_quit_confirm (GossipApp *app,
 				break;
 			}
 
-			info = g_strdup_printf (ngettext (str_single,
-							  str_plural,
-							  count[i]),
-						count[i]);
+			format = ngettext (str_single, str_plural, count[i]);
+			info = g_strdup_printf (format, count[i]);
 
 			if (oldstr) {
 				g_free (oldstr);
@@ -1680,6 +1683,87 @@ gossip_app_is_connected (void)
  */
 
 static void
+app_accounts_account_added_cb (GossipAccountManager *manager,
+			       GossipAccount        *account,
+			       gpointer              user_data)
+{
+ 	app_accounts_add (account); 
+}
+
+static void
+app_accounts_account_removed_cb (GossipAccountManager *manager,
+				 GossipAccount        *account,
+				 gpointer              user_data)
+{
+	app_accounts_remove (account);
+}
+
+static void
+app_accounts_account_enabled_cb (GossipAccountManager *manager,
+				 GossipAccount        *account,
+				 gpointer              user_data)
+{
+	app_accounts_rearrage ();	
+	app_connection_items_update ();
+}
+
+static gint
+app_accounts_sort_func (GossipAccount *a, 
+			GossipAccount *b)
+{
+	gboolean     enabled_a;
+	gboolean     enabled_b;
+	const gchar *name_a;
+	const gchar *name_b;
+
+	enabled_a = gossip_account_get_enabled (a);
+	enabled_b = gossip_account_get_enabled (b);
+	
+	if (enabled_a && !enabled_b) {
+		return -1;
+	}
+
+	if (!enabled_a && enabled_b) {
+		return 1;
+	}
+
+	/* after this, we strcmp based on name */
+	name_a = gossip_account_get_name (a);
+	name_b = gossip_account_get_name (b);
+
+	if (name_a && !name_b) {
+		return -1;
+	}
+
+	if (!name_a && name_b) {
+		return 1;
+	}
+
+	return strcmp (name_a, name_b);
+}
+
+static void
+app_accounts_rearrage (void)
+{
+	GossipAppPriv *priv;
+	GList         *children;
+	GList         *l;
+
+	priv = app->priv;
+
+	/* remove all children for a reshuffle */
+	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
+	for (l = children; l; l = l->next) {
+		gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), l->data);
+	}
+	
+	g_list_free (children);
+
+	/* add accounts back in */
+	app_accounts_create ();
+}
+
+static void
 app_accounts_create (void)
 {
 	GossipAppPriv        *priv;
@@ -1692,6 +1776,10 @@ app_accounts_create (void)
 	manager = gossip_session_get_account_manager (priv->session);
 	accounts = gossip_account_manager_get_accounts (manager);
 
+	/* add enabled accounts first, since they are important, they
+	   should be at the start of the account list */
+	accounts = g_list_sort (accounts, (GCompareFunc)app_accounts_sort_func);
+
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
 
@@ -1702,6 +1790,55 @@ app_accounts_create (void)
 
 	/* show/hide toolbar */
 	app_accounts_update_toolbar ();
+	app_accounts_update_separator ();
+}
+
+static void
+app_accounts_update_separator (void)
+{
+	GossipAppPriv *priv;
+	GtkToolItem   *item;
+	GList         *children;
+	GList         *l;
+	gint           index = 0;
+
+	priv = app->priv;
+
+	/* remove current separator */
+	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
+	for (l = children; l; l = l->next) {
+		if (G_OBJECT_TYPE (l->data) == GOSSIP_TYPE_ACCOUNT_BUTTON) {
+			continue;
+		}
+
+		gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), l->data);
+	}
+	
+	g_list_free (children);
+
+	/* find position for new separator */
+	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
+	for (l = children; l; l = l->next) {
+		GossipAccountButton *account_button;
+
+		account_button = l->data;
+
+		if (gossip_account_button_get_is_important (account_button)) {
+			index++;
+		} else {
+			break;
+		}
+	}
+
+	/* don't put a separator in if it is at the start or end */
+	if (index > 0 && index < g_list_length (children)) {
+		/* create separator */
+		item = gtk_separator_tool_item_new ();
+		gtk_toolbar_insert (GTK_TOOLBAR (priv->accounts_toolbar), item, index);
+		gtk_widget_show (GTK_WIDGET (item));
+	}
+
+	g_list_free (children);
 }
 
 static void 
@@ -1730,8 +1867,6 @@ app_accounts_add (GossipAccount *account)
 	GossipAppPriv *priv;
 	GtkWidget     *account_button;
 
-	GtkWidget     *toolitem;
-
 	priv = app->priv;
 
 	account_button = gossip_account_button_new ();
@@ -1743,11 +1878,8 @@ app_accounts_add (GossipAccount *account)
 			     account_button);
 	
 	/* add to toolbar */
-	toolitem = (GtkWidget*) gtk_tool_item_new ();
-	gtk_container_add (GTK_CONTAINER (priv->accounts_toolbar), toolitem);
-
-	gtk_container_add (GTK_CONTAINER (toolitem), account_button);
-	gtk_widget_show_all (toolitem);
+	gtk_container_add (GTK_CONTAINER (priv->accounts_toolbar), account_button);
+	gtk_widget_show_all (account_button);
 
 	/* show/hide toolbar */
 	app_accounts_update_toolbar ();
@@ -1764,30 +1896,6 @@ app_accounts_remove (GossipAccount *account)
 
 	/* show/hide toolbar */
 	app_accounts_update_toolbar ();
-}
-
-static void
-app_accounts_account_added_cb (GossipAccountManager *manager,
-			       GossipAccount        *account,
-			       gpointer              user_data)
-{
- 	app_accounts_add (account); 
-}
-
-static void
-app_accounts_account_removed_cb (GossipAccountManager *manager,
-				 GossipAccount        *account,
-				 gpointer              user_data)
-{
-	app_accounts_remove (account);
-}
-
-static void
-app_accounts_account_enabled_cb (GossipAccountManager *manager,
-				 GossipAccount        *account,
-				 gpointer              user_data)
-{
-	app_connection_items_update ();
 }
 
 static GossipPresence *

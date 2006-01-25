@@ -67,7 +67,7 @@ static void       account_button_menu_popdown              (GtkWidget           
 static void       account_button_menu_detach               (GtkWidget           *attach_widget,
 							    GtkMenu             *menu);
 static void       account_button_menu_popup                (GossipAccountButton *account_button);
-static void       account_button_clicked_cb                (GtkButton           *button,
+static void       account_button_clicked_cb                (GtkWidget           *button,
 							    GossipAccountButton *account_button);
 static GtkWidget *account_button_create_menu               (GossipAccountButton *account_button);
 static void       account_button_update_tooltip            (GossipAccountButton *account_button);
@@ -95,12 +95,12 @@ static void       account_button_protocol_error_cb         (GossipSession       
 							    GossipAccount       *account,
 							    GError              *error,
 							    GossipAccountButton *account_button);
-static void       account_button_account_name_changed_cb   (GossipAccount       *account,
+static void       account_button_account_notify_cb         (GossipAccount       *account,
 							    GParamSpec          *param,
 							    GossipAccountButton *account_button);
 
 
-G_DEFINE_TYPE (GossipAccountButton, gossip_account_button, GTK_TYPE_TOGGLE_BUTTON);
+G_DEFINE_TYPE (GossipAccountButton, gossip_account_button, GTK_TYPE_TOGGLE_TOOL_BUTTON);
 
 
 static void
@@ -156,7 +156,7 @@ account_button_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	g_signal_handlers_disconnect_by_func (priv->account, 
-					      account_button_account_name_changed_cb, 
+					      account_button_account_notify_cb, 
 					      account_button);
 	if (priv->account) {
 		g_object_unref (priv->account);
@@ -242,8 +242,8 @@ account_button_menu_popdown (GtkWidget           *menu,
 					 account_button_clicked_cb,
 					 account_button);
 
-	gtk_toggle_button_set_active (
-		GTK_TOGGLE_BUTTON (account_button), FALSE);
+	gtk_toggle_tool_button_set_active (
+		GTK_TOGGLE_TOOL_BUTTON (account_button), FALSE);
 
 	g_signal_handlers_unblock_by_func (account_button,
 					   account_button_clicked_cb,
@@ -283,7 +283,7 @@ account_button_menu_popup (GossipAccountButton *account_button)
 }
 
 static void
-account_button_clicked_cb (GtkButton           *button,
+account_button_clicked_cb (GtkWidget           *button,
 			   GossipAccountButton *account_button)
 {
 	account_button_menu_popup (account_button);
@@ -480,10 +480,11 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 		return FALSE;
 	}
 
-	image = gtk_button_get_image (GTK_BUTTON (account_button));
+	image = gtk_tool_button_get_icon_widget (GTK_TOOL_BUTTON (account_button));
 	if (!image) {
 		image = gtk_image_new ();
-		gtk_button_set_image (GTK_BUTTON (account_button), image);
+		gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (account_button),
+						 image);
 	}
 	
 	priv->pixelate = !priv->pixelate;
@@ -637,10 +638,11 @@ account_button_protocol_error_cb (GossipSession       *session,
 	/* set button status */
 	gossip_account_button_set_status (account_button, FALSE);
 
-	image = gtk_button_get_image (GTK_BUTTON (account_button));
+	image = gtk_tool_button_get_icon_widget (GTK_TOOL_BUTTON (account_button));
 	if (!image) {
 		image = gtk_image_new ();
-		gtk_button_set_image (GTK_BUTTON (account_button), image);
+		gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (account_button),
+						 image);
 	}
 
 	pixbuf = gossip_pixbuf_from_account_error (priv->account, 
@@ -653,10 +655,16 @@ account_button_protocol_error_cb (GossipSession       *session,
 }
 
 static void
-account_button_account_name_changed_cb (GossipAccount       *account,
-					GParamSpec          *param,
-					GossipAccountButton *account_button)
+account_button_account_notify_cb (GossipAccount       *account,
+				  GParamSpec          *param,
+				  GossipAccountButton *account_button)
 {
+	gtk_tool_button_set_label (GTK_TOOL_BUTTON (account_button),
+				   gossip_account_get_name (account));
+
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
+					gossip_account_get_enabled (account));
+
 	account_button_update_tooltip (account_button);
 }
 
@@ -667,10 +675,13 @@ gossip_account_button_new (void)
 
 	account_button = g_object_new (GOSSIP_TYPE_ACCOUNT_BUTTON, NULL);
 
-	g_object_set (account_button, 
-		      "relief", GTK_RELIEF_NONE,
-		      "label", "",
-		      NULL);
+	/* should we show the text for the account? */
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
+					FALSE);
+
+	/* should we show the item when docked horizontally */
+	gtk_tool_item_set_visible_horizontal (GTK_TOOL_ITEM (account_button),
+					      TRUE);
 	
 	return account_button;
 }
@@ -689,15 +700,22 @@ gossip_account_button_set_account (GossipAccountButton *account_button,
 
 	if (priv->account) {
 		g_signal_handlers_disconnect_by_func (account, 
-						      account_button_account_name_changed_cb, 
+						      account_button_account_notify_cb, 
 						      account_button);
 		g_object_unref (priv->account);
 	}
 
+	/* set label */
+	gtk_tool_button_set_label (GTK_TOOL_BUTTON (account_button),
+				   gossip_account_get_name (account));
+
+	/* should we show the text for the account? */
+	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
+					gossip_account_get_enabled (account));
 
 	priv->account = g_object_ref (account);
-	g_signal_connect (priv->account, "notify::name", 
-			  G_CALLBACK (account_button_account_name_changed_cb), 
+	g_signal_connect (priv->account, "notify", 
+			  G_CALLBACK (account_button_account_notify_cb), 
 			  account_button);
 
 	session = gossip_app_get_session ();
@@ -730,10 +748,11 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 	}
 
 	/* set image */
-	image = gtk_button_get_image (GTK_BUTTON (account_button));
+	image = gtk_tool_button_get_icon_widget (GTK_TOOL_BUTTON (account_button));
 	if (!image) {
 		image = gtk_image_new ();
-		gtk_button_set_image (GTK_BUTTON (account_button), image);
+		gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (account_button),
+						 image);
 	}
 
 	pixbuf = gossip_pixbuf_from_account_status (priv->account, 
@@ -743,4 +762,18 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 	g_object_unref (pixbuf);
 }
 
+gboolean
+gossip_account_button_get_is_important (GossipAccountButton *account_button)
+{
+	GossipAccountButtonPriv *priv;
 
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
+
+	priv = GET_PRIV (account_button);
+
+	if (!priv->account) {
+		return FALSE;
+	}
+
+	return gossip_account_get_enabled (priv->account);
+}

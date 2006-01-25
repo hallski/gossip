@@ -1,3 +1,18 @@
+2006-01-25  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-account-button.[ch]:
+	* src/gossip-app.c: 
+	* ui/main.glade:
+	- Updated the account buttons so they now are divided into two
+	groups, the first group is enabled accounts which show the icon
+	AND the text horizontally, the second group is disabled accounts
+	which JUST show the icon. 
+	- Use a separator to divide enabled/disabled accounts.
+	- Fixed an implementation detail so that the items are not
+	GtkButton's inside GtkToolItem's, they are now just
+	GtkToggleToolButtons so now we get a drop down arrow button when
+	accounts don't fit the width of the window, which is cool.  
+
 2006-01-20  Johan Dahlin  <johan@gnome.org>
 
 	* src/gossip-presence-chooser.c: (presence_chooser_add_item):
