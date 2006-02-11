@@ -753,15 +753,19 @@ jabber_connection_auth_cb (LmConnection *connection,
 	g_signal_emit_by_name (jabber, "logged-in", priv->account);
 
 	if (priv->vcard) {
-		const gchar *name;
+		gchar *name;
 
-		name = gossip_vcard_get_name (priv->vcard);
-		if (name && strlen (name) > 0) {
-			gossip_contact_set_name (priv->contact, name);
-			g_signal_emit_by_name (jabber, 
-					       "contact-updated", 
-					       priv->contact);
-		}
+		name = gossip_jabber_get_name_to_use 
+			(gossip_contact_get_id (priv->contact),
+			 gossip_vcard_get_nickname (priv->vcard),
+			 gossip_vcard_get_name (priv->vcard));
+		
+		gossip_contact_set_name (priv->contact, name);
+		g_free (name);
+
+		g_signal_emit_by_name (jabber, 
+				       "contact-updated", 
+				       priv->contact);
 
 		/* Set the vcard waiting to be sent to our jabber server once
 		 * connected. 
@@ -1172,7 +1176,10 @@ jabber_send_message (GossipProtocol *protocol,
 	/* Getting contact from JID, this will add them to our
 	 * contacts hash table if they don't exist too. 
 	 */
-	recipient = gossip_jabber_get_contact_from_jid (jabber, recipient_id, &new_contact);
+	recipient = gossip_jabber_get_contact_from_jid (jabber, 
+							recipient_id, 
+							&new_contact,
+							TRUE);
 	if (new_contact) {
 		g_object_unref (recipient);
 	}
@@ -1557,15 +1564,19 @@ jabber_contact_vcard_cb (GossipResult  result,
 			 VCardData    *vd)
 {
 	if (result == GOSSIP_RESULT_OK) {
-		const gchar *name;
+		gchar *name;
 
-		name = gossip_vcard_get_name (vcard);
-		if (name && strlen (name) > 0) {
-			gossip_contact_set_name (vd->contact, name);
-			g_signal_emit_by_name (vd->jabber, 
-					       "contact-updated", 
-					       vd->contact);
-		}
+		name = gossip_jabber_get_name_to_use 
+			(gossip_contact_get_id (vd->contact),
+			 gossip_vcard_get_nickname (vcard),
+			 gossip_vcard_get_name (vcard));
+		
+		gossip_contact_set_name (vd->contact, name);
+		g_free (name);
+
+		g_signal_emit_by_name (vd->jabber, 
+				       "contact-updated", 
+				       vd->contact);
 	}
 
 	g_object_unref (vd->jabber);
@@ -1783,19 +1794,12 @@ jabber_get_vcard (GossipProtocol       *protocol,
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv; 
-	const gchar      *jid_str;
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 	
-	if (contact) {
-		jid_str = gossip_contact_get_id (contact);
-	} else {
-		jid_str = NULL;
-	}
-	
 	return gossip_jabber_vcard_get (priv->connection,
-					jid_str,
+					gossip_contact_get_id (contact),
 					callback, user_data, error);
 }
 
@@ -1902,7 +1906,10 @@ jabber_message_handler (LmMessageHandler *handler,
 	case LM_MESSAGE_SUB_TYPE_CHAT:
 	case LM_MESSAGE_SUB_TYPE_HEADLINE: /* For now, fixes #120009 */
 		from_str = lm_message_node_get_attribute (m->node, "from");
-		from = gossip_jabber_get_contact_from_jid (jabber, from_str, NULL);
+		from = gossip_jabber_get_contact_from_jid (jabber, 
+							   from_str, 
+							   NULL,
+							   TRUE);
 		
 		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
 					      priv->contact);
@@ -1978,7 +1985,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
-	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item); 
+	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item, TRUE); 
 
 	type = lm_message_node_get_attribute (m->node, "type");
 	if (!type) {
@@ -2224,7 +2231,11 @@ jabber_request_roster (GossipJabber *jabber,
 			continue;
 		}
 
-		contact = gossip_jabber_get_contact_from_jid (jabber, jid_str, &new_item);
+		contact = gossip_jabber_get_contact_from_jid (jabber, 
+							      jid_str, 
+							      &new_item, 
+							      FALSE);
+
 		g_object_set (contact, "type", GOSSIP_CONTACT_TYPE_CONTACTLIST, NULL);
 
 		/* groups */
@@ -2644,7 +2655,8 @@ gossip_jabber_get_own_contact (GossipJabber *jabber)
 GossipContact *
 gossip_jabber_get_contact_from_jid (GossipJabber *jabber, 
 				    const gchar  *jid_str,
-				    gboolean     *new_item)
+				    gboolean     *new_item,
+				    gboolean      get_vcard)
 {
 	GossipJabberPriv *priv;
 	GossipContact    *contact;
@@ -2669,15 +2681,17 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 					 gossip_jid_get_without_resource (jid));
 
 		tmp_new_item = TRUE;
-
+		
 		g_hash_table_insert (priv->contacts, 
 				     g_strdup (gossip_contact_get_id (contact)),
 				     g_object_ref (contact));
 		
-		/* Request contacts VCard details so we can get the
-		 * real name for them for chat windows, etc 
-		 */
-		jabber_contact_vcard (jabber, contact);
+		if (get_vcard) {
+			/* Request contacts VCard details so we can get the
+			 * real name for them for chat windows, etc 
+			 */
+			jabber_contact_vcard (jabber, contact);
+		}
 	}
 
 	gossip_jid_unref (jid);

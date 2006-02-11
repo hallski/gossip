@@ -57,7 +57,8 @@ GossipAccount *gossip_jabber_get_account               (GossipJabber        *jab
 GossipContact *gossip_jabber_get_own_contact           (GossipJabber        *jabber);
 GossipContact *gossip_jabber_get_contact_from_jid      (GossipJabber        *jabber,
 							const gchar         *jid,
-							gboolean            *new_item);
+							gboolean            *new_item,
+							gboolean             get_vcard);
 void           gossip_jabber_send_subscribed           (GossipJabber        *jabber,
 							GossipContact       *contact);
 void           gossip_jabber_send_unsubscribed         (GossipJabber        *jabber,

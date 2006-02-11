@@ -21,6 +21,7 @@
 #include "string.h"
 
 #include "gossip-jabber-utils.h"
+#include "gossip-jid.h"
 
 const gchar * 
 gossip_jabber_presence_state_to_str (GossipPresence *presence)
@@ -176,4 +177,31 @@ gossip_jabber_get_message_is_composing (LmMessage *m)
         }
 
 	return FALSE;	
+}
+
+gchar *
+gossip_jabber_get_name_to_use (const gchar *jid_str,
+			       const gchar *nickname, 
+			       const gchar *full_name)
+{
+	if (nickname && strlen (nickname) > 0) {
+		return g_strdup (nickname);
+	}
+
+	if (full_name && strlen (full_name) > 0) {
+		return g_strdup (full_name);
+	}
+	
+	if (jid_str && strlen (jid_str) > 0) {
+		GossipJID *jid;
+		gchar     *part_name;
+
+		jid = gossip_jid_new (jid_str);
+		part_name = gossip_jid_get_part_name (jid);
+		gossip_jid_unref (jid);
+
+		return part_name;
+	}
+
+	return "";
 }

@@ -1,5 +1,20 @@
 2006-02-11  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber-ft.c: 
+	* protocols/jabber/gossip-jabber-vcard.c:
+	* protocols/jabber/gossip-jabber.[ch]: 
+	- Fixed a bug from the work just committed where the vcard for
+	every contact on a roster was requested.
+	- Fixed the name used in chat from full name to fall back to names
+	in this order: nickname, name, name part of JID.
+	
+	* src/gossip-new-account-window.c: 
+	* ui/connect.glade:
+	- Make the account id (JID) entry wider in the accounts dialog so
+	it is more likely to fit with the resource id.
+
+2006-02-11  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-protocol.[ch]:
 	- Added support for _is_valid_username(), _get_example_username(),
 	_get_default_server() and _get_default_port().

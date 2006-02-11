@@ -292,7 +292,7 @@
 			      <property name="has_frame">True</property>
 			      <property name="invisible_char">*</property>
 			      <property name="activates_default">True</property>
-			      <property name="width_chars">25</property>
+			      <property name="width_chars">30</property>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">1</property>

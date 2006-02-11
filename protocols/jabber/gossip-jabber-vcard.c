@@ -23,6 +23,7 @@
 #include <stdlib.h> 
 
 #include "gossip-jabber-vcard.h"
+#include "gossip-jid.h"
 
 #define d(x)
 
@@ -146,9 +147,14 @@ gossip_jabber_vcard_get (LmConnection         *connection,
 	LmMessage          *m;
 	LmMessageNode      *node;
 	LmMessageHandler   *handler;
+	GossipJID          *jid;
 	GossipCallbackData *data;
 
-	m = lm_message_new (jid_str, LM_MESSAGE_TYPE_IQ);
+	jid = gossip_jid_new (jid_str);
+	m = lm_message_new (gossip_jid_get_without_resource (jid), 
+			    LM_MESSAGE_TYPE_IQ);
+	gossip_jid_unref (jid);
+
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 

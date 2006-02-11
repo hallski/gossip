@@ -29,5 +29,8 @@ gossip_time_t       gossip_jabber_get_message_timestamp    (LmMessage      *m);
 const gchar *       gossip_jabber_get_message_conference   (LmMessage      *m);
 gboolean            gossip_jabber_get_message_is_event     (LmMessage      *m);
 gboolean            gossip_jabber_get_message_is_composing (LmMessage      *m);
+gchar *             gossip_jabber_get_name_to_use          (const gchar    *jid_str,
+							    const gchar    *nickname,  
+							    const gchar    *full_name);
 
 #endif /* __GOSSIP_JABBER_UTILS_H__ */

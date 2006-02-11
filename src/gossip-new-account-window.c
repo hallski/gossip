@@ -189,7 +189,9 @@ new_account_window_register (GossipNewAccountWindow *window,
 {
 	GossipSession *session;
 	GossipVCard   *vcard;
+	gchar         *nickname;
 	const gchar   *name;
+	const gchar   *last_part;
 
 	gtk_image_set_from_stock (GTK_IMAGE (window->six_progress_image),
 				  GTK_STOCK_INFO,
@@ -211,8 +213,20 @@ new_account_window_register (GossipNewAccountWindow *window,
 	vcard = gossip_vcard_new ();
 
 	name = gtk_entry_get_text (GTK_ENTRY (window->three_name_entry));
-	gossip_vcard_set_name (vcard, name);
+	
+	last_part = strstr (name, " ");
+	if (last_part) {
+		gint len;
 
+		len = last_part - name;
+		nickname = g_strndup (name, len);
+	} else {
+		nickname = g_strdup (name);
+	}
+
+	gossip_vcard_set_name (vcard, name);
+	gossip_vcard_set_nickname (vcard, nickname);
+	
         gossip_session_register_account (session,
 					 GOSSIP_ACCOUNT_TYPE_JABBER,
 					 account,
