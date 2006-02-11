@@ -25,7 +25,9 @@
 #include "gossip-chat.h"
 #include "gossip-chat-manager.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+						    GOSSIP_TYPE_CHAT_MANAGER, \
+						    GossipChatManagerPriv))
 
 #define d(x) 
 
@@ -37,6 +39,7 @@ struct _GossipChatManagerPriv {
 	GHashTable *events;
 };
 
+
 static void chat_manager_finalize           (GObject            *object);
 static void chat_manager_new_message_cb     (GossipSession      *session,
 					     GossipMessage      *msg,
@@ -45,9 +48,12 @@ static void chat_manager_event_activated_cb (GossipEventManager *event_manager,
 					     GossipEvent        *event,
 					     GObject            *object);
 
+
 G_DEFINE_TYPE (GossipChatManager, gossip_chat_manager, G_TYPE_OBJECT);
 
+
 static gpointer parent_class = NULL;
+
 
 static void
 gossip_chat_manager_class_init (GossipChatManagerClass *class)
@@ -190,10 +196,19 @@ gossip_chat_manager_get_chat (GossipChatManager *manager,
 	chat = g_hash_table_lookup (priv->chats, contact);
 	
 	if (!chat) {
-		chat = gossip_private_chat_new (contact);
+		GossipSession *session;
+		GossipAccount *account;
+		GossipContact *own_contact;
+		
+		session = gossip_app_get_session ();
+		account = gossip_contact_get_account (contact);
+		own_contact = gossip_session_get_own_contact (session, account);
+
+		chat = gossip_private_chat_new (own_contact, contact);
 		g_hash_table_insert (priv->chats, 
 				     g_object_ref (contact),
 				     chat);
+
 		d(g_print ("Creating a new chat: %s\n",
 			   gossip_contact_get_id (contact)));
 	}

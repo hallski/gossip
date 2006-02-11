@@ -27,27 +27,22 @@
 #define d(x)
 
 
-typedef struct {
-	gpointer callback;
-	gpointer user_data;
-} AsyncCallbackData;
-
-
 static LmHandlerResult 
-jabber_vcard_get_cb (LmMessageHandler  *handler,
-		     LmConnection      *connection,
-		     LmMessage         *m,
-		     AsyncCallbackData *data)
+jabber_vcard_get_cb (LmMessageHandler   *handler,
+		     LmConnection       *connection,
+		     LmMessage          *m,
+		     GossipCallbackData *data)
 {
-	GossipVCard              *vcard;
+	GossipVCard         *vcard;
 	GossipVCardCallback  callback;
-	LmMessageNode            *vcard_node, *node;
-	LmMessageSubType          type;
+	LmMessageNode       *vcard_node, *node;
+	LmMessageSubType     type;
 
-	callback = data->callback;
-	if (!callback) {
+	if (!data || !data->callback) {
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
+
+	callback = data->callback;
 
 	/* check for error */
 	type = lm_message_get_sub_type (m);
@@ -148,21 +143,22 @@ gossip_jabber_vcard_get (LmConnection         *connection,
 			 gpointer              user_data,
 			 GError              **error)
 {
-	LmMessage         *m;
-	LmMessageNode     *node;
-	LmMessageHandler  *handler;
-	AsyncCallbackData *data;
+	LmMessage          *m;
+	LmMessageNode      *node;
+	LmMessageHandler   *handler;
+	GossipCallbackData *data;
 
 	m = lm_message_new (jid_str, LM_MESSAGE_TYPE_IQ);
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
-	data = g_new0 (AsyncCallbackData, 1);
+	data = g_new0 (GossipCallbackData, 1);
 	data->callback = callback;
 	data->user_data = user_data;
 	
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_get_cb,
-					  data, g_free);
+					  data, 
+					  g_free);
 	
 	if (!lm_connection_send_with_reply (connection, m, 
 					    handler, error)) {
@@ -180,29 +176,35 @@ gossip_jabber_vcard_get (LmConnection         *connection,
 }
 
 static LmHandlerResult 
-jabber_vcard_set_cb (LmMessageHandler  *handler,
-		     LmConnection      *connection,
-		     LmMessage         *m,
-		     AsyncCallbackData *data)
+jabber_vcard_set_cb (LmMessageHandler   *handler,
+		     LmConnection       *connection,
+		     LmMessage          *m,
+		     GossipCallbackData *data)
 {
-	/* FIXME: Error checking and reply error if failed */
-	((GossipResultCallback )data->callback) (GOSSIP_RESULT_OK, data->user_data);
+	GossipResultCallback callback;
+
+	if (!data || !data->callback) {
+		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	}
+
+	callback = data->callback;
+	(callback) (GOSSIP_RESULT_OK, data->user_data);
 	
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
 gossip_jabber_vcard_set (LmConnection          *connection,
-			 GossipVCard                *vcard,
+			 GossipVCard           *vcard,
 			 GossipResultCallback   callback,
-			 gpointer                    user_data,
-			 GError                    **error)
+			 gpointer               user_data,
+			 GError               **error)
 {
-	LmMessage         *m;
-	LmMessageNode     *node;
-	LmMessageHandler  *handler;
-	AsyncCallbackData *data;
-	gboolean           result;
+	LmMessage          *m;
+	LmMessageNode      *node;
+	LmMessageHandler   *handler;
+	GossipCallbackData *data;
+	gboolean            result;
 
 	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,
@@ -219,12 +221,14 @@ gossip_jabber_vcard_set (LmConnection          *connection,
 	lm_message_node_add_child (node, "DESC", 
 				   gossip_vcard_get_description (vcard));
 	
-	data = g_new0 (AsyncCallbackData, 1);
+	data = g_new0 (GossipCallbackData, 1);
+
 	data->callback = callback;
 	data->user_data = user_data;
 	
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_set_cb,
-					  data, g_free);
+					  data, 
+					  g_free);
  
 	result = lm_connection_send_with_reply (connection, m, handler, error);
 	
@@ -233,4 +237,3 @@ gossip_jabber_vcard_set (LmConnection          *connection,
 
 	return result;
 }
-

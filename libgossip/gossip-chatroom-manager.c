@@ -33,7 +33,7 @@
 #define CHATROOMS_XML_FILENAME "chatrooms.xml"
 #define CHATROOMS_DTD_FILENAME "gossip-chatroom.dtd"
 
-#define d(x) x
+#define d(x)
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerPriv))
 

@@ -54,7 +54,8 @@ struct _GossipPrivateChatClass {
 };
 
 GType               gossip_private_chat_get_type           (void);
-GossipPrivateChat * gossip_private_chat_new                (GossipContact     *contact);
+GossipPrivateChat * gossip_private_chat_new                (GossipContact     *own_contact,
+							    GossipContact     *contact);
 GossipPrivateChat * gossip_private_chat_get_for_group_chat (GossipContact     *contact,
 						            GossipGroupChat   *g_chat);
 void                gossip_private_chat_append_message     (GossipPrivateChat *chat,

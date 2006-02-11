@@ -34,7 +34,6 @@
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-accounts-dialog.h"
-#include "gossip-ui-utils.h"
 #include "gossip-app.h"
 #include "gossip-new-account-window.h"
 
@@ -53,7 +52,6 @@ typedef struct {
 	GtkWidget *entry_name;
 	GtkWidget *entry_id;
 	GtkWidget *entry_server;
-	GtkWidget *entry_resource;
 	GtkWidget *entry_password;
 	GtkWidget *entry_port;
 
@@ -259,19 +257,29 @@ static void
 accounts_dialog_update_account (GossipAccountsDialog *dialog,
 				GossipAccount        *account)
 {
-	gchar         *port_str; 
-	const gchar   *id;
+	GossipSession  *session;
+	GossipProtocol *protocol;
+
+	gchar          *port_str; 
+	const gchar    *id;
+
+	const gchar    *server;
+	const gchar    *password;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
 	/* block signals first */
 	accounts_dialog_block_widgets (dialog, TRUE);
 
+	/* get protocol */
+	session = gossip_app_get_session ();
+	protocol = gossip_session_get_protocol (session, account);
+
 	/* set account details */
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), 
 			    gossip_account_get_name (account));
 
-	if (lm_ssl_is_supported ()) {
+	if (gossip_protocol_is_ssl_supported (protocol)) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_ssl),
 					      gossip_account_get_use_ssl (account));
 	} else {
@@ -286,40 +294,16 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 
 
 	id = gossip_account_get_id (account);
-	if (!STRING_EMPTY (id)) {
-		const gchar *resource;
-		gchar       *name, *host, *id_no_resource;
-		
-		/* FIXME: we have to know about Jabber stuff here... */
-		resource = gossip_utils_jid_str_locate_resource (id);
-		if (!resource) {
-			resource = _("Home");
-		}
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_id), id);
 
-		name = gossip_utils_jid_str_get_part_name (id);
-		host = gossip_utils_jid_str_get_part_host (id);
+	password = gossip_account_get_password (account);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password), password ? password : "");
 
-		id_no_resource = g_strdup_printf ("%s@%s", name, host);
-
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_resource), resource);
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_id), id_no_resource);
-
-		g_free (name);
-		g_free (host);
-		g_free (id_no_resource);
-	}
-
-	if (gossip_account_get_password (account)) {
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_password), 
-				    gossip_account_get_password (account));
-	}
-
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), 
-			    gossip_account_get_server (account));
+	server = gossip_account_get_server (account);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), server ? server : "");
 
 	port_str = g_strdup_printf ("%d", gossip_account_get_port (account));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_port), 
-			    port_str);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_port), port_str);
 	g_free (port_str);
 
 	/* unblock signals */
@@ -393,9 +377,7 @@ accounts_dialog_save (GossipAccountsDialog *dialog,
 	GossipSession        *session;
 	GossipAccountManager *manager;
  	const gchar          *str;
-	gchar                *id_to_save;
-	const gchar          *resource;
-	gint                  pnr;
+	guint16               pnr;
 	gboolean              bool;
 
 	session = gossip_app_get_session ();
@@ -407,14 +389,7 @@ accounts_dialog_save (GossipAccountsDialog *dialog,
 
 	/* set id */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
-	resource = gtk_entry_get_text (GTK_ENTRY (dialog->entry_resource));
-	if (STRING_EMPTY (resource)) {
-		resource = _("Home");
-	}
-	
-	id_to_save = g_strdup_printf ("%s/%s", str, resource);
-	gossip_account_set_id (account, id_to_save);
-	g_free (id_to_save);
+	gossip_account_set_id (account, str);
 
 	/* set password */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
@@ -427,9 +402,7 @@ accounts_dialog_save (GossipAccountsDialog *dialog,
 	/* set port */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_port));
 	pnr = strtol (str, NULL, 10);
-	if (pnr > 0 && pnr < 65556) {
-		gossip_account_set_port (account, pnr);
-	}
+	gossip_account_set_port (account, pnr);
 
 	/* set auto connect, proxy, ssl */
 	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect));
@@ -731,8 +704,15 @@ accounts_dialog_model_selection_changed (GtkTreeSelection     *selection,
 	accounts_dialog_update_connect_button (dialog);
 
 	if (is_selection) {
+		GossipSession *session;
+
+		session = gossip_app_get_session ();
 		account = accounts_dialog_model_get_selected (dialog);
 		accounts_dialog_update_account (dialog, account);
+
+		if (gossip_session_is_connected (session, account)) {
+			gtk_widget_set_sensitive (dialog->button_remove, FALSE);
+		}
 
 		g_object_unref (account);
 	}
@@ -885,32 +865,74 @@ accounts_dialog_entry_focus_cb (GtkWidget            *widget,
 				GdkEventFocus        *event,
 				GossipAccountsDialog *dialog)
 {
-	if (widget == dialog->entry_id) {
-		const gchar *server;
-		
-		server = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
+	GossipAccount *account;
 
-		if (STRING_EMPTY (server)) {
+	account = accounts_dialog_model_get_selected (dialog);
+
+	if (widget == dialog->entry_id) {
+		GossipSession  *session;
+		GossipProtocol *protocol;
+
+		session = gossip_app_get_session ();
+		protocol = gossip_session_get_protocol (session, account);
+
+		if (protocol) {
 			const gchar *str;
-			gchar       *host;
 
 			str = gtk_entry_get_text (GTK_ENTRY (widget));
-			host = gossip_utils_jid_str_get_part_host (str);
-			gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), host);
 
-			g_free (host);
+			if (!gossip_protocol_is_valid_username (protocol, str)) {
+				str = gossip_account_get_id (account);
+				dialog->account_changed = FALSE;
+			}
+
+			gtk_entry_set_text (GTK_ENTRY (widget), str);
+		}
+	}
+
+	if (widget == dialog->entry_name ||
+	    widget == dialog->entry_password ||
+	    widget == dialog->entry_server) {
+		const gchar *str;
+
+		str = gtk_entry_get_text (GTK_ENTRY (widget));
+		if (STRING_EMPTY (str)) {
+			if (widget == dialog->entry_name) {
+				str = gossip_account_get_name (account);
+			} else if (widget == dialog->entry_password) {
+				str = gossip_account_get_password (account);
+			} else if (widget == dialog->entry_server) {
+				str = gossip_account_get_server (account);
+			}
+
+			gtk_entry_set_text (GTK_ENTRY (widget), str);
+			dialog->account_changed = FALSE;
+		}
+	}
+
+	if (widget == dialog->entry_port) {
+		const gchar *str;
+		
+		str = gtk_entry_get_text (GTK_ENTRY (widget));
+		if (STRING_EMPTY (str)) {
+			gchar   *port_str;
+			guint16  port;
+			
+			port = gossip_account_get_port (account);
+			port_str = g_strdup_printf ("%d", port);
+			gtk_entry_set_text (GTK_ENTRY (widget), port_str);
+			g_free (port_str);
+
+			dialog->account_changed = FALSE;
 		}
 	}
 
 	if (dialog->account_changed) {
-		GossipAccount *account;
-
-		account = accounts_dialog_model_get_selected (dialog);
  		accounts_dialog_save (dialog, account); 
-
-		g_object_unref (account);
 	}
 
+	g_object_unref (account);
+			
 	return FALSE;
 }
 
@@ -960,17 +982,28 @@ accounts_dialog_checkbutton_toggled_cb (GtkWidget            *widget,
 	account = accounts_dialog_model_get_selected (dialog);
 
 	if (widget == dialog->checkbutton_ssl) {
+		GossipSession  *session;
+		GossipProtocol *protocol;
+
+		guint16         port;
+		guint16         port_with_ssl;
+
+		session = gossip_app_get_session ();
+		protocol = gossip_session_get_protocol (session, account);
+
+		port = gossip_protocol_get_default_port (protocol, FALSE);
+		port_with_ssl = gossip_protocol_get_default_port (protocol, TRUE);
+
 		active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
-		
 		gossip_account_set_use_ssl (account, active);
 		
 		if (active && 
-		    (gossip_account_get_port (account) == LM_CONNECTION_DEFAULT_PORT)) {
-			gossip_account_set_port (account, LM_CONNECTION_DEFAULT_PORT_SSL);
+		    (gossip_account_get_port (account) == port)) {
+			gossip_account_set_port (account, port_with_ssl);
 			changed = TRUE;
 		} else if (!active && 
-			   (gossip_account_get_port (account) == LM_CONNECTION_DEFAULT_PORT_SSL)) {
-			gossip_account_set_port (account, LM_CONNECTION_DEFAULT_PORT);
+			   (gossip_account_get_port (account) == port_with_ssl)) {
+			gossip_account_set_port (account, port);
 			changed = TRUE;
 		}
 		
@@ -1119,6 +1152,7 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
  	manager = gossip_session_get_account_manager (session);
 
 	account = accounts_dialog_model_get_selected (window);
+
 	gossip_account_manager_remove (manager, account);
 	gossip_account_manager_store (manager);
 
@@ -1226,7 +1260,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	GladeXML                    *glade;
 	GtkSizeGroup                *size_group;
 	GtkWidget                   *label_name, *label_id, *label_password;
-	GtkWidget                   *label_server, *label_port, *label_resource; 
+	GtkWidget                   *label_server, *label_port; 
 	GtkWidget                   *bbox, *button_close;
 
 	if (dialog) {
@@ -1248,10 +1282,8 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "label_password", &label_password,
 				       "label_server", &label_server,
 				       "label_port", &label_port,
-				       "label_resource", &label_resource,
 				       "entry_name", &dialog->entry_name,
 				       "entry_id", &dialog->entry_id,
-				       "entry_resource", &dialog->entry_resource,
 				       "entry_server", &dialog->entry_server,
 				       "entry_password", &dialog->entry_password,
 				       "entry_port", &dialog->entry_port,
@@ -1271,13 +1303,11 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "entry_password", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_server", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_port", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_resource", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_name", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_id", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_password", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_server", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_port", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_resource", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_port", "insert_text", accounts_dialog_entry_port_insert_text_cb,
 			      "checkbutton_proxy", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      "checkbutton_ssl", "toggled", accounts_dialog_checkbutton_toggled_cb,

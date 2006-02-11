@@ -75,7 +75,8 @@ log_ensure_dir (void)
 }
 
 static gchar *
-log_get_filename (GossipContact *contact, const gchar *suffix)
+log_get_filename (GossipContact *contact, 
+		  const gchar   *suffix)
 {
 	gchar *tmp;
 	gchar *ret;
@@ -182,7 +183,9 @@ log_urlify (const gchar *msg)
 }
 
 void
-gossip_log_message (GossipMessage *msg, gboolean incoming)
+gossip_log_message (GossipContact *own_contact,
+		    GossipMessage *msg, 
+		    gboolean       incoming)
 {
 	GossipContact *contact;
         gchar         *filename;
@@ -228,7 +231,7 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 		nick = gossip_contact_get_name (contact);
 	} else {
 		to_or_from = "to";
- 		nick = gossip_session_get_nickname (gossip_app_get_session ());
+ 		nick = gossip_contact_get_name (own_contact);
 	}
 
         if (gossip_message_get_body (msg)) {
@@ -260,7 +263,8 @@ gossip_log_message (GossipMessage *msg, gboolean incoming)
 }
 
 static gboolean
-log_transform (const gchar *infile, gint fd_outfile)
+log_transform (const gchar *infile, 
+	       gint         fd_outfile)
 {
         xsltStylesheet  *stylesheet;
         xmlDoc          *xml_doc;

@@ -51,11 +51,14 @@ GType      gossip_account_button_get_type         (void) G_GNUC_CONST;
 
 GtkWidget *gossip_account_button_new              (void);
 
+GossipAccount *
+           gossip_account_button_get_account      (GossipAccountButton *button);
+gboolean   gossip_account_button_get_is_important (GossipAccountButton *button);
+
 void       gossip_account_button_set_account      (GossipAccountButton *button,
 						   GossipAccount       *account);
 void       gossip_account_button_set_status       (GossipAccountButton *button,
 						   gboolean             online);
-gboolean   gossip_account_button_get_is_important (GossipAccountButton *button);
 
 
 

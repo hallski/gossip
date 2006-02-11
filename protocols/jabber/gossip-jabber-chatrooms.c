@@ -32,7 +32,7 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
 
-#define d(x) x
+#define d(x)
 
 #define JOIN_TIMEOUT       20000
 
@@ -145,7 +145,12 @@ gossip_jabber_chatrooms_init (GossipJabber *jabber)
 void
 gossip_jabber_chatrooms_finalize (GossipJabberChatrooms *chatrooms)
 {
-	g_return_if_fail (chatrooms != NULL);
+	if (!chatrooms) {
+		/* We don't error here, because if no connection is
+		made, then we can clean up a GossipJabber object
+		without any chatrooms ever existing */
+		return;
+	}
 
 	g_hash_table_destroy (chatrooms->room_id_hash);
 	g_hash_table_destroy (chatrooms->room_jid_hash);

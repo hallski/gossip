@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_NEW_ACCOUNT_WINDOW_H__
 #define __GOSSIP_NEW_ACCOUNT_WINDOW_H__
 
-#include <glib.h>
+#include <gtk/gtk.h>
 
 void     gossip_new_account_window_show      (GtkWindow *parent);
 gboolean gossip_new_account_window_is_needed (void);

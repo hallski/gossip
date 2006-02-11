@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2005 Imendio AB
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -31,6 +31,7 @@
 #include "gossip-ft-provider.h"
 #include "gossip-message.h"
 #include "gossip-presence.h"
+#include "gossip-protocol.h"
 #include "gossip-vcard.h"
 
 #define GOSSIP_TYPE_SESSION         (gossip_session_get_type ())
@@ -65,6 +66,18 @@ struct _GossipSessionClass {
 GType           gossip_session_get_type                (void) G_GNUC_CONST;
 GossipSession * gossip_session_new                     (GossipAccountManager    *manager);
 
+/* get protocol */
+GossipProtocol *gossip_session_get_protocol            (GossipSession           *session,
+							GossipAccount           *account);
+
+/* providers */
+GossipChatroomProvider *
+                gossip_session_get_chatroom_provider   (GossipSession           *session,
+							GossipAccount           *account);
+GossipFTProvider *
+                gossip_session_get_ft_provider         (GossipSession           *session,
+							GossipAccount           *account);
+
 /* accounts */
 GossipAccountManager *
                 gossip_session_get_account_manager     (GossipSession           *session);
@@ -88,27 +101,21 @@ void            gossip_session_connect                 (GossipSession           
 							gboolean                 startup);
 void            gossip_session_disconnect              (GossipSession           *session,
 							GossipAccount           *account);
+gboolean        gossip_session_is_connected            (GossipSession           *session,
+							GossipAccount           *account);
 void            gossip_session_send_message            (GossipSession           *session,
 							GossipMessage           *message);
 void            gossip_session_send_composing          (GossipSession           *session,
 							GossipContact           *contact,
 							gboolean                 composing);
-GossipPresence *gossip_session_get_presence            (GossipSession           *session);
 void            gossip_session_set_presence            (GossipSession           *session,
 							GossipPresence          *presence);
-gboolean        gossip_session_is_connected            (GossipSession           *session,
-							GossipAccount           *account);
-const gchar *   gossip_session_get_active_resource     (GossipSession           *session,
-							GossipContact           *contact);
-
-/* providers */
-GossipChatroomProvider *
-gossip_session_get_chatroom_provider                    (GossipSession           *session,
-							 GossipAccount           *account);
-GossipFTProvider *
-gossip_session_get_ft_provider                          (GossipSession           *session,
-							 GossipAccount           *account);
-
+gboolean        gossip_session_set_vcard               (GossipSession           *session,
+							GossipAccount           *account,
+							GossipVCard             *vcard,
+							GossipResultCallback     callback,
+							gpointer                 user_data,
+							GError                 **error);
 /* contact management */
 GossipContact * gossip_session_find_contact            (GossipSession           *session,
 							const gchar             *str);
@@ -128,35 +135,34 @@ void            gossip_session_update_contact          (GossipSession           
 void            gossip_session_rename_group            (GossipSession           *session,
 							const gchar             *group,
 							const gchar             *new_name);
+GossipPresence *gossip_session_get_presence            (GossipSession           *session);
 const GList *   gossip_session_get_contacts            (GossipSession           *session);
 GList *         gossip_session_get_contacts_by_account (GossipSession           *session,
 							GossipAccount           *account);
+GossipContact * gossip_session_get_own_contact         (GossipSession           *session,
+							GossipAccount           *account);
+const gchar *   gossip_session_get_nickname            (GossipSession           *session,
+							GossipAccount           *account);
 GList *         gossip_session_get_groups              (GossipSession           *session);
-const gchar *   gossip_session_get_nickname            (GossipSession           *session);
 
-
-/* async operations */
-gboolean        gossip_session_register_account        (GossipSession           *session,
-							GossipAccountType        type,
-							GossipAccount           *account,
-							GossipRegisterCallback   callback,
-							gpointer                 user_data,
-							GError                 **error);
+const gchar *   gossip_session_get_active_resource     (GossipSession           *session,
+							GossipContact           *contact);
 gboolean        gossip_session_get_vcard               (GossipSession           *session,
 							GossipAccount           *account,
 							GossipContact           *contact,
 							GossipVCardCallback      callback,
 							gpointer                 user_data,
 							GError                 **error);
-gboolean        gossip_session_set_vcard               (GossipSession           *session,
-							GossipAccount           *account,
-							GossipVCard             *vcard,
-							GossipResultCallback     callback,
-							gpointer                 user_data,
-							GError                 **error);
 gboolean        gossip_session_get_version             (GossipSession           *session,
 							GossipContact           *contact,
 							GossipVersionCallback    callback,
+							gpointer                 user_data,
+							GError                 **error);
+gboolean        gossip_session_register_account        (GossipSession           *session,
+							GossipAccountType        type,
+							GossipAccount           *account,
+							GossipVCard             *vcard,
+							GossipRegisterCallback   callback,
 							gpointer                 user_data,
 							GError                 **error);
 

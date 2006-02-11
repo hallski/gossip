@@ -40,11 +40,11 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
-#define d(x)
-
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
 #define COMPOSING_STOP_TIMEOUT 5
+
+#define d(x)
 
 
 struct _GossipPrivateChatPriv {
@@ -152,7 +152,7 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 	
         private_chat_create_gui (chat);
 
-	d(g_print ("Private Chat: Connecting\n"));
+	d(g_print ("PrivateChat: Connecting\n"));
 
 	g_signal_connect_object (gossip_app_get_session (),
 				 "connected",
@@ -178,7 +178,9 @@ private_chat_finalize (GObject *object)
 
 	priv = chat->priv;
 
-	g_object_unref (priv->contact);
+	if (priv->own_contact) {
+		g_object_unref (priv->contact);
+	}
 
 	if (priv->own_contact) {
 		g_object_unref (priv->own_contact);
@@ -275,7 +277,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 	
 	if (priv->roster_resource &&
 	    g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
-		d(g_print ("Private Chat: Roster unchanged\n"));
+		d(g_print ("PrivateChat: Roster unchanged\n"));
 
 		if (!priv->locked_resource) {
 			priv->locked_resource = g_strdup (roster_resource);
@@ -284,7 +286,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 		return;
 	}
 	
-	d(g_print ("Private Chat: New roster resource: %s\n", roster_resource));
+	d(g_print ("PrivateChat: New roster resource: %s\n", roster_resource));
 	
 	g_free (priv->roster_resource);
 	priv->roster_resource = g_strdup (roster_resource);
@@ -326,9 +328,11 @@ private_chat_send (GossipPrivateChat *chat,
 	gossip_message_set_body (m, msg);
 	gossip_message_request_composing (m);
 
-	gossip_log_message (m, FALSE);
+	gossip_log_message (priv->own_contact, m, FALSE);
 
-	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view, m, NULL);
+	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view, 
+						   m, 
+						   priv->own_contact);
 
 	gossip_session_send_message (gossip_app_get_session (), m);
 	
@@ -410,6 +414,9 @@ private_chat_contact_presence_updated (gpointer           not_used,
 	if (!gossip_contact_equal (contact, priv->contact)) {
 		return;
 	}
+
+	d(g_print ("PrivateChat: Presence update for contact:'%s'\n", 
+		   gossip_contact_get_id (contact)));
 
 	g_signal_emit_by_name (chat, "status-changed");
 
@@ -533,7 +540,7 @@ private_chat_composing_event_cb (GossipSession *session,
 	priv   = p_chat->priv;
 
 	if (gossip_contact_equal (contact, priv->contact)) {
-		d(g_print ("Private Chat: Contact:'%s' %s typing\n",
+		d(g_print ("PrivateChat: Contact:'%s' %s typing\n",
 			   gossip_contact_get_name (contact),
 			   composing ? "is" : "is not"));
 
@@ -723,9 +730,15 @@ private_chat_get_contact (GossipChat *chat)
 static GossipContact *
 private_chat_get_own_contact (GossipChat *chat)
 {
+	GossipPrivateChat     *p_chat;
+	GossipPrivateChatPriv *priv;
+
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
-	return NULL;
+	p_chat = GOSSIP_PRIVATE_CHAT (chat);
+	priv   = p_chat->priv;
+
+	return priv->own_contact;
 }
 
 static void
@@ -752,15 +765,22 @@ private_chat_get_widget (GossipChat *chat)
 }
 
 GossipPrivateChat *
-gossip_private_chat_new (GossipContact *contact)
+gossip_private_chat_new (GossipContact *own_contact,
+			 GossipContact *contact)
 {
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
 
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
 	chat = g_object_new (GOSSIP_TYPE_PRIVATE_CHAT, NULL);
 
 	priv = chat->priv;
+
 	priv->contact = g_object_ref (contact);
+	priv->own_contact = g_object_ref (own_contact);
+
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
 	g_signal_connect_object (gossip_app_get_session (),
@@ -828,7 +848,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	priv = chat->priv;
 	
-	d(g_print ("Private Chat: Appending message ('%s')\n",
+	d(g_print ("PrivateChat: Appending message ('%s')\n",
 		   gossip_contact_get_name (gossip_message_get_sender (m))));
 
 	sender = gossip_message_get_sender (m);
@@ -849,7 +869,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 		}
 	}
 
-	gossip_log_message (m, TRUE);
+	gossip_log_message (priv->own_contact, m, TRUE);
 
 	invite = gossip_message_get_invite (m);
 	if (invite) {
@@ -858,7 +878,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	} else {
 		gossip_chat_view_append_message_from_other (GOSSIP_CHAT (chat)->view,
 							    m,
-							    FALSE);
+							    priv->own_contact);
 	}
 
 	if (gossip_chat_should_play_sound (GOSSIP_CHAT (chat))) {

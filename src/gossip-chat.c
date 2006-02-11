@@ -797,6 +797,8 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 	gchar         *ch;
 	gboolean       ret_val;
 
+	d(g_print ("ChatView: Highlighting nickname\n"));
+
 	ret_val = FALSE;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);

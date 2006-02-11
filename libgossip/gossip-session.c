@@ -21,11 +21,6 @@
 #include <config.h>
 
 #include "libgossip-marshal.h"
-#include "gossip-account.h"
-#include "gossip-protocol.h"
-
-/* Temporary */
-#include <gossip-jabber.h>
 
 #include "gossip-session.h"
 
@@ -702,6 +697,20 @@ gossip_session_new (GossipAccountManager *manager)
 	return session;
 }
 
+GossipProtocol *
+gossip_session_get_protocol (GossipSession *session,
+			     GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (session);
+
+	return g_hash_table_lookup (priv->accounts, account);
+}
+
 GossipAccountManager *
 gossip_session_get_account_manager (GossipSession *session) 
 {
@@ -837,6 +846,7 @@ gossip_session_add_account (GossipSession *session,
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
+	GossipAccountType  type;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
@@ -851,15 +861,10 @@ gossip_session_add_account (GossipSession *session,
 		return TRUE;
 	}
 
-	/* create protocol for account type */
-	switch (gossip_account_get_type (account)) {
-	case GOSSIP_ACCOUNT_TYPE_JABBER:
-		protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
-		break;
-	default:
-		g_assert_not_reached();
-	}
-	
+	type = gossip_account_get_type (account);
+	protocol = gossip_protocol_new_from_account_type (type);
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+
 	/* add to list */
 	priv->protocols = g_list_append (priv->protocols, 
 					 g_object_ref (protocol));
@@ -871,6 +876,9 @@ gossip_session_add_account (GossipSession *session,
 
 	/* connect up all signals */ 
 	session_protocol_signals_setup (session, protocol);
+
+	/* clean up */
+	g_object_unref (protocol);
 			
 	return TRUE;
 }
@@ -1182,78 +1190,6 @@ gossip_session_send_composing (GossipSession  *session,
 					composing);
 }
 
-#if 0
-void
-gossip_session_ft_start (GossipSession  *session,
-			 GossipContact  *contact,
-			 const gchar    *file)
-{
-	GossipSessionPriv *priv;
-	GossipAccount     *account;
-	GossipProtocol    *protocol;
-
-	g_return_if_fail (GOSSIP_IS_SESSION (session));
-
-	priv = GET_PRIV (session);
-
-	account = gossip_session_find_account (session, contact);
-	protocol = g_hash_table_lookup (priv->accounts, 
-					gossip_account_get_name (account));
-	
-	gossip_protocol_ft_start (protocol, contact, file);
-}
-
-void            gossip_session_ft_start                (GossipSession           *session,
-							GossipContact           *contact,
-							const gchar             *file);
-void            gossip_session_ft_accept               (GossipSession           *session,
-							GossipContact           *contact,
-							const gchar             *file);
-void            gossip_session_ft_decline              (GossipSession           *session,
-							GossipContact           *contact,
-							const gchar             *file);
-
-void
-gossip_session_ft_accept (GossipSession  *session,
-			  GossipContact  *contact,
-			  const gchar    *file)
-{
-	GossipSessionPriv *priv;
-	GossipAccount     *account;
-	GossipProtocol    *protocol;
-
-	g_return_if_fail (GOSSIP_IS_SESSION (session));
-
-	priv = GET_PRIV (session);
-
-	account = gossip_session_find_account (session, contact);
-	protocol = g_hash_table_lookup (priv->accounts, 
-					gossip_account_get_name (account));
-	
-	gossip_protocol_ft_accept (protocol, contact, file);
-}
-
-void
-gossip_session_ft_decline (GossipSession  *session,
-			   GossipContact  *contact,
-			   const gchar    *file)
-{
-	GossipSessionPriv *priv;
-	GossipAccount     *account;
-	GossipProtocol    *protocol;
-
-	g_return_if_fail (GOSSIP_IS_SESSION (session));
-
-	priv = GET_PRIV (session);
-
-	account = gossip_session_find_account (session, contact);
-	protocol = g_hash_table_lookup (priv->accounts, 
-					gossip_account_get_name (account));
-	
-	gossip_protocol_ft_accept (protocol, contact, file);
-}
-#endif
-
 GossipPresence *
 gossip_session_get_presence (GossipSession *session)
 {
@@ -1564,6 +1500,25 @@ gossip_session_get_contacts_by_account (GossipSession *session,
 	return list;
 }
 
+GossipContact * 
+gossip_session_get_own_contact (GossipSession *session,
+				GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, account);
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	return gossip_protocol_get_own_contact (protocol);
+}
+
+
 GList *
 gossip_session_get_groups (GossipSession *session)
 {
@@ -1590,44 +1545,32 @@ gossip_session_get_groups (GossipSession *session)
 }
 
 const gchar *
-gossip_session_get_nickname (GossipSession *session)
+gossip_session_get_nickname (GossipSession *session,
+			     GossipAccount *account)
 {
 	GossipSessionPriv *priv;
-	const GList       *l;
+	GossipProtocol    *protocol;
+	GossipContact     *contact;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), "");
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), "");
 
 	priv = GET_PRIV (session);
 
-	/* FIXME: this needs thinking about (mr) */
-	for (l = priv->protocols; l; l = l->next) {
-		GossipProtocol *protocol;
-		GossipContact  *contact;
+	protocol = g_hash_table_lookup (priv->accounts, account);
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), "");
 
-		protocol = l->data;
+	contact = gossip_protocol_get_own_contact (protocol);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), "");
 
-		if (!gossip_protocol_is_connected (protocol)) {
-			continue;
-		}
-
-#if 1
-		/* FIXME: for now, use the first jabber account */
-		if (!GOSSIP_IS_JABBER (protocol)) {
-			continue;
-		}
-#endif
-
-		contact = gossip_jabber_get_own_contact (GOSSIP_JABBER (protocol));
-		return gossip_contact_get_name (contact);
-	}
-
-	return "";
+	return gossip_contact_get_name (contact);
 }
 
 gboolean
 gossip_session_register_account (GossipSession           *session,
 				 GossipAccountType        type,
 				 GossipAccount           *account,
+				 GossipVCard             *vcard,
 				 GossipRegisterCallback   callback,
 				 gpointer                 user_data,
 				 GError                 **error)
@@ -1645,8 +1588,9 @@ gossip_session_register_account (GossipSession           *session,
 	gossip_session_add_account (session, account);
 	
 	protocol = g_hash_table_lookup (priv->accounts, account);
-	
-        return gossip_protocol_register_account (protocol, account, 
+	gossip_protocol_setup (protocol, account);
+
+        return gossip_protocol_register_account (protocol, account, vcard,
 						 callback, user_data,
 						 error);
 }

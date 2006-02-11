@@ -25,18 +25,18 @@
 
 #include <libgossip/gossip-async.h>
 #include <libgossip/gossip-vcard.h>
+#include <libgossip/gossip-account.h>
 
 
-gboolean gossip_jabber_vcard_get (LmConnection          *connection,
-				  const gchar           *jid_str,
-				  GossipVCardCallback    callback,
-				  gpointer               user_data,
-				  GError               **error);
-gboolean gossip_jabber_vcard_set (LmConnection          *connection,
-				  GossipVCard           *vcard,
-				  GossipResultCallback   callback,
-				  gpointer               user_data,
-				  GError               **error);
-
+gboolean gossip_jabber_vcard_get                 (LmConnection          *connection,
+						  const gchar           *jid_str,
+						  GossipVCardCallback    callback,
+						  gpointer               user_data,
+						  GError               **error);
+gboolean gossip_jabber_vcard_set                 (LmConnection          *connection,
+						  GossipVCard           *vcard,
+						  GossipResultCallback   callback,
+						  gpointer               user_data,
+						  GError               **error);
 
 #endif /* __GOSSIP_JABBER_VCARD_H__ */

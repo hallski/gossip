@@ -27,6 +27,7 @@
 #include "gossip-contact.h"
 #include "gossip-message.h"
 #include "gossip-account.h"
+#include "gossip-vcard.h"
 
 #define GOSSIP_TYPE_PROTOCOL         (gossip_protocol_get_type ())
 #define GOSSIP_PROTOCOL(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
@@ -67,132 +68,147 @@ struct _GossipProtocolClass {
 	GObjectClass parent_class;
 
 	/* virtual functions */
-	void          (*setup)                 (GossipProtocol  *protocol,
+	void            (*setup)               (GossipProtocol  *protocol,
 						GossipAccount   *account);
-	void          (*login)                 (GossipProtocol  *protocol);
-	void          (*logout)                (GossipProtocol  *protocol);
-	gboolean      (*is_connected)          (GossipProtocol  *protocol);
+	void            (*login)               (GossipProtocol  *protocol);
+	void            (*logout)              (GossipProtocol  *protocol);
+	gboolean        (*is_connected)        (GossipProtocol  *protocol);
+	gboolean        (*is_valid_username)   (GossipProtocol  *protocol,
+						const gchar     *username);
+	gboolean        (*is_ssl_supported)    (GossipProtocol  *protocol);
+	const gchar *   (*get_example_username)(GossipProtocol  *protocol);
+	gchar *         (*get_default_server)  (GossipProtocol  *protocol,
+						const gchar     *username);
+	guint16         (*get_default_port)    (GossipProtocol  *protocol,
+						gboolean         use_ssl);
 	
-	void          (*set_subscription)      (GossipProtocol *protocol,
-						GossipContact  *contact,
-						gboolean        subscribed);
-	
-	void          (*send_message)          (GossipProtocol  *protocol,
+	void            (*send_message)        (GossipProtocol  *protocol,
 						GossipMessage   *message);
-	void          (*send_composing)        (GossipProtocol  *protocol,
+	void            (*send_composing)      (GossipProtocol  *protocol,
 						GossipContact   *contact,
 						gboolean         typing);
-	void          (*send_file)             (GossipProtocol  *protocol,
-						GossipContact   *contact,
-						const gchar     *file);
-	void          (*set_presence)          (GossipProtocol  *protocol,
+	void            (*set_presence)        (GossipProtocol  *protocol,
 						GossipPresence  *presence);
-	GossipContact * (*find_contact)        (GossipProtocol  *protocol,
-						const gchar     *id);
-	void          (*add_contact)           (GossipProtocol  *protocol,
-						const gchar     *id,
-						const gchar     *name,
-						const gchar     *group,
-						const gchar     *message);
-	void          (*rename_contact)        (GossipProtocol  *protocol,
-						GossipContact   *contact,
-						const gchar     *new_name);
-	void          (*remove_contact)        (GossipProtocol  *protocol,
-						GossipContact   *contact);
-	void          (*update_contact)        (GossipProtocol  *protocol,
-						GossipContact   *contact);
-	void          (*rename_group)          (GossipProtocol  *protocol,
-						const gchar     *group,
-						const gchar     *new_name);
-	const GList * (*get_contacts)          (GossipProtocol  *protocol);
-	const gchar * (*get_active_resource)   (GossipProtocol  *protocol,
-						GossipContact   *contact);
-	GList *       (*get_groups)            (GossipProtocol  *protocol);
-	
-	
-	gboolean      (*register_account)      (GossipProtocol  *protocol,
-					        GossipAccount   *account,
-					        GossipRegisterCallback callback,
-					        gpointer         user_data,
-					        GError         **error);
-	gboolean      (*get_vcard)             (GossipProtocol  *protocol,
-					        GossipContact   *contact,
-					        GossipVCardCallback callback,
-					        gpointer         user_data,
-					        GError         **error);
-	gboolean      (*set_vcard)             (GossipProtocol  *protocol,
+	void            (*set_subscription)    (GossipProtocol *protocol,
+						GossipContact  *contact,
+						gboolean        subscribed);
+	gboolean        (*set_vcard)           (GossipProtocol  *protocol,
 					        GossipVCard     *vcard,
 						GossipResultCallback callback,
 					        gpointer         user_data,
 					        GError         **error);
-	gboolean      (*get_version)           (GossipProtocol  *protocol,
+	GossipContact * (*find_contact)        (GossipProtocol  *protocol,
+						const gchar     *id);
+	void            (*add_contact)         (GossipProtocol  *protocol,
+						const gchar     *id,
+						const gchar     *name,
+						const gchar     *group,
+						const gchar     *message);
+	void            (*rename_contact)      (GossipProtocol  *protocol,
+						GossipContact   *contact,
+						const gchar     *new_name);
+	void            (*remove_contact)      (GossipProtocol  *protocol,
+						GossipContact   *contact);
+	void            (*update_contact)      (GossipProtocol  *protocol,
+						GossipContact   *contact);
+	void            (*rename_group)        (GossipProtocol  *protocol,
+						const gchar     *group,
+						const gchar     *new_name);
+	const GList *   (*get_contacts)        (GossipProtocol  *protocol);
+	GossipContact * (*get_own_contact)     (GossipProtocol  *protocol);
+	const gchar *   (*get_active_resource) (GossipProtocol  *protocol,
+						GossipContact   *contact);
+	GList *         (*get_groups)          (GossipProtocol  *protocol);
+	
+	
+	gboolean        (*get_vcard)           (GossipProtocol  *protocol,
+					        GossipContact   *contact,
+					        GossipVCardCallback callback,
+					        gpointer         user_data,
+					        GError         **error);
+	gboolean        (*get_version)         (GossipProtocol  *protocol,
 					        GossipContact   *contact,
 						GossipVersionCallback callback,
+					        gpointer         user_data,
+					        GError         **error);
+	gboolean        (*register_account)    (GossipProtocol  *protocol,
+					        GossipAccount   *account,
+						GossipVCard     *vcard,
+					        GossipRegisterCallback callback,
 					        gpointer         user_data,
 					        GError         **error);
 };
 
 
-GType          gossip_protocol_get_type                 (void) G_GNUC_CONST;
+GType           gossip_protocol_get_type              (void) G_GNUC_CONST;
 
-void           gossip_protocol_setup                    (GossipProtocol               *protocol,
-							 GossipAccount                *account);
-void           gossip_protocol_login                    (GossipProtocol               *protocol);
-void           gossip_protocol_logout                   (GossipProtocol               *protocol);
-gboolean       gossip_protocol_is_connected             (GossipProtocol               *protocol);
-void           gossip_protocol_set_subscription         (GossipProtocol               *protocol,
-							 GossipContact                *contact,
-							 gboolean                      subscribed);
-void           gossip_protocol_send_message             (GossipProtocol               *protocol,
-							 GossipMessage                *message);
-void           gossip_protocol_send_composing           (GossipProtocol               *protocol,
-							 GossipContact                *contact,
-							 gboolean                      typing);
-void           gossip_protocol_send_file                (GossipProtocol               *protocol,
-							 GossipContact                *contact,
-							 const gchar                  *file);
-void           gossip_protocol_set_presence             (GossipProtocol               *protocol,
-							 GossipPresence               *presence);
-GossipContact *gossip_protocol_find_contact             (GossipProtocol               *protocol,
-							 const gchar                  *id);
-void           gossip_protocol_add_contact              (GossipProtocol               *protocol,
-							 const gchar                  *id,
-							 const gchar                  *name,
-							 const gchar                  *group,
-							 const gchar                  *message);
-void           gossip_protocol_rename_contact           (GossipProtocol               *protocol,
-							 GossipContact                *contact,
-							 const gchar                  *new_name);
-void           gossip_protocol_remove_contact           (GossipProtocol               *protocol,
-							 GossipContact                *contact);
-const GList *  gossip_protocol_get_contacts             (GossipProtocol               *protocol);
-void           gossip_protocol_update_contact           (GossipProtocol               *protocol,
-							 GossipContact                *contact);
-void           gossip_protocol_rename_group             (GossipProtocol               *protocol,
-							 const gchar                  *group,
-							 const gchar                  *new_name);
-const gchar *  gossip_protocol_get_active_resource      (GossipProtocol               *protocol,
-							 GossipContact                *contact);
-GList *        gossip_protocol_get_groups               (GossipProtocol               *protocol);
-gboolean       gossip_protocol_register_account         (GossipProtocol               *protocol,
-							 GossipAccount                *account,
-							 GossipRegisterCallback   callback,
-							 gpointer                      user_data,
-							 GError                      **error);
-gboolean       gossip_protocol_get_vcard                (GossipProtocol               *protocol,
-							 GossipContact                *contact,
-							 GossipVCardCallback      callback,
-							 gpointer                      user_data,
-							 GError                      **error);
-gboolean       gossip_protocol_set_vcard                (GossipProtocol               *protocol,
-							 GossipVCard                  *vcard,
-							 GossipResultCallback     callback,
-							 gpointer                      user_data,
-							 GError                      **error);
-gboolean       gossip_protocol_get_version              (GossipProtocol               *protocol,
-							 GossipContact                *contact,
-							 GossipVersionCallback    callback,
-							 gpointer                      user_data,
-							 GError                      **error);
+GossipProtocol *gossip_protocol_new_from_account_type (GossipAccountType        type);
+
+void            gossip_protocol_setup                 (GossipProtocol          *protocol,
+						       GossipAccount           *account);
+void            gossip_protocol_login                 (GossipProtocol          *protocol);
+void            gossip_protocol_logout                (GossipProtocol          *protocol);
+gboolean        gossip_protocol_is_connected          (GossipProtocol          *protocol);
+gboolean        gossip_protocol_is_valid_username     (GossipProtocol          *protocol,
+						       const gchar             *username);
+gboolean        gossip_protocol_is_ssl_supported      (GossipProtocol          *protocol);
+const gchar   * gossip_protocol_get_example_username  (GossipProtocol          *protocol);
+gchar         * gossip_protocol_get_default_server    (GossipProtocol          *protocol,
+						       const gchar             *username);
+guint16         gossip_protocol_get_default_port      (GossipProtocol          *protocol,
+						       gboolean                 use_ssl);
+void            gossip_protocol_send_message          (GossipProtocol          *protocol,
+						       GossipMessage           *message);
+void            gossip_protocol_send_composing        (GossipProtocol          *protocol,
+						       GossipContact           *contact,
+						       gboolean                 typing);
+void            gossip_protocol_set_presence          (GossipProtocol          *protocol,
+						       GossipPresence          *presence);
+void            gossip_protocol_set_subscription      (GossipProtocol          *protocol,
+						       GossipContact           *contact,
+						       gboolean                 subscribed);
+gboolean        gossip_protocol_set_vcard             (GossipProtocol          *protocol,
+						       GossipVCard             *vcard,
+						       GossipResultCallback     callback,
+						       gpointer                 user_data,
+						       GError                 **error);
+GossipContact * gossip_protocol_find_contact          (GossipProtocol          *protocol,
+						       const gchar             *id);
+void            gossip_protocol_add_contact           (GossipProtocol          *protocol,
+						       const gchar             *id,
+						       const gchar             *name,
+						       const gchar             *group,
+						       const gchar             *message);
+void            gossip_protocol_rename_contact        (GossipProtocol          *protocol,
+						       GossipContact           *contact,
+						       const gchar             *new_name);
+void            gossip_protocol_remove_contact        (GossipProtocol          *protocol,
+						       GossipContact           *contact);
+void            gossip_protocol_update_contact        (GossipProtocol          *protocol,
+						       GossipContact           *contact);
+void            gossip_protocol_rename_group          (GossipProtocol          *protocol,
+						       const gchar             *group,
+						       const gchar             *new_name);
+const GList *   gossip_protocol_get_contacts          (GossipProtocol          *protocol);
+GossipContact * gossip_protocol_get_own_contact       (GossipProtocol          *protocol);
+const gchar *   gossip_protocol_get_active_resource   (GossipProtocol          *protocol,
+						       GossipContact           *contact);
+GList *         gossip_protocol_get_groups            (GossipProtocol          *protocol);
+gboolean        gossip_protocol_get_vcard             (GossipProtocol          *protocol,
+						       GossipContact           *contact,
+						       GossipVCardCallback      callback,
+						       gpointer                 user_data,
+						       GError                 **error);
+gboolean        gossip_protocol_get_version           (GossipProtocol          *protocol,
+						       GossipContact           *contact,
+						       GossipVersionCallback    callback,
+						       gpointer                 user_data,
+						       GError                 **error);
+gboolean        gossip_protocol_register_account      (GossipProtocol          *protocol,
+						       GossipAccount           *account,
+						       GossipVCard             *vcard,
+						       GossipRegisterCallback   callback,
+						       gpointer                 user_data,
+						       GError                 **error);
 
 #endif /* __GOSSIP_PROTOCOL_H__ */

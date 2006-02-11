@@ -459,7 +459,7 @@ account_button_update_tooltip (GossipAccountButton *account_button)
 			       has_error && error3 ? error3 : "");   
 
 	tooltips = gtk_tooltips_new ();
-	gtk_tooltips_set_tip (tooltips, GTK_WIDGET (account_button), str, NULL);
+	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (account_button), tooltips, str, NULL);
 
 	g_free (str);
 }
@@ -686,6 +686,34 @@ gossip_account_button_new (void)
 	return account_button;
 }
 
+GossipAccount *
+gossip_account_button_get_account (GossipAccountButton *account_button)
+{
+	GossipAccountButtonPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), NULL);
+
+	priv = GET_PRIV (account_button);
+
+	return priv->account;
+}
+
+gboolean
+gossip_account_button_get_is_important (GossipAccountButton *account_button)
+{
+	GossipAccountButtonPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
+
+	priv = GET_PRIV (account_button);
+
+	if (!priv->account) {
+		return FALSE;
+	}
+
+	return gossip_account_get_enabled (priv->account);
+}
+
 void
 gossip_account_button_set_account (GossipAccountButton *account_button,
 				   GossipAccount       *account)
@@ -762,18 +790,3 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 	g_object_unref (pixbuf);
 }
 
-gboolean
-gossip_account_button_get_is_important (GossipAccountButton *account_button)
-{
-	GossipAccountButtonPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
-
-	priv = GET_PRIV (account_button);
-
-	if (!priv->account) {
-		return FALSE;
-	}
-
-	return gossip_account_get_enabled (priv->account);
-}

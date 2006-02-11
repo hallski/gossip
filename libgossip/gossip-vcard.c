@@ -147,7 +147,6 @@ vcard_finalize (GObject *object)
 	g_free (priv->description);
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
-
 }
 
 static void

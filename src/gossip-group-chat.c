@@ -240,8 +240,6 @@ gossip_group_chat_init (GossipGroupChat *chat)
                                                                                 
         chat->priv = priv;
 
-	priv->own_contact = NULL;
-                                                                                
 	priv->contacts_visible = TRUE;
 }
 

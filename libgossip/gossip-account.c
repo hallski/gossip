@@ -54,17 +54,19 @@ struct _GossipAccountPriv {
 };
 
 
-static void     account_class_init     (GossipAccountClass *class);
-static void     account_init           (GossipAccount      *account);
-static void     account_finalize       (GObject            *object);
-static void     account_get_property   (GObject            *object,
-					guint               param_id,
-					GValue             *value,
-					GParamSpec         *pspec);
-static void     account_set_property   (GObject            *object,
-					guint               param_id,
-					const GValue       *value,
-					GParamSpec         *pspec);
+static void account_class_init   (GossipAccountClass *class);
+static void account_init         (GossipAccount      *account);
+static void account_finalize     (GObject            *object);
+static void account_get_property (GObject            *object,
+				  guint               param_id,
+				  GValue             *value,
+				  GParamSpec         *pspec);
+static void account_set_property (GObject            *object,
+				  guint               param_id,
+				  const GValue       *value,
+				  GParamSpec         *pspec);
+static void account_set_type     (GossipAccount      *account,
+				  GossipAccountType   type);
 
 
 enum {
@@ -336,8 +338,8 @@ account_set_property (GObject      *object,
 	
 	switch (param_id) {
 	case PROP_TYPE:
-		priv->type = g_value_get_int (value);
-		g_signal_emit (GOSSIP_ACCOUNT (object), signals[CHANGED], 0);
+		account_set_type (GOSSIP_ACCOUNT (object),
+				  g_value_get_int (value));
 		break;
 	case PROP_NAME:
 		gossip_account_set_name (GOSSIP_ACCOUNT (object),
@@ -379,6 +381,20 @@ account_set_property (GObject      *object,
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
 	};
+}
+
+static void
+account_set_type (GossipAccount     *account,
+		  GossipAccountType  type)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
+	priv->type = type;
+
+	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 GossipAccountType

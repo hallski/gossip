@@ -1,3 +1,77 @@
+2006-02-11  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-protocol.[ch]:
+	- Added support for _is_valid_username(), _get_example_username(),
+	_get_default_server() and _get_default_port().
+
+	* libgossip/gossip-session.[ch]:
+	- Get own nickname from the protocol not just the first one in the
+	list of protocols for the session.
+	
+	* libgossip/gossip-utils.[ch]:
+	* src/gossip-accounts-dialog.c: 
+	* src/gossip-add-contact-window.c:
+	* ui/connect.glade:
+	- Removed ALL notations of Jabber, specifically gossip_jid_get_()
+	functions and port details.
+	
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber-ft.c:
+	- Fixed unnecessary warnings when cleaning up GossipJabber objects.
+	
+	* protocols/jabber/gossip-jabber-vcard.c:
+	- Updated to use already available types in
+	libgossip/gossip-async.[ch] instead of reinventing the wheel. 
+	
+	* protocols/jabber/gossip-jabber.c:
+	- Cleaned up in places.
+	- Implemented new functions in libgossip/gossip-protocol.[ch].
+	- Added support for requesting new or unknown contact vcards for
+	use chat windows, etc. 
+	- Added support for requesting own vcard on every connect to use
+	in chat windows. Fixes 131290 (Michal Janeczek).
+
+	* protocols/jabber/gossip-jid.[ch]: 
+	- Moved the gossip_jid_string_() functions in here from
+	libgossip/gossip-utils.[ch].  
+
+	* src/Makefile.am:
+	* src/gossip-register.[ch]:
+	- Removed src/gossip-register.[ch], they are no longer used.
+	
+	* src/gossip-account-button.[ch]: 
+	- Fixed the broken tooltip so that it now displays (some would say
+	it is still broken due to its uglyness *cough* Richard *cough*) :P 
+	- Added API to get the account associated with this object.
+
+	* src/gossip-app.c:
+	- Fixed the GossipAccountButton toolbar so it now doesn't crash in
+	conditions when it needs to rearrange the buttons.
+	
+	* src/gossip-chat-manager.[ch]:
+	* src/gossip-chat-view.c:
+	* src/gossip-chat.[ch]:
+	* src/gossip-group-chat.c:
+	* src/gossip-log.[ch]:
+	* src/gossip-private-chat.[ch]: (gossip_private_chat_init),
+	- Own contact is now passed when creating the private chat object,
+	so we now have a real reference to ourselves for proper nicknames
+	in chat windows (instead of being based on the Jabber ID).
+
+	* src/gossip-new-account-window.[ch]:
+	* ui/main.glade:
+	- Added a page for the account name (as in the toolbar).
+	- Added a page for progress when registering (instead of dialogs).
+	- The server and port can now be set indepentantly of the account
+	id which is now a FULL account id, for example,
+	someone@somewhere.org/resource. Fixes #321569 (Brian Pepple).
+	- Added a password entry so we don't prompt the user with another
+	dialog for it when trying to register.
+
+	* src/gossip-new-message-dialog.c:
+	- Added a GossipAccountChooser for sending messages so it doesn't
+	just pick the first one connected in GossipSession.
+
 2006-01-25  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-account-button.[ch]:

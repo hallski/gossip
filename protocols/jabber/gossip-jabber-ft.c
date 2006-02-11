@@ -121,7 +121,12 @@ gossip_jabber_ft_init (GossipJabber *jabber)
 void
 gossip_jabber_ft_finalize (GossipJabberFTs *fts)
 {
-	g_return_if_fail (fts != NULL);
+	if (!fts) {
+		/* We don't error here, because if no connection is
+		made, then we can clean up a GossipJabber object
+		without any fts ever existing */
+		return;
+	}
 
  	g_hash_table_destroy (fts->str_ids); 
  	g_hash_table_destroy (fts->ft_ids); 

@@ -20,9 +20,13 @@
 
 #include <config.h>
 #include <string.h>
+
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
+#include <libgossip/gossip-session.h>
+
+#include "gossip-account-chooser.h"
 #include "gossip-app.h"
 #include "gossip-new-message-dialog.h"
 
@@ -30,8 +34,10 @@
 
 
 typedef struct {
-	GtkWidget     *dialog;
+	GtkWidget    *dialog;
 
+	GtkWidget    *accounts_vbox;
+	GtkWidget    *accounts_chooser;
 	GtkWidget    *name_entry;
 	GtkWidget    *treeview;
 	GtkWidget    *chat_button;
@@ -374,6 +380,16 @@ new_message_dialog_response (GtkWidget              *widget,
 					    COL_POINTER, &contact, 
 					    -1);
 		}
+
+		if (!gossip_contact_get_account (contact)) {
+			GossipAccount        *account;
+			GossipAccountChooser *accounts_chooser;
+
+			accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
+			account = gossip_account_chooser_get_account (accounts_chooser);
+			gossip_contact_set_account (contact, account);
+			g_object_unref (account);
+		}
 		
 		gossip_chat_manager_show_chat (chat_manager, contact);
 
@@ -391,6 +407,8 @@ void
 gossip_new_message_dialog_show (GtkWindow *parent)
 {
 	GossipNewMessageDialog *dialog;
+	GossipSession          *session;
+	GList                  *accounts;
 	GladeXML               *ui;
 
 	dialog = g_new0 (GossipNewMessageDialog, 1);
@@ -399,6 +417,7 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 				    "new_message_dialog",
 				    NULL,
 				    "new_message_dialog", &dialog->dialog,
+				    "accounts_vbox", &dialog->accounts_vbox,
 				    "name_entry", &dialog->name_entry,
 				    "chat_button", &dialog->chat_button,
 				    "treeview", &dialog->treeview,
@@ -415,6 +434,26 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 
 	new_message_dialog_setup_view (dialog);
 	new_message_dialog_setup_contacts (dialog);
+
+	/* set up account chooser */
+	session = gossip_app_get_session ();
+
+	dialog->accounts_chooser = gossip_account_chooser_new (session);
+	gtk_box_pack_start (GTK_BOX (dialog->accounts_vbox), 
+			    dialog->accounts_chooser,
+			    TRUE, TRUE, 0);
+	gtk_widget_show (dialog->accounts_chooser);
+	
+	accounts = gossip_session_get_accounts (session);
+	if (g_list_length (accounts) > 1) {
+		gtk_widget_show (dialog->accounts_vbox);
+	} else {
+		/* show no accounts combo box */
+		gtk_widget_hide (dialog->accounts_vbox);
+	}
+	
+	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_free (accounts);
 
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 

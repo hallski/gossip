@@ -20,6 +20,10 @@
 
 #include <config.h>
 
+/* FIXME: we should really have a definition in config.h so we can
+ * include certain protocol head files */
+#include <gossip-jabber.h>
+
 #include "libgossip-marshal.h"
 #include "gossip-protocol.h"
 
@@ -53,26 +57,33 @@ G_DEFINE_TYPE (GossipProtocol, gossip_protocol, G_TYPE_OBJECT);
 static void
 gossip_protocol_class_init (GossipProtocolClass *klass)
 {
-	klass->setup               = NULL;
-	klass->login               = NULL;
-	klass->logout              = NULL;
-	klass->register_account    = NULL;
-	klass->is_connected        = NULL;
-	klass->send_message        = NULL;
-	klass->send_composing      = NULL;
-	klass->send_file           = NULL;
-	klass->set_presence        = NULL;
-        klass->find_contact        = NULL;
-        klass->add_contact         = NULL;
-        klass->rename_contact      = NULL;
-        klass->remove_contact      = NULL;
-	klass->update_contact      = NULL;
-	klass->rename_group        = NULL;
-	klass->get_active_resource = NULL;
-	klass->get_groups          = NULL;
-	klass->get_vcard           = NULL;
-	klass->set_vcard           = NULL;
-
+	klass->setup                = NULL;
+	klass->login                = NULL;
+	klass->logout               = NULL;
+	klass->is_connected         = NULL;
+	klass->is_valid_username    = NULL;
+	klass->get_example_username = NULL;
+	klass->get_default_server   = NULL;
+	klass->get_default_port     = NULL;
+	klass->set_presence         = NULL;
+	klass->set_subscription     = NULL;
+	klass->set_vcard            = NULL;
+	klass->send_message         = NULL;
+	klass->send_composing       = NULL;
+        klass->find_contact         = NULL;
+        klass->add_contact          = NULL;
+        klass->rename_contact       = NULL;
+        klass->remove_contact       = NULL;
+	klass->update_contact       = NULL;
+	klass->rename_group         = NULL;
+	klass->get_contacts         = NULL;
+	klass->get_own_contact      = NULL;
+	klass->get_active_resource  = NULL;
+	klass->get_groups           = NULL;
+ 	klass->get_vcard            = NULL;
+ 	klass->get_version          = NULL;
+	klass->register_account     = NULL;
+ 
 	signals[LOGGED_IN] = 
 		g_signal_new ("logged-in",
 			      G_TYPE_FROM_CLASS (klass),
@@ -192,6 +203,23 @@ gossip_protocol_init (GossipProtocol *protocol)
 	/* FIXME: Implement */
 }
 
+GossipProtocol *
+gossip_protocol_new_from_account_type (GossipAccountType type)
+{
+	GossipProtocol *protocol = NULL;
+
+	/* create protocol for account type */
+	switch (type) {
+	case GOSSIP_ACCOUNT_TYPE_JABBER:
+		protocol = g_object_new (GOSSIP_TYPE_JABBER, NULL);
+		break;
+	default:
+		break;
+	}
+
+	return protocol;
+}
+
 void
 gossip_protocol_setup (GossipProtocol *protocol,
 		       GossipAccount  *account)
@@ -248,19 +276,84 @@ gossip_protocol_is_connected (GossipProtocol *protocol)
 	return FALSE;
 }
 
-void
-gossip_protocol_set_subscription (GossipProtocol *protocol,
-				  GossipContact  *contact,
-				  gboolean        subscribed)
+gboolean
+gossip_protocol_is_valid_username (GossipProtocol *protocol,
+				   const gchar    *username)
 {
 	GossipProtocolClass *klass;
 
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), TRUE);
+	g_return_val_if_fail (username != NULL, FALSE);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->set_subscription) {
-		klass->set_subscription (protocol, contact, subscribed);
+	if (klass->is_valid_username) {
+		return klass->is_valid_username (protocol, username);
 	}
+
+	return TRUE;
+}
+
+gboolean
+gossip_protocol_is_ssl_supported (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->is_ssl_supported) {
+		return klass->is_ssl_supported (protocol);
+	}
+
+	return FALSE;
+}
+
+const gchar * 
+gossip_protocol_get_example_username (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_example_username) {
+		return klass->get_example_username (protocol);
+	}
+
+	return NULL;
+}
+
+gchar * 
+gossip_protocol_get_default_server (GossipProtocol *protocol,
+				    const gchar    *username)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+	g_return_val_if_fail (username != NULL, NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_default_server) {
+		return klass->get_default_server (protocol, username);
+	}
+
+	return NULL;
+}
+
+guint16 
+gossip_protocol_get_default_port (GossipProtocol *protocol,
+				  gboolean        use_ssl)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), 0);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_default_port) {
+		return klass->get_default_port (protocol, use_ssl);
+	}
+
+	return 0;
 }
 
 void
@@ -304,6 +397,43 @@ gossip_protocol_set_presence (GossipProtocol *protocol,
 	if (klass->set_presence) {
 		klass->set_presence (protocol, presence);
 	}
+}
+
+void
+gossip_protocol_set_subscription (GossipProtocol *protocol,
+				  GossipContact  *contact,
+				  gboolean        subscribed)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->set_subscription) {
+		klass->set_subscription (protocol, contact, subscribed);
+	}
+}
+
+gboolean 
+gossip_protocol_set_vcard (GossipProtocol        *protocol,
+			   GossipVCard           *vcard,
+			   GossipResultCallback   callback,
+			   gpointer               user_data,
+			   GError               **error)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->set_vcard) {
+		return klass->set_vcard (protocol, vcard,
+					       callback, user_data, 
+					       error);
+	}
+
+	/* Don't report error if protocol doesn't implement this */
+	return TRUE;
 }
 
 GossipContact *
@@ -368,21 +498,6 @@ gossip_protocol_remove_contact (GossipProtocol *protocol,
 	}
 }
 
-const GList *
-gossip_protocol_get_contacts (GossipProtocol *protocol)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->get_contacts) {
-		return klass->get_contacts (protocol);
-	}
-
-	return NULL;
-}
-
 void
 gossip_protocol_update_contact (GossipProtocol *protocol,
                                 GossipContact  *contact)
@@ -410,6 +525,36 @@ gossip_protocol_rename_group (GossipProtocol *protocol,
 	if (klass->rename_group) {
 		klass->rename_group (protocol, group, new_name);
 	}
+}
+
+GossipContact * 
+gossip_protocol_get_own_contact (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_own_contact) {
+		return klass->get_own_contact (protocol);
+	}
+
+	return NULL;
+}
+
+const GList *
+gossip_protocol_get_contacts (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_contacts) {
+		return klass->get_contacts (protocol);
+	}
+
+	return NULL;
 }
 
 const gchar * 
@@ -444,28 +589,6 @@ gossip_protocol_get_groups (GossipProtocol *protocol)
 }
 
 gboolean
-gossip_protocol_register_account (GossipProtocol          *protocol,
-				  GossipAccount           *account,
-				  GossipRegisterCallback   callback,
-				  gpointer                 user_data,
-				  GError                 **error)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
-	g_return_val_if_fail (callback != NULL, FALSE);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->register_account) {
-		return klass->register_account (protocol, account, 
-					      callback, user_data, 
-					      error);
-	}
-
-	return FALSE;
-}
-
-gboolean
 gossip_protocol_get_vcard (GossipProtocol       *protocol,
 			   GossipContact        *contact,
 			   GossipVCardCallback   callback,
@@ -481,28 +604,6 @@ gossip_protocol_get_vcard (GossipProtocol       *protocol,
 		return klass->get_vcard (protocol, contact,
 					 callback, user_data, 
 					 error);
-	}
-
-	/* Don't report error if protocol doesn't implement this */
-	return TRUE;
-}
-
-gboolean 
-gossip_protocol_set_vcard (GossipProtocol        *protocol,
-			   GossipVCard           *vcard,
-			   GossipResultCallback   callback,
-			   gpointer               user_data,
-			   GError               **error)
-{
-	GossipProtocolClass *klass;
-
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
-
-	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
-	if (klass->set_vcard) {
-		return klass->set_vcard (protocol, vcard,
-					       callback, user_data, 
-					       error);
 	}
 
 	/* Don't report error if protocol doesn't implement this */
@@ -531,3 +632,26 @@ gossip_protocol_get_version (GossipProtocol         *protocol,
 	return TRUE;
 }
  
+gboolean
+gossip_protocol_register_account (GossipProtocol          *protocol,
+				  GossipAccount           *account,
+				  GossipVCard             *vcard,
+				  GossipRegisterCallback   callback,
+				  gpointer                 user_data,
+				  GError                 **error)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+	g_return_val_if_fail (callback != NULL, FALSE);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->register_account) {
+		return klass->register_account (protocol, account, vcard,
+						callback, user_data, 
+						error);
+	}
+
+	return FALSE;
+}
+

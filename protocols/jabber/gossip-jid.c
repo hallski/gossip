@@ -252,36 +252,109 @@ gossip_jid_equals_without_resource (GossipJID *jid_a, GossipJID *jid_b)
 }
 
 gboolean
-gossip_jid_string_is_valid_jid (const gchar *str_jid)
+gossip_jid_string_is_valid (const gchar *str,
+			    gboolean     with_resource)
 {
 	const gchar *at;
 	const gchar *dot;
-	gint         jid_len;
+	const gchar *slash;
+	gint         len;
 	
-	if (!str_jid || strcmp (str_jid, "") == 0) {
+	if (!str || strlen (str) < 1) {
 		return FALSE;
 	}
 
-	jid_len = strlen (str_jid);
+	len = strlen (str);
 
-	at = strchr (str_jid, '@');
-	if (!at || at == str_jid || at == str_jid + jid_len - 1) {
+	/* check for the '@' sign and make sure it isn't at the start
+	   of the string or the last character */
+	at = strchr (str, '@');
+	if (!at || 
+	    at == str || 
+	    at == str + len - 1) {
 		return FALSE;
 	}
-	
+
+	/* check for the '.' character and if it exists make sure it
+	   is not directly after the '@' sign or the last character. */
 	dot = strchr (at, '.');
-	if (dot == at + 1 
-	    || dot == str_jid + jid_len - 1 
-	    || dot == str_jid + jid_len - 2) {
+	if (dot == at + 1 || 
+	    dot == str + len - 1 || 
+	    dot == str + len - 2) {
 		return FALSE;
 	}
 
-	dot = strrchr (str_jid, '.');
-	if (dot == str_jid + jid_len - 1) {
+	/* check the '/' character exists (if we are checking with
+	   resource) and make sure it is not after the '@' sign or the
+	   last character */ 
+	slash = strchr (at, '/');
+	if (with_resource && 
+	    (slash == NULL ||
+	     slash == at + 1 ||
+	     slash == str + len - 1)) {
+		return FALSE;
+	} 
+
+	/* if slash exists and we are expecting a JID without the
+	   resource then we return FALSE */
+	if (!with_resource && slash) {
 		return FALSE;
 	}
 
 	return TRUE;
+}
+
+gchar *
+gossip_jid_string_get_part_name (const gchar *str)
+{
+	const gchar *ch;
+
+	g_return_val_if_fail (str != NULL, "");
+
+	for (ch = str; *ch; ++ch) {
+		if (*ch == '@') {
+			return g_strndup (str, ch - str);
+		}
+	}
+
+	return g_strdup (""); 
+}
+
+gchar *
+gossip_jid_string_get_part_host (const gchar *str) 
+{
+	const gchar *r_loc;
+	const gchar *ch;
+
+	g_return_val_if_fail (str != NULL, "");
+
+	r_loc = gossip_jid_string_get_part_resource (str);
+	for (ch = str; *ch; ++ch) {
+		if (*ch == '@') {
+			ch++;
+
+			if (r_loc) {
+				return g_strndup (ch, r_loc - 1 - ch);
+			} 
+
+			return g_strdup (ch);
+		}
+	}
+
+	return g_strdup (""); 
+}
+
+const gchar *
+gossip_jid_string_get_part_resource (const gchar *str)
+{
+	gchar *ch;
+	
+	ch = strchr (str, '/');
+	if (ch) {
+		return (const gchar *) (ch + 1);
+	}
+
+	return NULL;
 }
 
 gint
@@ -322,4 +395,3 @@ gossip_jid_hash (gconstpointer key)
 
 	return ret_val;
 }
-

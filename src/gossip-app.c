@@ -91,7 +91,7 @@
 #define MIN_WIDTH 50
 
 /* Debugging */
-#define d(x) 
+#define d(x)
 
 
 struct _GossipAppPriv {
@@ -250,7 +250,7 @@ static void            app_accounts_account_enabled_cb      (GossipAccountManage
 							     gpointer                  user_data);
 static gint            app_accounts_sort_func               (GossipAccount            *a, 
 							     GossipAccount            *b);
-static void            app_accounts_rearrage                (void);
+static void            app_accounts_rearrange               (void);
 static void            app_accounts_create                  (void);
 static void            app_accounts_update_separator        (void);
 static void            app_accounts_update_toolbar          (void);
@@ -333,11 +333,6 @@ gossip_app_init (GossipApp *singleton_app)
 	app = singleton_app;
 	
         priv = g_new0 (GossipAppPriv, 1);
-
- 	priv->accounts = g_hash_table_new_full (gossip_account_hash,
-						gossip_account_equal,
-						g_object_unref,
-						(GDestroyNotify)gtk_widget_destroy);
 
         app->priv = priv;
 }
@@ -1703,7 +1698,7 @@ app_accounts_account_enabled_cb (GossipAccountManager *manager,
 				 GossipAccount        *account,
 				 gpointer              user_data)
 {
-	app_accounts_rearrage ();	
+	app_accounts_rearrange ();	
 	app_connection_items_update ();
 }
 
@@ -1743,13 +1738,15 @@ app_accounts_sort_func (GossipAccount *a,
 }
 
 static void
-app_accounts_rearrage (void)
+app_accounts_rearrange (void)
 {
 	GossipAppPriv *priv;
 	GList         *children;
 	GList         *l;
 
 	priv = app->priv;
+
+	d(g_print ("AppAccounts: Rearranging toolbar\n"));
 
 	/* remove all children for a reshuffle */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -1773,12 +1770,15 @@ app_accounts_create (void)
 
 	priv = app->priv;
 
+	d(g_print ("AppAccounts: Creating toolbar\n"));
+
 	manager = gossip_session_get_account_manager (priv->session);
 	accounts = gossip_account_manager_get_accounts (manager);
 
-	/* add enabled accounts first, since they are important, they
-	   should be at the start of the account list */
-	accounts = g_list_sort (accounts, (GCompareFunc)app_accounts_sort_func);
+	/* Add enabled accounts first, since they are important, they
+	   should be at the start of the account list.
+	*/
+	accounts = g_list_sort (accounts, (GCompareFunc) app_accounts_sort_func);
 
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
@@ -1788,7 +1788,7 @@ app_accounts_create (void)
 
 	g_list_free (accounts);
 
-	/* show/hide toolbar */
+	/* Show/hide toolbar */
 	app_accounts_update_toolbar ();
 	app_accounts_update_separator ();
 }
@@ -1803,6 +1803,8 @@ app_accounts_update_separator (void)
 	gint           index = 0;
 
 	priv = app->priv;
+
+	d(g_print ("AppAccounts: Updating toolbar separator position\n"));
 
 	/* remove current separator */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -1853,6 +1855,9 @@ app_accounts_update_toolbar (void)
 	manager = gossip_session_get_account_manager (priv->session);
 	count = gossip_account_manager_get_count (manager);
 
+	d(g_print ("AppAccounts: Updating toolbar, account count:%d\n", 
+		   count));
+
 	/* show accounts if we have more than one */
 	if (count < 2) {
 		gtk_widget_hide (priv->accounts_toolbar);
@@ -1869,14 +1874,13 @@ app_accounts_add (GossipAccount *account)
 
 	priv = app->priv;
 
+	d(g_print ("AppAccounts: Adding account with id:'%s'\n", 
+		   gossip_account_get_id (account)));
+
 	account_button = gossip_account_button_new ();
 	gossip_account_button_set_account (GOSSIP_ACCOUNT_BUTTON (account_button), 
 					   account);
 
-	g_hash_table_insert (priv->accounts, 
-			     g_object_ref (account), 
-			     account_button);
-	
 	/* add to toolbar */
 	gtk_container_add (GTK_CONTAINER (priv->accounts_toolbar), account_button);
 	gtk_widget_show_all (account_button);
@@ -1889,10 +1893,31 @@ static void
 app_accounts_remove (GossipAccount *account)
 {
 	GossipAppPriv *priv;
+	GList         *children;
+	GList         *l;
 
 	priv = app->priv;
 
-	g_hash_table_remove (priv->accounts, account);
+	d(g_print ("AppAccounts: Removing account with id:'%s'\n", 
+		   gossip_account_get_id (account)));
+
+	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
+	for (l = children; l; l = l->next) {
+		GossipAccount *this_account;
+
+		if (G_OBJECT_TYPE (l->data) != GOSSIP_TYPE_ACCOUNT_BUTTON) {
+			continue;
+		}
+		
+		this_account = gossip_account_button_get_account (l->data);
+
+		if (gossip_account_equal (account, this_account)) {
+			gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), 
+					      l->data);
+		}
+	}
+	
+	g_list_free (children);
 
 	/* show/hide toolbar */
 	app_accounts_update_toolbar ();

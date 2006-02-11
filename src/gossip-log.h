@@ -24,7 +24,8 @@
 #include <glib.h>
 #include <libgossip/gossip-message.h>
 
-void     gossip_log_message (GossipMessage *msg,
+void     gossip_log_message (GossipContact *own_contact,
+			     GossipMessage *msg,
 			     gboolean       incoming);
 gboolean gossip_log_exists  (GossipContact *contact);
 void     gossip_log_show    (GtkWidget     *window,

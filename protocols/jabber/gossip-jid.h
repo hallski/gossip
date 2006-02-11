@@ -25,32 +25,40 @@
 
 typedef struct GossipJID GossipJID;		
 
-GossipJID *     gossip_jid_new                     (const gchar   *str_jid);
-void            gossip_jid_set_without_resource    (GossipJID     *jid,
-						    const gchar   *str);
-void            gossip_jid_set_resource            (GossipJID     *jid,
-						    const gchar   *resource);
-const gchar *   gossip_jid_get_full                (GossipJID     *jid);
-const gchar *   gossip_jid_get_without_resource    (GossipJID     *jid);
-const gchar *   gossip_jid_get_resource            (GossipJID     *jid);
-gchar *         gossip_jid_get_part_name           (GossipJID     *jid);
-const gchar *   gossip_jid_get_part_host           (GossipJID     *jid);
+GossipJID *  gossip_jid_new                      (const gchar   *str_jid);
+GossipJID *  gossip_jid_ref                      (GossipJID     *jid);
+void         gossip_jid_unref                    (GossipJID     *jid);
 
-gboolean        gossip_jid_is_service              (GossipJID     *jid);
+void         gossip_jid_set_without_resource     (GossipJID     *jid,
+						  const gchar   *str);
+void         gossip_jid_set_resource             (GossipJID     *jid,
+						  const gchar   *resource);
+const gchar *gossip_jid_get_full                 (GossipJID     *jid);
+const gchar *gossip_jid_get_without_resource     (GossipJID     *jid);
+const gchar *gossip_jid_get_resource             (GossipJID     *jid);
+gchar *      gossip_jid_get_part_name            (GossipJID     *jid);
+const gchar *gossip_jid_get_part_host            (GossipJID     *jid);
+gboolean     gossip_jid_is_service               (GossipJID     *jid);
 
-GossipJID *     gossip_jid_ref                     (GossipJID     *jid);
-void            gossip_jid_unref                   (GossipJID     *jid);
+/* compare functions */
+gboolean     gossip_jid_equals                   (GossipJID     *jid_a,
+						  GossipJID     *jid_b);
+gboolean     gossip_jid_equals_without_resource  (GossipJID     *jid_a,
+						  GossipJID     *jid_b);
 
-gboolean        gossip_jid_equals                  (GossipJID     *jid_a,
-						    GossipJID     *jid_b);
-gboolean        gossip_jid_equals_without_resource (GossipJID     *jid_a,
-						    GossipJID     *jid_b);
-gboolean        gossip_jid_string_is_valid_jid     (const gchar   *str_jid);
-gint            gossip_jid_case_compare            (gconstpointer  a,
-						    gconstpointer  b);
-/* Used in Hash tables */
-gboolean        gossip_jid_equal                   (gconstpointer  v1,
-				 		    gconstpointer  v2);
-guint           gossip_jid_hash                    (gconstpointer  key);
+/* string functions */
+gboolean     gossip_jid_string_is_valid          (const gchar   *str,
+						  gboolean       with_resource);
+gchar *      gossip_jid_string_get_part_name     (const gchar   *str);
+gchar *      gossip_jid_string_get_part_host     (const gchar   *str);
+const gchar *gossip_jid_string_get_part_resource (const gchar   *str);
+
+gint         gossip_jid_case_compare             (gconstpointer  a,
+						  gconstpointer  b);
+
+/* hash table functions */
+gboolean     gossip_jid_equal                    (gconstpointer  v1,
+						  gconstpointer  v2);
+guint        gossip_jid_hash                     (gconstpointer  key);
 
 #endif /* __GOSSIP_JID_H__ */

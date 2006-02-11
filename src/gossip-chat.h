@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CHAT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT))
 #define GOSSIP_CHAT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT, GossipChatClass))
 
-
 typedef struct _GossipChat GossipChat;
 typedef struct _GossipChatClass GossipChatClass;
 typedef struct _GossipChatPriv GossipChatPriv;
@@ -124,7 +123,6 @@ void              gossip_chat_correct_word          (GossipChat       *chat,
 gboolean          gossip_chat_should_play_sound     (GossipChat       *chat);
 gboolean          gossip_chat_should_highlight_nick (GossipMessage    *message,
 						     GossipContact    *my_contact);
-
 
 G_END_DECLS
 

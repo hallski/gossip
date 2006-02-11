@@ -333,14 +333,8 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
                                         
 	/* if the nick has NOT been changed */
 	if (!changed) {
-		gchar *username;
-
-		username = gossip_utils_jid_str_get_part_name (id);
-		
 		/* set up name */
-		gtk_entry_set_text (GTK_ENTRY (window->two_nick_entry),
-				    username);
-		g_free (username);
+		gtk_entry_set_text (GTK_ENTRY (window->two_nick_entry), id);
 	}
 
 	/* vcard */

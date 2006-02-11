@@ -43,6 +43,9 @@
 /* Maximum lines in any chat buffer, see bug #141292. */
 #define MAX_LINES 1000
 
+#define d(x)
+
+
 typedef enum {
 	BLOCK_TYPE_NONE,
 	BLOCK_TYPE_SELF,
@@ -51,6 +54,7 @@ typedef enum {
 	BLOCK_TYPE_TIME,
 	BLOCK_TYPE_INVITE
 } BlockType;
+
 
 struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
@@ -162,6 +166,7 @@ static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_SILLY,        "(O",  0 },
 	{ GOSSIP_SMILEY_SICK,         ")o+", 0 }
 };
+
 
 static gint num_smileys = G_N_ELEMENTS (smileys);
 
@@ -732,16 +737,6 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	}
 }
 
-static const gchar *
-chat_view_get_my_name (GossipContact *my_contact)
-{
-	if (my_contact) {
-		return gossip_contact_get_name (my_contact);
-	} else {
-		return gossip_session_get_nickname (gossip_app_get_session ());
-	}
-}
-
 void
 gossip_chat_view_append_invite (GossipChatView *view,
 				GossipMessage  *message)
@@ -1069,8 +1064,10 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 
 	contact = gossip_message_get_sender (msg);
 	
+	d(g_print ("ChatView: Maybe add fancy header\n"));
+
 	if (from_self) {
-		name = chat_view_get_my_name (my_contact);
+		name = gossip_contact_get_name (my_contact);
 		
 		tag = "fancy-header-self";
 		line_tag = "fancy-line-self";
@@ -1150,13 +1147,18 @@ chat_view_append_irc_action (GossipChatView *view,
 
 	priv = view->priv;
 
+	d(g_print ("ChatView: Add IRC action\n"));
+
 	/* Skip the "/me ". */
 	if (from_self) {
-		name = chat_view_get_my_name (my_contact);
+		name = gossip_contact_get_name (my_contact);
 		
 		tag = "irc-action-self";
 	} else {
-		name = gossip_contact_get_name (gossip_message_get_sender (msg));
+		GossipContact *contact;
+
+		contact = gossip_message_get_sender (msg);
+		name = gossip_contact_get_name (contact);
 		
 		tag = "irc-action-other";
 	}
@@ -1199,15 +1201,20 @@ chat_view_append_fancy_action (GossipChatView *view,
 
 	priv = view->priv;
 
+	d(g_print ("ChatView: Add fancy action\n"));
+
 	contact = gossip_message_get_sender (msg);
-	
+
 	if (from_self) {
-		name = chat_view_get_my_name (my_contact);
+		name = gossip_contact_get_name (my_contact);
 		
 		tag = "fancy-action-self";
 		line_tag = "fancy-line-self";
 	} else {
-		name = gossip_contact_get_name (gossip_message_get_sender (msg));
+		GossipContact *contact;
+
+		contact = gossip_message_get_sender (msg);
+		name = gossip_contact_get_name (contact);
 		
 		tag = "fancy-action-other";
 		line_tag = "fancy-line-other";
@@ -1243,15 +1250,20 @@ chat_view_append_irc_message (GossipChatView *view,
 
 	priv = view->priv;
 
+	d(g_print ("ChatView: Add IRC message\n"));
+
 	body = gossip_message_get_body (msg);
 
 	if (from_self) {
-		name = chat_view_get_my_name (my_contact);
+		name = gossip_contact_get_name (my_contact);
 		
 		nick_tag = "irc-nick-self";
 		body_tag = "irc-body-self";
 	} else {
-		name = gossip_contact_get_name (gossip_message_get_sender (msg));
+		GossipContact *contact;
+
+		contact = gossip_message_get_sender (msg);
+		name = gossip_contact_get_name (contact);
 
 		if (gossip_chat_should_highlight_nick (msg, my_contact)) {
 			nick_tag = "irc-nick-highlight";
@@ -1368,7 +1380,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 void
 gossip_chat_view_append_message_from_other (GossipChatView *view,
 					    GossipMessage  *msg,
-					    GossipContact  *my_contact)
+					    GossipContact  *contact)
 {
 	GossipChatViewPriv *priv;
 	const gchar        *body;
@@ -1387,7 +1399,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	chat_view_maybe_append_date_and_time (view, msg);
 
 	if (!priv->irc_style) {
-		chat_view_maybe_append_fancy_header (view, msg, my_contact, FALSE);
+		chat_view_maybe_append_fancy_header (view, msg, contact, FALSE);
 	}
 	
 	/* Handle action messages (/me) and normal messages, in combination with
@@ -1395,15 +1407,15 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	 */
 	if (g_str_has_prefix (body, "/me ")) {
 		if (priv->irc_style) {
-			chat_view_append_irc_action (view, msg, my_contact, FALSE);
+			chat_view_append_irc_action (view, msg, contact, FALSE);
 		} else {
-			chat_view_append_fancy_action (view, msg, my_contact, FALSE);
+			chat_view_append_fancy_action (view, msg, contact, FALSE);
 		}
 	} else {
 		if (priv->irc_style) {
-			chat_view_append_irc_message (view, msg, my_contact, FALSE);
+			chat_view_append_irc_message (view, msg, contact, FALSE);
 		} else {
-			chat_view_append_fancy_message (view, msg, my_contact, FALSE);
+			chat_view_append_fancy_message (view, msg, contact, FALSE);
 		}
 	}
 
@@ -1527,7 +1539,7 @@ chat_view_invite_accept_cb (GtkWidget *button,
 	session = gossip_app_get_session ();
 	account = gossip_contact_get_account (contact);
 	provider = gossip_session_get_chatroom_provider (session, account);
-	nickname = gossip_session_get_nickname (session);
+	nickname = gossip_session_get_nickname (session, account);
 
 	gossip_chatroom_provider_invite_accept (provider,
 						chat_view_invite_join_cb,
