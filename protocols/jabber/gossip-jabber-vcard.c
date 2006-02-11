@@ -149,10 +149,16 @@ gossip_jabber_vcard_get (LmConnection         *connection,
 	LmMessageHandler   *handler;
 	GossipJID          *jid;
 	GossipCallbackData *data;
+	const gchar        *jid_without_resource;
 
 	jid = gossip_jid_new (jid_str);
-	m = lm_message_new (gossip_jid_get_without_resource (jid), 
+	jid_without_resource = gossip_jid_get_without_resource (jid);
+
+	d(g_print ("Protocol: Requesting VCard, JID:'%s'\n", jid_without_resource));
+
+	m = lm_message_new (jid_without_resource, 
 			    LM_MESSAGE_TYPE_IQ);
+
 	gossip_jid_unref (jid);
 
 	node = lm_message_node_add_child (m->node, "vCard", NULL);

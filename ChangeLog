@@ -1,5 +1,12 @@
 2006-02-11  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber-vcard.c:
+	* protocols/jabber/gossip-jabber.c: 
+	- Fixed _get_vcard() to get own contact vcard if no GossipContact
+	is supplied instead of failing miserably with no warning.
+
+2006-02-11  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber-ft.c: 
 	* protocols/jabber/gossip-jabber-vcard.c:
 	* protocols/jabber/gossip-jabber.[ch]: 

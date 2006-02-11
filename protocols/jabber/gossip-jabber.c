@@ -1794,12 +1794,19 @@ jabber_get_vcard (GossipProtocol       *protocol,
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv; 
+	const gchar      *jid_str;
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
+
+	if (contact) {
+		jid_str = gossip_contact_get_id (contact);
+	} else {
+		jid_str = gossip_contact_get_id (priv->contact);
+	}
 	
 	return gossip_jabber_vcard_get (priv->connection,
-					gossip_contact_get_id (contact),
+					jid_str,
 					callback, user_data, error);
 }
 
