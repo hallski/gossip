@@ -112,150 +112,151 @@ typedef struct {
 } ShowActiveData;
 
 
-static void            gossip_contact_list_class_init           (GossipContactListClass *klass);
-static void            gossip_contact_list_init                 (GossipContactList      *list);
-static void            contact_list_finalize                    (GObject                *object);
-static void            contact_list_get_property                (GObject                *object,
-								 guint                   param_id,
-								 GValue                 *value,
-								 GParamSpec             *pspec);
-static void            contact_list_set_property                (GObject                *object,
-								 guint                   param_id,
-								 const GValue           *value,
-								 GParamSpec             *pspec);
-static void            contact_list_connected_cb                (GossipSession          *session,
-								 GossipContactList      *list);
-static gboolean        contact_list_show_active_users_cb        (GossipContactList      *list);
-static void            contact_list_contact_added_cb            (GossipSession          *session,
-								 GossipContact          *contact,
-								 GossipContactList      *list);
-static void            contact_list_contact_updated_cb          (GossipSession          *session,
-								 GossipContact          *contact,
-								 GossipContactList      *list);
-static void            contact_list_contact_presence_updated_cb (GossipSession          *session,
-								 GossipContact          *contact,
-								 GossipContactList      *list);
-static void            contact_list_contact_removed_cb          (GossipSession          *session,
-								 GossipContact          *contact,
-								 GossipContactList      *list);
-static void            contact_list_contact_set_active          (GossipContactList      *list,
-								 GossipContact          *contact,
-								 gboolean                active,
-								 gboolean                set_changed);
-static ShowActiveData *contact_list_contact_active_new          (GossipContactList      *list,
-								 GossipContact          *contact,
-								 gboolean                remove);
-static void            contact_list_contact_active_free         (ShowActiveData         *data);
-static gboolean        contact_list_contact_active_cb           (ShowActiveData         *data);
-static gchar *         contact_list_get_parent_group            (GtkTreeModel           *model,
-								 GtkTreePath            *path,
-								 gboolean               *path_is_group);
-static void            contact_list_get_group                   (GossipContactList      *list,
-								 const gchar            *name,
-								 GtkTreeIter            *iter_to_set,
-								 gboolean               *created);
-static gboolean        contact_list_get_group_foreach           (GtkTreeModel           *model,
-								 GtkTreePath            *path,
-								 GtkTreeIter            *iter,
-								 FindGroup              *fg);
-static void            contact_list_add_contact                 (GossipContactList      *list,
-								 GossipContact          *contact);
-static void            contact_list_remove_contact              (GossipContactList      *list,
-								 GossipContact          *contact);
-static void            contact_list_create_model                (GossipContactList      *list);
-static void            contact_list_setup_view                  (GossipContactList      *list);
-static void            contact_list_drag_data_received          (GtkWidget              *widget,
-								 GdkDragContext         *context,
-								 gint                    x,
-								 gint                    y,
-								 GtkSelectionData       *selection,
-								 guint                   info,
-								 guint                   time,
-								 gpointer                user_data);
-static gboolean        contact_list_drag_motion                 (GtkWidget              *widget,
-								 GdkDragContext         *context,
-								 gint                    x,
-								 gint                    y,
-								 guint                   time,
-								 gpointer                data);
-static gboolean        contact_list_drag_motion_cb              (DragMotionData         *data);
-static void            contact_list_drag_begin                  (GtkWidget              *widget,
-								 GdkDragContext         *context,
-								 gpointer                user_data);
-static void            contact_list_drag_data_get               (GtkWidget              *widget,
-								 GdkDragContext         *contact,
-								 GtkSelectionData       *selection,
-								 guint                   info,
-								 guint                   time,
-								 gpointer                user_data);
-static void            contact_list_drag_end                    (GtkWidget              *widget,
-								 GdkDragContext         *context,
-								 gpointer                user_data);
-static void            contact_list_cell_set_background         (GossipContactList      *list,
-								 GtkCellRenderer        *cell,
-								 gboolean                is_group,
-								 gboolean                is_active);
-static void            contact_list_pixbuf_cell_data_func       (GtkTreeViewColumn      *tree_column,
-								 GtkCellRenderer        *cell,
-								 GtkTreeModel           *model,
-								 GtkTreeIter            *iter,
-								 GossipContactList      *list);
-static void            contact_list_text_cell_data_func         (GtkTreeViewColumn      *tree_column,
-								 GtkCellRenderer        *cell,
-								 GtkTreeModel           *model,
-								 GtkTreeIter            *iter,
-								 GossipContactList      *list);
-static gboolean        contact_list_button_press_event_cb       (GossipContactList      *list,
-								 GdkEventButton         *event,
-								 gpointer                unused);
-static void            contact_list_row_activated_cb            (GossipContactList      *list,
-								 GtkTreePath            *path,
-								 GtkTreeViewColumn      *col,
-								 gpointer                unused);
-static void            contact_list_row_expand_or_collapse_cb   (GossipContactList      *list,
-								 GtkTreeIter            *iter,
-								 GtkTreePath            *path,
-								 gpointer                unused);
-static gint            contact_list_sort_func                   (GtkTreeModel           *model,
-								 GtkTreeIter            *iter_a,
-								 GtkTreeIter            *iter_b,
-								 gpointer                unused);
-static GList *         contact_list_find_contact                (GossipContactList      *list,
-								 GossipContact          *contact);
-static gboolean        contact_list_find_contact_foreach        (GtkTreeModel           *model,
-								 GtkTreePath            *path,
-								 GtkTreeIter            *iter,
-								 FindContact            *fc);
-static gchar *         contact_list_item_factory_translate_func (const gchar            *path,
-								 gpointer                data);
-static void            contact_list_item_menu_info_cb           (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_item_menu_rename_cb         (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_item_menu_edit_groups_cb    (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_item_menu_send_file_cb      (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_item_menu_log_cb            (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_item_menu_remove_cb         (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_group_menu_rename_cb        (gpointer                data,
-								 guint                   action,
-								 GtkWidget              *widget);
-static void            contact_list_event_added_cb              (GossipEventManager     *manager,
-								 GossipEvent            *event,
-								 GossipContactList      *list);
-static void            contact_list_event_removed_cb            (GossipEventManager     *manager,
-								 GossipEvent            *event,
-								 GossipContactList      *list);
-static void            contact_list_flash_free_data             (FlashData              *data);
+static void     gossip_contact_list_class_init           (GossipContactListClass *klass);
+static void     gossip_contact_list_init                 (GossipContactList *list);
+static void     contact_list_finalize                    (GObject           *object);
+static void     contact_list_get_property                (GObject           *object,
+							  guint              param_id,
+							  GValue            *value,
+							  GParamSpec        *pspec);
+static void     contact_list_set_property                (GObject           *object,
+							  guint              param_id,
+							  const GValue      *value,
+							  GParamSpec        *pspec);
+static void     contact_list_connected_cb                (GossipSession     *session,
+							  GossipContactList *list);
+static gboolean contact_list_show_active_users_cb        (GossipContactList *list);
+static void     contact_list_contact_added_cb            (GossipSession     *session,
+							  GossipContact     *contact,
+							  GossipContactList *list);
+static void     contact_list_contact_updated_cb          (GossipSession     *session,
+							  GossipContact     *contact,
+							  GossipContactList *list);
+static void     contact_list_contact_presence_updated_cb (GossipSession     *session,
+							  GossipContact     *contact,
+							  GossipContactList *list);
+static void     contact_list_contact_removed_cb          (GossipSession     *session,
+							  GossipContact     *contact,
+							  GossipContactList *list);
+static void     contact_list_contact_set_active          (GossipContactList *list,
+							  GossipContact     *contact,
+							  gboolean           active,
+							  gboolean           set_changed);
+static ShowActiveData *
+                contact_list_contact_active_new          (GossipContactList  *list,
+							  GossipContact      *contact,
+							  gboolean            remove);
+static void     contact_list_contact_active_free         (ShowActiveData     *data);
+static gboolean contact_list_contact_active_cb           (ShowActiveData     *data);
+static gchar *  contact_list_get_parent_group            (GtkTreeModel       *model,
+							  GtkTreePath        *path,
+							  gboolean           *path_is_group);
+static void     contact_list_get_group                   (GossipContactList  *list,
+							  const gchar        *name,
+							  GtkTreeIter        *iter_to_set,
+							  gboolean           *created);
+static gboolean contact_list_get_group_foreach           (GtkTreeModel       *model,
+							  GtkTreePath        *path,
+							  GtkTreeIter        *iter,
+							  FindGroup          *fg);
+static void     contact_list_add_contact                 (GossipContactList  *list,
+							  GossipContact      *contact);
+static void     contact_list_remove_contact              (GossipContactList  *list,
+							  GossipContact      *contact);
+static void     contact_list_create_model                (GossipContactList  *list);
+static void     contact_list_setup_view                  (GossipContactList  *list);
+static void     contact_list_drag_data_received          (GtkWidget          *widget,
+							  GdkDragContext     *context,
+							  gint                x,
+							  gint                y,
+							  GtkSelectionData   *selection,
+							  guint               info,
+							  guint               time,
+							  gpointer            user_data);
+static gboolean contact_list_drag_motion                 (GtkWidget          *widget,
+							  GdkDragContext     *context,
+							  gint                x,
+							  gint                y,
+							  guint               time,
+							  gpointer            data);
+static gboolean contact_list_drag_motion_cb              (DragMotionData     *data);
+static void     contact_list_drag_begin                  (GtkWidget          *widget,
+							  GdkDragContext     *context,
+							  gpointer            user_data);
+static void     contact_list_drag_data_get               (GtkWidget          *widget,
+							  GdkDragContext     *contact,
+							  GtkSelectionData   *selection,
+							  guint               info,
+							  guint               time,
+							  gpointer            user_data);
+static void     contact_list_drag_end                    (GtkWidget          *widget,
+							  GdkDragContext     *context,
+							  gpointer            user_data);
+static void     contact_list_cell_set_background         (GossipContactList  *list,
+							  GtkCellRenderer    *cell,
+							  gboolean            is_group,
+							  gboolean            is_active);
+static void     contact_list_pixbuf_cell_data_func       (GtkTreeViewColumn  *tree_column,
+							  GtkCellRenderer    *cell,
+							  GtkTreeModel       *model,
+							  GtkTreeIter        *iter,
+							  GossipContactList  *list);
+static void     contact_list_text_cell_data_func         (GtkTreeViewColumn  *tree_column,
+							  GtkCellRenderer    *cell,
+							  GtkTreeModel       *model,
+							  GtkTreeIter        *iter,
+							  GossipContactList  *list);
+static gboolean contact_list_button_press_event_cb       (GossipContactList  *list,
+							  GdkEventButton     *event,
+							  gpointer            unused);
+static void     contact_list_row_activated_cb            (GossipContactList  *list,
+							  GtkTreePath        *path,
+							  GtkTreeViewColumn  *col,
+							  gpointer            unused);
+static void     contact_list_row_expand_or_collapse_cb   (GossipContactList  *list,
+							  GtkTreeIter        *iter,
+							  GtkTreePath        *path,
+							  gpointer            unused);
+static gint     contact_list_sort_func                   (GtkTreeModel       *model,
+							  GtkTreeIter        *iter_a,
+							  GtkTreeIter        *iter_b,
+							  gpointer            unused);
+static GList *  contact_list_find_contact                (GossipContactList  *list,
+							  GossipContact      *contact);
+static gboolean contact_list_find_contact_foreach        (GtkTreeModel       *model,
+							  GtkTreePath        *path,
+							  GtkTreeIter        *iter,
+							  FindContact        *fc);
+static gchar *  contact_list_item_factory_translate_func (const gchar        *path,
+							  gpointer            data);
+static void     contact_list_item_menu_info_cb           (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_item_menu_rename_cb         (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_item_menu_edit_groups_cb    (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_item_menu_send_file_cb      (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_item_menu_log_cb            (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_item_menu_remove_cb         (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_group_menu_rename_cb        (gpointer            data,
+							  guint               action,
+							  GtkWidget          *widget);
+static void     contact_list_event_added_cb              (GossipEventManager *manager,
+							  GossipEvent        *event,
+							  GossipContactList  *list);
+static void     contact_list_event_removed_cb            (GossipEventManager *manager,
+							  GossipEvent        *event,
+							  GossipContactList  *list);
+static void     contact_list_flash_free_data             (FlashData          *data);
 
 
 /* signals */
@@ -267,7 +268,7 @@ enum {
 static guint signals[LAST_SIGNAL];
 
 
-/* model columns */
+/* Model columns */
 enum {
 	COL_PIXBUF,
 	COL_NAME,
@@ -280,14 +281,14 @@ enum {
 };
 
 
-/* properties */
+/* Properties */
 enum {
 	PROP_0,
 	PROP_SHOW_OFFLINE
 };
 
 
-/* item context menu */
+/* Item context menu */
 enum {
         ITEM_MENU_NONE,
         ITEM_MENU_INFO,
@@ -300,7 +301,7 @@ enum {
 };
 
 
-/* group context menu */
+/* Group context menu */
 enum {
         GROUP_MENU_NONE,
         GROUP_MENU_RENAME
@@ -380,14 +381,12 @@ static GtkItemFactoryEntry item_menu_items[] = {
 
 
 static GtkItemFactoryEntry group_menu_items[] = {
-	{
-		N_("/Re_name group"),
-		NULL,
-		GIF_CB (contact_list_group_menu_rename_cb),
-		GROUP_MENU_RENAME,
-		"<Item>",
-		NULL
-	}
+	{ N_("/Re_name group"),
+	  NULL,
+	  GIF_CB (contact_list_group_menu_rename_cb),
+	  GROUP_MENU_RENAME,
+	  "<Item>",
+	  NULL }
 };
 
 
@@ -421,6 +420,7 @@ G_DEFINE_TYPE (GossipContactList, gossip_contact_list, GTK_TYPE_TREE_VIEW);
 static void
 gossip_contact_list_class_init (GossipContactListClass *klass)
 {
+	GParamSpec   *param;
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
         object_class->finalize = contact_list_finalize;
@@ -437,13 +437,16 @@ gossip_contact_list_class_init (GossipContactListClass *klass)
                               G_TYPE_NONE,
                               1, G_TYPE_POINTER);
 
+	param = g_param_spec_boolean ("show_offline",
+				      "Show Offline",
+				      "Whether contact list should display "
+				      "offline contacts",
+				      FALSE,
+				      G_PARAM_READWRITE);
+
 	g_object_class_install_property (object_class,
 					 PROP_SHOW_OFFLINE,
-					 g_param_spec_boolean ("show_offline",
-							       "Show Offline",
-							       "Whether contact list should display offline contacts",
-							       FALSE,
-							       G_PARAM_READWRITE));
+					 param);
 }
 
 static void
@@ -596,7 +599,7 @@ contact_list_set_property (GObject      *object,
 static void
 contact_list_connected_cb (GossipSession *session, GossipContactList *list)
 {
-	d(g_print ("Contact List: Connected\n"));
+	d(g_print ("ContactList: Connected\n"));
 
 	g_timeout_add (ACTIVE_USER_WAIT_TO_ENABLE_TIME, 
 		       (GSourceFunc) contact_list_show_active_users_cb,
@@ -624,7 +627,7 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	priv = list->priv;
 
-	d(g_print ("Contact List: Contact added: %s\n",
+	d(g_print ("ContactList: Contact added: %s\n",
 		   gossip_contact_get_name (contact)));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
@@ -644,15 +647,23 @@ contact_list_contact_updated_cb (GossipSession     *session,
 				 GossipContactList *list)
 {
 	GossipContactListPriv *priv;
+	GossipContactType      type;
 	GossipPresence        *presence;
 	GtkTreeModel          *model;
 
 	priv = list->priv;
 
+	type = gossip_contact_get_type (contact);
+	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
+		d(g_print ("ContactList: Update to none-contact list "
+			   "contact (doing nothing)\n"));
+		return;
+	}
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	presence = gossip_contact_get_active_presence (contact);
 
-	d(g_print ("Contact List: Contact updated: %s\n",
+	d(g_print ("ContactList: Contact updated: %s\n",
 		   gossip_contact_get_name (contact)));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
@@ -692,10 +703,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	type = gossip_contact_get_type (contact);
-	if (type == GOSSIP_CONTACT_TYPE_TEMPORARY ||
-	    type == GOSSIP_CONTACT_TYPE_CHATROOM) {
-		d(g_print ("Contact List: Presence from %s contact (doing nothing)\n",
-			   type == GOSSIP_CONTACT_TYPE_TEMPORARY ? "temporary" : "chatroom")); 
+	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
+		d(g_print ("ContactList: Presence from none-contact list "
+			   "contact (doing nothing)\n"));
 		return;
 	}
 
@@ -735,9 +745,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			do_set_refresh = TRUE;
 
 			set_model = TRUE;
-			d(g_print ("Contact List: Remove item (after timeout)\n")); 
+			d(g_print ("ContactList: Remove item (after timeout)\n")); 
 		} else {
-			d(g_print ("Contact List: Remove item (now)!\n")); 
+			d(g_print ("ContactList: Remove item (now)!\n")); 
 			contact_list_remove_contact (list, contact);
 		}
 	}
@@ -754,7 +764,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (priv->show_active) {
 			do_set_active = TRUE;
 
-			d(g_print ("Contact List: Set active (contact added)\n")); 
+			d(g_print ("ContactList: Set active (contact added)\n")); 
 		}
 
 	} else {
@@ -780,14 +790,14 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 					str = "offline -> online"; 
 				}
 
-				d(g_print ("Contact List: Set active (contact updated %s)\n", str)); 
+				d(g_print ("ContactList: Set active (contact updated %s)\n", str)); 
 
 			} else {
 				/* was TRUE for presence updates */
 				/* do_set_active = FALSE;  */
 				do_set_refresh = TRUE;
 				
-				d(g_print ("Contact List: Set active (contact updated)\n")); 
+				d(g_print ("ContactList: Set active (contact updated)\n")); 
 			}
 		}
 
@@ -833,7 +843,7 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	d(g_print ("Contact List: Contact removed: %s\n",
+	d(g_print ("ContactList: Contact removed: %s\n",
 		   gossip_contact_get_name (contact)));
 
 	contact_list_remove_contact (list, contact);
@@ -860,7 +870,7 @@ contact_list_contact_set_active (GossipContactList *list,
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
 				    COL_IS_ACTIVE, active,
 				    -1);
-		d(g_print ("Contact List: Set item %s\n", active ? "active" : "inactive"));
+		d(g_print ("ContactList: Set item %s\n", active ? "active" : "inactive"));
 	
  		if (set_changed) { 
  			path = gtk_tree_model_get_path (model, iter); 
@@ -916,12 +926,12 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	if (data->remove && 
 	    !priv->show_offline && 
 	    !gossip_contact_is_online (data->contact)) {
-		d(g_print ("Contact List: Remove item (active timeout)!\n"));
+		d(g_print ("ContactList: Remove item (active timeout)!\n"));
 		contact_list_remove_contact (data->list,
 					     data->contact);
 	}
 
-	d(g_print ("Contact List: Setting contact to no longer be active\n"));
+	d(g_print ("ContactList: Setting contact to no longer be active\n"));
 	contact_list_contact_set_active (data->list, 
 					 data->contact,
 					 FALSE,
@@ -1323,14 +1333,14 @@ contact_list_drag_data_received (GtkWidget         *widget,
 	gboolean                 drag_del = FALSE;
 
 	id = (const gchar*) selection->data;
-	d(g_print ("Contact List: Received %s%s drag & drop contact from roster with id:'%s'\n", 
+	d(g_print ("ContactList: Received %s%s drag & drop contact from roster with id:'%s'\n", 
 		   context->action == GDK_ACTION_MOVE ? "move" : "", 
 		   context->action == GDK_ACTION_COPY ? "copy" : "", 
 		   id));
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	if (!contact) {
-		d(g_print ("Contact List: No contact found associated with drag & drop\n"));
+		d(g_print ("ContactList: No contact found associated with drag & drop\n"));
 		return;
 	}
 

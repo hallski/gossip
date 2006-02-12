@@ -1,3 +1,11 @@
+2006-02-12  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c:
+	- Make sure we don't react to the "contact-updated" signal in the
+	contact list for contacts which are temporary, own contact or
+	chatroom contacts. This should stop our own contact mysterously
+	showing up at the top of the roster due to the changes yesterday.
+
 2006-02-11  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-vcard.c:
