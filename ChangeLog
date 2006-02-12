@@ -11,7 +11,8 @@
 	and make use of them in the Jabber new user registration code.
 	- Make sure we clean up properly when cancelling registration of a
 	new user. 
-	- Fixes #306321 (Joe Shaw).
+	- Update the errors returned from registration failure to be more
+	user friendly, fixes #306321 (Joe Shaw).
 
 2006-02-12  Martyn Russell  <martyn@imendio.com>
 
