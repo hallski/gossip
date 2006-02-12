@@ -1,5 +1,20 @@
 2006-02-12  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-async.h:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.[ch]:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-account-button.c: 
+	* src/gossip-new-account-window.c:
+	- Added _register_cancel() functionality.
+	- Implemented some additional error conditions for GossipProtocol
+	and make use of them in the Jabber new user registration code.
+	- Make sure we clean up properly when cancelling registration of a
+	new user. 
+	- Fixes #306321 (Joe Shaw).
+
+2006-02-12  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-list.c:
 	- Make sure we don't react to the "contact-updated" signal in the
 	contact list for contacts which are temporary, own contact or

@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+#/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2004 Imendio AB
  *
@@ -19,6 +19,8 @@
  */
 
 #include <config.h>
+
+#include <glib/gi18n.h>
 
 /* FIXME: we should really have a definition in config.h so we can
  * include certain protocol head files */
@@ -632,26 +634,69 @@ gossip_protocol_get_version (GossipProtocol         *protocol,
 	return TRUE;
 }
  
-gboolean
+void
 gossip_protocol_register_account (GossipProtocol          *protocol,
 				  GossipAccount           *account,
 				  GossipVCard             *vcard,
 				  GossipRegisterCallback   callback,
-				  gpointer                 user_data,
-				  GError                 **error)
+				  gpointer                 user_data)
 {
 	GossipProtocolClass *klass;
 
-	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
-	g_return_val_if_fail (callback != NULL, FALSE);
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	g_return_if_fail (callback != NULL);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->register_account) {
-		return klass->register_account (protocol, account, vcard,
-						callback, user_data, 
-						error);
+		klass->register_account (protocol, account, vcard,
+					 callback, user_data);
 	}
-
-	return FALSE;
 }
 
+void
+gossip_protocol_register_cancel (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->register_cancel) {
+		klass->register_cancel (protocol);
+	}
+}
+
+const gchar *
+gossip_protocol_error_to_string (GossipProtocolError error)
+{
+	const gchar *str = _("An unknown error ocurred.");
+
+	switch (error) {
+	case GOSSIP_PROTOCOL_NO_CONNECTION:
+		str = _("Connection refused.");
+		break;
+	case GOSSIP_PROTOCOL_NO_SUCH_HOST:
+		str = _("Server address could not be resolved.");
+		break;
+	case GOSSIP_PROTOCOL_TIMED_OUT:
+		str = _("Connection timed out.");
+		break;
+	case GOSSIP_PROTOCOL_AUTH_FAILED:
+		str = _("Authentication failed.");
+		break;
+	case GOSSIP_PROTOCOL_DUPLICATE_USER:
+		str = _("The username you are trying already exists.");
+		break;
+	case GOSSIP_PROTOCOL_UNAVAILABLE:
+		str = _("This feature is unavailable.");
+		break;
+	case GOSSIP_PROTOCOL_UNAUTHORIZED:
+		str = _("This feature is unauthorized.");
+		break;
+	case GOSSIP_PROTOCOL_SPECIFIC_ERROR:
+		str = _("A specific protocol error occured that was unexpected.");
+		break;
+	}
+
+	return str;
+}

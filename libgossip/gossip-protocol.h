@@ -45,13 +45,14 @@
 
 
 typedef enum {
-	GossipProtocolErrorNoConnection,
-	GossipProtocolErrorNoSuchHost,
-	GossipProtocolErrorTimedOut,
-	GossipProtocolErrorAuthFailed,
-	
-	GossipProtocolErrorSpecific,
-
+	GOSSIP_PROTOCOL_NO_CONNECTION,
+	GOSSIP_PROTOCOL_NO_SUCH_HOST,
+	GOSSIP_PROTOCOL_TIMED_OUT,
+	GOSSIP_PROTOCOL_AUTH_FAILED,
+	GOSSIP_PROTOCOL_DUPLICATE_USER,
+	GOSSIP_PROTOCOL_UNAVAILABLE,
+	GOSSIP_PROTOCOL_UNAUTHORIZED,
+	GOSSIP_PROTOCOL_SPECIFIC_ERROR,
 } GossipProtocolError;
 
 
@@ -131,12 +132,12 @@ struct _GossipProtocolClass {
 						GossipVersionCallback callback,
 					        gpointer         user_data,
 					        GError         **error);
-	gboolean        (*register_account)    (GossipProtocol  *protocol,
+	void            (*register_account)    (GossipProtocol  *protocol,
 					        GossipAccount   *account,
 						GossipVCard     *vcard,
 					        GossipRegisterCallback callback,
-					        gpointer         user_data,
-					        GError         **error);
+					        gpointer         user_data);
+	void            (*register_cancel)     (GossipProtocol  *protocol);
 };
 
 
@@ -204,11 +205,12 @@ gboolean        gossip_protocol_get_version           (GossipProtocol          *
 						       GossipVersionCallback    callback,
 						       gpointer                 user_data,
 						       GError                 **error);
-gboolean        gossip_protocol_register_account      (GossipProtocol          *protocol,
+void            gossip_protocol_register_account      (GossipProtocol          *protocol,
 						       GossipAccount           *account,
 						       GossipVCard             *vcard,
 						       GossipRegisterCallback   callback,
-						       gpointer                 user_data,
-						       GError                 **error);
+						       gpointer                 user_data);
+void            gossip_protocol_register_cancel       (GossipProtocol          *protocol);
+const gchar *   gossip_protocol_error_to_string       (GossipProtocolError      error);
 
 #endif /* __GOSSIP_PROTOCOL_H__ */

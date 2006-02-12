@@ -41,7 +41,7 @@ typedef struct {
 
 
 typedef void (*GossipRegisterCallback) (GossipResult       result,
-					const gchar       *err_message,
+					GError            *error,
 					gpointer           user_data);
 
 typedef void (*GossipVCardCallback)    (GossipResult       result,

@@ -1566,21 +1566,19 @@ gossip_session_get_nickname (GossipSession *session,
 	return gossip_contact_get_name (contact);
 }
 
-gboolean
+void
 gossip_session_register_account (GossipSession           *session,
-				 GossipAccountType        type,
 				 GossipAccount           *account,
 				 GossipVCard             *vcard,
 				 GossipRegisterCallback   callback,
-				 gpointer                 user_data,
-				 GError                 **error)
+				 gpointer                 user_data)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 	
-	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
-	g_return_val_if_fail (callback != NULL, FALSE);
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	g_return_if_fail (callback != NULL);
 
 	priv = GET_PRIV (session);
 
@@ -1590,9 +1588,25 @@ gossip_session_register_account (GossipSession           *session,
 	protocol = g_hash_table_lookup (priv->accounts, account);
 	gossip_protocol_setup (protocol, account);
 
-        return gossip_protocol_register_account (protocol, account, vcard,
-						 callback, user_data,
-						 error);
+        gossip_protocol_register_account (protocol, account, vcard,
+					  callback, user_data);
+}
+
+void
+gossip_session_register_cancel (GossipSession *session,
+				GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+	
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, account);
+
+        gossip_protocol_register_cancel (protocol);
 }
 
 gboolean

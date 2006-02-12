@@ -158,13 +158,13 @@ gboolean        gossip_session_get_version             (GossipSession           
 							GossipVersionCallback    callback,
 							gpointer                 user_data,
 							GError                 **error);
-gboolean        gossip_session_register_account        (GossipSession           *session,
-							GossipAccountType        type,
+void            gossip_session_register_account        (GossipSession           *session,
 							GossipAccount           *account,
 							GossipVCard             *vcard,
 							GossipRegisterCallback   callback,
-							gpointer                 user_data,
-							GError                 **error);
+							gpointer                 user_data);
+void            gossip_session_register_cancel         (GossipSession           *session,
+							GossipAccount           *account);
 
 #endif /* __GOSSIP_SESSION_H__ */
 

@@ -401,27 +401,23 @@ account_button_update_tooltip (GossipAccountButton *account_button)
 		has_error = TRUE;
 		
 		code = priv->last_error->code;
-		
+		error1 = gossip_protocol_error_to_string (code);
+
 		switch (code) {
-		case GossipProtocolErrorNoConnection:
-			error1 = _("Connection refused.");
+		case GOSSIP_PROTOCOL_NO_CONNECTION:
 			error2 = _("Perhaps you are trying to connect to the wrong port?");
 			error3 = _("Perhaps the service is not currently running?");
 			break;
-		case GossipProtocolErrorNoSuchHost:
-			error1 = _("Server address could not be resolved.");
+		case GOSSIP_PROTOCOL_NO_SUCH_HOST:
 			error2 = _("Check your connection details.");
 			break;
-		case GossipProtocolErrorTimedOut:
-			error1 = _("Connection timed out.");
+		case GOSSIP_PROTOCOL_TIMED_OUT:
 			error2 = _("Perhaps the server is not running this service.");
 			break;
-		case GossipProtocolErrorAuthFailed:
-			error1 = _("Authentication failed.");
+		case GOSSIP_PROTOCOL_AUTH_FAILED:
 			error2 = _("Check your username and password are correct.");
 			break;
 		default:
-			error1 = _("Unknown error.");
 			error2 = _("Check your connection details.");
 			break;
 		}

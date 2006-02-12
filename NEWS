@@ -28,6 +28,7 @@ News in 0.9.1:
  * Added "auto_connect" feature for accounts when starting Gossip (Martyn).
  * Clean up unused ellipsize and tree model filter code borrowed from
  * libegg which is now in GTK+ (Richard).
+ * Fixed #306321 - Make sure errors returned from failed registration attempts are more user friendly rather than esoteric (Joe Shaw).
  * Fixed #131290 - Fixed nickname used in chat to be the full name from the users vcard - which is also now set when registering new accounts (Michal Janeczek).
  * Fixed #321569 - Possibility to set server seperately from jabber id in the startup wizard (Brian Pepple).
  * Fixed #325841 - Support automatically joining chat rooms when connecting to the server (Martyn, Ross Burton).
