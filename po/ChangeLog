@@ -1,3 +1,10 @@
+2006-02-12  Brian Pepple  <bdpepple@ameritech.net>
+
+	* POTFILES.in: 
+	- Removed src/gossip-chatrooms-dialog.c
+	- Removed src/gossip-register.c
+	- Added src/gosip-chatrooms-window.c
+
 2006-01-14  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
 
 	* zh_TW.po: Updated Traditional Chinese translation(Taiwan).

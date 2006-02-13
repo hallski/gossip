@@ -1,3 +1,11 @@
+2006-02-12  Brian Pepple  <bdpepple@ameritech.net>
+
+	* POTFILES.in: 
+	- Removed src/gossip-chatrooms-dialog.c
+	- Removed src/gossip-register.c
+	- Added src/gosip-chatrooms-window.c
+	- Fixes #330916 (Brian Pepple).
+
 2006-02-12  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-async.h:
