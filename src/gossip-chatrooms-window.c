@@ -56,6 +56,7 @@ typedef struct {
 	GtkWidget        *button_edit;
 	GtkWidget        *button_delete;
 
+	GtkWidget        *button_close;
 	GtkWidget        *button_join;
 
 	GossipChatroom   *joining_chatroom;
@@ -117,6 +118,8 @@ static gboolean   chatrooms_window_delete_foreach              (GtkTreeModel    
 								GtkTreePath              *path,
 								GtkTreeIter              *iter,
 								GossipChatroom           *chatroom);
+static void       chatrooms_window_close_clicked_cb            (GtkWidget                *widget,
+								GossipChatroomsWindow    *window);
 static void       chatrooms_window_join_clicked_cb             (GtkWidget                *widget,
 								GossipChatroomsWindow    *window);
 static void       chatrooms_window_chatroom_changed_cb         (GossipChatroom           *chatroom,
@@ -306,10 +309,10 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	GdkColor              color;
 	gchar                *str;
 	const gchar          *last_error;
-	gchar                *name;
+	const gchar          *name;
 	GossipChatroom       *chatroom;
 	GossipChatroomStatus  status;
- 	const gchar          *status_str;
+ 	gchar                *status_str;
 	gboolean              selected = FALSE;
 
 	attr_color = NULL;
@@ -317,10 +320,8 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	gtk_tree_model_get (model, iter, 
 			    COL_POINTER, &chatroom, 
 			    -1);
-	name = g_strdup_printf ("%s (%s@%s)",
-				gossip_chatroom_get_name (chatroom),
-				gossip_chatroom_get_room (chatroom),
-				gossip_chatroom_get_server (chatroom));
+	
+	name = gossip_chatroom_get_name (chatroom),
 
 	status = gossip_chatroom_get_status (chatroom);
 	last_error = gossip_chatroom_get_last_error (chatroom);
@@ -332,12 +333,18 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	}
 
 	if (status == GOSSIP_CHATROOM_ERROR) {
-		status_str = last_error;
+		status_str = g_strdup (last_error);
 	} else {
-		status_str = gossip_chatroom_get_status_as_str (status);
+/* 		status_str = gossip_chatroom_get_status_as_str (status); */
+
+		status_str = g_strdup_printf ("%s@%s", 
+					      gossip_chatroom_get_room (chatroom),
+					      gossip_chatroom_get_server (chatroom));
 	}
 
-	str = g_strdup_printf ("%s\n%s", name, status_str);
+	str = g_strdup_printf ("%s\n%s", 
+			       name, 
+			       status_str);
 
 	/* get: is_selected */
 	view = GTK_TREE_VIEW (window->treeview);
@@ -376,7 +383,7 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	pango_attr_list_unref (attr_list);
 
 	g_free (str);
-	g_free (name);
+ 	g_free (status_str); 
 }
 
 static GossipChatroom *
@@ -807,6 +814,13 @@ chatrooms_window_delete_foreach (GtkTreeModel   *model,
 }
 
 static void
+chatrooms_window_close_clicked_cb (GtkWidget             *widget,
+				   GossipChatroomsWindow *window)
+{
+	gtk_widget_hide (window->window);
+}
+
+static void
 chatrooms_window_join_clicked_cb (GtkWidget             *widget,
 				  GossipChatroomsWindow *window)
 {
@@ -904,6 +918,7 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 				       "button_new", &window->button_new,
 				       "button_edit", &window->button_edit,
 				       "button_delete", &window->button_delete,
+				       "button_close", &window->button_close,
 				       "button_join", &window->button_join,
 				       NULL);
 	
@@ -912,6 +927,7 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 			      "button_new", "clicked", chatrooms_window_new_clicked_cb,
 			      "button_edit", "clicked", chatrooms_window_edit_clicked_cb,
 			      "button_delete", "clicked", chatrooms_window_delete_clicked_cb,
+			      "button_close", "clicked", chatrooms_window_close_clicked_cb,
 			      "button_join", "clicked", chatrooms_window_join_clicked_cb,
 			      NULL);
 

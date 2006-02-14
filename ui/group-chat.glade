@@ -542,12 +542,12 @@
 </widget>
 
 <widget class="GtkDialog" id="new_chatroom_dialog">
-  <property name="width_request">350</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - New Chatroom</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
+  <property name="default_width">350</property>
   <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>
@@ -1248,6 +1248,18 @@
 		  <property name="visible">True</property>
 		  <property name="layout_style">GTK_BUTTONBOX_END</property>
 		  <property name="spacing">6</property>
+
+		  <child>
+		    <widget class="GtkButton" id="button_close">
+		      <property name="visible">True</property>
+		      <property name="can_default">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label">gtk-close</property>
+		      <property name="use_stock">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkButton" id="button_join">

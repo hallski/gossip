@@ -223,7 +223,7 @@ new_chatroom_dialog_join_custom (GossipNewChatroomDialog *dialog)
 	server = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
 	room   = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
 
-	name = g_strdup_printf ("%s@%s", room, server);
+	name = g_strdup (room);
 			
 	chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
 				 "name", name, 

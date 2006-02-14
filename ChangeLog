@@ -1,5 +1,16 @@
 2006-02-14  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chatrooms-window.c:
+	* src/gossip-new-chatroom-dialog.c:
+	* ui/group-chat.glade:
+	- Added a Close button to the chatrooms window.
+	- Changed the format of the treeview listings to show the
+	conference room id and the name (status is only shown if there is
+	an error).
+	- Changed the default name of a new room to just the room name.
+
+2006-02-14  Martyn Russell  <martyn@imendio.com>
+
 	* src/Makefile.am:
 	- Fixed the header file for gossip-new-chatroom-dialog.h inclusion so
 	make distcheck is successful.
