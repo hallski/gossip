@@ -1,6 +1,12 @@
 2006-02-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/Makefile.am:
+	- Fixed the header file for gossip-new-chatroom-dialog.h inclusion so
+	make distcheck is successful.
+
+2006-02-14  Martyn Russell  <martyn@imendio.com>
+
+	* src/Makefile.am:
 	* src/gossip-new-chatroom-dialog.[ch]:
 	* src/gossip-chatrooms-window.[ch]:
 	* src/gossip-edit-chatroom-dialog.[ch]:
