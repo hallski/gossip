@@ -50,6 +50,8 @@ gossip_SOURCES = 				                        	\
 	gossip-contact-list.c              gossip-contact-list.h               	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
 	gossip-contact-info-dialog.c       gossip-contact-info-dialog.h         \
+	gossip-edit-chatroom-dialog.c      gossip-edit-chatroom-dialog.h	\
+	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-ft-window.c		   gossip-ft-window.h			\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
@@ -57,6 +59,7 @@ gossip_SOURCES = 				                        	\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \
 	gossip-new-account-window.c        gossip-new-account-window.h		\
+	gossip-new-chatroom-dialog.c       gossip-new-chatroom-window.h		\
 	gossip-new-message-dialog.c        gossip-new-message-dialog.h		\
 	gossip-notebook.c	           gossip-notebook.h			\
 	gossip-presence-chooser.c          gossip-presence-chooser.h        	\
@@ -69,7 +72,6 @@ gossip_SOURCES = 				                        	\
 	gossip-status-presets.c		   gossip-status-presets.h	       	\
 	gossip-subscription-dialog.c       gossip-subscription-dialog.h		\
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
-	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
 	gossip-theme-manager.c	    	   gossip-theme-manager.h		\
 	eggtrayicon.c		           eggtrayicon.h

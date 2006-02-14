@@ -31,6 +31,7 @@ src/gossip-idle.c
 src/gossip-log.c
 src/gossip-main.c
 src/gossip-new-account-window.c
+src/gossip-new-chatroom-dialog.c
 src/gossip-new-message-dialog.c
 src/gossip-preferences.c
 src/gossip-presence-chooser.c

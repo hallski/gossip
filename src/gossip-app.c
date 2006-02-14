@@ -871,7 +871,7 @@ static void
 app_join_group_chat_cb (GtkWidget *window,
 			GossipApp *app)
 {
-	gossip_chatrooms_window_show (FALSE);
+	gossip_chatrooms_window_show (NULL, FALSE);
 }
 
 static void
@@ -2271,7 +2271,7 @@ app_chatroom_auto_connected_cb (GossipChatroomManager    *manager,
 	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
-		gossip_chatrooms_window_show (TRUE);
+		gossip_chatrooms_window_show (NULL, TRUE);
 		break;
 
 	case GOSSIP_CHATROOM_JOIN_OK:

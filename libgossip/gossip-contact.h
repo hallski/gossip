@@ -72,6 +72,7 @@ GossipContact *    gossip_contact_new_full                  (GossipContactType  
 							     GossipAccount      *account,
 							     const gchar        *id,
 							     const gchar        *name);
+GossipContact *    gossip_contact_copy                      (GossipContact      *contact);
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);

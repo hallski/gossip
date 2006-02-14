@@ -1,3 +1,24 @@
+2006-02-14  Martyn Russell  <martyn@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-new-chatroom-dialog.[ch]:
+	* src/gossip-chatrooms-window.[ch]:
+	* src/gossip-edit-chatroom-dialog.[ch]:
+	* po/POTFILES.in:
+	* ui/group-chat.glade:
+	- Split the gossip-chatrooms-window.[ch] into smaller modules to
+	make it easier to maintain and I also changed the layout so we
+	don't have a GtkNotebook here any more.
+	- Fixes bug #330830 (Paul Van Tilburg, Mikael) - Mikael's GUI
+	suggestions in there with Pauls bug fixed as part of that.
+
+	* libgossip/gossip-contact.[ch]: 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	- Added gossip_contact_copy() function for our own contact and
+	change the name so we can have a nickname of the users choice per
+	chatroom. 
+	- Fixes bug #330828 (Paul Van Tilburg).
+
 2006-02-12  Brian Pepple  <bdpepple@ameritech.net>
 
 	* POTFILES.in: 

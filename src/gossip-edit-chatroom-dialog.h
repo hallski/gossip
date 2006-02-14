@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
+ * Copyright (C) 2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,12 +18,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_CHATROOMS_WINDOW_H__
-#define __GOSSIP_CHATROOMS_WINDOW_H__
+#ifndef __GOSSIP_EDIT_CHATROOMS_WINDOW_H__
+#define __GOSSIP_EDIT_CHATROOMS_WINDOW_H__
 
+#include <gtk/gtk.h>
 #include <libgossip/gossip-chatroom.h>
 
-void gossip_chatrooms_window_show    (GtkWindow      *parent,
-				      gboolean        show_chatrooms);
+GtkWidget *gossip_edit_chatroom_dialog_show (GossipChatroom *chatroom);
 
-#endif /* __GOSSIP_CHATROOMS_WINDOW_H__ */
+#endif /* __GOSSIP_EDIT_CHATROOMS_WINDOW_H__ */

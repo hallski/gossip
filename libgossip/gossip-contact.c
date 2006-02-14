@@ -30,7 +30,11 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
 
+/* Make sure any additions to the private contact structure are copied
+ * in the gossip_contact_copy() function further down.
+ */
 typedef struct _GossipContactPriv GossipContactPriv;
+
 struct _GossipContactPriv {
 	GossipContactType   type;
 
@@ -318,6 +322,40 @@ gossip_contact_new_full (GossipContactType  type,
 			     "name", name,
 			     "id", id,
 			     NULL);
+}
+
+GossipContact *    
+gossip_contact_copy (GossipContact *contact)
+{
+	GossipContact     *new_contact;
+	GossipContactPriv *new_priv;
+	GossipContactPriv *priv;
+	GList             *l;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+	
+	priv = GET_PRIV (contact);
+
+	new_contact = gossip_contact_new_full (priv->type, 
+					       priv->account,
+					       priv->id,
+					       priv->name);
+
+	new_priv = GET_PRIV (new_contact);
+	
+	new_priv->subscription = priv->subscription;
+	
+	for (l = priv->groups; l; l = l->next) {
+		new_priv->groups = g_list_append (new_priv->groups, 
+						  g_strdup (l->data));
+	}
+
+	for (l = priv->presences; l; l = l->next) {
+		new_priv->presences = g_list_append (new_priv->presences, 
+						     g_strdup (l->data));
+	}
+
+	return new_contact;
 }
 
 GossipContactType

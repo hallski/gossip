@@ -176,12 +176,9 @@ jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
 
 	jabber = chatrooms->jabber;
 
-	own_contact = gossip_jabber_get_own_contact (jabber);
-
 	room = g_new0 (JabberChatroom, 1);
 
 	room->ref_count = 1;
-
 	room->chatroom = g_object_ref (chatroom);
 
 	jid_str = g_strdup_printf ("%s@%s/%s", 
@@ -192,8 +189,15 @@ jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
 	g_free (jid_str);
 
 	room->contacts = NULL;
-	
-	room->own_contact = g_object_ref (own_contact);
+
+	/* What we do here is copy the contact instead of reference
+	 * it, plus we change the name according to how the user wants
+	 * their nickname in the chat room. 
+	 */
+	own_contact = gossip_jabber_get_own_contact (jabber);
+	room->own_contact = gossip_contact_copy (own_contact);
+	gossip_contact_set_name (room->own_contact, 
+				 gossip_chatroom_get_nick (chatroom));
 
 	return room;
 }
