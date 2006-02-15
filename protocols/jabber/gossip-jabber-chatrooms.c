@@ -1030,8 +1030,9 @@ gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
 	chatroom = g_object_new (GOSSIP_TYPE_CHATROOM, 
 				 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
 				 "server", server,
+				 "name", room,
 				 "room", room,
-				 "nickname", nickname,
+				 "nick", nickname,
 				 NULL);
 
 	gossip_jabber_chatrooms_join (chatrooms,

@@ -35,8 +35,6 @@
 #include "gossip-chatrooms-window.h"
 #include "gossip-edit-chatroom-dialog.h"
 #include "gossip-new-chatroom-dialog.h"
-/* #include "gossip-group-chat.h" */
-/* #include "gossip-stock.h" */
 
 /* This is turned off for now, but to configure the auto connect in
  * the list instead of from the edit dialog, define this variable: */
@@ -102,7 +100,7 @@ static void       chatrooms_window_model_remove                (GossipChatroomsW
 								GossipChatroom           *chatroom);
 static void       chatrooms_window_model_setup                 (GossipChatroomsWindow    *window);
 
-static void       chatrooms_window_update_join_button          (GossipChatroomsWindow    *window);
+static void       chatrooms_window_update_buttons              (GossipChatroomsWindow    *window);
 
 static void       chatrooms_window_join_cb                     (GossipChatroomProvider   *provider,
 								GossipChatroomJoinResult  result,
@@ -443,7 +441,7 @@ chatrooms_window_model_join_selected (GossipChatroomsWindow *window)
 
 	status = chatrooms_window_model_status_selected (window);
 	if (status == GOSSIP_CHATROOM_CONNECTING) {
-		chatrooms_window_update_join_button (window);
+		chatrooms_window_update_buttons (window);
 		return;
 	}
 
@@ -465,7 +463,7 @@ chatrooms_window_model_join_selected (GossipChatroomsWindow *window)
 					    window);
 	
 	/* set model with data we need to remember */
-	chatrooms_window_update_join_button (window);
+	chatrooms_window_update_buttons (window);
 	
 	g_object_unref (chatroom);	
 
@@ -515,18 +513,8 @@ chatrooms_window_model_selection_changed (GtkTreeSelection      *selection,
 {
 	GtkTreeModel *model;
 	GtkTreeIter   iter;
-	gboolean      is_selection;
 		
-	is_selection = gtk_tree_selection_get_selected (selection, &model, &iter);
-
-	gtk_widget_set_sensitive (window->button_join, is_selection);
-	gtk_widget_set_sensitive (window->button_edit, is_selection);
-	gtk_widget_set_sensitive (window->button_delete, is_selection);
-
-	chatrooms_window_update_join_button (window);
-
-	/* set default chatroom */
-	if (is_selection) {
+	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		GossipChatroomManager *manager;
 		GossipChatroom        *chatroom;
 
@@ -536,6 +524,8 @@ chatrooms_window_model_selection_changed (GtkTreeSelection      *selection,
 		gossip_chatroom_manager_set_default (manager, chatroom);
 		gossip_chatroom_manager_store (manager);
 	}
+
+	chatrooms_window_update_buttons (window);
 }
 
 static void
@@ -695,14 +685,15 @@ chatrooms_window_model_setup (GossipChatroomsWindow *window)
 	chatrooms_window_model_refresh_data (window, TRUE);
 }
 
-static void
-chatrooms_window_update_join_button (GossipChatroomsWindow *window)
+static void 
+chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 {
-	GtkButton             *button;
-	GtkWidget             *image;
-	GossipChatroomStatus   status;
+	GtkButton            *button;
+	GtkWidget            *image;
+	GossipChatroomStatus  status;
+	gboolean              sensitive = TRUE;
 
-	/* first get button and icon */
+	/* Sort out Join button first. */
 	button = GTK_BUTTON (window->button_join);
 
 	image = gtk_button_get_image (button);
@@ -733,9 +724,13 @@ chatrooms_window_update_join_button (GossipChatroomsWindow *window)
 					  GTK_ICON_SIZE_BUTTON);
 		break;
 	}
-	
-	gtk_widget_set_sensitive (GTK_WIDGET (button), 
-				  (status != GOSSIP_CHATROOM_OPEN));
+
+	sensitive &= (status != GOSSIP_CHATROOM_OPEN);
+	gtk_widget_set_sensitive (window->button_join, sensitive);
+
+	sensitive &= (status != GOSSIP_CHATROOM_CONNECTING);
+	gtk_widget_set_sensitive (window->button_edit, sensitive);
+	gtk_widget_set_sensitive (window->button_delete, sensitive);
 }
 
 static void
@@ -752,7 +747,7 @@ chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 		gossip_group_chat_show (provider, id);
 	} 
 
-	chatrooms_window_update_join_button (window);
+	chatrooms_window_update_buttons (window);
 }
 
 static void
@@ -849,7 +844,7 @@ chatrooms_window_chatroom_changed_cb (GossipChatroom        *chatroom,
 				chatrooms_window_chatroom_changed_foreach,
 				chatroom);
 
-	chatrooms_window_update_join_button (window);
+	chatrooms_window_update_buttons (window);
 }
 
 static void

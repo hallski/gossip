@@ -1,3 +1,14 @@
+2006-02-15  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* src/gossip-chat-invite.c:
+	- Fixed a crasher when accepting an invitation from another
+	contact to join a chat conference 
+
+	* src/gossip-chatrooms-window.c:
+	- Fixed the button states depending on the selected chatroom state
+	(so now you can't delete or edit a chatroom which is currently open).
+
 2006-02-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chatrooms-window.c:

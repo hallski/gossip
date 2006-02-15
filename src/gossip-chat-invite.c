@@ -80,7 +80,7 @@ gossip_chat_invite_contact_menu (GossipContact *contact)
 		id = GPOINTER_TO_INT(l->data);
 		name = gossip_chatroom_provider_get_room_name (provider, id);
 		
-		if (!name && strlen (name) > 0) {
+		if (name == NULL || strlen (name) < 1) {
 			continue;
 		}
 		
