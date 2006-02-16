@@ -1,3 +1,13 @@
+2006-02-16  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: 
+	- Make sure we don't try to do file transfer context menu
+	operations on a group context menu. Fixes #331228 (Diego
+	González).
+	- Change the remove contact dialog so the buttons used are
+	"Remove" and "Cancel" instead of "Yes" and "No", more HIG
+	compliant. Fixes #331412 (Wouter Bolsterlee).
+
 2006-02-15  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c:

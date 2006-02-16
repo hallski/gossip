@@ -1751,15 +1751,16 @@ contact_list_button_press_event_cb (GossipContactList *list,
 					gtk_widget_hide (invite_sep);
 					gtk_widget_hide (invite_item);
 				}
-			}
-			
-			/* FIXME: disable file transfer until finished */
-			ft_item = gtk_item_factory_get_item (factory,
-							     "/Send File...");
-			gtk_widget_hide (ft_item);
-			ft_item = gtk_item_factory_get_item (factory,
-							     "/sep-ft");
-			gtk_widget_hide (ft_item);
+
+				/* FIXME: disable file transfer until finished */
+				ft_item = gtk_item_factory_get_item (factory,
+								     "/Send File...");
+				gtk_widget_hide (ft_item);
+
+				ft_item = gtk_item_factory_get_item (factory,
+								     "/sep-ft");
+				gtk_widget_hide (ft_item);
+			}		
 
 			/* show */
 			gtk_item_factory_popup (factory,
@@ -2089,7 +2090,7 @@ contact_list_item_menu_remove_cb (gpointer   data,
                                   GtkWidget *widget)
 {
         GossipContact *contact;
-	gchar         *str;
+	gchar         *name;
 	GtkWidget     *dialog;
 	gint           response;
 	
@@ -2098,21 +2099,28 @@ contact_list_item_menu_remove_cb (gpointer   data,
                 return;
         }
 
-	str = g_strdup_printf ("<b>%s</b>", 
-                               gossip_contact_get_id (contact));
+	name = g_strdup_printf ("<b>%s</b>\n",
+				gossip_contact_get_name (contact));
 
-	/* Translator: %s denotes the Jabber ID */
 	dialog = gtk_message_dialog_new (NULL,
 					 0,
 					 GTK_MESSAGE_QUESTION,
-					 GTK_BUTTONS_YES_NO,
-					 _("Do you want to remove the contact\n"
-					   "%s\n"
-					   "from your contact list?"),
-					 str);
-	
-	g_free (str);
-	
+					 GTK_BUTTONS_NONE,
+					 "%s\n\n"
+					 "%s"
+					 "%s\n",
+					 _("Do you want to remove this contact from your roster?"),
+					 name ? name : "",
+					 gossip_contact_get_id (contact));
+	g_free (name);
+
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+				GTK_STOCK_CANCEL,
+				GTK_RESPONSE_NO,
+				GTK_STOCK_REMOVE,
+				GTK_RESPONSE_YES,
+				NULL);
+
 	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
 		      "use-markup", TRUE,
 		      "wrap", FALSE,

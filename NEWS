@@ -28,6 +28,8 @@ News in 0.9.1:
  * Added "auto_connect" feature for accounts when starting Gossip (Martyn).
  * Clean up unused ellipsize and tree model filter code borrowed from
  * libegg which is now in GTK+ (Richard).
+ * Fixed #331412 - Use "Remove" and "Cancel instead of "Yes" and "No" when removing a contact (Wouter Bolsterlee).
+ * Fixed #331228 - GTK+ gtk_widget_hide() warning causing a crash (Diego González).
  * Fixed #330830 - Make sure the chatrooms window clears widget values when closed (since it is hidden) (Paul Van Tilburg).
  * Fixed #330828 - Make sure the nickname for chatrooms is honored (Paul Van Tilburg).
  * Fixed #330916 - Missing files in POTFILES.in (Brian Pepple).
