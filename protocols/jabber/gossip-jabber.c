@@ -42,7 +42,7 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define d(x) x
+#define d(x)
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
 						    GOSSIP_TYPE_JABBER, \
@@ -1367,7 +1367,8 @@ jabber_set_presence (GossipProtocol *protocol,
 	GossipJabberPriv    *priv;
 	LmMessage           *m;
 	GossipPresenceState  state;
-	const gchar         *show = NULL;
+	const gchar         *show;
+	const gchar         *status;
 	const gchar         *priority;
 	
 	jabber = GOSSIP_JABBER (protocol);
@@ -1384,6 +1385,8 @@ jabber_set_presence (GossipProtocol *protocol,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 
 	state = gossip_presence_get_state (presence);
+	status = gossip_presence_get_status (presence);
+
 	show = gossip_jabber_presence_state_to_str (presence);
 	
 	switch (state) {
@@ -1401,17 +1404,19 @@ jabber_set_presence (GossipProtocol *protocol,
 		break;
 	}
 
-	d(g_print ("Protocol: Settting presence to:'%s', status:'%s'\n", 
-		   show, gossip_presence_get_status (presence)));
+	d(g_print ("Protocol: Setting presence to:'%s', status:'%s', priority:'%s'\n", 
+		   show ? show : "available", 
+		   status ? status : "",
+		   priority));
 
 	if (show) {
 		lm_message_node_add_child (m->node, "show", show);
 	}
+
 	lm_message_node_add_child (m->node, "priority", priority);
 	
-	if (gossip_presence_get_status (presence)) {
-		lm_message_node_add_child (m->node, "status",
-					   gossip_presence_get_status (presence));
+	if (status) {
+		lm_message_node_add_child (m->node, "status", status);
 	}
 	
 	lm_connection_send (priv->connection, m, NULL);
@@ -2622,11 +2627,6 @@ jabber_chatroom_get_rooms (GossipChatroomProvider *provider)
 
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
-
-/* 	g_hash_table_foreach (priv->chatrooms->room_id_hash,  */
-/* 			      (GHFunc) jabber_chatrooms_foreach_set_presence, */
-/* 			      chatrooms); */
-
 
 	return gossip_jabber_chatrooms_get_rooms (priv->chatrooms);
 }

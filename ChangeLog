@@ -1,3 +1,24 @@
+2006-02-18  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c
+	- Updated the presence debug statement to be more informative.
+	- Turned off debugging ready for release.
+
+	* protocols/jabber/gossip-jabber-services.c
+	(gossip_jabber_services_get_version): 
+	- Check for NULL presence (seen from offline contacts) before calling
+	gossip_contact_get_active_presence(). 
+	- Fixes bug #331229 (Wouter Bolsterlee).
+
+	* src/gossip-account-button.[ch]:
+	* src/gossip-app.c: 
+	- Now when adding accounts to the toolbar, they are arranged
+	instead of just being added to the end and looking out of place.
+	- Make sure when rearranging the toolbar (which effective removes
+	from a container and adds back into it), the GossipAccountButton
+	account status is set.  Online accounts would be rearranged and
+	suddenly become offline (although the connection was actually up).
+	
 2006-02-16  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: 

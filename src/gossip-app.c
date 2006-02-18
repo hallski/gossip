@@ -1682,7 +1682,8 @@ app_accounts_account_added_cb (GossipAccountManager *manager,
 			       GossipAccount        *account,
 			       gpointer              user_data)
 {
- 	app_accounts_add (account); 
+	app_accounts_rearrange ();
+	app_connection_items_update ();
 }
 
 static void
@@ -1691,6 +1692,7 @@ app_accounts_account_removed_cb (GossipAccountManager *manager,
 				 gpointer              user_data)
 {
 	app_accounts_remove (account);
+	app_connection_items_update ();
 }
 
 static void
@@ -1748,7 +1750,7 @@ app_accounts_rearrange (void)
 
 	d(g_print ("AppAccounts: Rearranging toolbar\n"));
 
-	/* remove all children for a reshuffle */
+	/* Remove all children for a reshuffle */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
 	for (l = children; l; l = l->next) {
 		gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), l->data);
@@ -1756,7 +1758,7 @@ app_accounts_rearrange (void)
 	
 	g_list_free (children);
 
-	/* add accounts back in */
+	/* Add accounts back in */
 	app_accounts_create ();
 }
 
@@ -1776,8 +1778,8 @@ app_accounts_create (void)
 	accounts = gossip_account_manager_get_accounts (manager);
 
 	/* Add enabled accounts first, since they are important, they
-	   should be at the start of the account list.
-	*/
+	 * should be at the start of the account list.
+	 */
 	accounts = g_list_sort (accounts, (GCompareFunc) app_accounts_sort_func);
 
 	for (l = accounts; l; l = l->next) {
@@ -1871,6 +1873,7 @@ app_accounts_add (GossipAccount *account)
 {
 	GossipAppPriv *priv;
 	GtkWidget     *account_button;
+	gboolean       connected;
 
 	priv = app->priv;
 
@@ -1881,11 +1884,15 @@ app_accounts_add (GossipAccount *account)
 	gossip_account_button_set_account (GOSSIP_ACCOUNT_BUTTON (account_button), 
 					   account);
 
-	/* add to toolbar */
+	connected = gossip_session_is_connected (priv->session, account);
+	gossip_account_button_set_status (GOSSIP_ACCOUNT_BUTTON (account_button), 
+					  connected);
+
+	/* Add to toolbar. */
 	gtk_container_add (GTK_CONTAINER (priv->accounts_toolbar), account_button);
 	gtk_widget_show_all (account_button);
 
-	/* show/hide toolbar */
+	/* Show/hide toolbar. */
 	app_accounts_update_toolbar ();
 }
 
@@ -2373,65 +2380,4 @@ gossip_app_get_event_manager (void)
 {
 	return app->priv->event_manager;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

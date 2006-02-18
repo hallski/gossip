@@ -218,16 +218,16 @@ account_button_align_menu_func (GtkMenu             *menu,
 	screen_height = gdk_screen_get_height (screen);	
 
 	if (req.height > screen_height) {
-		/* too big for screen height anyway */
+		/* Too big for screen height anyway. */
 		*y = 0;
 		return;
 	}
 
 	if ((*y + req.height + widget->allocation.height) > screen_height) {
-		/* can't put it below the button */
+		/* Can't put it below the button. */
 		*y -= req.height;
 	} else {
-		/* put menu below button */
+		/* Put menu below button. */
 		*y += widget->allocation.height;
 	}
 
@@ -388,7 +388,6 @@ account_button_update_tooltip (GossipAccountButton *account_button)
 		return;
 	}
 
-	/* set tool tip */
 	if (priv->connected) {
 		status =  _("Connected");
 	} else {
@@ -624,14 +623,12 @@ account_button_protocol_error_cb (GossipSession       *session,
 
 	priv->connecting = FALSE;
 
-	/* set last error */
 	if (priv->last_error) {
 		g_error_free (priv->last_error);
 	}
 
 	priv->last_error = g_error_copy (error);
 
-	/* set button status */
 	gossip_account_button_set_status (account_button, FALSE);
 
 	image = gtk_tool_button_get_icon_widget (GTK_TOOL_BUTTON (account_button));
@@ -671,11 +668,11 @@ gossip_account_button_new (void)
 
 	account_button = g_object_new (GOSSIP_TYPE_ACCOUNT_BUTTON, NULL);
 
-	/* should we show the text for the account? */
+	/* Should we show the text for the account? */
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
 					FALSE);
 
-	/* should we show the item when docked horizontally */
+	/* Should we show the item when docked horizontally. */
 	gtk_tool_item_set_visible_horizontal (GTK_TOOL_ITEM (account_button),
 					      TRUE);
 	
@@ -729,11 +726,10 @@ gossip_account_button_set_account (GossipAccountButton *account_button,
 		g_object_unref (priv->account);
 	}
 
-	/* set label */
 	gtk_tool_button_set_label (GTK_TOOL_BUTTON (account_button),
 				   gossip_account_get_name (account));
 
-	/* should we show the text for the account? */
+	/* Should we show the text for the account? */
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
 					gossip_account_get_enabled (account));
 
@@ -771,7 +767,6 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 		priv->timeout_id = 0; 
 	}
 
-	/* set image */
 	image = gtk_tool_button_get_icon_widget (GTK_TOOL_BUTTON (account_button));
 	if (!image) {
 		image = gtk_image_new ();

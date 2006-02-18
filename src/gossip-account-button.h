@@ -60,7 +60,5 @@ void       gossip_account_button_set_account      (GossipAccountButton *button,
 void       gossip_account_button_set_status       (GossipAccountButton *button,
 						   gboolean             online);
 
-
-
 #endif /* __GOSSIP_ACCOUNT_BUTTON_H__ */
 

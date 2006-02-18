@@ -256,7 +256,7 @@ gossip_presence_get_resource (GossipPresence *presence)
 	priv = GET_PRIV (presence);
 	
 	if (priv->resource) {
-		return priv->resource;
+		return priv->resource; 
 	}
 
 	return NULL;

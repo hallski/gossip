@@ -141,17 +141,22 @@ gossip_jabber_services_get_version (LmConnection           *connection,
 	LmMessageHandler   *handler;
 	GossipCallbackData *data;
 	gboolean            result;
-	GossipPresence     *p;
-	const gchar        *id, *resource;
+	GossipPresence     *presence;
+	const gchar        *id;
+	const gchar        *resource = NULL;
 	gchar              *jid_str;
 
 	d(g_print ("Services: Requesting client information from contact:'%s'\n", 
 		   gossip_contact_get_id (contact)));
 
-	p = gossip_contact_get_active_presence (contact);
-	resource = gossip_presence_get_resource (p);
-	id = gossip_contact_get_id (contact);
+	/* If offline, contacts don't have presence */
+	presence = gossip_contact_get_active_presence (contact);
+	if (presence) {
+		resource = gossip_presence_get_resource (presence);
+	}
 
+	id = gossip_contact_get_id (contact);
+ 
 	if (resource && strcmp (resource, "") != 0) {
 		jid_str = g_strdup_printf ("%s/%s", id, resource);
 	} else {
