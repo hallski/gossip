@@ -1,6 +1,6 @@
-AC_INIT(Gossip, 0.9, gossip)
+AC_INIT(Gossip, 0.10, gossip)
 AC_PREREQ(2.59)
-AC_COPYRIGHT([Copyright (C) 2003-2005 Imendio AB])
+AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
 
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AC_CONFIG_HEADERS(config.h)

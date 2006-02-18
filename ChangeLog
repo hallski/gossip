@@ -1,5 +1,9 @@
 2006-02-18  Martyn Russell  <martyn@imendio.com>
 
+        * Release 0.10.
+
+2006-02-18  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c
 	- Updated the presence debug statement to be more informative.
 	- Turned off debugging ready for release.
