@@ -1,14 +1,14 @@
 # Catalan translation for Gossip
-# Copyright © 2003, 2004, 2005 Free Software Foundation, Inc.
+# Copyright © 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
 # This file is distributed under the same licence as the gossip package.
-# Jordi Mallach <jordi@sindominio.net>, 2003, 2004, 2005.
+# Jordi Mallach <jordi@sindominio.net>, 2003, 2004, 2005, 2006.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip 0.9.0pre\n"
+"Project-Id-Version: gossip 0.10\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-19 12:09+0000\n"
-"PO-Revision-Date: 2006-02-19 03:42+0100\n"
+"POT-Creation-Date: 2006-02-19 14:24+0100\n"
+"PO-Revision-Date: 2006-02-19 14:28+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +25,7 @@ msgstr "Missatgeria instantània"
 
 #: ../gossip.schemas.in.h:1
 msgid "Always open a separate chat window for new chats."
-msgstr ""
+msgstr "Obre sempre una finestra de xat separada per a xats nous."
 
 #: ../gossip.schemas.in.h:2
 msgid "Be silent when away"
@@ -43,6 +43,8 @@ msgstr "Tema de la finestra de xat"
 msgid ""
 "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
 msgstr ""
+"Llista separada per comes de les llengües de corrector ortogràfic a "
+"utilitzar (p. ex. ca, en, es, fr)."
 
 #: ../gossip.schemas.in.h:6
 msgid "Enable spell checking"
@@ -62,7 +64,7 @@ msgstr "Amaga la finestra principal."
 
 #: ../gossip.schemas.in.h:10
 msgid "Open new chats in separate windows"
-msgstr ""
+msgstr "Obre les finestres de xat noves en finestres separades"
 
 #: ../gossip.schemas.in.h:11
 msgid "Preset status messages"
@@ -78,7 +80,7 @@ msgstr "Mostra els contactes desconnectats"
 
 #: ../gossip.schemas.in.h:14
 msgid "Spell checking languages"
-msgstr ""
+msgstr "Llengües per a la correcció ortogràfica"
 
 #: ../gossip.schemas.in.h:15
 msgid "The X position of the main window."
@@ -155,59 +157,55 @@ msgstr "Desconnectat"
 
 #: ../libgossip/gossip-protocol.c:672
 msgid "An unknown error ocurred."
-msgstr ""
+msgstr "S'ha produït un error desconegut."
 
 #: ../libgossip/gossip-protocol.c:676
-#, fuzzy
 msgid "Connection refused."
-msgstr "Detalls de la connexió"
+msgstr "S'ha rebutjat la connexió."
 
 #: ../libgossip/gossip-protocol.c:679
 msgid "Server address could not be resolved."
-msgstr ""
+msgstr "No s'ha pogut resoldre l'adreça del servidor."
 
 #: ../libgossip/gossip-protocol.c:682
-#, fuzzy
 msgid "Connection timed out."
-msgstr "Detalls de la connexió"
+msgstr "S'ha exhaurit el temps d'espera de la connexió."
 
 #: ../libgossip/gossip-protocol.c:685
 msgid "Authentication failed."
-msgstr ""
+msgstr "Ha fallat l'autenticació."
 
 #: ../libgossip/gossip-protocol.c:688
 msgid "The username you are trying already exists."
-msgstr ""
+msgstr "El nom d'usuari que esteu intentant fer servir ja existeix."
 
 #: ../libgossip/gossip-protocol.c:691
-#, fuzzy
 msgid "This feature is unavailable."
-msgstr "El servidor pot no estar disponible ara mateix."
+msgstr "Aquesta funcionalidad no està disponible."
 
 #: ../libgossip/gossip-protocol.c:694
 msgid "This feature is unauthorized."
-msgstr ""
+msgstr "Aquesta funcionalitat no està autoritzada."
 
 #: ../libgossip/gossip-protocol.c:697
 msgid "A specific protocol error occured that was unexpected."
-msgstr ""
+msgstr "S'ha produït un error de protocol específic inesperat."
 
 #: ../libgossip/gossip-chatroom.c:733
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #: ../libgossip/gossip-chatroom.c:743
-#, fuzzy
 msgid "Connecting..."
-msgstr "S'està connectant"
+msgstr "S'està connectant..."
 
 #: ../libgossip/gossip-chatroom.c:744
 msgid "Open"
-msgstr ""
+msgstr "Obert"
 
 #: ../libgossip/gossip-chatroom.c:745
 msgid "Closed"
-msgstr ""
+msgstr "Tancat"
 
 #: ../libgossip/gossip-chatroom.c:746
 msgid "Unknown"
@@ -215,27 +213,27 @@ msgstr "Desconegut"
 
 #: ../libgossip/gossip-chatroom.c:747
 msgid "Error"
-msgstr ""
+msgstr "Error"
 
 #: ../libgossip/gossip-chatroom-provider.c:319
 msgid "The nickname you have chosen is already in use."
-msgstr ""
+msgstr "El sobrenom que heu triat ja està en ús."
 
 #: ../libgossip/gossip-chatroom-provider.c:323
 msgid "The chat room you tried to join requires a password."
-msgstr ""
+msgstr "La sala de xat a la qual heu intentat unir-vos requereix una contrasenya."
 
 #: ../libgossip/gossip-chatroom-provider.c:327
 msgid "The remote conference server did not respond in a sensible time."
-msgstr ""
+msgstr "El servidor de conferències remot no ha contestat en un temps raonable."
 
 #: ../libgossip/gossip-chatroom-provider.c:331
 msgid "The conference server you tried to join could not be found."
-msgstr ""
+msgstr "No s'ha trobat el servidor de conferències al qual heu intentat unir-vos."
 
 #: ../libgossip/gossip-chatroom-provider.c:335
 msgid "An unknown error occured, check your details are correct."
-msgstr ""
+msgstr "S'ha produït un error desconegut, comproveu que els vostres detalls són correctes."
 
 #: ../protocols/jabber/gossip-jabber.c:547
 #: ../protocols/jabber/gossip-jabber.c:693
@@ -243,18 +241,16 @@ msgid "Could not open connection"
 msgstr "No s'ha pogut obrir la connexió"
 
 #: ../protocols/jabber/gossip-jabber.c:574
-#, fuzzy
 msgid "Could not find the server you wanted to use"
-msgstr "Quin servidor voleu utilitzar?"
+msgstr "No s'ha trobat el servidor que volieu utilitzar"
 
 #: ../protocols/jabber/gossip-jabber.c:591
-#, fuzzy
 msgid "Connection to the server failed."
-msgstr "No s'ha pogut obrir la connexió"
+msgstr "Ha fallat la connexió al servidor."
 
 #: ../protocols/jabber/gossip-jabber.c:743
 msgid "Authentication failed"
-msgstr ""
+msgstr "Ha fallat l'autenticació"
 
 #: ../protocols/jabber/gossip-jabber.c:999
 msgid "Connection could not be opened"
@@ -317,23 +313,23 @@ msgstr "Desconnectat"
 
 #: ../src/gossip-account-button.c:407
 msgid "Perhaps you are trying to connect to the wrong port?"
-msgstr ""
+msgstr "Potser us esteu intentant connectar al port incorrecte?"
 
 #: ../src/gossip-account-button.c:408
 msgid "Perhaps the service is not currently running?"
-msgstr ""
+msgstr "Potser el servei no s'està executant actualment?"
 
 #: ../src/gossip-account-button.c:411 ../src/gossip-account-button.c:420
 msgid "Check your connection details."
-msgstr ""
+msgstr "Comproveu els detalls de la connexió."
 
 #: ../src/gossip-account-button.c:414
 msgid "Perhaps the server is not running this service."
-msgstr ""
+msgstr "Potser el servidor no està executant aquest servei."
 
 #: ../src/gossip-account-button.c:417
 msgid "Check your username and password are correct."
-msgstr ""
+msgstr "Comproveu que el vostre nom d'usuari i contrasenya són correctes."
 
 #: ../src/gossip-account-button.c:437 ../ui/main.glade.h:15
 msgid "Account Name"
@@ -349,7 +345,7 @@ msgstr "Estat"
 
 #: ../src/gossip-account-button.c:444
 msgid "Last Error"
-msgstr ""
+msgstr "Últim error"
 
 #: ../src/gossip-accounts-dialog.c:479
 msgid "Accounts"
@@ -430,15 +426,17 @@ msgid "_Check Word Spelling..."
 msgstr "_Comprova l'ortografia de la paraula..."
 
 #: ../src/gossip-chat-invite.c:207
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please enter your invitation message to:\n"
 "%s"
-msgstr "Si us plau, introduïu la vostra contrasenya:"
+msgstr ""
+"Introduïu el vostre missatge d'invitació a:\n"
+"%s"
 
 #: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:776
 msgid "You have been invited to join a chat conference."
-msgstr ""
+msgstr "Us han convidat a unir-vos a una conferència de xat."
 
 #: ../src/gossip-chat-manager.c:147
 #, c-format
@@ -516,7 +514,7 @@ msgstr "/Sup_rimeix el contacte"
 
 #: ../src/gossip-contact-list.c:350
 msgid "/_Invite to Chat Conference"
-msgstr "/_Convida a una conferencia xat"
+msgstr "/_Convida a una conferència de xat"
 
 #: ../src/gossip-contact-list.c:362
 msgid "/_Send File..."
@@ -540,12 +538,8 @@ msgstr ""
 "%s"
 
 #: ../src/gossip-contact-list.c:2112
-#, fuzzy
 msgid "Do you want to remove this contact from your roster?"
-msgstr ""
-"Voleu eliminar el contacte\n"
-"%s\n"
-"de la llista de contactes?"
+msgstr "Voleu eliminar aquest contacte de la llista de contactes?"
 
 #: ../src/gossip-contact-list.c:2168
 #, c-format
@@ -578,33 +572,32 @@ msgstr "Sense ordenar"
 #: ../src/gossip-ft-window.c:145
 #, c-format
 msgid "New file transfer request from %s"
-msgstr ""
+msgstr "Petició de transferència de fitxer nova de %s"
 
 #: ../src/gossip-ft-window.c:177
 msgid "File transfer is not supported by both parties."
-msgstr ""
+msgstr "La transferència de fitxers no està suportada pels dos usuaris."
 
 #: ../src/gossip-ft-window.c:181
 msgid "Your file transfer offer declined."
-msgstr ""
+msgstr "S'ha declinat el vostre oferiment de transferència."
 
 #: ../src/gossip-ft-window.c:182
 msgid "The other user decided not to continue."
-msgstr ""
+msgstr "L'altre usuari ha decidit no continuar."
 
 #: ../src/gossip-ft-window.c:187
 msgid "Unknown error occured during file transfer."
-msgstr ""
+msgstr "S'ha produït un error desconegut durant la transferència del fitxer."
 
 #: ../src/gossip-ft-window.c:271
-#, fuzzy, c-format
+#, c-format
 msgid "%s would like to send you a file."
-msgstr "M'agradaria afegir-te a la meua llista de contactes."
+msgstr "%s vol enviar-vos un fitxer."
 
 #: ../src/gossip-ft-window.c:274
-#, fuzzy
 msgid "Someone would like to send you a file."
-msgstr "M'agradaria afegir-te a la meua llista de contactes."
+msgstr "Algú vol enviar-vos un fitxer."
 
 #: ../src/gossip-ft-window.c:406
 msgid "Select a file"
@@ -614,7 +607,7 @@ msgstr "Seleccioneu un fitxer"
 #: ../src/gossip-group-chat.c:478
 #, c-format
 msgid "Invited %s to join this chat conference."
-msgstr ""
+msgstr "S'ha convidat a %s a unir-se a aquesta conferència de xat."
 
 #: ../src/gossip-log.c:290
 msgid "Conversation Log"
@@ -638,7 +631,7 @@ msgstr "Llista els comptes disponibles"
 
 #: ../src/gossip-main.c:119
 msgid "No accounts available."
-msgstr ""
+msgstr "No hi ha comptes disponibles."
 
 #: ../src/gossip-main.c:124
 msgid "Available accounts:"
@@ -654,9 +647,8 @@ msgid "There is no account with the name '%s'."
 msgstr "No hi ha cap compte amb el nom «%s»."
 
 #: ../src/gossip-new-account-window.c:183
-#, fuzzy
 msgid "Failed to register your new account settings"
-msgstr "No s'ha pogut registrar el compte"
+msgstr "No s'han pogut registrar els paràmetres del compte nous."
 
 #: ../src/gossip-new-account-window.c:212
 msgid "Registering account"
@@ -826,11 +818,11 @@ msgstr "Francès (Suïssa)"
 
 #: ../src/gossip-spell.c:101
 msgid "Irish Gaelic"
-msgstr ""
+msgstr "Gaèlic irlandès"
 
 #: ../src/gossip-spell.c:102
 msgid "Scots Gaelic"
-msgstr ""
+msgstr "Gaèlic escocès"
 
 #: ../src/gossip-spell.c:103
 msgid "Galician"
@@ -898,7 +890,7 @@ msgstr ""
 
 #: ../src/gossip-spell.c:119
 msgid "Limburgish"
-msgstr ""
+msgstr "Limburguès"
 
 #: ../src/gossip-spell.c:120
 msgid "Lithuanian"
@@ -918,7 +910,7 @@ msgstr "Macedoni"
 
 #: ../src/gossip-spell.c:124
 msgid "Malayalam"
-msgstr ""
+msgstr "Malailam"
 
 #: ../src/gossip-spell.c:125
 msgid "Mongolian"
@@ -938,7 +930,7 @@ msgstr "Noruec (Bokmål)"
 
 #: ../src/gossip-spell.c:130
 msgid "Nepali"
-msgstr ""
+msgstr "Nepalès"
 
 #: ../src/gossip-spell.c:131
 msgid "Dutch"
@@ -958,7 +950,7 @@ msgstr "Norwegian (Nyorsk)"
 
 #: ../src/gossip-spell.c:135
 msgid "Oriya"
-msgstr ""
+msgstr "Oriya"
 
 #: ../src/gossip-spell.c:136
 msgid "Punjabi"
@@ -1019,7 +1011,7 @@ msgstr "Tàmil"
 
 #: ../src/gossip-spell.c:150
 msgid "Telugu"
-msgstr ""
+msgstr "Telugu"
 
 #: ../src/gossip-spell.c:151
 msgid "Thai"
@@ -1027,7 +1019,7 @@ msgstr "Tailandès"
 
 #: ../src/gossip-spell.c:152
 msgid "Turkmen"
-msgstr ""
+msgstr "Turcman"
 
 #: ../src/gossip-spell.c:153
 msgid "Turkish"
@@ -1155,7 +1147,7 @@ msgstr "D_esenganxa la pestanya"
 
 #: ../ui/chat.glade.h:10
 msgid "_Invite to Chat Room"
-msgstr ""
+msgstr "_Convida a una sala de xat"
 
 #: ../ui/chat.glade.h:11
 msgid "_Next Tab"
@@ -1266,7 +1258,6 @@ msgid "Account:"
 msgstr "Compte:"
 
 #: ../ui/group-chat.glade.h:2
-#, fuzzy
 msgid ""
 "Customize your own nickname, server and chat room that you wish to join in "
 "to."
@@ -1308,7 +1299,7 @@ msgstr "Uneix-te a la sala de xat"
 
 #: ../ui/group-chat.glade.h:12
 msgid "Join this chat room when Gossip starts and you are connected."
-msgstr ""
+msgstr "Uneix-te a aquesta sala de xat quan s'inicie el Gossip i es connecte."
 
 #: ../ui/group-chat.glade.h:13
 msgid "N_ame:"
@@ -1319,6 +1310,8 @@ msgid ""
 "Pick a saved chat room from the presets available below and click Join Chat "
 "Room to start chatting."
 msgstr ""
+"Introduïu una sala de xat desada de les predefinides a continuació i feu "
+"clic en «Uneix-te a la sala de xat» per a comentar a xatejar."
 
 #: ../ui/group-chat.glade.h:15
 msgid "Progress:"
@@ -1350,7 +1343,7 @@ msgstr "    "
 
 #: ../ui/main.glade.h:2
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: ../ui/main.glade.h:3
 msgid "<b>About</b>"
@@ -1453,9 +1446,8 @@ msgid "Disable sounds when _busy"
 msgstr "Inhabilita els sons quan s'està _ocupat"
 
 #: ../ui/main.glade.h:31
-#, fuzzy
 msgid "Do you already have an account set up on a server?"
-msgstr "Teniu ja un compte a un servidor de Jabber?"
+msgstr "Teniu ja un compte configurat en un servidor?"
 
 #: ../ui/main.glade.h:32
 msgid "Email:"
@@ -1470,33 +1462,28 @@ msgid "Enter status message:"
 msgstr "Introduïu el missatge d'estat:"
 
 #: ../ui/main.glade.h:35
-#, fuzzy
 msgid "Enter the name or contact ID of the person you want to chat to below:"
-msgstr ""
-"Introduïu l'ID d'usuari de la persona a la que voleu enviar un missatge de "
-"xerrada."
+msgstr "Introduïu l'ID d'usuari de la persona amb la qual voleu xerrar:"
 
 #: ../ui/main.glade.h:36
 msgid "Enter the port used in the connection for this account."
-msgstr ""
+msgstr "Introduïu el port utilitzat en la connexió per a aquest compte."
 
 #: ../ui/main.glade.h:37
 msgid "Enter the server used in the connection for this account."
-msgstr ""
+msgstr "Introduïu el servidor utilitzat en la connexió per a aquest compte."
 
 #: ../ui/main.glade.h:38
-#, fuzzy
 msgid "Enter the user's contact ID:"
-msgstr "Feu clic per a obtindre la informació del contacte"
+msgstr "Introduïu l'ID de contacte de l'usuari:"
 
 #: ../ui/main.glade.h:39
-#, fuzzy
 msgid "Enter your account password:"
-msgstr "Si us plau, introduïu la vostra contrasenya:"
+msgstr "Introduïu la contrasenya del vostre compte:"
 
 #: ../ui/main.glade.h:40
 msgid "Enter your real name here."
-msgstr ""
+msgstr "Introduïu ací el vostre nom real."
 
 #: ../ui/main.glade.h:41
 msgid "Finished"
@@ -1504,7 +1491,7 @@ msgstr "Finalitzat"
 
 #: ../ui/main.glade.h:42
 msgid "For increased security, enable this option."
-msgstr ""
+msgstr "Per a més seguretat, habiliteu aquesta opció."
 
 #: ../ui/main.glade.h:43
 msgid "General"
@@ -1595,12 +1582,16 @@ msgid ""
 "If you have another machine on your network which 'proxies' the connection "
 "to the internet and you want to use it, enable this option."
 msgstr ""
+"Si teniu un altre ordinador que fa de «servidor intermediari» de la connexió "
+"a Internet i el voleu utilitzar, habiliteu aquesta opció."
 
 #: ../ui/main.glade.h:65
 msgid ""
 "If you need to set specific connection details, like a different server or "
 "port, you can configure that here:"
 msgstr ""
+"Si necessiteu establir detalls de connexió específics, com un servidor o "
+"port diferent, ho podeu configurar ací:"
 
 #: ../ui/main.glade.h:66
 msgid ""
@@ -1637,31 +1628,24 @@ msgid "Port:"
 msgstr "Port:"
 
 #: ../ui/main.glade.h:74
-#, fuzzy
 msgid "Press Subscribe to request to receive their status."
-msgstr ""
-"No esteu subscrit a l'estat d'aquest contacte. Premeu «Subscriu» per a rebre "
-"el seu estat."
+msgstr "«Subscriu» per a demanar la recepció del seu estat."
 
 #: ../ui/main.glade.h:75
-#, fuzzy
 msgid "Registering Account"
 msgstr "S'està registrant el compte"
 
 #: ../ui/main.glade.h:76
-#, fuzzy
 msgid "Registration"
-msgstr "Es requereix enregistrament"
+msgstr "Enregistrament"
 
 #: ../ui/main.glade.h:77
-#, fuzzy
 msgid "Requested information."
-msgstr "Informació del client"
+msgstr "S'ha demanat la informació."
 
 #: ../ui/main.glade.h:78
-#, fuzzy
 msgid "Requesting contact information, please wait..."
-msgstr "S'estan demanant els detalls personals, espereu..."
+msgstr "S'està demanant la informació del contacte, espereu..."
 
 #: ../ui/main.glade.h:79
 msgid "Sending request"
@@ -1688,6 +1672,8 @@ msgid ""
 "The list of languages here reflects only the languages for which you have a "
 "dictionary installed."
 msgstr ""
+"Aquesta llista de llengües només reflecteix les llengües per a les quals "
+"teniu un diccionari instal·lat."
 
 #: ../ui/main.glade.h:86
 msgid ""
@@ -1695,10 +1681,15 @@ msgid ""
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
 msgstr ""
+"Això actua com un filtre per a la llista de contactes. Podeu utilitzar "
+"segments del nom del contacte o ID; per exemple, «jabber.org» mostrarà a "
+"tothom que utilitze aquest servidor."
 
 #: ../ui/main.glade.h:87
 msgid "This is the name that will be used on your roster for this contact."
 msgstr ""
+"Aquest és el nom que s'utilitzarà per a aquest contacte a la vostra llista "
+"de contactes."
 
 #: ../ui/main.glade.h:88
 msgid "This name will be used to identify you in chat windows."
@@ -1709,9 +1700,8 @@ msgid "Version:"
 msgstr "Versió:"
 
 #: ../ui/main.glade.h:92
-#, fuzzy
 msgid "Waiting for server to respond, please wait..."
-msgstr "<b>S'està esperant a la resposta del servidor...</b>"
+msgstr "S'està esperant a la resposta del servidor, espereu..."
 
 #: ../ui/main.glade.h:93
 msgid "Web Site:"
@@ -1734,9 +1724,8 @@ msgid "What nickname do you want to use for this contact?"
 msgstr "Quin àlies voleu utilitzar per a aquest contacte?"
 
 #: ../ui/main.glade.h:99
-#, fuzzy
 msgid "What password do you want to use?"
-msgstr "Quin servidor voleu utilitzar?"
+msgstr "Quina contrasenya voleu utilitzar?"
 
 #: ../ui/main.glade.h:100
 msgid "What username do you use?"
@@ -1747,27 +1736,23 @@ msgid "What username do you want to use?"
 msgstr "Quin nom d'usuari voleu utilitzar?"
 
 #: ../ui/main.glade.h:102
-#, fuzzy
 msgid "Which account do you want to add this contact to?"
-msgstr "A quin grup voleu afegir a aquest contacte?"
+msgstr "A quin compte voleu afegir a aquest contacte?"
 
 #: ../ui/main.glade.h:103
-#, fuzzy
 msgid "Which account do you want to use?"
-msgstr "Quin nom d'usuari voleu utilitzar?"
+msgstr "Quin compte voleu utilitzar?"
 
 #: ../ui/main.glade.h:104
-#, fuzzy
 msgid "You are not subscribed to this contact."
-msgstr "No hi ha informació disponible per a aquest contacte."
+msgstr "No esteu subscrit a aquest contacte."
 
 #: ../ui/main.glade.h:105
-#, fuzzy
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
 msgstr ""
-"Podeu canviar la configuració del vostre compte més endavant, seleccionant "
+"Podeu canviar els paràmetres del vostre compte més endavant, seleccionant "
 "l'element del menú «Edita->Comptes»."
 
 #: ../ui/main.glade.h:106
@@ -1775,6 +1760,8 @@ msgid ""
 "You can identify this account with a name, for example, <b>Home</b> or "
 "<b>Work</b>.  Choose a name for this account:"
 msgstr ""
+"Podeu identificar aquest compte amb un nom, com per exemple, <b>Casa</b> o "
+"<b>Feina</b>. Seleccioneu un nom per a aquest compte:"
 
 #: ../ui/main.glade.h:107
 msgid "Your Account"
@@ -1786,7 +1773,7 @@ msgstr "La vostra identitat"
 
 #: ../ui/main.glade.h:109
 msgid "Your new account has now been set up."
-msgstr ""
+msgstr "S'ha configurat el vostre compte nou."
 
 #: ../ui/main.glade.h:111
 msgid "_Accounts"
