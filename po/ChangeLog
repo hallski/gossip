@@ -1,3 +1,49 @@
+2006-02-19  Martyn Russell  <martyn@imendio.com>
+
+	* po/POTFILES.in:
+	- Added some missing files from libgossip.
+	
+	* po/ar.po:
+	* po/az.po:
+	* po/bg.po:
+	* po/cs.po:
+	* po/cy.po:
+	* po/da.po:
+	* po/de.po:
+	* po/en_CA.po:
+	* po/en_GB.po:
+	* po/eo.po:
+	* po/es.po:
+	* po/eu.po:
+	* po/fr.po:
+	* po/ga.po:
+	* po/hr.po:
+	* po/hu.po:
+	* po/it.po:
+	* po/lt.po:
+	* po/ml.po:
+	* po/ms.po:
+	* po/nb.po:
+	* po/ne.po:
+	* po/nl.po:
+	* po/no.po:
+	* po/pl.po:
+	* po/pt.po:
+	* po/pt_BR.po:
+	* po/ru.po:
+	* po/sq.po:
+	* po/sr.po:
+	* po/sr@Latn.po:
+	* po/sv.po:
+	* po/tr.po:
+	* po/uk.po:
+	* po/vi.po:
+	* po/zh_CN.po:
+	* po/zh_HK.po:
+	* po/zh_TW.po:
+	- Ran make update-po to make sure the strings were up to date in
+	the translation files.  They hadn't been updated in over a year.
+
 2006-02-19  Clytie Siddall <clytie@riverland.net.au>
 
 	* vi.po: Added Vietnamese translation.

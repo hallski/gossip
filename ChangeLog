@@ -2,7 +2,7 @@
 
 	* configure.in	Added vi in ALL_LINGUAS line.
 	
-	2006-02-18  Martyn Russell  <martyn@imendio.com>
+2006-02-18  Martyn Russell  <martyn@imendio.com>
 
         * Release 0.10.
 
@@ -26,7 +26,7 @@
 	from a container and adds back into it), the GossipAccountButton
 	account status is set.  Online accounts would be rearranged and
 	suddenly become offline (although the connection was actually up).
-	
+
 2006-02-16  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: 

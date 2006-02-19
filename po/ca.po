@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip 0.9.0pre\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-19 03:05+0100\n"
+"POT-Creation-Date: 2006-02-19 12:09+0000\n"
 "PO-Revision-Date: 2006-02-19 03:42+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
@@ -152,6 +152,90 @@ msgstr "Posició Y de la finestra principal"
 #: ../src/gossip-contact-info-dialog.c:171 ../src/gossip-galago.c:164
 msgid "Offline"
 msgstr "Desconnectat"
+
+#: ../libgossip/gossip-protocol.c:672
+msgid "An unknown error ocurred."
+msgstr ""
+
+#: ../libgossip/gossip-protocol.c:676
+#, fuzzy
+msgid "Connection refused."
+msgstr "Detalls de la connexió"
+
+#: ../libgossip/gossip-protocol.c:679
+msgid "Server address could not be resolved."
+msgstr ""
+
+#: ../libgossip/gossip-protocol.c:682
+#, fuzzy
+msgid "Connection timed out."
+msgstr "Detalls de la connexió"
+
+#: ../libgossip/gossip-protocol.c:685
+msgid "Authentication failed."
+msgstr ""
+
+#: ../libgossip/gossip-protocol.c:688
+msgid "The username you are trying already exists."
+msgstr ""
+
+#: ../libgossip/gossip-protocol.c:691
+#, fuzzy
+msgid "This feature is unavailable."
+msgstr "El servidor pot no estar disponible ara mateix."
+
+#: ../libgossip/gossip-protocol.c:694
+msgid "This feature is unauthorized."
+msgstr ""
+
+#: ../libgossip/gossip-protocol.c:697
+msgid "A specific protocol error occured that was unexpected."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom.c:733
+msgid "Normal"
+msgstr ""
+
+#: ../libgossip/gossip-chatroom.c:743
+#, fuzzy
+msgid "Connecting..."
+msgstr "S'està connectant"
+
+#: ../libgossip/gossip-chatroom.c:744
+msgid "Open"
+msgstr ""
+
+#: ../libgossip/gossip-chatroom.c:745
+msgid "Closed"
+msgstr ""
+
+#: ../libgossip/gossip-chatroom.c:746
+msgid "Unknown"
+msgstr "Desconegut"
+
+#: ../libgossip/gossip-chatroom.c:747
+msgid "Error"
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:319
+msgid "The nickname you have chosen is already in use."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:323
+msgid "The chat room you tried to join requires a password."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:327
+msgid "The remote conference server did not respond in a sensible time."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:331
+msgid "The conference server you tried to join could not be found."
+msgstr ""
+
+#: ../libgossip/gossip-chatroom-provider.c:335
+msgid "An unknown error occured, check your details are correct."
+msgstr ""
 
 #: ../protocols/jabber/gossip-jabber.c:547
 #: ../protocols/jabber/gossip-jabber.c:693
@@ -1805,9 +1889,6 @@ msgstr "_Sí"
 #~ msgid "Remote Server Timeout"
 #~ msgstr "Temps d'espera esgotat per a un servidor remot"
 
-#~ msgid "Unknown"
-#~ msgstr "Desconegut"
-
 #~ msgid "Available"
 #~ msgstr "Disponible"
 
@@ -2241,9 +2322,6 @@ msgstr "_Sí"
 
 #~ msgid "Gossip Website"
 #~ msgstr "Lloc web del Gossip"
-
-#~ msgid "The server may currently be unavailable."
-#~ msgstr "El servidor pot no estar disponible ara mateix."
 
 #~ msgid "_Quit"
 #~ msgstr "_Surt"
