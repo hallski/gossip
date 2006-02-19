@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.10\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-19 14:24+0100\n"
-"PO-Revision-Date: 2006-02-19 14:28+0100\n"
+"PO-Revision-Date: 2006-02-19 14:39+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -1261,9 +1261,7 @@ msgstr "Compte:"
 msgid ""
 "Customize your own nickname, server and chat room that you wish to join in "
 "to."
-msgstr ""
-"Seleccioneu un preferit, o introduïu l'àlies, nom del servidor i el nom de "
-"la sala de xerrades a la qual voleu entrar."
+msgstr "Seleccioneu un preferit, o introduïu l'àlies, nom del servidor i el nom de la sala de xat a la qual voleu entrar."
 
 #: ../ui/group-chat.glade.h:3
 msgid "Edit your chat room details:"
@@ -1463,7 +1461,7 @@ msgstr "Introduïu el missatge d'estat:"
 
 #: ../ui/main.glade.h:35
 msgid "Enter the name or contact ID of the person you want to chat to below:"
-msgstr "Introduïu l'ID d'usuari de la persona amb la qual voleu xerrar:"
+msgstr "Introduïu l'ID d'usuari de la persona amb la qual voleu xatejar:"
 
 #: ../ui/main.glade.h:36
 msgid "Enter the port used in the connection for this account."
@@ -1693,7 +1691,7 @@ msgstr ""
 
 #: ../ui/main.glade.h:88
 msgid "This name will be used to identify you in chat windows."
-msgstr "Aquest nom s'usarà per a indentificar-vos en les finestres de xerrada."
+msgstr "Aquest nom s'usarà per a indentificar-vos en les finestres de xat."
 
 #: ../ui/main.glade.h:91
 msgid "Version:"
@@ -2055,7 +2053,7 @@ msgstr "_Sí"
 #~ msgstr "_Recurs:"
 
 #~ msgid "Chat Na_me:"
-#~ msgstr "No_m de la xerrada:"
+#~ msgstr "No_m del xat:"
 
 #~ msgid "Edit or Delete this favourite."
 #~ msgstr "Editeu o suprimiu aquest preferit."
@@ -2067,10 +2065,10 @@ msgstr "_Sí"
 #~ msgstr "Gossip - Edita els preferits"
 
 #~ msgid "Imendio Gossip - Group Chat"
-#~ msgstr "Imendio Gossip - Xerrada en grup"
+#~ msgstr "Imendio Gossip - Xat en grup"
 
 #~ msgid "Trying to join chat room, please wait..."
-#~ msgstr "S'està intentant unir-se a la xerrada en grup, espereu..."
+#~ msgstr "S'està intentant unir-se al xat en grup, espereu..."
 
 #~ msgid "_Add to Favourites"
 #~ msgstr "_Afegeix als preferits"
@@ -2226,10 +2224,10 @@ msgstr "_Sí"
 #~ msgstr "        "
 
 #~ msgid "<b>Available chat rooms</b>"
-#~ msgstr "<b>Sales de xerrada disponibles</b>"
+#~ msgstr "<b>Sales de xat disponibles</b>"
 
 #~ msgid "<b>Chat room information</b>"
-#~ msgstr "<b>Informació sobre la sala de xerrada</b>"
+#~ msgstr "<b>Informació sobre la sala de xat</b>"
 
 #~ msgid "N_ickname:"
 #~ msgstr "Àl_ies:"
@@ -2274,17 +2272,14 @@ msgstr "_Sí"
 #~ "Assegureu-vos que la informació del vostre compte és correcta. El "
 #~ "servidor també pot no estar disponible en aquest moment."
 
-#~ msgid "An error occurred when chatting in the group chat %s."
-#~ msgstr "S'ha produït un error mentre es xerrava a la xerrada en grup %s."
-
 #~ msgid "Details:"
 #~ msgstr "Detalls:"
 
 #~ msgid "Unable to enter the group chat %s."
-#~ msgstr "No s'ha pogut entrar a la xerrada en grup %s."
+#~ msgstr "No s'ha pogut entrar al xat en grup %s."
 
 #~ msgid "An error occurred when chatting with %s."
-#~ msgstr "S'ha produït un error mentre es xerrava amb %s."
+#~ msgstr "S'ha produït un error mentre es xatejava amb %s."
 
 #~ msgid "Discover Services"
 #~ msgstr "Descobreix serveix"
@@ -2409,18 +2404,16 @@ msgstr "_Sí"
 #~ msgstr "_Vés"
 
 #~ msgid "_Next Conversation"
-#~ msgstr "Xerrada _següent"
+#~ msgstr "Xat _següent"
 
 #~ msgid "Open conversations in single window with list view"
-#~ msgstr "Obre les xerrades a una sola finestra amb una vista de llista"
+#~ msgstr "Obre els xats a una sola finestra amb una vista de llista"
 
 #~ msgid "Timestamp all messages"
 #~ msgstr "Fica marques de temps a tots els missatges"
 
 #~ msgid "Whether or not to timestamp all messages in conversations."
-#~ msgstr ""
-#~ "Si s'ha de ficar marques de temps o no a tots els missatges a les "
-#~ "xerrades."
+#~ msgstr "Si s'ha de ficar marques de temps o no a tots els missatges als xats."
 
 #~ msgid "[Eating,Sleeping]"
 #~ msgstr "[Menjant,Dormint]"
@@ -2438,7 +2431,7 @@ msgstr "_Sí"
 #~ msgstr "Notificació"
 
 #~ msgid "Open conversations in a single window with _list view"
-#~ msgstr "Obre les xerrades en una sola finestra amb una vista de _llista"
+#~ msgstr "Obre els xats en una sola finestra amb una vista de _llista"
 
 #~ msgid ""
 #~ "These messages are used to describe your status when you're about to "
@@ -2448,19 +2441,19 @@ msgstr "_Sí"
 #~ "a punt de sortir i quan esteu absent."
 
 #~ msgid "Use com_pact conversation style"
-#~ msgstr "Utilitza l'estil de xerrada com_pacta"
+#~ msgstr "Utilitza l'estil de xat com_pacte"
 
 #~ msgid "Use sounds to _notify when new messages arrive"
 #~ msgstr "Utilitza sons per a _notificar quan arriben missatges nous"
 
 #~ msgid "_Send Chat Message..."
-#~ msgstr "_Envia un missatge de xerrada..."
+#~ msgstr "_Envia un missatge de xat..."
 
 #~ msgid "_Timestamp all messages"
 #~ msgstr "Fica _marques de temps a tots els missatges"
 
 #~ msgid "%sChat"
-#~ msgstr "%sXerrada"
+#~ msgstr "%sXat"
 
 #~ msgid "Offline "
 #~ msgstr "Desconnectats"
@@ -2481,7 +2474,7 @@ msgstr "_Sí"
 #~ msgstr "Disponible:"
 
 #~ msgid "Use ta_bs instead of windows for conversations"
-#~ msgstr "Utilitza pes_tanyes en comptes de finestres per a les xerrades"
+#~ msgstr "Utilitza pes_tanyes en comptes de finestres per als xats"
 
 #~ msgid "Auto away enabled"
 #~ msgstr "Absència automàtica habilitada"
@@ -2517,7 +2510,7 @@ msgstr "_Sí"
 #~ msgstr "Estableix l'estat:"
 
 #~ msgid "Free to chat"
-#~ msgstr "Disponible per xerrar"
+#~ msgstr "Disponible per xatejar"
 
 #~ msgid "Extended away"
 #~ msgstr "Absent fa estona"
