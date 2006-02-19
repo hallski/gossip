@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gossip 0.9.0pre\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-19 03:05+0100\n"
-"PO-Revision-Date: 2006-02-19 03:24+0100\n"
+"PO-Revision-Date: 2006-02-19 03:42+0100\n"
 "Last-Translator: Jordi Mallach <jordi@sindominio.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -111,7 +111,8 @@ msgstr "Utilitza sons de notificació"
 #: ../gossip.schemas.in.h:22
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
-msgstr "Si s'ha de convertir o no els «smileys» a imatges gràfiques a les converses."
+msgstr ""
+"Si s'ha de convertir o no els «smileys» a imatges gràfiques a les converses."
 
 #: ../gossip.schemas.in.h:23
 msgid "Whether or not to play a sound when messages arrive."
@@ -613,131 +614,131 @@ msgstr "%s s'ha connectat"
 
 #: ../src/gossip-spell.c:69
 msgid "Afrikaans"
-msgstr ""
+msgstr "Afrikaans"
 
 #: ../src/gossip-spell.c:70
 msgid "Amharic"
-msgstr ""
+msgstr "Amhàric"
 
 #: ../src/gossip-spell.c:71
 msgid "Arabic"
-msgstr ""
+msgstr "Àrab"
 
 #: ../src/gossip-spell.c:72
 msgid "Azerbaijani"
-msgstr ""
+msgstr "Àzeri"
 
 #: ../src/gossip-spell.c:73
 msgid "Belarusian"
-msgstr ""
+msgstr "Bielorús"
 
 #: ../src/gossip-spell.c:74
 msgid "Bulgarian"
-msgstr ""
+msgstr "Búlgar"
 
 #: ../src/gossip-spell.c:75
 msgid "Bengali"
-msgstr ""
+msgstr "Bengalès"
 
 #: ../src/gossip-spell.c:76
 msgid "Breton"
-msgstr ""
+msgstr "Bretó"
 
 #: ../src/gossip-spell.c:77
 msgid "Bosnian"
-msgstr ""
+msgstr "Bosni"
 
 #: ../src/gossip-spell.c:78
 msgid "Catalan"
-msgstr ""
+msgstr "Català"
 
 #: ../src/gossip-spell.c:79
 msgid "Czech"
-msgstr ""
+msgstr "Txec"
 
 #: ../src/gossip-spell.c:80
 msgid "Welsh"
-msgstr ""
+msgstr "Gal·lès"
 
 #: ../src/gossip-spell.c:81
 msgid "Danish"
-msgstr ""
+msgstr "Danès"
 
 #: ../src/gossip-spell.c:82
 msgid "German"
-msgstr ""
+msgstr "Alemany"
 
 #: ../src/gossip-spell.c:83
 msgid "German (Austria)"
-msgstr ""
+msgstr "Alemany (Àustria)"
 
 #: ../src/gossip-spell.c:84
 msgid "German (Germany)"
-msgstr ""
+msgstr "Alemany (Alemanya)"
 
 #: ../src/gossip-spell.c:85
 msgid "German (Swiss)"
-msgstr ""
+msgstr "Alemany (Suïssa)"
 
 #: ../src/gossip-spell.c:86
 msgid "Greek"
-msgstr ""
+msgstr "Grec"
 
 #: ../src/gossip-spell.c:87
 msgid "English"
-msgstr ""
+msgstr "Anglès"
 
 #: ../src/gossip-spell.c:88
 msgid "English (Canadian)"
-msgstr ""
+msgstr "Anglès (canadenc)"
 
 #: ../src/gossip-spell.c:89
 msgid "English (British)"
-msgstr ""
+msgstr "Anglès (britànic)"
 
 #: ../src/gossip-spell.c:90
 msgid "English (American)"
-msgstr ""
+msgstr "Anglès (americà)"
 
 #: ../src/gossip-spell.c:91
 msgid "Esperanto"
-msgstr ""
+msgstr "Esperanto"
 
 #: ../src/gossip-spell.c:92
 msgid "Spanish"
-msgstr ""
+msgstr "Castellà"
 
 #: ../src/gossip-spell.c:93
 msgid "Estonian"
-msgstr ""
+msgstr "Estonià"
 
 #: ../src/gossip-spell.c:94
 msgid "Basque"
-msgstr ""
+msgstr "Basc"
 
 #: ../src/gossip-spell.c:95
 msgid "Persian"
-msgstr ""
+msgstr "Persa"
 
 #: ../src/gossip-spell.c:96
 msgid "Finnish"
-msgstr ""
+msgstr "Finès"
 
 #: ../src/gossip-spell.c:97
 msgid "Faroese"
-msgstr ""
+msgstr "Faroès"
 
 #: ../src/gossip-spell.c:98
 msgid "French"
-msgstr ""
+msgstr "Francès"
 
 #: ../src/gossip-spell.c:99
 msgid "French (France)"
-msgstr ""
+msgstr "Francès (França)"
 
 #: ../src/gossip-spell.c:100
 msgid "French (Swiss)"
-msgstr ""
+msgstr "Francès (Suïssa)"
 
 #: ../src/gossip-spell.c:101
 msgid "Irish Gaelic"
@@ -749,23 +750,23 @@ msgstr ""
 
 #: ../src/gossip-spell.c:103
 msgid "Galician"
-msgstr ""
+msgstr "Gallec"
 
 #: ../src/gossip-spell.c:104
 msgid "Gujarati"
-msgstr ""
+msgstr "Gujarati"
 
 #: ../src/gossip-spell.c:105
 msgid "Manx Gaelic"
-msgstr ""
+msgstr "Manx"
 
 #: ../src/gossip-spell.c:106
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreu"
 
 #: ../src/gossip-spell.c:107
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: ../src/gossip-spell.c:108
 msgid "Croatian"
@@ -773,39 +774,39 @@ msgstr "Croat"
 
 #: ../src/gossip-spell.c:109
 msgid "Hungarian"
-msgstr ""
+msgstr "Hongarès"
 
 #: ../src/gossip-spell.c:110
 msgid "Indonesian"
-msgstr ""
+msgstr "Indonesi"
 
 #: ../src/gossip-spell.c:111
 msgid "Icelandic"
-msgstr ""
+msgstr "Islandès"
 
 #: ../src/gossip-spell.c:112
 msgid "Italian"
-msgstr ""
+msgstr "Italià"
 
 #: ../src/gossip-spell.c:113
 msgid "Japanese"
-msgstr ""
+msgstr "Japonès"
 
 #: ../src/gossip-spell.c:114
 msgid "Georgian"
-msgstr ""
+msgstr "Georgià"
 
 #: ../src/gossip-spell.c:115
 msgid "Kannada"
-msgstr ""
+msgstr "Kannada"
 
 #: ../src/gossip-spell.c:116
 msgid "Korean"
-msgstr ""
+msgstr "Coreà"
 
 #: ../src/gossip-spell.c:117
 msgid "Kurdish"
-msgstr ""
+msgstr "Kurd"
 
 #: ../src/gossip-spell.c:118
 msgid "Cornish"
@@ -817,19 +818,19 @@ msgstr ""
 
 #: ../src/gossip-spell.c:120
 msgid "Lithuanian"
-msgstr ""
+msgstr "Lituà"
 
 #: ../src/gossip-spell.c:121
 msgid "Latvian"
-msgstr ""
+msgstr "Letó"
 
 #: ../src/gossip-spell.c:122
 msgid "Maori"
-msgstr ""
+msgstr "Maori"
 
 #: ../src/gossip-spell.c:123
 msgid "Macedonian"
-msgstr ""
+msgstr "Macedoni"
 
 #: ../src/gossip-spell.c:124
 msgid "Malayalam"
@@ -837,19 +838,19 @@ msgstr ""
 
 #: ../src/gossip-spell.c:125
 msgid "Mongolian"
-msgstr ""
+msgstr "Mongol"
 
 #: ../src/gossip-spell.c:126
 msgid "Marathi"
-msgstr ""
+msgstr "Marati"
 
 #: ../src/gossip-spell.c:127
 msgid "Malay"
-msgstr ""
+msgstr "Malai"
 
 #: ../src/gossip-spell.c:128 ../src/gossip-spell.c:129
 msgid "Norwegian (Bokmal)"
-msgstr ""
+msgstr "Noruec (Bokmål)"
 
 #: ../src/gossip-spell.c:130
 msgid "Nepali"
@@ -857,19 +858,19 @@ msgstr ""
 
 #: ../src/gossip-spell.c:131
 msgid "Dutch"
-msgstr ""
+msgstr "Holandès"
 
 #: ../src/gossip-spell.c:132
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruec"
 
 #: ../src/gossip-spell.c:133
 msgid "Norwegian (Nynorsk)"
-msgstr ""
+msgstr "Noruec (Nynorsk)"
 
 #: ../src/gossip-spell.c:134
 msgid "Norwegian (Nyorsk)"
-msgstr ""
+msgstr "Norwegian (Nyorsk)"
 
 #: ../src/gossip-spell.c:135
 msgid "Oriya"
@@ -877,59 +878,60 @@ msgstr ""
 
 #: ../src/gossip-spell.c:136
 msgid "Punjabi"
-msgstr ""
+msgstr "Panjabi"
 
 #: ../src/gossip-spell.c:137
 msgid "Polish"
-msgstr ""
+msgstr "Polonès"
 
 #: ../src/gossip-spell.c:138
 msgid "Portuguese"
-msgstr ""
+msgstr "Portuguès"
 
 #: ../src/gossip-spell.c:139
 msgid "Portuguese (Portugal)"
-msgstr ""
+msgstr "Portuguès (Portugal)"
 
 #: ../src/gossip-spell.c:140
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portuguès (Brasil)"
 
 #: ../src/gossip-spell.c:141
 msgid "Romanian"
-msgstr ""
+msgstr "Romanès"
 
 #: ../src/gossip-spell.c:142
 msgid "Russian"
-msgstr ""
+msgstr "Rus"
 
+# NOTA: Segons el Termcat (Josep)
 #: ../src/gossip-spell.c:143
 msgid "Kinyarwanda"
-msgstr ""
+msgstr "Kinyarwanda"
 
 #: ../src/gossip-spell.c:144
 msgid "Slovak"
-msgstr ""
+msgstr "Eslovac"
 
 #: ../src/gossip-spell.c:145
 msgid "Slovenian"
-msgstr ""
+msgstr "Eslovè"
 
 #: ../src/gossip-spell.c:146
 msgid "Albanian"
-msgstr ""
+msgstr "Albanès"
 
 #: ../src/gossip-spell.c:147
 msgid "Serbian"
-msgstr ""
+msgstr "Serbi"
 
 #: ../src/gossip-spell.c:148
 msgid "Swedish"
-msgstr ""
+msgstr "Suec"
 
 #: ../src/gossip-spell.c:149
 msgid "Tamil"
-msgstr ""
+msgstr "Tàmil"
 
 #: ../src/gossip-spell.c:150
 msgid "Telugu"
@@ -937,7 +939,7 @@ msgstr ""
 
 #: ../src/gossip-spell.c:151
 msgid "Thai"
-msgstr ""
+msgstr "Tailandès"
 
 #: ../src/gossip-spell.c:152
 msgid "Turkmen"
@@ -945,35 +947,36 @@ msgstr ""
 
 #: ../src/gossip-spell.c:153
 msgid "Turkish"
-msgstr ""
+msgstr "Turc"
 
 #: ../src/gossip-spell.c:154
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ucraïnès"
 
 #: ../src/gossip-spell.c:155
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: ../src/gossip-spell.c:156
 msgid "Wallon"
-msgstr ""
+msgstr "Való"
 
 #: ../src/gossip-spell.c:157
 msgid "Xhosa"
-msgstr ""
+msgstr "Xhosa"
 
+# Nota: Segons el Termcat (Josep)
 #: ../src/gossip-spell.c:158
 msgid "Yiddish"
-msgstr ""
+msgstr "Jiddisch"
 
 #: ../src/gossip-spell.c:159
 msgid "Chinese Simplified"
-msgstr ""
+msgstr "Xinès simplificat"
 
 #: ../src/gossip-spell.c:160
 msgid "Chinese Traditional"
-msgstr ""
+msgstr "Xinès tradicional"
 
 #: ../src/gossip-spell-dialog.c:111
 msgid "Suggestions for the word"
@@ -1016,15 +1019,15 @@ msgstr "Voleu que es recorde la contrasenya?"
 
 #: ../src/gossip-vcard-dialog.c:367
 msgid "The server does not seem to be responding."
-msgstr ""
+msgstr "Sembla que el servidor no està responent."
 
 #: ../src/gossip-vcard-dialog.c:368
 msgid "Try again later."
-msgstr ""
+msgstr "Proveu-ho més tard."
 
 #: ../src/sounds/gossip.soundlist.in.h:1
 msgid "Chat"
-msgstr "Xarra"
+msgstr "Xat"
 
 #: ../src/sounds/gossip.soundlist.in.h:2
 msgid "Contact goes offline"
@@ -1040,7 +1043,7 @@ msgstr "_Informació del contacte"
 
 #: ../ui/chat.glade.h:3
 msgid "Gossip - Chat"
-msgstr "Gossip - Xerrada"
+msgstr "Gossip - Xat"
 
 #: ../ui/chat.glade.h:4
 msgid "Move Tab _Left"
@@ -1060,7 +1063,7 @@ msgstr "_Afegeix un contacte..."
 
 #: ../ui/chat.glade.h:8
 msgid "_Conversation"
-msgstr "_Xerrada"
+msgstr "_Conversa"
 
 #: ../ui/chat.glade.h:9
 msgid "_Detach Tab"
@@ -1679,7 +1682,9 @@ msgstr "No hi ha informació disponible per a aquest contacte."
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
-msgstr "Podeu canviar la configuració del vostre compte més endavant, seleccionant l'element del menú «Edita->Comptes»."
+msgstr ""
+"Podeu canviar la configuració del vostre compte més endavant, seleccionant "
+"l'element del menú «Edita->Comptes»."
 
 #: ../ui/main.glade.h:106
 msgid ""
@@ -1713,7 +1718,7 @@ msgstr "_Continguts"
 
 #: ../ui/main.glade.h:118
 msgid "_Join Group Chat..."
-msgstr "Entra a una _xerrada en grup..."
+msgstr "Entra a un xat en _grup..."
 
 #: ../ui/main.glade.h:119
 msgid "_New Message..."
