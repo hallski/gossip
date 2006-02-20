@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-19 12:09+0000\n"
-"PO-Revision-Date: 2004-09-17 16:12+0200\n"
+"POT-Creation-Date: 2006-02-20 03:29+0100\n"
+"PO-Revision-Date: 2006-02-20 03:46+0100\n"
 "Last-Translator: Miloslav Trmac <mitr@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -704,12 +704,12 @@ msgstr "_Vymazat"
 #: ../src/gossip-private-chat.c:429
 #, c-format
 msgid "%s went offline"
-msgstr "%s se připojil"
+msgstr "%s se odpojil"
 
 #: ../src/gossip-private-chat.c:443
 #, c-format
 msgid "%s comes online"
-msgstr "%s se odpojil"
+msgstr "%s se připojil"
 
 #: ../src/gossip-spell.c:69
 msgid "Afrikaans"
