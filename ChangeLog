@@ -1,11 +1,17 @@
 2006-02-20  Martyn Russell  <martyn@imendio.com>
 
-	* src/gossip-app.c: (app_main_window_quit_confirm):
-	* src/gossip-ft-window.c: (ft_window_error_cb):
+	* configure.ac: Depend on GTK+ 2.8 instead of 2.6 since we are
+	using some stock items from GTK+ 2.8.  Fixes bug #331707 (Brian
+	Pepple). 
+
+2006-02-20  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c:
+	* src/gossip-ft-window.c:
 	* src/gossip-spell.c:
 	* ui/group-chat.glade:
 	* ui/main.glade: Corrected some UI typos, fixes bug #331868
-	(Clytie Siddall). 
+	(Clytie Siddall).  
 	
 2006-02-19  Clytie Siddall <clytie@riverland.net.au>
 

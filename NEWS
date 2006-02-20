@@ -1,5 +1,6 @@
 News in 0.11:
 =============
+ * Fixed #331707 - Depend on GTK+ 2.8 (Brian Pepple).
  * Fixed #331868 - Corrected some UI typos (Clytie Siddall).
 
 News in 0.10:
