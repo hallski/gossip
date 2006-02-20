@@ -55,15 +55,15 @@ static void spell_free (GossipSpell *spell);
 
 
 /* 
-   can we get this from somewhere else?
-
-   Evolution uses Corba and all that jazz to talk to GnomeSpell, it is
-   pretty horrible really, plus their list of languages is not as
-   extensive as the one below.
-
-   The list below is a combination of the GnomeSpell list and the list
-   of languages from the Gnome Translation Project. 
-*/
+ * Can we get this from somewhere else?
+ *
+ * Evolution uses Corba and all that jazz to talk to GnomeSpell, it is
+ * pretty horrible really, plus their list of languages is not as
+ * extensive as the one below.
+ *
+ * The list below is a combination of the GnomeSpell list and the list
+ * of languages from the Gnome Translation Project. 
+ */
 
 const gchar *languages[] = {
 	"af", N_("Afrikaans"),
@@ -153,7 +153,7 @@ const gchar *languages[] = {
 	"tr", N_("Turkish"),
 	"uk", N_("Ukrainian"),
 	"vi", N_("Vietnamese"),
-	"wa", N_("Wallon"),
+	"wa", N_("Walloon"),
 	"xh", N_("Xhosa"),
 	"yi", N_("Yiddish"),
 	"zh_CN", N_("Chinese Simplified"),

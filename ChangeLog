@@ -1,3 +1,12 @@
+2006-02-20  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c: (app_main_window_quit_confirm):
+	* src/gossip-ft-window.c: (ft_window_error_cb):
+	* src/gossip-spell.c:
+	* ui/group-chat.glade:
+	* ui/main.glade: Corrected some UI typos, fixes bug #331868
+	(Clytie Siddall). 
+	
 2006-02-19  Clytie Siddall <clytie@riverland.net.au>
 
 	* configure.in	Added vi in ALL_LINGUAS line.

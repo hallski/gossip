@@ -1,5 +1,9 @@
+News in 0.11:
+=============
+ * Fixed #331868 - Corrected some UI typos (Clytie Siddall).
+
 News in 0.10:
-==============
+=============
  * Added support for changing topics in group chat (Martyn).
  * Added support incoming message sound if your name is used in group chat (Martyn).
  * Reworked the chat code in places and added the beginings of a theme engine (Richard).
@@ -13,6 +17,7 @@ News in 0.10:
  * Use the Gnome smiley theme so there are now more emote icons that can be used in chat (Martyn):
 	:*  = Kiss
 	:s  = Confused
+	:@  = Angry
 	*|  = Sorry
 	*)  = Look Away
 	:x  = Oooh

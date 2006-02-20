@@ -759,13 +759,14 @@ app_main_window_quit_confirm (GossipApp *app,
 
 		g_list_free (events);
 
-		dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
-							     0,
-							     GTK_MESSAGE_WARNING,
-							     GTK_BUTTONS_OK_CANCEL,
-							     "<b>%s</b>\n\n%s",
-							     _("If you quit, you will loose all unread information."), 
-							     str);
+		dialog = gtk_message_dialog_new_with_markup 
+			(GTK_WINDOW (gossip_app_get_window ()),
+			 0,
+			 GTK_MESSAGE_WARNING,
+			 GTK_BUTTONS_OK_CANCEL,
+			 "<b>%s</b>\n\n%s",
+			 _("If you quit, you will lose all unread information."), 
+			 str);
 	
 		g_signal_connect (dialog, "response",
 				  G_CALLBACK (app_main_window_quit_confirm_cb),

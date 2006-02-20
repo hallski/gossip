@@ -184,7 +184,7 @@ ft_window_error_cb (GossipProtocol *protocol,
 		
 	case GOSSIP_FT_ERROR_UNKNOWN:
 	default:
-		str1 = _("Unknown error occured during file transfer."); 
+		str1 = _("Unknown error occurred during file transfer."); 
 		break;
 	}
 
