@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-18 03:33+0100\n"
-"PO-Revision-Date: 2006-02-19 22:52+1030\n"
+"POT-Creation-Date: 2006-02-21 04:12+0100\n"
+"PO-Revision-Date: 2006-02-21 21:45+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -43,7 +43,8 @@ msgstr "Sắc thái cửa sổ trò chuyện"
 #:../gossip.schemas.in.h:5
 msgid ""
 "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
-msgstr "Danh sách định giới bằng dấu phẩy các ngôn ngữ kiểm tra chính tả cần dùng (v.d. en, fr, ja, vi)."
+msgstr "Danh sách định giới bằng dấu phẩy các ngôn ngữ kiểm tra chính tả cần dùng (v."
+"d. en, fr, ja, vi)."
 
 #:../gossip.schemas.in.h:6
 msgid "Enable spell checking"
@@ -112,7 +113,8 @@ msgstr "Dùng âm thanh thông báo"
 #:../gossip.schemas.in.h:22
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
-msgstr "Bật/tặt chuyển đổi ký tự miêu tả mặt cười thành biểu tượng xúc cảm trong đối thoại."
+msgstr "Bật/tặt chuyển đổi ký tự miêu tả mặt cười thành biểu tượng xúc cảm trong đối "
+"thoại."
 
 #:../gossip.schemas.in.h:23
 msgid "Whether or not to play a sound when messages arrive."
@@ -146,10 +148,90 @@ msgstr "Vị trí X của cửa sổ chính."
 msgid "Y position of main window"
 msgstr "Vị trí Y của cửa sổ chính."
 
-#:../libgossip/gossip-contact.c:768 ../src/gossip-app.c:1998
+#:../libgossip/gossip-contact.c:768 ../src/gossip-app.c:1992
 #:../src/gossip-contact-info-dialog.c:171 ../src/gossip-galago.c:164
 msgid "Offline"
 msgstr "Ngoại tuyến"
+
+#:../libgossip/gossip-protocol.c:672
+msgid "An unknown error ocurred."
+msgstr "Gặp lỗi không rõ."
+
+#:../libgossip/gossip-protocol.c:676
+msgid "Connection refused."
+msgstr "Kết nối bị từ chối."
+
+#:../libgossip/gossip-protocol.c:679
+msgid "Server address could not be resolved."
+msgstr "Không thể quyết định địa chỉ của máy phục vụ."
+
+#:../libgossip/gossip-protocol.c:682
+msgid "Connection timed out."
+msgstr "Kết nối đã quá giờ."
+
+#:../libgossip/gossip-protocol.c:685
+msgid "Authentication failed."
+msgstr "Việc xác thực bị lỗi."
+
+#:../libgossip/gossip-protocol.c:688
+msgid "The username you are trying already exists."
+msgstr "Bạn đang thử ra một tên người dùng đã có."
+
+#:../libgossip/gossip-protocol.c:691
+msgid "This feature is unavailable."
+msgstr "Không có tính năng này."
+
+#:../libgossip/gossip-protocol.c:694
+msgid "This feature is unauthorized."
+msgstr "Tính năng này không được xác thực."
+
+#:../libgossip/gossip-protocol.c:697
+msgid "A specific protocol error occured that was unexpected."
+msgstr "Gặp một lỗi giao thức dứt khoát mà bất ngờ."
+
+#:../libgossip/gossip-chatroom.c:733
+msgid "Normal"
+msgstr "Chuẩn"
+
+#:../libgossip/gossip-chatroom.c:743
+msgid "Connecting..."
+msgstr "Đang kết nối..."
+
+#:../libgossip/gossip-chatroom.c:744
+msgid "Open"
+msgstr "Mở"
+
+#:../libgossip/gossip-chatroom.c:745
+msgid "Closed"
+msgstr "Đã đóng"
+
+#:../libgossip/gossip-chatroom.c:746
+msgid "Unknown"
+msgstr "Không rõ"
+
+#:../libgossip/gossip-chatroom.c:747
+msgid "Error"
+msgstr "Lỗi"
+
+#:../libgossip/gossip-chatroom-provider.c:319
+msgid "The nickname you have chosen is already in use."
+msgstr "Bạn đã chọn một tên hiệu đang được dùng."
+
+#:../libgossip/gossip-chatroom-provider.c:323
+msgid "The chat room you tried to join requires a password."
+msgstr "Bạn đang cố tham gia một phòng trò chuyện cần thiết mật khẩu."
+
+#:../libgossip/gossip-chatroom-provider.c:327
+msgid "The remote conference server did not respond in a sensible time."
+msgstr "Máy phục vụ hội thảo ở xa chưa đáp ứng sau một thời gian hợp lý."
+
+#:../libgossip/gossip-chatroom-provider.c:331
+msgid "The conference server you tried to join could not be found."
+msgstr "Bạn đã cố tham gia một máy phục vụ hội thảo không thể được tìm."
+
+#:../libgossip/gossip-chatroom-provider.c:335
+msgid "An unknown error occured, check your details are correct."
+msgstr "Gặp lỗi lạ: hãy kiểm tra xem bạn đã gõ đúng chi tiết mình."
 
 #:../protocols/jabber/gossip-jabber.c:547
 #:../protocols/jabber/gossip-jabber.c:693
@@ -164,15 +246,19 @@ msgstr "Không thể tìm thấy máy phục vụ bạn muốn sử dụng."
 msgid "Connection to the server failed."
 msgstr "Việc kết nối đến máy phục vụ bị lỗi."
 
-#:../protocols/jabber/gossip-jabber.c:743
+#:../protocols/jabber/gossip-jabber.c:718 ../ui/main.glade.h:61
+msgid "Home"
+msgstr "Nhà"
+
+#:../protocols/jabber/gossip-jabber.c:750
 msgid "Authentication failed"
 msgstr "Việc xác thực bị lỗi."
 
-#:../protocols/jabber/gossip-jabber.c:999
+#:../protocols/jabber/gossip-jabber.c:1006
 msgid "Connection could not be opened"
 msgstr "Không thể mở kết nối."
 
-#:../protocols/jabber/gossip-jabber.c:1043
+#:../protocols/jabber/gossip-jabber.c:1050
 msgid "Couldn't send message!"
 msgstr "Không thể gởi tin nhẳn."
 
@@ -213,53 +299,53 @@ msgstr "Ngắt kết nối"
 msgid "Edit"
 msgstr "Hiệu chỉnh"
 
-#:../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:692
+#:../src/gossip-account-button.c:392 ../src/gossip-group-chat.c:692
 #:../src/gossip-private-chat.c:508
 msgid "Connected"
 msgstr "Được kết nối"
 
-#:../src/gossip-account-button.c:395
+#:../src/gossip-account-button.c:394
 msgid "Connecting"
 msgstr "Đang kết nối..."
 
-#:../src/gossip-account-button.c:395 ../src/gossip-group-chat.c:703
+#:../src/gossip-account-button.c:394 ../src/gossip-group-chat.c:703
 #:../src/gossip-private-chat.c:523
 msgid "Disconnected"
 msgstr "Kết nối bị ngắt"
 
-#:../src/gossip-account-button.c:408
+#:../src/gossip-account-button.c:407
 msgid "Perhaps you are trying to connect to the wrong port?"
 msgstr "Có lẽ bạn đang cố kết nối đến cổng không đúng?"
 
-#:../src/gossip-account-button.c:409
+#:../src/gossip-account-button.c:408
 msgid "Perhaps the service is not currently running?"
 msgstr "Có lẽ dịch vụ không đang chạy?"
 
-#:../src/gossip-account-button.c:412 ../src/gossip-account-button.c:421
+#:../src/gossip-account-button.c:411 ../src/gossip-account-button.c:420
 msgid "Check your connection details."
 msgstr "Hãy kiểm tra xem chi tiết kết nối là đúng."
 
-#:../src/gossip-account-button.c:415
+#:../src/gossip-account-button.c:414
 msgid "Perhaps the server is not running this service."
 msgstr "Có lẽ máy phục vụ không đang chạy dịch vụ này."
 
-#:../src/gossip-account-button.c:418
+#:../src/gossip-account-button.c:417
 msgid "Check your username and password are correct."
 msgstr "Hãy kiểm tra xem đã gõ tên người dùng và mật khẩu đúng."
 
-#:../src/gossip-account-button.c:438 ../ui/main.glade.h:15
+#:../src/gossip-account-button.c:437 ../ui/main.glade.h:15
 msgid "Account Name"
 msgstr "Tên tài khoản"
 
-#:../src/gossip-account-button.c:440
+#:../src/gossip-account-button.c:439
 msgid "Account ID"
 msgstr "ID tài khoản  "
 
-#:../src/gossip-account-button.c:442 ../ui/main.glade.h:83
+#:../src/gossip-account-button.c:441 ../ui/main.glade.h:83
 msgid "Status"
 msgstr "Trạng thái"
 
-#:../src/gossip-account-button.c:445
+#:../src/gossip-account-button.c:444
 msgid "Last Error"
 msgstr "Lỗi cuối cùng"
 
@@ -267,8 +353,8 @@ msgstr "Lỗi cuối cùng"
 msgid "Accounts"
 msgstr "Tài khoản"
 
-#:../src/gossip-add-contact-window.c:158
 # Name: don't translate / Tên: đừng dịch
+#:../src/gossip-add-contact-window.c:158
 msgid "Jabber"
 msgstr "Jabber"
 
@@ -302,39 +388,40 @@ msgstr "%s ID của liên lạc mới :"
 msgid "Example: %s"
 msgstr "Ví dụ : %s"
 
-#:../src/gossip-app.c:549 ../ui/main.glade.h:114
+#:../src/gossip-app.c:531 ../ui/main.glade.h:114
 msgid "_Connect"
 msgstr "_Kết nối"
 
-#:../src/gossip-app.c:554 ../ui/main.glade.h:117
+#:../src/gossip-app.c:536 ../ui/main.glade.h:117
 msgid "_Disconnect"
 msgstr "_Ngắt kết nối"
 
-#:../src/gossip-app.c:698
+#:../src/gossip-app.c:684
 msgid "To summarize:"
 msgstr "Tóm tắt:"
 
-#:../src/gossip-app.c:767
-msgid "If you quit, you will loose all unread information."
+#:../src/gossip-app.c:754
+msgid "If you quit, you will lose all unread information."
 msgstr "Nếu bạn thoát, các thông tin chưa đọc sẽ bị mất hoàn toàn."
 
-#:../src/gossip-app.c:984
+#:../src/gossip-app.c:971
 msgid "Could not display the help contents."
 msgstr "Không thể hiển thị nội dung trợ giúp."
 
-#:../src/gossip-app.c:1231
+#:../src/gossip-app.c:1218
 msgid "Gossip, Instant Messaging Client"
 msgstr "Ứng dụng tin nhắn tức khắc Gossip"
 
-#:../src/gossip-app.c:1484
+#:../src/gossip-app.c:1471
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Bạn chưa cấu hình tài khoản Tin nhắn tức khắc."
 
-#:../src/gossip-app.c:1486
+#:../src/gossip-app.c:1473
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
-msgstr "Bước sau, bạn có thể thiết lập chi tiết mình trong hộp thoại Thông tin Tài khoản."
+msgstr "Bước sau, bạn có thể thiết lập chi tiết mình trong hộp thoại Thông tin Tài "
+"khoản."
 
 #:../src/gossip-chat.c:463
 msgid "_Check Word Spelling..."
@@ -410,39 +497,39 @@ msgstr "Thông tin lien lạc cho %s"
 msgid "Requested Information"
 msgstr "Thông tin cần thiết"
 
-#:../src/gossip-contact-list.c:314
+#:../src/gossip-contact-list.c:320
 msgid "/Contact _Information"
 msgstr "/Thông t_in lien lạc"
 
-#:../src/gossip-contact-list.c:326
+#:../src/gossip-contact-list.c:332
 msgid "/Re_name Contact"
 msgstr "/Đổi t_ên Liên lạc"
 
-#:../src/gossip-contact-list.c:332
+#:../src/gossip-contact-list.c:338
 msgid "/_Edit Groups"
 msgstr "/_Hiệu chỉnh nhóm"
 
-#:../src/gossip-contact-list.c:338
+#:../src/gossip-contact-list.c:344
 msgid "/_Remove Contact"
 msgstr "/Gỡ _bỏ Liên lạc"
 
-#:../src/gossip-contact-list.c:350
+#:../src/gossip-contact-list.c:356
 msgid "/_Invite to Chat Conference"
 msgstr "/_Mời vào Hội thảo Trò chuyện"
 
-#:../src/gossip-contact-list.c:362
+#:../src/gossip-contact-list.c:368
 msgid "/_Send File..."
 msgstr "/_Gởi tập tin..."
 
-#:../src/gossip-contact-list.c:374
+#:../src/gossip-contact-list.c:380
 msgid "/Show _Log"
 msgstr "/Hiện _bản ghi"
 
-#:../src/gossip-contact-list.c:384
+#:../src/gossip-contact-list.c:390
 msgid "/Re_name group"
 msgstr "/Đổi tên _nhóm"
 
-#:../src/gossip-contact-list.c:1992
+#:../src/gossip-contact-list.c:2002
 #,c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -450,11 +537,11 @@ msgid ""
 msgstr "Hãy gõ tên hiệu mới cho liên lạc này\n"
 "%s"
 
-#:../src/gossip-contact-list.c:2112
+#:../src/gossip-contact-list.c:2122
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Bạn có muốn gỡ bỏ liên lạc này ra bản liệt kê không?"
 
-#:../src/gossip-contact-list.c:2168
+#:../src/gossip-contact-list.c:2178
 #,c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -499,7 +586,7 @@ msgid "The other user decided not to continue."
 msgstr "Người dùng khác đã quyết định sẽ không tiếp tục."
 
 #:../src/gossip-ft-window.c:187
-msgid "Unknown error occured during file transfer."
+msgid "Unknown error occurred during file transfer."
 msgstr "Gặp lỗi lạ trong khi truyền tập tin."
 
 #:../src/gossip-ft-window.c:271
@@ -597,7 +684,7 @@ msgstr "%s mới ngoại tuyến"
 
 #:../src/gossip-private-chat.c:443
 #,c-format
-msgid "%s comes online"
+msgid "%s has come online"
 msgstr "%s mới trực tuyến"
 
 #:../src/gossip-spell.c:69
@@ -945,7 +1032,7 @@ msgid "Vietnamese"
 msgstr "Việt Nam"
 
 #:../src/gossip-spell.c:156
-msgid "Wallon"
+msgid "Walloon"
 msgstr "Oua-lunh"
 
 #:../src/gossip-spell.c:157
@@ -1169,8 +1256,7 @@ msgstr "Tài khoản:"
 
 #:../ui/group-chat.glade.h:2
 msgid ""
-"Customize your own nickname, server and chat room that you wish to join in "
-"to."
+"Customize your own nickname, the server and chatroom which you wish to join."
 msgstr "Tùy chỉnh tên hiệu mình, máy phục vụ và phòng trò chuyện bạn muốn vào."
 
 #:../ui/group-chat.glade.h:3
@@ -1217,7 +1303,8 @@ msgstr "T_ên:"
 msgid ""
 "Pick a saved chat room from the presets available below and click Join Chat "
 "Room to start chatting."
-msgstr "Chọn một phòng trò chuyện đã lưu trong danh sách định sẵn bên dưới, rồi nhắp vào nút « Vào phòng trò chuyện » để bắt đầu nói chuyện."
+msgstr "Chọn một phòng trò chuyện đã lưu trong danh sách định sẵn bên dưới, rồi nhắp "
+"vào nút « Vào phòng trò chuyện » để bắt đầu nói chuyện."
 
 #:../ui/group-chat.glade.h:15
 msgid "Progress:"
@@ -1455,19 +1542,17 @@ msgid ""
 "favorite Jabber server.\n"
 "\n"
 "To get started, just click \"Forward\"."
-msgstr "Gossip là một ứng dụng khách hiện thời cho hệ thống Tin nhắn tức khắc Jabber.\n"
+msgstr "Gossip là một ứng dụng khách hiện thời cho hệ thống Tin nhắn tức khắc "
+"Jabber.\n"
 "\n"
-"Trợ lý này sẽ giúp đỡ bạn cấu hình trình Gossip và kết nối bạn đến mấy phục vụ Jabber ưa thích.\n"
+"Trợ lý này sẽ giúp đỡ bạn cấu hình trình Gossip và kết nối bạn đến mấy phục "
+"vụ Jabber ưa thích.\n"
 "\n"
 "Để bắt đầu tiến trình cấu hình, đơn giản hãy nhắp vào nút « Tiếp »."
 
 #:../ui/main.glade.h:60
 msgid "Group:"
 msgstr "Nhóm:"
-
-#:../ui/main.glade.h:61
-msgid "Home"
-msgstr "Nhà"
 
 #:../ui/main.glade.h:62
 msgid "ID:"
@@ -1482,20 +1567,24 @@ msgstr "Nếu bạn chọn quyết định sau này, bạn sẽ được nhắc 
 msgid ""
 "If you have another machine on your network which 'proxies' the connection "
 "to the internet and you want to use it, enable this option."
-msgstr "Nếu bạn có một máy khác trên mạng mà làm « ủy nhiệm » kết nối đến Mạng và bạn muốn sử dụng nó, hãy bật tùy chọn này."
+msgstr "Nếu bạn có một máy khác trên mạng mà làm « ủy nhiệm » kết nối đến Mạng và "
+"bạn muốn sử dụng nó, hãy bật tùy chọn này."
 
 #:../ui/main.glade.h:65
 msgid ""
 "If you need to set specific connection details, like a different server or "
 "port, you can configure that here:"
-msgstr "Nếu bạn cần phải đặt một số chi tiết kết nối riêng, lấy thí dụ, máy phục vụ hay cổng khác, có thể cấu hình nó ở đây."
+msgstr "Nếu bạn cần phải đặt một số chi tiết kết nối riêng, lấy thí dụ, máy phục vụ "
+"hay cổng khác, có thể cấu hình nó ở đây."
 
 #:../ui/main.glade.h:66
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
-msgstr "Bạn cần yêu cầu nhận thông báo sự có mặt của người dùng. Người dùng này sẽ được hiển thị « Ngoại tuyến »  trong danh sách liên lạc của bạn, cho đến khi yêu cầu thông báo đã được chấp nhận."
+msgstr "Bạn cần yêu cầu nhận thông báo sự có mặt của người dùng. Người dùng này sẽ "
+"được hiển thị « Ngoại tuyến »  trong danh sách liên lạc của bạn, cho đến khi "
+"yêu cầu thông báo đã được chấp nhận."
 
 #:../ui/main.glade.h:67
 msgid "In which group do you want to place this contact?"
@@ -1572,7 +1661,9 @@ msgid ""
 "This acts as a filter to the contact list below.  You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
-msgstr "Điều này lọc danh sách liên lạc bên dưới. Bạn có thể sử dụng phần tên hoặc ID của liên lạc; lấy thí dụ, « jabber.org » sẽ liệt kê mọi người sử dụng máy phục vụ đó."
+msgstr "Điều này lọc danh sách liên lạc bên dưới. Bạn có thể sử dụng phần tên hoặc "
+"ID của liên lạc; lấy thí dụ, « jabber.org » sẽ liệt kê mọi người sử dụng máy "
+"phục vụ đó."
 
 #:../ui/main.glade.h:87
 msgid "This is the name that will be used on your roster for this contact."
@@ -1638,13 +1729,15 @@ msgstr "Bạn chưa đăng ký với liên lạc này."
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
-msgstr "Bạn có thể thay đổi thiết lập tài khoản sau này, bằng cách chọn mục trình đơn Hiệu chỉnh → Tài khoản."
+msgstr "Bạn có thể thay đổi thiết lập tài khoản sau này, bằng cách chọn mục trình "
+"đơn Hiệu chỉnh → Tài khoản."
 
 #:../ui/main.glade.h:106
 msgid ""
 "You can identify this account with a name, for example, <b>Home</b> or "
 "<b>Work</b>.  Choose a name for this account:"
-msgstr "Bạn có thể nhận diện tài khoản này bằng tên, lấy thí dụ, <b>Ở nhà</b> hoặc <b>Chỗ làm</b>. Hãy chọn tên cho tài khoản này:"
+msgstr "Bạn có thể nhận diện tài khoản này bằng tên, lấy thí dụ, <b>Ở nhà</b> hoặc "
+"<b>Chỗ làm</b>. Hãy chọn tên cho tài khoản này:"
 
 #:../ui/main.glade.h:107
 msgid "Your Account"
