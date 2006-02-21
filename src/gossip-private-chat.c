@@ -440,7 +440,7 @@ private_chat_contact_presence_updated (gpointer           not_used,
 		if (!priv->is_online) {
 			gchar *msg;
 		
-			msg = g_strdup_printf (_("%s comes online"),
+			msg = g_strdup_printf (_("%s has come online"),
 					       gossip_contact_get_name (priv->contact));
 			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
 						       msg);

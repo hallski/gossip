@@ -43,6 +43,7 @@ AC_SUBST(LIBGNOME_REQUIRED, 2.0.0)
 AC_SUBST(LIBGNOMEVFS_REQUIRED, 2.0.0)
 AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
 
+
 dnl To make the egg stuff build properly, should have a real test...
 AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
 
@@ -105,6 +106,35 @@ fi
 AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
 
 dnl -----------------------------------------------------------
+dnl Notify
+dnl -----------------------------------------------------------
+
+AC_ARG_ENABLE(libnotify,
+              AS_HELP_STRING([--enable-libnotify=@<:@no/yes/auto@:>@],
+                             [compile with libnotify support]), ,
+              enable_libnotify=auto)
+
+if test "x$enable_libnotify" != "xno"; then
+   libnotify_pkgconfig_tmp="libnotify >= 0.2.1"
+   PKG_CHECK_MODULES(LIBNOTIFY, $libnotify_pkgconfig_tmp, have_libnotify=yes, have_libnotify=no)
+   if test x$have_libnotify = xyes; then
+      AC_DEFINE(HAVE_LIBNOTIFY, 1, libnotify support)
+      libnotify_pkgconfig=$libnotify_pkgconfig_tmp
+  fi
+else
+   have_libnotify=no
+   libnotify_pkgconfig=
+fi
+
+if test "x$enable_libnotify" = "xyes"; then
+   if test "x$have_libnotify" != "xyes"; then
+      AC_MSG_ERROR([Couldn't find libnotify.])
+   fi
+fi
+
+AM_CONDITIONAL(HAVE_LIBNOTIFY, test x$have_libnotify = xyes)
+
+dnl -----------------------------------------------------------
 dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
 
@@ -130,6 +160,7 @@ PKG_CHECK_MODULES(GOSSIP,
 	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
 	$dbus_pkgconfig
 	$galago_pkgconfig
+	$libnotify_pkgconfig
 ])
 
 PKG_CHECK_MODULES(GOSSIP_JABBER,
@@ -264,4 +295,5 @@ echo "Gossip prefix: $prefix"
 echo "D-BUS        : $have_dbus"
 echo "Galago       : $have_galago"
 echo "ASpell       : $have_aspell"
+echo "Notify       : $have_libnotify"
 echo

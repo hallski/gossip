@@ -27,12 +27,18 @@ galago_sources =			                                        \
 	gossip-galago.c                     gossip-galago.h
 endif
 
+if HAVE_LIBNOTIFY
+libnotify_sources =			                                        \
+	gossip-notify.c                     gossip-notify.h
+endif
+
 
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	$(galago_sources)		     	                        	\
+	$(libnotify_sources)		     	                        	\
 	gossip-about.c                     gossip-about.h  			\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-button.c		   gossip-account-button.h		\

@@ -20,7 +20,9 @@
 
 #include <string.h>
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
@@ -39,6 +41,10 @@
 #include "gossip-marshal.h"
 #include "gossip-sound.h"
 #include "gossip-stock.h"
+
+#ifdef HAVE_LIBNOTIFY
+#include "gossip-notify.h"
+#endif
 
 #define d(x)
 
@@ -758,6 +764,10 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
 			gossip_sound_play (GOSSIP_SOUND_ONLINE);
 		}
+
+#ifdef HAVE_LIBNOTIFY
+		gossip_notify_contact_online (contact);
+#endif
 
 		contact_list_add_contact (list, contact);
 	

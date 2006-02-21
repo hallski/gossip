@@ -38,27 +38,27 @@
 #define d(x)
 
 
-static const char *   galago_generate_person_id          (GossipContact     *contact);
-static GalagoService *galago_get_service                 (GossipAccount     *account);
-static GalagoAccount *galago_get_account                 (GossipAccount     *account);
-static void           galago_set_status                  (GalagoAccount     *account,
-							  GossipPresence    *presence);
-static void           galago_presence_changed_cb         (GossipSession     *gossip_session,
-							  GossipPresence    *gossip_presence,
-							  gpointer           userdata);
-static void           galago_contact_added_cb            (GossipSession     *session,
-							  GossipContact     *contact,
-							  GossipContactList *list);
-static void           galago_contact_updated_cb          (GossipSession     *session,
-							  GossipContact     *contact,
-							  GossipContactList *list);
-static void           galago_contact_presence_updated_cb (GossipSession     *session,
-							  GossipContact     *contact,
-							  GossipContactList *list);
-static void           galago_contact_removed_cb          (GossipSession     *session,
-							  GossipContact     *contact,
-							  GossipContactList *list);
-static void           galago_setup_accounts              (GossipSession     *session);
+static const char *   galago_generate_person_id          (GossipContact  *contact);
+static GalagoService *galago_get_service                 (GossipAccount  *account);
+static GalagoAccount *galago_get_account                 (GossipAccount  *account);
+static void           galago_set_status                  (GalagoAccount  *account,
+							  GossipPresence *presence);
+static void           galago_presence_changed_cb         (GossipSession  *gossip_session,
+							  GossipPresence *gossip_presence,
+							  gpointer        userdata);
+static void           galago_contact_added_cb            (GossipSession  *session,
+							  GossipContact  *contact,
+							  gpointer        user_data);
+static void           galago_contact_updated_cb          (GossipSession  *session,
+							  GossipContact  *contact,
+							  gpointer        user_data);
+static void           galago_contact_presence_updated_cb (GossipSession  *session,
+							  GossipContact  *contact,
+							  gpointer        user_data);
+static void           galago_contact_removed_cb          (GossipSession  *session,
+							  GossipContact  *contact,
+							  gpointer        user_data);
+static void           galago_setup_accounts              (GossipSession  *session);
 
 
 static GalagoPerson *me = NULL;
@@ -196,9 +196,9 @@ galago_presence_changed_cb (GossipSession  *gossip_session,
 }
 
 static void
-galago_contact_added_cb (GossipSession     *session, 
-			 GossipContact     *contact, 
-			 GossipContactList *list)
+galago_contact_added_cb (GossipSession *session, 
+			 GossipContact *contact, 
+			 gpointer       user_data)
 {
 	GalagoService *service;
 	GalagoAccount *my_gaccount, *gaccount;
@@ -228,9 +228,9 @@ galago_contact_added_cb (GossipSession     *session,
 }
 
 static void
-galago_contact_updated_cb (GossipSession     *session, 
-			   GossipContact     *contact, 
-			   GossipContactList *list)
+galago_contact_updated_cb (GossipSession  *session, 
+			   GossipContact  *contact, 
+			   gpointer        user_data)
 {
 	d(g_print ("Galago: Contact updated:'%s'\n", 
 		   gossip_contact_get_id (contact)));
@@ -239,9 +239,9 @@ galago_contact_updated_cb (GossipSession     *session,
 }
 
 static void 
-galago_contact_presence_updated_cb (GossipSession     *session, 
-				    GossipContact     *contact, 
-				    GossipContactList *list)
+galago_contact_presence_updated_cb (GossipSession *session, 
+				    GossipContact *contact, 
+				    gpointer       user_data)
 {
 	GossipPresence *presence;
 	GalagoService  *service;
@@ -276,9 +276,9 @@ galago_contact_presence_updated_cb (GossipSession     *session,
 }
 
 static void
-galago_contact_removed_cb (GossipSession     *session,
-			   GossipContact     *contact,
-			   GossipContactList *list)
+galago_contact_removed_cb (GossipSession *session,
+			   GossipContact *contact,
+			   gpointer       user_data)
 {
 	GalagoAccount *my_galago_account, *galago_account;
 	GalagoService *service;

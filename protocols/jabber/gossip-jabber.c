@@ -709,12 +709,19 @@ jabber_connection_open_cb (LmConnection *connection,
 	 
 	/* FIXME: Decide on Resource */
 	jid_str = gossip_account_get_id (account);
+	d(g_print ("Protocol: Using JabberID:'%s'\n", jid_str));
 
 	id = gossip_jid_string_get_part_name (jid_str);
-	resource = gossip_jid_string_get_part_resource (jid_str);
 
-	d(g_print ("Protocol: Using JabberID:'%s'\n", jid_str));
-	
+	resource = gossip_jid_string_get_part_resource (jid_str);
+	if (!resource) {
+		resource = _("Home");
+
+		d(g_print ("Protocol: JabberID is invalid, there is no resource, "
+			   "using '%s' (default)\n", 
+			   resource));
+	}
+
 	lm_connection_authenticate (priv->connection,
 				    id,
 				    password, 

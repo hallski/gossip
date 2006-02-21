@@ -72,6 +72,10 @@
 #include "gossip-galago.h"
 #endif
 
+#ifdef HAVE_LIBNOTIFY
+#include "gossip-notify.h"
+#endif
+
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
 #define	EXT_AWAY_TIME (30*60)
@@ -152,13 +156,6 @@ struct _GossipAppPriv {
 	
 	/* misc */
 	guint                  size_timeout_id;
-};
-
-
-enum {
-	CONNECTED,
-	DISCONNECTED,
-	LAST_SIGNAL
 };
 
 
@@ -289,8 +286,6 @@ static void            app_contact_activated_cb             (GossipContactList  
 							     gpointer                  user_data);
 
 
-static guint         signals[LAST_SIGNAL] = { 0 };
-
 static GObjectClass *parent_class;
 static GossipApp    *app;
 
@@ -306,23 +301,6 @@ gossip_app_class_init (GossipAppClass *klass)
         parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
       
         object_class->finalize = app_finalize;
-
-	signals[CONNECTED] = 
-		g_signal_new ("connected",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0, 
-			      NULL, NULL,
-			      gossip_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
-	signals[DISCONNECTED] = 
-		g_signal_new ("disconnected",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0, 
-			      NULL, NULL,
-			      gossip_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
 }
 
 static void
@@ -453,6 +431,10 @@ app_setup (GossipAccountManager *manager)
 
 #ifdef HAVE_GALAGO
 	gossip_galago_init (priv->session);
+#endif
+
+#ifdef HAVE_LIBNOTIFY
+	gossip_notify_init (priv->session);
 #endif
 
 	/* call init session dependent modules */

@@ -1,3 +1,21 @@
+2006-02-21  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: Don't try to authenticate in
+	the Jabber back end without a resource.  Fixes bug #331664 in part
+	(Fryderyk Dziarmagowski). 
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-notify.[ch]:
+	- Added support for libnotify. For now, when a contact comes
+	online, the notification will popup to let you know.
+
+	* src/gossip-galago.c: Cleaned up in places.
+	
+	* src/gossip-private-chat.c: Updated a translation.
+
 2006-02-20  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Depend on GTK+ 2.8 instead of 2.6 since we are
