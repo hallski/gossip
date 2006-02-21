@@ -586,19 +586,6 @@ app_setup (GossipAccountManager *manager)
 	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
-	/* Set window position. */
- 	x = gconf_client_get_int (priv->gconf_client, 
-				  GCONF_PATH "/ui/main_window_position_x",
-				  NULL);
-
-	y = gconf_client_get_int (priv->gconf_client, 
-				  GCONF_PATH "/ui/main_window_position_y", 
-				  NULL);
- 
- 	if (x >= 0 && y >= 0) {
- 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
-	}
-
 	/* Set window size. */
 	width = gconf_client_get_int (priv->gconf_client,
 				      GCONF_PATH "/ui/main_window_width",
@@ -610,7 +597,24 @@ app_setup (GossipAccountManager *manager)
 
 	width = MAX (width, MIN_WIDTH);
 	gtk_window_set_default_size (GTK_WINDOW (priv->window), width, height);
-	
+	d(g_print ("Setting window default size to w:%d, h:%d\n", width, height)); 
+
+	/* Set window position. */
+ 	x = gconf_client_get_int (priv->gconf_client, 
+				  GCONF_PATH "/ui/main_window_position_x",
+				  NULL);
+
+	y = gconf_client_get_int (priv->gconf_client, 
+				  GCONF_PATH "/ui/main_window_position_y", 
+				  NULL);
+
+	x = CLAMP (x, 0, gdk_screen_width () - width); 
+	y = CLAMP (y, 0, gdk_screen_height () - height); 
+
+ 	if (x >= 0 && y >= 0) {
+ 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
+	}
+
 	/* Set up current presence. */
 	app_presence_updated ();
 

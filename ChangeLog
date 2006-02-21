@@ -1,5 +1,11 @@
 2006-02-21  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	* ui/main.glade: Fixed a problem where the window would not start
+	up in the right size as saved (this is with GtkWindow not a GnomeApp).
+
+2006-02-21  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Don't try to authenticate in
 	the Jabber back end without a resource.  Fixes bug #331664 in part
 	(Fryderyk Dziarmagowski). 
