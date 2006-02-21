@@ -49,6 +49,8 @@ typedef struct {
 	GtkWidget *spell_checker_vbox;
 	GtkWidget *spell_checker_checkbutton;
 	GtkWidget *spell_checker_treeview;
+
+	GtkWidget *theme_combobox;
 	
 	GList     *ids;
 } GossipPreferences;
@@ -60,6 +62,13 @@ enum {
 	COL_LANG_NAME,
 	COL_LANG_COUNT
 };
+
+enum {
+	COL_COMBO_VISIBLE_NAME,
+	COL_COMBO_NAME,
+	COL_COMBO_COUNT
+};
+
 
 
 static void     preferences_setup_widgets                (GossipPreferences      *preferences);
@@ -78,17 +87,24 @@ static gboolean preferences_languages_load_foreach       (GtkTreeModel          
 static void     preferences_languages_cell_toggled_cb    (GtkCellRendererToggle  *cell,
 							  gchar                  *path_string,
 							  GossipPreferences      *preferences);
+static void     preferences_themes_setup                 (GossipPreferences      *preferences);
 static void     preferences_set_boolean_from_gconf       (const gchar            *key,
 							  GtkWidget              *widget);
 static void     preferences_set_int_from_gconf           (const gchar            *key,
 							  GtkWidget              *widget);
 static void     preferences_set_string_from_gconf        (const gchar            *key,
 							  GtkWidget              *widget);
+static void     preferences_set_string_combo_from_gconf  (const gchar            *key,
+							  GtkWidget              *widget);
 static void     preferences_notify_int_cb                (GConfClient            *client,
 							  guint                   cnxn_id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
 static void     preferences_notify_string_cb             (GConfClient            *client,
+							  guint                   cnxn_id,
+							  GConfEntry             *entry,
+							  gpointer                user_data);
+static void     preferences_notify_string_combo_cb       (GConfClient            *client,
 							  guint                   cnxn_id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
@@ -109,6 +125,9 @@ static void     preferences_hookup_entry                 (GossipPreferences     
 static void     preferences_hookup_toggle_button         (GossipPreferences      *preferences,
 							  const gchar            *key,
 							  GtkWidget              *widget);
+static void     preferences_hookup_string_combo          (GossipPreferences      *preferences,
+							  const gchar            *key,
+							  GtkWidget              *widget);
 static void     preferences_hookup_sensitivity           (GossipPreferences      *preferences,
 							  const gchar            *key,
 							  GtkWidget              *widget);
@@ -117,6 +136,8 @@ static void     preferences_spin_button_value_changed_cb (GtkWidget             
 static void     preferences_entry_value_changed_cb       (GtkWidget              *entry,
 							  gpointer                user_data);
 static void     preferences_toggle_button_toggled_cb     (GtkWidget              *button,
+							  gpointer                user_data);
+static void     preferences_string_combo_changed_cb      (GtkWidget *button,
 							  gpointer                user_data);
 static void     preferences_destroy_cb                   (GtkWidget              *widget,
 							  GossipPreferences      *preferences);
@@ -156,6 +177,10 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	preferences_hookup_toggle_button (preferences,
 					  GCONF_PATH "/conversation/enable_spell_checker",
 					  preferences->spell_checker_checkbutton);
+
+	preferences_hookup_string_combo (preferences,
+					 GCONF_PATH "/conversation/theme",
+					 preferences->theme_combobox);
 }
 
 static void 
@@ -385,14 +410,13 @@ preferences_languages_load_foreach (GtkTreeModel  *model,
 static void 
 preferences_languages_cell_toggled_cb (GtkCellRendererToggle *cell, 
 				       gchar                 *path_string, 
-			 GossipPreferences *preferences)
+				       GossipPreferences     *preferences)
 {
 	GtkTreeView  *view;
 	GtkTreeModel *model;
 	GtkListStore *store;
 	GtkTreePath  *path;
 	GtkTreeIter   iter;
-
 	gboolean      enabled;
 
 	view = GTK_TREE_VIEW (preferences->spell_checker_treeview);
@@ -411,6 +435,35 @@ preferences_languages_cell_toggled_cb (GtkCellRendererToggle *cell,
 
 	preferences_languages_save (preferences);
 }
+
+static void
+preferences_themes_setup (GossipPreferences *preferences)
+{
+	GtkComboBox     *combo;
+	GtkListStore    *model;
+	GtkTreeIter      iter;
+
+	combo = GTK_COMBO_BOX (preferences->theme_combobox);
+
+	model = gtk_list_store_new (COL_COMBO_COUNT,
+				    G_TYPE_STRING,
+				    G_TYPE_STRING);
+
+	gtk_list_store_append (model, &iter);
+	gtk_list_store_set (model, &iter,
+			    COL_COMBO_VISIBLE_NAME, _("Classic"),
+			    COL_COMBO_NAME, "classic",
+			    -1);
+	
+	gtk_list_store_append (model, &iter);
+	gtk_list_store_set (model, &iter,
+			    COL_COMBO_VISIBLE_NAME, _("Blue"),
+			    COL_COMBO_NAME, "blue",
+			    -1);
+	
+	gtk_combo_box_set_model (combo, GTK_TREE_MODEL (model));
+	g_object_unref (model);
+}	
 
 static void
 preferences_set_boolean_from_gconf (const gchar *key, GtkWidget *widget)
@@ -445,6 +498,49 @@ preferences_set_string_from_gconf (const gchar *key, GtkWidget *widget)
 }
 
 static void
+preferences_set_string_combo_from_gconf (const gchar *key, GtkWidget *widget)
+{
+	gchar        *value;
+	GtkTreeModel *model; 
+	GtkTreeIter   iter;
+	gboolean      found;
+	
+	value = gconf_client_get_string (gossip_app_get_gconf_client (), key, NULL);
+
+	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
+
+	found = FALSE;
+	if (gtk_tree_model_get_iter_first (model, &iter)) {
+		gchar *name;
+
+		do {
+			gtk_tree_model_get (model, &iter,
+					    COL_COMBO_NAME, &name, 
+					    -1);
+
+			if (strcmp (name, value) == 0) {
+				found = TRUE;
+				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
+				break;
+			} else {
+				found = FALSE;
+			}
+
+			g_free (name);
+		} while (gtk_tree_model_iter_next (model, &iter));
+	}
+
+	/* Fallback to classic. */
+	if (!found) {
+		if (gtk_tree_model_get_iter_first (model, &iter)) {
+			gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
+		}
+	}
+
+	g_free (value);
+}
+
+static void
 preferences_notify_int_cb (GConfClient *client,
 			   guint        cnxn_id,
 			   GConfEntry  *entry,
@@ -470,6 +566,15 @@ preferences_notify_string_cb (GConfClient *client,
 
 	gtk_entry_set_text (GTK_ENTRY (user_data),
 			    gconf_value_get_string (value));
+}
+
+static void
+preferences_notify_string_combo_cb (GConfClient *client,
+				    guint        cnxn_id,
+				    GConfEntry  *entry,
+				    gpointer     user_data)
+{
+	preferences_set_string_combo_from_gconf (gconf_entry_get_key (entry), user_data);
 }
 
 static void
@@ -594,6 +699,34 @@ preferences_hookup_toggle_button (GossipPreferences *preferences,
 }
 
 static void
+preferences_hookup_string_combo (GossipPreferences *preferences,
+				 const gchar       *key,
+				 GtkWidget         *widget)
+{
+	guint id;
+
+	preferences_set_string_combo_from_gconf (key, widget);
+	
+	g_object_set_data_full (G_OBJECT (widget), "key",
+				g_strdup (key), g_free); 
+	
+	g_signal_connect (widget,
+			  "changed",
+			  G_CALLBACK (preferences_string_combo_changed_cb),
+			  NULL);
+
+	id = gconf_client_notify_add (gossip_app_get_gconf_client (),
+				      key,
+				      preferences_notify_string_combo_cb,
+				      widget,
+				      NULL,
+				      NULL);
+	
+	preferences->ids = g_list_prepend (preferences->ids,
+					   GUINT_TO_POINTER (id));
+}
+
+static void
 preferences_hookup_sensitivity (GossipPreferences *preferences,
 			       const gchar       *key,
 			       GtkWidget         *widget)
@@ -643,7 +776,6 @@ preferences_entry_value_changed_cb (GtkWidget *entry,
 				 NULL);
 }
 
-
 static void
 preferences_toggle_button_toggled_cb (GtkWidget *button,
 				      gpointer   user_data)
@@ -656,6 +788,33 @@ preferences_toggle_button_toggled_cb (GtkWidget *button,
 			       key,
 			       gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)),
 			       NULL);
+}
+
+static void
+preferences_string_combo_changed_cb (GtkWidget *combo,
+				     gpointer   user_data)
+{
+	const gchar  *key;
+	GtkTreeModel *model;
+	GtkTreeIter   iter;
+	gchar        *name;
+
+	key = g_object_get_data (G_OBJECT (combo), "key");
+
+	if (gtk_combo_box_get_active_iter (GTK_COMBO_BOX (combo), &iter)) {
+		model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
+		
+		gtk_tree_model_get (model, &iter,
+				    COL_COMBO_NAME, &name,
+				    -1);
+		
+		gconf_client_set_string (gossip_app_get_gconf_client (),
+					 key,
+					 name,
+					 NULL);
+
+		g_free (name);
+	}
 }
 
 static void
@@ -697,24 +856,28 @@ gossip_preferences_show (void)
         preferences = g_new0 (GossipPreferences, 1);
 	preferences->app = gossip_app_get ();
 
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
-				     "preferences_dialog",
-				     NULL,
-				     "preferences_dialog", &preferences->dialog,
-				     "notebook", &preferences->notebook,
-				     "sound_checkbutton", &preferences->sound_checkbutton,
-				     "silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
-				     "silent_away_checkbutton", &preferences->silent_away_checkbutton,
-				     "smileys_checkbutton", &preferences->smileys_checkbutton,
-				     "separate_windows_checkbutton", &preferences->separate_windows_checkbutton,
-				     "spell_checker_vbox", &preferences->spell_checker_vbox,
-				     "spell_checker_checkbutton", &preferences->spell_checker_checkbutton,
-				       "spell_checker_treeview", &preferences->spell_checker_treeview,
-				     NULL);
+	glade = gossip_glade_get_file (
+		GLADEDIR "/main.glade",
+		"preferences_dialog",
+		NULL,
+		"preferences_dialog", &preferences->dialog,
+		"notebook", &preferences->notebook,
+		"sound_checkbutton", &preferences->sound_checkbutton,
+		"silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
+		"silent_away_checkbutton", &preferences->silent_away_checkbutton,
+		"smileys_checkbutton", &preferences->smileys_checkbutton,
+		"separate_windows_checkbutton", &preferences->separate_windows_checkbutton,
+		"spell_checker_vbox", &preferences->spell_checker_vbox,
+		"spell_checker_checkbutton", &preferences->spell_checker_checkbutton,
+		"spell_checker_treeview", &preferences->spell_checker_treeview,
+		"theme_combobox", &preferences->theme_combobox,
+		NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (preferences->dialog),
 				   (gpointer) &preferences);
 	
+	preferences_themes_setup (preferences);
+
 	preferences_setup_widgets (preferences);
 	
 	preferences_languages_setup (preferences);
@@ -730,10 +893,12 @@ gossip_preferences_show (void)
 	if (gossip_spell_supported ()) {
 		GtkWidget *spell_checking_page;
 
-		spell_checking_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (preferences->notebook), 1);
+		spell_checking_page = gtk_notebook_get_nth_page (
+			GTK_NOTEBOOK (preferences->notebook), 1);
 		gtk_widget_show (spell_checking_page);
 	}
 
-	gtk_window_set_transient_for (GTK_WINDOW (preferences->dialog), GTK_WINDOW (gossip_app_get_window ()));
+	gtk_window_set_transient_for (GTK_WINDOW (preferences->dialog),
+				      GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (preferences->dialog);
 }

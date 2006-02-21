@@ -100,8 +100,8 @@
     </schema>
 
    <schema>
-      <key>/schemas/apps/gossip/ui/theme</key>
-      <applyto>/apps/gossip/ui/theme</applyto>
+      <key>/schemas/apps/gossip/conversation/theme</key>
+      <applyto>/apps/gossip/conversation/theme</applyto>
       <owner>gossip</owner>
       <type>string</type>
       <default>classic</default>

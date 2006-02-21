@@ -1,3 +1,21 @@
+2006-02-21  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-preferences.c: (preferences_setup_widgets),
+	(preferences_languages_cell_toggled_cb),
+	(preferences_themes_setup),
+	(preferences_set_string_combo_from_gconf),
+	(preferences_notify_string_combo_cb),
+	(preferences_hookup_string_combo),
+	(preferences_string_combo_changed_cb), (gossip_preferences_show):
+	Implement a string combo prefs type and use it for the theme combo
+	box.
+
+	* gossip.schemas.in:
+	* src/gossip-theme-manager.c: (gossip_theme_manager_init): Change
+	the gconf key.
+
+	* ui/main.glade: Add theme combo box.
+
 2006-02-21  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-provider.c:

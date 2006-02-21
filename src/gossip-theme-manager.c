@@ -94,16 +94,14 @@ gossip_theme_manager_init (GossipThemeManager *manager)
 
 	priv->notify_id = gconf_client_notify_add (
 		gossip_app_get_gconf_client (),
-		GCONF_PATH "/ui/theme",
+		GCONF_PATH "/conversation/theme",
 		theme_manager_notify_func,
 		manager,
 		NULL,
 		NULL);
 
-	priv = GET_PRIV (manager);
-
 	name = gconf_client_get_string (gossip_app_get_gconf_client (),
-					GCONF_PATH "/ui/theme",
+					GCONF_PATH "/conversation/theme",
 					NULL);
 	if (!name || strcmp (name, "classic") == 0) {
 		priv->irc_style = TRUE;
