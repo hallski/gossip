@@ -125,8 +125,7 @@ static gboolean         jabber_logout_contact_foreach       (gpointer           
 static GError *         jabber_error_create                 (GossipProtocolError      code,
 							     const gchar             *reason);
 static void             jabber_error                        (GossipProtocol          *protocol,
-							     GossipProtocolError      code,
-							     const gchar             *reason);
+							     GossipProtocolError      code);
 static void             jabber_connection_open_cb           (LmConnection            *connection,
 							     gboolean                 result,
 							     GossipJabber            *jabber);
@@ -542,9 +541,7 @@ jabber_login (GossipProtocol *protocol)
 	jabber_setup_connection (jabber);
 
 	if (!priv->connection) {
-		jabber_error (GOSSIP_PROTOCOL (jabber), 
-			      GOSSIP_PROTOCOL_NO_CONNECTION,
-			      _("Could not open connection"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_CONNECTION);
 		return;
 	}
 
@@ -569,9 +566,7 @@ jabber_login (GossipProtocol *protocol)
 	if (error->code == 1 && 
 	    strcmp (error->message, "getaddrinfo() failed") == 0) {
 		/* host lookup failed */
-		jabber_error (GOSSIP_PROTOCOL (jabber), 
-			      GOSSIP_PROTOCOL_NO_SUCH_HOST,
-			      _("Could not find the server you wanted to use"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_SUCH_HOST);
 	}
 
 	g_error_free (error);
@@ -586,9 +581,7 @@ jabber_login_timeout_cb (GossipJabber *jabber)
 
 	priv->connection_timeout_id = 0;
 
-	jabber_error (GOSSIP_PROTOCOL (jabber), 
-		      GOSSIP_PROTOCOL_TIMED_OUT,
-		      _("Connection to the server failed."));
+	jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_TIMED_OUT);
 
 	return FALSE;
 }
@@ -643,20 +636,20 @@ jabber_error_create (GossipProtocolError  code,
 
 static void
 jabber_error (GossipProtocol      *protocol, 
-	      GossipProtocolError  code,
-	      const gchar         *reason)
+	      GossipProtocolError  code)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 	GError           *error;
+	const gchar      *message;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
-	g_return_if_fail (reason != NULL);
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
-	error = jabber_error_create (code, reason);
+	message = gossip_protocol_error_to_string (code);
+	error = jabber_error_create (code, message);
 	g_signal_emit_by_name (protocol, "error", priv->account, error);
  	g_error_free (error); 
 }
@@ -688,9 +681,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	}
 
 	if (result == FALSE) {
-		jabber_error (GOSSIP_PROTOCOL (jabber), 
-			      GOSSIP_PROTOCOL_NO_CONNECTION,
-			      _("Could not open connection"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_CONNECTION);
 		return;
 	}
 
@@ -709,17 +700,17 @@ jabber_connection_open_cb (LmConnection *connection,
 	 
 	/* FIXME: Decide on Resource */
 	jid_str = gossip_account_get_id (account);
-	d(g_print ("Protocol: Using JabberID:'%s'\n", jid_str));
+	d(g_print ("Protocol: Attempting to use JabberID:'%s'\n", jid_str));
 
 	id = gossip_jid_string_get_part_name (jid_str);
 
 	resource = gossip_jid_string_get_part_resource (jid_str);
 	if (!resource) {
-		resource = _("Home");
+		d(g_print ("Protocol: JabberID:'%s' is invalid, there is no resource.\n", jid_str));
 
-		d(g_print ("Protocol: JabberID is invalid, there is no resource, "
-			   "using '%s' (default)\n", 
-			   resource));
+		jabber_logout (GOSSIP_PROTOCOL (jabber));
+		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_INVALID_USER);
+		return;
 	}
 
 	lm_connection_authenticate (priv->connection,
@@ -745,9 +736,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 	priv = GET_PRIV (jabber);
 	
 	if (result == FALSE) {
-		jabber_error (GOSSIP_PROTOCOL (jabber), 
-			      GOSSIP_PROTOCOL_AUTH_FAILED,
-			      _("Authentication failed"));
+		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_AUTH_FAILED);
 		return;
 	}
 

@@ -1,3 +1,11 @@
+2006-02-21  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-protocol.c:
+	* libgossip/gossip-protocol.h:
+	* protocols/jabber/gossip-jabber.c: Instead of making up the
+	resource if the user ID is incorrect, we signal an error so the
+	user can fix it. 
+
 2006-02-21  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-preferences.c: (preferences_setup_widgets),

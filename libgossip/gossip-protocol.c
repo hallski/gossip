@@ -687,6 +687,9 @@ gossip_protocol_error_to_string (GossipProtocolError error)
 	case GOSSIP_PROTOCOL_DUPLICATE_USER:
 		str = _("The username you are trying already exists.");
 		break;
+	case GOSSIP_PROTOCOL_INVALID_USER:
+		str = _("The username you are trying is not valid.");
+		break;
 	case GOSSIP_PROTOCOL_UNAVAILABLE:
 		str = _("This feature is unavailable.");
 		break;
