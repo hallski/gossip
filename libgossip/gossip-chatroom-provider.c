@@ -332,7 +332,7 @@ gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result)
 		break;
 
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
-		last_error = _("An unknown error occured, check your details are correct.");
+		last_error = _("An unknown error occurred, check your details are correct.");
 		break;
 
 	default:

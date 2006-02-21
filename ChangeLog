@@ -1,5 +1,11 @@
 2006-02-21  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-provider.c:
+	* libgossip/gossip-protocol.c: Corrected some typos, fixes bug
+	#332020 (Clytie Siddall).
+
+2006-02-21  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-contact.c: Fixed return value on error to not
 	EQUAL 0, since it means lookups are successful with NULL.
 	

@@ -669,7 +669,7 @@ gossip_protocol_register_cancel (GossipProtocol *protocol)
 const gchar *
 gossip_protocol_error_to_string (GossipProtocolError error)
 {
-	const gchar *str = _("An unknown error ocurred.");
+	const gchar *str = _("An unknown error occurred.");
 
 	switch (error) {
 	case GOSSIP_PROTOCOL_NO_CONNECTION:
@@ -694,7 +694,7 @@ gossip_protocol_error_to_string (GossipProtocolError error)
 		str = _("This feature is unauthorized.");
 		break;
 	case GOSSIP_PROTOCOL_SPECIFIC_ERROR:
-		str = _("A specific protocol error occured that was unexpected.");
+		str = _("A specific protocol error occurred that was unexpected.");
 		break;
 	}
 
