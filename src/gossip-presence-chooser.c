@@ -311,8 +311,8 @@ presence_chooser_add_item (GossipPresenceChooser *chooser,
 	const gchar *stock;
 
 	item = gtk_image_menu_item_new_with_label (str);
-    gtk_label_set_ellipsize (GTK_LABEL (GTK_BIN (item)->child),
-                             PANGO_ELLIPSIZE_END);
+/* 	gtk_label_set_ellipsize (GTK_LABEL (GTK_BIN (item)->child), */
+/* 				 PANGO_ELLIPSIZE_END); */
 
 	switch (state) {
 	case GOSSIP_PRESENCE_STATE_AVAILABLE:

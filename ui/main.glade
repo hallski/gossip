@@ -5863,7 +5863,6 @@ To get started, just click &quot;Forward&quot;.</property>
 </widget>
 
 <widget class="GtkWindow" id="main_window">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -6161,6 +6160,7 @@ To get started, just click &quot;Forward&quot;.</property>
 	<widget class="GtkScrolledWindow" id="roster_scrolledwindow">
 	  <property name="visible">True</property>
 	  <property name="can_focus">True</property>
+	  <property name="has_focus">True</property>
 	  <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
 	  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
 	  <property name="shadow_type">GTK_SHADOW_IN</property>

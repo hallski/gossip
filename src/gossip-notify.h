@@ -22,11 +22,11 @@
 #define __GOSSIP_NOTIFY_H__
 
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-event-manager.h>
 
-void gossip_notify_init            (GossipSession *session);
-
-void gossip_notify_contact_online  (GossipContact *contact);
-void gossip_notify_contact_offline (GossipContact *contact);
-void gossip_notify_new_message     (GossipContact *contact);
+void gossip_notify_init            (GossipSession      *session,
+				    GossipEventManager *event_manager);
+void gossip_notify_contact_online  (GossipContact      *contact);
+void gossip_notify_contact_offline (GossipContact      *contact);
 
 #endif /* __GOSSIP_NOTIFY_H__ */

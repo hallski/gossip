@@ -722,7 +722,7 @@ gossip_contact_equal (gconstpointer v1,
 guint
 gossip_contact_hash (gconstpointer key)
 {
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (key), 0);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (key), +1);
 
 	return g_str_hash (gossip_contact_get_id (GOSSIP_CONTACT (key)));
 }

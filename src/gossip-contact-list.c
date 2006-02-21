@@ -763,11 +763,11 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
 			gossip_sound_play (GOSSIP_SOUND_ONLINE);
-		}
 
 #ifdef HAVE_LIBNOTIFY
-		gossip_notify_contact_online (contact);
+			gossip_notify_contact_online (contact);
 #endif
+		}
 
 		contact_list_add_contact (list, contact);
 	
@@ -2310,17 +2310,19 @@ contact_list_event_added_cb (GossipEventManager *manager,
 			     GossipContactList  *list)
 {
 	GossipContactListPriv *priv;
+	GossipMessage         *message;
 	GossipContact         *contact;
 	FlashData             *data;
 	FlashTimeoutData      *t_data;
 	
 	priv = list->priv;
 	
-	if (gossip_event_get_event_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
+	if (gossip_event_get_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
 		return;
 	}
 
-	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
+	message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+	contact = gossip_message_get_sender (message);
 	data = g_hash_table_lookup (priv->flash_table, contact);
 
 	if (data) {
@@ -2350,18 +2352,20 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 {
 	GossipContactListPriv *priv;
 	FlashData             *data;
+	GossipMessage         *message;
 	GossipContact         *contact;
 	GdkPixbuf             *pixbuf;
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
 	
-	if (gossip_event_get_event_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
+	if (gossip_event_get_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
 		return;
 	}
 	
 	priv = list->priv;
 
-	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
+	message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+	contact = gossip_message_get_sender (message);
 
 	data = g_hash_table_lookup (priv->flash_table, contact);
 	if (!data) {

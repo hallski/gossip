@@ -80,5 +80,4 @@ void              gossip_message_set_invite              (GossipMessage     *mes
 void              gossip_message_request_composing       (GossipMessage     *message);
 gboolean          gossip_message_is_requesting_composing (GossipMessage     *message);
 
-
 #endif /* __GOSSIP_MESSAGE_H__ */

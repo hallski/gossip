@@ -1,5 +1,30 @@
 2006-02-21  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact.c: Fixed return value on error to not
+	EQUAL 0, since it means lookups are successful with NULL.
+	
+	* libgossip/gossip-event.[ch]: Added two new states for
+	online/offline contacts.
+	
+	* libgossip/gossip-message.[ch]: Cleaned up a bit.
+
+	* po/POTFILES.in: Added new file src/gossip-notify.c.
+	
+	* src/gossip-chat-manager.c:
+	* src/gossip-contact-list.c: Make sure new notifications only
+	happen when a sound is played (i.e. you don't get notifications
+	for ALL contacts when you sign in).
+
+	* src/gossip-notify.[ch]: Added notification for new messages with
+	the message content included and a few links to get contact
+	information or respond to that message.
+	
+	* src/gossip-presence-chooser.c: Don't ellipsize the menu text
+	since most the items are cut off (especially when used from the
+	tray icon).
+
+2006-02-21  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c:
 	* ui/main.glade: Fixed a problem where the window would not start
 	up in the right size as saved (this is with GtkWindow not a GnomeApp).

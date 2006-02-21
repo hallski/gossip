@@ -105,7 +105,7 @@ chat_manager_finalize (GObject *object)
 
 static void
 chat_manager_new_message_cb (GossipSession     *session,
-			     GossipMessage     *msg,
+			     GossipMessage     *message,
 			     GossipChatManager *manager)
 {
 	GossipChatManagerPriv *priv;
@@ -116,7 +116,7 @@ chat_manager_new_message_cb (GossipSession     *session,
 
 	priv = GET_PRIV (manager);
 
-	sender = gossip_message_get_sender (msg);
+	sender = gossip_message_get_sender (message);
 	chat = g_hash_table_lookup (priv->chats, sender);
 
 	old_event = g_hash_table_lookup (priv->events, sender);
@@ -139,7 +139,7 @@ chat_manager_new_message_cb (GossipSession     *session,
 		}
 	}
 				
-	gossip_private_chat_append_message (chat, msg);
+	gossip_private_chat_append_message (chat, message);
 
 	if (event) {
 		gchar *str;
@@ -148,7 +148,7 @@ chat_manager_new_message_cb (GossipSession     *session,
 				       gossip_contact_get_name (sender));
 		g_object_set (event, 
 			      "message", str, 
-			      "data", sender,
+			      "data", message,
 			      NULL);
 		g_free (str);
 
@@ -168,9 +168,11 @@ chat_manager_event_activated_cb (GossipEventManager *event_manager,
 				 GossipEvent        *event,
 				 GObject            *object)
 {
+	GossipMessage *message;
 	GossipContact *contact;
 
-	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
+	message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+	contact = gossip_message_get_sender (message);
 
 	gossip_chat_manager_show_chat (GOSSIP_CHAT_MANAGER (object), contact);
 }
@@ -232,7 +234,7 @@ gossip_chat_manager_show_chat (GossipChatManager *manager,
 	chat = gossip_chat_manager_get_chat (manager, contact);
 
 	gossip_chat_present (GOSSIP_CHAT (chat));
-	
+	 
 	event = g_hash_table_lookup (priv->events, contact);
 	if (event) {
 		gossip_event_manager_remove (gossip_app_get_event_manager (),

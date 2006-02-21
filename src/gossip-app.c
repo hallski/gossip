@@ -223,7 +223,6 @@ static gboolean        app_tray_button_press_cb             (GtkWidget          
 							     GossipApp                *app);
 static void            app_tray_create_menu                 (void);
 static void            app_tray_create                      (void);
-static gboolean        app_tray_pop_event                   (void);
 static void            app_tray_update_tooltip              (void);
 static gboolean        app_status_flash_timeout_func        (gpointer                  data);
 static void            app_status_flash_start               (void);
@@ -433,10 +432,6 @@ app_setup (GossipAccountManager *manager)
 	gossip_galago_init (priv->session);
 #endif
 
-#ifdef HAVE_LIBNOTIFY
-	gossip_notify_init (priv->session);
-#endif
-
 	/* call init session dependent modules */
 	gossip_subscription_dialog_init (priv->session);
 	gossip_ft_window_init (priv->session);
@@ -452,6 +447,11 @@ app_setup (GossipAccountManager *manager)
 
 	priv->chat_manager = gossip_chat_manager_new ();
  	priv->event_manager = gossip_event_manager_new (); 
+
+#ifdef HAVE_LIBNOTIFY
+	gossip_notify_init (priv->session,
+			    priv->event_manager);
+#endif
 
 	g_signal_connect (manager, "account_added",
 			  G_CALLBACK (app_accounts_account_added_cb), 
@@ -692,7 +692,7 @@ app_main_window_quit_confirm (GossipApp *app,
 			GossipEventType  type; 
 
 			event = l->data;
-			type = gossip_event_get_event_type (event);
+			type = gossip_event_get_type (event);
 
 			count[type]++;
 		}
@@ -1125,7 +1125,7 @@ app_tray_destroy_cb (GtkWidget *widget,
 
 static gboolean
 app_tray_button_press_cb (GtkWidget      *widget, 
-			  GdkEventButton *event, 
+			  GdkEventButton *button_event, 
 			  GossipApp      *app)
 {
 	GossipAppPriv *priv;
@@ -1133,21 +1133,27 @@ app_tray_button_press_cb (GtkWidget      *widget,
 
 	priv = app->priv;
 
-	if (event->type == GDK_2BUTTON_PRESS ||
-	    event->type == GDK_3BUTTON_PRESS) {
+	if (button_event->type == GDK_2BUTTON_PRESS ||
+	    button_event->type == GDK_3BUTTON_PRESS) {
 		return FALSE;
 	}
 	
-	if (event->button != 1 && 
-	    event->button != 3) {
+	if (button_event->button != 1 && 
+	    button_event->button != 3) {
 		return FALSE;
 	}
 
-	if (event->button == 1) {
-		if (!app_tray_pop_event ()) {
+	if (button_event->button == 1) {
+		GossipEvent *event;
+
+		if (!priv->tray_flash_icons) {
 			app_toggle_visibility ();
+			return TRUE;
 		}
-	} else if (event->button == 3) {
+		
+		event = priv->tray_flash_icons->data;
+		gossip_event_manager_activate (priv->event_manager, event);
+	} else if (button_event->button == 3) {
 		gboolean show;
 
 		show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
@@ -1164,8 +1170,10 @@ app_tray_button_press_cb (GtkWidget      *widget,
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->popup_menu_status_item),
 					   submenu);
 		
-                gtk_menu_popup (GTK_MENU (priv->popup_menu), NULL, NULL, NULL,
-				NULL, event->button, event->time);
+                gtk_menu_popup (GTK_MENU (priv->popup_menu), 
+				NULL, NULL, NULL, NULL, 
+				button_event->button, 
+				button_event->time);
 	}
 
 	return TRUE;
@@ -1249,24 +1257,6 @@ app_tray_create (void)
 			  "destroy",
 			  G_CALLBACK (app_tray_destroy_cb),
 			  priv->tray_event_box);
-}
-
-static gboolean
-app_tray_pop_event (void)
-{
-	GossipAppPriv *priv;
-	GossipEvent   *event;
-
-	priv = app->priv;
-
-	if (!priv->tray_flash_icons) {
-		return FALSE;
-	}
-
-	event = priv->tray_flash_icons->data;
-	gossip_event_manager_activate (priv->event_manager, event);
-
-	return TRUE;
 }
 
 static void
@@ -2296,7 +2286,7 @@ app_event_added_cb (GossipEventManager *manager,
 		/* Already in list */
 		return;
 	}
-
+	
 	priv->tray_flash_icons = g_list_append (priv->tray_flash_icons, 
 						g_object_ref (event));
 

@@ -25,6 +25,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT, GossipEventPriv))
 
 typedef struct _GossipEventPriv GossipEventPriv;
+
 struct _GossipEventPriv {
 	gint             id;
 	GossipEventType  type;
@@ -35,19 +36,17 @@ struct _GossipEventPriv {
 	GObject         *data;
 };
 
-static void   gossip_event_finalize (GObject              *object);
-static void   event_get_property    (GObject              *object,
-				     guint                 param_id,
-				     GValue               *value,
-				     GParamSpec           *pspec);
-static void   event_set_property    (GObject              *object,
-				     guint                 param_id,
-				     const GValue         *value,
-				     GParamSpec           *pspec);
-
-
-G_DEFINE_TYPE (GossipEvent, gossip_event, G_TYPE_OBJECT);
-static gpointer parent_class = NULL;
+static void gossip_event_class_init (GossipEventClass *klass);
+static void gossip_event_init       (GossipEvent      *event);
+static void gossip_event_finalize   (GObject          *object);
+static void event_get_property      (GObject          *object,
+				     guint             param_id,
+				     GValue           *value,
+				     GParamSpec       *pspec);
+static void event_set_property      (GObject          *object,
+				     guint             param_id,
+				     const GValue     *value,
+				     GParamSpec       *pspec);
 
 enum {
 	PROP_0,
@@ -57,16 +56,46 @@ enum {
 	PROP_DATA
 };
 
+static gpointer parent_class = NULL;
+
+GType
+gossip_event_get_gtype (void)
+{
+	static GType type = 0;
+
+	if (!type) {
+		static const GTypeInfo info = {
+			sizeof (GossipEventClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc) gossip_event_class_init,
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof (GossipEvent),
+			0,    /* n_preallocs */
+			(GInstanceInitFunc) gossip_event_init
+		};
+
+		type = g_type_register_static (G_TYPE_OBJECT,
+					       "GossipEvent",
+					       &info, 0);
+	}
+
+	return type;
+
+}
+
 static void
 gossip_event_class_init (GossipEventClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GObjectClass *object_class;
+
+	object_class = G_OBJECT_CLASS (klass);
+	parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize     = gossip_event_finalize;
 	object_class->get_property = event_get_property;
 	object_class->set_property = event_set_property;
-
-	parent_class = g_type_class_peek_parent (klass);
 
 	g_object_class_install_property (object_class,
 					 PROP_ID,
@@ -234,7 +263,7 @@ gossip_event_get_message (GossipEvent *event)
 }
 
 GossipEventType 
-gossip_event_get_event_type (GossipEvent *event)
+gossip_event_get_type (GossipEvent *event)
 {
         GossipEventPriv *priv;
 

@@ -23,7 +23,7 @@
 
 #include <glib-object.h>
 
-#define GOSSIP_TYPE_EVENT         (gossip_event_get_type ())
+#define GOSSIP_TYPE_EVENT         (gossip_event_get_gtype ())
 #define GOSSIP_EVENT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_EVENT, GossipEvent))
 #define GOSSIP_EVENT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_EVENT, GossipEventClass))
 #define GOSSIP_IS_EVENT(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_EVENT))
@@ -46,25 +46,27 @@ typedef enum {
 	GOSSIP_EVENT_SUBSCRIPTION_REQUEST,
 	GOSSIP_EVENT_SERVER_MESSAGE,
 	GOSSIP_EVENT_FILE_TRANSFER_REQUEST,
+	GOSSIP_EVENT_USER_ONLINE,
+	GOSSIP_EVENT_USER_OFFLINE,
 	GOSSIP_EVENT_ERROR
 } GossipEventType;
 
-GType           gossip_event_get_type          (void) G_GNUC_CONST;
-GossipEvent *   gossip_event_new               (GossipEventType   type);
-gint            gossip_event_get_id            (GossipEvent      *event);
-GossipEventType gossip_event_get_event_type    (GossipEvent      *event);
-const gchar *   gossip_event_get_message       (GossipEvent      *event);
+GType           gossip_event_get_gtype   (void) G_GNUC_CONST;
+GossipEvent *   gossip_event_new         (GossipEventType  type);
+gint            gossip_event_get_id      (GossipEvent     *event);
+GossipEventType gossip_event_get_type    (GossipEvent     *event);
+const gchar *   gossip_event_get_message (GossipEvent     *event);
+
 
 /* Should probably subclass event instead */
-GObject *       gossip_event_get_data          (GossipEvent      *event);
-void            gossip_event_set_data          (GossipEvent      *event,
-						GObject          *data);
-
-gboolean        gossip_event_equal             (gconstpointer     v1,
-						gconstpointer     v2);
-guint           gossip_event_hash              (gconstpointer     key);
-gint            gossip_event_compare           (gconstpointer     a,
-						gconstpointer     b);
+GObject *       gossip_event_get_data    (GossipEvent     *event);
+void            gossip_event_set_data    (GossipEvent     *event,
+					  GObject         *data);
+gboolean        gossip_event_equal       (gconstpointer    v1,
+					  gconstpointer    v2);
+guint           gossip_event_hash        (gconstpointer    key);
+gint            gossip_event_compare     (gconstpointer    a,
+					  gconstpointer    b);
 
 #endif /* __GOSSIP_EVENT_H__ */
 
