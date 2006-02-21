@@ -510,14 +510,14 @@ preferences_set_string_combo_from_gconf (const gchar *key, GtkWidget *widget)
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
 
 	found = FALSE;
-	if (gtk_tree_model_get_iter_first (model, &iter)) {
+	if (value && gtk_tree_model_get_iter_first (model, &iter)) {
 		gchar *name;
-
+		
 		do {
 			gtk_tree_model_get (model, &iter,
 					    COL_COMBO_NAME, &name, 
 					    -1);
-
+			
 			if (strcmp (name, value) == 0) {
 				found = TRUE;
 				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);

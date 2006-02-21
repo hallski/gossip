@@ -1,5 +1,10 @@
 2006-02-21  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-preferences.c:
+	(preferences_set_string_combo_from_gconf): Fixed a crasher.
+
+2006-02-21  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-protocol.c:
 	* libgossip/gossip-protocol.h:
 	* protocols/jabber/gossip-jabber.c: Instead of making up the
