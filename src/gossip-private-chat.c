@@ -608,13 +608,15 @@ private_chat_input_key_press_event_cb (GtkWidget         *widget,
 		/* Newline for shift-enter. */
 		return FALSE;
 	}
-	else if (event->keyval == GDK_Page_Up) {
+	else if ((event->state & GDK_CONTROL_MASK) != GDK_CONTROL_MASK &&
+		 event->keyval == GDK_Page_Up) {
 		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
 		gtk_adjustment_set_value (adj, adj->value - adj->page_size);
 		
 		return TRUE;
 	}
-	else if (event->keyval == GDK_Page_Down) {
+	else if ((event->state & GDK_CONTROL_MASK) != GDK_CONTROL_MASK &&
+		 event->keyval == GDK_Page_Down) {
 		adj = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (priv->text_view_sw));
 		val = MIN (adj->value + adj->page_size, adj->upper - adj->page_size);  
 		gtk_adjustment_set_value (adj, val);

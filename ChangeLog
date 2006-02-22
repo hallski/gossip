@@ -1,5 +1,11 @@
 2006-02-22  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-group-chat.c: (group_chat_key_press_event_cb):
+	* src/gossip-private-chat.c:
+	(private_chat_input_key_press_event_cb): Fix bug #165565.
+
+2006-02-22  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-group-chat.c (gossip_group_chat_show)
 	(group_chat_scroll_down_func): Try to fix bug #172013.
 
