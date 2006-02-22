@@ -1,3 +1,8 @@
+2006-02-22  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-group-chat.c (gossip_group_chat_show)
+	(group_chat_scroll_down_func): Try to fix bug #172013.
+
 2006-02-22  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: Added typing notification to the

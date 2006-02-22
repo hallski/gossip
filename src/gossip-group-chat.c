@@ -1279,6 +1279,16 @@ group_chat_set_show_contacts (GossipChat *chat,
 	}
 }
 
+/* Scroll down after the back-log has been received. */
+static gboolean
+group_chat_scroll_down_func (GossipChat *chat)
+{
+	gossip_chat_scroll_down (chat);
+ 	g_object_unref (chat);
+
+	return FALSE;
+}
+
 GossipGroupChat *
 gossip_group_chat_show (GossipChatroomProvider *provider,
 			GossipChatroomId        id)
@@ -1343,6 +1353,9 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 	
 	gossip_chat_present (GOSSIP_CHAT (chat));
 
+ 	g_object_ref (chat);
+	g_idle_add ((GSourceFunc) group_chat_scroll_down_func, chat);
+	
 	return chat;
 }
 
