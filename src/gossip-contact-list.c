@@ -46,7 +46,7 @@
 #include "gossip-notify.h"
 #endif
 
-#define d(x)
+#define d(x) x
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
@@ -143,6 +143,10 @@ static void     contact_list_contact_presence_updated_cb (GossipSession     *ses
 							  GossipContactList *list);
 static void     contact_list_contact_removed_cb          (GossipSession     *session,
 							  GossipContact     *contact,
+							  GossipContactList *list);
+static void     contact_list_contact_composing_cb        (GossipSession     *session,
+							  GossipContact     *contact,
+							  gboolean           composing,
 							  GossipContactList *list);
 static void     contact_list_contact_set_active          (GossipContactList *list,
 							  GossipContact     *contact,
@@ -283,6 +287,7 @@ enum {
 	COL_IS_GROUP,
 	COL_IS_ACTIVE,
 	COL_IS_ONLINE,
+	COL_IS_COMPOSING,
 	COL_COUNT
 };
 
@@ -526,6 +531,10 @@ gossip_contact_list_init (GossipContactList *list)
 			  "contact-removed",
 			  G_CALLBACK (contact_list_contact_removed_cb),
 			  list);
+	g_signal_connect (gossip_app_get_session (),
+			  "composing-event",
+			  G_CALLBACK (contact_list_contact_composing_cb),
+			  list);
 
 	/* connect to event manager signals */
 	g_signal_connect (gossip_app_get_event_manager (),
@@ -705,6 +714,11 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	GossipAccount         *account;
 	gdouble                seconds;
 
+	gboolean               is_composing;
+	const GdkPixbuf       *pixbuf;
+ 	GdkPixbuf             *pixbuf_composing;
+	GdkPixbuf             *pixbuf_presence;
+
 	priv = list->priv;
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
@@ -814,19 +828,31 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		set_model = TRUE;
 	}
 
+
+	pixbuf_presence = gossip_pixbuf_for_contact (contact);
+	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING, 
+						     GTK_ICON_SIZE_MENU);
+
+	pixbuf = pixbuf_presence;
+
 	for (l = iters; l && set_model; l = l->next) {
-		GdkPixbuf *pixbuf;
-		
-		pixbuf = gossip_pixbuf_for_contact (contact);
-		
+		gtk_tree_model_get (model, l->data,
+				    COL_IS_COMPOSING, &is_composing,
+				    -1);
+
+		if (is_composing) {
+			pixbuf = pixbuf_composing;
+		}
+	
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
 				    COL_PIXBUF, pixbuf,
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_IS_ONLINE, now_online,
 				    -1);
-		
-		g_object_unref (pixbuf);
 	}
+
+	g_object_unref (pixbuf_presence); 
+	g_object_unref (pixbuf_composing); 
 
 	if (priv->show_active && do_set_active) {
 		contact_list_contact_set_active (list, contact, do_set_active, do_set_refresh);  
@@ -857,6 +883,64 @@ contact_list_contact_removed_cb (GossipSession     *session,
 		   gossip_contact_get_name (contact)));
 
 	contact_list_remove_contact (list, contact);
+}
+
+static void
+contact_list_contact_composing_cb (GossipSession     *session,
+				   GossipContact     *contact,
+				   gboolean           composing,
+				   GossipContactList *list)
+{
+	GossipContactListPriv *priv;
+	GtkTreeModel          *model;
+	GList                 *iters, *l;
+	GdkPixbuf             *pixbuf = NULL;
+
+	d(g_print ("ContactList: Contact %s typing:'%s'\n",
+		   composing ? "is" : "is not",
+		   gossip_contact_get_name (contact)));
+
+	priv = list->priv;
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+
+	if (! g_hash_table_lookup (priv->flash_table, contact)) {
+		if (composing) {
+			pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING, 
+							   GTK_ICON_SIZE_MENU);
+		} else {
+			pixbuf = gossip_pixbuf_for_contact (contact);
+		}
+	}
+	
+	iters = contact_list_find_contact (list, contact);
+	for (l = iters; l; l = l->next) {
+ 		GtkTreePath *path; 
+ 		GtkTreeIter *iter; 
+		
+		iter = l->data;
+
+		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
+				    COL_IS_COMPOSING, composing,
+				    -1);
+
+		if (pixbuf) {
+			gtk_tree_store_set (GTK_TREE_STORE (model), iter,
+					    COL_PIXBUF, pixbuf,
+					    -1);
+		}
+
+		path = gtk_tree_model_get_path (model, iter); 
+		gtk_tree_model_row_changed (model, path, iter);  
+		gtk_tree_path_free (path); 
+	}
+
+	if (pixbuf) {
+		g_object_unref (pixbuf);
+	}
+	
+	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
+	g_list_free (iters);
 }
 
 static void
@@ -1027,6 +1111,7 @@ contact_list_get_group (GossipContactList *list,
 				    COL_NAME, name,
 				    COL_IS_GROUP, TRUE,
 				    COL_IS_ACTIVE, FALSE,
+				    COL_IS_COMPOSING, FALSE,
 				    -1);	
 	} else {
 		if (created) {
@@ -1097,6 +1182,7 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_GROUP, FALSE,
 				    COL_IS_ACTIVE, FALSE,
 				    COL_IS_ONLINE, gossip_contact_is_online (contact),
+				    COL_IS_COMPOSING, FALSE,
 				    -1);
 
 		g_object_unref (pixbuf);
@@ -1127,6 +1213,7 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_GROUP, FALSE,
 				    COL_IS_ACTIVE, FALSE,
 				    COL_IS_ONLINE, gossip_contact_is_online (contact),
+				    COL_IS_COMPOSING, FALSE,
 				    -1);
 
 		g_object_unref (pixbuf);
@@ -1208,6 +1295,7 @@ contact_list_create_model (GossipContactList *list)
 						    G_TYPE_STRING,
 						    G_TYPE_STRING,
 						    GOSSIP_TYPE_CONTACT,
+						    G_TYPE_BOOLEAN,
 						    G_TYPE_BOOLEAN,
 						    G_TYPE_BOOLEAN,
 						    G_TYPE_BOOLEAN));
@@ -2256,7 +2344,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	FlashData             *data;
 	gboolean               ret_val;
 	GossipContact         *contact;
-	GdkPixbuf             *pixbuf;
+	GdkPixbuf             *pixbuf = NULL;
 	GtkTreeModel          *model;
 	GList                 *l, *iters;
 	
@@ -2354,10 +2442,13 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 	FlashData             *data;
 	GossipMessage         *message;
 	GossipContact         *contact;
-	GdkPixbuf             *pixbuf;
+	const GdkPixbuf       *pixbuf;
+ 	GdkPixbuf             *pixbuf_composing;
+	GdkPixbuf             *pixbuf_presence;
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
-	
+	gboolean               is_composing;
+
 	if (gossip_event_get_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
 		return;
 	}
@@ -2380,17 +2471,31 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		return;
 	}
 	
-	pixbuf = gossip_pixbuf_for_contact (contact);
+	pixbuf_presence = gossip_pixbuf_for_contact (contact);
+	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
+						     GTK_ICON_SIZE_MENU);
+
+	pixbuf = pixbuf_presence;
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	for (l = iters; l; l = l->next) {
+		gtk_tree_model_get (model, l->data,
+				    COL_IS_COMPOSING, &is_composing,
+				    -1);
+
+		if (is_composing) {
+			pixbuf = pixbuf_composing;
+		}
+
 		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    l->data, 
 				    COL_PIXBUF, pixbuf,
 				    -1);
 	}
 
-	g_object_unref (pixbuf); 
+	g_object_unref (pixbuf_presence); 
+	g_object_unref (pixbuf_composing); 
  	
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free (iters);

@@ -1,5 +1,8 @@
 News in 0.11:
 =============
+ * Added typing notification on the roster (Martyn, Richard).
+ * Added a chat theme selection in the preferences to choose between
+ Classic and Blue (which is a block message format), try it! (Richard).
  * Fixed #332020 - Corrected some UI typos (Clytie Siddall)
  * Fixed #331707 - Depend on GTK+ 2.8 (Brian Pepple).
  * Fixed #331868 - Corrected some UI typos (Clytie Siddall).
