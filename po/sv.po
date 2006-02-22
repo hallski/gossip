@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-19 12:09+0000\n"
+"POT-Creation-Date: 2006-02-22 22:02+0100\n"
 "PO-Revision-Date: 2004-12-22 21:21+0100\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -155,14 +155,13 @@ msgstr "X-positionen av huvudfönstret"
 msgid "Y position of main window"
 msgstr "Y-positionen av huvudfönstret"
 
-#: ../libgossip/gossip-contact.c:768 ../src/gossip-app.c:2005
+#: ../libgossip/gossip-contact.c:768 ../src/gossip-app.c:1982
 #: ../src/gossip-contact-info-dialog.c:171 ../src/gossip-galago.c:164
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #: ../libgossip/gossip-protocol.c:672
-#, fuzzy
-msgid "An unknown error ocurred."
+msgid "An unknown error occurred."
 msgstr "Ett okänt fel inträffade."
 
 #: ../libgossip/gossip-protocol.c:676
@@ -186,16 +185,19 @@ msgid "The username you are trying already exists."
 msgstr ""
 
 #: ../libgossip/gossip-protocol.c:691
-#, fuzzy
-msgid "This feature is unavailable."
-msgstr "Inga konton tillgängliga."
+msgid "The username you are trying is not valid."
+msgstr ""
 
 #: ../libgossip/gossip-protocol.c:694
+msgid "This feature is unavailable."
+msgstr "Denna funktion är inte tillgänglig."
+
+#: ../libgossip/gossip-protocol.c:697
 msgid "This feature is unauthorized."
 msgstr ""
 
-#: ../libgossip/gossip-protocol.c:697
-msgid "A specific protocol error occured that was unexpected."
+#: ../libgossip/gossip-protocol.c:700
+msgid "A specific protocol error occurred that was unexpected."
 msgstr ""
 
 #: ../libgossip/gossip-chatroom.c:733
@@ -203,17 +205,16 @@ msgid "Normal"
 msgstr ""
 
 #: ../libgossip/gossip-chatroom.c:743
-#, fuzzy
 msgid "Connecting..."
-msgstr "Ansluter"
+msgstr "Ansluter..."
 
 #: ../libgossip/gossip-chatroom.c:744
 msgid "Open"
-msgstr ""
+msgstr "Öppet"
 
 #: ../libgossip/gossip-chatroom.c:745
 msgid "Closed"
-msgstr ""
+msgstr "Stängt"
 
 #: ../libgossip/gossip-chatroom.c:746
 msgid "Unknown"
@@ -221,11 +222,11 @@ msgstr "Okänt"
 
 #: ../libgossip/gossip-chatroom.c:747
 msgid "Error"
-msgstr ""
+msgstr "Fel"
 
 #: ../libgossip/gossip-chatroom-provider.c:319
 msgid "The nickname you have chosen is already in use."
-msgstr ""
+msgstr "Smeknamnet du har valt är upptaget."
 
 #: ../libgossip/gossip-chatroom-provider.c:323
 msgid "The chat room you tried to join requires a password."
@@ -240,32 +241,14 @@ msgid "The conference server you tried to join could not be found."
 msgstr ""
 
 #: ../libgossip/gossip-chatroom-provider.c:335
-#, fuzzy
-msgid "An unknown error occured, check your details are correct."
-msgstr "Kontrollera att dina detaljer är korrekta."
+msgid "An unknown error occurred, check your details are correct."
+msgstr "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
 
-#: ../protocols/jabber/gossip-jabber.c:547
-#: ../protocols/jabber/gossip-jabber.c:693
-msgid "Could not open connection"
-msgstr "Kunde inte öppna anslutning"
-
-#: ../protocols/jabber/gossip-jabber.c:574
-msgid "Could not find the server you wanted to use"
-msgstr "Kunde inte hitta servern du ville använda"
-
-#: ../protocols/jabber/gossip-jabber.c:591
-msgid "Connection to the server failed."
-msgstr "Anslutningen till servern misslyckades."
-
-#: ../protocols/jabber/gossip-jabber.c:743
-msgid "Authentication failed"
-msgstr "Autentisering misslyckades"
-
-#: ../protocols/jabber/gossip-jabber.c:999
+#: ../protocols/jabber/gossip-jabber.c:995
 msgid "Connection could not be opened"
 msgstr "Anslutning kunde inte öppnas"
 
-#: ../protocols/jabber/gossip-jabber.c:1043
+#: ../protocols/jabber/gossip-jabber.c:1039
 msgid "Couldn't send message!"
 msgstr "Kunde inte sända meddelande!"
 
@@ -308,7 +291,7 @@ msgstr "Koppla ifrån"
 msgid "Edit"
 msgstr "Redigera"
 
-#: ../src/gossip-account-button.c:392 ../src/gossip-group-chat.c:692
+#: ../src/gossip-account-button.c:392 ../src/gossip-group-chat.c:694
 #: ../src/gossip-private-chat.c:508
 msgid "Connected"
 msgstr "Anslöts"
@@ -317,7 +300,7 @@ msgstr "Anslöts"
 msgid "Connecting"
 msgstr "Ansluter"
 
-#: ../src/gossip-account-button.c:394 ../src/gossip-group-chat.c:703
+#: ../src/gossip-account-button.c:394 ../src/gossip-group-chat.c:705
 #: ../src/gossip-private-chat.c:523
 msgid "Disconnected"
 msgstr "Kopplades ifrån"
@@ -350,7 +333,7 @@ msgstr "Kontonamn"
 msgid "Account ID"
 msgstr "Kontoid"
 
-#: ../src/gossip-account-button.c:441 ../ui/main.glade.h:83
+#: ../src/gossip-account-button.c:441 ../ui/main.glade.h:84
 msgid "Status"
 msgstr "Status"
 
@@ -396,35 +379,35 @@ msgstr "%s id för ny kontakt:"
 msgid "Example: %s"
 msgstr "Exempel: %s"
 
-#: ../src/gossip-app.c:549 ../ui/main.glade.h:114
+#: ../src/gossip-app.c:531 ../ui/main.glade.h:115
 msgid "_Connect"
 msgstr "An_slut"
 
-#: ../src/gossip-app.c:554 ../ui/main.glade.h:117
+#: ../src/gossip-app.c:536 ../ui/main.glade.h:118
 msgid "_Disconnect"
 msgstr "_Koppla ifrån"
 
-#: ../src/gossip-app.c:698
+#: ../src/gossip-app.c:684
 msgid "To summarize:"
 msgstr "Sammanfattning:"
 
-#: ../src/gossip-app.c:767
-msgid "If you quit, you will loose all unread information."
+#: ../src/gossip-app.c:754
+msgid "If you quit, you will lose all unread information."
 msgstr "Om du avslutar kommer all oläst information förloras."
 
-#: ../src/gossip-app.c:984
+#: ../src/gossip-app.c:971
 msgid "Could not display the help contents."
 msgstr "Kunde inte visa hjälpinnehållet."
 
-#: ../src/gossip-app.c:1231
+#: ../src/gossip-app.c:1226
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, snabbmeddelandeklient"
 
-#: ../src/gossip-app.c:1484
+#: ../src/gossip-app.c:1461
 msgid "You have no Instant Messaging accounts configured!"
 msgstr ""
 
-#: ../src/gossip-app.c:1486
+#: ../src/gossip-app.c:1463
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -447,7 +430,7 @@ msgstr ""
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
-#: ../src/gossip-chat-manager.c:147
+#: ../src/gossip-chat-manager.c:147 ../src/gossip-notify.c:273
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
@@ -483,11 +466,10 @@ msgstr "Skriver ett meddelande."
 
 #: ../src/gossip-chatrooms-window.c:721
 #: ../src/gossip-new-chatroom-dialog.c:164 ../ui/group-chat.glade.h:9
-#, fuzzy
 msgid "Join"
-msgstr "_Gå in"
+msgstr "Gå in"
 
-#: ../src/gossip-contact-info-dialog.c:299 ../ui/main.glade.h:69
+#: ../src/gossip-contact-info-dialog.c:299 ../ui/main.glade.h:70
 msgid "Name:"
 msgstr "Namn:"
 
@@ -506,40 +488,40 @@ msgstr "Kontaktinformation för %s"
 msgid "Requested Information"
 msgstr "Information efterfrågad"
 
-#: ../src/gossip-contact-list.c:314
+#: ../src/gossip-contact-list.c:325
 msgid "/Contact _Information"
 msgstr "/Kontakt_information"
 
-#: ../src/gossip-contact-list.c:326
+#: ../src/gossip-contact-list.c:337
 msgid "/Re_name Contact"
 msgstr "/Byt _namn på kontakt"
 
 # Vi brukar förvisso låta R:et vara åtkomsttangent i "Redigera"
-#: ../src/gossip-contact-list.c:332
+#: ../src/gossip-contact-list.c:343
 msgid "/_Edit Groups"
 msgstr "/R_edigera grupper"
 
-#: ../src/gossip-contact-list.c:338
+#: ../src/gossip-contact-list.c:349
 msgid "/_Remove Contact"
 msgstr "/_Ta bort kontakt"
 
-#: ../src/gossip-contact-list.c:350
+#: ../src/gossip-contact-list.c:361
 msgid "/_Invite to Chat Conference"
 msgstr "/_Bjud in till chattkonferens"
 
-#: ../src/gossip-contact-list.c:362
+#: ../src/gossip-contact-list.c:373
 msgid "/_Send File..."
 msgstr ""
 
-#: ../src/gossip-contact-list.c:374
+#: ../src/gossip-contact-list.c:385
 msgid "/Show _Log"
 msgstr "/Visa _logg"
 
-#: ../src/gossip-contact-list.c:384
+#: ../src/gossip-contact-list.c:395
 msgid "/Re_name group"
 msgstr "/Byt _namn på grupp"
 
-#: ../src/gossip-contact-list.c:1992
+#: ../src/gossip-contact-list.c:2090
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -548,15 +530,12 @@ msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
 "%s"
 
-#: ../src/gossip-contact-list.c:2112
-#, fuzzy
+#: ../src/gossip-contact-list.c:2210
 msgid "Do you want to remove this contact from your roster?"
 msgstr ""
-"Vill du ta bort kontakten\n"
-"%s\n"
-"från din kontaktlista?"
+"Vill du ta bort denna kontakt från din kontaktlista?"
 
-#: ../src/gossip-contact-list.c:2168
+#: ../src/gossip-contact-list.c:2266
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -570,7 +549,7 @@ msgstr ""
 msgid "Edit groups for %s"
 msgstr "Redigera grupper för %s"
 
-#: ../src/gossip-edit-groups-dialog.c:232 ../src/gossip-preferences.c:191
+#: ../src/gossip-edit-groups-dialog.c:232 ../src/gossip-preferences.c:216
 msgid "Select"
 msgstr "Markera"
 
@@ -603,18 +582,17 @@ msgstr ""
 
 #: ../src/gossip-ft-window.c:187
 #, fuzzy
-msgid "Unknown error occured during file transfer."
+msgid "Unknown error occurred during file transfer."
 msgstr "Ett okänt fel inträffade."
 
 #: ../src/gossip-ft-window.c:271
-#, fuzzy, c-format
+#, c-format
 msgid "%s would like to send you a file."
-msgstr "Jag vill lägga till dig i min kontaktlista."
+msgstr "%s vill skicka en fil till dig."
 
 #: ../src/gossip-ft-window.c:274
-#, fuzzy
 msgid "Someone would like to send you a file."
-msgstr "Jag vill lägga till dig i min kontaktlista."
+msgstr "Någon vill skicka en fil till dig."
 
 #: ../src/gossip-ft-window.c:406
 #, fuzzy
@@ -622,7 +600,7 @@ msgid "Select a file"
 msgstr "Markera"
 
 #. send event to chat window
-#: ../src/gossip-group-chat.c:478
+#: ../src/gossip-group-chat.c:480
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Inbjöd %s till att gå med i chattkonferens."
@@ -676,13 +654,39 @@ msgid "Registering account"
 msgstr "Registrerar konto"
 
 #: ../src/gossip-new-account-window.c:394
-#, fuzzy
 msgid "Example"
-msgstr "Exempel: %s"
+msgstr "Exempel"
 
-#: ../src/gossip-preferences.c:201
+#: ../src/gossip-notify.c:147 ../src/gossip-private-chat.c:443
+#, c-format
+msgid "%s has come online"
+msgstr "%s anslöt sig"
+
+#: ../src/gossip-notify.c:190
+#, c-format
+msgid "%s has gone offline"
+msgstr "%s kopplade från"
+
+#: ../src/gossip-notify.c:299
+#, fuzzy
+msgid "Respond"
+msgstr "Orsak"
+
+#: ../src/gossip-notify.c:300
+msgid "Contact Information"
+msgstr "Kontaktinformation"
+
+#: ../src/gossip-preferences.c:226
 msgid "Language"
 msgstr "Språk"
+
+#: ../src/gossip-preferences.c:454
+msgid "Classic"
+msgstr "Klassiskt"
+
+#: ../src/gossip-preferences.c:460
+msgid "Blue"
+msgstr "Blått"
 
 #: ../src/gossip-presence-chooser.c:483
 msgid "Available..."
@@ -704,11 +708,6 @@ msgstr "Töm listan"
 #, c-format
 msgid "%s went offline"
 msgstr "%s kopplade från"
-
-#: ../src/gossip-private-chat.c:443
-#, c-format
-msgid "%s comes online"
-msgstr "%s anslöt sig"
 
 #: ../src/gossip-spell.c:69
 msgid "Afrikaans"
@@ -1057,7 +1056,7 @@ msgid "Vietnamese"
 msgstr ""
 
 #: ../src/gossip-spell.c:156
-msgid "Wallon"
+msgid "Walloon"
 msgstr ""
 
 #: ../src/gossip-spell.c:157
@@ -1155,7 +1154,7 @@ msgstr "Flytta flik till _höger"
 msgid "View Lo_g"
 msgstr "_Visa logg"
 
-#: ../ui/chat.glade.h:7 ../ui/main.glade.h:112
+#: ../ui/chat.glade.h:7 ../ui/main.glade.h:113
 msgid "_Add Contact..."
 msgstr "_Lägg till kontakt..."
 
@@ -1215,11 +1214,11 @@ msgstr "Inloggningsid:"
 msgid "Por_t:"
 msgstr "_Port:"
 
-#: ../ui/connect.glade.h:8 ../ui/main.glade.h:89
+#: ../ui/connect.glade.h:8 ../ui/main.glade.h:90
 msgid "Use _encryption (SSL)"
 msgstr "Använd _kryptering (SSL)"
 
-#: ../ui/connect.glade.h:9 ../ui/main.glade.h:90
+#: ../ui/connect.glade.h:9 ../ui/main.glade.h:91
 msgid "Use system pro_xy"
 msgstr "Använd systemets pro_xyinställningar"
 
@@ -1270,15 +1269,15 @@ msgid "This person wishes to send you this file:"
 msgstr ""
 
 # "Web site" är "webbplats". "Web page" är "webbsida".
-#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:94
+#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:95
 msgid "Web site:"
 msgstr "Webbplats:"
 
-#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:110
+#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:111
 msgid "_Accept"
 msgstr "_Acceptera"
 
-#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:116
+#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:117
 msgid "_Deny"
 msgstr "_Neka"
 
@@ -1289,8 +1288,7 @@ msgstr "Konto:"
 #: ../ui/group-chat.glade.h:2
 #, fuzzy
 msgid ""
-"Customize your own nickname, server and chat room that you wish to join in "
-"to."
+"Customize your own nickname, the server and chatroom which you wish to join."
 msgstr ""
 "Välj en favorit eller ange smeknamn, servernamn och namnet på chattrummet du "
 "vill gå in i."
@@ -1300,46 +1298,40 @@ msgid "Edit your chat room details:"
 msgstr ""
 
 #: ../ui/group-chat.glade.h:4
-#, fuzzy
 msgid "Gossip - Chat Rooms"
-msgstr "Gossip - Chatt"
+msgstr "Gossip - Chattrum"
 
 #: ../ui/group-chat.glade.h:5
-#, fuzzy
 msgid "Gossip - Edit Chat Room"
-msgstr "Gossip - Chatt"
+msgstr "Gossip - Redigera chattrum"
 
 #: ../ui/group-chat.glade.h:6
 msgid "Gossip - Group Chat"
 msgstr "Gossip - gruppchatt"
 
 #: ../ui/group-chat.glade.h:7
-#, fuzzy
 msgid "Gossip - New Chatroom"
-msgstr "Gossip - Chatt"
+msgstr "Gossip - Nytt chattrum"
 
 #: ../ui/group-chat.glade.h:8
 msgid "Idle"
 msgstr ""
 
 #: ../ui/group-chat.glade.h:10
-#, fuzzy
 msgid "Join room on start_up"
-msgstr "Anslut inte vid uppstart"
+msgstr "Gå in i rummet vid uppstart"
 
 #: ../ui/group-chat.glade.h:11
-#, fuzzy
 msgid "Join the chat room"
-msgstr "Tillgängliga chattrum"
+msgstr "Gå in i chattrummet"
 
 #: ../ui/group-chat.glade.h:12
 msgid "Join this chat room when Gossip starts and you are connected."
 msgstr ""
 
 #: ../ui/group-chat.glade.h:13
-#, fuzzy
 msgid "N_ame:"
-msgstr "Namn:"
+msgstr "N_amn:"
 
 #: ../ui/group-chat.glade.h:14
 msgid ""
@@ -1356,9 +1348,8 @@ msgid "S_erver:"
 msgstr "S_erver:"
 
 #: ../ui/group-chat.glade.h:17
-#, fuzzy
 msgid "Save _this chat room"
-msgstr "Tillgängliga chattrum"
+msgstr "Spara detta chattrum"
 
 #: ../ui/group-chat.glade.h:18
 msgid "_Nickname:"
@@ -1405,32 +1396,28 @@ msgid "<b>Options</b>"
 msgstr "<b>Alternativ</b>"
 
 #: ../ui/main.glade.h:9
-#, fuzzy
 msgid "<b>Personal Details</b>"
-msgstr "<b>Detaljer</b>"
+msgstr "<b>Personliga detaljer</b>"
 
 #: ../ui/main.glade.h:10
 msgid "<b>Sound</b>"
 msgstr "<b>Ljud</b>"
 
 #: ../ui/main.glade.h:11
-#, fuzzy
 msgid "<b>Status</b>"
-msgstr "<b>Detaljer</b>"
+msgstr "<b>Status</b>"
 
 #: ../ui/main.glade.h:12
-#, fuzzy
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
-msgstr "<span size=\"smaller\">Exempel: användare@jabber.org</span>"
+msgstr "<span size=\"smaller\">Exempel: Mikael eller användare@server.org</span>"
 
 #: ../ui/main.glade.h:13
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Exempel: användare@jabber.org</span>"
 
 #: ../ui/main.glade.h:14
-#, fuzzy
 msgid "<span size=\"smaller\">Example:</span>"
-msgstr "<span size=\"smaller\">Exempel: msn.server.com</span>"
+msgstr "<span size=\"smaller\">Exempel:</span>"
 
 #: ../ui/main.glade.h:17
 msgid "Add a contact"
@@ -1441,156 +1428,157 @@ msgid "Add to status message list"
 msgstr "Lägg till i statusmeddelandelistan"
 
 #: ../ui/main.glade.h:20
-#, fuzzy
 msgid "Ch_at"
-msgstr "Chatta"
+msgstr "Ch_atta"
 
 #: ../ui/main.glade.h:21
+msgid "Chat theme: "
+msgstr "Chattema:"
+
+#: ../ui/main.glade.h:22
 msgid "Check spelling while I _type"
 msgstr "Kontrollera stavning medan jag skriver"
 
-#: ../ui/main.glade.h:22
+#: ../ui/main.glade.h:23
 msgid "Client:"
 msgstr "Klient:"
 
-#: ../ui/main.glade.h:23
-#, fuzzy
-msgid "Connection Details"
-msgstr "Konfigurationsdetaljer"
-
 #: ../ui/main.glade.h:24
+msgid "Connection Details"
+msgstr "Anslutningsdetaljer"
+
+#: ../ui/main.glade.h:25
 msgid "Contact information"
 msgstr "Kontaktinformation"
 
-#: ../ui/main.glade.h:25
+#: ../ui/main.glade.h:26
 msgid "Convert _smileys to graphical images"
 msgstr "Konvertera _smilisar till grafiska bilder"
 
-#: ../ui/main.glade.h:26
+#: ../ui/main.glade.h:27
 msgid "Country:"
 msgstr "Land:"
 
-#: ../ui/main.glade.h:27
+#: ../ui/main.glade.h:28
 msgid "Decide _Later"
 msgstr "Bestäm _senare"
 
-#: ../ui/main.glade.h:28
+#: ../ui/main.glade.h:29
 msgid "Description:"
 msgstr "Beskrivning:"
 
-#: ../ui/main.glade.h:29
+#: ../ui/main.glade.h:30
 msgid "Disable sounds when _away"
 msgstr "Inaktivera ljud under frånvaro"
 
-#: ../ui/main.glade.h:30
+#: ../ui/main.glade.h:31
 msgid "Disable sounds when _busy"
 msgstr "Inaktivera ljud under upptagetläge"
 
-#: ../ui/main.glade.h:31
+#: ../ui/main.glade.h:32
 msgid "Do you already have an account set up on a server?"
 msgstr "Har du redan ett konto på en server?"
 
-#: ../ui/main.glade.h:32
+#: ../ui/main.glade.h:33
 msgid "Email:"
 msgstr "E-post:"
 
-#: ../ui/main.glade.h:33
+#: ../ui/main.glade.h:34
 #, fuzzy
 msgid "Enter a name for this account."
 msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
 "%s"
 
-#: ../ui/main.glade.h:34
+#: ../ui/main.glade.h:35
 msgid "Enter status message:"
 msgstr "Ange statusmeddelande:"
 
-#: ../ui/main.glade.h:35
+#: ../ui/main.glade.h:36
 #, fuzzy
 msgid "Enter the name or contact ID of the person you want to chat to below:"
 msgstr ""
 "Ange användarid för den person du vill skicka ett chattmeddelande till."
 
-#: ../ui/main.glade.h:36
+#: ../ui/main.glade.h:37
 msgid "Enter the port used in the connection for this account."
 msgstr ""
 
-#: ../ui/main.glade.h:37
+#: ../ui/main.glade.h:38
 msgid "Enter the server used in the connection for this account."
 msgstr ""
 
-#: ../ui/main.glade.h:38
+#: ../ui/main.glade.h:39
 #, fuzzy
 msgid "Enter the user's contact ID:"
 msgstr "Klicka för att få användarens kontaktinformation"
 
-#: ../ui/main.glade.h:39
+#: ../ui/main.glade.h:40
 #, fuzzy
 msgid "Enter your account password:"
 msgstr "Ange ditt lösenord:"
 
-#: ../ui/main.glade.h:40
+#: ../ui/main.glade.h:41
 msgid "Enter your real name here."
 msgstr ""
 
-#: ../ui/main.glade.h:41
+#: ../ui/main.glade.h:42
 msgid "Finished"
 msgstr "Slutfört"
 
-#: ../ui/main.glade.h:42
+#: ../ui/main.glade.h:43
 msgid "For increased security, enable this option."
 msgstr ""
 
-#: ../ui/main.glade.h:43
+#: ../ui/main.glade.h:44
 msgid "General"
 msgstr ""
 
-#: ../ui/main.glade.h:44
+#: ../ui/main.glade.h:45
 msgid "Gossip"
 msgstr "Gossip"
 
-#: ../ui/main.glade.h:45
+#: ../ui/main.glade.h:46
 msgid "Gossip - Add contact"
 msgstr "Gossip - lägg till kontakt"
 
-#: ../ui/main.glade.h:46
+#: ../ui/main.glade.h:47
 msgid "Gossip - Contact Information"
 msgstr "Gossip - kontaktinformation"
 
-#: ../ui/main.glade.h:47
+#: ../ui/main.glade.h:48
 msgid "Gossip - Edit Groups"
 msgstr "Gossip - Redigera grupper"
 
-#: ../ui/main.glade.h:48
+#: ../ui/main.glade.h:49
 msgid "Gossip - New Account"
 msgstr "Gossip - nytt konto"
 
-#: ../ui/main.glade.h:49
-#, fuzzy
-msgid "Gossip - New Message"
-msgstr "Gossip - Mottaget meddelande"
-
 #: ../ui/main.glade.h:50
+msgid "Gossip - New Message"
+msgstr "Gossip - Nytt meddelande"
+
+#: ../ui/main.glade.h:51
 msgid "Gossip - Personal Details"
 msgstr "Gossip - personlig information"
 
-#: ../ui/main.glade.h:51
+#: ../ui/main.glade.h:52
 msgid "Gossip - Preferences"
 msgstr "Gossip - inställningar"
 
-#: ../ui/main.glade.h:52
+#: ../ui/main.glade.h:53
 msgid "Gossip - Spell Checker"
 msgstr "Gossip - stavningskontroll"
 
-#: ../ui/main.glade.h:53
+#: ../ui/main.glade.h:54
 msgid "Gossip - Status Message"
 msgstr "Gossip - statusmeddelande"
 
-#: ../ui/main.glade.h:54
+#: ../ui/main.glade.h:55
 msgid "Gossip - Subscription Request"
 msgstr "Gossip - prenumerationsförfrågan"
 
-#: ../ui/main.glade.h:55
+#: ../ui/main.glade.h:56
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -1606,37 +1594,36 @@ msgstr ""
 "\n"
 "För att börja klickar du bara på \"Framåt\"."
 
-#: ../ui/main.glade.h:60
-#, fuzzy
-msgid "Group:"
-msgstr "Grupp"
-
 #: ../ui/main.glade.h:61
+msgid "Group:"
+msgstr "Grupp:"
+
+#: ../ui/main.glade.h:62
 msgid "Home"
 msgstr "Hemma"
 
-#: ../ui/main.glade.h:62
+#: ../ui/main.glade.h:63
 msgid "ID:"
 msgstr "ID:"
 
-#: ../ui/main.glade.h:63
+#: ../ui/main.glade.h:64
 msgid ""
 "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 
-#: ../ui/main.glade.h:64
+#: ../ui/main.glade.h:65
 msgid ""
 "If you have another machine on your network which 'proxies' the connection "
 "to the internet and you want to use it, enable this option."
 msgstr ""
 
-#: ../ui/main.glade.h:65
+#: ../ui/main.glade.h:66
 msgid ""
 "If you need to set specific connection details, like a different server or "
 "port, you can configure that here:"
 msgstr ""
 
-#: ../ui/main.glade.h:66
+#: ../ui/main.glade.h:67
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
@@ -1646,152 +1633,145 @@ msgstr ""
 "förfrågan att skickas. Användaren kommer alltid att visas som \"Frånkopplad"
 "\" i din kontaktlista till dess att denna förfrågan är godkänd."
 
-#: ../ui/main.glade.h:67
+#: ../ui/main.glade.h:68
 msgid "In which group do you want to place this contact?"
 msgstr "I vilken grupp vill du placera denna kontakt?"
 
-#: ../ui/main.glade.h:68
+#: ../ui/main.glade.h:69
 msgid "Jabber ID:"
 msgstr "Jabber-id:"
 
-#: ../ui/main.glade.h:70
+#: ../ui/main.glade.h:71
 msgid "Nickname:"
 msgstr "Smeknamn:"
 
-#: ../ui/main.glade.h:71
+#: ../ui/main.glade.h:72
 msgid "OS:"
 msgstr "OS:"
 
-#: ../ui/main.glade.h:72
+#: ../ui/main.glade.h:73
 msgid "Personal Details Saved!"
 msgstr "Personlig information sparad"
 
-#: ../ui/main.glade.h:73
-#, fuzzy
-msgid "Port:"
-msgstr "_Port:"
-
 #: ../ui/main.glade.h:74
+msgid "Port:"
+msgstr "Port:"
+
+#: ../ui/main.glade.h:75
 msgid "Press Subscribe to request to receive their status."
 msgstr "Tryck på Prenumerera för att ta emot deras status."
 
-#: ../ui/main.glade.h:75
-#, fuzzy
+#: ../ui/main.glade.h:76
 msgid "Registering Account"
 msgstr "Registrerar konto"
 
-#: ../ui/main.glade.h:76
-#, fuzzy
-msgid "Registration"
-msgstr "Registrering krävd"
-
 #: ../ui/main.glade.h:77
+msgid "Registration"
+msgstr "Registrering"
+
+#: ../ui/main.glade.h:78
 msgid "Requested information."
 msgstr "Information efterfrågad."
 
-#: ../ui/main.glade.h:78
+#: ../ui/main.glade.h:79
 msgid "Requesting contact information, please wait..."
 msgstr "Begär kontaktinformation, var vänlig vänta..."
 
-#: ../ui/main.glade.h:79
+#: ../ui/main.glade.h:80
 msgid "Sending request"
 msgstr "Skickar förfrågan"
 
-#: ../ui/main.glade.h:80
-#, fuzzy
-msgid "Server:"
-msgstr "_Server:"
-
 #: ../ui/main.glade.h:81
+msgid "Server:"
+msgstr "Server:"
+
+#: ../ui/main.glade.h:82
 msgid "Show _Offline Contacts"
 msgstr "Visa _frånkopplade kontakter"
 
-#: ../ui/main.glade.h:82
+#: ../ui/main.glade.h:83
 msgid "Spell Checking"
 msgstr "Stavningskontroll"
 
-#: ../ui/main.glade.h:84
+#: ../ui/main.glade.h:85
 msgid "Suggestions for the word:"
 msgstr ""
 
-#: ../ui/main.glade.h:85
+#: ../ui/main.glade.h:86
 msgid ""
 "The list of languages here reflects only the languages for which you have a "
 "dictionary installed."
 msgstr ""
 
-#: ../ui/main.glade.h:86
+#: ../ui/main.glade.h:87
 msgid ""
 "This acts as a filter to the contact list below.  You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
 msgstr ""
 
-#: ../ui/main.glade.h:87
+#: ../ui/main.glade.h:88
 msgid "This is the name that will be used on your roster for this contact."
 msgstr ""
 
-#: ../ui/main.glade.h:88
+#: ../ui/main.glade.h:89
 msgid "This name will be used to identify you in chat windows."
 msgstr "Detta namn kommer att användas för att identifiera dig i chattfönster."
 
-#: ../ui/main.glade.h:91
+#: ../ui/main.glade.h:92
 msgid "Version:"
 msgstr "Version:"
 
-#: ../ui/main.glade.h:92
+#: ../ui/main.glade.h:93
 msgid "Waiting for server to respond, please wait..."
 msgstr "Väntar på svar från servern, var vänlig vänta..."
 
 # "Web site" är "webbplats". "Web page" är "webbsida".
-#: ../ui/main.glade.h:93
-#, fuzzy
+#: ../ui/main.glade.h:94
 msgid "Web Site:"
 msgstr "Webbplats:"
 
-#: ../ui/main.glade.h:95
+#: ../ui/main.glade.h:96
 msgid "Welcome to Gossip"
 msgstr "Välkommen till Gossip"
 
-#: ../ui/main.glade.h:96
+#: ../ui/main.glade.h:97
 msgid "What instant messaging system does the contact use?"
 msgstr "Vilket meddelandesystem använder kontakten?"
 
-#: ../ui/main.glade.h:97
+#: ../ui/main.glade.h:98
 msgid "What is your name?"
 msgstr "Vad heter du?"
 
-#: ../ui/main.glade.h:98
+#: ../ui/main.glade.h:99
 msgid "What nickname do you want to use for this contact?"
 msgstr "Vilket smeknamn vill du använda för denna kontakt?"
 
-#: ../ui/main.glade.h:99
-#, fuzzy
-msgid "What password do you want to use?"
-msgstr "Vilken server vill du använda?"
-
 #: ../ui/main.glade.h:100
+msgid "What password do you want to use?"
+msgstr "Vilket lösenord vill du använda?"
+
+#: ../ui/main.glade.h:101
 msgid "What username do you use?"
 msgstr "Vad använder du för användarnamn?"
 
-#: ../ui/main.glade.h:101
+#: ../ui/main.glade.h:102
 msgid "What username do you want to use?"
 msgstr "Vilket användarnamn vill du använda?"
 
-#: ../ui/main.glade.h:102
+#: ../ui/main.glade.h:103
 msgid "Which account do you want to add this contact to?"
 msgstr "Till vilket konto vill du lägga till denna kontakt?"
 
-#: ../ui/main.glade.h:103
-#, fuzzy
-msgid "Which account do you want to use?"
-msgstr "Vilket smeknamn vill du använda?"
-
 #: ../ui/main.glade.h:104
+msgid "Which account do you want to use?"
+msgstr "Vilket konto vill du använda?"
+
+#: ../ui/main.glade.h:105
 msgid "You are not subscribed to this contact."
 msgstr "Du prenumererar inte på denna kontakt."
 
-#: ../ui/main.glade.h:105
+#: ../ui/main.glade.h:106
 #, fuzzy
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
@@ -1801,80 +1781,91 @@ msgstr ""
 "Du kan ändra dina kontoinställningar senare, genom att välja menyvalet "
 "Chatta->Anslut..."
 
-#: ../ui/main.glade.h:106
+#: ../ui/main.glade.h:107
 msgid ""
 "You can identify this account with a name, for example, <b>Home</b> or "
 "<b>Work</b>.  Choose a name for this account:"
 msgstr ""
 
-#: ../ui/main.glade.h:107
+#: ../ui/main.glade.h:108
 msgid "Your Account"
 msgstr "Ditt konto"
 
-#: ../ui/main.glade.h:108
+#: ../ui/main.glade.h:109
 msgid "Your Identity"
 msgstr "Din identitet"
 
-#: ../ui/main.glade.h:109
+#: ../ui/main.glade.h:110
 msgid "Your new account has now been set up."
 msgstr "Ditt nya konto är nu inställt."
 
-#: ../ui/main.glade.h:111
+#: ../ui/main.glade.h:112
 msgid "_Accounts"
 msgstr "_Konton"
 
-#: ../ui/main.glade.h:113
+#: ../ui/main.glade.h:114
 msgid "_Chat"
 msgstr "_Chatta"
 
-#: ../ui/main.glade.h:115
-#, fuzzy
+#: ../ui/main.glade.h:116
 msgid "_Contents"
-msgstr "An_slut"
+msgstr "_Innehåll"
 
-#: ../ui/main.glade.h:118
+#: ../ui/main.glade.h:119
 msgid "_Join Group Chat..."
 msgstr "_Gå in i gruppchatt..."
 
-#: ../ui/main.glade.h:119
+#: ../ui/main.glade.h:120
 msgid "_New Message..."
 msgstr "_Nytt meddelande..."
 
-#: ../ui/main.glade.h:120
+#: ../ui/main.glade.h:121
 msgid "_No"
 msgstr "_Nej"
 
-#: ../ui/main.glade.h:121
+#: ../ui/main.glade.h:122
 msgid "_Open new chats in separate windows"
 msgstr "_Öppna nya chatter i separata fönster"
 
-#: ../ui/main.glade.h:122
+#: ../ui/main.glade.h:123
 msgid "_Personal Information"
 msgstr "_Personlig information"
 
-#: ../ui/main.glade.h:123
+#: ../ui/main.glade.h:124
 msgid "_Play sound when messages arrive"
 msgstr "Spela _ljud när meddelanden kommer"
 
-#: ../ui/main.glade.h:124
+#: ../ui/main.glade.h:125
 msgid "_Preferences"
 msgstr "_Inställningar"
 
-#: ../ui/main.glade.h:125
+#: ../ui/main.glade.h:126
 msgid "_Search..."
 msgstr "_Sök..."
 
-#: ../ui/main.glade.h:126
+#: ../ui/main.glade.h:127
 msgid "_Show Contact List"
 msgstr "_Visa kontaktlista"
 
-#: ../ui/main.glade.h:127
+#: ../ui/main.glade.h:128
 msgid "_Subscribe"
 msgstr "_Prenumerera"
 
-#: ../ui/main.glade.h:128
+#: ../ui/main.glade.h:129
 msgid "_Yes"
 msgstr "_Ja"
+
+#~ msgid "Could not open connection"
+#~ msgstr "Kunde inte öppna anslutning"
+
+#~ msgid "Could not find the server you wanted to use"
+#~ msgstr "Kunde inte hitta servern du ville använda"
+
+#~ msgid "Connection to the server failed."
+#~ msgstr "Anslutningen till servern misslyckades."
+
+#~ msgid "Authentication failed"
+#~ msgstr "Autentisering misslyckades"
 
 #~ msgid "Connection could not be created"
 #~ msgstr "Anslutning kunde inte skapas"
@@ -2005,9 +1996,6 @@ msgstr "_Ja"
 
 #~ msgid "_Resource:"
 #~ msgstr "_Resurs:"
-
-#~ msgid "Chat Na_me:"
-#~ msgstr "_Chattnamn:"
 
 #~ msgid "Gossip - Edit Group Chat Favorites"
 #~ msgstr "Gossip - Redigera gruppchattsfavoriter"
@@ -2453,9 +2441,6 @@ msgstr "_Ja"
 
 #~ msgid "Available:"
 #~ msgstr "Tillgänglig:"
-
-#~ msgid "Reason"
-#~ msgstr "Orsak"
 
 #~ msgid "Not here right now"
 #~ msgstr "Inte här just nu"
