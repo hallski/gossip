@@ -174,6 +174,11 @@ static gint num_smileys = G_N_ELEMENTS (smileys);
 static void       gossip_chat_view_class_init          (GossipChatViewClass      *klass);
 static void       gossip_chat_view_init                (GossipChatView           *view);
 static void       chat_view_finalize                   (GObject                  *object);
+static gboolean   chat_view_drag_motion                (GtkWidget                *widget,
+							GdkDragContext           *context,
+							gint                      x,
+							gint                      y,
+							guint                     time);
 static void       chat_view_size_allocate              (GtkWidget                *widget,
 							GtkAllocation            *alloc);
 static void       chat_view_setup_tags                 (GossipChatView           *view);
@@ -247,6 +252,7 @@ gossip_chat_view_class_init (GossipChatViewClass *klass)
 
 	object_class->finalize = chat_view_finalize;
 	widget_class->size_allocate = chat_view_size_allocate;
+	widget_class->drag_motion = chat_view_drag_motion;
 }
 
 static void
@@ -295,6 +301,20 @@ chat_view_finalize (GObject *object)
 	g_free (priv);
 
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
+}
+
+static gboolean
+chat_view_drag_motion (GtkWidget        *widget,
+		       GdkDragContext   *context,
+		       gint              x,
+		       gint              y,
+		       guint             time)
+{
+	/* Don't handle drag motion, since we don't want the view to scroll as
+	 * the result of dragging something across it.
+	 */
+	
+	return TRUE;
 }
 
 static void
