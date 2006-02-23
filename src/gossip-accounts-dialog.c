@@ -80,9 +80,6 @@ static void           accounts_dialog_save                      (GossipAccountsD
 								 GossipAccount         *account);
 static void           accounts_dialog_model_setup               (GossipAccountsDialog  *dialog);
 static void           accounts_dialog_model_add_columns         (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_model_cell_toggled        (GtkCellRendererToggle *cell,
-								 gchar                 *path_string,
-								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_model_pixbuf_data_func    (GtkTreeViewColumn     *tree_column,
 								 GtkCellRenderer       *cell,
 								 GtkTreeModel          *model,
@@ -146,7 +143,6 @@ static void           accounts_dialog_destroy_cb                (GtkWidget      
 enum {
 	COL_NAME,
 	COL_EDITABLE,
-	COL_ENABLED,
 	COL_DEFAULT,
 	COL_CONNECTED, 
 	COL_AUTO_CONNECT,
@@ -203,7 +199,6 @@ accounts_dialog_setup (GossipAccountsDialog *dialog)
 				    COL_EDITABLE, is_editable,
 				    COL_DEFAULT, is_default,
 				    COL_CONNECTED, is_connected,
-				    COL_ENABLED, gossip_account_get_enabled (account),
 				    COL_AUTO_CONNECT, gossip_account_get_auto_connect (account), 
 				    COL_ACCOUNT_POINTER, account,
 				    -1);
@@ -430,7 +425,6 @@ accounts_dialog_model_setup (GossipAccountsDialog *dialog)
 	store = gtk_list_store_new (COL_COUNT,
 				    G_TYPE_STRING,        /* name */
 				    G_TYPE_BOOLEAN,       /* editable */
-				    G_TYPE_BOOLEAN,       /* enabled */
 				    G_TYPE_BOOLEAN,       /* default */
 				    G_TYPE_BOOLEAN,       /* connected */
 				    G_TYPE_BOOLEAN,       /* auto start */
@@ -462,17 +456,6 @@ accounts_dialog_model_add_columns (GossipAccountsDialog *dialog)
 	
 	view = GTK_TREE_VIEW (dialog->treeview);
 	gtk_tree_view_set_headers_visible (view, TRUE);
-
-	/* account enabled */
-	cell = gtk_cell_renderer_toggle_new ();
- 	column = gtk_tree_view_column_new_with_attributes (NULL, cell,  
- 							   "active", COL_ENABLED,  
- 							   NULL); 
-	gtk_tree_view_append_column (view, column);
-
- 	g_signal_connect (cell, "toggled",  
- 			  G_CALLBACK (accounts_dialog_model_cell_toggled),  
- 			  dialog); 
 
 	/* account name/status */
 	column = gtk_tree_view_column_new ();
@@ -520,49 +503,6 @@ accounts_dialog_model_select_first (GossipAccountsDialog *dialog)
 		selection = gtk_tree_view_get_selection (view);
 		gtk_tree_selection_select_iter (selection, &iter);
 	}
-}
-
-static void 
-accounts_dialog_model_cell_toggled (GtkCellRendererToggle *cell, 
-				    gchar                 *path_string, 
-				    GossipAccountsDialog  *dialog)
-{
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	GossipAccount        *account;
-	gboolean              enabled;
-	GtkTreeView          *view;
-	GtkTreeModel         *model;
-	GtkListStore         *store;
-	GtkTreePath          *path;
-	GtkTreeIter           iter;
-
-	view = GTK_TREE_VIEW (dialog->treeview);
-	model = gtk_tree_view_get_model (view);
-	store = GTK_LIST_STORE (model);
-	
-	path = gtk_tree_path_new_from_string (path_string);
-
-	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter, 
-			    COL_ENABLED, &enabled, 
-			    COL_ACCOUNT_POINTER, &account,
-			    -1);
-
-	enabled = !enabled;
-
-	session = gossip_app_get_session ();
- 	manager = gossip_session_get_account_manager (session);
-
-	gossip_account_set_enabled (account, enabled);
-
-	dialog->account_changed = TRUE;
- 	gossip_account_manager_store (manager); 
-
-	gtk_list_store_set (store, &iter, COL_ENABLED, enabled, -1);
-	gtk_tree_path_free (path);
-
-	g_object_unref (account);
 }
 
 static void  
@@ -800,7 +740,6 @@ accounts_dialog_account_added_cb (GossipAccountManager *manager,
 			    COL_EDITABLE, FALSE,
 			    COL_DEFAULT, is_default,
 			    COL_CONNECTED, is_connected,
-			    COL_ENABLED, gossip_account_get_enabled (account),
 			    COL_AUTO_CONNECT, gossip_account_get_auto_connect (account), 
 			    COL_ACCOUNT_POINTER, account,
 			    -1);

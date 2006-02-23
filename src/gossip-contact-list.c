@@ -46,7 +46,7 @@
 #include "gossip-notify.h"
 #endif
 
-#define d(x) 
+#define d(x)
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500

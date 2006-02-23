@@ -57,7 +57,6 @@ typedef struct {
 struct CountAccounts {
 	GossipSession *session;
 	guint          connected;
-	guint          connected_total;
 	guint          disconnected;
 };
 
@@ -785,7 +784,6 @@ gossip_session_get_connected_time (GossipSession *session,
 void 
 gossip_session_count_accounts (GossipSession *session,
 			       guint         *connected,
-			       guint         *connected_total,
 			       guint         *disconnected)
 {
 	GossipSessionPriv    *priv;
@@ -798,7 +796,6 @@ gossip_session_count_accounts (GossipSession *session,
 	ca.session = session;
 
 	ca.connected = 0;
-	ca.connected_total = 0;
 	ca.disconnected = 0;
 
 	g_hash_table_foreach (priv->accounts, 
@@ -807,10 +804,6 @@ gossip_session_count_accounts (GossipSession *session,
 
 	if (connected) {
 		*connected = ca.connected;
-	}
-
-	if (connected_total) {
-		*connected_total = ca.connected_total;
 	}
 
 	if (disconnected) {
@@ -828,15 +821,9 @@ session_count_accounts_foreach_cb (GossipAccount        *account,
 	priv = GET_PRIV (ca->session);
 
 	if (gossip_protocol_is_connected (protocol)) {
-		if (gossip_account_get_enabled (account)) {
-			ca->connected++;
-		}
-
-		ca->connected_total++;
+		ca->connected++;
 	} else {
-		if (gossip_account_get_enabled (account)) {
-			ca->disconnected++;
-		}
+		ca->disconnected++;
 	}
 }
 
@@ -1045,10 +1032,6 @@ session_connect_foreach_cb (GossipAccount   *account,
 
 	priv = GET_PRIV (data->session);
 
-	if (!gossip_account_get_enabled (account)) {
-		return;
-	}
-	
 	if (data->startup && 
 	    !gossip_account_get_auto_connect (account)) {
 		return;
@@ -1112,14 +1095,6 @@ session_disconnect_foreach_cb (GossipAccount  *account,
 	GossipSessionPriv *priv;
 
 	priv = GET_PRIV (session);
-
-	/* don't disconnect accounts which are disabled since
-	   they might have been started manually for other
-	   reasons and we only want to disconnect all accounts
-	   we would normall connect */
-	if (!gossip_account_get_enabled (account)) {
-		return;
-	}
 	
 	session_disconnect (session, account);
 }

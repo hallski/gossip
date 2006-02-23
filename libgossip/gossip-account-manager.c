@@ -53,16 +53,12 @@ struct _GossipAccountManagerPriv {
 enum {
 	ACCOUNT_ADDED,
 	ACCOUNT_REMOVED, 
-	ACCOUNT_ENABLED,
 	NEW_DEFAULT,
 	LAST_SIGNAL
 };
 
 
 static void     account_manager_finalize             (GObject               *object);
-static void     account_manager_account_enabled_cb   (GossipAccount         *account,
-						      GParamSpec            *arg1,
-						      GossipAccountManager  *manager);
 static gboolean account_manager_get_all              (GossipAccountManager  *manager);
 static gboolean account_manager_file_parse           (GossipAccountManager  *manager,
 						      const gchar           *filename);
@@ -94,15 +90,6 @@ gossip_account_manager_class_init (GossipAccountManagerClass *klass)
 			      1, GOSSIP_TYPE_ACCOUNT);
         signals[ACCOUNT_REMOVED] = 
 		g_signal_new ("account-removed",
-			      G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_LAST,
-			      0, 
-			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_ACCOUNT);
-        signals[ACCOUNT_ENABLED] = 
-		g_signal_new ("account-enabled",
 			      G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_LAST,
 			      0, 
@@ -185,14 +172,10 @@ gossip_account_manager_add (GossipAccountManager *manager,
 		type = gossip_account_get_type (account);
 		name = gossip_account_get_name (account);
 
-		d(g_print ("Account Manager: Adding %s %s account with name:'%s'\n", 
-			   gossip_account_get_enabled (account) ? "enabled" : "disabled", 
+		d(g_print ("Account Manager: Adding %s account with name:'%s'\n", 
 			   gossip_account_get_type_as_str (type), 
 			   name));
 		
-		g_signal_connect (account, "notify::enabled", 
-				  G_CALLBACK (account_manager_account_enabled_cb), manager);
-
 		priv->accounts = g_list_append (priv->accounts, g_object_ref (account));
 
 		g_signal_emit (manager, signals[ACCOUNT_ADDED], 0, account);
@@ -217,23 +200,11 @@ gossip_account_manager_remove (GossipAccountManager *manager,
  	d(g_print ("Account Manager: Removing account with name:'%s'\n",  
  		   gossip_account_get_name (account)));
 
-	g_signal_handlers_disconnect_by_func (account, 
-					      account_manager_account_enabled_cb, 
-					      manager);
-
 	priv->accounts = g_list_remove (priv->accounts, account);
 	
 	g_signal_emit (manager, signals[ACCOUNT_REMOVED], 0, account);
 
 	g_object_unref (account);
-}
-
-static void
-account_manager_account_enabled_cb (GossipAccount        *account,
-				    GParamSpec           *arg1,
-				    GossipAccountManager *manager)
-{
-	g_signal_emit (manager, signals[ACCOUNT_ENABLED], 0, account);
 }
 
 GList *
@@ -443,7 +414,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 	gchar             *name, *id, *password;
 	gchar             *server;
 	guint16            port;
-	gboolean           enabled, auto_connect, use_ssl, use_proxy;
+	gboolean           auto_connect, use_ssl, use_proxy;
 
 	/* Default values. */
 	type = GOSSIP_ACCOUNT_TYPE_JABBER;
@@ -452,7 +423,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 	password = NULL;
 	server = NULL;
 	port = 5222;
-	enabled = TRUE;
 	auto_connect = TRUE;
 	use_ssl = FALSE;
 	use_proxy = FALSE;
@@ -491,14 +461,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 			}
 			xmlFree (str);
 		}
-		else if (strcmp (tag, "enabled") == 0) {
-			if (strcmp (str, "yes") == 0) {
-				enabled = TRUE;
-			} else {
-				enabled = FALSE;
-			}
-			xmlFree (str);
-		}
 		else if (strcmp (tag, "auto_connect") == 0) {
 			if (strcmp (str, "yes") == 0) {
 				auto_connect = TRUE;
@@ -533,7 +495,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 					"name", name,
 					"id", id,
 					"port", port,
-					"enabled", enabled,
 					"auto_connect", auto_connect,
 					"use_ssl", use_ssl,
 					"use_proxy", use_proxy,
@@ -696,7 +657,6 @@ account_manager_file_save (GossipAccountManager *manager)
 		xmlNewChild (node, NULL, BAD_CAST "server", BAD_CAST gossip_account_get_server (account));
 		xmlNewChild (node, NULL, BAD_CAST "port", BAD_CAST port);
 
-		xmlNewChild (node, NULL, BAD_CAST "enabled", BAD_CAST (gossip_account_get_enabled (account) ? "yes" : "no"));
 		xmlNewChild (node, NULL, BAD_CAST "auto_connect", BAD_CAST (gossip_account_get_auto_connect (account) ? "yes" : "no"));
 		xmlNewChild (node, NULL, BAD_CAST "use_ssl", BAD_CAST (gossip_account_get_use_ssl (account) ? "yes" : "no"));
 		xmlNewChild (node, NULL, BAD_CAST "use_proxy", BAD_CAST (gossip_account_get_use_proxy (account) ? "yes" : "no"));

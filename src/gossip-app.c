@@ -136,7 +136,6 @@ struct _GossipAppPriv {
 	GtkWidget             *popup_menu_show_list_item;
 	 
 	/* widgets that are enabled when we're connected/disconnected */
-	GList                 *widgets_connected_all;
 	GList                 *widgets_connected;
 	GList                 *widgets_disconnected;
 
@@ -241,9 +240,6 @@ static void            app_accounts_account_added_cb        (GossipAccountManage
 static void            app_accounts_account_removed_cb      (GossipAccountManager     *manager,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
-static void            app_accounts_account_enabled_cb      (GossipAccountManager     *manager,
-							     GossipAccount            *account,
-							     gpointer                  user_data);
 static gint            app_accounts_sort_func               (GossipAccount            *a, 
 							     GossipAccount            *b);
 static void            app_accounts_rearrange               (void);
@@ -336,7 +332,6 @@ app_finalize (GObject *object)
 		g_source_remove (priv->status_flash_timeout_id);
 	}
 
-	g_list_free (priv->widgets_connected_all);
 	g_list_free (priv->widgets_connected);
 	g_list_free (priv->widgets_disconnected);
 
@@ -347,9 +342,6 @@ app_finalize (GObject *object)
 					      NULL);
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_removed_cb, 
-					      NULL);
-	g_signal_handlers_disconnect_by_func (manager,
-					      app_accounts_account_enabled_cb, 
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (priv->session,
@@ -461,10 +453,6 @@ app_setup (GossipAccountManager *manager)
 			  G_CALLBACK (app_accounts_account_removed_cb), 
 			  NULL);
 
-	g_signal_connect (manager, "account_enabled",
-			  G_CALLBACK (app_accounts_account_enabled_cb), 
-			  NULL);
-
 	g_signal_connect (priv->session, "protocol-connected",
 			  G_CALLBACK (app_session_protocol_connected_cb),
 			  NULL);
@@ -552,9 +540,9 @@ app_setup (GossipAccountManager *manager)
 			  NULL);
 	gtk_widget_show (priv->presence_chooser);
 
-	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
-						      priv->presence_chooser);
-
+	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
+						  priv->presence_chooser);
+	
 	/* Set up contact list. */
 	priv->contact_list = gossip_contact_list_new ();
 
@@ -1206,11 +1194,11 @@ app_tray_create_menu (void)
 	g_signal_connect (priv->popup_menu_show_list_item, "toggled", 
 			  G_CALLBACK (app_show_list_cb), app);
 
-	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
-						      priv->popup_menu_status_item);
+	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
+						  priv->popup_menu_status_item);
 	
-	priv->widgets_connected_all = g_list_prepend (priv->widgets_connected_all,
-						      message_item);
+	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
+						  message_item);
 	
 	g_object_unref (glade);
 }
@@ -1563,15 +1551,12 @@ app_connection_items_setup (GladeXML *glade)
 {
 	GossipAppPriv *priv;
 
-	const gchar   *widgets_connected_all[] = {
+	const gchar   *widgets_connected[] = {
+		"actions_disconnect",
 		"actions_join_group_chat",
 		"actions_new_message",
 		"actions_add_contact",
 		"edit_personal_information"
-	};
-
-	const gchar   *widgets_connected[] = {
-		"actions_disconnect"
 	};
 
 	const gchar   *widgets_disconnected[] = {
@@ -1583,13 +1568,6 @@ app_connection_items_setup (GladeXML *glade)
 	gint           i;
 
 	priv = app->priv;
-
-	for (i = 0, list = NULL; i < G_N_ELEMENTS (widgets_connected_all); i++) {
-		w = glade_xml_get_widget (glade, widgets_connected_all[i]);
-		list = g_list_prepend (list, w);
-	}
-
-	priv->widgets_connected_all = list;
 
 	for (i = 0, list = NULL; i < G_N_ELEMENTS (widgets_connected); i++) {
 		w = glade_xml_get_widget (glade, widgets_connected[i]);
@@ -1612,7 +1590,6 @@ app_connection_items_update (void)
 	GossipAppPriv *priv;
 	GList         *l;
 	guint          connected = 0;
-	guint          connected_total = 0;
 	guint          disconnected = 0;
 
 	priv = app->priv;
@@ -1624,12 +1601,7 @@ app_connection_items_update (void)
 	*/
 	gossip_session_count_accounts (priv->session,
 				       &connected, 
-				       &connected_total,
 				       &disconnected);
-
-	for (l = priv->widgets_connected_all; l; l = l->next) {
-		gtk_widget_set_sensitive (l->data, (connected_total > 0));
-	}
 
 	for (l = priv->widgets_connected; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, (connected > 0));
@@ -1672,32 +1644,23 @@ app_accounts_account_removed_cb (GossipAccountManager *manager,
 	app_connection_items_update ();
 }
 
-static void
-app_accounts_account_enabled_cb (GossipAccountManager *manager,
-				 GossipAccount        *account,
-				 gpointer              user_data)
-{
-	app_accounts_rearrange ();	
-	app_connection_items_update ();
-}
-
 static gint
 app_accounts_sort_func (GossipAccount *a, 
 			GossipAccount *b)
 {
-	gboolean     enabled_a;
-	gboolean     enabled_b;
+	gboolean     auto_connect_a;
+	gboolean     auto_connect_b;
 	const gchar *name_a;
 	const gchar *name_b;
 
-	enabled_a = gossip_account_get_enabled (a);
-	enabled_b = gossip_account_get_enabled (b);
+	auto_connect_a = gossip_account_get_auto_connect (a);
+	auto_connect_b = gossip_account_get_auto_connect (b);
 	
-	if (enabled_a && !enabled_b) {
+	if (auto_connect_a && !auto_connect_b) {
 		return -1;
 	}
 
-	if (!enabled_a && enabled_b) {
+	if (!auto_connect_a && auto_connect_b) {
 		return 1;
 	}
 

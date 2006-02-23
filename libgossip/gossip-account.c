@@ -77,7 +77,6 @@ enum {
 	PROP_PASSWORD,
 	PROP_SERVER,
 	PROP_PORT,
-	PROP_ENABLED,
 	PROP_AUTO_CONNECT,
 	PROP_USE_SSL,
 	PROP_USE_PROXY
@@ -192,14 +191,6 @@ account_class_init (GossipAccountClass *class)
 							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
-					 PROP_ENABLED,
-					 g_param_spec_boolean ("enabled",
-							       "Account is Enabled",
-							       "Use Account for connect/disconnect operations",
-							       TRUE,
-							       G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
 					 PROP_AUTO_CONNECT,
 					 g_param_spec_boolean ("auto_connect",
 							       "Account Auto Connect",
@@ -308,9 +299,6 @@ account_get_property (GObject    *object,
 	case PROP_PORT:
 		g_value_set_int (value, priv->port);
 		break;
-	case PROP_ENABLED:
-		g_value_set_boolean (value, priv->enabled);
-		break;
 	case PROP_AUTO_CONNECT:
 		g_value_set_boolean (value, priv->auto_connect);
 		break;
@@ -360,10 +348,6 @@ account_set_property (GObject      *object,
 	case PROP_PORT:
 		gossip_account_set_port (GOSSIP_ACCOUNT (object),
 					 g_value_get_int (value));
-		break;
-	case PROP_ENABLED:
-		gossip_account_set_enabled (GOSSIP_ACCOUNT (object),
-					    g_value_get_boolean (value));
 		break;
 	case PROP_AUTO_CONNECT:
 		gossip_account_set_auto_connect (GOSSIP_ACCOUNT (object),
@@ -461,17 +445,6 @@ gossip_account_get_port (GossipAccount *account)
 
 	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
 	return priv->port;
-}
-
-gboolean
-gossip_account_get_enabled (GossipAccount *account)
-{
-	GossipAccountPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
-
-	priv = GOSSIP_ACCOUNT_GET_PRIV (account);
-	return priv->enabled;
 }
 
 gboolean

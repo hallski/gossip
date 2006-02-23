@@ -34,7 +34,7 @@
 #include "gossip-notify.h"
 #include "gossip-stock.h"
 
-#define d(x) x
+#define d(x)
 
 #define NOTIFY_MESSAGE_TIMEOUT 10
 

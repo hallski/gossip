@@ -656,7 +656,7 @@ account_button_account_notify_cb (GossipAccount       *account,
 				   gossip_account_get_name (account));
 
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
-					gossip_account_get_enabled (account));
+					gossip_account_get_auto_connect (account));
 
 	account_button_update_tooltip (account_button);
 }
@@ -704,7 +704,7 @@ gossip_account_button_get_is_important (GossipAccountButton *account_button)
 		return FALSE;
 	}
 
-	return gossip_account_get_enabled (priv->account);
+	return gossip_account_get_auto_connect (priv->account);
 }
 
 void
@@ -731,7 +731,7 @@ gossip_account_button_set_account (GossipAccountButton *account_button,
 
 	/* Should we show the text for the account? */
 	gtk_tool_item_set_is_important (GTK_TOOL_ITEM (account_button),
-					gossip_account_get_enabled (account));
+					gossip_account_get_auto_connect (account));
 
 	priv->account = g_object_ref (account);
 	g_signal_connect (priv->account, "notify", 
