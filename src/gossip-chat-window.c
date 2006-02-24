@@ -55,6 +55,8 @@ static void       chat_window_accel_cb                 (GtkAccelGroup         *a
 							guint                  key,
 							GdkModifierType        mod,
 							GossipChatWindow      *window);
+static void       chat_window_close_clicked_cb         (GtkWidget             *button,
+							GossipChat            *chat);
 static GtkWidget *chat_window_create_label             (GossipChatWindow      *window,
 							GossipChat            *chat);
 static void       chat_window_update_status            (GossipChatWindow      *window,
@@ -491,6 +493,16 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 	}
 }
 
+static void
+chat_window_close_clicked_cb (GtkWidget  *button,
+			      GossipChat *chat)
+{
+	GossipChatWindow *window;
+
+	window = gossip_chat_get_window (chat);
+	gossip_chat_window_remove_chat (window, chat);
+}
+
 static GtkWidget *
 chat_window_create_label (GossipChatWindow *window,
 			  GossipChat       *chat)
@@ -498,11 +510,15 @@ chat_window_create_label (GossipChatWindow *window,
 	GossipChatWindowPriv *priv;
 	GtkWidget            *hbox;
 	GtkWidget            *name_label;
-	GtkWidget            *status_img;
+	GtkWidget            *status_image;
+	GtkWidget            *close_button;
+	GtkWidget            *close_image;
 	const gchar          *name;
 	GtkWidget            *event_box; 
+	GtkWidget            *event_box_hbox; 
 	PangoAttrList        *attr_list;
 	PangoAttribute       *attr;
+	gint                  w, h;
 
 	priv = window->priv;
 	
@@ -527,21 +543,42 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
 	g_object_set_data (G_OBJECT (chat), "label", name_label); 
 
-	status_img = gtk_image_new ();
+	status_image = gtk_image_new ();
 
-	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_img);
+	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_image);
   	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", event_box);
 
 	chat_window_update_tooltip (window, chat);
 
-	gtk_box_pack_start (GTK_BOX (hbox), status_img, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (hbox), name_label, TRUE, TRUE, 0);
+	event_box_hbox = gtk_hbox_new (FALSE, 0);
 
- 	gtk_container_add (GTK_CONTAINER (event_box), hbox);
+	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (event_box_hbox), name_label, TRUE, TRUE, 0);
 
- 	gtk_widget_show_all (event_box);
+	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
+	close_button = gtk_button_new ();
+	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
+	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 
-	return event_box;
+ 	gtk_widget_set_size_request (close_image, w, h);
+	gtk_container_add (GTK_CONTAINER (close_button), close_image);
+	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
+
+ 	w += 4;
+ 	h += 4; 
+ 	gtk_widget_set_size_request (close_button, w, h);
+
+	gtk_box_pack_start (GTK_BOX (hbox), event_box_hbox, TRUE, TRUE, 0);
+	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+
+	g_signal_connect (close_button,
+			  "clicked",
+			  G_CALLBACK (chat_window_close_clicked_cb),
+			  chat);
+
+	gtk_widget_show_all (hbox);
+
+	return hbox;
 }
 
 static void

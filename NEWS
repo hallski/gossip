@@ -1,5 +1,10 @@
 News in 0.11:
 =============
+ * Fixed #322030 - Added the 'x' button back onto chat tabs to close conversations (Sjoerd Simons)
+ * Fixed #332333 - Fixed weird menu detachment behaviour (Diego González).
+ * Fixed #142188 - Don't scroll the chat window when drag and dropping across them (Richard).
+ * Fixed #165565 - Don't scroll the chat window when on the first or last tab and pressing Ctrl+Pg[Up|Down] (Richard)
+ * Fixed #172013 - Make sure group chat windows scroll to the bottom (Richard)
  * Added typing notification on the roster (Martyn, Richard).
  * Added a chat theme selection in the preferences to choose between
  Classic and Blue (which is a block message format), try it! (Richard).

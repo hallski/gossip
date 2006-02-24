@@ -1,3 +1,8 @@
+2006-02-24  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: Added the 'x' back into Chat tabs due
+	to popular demand. Fixes bug #322030 (Sjoerd Simons).
+
 2006-02-23  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:
