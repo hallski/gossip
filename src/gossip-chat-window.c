@@ -172,8 +172,7 @@ struct _GossipChatWindowPriv {
 };
 
 
-static gpointer  parent_class;
-static GList    *chat_windows = NULL;
+static GList *chat_windows = NULL;
 
 
 static guint tab_accel_keys[] = {
@@ -199,10 +198,9 @@ static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	parent_class = g_type_class_peek_parent (klass);
 
-	object_class->finalize	   = gossip_chat_window_finalize;
-
+	object_class->finalize = gossip_chat_window_finalize;
+	
 	/* Set up a style for the close button with no focus padding. */
 	gtk_rc_parse_string (
 		"style \"gossip-close-button-style\"\n"
@@ -444,7 +442,7 @@ gossip_chat_window_finalize (GObject *object)
 	gtk_widget_destroy (window->priv->dialog);
 	g_free (window->priv);
 
-	G_OBJECT_CLASS (parent_class)->finalize (object);
+	G_OBJECT_CLASS (gossip_chat_window_parent_class)->finalize (object);
 }
 
 static GdkPixbuf *
@@ -563,19 +561,27 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (event_box_hbox), name_label, TRUE, TRUE, 0);
 
-	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
 	close_button = gtk_button_new ();
 	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
-	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-
-	gtk_container_add (GTK_CONTAINER (close_button), close_image);
-
-	/* Add 1 to the width to not make the image cut off. */ 
- 	gtk_widget_set_size_request (close_button, w + 1, h);
 
 	/* Set the name to make the special rc style match. */
 	gtk_widget_set_name (close_button, "gossip-close-button");
 	
+	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	gtk_container_add (GTK_CONTAINER (close_button), close_image);
+
+	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
+
+	/* We don't want focus/keynav for the button to avoid clutter, and
+	 * Ctrl-W works anyway.
+	 */
+	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_FOCUS);
+	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_DEFAULT);
+
+	/* Make sure the button isn't too big. */
+	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
+	gtk_widget_set_size_request (close_button, w + 2, h + 2);
+ 
 	gtk_box_pack_start (GTK_BOX (hbox), event_box_hbox, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 
@@ -1207,6 +1213,8 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 	
 	gossip_chat_window_remove_chat (window, chat);
 	gossip_chat_window_add_chat (new_window, chat);
+
+	gtk_widget_show (new_window->priv->dialog);
 }
 
 static void
@@ -1313,7 +1321,7 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	if (g_list_length (window->priv->chats) == 0) {
 		gint width, height;
 
-		/* first chat, resize the window to its preferred size */
+		/* First chat, resize the window to its preferred size. */
 		gossip_chat_get_geometry (chat, &width, &height);
 		gtk_window_resize (GTK_WINDOW (window->priv->dialog), width, height);
 	}
