@@ -1,3 +1,9 @@
+2006-02-24  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_class_init),
+	(chat_window_create_label): Make the close button as small as
+	possible.
+
 2006-02-24  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: Added the 'x' back into Chat tabs due

@@ -202,6 +202,14 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 	parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize	   = gossip_chat_window_finalize;
+
+	/* Set up a style for the close button with no focus padding. */
+	gtk_rc_parse_string (
+		"style \"gossip-close-button-style\"\n"
+		"{\n"
+		"  GtkWidget::focus-padding = 0\n"
+		"}\n"
+		"widget \"*.gossip-close-button\" style \"gossip-close-button-style\"");
 }
 
 static void
@@ -560,14 +568,14 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
 	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
 
- 	gtk_widget_set_size_request (close_image, w, h);
 	gtk_container_add (GTK_CONTAINER (close_button), close_image);
-	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
 
- 	w += 4;
- 	h += 4; 
- 	gtk_widget_set_size_request (close_button, w, h);
+	/* Add 1 to the width to not make the image cut off. */ 
+ 	gtk_widget_set_size_request (close_button, w + 1, h);
 
+	/* Set the name to make the special rc style match. */
+	gtk_widget_set_name (close_button, "gossip-close-button");
+	
 	gtk_box_pack_start (GTK_BOX (hbox), event_box_hbox, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 
