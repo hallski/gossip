@@ -121,7 +121,7 @@ status_presets_file_parse (const gchar *filename)
 			StatusPreset        *preset;
 
 			status = (gchar *) xmlNodeGetContent (node);
-			state_str = (gchar *) xmlGetProp (node, BAD_CAST ("presence"));
+			state_str = (gchar *) xmlGetProp (node, "presence");
 
 			if (state_str) {
 				if (strcmp (state_str, "available") == 0) {
@@ -199,11 +199,11 @@ status_presets_file_save (void)
 
 	dtd_file = g_build_filename (DTDDIR, STATUS_PRESETS_DTD_FILENAME, NULL);
 
-	doc = xmlNewDoc (BAD_CAST "1.0");
-	root = xmlNewNode (NULL, BAD_CAST "presets");
+	doc = xmlNewDoc ("1.0");
+	root = xmlNewNode (NULL, "presets");
 	xmlDocSetRootElement (doc, root);
 
-	dtd = xmlCreateIntSubset (doc, BAD_CAST "presets", NULL, BAD_CAST dtd_file);
+	dtd = xmlCreateIntSubset (doc, "presets", NULL, dtd_file);
 
 	for (l = presets; l; l = l->next) {
 		StatusPreset *sp;
@@ -214,16 +214,16 @@ status_presets_file_save (void)
 
 		switch (sp->state) {
 		case GOSSIP_PRESENCE_STATE_AVAILABLE:
-			state = BAD_CAST "available";
+			state = "available";
 			break;
 		case GOSSIP_PRESENCE_STATE_BUSY:
-			state = BAD_CAST "busy";
+			state = "busy";
 			break;
 		case GOSSIP_PRESENCE_STATE_AWAY:
-			state = BAD_CAST "away";
+			state = "away";
 			break;
 		case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-			state = BAD_CAST "ext_away";
+			state = "ext_away";
 			break;
 		default:
 			continue;
@@ -234,11 +234,11 @@ status_presets_file_save (void)
 			continue;
 		}
 		
-		subnode = xmlNewChild (root,
-				       NULL,
-				       BAD_CAST "status",
-				       BAD_CAST sp->status);
-		xmlNewProp (subnode, BAD_CAST "presence", state);	
+		subnode = xmlNewTextChild (root,
+					   NULL,
+					   "status",
+					   sp->status);
+		xmlNewProp (subnode, "presence", state);	
 	}
 
 	DEBUG_MSG (("StatusPresets: Saving file:'%s'", xml_file));

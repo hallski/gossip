@@ -1,5 +1,21 @@
 2006-02-25  Richard Hult  <richard@imendio.com>
 
+	* acinclude.m4: Disable signed pointers warnings.
+
+	* libgossip/gossip-account-manager.c:
+	(gossip_account_manager_class_init),
+	(account_manager_parse_account), (account_manager_file_save):
+	* libgossip/gossip-chatroom-manager.c:
+	(chatroom_manager_file_save):
+	* src/gossip-contact-groups.c: (contact_groups_file_parse),
+	(contact_groups_file_save):
+	* src/gossip-status-presets.c: (status_presets_file_parse),
+	(status_presets_file_save): Use xmlNewTextChild for user input so
+	that we escape properly, fixes bug #332423. Also remove BAD_CAST
+	since we don't need them anymore with the warning removed.
+
+2006-02-25  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c: (app_setup), (app_show_hide_list_cb),
 	(app_tray_button_press_cb), (app_tray_create_menu),
 	(configure_event_idle_cb):

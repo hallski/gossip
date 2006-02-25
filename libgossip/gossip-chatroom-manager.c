@@ -724,19 +724,19 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 	dtd_file = g_build_filename (DTDDIR, CHATROOMS_DTD_FILENAME, NULL);
 
-	doc = xmlNewDoc (BAD_CAST "1.0");
-	root = xmlNewNode (NULL, BAD_CAST "chatrooms");
+	doc = xmlNewDoc ("1.0");
+	root = xmlNewNode (NULL, "chatrooms");
 	xmlDocSetRootElement (doc, root);
 
-	dtd = xmlCreateIntSubset (doc, BAD_CAST "chatrooms", NULL, BAD_CAST dtd_file);
+	dtd = xmlCreateIntSubset (doc, "chatrooms", NULL, dtd_file);
 
 	if (!priv->default_name) {
 		priv->default_name = g_strdup ("Default");
 	}
 	
-	xmlNewChild (root, NULL, 
-		     BAD_CAST "default", 
-		     BAD_CAST priv->default_name);
+	xmlNewTextChild (root, NULL, 
+			 "default", 
+			 priv->default_name);
 
 	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, NULL);
 
@@ -755,20 +755,20 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 			break;
 		}
 	
-		node = xmlNewChild (root, NULL, BAD_CAST "chatroom", NULL);
-		xmlNewChild (node, NULL, BAD_CAST "type", BAD_CAST type);
-		xmlNewChild (node, NULL, BAD_CAST "name", BAD_CAST gossip_chatroom_get_name (chatroom));
-		xmlNewChild (node, NULL, BAD_CAST "nick", BAD_CAST gossip_chatroom_get_nick (chatroom));
+		node = xmlNewChild (root, NULL, "chatroom", NULL);
+		xmlNewChild (node, NULL, "type", type);
+		xmlNewTextChild (node, NULL, "name", gossip_chatroom_get_name (chatroom));
+		xmlNewTextChild (node, NULL, "nick", gossip_chatroom_get_nick (chatroom));
 
-		xmlNewChild (node, NULL, BAD_CAST "server", BAD_CAST gossip_chatroom_get_server (chatroom));
-		xmlNewChild (node, NULL, BAD_CAST "room", BAD_CAST gossip_chatroom_get_room (chatroom));
+		xmlNewTextChild (node, NULL, "server", gossip_chatroom_get_server (chatroom));
+		xmlNewTextChild (node, NULL, "room", gossip_chatroom_get_room (chatroom));
 
-		xmlNewChild (node, NULL, BAD_CAST "password", BAD_CAST gossip_chatroom_get_password (chatroom));
-		xmlNewChild (node, NULL, BAD_CAST "auto_connect", BAD_CAST (gossip_chatroom_get_auto_connect (chatroom) ? "yes" : "no"));
+		xmlNewTextChild (node, NULL, "password", gossip_chatroom_get_password (chatroom));
+		xmlNewChild (node, NULL, "auto_connect", gossip_chatroom_get_auto_connect (chatroom) ? "yes" : "no");
 
 		account = gossip_chatroom_get_account (chatroom);
 		if (account) {
-			xmlNewChild (node, NULL, BAD_CAST "account", BAD_CAST gossip_account_get_name (account));
+			xmlNewTextChild (node, NULL, "account", gossip_account_get_name (account));
 			g_object_unref (account);
 		}
 

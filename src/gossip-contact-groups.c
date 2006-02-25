@@ -137,8 +137,8 @@ contact_groups_file_parse (const gchar *filename)
 			gboolean      expanded;
 			ContactGroup *contact_group;
 
-			name = (gchar *) xmlGetProp (node, BAD_CAST ("name"));
-			expanded_str = (gchar *) xmlGetProp (node, BAD_CAST ("expanded"));
+			name = (gchar *) xmlGetProp (node, "name");
+			expanded_str = (gchar *) xmlGetProp (node, "expanded");
 			
 			if (expanded_str && strcmp (expanded_str, "yes") == 0) {
 				expanded = TRUE;
@@ -208,14 +208,14 @@ contact_groups_file_save (void)
 
 	dtd_file = g_build_filename (DTDDIR, CONTACT_GROUPS_DTD_FILENAME, NULL);
 
-	doc = xmlNewDoc (BAD_CAST "1.0");
-	root = xmlNewNode (NULL, BAD_CAST "contacts");
+	doc = xmlNewDoc ("1.0");
+	root = xmlNewNode (NULL, "contacts");
 	xmlDocSetRootElement (doc, root);
 
-	dtd = xmlCreateIntSubset (doc, BAD_CAST "contacts", NULL, BAD_CAST dtd_file);
+	dtd = xmlCreateIntSubset (doc, "contacts", NULL, dtd_file);
 
-	node = xmlNewChild (root, NULL, BAD_CAST "account", NULL);
-	xmlNewProp (node, BAD_CAST "name", BAD_CAST "Default");
+	node = xmlNewChild (root, NULL, "account", NULL);
+	xmlNewProp (node, "name", "Default");
 
 	for (l = groups; l; l = l->next) {
 		ContactGroup *cg;
@@ -223,9 +223,9 @@ contact_groups_file_save (void)
 
 		cg = l->data;
 		
-		subnode = xmlNewChild (node, NULL, BAD_CAST "group", NULL);
-		xmlNewProp (subnode, BAD_CAST "expanded", BAD_CAST (cg->expanded ? "yes" : "no"));	
-		xmlNewProp (subnode, BAD_CAST "name", BAD_CAST cg->name);
+		subnode = xmlNewChild (node, NULL, "group", NULL);
+		xmlNewProp (subnode, "expanded", cg->expanded ? "yes" : "no");	
+		xmlNewProp (subnode, "name", cg->name);
 	}
 
 	DEBUG_MSG (("ContactGroups: Saving file:'%s'", xml_file));

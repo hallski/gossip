@@ -66,7 +66,7 @@ static gboolean account_manager_file_parse           (GossipAccountManager  *man
 static gboolean account_manager_file_save            (GossipAccountManager  *manager);
 
 
-static guint  signals[LAST_SIGNAL] = {0};
+static guint signals[LAST_SIGNAL] = {0};
 
 
 G_DEFINE_TYPE (GossipAccountManager, gossip_account_manager, G_TYPE_OBJECT);
@@ -78,7 +78,6 @@ gossip_account_manager_class_init (GossipAccountManagerClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = account_manager_finalize;
-
 
 	signals[ACCOUNT_ADDED] = 
 		g_signal_new ("account-added",
@@ -449,6 +448,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 		}
 		else if (strcmp (tag, "password") == 0) {
 			password = str;
+			g_print ("GOT '%s'\n", password);
 		}
 		else if (strcmp (tag, "server") == 0) {
 			server = str;
@@ -617,19 +617,19 @@ account_manager_file_save (GossipAccountManager *manager)
 
 	dtd_file = g_build_filename (DTDDIR, ACCOUNTS_DTD_FILENAME, NULL);
 
-	doc = xmlNewDoc (BAD_CAST "1.0");
-	root = xmlNewNode (NULL, BAD_CAST "accounts");
+	doc = xmlNewDoc ("1.0");
+	root = xmlNewNode (NULL, "accounts");
 	xmlDocSetRootElement (doc, root);
 
-	dtd = xmlCreateIntSubset (doc, BAD_CAST "accounts", NULL, BAD_CAST dtd_file);
+	dtd = xmlCreateIntSubset (doc,"accounts", NULL,dtd_file);
 
 	if (!priv->default_name) {
 		priv->default_name = g_strdup ("Default");
 	}
 	
 	xmlNewChild (root, NULL, 
-		     BAD_CAST "default", 
-		     BAD_CAST priv->default_name);
+		    "default", 
+		    priv->default_name);
 
 	accounts = gossip_account_manager_get_accounts (manager);
 
@@ -649,18 +649,18 @@ account_manager_file_save (GossipAccountManager *manager)
 	
 		port = g_strdup_printf ("%d", gossip_account_get_port (account));
 
-		node = xmlNewChild (root, NULL, BAD_CAST "account", NULL);
-		xmlNewChild (node, NULL, BAD_CAST "type", BAD_CAST type);
-		xmlNewChild (node, NULL, BAD_CAST "name", BAD_CAST gossip_account_get_name (account));
-		xmlNewChild (node, NULL, BAD_CAST "id", BAD_CAST gossip_account_get_id (account));
+		node = xmlNewChild (root, NULL, "account", NULL);
+		xmlNewChild (node, NULL, "type", type);
+		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
+		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
 
-		xmlNewChild (node, NULL, BAD_CAST "password", BAD_CAST gossip_account_get_password (account));
-		xmlNewChild (node, NULL, BAD_CAST "server", BAD_CAST gossip_account_get_server (account));
-		xmlNewChild (node, NULL, BAD_CAST "port", BAD_CAST port);
+		xmlNewTextChild (node, NULL, "password", gossip_account_get_password (account));
+		xmlNewTextChild (node, NULL, "server", gossip_account_get_server (account));
+		xmlNewChild (node, NULL, "port", port);
 
-		xmlNewChild (node, NULL, BAD_CAST "auto_connect", BAD_CAST (gossip_account_get_auto_connect (account) ? "yes" : "no"));
-		xmlNewChild (node, NULL, BAD_CAST "use_ssl", BAD_CAST (gossip_account_get_use_ssl (account) ? "yes" : "no"));
-		xmlNewChild (node, NULL, BAD_CAST "use_proxy", BAD_CAST (gossip_account_get_use_proxy (account) ? "yes" : "no"));
+		xmlNewChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
+		xmlNewChild (node, NULL, "use_ssl", gossip_account_get_use_ssl (account) ? "yes" : "no");
+		xmlNewChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
 
 		g_free (type);
 		g_free (port);
