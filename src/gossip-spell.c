@@ -132,7 +132,7 @@ const gchar *languages[] = {
 	"nl", N_("Dutch"),
 	"no", N_("Norwegian"),
 	"nn", N_("Norwegian (Nynorsk)"),
-	"nn_NO", N_("Norwegian (Nyorsk)"),
+	"nn_NO", N_("Norwegian (Nynorsk)"),
 	"or", N_("Oriya"),
 	"pa", N_("Punjabi"),
 	"pl", N_("Polish"),

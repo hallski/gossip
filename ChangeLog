@@ -1,5 +1,7 @@
 2006-02-25  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-spell.c: Fix typo, bug #331868.
+
 	* libgossip/gossip-account-manager.c: (account_manager_get_all),
 	(account_manager_parse_account), (account_manager_file_parse),
 	(account_manager_file_save):
