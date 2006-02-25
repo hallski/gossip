@@ -8,7 +8,7 @@
 	(jabber_chatrooms_join_timeout_cb), (gossip_jabber_chatrooms_join),
 	(jabber_chatrooms_join_cb), (gossip_jabber_chatrooms_cancel),
 	(gossip_jabber_chatrooms_leave): Change the names and strings of
-	the chatroom status enums to make the more clear.
+	the chatroom status enums to make them more clear.
 
 	* src/gossip-chatrooms-window.c:
 	(chatrooms_window_model_pixbuf_cell_data_func),
