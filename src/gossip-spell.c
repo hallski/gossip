@@ -166,12 +166,12 @@ const gchar *languages[] = {
 GossipSpell * 
 gossip_spell_new (GList *languages)
 {
+	GossipSpell *spell;
+	GList       *l;
+
 #ifndef HAVE_ASPELL
 	return NULL;
 #else 
-	GossipSpell *spell;
-	
-	GList       *l;
 
 	DEBUG_MSG (("Spell: Initiating")); 
 
@@ -281,6 +281,7 @@ gboolean
 gossip_spell_has_backend (GossipSpell *spell)
 {
 	g_return_val_if_fail (spell != NULL, FALSE);
+
 	return spell->has_backend;
 }
 
@@ -307,9 +308,7 @@ gossip_spell_get_language_codes (GossipSpell *spell)
 	AspellConfig              *config;
 	AspellDictInfoList        *dlist;
 	AspellDictInfoEnumeration *dels;
-
 	const AspellDictInfo      *entry;
-
 	GList                     *codes = NULL;
 
 	g_return_val_if_fail (spell != NULL, FALSE);
@@ -359,13 +358,13 @@ gossip_spell_check (GossipSpell *spell, const gchar *word)
 
 	g_return_val_if_fail (spell != NULL, FALSE);
 	g_return_val_if_fail (word != NULL, FALSE);
-	g_return_val_if_fail (strlen (word) > 0, FALSE);
+	g_return_val_if_fail (word[0] != 0, FALSE);
 
-	langs = g_list_length (spell->languages);
-
-	if (langs < 1) {
+	if (!spell->languages) {
 		return FALSE;
 	}
+	
+	langs = g_list_length (spell->languages);
 
 #ifdef HAVE_ASPELL
 	for (l = spell->languages; l; l = l->next) {
@@ -377,7 +376,7 @@ gossip_spell_check (GossipSpell *spell, const gchar *word)
 		}
 
 		correct = aspell_speller_check (lang->spell_checker, 
-					word, strlen (word));
+						word, strlen (word));
 		
 		if (langs > 1 && correct) {
 			break;
@@ -406,7 +405,7 @@ gossip_spell_suggestions (GossipSpell *spell,
 
 	g_return_val_if_fail (spell != NULL, NULL);
 	g_return_val_if_fail (word != NULL, NULL);
-	g_return_val_if_fail (strlen (word) > 0, NULL);
+	g_return_val_if_fail (word[0] != 0, NULL);
 
 #ifdef HAVE_ASPELL
 	for (l1 = spell->languages; l1; l1 = l1->next) {
