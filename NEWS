@@ -7,6 +7,10 @@ News in 0.10.1:
  * Don't ellipsize text in the menu created for status presets, this usually is not shown in full when using the menu on the tray icon (Martyn). 
  * Added libnotify support for contacts coming online and sending first time messages (note: this only works with libnotify 0.2.1 at the moment, not with the 0.3.x API, if you have 0.3.x you might have to disable it with configure --disable-libnotify) (Martyn).
  * Use a GtkWindow instead of a GnomeApp for the main window. The widget spacing for toolbars and menus is much better now (Martyn).
+332052
+ * Fixed #306719 - Make sure Wordstar style key bindings work (i.e Ctrl+Insert copies, Ctrl+Delete and cuts Shift+Insert pastes) (Richard).
+ * Fixed #332052 - Be more flexible with DTD validation in XML files (Richard, Ross Burton).
+ * Fixed #332423 - Make sure special characters are escaped when saving to XML files (for accounts, presets, and contact groups) (Richard, Jonatan Magnusson).
  * Fixed #322030 - Added the 'x' button back onto chat tabs to close conversations (Richard, Sjoerd Simons)
  * Fixed #332333 - Fixed weird menu detachment behaviour (Diego González).
  * Fixed #142188 - Don't scroll the chat window when drag and dropping across them (Richard).
@@ -17,6 +21,15 @@ News in 0.10.1:
  about a missing resource in the account id, instead we now signal the error and the user is informed so they are able to correct it (Martyn).
  * Fixed #331707 - Depend on GTK+ 2.8 because we are using some GTK+ stock icons from it (Brian Pepple).
  * Fixed #331868 - Corrected some UI typos (Clytie Siddall).
+
+Translations:
+ * Clytie Siddall (vi)
+ * David Nielsen (da)
+ * Jordi Mallach (ca)
+ * Miloslav Trmac (cs)
+ * Richard Hult (sv)
+ * Wouter Bolsterlee (nl)
+
 
 News in 0.10:
 =============
