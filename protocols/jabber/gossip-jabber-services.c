@@ -25,7 +25,8 @@
 
 #include "gossip-jabber-services.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 static LmHandlerResult 
@@ -39,7 +40,7 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 	LmMessageNode         *query_node, *node;
 	LmMessageSubType       type;
 
-	d(g_print ("Services: Received client information\n", 
+	DEBUG_MSG (("Services: Received client information", 
 		   gossip_contact_get_id (contact)));
 
 	callback = data->callback;
@@ -64,20 +65,20 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 			switch (code) {
 			case 404: {
 				/* not found */
-				d(g_print ("Version: Not found\n"));
+				DEBUG_MSG (("Version: Not found"));
 				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			case 502: {
 				/* service not available */
-				d(g_print ("Version: Service not available\n"));
+				DEBUG_MSG (("Version: Service not available"));
 				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			default:
-				d(g_print ("Version: Unhandled presence error:%d\n", code));
+				DEBUG_MSG (("Version: Unhandled presence error:%d", code));
 				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 				break;
 			}
@@ -146,7 +147,7 @@ gossip_jabber_services_get_version (LmConnection           *connection,
 	const gchar        *resource = NULL;
 	gchar              *jid_str;
 
-	d(g_print ("Services: Requesting client information from contact:'%s'\n", 
+	DEBUG_MSG (("Services: Requesting client information from contact:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	/* If offline, contacts don't have presence */

@@ -28,7 +28,8 @@
 
 #include "gossip-transport-discover.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 /* in seconds */
 #define DISCO_TIMEOUT      20
@@ -368,7 +369,7 @@ transport_disco_request_items (GossipTransportDisco *disco)
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_GET);
 
-	d(g_print ("disco items to: %s\n", 
+	DEBUG_MSG (("ProtocolTransport: disco items to: %s", 
 		   gossip_jid_get_full (disco->to)));
 	
 	connection = gossip_jabber_get_connection (disco->jabber);
@@ -385,7 +386,7 @@ transport_disco_request_items (GossipTransportDisco *disco)
 static gboolean
 transport_disco_request_items_timeout_cb (GossipTransportDisco *disco)
 {
-	d(g_print ("disco items to:'%s' have timed out after %d seconds, cleaning up...\n", 
+	DEBUG_MSG (("ProtocolTransport: disco items to:'%s' have timed out after %d seconds, cleaning up...", 
 		   gossip_jid_get_full (disco->to), DISCO_TIMEOUT));
 
 	/* stop timeout */
@@ -417,7 +418,7 @@ transport_disco_request_info_timeout_cb (GossipTransportDiscoItem *item)
 		return FALSE;
 	}
 
-	d(g_print ("disco info to:'%s' has timed out after %d seconds, cleaning up...\n", 
+	DEBUG_MSG (("ProtocolTransport: disco info to:'%s' has timed out after %d seconds, cleaning up...", 
 		   gossip_jid_get_full (disco->to), DISCO_INFO_TIMEOUT));
 
 	if (!disco->item_lookup) {
@@ -471,7 +472,7 @@ transport_disco_handle_items (GossipTransportDisco *disco,
 
 		disco->items = g_list_append (disco->items, item);
 
-		d(g_print ("disco item - jid:'%s', node:'%s', name:'%s'\n", 
+		DEBUG_MSG (("ProtocolTransport: disco item - jid:'%s', node:'%s', name:'%s'", 
 			   jid_str, node_str, name_str));
 
 		/* go to next item */
@@ -504,7 +505,7 @@ transport_disco_request_info (GossipTransportDisco *disco)
 		   respond.  If this code is uncommented it will treat
 		   it as any other JID. */
 		if (gossip_jid_equals (item->jid, jid)) {
-			d(g_print ("ignoring JID:'users.jabber.org', it doesn't tend to respond\n"));
+			DEBUG_MSG (("ProtocolTransport: ignoring JID:'users.jabber.org', it doesn't tend to respond"));
 			disco->items_remaining--;
 			continue;
 		}
@@ -514,7 +515,7 @@ transport_disco_request_info (GossipTransportDisco *disco)
 						  LM_MESSAGE_TYPE_IQ,
 						  LM_MESSAGE_SUB_TYPE_GET);
 		
-		d(g_print ("disco info to: %s\n", 
+		DEBUG_MSG (("ProtocolTransport: disco info to: %s", 
 			   gossip_jid_get_full (item->jid)));
 		
 		/* start timeout */
@@ -555,7 +556,7 @@ transport_disco_handle_info (GossipTransportDisco *disco,
 	}
 
         from = lm_message_node_get_attribute (m->node, "from");
-	d(g_print ("sorting disco info for:'%s'....\n", from));
+	DEBUG_MSG (("ProtocolTransport: sorting disco info for:'%s'....", from));
 
 	item = NULL;
 	for (l = disco->items; l; l = l->next) {
@@ -594,7 +595,7 @@ transport_disco_handle_info (GossipTransportDisco *disco,
 		name = lm_message_node_get_attribute (node, "name");
 		ident->name = g_strdup (name);
 
-		d(g_print ("disco item - category:'%s', type:'%s', name:'%s'\n", 
+		DEBUG_MSG (("ProtocolTransport: disco item - category:'%s', type:'%s', name:'%s'", 
 			   category, type, name));
 
 		info->identities = g_list_append (info->identities, ident);
@@ -607,7 +608,7 @@ transport_disco_handle_info (GossipTransportDisco *disco,
 	while (node && strcmp (node->name, "feature") == 0) {
 		feature = lm_message_node_get_attribute (node, "var");
 
-		d(g_print ("disco item - feature:'%s'\n", feature));
+		DEBUG_MSG (("ProtocolTransport: disco item - feature:'%s'", feature));
 
 		info->features = g_list_append (info->features, g_strdup (feature));
 

@@ -27,8 +27,6 @@
 #include "gossip-app.h"
 #include "gossip-edit-groups-dialog.h"
 
-#define d(x)
-
 
 struct _GossipEditGroups {
 	GtkWidget   *dialog;
@@ -316,8 +314,6 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 				gtk_list_store_set (store, &iter,    
 						    COL_ENABLED, TRUE,
 						    -1);
-			} else {
-				d (g_assert_not_reached ());
 			}
 		}
 	}

@@ -27,7 +27,8 @@
 #include "gossip-jabber-private.h"
 #include "gossip-transport-register.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 typedef struct {
@@ -139,7 +140,7 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 
 	g_hash_table_insert (unregisters, tu->jid, tu);
 
-	d(g_print ("disco unregister to: %s (requirements)\n", 
+	DEBUG_MSG (("ProtocolTransport: Disco unregister to: %s (requirements)", 
 		   gossip_jid_get_full (jid)));
 
 	/* set up handler */
@@ -286,7 +287,7 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 						    LM_MESSAGE_TYPE_IQ,
 						    LM_MESSAGE_SUB_TYPE_SET);
 
-	d(g_print ("disco unregister to: %s (request)\n", gossip_jid_get_full (tu->jid)));
+	DEBUG_MSG (("ProtocolTransport: Disco unregister to: %s (request)", gossip_jid_get_full (tu->jid)));
 	
 	lm_message_node_add_child (new_message->node, "query", NULL);
 	node = lm_message_node_get_child (new_message->node, "query");
@@ -370,7 +371,7 @@ gossip_transport_requirements (GossipJabber                    *jabber,
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_GET);
 
-	d(g_print ("disco register to: %s (requirements)\n", gossip_jid_get_full (jid)));
+	DEBUG_MSG (("ProtocolTransport: Disco register to: %s (requirements)", gossip_jid_get_full (jid)));
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
@@ -588,7 +589,7 @@ gossip_transport_register (GossipJabber                *jabber,
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_SET);
 
-	d(g_print ("disco register to: %s (register)\n", gossip_jid_get_full (jid)));
+	DEBUG_MSG (("ProtocolTransport: Disco register to: %s (register)", gossip_jid_get_full (jid)));
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");

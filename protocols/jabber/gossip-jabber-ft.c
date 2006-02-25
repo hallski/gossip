@@ -30,7 +30,8 @@
 #include "gossip-jabber-private.h"
 #include "gossip-jid.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define XMPP_FILE_TRANSFER_XMLNS        "http://jabber.org/protocol/si"
 #define XMPP_FILE_TRANSFER_PROFILE      "http://jabber.org/protocol/si/profile/file-transfer"
@@ -237,7 +238,7 @@ jabber_ft_handle_request (GossipJabber *jabber,
 	
 	g_object_get (ft, "id", &id, NULL);
 
-	d(g_print("Protocol FT: ID[%d] File transfer request from:'%s' with file:'%s', size:'%s'\n", 
+	DEBUG_MSG (("ProtocolFT: ID[%d] File transfer request from:'%s' with file:'%s', size:'%s'", 
 		  id, 
 		  from_str,
 		  file_name,
@@ -279,7 +280,7 @@ jabber_ft_handle_error (GossipJabber *jabber,
 	error_reason = lm_message_node_get_value (node);
 	error_code_str = lm_message_node_get_attribute (node, "code"); 
 
-	d(g_print("Protocol FT: File transfer error from:'%s' with code:'%s', reason:'%s' \n", 
+	DEBUG_MSG (("ProtocolFT: File transfer error from:'%s' with code:'%s', reason:'%s'", 
 		  from_str,
 		  error_code_str,
 		  error_reason));
@@ -349,12 +350,12 @@ jabber_ft_get_file_details (const gchar  *uri,
 	GnomeVFSResult   result;
 	/*  	GnomeVFSURI      *uri;  */
 
-	d(g_print("Protocol FT: Getting file info for URI:'%s'\n", uri));
+	DEBUG_MSG (("ProtocolFT: Getting file info for URI:'%s'", uri));
 
 	/*  	uri = gnome_vfs_uri_new (file_name); */
 
 	/* 	if (!gnome_vfs_uri_exists (uri)) { */
-	/* 		d(g_print("Protocol FT: URI:'%s' does not exist\n", file_name)); */
+	/* 		DEBUG_MSG (("ProtocolFT: URI:'%s' does not exist", file_name)); */
 	/* 		gnome_vfs_uri_unref (uri); */
 	/* 		return; */
 	/* 	} */
@@ -364,7 +365,7 @@ jabber_ft_get_file_details (const gchar  *uri,
 					  GNOME_VFS_FILE_INFO_DEFAULT);
 
 	if (result != GNOME_VFS_OK) {
-		g_warning ("Protocol FT: Could not get file info for URI:'%s'", uri);
+		g_warning ("ProtocolFT: Could not get file info for URI:'%s'", uri);
 		return FALSE;
 	}
 	
@@ -517,7 +518,7 @@ gossip_jabber_ft_send (GossipJabberFTs *fts,
 	
 	g_object_get (ft, "id", &id, NULL);
 
-	d(g_print("Protocol FT: ID[%d] Sending file transfer request for URI:'%s'\n", 
+	DEBUG_MSG (("ProtocolFT: ID[%d] Sending file transfer request for URI:'%s'", 
 		  id, file));
 
 	g_hash_table_insert (fts->str_ids, GUINT_TO_POINTER (id), g_strdup (id_str));
@@ -549,7 +550,7 @@ gossip_jabber_ft_accept (GossipJabberFTs *fts,
 	
 	g_return_if_fail (fts != NULL);
 
-	d(g_print("Protocol FT: ID[%d] Accepting file transfer\n", id));
+	DEBUG_MSG (("ProtocolFT: ID[%d] Accepting file transfer", id));
 
 	connection = gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
@@ -558,12 +559,12 @@ gossip_jabber_ft_accept (GossipJabberFTs *fts,
 	id_str = g_hash_table_lookup (fts->str_ids, GUINT_TO_POINTER (id));
 
 	if (!to_str) {
-		g_warning ("Protocol FT: ID[%d] Could not get remote JID", id);
+		g_warning ("ProtocolFT: ID[%d] Could not get remote JID", id);
 		return;
 	}
 
 	if (!id_str) {
-		g_warning ("Protocol FT: ID[%d] Could not get original message id", id);
+		g_warning ("ProtocolFT: ID[%d] Could not get original message id", id);
 		return;
 	}
 
@@ -618,7 +619,7 @@ gossip_jabber_ft_decline (GossipJabberFTs *fts,
 
 	g_return_if_fail (fts != NULL);
 
-	d(g_print("Protocol FT: ID[%d] Declining file transfer\n", id));
+	DEBUG_MSG (("ProtocolFT: ID[%d] Declining file transfer", id));
 
 	connection = gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
@@ -627,12 +628,12 @@ gossip_jabber_ft_decline (GossipJabberFTs *fts,
 	id_str = g_hash_table_lookup (fts->str_ids, GUINT_TO_POINTER (id));
 
 	if (!to_str) {
-		g_warning ("Protocol FT: ID[%d] Could not get remote JID", id);
+		g_warning ("ProtocolFT: ID[%d] Could not get remote JID", id);
 		return;
 	}
 
 	if (!id_str) {
-		g_warning ("Protocol FT: ID[%d] Could not get original message id", id);
+		g_warning ("ProtocolFT: ID[%d] Could not get original message id", id);
 		return;
 	}
 

@@ -30,7 +30,8 @@
 #include "gossip-ft-window.h"
 #include "gossip-app.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 
 typedef struct {
@@ -396,7 +397,7 @@ ft_window_filechooser_create (GossipContact *contact)
 	GtkWidget     *dialog;
 	GtkFileFilter *filter;
 
-	d(g_print ("FileTransferWindow: Creating filechooser...\n"));
+	DEBUG_MSG (("FileTransferWindow: Creating filechooser..."));
 
 	dialog = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
 			       "action", GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -438,14 +439,14 @@ ft_window_filechooser_response_cb (GtkDialog     *dialog,
 		if (list) {
 			GSList *l;
 			
-			d(g_print ("FileTransferWindow: File chooser selected files:\n"));
+			DEBUG_MSG (("FileTransferWindow: File chooser selected files:"));
 			
 			for (l = list; l; l = l->next) {
 				gchar *file;
 				
 				file = l->data;
 				
-				d(g_print ("FileTransferWindow: \t%s\n", file));
+				DEBUG_MSG (("FileTransferWindow: \t%s", file));
 				gossip_ft_window_send_file_from_uri (contact, file);
 				
 				g_free (file);
@@ -453,7 +454,7 @@ ft_window_filechooser_response_cb (GtkDialog     *dialog,
 			
 			g_slist_free (list);
 		} else {
-			d(g_print ("FileTransferWindow: File chooser had no files selected\n"));
+			DEBUG_MSG (("FileTransferWindow: File chooser had no files selected"));
 		}
 	}
 

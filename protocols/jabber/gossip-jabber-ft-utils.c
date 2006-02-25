@@ -24,7 +24,8 @@
 
 #include "gossip-jabber-ft-utils.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 static void base64_init (void);
@@ -86,11 +87,11 @@ gossip_jabber_ft_base64_encode_close (guint8 const *in,
 	c1 = ((guint8 *)save)[1];
 	c2 = ((guint8 *)save)[2];
 	
-	d(g_print("Base64: mode = %d\nc1 = %c\nc2 = %c\n",
-		 (int)((char *)save)[0],
-		 (int)((char *)save)[1],
-		 (int)((char *)save)[2]));
-
+	DEBUG_MSG (("Base64: mode = %d\nc1 = %c\nc2 = %c",
+		    (int)((char *)save)[0],
+		    (int)((char *)save)[1],
+		    (int)((char *)save)[2]));
+	
 	switch (((char *)save)[0]) {
 	case 2:
 		outptr[2] = base64_alphabet[ ( (c2 &0x0f) << 2 ) ];
@@ -140,7 +141,7 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 	inptr = in;
 	outptr = out;
 
-	d(g_print("Base64: we have %d chars, and %d saved chars\n", len, ((char *)save)[0]));
+	DEBUG_MSG (("Base64: we have %d chars, and %d saved chars", len, ((char *)save)[0]));
 
 	if (len + ((char *)save)[0] > 2) {
 		guint8 const *inend = in+len-2;
@@ -179,8 +180,8 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 		*state = already;
 	}
 
-	d(g_print("Base64: state = %d, len = %d\n",
-		 (int)((char *)save)[0], len));
+	DEBUG_MSG (("Base64: state = %d, len = %d",
+		    (int)((char *)save)[0], len));
 
 	if (len > 0) {
 		register char *saveout;
@@ -196,11 +197,11 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 		((char*)save)[0] += len;
 	}
 
-	d(g_print("Base64: mode = %d\nc1 = %c\nc2 = %c\n",
-		 (int)((char *)save)[0],
-		 (int)((char *)save)[1],
-		 (int)((char *)save)[2]));
-
+	DEBUG_MSG (("Base64: mode = %d\nc1 = %c\nc2 = %c",
+		    (int)((char *)save)[0],
+		    (int)((char *)save)[1],
+		    (int)((char *)save)[2]));
+	
 	return outptr-out;
 }
 

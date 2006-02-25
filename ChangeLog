@@ -1,3 +1,52 @@
+2006-02-25  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-chatroom.c:
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-session.c:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber-ft-utils.c:
+	* protocols/jabber/gossip-jabber-ft.c:
+	* protocols/jabber/gossip-jabber-services.c:
+	* protocols/jabber/gossip-jabber-vcard.c:
+	* protocols/jabber/gossip-jabber.c:
+	* protocols/jabber/gossip-transport-accounts.c:
+	* protocols/jabber/gossip-transport-discover.c:
+	* protocols/jabber/gossip-transport-protocol.c:
+	* protocols/jabber/gossip-transport-register.c:
+	* src/gossip-account-button.c: 
+	* src/gossip-account-chooser.c:
+	* src/gossip-app.c:
+	* src/gossip-chat-manager.c: 
+	* src/gossip-chat-view.c: 
+	* src/gossip-chat-window.c: 
+	* src/gossip-chat.c:
+	* src/gossip-contact-groups.c:
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-edit-groups-dialog.c:
+	* src/gossip-ft-window.c:
+	* src/gossip-galago.c: 
+	* src/gossip-new-message-dialog.c:
+	* src/gossip-notify.c: 
+	* src/gossip-private-chat.c:
+	* src/gossip-sound.c: 
+	* src/gossip-spell-dialog.c:
+	* src/gossip-spell.c:
+	* src/gossip-status-presets.c:
+	* src/gossip-transport-accounts-window.c:
+	* src/gossip-transport-add-window.c:
+	* src/gossip-vcard-dialog.c: Updated the debugging to use
+	DEBUG_MSG and use stderr instead of stdout to write to. Also
+	updated the quality of the debugging in places.
+
+	* src/gossip-account-button.c: Fixed a bug where the disconnect
+	signal after the error signal would not show an error for an
+	account and only show the account id and the last error that
+	occurred if any in the tooltip.
+
 2006-02-24  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (gossip_chat_window_class_init),

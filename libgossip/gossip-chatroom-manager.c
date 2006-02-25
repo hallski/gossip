@@ -33,7 +33,8 @@
 #define CHATROOMS_XML_FILENAME "chatrooms.xml"
 #define CHATROOMS_DTD_FILENAME "gossip-chatroom.dtd"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerPriv))
 
@@ -238,7 +239,7 @@ gossip_chatroom_manager_add (GossipChatroomManager *manager,
 		type = gossip_chatroom_get_type (chatroom);
 		name = gossip_chatroom_get_name (chatroom);
 
-		d(g_print ("Chatroom Manager: Adding %s%s chatroom with name:'%s'\n", 
+		DEBUG_MSG (("ChatroomManager: Adding %s%s chatroom with name:'%s'", 
 			   gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "", 
 			   gossip_chatroom_get_type_as_str (type), 
 			   name));
@@ -274,7 +275,7 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 
 	priv = GET_PRIV (manager);
 
- 	d(g_print ("Chatroom Manager: Removing chatroom with name:'%s'\n",  
+ 	DEBUG_MSG (("ChatroomManager: Removing chatroom with name:'%s'",  
  		   gossip_chatroom_get_name (chatroom)));
 
 	g_signal_handlers_disconnect_by_func (chatroom, 
@@ -421,7 +422,7 @@ gossip_chatroom_manager_set_default (GossipChatroomManager *manager,
 
 	priv = GET_PRIV (manager);
 	
- 	d(g_print ("Chatroom Manager: Setting default chatroom with name:'%s'\n",  
+ 	DEBUG_MSG (("ChatroomManager: Setting default chatroom with name:'%s'",  
  		   gossip_chatroom_get_name (chatroom))); 
 
 	name = gossip_chatroom_get_name (chatroom);
@@ -470,7 +471,7 @@ gossip_chatroom_manager_store (GossipChatroomManager *manager)
 {
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 
- 	d(g_print ("Chatroom Manager: Saving chatrooms\n"));  
+ 	DEBUG_MSG (("ChatroomManager: Saving chatrooms"));  
 	
 	return chatroom_manager_file_save (manager);
 }
@@ -641,7 +642,7 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
 
 	priv = GET_PRIV (manager);
 	
-	d(g_print ("Chatroom Manager: Attempting to parse file:'%s'...\n", filename));
+	DEBUG_MSG (("ChatroomManager: Attempting to parse file:'%s'...", filename));
 
  	ctxt = xmlNewParserCtxt ();
 
@@ -680,10 +681,10 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
 		node = node->next;
 	}
 	
-	d(g_print ("Chatroom Manager: Parsed %d chatrooms\n", 
+	DEBUG_MSG (("ChatroomManager: Parsed %d chatrooms", 
 		   g_list_length (priv->chatrooms)));
 
-	d(g_print ("Chatroom Manager: Default chatroom is:'%s'\n", 
+	DEBUG_MSG (("ChatroomManager: Default chatroom is:'%s'", 
 		   priv->default_name));
 	
 	xmlFreeDoc(doc);
@@ -774,7 +775,7 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		g_free (type);
 	}
 
-	d(g_print ("Chatroom Manager: Saving file:'%s'\n", xml_file));
+	DEBUG_MSG (("ChatroomManager: Saving file:'%s'", xml_file));
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 
@@ -810,7 +811,8 @@ chatroom_manager_protocol_connected_cb (GossipSession         *session,
 
 	priv = GET_PRIV (manager);
 	
-	d(g_print ("Chatroom Manager: Account:'%s' connected, checking chatroom auto connects.\n",
+	DEBUG_MSG (("ChatroomManager: Account:'%s' connected, "
+		    "checking chatroom auto connects.",
 		   gossip_account_get_name (account)));
 
 	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, account);

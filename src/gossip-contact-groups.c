@@ -30,10 +30,11 @@
 
 #include "gossip-contact-groups.h"
 
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+
 #define CONTACT_GROUPS_XML_FILENAME "contact-groups.xml"
 #define CONTACT_GROUPS_DTD_FILENAME "gossip-contact-groups.dtd"
-
-#define d(x) 
 
 
 typedef struct {
@@ -92,7 +93,7 @@ contact_groups_file_parse (const gchar *filename)
 	
 	g_return_if_fail (filename != NULL);
 
-	d(g_print ("Attempting to parse file:'%s'...\n", filename));
+	DEBUG_MSG (("ContactGroups: Attempting to parse file:'%s'...", filename));
 	
  	ctxt = xmlNewParserCtxt ();
 
@@ -155,7 +156,7 @@ contact_groups_file_parse (const gchar *filename)
 		node = node->next;
 	}
 	
-	d(g_print ("Parsed %d contact groups\n", g_list_length (groups)));
+	DEBUG_MSG (("ContactGroups: Parsed %d contact groups", g_list_length (groups)));
 	  
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
@@ -227,7 +228,7 @@ contact_groups_file_save (void)
 		xmlNewProp (subnode, BAD_CAST "name", BAD_CAST cg->name);
 	}
 
-	d(g_print ("Saving file:'%s'\n", xml_file));
+	DEBUG_MSG (("ContactGroups: Saving file:'%s'", xml_file));
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 

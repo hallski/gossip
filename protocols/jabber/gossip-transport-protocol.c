@@ -33,7 +33,8 @@
 #include "gossip-transport-accounts.h"
 #include "gossip-transport-protocol.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 struct _GossipTransportProtocol {
@@ -97,7 +98,7 @@ transport_gnomevfs_print_error (GnomeVFSResult  result,
 
 	error_string = gnome_vfs_result_to_string (result);
 
-	g_warning ("Error %s occured opening location %s\n", 
+	g_warning ("Error %s occured opening location %s", 
 		   error_string, uri_string);
 
 	return FALSE;
@@ -112,7 +113,9 @@ gossip_transport_protocol_get_all (void)
 	GList          *protocol_list = NULL;
 	gchar          *dir;
 
-	d(g_print ("attempting to get a list of protocols with uri:'%s'\n", PROTOCOLSDIR));
+	DEBUG_MSG (("ProtocolTransport: Attempting to get a list of "
+		    "protocols with uri:'%s'", 
+		    PROTOCOLSDIR));
 
 	/* 
 	 * look up files packaged with Gossip 
@@ -128,7 +131,8 @@ gossip_transport_protocol_get_all (void)
 	}
 
 	if (!files || g_list_length (files) < 1) {
-		d(g_print ("no protocol xml files found in %s\n", PROTOCOLSDIR));
+		DEBUG_MSG (("ProtocolTransport: No protocol xml files found in %s", 
+			    PROTOCOLSDIR));
 		return NULL;
 	}
 	
@@ -167,7 +171,9 @@ gossip_transport_protocol_get_all (void)
 		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 
-	d(g_print ("attempting to get a list of protocols with uri:'%s'\n", dir));
+	DEBUG_MSG (("ProtocolTransport: Attempting to get a list of "
+		    "protocols with uri:'%s'", 
+		    dir));
 
 	result = gnome_vfs_directory_list_load (&files, dir, 
 						GNOME_VFS_FILE_INFO_DEFAULT | 
@@ -182,7 +188,8 @@ gossip_transport_protocol_get_all (void)
 
 	if (!files || g_list_length (files) < 1) {
 		g_free (dir);
-		d(g_print ("no protocol xml files found in %s\n", PROTOCOLSDIR));
+		DEBUG_MSG (("ProtocolTransport: No protocol xml files found in %s", 
+			    PROTOCOLSDIR));
 		return NULL;
 	}
 	
@@ -231,7 +238,8 @@ transport_protocol_file_validate (const char *filename)
 
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	d(g_print ("attempting to validate file (against DTD):'%s'\n", filename));
+	DEBUG_MSG (("ProtocolTransport: Attempting to validate file (against DTD):'%s'", 
+		    filename));
 
 	/* create a parser context */
 	ctxt = xmlNewParserCtxt();
@@ -278,7 +286,7 @@ transport_protocol_file_parse (const gchar *filename)
 
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	d(g_print ("attempting to parse file:'%s'...\n", filename));
+	DEBUG_MSG (("ProtocolTransport: Attempting to parse file:'%s'...", filename));
 	
 	reader = xmlReaderForFile(filename, NULL, 0);
 	if (reader == NULL) {
@@ -396,14 +404,14 @@ transport_protocol_file_parse (const gchar *filename)
 		return NULL;
 	}
 	
-	d(g_print ("protocol name:'%s'\n"
-		   "protocol disco_type:'%s'\n"
-		   "protocol stock_icon:'%s'\n"
-		   "protocol description:'%s'\n"
-		   "protocol example:'%s'\n"
-		   "protocol icon:'%s'\n"
-		   "protocol url:'%s'\n"
-		   "protocol services:%d\n",
+	DEBUG_MSG (("ProtocolTransport: protocol name:'%s'\n"
+		   "\tdisco_type:'%s'\n"
+		   "\tstock_icon:'%s'\n"
+		   "\tdescription:'%s'\n"
+		   "\texample:'%s'\n"
+		   "\ticon:'%s'\n"
+		   "\turl:'%s'\n"
+		   "\tservices:%d",
 		   protocol->name,
 		   protocol->disco_type,
 		   protocol->stock_icon,
@@ -413,7 +421,7 @@ transport_protocol_file_parse (const gchar *filename)
 		   protocol->url, 
 		   g_list_length (protocol->services)));
 	
-	d(g_print ("cleaning up parser for file:'%s'\n\n", filename));
+	DEBUG_MSG (("ProtocolTransport: cleaning up parser for file:'%s'", filename));
 	  
 	doc = xmlTextReaderCurrentDoc(reader);
 	xmlFreeDoc(doc);
@@ -678,7 +686,7 @@ gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
                                           LM_MESSAGE_TYPE_IQ,
                                           LM_MESSAGE_SUB_TYPE_SET);
 	
-	d(g_print ("requesting id to jid translation for: %s\n", id));
+	DEBUG_MSG (("ProtocolTransport: Requesting id to jid translation for: %s", id));
 	
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
@@ -725,7 +733,8 @@ transport_protocol_message_handler (LmMessageHandler *handler,
 	pi = (ProtocolID*) user_data;
 		
 	jid = gossip_jid_new (node->value);
-	d(g_print ("translation is: %s\n", gossip_jid_get_full (jid)));
+	DEBUG_MSG (("ProtocolTransport: Translation is: %s\n", 
+		    gossip_jid_get_full (jid)));
 	
 	/* call callback */
 	(pi->func)(jid, pi->id, pi->user_data);

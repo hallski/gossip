@@ -33,13 +33,12 @@
 #include "gossip-accounts-dialog.h"
 #include "gossip-account-button.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
-#define CONNECTING_DRAW_TIME      500 /* ms */
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonPriv))
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj),		        \
-						    GOSSIP_TYPE_ACCOUNT_BUTTON, \
-						    GossipAccountButtonPriv))
+#define CONNECTING_DRAW_TIME  500 /* ms */
 
 
 typedef struct {
@@ -375,9 +374,9 @@ account_button_update_tooltip (GossipAccountButton *account_button)
 	GossipAccountButtonPriv *priv;
 	GtkTooltips             *tooltips;
 	const gchar             *status;
-	const gchar             *error1 = NULL;
-	const gchar             *error2 = NULL;
-	const gchar             *error3 = NULL;
+	const gchar             *error = NULL;
+	const gchar             *suggestion1 = NULL;
+	const gchar             *suggestion2 = NULL;
 	gchar                   *str;
 	gboolean                 has_error = FALSE;
 
@@ -400,58 +399,42 @@ account_button_update_tooltip (GossipAccountButton *account_button)
 		has_error = TRUE;
 		
 		code = priv->last_error->code;
-		error1 = gossip_protocol_error_to_string (code);
+		error = gossip_protocol_error_to_string (code);
 
 		switch (code) {
 		case GOSSIP_PROTOCOL_NO_CONNECTION:
-			error2 = _("Perhaps you are trying to connect to the wrong port?");
-			error3 = _("Perhaps the service is not currently running?");
+			suggestion1 = _("Perhaps you are trying to connect to the wrong port?");
+			suggestion2 = _("Perhaps the service is not currently running?");
 			break;
 		case GOSSIP_PROTOCOL_NO_SUCH_HOST:
-			error2 = _("Check your connection details.");
+			suggestion1 = _("Check your connection details.");
 			break;
 		case GOSSIP_PROTOCOL_TIMED_OUT:
-			error2 = _("Perhaps the server is not running this service.");
+			suggestion1 = _("Perhaps the server is not running this service.");
 			break;
 		case GOSSIP_PROTOCOL_AUTH_FAILED:
-			error2 = _("Check your username and password are correct.");
+			suggestion1 = _("Check your username and password are correct.");
 			break;
 		default:
-			error2 = _("Check your connection details.");
+			suggestion1 = _("Check your connection details.");
 			break;
 		}
 	}
 
-	str = g_strdup_printf ("%s:\n"
-			       "\t%s\n"
-			       "\n"
-			       "%s:\n"
-			       "\t%s\n"
-			       "\n"
-			       "%s:\n"
-			       "\t%s%s"
-			       "%s%s %s"
-			       "%s%s%s"
-			       "%s%s%s"
-			       "%s%s",
-			       _("Account Name"),
-			       gossip_account_get_name (priv->account),
-			       _("Account ID"),
+	str = g_strdup_printf ("%s"  /* account */
+			       "%s"  /* line feed */
+			       "%s"  /* error */
+			       "%s"  /* line feed */
+			       "%s"  /* suggestion 1 */
+			       "%s"  /* line feed */
+			       "%s", /* suggestion 2 */
 			       gossip_account_get_id (priv->account),
-			       _("Status"),
-			       status,
-			       has_error ? "\n\n" : "",
-			       has_error ? _("Last Error") : "",
-			       has_error ? ":" : "",
-			       has_error ? "\n" : "",
-			       has_error ? "\t" : "",
-			       has_error ? error1 : "",
-			       has_error ? "\n" : "",
-			       has_error ? "\t" : "",
-			       has_error ? error2 : "",  
-			       has_error && error3 ? "\n" : "",
-			       has_error && error3 ? "\t" : "",
-			       has_error && error3 ? error3 : "");   
+			       error ? "\n\n" : "",
+			       error ? error : "",
+			       error ? "\n" : "",
+			       suggestion1 ? suggestion1 : "",  
+			       suggestion2 ? "\n" : "",
+			       suggestion2 ? suggestion2 : "");   
 
 	tooltips = gtk_tooltips_new ();
 	gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (account_button), tooltips, str, NULL);
@@ -470,6 +453,10 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
 
 	priv = GET_PRIV (account_button);
+
+	DEBUG_MSG (("AccountButton: Account:'%s' timed out trying to connect", 
+		    gossip_account_get_id (priv->account)));
+
 
 	if (!priv->account) {
 		return FALSE;
@@ -509,6 +496,9 @@ account_button_protocol_connecting_cb (GossipSession       *session,
 		return;
 	}
 
+	DEBUG_MSG (("AccountButton: Account:'%s' connecting", 
+		    gossip_account_get_id (account)));
+
 	if (priv->last_error) {
 		g_error_free (priv->last_error);
 		priv->last_error = NULL;
@@ -545,6 +535,9 @@ account_button_protocol_disconnecting_cb (GossipSession       *session,
 		return;
 	}
 
+	DEBUG_MSG (("AccountButton: Account:'%s' disconnecting", 
+		    gossip_account_get_id (account)));
+
 	priv->connected = FALSE;
 	priv->connecting = FALSE;
 	
@@ -565,6 +558,9 @@ account_button_protocol_connected_cb (GossipSession       *session,
 	if (!gossip_account_equal (account, priv->account)) {
 		return;
 	}
+
+	DEBUG_MSG (("AccountButton: Account:'%s' connected", 
+		    gossip_account_get_id (account)));
 
 	if (priv->last_error) {
 		g_error_free (priv->last_error);
@@ -592,10 +588,13 @@ account_button_protocol_disconnected_cb (GossipSession       *session,
 		return;
 	}
 
-	if (priv->last_error) {
-		g_error_free (priv->last_error);
-		priv->last_error = NULL;
-	}
+	DEBUG_MSG (("AccountButton: Account:'%s' disconnected", 
+		    gossip_account_get_id (account)));
+	
+/* 	if (priv->last_error) { */
+/* 		g_error_free (priv->last_error); */
+/* 		priv->last_error = NULL; */
+/* 	} */
 
 	priv->connected = FALSE;
 	priv->connecting = FALSE;
@@ -612,14 +611,17 @@ account_button_protocol_error_cb (GossipSession       *session,
 				  GossipAccountButton *account_button)
 {
 	GossipAccountButtonPriv *priv;
-	GtkWidget               *image;
-	GdkPixbuf               *pixbuf;
 
 	priv = GET_PRIV (account_button);
 
  	if (!gossip_account_equal (account, priv->account)) { 
  		return; 
  	} 
+
+	DEBUG_MSG (("AccountButton: Account:'%s' error:%d->'%s'", 
+		    gossip_account_get_id (account),
+		    error->code, 
+		    error->message));
 
 	priv->connecting = FALSE;
 
@@ -630,20 +632,6 @@ account_button_protocol_error_cb (GossipSession       *session,
 	priv->last_error = g_error_copy (error);
 
 	gossip_account_button_set_status (account_button, FALSE);
-
-	image = gtk_tool_button_get_icon_widget (GTK_TOOL_BUTTON (account_button));
-	if (!image) {
-		image = gtk_image_new ();
-		gtk_tool_button_set_icon_widget (GTK_TOOL_BUTTON (account_button),
-						 image);
-	}
-
-	pixbuf = gossip_pixbuf_from_account_error (priv->account, 
-						   GTK_ICON_SIZE_BUTTON);
-	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-	g_object_unref (pixbuf);
-	
-	/* update tooltip */
 	account_button_update_tooltip (account_button);
 }
 
@@ -774,9 +762,15 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 						 image);
 	}
 
-	pixbuf = gossip_pixbuf_from_account_status (priv->account, 
-						    GTK_ICON_SIZE_BUTTON,
-						    online);
+	if (priv->last_error) {
+		pixbuf = gossip_pixbuf_from_account_error (priv->account, 
+							   GTK_ICON_SIZE_BUTTON);
+	} else {
+		pixbuf = gossip_pixbuf_from_account_status (priv->account, 
+							    GTK_ICON_SIZE_BUTTON,
+							    online);
+	}
+
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 }

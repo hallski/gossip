@@ -36,7 +36,9 @@
 #include "gossip-chat.h"
 #include "gossip-app.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+
 
 struct _GossipChatPriv {
 	GossipChatWindow *window;
@@ -797,7 +799,7 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 	gchar         *ch;
 	gboolean       ret_val;
 
-	d(g_print ("ChatView: Highlighting nickname\n"));
+	DEBUG_MSG (("Chat: Highlighting nickname"));
 
 	ret_val = FALSE;
 

@@ -30,11 +30,13 @@
 
 #include "gossip-status-presets.h"
 
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+
 #define STATUS_PRESETS_XML_FILENAME "status-presets.xml"
 #define STATUS_PRESETS_DTD_FILENAME "gossip-status-presets.dtd"
 #define STATUS_PRESETS_MAX_EACH     15
 
-#define d(x) 
 
 typedef struct {
 	gchar               *status;
@@ -88,7 +90,7 @@ status_presets_file_parse (const gchar *filename)
 	xmlNodePtr        presets_node;
 	xmlNodePtr        node;
 	
-	d(g_print ("Attempting to parse file:'%s'...\n", filename));
+	DEBUG_MSG (("StatusPresets: Attempting to parse file:'%s'...", filename));
 
  	ctxt = xmlNewParserCtxt ();
 
@@ -148,7 +150,7 @@ status_presets_file_parse (const gchar *filename)
 		node = node->next;
 	}
 	
-	d(g_print ("Parsed %d status presets\n", g_list_length (presets)));
+	DEBUG_MSG (("StatusPresets: Parsed %d status presets", g_list_length (presets)));
 
 	xmlFreeDoc (doc);
 	xmlFreeParserCtxt (ctxt);
@@ -239,7 +241,7 @@ status_presets_file_save (void)
 		xmlNewProp (subnode, BAD_CAST "presence", state);	
 	}
 
-	d(g_print ("Saving file:'%s'\n", xml_file));
+	DEBUG_MSG (("StatusPresets: Saving file:'%s'", xml_file));
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 

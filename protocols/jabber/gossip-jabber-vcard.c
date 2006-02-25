@@ -25,7 +25,8 @@
 #include "gossip-jabber-vcard.h"
 #include "gossip-jid.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 static LmHandlerResult 
@@ -62,13 +63,13 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			switch (code) {
 			case 404: {
 				/* receipient unavailable */
-				d(g_print ("VCard: Receipient is unavailable\n"));
+				DEBUG_MSG (("VCard: Receipient is unavailable"));
 				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			default:
-				d(g_print ("VCard: Unhandled presence error:%d\n", code));
+				DEBUG_MSG (("VCard: Unhandled presence error:%d", code));
 				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 				break;
 			}
@@ -154,7 +155,7 @@ gossip_jabber_vcard_get (LmConnection         *connection,
 	jid = gossip_jid_new (jid_str);
 	jid_without_resource = gossip_jid_get_without_resource (jid);
 
-	d(g_print ("Protocol: Requesting VCard, JID:'%s'\n", jid_without_resource));
+	DEBUG_MSG (("Protocol: Requesting VCard, JID:'%s'", jid_without_resource));
 
 	m = lm_message_new (jid_without_resource, 
 			    LM_MESSAGE_TYPE_IQ);

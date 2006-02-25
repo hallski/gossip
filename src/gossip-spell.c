@@ -30,7 +30,8 @@
 
 #include "gossip-spell.h"
 
-#define d(x) 
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 	
 
 typedef struct {
@@ -172,7 +173,7 @@ gossip_spell_new (GList *languages)
 	
 	GList       *l;
 
-	d(g_print ("Spell: Initiating\n")); 
+	DEBUG_MSG (("Spell: Initiating")); 
 
 	spell = g_new0 (GossipSpell, 1);
 
@@ -185,9 +186,9 @@ gossip_spell_new (GList *languages)
 		language = getenv ("LANG");
 		if (!language) {
 			language = "en";
-			d(g_print ("Spell: Using default language ('%s')\n", language)); 
+			DEBUG_MSG (("Spell: Using default language ('%s')", language)); 
 		} else {
-			d(g_print ("Spell: Using language from environment variable LANG ('%s')\n", language)); 
+			DEBUG_MSG (("Spell: Using language from environment variable LANG ('%s')", language)); 
 		}
 
 		
@@ -204,9 +205,9 @@ gossip_spell_new (GList *languages)
 			lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
 			spell->has_backend = TRUE;
 			
-			d(g_print ("Spell: Using ASpell back end for language:'%s'\n", language)); 
+			DEBUG_MSG (("Spell: Using ASpell back end for language:'%s'", language)); 
 	} else {
-			d(g_print ("Spell: No back end supported\n")); 
+			DEBUG_MSG (("Spell: No back end supported")); 
 	}
 
  		spell->languages = g_list_append (spell->languages, lang);
@@ -218,7 +219,7 @@ gossip_spell_new (GList *languages)
 
 			language = l->data;
 
-			d(g_print ("Spell: Using language:'%s'\n", language)); 
+			DEBUG_MSG (("Spell: Using language:'%s'", language)); 
 
 			lang = g_new0 (SpellLanguage, 1);
 			
@@ -233,7 +234,7 @@ gossip_spell_new (GList *languages)
 				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
 		spell->has_backend = TRUE;
 				
-				d(g_print ("Spell: Using ASpell back end for language:'%s'\n", language)); 
+				DEBUG_MSG (("Spell: Using ASpell back end for language:'%s'", language)); 
 			}
 
 			spell->languages = g_list_append (spell->languages, lang);
@@ -313,7 +314,7 @@ gossip_spell_get_language_codes (GossipSpell *spell)
 
 	g_return_val_if_fail (spell != NULL, FALSE);
 
-	d(g_print ("Spell: Listing available language codes:\n"));
+	DEBUG_MSG (("Spell: Listing available language codes:"));
 
 	config = new_aspell_config ();
 
@@ -330,7 +331,7 @@ gossip_spell_get_language_codes (GossipSpell *spell)
 			continue;
 		}
 
-		d(g_print ("Spell:  + %s (%s)\n", 
+		DEBUG_MSG (("Spell:  + %s (%s)", 
 			   entry->code, 
 			   gossip_spell_get_language_name (entry->code)));
 		codes = g_list_append (codes, g_strdup (entry->code));
@@ -338,7 +339,7 @@ gossip_spell_get_language_codes (GossipSpell *spell)
 
 	delete_aspell_dict_info_enumeration (dels);
 
-	d(g_print ("Spell: %d language codes in total:\n", g_list_length (codes)));
+	DEBUG_MSG (("Spell: %d language codes in total:", g_list_length (codes)));
 
 	return codes;
 #else  /* HAVE_ASPELL */

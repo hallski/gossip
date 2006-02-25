@@ -46,7 +46,8 @@
 #include "gossip-notify.h"
 #endif
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
@@ -614,7 +615,7 @@ contact_list_set_property (GObject      *object,
 static void
 contact_list_connected_cb (GossipSession *session, GossipContactList *list)
 {
-	d(g_print ("ContactList: Connected\n"));
+	DEBUG_MSG (("ContactList: Connected"));
 
 	g_timeout_add (ACTIVE_USER_WAIT_TO_ENABLE_TIME, 
 		       (GSourceFunc) contact_list_show_active_users_cb,
@@ -642,7 +643,7 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	priv = list->priv;
 
-	d(g_print ("ContactList: Contact added: %s\n",
+	DEBUG_MSG (("ContactList: Contact added: %s",
 		   gossip_contact_get_name (contact)));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
@@ -670,15 +671,15 @@ contact_list_contact_updated_cb (GossipSession     *session,
 
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-		d(g_print ("ContactList: Update to none-contact list "
-			   "contact (doing nothing)\n"));
+		DEBUG_MSG (("ContactList: Update to none-contact list "
+			   "contact (doing nothing)"));
 		return;
 	}
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	presence = gossip_contact_get_active_presence (contact);
 
-	d(g_print ("ContactList: Contact updated: %s\n",
+	DEBUG_MSG (("ContactList: Contact updated: %s",
 		   gossip_contact_get_name (contact)));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
@@ -724,8 +725,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-		d(g_print ("ContactList: Presence from none-contact list "
-			   "contact (doing nothing)\n"));
+		DEBUG_MSG (("ContactList: Presence from none-contact list "
+			   "contact (doing nothing)"));
 		return;
 	}
 
@@ -765,9 +766,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			do_set_refresh = TRUE;
 
 			set_model = TRUE;
-			d(g_print ("ContactList: Remove item (after timeout)\n")); 
+			DEBUG_MSG (("ContactList: Remove item (after timeout)")); 
 		} else {
-			d(g_print ("ContactList: Remove item (now)!\n")); 
+			DEBUG_MSG (("ContactList: Remove item (now)!")); 
 			contact_list_remove_contact (list, contact);
 		}
 	}
@@ -788,7 +789,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (priv->show_active) {
 			do_set_active = TRUE;
 
-			d(g_print ("ContactList: Set active (contact added)\n")); 
+			DEBUG_MSG (("ContactList: Set active (contact added)")); 
 		}
 
 	} else {
@@ -814,14 +815,14 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 					str = "offline -> online"; 
 				}
 
-				d(g_print ("ContactList: Set active (contact updated %s)\n", str)); 
+				DEBUG_MSG (("ContactList: Set active (contact updated %s)", str)); 
 
 			} else {
 				/* was TRUE for presence updates */
 				/* do_set_active = FALSE;  */
 				do_set_refresh = TRUE;
 				
-				d(g_print ("ContactList: Set active (contact updated)\n")); 
+				DEBUG_MSG (("ContactList: Set active (contact updated)")); 
 			}
 		}
 
@@ -879,7 +880,7 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	d(g_print ("ContactList: Contact removed: %s\n",
+	DEBUG_MSG (("ContactList: Contact removed: %s",
 		   gossip_contact_get_name (contact)));
 
 	contact_list_remove_contact (list, contact);
@@ -896,7 +897,7 @@ contact_list_contact_composing_cb (GossipSession     *session,
 	GList                 *iters, *l;
 	GdkPixbuf             *pixbuf = NULL;
 
-	d(g_print ("ContactList: Contact %s typing:'%s'\n",
+	DEBUG_MSG (("ContactList: Contact %s typing:'%s'",
 		   composing ? "is" : "is not",
 		   gossip_contact_get_name (contact)));
 
@@ -964,7 +965,7 @@ contact_list_contact_set_active (GossipContactList *list,
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
 				    COL_IS_ACTIVE, active,
 				    -1);
-		d(g_print ("ContactList: Set item %s\n", active ? "active" : "inactive"));
+		DEBUG_MSG (("ContactList: Set item %s", active ? "active" : "inactive"));
 	
  		if (set_changed) { 
  			path = gtk_tree_model_get_path (model, iter); 
@@ -1020,12 +1021,12 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	if (data->remove && 
 	    !priv->show_offline && 
 	    !gossip_contact_is_online (data->contact)) {
-		d(g_print ("ContactList: Remove item (active timeout)!\n"));
+		DEBUG_MSG (("ContactList: Remove item (active timeout)!"));
 		contact_list_remove_contact (data->list,
 					     data->contact);
 	}
 
-	d(g_print ("ContactList: Setting contact to no longer be active\n"));
+	DEBUG_MSG (("ContactList: Setting contact to no longer be active"));
 	contact_list_contact_set_active (data->list, 
 					 data->contact,
 					 FALSE,
@@ -1431,14 +1432,14 @@ contact_list_drag_data_received (GtkWidget         *widget,
 	gboolean                 drag_del = FALSE;
 
 	id = (const gchar*) selection->data;
-	d(g_print ("ContactList: Received %s%s drag & drop contact from roster with id:'%s'\n", 
+	DEBUG_MSG (("ContactList: Received %s%s drag & drop contact from roster with id:'%s'", 
 		   context->action == GDK_ACTION_MOVE ? "move" : "", 
 		   context->action == GDK_ACTION_COPY ? "copy" : "", 
 		   id));
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	if (!contact) {
-		d(g_print ("ContactList: No contact found associated with drag & drop\n"));
+		DEBUG_MSG (("ContactList: No contact found associated with drag & drop"));
 		return;
 	}
 

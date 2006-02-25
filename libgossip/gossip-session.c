@@ -24,13 +24,13 @@
 
 #include "gossip-session.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
 
 
 typedef struct _GossipSessionPriv  GossipSessionPriv;
-
 
 struct _GossipSessionPriv {
  	GossipAccountManager *account_manager; 
@@ -461,7 +461,7 @@ session_protocol_logged_in (GossipProtocol *protocol,
 	GossipSessionPriv *priv;
 	GTimer            *timer;
 
-	d(g_print ("Session: Protocol logged in\n"));
+	DEBUG_MSG (("Session: Protocol logged in"));
 
 	priv = GET_PRIV (session);
 
@@ -493,7 +493,7 @@ session_protocol_logged_out (GossipProtocol *protocol,
 	gdouble            seconds;
 
 	seconds = gossip_session_get_connected_time (session, account);
-	d(g_print ("Session: Protocol logged out (after %.2f seconds)\n", seconds));
+	DEBUG_MSG (("Session: Protocol logged out (after %.2f seconds)", seconds));
 
 	priv = GET_PRIV (session);
 
@@ -532,7 +532,7 @@ session_protocol_contact_added (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 
-	d(g_print ("Session: Contact added '%s'\n",
+	DEBUG_MSG (("Session: Contact added '%s'",
 		   gossip_contact_get_name (contact)));
 
 	priv = GET_PRIV (session);
@@ -548,7 +548,7 @@ session_protocol_contact_updated (GossipProtocol *protocol,
 				  GossipContact  *contact,
 				  GossipSession  *session)
 {
-	d(g_print ("Session: Contact updated '%s'\n",
+	DEBUG_MSG (("Session: Contact updated '%s'",
 		   gossip_contact_get_name (contact)));
 
 	g_signal_emit (session, signals[CONTACT_UPDATED], 0, contact);
@@ -559,7 +559,7 @@ session_protocol_contact_presence_updated (GossipProtocol *protocol,
 					   GossipContact  *contact,
 					   GossipSession  *session)
 {
-	d(g_print ("Session: Contact presence updated '%s'\n",
+	DEBUG_MSG (("Session: Contact presence updated '%s'",
 		   gossip_contact_get_name (contact)));
 	g_signal_emit (session, signals[CONTACT_PRESENCE_UPDATED], 0, contact);
 }
@@ -571,7 +571,7 @@ session_protocol_contact_removed (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 	
-	d(g_print ("Session: Contact removed '%s'\n",
+	DEBUG_MSG (("Session: Contact removed '%s'",
 		   gossip_contact_get_name (contact)));
 
 	priv = GET_PRIV (session);
@@ -590,7 +590,7 @@ session_protocol_composing_event (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 	
-	d(g_print ("Session: Contact %s composing:'%s'\n",
+	DEBUG_MSG (("Session: Contact %s composing:'%s'",
 		   composing ? "is" : "is not",
 		   gossip_contact_get_name (contact)));
 
@@ -606,7 +606,7 @@ session_protocol_get_password (GossipProtocol *protocol,
 {
 	gchar *password;
 
-	d(g_print ("Session: Get password\n"));
+	DEBUG_MSG (("Session: Get password"));
 
 	g_signal_emit (session, signals[GET_PASSWORD], 0, account, &password);
 	
@@ -620,7 +620,7 @@ session_protocol_error (GossipProtocol *protocol,
 			GossipSession  *session)
 {
 
-	d(g_print ("Session: Error:%d->'%s'\n", 
+	DEBUG_MSG (("Session: Error:%d->'%s'", 
 		   error->code, error->message));
 
 	g_signal_emit (session, signals[PROTOCOL_ERROR], 0, protocol, account, error); 

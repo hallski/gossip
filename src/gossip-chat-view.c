@@ -37,13 +37,14 @@
 #include "gossip-theme-manager.h"
 #include "gossip-app.h"
 
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
 #define TIMESTAMP_INTERVAL 300
 
 /* Maximum lines in any chat buffer, see bug #141292. */
 #define MAX_LINES 1000
-
-#define d(x)
 
 
 typedef enum {
@@ -1084,7 +1085,7 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 
 	contact = gossip_message_get_sender (msg);
 	
-	d(g_print ("ChatView: Maybe add fancy header\n"));
+	DEBUG_MSG (("ChatView: Maybe add fancy header"));
 
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
@@ -1167,7 +1168,7 @@ chat_view_append_irc_action (GossipChatView *view,
 
 	priv = view->priv;
 
-	d(g_print ("ChatView: Add IRC action\n"));
+	DEBUG_MSG (("ChatView: Add IRC action"));
 
 	/* Skip the "/me ". */
 	if (from_self) {
@@ -1221,7 +1222,7 @@ chat_view_append_fancy_action (GossipChatView *view,
 
 	priv = view->priv;
 
-	d(g_print ("ChatView: Add fancy action\n"));
+	DEBUG_MSG (("ChatView: Add fancy action"));
 
 	contact = gossip_message_get_sender (msg);
 
@@ -1270,7 +1271,7 @@ chat_view_append_irc_message (GossipChatView *view,
 
 	priv = view->priv;
 
-	d(g_print ("ChatView: Add IRC message\n"));
+	DEBUG_MSG (("ChatView: Add IRC message"));
 
 	body = gossip_message_get_body (msg);
 

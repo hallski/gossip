@@ -36,7 +36,8 @@
 #include "gossip-app.h"
 #include "gossip-vcard-dialog.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
@@ -226,12 +227,12 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	GtkTextBuffer *buffer;
 	const gchar   *str;
 
-	d(g_print ("Got a vCard response\n"));
+	DEBUG_MSG (("VCardDialog: Got a VCard response"));
 
 	vcard_dialog_lookup_stop (dialog);
 
 	if (result != GOSSIP_RESULT_OK) {
-		d(g_print ("vCard result != GOSSIP_RESULT_OK\n"));
+		DEBUG_MSG (("VCardDialog: VCard result was not good"));
 		return;
 	}
 
@@ -269,7 +270,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	const gchar          *str;
 
 	if (!gossip_app_is_connected ()) {
-		d(g_print ("Not connected, not setting vCard\n"));
+		DEBUG_MSG (("VCardDialog: Not connected, not setting VCard"));
 		return;
 	}
 
@@ -310,7 +311,7 @@ static void
 vcard_dialog_set_vcard_cb (GossipResult       result, 
 			   GossipVCardDialog *dialog)
 {
-	d(g_print ("Got a vCard response\n"));
+	DEBUG_MSG (("VCardDialog: Got a VCard response"));
   
 	/* if multiple accounts, wait for the close button */
 	if (vcard_dialog_get_account_count (dialog) <= 1) {

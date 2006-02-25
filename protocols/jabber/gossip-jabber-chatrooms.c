@@ -32,7 +32,8 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define JOIN_TIMEOUT       20000
 
@@ -365,7 +366,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	
 	id = jabber_chatrooms_chatroom_get_id (room);
 
-	d(g_print ("Protocol Chatrooms: Presence from: %s\n", from));
+	DEBUG_MSG (("ProtocolChatrooms: Presence from: %s", from));
 
 	type = lm_message_get_sub_type (m);
 	switch (type) {
@@ -391,13 +392,13 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 
 		/* is contact new or updated */
 		if (new_contact || was_offline) {
-			d(g_print ("Protocol Chatrooms: ID[%d] Presence for new joining contact:'%s'\n",
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Presence for new joining contact:'%s'",
 				   id, gossip_jid_get_full (jid)));
 			g_signal_emit_by_name (chatrooms->jabber,
 					       "chatroom-contact-joined",
 					       id, contact);
 		} else {
-			d(g_print ("Protocol Chatrooms: ID[%d] Presence updated for contact:'%s'\n", 
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Presence updated for contact:'%s'", 
 				   id, gossip_jid_get_full (jid)));
 			g_signal_emit_by_name (chatrooms->jabber,
 					       "chatroom-contact-presence-updated", 
@@ -408,7 +409,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	case LM_MESSAGE_SUB_TYPE_UNAVAILABLE:
 		contact = jabber_chatrooms_get_contact (room, jid, NULL);
 		if (contact) {
-			d(g_print ("Protocol Chatrooms: ID[%d] Contact left:'%s'\n",
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Contact left:'%s'",
 				   id, gossip_jid_get_full (jid)));
 			g_signal_emit_by_name (chatrooms->jabber, 
 					       "chatroom-contact-left",
@@ -449,7 +450,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 #endif
 
 	default:
-		d(g_print ("Protocol Chatrooms: Presence not handled for:'%s'\n",
+		DEBUG_MSG (("ProtocolChatrooms: Presence not handled for:'%s'",
 			   gossip_jid_get_full (jid)));
 		gossip_jid_unref (jid);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -515,7 +516,7 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 	}
 
 	id = jabber_chatrooms_chatroom_get_id (room);
-	d(g_print ("Protocol Chatrooms: ID[%d] Join timed out (internally)\n", id));
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join timed out (internally)", id));
 
 	/* set chatroom status and error */
 	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_ERROR);
@@ -527,7 +528,7 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 	chatrooms = room->chatrooms;
 		
 	if (room->callback != NULL) {
-		d(g_print ("Protocol Chatrooms: ID[%d] Calling back...\n", id));
+		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Calling back...", id));
 		(room->callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
 				  GOSSIP_CHATROOM_JOIN_TIMED_OUT, 
 				  id, room->user_data);
@@ -573,7 +574,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 		/* duplicate room already exists */
 		id = jabber_chatrooms_chatroom_get_id (existing_room);
 
-		d(g_print ("Protocol Chatrooms: ID[%d] Join chatroom:'%s', room already exists.\n", 
+		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join chatroom:'%s', room already exists.", 
 			   id,
 			   gossip_chatroom_get_room (chatroom)));
 
@@ -588,7 +589,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	/* get real chatroom */
 	id = jabber_chatrooms_chatroom_get_id (room);
 
-        d(g_print ("Protocol Chatrooms: ID[%d] Join chatroom:'%s' on server:'%s'\n", 
+        DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join chatroom:'%s' on server:'%s'", 
 		   id,
 		   gossip_chatroom_get_room (chatroom),
 		   gossip_chatroom_get_server (chatroom)));
@@ -703,27 +704,27 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		switch (code) {
 		case 409: {
 			/* conflicting nickname */
-			d(g_print ("Protocol Chatrooms: ID[%d] Conflicting nickname\n", id));
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Conflicting nickname", id));
 			result = GOSSIP_CHATROOM_JOIN_NICK_IN_USE;
 			break;
 		}
 			
 		case 502: {
 			/* unresolved hostname */
-			d(g_print ("Protocol Chatrooms: ID[%d] Unable to resolve hostname\n", id));
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Unable to resolve hostname", id));
 			result = GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST;
 			break;
 		}
 			
 		case 504: {
 			/* remote server timeout */
-			d(g_print ("Protocol Chatrooms: ID[%d] Join timed out\n", id));
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join timed out", id));
 			result = GOSSIP_CHATROOM_JOIN_TIMED_OUT;
 			break;
 		}
 			
 		default:
-			d(g_print ("Protocol Chatrooms: ID[%d] Unhandled presence error:%d\n", id, code));
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Unhandled presence error:%d", id, code));
 			result = GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR;
 			break;
 		}
@@ -740,7 +741,7 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 					gossip_chatroom_provider_join_result_as_str (result));
 
 	if (room->callback != NULL) {
-		d(g_print ("Protocol Chatrooms: ID[%d] Calling back...\n", id));
+		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Calling back...", id));
 		(room->callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
 				  result, id, room->user_data);
 	}
@@ -780,11 +781,11 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 	room = g_hash_table_lookup (chatrooms->room_id_hash, 
 				    GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d\n", id);
 		return;
 	}
 
-	d(g_print ("Protocol Chatrooms: ID[%d] Cancel joining room\n", id));
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Cancel joining room", id));
 
 	if (room->timeout_id) {
 		g_source_remove (room->timeout_id);
@@ -801,7 +802,7 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	if (room->callback != NULL) {
-		d(g_print ("Protocol Chatrooms: ID[%d] Calling back...\n", id));
+		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Calling back...", id));
 		(room->callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
 				  GOSSIP_CHATROOM_JOIN_CANCELED, id, room->user_data);
 	}
@@ -830,11 +831,11 @@ gossip_jabber_chatrooms_send (GossipJabberChatrooms *chatrooms,
 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 	
-	d(g_print ("Protocol Chatrooms: ID[%d] Send message\n", id));
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Send message", id));
 	
 	m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (room->jid),
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -860,11 +861,11 @@ gossip_jabber_chatrooms_change_topic (GossipJabberChatrooms *chatrooms,
 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
-	d(g_print ("Protocol Chatrooms: ID[%d] Change topic to:'%s'\n", 
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Change topic to:'%s'", 
 		   id, new_topic));
 	
 	without_resource = gossip_jid_get_without_resource (room->jid);
@@ -893,11 +894,11 @@ gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms *chatrooms,
 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
-	d(g_print ("Protocol Chatrooms: ID[%d] Change chatroom nick to:'%s'\n", 
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Change chatroom nick to:'%s'", 
 		   id, new_nick));
 
 	gossip_jid_set_resource (room->jid, new_nick);
@@ -921,7 +922,7 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
@@ -940,7 +941,7 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 	g_hash_table_remove (chatrooms->room_jid_hash,
 			     room->jid);
 
-	d(g_print ("Protocol Chatrooms: ID[%d] Leaving room, ref count is %d\n", 
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Leaving room, ref count is %d", 
 		   id, room->ref_count - 1));
 	
 	jabber_chatrooms_chatroom_unref (room);
@@ -957,7 +958,7 @@ gossip_jabber_chatrooms_get_room_name (GossipJabberChatrooms *chatrooms,
 	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash,
 						      GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return NULL;
 	}
 
@@ -980,11 +981,11 @@ gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
 						       GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("Protocol Chatrooms: Unknown chatroom id: %d", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
-	d(g_print ("Protocol Chatrooms: ID[%d] Inviting contact:'%s'\n", 
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Inviting contact:'%s'", 
 		   id, contact_id));
 
 	m = lm_message_new (contact_id,

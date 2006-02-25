@@ -30,8 +30,6 @@
 #include "gossip-app.h"
 #include "gossip-new-message-dialog.h"
 
-#define d(x)
-
 
 typedef struct {
 	GtkWidget    *dialog;

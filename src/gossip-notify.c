@@ -34,7 +34,8 @@
 #include "gossip-notify.h"
 #include "gossip-stock.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define NOTIFY_MESSAGE_TIMEOUT 10
 
@@ -135,7 +136,7 @@ gossip_notify_contact_online (GossipContact *contact)
 	gchar          *title;
 	const gchar    *status;
 
-	d(g_print ("Notify: Contact online:'%s'\n", 
+	DEBUG_MSG (("Notify: Contact online:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	presence = gossip_contact_get_active_presence (contact);
@@ -178,7 +179,7 @@ gossip_notify_contact_offline (GossipContact *contact)
 	gchar          *title;
 	const gchar    *status;
 
-	d(g_print ("Notify: Contact offline:'%s'\n", 
+	DEBUG_MSG (("Notify: Contact offline:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	presence = gossip_contact_get_active_presence (contact);
@@ -235,7 +236,7 @@ notify_new_message_cb (NotifyHandle       *handle,
 			break;
 		}
 	} else {
-		g_warning ("No event found for NotifyHandle:0x%.8x\n", 
+		g_warning ("No event found for NotifyHandle:0x%.8x", 
 			   (gint) handle);
 	}
 
@@ -263,7 +264,7 @@ notify_new_message (GossipEventManager *event_manager,
 
 	contact = gossip_message_get_sender (message);
 
-	d(g_print ("Notify: New message:'%s'\n", 
+	DEBUG_MSG (("Notify: New message:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	filename = notify_get_filename_from_stock (GOSSIP_STOCK_MESSAGE);
@@ -373,7 +374,7 @@ gossip_notify_init (GossipSession      *session,
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (event_manager));
 	
-	d(g_print ("Notify: Initiating...\n"));
+	DEBUG_MSG (("Notify: Initiating..."));
 
 	if (!notify_glib_init (PACKAGE_NAME, NULL)) {
 		g_warning ("Cannot initialise Notify integration");

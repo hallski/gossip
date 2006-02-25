@@ -32,7 +32,8 @@
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
@@ -172,7 +173,7 @@ gossip_account_manager_add (GossipAccountManager *manager,
 		type = gossip_account_get_type (account);
 		name = gossip_account_get_name (account);
 
-		d(g_print ("Account Manager: Adding %s account with name:'%s'\n", 
+		DEBUG_MSG (("Account Manager: Adding %s account with name:'%s'", 
 			   gossip_account_get_type_as_str (type), 
 			   name));
 		
@@ -197,7 +198,7 @@ gossip_account_manager_remove (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 
- 	d(g_print ("Account Manager: Removing account with name:'%s'\n",  
+ 	DEBUG_MSG (("Account Manager: Removing account with name:'%s'",  
  		   gossip_account_get_name (account)));
 
 	priv->accounts = g_list_remove (priv->accounts, account);
@@ -274,7 +275,7 @@ gossip_account_manager_set_overridden_default (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 
- 	d(g_print ("Account Manager: Setting overriding default account with name:'%s'\n",  
+ 	DEBUG_MSG (("Account Manager: Setting overriding default account with name:'%s'",  
  		   name)); 
 
 	g_free (priv->default_name_override);
@@ -293,7 +294,7 @@ gossip_account_manager_set_default (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 	
- 	d(g_print ("Account Manager: Setting default account with name:'%s'\n",  
+ 	DEBUG_MSG (("Account Manager: Setting default account with name:'%s'",  
  		   gossip_account_get_name (account))); 
 
 	name = gossip_account_get_name (account);
@@ -358,7 +359,7 @@ gossip_account_manager_store (GossipAccountManager *manager)
 {
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 
- 	d(g_print ("Account Manager: Saving accounts\n"));  
+ 	DEBUG_MSG (("Account Manager: Saving accounts"));  
 	
 	return account_manager_file_save (manager);
 }
@@ -534,7 +535,7 @@ account_manager_file_parse (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 	
-	d(g_print ("Account Manager: Attempting to parse file:'%s'...\n", filename));
+	DEBUG_MSG (("Account Manager: Attempting to parse file:'%s'...", filename));
 
  	ctxt = xmlNewParserCtxt ();
 
@@ -573,10 +574,10 @@ account_manager_file_parse (GossipAccountManager *manager,
 		node = node->next;
 	}
 	
-	d(g_print ("Account Manager: Parsed %d accounts\n", 
+	DEBUG_MSG (("Account Manager: Parsed %d accounts", 
 		   g_list_length (priv->accounts)));
 
-	d(g_print ("Account Manager: Default account is:'%s'\n", 
+	DEBUG_MSG (("Account Manager: Default account is:'%s'", 
 		   priv->default_name));
 	
 	xmlFreeDoc(doc);
@@ -665,7 +666,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		g_free (port);
 	}
 
-	d(g_print ("Account Manager: Saving file:'%s'\n", xml_file));
+	DEBUG_MSG (("Account Manager: Saving file:'%s'", xml_file));
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 

@@ -31,7 +31,8 @@
 
 #include "gossip-transport-accounts.h"
 
-#define d(x)
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 struct _GossipTransportAccountList {
@@ -571,10 +572,7 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 	id = gossip_contact_get_id (own_contact);
 	from_jid = gossip_jid_new (id);
 
-	d(g_print ("\n"
-		   "++++++++++++++++++++++++++++++\n"
-		   "Removing Service:'%s'\n"
-		   "++++++++++++++++++++++++++++++\n", 
+	DEBUG_MSG (("ProtocolTransport: Removing Service:'%s'"
 		   gossip_jid_get_full (service_jid)));
 
 	/* remove contacts associated with the service from roster */
@@ -598,7 +596,7 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 			continue;
 		}
 
-		d(g_print ("removing '%s' from roster\n", contact_id));
+		DEBUG_MSG (("ProtocolTransport: Removing '%s' from roster", contact_id));
 		
 		m = lm_message_new_with_sub_type (NULL,
 						  LM_MESSAGE_TYPE_IQ,
@@ -620,7 +618,7 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 	}
 
 	/* remove from roster the service */
-	d(g_print ("removing service '%s' from contact list\n", 
+	DEBUG_MSG (("ProtocolTransport: Removing service '%s' from contact list", 
 		   gossip_jid_get_full (service_jid)));
 
 	m = lm_message_new_with_sub_type (NULL,
@@ -644,7 +642,7 @@ gossip_transport_account_remove (GossipTransportAccount *account)
 	lm_message_unref (m);
 
 	/* unregister the service - new method */
-	d(g_print ("request disco unregister\n"));
+	DEBUG_MSG (("ProtocolTransport: Request disco unregister"));
 
  	gossip_transport_unregister (jabber,
 				     service_jid, 
@@ -661,7 +659,8 @@ transport_account_unregister_cb (GossipJID   *jid,
 				 const gchar *error_reason,
 				 gpointer     user_data)
 {
-	d(g_print ("request disco unregister - response (jid:'%s', error:'%s'->'%s')\n",
+	DEBUG_MSG (("ProtocolTransport: Request disco unregister - response "
+		    "(jid:'%s', error:'%s'->'%s')",
 		   gossip_jid_get_full (jid), error_code, error_reason));
 }
 

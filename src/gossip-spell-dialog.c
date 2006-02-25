@@ -30,7 +30,6 @@
 #include "gossip-ui-utils.h"
 #include "gossip-spell-dialog.h"
 
-#define d(x)
 
 struct _GossipSpellDialog {
 	GtkWidget   *window;

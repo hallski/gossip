@@ -31,7 +31,6 @@
 #include "gossip-app.h"
 #include "gossip-contact-info-dialog.h"
 
-#define d(x) 
 
 typedef struct {
 	GossipContact *contact;

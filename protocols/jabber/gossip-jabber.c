@@ -42,11 +42,10 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define d(x)
+#define DEBUG_MSG(x)
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-						    GOSSIP_TYPE_JABBER, \
-						    GossipJabberPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
 #define XMPP_VERSION_XMLNS  "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS   "jabber:iq:roster"
@@ -491,7 +490,7 @@ jabber_setup_connection (GossipJabber *jabber)
 	if (gossip_account_get_use_ssl (priv->account)) {
 		LmSSL *ssl;
 
-		d(g_print ("Protocol: Using SSL\n"));
+		DEBUG_MSG (("Protocol: Using SSL"));
 
 		ssl = lm_ssl_new (NULL,
 				  (LmSSLFunction) jabber_ssl_status_cb,
@@ -505,7 +504,7 @@ jabber_setup_connection (GossipJabber *jabber)
 	}
 
 	if (gossip_account_get_use_proxy (priv->account)) {
-		d(g_print ("Protocol: Using proxy\n"));
+		DEBUG_MSG (("Protocol: Using proxy"));
 
 		jabber_set_proxy (priv->connection);
 	} else {
@@ -531,7 +530,7 @@ jabber_login (GossipProtocol *protocol)
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
-	d(g_print ("Protocol: Logging in Jabber\n"));
+	DEBUG_MSG (("Protocol: Logging in Jabber"));
 
 	priv->presence = gossip_presence_new ();
 	gossip_presence_set_state (priv->presence, 
@@ -649,6 +648,8 @@ jabber_error (GossipProtocol      *protocol,
 	priv = GET_PRIV (jabber);
 
 	message = gossip_protocol_error_to_string (code);
+	DEBUG_MSG (("Protocol: Error:%d->'%s'", code, message));
+
 	error = jabber_error_create (code, message);
 	g_signal_emit_by_name (protocol, "error", priv->account, error);
  	g_error_free (error); 
@@ -685,7 +686,7 @@ jabber_connection_open_cb (LmConnection *connection,
 		return;
 	}
 
-	d(g_print ("Protocol: Connection open!\n"));
+	DEBUG_MSG (("Protocol: Connection open!"));
 
 	account = priv->account;
 	account_password = gossip_account_get_password (account);
@@ -700,13 +701,13 @@ jabber_connection_open_cb (LmConnection *connection,
 	 
 	/* FIXME: Decide on Resource */
 	jid_str = gossip_account_get_id (account);
-	d(g_print ("Protocol: Attempting to use JabberID:'%s'\n", jid_str));
+	DEBUG_MSG (("Protocol: Attempting to use JabberID:'%s'", jid_str));
 
 	id = gossip_jid_string_get_part_name (jid_str);
 
 	resource = gossip_jid_string_get_part_resource (jid_str);
 	if (!resource) {
-		d(g_print ("Protocol: JabberID:'%s' is invalid, there is no resource.\n", jid_str));
+		DEBUG_MSG (("Protocol: JabberID:'%s' is invalid, there is no resource.", jid_str));
 
 		jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_INVALID_USER);
@@ -740,7 +741,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 		return;
 	}
 
-	d(g_print ("Protocol: Connection logged in!\n"));
+	DEBUG_MSG (("Protocol: Connection logged in!"));
 
 	/* Request roster */
 	m = lm_message_new_with_sub_type (NULL,
@@ -853,7 +854,7 @@ jabber_ssl_status_cb (LmConnection *connection,
 		break;
 	}
 
-	d(g_print ("Protocol: %s\n", str));
+	DEBUG_MSG (("Protocol: %s", str));
 
 	return LM_SSL_RESPONSE_CONTINUE;
 }
@@ -911,7 +912,7 @@ jabber_register_account (GossipProtocol          *protocol,
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
 	g_return_if_fail (callback != NULL);
 
-	d(g_print ("Protocol: Registering with Jabber server...\n"));
+	DEBUG_MSG (("Protocol: Registering with Jabber server..."));
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
@@ -941,7 +942,7 @@ error:
 	error_message = gossip_protocol_error_to_string (error_code);
 	error = jabber_error_create (error_code, error_message);
 
-	d(g_print ("Protocol: %s\n", error_message));
+	DEBUG_MSG (("Protocol: %s", error_message));
 	
 	if (callback) {
 		(callback) (GOSSIP_RESULT_ERROR_REGISTRATION, 
@@ -961,7 +962,7 @@ jabber_register_cancel (GossipProtocol *protocol)
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
 
-	d(g_print ("Protocol: Canceling registration with Jabber server...\n"));
+	DEBUG_MSG (("Protocol: Canceling registration with Jabber server..."));
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
@@ -996,7 +997,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		error = jabber_error_create (GOSSIP_PROTOCOL_NO_CONNECTION,
 					     error_message);
 
-		d(g_print ("Protocol: %s\n", error_message));
+		DEBUG_MSG (("Protocol: %s", error_message));
 
 		if (ra->callback) {
 			(ra->callback) (GOSSIP_RESULT_ERROR_REGISTRATION, 
@@ -1009,7 +1010,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		return;
 	}
  
-	d(g_print ("Protocol: Connection open!\n"));
+	DEBUG_MSG (("Protocol: Connection open!"));
 
 	ra->message_handler = lm_message_handler_new ((LmHandleMessageFunction) 
 						      jabber_register_message_handler,
@@ -1040,7 +1041,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		error = jabber_error_create (GOSSIP_PROTOCOL_SPECIFIC_ERROR,
 					     error_message);
 
-		d(g_print ("Protocol: %s\n", error_message));
+		DEBUG_MSG (("Protocol: %s", error_message));
 
 		if (ra->callback) {
 			(ra->callback) (GOSSIP_RESULT_ERROR_REGISTRATION, 
@@ -1053,7 +1054,7 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		return;
 	}
 
-	d(g_print ("Protocol: Sent registration details\n"));
+	DEBUG_MSG (("Protocol: Sent registration details"));
 }
 
 static LmHandlerResult
@@ -1122,10 +1123,10 @@ jabber_register_message_handler (LmMessageHandler *handler,
 		error = jabber_error_create (error_code,
 					     error_message);
 
-		d(g_print ("Protocol: Registration failed with error:%s->'%s'\n",
+		DEBUG_MSG (("Protocol: Registration failed with error:%s->'%s'",
 			   error_code_str, error_message));	
 	} else {
-		d(g_print ("Protocol: Registration success\n"));
+		DEBUG_MSG (("Protocol: Registration success"));
 	}
 
 	if (ra->callback) {
@@ -1265,7 +1266,7 @@ jabber_send_message (GossipProtocol *protocol,
 		jid_str = g_strdup (recipient_id);
 	}
 
-	d(g_print ("Protocol: Sending message to: '%s'\n", jid_str));
+	DEBUG_MSG (("Protocol: Sending message to: '%s'", jid_str));
 	
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -1312,7 +1313,7 @@ jabber_send_composing (GossipProtocol *protocol,
 
 	contact_id = gossip_contact_get_id (contact);
 
-	d(g_print ("Protocol: Sending %s to contact:'%s'\n", 
+	DEBUG_MSG (("Protocol: Sending %s to contact:'%s'", 
 		   typing ? "composing" : "not composing",
 		   contact_id));
 	
@@ -1400,7 +1401,7 @@ jabber_set_presence (GossipProtocol *protocol,
 		break;
 	}
 
-	d(g_print ("Protocol: Setting presence to:'%s', status:'%s', priority:'%s'\n", 
+	DEBUG_MSG (("Protocol: Setting presence to:'%s', status:'%s', priority:'%s'", 
 		   show ? show : "available", 
 		   status ? status : "",
 		   priority));
@@ -1433,7 +1434,7 @@ jabber_set_subscription (GossipProtocol *protocol,
 
 	jabber = GOSSIP_JABBER (protocol);
 
-	d(g_print ("Protocol: Settting subscription for contact:'%s' as %s\n", 
+	DEBUG_MSG (("Protocol: Settting subscription for contact:'%s' as %s", 
 		   gossip_contact_get_id (contact),
 		   subscribed ? "subscribed" : "unsubscribed"));
 
@@ -1984,7 +1985,7 @@ jabber_message_handler (LmMessageHandler *handler,
 
 	priv = GET_PRIV (jabber);
 	
-	d(g_print ("Protocol: New message from: %s\n", 
+	DEBUG_MSG (("Protocol: New message from: %s", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
 	switch (lm_message_get_sub_type (m)) {
@@ -2064,7 +2065,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 	priv = GET_PRIV (jabber);
 
 	from = lm_message_node_get_attribute (m->node, "from");
-        d(g_print ("Protocol: New presence from: %s\n", 
+        DEBUG_MSG (("Protocol: New presence from: %s", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
 	if (gossip_jabber_chatrooms_get_jid_is_chatroom (priv->chatrooms,
@@ -2196,7 +2197,7 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	lm_message_handler_invalidate (handler);
 	
 	/* send subscribed to them */
-	d(g_print ("Protocol: Sending subscribed message to new service:'%s'\n", to));
+	DEBUG_MSG (("Protocol: Sending subscribed message to new service:'%s'", to));
 	new_message = lm_message_new_with_sub_type (to,
 						    LM_MESSAGE_TYPE_PRESENCE,
 						    LM_MESSAGE_SUB_TYPE_SUBSCRIBED);
@@ -2244,7 +2245,7 @@ jabber_request_version (GossipJabber *jabber,
 	from = lm_message_node_get_attribute (m->node, "from");
 	id = lm_message_node_get_attribute (m->node, "id");
 
-	d(g_print ("Protocol: Version request from:'%s'\n", from));
+	DEBUG_MSG (("Protocol: Version request from:'%s'", from));
 
 	r = lm_message_new_with_sub_type (from,
 					  LM_MESSAGE_TYPE_IQ,
@@ -2748,13 +2749,13 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 	priv = GET_PRIV (jabber);
 
 	jid = gossip_jid_new (jid_str);
-	d(g_print ("Protocol: Get contact: %s\n", gossip_jid_get_full (jid)));
+	DEBUG_MSG (("Protocol: Get contact: %s", gossip_jid_get_full (jid)));
 
 	contact = g_hash_table_lookup (priv->contacts, 
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
-		d(g_print ("Protocol: New contact\n"));
+		DEBUG_MSG (("Protocol: New contact"));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
 					      priv->account);
 		gossip_contact_set_id (contact, 

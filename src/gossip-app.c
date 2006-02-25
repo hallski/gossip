@@ -76,6 +76,9 @@
 #include "gossip-notify.h"
 #endif
 
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
 #define	EXT_AWAY_TIME (30*60)
@@ -93,9 +96,6 @@
 
 /* Minimum width of roster window if something goes wrong. */
 #define MIN_WIDTH 50
-
-/* Debugging */
-#define d(x)
 
 
 struct _GossipAppPriv {
@@ -234,6 +234,9 @@ static gboolean        app_idle_check_cb                    (GossipApp          
 static void            app_disconnect                       (void);
 static void            app_connection_items_setup           (GladeXML                 *glade);
 static void            app_connection_items_update          (void);
+static void            app_accounts_account_notify_cb       (GossipAccount            *account,
+							     GParamSpec               *param,
+							     gpointer                  user_data);
 static void            app_accounts_account_added_cb        (GossipAccountManager     *manager,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
@@ -585,7 +588,7 @@ app_setup (GossipAccountManager *manager)
 
 	width = MAX (width, MIN_WIDTH);
 	gtk_window_set_default_size (GTK_WINDOW (priv->window), width, height);
-	d(g_print ("Setting window default size to w:%d, h:%d\n", width, height)); 
+	DEBUG_MSG (("App: Setting window default size to w:%d, h:%d", width, height)); 
 
 	/* Set window position. */
  	x = gconf_client_get_int (priv->gconf_client, 
@@ -1363,7 +1366,7 @@ app_idle_check_cb (GossipApp *app)
 	presence = app_get_effective_presence ();
 	state = gossip_presence_get_state (presence);
 
-	/* d(g_print ("Idle for:%d\n", idle)); */
+	/* DEBUG_MSG (("AppIdle: Idle for:%d", idle)); */
 
 	/* We're going away, allow some slack. */
 	if (priv->leave_time > 0) {
@@ -1372,7 +1375,7 @@ app_idle_check_cb (GossipApp *app)
 			app_status_flash_stop ();
 
 			gossip_idle_reset ();
-			d(g_print ("OK, away now.\n"));
+			DEBUG_MSG (("AppIdle: OK, away now."));
 		}
 		
 		return TRUE;
@@ -1387,7 +1390,7 @@ app_idle_check_cb (GossipApp *app)
 		}
 
 		/* Presence will already be away. */
-		d(g_print ("Going to ext away...\n"));
+		DEBUG_MSG (("AppIdle: Going to ext away..."));
 		gossip_presence_set_state (priv->away_presence, 
 					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
 		presence_changed = TRUE;
@@ -1395,7 +1398,7 @@ app_idle_check_cb (GossipApp *app)
 	else if (state != GOSSIP_PRESENCE_STATE_AWAY && 
 		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
-		d(g_print ("Going to away...\n"));
+		DEBUG_MSG (("AppIdle: Going to away..."));
 		app_set_away (NULL);
 		presence_changed = TRUE;
 	}
@@ -1403,16 +1406,16 @@ app_idle_check_cb (GossipApp *app)
 		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
 		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= 0) {
-			d(g_print ("Slack, do nothing.\n"));
+			DEBUG_MSG (("AppIdle: Slack, do nothing."));
 			app_status_flash_start ();
 		}
 		else if (idle < -BACK_SLACK) {
-			d(g_print ("No more slack, break interrupted.\n"));
+			DEBUG_MSG (("AppIdle: No more slack, break interrupted."));
 			app_status_clear_away ();
 			return TRUE;
 		}
 		else if (idle > BACK_SLACK) {
-			d(g_print ("Don't interrupt break.\n"));
+			DEBUG_MSG (("AppIdle: Don't interrupt break."));
 			app_status_flash_stop ();
 		}
 	}
@@ -1625,12 +1628,20 @@ gossip_app_is_connected (void)
 /*
  * toolbar for accounts
  */
+static void
+app_accounts_account_notify_cb (GossipAccount *account,
+				GParamSpec    *param,
+				gpointer       user_data)
+{
+	app_accounts_rearrange ();
+}
 
 static void
 app_accounts_account_added_cb (GossipAccountManager *manager,
 			       GossipAccount        *account,
 			       gpointer              user_data)
 {
+	DEBUG_MSG (("AppAccounts: Account added"));
 	app_accounts_rearrange ();
 	app_connection_items_update ();
 }
@@ -1640,6 +1651,7 @@ app_accounts_account_removed_cb (GossipAccountManager *manager,
 				 GossipAccount        *account,
 				 gpointer              user_data)
 {
+	DEBUG_MSG (("AppAccounts: Account removed"));
 	app_accounts_remove (account);
 	app_connection_items_update ();
 }
@@ -1688,7 +1700,7 @@ app_accounts_rearrange (void)
 
 	priv = app->priv;
 
-	d(g_print ("AppAccounts: Rearranging toolbar\n"));
+	DEBUG_MSG (("AppAccounts: Rearranging toolbar"));
 
 	/* Remove all children for a reshuffle */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -1712,7 +1724,7 @@ app_accounts_create (void)
 
 	priv = app->priv;
 
-	d(g_print ("AppAccounts: Creating toolbar\n"));
+	DEBUG_MSG (("AppAccounts: Creating toolbar"));
 
 	manager = gossip_session_get_account_manager (priv->session);
 	accounts = gossip_account_manager_get_accounts (manager);
@@ -1723,15 +1735,12 @@ app_accounts_create (void)
 	accounts = g_list_sort (accounts, (GCompareFunc) app_accounts_sort_func);
 
 	for (l = accounts; l; l = l->next) {
-		GossipAccount *account = l->data;
-
-		app_accounts_add (account);
+		app_accounts_add (GOSSIP_ACCOUNT (l->data));
 	}
 
 	g_list_free (accounts);
 
 	/* Show/hide toolbar */
-	app_accounts_update_toolbar ();
 	app_accounts_update_separator ();
 }
 
@@ -1746,7 +1755,7 @@ app_accounts_update_separator (void)
 
 	priv = app->priv;
 
-	d(g_print ("AppAccounts: Updating toolbar separator position\n"));
+	DEBUG_MSG (("AppAccounts: Updating toolbar separator position"));
 
 	/* remove current separator */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -1797,8 +1806,7 @@ app_accounts_update_toolbar (void)
 	manager = gossip_session_get_account_manager (priv->session);
 	count = gossip_account_manager_get_count (manager);
 
-	d(g_print ("AppAccounts: Updating toolbar, account count:%d\n", 
-		   count));
+	DEBUG_MSG (("AppAccounts: Updating toolbar"));
 
 	/* show accounts if we have more than one */
 	if (count < 2) {
@@ -1817,7 +1825,7 @@ app_accounts_add (GossipAccount *account)
 
 	priv = app->priv;
 
-	d(g_print ("AppAccounts: Adding account with id:'%s'\n", 
+	DEBUG_MSG (("AppAccounts: Adding account with id:'%s'", 
 		   gossip_account_get_id (account)));
 
 	account_button = gossip_account_button_new ();
@@ -1827,6 +1835,15 @@ app_accounts_add (GossipAccount *account)
 	connected = gossip_session_is_connected (priv->session, account);
 	gossip_account_button_set_status (GOSSIP_ACCOUNT_BUTTON (account_button), 
 					  connected);
+
+	/* disconnect any handlers already set up to do this */
+	g_signal_handlers_disconnect_by_func (account,
+					      G_CALLBACK (app_accounts_account_notify_cb), 
+					      NULL);
+
+	g_signal_connect (account, "notify", 
+			  G_CALLBACK (app_accounts_account_notify_cb), 
+			  NULL);
 
 	/* Add to toolbar. */
 	gtk_container_add (GTK_CONTAINER (priv->accounts_toolbar), account_button);
@@ -1845,7 +1862,7 @@ app_accounts_remove (GossipAccount *account)
 
 	priv = app->priv;
 
-	d(g_print ("AppAccounts: Removing account with id:'%s'\n", 
+	DEBUG_MSG (("AppAccounts: Removing account with id:'%s'", 
 		   gossip_account_get_id (account)));
 
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -1857,11 +1874,16 @@ app_accounts_remove (GossipAccount *account)
 		}
 		
 		this_account = gossip_account_button_get_account (l->data);
-
-		if (gossip_account_equal (account, this_account)) {
-			gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), 
-					      l->data);
+		if (! gossip_account_equal (account, this_account)) {
+			continue;
 		}
+
+		g_signal_handlers_disconnect_by_func (account,
+						      G_CALLBACK (app_accounts_account_notify_cb), 
+						      NULL);
+		
+		gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), 
+				      l->data);
 	}
 	
 	g_list_free (children);
@@ -2135,19 +2157,6 @@ app_tray_flash_timeout_func (gpointer data)
 
 	priv = app->priv;
 
-#if 0
-	/* Debug code */
-	if (priv->tray_flash_icons == NULL && 
-	    priv->status_flash_timeout_id == 0) {
-		g_print ("no flash\n");
-	}
-
-	if (priv->status_flash_timeout_id != 0 && 
-	    priv->explicit_show == priv->auto_show) {
-		g_print ("expl == auto, flashing\n");
-	}
-#endif
-	
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
 			pixbuf = gossip_pixbuf_for_presence (priv->presence);
@@ -2239,7 +2248,7 @@ app_event_added_cb (GossipEventManager *manager,
 	GossipAppPriv *priv;
 	GList         *l;
 		
-	d(g_print ("Tray start blink\n"));
+	DEBUG_MSG (("AppTray: Start blink"));
 
 	priv = app->priv;
 	
@@ -2267,13 +2276,13 @@ app_event_removed_cb (GossipEventManager *manager,
 
 	priv = app->priv;
 
-	d(g_print ("Tray stop blink\n"));
+	DEBUG_MSG (("AppTray: Stop blink"));
 	l = g_list_find_custom (priv->tray_flash_icons, event,
 				gossip_event_compare);
 
 	if (!l) {
 		/* Not flashing this event */
-		g_print ("Couldn't find event\n");
+		DEBUG_MSG (("AppTray: Couldn't find event"));
 		return;
 	}
 

@@ -35,7 +35,8 @@
 #include "gossip-contact-list.h"
 #include "gossip-galago.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 
 static const char *   galago_generate_person_id          (GossipContact  *contact);
@@ -156,9 +157,9 @@ galago_set_status (GalagoAccount  *account,
 		status = gossip_presence_get_status (presence);
 		if (!status)
 			status = gossip_presence_state_get_default_status (state);
-		d(g_print ("Galago: Setting status to %s\n", status));
+		DEBUG_MSG (("Galago: Setting status to %s", status));
 	} else {
-		d(g_print ("Galago: Setting status to offline\n"));
+		DEBUG_MSG (("Galago: Setting status to offline"));
 		type = GALAGO_STATUS_OFFLINE;
 		id = GALAGO_STATUS_ID_OFFLINE;
 		status = _("Offline");
@@ -178,7 +179,7 @@ galago_presence_changed_cb (GossipSession  *gossip_session,
 	GList *accounts;
 	GList *l;
 
-	d(g_print ("Galago: Session presence changed\n"));
+	DEBUG_MSG (("Galago: Session presence changed"));
 
 	accounts = gossip_session_get_accounts (gossip_session);
 
@@ -204,7 +205,7 @@ galago_contact_added_cb (GossipSession *session,
 	GalagoAccount *my_gaccount, *gaccount;
 	GalagoPerson  *person;
 
-	d(g_print ("Galago: Contact added:'%s'\n", 
+	DEBUG_MSG (("Galago: Contact added:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	my_gaccount = galago_get_account (gossip_contact_get_account (contact));
@@ -232,7 +233,7 @@ galago_contact_updated_cb (GossipSession  *session,
 			   GossipContact  *contact, 
 			   gpointer        user_data)
 {
-	d(g_print ("Galago: Contact updated:'%s'\n", 
+	DEBUG_MSG (("Galago: Contact updated:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	/* TODO */
@@ -248,7 +249,7 @@ galago_contact_presence_updated_cb (GossipSession *session,
 	GalagoPerson   *person;
 	GalagoAccount  *gaccount, *my_gaccount;
 
-	d(g_print ("Galago: Contact presence updated:'%s'\n", 
+	DEBUG_MSG (("Galago: Contact presence updated:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	my_gaccount = galago_get_account (gossip_contact_get_account (contact));
@@ -284,7 +285,7 @@ galago_contact_removed_cb (GossipSession *session,
 	GalagoService *service;
 	GalagoPerson  *galago_person;
 
-	d(g_print ("Galago: Contact removed:'%s'\n", 
+	DEBUG_MSG (("Galago: Contact removed:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	my_galago_account = galago_get_account (gossip_contact_get_account (contact));
@@ -309,7 +310,7 @@ galago_setup_accounts (GossipSession *session)
 	GList *accounts;
 	GList *l;
 
-	d(g_print ("Galago: Setting up accounts\n"));
+	DEBUG_MSG (("Galago: Setting up accounts"));
 
 	accounts = gossip_session_get_accounts (session);
 
@@ -339,7 +340,7 @@ gossip_galago_init (GossipSession *session)
 {
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	
-	d(g_print ("Galago: Initiating...\n"));
+	DEBUG_MSG (("Galago: Initiating..."));
 
 	if (!galago_glib_init (PACKAGE_NAME, TRUE, NULL)) {
 		g_warning ("Cannot initialise Galago integration");

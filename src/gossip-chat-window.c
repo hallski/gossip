@@ -42,8 +42,9 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
-#define d(x)
 
 static void       gossip_chat_window_class_init        (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init              (GossipChatWindow      *window);
@@ -965,7 +966,7 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 {
 	GList *list, *l;
 
-	d(g_print ("Chat Window: Delete event received\n"));
+	DEBUG_MSG (("Chat Window: Delete event received"));
 
 	list = g_list_copy (window->priv->chats);
 
@@ -1120,7 +1121,7 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 
 	priv = window->priv;
 
-	d(g_print ("Chat Window: Tab added\n"));
+	DEBUG_MSG (("Chat Window: Tab added"));
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 
@@ -1161,7 +1162,7 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 {
 	GossipChat *chat;
 
-	d(g_print ("Chat Window: Tab removed\n"));
+	DEBUG_MSG (("Chat Window: Tab removed"));
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	
@@ -1198,7 +1199,7 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 	GossipChat	 *chat;
 	gint              x, y;
 
-	d(g_print ("Chat Window: Tab detached\n"));
+	DEBUG_MSG (("Chat Window: Tab detached"));
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	new_window = gossip_chat_window_new ();
@@ -1252,12 +1253,15 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	const gchar       *id;
 
 	id = (const gchar*) selection->data;
-	d(g_print ("Chat Window: Received drag & drop contact from roster with id:'%s'\n", id));
+	DEBUG_MSG (("Chat Window: Received drag & drop contact "
+		    "from roster with id:'%s'", 
+		    id));
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	
 	if (!contact) {
-		d(g_print ("Chat Window: No contact found associated with drag & drop\n"));
+		DEBUG_MSG (("Chat Window: No contact found associated "
+			    "with drag & drop"));
 		return;
 	}
 
@@ -1314,7 +1318,7 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 {
 	GtkWidget *label;
 
-	d(g_print ("Chat Window: Adding chat\n"));
+	DEBUG_MSG (("Chat Window: Adding chat"));
 
 	label = chat_window_create_label (window, chat);
 
@@ -1340,7 +1344,7 @@ void
 gossip_chat_window_remove_chat (GossipChatWindow *window,
 				GossipChat	 *chat)
 {
-	d(g_print ("Chat Window: Removing chat\n"));
+	DEBUG_MSG (("Chat Window: Removing chat"));
 
 	gossip_notebook_remove_page (GOSSIP_NOTEBOOK (window->priv->notebook),
 				     gossip_chat_get_widget (chat));

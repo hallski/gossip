@@ -28,9 +28,10 @@
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
-/* is sound toggled on or off */
+
 static gboolean sound_enabled = TRUE;
 
 
@@ -47,7 +48,7 @@ gossip_sound_play (GossipSound sound)
 	/* this is the internal sound enable/disable for when events
 	   happen that we need to mute sound - e.g. changing roster contacts */
 	if (!sound_enabled) {
-		d(g_print ("Sound: Play request ignored, sound currently disabled.\n"));
+		DEBUG_MSG (("Sound: Play request ignored, sound currently disabled."));
 		return;
 	}
 
@@ -55,7 +56,7 @@ gossip_sound_play (GossipSound sound)
 					 GCONF_PATH "/sound/play_sounds",
 					 NULL);
 	if (!enabled) {
-		d(g_print ("Sound: Preferences have sound disabled.\n"));
+		DEBUG_MSG (("Sound: Preferences have sound disabled."));
 		return;
 	}
 
@@ -80,19 +81,19 @@ gossip_sound_play (GossipSound sound)
 
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
-		d(g_print ("Sound: Triggering 'Chat' event.\n"));
+		DEBUG_MSG (("Sound: Triggering 'Chat' event."));
 		gnome_triggers_do (NULL, NULL, "gossip", "Chat", NULL);
 		break;
 	case GOSSIP_SOUND_ONLINE:
-		d(g_print ("Sound: Triggering 'Online' event.\n"));
+		DEBUG_MSG (("Sound: Triggering 'Online' event."));
 		gnome_triggers_do (NULL, NULL, "gossip", "Online", NULL);
 		break;
 	case GOSSIP_SOUND_OFFLINE:
-		d(g_print ("Sound: Triggering 'Offline' event.\n"));
+		DEBUG_MSG (("Sound: Triggering 'Offline' event."));
 		gnome_triggers_do (NULL, NULL, "gossip", "Offline", NULL);
 		break;
 	default:
-		d(g_print ("Sound: Unknown sound type.\n"));
+		DEBUG_MSG (("Sound: Unknown sound type."));
 		return;
 	}
 }		

@@ -34,7 +34,8 @@
 #include "gossip-stock.h"
 #include "gossip-contact.h"
 
-#define d(x)
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define SEARCH_MAX 15
 
@@ -354,7 +355,7 @@ transport_add_window_check_local (GossipTransportAddWindow *window)
 	
 	window->service_found = FALSE;
 
-	d(g_print ("running disco on local service:'%s'\n", host));
+	DEBUG_MSG (("TransportWindow: Running disco on local service:'%s'", host));
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 0);
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching), 
@@ -391,8 +392,8 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 
 	/* 404 = not found, service discovery not supported */
 	if (error && error->code == 404) {
-		d(g_print ("local server does not support service "
-			   "discovery, trying 3rd party services\n"));
+		DEBUG_MSG (("TransportWindow: Local server does not support service "
+			   "discovery, trying 3rd party services"));
 		transport_add_window_disco_cleanup (window);
 		transport_add_window_check_others (window);
 		
@@ -402,7 +403,7 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 	/* show progress */
 	fraction = 1 - (remaining / total);
 
-	d(g_print ("disco local items: complete:%d, items:%d, remaining:%d, fraction:%f\n", 
+	DEBUG_MSG (("TransportWindow: Disco local items: complete:%d, items:%d, remaining:%d, fraction:%f", 
 		   (gint)total - (gint)remaining, (gint)remaining, (gint)total, (gfloat)fraction));
 
 	str = g_strdup_printf (_("Searching Local Services (%d of %d)"), 
@@ -421,11 +422,11 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 	     !gossip_transport_disco_item_has_category (item, "gateway") ||
 	     !gossip_transport_disco_item_has_type (item, window->disco_type))) {
 		if (timeout) {
-			d(g_print ("disco timed out\n"));
+			DEBUG_MSG (("TransportWindow: Disco timed out"));
 		} 
 
 		if (last_item) {
-			d(g_print ("all local disco services received\n"));
+			DEBUG_MSG (("TransportWindow: All local disco services received"));
 			transport_add_window_disco_cleanup (window);
 			transport_add_window_check_others (window);
 		}
@@ -452,16 +453,17 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 		jid = gossip_transport_disco_item_get_jid (item);
 		jid = gossip_jid_ref (jid);
 		
-		d(g_print ("disco service found: '%s'!\n", gossip_jid_get_full (jid)));
+		DEBUG_MSG (("TransportWindow: Disco service found: '%s'!", 
+			    gossip_jid_get_full (jid)));
 		
 		transport_add_window_disco_cleanup (window);
 		
 		if (timeout) {
-			d(g_print ("disco timed out\n"));
+			DEBUG_MSG (("TransportWindow: Disco timed out"));
 		}
 		
 		if (last_item) {
-			d(g_print ("all local disco services received\n"));
+			DEBUG_MSG (("TransportWindow: All local disco services received"));
 		}
 		
 		transport_add_window_requirements (window, jid);
@@ -480,7 +482,8 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
 	
-	d(g_print ("checking other services, protocol:'%s' not found locally\n", 
+	DEBUG_MSG (("TransportWindow: Checking other services, "
+		    "protocol:'%s' not found locally", 
 		   window->disco_type));
 
 	jabber = gossip_transport_account_list_get_jabber (window->al);
@@ -505,7 +508,8 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 		gtk_tree_model_get (model, &iter, COL_DISCO_TYPE_DATA, &protocol, -1);
 		g_return_if_fail (protocol != NULL);
 
- 		d(g_print ("only looking up %d services from protocol service listing\n",  
+ 		DEBUG_MSG (("TransportWindow: Only looking up %d services from "
+			    "protocol service listing",  
  			   SEARCH_MAX)); 
 		
 		l = gossip_transport_protocol_get_services (protocol);
@@ -518,7 +522,8 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 			service = (GossipTransportService*) l->data;
 			host = gossip_transport_service_get_host (service);
 
-			d(g_print ("running disco on remote service:'%s'\n", host));
+			DEBUG_MSG (("TransportWindow: Running disco on remote service:'%s'", 
+				    host));
 
 			disco = gossip_transport_disco_request_info (jabber,
 								     host, 
@@ -528,7 +533,7 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 			window->disco_list = g_list_append (window->disco_list, disco);
 		}
 
-		d(g_print ("sent %d disco requests\n", count));
+		DEBUG_MSG (("TransportWindow: Sent %d disco requests", count));
 
 		window->discos_received = 0;
 		window->discos_sent = count;
@@ -566,7 +571,8 @@ transport_add_window_check_others_cb (GossipTransportDisco     *disco,
 	
 	window->discos_received++;
 
-	d(g_print ("disco checking item with jid:'%s'...\n", gossip_jid_get_full (jid)));
+	DEBUG_MSG (("TransportWindow: Disco checking item with jid:'%s'...", 
+		    gossip_jid_get_full (jid)));
 
 	str = g_strdup_printf (_("Searching 3rd Party Services (%d of %d)"), 
 			       (gint)window->discos_received, (gint)SEARCH_MAX);
@@ -637,7 +643,8 @@ transport_add_window_requirements (GossipTransportAddWindow *window, GossipJID *
 		g_print ("here");
 	}
 
-	d(g_print ("asking for disco registration requirements for protocol:'%s' with service jid:'%s'\n", 
+	DEBUG_MSG (("TransportWindow: Asking for disco registration "
+		    "requirements for protocol:'%s' with service jid:'%s'", 
 		   window->disco_type, 
 		   gossip_jid_get_full (jid)));
 
@@ -814,7 +821,7 @@ transport_add_window_register (GossipTransportAddWindow *window)
 			  window);
 
 	/* register transport */
-	d(g_print ("requesting disco registration\n"));
+	DEBUG_MSG (("TransportWindow: Requesting disco registration"));
  	gossip_transport_register (jabber,
 				   window->jid,
 				   window->key, 

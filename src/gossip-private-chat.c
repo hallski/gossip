@@ -40,11 +40,12 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
 #define COMPOSING_STOP_TIMEOUT 5
-
-#define d(x)
 
 
 struct _GossipPrivateChatPriv {
@@ -152,7 +153,7 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 	
         private_chat_create_gui (chat);
 
-	d(g_print ("PrivateChat: Connecting\n"));
+	DEBUG_MSG (("PrivateChat: Connecting"));
 
 	g_signal_connect_object (gossip_app_get_session (),
 				 "connected",
@@ -277,7 +278,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 	
 	if (priv->roster_resource &&
 	    g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
-		d(g_print ("PrivateChat: Roster unchanged\n"));
+		DEBUG_MSG (("PrivateChat: Roster unchanged"));
 
 		if (!priv->locked_resource) {
 			priv->locked_resource = g_strdup (roster_resource);
@@ -286,7 +287,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 		return;
 	}
 	
-	d(g_print ("PrivateChat: New roster resource: %s\n", roster_resource));
+	DEBUG_MSG (("PrivateChat: New roster resource: %s", roster_resource));
 	
 	g_free (priv->roster_resource);
 	priv->roster_resource = g_strdup (roster_resource);
@@ -415,7 +416,7 @@ private_chat_contact_presence_updated (gpointer           not_used,
 		return;
 	}
 
-	d(g_print ("PrivateChat: Presence update for contact:'%s'\n", 
+	DEBUG_MSG (("PrivateChat: Presence update for contact:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	g_signal_emit_by_name (chat, "status-changed");
@@ -540,7 +541,7 @@ private_chat_composing_event_cb (GossipSession *session,
 	priv   = p_chat->priv;
 
 	if (gossip_contact_equal (contact, priv->contact)) {
-		d(g_print ("PrivateChat: Contact:'%s' %s typing\n",
+		DEBUG_MSG (("PrivateChat: Contact:'%s' %s typing",
 			   gossip_contact_get_name (contact),
 			   composing ? "is" : "is not"));
 
@@ -850,7 +851,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	priv = chat->priv;
 	
-	d(g_print ("PrivateChat: Appending message ('%s')\n",
+	DEBUG_MSG (("PrivateChat: Appending message ('%s')",
 		   gossip_contact_get_name (gossip_message_get_sender (m))));
 
 	sender = gossip_message_get_sender (m);
