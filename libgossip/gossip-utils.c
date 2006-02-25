@@ -233,3 +233,23 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 
 	return ret_val;
 }
+
+gboolean 
+gossip_utils_xml_validate (xmlDoc *doc, const gchar *dtd_filename)
+{
+	gchar        *path;
+	xmlValidCtxt  cvp;
+	xmlDtd       *dtd;
+	gboolean      ret;
+		
+	path = g_build_filename (DTDDIR, dtd_filename, NULL);
+
+	memset (&cvp, 0, sizeof (cvp));
+	dtd = xmlParseDTD (NULL, path);
+	ret = xmlValidateDtd (&cvp, doc, dtd);
+	
+	xmlFreeDtd (dtd);
+	g_free (path);
+	
+        return ret;
+}

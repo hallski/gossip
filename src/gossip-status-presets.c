@@ -28,6 +28,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "libgossip/gossip-utils.h"
 #include "gossip-status-presets.h"
 
 #define DEBUG_MSG(x)  
@@ -95,20 +96,20 @@ status_presets_file_parse (const gchar *filename)
  	ctxt = xmlNewParserCtxt ();
 
 	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
 	if (!doc) {
 		g_warning ("Failed to parse file:'%s'", filename);
 		xmlFreeParserCtxt (ctxt);
 		return;
 	}
 
-	if (!ctxt->valid) {
-		g_warning ("Failed to validate file:'%s'",  filename);
+	if (!gossip_utils_xml_validate (doc, STATUS_PRESETS_DTD_FILENAME)) {
+		g_warning ("Failed to validate file:'%s'", filename);
 		xmlFreeDoc(doc);
 		xmlFreeParserCtxt (ctxt);
 		return;
 	}
-	
+
 	/* The root node, presets. */
 	presets_node = xmlDocGetRootElement (doc);
 

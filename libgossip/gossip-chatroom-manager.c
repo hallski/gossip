@@ -27,6 +27,7 @@
 
 #include "libgossip-marshal.h"
 
+#include "gossip-utils.h"
 #include "gossip-chatroom-manager.h"
 #include "gossip-protocol.h"
 
@@ -647,15 +648,15 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
  	ctxt = xmlNewParserCtxt ();
 
 	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
 	if (!doc) {
 		g_warning ("Failed to parse file:'%s'", filename);
 		xmlFreeParserCtxt (ctxt);
 		return FALSE;
 	}
-
-	if (!ctxt->valid) {
-		g_warning ("Failed to validate file:'%s'",  filename);
+	
+	if (!gossip_utils_xml_validate (doc, CHATROOMS_DTD_FILENAME)) {
+		g_warning ("Failed to validate file:'%s'", filename);
 		xmlFreeDoc(doc);
 		xmlFreeParserCtxt (ctxt);
 		return FALSE;

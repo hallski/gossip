@@ -21,6 +21,9 @@
 #ifndef __GOSSIP_UTILS_H__
 #define __GOSSIP_UTILS_H__
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include "gossip-account.h"
 #include "gossip-presence.h"
 
@@ -48,5 +51,9 @@ gint         gossip_utils_str_case_cmp               (const gchar      *s1,
 gint         gossip_utils_str_n_case_cmp             (const gchar      *s1, 
 						      const gchar      *s2,
 						      gsize             n);
+
+gboolean     gossip_utils_xml_validate               (xmlDoc           *doc,
+						      const gchar      *dtd_filename);
+
 
 #endif /*  __GOSSIP_UTILS_H__ */

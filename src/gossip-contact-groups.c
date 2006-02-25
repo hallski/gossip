@@ -28,6 +28,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#include "libgossip/gossip-utils.h"
 #include "gossip-contact-groups.h"
 
 #define DEBUG_MSG(x) 
@@ -91,22 +92,20 @@ contact_groups_file_parse (const gchar *filename)
 	xmlNodePtr        account;
 	xmlNodePtr        node;
 	
-	g_return_if_fail (filename != NULL);
-
 	DEBUG_MSG (("ContactGroups: Attempting to parse file:'%s'...", filename));
 	
  	ctxt = xmlNewParserCtxt ();
 
 	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
 	if (!doc) {
 		g_warning ("Failed to parse file:'%s'", filename);
 		xmlFreeParserCtxt (ctxt);
 		return;
 	}
 
-	if (!ctxt->valid) {
-		g_warning ("Failed to validate file:'%s'",  filename);
+	if (!gossip_utils_xml_validate (doc, CONTACT_GROUPS_DTD_FILENAME)) {
+		g_warning ("Failed to validate file:'%s'", filename);
 		xmlFreeDoc(doc);
 		xmlFreeParserCtxt (ctxt);
 		return;

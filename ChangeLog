@@ -1,5 +1,21 @@
 2006-02-25  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-account-manager.c: (account_manager_get_all),
+	(account_manager_parse_account), (account_manager_file_parse),
+	(account_manager_file_save):
+	* libgossip/gossip-chatroom-manager.c:
+	(chatroom_manager_file_parse):
+	* libgossip/gossip-utils.c: (gossip_utils_xml_validate):
+	* libgossip/gossip-utils.h:
+	* src/gossip-contact-groups.c: (contact_groups_file_parse):
+	* src/gossip-status-presets.c: (status_presets_file_parse): Clean
+	up XML code a bit more, add a convenience function to validate
+	against a given DTD file and use that to validate the various
+	files, instead of using the DTD specified in the files. Fixes bug
+	#332052.
+
+2006-02-25  Richard Hult  <richard@imendio.com>
+
 	* acinclude.m4: Disable signed pointers warnings.
 
 	* libgossip/gossip-account-manager.c:

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,7 +26,7 @@
 #include <libxml/tree.h>
 
 #include "libgossip-marshal.h"
-
+#include "gossip-utils.h"
 #include "gossip-account-manager.h"
 
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
@@ -374,8 +374,6 @@ account_manager_get_all (GossipAccountManager *manager)
 	gchar                    *dir;
 	gchar                    *file_with_path = NULL;
 
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
-
 	priv = GET_PRIV (manager);
 
 	/* Use default if no file specified. */
@@ -448,7 +446,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 		}
 		else if (strcmp (tag, "password") == 0) {
 			password = str;
-			g_print ("GOT '%s'\n", password);
 		}
 		else if (strcmp (tag, "server") == 0) {
 			server = str;
@@ -530,9 +527,6 @@ account_manager_file_parse (GossipAccountManager *manager,
 	xmlNodePtr                node;
 	gchar                    *str;
 
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
-
 	priv = GET_PRIV (manager);
 	
 	DEBUG_MSG (("Account Manager: Attempting to parse file:'%s'...", filename));
@@ -540,15 +534,15 @@ account_manager_file_parse (GossipAccountManager *manager,
  	ctxt = xmlNewParserCtxt ();
 
 	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, XML_PARSE_DTDVALID);	
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);
 	if (!doc) {
 		g_warning ("Failed to parse file:'%s'", filename);
 		xmlFreeParserCtxt (ctxt);
 		return FALSE;
 	}
 
-	if (!ctxt->valid) {
-		g_warning ("Failed to validate file:'%s'",  filename);
+	if (!gossip_utils_xml_validate (doc, ACCOUNTS_DTD_FILENAME)) {
+		g_warning ("Failed to validate file:'%s'", filename);
 		xmlFreeDoc(doc);
 		xmlFreeParserCtxt (ctxt);
 		return FALSE;
@@ -599,8 +593,6 @@ account_manager_file_save (GossipAccountManager *manager)
 	gchar                    *xml_dir;
 	gchar                    *xml_file;
 					
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
-
 	priv = GET_PRIV (manager);
 	
 	if (priv->accounts_file_name) {
