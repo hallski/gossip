@@ -653,18 +653,18 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 	status = gossip_chatroom_get_status (chatroom);
 	
 	switch (status) {
-	case GOSSIP_CHATROOM_CONNECTING:
+	case GOSSIP_CHATROOM_STATUS_JOINING:
 		stock_id = GTK_STOCK_EXECUTE;
 		break;
-	case GOSSIP_CHATROOM_OPEN:
+	case GOSSIP_CHATROOM_STATUS_ACTIVE:
 		stock_id = GOSSIP_STOCK_GROUP_MESSAGE;
 		break;
-	case GOSSIP_CHATROOM_ERROR:
+	case GOSSIP_CHATROOM_STATUS_ERROR:
 		stock_id = GTK_STOCK_DIALOG_ERROR;
 		break;	
 	default:
-	case GOSSIP_CHATROOM_CLOSED:
-	case GOSSIP_CHATROOM_UNKNOWN:
+	case GOSSIP_CHATROOM_STATUS_INACTIVE:
+	case GOSSIP_CHATROOM_STATUS_UNKNOWN:
 		stock_id = GTK_STOCK_CLOSE;
 		break;
 	}

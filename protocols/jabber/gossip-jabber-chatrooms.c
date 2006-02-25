@@ -519,7 +519,7 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join timed out (internally)", id));
 
 	/* set chatroom status and error */
-	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_ERROR);
+	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_ERROR);
 
 	last_error = gossip_chatroom_provider_join_result_as_str (GOSSIP_CHATROOM_JOIN_TIMED_OUT);
 	gossip_chatroom_set_last_error (room->chatroom, last_error);
@@ -606,7 +606,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
         room->callback = callback;
         room->user_data = user_data;
 	
-	gossip_chatroom_set_status (chatroom, GOSSIP_CHATROOM_CONNECTING);
+	gossip_chatroom_set_status (chatroom, GOSSIP_CHATROOM_STATUS_JOINING);
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	/* compose message */
@@ -730,10 +730,10 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		}
 
 		/* set room state */
-		status = GOSSIP_CHATROOM_ERROR;
+		status = GOSSIP_CHATROOM_STATUS_ERROR;
 	} else {
 		result = GOSSIP_CHATROOM_JOIN_OK;
-		status = GOSSIP_CHATROOM_OPEN;
+		status = GOSSIP_CHATROOM_STATUS_ACTIVE;
 	}
 
 	gossip_chatroom_set_status (room->chatroom, status);
@@ -798,7 +798,7 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 	}
 
 	
-	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_CLOSED);
+	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_INACTIVE);
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	if (room->callback != NULL) {
@@ -926,7 +926,7 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 		return;
 	}
 
-	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_CLOSED);
+	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_INACTIVE);
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
 	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),

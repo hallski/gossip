@@ -1,3 +1,26 @@
+2006-02-25  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-chatroom.c: (chatroom_class_init),
+	(chatroom_init), (gossip_chatroom_get_status),
+	(gossip_chatroom_get_status_as_str):
+	* libgossip/gossip-chatroom.h:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_join_timeout_cb), (gossip_jabber_chatrooms_join),
+	(jabber_chatrooms_join_cb), (gossip_jabber_chatrooms_cancel),
+	(gossip_jabber_chatrooms_leave): Change the names and strings of
+	the chatroom status enums to make the more clear.
+
+	* src/gossip-chatrooms-window.c:
+	(chatrooms_window_model_pixbuf_cell_data_func),
+	(chatrooms_window_model_text_cell_data_func),
+	(chatrooms_window_model_join_selected),
+	(chatrooms_window_update_buttons),
+	(chatrooms_window_join_clicked_cb):
+	* src/gossip-ui-utils.c: (gossip_pixbuf_for_chatroom_status):
+	* ui/group-chat.glade: Change the strings for chatroom status.
+
+	* ui/main.glade: Remove extra space after period.
+
 2006-02-25  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:

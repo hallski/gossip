@@ -211,7 +211,7 @@ chatroom_class_init (GossipChatroomClass *class)
 							   "Status of the room, open, closed, etc",
 							   G_MININT,
 							   G_MAXINT,
-							   GOSSIP_CHATROOM_UNKNOWN,
+							   GOSSIP_CHATROOM_STATUS_UNKNOWN,
 							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
@@ -265,7 +265,7 @@ chatroom_init (GossipChatroom *chatroom)
 	priv->room         = NULL;
 	priv->password     = NULL;
 	priv->auto_connect = FALSE;
-	priv->status       = GOSSIP_CHATROOM_CLOSED;
+	priv->status       = GOSSIP_CHATROOM_STATUS_INACTIVE;
 	priv->last_error   = NULL;
 	priv->account      = NULL;
 }
@@ -492,7 +492,8 @@ gossip_chatroom_get_status (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), GOSSIP_CHATROOM_UNKNOWN);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom),
+			      GOSSIP_CHATROOM_STATUS_UNKNOWN);
 
 	priv = GET_PRIV (chatroom);
 	
@@ -738,12 +739,19 @@ const gchar *
 gossip_chatroom_get_status_as_str (GossipChatroomStatus status)
 {
 	switch (status) {
-	case GOSSIP_CHATROOM_CONNECTING: return _("Connecting...");
-	case GOSSIP_CHATROOM_OPEN: return _("Open");
-	case GOSSIP_CHATROOM_CLOSED: return _("Closed");
-	case GOSSIP_CHATROOM_UNKNOWN: return _("Unknown");
-	case GOSSIP_CHATROOM_ERROR: return _("Error");
+	case GOSSIP_CHATROOM_STATUS_JOINING:
+		return _("Joining");
+	case GOSSIP_CHATROOM_STATUS_ACTIVE:
+		return _("Active");
+	case GOSSIP_CHATROOM_STATUS_INACTIVE:
+		return _("Inactive");
+	case GOSSIP_CHATROOM_STATUS_UNKNOWN:
+		return _("Unknown");
+	case GOSSIP_CHATROOM_STATUS_ERROR:
+		return _("Error");
 	}
 
+	g_warning ("Invalid chatroom status: %d\n", status);
+	
 	return "";
 }

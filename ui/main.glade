@@ -3352,7 +3352,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <child>
 			<widget class="GtkLabel" id="4_server_label">
 			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">You can identify this account with a name, for example, &lt;b&gt;Home&lt;/b&gt; or &lt;b&gt;Work&lt;/b&gt;.  Choose a name for this account:</property>
+			  <property name="label" translatable="yes">You can identify this account with a name, for example, &lt;b&gt;Home&lt;/b&gt; or &lt;b&gt;Work&lt;/b&gt;. Choose a name for this account:</property>
 			  <property name="use_underline">False</property>
 			  <property name="use_markup">True</property>
 			  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -5782,7 +5782,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <child>
 			<widget class="GtkEntry" id="name_entry">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">This acts as a filter to the contact list below.  You can use segments of contact's name or ID, for example, &quot;jabber.org&quot; will list everyone using that server. </property>
+			  <property name="tooltip" translatable="yes">This acts as a filter to the contact list below. You can use segments of contact's name or ID, for example, &quot;jabber.org&quot; will list everyone using that server. </property>
 			  <property name="can_focus">True</property>
 			  <property name="has_focus">True</property>
 			  <property name="editable">True</property>

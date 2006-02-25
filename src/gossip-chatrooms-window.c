@@ -277,8 +277,8 @@ chatrooms_window_model_pixbuf_cell_data_func (GtkTreeViewColumn     *tree_column
 	status = gossip_chatroom_get_status (chatroom);
 	last_error = gossip_chatroom_get_last_error (chatroom);
 
-	if (status == GOSSIP_CHATROOM_ERROR && !last_error) {
-		status = GOSSIP_CHATROOM_CLOSED;
+	if (status == GOSSIP_CHATROOM_STATUS_ERROR && !last_error) {
+		status = GOSSIP_CHATROOM_STATUS_INACTIVE;
 	}
 
 	pixbuf = gossip_pixbuf_for_chatroom_status (chatroom, GTK_ICON_SIZE_MENU);
@@ -325,12 +325,12 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	last_error = gossip_chatroom_get_last_error (chatroom);
 	g_object_unref (chatroom);
 
-	if ((status == GOSSIP_CHATROOM_UNKNOWN) ||
-	    (status == GOSSIP_CHATROOM_ERROR && !last_error)) {
-		status = GOSSIP_CHATROOM_CLOSED;
+	if ((status == GOSSIP_CHATROOM_STATUS_UNKNOWN) ||
+	    (status == GOSSIP_CHATROOM_STATUS_ERROR && !last_error)) {
+		status = GOSSIP_CHATROOM_STATUS_INACTIVE;
 	}
 
-	if (status == GOSSIP_CHATROOM_ERROR) {
+	if (status == GOSSIP_CHATROOM_STATUS_ERROR) {
 		status_str = g_strdup (last_error);
 	} else {
 /* 		status_str = gossip_chatroom_get_status_as_str (status); */
@@ -440,7 +440,7 @@ chatrooms_window_model_join_selected (GossipChatroomsWindow *window)
 	GossipChatroomStatus    status;
 
 	status = chatrooms_window_model_status_selected (window);
-	if (status == GOSSIP_CHATROOM_CONNECTING) {
+	if (status == GOSSIP_CHATROOM_STATUS_JOINING) {
 		chatrooms_window_update_buttons (window);
 		return;
 	}
@@ -705,7 +705,7 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 	status = chatrooms_window_model_status_selected (window);
 	
 	switch (status) {
-	case GOSSIP_CHATROOM_CONNECTING:
+	case GOSSIP_CHATROOM_STATUS_JOINING:
 		gtk_button_set_use_stock (button, TRUE);
 		gtk_button_set_label (button, GTK_STOCK_CANCEL);
 		
@@ -713,10 +713,10 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 					  GTK_STOCK_CANCEL,
 					  GTK_ICON_SIZE_BUTTON);
 		break;
-	case GOSSIP_CHATROOM_OPEN:
-	case GOSSIP_CHATROOM_CLOSED:
-	case GOSSIP_CHATROOM_ERROR:
-	case GOSSIP_CHATROOM_UNKNOWN:
+	case GOSSIP_CHATROOM_STATUS_ACTIVE:
+	case GOSSIP_CHATROOM_STATUS_INACTIVE:
+	case GOSSIP_CHATROOM_STATUS_ERROR:
+	case GOSSIP_CHATROOM_STATUS_UNKNOWN:
 		gtk_button_set_use_stock (button, FALSE);
 		gtk_button_set_label (button, _("Join"));
 		gtk_image_set_from_stock (GTK_IMAGE (image), 
@@ -725,10 +725,10 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 		break;
 	}
 
-	sensitive &= (status != GOSSIP_CHATROOM_OPEN);
+	sensitive &= (status != GOSSIP_CHATROOM_STATUS_ACTIVE);
 	gtk_widget_set_sensitive (window->button_join, sensitive);
 
-	sensitive &= (status != GOSSIP_CHATROOM_CONNECTING);
+	sensitive &= (status != GOSSIP_CHATROOM_STATUS_JOINING);
 	gtk_widget_set_sensitive (window->button_edit, sensitive);
 	gtk_widget_set_sensitive (window->button_delete, sensitive);
 }
@@ -823,7 +823,7 @@ chatrooms_window_join_clicked_cb (GtkWidget             *widget,
 
 	status = chatrooms_window_model_status_selected (window);
 	
-	if (status == GOSSIP_CHATROOM_CONNECTING) {
+	if (status == GOSSIP_CHATROOM_STATUS_JOINING) {
 		chatrooms_window_model_cancel_selected (window);
 	} else {
 		chatrooms_window_model_join_selected (window);
