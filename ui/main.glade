@@ -5930,7 +5930,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image181">
+			<widget class="GtkImage" id="image191">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -5950,7 +5950,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image182">
+			<widget class="GtkImage" id="image192">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -5985,7 +5985,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image183">
+			<widget class="GtkImage" id="image193">
 			  <property name="visible">True</property>
 			  <property name="pixbuf">gossip-message.png</property>
 			  <property name="xalign">0.5</property>
@@ -6010,7 +6010,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image184">
+			<widget class="GtkImage" id="image194">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -6040,11 +6040,10 @@ To get started, just click &quot;Forward&quot;.</property>
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="actions_show_list">
+		    <widget class="GtkMenuItem" id="actions_hide_list">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Show Contact List</property>
+		      <property name="label" translatable="yes">_Hide Contact List</property>
 		      <property name="use_underline">True</property>
-		      <property name="active">True</property>
 		    </widget>
 		  </child>
 
@@ -6102,7 +6101,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image185">
+			<widget class="GtkImage" id="image195">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -6135,7 +6134,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image186">
+			<widget class="GtkImage" id="image196">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>

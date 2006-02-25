@@ -1,5 +1,15 @@
 2006-02-25  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (app_setup), (app_show_hide_list_cb),
+	(app_tray_button_press_cb), (app_tray_create_menu),
+	(configure_event_idle_cb):
+	* src/gossip-main.c:
+	* ui/main.glade: Don't use a checkbutton in the contact list
+	window for showing/hiding the window, since we can't even see the
+	menu when the window is hidden...
+
+2006-02-25  Richard Hult  <richard@imendio.com>
+
 	* libgossip/gossip-chatroom.c: (chatroom_class_init),
 	(chatroom_init), (gossip_chatroom_get_status),
 	(gossip_chatroom_get_status_as_str):

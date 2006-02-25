@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2005 Imendio AB
+ * Copyright (C) 2002-2006 Imendio AB
  * Copyright (C) 2004-2005 Martyn Russell <mr@gnome.org>
  * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
  *
@@ -117,7 +117,7 @@ struct _GossipAppPriv {
 	/* menu widgets */
 	GtkWidget             *actions_connect;
 	GtkWidget             *actions_disconnect;
-	GtkWidget             *actions_show_list;
+	GtkWidget             *actions_hide_list;
 
 	/* accounts toolbar */
 	GtkWidget             *accounts_toolbar;
@@ -210,7 +210,7 @@ static void            app_session_protocol_disconnected_cb (GossipSession      
 static gchar *         app_session_get_password_cb          (GossipSession            *session,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
-static void            app_show_list_cb                     (GtkWidget                *widget,
+static void            app_show_hide_list_cb                (GtkWidget                *widget,
 							     GossipApp                *app);
 static void            app_popup_new_message_cb             (GtkWidget                *widget,
 							     gpointer                  user_data);
@@ -488,7 +488,7 @@ app_setup (GossipAccountManager *manager)
 				       "actions_connect", &priv->actions_connect,
 				       "actions_disconnect", &priv->actions_disconnect,
 				       "actions_show_offline", &show_offline_widget,
-				       "actions_show_list", &priv->actions_show_list,
+				       "actions_hide_list", &priv->actions_hide_list,
 				       "accounts_toolbar", &priv->accounts_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       "status_button_hbox", &priv->status_button_hbox,
@@ -526,8 +526,8 @@ app_setup (GossipAccountManager *manager)
 	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_disconnect)->child), 
 					  _("_Disconnect"));
 
-	g_signal_connect (priv->actions_show_list, "toggled", 
-			  G_CALLBACK (app_show_list_cb), app);
+	g_signal_connect (priv->actions_hide_list, "activate", 
+			  G_CALLBACK (app_show_hide_list_cb), app);
 
 	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);
@@ -1074,8 +1074,8 @@ app_toggle_visibility (void)
 }
 
 static void
-app_show_list_cb (GtkWidget *widget,
-		  GossipApp *app)
+app_show_hide_list_cb (GtkWidget *widget,
+		       GossipApp *app)
 {
 	app_toggle_visibility ();
 }
@@ -1150,11 +1150,11 @@ app_tray_button_press_cb (GtkWidget      *widget,
 		show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 		
 		g_signal_handlers_block_by_func (priv->popup_menu_show_list_item, 
-						 app_show_list_cb, app);
+						 app_show_hide_list_cb, app);
 		gtk_check_menu_item_set_active 
 			(GTK_CHECK_MENU_ITEM (priv->popup_menu_show_list_item), show);
 		g_signal_handlers_unblock_by_func (priv->popup_menu_show_list_item, 
-						   app_show_list_cb, app);
+						   app_show_hide_list_cb, app);
 
 		submenu = gossip_presence_chooser_create_menu (
 			GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
@@ -1195,7 +1195,7 @@ app_tray_create_menu (void)
 			      NULL);
 
 	g_signal_connect (priv->popup_menu_show_list_item, "toggled", 
-			  G_CALLBACK (app_show_list_cb), app);
+			  G_CALLBACK (app_show_hide_list_cb), app);
 
 	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
 						  priv->popup_menu_status_item);
@@ -2059,7 +2059,6 @@ configure_event_idle_cb (GtkWidget *widget)
 	GossipAppPriv *priv = app->priv;
 	gint           width, height;
 	gint           x, y;
-	gboolean       show;
 	
 	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
 	gtk_window_get_position (GTK_WINDOW(app->priv->window), &x, &y);
@@ -2086,16 +2085,6 @@ configure_event_idle_cb (GtkWidget *widget)
 
 	priv->size_timeout_id = 0;
 
-	/* Update the show list menu item */
-	show = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
-
-	g_signal_handlers_block_by_func (priv->actions_show_list, 
-					 app_show_list_cb, app);
-	gtk_check_menu_item_set_active 
-		(GTK_CHECK_MENU_ITEM (priv->actions_show_list), show);
-	g_signal_handlers_unblock_by_func (priv->actions_show_list, 
-					   app_show_list_cb, app);
-	
 	return FALSE;
 }
 
