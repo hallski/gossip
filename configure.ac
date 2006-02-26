@@ -3,7 +3,7 @@ AC_PREREQ(2.59)
 AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
 
 AC_CONFIG_SRCDIR(src/gossip-app.h)
-AC_CONFIG_HEADERS(config.h)
+AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(1.9 check-news dist-bzip2 no-define)
 
 AM_MAINTAINER_MODE
@@ -59,7 +59,7 @@ if test "x$enable_dbus" != "xno"; then
    dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
    PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
    if test x$have_dbus = xyes; then
-      AC_DEFINE(HAVE_DBUS, 1, d-bus support)
+      AC_DEFINE(HAVE_DBUS, 1, [d-bus support])
       dbus_pkgconfig=$dbus_pkgconfig_tmp
   fi
 else
@@ -117,7 +117,7 @@ if test "x$enable_libnotify" != "xno"; then
    libnotify_pkgconfig_tmp="libnotify >= 0.2.1"
    PKG_CHECK_MODULES(LIBNOTIFY, $libnotify_pkgconfig_tmp, have_libnotify=yes, have_libnotify=no)
    if test x$have_libnotify = xyes; then
-      AC_DEFINE(HAVE_LIBNOTIFY, 1, libnotify support)
+      AC_DEFINE(HAVE_LIBNOTIFY, 1, [libnotify support])
       libnotify_pkgconfig=$libnotify_pkgconfig_tmp
   fi
 else

@@ -1,5 +1,10 @@
 2006-02-26  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Quote more strings and use AM_CONFIG_HEADER
+	instead of AC_CONFIG_HEADERS, fixes build for some reason...
+	
+2006-02-26  Richard Hult  <richard@imendio.com>
+
 	* Makefile.am:
 	* help/C/gossip.xml:
 	* help/Makefile.am: Move to gnome-doc-utils, based on patch from
