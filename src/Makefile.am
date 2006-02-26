@@ -13,9 +13,7 @@ AM_CPPFLAGS =	                                 	\
 	-DSTYLESHEETDIR=\"$(datadir)/gossip\"		\
 	-DDTDDIR=\"$(datadir)/gossip\"			\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
-	@GOSSIP_CFLAGS@					\
-	@GTK_VER@
-
+	$(GOSSIP_CFLAGS) $(WARN_CFLAGS)
 
 if HAVE_DBUS
 dbus_sources =									\
@@ -82,7 +80,7 @@ gossip_SOURCES = 				                        	\
 	gossip-theme-manager.c	    	   gossip-theme-manager.h		\
 	eggtrayicon.c		           eggtrayicon.h
 
-gossip_LDADD = @GOSSIP_LIBS@                            			\
+gossip_LDADD = $(GOSSIP_LIBS) $(XSS_LIBS)					\
 	$(top_builddir)/libgossip/libgossip.la
 
 gossip_LDFLAGS = -export-dynamic

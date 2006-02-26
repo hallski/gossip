@@ -25,3 +25,4 @@ install-sh
 missing
 *.swp
 gossip.desktop.in
+gnome-doc-utils.make

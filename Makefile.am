@@ -21,8 +21,7 @@ EXTRA_DIST = 			\
         ChangeLog               \
         README                  \
 	CONTRIBUTORS            \
-	xmldocs.make		\
-	omf.make		\
+	gnome-doc-utils.make	\
 	$(desktop_in_files)	\
 	$(desktop_files)	\
 	$(schemas_in_files)	\
@@ -33,8 +32,14 @@ DISTCLEANFILES = 		\
 	intltool-extract	\
 	intltool-merge		\
 	intltool-update		\
+	xmldocs.make            \
+	omf.make                \
+	gnome-doc-utils.make	\
 	$(desktop_files)	\
 	$(schemas_DATA)
+
+DISTCHECK_CONFIGURE_FLAGS =	\
+	--disable-scrollkeeper
 
 if GCONF_SCHEMAS_INSTALL
 install-data-local:

@@ -4,7 +4,7 @@ AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
 
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AC_CONFIG_HEADERS(config.h)
-AM_INIT_AUTOMAKE(1.9 -Wall check-news dist-bzip2 no-define)
+AM_INIT_AUTOMAKE(1.9 check-news dist-bzip2 no-define)
 
 AM_MAINTAINER_MODE
 
@@ -16,7 +16,9 @@ AM_PROG_LIBTOOL
 AM_PATH_GLIB_2_0 
 AC_PATH_X
 
+GNOME_DOC_INIT
 AC_PROG_INTLTOOL
+
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 
 IDT_COMPILE_WARNINGS
@@ -34,7 +36,8 @@ dnl spec file.
 
 AC_SUBST(LIBXML_REQUIRED, 2.6.16)
 AC_SUBST(LIBXSLT_REQUIRED, 1.0.0)
-AC_SUBST(GLIB_REQUIRED, 2.6.0)
+AC_SUBST(LIBEXSLT_REQUIRED, 0.8.0)
+AC_SUBST(GLIB_REQUIRED, 2.8.0)
 AC_SUBST(GTK_REQUIRED, 2.8.0)
 AC_SUBST(LIBGLADE_REQUIRED, 2.0.0)
 AC_SUBST(LOUDMOUTH_REQUIRED, 1.0)
@@ -42,10 +45,6 @@ AC_SUBST(GCONF_REQUIRED, 1.2.0)
 AC_SUBST(LIBGNOME_REQUIRED, 2.0.0)
 AC_SUBST(LIBGNOMEVFS_REQUIRED, 2.0.0)
 AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
-
-
-dnl To make the egg stuff build properly, should have a real test...
-AC_DEFINE(HAVE_GTK_MULTIHEAD,0,[gtk+ with multihead support found])
 
 dnl -----------------------------------------------------------
 dnl D-BUS
@@ -142,7 +141,7 @@ PKG_CHECK_MODULES(LIBGOSSIP, [
 	libxml-2.0 >= $LIBXML_REQUIRED
 	glib-2.0 >= $GLIB_REQUIRED
 	gobject-2.0
-	libgnome-2.0 >= $LIBGNOME_REQUIRED
+	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
 	gconf-2.0 >= $GCONF_REQUIRED
 ])
 
@@ -150,6 +149,7 @@ PKG_CHECK_MODULES(GOSSIP,
 [
 	libxml-2.0 >= $LIBXML_REQUIRED
 	libxslt >= $LIBXSLT_REQUIRED
+	libexslt >= $LIBEXSLT_REQUIRED
 	glib-2.0 >= $GLIB_REQUIRED
 	gobject-2.0
 	gtk+-2.0 >= $GTK_REQUIRED
@@ -157,7 +157,6 @@ PKG_CHECK_MODULES(GOSSIP,
 	loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
 	gconf-2.0 >= $GCONF_REQUIRED
 	libgnomeui-2.0 >= $LIBGNOME_REQUIRED
-	gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
 	$dbus_pkgconfig
 	$galago_pkgconfig
 	$libnotify_pkgconfig
@@ -173,54 +172,36 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
 	libxml-2.0 >= $LIBXML_REQUIRED
 ])
 
-# Sucks that we need to do this
-GOSSIP_LIBS="$GOSSIP_LIBS -lexslt"
-
 GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
 AC_SUBST(GLIB_GENMARSHAL)
 
-dnl Check for gtk_window_set_urgency
-PKG_CHECK_MODULES(GTK_VER, gtk+-2.0 >= 2.7.0,
-                 GTK_VER="-DHAVE_GTK_URGENCY",
-                 GTK_VER="-UHAVE_GTK_URGENCY")
-AC_SUBST(GTK_VER)
 
 dnl -----------------------------------------------------------
-dnl Check for autoaway
+dnl Check for the XScreenSaver extension (used for autoaway)
 dnl -----------------------------------------------------------
 
-dnl Check for XScreenSaver
-old_LIBS="$LIBS"
-old_CFLAGS="$CFLAGS"
-LIBS="$LIBS -L$x_libraries $GOSSIP_LIBS"
-CFLAGS="$CFLAGS -I$x_includes $GOSSIP_CFLAGS"
-XSS_LIBS="no"
-XSS_HEADERS="no"
-AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
-AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
-if test "x$XSS_LIBS" != "xno"; then
-   AC_TRY_COMPILE([
-#include <X11/Xlib.h>
-#include <X11/extensions/scrnsaver.h>
-		],[],[
-		AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
-		], [enable_xss=no])
-else
-    XSS_LIBS=""
-    enable_xss=no
-fi
-LIBS="$old_LIBS"
-CFLAGS="$old_CFLAGS"
+x_libs="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
+have_xss="no"
 
-if test "x$enable_xss" = "xno"; then
+AC_CHECK_FUNC(XScreenSaverQueryInfo, [
+  have_xss="yes"], [
+  save_LIBS=$LIBS
+  LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
+  AC_CHECK_LIB(Xss, XScreenSaverQueryInfo, [
+    have_xss="yes"
+    XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"], [
+    LIBS=$save_LIBS
+    LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXext -lX11"
+    AC_CHECK_LIB(Xext, XScreenSaverQueryInfo, [
+      have_xss="yes"
+      XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXext -lX11"],[])])
+  LIBS=$save_LIBS])
+AC_SUBST(XSS_LIBS)
+
+if test "x$have_xss" = "xno"; then
   AC_MSG_ERROR([Couldn't find XScreenSaver extension.])
 fi
 
-GOSSIP_CFLAGS="$GOSSIP_CFLAGS $XSS_CFLAGS"
-GOSSIP_LIBS="$GOSSIP_LIBS $XSS_LIBS"
-
-AC_SUBST(GOSSIP_CFLAGS)
-AC_SUBST(GOSSIP_LIBS)
 
 dnl -----------------------------------------------------------
 dnl Scrollkeeper
@@ -273,7 +254,6 @@ AM_GLIB_GNU_GETTEXT
 
 dnl -----------------------------------------------------------
 
-CFLAGS="$CFLAGS $WARN_CFLAGS"
 
 AC_OUTPUT([
 Makefile
@@ -286,7 +266,6 @@ protocols/Makefile
 protocols/jabber/Makefile
 po/Makefile.in
 help/Makefile
-help/C/Makefile
 gossip.desktop.in
 ])
 

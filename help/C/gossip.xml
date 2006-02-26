@@ -30,7 +30,7 @@
       <holder>Keywan Najafi Tonekaboni</holder> 
     </copyright> 
     <copyright>
-      <year>2005</year>
+      <year>2005-2006</year>
       <holder>Brian Pepple</holder>
     </copyright>
     
@@ -46,7 +46,7 @@
      not specified, the publisher/author is the same for all versions of the 
      document.  -->
     <publisher> 
-      <publishername> GNOME Documentation Project </publishername> 
+      <publishername>GNOME Documentation Project</publishername> 
     </publisher> 
 
    &legal;
@@ -71,7 +71,7 @@
 	  		<address> <email>keywan@uni-duisburg.de</email> </address> 
 		</affiliation> 
       </author> 
-      <author>
+      <author role="maintainer">
 	        <firstname>Brian</firstname>
 	        <surname>Pepple</surname>
 	        <affiliation>
@@ -131,7 +131,12 @@
 	  		<para role="publisher">GNOME Documentation Project</para>
 		</revdescription> 
       </revision> 
-    </revhistory> 
+    </revhistory>
+
+    <abstract role="description">
+      <para>This manual describes the use of &app;.</para>
+    </abstract> 
+
     <releaseinfo>This manual describes version &appversion; of &app;.
     </releaseinfo> 
     <legalnotice> 

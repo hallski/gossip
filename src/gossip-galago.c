@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  * Copyright (C) 2005 Ross Burton <ross@openedhand.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -19,14 +19,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
+#include <config.h>
 #include <glib/gi18n.h>
-
 #include <libgalago/galago.h>
-
 #include <dbus/dbus-glib-lowlevel.h>
 
 #include <libgossip/gossip-account.h>
