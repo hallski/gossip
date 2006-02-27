@@ -308,11 +308,11 @@ msgstr "Kopplades ifrån"
 
 #: ../src/gossip-account-button.c:406
 msgid "Perhaps you are trying to connect to the wrong port?"
-msgstr ""
+msgstr "Försöker du kanske ansluta till fel port?"
 
 #: ../src/gossip-account-button.c:407
 msgid "Perhaps the service is not currently running?"
-msgstr ""
+msgstr "Tjänsten kanske inte är igång just nu?"
 
 #: ../src/gossip-account-button.c:410 ../src/gossip-account-button.c:419
 msgid "Check your connection details."
@@ -320,7 +320,7 @@ msgstr "Kontrollera dina anslutningsdetaljer."
 
 #: ../src/gossip-account-button.c:413
 msgid "Perhaps the server is not running this service."
-msgstr ""
+msgstr "Servern kanske inte kör denna tjänsten."
 
 #: ../src/gossip-account-button.c:416
 msgid "Check your username and password are correct."
