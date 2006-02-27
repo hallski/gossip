@@ -1,3 +1,7 @@
+2006-02-27  Martyn Russell  <martyn@imendio.com>
+
+	* autogen.sh: Update error for automake to v1.9 from 1.7.
+
 2006-02-26  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Quote more strings and use AM_CONFIG_HEADER
