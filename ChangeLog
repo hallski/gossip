@@ -1,3 +1,11 @@
+2006-02-27  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-log.c: Cleaned up the logging code and use some
+	convenience functions now available in later version of glib.
+	
+	* src/gossip-log.xsl:
+	- Update the CSS used so the font isn't so big.
+
 2006-02-27  Brian Pepple  <bdpepple@ameritech.net>
 
 	* src/gossip-contact-list.c: 

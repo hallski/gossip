@@ -9,6 +9,8 @@
           <xsl:text>
             body {
               background: #fff;
+	      font-family: Verdana, "Bitstream Vera Sans", Sans-Serif; 
+	      font-size: 10pt;
             }
             .stamp {
               color: #999;
