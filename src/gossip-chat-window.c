@@ -552,15 +552,15 @@ chat_window_create_label (GossipChatWindow *window,
 
 	status_image = gtk_image_new ();
 
+	event_box_hbox = gtk_hbox_new (FALSE, 2);
+
+	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (event_box_hbox), name_label, TRUE, TRUE, 0);
+
 	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_image);
   	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", event_box);
 
 	chat_window_update_tooltip (window, chat);
-
-	event_box_hbox = gtk_hbox_new (FALSE, 0);
-
-	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (event_box_hbox), name_label, TRUE, TRUE, 0);
 
 	close_button = gtk_button_new ();
 	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
@@ -583,7 +583,8 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
 	gtk_widget_set_size_request (close_button, w + 2, h + 2);
  
-	gtk_box_pack_start (GTK_BOX (hbox), event_box_hbox, TRUE, TRUE, 0);
+	gtk_container_add (GTK_CONTAINER (event_box), event_box_hbox);
+	gtk_box_pack_start (GTK_BOX (hbox), event_box, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
 
 	g_signal_connect (close_button,

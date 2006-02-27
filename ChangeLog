@@ -1,3 +1,12 @@
+2006-02-27  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Use AC_PATH_XTRA to fix the Xss detection, patch
+	from Tommi Komulainen.
+
+	* src/gossip-chat-window.c: (chat_window_create_label): Use the
+	eventbox, brings back tooltips on the chat tabs (and add some
+	spacing between the icon and label again).
+
 2006-02-27  Martyn Russell  <martyn@imendio.com>
 
 	* autogen.sh: Update error for automake to v1.9 from 1.7.
