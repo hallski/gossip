@@ -1,3 +1,9 @@
+2006-02-27  Brian Pepple  <bdpepple@ameritech.net>
+
+	* src/gossip-contact-list.c: 
+	* ui/chat.glade: Change some keyboard mnemonics, fixes bug
+	#332240.
+
 2006-02-27  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Use AC_PATH_XTRA to fix the Xss detection, patch

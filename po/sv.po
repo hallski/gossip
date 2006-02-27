@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-25 15:29+0100\n"
+"POT-Creation-Date: 2006-02-27 18:09+0100\n"
 "PO-Revision-Date: 2004-12-22 21:21+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -156,7 +156,7 @@ msgid "Y position of main window"
 msgstr "Y-positionen av huvudfönstret"
 
 #: ../libgossip/gossip-contact.c:769 ../src/gossip-app.c:1967
-#: ../src/gossip-contact-info-dialog.c:170 ../src/gossip-galago.c:165
+#: ../src/gossip-contact-info-dialog.c:170 ../src/gossip-galago.c:160
 msgid "Offline"
 msgstr "Frånkopplad"
 
@@ -415,7 +415,7 @@ msgstr ""
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
-#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:274
+#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:269
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
@@ -440,12 +440,12 @@ msgstr "Acceptera"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-window.c:621
+#: ../src/gossip-chat-window.c:622
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
 
-#: ../src/gossip-chat-window.c:1009
+#: ../src/gossip-chat-window.c:1006
 msgid "Typing a message."
 msgstr "Skriver ett meddelande."
 
@@ -474,8 +474,8 @@ msgid "Requested Information"
 msgstr "Information efterfrågad"
 
 #: ../src/gossip-contact-list.c:326
-msgid "/Contact _Information"
-msgstr "/Kontakt_information"
+msgid "/_Contact Information"
+msgstr "/_Kontaktinformation"
 
 #: ../src/gossip-contact-list.c:338
 msgid "/Re_name Contact"
@@ -491,16 +491,16 @@ msgid "/_Remove Contact"
 msgstr "/_Ta bort kontakt"
 
 #: ../src/gossip-contact-list.c:362
-msgid "/_Invite to Chat Conference"
+msgid "/In_vite to Chat Conference"
 msgstr "/_Bjud in till chattkonferens"
 
 #: ../src/gossip-contact-list.c:374
 msgid "/_Send File..."
-msgstr ""
+msgstr "/_Skicka fil..."
 
 #: ../src/gossip-contact-list.c:386
 msgid "/Show _Log"
-msgstr "/Visa _logg"
+msgstr "/_Visa logg"
 
 #: ../src/gossip-contact-list.c:396
 msgid "/Re_name group"
@@ -638,21 +638,21 @@ msgstr "Registrerar konto"
 msgid "Example"
 msgstr "Exempel"
 
-#: ../src/gossip-notify.c:148 ../src/gossip-private-chat.c:444
+#: ../src/gossip-notify.c:143 ../src/gossip-private-chat.c:444
 #, c-format
 msgid "%s has come online"
 msgstr "%s anslöt sig"
 
-#: ../src/gossip-notify.c:191
+#: ../src/gossip-notify.c:186
 #, c-format
 msgid "%s has gone offline"
 msgstr "%s kopplade från"
 
-#: ../src/gossip-notify.c:300
+#: ../src/gossip-notify.c:295
 msgid "Respond"
 msgstr "Svara"
 
-#: ../src/gossip-notify.c:301
+#: ../src/gossip-notify.c:296
 msgid "Contact Information"
 msgstr "Kontaktinformation"
 
@@ -1117,32 +1117,32 @@ msgid "Gossip - Chat"
 msgstr "Gossip - Chatt"
 
 #: ../ui/chat.glade.h:4
+msgid "In_vite to Chat Room"
+msgstr "_Bjud in till chattrum"
+
+#: ../ui/chat.glade.h:5
 msgid "Move Tab _Left"
 msgstr "Flytta flik till _vänster"
 
-#: ../ui/chat.glade.h:5
+#: ../ui/chat.glade.h:6
 msgid "Move Tab _Right"
 msgstr "Flytta flik till _höger"
 
-#: ../ui/chat.glade.h:6
+#: ../ui/chat.glade.h:7
 msgid "View Lo_g"
 msgstr "_Visa logg"
 
-#: ../ui/chat.glade.h:7 ../ui/main.glade.h:113
+#: ../ui/chat.glade.h:8 ../ui/main.glade.h:113
 msgid "_Add Contact..."
 msgstr "_Lägg till kontakt..."
 
-#: ../ui/chat.glade.h:8
+#: ../ui/chat.glade.h:9
 msgid "_Conversation"
 msgstr "_Konversation"
 
-#: ../ui/chat.glade.h:9
+#: ../ui/chat.glade.h:10
 msgid "_Detach Tab"
 msgstr "_Koppla loss flik"
-
-#: ../ui/chat.glade.h:10
-msgid "_Invite to Chat Room"
-msgstr ""
 
 #: ../ui/chat.glade.h:11
 msgid "_Next Tab"
