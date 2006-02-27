@@ -4,6 +4,9 @@
 
 2006-02-26  Richard Hult  <richard@imendio.com>
 
+	* Makefile.am: Move the scrollkeeper makefiles from DISTCLEANFILES
+	to EXTRA_DIST, mistake in the previous commit.
+
 	* configure.ac: Quote more strings and use AM_CONFIG_HEADER
 	instead of AC_CONFIG_HEADERS, fixes build for some reason...
 	
