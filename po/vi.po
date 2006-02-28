@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-24 12:05+0100\n"
-"PO-Revision-Date: 2006-02-24 22:59+1030\n"
+"POT-Creation-Date: 2006-02-28 04:01+0100\n"
+"PO-Revision-Date: 2006-02-28 16:57+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -148,8 +148,8 @@ msgstr "Vị trí X của cửa sổ chính."
 msgid "Y position of main window"
 msgstr "Vị trí Y của cửa sổ chính."
 
-#:../libgossip/gossip-contact.c:768 ../src/gossip-app.c:1945
-#:../src/gossip-contact-info-dialog.c:171 ../src/gossip-galago.c:164
+#:../libgossip/gossip-contact.c:769 ../src/gossip-app.c:1967
+#:../src/gossip-contact-info-dialog.c:170 ../src/gossip-galago.c:160
 msgid "Offline"
 msgstr "Ngoại tuyến"
 
@@ -193,27 +193,27 @@ msgstr "Tính năng này không được xác thực."
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Gặp một lỗi giao thức dứt khoát mà bất ngờ."
 
-#:../libgossip/gossip-chatroom.c:733
+#:../libgossip/gossip-chatroom.c:732
 msgid "Normal"
 msgstr "Chuẩn"
 
 #:../libgossip/gossip-chatroom.c:743
-msgid "Connecting..."
-msgstr "Đang kết nối..."
-
-#:../libgossip/gossip-chatroom.c:744
-msgid "Open"
-msgstr "Mở"
+msgid "Joining"
+msgstr "Tham gia"
 
 #:../libgossip/gossip-chatroom.c:745
-msgid "Closed"
-msgstr "Đã đóng"
+msgid "Active"
+msgstr "Hoạt động"
 
-#:../libgossip/gossip-chatroom.c:746
+#:../libgossip/gossip-chatroom.c:747 ../ui/group-chat.glade.h:8
+msgid "Inactive"
+msgstr "Bị động"
+
+#:../libgossip/gossip-chatroom.c:749
 msgid "Unknown"
 msgstr "Không rõ"
 
-#:../libgossip/gossip-chatroom.c:747
+#:../libgossip/gossip-chatroom.c:751
 msgid "Error"
 msgstr "Lỗi"
 
@@ -237,11 +237,11 @@ msgstr "Bạn đã cố tham gia một máy phục vụ hội thảo không th�
 msgid "An unknown error occurred, check your details are correct."
 msgstr "Gặp lỗi lạ: hãy kiểm tra xem bạn đã gõ đúng chi tiết mình."
 
-#:../protocols/jabber/gossip-jabber.c:995
+#:../protocols/jabber/gossip-jabber.c:996
 msgid "Connection could not be opened"
 msgstr "Không thể mở kết nối."
 
-#:../protocols/jabber/gossip-jabber.c:1039
+#:../protocols/jabber/gossip-jabber.c:1040
 msgid "Couldn't send message!"
 msgstr "Không thể gởi tin nhẳn."
 
@@ -266,71 +266,55 @@ msgstr "Dịch giả :"
 msgid "translator_credits"
 msgstr "Nhóm Việt hóa Gnome <gnomevi-list@lists.sourceforge.net>"
 
-#:../src/gossip-account-button.c:335
+#:../src/gossip-account-button.c:334
 msgid "Stop Connecting"
 msgstr "Dừng kết nối"
 
-#:../src/gossip-account-button.c:342 ../src/gossip-accounts-dialog.c:241
+#:../src/gossip-account-button.c:341 ../src/gossip-accounts-dialog.c:241
 msgid "Connect"
 msgstr "Kết nối"
 
-#:../src/gossip-account-button.c:350 ../src/gossip-accounts-dialog.c:238
+#:../src/gossip-account-button.c:349 ../src/gossip-accounts-dialog.c:238
 msgid "Disconnect"
 msgstr "Ngắt kết nối"
 
-#:../src/gossip-account-button.c:361
+#:../src/gossip-account-button.c:360
 msgid "Edit"
 msgstr "Hiệu chỉnh"
 
-#:../src/gossip-account-button.c:392 ../src/gossip-group-chat.c:694
-#:../src/gossip-private-chat.c:508
+#:../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:694
+#:../src/gossip-private-chat.c:509
 msgid "Connected"
 msgstr "Được kết nối"
 
-#:../src/gossip-account-button.c:394
+#:../src/gossip-account-button.c:393
 msgid "Connecting"
 msgstr "Đang kết nối..."
 
-#:../src/gossip-account-button.c:394 ../src/gossip-group-chat.c:705
-#:../src/gossip-private-chat.c:523
+#:../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:705
+#:../src/gossip-private-chat.c:524
 msgid "Disconnected"
 msgstr "Kết nối bị ngắt"
 
-#:../src/gossip-account-button.c:407
+#:../src/gossip-account-button.c:406
 msgid "Perhaps you are trying to connect to the wrong port?"
 msgstr "Có lẽ bạn đang cố kết nối đến cổng không đúng?"
 
-#:../src/gossip-account-button.c:408
+#:../src/gossip-account-button.c:407
 msgid "Perhaps the service is not currently running?"
 msgstr "Có lẽ dịch vụ không đang chạy?"
 
-#:../src/gossip-account-button.c:411 ../src/gossip-account-button.c:420
+#:../src/gossip-account-button.c:410 ../src/gossip-account-button.c:419
 msgid "Check your connection details."
 msgstr "Hãy kiểm tra xem chi tiết kết nối là đúng."
 
-#:../src/gossip-account-button.c:414
+#:../src/gossip-account-button.c:413
 msgid "Perhaps the server is not running this service."
 msgstr "Có lẽ máy phục vụ không đang chạy dịch vụ này."
 
-#:../src/gossip-account-button.c:417
+#:../src/gossip-account-button.c:416
 msgid "Check your username and password are correct."
 msgstr "Hãy kiểm tra xem đã gõ tên người dùng và mật khẩu đúng."
-
-#:../src/gossip-account-button.c:437 ../ui/main.glade.h:15
-msgid "Account Name"
-msgstr "Tên tài khoản"
-
-#:../src/gossip-account-button.c:439
-msgid "Account ID"
-msgstr "ID tài khoản"
-
-#:../src/gossip-account-button.c:441 ../ui/main.glade.h:84
-msgid "Status"
-msgstr "Trạng thái"
-
-#:../src/gossip-account-button.c:444
-msgid "Last Error"
-msgstr "Lỗi cuối cùng"
 
 #:../src/gossip-accounts-dialog.c:462
 msgid "Accounts"
@@ -355,7 +339,7 @@ msgid "%s will be added to your contact list."
 msgstr "%s sẽ được thêm vào danh sách liên lạc của bạn."
 
 #:../src/gossip-add-contact-window.c:424
-#:../src/gossip-contact-info-dialog.c:455
+#:../src/gossip-contact-info-dialog.c:454
 #:../src/gossip-subscription-dialog.c:371
 msgid "I would like to add you to my contact list."
 msgstr "Tôi muốn thêm bạn vào danh sách liên lạc mình."
@@ -371,42 +355,42 @@ msgstr "%s ID của liên lạc mới :"
 msgid "Example: %s"
 msgstr "Ví dụ : %s"
 
-#:../src/gossip-app.c:519 ../ui/main.glade.h:115
+#:../src/gossip-app.c:522 ../ui/main.glade.h:115
 msgid "_Connect"
 msgstr "_Kết nối"
 
-#:../src/gossip-app.c:524 ../ui/main.glade.h:118
+#:../src/gossip-app.c:527 ../ui/main.glade.h:118
 msgid "_Disconnect"
 msgstr "_Ngắt kết nối"
 
-#:../src/gossip-app.c:672
+#:../src/gossip-app.c:675
 msgid "To summarize:"
 msgstr "Tóm tắt:"
 
-#:../src/gossip-app.c:742
+#:../src/gossip-app.c:745
 msgid "If you quit, you will lose all unread information."
 msgstr "Nếu bạn thoát, các thông tin chưa đọc sẽ bị mất hoàn toàn."
 
-#:../src/gossip-app.c:959
+#:../src/gossip-app.c:962
 msgid "Could not display the help contents."
 msgstr "Không thể hiển thị nội dung trợ giúp."
 
-#:../src/gossip-app.c:1214
+#:../src/gossip-app.c:1217
 msgid "Gossip, Instant Messaging Client"
 msgstr "Ứng dụng tin nhắn tức khắc Gossip"
 
-#:../src/gossip-app.c:1449
+#:../src/gossip-app.c:1452
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Bạn chưa cấu hình tài khoản Tin nhắn tức khắc."
 
-#:../src/gossip-app.c:1451
+#:../src/gossip-app.c:1454
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
 msgstr "Bước sau, bạn có thể thiết lập chi tiết mình trong hộp thoại Thông tin Tài "
 "khoản."
 
-#:../src/gossip-chat.c:463
+#:../src/gossip-chat.c:465
 msgid "_Check Word Spelling..."
 msgstr "_Kiểm tra chính tả từ..."
 
@@ -418,41 +402,41 @@ msgid ""
 msgstr "Hãy gõ thông điệp mời :\n"
 "%s"
 
-#:../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:796
+#:../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:797
 msgid "You have been invited to join a chat conference."
 msgstr "Bạn đã được mời tham gia một hội thảo trò chuyện."
 
-#:../src/gossip-chat-manager.c:147 ../src/gossip-notify.c:273
+#:../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:269
 #,c-format
 msgid "New message from %s"
 msgstr "Tin nhẳn mới từ %s"
 
-#:../src/gossip-chat-view.c:402 ../ui/chat.glade.h:1
+#:../src/gossip-chat-view.c:403 ../ui/chat.glade.h:1
 msgid "C_lear"
 msgstr "_Xoá"
 
-#:../src/gossip-chat-view.c:419
+#:../src/gossip-chat-view.c:420
 msgid "_Copy Link Address"
 msgstr "_Chép địa chỉ liên kết"
 
-#:../src/gossip-chat-view.c:427
+#:../src/gossip-chat-view.c:428
 msgid "_Open Link"
 msgstr "Mở _liên kết"
 
-#:../src/gossip-chat-view.c:821
+#:../src/gossip-chat-view.c:822
 msgid "Accept"
 msgstr "Chấp nhận"
 
-#:../src/gossip-chat-view.c:911
+#:../src/gossip-chat-view.c:912
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#:../src/gossip-chat-window.c:569
+#:../src/gossip-chat-window.c:622
 #,c-format
 msgid "%sChat - %s"
 msgstr "%sTrò chuyện — %s"
 
-#:../src/gossip-chat-window.c:957
+#:../src/gossip-chat-window.c:1006
 msgid "Typing a message."
 msgstr "Đang gõ tin nhẳn."
 
@@ -461,58 +445,58 @@ msgstr "Đang gõ tin nhẳn."
 msgid "Join"
 msgstr "Tham gia"
 
-#:../src/gossip-contact-info-dialog.c:299 ../ui/main.glade.h:70
+#:../src/gossip-contact-info-dialog.c:298 ../ui/main.glade.h:70
 msgid "Name:"
 msgstr "Tên:"
 
-#:../src/gossip-contact-info-dialog.c:302
-#:../src/gossip-contact-info-dialog.c:630 ../ui/main.glade.h:19
+#:../src/gossip-contact-info-dialog.c:301
+#:../src/gossip-contact-info-dialog.c:629 ../ui/main.glade.h:19
 msgid "Alias:"
 msgstr "Tên hiệu :"
 
 #.set labels
-#:../src/gossip-contact-info-dialog.c:620
+#:../src/gossip-contact-info-dialog.c:619
 #,c-format
 msgid "Contact Information for %s"
 msgstr "Thông tin lien lạc cho %s"
 
-#:../src/gossip-contact-info-dialog.c:654
+#:../src/gossip-contact-info-dialog.c:653
 msgid "Requested Information"
 msgstr "Thông tin cần thiết"
 
-#:../src/gossip-contact-list.c:325
-msgid "/Contact _Information"
+#:../src/gossip-contact-list.c:326
+msgid "/_Contact Information"
 msgstr "/Thông t_in lien lạc"
 
-#:../src/gossip-contact-list.c:337
+#:../src/gossip-contact-list.c:338
 msgid "/Re_name Contact"
 msgstr "/Đổi t_ên Liên lạc"
 
-#:../src/gossip-contact-list.c:343
+#:../src/gossip-contact-list.c:344
 msgid "/_Edit Groups"
 msgstr "/_Hiệu chỉnh nhóm"
 
-#:../src/gossip-contact-list.c:349
+#:../src/gossip-contact-list.c:350
 msgid "/_Remove Contact"
 msgstr "/Gỡ _bỏ Liên lạc"
 
-#:../src/gossip-contact-list.c:361
-msgid "/_Invite to Chat Conference"
+#:../src/gossip-contact-list.c:362
+msgid "/In_vite to Chat Conference"
 msgstr "/_Mời vào Hội thảo Trò chuyện"
 
-#:../src/gossip-contact-list.c:373
+#:../src/gossip-contact-list.c:374
 msgid "/_Send File..."
 msgstr "/_Gởi tập tin..."
 
-#:../src/gossip-contact-list.c:385
+#:../src/gossip-contact-list.c:386
 msgid "/Show _Log"
 msgstr "/Hiện _bản ghi"
 
-#:../src/gossip-contact-list.c:395
+#:../src/gossip-contact-list.c:396
 msgid "/Re_name group"
 msgstr "/Đổi tên _nhóm"
 
-#:../src/gossip-contact-list.c:2090
+#:../src/gossip-contact-list.c:2091
 #,c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -520,11 +504,11 @@ msgid ""
 msgstr "Hãy gõ tên hiệu mới cho liên lạc này\n"
 "%s"
 
-#:../src/gossip-contact-list.c:2210
+#:../src/gossip-contact-list.c:2211
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Bạn có muốn gỡ bỏ liên lạc này ra bản liệt kê không?"
 
-#:../src/gossip-contact-list.c:2266
+#:../src/gossip-contact-list.c:2267
 #,c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -532,56 +516,56 @@ msgid ""
 msgstr "Hãy gõ tên mới cho nhóm này:\n"
 "%s"
 
-#:../src/gossip-edit-groups-dialog.c:163
+#:../src/gossip-edit-groups-dialog.c:161
 #,c-format
 msgid "Edit groups for %s"
 msgstr "Hiệu chỉnh những nhóm cho %s"
 
-#:../src/gossip-edit-groups-dialog.c:232 ../src/gossip-preferences.c:216
+#:../src/gossip-edit-groups-dialog.c:230 ../src/gossip-preferences.c:216
 msgid "Select"
 msgstr "Chọn"
 
-#:../src/gossip-edit-groups-dialog.c:243
+#:../src/gossip-edit-groups-dialog.c:241
 msgid "Group"
 msgstr "Nhóm"
 
-#:../src/gossip-edit-groups-dialog.c:294
-#:../src/gossip-edit-groups-dialog.c:304
+#:../src/gossip-edit-groups-dialog.c:292
+#:../src/gossip-edit-groups-dialog.c:302
 #:../src/gossip-subscription-dialog.c:194
 msgid "Unsorted"
 msgstr "Chưa sắp xếp"
 
-#:../src/gossip-ft-window.c:145
+#:../src/gossip-ft-window.c:146
 #,c-format
 msgid "New file transfer request from %s"
 msgstr "Yêu cầu truyền tập tin mới từ %s"
 
-#:../src/gossip-ft-window.c:177
+#:../src/gossip-ft-window.c:178
 msgid "File transfer is not supported by both parties."
 msgstr "Không phải cả hai người hỗ trợ việc truyền tập tin."
 
-#:../src/gossip-ft-window.c:181
+#:../src/gossip-ft-window.c:182
 msgid "Your file transfer offer declined."
 msgstr "Người khác đã từ chối truyền tập tin."
 
-#:../src/gossip-ft-window.c:182
+#:../src/gossip-ft-window.c:183
 msgid "The other user decided not to continue."
 msgstr "Người dùng khác đã quyết định sẽ không tiếp tục."
 
-#:../src/gossip-ft-window.c:187
+#:../src/gossip-ft-window.c:188
 msgid "Unknown error occurred during file transfer."
 msgstr "Gặp lỗi lạ trong khi truyền tập tin."
 
-#:../src/gossip-ft-window.c:271
+#:../src/gossip-ft-window.c:272
 #,c-format
 msgid "%s would like to send you a file."
 msgstr "%s muốn gởi tập tin cho bạn."
 
-#:../src/gossip-ft-window.c:274
+#:../src/gossip-ft-window.c:275
 msgid "Someone would like to send you a file."
 msgstr "Người nào muốn gởi tập tin cho bạn."
 
-#:../src/gossip-ft-window.c:406
+#:../src/gossip-ft-window.c:407
 msgid "Select a file"
 msgstr "Chọn tập tin"
 
@@ -591,7 +575,7 @@ msgstr "Chọn tập tin"
 msgid "Invited %s to join this chat conference."
 msgstr "Đã mời %s tham gia hội thảo trò chuyện này."
 
-#:../src/gossip-log.c:290
+#:../src/gossip-log.c:214
 msgid "Conversation Log"
 msgstr "Bản ghi đối thoại"
 
@@ -640,21 +624,21 @@ msgstr "Đang đăng ký tài khoản..."
 msgid "Example"
 msgstr "Ví dụ"
 
-#:../src/gossip-notify.c:147 ../src/gossip-private-chat.c:443
+#:../src/gossip-notify.c:143 ../src/gossip-private-chat.c:444
 #,c-format
 msgid "%s has come online"
 msgstr "%s mới trực tuyến"
 
-#:../src/gossip-notify.c:190
+#:../src/gossip-notify.c:186
 #,c-format
 msgid "%s has gone offline"
 msgstr "%s mới ngoại tuyến"
 
-#:../src/gossip-notify.c:299
+#:../src/gossip-notify.c:295
 msgid "Respond"
 msgstr "Đáp ứng"
 
-#:../src/gossip-notify.c:300
+#:../src/gossip-notify.c:296
 msgid "Contact Information"
 msgstr "Thông tin lien lạc"
 
@@ -686,380 +670,376 @@ msgstr "Vắng mặt..."
 msgid "Clear List"
 msgstr "Xoá danh sách"
 
-#:../src/gossip-private-chat.c:429
+#:../src/gossip-private-chat.c:430
 #,c-format
 msgid "%s went offline"
 msgstr "%s mới ngoại tuyến"
 
-#:../src/gossip-spell.c:69
+#:../src/gossip-spell.c:70
 msgid "Afrikaans"
 msgstr "Hoà-lan Nam Phi"
 
-#:../src/gossip-spell.c:70
+#:../src/gossip-spell.c:71
 msgid "Amharic"
 msgstr "Am-ha-ri"
 
-#:../src/gossip-spell.c:71
+#:../src/gossip-spell.c:72
 msgid "Arabic"
 msgstr "Ả Rập"
 
-#:../src/gossip-spell.c:72
+#:../src/gossip-spell.c:73
 msgid "Azerbaijani"
 msgstr "A-dợ-bai-sanh"
 
-#:../src/gossip-spell.c:73
+#:../src/gossip-spell.c:74
 msgid "Belarusian"
 msgstr "Be-la-ru-xợ"
 
-#:../src/gossip-spell.c:74
+#:../src/gossip-spell.c:75
 msgid "Bulgarian"
 msgstr "Bảo-gia-lơi"
 
-#:../src/gossip-spell.c:75
+#:../src/gossip-spell.c:76
 msgid "Bengali"
 msgstr "Ben-ga-ni"
 
-#:../src/gossip-spell.c:76
+#:../src/gossip-spell.c:77
 msgid "Breton"
 msgstr "Boue-ton (Pháp)"
 
-#:../src/gossip-spell.c:77
+#:../src/gossip-spell.c:78
 msgid "Bosnian"
 msgstr "Bô-xni-a"
 
-#:../src/gossip-spell.c:78
+#:../src/gossip-spell.c:79
 msgid "Catalan"
 msgstr "Ca-ta-lan"
 
-#:../src/gossip-spell.c:79
+#:../src/gossip-spell.c:80
 msgid "Czech"
 msgstr "Séc"
 
-#:../src/gossip-spell.c:80
+#:../src/gossip-spell.c:81
 msgid "Welsh"
 msgstr "Ouen-s"
 
-#:../src/gossip-spell.c:81
+#:../src/gossip-spell.c:82
 msgid "Danish"
 msgstr "Đan-mạch"
 
-#:../src/gossip-spell.c:82
+#:../src/gossip-spell.c:83
 msgid "German"
 msgstr "Đức"
 
-#:../src/gossip-spell.c:83
+#:../src/gossip-spell.c:84
 msgid "German (Austria)"
 msgstr "Đức (Ao)"
 
-#:../src/gossip-spell.c:84
+#:../src/gossip-spell.c:85
 msgid "German (Germany)"
 msgstr "Đức (Đức)"
 
-#:../src/gossip-spell.c:85
+#:../src/gossip-spell.c:86
 msgid "German (Swiss)"
 msgstr "Đức (Thụy sĩ)"
 
-#:../src/gossip-spell.c:86
+#:../src/gossip-spell.c:87
 msgid "Greek"
 msgstr "Hy-lạp"
 
-#:../src/gossip-spell.c:87
+#:../src/gossip-spell.c:88
 msgid "English"
 msgstr "Tiếng Anh"
 
-#:../src/gossip-spell.c:88
+#:../src/gossip-spell.c:89
 msgid "English (Canadian)"
 msgstr "Tiếng Anh (Ca-na-đa)"
 
-#:../src/gossip-spell.c:89
+#:../src/gossip-spell.c:90
 msgid "English (British)"
 msgstr "Tiếng Anh (quốc Anh)"
 
-#:../src/gossip-spell.c:90
+#:../src/gossip-spell.c:91
 msgid "English (American)"
 msgstr "Tiếng Anh (Mỹ)"
 
-#:../src/gossip-spell.c:91
+#:../src/gossip-spell.c:92
 msgid "Esperanto"
 msgstr "Etpêrantô"
 
-#:../src/gossip-spell.c:92
+#:../src/gossip-spell.c:93
 msgid "Spanish"
 msgstr "Tây-ban-nha"
 
-#:../src/gossip-spell.c:93
+#:../src/gossip-spell.c:94
 msgid "Estonian"
 msgstr "Et-tô-ni-a"
 
-#:../src/gossip-spell.c:94
+#:../src/gossip-spell.c:95
 msgid "Basque"
 msgstr "Bax-quợ"
 
-#:../src/gossip-spell.c:95
+#:../src/gossip-spell.c:96
 msgid "Persian"
 msgstr "Pha-xi"
 
-#:../src/gossip-spell.c:96
+#:../src/gossip-spell.c:97
 msgid "Finnish"
 msgstr "Phần-lan"
 
-#:../src/gossip-spell.c:97
+#:../src/gossip-spell.c:98
 msgid "Faroese"
 msgstr "Pha-rô"
 
-#:../src/gossip-spell.c:98
+#:../src/gossip-spell.c:99
 msgid "French"
 msgstr "Pháp"
 
-#:../src/gossip-spell.c:99
+#:../src/gossip-spell.c:100
 msgid "French (France)"
 msgstr "Pháp (Pháp)"
 
-#:../src/gossip-spell.c:100
+#:../src/gossip-spell.c:101
 msgid "French (Swiss)"
 msgstr "Pháp (Thụy sĩ)"
 
-#:../src/gossip-spell.c:101
+#:../src/gossip-spell.c:102
 msgid "Irish Gaelic"
 msgstr "Xen-tơ (Ái-nhĩ-lan)"
 
-#:../src/gossip-spell.c:102
+#:../src/gossip-spell.c:103
 msgid "Scots Gaelic"
 msgstr "Xen-tơ (Ê-cốt)"
 
-#:../src/gossip-spell.c:103
+#:../src/gossip-spell.c:104
 msgid "Galician"
 msgstr "Ga-li-xi"
 
-#:../src/gossip-spell.c:104
+#:../src/gossip-spell.c:105
 msgid "Gujarati"
 msgstr "Gu-gia-ra-ti"
 
-#:../src/gossip-spell.c:105
+#:../src/gossip-spell.c:106
 msgid "Manx Gaelic"
 msgstr "Xen-tơ (Mankh-x)"
 
-#:../src/gossip-spell.c:106
+#:../src/gossip-spell.c:107
 msgid "Hebrew"
 msgstr "Do-thái"
 
-#:../src/gossip-spell.c:107
+#:../src/gossip-spell.c:108
 msgid "Hindi"
 msgstr "Hin-đi"
 
-#:../src/gossip-spell.c:108
+#:../src/gossip-spell.c:109
 msgid "Croatian"
 msgstr "Cợ-rô-a-ti-a"
 
-#:../src/gossip-spell.c:109
+#:../src/gossip-spell.c:110
 msgid "Hungarian"
 msgstr "Hung-gia-lợi"
 
-#:../src/gossip-spell.c:110
+#:../src/gossip-spell.c:111
 msgid "Indonesian"
 msgstr "Nam Dương"
 
-#:../src/gossip-spell.c:111
+#:../src/gossip-spell.c:112
 msgid "Icelandic"
 msgstr "Băng đảo"
 
-#:../src/gossip-spell.c:112
+#:../src/gossip-spell.c:113
 msgid "Italian"
 msgstr "Ý"
 
-#:../src/gossip-spell.c:113
+#:../src/gossip-spell.c:114
 msgid "Japanese"
 msgstr "Nhật-bản"
 
-#:../src/gossip-spell.c:114
+#:../src/gossip-spell.c:115
 msgid "Georgian"
 msgstr "Gi-oa-gi-a"
 
-#:../src/gossip-spell.c:115
+#:../src/gossip-spell.c:116
 msgid "Kannada"
 msgstr "Kan-na-đa"
 
-#:../src/gossip-spell.c:116
+#:../src/gossip-spell.c:117
 msgid "Korean"
 msgstr "Hàn Quốc"
 
-#:../src/gossip-spell.c:117
+#:../src/gossip-spell.c:118
 msgid "Kurdish"
 msgstr "Khơ-đhi"
 
-#:../src/gossip-spell.c:118
+#:../src/gossip-spell.c:119
 msgid "Cornish"
 msgstr "Xen-tơ (Coanh-ouăn)"
 
-#:../src/gossip-spell.c:119
+#:../src/gossip-spell.c:120
 msgid "Limburgish"
 msgstr "Lim-bổ-ghi"
 
-#:../src/gossip-spell.c:120
+#:../src/gossip-spell.c:121
 msgid "Lithuanian"
 msgstr "Li-tu-a-ni"
 
-#:../src/gossip-spell.c:121
+#:../src/gossip-spell.c:122
 msgid "Latvian"
 msgstr "Lát-vi-a"
 
-#:../src/gossip-spell.c:122
+#:../src/gossip-spell.c:123
 msgid "Maori"
 msgstr "Maori"
 
-#:../src/gossip-spell.c:123
+#:../src/gossip-spell.c:124
 msgid "Macedonian"
 msgstr "Ma-xê-đô-ni"
 
-#:../src/gossip-spell.c:124
+#:../src/gossip-spell.c:125
 msgid "Malayalam"
 msgstr "Ma-lay-am"
 
-#:../src/gossip-spell.c:125
+#:../src/gossip-spell.c:126
 msgid "Mongolian"
 msgstr "Mông-cổ"
 
-#:../src/gossip-spell.c:126
+#:../src/gossip-spell.c:127
 msgid "Marathi"
 msgstr "Ma-ra-ti"
 
-#:../src/gossip-spell.c:127
+#:../src/gossip-spell.c:128
 msgid "Malay"
 msgstr "Mã lai"
 
-#:../src/gossip-spell.c:128 ../src/gossip-spell.c:129
+#:../src/gossip-spell.c:129 ../src/gossip-spell.c:130
 msgid "Norwegian (Bokmal)"
 msgstr "Na-uy (Bokh-man)"
 
-#:../src/gossip-spell.c:130
+#:../src/gossip-spell.c:131
 msgid "Nepali"
 msgstr "Nê-pan"
 
-#:../src/gossip-spell.c:131
+#:../src/gossip-spell.c:132
 msgid "Dutch"
 msgstr "Hoà-lan"
 
-#:../src/gossip-spell.c:132
+#:../src/gossip-spell.c:133
 msgid "Norwegian"
 msgstr "Na-uy"
 
-#:../src/gossip-spell.c:133
+#:../src/gossip-spell.c:134 ../src/gossip-spell.c:135
 msgid "Norwegian (Nynorsk)"
 msgstr "Na-uy (Ny-noa-x-kh)"
 
-#:../src/gossip-spell.c:134
-msgid "Norwegian (Nyorsk)"
-msgstr "Na-uy (Ny-noa-x-kh)"
-
-#:../src/gossip-spell.c:135
+#:../src/gossip-spell.c:136
 msgid "Oriya"
 msgstr "O-ri-ya"
 
-#:../src/gossip-spell.c:136
+#:../src/gossip-spell.c:137
 msgid "Punjabi"
 msgstr "Pun-cha-bi"
 
-#:../src/gossip-spell.c:137
+#:../src/gossip-spell.c:138
 msgid "Polish"
 msgstr "Ba-lan"
 
-#:../src/gossip-spell.c:138
+#:../src/gossip-spell.c:139
 msgid "Portuguese"
 msgstr "Bồ-đào-nha"
 
-#:../src/gossip-spell.c:139
+#:../src/gossip-spell.c:140
 msgid "Portuguese (Portugal)"
 msgstr "Bồ-đào-nha (Bồ đào nha)"
 
-#:../src/gossip-spell.c:140
+#:../src/gossip-spell.c:141
 msgid "Portuguese (Brazil)"
 msgstr "Bồ-đào-nha (Bra-xin)"
 
-#:../src/gossip-spell.c:141
+#:../src/gossip-spell.c:142
 msgid "Romanian"
 msgstr "Lỗ-má-ni"
 
-#:../src/gossip-spell.c:142
+#:../src/gossip-spell.c:143
 msgid "Russian"
 msgstr "Nga"
 
-#:../src/gossip-spell.c:143
+#:../src/gossip-spell.c:144
 msgid "Kinyarwanda"
 msgstr "Kin-ia-ouanh-đa"
 
-#:../src/gossip-spell.c:144
+#:../src/gossip-spell.c:145
 msgid "Slovak"
 msgstr "Xlô-vác"
 
-#:../src/gossip-spell.c:145
+#:../src/gossip-spell.c:146
 msgid "Slovenian"
 msgstr "Xlô-ven"
 
-#:../src/gossip-spell.c:146
+#:../src/gossip-spell.c:147
 msgid "Albanian"
 msgstr "An-ba-ni"
 
-#:../src/gossip-spell.c:147
+#:../src/gossip-spell.c:148
 msgid "Serbian"
 msgstr "Xéc-bi"
 
-#:../src/gossip-spell.c:148
+#:../src/gossip-spell.c:149
 msgid "Swedish"
 msgstr "Thuỵ-điển"
 
-#:../src/gossip-spell.c:149
+#:../src/gossip-spell.c:150
 msgid "Tamil"
 msgstr "Ta-min"
 
-#:../src/gossip-spell.c:150
+#:../src/gossip-spell.c:151
 msgid "Telugu"
 msgstr "Te-lu-gu"
 
-#:../src/gossip-spell.c:151
+#:../src/gossip-spell.c:152
 msgid "Thai"
 msgstr "Thái"
 
-#:../src/gossip-spell.c:152
+#:../src/gossip-spell.c:153
 msgid "Turkmen"
 msgstr "Tuốc-mê-ni"
 
-#:../src/gossip-spell.c:153
+#:../src/gossip-spell.c:154
 msgid "Turkish"
 msgstr "Thổ-nhĩ-kỳ"
 
-#:../src/gossip-spell.c:154
+#:../src/gossip-spell.c:155
 msgid "Ukrainian"
 msgstr "U-cợ-rainh"
 
-#:../src/gossip-spell.c:155
+#:../src/gossip-spell.c:156
 msgid "Vietnamese"
 msgstr "Việt Nam"
 
-#:../src/gossip-spell.c:156
+#:../src/gossip-spell.c:157
 msgid "Walloon"
 msgstr "Oua-lunh"
 
-#:../src/gossip-spell.c:157
+#:../src/gossip-spell.c:158
 msgid "Xhosa"
 msgstr "Xhô-sa"
 
-#:../src/gossip-spell.c:158
+#:../src/gossip-spell.c:159
 msgid "Yiddish"
 msgstr "Y-đit"
 
-#:../src/gossip-spell.c:159
+#:../src/gossip-spell.c:160
 msgid "Chinese Simplified"
 msgstr "Tiếng Hoa phổ thông"
 
-#:../src/gossip-spell.c:160
+#:../src/gossip-spell.c:161
 msgid "Chinese Traditional"
 msgstr "Tiếng Hoa truyền thống"
 
-#:../src/gossip-spell-dialog.c:111
+#:../src/gossip-spell-dialog.c:110
 msgid "Suggestions for the word"
 msgstr "Đề nghị từ"
 
-#:../src/gossip-spell-dialog.c:158
+#:../src/gossip-spell-dialog.c:157
 msgid "Word"
 msgstr "Từ"
 
@@ -1094,11 +1074,11 @@ msgstr "Hãy gõ mật khẩu :"
 msgid "Remember Password?"
 msgstr "Nhớ mật khẩu ?"
 
-#:../src/gossip-vcard-dialog.c:367
+#:../src/gossip-vcard-dialog.c:368
 msgid "The server does not seem to be responding."
 msgstr "Máy phục vụ có vẻ không phải đáp ứng."
 
-#:../src/gossip-vcard-dialog.c:368
+#:../src/gossip-vcard-dialog.c:369
 msgid "Try again later."
 msgstr "Thử lại sau."
 
@@ -1123,32 +1103,32 @@ msgid "Gossip - Chat"
 msgstr "Gossip — Trò chuyện"
 
 #:../ui/chat.glade.h:4
+msgid "In_vite to Chat Room"
+msgstr "_Mời vào phòng trò chuyện"
+
+#:../ui/chat.glade.h:5
 msgid "Move Tab _Left"
 msgstr "Chuyển thanh t_rái"
 
-#:../ui/chat.glade.h:5
+#:../ui/chat.glade.h:6
 msgid "Move Tab _Right"
 msgstr "Chuyển thanh p_hải"
 
-#:../ui/chat.glade.h:6
+#:../ui/chat.glade.h:7
 msgid "View Lo_g"
 msgstr "Xem bản _ghi"
 
-#:../ui/chat.glade.h:7 ../ui/main.glade.h:113
+#:../ui/chat.glade.h:8 ../ui/main.glade.h:113
 msgid "_Add Contact..."
 msgstr "Th_êm liên lạc..."
 
-#:../ui/chat.glade.h:8
+#:../ui/chat.glade.h:9
 msgid "_Conversation"
 msgstr "Đối th_oại"
 
-#:../ui/chat.glade.h:9
+#:../ui/chat.glade.h:10
 msgid "_Detach Tab"
 msgstr "Gỡ _ra thanh"
-
-#:../ui/chat.glade.h:10
-msgid "_Invite to Chat Room"
-msgstr "Mờ_i vào phòng trò chuyện"
 
 #:../ui/chat.glade.h:11
 msgid "_Next Tab"
@@ -1279,10 +1259,6 @@ msgstr "Gossip — Trò chuyện nhóm"
 msgid "Gossip - New Chatroom"
 msgstr "Gossip — Phòng trò chuyện mới"
 
-#:../ui/group-chat.glade.h:8
-msgid "Idle"
-msgstr "Nghỉ"
-
 #:../ui/group-chat.glade.h:10
 msgid "Join room on start_up"
 msgstr "Vào phòng khi khởi chạ_y"
@@ -1307,16 +1283,16 @@ msgstr "Chọn một phòng trò chuyện đã lưu trong danh sách định s�
 "vào nút « Vào phòng trò chuyện » để bắt đầu nói chuyện."
 
 #:../ui/group-chat.glade.h:15
-msgid "Progress:"
-msgstr "Tiến hành:"
-
-#:../ui/group-chat.glade.h:16
 msgid "S_erver:"
 msgstr "Máy _phục vụ :"
 
-#:../ui/group-chat.glade.h:17
+#:../ui/group-chat.glade.h:16
 msgid "Save _this chat room"
 msgstr "Lưu phòng trò chuyện _này"
+
+#:../ui/group-chat.glade.h:17
+msgid "Status:"
+msgstr "Trạng thái:"
 
 #:../ui/group-chat.glade.h:18
 msgid "_Nickname:"
@@ -1385,6 +1361,10 @@ msgstr "<span size=\"smaller\">Ví dụ : ngườ_dùng@jabber.org</span>"
 #:../ui/main.glade.h:14
 msgid "<span size=\"smaller\">Example:</span>"
 msgstr "<span size=\"smaller\">Ví dụ</span>"
+
+#:../ui/main.glade.h:15
+msgid "Account Name"
+msgstr "Tên tài khoản"
 
 #:../ui/main.glade.h:17
 msgid "Add a contact"
@@ -1654,6 +1634,10 @@ msgstr "Hiện các liên lạc _ngoại tuyến"
 msgid "Spell Checking"
 msgstr "Kiểm tra chính tả"
 
+#:../ui/main.glade.h:84
+msgid "Status"
+msgstr "Trạng thái"
+
 #:../ui/main.glade.h:85
 msgid "Suggestions for the word:"
 msgstr "Đề nghị từ :"
@@ -1666,7 +1650,7 @@ msgstr "Danh sách ngôn ngữ phản ánh chỉ những ngôn ngữ mà bạn c
 
 #:../ui/main.glade.h:87
 msgid ""
-"This acts as a filter to the contact list below.  You can use segments of "
+"This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
 msgstr "Điều này lọc danh sách liên lạc bên dưới. Bạn có thể sử dụng phần tên hoặc "
@@ -1743,7 +1727,7 @@ msgstr "Bạn có thể thay đổi thiết lập tài khoản sau này, bằng 
 #:../ui/main.glade.h:107
 msgid ""
 "You can identify this account with a name, for example, <b>Home</b> or "
-"<b>Work</b>.  Choose a name for this account:"
+"<b>Work</b>. Choose a name for this account:"
 msgstr "Bạn có thể nhận diện tài khoản này bằng tên, lấy thí dụ, <b>Ở nhà</b> hoặc "
 "<b>Chỗ làm</b>. Hãy chọn tên cho tài khoản này:"
 
@@ -1772,45 +1756,49 @@ msgid "_Contents"
 msgstr "_Nội dung"
 
 #:../ui/main.glade.h:119
+msgid "_Hide Contact List"
+msgstr "Ẩ_n danh sách liên lạc"
+
+#:../ui/main.glade.h:120
 msgid "_Join Group Chat..."
 msgstr "_Vào trò chuyện nhóm..."
 
-#:../ui/main.glade.h:120
+#:../ui/main.glade.h:121
 msgid "_New Message..."
 msgstr "Tin nhẳn _mới..."
 
-#:../ui/main.glade.h:121
+#:../ui/main.glade.h:122
 msgid "_No"
 msgstr "_Không"
 
-#:../ui/main.glade.h:122
+#:../ui/main.glade.h:123
 msgid "_Open new chats in separate windows"
 msgstr "Mở cuộc trò chuyện mới trong cửa sổ riêng"
 
-#:../ui/main.glade.h:123
+#:../ui/main.glade.h:124
 msgid "_Personal Information"
 msgstr "Thông tin cá nh_ân"
 
-#:../ui/main.glade.h:124
+#:../ui/main.glade.h:125
 msgid "_Play sound when messages arrive"
 msgstr "_Phát âm thanh khi mới nhận tin nhẳn"
 
-#:../ui/main.glade.h:125
+#:../ui/main.glade.h:126
 msgid "_Preferences"
 msgstr "Tù_y thích"
 
-#:../ui/main.glade.h:126
+#:../ui/main.glade.h:127
 msgid "_Search..."
 msgstr "Tìm _kiếm..."
 
-#:../ui/main.glade.h:127
+#:../ui/main.glade.h:128
 msgid "_Show Contact List"
 msgstr "Hiện danh sách liên lạc"
 
-#:../ui/main.glade.h:128
+#:../ui/main.glade.h:129
 msgid "_Subscribe"
 msgstr "Đăng _ký"
 
-#:../ui/main.glade.h:129
+#:../ui/main.glade.h:130
 msgid "_Yes"
 msgstr "_Có"
