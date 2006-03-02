@@ -192,7 +192,7 @@ theme_manager_init_tag_by_name (GtkTextTagTable *table,
 		return gtk_text_tag_new (name);
 	}
 
-	// clear it...
+	/* FIXME: Clear it... */
 
 	return tag;
 }
@@ -408,7 +408,8 @@ gossip_theme_manager_apply (GossipThemeManager *manager,
 
 	tag = theme_manager_init_tag_by_name (table, "irc-body-self");
 	g_object_set (tag,
-		      "foreground", "black",
+		      /* To get the default theme color: */
+		      "foreground-set", FALSE, 
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
@@ -434,7 +435,8 @@ gossip_theme_manager_apply (GossipThemeManager *manager,
 
 	tag = theme_manager_init_tag_by_name (table, "irc-body-other");
 	g_object_set (tag,
-		      "foreground", "black",
+		      /* To get the default theme color: */
+		      "foreground-set", FALSE,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 

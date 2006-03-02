@@ -1,3 +1,9 @@
+2006-03-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-theme-manager.c (gossip_theme_manager_apply): Use
+	default fg color for text for the classic theme. Fixes bug
+	#332713.
+
 2006-02-27  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log.c: Cleaned up the logging code and use some
