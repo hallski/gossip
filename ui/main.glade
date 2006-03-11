@@ -4509,7 +4509,6 @@ To get started, just click &quot;Forward&quot;.</property>
 </widget>
 
 <widget class="GtkDialog" id="edit_groups_dialog">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Edit Groups</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -4978,7 +4977,6 @@ To get started, just click &quot;Forward&quot;.</property>
 </widget>
 
 <widget class="GtkDialog" id="vcard_dialog">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Personal Details</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -5487,7 +5485,6 @@ To get started, just click &quot;Forward&quot;.</property>
 </widget>
 
 <widget class="GtkDialog" id="spell_dialog">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - Spell Checker</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -5625,7 +5622,6 @@ To get started, just click &quot;Forward&quot;.</property>
 
 <widget class="GtkDialog" id="new_message_dialog">
   <property name="border_width">6</property>
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Gossip - New Message</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>

@@ -1,3 +1,9 @@
+2006-03-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-vcard-dialog.c: (gossip_vcard_dialog_show):
+	* ui/main.glade: Don't set visible to true in glade files, fixes
+	ugly flashing.
+
 2006-03-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-theme-manager.c (gossip_theme_manager_apply): Use

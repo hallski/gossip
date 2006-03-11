@@ -521,5 +521,7 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
 	}
 
+	gtk_widget_show (dialog->dialog);
+	
 	vcard_dialog_lookup_start (dialog);
 }
