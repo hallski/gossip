@@ -34,14 +34,12 @@
 #define CHATROOMS_XML_FILENAME "chatrooms.xml"
 #define CHATROOMS_DTD_FILENAME "gossip-chatroom.dtd"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_MSG(x)
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerPriv))
 
-
 typedef struct _GossipChatroomManagerPriv GossipChatroomManagerPriv;
-
 
 struct _GossipChatroomManagerPriv {
 	GossipAccountManager *account_manager;
@@ -54,7 +52,6 @@ struct _GossipChatroomManagerPriv {
 
 	gchar                *default_name;
 };
-
 
 static void     chatroom_manager_finalize              (GObject                  *object);
 static void     chatroom_manager_chatroom_enabled_cb   (GossipChatroom           *chatroom,
@@ -73,21 +70,18 @@ static void     chatroom_manager_protocol_connected_cb (GossipSession           
 							GossipProtocol           *protocol,
 							GossipChatroomManager    *manager);
 
-
 enum {
 	CHATROOM_ADDED,
 	CHATROOM_REMOVED, 
 	CHATROOM_ENABLED,
-	CHATROOM_AUTO_CONNECTED,
+	CHATROOM_AUTO_CONNECT_UPDATE,
 	NEW_DEFAULT,
 	LAST_SIGNAL
 };
 
 static guint  signals[LAST_SIGNAL] = {0};
 
-
 G_DEFINE_TYPE (GossipChatroomManager, gossip_chatroom_manager, G_TYPE_OBJECT);
-
 
 static void
 gossip_chatroom_manager_class_init (GossipChatroomManagerClass *klass)
@@ -123,8 +117,8 @@ gossip_chatroom_manager_class_init (GossipChatroomManagerClass *klass)
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CHATROOM);
-        signals[CHATROOM_AUTO_CONNECTED] = 
-		g_signal_new ("chatroom-auto-connected",
+        signals[CHATROOM_AUTO_CONNECT_UPDATE] = 
+		g_signal_new ("chatroom-auto-connect-update",
 			      G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_LAST,
 			      0, 
@@ -795,7 +789,8 @@ chatroom_manager_join_cb (GossipChatroomProvider   *provider,
 			  GossipChatroomId          id,
 			  GossipChatroomManager    *manager)
 {
-	g_signal_emit (manager, signals[CHATROOM_AUTO_CONNECTED], 0, 
+	g_print ("result:%d\n", result);
+	g_signal_emit (manager, signals[CHATROOM_AUTO_CONNECT_UPDATE], 0, 
 		       provider, id, result);
 }
 

@@ -1,3 +1,32 @@
+2006-03-12  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c: 
+	* src/gossip-app.c: Change the signalling here slightly to better
+	reflect the scenario. 
+	
+	* protocols/jabber/gossip-jabber-chatrooms.c: Fix the presence
+	handler here so we actually check the presence message is actually
+	for the join request and not just any presence message - this
+	means we no longer see success when auto-joining on startup (in
+	failure conditions).
+	
+	* src/gossip-chatrooms-window.c: Support selecting multiple rooms
+	to delete, join, etc. Also now the row-activated signal has been
+	hooked up to make it quicker for mouse users to double click and
+	open a room.
+	
+	* src/gossip-edit-chatroom-dialog.[ch]: Pass the GtkWindow parent
+	to set up the transient parent.
+
+	* src/gossip-new-chatroom-dialog.c: Make sure we save the new
+	chatroom back to the chatrooms.xml file. This was happening by
+	mistake when you select a new item in the list and the default is
+	set (if it worked before). 
+	
+	* ui/group-chat.glade: Make the window non-resizable since it is
+	unnecessary and should avoid a problem I have seen where the width
+	of the window is 1/2 the screen width when shown.
+
 2006-03-11  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-vcard-dialog.c: (gossip_vcard_dialog_show):

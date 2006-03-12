@@ -32,8 +32,8 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+/* #define DEBUG_MSG(x)  */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
 #define JOIN_TIMEOUT       20000
 
@@ -571,7 +571,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 	if (existing_room) {
  		jabber_chatrooms_chatroom_unref (room); 
 
-		/* duplicate room already exists */
+		/* Duplicate room already exists. */
 		id = jabber_chatrooms_chatroom_get_id (existing_room);
 
 		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join chatroom:'%s', room already exists.", 
@@ -586,7 +586,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 		return id;
 	}
 
-	/* get real chatroom */
+	/* Get real chatroom. */
 	id = jabber_chatrooms_chatroom_get_id (room);
 
         DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join chatroom:'%s' on server:'%s'", 
@@ -595,21 +595,21 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 		   gossip_chatroom_get_server (chatroom)));
 
 
-	/* add timeout for server response */
+	/* Add timeout for server response. */
 	room->timeout_id = g_timeout_add (JOIN_TIMEOUT, 
 					  (GSourceFunc) jabber_chatrooms_join_timeout_cb, 
 					  room);
 
 	room->chatrooms = chatrooms;
 
-	/* set callback data */
+	/* Set callback data. */
         room->callback = callback;
         room->user_data = user_data;
 	
 	gossip_chatroom_set_status (chatroom, GOSSIP_CHATROOM_STATUS_JOINING);
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
-	/* compose message */
+	/* Compose message. */
 	m = lm_message_new_with_sub_type (gossip_jid_get_full (room->jid),
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
@@ -621,7 +621,6 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 			     room->jid, 
 			     jabber_chatrooms_chatroom_ref (room));
 
-	/* release the local ref */
 	jabber_chatrooms_chatroom_unref (room); 
 
         show = gossip_jabber_presence_state_to_str (chatrooms->presence);
@@ -634,7 +633,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
         lm_message_node_set_attribute (m->node, "id", id_str);
         g_free (id_str);
 
-	/* send message */
+	/* Send message. */
 	room->connection = lm_connection_ref (chatrooms->connection);
         room->join_handler = lm_message_handler_new ((LmHandleMessageFunction) 
 						     jabber_chatrooms_join_cb,
@@ -645,8 +644,8 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 						LM_MESSAGE_TYPE_PRESENCE,
 						LM_HANDLER_PRIORITY_FIRST);
         
-	/* some servers don't honor the id so we don't get a reply and
-	   are waiting forever */
+	/* Some servers don't honor the id so we don't get a reply and
+	   are waiting forever. */
  	lm_connection_send (chatrooms->connection, m,  NULL);
 
 	lm_message_unref (m);
@@ -664,14 +663,39 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 	GossipChatroomJoinResult  result;
 	GossipChatroomStatus      status;
 	GossipChatroomId          id;
+	GossipChatroomId          id_found;
 	LmMessageSubType          type;
 	LmMessageNode            *node = NULL;
+	const gchar              *from;
+	GossipJID                *jid;
+	JabberChatroom           *room_found;
+	gboolean                  room_match = FALSE;
 
 	if (!room || !room->join_handler) {
  		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
 	}
 
 	chatrooms = room->chatrooms;
+
+	/* get room id */
+	id = jabber_chatrooms_chatroom_get_id (room);
+
+	from = lm_message_node_get_attribute (m->node, "from");
+	jid = gossip_jid_new (from);
+
+	room_found = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+	gossip_jid_unref (jid);
+
+	if (room_found) {
+		id_found = jabber_chatrooms_chatroom_get_id (room_found);
+		if (id == id_found) {
+			room_match = TRUE;
+		}
+	} 
+
+	if (!room_match) {
+ 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS; 
+	}
 
 	/* clean up the join timeout */
 	if (room->timeout_id) {
@@ -685,19 +709,15 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		room->join_handler = NULL;
 	}
 
-	/* get room id */
-	id = jabber_chatrooms_chatroom_get_id (room);
-
         /* check for error */
-	type = lm_message_get_sub_type (m);
+ 	type = lm_message_get_sub_type (m);
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
 		node = lm_message_node_get_child (m->node, "error");
 	}
 	
 	if (node) {
 		const gchar *str;
-		gint         code;
-		
+		gint         code;		
 		str = lm_message_node_get_attribute (node, "code");
 		code = str ? atoi (str) : 0;
 		

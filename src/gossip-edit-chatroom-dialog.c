@@ -125,13 +125,14 @@ edit_chatroom_dialog_destroy_cb (GtkWidget                *widget,
 	g_free (dialog);
 }
 
-GtkWidget *
-gossip_edit_chatroom_dialog_show (GossipChatroom *chatroom)
+void
+gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
+				  GossipChatroom *chatroom)
 {
 	GossipEditChatroomDialog *dialog;
 	GladeXML                 *glade;
 
-	g_return_val_if_fail (chatroom != NULL, NULL);
+	g_return_if_fail (chatroom != NULL);
 	
         dialog = g_new0 (GossipEditChatroomDialog, 1);
 
@@ -172,7 +173,9 @@ gossip_edit_chatroom_dialog_show (GossipChatroom *chatroom)
 	gtk_toggle_button_set_active (
 		GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),
 		gossip_chatroom_get_auto_connect (chatroom));
-				      
- 	return dialog->dialog;
+
+	if (parent) {
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
+	}
 }
 

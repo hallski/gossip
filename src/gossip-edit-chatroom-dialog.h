@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include <libgossip/gossip-chatroom.h>
 
-GtkWidget *gossip_edit_chatroom_dialog_show (GossipChatroom *chatroom);
+void gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
+				       GossipChatroom *chatroom);
 
 #endif /* __GOSSIP_EDIT_CHATROOMS_WINDOW_H__ */

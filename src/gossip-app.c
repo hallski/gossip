@@ -76,8 +76,8 @@
 #include "gossip-notify.h"
 #endif
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x)   */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
 
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
@@ -268,7 +268,7 @@ static gboolean        app_have_tray                        (void);
 static gboolean        app_tray_flash_timeout_func          (gpointer                  data);
 static void            app_tray_flash_start                 (void);
 static void            app_tray_flash_maybe_stop            (void);
-static void            app_chatroom_auto_connected_cb       (GossipChatroomManager    *manager,
+static void            app_chatroom_auto_connect_update_cb  (GossipChatroomManager    *manager,
 							     GossipChatroomProvider   *provider,
 							     GossipChatroomId          id,
 							     GossipChatroomJoinResult  result,
@@ -358,7 +358,7 @@ app_finalize (GObject *object)
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (priv->chatroom_manager,
-					      app_chatroom_auto_connected_cb, 
+					      app_chatroom_auto_connect_update_cb, 
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
@@ -468,8 +468,8 @@ app_setup (GossipAccountManager *manager)
 			  G_CALLBACK (app_session_get_password_cb),
 			  NULL);
 
-	g_signal_connect (priv->chatroom_manager, "chatroom-auto-connected",
-			  G_CALLBACK (app_chatroom_auto_connected_cb),
+	g_signal_connect (priv->chatroom_manager, "chatroom-auto-connect-update",
+			  G_CALLBACK (app_chatroom_auto_connect_update_cb),
 			  NULL);
 
 	g_signal_connect (priv->event_manager, "event-added",
@@ -2204,23 +2204,31 @@ app_tray_flash_maybe_stop (void)
 }
 
 static void
-app_chatroom_auto_connected_cb (GossipChatroomManager    *manager,
-				GossipChatroomProvider   *provider,
-				GossipChatroomId          id,
-				GossipChatroomJoinResult  result,
-				gpointer                  user_data)
+app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
+				     GossipChatroomProvider   *provider,
+				     GossipChatroomId          id,
+				     GossipChatroomJoinResult  result,
+				     gpointer                  user_data)
 {
+	const gchar *chatroom_name;
+
+	chatroom_name = gossip_chatroom_provider_get_room_name (provider, id);
+
 	switch (result) {
 	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
 	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
 	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
+		DEBUG_MSG (("AppChatroom: Auto connect update: failed for room:'%s'",
+			    chatroom_name));
 		gossip_chatrooms_window_show (NULL, TRUE);
 		break;
 
 	case GOSSIP_CHATROOM_JOIN_OK:
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
+		DEBUG_MSG (("AppChatroom: Auto connect update: success for room:'%s'",
+			    chatroom_name));
 		gossip_group_chat_show (provider, id);
 		break;
 

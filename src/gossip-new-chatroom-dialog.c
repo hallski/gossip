@@ -240,6 +240,7 @@ new_chatroom_dialog_join_custom (GossipNewChatroomDialog *dialog)
 	/* should we save the chatroom? */
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_add))) {
 		gossip_chatroom_manager_add (manager, chatroom);
+		gossip_chatroom_manager_store (manager);
 	}
 
 	/* remember this chatroom */
@@ -541,8 +542,10 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 	gtk_widget_grab_focus (dialog->entry_nickname);
 
 	/* last touches */
-	gtk_window_set_transient_for (GTK_WINDOW (dialog->window), 
-				      GTK_WINDOW (parent));
+	if (parent) {
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->window), 
+					      GTK_WINDOW (parent));
+	}
 
 	gtk_widget_show (dialog->window);
 }

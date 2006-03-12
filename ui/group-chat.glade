@@ -1066,7 +1066,7 @@
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
   <property name="default_height">415</property>
-  <property name="resizable">True</property>
+  <property name="resizable">False</property>
   <property name="destroy_with_parent">False</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
@@ -1158,6 +1158,7 @@
 
 	  <child>
 	    <widget class="GtkScrolledWindow" id="scrolledwindow1">
+	      <property name="height_request">180</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="hscrollbar_policy">GTK_POLICY_NEVER</property>
