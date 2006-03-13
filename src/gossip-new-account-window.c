@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -59,6 +59,7 @@ typedef struct {
 
 	/* Page four */
 	GtkWidget      *four_page;
+	GtkWidget      *four_resource_entry;
 	GtkWidget      *four_server_entry;
 	GtkWidget      *four_port_entry;
 	GtkWidget      *four_ssl_checkbutton;
@@ -137,6 +138,8 @@ static void     new_account_window_port_insert_text    (GtkEditable             
 static void     new_account_window_port_changed        (GtkEntry                *entry,
 							GossipNewAccountWindow  *window);
 static void     new_account_window_ssl_toggled         (GtkToggleButton         *button,
+							GossipNewAccountWindow  *window);
+static void     new_account_window_entry_3_changed     (GtkEntry                *entry,
 							GossipNewAccountWindow  *window);
 static void     new_account_window_entry_changed       (GtkEntry                *entry,
 							GossipNewAccountWindow  *window);
@@ -273,6 +276,7 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 
 	const gchar     *username;
 	const gchar     *password;
+	const gchar     *resource;
 	const gchar     *server;
 	const gchar     *port;
 	guint16          port_int;
@@ -292,6 +296,7 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 	/* get widget values */
 	username = gtk_entry_get_text (GTK_ENTRY (window->three_username_entry));
 	password = gtk_entry_get_text (GTK_ENTRY (window->three_password_entry));
+	resource = gtk_entry_get_text (GTK_ENTRY (window->four_resource_entry));
 	server = gtk_entry_get_text (GTK_ENTRY (window->four_server_entry));
 	port = gtk_entry_get_text (GTK_ENTRY (window->four_port_entry));
 
@@ -302,6 +307,10 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 	
 	toggle = GTK_TOGGLE_BUTTON (window->four_proxy_checkbutton);
 	use_proxy = gtk_toggle_button_get_active (toggle);
+
+	if (!resource || resource[0] == '\0') {
+		name = _("Home");
+	}
 	
 	/* create account */
 	port_int = atoi (port);
@@ -309,6 +318,7 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 	*account = g_object_new (GOSSIP_TYPE_ACCOUNT,
 				 "name", name,
 				 "id", username,
+				 "resource", resource,
 				 "server", server,
 				 "password", password,
 				 "port", port_int,
@@ -420,7 +430,6 @@ new_account_window_4_prepare (GnomeDruidPage         *page,
 	server = gossip_protocol_get_default_server (window->selected_protocol, username);
 	gtk_entry_set_text (GTK_ENTRY (window->four_server_entry), server);
 	g_free (server);
-
 
 	toggle = GTK_TOGGLE_BUTTON (window->four_ssl_checkbutton);
 	use_ssl = gtk_toggle_button_get_active (toggle);
@@ -560,6 +569,37 @@ new_account_window_ssl_toggled (GtkToggleButton        *button,
 }
 
 static void
+new_account_window_entry_3_changed (GtkEntry               *entry,
+				    GossipNewAccountWindow *window)
+{
+	GtkToggleButton *toggle;
+	const gchar     *username, *password, *name;
+	gboolean         has_account;
+	gboolean         ok = TRUE;
+	
+	username = gtk_entry_get_text (GTK_ENTRY (window->three_username_entry));
+	ok &= username && strlen (username) > 0;
+	ok &= gossip_protocol_is_valid_username (window->selected_protocol, username);
+
+	password = gtk_entry_get_text (GTK_ENTRY (window->three_password_entry));
+	ok &= password && strlen (password) > 0;
+
+	toggle = GTK_TOGGLE_BUTTON (window->two_yes_radiobutton);
+	has_account = gtk_toggle_button_get_active (toggle);
+
+	if (!has_account) {
+		name = gtk_entry_get_text (GTK_ENTRY (window->three_name_entry));
+		ok &= name && strlen (name) > 0;
+	}
+
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   TRUE,
+					   ok,
+					   TRUE,
+					   FALSE);
+}
+
+static void
 new_account_window_entry_changed (GtkEntry               *entry,
 				  GossipNewAccountWindow *window)
 {
@@ -568,10 +608,6 @@ new_account_window_entry_changed (GtkEntry               *entry,
 	
 	str = gtk_entry_get_text (entry);
 	ok &= str && strlen (str) > 0;
-
-	if (entry == GTK_ENTRY (window->three_username_entry)) {
-		ok &= gossip_protocol_is_valid_username (window->selected_protocol, str);
-	}
 
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
 					   TRUE,
@@ -672,6 +708,7 @@ gossip_new_account_window_show (GtkWindow *parent)
 				       "3_name_label", &window->three_name_label,
 				       "3_name_entry", &window->three_name_entry,
 				       "4_page", &window->four_page,
+				       "4_resource_entry", &window->four_resource_entry,
 				       "4_server_entry", &window->four_server_entry,
 				       "4_port_entry", &window->four_port_entry,
 				       "4_ssl_checkbutton", &window->four_ssl_checkbutton,
@@ -691,12 +728,13 @@ gossip_new_account_window_show (GtkWindow *parent)
 			      window,
 			      "new_account_window", "destroy", new_account_window_destroy,
 			      "druid", "cancel", new_account_window_druid_cancel,
-			      "3_username_entry", "changed", new_account_window_entry_changed,
-			      "3_password_entry", "changed", new_account_window_entry_changed,
+			      "3_username_entry", "changed", new_account_window_entry_3_changed,
+			      "3_password_entry", "changed", new_account_window_entry_3_changed,
+			      "3_name_entry", "changed", new_account_window_entry_3_changed,
 			      "4_server_entry", "changed", new_account_window_entry_changed,
-			      "5_name_entry", "changed", new_account_window_entry_changed,
 			      "4_port_entry", "insert_text", new_account_window_port_insert_text,
 			      "4_ssl_checkbutton", "toggled", new_account_window_ssl_toggled,
+			      "5_name_entry", "changed", new_account_window_entry_changed,
 			      "last_page", "finish", new_account_window_last_page_finished,
 			      NULL);
 

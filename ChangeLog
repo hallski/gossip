@@ -1,3 +1,27 @@
+2006-03-13  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.[ch]:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account.dtd: 
+	* src/gossip-accounts-dialog.c: 
+	* ui/connect.glade: Added "resource" back in.
+	
+	* protocols/jabber/gossip-jabber.c: Separate username and
+	resource, so the example username now has no resource and the
+	validation of a username doesn't require the "/resource" part. The
+	account wizzard asks for it separately and the backend uses it
+	where needed.
+	
+	* ui/main.glade:
+	* src/gossip-new-account-window.c: Fixed the wizzard to make sure
+	we actually check all the details are correct on the username page
+	before continuing and accept a username without resource (which is
+	on the follow up page).
+	
+	* src/gossip-vcard-dialog.c: Use Save and Cancel buttons and close
+	when clicking on Save too. Plus, remove the progress and status
+	widgets.
+
 2006-03-12  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c: 

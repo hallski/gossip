@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell <ginxd@btopenworld.com>
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -36,16 +35,17 @@
 #include "gossip-app.h"
 #include "gossip-vcard-dialog.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x)   */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
-#define VCARD_TIMEOUT 20000
-#define SAVED_TIMEOUT 10000
+#define VCARD_TIMEOUT    20000
+#define SAVED_TIMEOUT    10000
 
+#define RESPONSE_SAVE    1
 
-struct _GossipVCardDialog {
+typedef struct {
 	GtkWidget *dialog;
 
 	GtkWidget *hbox_account;
@@ -67,38 +67,17 @@ struct _GossipVCardDialog {
 
 	GtkWidget *textview_description;
 
-	GtkWidget *vbox_waiting;
-	GtkWidget *progressbar_waiting;
-
-	GtkWidget *hbox_saved;
-
 	GtkWidget *button_cancel;
-	GtkWidget *button_ok;
+	GtkWidget *button_save;
 
-	guint      wait_id;
-	guint      pulse_id;
 	guint      timeout_id; 
 	guint      saved_id;
 
 	gboolean   requesting_vcard;
 
 	gint       last_account_selected;
-};
+} GossipVCardDialog;
 
-
-typedef struct _GossipVCardDialog GossipVCardDialog;
-
-
-enum {
-	COL_ACCOUNT_IMAGE,
-	COL_ACCOUNT_TEXT,
-	COL_ACCOUNT_CONNECTED,
-	COL_ACCOUNT_POINTER,
-	COL_ACCOUNT_COUNT
-};
-
-
-static gint     vcard_dialog_get_account_count   (GossipVCardDialog *dialog);
 static void     vcard_dialog_set_account_to_last (GossipVCardDialog *dialog);
 static void     vcard_dialog_lookup_start        (GossipVCardDialog *dialog);
 static void     vcard_dialog_lookup_stop         (GossipVCardDialog *dialog);
@@ -108,10 +87,7 @@ static void     vcard_dialog_get_vcard_cb        (GossipResult       result,
 static void     vcard_dialog_set_vcard           (GossipVCardDialog *dialog);
 static void     vcard_dialog_set_vcard_cb        (GossipResult       result,
 						  GossipVCardDialog *dialog);
-static gboolean vcard_dialog_progress_pulse_cb   (GtkWidget         *progressbar);
-static gboolean vcard_dialog_wait_cb             (GossipVCardDialog *dialog);
 static gboolean vcard_dialog_timeout_cb          (GossipVCardDialog *dialog);
-static gboolean vcard_dialog_saved_cb            (GtkWidget         *widget);
 static void     vcard_dialog_account_changed_cb  (GtkWidget         *combo_box,
 						  GossipVCardDialog *dialog);
 static void     vcard_dialog_response_cb         (GtkDialog         *widget,
@@ -119,16 +95,6 @@ static void     vcard_dialog_response_cb         (GtkDialog         *widget,
 						  GossipVCardDialog *dialog);
 static void     vcard_dialog_destroy_cb          (GtkWidget         *widget,
 						  GossipVCardDialog *dialog);
-
-
-static gint
-vcard_dialog_get_account_count (GossipVCardDialog *dialog) 
-{
-	GtkTreeModel *model;
-		
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX (dialog->account_chooser));
-        return gtk_tree_model_iter_n_children  (model, NULL);
-}
 
 static void
 vcard_dialog_set_account_to_last (GossipVCardDialog *dialog) 
@@ -152,26 +118,18 @@ vcard_dialog_lookup_start (GossipVCardDialog *dialog)
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
 
-	/* update widgets */
 	gtk_widget_set_sensitive (dialog->table_vcard, FALSE);
 	gtk_widget_set_sensitive (dialog->account_chooser, FALSE);
-	gtk_widget_set_sensitive (dialog->button_ok, FALSE);
-
-	/* set up timers */
-	dialog->wait_id = g_timeout_add (2000, 
-					 (GSourceFunc)vcard_dialog_wait_cb,
-					 dialog);
+	gtk_widget_set_sensitive (dialog->button_save, FALSE);
 
 	dialog->timeout_id = g_timeout_add (VCARD_TIMEOUT, 
 					    (GSourceFunc)vcard_dialog_timeout_cb,
 					    dialog);
 
-	/* get selected and look it up */
 	session = gossip_app_get_session ();
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
-	/* request current vCard */
 	gossip_session_get_vcard (session,
 				  account,
 				  NULL,
@@ -189,23 +147,9 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 {
 	dialog->requesting_vcard = FALSE;
 
-	/* update widgets */
 	gtk_widget_set_sensitive (dialog->table_vcard, TRUE);
 	gtk_widget_set_sensitive (dialog->account_chooser, TRUE);
-	gtk_widget_set_sensitive (dialog->button_ok, TRUE);
-
-	gtk_widget_hide (dialog->vbox_waiting); 
-
-	/* clean up timers */
-	if (dialog->wait_id != 0) {
-		g_source_remove (dialog->wait_id);
-		dialog->wait_id = 0;
-	}
-
-	if (dialog->pulse_id != 0) {
-		g_source_remove (dialog->pulse_id);
-		dialog->pulse_id = 0;
-	}
+	gtk_widget_set_sensitive (dialog->button_save, TRUE);
 
 	if (dialog->timeout_id != 0) {
 		g_source_remove (dialog->timeout_id);
@@ -252,7 +196,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
 	gtk_text_buffer_set_text (buffer, STRING_EMPTY (str) ? "" : str, -1);
 
-	/* save position incase the next lookup fails */
+	/* Save position incase the next lookup fails. */
 	combo_box = GTK_COMBO_BOX (dialog->account_chooser);
 	dialog->last_account_selected = gtk_combo_box_get_active (combo_box);
 }
@@ -313,39 +257,7 @@ vcard_dialog_set_vcard_cb (GossipResult       result,
 {
 	DEBUG_MSG (("VCardDialog: Got a VCard response"));
   
-	/* if multiple accounts, wait for the close button */
-	if (vcard_dialog_get_account_count (dialog) <= 1) {
-		gtk_widget_destroy (dialog->dialog);
-		return;
-	}
-
-	/* inform the user */
-	gtk_widget_show (dialog->hbox_saved);
-
-	dialog->pulse_id = g_timeout_add (SAVED_TIMEOUT, 
-					  (GSourceFunc)vcard_dialog_saved_cb, 
-					  dialog->hbox_saved);
-}
-
-static gboolean 
-vcard_dialog_progress_pulse_cb (GtkWidget *progressbar)
-{
-	g_return_val_if_fail (progressbar != NULL, FALSE);
-	gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progressbar));
-
-	return TRUE;
-}
-
-static gboolean
-vcard_dialog_wait_cb (GossipVCardDialog *dialog)
-{
-	gtk_widget_show (dialog->vbox_waiting);
-
-	dialog->pulse_id = g_timeout_add (50, 
-					  (GSourceFunc)vcard_dialog_progress_pulse_cb, 
-					  dialog->progressbar_waiting);
-
-	return FALSE;
+	gtk_widget_destroy (dialog->dialog);
 }
 
 static gboolean
@@ -375,17 +287,9 @@ vcard_dialog_timeout_cb (GossipVCardDialog *dialog)
 	return FALSE;
 }
 
-static gboolean 
-vcard_dialog_saved_cb (GtkWidget *widget)
-{
-	gtk_widget_hide (widget);
-	
-	return FALSE;
-}
-
 static void
 vcard_dialog_account_changed_cb (GtkWidget         *combo_box,
-					 GossipVCardDialog *dialog)
+				 GossipVCardDialog *dialog)
 {
 	vcard_dialog_lookup_start (dialog);
 }
@@ -395,18 +299,23 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 			  gint               response, 
 			  GossipVCardDialog *dialog)
 {
-	if (response == GTK_RESPONSE_OK) {
+	switch (response) {
+	case RESPONSE_SAVE:
 		vcard_dialog_set_vcard (dialog);
 		return;
-	}
 
-	if (response == GTK_RESPONSE_CANCEL && dialog->requesting_vcard) {
-		/* change widgets so they are unsensitive */
-		vcard_dialog_lookup_stop (dialog);
+	case GTK_RESPONSE_CANCEL:
+		if (dialog->requesting_vcard) {
+			/* change widgets so they are unsensitive */
+			vcard_dialog_lookup_stop (dialog);
+			
+			/* select last successfull account */
+			vcard_dialog_set_account_to_last (dialog);
+			return;
+		}
 
-		/* select last successfull account */
-		vcard_dialog_set_account_to_last (dialog);
-		return;
+	default:
+		break;
 	}
 
 	gtk_widget_destroy (dialog->dialog);
@@ -416,11 +325,7 @@ static void
 vcard_dialog_destroy_cb (GtkWidget         *widget, 
 			 GossipVCardDialog *dialog)
 {
-	GossipSession *session;
-
 	vcard_dialog_lookup_stop (dialog);
-
-	session = gossip_app_get_session ();
 
 	g_free (dialog);
 }
@@ -453,11 +358,8 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "entry_web_site", &dialog->entry_web_site,
 				       "entry_email", &dialog->entry_email,
 				       "textview_description", &dialog->textview_description,
-				       "vbox_waiting", &dialog->vbox_waiting,
-				       "progressbar_waiting", &dialog->progressbar_waiting,
-				       "hbox_saved", &dialog->hbox_saved,
 				       "button_cancel", &dialog->button_cancel,
-				       "button_ok", &dialog->button_ok,
+				       "button_save", &dialog->button_save,
 				       NULL);
 
 	gossip_glade_connect (glade, 
@@ -497,21 +399,9 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 	accounts = gossip_session_get_accounts (session);
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (dialog->hbox_account);
-
-		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_cancel), TRUE);
-		gtk_button_set_label (GTK_BUTTON (dialog->button_cancel), "gtk-close");
-
-		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
-		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-apply");
 	} else {
 		/* show no accounts combo box */	
 		gtk_widget_hide (dialog->hbox_account);
-
-		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_cancel), TRUE);
-		gtk_button_set_label (GTK_BUTTON (dialog->button_cancel), "gtk-cancel");
-
-		gtk_button_set_use_stock (GTK_BUTTON (dialog->button_ok), TRUE);
-		gtk_button_set_label (GTK_BUTTON (dialog->button_ok), "gtk-ok");
 	}
 
 	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);

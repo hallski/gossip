@@ -51,6 +51,7 @@ typedef struct {
 
 	GtkWidget *entry_name;
 	GtkWidget *entry_id;
+	GtkWidget *entry_resource;
 	GtkWidget *entry_server;
 	GtkWidget *entry_password;
 	GtkWidget *entry_port;
@@ -258,6 +259,7 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 	gchar          *port_str; 
 	const gchar    *id;
 
+	const gchar    *resource;
 	const gchar    *server;
 	const gchar    *password;
 
@@ -294,6 +296,9 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 	password = gossip_account_get_password (account);
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password), password ? password : "");
 
+	resource = gossip_account_get_resource (account);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_resource), resource ? resource : "");
+
 	server = gossip_account_get_server (account);
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), server ? server : "");
 
@@ -320,6 +325,9 @@ accounts_dialog_block_widgets (GossipAccountsDialog *dialog,
 		g_signal_handlers_block_by_func (dialog->entry_password,
 						 accounts_dialog_entry_changed_cb, 
 						 dialog);
+		g_signal_handlers_block_by_func (dialog->entry_resource,
+						 accounts_dialog_entry_changed_cb, 
+						 dialog);
 		g_signal_handlers_block_by_func (dialog->entry_server,
 						 accounts_dialog_entry_changed_cb, 
 						 dialog);
@@ -344,6 +352,9 @@ accounts_dialog_block_widgets (GossipAccountsDialog *dialog,
 						   accounts_dialog_entry_changed_cb, 
 						   dialog);
 		g_signal_handlers_unblock_by_func (dialog->entry_password,
+						   accounts_dialog_entry_changed_cb, 
+						   dialog);
+		g_signal_handlers_unblock_by_func (dialog->entry_resource,
 						   accounts_dialog_entry_changed_cb, 
 						   dialog);
 		g_signal_handlers_unblock_by_func (dialog->entry_server,
@@ -389,6 +400,10 @@ accounts_dialog_save (GossipAccountsDialog *dialog,
 	/* set password */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
 	gossip_account_set_password (account, str);
+
+	/* set resource */
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_resource));
+	gossip_account_set_resource (account, str);
 
 	/* set server */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
@@ -831,6 +846,7 @@ accounts_dialog_entry_focus_cb (GtkWidget            *widget,
 
 	if (widget == dialog->entry_name ||
 	    widget == dialog->entry_password ||
+	    widget == dialog->entry_resource ||
 	    widget == dialog->entry_server) {
 		const gchar *str;
 
@@ -840,6 +856,8 @@ accounts_dialog_entry_focus_cb (GtkWidget            *widget,
 				str = gossip_account_get_name (account);
 			} else if (widget == dialog->entry_password) {
 				str = gossip_account_get_password (account);
+			} else if (widget == dialog->entry_resource) {
+				str = gossip_account_get_resource (account);
 			} else if (widget == dialog->entry_server) {
 				str = gossip_account_get_server (account);
 			}
@@ -1199,7 +1217,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	GladeXML                    *glade;
 	GtkSizeGroup                *size_group;
 	GtkWidget                   *label_name, *label_id, *label_password;
-	GtkWidget                   *label_server, *label_port; 
+	GtkWidget                   *label_server, *label_resource, *label_port; 
 	GtkWidget                   *bbox, *button_close;
 
 	if (dialog) {
@@ -1219,10 +1237,12 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "label_name", &label_name,
 				       "label_id", &label_id,
 				       "label_password", &label_password,
+				       "label_resource", &label_resource,
 				       "label_server", &label_server,
 				       "label_port", &label_port,
 				       "entry_name", &dialog->entry_name,
 				       "entry_id", &dialog->entry_id,
+				       "entry_resource", &dialog->entry_resource,
 				       "entry_server", &dialog->entry_server,
 				       "entry_password", &dialog->entry_password,
 				       "entry_port", &dialog->entry_port,
@@ -1240,11 +1260,13 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "entry_name", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_id", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_password", "changed", accounts_dialog_entry_changed_cb,
+			      "entry_resource", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_server", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_port", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_name", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_id", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_password", "focus-out-event", accounts_dialog_entry_focus_cb,
+			      "entry_resource", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_server", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_port", "focus-out-event", accounts_dialog_entry_focus_cb,
 			      "entry_port", "insert_text", accounts_dialog_entry_port_insert_text_cb,
@@ -1294,6 +1316,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
+	gtk_size_group_add_widget (size_group, label_resource);
 	gtk_size_group_add_widget (size_group, label_server);
 	gtk_size_group_add_widget (size_group, label_port);
 

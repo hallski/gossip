@@ -407,7 +407,7 @@ jabber_setup (GossipProtocol *protocol,
  	GossipJabber     *jabber;
  	GossipJabberPriv *priv;
  	LmMessageHandler *handler;
-	const gchar      *id;
+	gchar            *id;
 	GossipJID        *jid;
 	
  	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
@@ -420,14 +420,17 @@ jabber_setup (GossipProtocol *protocol,
  
  	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
- 
-	id = gossip_account_get_id (account);
+	
+	id = g_strdup_printf ("%s/%s", 
+			      gossip_account_get_id (account),
+			      gossip_account_get_resource (account));
 	jid = gossip_jid_new (id);
 
 	g_object_set (priv->contact,
 		      "id", id,          /* we need FULL JID here */
 		      "name", id,
 		      NULL);
+	g_free (id);
 
 	priv->connection = lm_connection_new (gossip_account_get_server (account));
 
@@ -704,8 +707,8 @@ jabber_connection_open_cb (LmConnection *connection,
 	DEBUG_MSG (("Protocol: Attempting to use JabberID:'%s'", jid_str));
 
 	id = gossip_jid_string_get_part_name (jid_str);
+	resource = gossip_account_get_resource (account);
 
-	resource = gossip_jid_string_get_part_resource (jid_str);
 	if (!resource) {
 		DEBUG_MSG (("Protocol: JabberID:'%s' is invalid, there is no resource.", jid_str));
 
@@ -981,6 +984,8 @@ jabber_register_connection_open_cb (LmConnection *connection,
 	LmMessage        *m;
 	LmMessageNode    *node;
 	const gchar      *error_message = NULL;
+	const gchar      *id;
+	gchar            *username;
 	gboolean          ok = FALSE;
 
 	priv = GET_PRIV (ra->jabber);
@@ -1026,7 +1031,11 @@ jabber_register_connection_open_cb (LmConnection *connection,
 
         lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
 	
-	lm_message_node_add_child (node, "username", gossip_account_get_id (priv->account));
+	id = gossip_account_get_id (priv->account);
+	username = gossip_jid_string_get_part_name (id);
+	lm_message_node_add_child (node, "username", username);
+	g_free (username);
+
 	lm_message_node_add_child (node, "password", gossip_account_get_password (priv->account));
 
         ok = lm_connection_send_with_reply (connection, m, 
@@ -1176,7 +1185,7 @@ jabber_is_valid_username (GossipProtocol *protocol,
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jid_string_is_valid (username, TRUE);
+	return gossip_jid_string_is_valid (username, FALSE);
 }
 
 static gboolean
@@ -1188,7 +1197,7 @@ jabber_is_ssl_supported (GossipProtocol *protocol)
 static const gchar *
 jabber_get_example_username (GossipProtocol *protocol)
 {
-	return "user@jabber.org/laptop";
+	return "user@jabber.org";
 }
 
 static gchar *

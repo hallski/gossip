@@ -46,6 +46,7 @@ struct _GossipAccountPriv {
 	gchar             *id;
 	gchar             *host;
 	gchar             *password;
+	gchar             *resource;
 	gchar             *server;
 	guint16            port;
 	gboolean           enabled;
@@ -76,6 +77,7 @@ enum {
 	PROP_NAME,
 	PROP_ID,
 	PROP_PASSWORD,
+	PROP_RESOURCE,
 	PROP_SERVER,
 	PROP_PORT,
 	PROP_AUTO_CONNECT,
@@ -182,6 +184,14 @@ account_class_init (GossipAccountClass *class)
 							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_RESOURCE,
+					 g_param_spec_string ("resource",
+							      "Connection Resource",
+							      "The name for the connection",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_PORT,
 					 g_param_spec_int ("port",
 							   "Account Port",
@@ -248,6 +258,7 @@ account_init (GossipAccount *account)
 	priv->name         = NULL;
 	priv->id           = NULL;
 	priv->password     = NULL;
+	priv->resource     = NULL;
 	priv->server       = NULL;
 	priv->port         = 0;
 	priv->enabled      = TRUE;
@@ -266,6 +277,7 @@ account_finalize (GObject *object)
 	g_free (priv->name);
 	g_free (priv->id);
 	g_free (priv->password);
+	g_free (priv->resource);
 	g_free (priv->server);
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
@@ -293,6 +305,9 @@ account_get_property (GObject    *object,
 		break;
 	case PROP_PASSWORD:
 		g_value_set_string (value, priv->password);
+		break;
+	case PROP_RESOURCE:
+		g_value_set_string (value, priv->resource);
 		break;
 	case PROP_SERVER:
 		g_value_set_string (value, priv->server);
@@ -340,6 +355,10 @@ account_set_property (GObject      *object,
 		break;
 	case PROP_PASSWORD:
 		gossip_account_set_password (GOSSIP_ACCOUNT (object),
+					     g_value_get_string (value));
+		break;
+	case PROP_RESOURCE:
+		gossip_account_set_resource (GOSSIP_ACCOUNT (object),
 					     g_value_get_string (value));
 		break;
 	case PROP_SERVER:
@@ -424,6 +443,17 @@ gossip_account_get_password (GossipAccount *account)
 
 	priv = GET_PRIV (account);
 	return priv->password;
+}
+
+const gchar *
+gossip_account_get_resource (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (account);
+	return priv->resource;
 }
 
 const gchar *
@@ -533,6 +563,24 @@ gossip_account_set_password (GossipAccount *account,
 	priv->password = g_strdup (password);
 
 	g_object_notify (G_OBJECT (account), "password");
+	g_signal_emit (account, signals[CHANGED], 0);
+}
+
+void
+gossip_account_set_resource (GossipAccount *account,
+			     const gchar   *resource)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	g_return_if_fail (resource != NULL);
+
+	priv = GET_PRIV (account);
+	
+	g_free (priv->resource);
+	priv->resource = g_strdup (resource);
+
+	g_object_notify (G_OBJECT (account), "resource");
 	g_signal_emit (account, signals[CHANGED], 0);
 }
 

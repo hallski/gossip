@@ -60,6 +60,7 @@ GossipAccountType gossip_account_get_type         (GossipAccount     *account);
 const gchar *     gossip_account_get_name         (GossipAccount     *account);
 const gchar *     gossip_account_get_id           (GossipAccount     *account);
 const gchar *     gossip_account_get_password     (GossipAccount     *account);
+const gchar *     gossip_account_get_resource     (GossipAccount     *account);
 const gchar *     gossip_account_get_server       (GossipAccount     *account);
 guint16           gossip_account_get_port         (GossipAccount     *account);
 gboolean          gossip_account_get_auto_connect (GossipAccount     *account);
@@ -73,6 +74,8 @@ void              gossip_account_set_id           (GossipAccount     *account,
 						   const gchar       *id);
 void              gossip_account_set_password     (GossipAccount     *account,
 						   const gchar       *password);
+void              gossip_account_set_resource     (GossipAccount     *account,
+						   const gchar       *resource);
 void              gossip_account_set_server       (GossipAccount     *account,
 						   const gchar       *server);
 void              gossip_account_set_port         (GossipAccount     *account,

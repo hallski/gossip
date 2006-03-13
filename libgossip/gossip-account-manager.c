@@ -410,7 +410,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 	gchar             *str;
 	GossipAccountType  type;
 	gchar             *name, *id, *password;
-	gchar             *server;
+	gchar             *server, *resource;
 	guint16            port;
 	gboolean           auto_connect, use_ssl, use_proxy;
 
@@ -419,6 +419,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 	name = NULL;
 	id = NULL;
 	password = NULL;
+	resource = NULL;
 	server = NULL;
 	port = 5222;
 	auto_connect = TRUE;
@@ -449,6 +450,9 @@ account_manager_parse_account (GossipAccountManager *manager,
 		}
 		else if (strcmp (tag, "server") == 0) {
 			server = str;
+		}
+		else if (strcmp (tag, "resource") == 0) {
+			resource = str;
 		}
 		else if (strcmp (tag, "port") == 0) {
 			guint tmp_port;
@@ -498,6 +502,10 @@ account_manager_parse_account (GossipAccountManager *manager,
 					"use_proxy", use_proxy,
 					NULL);
 		
+		if (resource) {
+			gossip_account_set_resource (account, resource);
+		}
+
 		if (server) {
 			gossip_account_set_server (account, server);
 		}
@@ -513,6 +521,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 	
 	xmlFree (name);
 	xmlFree (id);
+	xmlFree (resource);
 	xmlFree (server);
 }
 
@@ -647,6 +656,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
 
 		xmlNewTextChild (node, NULL, "password", gossip_account_get_password (account));
+		xmlNewTextChild (node, NULL, "resource", gossip_account_get_resource (account));
 		xmlNewTextChild (node, NULL, "server", gossip_account_get_server (account));
 		xmlNewChild (node, NULL, "port", port);
 
