@@ -31,14 +31,13 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserPriv))
 
-
 typedef struct {
 	GossipSession        *session;
 	GossipAccountManager *account_manager;
 
-	gboolean              active_item_set;
+	gboolean              set_active_item;
+	gboolean              can_select_all;
 } GossipAccountChooserPriv;
-
 
 struct SetAccountData {
 	GossipAccountChooser *account_chooser;
@@ -46,15 +45,13 @@ struct SetAccountData {
 	gboolean              set;
 };
 
-
 enum {
 	COL_ACCOUNT_IMAGE,
 	COL_ACCOUNT_TEXT,
-	COL_ACCOUNT_CONNECTED,
+	COL_ACCOUNT_ENABLED, /* usually tied to connected state */
 	COL_ACCOUNT_POINTER,
 	COL_ACCOUNT_COUNT
 };
-
 
 static void     account_chooser_finalize                 (GObject               *object);
 static void     account_chooser_setup                    (GossipAccountChooser  *account_chooser);
@@ -68,13 +65,13 @@ static void     account_chooser_account_removed_cb       (GossipAccountManager  
 							  GossipAccountChooser  *account_chooser);
 static void     account_chooser_account_remove_foreach   (GossipAccount         *account,
 							  GossipAccountChooser  *account_chooser);
-static void     account_chooser_account_name_changed_cb  (GossipAccount         *account,
-							  GParamSpec            *param,
-							  GossipAccountChooser  *account_chooser);
 static gboolean account_chooser_account_name_foreach     (GtkTreeModel          *model,
 							  GtkTreePath           *path,
 							  GtkTreeIter           *iter,
 							  struct SetAccountData *data);
+static void     account_chooser_account_name_changed_cb  (GossipAccount         *account,
+							  GParamSpec            *param,
+							  GossipAccountChooser  *account_chooser);
 static gboolean account_chooser_account_update_foreach   (GtkTreeModel          *model,
 							  GtkTreePath           *path,
 							  GtkTreeIter           *iter,
@@ -91,10 +88,12 @@ static gboolean account_chooser_set_account_foreach      (GtkTreeModel          
 							  GtkTreePath           *path,
 							  GtkTreeIter           *iter,
 							  struct SetAccountData *data);
-
+static gboolean account_chooser_set_enabled_foreach      (GtkTreeModel         *model,
+							  GtkTreePath          *path,
+							  GtkTreeIter          *iter,
+							  GossipAccountChooser *account_chooser);
 
 G_DEFINE_TYPE (GossipAccountChooser, gossip_account_chooser, GTK_TYPE_COMBO_BOX);
-
 
 static void
 gossip_account_chooser_class_init (GossipAccountChooserClass *klass)
@@ -173,14 +172,14 @@ account_chooser_setup (GossipAccountChooser *account_chooser)
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"pixbuf", COL_ACCOUNT_IMAGE,
-					"sensitive", COL_ACCOUNT_CONNECTED,
+					"sensitive", COL_ACCOUNT_ENABLED,
 					NULL);
 
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"text", COL_ACCOUNT_TEXT,
-					"sensitive", COL_ACCOUNT_CONNECTED,
+					"sensitive", COL_ACCOUNT_ENABLED,
 					NULL);
 
 	/* populate accounts */
@@ -212,6 +211,7 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 
 	GdkPixbuf                *pixbuf;
 	gboolean                  is_connected;
+	gboolean                  is_enabled;
 	
 	priv = GET_PRIV (account_chooser);
 
@@ -222,20 +222,28 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 	pixbuf = gossip_pixbuf_from_account_status (account, 
 						    GTK_ICON_SIZE_MENU,
 						    is_connected);
+
+	if (!priv->can_select_all && !is_connected) {
+		is_enabled = FALSE;
+	} else {
+		is_enabled = TRUE;
+	}
 	
 	gtk_list_store_append (store, &iter);
 	gtk_list_store_set (store, &iter, 
 			    COL_ACCOUNT_IMAGE, pixbuf, 
 			    COL_ACCOUNT_TEXT, gossip_account_get_name (account), 
-			    COL_ACCOUNT_CONNECTED, is_connected,
+			    COL_ACCOUNT_ENABLED, is_enabled,
 			    COL_ACCOUNT_POINTER, account,
 			    -1);
 	
 	g_object_unref (pixbuf);
 	
 	/* set first connected account as active account */
-	if (!priv->active_item_set && is_connected) {
-		priv->active_item_set = TRUE;
+	if (priv->set_active_item == FALSE && 
+	    ((priv->can_select_all == TRUE) || 
+	     (priv->can_select_all == FALSE && is_connected == TRUE))) {
+		priv->set_active_item = TRUE;
 		gtk_combo_box_set_active_iter (combo_box, &iter); 
 	}	
 	
@@ -259,32 +267,6 @@ account_chooser_account_remove_foreach (GossipAccount        *account,
 	g_signal_handlers_disconnect_by_func (account, 
 					      account_chooser_account_name_changed_cb, 
 					      account_chooser);
-}
-
-static void
-account_chooser_account_name_changed_cb (GossipAccount        *account,
-					 GParamSpec           *param,
-					 GossipAccountChooser *account_chooser)
-{
-	GtkComboBox           *combobox;
-	GtkTreeModel          *model;
-	GtkTreeIter            iter;
-
-	struct SetAccountData  data;
-
-	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	
-	combobox = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combobox);
-	gtk_combo_box_get_active_iter (combobox, &iter);
-
-	data.account_chooser = account_chooser;
-	data.account = account;
-
-	gtk_tree_model_foreach (model, 
-				(GtkTreeModelForeachFunc) account_chooser_account_name_foreach, 
-				&data);
 }
 
 static gboolean
@@ -316,6 +298,32 @@ account_chooser_account_name_foreach (GtkTreeModel          *model,
 	return equal;
 }
 
+static void
+account_chooser_account_name_changed_cb (GossipAccount        *account,
+					 GParamSpec           *param,
+					 GossipAccountChooser *account_chooser)
+{
+	GtkComboBox           *combo_box;
+	GtkTreeModel          *model;
+	GtkTreeIter            iter;
+
+	struct SetAccountData  data;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	
+	combo_box = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combo_box);
+	gtk_combo_box_get_active_iter (combo_box, &iter);
+
+	data.account_chooser = account_chooser;
+	data.account = account;
+
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) account_chooser_account_name_foreach, 
+				&data);
+}
+
 static gboolean
 account_chooser_account_update_foreach (GtkTreeModel          *model,
 					GtkTreePath           *path,
@@ -327,7 +335,7 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
 
 	account1 = GOSSIP_ACCOUNT (data->account);
 	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account2, -1);
-
+	
 	equal = gossip_account_equal (account1, account2);
 	g_object_unref (account2);
 
@@ -336,7 +344,8 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
 		GtkListStore             *store;
 		GdkPixbuf                *pixbuf;
 		gboolean                  is_connected;
-		
+		gboolean                  is_enabled;
+
 		priv = GET_PRIV (data->account_chooser);
 
 		store = GTK_LIST_STORE (model);
@@ -347,9 +356,15 @@ account_chooser_account_update_foreach (GtkTreeModel          *model,
 							    GTK_ICON_SIZE_MENU,
 							    is_connected);
 		
+		if (!priv->can_select_all && !is_connected) {
+			is_enabled = FALSE;
+		} else {
+			is_enabled = TRUE;
+		}
+
 		gtk_list_store_set (store, iter, 
 				    COL_ACCOUNT_IMAGE, pixbuf, 
-				    COL_ACCOUNT_CONNECTED, is_connected,
+				    COL_ACCOUNT_ENABLED, is_enabled,
 				    -1);
 		
 		g_object_unref (pixbuf);
@@ -366,7 +381,7 @@ account_chooser_protocol_connected_cb (GossipSession        *session,
 				       GossipProtocol       *protocol,
 				       GossipAccountChooser *account_chooser)
 {
-	GtkComboBox           *combobox;
+	GtkComboBox           *combo_box;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
 
@@ -375,9 +390,9 @@ account_chooser_protocol_connected_cb (GossipSession        *session,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
-	combobox = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combobox);
-	gtk_combo_box_get_active_iter (combobox, &iter);
+	combo_box = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combo_box);
+	gtk_combo_box_get_active_iter (combo_box, &iter);
 
 	data.account_chooser = account_chooser;
 	data.account = account;
@@ -393,7 +408,7 @@ account_chooser_protocol_disconnected_cb (GossipSession        *session,
 					  GossipProtocol       *protocol,
 					  GossipAccountChooser *account_chooser)
 {
-	GtkComboBox           *combobox;
+	GtkComboBox           *combo_box;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
 
@@ -402,9 +417,9 @@ account_chooser_protocol_disconnected_cb (GossipSession        *session,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
-	combobox = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combobox);
-	gtk_combo_box_get_active_iter (combobox, &iter);
+	combo_box = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combo_box);
+	gtk_combo_box_get_active_iter (combo_box, &iter);
 
 	data.account_chooser = account_chooser;
 	data.account = account;
@@ -474,33 +489,6 @@ gossip_account_chooser_get_account (GossipAccountChooser *account_chooser)
 	return account;
 }
 
-gboolean
-gossip_account_chooser_set_account (GossipAccountChooser *account_chooser,
-				    GossipAccount        *account) 
-{
-	GtkComboBox           *combobox;
-	GtkTreeModel          *model;
-	GtkTreeIter            iter;
-
-	struct SetAccountData  data;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
-	
-	combobox = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combobox);
-	gtk_combo_box_get_active_iter (combobox, &iter);
-
-	data.account_chooser = account_chooser;
-	data.account = account;
-
-	gtk_tree_model_foreach (model, 
-				(GtkTreeModelForeachFunc) account_chooser_set_account_foreach, 
-				&data);
-
-	return data.set;
-}
-
 static gboolean
 account_chooser_set_account_foreach (GtkTreeModel          *model,
 				     GtkTreePath           *path,
@@ -517,13 +505,105 @@ account_chooser_set_account_foreach (GtkTreeModel          *model,
 	g_object_unref (account2);
 
 	if (equal) {
-		GtkComboBox *combobox;
+		GtkComboBox *combo_box;
 
-		combobox = GTK_COMBO_BOX (data->account_chooser);
-		gtk_combo_box_set_active_iter (combobox, iter);
+		combo_box = GTK_COMBO_BOX (data->account_chooser);
+		gtk_combo_box_set_active_iter (combo_box, iter);
 
 		data->set = TRUE;
 	}
 		
 	return equal;
+}
+
+gboolean
+gossip_account_chooser_set_account (GossipAccountChooser *account_chooser,
+				    GossipAccount        *account) 
+{
+	GtkComboBox           *combo_box;
+	GtkTreeModel          *model;
+	GtkTreeIter            iter;
+
+	struct SetAccountData  data;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+	
+	combo_box = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combo_box);
+	gtk_combo_box_get_active_iter (combo_box, &iter);
+
+	data.account_chooser = account_chooser;
+	data.account = account;
+
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) account_chooser_set_account_foreach, 
+				&data);
+
+	return data.set;
+}
+
+static gboolean
+account_chooser_set_enabled_foreach (GtkTreeModel         *model,
+				     GtkTreePath          *path,
+				     GtkTreeIter          *iter,
+				     GossipAccountChooser *account_chooser)
+{
+	GossipAccountChooserPriv *priv;
+	GossipAccount            *account;
+	GtkListStore             *store;
+	gboolean                  is_connected;
+	gboolean                  is_enabled;
+
+	priv = GET_PRIV (account_chooser);
+	
+	store = GTK_LIST_STORE (model);
+	
+	gtk_tree_model_get (model, iter, COL_ACCOUNT_POINTER, &account, -1);
+
+	is_connected = gossip_session_is_connected (priv->session, account);
+	g_object_unref (account);
+		
+	if (!priv->can_select_all && !is_connected) {
+		is_enabled = FALSE;
+	} else {
+		is_enabled = TRUE;
+	}
+
+	gtk_list_store_set (store, iter, COL_ACCOUNT_ENABLED, is_enabled, -1);
+
+	if (priv->set_active_item == FALSE && 
+	    ((priv->can_select_all == TRUE) || 
+	     (priv->can_select_all == FALSE && is_connected == TRUE))) {
+		GtkComboBox *combo_box;
+
+		combo_box = GTK_COMBO_BOX (account_chooser);
+
+		priv->set_active_item = TRUE;
+		gtk_combo_box_set_active_iter (combo_box, iter); 
+	}
+
+	return FALSE;
+}
+
+void
+gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
+					   gboolean              can_select_all)
+{
+	GossipAccountChooserPriv *priv;
+	GtkComboBox              *combo_box;
+	GtkTreeModel             *model;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
+
+	priv = GET_PRIV (account_chooser);
+
+	combo_box = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combo_box);
+
+	priv->can_select_all = can_select_all;
+
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) account_chooser_set_enabled_foreach, 
+				account_chooser);
 }

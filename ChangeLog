@@ -1,5 +1,14 @@
 2006-03-13  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-account-chooser.[ch]: Make it possible to select
+	accounts that are offline.
+
+	* src/gossip-accounts-dialog.c: Fixed a bug where accounts could
+	be removed because the Remove button didn't update when they
+	connect using the Connect/Disconnect button. 
+
+2006-03-13  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account-manager.[ch]:
 	* libgossip/gossip-account.[ch]:
 	* libgossip/gossip-account.dtd: 

@@ -50,12 +50,14 @@ struct _GossipAccountChooserClass {
         GtkComboBoxClass parent_class;
 };
 
-GType          gossip_account_chooser_get_type    (void) G_GNUC_CONST;
+GType          gossip_account_chooser_get_type           (void) G_GNUC_CONST;
 
-GtkWidget *    gossip_account_chooser_new         (GossipSession        *session);
-gboolean       gossip_account_chooser_set_account (GossipAccountChooser *account_chooser,
-						   GossipAccount        *account);
-GossipAccount *gossip_account_chooser_get_account (GossipAccountChooser *chooser);
+GtkWidget *    gossip_account_chooser_new                (GossipSession        *session);
+gboolean       gossip_account_chooser_set_account        (GossipAccountChooser *account_chooser,
+							  GossipAccount        *account);
+GossipAccount *gossip_account_chooser_get_account        (GossipAccountChooser *chooser);
+void           gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
+							  gboolean              can_select_all);
 
 #endif /* __GOSSIP_ACCOUNT_CHOOSER_H__ */
 

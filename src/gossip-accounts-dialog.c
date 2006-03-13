@@ -39,7 +39,6 @@
 
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
-
 typedef struct {
 	GtkWidget *window;
 
@@ -64,12 +63,10 @@ typedef struct {
 
 } GossipAccountsDialog;
 
-
 typedef struct {
 	GossipAccount *account;
 	GtkComboBox   *combobox;
 } SetAccountData;
-
 
 static void           accounts_dialog_setup                     (GossipAccountsDialog  *dialog);
 static void           accounts_dialog_update_connect_button     (GossipAccountsDialog  *dialog);
@@ -140,7 +137,6 @@ static gboolean       accounts_dialog_foreach                   (GtkTreeModel   
 static void           accounts_dialog_destroy_cb                (GtkWidget             *widget,
 								 GossipAccountsDialog  *dialog);
 
-
 enum {
 	COL_NAME,
 	COL_EDITABLE,
@@ -150,7 +146,6 @@ enum {
 	COL_ACCOUNT_POINTER,
 	COL_COUNT
 };
-
 
 static void
 accounts_dialog_setup (GossipAccountsDialog *dialog)
@@ -452,7 +447,8 @@ accounts_dialog_model_setup (GossipAccountsDialog *dialog)
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
 	g_signal_connect (selection, "changed", 
-			  G_CALLBACK (accounts_dialog_model_selection_changed), dialog);
+			  G_CALLBACK (accounts_dialog_model_selection_changed), 
+			  dialog);
 
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), 
 					      COL_NAME, GTK_SORT_ASCENDING);
@@ -1007,6 +1003,16 @@ accounts_dialog_protocol_connected_cb (GossipSession        *session,
 	GtkTreeModel     *model;
 	GtkTreeIter       iter;
 	gboolean          ok;
+	GossipAccount    *selected_account;
+
+	selected_account = accounts_dialog_model_get_selected (dialog);
+	if (selected_account) {
+		if (gossip_account_equal (selected_account, account)) {
+			gtk_widget_set_sensitive (dialog->button_remove, FALSE);
+		}
+		
+		g_object_unref (selected_account);
+	}
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -1054,6 +1060,17 @@ accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 	GtkTreeModel     *model;
 	GtkTreeIter       iter;
 	gboolean          ok;
+	
+	GossipAccount    *selected_account;
+
+	selected_account = accounts_dialog_model_get_selected (dialog);
+	if (selected_account) {
+		if (gossip_account_equal (selected_account, account)) {
+			gtk_widget_set_sensitive (dialog->button_remove, TRUE);
+		}
+		
+		g_object_unref (selected_account);
+	}
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -1099,7 +1116,7 @@ accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 
 static void
 accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
-					  GossipAccountsDialog *window)
+					  GossipAccountsDialog *dialog)
 {
 	GossipSession        *session;
 	GossipAccountManager *manager;
@@ -1108,7 +1125,7 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
 
-	account = accounts_dialog_model_get_selected (window);
+	account = accounts_dialog_model_get_selected (dialog);
 
 	gossip_account_manager_remove (manager, account);
 	gossip_account_manager_store (manager);
@@ -1118,7 +1135,7 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
 
 static void
 accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
-					   GossipAccountsDialog *window)
+					   GossipAccountsDialog *dialog)
 {
 	GossipSession        *session;
 	GossipAccountManager *manager;
@@ -1127,7 +1144,7 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
 
-	account = accounts_dialog_model_get_selected (window);
+	account = accounts_dialog_model_get_selected (dialog);
 
 	if (gossip_session_is_connected (session, account)) {
 		gossip_session_disconnect (session, account);
