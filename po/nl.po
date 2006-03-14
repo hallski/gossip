@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-14 14:33+0100\n"
-"PO-Revision-Date: 2006-03-14 14:34+0100\n"
+"POT-Creation-Date: 2006-03-14 14:51+0100\n"
+"PO-Revision-Date: 2006-03-14 14:52+0100\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -271,8 +271,7 @@ msgstr ""
 "Vincent van Adrighem\n"
 "Taco Witte\n"
 "Wouter Bolsterlee\n"
-"\n"
-"Kijk voor meer info op http://nl.gnome.org/"
+"http://nl.gnome.org/"
 
 #: ../src/gossip-account-button.c:334
 msgid "Stop Connecting"
@@ -499,7 +498,7 @@ msgstr "/_Bestand versturen..."
 
 #: ../src/gossip-contact-list.c:386
 msgid "/Show _Log"
-msgstr "/_Log weergeven"
+msgstr "/_Logboek bekijken"
 
 #: ../src/gossip-contact-list.c:396
 msgid "/Re_name group"
@@ -1732,7 +1731,7 @@ msgstr "Welke bijnaam wilt u voor dit contact gebruiken?"
 
 #: ../ui/main.glade.h:103
 msgid "What password do you want to use?"
-msgstr "Welke wachtwoord wilt u gebruiken?"
+msgstr "Welk wachtwoord wilt u gebruiken?"
 
 #: ../ui/main.glade.h:104
 msgid "What username do you use?"
@@ -1816,7 +1815,7 @@ msgstr "Nieuwe chats _openen in aparte vensters"
 
 #: ../ui/main.glade.h:127
 msgid "_Personal Information"
-msgstr "_Persoonlijke informatie"
+msgstr "_Persoonlijke gegevens"
 
 #: ../ui/main.glade.h:128
 msgid "_Play sound when messages arrive"
