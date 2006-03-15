@@ -29,6 +29,11 @@
 #include "gossip-utils.h"
 #include "gossip-account-manager.h"
 
+#define RESOURCE_HACK /* For splitting an id of user@server/resource
+		       * to just user@server with resource in it's own
+		       * xml tags (for Gossip release 0.10.2).
+		       */
+
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
@@ -37,9 +42,7 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
-
 typedef struct _GossipAccountManagerPriv GossipAccountManagerPriv;
-
 
 struct _GossipAccountManagerPriv {
 	GList *accounts;
@@ -50,7 +53,6 @@ struct _GossipAccountManagerPriv {
 	gchar *default_name_override;
 };
 
-
 enum {
 	ACCOUNT_ADDED,
 	ACCOUNT_REMOVED, 
@@ -58,19 +60,15 @@ enum {
 	LAST_SIGNAL
 };
 
-
-static void     account_manager_finalize             (GObject               *object);
-static gboolean account_manager_get_all              (GossipAccountManager  *manager);
-static gboolean account_manager_file_parse           (GossipAccountManager  *manager,
-						      const gchar           *filename);
-static gboolean account_manager_file_save            (GossipAccountManager  *manager);
-
+static void     account_manager_finalize   (GObject              *object);
+static gboolean account_manager_get_all    (GossipAccountManager *manager);
+static gboolean account_manager_file_parse (GossipAccountManager *manager,
+					    const gchar          *filename);
+static gboolean account_manager_file_save  (GossipAccountManager *manager);
 
 static guint signals[LAST_SIGNAL] = {0};
 
-
 G_DEFINE_TYPE (GossipAccountManager, gossip_account_manager, G_TYPE_OBJECT);
-
 
 static void
 gossip_account_manager_class_init (GossipAccountManagerClass *klass)
@@ -514,6 +512,37 @@ account_manager_parse_account (GossipAccountManager *manager,
 			gossip_account_set_password (account, password);
 		}
 		
+#ifdef RESOURCE_HACK
+		const gchar *resource_found = NULL;
+
+		g_printerr ("Checking account id:'%s' is in the correct form since it "
+			    "has changed this version...\n", id);
+
+		if (id) {
+			/* FIXME: This hack is so we don't get bug
+			 * reports and basically gets the resource
+			 * from the id. */
+			const gchar *ch;
+			
+			ch = strchr (id, '/');
+			if (ch) {
+				resource_found = (ch + 1);
+				id[ch - id] = '\0';
+
+				g_printerr ("\tConverting ID... "
+					    "(id:'%s', resource:'%s')\n", id, resource_found);
+			}
+		}
+
+		if (resource_found) {
+			gossip_account_set_id (account, id);
+			gossip_account_set_resource (account, resource_found);
+
+			g_printerr ("\tSaving accounts... \n");
+			account_manager_file_save (manager);
+		}
+#endif /* RESOURCE_HACK */
+
 		gossip_account_manager_add (manager, account);
 		
 		g_object_unref (account);

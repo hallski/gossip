@@ -1,49 +1,116 @@
+NEWS in 0.10.2:
+===============
+- Changed the account ID for Jabber IDs back to 'username@server' and
+make the resource a separate entity in the accounts.xml (note: there
+is some extra code to make sure the same problems that occurred last
+time don't reoccurr this time with invalid usernames when trying to
+connect) (Martyn). 
+- Updated the spell checker dialog to use "Replace" instead of "OK"
+(Martyn). 
+- Cleaned up the glade windows and dialogs so windows are not shown
+automatically, this reduces flickering when they are created (Richard).
+- Fixed the assistant used to add accounts so it now accepts a
+username of username@server and make the resource optional on the next
+(connections) page (Martyn).
+- Fixed the add account assistant so that account details are properly
+checked before proceeding to the following page (Martyn).
+- Updated the personal information dialog so there is no longer a
+progress bar when saving or loading, it just makes widgets
+insensitive. Also the buttons are now Save and Cancel which is clearer
+(Martyn). 
+- Fixed the jabber chatroom join presence handling so it actually
+checks the presence message is for the right room instead of just
+accepting any old presence message - this means auto-connecting on
+startup works properly and will also give the correct error if you
+can't join for some reason (Martyn).
+- The chatrooms window now allows selection of multiple rooms for
+joining, deleteing, etc and the dialog will close when a rooms are
+joined. Chatrooms will also be joined on the treeview "row-activate"
+signal now (Martyn).
+- Updated the CSS used for logging so the font isn't so big (Martyn).
+- Improve the X screensaver detection (Richard, Tommi Komulainen).
+- Added the 'x' to close separate chat tabs back in (Richard, Martyn).
+- Improve the build scripts (Richard, Bryan Pepple).
+- Fixed #332713, Use the default foreground colour for the classic
+chat theme (Richard).
+- Fixed #332240, Change some keyboard mnemonics for chat windows
+(Brian Pepple). 
+
 News in 0.10.1:
 ===============
- * Changed the accounts dialog and removed the enable/disable account checkbutton in the accounts list, it was pointless (Martyn).
- * Changed the account button tooltip to only show the account id and any error that might of occurred (Martyn).
- * Added typing notification on the roster (Martyn, Richard).
- * Added a chat theme selection in the preferences to choose between Classic and Blue (which is a block message format), try it! (Richard).
- * Don't ellipsize text in the menu created for status presets, this usually is not shown in full when using the menu on the tray icon (Martyn). 
- * Added libnotify support for contacts coming online and sending first time messages (note: this only works with libnotify 0.2.1 at the moment, not with the 0.3.x API, if you have 0.3.x you might have to disable it with configure --disable-libnotify) (Martyn).
- * Use a GtkWindow instead of a GnomeApp for the main window. The widget spacing for toolbars and menus is much better now (Martyn).
-332052
- * Fixed #306719 - Make sure Wordstar style key bindings work (i.e Ctrl+Insert copies, Ctrl+Delete and cuts Shift+Insert pastes) (Richard).
- * Fixed #332052 - Be more flexible with DTD validation in XML files (Richard, Ross Burton).
- * Fixed #332423 - Make sure special characters are escaped when saving to XML files (for accounts, presets, and contact groups) (Richard, Jonatan Magnusson).
- * Fixed #322030 - Added the 'x' button back onto chat tabs to close conversations (Richard, Sjoerd Simons)
- * Fixed #332333 - Fixed weird menu detachment behaviour (Diego González).
- * Fixed #142188 - Don't scroll the chat window when drag and dropping across them (Richard).
- * Fixed #165565 - Don't scroll the chat window when on the first or last tab and pressing Ctrl+Pg[Up|Down] (Richard)
- * Fixed #172013 - Make sure group chat windows scroll to the bottom (Richard)
- * Fixed #332020 - Corrected some UI typos (Clytie Siddall)
- * Fixed #331664 - Don't crash when trying to connect with an error
- about a missing resource in the account id, instead we now signal the error and the user is informed so they are able to correct it (Martyn).
- * Fixed #331707 - Depend on GTK+ 2.8 because we are using some GTK+ stock icons from it (Brian Pepple).
- * Fixed #331868 - Corrected some UI typos (Clytie Siddall).
+- Changed the accounts dialog and removed the enable/disable account
+checkbutton in the accounts list, it was pointless (Martyn). 
+- Changed the account button tooltip to only show the account id and
+any error that might of occurred (Martyn). 
+- Added typing notification on the roster (Martyn, Richard). 
+- Added a chat theme selection in the preferences to choose between
+Classic and Blue (which is a block message format), try it!
+(Richard). 
+- Don't ellipsize text in the menu created for status presets, this
+usually is not shown in full when using the menu on the tray icon
+(Martyn).  
+- Added libnotify support for contacts coming online and sending first
+time messages (note: this only works with libnotify 0.2.1 at the
+moment, not with the 0.3.x API, if you have 0.3.x you might have to
+disable it with configure --disable-libnotify) (Martyn). 
+- Use a GtkWindow instead of a GnomeApp for the main window. The
+widget spacing for toolbars and menus is much better now (Martyn). 
+- Fixed #306719, Make sure Wordstar style key bindings work (i.e
+Ctrl+Insert copies, Ctrl+Delete and cuts Shift+Insert pastes)
+(Richard).  
+- Fixed #332052, Be more flexible with DTD validation in XML files
+(Richard, Ross Burton). 
+- Fixed #332423, Make sure special characters are escaped when saving
+to XML files (for accounts, presets, and contact groups) (Richard,
+Jonatan Magnusson). 
+- Fixed #322030, Added the 'x' button back onto chat tabs to close
+conversations (Richard, Sjoerd Simons) 
+- Fixed #332333, Fixed weird menu detachment behaviour (Diego
+González). 
+- Fixed #142188, Don't scroll the chat window when drag and dropping
+across them (Richard). 
+- Fixed #165565, Don't scroll the chat window when on the first or
+last tab and pressing Ctrl+Pg[Up|Down] (Richard) 
+- Fixed #172013, Make sure group chat windows scroll to the bottom
+(Richard) 
+- Fixed #332020, Corrected some UI typos (Clytie Siddall) 
+- Fixed #331664, Don't crash when trying to connect with an error
+ about a missing resource in the account id, instead we now signal the
+ error and the user is informed so they are able to correct it
+ (Martyn). 
+- Fixed #331707, Depend on GTK+ 2.8 because we are using some GTK+
+stock icons from it (Brian Pepple). 
+- Fixed #331868, Corrected some UI typos (Clytie Siddall).
 
 Translations:
- * Clytie Siddall (vi)
- * David Nielsen (da)
- * Jordi Mallach (ca)
- * Miloslav Trmac (cs)
- * Richard Hult (sv)
- * Wouter Bolsterlee (nl)
+- Clytie Siddall (vi)
+- David Nielsen (da)
+- Jordi Mallach (ca)
+- Miloslav Trmac (cs)
+- Richard Hult (sv)
+- Wouter Bolsterlee (nl)
 
 
 News in 0.10:
 =============
- * Added support for changing topics in group chat (Martyn).
- * Added support incoming message sound if your name is used in group chat (Martyn).
- * Reworked the chat code in places and added the beginings of a theme engine (Richard).
- * Reworked the group chat join code (Martyn).
- * Reworked the group chat configuration to use an XML file (Martyn).
- * Reworked the status preset code (Richard).
- * Reworked the status preset configuration to use an XML file (Martyn, Richard).
- * Added *VERY* basic support for file transfer (this means you can respond to incoming requests, but you can not accept or initiate them) (Martyn).
- * Added Help->Contents (Brian Pepple and Keywan Najafi Tonekaboni).
- * Added new DBus API for post-net-up and pre-net-down so things can clean up (Mikael).
- * Use the Gnome smiley theme so there are now more emote icons that can be used in chat (Martyn):
+- Added support for changing topics in group chat (Martyn). 
+- Added support incoming message sound if your name is used in group
+chat (Martyn). 
+- Reworked the chat code in places and added the beginings of a theme
+engine (Richard). 
+- Reworked the group chat join code (Martyn).
+- Reworked the group chat configuration to use an XML file (Martyn). 
+- Reworked the status preset code (Richard).
+- Reworked the status preset configuration to use an XML file (Martyn,
+Richard). 
+- Added *VERY* basic support for file transfer (this means you can
+respond to incoming requests, but you can not accept or initiate them)
+(Martyn). 
+- Added Help->Contents (Brian Pepple and Keywan Najafi Tonekaboni). 
+- Added new DBus API for post-net-up and pre-net-down so things can
+clean up (Mikael). 
+- Use the Gnome smiley theme so there are now more emote icons that
+can be used in chat (Martyn): 
 	:*  = Kiss
 	:s  = Confused
 	:@  = Angry
@@ -58,224 +125,267 @@ News in 0.10:
 	O)  = Silly
 	+o( = Sick
 
- * Added "composing" support back into Gossip (Martyn).
- * Added "auto_connect" feature for accounts when starting Gossip (Martyn).
- * Clean up unused ellipsize and tree model filter code borrowed from
- * libegg which is now in GTK+ (Richard).
- * Fixed #331229 - Avoid critical warning when getting presence information about offline contacts (Wouter Bolsterlee).
- * Fixed #331412 - Use "Remove" and "Cancel instead of "Yes" and "No" when removing a contact (Wouter Bolsterlee).
- * Fixed #331228 - GTK+ gtk_widget_hide() warning causing a crash (Diego González).
- * Fixed #330830 - Make sure the chatrooms window clears widget values when closed (since it is hidden) (Paul Van Tilburg).
- * Fixed #330828 - Make sure the nickname for chatrooms is honored (Paul Van Tilburg).
- * Fixed #330916 - Missing files in POTFILES.in (Brian Pepple).
- * Fixed #306321 - Make sure errors returned from failed registration attempts are more user friendly rather than esoteric (Joe Shaw).
- * Fixed #131290 - Fixed nickname used in chat to be the full name from the users vcard - which is also now set when registering new accounts (Michal Janeczek).
- * Fixed #321569 - Possibility to set server seperately from jabber id in the startup wizard (Brian Pepple).
- * Fixed #325841 - Support automatically joining chat rooms when connecting to the server (Martyn, Ross Burton).
- * Fixed #325740 - Fixed crasher when joining the same group chat for the 2nd time (Martyn).
- * Fixed #325378 - Updated help documentation to reflect the latest user interface changes (Brian Pepple).
- * Fixed #308041 - Made the show/hide contact list configurable from the main menu not just the notification area (Radomir Dopieralski).
- * Fixed #321801 - Don't send "composing" notification from every account, only from the account that has that contact (Ross Burton).
- * Fixed #119971 - Support inviting people to group chat rooms (Mikael Hallendal).
- * Fixed #325258 - Make sure the default vcard is looked up when showing the Personal Information dialog (Brian Pepple).
- * Fixed #141225 - Added status and resource information to the Contact Information dialog (jon@tgpsolutions.com).
- * Fixed #322775 - Reworked the Chat->New Message dialog (Martyn, Brian Pepple).
- * Fixed #323099 - Made name and group configurable on new subscriptions (Maciej Katafiasz).
- * Fixed #305103 - Translation bugs in jabber transport modules (Gabor Kelemen). 
- * Fixed #322712 - Build issues with DBus and Galago (Brian Pepple).
- * Fixed #321538 - Windows and dialogs have transients to positioned children over their parents (Christian Neumair, Martyn).
- * Fixed #316925 - Added support for Galago (Ross Burton).
- * Fixed #314848 - Disable sound when showing/hiding offline contacts (Martyn).
- * Fixed #316172 - Stop sending blank messages with "composing" information (Ross Burton).
- * Fixed #317107 - Fixed GossipAccountButton implementation (Martyn, Tommi Komulainen).
- * Fixed #135472 - Added shortcut (Escape) to hide main window (Edd Dumbill).
- * Fixed #316340 - Make sure newly opened chat windows get focus (Keywan Najafi Tonekaboni).
- * Fixed #316917 - Added "presence-changed" signal to the session for Galago (Ross Burton).
- * Fixed #316625 - Resolved build issues with pkg-config (Tommi Komulainen).
- * Fixed #316621 - Make the offline GossipAccountButton icon clearer (Tommi Komulainen).
- * Fixed #315181 - Moved DBus initiation out of libgossip (Brian Pepple).
- * Fixed #153110 - Resolved group chat text wrapping issues (Sven Salzwedel).
- * Fixed #165404 - Support registering using SSL (Martyn, Mikael, skadz@mindstorm.com).
- * Fixed #165519 - Support configuring multiple accounts (Martyn).
- * Fixed #314140 - Resolved "Login" grammar error (Adam Weinberger).
- * Fixed #155135 - Added confirmation dialog when trying to quit with unread messages, subscriptions, etc (Keywan Najafi Tonekaboni).
- * Fixed #142192 - Make dragging contacts into chat windows highlight the target to make things clearer and only drop when the button is released (Sjoerd Simons).
- * Fixed #151859 - Stop the new message icon flashing on a contact when dragging them to a chat window (Paul van Tilburg).
- * Fixed #160216 - Make the add contact druid continue when pressing Next (bram@luon.net).
- * Fixed #141787 - Support adding contacts from a chat window (Brad Taylor).
- * Fixed #156285 - Added completion to the status preset dialogs (Martyn).
- * Fixed #313486 - Stop crash when joining a group chat and canceling it immediately after (Brian Pepple).
+- Added "composing" support back into Gossip (Martyn).
+- Added "auto_connect" feature for accounts when starting Gossip
+(Martyn).  
+- Clean up unused ellipsize and tree model filter code borrowed from
+libegg which is now in GTK+ (Richard). 
+- Fixed #331229, Avoid critical warning when getting presence
+information about offline contacts (Wouter Bolsterlee).  
+- Fixed #331412, Use "Remove" and "Cancel instead of "Yes" and "No"
+when removing a contact (Wouter Bolsterlee).   
+- Fixed #331228, GTK+ gtk_widget_hide() warning causing a crash (Diego
+González). 
+- Fixed #330830, Make sure the chatrooms window clears widget values
+when closed (since it is hidden) (Paul Van Tilburg).  
+- Fixed #330828, Make sure the nickname for chatrooms is honored (Paul
+Van Tilburg). 
+- Fixed #330916, Missing files in POTFILES.in (Brian Pepple). 
+- Fixed #306321, Make sure errors returned from failed registration
+attempts are more user friendly rather than esoteric (Joe Shaw).  
+- Fixed #131290, Fixed nickname used in chat to be the full name from
+the users vcard, which is also now set when registering new accounts
+(Michal Janeczek).  
+- Fixed #321569, Possibility to set server seperately from jabber id
+in the startup wizard (Brian Pepple).  
+- Fixed #325841, Support automatically joining chat rooms when
+connecting to the server (Martyn, Ross Burton).  
+- Fixed #325740, Fixed crasher when joining the same group chat for
+the 2nd time (Martyn).  
+- Fixed #325378, Updated help documentation to reflect the latest
+user interface changes (Brian Pepple).  
+- Fixed #308041, Made the show/hide contact list configurable from the
+main menu not just the notification area (Radomir Dopieralski). 
+- Fixed #321801, Don't send "composing" notification from every
+account, only from the account that has that contact (Ross Burton).  
+- Fixed #119971, Support inviting people to group chat rooms (Mikael
+Hallendal).
+- Fixed #325258, Make sure the default vcard is looked up when showing
+the Personal Information dialog (Brian Pepple). 
+- Fixed #141225, Added status and resource information to the Contact
+Information dialog (jon@tgpsolutions.com).  
+- Fixed #322775, Reworked the Chat->New Message dialog (Martyn, Brian
+Pepple).  
+- Fixed #323099, Made name and group configurable on new subscriptions
+(Maciej Katafiasz).  
+- Fixed #305103, Translation bugs in jabber transport modules (Gabor
+Kelemen).   
+- Fixed #322712, Build issues with DBus and Galago (Brian Pepple). 
+- Fixed #321538, Windows and dialogs have transients to positioned
+children over their parents (Christian Neumair, Martyn).  
+- Fixed #316925, Added support for Galago (Ross Burton).
+- Fixed #314848, Disable sound when showing/hiding offline contacts
+(Martyn).  
+- Fixed #316172, Stop sending blank messages with "composing"
+information (Ross Burton).  
+- Fixed #317107, Fixed GossipAccountButton implementation (Martyn,
+Tommi Komulainen).  
+- Fixed #135472, Added shortcut (Escape) to hide main window (Edd
+Dumbill).  
+- Fixed #316340, Make sure newly opened chat windows get focus (Keywan
+Najafi Tonekaboni).  
+- Fixed #316917, Added "presence-changed" signal to the session for
+Galago (Ross Burton).  
+- Fixed #316625, Resolved build issues with pkg-config (Tommi
+Komulainen).  
+- Fixed #316621, Make the offline GossipAccountButton icon clearer
+(Tommi Komulainen).  
+- Fixed #315181, Moved DBus initiation out of libgossip (Brian
+Pepple).  
+- Fixed #153110, Resolved group chat text wrapping issues (Sven
+Salzwedel). 
+- Fixed #165404, Support registering using SSL (Martyn, Mikael,
+skadz@mindstorm.com).  
+- Fixed #165519, Support configuring multiple accounts (Martyn). 
+- Fixed #314140, Resolved "Login" grammar error (Adam Weinberger).
+- Fixed #155135, Added confirmation dialog when trying to quit with
+unread messages, subscriptions, etc (Keywan Najafi Tonekaboni).  
+- Fixed #142192, Make dragging contacts into chat windows highlight
+the target to make things clearer and only drop when the button is
+released (Sjoerd Simons).  
+- Fixed #151859, Stop the new message icon flashing on a contact when
+dragging them to a chat window (Paul van Tilburg).  
+- Fixed #160216, Make the add contact druid continue when pressing
+Next (bram@luon.net). 
+- Fixed #141787, Support adding contacts from a chat window (Brad
+Taylor).   
+- Fixed #156285, Added completion to the status preset dialogs
+(Martyn).  
+- Fixed #313486, Stop crash when joining a group chat and canceling it
+immediately after (Brian Pepple). 
 
 Translations:
- * Adam Weinberger (en_CA)
- * Chao-Hsiung Liao (zh_HK)
- * Chao-Hsiung Liao (zh_TW)
- * Christian Rose (sv)
- * Francisco Javier F. Serrador (es)
- * Gabor Kelemen (hu)
- * Jaydeep Bhusal (ne)
- * Pawan Chitrakar (ne)
- * Richard Hult (sv)
- * Žygimantas Beručka (lt)
+- Adam Weinberger (en_CA)
+- Chao-Hsiung Liao (zh_HK)
+- Chao-Hsiung Liao (zh_TW)
+- Christian Rose (sv)
+- Francisco Javier F. Serrador (es)
+- Gabor Kelemen (hu)
+- Jaydeep Bhusal (ne)
+- Pawan Chitrakar (ne)
+- Richard Hult (sv)
+- Žygimantas Beručka (lt)
 
 
 New in 0.9:
 ============
- * This release features a large refactoring to make further development easier.
- * Part of the works has also been to make the current features more stable
-   and better implement.
- * Most of the work on this release has been carried out by Mikael Hallendal and   Martyn Russell.
- * UPDATE NOW!
+- This release features a large refactoring to make further
+development easier. 
+- Part of the works has also been to make the current features more
+stable and better implement. 
+- Most of the work on this release has been carried out by Mikael
+Hallendal and Martyn Russell. 
+- UPDATE NOW!
 
 
 News in 0.8:
 ============
- * Fixed #151737 (Martyn)
- * Group chats now support tabbed windows (Geert-Jan)
- * If only one window exists, open new chats in that window (Martyn)
- * Fixed window title (Micke)
- * Fixed issue when Gossip sent replies to error messages (Micke)
- * New translations (nb, tr, bg)
- * Updated translations (cs, pt_BR, fr, de, ca, da, nl, no, en_CA, zh_TW, 
-			 en_GB, lt, eu, sv)
+- Fixed #151737 (Martyn)
+- Group chats now support tabbed windows (Geert-Jan).
+- If only one window exists, open new chats in that window (Martyn).
+- Fixed window title (Micke).
+- Fixed issue when Gossip sent replies to error messages (Micke).
+- New translations (nb, tr, bg).
+- Updated translations (cs, pt_BR, fr, de, ca, da, nl, no, en_CA,
+zh_TW, en_GB, lt, eu, sv).
 
 News in 0.7.8:
 ==============
- * Add support for disabling system proxy (Ross Burton)
- * Typo fixes (Richard)
- * Updated translations (sv, en_CA)
+- Add support for disabling system proxy (Ross Burton).
+- Typo fixes (Richard).
+- Updated translations (sv, en_CA).
  
 
 News in 0.7.7:
 ==============
- * Make the groupchat input area the same as in chats (Geert-Jan)
- * Improved URL recognizer (Johan Hammar)
- * Fixed name bug when chatting with people not in your contact list (Micke)
- * Cut supported in chat windows (cuts from input area) (Thomas Reynolds)
- * Support for specifying both JID and connect server (Micke)
- * Support for HTTP proxy, uses desktop global settings (Micke)
- * Notify on updates in the contact list (Change the background on that row 
-   for 7 seconds) (Martyn)
- * New translations (ga)
- * Updated translations 
-   (cs, nl, en_GB, lt, cy, sq, ru, eu, en_CA, es, nl, pt, da)
+- Make the groupchat input area the same as in chats (Geert-Jan).
+- Improved URL recognizer (Johan Hammar).
+- Fixed name bug when chatting with people not in your contact list
+(Micke).
+- Cut supported in chat windows (cuts from input area) (Thomas
+Reynolds). 
+- Support for specifying both JID and connect server (Micke).
+- Support for HTTP proxy, uses desktop global settings (Micke).
+- Notify on updates in the contact list (Change the background on that
+row for 7 seconds) (Martyn).
+- New translations (ga).
+- Updated translations (cs, nl, en_GB, lt, cy, sq, ru, eu, en_CA, es,
+nl, pt, da).
 
 
 News in 0.7.6:
 ==============
- * Lot of bug fixing gone into the Group Chats (Micke)
- * Drag contacts from roster to chat windows to start a chat (Micke)
- * Show new message icon as window icon when new message 
-   arrived (Sergey Dolgopolov)
- * Crash fixes (Micke)
- * Allow IP-numbers as hostpart of the JID (Fabio Bonelli)
- * Added copy&paste to chat windows. (Micke)
- * Fixed drawing error in chat windows tabs with certain themes (Geert-Jan)
- * Shrink chat windows after long messages has been sent (Micke, Lionel Henry)
- * Store log files as lowercase JID. (Micke)
- * Resubscribe support if subscription isn't both way (Ross Burton)
- * Show presence icon in new message popup list (Micke)
- * Added support for editing your own vCard (Martyn Russel, Micke)
- * New translations (en_CA, uk, eo, ar)
- * Updated translations (lt, cs, en_GB, nl, ca, pt_BR, sv, zh_CN, da, pl, pt)
+- Lot of bug fixing gone into the Group Chats (Micke).
+- Drag contacts from roster to chat windows to start a chat (Micke).
+- Show new message icon as window icon when new message arrived
+(Sergey Dolgopolov).
+- Crash fixes (Micke).
+- Allow IP-numbers as hostpart of the JID (Fabio Bonelli).
+- Added copy&paste to chat windows (Micke).
+- Fixed drawing error in chat windows tabs with certain themes
+(Geert-Jan). 
+- Shrink chat windows after long messages has been sent (Micke, Lionel
+Henry).
+- Store log files as lowercase JID (Micke).
+- Resubscribe support if subscription isn't both way (Ross Burton)
+- Show presence icon in new message popup list (Micke).
+- Added support for editing your own vCard (Martyn Russel, Micke).
+- New translations (en_CA, uk, eo, ar).
+- Updated translations (lt, cs, en_GB, nl, ca, pt_BR, sv, zh_CN, da,
+pl, pt).
 
 
 News in 0.7.5:
 ==============
- 
- * SSL support when registering (Ross Burton)
- * Registering support for Jabberd 2 (Sjoerd Simons)
- * Fixed the nick highlighting code (Micke)
- * Re-enabled private chat through group chat (Micke)
- * Fixed group chat nick completion code (Micke)
- * Fixed crasher bug in logging code (Richard)
- * New translations (pt_BR, en_GB, lt)
- * Updated translations (cs, nl, da, ca, hr, zh_CN, no, es, cy)
+ - SSL support when registering (Ross Burton).
+- Registering support for Jabberd 2 (Sjoerd Simons).
+- Fixed the nick highlighting code (Micke).
+- Re-enabled private chat through group chat (Micke).
+- Fixed group chat nick completion code (Micke).
+- Fixed crasher bug in logging code (Richard).
+- New translations (pt_BR, en_GB, lt).
+- Updated translations (cs, nl, da, ca, hr, zh_CN, no, es, cy).
  
 
 News in 0.7.4:
 ==============
-
- * Fixed a crasher bug in the new about box.
+- Fixed a crasher bug in the new about box.
 
 
 News in 0.7.3:
 ==============
-
- * Fix transient window behaviour, Mikael.
- * Fix bugs with the flashing icons, Richard.
- * Propagate status updates to group chat, Martyn Russell.
- * Show dialog when authentication fails. Martyn, Richard.
- * Behave better when the notification area is removed, Qball Cow.
- * Plug leaks, Richard.
- * Updated translations (cs, da, eu, fr, nl, sr, sr@Latn, sv)
+- Fix transient window behaviour, Mikael.
+- Fix bugs with the flashing icons, Richard.
+- Propagate status updates to group chat, Martyn Russell.
+- Show dialog when authentication fails. Martyn, Richard.
+- Behave better when the notification area is removed, Qball Cow.
+- Plug leaks, Richard.
+- Updated translations (cs, da, eu, fr, nl, sr, sr@Latn, sv).
 
 
 News in 0.7.2:
 ==============
-
- * Make the status icon flash when going to and from away state
- * Show the contact list if it's visible on another workspace when
-   toggling visibility
- * Make links clickable in logs
- * Handle incoming private chats through group chats correctly
- * An experimental and optional dbus interface
- * Add status submenu to the notification area icon
- * Limit the length of the status text in the contact list
- * Plug memory leaks
- * When detaching a tab, put the new window at the pointer
- * Updated translations (ca, cs, es, hr, nl, no, sr, sr@Latn, sv)
+- Make the status icon flash when going to and from away state.
+- Show the contact list if it's visible on another workspace when
+toggling visibility.
+- Make links clickable in logs.
+- Handle incoming private chats through group chats correctly.
+- An experimental and optional dbus interface.
+- Add status submenu to the notification area icon.
+- Limit the length of the status text in the contact list.
+- Plug memory leaks.
+- When detaching a tab, put the new window at the pointer.
+- Updated translations (ca, cs, es, hr, nl, no, sr, sr@Latn, sv).
 
 
 News in 0.7.1:
 ==============
-
- * The away message wasn't always cleared when coming back
- * Fixed a few schema problems
- * Didn't export a variable for the spec file
+- The away message wasn't always cleared when coming back.
+- Fixed a few schema problems.
+- Didn't export a variable for the spec file.
 
 
 News in 0.7:
 ============
-* Fixes to the chat window (URL matching, clear chat)
-* New application icon from Dan Taylor
-* Chat window entry autoexpands instead of using a disclosure widget
+* Fixes to the chat window (URL matching, clear chat).
+* New application icon from Dan Taylor.
+* Chat window entry autoexpands instead of using a disclosure widget.
 * Store state of contact list (visibility, position and size) between
-  sessions
-* Don't show groups with no contacts
-* Presence setting system greatly improved
-* Edit groups support added
-* Made the autoback timeout longer (30 secs)
-* Better keynav support
-* A couple of crash fixes
-* Several smaller bugs fixed
-* Updated and new translations (ca, cs, da, es, eu, it, ms, nl, no, pt,
-  sr@Latn, sr, sv)
+sessions.  
+* Don't show groups with no contacts.
+* Presence setting system greatly improved.
+* Edit groups support added.
+* Made the autoback timeout longer (30 secs).
+* Better keynav support.
+* A couple of crash fixes.
+* Several smaller bugs fixed.
+* Updated and new translations (ca, cs, da, es, eu, it, ms, nl, no,
+pt, sr@Latn, sr, sv).
 
 
 News in 0.6:
 ============
-* Improved contact list
-* New presence system
-* New icons
-* Tabbed chat windows
-* Conversation logging
-* Nicer timestamping
-* Many bug fixes and small improvements
-* Updated and new translations (az, ca, cs, cy, da, de, es, fr, fr, it,
-  nl, no, pl, pt, ru, sr, sr@Latn, sv, zh_CN, zh_TW)
+* Improved contact list.
+* New presence system.
+* New icons.
+* Tabbed chat windows.
+* Conversation logging.
+* Nicer timestamping.
+* Many bug fixes and small improvements.
+* Updated and new translations (az, ca, cs, cy, da, de, es, fr, fr,
+it, nl, no, pl, pt, ru, sr, sr@Latn, sv, zh_CN, zh_TW). 
 
 News in 0.5:
 ============
-* Typing notification, JEP-0022
-* Flash an icon instead of popping up chat windows directly
-* Don't clear chat windows when closing them
-* Improve nick completion in group chat
-* Fix private chats in group chat
-* Set the right group when renaming a contact
-* Various small bug fixes
-* New translations (sr, sr@Latn, pt)
-* Updated translations (es, ca, cy, cs, sv)
+* Typing notification, JEP-0022.
+* Flash an icon instead of popping up chat windows directly.
+* Don't clear chat windows when closing them.
+* Improve nick completion in group chat.
+* Fix private chats in group chat.
+* Set the right group when renaming a contact.
+* Various small bug fixes.
+* New translations (sr, sr@Latn, pt).
+* Updated translations (es, ca, cy, cs, sv).
 
 
 News in 0.4:
@@ -297,4 +407,4 @@ News in 0.4:
 * Added bugzilla info.
 * Improvements to add contact dialog.
 * Notification in titlebar when new messages arrive to unfocused windows.
-* New translations: nl, cs, es, cy, ru
+* New translations: nl, cs, es, cy, ru.

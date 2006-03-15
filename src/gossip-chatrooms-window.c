@@ -38,7 +38,7 @@
 
 /* This is turned off for now, but to configure the auto connect in
  * the list instead of from the edit dialog, define this variable: */
-#undef CHATROOM_AUTOCONNECT_IN_LIST
+#define CHATROOM_AUTOCONNECT_IN_LIST
 
 typedef struct {
 	GtkWidget        *window;
@@ -100,6 +100,10 @@ static void       chatrooms_window_model_setup                 (GossipChatroomsW
 
 static void       chatrooms_window_update_buttons              (GossipChatroomsWindow    *window);
 
+static gboolean   chatrooms_window_chatroom_any_joining_foreach (GtkTreeModel             *model,
+								GtkTreePath              *path,
+								GtkTreeIter              *iter,
+								gboolean                 *any_joining);
 static void       chatrooms_window_join_cb                     (GossipChatroomProvider   *provider,
 								GossipChatroomJoinResult  result,
 								GossipChatroomId          id,
@@ -116,6 +120,10 @@ static gboolean   chatrooms_window_delete_foreach              (GtkTreeModel    
 								GossipChatroom           *chatroom);
 static void       chatrooms_window_close_clicked_cb            (GtkWidget                *widget,
 								GossipChatroomsWindow    *window);
+static gboolean   chatrooms_window_chatroom_changed_foreach    (GtkTreeModel             *model,
+								GtkTreePath              *path,
+								GtkTreeIter              *iter,
+								GossipChatroom           *chatroom);
 static void       chatrooms_window_join_clicked_cb             (GtkWidget                *widget,
 								GossipChatroomsWindow    *window);
 static void       chatrooms_window_chatroom_changed_cb         (GossipChatroom           *chatroom,
@@ -124,10 +132,6 @@ static void       chatrooms_window_chatroom_changed_cb         (GossipChatroom  
 static void       chatrooms_window_chatroom_added_cb           (GossipChatroomManager    *manager,
 								GossipChatroom           *chatroom,
 								GossipChatroomsWindow    *window);
-static gboolean   chatrooms_window_chatroom_changed_foreach    (GtkTreeModel             *model,
-								GtkTreePath              *path,
-								GtkTreeIter              *iter,
-								GossipChatroom           *chatroom);
 static void       chatrooms_window_account_chatroom_changed_cb (GtkWidget                *combo_box,
 								GossipChatroomsWindow    *window);
 
@@ -735,12 +739,36 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 	g_list_free (chatrooms);
 }
 
+static gboolean 
+chatrooms_window_chatroom_any_joining_foreach (GtkTreeModel *model,
+					       GtkTreePath  *path,
+					       GtkTreeIter  *iter,
+					       gboolean     *any_joining)
+{
+	GossipChatroom       *chatroom;
+	GossipChatroomStatus  status;
+
+	gtk_tree_model_get (model, iter, COL_POINTER, &chatroom, -1);
+	status = gossip_chatroom_get_status (chatroom);
+
+	if (status == GOSSIP_CHATROOM_STATUS_JOINING) {
+		*any_joining = TRUE;
+	}
+
+	g_object_unref (chatroom);
+
+	return ! *any_joining;
+}
+
 static void
 chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 			  GossipChatroomJoinResult  result,
 			  GossipChatroomId          id,
 			  GossipChatroomsWindow    *window)
 {
+	GtkTreeModel *model = NULL;
+	gboolean      any_joining = FALSE;
+
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (window != NULL);
 	
@@ -750,6 +778,16 @@ chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 	} 
 
 	chatrooms_window_update_buttons (window);
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (window->treeview));
+	gtk_tree_model_foreach (model,
+				(GtkTreeModelForeachFunc) 
+				chatrooms_window_chatroom_any_joining_foreach,
+				&any_joining);
+
+	if (!any_joining) {
+		gtk_widget_hide (window->window);
+	}
 }
 
 static void
@@ -819,6 +857,29 @@ chatrooms_window_join_clicked_cb (GtkWidget             *widget,
 	chatrooms_window_model_action_selected (window);
 }
 
+static gboolean 
+chatrooms_window_chatroom_changed_foreach (GtkTreeModel   *model,
+					   GtkTreePath    *path,
+					   GtkTreeIter    *iter,
+					   GossipChatroom *chatroom_to_update)
+{
+	GossipChatroom *chatroom;
+	gboolean        equal = FALSE;
+
+	gtk_tree_model_get (model, iter, COL_POINTER, &chatroom, -1);
+	if (!chatroom) {
+		return equal;
+	}
+
+	equal = gossip_chatroom_equal (chatroom, chatroom_to_update);
+	if (equal) {
+		gtk_tree_model_row_changed (model, path, iter);
+	}
+
+	g_object_unref (chatroom);
+	return equal;
+}
+
 static void
 chatrooms_window_chatroom_changed_cb (GossipChatroom        *chatroom,
 				      GParamSpec            *param,
@@ -842,29 +903,6 @@ chatrooms_window_chatroom_added_cb (GossipChatroomManager *manager,
 				    GossipChatroomsWindow *window)
 {
 	chatrooms_window_model_add (window, chatroom, FALSE, TRUE);
-}
-
-static gboolean 
-chatrooms_window_chatroom_changed_foreach (GtkTreeModel   *model,
-					   GtkTreePath    *path,
-					   GtkTreeIter    *iter,
-					   GossipChatroom *chatroom_to_update)
-{
-	GossipChatroom *chatroom;
-	gboolean        equal = FALSE;
-
-	gtk_tree_model_get (model, iter, COL_POINTER, &chatroom, -1);
-	if (!chatroom) {
-		return equal;
-	}
-
-	equal = gossip_chatroom_equal (chatroom, chatroom_to_update);
-	if (equal) {
-		gtk_tree_model_row_changed (model, path, iter);
-	}
-
-	g_object_unref (chatroom);
-	return equal;
 }
 
 static void

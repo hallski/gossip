@@ -665,7 +665,7 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 	default:
 	case GOSSIP_CHATROOM_STATUS_INACTIVE:
 	case GOSSIP_CHATROOM_STATUS_UNKNOWN:
-		stock_id = GTK_STOCK_CLOSE;
+		stock_id = GTK_STOCK_DISCONNECT;
 		break;
 	}
 

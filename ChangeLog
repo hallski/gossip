@@ -1,5 +1,21 @@
 2006-03-15  Martyn Russell  <martyn@imendio.com>
 
+	* NEWS: Updated for upcoming release.
+	
+	* libgossip/gossip-account-manager.c: Added a check for account
+	IDs to make sure they are in the correct state since we changed
+	the format again for the next release and we don't want the same
+	confusion as last time. Fixes bug #331664.
+
+	* src/gossip-chatrooms-window.c: Check if any rooms are still
+	joining when we get called back that a room has been joined, if
+	not we hide the window.
+	
+	* src/gossip-ui-utils.c: Use the GTK_STOCK_DISCONNECT for inactive
+	chatrooms, I think it works better than the GTK_STOCK_CLOSE.
+
+2006-03-15  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-spell-dialog.c:
 	* ui/main.glade: Fixed the spell checker dialog not showing and
 	change the "OK" button to "Replace".
