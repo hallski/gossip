@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -30,10 +30,9 @@
 #include "gossip-ui-utils.h"
 #include "gossip-spell-dialog.h"
 
-
 struct _GossipSpellDialog {
 	GtkWidget   *window;
-	GtkWidget   *button_ok;
+	GtkWidget   *button_replace;
 	GtkWidget   *label_word;
 	GtkWidget   *treeview_words;
 
@@ -41,8 +40,8 @@ struct _GossipSpellDialog {
 	GossipSpell *spell;
 
 	gchar       *word;
-	GtkTextIter start;
-	GtkTextIter end;
+	GtkTextIter  start;
+	GtkTextIter  end;
 };
 
 typedef struct _GossipSpellDialog GossipSpellDialog;
@@ -52,94 +51,16 @@ enum {
 	COL_SPELL_COUNT
 };
 
-static void spell_dialog_setup                (GossipSpellDialog *dialog);
 static void spell_dialog_populate_columns     (GossipSpellDialog *dialog);
 static void spell_dialog_populate_suggestions (GossipSpellDialog *dialog);
 static void spell_dialog_selection_changed_cb (GtkTreeSelection  *treeselection,
 					       GossipSpellDialog *dialog);
+static void spell_dialog_setup                (GossipSpellDialog *dialog);
 static void spell_dialog_response_cb          (GtkWidget         *widget,
 					       gint               response,
 					       GossipSpellDialog *dialog);
 static void spell_dialog_destroy_cb           (GtkWidget         *widget,
 					       GossipSpellDialog *dialog);
-
-
-void
-gossip_spell_dialog_show (GossipChat  *chat,
-			  GossipSpell *spell,
-			  GtkTextIter  start,
-			  GtkTextIter  end,
-			  const gchar *word)
-{
-	GossipSpellDialog *dialog;
-	GladeXML          *gui;
-	gchar             *str;
-
-	g_return_if_fail (chat != NULL);
-	g_return_if_fail (word != NULL);
-	g_return_if_fail (strlen (word) > 0);
-
-	dialog = g_new0 (GossipSpellDialog, 1);
-
-	dialog->chat = g_object_ref (chat);
-	dialog->spell = spell;
-
-	dialog->word = g_strdup (word);
-
-	dialog->start = start;
-	dialog->end = end;
-
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
-				     "spell_dialog",
-				     NULL,
-				     "spell_dialog", &dialog->window,
-				     "button_ok", &dialog->button_ok,
-				     "label_word", &dialog->label_word,
-				     "treeview_words", &dialog->treeview_words,
-				     NULL);
-
-	gossip_glade_connect (gui,
-			      dialog,
-			      "spell_dialog", "response", spell_dialog_response_cb,
-			      "spell_dialog", "destroy", spell_dialog_destroy_cb,
-			      NULL);
-
-	g_object_unref (gui);
-
-	str = g_strdup_printf ("%s:\n<b>%s</b>", 
-			       _("Suggestions for the word"),
-			       word);
-
-	gtk_label_set_markup (GTK_LABEL (dialog->label_word), str);
-	g_free (str);
-	
-	spell_dialog_setup (dialog);
-}
-
-static void 
-spell_dialog_setup (GossipSpellDialog *dialog)
-{
-	GtkListStore     *store;
-	GtkTreeSelection *selection;
-
-	store = gtk_list_store_new (COL_SPELL_COUNT,
-				    G_TYPE_STRING);   /* word */
-	
-	gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->treeview_words), 
-				 GTK_TREE_MODEL (store));
-
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->treeview_words));
-	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-	
-	g_signal_connect (selection, "changed",
-			  G_CALLBACK (spell_dialog_selection_changed_cb),
-			  dialog);
-
-	spell_dialog_populate_columns (dialog);
-	spell_dialog_populate_suggestions (dialog);
-
-	g_object_unref (store);
-}
 
 static void 
 spell_dialog_populate_columns (GossipSpellDialog *dialog)
@@ -210,7 +131,32 @@ spell_dialog_selection_changed_cb (GtkTreeSelection  *treeselection,
 	gint count;
 
 	count = gtk_tree_selection_count_selected_rows (treeselection);
-	gtk_widget_set_sensitive (dialog->button_ok, (count == 1));
+	gtk_widget_set_sensitive (dialog->button_replace, (count == 1));
+}
+
+static void 
+spell_dialog_setup (GossipSpellDialog *dialog)
+{
+	GtkListStore     *store;
+	GtkTreeSelection *selection;
+
+	store = gtk_list_store_new (COL_SPELL_COUNT,
+				    G_TYPE_STRING);   /* word */
+	
+	gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->treeview_words), 
+				 GTK_TREE_MODEL (store));
+
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->treeview_words));
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (spell_dialog_selection_changed_cb),
+			  dialog);
+
+	spell_dialog_populate_columns (dialog);
+	spell_dialog_populate_suggestions (dialog);
+
+	g_object_unref (store);
 }
 
 static void
@@ -254,4 +200,58 @@ spell_dialog_response_cb (GtkWidget         *widget,
 	}
 
 	gtk_widget_destroy (dialog->window);
+}
+
+void
+gossip_spell_dialog_show (GossipChat  *chat,
+			  GossipSpell *spell,
+			  GtkTextIter  start,
+			  GtkTextIter  end,
+			  const gchar *word)
+{
+	GossipSpellDialog *dialog;
+	GladeXML          *gui;
+	gchar             *str;
+
+	g_return_if_fail (chat != NULL);
+	g_return_if_fail (word != NULL);
+	g_return_if_fail (strlen (word) > 0);
+
+	dialog = g_new0 (GossipSpellDialog, 1);
+
+	dialog->chat = g_object_ref (chat);
+	dialog->spell = spell;
+
+	dialog->word = g_strdup (word);
+
+	dialog->start = start;
+	dialog->end = end;
+
+	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+				     "spell_dialog",
+				     NULL,
+				     "spell_dialog", &dialog->window,
+				     "button_replace", &dialog->button_replace,
+				     "label_word", &dialog->label_word,
+				     "treeview_words", &dialog->treeview_words,
+				     NULL);
+
+	gossip_glade_connect (gui,
+			      dialog,
+			      "spell_dialog", "response", spell_dialog_response_cb,
+			      "spell_dialog", "destroy", spell_dialog_destroy_cb,
+			      NULL);
+
+	g_object_unref (gui);
+
+	str = g_strdup_printf ("%s:\n<b>%s</b>", 
+			       _("Suggestions for the word"),
+			       word);
+
+	gtk_label_set_markup (GTK_LABEL (dialog->label_word), str);
+	g_free (str);
+	
+	spell_dialog_setup (dialog);
+
+	gtk_widget_show (dialog->window);
 }

@@ -1,3 +1,9 @@
+2006-03-15  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-spell-dialog.c:
+	* ui/main.glade: Fixed the spell checker dialog not showing and
+	change the "OK" button to "Replace".
+
 2006-03-13  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-account-chooser.[ch]: Make it possible to select
