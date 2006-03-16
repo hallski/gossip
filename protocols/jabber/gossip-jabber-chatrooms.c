@@ -273,10 +273,12 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 {
 	GossipJID        *jid;
 	GossipMessage    *message;
+	GossipContact    *contact;
 	GossipChatroomId  id;
 	JabberChatroom   *room;
 	LmMessageNode    *node;
 	const gchar      *from;
+
 
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GROUPCHAT) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -293,6 +295,8 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
+	contact = jabber_chatrooms_get_contact (room, jid, NULL);
+
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
 		if (gossip_jid_get_resource (jid) == NULL) {
@@ -301,10 +305,6 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 					       id, node->value);
 		} else {
 			gossip_time_t  timestamp;
-			GossipContact *contact;
-
-			contact = jabber_chatrooms_get_contact (room, jid, 
-								NULL);
 			timestamp = gossip_jabber_get_message_timestamp (m);
 
 			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
@@ -327,8 +327,8 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 	node = lm_message_node_get_child (m->node, "subject");
 	if (node) {
 		g_signal_emit_by_name (chatrooms->jabber,
-				       "chatroom-title-changed", 
-				       id, node->value);
+				       "chatroom-topic-changed", 
+				       id, contact, node->value);
 	}
 	
 	gossip_jid_unref (jid);

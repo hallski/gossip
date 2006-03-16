@@ -375,8 +375,8 @@ gossip_theme_manager_apply (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-event");
 	g_object_set (tag,
-		      "foreground", "darkgrey",
-		      "justification", GTK_JUSTIFY_CENTER,
+		      "foreground", "PeachPuff4", /* PeachPuff3 isn't bad */
+		      "justification", GTK_JUSTIFY_LEFT,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
@@ -456,8 +456,8 @@ gossip_theme_manager_apply (GossipThemeManager *manager,
 
 	tag = theme_manager_init_tag_by_name (table, "irc-event");
 	g_object_set (tag,
-		      "foreground", "darkgrey",
-		      "justification", GTK_JUSTIFY_CENTER,
+		      "foreground", "PeachPuff4",
+		      "justification", GTK_JUSTIFY_LEFT,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 

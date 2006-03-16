@@ -46,7 +46,6 @@
 /* Maximum lines in any chat buffer, see bug #141292. */
 #define MAX_LINES 1000
 
-
 typedef enum {
 	BLOCK_TYPE_NONE,
 	BLOCK_TYPE_SELF,
@@ -55,7 +54,6 @@ typedef enum {
 	BLOCK_TYPE_TIME,
 	BLOCK_TYPE_INVITE
 } BlockType;
-
 
 struct _GossipChatViewPriv {
 	GtkTextBuffer *buffer;
@@ -70,13 +68,11 @@ struct _GossipChatViewPriv {
 	GossipContact *last_contact;
 };
 
-
 typedef struct {
 	GossipSmiley  smiley;
 	gchar        *pattern;
 	gint          index;
 } GossipSmileyPattern;
-
 
 static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_NORMAL,       ":)",  0 },
@@ -168,9 +164,7 @@ static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_SICK,         ")o+", 0 }
 };
 
-
 static gint num_smileys = G_N_ELEMENTS (smileys);
-
 
 static void       gossip_chat_view_class_init          (GossipChatViewClass      *klass);
 static void       gossip_chat_view_init                (GossipChatView           *view);
@@ -241,9 +235,7 @@ static void       chat_view_append_fancy_message       (GossipChatView          
 							GossipContact            *my_contact,
 							gboolean                  from_self);
 
-
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
-
 
 static void
 gossip_chat_view_class_init (GossipChatViewClass *klass)
@@ -821,9 +813,11 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	widget = gtk_button_new_with_label (_("Accept"));
 	g_object_set_data_full (G_OBJECT (widget), "invite",
-				g_strdup (invite), g_free);
+				g_strdup (invite), 
+				g_free);
  	g_object_set_data_full (G_OBJECT (widget), "contact",
- 				g_object_ref (sender), g_object_unref);
+ 				g_object_ref (sender), 
+				g_object_unref);
 
 	g_signal_connect (widget,
 			  "clicked",
@@ -913,7 +907,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 		g_string_append (str, buf);
 
 		if (append_time) {
-			g_string_append (str, " - ");
+			g_string_append (str, ", ");
 		}
 	}
 
@@ -1485,7 +1479,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	timestamp = gossip_time_get_current ();
 	stamp = gossip_time_to_timestamp (-1);
-	msg = g_strdup_printf ("- %s - %s -\n", str, stamp);
+	msg = g_strdup_printf ("* [%s] %s\n", stamp, str);
 	g_free (stamp);
 
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer, &iter,

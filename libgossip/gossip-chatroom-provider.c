@@ -32,7 +32,7 @@ static void  chatroom_provider_base_init (gpointer g_class);
 enum {
 	CHATROOM_NEW_MESSAGE,
 	CHATROOM_NEW_ROOM_EVENT,
-	CHATROOM_TITLE_CHANGED,
+	CHATROOM_TOPIC_CHANGED,
 	CHATROOM_CONTACT_JOINED,
 	CHATROOM_CONTACT_LEFT,
 	CHATROOM_CONTACT_PRESENCE_UPDATED,
@@ -96,15 +96,15 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT_STRING,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, G_TYPE_STRING);
-		signals[CHATROOM_TITLE_CHANGED] = 
-			g_signal_new ("chatroom-title-changed",
+		signals[CHATROOM_TOPIC_CHANGED] = 
+			g_signal_new ("chatroom-topic-changed",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
 				      0,
 				      NULL, NULL,
-				      libgossip_marshal_VOID__INT_STRING,
+				      libgossip_marshal_VOID__INT_OBJECT_STRING,
 				      G_TYPE_NONE,
-				      2, G_TYPE_INT, G_TYPE_STRING);
+				      3, G_TYPE_INT, GOSSIP_TYPE_CONTACT, G_TYPE_STRING);
 		
 		signals[CHATROOM_CONTACT_JOINED] = 
 			g_signal_new ("chatroom-contact-joined",

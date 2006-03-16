@@ -1,5 +1,23 @@
 2006-03-16  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-provider.c:
+	* libgossip/libgossip-marshal.list: 
+	* src/gossip-group-chat.c: 
+	* protocols/jabber/gossip-jabber-chatrooms.c: Pass the contact
+	responsible for changing the topic so we can report it in the
+	group chat window.    
+
+	* src/gossip-chat-view.c: 
+	* src/gossip-theme-manager.c: Update the colours for events to be
+	slightly more obvious than the darkgrey for time. Also make events
+	left aligned since I think they look ugly centered with a
+	timestamp :( - please don't kill me richard. I think the colour
+	could be better AND I am not certain of the format with the left
+	alignment like that either - so it will likely to back to how it
+	was. Let's try it for a while.
+
+2006-03-16  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac:
 	* src/gossip-notify.c: Update the libnotify module to work with
 	the 0.3.x API. This was been based on a patch from Brian Pepple

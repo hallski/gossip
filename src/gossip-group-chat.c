@@ -134,9 +134,10 @@ static void           group_chat_new_room_event_cb           (GossipChatroomProv
 							      gint                          id,
 							      const gchar                  *event,
 							      GossipGroupChat              *chat);
-static void           group_chat_title_changed_cb            (GossipChatroomProvider       *provider,
+static void           group_chat_topic_changed_cb            (GossipChatroomProvider       *provider,
 							      gint                          id,
-							      const gchar                  *title,
+							      GossipContact                *who,
+							      const gchar                  *new_topic,
 							      GossipGroupChat              *chat);
 static void           group_chat_contact_joined_cb           (GossipChatroomProvider       *provider,
 							      gint                          id,
@@ -264,7 +265,7 @@ group_chat_finalize (GObject *object)
 					      group_chat_new_room_event_cb, 
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->provider,
-					      group_chat_title_changed_cb, 
+					      group_chat_topic_changed_cb, 
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->provider,
 					      group_chat_contact_joined_cb,
@@ -845,12 +846,15 @@ group_chat_new_room_event_cb (GossipChatroomProvider *provider,
 }
 
 static void
-group_chat_title_changed_cb (GossipChatroomProvider *provider,
+group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 			     gint                    id,
-			     const gchar            *title,
+			     GossipContact          *who,
+			     const gchar            *new_topic,
 			     GossipGroupChat        *chat)
 {
 	GossipGroupChatPriv *priv;
+	gchar               *event;
+	gchar               *str;
 
 	priv = chat->priv;
 
@@ -858,7 +862,15 @@ group_chat_title_changed_cb (GossipChatroomProvider *provider,
 		return;
 	}
 	
-	gtk_entry_set_text (GTK_ENTRY (priv->topic_entry), title);
+	gtk_entry_set_text (GTK_ENTRY (priv->topic_entry), new_topic);
+	
+	str = g_strdup_printf (_("%s has set the topic"),
+				 gossip_contact_get_name (who));
+	event = g_strconcat (str, ": ", new_topic, NULL);
+	g_free (str);
+
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
+	g_free (event);
 }
 
 static void
@@ -1325,8 +1337,8 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 	g_signal_connect (provider, "chatroom-new-room-event",
 			  G_CALLBACK (group_chat_new_room_event_cb),
 			  chat);
-	g_signal_connect (provider, "chatroom-title-changed",
-			  G_CALLBACK (group_chat_title_changed_cb),
+	g_signal_connect (provider, "chatroom-topic-changed",
+			  G_CALLBACK (group_chat_topic_changed_cb),
 			  chat);
 	g_signal_connect (provider, "chatroom-contact-joined",
 			  G_CALLBACK (group_chat_contact_joined_cb),
