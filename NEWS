@@ -31,6 +31,8 @@ signal now (Martyn).
 - Improve the X screensaver detection (Richard, Tommi Komulainen).
 - Added the 'x' to close separate chat tabs back in (Richard, Martyn).
 - Improve the build scripts (Richard, Bryan Pepple).
+- Fixed #332169, Update the libnotify code to work with the 0.3.2 API
+(Martyn, Brian Pepple).
 - Fixed #332713, Use the default foreground colour for the classic
 chat theme (Richard).
 - Fixed #332240, Change some keyboard mnemonics for chat windows

@@ -114,7 +114,7 @@ AC_ARG_ENABLE(libnotify,
               enable_libnotify=auto)
 
 if test "x$enable_libnotify" != "xno"; then
-   libnotify_pkgconfig_tmp="libnotify >= 0.2.1"
+   libnotify_pkgconfig_tmp="libnotify >= 0.3.2"
    PKG_CHECK_MODULES(LIBNOTIFY, $libnotify_pkgconfig_tmp, have_libnotify=yes, have_libnotify=no)
    if test x$have_libnotify = xyes; then
       AC_DEFINE(HAVE_LIBNOTIFY, 1, [libnotify support])

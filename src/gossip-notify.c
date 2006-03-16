@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 Imendio AB
- * Copyright (C) 2005 Ross Burton <ross@openedhand.com>
+ * Copyright (C) 2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,32 +28,34 @@
 #include "gossip-notify.h"
 #include "gossip-stock.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x)   */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
 
-#define NOTIFY_MESSAGE_TIMEOUT 10
+#define NOTIFY_MESSAGE_TIMEOUT 20000
 
 #define NOTIFY_MESSAGE_MAX_LEN 64 /* Max length of the body part of a
 				   * message we show in the notification.
 				   */
 
-static gchar *       notify_get_filename_from_stock    (const gchar        *stock);
-static gchar *       notify_get_filename_from_presence (GossipPresence     *presence);
-static const gchar * notify_get_status_from_presence   (GossipPresence     *presence);
-static void          notify_new_message_cb             (NotifyHandle       *handle,
-							guint32             id,
-							GossipEventManager *event_manager);
-static NotifyHandle *notify_new_message                (GossipEventManager *event_manager,
-							GossipMessage      *message);
-static void          notify_event_added_cb             (GossipEventManager *event_manager,
-							GossipEvent        *event,
-							gpointer            user_data);
-static gboolean      notify_event_remove_foreach       (gpointer            key,
-							GossipEvent        *event,
-							GossipEvent        *event_to_compare);
-static void          notify_event_removed_cb           (GossipEventManager *event_manager,
-							GossipEvent        *event,
-							gpointer            user_data);
+static const gchar *         notify_get_status_from_presence (GossipPresence     *presence);
+static void                  notify_new_message_default_cb   (NotifyNotification *notify,
+							      gchar              *label,
+							      GossipEventManager *event_manager);
+static void                  notify_new_message_contact_cb   (NotifyNotification *notify,
+							      gchar              *label,
+							      GossipEventManager *event_manager);
+static NotifyNotification   *notify_new_message              (GossipEventManager *event_manager,
+							      GossipMessage      *message);
+static void                  notify_event_added_cb           (GossipEventManager *event_manager,
+							      GossipEvent        *event,
+							      gpointer            user_data);
+static gboolean              notify_event_remove_foreach     (gpointer            key,
+							      GossipEvent        *event,
+							      GossipEvent        *event_to_compare);
+static void                  notify_event_removed_cb         (GossipEventManager *event_manager,
+							      GossipEvent        *event,
+							      gpointer            user_data);
+static void                  notify_event_destroy_cb         (NotifyNotification *notify);
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
@@ -64,46 +65,6 @@ enum {
 static GHashTable *message_notifications = NULL;
 /* static GHashTable *presence_notifications = NULL; */
 static GHashTable *event_notifications = NULL;
-
-
-static gchar *
-notify_get_filename_from_stock (const gchar *stock)
-{
-	gchar *filename;
-
-	filename = g_strdup_printf (IMAGEDIR "/%s.png", stock);
-	return filename;
-}
-
-
-static gchar *
-notify_get_filename_from_presence (GossipPresence *presence)
-{
-	const gchar *stock; 
-
-	stock = GOSSIP_STOCK_OFFLINE;
-
-	if (presence) {
-		switch (gossip_presence_get_state (presence)) {
-		case GOSSIP_PRESENCE_STATE_AVAILABLE:
-			stock = GOSSIP_STOCK_AVAILABLE;
-			break;
-		case GOSSIP_PRESENCE_STATE_BUSY:
-			stock = GOSSIP_STOCK_BUSY;
-			break;
-		case GOSSIP_PRESENCE_STATE_AWAY:
-			stock = GOSSIP_STOCK_AWAY;
-			break;
-		case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-			stock = GOSSIP_STOCK_EXT_AWAY;
-			break;
-		default:
-			break;
-		}
-	}
-
-	return notify_get_filename_from_stock (stock);
-}
 
 static const gchar *
 notify_get_status_from_presence (GossipPresence *presence)
@@ -124,147 +85,149 @@ notify_get_status_from_presence (GossipPresence *presence)
 void
 gossip_notify_contact_online (GossipContact *contact)
 {
-	GossipPresence *presence;
-	NotifyIcon     *icon = NULL;
-	NotifyHandle   *handle;
-	gchar          *filename;
-	gchar          *title;
-	const gchar    *status;
+	GossipPresence     *presence;
+	NotifyNotification *notify;
+	GdkPixbuf          *pixbuf;
+	gchar              *title;
+	const gchar        *status;
+	GError             *error = NULL;
 
 	DEBUG_MSG (("Notify: Contact online:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	presence = gossip_contact_get_active_presence (contact);
-
-	filename = notify_get_filename_from_presence (presence);
-	icon = notify_icon_new_from_uri (filename);
-	g_free (filename);
+	pixbuf = gossip_pixbuf_for_presence (presence);
 
 	title = g_strdup_printf (_("%s has come online"), 
 			       gossip_contact_get_name (contact));
 	status = notify_get_status_from_presence (presence);
-	
-	handle = notify_send_notification (NULL,
-					   NULL, 
-					   NOTIFY_URGENCY_NORMAL,
-					   title,
-					   status,
-					   icon,   /* icon */
-					   TRUE,   /* should auto disappear */
-					   0,      /* timeout */
-					   NULL,   /* hints */
-					   NULL,   /* user data */
-					   0,      /* number of actions */ 
-					   NULL);  /* actions (uint32, string, callback) */
+
+	notify = notify_notification_new (title, status, NULL, NULL);
+	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
+	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+
+	if (!notify_notification_show (notify, &error)) {
+		g_warning ("Failed to send notification: %s\n",
+			   error->message);
+		g_error_free (error);
+	}
 	
 	g_free (title);
 
-	if (icon) {
-		notify_icon_destroy (icon);
+	if (pixbuf) {
+		g_object_unref (pixbuf);
 	}
 }
 
 void
 gossip_notify_contact_offline (GossipContact *contact)
 {
-	GossipPresence *presence;
-	NotifyIcon     *icon = NULL;
-	NotifyHandle   *handle;
-	gchar          *filename;
-	gchar          *title;
-	const gchar    *status;
+	GossipPresence     *presence;
+	NotifyNotification *notify;
+	GdkPixbuf          *pixbuf;
+	gchar              *title;
+	const gchar        *status;
+	GError             *error = NULL;
 
 	DEBUG_MSG (("Notify: Contact offline:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	presence = gossip_contact_get_active_presence (contact);
-
-	filename = notify_get_filename_from_presence (presence);
-	icon = notify_icon_new_from_uri (filename);
-	g_free (filename);
+	pixbuf = gossip_pixbuf_for_presence (presence);
 
 	title = g_strdup_printf (_("%s has gone offline"), 
 				 gossip_contact_get_name (contact));
 	status = notify_get_status_from_presence (presence);
-	
-	handle = notify_send_notification (NULL, 
-					   NULL, 
-					   NOTIFY_URGENCY_NORMAL,
-					   title,
-					   status,
-					   icon,   /* icon */
-					   TRUE,   /* should auto disappear */
-					   0,      /* timeout */
-					   NULL,   /* hints */
-					   NULL,   /* user data */
-					   0,      /* number of actions */ 
-					   NULL);  /* actions (uint32, string, callback) */
 
+	notify = notify_notification_new (title, status, NULL, NULL);
+	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
+	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+
+	if (!notify_notification_show (notify, &error)) {
+		g_warning ("Failed to send notification: %s\n",
+			   error->message);
+		g_error_free (error);
+	}
+	
 	g_free (title);
 
-	if (icon) {
-		notify_icon_destroy (icon);
-	}
+	if (pixbuf) {
+		g_object_unref (pixbuf);
+	}					
 }
 
 static void
-notify_new_message_cb (NotifyHandle       *handle,
-		       guint32             id,
-		       GossipEventManager *event_manager)
+notify_new_message_default_cb (NotifyNotification *notify,
+			       gchar              *label,
+			       GossipEventManager *event_manager)
 {
 	GossipEvent   *event;
 	GossipMessage *message;
 	GossipContact *contact = NULL;
 
-	event = g_hash_table_lookup (event_notifications, handle);
+	event = g_hash_table_lookup (event_notifications, notify);
 	if (event) {
 		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
 		contact = gossip_message_get_sender (message);
 	
-		switch (id) {
-		case 0:
-		case 1:
-			gossip_event_manager_activate (event_manager, event);
-			break;
-		case 2:
-			gossip_contact_info_dialog_show (contact);
-			break;
-		}
+		gossip_event_manager_activate (event_manager, event);
 	} else {
-		g_warning ("No event found for NotifyHandle:0x%.8x", 
-			   (gint) handle);
+		g_warning ("No event found for NotifyNotification:0x%.8x\n", 
+			   (gint) notify);
 	}
 
-	if (id == 0 || id == 1) {
-		g_hash_table_remove (event_notifications, handle);
-		g_hash_table_remove (message_notifications, contact);
+	g_hash_table_remove (event_notifications, notify);
+	g_hash_table_remove (message_notifications, contact);
 
-		g_object_unref (event_manager);
+	g_object_unref (event_manager);
+}
+
+static void
+notify_new_message_contact_cb (NotifyNotification *notify,
+			       gchar              *label,
+			       GossipEventManager *event_manager)
+{
+	GossipEvent   *event;
+	GossipMessage *message;
+	GossipContact *contact = NULL;
+
+	event = g_hash_table_lookup (event_notifications, notify);
+	if (event) {
+		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
+		contact = gossip_message_get_sender (message);
+
+		gossip_contact_info_dialog_show (contact);
+	} else {
+		g_warning ("No event found for Notification:0x%.8x\n",
+			   (gint) notify);
 	}
-}       
 
-static NotifyHandle *
+	g_hash_table_remove (event_notifications, notify);
+	g_hash_table_remove (message_notifications, contact);
+
+	g_object_unref (event_manager);
+}
+
+static NotifyNotification *
 notify_new_message (GossipEventManager *event_manager,
 		    GossipMessage      *message)
-{
-	GossipContact *contact;
-	NotifyIcon    *icon = NULL;
-	NotifyHandle  *handle;
-	gchar         *filename;
-	gchar         *title;
-	gchar         *msg;
-	const gchar   *body;
-	gchar         *str;
-	gint           len;
+{ 
+	GossipContact      *contact;
+	NotifyNotification *notify = NULL;
+	GdkPixbuf          *pixbuf;
+	gchar              *title;
+	gchar              *msg;
+	const gchar        *body;
+	gchar              *str;
+	gint                len;
+	GError             *error = NULL;
 
 	contact = gossip_message_get_sender (message);
 
 	DEBUG_MSG (("Notify: New message:'%s'", 
 		   gossip_contact_get_id (contact)));
 
-	filename = notify_get_filename_from_stock (GOSSIP_STOCK_MESSAGE);
-	icon = notify_icon_new_from_uri (filename);
-	g_free (filename);
+	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
 
 	title = g_strdup_printf (_("New message from %s"), 
 				 gossip_contact_get_name (contact));
@@ -274,35 +237,40 @@ notify_new_message (GossipEventManager *event_manager,
 	len = MIN (len, NOTIFY_MESSAGE_MAX_LEN);
 	str = g_strndup (body, len);
 
-	msg = g_strdup_printf ("\"%s%s\"",
+	msg = g_strdup_printf ("\n\"%s%s\"\n",
 			       str, 
 			       len >= NOTIFY_MESSAGE_MAX_LEN ? "..." : "");
 	g_free (str);
 
-	handle = 
-		notify_send_notification (NULL, 
-					  "new_message", 
-					  NOTIFY_URGENCY_NORMAL,
-					  title,
-					  msg,
-					  icon,  
-					  TRUE,   /* should auto disappear */
-					  NOTIFY_MESSAGE_TIMEOUT,
-					  NULL,   /* hints */
-					  g_object_ref (event_manager),
-					  3,      /* number of actions */ 
-					  0, "default", notify_new_message_cb,
-					  1, _("Respond"), notify_new_message_cb,
-					  2, _("Contact Information"), notify_new_message_cb);
+	notify = notify_notification_new (title, msg, NULL, NULL);
+	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
+	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIMEOUT);
+
+	notify_notification_add_action (notify, "default", _("Default"),
+					(NotifyActionCallback) notify_new_message_default_cb,
+					g_object_ref (event_manager), NULL);
+	notify_notification_add_action (notify, "respond", _("Respond"),
+					(NotifyActionCallback) notify_new_message_default_cb,
+					g_object_ref (event_manager), NULL);
+	notify_notification_add_action (notify, "contact", _("Contact Information"),
+					(NotifyActionCallback) notify_new_message_contact_cb,
+					g_object_ref (event_manager), NULL);
+
+	if (!notify_notification_show (notify, &error)) {
+		g_warning ("Failed to send notification: %s\n",
+			   error->message);
+		g_error_free (error);
+	}
 
 	g_free (msg);
 	g_free (title);
 
-	if (icon) {
-		notify_icon_destroy (icon);
+	if (pixbuf) {
+		g_object_unref (pixbuf);
 	}
 
-	return handle;
+	return notify;
 }
 
 static void
@@ -315,9 +283,9 @@ notify_event_added_cb (GossipEventManager *event_manager,
 	type = gossip_event_get_type (event);
 
 	if (type == GOSSIP_EVENT_NEW_MESSAGE) {
-		NotifyHandle  *handle;
-		GossipMessage *message;
-		GossipContact *contact;
+		NotifyNotification  *notify;
+		GossipMessage       *message;
+		GossipContact       *contact;
 		
 		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
 		contact = gossip_message_get_sender (message);
@@ -326,12 +294,12 @@ notify_event_added_cb (GossipEventManager *event_manager,
 		 * if not, show a notification.
 		 */
 		if (! g_hash_table_lookup (message_notifications, contact)) {
-			handle = notify_new_message (event_manager, message);
+			notify = notify_new_message (event_manager, message);
 			g_hash_table_insert (message_notifications,
 					     contact,
 					     g_object_ref (event));
   			g_hash_table_insert (event_notifications,   
-  					     handle,   
+  					     notify,   
   					     g_object_ref (event));  
 		}
 	}
@@ -362,6 +330,12 @@ notify_event_removed_cb (GossipEventManager *event_manager,
 				     event);
 }
 
+static void
+notify_event_destroy_cb (NotifyNotification *notify)
+{
+	notify_notification_close (notify, NULL);
+}
+
 void
 gossip_notify_init (GossipSession      *session,
 		    GossipEventManager *event_manager)
@@ -371,7 +345,7 @@ gossip_notify_init (GossipSession      *session,
 	
 	DEBUG_MSG (("Notify: Initiating..."));
 
-	if (!notify_glib_init (PACKAGE_NAME, NULL)) {
+	if (!notify_init (PACKAGE_NAME)) {
 		g_warning ("Cannot initialise Notify integration");
 		return;
 	}
@@ -383,7 +357,7 @@ gossip_notify_init (GossipSession      *session,
 
 	event_notifications = g_hash_table_new_full (g_direct_hash,
 						     g_direct_equal,
-						     (GDestroyNotify) notify_close,
+						     (GDestroyNotify) notify_event_destroy_cb,
 						     (GDestroyNotify) g_object_unref);
 
 	g_signal_connect (event_manager, "event-added",
@@ -392,5 +366,4 @@ gossip_notify_init (GossipSession      *session,
 	g_signal_connect (event_manager, "event-removed",
 			  G_CALLBACK (notify_event_removed_cb),
 			  NULL);
-
 }

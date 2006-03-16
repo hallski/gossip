@@ -1,3 +1,11 @@
+2006-03-16  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* src/gossip-notify.c: Update the libnotify module to work with
+	the 0.3.x API. This was been based on a patch from Brian Pepple
+	with some minor alterations. Gossip will now work with libnotify
+	0.3.2 or above. Fixes bug #332169 (Brian Pepple).
+	
 2006-03-15  Martyn Russell  <martyn@imendio.com>
 
 	* NEWS: Updated for upcoming release.

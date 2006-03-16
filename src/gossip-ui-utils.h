@@ -83,7 +83,6 @@ GdkPixbuf *gossip_pixbuf_offline             (void);
 GdkPixbuf *gossip_pixbuf_for_chatroom_status (GossipChatroom      *chatroom,
 					      GtkIconSize          icon_size);
 	
-
 /* windows */
 gboolean   gossip_window_get_is_visible      (GtkWindow           *window);
 void       gossip_window_present             (GtkWindow           *window);
