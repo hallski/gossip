@@ -36,8 +36,8 @@
 #include "gossip-chat.h"
 #include "gossip-app.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_MSG(x)  
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 
 struct _GossipChatPriv {
@@ -322,7 +322,12 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 
 		/* spell check string */
-		correct = gossip_spell_check (priv->spell, str);
+  		if (!gossip_chat_get_is_command (str)) { 
+			correct = gossip_spell_check (priv->spell, str);
+ 		} else { 
+ 			correct = TRUE; 
+ 		} 
+
 		if (!correct) {
 			gtk_text_buffer_apply_tag_by_name (buffer, "misspelled", &start, &end);
 		} else {
@@ -516,6 +521,25 @@ chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem,
 				  chat_spell->start,
 				  chat_spell->end,
 				  chat_spell->word);
+}
+
+gboolean
+gossip_chat_get_is_command (const gchar *str)
+{
+	g_return_val_if_fail (str != NULL, FALSE);
+	g_return_val_if_fail (strlen (str) > 0, FALSE);
+	
+	if (g_str_has_prefix (str, "/me")) {
+		return TRUE;
+	}
+	else if (g_str_has_prefix (str, "/nick")) {
+		return TRUE;
+	}
+	else if (g_str_has_prefix (str, "/topic")) {
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 void

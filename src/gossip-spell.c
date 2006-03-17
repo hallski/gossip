@@ -31,8 +31,7 @@
 #include "gossip-spell.h"
 
 #define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
-	
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
 typedef struct {
 #ifdef HAVE_ASPELL
@@ -42,7 +41,6 @@ typedef struct {
 #endif /* HAVE_ASPELL */
 } SpellLanguage;
 
-
 struct _GossipSpell {
 	gint                ref_count;
 
@@ -51,9 +49,7 @@ struct _GossipSpell {
 	gboolean            has_backend;
 };
 
-
 static void spell_free (GossipSpell *spell);
-
 
 /* 
  * Can we get this from somewhere else?
@@ -162,7 +158,6 @@ const gchar *languages[] = {
 	NULL
 };
 
-
 GossipSpell * 
 gossip_spell_new (GList *languages)
 {
@@ -206,12 +201,11 @@ gossip_spell_new (GList *languages)
 			spell->has_backend = TRUE;
 			
 			DEBUG_MSG (("Spell: Using ASpell back end for language:'%s'", language)); 
-	} else {
+		} else {
 			DEBUG_MSG (("Spell: No back end supported")); 
-	}
+		}
 
  		spell->languages = g_list_append (spell->languages, lang);
-
 	} else {
 		for (l = languages; l; l = l->next) {
 			SpellLanguage *lang;
@@ -232,7 +226,7 @@ gossip_spell_new (GList *languages)
 
 			if (aspell_error_number (lang->spell_possible_err) == 0) {
 				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
-		spell->has_backend = TRUE;
+				spell->has_backend = TRUE;
 				
 				DEBUG_MSG (("Spell: Using ASpell back end for language:'%s'", language)); 
 			}
@@ -347,23 +341,45 @@ gossip_spell_get_language_codes (GossipSpell *spell)
 }
 
 gboolean
-gossip_spell_check (GossipSpell *spell, const gchar *word)
+gossip_spell_check (GossipSpell *spell, 
+		    const gchar *word)
 {
 #ifdef HAVE_ASPELL
 	GList    *l;
 #endif /* HAVE_ASPELL */
 
-	gint      langs;
-	gboolean  correct = FALSE;
+	gint         langs;
+	gboolean     correct = FALSE;
+
+	gint         len;
+
+	const gchar *p;
+	gunichar     c;
+
+	gboolean     digit;
 
 	g_return_val_if_fail (spell != NULL, FALSE);
 	g_return_val_if_fail (word != NULL, FALSE);
-	g_return_val_if_fail (word[0] != 0, FALSE);
+
+	len = strlen (word);
+	g_return_val_if_fail (len > 0, FALSE);
 
 	if (!spell->languages) {
 		return FALSE;
 	}
-	
+
+	/* Ignore certan cases like numbers, etc. */
+	for (p = word, digit = TRUE; *p && digit; p = g_utf8_next_char (p)) {
+		c = g_utf8_get_char (p);
+		digit = g_unichar_isdigit (c);
+	}
+
+	if (digit) {
+		/* We don't spell check digits. */
+		DEBUG_MSG (("Not spell checking word:'%s', it is all digits", word));
+		return TRUE;
+	}
+		
 	langs = g_list_length (spell->languages);
 
 #ifdef HAVE_ASPELL
@@ -375,9 +391,7 @@ gossip_spell_check (GossipSpell *spell, const gchar *word)
 			continue;
 		}
 
-		correct = aspell_speller_check (lang->spell_checker, 
-						word, strlen (word));
-		
+		correct = aspell_speller_check (lang->spell_checker, word, len);
 		if (langs > 1 && correct) {
 			break;
 		}

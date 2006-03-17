@@ -902,13 +902,27 @@ chatrooms_window_chatroom_added_cb (GossipChatroomManager *manager,
 				    GossipChatroom        *chatroom,
 				    GossipChatroomsWindow *window)
 {
-	chatrooms_window_model_add (window, chatroom, FALSE, TRUE);
+	GossipAccount        *account;
+	GossipAccount        *account_selected;
+	GossipAccountChooser *account_chooser;
+
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser_chatroom);
+	account_selected = gossip_account_chooser_get_account (account_chooser);
+
+	account = gossip_chatroom_get_account (chatroom);
+
+	if (gossip_account_equal (account_selected, account)) {
+		chatrooms_window_model_add (window, chatroom, FALSE, TRUE);
+	}
+
+	g_object_unref (account_selected);
 }
 
 static void
 chatrooms_window_account_chatroom_changed_cb (GtkWidget             *combo_box,
 					      GossipChatroomsWindow *window)
 {
+	
 	chatrooms_window_model_refresh_data (window, FALSE);
 }
 

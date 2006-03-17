@@ -44,8 +44,8 @@
 #include "gossip-app.h"
 #include "gossip-log.h"
 
-/* #define DEBUG_MSG(x)   */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
 #define LOG_HEADER \
     "<?xml version='1.0' encoding='UTF-8'?>\n" \

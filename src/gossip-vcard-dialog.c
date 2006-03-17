@@ -35,8 +35,8 @@
 #include "gossip-app.h"
 #include "gossip-vcard-dialog.h"
 
-/* #define DEBUG_MSG(x)   */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 

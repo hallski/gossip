@@ -34,6 +34,10 @@ signal now (Martyn).
 - Improve the X screensaver detection (Richard, Tommi Komulainen).
 - Added the 'x' to close separate chat tabs back in (Richard, Martyn).
 - Improve the build scripts (Richard, Bryan Pepple).
+- Fixed #332058, Don't spell check chat commands like "/me" (Ross
+Burton). 
+- Fixed #332063, Don't spell check numberic strings, e.g. "1234" (Ross
+Burton). 
 - Fixed #332169, Update the libnotify code to work with the 0.3.2 API
 (Martyn, Brian Pepple).
 - Fixed #332713, Use the default foreground colour for the classic

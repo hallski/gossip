@@ -28,8 +28,8 @@
 #include "gossip-notify.h"
 #include "gossip-stock.h"
 
-/* #define DEBUG_MSG(x)   */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
 #define NOTIFY_MESSAGE_TIMEOUT 20000
 
@@ -237,7 +237,7 @@ notify_new_message (GossipEventManager *event_manager,
 	len = MIN (len, NOTIFY_MESSAGE_MAX_LEN);
 	str = g_strndup (body, len);
 
-	msg = g_strdup_printf ("\n\"%s%s\"\n",
+	msg = g_strdup_printf ("\"%s%s\"",
 			       str, 
 			       len >= NOTIFY_MESSAGE_MAX_LEN ? "..." : "");
 	g_free (str);

@@ -114,8 +114,8 @@ gboolean          gossip_chat_get_show_contacts     (GossipChat       *chat);
 void              gossip_chat_set_show_contacts     (GossipChat       *chat,
 						     gboolean          show);
 
-
-/* for spell checker dialog to correct the misspelled word */
+/* For spell checker dialog to correct the misspelled word. */
+gboolean          gossip_chat_get_is_command        (const gchar      *str);
 void              gossip_chat_correct_word          (GossipChat       *chat,
 						     GtkTextIter       start,
 						     GtkTextIter       end,

@@ -1,3 +1,21 @@
+2006-03-17  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat.[ch]: Make sure the string we want to spell
+	check isn't a command like "/me" before checking it, since it
+	fails the spell check and gets underlined. Fixes bug #332058 (Ross
+	Burton).
+
+	* src/gossip-spell.c: Don't spell check strings which comprise of
+	digits, fixes bug #332063 (Ross Burton).
+
+	* src/gossip-chatrooms-window.c: When adding new chatrooms to the
+	list make sure the chatroom account matches the account selected
+	instead of blindly adding it.
+
+	* src/gossip-log.c:
+	* src/gossip-notify.c: 
+	* src/gossip-vcard-dialog.c: Removed debugging.
+
 2006-03-16  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-provider.c:
