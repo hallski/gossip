@@ -4,7 +4,7 @@ AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
 
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(1.9 check-news dist-bzip2 no-define)
+AM_INIT_AUTOMAKE(1.9 dist-bzip2 no-define)
 
 AM_MAINTAINER_MODE
 

@@ -1,5 +1,9 @@
 2006-03-17  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: Removed some crack so make distcheck builds.
+
+2006-03-17  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat.[ch]: Make sure the string we want to spell
 	check isn't a command like "/me" before checking it, since it
 	fails the spell check and gets underlined. Fixes bug #332058 (Ross
