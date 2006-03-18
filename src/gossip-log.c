@@ -19,17 +19,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libgnome/gnome-url.h>
