@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-14 14:51+0100\n"
+"POT-Creation-Date: 2006-03-18 13:48+0100\n"
 "PO-Revision-Date: 2006-03-14 14:52+0100\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -289,7 +289,7 @@ msgstr "Verbinding ver_breken"
 msgid "Edit"
 msgstr "Bewerken"
 
-#: ../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:694
+#: ../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:695
 #: ../src/gossip-private-chat.c:509
 msgid "Connected"
 msgstr "Verbonden"
@@ -298,7 +298,7 @@ msgstr "Verbonden"
 msgid "Connecting"
 msgstr "Verbinden"
 
-#: ../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:705
+#: ../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:706
 #: ../src/gossip-private-chat.c:524
 msgid "Disconnected"
 msgstr "Verbinding verbroken"
@@ -397,7 +397,7 @@ msgstr ""
 "De volgende stap is het invullen van uw accountgegevens in het "
 "accountvenster."
 
-#: ../src/gossip-chat.c:465
+#: ../src/gossip-chat.c:470
 msgid "_Check Word Spelling..."
 msgstr "Spelling van woord _controleren..."
 
@@ -410,32 +410,32 @@ msgstr ""
 "Vul een uitnodigingsbericht in voor\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:797
+#: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:789
 msgid "You have been invited to join a chat conference."
 msgstr "U bent uitgenodigd voor een groepsgesprek."
 
-#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:269
+#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:232
 #, c-format
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
 
-#: ../src/gossip-chat-view.c:403 ../ui/chat.glade.h:1
+#: ../src/gossip-chat-view.c:395 ../ui/chat.glade.h:1
 msgid "C_lear"
 msgstr "_Wissen"
 
-#: ../src/gossip-chat-view.c:420
+#: ../src/gossip-chat-view.c:412
 msgid "_Copy Link Address"
 msgstr "Koppelingsadres _kopiëren"
 
-#: ../src/gossip-chat-view.c:428
+#: ../src/gossip-chat-view.c:420
 msgid "_Open Link"
 msgstr "Koppeling _openen"
 
-#: ../src/gossip-chat-view.c:822
+#: ../src/gossip-chat-view.c:814
 msgid "Accept"
 msgstr "Accepteren"
 
-#: ../src/gossip-chat-view.c:912
+#: ../src/gossip-chat-view.c:910
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
@@ -448,7 +448,7 @@ msgstr "%sChatten - %s"
 msgid "Typing a message."
 msgstr "Bezig met typen van een bericht."
 
-#: ../src/gossip-chatrooms-window.c:718
+#: ../src/gossip-chatrooms-window.c:722
 #: ../src/gossip-new-chatroom-dialog.c:164 ../ui/group-chat.glade.h:9
 msgid "Join"
 msgstr "_Binnengaan"
@@ -472,39 +472,39 @@ msgstr "Contact informatie voor %s"
 msgid "Requested Information"
 msgstr "Opgevraagde informatie"
 
-#: ../src/gossip-contact-list.c:326
+#: ../src/gossip-contact-list.c:322
 msgid "/_Contact Information"
 msgstr "/_Contactinformatie"
 
-#: ../src/gossip-contact-list.c:338
+#: ../src/gossip-contact-list.c:334
 msgid "/Re_name Contact"
 msgstr "/Contact _hernoemen"
 
-#: ../src/gossip-contact-list.c:344
+#: ../src/gossip-contact-list.c:340
 msgid "/_Edit Groups"
 msgstr "/Groepen be_werken"
 
-#: ../src/gossip-contact-list.c:350
+#: ../src/gossip-contact-list.c:346
 msgid "/_Remove Contact"
 msgstr "/Contact _verwijderen"
 
-#: ../src/gossip-contact-list.c:362
+#: ../src/gossip-contact-list.c:358
 msgid "/In_vite to Chat Conference"
 msgstr "In groepsgesprek _uitnodigen"
 
-#: ../src/gossip-contact-list.c:374
+#: ../src/gossip-contact-list.c:370
 msgid "/_Send File..."
 msgstr "/_Bestand versturen..."
 
-#: ../src/gossip-contact-list.c:386
+#: ../src/gossip-contact-list.c:382
 msgid "/Show _Log"
 msgstr "/_Logboek bekijken"
 
-#: ../src/gossip-contact-list.c:396
+#: ../src/gossip-contact-list.c:392
 msgid "/Re_name group"
 msgstr "/Groep her_noemen"
 
-#: ../src/gossip-contact-list.c:2091
+#: ../src/gossip-contact-list.c:2087
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -513,11 +513,11 @@ msgstr ""
 "Voer een nieuwe bijnaam in voor contact\n"
 "%s"
 
-#: ../src/gossip-contact-list.c:2211
+#: ../src/gossip-contact-list.c:2207
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Wilt u dit contact echt uit de contactlijst verwijderen?"
 
-#: ../src/gossip-contact-list.c:2267
+#: ../src/gossip-contact-list.c:2263
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -531,7 +531,7 @@ msgstr ""
 msgid "Edit groups for %s"
 msgstr "Groepen bewerken voor %s"
 
-#: ../src/gossip-edit-groups-dialog.c:230 ../src/gossip-preferences.c:216
+#: ../src/gossip-edit-groups-dialog.c:230
 msgid "Select"
 msgstr "Selecteren"
 
@@ -580,12 +580,17 @@ msgid "Select a file"
 msgstr "Bestand selecteren"
 
 #. send event to chat window
-#: ../src/gossip-group-chat.c:480
+#: ../src/gossip-group-chat.c:481
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "%s wordt uitgenodigd om aan dit gesprek deel te nemen."
 
-#: ../src/gossip-log.c:214
+#: ../src/gossip-group-chat.c:867
+#, c-format
+msgid "%s has set the topic"
+msgstr "%s heeft het onderwerp ingesteld"
+
+#: ../src/gossip-log.c:210
 msgid "Conversation Log"
 msgstr "Gesprekslog"
 
@@ -638,33 +643,37 @@ msgstr "Thuis"
 msgid "Example"
 msgstr "Voorbeeld"
 
-#: ../src/gossip-notify.c:143 ../src/gossip-private-chat.c:444
+#: ../src/gossip-notify.c:101 ../src/gossip-private-chat.c:444
 #, c-format
 msgid "%s has come online"
 msgstr "%s is nu online"
 
-#: ../src/gossip-notify.c:186
+#: ../src/gossip-notify.c:138
 #, c-format
 msgid "%s has gone offline"
 msgstr "%s ging offline"
 
-#: ../src/gossip-notify.c:295
+#: ../src/gossip-notify.c:250
+msgid "Default"
+msgstr "Standaard"
+
+#: ../src/gossip-notify.c:253
 msgid "Respond"
 msgstr "Beantwoorden"
 
-#: ../src/gossip-notify.c:296
+#: ../src/gossip-notify.c:256
 msgid "Contact Information"
 msgstr "Contactinformatie"
 
-#: ../src/gossip-preferences.c:226
+#: ../src/gossip-preferences.c:224
 msgid "Language"
 msgstr "Taal"
 
-#: ../src/gossip-preferences.c:454
+#: ../src/gossip-preferences.c:451
 msgid "Classic"
 msgstr "Klassiek"
 
-#: ../src/gossip-preferences.c:460
+#: ../src/gossip-preferences.c:457
 msgid "Blue"
 msgstr "Blauw"
 
@@ -689,373 +698,13 @@ msgstr "Wissen"
 msgid "%s went offline"
 msgstr "%s ging offline"
 
-#: ../src/gossip-spell.c:70
-msgid "Afrikaans"
-msgstr "Afrikaans"
-
-#: ../src/gossip-spell.c:71
-msgid "Amharic"
-msgstr "Amhaars, Amharisch"
-
-#: ../src/gossip-spell.c:72
-msgid "Arabic"
-msgstr "Arabisch"
-
-#: ../src/gossip-spell.c:73
-msgid "Azerbaijani"
-msgstr "Azeri, Azerbeidzjaans"
-
-#: ../src/gossip-spell.c:74
-msgid "Belarusian"
-msgstr "Wit-Russisch, Belarussisch"
-
-#: ../src/gossip-spell.c:75
-msgid "Bulgarian"
-msgstr "Bulgaars"
-
-#: ../src/gossip-spell.c:76
-msgid "Bengali"
-msgstr "Bengaals"
-
-#: ../src/gossip-spell.c:77
-msgid "Breton"
-msgstr "Bretons, Bretoens"
-
-#: ../src/gossip-spell.c:78
-msgid "Bosnian"
-msgstr "Bosnisch"
-
-#: ../src/gossip-spell.c:79
-msgid "Catalan"
-msgstr "Catalaans"
-
-#: ../src/gossip-spell.c:80
-msgid "Czech"
-msgstr "Tsjechisch"
-
-#: ../src/gossip-spell.c:81
-msgid "Welsh"
-msgstr "Welsh"
-
-#: ../src/gossip-spell.c:82
-msgid "Danish"
-msgstr "Deens"
-
-#: ../src/gossip-spell.c:83
-msgid "German"
-msgstr "Duits"
-
-#: ../src/gossip-spell.c:84
-msgid "German (Austria)"
-msgstr "Duits (Oostenrijk)"
-
-#: ../src/gossip-spell.c:85
-msgid "German (Germany)"
-msgstr "Duits (Duitsland)"
-
-#: ../src/gossip-spell.c:86
-msgid "German (Swiss)"
-msgstr "Duits (Zwitserland)"
-
-#: ../src/gossip-spell.c:87
-msgid "Greek"
-msgstr "Grieks"
-
-#: ../src/gossip-spell.c:88
-msgid "English"
-msgstr "Engels"
-
-#: ../src/gossip-spell.c:89
-msgid "English (Canadian)"
-msgstr "Engels (Canadees)"
-
-#: ../src/gossip-spell.c:90
-msgid "English (British)"
-msgstr "Engels (Brits)"
-
-#: ../src/gossip-spell.c:91
-msgid "English (American)"
-msgstr "Engels (Amerikaans)"
-
-#: ../src/gossip-spell.c:92
-msgid "Esperanto"
-msgstr "Esperanto"
-
-#: ../src/gossip-spell.c:93
-msgid "Spanish"
-msgstr "Spaans"
-
-#: ../src/gossip-spell.c:94
-msgid "Estonian"
-msgstr "Estlands"
-
-#: ../src/gossip-spell.c:95
-msgid "Basque"
-msgstr "Baskisch"
-
-#: ../src/gossip-spell.c:96
-msgid "Persian"
-msgstr "Perzisch"
-
-#: ../src/gossip-spell.c:97
-msgid "Finnish"
-msgstr "Fins"
-
-#: ../src/gossip-spell.c:98
-msgid "Faroese"
-msgstr "Faeröers"
-
-#: ../src/gossip-spell.c:99
-msgid "French"
-msgstr "Frans"
-
-#: ../src/gossip-spell.c:100
-msgid "French (France)"
-msgstr "Frans (Frankrijk)"
-
-#: ../src/gossip-spell.c:101
-msgid "French (Swiss)"
-msgstr "Frans (Zwitsers)"
-
-#: ../src/gossip-spell.c:102
-msgid "Irish Gaelic"
-msgstr "Gaelisch (Iers)"
-
-#: ../src/gossip-spell.c:103
-msgid "Scots Gaelic"
-msgstr "Gaelisch (Schots)"
-
-#: ../src/gossip-spell.c:104
-msgid "Galician"
-msgstr "Galiciaans"
-
-#: ../src/gossip-spell.c:105
-msgid "Gujarati"
-msgstr "Gujarati"
-
-#: ../src/gossip-spell.c:106
-msgid "Manx Gaelic"
-msgstr "Gaelisch (Manx)"
-
-#: ../src/gossip-spell.c:107
-msgid "Hebrew"
-msgstr "Hebreeuws"
-
-#: ../src/gossip-spell.c:108
-msgid "Hindi"
-msgstr "Hindi"
-
-#: ../src/gossip-spell.c:109
-msgid "Croatian"
-msgstr "Kroatisch"
-
-#: ../src/gossip-spell.c:110
-msgid "Hungarian"
-msgstr "Hongaars"
-
-#: ../src/gossip-spell.c:111
-msgid "Indonesian"
-msgstr "Indonesisch"
-
-#: ../src/gossip-spell.c:112
-msgid "Icelandic"
-msgstr "IJslands"
-
-#: ../src/gossip-spell.c:113
-msgid "Italian"
-msgstr "Italiaans"
-
-#: ../src/gossip-spell.c:114
-msgid "Japanese"
-msgstr "Japans"
-
-#: ../src/gossip-spell.c:115
-msgid "Georgian"
-msgstr "Georgisch"
-
-#: ../src/gossip-spell.c:116
-msgid "Kannada"
-msgstr "Kannada, Kanara, Kanarees"
-
-#: ../src/gossip-spell.c:117
-msgid "Korean"
-msgstr "Koreaans"
-
-#: ../src/gossip-spell.c:118
-msgid "Kurdish"
-msgstr "Koerdisch"
-
-#: ../src/gossip-spell.c:119
-msgid "Cornish"
-msgstr "Cornish"
-
-#: ../src/gossip-spell.c:120
-msgid "Limburgish"
-msgstr "Limburgs"
-
-#: ../src/gossip-spell.c:121
-msgid "Lithuanian"
-msgstr "Litouws"
-
-#: ../src/gossip-spell.c:122
-msgid "Latvian"
-msgstr "Lets"
-
-#: ../src/gossip-spell.c:123
-msgid "Maori"
-msgstr "Maori"
-
-#: ../src/gossip-spell.c:124
-msgid "Macedonian"
-msgstr "Macedonisch"
-
-#: ../src/gossip-spell.c:125
-msgid "Malayalam"
-msgstr "Malayalam"
-
-#: ../src/gossip-spell.c:126
-msgid "Mongolian"
-msgstr "Mongools"
-
-#: ../src/gossip-spell.c:127
-msgid "Marathi"
-msgstr "Marathi"
-
-#: ../src/gossip-spell.c:128
-msgid "Malay"
-msgstr "Maleis"
-
-#: ../src/gossip-spell.c:129 ../src/gossip-spell.c:130
-msgid "Norwegian (Bokmal)"
-msgstr "Noors (Bokmal)"
-
-#: ../src/gossip-spell.c:131
-msgid "Nepali"
-msgstr "Nepalees"
-
-#: ../src/gossip-spell.c:132
-msgid "Dutch"
-msgstr "Nederlands"
-
-#: ../src/gossip-spell.c:133
-msgid "Norwegian"
-msgstr "Noors"
-
-#: ../src/gossip-spell.c:134 ../src/gossip-spell.c:135
-msgid "Norwegian (Nynorsk)"
-msgstr "Noors (Nynorsk)"
-
-#: ../src/gossip-spell.c:136
-msgid "Oriya"
-msgstr "Oriya"
-
-#: ../src/gossip-spell.c:137
-msgid "Punjabi"
-msgstr "Punjabi"
-
-#: ../src/gossip-spell.c:138
-msgid "Polish"
-msgstr "Pools"
-
-#: ../src/gossip-spell.c:139
-msgid "Portuguese"
-msgstr "Portugees"
-
-#: ../src/gossip-spell.c:140
-msgid "Portuguese (Portugal)"
-msgstr "Portugees (Portugal)"
-
-#: ../src/gossip-spell.c:141
-msgid "Portuguese (Brazil)"
-msgstr "Portugees (Brazilië)"
-
-#: ../src/gossip-spell.c:142
-msgid "Romanian"
-msgstr "Roemeens"
-
-#: ../src/gossip-spell.c:143
-msgid "Russian"
-msgstr "Russisch"
-
-#: ../src/gossip-spell.c:144
-msgid "Kinyarwanda"
-msgstr "Kinyarwanda"
-
-#: ../src/gossip-spell.c:145
-msgid "Slovak"
-msgstr "Slovaaks, Slowaaks"
-
-#: ../src/gossip-spell.c:146
-msgid "Slovenian"
-msgstr "Sloveens"
-
-#: ../src/gossip-spell.c:147
-msgid "Albanian"
-msgstr "Albanees"
-
-#: ../src/gossip-spell.c:148
-msgid "Serbian"
-msgstr "Servisch"
-
-#: ../src/gossip-spell.c:149
-msgid "Swedish"
-msgstr "Zweeds"
-
-#: ../src/gossip-spell.c:150
-msgid "Tamil"
-msgstr "Tamil"
-
-#: ../src/gossip-spell.c:151
-msgid "Telugu"
-msgstr "Telugu"
-
-#: ../src/gossip-spell.c:152
-msgid "Thai"
-msgstr "Thai"
-
-#: ../src/gossip-spell.c:153
-msgid "Turkmen"
-msgstr "Turkmeens"
-
-#: ../src/gossip-spell.c:154
-msgid "Turkish"
-msgstr "Turks"
-
-#: ../src/gossip-spell.c:155
-msgid "Ukrainian"
-msgstr "Oekraïens"
-
-#: ../src/gossip-spell.c:156
-msgid "Vietnamese"
-msgstr "Vietnamees"
-
-#: ../src/gossip-spell.c:157
-msgid "Walloon"
-msgstr "Waals"
-
-#: ../src/gossip-spell.c:158
-msgid "Xhosa"
-msgstr "Xhosa"
-
-#: ../src/gossip-spell.c:159
-msgid "Yiddish"
-msgstr "Jiddisch"
-
-#: ../src/gossip-spell.c:160
-msgid "Chinese Simplified"
-msgstr "Chinees (versimpeld)"
-
-#: ../src/gossip-spell.c:161
-msgid "Chinese Traditional"
-msgstr "Chinees (Traditioneel)"
-
-#: ../src/gossip-spell-dialog.c:110
-msgid "Suggestions for the word"
-msgstr "Suggesties voor dit woord"
-
-#: ../src/gossip-spell-dialog.c:157
+#: ../src/gossip-spell-dialog.c:78
 msgid "Word"
 msgstr "Woord"
+
+#: ../src/gossip-spell-dialog.c:248
+msgid "Suggestions for the word"
+msgstr "Suggesties voor dit woord"
 
 #: ../src/gossip-subscription-dialog.c:138
 #, c-format
@@ -1295,10 +944,10 @@ msgstr "_Naam:"
 
 #: ../ui/group-chat.glade.h:14
 msgid ""
-"Pick a saved chat room from the presets available below and click Join Chat "
-"Room to start chatting."
+"Pick a saved chat room from the presets available below and click Join to "
+"start chatting."
 msgstr ""
-"Kies een opgeslagen chatruimte van de onderstaande lijst en ga de ruimte "
+"Kies een opgeslagen chatruimte uit de onderstaande lijst en ga de ruimte "
 "binnen om te chatten."
 
 #: ../ui/group-chat.glade.h:15
@@ -1840,3 +1489,273 @@ msgstr "_Inschrijven"
 #: ../ui/main.glade.h:133
 msgid "_Yes"
 msgstr "_Ja"
+
+#~ msgid "Afrikaans"
+#~ msgstr "Afrikaans"
+
+#~ msgid "Amharic"
+#~ msgstr "Amhaars, Amharisch"
+
+#~ msgid "Arabic"
+#~ msgstr "Arabisch"
+
+#~ msgid "Azerbaijani"
+#~ msgstr "Azeri, Azerbeidzjaans"
+
+#~ msgid "Belarusian"
+#~ msgstr "Wit-Russisch, Belarussisch"
+
+#~ msgid "Bulgarian"
+#~ msgstr "Bulgaars"
+
+#~ msgid "Bengali"
+#~ msgstr "Bengaals"
+
+#~ msgid "Breton"
+#~ msgstr "Bretons, Bretoens"
+
+#~ msgid "Bosnian"
+#~ msgstr "Bosnisch"
+
+#~ msgid "Catalan"
+#~ msgstr "Catalaans"
+
+#~ msgid "Czech"
+#~ msgstr "Tsjechisch"
+
+#~ msgid "Welsh"
+#~ msgstr "Welsh"
+
+#~ msgid "Danish"
+#~ msgstr "Deens"
+
+#~ msgid "German"
+#~ msgstr "Duits"
+
+#~ msgid "German (Austria)"
+#~ msgstr "Duits (Oostenrijk)"
+
+#~ msgid "German (Germany)"
+#~ msgstr "Duits (Duitsland)"
+
+#~ msgid "German (Swiss)"
+#~ msgstr "Duits (Zwitserland)"
+
+#~ msgid "Greek"
+#~ msgstr "Grieks"
+
+#~ msgid "English"
+#~ msgstr "Engels"
+
+#~ msgid "English (Canadian)"
+#~ msgstr "Engels (Canadees)"
+
+#~ msgid "English (British)"
+#~ msgstr "Engels (Brits)"
+
+#~ msgid "English (American)"
+#~ msgstr "Engels (Amerikaans)"
+
+#~ msgid "Esperanto"
+#~ msgstr "Esperanto"
+
+#~ msgid "Spanish"
+#~ msgstr "Spaans"
+
+#~ msgid "Estonian"
+#~ msgstr "Estlands"
+
+#~ msgid "Basque"
+#~ msgstr "Baskisch"
+
+#~ msgid "Persian"
+#~ msgstr "Perzisch"
+
+#~ msgid "Finnish"
+#~ msgstr "Fins"
+
+#~ msgid "Faroese"
+#~ msgstr "Faeröers"
+
+#~ msgid "French"
+#~ msgstr "Frans"
+
+#~ msgid "French (France)"
+#~ msgstr "Frans (Frankrijk)"
+
+#~ msgid "French (Swiss)"
+#~ msgstr "Frans (Zwitsers)"
+
+#~ msgid "Irish Gaelic"
+#~ msgstr "Gaelisch (Iers)"
+
+#~ msgid "Scots Gaelic"
+#~ msgstr "Gaelisch (Schots)"
+
+#~ msgid "Galician"
+#~ msgstr "Galiciaans"
+
+#~ msgid "Gujarati"
+#~ msgstr "Gujarati"
+
+#~ msgid "Manx Gaelic"
+#~ msgstr "Gaelisch (Manx)"
+
+#~ msgid "Hebrew"
+#~ msgstr "Hebreeuws"
+
+#~ msgid "Hindi"
+#~ msgstr "Hindi"
+
+#~ msgid "Croatian"
+#~ msgstr "Kroatisch"
+
+#~ msgid "Hungarian"
+#~ msgstr "Hongaars"
+
+#~ msgid "Indonesian"
+#~ msgstr "Indonesisch"
+
+#~ msgid "Icelandic"
+#~ msgstr "IJslands"
+
+#~ msgid "Italian"
+#~ msgstr "Italiaans"
+
+#~ msgid "Japanese"
+#~ msgstr "Japans"
+
+#~ msgid "Georgian"
+#~ msgstr "Georgisch"
+
+#~ msgid "Kannada"
+#~ msgstr "Kannada, Kanara, Kanarees"
+
+#~ msgid "Korean"
+#~ msgstr "Koreaans"
+
+#~ msgid "Kurdish"
+#~ msgstr "Koerdisch"
+
+#~ msgid "Cornish"
+#~ msgstr "Cornish"
+
+#~ msgid "Limburgish"
+#~ msgstr "Limburgs"
+
+#~ msgid "Lithuanian"
+#~ msgstr "Litouws"
+
+#~ msgid "Latvian"
+#~ msgstr "Lets"
+
+#~ msgid "Maori"
+#~ msgstr "Maori"
+
+#~ msgid "Macedonian"
+#~ msgstr "Macedonisch"
+
+#~ msgid "Malayalam"
+#~ msgstr "Malayalam"
+
+#~ msgid "Mongolian"
+#~ msgstr "Mongools"
+
+#~ msgid "Marathi"
+#~ msgstr "Marathi"
+
+#~ msgid "Malay"
+#~ msgstr "Maleis"
+
+#~ msgid "Norwegian (Bokmal)"
+#~ msgstr "Noors (Bokmal)"
+
+#~ msgid "Nepali"
+#~ msgstr "Nepalees"
+
+#~ msgid "Dutch"
+#~ msgstr "Nederlands"
+
+#~ msgid "Norwegian"
+#~ msgstr "Noors"
+
+#~ msgid "Norwegian (Nynorsk)"
+#~ msgstr "Noors (Nynorsk)"
+
+#~ msgid "Oriya"
+#~ msgstr "Oriya"
+
+#~ msgid "Punjabi"
+#~ msgstr "Punjabi"
+
+#~ msgid "Polish"
+#~ msgstr "Pools"
+
+#~ msgid "Portuguese"
+#~ msgstr "Portugees"
+
+#~ msgid "Portuguese (Portugal)"
+#~ msgstr "Portugees (Portugal)"
+
+#~ msgid "Portuguese (Brazil)"
+#~ msgstr "Portugees (Brazilië)"
+
+#~ msgid "Romanian"
+#~ msgstr "Roemeens"
+
+#~ msgid "Russian"
+#~ msgstr "Russisch"
+
+#~ msgid "Kinyarwanda"
+#~ msgstr "Kinyarwanda"
+
+#~ msgid "Slovak"
+#~ msgstr "Slovaaks, Slowaaks"
+
+#~ msgid "Slovenian"
+#~ msgstr "Sloveens"
+
+#~ msgid "Albanian"
+#~ msgstr "Albanees"
+
+#~ msgid "Serbian"
+#~ msgstr "Servisch"
+
+#~ msgid "Swedish"
+#~ msgstr "Zweeds"
+
+#~ msgid "Tamil"
+#~ msgstr "Tamil"
+
+#~ msgid "Telugu"
+#~ msgstr "Telugu"
+
+#~ msgid "Thai"
+#~ msgstr "Thai"
+
+#~ msgid "Turkmen"
+#~ msgstr "Turkmeens"
+
+#~ msgid "Turkish"
+#~ msgstr "Turks"
+
+#~ msgid "Ukrainian"
+#~ msgstr "Oekraïens"
+
+#~ msgid "Vietnamese"
+#~ msgstr "Vietnamees"
+
+#~ msgid "Walloon"
+#~ msgstr "Waals"
+
+#~ msgid "Xhosa"
+#~ msgstr "Xhosa"
+
+#~ msgid "Yiddish"
+#~ msgstr "Jiddisch"
+
+#~ msgid "Chinese Simplified"
+#~ msgstr "Chinees (versimpeld)"
+
+#~ msgid "Chinese Traditional"
+#~ msgstr "Chinees (Traditioneel)"
