@@ -870,8 +870,12 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	}
 
 	str = g_string_new (NULL);
+
+	timestamp = 0;
+	if (msg) {
+		timestamp = gossip_message_get_timestamp (msg);
+	}
 	
-	timestamp = gossip_message_get_timestamp (msg);
 	if (timestamp <= 0) {
 		timestamp = gossip_time_get_current ();
 	}
@@ -889,7 +893,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 		append_date = TRUE;
 		append_time = TRUE;
 	}
-
+	
 	if (priv->last_timestamp + TIMESTAMP_INTERVAL < timestamp) {
 		append_time = TRUE;
 	}
@@ -1454,8 +1458,6 @@ gossip_chat_view_append_event (GossipChatView *view,
 	GossipChatViewPriv *priv;
 	gboolean            bottom;
 	GtkTextIter         iter;
-	time_t              timestamp;
-	gchar              *stamp;
 	gchar              *msg;
 	const gchar        *tag;
 
@@ -1467,20 +1469,19 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	if (priv->irc_style) {
 		tag = "irc-event";
+		msg = g_strdup_printf ("* %s\n", str);
 	} else {
 		tag = "fancy-event";
+		msg = g_strdup_printf ("%s\n", str);
 	}
 	
 	if (priv->last_block_type != BLOCK_TYPE_EVENT) {
 		chat_view_append_spacing (view);
 	}
-		
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 
-	timestamp = gossip_time_get_current ();
-	stamp = gossip_time_to_timestamp (-1);
-	msg = g_strdup_printf ("* [%s] %s\n", stamp, str);
-	g_free (stamp);
+	chat_view_maybe_append_date_and_time (view, NULL);
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer, &iter,
 						  msg, -1,
@@ -1493,7 +1494,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 	}
 
 	priv->last_block_type = BLOCK_TYPE_EVENT;
-	priv->last_timestamp = timestamp;
+	//priv->last_timestamp = gossip_time_get_current ();
 }
 
 void

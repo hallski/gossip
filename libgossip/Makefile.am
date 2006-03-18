@@ -22,6 +22,8 @@ libgossip_la_SOURCES =             			\
 	gossip-chatroom-provider.h 			\
 	gossip-contact.c           			\
 	gossip-contact.h           			\
+	gossip-debug.c					\
+	gossip-debug.h					\
 	gossip-event.c             			\
 	gossip-event.h             			\
 	gossip-event-manager.c     			\

@@ -1,3 +1,13 @@
+2006-03-18  Richard Hult  <richard@imendio.com>
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-debug.c: 
+	* libgossip/gossip-debug.h: Add runtime controlled debug output.
+	
+	* src/gossip-chat-view.c: (chat_view_maybe_append_date_and_time),
+	(gossip_chat_view_append_event): Tweak the events and timestamp
+	looks a bit.
+
 2006-03-17  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Removed some crack so make distcheck builds.
