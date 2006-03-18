@@ -295,8 +295,6 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
-	contact = jabber_chatrooms_get_contact (room, jid, NULL);
-
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
 		if (gossip_jid_get_resource (jid) == NULL) {
@@ -304,7 +302,8 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 					       "chatroom-new-room-event",
 					       id, node->value);
 		} else {
-			gossip_time_t  timestamp;
+			gossip_time_t timestamp;
+
 			timestamp = gossip_jabber_get_message_timestamp (m);
 
 			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM,
@@ -313,6 +312,8 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 			timestamp = gossip_jabber_get_message_timestamp (m);
 			gossip_message_set_timestamp (message, timestamp);
 			
+			contact = jabber_chatrooms_get_contact (room, jid, NULL);
+
 			gossip_message_set_sender (message, contact);
 			gossip_message_set_body (message, node->value);
 			
@@ -326,6 +327,8 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 
 	node = lm_message_node_get_child (m->node, "subject");
 	if (node) {
+		contact = jabber_chatrooms_get_contact (room, jid, NULL);
+		
 		g_signal_emit_by_name (chatrooms->jabber,
 				       "chatroom-topic-changed", 
 				       id, contact, node->value);

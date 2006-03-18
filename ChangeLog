@@ -1,5 +1,11 @@
 2006-03-18  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_message_handler): Fix critical warning
+	introduced recently when joining group chats.
+
+2006-03-18  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chatrooms-window.c: Disable autoconnect checkbutton
 	in the treeview.
 
