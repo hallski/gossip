@@ -20,7 +20,8 @@
 
 #include <config.h>
 #include <string.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <libgnomevfs/gnome-vfs.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -37,7 +38,7 @@
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
 
-#define DEBUG_MSG(x) 
+#define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
@@ -515,13 +516,14 @@ account_manager_parse_account (GossipAccountManager *manager,
 #ifdef RESOURCE_HACK
 		const gchar *resource_found = NULL;
 
-		g_printerr ("Checking account id:'%s' is in the correct form since it "
-			    "has changed this version...\n", id);
+		/*g_printerr ("Checking account id:'%s' is in the correct form since it "
+		  "has changed this version...\n", id);*/
 
 		if (id) {
 			/* FIXME: This hack is so we don't get bug
 			 * reports and basically gets the resource
-			 * from the id. */
+			 * from the id.
+			 */
 			const gchar *ch;
 			
 			ch = strchr (id, '/');
@@ -630,7 +632,8 @@ account_manager_file_save (GossipAccountManager *manager)
 	gchar                    *dtd_file;
 	gchar                    *xml_dir;
 	gchar                    *xml_file;
-					
+	mode_t                    old_mask;
+
 	priv = GET_PRIV (manager);
 	
 	if (priv->accounts_file_name) {
@@ -698,13 +701,20 @@ account_manager_file_save (GossipAccountManager *manager)
 	}
 
 	DEBUG_MSG (("Account Manager: Saving file:'%s'", xml_file));
+
+	/* Set the umask to get the proper permissions when libxml saves the
+	 * file, but also change the permissions expiicitly in case the file
+	 * already exists.
+	 */
+	old_mask = umask (077);
+	chmod (xml_file, 0600);
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
+	umask (old_mask);
+
 	xmlFreeDoc (doc);
-
 	xmlCleanupParser ();
-
 	xmlMemoryDump ();
-	
+
 	g_free (xml_file);
 
 	return TRUE;

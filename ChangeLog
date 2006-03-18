@@ -1,5 +1,12 @@
 2006-03-18  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	(account_manager_parse_account), (account_manager_file_save): Make
+	the accounts info file not readable by others than the owner, bug
+	#331910.
+
+2006-03-18  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-preferences.c: (preferences_languages_setup): Don't
 	set a fixed width on the language checkbox, that looks ugly.
 
