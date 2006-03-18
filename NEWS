@@ -1,5 +1,10 @@
 NEWS in 0.10.2:
 ===============
+- Fixed #334390, use iso-codes for the language names for spell
+checking (Nickolay V. Shmyrev, Richard).
+- Fixed #331910, make the accounts info file not readable by others
+than the owner (Richard).
+- Add runtime controlled debugging facilities (Richard).
 - Display an event in the group chat window when a user changes the
 topic, previously it just happened with no indication of who changed
 it or when (Kristian Rietveld).
