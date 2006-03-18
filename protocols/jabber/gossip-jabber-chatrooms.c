@@ -19,10 +19,8 @@
  */
 
 #include <config.h>
-
 #include <stdlib.h>
 #include <string.h>
-
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-utils.h>
@@ -32,8 +30,8 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
 
-/* #define DEBUG_MSG(x)  */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+#define DEBUG_MSG(x)
+/*#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define JOIN_TIMEOUT       20000
 
