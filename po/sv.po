@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-18 08:57+0100\n"
+"POT-Creation-Date: 2006-03-18 13:35+0100\n"
 "PO-Revision-Date: 2004-12-22 21:21+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -477,40 +477,40 @@ msgstr "Kontaktinformation för %s"
 msgid "Requested Information"
 msgstr "Information efterfrågad"
 
-#: ../src/gossip-contact-list.c:326
+#: ../src/gossip-contact-list.c:322
 msgid "/_Contact Information"
 msgstr "/_Kontaktinformation"
 
-#: ../src/gossip-contact-list.c:338
+#: ../src/gossip-contact-list.c:334
 msgid "/Re_name Contact"
 msgstr "/Byt _namn på kontakt"
 
 # Vi brukar förvisso låta R:et vara åtkomsttangent i "Redigera"
-#: ../src/gossip-contact-list.c:344
+#: ../src/gossip-contact-list.c:340
 msgid "/_Edit Groups"
 msgstr "/R_edigera grupper"
 
-#: ../src/gossip-contact-list.c:350
+#: ../src/gossip-contact-list.c:346
 msgid "/_Remove Contact"
 msgstr "/_Ta bort kontakt"
 
-#: ../src/gossip-contact-list.c:362
+#: ../src/gossip-contact-list.c:358
 msgid "/In_vite to Chat Conference"
 msgstr "/_Bjud in till chattkonferens"
 
-#: ../src/gossip-contact-list.c:374
+#: ../src/gossip-contact-list.c:370
 msgid "/_Send File..."
 msgstr "/_Skicka fil..."
 
-#: ../src/gossip-contact-list.c:386
+#: ../src/gossip-contact-list.c:382
 msgid "/Show _Log"
 msgstr "/_Visa logg"
 
-#: ../src/gossip-contact-list.c:396
+#: ../src/gossip-contact-list.c:392
 msgid "/Re_name group"
 msgstr "/Byt _namn på grupp"
 
-#: ../src/gossip-contact-list.c:2091
+#: ../src/gossip-contact-list.c:2087
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -519,11 +519,11 @@ msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
 "%s"
 
-#: ../src/gossip-contact-list.c:2211
+#: ../src/gossip-contact-list.c:2207
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Vill du ta bort denna kontakt från din kontaktlista?"
 
-#: ../src/gossip-contact-list.c:2267
+#: ../src/gossip-contact-list.c:2263
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -596,7 +596,7 @@ msgstr "Inbjöd %s till att gå med i chattkonferens."
 msgid "%s has set the topic"
 msgstr ""
 
-#: ../src/gossip-log.c:214
+#: ../src/gossip-log.c:210
 msgid "Conversation Log"
 msgstr "Konversationslogg"
 
@@ -954,9 +954,9 @@ msgstr "N_amn:"
 
 #: ../ui/group-chat.glade.h:14
 msgid ""
-"Pick a saved chat room from the presets available below and click Join Chat "
-"Room to start chatting."
-msgstr ""
+"Pick a saved chat room from the presets available below and click Join to "
+"start chatting."
+msgstr "Välj ett sparat chattrum nedan och tryck Gå in för att börja chatta."
 
 #: ../ui/group-chat.glade.h:15
 msgid "S_erver:"
@@ -988,7 +988,7 @@ msgstr "    "
 
 #: ../ui/main.glade.h:2
 msgid "-"
-msgstr ""
+msgstr "-"
 
 #: ../ui/main.glade.h:3
 msgid "<b>About</b>"
@@ -1334,7 +1334,8 @@ msgstr "Detta namn kommer att användas för att identifiera dig i chattfönster
 #: ../ui/main.glade.h:90
 msgid ""
 "This name will be used to identify you when new contacts lookup your details."
-msgstr "Detta namn kommer att användas för att identifiera dig när nya kontakter "
+msgstr ""
+"Detta namn kommer att användas för att identifiera dig när nya kontakter "
 "kontrollerar din information."
 
 #: ../ui/main.glade.h:93

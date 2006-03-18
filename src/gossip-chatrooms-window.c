@@ -38,7 +38,7 @@
 
 /* This is turned off for now, but to configure the auto connect in
  * the list instead of from the edit dialog, define this variable: */
-#define CHATROOM_AUTOCONNECT_IN_LIST
+/*#define CHATROOM_AUTOCONNECT_IN_LIST*/
 
 typedef struct {
 	GtkWidget        *window;

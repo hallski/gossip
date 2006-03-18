@@ -1,3 +1,11 @@
+2006-03-18  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chatrooms-window.c: Disable autoconnect checkbutton
+	in the treeview.
+
+	* ui/group-chat.glade: Fix string, it was referring to a button
+	that had changed.
+
 2006-03-18  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c: Only save the account

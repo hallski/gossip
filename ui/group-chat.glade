@@ -1092,7 +1092,7 @@
 	  <child>
 	    <widget class="GtkLabel" id="label_preamble_chatroom">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Pick a saved chat room from the presets available below and click Join Chat Room to start chatting.</property>
+	      <property name="label" translatable="yes">Pick a saved chat room from the presets available below and click Join to start chatting.</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
