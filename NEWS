@@ -52,6 +52,16 @@ chat theme (Richard).
 - Fixed #332240, Change some keyboard mnemonics for chat windows
 (Brian Pepple). 
 
+Translations:
+Clytie Siddall (vi)
+Francisco Javier F. Serrador (es)
+Mikhail Zabaluev (ru)
+Øivind Hoel (nb)
+Richard Hult (sv)
+Wouter Bolsterlee (nl)
+Žygimantas Beručka (lt)
+
+
 News in 0.10.1:
 ===============
 - Changed the accounts dialog and removed the enable/disable account
