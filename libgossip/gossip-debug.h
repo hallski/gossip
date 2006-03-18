@@ -18,8 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <config.h>
-
 #ifndef __GOSSIP_DEBUG_H__
 #define __GOSSIP_DEBUG_H__
 
@@ -29,15 +27,13 @@
 #  ifdef GOSSIP_DISABLE_DEBUG
 #    define gossip_debug(...)
 #  else
-#    define gossip_debug(...) \
-	gossip_debug_impl (__VA_ARGS__)
+#    define gossip_debug(...) gossip_debug_impl (__VA_ARGS__)
 #  endif
 #elif defined(G_HAVE_GNUC_VARARGS)
 #  if GOSSIP_DISABLE_DEBUG
 #    define gossip_debug(fmt...)
 #  else
-#    define gossip_debug(fmt...) \
-	gossip_debug_impl(fmt)
+#    define gossip_debug(fmt...) gossip_debug_impl(fmt)
 #  endif
 #else
 #  if GOSSIP_DISABLE_DEBUG

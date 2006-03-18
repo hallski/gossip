@@ -1,5 +1,10 @@
 2006-03-18  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-debug.c: (debug_init), (gossip_debug_impl):
+	* libgossip/gossip-debug.h: Some small improvements.
+
+2006-03-18  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-contact-list.c:
 	* src/gossip-log.c: Remove HAVE_CONFIG stuff, we don't have it
 	anywhere else.

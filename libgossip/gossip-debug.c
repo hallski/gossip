@@ -24,9 +24,14 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
+/* Set GOSSIP_DEBUG to a colon separated list of domains, or "all" to get all
+ * debug output.
+ */
+
 #include "gossip-debug.h"
 
-static gchar **debug_strv;
+static gchar    **debug_strv;
+static gboolean   all_domains = FALSE;
 
 static void
 debug_init (void)
@@ -35,6 +40,7 @@ debug_init (void)
 
 	if (!inited) {
 		const gchar *env;
+		gint         i;
 
 		env = g_getenv ("GOSSIP_DEBUG");
 
@@ -44,6 +50,12 @@ debug_init (void)
 			debug_strv = NULL;
 		}
 
+		for (i = 0; debug_strv && debug_strv[i]; i++) {
+			if (strcmp ("all", debug_strv[i]) == 0) {
+				all_domains = TRUE;
+			}
+		}
+		
 		inited = TRUE;
 	}
 }
@@ -53,22 +65,23 @@ gossip_debug_impl (const gchar *domain, const gchar *msg, ...)
 {
 	gint i;
 
+	g_return_if_fail (domain != NULL);
+	g_return_if_fail (msg != NULL);
+	
 	debug_init ();
 
-	if (debug_strv) {
-		for (i = 0; debug_strv[i]; i++) {
-			if (strcmp (domain, debug_strv[i]) == 0) {
-				va_list args;
-
-				g_print ("%s: ", domain);
-
-				va_start (args, msg);
-				g_vprintf (msg, args);
-				va_end (args);
-
-				g_print ("\n");
-				break;
-			}
+	for (i = 0; debug_strv && debug_strv[i]; i++) {
+		if (all_domains || strcmp (domain, debug_strv[i]) == 0) {
+			va_list args;
+			
+			g_print ("%s: ", domain);
+			
+			va_start (args, msg);
+			g_vprintf (msg, args);
+			va_end (args);
+			
+			g_print ("\n");
+			break;
 		}
 	}
 }
