@@ -28,18 +28,17 @@ G_BEGIN_DECLS
 typedef struct _GossipSpell GossipSpell;
 
 GossipSpell *gossip_spell_new                (GList       *languages);
-GossipSpell *gossip_spell_ref         (GossipSpell *spell);
-void         gossip_spell_unref       (GossipSpell *spell);
-gboolean     gossip_spell_has_backend (GossipSpell *spell);
-gboolean     gossip_spell_check       (GossipSpell *spell,
-				       const gchar *word);
-GList *      gossip_spell_suggestions (GossipSpell *spell,
-				       const gchar *word);
-gboolean     gossip_spell_supported   (void);
-
-const gchar *gossip_spell_get_language_name  (const gchar *code);
+GossipSpell *gossip_spell_ref                (GossipSpell *spell);
+void         gossip_spell_unref              (GossipSpell *spell);
+gboolean     gossip_spell_has_backend        (GossipSpell *spell);
+gboolean     gossip_spell_check              (GossipSpell *spell,
+					      const gchar *word);
+GList *      gossip_spell_suggestions        (GossipSpell *spell,
+					      const gchar *word);
+gboolean     gossip_spell_supported          (void);
+const gchar *gossip_spell_get_language_name  (GossipSpell *spell,
+					      const gchar *code);
 GList       *gossip_spell_get_language_codes (GossipSpell *spell);
-
 
 G_END_DECLS
 

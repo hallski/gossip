@@ -46,10 +46,10 @@ AC_SUBST(LIBGNOME_REQUIRED, 2.0.0)
 AC_SUBST(LIBGNOMEVFS_REQUIRED, 2.0.0)
 AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
 
+
 dnl -----------------------------------------------------------
 dnl D-BUS
 dnl -----------------------------------------------------------
-
 AC_ARG_ENABLE(dbus,
               AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
                              [compile with d-bus support]), ,
@@ -75,10 +75,10 @@ fi
 
 AM_CONDITIONAL(HAVE_DBUS, test x$have_dbus = xyes)
 
+
 dnl -----------------------------------------------------------
 dnl Galago
 dnl -----------------------------------------------------------
-
 AC_ARG_WITH(galago,
               AS_HELP_STRING([--with-galago=@<:@no/yes/auto@:>@],
                              [compile with Galago support]), ,
@@ -104,10 +104,10 @@ fi
 
 AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
 
+
 dnl -----------------------------------------------------------
 dnl Notify
 dnl -----------------------------------------------------------
-
 AC_ARG_ENABLE(libnotify,
               AS_HELP_STRING([--enable-libnotify=@<:@no/yes/auto@:>@],
                              [compile with libnotify support]), ,
@@ -133,10 +133,29 @@ fi
 
 AM_CONDITIONAL(HAVE_LIBNOTIFY, test x$have_libnotify = xyes)
 
+
+dnl -----------------------------------------------------------
+dnl ISO codes, used for aspell support
+dnl -----------------------------------------------------------
+AC_MSG_CHECKING([whether iso-codes exists and has iso-639 domain])
+if $PKG_CONFIG --variable=domains iso-codes | grep -q 639 ; then
+	AC_MSG_RESULT([yes])
+	iso_codes_prefix=`$PKG_CONFIG --variable=prefix iso-codes`
+	iso_codes_pkgconfig=iso-codes
+	have_iso_codes=yes
+else
+	AC_MSG_RESULT([no])
+	iso_codes_prefix=
+	iso_codes_pkgconfig=
+	have_iso_codes=no
+fi
+
+AC_DEFINE_UNQUOTED([ISO_CODES_PREFIX],["$iso_codes_prefix"],[ISO codes prefix])
+
+
 dnl -----------------------------------------------------------
 dnl Pkg-Config dependency checks
 dnl -----------------------------------------------------------
-
 PKG_CHECK_MODULES(LIBGOSSIP, [
 	libxml-2.0 >= $LIBXML_REQUIRED
 	glib-2.0 >= $GLIB_REQUIRED
@@ -157,6 +176,7 @@ PKG_CHECK_MODULES(GOSSIP,
 	loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
 	gconf-2.0 >= $GCONF_REQUIRED
 	libgnomeui-2.0 >= $LIBGNOME_REQUIRED
+	$iso_codes_pkgconfig
 	$dbus_pkgconfig
 	$galago_pkgconfig
 	$libnotify_pkgconfig
@@ -179,7 +199,6 @@ AC_SUBST(GLIB_GENMARSHAL)
 dnl -----------------------------------------------------------
 dnl Check for the XScreenSaver extension (used for autoaway)
 dnl -----------------------------------------------------------
-
 x_libs="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
 have_xss="no"
 
@@ -212,34 +231,36 @@ if test x$SK_CONFIG = xno; then
 scrollkeeper package: http://scrollkeeper.sourceforge.net)
 fi
 
+
 dnl -----------------------------------------------------------
 dnl ASpell
 dnl -----------------------------------------------------------
-
 AC_ARG_ENABLE(aspell,
               AS_HELP_STRING([--enable-aspell=@<:@no/yes/auto@:>@],
                              [compile with aspell support]), ,
                              enable_aspell=auto)
 
-if test "x$enable_aspell" != "xno"; then
+if test "x$enable_aspell" = "xyes" -a "x$have_iso_codes" != "xyes"; then
+  AC_MSG_ERROR([You must have iso-codes with the iso-639 domain to use aspell.])
+fi
 
-        AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
+if test "x$enable_aspell" != "xno" -a "x$have_iso_codes" = "xyes"; then
+  AC_CHECK_LIB(aspell, aspell_speller_check,have_aspell=yes,have_aspell=no,)
 
-        if test "x$have_aspell" = "xyes"; then
-                AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
-                GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
-        else
-                have_aspell=no
-        fi
+  if test "x$have_aspell" = "xyes"; then
+    AC_DEFINE(HAVE_ASPELL, 1, [Define if we have aspell])
+    GOSSIP_LIBS="$GOSSIP_LIBS -laspell"
+  else
+    have_aspell=no
+  fi
 else
-        have_aspell=no
+  have_aspell=no
 fi
 
-if test "x$enable_aspell" = "xyes"; then
-   if test "x$have_aspell" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find aspell.])
-   fi
+if test "x$enable_aspell" = "xyes" -a "x$have_aspell" != "xyes"; then
+  AC_MSG_ERROR([Couldn't find aspell.])
 fi
+
 
 dnl -----------------------------------------------------------
 dnl Language Support
@@ -252,8 +273,8 @@ ALL_LINGUAS="ar az bg ca cs cy da de en_CA en_GB eo es eu fr ga hr hu it lt ml m
 
 AM_GLIB_GNU_GETTEXT
 
-dnl -----------------------------------------------------------
 
+dnl -----------------------------------------------------------
 
 AC_OUTPUT([
 Makefile

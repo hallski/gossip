@@ -1,5 +1,21 @@
 2006-03-18  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-preferences.c: (preferences_languages_setup): Don't
+	set a fixed width on the language checkbox, that looks ugly.
+
+2006-03-18  Richard Hult  <richard@imendio.com>
+
+	* configure.ac:
+	* src/gossip-preferences.c: (preferences_languages_add):
+	* src/gossip-spell.c: (gossip_spell_new), (spell_free),
+	(gossip_spell_lang_table_parse_start_tag),
+	(gossip_spell_lang_table_init), (gossip_spell_get_language_name):
+	* src/gossip-spell.h: Based on patch by Nickolay V. Shmyrev, use
+	iso-codes to get the language names for spellchecking, bug
+	#334390.
+	
+2006-03-18  Richard Hult  <richard@imendio.com>
+
 	* libgossip/Makefile.am:
 	* libgossip/gossip-debug.c: 
 	* libgossip/gossip-debug.h: Add runtime controlled debug output.

@@ -43,120 +43,16 @@ typedef struct {
 
 struct _GossipSpell {
 	gint                ref_count;
-
 	GList              *languages;
-	
 	gboolean            has_backend;
+	GHashTable         *lang_names;
 };
 
 static void spell_free (GossipSpell *spell);
 
-/* 
- * Can we get this from somewhere else?
- *
- * Evolution uses Corba and all that jazz to talk to GnomeSpell, it is
- * pretty horrible really, plus their list of languages is not as
- * extensive as the one below.
- *
- * The list below is a combination of the GnomeSpell list and the list
- * of languages from the Gnome Translation Project. 
- */
+#define ISO_CODES_DATADIR ISO_CODES_PREFIX"/share/xml/iso-codes"
+#define ISO_CODES_LOCALESDIR ISO_CODES_PREFIX"/share/locale"
 
-const gchar *languages[] = {
-	"af", N_("Afrikaans"),
-	"am", N_("Amharic"),
-	"ar", N_("Arabic"),
-	"az", N_("Azerbaijani"),
-	"be", N_("Belarusian"),
-	"bg", N_("Bulgarian"),
-	"bn", N_("Bengali"),
-	"br", N_("Breton"),
-	"bs", N_("Bosnian"),
-	"ca", N_("Catalan"),
-	"cs", N_("Czech"),
-	"cy", N_("Welsh"),
-	"da", N_("Danish"),
-	"de", N_("German"),
-	"de_AT", N_("German (Austria)"),
-	"de_DE", N_("German (Germany)"),
-	"de_CH", N_("German (Swiss)"),
-	"el", N_("Greek"),
-	"en", N_("English"),
-	"en_CA", N_("English (Canadian)"),
-	"en_GB", N_("English (British)"),
-	"en_US", N_("English (American)"),
-	"eo", N_("Esperanto"),
-	"es", N_("Spanish"),
-	"et", N_("Estonian"),
-	"eu", N_("Basque"),
-	"fa", N_("Persian"),
-	"fi", N_("Finnish"),
-	"fo", N_("Faroese"),
-	"fr", N_("French"),
-	"fr_FR", N_("French (France)"),
-	"fr_CH", N_("French (Swiss)"),
-	"ga", N_("Irish Gaelic"),
-	"gd", N_("Scots Gaelic"),
-	"gl", N_("Galician"),
-	"gu", N_("Gujarati"),
-	"gv", N_("Manx Gaelic"),
-	"he", N_("Hebrew"),
-	"hi", N_("Hindi"),
-	"hr", N_("Croatian"),
-	"hu", N_("Hungarian"),
-	"id", N_("Indonesian"),
-	"is", N_("Icelandic"),
-	"it", N_("Italian"),
-	"ja", N_("Japanese"),
-	"ka", N_("Georgian"),
-	"kn", N_("Kannada"),
-	"ko", N_("Korean"),
-	"ku", N_("Kurdish"),
-	"kw", N_("Cornish"),
-	"li", N_("Limburgish"),
-	"lt", N_("Lithuanian"),
-	"lv", N_("Latvian"),
-	"mi", N_("Maori"),
-	"mk", N_("Macedonian"),
-	"ml", N_("Malayalam"),
-	"mn", N_("Mongolian"),
-	"mr", N_("Marathi"),
-	"ms", N_("Malay"),
-	"nb", N_("Norwegian (Bokmal)"),
-	"nb_NO", N_("Norwegian (Bokmal)"),
-	"ne", N_("Nepali"),
-	"nl", N_("Dutch"),
-	"no", N_("Norwegian"),
-	"nn", N_("Norwegian (Nynorsk)"),
-	"nn_NO", N_("Norwegian (Nynorsk)"),
-	"or", N_("Oriya"),
-	"pa", N_("Punjabi"),
-	"pl", N_("Polish"),
-	"pt", N_("Portuguese"),
-	"pt_PT", N_("Portuguese (Portugal)"),
-	"pt_BR", N_("Portuguese (Brazil)"),
-	"ro", N_("Romanian"),
-	"ru", N_("Russian"),
-	"rw", N_("Kinyarwanda"),
-	"sk", N_("Slovak"),
-	"sl", N_("Slovenian"),
-	"sq", N_("Albanian"),
-	"sr", N_("Serbian"),
-	"sv", N_("Swedish"),
-	"ta", N_("Tamil"),
-	"te", N_("Telugu"),
-	"th", N_("Thai"),
-	"tk", N_("Turkmen"),
-	"tr", N_("Turkish"),
-	"uk", N_("Ukrainian"),
-	"vi", N_("Vietnamese"),
-	"wa", N_("Walloon"),
-	"xh", N_("Xhosa"),
-	"yi", N_("Yiddish"),
-	"zh_CN", N_("Chinese Simplified"),
-	"zh_TW", N_("Chinese Traditional"),
-	NULL
-};
 
 GossipSpell * 
 gossip_spell_new (GList *languages)
@@ -189,7 +85,7 @@ gossip_spell_new (GList *languages)
 		
 		lang = g_new0 (SpellLanguage, 1);
 
-		lang->spell_config = new_aspell_config();
+		lang->spell_config = new_aspell_config ();
 		
 		aspell_config_replace (lang->spell_config, "encoding", "utf-8");
 		aspell_config_replace (lang->spell_config, "lang", language);
@@ -246,6 +142,10 @@ spell_free (GossipSpell *spell)
 	
 	g_list_foreach (spell->languages, (GFunc)g_free, NULL);
 	g_list_free (spell->languages);
+	
+	if (spell->lang_names) {
+		g_hash_table_destroy (spell->lang_names);
+	}
 
 	g_free (spell);
 }	
@@ -279,19 +179,145 @@ gossip_spell_has_backend (GossipSpell *spell)
 	return spell->has_backend;
 }
 
-const gchar *
-gossip_spell_get_language_name (const gchar *code)
+static void
+gossip_spell_lang_table_parse_start_tag (GMarkupParseContext *ctx,
+					 const gchar         *element_name,
+					 const gchar        **attr_names,
+					 const gchar        **attr_values,
+					 gpointer             data,
+					 GError             **error)
 {
-	gint i;
+	GossipSpell *spell = (GossipSpell *)data;
+	const char  *ccode_longB, *ccode_longT, *ccode, *lang_name;
 
-	for (i = 0; code && languages[i] && languages[i+1]; i+=2) {
-		const char *lang_code = languages[i];
+	if (!g_str_equal (element_name, "iso_639_entry") ||
+	    attr_names == NULL || attr_values == NULL) {
+		return;
+	}
 
-		if (code && lang_code && strcmp (code, lang_code) == 0) {
-			return _(languages[i+1]);
+	ccode = NULL;
+	ccode_longB = NULL;
+	ccode_longT = NULL;
+	lang_name = NULL;
+
+	while (*attr_names && *attr_values) {
+		if (g_str_equal (*attr_names, "iso_639_1_code")) {
+			/* skip if empty */
+			if (**attr_values) {
+				g_return_if_fail (strlen (*attr_values) == 2);
+				ccode = *attr_values;
+			}
 		}
-	} 
+		else if (g_str_equal (*attr_names, "iso_639_2B_code")) {
+			/* skip if empty */
+			if (**attr_values) {
+				g_return_if_fail (strlen (*attr_values) == 3);
+				ccode_longB = *attr_values;
+			}
+		}
+		else if (g_str_equal (*attr_names, "iso_639_2T_code")) {
+			/* skip if empty */
+			if (**attr_values) {
+				g_return_if_fail (strlen (*attr_values) == 3);
+				ccode_longT = *attr_values;
+			}
+		}
+		else if (g_str_equal (*attr_names, "name")) {
+			lang_name = *attr_values;
+		}
+
+		attr_names++;
+		attr_values++;
+	}
+
+	if (lang_name == NULL) {
+		return;
+	}
+
+	if (ccode != NULL) {
+		g_hash_table_insert (spell->lang_names,
+				     g_strdup (ccode),
+				     g_strdup (lang_name));
+	}
 	
+	if (ccode_longB != NULL) {
+		g_hash_table_insert (spell->lang_names,
+				     g_strdup (ccode_longB),
+				     g_strdup (lang_name));
+	}
+	
+	if (ccode_longT != NULL) {
+		g_hash_table_insert (spell->lang_names,
+				     g_strdup (ccode_longT),
+				     g_strdup (lang_name));
+	}
+}
+
+static void
+gossip_spell_lang_table_init (GossipSpell *spell)
+{
+	GError *err = NULL;
+	gchar  *buf;
+	gsize   buf_len;
+
+	spell->lang_names = g_hash_table_new_full (g_str_hash, g_str_equal,
+						   g_free, g_free);
+
+	bindtextdomain ("iso_639", ISO_CODES_LOCALESDIR);
+	bind_textdomain_codeset ("iso_639", "UTF-8");
+
+	if (g_file_get_contents (ISO_CODES_DATADIR "/iso_639.xml", &buf, &buf_len, &err)) {
+		GMarkupParseContext *ctx;
+		GMarkupParser        parser = {
+			gossip_spell_lang_table_parse_start_tag,
+			NULL, NULL, NULL, NULL
+		};
+
+		ctx = g_markup_parse_context_new (&parser, 0, spell, NULL);
+
+		if (!g_markup_parse_context_parse (ctx, buf, buf_len, &err)) {
+			g_warning ("Failed to parse '%s': %s\n",
+				   ISO_CODES_DATADIR"/iso_639.xml",
+				   err->message);
+			g_error_free (err);
+		}
+
+		g_markup_parse_context_free (ctx);
+		g_free (buf);
+	} else {
+		g_warning ("Failed to load '%s': %s\n",
+				ISO_CODES_DATADIR"/iso_639.xml", err->message);
+		g_error_free (err);
+	}
+}
+
+const char *
+gossip_spell_get_language_name (GossipSpell *spell, const char *lang)
+{
+#if HAVE_ASPELL
+	const gchar *lang_name;
+	gint         len;
+	
+	if (lang == NULL) {
+		return "";
+	}
+
+	len = strlen (lang);
+	if (len != 2 && len != 3) {
+		return "";
+	}
+
+	if (!spell->lang_names) {
+		gossip_spell_lang_table_init (spell);
+	}
+	
+	lang_name = (const gchar*) g_hash_table_lookup (spell->lang_names, lang);
+
+	if (lang_name) {
+		return dgettext ("iso_639", lang_name);
+	}
+	
+#endif
 	return "";
 }
 

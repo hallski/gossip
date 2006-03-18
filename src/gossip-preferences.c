@@ -213,12 +213,10 @@ preferences_languages_setup (GossipPreferences *preferences)
  			  G_CALLBACK (preferences_languages_cell_toggled_cb),  
  			  preferences);
 	
-	column = gtk_tree_view_column_new_with_attributes (_("Select"), renderer,
+	column = gtk_tree_view_column_new_with_attributes (NULL, renderer,
 							   "active", COL_LANG_ENABLED,
 							   NULL);
 	
-	gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width (column, 50);
 	gtk_tree_view_append_column (view, column);
 	
 	renderer = gtk_cell_renderer_text_new ();
@@ -244,7 +242,6 @@ preferences_languages_add (GossipPreferences *preferences)
 {
 	GtkTreeView  *view;
 	GtkListStore *store;
-
 	GossipSpell  *spell;
 	GList        *codes, *l;
 
@@ -255,13 +252,13 @@ preferences_languages_add (GossipPreferences *preferences)
 	codes = gossip_spell_get_language_codes (spell);
 
 	for (l = codes; l; l = l->next) {
-		GtkTreeIter   iter;
-		const gchar  *code;
-		const gchar  *language;
+		GtkTreeIter  iter;
+		const gchar *code;
+		const gchar *language;
 
 		code = l->data; 
-		language = gossip_spell_get_language_name (code);
-
+		language = gossip_spell_get_language_name (spell, code);
+		
 		if (!language || strlen (language) < 1) {
 			continue;
 		}
