@@ -69,6 +69,10 @@ static gboolean account_manager_file_save  (GossipAccountManager *manager);
 
 static guint signals[LAST_SIGNAL] = {0};
 
+#ifdef RESOURCE_HACK
+gboolean need_saving = FALSE;
+#endif
+
 G_DEFINE_TYPE (GossipAccountManager, gossip_account_manager, G_TYPE_OBJECT);
 
 static void
@@ -516,9 +520,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 #ifdef RESOURCE_HACK
 		const gchar *resource_found = NULL;
 
-		/*g_printerr ("Checking account id:'%s' is in the correct form since it "
-		  "has changed this version...\n", id);*/
-
 		if (id) {
 			/* FIXME: This hack is so we don't get bug
 			 * reports and basically gets the resource
@@ -531,17 +532,15 @@ account_manager_parse_account (GossipAccountManager *manager,
 				resource_found = (ch + 1);
 				id[ch - id] = '\0';
 
-				g_printerr ("\tConverting ID... "
-					    "(id:'%s', resource:'%s')\n", id, resource_found);
+				g_printerr ("Converting ID... (id:'%s', resource:'%s')\n", 
+					    id, resource_found);
 			}
 		}
 
 		if (resource_found) {
 			gossip_account_set_id (account, id);
 			gossip_account_set_resource (account, resource_found);
-
-			g_printerr ("\tSaving accounts... \n");
-			account_manager_file_save (manager);
+			need_saving = TRUE;
 		}
 #endif /* RESOURCE_HACK */
 
@@ -617,6 +616,13 @@ account_manager_file_parse (GossipAccountManager *manager,
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
 	
+#ifdef RESOURCE_HACK
+	if (need_saving) {
+		g_printerr ("Saving accounts... \n");
+		account_manager_file_save (manager);
+	}
+#endif
+
 	return TRUE;
 }
 
@@ -687,8 +693,8 @@ account_manager_file_save (GossipAccountManager *manager)
 		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
 		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
 
-		xmlNewTextChild (node, NULL, "password", gossip_account_get_password (account));
 		xmlNewTextChild (node, NULL, "resource", gossip_account_get_resource (account));
+		xmlNewTextChild (node, NULL, "password", gossip_account_get_password (account));
 		xmlNewTextChild (node, NULL, "server", gossip_account_get_server (account));
 		xmlNewChild (node, NULL, "port", port);
 

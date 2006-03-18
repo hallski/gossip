@@ -9,13 +9,13 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT account 
-    (type,name,id,(password?),(resource?),(server?),port,(enabled?),(auto_connect?),(use_ssl?),(use_proxy?))>
+    (type,name,id,(resource?),(password?),(server?),port,(enabled?),(auto_connect?),(use_ssl?),(use_proxy?))>
 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
 <!ELEMENT id (#PCDATA)>
-<!ELEMENT password (#PCDATA)>
 <!ELEMENT resource (#PCDATA)>
+<!ELEMENT password (#PCDATA)>
 <!ELEMENT server (#PCDATA)>
 <!ELEMENT port (#PCDATA)>
 <!ELEMENT enabled (#PCDATA)>

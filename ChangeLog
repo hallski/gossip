@@ -1,3 +1,12 @@
+2006-03-18  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c: Only save the account
+	changes after iterating ALL accounts (the changes between the
+	accounts.xml format now and in the last release).
+	
+	* libgossip/gossip-account.dtd: Change the DTD back to how it was
+	to avoid any DTD validation issues in the next release.
+
 2006-03-18  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-debug.c: (debug_init), (gossip_debug_impl):
