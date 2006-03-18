@@ -1,3 +1,19 @@
+2006-03-18  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom.c: 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* src/gossip-notify.c:
+	* src/gossip-spell.c: Fixed various spelling mistakes or extra
+	unnecessary new	lines.
+
+	* src/gossip-accounts-dialog.c: 
+	* src/gossip-new-account-window.c:
+	* ui/connect.glade:
+	* ui/main.glade: Added a button to forget saved passwords for
+	accounts and make it possible to have an empty password in the new
+	account assistant so that passwords don't have to be stored on
+	public machines. Fixed bug #334890 (Paul Van Tilburg). 
+
 2006-03-18  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c: Disable debug.

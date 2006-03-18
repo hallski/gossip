@@ -47,6 +47,7 @@ typedef struct {
 
 	GtkWidget *button_remove;
 	GtkWidget *button_connect;
+	GtkWidget *button_forget;
 
 	GtkWidget *entry_name;
 	GtkWidget *entry_id;
@@ -127,6 +128,8 @@ static void           accounts_dialog_entry_port_insert_text_cb (GtkEditable    
 static void           accounts_dialog_button_add_clicked_cb     (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_button_remove_clicked_cb  (GtkWidget             *button,
+								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_button_forget_clicked_cb  (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_button_close_clicked_cb   (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
@@ -300,6 +303,8 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 	port_str = g_strdup_printf ("%d", gossip_account_get_port (account));
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_port), port_str);
 	g_free (port_str);
+
+	gtk_widget_set_sensitive (dialog->button_forget, ! STRING_EMPTY (password));
 
 	/* unblock signals */
 	accounts_dialog_block_widgets (dialog, FALSE);
@@ -918,6 +923,11 @@ accounts_dialog_entry_changed_cb (GtkWidget            *widget,
 
 			return;
 		}
+	} else if (widget == dialog->entry_password) {
+		const gchar *str;
+
+		str = gtk_entry_get_text (GTK_ENTRY (widget));
+		gtk_widget_set_sensitive (dialog->button_forget, ! STRING_EMPTY (str));
 	}
 
 	/* save */
@@ -1134,6 +1144,27 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
 }
 
 static void
+accounts_dialog_button_forget_clicked_cb (GtkWidget            *button,
+					  GossipAccountsDialog *dialog)
+{
+	GossipSession        *session;
+	GossipAccountManager *manager;
+	GossipAccount        *account;
+
+	session = gossip_app_get_session ();
+ 	manager = gossip_session_get_account_manager (session);
+
+	account = accounts_dialog_model_get_selected (dialog);
+
+	gossip_account_set_password (account, "");
+	gossip_account_manager_store (manager);
+
+	g_object_unref (account);
+
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password), "");
+}
+
+static void
 accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 					   GossipAccountsDialog *dialog)
 {
@@ -1268,6 +1299,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "checkbutton_connect", &dialog->checkbutton_connect,
 				       "button_remove", &dialog->button_remove,
 				       "button_connect", &dialog->button_connect,
+				       "button_forget", &dialog->button_forget,
 				       "button_close", &button_close,
 				       NULL);
 
@@ -1292,6 +1324,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "checkbutton_connect", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
 			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
+			      "button_forget", "clicked", accounts_dialog_button_forget_clicked_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
 			      "button_close", "clicked", accounts_dialog_button_close_clicked_cb,
 			      NULL);

@@ -276,7 +276,7 @@ gossip_spell_lang_table_init (GossipSpell *spell)
 		ctx = g_markup_parse_context_new (&parser, 0, spell, NULL);
 
 		if (!g_markup_parse_context_parse (ctx, buf, buf_len, &err)) {
-			g_warning ("Failed to parse '%s': %s\n",
+			g_warning ("Failed to parse '%s': %s",
 				   ISO_CODES_DATADIR"/iso_639.xml",
 				   err->message);
 			g_error_free (err);
@@ -285,7 +285,7 @@ gossip_spell_lang_table_init (GossipSpell *spell)
 		g_markup_parse_context_free (ctx);
 		g_free (buf);
 	} else {
-		g_warning ("Failed to load '%s': %s\n",
+		g_warning ("Failed to load '%s': %s",
 				ISO_CODES_DATADIR"/iso_639.xml", err->message);
 		g_error_free (err);
 	}

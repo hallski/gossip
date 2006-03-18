@@ -107,7 +107,7 @@ gossip_notify_contact_online (GossipContact *contact)
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 
 	if (!notify_notification_show (notify, &error)) {
-		g_warning ("Failed to send notification: %s\n",
+		g_warning ("Failed to send notification: %s",
 			   error->message);
 		g_error_free (error);
 	}
@@ -144,7 +144,7 @@ gossip_notify_contact_offline (GossipContact *contact)
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 
 	if (!notify_notification_show (notify, &error)) {
-		g_warning ("Failed to send notification: %s\n",
+		g_warning ("Failed to send notification: %s",
 			   error->message);
 		g_error_free (error);
 	}
@@ -172,7 +172,7 @@ notify_new_message_default_cb (NotifyNotification *notify,
 	
 		gossip_event_manager_activate (event_manager, event);
 	} else {
-		g_warning ("No event found for NotifyNotification:0x%.8x\n", 
+		g_warning ("No event found for NotifyNotification:0x%.8x", 
 			   (gint) notify);
 	}
 
@@ -198,7 +198,7 @@ notify_new_message_contact_cb (NotifyNotification *notify,
 
 		gossip_contact_info_dialog_show (contact);
 	} else {
-		g_warning ("No event found for Notification:0x%.8x\n",
+		g_warning ("No event found for Notification:0x%.8x",
 			   (gint) notify);
 	}
 
@@ -258,7 +258,7 @@ notify_new_message (GossipEventManager *event_manager,
 					g_object_ref (event_manager), NULL);
 
 	if (!notify_notification_show (notify, &error)) {
-		g_warning ("Failed to send notification: %s\n",
+		g_warning ("Failed to send notification: %s",
 			   error->message);
 		g_error_free (error);
 	}
@@ -346,7 +346,7 @@ gossip_notify_init (GossipSession      *session,
 	DEBUG_MSG (("Notify: Initiating..."));
 
 	if (!notify_init (PACKAGE_NAME)) {
-		g_warning ("Cannot initialise Notify integration");
+		g_warning ("Cannot initialize Notify integration");
 		return;
 	}
 

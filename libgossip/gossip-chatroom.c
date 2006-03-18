@@ -751,7 +751,7 @@ gossip_chatroom_get_status_as_str (GossipChatroomStatus status)
 		return _("Error");
 	}
 
-	g_warning ("Invalid chatroom status: %d\n", status);
+	g_warning ("Invalid chatroom status: %d", status);
 	
 	return "";
 }

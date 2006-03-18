@@ -2980,6 +2980,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <child>
 			<widget class="GtkEntry" id="3_password_entry">
 			  <property name="visible">True</property>
+			  <property name="tooltip" translatable="yes">You can leave this blank if you don't want your password stored on a public machine. If you decide to do this, you will be prompted each time you connect for a password.</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">False</property>

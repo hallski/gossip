@@ -802,7 +802,7 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 	room = g_hash_table_lookup (chatrooms->room_id_hash, 
 				    GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d\n", id);
+		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 

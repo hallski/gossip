@@ -573,16 +573,19 @@ new_account_window_entry_3_changed (GtkEntry               *entry,
 				    GossipNewAccountWindow *window)
 {
 	GtkToggleButton *toggle;
-	const gchar     *username, *password, *name;
+	const gchar     *username, *name;
 	gboolean         has_account;
 	gboolean         ok = TRUE;
+
+	/* Passwords can be empty since it allows the user to be
+	 * prompted when they connect to a server and also means the
+	 * password is not stored on the machine if it is a public
+	 * computer. 
+	 */
 	
 	username = gtk_entry_get_text (GTK_ENTRY (window->three_username_entry));
 	ok &= username && strlen (username) > 0;
 	ok &= gossip_protocol_is_valid_username (window->selected_protocol, username);
-
-	password = gtk_entry_get_text (GTK_ENTRY (window->three_password_entry));
-	ok &= password && strlen (password) > 0;
 
 	toggle = GTK_TOGGLE_BUTTON (window->two_yes_radiobutton);
 	has_account = gtk_toggle_button_get_active (toggle);
