@@ -57,12 +57,11 @@ static void spell_free (GossipSpell *spell);
 GossipSpell * 
 gossip_spell_new (GList *languages)
 {
-	GossipSpell *spell;
-	GList       *l;
-
 #ifndef HAVE_ASPELL
+
 	return NULL;
 #else 
+	GossipSpell *spell;
 
 	DEBUG_MSG (("Spell: Initiating")); 
 
@@ -103,6 +102,8 @@ gossip_spell_new (GList *languages)
 
  		spell->languages = g_list_append (spell->languages, lang);
 	} else {
+		GList *l;
+
 		for (l = languages; l; l = l->next) {
 			SpellLanguage *lang;
 			const gchar   *language;
@@ -179,6 +180,7 @@ gossip_spell_has_backend (GossipSpell *spell)
 	return spell->has_backend;
 }
 
+#ifdef HAVE_ASPELL
 static void
 gossip_spell_lang_table_parse_start_tag (GMarkupParseContext *ctx,
 					 const gchar         *element_name,
@@ -290,6 +292,7 @@ gossip_spell_lang_table_init (GossipSpell *spell)
 		g_error_free (err);
 	}
 }
+#endif
 
 const char *
 gossip_spell_get_language_name (GossipSpell *spell, const char *lang)

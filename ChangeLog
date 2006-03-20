@@ -1,3 +1,8 @@
+2006-03-20  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-spell.c: (gossip_spell_new): Fix build warnings when
+	building without aspell.
+
 2006-03-18  Martyn Russell  <martyn@imendio.com>
 	
 	* Release 0.10.2.
