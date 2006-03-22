@@ -1,3 +1,10 @@
+2006-03-22  Richard Hult  <richard@imendio.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* omf.make:
+	* xmldocs.make: Try to fix docs build, bug #335064.
+
 2006-03-20  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-spell.c: (gossip_spell_new): Fix build warnings when

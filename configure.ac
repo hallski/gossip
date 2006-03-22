@@ -223,16 +223,6 @@ fi
 
 
 dnl -----------------------------------------------------------
-dnl Scrollkeeper
-dnl -----------------------------------------------------------
-AC_PATH_PROG(SK_CONFIG,scrollkeeper-config,no)
-if test x$SK_CONFIG = xno; then
-  AC_MSG_ERROR(Couldn't find scrollkeeper-config. Please install the
-scrollkeeper package: http://scrollkeeper.sourceforge.net)
-fi
-
-
-dnl -----------------------------------------------------------
 dnl ASpell
 dnl -----------------------------------------------------------
 AC_ARG_ENABLE(aspell,

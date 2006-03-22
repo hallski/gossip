@@ -54,5 +54,4 @@ endif
 
 # Workaround broken scrollkeeper that doesn't remove its files on
 # uninstall.
-distuninstallcheck_listfiles = find . -type f -print | grep -v '^\./var/scrollkeeper' | \
- grep -v '/share/omf/planner'
+distuninstallcheck_listfiles = find . -type f -print | grep -v '^\./var/scrollkeeper'
