@@ -1,5 +1,15 @@
 2006-03-22  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_message_handler): Don't try to use the resource
+	when there isn't one. Fixes critical warning.
+	
+	* src/gossip-chat-view.c: (gossip_chat_view_append_event):
+	* src/gossip-theme-manager.c: (gossip_theme_manager_apply): Tweak
+	the theme appearance a bit.
+
+2006-03-22  Richard Hult  <richard@imendio.com>
+
 	* Makefile.am:
 	* configure.ac:
 	* omf.make:

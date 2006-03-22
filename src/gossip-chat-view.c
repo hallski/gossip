@@ -1469,10 +1469,10 @@ gossip_chat_view_append_event (GossipChatView *view,
 
 	if (priv->irc_style) {
 		tag = "irc-event";
-		msg = g_strdup_printf (" * %s\n", str);
+		msg = g_strdup_printf (" - %s\n", str);
 	} else {
 		tag = "fancy-event";
-		msg = g_strdup_printf ("%s\n", str);
+		msg = g_strdup_printf (" - %s\n", str);
 	}
 	
 	if (priv->last_block_type != BLOCK_TYPE_EVENT) {
@@ -1494,7 +1494,6 @@ gossip_chat_view_append_event (GossipChatView *view,
 	}
 
 	priv->last_block_type = BLOCK_TYPE_EVENT;
-	//priv->last_timestamp = gossip_time_get_current ();
 }
 
 void

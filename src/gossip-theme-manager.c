@@ -375,7 +375,7 @@ gossip_theme_manager_apply (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-event");
 	g_object_set (tag,
-		      "foreground", "PeachPuff4", /* PeachPuff3 isn't bad */
+		      "foreground", FANCY_LINE_OTHER,
 		      "justification", GTK_JUSTIFY_LEFT,
 		      NULL);
 	theme_manager_add_tag (table, tag);
