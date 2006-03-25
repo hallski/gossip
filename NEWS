@@ -1,3 +1,12 @@
+NEWS in 0.11:
+=============
+- Make use of the GtkAboutDialog.
+- Fixed #335992, Add the license to the new about dialog (Brian
+Pepple).
+- Fixed #335064, Try to fix make install failing in help directory
+(Richard). 
+
+
 NEWS in 0.10.2:
 ===============
 - Add runtime controlled debugging facilities (Richard).
