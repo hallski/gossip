@@ -151,14 +151,14 @@ account_chooser_setup (GossipAccountChooser *account_chooser)
 
 	GtkListStore             *store;
 	GtkCellRenderer          *renderer;
-	GtkComboBox              *combo_box;
+	GtkComboBox              *combobox;
  
 	priv = GET_PRIV (account_chooser);
 
 	/* set up combo box with new store */
-	combo_box = GTK_COMBO_BOX (account_chooser);
+	combobox = GTK_COMBO_BOX (account_chooser);
 
-  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combo_box));  
+  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combobox));  
 
 	store = gtk_list_store_new (COL_ACCOUNT_COUNT,
 				    GDK_TYPE_PIXBUF,
@@ -166,18 +166,18 @@ account_chooser_setup (GossipAccountChooser *account_chooser)
 				    G_TYPE_BOOLEAN,
 				    GOSSIP_TYPE_ACCOUNT);    
 
-	gtk_combo_box_set_model (combo_box, GTK_TREE_MODEL (store));
+	gtk_combo_box_set_model (combobox, GTK_TREE_MODEL (store));
 
 	renderer = gtk_cell_renderer_pixbuf_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, FALSE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, FALSE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
 					"pixbuf", COL_ACCOUNT_IMAGE,
 					"sensitive", COL_ACCOUNT_ENABLED,
 					NULL);
 
 	renderer = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
 					"text", COL_ACCOUNT_TEXT,
 					"sensitive", COL_ACCOUNT_ENABLED,
 					NULL);
@@ -206,7 +206,7 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 	GossipAccountChooserPriv *priv;
 
 	GtkListStore             *store;
-	GtkComboBox              *combo_box;
+	GtkComboBox              *combobox;
  	GtkTreeIter               iter;
 
 	GdkPixbuf                *pixbuf;
@@ -215,8 +215,8 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 	
 	priv = GET_PRIV (account_chooser);
 
-	combo_box = GTK_COMBO_BOX (account_chooser);
-	store = GTK_LIST_STORE (gtk_combo_box_get_model (combo_box));
+	combobox = GTK_COMBO_BOX (account_chooser);
+	store = GTK_LIST_STORE (gtk_combo_box_get_model (combobox));
 
 	is_connected = gossip_session_is_connected (priv->session, account);
 	pixbuf = gossip_pixbuf_from_account_status (account, 
@@ -244,7 +244,7 @@ account_chooser_account_add_foreach (GossipAccount        *account,
 	    ((priv->can_select_all == TRUE) || 
 	     (priv->can_select_all == FALSE && is_connected == TRUE))) {
 		priv->set_active_item = TRUE;
-		gtk_combo_box_set_active_iter (combo_box, &iter); 
+		gtk_combo_box_set_active_iter (combobox, &iter); 
 	}	
 	
 	g_signal_connect (account, "notify::name", 
@@ -303,7 +303,7 @@ account_chooser_account_name_changed_cb (GossipAccount        *account,
 					 GParamSpec           *param,
 					 GossipAccountChooser *account_chooser)
 {
-	GtkComboBox           *combo_box;
+	GtkComboBox           *combobox;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
 
@@ -312,9 +312,9 @@ account_chooser_account_name_changed_cb (GossipAccount        *account,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
-	combo_box = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combo_box);
-	gtk_combo_box_get_active_iter (combo_box, &iter);
+	combobox = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combobox);
+	gtk_combo_box_get_active_iter (combobox, &iter);
 
 	data.account_chooser = account_chooser;
 	data.account = account;
@@ -381,7 +381,7 @@ account_chooser_protocol_connected_cb (GossipSession        *session,
 				       GossipProtocol       *protocol,
 				       GossipAccountChooser *account_chooser)
 {
-	GtkComboBox           *combo_box;
+	GtkComboBox           *combobox;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
 
@@ -390,9 +390,9 @@ account_chooser_protocol_connected_cb (GossipSession        *session,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
-	combo_box = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combo_box);
-	gtk_combo_box_get_active_iter (combo_box, &iter);
+	combobox = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combobox);
+	gtk_combo_box_get_active_iter (combobox, &iter);
 
 	data.account_chooser = account_chooser;
 	data.account = account;
@@ -408,7 +408,7 @@ account_chooser_protocol_disconnected_cb (GossipSession        *session,
 					  GossipProtocol       *protocol,
 					  GossipAccountChooser *account_chooser)
 {
-	GtkComboBox           *combo_box;
+	GtkComboBox           *combobox;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
 
@@ -417,9 +417,9 @@ account_chooser_protocol_disconnected_cb (GossipSession        *session,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
-	combo_box = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combo_box);
-	gtk_combo_box_get_active_iter (combo_box, &iter);
+	combobox = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combobox);
+	gtk_combo_box_get_active_iter (combobox, &iter);
 
 	data.account_chooser = account_chooser;
 	data.account = account;
@@ -505,10 +505,10 @@ account_chooser_set_account_foreach (GtkTreeModel          *model,
 	g_object_unref (account2);
 
 	if (equal) {
-		GtkComboBox *combo_box;
+		GtkComboBox *combobox;
 
-		combo_box = GTK_COMBO_BOX (data->account_chooser);
-		gtk_combo_box_set_active_iter (combo_box, iter);
+		combobox = GTK_COMBO_BOX (data->account_chooser);
+		gtk_combo_box_set_active_iter (combobox, iter);
 
 		data->set = TRUE;
 	}
@@ -520,7 +520,7 @@ gboolean
 gossip_account_chooser_set_account (GossipAccountChooser *account_chooser,
 				    GossipAccount        *account) 
 {
-	GtkComboBox           *combo_box;
+	GtkComboBox           *combobox;
 	GtkTreeModel          *model;
 	GtkTreeIter            iter;
 
@@ -529,9 +529,9 @@ gossip_account_chooser_set_account (GossipAccountChooser *account_chooser,
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 	
-	combo_box = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combo_box);
-	gtk_combo_box_get_active_iter (combo_box, &iter);
+	combobox = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combobox);
+	gtk_combo_box_get_active_iter (combobox, &iter);
 
 	data.account_chooser = account_chooser;
 	data.account = account;
@@ -575,12 +575,12 @@ account_chooser_set_enabled_foreach (GtkTreeModel         *model,
 	if (priv->set_active_item == FALSE && 
 	    ((priv->can_select_all == TRUE) || 
 	     (priv->can_select_all == FALSE && is_connected == TRUE))) {
-		GtkComboBox *combo_box;
+		GtkComboBox *combobox;
 
-		combo_box = GTK_COMBO_BOX (account_chooser);
+		combobox = GTK_COMBO_BOX (account_chooser);
 
 		priv->set_active_item = TRUE;
-		gtk_combo_box_set_active_iter (combo_box, iter); 
+		gtk_combo_box_set_active_iter (combobox, iter); 
 	}
 
 	return FALSE;
@@ -591,15 +591,15 @@ gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser
 					   gboolean              can_select_all)
 {
 	GossipAccountChooserPriv *priv;
-	GtkComboBox              *combo_box;
+	GtkComboBox              *combobox;
 	GtkTreeModel             *model;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_CHOOSER (account_chooser));
 
 	priv = GET_PRIV (account_chooser);
 
-	combo_box = GTK_COMBO_BOX (account_chooser);
-	model = gtk_combo_box_get_model (combo_box);
+	combobox = GTK_COMBO_BOX (account_chooser);
+	model = gtk_combo_box_get_model (combobox);
 
 	priv->can_select_all = can_select_all;
 

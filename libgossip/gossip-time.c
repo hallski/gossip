@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -103,7 +103,8 @@ gossip_time_to_timestamp (gossip_time_t t)
 }
 
 gchar *
-gossip_time_to_timestamp_full (gossip_time_t t, const gchar *format)
+gossip_time_to_timestamp_full (gossip_time_t  t,
+			       const gchar   *format)
 {
 	gchar      stamp[128];
 	struct tm *tm;
@@ -116,5 +117,15 @@ gossip_time_to_timestamp_full (gossip_time_t t, const gchar *format)
 	strftime (stamp, sizeof (stamp), format, tm);
 
 	return g_strdup (stamp);
+}
+
+gossip_time_t 
+gossip_time_from_string_full (const gchar *time,
+			      const gchar *format)
+{
+	struct tm tm;
+	
+	strptime (time, format, &tm);
+	return gossip_time_from_tm (&tm);
 }
 

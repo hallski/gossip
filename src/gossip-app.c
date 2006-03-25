@@ -51,6 +51,7 @@
 #include "gossip-ft-window.h"
 #include "gossip-group-chat.h"
 #include "gossip-idle.h"
+#include "gossip-log-window.h"
 #include "gossip-marshal.h"
 #include "gossip-new-account-window.h"
 #include "gossip-new-message-dialog.h"
@@ -181,9 +182,11 @@ static void            app_connect_cb                       (GtkWidget          
 							     GossipApp                *app);
 static void            app_disconnect_cb                    (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_join_group_chat_cb               (GtkWidget                *window,
-							     GossipApp                *app);
 static void            app_new_message_cb                   (GtkWidget                *widget,
+							     GossipApp                *app);
+static void            app_history_cb                       (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_join_group_chat_cb               (GtkWidget                *window,
 							     GossipApp                *app);
 static void            app_add_contact_cb                   (GtkWidget                *widget,
 							     GossipApp                *app);
@@ -504,8 +507,9 @@ app_setup (GossipAccountManager *manager)
 			      "file_quit", "activate", app_quit_cb,
 			      "actions_connect", "activate", app_connect_cb,
  			      "actions_disconnect", "activate", app_disconnect_cb, 
-			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
 			      "actions_new_message", "activate", app_new_message_cb,
+			      "actions_history", "activate", app_history_cb,
+			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "actions_show_offline", "toggled", app_show_offline_cb,
 			      "edit_accounts", "activate", app_accounts_cb,
@@ -833,7 +837,7 @@ app_connect_cb (GtkWidget *window,
 	/* currently we pass TRUE even though this is not a startup
 	   call to connect, but if we pass FALSE then *ALL* accounts
 	   will be connected. */
-	gossip_app_connect (FALSE);
+	gossip_app_connect (NULL);
 }
 
 static void
@@ -846,13 +850,6 @@ app_disconnect_cb (GtkWidget *window,
 }
 
 static void
-app_join_group_chat_cb (GtkWidget *window,
-			GossipApp *app)
-{
-	gossip_chatrooms_window_show (NULL, FALSE);
-}
-
-static void
 app_new_message_cb (GtkWidget *widget,
 		    GossipApp *app)
 {
@@ -861,6 +858,24 @@ app_new_message_cb (GtkWidget *widget,
 	priv = app->priv;
 
 	gossip_new_message_dialog_show (GTK_WINDOW (priv->window));
+}
+
+static void
+app_history_cb (GtkWidget *widget,
+		GossipApp *app)
+{
+	GossipAppPriv *priv;
+
+	priv = app->priv;
+
+	gossip_log_window_show (GTK_WINDOW (priv->window), NULL);
+}
+
+static void
+app_join_group_chat_cb (GtkWidget *window,
+			GossipApp *app)
+{
+	gossip_chatrooms_window_show (NULL, FALSE);
 }
 
 static void
@@ -1426,7 +1441,7 @@ app_idle_check_cb (GossipApp *app)
  *
  */
 void
-gossip_app_connect (gboolean startup)
+gossip_app_connect (GossipAccount *specific_account)
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
@@ -1457,7 +1472,7 @@ gossip_app_connect (gboolean startup)
 		return;
 	}
 	
-	gossip_session_connect (priv->session, NULL, startup);
+	gossip_session_connect (priv->session, specific_account);
 }
 
 /* Test hack to add support for disconnecting all accounts and then connect 
@@ -1509,7 +1524,7 @@ gossip_app_net_up (void)
 	for (l = tmp_account_list; l; l = l->next) {
 		GossipAccount *account = GOSSIP_ACCOUNT (l->data);
 		
-		gossip_session_connect (priv->session, account, FALSE);
+		gossip_session_connect (priv->session, account);
 		g_object_unref (account);
 	}
 

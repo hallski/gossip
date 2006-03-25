@@ -1,3 +1,30 @@
+2006-03-25  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-session.[ch]:
+	* src/gossip-account-button.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-app.[ch]:
+	* src/gossip-main.c: Use GOption instead of popt and fixed
+	--account <name> which is supposed to only connect one account
+	when starting Gossip (and was broken). Fixes bug #335993 (Caio
+	Marcelo).
+	
+	* libgossip/gossip-time.[ch]:
+	* po/POTFILES.in:
+	* src/Makefile.am:
+	* src/gossip-chat-view.[ch]:
+	* src/gossip-chat.c:
+	* src/gossip-log-window.[ch]:
+	* src/gossip-log.[ch]:
+	* ui/main.glade: Added an initial log window
+	implementation. Currently there are a few teething issues:
+	- We won't have a real name to go by, just the account id
+	- Need case-insensitive	searching
+	- Need to fix the GOSSIP_IS_CONTACT() warnings
+	- Need to show more than just today's logs.
+
+	* src/gossip-log.xsl: Improved the CSS here so the font isn't so big. 
+
 2006-03-25  Brian Pepple  <bdpepple@ameritech.net>
 
 	* src/gossip-about-dialog.c: Add license to about dialog. Fixes

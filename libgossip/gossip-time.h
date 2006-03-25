@@ -21,18 +21,21 @@
 #ifndef __GOSSIP_TIME_H__
 #define __GOSSIP_TIME_H__
 
+#define __USE_XOPEN
 #include <time.h>
 
 #include <glib.h>
 
 typedef long gossip_time_t;
 
-gossip_time_t gossip_time_from_tm              (struct tm        *tm);
-struct tm *   gossip_time_to_tm                (gossip_time_t     t);
-gossip_time_t gossip_time_get_current          (void);
-gchar *       gossip_time_to_timestamp         (gossip_time_t     t);
-gchar *       gossip_time_to_timestamp_full    (gossip_time_t     t,
-						const gchar      *format);
+gossip_time_t gossip_time_from_tm           (struct tm     *tm);
+struct tm *   gossip_time_to_tm             (gossip_time_t  t);
+gossip_time_t gossip_time_get_current       (void);
+gchar *       gossip_time_to_timestamp      (gossip_time_t  t);
+gchar *       gossip_time_to_timestamp_full (gossip_time_t  t,
+					     const gchar   *format);
+gossip_time_t gossip_time_from_string_full  (const gchar   *time,
+					     const gchar   *format);
 
 #endif /* __GOSSIP_TIME_H__ */
 

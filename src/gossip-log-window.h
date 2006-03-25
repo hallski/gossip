@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2005 Imendio AB
+ * Copyright (C) 2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,21 +18,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_LOG_H__
-#define __GOSSIP_LOG_H__
+#ifndef __GOSSIP_LOG_WINDOW_H__
+#define __GOSSIP_LOG_WINDOW_H__
 
-#include <glib.h>
-#include <libgossip/gossip-message.h>
+void gossip_log_window_show    (GtkWindow     *parent,
+				GossipContact *contact);
 
-void     gossip_log_message         (GossipContact *own_contact,
-				     GossipMessage *msg,
-				     gboolean       incoming);
-gboolean gossip_log_exists          (GossipContact *contact);
-void     gossip_log_show            (GtkWidget     *window,
-				     GossipContact *contact);
-GList *  gossip_log_get_contacts    (GossipAccount *account);
-GList *  gossip_log_get_for_contact (GossipContact *own_contact,
-				     GossipAccount *account,
-				     const gchar   *contact_id);
-
-#endif /* __GOSSIP_LOG_H__ */
+#endif /* __GOSSIP_LOG_WINDOW_H__ */

@@ -60,6 +60,7 @@ gossip_SOURCES = 				                        	\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
 	gossip-log.c		           gossip-log.h				\
+	gossip-log-window.c	           gossip-log-window.h			\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \
 	gossip-new-account-window.c        gossip-new-account-window.h		\

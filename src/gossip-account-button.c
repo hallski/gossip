@@ -307,7 +307,7 @@ account_button_connection_activate_cb (GtkWidget           *menuitem,
 	session = gossip_app_get_session ();
 
 	if (!priv->connected && !priv->connecting) {
-		gossip_session_connect (session, priv->account, FALSE);
+		gossip_session_connect (session, priv->account);
 	} else {
 		gossip_session_disconnect (session, priv->account);
 	}

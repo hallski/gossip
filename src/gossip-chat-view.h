@@ -32,23 +32,17 @@
 #define GOSSIP_IS_CHAT_VIEW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT_VIEW))
 #define GOSSIP_CHAT_VIEW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewClass))
 
-
 typedef struct _GossipChatView      GossipChatView;
 typedef struct _GossipChatViewClass GossipChatViewClass;
 typedef struct _GossipChatViewPriv  GossipChatViewPriv;
 
-
 struct _GossipChatView {
-	GtkTextView         parent;
-
-	GossipChatViewPriv *priv;
+	GtkTextView      parent;
 };
-
 
 struct _GossipChatViewClass {
-	GtkTextViewClass    parent_class;
+	GtkTextViewClass parent_class;
 };
-
 
 typedef enum {
 	GOSSIP_SMILEY_NORMAL,       /*  :)   */
@@ -78,10 +72,9 @@ typedef enum {
 	GOSSIP_SMILEY_MONKEY,       /*  #)   */
 	GOSSIP_SMILEY_SILLY,        /*  O)   */
 	GOSSIP_SMILEY_SICK,         /*  +o(  */
-						
-	NUM_SMILEYS
+	
+	GOSSIP_SMILEY_COUNT
 } GossipSmiley;
-
 
 GType           gossip_chat_view_get_type                  (void) G_GNUC_CONST;
 GossipChatView *gossip_chat_view_new                       (void);

@@ -35,33 +35,22 @@
 #include "gossip-vcard.h"
 
 #define GOSSIP_TYPE_SESSION         (gossip_session_get_type ())
-#define GOSSIP_SESSION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
- 			             GOSSIP_TYPE_SESSION, GossipSession))
-#define GOSSIP_SESSION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				     GOSSIP_TYPE_SESSION, \
-			             GossipSessionClass))
-#define GOSSIP_IS_SESSION(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o),\
-			             GOSSIP_TYPE_SESSION))
-#define GOSSIP_IS_SESSION_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), \
-				     GOSSIP_TYPE_SESSION))
-#define GOSSIP_SESSION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),\
-				     GOSSIP_TYPE_SESSION, \
-				     GossipSessionClass))
-
+#define GOSSIP_SESSION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_SESSION, GossipSession))
+#define GOSSIP_SESSION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_SESSION, GossipSessionClass))
+#define GOSSIP_IS_SESSION(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_SESSION))
+#define GOSSIP_IS_SESSION_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_SESSION))
+#define GOSSIP_SESSION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_SESSION, GossipSessionClass))
 
 typedef struct _GossipSession      GossipSession;
 typedef struct _GossipSessionClass GossipSessionClass;
-
 
 struct _GossipSession {
 	GObject parent;
 };
 
-
 struct _GossipSessionClass {
 	GObjectClass parent_class;
 };
-
 
 GType           gossip_session_get_type                (void) G_GNUC_CONST;
 GossipSession * gossip_session_new                     (GossipAccountManager    *manager);
@@ -96,8 +85,7 @@ gboolean        gossip_session_remove_account          (GossipSession           
 GossipAccount * gossip_session_find_account            (GossipSession           *session,
 							GossipContact           *contact);
 void            gossip_session_connect                 (GossipSession           *session,
-							GossipAccount           *account,
-							gboolean                 startup);
+							GossipAccount           *account);
 void            gossip_session_disconnect              (GossipSession           *session,
 							GossipAccount           *account);
 gboolean        gossip_session_is_connected            (GossipSession           *session,

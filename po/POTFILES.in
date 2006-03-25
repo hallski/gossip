@@ -32,6 +32,7 @@ src/gossip-galago.c
 src/gossip-group-chat.c
 src/gossip-idle.c
 src/gossip-log.c
+src/gossip-log-window.c
 src/gossip-main.c
 src/gossip-new-account-window.c
 src/gossip-new-chatroom-dialog.c

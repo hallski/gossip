@@ -1,6 +1,6 @@
 <xsl:stylesheet version = '1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
 
-  <xsl:output method="html" encoding="UTF-8" indent="yes"/>
+  <xsl:output method="html" encoding="utf-8" indent="yes"/>
 
   <xsl:template match="/">
     <html>
@@ -87,7 +87,7 @@
     <xsl:text disable-output-escaping="yes">&lt;/a&gt;</xsl:text>
   </xsl:template>
 
-  <xsl:template match="gossip">
+  <xsl:template match="log">
 
     <div class="top-day-stamp">
       <xsl:call-template name="format-day-stamp">

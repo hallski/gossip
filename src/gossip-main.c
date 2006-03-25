@@ -26,6 +26,7 @@
 #include <gtk/gtkwindow.h>
 #include <gtk/gtkmain.h>
 #include <glib/gi18n.h>
+#include <glib/goption.h>
 
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
@@ -36,6 +37,26 @@
 #include "gossip-preferences.h"
 #include "gossip-stock.h"
 #include "gossip-app.h"
+
+static gboolean  no_connect = FALSE;
+static gboolean  list_accounts = FALSE;
+static gchar    *account_name = NULL;
+
+static const GOptionEntry options[] = {
+	{ "no-connect", 'n', 
+	  0, G_OPTION_ARG_NONE, &no_connect,
+	  N_("Don't connect on startup"),
+	  NULL },
+	{ "list-accounts", 'l', 
+	  0, G_OPTION_ARG_NONE, &list_accounts,
+	  N_("List the available accounts"),
+	  NULL },
+	{ "account", 'a', 
+	  0, G_OPTION_ARG_STRING, &account_name,
+	  N_("Which account to connect to on startup"),
+	  N_("ACCOUNT-NAME") },
+	{ NULL }
+};	
 
 static void
 setup_default_window_icon (void)
@@ -52,77 +73,52 @@ main (int argc, char *argv[])
 {
 	GnomeProgram          *program;
 	GossipAccountManager  *account_manager;
-	gboolean               no_connect = FALSE;
-	gboolean               list_accounts = FALSE;
-	poptContext            popt_context;
-	gchar                 *account_name = NULL;
-	const gchar          **args;
+	GossipAccount         *account = NULL;
+	GOptionContext        *context;
 	GList                 *accounts;
 
-	struct poptOption   options[] = {
-		{ "no-connect",
-			'n',
-			POPT_ARG_NONE,
-			&no_connect,
-			0,
-			N_("Don't connect on startup"),
-		  NULL },
-		{ "account",
-			'a',
-			POPT_ARG_STRING,
-			&account_name,
-			0,
-			N_("Which account to connect to on startup"),
-		  N_("ACCOUNT-NAME") },
-		{ "list-accounts",
-			'l',
-			POPT_ARG_NONE,
-			&list_accounts,
-			0,
-			N_("List the available accounts"),
-		  NULL },
-
-		{ NULL, '\0', 0, NULL, 0, NULL, NULL }
-	};
-
+	
 	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
+
+	context = g_option_context_new (N_("- Gossip Instant Messenger"));
+	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);	
 
 	program = gnome_program_init ("gossip", PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,
-				      GNOME_PARAM_POPT_TABLE, options,
+				      GNOME_PARAM_GOPTION_CONTEXT, context,
 				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
 
 	g_set_application_name (PACKAGE_NAME);
 
-	g_object_get (program,
-		      GNOME_PARAM_POPT_CONTEXT,
-		      &popt_context,
-		      NULL);
-
-	args = poptGetArgs (popt_context);
-
-	/* get all accounts */
+	/* Get all accounts. */
  	account_manager = gossip_account_manager_new (NULL);
 
 	accounts = gossip_account_manager_get_accounts (account_manager);
+
+	if (account_name && no_connect) {
+		g_printerr (_("You can not use --no-connect together with --account"));
+		g_printerr ("\n");
+
+		return EXIT_FAILURE;
+	}
 
 	if (list_accounts) {
 		GList         *l;
 		GossipAccount *def = NULL;
 
 		if (g_list_length ((GList*)accounts) < 1) {
-			g_print (_("No accounts available."));
-			g_print ("\n");
+			g_printerr (_("No accounts available."));
+			g_printerr ("\n");
 		} else {
 			def = gossip_account_manager_get_default (account_manager);
 			
-			g_print (_("Available accounts:"));
-			g_print ("\n");
+			g_printerr (_("Available accounts:"));
+			g_printerr ("\n");
 		}
 		
 		for (l = accounts; l; l = l->next) {
@@ -130,11 +126,11 @@ main (int argc, char *argv[])
 			
 			g_print (" %s", gossip_account_get_name (account));
 			if (gossip_account_equal (account, def)) {
-				g_print (" ");
-				g_print (_("[default]"));
+				g_printerr (" ");
+				g_printerr (_("[default]"));
 			}
 
-			g_print ("\n");
+			g_printerr ("\n");
 		}
 
 		g_list_free (accounts);
@@ -143,23 +139,17 @@ main (int argc, char *argv[])
 	}
 	
 	if (account_name) {
-		GossipAccount *account;
-
 		account = gossip_account_manager_find (account_manager,
 						       account_name);
 		if (!account) {
-			g_print (_("There is no account with the name '%s'."),
-				 account_name);
-			g_print ("\n");
+			g_printerr (_("There is no account with the name '%s'."),
+				    account_name);
+			g_printerr ("\n");
 
 			g_list_free (accounts);
 
 			return EXIT_FAILURE;
 		}
-
-		/* use the specified account as default account. */
-		gossip_account_manager_set_overridden_default (account_manager,
-							       account_name);
 	}
 
 	g_list_free (accounts);
@@ -169,7 +159,7 @@ main (int argc, char *argv[])
 	gossip_app_create (account_manager);
 	
 	if (!no_connect) {
-		gossip_app_connect (TRUE);
+		gossip_app_connect (account);
 	}
 	
 	gtk_main ();

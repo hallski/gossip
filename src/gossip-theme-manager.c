@@ -36,12 +36,7 @@
 #include "gossip-preferences.h"
 #include "gossip-app.h"
 
-static void theme_manager_finalize    (GObject     *object);
-static void theme_manager_notify_func (GConfClient *client,
-				       guint        id,
-				       GConfEntry  *entry,
-				       gpointer     user_data);
-
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
 	gchar    *name;
@@ -51,6 +46,12 @@ typedef struct {
 	guint     notify_id;
 } GossipThemeManagerPriv;
 
+static void theme_manager_finalize    (GObject     *object);
+static void theme_manager_notify_func (GConfClient *client,
+				       guint        id,
+				       GConfEntry  *entry,
+				       gpointer     user_data);
+
 enum {
 	THEME_CHANGED,
 	LAST_SIGNAL
@@ -59,10 +60,6 @@ enum {
 static guint signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (GossipThemeManager, gossip_theme_manager, G_TYPE_OBJECT);
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, \
-						    GossipThemeManagerPriv))
-
 
 static void
 gossip_theme_manager_class_init (GossipThemeManagerClass *klass)

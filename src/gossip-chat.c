@@ -39,7 +39,6 @@
 #define DEBUG_MSG(x)  
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
-
 struct _GossipChatPriv {
 	GossipChatWindow *window;
 
@@ -52,7 +51,6 @@ struct _GossipChatPriv {
 	gint              last_input_height;
 };
 
-
 typedef struct {
 	GossipChat  *chat;
        	gchar       *word;
@@ -60,7 +58,6 @@ typedef struct {
        	GtkTextIter  start;
        	GtkTextIter  end;
 } GossipChatSpell;
-
 
 static void      gossip_chat_class_init            (GossipChatClass *klass);
 static void      gossip_chat_init                  (GossipChat      *chat);
@@ -81,7 +78,6 @@ GossipChatSpell *chat_spell_new                    (GossipChat      *chat,
 						    GtkTextIter      end);
 static void      chat_spell_free                   (GossipChatSpell *chat_spell);
 
-
 enum {
 	COMPOSING,
 	NEW_MESSAGE,
@@ -90,13 +86,10 @@ enum {
 	LAST_SIGNAL
 };
 
-
 static GObjectClass *parent_class = NULL;
 static guint         chat_signals[LAST_SIGNAL] = { 0 };
 
-
 G_DEFINE_TYPE (GossipChat, gossip_chat, G_TYPE_OBJECT);
-
 
 static void
 gossip_chat_class_init (GossipChatClass *klass)

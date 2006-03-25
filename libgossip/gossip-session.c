@@ -29,7 +29,6 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
 
-
 typedef struct _GossipSessionPriv  GossipSessionPriv;
 
 struct _GossipSessionPriv {
@@ -47,12 +46,10 @@ struct _GossipSessionPriv {
 	GHashTable           *timers; /* connected time */
 };
 
-
 typedef struct {
 	gchar         *contact_id;
 	GossipAccount *account;
 } FindAccount;
-
 
 struct CountAccounts {
 	GossipSession *session;
@@ -60,18 +57,10 @@ struct CountAccounts {
 	guint          disconnected;
 };
 
-
 typedef struct {
 	GossipSession *session;
 	GList         *accounts;
 } GetAccounts;
-
-
-typedef struct {
-	GossipSession *session;
-	gboolean       startup;
-} ConnectAccounts;
-
 
 static void            gossip_session_class_init                 (GossipSessionClass   *klass);
 static void            gossip_session_init                       (GossipSession        *session);
@@ -131,15 +120,13 @@ static void            session_connect                           (GossipSession 
 								  GossipAccount        *account);
 static void            session_connect_foreach_cb                (GossipAccount        *account,
 								  GossipProtocol       *protocol,
-								  ConnectAccounts      *data);
+								  GossipSession        *session);
 static void            session_disconnect                        (GossipSession        *session,
 								  GossipAccount        *account);
 static void            session_disconnect_foreach_cb             (GossipAccount        *account,
 								  GossipProtocol       *protocol,
 								  GossipSession        *session);
 	
-
-/* signals */
 enum {
 	CONNECTING,
 	CONNECTED,
@@ -163,13 +150,10 @@ enum {
 	LAST_SIGNAL
 };
 
-
-G_DEFINE_TYPE (GossipSession, gossip_session, G_TYPE_OBJECT);
-
-
 static guint    signals[LAST_SIGNAL] = {0};
 static gpointer parent_class;
 
+G_DEFINE_TYPE (GossipSession, gossip_session, G_TYPE_OBJECT);
 
 static void
 gossip_session_class_init (GossipSessionClass *klass)
@@ -957,11 +941,9 @@ session_account_removed_cb (GossipAccountManager *manager,
 
 void
 gossip_session_connect (GossipSession *session,
-			GossipAccount *account,
-			gboolean       startup)
+			GossipAccount *account)
 {
 	GossipSessionPriv *priv;
-	ConnectAccounts   *data;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
@@ -986,17 +968,9 @@ gossip_session_connect (GossipSession *session,
 	}
 
 	/* connect ALL accounts if no one account is specified */
-	data = g_new0 (ConnectAccounts, 1);
-
-	data->session = g_object_ref (session);
-	data->startup = startup;
-
 	g_hash_table_foreach (priv->accounts,
-			      (GHFunc)session_connect_foreach_cb,
-			      data);
-
-	g_object_unref (data->session);
-	g_free (data);
+			      (GHFunc) session_connect_foreach_cb,
+			      session);
 }
 
 static void
@@ -1024,20 +998,15 @@ session_connect (GossipSession *session,
 }
 
 static void
-session_connect_foreach_cb (GossipAccount   *account,
-			    GossipProtocol  *protocol,
-			    ConnectAccounts *data)
+session_connect_foreach_cb (GossipAccount  *account,
+			    GossipProtocol *protocol,
+			    GossipSession  *session)
 {
-	GossipSessionPriv *priv;
-
-	priv = GET_PRIV (data->session);
-
-	if (data->startup && 
-	    !gossip_account_get_auto_connect (account)) {
+	if (!gossip_account_get_auto_connect (account)) {
 		return;
 	}
 
-	session_connect (data->session, account);
+	session_connect (session, account);
 }
 
 void
@@ -1492,7 +1461,6 @@ gossip_session_get_own_contact (GossipSession *session,
 
 	return gossip_protocol_get_own_contact (protocol);
 }
-
 
 GList *
 gossip_session_get_groups (GossipSession *session)

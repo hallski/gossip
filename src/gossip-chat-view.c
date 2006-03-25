@@ -37,6 +37,8 @@
 #include "gossip-theme-manager.h"
 #include "gossip-app.h"
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
+
 #define DEBUG_MSG(x) 
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
@@ -246,6 +248,8 @@ gossip_chat_view_class_init (GossipChatViewClass *klass)
 	object_class->finalize = chat_view_finalize;
 	widget_class->size_allocate = chat_view_size_allocate;
 	widget_class->drag_motion = chat_view_drag_motion;
+
+	g_type_class_add_private (object_class, sizeof (GossipChatViewPriv));
 }
 
 static void
@@ -253,8 +257,10 @@ gossip_chat_view_init (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
 
-	priv = g_new0 (GossipChatViewPriv, 1);
-	view->priv = priv;
+/* 	priv = g_new0 (GossipChatViewPriv, 1); */
+/* 	view->priv = priv; */
+
+	priv = GET_PRIV (view);
 
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	priv->last_timestamp = 0;
@@ -286,13 +292,6 @@ gossip_chat_view_init (GossipChatView *view)
 static void
 chat_view_finalize (GObject *object)
 {
-	GossipChatView     *view = GOSSIP_CHAT_VIEW (object);
-	GossipChatViewPriv *priv;
-
-	priv = view->priv;
-
-	g_free (priv);
-
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
 }
 
@@ -331,7 +330,7 @@ chat_view_setup_tags (GossipChatView *view)
 	GossipChatViewPriv *priv;
 	GtkTextTag         *tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "cut",
@@ -365,7 +364,7 @@ chat_view_populate_popup (GossipChatView *view,
 	GtkWidget          *item;
 	gchar              *str = NULL;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	table = gtk_text_buffer_get_tag_table (priv->buffer);
 	tag = gtk_text_tag_table_lookup (table, "link");
@@ -641,15 +640,14 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 static GdkPixbuf *
 chat_view_get_smiley (GossipSmiley smiley)
 {
-	static GdkPixbuf *pixbufs[NUM_SMILEYS];
+	static GdkPixbuf *pixbufs[GOSSIP_SMILEY_COUNT];
 	static gboolean   inited = FALSE;
 
 	if (!inited) {
 		gint i;
 
-		for (i = 0; i < NUM_SMILEYS; i++) {
-			pixbufs[i] = gossip_pixbuf_from_smiley (
-				i, GTK_ICON_SIZE_MENU);
+		for (i = 0; i < GOSSIP_SMILEY_COUNT; i++) {
+			pixbufs[i] = gossip_pixbuf_from_smiley (i, GTK_ICON_SIZE_MENU);
 		}
 
 		inited = TRUE;
@@ -716,7 +714,7 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	GtkTextTagTable    *table;
 	GtkTextTag         *tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &bottom);
 	line = gtk_text_iter_get_line (&bottom);
@@ -767,7 +765,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	gboolean            bottom;
 	const gchar        *tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	if (priv->irc_style) {
 		tag = "irc-invite";
@@ -857,7 +855,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	gboolean            append_date, append_time;
 	GString            *str;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	if (priv->irc_style) {
 		tag = "irc-time";
@@ -950,7 +948,7 @@ chat_view_append_spacing (GossipChatView *view)
 	const gchar        *tag;
 	GtkTextIter         iter;
 	
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	if (priv->irc_style) {
 		tag = "irc-spacing";
@@ -981,7 +979,7 @@ chat_view_append_text (GossipChatView *view,
 	GArray             *start, *end;
 	const gchar        *link_tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	if (priv->irc_style) {
 		link_tag = "irc-link";
@@ -1079,7 +1077,7 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 	const gchar        *tag;
 	const gchar        *line_tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	contact = gossip_message_get_sender (msg);
 	
@@ -1164,7 +1162,7 @@ chat_view_append_irc_action (GossipChatView *view,
 	gchar              *tmp;
 	const gchar        *tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	DEBUG_MSG (("ChatView: Add IRC action"));
 
@@ -1218,7 +1216,7 @@ chat_view_append_fancy_action (GossipChatView *view,
 	const gchar        *tag;
 	const gchar        *line_tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	DEBUG_MSG (("ChatView: Add fancy action"));
 
@@ -1267,7 +1265,7 @@ chat_view_append_irc_message (GossipChatView *view,
 	GtkTextIter         iter;
 	gchar              *tmp;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	DEBUG_MSG (("ChatView: Add IRC message"));
 
@@ -1325,7 +1323,7 @@ chat_view_append_fancy_message (GossipChatView *view,
 	const gchar        *body;
 	const gchar        *tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 	
 	if (from_self) {
 		tag = "fancy-body-self";
@@ -1349,7 +1347,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	const gchar        *body;
 	gboolean            scroll_down;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	body = gossip_message_get_body (msg);
 	if (!body) {
@@ -1405,7 +1403,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	const gchar        *body;
 	gboolean            scroll_down;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	body = gossip_message_get_body (msg);
 	if (!body) {
@@ -1461,7 +1459,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 	gchar              *msg;
 	const gchar        *tag;
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 	
 	bottom = chat_view_is_scrolled_down (view);
 
@@ -1499,12 +1497,21 @@ gossip_chat_view_append_event (GossipChatView *view,
 void
 gossip_chat_view_clear (GossipChatView *view)
 {
-	GtkTextBuffer *buffer;
+	GtkTextBuffer      *buffer;
+	GossipChatViewPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	gtk_text_buffer_set_text (buffer, "", -1);
+
+	/* We set these back to the initial values so we get
+	 * timestamps when clearing the window to know when
+	 * conversations start. */
+	priv = GET_PRIV (view);
+	
+	priv->last_block_type = BLOCK_TYPE_NONE;
+	priv->last_timestamp = 0;
 }
 
 gboolean
@@ -1577,7 +1584,7 @@ theme_manager_theme_changed_cb (GossipThemeManager *manager,
 {
 	GossipChatViewPriv *priv;
 	
-	priv = view->priv;
+	priv = GET_PRIV (view);
 	
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	
@@ -1593,7 +1600,7 @@ gossip_chat_view_set_irc_style (GossipChatView *view,
 	
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	priv->irc_style = irc_style;
 
@@ -1616,7 +1623,7 @@ gossip_chat_view_get_irc_style (GossipChatView *view)
 	
 	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
 
-	priv = view->priv;
+	priv = GET_PRIV (view);
 
 	return priv->irc_style;
 }
