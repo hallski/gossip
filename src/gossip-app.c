@@ -40,7 +40,7 @@
 
 #include "eggtrayicon.h"
 
-#include "gossip-about.h"
+#include "gossip-about-dialog.h"
 #include "gossip-account-button.h"
 #include "gossip-accounts-dialog.h"
 #include "gossip-add-contact-window.h"
@@ -928,16 +928,11 @@ static void
 app_about_cb (GtkWidget *window,
 	      GossipApp *app)
 {
-	static GtkWidget *about;
+	GossipAppPriv *priv;
 
-	if (about) {
-		gtk_window_present (GTK_WINDOW (about));
-		return;
-	}
+	priv = app->priv;
 	
-	about = gossip_about_new ();
-	g_object_add_weak_pointer (G_OBJECT (about), (gpointer) &about);
-	gtk_widget_show (about);
+	gossip_about_dialog_new (GTK_WINDOW (priv->window));
 }
 
 static void

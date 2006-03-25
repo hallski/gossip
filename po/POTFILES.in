@@ -12,7 +12,7 @@ libgossip/gossip-chatroom-provider.c
 
 protocols/jabber/gossip-jabber.c
 
-src/gossip-about.c
+src/gossip-about-dialog.c
 src/gossip-account-button.c
 src/gossip-accounts-dialog.c
 src/gossip-add-contact-window.c

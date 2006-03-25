@@ -37,7 +37,7 @@ gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	$(galago_sources)		     	                        	\
 	$(libnotify_sources)		     	                        	\
-	gossip-about.c                     gossip-about.h  			\
+	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-button.c		   gossip-account-button.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\

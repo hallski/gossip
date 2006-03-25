@@ -1,3 +1,13 @@
+2006-03-25  Martyn Russell  <martyn@imendio.com>
+
+	* po/ChangeLog:
+	* po/POTFILES.in:
+	* src/Makefile.am:
+	* src/gossip-about-dialog.[ch]:
+	* src/gossip-about.[ch]:
+	* src/gossip-app.c: Deprecated old about dialog and added new
+	about dialog using the new GTK API.
+
 2006-03-22  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c:
