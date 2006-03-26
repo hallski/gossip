@@ -42,8 +42,8 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
@@ -673,31 +673,44 @@ jabber_connection_open_cb (LmConnection *connection,
 	
 	priv = GET_PRIV (jabber);
 
-	if (priv->connection_timeout_id != 0) {
-		g_source_remove (priv->connection_timeout_id);
-		priv->connection_timeout_id = 0;
-	}
-
 	if (priv->disconnect_request) {
-		/* this is so we go no further that way we don't issue
-		   warnings for connections we stopped ourselves */
+		/* This is so we go no further that way we don't issue
+		 * warnings for connections we stopped ourselves.
+		 */
+		jabber_logout (GOSSIP_PROTOCOL (jabber));
 		return;
 	}
 
 	if (result == FALSE) {
+		jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_CONNECTION);
 		return;
 	}
 
 	DEBUG_MSG (("Protocol: Connection open!"));
 
+	if (priv->connection_timeout_id != 0) {
+		g_source_remove (priv->connection_timeout_id);
+		priv->connection_timeout_id = 0;
+	}
+
 	account = priv->account;
 	account_password = gossip_account_get_password (account);
 
 	if (!account_password || strlen (account_password) < 1) {
-		/* FIXME: Ask the user for the password */
+		DEBUG_MSG (("Protocol: Requesting password for:'%s'", 
+			    gossip_account_get_id (account)));
+
 		g_signal_emit_by_name (jabber, "get-password", 
 				       account, &password);
+
+		if (!password) {
+			DEBUG_MSG (("Protocol: Cancelled password request for:'%s'", 
+				    gossip_account_get_id (account)));
+
+			jabber_logout (GOSSIP_PROTOCOL (jabber));
+			return;
+		}
 	} else {
 		password = g_strdup (account_password);
 	}
@@ -740,6 +753,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 	priv = GET_PRIV (jabber);
 	
 	if (result == FALSE) {
+		jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_AUTH_FAILED);
 		return;
 	}

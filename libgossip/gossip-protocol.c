@@ -42,7 +42,7 @@ enum {
 	CONTACT_REMOVED,
 	COMPOSING_EVENT,
 
-	/* use to get password from user */
+	/* Used to get password from user. */
 	GET_PASSWORD,
 	
 	SUBSCRIPTION_REQUEST,
@@ -92,9 +92,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_ACCOUNT);
 
 	/* Maybe include a reason for disconnect? */
 	signals[LOGGED_OUT] = 
@@ -103,9 +103,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_ACCOUNT);
 
 	signals[NEW_MESSAGE] = 
 		g_signal_new ("new-message",
@@ -113,9 +113,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_MESSAGE);
 
 	signals[CONTACT_ADDED] = 
 		g_signal_new ("contact-added",
@@ -123,9 +123,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_CONTACT);
 
 	signals[CONTACT_UPDATED] = 
 		g_signal_new ("contact-updated",
@@ -133,9 +133,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_CONTACT);
 	
 	signals[CONTACT_PRESENCE_UPDATED] =
 		g_signal_new ("contact-presence-updated",
@@ -143,9 +143,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_CONTACT);
 
 	signals[CONTACT_REMOVED] = 
 		g_signal_new ("contact-removed",
@@ -153,9 +153,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_CONTACT);
 
 	signals[COMPOSING_EVENT] = 
 		g_signal_new ("composing-event",
@@ -163,9 +163,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER_BOOLEAN,
+			      libgossip_marshal_VOID__OBJECT_BOOLEAN,
 			      G_TYPE_NONE,
-			      2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
+			      2, GOSSIP_TYPE_CONTACT, G_TYPE_BOOLEAN);
 
 	signals[GET_PASSWORD] =
 		g_signal_new ("get-password",
@@ -173,9 +173,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_STRING__POINTER,
+			      libgossip_marshal_STRING__OBJECT,
 			      G_TYPE_STRING,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_ACCOUNT);
 
         signals[SUBSCRIPTION_REQUEST] =
                 g_signal_new ("subscription-request",
@@ -183,9 +183,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-                              libgossip_marshal_VOID__POINTER,
+                              libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
+			      1, GOSSIP_TYPE_CONTACT);
 
 	signals[ERROR] = 
 		g_signal_new ("error",
@@ -193,9 +193,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__POINTER_POINTER,
+			      libgossip_marshal_VOID__OBJECT_POINTER,
 			      G_TYPE_NONE,
-			      2, G_TYPE_POINTER, G_TYPE_POINTER);
+			      2, GOSSIP_TYPE_ACCOUNT, G_TYPE_POINTER);
 
 }
 

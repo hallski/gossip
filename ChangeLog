@@ -1,5 +1,20 @@
 2006-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-protocol.c: 
+	* libgossip/gossip-session.c: 
+	* libgossip/libgossip-marshal.list: Fixed the types used in
+	signals to use the ACTUAL types (GOSSIP_TYPE_MESSAGE, etc) instead
+	of G_TYPE_POINTER. 
+	
+	* protocols/jabber/gossip-jabber.c: Clean up the password request
+	code and don't error when the password is NULL.
+	
+	* src/gossip-ui-utils.c: Fixed the password dialog to show the
+	account name and id when asking for a password so we know which
+	account password to fill in. Fixes #336008 (André Dahlqvist).
+
+2006-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* po/POTFILES.in:
 	* src/gossip-accounts-dialog.c:
 	* ui/Makefile.am:

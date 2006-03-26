@@ -94,7 +94,6 @@ gossip_message_get_gtype (void)
 	}
 
 	return type;
-
 }
 
 static void

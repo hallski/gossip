@@ -224,38 +224,52 @@ gossip_password_dialog_run (GossipAccount *account,
 {
 	GtkWidget *dialog;
 	GtkWidget *checkbox;
-	GtkWidget *entry, *hbox;
+	GtkWidget *entry;
+	GtkWidget *vbox;
+	gchar     *str;
 	gchar     *password;
-	
-	dialog = gtk_message_dialog_new (parent,
-					 GTK_DIALOG_DESTROY_WITH_PARENT,
-					 GTK_MESSAGE_QUESTION,
-					 GTK_BUTTONS_OK_CANCEL,
-					 _("Please enter your password:"));
-	
-	checkbox = gtk_check_button_new_with_label (_("Remember Password?"));
-	gtk_widget_show (checkbox);
 
-	gtk_container_set_border_width (GTK_CONTAINER (checkbox), 2);
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 	
+	str = g_strdup_printf (_("Please enter your %s account password"),
+			       gossip_account_get_name (account));
+	dialog = gtk_message_dialog_new_with_markup (parent,
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_MESSAGE_QUESTION,
+						     GTK_BUTTONS_OK_CANCEL,
+						     "<b>%s</b>",
+						     str);
+	g_free (str);
+
+	str = g_strdup_printf (_("Logging in with: %s"), 
+			       gossip_account_get_id (account));
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", str);
+	g_free (str);
+
+	checkbox = gtk_check_button_new_with_label (_("Remember Password?"));
+
 	entry = gtk_entry_new ();
 	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
-	gtk_widget_show (entry);
 	
 	g_signal_connect (entry,
 			  "activate",
 			  G_CALLBACK (password_dialog_activate_cb),
 			  dialog);
 	
-	hbox = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox);
+	vbox = gtk_vbox_new (FALSE, 6);
+
+ 	gtk_container_set_border_width  (GTK_CONTAINER (vbox), 6); 
 	
-	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, TRUE, 4);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), checkbox, FALSE, TRUE, 4);
+	gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), checkbox, FALSE, FALSE, 0);
+
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox, FALSE, FALSE, 0);
+
+ 	gtk_widget_show_all (dialog); 
 	
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
 		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
+
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbox))) {
 			GossipSession        *session;
 			GossipAccountManager *manager;
@@ -269,7 +283,7 @@ gossip_password_dialog_run (GossipAccount *account,
 	} else {
 		password = NULL;
 	}
-	
+
 	gtk_widget_destroy (dialog);
 
 	return password;

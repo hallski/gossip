@@ -1,7 +1,10 @@
 NEWS in 0.11:
 =============
-- Make use of the GtkAboutDialog.
 - Added a chat history window.
+- Make use of the GtkAboutDialog.
+- Fixed #336008, Show the account name and id when asking for the
+account password so we know which password to enter when we have
+multiple accounts configured (André Dahlqvist). 
 - Fixed #336064, Add a mnemonic for the chat theme option in the
 preferences (Wouter Bolsterlee).
 - Fixed #335464, Don't spam notifying offline contacts as online when
