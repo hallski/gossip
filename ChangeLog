@@ -1,5 +1,12 @@
 2006-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-preferences.c: 
+	* ui/connect.glade: A few more GUI tweaks to make sure Escape
+	closes dialogs.
+
+2006-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* ui/main.glade: Make sure Escape works for closing Preferences
 	and some other dialogs that have a Close button and not a Cancel
 	button. Made sure the chat theme combo label has a mnemonic, fixes

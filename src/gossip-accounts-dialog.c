@@ -131,15 +131,15 @@ static void           accounts_dialog_button_remove_clicked_cb  (GtkWidget      
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_button_forget_clicked_cb  (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_button_close_clicked_cb   (GtkWidget             *button,
-								 GossipAccountsDialog  *dialog);
 static gboolean       accounts_dialog_foreach                   (GtkTreeModel          *model,
 								 GtkTreePath           *path,
 								 GtkTreeIter           *iter,
 								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_response_cb               (GtkWidget             *widget,
+								 gint                   response,
+								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_destroy_cb                (GtkWidget             *widget,
 								 GossipAccountsDialog  *dialog);
-
 enum {
 	COL_NAME,
 	COL_EDITABLE,
@@ -1186,13 +1186,6 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 	g_object_unref (account);
 }
 
-static void
-accounts_dialog_button_close_clicked_cb (GtkWidget            *button,
-					 GossipAccountsDialog *dialog)
-{
-	gtk_widget_destroy (dialog->window);
-}
-
 static gboolean
 accounts_dialog_foreach (GtkTreeModel         *model,
 			 GtkTreePath          *path,
@@ -1210,6 +1203,14 @@ accounts_dialog_foreach (GtkTreeModel         *model,
 	g_object_unref (account);
 
 	return FALSE;
+}
+
+static void
+accounts_dialog_response_cb (GtkWidget            *widget,
+			     gint                  response,
+			     GossipAccountsDialog *dialog)
+{
+	gtk_widget_destroy (widget);
 }
 
 static void
@@ -1306,6 +1307,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	gossip_glade_connect (glade, 
 			      dialog,
 			      "accounts_dialog", "destroy", accounts_dialog_destroy_cb,
+			      "accounts_dialog", "response", accounts_dialog_response_cb,
 			      "entry_name", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_id", "changed", accounts_dialog_entry_changed_cb,
 			      "entry_password", "changed", accounts_dialog_entry_changed_cb,
@@ -1326,7 +1328,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
 			      "button_forget", "clicked", accounts_dialog_button_forget_clicked_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
-			      "button_close", "clicked", accounts_dialog_button_close_clicked_cb,
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);

@@ -815,6 +815,14 @@ preferences_string_combo_changed_cb (GtkWidget *combo,
 }
 
 static void
+preferences_response_cb (GtkWidget         *widget,
+			 gint               response,
+			 GossipPreferences *preferences)
+{
+	gtk_widget_destroy (widget);
+}
+
+static void
 preferences_destroy_cb (GtkWidget         *widget,
 			GossipPreferences *preferences)
 {
@@ -829,15 +837,6 @@ preferences_destroy_cb (GtkWidget         *widget,
 	g_list_free (preferences->ids);
 	g_free (preferences);
 }
-
-static void
-preferences_response_cb (GtkWidget         *widget,
-			 gint               response,
-			 GossipPreferences *preferences)
-{
-	gtk_widget_destroy (widget);
-}
-
 
 void
 gossip_preferences_show (void)
