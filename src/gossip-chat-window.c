@@ -35,6 +35,7 @@
 #include "gossip-chat-window.h"
 #include "gossip-contact-info-dialog.h"
 #include "gossip-log.h"
+#include "gossip-log-window.h"
 #include "gossip-notebook.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
@@ -42,9 +43,10 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
+
 #define DEBUG_MSG(x) 
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
-
 
 static void       gossip_chat_window_class_init        (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init              (GossipChatWindow      *window);
@@ -135,10 +137,8 @@ static void       chat_window_drag_data_received       (GtkWidget             *w
 							guint                  time,
 							GossipChatWindow      *window);
 
-
-/* called from Glade, so it shouldn't be static */
+/* Called from Glade, so it shouldn't be static. */
 GtkWidget * chat_window_create_notebook (gpointer data);
-
 
 struct _GossipChatWindowPriv {
 	GList       *chats;
@@ -172,28 +172,22 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *m_tabs_detach;
 };
 
-
 static GList *chat_windows = NULL;
-
 
 static guint tab_accel_keys[] = {
 	GDK_1, GDK_2, GDK_3, GDK_4, GDK_5,
 	GDK_6, GDK_7, GDK_8, GDK_9, GDK_0
 };
 
-
 enum DndDropType {
 	DND_DROP_TYPE_CONTACT_ID,
 };
-
 
 static GtkTargetEntry drop_types[] = {
 	{ "text/contact-id", 0, DND_DROP_TYPE_CONTACT_ID },
 };
 
-
 G_DEFINE_TYPE (GossipChatWindow, gossip_chat_window, G_TYPE_OBJECT);
-
 
 static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)
@@ -201,7 +195,9 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = gossip_chat_window_finalize;
-	
+
+	g_type_class_add_private (object_class, sizeof (GossipChatWindowPriv));
+
 	/* Set up a style for the close button with no focus padding. */
 	gtk_rc_parse_string (
 		"style \"gossip-close-button-style\"\n"
@@ -221,8 +217,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 	gint                  i;
 	GtkWidget            *menu_conv;
 
-	priv = g_new0 (GossipChatWindowPriv, 1);
-	window->priv = priv;
+	priv = GET_PRIV (window);
 
 	glade = gossip_glade_get_file (GLADEDIR "/chat.glade",
 				       "chat_window",
@@ -433,15 +428,18 @@ gossip_chat_window_get_default (void)
 static void
 gossip_chat_window_finalize (GObject *object)
 {
-	GossipChatWindow *window = GOSSIP_CHAT_WINDOW (object);
+	GossipChatWindow     *window;
+	GossipChatWindowPriv *priv;
+
+	window = GOSSIP_CHAT_WINDOW (object);
+	priv = GET_PRIV (window);
 
 	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
 					      chat_window_disconnected_cb,
 					      window);
 
 	chat_windows = g_list_remove (chat_windows, window);
-	gtk_widget_destroy (window->priv->dialog);
-	g_free (window->priv);
+	gtk_widget_destroy (priv->dialog);
 
 	G_OBJECT_CLASS (gossip_chat_window_parent_class)->finalize (object);
 }
@@ -450,16 +448,19 @@ static GdkPixbuf *
 chat_window_get_status_pixbuf (GossipChatWindow *window,
 			       GossipChat *chat)
 {
-	GossipSession *session;
-	GdkPixbuf     *pixbuf;
+	GossipChatWindowPriv *priv;
+	GossipSession        *session;
+	GdkPixbuf            *pixbuf;
+
+	priv = GET_PRIV (window);
 
 	session = gossip_app_get_session ();
 
-	if (g_list_find (window->priv->chats_new_msg, chat)) {
+	if (g_list_find (priv->chats_new_msg, chat)) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, 
 						   GTK_ICON_SIZE_MENU);
 	}
-	else if (g_list_find (window->priv->chats_composing, chat)) {
+	else if (g_list_find (priv->chats_composing, chat)) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING, 
 						   GTK_ICON_SIZE_MENU);
 	}
@@ -485,7 +486,10 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 		      GdkModifierType   mod,
 		      GossipChatWindow *window)
 {
-	gint i, num = -1;
+	GossipChatWindowPriv *priv;
+	gint                  i, num = -1;
+
+	priv = GET_PRIV (window);
 
 	for (i = 0; i < G_N_ELEMENTS (tab_accel_keys); i++) {
 		if (tab_accel_keys[i] == key) {
@@ -495,8 +499,7 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 	}
 
 	if (num != -1) {
-		gtk_notebook_set_current_page (
-			GTK_NOTEBOOK (window->priv->notebook), num);
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (priv->notebook), num);
 	}
 }
 
@@ -527,7 +530,7 @@ chat_window_create_label (GossipChatWindow *window,
 	PangoAttribute       *attr;
 	gint                  w, h;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 	
 	hbox = gtk_hbox_new (FALSE, 2);
 
@@ -617,21 +620,21 @@ chat_window_update_title (GossipChatWindow *window)
 	gchar                *title; 
 	GdkPixbuf 	     *pixbuf;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	title = g_strdup_printf (_("%sChat - %s"), 
-				 window->priv->new_msg ? "*" : "", 
+				 priv->new_msg ? "*" : "", 
 				 gossip_chat_get_name (priv->current_chat));
 
-	gtk_window_set_title (GTK_WINDOW (window->priv->dialog), title);
-	if (window->priv->new_msg) {
+	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);
+	if (priv->new_msg) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
-		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), pixbuf);
-		gtk_window_set_urgency_hint (GTK_WINDOW (window->priv->dialog), TRUE);
+		gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
+		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
         } else {
-		gtk_window_set_icon (GTK_WINDOW (window->priv->dialog), NULL);
-		gtk_window_set_urgency_hint (GTK_WINDOW (window->priv->dialog), FALSE);
+		gtk_window_set_icon (GTK_WINDOW (priv->dialog), NULL);
+		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
 	}
 	g_free (title);
 }
@@ -650,7 +653,7 @@ chat_window_update_menu (GossipChatWindow *window)
 	gboolean              is_group_chat;
 	gboolean              show_contacts;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
 	num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (priv->notebook));
@@ -718,7 +721,7 @@ chat_window_invite_menu_setup (GossipChatWindow *window)
 	GtkWidget            *menu = NULL;
 	gboolean              is_group_chat;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 	
 	contact = gossip_chat_get_own_contact (priv->current_chat);
 	
@@ -766,7 +769,9 @@ static void
 chat_window_clear_activate_cb (GtkWidget        *menuitem, 
 			       GossipChatWindow *window)
 {
-	GossipChatWindowPriv *priv = window->priv;
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
 
 	gossip_chat_clear (priv->current_chat);
 }
@@ -775,8 +780,10 @@ static void
 chat_window_add_contact_activate_cb (GtkWidget        *menuitem, 
 				     GossipChatWindow *window)
 {
-	GossipChatWindowPriv *priv = window->priv;
+	GossipChatWindowPriv *priv;
 	GossipContact        *contact;
+
+	priv = GET_PRIV (window);
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
@@ -787,12 +794,14 @@ static void
 chat_window_log_activate_cb (GtkWidget        *menuitem, 
 			     GossipChatWindow *window)
 {
-	GossipChatWindowPriv *priv = window->priv;
+	GossipChatWindowPriv *priv;
 	GossipContact        *contact;
+
+	priv = GET_PRIV (window);
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_log_show (GTK_WIDGET (priv->dialog), contact);
+	gossip_log_window_show (GTK_WINDOW (priv->dialog), contact);
 }
 
 static void
@@ -802,7 +811,7 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 	GossipChatWindowPriv *priv;
 	GossipContact        *contact;
 	
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
@@ -817,7 +826,7 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 	GossipContact        *contact;
 	gboolean              log_exists;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 	
 	contact = gossip_chat_get_contact (priv->current_chat);
 
@@ -837,7 +846,7 @@ chat_window_show_contacts_toggled_cb (GtkWidget        *menuitem,
 	GossipChatWindowPriv *priv;
 	gboolean              show;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	g_return_if_fail (priv->current_chat != NULL);
 	
@@ -849,9 +858,13 @@ static void
 chat_window_close_activate_cb (GtkWidget        *menuitem,
 			       GossipChatWindow *window)
 {
-	g_return_if_fail (window->priv->current_chat != NULL);
-	
-	gossip_chat_window_remove_chat (window, window->priv->current_chat);
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	g_return_if_fail (priv->current_chat != NULL);
+
+	gossip_chat_window_remove_chat (window, priv->current_chat);
 }
 
 static void
@@ -862,7 +875,7 @@ chat_window_cut_activate_cb (GtkWidget        *menuitem,
 	
 	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	gossip_chat_cut (priv->current_chat);
 }
@@ -875,7 +888,7 @@ chat_window_copy_activate_cb (GtkWidget        *menuitem,
 	
 	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	gossip_chat_copy (priv->current_chat);
 }
@@ -888,7 +901,7 @@ chat_window_paste_activate_cb (GtkWidget        *menuitem,
 	
 	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
 	
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	gossip_chat_paste (priv->current_chat);
 }
@@ -901,7 +914,7 @@ chat_window_tab_left_activate_cb (GtkWidget        *menuitem,
 	GossipChat           *chat;
 	gint                  index;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	chat = priv->current_chat;
 	index = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
@@ -927,7 +940,7 @@ chat_window_tab_right_activate_cb (GtkWidget        *menuitem,
 	GossipChat           *chat;
 	gint                  index;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	chat = priv->current_chat;
 	index = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
@@ -946,10 +959,13 @@ static void
 chat_window_detach_activate_cb (GtkWidget        *menuitem,
 				GossipChatWindow *window)
 {
-	GossipChatWindow *new_window;
-	GossipChat       *chat;
+	GossipChatWindowPriv *priv;
+	GossipChatWindow     *new_window;
+	GossipChat           *chat;
 
-	chat = window->priv->current_chat;
+	priv = GET_PRIV (window);
+
+	chat = priv->current_chat;
 	new_window = gossip_chat_window_new ();
 
 	gossip_chat_window_remove_chat (window, chat);
@@ -961,11 +977,15 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 			     GdkEvent         *event,
 			     GossipChatWindow *window)
 {
-	GList *list, *l;
+	GossipChatWindowPriv *priv;
+	GList                *list;
+	GList                *l;
+
+	priv = GET_PRIV (window);
 
 	DEBUG_MSG (("Chat Window: Delete event received"));
 
-	list = g_list_copy (window->priv->chats);
+	list = g_list_copy (priv->chats);
 
 	for (l = list; l; l = l->next) {
 		GossipChat *chat = l->data;
@@ -992,7 +1012,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
 	GtkWidget            *widget;
 	gchar                *str;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	widget = g_object_get_data (G_OBJECT (chat), 
 			            "chat-window-tooltip-widget");
@@ -1032,10 +1052,14 @@ chat_window_composing_cb (GossipChat       *chat,
 			  gboolean          is_composing,
 			  GossipChatWindow *window)
 {
-	if (is_composing && !g_list_find (window->priv->chats_composing, chat)) {
-		window->priv->chats_composing = g_list_prepend (window->priv->chats_composing, chat);
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	if (is_composing && !g_list_find (priv->chats_composing, chat)) {
+		priv->chats_composing = g_list_prepend (priv->chats_composing, chat);
 	} else {
-		window->priv->chats_composing = g_list_remove (window->priv->chats_composing, chat);
+		priv->chats_composing = g_list_remove (priv->chats_composing, chat);
 	}
 
 	chat_window_update_status (window, chat);
@@ -1045,17 +1069,21 @@ static void
 chat_window_new_message_cb (GossipChat       *chat,
 			    GossipChatWindow *window)
 {
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
 	if (!gossip_chat_window_has_focus (window)) {
-		window->priv->new_msg = TRUE;
+		priv->new_msg = TRUE;
 		chat_window_update_title (window);
 	}
 
-	if (chat == window->priv->current_chat) {
+	if (chat == priv->current_chat) {
 		return;
 	}
 
-	if (!g_list_find (window->priv->chats_new_msg, chat)) {
-		window->priv->chats_new_msg = g_list_prepend (window->priv->chats_new_msg, chat);
+	if (!g_list_find (priv->chats_new_msg, chat)) {
+		priv->chats_new_msg = g_list_prepend (priv->chats_new_msg, chat);
 		chat_window_update_status (window, chat);
 	}
 }
@@ -1069,7 +1097,7 @@ chat_window_disconnected_cb (GossipApp        *app,
 
 	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (window));
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	/* FIXME: this works for now, but should operate on a PER
 	   protocol basis not ALL connections since some tabs will
@@ -1090,7 +1118,7 @@ chat_window_switch_page_cb (GtkNotebook	     *notebook,
 	GossipChat           *chat;
 	GtkWidget            *child;
 
-	priv = window->priv;
+	priv = GET_PRIV (window);
 	
 	child = gtk_notebook_get_nth_page (notebook, page_num); 	
 	chat = g_object_get_data (G_OBJECT (child), "chat");
@@ -1113,12 +1141,12 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 			  GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipChat *chat;
-	GtkWidget  *label;
-
-	priv = window->priv;
+	GossipChat           *chat;
+	GtkWidget            *label;
 
 	DEBUG_MSG (("Chat Window: Tab added"));
+
+	priv = GET_PRIV (window);
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 
@@ -1157,9 +1185,12 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 			    GtkWidget	     *child,
 			    GossipChatWindow *window)
 {
-	GossipChat *chat;
+	GossipChatWindowPriv *priv;
+	GossipChat           *chat;
 
 	DEBUG_MSG (("Chat Window: Tab removed"));
+
+	priv = GET_PRIV (window);
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	
@@ -1178,9 +1209,9 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 					      G_CALLBACK (chat_window_new_message_cb),
 					      window);
 
-	window->priv->chats = g_list_remove (window->priv->chats, chat);
+	priv->chats = g_list_remove (priv->chats, chat);
 
-	if (window->priv->chats == NULL) {
+	if (priv->chats == NULL) {
 		g_object_unref (window);
 	} else {
 		chat_window_update_menu (window);
@@ -1192,14 +1223,17 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 			     GtkWidget	      *child,
 			     GossipChatWindow *window)
 {
-	GossipChatWindow *new_window;
-	GossipChat	 *chat;
-	gint              x, y;
+	GossipChatWindowPriv *priv;
+	GossipChatWindow     *new_window;
+	GossipChat	     *chat;
+	gint                  x, y;
 
 	DEBUG_MSG (("Chat Window: Tab detached"));
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	new_window = gossip_chat_window_new ();
+
+	priv = GET_PRIV (new_window);
 
 	gdk_display_get_pointer (gdk_display_get_default (),
 				 NULL,
@@ -1207,12 +1241,12 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 				 &y,
 				 NULL);
 	
-	gtk_window_move (GTK_WINDOW (new_window->priv->dialog), x, y);
+	gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
 	
 	gossip_chat_window_remove_chat (window, chat);
 	gossip_chat_window_add_chat (new_window, chat);
 
-	gtk_widget_show (new_window->priv->dialog);
+	gtk_widget_show (priv->dialog);
 }
 
 static void
@@ -1227,7 +1261,12 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 			       GdkEvent         *event,
 			       GossipChatWindow *window)
 {
-	window->priv->new_msg = FALSE;
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	priv->new_msg = FALSE;
+
 	chat_window_update_title (window);
 
 	return FALSE;
@@ -1304,30 +1343,37 @@ gossip_chat_window_new (void)
 GtkWidget *
 gossip_chat_window_get_dialog (GossipChatWindow *window)
 {
+	GossipChatWindowPriv *priv;
+
 	g_return_val_if_fail (window != NULL, NULL);
+
+	priv = GET_PRIV (window);
 	
-	return window->priv->dialog;
+	return priv->dialog;
 }
 
 void
 gossip_chat_window_add_chat (GossipChatWindow *window,
 			     GossipChat	      *chat)
 {
-	GtkWidget *label;
+	GossipChatWindowPriv *priv;
+	GtkWidget            *label;
 
 	DEBUG_MSG (("Chat Window: Adding chat"));
 
+	priv = GET_PRIV (window);
+	
 	label = chat_window_create_label (window, chat);
 
-	if (g_list_length (window->priv->chats) == 0) {
+	if (g_list_length (priv->chats) == 0) {
 		gint width, height;
 
 		/* First chat, resize the window to its preferred size. */
 		gossip_chat_get_geometry (chat, &width, &height);
-		gtk_window_resize (GTK_WINDOW (window->priv->dialog), width, height);
+		gtk_window_resize (GTK_WINDOW (priv->dialog), width, height);
 	}
 
-	gossip_notebook_insert_page (GOSSIP_NOTEBOOK (window->priv->notebook),
+	gossip_notebook_insert_page (GOSSIP_NOTEBOOK (priv->notebook),
 	  			     gossip_chat_get_widget (chat),
 				     label,
 				     GOSSIP_NOTEBOOK_INSERT_LAST,
@@ -1341,9 +1387,13 @@ void
 gossip_chat_window_remove_chat (GossipChatWindow *window,
 				GossipChat	 *chat)
 {
+	GossipChatWindowPriv *priv;
+
 	DEBUG_MSG (("Chat Window: Removing chat"));
 
-	gossip_notebook_remove_page (GOSSIP_NOTEBOOK (window->priv->notebook),
+	priv = GET_PRIV (window);
+
+	gossip_notebook_remove_page (GOSSIP_NOTEBOOK (priv->notebook),
 				     gossip_chat_get_widget (chat));
 	/* FIXME: somewhat ugly */
 	g_object_unref (chat);
@@ -1353,11 +1403,14 @@ void
 gossip_chat_window_switch_to_chat (GossipChatWindow *window,
 				   GossipChat	    *chat)
 {
-	gint page_num;
+	GossipChatWindowPriv *priv;
+	gint                  page_num;
 
-	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->priv->notebook),
+	priv = GET_PRIV (window);
+
+	page_num = gtk_notebook_page_num (GTK_NOTEBOOK (priv->notebook),
 					  gossip_chat_get_widget (chat));
-	gtk_notebook_set_current_page (GTK_NOTEBOOK (window->priv->notebook),
+	gtk_notebook_set_current_page (GTK_NOTEBOOK (priv->notebook),
 				       page_num);
 }
 
@@ -1369,7 +1422,7 @@ gossip_chat_window_has_focus (GossipChatWindow *window)
 
 	g_return_val_if_fail (GOSSIP_IS_CHAT_WINDOW (window), FALSE);
 	
-	priv = window->priv;
+	priv = GET_PRIV (window);
 
 	g_object_get (priv->dialog, "has-toplevel-focus", &has_focus, NULL);
 

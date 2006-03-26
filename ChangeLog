@@ -1,5 +1,19 @@
 2006-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-window.c: Cleaned up the code here and made use
+	of g_type_class_add_private (). 
+
+	* src/gossip-chat-window.c: 
+	* src/gossip-contact-list.c: Make the ->View Log option from the
+	context menu and chat window menu show the new chat history
+	window.
+	
+	* src/gossip-log-window.c: 
+	* src/gossip-log.c: Show real names instead of account IDs in the
+	log window and fixed runtime warnings.
+
+2006-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-protocol.c: 
 	* libgossip/gossip-session.c: 
 	* libgossip/libgossip-marshal.list: Fixed the types used in

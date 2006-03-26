@@ -26,18 +26,12 @@
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-session.h>
 
-#define GOSSIP_TYPE_ACCOUNT_CHOOSER \
-  (gossip_account_chooser_get_type ())
-#define GOSSIP_ACCOUNT_CHOOSER(o) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooser))
-#define GOSSIP_ACCOUNT_CHOOSER_CLASS(k) \
-  (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserClass))
-#define GOSSIP_IS_ACCOUNT_CHOOSER(o) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER))
-#define GOSSIP_IS_ACCOUNT_CHOOSER_CLASS(k) \
-  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT_CHOOSER))
-#define GOSSIP_ACCOUNT_CHOOSER_GET_CLASS(o) \
-  (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserClass))
+#define GOSSIP_TYPE_ACCOUNT_CHOOSER (gossip_account_chooser_get_type ())
+#define GOSSIP_ACCOUNT_CHOOSER(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooser))
+#define GOSSIP_ACCOUNT_CHOOSER_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserClass))
+#define GOSSIP_IS_ACCOUNT_CHOOSER(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER))
+#define GOSSIP_IS_ACCOUNT_CHOOSER_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT_CHOOSER))
+#define GOSSIP_ACCOUNT_CHOOSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserClass))
 
 typedef struct _GossipAccountChooser      GossipAccountChooser;
 typedef struct _GossipAccountChooserClass GossipAccountChooserClass;

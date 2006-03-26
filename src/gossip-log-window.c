@@ -55,6 +55,8 @@ typedef struct {
 	GtkWidget      *button_close;
 } GossipLogWindow;
 
+static void   log_window_contacts_set_selected  (GossipLogWindow *window,
+						 GossipContact   *contact);
 static gchar *log_window_contacts_get_selected  (GossipLogWindow *window);
 static void   log_window_contacts_populate      (GossipLogWindow *window);
 static void   log_window_contacts_setup         (GossipLogWindow *window);
@@ -74,6 +76,47 @@ enum {
 	COL_CONTACT_ID,
 	COL_CONTACT_COUNT
 };
+
+static void   
+log_window_contacts_set_selected  (GossipLogWindow *window,
+				   GossipContact   *contact)
+{
+	GtkComboBox  *combobox;
+	GtkTreeModel *model;
+	GtkTreeIter   iter;
+	const gchar  *id;
+	gchar        *this_id;
+	gboolean      ok;
+
+	id = gossip_contact_get_id (contact);
+	
+	g_return_if_fail (id != NULL);
+
+	combobox = GTK_COMBO_BOX (window->combobox_contacts);
+	model = gtk_combo_box_get_model (combobox);
+
+	if (!gtk_tree_model_get_iter_first (model, &iter)) {
+		return;
+	}
+	
+	for (; ok; ok = gtk_tree_model_iter_next (model, &iter)) {
+		gtk_tree_model_get (model, &iter, 
+				    COL_CONTACT_ID, &this_id, 
+				    -1);
+
+		if (!this_id) {
+			continue;
+		}
+
+		if (strcmp (id, this_id) == 0) {
+			gtk_combo_box_set_active_iter (combobox, &iter);
+			g_free (this_id);
+			break;
+		} 
+			
+		g_free (this_id);
+	}
+}
 
 static gchar *
 log_window_contacts_get_selected (GossipLogWindow *window)
@@ -100,6 +143,7 @@ log_window_contacts_populate (GossipLogWindow *window)
 {
 	GossipAccountChooser *account_chooser;
 	GossipAccount        *account;     
+	GossipContact        *contact;
 	GList                *contacts;
 	GList                *l;
 	
@@ -120,15 +164,20 @@ log_window_contacts_populate (GossipLogWindow *window)
 	contacts = gossip_log_get_contacts (account);
 
 	for (l = contacts; l; l = l->next) {
+		contact = l->data;
+
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, COL_CONTACT_ID, l->data, -1);
+		gtk_list_store_set (store, &iter, 
+				    COL_CONTACT_ID, gossip_contact_get_id (contact), 
+				    COL_CONTACT_NAME, gossip_contact_get_name (contact), 
+				    -1);
 
 		if (l == contacts) {
 			gtk_combo_box_set_active_iter (combobox, &iter);
 		}
 	}
 
-	g_list_foreach (contacts, (GFunc) g_free, NULL);
+	g_list_foreach (contacts, (GFunc) g_object_unref, NULL);
 	g_list_free (contacts);
 
 	g_object_unref (account);
@@ -156,7 +205,7 @@ log_window_contacts_setup (GossipLogWindow *window)
 
 	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, TRUE);
 	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
-					"text", COL_CONTACT_ID,				
+					"text", COL_CONTACT_NAME,				
 					NULL);
 
 	g_object_unref (store);
@@ -263,8 +312,6 @@ log_window_find (GossipLogWindow *window,
 	gboolean            found;
 	gboolean            from_start = FALSE;
     
-/* 	gboolean            match_case; */
-
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (window->chatview));
     
 	str = gtk_entry_get_text (GTK_ENTRY (window->entry_find));
@@ -273,9 +320,7 @@ log_window_find (GossipLogWindow *window,
 		find_mark = NULL;
 		from_start = TRUE;
 	}
-    
-/* 	match_case = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (window->checkbutton_match_case));   */
-    
+     
 	if (find_mark) {
 		gtk_text_buffer_get_iter_at_mark (buffer, &iter_at_mark, find_mark);
 	} else {
@@ -408,16 +453,19 @@ gossip_log_window_show (GtkWindow     *parent,
 	if (account_num > 1) {
 		gtk_widget_show (window->label_account);
 		gtk_widget_show (window->account_chooser);
-/* 		gtk_widget_show (window->checkbutton_all_accounts); */
 	} else {
 		gtk_widget_hide (window->label_account);
 		gtk_widget_hide (window->account_chooser);
-/* 		gtk_widget_hide (window->checkbutton_all_accounts); */
 	}
 
 	/* Contacts */
 	log_window_contacts_setup (window);
 	log_window_contacts_populate (window);
+
+	/* Select contact */
+	if (contact) {
+		log_window_contacts_set_selected (window, contact);
+	}
 
 	/* Last touches */
 	if (parent) {

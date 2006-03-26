@@ -23,7 +23,8 @@
 #include <glib/gi18n.h>
 
 /* FIXME: we should really have a definition in config.h so we can
- * include certain protocol head files */
+ * include certain protocol head files.
+ */
 #include <gossip-jabber.h>
 
 #include "libgossip-marshal.h"

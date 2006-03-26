@@ -34,6 +34,7 @@
 #include "gossip-edit-groups-dialog.h"
 #include "gossip-ft-window.h"
 #include "gossip-log.h"
+#include "gossip-log-window.h"
 #include "gossip-marshal.h"
 #include "gossip-sound.h"
 #include "gossip-stock.h"
@@ -2164,7 +2165,7 @@ contact_list_item_menu_log_cb (gpointer   data,
                 return;
         }
 
-        gossip_log_show (GTK_WIDGET (data), contact);
+        gossip_log_window_show (NULL, contact);
 
 	g_object_unref (contact);
 }
