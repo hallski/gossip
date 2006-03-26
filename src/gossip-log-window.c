@@ -99,7 +99,7 @@ log_window_contacts_set_selected  (GossipLogWindow *window,
 		return;
 	}
 	
-	for (; ok; ok = gtk_tree_model_iter_next (model, &iter)) {
+	for (ok = TRUE; ok; ok = gtk_tree_model_iter_next (model, &iter)) {
 		gtk_tree_model_get (model, &iter, 
 				    COL_CONTACT_ID, &this_id, 
 				    -1);
