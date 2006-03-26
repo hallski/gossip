@@ -1,6 +1,9 @@
 NEWS in 0.11:
 =============
 - Make use of the GtkAboutDialog.
+- Fixed #335464, Don't spam notifying offline contacts as online when
+activating the "Show Offline Contacts" feature (Keywan Najafi
+Tonekaboni).
 - Fixed #335993, Use GOption instead of popt (Caio Marcelo).
 - Fixed #335992, Add the license to the new about dialog (Brian
 Pepple).
@@ -11,7 +14,7 @@ Pepple).
 NEWS in 0.10.2:
 ===============
 - Add runtime controlled debugging facilities (Richard).
-- Display an event in the group chat window when a user changes the
+- Display an event in the group# chat window when a user changes the
 topic, previously it just happened with no indication of who changed
 it or when (Kristian Rietveld).
 - Changed the account ID for Jabber IDs back to 'username@server' and

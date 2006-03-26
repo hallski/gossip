@@ -1,3 +1,13 @@
+2006-03-26  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: 
+	- Removed the GDK_ACTION_COPY for Drag & Drop so that moves are
+	done by default (copy was default before). 
+	- Make sure we don't notify offline contacts as online when
+	switching the view to show offline contacts. Fixes #335464 (Keywan
+	Najafi Tonekaboni). 
+	- Cleaned up the code in places.
+
 2006-03-25  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-session.[ch]:

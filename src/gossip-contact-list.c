@@ -42,34 +42,33 @@
 #include "gossip-notify.h"
 #endif
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
+
 #define DEBUG_MSG(x)  
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
 
-/* 
- * Active users are those which have recently changed state
+/* Active users are those which have recently changed state
  * (e.g. online, offline or from normal to a busy state). 
- * 
  */
 
-/* time user is shown as active */
+/* Time user is shown as active */
 #define ACTIVE_USER_SHOW_TIME 7000     
         
-/* time after connecting which we wait before active users are enabled */
+/* Time after connecting which we wait before active users are enabled */
 #define ACTIVE_USER_WAIT_TO_ENABLE_TIME 5000    
 
-/* time to wait before we use sounds for an account after it has gone
-   online/offline, so we don't spam the sound with online's, etc */
+/* Time to wait before we use sounds for an account after it has gone
+ * online/offline, so we don't spam the sound with online's, etc 
+ */ 
 #define SOUNDS_ENABLED_WAIT_TIME 10000   
-
 
 struct _GossipContactListPriv {
 	gboolean             show_offline;
 	gboolean             show_active;
 
-	/* protocol to group association */
 	GHashTable          *groups;
 
         GtkItemFactory      *item_popup_factory;
@@ -80,12 +79,10 @@ struct _GossipContactListPriv {
 	GtkTreeRowReference *drag_row;
 };
 
-
 typedef struct {
 	gboolean flash_on;
 	guint    flash_timeout_id;
 } FlashData;
-
 
 typedef struct {
 	gchar       *name;
@@ -93,13 +90,11 @@ typedef struct {
 	GtkTreeIter  iter;
 } FindGroup;
 
-
 typedef struct {
 	GossipContact *contact;
 	gboolean       found;
 	GList         *iters;
 } FindContact;
-
 
 typedef struct {
 	GossipContactList *list;
@@ -107,13 +102,11 @@ typedef struct {
 	guint              timeout_id;
 } DragMotionData;
 
-
 typedef struct {
 	GossipContactList *list;
 	GossipContact     *contact;
 	gboolean           remove;
 } ShowActiveData;
-
 
 static void     gossip_contact_list_class_init           (GossipContactListClass *klass);
 static void     gossip_contact_list_init                 (GossipContactList *list);
@@ -265,8 +258,6 @@ static void     contact_list_event_removed_cb            (GossipEventManager *ma
 							  GossipContactList  *list);
 static void     contact_list_flash_free_data             (FlashData          *data);
 
-
-/* signals */
 enum {
         CONTACT_ACTIVATED,
         LAST_SIGNAL
@@ -274,8 +265,6 @@ enum {
 
 static guint signals[LAST_SIGNAL];
 
-
-/* Model columns */
 enum {
 	COL_PIXBUF,
 	COL_NAME,
@@ -288,15 +277,11 @@ enum {
 	COL_COUNT
 };
 
-
-/* Properties */
 enum {
 	PROP_0,
 	PROP_SHOW_OFFLINE
 };
 
-
-/* Item context menu */
 enum {
         ITEM_MENU_NONE,
         ITEM_MENU_INFO,
@@ -308,13 +293,10 @@ enum {
         ITEM_MENU_LOG
 };
 
-
-/* Group context menu */
 enum {
         GROUP_MENU_NONE,
         GROUP_MENU_RENAME
 };
-
 
 #define GIF_CB(x)    ((GtkItemFactoryCallback)(x))
 
@@ -387,7 +369,6 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  NULL },
 };
 
-
 static GtkItemFactoryEntry group_menu_items[] = {
 	{ N_("/Re_name group"),
 	  NULL,
@@ -397,13 +378,11 @@ static GtkItemFactoryEntry group_menu_items[] = {
 	  NULL }
 };
 
-
 enum DndDragType {
 	DND_DRAG_TYPE_STRING,
 	DND_DRAG_TYPE_URL,
 	DND_DRAG_TYPE_CONTACT_ID,
 };
-
 
 static GtkTargetEntry drag_types_dest[] = {
 	{ "STRING",          0, DND_DRAG_TYPE_STRING },
@@ -412,18 +391,14 @@ static GtkTargetEntry drag_types_dest[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
-
 static GtkTargetEntry drag_types_source[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
-
 static GdkAtom drag_atoms_dest[G_N_ELEMENTS (drag_types_dest)];
 static GdkAtom drag_atoms_source[G_N_ELEMENTS (drag_types_source)];
 
-
 G_DEFINE_TYPE (GossipContactList, gossip_contact_list, GTK_TYPE_TREE_VIEW);
-
 
 static void
 gossip_contact_list_class_init (GossipContactListClass *klass)
@@ -455,6 +430,8 @@ gossip_contact_list_class_init (GossipContactListClass *klass)
 	g_object_class_install_property (object_class,
 					 PROP_SHOW_OFFLINE,
 					 param);
+
+	g_type_class_add_private (object_class, sizeof (GossipContactListPriv));
 }
 
 static void
@@ -462,8 +439,7 @@ gossip_contact_list_init (GossipContactList *list)
 {
 	GossipContactListPriv *priv;
 	
-	priv = g_new0 (GossipContactListPriv, 1);
-	list->priv = priv;
+	priv = GET_PRIV (list);
 
 	priv->groups = g_hash_table_new_full (g_str_hash, 
 					      g_str_equal,
@@ -478,10 +454,10 @@ gossip_contact_list_init (GossipContactList *list)
 	contact_list_create_model (list);
 	contact_list_setup_view (list);
 
-	/* get saved group states */
+	/* Get saved group states. */
 	gossip_contact_groups_get_all ();
 
-        /* context menus */
+        /* Context menus. */
         priv->item_popup_factory = gtk_item_factory_new (GTK_TYPE_MENU,
 							 "<main>", NULL);
 	priv->group_popup_factory = gtk_item_factory_new (GTK_TYPE_MENU,
@@ -507,7 +483,7 @@ gossip_contact_list_init (GossipContactList *list)
 				       group_menu_items,
 				       list);
         
-        /* signal connection */
+        /* Signal connection. */
 	g_signal_connect (gossip_app_get_session (),
 			  "connected",
 			  G_CALLBACK (contact_list_connected_cb),
@@ -533,7 +509,7 @@ gossip_contact_list_init (GossipContactList *list)
 			  G_CALLBACK (contact_list_contact_composing_cb),
 			  list);
 
-	/* connect to event manager signals */
+	/* Connect to event manager signals. */
 	g_signal_connect (gossip_app_get_event_manager (),
 			  "event-added",
 			  G_CALLBACK (contact_list_event_added_cb),
@@ -543,7 +519,7 @@ gossip_contact_list_init (GossipContactList *list)
 			  G_CALLBACK (contact_list_event_removed_cb),
 			  list);
 
-	/* connect to tree view signals rather than override */
+	/* Connect to tree view signals rather than override. */
 	g_signal_connect (list,
 			  "button-press-event",
 			  G_CALLBACK (contact_list_button_press_event_cb),
@@ -575,7 +551,7 @@ contact_list_get_property (GObject    *object,
 {
 	GossipContactListPriv *priv;
 
-	priv = GOSSIP_CONTACT_LIST (object)->priv;
+	priv = GET_PRIV (object);
 
 	switch (param_id) {
 	case PROP_SHOW_OFFLINE:
@@ -595,7 +571,7 @@ contact_list_set_property (GObject      *object,
 {
 	GossipContactListPriv *priv;
 
-	priv = GOSSIP_CONTACT_LIST (object)->priv;
+	priv = GET_PRIV (object);
 
 	switch (param_id) {
 	case PROP_SHOW_OFFLINE:
@@ -621,7 +597,9 @@ contact_list_connected_cb (GossipSession *session, GossipContactList *list)
 static gboolean
 contact_list_show_active_users_cb (GossipContactList *list)
 {
-	GossipContactListPriv *priv = list->priv;
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (list);
 
 	priv->show_active = TRUE;
 
@@ -637,7 +615,7 @@ contact_list_contact_added_cb (GossipSession     *session,
 	GtkTreeModel          *model;
 	GList                 *groups;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	DEBUG_MSG (("ContactList: Contact added: %s",
 		   gossip_contact_get_name (contact)));
@@ -663,7 +641,7 @@ contact_list_contact_updated_cb (GossipSession     *session,
 	GossipPresence        *presence;
 	GtkTreeModel          *model;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
@@ -682,9 +660,10 @@ contact_list_contact_updated_cb (GossipSession     *session,
 		return;
 	}
 
-	/* we do this to make sure the groups are correct, if not, we
-	   would have to check the groups already set up for each
-	   contact and then see what has been updated */
+	/* We do this to make sure the groups are correct, if not, we
+	 * would have to check the groups already set up for each
+	 * contact and then see what has been updated. 
+	 */
 	contact_list_remove_contact (list, contact);
 	contact_list_add_contact (list, contact);
 }
@@ -709,14 +688,14 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	gboolean               do_set_refresh = FALSE;
 
 	GossipAccount         *account;
-	gdouble                seconds;
+	gdouble                seconds = 0;
 
 	gboolean               is_composing;
 	const GdkPixbuf       *pixbuf;
  	GdkPixbuf             *pixbuf_composing;
 	GdkPixbuf             *pixbuf_presence;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
 	type = gossip_contact_get_type (contact);
@@ -739,18 +718,21 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		should_be_in_list = FALSE;
 	}
 
-	/* get online state now */
+	/* Get online state now. */
 	now_online = gossip_contact_is_online (contact);
 
 	if (!in_list && !should_be_in_list) {
-		/* nothing to do */
+		/* Nothing to do. */
 		g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 		g_list_free (iters);
 		return;
 	}
 	else if (in_list && !should_be_in_list) {
 		account = gossip_session_find_account (session, contact);
-		seconds = gossip_session_get_connected_time (session, account);
+		if (account) {
+			seconds = gossip_session_get_connected_time (session, 
+								     account);
+		}
 
 		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
 			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
@@ -770,14 +752,19 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	}
 	else if (!in_list && should_be_in_list) {
 		account = gossip_session_find_account (session, contact);
-		seconds = gossip_session_get_connected_time (session, account);
+		if (account) {
+			seconds = gossip_session_get_connected_time (session, 
+								     account);
+		}
 
-		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
-			gossip_sound_play (GOSSIP_SOUND_ONLINE);
-
+		if (now_online) {
+			if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
+				gossip_sound_play (GOSSIP_SOUND_ONLINE);
+				
 #ifdef HAVE_LIBNOTIFY
-			gossip_notify_contact_online (contact);
+				gossip_notify_contact_online (contact);
 #endif
+			}
 		}
 
 		contact_list_add_contact (list, contact);
@@ -789,7 +776,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		}
 
 	} else {
-		/* get online state before */
+		/* Get online state before. */
 		if (iters && g_list_length (iters) > 0) {
 			GtkTreeIter *iter;
 			
@@ -797,7 +784,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			gtk_tree_model_get (model, iter, COL_IS_ONLINE, &was_online, -1);
 		}
 
-		/* is this really an update or an online/offline */
+		/* Is this really an update or an online/offline. */
 		if (priv->show_active) {
 			if (was_online != now_online) {
 				gchar *str;
@@ -814,7 +801,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 				DEBUG_MSG (("ContactList: Set active (contact updated %s)", str)); 
 
 			} else {
-				/* was TRUE for presence updates */
+				/* Was TRUE for presence updates. */
 				/* do_set_active = FALSE;  */
 				do_set_refresh = TRUE;
 				
@@ -824,7 +811,6 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 		set_model = TRUE;
 	}
-
 
 	pixbuf_presence = gossip_pixbuf_for_contact (contact);
 	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING, 
@@ -863,10 +849,10 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	}
 
 	/* FIXME: when someone goes online then offline quickly, the
-	   first timeout sets the user to be inactive and the
-	   second timeout removes the user from the contact
-	   list, really we should remove the first timeout. */
-		
+	 * first timeout sets the user to be inactive and the second
+	 * timeout removes the user from the contact list, really we
+	 * should remove the first timeout. 
+	 */		
 	g_list_foreach (iters, (GFunc)gtk_tree_iter_free, NULL);
 	g_list_free (iters);
 }
@@ -897,7 +883,7 @@ contact_list_contact_composing_cb (GossipSession     *session,
 		   composing ? "is" : "is not",
 		   gossip_contact_get_name (contact)));
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
@@ -1012,7 +998,7 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	
 	g_return_val_if_fail (data != NULL, FALSE);
 
-	priv = data->list->priv;
+	priv = GET_PRIV (data->list);
 
 	if (data->remove && 
 	    !priv->show_offline && 
@@ -1131,7 +1117,7 @@ contact_list_get_group_foreach (GtkTreeModel *model,
 	gchar    *str;
 	gboolean  is_group;
 
-	/* groups are only at the top level */
+	/* Groups are only at the top level. */
 	if (gtk_tree_path_get_depth (path) != 1) {
 		return FALSE;
 	}
@@ -1159,11 +1145,11 @@ contact_list_add_contact (GossipContactList *list,
 	GtkTreeModel          *model;
 	GList                 *l, *groups;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
-	/* if no groups just add it at the top level */
+	/* If no groups just add it at the top level. */
 	groups = gossip_contact_get_groups (contact);
 	if (!groups) {
 		GdkPixbuf *pixbuf;
@@ -1185,7 +1171,7 @@ contact_list_add_contact (GossipContactList *list,
 		g_object_unref (pixbuf);
 	}
 
-	/* else add to each group */
+	/* Else add to each group. */
 	for (l = groups; l; l = l->next) {
 		GtkTreePath *path;
 		GdkPixbuf   *pixbuf;
@@ -1256,7 +1242,7 @@ contact_list_remove_contact (GossipContactList *list,
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 	
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {
@@ -1321,7 +1307,6 @@ contact_list_setup_view (GossipContactList *list)
 		      "reorderable", TRUE,
 		      NULL);
 
-	/* columns, cells, etc */
 	col  = gtk_tree_view_column_new ();
 	
 	cell = gtk_cell_renderer_pixbuf_new ();
@@ -1355,7 +1340,7 @@ contact_list_setup_view (GossipContactList *list)
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (list), col);
 
-	/* drag & drop */ 
+	/* Drag & Drop. */ 
 	for (i = 0; i < G_N_ELEMENTS (drag_types_dest); ++i) {
 		drag_atoms_dest[i] = gdk_atom_intern (drag_types_dest[i].target,
 						      FALSE);
@@ -1366,17 +1351,20 @@ contact_list_setup_view (GossipContactList *list)
 							FALSE);
 	}
 
+	/* Note: We support the COPY action too, but need to make the
+	 * MOVE action the default.
+	 */
 	gtk_drag_source_set (GTK_WIDGET (list), 
 			     GDK_BUTTON1_MASK, 
 			     drag_types_source, 
 			     G_N_ELEMENTS (drag_types_source), 
-			     GDK_ACTION_MOVE | GDK_ACTION_COPY);
+			     GDK_ACTION_MOVE);
 
 	gtk_drag_dest_set (GTK_WIDGET (list), 
 			   GTK_DEST_DEFAULT_ALL, 
 			   drag_types_dest, 
 			   G_N_ELEMENTS (drag_types_dest),
-			   GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+			   GDK_ACTION_MOVE | GDK_ACTION_LINK);
 	
 	g_signal_connect (GTK_WIDGET (list),
 			  "drag-data-received",
@@ -1384,8 +1372,9 @@ contact_list_setup_view (GossipContactList *list)
 			  NULL);
 
 	/* FIXME: noticed but when you drag the row over the treeview
-	   fast, it seems to stop redrawing itself, if we don't
-	   connect this signal, all is fine. */
+	 * fast, it seems to stop redrawing itself, if we don't
+	 * connect this signal, all is fine. 
+	 */
  	g_signal_connect (GTK_WIDGET (list),  
  			  "drag-motion", 
  			  G_CALLBACK (contact_list_drag_motion), 
@@ -1450,11 +1439,12 @@ contact_list_drag_data_received (GtkWidget         *widget,
 	if (!is_row) {
 		if (g_list_length (groups) != 1) {
 			/* if they have dragged a contact out of a
-			   group then we would set the contact to have
-			   NO groups but only if they were ONE group
-			   to begin with - should we do this
-			   regardless to how many groups they are in
-			   already or not at all? */ 
+			 * group then we would set the contact to have
+			 * NO groups but only if they were ONE group
+			 * to begin with - should we do this
+			 * regardless to how many groups they are in
+			 * already or not at all?  
+			 */ 
 			return;
 		}
 
@@ -1473,8 +1463,8 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			return;
 		}
 
-		/* get source group information */
-		priv = GOSSIP_CONTACT_LIST (widget)->priv;
+		/* Get source group information. */
+		priv = GET_PRIV (widget);
 		if (!priv->drag_row) {
 			return;
 		}
@@ -1495,7 +1485,7 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			drag_del = TRUE;
 		}
 
-		/* create new groups GList */
+		/* Create new groups GList. */
 		for (l = groups, new_groups = NULL; l && drag_success; l = l->next) {
 			gchar *str;
 			
@@ -1606,7 +1596,7 @@ contact_list_drag_begin (GtkWidget      *widget,
 	GtkTreePath           *path;
 	GtkTreeIter            iter;
 
-	priv = GOSSIP_CONTACT_LIST (widget)->priv;
+	priv = GET_PRIV (widget);
 	
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1616,8 +1606,6 @@ contact_list_drag_begin (GtkWidget      *widget,
 	path = gtk_tree_model_get_path (model, &iter);
 	priv->drag_row = gtk_tree_row_reference_new (model, path);
 	gtk_tree_path_free (path);
-
-	/* FIXME: Set a nice icon */
 }
 
 static void
@@ -1635,7 +1623,7 @@ contact_list_drag_data_get (GtkWidget             *widget,
 	GossipContact         *contact;
 	const gchar           *id;
 	
-	priv = GOSSIP_CONTACT_LIST (widget)->priv;
+	priv = GET_PRIV (widget);
 	
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
 	if (!priv->drag_row) {
@@ -1680,7 +1668,7 @@ contact_list_drag_end (GtkWidget      *widget,
 {
 	GossipContactListPriv *priv;
 
-	priv = GOSSIP_CONTACT_LIST (widget)->priv;
+	priv = GET_PRIV (widget);
 
 	if (priv->drag_row) {
 		gtk_tree_row_reference_free (priv->drag_row);
@@ -1708,9 +1696,10 @@ contact_list_cell_set_background (GossipContactList  *list,
 		color = style->bg[GTK_STATE_SELECTED]; 
 		
 		/* Here we take the current theme colour and add it to
-		   the colour for white and average the two. This
-		   gives a colour which is inline with the theme but
-		   slightly whiter. */ 
+		 * the colour for white and average the two. This
+		 * gives a colour which is inline with the theme but
+		 * slightly whiter. 
+		 */ 
 		color.red = (color.red + (style->white).red) / 2;
 		color.green = (color.green + (style->white).green) / 2;
 		color.blue = (color.blue + (style->white).blue) / 2;
@@ -1779,7 +1768,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 {
 	GossipContactListPriv *priv;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 	
 	if (event->button == 3) {
 		GtkTreePath      *path;
@@ -1826,7 +1815,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				log_exists = gossip_log_exists (contact);
 				gtk_widget_set_sensitive (log_item, log_exists);
 
-				/* set up invites menu */
+				/* Set up invites menu. */
 				menu = gossip_chat_invite_contact_menu (contact);
 				g_object_unref (contact);
 
@@ -1847,7 +1836,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 					gtk_widget_hide (invite_item);
 				}
 
-				/* FIXME: disable file transfer until finished */
+				/* FIXME: disable file transfer until finished. */
 				ft_item = gtk_item_factory_get_item (factory,
 								     "/Send File...");
 				gtk_widget_hide (ft_item);
@@ -1857,7 +1846,6 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				gtk_widget_hide (ft_item);
 			}		
 
-			/* show */
 			gtk_item_factory_popup (factory,
 						event->x_root, event->y_root,
 						event->button, event->time);
@@ -1880,7 +1868,7 @@ contact_list_row_activated_cb (GossipContactList *list,
 	GossipContact         *contact;
 	GtkTreeIter            iter;
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
@@ -1890,7 +1878,7 @@ contact_list_row_activated_cb (GossipContactList *list,
 			    -1);
 
 	if (!contact) { 
-		/* This is a group */
+		/* This is a group. */
 		return;
 	}
 
@@ -1939,7 +1927,7 @@ contact_list_sort_func (GtkTreeModel *model,
 			    COL_CONTACT, &contact_b,
 			    -1);
 	
-	/* If contact is NULL it means it's a group */
+	/* If contact is NULL it means it's a group. */
 
 	if (!contact_a && contact_b) {
 		ret_val = 1;
@@ -2024,8 +2012,10 @@ contact_list_find_contact_foreach (GtkTreeModel *model,
 		fc->iters = g_list_append (fc->iters, gtk_tree_iter_copy (iter));
 	}
 	
-	/* we want to find ALL contacts that match, this means if we
-	   have the same contact in 3 groups, all iters should be returned. */
+	/* We want to find ALL contacts that match, this means if we
+	 * have the same contact in 3 groups, all iters should be
+	 * returned. 
+	 */
 	return FALSE;
 }
 
@@ -2255,7 +2245,7 @@ contact_list_group_menu_rename_cb (gpointer   data,
 
 	str = g_strdup_printf ("<b>%s</b>", group);
 
-	/* translator: %s denotes the contact ID */
+	/* Translator: %s denotes the contact ID */
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
@@ -2346,7 +2336,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	GList                 *l, *iters;
 	
 	list = t_data->list;
-	priv = list->priv;
+	priv = GET_PRIV (list);
 	
 	contact = t_data->contact;
 	
@@ -2400,7 +2390,7 @@ contact_list_event_added_cb (GossipEventManager *manager,
 	FlashData             *data;
 	FlashTimeoutData      *t_data;
 	
-	priv = list->priv;
+	priv = GET_PRIV (list);
 	
 	if (gossip_event_get_type (event) != GOSSIP_EVENT_NEW_MESSAGE) {
 		return;
@@ -2411,7 +2401,7 @@ contact_list_event_added_cb (GossipEventManager *manager,
 	data = g_hash_table_lookup (priv->flash_table, contact);
 
 	if (data) {
-		/* Already flashing this item */
+		/* Already flashing this item. */
 		return;
 	}
 
@@ -2450,14 +2440,14 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 		return;
 	}
 	
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	message = GOSSIP_MESSAGE (gossip_event_get_data (event));
 	contact = gossip_message_get_sender (message);
 
 	data = g_hash_table_lookup (priv->flash_table, contact);
 	if (!data) {
-		/* Not flashing this contact */
+		/* Not flashing this contact. */
 		return;
 	}
 
@@ -2515,7 +2505,7 @@ gossip_contact_list_get_selected (GossipContactList *list)
 	
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
 	
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
         if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -2541,7 +2531,7 @@ gossip_contact_list_get_selected_group (GossipContactList *list)
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
 	
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
         if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -2580,12 +2570,12 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 		
 	g_return_if_fail (GOSSIP_IS_CONTACT_LIST (list));
 
-	priv = list->priv;
+	priv = GET_PRIV (list);
 
 	priv->show_offline = show_offline;
 	show_active = priv->show_active;
 
-	/* disable temporarily */
+	/* Disable temporarily. */
 	priv->show_active = FALSE;
 
 	session = gossip_app_get_session ();
@@ -2599,6 +2589,6 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 							  list);
 	}
 
-	/* restore to original setting */
+	/* Restore to original setting. */
 	priv->show_active = show_active;
 }
