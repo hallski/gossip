@@ -1,6 +1,9 @@
 NEWS in 0.11:
 =============
 - Make use of the GtkAboutDialog.
+- Added a chat history window.
+- Fixed #336064, Add a mnemonic for the chat theme option in the
+preferences (Wouter Bolsterlee).
 - Fixed #335464, Don't spam notifying offline contacts as online when
 activating the "Show Offline Contacts" feature (Keywan Najafi
 Tonekaboni).
