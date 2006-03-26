@@ -49,7 +49,6 @@ src/gossip-vcard-dialog.c
 src/sounds/gossip.soundlist.in
 
 ui/chat.glade
-ui/connect.glade
 ui/file-transfer.glade
 ui/group-chat.glade
 ui/main.glade

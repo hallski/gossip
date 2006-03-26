@@ -1276,7 +1276,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	
 	dialog = g_new0 (GossipAccountsDialog, 1);
 
-	glade = gossip_glade_get_file (GLADEDIR "/connect.glade",
+	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
 				       "accounts_dialog",
 				       NULL,
 				       "accounts_dialog", &dialog->window,

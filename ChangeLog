@@ -1,5 +1,14 @@
 2006-03-26  Martyn Russell  <martyn@imendio.com>
 
+	* po/POTFILES.in:
+	* src/gossip-accounts-dialog.c:
+	* ui/Makefile.am:
+	* ui/connect.glade:
+	* ui/main.glade: Removed connect.glade since there was one dialog
+	in it and it really could be moved into main.glade.
+
+2006-03-26  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-accounts-dialog.c:
 	* src/gossip-preferences.c: 
 	* ui/connect.glade: A few more GUI tweaks to make sure Escape
