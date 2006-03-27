@@ -1,5 +1,8 @@
 2006-03-27  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c (app_connection_items_update): Stop status
+	flashing if there are no connected accounts. Bug #322779.
+
 	* src/gossip-notify.c: (notify_new_message_default_cb),
 	(notify_new_message_contact_cb): Fix warnings on 64-bit
 	machines (#336011, Caio Marcelo).

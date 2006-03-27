@@ -1005,9 +1005,9 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 				      gpointer        user_data)
 {
 	GossipAppPriv *priv;
-	
+
 	priv = app->priv;
-	
+
  	app_connection_items_update ();
 	app_presence_updated ();
 }
@@ -1556,7 +1556,6 @@ app_disconnect (void)
 	GossipAppPriv *priv = app->priv;
 
 	gossip_session_disconnect (priv->session, NULL);
-	app_status_flash_stop ();
 }
 
 static void
@@ -1622,6 +1621,10 @@ app_connection_items_update (void)
 
 	for (l = priv->widgets_disconnected; l; l = l->next) {
 		gtk_widget_set_sensitive (l->data, (disconnected > 0));
+	}
+
+	if (connected == 0) {
+		app_status_flash_stop ();
 	}
 }
 
