@@ -172,8 +172,7 @@ notify_new_message_default_cb (NotifyNotification *notify,
 	
 		gossip_event_manager_activate (event_manager, event);
 	} else {
-		g_warning ("No event found for NotifyNotification:0x%.8x", 
-			   (gint) notify);
+		g_warning ("No event found for NotifyNotification: %p", notify);
 	}
 
 	g_hash_table_remove (event_notifications, notify);
@@ -198,8 +197,7 @@ notify_new_message_contact_cb (NotifyNotification *notify,
 
 		gossip_contact_info_dialog_show (contact);
 	} else {
-		g_warning ("No event found for Notification:0x%.8x",
-			   (gint) notify);
+		g_warning ("No event found for Notification: %p", notify);
 	}
 
 	g_hash_table_remove (event_notifications, notify);

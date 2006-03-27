@@ -1,3 +1,9 @@
+2006-03-27  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-notify.c: (notify_new_message_default_cb),
+	(notify_new_message_contact_cb): Fix warnings on 64-bit
+	machines (#336011, Caio Marcelo).
+
 2006-03-26  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: Cleaned up the code here and made use
