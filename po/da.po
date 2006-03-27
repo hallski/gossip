@@ -1,25 +1,24 @@
 # Danish translation of Gossip.
 # Copyright (C) 2003, 04 Free Software Foundation, Inc.
-# Ole Laursen <olau@hardworking.dk>, 2003, 04.
-# David Nielsen <dnielsen@breakmygentoo.net>, 2006, 02.
-# 
-# 
+# Ole Laursen <olau@hardworking.dk>, 2003, 04, 06.
+# David Nielsen <dnielsen@breakmygentoo.net>, 2002, 06.
+#
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-19 12:09+0000\n"
-"PO-Revision-Date: 2006-02-22 12:38+0200\n"
-"Last-Translator: David Nielsen <gnomeuser@gmail.com>\n"
+"POT-Creation-Date: 2006-03-27 23:09+0200\n"
+"PO-Revision-Date: 2006-03-27 23:37+0200\n"
+"Last-Translator: Ole Laursen <olau@hardworking.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ../gossip.desktop.in.in.h:1
-#, fuzzy
 msgid "Gossip Instant Messenger"
-msgstr "Gossip samtaleklient"
+msgstr "Gossip - samtaleklient"
 
 #: ../gossip.desktop.in.in.h:2
 msgid "Instant Messenger"
@@ -27,7 +26,7 @@ msgstr "Samtaleklient"
 
 #: ../gossip.schemas.in.h:1
 msgid "Always open a separate chat window for new chats."
-msgstr "Åbn altid et adskilt samtalevindue for nye samtaler"
+msgstr "Åbn altid et særskilt samtalevindue for nye samtaler"
 
 #: ../gossip.schemas.in.h:2
 msgid "Be silent when away"
@@ -39,12 +38,12 @@ msgstr "Vær stille når brugeren er optaget"
 
 #: ../gossip.schemas.in.h:4
 msgid "Chat window theme"
-msgstr "Samtalevindue tema"
+msgstr "Tema for samtalevindue"
 
 #: ../gossip.schemas.in.h:5
 msgid ""
 "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
-msgstr ""
+msgstr "Komma-adskilt liste af sprog der skal bruges i stavekontrol (f.eks. \"en, fr, nl\")."
 
 #: ../gossip.schemas.in.h:6
 msgid "Enable spell checking"
@@ -60,7 +59,7 @@ msgstr "Skjul hovedvindue"
 
 #: ../gossip.schemas.in.h:9
 msgid "Hide the main window."
-msgstr "Skjul hovedvinduet"
+msgstr "Skjul hovedvinduet."
 
 #: ../gossip.schemas.in.h:10
 msgid "Open new chats in separate windows"
@@ -148,207 +147,190 @@ msgstr "Vandret placering af hovedvindue"
 msgid "Y position of main window"
 msgstr "Lodret placering af hovedvindue"
 
-#: ../libgossip/gossip-contact.c:768 ../src/gossip-app.c:2005
-#: ../src/gossip-contact-info-dialog.c:171 ../src/gossip-galago.c:164
+#: ../libgossip/gossip-contact.c:769 ../src/gossip-app.c:1984
+#: ../src/gossip-contact-info-dialog.c:170 ../src/gossip-galago.c:160
 msgid "Offline"
 msgstr "Frakoblet"
 
-#: ../libgossip/gossip-protocol.c:672
-msgid "An unknown error ocurred."
-msgstr "Ukendt fejl opstod"
+#: ../libgossip/gossip-protocol.c:673
+msgid "An unknown error occurred."
+msgstr "Der opstod en ukendt fejl."
 
-#: ../libgossip/gossip-protocol.c:676
+#: ../libgossip/gossip-protocol.c:677
 msgid "Connection refused."
 msgstr "Tilslutning afvist"
 
-#: ../libgossip/gossip-protocol.c:679
+#: ../libgossip/gossip-protocol.c:680
 msgid "Server address could not be resolved."
-msgstr ""
+msgstr "Serveradressen kunne ikke findes."
 
-#: ../libgossip/gossip-protocol.c:682
-#, fuzzy
+#: ../libgossip/gossip-protocol.c:683
 msgid "Connection timed out."
-msgstr "Tilsluttet"
+msgstr "Tidsfrist for forbindelsen løb ud."
 
-#: ../libgossip/gossip-protocol.c:685
+#: ../libgossip/gossip-protocol.c:686
 msgid "Authentication failed."
-msgstr "Godkendelse fejlede"
+msgstr "Godkendelse mislykkedes."
 
-#: ../libgossip/gossip-protocol.c:688
+#: ../libgossip/gossip-protocol.c:689
 msgid "The username you are trying already exists."
-msgstr "Brugernavnet you forsøgte eksistere allerede"
+msgstr "Brugernavnet du forsøger eksisterer allerede."
 
-#: ../libgossip/gossip-protocol.c:691
+#: ../libgossip/gossip-protocol.c:692
+msgid "The username you are trying is not valid."
+msgstr "Brugernavnet du forsøger er ikke gyldigt."
+
+#: ../libgossip/gossip-protocol.c:695
 msgid "This feature is unavailable."
-msgstr "Denne funktion er ikke tilgængelig"
+msgstr "Denne funktion er ikke tilgængelig."
 
-#: ../libgossip/gossip-protocol.c:694
+#: ../libgossip/gossip-protocol.c:698
 msgid "This feature is unauthorized."
-msgstr "Denne funktion er ikke godkendt"
+msgstr "Denne funktion er ikke godkendt."
 
-#: ../libgossip/gossip-protocol.c:697
-msgid "A specific protocol error occured that was unexpected."
-msgstr "En specifik protokol fejl opstod uventet."
+#: ../libgossip/gossip-protocol.c:701
+msgid "A specific protocol error occurred that was unexpected."
+msgstr "En specifik protokolfejl opstod uventet."
 
-#: ../libgossip/gossip-chatroom.c:733
+#: ../libgossip/gossip-chatroom.c:732
 msgid "Normal"
 msgstr "Normal"
 
 #: ../libgossip/gossip-chatroom.c:743
-msgid "Connecting..."
-msgstr "Tilslut..."
-
-#: ../libgossip/gossip-chatroom.c:744
-msgid "Open"
-msgstr "Åbn"
+msgid "Joining"
+msgstr "Tilslutter"
 
 #: ../libgossip/gossip-chatroom.c:745
-msgid "Closed"
-msgstr "Lukket"
+msgid "Active"
+msgstr "Aktiv"
 
-#: ../libgossip/gossip-chatroom.c:746
+#: ../libgossip/gossip-chatroom.c:747 ../ui/group-chat.glade.h:8
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: ../libgossip/gossip-chatroom.c:749
 msgid "Unknown"
 msgstr "Ukendt"
 
-#: ../libgossip/gossip-chatroom.c:747
+#: ../libgossip/gossip-chatroom.c:751
 msgid "Error"
 msgstr "Fejl"
 
 #: ../libgossip/gossip-chatroom-provider.c:319
 msgid "The nickname you have chosen is already in use."
-msgstr "Kælenavnet du har valgt er allerede i brug."
+msgstr "Kælenavnet du har valgt, er allerede i brug."
 
 #: ../libgossip/gossip-chatroom-provider.c:323
 msgid "The chat room you tried to join requires a password."
-msgstr "Samtalerummet du forsøgte at tilslutte dig kræver en adgangskode."
+msgstr "Samtalerummet du forsøgte at tilslutte dig til, kræver en adgangskode."
 
 #: ../libgossip/gossip-chatroom-provider.c:327
 msgid "The remote conference server did not respond in a sensible time."
-msgstr "Fjernkonferenceserveren svarede ikke indenfor en rimelig tidsfrist."
+msgstr "Fjernkonferenceserveren svarede ikke inden for en rimelig tidsfrist."
 
 #: ../libgossip/gossip-chatroom-provider.c:331
 msgid "The conference server you tried to join could not be found."
 msgstr "Konferenceserveren du forsøgte at tilslutte dig kunne ikke findes."
 
 #: ../libgossip/gossip-chatroom-provider.c:335
-msgid "An unknown error occured, check your details are correct."
-msgstr "En ukendt fejl opstod, kontrollere at dine indstillinger er korrekte."
+msgid "An unknown error occurred, check your details are correct."
+msgstr "En ukendt fejl opstod, kontrollér at dine indstillinger er korrekte."
 
-#: ../protocols/jabber/gossip-jabber.c:547
-#: ../protocols/jabber/gossip-jabber.c:693
-msgid "Could not open connection"
-msgstr "Kunne åbne en forbindelse"
-
-#: ../protocols/jabber/gossip-jabber.c:574
-msgid "Could not find the server you wanted to use"
-msgstr "Kunne ikke finde den server du ønskede at bruge"
-
-#: ../protocols/jabber/gossip-jabber.c:591
-msgid "Connection to the server failed."
-msgstr "Tilslutningen til server fejlede."
-
-#: ../protocols/jabber/gossip-jabber.c:743
-msgid "Authentication failed"
-msgstr "Godkendelse fejlede"
-
-#: ../protocols/jabber/gossip-jabber.c:999
+#: ../protocols/jabber/gossip-jabber.c:1015
 msgid "Connection could not be opened"
 msgstr "Forbindelsen kunne ikke åbnes"
 
-#: ../protocols/jabber/gossip-jabber.c:1043
+#: ../protocols/jabber/gossip-jabber.c:1063
 msgid "Couldn't send message!"
 msgstr "Kunne ikke sende besked!"
 
-#: ../src/gossip-about.c:277
-msgid "Written by:"
-msgstr "Skrevet af:"
+#: ../src/gossip-about-dialog.c:57
+msgid ""
+"Gossip is free software; you can redistribute it and/or modify\n"
+"it under the terms of the GNU General Public License as published by\n"
+"the Free Software Foundation; either version 2 of the License, or\n"
+"(at your option) any later version.\n"
+msgstr ""
 
-#: ../src/gossip-about.c:287
-msgid "Artwork by:"
-msgstr "Grafik af:"
+#: ../src/gossip-about-dialog.c:61
+msgid ""
+"Gossip is distributed in the hope that it will be useful,\n"
+"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"GNU General Public License for more details.\n"
+msgstr ""
 
-#: ../src/gossip-about.c:298
-msgid "Translated by:"
-msgstr "Oversat af:"
+#: ../src/gossip-about-dialog.c:65
+msgid ""
+"You should have received a copy of the GNU General Public License\n"
+"along with Gossip; if not, write to the Free Software Foundation, Inc.,\n"
+"59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
+msgstr ""
 
-#. Note to translators: put your name here so it will shop up in the
-#. * "about" box. Please add ONLY names, separated by newlines. No mail
-#. * addresses, empty lines, full sentences or years. Just the
-#. * names. Thanks!
-#.
-#: ../src/gossip-about.c:344
+#: ../src/gossip-about-dialog.c:97
+msgid "An Instant Messaging client for GNOME"
+msgstr "En samtaleklient til GNOME."
+
+#: ../src/gossip-about-dialog.c:103
 msgid "translator_credits"
 msgstr ""
 "Ole Laursen\n"
-"David Nielsen"
+"David Nielsen\n"
+"\n"
+"Dansk-gruppen <dansk@dansk-gruppen.dk>\n"
+"Mere info: http://www.dansk-gruppen.dk"
 
-#: ../src/gossip-account-button.c:335
+#: ../src/gossip-account-button.c:334
 msgid "Stop Connecting"
-msgstr "Stop Tilslutning"
+msgstr "Stop tilslutning"
 
-#: ../src/gossip-account-button.c:342 ../src/gossip-accounts-dialog.c:246
+#: ../src/gossip-account-button.c:341 ../src/gossip-accounts-dialog.c:240
 msgid "Connect"
 msgstr "Tilslut"
 
-#: ../src/gossip-account-button.c:350 ../src/gossip-accounts-dialog.c:243
+#: ../src/gossip-account-button.c:349 ../src/gossip-accounts-dialog.c:237
 msgid "Disconnect"
 msgstr "Frakobl"
 
-#: ../src/gossip-account-button.c:361
+#: ../src/gossip-account-button.c:360
 msgid "Edit"
 msgstr "Redigér"
 
-#: ../src/gossip-account-button.c:392 ../src/gossip-group-chat.c:692
-#: ../src/gossip-private-chat.c:508
+#: ../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:695
+#: ../src/gossip-private-chat.c:509
 msgid "Connected"
 msgstr "Tilsluttet"
 
-#: ../src/gossip-account-button.c:394
+#: ../src/gossip-account-button.c:393
 msgid "Connecting"
 msgstr "Tilslutter"
 
-#: ../src/gossip-account-button.c:394 ../src/gossip-group-chat.c:703
-#: ../src/gossip-private-chat.c:523
+#: ../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:706
+#: ../src/gossip-private-chat.c:524
 msgid "Disconnected"
 msgstr "Frakoblet"
 
-#: ../src/gossip-account-button.c:407
+#: ../src/gossip-account-button.c:406
 msgid "Perhaps you are trying to connect to the wrong port?"
 msgstr "Måske forsøger du at tilslutte til den forkerte port?"
 
-#: ../src/gossip-account-button.c:408
+#: ../src/gossip-account-button.c:407
 msgid "Perhaps the service is not currently running?"
 msgstr "Måske kører tjenesten ikke på nuværende tidspunkt?"
 
-#: ../src/gossip-account-button.c:411 ../src/gossip-account-button.c:420
+#: ../src/gossip-account-button.c:410 ../src/gossip-account-button.c:419
 msgid "Check your connection details."
-msgstr "Kontrollér dine forbindelse indstillinger."
+msgstr "Kontrollér dine forbindelsesindstillinger."
 
-#: ../src/gossip-account-button.c:414
+#: ../src/gossip-account-button.c:413
 msgid "Perhaps the server is not running this service."
-msgstr "Måske kører server ikke på nuværende tidspunkt."
+msgstr "Måske kører serveren ikke denne tjeneste."
 
-#: ../src/gossip-account-button.c:417
+#: ../src/gossip-account-button.c:416
 msgid "Check your username and password are correct."
-msgstr "Kontrollér at dit brugernavn og adgangskode er korrekte."
+msgstr "Kontrollér at brugernavn og adgangskode er korrekte."
 
-#: ../src/gossip-account-button.c:437 ../ui/main.glade.h:15
-msgid "Account Name"
-msgstr "Kontonavn"
-
-#: ../src/gossip-account-button.c:439
-msgid "Account ID"
-msgstr "Konto ID"
-
-#: ../src/gossip-account-button.c:441 ../ui/main.glade.h:83
-msgid "Status"
-msgstr "Status"
-
-#: ../src/gossip-account-button.c:444
-msgid "Last Error"
-msgstr "Sidste Fejl"
-
-#: ../src/gossip-accounts-dialog.c:479
+#: ../src/gossip-accounts-dialog.c:478
 msgid "Accounts"
 msgstr "Konti"
 
@@ -358,11 +340,11 @@ msgstr "Jabber"
 
 #: ../src/gossip-add-contact-window.c:227
 msgid "No information is available for this contact."
-msgstr "Ingen information tilgængelig for denne kontakt."
+msgstr "Ingen oplysninger tilgængelige om denne kontakt."
 
 #: ../src/gossip-add-contact-window.c:355
 msgid "Information requested, please wait..."
-msgstr "Information forespurgt, vent venligst..."
+msgstr "Oplysninger forespurgt, vent venligst..."
 
 #: ../src/gossip-add-contact-window.c:405
 #, c-format
@@ -370,7 +352,7 @@ msgid "%s will be added to your contact list."
 msgstr "%s vil blive tilføjet til din kontaktliste."
 
 #: ../src/gossip-add-contact-window.c:424
-#: ../src/gossip-contact-info-dialog.c:455
+#: ../src/gossip-contact-info-dialog.c:454
 #: ../src/gossip-subscription-dialog.c:371
 msgid "I would like to add you to my contact list."
 msgstr "Jeg vil gerne tilføje dig til min kontaktliste."
@@ -378,7 +360,7 @@ msgstr "Jeg vil gerne tilføje dig til min kontaktliste."
 #: ../src/gossip-add-contact-window.c:476
 #, c-format
 msgid "%s ID of new contact:"
-msgstr "%s ID for ny kontakt:"
+msgstr "%s-id for ny kontakt:"
 
 #. must be a jabber system selected
 #: ../src/gossip-add-contact-window.c:481
@@ -386,35 +368,35 @@ msgstr "%s ID for ny kontakt:"
 msgid "Example: %s"
 msgstr "Eksempel: %s"
 
-#: ../src/gossip-app.c:549 ../ui/main.glade.h:114
+#: ../src/gossip-app.c:526 ../ui/main.glade.h:129
 msgid "_Connect"
 msgstr "_Tilslut"
 
-#: ../src/gossip-app.c:554 ../ui/main.glade.h:117
+#: ../src/gossip-app.c:531 ../ui/main.glade.h:132
 msgid "_Disconnect"
 msgstr "_Frakobl"
 
-#: ../src/gossip-app.c:698
+#: ../src/gossip-app.c:679
 msgid "To summarize:"
 msgstr "For at opsummere:"
 
-#: ../src/gossip-app.c:767
-msgid "If you quit, you will loose all unread information."
-msgstr "Hvis du afslutter vil alt ulæst information gå tabt."
+#: ../src/gossip-app.c:749
+msgid "If you quit, you will lose all unread information."
+msgstr "Hvis du afslutter, vil alt ulæst information gå tabt."
 
-#: ../src/gossip-app.c:984
+#: ../src/gossip-app.c:972
 msgid "Could not display the help contents."
 msgstr "Kunne ikke vise hjælp."
 
-#: ../src/gossip-app.c:1231
+#: ../src/gossip-app.c:1227
 msgid "Gossip, Instant Messaging Client"
-msgstr "Gossip, Samtaleklient"
+msgstr "Gossip, samtaleklient"
 
-#: ../src/gossip-app.c:1484
+#: ../src/gossip-app.c:1466
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Du har ingen samtalekonti konfiguret!"
 
-#: ../src/gossip-app.c:1486
+#: ../src/gossip-app.c:1468
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -429,105 +411,105 @@ msgstr "_Kontrollér stavning af ord..."
 msgid ""
 "Please enter your invitation message to:\n"
 "%s"
-msgstr "Indtast venligst din invitationsbesked to:\n"
+msgstr ""
+"Indtast venligst din invitationsbesked to:\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:776
+#: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:787
 msgid "You have been invited to join a chat conference."
 msgstr "Du er blevet inviteret til at deltage i en konferencesamtale."
 
-#: ../src/gossip-chat-manager.c:147
+#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:237
 #, c-format
 msgid "New message from %s"
 msgstr "Ny besked fra %s"
 
-#: ../src/gossip-chat-view.c:382 ../ui/chat.glade.h:1
+#: ../src/gossip-chat-view.c:394 ../ui/chat.glade.h:1
 msgid "C_lear"
 msgstr "_Ryd"
 
-#: ../src/gossip-chat-view.c:399
+#: ../src/gossip-chat-view.c:411
 msgid "_Copy Link Address"
 msgstr "_Kopiér adresse"
 
-#: ../src/gossip-chat-view.c:407
+#: ../src/gossip-chat-view.c:419
 msgid "_Open Link"
 msgstr "_Åbn adresse"
 
-#: ../src/gossip-chat-view.c:801
+#: ../src/gossip-chat-view.c:812
 msgid "Accept"
 msgstr "Acceptér"
 
-#: ../src/gossip-chat-view.c:891
+#: ../src/gossip-chat-view.c:908
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-window.c:569
+#: ../src/gossip-chat-window.c:625
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sSamtale - %s"
 
-#: ../src/gossip-chat-window.c:957
+#: ../src/gossip-chat-window.c:1026
 msgid "Typing a message."
 msgstr "Skriver en besked."
 
-#: ../src/gossip-chatrooms-window.c:721
+#: ../src/gossip-chatrooms-window.c:722
 #: ../src/gossip-new-chatroom-dialog.c:164 ../ui/group-chat.glade.h:9
 msgid "Join"
 msgstr "Deltag"
 
-#: ../src/gossip-contact-info-dialog.c:299 ../ui/main.glade.h:69
+#: ../src/gossip-contact-info-dialog.c:298 ../ui/main.glade.h:79
 msgid "Name:"
 msgstr "Navn:"
 
-#: ../src/gossip-contact-info-dialog.c:302
-#: ../src/gossip-contact-info-dialog.c:630 ../ui/main.glade.h:19
+#: ../src/gossip-contact-info-dialog.c:301
+#: ../src/gossip-contact-info-dialog.c:629 ../ui/main.glade.h:20
 msgid "Alias:"
 msgstr "Alias"
 
 #. set labels
-#: ../src/gossip-contact-info-dialog.c:620
+#: ../src/gossip-contact-info-dialog.c:619
 #, c-format
 msgid "Contact Information for %s"
-msgstr "Kontaktinformation for %s"
+msgstr "Kontaktoplysninger for %s"
 
-#: ../src/gossip-contact-info-dialog.c:654
+#: ../src/gossip-contact-info-dialog.c:653
 msgid "Requested Information"
 msgstr "Anmodet oplysninger"
 
-#: ../src/gossip-contact-list.c:314
-msgid "/Contact _Information"
-msgstr "/Kontakt_oplysninger"
+#: ../src/gossip-contact-list.c:305
+msgid "/_Contact Information"
+msgstr "/_Kontaktoplysninger"
 
-#: ../src/gossip-contact-list.c:326
+#: ../src/gossip-contact-list.c:317
 msgid "/Re_name Contact"
 msgstr "/Om_døb kontakt"
 
-#: ../src/gossip-contact-list.c:332
-#, fuzzy
+#: ../src/gossip-contact-list.c:323
 msgid "/_Edit Groups"
 msgstr "/_Redigér grupper"
 
-#: ../src/gossip-contact-list.c:338
+#: ../src/gossip-contact-list.c:329
 msgid "/_Remove Contact"
 msgstr "/_Fjern kontakt"
 
-#: ../src/gossip-contact-list.c:350
-msgid "/_Invite to Chat Conference"
+#: ../src/gossip-contact-list.c:341
+msgid "/In_vite to Chat Conference"
 msgstr "/_Invitér til konferencesamtale"
 
-#: ../src/gossip-contact-list.c:362
+#: ../src/gossip-contact-list.c:353
 msgid "/_Send File..."
-msgstr "Send _fil..."
+msgstr "/Send _fil..."
 
-#: ../src/gossip-contact-list.c:374
+#: ../src/gossip-contact-list.c:365
 msgid "/Show _Log"
 msgstr "/Vis _log"
 
-#: ../src/gossip-contact-list.c:384
+#: ../src/gossip-contact-list.c:374
 msgid "/Re_name group"
 msgstr "/Om_døb gruppe"
 
-#: ../src/gossip-contact-list.c:1992
+#: ../src/gossip-contact-list.c:2078
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -536,11 +518,11 @@ msgstr ""
 "Indtast et nyt kælenavn til kontakten\n"
 "%s"
 
-#: ../src/gossip-contact-list.c:2112
+#: ../src/gossip-contact-list.c:2198
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Ønsker du at fjerne denne kontakt fra din kontaktliste?"
 
-#: ../src/gossip-contact-list.c:2168
+#: ../src/gossip-contact-list.c:2254
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -549,119 +531,165 @@ msgstr ""
 "Indtast et nyt navn til gruppen\n"
 "%s"
 
-#: ../src/gossip-edit-groups-dialog.c:163
+#: ../src/gossip-edit-groups-dialog.c:161
 #, c-format
 msgid "Edit groups for %s"
 msgstr "Redigér grupper for %s"
 
-#: ../src/gossip-edit-groups-dialog.c:232 ../src/gossip-preferences.c:191
+#: ../src/gossip-edit-groups-dialog.c:230
 msgid "Select"
 msgstr "Vælg"
 
-#: ../src/gossip-edit-groups-dialog.c:243
+#: ../src/gossip-edit-groups-dialog.c:241
 msgid "Group"
 msgstr "Gruppe"
 
-#: ../src/gossip-edit-groups-dialog.c:294
-#: ../src/gossip-edit-groups-dialog.c:304
+#: ../src/gossip-edit-groups-dialog.c:292
+#: ../src/gossip-edit-groups-dialog.c:302
 #: ../src/gossip-subscription-dialog.c:194
 msgid "Unsorted"
 msgstr "Usorteret"
 
-#: ../src/gossip-ft-window.c:145
+#: ../src/gossip-ft-window.c:146
 #, c-format
 msgid "New file transfer request from %s"
-msgstr "Ny filoverførelsesanmodning fra %s"
+msgstr "Ny filoverførselsanmodning fra %s"
 
-#: ../src/gossip-ft-window.c:177
+#: ../src/gossip-ft-window.c:178
 msgid "File transfer is not supported by both parties."
-msgstr "Filoverførelse er ikke understøttet af begge parter"
-
-#: ../src/gossip-ft-window.c:181
-msgid "Your file transfer offer declined."
-msgstr "Din filoverførelse blev afvist."
+msgstr "Filoverførsel er ikke understøttet af begge parter."
 
 #: ../src/gossip-ft-window.c:182
+msgid "Your file transfer offer declined."
+msgstr "Dit filoverførselstilbud blev afvist."
+
+#: ../src/gossip-ft-window.c:183
 msgid "The other user decided not to continue."
-msgstr "Den anden bruger besluttede ikke at forsætte"
+msgstr "Den anden bruger besluttede ikke at forsætte."
 
-#: ../src/gossip-ft-window.c:187
-msgid "Unknown error occured during file transfer."
-msgstr "Ukendt fejl opstod under fil overførelse."
+#: ../src/gossip-ft-window.c:188
+msgid "Unknown error occurred during file transfer."
+msgstr "Ukendt fejl opstod under filoverførsel."
 
-#: ../src/gossip-ft-window.c:271
+#: ../src/gossip-ft-window.c:272
 #, c-format
 msgid "%s would like to send you a file."
 msgstr "%s vil gerne sende dig en fil."
 
-#: ../src/gossip-ft-window.c:274
 #
+#: ../src/gossip-ft-window.c:275
 msgid "Someone would like to send you a file."
 msgstr "Nogen vil gerne sende dig en fil."
 
-#: ../src/gossip-ft-window.c:406
-#, fuzzy
+#: ../src/gossip-ft-window.c:407
 msgid "Select a file"
 msgstr "Vælg en fil"
 
 #. send event to chat window
-#: ../src/gossip-group-chat.c:478
+#: ../src/gossip-group-chat.c:481
 #, c-format
 msgid "Invited %s to join this chat conference."
-msgstr "Inviterede %s til at deltage i denne konferencesamtale"
+msgstr "Inviterede %s til at deltage i denne konferencesamtale."
 
-#: ../src/gossip-log.c:290
+#: ../src/gossip-group-chat.c:867
+#, c-format
+msgid "%s has set the topic"
+msgstr "%s har sat emnet"
+
+#: ../src/gossip-log.c:320
 msgid "Conversation Log"
 msgstr "Samtalelog"
 
-#: ../src/gossip-main.c:68
+#: ../src/gossip-main.c:48
 msgid "Don't connect on startup"
 msgstr "Tilslut ikke ved start"
 
-#: ../src/gossip-main.c:75
-msgid "Which account to connect to on startup"
-msgstr "Hvilken konto skal benyttes ved start"
-
-#: ../src/gossip-main.c:76
-msgid "ACCOUNT-NAME"
-msgstr "KONTONAVN"
-
-#: ../src/gossip-main.c:82
+#: ../src/gossip-main.c:52
 msgid "List the available accounts"
 msgstr "Vis de tilgængelige konti"
 
-#: ../src/gossip-main.c:119
-msgid "No accounts available."
-msgstr "Ingen konti tilgængelig"
+#: ../src/gossip-main.c:56
+msgid "Which account to connect to on startup"
+msgstr "Hvilken konto skal benyttes ved start"
 
-#: ../src/gossip-main.c:124
+#: ../src/gossip-main.c:57
+msgid "ACCOUNT-NAME"
+msgstr "KONTONAVN"
+
+#: ../src/gossip-main.c:85
+msgid "- Gossip Instant Messenger"
+msgstr "- Gossip - samtaleklient"
+
+#: ../src/gossip-main.c:104
+msgid "You can not use --no-connect together with --account"
+msgstr "Du kan ikke bruge --no-connect sammen med --account"
+
+#: ../src/gossip-main.c:115
+msgid "No accounts available."
+msgstr "Ingen konti tilgængelige."
+
+#: ../src/gossip-main.c:120
 msgid "Available accounts:"
 msgstr "Tilgængelige konti:"
 
-#: ../src/gossip-main.c:134
+#: ../src/gossip-main.c:130
 msgid "[default]"
 msgstr "[forvalgt]"
 
-#: ../src/gossip-main.c:151
+#: ../src/gossip-main.c:145
 #, c-format
 msgid "There is no account with the name '%s'."
-msgstr "Der er ingen konto med navnet '%s'."
+msgstr "Der er ingen konto med navnet \"%s\"."
 
-#: ../src/gossip-new-account-window.c:183
+#: ../src/gossip-new-account-window.c:186
 msgid "Failed to register your new account settings"
 msgstr "Det mislykkedes at registrere de nye kontoindstillinger"
 
-#: ../src/gossip-new-account-window.c:212
+#: ../src/gossip-new-account-window.c:215
 msgid "Registering account"
 msgstr "Registrering af konto"
 
-#: ../src/gossip-new-account-window.c:394
+#: ../src/gossip-new-account-window.c:312 ../ui/main.glade.h:69
+msgid "Home"
+msgstr "Hjemme"
+
+#: ../src/gossip-new-account-window.c:404
 msgid "Example"
 msgstr "Eksempel"
 
-#: ../src/gossip-preferences.c:201
+#: ../src/gossip-notify.c:102 ../src/gossip-private-chat.c:444
+#, c-format
+msgid "%s has come online"
+msgstr "%s tilslutter sig"
+
+#: ../src/gossip-notify.c:142
+#, c-format
+msgid "%s has gone offline"
+msgstr "%s frakoblede sig"
+
+#: ../src/gossip-notify.c:258
+msgid "Default"
+msgstr "Forvalgt"
+
+#: ../src/gossip-notify.c:261
+msgid "Respond"
+msgstr "Svar"
+
+#: ../src/gossip-notify.c:264
+msgid "Contact Information"
+msgstr "Kontaktoplysninger"
+
+#: ../src/gossip-preferences.c:224
 msgid "Language"
 msgstr "Sprog"
+
+#: ../src/gossip-preferences.c:451
+msgid "Classic"
+msgstr "Klassisk"
+
+#: ../src/gossip-preferences.c:457
+msgid "Blue"
+msgstr "Blå"
 
 #: ../src/gossip-presence-chooser.c:483
 msgid "Available..."
@@ -676,402 +704,31 @@ msgid "Away..."
 msgstr "Væk..."
 
 #: ../src/gossip-presence-chooser.c:534
-#, fuzzy
 msgid "Clear List"
-msgstr "_Ryd liste"
+msgstr "Ryd liste"
 
-#: ../src/gossip-private-chat.c:429
+#: ../src/gossip-private-chat.c:430
 #, c-format
 msgid "%s went offline"
 msgstr "%s frakoblede sig"
 
-#: ../src/gossip-private-chat.c:443
-#, c-format
-msgid "%s comes online"
-msgstr "%s tilslutter sig"
-
-#: ../src/gossip-spell.c:69
-msgid "Afrikaans"
-msgstr ""
-
-#: ../src/gossip-spell.c:70
-msgid "Amharic"
-msgstr ""
-
-#: ../src/gossip-spell.c:71
-msgid "Arabic"
-msgstr ""
-
-#: ../src/gossip-spell.c:72
-msgid "Azerbaijani"
-msgstr ""
-
-#: ../src/gossip-spell.c:73
-msgid "Belarusian"
-msgstr ""
-
-#: ../src/gossip-spell.c:74
-msgid "Bulgarian"
-msgstr ""
-
-#: ../src/gossip-spell.c:75
-msgid "Bengali"
-msgstr ""
-
-#: ../src/gossip-spell.c:76
-msgid "Breton"
-msgstr ""
-
-#: ../src/gossip-spell.c:77
-msgid "Bosnian"
-msgstr ""
-
-#: ../src/gossip-spell.c:78
-msgid "Catalan"
-msgstr ""
-
-#: ../src/gossip-spell.c:79
-msgid "Czech"
-msgstr ""
-
-#: ../src/gossip-spell.c:80
-msgid "Welsh"
-msgstr ""
-
-#: ../src/gossip-spell.c:81
-msgid "Danish"
-msgstr "Dansk"
-
-#: ../src/gossip-spell.c:82
-msgid "German"
-msgstr "Tysk"
-
-#: ../src/gossip-spell.c:83
-msgid "German (Austria)"
-msgstr ""
-
-#: ../src/gossip-spell.c:84
-msgid "German (Germany)"
-msgstr "Tysk (Tyskland)"
-
-#: ../src/gossip-spell.c:85
-msgid "German (Swiss)"
-msgstr ""
-
-#: ../src/gossip-spell.c:86
-msgid "Greek"
-msgstr "Græsk"
-
-#: ../src/gossip-spell.c:87
-msgid "English"
-msgstr "Engelsk"
-
-#: ../src/gossip-spell.c:88
-msgid "English (Canadian)"
-msgstr "Engelsk (Canadisk)"
-
-#: ../src/gossip-spell.c:89
-msgid "English (British)"
-msgstr "Engelsk (Britisk)"
-
-#: ../src/gossip-spell.c:90
-msgid "English (American)"
-msgstr "Engelsk (Amerikansk)"
-
-#: ../src/gossip-spell.c:91
-msgid "Esperanto"
-msgstr "Esperanto"
-
-#: ../src/gossip-spell.c:92
-msgid "Spanish"
-msgstr "Spansk"
-
-#: ../src/gossip-spell.c:93
-msgid "Estonian"
-msgstr ""
-
-#: ../src/gossip-spell.c:94
-msgid "Basque"
-msgstr ""
-
-#: ../src/gossip-spell.c:95
-msgid "Persian"
-msgstr "Persisk"
-
-#: ../src/gossip-spell.c:96
-msgid "Finnish"
-msgstr "Finsk"
-
-#: ../src/gossip-spell.c:97
-msgid "Faroese"
-msgstr "Færøsk"
-
-#: ../src/gossip-spell.c:98
-msgid "French"
-msgstr "Fransk"
-
-#: ../src/gossip-spell.c:99
-msgid "French (France)"
-msgstr "Fransk (Frankrig)"
-
-#: ../src/gossip-spell.c:100
-msgid "French (Swiss)"
-msgstr ""
-
-#: ../src/gossip-spell.c:101
-msgid "Irish Gaelic"
-msgstr ""
-
-#: ../src/gossip-spell.c:102
-msgid "Scots Gaelic"
-msgstr ""
-
-#: ../src/gossip-spell.c:103
-msgid "Galician"
-msgstr ""
-
-#: ../src/gossip-spell.c:104
-msgid "Gujarati"
-msgstr ""
-
-#: ../src/gossip-spell.c:105
-msgid "Manx Gaelic"
-msgstr ""
-
-#: ../src/gossip-spell.c:106
-msgid "Hebrew"
-msgstr ""
-
-#: ../src/gossip-spell.c:107
-msgid "Hindi"
-msgstr ""
-
-#: ../src/gossip-spell.c:108
-msgid "Croatian"
-msgstr ""
-
-#: ../src/gossip-spell.c:109
-msgid "Hungarian"
-msgstr "Hungarsk"
-
-#: ../src/gossip-spell.c:110
-msgid "Indonesian"
-msgstr ""
-
-#: ../src/gossip-spell.c:111
-msgid "Icelandic"
-msgstr "Islandsk"
-
-#: ../src/gossip-spell.c:112
-msgid "Italian"
-msgstr "Italiansk"
-
-#: ../src/gossip-spell.c:113
-msgid "Japanese"
-msgstr "Japansk"
-
-#: ../src/gossip-spell.c:114
-msgid "Georgian"
-msgstr ""
-
-#: ../src/gossip-spell.c:115
-msgid "Kannada"
-msgstr ""
-
-#: ../src/gossip-spell.c:116
-msgid "Korean"
-msgstr ""
-
-#: ../src/gossip-spell.c:117
-msgid "Kurdish"
-msgstr ""
-
-#: ../src/gossip-spell.c:118
-msgid "Cornish"
-msgstr ""
-
-#: ../src/gossip-spell.c:119
-msgid "Limburgish"
-msgstr ""
-
-#: ../src/gossip-spell.c:120
-msgid "Lithuanian"
-msgstr ""
-
-#: ../src/gossip-spell.c:121
-#, fuzzy
-msgid "Latvian"
-msgstr "Forlader:"
-
-#: ../src/gossip-spell.c:122
-msgid "Maori"
-msgstr ""
-
-#: ../src/gossip-spell.c:123
-msgid "Macedonian"
-msgstr ""
-
-#: ../src/gossip-spell.c:124
-msgid "Malayalam"
-msgstr ""
-
-#: ../src/gossip-spell.c:125
-msgid "Mongolian"
-msgstr ""
-
-#: ../src/gossip-spell.c:126
-msgid "Marathi"
-msgstr ""
-
-#: ../src/gossip-spell.c:127
-msgid "Malay"
-msgstr ""
-
-#: ../src/gossip-spell.c:128 ../src/gossip-spell.c:129
-msgid "Norwegian (Bokmal)"
-msgstr "Norsk (Bokmål)"
-
-#: ../src/gossip-spell.c:130
-msgid "Nepali"
-msgstr ""
-
-#: ../src/gossip-spell.c:131
-msgid "Dutch"
-msgstr ""
-
-#: ../src/gossip-spell.c:132
-msgid "Norwegian"
-msgstr "Norsk"
-
-#: ../src/gossip-spell.c:133
-msgid "Norwegian (Nynorsk)"
-msgstr "Norsk (Nynorsk)"
-
-#: ../src/gossip-spell.c:134
-msgid "Norwegian (Nyorsk)"
-msgstr "Norsk (Nynorsk)"
-
-#: ../src/gossip-spell.c:135
-msgid "Oriya"
-msgstr ""
-
-#: ../src/gossip-spell.c:136
-msgid "Punjabi"
-msgstr ""
-
-#: ../src/gossip-spell.c:137
-msgid "Polish"
-msgstr "Polsk"
-
-#: ../src/gossip-spell.c:138
-msgid "Portuguese"
-msgstr ""
-
-#: ../src/gossip-spell.c:139
-msgid "Portuguese (Portugal)"
-msgstr ""
-
-#: ../src/gossip-spell.c:140
-msgid "Portuguese (Brazil)"
-msgstr ""
-
-#: ../src/gossip-spell.c:141
-msgid "Romanian"
-msgstr ""
-
-#: ../src/gossip-spell.c:142
-msgid "Russian"
-msgstr "Russisk"
-
-#: ../src/gossip-spell.c:143
-msgid "Kinyarwanda"
-msgstr ""
-
-#: ../src/gossip-spell.c:144
-msgid "Slovak"
-msgstr ""
-
-#: ../src/gossip-spell.c:145
-msgid "Slovenian"
-msgstr ""
-
-#: ../src/gossip-spell.c:146
-msgid "Albanian"
-msgstr ""
-
-#: ../src/gossip-spell.c:147
-msgid "Serbian"
-msgstr ""
-
-#: ../src/gossip-spell.c:148
-msgid "Swedish"
-msgstr "Svensk"
-
-#: ../src/gossip-spell.c:149
-msgid "Tamil"
-msgstr ""
-
-#: ../src/gossip-spell.c:150
-msgid "Telugu"
-msgstr ""
-
-#: ../src/gossip-spell.c:151
-msgid "Thai"
-msgstr ""
-
-#: ../src/gossip-spell.c:152
-msgid "Turkmen"
-msgstr ""
-
-#: ../src/gossip-spell.c:153
-msgid "Turkish"
-msgstr ""
-
-#: ../src/gossip-spell.c:154
-msgid "Ukrainian"
-msgstr ""
-
-#: ../src/gossip-spell.c:155
-msgid "Vietnamese"
-msgstr ""
-
-#: ../src/gossip-spell.c:156
-msgid "Wallon"
-msgstr ""
-
-#: ../src/gossip-spell.c:157
-msgid "Xhosa"
-msgstr ""
-
-#: ../src/gossip-spell.c:158
-msgid "Yiddish"
-msgstr ""
-
-#: ../src/gossip-spell.c:159
-msgid "Chinese Simplified"
-msgstr ""
-
-#: ../src/gossip-spell.c:160
-msgid "Chinese Traditional"
-msgstr ""
-
-#: ../src/gossip-spell-dialog.c:111
-msgid "Suggestions for the word"
-msgstr "Forslag for ordet"
-
-#: ../src/gossip-spell-dialog.c:158
+#: ../src/gossip-spell-dialog.c:78
 msgid "Word"
 msgstr "Ord"
+
+#: ../src/gossip-spell-dialog.c:248
+msgid "Suggestions for the word"
+msgstr "Forslag for ordet"
 
 #: ../src/gossip-subscription-dialog.c:138
 #, c-format
 msgid "New subscription request from %s"
-msgstr "Ny Abonneringsanmodning fra %s"
+msgstr "Ny abonneringsanmodning fra %s"
 
 #: ../src/gossip-subscription-dialog.c:267
 #, c-format
 msgid "%s wants to be added to your contact list."
-msgstr "%s vil blive tilføjet til din kontaktliste."
+msgstr "%s ønsker at blive tilføjet til din kontaktliste."
 
 #: ../src/gossip-subscription-dialog.c:269
 #, c-format
@@ -1080,25 +737,31 @@ msgstr "Ønsker du at tilføje %s til din kontaktliste?"
 
 #: ../src/gossip-subscription-dialog.c:275
 msgid "Someone wants to be added to your contact list."
-msgstr "Nogen ønsker at blive tilføjet til din kontaktliste"
+msgstr "Nogen ønsker at blive tilføjet til din kontaktliste."
 
 #: ../src/gossip-subscription-dialog.c:276
 msgid "Do you want to add this person to your contact list?"
 msgstr "Ønsker du at tilføje denne person til din kontaktliste?"
 
 #: ../src/gossip-ui-utils.c:234
-msgid "Please enter your password:"
-msgstr "Indtast din adgangskode:"
+#, c-format
+msgid "Please enter your %s account password"
+msgstr "Indtast din adgangskode for kontoen %s"
 
-#: ../src/gossip-ui-utils.c:236
+#: ../src/gossip-ui-utils.c:244
+#, c-format
+msgid "Logging in with: %s"
+msgstr "Logger på med: %s"
+
+#: ../src/gossip-ui-utils.c:249
 msgid "Remember Password?"
 msgstr "Husk adgangskode?"
 
-#: ../src/gossip-vcard-dialog.c:367
+#: ../src/gossip-vcard-dialog.c:280
 msgid "The server does not seem to be responding."
-msgstr "Serveren lader ikke til at svare"
+msgstr "Serveren ser ikke ud til at svare."
 
-#: ../src/gossip-vcard-dialog.c:368
+#: ../src/gossip-vcard-dialog.c:281
 msgid "Try again later."
 msgstr "Prøv igen senere."
 
@@ -1123,32 +786,32 @@ msgid "Gossip - Chat"
 msgstr "Gossip - samtale"
 
 #: ../ui/chat.glade.h:4
-msgid "Move Tab _Left"
-msgstr "Faneblad til _venstre"
+msgid "In_vite to Chat Room"
+msgstr "_Invitér til konferencesamtale"
 
 #: ../ui/chat.glade.h:5
-msgid "Move Tab _Right"
-msgstr "Faneblad til _højre"
+msgid "Move Tab _Left"
+msgstr "Flyt til _venstre"
 
 #: ../ui/chat.glade.h:6
+msgid "Move Tab _Right"
+msgstr "Flyt til _højre"
+
+#: ../ui/chat.glade.h:7
 msgid "View Lo_g"
 msgstr "Vis lo_g"
 
-#: ../ui/chat.glade.h:7 ../ui/main.glade.h:112
+#: ../ui/chat.glade.h:8 ../ui/main.glade.h:127
 msgid "_Add Contact..."
 msgstr "_Tilføj kontakt..."
 
-#: ../ui/chat.glade.h:8
+#: ../ui/chat.glade.h:9
 msgid "_Conversation"
 msgstr "_Samtale"
 
-#: ../ui/chat.glade.h:9
+#: ../ui/chat.glade.h:10
 msgid "_Detach Tab"
 msgstr "_Frigør faneblad"
-
-#: ../ui/chat.glade.h:10
-msgid "_Invite to Chat Room"
-msgstr ""
 
 #: ../ui/chat.glade.h:11
 msgid "_Next Tab"
@@ -1159,7 +822,6 @@ msgid "_Previous Tab"
 msgstr "_Forrige faneblad"
 
 #: ../ui/chat.glade.h:13
-#, fuzzy
 msgid "_Show Contacts"
 msgstr "_Vis kontaktliste"
 
@@ -1167,57 +829,9 @@ msgstr "_Vis kontaktliste"
 msgid "_Tabs"
 msgstr "_Faneblade"
 
-#: ../ui/connect.glade.h:1
-msgid "Account"
-msgstr "Konto"
-
-#: ../ui/connect.glade.h:2
-msgid "Actions"
-msgstr "Handling"
-
-#: ../ui/connect.glade.h:3
-msgid "Connect on Start_up"
-msgstr "Tilslut ved start"
-
-#: ../ui/connect.glade.h:4
-msgid "Connection"
-msgstr "Tilslutning"
-
-#: ../ui/connect.glade.h:5
-msgid "Gossip - Accounts"
-msgstr "Gossip - Konti"
-
-#: ../ui/connect.glade.h:6
-msgid "Login I_D:"
-msgstr "Login I_D"
-
-#: ../ui/connect.glade.h:7
-msgid "Por_t:"
-msgstr "Por_t:"
-
-#: ../ui/connect.glade.h:8 ../ui/main.glade.h:89
-msgid "Use _encryption (SSL)"
-msgstr "Anvend _kryptering (SSL)"
-
-#: ../ui/connect.glade.h:9 ../ui/main.glade.h:90
-msgid "Use system pro_xy"
-msgstr "Benyt forvalgt mellemvært"
-
-#: ../ui/connect.glade.h:10
-msgid "_Name:"
-msgstr "_Navn:"
-
-#: ../ui/connect.glade.h:11
-msgid "_Password:"
-msgstr "_Adgangskode:"
-
-#: ../ui/connect.glade.h:12 ../ui/group-chat.glade.h:20
-msgid "_Server:"
-msgstr "_Server:"
-
 #: ../ui/file-transfer.glade.h:1
 msgid "Contact ID:"
-msgstr "Kontakt ID:"
+msgstr "Kontakt-id:"
 
 #: ../ui/file-transfer.glade.h:2
 msgid "Do you want to accept this file?"
@@ -1233,66 +847,60 @@ msgstr "Filstørrelse:"
 
 #: ../ui/file-transfer.glade.h:5
 msgid "Gossip - File Transfer Request"
-msgstr "Gossip - Filoverførelsesanmodning"
+msgstr "Gossip - Filoverførselsanmodning"
 
 #: ../ui/file-transfer.glade.h:6
 msgid "Not supported yet."
-msgstr "Ikke understøttet på nuværende tidspunkt"
+msgstr "Ikke understøttet på nuværende tidspunkt."
 
 #: ../ui/file-transfer.glade.h:7
 msgid "This person wishes to send you this file:"
 msgstr "Denne person ønsker at sende dig denne fil:"
 
-#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:94
+#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:105
 msgid "Web site:"
 msgstr "Hjemmeside:"
 
-#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:110
+#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:125
 msgid "_Accept"
 msgstr "_Acceptér"
 
-#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:116
+#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:131
 msgid "_Deny"
 msgstr "_Afvis"
 
-#: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:16
+#: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:17
 msgid "Account:"
-msgstr "Konto"
+msgstr "Konto:"
 
 #: ../ui/group-chat.glade.h:2
 msgid ""
-"Customize your own nickname, server and chat room that you wish to join in "
-"to."
-msgstr ""
-"Tilpasset dit kælenavn, den server og det samtalerum du ønsker at indtræde i"
+"Customize your own nickname, the server and chatroom which you wish to join."
+msgstr "Tilpas dit kælenavn, den server og det samtalerum du ønsker at tilslutte dig."
 
 #: ../ui/group-chat.glade.h:3
 msgid "Edit your chat room details:"
-msgstr "Redigér dine samtalerum indstillinger"
+msgstr "Redigér dine indstillinger for samtalerum:"
 
 #: ../ui/group-chat.glade.h:4
 msgid "Gossip - Chat Rooms"
-msgstr "Gossip - Samtalerum"
+msgstr "Gossip - samtalerum"
 
 #: ../ui/group-chat.glade.h:5
 msgid "Gossip - Edit Chat Room"
-msgstr "Gossip - Redigér samtalerum"
+msgstr "Gossip - redigér samtalerum"
 
 #: ../ui/group-chat.glade.h:6
 msgid "Gossip - Group Chat"
-msgstr "Gossip - Gruppesamtale"
+msgstr "Gossip - gruppesamtale"
 
 #: ../ui/group-chat.glade.h:7
 msgid "Gossip - New Chatroom"
-msgstr "Gossip - Nyt samtalerum"
-
-#: ../ui/group-chat.glade.h:8
-msgid "Idle"
-msgstr "Inaktiv"
+msgstr "Gossip - nyt samtalerum"
 
 #: ../ui/group-chat.glade.h:10
 msgid "Join room on start_up"
-msgstr "Indtræde i rum ved start"
+msgstr "Indtræd i rum ved _start"
 
 #: ../ui/group-chat.glade.h:11
 msgid "Join the chat room"
@@ -1300,31 +908,32 @@ msgstr "Indtræd i samtalerummet"
 
 #: ../ui/group-chat.glade.h:12
 msgid "Join this chat room when Gossip starts and you are connected."
-msgstr "Indtræde i dette samtalerum når Gossip starter og du er forbundet."
+msgstr "Indtræd i dette samtalerum når Gossip starter og du er tilsluttet."
 
 #: ../ui/group-chat.glade.h:13
 msgid "N_ame:"
 msgstr "N_avn:"
 
 #: ../ui/group-chat.glade.h:14
+#, fuzzy
 msgid ""
-"Pick a saved chat room from the presets available below and click Join Chat "
-"Room to start chatting."
+"Pick a saved chat room from the presets available below and click Join to "
+"start chatting."
 msgstr ""
-"Vælg a gemt samtalerum fra de nuværende tilgængelige nedenstående og klik på"
-"Indtræde i samtalerum for at påbegynde samtale."
+"Vælg a gemt samtalerum fra de nuværende tilgængelige nedenstående og klik "
+"påIndtræde i samtalerum for at påbegynde samtale."
 
 #: ../ui/group-chat.glade.h:15
-msgid "Progress:"
-msgstr "Fremgang"
-
-#: ../ui/group-chat.glade.h:16
 msgid "S_erver:"
 msgstr "S_erver:"
 
-#: ../ui/group-chat.glade.h:17
+#: ../ui/group-chat.glade.h:16
 msgid "Save _this chat room"
 msgstr "Gem _dette samtalerum"
+
+#: ../ui/group-chat.glade.h:17
+msgid "Status:"
+msgstr "Status:"
 
 #: ../ui/group-chat.glade.h:18
 msgid "_Nickname:"
@@ -1333,6 +942,10 @@ msgstr "Kæle_navn:"
 #: ../ui/group-chat.glade.h:19
 msgid "_Room:"
 msgstr "_Rum:"
+
+#: ../ui/group-chat.glade.h:20 ../ui/main.glade.h:146
+msgid "_Server:"
+msgstr "_Server:"
 
 #: ../ui/group-chat.glade.h:21
 msgid "_Topic:"
@@ -1352,7 +965,7 @@ msgstr "<b>Om</b>"
 
 #: ../ui/main.glade.h:4
 msgid "<b>Appearance and Behavior</b>"
-msgstr "<b>Udseende og opførelse</b>"
+msgstr "<b>Udseende og opførsel</b>"
 
 #: ../ui/main.glade.h:5
 msgid "<b>Client Information</b>"
@@ -1391,162 +1004,194 @@ msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
 msgstr "<span size=\"smaller\">Eksempel: bruger@jabber.org</span>"
 
 #: ../ui/main.glade.h:14
-
 msgid "<span size=\"smaller\">Example:</span>"
 msgstr "<span size=\"smaller\">Eksempel:</span>"
 
-#: ../ui/main.glade.h:17
+#: ../ui/main.glade.h:15
+msgid "Account"
+msgstr "Konto"
+
+#: ../ui/main.glade.h:16
+msgid "Account Name"
+msgstr "Kontonavn"
+
+#: ../ui/main.glade.h:18
 msgid "Add a contact"
 msgstr "Tilføj en kontakt"
 
-#: ../ui/main.glade.h:18
+#: ../ui/main.glade.h:19
 msgid "Add to status message list"
 msgstr "Tilføj til statusbeskedliste"
 
-#: ../ui/main.glade.h:20
-#, fuzzy
+#: ../ui/main.glade.h:21
 msgid "Ch_at"
 msgstr "S_amtale"
 
-#: ../ui/main.glade.h:21
-msgid "Check spelling while I _type"
-msgstr "Kontrollér stavning mens jeg skriver"
-
 #: ../ui/main.glade.h:22
+msgid "Chat th_eme: "
+msgstr "Samtale_tema:"
+
+#: ../ui/main.glade.h:23
+msgid "Check spelling while I _type"
+msgstr "Kontrollér stavning mens jeg _skriver"
+
+#: ../ui/main.glade.h:24
 msgid "Client:"
 msgstr "Klient:"
 
-#: ../ui/main.glade.h:23
+#: ../ui/main.glade.h:25
+msgid "Con_tact:"
+msgstr "Kon_takt:"
 
+#: ../ui/main.glade.h:26
+msgid "Connect on Start_up"
+msgstr "Tilslut ved _start"
+
+#: ../ui/main.glade.h:27
+msgid "Connection"
+msgstr "Tilslutning"
+
+#: ../ui/main.glade.h:28
 msgid "Connection Details"
-msgstr "Forbindelse detaljer"
+msgstr "Forbindelsesdetaljer"
 
-#: ../ui/main.glade.h:24
+#: ../ui/main.glade.h:29
 msgid "Contact information"
 msgstr "Kontaktoplysninger"
 
-#: ../ui/main.glade.h:25
+#: ../ui/main.glade.h:30
+msgid "Conversation Hi_story"
+msgstr "Samtale_historik"
+
+#: ../ui/main.glade.h:31
 msgid "Convert _smileys to graphical images"
 msgstr "Konvertér _tekstansigter til små billeder"
 
-#: ../ui/main.glade.h:26
+#: ../ui/main.glade.h:32
 msgid "Country:"
 msgstr "Land:"
 
-#: ../ui/main.glade.h:27
+#: ../ui/main.glade.h:33
 msgid "Decide _Later"
 msgstr "Beslut _senere"
 
-#: ../ui/main.glade.h:28
+#: ../ui/main.glade.h:34
 msgid "Description:"
 msgstr "Beskrivelse:"
 
-#: ../ui/main.glade.h:29
+#: ../ui/main.glade.h:35
 msgid "Disable sounds when _away"
 msgstr "Deaktivér lyde når brugeren er _fraværende"
 
-#: ../ui/main.glade.h:30
+#: ../ui/main.glade.h:36
 msgid "Disable sounds when _busy"
 msgstr "Deaktivér lyde når brugeren er _optaget"
 
-#: ../ui/main.glade.h:31
+#: ../ui/main.glade.h:37
 msgid "Do you already have an account set up on a server?"
 msgstr "Har du allerede en konto på en server?"
 
-#: ../ui/main.glade.h:32
+#: ../ui/main.glade.h:38
 msgid "Email:"
-msgstr "Email:"
+msgstr "E-post:"
 
-#: ../ui/main.glade.h:33
+#: ../ui/main.glade.h:39
 msgid "Enter a name for this account."
 msgstr "Indtast et navn for konto."
 
-#: ../ui/main.glade.h:34
+#: ../ui/main.glade.h:40
 msgid "Enter status message:"
 msgstr "Indtast statusbesked:"
 
-#: ../ui/main.glade.h:35
+#: ../ui/main.glade.h:41
 msgid "Enter the name or contact ID of the person you want to chat to below:"
-msgstr "Indtast navn eller kontakt ID på den person du ønsker at samtale med nedenfor."
+msgstr "Indtast navn eller kontakt-id på den person du ønsker at samtale med nedenfor."
 
-#: ../ui/main.glade.h:36
+#: ../ui/main.glade.h:42
 msgid "Enter the port used in the connection for this account."
-msgstr "Indtast den port der bliver brugt ved forbindelse med denne konto"
+msgstr "Indtast den port der bliver brugt ved tilslutning for denne konto."
 
-#: ../ui/main.glade.h:37
+#: ../ui/main.glade.h:43
 msgid "Enter the server used in the connection for this account."
-msgstr "Indtast den server der bliver brugt ved forbindelse med denne konto"
+msgstr "Indtast den server der bliver brugt ved tilslutning for denne konto."
 
-#: ../ui/main.glade.h:38
+#: ../ui/main.glade.h:44
 msgid "Enter the user's contact ID:"
-msgstr "Indtast brugerens kontakt ID:"
+msgstr "Indtast brugerens kontakt-ID:"
 
-#: ../ui/main.glade.h:39
+#: ../ui/main.glade.h:45
 msgid "Enter your account password:"
-msgstr "Indtast din konto adgangskode:"
+msgstr "Indtast din konto-adgangskode:"
 
-#: ../ui/main.glade.h:40
+#: ../ui/main.glade.h:46
 msgid "Enter your real name here."
 msgstr "Indtast dit rigtige navn her."
 
-#: ../ui/main.glade.h:41
+#: ../ui/main.glade.h:47
 msgid "Finished"
 msgstr "Afsluttet"
 
-#: ../ui/main.glade.h:42
+#: ../ui/main.glade.h:48
 msgid "For increased security, enable this option."
-msgstr "For øget sikkerhed, slå denne indstilling til."
+msgstr "Slå denne indstilling til for øget sikkerhed."
 
-#: ../ui/main.glade.h:43
+#: ../ui/main.glade.h:49
 msgid "General"
 msgstr "Generelt"
 
-#: ../ui/main.glade.h:44
+#: ../ui/main.glade.h:50
 msgid "Gossip"
 msgstr "Gossip"
 
-#: ../ui/main.glade.h:45
-msgid "Gossip - Add contact"
-msgstr "Gossip - Tilføj kontakt"
-
-#: ../ui/main.glade.h:46
-msgid "Gossip - Contact Information"
-msgstr "Gossip - Kontaktoplysninger"
-
-#: ../ui/main.glade.h:47
-msgid "Gossip - Edit Groups"
-msgstr "Gossip - Redigér grupper"
-
-#: ../ui/main.glade.h:48
-msgid "Gossip - New Account"
-msgstr "Gossip - Ny konto"
-
-#: ../ui/main.glade.h:49
-msgid "Gossip - New Message"
-msgstr "Gossip - Ny besked"
-
-#: ../ui/main.glade.h:50
-msgid "Gossip - Personal Details"
-msgstr "Gossip - Personlige detaljer"
-
 #: ../ui/main.glade.h:51
-msgid "Gossip - Preferences"
-msgstr "Gossip - Indstillinger"
+msgid "Gossip - Accounts"
+msgstr "Gossip - konti"
 
 #: ../ui/main.glade.h:52
-msgid "Gossip - Spell Checker"
-msgstr "Gossip - Stavekontrol"
+msgid "Gossip - Add contact"
+msgstr "Gossip - tilføj kontakt"
 
 #: ../ui/main.glade.h:53
-msgid "Gossip - Status Message"
-msgstr "Gossip - Statusbesked"
+msgid "Gossip - Contact Information"
+msgstr "Gossip - kontaktoplysninger"
 
 #: ../ui/main.glade.h:54
-#, fuzzy
-msgid "Gossip - Subscription Request"
-msgstr "Gossip - Abonneringsanmodning"
+msgid "Gossip - Edit Groups"
+msgstr "Gossip - redigér grupper"
 
 #: ../ui/main.glade.h:55
+msgid "Gossip - Logs"
+msgstr "Gossip - log"
+
+#: ../ui/main.glade.h:56
+msgid "Gossip - New Account"
+msgstr "Gossip - ny konto"
+
+#: ../ui/main.glade.h:57
+msgid "Gossip - New Message"
+msgstr "Gossip - ny besked"
+
+#: ../ui/main.glade.h:58
+msgid "Gossip - Personal Details"
+msgstr "Gossip - personlige detaljer"
+
+#: ../ui/main.glade.h:59
+msgid "Gossip - Preferences"
+msgstr "Gossip - indstillinger"
+
+#: ../ui/main.glade.h:60
+msgid "Gossip - Spell Checker"
+msgstr "Gossip - stavekontrol"
+
+#: ../ui/main.glade.h:61
+msgid "Gossip - Status Message"
+msgstr "Gossip - statusbesked"
+
+#: ../ui/main.glade.h:62
+msgid "Gossip - Subscription Request"
+msgstr "Gossip - abonneringsanmodning"
+
+#: ../ui/main.glade.h:63
 msgid ""
 "Gossip is a modern client for the Jabber Instant Messaging system.\n"
 "\n"
@@ -1557,202 +1202,216 @@ msgid ""
 msgstr ""
 "Gossip er en moderne klient til samtalesystemet Jabber\n"
 "\n"
-"Denne hjælper sætter dig i gang med at konfigurere Gossip og tilslutte dig "
-"til din favorit Jabber-server.\n"
+"Denne assistent sætter dig i gang med at konfigurere Gossip og tilslutte dig til din favorit Jabber-server.\n"
 "\n"
 "Klik på \"Fremad\" for at komme i gang."
 
-#: ../ui/main.glade.h:60
+#: ../ui/main.glade.h:68
 msgid "Group:"
 msgstr "Gruppe:"
 
-#: ../ui/main.glade.h:61
-msgid "Home"
-msgstr "Hjemme"
-
-#: ../ui/main.glade.h:62
+#: ../ui/main.glade.h:70
 msgid "ID:"
-msgstr "ID:"
+msgstr "Id:"
 
-#: ../ui/main.glade.h:63
+#: ../ui/main.glade.h:71
 msgid ""
 "If you chose to decide later you will be asked the next time you log on."
-msgstr ""
-"Hvis du vælger at beslutte senere vil du blive spurgt næste gang du logger på."
+msgstr "Hvis du vælger at beslutte senere, vil du blive spurgt næste gang du logger på."
 
-#: ../ui/main.glade.h:64
+#: ../ui/main.glade.h:72
 msgid ""
 "If you have another machine on your network which 'proxies' the connection "
 "to the internet and you want to use it, enable this option."
-msgstr ""
-"Hvis du har en anden maskine på dit netværk som fungere som mellemvært for "
-"forbindelsen til internettet og du ønsker at bruge den, slå denne indstilling til"
+msgstr "Hvis du har en anden maskine på dit netværk som fungerer som mellemvært for forbindelsen til internettet og du ønsker at bruge den, så slå denne indstilling til"
 
-#: ../ui/main.glade.h:65
+#: ../ui/main.glade.h:73
 msgid ""
 "If you need to set specific connection details, like a different server or "
 "port, you can configure that here:"
 msgstr ""
 
-#: ../ui/main.glade.h:66
+#: ../ui/main.glade.h:74
 msgid ""
 "In order to subscribe to presence notifications from the user, a request "
 "will be sent. Until this request is approved, the user will always be shown "
 "as \"Offline\" in your contact list."
-msgstr ""
-"For at kunne få at vide når brugeren kommer og går, vil en anmodning blive "
-"sendt. Før denne anmodning er accepteret, vil brugeren altid blive vist som "
-"frakoblet i din kontaktliste."
+msgstr "For at kunne få at vide når brugeren kommer og går, vil en tilstedeværelses-anmodning blive sendt. Før denne anmodning er accepteret, vil brugeren altid blive vist som frakoblet i din kontaktliste."
 
-#: ../ui/main.glade.h:67
+#: ../ui/main.glade.h:75
 msgid "In which group do you want to place this contact?"
 msgstr "Hvilken gruppe ønsker du at placere denne kontakt i?"
 
-#: ../ui/main.glade.h:68
+#: ../ui/main.glade.h:76
 msgid "Jabber ID:"
 msgstr "Jabber-id:"
 
-#: ../ui/main.glade.h:70
+#: ../ui/main.glade.h:77
+msgid "Join _Group Chat..."
+msgstr "Deltag i _gruppesamtale..."
+
+#: ../ui/main.glade.h:78
+msgid "Login I_D:"
+msgstr "Login i_d"
+
+#: ../ui/main.glade.h:80
 msgid "Nickname:"
 msgstr "Kælenavn:"
 
-#: ../ui/main.glade.h:71
+#: ../ui/main.glade.h:81
 msgid "OS:"
 msgstr "Styresystem:"
 
-#: ../ui/main.glade.h:72
-#, fuzzy
-msgid "Personal Details Saved!"
-msgstr "Personlige detaljer"
+#: ../ui/main.glade.h:82
+msgid "Por_t:"
+msgstr "Por_t:"
 
-#: ../ui/main.glade.h:73
-#, fuzzy
+#: ../ui/main.glade.h:83
 msgid "Port:"
-msgstr "_Port:"
+msgstr "Port:"
 
-#: ../ui/main.glade.h:74
-#, fuzzy
+#: ../ui/main.glade.h:84
 msgid "Press Subscribe to request to receive their status."
-msgstr ""
-"Du bliver ikke holdt informeret om denne kontakts status. Tryk på Abonnér "
-"for at modtage deres status."
+msgstr "Tryk på \"Abonnér\" for at modtage deres status."
 
-#: ../ui/main.glade.h:75
-#, fuzzy
+#: ../ui/main.glade.h:85
 msgid "Registering Account"
 msgstr "Registrering af konto"
 
-#: ../ui/main.glade.h:76
-#, fuzzy
+#: ../ui/main.glade.h:86
 msgid "Registration"
-msgstr "Registrering af konto"
+msgstr "Registrering"
 
-#: ../ui/main.glade.h:77
-#, fuzzy
+#: ../ui/main.glade.h:87
 msgid "Requested information."
-msgstr "Klientoplysninger"
+msgstr "Forespurgte oplysninger."
 
-#: ../ui/main.glade.h:78
-#, fuzzy
+#: ../ui/main.glade.h:88
 msgid "Requesting contact information, please wait..."
-msgstr "Spørger efter personlige detaljer, vent venligst..."
+msgstr "Forespørger kontaktoplysninger, vent venligst..."
 
-#: ../ui/main.glade.h:79
+#: ../ui/main.glade.h:89
+msgid "Resource:"
+msgstr "Resurse:"
+
+#: ../ui/main.glade.h:90
 msgid "Sending request"
 msgstr "Sender forespørgsel"
 
-#: ../ui/main.glade.h:80
+#: ../ui/main.glade.h:91
 msgid "Server:"
 msgstr "Server:"
 
-#: ../ui/main.glade.h:81
+#: ../ui/main.glade.h:92
 msgid "Show _Offline Contacts"
 msgstr "Vis _frakoblede kontakter"
 
-#: ../ui/main.glade.h:82
+#: ../ui/main.glade.h:93
 msgid "Spell Checking"
 msgstr "Stavekontrol"
 
-#: ../ui/main.glade.h:84
+#: ../ui/main.glade.h:94
+msgid "Status"
+msgstr "Status"
+
+#: ../ui/main.glade.h:95
 msgid "Suggestions for the word:"
 msgstr "Forslag for ordet:"
 
-#: ../ui/main.glade.h:85
+# HERTIL
+#: ../ui/main.glade.h:96
 msgid ""
 "The list of languages here reflects only the languages for which you have a "
 "dictionary installed."
 msgstr ""
 
-#: ../ui/main.glade.h:86
+#: ../ui/main.glade.h:97
 msgid ""
-"This acts as a filter to the contact list below.  You can use segments of "
+"This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
 msgstr ""
 
-#: ../ui/main.glade.h:87
+#: ../ui/main.glade.h:98
 msgid "This is the name that will be used on your roster for this contact."
 msgstr "Dette navn bliver brugt på din kontaktliste for denne kontakt"
 
-#: ../ui/main.glade.h:88
+#: ../ui/main.glade.h:99
 msgid "This name will be used to identify you in chat windows."
 msgstr "Dette navn bliver brugt til at identificere dig i samtalevinduer."
 
-#: ../ui/main.glade.h:91
+#: ../ui/main.glade.h:100
+#, fuzzy
+msgid ""
+"This name will be used to identify you when new contacts lookup your details."
+msgstr "Dette navn bliver brugt til at identificere dig i samtalevinduer."
+
+#: ../ui/main.glade.h:101
+msgid "Use _encryption (SSL)"
+msgstr "Anvend _kryptering (SSL)"
+
+#: ../ui/main.glade.h:102
+msgid "Use system pro_xy"
+msgstr "Benyt forvalgt mellemvært"
+
+#: ../ui/main.glade.h:103
 msgid "Version:"
 msgstr "Version:"
 
-#: ../ui/main.glade.h:92
-#, fuzzy
-msgid "Waiting for server to respond, please wait..."
-msgstr "<b>Venter på svar fra serveren...</b>"
-
-#: ../ui/main.glade.h:93
+#: ../ui/main.glade.h:104
 #, fuzzy
 msgid "Web Site:"
 msgstr "Hjemmeside:"
 
-#: ../ui/main.glade.h:95
+#: ../ui/main.glade.h:106
 msgid "Welcome to Gossip"
 msgstr "Velkommen til Gossip"
 
-#: ../ui/main.glade.h:96
+#: ../ui/main.glade.h:107
 msgid "What instant messaging system does the contact use?"
 msgstr "Hvilket samtalesystem anvender kontakten?"
 
-#: ../ui/main.glade.h:97
+#: ../ui/main.glade.h:108
 msgid "What is your name?"
 msgstr "Hvad er dit navn?"
 
-#: ../ui/main.glade.h:98
+#: ../ui/main.glade.h:109
+msgid ""
+"What name do you want to use to identify this account?\n"
+"\n"
+"This name could be something associated with the service provider, for "
+"example, <b>Google</b>."
+msgstr ""
+
+#: ../ui/main.glade.h:112
 msgid "What nickname do you want to use for this contact?"
 msgstr "Hvilket kælenavn ønsker du at bruge til denne kontakt?"
 
-#: ../ui/main.glade.h:99
+#: ../ui/main.glade.h:113
 msgid "What password do you want to use?"
 msgstr "Hvilken adgangskode ønsker du at anvende?"
 
-#: ../ui/main.glade.h:100
+#: ../ui/main.glade.h:114
 msgid "What username do you use?"
 msgstr "Hvilket brugernavn benytter du?"
 
-#: ../ui/main.glade.h:101
+#: ../ui/main.glade.h:115
 msgid "What username do you want to use?"
 msgstr "Hvilket brugernavn ønsker du at benytte?"
 
-#: ../ui/main.glade.h:102
+#: ../ui/main.glade.h:116
 msgid "Which account do you want to add this contact to?"
 msgstr "Hvilken konto ønsker du at tilføje denne kontakt til?"
 
-#: ../ui/main.glade.h:103
+#: ../ui/main.glade.h:117
 msgid "Which account do you want to use?"
 msgstr "Hvilket konto ønsker du at benytte?"
 
-#: ../ui/main.glade.h:104
+#: ../ui/main.glade.h:118
 msgid "You are not subscribed to this contact."
 msgstr "Du abonnér ikke på denne kontakt."
 
-#: ../ui/main.glade.h:105
+#: ../ui/main.glade.h:119
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
@@ -1760,82 +1419,245 @@ msgstr ""
 "Du kan ændre dine konto indstillinger senere ved at vælge menupunktet "
 "Redigér->Konti"
 
-#: ../ui/main.glade.h:106
+#: ../ui/main.glade.h:120
 msgid ""
-"You can identify this account with a name, for example, <b>Home</b> or "
-"<b>Work</b>.  Choose a name for this account:"
+"You can leave this blank if you don't want your password stored on a public "
+"machine. If you decide to do this, you will be prompted each time you "
+"connect for a password."
 msgstr ""
-"Du kan identificere denne konto med et navn, f.eks. <b>Hjemme</b> eller "
-"<b>Arbejde</b>. Vælg et navn for denne konto:"
 
-#: ../ui/main.glade.h:107
+#: ../ui/main.glade.h:121
+msgid ""
+"You need to set a name for the connection, for example, <b>Home</b> or "
+"<b>Laptop</b>."
+msgstr ""
+
+#: ../ui/main.glade.h:122
 msgid "Your Account"
 msgstr "Din konto"
 
-#: ../ui/main.glade.h:108
+#: ../ui/main.glade.h:123
 msgid "Your Identity"
 msgstr "Din identitet"
 
-#: ../ui/main.glade.h:109
+#: ../ui/main.glade.h:124
 msgid "Your new account has now been set up."
 msgstr "Din nye konto er nu opsat"
 
-#: ../ui/main.glade.h:111
+#: ../ui/main.glade.h:126
 msgid "_Accounts"
 msgstr "_Konti"
 
-#: ../ui/main.glade.h:113
+#: ../ui/main.glade.h:128
 msgid "_Chat"
 msgstr "_Samtale"
 
-#: ../ui/main.glade.h:115
+#: ../ui/main.glade.h:130
 msgid "_Contents"
 msgstr "_Indhold"
 
-#: ../ui/main.glade.h:118
-msgid "_Join Group Chat..."
-msgstr "_Deltag i gruppesamtale"
+#: ../ui/main.glade.h:133
+msgid "_Find:"
+msgstr ""
 
-#: ../ui/main.glade.h:119
+#: ../ui/main.glade.h:134
+msgid "_Forget"
+msgstr ""
+
+#: ../ui/main.glade.h:135
+msgid "_Hide Contact List"
+msgstr "_Skjul kontaktliste"
+
+#: ../ui/main.glade.h:136
+msgid "_Highlight"
+msgstr ""
+
+#: ../ui/main.glade.h:137
+msgid "_Name:"
+msgstr "_Navn:"
+
+#: ../ui/main.glade.h:138
 msgid "_New Message..."
 msgstr "_Ny besked..."
 
-#: ../ui/main.glade.h:120
-
+#: ../ui/main.glade.h:139
 msgid "_No"
 msgstr "_Nej"
 
-#: ../ui/main.glade.h:121
+#: ../ui/main.glade.h:140
 msgid "_Open new chats in separate windows"
 msgstr "_Åbn nye samtaler i seperate vinduer"
 
-#: ../ui/main.glade.h:122
+#: ../ui/main.glade.h:141
+msgid "_Password:"
+msgstr "_Adgangskode:"
+
+#: ../ui/main.glade.h:142
 msgid "_Personal Information"
 msgstr "_Personlige oplysninger"
 
-#: ../ui/main.glade.h:123
+#: ../ui/main.glade.h:143
 msgid "_Play sound when messages arrive"
 msgstr "_Afspil lyd når beskeder ankommer"
 
-#: ../ui/main.glade.h:124
+#: ../ui/main.glade.h:144
 msgid "_Preferences"
 msgstr "_Indstillinger"
 
-#: ../ui/main.glade.h:125
+#: ../ui/main.glade.h:145
 msgid "_Search..."
 msgstr "_Søg..."
 
-#: ../ui/main.glade.h:126
+#: ../ui/main.glade.h:147
 msgid "_Show Contact List"
 msgstr "_Vis kontaktliste"
 
-#: ../ui/main.glade.h:127
+#: ../ui/main.glade.h:148
 msgid "_Subscribe"
 msgstr "_Abonnér"
 
-#: ../ui/main.glade.h:128
+#: ../ui/main.glade.h:149
 msgid "_Yes"
 msgstr "_Ja"
+
+#~ msgid "Connecting..."
+#~ msgstr "Tilslut..."
+
+#~ msgid "Open"
+#~ msgstr "Åbn"
+
+#~ msgid "Closed"
+#~ msgstr "Lukket"
+
+#~ msgid "Could not open connection"
+#~ msgstr "Kunne åbne en forbindelse"
+
+#~ msgid "Could not find the server you wanted to use"
+#~ msgstr "Kunne ikke finde den server du ønskede at bruge"
+
+#~ msgid "Connection to the server failed."
+#~ msgstr "Tilslutningen til server fejlede."
+
+#~ msgid "Authentication failed"
+#~ msgstr "Godkendelse fejlede"
+
+#~ msgid "Written by:"
+#~ msgstr "Skrevet af:"
+
+#~ msgid "Artwork by:"
+#~ msgstr "Grafik af:"
+
+#~ msgid "Translated by:"
+#~ msgstr "Oversat af:"
+
+#~ msgid "Account ID"
+#~ msgstr "Konto ID"
+
+#~ msgid "Last Error"
+#~ msgstr "Sidste Fejl"
+
+#~ msgid "Danish"
+#~ msgstr "Dansk"
+
+#~ msgid "German"
+#~ msgstr "Tysk"
+
+#~ msgid "German (Germany)"
+#~ msgstr "Tysk (Tyskland)"
+
+#~ msgid "Greek"
+#~ msgstr "Græsk"
+
+#~ msgid "English"
+#~ msgstr "Engelsk"
+
+#~ msgid "English (Canadian)"
+#~ msgstr "Engelsk (Canadisk)"
+
+#~ msgid "English (British)"
+#~ msgstr "Engelsk (Britisk)"
+
+#~ msgid "English (American)"
+#~ msgstr "Engelsk (Amerikansk)"
+
+#~ msgid "Esperanto"
+#~ msgstr "Esperanto"
+
+#~ msgid "Spanish"
+#~ msgstr "Spansk"
+
+#~ msgid "Persian"
+#~ msgstr "Persisk"
+
+#~ msgid "Finnish"
+#~ msgstr "Finsk"
+
+#~ msgid "Faroese"
+#~ msgstr "Færøsk"
+
+#~ msgid "French"
+#~ msgstr "Fransk"
+
+#~ msgid "French (France)"
+#~ msgstr "Fransk (Frankrig)"
+
+#~ msgid "Hungarian"
+#~ msgstr "Hungarsk"
+
+#~ msgid "Icelandic"
+#~ msgstr "Islandsk"
+
+#~ msgid "Italian"
+#~ msgstr "Italiansk"
+
+#~ msgid "Japanese"
+#~ msgstr "Japansk"
+
+#, fuzzy
+#~ msgid "Latvian"
+#~ msgstr "Forlader:"
+
+#~ msgid "Norwegian (Bokmal)"
+#~ msgstr "Norsk (Bokmål)"
+
+#~ msgid "Norwegian"
+#~ msgstr "Norsk"
+
+#~ msgid "Norwegian (Nynorsk)"
+#~ msgstr "Norsk (Nynorsk)"
+
+#~ msgid "Norwegian (Nyorsk)"
+#~ msgstr "Norsk (Nynorsk)"
+
+#~ msgid "Polish"
+#~ msgstr "Polsk"
+
+#~ msgid "Russian"
+#~ msgstr "Russisk"
+
+#~ msgid "Swedish"
+#~ msgstr "Svensk"
+
+#~ msgid "Idle"
+#~ msgstr "Inaktiv"
+
+#~ msgid "Progress:"
+#~ msgstr "Fremgang"
+
+#, fuzzy
+#~ msgid "Personal Details Saved!"
+#~ msgstr "Personlige detaljer"
+
+#, fuzzy
+#~ msgid "Waiting for server to respond, please wait..."
+#~ msgstr "<b>Venter på svar fra serveren...</b>"
+
+#~ msgid ""
+#~ "You can identify this account with a name, for example, <b>Home</b> or "
+#~ "<b>Work</b>.  Choose a name for this account:"
+#~ msgstr ""
+#~ "Du kan identificere denne konto med et navn, f.eks. <b>Hjemme</b> eller "
+#~ "<b>Arbejde</b>. Vælg et navn for denne konto:"
 
 #~ msgid "Imendio Gossip"
 #~ msgstr "Imendio Gossip"
@@ -1886,9 +1708,6 @@ msgstr "_Ja"
 #~ msgid "Successfully registered the account"
 #~ msgstr "Det lykkedes at registrere kontoen"
 
-#~ msgid "Reason:"
-#~ msgstr "Årsag:"
-
 #~ msgid "Gossip will now try to use your account:"
 #~ msgstr "Gossip vil nu forsøge at anvende din konto:"
 
@@ -1937,9 +1756,6 @@ msgstr "_Ja"
 #~ msgid "_Jabber ID:"
 #~ msgstr "_Jabber-id:"
 
-#~ msgid "_Resource:"
-#~ msgstr "_Resurse:"
-
 #~ msgid "        "
 #~ msgstr "        "
 
@@ -1951,9 +1767,6 @@ msgstr "_Ja"
 
 #~ msgid "<b>Favorite:</b>"
 #~ msgstr "<b>Favorit:</b>"
-
-#~ msgid "Chat _name:"
-#~ msgstr "Samtale_navn:"
 
 #~ msgid "Imendio Gossip - Group Chat"
 #~ msgstr "Gossip - gruppesamtale"
@@ -2079,9 +1892,6 @@ msgstr "_Ja"
 #~ msgid "Which protocol would you like to set up? "
 #~ msgstr "Hvilken protokol ønsker du at opsætte? "
 
-#~ msgid "_Hide Contact List"
-#~ msgstr "_Skjul kontaktliste"
-
 #~ msgid "_Personal Details"
 #~ msgstr "_Personlige detaljer"
 
@@ -2105,9 +1915,6 @@ msgstr "_Ja"
 
 #~ msgid "subscription_label"
 #~ msgstr "abonnerings_etiket"
-
-#~ msgid "An Instant Messaging Client for GNOME"
-#~ msgstr "En kvikbeskedsklient til GNOME."
 
 #~ msgid "Gossip Website"
 #~ msgstr "Gossips hjemmeside"
