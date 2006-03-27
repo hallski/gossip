@@ -1,5 +1,15 @@
 2006-03-27  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (app_tray_create): Setup the newly created
+	widget as attach widget for the libnotify stuff.
+	
+	* src/gossip-notify.c: (gossip_notify_contact_online),
+	(gossip_notify_contact_offline), (notify_new_message),
+	(gossip_notify_set_attach_widget), (gossip_notify_init): Use an
+	attach widget and handle when it goes away.
+
+2006-03-27  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-app.c (app_connection_items_update): Stop status
 	flashing if there are no connected accounts. Bug #322779.
 

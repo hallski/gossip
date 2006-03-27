@@ -65,6 +65,7 @@ enum {
 static GHashTable *message_notifications = NULL;
 /* static GHashTable *presence_notifications = NULL; */
 static GHashTable *event_notifications = NULL;
+static GtkWidget  *attach_widget = NULL;
 
 static const gchar *
 notify_get_status_from_presence (GossipPresence *presence)
@@ -105,6 +106,9 @@ gossip_notify_contact_online (GossipContact *contact)
 	notify = notify_notification_new (title, status, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+	if (attach_widget) {
+		notify_notification_attach_to_widget (notify, attach_widget);
+	}
 
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
@@ -142,7 +146,10 @@ gossip_notify_contact_offline (GossipContact *contact)
 	notify = notify_notification_new (title, status, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
-
+	if (attach_widget) {
+		notify_notification_attach_to_widget (notify, attach_widget);
+	}
+	
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
 			   error->message);
@@ -244,7 +251,10 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIMEOUT);
-
+	if (attach_widget) {
+		notify_notification_attach_to_widget (notify, attach_widget);
+	}
+	
 	notify_notification_add_action (notify, "default", _("Default"),
 					(NotifyActionCallback) notify_new_message_default_cb,
 					g_object_ref (event_manager), NULL);
@@ -254,7 +264,7 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_add_action (notify, "contact", _("Contact Information"),
 					(NotifyActionCallback) notify_new_message_contact_cb,
 					g_object_ref (event_manager), NULL);
-
+	
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
 			   error->message);
@@ -335,6 +345,21 @@ notify_event_destroy_cb (NotifyNotification *notify)
 }
 
 void
+gossip_notify_set_attach_widget (GtkWidget *new_attach_widget)
+{
+	if (attach_widget) {
+		g_object_remove_weak_pointer (G_OBJECT (attach_widget),
+					      (gpointer) &attach_widget);
+	}
+	
+	attach_widget = new_attach_widget;
+	if (attach_widget) {
+		g_object_add_weak_pointer (G_OBJECT (new_attach_widget),
+					   (gpointer) &attach_widget);
+	}
+}
+
+void
 gossip_notify_init (GossipSession      *session,
 		    GossipEventManager *event_manager)
 {
@@ -342,7 +367,7 @@ gossip_notify_init (GossipSession      *session,
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (event_manager));
 	
 	DEBUG_MSG (("Notify: Initiating..."));
-
+	
 	if (!notify_init (PACKAGE_NAME)) {
 		g_warning ("Cannot initialize Notify integration");
 		return;

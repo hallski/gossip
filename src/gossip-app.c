@@ -1225,7 +1225,7 @@ app_tray_create (void)
 	priv = app->priv;
 
 	priv->tray_icon = egg_tray_icon_new (_("Gossip, Instant Messaging Client"));
-		
+
 	priv->tray_event_box = gtk_event_box_new ();
 	priv->tray_image = gtk_image_new ();
 	
@@ -1258,6 +1258,10 @@ app_tray_create (void)
 			  "destroy",
 			  G_CALLBACK (app_tray_destroy_cb),
 			  priv->tray_event_box);
+
+#ifdef HAVE_LIBNOTIFY
+	gossip_notify_set_attach_widget (GTK_WIDGET (priv->tray_icon));
+#endif
 }
 
 static void
