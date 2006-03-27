@@ -1,15 +1,19 @@
 # Danish translation of Gossip.
-# Copyright (C) 2003, 04 Free Software Foundation, Inc.
+# Copyright (C) 2003, 04, 06 Free Software Foundation, Inc.
 # Ole Laursen <olau@hardworking.dk>, 2003, 04, 06.
 # David Nielsen <dnielsen@breakmygentoo.net>, 2002, 06.
 #
+# Konventioner:
+#
+#   instant messaging client -> samtaleklient
+#   join -> deltag (om gruppesamtaler)
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-27 23:09+0200\n"
-"PO-Revision-Date: 2006-03-27 23:37+0200\n"
+"PO-Revision-Date: 2006-03-28 00:25+0200\n"
 "Last-Translator: Ole Laursen <olau@hardworking.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -94,9 +98,8 @@ msgid "The height of the main window."
 msgstr "Hovedvinduets højde."
 
 #: ../gossip.schemas.in.h:18
-#, fuzzy
 msgid "The theme that is used to display the conversation in chat windows."
-msgstr "Dette navn bliver brugt til at identificere dig i samtalevinduer."
+msgstr "Det tema der bruges til at vise samtalen i samtalevinduer."
 
 #: ../gossip.schemas.in.h:19
 msgid "The width of the main window."
@@ -251,6 +254,10 @@ msgid ""
 "the Free Software Foundation; either version 2 of the License, or\n"
 "(at your option) any later version.\n"
 msgstr ""
+"Gossip er frit programmel. Du kan redistribuere og/eller ændre programmet\n"
+"under betingelserne givet i GNU General Public License som udgives af\n"
+"Free Software Foundation; enten version 2 af licensen, eller (hvis du\n"
+"ønsker det) enhver senere version.\n"
 
 #: ../src/gossip-about-dialog.c:61
 msgid ""
@@ -259,6 +266,10 @@ msgid ""
 "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
 "GNU General Public License for more details.\n"
 msgstr ""
+"Gossip distribueres i håb om at programmet er nyttigt, men\n"
+"uden NOGEN GARANTI, ikke engang underforstået garanti om at\n"
+"det er SALGBART eller PASSER TIL ET BESTEMT FORMÅL. Se GNU\n"
+"General Public License for detaljer.\n"
 
 #: ../src/gossip-about-dialog.c:65
 msgid ""
@@ -266,6 +277,10 @@ msgid ""
 "along with Gossip; if not, write to the Free Software Foundation, Inc.,\n"
 "59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n"
 msgstr ""
+"Du burde have modtaget en kopi af GNU General Public License \n"
+"sammen med Gossip. Hvis du ikke har det, kan du skrive til Free \n"
+"Software Foundation, Inc. 59 Temple Place, Suite 330, Boston, MA\n"
+"02111-1307 USA\n"
 
 #: ../src/gossip-about-dialog.c:97
 msgid "An Instant Messaging client for GNOME"
@@ -400,7 +415,7 @@ msgstr "Du har ingen samtalekonti konfiguret!"
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
-msgstr ""
+msgstr "Som det næste bliver du præsenteret for kontooplysningsvinduet for at konfigurere dine detaljer."
 
 #: ../src/gossip-chat.c:463
 msgid "_Check Word Spelling..."
@@ -876,7 +891,7 @@ msgstr "Konto:"
 #: ../ui/group-chat.glade.h:2
 msgid ""
 "Customize your own nickname, the server and chatroom which you wish to join."
-msgstr "Tilpas dit kælenavn, den server og det samtalerum du ønsker at tilslutte dig."
+msgstr "Tilpas dit kælenavn, den server og det samtalerum du ønsker at deltage i."
 
 #: ../ui/group-chat.glade.h:3
 msgid "Edit your chat room details:"
@@ -900,28 +915,25 @@ msgstr "Gossip - nyt samtalerum"
 
 #: ../ui/group-chat.glade.h:10
 msgid "Join room on start_up"
-msgstr "Indtræd i rum ved _start"
+msgstr "Deltag i rum ved _start"
 
 #: ../ui/group-chat.glade.h:11
 msgid "Join the chat room"
-msgstr "Indtræd i samtalerummet"
+msgstr "Deltag i samtalerummet"
 
 #: ../ui/group-chat.glade.h:12
 msgid "Join this chat room when Gossip starts and you are connected."
-msgstr "Indtræd i dette samtalerum når Gossip starter og du er tilsluttet."
+msgstr "Deltag i dette samtalerum når Gossip starter og du er tilsluttet."
 
 #: ../ui/group-chat.glade.h:13
 msgid "N_ame:"
 msgstr "N_avn:"
 
 #: ../ui/group-chat.glade.h:14
-#, fuzzy
 msgid ""
 "Pick a saved chat room from the presets available below and click Join to "
 "start chatting."
-msgstr ""
-"Vælg a gemt samtalerum fra de nuværende tilgængelige nedenstående og klik "
-"påIndtræde i samtalerum for at påbegynde samtale."
+msgstr "Vælg a gemt samtalerum fra de nedenstående forvalgte og klik på \"Deltag\" for at påbegynde samtale."
 
 #: ../ui/group-chat.glade.h:15
 msgid "S_erver:"
@@ -1229,7 +1241,7 @@ msgstr "Hvis du har en anden maskine på dit netværk som fungerer som mellemvæ
 msgid ""
 "If you need to set specific connection details, like a different server or "
 "port, you can configure that here:"
-msgstr ""
+msgstr "Hvis du har brug for at angive specifikke forbindelsesdetaljer, såsom en anden server eller port, kan du konfigurere det her:"
 
 #: ../ui/main.glade.h:74
 msgid ""
@@ -1323,28 +1335,27 @@ msgstr "Forslag for ordet:"
 msgid ""
 "The list of languages here reflects only the languages for which you have a "
 "dictionary installed."
-msgstr ""
+msgstr "Denne liste af sprog reflekterer kun de sprog som du har en ordbog installeret for."
 
 #: ../ui/main.glade.h:97
 msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server. "
-msgstr ""
+msgstr "Dette agerer som et filter for kontaktlisten nedenfor. Du kan bruge dele af kontaktens navn eller id, f.eks. vil \"jabber.org\" liste alle der bruger den server."
 
 #: ../ui/main.glade.h:98
 msgid "This is the name that will be used on your roster for this contact."
-msgstr "Dette navn bliver brugt på din kontaktliste for denne kontakt"
+msgstr "Dette navn bliver brugt i din kontaktliste for denne kontakt"
 
 #: ../ui/main.glade.h:99
 msgid "This name will be used to identify you in chat windows."
 msgstr "Dette navn bliver brugt til at identificere dig i samtalevinduer."
 
 #: ../ui/main.glade.h:100
-#, fuzzy
 msgid ""
 "This name will be used to identify you when new contacts lookup your details."
-msgstr "Dette navn bliver brugt til at identificere dig i samtalevinduer."
+msgstr "Dette navn bliver brugt til at identificere dig når nye kontakter laver et opslag efter dine detaljer."
 
 #: ../ui/main.glade.h:101
 msgid "Use _encryption (SSL)"
@@ -1352,14 +1363,13 @@ msgstr "Anvend _kryptering (SSL)"
 
 #: ../ui/main.glade.h:102
 msgid "Use system pro_xy"
-msgstr "Benyt forvalgt mellemvært"
+msgstr "Benyt systemets _mellemvært"
 
 #: ../ui/main.glade.h:103
 msgid "Version:"
 msgstr "Version:"
 
 #: ../ui/main.glade.h:104
-#, fuzzy
 msgid "Web Site:"
 msgstr "Hjemmeside:"
 
@@ -1382,6 +1392,9 @@ msgid ""
 "This name could be something associated with the service provider, for "
 "example, <b>Google</b>."
 msgstr ""
+"Hvilket navn ønsker du at bruge til at identificere denne konto?\n"
+"\n"
+"Dette navn kunne være noget der er associeret med tjenesteudbyderen, f.eks. <b>Google</b>."
 
 #: ../ui/main.glade.h:112
 msgid "What nickname do you want to use for this contact?"
@@ -1405,32 +1418,30 @@ msgstr "Hvilken konto ønsker du at tilføje denne kontakt til?"
 
 #: ../ui/main.glade.h:117
 msgid "Which account do you want to use?"
-msgstr "Hvilket konto ønsker du at benytte?"
+msgstr "Hvilken konto ønsker du at benytte?"
 
 #: ../ui/main.glade.h:118
 msgid "You are not subscribed to this contact."
-msgstr "Du abonnér ikke på denne kontakt."
+msgstr "Du abonnerer ikke på denne kontakt."
 
 #: ../ui/main.glade.h:119
 msgid ""
 "You can change your account settings later by selecting the Edit->Accounts "
 "menu item."
-msgstr ""
-"Du kan ændre dine konto indstillinger senere ved at vælge menupunktet "
-"Redigér->Konti"
+msgstr "Du kan ændre dine kontoindstillinger senere ved at vælge menupunktet Redigér->Konti."
 
 #: ../ui/main.glade.h:120
 msgid ""
 "You can leave this blank if you don't want your password stored on a public "
 "machine. If you decide to do this, you will be prompted each time you "
 "connect for a password."
-msgstr ""
+msgstr "Du kan lade dette være tomt hvis du ikke ønsker at din adgangskode skal være gemt på en offentlig maskine. Hvis du gør dette, vil du blive spurgt efter adgangskoden hver gang du tilslutter."
 
 #: ../ui/main.glade.h:121
 msgid ""
 "You need to set a name for the connection, for example, <b>Home</b> or "
 "<b>Laptop</b>."
-msgstr ""
+msgstr "Du skal give forbindelsen et navn, f.eks. <b>Hjemme</b> eller <b>Bærbar</b>."
 
 #: ../ui/main.glade.h:122
 msgid "Your Account"
@@ -1442,7 +1453,7 @@ msgstr "Din identitet"
 
 #: ../ui/main.glade.h:124
 msgid "Your new account has now been set up."
-msgstr "Din nye konto er nu opsat"
+msgstr "Din nye konto er nu konfigureret."
 
 #: ../ui/main.glade.h:126
 msgid "_Accounts"
@@ -1458,11 +1469,11 @@ msgstr "_Indhold"
 
 #: ../ui/main.glade.h:133
 msgid "_Find:"
-msgstr ""
+msgstr "_Find:"
 
 #: ../ui/main.glade.h:134
 msgid "_Forget"
-msgstr ""
+msgstr "_Glem"
 
 #: ../ui/main.glade.h:135
 msgid "_Hide Contact List"
@@ -1470,7 +1481,7 @@ msgstr "_Skjul kontaktliste"
 
 #: ../ui/main.glade.h:136
 msgid "_Highlight"
-msgstr ""
+msgstr "_Fremhæv"
 
 #: ../ui/main.glade.h:137
 msgid "_Name:"
@@ -1486,7 +1497,7 @@ msgstr "_Nej"
 
 #: ../ui/main.glade.h:140
 msgid "_Open new chats in separate windows"
-msgstr "_Åbn nye samtaler i seperate vinduer"
+msgstr "_Åbn nye samtaler i særskilte vinduer"
 
 #: ../ui/main.glade.h:141
 msgid "_Password:"
@@ -1520,41 +1531,11 @@ msgstr "_Abonnér"
 msgid "_Yes"
 msgstr "_Ja"
 
-#~ msgid "Connecting..."
-#~ msgstr "Tilslut..."
-
-#~ msgid "Open"
-#~ msgstr "Åbn"
-
-#~ msgid "Closed"
-#~ msgstr "Lukket"
-
-#~ msgid "Could not open connection"
-#~ msgstr "Kunne åbne en forbindelse"
-
-#~ msgid "Could not find the server you wanted to use"
-#~ msgstr "Kunne ikke finde den server du ønskede at bruge"
-
-#~ msgid "Connection to the server failed."
-#~ msgstr "Tilslutningen til server fejlede."
-
-#~ msgid "Authentication failed"
-#~ msgstr "Godkendelse fejlede"
-
-#~ msgid "Written by:"
-#~ msgstr "Skrevet af:"
-
 #~ msgid "Artwork by:"
 #~ msgstr "Grafik af:"
 
 #~ msgid "Translated by:"
 #~ msgstr "Oversat af:"
-
-#~ msgid "Account ID"
-#~ msgstr "Konto ID"
-
-#~ msgid "Last Error"
-#~ msgstr "Sidste Fejl"
 
 #~ msgid "Danish"
 #~ msgstr "Dansk"
@@ -1613,10 +1594,6 @@ msgstr "_Ja"
 #~ msgid "Japanese"
 #~ msgstr "Japansk"
 
-#, fuzzy
-#~ msgid "Latvian"
-#~ msgstr "Forlader:"
-
 #~ msgid "Norwegian (Bokmal)"
 #~ msgstr "Norsk (Bokmål)"
 
@@ -1643,33 +1620,6 @@ msgstr "_Ja"
 
 #~ msgid "Progress:"
 #~ msgstr "Fremgang"
-
-#, fuzzy
-#~ msgid "Personal Details Saved!"
-#~ msgstr "Personlige detaljer"
-
-#, fuzzy
-#~ msgid "Waiting for server to respond, please wait..."
-#~ msgstr "<b>Venter på svar fra serveren...</b>"
-
-#~ msgid ""
-#~ "You can identify this account with a name, for example, <b>Home</b> or "
-#~ "<b>Work</b>.  Choose a name for this account:"
-#~ msgstr ""
-#~ "Du kan identificere denne konto med et navn, f.eks. <b>Hjemme</b> eller "
-#~ "<b>Arbejde</b>. Vælg et navn for denne konto:"
-
-#~ msgid "Imendio Gossip"
-#~ msgstr "Imendio Gossip"
-
-#~ msgid "What request message do you want to send to %s?"
-#~ msgstr "Hvilken forespørgselsbesked ønsker du at sende til %s?"
-
-#~ msgid "Make sure that your account information is correct."
-#~ msgstr "Sikr dig at dine kontooplysninger er korrekte."
-
-#~ msgid "%s wants to be notified of your status."
-#~ msgstr "%s ønsker at blive holdt orienteret om din status."
 
 #~ msgid "You were disconnected from the server. Do you want to reconnect?"
 #~ msgstr "Du blev koblet fra serveren. Ønsker du at tilslutte igen?"
