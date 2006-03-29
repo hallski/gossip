@@ -1,3 +1,8 @@
+2006-03-29  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-log.c (log_set_nick): Fix compilation on 64-bit
+	systems, bug #336395 (Caio Marcelo).
+
 2006-03-27  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_tray_create): Setup the newly created

@@ -598,14 +598,14 @@ log_set_nick (const gchar *account_id,
 		GError *error = NULL;
 
 		DEBUG_MSG (("Log: The nick key file:'%s' has been saved with %d bytes of data",
-			    filename, length));
+			    filename, (int) length));
 
 		ok = g_file_set_contents (filename, content, length, &error);
 		g_free (content);
 
 		if (error) {
 			DEBUG_MSG (("Log: Could not file:'%s' with %d bytes of data, error:%d->'%s'",
-				    filename, length, error->code, error->message));
+				    filename, (int) length, error->code, error->message));
 			g_error_free (error);
 		}
 	} else {
