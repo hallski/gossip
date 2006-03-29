@@ -203,6 +203,8 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 		"style \"gossip-close-button-style\"\n"
 		"{\n"
 		"  GtkWidget::focus-padding = 0\n"
+		"  xthickness = 0\n"
+		"  ythickness = 0\n"
 		"}\n"
 		"widget \"*.gossip-close-button\" style \"gossip-close-button-style\"");
 }
@@ -528,7 +530,7 @@ chat_window_create_label (GossipChatWindow *window,
 	GtkWidget            *event_box_hbox; 
 	PangoAttrList        *attr_list;
 	PangoAttribute       *attr;
-	gint                  w, h;
+	GtkRequisition        size;
 
 	priv = GET_PRIV (window);
 	
@@ -568,24 +570,23 @@ chat_window_create_label (GossipChatWindow *window,
 	close_button = gtk_button_new ();
 	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
 
-	/* Set the name to make the special rc style match. */
-	gtk_widget_set_name (close_button, "gossip-close-button");
-	
-	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	gtk_container_add (GTK_CONTAINER (close_button), close_image);
-
-	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
-
 	/* We don't want focus/keynav for the button to avoid clutter, and
 	 * Ctrl-W works anyway.
 	 */
 	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_FOCUS);
 	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_DEFAULT);
 
-	/* Make sure the button isn't too big. */
-	gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &w, &h);
-	gtk_widget_set_size_request (close_button, w + 2, h + 2);
- 
+	/* Set the name to make the special rc style match. */
+	gtk_widget_set_name (close_button, "gossip-close-button");
+
+	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+
+	gtk_widget_size_request (close_image, &size);
+	gtk_widget_set_size_request (close_button, size.width, size.height);
+	
+	gtk_container_add (GTK_CONTAINER (close_button), close_image);
+	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
+
 	gtk_container_add (GTK_CONTAINER (event_box), event_box_hbox);
 	gtk_box_pack_start (GTK_BOX (hbox), event_box, TRUE, TRUE, 0);
 	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);

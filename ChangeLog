@@ -1,5 +1,10 @@
 2006-03-29  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-stock.c: Remove trailing comma.
+
+	* src/gossip-chat-window.c (chat_window_create_label): Make the
+	button use less padding.
+
 	* src/gossip-main.c (main): Fix the previous goption patch to use
 	_(), not N_().
 
