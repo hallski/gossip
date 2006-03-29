@@ -1,8 +1,6 @@
 imagedir = $(datadir)/gossip
 
 image_DATA =			\
-	gossip-logo.png		\
-	gossip-about.png	\
 	gossip-available.png    \
 	gossip-away.png		\
 	gossip-busy.png		\
@@ -18,8 +16,22 @@ image_DATA =			\
 	vcard_16.png		\
 	vcard_48.png
 
-pixmapdir = $(datadir)/pixmaps
-pixmap_DATA = gossip.png
+icondir = $(datadir)/icons/hicolor/48x48/apps
+icon_DATA = gossip.png
+svgicondir = $(datadir)/icons/hicolor/scalable/apps
+svgicon_DATA = gossip.svg
 
-EXTRA_DIST = $(image_DATA) $(pixmap_DATA)
+gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
+
+install-data-hook:
+	@-if test -z "$(DESTDIR)"; then \
+		echo "Updating Gtk icon cache."; \
+		$(gtk_update_icon_cache); \
+	else \
+		echo "*** Icon cache not updated.  After install, run this:"; \
+		echo "***   $(gtk_update_icon_cache)"; \
+	fi
+
+EXTRA_DIST = $(image_DATA) $(icon_DATA)
+
 

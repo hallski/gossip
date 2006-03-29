@@ -1,5 +1,23 @@
 2006-03-29  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c (main): Fix the previous goption patch to use
+	_(), not N_().
+
+2006-03-28  Brian Pepple  <bdpepple@ameritech.net>
+
+	Bug #336375:
+
+	* src/gossip-about-dialog.c (gossip_about_dialog_new):
+	Drop name property from about dialog, and use "wrap-license"
+	and _("translator-credits").
+
+	* src/gossip-about-dialog.c
+	* ui/pixmaps/Makefile.am (icondir): 
+	* src/gossip-main.c: 
+	* gossip.desktop.in.in: Use icon theme specification.
+ 
+2006-03-29  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-log.c (log_set_nick): Fix compilation on 64-bit
 	systems, bug #336395 (Caio Marcelo).
 

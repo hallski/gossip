@@ -58,16 +58,6 @@ static const GOptionEntry options[] = {
 	{ NULL }
 };	
 
-static void
-setup_default_window_icon (void)
-{
-	GdkPixbuf *pixbuf;
-
-	pixbuf = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/gossip.png", NULL);
-	gtk_window_set_default_icon (pixbuf);
-	g_object_unref (pixbuf);
-}
-
 int
 main (int argc, char *argv[])
 {
@@ -82,7 +72,7 @@ main (int argc, char *argv[])
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	context = g_option_context_new (N_("- Gossip Instant Messenger"));
+	context = g_option_context_new (_("- Gossip Instant Messenger"));
 	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);	
 
 	program = gnome_program_init ("gossip", PACKAGE_VERSION,
@@ -93,7 +83,8 @@ main (int argc, char *argv[])
 				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
 
-	g_set_application_name (PACKAGE_NAME);
+	g_set_application_name ("Gossip");
+	gtk_window_set_default_icon_name ("gossip");
 
 	/* Get all accounts. */
  	account_manager = gossip_account_manager_new (NULL);
@@ -155,7 +146,6 @@ main (int argc, char *argv[])
 	g_list_free (accounts);
 
 	gossip_stock_init ();
-	setup_default_window_icon ();
 	gossip_app_create (account_manager);
 	
 	if (!no_connect) {
