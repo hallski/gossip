@@ -75,7 +75,7 @@ main (int argc, char *argv[])
 	context = g_option_context_new (_("- Gossip Instant Messenger"));
 	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);	
 
-	program = gnome_program_init (PACKAGE, PACKAGE_VERSION,
+	program = gnome_program_init ("gossip", PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,
@@ -86,7 +86,7 @@ main (int argc, char *argv[])
 	g_option_context_free (context);
 
 	g_set_application_name (PACKAGE_NAME);
-	gtk_window_set_default_icon_name (PACKAGE);
+	gtk_window_set_default_icon_name ("gossip");
 
 	/* Get all accounts. */
  	account_manager = gossip_account_manager_new (NULL);
