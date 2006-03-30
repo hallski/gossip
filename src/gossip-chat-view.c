@@ -626,6 +626,7 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 
 			pixbuf = chat_view_get_smiley (smileys[match].smiley);
 			gtk_text_buffer_insert_pixbuf (buf, iter, pixbuf);
+/* 			g_object_unref (pixbuf); */
 
 			gtk_text_buffer_insert (buf, iter, " ", 1);
 		} else {

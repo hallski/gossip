@@ -146,6 +146,7 @@ gossip_notify_contact_offline (GossipContact *contact)
 	notify = notify_notification_new (title, status, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
 	}
@@ -251,6 +252,7 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIMEOUT);
+
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
 	}

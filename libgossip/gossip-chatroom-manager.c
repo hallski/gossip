@@ -546,22 +546,21 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 
 		if (strcmp (tag, "type") == 0) {
 			/* we have no types yet */
-			xmlFree (str);
 		}
 		else if (strcmp (tag, "name") == 0) {
-			name = str;
+			name = g_strdup (str);
 		}
 		else if (strcmp (tag, "nick") == 0) {
-			nick = str;
+			nick = g_strdup (str);
 		}
 		else if (strcmp (tag, "server") == 0) {
-			server = str;
+			server = g_strdup (str);
 		}
 		else if (strcmp (tag, "room") == 0) {
-			room = str;
+			room = g_strdup (str);
 		}
 		else if (strcmp (tag, "password") == 0) {
-			password = str;
+			password = g_strdup (str);
 		}
 		else if (strcmp (tag, "auto_connect") == 0) {
 			if (strcmp (str, "yes") == 0) {
@@ -569,11 +568,12 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 			} else {
 				auto_connect = FALSE;
 			}
-			xmlFree (str);
 		}
 		else if (strcmp (tag, "account") == 0) {
-			account_name = str;
+			account_name = g_strdup (str);
 		}
+
+		xmlFree (str);
 
 		child = child->next;
 	}
@@ -613,12 +613,12 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 		g_object_unref (chatroom);
 	}
 	
-	xmlFree (name);
-	xmlFree (nick);
-	xmlFree (server);
-	xmlFree (room);
-	xmlFree (password);
-	xmlFree (account_name);
+	g_free (name);
+	g_free (nick);
+	g_free (server);
+	g_free (room);
+	g_free (password);
+	g_free (account_name);
 }
 
 static gboolean

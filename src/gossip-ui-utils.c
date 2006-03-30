@@ -69,7 +69,8 @@ static GladeXML *
 get_glade_file (const gchar *filename,
 		const gchar *root,
 		const gchar *domain,
-		const gchar *first_required_widget, va_list args)
+		const gchar *first_required_widget, 
+		va_list      args)
 {
 	GladeXML   *gui;
 	const char *name;
@@ -409,6 +410,7 @@ gossip_pixbuf_from_account_error (GossipAccount *account,
 	pixbuf_error = gossip_pixbuf_from_stock (GTK_STOCK_DIALOG_ERROR,
 						 GTK_ICON_SIZE_MENU);
 	if (!pixbuf_error) {
+		g_object_unref (pixbuf);
 		return NULL;
 	}
 
@@ -421,6 +423,8 @@ gossip_pixbuf_from_account_error (GossipAccount *account,
 			      1,1,
 			      GDK_INTERP_BILINEAR,
 			      255);
+
+	g_object_unref (pixbuf_error);
 
 	return pixbuf;
 }

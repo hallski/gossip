@@ -19,6 +19,7 @@
  */
 
 #include <string.h>
+#include <stdlib.h>
 
 #include <gtk/gtk.h> 
 
@@ -28,112 +29,174 @@
 #include "gossip-log-window.h"
 #include "gossip-ui-utils.h"
 
+/* #define DEBUG_MSG(x)   */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
+
 typedef struct {
 	GtkWidget      *window;
 
-	GtkWidget      *table;
-
-	GtkWidget      *label_account;
+	GtkWidget      *vbox_account;
 	GtkWidget      *account_chooser;
-	GtkWidget      *checkbutton_all_accounts;
 
-	GtkWidget      *combobox_contacts;
-	GtkWidget      *checkbutton_all_contacts;
+	GtkWidget      *treeview;
 
-	GtkWidget      *entry_date;
-	GtkWidget      *checkbutton_all_dates;
+	GtkWidget      *calendar;
 
 	GtkWidget      *entry_find;
-	GtkWidget      *button_previous;
-	GtkWidget      *button_next;
-	GtkWidget      *togglebutton_highlight;
-	GtkWidget      *checkbutton_match_case;
 
 	GtkWidget      *scrolledwindow;
 	GossipChatView *chatview;
 
 	GtkWidget      *button_close;
+
+	GossipLog      *log;
 } GossipLogWindow;
 
-static void   log_window_contacts_set_selected  (GossipLogWindow *window,
-						 GossipContact   *contact);
-static gchar *log_window_contacts_get_selected  (GossipLogWindow *window);
-static void   log_window_contacts_populate      (GossipLogWindow *window);
-static void   log_window_contacts_setup         (GossipLogWindow *window);
-static void   log_window_contacts_changed_cb    (GtkWidget       *combobox,
-						 GossipLogWindow *window);
-static void   log_window_accounts_changed_cb    (GtkWidget       *combobox,
-						 GossipLogWindow *window);
-static void   log_window_entry_find_changed_cb  (GtkWidget       *entry,
-						 GossipLogWindow *window);
-static void   log_window_entry_find_activate_cb (GtkWidget       *entry,
-						 GossipLogWindow *window);
-static void   log_window_close_clicked_cb       (GtkWidget       *widget,
-						 GossipLogWindow *window);
+static void           log_window_text_data_func           (GtkCellLayout     *cell_layout,
+							   GtkCellRenderer   *cell,
+							   GtkTreeModel      *tree_model,
+							   GtkTreeIter       *iter,
+							   GossipLogWindow   *window);
+static void           log_window_pixbuf_data_func         (GtkCellLayout     *cell_layout,
+							   GtkCellRenderer   *cell,
+							   GtkTreeModel      *tree_model,
+							   GtkTreeIter       *iter,
+							   GossipLogWindow   *window);
+static void           log_window_contacts_changed_cb      (GtkTreeSelection  *selection,
+							   GossipLogWindow   *window);
+static void           log_window_contacts_set_selected    (GossipLogWindow   *window,
+							   GossipContact     *contact);
+static GossipContact *log_window_contacts_get_selected    (GossipLogWindow   *window);
+static void           log_window_contacts_populate        (GossipLogWindow   *window);
+static void           log_window_contacts_setup           (GossipLogWindow   *window);
+static void           log_window_accounts_changed_cb      (GtkWidget         *combobox,
+							   GossipLogWindow   *window);
+static void           log_window_new_message_cb           (GossipLog         *log,
+							   GossipMessage     *message,
+							   GossipLogWindow   *window);
+static void           log_window_find                     (GossipLogWindow   *window,
+							   gboolean           new_search);
+static void           log_window_update_messages          (GossipLogWindow   *window,
+							   const gchar       *date);
+static void           log_window_calendar_day_selected_cb (GtkWidget         *calendar,
+							   GossipLogWindow   *window);
+static void           log_window_entry_find_changed_cb    (GtkWidget         *entry,
+							   GossipLogWindow   *window);
+static void           log_window_entry_find_activate_cb   (GtkWidget         *entry,
+							   GossipLogWindow   *window);
+static void           log_window_close_clicked_cb         (GtkWidget         *widget,
+							   GossipLogWindow   *window);
+static void           log_window_destroy_cb               (GtkWidget         *widget, 
+							   GossipLogWindow   *window);
 
 enum {
-	COL_CONTACT_NAME, 
-	COL_CONTACT_ID,
-	COL_CONTACT_COUNT
+	COL_STATUS,
+	COL_NAME, 
+	COL_POINTER,
+	COL_COUNT
 };
+
+static void
+log_window_pixbuf_data_func (GtkCellLayout   *cell_layout,
+			     GtkCellRenderer *cell,
+			     GtkTreeModel    *tree_model,
+			     GtkTreeIter     *iter,
+			     GossipLogWindow *window)
+{
+	GossipContact *contact;
+	GdkPixbuf     *pixbuf;
+
+	gtk_tree_model_get (tree_model, iter, COL_POINTER, &contact, -1);
+
+	pixbuf = gossip_pixbuf_for_contact (contact);
+
+	g_object_set (cell, "pixbuf", pixbuf, NULL);
+	g_object_set (cell, "visible", FALSE, NULL);
+	g_object_unref (pixbuf);
+	g_object_unref (contact);
+}
+
+static void
+log_window_text_data_func (GtkCellLayout   *cell_layout,
+			   GtkCellRenderer *cell,
+			   GtkTreeModel    *tree_model,
+			   GtkTreeIter     *iter,
+			   GossipLogWindow *window)
+{
+	GossipContact *contact;
+
+	gtk_tree_model_get (tree_model, iter, COL_POINTER, &contact, -1);
+
+	g_object_set (cell, "text", gossip_contact_get_name (contact), NULL);
+	g_object_unref (contact);
+}
+
+static void
+log_window_contacts_changed_cb (GtkTreeSelection *selection,
+				GossipLogWindow  *window)
+{
+	/* Use last date by default */
+	gtk_calendar_clear_marks (GTK_CALENDAR (window->calendar));
+
+	log_window_update_messages (window, NULL);
+}
 
 static void   
 log_window_contacts_set_selected  (GossipLogWindow *window,
 				   GossipContact   *contact)
 {
-	GtkComboBox  *combobox;
-	GtkTreeModel *model;
-	GtkTreeIter   iter;
-	const gchar  *id;
-	gchar        *this_id;
-	gboolean      ok;
+	GtkTreeView      *view;
+	GtkTreeModel     *model;
+	GtkTreeSelection *selection;
+	GtkTreeIter       iter;
+	GossipContact    *this_contact;
+	gboolean          ok;
 
-	id = gossip_contact_get_id (contact);
-	
-	g_return_if_fail (id != NULL);
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	combobox = GTK_COMBO_BOX (window->combobox_contacts);
-	model = gtk_combo_box_get_model (combobox);
+	view = GTK_TREE_VIEW (window->treeview);
+	model = gtk_tree_view_get_model (view);
+	selection = gtk_tree_view_get_selection (view);
 
 	if (!gtk_tree_model_get_iter_first (model, &iter)) {
 		return;
 	}
 	
 	for (ok = TRUE; ok; ok = gtk_tree_model_iter_next (model, &iter)) {
-		gtk_tree_model_get (model, &iter, 
-				    COL_CONTACT_ID, &this_id, 
-				    -1);
+		gtk_tree_model_get (model, &iter, COL_POINTER, &this_contact, -1);
 
-		if (!this_id) {
+		if (!this_contact) {
 			continue;
 		}
 
-		if (strcmp (id, this_id) == 0) {
-			gtk_combo_box_set_active_iter (combobox, &iter);
-			g_free (this_id);
+		if (gossip_contact_equal (contact, this_contact)) {
+			gtk_tree_selection_select_iter (selection, &iter);
+			g_object_unref (this_contact);
 			break;
 		} 
 			
-		g_free (this_id);
+		g_object_unref (this_contact);
 	}
 }
 
-static gchar *
+static GossipContact *
 log_window_contacts_get_selected (GossipLogWindow *window)
 {
-	GtkComboBox  *combobox;
-	GtkTreeModel *model;
-	GtkTreeIter   iter;
-	gchar        *contact;
+	GtkTreeView      *view;
+	GtkTreeModel     *model;
+	GtkTreeSelection *selection;
+	GtkTreeIter       iter;
+	GossipContact    *contact;
 
-	combobox = GTK_COMBO_BOX (window->combobox_contacts);
+	view = GTK_TREE_VIEW (window->treeview);
+	model = gtk_tree_view_get_model (view);
+	selection = gtk_tree_view_get_selection (view);
 
-	model = gtk_combo_box_get_model (combobox);
-	if (!gtk_combo_box_get_active_iter (combobox, &iter)) {
+	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
 		return NULL;
 	}
 
-	gtk_tree_model_get (model, &iter, COL_CONTACT_ID, &contact, -1);
+	gtk_tree_model_get (model, &iter, COL_POINTER, &contact, -1);
 	
 	return contact;
 }
@@ -147,17 +210,24 @@ log_window_contacts_populate (GossipLogWindow *window)
 	GList                *contacts;
 	GList                *l;
 	
-	GtkComboBox          *combobox;
+	GtkTreeView          *view;
 	GtkTreeModel         *model;
+	GtkTreeSelection     *selection;
 	GtkListStore         *store;
 	GtkTreeIter           iter;
 	
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
-	combobox = GTK_COMBO_BOX (window->combobox_contacts);
-	model = gtk_combo_box_get_model (combobox);
+	view = GTK_TREE_VIEW (window->treeview);
+	model = gtk_tree_view_get_model (view);
+	selection = gtk_tree_view_get_selection (view);
 	store = GTK_LIST_STORE (model);
+
+	/* Block signals to stop the logs being retrieved prematurely */
+	g_signal_handlers_block_by_func (selection, 
+					 log_window_contacts_changed_cb, 
+					 window);
 
 	gtk_list_store_clear (store);
 
@@ -168,14 +238,19 @@ log_window_contacts_populate (GossipLogWindow *window)
 
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
-				    COL_CONTACT_ID, gossip_contact_get_id (contact), 
-				    COL_CONTACT_NAME, gossip_contact_get_name (contact), 
+				    COL_NAME, gossip_contact_get_name (contact), 
+				    COL_POINTER, contact,
 				    -1);
 
-		if (l == contacts) {
-			gtk_combo_box_set_active_iter (combobox, &iter);
-		}
+/* 		if (l == contacts) { */
+/* 			gtk_tree_selection_select_iter (selection, &iter); */
+/* 		} */
 	}
+
+	/* Unblock signals */
+	g_signal_handlers_unblock_by_func (selection, 
+					   log_window_contacts_changed_cb, 
+					   window);
 
 	g_list_foreach (contacts, (GFunc) g_object_unref, NULL);
 	g_list_free (contacts);
@@ -186,113 +261,99 @@ log_window_contacts_populate (GossipLogWindow *window)
 static void
 log_window_contacts_setup (GossipLogWindow *window)
 {
-	GtkListStore         *store;
-	GtkCellRenderer      *renderer;
-	GtkComboBox          *combobox;
+	GtkTreeView       *view;
+	GtkTreeModel      *model;
+	GtkTreeSelection  *selection;
+	GtkTreeSortable   *sortable;
+	GtkTreeViewColumn *column;
+	GtkListStore      *store;
+	GtkCellRenderer   *cell;	
 
-	combobox = GTK_COMBO_BOX (window->combobox_contacts);
+	view = GTK_TREE_VIEW (window->treeview);
+	selection = gtk_tree_view_get_selection (view);
 
-  	gtk_cell_layout_clear (GTK_CELL_LAYOUT (combobox));  
- 
-	store = gtk_list_store_new (COL_CONTACT_COUNT,
+	/* new store */
+	store = gtk_list_store_new (COL_COUNT,
+				    GDK_TYPE_PIXBUF,  /* status */
 				    G_TYPE_STRING,    /* name */
-				    G_TYPE_STRING);   /* id */
+				    GOSSIP_TYPE_CONTACT);   
 
-	gtk_combo_box_set_model (combobox, GTK_TREE_MODEL (store));
+	model = GTK_TREE_MODEL (store);
+	sortable = GTK_TREE_SORTABLE (store);
 
-	renderer = gtk_cell_renderer_text_new ();
-	g_object_set (renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	gtk_tree_view_set_model (view, model);
 
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combobox), renderer, TRUE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combobox), renderer,
-					"text", COL_CONTACT_NAME,				
-					NULL);
+	/* new column */
+	column = gtk_tree_view_column_new ();
+
+	cell = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_column_pack_start (column, cell, FALSE);
+	gtk_tree_view_column_set_cell_data_func (column, cell, 
+						 (GtkTreeCellDataFunc) 
+						 log_window_pixbuf_data_func,
+						 window, 
+						 NULL);
+
+	cell = gtk_cell_renderer_text_new ();
+	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	gtk_tree_view_column_pack_start (column, cell, TRUE);
+	gtk_tree_view_column_set_cell_data_func (column, cell, 
+						 (GtkTreeCellDataFunc) 
+						 log_window_text_data_func,
+						 window, 
+						 NULL);
+
+	gtk_tree_view_append_column (view, column);
+
+	/* set up treeview properties */
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	gtk_tree_sortable_set_sort_column_id (sortable, 
+					      COL_NAME, 
+					      GTK_SORT_ASCENDING);
+
+	/* set up signals */
+	g_signal_connect (selection, "changed", 
+			  G_CALLBACK (log_window_contacts_changed_cb), 
+			  window);
 
 	g_object_unref (store);
-}
-
-static void
-log_window_contacts_changed_cb (GtkWidget       *combobox,
-				GossipLogWindow *window)
-{
-	GossipSession        *session;
-	GossipAccountChooser *account_chooser;
-	GossipAccount        *account;   
-	GossipContact        *own_contact;
-	GossipContact        *sender;
-	GossipMessage        *message;
-	gchar                *contact_id;
-	GList                *messages;
-	GList                *l;
-
-	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
-	account = gossip_account_chooser_get_account (account_chooser);
-
-	contact_id = log_window_contacts_get_selected (window);
-
-	session = gossip_app_get_session ();
-	own_contact = gossip_session_get_own_contact (session, account);
-
-	/* Note: in this case we are offline :/ */
-	if (!own_contact) {
-		gchar *id;
-
-		own_contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
-						  account);
-
-		/* FIXME: Jabber ism's till we can save and load the
-		 * roster without needing to connect to a server.
-		 */
-		id = g_strdup_printf ("%s/%s", 
-				      gossip_account_get_id (account),
-				      gossip_account_get_resource (account));
-	
-		g_object_set (own_contact,
-			      "id", id, 
-			      "name", id,
-			      NULL);
-		g_free (id);
-	}
-
-	messages = gossip_log_get_for_contact (own_contact, 
-					       account, 
-					       contact_id);
-
-	gossip_chat_view_clear (window->chatview);
-
-	for (l = messages; l; l = l->next) {
-		message = l->data;
-
-		sender = gossip_message_get_sender (message);
-
-		if (gossip_contact_equal (own_contact, sender)) {
-			gossip_chat_view_append_message_from_self (window->chatview, 
-								   message,
-								   own_contact);
-		} else {
-			gossip_chat_view_append_message_from_other (window->chatview, 
-								    message,
-								    own_contact);
-		}
-	}
-
-	gossip_chat_view_scroll_down (window->chatview);
-
-	gtk_widget_grab_focus (window->entry_find);
-
-	g_list_foreach (messages, (GFunc) g_object_unref, NULL);
-	g_list_free (messages);
-
-	g_free (contact_id);
-
-	g_object_unref (account);
 }
 
 static void
 log_window_accounts_changed_cb (GtkWidget       *combobox,
 				GossipLogWindow *window)
 {
+	/* Clear all current messages shown in the textview */
+	gossip_chat_view_clear (window->chatview);
+
 	log_window_contacts_populate (window);
+}
+
+static void
+log_window_new_message_cb (GossipLog       *log,
+			   GossipMessage   *message,
+			   GossipLogWindow *window)
+{
+	GossipContact *own_contact;
+	GossipContact *sender;
+
+	/* Get own contact to know which messages are from me or the contact */
+	own_contact = gossip_log_get_own_contact (window->log); 
+
+	sender = gossip_message_get_sender (message);
+	
+	if (gossip_contact_equal (own_contact, sender)) {
+		gossip_chat_view_append_message_from_self (window->chatview, 
+							   message,
+							   own_contact);
+	} else {
+		gossip_chat_view_append_message_from_other (window->chatview, 
+							    message,
+							    sender);
+	}
+
+	/* Scroll to the most recent messages */
+	gossip_chat_view_scroll_down (window->chatview);	
 }
 
 static void
@@ -343,7 +404,6 @@ log_window_find (GossipLogWindow *window,
     
 	if (!found) {
 		if (from_start) {
-			gtk_widget_set_sensitive (window->button_next, FALSE);
 			return;
 		}
 	
@@ -354,7 +414,6 @@ log_window_find (GossipLogWindow *window,
 			wrapped = FALSE;
 		}
 
-		gtk_widget_set_sensitive (window->button_next, FALSE);
 		return;
 	}
     
@@ -364,6 +423,148 @@ log_window_find (GossipLogWindow *window,
 
 	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
 	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);	
+}
+
+static void
+log_window_update_messages (GossipLogWindow *window, 
+			    const gchar     *date_to_show)
+{
+	GossipContact *contact;
+	GossipContact *own_contact;
+	GossipContact *sender;
+	GossipMessage *message;
+	GList         *messages;
+	GList         *dates = NULL;
+	GList         *l;
+
+	const gchar   *date;
+
+	contact = log_window_contacts_get_selected (window);
+	if (!contact) {
+		return;
+	}
+
+	/* Get the log object for this contact */
+	if (window->log) {
+		g_signal_handlers_disconnect_by_func (window->log, 
+						      log_window_new_message_cb,
+						      window);
+		g_object_unref (window->log);
+	}
+
+	window->log = gossip_log_get (contact);
+
+	g_return_if_fail (GOSSIP_IS_LOG (window->log));
+
+	g_signal_connect (window->log, 
+			  "new-message",
+			  G_CALLBACK (log_window_new_message_cb),
+			  window);
+
+	/* Either use the supplied date or get the last */
+	date = date_to_show;
+	if (!date) {
+		dates = gossip_log_get_dates (window->log);
+
+		for (l = dates; l; l = l->next) {
+			guint  day;
+			guint  day_p;
+			gchar *str;
+			
+			str = l->data;
+			if (!str) {
+				continue;
+			}
+			
+			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
+			
+			/* FIXME: There is an obvious bug here. What
+			 * if the month is not the same then if we
+			 * have a day for every day from any month
+			 * then we highlight all.
+			*/
+
+			day_p = strlen (str) - 2;
+			
+			day = atoi (str + day_p);
+			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar), day);
+			
+			if (l->next) {
+				continue;
+			}
+
+			date = str;
+			
+			g_signal_handlers_block_by_func (window->calendar, 
+							 log_window_calendar_day_selected_cb, 
+							 window);
+			gtk_calendar_select_day (GTK_CALENDAR (window->calendar), day);
+			g_signal_handlers_unblock_by_func (window->calendar, 
+							   log_window_calendar_day_selected_cb, 
+							   window);
+		}
+	}
+
+	/* Clear all current messages shown in the textview */
+	gossip_chat_view_clear (window->chatview);
+
+	/* Get own contact to know which messages are from me or the contact */
+	own_contact = gossip_log_get_own_contact (window->log); 
+
+	/* Get messages */
+	messages = gossip_log_get_messages (window->log, date);
+
+	for (l = messages; l; l = l->next) {
+		message = l->data;
+
+		sender = gossip_message_get_sender (message);
+
+		if (gossip_contact_equal (own_contact, sender)) {
+			gossip_chat_view_append_message_from_self (window->chatview, 
+								   message,
+								   own_contact);
+		} else {
+			gossip_chat_view_append_message_from_other (window->chatview, 
+								    message,
+								    sender);
+		}
+	}
+
+	/* Scroll to the most recent messages */
+	gossip_chat_view_scroll_down (window->chatview);
+	
+	/* Give the search entry main focus */
+	gtk_widget_grab_focus (window->entry_find);
+
+	/* Clean up */ 
+	g_list_foreach (messages, (GFunc) g_object_unref, NULL);
+	g_list_free (messages);
+
+	g_list_foreach (dates, (GFunc) g_free, NULL);
+	g_list_free (dates);
+}
+
+static void
+log_window_calendar_day_selected_cb (GtkWidget       *calendar,
+				     GossipLogWindow *window)  
+{
+	guint  year;
+	guint  month;
+	guint  day;
+
+	gchar *date;
+
+	gtk_calendar_get_date (GTK_CALENDAR (calendar), &year, &month, &day);	
+
+	/* We need this hear because it appears that the months start from 0 */
+	month++;
+	
+	date = g_strdup_printf ("%4.4d%2.2d%2.2d", year, month, day);
+
+	DEBUG_MSG (("LogWindow: Currently selected date is:'%s'", date));
+
+	log_window_update_messages (window, date);
+	g_free (date);
 }
 
 static void
@@ -387,6 +588,17 @@ log_window_close_clicked_cb (GtkWidget       *widget,
 	gtk_widget_destroy (window->window);
 }
 
+static void
+log_window_destroy_cb (GtkWidget       *widget, 
+		       GossipLogWindow *window)
+{
+	if (window->log) {
+		g_object_unref (window->log);
+	}
+
+ 	g_free (window); 
+}
+
 void
 gossip_log_window_show (GtkWindow     *parent,
 			GossipContact *contact)
@@ -404,24 +616,26 @@ gossip_log_window_show (GtkWindow     *parent,
 				       "log_window",
 				       NULL,
 				       "log_window", &window->window,
-				       "table", &window->table, 
-				       "label_account", &window->label_account,
- 				       "combobox_contacts", &window->combobox_contacts, 
+				       "vbox_account", &window->vbox_account,
+ 				       "treeview", &window->treeview, 
 				       "entry_find", &window->entry_find,
-				       "button_previous", &window->button_previous,
-				       "button_next", &window->button_next,
-				       "togglebutton_highlight", &window->togglebutton_highlight,
 				       "scrolledwindow", &window->scrolledwindow,
+ 				       "calendar", &window->calendar, 
 				       "button_close", &window->button_close,
 				       NULL);
 	
 	gossip_glade_connect (glade, 
 			      window,
-			      "combobox_contacts", "changed", log_window_contacts_changed_cb,
+			      "log_window", "destroy", log_window_destroy_cb,
 			      "entry_find", "changed", log_window_entry_find_changed_cb,
 			      "entry_find", "activate", log_window_entry_find_activate_cb,
 			      "button_close", "clicked", log_window_close_clicked_cb,
 			      NULL);
+
+	/* We set this up here so we can block it when needed. */
+	g_signal_connect (window->calendar, "day-selected", 
+			  G_CALLBACK (log_window_calendar_day_selected_cb),
+			  window);
 
 	/* Configure GossipChatView */
 	window->chatview = gossip_chat_view_new ();
@@ -434,10 +648,10 @@ gossip_log_window_show (GtkWindow     *parent,
 	window->account_chooser = gossip_account_chooser_new (session);
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->account_chooser);
 	gossip_account_chooser_set_can_select_all (account_chooser, TRUE);
-	
-	gtk_table_attach (GTK_TABLE (window->table), 
-			  window->account_chooser,
-			  1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+
+	gtk_box_pack_start (GTK_BOX (window->vbox_account), 
+			    window->account_chooser,
+			    FALSE, TRUE, 0);
 			  
 	g_signal_connect (window->account_chooser, "changed",
 			  G_CALLBACK (log_window_accounts_changed_cb),
@@ -451,10 +665,10 @@ gossip_log_window_show (GtkWindow     *parent,
 	g_list_free (accounts);
 
 	if (account_num > 1) {
-		gtk_widget_show (window->label_account);
+		gtk_widget_show (window->vbox_account);
 		gtk_widget_show (window->account_chooser);
 	} else {
-		gtk_widget_hide (window->label_account);
+		gtk_widget_hide (window->vbox_account);
 		gtk_widget_hide (window->account_chooser);
 	}
 

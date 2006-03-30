@@ -439,23 +439,22 @@ account_manager_parse_account (GossipAccountManager *manager,
 		if (strcmp (tag, "type") == 0) {
 			if (strcmp (str, "jabber") == 0) {
 				type = GOSSIP_ACCOUNT_TYPE_JABBER;
-				xmlFree (str);
 			}
 		}
 		else if (strcmp (tag, "name") == 0) {
-			name = str;
+			name = g_strdup (str);
 		}
 		else if (strcmp (tag, "id") == 0) {
-			id = str;
+			id = g_strdup (str);
 		}
 		else if (strcmp (tag, "password") == 0) {
-			password = str;
+			password = g_strdup (str);
 		}
 		else if (strcmp (tag, "server") == 0) {
-			server = str;
+			server = g_strdup (str);
 		}
 		else if (strcmp (tag, "resource") == 0) {
-			resource = str;
+			resource = g_strdup (str);
 		}
 		else if (strcmp (tag, "port") == 0) {
 			guint tmp_port;
@@ -464,7 +463,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 			if (tmp_port != 0) {
 				port = tmp_port;
 			}
-			xmlFree (str);
 		}
 		else if (strcmp (tag, "auto_connect") == 0) {
 			if (strcmp (str, "yes") == 0) {
@@ -472,7 +470,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 			} else {
 				auto_connect = FALSE;
 			}
-			xmlFree (str);
 		}
 		else if (strcmp (tag, "use_ssl") == 0) {
 			if (strcmp (str, "yes") == 0) {
@@ -480,7 +477,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 			} else {
 				use_ssl = FALSE;
 			}
-			xmlFree (str);
 		}
 		else if (strcmp (tag, "use_proxy") == 0) {
 			if (strcmp (str, "yes") == 0) {
@@ -488,8 +484,9 @@ account_manager_parse_account (GossipAccountManager *manager,
 			} else {
 				use_proxy = FALSE;
 			}
-			xmlFree (str);
 		}
+
+		xmlFree (str);
 
 		child = child->next;
 	}
@@ -549,10 +546,11 @@ account_manager_parse_account (GossipAccountManager *manager,
 		g_object_unref (account);
 	}
 	
-	xmlFree (name);
-	xmlFree (id);
-	xmlFree (resource);
-	xmlFree (server);
+	g_free (name);
+	g_free (id);
+	g_free (password);
+	g_free (resource);
+	g_free (server);
 }
 
 static gboolean
@@ -598,6 +596,7 @@ account_manager_file_parse (GossipAccountManager *manager,
 
 			g_free (priv->default_name);
 			priv->default_name = g_strdup (str);
+
 			xmlFree (str);
 		}
 		else if (strcmp ((gchar *) node->name, "account") == 0) {

@@ -30,7 +30,6 @@
 #include "gossip-app.h"
 #include "gossip-new-message-dialog.h"
 
-
 typedef struct {
 	GtkWidget    *dialog;
 
@@ -43,7 +42,6 @@ typedef struct {
 	GtkListStore *store;
 	GtkTreeModel *filter;
 } GossipNewMessageDialog;
-
 
 static void     new_message_dialog_update_buttons     (GossipNewMessageDialog *dialog);
 static void     new_message_dialog_pixbuf_data_func   (GtkCellLayout          *cell_layout,
@@ -75,14 +73,12 @@ static void     new_message_dialog_response           (GtkWidget              *w
 						       gint                    response,
 						       GossipNewMessageDialog *dialog);
 
-
 enum {
 	COL_STATUS,
 	COL_NAME,
 	COL_POINTER,
 	COL_COUNT
 };
-
 
 static void
 new_message_dialog_update_buttons (GossipNewMessageDialog *dialog)

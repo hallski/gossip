@@ -362,12 +362,12 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  0,
 	  "<Separator>",
 	  NULL },
-	{ N_("/Show _Log"),
+	{ N_("/View Message _History"),
 	  NULL,
 	  GIF_CB (contact_list_item_menu_log_cb),
 	  ITEM_MENU_LOG,
-	  "<Item>",
-	  NULL },
+	  "<StockItem>",
+	  GTK_STOCK_JUSTIFY_LEFT }
 };
 
 static GtkItemFactoryEntry group_menu_items[] = {
@@ -1805,6 +1805,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 			if (!contact) {
 				factory = priv->group_popup_factory;
 			} else {
+				GossipLog *log;
 				gboolean   log_exists;
 				GtkWidget *log_item;
 				GtkWidget *invite_item, *invite_sep;
@@ -1813,7 +1814,10 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				factory = priv->item_popup_factory;
 				log_item = gtk_item_factory_get_item (factory,
 								      "/Show Log");
-				log_exists = gossip_log_exists (contact);
+
+
+				log = gossip_log_get (contact);
+				log_exists = gossip_log_exists (log);
 				gtk_widget_set_sensitive (log_item, log_exists);
 
 				/* Set up invites menu. */

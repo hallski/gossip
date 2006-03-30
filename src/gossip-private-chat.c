@@ -301,7 +301,8 @@ private_chat_send (GossipPrivateChat *chat,
                    const gchar       *msg)
 {
 	GossipPrivateChatPriv *priv;
-	GossipMessage         *m;
+	GossipMessage         *message;
+	GossipLog             *log;
 
 	priv = chat->priv;
 
@@ -320,24 +321,26 @@ private_chat_send (GossipPrivateChat *chat,
 
 	private_chat_update_locked_resource (chat);
 	
-	m = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, priv->contact);
+	message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, priv->contact);
 
 	if (priv->locked_resource) {
-		gossip_message_set_explicit_resource (m, priv->locked_resource);
+		gossip_message_set_explicit_resource (message, priv->locked_resource);
 	}
 	
-	gossip_message_set_body (m, msg);
-	gossip_message_request_composing (m);
+	gossip_message_set_body (message, msg);
+	gossip_message_request_composing (message);
+	gossip_message_set_sender (message, priv->own_contact);
 
-	gossip_log_message (priv->own_contact, m, FALSE);
+	log = gossip_log_get (priv->contact);
+	gossip_log_message (log, message, FALSE);
 
 	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view, 
-						   m, 
+						   message, 
 						   priv->own_contact);
 
-	gossip_session_send_message (gossip_app_get_session (), m);
+	gossip_session_send_message (gossip_app_get_session (), message);
 	
-	g_object_unref (m);
+	g_object_unref (message);
 }
 
 static void
@@ -839,28 +842,28 @@ gossip_private_chat_get_history (GossipPrivateChat *chat, gint lines)
 
 void
 gossip_private_chat_append_message (GossipPrivateChat *chat, 
-				    GossipMessage     *m)
+				    GossipMessage     *message)
 {
 	GossipPrivateChatPriv *priv;
 	GossipContact         *sender;
+	GossipLog             *log;
 	const gchar           *resource;
 	const gchar           *invite;
 	
         g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
-        g_return_if_fail (GOSSIP_IS_MESSAGE (m));
+        g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
 	priv = chat->priv;
 	
 	DEBUG_MSG (("PrivateChat: Appending message ('%s')",
-		   gossip_contact_get_name (gossip_message_get_sender (m))));
+		   gossip_contact_get_name (gossip_message_get_sender (message))));
 
-	sender = gossip_message_get_sender (m);
+	sender = gossip_message_get_sender (message);
 	if (!gossip_contact_equal (priv->contact, sender)) {
 		return;
 	}
 
-	resource = gossip_message_get_explicit_resource (m);
-
+	resource = gossip_message_get_explicit_resource (message);
 	if (resource) {
 		gboolean is_different;
 
@@ -872,15 +875,16 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 		}
 	}
 
-	gossip_log_message (priv->own_contact, m, TRUE);
+	log = gossip_log_get (priv->contact);
+	gossip_log_message (log, message, TRUE);
 
-	invite = gossip_message_get_invite (m);
+	invite = gossip_message_get_invite (message);
 	if (invite) {
 		gossip_chat_view_append_invite (GOSSIP_CHAT (chat)->view,
-						m);
+						message);
 	} else {
 		gossip_chat_view_append_message_from_other (GOSSIP_CHAT (chat)->view,
-							    m,
+							    message,
 							    priv->own_contact);
 	}
 

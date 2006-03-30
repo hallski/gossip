@@ -24,15 +24,39 @@
 #include <glib.h>
 #include <libgossip/gossip-message.h>
 
-void     gossip_log_message         (GossipContact *own_contact,
-				     GossipMessage *msg,
-				     gboolean       incoming);
-gboolean gossip_log_exists          (GossipContact *contact);
-void     gossip_log_show            (GtkWidget     *window,
-				     GossipContact *contact);
-GList *  gossip_log_get_contacts    (GossipAccount *account);
-GList *  gossip_log_get_for_contact (GossipContact *own_contact,
-				     GossipAccount *account,
-				     const gchar   *contact_id);
+#define GOSSIP_TYPE_LOG         (gossip_log_get_type ())
+#define GOSSIP_LOG(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_LOG, GossipLog))
+#define GOSSIP_LOG_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_LOG, GossipLogClass))
+#define GOSSIP_IS_LOG(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_LOG))
+#define GOSSIP_IS_LOG_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_LOG))
+#define GOSSIP_LOG_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_LOG, GossipLogClass))
+
+typedef struct _GossipLog      GossipLog;
+typedef struct _GossipLogClass GossipLogClass;
+typedef struct _GossipLogPriv  GossipLogPriv;
+
+struct _GossipLog {
+	GObject      parent;
+};
+
+
+struct _GossipLogClass {
+	GObjectClass parent_class;
+};
+
+GType          gossip_log_get_type        (void) G_GNUC_CONST;
+GossipLog *    gossip_log_get             (GossipContact *contact);
+GossipContact *gossip_log_get_own_contact (GossipLog     *log);
+GList *        gossip_log_get_contacts    (GossipAccount *account);
+GList *        gossip_log_get_messages    (GossipLog     *log,
+					   const gchar   *date);
+GList *        gossip_log_get_dates       (GossipLog     *log);
+
+void           gossip_log_message         (GossipLog     *log,
+					   GossipMessage *message,
+					   gboolean       incoming);
+gboolean       gossip_log_exists          (GossipLog     *log);
+void           gossip_log_show            (GtkWidget     *window,
+					   GossipContact *contact);
 
 #endif /* __GOSSIP_LOG_H__ */

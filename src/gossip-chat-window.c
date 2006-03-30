@@ -830,9 +830,11 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 	priv = GET_PRIV (window);
 	
 	contact = gossip_chat_get_contact (priv->current_chat);
-
 	if (contact != NULL) {
-		log_exists = gossip_log_exists (contact);
+		GossipLog *log;
+
+		log = gossip_log_get (contact);
+		log_exists = gossip_log_exists (log);
 	} else {
 		log_exists = FALSE;
 	}

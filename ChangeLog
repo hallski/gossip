@@ -1,3 +1,27 @@
+2006-03-30  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-chatroom-manager.c: 
+	* src/gossip-main.c: 
+	* src/gossip-ui-utils.c: Plugged some memory leaks.
+
+	* src/gossip-chat-window.c:
+	* src/gossip-contact-list.c: 
+	* src/gossip-private-chat.c: Fixed up the places that call into
+	the gossip_log_() API and make the "View Message History" menu
+	item consistent everywhere.
+	
+	* src/gossip-log-window.c:
+	* src/gossip-log.[ch]: Fixed various issues and added a whole
+	bunch more, now you can view logs by date.
+	
+	* ui/chat.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade: 
+	- For stock dialogs (like New chatroom or Edit chatroom) use the
+	NEW and EDIT stock icons for the window.  
+	- Updated the log window quite a bit.
+
 2006-03-29  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-stock.c: Remove trailing comma.
