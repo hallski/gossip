@@ -2,6 +2,8 @@ NEWS in 0.11:
 =============
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #309912, Don't propergate Jabber messages with no <body>
+element (Ralph Meijer).  
 - Fixed #336375, Use theme friendly icons (Brian Pepple).
 - Fixed #336395, Fixed some type compilation warnings (Richard).
 - Fixed #336451, Notification bubbles should attach to notification

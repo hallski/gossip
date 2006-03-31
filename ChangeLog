@@ -1,5 +1,10 @@
 2006-03-31  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c: Don't propergate Jabber
+	messages with no <body> element, fixes #309912 (Ralph Meijer). 
+
+2006-03-31  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-notify.c: Use a low priority for presence
 	notifications (online or offline), fixes bug #336611 (Wouter
 	Bolsterlee). 

@@ -1985,7 +1985,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	const gchar      *from_str;
 	GossipContact    *from;
 	const gchar      *thread = "";
-	const gchar      *body = "";
+	const gchar      *body = NULL;
 	LmMessageNode    *node;
 
 	priv = GET_PRIV (jabber);
@@ -2004,11 +2004,6 @@ jabber_message_handler (LmMessageHandler *handler,
 							   NULL,
 							   TRUE);
 		
-		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
-					      priv->contact);
-		
-		gossip_message_set_sender (message, from);
-
 		/* if event, then we can ignore the rest */
 		if (gossip_jabber_get_message_is_event (m)) {
 			gboolean composing;
@@ -2016,20 +2011,32 @@ jabber_message_handler (LmMessageHandler *handler,
 			composing = gossip_jabber_get_message_is_composing (m);
 
 			g_signal_emit_by_name (jabber, "composing-event", 
-					       from, composing);
+					       from, 
+					       composing);
 			break;
 		}
 
 		node = lm_message_node_get_child (m->node, "body");
 		if (node) {
 			body = node->value;
+		} else {
+			/* If no body to the message, we ignore it since it
+			 * has no purpose now (see fixes #309912). 
+			 */
+			DEBUG_MSG (("Protocol: Dropping new message, no <body> element"));
+			break;
 		}
 
 		node = lm_message_node_get_child (m->node, "thread");
 		if (node) {
 			thread = node->value;
 		}
-			
+
+		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
+					      priv->contact);
+		
+		gossip_message_set_sender (message, from);
+
 		gossip_message_set_body (message, body);
 		gossip_message_set_thread (message, thread);
 
@@ -2042,6 +2049,7 @@ jabber_message_handler (LmMessageHandler *handler,
 		g_signal_emit_by_name (jabber, "new-message", message);
 		g_signal_emit_by_name (jabber, "composing-event", 
 				       from, FALSE);
+
 		g_object_unref (message);
 
 		break;
