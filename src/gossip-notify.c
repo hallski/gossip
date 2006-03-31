@@ -37,25 +37,25 @@
 				   * message we show in the notification.
 				   */
 
-static const gchar *         notify_get_status_from_presence (GossipPresence     *presence);
-static void                  notify_new_message_default_cb   (NotifyNotification *notify,
-							      gchar              *label,
-							      GossipEventManager *event_manager);
-static void                  notify_new_message_contact_cb   (NotifyNotification *notify,
-							      gchar              *label,
-							      GossipEventManager *event_manager);
-static NotifyNotification   *notify_new_message              (GossipEventManager *event_manager,
-							      GossipMessage      *message);
-static void                  notify_event_added_cb           (GossipEventManager *event_manager,
-							      GossipEvent        *event,
-							      gpointer            user_data);
-static gboolean              notify_event_remove_foreach     (gpointer            key,
-							      GossipEvent        *event,
-							      GossipEvent        *event_to_compare);
-static void                  notify_event_removed_cb         (GossipEventManager *event_manager,
-							      GossipEvent        *event,
-							      gpointer            user_data);
-static void                  notify_event_destroy_cb         (NotifyNotification *notify);
+static const gchar *       notify_get_status_from_presence (GossipPresence     *presence);
+static void                notify_online_send_message_cb   (NotifyNotification *notify,
+							    gchar              *label,
+							    GossipContact      *contact);
+static void                notify_new_message_contact_cb   (NotifyNotification *notify,
+							    gchar              *label,
+							    GossipEventManager *event_manager);
+static NotifyNotification *notify_new_message              (GossipEventManager *event_manager,
+							    GossipMessage      *message);
+static void                notify_event_added_cb           (GossipEventManager *event_manager,
+							    GossipEvent        *event,
+							    gpointer            user_data);
+static gboolean            notify_event_remove_foreach     (gpointer            key,
+							    GossipEvent        *event,
+							    GossipEvent        *event_to_compare);
+static void                notify_event_removed_cb         (GossipEventManager *event_manager,
+							    GossipEvent        *event,
+							    gpointer            user_data);
+static void                notify_event_destroy_cb         (NotifyNotification *notify);
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
@@ -63,7 +63,6 @@ enum {
 };
 
 static GHashTable *message_notifications = NULL;
-/* static GHashTable *presence_notifications = NULL; */
 static GHashTable *event_notifications = NULL;
 static GtkWidget  *attach_widget = NULL;
 
@@ -81,6 +80,19 @@ notify_get_status_from_presence (GossipPresence *presence)
 	}
 	
 	return status;
+}
+
+static void
+notify_online_send_message_cb (NotifyNotification *notify,
+			       gchar              *label,
+			       GossipContact      *contact)
+{
+	GossipSession     *session;
+	GossipChatManager *chat_manager;
+
+	session = gossip_app_get_session ();
+	chat_manager = gossip_app_get_chat_manager ();
+	gossip_chat_manager_show_chat (chat_manager, contact);
 }
 
 void
@@ -106,9 +118,14 @@ gossip_notify_contact_online (GossipContact *contact)
 	notify = notify_notification_new (title, status, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_LOW);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
 	}
+
+	notify_notification_add_action (notify, "send_message", _("Send Message"),
+					(NotifyActionCallback) notify_online_send_message_cb,
+					g_object_ref (contact), NULL);
 
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
@@ -150,7 +167,7 @@ gossip_notify_contact_offline (GossipContact *contact)
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
 	}
-	
+
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
 			   error->message);

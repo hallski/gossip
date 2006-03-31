@@ -1,5 +1,10 @@
 2006-03-31  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-notify.c: Add a "send message" button to online
+	notifications, fixes #336222 (Wouter Bolsterlee). 
+
+2006-03-31  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-utils.[ch]: Updated the regular expressions
 	code based on gnome-terminal so more URLs are spotted, including
 	the mailto scheme which was broken before, fixes #163816 (Micke).

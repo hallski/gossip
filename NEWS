@@ -2,6 +2,8 @@ NEWS in 0.11:
 =============
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #336222, Add a "send message" button to online notifications
+(Wouter Bolsterlee). 
 - Fixed #163816, Highlight and make mailto: URLs work (Micke).
 - Fixed #309912, Don't propergate Jabber messages with no <body>
 element (Ralph Meijer).  
