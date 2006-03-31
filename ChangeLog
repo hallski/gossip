@@ -1,5 +1,10 @@
 2006-03-31  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-accounts-dialog.c: 
+	* ui/main.glade: Fixed the "Add Account" dialog not working.
+
+2006-03-31  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Don't propergate Jabber
 	messages with no <body> element, fixes #309912 (Ralph Meijer). 
 

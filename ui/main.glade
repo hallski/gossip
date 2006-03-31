@@ -6620,7 +6620,7 @@ This name could be something associated with the service provider, for example, 
 	      <property name="use_stock">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
-	      <property name="response_id">0</property>
+	      <property name="response_id">1</property>
 	    </widget>
 	  </child>
 

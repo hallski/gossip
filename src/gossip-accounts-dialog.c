@@ -125,10 +125,6 @@ static void           accounts_dialog_entry_port_insert_text_cb (GtkEditable    
 								 gint                   len,
 								 gint                  *position,
 								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_button_add_clicked_cb     (GtkWidget             *button,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_button_remove_clicked_cb  (GtkWidget             *button,
-								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_button_forget_clicked_cb  (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
 static gboolean       accounts_dialog_foreach                   (GtkTreeModel          *model,
@@ -148,6 +144,11 @@ enum {
 	COL_AUTO_CONNECT,
 	COL_ACCOUNT_POINTER,
 	COL_COUNT
+};
+
+enum {
+	RESPONSE_ACCOUNT_ADD,
+	RESPONSE_ACCOUNT_REMOVE
 };
 
 static void
@@ -1118,32 +1119,6 @@ accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 }
 
 static void
-accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
-				       GossipAccountsDialog *dialog)
-{
-	gossip_new_account_window_show (GTK_WINDOW (dialog->window));
-}
-
-static void
-accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
-					  GossipAccountsDialog *dialog)
-{
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	GossipAccount        *account;
-
-	session = gossip_app_get_session ();
- 	manager = gossip_session_get_account_manager (session);
-
-	account = accounts_dialog_model_get_selected (dialog);
-
-	gossip_account_manager_remove (manager, account);
-	gossip_account_manager_store (manager);
-
-	g_object_unref (account);
-}
-
-static void
 accounts_dialog_button_forget_clicked_cb (GtkWidget            *button,
 					  GossipAccountsDialog *dialog)
 {
@@ -1210,6 +1185,32 @@ accounts_dialog_response_cb (GtkWidget            *widget,
 			     gint                  response,
 			     GossipAccountsDialog *dialog)
 {
+	switch (response) {
+	case RESPONSE_ACCOUNT_ADD:
+		gossip_new_account_window_show (GTK_WINDOW (dialog->window));
+		return;
+
+	case RESPONSE_ACCOUNT_REMOVE: {
+		GossipSession        *session;
+		GossipAccountManager *manager;
+		GossipAccount        *account;
+		
+		session = gossip_app_get_session ();
+		manager = gossip_session_get_account_manager (session);
+		
+		account = accounts_dialog_model_get_selected (dialog);
+		
+		gossip_account_manager_remove (manager, account);
+		gossip_account_manager_store (manager);
+		
+		g_object_unref (account);
+		return;
+	}
+
+	default:
+		break;
+	}
+
 	gtk_widget_destroy (widget);
 }
 
@@ -1324,8 +1325,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "checkbutton_proxy", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      "checkbutton_ssl", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      "checkbutton_connect", "toggled", accounts_dialog_checkbutton_toggled_cb,
-			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
-			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
 			      "button_forget", "clicked", accounts_dialog_button_forget_clicked_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
 			      NULL);
