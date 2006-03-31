@@ -49,7 +49,13 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
+
+#ifdef USE_GNOMEVFS_FOR_URL
+#include <libgnomevfs/gnome-vfs.h>
+#else
 #include <libgnome/gnome-url.h>
+#endif
+
 #include <libgnomevfs/gnome-vfs-utils.h>
 #include <libxslt/xslt.h>
 #include <libxslt/transform.h>
@@ -739,7 +745,8 @@ log_urlify (const gchar *msg)
 	start = g_array_new (FALSE, FALSE, sizeof (gint));
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 
-	num_matches = gossip_utils_url_regex_match (msg, start, end);
+	num_matches = gossip_utils_regex_match (GOSSIP_REGEX_ALL, 
+						msg, start, end);
 
 	if (num_matches == 0) {
 		esc = g_markup_escape_text (msg, -1);
@@ -852,12 +859,15 @@ log_transform (const gchar *infile,
 static void
 log_show (GossipLog *log)
 {
-	GossipLogPriv *priv;
-	gchar         *filename = NULL;
-	gchar         *outfile;
-	gchar         *url;
-	FILE          *file;
-	gint           fd;
+	GossipLogPriv  *priv;
+#if 0
+	GnomeVFSResult  result;
+#endif
+	gchar          *filename = NULL;
+	gchar          *outfile;
+	gchar          *url;
+	FILE           *file;
+	gint            fd;
 
 	priv = GET_PRIV (log);
 
@@ -900,9 +910,15 @@ log_show (GossipLog *log)
 	g_free (outfile);
 
 	url = g_strconcat (LOG_FILENAME_PREFIX, filename, NULL);
-	if (!gnome_url_show (url, NULL)) {
+
+#ifdef USE_GNOMEVFS_FOR_URL
+	result = gnome_vfs_url_show (url);
+	if (result == GNOME_VFS_OK) {
 		g_warning ("Couldn't show log file:'%s'", filename);
 	}
+#else
+	gnome_url_show (url, NULL);
+#endif
 
 	g_free (url);
 	g_free (filename);

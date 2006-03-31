@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2005 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -28,13 +28,15 @@
 #include <glib/gi18n.h>
 #include "gossip-utils.h"
 
-#define DINGUS "(((mailto|news|telnet|nttp|file|http|sftp|ftp|https|dav|callto)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+(:[0-9]*)?(/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:{}@&=\\?/~\\#\\%]*[^]'\\.}>\\) ,\\\"])?"
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+
+static void utils_regex_init (void);
+static void utils_free_entry (GossipStatusEntry *entry);
 
 #define AVAILABLE_MESSAGE "Available"
-#define AWAY_MESSAGE "Away"
-#define BUSY_MESSAGE "Busy"
-
-static regex_t  dingus;
+#define AWAY_MESSAGE      "Away"
+#define BUSY_MESSAGE      "Busy"
 
 GList *
 gossip_utils_get_status_messages (void)
@@ -134,7 +136,7 @@ gossip_utils_set_status_messages (GList *list)
 }
 
 static void
-free_entry (GossipStatusEntry *entry)
+utils_free_entry (GossipStatusEntry *entry)
 {
 	g_free (entry->string);
 	g_free (entry);
@@ -143,7 +145,7 @@ free_entry (GossipStatusEntry *entry)
 void
 gossip_utils_free_status_messages (GList *list)
 {
-	g_list_foreach (list, (GFunc) free_entry, NULL);
+	g_list_foreach (list, (GFunc) utils_free_entry, NULL);
 	g_list_free (list);
 }
 
@@ -153,31 +155,84 @@ gossip_utils_substring (const gchar *str, gint start, gint end)
 	return g_strndup (str + start, end - start);
 }
 
-gint
-gossip_utils_url_regex_match (const gchar *msg,
-			      GArray      *start,
-			      GArray      *end)
-{
-	static gboolean inited = FALSE;
-	regmatch_t      matches[1];
-	gint            ret = 0;
-	gint            num_matches = 0;
-	gint            offset = 0;
+/*
+ * Regular Expression code to match urls.
+ */
+#define USERCHARS "-A-Za-z0-9"
+#define PASSCHARS "-A-Za-z0-9,?;.:/!%$^*&~\"#'"
+#define HOSTCHARS "-A-Za-z0-9"
+#define PATHCHARS "-A-Za-z0-9_$.+!*(),;:@&=?/~#%"
+#define SCHEME    "(news:|telnet:|nntp:|file:/|https?:|ftps?:|webcal:)"
+#define USER      "[" USERCHARS "]+(:["PASSCHARS "]+)?"
+#define URLPATH   "/[" PATHCHARS "]*[^]'.}>) \t\r\n,\\\"]"
 
-	if (!inited) {
-		memset (&dingus, 0, sizeof (regex_t));
-		regcomp (&dingus, DINGUS, REG_EXTENDED);
-		inited = TRUE;
+static regex_t dingus[GOSSIP_REGEX_ALL];
+
+static void
+utils_regex_init (void)
+{
+	static gboolean  inited = FALSE;
+	const gchar     *expression;
+	gint             i;
+	
+	if (inited) {
+		return;
 	}
 
-	while (!ret) {
-		ret = regexec (&dingus, msg + offset, 1, matches, 0);
+	for (i = 0; i < GOSSIP_REGEX_ALL; i++) {
+		switch (i) {
+		case GOSSIP_REGEX_AS_IS:
+			expression = 
+				SCHEME "//(" USER "@)?[" HOSTCHARS ".]+"
+				"(:[0-9]+)?(" URLPATH ")?";
+			break;
+		case GOSSIP_REGEX_BROWSER:
+			expression = 
+				"(www|ftp)[" HOSTCHARS "]*\\.[" HOSTCHARS ".]+"
+				"(:[0-9]+)?(" URLPATH ")?";
+			break;
+		case GOSSIP_REGEX_EMAIL:
+			expression = 
+				"(mailto:)?[a-z0-9][a-z0-9.-]*@[a-z0-9]"
+				"[a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+";
+			break;
+		case GOSSIP_REGEX_OTHER:
+			expression = 
+				"news:[-A-Z\\^_a-z{|}~!\"#$%&'()*+,./0-9;:=?`]+"
+				"@[" HOSTCHARS ".]+(:[0-9]+)?";
+			break;
+		}
+		
+		memset (&dingus[i], 0, sizeof (regex_t));
+		regcomp (&dingus[i], expression, REG_EXTENDED);
+	}
+	
+	inited = TRUE;
+}
 
+gint
+gossip_utils_regex_match (GossipRegExType  type, 
+			  const gchar     *msg,
+			  GArray          *start,
+			  GArray          *end)
+{
+	regmatch_t matches[1];
+	gint       ret = 0;
+	gint       num_matches = 0;
+	gint       offset = 0;
+	gint       i;
+
+	g_return_val_if_fail (type >= 0 || type <= GOSSIP_REGEX_ALL, 0);
+
+	utils_regex_init ();
+
+	while (!ret && type != GOSSIP_REGEX_ALL) {
+		ret = regexec (&dingus[type], msg + offset, 1, matches, 0);
 		if (ret == 0) {
 			gint s;
 			
 			num_matches++;
-
+			
 			s = matches[0].rm_so + offset;
 			offset = matches[0].rm_eo + offset;
 			
@@ -185,7 +240,32 @@ gossip_utils_url_regex_match (const gchar *msg,
 			g_array_append_val (end, offset);
 		}
 	}
-		
+
+ 	if (type != GOSSIP_REGEX_ALL) { 
+		DEBUG_MSG (("Utils: Found %d matches for regex type:%d", num_matches, type));
+		return num_matches;
+	}
+
+	/* If GOSSIP_REGEX_ALL then we run ALL regex's on the string. */
+	for (i = 0; i < GOSSIP_REGEX_ALL; i++, ret = 0) { 
+		while (!ret) {
+			ret = regexec (&dingus[i], msg + offset, 1, matches, 0);
+			if (ret == 0) {
+				gint s;
+				
+				num_matches++;
+				
+				s = matches[0].rm_so + offset;
+				offset = matches[0].rm_eo + offset;
+				
+				g_array_append_val (start, s);
+				g_array_append_val (end, offset);
+			}
+		}
+	}
+
+	DEBUG_MSG (("Utils: Found %d matches for ALL regex types", num_matches));
+
 	return num_matches;
 }
 

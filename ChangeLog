@@ -1,5 +1,20 @@
 2006-03-31  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-utils.[ch]: Updated the regular expressions
+	code based on gnome-terminal so more URLs are spotted, including
+	the mailto scheme which was broken before, fixes #163816 (Micke).
+	
+	* src/gossip-about-dialog.c: 
+	* src/gossip-chat-view.c: 
+	* src/gossip-log.c: Add a definition to switch between gnomevfs
+	and libgnome for showing URLs.
+
+2006-03-31  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-utils.c:
+
+2006-03-31  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-accounts-dialog.c: 
 	* ui/main.glade: Fixed the "Add Account" dialog not working.
 

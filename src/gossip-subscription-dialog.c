@@ -303,7 +303,8 @@ subscription_dialog_vcard_cb (GossipResult              result,
 		start = g_array_new (FALSE, FALSE, sizeof (gint));
 		end = g_array_new (FALSE, FALSE, sizeof (gint));
 		
-		num_matches = gossip_utils_url_regex_match (url, start, end);
+		num_matches = gossip_utils_regex_match (GOSSIP_REGEX_ALL, 
+							url, start, end);
 	}
 
 	/* add url button to table */

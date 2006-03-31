@@ -2,6 +2,7 @@ NEWS in 0.11:
 =============
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #163816, Highlight and make mailto: URLs work (Micke).
 - Fixed #309912, Don't propergate Jabber messages with no <body>
 element (Ralph Meijer).  
 - Fixed #336375, Use theme friendly icons (Brian Pepple).

@@ -26,7 +26,12 @@
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
+
+#ifdef USE_GNOMEVFS_FOR_URL
+#include <libgnomevfs/gnome-vfs.h>
+#else
 #include <libgnome/gnome-url.h>
+#endif
 
 #include <libgossip/gossip-time.h>
 #include <libgossip/gossip-utils.h>
@@ -508,23 +513,16 @@ chat_view_url_event_cb (GtkTextTag    *tag,
 static void
 chat_view_open_address (const gchar *url)
 {
-	if (!url || strlen (url) == 0) {
-		return;
+#ifdef USE_GNOMEVFS_FOR_URL
+	GnomeVFSResult result;
+
+	result = gnome_vfs_url_show (url);
+	if (result == GNOME_VFS_OK) {
+		g_warning ("Couldn't show URL:'%s'", url);
 	}
-
-	/* gnome_url_show doesn't work when there's no protocol, so we might
-	 * need to add one.
-	 */
-	if (strstr (url, "://") == NULL) {
-		gchar *tmp;
-
-		tmp = g_strconcat ("http://", url, NULL);
-		gnome_url_show (tmp, NULL);
-		g_free (tmp);
-		return;
-	}
-
+#else
 	gnome_url_show (url, NULL);
+#endif
 }
 
 static void
@@ -994,7 +992,8 @@ chat_view_append_text (GossipChatView *view,
 	start = g_array_new (FALSE, FALSE, sizeof (gint));
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 
-	num_matches = gossip_utils_url_regex_match (body, start, end);
+	num_matches = gossip_utils_regex_match (GOSSIP_REGEX_ALL, 
+						body, start, end);
 
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
