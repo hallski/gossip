@@ -1,3 +1,9 @@
+2006-03-31  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-notify.c: Use a low priority for presence
+	notifications (online or offline), fixes bug #336611 (Wouter
+	Bolsterlee). 
+
 2006-03-30  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.c:

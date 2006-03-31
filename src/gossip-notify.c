@@ -104,7 +104,7 @@ gossip_notify_contact_online (GossipContact *contact)
 	status = notify_get_status_from_presence (presence);
 
 	notify = notify_notification_new (title, status, NULL, NULL);
-	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
+	notify_notification_set_urgency (notify, NOTIFY_URGENCY_LOW);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
@@ -144,7 +144,7 @@ gossip_notify_contact_offline (GossipContact *contact)
 	status = notify_get_status_from_presence (presence);
 
 	notify = notify_notification_new (title, status, NULL, NULL);
-	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
+	notify_notification_set_urgency (notify, NOTIFY_URGENCY_LOW);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 
 	if (attach_widget) {

@@ -55,7 +55,6 @@
    will timeout before then with that error */
 #define CONNECT_TIMEOUT     210 
 
-
 struct _GossipJabberPriv {
 	LmConnection          *connection;
 	
@@ -66,26 +65,26 @@ struct _GossipJabberPriv {
 
 	GHashTable            *contacts;
 
-	/* cancel registration attempt */
+	/* Cancel registration attempt */
 	gboolean               register_cancel;
 
-	/* connection details */
+	/* Connection details */
 	guint                  connection_timeout_id;
 	gboolean               disconnect_request;
 
-	/* extended parts */
+	/* Extended parts */
 	GossipJabberChatrooms *chatrooms;
 	GossipJabberFTs       *fts;
 
-	/* used to hold a list of composing message ids, this is so we
-	   can send the cancelation to the last message id */
+	/* Used to hold a list of composing message ids, this is so we
+	 * can send the cancelation to the last message id. 
+	 */
 	GHashTable            *composing_ids;
 
-	/* transport stuff... is this in the right place? */
+	/* Transport stuff... is this in the right place? */
 	GossipTransportAccountList *account_list;
 	LmMessageHandler      *subscription_handler;
 };
-
 
 typedef struct {
 	GossipJabber     *jabber;
@@ -95,19 +94,16 @@ typedef struct {
 	gpointer          user_data;
 } RegisterData;
 
-
 typedef struct {
 	GossipJabber     *jabber;
 	gchar            *group;
 	gchar            *new_name;
 } RenameGroupData;
 
-
 typedef struct {
 	GossipJabber     *jabber;
 	GossipContact    *contact;
 } VCardData;
-
 
 static void             gossip_jabber_class_init            (GossipJabberClass       *klass);
 static void             gossip_jabber_init                  (GossipJabber            *jabber);
@@ -246,7 +242,6 @@ static void             jabber_request_roster               (GossipJabber       
 static void             jabber_request_unknown              (GossipJabber            *jabber,
 							     LmMessage               *m);
 
-
 /* chatrooms */
 static void             jabber_chatroom_init                (GossipChatroomProviderIface *iface);
 static GossipChatroomId jabber_chatroom_join                (GossipChatroomProvider  *provider,
@@ -278,8 +273,6 @@ static void             jabber_chatroom_invite_accept       (GossipChatroomProvi
 							     const gchar             *invite_id);
 static GList *          jabber_chatroom_get_rooms           (GossipChatroomProvider  *provider);
 
-
-
 /* fts */
 static void             jabber_ft_init                      (GossipFTProviderIface   *iface);
 static GossipFTId       jabber_ft_send                      (GossipFTProvider        *provider,
@@ -292,17 +285,13 @@ static void             jabber_ft_accept                    (GossipFTProvider   
 static void             jabber_ft_decline                   (GossipFTProvider        *provider,
 							     GossipFTId               id);
 
-
-
 extern GConfClient *gconf_client;
-
 
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CHATROOM_PROVIDER,
 						jabber_chatroom_init);
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_FT_PROVIDER,
 						jabber_ft_init));
-
 
 static void
 gossip_jabber_class_init (GossipJabberClass *klass)
@@ -1298,8 +1287,9 @@ jabber_send_message (GossipProtocol *protocol,
 	lm_message_node_add_child (m->node, "body",
 				   gossip_message_get_body (message));
 
-	/* if we have had a request for composing then we send the
-	   other side composing details with every message */
+	/* If we have had a request for composing then we send the
+	 * other side composing details with every message 
+	 */
 	if (gossip_message_is_requesting_composing (message)) {
 		LmMessageNode *node;
 
@@ -1325,7 +1315,6 @@ jabber_send_composing (GossipProtocol *protocol,
 	LmMessageNode    *node;
 	const gchar      *id = NULL;
 	const gchar      *contact_id;
-	const gchar      *resource = NULL;
 	gchar            *jid_str;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
@@ -1340,14 +1329,7 @@ jabber_send_composing (GossipProtocol *protocol,
 		   typing ? "composing" : "not composing",
 		   contact_id));
 	
-	/* FIXME: Create a full JID (with resource) and send to that */
-/* 	resource = gossip_message_get_explicit_resource (message); */
-
-	if (resource) {
-		jid_str = g_strdup_printf ("%s/%s", contact_id, resource);
-	} else {
-		jid_str = g_strdup (contact_id);
-	}
+	jid_str = g_strdup (contact_id);
 
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,

@@ -1,7 +1,18 @@
 NEWS in 0.11:
 =============
-- Added a chat history window.
-- Make use of the GtkAboutDialog.
+- Added the ability to view message history (Martyn).
+- Make use of the GtkAboutDialog (Martyn).
+- Fixed #336375, Use theme friendly icons (Brian Pepple).
+- Fixed #336395, Fixed some type compilation warnings (Richard).
+- Fixed #336451, Notification bubbles should attach to notification
+icon (Caio Marcelo, Richard).
+- Fixed #322779, Stop the notification icon blinking when going
+offline during the Available->Away or Away->Available transition
+(Keywan Najafi Tonekaboni, Richard).
+- Fixed #336011, Fixed some type warnings in the debugging (Caio
+Marcelo, Richard).
+- Fixed #306529, Make it easy to view message history for offline
+contacts (Paul Van Tilburg, Martyn).
 - Fixed #336008, Show the account name and id when asking for the
 account password so we know which password to enter when we have
 multiple accounts configured (André Dahlqvist). 
