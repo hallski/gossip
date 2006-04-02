@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
@@ -67,6 +67,8 @@ static void       chat_window_update_status            (GossipChatWindow      *w
 static void       chat_window_update_title             (GossipChatWindow      *window);
 static void       chat_window_update_menu              (GossipChatWindow      *window);
 static void       chat_window_invite_menu_setup        (GossipChatWindow      *window);
+static void       chat_window_conv_activate_cb         (GtkWidget             *menuitem,
+							GossipChatWindow      *window);
 static void       chat_window_clear_activate_cb        (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
 static void       chat_window_info_activate_cb         (GtkWidget             *menuitem,
@@ -75,10 +77,12 @@ static void       chat_window_add_contact_activate_cb  (GtkWidget             *m
 							GossipChatWindow      *window);
 static void       chat_window_log_activate_cb          (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
-static void       chat_window_conv_activate_cb         (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
 static void       chat_window_show_contacts_toggled_cb (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
+static void       chat_window_edit_activate_cb         (GtkWidget             *menuitem,
+							GossipChatWindow      *window);
+static void       chat_window_insert_smiley_activate_cb (GtkWidget        *menuitem, 
+							 GossipChatWindow *window);
 static void       chat_window_close_activate_cb        (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
 static void       chat_window_cut_activate_cb          (GtkWidget             *menuitem,
@@ -87,9 +91,9 @@ static void       chat_window_copy_activate_cb         (GtkWidget             *m
 							GossipChatWindow      *window);
 static void       chat_window_paste_activate_cb        (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
-static void       chat_window_tab_left_activate_cb     (GtkWidget             *menuitem,
+static void       chat_window_tabs_left_activate_cb    (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
-static void       chat_window_tab_right_activate_cb    (GtkWidget             *menuitem,
+static void       chat_window_tabs_right_activate_cb   (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
 static void       chat_window_detach_activate_cb       (GtkWidget             *menuitem,
 							GossipChatWindow      *window);
@@ -153,23 +157,24 @@ struct _GossipChatWindowPriv {
 	GtkTooltips *tooltips;
 
 	/* Menu items. */
-	GtkWidget   *m_conv_clear;
-	GtkWidget   *m_conv_add_contact;
-	GtkWidget   *m_conv_log;
-	GtkWidget   *m_conv_info;
-	GtkWidget   *s_conv_show_contacts;
-	GtkWidget   *m_conv_show_contacts;
-	GtkWidget   *s_conv_invite_contacts;
-	GtkWidget   *m_conv_invite_contacts;
-	GtkWidget   *m_conv_close;
-	GtkWidget   *m_edit_cut;
-	GtkWidget   *m_edit_copy;
-	GtkWidget   *m_edit_paste;
-	GtkWidget   *m_tabs_next;
-	GtkWidget   *m_tabs_prev;
-	GtkWidget   *m_tabs_left;
-	GtkWidget   *m_tabs_right;
-	GtkWidget   *m_tabs_detach;
+	GtkWidget   *menu_conv_clear;
+	GtkWidget   *menu_conv_add_contact;
+	GtkWidget   *menu_conv_log;
+	GtkWidget   *menu_conv_info;
+	GtkWidget   *menu_conv_show_contacts_sep;
+	GtkWidget   *menu_conv_show_contacts;
+	GtkWidget   *menu_conv_invite_contacts_sep;
+	GtkWidget   *menu_conv_invite_contacts;
+	GtkWidget   *menu_conv_close;
+	GtkWidget   *menu_edit_insert_smiley;
+	GtkWidget   *menu_edit_cut;
+	GtkWidget   *menu_edit_copy;
+	GtkWidget   *menu_edit_paste;
+	GtkWidget   *menu_tabs_next;
+	GtkWidget   *menu_tabs_prev;
+	GtkWidget   *menu_tabs_left;
+	GtkWidget   *menu_tabs_right;
+	GtkWidget   *menu_tabs_detach;
 };
 
 static GList *chat_windows = NULL;
@@ -216,8 +221,9 @@ gossip_chat_window_init (GossipChatWindow *window)
 	GladeXML             *glade;
 	GtkAccelGroup        *accel_group;
 	GClosure             *closure;
-	gint                  i;
 	GtkWidget            *menu_conv;
+	GtkWidget            *menu;
+	gint                  i;
 
 	priv = GET_PRIV (window);
 
@@ -227,25 +233,46 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "chat_window", &priv->dialog,
 				       "chats_notebook", &priv->notebook,
 				       "menu_conv", &menu_conv,
-				       "menu_conv_clear", &priv->m_conv_clear,
-				       "menu_conv_add_contact", &priv->m_conv_add_contact,
-				       "menu_conv_log", &priv->m_conv_log,
-				       "menu_conv_info", &priv->m_conv_info,
-				       "sep_conv_show_contacts", &priv->s_conv_show_contacts,
-				       "menu_conv_show_contacts", &priv->m_conv_show_contacts,
-				       "sep_conv_invite_contacts", &priv->s_conv_invite_contacts,
-				       "menu_conv_invite_contacts", &priv->m_conv_invite_contacts,
-				       "menu_conv_close", &priv->m_conv_close,
-				       "menu_edit_cut", &priv->m_edit_cut,
-				       "menu_edit_copy", &priv->m_edit_copy,
-				       "menu_edit_paste", &priv->m_edit_paste,
-				       "menu_tabs_next", &priv->m_tabs_next,
-				       "menu_tabs_prev", &priv->m_tabs_prev,
-				       "menu_tabs_left", &priv->m_tabs_left,
-				       "menu_tabs_right", &priv->m_tabs_right,
-				       "menu_tabs_detach", &priv->m_tabs_detach,
+				       "menu_conv_clear", &priv->menu_conv_clear,
+				       "menu_conv_add_contact", &priv->menu_conv_add_contact,
+				       "menu_conv_log", &priv->menu_conv_log,
+				       "menu_conv_info", &priv->menu_conv_info,
+				       "sep_conv_show_contacts", &priv->menu_conv_show_contacts_sep,
+				       "menu_conv_show_contacts", &priv->menu_conv_show_contacts,
+				       "sep_conv_invite_contacts", &priv->menu_conv_invite_contacts_sep,
+				       "menu_conv_invite_contacts", &priv->menu_conv_invite_contacts,
+				       "menu_conv_close", &priv->menu_conv_close,
+				       "menu_edit_insert_smiley", &priv->menu_edit_insert_smiley,
+				       "menu_edit_cut", &priv->menu_edit_cut,
+				       "menu_edit_copy", &priv->menu_edit_copy,
+				       "menu_edit_paste", &priv->menu_edit_paste,
+				       "menu_tabs_next", &priv->menu_tabs_next,
+				       "menu_tabs_prev", &priv->menu_tabs_prev,
+				       "menu_tabs_left", &priv->menu_tabs_left,
+				       "menu_tabs_right", &priv->menu_tabs_right,
+				       "menu_tabs_detach", &priv->menu_tabs_detach,
 				       NULL);
 
+	gossip_glade_connect (glade, 
+			      window,
+			      "menu_conv", "activate", chat_window_conv_activate_cb,
+			      "menu_conv_clear", "activate", chat_window_clear_activate_cb,
+			      "menu_conv_add_contact", "activate", chat_window_add_contact_activate_cb,
+			      "menu_conv_log", "activate", chat_window_log_activate_cb,
+			      "menu_conv_info", "activate", chat_window_info_activate_cb,
+			      "menu_conv_close", "activate", chat_window_close_activate_cb,
+			      "menu_edit", "activate", chat_window_edit_activate_cb,
+			      "menu_edit_cut", "activate", chat_window_cut_activate_cb,
+			      "menu_edit_copy", "activate", chat_window_copy_activate_cb,
+			      "menu_edit_paste", "activate", chat_window_paste_activate_cb,
+			      "menu_tabs_left", "activate", chat_window_tabs_left_activate_cb,
+			      "menu_tabs_right", "activate", chat_window_tabs_right_activate_cb,
+			      "menu_tabs_detach", "activate", chat_window_detach_activate_cb,
+			      NULL);
+
+	g_object_unref (glade);
+
+	/* Set up accels */
 	accel_group = gtk_accel_group_new ();
 	gtk_window_add_accel_group (GTK_WINDOW (priv->dialog), accel_group);
 	
@@ -260,73 +287,31 @@ gossip_chat_window_init (GossipChatWindow *window)
 					 closure);
 	}
 
-	priv->tooltips = gtk_tooltips_new ();
-	
-	g_signal_connect (menu_conv,
-			  "activate",
-			  G_CALLBACK (chat_window_conv_activate_cb),
-			  window);
+	/* Set up smiley menu */
+	menu = gossip_chat_view_get_smiley_menu (
+		G_CALLBACK (chat_window_insert_smiley_activate_cb), 
+		window);
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_edit_insert_smiley), menu);
 
-	g_signal_connect (priv->m_conv_clear,
-			  "activate",
-			  G_CALLBACK (chat_window_clear_activate_cb),
-			  window);
-	g_signal_connect (priv->m_conv_add_contact,
-			  "activate",
-			  G_CALLBACK (chat_window_add_contact_activate_cb),
-			  window);
-	g_signal_connect (priv->m_conv_log,
-			  "activate",
-			  G_CALLBACK (chat_window_log_activate_cb),
-			  window);
-	g_signal_connect (priv->m_conv_info,
-			  "activate",
-			  G_CALLBACK (chat_window_info_activate_cb),
-			  window);
-	g_signal_connect (priv->m_conv_show_contacts,
+	/* Set up signals we can't do with glade */
+	g_signal_connect (priv->menu_conv_show_contacts, 
 			  "toggled",
 			  G_CALLBACK (chat_window_show_contacts_toggled_cb),
 			  window);
-	g_signal_connect (priv->m_conv_close,
-			  "activate",
-			  G_CALLBACK (chat_window_close_activate_cb),
-			  window);
-	g_signal_connect (priv->m_edit_cut,
-			  "activate",
-			  G_CALLBACK (chat_window_cut_activate_cb),
-			  window);
-	g_signal_connect (priv->m_edit_copy,
-			  "activate",
-			  G_CALLBACK (chat_window_copy_activate_cb),
-			  window);
-	g_signal_connect (priv->m_edit_paste,
-			  "activate",
-			  G_CALLBACK (chat_window_paste_activate_cb),
-			  window);
-	g_signal_connect_swapped (priv->m_tabs_prev,
+
+	g_signal_connect_swapped (priv->menu_tabs_prev,
 			          "activate",
 			          G_CALLBACK (gtk_notebook_prev_page),
 				  priv->notebook);
-	g_signal_connect_swapped (priv->m_tabs_next,
+	g_signal_connect_swapped (priv->menu_tabs_next,
 			          "activate",
 			          G_CALLBACK (gtk_notebook_next_page),
 			          priv->notebook);
-	g_signal_connect (priv->m_tabs_left,
-			  "activate",
-			  G_CALLBACK (chat_window_tab_left_activate_cb),
-			  window);
-	g_signal_connect (priv->m_tabs_right,
-			  "activate",
-			  G_CALLBACK (chat_window_tab_right_activate_cb),
-			  window);
-	g_signal_connect (priv->m_tabs_detach,
-			  "activate",
-			  G_CALLBACK (chat_window_detach_activate_cb),
-			  window);
 	g_signal_connect (priv->dialog,
 			  "delete_event",
 			  G_CALLBACK (chat_window_delete_event_cb),
 			  window);
+
 	g_signal_connect_after (priv->notebook,
 				"switch_page",
 				G_CALLBACK (chat_window_switch_page_cb),
@@ -355,7 +340,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 			  "disconnected",
 			  G_CALLBACK (chat_window_disconnected_cb),
 			  window);
-
+	
+	/* Set up drag and drop */
 	gtk_drag_dest_set (GTK_WIDGET (priv->notebook), 
 			   GTK_DEST_DEFAULT_ALL,
 			   drop_types, 
@@ -369,14 +355,19 @@ gossip_chat_window_init (GossipChatWindow *window)
 
 	chat_windows = g_list_prepend (chat_windows, window);
 
+	/* Set up private details */
 	priv->chats = NULL;
 	priv->chats_new_msg = NULL;
 	priv->chats_composing = NULL;
 	priv->current_chat = NULL;
+
+	priv->tooltips = gtk_tooltips_new ();
 }
 
-/* Returns the window to open a new tab in if there is only one window visble */
-/* Otherwise, returns NULL indicating that a new window should be added       */
+/* Returns the window to open a new tab in if there is only one window
+ * visble, otherwise, returns NULL indicating that a new window should
+ * be added.
+ */
 GossipChatWindow *
 gossip_chat_window_get_default (void)
 {
@@ -650,7 +641,7 @@ chat_window_update_menu (GossipChatWindow *window)
 	gint                  num_pages;
 	gint                  page_num;
 	
-	/* group chat menu details */
+	/* Group chat menu details */
 	gboolean              is_group_chat;
 	gboolean              show_contacts;
 
@@ -663,17 +654,17 @@ chat_window_update_menu (GossipChatWindow *window)
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gtk_widget_set_sensitive (priv->m_tabs_next, !last_page);
-	gtk_widget_set_sensitive (priv->m_tabs_prev, !first_page);
-	gtk_widget_set_sensitive (priv->m_tabs_detach, num_pages > 1);
-	gtk_widget_set_sensitive (priv->m_tabs_left, !first_page);
-	gtk_widget_set_sensitive (priv->m_tabs_right, !last_page);
-	gtk_widget_set_sensitive (priv->m_conv_info, contact != NULL);
+	gtk_widget_set_sensitive (priv->menu_tabs_next, !last_page);
+	gtk_widget_set_sensitive (priv->menu_tabs_prev, !first_page);
+	gtk_widget_set_sensitive (priv->menu_tabs_detach, num_pages > 1);
+	gtk_widget_set_sensitive (priv->menu_tabs_left, !first_page);
+	gtk_widget_set_sensitive (priv->menu_tabs_right, !last_page);
+	gtk_widget_set_sensitive (priv->menu_conv_info, contact != NULL);
 
 	is_group_chat = gossip_chat_get_group_chat (priv->current_chat);
 	if (is_group_chat) {
-		gtk_widget_show (priv->s_conv_show_contacts);
-		gtk_widget_show (priv->m_conv_show_contacts);
+		gtk_widget_show (priv->menu_conv_show_contacts_sep);
+		gtk_widget_show (priv->menu_conv_show_contacts);
 
 		show_contacts = gossip_chat_get_show_contacts (priv->current_chat);
 
@@ -685,29 +676,29 @@ chat_window_update_menu (GossipChatWindow *window)
 		   or more group chat windows where showing contacts
 		   doesn't do anything. */
 
-		g_signal_handlers_block_by_func (priv->m_conv_show_contacts, 
+		g_signal_handlers_block_by_func (priv->menu_conv_show_contacts, 
 						 chat_window_show_contacts_toggled_cb, 
 						 window);
 		
-		g_object_set (priv->m_conv_show_contacts, 
+		g_object_set (priv->menu_conv_show_contacts, 
 			      "active", show_contacts,
 			      NULL);
 
-		g_signal_handlers_unblock_by_func (priv->m_conv_show_contacts, 
+		g_signal_handlers_unblock_by_func (priv->menu_conv_show_contacts, 
 						   chat_window_show_contacts_toggled_cb,
 						   window);
 	} else {
 		GossipContactType type;
 
-		gtk_widget_hide (priv->s_conv_show_contacts);
-		gtk_widget_hide (priv->m_conv_show_contacts);
+		gtk_widget_hide (priv->menu_conv_show_contacts_sep);
+		gtk_widget_hide (priv->menu_conv_show_contacts);
 
 		type = gossip_contact_get_type (contact);
 		if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST &&
 		    type != GOSSIP_CONTACT_TYPE_USER) {
-			gtk_widget_show (priv->m_conv_add_contact);
+			gtk_widget_show (priv->menu_conv_add_contact);
 		} else {
-			gtk_widget_hide (priv->m_conv_add_contact);
+			gtk_widget_hide (priv->menu_conv_add_contact);
 		}
 	}
 
@@ -750,20 +741,43 @@ chat_window_invite_menu_setup (GossipChatWindow *window)
 	}
 
 	if (menu) {
-		gtk_widget_show (priv->s_conv_invite_contacts);
-		gtk_widget_show (priv->m_conv_invite_contacts);
+		gtk_widget_show (priv->menu_conv_invite_contacts_sep);
+		gtk_widget_show (priv->menu_conv_invite_contacts);
 
 		gtk_widget_show_all (menu);
 		
-		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->m_conv_invite_contacts),
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_conv_invite_contacts),
 					   menu);
 
 	} else {
-		gtk_menu_item_remove_submenu (GTK_MENU_ITEM (priv->m_conv_invite_contacts));
+		gtk_menu_item_remove_submenu (GTK_MENU_ITEM (priv->menu_conv_invite_contacts));
 
-		gtk_widget_hide (priv->s_conv_invite_contacts);
-		gtk_widget_hide (priv->m_conv_invite_contacts);
+		gtk_widget_hide (priv->menu_conv_invite_contacts_sep);
+		gtk_widget_hide (priv->menu_conv_invite_contacts);
 	}
+}
+
+static void
+chat_window_insert_smiley_activate_cb (GtkWidget        *menuitem, 
+				       GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GossipChat           *chat;
+	GtkTextBuffer        *buffer;
+	GtkTextIter           iter;
+	const gchar          *smiley;
+
+	priv = GET_PRIV (window);
+
+	chat = priv->current_chat;
+	
+	smiley = g_object_get_data (G_OBJECT (menuitem), "smiley_text");
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer, &iter, 
+				smiley, 
+				g_utf8_strlen (smiley, -1));
 }
 
 static void
@@ -839,7 +853,7 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 		log_exists = FALSE;
 	}
 
-	gtk_widget_set_sensitive (priv->m_conv_log, log_exists);
+	gtk_widget_set_sensitive (priv->menu_conv_log, log_exists);
 }
 
 static void
@@ -853,7 +867,7 @@ chat_window_show_contacts_toggled_cb (GtkWidget        *menuitem,
 
 	g_return_if_fail (priv->current_chat != NULL);
 	
-	show = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (priv->m_conv_show_contacts)); 
+	show = gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM (priv->menu_conv_show_contacts)); 
 	gossip_chat_set_show_contacts (priv->current_chat, show);
 }
 
@@ -868,6 +882,43 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 	g_return_if_fail (priv->current_chat != NULL);
 
 	gossip_chat_window_remove_chat (window, priv->current_chat);
+}
+
+static void
+chat_window_edit_activate_cb (GtkWidget        *menuitem,
+			      GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GossipChat           *chat;
+	GtkClipboard         *clipboard;
+	GtkTextBuffer        *buffer;
+
+	priv = GET_PRIV (window);
+
+	g_return_if_fail (priv->current_chat != NULL);
+
+	chat = priv->current_chat;
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	if (gtk_text_buffer_get_selection_bounds (buffer, NULL, NULL)) {
+		gtk_widget_set_sensitive (priv->menu_edit_copy, TRUE);
+		gtk_widget_set_sensitive (priv->menu_edit_cut, TRUE);
+	} else {
+		gtk_widget_set_sensitive (priv->menu_edit_cut, FALSE);
+
+		if (gossip_chat_view_get_selection_bounds (chat->view, NULL, NULL)) {
+			gtk_widget_set_sensitive (priv->menu_edit_copy, TRUE);
+		} else {
+			gtk_widget_set_sensitive (priv->menu_edit_copy, FALSE);
+		}
+	}
+
+	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
+	if (gtk_clipboard_wait_is_text_available (clipboard)) {
+		gtk_widget_set_sensitive (priv->menu_edit_paste, TRUE);
+	} else {
+		gtk_widget_set_sensitive (priv->menu_edit_paste, FALSE);
+	}
 }
 
 static void
@@ -910,7 +961,7 @@ chat_window_paste_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
-chat_window_tab_left_activate_cb (GtkWidget        *menuitem,
+chat_window_tabs_left_activate_cb (GtkWidget        *menuitem,
 				  GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
@@ -936,7 +987,7 @@ chat_window_tab_left_activate_cb (GtkWidget        *menuitem,
 }
 
 static void
-chat_window_tab_right_activate_cb (GtkWidget        *menuitem,
+chat_window_tabs_right_activate_cb (GtkWidget        *menuitem,
 				   GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;

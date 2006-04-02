@@ -1,3 +1,14 @@
+2006-04-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.[ch]:
+	* src/gossip-chat-window.c: 
+	* src/gossip-chat.c:
+	* ui/chat.glade: Added a smiley menu item and context menu item so
+	it is easy for users to select the smiley they want to use instead
+	of remember the key sequence. Fixed the Copy, Cut and Paste items
+	to only be available when usable (e.g. when text is highlighted)
+	and cleaned up the code in places.
+
 2006-03-31  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-notify.c: Add a "send message" button to online

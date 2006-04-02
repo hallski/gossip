@@ -50,9 +50,23 @@ struct _GossipSpell {
 
 static void spell_free (GossipSpell *spell);
 
-#define ISO_CODES_DATADIR ISO_CODES_PREFIX"/share/xml/iso-codes"
+#define ISO_CODES_DATADIR    ISO_CODES_PREFIX"/share/xml/iso-codes"
 #define ISO_CODES_LOCALESDIR ISO_CODES_PREFIX"/share/locale"
 
+static void
+spell_free (GossipSpell *spell)
+{
+	g_return_if_fail (spell != NULL);
+	
+	g_list_foreach (spell->languages, (GFunc)g_free, NULL);
+	g_list_free (spell->languages);
+	
+	if (spell->lang_names) {
+		g_hash_table_destroy (spell->lang_names);
+	}
+
+	g_free (spell);
+}	
 
 GossipSpell * 
 gossip_spell_new (GList *languages)
@@ -135,21 +149,6 @@ gossip_spell_new (GList *languages)
 	return spell;
 #endif /* HAVE_ASPELL */
 }
-
-static void
-spell_free (GossipSpell *spell)
-{
-	g_return_if_fail (spell != NULL);
-	
-	g_list_foreach (spell->languages, (GFunc)g_free, NULL);
-	g_list_free (spell->languages);
-	
-	if (spell->lang_names) {
-		g_hash_table_destroy (spell->lang_names);
-	}
-
-	g_free (spell);
-}	
 
 GossipSpell *
 gossip_spell_ref (GossipSpell *spell)
@@ -292,7 +291,7 @@ gossip_spell_lang_table_init (GossipSpell *spell)
 		g_error_free (err);
 	}
 }
-#endif
+#endif /* HAVE_ASPELL */
 
 const char *
 gossip_spell_get_language_name (GossipSpell *spell, const char *lang)
@@ -320,7 +319,7 @@ gossip_spell_get_language_name (GossipSpell *spell, const char *lang)
 		return dgettext ("iso_639", lang_name);
 	}
 	
-#endif
+#endif /* HAVE_ASPELL */
 	return "";
 }
 
@@ -462,9 +461,9 @@ gossip_spell_suggestions (GossipSpell *spell,
 		suggestions = (AspellWordList*) aspell_speller_suggest (lang->spell_checker,
 								word, strlen (word));
 
-	elements = aspell_word_list_elements (suggestions);
-	
-	while ((next = aspell_string_enumeration_next (elements)) != NULL) {
+		elements = aspell_word_list_elements (suggestions);
+		
+		while ((next = aspell_string_enumeration_next (elements)) != NULL) {
 			l2 = g_list_append (l2, g_strdup (next));
 		}
 	}

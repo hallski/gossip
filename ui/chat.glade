@@ -143,7 +143,7 @@
 		      <accelerator key="L" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image10">
+			<widget class="GtkImage" id="image22">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-clear</property>
 			  <property name="icon_size">1</property>
@@ -168,7 +168,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image11">
+			<widget class="GtkImage" id="image23">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -189,7 +189,7 @@
 		      <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image12">
+			<widget class="GtkImage" id="image24">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -255,12 +255,26 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="redigera1">
+	    <widget class="GtkMenuItem" id="menu_edit">
 	      <property name="visible">True</property>
 	      <property name="stock_item">GNOMEUIINFO_MENU_EDIT_TREE</property>
 
 	      <child>
-		<widget class="GtkMenu" id="redigera1_menu">
+		<widget class="GtkMenu" id="menu_edit_menu">
+
+		  <child>
+		    <widget class="GtkMenuItem" id="menu_edit_insert_smiley">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Insert _Smiley</property>
+		      <property name="use_underline">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="separator9">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="menu_edit_cut">

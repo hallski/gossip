@@ -409,23 +409,61 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 }
 
 static void
+chat_insert_smiley_activate_cb (GtkWidget  *menuitem, 
+				GossipChat *chat)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	const gchar   *smiley;
+
+	smiley = g_object_get_data (G_OBJECT (menuitem), "smiley_text");
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer, &iter, 
+				smiley, 
+				g_utf8_strlen (smiley, -1));
+}
+
+static void
 chat_text_populate_popup_cb (GtkTextView *view,
 			     GtkMenu     *menu,
 			     GossipChat  *chat)
 {
-	GtkTextBuffer      *buffer;
-	GtkTextTagTable    *table;
-	GtkTextTag         *tag;
-	gint                x, y;
-	GtkTextIter         iter, start, end;
-	GtkWidget          *item;
-	gchar              *str = NULL;
-	GossipChatSpell    *chat_spell;
+	GtkTextBuffer   *buffer;
+	GtkTextTagTable *table;
+	GtkTextTag      *tag;
+	gint             x, y;
+	GtkTextIter      iter, start, end;
+	GtkWidget       *item;
+	gchar           *str = NULL;
+	GossipChatSpell *chat_spell;
+	GtkWidget       *smiley_menu;
+
+	/*
+	 * Add the emoticon menu.
+	 */
+
+	item = gtk_separator_menu_item_new ();
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+	
+	item = gtk_menu_item_new_with_mnemonic (_("Insert Smiley"));
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+
+	smiley_menu = gossip_chat_view_get_smiley_menu (
+		G_CALLBACK (chat_insert_smiley_activate_cb), 
+		chat);
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), smiley_menu);
+
+	/*
+	 * Add the spell check menu item.
+	 */
 
 	buffer = gtk_text_view_get_buffer (view);
 	table = gtk_text_buffer_get_tag_table (buffer);
-	
-	/* handle misspelled tags */
+
 	tag = gtk_text_tag_table_lookup (table, "misspelled");
 	
 	gtk_widget_get_pointer (GTK_WIDGET (view), &x, &y);
@@ -705,7 +743,7 @@ gossip_chat_scroll_down (GossipChat *chat)
 void
 gossip_chat_cut (GossipChat *chat)
 {
-	GtkTextBuffer  *buffer;
+	GtkTextBuffer *buffer;
 	
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
@@ -722,7 +760,7 @@ gossip_chat_cut (GossipChat *chat)
 void
 gossip_chat_copy (GossipChat *chat)
 {
-	GtkTextBuffer         *buffer;
+	GtkTextBuffer *buffer;
 	
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
@@ -744,8 +782,8 @@ gossip_chat_copy (GossipChat *chat)
 void
 gossip_chat_paste (GossipChat *chat)
 {
-	GtkTextBuffer         *buffer;
-	GtkClipboard          *clipboard;
+	GtkTextBuffer *buffer;
+	GtkClipboard  *clipboard;
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 

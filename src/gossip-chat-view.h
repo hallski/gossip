@@ -84,20 +84,26 @@ void            gossip_chat_view_append_message_from_self  (GossipChatView *view
 void            gossip_chat_view_append_message_from_other (GossipChatView *view,
 							    GossipMessage  *msg,
 							    GossipContact  *my_contact);
-void            gossip_chat_view_append_invite             (GossipChatView *view,
-							    GossipMessage  *message);
 void            gossip_chat_view_append_event              (GossipChatView *view,
 							    const gchar    *str);
-void            gossip_chat_view_set_margin                (GossipChatView *view,
-							    gint            margin);
-void            gossip_chat_view_clear                     (GossipChatView *view);
+void            gossip_chat_view_append_invite             (GossipChatView *view,
+							    GossipMessage  *message);
+/* void            gossip_chat_view_set_margin                (GossipChatView *view, */
+/* 							    gint            margin); */
 void            gossip_chat_view_scroll_down               (GossipChatView *view);
+
 gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view,
 							    GtkTextIter    *start,
 							    GtkTextIter    *end);
+void            gossip_chat_view_clear                     (GossipChatView *view);
 void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
+
+gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
 void            gossip_chat_view_set_irc_style             (GossipChatView *view,
 							    gboolean        irc_style);
-gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
+GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smiley);
+const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smiley);
+GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,
+							    gpointer        user_data);
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

@@ -205,7 +205,6 @@ static void       chat_view_clear_view_cb              (GtkMenuItem             
 static void       chat_view_insert_text_with_emoticons (GtkTextBuffer            *buf,
 							GtkTextIter              *iter,
 							const gchar              *str);
-static GdkPixbuf *chat_view_get_smiley                 (GossipSmiley              smiley);
 static gboolean   chat_view_is_scrolled_down           (GossipChatView           *view);
 static void       chat_view_invite_accept_cb           (GtkWidget                *button,
 							gpointer                  user_data);
@@ -572,6 +571,10 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 	}
 
 	while (*str) {
+		GdkPixbuf   *pixbuf;
+		gint         len;
+		const gchar *start;
+
 		for (i = 0; i < num_smileys; i++) {
 			smileys[i].index = 0;
 		}
@@ -580,6 +583,7 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 		submatch = -1;
 		p = str;
 		prev_c = 0;
+
 		while (*p) {
 			c = g_utf8_get_char (p);
 
@@ -610,55 +614,25 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 			p = g_utf8_next_char (p);
 		}
 
-		if (match != -1) {
-			GdkPixbuf   *pixbuf;
-			gint         len;
-			const gchar *start;
-
-			start = p - strlen (smileys[match].pattern);
-
-			if (start > str) {
-				len = start - str;
-				gtk_text_buffer_insert (buf, iter, str, len);
-			}
-
-			pixbuf = chat_view_get_smiley (smileys[match].smiley);
-			gtk_text_buffer_insert_pixbuf (buf, iter, pixbuf);
-/* 			g_object_unref (pixbuf); */
-
-			gtk_text_buffer_insert (buf, iter, " ", 1);
-		} else {
+		if (match == -1) {
 			gtk_text_buffer_insert (buf, iter, str, -1);
 			return;
 		}
 
+		start = p - strlen (smileys[match].pattern);
+		
+		if (start > str) {
+			len = start - str;
+			gtk_text_buffer_insert (buf, iter, str, len);
+		}
+		
+		pixbuf = gossip_chat_view_get_smiley_image (smileys[match].smiley);
+		gtk_text_buffer_insert_pixbuf (buf, iter, pixbuf);
+		
+		gtk_text_buffer_insert (buf, iter, " ", 1);
+
 		str = g_utf8_find_next_char (p, NULL);
 	}
-}
-
-static GdkPixbuf *
-chat_view_get_smiley (GossipSmiley smiley)
-{
-	static GdkPixbuf *pixbufs[GOSSIP_SMILEY_COUNT];
-	static gboolean   inited = FALSE;
-
-	if (!inited) {
-		gint i;
-
-		for (i = 0; i < GOSSIP_SMILEY_COUNT; i++) {
-			pixbufs[i] = gossip_pixbuf_from_smiley (i, GTK_ICON_SIZE_MENU);
-		}
-
-		inited = TRUE;
-	}
-
-	return pixbufs[smiley];
-}
-
-GossipChatView *
-gossip_chat_view_new (void)
-{
-	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
 }
 
 static gboolean
@@ -678,29 +652,6 @@ chat_view_is_scrolled_down (GossipChatView *view)
 	}
 
 	return TRUE;
-}
-
-void
-gossip_chat_view_scroll_down (GossipChatView *view)
-{
-	GtkTextBuffer *buffer;
-	GtkTextIter    iter;
-	GtkTextMark   *mark;
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-	gtk_text_buffer_get_end_iter (buffer, &iter);
-	mark = gtk_text_buffer_create_mark (buffer,
-					    NULL,
-					    &iter,
-					    FALSE);
-
-	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-				      mark,
-				      0.0,
-				      FALSE,
-				      0,
-				      0);
 }
 
 static void
@@ -745,101 +696,6 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	if (!gtk_text_iter_equal (&top, &bottom)) {
 		gtk_text_buffer_delete (priv->buffer, &top, &bottom);
 	}
-}
-
-void
-gossip_chat_view_append_invite (GossipChatView *view,
-				GossipMessage  *message)
-{
-	GossipChatViewPriv *priv;
-	GossipContact      *sender;
-	const gchar        *invite;
-	const gchar        *body;
-	GtkTextChildAnchor *anchor;
-	GtkTextIter         iter;
-	GtkWidget          *widget;
-	const gchar        *used_msg;
-	const gchar        *used_invite;
-	gchar              *str;
-	gboolean            bottom;
-	const gchar        *tag;
-
-	priv = GET_PRIV (view);
-
-	if (priv->irc_style) {
-		tag = "irc-invite";
-	} else {
-		tag = "fancy-invite";
-	}
-	
-	bottom = chat_view_is_scrolled_down (view);
-
-	sender = gossip_message_get_sender (message);
-	invite = gossip_message_get_invite (message);
-	body = gossip_message_get_body (message);
-		
-	chat_view_maybe_append_date_and_time (view, message);
-
-	if (body && body[0]) {
-		used_msg = body;
-	} else {
-		used_msg = _("You have been invited to join a chat conference.");
-	}
-
-	/* Don't include the invite in the chat window if it is part of the
-	 * actual request - some chat clients send this and it looks weird
-	 * repeated.
-	 */
-	if (strstr (body, invite)) {
-		used_invite = NULL;
-	} else {
-		used_invite = invite;
-	}
-
-	str = g_strdup_printf ("\n%s\n%s%s%s%s\n",
-			       used_msg,
-			       used_invite ? "(" : "",
-			       used_invite ? used_invite : "",
-			       used_invite ? ")" : "",
-			       used_invite ? "\n" : "");
-	chat_view_append_text (view, str, tag);
-	g_free (str);
-
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-	anchor = gtk_text_buffer_create_child_anchor (priv->buffer, &iter);
-
-	widget = gtk_button_new_with_label (_("Accept"));
-	g_object_set_data_full (G_OBJECT (widget), "invite",
-				g_strdup (invite), 
-				g_free);
- 	g_object_set_data_full (G_OBJECT (widget), "contact",
- 				g_object_ref (sender), 
-				g_object_unref);
-
-	g_signal_connect (widget,
-			  "clicked",
-			  G_CALLBACK (chat_view_invite_accept_cb),
-			  NULL);
-
-	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
-					   widget,
-					   anchor);
-
-	gtk_widget_show_all (widget);
-
-	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
-	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
-						  &iter,
-						  "\n\n",
-						  2,
-						  tag,
-						  NULL);
-
-	if (bottom) {
-		gossip_chat_view_scroll_down (view);
-	}
-
-	priv->last_block_type = BLOCK_TYPE_INVITE;
 }
 
 static void
@@ -1337,6 +1193,61 @@ chat_view_append_fancy_message (GossipChatView *view,
 	chat_view_append_text (view, body, tag);
 }
 
+static void
+chat_view_invite_accept_cb (GtkWidget *button,
+			    gpointer   user_data)
+{
+	GossipSession          *session;
+	GossipAccount          *account;
+	GossipContact          *contact;
+	GossipChatroomProvider *provider;
+	const gchar            *nickname;
+	const gchar            *invite;
+
+	invite = g_object_get_data (G_OBJECT (button), "invite");
+	contact = g_object_get_data (G_OBJECT (button), "contact");
+
+	gtk_widget_set_sensitive (button, FALSE);
+
+	session = gossip_app_get_session ();
+	account = gossip_contact_get_account (contact);
+	provider = gossip_session_get_chatroom_provider (session, account);
+	nickname = gossip_session_get_nickname (session, account);
+
+	gossip_chatroom_provider_invite_accept (provider,
+						chat_view_invite_join_cb,
+						nickname,
+						invite);
+}
+
+static void
+chat_view_invite_join_cb (GossipChatroomProvider   *provider,
+			  GossipChatroomJoinResult  result,
+			  gint                      id,
+			  gpointer                  user_data)
+{
+	gossip_group_chat_show (provider, id);
+}
+
+static void
+theme_manager_theme_changed_cb (GossipThemeManager *manager,
+				GossipChatView     *view)
+{
+	GossipChatViewPriv *priv;
+	
+	priv = GET_PRIV (view);
+	
+	priv->last_block_type = BLOCK_TYPE_NONE;
+	
+	gossip_theme_manager_apply (manager, view);
+}
+
+GossipChatView *
+gossip_chat_view_new (void)
+{
+	return g_object_new (GOSSIP_TYPE_CHAT_VIEW, NULL);
+}
+
 /* The name is optional, if NULL, the sender for msg is used. */
 void
 gossip_chat_view_append_message_from_self (GossipChatView *view,
@@ -1495,23 +1406,121 @@ gossip_chat_view_append_event (GossipChatView *view,
 }
 
 void
-gossip_chat_view_clear (GossipChatView *view)
+gossip_chat_view_append_invite (GossipChatView *view,
+				GossipMessage  *message)
 {
-	GtkTextBuffer      *buffer;
 	GossipChatViewPriv *priv;
+	GossipContact      *sender;
+	const gchar        *invite;
+	const gchar        *body;
+	GtkTextChildAnchor *anchor;
+	GtkTextIter         iter;
+	GtkWidget          *widget;
+	const gchar        *used_msg;
+	const gchar        *used_invite;
+	gchar              *str;
+	gboolean            bottom;
+	const gchar        *tag;
 
-	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	priv = GET_PRIV (view);
+
+	if (priv->irc_style) {
+		tag = "irc-invite";
+	} else {
+		tag = "fancy-invite";
+	}
+	
+	bottom = chat_view_is_scrolled_down (view);
+
+	sender = gossip_message_get_sender (message);
+	invite = gossip_message_get_invite (message);
+	body = gossip_message_get_body (message);
+		
+	chat_view_maybe_append_date_and_time (view, message);
+
+	if (body && body[0]) {
+		used_msg = body;
+	} else {
+		used_msg = _("You have been invited to join a chat conference.");
+	}
+
+	/* Don't include the invite in the chat window if it is part of the
+	 * actual request - some chat clients send this and it looks weird
+	 * repeated.
+	 */
+	if (strstr (body, invite)) {
+		used_invite = NULL;
+	} else {
+		used_invite = invite;
+	}
+
+	str = g_strdup_printf ("\n%s\n%s%s%s%s\n",
+			       used_msg,
+			       used_invite ? "(" : "",
+			       used_invite ? used_invite : "",
+			       used_invite ? ")" : "",
+			       used_invite ? "\n" : "");
+	chat_view_append_text (view, str, tag);
+	g_free (str);
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+	anchor = gtk_text_buffer_create_child_anchor (priv->buffer, &iter);
+
+	widget = gtk_button_new_with_label (_("Accept"));
+	g_object_set_data_full (G_OBJECT (widget), "invite",
+				g_strdup (invite), 
+				g_free);
+ 	g_object_set_data_full (G_OBJECT (widget), "contact",
+ 				g_object_ref (sender), 
+				g_object_unref);
+
+	g_signal_connect (widget,
+			  "clicked",
+			  G_CALLBACK (chat_view_invite_accept_cb),
+			  NULL);
+
+	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
+					   widget,
+					   anchor);
+
+	gtk_widget_show_all (widget);
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  "\n\n",
+						  2,
+						  tag,
+						  NULL);
+
+	if (bottom) {
+		gossip_chat_view_scroll_down (view);
+	}
+
+	priv->last_block_type = BLOCK_TYPE_INVITE;
+}
+
+void
+gossip_chat_view_scroll_down (GossipChatView *view)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	GtkTextMark   *mark;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-	gtk_text_buffer_set_text (buffer, "", -1);
 
-	/* We set these back to the initial values so we get
-	 * timestamps when clearing the window to know when
-	 * conversations start. */
-	priv = GET_PRIV (view);
-	
-	priv->last_block_type = BLOCK_TYPE_NONE;
-	priv->last_timestamp = 0;
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	mark = gtk_text_buffer_create_mark (buffer,
+					    NULL,
+					    &iter,
+					    FALSE);
+
+	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+				      mark,
+				      0.0,
+				      FALSE,
+				      0,
+				      0);
 }
 
 gboolean
@@ -1529,6 +1538,27 @@ gossip_chat_view_get_selection_bounds (GossipChatView *view,
 }
 
 void
+gossip_chat_view_clear (GossipChatView *view)
+{
+	GtkTextBuffer      *buffer;
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	gtk_text_buffer_set_text (buffer, "", -1);
+
+	/* We set these back to the initial values so we get
+	 * timestamps when clearing the window to know when
+	 * conversations start.
+	 */
+	priv = GET_PRIV (view);
+	
+	priv->last_block_type = BLOCK_TYPE_NONE;
+	priv->last_timestamp = 0;
+}
+
+void
 gossip_chat_view_copy_clipboard (GossipChatView *view)
 {
 	GtkTextBuffer *buffer;
@@ -1542,53 +1572,16 @@ gossip_chat_view_copy_clipboard (GossipChatView *view)
 	gtk_text_buffer_copy_clipboard (buffer, clipboard);
 }
 
-static void
-chat_view_invite_accept_cb (GtkWidget *button,
-			    gpointer   user_data)
-{
-	GossipSession          *session;
-	GossipAccount          *account;
-	GossipContact          *contact;
-	GossipChatroomProvider *provider;
-	const gchar            *nickname;
-	const gchar            *invite;
-
-	invite = g_object_get_data (G_OBJECT (button), "invite");
-	contact = g_object_get_data (G_OBJECT (button), "contact");
-
-	gtk_widget_set_sensitive (button, FALSE);
-
-	session = gossip_app_get_session ();
-	account = gossip_contact_get_account (contact);
-	provider = gossip_session_get_chatroom_provider (session, account);
-	nickname = gossip_session_get_nickname (session, account);
-
-	gossip_chatroom_provider_invite_accept (provider,
-						chat_view_invite_join_cb,
-						nickname,
-						invite);
-}
-
-static void
-chat_view_invite_join_cb (GossipChatroomProvider   *provider,
-			  GossipChatroomJoinResult  result,
-			  gint                      id,
-			  gpointer                  user_data)
-{
-	gossip_group_chat_show (provider, id);
-}
-
-static void
-theme_manager_theme_changed_cb (GossipThemeManager *manager,
-				GossipChatView     *view)
+gboolean
+gossip_chat_view_get_irc_style (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
 	
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
+
 	priv = GET_PRIV (view);
-	
-	priv->last_block_type = BLOCK_TYPE_NONE;
-	
-	gossip_theme_manager_apply (manager, view);
+
+	return priv->irc_style;
 }
 
 void
@@ -1616,14 +1609,93 @@ gossip_chat_view_set_irc_style (GossipChatView *view,
 		      NULL);
 }
 
-gboolean
-gossip_chat_view_get_irc_style (GossipChatView *view)
+GdkPixbuf *
+gossip_chat_view_get_smiley_image (GossipSmiley smiley)
 {
-	GossipChatViewPriv *priv;
+	static GdkPixbuf *pixbufs[GOSSIP_SMILEY_COUNT];
+	static gboolean   inited = FALSE;
+
+	if (!inited) {
+		gint i;
+
+		for (i = 0; i < GOSSIP_SMILEY_COUNT; i++) {
+			pixbufs[i] = gossip_pixbuf_from_smiley (i, GTK_ICON_SIZE_MENU);
+		}
+
+		inited = TRUE;
+	}
+
+	return pixbufs[smiley];
+}
+
+const gchar *
+gossip_chat_view_get_smiley_text (GossipSmiley smiley)
+{
+	gint i;
 	
-	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
+	for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
+		if (smileys[i].smiley != smiley) {
+			continue;
+		}
 
-	priv = GET_PRIV (view);
+		return smileys[i].pattern;
+	}
+	
+	return NULL;
+}
 
-	return priv->irc_style;
+GtkWidget *
+gossip_chat_view_get_smiley_menu (GCallback callback, 
+				  gpointer  user_data)
+{
+	GtkWidget *menu;
+	gint       x;
+	gint       y;
+	gint       i;
+
+	/* Set up smiley menu */
+	menu = gtk_menu_new ();
+
+	for (i = 0, x = 0, y = 0; i < GOSSIP_SMILEY_COUNT; i++) {
+		GtkWidget   *item;
+		GtkWidget   *image;
+		GdkPixbuf   *pixbuf;
+		GtkTooltips *tooltips;
+		const gchar *smiley_text;
+
+		pixbuf = gossip_chat_view_get_smiley_image (i);
+		if (!pixbuf) {
+			continue;
+		}
+
+		image = gtk_image_new_from_pixbuf (pixbuf);
+
+		item = gtk_image_menu_item_new_with_label ("");
+		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+
+		gtk_menu_attach (GTK_MENU (menu), item,
+				 x, x + 1, y, y + 1);
+
+		smiley_text = gossip_chat_view_get_smiley_text (i);
+
+		tooltips = gtk_tooltips_new ();
+		gtk_tooltips_set_tip (tooltips, 
+				      item, 
+				      smiley_text, 
+				      NULL);
+
+		g_object_set_data  (G_OBJECT (item), "smiley_text", (gpointer) smiley_text);
+		g_signal_connect (item, "activate", callback, user_data);
+		
+		if (x > 3) {
+			y++;
+			x = 0;
+		} else {
+			x++;
+		}
+	}
+
+	gtk_widget_show_all (menu);
+
+	return menu;
 }
