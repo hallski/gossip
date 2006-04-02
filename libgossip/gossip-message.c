@@ -32,6 +32,7 @@ struct _GossipMessagePriv {
 	
 	GossipContact     *sender;
 
+	gchar             *subject;
 	gchar             *body;
 	gchar             *thread;
 
@@ -62,6 +63,7 @@ enum {
 	PROP_SENDER,
 	PROP_TYPE,
 	PROP_RESOURCE,
+	PROP_SUBJECT,
 	PROP_BODY,
 	PROP_THREAD,
 	PROP_TIMESTAMP,
@@ -142,6 +144,14 @@ gossip_message_class_init (GossipMessageClass *class)
 							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_SUBJECT,
+					 g_param_spec_string ("subject",
+							      "Subject",
+							      "The message subject",
+							      NULL,
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_BODY,
 					 g_param_spec_string ("body",
 							      "Message Body",
@@ -187,6 +197,7 @@ gossip_message_init (GossipMessage *message)
 	priv->recipient         = NULL;
 	priv->sender            = NULL;
 	priv->resource          = NULL;
+	priv->subject           = NULL;
 	priv->body              = NULL;
 	priv->thread            = NULL;
 	priv->timestamp         = gossip_time_get_current ();
@@ -238,6 +249,9 @@ message_get_property (GObject    *object,
 	case PROP_RESOURCE:
 		g_value_set_string (value, priv->resource);
 		break;
+	case PROP_SUBJECT:
+		g_value_set_string (value, priv->subject);
+		break;
 	case PROP_BODY:
 		g_value_set_string (value, priv->body);
 		break;
@@ -278,6 +292,10 @@ message_set_property (GObject      *object,
 	case PROP_RESOURCE:
 		gossip_message_set_explicit_resource (GOSSIP_MESSAGE (object),
 						      g_value_get_string (value));
+		break;
+	case PROP_SUBJECT:
+		gossip_message_set_subject (GOSSIP_MESSAGE (object),
+					    g_value_get_string (value));
 		break;
 	case PROP_BODY:
 		gossip_message_set_body (GOSSIP_MESSAGE (object),
@@ -405,6 +423,36 @@ gossip_message_set_sender (GossipMessage *message, GossipContact *contact)
 	}
 	
 	priv->sender = g_object_ref (contact);
+}
+
+const gchar *
+gossip_message_get_subject (GossipMessage *message)
+{
+	GossipMessagePriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
+
+	priv = GET_PRIV (message);
+
+	return priv->subject;
+}
+
+void       
+gossip_message_set_subject (GossipMessage *message, const gchar *subject)
+{
+	GossipMessagePriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+	
+	priv = GET_PRIV (message);
+
+	g_free (priv->subject);
+
+	if (subject) {
+		priv->subject = g_strdup (subject);
+	} else {
+		priv->subject = NULL;
+	}
 }
 
 const gchar *

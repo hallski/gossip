@@ -63,6 +63,9 @@ void              gossip_message_set_explicit_resource   (GossipMessage     *mes
 GossipContact *   gossip_message_get_sender              (GossipMessage     *message);
 void              gossip_message_set_sender              (GossipMessage     *message,
 							  GossipContact     *contact);
+const gchar *     gossip_message_get_subject             (GossipMessage     *message);
+void              gossip_message_set_subject             (GossipMessage     *message,
+							  const gchar       *subject);
 const gchar *     gossip_message_get_body                (GossipMessage     *message);
 void              gossip_message_set_body                (GossipMessage     *message,
 							  const gchar       *body);

@@ -848,6 +848,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	GossipContact         *sender;
 	GossipLog             *log;
 	const gchar           *resource;
+	const gchar           *subject;
 	const gchar           *invite;
 	
         g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
@@ -877,6 +878,15 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	log = gossip_log_get (priv->contact);
 	gossip_log_message (log, message, TRUE);
+
+	subject = gossip_message_get_subject (message);
+ 	if (subject) {
+		gchar *str;
+
+		str = g_strdup_printf ("Subject: %s", subject);
+		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		g_free (str);
+	}
 
 	invite = gossip_message_get_invite (message);
 	if (invite) {

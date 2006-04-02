@@ -1,5 +1,13 @@
 2006-04-02  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-message.[ch]:
+	* libgossip/gossip-message.h:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-private-chat.c: Support the "subject" element in a
+	Jabber message, fixes #305370 (Jeremy Nickurak).
+
+2006-04-02  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.c:
 	* src/gossip-chat-window.h: Make sure the "Clear" context item for
 	the actual message textview uses GTK_STOCK_CLEAR and add a
@@ -2611,6 +2619,15 @@
 
 	* libgossip/gossip-session.c: 
 	- Turn off debugging output.
+
+2005-08-10  Martyn Russell  <mr@gnome.org>
+
+	* libgossip/gossip-message.[ch]: 
+	* src/gossip-chat-view.[ch]:
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c:
+	- Added message subject support.
+	- Fixes bug #305370.
 
 2005-08-10  Martyn Russell  <mr@gnome.org>
 

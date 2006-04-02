@@ -50,7 +50,6 @@ static DBusObjectPathVTable vtable = {
 	NULL,
 };
 
-
 gboolean
 gossip_dbus_init (GossipSession *session)
 {

@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2005 Imendio AB
- * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -1984,7 +1983,8 @@ jabber_message_handler (LmMessageHandler *handler,
 	GossipMessage    *message;
 	const gchar      *from_str;
 	GossipContact    *from;
-	const gchar      *thread = "";
+	const gchar      *thread = NULL;
+	const gchar      *subject = NULL;
 	const gchar      *body = NULL;
 	LmMessageNode    *node;
 
@@ -2016,6 +2016,11 @@ jabber_message_handler (LmMessageHandler *handler,
 			break;
 		}
 
+		node = lm_message_node_get_child (m->node, "subject");
+		if (node) {
+			subject = node->value;
+		}
+
 		node = lm_message_node_get_child (m->node, "body");
 		if (node) {
 			body = node->value;
@@ -2036,9 +2041,15 @@ jabber_message_handler (LmMessageHandler *handler,
 					      priv->contact);
 		
 		gossip_message_set_sender (message, from);
-
 		gossip_message_set_body (message, body);
-		gossip_message_set_thread (message, thread);
+
+		if (subject) {
+			gossip_message_set_subject (message, subject);
+		}
+
+		if (thread) {
+			gossip_message_set_thread (message, thread);
+		}
 
 		gossip_message_set_timestamp (message,
 					      gossip_jabber_get_message_timestamp (m));
