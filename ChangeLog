@@ -1,5 +1,26 @@
 2006-04-02  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-view.c:
+	* src/gossip-chat-window.h: Make sure the "Clear" context item for
+	the actual message textview uses GTK_STOCK_CLEAR and add a
+	separator between the open/copy link items and the clear item.
+
+	* src/gossip-chat.[ch]: Cleaned up code to add a private struct to
+	GossipChat instead of doing it manually.
+
+2006-04-02  Martyn Russell  <martyn@imendio.com>
+
+	* NEWS:
+	* src/gossip-chat-window.h:
+	* src/gossip-chat.c: (gossip_chat_class_init), (gossip_chat_init),
+	(chat_finalize), (chat_input_text_buffer_changed_cb),
+	(chat_text_view_size_allocate_cb),
+	(chat_text_check_word_spelling_cb), (gossip_chat_set_window),
+	(gossip_chat_get_window), (gossip_chat_present):
+	* src/gossip-chat.h:
+
+2006-04-02  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	* src/gossip-chat-window.c: 
 	* src/gossip-chat.c:

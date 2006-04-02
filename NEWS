@@ -1,5 +1,6 @@
 NEWS in 0.11:
 =============
+- Added a smiley menu and context menu for chat windows (Martyn). 
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
 - Fixed #336222, Add a "send message" button to online notifications

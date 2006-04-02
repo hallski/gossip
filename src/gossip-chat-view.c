@@ -44,8 +44,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+/* #define DEBUG_MSG(x)  */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
 #define TIMESTAMP_INTERVAL 300
@@ -370,6 +370,23 @@ chat_view_populate_popup (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
+	/* Clear menu item */
+	if (gtk_text_buffer_get_char_count (priv->buffer) > 0) {
+		item = gtk_menu_item_new ();
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+		
+		item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CLEAR, NULL);
+		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+		
+		g_signal_connect (item,
+				  "activate",
+				  G_CALLBACK (chat_view_clear_view_cb),
+				  view);
+	}
+
+	/* Link context menu items */
 	table = gtk_text_buffer_get_tag_table (priv->buffer);
 	tag = gtk_text_tag_table_lookup (table, "link");
 
@@ -386,31 +403,23 @@ chat_view_populate_popup (GossipChatView *view,
 
 	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
 	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
-
 		str = gtk_text_buffer_get_text (priv->buffer,
 						&start, &end, FALSE);
 	}
 
-	item = gtk_menu_item_new ();
-	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-
-	item = gtk_menu_item_new_with_mnemonic (_("C_lear"));
-	g_signal_connect (item,
-			  "activate",
-			  G_CALLBACK (chat_view_clear_view_cb),
-			  view);
-	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
-	gtk_widget_show (item);
-
-	if (!str || strlen (str) == 0) {
+	if (!str || strlen (str) < 1) {
+		g_free (str);
 		return;
 	}
 
-	/* Set data just to get the string freed when not needed. */
+	/* NOTE: Set data just to get the string freed when not needed. */
 	g_object_set_data_full (G_OBJECT (menu),
 				"url", str,
 				(GDestroyNotify) g_free);
+
+	item = gtk_menu_item_new ();
+	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
 
 	item = gtk_menu_item_new_with_mnemonic (_("_Copy Link Address"));
 	g_signal_connect (item,

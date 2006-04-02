@@ -36,6 +36,8 @@
 #include "gossip-chat.h"
 #include "gossip-app.h"
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT, GossipChatPriv))
+
 #define DEBUG_MSG(x)  
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
@@ -86,8 +88,9 @@ enum {
 	LAST_SIGNAL
 };
 
+static guint chat_signals[LAST_SIGNAL] = { 0 };
+
 static GObjectClass *parent_class = NULL;
-static guint         chat_signals[LAST_SIGNAL] = { 0 };
 
 G_DEFINE_TYPE (GossipChat, gossip_chat, G_TYPE_OBJECT);
 
@@ -140,6 +143,8 @@ gossip_chat_class_init (GossipChatClass *klass)
 			      gossip_marshal_VOID__VOID,
 			      G_TYPE_NONE,
 			      0);
+
+	g_type_class_add_private (object_class, sizeof (GossipChatPriv));
 }
 
 static void
@@ -164,10 +169,9 @@ gossip_chat_init (GossipChat *chat)
 		      "wrap-mode", GTK_WRAP_WORD_CHAR,
 		      NULL);
 
-	priv = g_new0 (GossipChatPriv, 1);
-	priv->default_window_height = -1;
+	priv = GET_PRIV (chat);
 
-	chat->priv = priv;
+	priv->default_window_height = -1;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	g_signal_connect (buffer,
@@ -229,7 +233,7 @@ chat_finalize (GObject *object)
 	g_return_if_fail (GOSSIP_IS_CHAT (object));
 
 	chat = GOSSIP_CHAT (object);
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
 	if (priv->spell) {
 		gossip_spell_unref (priv->spell);
@@ -248,7 +252,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 	gchar          *str;
 	gboolean        spell_checker;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
  	spell_checker = gconf_client_get_bool (gossip_app_get_gconf_client (), 
 					       "/apps/gossip/conversation/enable_spell_checker", 
@@ -364,7 +368,7 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 	gint              current_height;
 	gint              diff;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
 	if (priv->default_window_height <= 0) {
 		return;
@@ -545,7 +549,7 @@ chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem,
 {
 	GossipChatPriv *priv;
 
-	priv = chat_spell->chat->priv;
+	priv = GET_PRIV (chat_spell->chat);
 
 	gossip_spell_dialog_show (chat_spell->chat,
 				  priv->spell,
@@ -721,15 +725,23 @@ gossip_chat_clear (GossipChat *chat)
 }
 
 void
-gossip_chat_set_window (GossipChat *chat, GossipChatWindow *window)
+gossip_chat_set_window (GossipChat       *chat, 
+			GossipChatWindow *window)
 {
-	chat->priv->window = window;
+	GossipChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+	priv->window = window;
 }
 
 GossipChatWindow *
 gossip_chat_get_window (GossipChat *chat)
 {
-	return chat->priv->window;
+	GossipChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+
+	return priv->window;
 }
 
 void
@@ -800,7 +812,7 @@ gossip_chat_present (GossipChat *chat)
 
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	if (priv->window == NULL) {
 		GossipChatWindow *window;
