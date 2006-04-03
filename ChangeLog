@@ -1,4 +1,4 @@
-2006-04-03  Martyn Russell  <martyn@imendio.com>
+2006-04-03  Brian Pepple  <bdpepple@ameritech.net>
 
 	* src/gossip-chat-window.c:
 	* ui/chat.glade:
@@ -7,15 +7,6 @@
 	* ui/main.glade: Don't put "Gossip" in front of every window
 	title, fixes bug #336456 (Wouter Bolsterlee, Brian Pepple).
 
-2006-04-02  Brian Pepple  <bdpepple@ameritech.net>
-
-	* ui/chat.glade:
-	* ui/file-transfer.glade:
-	* ui/group-chat.glade:
-	* ui/main.glade:
-	* src/gossip-chat-window.c (chat_window_update_title): Simplify 
-	window titles, fixes #336456 (Wouter Bolsterlee).
-	
 2006-04-02  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-message.[ch]:
