@@ -883,7 +883,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
  	if (subject) {
 		gchar *str;
 
-		str = g_strdup_printf ("Subject: %s", subject);
+		str = g_strdup_printf (_("Subject: %s"), subject);
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
 		g_free (str);
 	}
