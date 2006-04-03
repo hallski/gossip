@@ -6,7 +6,7 @@
 
 <widget class="GtkWindow" id="group_chat_window">
   <property name="border_width">6</property>
-  <property name="title" translatable="yes">Gossip - Group Chat</property>
+  <property name="title" translatable="yes">Group Chat</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -188,7 +188,7 @@
 
 <widget class="GtkDialog" id="edit_chatroom_dialog">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Gossip - Edit Chat Room</property>
+  <property name="title" translatable="yes">Edit Chat Room</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -544,7 +544,7 @@
 
 <widget class="GtkDialog" id="new_chatroom_dialog">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Gossip - New Chatroom</property>
+  <property name="title" translatable="yes">New Chat Room</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -1063,7 +1063,7 @@
 
 <widget class="GtkWindow" id="chatrooms_window">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Gossip - Chat Rooms</property>
+  <property name="title" translatable="yes">Chat Rooms</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>

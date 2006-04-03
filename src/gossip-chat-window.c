@@ -614,8 +614,8 @@ chat_window_update_title (GossipChatWindow *window)
 
 	priv = GET_PRIV (window);
 
-	title = g_strdup_printf (_("%sChat - %s"), 
-				 priv->new_msg ? "*" : "", 
+	title = g_strdup_printf (("%s%s"),
+				 priv->new_msg ? "*" : "",
 				 gossip_chat_get_name (priv->current_chat));
 
 	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);

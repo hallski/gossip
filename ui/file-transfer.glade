@@ -4,7 +4,7 @@
 <glade-interface>
 
 <widget class="GtkDialog" id="file_transfer_dialog">
-  <property name="title" translatable="yes">Gossip - File Transfer Request</property>
+  <property name="title" translatable="yes">File Transfer Request</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>

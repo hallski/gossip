@@ -5,7 +5,7 @@
 <requires lib="gnome"/>
 
 <widget class="GtkWindow" id="add_contact_window">
-  <property name="title" translatable="yes">Gossip - Add contact</property>
+  <property name="title" translatable="yes">Add Contact</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -780,7 +780,7 @@
 </widget>
 
 <widget class="GtkDialog" id="contact_information_dialog">
-  <property name="title" translatable="yes">Gossip - Contact Information</property>
+  <property name="title" translatable="yes">Contact Information</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -2001,7 +2001,7 @@
 </widget>
 
 <widget class="GtkDialog" id="subscription_request_dialog">
-  <property name="title" translatable="yes">Gossip - Subscription Request</property>
+  <property name="title" translatable="yes">Subscription Request</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -2572,7 +2572,7 @@
 </widget>
 
 <widget class="GtkWindow" id="new_account_window">
-  <property name="title" translatable="yes">Gossip - New Account</property>
+  <property name="title" translatable="yes">New Account</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -3740,7 +3740,7 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="preferences_dialog">
-  <property name="title" translatable="yes">Gossip - Preferences</property>
+  <property name="title" translatable="yes">Preferences</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -4617,7 +4617,7 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="edit_groups_dialog">
-  <property name="title" translatable="yes">Gossip - Edit Groups</property>
+  <property name="title" translatable="yes">Edit Groups</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -4857,7 +4857,7 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="status_message_dialog">
-  <property name="title" translatable="yes">Gossip - Status Message</property>
+  <property name="title" translatable="yes">Status Message Presets</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -5086,7 +5086,7 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="vcard_dialog">
-  <property name="title" translatable="yes">Gossip - Personal Details</property>
+  <property name="title" translatable="yes">Personal Details</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -5489,7 +5489,7 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="spell_dialog">
-  <property name="title" translatable="yes">Gossip - Spell Checker</property>
+  <property name="title" translatable="yes">Spell Checker</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">True</property>
@@ -5687,7 +5687,7 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="new_message_dialog">
-  <property name="title" translatable="yes">Gossip - New Message</property>
+  <property name="title" translatable="yes">New Message</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
   <property name="modal">False</property>
@@ -6334,7 +6334,7 @@ This name could be something associated with the service provider, for example, 
 
 <widget class="GtkWindow" id="log_window">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">Gossip - View Message History</property>
+  <property name="title" translatable="yes">View Message History</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
