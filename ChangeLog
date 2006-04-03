@@ -18,17 +18,6 @@
 
 2006-04-02  Martyn Russell  <martyn@imendio.com>
 
-	* NEWS:
-	* src/gossip-chat-window.h:
-	* src/gossip-chat.c: (gossip_chat_class_init), (gossip_chat_init),
-	(chat_finalize), (chat_input_text_buffer_changed_cb),
-	(chat_text_view_size_allocate_cb),
-	(chat_text_check_word_spelling_cb), (gossip_chat_set_window),
-	(gossip_chat_get_window), (gossip_chat_present):
-	* src/gossip-chat.h:
-
-2006-04-02  Martyn Russell  <martyn@imendio.com>
-
 	* src/gossip-chat-view.[ch]:
 	* src/gossip-chat-window.c: 
 	* src/gossip-chat.c:
