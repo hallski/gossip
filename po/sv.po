@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-31 22:42+0200\n"
+"POT-Creation-Date: 2006-04-02 16:11+0200\n"
 "PO-Revision-Date: 2004-12-22 21:21+0100\n"
 "Last-Translator: Richard Hult <richard@imendio.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -247,11 +247,11 @@ msgid "An unknown error occurred, check your details are correct."
 msgstr ""
 "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
 
-#: ../protocols/jabber/gossip-jabber.c:1004
+#: ../protocols/jabber/gossip-jabber.c:1003
 msgid "Connection could not be opened"
 msgstr "Anslutning kunde inte öppnas"
 
-#: ../protocols/jabber/gossip-jabber.c:1052
+#: ../protocols/jabber/gossip-jabber.c:1051
 msgid "Couldn't send message!"
 msgstr "Kunde inte sända meddelande!"
 
@@ -412,7 +412,11 @@ msgstr ""
 "Kontoinformationsdialogen kommer nu att visas så att du kan mata in din "
 "information."
 
-#: ../src/gossip-chat.c:463
+#: ../src/gossip-chat.c:455
+msgid "Insert Smiley"
+msgstr "Infoga smilis"
+
+#: ../src/gossip-chat.c:505
 msgid "_Check Word Spelling..."
 msgstr "_Kontrollera stavning..."
 
@@ -425,7 +429,7 @@ msgstr ""
 "Ange ditt inbjudningsmeddelande till:\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:786
+#: ../src/gossip-chat-invite.c:220 ../src/gossip-chat-view.c:1453
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
@@ -434,32 +438,28 @@ msgstr "Du har blivit inbjuden till en chattkonferens."
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: ../src/gossip-chat-view.c:399 ../ui/chat.glade.h:1
-msgid "C_lear"
-msgstr "_Töm"
-
-#: ../src/gossip-chat-view.c:416
+#: ../src/gossip-chat-view.c:424
 msgid "_Copy Link Address"
 msgstr "_Kopiera länkadress"
 
-#: ../src/gossip-chat-view.c:424
+#: ../src/gossip-chat-view.c:432
 msgid "_Open Link"
 msgstr "_Öppna länk"
 
-#: ../src/gossip-chat-view.c:811
-msgid "Accept"
-msgstr "Acceptera"
-
-#: ../src/gossip-chat-view.c:907
+#: ../src/gossip-chat-view.c:772
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-window.c:626
+#: ../src/gossip-chat-view.c:1478
+msgid "Accept"
+msgstr "Acceptera"
+
+#: ../src/gossip-chat-window.c:617
 #, c-format
 msgid "%sChat - %s"
 msgstr "%sChatt - %s"
 
-#: ../src/gossip-chat-window.c:1029
+#: ../src/gossip-chat-window.c:1080
 msgid "Typing a message."
 msgstr "Skriver ett meddelande."
 
@@ -514,7 +514,7 @@ msgstr "/_Skicka fil..."
 
 #: ../src/gossip-contact-list.c:365
 msgid "/View Message _History"
-msgstr ""
+msgstr "/Visa _meddelandehistorik"
 
 #: ../src/gossip-contact-list.c:374
 msgid "/Re_name group"
@@ -793,9 +793,13 @@ msgstr "Kontakt kopplas ner"
 msgid "Contact goes online"
 msgstr "Kontakt ansluts"
 
+#: ../ui/chat.glade.h:1
+msgid "C_lear"
+msgstr "T_öm"
+
 #: ../ui/chat.glade.h:2
 msgid "Contact _Information"
-msgstr "Kontakt_information"
+msgstr "Kontakti_nformation"
 
 #: ../ui/chat.glade.h:3
 msgid "Gossip - Chat"
@@ -806,42 +810,46 @@ msgid "In_vite to Chat Room"
 msgstr "_Bjud in till chattrum"
 
 #: ../ui/chat.glade.h:5
+msgid "Insert _Smiley"
+msgstr "Infoga _smilis"
+
+#: ../ui/chat.glade.h:6
 msgid "Move Tab _Left"
 msgstr "Flytta flik till _vänster"
 
-#: ../ui/chat.glade.h:6
+#: ../ui/chat.glade.h:7
 msgid "Move Tab _Right"
 msgstr "Flytta flik till _höger"
 
-#: ../ui/chat.glade.h:7
+#: ../ui/chat.glade.h:8
 msgid "View Message _History"
-msgstr ""
+msgstr "Visa _meddelandehistorik"
 
-#: ../ui/chat.glade.h:8 ../ui/main.glade.h:126
+#: ../ui/chat.glade.h:9 ../ui/main.glade.h:126
 msgid "_Add Contact..."
 msgstr "_Lägg till kontakt..."
 
-#: ../ui/chat.glade.h:9
+#: ../ui/chat.glade.h:10
 msgid "_Conversation"
 msgstr "_Konversation"
 
-#: ../ui/chat.glade.h:10
+#: ../ui/chat.glade.h:11
 msgid "_Detach Tab"
 msgstr "_Koppla loss flik"
 
-#: ../ui/chat.glade.h:11
+#: ../ui/chat.glade.h:12
 msgid "_Next Tab"
 msgstr "_Nästa flik"
 
-#: ../ui/chat.glade.h:12
+#: ../ui/chat.glade.h:13
 msgid "_Previous Tab"
 msgstr "_Föregående flik"
 
-#: ../ui/chat.glade.h:13
+#: ../ui/chat.glade.h:14
 msgid "_Show Contacts"
 msgstr "_Visa kontakter"
 
-#: ../ui/chat.glade.h:14
+#: ../ui/chat.glade.h:15
 msgid "_Tabs"
 msgstr "_Flikar"
 
@@ -1470,7 +1478,7 @@ msgstr "_Chatta"
 
 #: ../ui/main.glade.h:129
 msgid "_Contents"
-msgstr "_Innehåll"
+msgstr "I_nnehåll"
 
 #: ../ui/main.glade.h:132
 msgid "_Forget"
@@ -1512,7 +1520,7 @@ msgstr "_Spela ljud när meddelanden kommer"
 
 #: ../ui/main.glade.h:141
 msgid "_Preferences"
-msgstr "_Inställningar"
+msgstr "In_ställningar"
 
 #: ../ui/main.glade.h:142
 msgid "_Search..."
@@ -2099,7 +2107,7 @@ msgstr "_Ja"
 #~ msgstr "Använd ljud för att _uppmärksamma när nya meddelanden kommer"
 
 #~ msgid "_Disable sounds when busy or away"
-#~ msgstr "_Inaktivera ljud under upptaget- eller frånvaroläge"
+#~ msgstr "I_naktivera ljud under upptaget- eller frånvaroläge"
 
 #~ msgid "Custom Away Message..."
 #~ msgstr "Eget frånvaromeddelande..."
