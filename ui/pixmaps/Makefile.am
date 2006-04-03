@@ -32,6 +32,6 @@ install-data-hook:
 		echo "***   $(gtk_update_icon_cache)"; \
 	fi
 
-EXTRA_DIST = $(image_DATA) $(icon_DATA)
+EXTRA_DIST = $(image_DATA) $(icon_DATA) $(svgicon_DATA)
 
 

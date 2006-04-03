@@ -1,3 +1,7 @@
+2006-04-03  Martyn Russell  <martyn@imendio.com>
+
+	* ui/pixmaps/Makefile.am: Fixed make distcheck.
+
 2006-04-03  Brian Pepple  <bdpepple@ameritech.net>
 
 	* src/gossip-chat-window.c:
