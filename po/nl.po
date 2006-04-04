@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-03 10:39+0200\n"
-"PO-Revision-Date: 2006-04-03 10:40+0200\n"
+"POT-Creation-Date: 2006-04-04 21:40+0200\n"
+"PO-Revision-Date: 2006-04-04 21:41+0200\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -724,6 +724,11 @@ msgstr "Wissen"
 #, c-format
 msgid "%s went offline"
 msgstr "%s ging offline"
+
+#: ../src/gossip-private-chat.c:886
+#, c-format
+msgid "Subject: %s"
+msgstr "Onderwerp: %s"
 
 #: ../src/gossip-spell-dialog.c:78
 msgid "Word"
