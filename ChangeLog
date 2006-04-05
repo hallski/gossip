@@ -1,3 +1,24 @@
+2006-04-05  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.[ch]: Added
+	gossip_account_manager_find_by_id() function.
+	
+	* libgossip/gossip-time.c: Fixed a bug where strptime() was
+	failing to operate because struct tm was full of crap, so we
+	memset this to 0 before using it.
+	
+	* src/gossip-chat-view.c: Turned off debugging.
+	
+	* src/gossip-log-window.c:
+	* src/gossip-log.[ch]:
+	* ui/main.glade: Added the ability to search ALL logs for a given
+	text as well as browse logs. This is still flawed in a few ways,
+	for example, we do case insensitive searching through ALL files to
+	present the list, but when highlighting and scrolling to the text
+	sometimes nothing happens because the search is case sensitive. We
+	need to make searching through the text case insensitive for
+	browsing and searching too.
+
 2006-04-03  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-private-chat.c (gossip_private_chat_append_message):

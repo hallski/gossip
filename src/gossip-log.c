@@ -107,33 +107,42 @@ struct _GossipLogPriv {
 	gchar         *date;
 }; 
 
-static void           gossip_log_class_init      (GossipLogClass  *klass);
-static void           gossip_log_init            (GossipLog       *log);
-static void           gossip_log_finalize        (GObject         *object);
-static gboolean       log_check_dir              (gchar          **directory);
-static gchar *        log_get_timestamp_full     (GossipMessage   *msg);
-static gchar *        log_get_timestamp_filename (void);
-static gchar *        log_get_filename_for_date  (GossipLog       *log,
-						  const gchar     *date);
-static const gchar *  log_get_filename_for_today (GossipLog       *log);
-static GList *        log_get_messages           (GossipLog       *log,
-						  const gchar     *filename);
-static const gchar *  log_get_contacts_filename  (GossipAccount   *account);
-static GossipContact *log_get_contact            (GossipAccount   *account,
-						  const gchar     *contact_id);
-static gboolean       log_set_name               (GossipAccount   *account,
-						  GossipContact   *contact);
-static GossipContact *log_get_own_contact        (GossipAccount   *account);
-static gboolean       log_set_own_name           (GossipAccount   *account,
-						  GossipContact   *contact);
-static gchar *        log_urlify                 (const gchar     *msg);
-static gboolean       log_transform              (const gchar     *infile,
-						  gint             fd);
-static void           log_show                   (GossipLog       *log);
-#if 0
-static gint           log_sort_date_func         (const gchar     *date1,
-						  const gchar     *date2);
-#endif
+struct _GossipLogSearchHit {
+	gchar         *account_id;
+	gchar         *contact_id;
+	gchar         *contact_name;
+	gchar         *filename;
+	gchar         *date;
+};
+
+static void           gossip_log_class_init            (GossipLogClass  *klass);
+static void           gossip_log_init                  (GossipLog       *log);
+static void           gossip_log_finalize              (GObject         *object);
+static gboolean       log_check_dir                    (gchar          **directory);
+static gchar *        log_get_timestamp_from_message   (GossipMessage   *msg);
+static gchar *        log_get_timestamp_filename       (void);
+static gchar *        log_get_contact_id_from_filename (const gchar     *filename);
+static gchar *        log_get_account_id_from_filename (const gchar     *filename);
+static gchar *        log_get_date_from_filename       (const gchar     *filename);
+static gchar *        log_get_filename_for_date        (GossipLog       *log,
+							const gchar     *date);
+static const gchar *  log_get_filename_for_today       (GossipLog       *log);
+static GList *        log_get_messages                 (GossipLog       *log,
+							const gchar     *filename);
+static const gchar *  log_get_contacts_filename        (GossipAccount   *account);
+static GossipContact *log_get_contact                  (GossipAccount   *account,
+							const gchar     *contact_id);
+static gchar         *log_get_contact_name_from_id     (const gchar     *account_id,
+							const gchar     *contact_id);
+static gboolean       log_set_name                     (GossipAccount   *account,
+							GossipContact   *contact);
+static GossipContact *log_get_own_contact              (GossipAccount   *account);
+static gboolean       log_set_own_name                 (GossipAccount   *account,
+							GossipContact   *contact);
+static gchar *        log_urlify                       (const gchar     *msg);
+static gboolean       log_transform                    (const gchar     *infile,
+							gint             fd);
+static void           log_show                         (GossipLog       *log);
 
 enum {
 	NEW_MESSAGE,
@@ -222,7 +231,7 @@ log_check_dir (gchar **directory)
 }
 
 static gchar *
-log_get_timestamp_full (GossipMessage *message)
+log_get_timestamp_from_message (GossipMessage *message)
 {
 	gossip_time_t t;
 
@@ -237,6 +246,122 @@ log_get_timestamp_filename (void)
 
 	t = gossip_time_get_current ();
 	return gossip_time_to_timestamp_full (t, LOG_TIME_FORMAT);
+}
+
+static gchar *
+log_get_contact_id_from_filename (const gchar *filename)
+{
+	gchar *basename;
+	gchar *p;
+
+	basename = g_path_get_basename (filename);
+	p = strstr (basename, "-");
+
+	p[0] = '\0';
+
+	return basename;
+}
+
+static gchar *
+log_get_account_id_from_filename (const gchar *filename)
+{
+	gchar *str;
+	gchar *dirname;
+	gchar *account_id;
+
+	dirname = g_path_get_dirname (filename);
+
+	str = g_strrstr (dirname, G_DIR_SEPARATOR_S);
+	if (!str) {
+		g_free (dirname);
+		return NULL;
+	}
+
+	str++;
+
+	account_id = g_strdup (str);
+	g_free (dirname);
+
+	return account_id; 
+}
+
+static gchar *
+log_get_date_from_filename (const gchar *filename)
+{
+	const gchar *start;
+
+	if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
+		return NULL;
+	}
+
+	start = g_strrstr (filename, "-");
+	if (!start) {
+		return NULL;
+	}
+
+	start++;
+	return g_strndup (start, strlen (start) - strlen (LOG_FILENAME_SUFFIX));
+}
+
+static gboolean
+log_get_all_log_files (const gchar  *root_location, 
+		       GList       **files)
+{
+	GDir        *dir;
+	const gchar *filename;
+	gchar       *location;
+
+	gboolean     ok = TRUE;
+
+	g_return_val_if_fail (files != NULL, FALSE);
+
+	if (root_location == NULL) {
+		gchar *log_directory;
+
+		*files = NULL;
+
+		if (log_check_dir (&log_directory)) {
+			DEBUG_MSG (("Log: No log directory exists"));
+			return TRUE;
+		}
+
+		ok = log_get_all_log_files (log_directory, files);
+		g_free (log_directory);
+
+		return ok;
+	}
+	
+	dir = g_dir_open (root_location, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", root_location));
+		return FALSE;
+	}
+	
+	DEBUG_MSG (("Log: Finding all log files in directory:'%s'", root_location));
+	
+	while (ok && (filename = g_dir_read_name (dir)) != NULL) {
+		location = g_build_filename (root_location, filename, NULL);
+		
+		if (g_file_test (location, G_FILE_TEST_IS_DIR)) {
+			/* Open directory */
+			ok = log_get_all_log_files (location, files);
+		} else {
+			if (g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
+				*files = g_list_insert_sorted (*files, 
+							       location, 
+							       (GCompareFunc) strcmp);
+
+				/* Don't free location */
+				continue;
+			}
+ 		}
+
+		g_free (location);
+	}
+
+	g_dir_close (dir);
+
+	return ok;
 }
 
 static gchar *
@@ -578,7 +703,7 @@ log_get_contacts_filename (GossipAccount *account)
 
 static GossipContact *
 log_get_contact (GossipAccount *account,
-	      const gchar   *contact_id)
+		 const gchar   *contact_id)
 {
 	GossipContact *contact;
 	GKeyFile      *key_file;
@@ -604,6 +729,40 @@ log_get_contact (GossipAccount *account,
 	g_free (name);
 
 	return contact;
+}
+
+static gchar *
+log_get_contact_name_from_id (const gchar *account_id,
+			      const gchar *contact_id)
+{
+	GKeyFile *key_file;
+	gchar    *log_directory;
+	gchar    *account_id_escaped;
+	gchar    *filename;
+	gchar    *name = NULL;
+
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+
+	log_check_dir (&log_directory);
+
+	filename = g_build_filename (log_directory,
+				     account_id_escaped,
+				     LOG_KEY_FILENAME,
+				     NULL);
+
+	g_free (log_directory);
+	g_free (account_id_escaped);
+
+	key_file = g_key_file_new ();
+
+	g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL);
+
+	name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
+	DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name)); 
+
+	g_key_file_free (key_file);
+
+	return name;
 }
 
 static gboolean 
@@ -925,6 +1084,20 @@ log_show (GossipLog *log)
 }
 
 GossipLog *
+gossip_log_get_by_contact_id (GossipAccount *account,
+			      const gchar   *contact_id)
+{
+	GossipLog     *log;
+	GossipContact *contact;
+
+	contact = log_get_contact (account, contact_id);
+	log = gossip_log_get (contact);
+	g_object_unref (contact);
+	
+	return log;
+}
+
+GossipLog *
 gossip_log_get (GossipContact *contact)
 {
 	GossipLog     *log;
@@ -978,6 +1151,203 @@ gossip_log_get_own_contact (GossipLog *log)
 
 	return priv->own_contact;
 }
+
+GList *
+gossip_log_get_contacts (GossipAccount *account)
+{
+	GList         *contacts = NULL;
+	GossipContact *contact;
+	gchar         *log_directory;
+	gchar         *directory;
+	const gchar   *account_id;
+	gchar         *account_id_escaped;
+	GDir          *dir;
+	const gchar   *filename;
+	gchar         *filename_unescaped;
+	gchar         *contact_id;
+	GList         *l;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return NULL;
+	}
+
+	account_id = gossip_account_get_id (account);
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	directory = g_build_path (G_DIR_SEPARATOR_S, 
+				  log_directory, 
+				  account_id_escaped,
+				  NULL);
+	g_free (account_id_escaped);
+	g_free (log_directory);
+	
+	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+		DEBUG_MSG (("Log: Log directory exists, but no account directory does, trying:'%s'",
+			    directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	dir = g_dir_open (directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	DEBUG_MSG (("Log: Obtaining contacts in log directory:'%s'",
+		    directory));
+
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		gboolean duplicate = FALSE;
+
+		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+
+		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
+		DEBUG_MSG (("Log: Using log file:'%s' to create contact", filename_unescaped));
+		
+		contact_id = log_get_contact_id_from_filename (filename_unescaped);
+		g_free (filename_unescaped);
+
+		contact = log_get_contact (account, contact_id);
+		g_free (contact_id);
+
+		for (l = contacts; l && !duplicate; l = l->next) {
+			if (gossip_contact_equal (l->data, contact)) {
+				duplicate = TRUE;
+			}
+		}
+
+		/* Avoid duplicates */
+		if (!duplicate) {
+			contacts = g_list_append (contacts, contact);
+		} else {
+			g_object_unref (contact);
+		}
+	}
+	
+	g_free (directory);
+	g_dir_close (dir);
+	
+	return contacts;
+}
+
+GList *  
+gossip_log_get_messages (GossipLog   *log,
+			 const gchar *date)
+{
+	gchar *filename;
+	GList *messages;
+
+ 	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
+
+	filename = log_get_filename_for_date (log, date);
+	messages = log_get_messages (log, filename); 
+	g_free (filename);
+
+	return messages;
+}
+
+GList *
+gossip_log_get_dates (GossipLog *log)
+{
+	GossipLogPriv *priv;
+	GossipAccount *account;
+	GList         *dates = NULL;
+	gchar         *date;
+	gchar         *log_directory;
+	gchar         *directory;
+	const gchar   *account_id;
+	gchar         *account_id_escaped;
+	GDir          *dir;
+	const gchar   *filename;
+	gchar         *filename_unescaped;
+	gchar         *contact_id;
+
+	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
+
+	priv = GET_PRIV (log);
+
+	/* Get own contact from log contact. */
+	account = gossip_contact_get_account (priv->contact);
+	
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return NULL;
+	}
+
+	account_id = gossip_account_get_id (account);
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	directory = g_build_path (G_DIR_SEPARATOR_S, 
+				  log_directory, 
+				  account_id_escaped,
+				  NULL);
+	g_free (account_id_escaped);
+	g_free (log_directory);
+	
+	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+		DEBUG_MSG (("Log: Log directory exists, but no account directory does, trying:'%s'",
+			    directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	dir = g_dir_open (directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	DEBUG_MSG (("Log: Obtaining contacts in log directory:'%s'",
+		    directory));
+
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+
+		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
+		DEBUG_MSG (("Log: Using log file:'%s' to create contact", filename_unescaped));
+		
+		contact_id = log_get_contact_id_from_filename (filename_unescaped);
+		if (strcmp (contact_id, gossip_contact_get_id (priv->contact)) != 0) {
+			g_free (contact_id);
+			g_free (filename_unescaped);
+			continue;
+		}
+
+		date = log_get_date_from_filename (filename_unescaped);
+		DEBUG_MSG (("Log: Using date:'%s' for:'%s'", 
+			    date, contact_id));
+
+		dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
+
+		g_free (contact_id);
+		g_free (filename_unescaped);
+	}
+	
+	g_free (directory);
+	g_dir_close (dir);
+
+ 	DEBUG_MSG (("Log: Parsed %d dates", g_list_length (dates))); 
+
+	return dates;
+}
+
+gchar *
+gossip_log_get_date_readable (const gchar *date)
+{
+	gossip_time_t t;
+	
+	t = gossip_time_from_string_full (date, LOG_TIME_FORMAT);
+	return gossip_time_to_timestamp_full (t, "%a %d %b %Y");
+}
+
 
 void
 gossip_log_message (GossipLog     *log,
@@ -1075,7 +1445,7 @@ gossip_log_message (GossipLog     *log,
 		return;
 	}
 
-	timestamp = log_get_timestamp_full (message);
+	timestamp = log_get_timestamp_from_message (message);
 
         if (gossip_message_get_body (message)) {
 		body = log_urlify (gossip_message_get_body (message));
@@ -1109,254 +1479,6 @@ gossip_log_message (GossipLog     *log,
 
 	/* Now signal new message */
 	g_signal_emit (log, signals[NEW_MESSAGE], 0, message);
-}
-
-GList *
-gossip_log_get_contacts (GossipAccount *account)
-{
-	GList         *contacts = NULL;
-	GossipContact *contact;
-	gchar         *log_directory;
-	gchar         *directory;
-	const gchar   *account_id;
-	gchar         *account_id_escaped;
-	GDir          *dir;
-	const gchar   *filename;
-	gchar         *filename_unescaped;
-	gchar         *contact_id;
-	const gchar   *p;
-	gint           len_prefix;
-	gint           len_suffix;
-	GList         *l;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	if (log_check_dir (&log_directory)) {
-		DEBUG_MSG (("Log: No log directory exists"));
-		return NULL;
-	}
-
-	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-	directory = g_build_path (G_DIR_SEPARATOR_S, 
-				  log_directory, 
-				  account_id_escaped,
-				  NULL);
-	g_free (account_id_escaped);
-	g_free (log_directory);
-	
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("Log: Log directory exists, but no account directory does, trying:'%s'",
-			    directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	dir = g_dir_open (directory, 0, NULL);
-	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	DEBUG_MSG (("Log: Obtaining contacts in log directory:'%s'",
-		    directory));
-
-	len_prefix = strlen (LOG_FILENAME_PREFIX);
-	len_suffix = strlen (LOG_FILENAME_SUFFIX);
-
-	while ((filename = g_dir_read_name (dir)) != NULL) {
-		gboolean duplicate = FALSE;
-
-		p = filename;
-
-		p += strlen (filename);
-		p -= len_suffix;
-
-		/* If the extension does not match, ignore it */
-		if (strcmp (p, LOG_FILENAME_SUFFIX) != 0) {
-			continue;
-		}
-
-		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
-		if (!filename_unescaped) {
-			continue;
-		}
-
-		DEBUG_MSG (("Log: Using log file:'%s' to create contact", filename_unescaped));
-		
-		p = filename_unescaped;
-		if (strstr (filename_unescaped, LOG_FILENAME_PREFIX)) {
-			p += len_prefix;
-		} else if (strstr (filename_unescaped, "file:")) {
-			p += 5;
-		}
-
-		/* The 9 that is subtracted is the "-YYYYMMDD" part of the file name. */
-		if (strstr (filename_unescaped, LOG_FILENAME_SUFFIX)) {
-			contact_id = g_strndup (p, strlen (p) - len_suffix - 9);
-		} else {
-			contact_id = g_strndup (p, strlen (p) - 9);
-		}
-
-		g_free (filename_unescaped);
-
-		contact = log_get_contact (account, contact_id);
-		g_free (contact_id);
-
-		for (l = contacts; l && !duplicate; l = l->next) {
-			if (gossip_contact_equal (l->data, contact)) {
-				duplicate = TRUE;
-			}
-		}
-
-		/* Avoid duplicates */
-		if (!duplicate) {
-			contacts = g_list_append (contacts, contact);
-		} else {
-			g_object_unref (contact);
-		}
-	}
-	
-	g_free (directory);
-	g_dir_close (dir);
-	
-	return contacts;
-}
-
-GList *
-gossip_log_get_dates (GossipLog *log)
-{
-	GossipLogPriv *priv;
-	GossipAccount *account;
-	GList         *dates = NULL;
-	gchar         *date;
-	gchar         *log_directory;
-	gchar         *directory;
-	const gchar   *account_id;
-	gchar         *account_id_escaped;
-	GDir          *dir;
-	const gchar   *filename;
-	gchar         *filename_unescaped;
-	gchar         *contact_id;
-	const gchar   *p;
-	gint           len_prefix;
-	gint           len_suffix;
-
-	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
-
-	priv = GET_PRIV (log);
-
-	/* Get own contact from log contact. */
-	account = gossip_contact_get_account (priv->contact);
-	
-	if (log_check_dir (&log_directory)) {
-		DEBUG_MSG (("Log: No log directory exists"));
-		return NULL;
-	}
-
-	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-	directory = g_build_path (G_DIR_SEPARATOR_S, 
-				  log_directory, 
-				  account_id_escaped,
-				  NULL);
-	g_free (account_id_escaped);
-	g_free (log_directory);
-	
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("Log: Log directory exists, but no account directory does, trying:'%s'",
-			    directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	dir = g_dir_open (directory, 0, NULL);
-	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	DEBUG_MSG (("Log: Obtaining contacts in log directory:'%s'",
-		    directory));
-
-	len_prefix = strlen (LOG_FILENAME_PREFIX);
-	len_suffix = strlen (LOG_FILENAME_SUFFIX);
-
-	while ((filename = g_dir_read_name (dir)) != NULL) {
-		p = filename;
-
-		p += strlen (filename);
-		p -= len_suffix;
-
-		/* If the extension does not match, ignore it */
-		if (strcmp (p, LOG_FILENAME_SUFFIX) != 0) {
-			continue;
-		}
-
-		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
-		if (!filename_unescaped) {
-			continue;
-		}
-
-		p = filename_unescaped;
-		if (strstr (filename_unescaped, LOG_FILENAME_PREFIX)) {
-			p += len_prefix;
-		} else if (strstr (filename_unescaped, "file:")) {
-			p += 5;
-		}
-
-		/* The 9 that is subtracted is the "-YYYYMMDD" part of the file name. */
-		if (strstr (filename_unescaped, LOG_FILENAME_SUFFIX)) {
-			contact_id = g_strndup (p, strlen (p) - len_suffix - 9);
-		} else {
-			contact_id = g_strndup (p, strlen (p) - 9);
-		}
-		
-		if (strcmp (contact_id, gossip_contact_get_id (priv->contact)) != 0) {
-			continue;
-		}
-
-		p = strstr (filename_unescaped, "-");
-		if (!p) {
-			g_free (filename_unescaped);
-			continue;
-		}
-
-		p++;
-		date = g_strndup (p, strlen (p) - len_suffix);
-
-		DEBUG_MSG (("Log: Using date:'%s' for:'%s'", 
-			    date, contact_id));
-
-		g_free (filename_unescaped);
-
-		dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
-	}
-	
-	g_free (directory);
-	g_dir_close (dir);
-
- 	DEBUG_MSG (("Log: Parsed %d dates", g_list_length (dates))); 
-
-	return dates;
-}
-
-GList *  
-gossip_log_get_messages (GossipLog   *log,
-			 const gchar *date)
-{
-	gchar *filename;
-	GList *messages;
-
- 	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
-
-	filename = log_get_filename_for_date (log, date);
-	messages = log_get_messages (log, filename); 
-	g_free (filename);
-
-	return messages;
 }
 
 gboolean
@@ -1398,4 +1520,135 @@ gossip_log_show (GtkWidget     *window,
 	log_show (log);
 
 	gdk_window_set_cursor (window->window, NULL);
+}
+
+GList *
+gossip_log_search_new (const gchar *text)
+{
+	GList       *files;
+	GList       *l;
+	const gchar *filename;
+	gchar       *text_casefold;
+	gchar       *contents;
+	gchar       *contents_casefold;
+	GList       *hits = NULL;
+
+	g_return_val_if_fail (text != NULL, NULL);
+	g_return_val_if_fail (strlen (text) > 0, NULL);
+
+	text_casefold = g_utf8_casefold (text, -1);
+
+	if (log_get_all_log_files (NULL, &files)) {
+		DEBUG_MSG (("Log: Found %d log files in total", g_list_length (files)));
+	} else {
+		DEBUG_MSG (("Log: Failed to retrieve all log files"));
+	}
+
+	for (l = files; l; l = l->next) {
+		filename = l->data;
+
+		if (!g_file_get_contents (filename, &contents, NULL, NULL)) {
+			continue;
+		}
+		
+		if (!contents || strlen (contents) < 1) {
+			continue;
+		}
+		
+		contents_casefold = g_utf8_casefold (contents, -1);
+		g_free (contents);
+
+		if (strstr (contents_casefold, text_casefold)) {
+			GossipLogSearchHit *hit;
+			
+			hit = g_new0 (GossipLogSearchHit, 1);
+
+			hit->account_id = log_get_account_id_from_filename (filename);
+			hit->contact_id = log_get_contact_id_from_filename (filename);
+
+			hit->contact_name = log_get_contact_name_from_id (hit->account_id,
+									  hit->contact_id);
+
+			hit->date = log_get_date_from_filename (filename);
+
+			hit->filename = g_strdup (filename);
+
+			hits = g_list_append (hits, hit);
+
+			DEBUG_MSG (("Log: Found text:'%s' in file:'%s' on date:'%s'...", 
+				    text, hit->filename, hit->date));
+		}
+
+		g_free (contents_casefold);
+	}
+
+	g_list_foreach (files, (GFunc) g_free, NULL);
+	g_list_free (files);
+	
+	g_free (text_casefold);
+
+	return hits;
+}
+
+void
+gossip_log_search_free (GList *hits)
+{
+	GList              *l;
+	GossipLogSearchHit *hit;
+
+	g_return_if_fail (hits != NULL);
+	
+	for (l = hits; l; l = l->next) {
+		hit = l->data;
+
+		g_free (hit->account_id);
+		g_free (hit->contact_id);
+		g_free (hit->contact_name);
+		g_free (hit->date);
+		g_free (hit->filename);
+
+		g_free (hit);
+	}
+	
+	g_list_free (hits);
+}
+
+const gchar *
+gossip_log_search_hit_get_account_id (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+	
+	return hit->account_id;
+}
+
+const gchar *
+gossip_log_search_hit_get_contact_id (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+	
+	return hit->contact_id;
+}
+
+const gchar *
+gossip_log_search_hit_get_contact_name (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+	
+	return hit->contact_name;
+}
+
+const gchar *
+gossip_log_search_hit_get_date (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+	
+	return hit->date;
+}
+
+const gchar *
+gossip_log_search_hit_get_filename (GossipLogSearchHit *hit)
+{
+	g_return_val_if_fail (hit != NULL, NULL);
+	
+	return hit->filename;
 }

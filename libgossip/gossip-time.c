@@ -20,6 +20,7 @@
 
 #include <config.h>
 
+#include <string.h>
 #include <stdlib.h>
 
 #include "gossip-time.h"
@@ -125,7 +126,8 @@ gossip_time_from_string_full (const gchar *time,
 {
 	struct tm tm;
 	
+	memset (&tm, 0, sizeof (struct tm));
+
 	strptime (time, format, &tm);
 	return gossip_time_from_tm (&tm);
 }
-

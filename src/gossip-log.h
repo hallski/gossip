@@ -44,19 +44,37 @@ struct _GossipLogClass {
 	GObjectClass parent_class;
 };
 
-GType          gossip_log_get_type        (void) G_GNUC_CONST;
-GossipLog *    gossip_log_get             (GossipContact *contact);
-GossipContact *gossip_log_get_own_contact (GossipLog     *log);
-GList *        gossip_log_get_contacts    (GossipAccount *account);
-GList *        gossip_log_get_messages    (GossipLog     *log,
-					   const gchar   *date);
-GList *        gossip_log_get_dates       (GossipLog     *log);
+GType          gossip_log_get_type                    (void) G_GNUC_CONST;
 
-void           gossip_log_message         (GossipLog     *log,
-					   GossipMessage *message,
-					   gboolean       incoming);
-gboolean       gossip_log_exists          (GossipLog     *log);
-void           gossip_log_show            (GtkWidget     *window,
-					   GossipContact *contact);
+GossipLog *    gossip_log_get                         (GossipContact      *contact);
+GossipLog *    gossip_log_get_by_contact_id           (GossipAccount      *account,
+						       const gchar        *contact_id);
+GossipContact *gossip_log_get_own_contact             (GossipLog          *log);
+GList *        gossip_log_get_contacts                (GossipAccount      *account);
+GList *        gossip_log_get_messages                (GossipLog          *log,
+						       const gchar        *date);
+GList *        gossip_log_get_dates                   (GossipLog          *log);
+gchar *        gossip_log_get_date_readable           (const gchar        *date);
+
+void           gossip_log_message                     (GossipLog          *log,
+						       GossipMessage      *message,
+						       gboolean            incoming);
+gboolean       gossip_log_exists                      (GossipLog          *log);
+void           gossip_log_show                        (GtkWidget          *window,
+						       GossipContact      *contact);
+
+/*
+ * Searching
+ */
+typedef struct _GossipLogSearchHit GossipLogSearchHit;
+
+GList *        gossip_log_search_new                  (const gchar        *text);
+void           gossip_log_search_free                 (GList              *hits);
+
+const gchar *  gossip_log_search_hit_get_account_id   (GossipLogSearchHit *hit);
+const gchar *  gossip_log_search_hit_get_contact_id   (GossipLogSearchHit *hit);
+const gchar *  gossip_log_search_hit_get_contact_name (GossipLogSearchHit *hit);
+const gchar *  gossip_log_search_hit_get_date         (GossipLogSearchHit *hit);
+const gchar *  gossip_log_search_hit_get_filename     (GossipLogSearchHit *hit);
 
 #endif /* __GOSSIP_LOG_H__ */

@@ -167,7 +167,7 @@ gossip_account_manager_add (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 
-	/* don't add more than once */
+	/* Don't add more than once */
  	if (!gossip_account_manager_find (manager, gossip_account_get_name (account))) { 
 		const gchar       *name;
 		GossipAccountType  type;
@@ -259,6 +259,33 @@ gossip_account_manager_find (GossipAccountManager *manager,
 		account_name = gossip_account_get_name (account);
 
 		if (strcmp (account_name, name) == 0) {
+			return account;
+		}
+	}
+
+	return NULL;
+}	
+
+GossipAccount *
+gossip_account_manager_find_by_id (GossipAccountManager *manager,
+				   const gchar          *id)
+{
+	GossipAccountManagerPriv *priv;
+	GList                    *l;
+	
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
+	g_return_val_if_fail (id != NULL, NULL);
+	
+	priv = GET_PRIV (manager);
+
+	for (l = priv->accounts; l; l = l->next) {
+		GossipAccount *account;
+		const gchar   *account_id;
+
+		account = l->data;
+		account_id = gossip_account_get_id (account);
+
+		if (strcmp (account_id, id) == 0) {
 			return account;
 		}
 	}
