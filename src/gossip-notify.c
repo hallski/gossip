@@ -95,6 +95,22 @@ notify_online_send_message_cb (NotifyNotification *notify,
 	gossip_chat_manager_show_chat (chat_manager, contact);
 }
 
+static gboolean
+notify_get_is_busy (void)
+{
+	GossipPresence      *presence;
+	GossipPresenceState  state;
+	
+	presence = gossip_session_get_presence (gossip_app_get_session ());
+        state = gossip_presence_get_state (presence);
+
+        if (state == GOSSIP_PRESENCE_STATE_BUSY) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 void
 gossip_notify_contact_online (GossipContact *contact)
 {
@@ -105,6 +121,10 @@ gossip_notify_contact_online (GossipContact *contact)
 	const gchar        *status;
 	GError             *error = NULL;
 
+	if (notify_get_is_busy ()) {
+		return;
+	}
+	
 	DEBUG_MSG (("Notify: Contact online:'%s'", 
 		   gossip_contact_get_id (contact)));
 
@@ -149,6 +169,10 @@ gossip_notify_contact_offline (GossipContact *contact)
 	gchar              *title;
 	const gchar        *status;
 	GError             *error = NULL;
+
+	if (notify_get_is_busy ()) {
+		return;
+	}
 
 	DEBUG_MSG (("Notify: Contact offline:'%s'", 
 		   gossip_contact_get_id (contact)));

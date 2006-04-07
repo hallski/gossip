@@ -1,5 +1,13 @@
 2006-04-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-list.c:
+	* src/gossip-notify.c: (notify_get_is_busy),
+	(gossip_notify_contact_online), (gossip_notify_contact_offline):
+	Please don't bubble so much when I'm busy (don't show bubbles for
+	online/offline events). Bug #337647.
+
+2006-04-07  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-presence-chooser.c (presence_chooser_show_popup): Fix
 	the previous fix. Caught by Dimitur Kirov.
 
