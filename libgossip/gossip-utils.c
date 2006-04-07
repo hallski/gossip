@@ -201,6 +201,10 @@ utils_regex_init (void)
 				"news:[-A-Z\\^_a-z{|}~!\"#$%&'()*+,./0-9;:=?`]+"
 				"@[" HOSTCHARS ".]+(:[0-9]+)?";
 			break;
+		default:
+			/* Silence the compiler. */
+			expression = NULL;
+			continue;
 		}
 		
 		memset (&dingus[i], 0, sizeof (regex_t));

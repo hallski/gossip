@@ -1,5 +1,8 @@
 2006-04-07  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-utils.c (utils_regex_init): Silence warning,
+	bug #337623 (Caio Marcelo).
+
 	* src/gossip-presence-chooser.c (presence_chooser_show_popup):
 	Don't leak the menu, based on patch from Dimitur Kirov, bug
 	#337645.
