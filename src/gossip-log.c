@@ -790,14 +790,14 @@ log_set_name (GossipAccount *account,
 	if (content) {
 		GError *error = NULL;
 
-		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %d bytes of data",
+		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %" G_GSIZE_FORMAT " bytes of data",
 			    filename, length));
 
 		ok = g_file_set_contents (filename, content, length, &error);
 		g_free (content);
 
 		if (error) {
-			DEBUG_MSG (("Log: Could not save file:'%s' with %d bytes of data, error:%d->'%s'",
+			DEBUG_MSG (("Log: Could not save file:'%s' with %" G_GSIZE_FORMAT " bytes of data, error:%d->'%s'",
 				    filename, length, error->code, error->message));
 			g_error_free (error);
 		}
@@ -870,14 +870,14 @@ log_set_own_name (GossipAccount *account,
 	if (content) {
 		GError *error = NULL;
 
-		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %d bytes of data",
+		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %" G_GSIZE_FORMAT " bytes of data",
 			    filename, length));
 
 		ok = g_file_set_contents (filename, content, length, &error);
 		g_free (content);
 
 		if (error) {
-			DEBUG_MSG (("Log: Could not save file:'%s' with %d bytes of data, error:%d->'%s'",
+			DEBUG_MSG (("Log: Could not save file:'%s' with %" G_GSIZE_FORMAT " bytes of data, error:%d->'%s'",
 				    filename, length, error->code, error->message));
 			g_error_free (error);
 		}

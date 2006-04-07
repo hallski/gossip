@@ -1,5 +1,9 @@
 2006-04-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-log.c (log_set_name, log_set_own_name): Use
+	G_GSIZE_FORMAT, fixes build on 64-bit systems. Bug #336395, patch
+	by Caio Marcelo.
+
 	* libgossip/gossip-utils.c (utils_regex_init): Silence warning,
 	bug #337623 (Caio Marcelo).
 
