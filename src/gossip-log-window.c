@@ -30,8 +30,8 @@
 #include "gossip-log-window.h"
 #include "gossip-ui-utils.h"
 
-/* #define DEBUG_MSG(x)   */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
 typedef struct {
 	GtkWidget      *window;
@@ -101,7 +101,7 @@ static void           log_window_accounts_changed_cb       (GtkWidget        *co
 static void           log_window_new_message_cb            (GossipLog        *log,
 							    GossipMessage    *message,
 							    GossipLogWindow  *window);
-static void           log_window_update_messages           (GossipLogWindow  *window,
+static void           log_window_contacts_get_messages     (GossipLogWindow  *window,
 							    const gchar      *date);
 static void           log_window_calendar_day_selected_cb  (GtkWidget        *calendar,
 							    GossipLogWindow  *window);
@@ -546,7 +546,7 @@ log_window_contacts_changed_cb (GtkTreeSelection *selection,
 	/* Use last date by default */
 	gtk_calendar_clear_marks (GTK_CALENDAR (window->calendar));
 
-	log_window_update_messages (window, NULL);
+	log_window_contacts_get_messages (window, NULL);
 }
 
 static void   
@@ -761,8 +761,8 @@ log_window_new_message_cb (GossipLog       *log,
 }
 
 static void
-log_window_update_messages (GossipLogWindow *window, 
-			    const gchar     *date_to_show)
+log_window_contacts_get_messages (GossipLogWindow *window, 
+				  const gchar     *date_to_show)
 {
 	GossipContact *contact;
 	GossipContact *own_contact;
@@ -773,6 +773,13 @@ log_window_update_messages (GossipLogWindow *window,
 	GList         *l;
 
 	const gchar   *date;
+
+	guint          year_selected;
+	guint          year;
+	guint          month;
+	guint          month_selected;
+	guint          day;
+	
 
 	contact = log_window_contacts_get_selected (window);
 	if (!contact) {
@@ -799,15 +806,13 @@ log_window_update_messages (GossipLogWindow *window,
 	/* Either use the supplied date or get the last */
 	date = date_to_show;
 	if (!date) {
+		gboolean day_selected = FALSE;
+
+		/* Get a list of dates and show them on the calendar */
 		dates = gossip_log_get_dates (window->log);
 
 		for (l = dates; l; l = l->next) {
 			const gchar *str;
-			guint        year_selected;
-			guint        year;
-			guint        month;
-			guint        month_selected;
-			guint        day;
 			
 			str = l->data;
 			if (!str) {
@@ -822,17 +827,24 @@ log_window_update_messages (GossipLogWindow *window,
 
 			month_selected++;
 
-			if (year == year_selected && month == month_selected) {
-				DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
-				gtk_calendar_mark_day (GTK_CALENDAR (window->calendar), day);
+			if (!l->next) {
+				date = str;
 			}
-			
+
+			if (year != year_selected || month != month_selected) {
+				continue;
+			}
+
+
+			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
+			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar), day);
+				
 			if (l->next) {
 				continue;
 			}
 
-			date = str;
-			
+			day_selected = TRUE;
+
 			g_signal_handlers_block_by_func (window->calendar, 
 							 log_window_calendar_day_selected_cb, 
 							 window);
@@ -842,8 +854,38 @@ log_window_update_messages (GossipLogWindow *window,
 							   window);
 		}
 
-		g_list_foreach (dates, (GFunc) g_free, NULL);
-		g_list_free (dates);
+		if (!day_selected) {
+			/* Unselect the day in the calendar */
+			g_signal_handlers_block_by_func (window->calendar, 
+							 log_window_calendar_day_selected_cb, 
+							 window);
+			gtk_calendar_select_day (GTK_CALENDAR (window->calendar), 0);
+			g_signal_handlers_unblock_by_func (window->calendar, 
+							   log_window_calendar_day_selected_cb, 
+							   window);
+		}
+	} else {
+		sscanf (date, "%4d%2d%2d", &year, &month, &day);
+		gtk_calendar_get_date (GTK_CALENDAR (window->calendar), 
+				       &year_selected, 
+				       &month_selected,
+				       NULL);
+
+		month_selected++;
+
+		if (year != year_selected && month != month_selected) {
+			day = 0;
+		} 
+
+		g_signal_handlers_block_by_func (window->calendar, 
+						 log_window_calendar_day_selected_cb, 
+						 window);
+
+		gtk_calendar_select_day (GTK_CALENDAR (window->calendar), day);
+
+		g_signal_handlers_unblock_by_func (window->calendar, 
+						   log_window_calendar_day_selected_cb, 
+						   window);
 	}
 
 	/* Clear all current messages shown in the textview */
@@ -874,6 +916,9 @@ log_window_update_messages (GossipLogWindow *window,
  	g_list_foreach (messages, (GFunc) g_object_unref, NULL);
 	g_list_free (messages);
 
+	g_list_foreach (dates, (GFunc) g_free, NULL);
+	g_list_free (dates);
+	
 	/* Scroll to the most recent messages */
 	gossip_chat_view_scroll_down (window->chatview_browse);
 	
@@ -900,7 +945,8 @@ log_window_calendar_day_selected_cb (GtkWidget       *calendar,
 
 	DEBUG_MSG (("LogWindow: Currently selected date is:'%s'", date));
 
-	log_window_update_messages (window, date);
+	log_window_contacts_get_messages (window, date);
+
 	g_free (date);
 }
 
@@ -1018,6 +1064,7 @@ gossip_log_window_show (GtkWindow     *parent,
 	GList                *accounts;
 	gint                  account_num;
 	GossipAccountChooser *account_chooser;
+	GtkWidget            *notebook;
 
         window = g_new0 (GossipLogWindow, 1);
 
@@ -1025,6 +1072,7 @@ gossip_log_window_show (GtkWindow     *parent,
 				       "log_window",
 				       NULL,
 				       "log_window", &window->window,
+				       "notebook", &notebook,
 				       "entry_search", &window->entry_search,
  				       "treeview_search", &window->treeview_search, 
 				       "scrolledwindow_search", &window->scrolledwindow_search,
@@ -1104,6 +1152,7 @@ gossip_log_window_show (GtkWindow     *parent,
 
 	/* Select contact */
 	if (contact) {
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), 1);
 		log_window_contacts_set_selected (window, contact);
 	}
 

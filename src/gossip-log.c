@@ -71,8 +71,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_LOG, GossipLogPriv))
 
-/* #define DEBUG_MSG(x)   */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
 #define LOG_HEADER \
     "<?xml version='1.0' encoding='utf-8'?>\n" \
@@ -255,10 +255,17 @@ log_get_contact_id_from_filename (const gchar *filename)
 	gchar *p;
 
 	basename = g_path_get_basename (filename);
+	if (!basename) {
+		return NULL;
+	}
+
 	p = strstr (basename, "-");
+	if (!p) {
+		g_free (basename);
+		return NULL;
+	}
 
 	p[0] = '\0';
-
 	return basename;
 }
 
@@ -270,6 +277,9 @@ log_get_account_id_from_filename (const gchar *filename)
 	gchar *account_id;
 
 	dirname = g_path_get_dirname (filename);
+	if (!dirname) {
+		return NULL;
+	}
 
 	str = g_strrstr (dirname, G_DIR_SEPARATOR_S);
 	if (!str) {
@@ -289,6 +299,10 @@ static gchar *
 log_get_date_from_filename (const gchar *filename)
 {
 	const gchar *start;
+
+	if (!filename) {
+		return NULL;
+	}
 
 	if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
 		return NULL;
@@ -705,7 +719,7 @@ static GossipContact *
 log_get_contact (GossipAccount *account,
 		 const gchar   *contact_id)
 {
-	GossipContact *contact;
+	GossipContact *contact = NULL;
 	GKeyFile      *key_file;
 	const gchar   *filename;
 	gchar         *name = NULL;
@@ -718,15 +732,17 @@ log_get_contact (GossipAccount *account,
 
 	name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
 	DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name)); 
-
+	
 	g_key_file_free (key_file);
 
-	contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
-					   account,
-					   contact_id,
-					   name);
+	if (name) {
+		contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
+						   account,
+						   contact_id,
+						   name);
 
-	g_free (name);
+		g_free (name);
+	}
 
 	return contact;
 }
@@ -1213,8 +1229,16 @@ gossip_log_get_contacts (GossipAccount *account)
 		contact_id = log_get_contact_id_from_filename (filename_unescaped);
 		g_free (filename_unescaped);
 
+		if (!contact_id) {
+			continue;
+		}
+
 		contact = log_get_contact (account, contact_id);
 		g_free (contact_id);
+
+		if (!contact) {
+			continue;
+		}
 
 		for (l = contacts; l && !duplicate; l = l->next) {
 			if (gossip_contact_equal (l->data, contact)) {
@@ -1315,13 +1339,16 @@ gossip_log_get_dates (GossipLog *log)
 		DEBUG_MSG (("Log: Using log file:'%s' to create contact", filename_unescaped));
 		
 		contact_id = log_get_contact_id_from_filename (filename_unescaped);
-		if (strcmp (contact_id, gossip_contact_get_id (priv->contact)) != 0) {
+		date = log_get_date_from_filename (filename_unescaped);
+		
+		if (!contact_id || !date || 
+		    strcmp (contact_id, gossip_contact_get_id (priv->contact)) != 0) {
 			g_free (contact_id);
+			g_free (date);
 			g_free (filename_unescaped);
-			continue;
+			continue; 
 		}
 
-		date = log_get_date_from_filename (filename_unescaped);
 		DEBUG_MSG (("Log: Using date:'%s' for:'%s'", 
 			    date, contact_id));
 
@@ -1418,9 +1445,9 @@ gossip_log_message (GossipLog     *log,
 		own_name = gossip_contact_get_name (priv->own_contact);
 		str = gossip_contact_get_name (own_contact);
 
-		if (!own_name || 
-		    strcmp (own_name, str) != 0 ||
-		    strcmp (own_name, own_id) == 0) {
+		if (str && (!own_name || 
+			    strcmp (own_name, str) != 0 ||
+			    strcmp (own_name, own_id) == 0)) {
 			gossip_contact_set_name (priv->own_contact, str);
 			save_own_contact = TRUE;
 		}

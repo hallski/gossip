@@ -1,3 +1,25 @@
+2006-04-07  Martyn Russell  <martyn@imendio.com>
+
+	* NEWS: Spent 10 minutes trying to keep up with all of Richards
+	party bug fixes for the next release :)
+	
+	* src/gossip-contact-list.c: 
+	* ui/chat.glade:
+	* ui/main.glade: Changed the "View Message History" to "View
+	Previous Conversations" and fixed the mnemonics to be consistent
+	everywhere, fixes bug #337001 (Wouter Bolsterlee).
+
+	* src/gossip-log-window.c: Turned off debugging and only make sure
+	the "Browse" tab is shown with your contact's last conversation IF
+	a contact is provided when calling gossip_log_window_show().
+
+	* src/gossip-log.c: Fixed a couple of crashers and turned
+	debugging off.
+	
+	* src/gossip-presence-chooser.c: Fixed richards G_CALLBACK
+	(foo_gtk_widget_destroy) for the latest presence menu changes he
+	did :)
+
 2006-04-07  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-list.c:

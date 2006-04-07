@@ -3,6 +3,14 @@ NEWS in 0.11:
 - Added a smiley menu and context menu for chat windows (Martyn). 
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #337001, Be consistent with the "View Previous Conversations"
+action text and mnemonics in chat windows, context menus, etc (Wouter
+Bolsterlee). 
+- Fixed #337647, Don't show status notifications when busy (Richard).
+- Fixed #336395, Silence log warnings on 64bit systems (Caio Marcelo).
+- Fixed #337623, Silence regexp warning (Caio Marcelo, Richard).
+- Fixed #337645, Don't leak the presence chooser popup menu (based on
+patch from Dimitur Kirov, Richard).
 - Fixed #336456, Don't put "Gossip" in front of every window title
 (Wouter Bolsterlee, Brian Pepple). 
 - Fixed #305370, Support the "subject" Jabber message element (Jeremy

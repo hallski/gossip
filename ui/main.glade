@@ -5991,7 +5991,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image260">
+			<widget class="GtkImage" id="image268">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -6011,7 +6011,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image261">
+			<widget class="GtkImage" id="image269">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -6038,7 +6038,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image262">
+			<widget class="GtkImage" id="image270">
 			  <property name="visible">True</property>
 			  <property name="pixbuf">gossip-message.png</property>
 			  <property name="xalign">0.5</property>
@@ -6053,12 +6053,12 @@ This name could be something associated with the service provider, for example, 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="actions_history">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">View Message Hi_story</property>
+		      <property name="label" translatable="yes">_View Previous Conversations</property>
 		      <property name="use_underline">True</property>
-		      <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <accelerator key="V" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image263">
+			<widget class="GtkImage" id="image271">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -6092,7 +6092,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image264">
+			<widget class="GtkImage" id="image272">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -6183,7 +6183,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image265">
+			<widget class="GtkImage" id="image273">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -6216,7 +6216,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image266">
+			<widget class="GtkImage" id="image274">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -6334,7 +6334,7 @@ This name could be something associated with the service provider, for example, 
 
 <widget class="GtkWindow" id="log_window">
   <property name="visible">True</property>
-  <property name="title" translatable="yes">View Message History</property>
+  <property name="title" translatable="yes">View Previous Conversations</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -6365,7 +6365,7 @@ This name could be something associated with the service provider, for example, 
 	  <property name="spacing">6</property>
 
 	  <child>
-	    <widget class="GtkNotebook" id="notebook1">
+	    <widget class="GtkNotebook" id="notebook">
 	      <property name="border_width">2</property>
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>

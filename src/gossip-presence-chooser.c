@@ -420,7 +420,7 @@ presence_chooser_show_popup (GossipPresenceChooser *chooser)
 	
 	g_signal_connect_after (menu,
 				"selection-done",
-				G_CALLBACK (foo_gtk_widget_destroy),
+				G_CALLBACK (gtk_widget_destroy),
 				NULL);
 
 	gtk_widget_set_size_request (menu,

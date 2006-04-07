@@ -338,7 +338,7 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  0,
 	  "<Separator>",
 	  NULL },
-	{ N_("/In_vite to Chat Conference"),
+	{ N_("/_Invite to Chat Conference"),
 	  NULL,
 	  NULL,
 	  ITEM_MENU_INVITE,
@@ -362,7 +362,7 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  0,
 	  "<Separator>",
 	  NULL },
-	{ N_("/View Message _History"),
+	{ N_("/_View Previous Conversations"),
 	  NULL,
 	  GIF_CB (contact_list_item_menu_log_cb),
 	  ITEM_MENU_LOG,
@@ -1813,7 +1813,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				
 				factory = priv->item_popup_factory;
 				log_item = gtk_item_factory_get_item (factory,
-								      "/Show Log");
+								      "/View Previous Conversations");
 
 
 				log = gossip_log_get (contact);
