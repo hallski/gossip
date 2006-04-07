@@ -1,5 +1,17 @@
 2006-04-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-log.c: (log_get_all_log_files_for_account_dir),
+	(log_get_all_log_files): Split up in two functions and only get
+	the files in the actual account directories instead of all files
+	recursively. Makes things work better when there are old style log
+	files.
+
+	(log_get_contact),
+	(log_get_contact_name_from_id),
+	(log_get_own_contact): Guard against non-parseable key files.
+
+2006-04-07  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-contact-list.c: Include config.h first.
 
 2006-04-07  Martyn Russell  <martyn@imendio.com>

@@ -72,7 +72,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_LOG, GossipLogPriv))
 
 #define DEBUG_MSG(x)   
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define LOG_HEADER \
     "<?xml version='1.0' encoding='utf-8'?>\n" \
@@ -317,65 +317,77 @@ log_get_date_from_filename (const gchar *filename)
 	return g_strndup (start, strlen (start) - strlen (LOG_FILENAME_SUFFIX));
 }
 
-static gboolean
-log_get_all_log_files (const gchar  *root_location, 
-		       GList       **files)
+static void
+log_get_all_log_files_for_account_dir (const gchar  *account_dir,
+				       GList       **files)
 {
 	GDir        *dir;
-	const gchar *filename;
-	gchar       *location;
+	const gchar *name;
+	gchar       *path;
 
-	gboolean     ok = TRUE;
-
-	g_return_val_if_fail (files != NULL, FALSE);
-
-	if (root_location == NULL) {
-		gchar *log_directory;
-
-		*files = NULL;
-
-		if (log_check_dir (&log_directory)) {
-			DEBUG_MSG (("Log: No log directory exists"));
-			return TRUE;
-		}
-
-		ok = log_get_all_log_files (log_directory, files);
-		g_free (log_directory);
-
-		return ok;
-	}
-	
-	dir = g_dir_open (root_location, 0, NULL);
+	dir = g_dir_open (account_dir, 0, NULL);
 	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", root_location));
-		return FALSE;
+		DEBUG_MSG (("Log: Could not open directory:'%s'", account_dir));
 	}
 	
-	DEBUG_MSG (("Log: Finding all log files in directory:'%s'", root_location));
+	DEBUG_MSG (("Log: Finding all log files in directory:'%s'", account_dir));
 	
-	while (ok && (filename = g_dir_read_name (dir)) != NULL) {
-		location = g_build_filename (root_location, filename, NULL);
+	while ((name = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (name, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+			
+		path = g_build_filename (account_dir, name, NULL);
+		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
+			*files = g_list_insert_sorted (*files, 
+						       path, 
+						       (GCompareFunc) strcmp);
+			
+			/* Don't free path. */
+			continue;
+		}
 		
-		if (g_file_test (location, G_FILE_TEST_IS_DIR)) {
-			/* Open directory */
-			ok = log_get_all_log_files (location, files);
-		} else {
-			if (g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
-				*files = g_list_insert_sorted (*files, 
-							       location, 
-							       (GCompareFunc) strcmp);
-
-				/* Don't free location */
-				continue;
-			}
- 		}
-
-		g_free (location);
+		g_free (path);
 	}
 
 	g_dir_close (dir);
+}
 
-	return ok;
+static gboolean
+log_get_all_log_files (GList **files)
+{
+	gchar       *log_directory;
+	GDir        *dir;
+	const gchar *name;
+	gchar       *account_dir;
+
+	*files = NULL;
+
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return TRUE;
+	}
+	
+	dir = g_dir_open (log_directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", log_directory));
+		return FALSE;
+	}
+	
+	while ((name = g_dir_read_name (dir)) != NULL) {
+		account_dir = g_build_filename (log_directory, name, NULL);
+		
+		if (g_file_test (account_dir, G_FILE_TEST_IS_DIR)) {
+			/* Open directory */
+			log_get_all_log_files_for_account_dir (account_dir, files);
+		}
+
+		g_free (account_dir);
+	}
+	
+	g_dir_close (dir);
+
+	return TRUE;
 }
 
 static gchar *
@@ -728,10 +740,10 @@ log_get_contact (GossipAccount *account,
 
 	key_file = g_key_file_new ();
 
-	g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL);
-
-	name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
-	DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name)); 
+	if (g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL)) {
+		name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
+		DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name));
+	}
 	
 	g_key_file_free (key_file);
 
@@ -771,12 +783,13 @@ log_get_contact_name_from_id (const gchar *account_id,
 
 	key_file = g_key_file_new ();
 
-	g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL);
-
-	name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
-	DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name)); 
-
+	if (g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL)) {
+		name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
+		DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name)); 
+	}
+	
 	g_key_file_free (key_file);
+	g_free (filename);
 
 	return name;
 }
@@ -806,14 +819,16 @@ log_set_name (GossipAccount *account,
 	if (content) {
 		GError *error = NULL;
 
-		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %" G_GSIZE_FORMAT " bytes of data",
+		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %"
+			    G_GSIZE_FORMAT " bytes of data",
 			    filename, length));
 
 		ok = g_file_set_contents (filename, content, length, &error);
 		g_free (content);
 
 		if (error) {
-			DEBUG_MSG (("Log: Could not save file:'%s' with %" G_GSIZE_FORMAT " bytes of data, error:%d->'%s'",
+			DEBUG_MSG (("Log: Could not save file:'%s' with %"
+				    G_GSIZE_FORMAT " bytes of data, error:%d->'%s'",
 				    filename, length, error->code, error->message));
 			g_error_free (error);
 		}
@@ -834,18 +849,19 @@ log_get_own_contact (GossipAccount *account)
 	GKeyFile      *key_file;
 	const gchar   *filename;
 	const gchar   *id;
-	gchar         *name;
+	gchar         *name = NULL;
 
 	filename = log_get_contacts_filename (account);
 
 	key_file = g_key_file_new ();
 
-	g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL);
-
-	id = gossip_account_get_id (account);
-	name = g_key_file_get_string (key_file, LOG_KEY_GROUP_SELF, LOG_KEY_VALUE_NAME, NULL);
+	if (g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL)) {
+		name = g_key_file_get_string (key_file, LOG_KEY_GROUP_SELF, LOG_KEY_VALUE_NAME, NULL);
+	}
 
 	g_key_file_free (key_file);
+	
+	id = gossip_account_get_id (account);
 
 	if (!name) {
 		DEBUG_MSG (("Log: No name in contacts file, using id for name.")); 
@@ -1565,7 +1581,7 @@ gossip_log_search_new (const gchar *text)
 
 	text_casefold = g_utf8_casefold (text, -1);
 
-	if (log_get_all_log_files (NULL, &files)) {
+	if (log_get_all_log_files (&files)) {
 		DEBUG_MSG (("Log: Found %d log files in total", g_list_length (files)));
 	} else {
 		DEBUG_MSG (("Log: Failed to retrieve all log files"));
