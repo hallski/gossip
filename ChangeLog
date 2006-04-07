@@ -1,3 +1,9 @@
+2006-04-07  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-presence-chooser.c (presence_chooser_show_popup):
+	Don't leak the menu, based on patch from Dimitur Kirov, bug
+	#337645.
+
 2006-04-05  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.[ch]: Added

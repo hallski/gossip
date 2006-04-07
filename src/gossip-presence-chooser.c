@@ -417,6 +417,11 @@ presence_chooser_show_popup (GossipPresenceChooser *chooser)
 	priv = GET_PRIV (chooser);
 
 	menu = gossip_presence_chooser_create_menu (chooser);
+	
+	g_signal_connect_after (menu,
+				"deactivate",
+				G_CALLBACK (gtk_widget_destroy),
+				NULL);
 
 	gtk_widget_set_size_request (menu,
 				     priv->button->allocation.width,
