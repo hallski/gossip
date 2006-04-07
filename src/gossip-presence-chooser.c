@@ -419,8 +419,8 @@ presence_chooser_show_popup (GossipPresenceChooser *chooser)
 	menu = gossip_presence_chooser_create_menu (chooser);
 	
 	g_signal_connect_after (menu,
-				"deactivate",
-				G_CALLBACK (gtk_widget_destroy),
+				"selection-done",
+				G_CALLBACK (foo_gtk_widget_destroy),
 				NULL);
 
 	gtk_widget_set_size_request (menu,

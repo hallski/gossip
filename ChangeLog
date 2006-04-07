@@ -1,5 +1,8 @@
 2006-04-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c (presence_chooser_show_popup): Fix
+	the previous fix. Caught by Dimitur Kirov.
+
 	* src/gossip-log.c (log_set_name, log_set_own_name): Use
 	G_GSIZE_FORMAT, fixes build on 64-bit systems. Bug #336395, patch
 	by Caio Marcelo.
