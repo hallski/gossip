@@ -1,3 +1,7 @@
+2006-04-07  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c: Include config.h first.
+
 2006-04-07  Martyn Russell  <martyn@imendio.com>
 
 	* NEWS: Spent 10 minutes trying to keep up with all of Richards
