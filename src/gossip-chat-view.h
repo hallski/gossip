@@ -90,12 +90,19 @@ void            gossip_chat_view_append_invite             (GossipChatView *view
 							    GossipMessage  *message);
 /* void            gossip_chat_view_set_margin                (GossipChatView *view, */
 /* 							    gint            margin); */
+void            gossip_chat_view_scroll                    (GossipChatView *view,
+							    gboolean        allow_scrolling);
 void            gossip_chat_view_scroll_down               (GossipChatView *view);
 
 gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view,
 							    GtkTextIter    *start,
 							    GtkTextIter    *end);
 void            gossip_chat_view_clear                     (GossipChatView *view);
+void            gossip_chat_view_find                      (GossipChatView *view, 
+							    const gchar    *search_criteria,
+							    gboolean        new_search);
+void            gossip_chat_view_highlight                 (GossipChatView *view, 
+							    const gchar    *text);
 void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
 
 gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);

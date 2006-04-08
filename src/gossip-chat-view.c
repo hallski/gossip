@@ -44,8 +44,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_MSG(x)  
+/*  #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
 #define TIMESTAMP_INTERVAL 300
@@ -68,6 +68,8 @@ struct _GossipChatViewPriv {
 	gboolean       irc_style;
 	time_t         last_timestamp;
 	BlockType      last_block_type;
+
+	gboolean       allow_scrolling;
 
 	/* This is for the group chat so we know if the "other" last contact
 	 * changed, so we know whether to insert a header or not.
@@ -261,15 +263,14 @@ gossip_chat_view_init (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
 
-/* 	priv = g_new0 (GossipChatViewPriv, 1); */
-/* 	view->priv = priv; */
-
 	priv = GET_PRIV (view);
+
+	priv->buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	priv->last_timestamp = 0;
 
-	priv->buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	priv->allow_scrolling = TRUE;
 
 	g_object_set (view,
 		      "wrap-mode", GTK_WRAP_WORD_CHAR,
@@ -338,6 +339,11 @@ chat_view_setup_tags (GossipChatView *view)
 
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "cut",
+				    NULL);
+
+	gtk_text_buffer_create_tag (priv->buffer,
+				    "highlight",
+				    "background", "yellow",
 				    NULL);
 
 	tag = gtk_text_buffer_create_tag (priv->buffer,
@@ -1510,11 +1516,34 @@ gossip_chat_view_append_invite (GossipChatView *view,
 }
 
 void
+gossip_chat_view_scroll (GossipChatView *view,
+			 gboolean        allow_scrolling)
+{
+	GossipChatViewPriv *priv;
+
+	priv = GET_PRIV (view);
+
+	priv->allow_scrolling = allow_scrolling;
+
+	DEBUG_MSG (("ChatView: Scrolling %s", allow_scrolling ? "enabled" : "disabled"));
+}
+
+void
 gossip_chat_view_scroll_down (GossipChatView *view)
 {
-	GtkTextBuffer *buffer;
-	GtkTextIter    iter;
-	GtkTextMark   *mark;
+	GossipChatViewPriv *priv;
+
+	GtkTextBuffer      *buffer;
+	GtkTextIter         iter;
+	GtkTextMark        *mark;
+
+	priv = GET_PRIV (view);
+
+	if (!priv->allow_scrolling) {
+		return;
+	}
+
+	DEBUG_MSG (("ChatView: Scrolling down"));
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
@@ -1565,6 +1594,136 @@ gossip_chat_view_clear (GossipChatView *view)
 	
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	priv->last_timestamp = 0;
+}
+
+void
+gossip_chat_view_find (GossipChatView *view, 
+		       const gchar    *search_criteria,
+		       gboolean        new_search)
+{
+	GtkTextBuffer      *buffer;
+	GtkTextIter         iter_at_mark;
+	GtkTextIter         iter_match_start;
+	GtkTextIter         iter_match_end;
+
+	static GtkTextMark *find_mark = NULL;
+	static gboolean     wrapped = FALSE;
+        
+	gboolean            found;
+	gboolean            from_start = FALSE;
+
+	gchar              *str;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (search_criteria != NULL);
+	g_return_if_fail (strlen (search_criteria) > 0);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+    
+	if (new_search) {
+		find_mark = NULL;
+		from_start = TRUE;
+	}
+     
+	if (find_mark) {
+		gtk_text_buffer_get_iter_at_mark (buffer, &iter_at_mark, find_mark);
+		gtk_text_buffer_delete_mark (buffer, find_mark); 
+		find_mark = NULL;
+	} else {
+		gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
+		from_start = TRUE;
+	}
+
+	str = g_utf8_casefold (search_criteria, -1);
+	found = gtk_text_iter_forward_search (&iter_at_mark, 
+					      str, 
+					      GTK_TEXT_SEARCH_TEXT_ONLY, 
+					      &iter_match_start, 
+					      &iter_match_end,
+					      NULL);
+	g_free (str);
+    
+	if (!found) {
+		if (from_start) {
+			return;
+		}
+	
+		/* Here we wrap around. */
+		if (!new_search && !wrapped) {
+			wrapped = TRUE;
+			gossip_chat_view_find (view, search_criteria, FALSE);
+			wrapped = FALSE;
+		}
+
+		return;
+	}
+    
+	/* Set new mark and show on screen */
+	find_mark = gtk_text_buffer_create_mark (buffer, NULL, &iter_match_end, TRUE); 
+	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+				      find_mark,
+				      0.0,
+				      TRUE,
+				      0.5,
+				      0.5);
+
+	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
+	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);	
+}
+
+void
+gossip_chat_view_highlight (GossipChatView *view, 
+			    const gchar    *text)
+{
+	GtkTextBuffer *buffer;
+	GtkTextIter    iter;
+	GtkTextIter    iter_start;
+	GtkTextIter    iter_end;
+	GtkTextIter    iter_match_start;
+	GtkTextIter    iter_match_end;
+	        
+	gboolean       found;
+
+	gchar         *str;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+    
+	gtk_text_buffer_get_start_iter (buffer, &iter);
+
+	gtk_text_buffer_get_bounds (buffer, &iter_start, &iter_end);
+	gtk_text_buffer_remove_tag_by_name (buffer, "highlight", 
+					    &iter_start, 
+					    &iter_end);
+
+	if (!text || strlen (text) < 1) {
+		return;
+	}
+
+	str = g_utf8_casefold (text, -1);
+
+	while (TRUE) {
+		found = gtk_text_iter_forward_search (&iter, 
+						      str, 
+						      GTK_TEXT_SEARCH_TEXT_ONLY, 
+						      &iter_match_start, 
+						      &iter_match_end,
+						      NULL);
+
+		if (!found) {
+			break;
+		}
+
+		gtk_text_buffer_apply_tag_by_name (buffer, "highlight", 
+						   &iter_match_start, 
+						   &iter_match_end);
+
+		iter = iter_match_end;
+		gtk_text_iter_forward_char (&iter);
+	}
+
+	g_free (str);
 }
 
 void

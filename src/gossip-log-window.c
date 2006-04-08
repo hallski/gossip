@@ -36,6 +36,12 @@
 typedef struct {
 	GtkWidget      *window;
 
+	GtkWidget      *entry_search;
+	GtkWidget      *button_search;
+	GtkWidget      *treeview_search;
+	GtkWidget      *scrolledwindow_search;
+	GossipChatView *chatview_search;
+
 	GtkWidget      *vbox_account;
 	GtkWidget      *account_chooser;
 
@@ -45,22 +51,13 @@ typedef struct {
 	GtkWidget      *scrolledwindow_browse;
 	GossipChatView *chatview_browse;
 
-	GtkWidget      *entry_search;
-	GtkWidget      *treeview_search;
-	GtkWidget      *scrolledwindow_search;
-	GossipChatView *chatview_search;
-
 	gchar          *last_search;
-	guint           idle_search_id;
 	
 	GtkWidget      *button_close;
 
 	GossipLog      *log;
 } GossipLogWindow;
 
-static void           log_window_find                      (GtkTextView      *view,
-							    const gchar      *search_criteria,
-							    gboolean          new_search);
 static void           log_window_search_text_data_func     (GtkCellLayout    *cell_layout,
 							    GtkCellRenderer  *cell,
 							    GtkTreeModel     *tree_model,
@@ -73,7 +70,6 @@ static void           log_window_search_pixbuf_data_func   (GtkCellLayout    *ce
 							    GossipLogWindow  *window);
 static void           log_window_entry_search_activate_cb  (GtkWidget        *entry,
 							    GossipLogWindow  *window);
-static gboolean       log_window_search_idle_cb            (GossipLogWindow  *window);
 static void           log_window_search_changed_cb         (GtkTreeSelection *selection,
 							    GossipLogWindow  *window);
 static void           log_window_search_populate           (GossipLogWindow  *window,
@@ -111,7 +107,9 @@ static void           log_window_entry_find_changed_cb     (GtkWidget        *en
 							    GossipLogWindow  *window);
 static void           log_window_entry_find_activate_cb    (GtkWidget        *entry,
 							    GossipLogWindow  *window);
-static void           log_window_close_clicked_cb          (GtkWidget        *widget,
+static void           log_window_button_search_clicked_cb  (GtkWidget        *widget,
+							    GossipLogWindow  *window);
+static void           log_window_button_close_clicked_cb   (GtkWidget        *widget,
 							    GossipLogWindow  *window);
 static void           log_window_destroy_cb                (GtkWidget        *widget,
 							    GossipLogWindow  *window);
@@ -132,78 +130,6 @@ enum {
 	COL_BROWSE_POINTER,
 	COL_BROWSE_COUNT
 };
-
-
-/*
- * Shared code.
- */
-static void
-log_window_find (GtkTextView *view, 
-		 const gchar *search_criteria,
-		 gboolean     new_search)
-{
-	GtkTextBuffer      *buffer;
-	GtkTextIter         iter_at_mark;
-	GtkTextIter         iter_match_start;
-	GtkTextIter         iter_match_end;
-
-	static GtkTextMark *find_mark = NULL;
-	static gboolean     wrapped = FALSE;
-        
-	gboolean            found;
-	gboolean            from_start = FALSE;
-    
-	buffer = gtk_text_view_get_buffer (view);
-    
-	
-	if (new_search) {
-		find_mark = NULL;
-		from_start = TRUE;
-	}
-     
-	if (find_mark) {
-		gtk_text_buffer_get_iter_at_mark (buffer, &iter_at_mark, find_mark);
-	} else {
-		gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
-	}
-    
-	found = gtk_text_iter_forward_search (&iter_at_mark, 
-					      search_criteria, 
-					      GTK_TEXT_SEARCH_TEXT_ONLY, 
-					      &iter_match_start, 
-					      &iter_match_end,
-					      NULL);
-    
-	if (find_mark) {
-		gtk_text_buffer_delete_mark (buffer, find_mark); 
-		find_mark = NULL;
-	} else {
-		from_start = TRUE;
-	}
-    
-	if (!found) {
-		if (from_start) {
-			return;
-		}
-	
-		/* Here we wrap around. */
-		if (!new_search && !wrapped) {
-			wrapped = TRUE;
-			log_window_find (view, search_criteria, FALSE);
-			wrapped = FALSE;
-		}
-
-		return;
-	}
-    
-	/* set new mark and show on screen */
-	find_mark = gtk_text_buffer_create_mark (buffer, NULL, &iter_match_end, TRUE); 
-	gtk_text_view_scroll_to_iter (view, &iter_match_start, 0, TRUE, 0.5, 0.5);
-/* 	gtk_text_view_scroll_mark_onscreen (view, find_mark);  */
-
-	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
-	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);	
-}
 
 /*
  * Search code.
@@ -256,19 +182,11 @@ log_window_entry_search_activate_cb (GtkWidget       *entry,
 	const gchar *str;
 
 	str = gtk_entry_get_text (GTK_ENTRY (window->entry_search));
+
+	g_free (window->last_search);
+	window->last_search = g_strdup (str);
+
 	log_window_search_populate (window, str);
-}
-
-static gboolean
-log_window_search_idle_cb (GossipLogWindow *window)
-{
-	log_window_find (GTK_TEXT_VIEW (window->chatview_search), 
-			 window->last_search, 
-			 TRUE);
-
-	window->idle_search_id = 0;
-
-	return FALSE;
 }
 
 static void
@@ -296,6 +214,7 @@ log_window_search_changed_cb (GtkTreeSelection *selection,
 	model = gtk_tree_view_get_model (view);
 
 	if (!gtk_tree_selection_get_selected (selection, NULL, &iter)) {
+		gtk_widget_set_sensitive (window->button_search, FALSE);
 		return;
 	}
 
@@ -314,8 +233,13 @@ log_window_search_changed_cb (GtkTreeSelection *selection,
 		return;
 	}
 
+	gtk_widget_set_sensitive (window->button_search, TRUE);
+
 	/* Clear all current messages shown in the textview */
 	gossip_chat_view_clear (window->chatview_search);
+
+	/* Turn off scrolling temporarily */
+	gossip_chat_view_scroll (window->chatview_search, FALSE);
 
 	/* Get own contact to know which messages are from me or the contact */
 	own_contact = gossip_log_get_own_contact (log); 
@@ -346,7 +270,14 @@ log_window_search_changed_cb (GtkTreeSelection *selection,
 	g_object_unref (log);
 
 	/* Scroll to the most recent messages */
-	window->idle_search_id = g_idle_add ((GSourceFunc) log_window_search_idle_cb, window);
+	gossip_chat_view_scroll (window->chatview_search, TRUE);
+
+	/* Highlight and find messages */
+	gossip_chat_view_highlight (window->chatview_search,
+				    window->last_search);
+	gossip_chat_view_find (window->chatview_search, 
+			       window->last_search,
+			       TRUE);
 }
 
 static void
@@ -376,12 +307,11 @@ log_window_search_populate (GossipLogWindow *window,
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
 
-	hits = gossip_log_search_new (search_criteria);
-
-	g_free (window->last_search);
-	window->last_search = g_strdup (search_criteria);
+	gossip_chat_view_clear (window->chatview_search);
 
 	gtk_list_store_clear (store);
+
+	hits = gossip_log_search_new (search_criteria);
 
 	for (l = hits; l; l = l->next) {
 		const gchar *date;
@@ -891,6 +821,9 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 	/* Clear all current messages shown in the textview */
 	gossip_chat_view_clear (window->chatview_browse);
 
+	/* Turn off scrolling temporarily */
+	gossip_chat_view_scroll (window->chatview_search, FALSE);
+
 	/* Get own contact to know which messages are from me or the contact */
 	own_contact = gossip_log_get_own_contact (window->log); 
 
@@ -918,7 +851,10 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 
 	g_list_foreach (dates, (GFunc) g_free, NULL);
 	g_list_free (dates);
-	
+
+	/* Turn off scrolling temporarily */
+	gossip_chat_view_scroll (window->chatview_search, TRUE);
+
 	/* Scroll to the most recent messages */
 	gossip_chat_view_scroll_down (window->chatview_browse);
 	
@@ -1008,31 +944,51 @@ static void
 log_window_entry_find_changed_cb (GtkWidget       *entry,
 				  GossipLogWindow *window)
 {
-	GtkTextView *view;
 	const gchar *str;
 
-	view = GTK_TEXT_VIEW (window->chatview_browse);
 	str = gtk_entry_get_text (GTK_ENTRY (window->entry_find));
+	gossip_chat_view_highlight (window->chatview_browse, str);
 
-	log_window_find (view, str, TRUE);
+	if (str) {
+		gossip_chat_view_find (window->chatview_browse, 
+				       str,
+				       TRUE);
+	}
 }
 
 static void
 log_window_entry_find_activate_cb (GtkWidget       *entry,
 				   GossipLogWindow *window)
 {
-	GtkTextView *view;
 	const gchar *str;
 
-	view = GTK_TEXT_VIEW (window->chatview_browse);
 	str = gtk_entry_get_text (GTK_ENTRY (window->entry_find));
 
- 	log_window_find (view, str, FALSE); 
+	if (str) {
+		gossip_chat_view_find (window->chatview_browse, 
+				       str,
+				       FALSE);
+	}
 }
 
 static void
-log_window_close_clicked_cb (GtkWidget       *widget,
-			     GossipLogWindow *window)
+log_window_button_search_clicked_cb (GtkWidget       *widget,
+				     GossipLogWindow *window)
+{
+	const gchar *str;
+
+	str = gtk_entry_get_text (GTK_ENTRY (window->entry_search));
+
+	if (str) {
+		gossip_chat_view_find (window->chatview_search, 
+				       str,
+				       FALSE);
+	}
+}
+
+static void
+log_window_button_close_clicked_cb (GtkWidget       *widget,
+				    GossipLogWindow *window)
 {
 	gtk_widget_destroy (window->window);
 }
@@ -1046,10 +1002,6 @@ log_window_destroy_cb (GtkWidget       *widget,
 	}
 
 	g_free (window->last_search);
-
-	if (window->idle_search_id) {
-		g_source_remove (window->idle_search_id);
-	}
 
  	g_free (window); 
 }
@@ -1074,6 +1026,7 @@ gossip_log_window_show (GtkWindow     *parent,
 				       "log_window", &window->window,
 				       "notebook", &notebook,
 				       "entry_search", &window->entry_search,
+				       "button_search", &window->button_search,
  				       "treeview_search", &window->treeview_search, 
 				       "scrolledwindow_search", &window->scrolledwindow_search,
 				       "entry_find", &window->entry_find,
@@ -1088,9 +1041,10 @@ gossip_log_window_show (GtkWindow     *parent,
 			      window,
 			      "log_window", "destroy", log_window_destroy_cb,
 			      "entry_search", "activate", log_window_entry_search_activate_cb,
+			      "button_search", "clicked", log_window_button_search_clicked_cb,
 			      "entry_find", "changed", log_window_entry_find_changed_cb,
 			      "entry_find", "activate", log_window_entry_find_activate_cb,
-			      "button_close", "clicked", log_window_close_clicked_cb,
+			      "button_close", "clicked", log_window_button_close_clicked_cb,
 			      NULL);
 
 	/* We set this up here so we can block it when needed. */

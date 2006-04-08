@@ -1,3 +1,19 @@
+2006-04-08  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.[ch]: Added functions _find() and _highlight()
+	so we can now find or highlight ANY word in any chat view (which
+	is any conversation). Added the ability to turn on/off scrolling.
+
+	* src/gossip-log-window.c: 
+	* src/gossip-log.c:  Make sure we actually scroll to the first
+	item when searching all log files. Now we highlight all words that
+	match in the chat view. Disable scrolling when adding the messages
+	into the chat view, this improves performance slightly.
+	
+	* ui/main.glade: Added a "Next" button so when we search all our
+	chat logs we can find the next place in the same file and added an
+	adjustable divider.
+
 2006-04-07  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-log.c: (log_get_all_log_files_for_account_dir),

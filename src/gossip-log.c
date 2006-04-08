@@ -567,15 +567,6 @@ log_get_messages (GossipLog   *log,
 		return NULL;
 	}
 
-#if 0
-	if (!gossip_utils_xml_validate (doc, STATUS_PRESETS_DTD_FILENAME)) {
-		g_warning ("Failed to validate file:'%s'", filename);
-		xmlFreeDoc(doc);
-		xmlFreeParserCtxt (ctxt);
-		return NULL;
-	}
-#endif
-
 	/* The root node, presets. */
 	log_node = xmlDocGetRootElement (doc);
 	if (!log_node) {
@@ -1051,7 +1042,7 @@ static void
 log_show (GossipLog *log)
 {
 	GossipLogPriv  *priv;
-#if 0
+#ifdef USE_GNOMEVFS_FOR_URL
 	GnomeVFSResult  result;
 #endif
 	gchar          *filename = NULL;
