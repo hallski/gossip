@@ -2227,9 +2227,11 @@ app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
 				     GossipChatroomJoinResult  result,
 				     gpointer                  user_data)
 {
-	const gchar *chatroom_name;
+	GossipChatroom *chatroom;
+	const gchar    *name;
 
-	chatroom_name = gossip_chatroom_provider_get_room_name (provider, id);
+	chatroom = gossip_chatroom_provider_find (provider, id);
+	name = gossip_chatroom_get_name (chatroom);
 
 	switch (result) {
 	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:

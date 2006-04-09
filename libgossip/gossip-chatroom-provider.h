@@ -30,7 +30,6 @@
 #define GOSSIP_IS_CHATROOM_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER))
 #define GOSSIP_CHATROOM_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER, GossipChatroomProviderIface))
 
-
 typedef struct _GossipChatroomProvider      GossipChatroomProvider;
 typedef struct _GossipChatroomProviderIface GossipChatroomProviderIface;
 
@@ -45,12 +44,10 @@ typedef enum {
 	GOSSIP_CHATROOM_JOIN_CANCELED
 } GossipChatroomJoinResult;
 
-
 typedef void (*GossipChatroomJoinCb) (GossipChatroomProvider   *provider,
 				      GossipChatroomJoinResult  result,
                                       gint                      id,
 				      gpointer                  user_data);
-
 
 struct _GossipChatroomProviderIface {
 	GTypeInterface g_iface;
@@ -73,7 +70,7 @@ struct _GossipChatroomProviderIface {
 					     const gchar            *new_nick);
 	void             (*leave)           (GossipChatroomProvider *provider,
 					     GossipChatroomId        id);
-	const gchar *    (*get_room_name)   (GossipChatroomProvider *provider,
+	GossipChatroom * (*find)            (GossipChatroomProvider *provider,
 					     GossipChatroomId        id);
 	void             (*invite)          (GossipChatroomProvider *provider,
 					     GossipChatroomId        id,
@@ -85,7 +82,6 @@ struct _GossipChatroomProviderIface {
 					     const gchar            *invite_id);
 	GList *          (*get_rooms)       (GossipChatroomProvider *provider);
 };
-
 
 GType        gossip_chatroom_provider_get_type           (void) G_GNUC_CONST;
 
@@ -107,7 +103,8 @@ void         gossip_chatroom_provider_change_nick        (GossipChatroomProvider
 							  const gchar            *new_nick);
 void         gossip_chatroom_provider_leave              (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);
-const gchar *gossip_chatroom_provider_get_room_name      (GossipChatroomProvider *provider,
+GossipChatroom *
+             gossip_chatroom_provider_find               (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);
 void         gossip_chatroom_provider_invite             (GossipChatroomProvider *provider,
 							  GossipChatroomId        id,

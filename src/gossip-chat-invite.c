@@ -74,11 +74,13 @@ gossip_chat_invite_contact_menu (GossipContact *contact)
 	
 	for (l = rooms; l; l = l->next) {
 		GossipChatroomId  id;
-		GtkWidget        *item;
+		GossipChatroom   *chatroom;
 		const gchar      *name;
+		GtkWidget        *item;
 		
 		id = GPOINTER_TO_INT(l->data);
-		name = gossip_chatroom_provider_get_room_name (provider, id);
+		chatroom = gossip_chatroom_provider_find (provider, id);
+		name = gossip_chatroom_get_name (chatroom);
 		
 		if (name == NULL || strlen (name) < 1) {
 			continue;

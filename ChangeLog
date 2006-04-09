@@ -1,5 +1,36 @@
 2006-04-09  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-chatroom-provider.[ch]:
+	* src/gossip-app.c:
+	* src/gossip-chat-invite.c:
+	Change the chatroom-provider _get_name()
+	function to _find(), so we can get the actual chatroom and call
+	_get_name() and any other functions on it directly.
+	
+	* protocols/jabber/gossip-jabber-chatrooms.c: When we get the
+	logged-out signal we now call the _leave() function for ALL rooms
+	associated with the account.
+	
+	* protocols/jabber/gossip-jabber.c:  When logged out of an
+	account, we now go through ALL contacts and remove all presence
+	information (which effectly puts them all into an offline state. 
+
+	* src/gossip-chat-window.c: Actually let the backends (private
+	chat and group chat) supply the pixbuf for the chat tab instead of
+	assuming an offline pixbuf when we get a disconnected signal.
+	
+	* src/gossip-group-chat.c: Added some debugging and connected the
+	new "chatroom-joined" signal so we can clear the contacts treeview
+	and the chatview (incase we need to join again after a
+	disconnect), fixes bug #335030 (Richard).
+	
+	* ui/chat.glade:
+	* ui/main.glade: Changed the "Ctrl+V" mnemonic for showing
+	previous conversations to F3, since Ctrl+V is commonly used for
+	clipboard paste operations (spotted by Paul Van Tilburg).
+
+2006-04-09  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber-chatrooms.c: Now we handle 404
 	(not found) when we try to join a server which doesn't exist.
 	

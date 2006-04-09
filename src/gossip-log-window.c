@@ -45,7 +45,7 @@ typedef struct {
 	GtkWidget      *vbox_account;
 	GtkWidget      *account_chooser;
 
-	GtkWidget      *entry_find;
+	GtkWidget      *entry_browse;
 	GtkWidget      *calendar;
 	GtkWidget      *treeview_browse;
 	GtkWidget      *scrolledwindow_browse;
@@ -103,9 +103,9 @@ static void           log_window_calendar_day_selected_cb  (GtkWidget        *ca
 							    GossipLogWindow  *window);
 static void           log_window_calendar_month_changed_cb (GtkWidget        *calendar,
 							    GossipLogWindow  *window);
-static void           log_window_entry_find_changed_cb     (GtkWidget        *entry,
+static void           log_window_entry_browse_changed_cb     (GtkWidget        *entry,
 							    GossipLogWindow  *window);
-static void           log_window_entry_find_activate_cb    (GtkWidget        *entry,
+static void           log_window_entry_browse_activate_cb    (GtkWidget        *entry,
 							    GossipLogWindow  *window);
 static void           log_window_button_search_clicked_cb  (GtkWidget        *widget,
 							    GossipLogWindow  *window);
@@ -859,7 +859,7 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 	gossip_chat_view_scroll_down (window->chatview_browse);
 	
 	/* Give the search entry main focus */
-	gtk_widget_grab_focus (window->entry_find);
+	gtk_widget_grab_focus (window->entry_browse);
 }
 
 static void
@@ -941,12 +941,12 @@ log_window_calendar_month_changed_cb (GtkWidget       *calendar,
 }
 
 static void
-log_window_entry_find_changed_cb (GtkWidget       *entry,
+log_window_entry_browse_changed_cb (GtkWidget       *entry,
 				  GossipLogWindow *window)
 {
 	const gchar *str;
 
-	str = gtk_entry_get_text (GTK_ENTRY (window->entry_find));
+	str = gtk_entry_get_text (GTK_ENTRY (window->entry_browse));
 	gossip_chat_view_highlight (window->chatview_browse, str);
 
 	if (str) {
@@ -957,12 +957,12 @@ log_window_entry_find_changed_cb (GtkWidget       *entry,
 }
 
 static void
-log_window_entry_find_activate_cb (GtkWidget       *entry,
+log_window_entry_browse_activate_cb (GtkWidget       *entry,
 				   GossipLogWindow *window)
 {
 	const gchar *str;
 
-	str = gtk_entry_get_text (GTK_ENTRY (window->entry_find));
+	str = gtk_entry_get_text (GTK_ENTRY (window->entry_browse));
 
 	if (str) {
 		gossip_chat_view_find (window->chatview_browse, 
@@ -1029,7 +1029,7 @@ gossip_log_window_show (GtkWindow     *parent,
 				       "button_search", &window->button_search,
  				       "treeview_search", &window->treeview_search, 
 				       "scrolledwindow_search", &window->scrolledwindow_search,
-				       "entry_find", &window->entry_find,
+				       "entry_browse", &window->entry_browse,
  				       "calendar", &window->calendar, 
 				       "vbox_account", &window->vbox_account,
  				       "treeview_browse", &window->treeview_browse, 
@@ -1042,8 +1042,8 @@ gossip_log_window_show (GtkWindow     *parent,
 			      "log_window", "destroy", log_window_destroy_cb,
 			      "entry_search", "activate", log_window_entry_search_activate_cb,
 			      "button_search", "clicked", log_window_button_search_clicked_cb,
-			      "entry_find", "changed", log_window_entry_find_changed_cb,
-			      "entry_find", "activate", log_window_entry_find_activate_cb,
+			      "entry_browse", "changed", log_window_entry_browse_changed_cb,
+			      "entry_browse", "activate", log_window_entry_browse_activate_cb,
 			      "button_close", "clicked", log_window_button_close_clicked_cb,
 			      NULL);
 

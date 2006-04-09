@@ -54,7 +54,8 @@ void           gossip_jabber_chatrooms_change_nick         (GossipJabberChatroom
 							    const gchar           *new_nick);
 void           gossip_jabber_chatrooms_leave               (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
-const gchar *  gossip_jabber_chatrooms_get_room_name       (GossipJabberChatrooms *chatrooms,
+GossipChatroom *
+               gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
 void           gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id,

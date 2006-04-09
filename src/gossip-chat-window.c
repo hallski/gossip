@@ -439,15 +439,12 @@ gossip_chat_window_finalize (GObject *object)
 
 static GdkPixbuf *
 chat_window_get_status_pixbuf (GossipChatWindow *window,
-			       GossipChat *chat)
+			       GossipChat       *chat)
 {
 	GossipChatWindowPriv *priv;
-	GossipSession        *session;
 	GdkPixbuf            *pixbuf;
 
 	priv = GET_PRIV (window);
-
-	session = gossip_app_get_session ();
 
 	if (g_list_find (priv->chats_new_msg, chat)) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, 
@@ -456,14 +453,6 @@ chat_window_get_status_pixbuf (GossipChatWindow *window,
 	else if (g_list_find (priv->chats_composing, chat)) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING, 
 						   GTK_ICON_SIZE_MENU);
-	}
-	else if (!gossip_session_is_connected (session, NULL)) {
-		/* FIXME: should use protocol for contact since the
-		   protocol we use to send the image may not be online
-		   and a session may cover multiple accounts */
-
-		/* always offline if disconnected */
-		pixbuf = gossip_pixbuf_offline ();
 	}
 	else {
 		pixbuf = gossip_chat_get_status_pixbuf (chat);
@@ -593,7 +582,8 @@ chat_window_create_label (GossipChatWindow *window,
 }
 
 static void
-chat_window_update_status (GossipChatWindow *window, GossipChat *chat)
+chat_window_update_status (GossipChatWindow *window, 
+			   GossipChat       *chat)
 {
 	GtkImage  *image;
 	GdkPixbuf *pixbuf;

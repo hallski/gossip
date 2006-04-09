@@ -673,7 +673,7 @@ private_chat_get_name (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv   = p_chat->priv;
+	priv = p_chat->priv;
 
 	return priv->name;
 }
@@ -690,7 +690,7 @@ private_chat_get_tooltip (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv   = p_chat->priv;
+	priv = p_chat->priv;
 
 	contact = gossip_chat_get_contact (chat);
 	status = gossip_contact_get_status (contact);
@@ -712,7 +712,7 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv   = p_chat->priv;
+	priv = p_chat->priv;
 
 	contact = gossip_chat_get_contact (chat);
 
@@ -728,7 +728,7 @@ private_chat_get_contact (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv   = p_chat->priv;
+	priv = p_chat->priv;
 
 	return priv->contact;
 }
@@ -742,7 +742,7 @@ private_chat_get_own_contact (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv   = p_chat->priv;
+	priv = p_chat->priv;
 
 	return priv->own_contact;
 }
@@ -765,7 +765,7 @@ private_chat_get_widget (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv   = p_chat->priv;
+	priv = p_chat->priv;
 
 	return priv->widget;
 }

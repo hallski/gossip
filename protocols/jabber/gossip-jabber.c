@@ -260,7 +260,7 @@ static void             jabber_chatroom_change_nick         (GossipChatroomProvi
 							     const gchar             *new_nick);
 static void             jabber_chatroom_leave               (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id);
-static const gchar *    jabber_chatroom_get_room_name       (GossipChatroomProvider  *provider,
+static GossipChatroom * jabber_chatroom_find                (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id);
 static void             jabber_chatroom_invite              (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id,
@@ -605,6 +605,24 @@ jabber_logout_contact_foreach (gpointer       key,
 			       GossipContact *contact,
 			       GossipJabber  *jabber)
 {
+	GList          *presences;
+	GList          *l;
+	GossipPresence *presence;
+
+	/* Set each contact to be offline, since they effectively are
+	 * now we don't know.
+	 */
+	presences = gossip_contact_get_presence_list (contact);
+	for (l = presences; l; l = l->next) {
+		presence = l->data;
+
+		if (!presence) {
+			continue;
+		}
+
+		gossip_contact_remove_presence (contact, presence);
+	}
+
 	g_signal_emit_by_name (jabber, "contact-removed", contact);
 	return TRUE;
 }
@@ -815,14 +833,14 @@ jabber_disconnect_cb (LmConnection       *connection,
 		priv->connection_timeout_id = 0;
 	}
 
-	g_signal_emit_by_name (jabber, "logged-out", priv->account);
-
-	/* signal removal of each contact */
+	/* Signal removal of each contact */
 	if (priv->contacts) {
 		g_hash_table_foreach_remove (priv->contacts,
 					     (GHRFunc) jabber_logout_contact_foreach,
 					     jabber);
 	}
+
+	g_signal_emit_by_name (jabber, "logged-out", priv->account);
 }
 
 static LmSSLResponse 
@@ -2110,7 +2128,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	} else if (strcmp (type, "subscribed") == 0) {
-		/* Handle this? */
+		/* FIXME: Handle this? */
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 	
@@ -2482,7 +2500,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->change_topic    = jabber_chatroom_change_topic;
 	iface->change_nick     = jabber_chatroom_change_nick;
 	iface->leave           = jabber_chatroom_leave;
-	iface->get_room_name   = jabber_chatroom_get_room_name;
+	iface->find            = jabber_chatroom_find;
 	iface->invite          = jabber_chatroom_invite;
 	iface->invite_accept   = jabber_chatroom_invite_accept;
 	iface->get_rooms       = jabber_chatroom_get_rooms;
@@ -2586,9 +2604,9 @@ jabber_chatroom_leave (GossipChatroomProvider *provider,
 	gossip_jabber_chatrooms_leave (priv->chatrooms, id);
 }
 
-static const gchar *
-jabber_chatroom_get_room_name (GossipChatroomProvider *provider,
-			       GossipChatroomId        id)
+static GossipChatroom *
+jabber_chatroom_find (GossipChatroomProvider *provider,
+		      GossipChatroomId        id)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -2598,7 +2616,7 @@ jabber_chatroom_get_room_name (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_chatrooms_get_room_name (priv->chatrooms, id);
+	return gossip_jabber_chatrooms_find (priv->chatrooms, id);
 }
 
 static void

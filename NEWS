@@ -3,6 +3,8 @@ NEWS in 0.11:
 - Added a smiley menu and context menu for chat windows (Martyn). 
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #335030, Allow rejoining group chats after disconnecting
+(Richard). 
 - Fixed #337184, Don't save the new chat room unless successfully
 joined (Keywan Najafi Tonekaboni).
 - Fixed #337188, When joining a chatroom, the Join button turned into
