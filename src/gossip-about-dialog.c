@@ -81,7 +81,7 @@ about_dialog_activate_link_cb (GtkAboutDialog *about,
 	GnomeVFSResult result;
 
 	result = gnome_vfs_url_show (link);
-	if (result == GNOME_VFS_OK) {
+	if (result != GNOME_VFS_OK) {
 		g_warning ("Couldn't show URL:'%s'", link);
 	}
 #else
@@ -93,6 +93,8 @@ void
 gossip_about_dialog_new (GtkWindow *parent)
 {
 	char *license_trans;
+
+	gtk_about_dialog_set_url_hook (about_dialog_activate_link_cb, NULL, NULL);
 
 	license_trans = g_strconcat (_(license[0]), "\n\n", 
 				     _(license[1]), "\n\n",
@@ -110,9 +112,8 @@ gossip_about_dialog_new (GtkWindow *parent)
 			       "logo-icon-name", "gossip",
 			       "translator-credits", _("translator-credits"),
 			       "version", PACKAGE_VERSION,
+			       "website", WEB_SITE,
 			       NULL);
-
-	gtk_about_dialog_set_url_hook (about_dialog_activate_link_cb, NULL, NULL);
 
 	g_free (license_trans);
 }
