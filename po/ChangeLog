@@ -1,3 +1,9 @@
+2006-04-09  Martyn Russell  <martyn@imendio.com>
+
+	* LINGUAS: Added in accordance to the GNOME Goals
+	(http://live.gnome.org/GnomeGoals/PoLinguas), fixes #337837 (patch
+	by Caio Marcelo). 
+
 2006-04-07  Richard Hult  <richard@imendio.com>
 
 	* sv.po:

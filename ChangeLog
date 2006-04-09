@@ -1,5 +1,12 @@
 2006-04-09  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac:
+	* po/LINGUAS: Added in accordance to the GNOME Goals
+	(http://live.gnome.org/GnomeGoals/PoLinguas), fixes #337837 (patch
+	by Caio Marcelo).
+
+2006-04-09  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-provider.[ch]:
 	* src/gossip-app.c:
 	* src/gossip-chat-invite.c:
