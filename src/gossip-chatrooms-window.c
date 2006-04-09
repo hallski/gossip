@@ -708,10 +708,10 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 	switch (status) {
 	case GOSSIP_CHATROOM_STATUS_JOINING:
 		gtk_button_set_use_stock (button, TRUE);
-		gtk_button_set_label (button, GTK_STOCK_CANCEL);
+		gtk_button_set_label (button, GTK_STOCK_STOP);
 		
 		gtk_image_set_from_stock (GTK_IMAGE (image), 
-					  GTK_STOCK_CANCEL,
+					  GTK_STOCK_STOP,
 					  GTK_ICON_SIZE_BUTTON);
 		break;
 	case GOSSIP_CHATROOM_STATUS_ACTIVE:
@@ -784,6 +784,10 @@ chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 				(GtkTreeModelForeachFunc) 
 				chatrooms_window_chatroom_any_joining_foreach,
 				&any_joining);
+
+	if (result == GOSSIP_CHATROOM_JOIN_CANCELED) {
+		return;
+	}
 
 	if (!any_joining) {
 		gtk_widget_hide (window->window);

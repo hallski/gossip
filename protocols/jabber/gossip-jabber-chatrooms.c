@@ -729,26 +729,29 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		code = str ? atoi (str) : 0;
 		
 		switch (code) {
-		case 409: {
-			/* conflicting nickname */
+		case 404: 
+ 			/* conflicting nickname */
+			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Chatroom not found", id));
+			result = GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST;
+			break;
+			
+		case 409: 
+ 			/* conflicting nickname */
 			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Conflicting nickname", id));
 			result = GOSSIP_CHATROOM_JOIN_NICK_IN_USE;
 			break;
-		}
 			
-		case 502: {
+		case 502: 
 			/* unresolved hostname */
 			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Unable to resolve hostname", id));
 			result = GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST;
 			break;
-		}
 			
-		case 504: {
+		case 504: 
 			/* remote server timeout */
 			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Join timed out", id));
 			result = GOSSIP_CHATROOM_JOIN_TIMED_OUT;
 			break;
-		}
 			
 		default:
 			DEBUG_MSG (("ProtocolChatrooms: ID[%d] Unhandled presence error:%d", id, code));

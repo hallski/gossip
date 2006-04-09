@@ -1,3 +1,20 @@
+2006-04-09  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c: Now we handle 404
+	(not found) when we try to join a server which doesn't exist.
+	
+	* src/gossip-chatrooms-window.c: 
+	* src/gossip-new-chatroom-dialog.c: When joining, the Join button
+	is now changed to Stop instead of Cancel (which meant we had two
+	Cancel buttons in the chatrooms window and new chatroom dialog,
+	fixes #337188 (Keywan Najafi Tonekaboni).  We also now don't save
+	the new chat room unless successfully joined, fixes #337184
+	(Keywan Najafi Tonekaboni). 
+	
+	* ui/group-chat.glade: Added a "Name" entry when adding new chat
+	rooms, this way you can decide when creating it instead of having
+	to edit it after.
+
 2006-04-08  Brian Pepple  <bdpepple@ameritech.net>
 
 	* src/gossip-about-dialog.c (gossip_about_dialog_new): Enable website url
