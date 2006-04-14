@@ -1,3 +1,17 @@
+2006-04-14  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: Added a timeout for the
+	composing signal we emit to make sure that we stop composing even
+	if the server doesn't send it to make sure we don't get stuck,
+	fixes #141577 (Richard). Added a hash table of people that have
+	requested the composing information and only send out the
+	composing event to contacts that have requested it, fixes #319080
+	(Ross Burton).
+	
+	* src/gossip-contact-info-dialog.c
+	(contact_info_dialog_contact_updated_cb): Fixed the "subscribe"
+	button to make it work instead of error.
+
 2006-04-09  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac:

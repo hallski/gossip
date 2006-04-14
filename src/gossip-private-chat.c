@@ -684,7 +684,6 @@ private_chat_get_tooltip (GossipChat *chat)
 	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 	GossipContact         *contact;
-	gchar                 *str;
 	const gchar           *status;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
@@ -695,11 +694,9 @@ private_chat_get_tooltip (GossipChat *chat)
 	contact = gossip_chat_get_contact (chat);
 	status = gossip_contact_get_status (contact);
 
-	str = g_strdup_printf ("%s\n%s",
-			       gossip_contact_get_id (contact),
-			       status);
-
-	return str;
+	return g_strdup_printf ("%s\n%s",
+				gossip_contact_get_id (contact),
+				status);
 }
 
 GdkPixbuf *

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2004 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -30,7 +30,6 @@
 
 #include "gossip-app.h"
 #include "gossip-contact-info-dialog.h"
-
 
 typedef struct {
 	GossipContact *contact;
@@ -72,33 +71,30 @@ typedef struct {
 	gulong         presence_signal_handler;
 } GossipContactInfoDialog;
 
-
-static void contact_info_dialog_init                (void);
-static void contact_info_dialog_update_subscription (GossipContactInfoDialog *dialog);
-static void contact_info_dialog_update_presences    (GossipContactInfoDialog *dialog);
-static void contact_info_dialog_get_vcard_cb        (GossipResult             result,
-						     GossipVCard             *vcard,
-						     GossipContact           *contact);
-static void contact_info_dialog_get_version_cb      (GossipResult             result,
-						     GossipVersionInfo       *version_info,
-						     GossipContact           *contact);
-static void contact_info_dialog_subscribe_cb        (GtkWidget               *widget,
-						     GossipContact           *contact);
-static void contact_info_dialog_contact_updated_cb  (GossipSession           *session,
-						     GossipContact           *contact,
-						     gpointer                 user_data);
-static void contact_info_dialog_presence_updated_cb (GossipSession           *session,
-						     GossipContact           *contact,
-						     gpointer                 user_data);
-static void contact_info_dialog_destroy_cb          (GtkWidget               *widget,
-						     GossipContactInfoDialog *dialog);
-static void contact_info_dialog_response_cb         (GtkWidget               *widget,
-						     gint                     response,
-						     GossipContactInfoDialog *dialog);
-
+static void contact_info_dialog_init                 (void);
+static void contact_info_dialog_update_subscription  (GossipContactInfoDialog *dialog);
+static void contact_info_dialog_update_presences     (GossipContactInfoDialog *dialog);
+static void contact_info_dialog_get_vcard_cb         (GossipResult             result,
+						      GossipVCard             *vcard,
+						      GossipContact           *contact);
+static void contact_info_dialog_get_version_cb       (GossipResult             result,
+						      GossipVersionInfo       *version_info,
+						      GossipContact           *contact);
+static void contact_info_dialog_contact_updated_cb   (GossipSession           *session,
+						      GossipContact           *contact,
+						      gpointer                 user_data);
+static void contact_info_dialog_presence_updated_cb  (GossipSession           *session,
+						      GossipContact           *contact,
+						      gpointer                 user_data);
+static void contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget,
+						      GossipContactInfoDialog *dialog);
+static void contact_info_dialog_destroy_cb           (GtkWidget               *widget,
+						      GossipContactInfoDialog *dialog);
+static void contact_info_dialog_response_cb          (GtkWidget               *widget,
+						      gint                     response,
+						      GossipContactInfoDialog *dialog);
 
 static GHashTable *contact_info_dialogs = NULL;
-
 
 static void
 contact_info_dialog_init (void)
@@ -436,35 +432,6 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 }
 
 static void
-contact_info_dialog_subscribe_cb (GtkWidget     *widget, 
-				  GossipContact *contact)
-{
-	GossipContactInfoDialog *dialog;
-	GossipSession           *session;
-	GossipAccount           *account;
-	const gchar             *message;
-
-	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
-	g_object_unref (contact);
-
-	if (!dialog) {
-		return;
-	}
-
-	message = _("I would like to add you to my contact list.");
-
-	session = gossip_app_get_session ();
-	account = gossip_session_find_account (session, contact);
-
-        gossip_session_add_contact (session,
-				    account,
-                                    gossip_contact_get_id (contact), 
-				    gossip_contact_get_name (contact),
-				    NULL, /* group */
-				    message);
-}
-
-static void
 contact_info_dialog_contact_updated_cb (GossipSession           *session,
 					GossipContact           *contact,
 					gpointer                 user_data)
@@ -503,6 +470,27 @@ contact_info_dialog_presence_updated_cb (GossipSession *session,
 	}
 
 	contact_info_dialog_update_presences (dialog);
+}
+
+static void
+contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget, 
+					  GossipContactInfoDialog *dialog)
+{
+	GossipSession *session;
+	GossipAccount *account;
+	const gchar   *message;
+
+	message = _("I would like to add you to my contact list.");
+
+	session = gossip_app_get_session ();
+	account = gossip_session_find_account (session, dialog->contact);
+
+        gossip_session_add_contact (session,
+				    account,
+                                    gossip_contact_get_id (dialog->contact), 
+				    gossip_contact_get_name (dialog->contact),
+				    NULL, /* group */
+				    message);
 }
 
 static void
@@ -597,13 +585,12 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 			      dialog,
 			      "contact_information_dialog", "destroy", contact_info_dialog_destroy_cb,
 			      "contact_information_dialog", "response", contact_info_dialog_response_cb,
-			      "subscribe_button", "clicked", contact_info_dialog_subscribe_cb,
+			      "subscribe_button", "clicked", contact_info_dialog_subscribe_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
 
-	/* A bit ugly, but the result is nice. Align the labels in the
-	   two different tables. */
+	/* Align widgets */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	gtk_size_group_add_widget (size_group, dialog->stub_name_label);

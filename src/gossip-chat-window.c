@@ -1054,6 +1054,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
 {
 	GossipChatWindowPriv *priv;
 	GtkWidget            *widget;
+	gchar                *current_tooltip;
 	gchar                *str;
 
 	priv = GET_PRIV (window);
@@ -1061,14 +1062,13 @@ chat_window_update_tooltip (GossipChatWindow *window,
 	widget = g_object_get_data (G_OBJECT (chat), 
 			            "chat-window-tooltip-widget");
 
-	str = gossip_chat_get_tooltip (chat);
+	current_tooltip = gossip_chat_get_tooltip (chat);
 
 	if (g_list_find (priv->chats_composing, chat)) {
-		gchar *t_str;
-
-		t_str = str;
-		str = g_strconcat (t_str, "\n", _("Typing a message."), NULL);
-		g_free (t_str);
+		str = g_strconcat (current_tooltip, "\n", _("Typing a message."), NULL);
+		g_free (current_tooltip);
+	} else {
+		str = current_tooltip;
 	}
 
 	gtk_tooltips_set_tip (priv->tooltips,

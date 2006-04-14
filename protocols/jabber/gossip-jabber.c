@@ -41,19 +41,27 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+/* #define DEBUG_MSG(x)  */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
+/* Common XMPP XML namespaces we use. */
 #define XMPP_VERSION_XMLNS  "jabber:iq:version"
 #define XMPP_ROSTER_XMLNS   "jabber:iq:roster"
 #define XMPP_REGISTER_XMLNS "jabber:iq:register"
 
-/* 3.5 minutes, we use this because if the port is just wrong then it
-   will timeout before then with that error */
+/* We use 3.5 minutes because if the port is just wrong then it
+ * will timeout before then with that error.
+ */
 #define CONNECT_TIMEOUT     210 
 
+/* This is the timeout we will accept the user to be composing for
+ * before we assume it is stuck and the server has failed to tell us
+ * the user has stopped composing.
+ */
+#define COMPOSING_TIMEOUT   45
+  
 struct _GossipJabberPriv {
 	LmConnection          *connection;
 	
@@ -79,6 +87,8 @@ struct _GossipJabberPriv {
 	 * can send the cancelation to the last message id. 
 	 */
 	GHashTable            *composing_ids;
+	GHashTable            *composing_timeouts;
+	GHashTable            *composing_requests;
 
 	/* Transport stuff... is this in the right place? */
 	GossipTransportAccountList *account_list;
@@ -102,7 +112,8 @@ typedef struct {
 typedef struct {
 	GossipJabber     *jabber;
 	GossipContact    *contact;
-} VCardData;
+	gpointer          user_data;
+} JabberData;
 
 static void             gossip_jabber_class_init            (GossipJabberClass       *klass);
 static void             gossip_jabber_init                  (GossipJabber            *jabber);
@@ -145,6 +156,7 @@ static void             jabber_register_cancel              (GossipProtocol     
 static void             jabber_register_connection_open_cb  (LmConnection            *connection,
 							     gboolean                 result,
 							     RegisterData            *ra);
+static gboolean         jabber_composing_timeout_cb         (JabberData              *data);
 static LmHandlerResult  jabber_register_message_handler     (LmMessageHandler        *handler,
 							     LmConnection            *conn,
 							     LmMessage               *m,
@@ -191,7 +203,7 @@ static void             jabber_contact_vcard                (GossipJabber       
 							     GossipContact           *contact);
 static void             jabber_contact_vcard_cb             (GossipResult             result,
 							     GossipVCard             *vcard,
-							     VCardData               *vd);
+							     JabberData              *data);
 static void             jabber_group_rename                 (GossipProtocol          *protocol,
 							     const gchar             *group,
 							     const gchar             *new_name);
@@ -284,6 +296,12 @@ static void             jabber_ft_accept                    (GossipFTProvider   
 static void             jabber_ft_decline                   (GossipFTProvider        *provider,
 							     GossipFTId               id);
 
+/* misc */
+static JabberData *     jabber_data_new                     (GossipJabber            *jabber,
+							     GossipContact           *contact,
+							     gpointer                 user_data);
+static void             jabber_data_free                    (JabberData              *data);
+
 extern GConfClient *gconf_client;
 
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
@@ -350,6 +368,18 @@ gossip_jabber_init (GossipJabber *jabber)
 				       gossip_contact_equal,
 				       (GDestroyNotify) g_object_unref,
 				       (GDestroyNotify) g_free);
+
+	priv->composing_timeouts = 
+		g_hash_table_new_full (gossip_contact_hash,
+				       gossip_contact_equal,
+				       (GDestroyNotify) g_object_unref,
+				       (GDestroyNotify) jabber_data_free);
+
+	priv->composing_requests = 
+		g_hash_table_new_full (gossip_contact_hash,
+				       gossip_contact_equal,
+				       (GDestroyNotify) g_object_unref,
+				       NULL);
 }
 	
 static void
@@ -376,6 +406,8 @@ jabber_finalize (GObject *obj)
 	gossip_jabber_ft_finalize (priv->fts);
 
  	g_hash_table_destroy (priv->composing_ids);
+ 	g_hash_table_destroy (priv->composing_timeouts);
+ 	g_hash_table_destroy (priv->composing_requests);
 
 	if (priv->connection_timeout_id != 0) {
 		g_source_remove (priv->connection_timeout_id);
@@ -1340,6 +1372,10 @@ jabber_send_composing (GossipProtocol *protocol,
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
+	if (!g_hash_table_lookup (priv->composing_requests, contact)) {
+		return;
+	}
+
 	contact_id = gossip_contact_get_id (contact);
 
 	DEBUG_MSG (("Protocol: Sending %s to contact:'%s'", 
@@ -1645,46 +1681,41 @@ jabber_contact_vcard (GossipJabber  *jabber,
 		      GossipContact *contact)
 {
 	GossipJabberPriv *priv;
-	VCardData        *vd;
+	JabberData       *data;
 	
 	priv = GET_PRIV (jabber);
 
-	vd = g_new0 (VCardData, 1);
-	
-	vd->jabber = g_object_ref (jabber);
-	vd->contact = g_object_ref (contact);
+	data = jabber_data_new (jabber, contact, NULL);
 	
 	gossip_jabber_vcard_get (priv->connection,
 				 gossip_contact_get_id (contact),
 				 (GossipVCardCallback) jabber_contact_vcard_cb, 
-				 vd, 
+				 data, 
 				 NULL);
 }
 
 static void
 jabber_contact_vcard_cb (GossipResult  result,
 			 GossipVCard  *vcard,
-			 VCardData    *vd)
+			 JabberData   *data)
 {
 	if (result == GOSSIP_RESULT_OK) {
 		gchar *name;
 
 		name = gossip_jabber_get_name_to_use 
-			(gossip_contact_get_id (vd->contact),
+			(gossip_contact_get_id (data->contact),
 			 gossip_vcard_get_nickname (vcard),
 			 gossip_vcard_get_name (vcard));
 		
-		gossip_contact_set_name (vd->contact, name);
+		gossip_contact_set_name (data->contact, name);
 		g_free (name);
 
-		g_signal_emit_by_name (vd->jabber, 
+		g_signal_emit_by_name (data->jabber, 
 				       "contact-updated", 
-				       vd->contact);
+				       data->contact);
 	}
 
-	g_object_unref (vd->jabber);
-	g_object_unref (vd->contact);
-	g_free (vd);
+	jabber_data_free (data);
 }
 
 static void
@@ -1991,6 +2022,25 @@ jabber_set_proxy (LmConnection *conn)
 	g_object_unref (gconf_client);
 }
 
+static gboolean
+jabber_composing_timeout_cb (JabberData *data)
+{
+	GossipJabberPriv *priv;
+
+	priv = GET_PRIV (data->jabber);
+
+	DEBUG_MSG (("Protocol: Contact:'%s' is NOT composing (timed out)",
+		    gossip_contact_get_id (data->contact)));
+
+	g_signal_emit_by_name (data->jabber, "composing-event", 
+			       data->contact, 
+			       FALSE);
+
+	g_hash_table_remove (priv->composing_timeouts, data->contact);
+
+	return FALSE;
+}
+
 static LmHandlerResult
 jabber_message_handler (LmMessageHandler *handler,
 			LmConnection     *conn,
@@ -2004,6 +2054,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	const gchar      *thread = NULL;
 	const gchar      *subject = NULL;
 	const gchar      *body = NULL;
+	LmMessageSubType  sub_type;
 	LmMessageNode    *node;
 
 	priv = GET_PRIV (jabber);
@@ -2011,84 +2062,127 @@ jabber_message_handler (LmMessageHandler *handler,
 	DEBUG_MSG (("Protocol: New message from: %s", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
-	switch (lm_message_get_sub_type (m)) {
-	case LM_MESSAGE_SUB_TYPE_NOT_SET:
-	case LM_MESSAGE_SUB_TYPE_NORMAL:
-	case LM_MESSAGE_SUB_TYPE_CHAT:
-	case LM_MESSAGE_SUB_TYPE_HEADLINE: /* For now, fixes #120009 */
-		from_str = lm_message_node_get_attribute (m->node, "from");
-		from = gossip_jabber_get_contact_from_jid (jabber, 
-							   from_str, 
-							   NULL,
-							   TRUE);
-		
-		/* if event, then we can ignore the rest */
-		if (gossip_jabber_get_message_is_event (m)) {
-			gboolean composing;
-
-			composing = gossip_jabber_get_message_is_composing (m);
-
-			g_signal_emit_by_name (jabber, "composing-event", 
-					       from, 
-					       composing);
-			break;
-		}
-
-		node = lm_message_node_get_child (m->node, "subject");
-		if (node) {
-			subject = node->value;
-		}
-
-		node = lm_message_node_get_child (m->node, "body");
-		if (node) {
-			body = node->value;
-		} else {
-			/* If no body to the message, we ignore it since it
-			 * has no purpose now (see fixes #309912). 
-			 */
-			DEBUG_MSG (("Protocol: Dropping new message, no <body> element"));
-			break;
-		}
-
-		node = lm_message_node_get_child (m->node, "thread");
-		if (node) {
-			thread = node->value;
-		}
-
-		message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
-					      priv->contact);
-		
-		gossip_message_set_sender (message, from);
-		gossip_message_set_body (message, body);
-
-		if (subject) {
-			gossip_message_set_subject (message, subject);
-		}
-
-		if (thread) {
-			gossip_message_set_thread (message, thread);
-		}
-
-		gossip_message_set_timestamp (message,
-					      gossip_jabber_get_message_timestamp (m));
-		
-		gossip_message_set_invite (message,
-					   gossip_jabber_get_message_conference (m));
-		
-		g_signal_emit_by_name (jabber, "new-message", message);
-		g_signal_emit_by_name (jabber, "composing-event", 
-				       from, FALSE);
-
-		g_object_unref (message);
-
-		break;
-	case LM_MESSAGE_SUB_TYPE_ERROR:
-		/* FIXME: Emit error */
-		break;
-	default:
-		break;
+	sub_type = lm_message_get_sub_type (m);
+	if (sub_type != LM_MESSAGE_SUB_TYPE_NOT_SET && 
+	    sub_type != LM_MESSAGE_SUB_TYPE_NORMAL && 
+	    sub_type != LM_MESSAGE_SUB_TYPE_CHAT && 
+	    sub_type != LM_MESSAGE_SUB_TYPE_HEADLINE) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
+	from_str = lm_message_node_get_attribute (m->node, "from");
+	from = gossip_jabber_get_contact_from_jid (jabber, 
+						   from_str, 
+						   NULL,
+						   TRUE);
+	
+	if (gossip_jabber_get_message_is_event (m)) {
+		gboolean composing;
+		
+		composing = gossip_jabber_get_message_is_composing (m);
+		
+		DEBUG_MSG (("Protocol: Contact:'%s' %s",
+			    gossip_contact_get_id (from),
+			    composing ? "is composing" : "is NOT composing"));
+		
+		g_signal_emit_by_name (jabber, "composing-event", 
+				       from, 
+				       composing);
+		
+		if (composing) {
+			JabberData *data;
+			guint       id;
+			
+			data = g_hash_table_lookup (priv->composing_timeouts, from);
+			if (data) {
+				g_source_remove (GPOINTER_TO_UINT (data->user_data));
+				g_hash_table_remove (priv->composing_timeouts, from);
+			}
+			
+			data = jabber_data_new (jabber, from, NULL);
+			id = g_timeout_add (COMPOSING_TIMEOUT * 1000,
+					    (GSourceFunc) jabber_composing_timeout_cb,
+					    data);
+			data->user_data = GUINT_TO_POINTER (id);
+			g_hash_table_insert (priv->composing_timeouts, from, data);
+		} else {
+			JabberData *data;
+
+			data = g_hash_table_lookup (priv->composing_timeouts, from);
+			if (data) {
+				g_source_remove (GPOINTER_TO_UINT (data->user_data));
+				g_hash_table_remove (priv->composing_timeouts, from);
+			}
+		}
+		
+		/* If event, then we can ignore the rest */
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	} else {
+		gboolean wants_composing;
+		
+		wants_composing = gossip_jabber_get_message_is_composing (m);
+		
+		if (wants_composing) {
+			g_hash_table_insert (priv->composing_requests, 
+					     g_object_ref (from),
+					     GINT_TO_POINTER (TRUE));
+		} else {
+			g_hash_table_remove (priv->composing_requests, 
+					     g_object_ref (from));
+		}
+		
+		DEBUG_MSG (("Protocol: Contact:'%s' %s composing info...",
+			    gossip_contact_get_id (from),
+			    wants_composing ? "wants" : "does NOT want"));
+	}
+	
+	node = lm_message_node_get_child (m->node, "subject");
+	if (node) {
+		subject = node->value;
+	}
+	
+	node = lm_message_node_get_child (m->node, "body");
+	if (node) {
+		body = node->value;
+	} else {
+		/* If no body to the message, we ignore it since it
+		 * has no purpose now (see fixes #309912). 
+		 */
+		DEBUG_MSG (("Protocol: Dropping new message, no <body> element"));
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	}
+	
+	node = lm_message_node_get_child (m->node, "thread");
+	if (node) {
+		thread = node->value;
+	}
+	
+	message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
+				      priv->contact);
+	
+	gossip_message_set_sender (message, from);
+	gossip_message_set_body (message, body);
+	
+	if (subject) {
+		gossip_message_set_subject (message, subject);
+	}
+	
+	if (thread) {
+		gossip_message_set_thread (message, thread);
+	}
+	
+	gossip_message_set_timestamp (message,
+				      gossip_jabber_get_message_timestamp (m));
+	
+	gossip_message_set_invite (message,
+				   gossip_jabber_get_message_conference (m));
+	
+	g_signal_emit_by_name (jabber, "new-message", message);
+	g_signal_emit_by_name (jabber, "composing-event", 
+			       from, FALSE);
+	
+	g_object_unref (message);
+	
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
@@ -2749,8 +2843,50 @@ jabber_ft_decline (GossipFTProvider *provider,
 	return gossip_jabber_ft_decline (priv->fts, id);
 }
 
+/*
+ * Misc
+ */
+
+static JabberData *
+jabber_data_new (GossipJabber  *jabber,
+		 GossipContact *contact,
+		 gpointer       user_data)
+{
+	JabberData *data;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+	
+	data = g_new0 (JabberData, 1);
+	
+	data->jabber = g_object_ref (jabber);
+	data->contact = g_object_ref (contact);
+
+	data->user_data = user_data;
+
+	return data;
+}
+
+static void
+jabber_data_free (JabberData *data)
+{
+	if (!data) {
+		return;
+	}
+
+	if (data->jabber) {
+		g_object_unref (data->jabber);
+	}
+
+	if (data->contact) {
+		g_object_unref (data->contact);
+	}
+
+	g_free (data);
+}
+
 /* 
- * external functions 
+ * External functions 
  */ 
 
 GossipAccount *
@@ -2922,7 +3058,7 @@ gossip_jabber_send_unsubscribed (GossipJabber  *jabber,
 }
 
 /*
- * private functions 
+ * Private functions 
  */
 
 LmConnection *
@@ -2948,3 +3084,4 @@ gossip_jabber_get_fts (GossipJabber *jabber)
 	
 	return priv->fts;
 }
+

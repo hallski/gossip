@@ -3,6 +3,11 @@ NEWS in 0.11:
 - Added a smiley menu and context menu for chat windows (Martyn). 
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #319080, Don't send out composing unless it has been requested
+by the other contact. This was causing empty messages to occur (Ross
+Burton). 
+- Fixed #141577, Clean up composing state if stuck after 45 seconds
+(Richard). 
 - Fixed #337837, Update the LINGUAS to be inline with the documented
 (http://live.gnome.org/GnomeGoals/PoLinguas) GONME goals, (patch by
 Caio Marcelo).  
