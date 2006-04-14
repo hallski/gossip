@@ -416,11 +416,11 @@ gossip_pixbuf_from_account_error (GossipAccount *account,
 
 	gdk_pixbuf_composite (pixbuf_error, 
 			      pixbuf, 
-			      0,0, 
-			      gdk_pixbuf_get_width (pixbuf),
-			      gdk_pixbuf_get_height (pixbuf),
-			      0,0,
-			      1,1,
+			      0, 0,
+			      gdk_pixbuf_get_width (pixbuf_error),
+			      gdk_pixbuf_get_height (pixbuf_error),
+			      0, 0,
+			      1, 1,
 			      GDK_INTERP_BILINEAR,
 			      255);
 

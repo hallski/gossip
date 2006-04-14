@@ -47,18 +47,18 @@ struct _GossipAccountButtonClass {
         GtkToggleToolButtonClass parent_class;
 };
 
-GType      gossip_account_button_get_type         (void) G_GNUC_CONST;
+GType      gossip_account_button_get_type       (void) G_GNUC_CONST;
 
-GtkWidget *gossip_account_button_new              (void);
+GtkWidget *gossip_account_button_new            (void);
 
 GossipAccount *
-           gossip_account_button_get_account      (GossipAccountButton *button);
-gboolean   gossip_account_button_get_is_important (GossipAccountButton *button);
-
-void       gossip_account_button_set_account      (GossipAccountButton *button,
-						   GossipAccount       *account);
-void       gossip_account_button_set_status       (GossipAccountButton *button,
-						   gboolean             online);
+           gossip_account_button_get_account    (GossipAccountButton *button);
+void       gossip_account_button_set_account    (GossipAccountButton *button,
+						 GossipAccount       *account);
+void       gossip_account_button_set_status     (GossipAccountButton *button,
+						 gboolean             online);
+gboolean   gossip_account_button_is_important   (GossipAccountButton *button);
+gboolean   gossip_account_button_is_error_shown (GossipAccountButton *button);
 
 #endif /* __GOSSIP_ACCOUNT_BUTTON_H__ */
 

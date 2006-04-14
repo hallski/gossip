@@ -3,6 +3,11 @@ NEWS in 0.11:
 - Added a smiley menu and context menu for chat windows (Martyn). 
 - Added the ability to view message history (Martyn).
 - Make use of the GtkAboutDialog (Martyn).
+- Fixed #336442, Fixed inconsistent presence state, with multiple
+accounts it would sometimes be online when offline and visa versa
+(Braden).
+- Fixed #335504, Make sure we give error feedback when authentication
+fails with only ONE account (Paul Van Tilburg).
 - Fixed #319080, Don't send out composing unless it has been requested
 by the other contact. This was causing empty messages to occur (Ross
 Burton). 

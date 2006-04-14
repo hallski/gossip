@@ -210,6 +210,11 @@ static void            app_session_protocol_disconnected_cb (GossipSession      
 							     GossipAccount            *account,
 							     GossipProtocol           *protocol,
 							     gpointer                  user_data);
+static void            app_session_protocol_error_cb        (GossipSession            *session,
+							     GossipProtocol           *protocol,
+							     GossipAccount            *account,
+							     GError                   *error,
+							     gpointer                  user_data);
 static gchar *         app_session_get_password_cb          (GossipSession            *session,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
@@ -357,6 +362,9 @@ app_finalize (GObject *object)
 					      app_session_protocol_disconnected_cb, 
 					      NULL);
 	g_signal_handlers_disconnect_by_func (priv->session,
+					      app_session_protocol_error_cb, 
+					      NULL);
+	g_signal_handlers_disconnect_by_func (priv->session,
 					      app_session_get_password_cb, 
 					      NULL);
 
@@ -465,6 +473,10 @@ app_setup (GossipAccountManager *manager)
 
 	g_signal_connect (priv->session, "protocol-disconnected",
 			  G_CALLBACK (app_session_protocol_disconnected_cb),
+			  NULL);
+
+	g_signal_connect (priv->session, "protocol-error",
+			  G_CALLBACK (app_session_protocol_error_cb),
 			  NULL);
 
 	g_signal_connect (priv->session, "get-password",
@@ -995,6 +1007,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 	priv = app->priv;
 
 	app_connection_items_update ();
+	app_accounts_update_toolbar ();
 	app_presence_updated ();
 }
 
@@ -1009,7 +1022,22 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	priv = app->priv;
 
  	app_connection_items_update ();
+	app_accounts_update_toolbar ();
 	app_presence_updated ();
+}
+
+static void
+app_session_protocol_error_cb (GossipSession  *session,
+			       GossipProtocol *protocol,
+			       GossipAccount  *account,
+			       GError         *error,
+			       gpointer        user_data)
+{
+	GossipAppPriv *priv;
+
+	priv = app->priv;
+
+	gtk_widget_show (priv->accounts_toolbar);
 }
 
 static gchar * 
@@ -1757,7 +1785,7 @@ app_accounts_create (void)
 
 	g_list_free (accounts);
 
-	/* Show/hide toolbar */
+	/* Update separator position */
 	app_accounts_update_separator ();
 }
 
@@ -1774,7 +1802,7 @@ app_accounts_update_separator (void)
 
 	DEBUG_MSG (("AppAccounts: Updating toolbar separator position"));
 
-	/* remove current separator */
+	/* Remove current separator */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
 	for (l = children; l; l = l->next) {
 		if (G_OBJECT_TYPE (l->data) == GOSSIP_TYPE_ACCOUNT_BUTTON) {
@@ -1786,23 +1814,23 @@ app_accounts_update_separator (void)
 	
 	g_list_free (children);
 
-	/* find position for new separator */
+	/* Find position for new separator */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
 	for (l = children; l; l = l->next) {
 		GossipAccountButton *account_button;
 
 		account_button = l->data;
 
-		if (gossip_account_button_get_is_important (account_button)) {
+		if (gossip_account_button_is_important (account_button)) {
 			index++;
 		} else {
 			break;
 		}
 	}
 
-	/* don't put a separator in if it is at the start or end */
+	/* Don't put a separator in if it is at the start or end */
 	if (index > 0 && index < g_list_length (children)) {
-		/* create separator */
+		/* Create separator */
 		item = gtk_separator_tool_item_new ();
 		gtk_toolbar_insert (GTK_TOOLBAR (priv->accounts_toolbar), item, index);
 		gtk_widget_show (GTK_WIDGET (item));
@@ -1814,23 +1842,42 @@ app_accounts_update_separator (void)
 static void 
 app_accounts_update_toolbar (void)
 {
-	GossipAppPriv        *priv;
-	GossipAccountManager *manager;
-	gint                  count;
+	GossipAppPriv *priv;
+	GList         *children;
+	GList         *l;
+	gint           count;
+	gboolean       errors;              
 
 	priv = app->priv;
 
-	manager = gossip_session_get_account_manager (priv->session);
-	count = gossip_account_manager_get_count (manager);
+	/* Find position for new separator */
+	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
+	for (l = children, errors = FALSE; l && !errors; l = l->next) {
+		GossipAccountButton *account_button;
 
-	DEBUG_MSG (("AppAccounts: Updating toolbar"));
+		if (G_OBJECT_TYPE (l->data) != GOSSIP_TYPE_ACCOUNT_BUTTON) {
+			continue;
+		}
 
-	/* show accounts if we have more than one */
-	if (count < 2) {
+		account_button = l->data;
+
+		if (gossip_account_button_is_error_shown (account_button)) {
+			errors = TRUE;
+		}
+	}
+
+	count = g_list_length (children);
+
+	/* Show accounts if we have more than one */
+	if (count < 2 || errors) {
 		gtk_widget_hide (priv->accounts_toolbar);
 	} else {
 		gtk_widget_show (priv->accounts_toolbar);
 	}
+
+	DEBUG_MSG (("AppAccounts: There are %d accounts on the toolbar", count));
+
+	g_list_free (children);
 }
 
 static void

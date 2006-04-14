@@ -481,16 +481,19 @@ session_protocol_logged_out (GossipProtocol *protocol,
 
 	priv = GET_PRIV (session);
 
-	/* remove timer */
+	/* Remove timer */
 	g_hash_table_remove (priv->timers, account);
 
-	/* update some status? */
+	/* Update some status? */
 	if (priv->connected_counter < 0) {
 		g_warning ("We have some issues in the connection counting");
 		return;
-	}
+	} 
 
-	priv->connected_counter--;
+	/* Don't go lower than 0 */
+	if (priv->connected_counter > 0) {
+		priv->connected_counter--;
+	}
 	
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
 	
@@ -1190,7 +1193,7 @@ gossip_session_is_connected (GossipSession *session,
 		return gossip_protocol_is_connected (protocol);
 	} 
 
-	/* fall back to counter if no account is provided */
+	/* Fall back to counter if no account is provided */
 	return (priv->connected_counter > 0);
 }
 
@@ -1203,8 +1206,9 @@ gossip_session_get_active_resource (GossipSession *session,
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	
-	/* get the activate resource, needed to be able to lock the
-	   chat against a certain resource */
+	/* Get the activate resource, needed to be able to lock the
+	 * chat against a certain resource.
+	 */
 
 	priv = GET_PRIV (session);
 

@@ -1,5 +1,22 @@
 2006-04-14  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-session.c: Don't decrease the connected_counter
+	when it is already 0, this leads to the G_UMAXINT32 being returned
+	which means we must have that many connections, fixes #336442
+	(Braden).
+	
+	* src/gossip-account-button.[ch]:
+	* src/gossip-app.c: If we have problems connecting to any accounts
+	we show the account toolbar, this means when we have ONE account
+	and the toolbar is hidden, the error is not hidden too, fixes
+	#335504 (Paul Van Tilburg).
+
+	* src/gossip-ui-utils.c: Fix up the pixbuf error composition
+	function call to put the error over the top of the account image,
+	it was producing some weird image.
+
+2006-04-14  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Added a timeout for the
 	composing signal we emit to make sure that we stop composing even
 	if the server doesn't send it to make sure we don't get stuck,

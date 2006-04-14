@@ -40,7 +40,6 @@
 
 #define CONNECTING_DRAW_TIME  500 /* ms */
 
-
 typedef struct {
 	GossipAccount *account;
 
@@ -53,7 +52,6 @@ typedef struct {
 	gboolean       connecting;
 
 } GossipAccountButtonPriv;
-
 
 static void       account_button_finalize                  (GObject             *object);
 static void       account_button_align_menu_func           (GtkMenu             *menu,
@@ -98,9 +96,7 @@ static void       account_button_account_notify_cb         (GossipAccount       
 							    GParamSpec          *param,
 							    GossipAccountButton *account_button);
 
-
 G_DEFINE_TYPE (GossipAccountButton, gossip_account_button, GTK_TYPE_TOGGLE_TOOL_BUTTON);
-
 
 static void
 gossip_account_button_class_init (GossipAccountButtonClass *klass)
@@ -591,11 +587,6 @@ account_button_protocol_disconnected_cb (GossipSession       *session,
 	DEBUG_MSG (("AccountButton: Account:'%s' disconnected", 
 		    gossip_account_get_id (account)));
 	
-/* 	if (priv->last_error) { */
-/* 		g_error_free (priv->last_error); */
-/* 		priv->last_error = NULL; */
-/* 	} */
-
 	priv->connected = FALSE;
 	priv->connecting = FALSE;
 
@@ -679,22 +670,6 @@ gossip_account_button_get_account (GossipAccountButton *account_button)
 	return priv->account;
 }
 
-gboolean
-gossip_account_button_get_is_important (GossipAccountButton *account_button)
-{
-	GossipAccountButtonPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
-
-	priv = GET_PRIV (account_button);
-
-	if (!priv->account) {
-		return FALSE;
-	}
-
-	return gossip_account_get_auto_connect (priv->account);
-}
-
 void
 gossip_account_button_set_account (GossipAccountButton *account_button,
 				   GossipAccount       *account)
@@ -775,3 +750,30 @@ gossip_account_button_set_status (GossipAccountButton *account_button,
 	g_object_unref (pixbuf);
 }
 
+gboolean
+gossip_account_button_is_important (GossipAccountButton *account_button)
+{
+	GossipAccountButtonPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
+
+	priv = GET_PRIV (account_button);
+
+	if (!priv->account) {
+		return FALSE;
+	}
+
+	return gossip_account_get_auto_connect (priv->account);
+}
+
+gboolean
+gossip_account_button_is_error_shown (GossipAccountButton *account_button)
+{
+	GossipAccountButtonPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_BUTTON (account_button), FALSE);
+
+	priv = GET_PRIV (account_button);
+
+	return (priv->last_error != NULL ? TRUE : FALSE);
+}
