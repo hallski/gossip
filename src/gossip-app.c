@@ -880,7 +880,7 @@ app_history_cb (GtkWidget *widget,
 
 	priv = app->priv;
 
-	gossip_log_window_show (GTK_WINDOW (priv->window), NULL);
+	gossip_log_window_show (NULL);
 }
 
 static void

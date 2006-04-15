@@ -36,6 +36,8 @@
 typedef struct {
 	GtkWidget      *window;
 
+	GtkWidget      *notebook;
+
 	GtkWidget      *entry_search;
 	GtkWidget      *button_search;
 	GtkWidget      *treeview_search;
@@ -1007,24 +1009,33 @@ log_window_destroy_cb (GtkWidget       *widget,
 }
 
 void
-gossip_log_window_show (GtkWindow     *parent,
-			GossipContact *contact)
+gossip_log_window_show (GossipContact *contact)
 {
-	GossipLogWindow      *window = NULL;
-	GladeXML             *glade;
-	GossipSession        *session;
-	GList                *accounts;
-	gint                  account_num;
-	GossipAccountChooser *account_chooser;
-	GtkWidget            *notebook;
+	static GossipLogWindow *window = NULL;
+	GladeXML               *glade;
+	GossipSession          *session;
+	GList                  *accounts;
+	gint                    account_num;
+	GossipAccountChooser   *account_chooser;
+	
+	if (window) {
+		gtk_window_present (GTK_WINDOW (window->window));
 
+		if (contact) {
+			gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), 1);
+			log_window_contacts_set_selected (window, contact);
+		}
+		
+		return;
+	}
+	
         window = g_new0 (GossipLogWindow, 1);
 
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
 				       "log_window",
 				       NULL,
 				       "log_window", &window->window,
-				       "notebook", &notebook,
+				       "notebook", &window->notebook,
 				       "entry_search", &window->entry_search,
 				       "button_search", &window->button_search,
  				       "treeview_search", &window->treeview_search, 
@@ -1046,6 +1057,9 @@ gossip_log_window_show (GtkWindow     *parent,
 			      "entry_browse", "activate", log_window_entry_browse_activate_cb,
 			      "button_close", "clicked", log_window_button_close_clicked_cb,
 			      NULL);
+
+	g_object_add_weak_pointer (G_OBJECT (window->window),
+				   (gpointer) &window);
 
 	/* We set this up here so we can block it when needed. */
 	g_signal_connect (window->calendar, "day-selected", 
@@ -1106,14 +1120,8 @@ gossip_log_window_show (GtkWindow     *parent,
 
 	/* Select contact */
 	if (contact) {
-		gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), 1);
+		gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), 1);
 		log_window_contacts_set_selected (window, contact);
-	}
-
-	/* Last touches */
-	if (parent) {
-		gtk_window_set_transient_for (GTK_WINDOW (window->window), 
-					      GTK_WINDOW (parent));
 	}
 
 	gtk_widget_show (window->window);

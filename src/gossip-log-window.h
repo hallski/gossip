@@ -21,7 +21,8 @@
 #ifndef __GOSSIP_LOG_WINDOW_H__
 #define __GOSSIP_LOG_WINDOW_H__
 
-void gossip_log_window_show    (GtkWindow     *parent,
-				GossipContact *contact);
+#include <libgossip/gossip-contact.h>
+
+void gossip_log_window_show (GossipContact *contact);
 
 #endif /* __GOSSIP_LOG_WINDOW_H__ */

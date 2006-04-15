@@ -32,7 +32,6 @@
 #include "gossip-preferences.h"
 #include "gossip-spell.h"
 
-
 typedef struct {
 	GossipApp *app;
  	
@@ -55,7 +54,6 @@ typedef struct {
 	GList     *ids;
 } GossipPreferences;
 
-
 enum {
 	COL_LANG_ENABLED,
 	COL_LANG_CODE,
@@ -68,8 +66,6 @@ enum {
 	COL_COMBO_NAME,
 	COL_COMBO_COUNT
 };
-
-
 
 static void     preferences_setup_widgets                (GossipPreferences      *preferences);
 static void     preferences_languages_setup              (GossipPreferences      *preferences);
@@ -144,8 +140,6 @@ static void     preferences_destroy_cb                   (GtkWidget             
 static void     preferences_response_cb                  (GtkWidget              *widget,
 							  gint                    response,
 							  GossipPreferences      *preferences);
-
-
 
 static void
 preferences_setup_widgets (GossipPreferences *preferences)

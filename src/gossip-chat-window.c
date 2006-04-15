@@ -806,7 +806,7 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_log_window_show (GTK_WINDOW (priv->dialog), contact);
+	gossip_log_window_show (contact);
 }
 
 static void

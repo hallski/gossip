@@ -2169,7 +2169,7 @@ contact_list_item_menu_log_cb (gpointer   data,
                 return;
         }
 
-        gossip_log_window_show (NULL, contact);
+        gossip_log_window_show (contact);
 
 	g_object_unref (contact);
 }

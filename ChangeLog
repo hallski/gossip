@@ -1,3 +1,12 @@
+2006-04-15  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c:
+	* src/gossip-chat-window.c: 
+	* src/gossip-contact-list.c:
+	* src/gossip-log-window.[ch]: Don't make log window a transient
+	window and only show ONE, not one for each instance the log window
+	is requested.
+
 2006-04-14  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-session.c: Don't decrease the connected_counter
