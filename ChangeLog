@@ -27,7 +27,8 @@
 	
 	* src/gossip-contact-info-dialog.c
 	(contact_info_dialog_contact_updated_cb): Fixed the "subscribe"
-	button to make it work instead of error.
+	button to make it work instead of error, fixes #332254 (Wouter
+	Bolsterlee).
 
 2006-04-09  Martyn Russell  <martyn@imendio.com>
 
