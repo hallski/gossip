@@ -436,6 +436,7 @@ private_chat_contact_presence_updated (gpointer           not_used,
 						       msg);
 			g_free (msg);
 		}
+
 		priv->is_online = FALSE;
 
 		g_signal_emit_by_name (chat, "composing", FALSE);
@@ -450,6 +451,7 @@ private_chat_contact_presence_updated (gpointer           not_used,
 						       msg);
 			g_free (msg);
 		}
+
 		priv->is_online = TRUE;
 	}
 }

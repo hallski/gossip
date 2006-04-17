@@ -28,7 +28,4 @@ void gossip_notify_init              (GossipSession      *session,
 				      GossipEventManager *event_manager);
 void gossip_notify_set_attach_widget (GtkWidget          *new_attach_widget);
 
-void gossip_notify_contact_online    (GossipContact      *contact);
-void gossip_notify_contact_offline   (GossipContact      *contact);
-
 #endif /* __GOSSIP_NOTIFY_H__ */

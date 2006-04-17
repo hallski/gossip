@@ -428,8 +428,7 @@ app_setup (GossipAccountManager *manager)
 	
 	priv->session = gossip_session_new (manager);
 
-	/* is this the best place for this, 
-	   perhaps in gossip-main.c? */
+	/* Is this the best place for this, perhaps in gossip-main.c? */
 #ifdef HAVE_DBUS
         gossip_dbus_init (priv->session);
 #endif
@@ -438,11 +437,11 @@ app_setup (GossipAccountManager *manager)
 	gossip_galago_init (priv->session);
 #endif
 
-	/* call init session dependent modules */
+	/* Call init session dependent modules */
 	gossip_subscription_dialog_init (priv->session);
 	gossip_ft_window_init (priv->session);
 
-	/* do we need first time start up druid? */
+	/* Do we need first time start up druid? */
 	if (gossip_new_account_window_is_needed ()) {
 		gossip_new_account_window_show (NULL);
 	}
@@ -458,6 +457,8 @@ app_setup (GossipAccountManager *manager)
 	gossip_notify_init (priv->session,
 			    priv->event_manager);
 #endif
+
+	gossip_sound_init (priv->session);
 
 	g_signal_connect (manager, "account_added",
 			  G_CALLBACK (app_accounts_account_added_cb), 

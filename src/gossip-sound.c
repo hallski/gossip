@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,12 +28,50 @@
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
+#define DEBUG_MSG(x)   
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
-static gboolean sound_enabled = TRUE;
+/* Time to wait before we use sounds for an account after it has gone
+ * online/offline, so we don't spam the sound with online's, etc 
+ */ 
+#define SOUND_WAIT_TIME 10000
 
+static void sound_contact_presence_updated_cb (GossipSession *session,
+					       GossipContact *contact,
+					       gpointer       user_data);
+
+static GHashTable *contact_states = NULL;
+static gboolean    sound_enabled = TRUE;
+
+static void
+sound_contact_presence_updated_cb (GossipSession *session,
+				   GossipContact *contact,
+				   gpointer       user_data)
+{
+	GossipPresence *presence;
+
+	presence = gossip_contact_get_active_presence (contact);
+	if (!presence) {
+		if (g_hash_table_lookup (contact_states, contact)) {
+			DEBUG_MSG (("Sound: Presence update, contact:'%s' is now offline",
+				    gossip_contact_get_id (contact)));
+			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
+		}
+			
+		g_hash_table_remove (contact_states, contact);
+	} else {
+		if (!g_hash_table_lookup (contact_states, contact)) {
+			DEBUG_MSG (("Sound: Presence update, contact:'%s' is now online",
+				    gossip_contact_get_id (contact)));
+			gossip_sound_play (GOSSIP_SOUND_ONLINE);
+		}
+
+		g_hash_table_insert (contact_states, 
+				     g_object_ref (contact), 
+				     g_object_ref (presence));
+	}
+}
 
 void
 gossip_sound_play (GossipSound sound)
@@ -45,8 +83,10 @@ gossip_sound_play (GossipSound sound)
 
 	session = gossip_app_get_session ();
 
-	/* this is the internal sound enable/disable for when events
-	   happen that we need to mute sound - e.g. changing roster contacts */
+	/* This is the internal sound enable/disable for when events
+	 * happen that we need to mute sound - e.g. changing roster
+	 * contacts.
+	 */
 	if (!sound_enabled) {
 		DEBUG_MSG (("Sound: Play request ignored, sound currently disabled."));
 		return;
@@ -98,7 +138,33 @@ gossip_sound_play (GossipSound sound)
 	}
 }		
 
-void gossip_sound_toggle (gboolean enabled)
+void 
+gossip_sound_toggle (gboolean enabled)
 {
 	sound_enabled = enabled;
+}
+
+void 
+gossip_sound_init (GossipSession *session)
+{
+	static gboolean inited = FALSE;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+
+	if (inited) {
+		return;
+	}
+
+	DEBUG_MSG (("Sound: Initiating..."));
+	
+	contact_states = g_hash_table_new_full (gossip_contact_hash,
+						gossip_contact_equal,
+						(GDestroyNotify) g_object_unref,
+						(GDestroyNotify) g_object_unref);
+
+	g_signal_connect (session, "contact-presence-updated",
+			  G_CALLBACK (sound_contact_presence_updated_cb),
+			  NULL);
+
+ 	inited = TRUE;
 }

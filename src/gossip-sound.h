@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,8 +21,7 @@
 #ifndef __GOSSIP_SOUND_H__
 #define __GOSSIP_SOUND_H__
 
-#include "gossip-app.h"
-
+#include <libgossip/gossip-session.h>
 
 typedef enum {
 	GOSSIP_SOUND_CHAT,
@@ -30,9 +29,9 @@ typedef enum {
 	GOSSIP_SOUND_ONLINE
 } GossipSound;
 
+void gossip_sound_init   (GossipSession *session);
 
 void gossip_sound_play   (GossipSound sound);
 void gossip_sound_toggle (gboolean    enabled);
-
 
 #endif /* __GOSSIP_SOUND_H__ */

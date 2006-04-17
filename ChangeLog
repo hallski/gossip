@@ -1,5 +1,19 @@
 2006-04-17  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: Initiate the sound module here.
+	
+	* src/gossip-contact-list.c:
+	* src/gossip-notify.[ch]: Detect online/offline users here, not in
+	the contact-list module, there is now no external API to put up an
+	online notification.
+	
+	* src/gossip-contact-list.c:
+	* src/gossip-sound.[ch]: Detect online/offline users here, not in
+	the contact-list module. We really should detect new messages here
+	too, not in the [private|group]-chat modules.
+
+2006-04-17  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c:
 	* src/gossip-chat-view.c:
 	* src/gossip-new-chatroom-dialog.c: Small gossip_group_chat_() API

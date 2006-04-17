@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -60,11 +60,6 @@
         
 /* Time after connecting which we wait before active users are enabled */
 #define ACTIVE_USER_WAIT_TO_ENABLE_TIME 5000    
-
-/* Time to wait before we use sounds for an account after it has gone
- * online/offline, so we don't spam the sound with online's, etc 
- */ 
-#define SOUNDS_ENABLED_WAIT_TIME 10000   
 
 struct _GossipContactListPriv {
 	gboolean             show_offline;
@@ -735,10 +730,6 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 								     account);
 		}
 
-		if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
-			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
-		}
-
 		if (priv->show_active) {
 			do_remove = TRUE;
 			do_set_active = TRUE;
@@ -756,16 +747,6 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (account) {
 			seconds = gossip_session_get_connected_time (session, 
 								     account);
-		}
-
-		if (now_online) {
-			if (seconds >= (SOUNDS_ENABLED_WAIT_TIME / 1000)) {
-				gossip_sound_play (GOSSIP_SOUND_ONLINE);
-				
-#ifdef HAVE_LIBNOTIFY
-				gossip_notify_contact_online (contact);
-#endif
-			}
 		}
 
 		contact_list_add_contact (list, contact);

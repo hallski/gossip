@@ -28,8 +28,8 @@
 #include "gossip-notify.h"
 #include "gossip-stock.h"
 
-#define DEBUG_MSG(x)   
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+#define DEBUG_MSG(x)
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define NOTIFY_MESSAGE_TIMEOUT 20000
 
@@ -37,31 +37,37 @@
 				   * message we show in the notification.
 				   */
 
-static const gchar *       notify_get_status_from_presence (GossipPresence     *presence);
-static void                notify_online_send_message_cb   (NotifyNotification *notify,
-							    gchar              *label,
-							    GossipContact      *contact);
-static void                notify_new_message_contact_cb   (NotifyNotification *notify,
-							    gchar              *label,
-							    GossipEventManager *event_manager);
-static NotifyNotification *notify_new_message              (GossipEventManager *event_manager,
-							    GossipMessage      *message);
-static void                notify_event_added_cb           (GossipEventManager *event_manager,
-							    GossipEvent        *event,
-							    gpointer            user_data);
-static gboolean            notify_event_remove_foreach     (gpointer            key,
-							    GossipEvent        *event,
-							    GossipEvent        *event_to_compare);
-static void                notify_event_removed_cb         (GossipEventManager *event_manager,
-							    GossipEvent        *event,
-							    gpointer            user_data);
-static void                notify_event_destroy_cb         (NotifyNotification *notify);
+static const gchar *       notify_get_status_from_presence    (GossipPresence     *presence);
+static gboolean            notify_get_is_busy                 (void);
+static void                notify_contact_online              (GossipContact      *contact);
+static void                notify_online_action_cb            (NotifyNotification *notify,
+							       gchar              *label,
+							       GossipContact      *contact);
+static void                notify_new_message_contact_cb      (NotifyNotification *notify,
+							       gchar              *label,
+							       GossipEventManager *event_manager);
+static NotifyNotification *notify_new_message                 (GossipEventManager *event_manager,
+							       GossipMessage      *message);
+static void                notify_contact_presence_updated_cb (GossipSession      *session,
+							       GossipContact      *contact,
+							       gpointer            user_data);
+static void                notify_event_added_cb              (GossipEventManager *event_manager,
+							       GossipEvent        *event,
+							       gpointer            user_data);
+static gboolean            notify_event_remove_foreach        (gpointer            key,
+							       GossipEvent        *event,
+							       GossipEvent        *event_to_compare);
+static void                notify_event_removed_cb            (GossipEventManager *event_manager,
+							       GossipEvent        *event,
+							       gpointer            user_data);
+static void                notify_event_destroy_cb            (NotifyNotification *notify);
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
 	NOTIFY_SHOW_ROSTER,
 };
 
+static GHashTable *contact_states = NULL;
 static GHashTable *message_notifications = NULL;
 static GHashTable *event_notifications = NULL;
 static GtkWidget  *attach_widget = NULL;
@@ -83,16 +89,20 @@ notify_get_status_from_presence (GossipPresence *presence)
 }
 
 static void
-notify_online_send_message_cb (NotifyNotification *notify,
-			       gchar              *label,
-			       GossipContact      *contact)
+notify_online_action_cb (NotifyNotification *notify,
+			 gchar              *label,
+			 GossipContact      *contact)
 {
-	GossipSession     *session;
-	GossipChatManager *chat_manager;
+	if (label && strcmp (label, "chat") == 0) {
+		GossipSession     *session;
+		GossipChatManager *chat_manager;
 
-	session = gossip_app_get_session ();
-	chat_manager = gossip_app_get_chat_manager ();
-	gossip_chat_manager_show_chat (chat_manager, contact);
+		session = gossip_app_get_session ();
+		chat_manager = gossip_app_get_chat_manager ();
+		gossip_chat_manager_show_chat (chat_manager, contact);
+	}
+
+	g_object_unref (contact);
 }
 
 static gboolean
@@ -111,8 +121,8 @@ notify_get_is_busy (void)
 	return FALSE;
 }
 
-void
-gossip_notify_contact_online (GossipContact *contact)
+static void
+notify_contact_online (GossipContact *contact)
 {
 	GossipPresence     *presence;
 	NotifyNotification *notify;
@@ -125,7 +135,7 @@ gossip_notify_contact_online (GossipContact *contact)
 		return;
 	}
 	
-	DEBUG_MSG (("Notify: Contact online:'%s'", 
+	DEBUG_MSG (("Notify: Setting up notification for online contact:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	presence = gossip_contact_get_active_presence (contact);
@@ -143,8 +153,11 @@ gossip_notify_contact_online (GossipContact *contact)
 		notify_notification_attach_to_widget (notify, attach_widget);
 	}
 
-	notify_notification_add_action (notify, "send_message", _("Send Message"),
-					(NotifyActionCallback) notify_online_send_message_cb,
+	notify_notification_add_action (notify, "default", _("Default"),
+					(NotifyActionCallback) notify_online_action_cb,
+					g_object_ref (contact), NULL);
+	notify_notification_add_action (notify, "chat", _("Chat!"),
+					(NotifyActionCallback) notify_online_action_cb,
 					g_object_ref (contact), NULL);
 
 	if (!notify_notification_show (notify, &error)) {
@@ -158,51 +171,6 @@ gossip_notify_contact_online (GossipContact *contact)
 	if (pixbuf) {
 		g_object_unref (pixbuf);
 	}
-}
-
-void
-gossip_notify_contact_offline (GossipContact *contact)
-{
-	GossipPresence     *presence;
-	NotifyNotification *notify;
-	GdkPixbuf          *pixbuf;
-	gchar              *title;
-	const gchar        *status;
-	GError             *error = NULL;
-
-	if (notify_get_is_busy ()) {
-		return;
-	}
-
-	DEBUG_MSG (("Notify: Contact offline:'%s'", 
-		   gossip_contact_get_id (contact)));
-
-	presence = gossip_contact_get_active_presence (contact);
-	pixbuf = gossip_pixbuf_for_presence (presence);
-
-	title = g_strdup_printf (_("%s has gone offline"), 
-				 gossip_contact_get_name (contact));
-	status = notify_get_status_from_presence (presence);
-
-	notify = notify_notification_new (title, status, NULL, NULL);
-	notify_notification_set_urgency (notify, NOTIFY_URGENCY_LOW);
-	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
-
-	if (attach_widget) {
-		notify_notification_attach_to_widget (notify, attach_widget);
-	}
-
-	if (!notify_notification_show (notify, &error)) {
-		g_warning ("Failed to send notification: %s",
-			   error->message);
-		g_error_free (error);
-	}
-	
-	g_free (title);
-
-	if (pixbuf) {
-		g_object_unref (pixbuf);
-	}					
 }
 
 static void
@@ -271,7 +239,7 @@ notify_new_message (GossipEventManager *event_manager,
 
 	contact = gossip_message_get_sender (message);
 
-	DEBUG_MSG (("Notify: New message:'%s'", 
+	DEBUG_MSG (("Notify: Setting up notification for new message from:'%s'", 
 		   gossip_contact_get_id (contact)));
 
 	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
@@ -322,6 +290,34 @@ notify_new_message (GossipEventManager *event_manager,
 	}
 
 	return notify;
+}
+
+static void
+notify_contact_presence_updated_cb (GossipSession *session,
+				    GossipContact *contact,
+				    gpointer       user_data)
+{
+	GossipPresence *presence;
+
+	presence = gossip_contact_get_active_presence (contact);
+	if (!presence) {
+		if (g_hash_table_lookup (contact_states, contact)) {
+			DEBUG_MSG (("Notify: Presence update, contact:'%s' is now offline",
+				    gossip_contact_get_id (contact)));
+		}
+			
+		g_hash_table_remove (contact_states, contact);
+	} else {
+		if (!g_hash_table_lookup (contact_states, contact)) {
+			DEBUG_MSG (("Notify: Presence update, contact:'%s' is now online",
+				    gossip_contact_get_id (contact)));
+			notify_contact_online (contact);
+		}
+
+		g_hash_table_insert (contact_states, 
+				     g_object_ref (contact), 
+				     g_object_ref (presence));
+	}
 }
 
 static void
@@ -406,10 +402,16 @@ void
 gossip_notify_init (GossipSession      *session,
 		    GossipEventManager *event_manager)
 {
+	static gboolean inited = FALSE;
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (event_manager));
 	
 	DEBUG_MSG (("Notify: Initiating..."));
+
+	if (inited) {
+		return;
+	}
 	
 	if (!notify_init (PACKAGE_NAME)) {
 		g_warning ("Cannot initialize Notify integration");
@@ -426,10 +428,21 @@ gossip_notify_init (GossipSession      *session,
 						     (GDestroyNotify) notify_event_destroy_cb,
 						     (GDestroyNotify) g_object_unref);
 
+	contact_states = g_hash_table_new_full (gossip_contact_hash,
+						gossip_contact_equal,
+						(GDestroyNotify) g_object_unref,
+						(GDestroyNotify) g_object_unref);
+
+	g_signal_connect (session, "contact-presence-updated",
+			  G_CALLBACK (notify_contact_presence_updated_cb),
+			  NULL);
+
 	g_signal_connect (event_manager, "event-added",
 			  G_CALLBACK (notify_event_added_cb),
 			  NULL);
 	g_signal_connect (event_manager, "event-removed",
 			  G_CALLBACK (notify_event_removed_cb),
 			  NULL);
+
+ 	inited = TRUE;
 }
