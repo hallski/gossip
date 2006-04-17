@@ -1,3 +1,11 @@
+2006-04-17  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: Reworked the 'x' in chat tabs so that
+	it replaces the presence icon when the pointer is hovering over
+	it. Clicking the 'x' will still close the tab. Comments relating
+	to this change can be found against the original bug #322030
+	(Martyn).   
+
 2006-04-15  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:

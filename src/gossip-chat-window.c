@@ -45,101 +45,108 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
-#define DEBUG_MSG(x) 
+#define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
-static void       gossip_chat_window_class_init        (GossipChatWindowClass *klass);
-static void       gossip_chat_window_init              (GossipChatWindow      *window);
-static void       gossip_chat_window_finalize          (GObject               *object);
-static GdkPixbuf *chat_window_get_status_pixbuf        (GossipChatWindow      *window,
-							GossipChat            *chat);
-static void       chat_window_accel_cb                 (GtkAccelGroup         *accelgroup,
-							GObject               *object,
-							guint                  key,
-							GdkModifierType        mod,
-							GossipChatWindow      *window);
-static void       chat_window_close_clicked_cb         (GtkWidget             *button,
-							GossipChat            *chat);
-static GtkWidget *chat_window_create_label             (GossipChatWindow      *window,
-							GossipChat            *chat);
-static void       chat_window_update_status            (GossipChatWindow      *window,
-							GossipChat            *chat);
-static void       chat_window_update_title             (GossipChatWindow      *window);
-static void       chat_window_update_menu              (GossipChatWindow      *window);
-static void       chat_window_invite_menu_setup        (GossipChatWindow      *window);
-static void       chat_window_conv_activate_cb         (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_clear_activate_cb        (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_info_activate_cb         (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_add_contact_activate_cb  (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_log_activate_cb          (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_show_contacts_toggled_cb (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_edit_activate_cb         (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_insert_smiley_activate_cb (GtkWidget        *menuitem, 
-							 GossipChatWindow *window);
-static void       chat_window_close_activate_cb        (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_cut_activate_cb          (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_copy_activate_cb         (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_paste_activate_cb        (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_tabs_left_activate_cb    (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_tabs_right_activate_cb   (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static void       chat_window_detach_activate_cb       (GtkWidget             *menuitem,
-							GossipChatWindow      *window);
-static gboolean   chat_window_delete_event_cb          (GtkWidget             *dialog,
-							GdkEvent              *event,
-							GossipChatWindow      *window);
-static void       chat_window_status_changed_cb        (GossipChat            *chat,
-							GossipChatWindow      *window);
-static void       chat_window_update_tooltip           (GossipChatWindow      *window,
-							GossipChat            *chat);
-static void       chat_window_name_changed_cb          (GossipChat            *chat,
-							const gchar           *name,
-							GossipChatWindow      *window);
-static void       chat_window_composing_cb             (GossipChat            *chat,
-							gboolean               is_composing,
-							GossipChatWindow      *window);
-static void       chat_window_new_message_cb           (GossipChat            *chat,
-							GossipChatWindow      *window);
-static void       chat_window_disconnected_cb          (GossipApp             *app,
-							GossipChatWindow      *window);
-static void       chat_window_switch_page_cb           (GtkNotebook           *notebook,
-							GtkNotebookPage       *page,
-							gint                   page_num,
-							GossipChatWindow      *window);
-static void       chat_window_tab_added_cb             (GossipNotebook        *notebook,
-							GtkWidget             *child,
-							GossipChatWindow      *window);
-static void       chat_window_tab_removed_cb           (GossipNotebook        *notebook,
-							GtkWidget             *child,
-							GossipChatWindow      *window);
-static void       chat_window_tab_detached_cb          (GossipNotebook        *notebook,
-							GtkWidget             *widget,
-							GossipChatWindow      *window);
-static void       chat_window_tabs_reordered_cb        (GossipNotebook        *notebook,
-							GossipChatWindow      *window);
-static gboolean   chat_window_focus_in_event_cb        (GtkWidget             *widget,
-							GdkEvent              *event,
-							GossipChatWindow      *window);
-static void       chat_window_drag_data_received       (GtkWidget             *widget,
-							GdkDragContext        *context,
-							int                    x,
-							int                    y,
-							GtkSelectionData      *selection,
-							guint                  info,
-							guint                  time,
-							GossipChatWindow      *window);
+static void       gossip_chat_window_class_init         (GossipChatWindowClass *klass);
+static void       gossip_chat_window_init               (GossipChatWindow      *window);
+static void       gossip_chat_window_finalize           (GObject               *object);
+static GdkPixbuf *chat_window_get_status_pixbuf         (GossipChatWindow      *window,
+							 GossipChat            *chat);
+static void       chat_window_accel_cb                  (GtkAccelGroup         *accelgroup,
+							 GObject               *object,
+							 guint                  key,
+							 GdkModifierType        mod,
+							 GossipChatWindow      *window);
+static gboolean   chat_window_status_enter_notify_cb    (GtkWidget             *widget,
+							 GdkEventCrossing      *event,
+							 GossipChat            *chat);
+static gboolean   chat_window_status_leave_notify_cb    (GtkWidget             *widget,
+							 GdkEventCrossing      *event,
+							 GossipChat            *chat);
+static gboolean   chat_window_status_button_press_cb    (GtkWidget             *widget,
+							 GdkEventButton        *event,
+							 GossipChat            *chat);
+static GtkWidget *chat_window_create_label              (GossipChatWindow      *window,
+							 GossipChat            *chat);
+static void       chat_window_update_status             (GossipChatWindow      *window,
+							 GossipChat            *chat);
+static void       chat_window_update_title              (GossipChatWindow      *window);
+static void       chat_window_update_menu               (GossipChatWindow      *window);
+static void       chat_window_invite_menu_setup         (GossipChatWindow      *window);
+static void       chat_window_conv_activate_cb          (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_clear_activate_cb         (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_info_activate_cb          (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_add_contact_activate_cb   (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_log_activate_cb           (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_show_contacts_toggled_cb  (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_edit_activate_cb          (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_insert_smiley_activate_cb (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_close_activate_cb         (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_cut_activate_cb           (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_copy_activate_cb          (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_paste_activate_cb         (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_tabs_left_activate_cb     (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_tabs_right_activate_cb    (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_detach_activate_cb        (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static gboolean   chat_window_delete_event_cb           (GtkWidget             *dialog,
+							 GdkEvent              *event,
+							 GossipChatWindow      *window);
+static void       chat_window_status_changed_cb         (GossipChat            *chat,
+							 GossipChatWindow      *window);
+static void       chat_window_update_tooltip            (GossipChatWindow      *window,
+							 GossipChat            *chat);
+static void       chat_window_name_changed_cb           (GossipChat            *chat,
+							 const gchar           *name,
+							 GossipChatWindow      *window);
+static void       chat_window_composing_cb              (GossipChat            *chat,
+							 gboolean               is_composing,
+							 GossipChatWindow      *window);
+static void       chat_window_new_message_cb            (GossipChat            *chat,
+							 GossipChatWindow      *window);
+static void       chat_window_disconnected_cb           (GossipApp             *app,
+							 GossipChatWindow      *window);
+static void       chat_window_switch_page_cb            (GtkNotebook           *notebook,
+							 GtkNotebookPage       *page,
+							 gint                   page_num,
+							 GossipChatWindow      *window);
+static void       chat_window_tab_added_cb              (GossipNotebook        *notebook,
+							 GtkWidget             *child,
+							 GossipChatWindow      *window);
+static void       chat_window_tab_removed_cb            (GossipNotebook        *notebook,
+							 GtkWidget             *child,
+							 GossipChatWindow      *window);
+static void       chat_window_tab_detached_cb           (GossipNotebook        *notebook,
+							 GtkWidget             *widget,
+							 GossipChatWindow      *window);
+static void       chat_window_tabs_reordered_cb         (GossipNotebook        *notebook,
+							 GossipChatWindow      *window);
+static gboolean   chat_window_focus_in_event_cb         (GtkWidget             *widget,
+							 GdkEvent              *event,
+							 GossipChatWindow      *window);
+static void       chat_window_drag_data_received        (GtkWidget             *widget,
+							 GdkDragContext        *context,
+							 int                    x,
+							 int                    y,
+							 GtkSelectionData      *selection,
+							 guint                  info,
+							 guint                  time,
+							 GossipChatWindow      *window);
 
 /* Called from Glade, so it shouldn't be static. */
 GtkWidget * chat_window_create_notebook (gpointer data);
@@ -202,16 +209,6 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 	object_class->finalize = gossip_chat_window_finalize;
 
 	g_type_class_add_private (object_class, sizeof (GossipChatWindowPriv));
-
-	/* Set up a style for the close button with no focus padding. */
-	gtk_rc_parse_string (
-		"style \"gossip-close-button-style\"\n"
-		"{\n"
-		"  GtkWidget::focus-padding = 0\n"
-		"  xthickness = 0\n"
-		"  ythickness = 0\n"
-		"}\n"
-		"widget \"*.gossip-close-button\" style \"gossip-close-button-style\"");
 }
 
 static void
@@ -482,17 +479,77 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 
 	if (num != -1) {
 		gtk_notebook_set_current_page (GTK_NOTEBOOK (priv->notebook), num);
-	}
+	}	
 }
 
-static void
-chat_window_close_clicked_cb (GtkWidget  *button,
-			      GossipChat *chat)
+static gboolean
+chat_window_status_enter_notify_cb (GtkWidget        *widget,
+				    GdkEventCrossing *event,
+				    GossipChat       *chat)
+{
+	GossipChatWindow     *window;
+	GossipChatWindowPriv *priv;
+	GtkImage             *image;
+	GdkPixbuf            *pixbuf;
+
+	pixbuf = gossip_pixbuf_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+	image = g_object_get_data (G_OBJECT (chat), "chat-window-tab-image");
+	gtk_image_set_from_pixbuf (image, pixbuf);
+
+	/* Set tooltip */
+	window = gossip_chat_get_window (chat);
+	priv = GET_PRIV (window);
+
+	gtk_tooltips_set_tip (priv->tooltips,
+			      widget,
+			      _("Close this chat window"),
+			      NULL);
+
+	/* Allow closing with left button click */
+ 	g_signal_connect (widget, "button_press_event", 
+ 			  G_CALLBACK (chat_window_status_button_press_cb), 
+ 			  chat); 
+
+	return FALSE;
+}
+
+static gboolean
+chat_window_status_leave_notify_cb (GtkWidget        *widget,
+				    GdkEventCrossing *event,
+				    GossipChat       *chat)
+{
+	GossipChatWindow *window;
+	GtkImage         *image;
+	GdkPixbuf        *pixbuf;
+
+	image = g_object_get_data (G_OBJECT (chat), "chat-window-tab-image");
+
+	window = gossip_chat_get_window (chat);
+	pixbuf = chat_window_get_status_pixbuf (window, chat);
+	gtk_image_set_from_pixbuf (image, pixbuf);
+	
+	/* Stop the close window left mouse click ability */
+ 	g_signal_handlers_disconnect_by_func (widget,
+					      chat_window_status_button_press_cb, 
+					      chat); 
+	return FALSE;
+}
+
+static gboolean
+chat_window_status_button_press_cb (GtkWidget      *widget,
+				    GdkEventButton *event,
+				    GossipChat     *chat)
 {
 	GossipChatWindow *window;
 
+	if (event->button != 1) {
+		return FALSE;
+	}
+
 	window = gossip_chat_get_window (chat);
 	gossip_chat_window_remove_chat (window, chat);
+
+	return FALSE;
 }
 
 static GtkWidget *
@@ -501,84 +558,76 @@ chat_window_create_label (GossipChatWindow *window,
 {
 	GossipChatWindowPriv *priv;
 	GtkWidget            *hbox;
-	GtkWidget            *name_label;
-	GtkWidget            *status_image;
-	GtkWidget            *close_button;
-	GtkWidget            *close_image;
+	GtkWidget            *label;
+	GtkWidget            *image;
 	const gchar          *name;
-	GtkWidget            *event_box; 
-	GtkWidget            *event_box_hbox; 
+	GtkWidget            *event_box_tab; 
+	GtkWidget            *event_box_image;
 	PangoAttrList        *attr_list;
 	PangoAttribute       *attr;
-	GtkRequisition        size;
 
 	priv = GET_PRIV (window);
-	
-	hbox = gtk_hbox_new (FALSE, 2);
 
- 	event_box = gtk_event_box_new (); 
- 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE); 
+	/* Set up event box for tooltip */
+ 	event_box_tab = gtk_event_box_new (); 
+ 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box_tab), FALSE); 
+  	g_object_set_data (G_OBJECT (chat), "chat-window-tab-tooltip-widget", event_box_tab);
 
+	/* Set up label */
 	name = gossip_chat_get_name (chat);
-	name_label = gtk_label_new (name);
+	label = gtk_label_new (name);
 
-	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
+	gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
 	
 	attr_list = pango_attr_list_new ();
 	attr = pango_attr_scale_new (1/1.2);
 	attr->start_index = 0;
 	attr->end_index = -1;
 	pango_attr_list_insert (attr_list, attr);
-	gtk_label_set_attributes (GTK_LABEL (name_label), attr_list);
+	gtk_label_set_attributes (GTK_LABEL (label), attr_list);
 	pango_attr_list_unref (attr_list);
 
-	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
-	g_object_set_data (G_OBJECT (chat), "label", name_label); 
+	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+	g_object_set_data (G_OBJECT (chat), "chat-window-tab-label", label); 
 
-	status_image = gtk_image_new ();
+	/* Set up event box for label */
+ 	event_box_image = gtk_event_box_new ();
+ 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box_image), FALSE);
 
-	event_box_hbox = gtk_hbox_new (FALSE, 2);
+	/* Set up image */
+	image = gtk_image_new ();
+	g_object_set_data (G_OBJECT (chat), "chat-window-tab-image", image);
 
-	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
-	gtk_box_pack_start (GTK_BOX (event_box_hbox), name_label, TRUE, TRUE, 0);
+ 	gtk_container_add (GTK_CONTAINER (event_box_image), image); 
 
-	g_object_set_data (G_OBJECT (chat), "chat-window-status-img", status_image);
-  	g_object_set_data (G_OBJECT (chat), "chat-window-tooltip-widget", event_box);
+	/* Add to the hbox */
+	hbox = gtk_hbox_new (FALSE, 2);
+  	gtk_box_pack_start (GTK_BOX (hbox), event_box_image, FALSE, FALSE, 0);  
+	gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
 
-	chat_window_update_tooltip (window, chat);
-
-	close_button = gtk_button_new ();
-	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
-
-	/* We don't want focus/keynav for the button to avoid clutter, and
-	 * Ctrl-W works anyway.
+	/* Add the hbox to the tooltip event box, this way both the
+	 * image and the label get the tooltip text.
 	 */
-	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_FOCUS);
-	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_DEFAULT);
+	gtk_container_add (GTK_CONTAINER (event_box_tab), hbox);
 
-	/* Set the name to make the special rc style match. */
-	gtk_widget_set_name (close_button, "gossip-close-button");
-
-	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-
-	gtk_widget_size_request (close_image, &size);
-	gtk_widget_set_size_request (close_button, size.width, size.height);
-	
-	gtk_container_add (GTK_CONTAINER (close_button), close_image);
-	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
-
-	gtk_container_add (GTK_CONTAINER (event_box), event_box_hbox);
-	gtk_box_pack_start (GTK_BOX (hbox), event_box, TRUE, TRUE, 0);
-	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
-
-	g_signal_connect (close_button,
-			  "clicked",
-			  G_CALLBACK (chat_window_close_clicked_cb),
+	/* Set up motion events for both event boxes */
+	gtk_widget_add_events (event_box_image, 
+			       GDK_ENTER_NOTIFY_MASK |
+			       GDK_LEAVE_NOTIFY_MASK);
+	g_signal_connect (event_box_image, "enter-notify-event",
+			  G_CALLBACK (chat_window_status_enter_notify_cb),
+			  chat);
+	g_signal_connect (event_box_image, "leave-notify-event",
+			  G_CALLBACK (chat_window_status_leave_notify_cb),
 			  chat);
 
-	gtk_widget_show_all (hbox);
+	/* Set up tooltip */
+	chat_window_update_tooltip (window, chat);
 
-	return hbox;
+	/* Make everything visible */
+	gtk_widget_show_all (event_box_tab);
+
+	return event_box_tab;
 }
 
 static void
@@ -589,7 +638,7 @@ chat_window_update_status (GossipChatWindow *window,
 	GdkPixbuf *pixbuf;
 
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
-	image = g_object_get_data (G_OBJECT (chat), "chat-window-status-img");
+	image = g_object_get_data (G_OBJECT (chat), "chat-window-tab-image");
 	gtk_image_set_from_pixbuf (image, pixbuf);
 	
 	chat_window_update_tooltip (window, chat);
@@ -658,14 +707,12 @@ chat_window_update_menu (GossipChatWindow *window)
 
 		show_contacts = gossip_chat_get_show_contacts (priv->current_chat);
 
-		/* we need to block the signal here because all we are
-		   really trying to do is check or uncheck the menu
-		   item.
-
-		   if we don't do this we get funny behaviour with 2
-		   or more group chat windows where showing contacts
-		   doesn't do anything. */
-
+		/* We need to block the signal here because all we are
+		 * really trying to do is check or uncheck the menu
+		 * item. If we don't do this we get funny behaviour
+		 * with 2 or more group chat windows where showing
+		 * contacts doesn't do anything. 
+		 */
 		g_signal_handlers_block_by_func (priv->menu_conv_show_contacts, 
 						 chat_window_show_contacts_toggled_cb, 
 						 window);
@@ -1059,11 +1106,8 @@ chat_window_update_tooltip (GossipChatWindow *window,
 
 	priv = GET_PRIV (window);
 
-	widget = g_object_get_data (G_OBJECT (chat), 
-			            "chat-window-tooltip-widget");
-
 	current_tooltip = gossip_chat_get_tooltip (chat);
-
+	
 	if (g_list_find (priv->chats_composing, chat)) {
 		str = g_strconcat (current_tooltip, "\n", _("Typing a message."), NULL);
 		g_free (current_tooltip);
@@ -1071,6 +1115,7 @@ chat_window_update_tooltip (GossipChatWindow *window,
 		str = current_tooltip;
 	}
 
+	widget = g_object_get_data (G_OBJECT (chat), "chat-window-tab-tooltip-widget");
 	gtk_tooltips_set_tip (priv->tooltips,
 			      widget,
 			      str,
@@ -1086,7 +1131,7 @@ chat_window_name_changed_cb (GossipChat       *chat,
 {
 	GtkLabel *label;
 
-	label = g_object_get_data (G_OBJECT (chat), "label");
+	label = g_object_get_data (G_OBJECT (chat), "chat-window-tab-label");
 
 	gtk_label_set_text (label, name);
 }
