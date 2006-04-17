@@ -41,7 +41,7 @@ enum {
 	CONTACT_UPDATED,
 	CONTACT_PRESENCE_UPDATED,
 	CONTACT_REMOVED,
-	COMPOSING_EVENT,
+	COMPOSING,
 
 	/* Used to get password from user. */
 	GET_PASSWORD,
@@ -158,8 +158,8 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[COMPOSING_EVENT] = 
-		g_signal_new ("composing-event",
+	signals[COMPOSING] = 
+		g_signal_new ("composing",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,

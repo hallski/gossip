@@ -41,8 +41,8 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
@@ -1327,7 +1327,7 @@ jabber_send_message (GossipProtocol *protocol,
 		jid_str = g_strdup (recipient_id);
 	}
 
-	DEBUG_MSG (("Protocol: Sending message to: '%s'", jid_str));
+	DEBUG_MSG (("Protocol: Sending message to:'%s'", jid_str));
 	
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,
@@ -2032,9 +2032,7 @@ jabber_composing_timeout_cb (JabberData *data)
 	DEBUG_MSG (("Protocol: Contact:'%s' is NOT composing (timed out)",
 		    gossip_contact_get_id (data->contact)));
 
-	g_signal_emit_by_name (data->jabber, "composing-event", 
-			       data->contact, 
-			       FALSE);
+	g_signal_emit_by_name (data->jabber, "composing", data->contact, FALSE);
 
 	g_hash_table_remove (priv->composing_timeouts, data->contact);
 
@@ -2059,7 +2057,7 @@ jabber_message_handler (LmMessageHandler *handler,
 
 	priv = GET_PRIV (jabber);
 	
-	DEBUG_MSG (("Protocol: New message from: %s", 
+	DEBUG_MSG (("Protocol: New message from:'%s'", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
 	sub_type = lm_message_get_sub_type (m);
@@ -2085,9 +2083,7 @@ jabber_message_handler (LmMessageHandler *handler,
 			    gossip_contact_get_id (from),
 			    composing ? "is composing" : "is NOT composing"));
 		
-		g_signal_emit_by_name (jabber, "composing-event", 
-				       from, 
-				       composing);
+		g_signal_emit_by_name (jabber, "composing", from, composing);
 		
 		if (composing) {
 			JabberData *data;
@@ -2104,7 +2100,7 @@ jabber_message_handler (LmMessageHandler *handler,
 					    (GSourceFunc) jabber_composing_timeout_cb,
 					    data);
 			data->user_data = GUINT_TO_POINTER (id);
-			g_hash_table_insert (priv->composing_timeouts, from, data);
+			g_hash_table_insert (priv->composing_timeouts, g_object_ref (from), data);
 		} else {
 			JabberData *data;
 
@@ -2178,8 +2174,7 @@ jabber_message_handler (LmMessageHandler *handler,
 				   gossip_jabber_get_message_conference (m));
 	
 	g_signal_emit_by_name (jabber, "new-message", message);
-	g_signal_emit_by_name (jabber, "composing-event", 
-			       from, FALSE);
+	g_signal_emit_by_name (jabber, "composing", from, FALSE);
 	
 	g_object_unref (message);
 	
@@ -2201,7 +2196,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 	priv = GET_PRIV (jabber);
 
 	from = lm_message_node_get_attribute (m->node, "from");
-        DEBUG_MSG (("Protocol: New presence from: %s", 
+        DEBUG_MSG (("Protocol: New presence from:'%s'", 
 		   lm_message_node_get_attribute (m->node, "from")));
 
 	if (gossip_jabber_chatrooms_get_jid_is_chatroom (priv->chatrooms,
@@ -2927,13 +2922,12 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 	priv = GET_PRIV (jabber);
 
 	jid = gossip_jid_new (jid_str);
-	DEBUG_MSG (("Protocol: Get contact: %s", gossip_jid_get_full (jid)));
-
+	
 	contact = g_hash_table_lookup (priv->contacts, 
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
-		DEBUG_MSG (("Protocol: New contact"));
+		DEBUG_MSG (("Protocol: New contact:'%s'", gossip_jid_get_full (jid)));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
 					      priv->account);
 		gossip_contact_set_id (contact, 
@@ -2953,6 +2947,8 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 			 */
 			jabber_contact_vcard (jabber, contact);
 		}
+	} else {
+		DEBUG_MSG (("Protocol: Get contact:'%s'", gossip_jid_get_full (jid)));
 	}
 
 	gossip_jid_unref (jid);

@@ -90,7 +90,7 @@ static void           private_chat_connected_cb                 (GossipSession  
 								 GossipPrivateChat      *chat);
 static void           private_chat_disconnected_cb              (GossipSession          *session,
 								 GossipPrivateChat      *chat);
-static void           private_chat_composing_event_cb           (GossipSession          *session,
+static void           private_chat_composing_cb                 (GossipSession          *session,
 								 GossipContact          *contact,
 								 gboolean                composing,
 								 GossipChat             *chat);
@@ -166,8 +166,8 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 				 chat, 0);
 	
 	g_signal_connect_object (gossip_app_get_session (),
-				 "composing-event",
-				 G_CALLBACK (private_chat_composing_event_cb),
+				 "composing",
+				 G_CALLBACK (private_chat_composing_cb),
 				 chat, 0);
 }
 
@@ -532,10 +532,10 @@ private_chat_disconnected_cb (GossipSession     *session,
 }
 
 static void
-private_chat_composing_event_cb (GossipSession *session,
-				 GossipContact *contact,
-				 gboolean       composing,
-				 GossipChat    *chat)
+private_chat_composing_cb (GossipSession *session,
+			   GossipContact *contact,
+			   gboolean       composing,
+			   GossipChat    *chat)
 {
 	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;

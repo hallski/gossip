@@ -501,7 +501,7 @@ gossip_contact_list_init (GossipContactList *list)
 			  G_CALLBACK (contact_list_contact_removed_cb),
 			  list);
 	g_signal_connect (gossip_app_get_session (),
-			  "composing-event",
+			  "composing",
 			  G_CALLBACK (contact_list_contact_composing_cb),
 			  list);
 

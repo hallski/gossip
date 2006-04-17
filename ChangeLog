@@ -1,5 +1,17 @@
 2006-04-17  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-protocol.c:
+	* libgossip/gossip-session.c: 
+	* src/gossip-contact-list.c: 
+	* src/gossip-private-chat.c: Changed "composing-event" to "composing".
+
+	* protocols/jabber/gossip-jabber.c: Fixed a bug which was causing
+	crashes because GossipContact objects were being unreferenced when
+	removed from a hash table, but not referenced when being inserted,
+	fixes #338811 (Martyn).
+
+2006-04-17  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.c: Don't error when we can't find a
 	protocol associated with a temporary contact for sending
 	composing, just silently return instead of print a load of warnings.

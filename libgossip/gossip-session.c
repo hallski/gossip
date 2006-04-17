@@ -88,7 +88,7 @@ static void            session_protocol_contact_presence_updated (GossipProtocol
 static void            session_protocol_contact_removed          (GossipProtocol       *protocol,
 								  GossipContact        *contact,
 								  GossipSession        *session);
-static void            session_protocol_composing_event          (GossipProtocol       *protocol,
+static void            session_protocol_composing                (GossipProtocol       *protocol,
 								  GossipContact        *contact,
 								  gboolean              composing,
 								  GossipSession        *session);
@@ -143,7 +143,7 @@ enum {
 	CONTACT_UPDATED,
 	CONTACT_PRESENCE_UPDATED,
 	CONTACT_REMOVED,
-	COMPOSING_EVENT,
+	COMPOSING,
 
 	/* Used for protocols to retreive information from UI */
 	GET_PASSWORD,
@@ -310,8 +310,8 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
-	signals[COMPOSING_EVENT] =
-		g_signal_new ("composing-event",
+	signals[COMPOSING] =
+		g_signal_new ("composing",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -426,8 +426,8 @@ session_protocol_signals_setup (GossipSession  *session,
 	g_signal_connect (protocol, "contact-removed",
 			  G_CALLBACK (session_protocol_contact_removed),
 			  session);
-	g_signal_connect (protocol, "composing-event",
-			  G_CALLBACK (session_protocol_composing_event),
+	g_signal_connect (protocol, "composing",
+			  G_CALLBACK (session_protocol_composing),
 			  session);
 	g_signal_connect (protocol, "get-password",
 			  G_CALLBACK (session_protocol_get_password),
@@ -570,10 +570,10 @@ session_protocol_contact_removed (GossipProtocol *protocol,
 }
 
 static void 
-session_protocol_composing_event (GossipProtocol *protocol,
-				  GossipContact  *contact,
-				  gboolean        composing,
-				  GossipSession  *session)
+session_protocol_composing (GossipProtocol *protocol,
+			    GossipContact  *contact,
+			    gboolean        composing,
+			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
 	
@@ -583,7 +583,7 @@ session_protocol_composing_event (GossipProtocol *protocol,
 
 	priv = GET_PRIV (session);
 	
-	g_signal_emit (session, signals[COMPOSING_EVENT], 0, contact, composing);
+	g_signal_emit (session, signals[COMPOSING], 0, contact, composing);
 }
 
 static gchar *
