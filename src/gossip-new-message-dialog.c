@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -361,12 +361,20 @@ new_message_dialog_response (GtkWidget              *widget,
 		chat_manager = gossip_app_get_chat_manager ();
 
 		if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-			const gchar *text;
+			GossipAccount        *account;
+			GossipAccountChooser *accounts_chooser;
+
+			const gchar          *text;
+
+			accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
+			account = gossip_account_chooser_get_account (accounts_chooser);
 
 			text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 
-			contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, NULL);
+			contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
 			gossip_contact_set_id (contact, text);
+
+			g_object_unref (account);
 
 			created = TRUE;
 		} else {
@@ -375,20 +383,12 @@ new_message_dialog_response (GtkWidget              *widget,
 					    -1);
 		}
 
-		if (!gossip_contact_get_account (contact)) {
-			GossipAccount        *account;
-			GossipAccountChooser *accounts_chooser;
-
-			accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
-			account = gossip_account_chooser_get_account (accounts_chooser);
-			gossip_contact_set_account (contact, account);
-			g_object_unref (account);
-		}
-		
 		gossip_chat_manager_show_chat (chat_manager, contact);
 
-		/* sounds weird I know, but we only unref the model
-		   contact, the created contact is needed for chat, etc */
+		/* Sounds weird I know, but we only unref the model
+		 * contact, the created contact is needed for chat,
+		 * etc.
+		 */
 		if (!created) {
 			g_object_unref (contact);
 		}

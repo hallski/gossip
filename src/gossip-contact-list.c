@@ -1806,7 +1806,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				g_object_unref (contact);
 
 				invite_item = gtk_item_factory_get_item (factory,
-									 "/Invite to Chat Conference");
+									 "/Invite to Chat Room");
 				invite_sep = gtk_item_factory_get_item (factory,
 									"/sep-invite");
 

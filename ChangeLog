@@ -1,5 +1,16 @@
 2006-04-17  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-session.c: Don't error when we can't find a
+	protocol associated with a temporary contact for sending
+	composing, just silently return instead of print a load of warnings.
+	
+	* src/gossip-contact-list.c: Fixed warning with the context menu.
+	
+	* src/gossip-new-message-dialog.c: Don't try to create a contact
+	with a NULL account, it just causes all sorts of warnings.
+
+2006-04-17  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c: Initiate the sound module here.
 	
 	* src/gossip-contact-list.c:

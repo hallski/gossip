@@ -1126,7 +1126,14 @@ gossip_session_send_composing (GossipSession  *session,
 	priv = GET_PRIV (session);
 
 	protocol = session_get_protocol (session, contact);
-	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	if (!protocol) {
+		/* We don't warn here because if no protocol is found,
+		 * it is likely that it is because the contact is a
+		 * temporary contact, instead we just silently ignore
+		 * it and don't send composing. 
+		 */
+		return;
+	}
 
 	if (!gossip_protocol_is_connected (protocol)) {
 		return;
