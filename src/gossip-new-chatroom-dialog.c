@@ -376,7 +376,7 @@ new_chatroom_dialog_join_cb (GossipChatroomProvider   *provider,
 		gboolean add_chatroom;
 		gboolean new_chatroom;
 
-		gossip_group_chat_show (provider, id);
+		gossip_group_chat_new (provider, id);
 
 		add_chatroom = gtk_toggle_button_get_active
 			(GTK_TOGGLE_BUTTON (dialog->checkbutton_add));

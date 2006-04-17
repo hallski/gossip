@@ -338,7 +338,7 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  0,
 	  "<Separator>",
 	  NULL },
-	{ N_("/_Invite to Chat Conference"),
+	{ N_("/_Invite to Chat Room"),
 	  NULL,
 	  NULL,
 	  ITEM_MENU_INVITE,

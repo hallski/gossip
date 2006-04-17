@@ -24,7 +24,6 @@
 #include <libgossip/gossip-chatroom-provider.h>
 
 #include "gossip-chat.h"
-#include "gossip-ui-utils.h"
 
 #define GOSSIP_TYPE_GROUP_CHAT         (gossip_group_chat_get_type ())
 #define GOSSIP_GROUP_CHAT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChat))
@@ -47,11 +46,11 @@ struct _GossipGroupChatClass {
 	GossipChatClass parent_class;
 };
 
-GType            gossip_group_chat_get_type    (void) G_GNUC_CONST;
-
-GossipGroupChat *gossip_group_chat_show        (GossipChatroomProvider *provider,
-						GossipChatroomId        id);
-GossipChatroomId gossip_group_chat_get_room_id (GossipGroupChat        *groupchat);
-
+GType            gossip_group_chat_get_type              (void) G_GNUC_CONST;
+GossipGroupChat *gossip_group_chat_new                   (GossipChatroomProvider *provider,
+							  GossipChatroomId        id);
+GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat        *groupchat);
+GossipChatroomProvider *
+                 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *groupchat);
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */

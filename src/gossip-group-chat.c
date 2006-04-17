@@ -41,14 +41,18 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatPriv))
+
 #define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
 struct _GossipGroupChatPriv {
-	GossipChatroomProvider *provider;
-	GossipChatroomId        room_id;
+	GossipContact          *own_contact;
+
+	GossipChatroomProvider *chatroom_provider;
+	GossipChatroomId        chatroom_id;
 
 	GtkWidget              *widget;
 	GtkWidget              *textview_sw;
@@ -61,7 +65,6 @@ struct _GossipGroupChatPriv {
 
 	GCompletion            *completion;
 
-	GossipContact          *own_contact;
 	GHashTable             *contacts;
 	GList                  *private_chats;
 
@@ -200,19 +203,24 @@ static GtkTargetEntry drop_types[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
+static GHashTable   *group_chats = NULL;
+static GObjectClass *parent_class = NULL;
+
 G_DEFINE_TYPE_WITH_CODE (GossipGroupChat, gossip_group_chat, 
 			 GOSSIP_TYPE_CHAT,
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CONTACT_LIST_IFACE,
 						group_chat_contact_list_iface_init));
 
-static GHashTable *group_chats = NULL;
-
 static void
 gossip_group_chat_class_init (GossipGroupChatClass *klass)
 {
-        GObjectClass    *object_class = G_OBJECT_CLASS (klass);
-	GossipChatClass *chat_class   = GOSSIP_CHAT_CLASS (klass);
-                                                                                
+        GObjectClass    *object_class;
+	GossipChatClass *chat_class;
+
+	object_class = G_OBJECT_CLASS (klass);
+	parent_class = g_type_class_peek_parent (klass);
+	chat_class = GOSSIP_CHAT_CLASS (klass);
+            
         object_class->finalize = group_chat_finalize;
 
 	chat_class->get_name          = group_chat_get_name;
@@ -225,17 +233,17 @@ gossip_group_chat_class_init (GossipGroupChatClass *klass)
 	chat_class->get_group_chat    = group_chat_get_group_chat;
 	chat_class->get_show_contacts = group_chat_get_show_contacts;
 	chat_class->set_show_contacts = group_chat_set_show_contacts;
+
+	g_type_class_add_private (object_class, sizeof (GossipGroupChatPriv));
 }
 
 static void
 gossip_group_chat_init (GossipGroupChat *chat)
 {
-        GossipGroupChatPriv *priv;
-                                                                                
-        priv = g_new0 (GossipGroupChatPriv, 1);
-                                                                                
-        chat->priv = priv;
+	GossipGroupChatPriv *priv;
 
+	priv = GET_PRIV (chat);
+                                                                               
 	priv->contacts_visible = TRUE;
 }
 
@@ -252,28 +260,28 @@ group_chat_finalize (GObject *object)
 	GossipGroupChatPriv *priv;
 
 	chat = GOSSIP_GROUP_CHAT (object);
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
-	g_signal_handlers_disconnect_by_func (priv->provider, 
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider, 
 					      group_chat_joined_cb, chat);
-	g_signal_handlers_disconnect_by_func (priv->provider, 
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider, 
 					      group_chat_new_message_cb, chat);
-	g_signal_handlers_disconnect_by_func (priv->provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_new_event_cb, 
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_topic_changed_cb, 
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_contact_joined_cb,
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_contact_left_cb,
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_contact_presence_updated_cb,
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_contact_updated_cb,
 					      chat);
 	
@@ -287,8 +295,8 @@ group_chat_finalize (GObject *object)
 	if (priv->own_contact) {
 		g_object_unref (priv->own_contact);
 	}
-	
-	g_free (priv);
+
+/* 	G_OBJECT_CLASS (parent_class)->finalize (object); */
 }
 
 static void
@@ -323,17 +331,25 @@ group_chat_key_press_event_cb (GtkWidget       *widget,
 	GList               *list, *l, *completed_list;
 	gboolean  is_start_of_buffer;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	/* Catch enter but not ctrl/shift-enter */
 	if (IS_ENTER (event->keyval) && !(event->state & GDK_SHIFT_MASK)) {
+		GossipChat   *parent;
+		GtkTextView  *view;
+		GtkIMContext *context;
+
 		/* This is to make sure that kinput2 gets the enter. And if
                  * it's handled there we shouldn't send on it. This is because
                  * kinput2 uses Enter to commit letters. See:
                  * http://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=104299
                  */
-		if (gtk_im_context_filter_keypress (GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view)->im_context, event)) {
-			GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view)->need_im_reset = TRUE;
+		parent = GOSSIP_CHAT (chat);
+		view = GTK_TEXT_VIEW (parent->input_text_view);
+		context = view->im_context;
+
+		if (gtk_im_context_filter_keypress (context, event)) {
+			GTK_TEXT_VIEW (view)->need_im_reset = TRUE;
 			return TRUE;
 		}
 		
@@ -440,7 +456,7 @@ group_chat_focus_in_event_cb (GtkWidget       *widget,
 {
 	GossipGroupChatPriv *priv;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 
@@ -462,7 +478,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
 	const gchar         *id;
 	gchar               *str;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
 	id = (const gchar*) selection->data;
 	g_print ("Received drag & drop contact from roster with id:'%s'\n", id);
@@ -480,7 +496,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
  	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
 	g_free (str);
 
-	gossip_chat_invite_dialog (contact, priv->room_id);
+	gossip_chat_invite_dialog (contact, priv->chatroom_id);
 
 	/* clean up dnd */
 	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
@@ -516,7 +532,7 @@ group_chat_widget_destroy_cb (GtkWidget       *widget,
 {
 	GossipGroupChatPriv *priv;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	/* disconnect signals */
 	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
@@ -527,9 +543,9 @@ group_chat_widget_destroy_cb (GtkWidget       *widget,
 					      group_chat_disconnected_cb,
 					      chat);
 
-	gossip_chatroom_provider_leave (priv->provider, priv->room_id);
+	gossip_chatroom_provider_leave (priv->chatroom_provider, priv->chatroom_id);
 	
-	g_hash_table_remove (group_chats, GINT_TO_POINTER (priv->room_id));
+	g_hash_table_remove (group_chats, GINT_TO_POINTER (priv->chatroom_id));
 }
 
 static gint
@@ -562,7 +578,8 @@ group_chat_contacts_setup (GossipGroupChat *chat)
 	GtkCellRenderer     *cell;	
 	GtkTreeViewColumn   *col;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
+
 	tree = GTK_TREE_VIEW (priv->treeview);
 	tv = GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->view);
 
@@ -638,7 +655,7 @@ group_chat_contacts_find (GossipGroupChat *chat,
 	ContactFindData      data;
 	GtkTreeModel        *model;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	data.found = FALSE;
 	data.contact = contact;
@@ -710,7 +727,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 	GtkWidget           *input_textview_sw;
 	GList               *list;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
 				       "group_chat_widget",
@@ -790,9 +807,9 @@ group_chat_joined_cb (GossipChatroomProvider *provider,
 	GtkTreeModel        *model;
 	GtkListStore        *store;
 	
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -822,9 +839,9 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	GossipGroupChatPriv *priv;
 	const gchar         *invite;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -867,9 +884,9 @@ group_chat_new_event_cb (GossipChatroomProvider *provider,
 {
 	GossipGroupChatPriv *priv;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -889,9 +906,9 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 	gchar               *event;
 	gchar               *str;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -920,23 +937,15 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 	GtkTreeIter          iter;
 	GdkPixbuf           *pixbuf;
 		
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
 	DEBUG_MSG (("GroupChat: [%d] Contact joined:'%s'", 
 		    id, gossip_contact_get_id (contact)));
 
-	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_USER) {
-		if (priv->own_contact) {
-			g_object_unref (priv->own_contact);
-		}
-
-		priv->own_contact = g_object_ref (contact);
-	}
-	
 	pixbuf = gossip_pixbuf_for_contact (contact);
 	
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
@@ -962,9 +971,9 @@ group_chat_contact_left_cb (GossipChatroomProvider *provider,
 	GossipGroupChatPriv *priv;
 	GtkTreeIter          iter;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -989,9 +998,9 @@ group_chat_contact_presence_updated_cb (GossipChatroomProvider *provider,
 	GossipGroupChatPriv *priv;
 	GtkTreeIter          iter;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -1023,9 +1032,9 @@ group_chat_contact_updated_cb (GossipChatroomProvider *provider,
 	GossipGroupChatPriv *priv;
 	GtkTreeIter          iter;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
-	if (priv->room_id != id) {
+	if (priv->chatroom_id != id) {
 		return;
 	}
 
@@ -1048,10 +1057,10 @@ group_chat_topic_activate_cb (GtkEntry *entry,
 {
 	GossipGroupChatPriv *priv;
 	
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
-	gossip_chatroom_provider_change_topic (priv->provider, 
-					       priv->room_id,
+	gossip_chatroom_provider_change_topic (priv->chatroom_provider, 
+					       priv->chatroom_id,
 					       gtk_entry_get_text (entry));
 	
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
@@ -1066,7 +1075,7 @@ group_chat_private_chat_new (GossipGroupChat *chat,
 	GossipChatManager   *chat_manager;
 	GtkWidget           *widget;
 
- 	priv = chat->priv; 
+ 	priv = GET_PRIV (chat); 
 
 	chat_manager = gossip_app_get_chat_manager ();
 	gossip_chat_manager_show_chat (chat_manager, contact);
@@ -1093,7 +1102,7 @@ group_chat_private_chat_removed (GossipGroupChat *chat,
 {
 	GossipGroupChatPriv *priv;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	priv->private_chats = g_list_remove (priv->private_chats, private_chat);
 }
@@ -1121,7 +1130,7 @@ group_chat_send (GossipGroupChat *chat)
 	gchar		    *msg;
 	gboolean             handled_command = FALSE;
 
-	priv = chat->priv;
+	priv = GET_PRIV (chat);
 	
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->input_text_view));
 
@@ -1136,8 +1145,8 @@ group_chat_send (GossipGroupChat *chat)
 		const gchar *nick;
 
 		nick = msg + 6;
-		gossip_chatroom_provider_change_nick (priv->provider,
-						      priv->room_id,
+		gossip_chatroom_provider_change_nick (priv->chatroom_provider,
+						      priv->chatroom_id,
 						      nick);
 		handled_command = TRUE;
 	}
@@ -1145,8 +1154,8 @@ group_chat_send (GossipGroupChat *chat)
 		const gchar *topic;
 
 		topic = msg + 7;
-		gossip_chatroom_provider_change_topic (priv->provider,
-						       priv->room_id,
+		gossip_chatroom_provider_change_topic (priv->chatroom_provider,
+						       priv->chatroom_id,
 						       topic);
 		handled_command = TRUE;
 	}
@@ -1160,7 +1169,7 @@ group_chat_send (GossipGroupChat *chat)
 	}
 
 	if (!handled_command) {
-		gossip_chatroom_provider_send (priv->provider, priv->room_id, msg);
+		gossip_chatroom_provider_send (priv->chatroom_provider, priv->chatroom_id, msg);
 		
 		gossip_app_force_non_away ();
 	}
@@ -1193,11 +1202,10 @@ group_chat_get_nick_list (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
 	GtkTreeModel        *model;
-	GList               *list;
+	GList               *list = NULL;
 
-	priv = chat->priv;
-	list = NULL;
-	
+	priv = GET_PRIV (chat);
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
 	
 	gtk_tree_model_foreach (model,
@@ -1210,13 +1218,13 @@ group_chat_get_nick_list (GossipGroupChat *chat)
 static GtkWidget *
 group_chat_get_widget (GossipChat *chat)
 {
-	GossipGroupChat     *g_chat;
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
 
-	g_chat = GOSSIP_GROUP_CHAT (chat);
-	priv = g_chat->priv;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
 
 	return priv->widget;
 }
@@ -1224,13 +1232,13 @@ group_chat_get_widget (GossipChat *chat)
 static const gchar *
 group_chat_get_name (GossipChat *chat)
 {
-	GossipGroupChat     *g_chat;
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
 
-	g_chat = GOSSIP_GROUP_CHAT (chat);
-	priv = g_chat->priv;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
 
 	return priv->name;
 }
@@ -1238,13 +1246,13 @@ group_chat_get_name (GossipChat *chat)
 static gchar *
 group_chat_get_tooltip (GossipChat *chat)
 {
-	GossipGroupChat     *g_chat;
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
 
-	g_chat = GOSSIP_GROUP_CHAT (chat);
-	priv = g_chat->priv;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
 
 	return g_strdup (priv->name);
 }
@@ -1252,17 +1260,17 @@ group_chat_get_tooltip (GossipChat *chat)
 static GdkPixbuf *
 group_chat_get_status_pixbuf (GossipChat *chat)
 {
-	GossipGroupChat     *g_chat;
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 	GossipChatroom      *chatroom;
 	GdkPixbuf           *pixbuf = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
 
-	g_chat = GOSSIP_GROUP_CHAT (chat);
- 	priv = g_chat->priv; 
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+ 	priv = GET_PRIV (group_chat); 
 
- 	chatroom = gossip_chatroom_provider_find (priv->provider, priv->room_id);
+ 	chatroom = gossip_chatroom_provider_find (priv->chatroom_provider, priv->chatroom_id);
 	pixbuf = gossip_pixbuf_for_chatroom_status (chatroom, GTK_ICON_SIZE_MENU);
 
 	if (!pixbuf) {
@@ -1284,13 +1292,13 @@ group_chat_get_contact (GossipChat *chat)
 static GossipContact *
 group_chat_get_own_contact (GossipChat *chat)
 {
-	GossipGroupChat     *g_chat;
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
 
-	g_chat = GOSSIP_GROUP_CHAT (chat);
-	priv   = g_chat->priv;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
 
 	return priv->own_contact;
 }
@@ -1315,11 +1323,13 @@ group_chat_get_group_chat (GossipChat *chat)
 static gboolean
 group_chat_get_show_contacts (GossipChat *chat)
 {
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
 
-	priv = GOSSIP_GROUP_CHAT (chat)->priv;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
 	
 	return priv->contacts_visible;
 }
@@ -1328,11 +1338,13 @@ static void
 group_chat_set_show_contacts (GossipChat *chat, 
 			      gboolean    show)
 {
+	GossipGroupChat     *group_chat;
 	GossipGroupChatPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (chat));
 
-	priv = GOSSIP_GROUP_CHAT (chat)->priv;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
 	
 	priv->contacts_visible = show;
 
@@ -1357,28 +1369,50 @@ group_chat_scroll_down_func (GossipChat *chat)
 }
 
 GossipGroupChat *
-gossip_group_chat_show (GossipChatroomProvider *provider,
-			GossipChatroomId        id)
+gossip_group_chat_new (GossipChatroomProvider *provider,
+		       GossipChatroomId        id)
 {
 	GossipGroupChat     *chat;
 	GossipGroupChatPriv *priv;
+	GossipSession       *session;
+	GossipAccount       *account;
+	GossipContact       *own_contact;
 	GossipChatroom      *chatroom;
+	const gchar         *name;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
 	
 	group_chats_init ();
-
+	
+	/* Check this group chat is not already shown */
 	chat = g_hash_table_lookup (group_chats, GINT_TO_POINTER (id));
 	if (chat) {
 		gossip_chat_present (GOSSIP_CHAT (chat));
 		return chat;
 	}
 
-	chat = g_object_new (GOSSIP_TYPE_GROUP_CHAT, NULL);
-	priv = chat->priv;
-
-	priv->room_id = id;
-	
+	/* Get important details like own contact, etc */
 	chatroom = gossip_chatroom_provider_find (provider, id);
-	priv->name = g_strdup (gossip_chatroom_get_name (chatroom));
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	session = gossip_app_get_session ();
+	account = gossip_chatroom_get_account (chatroom);
+	own_contact = gossip_session_get_own_contact (session, account);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
+
+	name = gossip_chatroom_get_name (chatroom);
+
+	/* Create new group chat object */
+	chat = g_object_new (GOSSIP_TYPE_GROUP_CHAT, NULL);
+
+	priv = GET_PRIV (chat);
+
+	priv->own_contact = g_object_ref (own_contact);
+
+	priv->chatroom_id = id;
+	priv->chatroom_provider = provider;
+
+	priv->name = g_strdup (name);
 
 	priv->private_chats = NULL;
 	
@@ -1421,8 +1455,6 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 				 G_CALLBACK (group_chat_disconnected_cb),
 				 chat, 0);
 
-	priv->provider = provider;
-	
 	gossip_chat_present (GOSSIP_CHAT (chat));
 
  	g_object_ref (chat);
@@ -1432,13 +1464,25 @@ gossip_group_chat_show (GossipChatroomProvider *provider,
 }
 
 GossipChatroomId 
-gossip_group_chat_get_room_id (GossipGroupChat *chat)
+gossip_group_chat_get_chatroom_id (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
 
  	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), 0); 
 
-	priv = chat->priv;	
+	priv = GET_PRIV (chat);	
 
-	return priv->room_id;
+	return priv->chatroom_id;
+}
+
+GossipChatroomProvider *
+gossip_group_chat_get_chatroom_provider (GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+
+ 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL); 
+
+	priv = GET_PRIV (chat);	
+
+ 	return priv->chatroom_provider;
 }

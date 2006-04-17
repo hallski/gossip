@@ -7,6 +7,8 @@ NEWS in 0.11:
 icon when the pointer is hovering over it. Clicking the 'x' will still
 close the tab. Comments relating to this change can be found against
 the original bug #322030 (Martyn).  
+- Fixed #155571, Support adding chat rooms to favourites from the chat
+window (Keywan Najafi Tonekaboni).
 - Fixed #332254, Don't crash when clicking "Subscribe" in the contact
 info dialog (Wouter Bolsterlee). 
 - Fixed #336442, Fixed inconsistent presence state, with multiple

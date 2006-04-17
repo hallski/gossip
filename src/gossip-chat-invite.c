@@ -108,32 +108,28 @@ GtkWidget *
 gossip_chat_invite_groupchat_menu (GossipContact    *contact,
 				   GossipChatroomId  id)
 {
-	GossipChatroomProvider *provider;
-	GossipSession          *session;
-	GossipAccount          *account;
-	GList                  *list = NULL;
-	GList                  *l;
-	GtkWidget              *menu;
+	GossipSession *session;
+	GossipAccount *account;
+	GList         *list = NULL;
+	GList         *l;
+	GtkWidget     *menu = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
 	account = gossip_contact_get_account (contact);
-	
+
 	session = gossip_app_get_session ();
-	provider = gossip_session_get_chatroom_provider (session, account);
- 
+
 	list = gossip_session_get_contacts_by_account (session, account);
 	if (!list || g_list_length (list) < 1) {
 		g_list_free (list);
 		return NULL;
 	}
 
-	menu = gtk_menu_new ();
-
 	for (l = list; l; l = l->next) {
-		GossipContact    *contact = NULL;
-		const gchar      *name;
-		GtkWidget        *item;
+		GossipContact *contact = NULL;
+		const gchar   *name;
+		GtkWidget     *item;
 		
 		/* get name */
 		contact = l->data;
@@ -145,6 +141,10 @@ gossip_chat_invite_groupchat_menu (GossipContact    *contact,
 		name = gossip_contact_get_name (contact);
 		if (!name && strlen (name) > 0) {
 			continue;
+		}
+
+		if (!menu) {
+			menu = gtk_menu_new ();
 		}
 
 		/* get name */

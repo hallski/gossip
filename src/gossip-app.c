@@ -2295,7 +2295,8 @@ app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
 		DEBUG_MSG (("AppChatroom: Auto connect update: success for room:'%s'",
 			    chatroom_name));
-		gossip_group_chat_show (provider, id);
+
+		gossip_group_chat_new (provider, id);
 		break;
 
  	case GOSSIP_CHATROOM_JOIN_CANCELED:

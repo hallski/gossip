@@ -1,5 +1,30 @@
 2006-04-17  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	* src/gossip-chat-view.c:
+	* src/gossip-new-chatroom-dialog.c: Small gossip_group_chat_() API
+	update that is called from these files.
+
+	* src/gossip-chat-invite.c: Don't create an empty "invite" menu.
+	
+	* src/gossip-chat-window.c: 
+	* ui/chat.glade: Moved all group chat items into a separate "Room"
+	menu item on the menu bar. Made sure we don't show the "Contact
+	Info" item when we are in group chat. Added the ability to add a
+	chat room to your favourites from the "Room" menu, fixes #155571
+	(Keywan Najafi Tonekaboni).
+	
+	* src/gossip-chat.c: (gossip_chat_class_init):
+	* src/gossip-chatrooms-window.c: (chatrooms_window_join_cb):
+	* src/gossip-contact-list.c:
+	* src/gossip-group-chat.[ch]: Instead of waiting for the chat room
+	contacts to get our own contact, we now obtain it first, fixes
+	some issues that were occuring with menus and widgets being out of
+	sync because own_contact was NULL when tabs were added and
+	switched. Updated the code to use g_type_class_add_private ().
+
+2006-04-17  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: Reworked the 'x' in chat tabs so that
 	it replaces the presence icon when the pointer is hovering over
 	it. Clicking the 'x' will still close the tab. Comments relating

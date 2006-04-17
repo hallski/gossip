@@ -97,8 +97,9 @@ G_DEFINE_TYPE (GossipChat, gossip_chat, G_TYPE_OBJECT);
 static void
 gossip_chat_class_init (GossipChatClass *klass)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GObjectClass *object_class;
 
+	object_class = G_OBJECT_CLASS (klass);
 	parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize = chat_finalize;

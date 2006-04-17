@@ -774,7 +774,7 @@ chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 	
 	if (result == GOSSIP_CHATROOM_JOIN_OK ||
 	    result == GOSSIP_CHATROOM_JOIN_ALREADY_OPEN) {
-		gossip_group_chat_show (provider, id);
+		gossip_group_chat_new (provider, id);
 	} 
 
 	chatrooms_window_update_buttons (window);

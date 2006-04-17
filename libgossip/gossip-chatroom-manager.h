@@ -34,20 +34,16 @@
 #define GOSSIP_IS_CHATROOM_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHATROOM_MANAGER))
 #define GOSSIP_CHATROOM_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerClass))
 
-
 typedef struct _GossipChatroomManager      GossipChatroomManager;
 typedef struct _GossipChatroomManagerClass GossipChatroomManagerClass;
-
 
 struct _GossipChatroomManager {
 	GObject parent;
 };
 
-
 struct _GossipChatroomManagerClass {
 	GObjectClass parent_class;
 };
-
 
 GType           gossip_chatroom_manager_get_type      (void) G_GNUC_CONST;
 GossipChatroomManager *
@@ -71,6 +67,5 @@ GList *         gossip_chatroom_manager_find_extended (GossipChatroomManager *ma
 void            gossip_chatroom_manager_set_default   (GossipChatroomManager *manager,
 						       GossipChatroom        *chatroom);
 gboolean        gossip_chatroom_manager_store         (GossipChatroomManager *manager);
-
 
 #endif /* __GOSSIP_CHATROOM_MANAGER_H__ */

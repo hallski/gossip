@@ -1241,7 +1241,7 @@ chat_view_invite_join_cb (GossipChatroomProvider   *provider,
 			  gint                      id,
 			  gpointer                  user_data)
 {
-	gossip_group_chat_show (provider, id);
+	gossip_group_chat_new (provider, id);
 }
 
 static void
