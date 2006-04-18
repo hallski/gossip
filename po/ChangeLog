@@ -1,3 +1,7 @@
+2006-04-18  Žygimantas Beručka  <zygis@gnome.org>
+
+	* lt.po: Updated Lithuanian translation.
+
 2006-04-17  Martyn Russell  <martyn@imendio.com>
 
 	* *.po: Ran make update-po to make sure translations are in step
