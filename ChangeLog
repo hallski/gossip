@@ -1,3 +1,9 @@
+2006-04-19  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-log.c: Make sure we escape ALL strings that we write
+	to log files, including the nickname, fixed bug #339056 (Samuel
+	Hym). 
+
 2006-04-17  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-protocol.c:

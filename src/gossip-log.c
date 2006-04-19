@@ -1393,11 +1393,13 @@ gossip_log_message (GossipLog     *log,
 	GossipContact *own_contact;
         const gchar   *filename;
 	FILE          *file;
-	gchar         *body;
 	const gchar   *to_or_from;
 	gchar         *timestamp;
-	const gchar   *name;
-	const gchar   *resource;
+	gchar         *body;
+	gchar         *resource;
+	gchar         *name;
+	gchar         *contact_id;
+	const gchar   *str; 
 	gboolean       save_contact = FALSE;
 	gboolean       save_own_contact = FALSE;
 
@@ -1408,7 +1410,6 @@ gossip_log_message (GossipLog     *log,
 
 	if (incoming) {
 		to_or_from = "from";
-
 		contact = gossip_message_get_sender (message);
 		own_contact = gossip_message_get_recipient (message);
 	} else {
@@ -1416,8 +1417,6 @@ gossip_log_message (GossipLog     *log,
 		contact = gossip_message_get_recipient (message);
 		own_contact = gossip_message_get_sender (message);
 	}
-
-	name = gossip_contact_get_name (contact);
 
 	filename = log_get_filename_for_today (log);
 
@@ -1481,17 +1480,35 @@ gossip_log_message (GossipLog     *log,
 
 	timestamp = log_get_timestamp_from_message (message);
 
-        if (gossip_message_get_body (message)) {
-		body = log_urlify (gossip_message_get_body (message));
+	/* Make sure we escape all data written */
+	str = gossip_message_get_body (message); 
+        if (str) {
+		body = log_urlify (str);
 	} else {
 		body = g_strdup ("");
 	}
 
-	resource = gossip_message_get_explicit_resource (message);
-	if (!resource) {
-		resource = "";
+	str = gossip_message_get_explicit_resource (message);
+	if (!str) {
+		resource = g_strdup ("");
+	} else {
+		resource = g_markup_escape_text (str, -1);
 	}
 
+	str = gossip_contact_get_name (contact);
+	if (!str) {
+		name = g_strdup ("");
+	} else {
+		name = g_markup_escape_text (str, -1);
+	}
+
+	str = gossip_contact_get_id (contact);
+	if (!str) {
+		contact_id = g_strdup ("");
+	} else {
+		contact_id = g_markup_escape_text (str, -1);
+	}
+		
 	g_fprintf (file,
 		   "<message time='%s' %s='%s' resource='%s' nick='%s'>"
 		   "%s"
@@ -1499,7 +1516,7 @@ gossip_log_message (GossipLog     *log,
 		   LOG_FOOTER,
 		   timestamp, 
 		   to_or_from,
-		   gossip_contact_get_id (contact),
+		   contact_id,
 		   resource,
 		   name,
 		   body);
@@ -1510,6 +1527,9 @@ gossip_log_message (GossipLog     *log,
 
 	g_free (timestamp);
 	g_free (body);
+	g_free (resource);
+	g_free (name);
+	g_free (contact_id);
 
 	/* Now signal new message */
 	g_signal_emit (log, signals[NEW_MESSAGE], 0, message);
