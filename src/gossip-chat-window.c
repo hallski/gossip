@@ -45,8 +45,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
-/* #define DEBUG_MSG(x) */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
+#define DEBUG_MSG(x)
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 static void       gossip_chat_window_class_init         (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init               (GossipChatWindow      *window);

@@ -1,5 +1,14 @@
 2006-04-21  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-chat-window.c: Turned off debugging.
+
+	* src/gossip-notify.c:
+	* src/gossip-sound.c: Don't spam notifications/sounds when
+	connected, fixes #339147 (Wouter Bolsterlee).
+	
+2006-04-21  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c:
 	* src/gossip-chat.c:
 	* src/gossip-group-chat.c:

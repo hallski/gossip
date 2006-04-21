@@ -41,8 +41,37 @@ static void sound_contact_presence_updated_cb (GossipSession *session,
 					       GossipContact *contact,
 					       gpointer       user_data);
 
+static GHashTable *account_states = NULL;
 static GHashTable *contact_states = NULL;
 static gboolean    sound_enabled = TRUE;
+
+static gboolean
+sound_protocol_timeout_cb (GossipAccount *account)
+{
+	g_hash_table_remove (account_states, account);
+	return FALSE;
+}
+
+static void
+sound_protocol_connected_cb (GossipSession  *session,
+			     GossipAccount  *account,
+			     GossipProtocol *protocol,
+			     gpointer        user_data)
+{
+	guint id;
+
+	if (g_hash_table_lookup (account_states, account)) {
+		return;
+	}
+
+	DEBUG_MSG (("Sound: Account update, account:'%s' is now online",
+		    gossip_account_get_id (account)));
+
+	id = g_timeout_add (SOUND_WAIT_TIME,
+			    (GSourceFunc) sound_protocol_timeout_cb, 
+			    account);
+	g_hash_table_insert (account_states, account, GUINT_TO_POINTER (id));
+}
 
 static void
 sound_contact_presence_updated_cb (GossipSession *session,
@@ -61,7 +90,16 @@ sound_contact_presence_updated_cb (GossipSession *session,
 			
 		g_hash_table_remove (contact_states, contact);
 	} else {
-		if (!g_hash_table_lookup (contact_states, contact)) {
+		GossipAccount *account;
+		
+		account = gossip_contact_get_account (contact);
+
+		/* Only show notifications after being online for some
+		 * time instead of spamming notifications each time we
+		 * connect.
+		 */
+		if (!g_hash_table_lookup (account_states, account) && 
+		    !g_hash_table_lookup (contact_states, contact)) {
 			DEBUG_MSG (("Sound: Presence update, contact:'%s' is now online",
 				    gossip_contact_get_id (contact)));
 			gossip_sound_play (GOSSIP_SOUND_ONLINE);
@@ -157,11 +195,19 @@ gossip_sound_init (GossipSession *session)
 
 	DEBUG_MSG (("Sound: Initiating..."));
 	
+	account_states = g_hash_table_new_full (gossip_account_hash,
+						gossip_account_equal,
+						(GDestroyNotify) g_object_unref,
+						(GDestroyNotify) g_source_remove);
+
 	contact_states = g_hash_table_new_full (gossip_contact_hash,
 						gossip_contact_equal,
 						(GDestroyNotify) g_object_unref,
 						(GDestroyNotify) g_object_unref);
 
+	g_signal_connect (session, "protocol-connected",
+			  G_CALLBACK (sound_protocol_connected_cb),
+			  NULL);
 	g_signal_connect (session, "contact-presence-updated",
 			  G_CALLBACK (sound_contact_presence_updated_cb),
 			  NULL);

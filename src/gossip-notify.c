@@ -31,11 +31,17 @@
 #define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
-#define NOTIFY_MESSAGE_TIMEOUT 20000
+#define NOTIFY_MESSAGE_TIME 20000
 
-#define NOTIFY_MESSAGE_MAX_LEN 64 /* Max length of the body part of a
-				   * message we show in the notification.
-				   */
+/* Max length of the body part of a message we show in the
+ * notification. 
+ */
+#define NOTIFY_MESSAGE_MAX_LEN 64 
+
+/* Time to wait before we use notification for an account after it has
+ * gone online/offline, so we don't spam the sound with online's, etc
+ */ 
+#define NOTIFY_WAIT_TIME 10000
 
 static const gchar *       notify_get_status_from_presence    (GossipPresence     *presence);
 static gboolean            notify_get_is_busy                 (void);
@@ -48,6 +54,11 @@ static void                notify_new_message_contact_cb      (NotifyNotificatio
 							       GossipEventManager *event_manager);
 static NotifyNotification *notify_new_message                 (GossipEventManager *event_manager,
 							       GossipMessage      *message);
+static gboolean            notify_protocol_timeout_cb         (GossipAccount      *account);
+static void                notify_protocol_connected_cb       (GossipSession      *session,
+							       GossipAccount      *account,
+							       GossipProtocol     *protocol,
+							       gpointer            user_data);
 static void                notify_contact_presence_updated_cb (GossipSession      *session,
 							       GossipContact      *contact,
 							       gpointer            user_data);
@@ -67,6 +78,7 @@ enum {
 	NOTIFY_SHOW_ROSTER,
 };
 
+static GHashTable *account_states = NULL;
 static GHashTable *contact_states = NULL;
 static GHashTable *message_notifications = NULL;
 static GHashTable *event_notifications = NULL;
@@ -260,7 +272,7 @@ notify_new_message (GossipEventManager *event_manager,
 	notify = notify_notification_new (title, msg, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
-	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIMEOUT);
+	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIME);
 
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
@@ -292,6 +304,34 @@ notify_new_message (GossipEventManager *event_manager,
 	return notify;
 }
 
+static gboolean
+notify_protocol_timeout_cb (GossipAccount *account)
+{
+	g_hash_table_remove (account_states, account);
+	return FALSE;
+}
+
+static void
+notify_protocol_connected_cb (GossipSession  *session,
+			      GossipAccount  *account,
+			      GossipProtocol *protocol,
+			      gpointer        user_data)
+{
+	guint id;
+
+	if (g_hash_table_lookup (account_states, account)) {
+		return;
+	}
+
+	DEBUG_MSG (("Notify: Account update, account:'%s' is now online",
+		    gossip_account_get_id (account)));
+
+	id = g_timeout_add (NOTIFY_WAIT_TIME,
+			    (GSourceFunc) notify_protocol_timeout_cb, 
+			    account);
+	g_hash_table_insert (account_states, account, GUINT_TO_POINTER (id));
+}
+
 static void
 notify_contact_presence_updated_cb (GossipSession *session,
 				    GossipContact *contact,
@@ -308,12 +348,21 @@ notify_contact_presence_updated_cb (GossipSession *session,
 			
 		g_hash_table_remove (contact_states, contact);
 	} else {
-		if (!g_hash_table_lookup (contact_states, contact)) {
+		GossipAccount *account;
+		
+		account = gossip_contact_get_account (contact);
+
+		/* Only show notifications after being online for some
+		 * time instead of spamming notifications each time we
+		 * connect.
+		 */
+		if (!g_hash_table_lookup (account_states, account) && 
+		    !g_hash_table_lookup (contact_states, contact)) {
 			DEBUG_MSG (("Notify: Presence update, contact:'%s' is now online",
 				    gossip_contact_get_id (contact)));
 			notify_contact_online (contact);
 		}
-
+		
 		g_hash_table_insert (contact_states, 
 				     g_object_ref (contact), 
 				     g_object_ref (presence));
@@ -428,11 +477,19 @@ gossip_notify_init (GossipSession      *session,
 						     (GDestroyNotify) notify_event_destroy_cb,
 						     (GDestroyNotify) g_object_unref);
 
+	account_states = g_hash_table_new_full (gossip_account_hash,
+						gossip_account_equal,
+						(GDestroyNotify) g_object_unref,
+						(GDestroyNotify) g_source_remove);
+
 	contact_states = g_hash_table_new_full (gossip_contact_hash,
 						gossip_contact_equal,
 						(GDestroyNotify) g_object_unref,
 						(GDestroyNotify) g_object_unref);
 
+	g_signal_connect (session, "protocol-connected",
+			  G_CALLBACK (notify_protocol_connected_cb),
+			  NULL);
 	g_signal_connect (session, "contact-presence-updated",
 			  G_CALLBACK (notify_contact_presence_updated_cb),
 			  NULL);
