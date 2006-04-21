@@ -112,8 +112,7 @@ gossip_chat_class_init (GossipChatClass *klass)
                               NULL, NULL,
 			      gossip_marshal_VOID__BOOLEAN,
                               G_TYPE_NONE,
-                              1,
-                              G_TYPE_BOOLEAN);
+                              1, G_TYPE_BOOLEAN);
 
 	chat_signals[NEW_MESSAGE] =
 		g_signal_new ("new-message",
@@ -121,9 +120,9 @@ gossip_chat_class_init (GossipChatClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GossipChatClass, new_message),
 			      NULL, NULL,
-			      gossip_marshal_VOID__VOID,
+			      gossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      0);
+			      1, GOSSIP_TYPE_MESSAGE);
 
 	chat_signals[NAME_CHANGED] =
 		g_signal_new ("name-changed",

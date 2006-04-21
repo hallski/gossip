@@ -45,8 +45,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
 
 static void       gossip_chat_window_class_init         (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init               (GossipChatWindow      *window);
@@ -119,6 +119,7 @@ static void       chat_window_composing_cb              (GossipChat            *
 							 gboolean               is_composing,
 							 GossipChatWindow      *window);
 static void       chat_window_new_message_cb            (GossipChat            *chat,
+							 GossipMessage         *message,
 							 GossipChatWindow      *window);
 static void       chat_window_disconnected_cb           (GossipApp             *app,
 							 GossipChatWindow      *window);
@@ -675,10 +676,10 @@ chat_window_update_title (GossipChatWindow *window)
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
 		gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
-		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
         } else {
 		gtk_window_set_icon (GTK_WINDOW (priv->dialog), NULL);
 		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
+		DEBUG_MSG (("ChatWindow: Turning off urgency hint"));
 	}
 
 	g_free (title);
@@ -1192,15 +1193,32 @@ chat_window_composing_cb (GossipChat       *chat,
 
 static void
 chat_window_new_message_cb (GossipChat       *chat,
+			    GossipMessage    *message,
 			    GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 
 	priv = GET_PRIV (window);
 
+	DEBUG_MSG (("ChatWindow: New message, do we have focus?"));
 	if (!gossip_chat_window_has_focus (window)) {
+		GossipContact *own_contact;
+
 		priv->new_msg = TRUE;
 		chat_window_update_title (window);
+
+		own_contact = gossip_chat_get_own_contact (chat);
+
+		if (gossip_chat_get_group_chat (chat)) {
+			DEBUG_MSG (("ChatWindow: Should we highlight this nick?"));
+			if (gossip_chat_should_highlight_nick (message, own_contact)) {
+				gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
+				DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
+			}
+		} else {
+			gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
+			DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
+		}
 	}
 
 	if (chat == priv->current_chat) {

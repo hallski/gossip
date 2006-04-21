@@ -7,6 +7,8 @@ NEWS in 0.11:
 icon when the pointer is hovering over it. Clicking the 'x' will still
 close the tab. Comments relating to this change can be found against
 the original bug #322030 (Martyn).  
+- Fixed #338998, Don't hint the window on every message in group chat
+(Ross Burton).
 - Fixed #339056, Make sure we escape ALL strings that we write to log
 files, including the nickname (Samuel Hym).
 - Fixed #155571, Support adding chat rooms to favourites from the chat

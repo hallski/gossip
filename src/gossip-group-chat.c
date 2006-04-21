@@ -873,7 +873,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 
-	g_signal_emit_by_name (chat, "new-message");
+	g_signal_emit_by_name (chat, "new-message", message);
 }
 
 static void 

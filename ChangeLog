@@ -1,3 +1,11 @@
+2006-04-21  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Don't hint the window on every
+	message in group chat, fixes #338998 (Ross Burton).
+
 2006-04-19  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log.c: Make sure we escape ALL strings that we write
