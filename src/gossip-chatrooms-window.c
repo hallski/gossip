@@ -302,7 +302,7 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	const gchar          *name;
 	GossipChatroom       *chatroom;
 	GossipChatroomStatus  status;
- 	gchar                *status_str;
+ 	const gchar          *status_str;
 	gboolean              selected = FALSE;
 
 	attr_color = NULL;
@@ -321,13 +321,9 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	}
 
 	if (status == GOSSIP_CHATROOM_STATUS_ERROR) {
-		status_str = g_strdup (last_error);
+		status_str = last_error;
 	} else {
-/* 		status_str = gossip_chatroom_get_status_as_str (status); */
-
-		status_str = g_strdup_printf ("%s@%s", 
-					      gossip_chatroom_get_room (chatroom),
-					      gossip_chatroom_get_server (chatroom));
+		status_str = gossip_chatroom_get_id_str (chatroom);
 	}
 
 	str = g_strdup_printf ("%s\n%s", 
@@ -371,7 +367,6 @@ chatrooms_window_model_text_cell_data_func (GtkTreeViewColumn     *tree_column,
 	pango_attr_list_unref (attr_list);
 
 	g_free (str);
- 	g_free (status_str); 
 }
 
 static GList *

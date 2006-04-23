@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2005 Imendio AB
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -38,12 +38,12 @@
 #define JOIN_MSG_ID_PREFIX "gc_join_"
 
 struct _GossipJabberChatrooms {
-	GossipJabber   *jabber;
-	GossipPresence *presence;
-	LmConnection   *connection;
+	GossipJabber          *jabber;
+	GossipPresence        *presence;
+	LmConnection          *connection;
 
-	GHashTable     *room_id_hash;
-	GHashTable     *room_jid_hash;
+	GHashTable            *room_id_hash;
+	GHashTable            *room_jid_hash;
 };
 
 typedef struct {
@@ -210,9 +210,8 @@ jabber_chatrooms_chatroom_new (GossipJabberChatrooms *chatrooms,
 	room->ref_count = 1;
 	room->chatroom = g_object_ref (chatroom);
 
-	jid_str = g_strdup_printf ("%s@%s/%s", 
-				   gossip_chatroom_get_room (chatroom), 
-				   gossip_chatroom_get_server (chatroom),
+	jid_str = g_strdup_printf ("%s/%s", 
+				   gossip_chatroom_get_id_str (chatroom), 
 				   gossip_chatroom_get_nick (chatroom));
 	room->jid = gossip_jid_new (jid_str);
 	g_free (jid_str);
@@ -341,7 +340,6 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 			gossip_message_set_timestamp (message, timestamp);
 			
 			contact = jabber_chatrooms_get_contact (room, jid, NULL);
-
 			gossip_message_set_sender (message, contact);
 			gossip_message_set_body (message, node->value);
 			
@@ -477,13 +475,6 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 
 	id = gossip_jid_get_full (jid);
 
-	if (gossip_jid_equals (jid, room->jid)) {
-		if (new_contact) {
-			*new_contact = FALSE;
-		}
-		return room->own_contact;
-	}
-
 	for (l = room->contacts; l; l = l->next) {
 		c = GOSSIP_CONTACT (l->data);
 
@@ -491,6 +482,7 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 			if (new_contact) {
 				*new_contact = FALSE;
 			}
+
 			return c;
 		}
 	}
@@ -776,11 +768,11 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 				  result, id, room->user_data);
 	}
 
-	/* clean up callback data */
+	/* Clean up callback data */
 	room->callback = NULL;
 	room->user_data = NULL;
 
-	/* articulate own contact presence so we appear in group chat */
+	/* Articulate own contact presence so we appear in group chat */
 	if (result == GOSSIP_CHATROOM_JOIN_OK) {
 		gossip_contact_add_presence (room->own_contact, 
 					     chatrooms->presence);
@@ -788,13 +780,8 @@ jabber_chatrooms_join_cb (LmMessageHandler *handler,
 		g_signal_emit_by_name (chatrooms->jabber,
 				       "chatroom-joined",
 				       id);
-
-		g_signal_emit_by_name (chatrooms->jabber,
-				       "chatroom-contact-joined",
-				       id,
-				       room->own_contact);
 	} else {
-		/* clean up */
+		/* Clean up */
 		g_hash_table_remove (chatrooms->room_id_hash, 
 				     GINT_TO_POINTER (id));
 		g_hash_table_remove (chatrooms->room_jid_hash, 
@@ -1166,12 +1153,4 @@ gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
 	gossip_jid_unref (jid);
 
 	return ret_val;
-}
-
-GossipContact * 
-gossip_jabber_chatrooms_get_contact (GossipJabberChatrooms *chatrooms,
-				     LmMessage             *message,
-				     gint                  *chat_id)
-{
-	return NULL;
 }

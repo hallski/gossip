@@ -30,14 +30,14 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM, GossipChatroomPriv))
 
-
 typedef struct _GossipChatroomPriv GossipChatroomPriv;
-
 
 struct _GossipChatroomPriv {
 	GossipChatroomType    type;
 
 	GossipChatroomId      id;
+
+	gchar                *id_str;
 	
 	gchar                *name;
 	gchar                *nick;
@@ -52,23 +52,22 @@ struct _GossipChatroomPriv {
 	GossipAccount        *account;
 };
 
-
-static void     chatroom_class_init     (GossipChatroomClass *class);
-static void     chatroom_init           (GossipChatroom      *chatroom);
-static void     chatroom_finalize       (GObject            *object);
-static void     chatroom_get_property   (GObject            *object,
-					guint               param_id,
-					GValue             *value,
-					GParamSpec         *pspec);
-static void     chatroom_set_property   (GObject            *object,
-					guint               param_id,
-					const GValue       *value,
-					GParamSpec         *pspec);
-
+static void chatroom_class_init   (GossipChatroomClass *class);
+static void chatroom_init         (GossipChatroom      *chatroom);
+static void chatroom_finalize     (GObject             *object);
+static void chatroom_get_property (GObject             *object,
+				   guint                param_id,
+				   GValue              *value,
+				   GParamSpec          *pspec);
+static void chatroom_set_property (GObject             *object,
+				   guint                param_id,
+				   const GValue        *value,
+				   GParamSpec          *pspec);
 
 enum {
 	PROP_0,
 	PROP_ID,
+	PROP_ID_STR,
 	PROP_TYPE,
 	PROP_NAME,
 	PROP_NICK,
@@ -81,17 +80,14 @@ enum {
 	PROP_ACCOUNT,
 };
 
-
 enum {
 	CHANGED,
 	LAST_SIGNAL
 };
 
+static guint    signals[LAST_SIGNAL] = {0};
 
-static guint     signals[LAST_SIGNAL] = {0};
-
-static gpointer  parent_class = NULL;
-
+static gpointer parent_class = NULL;
 
 GType
 gossip_chatroom_get_gtype (void)
@@ -145,6 +141,14 @@ chatroom_class_init (GossipChatroomClass *class)
 							   G_MAXINT,
 							   0,
 							   G_PARAM_READABLE));
+
+	g_object_class_install_property (object_class,
+					 PROP_ID_STR,
+					 g_param_spec_string ("id_str",
+							      "Chatroom String ID",
+							      "Chatroom represented as 'room@server'",
+							      NULL,
+							      G_PARAM_READABLE));
 
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
@@ -257,8 +261,10 @@ chatroom_init (GossipChatroom *chatroom)
 	priv = GET_PRIV (chatroom);
 
 	priv->id           = id++;
+	priv->id_str       = NULL;
 
 	priv->type         = 0;
+
 	priv->name         = NULL;
 	priv->nick         = NULL;
 	priv->server       = NULL;
@@ -276,6 +282,8 @@ chatroom_finalize (GObject *object)
 	GossipChatroomPriv *priv;
 	
 	priv = GET_PRIV (object);
+
+	g_free (priv->id_str);
 	
 	g_free (priv->name);
 	g_free (priv->nick);
@@ -305,6 +313,9 @@ chatroom_get_property (GObject    *object,
 	switch (param_id) {
 	case PROP_ID:
 		g_value_set_int (value, priv->id);
+		break;
+	case PROP_ID_STR:
+		g_value_set_string (value, priv->id_str);
 		break;
 	case PROP_TYPE:
 		g_value_set_int (value, priv->type);
@@ -419,6 +430,22 @@ gossip_chatroom_get_type (GossipChatroom *chatroom)
 	
 	priv = GET_PRIV (chatroom);
 	return priv->type;
+}
+
+const gchar *
+gossip_chatroom_get_id_str (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+	
+	priv = GET_PRIV (chatroom);
+
+	if (!priv->room && !priv->server) {
+		priv->id_str = g_strdup ("");
+	}
+		
+	return priv->id_str;	
 }
 
 const gchar *
@@ -577,6 +604,11 @@ gossip_chatroom_set_server (GossipChatroom *chatroom,
 	g_free (priv->server);
 	priv->server = g_strdup (server);
 
+	if (priv->room && priv->server) {
+		g_free (priv->id_str);
+		priv->id_str = g_strdup_printf ("%s@%s", priv->room, priv->server);
+	}
+
 	g_object_notify (G_OBJECT (chatroom), "server");
 	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
@@ -594,6 +626,11 @@ gossip_chatroom_set_room (GossipChatroom *chatroom,
 	
 	g_free (priv->room);
 	priv->room = g_strdup (room);
+
+	if (priv->room && priv->server) {
+		g_free (priv->id_str);
+		priv->id_str = g_strdup_printf ("%s@%s", priv->room, priv->server);
+	}
 
 	g_object_notify (G_OBJECT (chatroom), "room");
 	g_signal_emit (chatroom, signals[CHANGED], 0);
@@ -725,8 +762,62 @@ gossip_chatroom_equal (gconstpointer a,
 	return (priv1->id == priv2->id);
 }
 
+gboolean
+gossip_chatroom_equal_full (gconstpointer a, 
+			    gconstpointer b)
+{
+	GossipChatroomPriv *priv1;
+	GossipChatroomPriv *priv2;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (a), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (b), FALSE);
+
+	priv1 = GET_PRIV (a);
+	priv2 = GET_PRIV (b);
+
+	if (!priv1) {
+		return FALSE;
+	}
+
+	if (!priv2) {
+		return FALSE;
+	}
+
+	if ((priv1->account && !priv2->account) || 
+	    (priv2->account && !priv1->account) || 
+	    !gossip_account_equal (priv1->account, priv2->account)) {
+		return FALSE;
+	}
+
+	if ((priv1->name && !priv2->name) || 
+	    (priv2->name && !priv1->name) || 
+	    strcmp (priv1->name, priv2->name) != 0) {
+		return FALSE;
+	}
+
+	if ((priv1->nick && !priv2->nick) || 
+	    (priv2->nick && !priv1->nick) || 
+	    strcmp (priv1->nick, priv2->nick) != 0) {
+		return FALSE;
+	}
+
+	if ((priv1->server && !priv2->server) || 
+	    (priv2->server && !priv1->server) || 
+	    strcmp (priv1->server, priv2->server) != 0) {
+		return FALSE;
+	}
+
+	if ((priv1->room && !priv2->room) || 
+	    (priv2->room && !priv1->room) || 
+	    strcmp (priv1->room, priv2->room) != 0) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 const gchar *
-gossip_chatroom_get_type_as_str (GossipChatroomType type)
+gossip_chatroom_type_to_string (GossipChatroomType type)
 {
 	switch (type) {
 	case GOSSIP_CHATROOM_TYPE_NORMAL: return _("Normal");
@@ -736,7 +827,7 @@ gossip_chatroom_get_type_as_str (GossipChatroomType type)
 }
 
 const gchar *
-gossip_chatroom_get_status_as_str (GossipChatroomStatus status)
+gossip_chatroom_status_to_string (GossipChatroomStatus status)
 {
 	switch (status) {
 	case GOSSIP_CHATROOM_STATUS_JOINING:

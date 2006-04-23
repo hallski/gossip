@@ -70,8 +70,5 @@ void           gossip_jabber_chatrooms_set_presence        (GossipJabberChatroom
 							    GossipPresence        *presence);
 gboolean       gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
 							    const gchar           *jid_str);
-GossipContact *gossip_jabber_chatrooms_get_contact         (GossipJabberChatrooms *chatrooms,
-							    LmMessage             *message,
-							    gint                  *chat_id);
 
 #endif /* __GOSSIP_JABBER_CHATROOM_H__ */

@@ -714,7 +714,7 @@ gossip_account_equal (gconstpointer a,
 }
 
 const gchar *
-gossip_account_get_type_as_str (GossipAccountType type)
+gossip_account_type_to_string (GossipAccountType type)
 {
 	switch (type) {
 	case GOSSIP_ACCOUNT_TYPE_JABBER: return "Jabber";

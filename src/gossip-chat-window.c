@@ -692,7 +692,6 @@ chat_window_update_menu (GossipChatWindow *window)
 	GossipContact        *contact;
 	GossipContact        *own_contact;
 	GtkWidget            *invite_menu = NULL;
-	gboolean              is_group_chat;
 	gboolean              show_contacts;
 	gboolean              first_page;
 	gboolean              last_page;
@@ -720,8 +719,7 @@ chat_window_update_menu (GossipChatWindow *window)
 	gtk_widget_set_sensitive (priv->menu_tabs_right, !last_page);
 	gtk_widget_set_sensitive (priv->menu_conv_info, contact != NULL);
 
-	is_group_chat = gossip_chat_get_group_chat (priv->current_chat);
-	if (is_group_chat) {
+	if (gossip_chat_get_group_chat (priv->current_chat)) {
 		GossipGroupChat       *group_chat;
 		GossipChatroomManager *manager;
 		GossipChatroomId       id;
@@ -852,13 +850,28 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 			     GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipContact        *contact;
 
 	priv = GET_PRIV (window);
 
-	contact = gossip_chat_get_contact (priv->current_chat);
+	if (gossip_chat_get_group_chat (priv->current_chat)) {
+		GossipGroupChat        *group_chat;
+		GossipChatroomProvider *provider;
+		GossipChatroom         *chatroom;
+		GossipChatroomId        id;
 
-	gossip_log_window_show (contact);
+		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
+
+		id = gossip_group_chat_get_chatroom_id (group_chat);
+		provider = gossip_group_chat_get_chatroom_provider (group_chat);
+		
+		chatroom = gossip_chatroom_provider_find (provider, id);
+		gossip_log_window_show (NULL, chatroom);
+	} else {
+		GossipContact *contact;
+
+		contact = gossip_chat_get_contact (priv->current_chat);
+		gossip_log_window_show (contact, NULL);
+	}
 }
 
 static void
@@ -880,19 +893,32 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipContact        *contact;
-	gboolean              log_exists;
+	gboolean              log_exists = FALSE;
 
 	priv = GET_PRIV (window);
 	
-	contact = gossip_chat_get_contact (priv->current_chat);
-	if (contact != NULL) {
-		GossipLog *log;
+	if (gossip_chat_get_group_chat (priv->current_chat)) {
+		GossipGroupChat        *group_chat;
+		GossipChatroomProvider *provider;
+		GossipChatroom         *chatroom;
+		GossipChatroomId        id;
 
-		log = gossip_log_get (contact);
-		log_exists = gossip_log_exists (log);
+		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
+
+		id = gossip_group_chat_get_chatroom_id (group_chat);
+		provider = gossip_group_chat_get_chatroom_provider (group_chat);
+
+		chatroom = gossip_chatroom_provider_find (provider, id);
+		if (chatroom) {
+			log_exists = gossip_log_exists_for_chatroom (chatroom);
+		}
 	} else {
-		log_exists = FALSE;
+		GossipContact *contact;
+	
+		contact = gossip_chat_get_contact (priv->current_chat);
+		if (contact) {
+			log_exists = gossip_log_exists_for_contact (contact);
+		}
 	}
 
 	gtk_widget_set_sensitive (priv->menu_conv_log, log_exists);

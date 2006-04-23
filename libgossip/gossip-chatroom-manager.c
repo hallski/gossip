@@ -236,7 +236,7 @@ gossip_chatroom_manager_add (GossipChatroomManager *manager,
 
 		DEBUG_MSG (("ChatroomManager: Adding %s%s chatroom with name:'%s'", 
 			   gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "", 
-			   gossip_chatroom_get_type_as_str (type), 
+			   gossip_chatroom_type_to_string (type), 
 			   name));
 		
 		g_signal_connect (chatroom, "notify::enabled", 
@@ -368,7 +368,6 @@ gossip_chatroom_manager_find (GossipChatroomManager *manager,
 
 GList *
 gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
-				       const gchar           *nick,
 				       const gchar           *server,
 				       const gchar           *room)
 {
@@ -377,7 +376,6 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 	GList                     *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
-	g_return_val_if_fail (nick != NULL, NULL);
 	g_return_val_if_fail (server != NULL, NULL);
 	g_return_val_if_fail (room != NULL, NULL);
 	
@@ -385,18 +383,15 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 
 	for (l = priv->chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
-		const gchar    *chatroom_nick;
 		const gchar    *chatroom_server;
 		const gchar    *chatroom_room;
 
 		chatroom = l->data;
 		
-		chatroom_nick = gossip_chatroom_get_nick (chatroom);
 		chatroom_server = gossip_chatroom_get_server (chatroom);
 		chatroom_room = gossip_chatroom_get_room (chatroom);
 		
-		if (strcmp (nick, chatroom_nick) == 0 &&
-		    strcmp (server, chatroom_server) == 0 &&
+		if (strcmp (server, chatroom_server) == 0 &&
 		    strcmp (room, chatroom_room) == 0) {
 			found = g_list_append (found, g_object_ref (chatroom));
 		}

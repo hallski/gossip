@@ -1786,7 +1786,6 @@ contact_list_button_press_event_cb (GossipContactList *list,
 			if (!contact) {
 				factory = priv->group_popup_factory;
 			} else {
-				GossipLog *log;
 				gboolean   log_exists;
 				GtkWidget *log_item;
 				GtkWidget *invite_item, *invite_sep;
@@ -1796,9 +1795,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 				log_item = gtk_item_factory_get_item (factory,
 								      "/View Previous Conversations");
 
-
-				log = gossip_log_get (contact);
-				log_exists = gossip_log_exists (log);
+				log_exists = gossip_log_exists_for_contact (contact);
 				gtk_widget_set_sensitive (log_item, log_exists);
 
 				/* Set up invites menu. */
@@ -2150,7 +2147,7 @@ contact_list_item_menu_log_cb (gpointer   data,
                 return;
         }
 
-        gossip_log_window_show (contact);
+        gossip_log_window_show (contact, NULL);
 
 	g_object_unref (contact);
 }

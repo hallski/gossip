@@ -176,7 +176,7 @@ gossip_account_manager_add (GossipAccountManager *manager,
 		name = gossip_account_get_name (account);
 
 		DEBUG_MSG (("Account Manager: Adding %s account with name:'%s'", 
-			   gossip_account_get_type_as_str (type), 
+			   gossip_account_type_to_string (type), 
 			   name));
 		
 		priv->accounts = g_list_append (priv->accounts, g_object_ref (account));

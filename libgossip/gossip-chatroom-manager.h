@@ -61,7 +61,6 @@ GossipChatroom *gossip_chatroom_manager_get_default   (GossipChatroomManager *ma
 GossipChatroom *gossip_chatroom_manager_find          (GossipChatroomManager *manager,
 						       GossipChatroomId       id);
 GList *         gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
-						       const gchar           *nick,
 						       const gchar           *server,
 						       const gchar           *room);
 void            gossip_chatroom_manager_set_default   (GossipChatroomManager *manager,

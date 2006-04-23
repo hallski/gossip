@@ -65,6 +65,7 @@ GType              gossip_chatroom_get_gtype         (void) G_GNUC_CONST;
 
 GossipChatroomType gossip_chatroom_get_type          (GossipChatroom       *chatroom);
 GossipChatroomId   gossip_chatroom_get_id            (GossipChatroom       *chatroom);
+const gchar *      gossip_chatroom_get_id_str        (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_name          (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_nick          (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_server        (GossipChatroom       *chatroom);
@@ -100,8 +101,10 @@ void               gossip_chatroom_set_account       (GossipChatroom       *chat
 guint              gossip_chatroom_hash              (gconstpointer         key);
 gboolean           gossip_chatroom_equal             (gconstpointer         v1,
 						      gconstpointer         v2);
+gboolean           gossip_chatroom_equal_full        (gconstpointer         v1,
+						      gconstpointer         v2);
 
-const gchar *      gossip_chatroom_get_type_as_str   (GossipChatroomType    type);
-const gchar *      gossip_chatroom_get_status_as_str (GossipChatroomStatus  status);
+const gchar *      gossip_chatroom_type_to_string    (GossipChatroomType    type);
+const gchar *      gossip_chatroom_status_to_string  (GossipChatroomStatus  status);
 
 #endif /* __GOSSIP_CHATROOM_H__ */

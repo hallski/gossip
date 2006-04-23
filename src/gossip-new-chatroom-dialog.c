@@ -181,7 +181,6 @@ new_chatroom_dialog_update_join_button (GossipNewChatroomDialog *dialog)
 		
 		manager = gossip_app_get_chatroom_manager ();
 		chatrooms = gossip_chatroom_manager_find_extended (manager, 
-								   nickname, 
 								   server, 
 								   room);
 		
@@ -436,7 +435,7 @@ new_chatroom_dialog_chatroom_changed_cb (GossipChatroom          *chatroom,
 	const gchar          *status_str;
 	
 	status = gossip_chatroom_get_status (chatroom);
-	status_str = gossip_chatroom_get_status_as_str (status);
+	status_str = gossip_chatroom_status_to_string (status);
 	
 	gtk_label_set_text (GTK_LABEL (dialog->label_progress_detail),
 			    status_str);

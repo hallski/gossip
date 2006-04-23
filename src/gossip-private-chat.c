@@ -302,7 +302,6 @@ private_chat_send (GossipPrivateChat *chat,
 {
 	GossipPrivateChatPriv *priv;
 	GossipMessage         *message;
-	GossipLog             *log;
 
 	priv = chat->priv;
 
@@ -331,8 +330,7 @@ private_chat_send (GossipPrivateChat *chat,
 	gossip_message_request_composing (message);
 	gossip_message_set_sender (message, priv->own_contact);
 
-	log = gossip_log_get (priv->contact);
-	gossip_log_message (log, message, FALSE);
+	gossip_log_message_for_contact (priv->contact, message, FALSE);
 
 	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view, 
 						   message, 
@@ -845,7 +843,6 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 {
 	GossipPrivateChatPriv *priv;
 	GossipContact         *sender;
-	GossipLog             *log;
 	const gchar           *resource;
 	const gchar           *subject;
 	const gchar           *invite;
@@ -875,8 +872,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 		}
 	}
 
-	log = gossip_log_get (priv->contact);
-	gossip_log_message (log, message, TRUE);
+	gossip_log_message_for_contact (priv->contact, message, TRUE);
 
 	subject = gossip_message_get_subject (message);
  	if (subject) {

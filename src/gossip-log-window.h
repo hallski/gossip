@@ -22,7 +22,9 @@
 #define __GOSSIP_LOG_WINDOW_H__
 
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-chatroom.h>
 
-void gossip_log_window_show (GossipContact *contact);
+void gossip_log_window_show (GossipContact  *contact,
+			     GossipChatroom *chatroom);
 
 #endif /* __GOSSIP_LOG_WINDOW_H__ */

@@ -40,6 +40,7 @@
 #include "gossip-sound.h"
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
+#include "gossip-log.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatPriv))
 
@@ -837,6 +838,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 			   GossipGroupChat        *chat)
 {
 	GossipGroupChatPriv *priv;
+	GossipChatroom      *chatroom;
 	const gchar         *invite;
 
 	priv = GET_PRIV (chat);
@@ -872,6 +874,10 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 	    gossip_chat_should_highlight_nick (message, priv->own_contact)) {
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
+
+ 	chatroom = gossip_chatroom_provider_find (priv->chatroom_provider, 
+						  priv->chatroom_id);
+	gossip_log_message_for_chatroom (chatroom, message, FALSE);
 
 	g_signal_emit_by_name (chat, "new-message", message);
 }
@@ -1374,11 +1380,9 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 {
 	GossipGroupChat     *chat;
 	GossipGroupChatPriv *priv;
-	GossipSession       *session;
-	GossipAccount       *account;
 	GossipContact       *own_contact;
+ 	gchar               *own_contact_id;
 	GossipChatroom      *chatroom;
-	const gchar         *name;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
 	
@@ -1395,24 +1399,27 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	chatroom = gossip_chatroom_provider_find (provider, id);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	session = gossip_app_get_session ();
-	account = gossip_chatroom_get_account (chatroom);
-	own_contact = gossip_session_get_own_contact (session, account);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
-
-	name = gossip_chatroom_get_name (chatroom);
+	own_contact_id = g_strdup_printf ("%s/%s", 
+					  gossip_chatroom_get_id_str (chatroom),
+					  gossip_chatroom_get_nick (chatroom));
+	
+	own_contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
+					       gossip_chatroom_get_account (chatroom),
+					       own_contact_id,
+					       gossip_chatroom_get_nick (chatroom));
+	g_free (own_contact_id);
 
 	/* Create new group chat object */
 	chat = g_object_new (GOSSIP_TYPE_GROUP_CHAT, NULL);
 
 	priv = GET_PRIV (chat);
 
-	priv->own_contact = g_object_ref (own_contact);
+	priv->own_contact = own_contact;
 
 	priv->chatroom_id = id;
 	priv->chatroom_provider = provider;
 
-	priv->name = g_strdup (name);
+	priv->name = g_strdup (gossip_chatroom_get_name (chatroom));
 
 	priv->private_chats = NULL;
 	

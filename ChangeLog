@@ -1,3 +1,38 @@
+2006-04-23  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chatrooms-window.c:
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-chatroom.[ch]: Added _get_id_str() which
+	returns 'room@server' since it is regularly needed and constructed
+	elsewhere. 
+
+	* libgossip/gossip-chatroom-manager.[ch]: When finding chatrooms,
+	don't compare the nick because on some occasions we don't have a one.
+
+	* protocols/jabber/gossip-jabber-chatrooms.[ch]: Our own contact's
+	JID is now 'room@server/nick' instead of 'user@server/resource'
+	which it is everywhere else. Removed the need to synthesis adding
+	ourselves into that chatroom with a presence signal. Most
+	importantly, this now works properly with logging.
+	
+	* src/gossip-app.c:
+	* src/gossip-chat-window.c: 
+	* src/gossip-contact-list.c: Support showing the log window for
+	chatrooms similarly to how we do contacts.
+	
+	* src/gossip-group-chat.c: When setting up the own_contact for
+	group chat, don't use the same own_contact we would use for normal
+	chat, again use 'room@server/nick'.
+	
+	* src/gossip-log-window.[ch]: 
+	* ui/main.glade: Added a new tab for group chat conversations.
+	
+	* src/gossip-log.[ch]: Added group chat logging, fixes #141564
+	(Mikael Hallendal). Fixed directory permissions for new
+	directories. Fix the "new-message" signalling so that we actually
+	update the log window when new messages occur. 
+	
 2006-04-21  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c:

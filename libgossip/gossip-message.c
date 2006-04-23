@@ -315,7 +315,8 @@ message_set_property (GObject      *object,
 }
 
 GossipMessage *
-gossip_message_new (GossipMessageType type, GossipContact *recipient)
+gossip_message_new (GossipMessageType  type, 
+		    GossipContact     *recipient)
 {
 	return g_object_new (GOSSIP_TYPE_MESSAGE,
 			     "type", type,
@@ -438,7 +439,8 @@ gossip_message_get_subject (GossipMessage *message)
 }
 
 void       
-gossip_message_set_subject (GossipMessage *message, const gchar *subject)
+gossip_message_set_subject (GossipMessage *message, 
+			    const gchar   *subject)
 {
 	GossipMessagePriv *priv;
 
@@ -468,7 +470,8 @@ gossip_message_get_body (GossipMessage *message)
 }
 
 void      
-gossip_message_set_body (GossipMessage *message, const gchar *body)
+gossip_message_set_body (GossipMessage *message,
+			 const gchar   *body)
 {
 	GossipMessagePriv *priv;
 
@@ -498,7 +501,8 @@ gossip_message_get_thread (GossipMessage *message)
 }
 
 void       
-gossip_message_set_thread (GossipMessage *message, const gchar *thread)
+gossip_message_set_thread (GossipMessage *message, 
+			   const gchar   *thread)
 {
 	GossipMessagePriv *priv;
 
@@ -528,7 +532,8 @@ gossip_message_get_timestamp (GossipMessage *message)
 }
 
 void
-gossip_message_set_timestamp (GossipMessage *message, gossip_time_t timestamp)
+gossip_message_set_timestamp (GossipMessage *message, 
+			      gossip_time_t  timestamp)
 {
 	GossipMessagePriv *priv;
 	
@@ -557,7 +562,8 @@ gossip_message_get_invite (GossipMessage *message)
 }
 
 void       
-gossip_message_set_invite (GossipMessage *message, const gchar *invite)
+gossip_message_set_invite (GossipMessage *message, 
+			   const gchar   *invite)
 {
 	GossipMessagePriv *priv;
 

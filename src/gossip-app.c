@@ -881,7 +881,7 @@ app_history_cb (GtkWidget *widget,
 
 	priv = app->priv;
 
-	gossip_log_window_show (NULL);
+	gossip_log_window_show (NULL, NULL);
 }
 
 static void

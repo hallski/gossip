@@ -46,26 +46,38 @@ struct _GossipLogClass {
 
 GType          gossip_log_get_type                    (void) G_GNUC_CONST;
 
-GossipLog *    gossip_log_get                         (GossipContact      *contact);
-GossipLog *    gossip_log_get_by_contact_id           (GossipAccount      *account,
-						       const gchar        *contact_id);
 GossipContact *gossip_log_get_own_contact             (GossipLog          *log);
-GList *        gossip_log_get_contacts                (GossipAccount      *account);
 GList *        gossip_log_get_messages                (GossipLog          *log,
 						       const gchar        *date);
 GList *        gossip_log_get_dates                   (GossipLog          *log);
+
+/* Utils */
+GList *        gossip_log_get_contacts                (GossipAccount      *account);
+GList *        gossip_log_get_chatrooms               (GossipAccount      *account);
+
 gchar *        gossip_log_get_date_readable           (const gchar        *date);
 
-void           gossip_log_message                     (GossipLog          *log,
+/* Contact functions */
+GossipLog *    gossip_log_lookup_for_contact_id       (GossipAccount      *account,
+						       const gchar        *contact_id);
+GossipLog *    gossip_log_lookup_for_contact          (GossipContact      *contact);
+void           gossip_log_message_for_contact         (GossipContact      *contact,
 						       GossipMessage      *message,
 						       gboolean            incoming);
-gboolean       gossip_log_exists                      (GossipLog          *log);
-void           gossip_log_show                        (GtkWidget          *window,
+gboolean       gossip_log_exists_for_contact          (GossipContact      *contact);
+void           gossip_log_show_for_contact            (GtkWidget          *window,
 						       GossipContact      *contact);
 
-/*
- * Searching
- */
+/* Chatroom functions */
+GossipLog *    gossip_log_lookup_for_chatroom         (GossipChatroom     *chatroom);
+void           gossip_log_message_for_chatroom        (GossipChatroom     *chatroom,
+						       GossipMessage      *message,
+						       gboolean            incoming);
+gboolean       gossip_log_exists_for_chatroom         (GossipChatroom     *chatroom);
+void           gossip_log_show_for_chatroom           (GtkWidget          *window,
+						       GossipChatroom     *chatroom);
+
+/* Searching */
 typedef struct _GossipLogSearchHit GossipLogSearchHit;
 
 GList *        gossip_log_search_new                  (const gchar        *text);

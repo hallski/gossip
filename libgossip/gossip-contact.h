@@ -33,10 +33,8 @@
 #define GOSSIP_IS_CONTACT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT))
 #define GOSSIP_CONTACT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONTACT, GossipContactClass))
 
-
 typedef struct _GossipContact      GossipContact;
 typedef struct _GossipContactClass GossipContactClass;
-
 
 struct _GossipContact {
 	GObject parent;
@@ -47,7 +45,6 @@ struct _GossipContactClass {
 	GObjectClass parent_class;
 };
 
-
 typedef enum {
 	GOSSIP_CONTACT_TYPE_TEMPORARY,
 	GOSSIP_CONTACT_TYPE_CONTACTLIST,
@@ -55,14 +52,12 @@ typedef enum {
 	GOSSIP_CONTACT_TYPE_USER /* Represents the own user */
 } GossipContactType;
 
-
 typedef enum {
 	GOSSIP_SUBSCRIPTION_NONE,
 	GOSSIP_SUBSCRIPTION_TO,
 	GOSSIP_SUBSCRIPTION_FROM,
 	GOSSIP_SUBSCRIPTION_BOTH
 } GossipSubscription;
-
 
 GType              gossip_contact_get_gtype                 (void) G_GNUC_CONST;
 
@@ -111,8 +106,6 @@ gboolean           gossip_contact_equal                     (gconstpointer      
 guint              gossip_contact_hash                      (gconstpointer       key);
 gboolean           gossip_contact_is_online                 (GossipContact      *contact);
 const gchar *      gossip_contact_get_status                (GossipContact      *contact);
-
-
 
 #endif /* __GOSSIP_CONTACT_H__ */
 

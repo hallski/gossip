@@ -93,6 +93,6 @@ guint             gossip_account_hash             (gconstpointer      key);
 gboolean          gossip_account_equal            (gconstpointer      v1,
 						   gconstpointer      v2);
 
-const gchar *     gossip_account_get_type_as_str  (GossipAccountType  type);
+const gchar *     gossip_account_type_to_string   (GossipAccountType  type);
 
 #endif /* __GOSSIP_ACCOUNT_H__ */
