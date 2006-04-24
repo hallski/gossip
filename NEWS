@@ -7,6 +7,9 @@ NEWS in 0.11:
 icon when the pointer is hovering over it. Clicking the 'x' will still
 close the tab. Comments relating to this change can be found against
 the original bug #322030 (Martyn).  
+- Fixed #339558, Escape text before using it for notifications (Paul
+Van Tilburg). 
+- Fixed #141564, Added group chat logging (Mikael Hallendal).
 - Fixed #339147, Don't spam notifications and sounds when connecting
 (Wouter Bolsterlee).
 - Fixed #338998, Don't hint the window on every message in group chat

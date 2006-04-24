@@ -153,8 +153,8 @@ notify_contact_online (GossipContact *contact)
 	presence = gossip_contact_get_active_presence (contact);
 	pixbuf = gossip_pixbuf_for_presence (presence);
 
-	title = g_strdup_printf (_("%s has come online"), 
-			       gossip_contact_get_name (contact));
+	title = g_markup_printf_escaped (_("%s has come online"), 
+					 gossip_contact_get_name (contact));
 	status = notify_get_status_from_presence (presence);
 
 	notify = notify_notification_new (title, status, NULL, NULL);
@@ -262,7 +262,7 @@ notify_new_message (GossipEventManager *event_manager,
 	body = gossip_message_get_body (message);
 	len = g_utf8_strlen (body, -1);
 	len = MIN (len, NOTIFY_MESSAGE_MAX_LEN);
-	str = g_strndup (body, len);
+	str = g_markup_printf_escaped ("%*s", len, body);
 
 	msg = g_strdup_printf ("\"%s%s\"",
 			       str, 

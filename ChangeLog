@@ -1,3 +1,8 @@
+2006-04-24  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-notify.c: Escape text before using it in
+	notifications, fixes #339558 (Paul Van Tilburg). 
+
 2006-04-23  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chatrooms-window.c:
