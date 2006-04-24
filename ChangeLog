@@ -1,5 +1,13 @@
 2006-04-24  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-window.c:
+	* src/gossip-contact-list.c:
+	* ui/chat.glade: Make sure we use the same contact information
+	icon for context menus and windows menus to be consistent, fixes
+	#339183 (Wouter Bolsterlee). 
+
+2006-04-24  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-notify.c: Escape text before using it in
 	notifications, fixes #339558 (Paul Van Tilburg). 
 

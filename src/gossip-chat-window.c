@@ -223,6 +223,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 	GossipChatWindowPriv *priv;
 	GladeXML             *glade;
 	GtkAccelGroup        *accel_group;
+	GtkWidget            *image;
 	GClosure             *closure;
 	GtkWidget            *menu_conv;
 	GtkWidget            *menu;
@@ -291,6 +292,14 @@ gossip_chat_window_init (GossipChatWindow *window)
 					 0,
 					 closure);
 	}
+
+	/* Set the contact information menu item image to the Gossip
+	 * stock image 
+	 */ 
+	image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (priv->menu_conv_info));
+	gtk_image_set_from_stock (GTK_IMAGE (image), 
+				  GOSSIP_STOCK_CONTACT_INFORMATION,
+				  GTK_ICON_SIZE_MENU);
 
 	/* Set up smiley menu */
 	menu = gossip_chat_view_get_smiley_menu (
