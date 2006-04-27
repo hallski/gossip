@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2003-2006 Imendio AB
- * Copyright (C) 2003      Johan Wallenborg <johan.wallenborg@fishpins.se>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,7 +27,7 @@
  * manage older logs with file systems commands, etc.
  * 
  * The basic structure is:
- *   ~/.gnome2/Gossip/logs/<account>/<contact>-<date>.log
+ *   ~/.gnome2/Gossip/logs/<account>/<contact>/<date>.log
  *
  * Where <date> is "20060102" and represents a day. So each day as new
  * log is created for each contact you talk with. 
@@ -39,7 +38,7 @@
  * new file is created.
  * 
  * For group chat, files are stored as:
- *   ~/.gnome2/Gossip/logs/<account>/chatrooms/<room@server>-<date>.log
+ *   ~/.gnome2/Gossip/logs/<account>/chatrooms/<room@server>/<date>.log
  * 
  */
 
@@ -71,9 +70,6 @@
 
 #include "gossip-app.h"
 #include "gossip-log.h"
-#include "gossip-marshal.h"
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_LOG, GossipLogPriv))
 
 /* #define DEBUG_MSG(x)    */
 #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
@@ -105,131 +101,195 @@
 #define LOG_TIME_FORMAT_FULL   "%Y%m%dT%H:%M:%S"
 #define LOG_TIME_FORMAT        "%Y%m%d"
 
-typedef enum {
-	GOSSIP_LOG_TYPE_CONTACT,
-	GOSSIP_LOG_TYPE_CHATROOM
-} GossipLogType;
-
-struct _GossipLogPriv {
-	GossipLogType   type;
-
-	GossipContact  *contact;
-	GossipContact  *own_contact;
-	GossipChatroom *chatroom;
-
-	/* Currently used file details for new messages */
-	gchar          *filename;
-	gchar          *date;
-}; 
+typedef struct {
+	GossipContact        *contact;
+	GossipChatroom       *chatroom;
+	GossipLogMessageFunc  func;
+	gpointer              user_data;
+} HandlerData;
 
 struct _GossipLogSearchHit {
-	gchar          *account_id;
-	gchar          *contact_id;
-	gchar          *contact_name;
-	gchar          *filename;
-	gchar          *date;
+	GossipAccount *account;
+	GossipContact *contact;
+	gchar         *filename;
+	gchar         *date;
 };
 
-static void            gossip_log_class_init                 (GossipLogClass  *klass);
-static void            gossip_log_init                       (GossipLog       *log);
-static void            log_finalize                          (GObject         *object);
-static gboolean        log_check_dir                         (gchar          **directory);
-static gchar *         log_get_timestamp_from_message        (GossipMessage   *msg);
-static gchar *         log_get_timestamp_filename            (void);
-static gchar *         log_get_contact_id_from_filename      (const gchar     *filename);
-static gchar *         log_get_chatroom_room_from_filename   (const gchar     *filename);
-static gchar *         log_get_chatroom_server_from_filename (const gchar     *filename);
-static GossipChatroom *log_get_chatroom_from_filename        (const gchar     *filename);
-static gchar *         log_get_account_id_from_filename      (const gchar     *filename);
-static gchar *         log_get_date_from_filename            (const gchar     *filename);
-static gchar *         log_get_filename_for_date             (GossipLog       *log,
-							      const gchar     *date);
-static const gchar *   log_get_filename_for_today            (GossipLog       *log);
-static GList *         log_get_messages_for_contacts         (GossipLog       *log,
-							      const gchar     *filename);
-static GList *         log_get_messages_for_chatrooms        (GossipLog       *log,
-							      const gchar     *filename);
-static GList *         log_get_dates_for_contacts            (GossipLog       *log);
-static GList *         log_get_dates_for_chatrooms           (GossipLog       *log);
-static const gchar *   log_get_contacts_filename             (GossipAccount   *account);
-static GossipContact * log_get_contact                       (GossipAccount   *account,
-							      const gchar     *contact_id);
-static gchar         * log_get_contact_name_from_id          (const gchar     *account_id,
-							      const gchar     *contact_id);
-static gboolean        log_set_name                          (GossipAccount   *account,
-							      GossipContact   *contact);
-static GossipContact * log_get_own_contact                   (GossipAccount   *account);
-static gboolean        log_set_own_name                      (GossipAccount   *account,
-							      GossipContact   *contact);
-static gchar *         log_urlify                            (const gchar     *msg);
-static gboolean        log_transform                         (const gchar     *infile,
-							      gint             fd);
-static void            log_show                              (GossipLog       *log);
-static void            log_message                           (GossipLog       *log,
-							      GossipMessage   *message,
-							      gboolean         incoming);
-static gboolean        log_exists                            (GossipLog       *log);
+static void            log_handlers_notify_foreach             (GossipLogMessageFunc   func,
+								HandlerData           *data,
+								GList                **list);
+static void            log_handlers_notify_all                 (GossipContact   *own_contact,
+								GossipContact   *contact,
+								GossipChatroom  *chatroom,
+								GossipMessage   *message);
+static gboolean        log_check_dir                           (gchar          **directory);
+static gchar *         log_get_timestamp_from_message          (GossipMessage   *msg);
+static gchar *         log_get_timestamp_filename              (void);
+static gchar *         log_get_contact_id_from_filename        (const gchar     *filename);
+static GossipChatroom *log_get_chatroom_from_filename          (GossipAccount   *account,
+								const gchar     *filename);
+static void            log_get_all_log_files_for_chatroom_dir  (const gchar     *chatrooms_dir,
+								GList          **files);
+static void            log_get_all_log_files_for_chatrooms_dir (const gchar     *chatrooms_dir,
+								GList          **files);
+static void            log_get_all_log_files_for_contact_dir   (const gchar     *contact_dir,
+								GList          **files);
+static void            log_get_all_log_files_for_account_dir   (const gchar     *account_dir,
+								GList          **files);
+static gchar *         log_get_account_id_from_filename        (const gchar     *filename);
+static gchar *         log_get_date_from_filename              (const gchar     *filename);
+static gchar *         log_get_filename_by_date_for_contact    (GossipContact   *contact,
+								const gchar     *particular_date);
+static gchar *         log_get_filename_by_date_for_chatroom   (GossipChatroom  *chatroom,
+								const gchar     *particular_date);
+static const gchar *   log_get_contacts_filename               (GossipAccount   *account);
+static GossipContact * log_get_contact                         (GossipAccount   *account,
+								const gchar     *contact_id);
+static gboolean        log_set_name                            (GossipAccount   *account,
+								GossipContact   *contact);
+static gboolean        log_set_own_name                        (GossipAccount   *account,
+								GossipContact   *contact);
+static gchar *         log_urlify                              (const gchar     *msg);
 
-enum {
-	NEW_MESSAGE,
 
-	LAST_SIGNAL
-};
+#ifdef DEPRECATED 
+static gboolean        log_transform                           (const gchar     *infile,
+							        gint             fd);
+static void            log_show                                (GossipLog       *log);
+#endif
 
-static guint signals[LAST_SIGNAL] = { 0 };
-
-static GHashTable *contact_logs = NULL;
-static GHashTable *chatroom_logs = NULL;
 static GHashTable *contact_files = NULL;
-
-G_DEFINE_TYPE (GossipLog, gossip_log, G_TYPE_OBJECT);
+static GHashTable *message_handlers = NULL;
 
 static void
-gossip_log_class_init (GossipLogClass *klass)
+log_handler_free (HandlerData *data)
 {
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	if (data->contact) {
+		g_object_unref (data->contact);
+	}
 
-	object_class->finalize = log_finalize;
+	if (data->chatroom) {
+		g_object_unref (data->chatroom);
+	}
 
-        signals[NEW_MESSAGE] = 
-		g_signal_new ("new-message",
-			      G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_LAST,
-			      0, 
-			      NULL, NULL,
-			      gossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_MESSAGE);
-
-	g_type_class_add_private (object_class, sizeof (GossipLogPriv));
+	g_free (data);
 }
 
 void
-gossip_log_init (GossipLog *log)
+gossip_log_handler_add_for_contact (GossipContact        *contact,
+				    GossipLogMessageFunc  func,
+				    gpointer              user_data)
 {
-}
+	HandlerData *data;
 
-void
-log_finalize (GObject *object)
-{
-	GossipLogPriv *priv;
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+	g_return_if_fail (func != NULL);
+
+	if (!message_handlers) {
+		message_handlers = g_hash_table_new_full (g_direct_hash,
+							  g_direct_equal,
+							  NULL,
+							  (GDestroyNotify) log_handler_free);
+	}
+
+	data = g_new0 (HandlerData, 1);
 	
-	priv = GET_PRIV (object);
+	data->contact = g_object_ref (contact);
 
-	if (priv->contact) {
-		g_object_unref (priv->contact);
+	data->func = func;
+	data->user_data = user_data;
+	
+	g_hash_table_insert (message_handlers, func, data);
+}
+
+void
+gossip_log_handler_add_for_chatroom (GossipChatroom       *chatroom,
+				     GossipLogMessageFunc  func,
+				     gpointer              user_data)
+{
+	HandlerData *data;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (func != NULL);
+
+	if (!message_handlers) {
+		message_handlers = g_hash_table_new_full (g_direct_hash,
+							  g_direct_equal,
+							  NULL,
+							  (GDestroyNotify) g_free);
 	}
 
-	if (priv->own_contact) {
-		g_object_unref (priv->own_contact);
+	data = g_new0 (HandlerData, 1);
+	
+	data->chatroom = g_object_ref (chatroom);
+
+	data->func = func;
+	data->user_data = user_data;
+	
+	g_hash_table_insert (message_handlers, func, data);
+}
+
+void
+gossip_log_handler_remove (GossipLogMessageFunc func)
+{
+	g_hash_table_remove (message_handlers, func);
+}
+
+static void
+log_handlers_notify_foreach (GossipLogMessageFunc   func,
+			     HandlerData           *data,
+			     GList                **list)
+{
+	if (data && data->func == func) {
+		*list = g_list_append (*list, data);
+	}
+}
+
+static void
+log_handlers_notify_all (GossipContact  *own_contact,
+			 GossipContact  *contact,
+			 GossipChatroom *chatroom,
+			 GossipMessage  *message)
+{
+	GossipLogMessageFunc  func;
+	GList                *handlers = NULL;
+	GList                *l;
+	HandlerData          *data;
+
+	if (!message_handlers) {
+		return;
 	}
 
-	if (priv->chatroom) {
-		g_object_unref (priv->chatroom);
-	}
+	g_hash_table_foreach (message_handlers, 
+			      (GHFunc) log_handlers_notify_foreach,
+			      &handlers);
 
-	g_free (priv->filename);
-	g_free (priv->date);
+	for (l = handlers; l; l = l->next) {
+		data = l->data;
+
+		if (!data || !data->func) {
+			continue;
+		}
+
+		if (data->contact) {
+			if (!contact || 
+			    !gossip_contact_equal (data->contact, contact)) {
+				continue;
+			}
+		}
+
+		if (data->chatroom) {
+			if (!chatroom ||
+			    !gossip_chatroom_equal_full (data->chatroom, chatroom)) {
+				continue;
+			}
+		}
+
+		func = data->func;
+		(func)(own_contact, message, data->user_data);
+	}
+	
+	g_list_free (handlers);
 }
 
 static gboolean
@@ -275,105 +335,54 @@ log_get_timestamp_filename (void)
 static gchar *
 log_get_contact_id_from_filename (const gchar *filename)
 {
-	gchar *basename;
-	gchar *p;
+	gchar  *contact_id;
+	gchar **strv;
+	gint    i = 0;
 
-	basename = g_path_get_basename (filename);
-	if (!basename) {
+	if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
 		return NULL;
 	}
 
-	p = strstr (basename, "-");
-	if (!p) {
-		g_free (basename);
-		return NULL;
-	}
+	strv = g_strsplit (filename, G_DIR_SEPARATOR_S, -1);
+	while (strv[i] != NULL) {
+		i++;
+	} 
 
-	p[0] = '\0';
-	return basename;
-}
+	contact_id = g_strdup (strv[i - 2]);
+	g_strfreev (strv);
 
-static gchar *
-log_get_chatroom_server_from_filename (const gchar *filename)
-{
-	gchar       *basename;
-	gchar       *server;
-	const gchar *p, *start;
-
-	basename = g_path_get_basename (filename);
-	if (!basename) {
-		return NULL;
-	}
-
-	p = strstr (basename, "@");
-	if (!p) {
-		g_free (basename);
-		return NULL;
-	}
-		
-	start = ++p;
-	
-	p = strstr (start, "-");
-	if (!p) {
-		g_free (basename);
-		return NULL;
-	}
-
-	server = g_strndup (start, p - start);
-	g_free (basename);
-
-	return server;
-}
-
-static gchar *
-log_get_chatroom_room_from_filename (const gchar *filename)
-{
-	gchar *basename;
-	gchar *p;
-
-	basename = g_path_get_basename (filename);
-	if (!basename) {
-		return NULL;
-	}
-
-	p = strstr (basename, "@");
-	if (!p) {
-		g_free (basename);
-		return NULL;
-	}
-
-	p[0] = '\0';
-	return basename;
+	return contact_id;
 }
 
 static gchar *
 log_get_account_id_from_filename (const gchar *filename)
 {
-	gchar *str;
-	gchar *dirname;
-	gchar *account_id;
+	gchar       *log_directory;
+	const gchar *p1;
+	const gchar *p2;
 
-	dirname = g_path_get_dirname (filename);
-	if (!dirname) {
+	log_check_dir (&log_directory);
+	
+	p1 = strstr (filename, log_directory);
+	if (!p1) {
+		g_free (log_directory);
 		return NULL;
 	}
 
-	str = g_strrstr (dirname, G_DIR_SEPARATOR_S);
-	if (!str) {
-		g_free (dirname);
+	p1 += strlen (log_directory) + 1;
+	
+	p2 = strstr (p1, G_DIR_SEPARATOR_S);
+	if (!p2) {
+		g_free (log_directory);
 		return NULL;
 	}
 
-	str++;
-
-	account_id = g_strdup (str);
-	g_free (dirname);
-
-	return account_id; 
+	return g_strndup (p1, p2 - p1); 
 }
 
 static GossipChatroom *
-log_get_chatroom_from_filename (const gchar *filename) 
+log_get_chatroom_from_filename (GossipAccount *account,
+				const gchar   *filename) 
 {
 	GossipChatroomManager *manager;
 	GossipChatroom        *chatroom;
@@ -381,22 +390,24 @@ log_get_chatroom_from_filename (const gchar *filename)
 	gchar                 *server;
 	gchar                 *room;
 
-	server = log_get_chatroom_server_from_filename (filename);
+	room = g_strdup (filename);
+
+	server = strstr (room, "@");
 	if (!server) {
+		g_free (room);
 		return NULL;
 	}
 
-	room = log_get_chatroom_room_from_filename (filename);
-	if (!room) {
-		return NULL;
-	}
-	
+	server[0] = '\0';
+	server++;
+
 	manager = gossip_app_get_chatroom_manager ();
 	found = gossip_chatroom_manager_find_extended (manager, server, room);
 
 	if (!found) {
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM, 
 					 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
+					 "account", account,
 					 "name", room,
 					 "server", server,
 					 "room", room,
@@ -408,7 +419,6 @@ log_get_chatroom_from_filename (const gchar *filename)
 		chatroom = found->data;
 	}
 	
-	g_free (server);
 	g_free (room);
 
 	return chatroom;
@@ -418,22 +428,113 @@ static gchar *
 log_get_date_from_filename (const gchar *filename)
 {
 	const gchar *start;
+	const gchar *end;
 
-	if (!filename) {
-		return NULL;
-	}
-
-	if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
-		return NULL;
-	}
-
-	start = g_strrstr (filename, "-");
+	start = g_strrstr (filename, G_DIR_SEPARATOR_S);
 	if (!start) {
 		return NULL;
 	}
 
 	start++;
-	return g_strndup (start, strlen (start) - strlen (LOG_FILENAME_SUFFIX));
+
+	end = strstr (start, LOG_FILENAME_SUFFIX);
+	if (!end) {
+		return NULL;
+	}
+
+	return g_strndup (start, end - start);
+}
+
+static void
+log_get_all_log_files_for_chatroom_dir (const gchar  *chatroom_dir,
+					 GList       **files)
+{
+	GDir        *dir;
+	const gchar *name;
+	gchar       *path;
+
+	dir = g_dir_open (chatroom_dir, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", chatroom_dir));
+	}
+	
+	while ((name = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (name, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+			
+		path = g_build_filename (chatroom_dir, name, NULL);
+
+		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
+			*files = g_list_insert_sorted (*files, 
+						       path, 
+						       (GCompareFunc) strcmp);
+			
+			/* Don't free path. */
+			continue;
+		}
+		
+		g_free (path);
+	}
+
+	g_dir_close (dir);
+}
+
+static void
+log_get_all_log_files_for_chatrooms_dir (const gchar  *chatrooms_dir,
+					 GList       **files)
+{
+	GDir        *dir;
+	const gchar *name;
+	gchar       *path;
+
+	dir = g_dir_open (chatrooms_dir, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", chatrooms_dir));
+	}
+	
+	while ((name = g_dir_read_name (dir)) != NULL) {
+		path = g_build_filename (chatrooms_dir, name, NULL);
+		log_get_all_log_files_for_chatroom_dir (path, files);
+		g_free (path);
+	}
+
+	g_dir_close (dir);
+}
+
+static void
+log_get_all_log_files_for_contact_dir (const gchar  *contact_dir,
+				       GList       **files)
+{
+	GDir        *dir;
+	const gchar *name;
+	gchar       *path;
+
+	dir = g_dir_open (contact_dir, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", contact_dir));
+	}
+	
+	while ((name = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (name, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+			
+		path = g_build_filename (contact_dir, name, NULL);
+
+		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
+			*files = g_list_insert_sorted (*files, 
+						       path, 
+						       (GCompareFunc) strcmp);
+			
+			/* Don't free path. */
+			continue;
+		}
+		
+		g_free (path);
+	}
+
+	g_dir_close (dir);
 }
 
 static void
@@ -450,20 +551,19 @@ log_get_all_log_files_for_account_dir (const gchar  *account_dir,
 	}
 	
 	while ((name = g_dir_read_name (dir)) != NULL) {
-		if (!g_str_has_suffix (name, LOG_FILENAME_SUFFIX)) {
-			continue;
-		}
-			
 		path = g_build_filename (account_dir, name, NULL);
-		if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
-			*files = g_list_insert_sorted (*files, 
-						       path, 
-						       (GCompareFunc) strcmp);
-			
-			/* Don't free path. */
+
+		if (!g_file_test (path, G_FILE_TEST_IS_DIR)) {
+			g_free (path);
 			continue;
 		}
-		
+
+		if (strcmp (name, LOG_DIR_CHATROOMS) == 0) {
+			log_get_all_log_files_for_chatrooms_dir (path, files);
+		} else {
+			log_get_all_log_files_for_contact_dir (path, files);
+		}
+
 		g_free (path);
 	}
 
@@ -493,12 +593,7 @@ log_get_all_log_files (GList **files)
 	
 	while ((name = g_dir_read_name (dir)) != NULL) {
 		account_dir = g_build_filename (log_directory, name, NULL);
-		
-		if (g_file_test (account_dir, G_FILE_TEST_IS_DIR)) {
-			/* Open directory */
-			log_get_all_log_files_for_account_dir (account_dir, files);
-		}
-
+		log_get_all_log_files_for_account_dir (account_dir, files);
 		g_free (account_dir);
 	}
 	
@@ -508,79 +603,55 @@ log_get_all_log_files (GList **files)
 }
 
 static gchar *
-log_get_filename_for_date (GossipLog   *log,
-			   const gchar *date)
+log_get_filename_by_date_for_contact (GossipContact *contact,
+				      const gchar   *particular_date)
 {
-	GossipLogPriv *priv;
 	GossipAccount *account;
 	const gchar   *account_id;
 	gchar         *account_id_escaped;
+	const gchar   *contact_id;
+	gchar         *contact_id_escaped;
 	gchar         *log_directory;
 	gchar         *filename;
-	gchar         *basename;
 	gchar         *dirname;
+	gchar         *basename;
+	gchar         *todays_date = NULL;
+	const gchar   *date;
 
-	priv = GET_PRIV (log);
+	if (!particular_date) {
+		date = todays_date = log_get_timestamp_filename ();
+	} else {
+		date = particular_date;
+	}
 
-	account = gossip_contact_get_account (priv->own_contact);
+	account = gossip_contact_get_account (contact);
 	if (!account) {
 		DEBUG_MSG (("Log: Contact has no account, can not get log filename"));
 		return NULL;
 	}
 	
-	if (priv->filename && 
-	    priv->date && 
-	    strcmp (priv->date, date) == 0) {
-		return g_strdup (priv->filename);
-	}
-
 	account_id = gossip_account_get_id (account);
 	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
 
 	log_check_dir (&log_directory);
 
-	if (priv->type == GOSSIP_LOG_TYPE_CONTACT) {
-		const gchar *contact_id;
-		gchar       *contact_id_escaped;
-
-
-		contact_id = gossip_contact_get_id (priv->contact);
-		contact_id_escaped = gnome_vfs_escape_host_and_path_string (contact_id);
-
-		basename = g_strconcat (contact_id_escaped, "-", date, LOG_FILENAME_SUFFIX, NULL);
-
-		g_free (contact_id_escaped);
-
-		filename = g_build_filename (log_directory,
-					     account_id_escaped,
-					     basename,
-					     NULL);
-
-		DEBUG_MSG (("Log: Using file:'%s' for contact:'%s'", 
-			    filename, 
-			    gossip_contact_get_id (priv->contact)));
-	} else {
-		const gchar *chatroom_id;
-		gchar       *chatroom_id_escaped;
-
-		chatroom_id = gossip_chatroom_get_id_str (priv->chatroom);
-		chatroom_id_escaped = gnome_vfs_escape_host_and_path_string (chatroom_id);
-
-		basename = g_strconcat (chatroom_id_escaped, "-", date, LOG_FILENAME_SUFFIX, NULL);
-
-		g_free (chatroom_id_escaped);
-
-		filename = g_build_filename (log_directory,
-					     account_id_escaped,
-					     LOG_DIR_CHATROOMS,
-					     basename,
-					     NULL);
-
-		DEBUG_MSG (("Log: Using file:'%s' for chatroom:'%s'", 
-			    filename, 
-			    gossip_chatroom_get_id_str (priv->chatroom)));
-	}
-
+	contact_id = gossip_contact_get_id (contact);
+	contact_id_escaped = gnome_vfs_escape_host_and_path_string (contact_id);
+	
+	basename = g_strconcat (date, LOG_FILENAME_SUFFIX, NULL);
+	filename = g_build_filename (log_directory,
+				     account_id_escaped,
+				     contact_id_escaped,
+				     basename,
+				     NULL);
+	
+	g_free (basename);
+	g_free (contact_id_escaped);
+	
+	DEBUG_MSG (("Log: Using file:'%s' for contact:'%s'", 
+		    filename, 
+		    gossip_contact_get_id (contact)));
+	
 	dirname = g_path_get_dirname (filename);
 	if (!g_file_test (dirname, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		DEBUG_MSG (("Log: Creating directory:'%s'", dirname));
@@ -588,93 +659,65 @@ log_get_filename_for_date (GossipLog   *log,
 	}
 
 	g_free (dirname);
-	g_free (basename);
 
 	g_free (log_directory);
 	g_free (account_id_escaped);
+
+	g_free (todays_date);
 
 	return filename;
 }
 
-static const gchar *
-log_get_filename_for_today (GossipLog *log)
+static gchar *
+log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
+				       const gchar    *particular_date)
 {
-	GossipLogPriv *priv;
 	GossipAccount *account;
-	gchar         *date_today;
 	const gchar   *account_id;
 	gchar         *account_id_escaped;
+	const gchar   *chatroom_id;
+	gchar         *chatroom_id_escaped;
 	gchar         *log_directory;
 	gchar         *filename;
-	gchar         *basename;
 	gchar         *dirname;
+	gchar         *basename;
+	gchar         *todays_date = NULL;
+	const gchar   *date;
 
-	priv = GET_PRIV (log);
+	if (!particular_date) {
+		date = todays_date = log_get_timestamp_filename ();
+	} else {
+		date = particular_date;
+	}
 
-	account = gossip_contact_get_account (priv->own_contact);
+	account = gossip_chatroom_get_account (chatroom);
 	if (!account) {
 		DEBUG_MSG (("Log: Contact has no account, can not get log filename"));
 		return NULL;
 	}
 	
-	date_today = log_get_timestamp_filename ();
-	if (priv->filename && 
-	    priv->date && 
-	    strcmp (priv->date, date_today) == 0) {
-		g_free (date_today);
-		return priv->filename;
-	}
-
 	account_id = gossip_account_get_id (account);
 	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
 
 	log_check_dir (&log_directory);
 
-	if (priv->type == GOSSIP_LOG_TYPE_CONTACT) {
-		const gchar *contact_id;
-		gchar       *contact_id_escaped;
-
-		contact_id = gossip_contact_get_id (priv->contact);
-		contact_id_escaped = gnome_vfs_escape_host_and_path_string (contact_id);
-
-		basename = g_strconcat (contact_id_escaped, "-", date_today, NULL);
-
-		g_free (contact_id_escaped);
-
-		filename = g_build_filename (log_directory,
-					     account_id_escaped,
-					     basename,
-					     NULL);
-
-		DEBUG_MSG (("Log: Using file:'%s%s' for contact:'%s'", 
-			    filename, 
-			    LOG_FILENAME_SUFFIX,
-			    gossip_contact_get_id (priv->contact)));
-	} else {
-		const gchar *chatroom_id;
-		gchar       *chatroom_id_escaped;
-
-		chatroom_id = gossip_chatroom_get_id_str (priv->chatroom);
-		chatroom_id_escaped = gnome_vfs_escape_host_and_path_string (chatroom_id);
-
-		basename = g_strconcat (chatroom_id_escaped, "-", date_today, NULL);
-
-		g_free (chatroom_id_escaped);
-
-		filename = g_build_filename (log_directory,
-					     account_id_escaped,
-					     LOG_DIR_CHATROOMS,
-					     basename,
-					     NULL);
-
-		DEBUG_MSG (("Log: Using file:'%s%s' for chatroom:'%s'", 
-			    filename,
-			    LOG_FILENAME_SUFFIX,
-			    gossip_chatroom_get_id_str (priv->chatroom)));
-	}
-
-	g_free (priv->date);
-	priv->date = date_today;
+	chatroom_id = gossip_chatroom_get_id_str (chatroom);
+	chatroom_id_escaped = gnome_vfs_escape_host_and_path_string (chatroom_id);
+	
+	basename = g_strconcat (date, LOG_FILENAME_SUFFIX, NULL);
+	filename = g_build_filename (log_directory,
+				     account_id_escaped,
+				     LOG_DIR_CHATROOMS,
+				     chatroom_id_escaped,
+				     basename,
+				     NULL);
+	
+	g_free (basename);
+	g_free (chatroom_id_escaped);
+	
+	DEBUG_MSG (("Log: Using file:'%s' for chatroom:'%s'", 
+		    filename, 
+		    gossip_chatroom_get_id_str (chatroom)));
 
 	dirname = g_path_get_dirname (filename);
 	if (!g_file_test (dirname, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
@@ -683,454 +726,13 @@ log_get_filename_for_today (GossipLog *log)
 	}
 
 	g_free (dirname);
-	g_free (basename);
 
 	g_free (log_directory);
 	g_free (account_id_escaped);
 
-	g_free (priv->filename);
-	priv->filename = g_strconcat (filename, LOG_FILENAME_SUFFIX, NULL);
+	g_free (todays_date);
 
-	g_free (filename);
-	
-	return priv->filename;
-}
-
-static GList *
-log_get_messages_for_contacts (GossipLog   *log,
-			       const gchar *filename)
-{
-	GossipLogPriv    *priv;
-	GossipAccount    *account;
-	GList            *messages = NULL;
-	gboolean          get_own_name = FALSE;
-	gboolean          get_name = FALSE;
-	xmlParserCtxtPtr  ctxt;
-	xmlDocPtr         doc;
-	xmlNodePtr        log_node;
-	xmlNodePtr        node;
-
-	DEBUG_MSG (("Log: Attempting to parse filename:'%s'...", filename));
-
-	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		DEBUG_MSG (("Log: Filename:'%s' does not exist", filename));
-		return NULL;
-	}
-
-	priv = GET_PRIV (log);
-
-	/* Get own contact from log contact. */
-	account = gossip_contact_get_account (priv->own_contact);
-
-	/* Create parser. */
- 	ctxt = xmlNewParserCtxt ();
-
-	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
-	if (!doc) {
-		g_warning ("Failed to parse file:'%s'", filename);
-		xmlFreeParserCtxt (ctxt);
-		return NULL;
-	}
-
-	/* The root node, presets. */
-	log_node = xmlDocGetRootElement (doc);
-	if (!log_node) {
-		xmlFreeDoc (doc);
-		xmlFreeParserCtxt (ctxt);
-		return NULL;
-	}
-
-	if (gossip_contact_get_name (priv->own_contact) == NULL ||
-	    strcmp (gossip_contact_get_id (priv->own_contact),
-		    gossip_contact_get_name (priv->own_contact)) == 0) {
-		get_own_name = TRUE;
-	}
-
-	if (gossip_contact_get_name (priv->contact) == NULL ||
-	    strcmp (gossip_contact_get_id (priv->contact),
-		    gossip_contact_get_name (priv->contact)) == 0) {
-		get_name = TRUE;
-	}
-
-	/* First get the other contact's details and our name if that
-	 * is lacking. 
-	 */
-	for (node = log_node->children; node && (get_own_name || get_name); node = node->next) {
-		gchar *to;
-		gchar *from;
-		gchar *name;
-
-		if (strcmp (node->name, "message") != 0) {
-			continue;
-		}
-
-		to = xmlGetProp (node, "to");
-		from = xmlGetProp (node, "from");
-		name = xmlGetProp (node, "nick");
-
-		if (!name) {
-			continue;
-		}
-
-		if (to && get_own_name) {
-			gossip_contact_set_name (priv->own_contact, name);
-			log_set_own_name (account, priv->own_contact);
-			get_own_name = FALSE;
-		}
-
-		if (from && get_name) {
-			gossip_contact_set_name (priv->contact, name);
-			log_set_name (account, priv->contact);
-			get_name = FALSE;
-		}
-	}
-
-	/* Now get the messages. */
-	for (node = log_node->children; node; node = node->next) {
-		GossipMessage *message;
-		gchar         *time;
-		gossip_time_t  t;
-		gchar         *who;
-		gchar         *name;
-		gchar         *body;
-		gboolean       sent = TRUE;
-
-		if (strcmp (node->name, "message") != 0) {
-			continue;
-		}
-
-		body = xmlNodeGetContent (node);
-		
-		time = xmlGetProp (node, "time");
-		t = gossip_time_from_string_full (time, "%Y%m%dT%H:%M:%S");
-		
-		name = xmlGetProp (node, "nick");
-		
-		who = xmlGetProp (node, "to");
-		if (!who) {
-			sent = FALSE;
-			who = xmlGetProp (node, "from");
-		}
-		
-		if (sent) {			
-			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, priv->contact);
-			gossip_message_set_sender (message, priv->own_contact);
-		} else {
-			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, priv->own_contact);
-			gossip_message_set_sender (message, priv->contact);
-		}
-		
-		gossip_message_set_body (message, body);
-		gossip_message_set_timestamp (message, t);
-		
-		messages = g_list_append (messages, message);
-		
-		xmlFree (time);
-		xmlFree (who);
-		xmlFree (name);
-		xmlFree (body);
-	}
-	
- 	DEBUG_MSG (("Log: Parsed %d messages", g_list_length (messages))); 
-
-	xmlFreeDoc (doc);
-	xmlFreeParserCtxt (ctxt);
-	
-	return messages;
-}
-
-static GList *
-log_get_messages_for_chatrooms (GossipLog   *log,
-				const gchar *filename)
-{
-	GossipLogPriv    *priv;
-	GossipAccount    *account;
-	GList            *messages = NULL;
-	xmlParserCtxtPtr  ctxt;
-	xmlDocPtr         doc;
-	xmlNodePtr        log_node;
-	xmlNodePtr        node;
-
-	DEBUG_MSG (("Log: Attempting to parse filename:'%s'...", filename));
-
-	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		DEBUG_MSG (("Log: Filename:'%s' does not exist", filename));
-		return NULL;
-	}
-
-	priv = GET_PRIV (log);
-
-	/* Get own contact from log contact. */
-	account = gossip_contact_get_account (priv->own_contact);
-
-	/* Create parser. */
- 	ctxt = xmlNewParserCtxt ();
-
-	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
-	if (!doc) {
-		g_warning ("Failed to parse file:'%s'", filename);
-		xmlFreeParserCtxt (ctxt);
-		return NULL;
-	}
-
-	/* The root node, presets. */
-	log_node = xmlDocGetRootElement (doc);
-	if (!log_node) {
-		xmlFreeDoc (doc);
-		xmlFreeParserCtxt (ctxt);
-		return NULL;
-	}
-
-	/* Now get the messages. */
-	for (node = log_node->children; node; node = node->next) {
-		GossipMessage *message;
-		GossipContact *contact;
-		gchar         *time;
-		gossip_time_t  t;
-		gchar         *who;
-		gchar         *name;
-		gchar         *body;
-		gboolean       sent = FALSE;
-
-		if (strcmp (node->name, "message") != 0) {
-			continue;
-		}
-
-		who = xmlGetProp (node, "from");
-		if (!who) {
-			continue;
-		}
-
-		name = xmlGetProp (node, "nick");
-		if (!name) {
-			g_free (who);
-			continue;
-		}
-
-		/* Should we use type temporary or chatroom? */
-		contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
-						   account,
-						   who,
-						   name);
-		body = xmlNodeGetContent (node);
-		
-		time = xmlGetProp (node, "time");
-		t = gossip_time_from_string_full (time, "%Y%m%dT%H:%M:%S");
-
-		sent = gossip_contact_equal (contact, priv->own_contact);
-		
-		if (sent) {			
-			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, contact);
-			gossip_message_set_sender (message, priv->own_contact);
-		} else {
-			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, priv->own_contact);
-			gossip_message_set_sender (message, contact);
-		}
-		
-		gossip_message_set_body (message, body);
-		gossip_message_set_timestamp (message, t);
-		
-		messages = g_list_append (messages, message);
-
-		g_object_unref (contact);
-		
-		xmlFree (time);
-		xmlFree (who);
-		xmlFree (name);
-		xmlFree (body);
-	}
-	
- 	DEBUG_MSG (("Log: Parsed %d messages", g_list_length (messages))); 
-
-	xmlFreeDoc (doc);
-	xmlFreeParserCtxt (ctxt);
-	
-	return messages;
-}
-
-static GList *
-log_get_dates_for_contacts (GossipLog *log)
-{
-	GossipLogPriv  *priv;
-	GossipAccount  *account;
-	GList          *dates = NULL;
-	gchar          *date;
-	gchar          *log_directory;
-	gchar          *directory;
-	const gchar    *account_id;
-	gchar          *account_id_escaped;
-	GDir           *dir;
-	const gchar    *filename;
-	gchar          *filename_unescaped;
-	gchar          *contact_id;
-
-	priv = GET_PRIV (log);
-
-	account = gossip_contact_get_account (priv->own_contact);
-	
-	if (log_check_dir (&log_directory)) {
-		DEBUG_MSG (("Log: No log directory exists"));
-		return NULL;
-	}
-
-	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-
-	directory = g_build_path (G_DIR_SEPARATOR_S, 
-				  log_directory, 
-				  account_id_escaped,
-				  NULL);
-
-	DEBUG_MSG (("Log: Collating a list of dates for account:'%s' in:'%s'", account_id, directory));
-
-	g_free (account_id_escaped);
-	g_free (log_directory);
-	
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("Log: Log directory exists, but no account directory does (looking here:'%s')",
-			    directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	dir = g_dir_open (directory, 0, NULL);
-	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	while ((filename = g_dir_read_name (dir)) != NULL) {
-		gboolean same_contact = TRUE;
-
-		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
-			continue;
-		}
-
-		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
-
-		date = log_get_date_from_filename (filename_unescaped);
-		if (!date) {
-			g_free (filename_unescaped);
-			continue;
-		}
-
-
-		contact_id = log_get_contact_id_from_filename (filename_unescaped);
-		g_free (filename_unescaped);
-		
-		same_contact &= contact_id != NULL;
-		same_contact &= strcmp (contact_id, 
-					gossip_contact_get_id (priv->contact)) == 0;
-		
-		g_free (contact_id);
-		
-		if (same_contact) {
-			dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
-			continue;
-		}
-
-		g_free (date);
-	}
-	
-	g_free (directory);
-	g_dir_close (dir);
-
- 	DEBUG_MSG (("Log: Parsed %d dates", g_list_length (dates))); 
-
-	return dates;
-} 
-
-static GList *
-log_get_dates_for_chatrooms (GossipLog *log)
-{
-	GossipLogPriv  *priv;
-	GossipAccount  *account;
-	GList          *dates = NULL;
-	gchar          *date;
-	gchar          *log_directory;
-	gchar          *directory;
-	const gchar    *account_id;
-	gchar          *account_id_escaped;
-	GDir           *dir;
-	const gchar    *filename;
-	gchar          *filename_unescaped;
-	GossipChatroom *chatroom;
-
-	priv = GET_PRIV (log);
-
-	account = gossip_contact_get_account (priv->own_contact);
-	
-	if (log_check_dir (&log_directory)) {
-		DEBUG_MSG (("Log: No log directory exists"));
-		return NULL;
-	}
-
-	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-
-	directory = g_build_path (G_DIR_SEPARATOR_S, 
-				  log_directory, 
-				  account_id_escaped,
-				  LOG_DIR_CHATROOMS,
-				  NULL);
-
-	DEBUG_MSG (("Log: Collating a list of dates for account:'%s' in:'%s'", account_id, directory));
-
-	g_free (account_id_escaped);
-	g_free (log_directory);
-	
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("Log: Log directory exists, but no account directory does (looking here:'%s')",
-			    directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	dir = g_dir_open (directory, 0, NULL);
-	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	while ((filename = g_dir_read_name (dir)) != NULL) {
-		gboolean same_chatroom = TRUE;
-
-		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
-			continue;
-		}
-
-		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
-		
-		date = log_get_date_from_filename (filename_unescaped);
-		if (!date) {
-			g_free (filename_unescaped);
-			continue;
-		}
-
-		chatroom = log_get_chatroom_from_filename (filename_unescaped);
-		g_free (filename_unescaped);
-		
-		same_chatroom &= chatroom != NULL;
-		same_chatroom &= gossip_chatroom_equal_full (chatroom, priv->chatroom);
-		
-		if (same_chatroom) {
-			dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
-			continue;
-		}
-
-		g_free (date);
-	}
-	
-	g_free (directory);
-	g_dir_close (dir);
-
- 	DEBUG_MSG (("Log: Parsed %d dates", g_list_length (dates))); 
-
-	return dates;
+	return filename;
 }
 
 static const gchar *
@@ -1212,41 +814,6 @@ log_get_contact (GossipAccount *account,
 	return contact;
 }
 
-static gchar *
-log_get_contact_name_from_id (const gchar *account_id,
-			      const gchar *contact_id)
-{
-	GKeyFile *key_file;
-	gchar    *log_directory;
-	gchar    *account_id_escaped;
-	gchar    *filename;
-	gchar    *name = NULL;
-
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-
-	log_check_dir (&log_directory);
-
-	filename = g_build_filename (log_directory,
-				     account_id_escaped,
-				     LOG_KEY_FILENAME,
-				     NULL);
-
-	g_free (log_directory);
-	g_free (account_id_escaped);
-
-	key_file = g_key_file_new ();
-
-	if (g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL)) {
-		name = g_key_file_get_string (key_file, LOG_KEY_GROUP_CONTACTS, contact_id, NULL);
-		DEBUG_MSG (("Log: Found name for contact ID:'%s', name:'%s'", contact_id, name)); 
-	}
-	
-	g_key_file_free (key_file);
-	g_free (filename);
-
-	return name;
-}
-
 static gboolean 
 log_set_name (GossipAccount *account,
 	      GossipContact *contact)
@@ -1295,8 +862,8 @@ log_set_name (GossipAccount *account,
 	return ok;
 }
 
-static GossipContact *
-log_get_own_contact (GossipAccount *account)
+GossipContact *
+gossip_log_get_own_contact (GossipAccount *account)
 {
 	GossipContact *contact;
 	GKeyFile      *key_file;
@@ -1355,14 +922,16 @@ log_set_own_name (GossipAccount *account,
 	if (content) {
 		GError *error = NULL;
 
-		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %" G_GSIZE_FORMAT " bytes of data",
+		DEBUG_MSG (("Log: The contacts key file:'%s' has been saved with %" 
+			    G_GSIZE_FORMAT " bytes of data",
 			    filename, length));
 
 		ok = g_file_set_contents (filename, content, length, &error);
 		g_free (content);
 
 		if (error) {
-			DEBUG_MSG (("Log: Could not save file:'%s' with %" G_GSIZE_FORMAT " bytes of data, error:%d->'%s'",
+			DEBUG_MSG (("Log: Could not save file:'%s' with %"
+				    G_GSIZE_FORMAT " bytes of data, error:%d->'%s'",
 				    filename, length, error->code, error->message));
 			g_error_free (error);
 		}
@@ -1449,6 +1018,8 @@ log_urlify (const gchar *msg)
 
 	return g_string_free (ret, FALSE);
 }
+
+#ifdef DEPRECATED
 
 static gboolean
 log_transform (const gchar *infile, 
@@ -1568,14 +1139,375 @@ log_show (GossipLog *log)
 	g_free (filename);
 }
 
-static void
-log_message (GossipLog     *log,
-	     GossipMessage *message, 
-	     gboolean       incoming)
+#endif /* DEPRECATED */
+
+GList *
+gossip_log_get_contacts (GossipAccount *account)
 {
-	GossipLogPriv *priv;
+	GList         *contacts = NULL;
+	GossipContact *contact;
+	gchar         *log_directory;
+	gchar         *directory;
+	const gchar   *account_id;
+	gchar         *account_id_escaped;
+	GDir          *dir;
+	const gchar   *filename;
+	gchar         *filename_unescaped;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return NULL;
+	}
+
+	account_id = gossip_account_get_id (account);
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+
+	directory = g_build_path (G_DIR_SEPARATOR_S, 
+				  log_directory, 
+				  account_id_escaped,
+				  NULL);
+
+	g_free (account_id_escaped);
+	g_free (log_directory);
+	
+	dir = g_dir_open (directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	DEBUG_MSG (("Log: Collating a list of contacts in:'%s'", directory));
+
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		if (!g_file_test (directory, G_FILE_TEST_IS_DIR)) {
+			continue;
+		}
+
+		if (strcmp (filename, LOG_DIR_CHATROOMS) == 0) {
+			continue;
+		}
+
+ 		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
+		contact = log_get_contact (account, filename_unescaped);
+		g_free (filename_unescaped);
+
+		if (!contact) {
+			continue;
+		}
+
+		contacts = g_list_append (contacts, contact);
+	}
+	
+	g_free (directory);
+	g_dir_close (dir);
+	
+	return contacts;
+}
+
+GList *
+gossip_log_get_chatrooms (GossipAccount *account)
+{
+	GList          *chatrooms = NULL;
+	GossipChatroom *chatroom;
+	gchar          *log_directory;
+	gchar          *directory;
+	const gchar    *account_id;
+	gchar          *account_id_escaped;
+	GDir           *dir;
+	const gchar    *filename;
+	gchar          *filename_unescaped;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return NULL;
+	}
+
+	account_id = gossip_account_get_id (account);
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+
+	directory = g_build_path (G_DIR_SEPARATOR_S, 
+				  log_directory, 
+				  account_id_escaped,
+				  LOG_DIR_CHATROOMS,
+				  NULL);
+
+	g_free (account_id_escaped);
+	g_free (log_directory);
+	
+	dir = g_dir_open (directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	DEBUG_MSG (("Log: Collating a list of chatrooms in:'%s'", directory));
+
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+ 		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
+		chatroom = log_get_chatroom_from_filename (account, filename_unescaped);
+		g_free (filename_unescaped);
+
+		if (!chatroom) {
+			continue;
+		}
+
+		chatrooms = g_list_append (chatrooms, chatroom);
+	}
+	
+	g_free (directory);
+	g_dir_close (dir);
+	
+	return chatrooms;
+}
+
+gchar *
+gossip_log_get_date_readable (const gchar *date)
+{
+	gossip_time_t t;
+	
+	t = gossip_time_from_string_full (date, LOG_TIME_FORMAT);
+	return gossip_time_to_timestamp_full (t, "%a %d %b %Y");
+}
+
+/*
+ * Contact functions 
+ */
+GList *
+gossip_log_get_dates_for_contact (GossipContact *contact)
+{
+	GossipAccount  *account;
+	GList          *dates = NULL;
+	gchar          *date;
+	gchar          *log_directory;
+	gchar          *directory;
+	const gchar    *account_id;
+	gchar          *account_id_escaped;
+	const gchar    *contact_id;
+	gchar          *contact_id_escaped;
+	GDir           *dir;
+	const gchar    *filename;
+	const gchar    *p;
+
+	account = gossip_contact_get_account (contact);
+	
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return NULL;
+	}
+
+	account_id = gossip_account_get_id (account);
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+
+	contact_id = gossip_contact_get_id (contact);
+	contact_id_escaped = gnome_vfs_escape_host_and_path_string (contact_id);
+
+	directory = g_build_path (G_DIR_SEPARATOR_S, 
+				  log_directory, 
+				  account_id_escaped,
+				  contact_id_escaped,
+				  NULL);
+
+	g_free (contact_id_escaped);
+	g_free (account_id_escaped);
+	g_free (log_directory);
+	
+	dir = g_dir_open (directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	DEBUG_MSG (("Log: Collating a list of dates in:'%s'", directory));
+
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+
+		p = strstr (filename, LOG_FILENAME_SUFFIX);
+		date = g_strndup (filename, p - filename);
+		if (!date) {
+			continue;
+		}
+
+		dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
+	}
+	
+	g_free (directory);
+	g_dir_close (dir);
+
+ 	DEBUG_MSG (("Log: Parsed %d dates", g_list_length (dates))); 
+
+	return dates;
+} 
+
+GList *
+gossip_log_get_messages_for_contact (GossipContact *contact,
+				     const gchar   *date)
+{
+	GossipAccount    *account;
+	GossipContact    *own_contact;
+	gchar            *filename;
+	GList            *messages = NULL;
+	gboolean          get_own_name = FALSE;
+	gboolean          get_name = FALSE;
+	xmlParserCtxtPtr  ctxt;
+	xmlDocPtr         doc;
+	xmlNodePtr        log_node;
+	xmlNodePtr        node;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	filename = log_get_filename_by_date_for_contact (contact, date);
+
+	DEBUG_MSG (("Log: Attempting to parse filename:'%s'...", filename));
+
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		DEBUG_MSG (("Log: Filename:'%s' does not exist", filename));
+		g_free (filename);
+		return NULL;
+	}
+
+	/* Get own contact from log contact. */
+	account = gossip_contact_get_account (contact);
+	own_contact = gossip_log_get_own_contact (account);
+
+	/* Create parser. */
+ 	ctxt = xmlNewParserCtxt ();
+
+	/* Parse and validate the file. */
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
+	if (!doc) {
+		g_warning ("Failed to parse file:'%s'", filename);
+		g_free (filename);
+		xmlFreeParserCtxt (ctxt);
+		return NULL;
+	}
+
+	/* The root node, presets. */
+	log_node = xmlDocGetRootElement (doc);
+	if (!log_node) {
+		g_free (filename);
+		xmlFreeDoc (doc);
+		xmlFreeParserCtxt (ctxt);
+		return NULL;
+	}
+
+	if (gossip_contact_get_name (own_contact) == NULL ||
+	    strcmp (gossip_contact_get_id (own_contact),
+		    gossip_contact_get_name (own_contact)) == 0) {
+		get_own_name = TRUE;
+	}
+
+	if (gossip_contact_get_name (contact) == NULL ||
+	    strcmp (gossip_contact_get_id (contact),
+		    gossip_contact_get_name (contact)) == 0) {
+		get_name = TRUE;
+	}
+
+	/* First get the other contact's details and our name if that
+	 * is lacking. 
+	 */
+	for (node = log_node->children; node && (get_own_name || get_name); node = node->next) {
+		gchar *to;
+		gchar *from;
+		gchar *name;
+
+		if (strcmp (node->name, "message") != 0) {
+			continue;
+		}
+
+		to = xmlGetProp (node, "to");
+		from = xmlGetProp (node, "from");
+		name = xmlGetProp (node, "nick");
+
+		if (!name) {
+			continue;
+		}
+
+		if (to && get_own_name) {
+			gossip_contact_set_name (own_contact, name);
+			log_set_own_name (account, own_contact);
+			get_own_name = FALSE;
+		}
+
+		if (from && get_name) {
+			gossip_contact_set_name (contact, name);
+			log_set_name (account, contact);
+			get_name = FALSE;
+		}
+	}
+
+	/* Now get the messages. */
+	for (node = log_node->children; node; node = node->next) {
+		GossipMessage *message;
+		gchar         *time;
+		gossip_time_t  t;
+		gchar         *who;
+		gchar         *name;
+		gchar         *body;
+		gboolean       sent = TRUE;
+
+		if (strcmp (node->name, "message") != 0) {
+			continue;
+		}
+
+		body = xmlNodeGetContent (node);
+		
+		time = xmlGetProp (node, "time");
+		t = gossip_time_from_string_full (time, "%Y%m%dT%H:%M:%S");
+		
+		name = xmlGetProp (node, "nick");
+		
+		who = xmlGetProp (node, "to");
+		if (!who) {
+			sent = FALSE;
+			who = xmlGetProp (node, "from");
+		}
+		
+		if (sent) {			
+			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, contact);
+			gossip_message_set_sender (message, own_contact);
+		} else {
+			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL, own_contact);
+			gossip_message_set_sender (message, contact);
+		}
+		
+		gossip_message_set_body (message, body);
+		gossip_message_set_timestamp (message, t);
+		
+		messages = g_list_append (messages, message);
+		
+		xmlFree (time);
+		xmlFree (who);
+		xmlFree (name);
+		xmlFree (body);
+	}
+	
+ 	DEBUG_MSG (("Log: Parsed %d messages", g_list_length (messages))); 
+
+	g_free (filename);
+	xmlFreeDoc (doc);
+	xmlFreeParserCtxt (ctxt);
+	
+	return messages;
+}
+
+void
+gossip_log_message_for_contact (GossipMessage *message,
+				gboolean       incoming)
+{
+	GossipAccount *account;
 	GossipContact *contact;
 	GossipContact *own_contact;
+	GossipContact *own_contact_saved;
         const gchar   *filename;
 	FILE          *file;
 	const gchar   *to_or_from = "";
@@ -1589,27 +1521,22 @@ log_message (GossipLog     *log,
 	gboolean       save_contact = FALSE;
 	gboolean       save_own_contact = FALSE;
 
-	g_return_if_fail (GOSSIP_IS_LOG (log));
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
-	priv = GET_PRIV (log);
-
-	if (priv->type == GOSSIP_LOG_TYPE_CONTACT) {
-		if (incoming) {
-			to_or_from = "from";
-			contact = gossip_message_get_sender (message);
-			own_contact = gossip_message_get_recipient (message);
-		} else {
-			to_or_from = "to";
-			contact = gossip_message_get_recipient (message);
-			own_contact = gossip_message_get_sender (message);
-		}
-	} else {
+	if (incoming) {
+		to_or_from = "from";
 		contact = gossip_message_get_sender (message);
- 		own_contact = priv->own_contact;
+		own_contact = gossip_message_get_recipient (message);
+	} else {
+		to_or_from = "to";
+		contact = gossip_message_get_recipient (message);
+		own_contact = gossip_message_get_sender (message);
 	}
 
-	filename = log_get_filename_for_today (log);
+	account = gossip_contact_get_account (contact);
+	own_contact_saved = gossip_log_get_own_contact (account);
+
+	filename = log_get_filename_by_date_for_contact (contact, NULL);
 
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		file = g_fopen (filename, "w+");
@@ -1625,8 +1552,7 @@ log_message (GossipLog     *log,
 	} else {
 		const gchar *own_id;
 		const gchar *own_name;
-
-		const gchar *str;
+		const gchar *real_name;
 				
 		file = g_fopen (filename, "r+");
 		if (file) {
@@ -1637,14 +1563,15 @@ log_message (GossipLog     *log,
 		 * we save the message name since ours is out of
 		 * sync. 
 		 */
-		own_id = gossip_contact_get_id (priv->own_contact);
-		own_name = gossip_contact_get_name (priv->own_contact);
-		str = gossip_contact_get_name (own_contact);
+		own_id = gossip_contact_get_id (own_contact_saved);
+		own_name = gossip_contact_get_name (own_contact_saved);
 
-		if (str && (!own_name || 
-			    strcmp (own_name, str) != 0 ||
-			    strcmp (own_name, own_id) == 0)) {
-			gossip_contact_set_name (priv->own_contact, str);
+		real_name = gossip_contact_get_name (own_contact);
+
+		if (real_name && (!own_name || 
+				  strcmp (own_name, real_name) != 0 ||
+				  strcmp (own_name, own_id) == 0)) {
+			gossip_contact_set_name (own_contact_saved, real_name);
 			save_own_contact = TRUE;
 		}
 	}
@@ -1653,7 +1580,7 @@ log_message (GossipLog     *log,
 		GossipAccount *account;
 
 		account = gossip_contact_get_account (contact);
-		log_set_own_name (account, priv->own_contact);
+		log_set_own_name (account, own_contact_saved);
 	}
 
 	if (new_file || save_contact) {
@@ -1691,39 +1618,25 @@ log_message (GossipLog     *log,
 		contact_id = g_markup_escape_text (str, -1);
 	}
 	
-	if (priv->type == GOSSIP_LOG_TYPE_CONTACT) {
-		str = gossip_message_get_explicit_resource (message);
-		if (!str) {
-			resource = g_strdup ("");
-		} else {
-			resource = g_markup_escape_text (str, -1);
-		}
-
-		g_fprintf (file,
-			   "<message time='%s' %s='%s' resource='%s' nick='%s'>"
-			   "%s"
-			   "</message>\n"
-			   LOG_FOOTER,
-			   timestamp, 
-			   to_or_from,
-			   contact_id,
-			   resource,
-			   name,
-			   body);
-
-		g_free (resource);
+	str = gossip_message_get_explicit_resource (message);
+	if (!str) {
+		resource = g_strdup ("");
 	} else {
-		g_fprintf (file,
-			   "<message time='%s' from='%s' nick='%s'>"
-			   "%s"
-			   "</message>\n"
-			   LOG_FOOTER,
-			   timestamp, 
-			   contact_id,
-			   name,
-			   body);
+		resource = g_markup_escape_text (str, -1);
 	}
-
+	
+	g_fprintf (file,
+		   "<message time='%s' %s='%s' resource='%s' nick='%s'>"
+		   "%s"
+		   "</message>\n"
+		   LOG_FOOTER,
+		   timestamp, 
+		   to_or_from,
+		   contact_id,
+		   resource,
+		   name,
+		   body);
+	
         fclose (file);
 
 	if (new_file) {
@@ -1732,22 +1645,22 @@ log_message (GossipLog     *log,
 
 	g_free (timestamp);
 	g_free (body);
+	g_free (resource);
 	g_free (name);
 	g_free (contact_id);
 
-	/* Now signal new message */
-	g_signal_emit (log, signals[NEW_MESSAGE], 0, message);
+	log_handlers_notify_all (own_contact, contact, NULL, message);
 }
 
-static gboolean
-log_exists (GossipLog *log)
+gboolean
+gossip_log_exists_for_contact (GossipContact *contact)
 {
 	GList    *dates;
 	gboolean  exists;
 
-	g_return_val_if_fail (GOSSIP_IS_LOG (log), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 
-	dates = gossip_log_get_dates (log);
+	dates = gossip_log_get_dates_for_contact (contact);
 	exists = g_list_length (dates) > 0;
 
 	g_list_foreach (dates, (GFunc) g_free, NULL);
@@ -1756,377 +1669,7 @@ log_exists (GossipLog *log)
 	return exists;
 }
 
-GossipLog *
-gossip_log_lookup_for_contact_id (GossipAccount *account,
-				  const gchar   *contact_id)
-{
-	GossipLog     *log;
-	GossipContact *contact;
-
-	contact = log_get_contact (account, contact_id);
-	log = gossip_log_lookup_for_contact (contact);
-	g_object_unref (contact);
-	
-	return log;
-}
-
-GossipLog *
-gossip_log_lookup_for_contact (GossipContact *contact)
-{
-	GossipLog     *log;
-	GossipLogPriv *priv;
-	GossipAccount *account;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	
-	if (!contact_logs) {
-		contact_logs = g_hash_table_new_full (gossip_contact_hash,
-						      gossip_contact_equal,
-						      (GDestroyNotify) g_object_unref,
-						      (GDestroyNotify) g_object_unref);
-	}
-
-	log = g_hash_table_lookup (contact_logs, contact);
-	if (log) {
-		return log;
-	}
-
-	account = gossip_contact_get_account (contact);
-
-	/* Create new log. */
-	log = g_object_new (GOSSIP_TYPE_LOG, NULL);
-	
-	priv = GET_PRIV (log);
-
-	priv->type = GOSSIP_LOG_TYPE_CONTACT;
-
-	priv->contact = g_object_ref (contact);
-
-	/* Note: We get this AFTER priv->contact because it is used to
-	 * get the own contact details.
-	 */
-	priv->own_contact = log_get_own_contact (account);
-
-	/* Note: priv->timestamp and priv->filename is filled in for
-	 * us by log_get_filename(). 
-	 */
-	log_get_filename_for_today (log);
-
-	g_hash_table_insert (contact_logs, g_object_ref (contact), log);
-
-	return log;
-}
-
-GossipLog *
-gossip_log_lookup_for_chatroom (GossipChatroom *chatroom)
-{
-	GossipLog     *log;
-	GossipLogPriv *priv;
-	GossipAccount *account;
-	gchar         *own_contact_id;
-
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
-	
-	if (!chatroom_logs) {
-		chatroom_logs = g_hash_table_new_full (gossip_chatroom_hash,
-						       gossip_chatroom_equal_full,
-						       (GDestroyNotify) g_object_unref,
-						       (GDestroyNotify) g_object_unref);
-	}
-
-	log = g_hash_table_lookup (chatroom_logs, chatroom);
-	if (log) {
-		return log;
-	}
-
-	account = gossip_chatroom_get_account (chatroom);
-
-	/* Create new log. */
-	log = g_object_new (GOSSIP_TYPE_LOG, NULL);
-	
-	priv = GET_PRIV (log);
-
-	priv->type = GOSSIP_LOG_TYPE_CHATROOM;
-
-	priv->chatroom = g_object_ref (chatroom);
-
-	/* Note: We get this AFTER priv->contact because it is used to
-	 * get the own contact details.
-	 */
-	own_contact_id = g_strdup_printf ("%s/%s", 
-					  gossip_chatroom_get_id_str (chatroom),
-					  gossip_chatroom_get_nick (chatroom));
-
-	priv->own_contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
-						     account,
-						     own_contact_id,
-						     gossip_chatroom_get_nick (chatroom));
-	g_free (own_contact_id);
-
-	/* Note: priv->timestamp and priv->filename is filled in for
-	 * us by log_get_filename(). 
-	 */
-	log_get_filename_for_today (log);
-
-	g_hash_table_insert (chatroom_logs, g_object_ref (chatroom), log);
-
-	return log;
-}
-
-GossipContact *
-gossip_log_get_own_contact (GossipLog *log)
-{
-	GossipLogPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
-
-	priv = GET_PRIV (log);
-
-	return priv->own_contact;
-}
-
-GList *
-gossip_log_get_contacts (GossipAccount *account)
-{
-	GList         *contacts = NULL;
-	GossipContact *contact;
-	gchar         *log_directory;
-	gchar         *directory;
-	const gchar   *account_id;
-	gchar         *account_id_escaped;
-	GDir          *dir;
-	const gchar   *filename;
-	gchar         *filename_unescaped;
-	gchar         *contact_id;
-	GList         *l;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	if (log_check_dir (&log_directory)) {
-		DEBUG_MSG (("Log: No log directory exists"));
-		return NULL;
-	}
-
-	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-	directory = g_build_path (G_DIR_SEPARATOR_S, 
-				  log_directory, 
-				  account_id_escaped,
-				  NULL);
-	g_free (account_id_escaped);
-	g_free (log_directory);
-	
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("Log: Log directory exists, but no account directory does (looking here:'%s')",
-			    directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	dir = g_dir_open (directory, 0, NULL);
-	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	while ((filename = g_dir_read_name (dir)) != NULL) {
-		gboolean duplicate = FALSE;
-
-		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
-			continue;
-		}
-
-		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
-		
-		contact_id = log_get_contact_id_from_filename (filename_unescaped);
-		g_free (filename_unescaped);
-
-		if (!contact_id) {
-			continue;
-		}
-
-		contact = log_get_contact (account, contact_id);
-		g_free (contact_id);
-
-		if (!contact) {
-			continue;
-		}
-
-		for (l = contacts; l && !duplicate; l = l->next) {
-			if (gossip_contact_equal (l->data, contact)) {
-				duplicate = TRUE;
-			}
-		}
-
-		/* Avoid duplicates */
-		if (!duplicate) {
-			contacts = g_list_append (contacts, contact);
-		} else {
-			g_object_unref (contact);
-		}
-	}
-	
-	g_free (directory);
-	g_dir_close (dir);
-	
-	return contacts;
-}
-
-GList *
-gossip_log_get_chatrooms (GossipAccount *account)
-{
-	GList          *chatrooms = NULL;
-	GossipChatroom *chatroom;
-	gchar          *log_directory;
-	gchar          *directory;
-	const gchar    *account_id;
-	gchar          *account_id_escaped;
-	GDir           *dir;
-	const gchar    *filename;
-	gchar          *filename_unescaped;
-	GList          *l;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	if (log_check_dir (&log_directory)) {
-		DEBUG_MSG (("Log: No log directory exists"));
-		return NULL;
-	}
-
-	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
-	directory = g_build_path (G_DIR_SEPARATOR_S, 
-				  log_directory, 
-				  account_id_escaped,
-				  LOG_DIR_CHATROOMS,
-				  NULL);
-	g_free (account_id_escaped);
-	g_free (log_directory);
-	
-	if (!g_file_test (directory, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("Log: Log directory exists, but no account directory does (looking here:'%s')",
-			    directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	dir = g_dir_open (directory, 0, NULL);
-	if (!dir) {
-		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
-		g_free (directory);
-		return NULL;
-	}
-
-	while ((filename = g_dir_read_name (dir)) != NULL) {
-		gboolean duplicate = FALSE;
-
-		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
-			continue;
-		}
-
-		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
-		
-		chatroom = log_get_chatroom_from_filename (filename_unescaped);
-		g_free (filename_unescaped);
-
-		if (!chatroom) {
-			continue;
-		}
-
-		for (l = chatrooms; l && !duplicate; l = l->next) {
-			if (gossip_chatroom_equal_full (l->data, chatroom)) {
-				duplicate = TRUE;
-			}
-		}
-
-		/* Avoid duplicates */
-		if (!duplicate) {
-			chatrooms = g_list_append (chatrooms, chatroom);
-		} else {
-			g_object_unref (chatroom);
-		}
-	}
-	
-	g_free (directory);
-	g_dir_close (dir);
-	
-	return chatrooms;
-}
-
-GList *  
-gossip_log_get_messages (GossipLog   *log,
-			 const gchar *date)
-{
-	GossipLogPriv *priv;
-	GList         *messages;
-	gchar         *filename;
-
-	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
-
-	priv = GET_PRIV (log);
-
-	filename = log_get_filename_for_date (log, date);
-	
-	if (priv->type == GOSSIP_LOG_TYPE_CONTACT) {
-		messages = log_get_messages_for_contacts (log, filename); 
-	} else {
-		messages = log_get_messages_for_chatrooms (log, filename); 
-	}
-
-	g_free (filename);
-
-	return messages;
-}
-
-GList *
-gossip_log_get_dates (GossipLog *log)
-{
-	GossipLogPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_LOG (log), NULL);
-
-	priv = GET_PRIV (log);
-	
-	if (priv->type == GOSSIP_LOG_TYPE_CONTACT) {
-		return log_get_dates_for_contacts (log);
-	} else {
-		return log_get_dates_for_chatrooms (log);
-	}
-}
-
-gchar *
-gossip_log_get_date_readable (const gchar *date)
-{
-	gossip_time_t t;
-	
-	t = gossip_time_from_string_full (date, LOG_TIME_FORMAT);
-	return gossip_time_to_timestamp_full (t, "%a %d %b %Y");
-}
-
-/*
- * Contact functions 
- */
-void
-gossip_log_message_for_contact (GossipContact *contact,
-				GossipMessage *message,
-				gboolean       incoming)
-{
-	GossipLog *log;
-
-	log = gossip_log_lookup_for_contact (contact);
-	log_message (log, message, incoming);
-}
-
-gboolean
-gossip_log_exists_for_contact (GossipContact *contact)
-{
-	GossipLog *log;
-
-	log = gossip_log_lookup_for_contact (contact);
-	return log_exists (log);
-}
-
+#ifdef DEPRECATED
 void
 gossip_log_show_for_contact (GtkWidget     *window, 
 			     GossipContact *contact)
@@ -2150,30 +1693,323 @@ gossip_log_show_for_contact (GtkWidget     *window,
 
 	gdk_window_set_cursor (window->window, NULL);
 }
+#endif /* DEPRECATED */
 
 /*
  * Chatroom functions 
  */
+GList *
+gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
+{
+	GossipAccount  *account;
+	GList          *dates = NULL;
+	gchar          *date;
+	gchar          *log_directory;
+	gchar          *directory;
+	const gchar    *account_id;
+	gchar          *account_id_escaped;
+	const gchar    *chatroom_id;
+	gchar          *chatroom_id_escaped;
+	GDir           *dir;
+	const gchar    *filename;
+	const gchar    *p;
+
+	account = gossip_chatroom_get_account (chatroom);
+	
+	if (log_check_dir (&log_directory)) {
+		DEBUG_MSG (("Log: No log directory exists"));
+		return NULL;
+	}
+
+	account_id = gossip_account_get_id (account);
+	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+
+	chatroom_id = gossip_chatroom_get_id_str (chatroom);
+	chatroom_id_escaped = gnome_vfs_escape_host_and_path_string (chatroom_id);
+	
+	directory = g_build_path (G_DIR_SEPARATOR_S, 
+				  log_directory, 
+				  account_id_escaped,
+				  LOG_DIR_CHATROOMS,
+				  chatroom_id_escaped,
+				  NULL);
+
+	g_free (account_id_escaped);
+	g_free (chatroom_id_escaped);
+	g_free (log_directory);
+	
+	dir = g_dir_open (directory, 0, NULL);
+	if (!dir) {
+		DEBUG_MSG (("Log: Could not open directory:'%s'", directory));
+		g_free (directory);
+		return NULL;
+	}
+
+	DEBUG_MSG (("Log: Collating a list of dates in:'%s'", directory));
+
+	while ((filename = g_dir_read_name (dir)) != NULL) {
+		if (!g_str_has_suffix (filename, LOG_FILENAME_SUFFIX)) {
+			continue;
+		}
+
+		p = strstr (filename, LOG_FILENAME_SUFFIX);
+		date = g_strndup (filename, p - filename);
+		if (!date) {
+			continue;
+		}
+
+		dates = g_list_insert_sorted (dates, date, (GCompareFunc) strcmp);
+	}
+	
+	g_free (directory);
+	g_dir_close (dir);
+
+ 	DEBUG_MSG (("Log: Parsed %d dates", g_list_length (dates))); 
+
+	return dates;
+}
+
+GList *
+gossip_log_get_messages_for_chatroom (GossipChatroom *chatroom,
+				      const gchar    *date)
+{
+	GossipAccount    *account;
+	GossipContact    *own_contact;
+	gchar            *filename;
+	GList            *messages = NULL;
+	xmlParserCtxtPtr  ctxt;
+	xmlDocPtr         doc;
+	xmlNodePtr        log_node;
+	xmlNodePtr        node;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	filename = log_get_filename_by_date_for_chatroom (chatroom, date);
+
+	DEBUG_MSG (("Log: Attempting to parse filename:'%s'...", filename));
+
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		DEBUG_MSG (("Log: Filename:'%s' does not exist", filename));
+		g_free (filename);
+		return NULL;
+	}
+
+	/* Get own contact from log contact. */
+	account = gossip_chatroom_get_account (chatroom);
+	own_contact = gossip_log_get_own_contact (account);
+
+	/* Create parser. */
+ 	ctxt = xmlNewParserCtxt ();
+
+	/* Parse and validate the file. */
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
+	if (!doc) {
+		g_warning ("Failed to parse file:'%s'", filename);
+		g_free (filename);
+		xmlFreeParserCtxt (ctxt);
+		return NULL;
+	}
+
+	/* The root node, presets. */
+	log_node = xmlDocGetRootElement (doc);
+	if (!log_node) {
+		g_free (filename);
+		xmlFreeDoc (doc);
+		xmlFreeParserCtxt (ctxt);
+		return NULL;
+	}
+
+	/* Now get the messages. */
+	for (node = log_node->children; node; node = node->next) {
+		GossipMessage *message;
+		GossipContact *contact;
+		gchar         *time;
+		gossip_time_t  t;
+		gchar         *who;
+		gchar         *name;
+		gchar         *body;
+		gboolean       sent = FALSE;
+
+		if (strcmp (node->name, "message") != 0) {
+			continue;
+		}
+
+		who = xmlGetProp (node, "from");
+		if (!who) {
+			continue;
+		}
+
+		name = xmlGetProp (node, "nick");
+		if (!name) {
+			g_free (who);
+			continue;
+		}
+
+		/* Should we use type temporary or chatroom? */
+		contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
+						   account,
+						   who,
+						   name);
+		body = xmlNodeGetContent (node);
+		
+		time = xmlGetProp (node, "time");
+		t = gossip_time_from_string_full (time, "%Y%m%dT%H:%M:%S");
+
+		sent = gossip_contact_equal (contact, own_contact);
+		
+		if (sent) {			
+			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, contact);
+			gossip_message_set_sender (message, own_contact);
+		} else {
+			message = gossip_message_new (GOSSIP_MESSAGE_TYPE_CHAT_ROOM, own_contact);
+			gossip_message_set_sender (message, contact);
+		}
+		
+		gossip_message_set_body (message, body);
+		gossip_message_set_timestamp (message, t);
+		
+		messages = g_list_append (messages, message);
+
+		g_object_unref (contact);
+		
+		xmlFree (time);
+		xmlFree (who);
+		xmlFree (name);
+		xmlFree (body);
+	}
+	
+ 	DEBUG_MSG (("Log: Parsed %d messages", g_list_length (messages))); 
+
+	g_free (filename);
+	xmlFreeDoc (doc);
+	xmlFreeParserCtxt (ctxt);
+	
+	return messages;
+}
+
 void
 gossip_log_message_for_chatroom (GossipChatroom *chatroom,
 				 GossipMessage  *message,
 				 gboolean        incoming)
 {
-	GossipLog *log;
+	GossipAccount *account;
+	GossipContact *contact;
+	GossipContact *own_contact;
+        const gchar   *filename;
+	FILE          *file;
+	gchar         *timestamp;
+	gchar         *body;
+	gchar         *name;
+	gchar         *contact_id;
+	const gchar   *str; 
+	gboolean       new_file = FALSE;
+	gboolean       save_contact = FALSE;
 
-	log = gossip_log_lookup_for_chatroom (chatroom);
-	log_message (log, message, incoming);
+	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
+	contact = gossip_message_get_sender (message);
+
+	account = gossip_chatroom_get_account (chatroom);
+	own_contact = gossip_log_get_own_contact (account);
+
+	filename = log_get_filename_by_date_for_chatroom (chatroom, NULL);
+
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		file = g_fopen (filename, "w+");
+		if (file) {
+			g_fprintf (file, LOG_HEADER);
+		}
+
+		/* ONLY save the name when we create new files, we are
+		 * more efficient this way. 
+		 */
+		
+		new_file = TRUE;
+	} else {
+		file = g_fopen (filename, "r+");
+		if (file) {
+			fseek (file, - strlen (LOG_FOOTER), SEEK_END);
+		}
+	}
+
+	if (new_file || save_contact) {
+		GossipAccount *account;
+
+		account = gossip_contact_get_account (contact);
+		log_set_name (account, contact);
+	}
+
+	if (!file) {
+		return;
+	}
+
+	timestamp = log_get_timestamp_from_message (message);
+
+	/* Make sure we escape all data written */
+	str = gossip_message_get_body (message); 
+        if (str) {
+		body = log_urlify (str);
+	} else {
+		body = g_strdup ("");
+	}
+
+	str = gossip_contact_get_name (contact);
+	if (!str) {
+		name = g_strdup ("");
+	} else {
+		name = g_markup_escape_text (str, -1);
+	}
+
+	str = gossip_contact_get_id (contact);
+	if (!str) {
+		contact_id = g_strdup ("");
+	} else {
+		contact_id = g_markup_escape_text (str, -1);
+	}
+	
+	g_fprintf (file,
+		   "<message time='%s' from='%s' nick='%s'>"
+		   "%s"
+		   "</message>\n"
+		   LOG_FOOTER,
+		   timestamp, 
+		   contact_id,
+		   name,
+		   body);
+
+        fclose (file);
+
+	if (new_file) {
+		g_chmod (filename, LOG_FILE_CREATE_MODE);
+	}
+
+	g_free (timestamp);
+	g_free (body);
+	g_free (name);
+	g_free (contact_id);
+
+	log_handlers_notify_all (own_contact, NULL, chatroom, message);
+	g_object_unref (own_contact);
 }
 
 gboolean
 gossip_log_exists_for_chatroom (GossipChatroom *chatroom)
 {
-	GossipLog *log;
+	GList    *dates;
+	gboolean  exists;
 
-	log = gossip_log_lookup_for_chatroom (chatroom);
-	return log_exists (log);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
+
+	dates = gossip_log_get_dates_for_chatroom (chatroom);
+	exists = g_list_length (dates) > 0;
+
+	g_list_foreach (dates, (GFunc) g_free, NULL);
+	g_list_free (dates);
+
+	return exists;
 }
 
+#ifdef DEPRECATED 
 void
 gossip_log_show_for_chatroom (GtkWidget      *window,
 			      GossipChatroom *chatroom)
@@ -2197,6 +2033,7 @@ gossip_log_show_for_chatroom (GtkWidget      *window,
 
 	gdk_window_set_cursor (window->window, NULL);	
 }
+#endif /* DEPRECATED */
 
 /*
  * Searching
@@ -2204,13 +2041,15 @@ gossip_log_show_for_chatroom (GtkWidget      *window,
 GList *
 gossip_log_search_new (const gchar *text)
 {
-	GList       *files;
-	GList       *l;
-	const gchar *filename;
-	gchar       *text_casefold;
-	gchar       *contents;
-	gchar       *contents_casefold;
-	GList       *hits = NULL;
+	GossipSession        *session;
+	GossipAccountManager *manager;
+	GList                *files;
+	GList                *l;
+	const gchar          *filename;
+	gchar                *text_casefold;
+	gchar                *contents;
+	gchar                *contents_casefold;
+	GList                *hits = NULL;
 
 	g_return_val_if_fail (text != NULL, NULL);
 	g_return_val_if_fail (strlen (text) > 0, NULL);
@@ -2223,6 +2062,9 @@ gossip_log_search_new (const gchar *text)
 		DEBUG_MSG (("Log: Failed to retrieve all log files"));
 	}
 
+	session = gossip_app_get_session ();
+ 	manager = gossip_session_get_account_manager (session);
+
 	for (l = files; l; l = l->next) {
 		filename = l->data;
 
@@ -2234,19 +2076,29 @@ gossip_log_search_new (const gchar *text)
 			continue;
 		}
 		
+		/* FIXME: Handle chatrooms */
+		if (strstr (filename, LOG_DIR_CHATROOMS)) {
+			continue;
+		}
+
 		contents_casefold = g_utf8_casefold (contents, -1);
 		g_free (contents);
 
 		if (strstr (contents_casefold, text_casefold)) {
 			GossipLogSearchHit *hit;
+			GossipAccount      *account;
+			gchar              *account_id;
+			gchar              *contact_id;
+
+			account_id = log_get_account_id_from_filename (filename);
+			account = gossip_account_manager_find_by_id (manager, account_id);
+
+			contact_id = log_get_contact_id_from_filename (filename);
 			
 			hit = g_new0 (GossipLogSearchHit, 1);
 
-			hit->account_id = log_get_account_id_from_filename (filename);
-			hit->contact_id = log_get_contact_id_from_filename (filename);
-
-			hit->contact_name = log_get_contact_name_from_id (hit->account_id,
-									  hit->contact_id);
+			hit->account = account;
+			hit->contact = log_get_contact (account, contact_id);
 
 			hit->date = log_get_date_from_filename (filename);
 
@@ -2256,6 +2108,9 @@ gossip_log_search_new (const gchar *text)
 
 			DEBUG_MSG (("Log: Found text:'%s' in file:'%s' on date:'%s'...", 
 				    text, hit->filename, hit->date));
+
+			g_free (account_id);
+			g_free (contact_id);
 		}
 
 		g_free (contents_casefold);
@@ -2280,9 +2135,14 @@ gossip_log_search_free (GList *hits)
 	for (l = hits; l; l = l->next) {
 		hit = l->data;
 
-		g_free (hit->account_id);
-		g_free (hit->contact_id);
-		g_free (hit->contact_name);
+		if (hit->account) {
+			g_object_unref (hit->account);
+		}
+
+		if (hit->contact) {
+			g_object_unref (hit->contact);
+		}
+
 		g_free (hit->date);
 		g_free (hit->filename);
 
@@ -2292,28 +2152,20 @@ gossip_log_search_free (GList *hits)
 	g_list_free (hits);
 }
 
-const gchar *
-gossip_log_search_hit_get_account_id (GossipLogSearchHit *hit)
+GossipAccount *
+gossip_log_search_hit_get_account (GossipLogSearchHit *hit)
 {
 	g_return_val_if_fail (hit != NULL, NULL);
 	
-	return hit->account_id;
+	return hit->account;
 }
 
-const gchar *
-gossip_log_search_hit_get_contact_id (GossipLogSearchHit *hit)
+GossipContact *
+gossip_log_search_hit_get_contact (GossipLogSearchHit *hit)
 {
 	g_return_val_if_fail (hit != NULL, NULL);
 	
-	return hit->contact_id;
-}
-
-const gchar *
-gossip_log_search_hit_get_contact_name (GossipLogSearchHit *hit)
-{
-	g_return_val_if_fail (hit != NULL, NULL);
-	
-	return hit->contact_name;
+	return hit->contact;
 }
 
 const gchar *

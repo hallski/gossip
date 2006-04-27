@@ -1,3 +1,13 @@
+2006-04-27  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-log-window.c:
+	* src/gossip-log.[ch]:
+	* src/gossip-private-chat.c: Changed the logging directory
+	structure so that contacts have their own directory, this makes
+	things a little faster. Also cleaned up the code. After this
+	update, previous logs will not be recognised because the naming
+	convention will be different.
+
 2006-04-24  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c:
