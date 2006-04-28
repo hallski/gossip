@@ -1,5 +1,13 @@
 2006-04-28  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_message_handler),
+	(jabber_chatrooms_get_contact): Fixed group chat so that topics
+	are displayed in the topic entry when entering a room, not just
+	when they are changed while you are there.
+
+2006-04-28  Martyn Russell  <martyn@imendio.com>
+
 	* ui/main.glade: Use Ctrl+H to show/hide offline contacts instead
 	of Ctrl+O, fixes #340008 (Wouter Bolsterlee).
 

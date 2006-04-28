@@ -353,17 +353,11 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 
 	node = lm_message_node_get_child (m->node, "subject");
 	if (node) {
-		/* Note: I'm not sure if there is a better way to fix this? It
-		 * happens when the history is too old so the topic is just set
-		 * by the room itself, not a member.
-		 */
-		if (gossip_jid_get_resource (jid) != NULL) {
-			contact = jabber_chatrooms_get_contact (room, jid, NULL);
-			
-			g_signal_emit_by_name (chatrooms->jabber,
-					       "chatroom-topic-changed", 
-					       id, contact, node->value);
-		}
+		contact = jabber_chatrooms_get_contact (room, jid, NULL);
+		
+		g_signal_emit_by_name (chatrooms->jabber,
+				       "chatroom-topic-changed", 
+				       id, contact, node->value);
 	}
 	
 	gossip_jid_unref (jid);
@@ -472,6 +466,7 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 	GSList        *l;
 	GossipContact *c;
 	const gchar   *id;
+	const gchar   *name;
 
 	id = gossip_jid_get_full (jid);
 
@@ -491,10 +486,15 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 		*new_contact = TRUE;
 	}
 
+	name = gossip_jid_get_resource (jid);
+	if (!name) {
+		name = id;
+	}
+
 	c = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM, 
 				     gossip_contact_get_account (room->own_contact),
 				     id, 
-				     gossip_jid_get_resource (jid));
+				     name);
 	room->contacts = g_slist_prepend (room->contacts, c);
 
 	return c;
