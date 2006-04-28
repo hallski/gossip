@@ -1,3 +1,8 @@
+2006-04-28  Martyn Russell  <martyn@imendio.com>
+
+	* ui/main.glade: Use Ctrl+H to show/hide offline contacts instead
+	of Ctrl+O, fixes #340008 (Wouter Bolsterlee).
+
 2006-04-27  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log-window.c:

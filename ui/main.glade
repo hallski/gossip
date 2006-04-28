@@ -5991,7 +5991,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image292">
+			<widget class="GtkImage" id="image312">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -6011,7 +6011,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image293">
+			<widget class="GtkImage" id="image313">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -6037,7 +6037,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image294">
+			<widget class="GtkImage" id="image314">
 			  <property name="visible">True</property>
 			  <property name="pixbuf">gossip-message.png</property>
 			  <property name="xalign">0.5</property>
@@ -6057,7 +6057,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F3" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image295">
+			<widget class="GtkImage" id="image315">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -6091,7 +6091,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image296">
+			<widget class="GtkImage" id="image316">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -6116,7 +6116,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="label" translatable="yes">Show _Offline Contacts</property>
 		      <property name="use_underline">True</property>
 		      <property name="active">False</property>
-		      <accelerator key="O" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+		      <accelerator key="H" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 		    </widget>
 		  </child>
 
@@ -6182,7 +6182,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image297">
+			<widget class="GtkImage" id="image317">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -6215,7 +6215,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image298">
+			<widget class="GtkImage" id="image318">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
