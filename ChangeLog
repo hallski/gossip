@@ -1,5 +1,11 @@
 2006-04-28  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-notify.c:
+	* src/gossip-sound.c: Only act on presence updates from contact
+	list contacts not every tom, dick and harry.
+
+2006-04-28  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.c: 
 	* src/gossip-app.c: Connect ALL accounts unless one is
 	provided, NOT just those with auto-connect = TRUE (spotted by Paul

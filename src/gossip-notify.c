@@ -339,6 +339,10 @@ notify_contact_presence_updated_cb (GossipSession *session,
 {
 	GossipPresence *presence;
 
+	if (gossip_contact_get_type (contact) != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
+		return;
+	}
+
 	presence = gossip_contact_get_active_presence (contact);
 	if (!presence) {
 		if (g_hash_table_lookup (contact_states, contact)) {
