@@ -956,13 +956,13 @@ gossip_session_connect (GossipSession *session,
 
 	g_signal_emit (session, signals[CONNECTING], 0);
 
-	/* temporary */
+	/* Temporary */
 	if (!priv->presence) {
 		priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
 							   NULL);
 	}
 
-	/* connect one account if provided */
+	/* Connect one account if provided */
 	if (account) {
 		g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 		
@@ -970,7 +970,7 @@ gossip_session_connect (GossipSession *session,
 		return;
 	}
 
-	/* connect ALL accounts if no one account is specified */
+	/* Connect ALL accounts if no one account is specified */
 	g_hash_table_foreach (priv->accounts,
 			      (GHFunc) session_connect_foreach_cb,
 			      session);
@@ -1005,9 +1005,11 @@ session_connect_foreach_cb (GossipAccount  *account,
 			    GossipProtocol *protocol,
 			    GossipSession  *session)
 {
-	if (!gossip_account_get_auto_connect (account)) {
-		return;
-	}
+#if 0
+ 	if (!gossip_account_get_auto_connect (account)) { 
+ 		return; 
+ 	} 
+#endif
 
 	session_connect (session, account);
 }
@@ -1050,10 +1052,6 @@ session_disconnect (GossipSession *session,
 	
 	protocol = g_hash_table_lookup (priv->accounts, account);
 	
-/* 	if (!gossip_protocol_is_connected (protocol)) { */
-/* 		return; */
-/* 	} */
-
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTING], 0, account);
 	
 	gossip_protocol_logout (protocol);

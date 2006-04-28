@@ -847,9 +847,6 @@ app_connect_cb (GtkWidget *window,
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
-	/* currently we pass TRUE even though this is not a startup
-	   call to connect, but if we pass FALSE then *ALL* accounts
-	   will be connected. */
 	gossip_app_connect (NULL);
 }
 

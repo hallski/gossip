@@ -1,5 +1,12 @@
 2006-04-28  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-session.c: 
+	* src/gossip-app.c: Connect ALL accounts unless one is
+	provided, NOT just those with auto-connect = TRUE (spotted by Paul
+	Van Tilburg).
+
+2006-04-28  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber-chatrooms.c:
 	(jabber_chatrooms_message_handler),
 	(jabber_chatrooms_get_contact): Fixed group chat so that topics
