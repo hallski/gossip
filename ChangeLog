@@ -1,3 +1,29 @@
+2006-04-29  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c: Change mnemonic back to c, i is too
+	thin. Consistancy between different menus/widgets is not possible
+	anyway.
+
+	* src/gossip-log-window.c (log_window_search_populate): Don't
+	crash on empty search strings, just clear the search.
+	(log_window_chatrooms_get_messages): Protect against bad data.
+
+	* src/gossip-log.c (gossip_log_get_chatrooms): Don't accept old
+	files as chatroom logs.
+
+	* src/gossip-log-window.c (log_window_search_populate): Protect
+	against invalid data.
+
+	* src/gossip-log.c (gossip_log_handler_remove): Check if the
+	hash table has been created before using it, fixes a crash.
+	(log_get_all_log_files_for_account_dir): Don't try to traverse the
+	dir if it wasn't found, fixes a crash.
+	(log_get_all_log_files_for_chatroom_dir): Likewise.
+	(log_get_all_log_files_for_chatrooms_dir): Likewise.
+	(log_get_all_log_files_for_contact_dir): Likewise.
+	(gossip_log_get_dates_for_chatroom): Check for account being NULL,
+	can happen when there are old log files around.
+
 2006-04-28  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-notify.c:

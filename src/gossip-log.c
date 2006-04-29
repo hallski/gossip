@@ -232,6 +232,10 @@ gossip_log_handler_add_for_chatroom (GossipChatroom       *chatroom,
 void
 gossip_log_handler_remove (GossipLogMessageFunc func)
 {
+	if (!message_handlers) {
+		return;
+	}
+
 	g_hash_table_remove (message_handlers, func);
 }
 
@@ -456,6 +460,7 @@ log_get_all_log_files_for_chatroom_dir (const gchar  *chatroom_dir,
 	dir = g_dir_open (chatroom_dir, 0, NULL);
 	if (!dir) {
 		DEBUG_MSG (("Log: Could not open directory:'%s'", chatroom_dir));
+		return;
 	}
 	
 	while ((name = g_dir_read_name (dir)) != NULL) {
@@ -491,6 +496,7 @@ log_get_all_log_files_for_chatrooms_dir (const gchar  *chatrooms_dir,
 	dir = g_dir_open (chatrooms_dir, 0, NULL);
 	if (!dir) {
 		DEBUG_MSG (("Log: Could not open directory:'%s'", chatrooms_dir));
+		return;
 	}
 	
 	while ((name = g_dir_read_name (dir)) != NULL) {
@@ -513,6 +519,7 @@ log_get_all_log_files_for_contact_dir (const gchar  *contact_dir,
 	dir = g_dir_open (contact_dir, 0, NULL);
 	if (!dir) {
 		DEBUG_MSG (("Log: Could not open directory:'%s'", contact_dir));
+		return;
 	}
 	
 	while ((name = g_dir_read_name (dir)) != NULL) {
@@ -548,6 +555,7 @@ log_get_all_log_files_for_account_dir (const gchar  *account_dir,
 	dir = g_dir_open (account_dir, 0, NULL);
 	if (!dir) {
 		DEBUG_MSG (("Log: Could not open directory:'%s'", account_dir));
+		return;
 	}
 	
 	while ((name = g_dir_read_name (dir)) != NULL) {
@@ -1249,8 +1257,19 @@ gossip_log_get_chatrooms (GossipAccount *account)
 	DEBUG_MSG (("Log: Collating a list of chatrooms in:'%s'", directory));
 
 	while ((filename = g_dir_read_name (dir)) != NULL) {
+		gchar *full;
+
+		full = g_build_filename (directory, filename, NULL);
+		if (!g_file_test (full, G_FILE_TEST_IS_DIR)) {
+			g_free (full);
+			continue;
+		}
+
+		g_free (full);
+		
  		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
 		chatroom = log_get_chatroom_from_filename (account, filename_unescaped);
+
 		g_free (filename_unescaped);
 
 		if (!chatroom) {
@@ -1715,6 +1734,9 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 	const gchar    *p;
 
 	account = gossip_chatroom_get_account (chatroom);
+	if (!account) {
+		return NULL;
+	}
 	
 	if (log_check_dir (&log_directory)) {
 		DEBUG_MSG (("Log: No log directory exists"));

@@ -354,6 +354,11 @@ log_window_search_populate (GossipLogWindow *window,
 
 	gtk_list_store_clear (store);
 
+	if (strlen (search_criteria) == 0) {
+		/* Just clear the search. */
+		return;
+	}
+
 	hits = gossip_log_search_new (search_criteria);
 
 	for (l = hits; l; l = l->next) {
@@ -365,6 +370,11 @@ log_window_search_populate (GossipLogWindow *window,
 		account = gossip_log_search_hit_get_account (hit);
 		contact = gossip_log_search_hit_get_contact (hit);
 
+		/* Protect against invalid data (corrupt or old log files. */
+		if (!account || !contact) {
+			continue;
+		}
+		
 		date = gossip_log_search_hit_get_date (hit);
 		date_readable = gossip_log_get_date_readable (date);
 
@@ -1391,9 +1401,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	GList          *messages;
 	GList          *dates = NULL;
 	GList          *l;
-
 	const gchar    *date;
-
 	guint           year_selected;
 	guint           year;
 	guint           month;
@@ -1405,6 +1413,16 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 		return;
 	}
 
+	account = gossip_chatroom_get_account (chatroom);
+	if (!account) {
+		/* Protect against invalid data. */
+		DEBUG_MSG (("LogWindow: No account for the chatroom"));
+		return;
+	}
+	
+	/* Get own contact to know which messages are from me or the contact */
+	own_contact = gossip_log_get_own_contact (account); 
+	
 	/* Either use the supplied date or get the last */
 	date = date_to_show;
 	if (!date) {
@@ -1436,7 +1454,6 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 			if (year != year_selected || month != month_selected) {
 				continue;
 			}
-
 
 			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
 			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar_chatrooms), day);
@@ -1506,10 +1523,6 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	/* Turn off scrolling temporarily */
 	gossip_chat_view_scroll (window->chatview_search, FALSE);
 
-	/* Get own contact to know which messages are from me or the contact */
-	account = gossip_chatroom_get_account (chatroom);
-	own_contact = gossip_log_get_own_contact (account); 
-
 	/* Get messages */
 	messages = gossip_log_get_messages_for_chatroom (chatroom, date);
 
@@ -1554,7 +1567,6 @@ log_window_calendar_chatrooms_day_selected_cb (GtkWidget       *calendar,
 	guint  year;
 	guint  month;
 	guint  day;
-
 	gchar *date;
 
 	gtk_calendar_get_date (GTK_CALENDAR (calendar), &year, &month, &day);	
@@ -1578,7 +1590,6 @@ log_window_calendar_chatrooms_month_changed_cb (GtkWidget       *calendar,
 	GossipChatroom *chatroom;
 	guint           year_selected;
 	guint           month_selected;
-
 	GList          *dates;
 	GList          *l;
 
