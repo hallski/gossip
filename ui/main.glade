@@ -7236,7 +7236,7 @@ This name could be something associated with the service provider, for example, 
 				  <child>
 				    <widget class="GtkLabel" id="label_password">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">_Password:</property>
+				      <property name="label" translatable="yes">Pass_word:</property>
 				      <property name="use_underline">True</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -7574,7 +7574,7 @@ This name could be something associated with the service provider, for example, 
 			      <child>
 				<widget class="GtkLabel" id="label_port">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Por_t:</property>
+				  <property name="label" translatable="yes">_Port:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
