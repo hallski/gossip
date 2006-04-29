@@ -297,7 +297,7 @@ enum {
 #define GIF_CB(x)    ((GtkItemFactoryCallback)(x))
 
 static GtkItemFactoryEntry item_menu_items[] = {
-	{ N_("/_Contact Information"),
+	{ N_("/Contact Infor_mation"),
 	  NULL,
 	  GIF_CB (contact_list_item_menu_info_cb),
 	  ITEM_MENU_INFO,
@@ -2062,8 +2062,6 @@ contact_list_item_menu_rename_cb (gpointer   data,
 	
 	g_free (str);
 
-	gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-	
 	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
 		      "use-markup", TRUE,
 		      NULL);
@@ -2238,8 +2236,6 @@ contact_list_group_menu_rename_cb (gpointer   data,
 	
 	g_free (str);
 
-	gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-	
 	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
 		      "use-markup", TRUE,
 		      NULL);

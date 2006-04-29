@@ -46,10 +46,10 @@ struct _GossipSessionPriv {
 	GHashTable           *timers; /* connected time */
 };
 
-typedef struct {
-	gchar         *contact_id;
+struct FindAccount {
+	const gchar   *contact_id;
 	GossipAccount *account;
-} FindAccount;
+};
 
 struct CountAccounts {
 	GossipSession *session;
@@ -57,10 +57,15 @@ struct CountAccounts {
 	guint          disconnected;
 };
 
-typedef struct {
+struct GetAccounts {
 	GossipSession *session;
 	GList         *accounts;
-} GetAccounts;
+};
+
+struct ConnectData {
+	GossipSession *session;
+	gboolean       startup;
+};
 
 static void            gossip_session_class_init                 (GossipSessionClass   *klass);
 static void            gossip_session_init                       (GossipSession        *session);
@@ -103,13 +108,13 @@ static GossipProtocol *session_get_protocol                      (GossipSession 
 								  GossipContact        *contact);
 static void            session_get_accounts_foreach_cb           (GossipAccount        *account,
 								  GossipProtocol       *protocol,
-								  GetAccounts          *data);
+								  struct GetAccounts   *ga);
 static void            session_count_accounts_foreach_cb         (GossipAccount        *account,
 								  GossipProtocol       *protocol,
 								  struct CountAccounts *ca);
 static void            session_find_account_foreach_cb           (GossipAccount        *account,
 								  GossipProtocol       *protocol,
-								  FindAccount          *fa);
+								  struct FindAccount   *fa);
 static void            session_account_added_cb                  (GossipAccountManager *manager,
 								  GossipAccount        *account,
 								  GossipSession        *session);
@@ -120,7 +125,7 @@ static void            session_connect                           (GossipSession 
 								  GossipAccount        *account);
 static void            session_connect_foreach_cb                (GossipAccount        *account,
 								  GossipProtocol       *protocol,
-								  GossipSession        *session);
+								  struct ConnectData   *cd);
 static void            session_disconnect                        (GossipSession        *session,
 								  GossipAccount        *account);
 static void            session_disconnect_foreach_cb             (GossipAccount        *account,
@@ -712,39 +717,36 @@ gossip_session_get_account_manager (GossipSession *session)
 GList *
 gossip_session_get_accounts (GossipSession *session)
 {
-	GossipSessionPriv *priv;
-	GetAccounts       *data;
-	GList             *list;
+	GossipSessionPriv  *priv;
+	struct GetAccounts  ga;
+	GList              *list;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	
 	priv = GET_PRIV (session);
 
-	data = g_new0 (GetAccounts, 1);
-	data->session = g_object_ref (session);
+	ga.session = session;
+	ga.accounts = NULL;
 
 	g_hash_table_foreach (priv->accounts, 
 			      (GHFunc)session_get_accounts_foreach_cb,
-			      data);
+			      &ga);
 
-	list = data->accounts;
-
-	g_object_unref (data->session);
-	g_free (data);
+	list = ga.accounts;
 
 	return list;
 }
 
 static void
-session_get_accounts_foreach_cb (GossipAccount   *account,
-				 GossipProtocol  *protocol,
-				 GetAccounts     *data)
+session_get_accounts_foreach_cb (GossipAccount      *account,
+				 GossipProtocol     *protocol,
+				 struct GetAccounts *ga)
 {
 	GossipSessionPriv *priv;
 
-	priv = GET_PRIV (data->session);
+	priv = GET_PRIV (ga->session);
 
-	data->accounts = g_list_append (data->accounts, g_object_ref (account));
+	ga->accounts = g_list_append (ga->accounts, g_object_ref (account));
 }
 
 gdouble
@@ -889,37 +891,28 @@ GossipAccount *
 gossip_session_find_account (GossipSession *session,
 			     GossipContact *contact)
 {
-	GossipSessionPriv *priv;
-	GossipAccount     *account = NULL;
-	FindAccount       *fa;
+	GossipSessionPriv  *priv;
+	struct FindAccount  fa;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 	
 	priv = GET_PRIV (session);
 
-	fa = g_new0 (FindAccount, 1);
-	
-	fa->contact_id = g_strdup (gossip_contact_get_id (contact));
+	fa.contact_id = gossip_contact_get_id (contact);
+	fa.account = NULL;
 
 	g_hash_table_foreach (priv->accounts, 
 			      (GHFunc)session_find_account_foreach_cb,
-			      fa);
+			      &fa);
 
-	if (fa->account) {
-		account = fa->account;
-	}
-
-	g_free (fa->contact_id);
-	g_free (fa);
-
-	return account;
+	return fa.account;
 }
 
 static void
-session_find_account_foreach_cb (GossipAccount  *account,
-				 GossipProtocol *protocol,
-				 FindAccount    *fa)
+session_find_account_foreach_cb (GossipAccount      *account,
+				 GossipProtocol     *protocol,
+				 struct FindAccount *fa)
 {
 	if (gossip_protocol_find_contact (protocol, fa->contact_id)) {
 		fa->account = g_object_ref (account);
@@ -944,9 +937,11 @@ session_account_removed_cb (GossipAccountManager *manager,
 
 void
 gossip_session_connect (GossipSession *session,
-			GossipAccount *account)
+			GossipAccount *account,
+			gboolean       startup)
 {
-	GossipSessionPriv *priv;
+	GossipSessionPriv  *priv;
+	struct ConnectData  cd;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
@@ -970,10 +965,13 @@ gossip_session_connect (GossipSession *session,
 		return;
 	}
 
+	cd.session = session;
+	cd.startup = startup;
+
 	/* Connect ALL accounts if no one account is specified */
 	g_hash_table_foreach (priv->accounts,
 			      (GHFunc) session_connect_foreach_cb,
-			      session);
+			      &cd);
 }
 
 static void
@@ -1001,17 +999,16 @@ session_connect (GossipSession *session,
 }
 
 static void
-session_connect_foreach_cb (GossipAccount  *account,
-			    GossipProtocol *protocol,
-			    GossipSession  *session)
+session_connect_foreach_cb (GossipAccount      *account,
+			    GossipProtocol     *protocol,
+			    struct ConnectData *cd)
 {
-#if 0
- 	if (!gossip_account_get_auto_connect (account)) { 
+ 	if (cd->startup && 
+	    !gossip_account_get_auto_connect (account)) { 
  		return; 
  	} 
-#endif
 
-	session_connect (session, account);
+	session_connect (cd->session, account);
 }
 
 void

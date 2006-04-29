@@ -1,3 +1,18 @@
+2006-04-29  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-session.[ch]: 
+	* src/gossip-app.[ch]: 
+	* src/gossip-account-button.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-main.c: Fix auto-connect which I broke last night.
+	
+	* src/gossip-contact-list.c:
+	* ui/chat.glade: Use "Contact I_nformation" mnemonic.
+
+	* src/gossip-app.c: Fixed the accounts toolbar so that we hide it
+	properly if there is only one account left instead of showing it
+	with the separator.
+
 2006-04-29  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-list.c: Change mnemonic back to c, i is too

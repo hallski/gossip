@@ -1155,7 +1155,7 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 	if (gossip_session_is_connected (session, account)) {
 		gossip_session_disconnect (session, account);
 	} else {
-		gossip_session_connect (session, account);
+		gossip_session_connect (session, account, FALSE);
 	}
 
 	g_object_unref (account);

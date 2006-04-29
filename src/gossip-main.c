@@ -151,7 +151,7 @@ main (int argc, char *argv[])
 	gossip_app_create (account_manager);
 	
 	if (!no_connect) {
-		gossip_app_connect (account);
+		gossip_app_connect (account, TRUE);
 	}
 	
 	gtk_main ();

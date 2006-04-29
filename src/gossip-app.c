@@ -847,7 +847,7 @@ app_connect_cb (GtkWidget *window,
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
-	gossip_app_connect (NULL);
+	gossip_app_connect (NULL, FALSE);
 }
 
 static void
@@ -1471,7 +1471,8 @@ app_idle_check_cb (GossipApp *app)
  *
  */
 void
-gossip_app_connect (GossipAccount *specific_account)
+gossip_app_connect (GossipAccount *account,
+		    gboolean       startup)
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
@@ -1502,7 +1503,7 @@ gossip_app_connect (GossipAccount *specific_account)
 		return;
 	}
 	
-	gossip_session_connect (priv->session, specific_account);
+	gossip_session_connect (priv->session, account, startup);
 }
 
 /* Test hack to add support for disconnecting all accounts and then connect 
@@ -1554,7 +1555,7 @@ gossip_app_net_up (void)
 	for (l = tmp_account_list; l; l = l->next) {
 		GossipAccount *account = GOSSIP_ACCOUNT (l->data);
 		
-		gossip_session_connect (priv->session, account);
+		gossip_session_connect (priv->session, account, FALSE);
 		g_object_unref (account);
 	}
 
@@ -1919,24 +1920,33 @@ static void
 app_accounts_remove (GossipAccount *account)
 {
 	GossipAppPriv *priv;
+	GtkContainer  *container;
 	GList         *children;
 	GList         *l;
+	gboolean       remove_separator;
 
 	priv = app->priv;
 
 	DEBUG_MSG (("AppAccounts: Removing account with id:'%s'", 
 		   gossip_account_get_id (account)));
 
-	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
+	container = GTK_CONTAINER (priv->accounts_toolbar);
+	children = gtk_container_get_children (container);
+	remove_separator = g_list_length (children) == 3;
+
 	for (l = children; l; l = l->next) {
 		GossipAccount *this_account;
 
 		if (G_OBJECT_TYPE (l->data) != GOSSIP_TYPE_ACCOUNT_BUTTON) {
+			if (remove_separator) {
+				gtk_container_remove (container, l->data);
+			}
+
 			continue;
 		}
 		
 		this_account = gossip_account_button_get_account (l->data);
-		if (! gossip_account_equal (account, this_account)) {
+		if (!gossip_account_equal (account, this_account)) {
 			continue;
 		}
 
@@ -1944,8 +1954,7 @@ app_accounts_remove (GossipAccount *account)
 						      G_CALLBACK (app_accounts_account_notify_cb), 
 						      NULL);
 		
-		gtk_container_remove (GTK_CONTAINER (priv->accounts_toolbar), 
-				      l->data);
+		gtk_container_remove (container, l->data);
 	}
 	
 	g_list_free (children);
