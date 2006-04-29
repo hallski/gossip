@@ -43,7 +43,7 @@ typedef struct {
 	GtkWidget *window;
 
 	GtkWidget *treeview;
-	GtkWidget *notebook;
+	GtkWidget *vbox_details;
 
 	GtkWidget *button_remove;
 	GtkWidget *button_connect;
@@ -127,6 +127,13 @@ static void           accounts_dialog_entry_port_insert_text_cb (GtkEditable    
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_button_forget_clicked_cb  (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_button_add_clicked_cb     (GtkWidget             *button,
+								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_remove_response_cb        (GtkWidget             *dialog,
+								 gint                   response,
+								 GossipAccount         *account);
+static void           accounts_dialog_button_remove_clicked_cb  (GtkWidget             *button,
+								 GossipAccountsDialog  *dialog);
 static gboolean       accounts_dialog_foreach                   (GtkTreeModel          *model,
 								 GtkTreePath           *path,
 								 GtkTreeIter           *iter,
@@ -144,11 +151,6 @@ enum {
 	COL_AUTO_CONNECT,
 	COL_ACCOUNT_POINTER,
 	COL_COUNT
-};
-
-enum {
-	RESPONSE_ACCOUNT_ADD,
-	RESPONSE_ACCOUNT_REMOVE
 };
 
 static void
@@ -513,9 +515,9 @@ accounts_dialog_model_select_first (GossipAccountsDialog *dialog)
 	model = gtk_tree_view_get_model (view);
 	
 	if (!gtk_tree_model_get_iter_first (model, &iter)) {
-		gtk_widget_set_sensitive (dialog->notebook, FALSE);
+		gtk_widget_set_sensitive (dialog->vbox_details, FALSE);
 	} else {
-		gtk_widget_set_sensitive (dialog->notebook, TRUE);
+		gtk_widget_set_sensitive (dialog->vbox_details, TRUE);
 		
 		selection = gtk_tree_view_get_selection (view);
 		gtk_tree_selection_select_iter (selection, &iter);
@@ -654,7 +656,7 @@ accounts_dialog_model_selection_changed (GtkTreeSelection     *selection,
 
 	is_selection = gtk_tree_selection_get_selected (selection, &model, &iter);
 
-	gtk_widget_set_sensitive (dialog->notebook, is_selection);
+	gtk_widget_set_sensitive (dialog->vbox_details, is_selection);
 	gtk_widget_set_sensitive (dialog->button_remove, is_selection);
 	gtk_widget_set_sensitive (dialog->button_connect, is_selection);
 
@@ -1161,6 +1163,67 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 	g_object_unref (account);
 }
 
+static void
+accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
+				       GossipAccountsDialog *dialog)
+{
+	gossip_new_account_window_show (GTK_WINDOW (dialog->window));
+}
+
+static void
+accounts_dialog_remove_response_cb (GtkWidget     *dialog,
+				    gint           response,
+				    GossipAccount *account)
+{
+	gtk_widget_destroy (dialog);
+
+	if (response == GTK_RESPONSE_YES) {
+		GossipSession        *session;
+		GossipAccountManager *manager;
+
+		session = gossip_app_get_session ();
+		manager = gossip_session_get_account_manager (session);
+		
+		gossip_account_manager_remove (manager, account);
+		gossip_account_manager_store (manager);
+	}
+
+	g_object_unref (account);
+}
+
+static void
+accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
+					  GossipAccountsDialog *dialog)
+{
+	GossipAccount *account;
+	GtkWidget     *message_dialog;
+
+	account = accounts_dialog_model_get_selected (dialog);
+	
+	message_dialog = gtk_message_dialog_new 
+		(GTK_WINDOW (dialog->window), 
+		 GTK_DIALOG_DESTROY_WITH_PARENT,
+		 GTK_MESSAGE_QUESTION,
+		 GTK_BUTTONS_YES_NO,
+		 _("You are about to remove your %s account!\n"
+		   "Are you sure you want to proceed?"),
+		 gossip_account_get_name (account));
+
+	gtk_message_dialog_format_secondary_text 
+		(GTK_MESSAGE_DIALOG (message_dialog),
+		 _("Any associated conversations and chat rooms will NOT be "
+		   "removed if you decide to proceed.\n"
+		   "\n"
+		   "Should you decide to add the account back at a later time, "
+		   "they will still be available."));
+
+	g_signal_connect (message_dialog, "response",
+			  G_CALLBACK (accounts_dialog_remove_response_cb),
+			  account);
+
+	gtk_widget_show (message_dialog);
+}
+
 static gboolean
 accounts_dialog_foreach (GtkTreeModel         *model,
 			 GtkTreePath          *path,
@@ -1185,32 +1248,6 @@ accounts_dialog_response_cb (GtkWidget            *widget,
 			     gint                  response,
 			     GossipAccountsDialog *dialog)
 {
-	switch (response) {
-	case RESPONSE_ACCOUNT_ADD:
-		gossip_new_account_window_show (GTK_WINDOW (dialog->window));
-		return;
-
-	case RESPONSE_ACCOUNT_REMOVE: {
-		GossipSession        *session;
-		GossipAccountManager *manager;
-		GossipAccount        *account;
-		
-		session = gossip_app_get_session ();
-		manager = gossip_session_get_account_manager (session);
-		
-		account = accounts_dialog_model_get_selected (dialog);
-		
-		gossip_account_manager_remove (manager, account);
-		gossip_account_manager_store (manager);
-		
-		g_object_unref (account);
-		return;
-	}
-
-	default:
-		break;
-	}
-
 	gtk_widget_destroy (widget);
 }
 
@@ -1283,7 +1320,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "accounts_dialog", &dialog->window,
 				       "dialog-action_area", &bbox,
 				       "treeview", &dialog->treeview,
-				       "notebook", &dialog->notebook,
+				       "vbox_details", &dialog->vbox_details,
 				       "label_name", &label_name,
 				       "label_id", &label_id,
 				       "label_password", &label_password,
@@ -1327,6 +1364,8 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "checkbutton_connect", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      "button_forget", "clicked", accounts_dialog_button_forget_clicked_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
+			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
+			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);
@@ -1372,14 +1411,14 @@ gossip_accounts_dialog_show (GossipAccount *account)
 
 	g_object_unref (size_group);
 
-	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (bbox), 
-					    button_close, TRUE);
+/* 	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (bbox),  */
+/* 					    button_close, TRUE); */
 	
 	gtk_window_set_transient_for (GTK_WINDOW (dialog->window), 
 				      GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (dialog->window);
 
-	gtk_widget_set_sensitive (dialog->notebook, FALSE);
+	gtk_widget_set_sensitive (dialog->vbox_details, FALSE);
 
 	if (GOSSIP_IS_ACCOUNT (account)) {
 		/* if account was specified then we select it */

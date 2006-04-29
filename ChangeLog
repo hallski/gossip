@@ -1,5 +1,13 @@
 2006-04-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-accounts-dialog.c:
+	* ui/main.glade: Updated the accounts dialog to give it a slightly
+	better look and feel. Also added a confirmation dialog when
+	removing an account incase the button is accidentally pressed
+	since this is quite a serious step.
+
+2006-04-29  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.[ch]: 
 	* src/gossip-app.[ch]: 
 	* src/gossip-account-button.c:
