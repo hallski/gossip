@@ -41,8 +41,8 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
@@ -276,12 +276,15 @@ static GossipChatroom * jabber_chatroom_find                (GossipChatroomProvi
 							     GossipChatroomId         id);
 static void             jabber_chatroom_invite              (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id,
-							     const gchar             *contact_id,
-							     const gchar             *invite);
+							     GossipContact           *contact,
+							     const gchar             *reason);
 static void             jabber_chatroom_invite_accept       (GossipChatroomProvider  *provider,
 							     GossipChatroomJoinCb     callback,
-							     const gchar             *nickname,
-							     const gchar             *invite_id);
+							     GossipChatroomInvite    *invite,
+							     const gchar             *nickname);
+static void             jabber_chatroom_invite_decline      (GossipChatroomProvider  *provider,
+							     GossipChatroomInvite    *invite,
+							     const gchar             *reason);
 static GList *          jabber_chatroom_get_rooms           (GossipChatroomProvider  *provider);
 
 /* fts */
@@ -1550,13 +1553,21 @@ jabber_contact_add (GossipProtocol *protocol,
                     const gchar    *group,
                     const gchar    *message)
 {
-        GossipJabber     *jabber;
-        GossipJabberPriv *priv;
-	LmMessage        *m;
-        LmMessageNode    *node;
+	LmMessage          *m;
+        LmMessageNode      *node;
+        GossipJabber       *jabber;
+        GossipJabberPriv   *priv;
+	GossipJID          *jid;
+	GossipContact      *contact;
+	GossipContactType   type;
+	GossipSubscription  subscription;
+	gboolean            ask = TRUE;
 
         jabber = GOSSIP_JABBER (protocol);
         priv = GET_PRIV (jabber);
+
+	jid = gossip_jid_new (id);
+	contact = g_hash_table_lookup (priv->contacts, gossip_jid_get_without_resource (jid));
 
         /* Request subscription */
         m = lm_message_new_with_sub_type (id, LM_MESSAGE_TYPE_PRESENCE,
@@ -1565,25 +1576,50 @@ jabber_contact_add (GossipProtocol *protocol,
         lm_connection_send (priv->connection, m, NULL);
         lm_message_unref (m);
 
-        /* Add to roster */
-        m = lm_message_new_with_sub_type (NULL, LM_MESSAGE_TYPE_IQ,
-                                          LM_MESSAGE_SUB_TYPE_SET);
-        node = lm_message_node_add_child (m->node, "query", NULL);
-        lm_message_node_set_attributes (node,
-                                        "xmlns", XMPP_ROSTER_XMLNS, NULL);
-        node = lm_message_node_add_child (node, "item", NULL);
-        lm_message_node_set_attributes (node,
-                                        "jid", id,
-                                        "subscription", "none",
-                                        "ask", "subscribe",
-                                        "name", name,
-                                        NULL);
+	/* Add to roster */
+	m = lm_message_new_with_sub_type (NULL, LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
+
+	node = lm_message_node_add_child (m->node, "query", NULL);
+	lm_message_node_set_attributes (node,
+					"xmlns", XMPP_ROSTER_XMLNS, NULL);
+
+	node = lm_message_node_add_child (node, "item", NULL);
+
+	/* Only ask for subscription if we already have NONE */
+	if (contact) {
+		type = gossip_contact_get_type (contact);
+		subscription = gossip_contact_get_subscription (contact);
+		
+		ask &= type == GOSSIP_CONTACT_TYPE_TEMPORARY;
+		ask &= subscription != GOSSIP_SUBSCRIPTION_BOTH;
+	} else {
+		ask = FALSE;
+	}
+
+	if (ask) {
+		lm_message_node_set_attributes (node,
+						"jid", gossip_jid_get_without_resource (jid),
+						"subscription", "none",
+						"ask", "subscribe",
+						"name", name,
+						NULL);
+	} else {
+		/* Make sure we set the name incase we updated it */
+		lm_message_node_set_attributes (node,
+						"jid", gossip_jid_get_without_resource (jid),
+						"name", name,
+						NULL);
+	}
+
         if (group && strcmp (group, "") != 0) {
                 lm_message_node_add_child (node, "group", group);
         }
+	
+	lm_connection_send (priv->connection, m, NULL);
+	lm_message_unref (m);
 
-        lm_connection_send (priv->connection, m, NULL);
-        lm_message_unref (m);
+	gossip_jid_unref (jid);
 }
 
 static void
@@ -2045,15 +2081,16 @@ jabber_message_handler (LmMessageHandler *handler,
 			LmMessage        *m,
 			GossipJabber     *jabber)
 {
-	GossipJabberPriv *priv;
-	GossipMessage    *message;
-	const gchar      *from_str;
-	GossipContact    *from;
-	const gchar      *thread = NULL;
-	const gchar      *subject = NULL;
-	const gchar      *body = NULL;
-	LmMessageSubType  sub_type;
-	LmMessageNode    *node;
+	LmMessageNode        *node;
+	LmMessageSubType      sub_type;
+	GossipJabberPriv     *priv;
+	GossipMessage        *message;
+	const gchar          *from_str;
+	GossipContact        *from;
+	const gchar          *thread = NULL;
+	const gchar          *subject = NULL;
+	const gchar          *body = NULL;
+	GossipChatroomInvite *invite;
 
 	priv = GET_PRIV (jabber);
 	
@@ -2136,14 +2173,41 @@ jabber_message_handler (LmMessageHandler *handler,
 	if (node) {
 		subject = node->value;
 	}
+
+	invite = gossip_jabber_get_message_conference (jabber, m);
+	if (invite) {
+		GossipContact *invitor;
+		
+		invitor = gossip_chatroom_invite_get_invitor (invite);
+		
+		DEBUG_MSG (("Protocol: Chat room invitiation from:'%s' for room:'%s', reason:'%s'", 
+			    gossip_contact_get_id (invitor), 
+			    gossip_chatroom_invite_get_id (invite), 
+			    gossip_chatroom_invite_get_reason (invite)));
+		
+		/* We set the from to be the person that invited you,
+		 * not the chatroom that sent the request on their
+		 * behalf.
+		 */
+		from = invitor;
+		
+		/* We usually don't have a <body> element for the
+		 * chatroom invitations, so just set it to an empty
+		 * string. 
+		 */
+		body = "";
+	}
 	
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
 		body = node->value;
-	} else {
+	}
+
+	if (!body && !invite) {
 		/* If no body to the message, we ignore it since it
 		 * has no purpose now (see fixes #309912). 
 		 */
+
 		DEBUG_MSG (("Protocol: Dropping new message, no <body> element"));
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
@@ -2155,7 +2219,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	
 	message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
 				      priv->contact);
-	
+
 	gossip_message_set_sender (message, from);
 	gossip_message_set_body (message, body);
 	
@@ -2166,12 +2230,14 @@ jabber_message_handler (LmMessageHandler *handler,
 	if (thread) {
 		gossip_message_set_thread (message, thread);
 	}
+
+	if (invite) {
+		gossip_message_set_invite (message, invite); 
+		gossip_chatroom_invite_unref (invite);
+	}
 	
 	gossip_message_set_timestamp (message,
 				      gossip_jabber_get_message_timestamp (m));
-	
-	gossip_message_set_invite (message,
-				   gossip_jabber_get_message_conference (m));
 	
 	g_signal_emit_by_name (jabber, "new-message", message);
 	g_signal_emit_by_name (jabber, "composing", from, FALSE);
@@ -2457,7 +2523,7 @@ jabber_request_roster (GossipJabber *jabber,
 
 		g_object_set (contact, "type", GOSSIP_CONTACT_TYPE_CONTACTLIST, NULL);
 
-		/* groups */
+		/* Groups */
 		for (subnode = node->children; subnode; subnode = subnode->next) {
 			if (strcmp (subnode->name, "group") != 0) {
 				continue;
@@ -2473,19 +2539,16 @@ jabber_request_roster (GossipJabber *jabber,
 			gossip_contact_set_groups (contact, groups);
 		}
 
-		/* subscription */
+		/* Subscription */
 		subscription = lm_message_node_get_attribute (node, "subscription");
 		if (contact && subscription) {
 			GossipSubscription type;
 
 			if (strcmp (subscription, "remove") == 0) {
-				g_object_ref (contact);
-				g_hash_table_remove (priv->contacts, 
-						     gossip_contact_get_id (contact));
-				
 				g_signal_emit_by_name (jabber,
 						       "contact-removed", contact);
-				g_object_unref (contact);
+				g_hash_table_remove (priv->contacts, 
+						     gossip_contact_get_id (contact));
 				continue;
 			} else if (strcmp (subscription, "both") == 0) {
 				type = GOSSIP_SUBSCRIPTION_BOTH;
@@ -2500,7 +2563,7 @@ jabber_request_roster (GossipJabber *jabber,
 			gossip_contact_set_subscription (contact, type);
 		} 
 		
-		/* find out if any thing has updated */
+		/* Find out if any thing has updated */
 		name_updated = groups_updated = FALSE;
 
 		name = lm_message_node_get_attribute (node, "name");
@@ -2516,7 +2579,7 @@ jabber_request_roster (GossipJabber *jabber,
 		}
 
 		if (new_groups) {
-			/* does not get free'd */
+			/* Does not get free'd */
 			groups_updated = gossip_contact_set_groups (contact, new_groups);
 		}
 
@@ -2592,6 +2655,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->find            = jabber_chatroom_find;
 	iface->invite          = jabber_chatroom_invite;
 	iface->invite_accept   = jabber_chatroom_invite_accept;
+	iface->invite_decline  = jabber_chatroom_invite_decline;
 	iface->get_rooms       = jabber_chatroom_get_rooms;
 }
 
@@ -2711,25 +2775,26 @@ jabber_chatroom_find (GossipChatroomProvider *provider,
 static void
 jabber_chatroom_invite (GossipChatroomProvider *provider,
 			GossipChatroomId        id,
-			const gchar            *contact_id,
-			const gchar            *invite)
+			GossipContact          *contact,
+			const gchar            *reason)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (provider));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	gossip_jabber_chatrooms_invite (priv->chatrooms, id, contact_id, invite);
+	gossip_jabber_chatrooms_invite (priv->chatrooms, id, contact, reason);
 }
 
 static void
 jabber_chatroom_invite_accept (GossipChatroomProvider *provider,
 			       GossipChatroomJoinCb    callback,
-			       const gchar            *nickname,
-			       const gchar            *invite_id)
+			       GossipChatroomInvite   *invite,
+			       const gchar            *nickname)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -2741,8 +2806,26 @@ jabber_chatroom_invite_accept (GossipChatroomProvider *provider,
 
 	gossip_jabber_chatrooms_invite_accept (priv->chatrooms, 
 					       callback, 
-					       nickname, 
-					       invite_id);
+					       invite,
+					       nickname);
+}
+
+static void
+jabber_chatroom_invite_decline (GossipChatroomProvider *provider,
+				GossipChatroomInvite   *invite,
+				const gchar            *reason)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (provider));
+
+	jabber = GOSSIP_JABBER (provider);
+	priv = GET_PRIV (jabber);
+
+	gossip_jabber_chatrooms_invite_decline (priv->chatrooms, 
+						invite,
+						reason);
 }
 
 static GList *
@@ -2938,7 +3021,7 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 		tmp_new_item = TRUE;
 		
 		g_hash_table_insert (priv->contacts, 
-				     g_strdup (gossip_contact_get_id (contact)),
+				     g_strdup (gossip_jid_get_without_resource (jid)),
 				     g_object_ref (contact));
 		
 		if (get_vcard) {

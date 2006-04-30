@@ -1,3 +1,34 @@
+2006-04-30  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-provider.[ch]: 
+	* protocols/jabber/gossip-jabber-chatrooms.[ch]: 
+	* protocols/jabber/gossip-jabber.c: 
+	* src/gossip-chat-invite.c:
+	* src/gossip-chat-view.c: Update the chat invite/decline
+	code to use the MUC methods instead of old GC protocol. Added a
+	"decline" button for chat room invites, fixes #339655 (Keywan
+	Najafi Tonekaboni). 
+
+	* protocols/jabber/gossip-jabber.c: Fixed the way we add contacts
+	to the internal hash table, make sure they are added WITHOUT the
+	resource, find, subscription and contact removal functions were
+	broken because of this.
+	
+	* src/gossip-add-contact-window.c: If we successfully find the
+	other contact's VCard and nick name, fill it in to the name that
+	will be used on the roster (if not already edited by the user).
+
+	* src/gossip-contact-info-dialog.c: Don't unref the GossipContact
+	in the vcard response function, this was causing crashes when
+	quitting, fixes #332539 (Richard).
+	
+	* src/gossip-contact-list.c: 
+	* src/gossip-ui-utils.c:
+	* ui/pixmaps/gossip-pending.png:
+	* ui/svg/gossip-pending.svg: Added the pending icon for contacts
+	on the roster which are still waiting for subscription responses,
+	fixes #116787 (Jordi Mallach, Daniel Taylor).
+
 2006-04-29  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-accounts-dialog.c:

@@ -27,22 +27,22 @@
 typedef struct _GossipMessagePriv GossipMessagePriv;
 
 struct _GossipMessagePriv {
-	GossipContact     *recipient;
-	gchar             *resource;
+	GossipContact        *recipient;
+	gchar                *resource;
 	
-	GossipContact     *sender;
+	GossipContact        *sender;
 
-	gchar             *subject;
-	gchar             *body;
-	gchar             *thread;
+	gchar                *subject;
+	gchar                *body;
+	gchar                *thread;
 
-	gossip_time_t      timestamp;
+	gossip_time_t         timestamp;
 
-	gchar             *invite;
+	GossipChatroomInvite *invite;
 	
-	gboolean           request_composing;
+	gboolean              request_composing;
 
-	GossipMessageType  type;
+	GossipMessageType     type;
 };
 
 static void gossip_message_class_init (GossipMessageClass *class);
@@ -197,11 +197,16 @@ gossip_message_init (GossipMessage *message)
 	priv->recipient         = NULL;
 	priv->sender            = NULL;
 	priv->resource          = NULL;
+
 	priv->subject           = NULL;
 	priv->body              = NULL;
 	priv->thread            = NULL;
+
 	priv->timestamp         = gossip_time_get_current ();
+
 	priv->request_composing = FALSE;
+
+	priv->invite            = NULL;
 }
 
 static void
@@ -214,14 +219,20 @@ gossip_message_finalize (GObject *object)
 	if (priv->recipient) {
 		g_object_unref (priv->recipient);
 	}
-	g_free (priv->resource);
-	
+
 	if (priv->sender) {
 		g_object_unref (priv->sender);
 	}
 
+	g_free (priv->resource);
+
+	g_free (priv->subject);
 	g_free (priv->body);
 	g_free (priv->thread);
+
+	if (priv->invite) {
+		gossip_chatroom_invite_unref (priv->invite);
+	}
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -549,7 +560,7 @@ gossip_message_set_timestamp (GossipMessage *message,
 	}
 }
 
-const gchar *
+GossipChatroomInvite *
 gossip_message_get_invite (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
@@ -562,8 +573,8 @@ gossip_message_get_invite (GossipMessage *message)
 }
 
 void       
-gossip_message_set_invite (GossipMessage *message, 
-			   const gchar   *invite)
+gossip_message_set_invite (GossipMessage        *message, 
+			   GossipChatroomInvite *invite)
 {
 	GossipMessagePriv *priv;
 
@@ -571,10 +582,12 @@ gossip_message_set_invite (GossipMessage *message,
 	
 	priv = GET_PRIV (message);
 
-	g_free (priv->invite);
+	if (priv->invite) {
+		gossip_chatroom_invite_unref (priv->invite);
+	}
 
 	if (invite) {
-		priv->invite = g_strdup (invite);
+		priv->invite = gossip_chatroom_invite_ref (invite);
 	} else {
 		priv->invite = NULL;
 	}

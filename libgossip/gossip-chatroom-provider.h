@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gossip-chatroom.h"
+#include "gossip-contact.h"
 
 #define GOSSIP_TYPE_CHATROOM_PROVIDER           (gossip_chatroom_provider_get_type ())
 #define GOSSIP_CHATROOM_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER, GossipChatroomProvider))
@@ -74,12 +75,15 @@ struct _GossipChatroomProviderIface {
 					     GossipChatroomId        id);
 	void             (*invite)          (GossipChatroomProvider *provider,
 					     GossipChatroomId        id,
-					     const gchar            *contact_id,
-					     const gchar            *invite);
+					     GossipContact          *contact,
+					     const gchar            *reason);
 	void             (*invite_accept)   (GossipChatroomProvider *provider,
 					     GossipChatroomJoinCb    callback,
-					     const gchar            *nickname,
-					     const gchar            *invite_id);
+					     GossipChatroomInvite   *invite,
+					     const gchar            *nickname);
+	void             (*invite_decline)  (GossipChatroomProvider *provider,
+					     GossipChatroomInvite   *invite,
+					     const gchar            *reason);
 	GList *          (*get_rooms)       (GossipChatroomProvider *provider);
 };
 
@@ -108,12 +112,15 @@ GossipChatroom *
 							  GossipChatroomId        id);
 void         gossip_chatroom_provider_invite             (GossipChatroomProvider *provider,
 							  GossipChatroomId        id,
-							  const gchar            *contact_id,
-							  const gchar            *invite);
+							  GossipContact          *contact,
+							  const gchar            *reason);
 void         gossip_chatroom_provider_invite_accept      (GossipChatroomProvider *provider,
 							  GossipChatroomJoinCb    callback,
-							  const gchar            *nickname,
-							  const gchar            *invite_id);
+							  GossipChatroomInvite   *invite,
+							  const gchar            *nickname);
+void         gossip_chatroom_provider_invite_decline     (GossipChatroomProvider *provider,
+							  GossipChatroomInvite   *invite,
+							  const gchar            *reason);
 
 GList *      gossip_chatroom_provider_get_rooms          (GossipChatroomProvider *provider);
 

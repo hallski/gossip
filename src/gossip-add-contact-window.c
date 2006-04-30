@@ -31,7 +31,6 @@
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
 
-
 typedef struct {
 	GtkWidget   *window;
 	GtkWidget   *druid;
@@ -70,12 +69,10 @@ typedef struct {
 	guint        idle_complete;
 } GossipAddContact;
 
-
 enum {
 	COL_NAME,
 	NUM_OF_COLS
 };
-
 
 enum {
 	COL_SYS_IMAGE,
@@ -84,7 +81,6 @@ enum {
 	COL_SYS_PROTOCOL,
 	COL_SYS_COUNT
 };
-
 
 static void           add_contact_window_setup_systems                (GList            *accounts,
 								       GossipAddContact *window);
@@ -122,7 +118,6 @@ static void           add_contact_window_destroy                      (GtkWidget
 								       GossipAddContact *window);
 static void           add_contact_window_cancel                       (GtkWidget        *unused,
 								       GossipAddContact *window);
-
 
 static void
 add_contact_window_setup_systems (GList            *accounts,
@@ -215,13 +210,14 @@ add_contact_window_complete_group_idle (GossipAddContact *window)
 	return FALSE;
 }
 
-
 static void
 add_contact_window_vcard_handler (GossipResult       result,
 				  GossipVCard       *vcard,
 				  GossipAddContact  *window)
 {
-	gchar       *text;
+	gchar    *text;
+	gpointer  p;
+	gboolean  changed;
 
 	const gchar *str = NULL;
 	const gchar *no_info = _("No information is available for this contact.");
@@ -233,12 +229,19 @@ add_contact_window_vcard_handler (GossipResult       result,
                 return;
         }
 
+	p = g_object_get_data (G_OBJECT (window->two_nick_entry), "changed");
+	changed = GPOINTER_TO_INT (p);
+
 	/* name */
 	str = gossip_vcard_get_name (vcard);
 	if (str && g_utf8_strlen (str, -1) > 0) {
 		gtk_widget_show (window->two_name_label);
 		gtk_widget_show (window->two_name_stub_label);
 		gtk_label_set_text (GTK_LABEL (window->two_name_label), str);
+		
+		if (!changed) {
+			gtk_entry_set_text (GTK_ENTRY (window->two_nick_entry), str);
+		}
 	} else {
 		gtk_widget_hide (window->two_name_label);
 		gtk_widget_hide (window->two_name_stub_label);
@@ -321,6 +324,7 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 	GList                *group_strings = NULL;
 	gint                  changed;
 	gchar                *str;
+	gpointer              p;
 	
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (window->one_system_combobox));
 	gtk_combo_box_get_active_iter (GTK_COMBO_BOX (window->one_system_combobox) , &iter);
@@ -328,16 +332,15 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 	id = gtk_entry_get_text (GTK_ENTRY (window->one_id_entry));
 	gtk_label_set_text (GTK_LABEL (window->two_id_label), id);
 
-	changed = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (window->two_nick_entry),
-						      "changed"));
+	p = g_object_get_data (G_OBJECT (window->two_nick_entry), "changed");
+	changed = GPOINTER_TO_INT (p);
                                         
-	/* if the nick has NOT been changed */
+	/* If the nick has NOT been changed */
 	if (!changed) {
-		/* set up name */
 		gtk_entry_set_text (GTK_ENTRY (window->two_nick_entry), id);
 	}
 
-	/* vcard */
+	/* VCard */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (window->one_accounts_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
@@ -377,7 +380,7 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 
 	gtk_entry_set_text (GTK_ENTRY (window->two_group_entry), "");
 
-	/* set focus and buttons up */
+	/* Set focus and buttons up */
 	gtk_widget_grab_focus (window->two_nick_entry);
 
 	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),

@@ -30,12 +30,12 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/*#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+/* #define DEBUG_MSG(x) x */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
-#define JOIN_TIMEOUT       20000
+#define XMPP_MUC_USER_XMLNS "http://jabber.org/protocol/muc#user"
 
-#define JOIN_MSG_ID_PREFIX "gc_join_"
+#define JOIN_TIMEOUT        20000
 
 struct _GossipJabberChatrooms {
 	GossipJabber          *jabber;
@@ -527,7 +527,7 @@ jabber_chatrooms_join_timeout_cb (JabberChatroom *room)
 	chatrooms = room->chatrooms;
 		
 	if (room->callback != NULL) {
-		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Calling back...", id));
+		DEBUG_MSG (("ProtocolChatrooms: ID[%d] Calling back... (timed out)", id));
 		(room->callback) (GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
 				  GOSSIP_CHATROOM_JOIN_TIMED_OUT, 
 				  id, room->user_data);
@@ -628,7 +628,7 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
                 lm_message_node_add_child (m->node, "show", show);
 	}
 
-        id_str = g_strdup_printf (JOIN_MSG_ID_PREFIX "%d", id);
+        id_str = g_strdup_printf ("muc_join_%d", id);
         lm_message_node_set_attribute (m->node, "id", id_str);
         g_free (id_str);
 
@@ -988,38 +988,43 @@ gossip_jabber_chatrooms_find (GossipJabberChatrooms *chatrooms,
 void 
 gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 				GossipChatroomId       id,
-				const gchar           *contact_id,
-				const gchar           *invite)
+				GossipContact         *contact,
+				const gchar           *reason)
 {
 	LmMessage      *m;
-	LmMessageNode  *n;
+	LmMessageNode  *parent;
+	LmMessageNode  *node;
 	JabberChatroom *room;
 
 	g_return_if_fail (chatrooms != NULL);
-	g_return_if_fail (contact_id != NULL);
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	room = (JabberChatroom *) g_hash_table_lookup (chatrooms->room_id_hash, 
-						       GINT_TO_POINTER (id));
+	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
+						      GINT_TO_POINTER (id));
+
 	if (!room) {
 		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
-	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Inviting contact:'%s'", 
-		   id, contact_id));
+	DEBUG_MSG (("ProtocolChatrooms: ID[%d] Invitation to contact:'%s' from:'%s'", 
+		    id, 
+		    gossip_contact_get_id (contact), 
+		    gossip_contact_get_id (room->own_contact)));
 
-	m = lm_message_new (contact_id,
+	m = lm_message_new (gossip_jid_get_without_resource (room->jid),
 			    LM_MESSAGE_TYPE_MESSAGE);
-
-	if (invite) {
-		lm_message_node_add_child (m->node, "body", invite); 
-	}
-	
-	n = lm_message_node_add_child (m->node, "x", NULL);
-	lm_message_node_set_attributes (n, 
-					"jid", gossip_jid_get_without_resource (room->jid),
-					"xmlns", "jabber:x:conference",
+	lm_message_node_set_attributes (m->node, 
+					"from", gossip_contact_get_id (room->own_contact), 
 					NULL);
+
+	parent = lm_message_node_add_child (m->node, "x", NULL);
+	lm_message_node_set_attributes (parent, "xmlns", XMPP_MUC_USER_XMLNS, NULL);
+
+	node = lm_message_node_add_child (parent, "invite", NULL);
+	lm_message_node_set_attributes (node, "to", gossip_contact_get_id (contact), NULL);
+
+	lm_message_node_add_child (node, "reason", reason);
 
 	lm_connection_send (chatrooms->connection, m, NULL);
 	lm_message_unref (m);
@@ -1028,28 +1033,38 @@ gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 void 
 gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
 				       GossipChatroomJoinCb   callback,
-				       const gchar           *nickname,
-				       const gchar           *invite_id)
+				       GossipChatroomInvite  *invite,
+				       const gchar           *nickname)
 {
 	GossipChatroom *chatroom;
+	GossipContact  *contact;
+	GossipAccount  *account;
 	gchar          *room = NULL;
+	const gchar    *id;
 	const gchar    *server;
 
-	g_return_if_fail (invite_id != NULL);
+	g_return_if_fail (chatrooms != NULL);
+	g_return_if_fail (invite != NULL);
 	g_return_if_fail (callback != NULL);
 
-	server = strstr (invite_id, "@");
+	id = gossip_chatroom_invite_get_id (invite);
+	contact = gossip_chatroom_invite_get_invitor (invite);
+
+	server = strstr (id, "@");
 
 	g_return_if_fail (server != NULL);
 	g_return_if_fail (nickname != NULL);
 	
 	if (server) {
-		room = g_strndup (invite_id, server - invite_id);
+		room = g_strndup (id, server - id);
 		server++;
 	}
 
+ 	account = gossip_contact_get_account (contact);
+
 	chatroom = g_object_new (GOSSIP_TYPE_CHATROOM, 
 				 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
+				 "account", account,
 				 "server", server,
 				 "name", room,
 				 "room", room,
@@ -1063,6 +1078,44 @@ gossip_jabber_chatrooms_invite_accept (GossipJabberChatrooms *chatrooms,
 
 	g_object_unref (chatroom);
 	g_free (room);
+}
+
+void 
+gossip_jabber_chatrooms_invite_decline (GossipJabberChatrooms *chatrooms,
+					GossipChatroomInvite  *invite,
+					const gchar           *reason)
+{
+	LmMessage     *m;
+	LmMessageNode *n;
+	GossipContact *own_contact;
+	GossipContact *contact;
+	const gchar   *id;
+
+	g_return_if_fail (chatrooms != NULL);
+	g_return_if_fail (invite != NULL);
+
+	own_contact = gossip_jabber_get_own_contact (chatrooms->jabber);
+	contact = gossip_chatroom_invite_get_invitor (invite);
+	id = gossip_chatroom_invite_get_id (invite);
+
+	DEBUG_MSG (("ProtocolChatrooms: Invitation decline to:'%s' into room:'%s'", 
+		    gossip_contact_get_id (contact), id));
+
+	m = lm_message_new (id, LM_MESSAGE_TYPE_MESSAGE);
+	lm_message_node_set_attributes (m->node, 
+					"from", gossip_contact_get_id (own_contact), 
+					NULL);
+
+	n = lm_message_node_add_child (m->node, "x", NULL);
+	lm_message_node_set_attributes (n, "xmlns", XMPP_MUC_USER_XMLNS, NULL);
+
+	n = lm_message_node_add_child (n, "decline", NULL);
+	lm_message_node_set_attributes (n, "to", gossip_contact_get_id (contact), NULL);
+
+	n = lm_message_node_add_child (n, "reason", reason);
+
+	lm_connection_send (chatrooms->connection, m, NULL);
+	lm_message_unref (m);
 }
 
 GList * 

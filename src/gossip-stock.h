@@ -26,8 +26,11 @@
 #define GOSSIP_STOCK_BUSY                "gossip-busy"
 #define GOSSIP_STOCK_AWAY                "gossip-away"
 #define GOSSIP_STOCK_EXT_AWAY            "gossip-extended-away"
+#define GOSSIP_STOCK_PENDING             "gossip-pending"
+
 #define GOSSIP_STOCK_MESSAGE             "gossip-message"
 #define GOSSIP_STOCK_TYPING              "gossip-typing"
+
 
 #define GOSSIP_STOCK_CONTACT_INFORMATION "vcard_16"
 

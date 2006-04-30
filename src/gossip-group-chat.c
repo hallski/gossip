@@ -837,9 +837,9 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 			   GossipMessage          *message,
 			   GossipGroupChat        *chat)
 {
-	GossipGroupChatPriv *priv;
-	GossipChatroom      *chatroom;
-	const gchar         *invite;
+	GossipGroupChatPriv  *priv;
+	GossipChatroom       *chatroom;
+	GossipChatroomInvite *invite;
 
 	priv = GET_PRIV (chat);
 

@@ -59,12 +59,15 @@ GossipChatroom *
 							    GossipChatroomId       id);
 void           gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id,
-							    const gchar           *contact_id,
-							    const gchar           *invite);
+							    GossipContact         *contact,
+							    const gchar           *reason);
 void           gossip_jabber_chatrooms_invite_accept       (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomJoinCb   callback,
-							    const gchar           *nickname,
-							    const gchar           *invite);
+							    GossipChatroomInvite  *invite,
+							    const gchar           *nickname);
+void           gossip_jabber_chatrooms_invite_decline      (GossipJabberChatrooms *chatrooms,
+							    GossipChatroomInvite  *invite,
+							    const gchar           *reason);
 GList *        gossip_jabber_chatrooms_get_rooms           (GossipJabberChatrooms *chatrooms);
 void           gossip_jabber_chatrooms_set_presence        (GossipJabberChatrooms *chatrooms,
 							    GossipPresence        *presence);

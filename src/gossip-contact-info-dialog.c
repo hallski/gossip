@@ -264,7 +264,6 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	const gchar             *str;
 	
 	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
-	g_object_unref (contact);
 	
 	if (!dialog) {
 		return;

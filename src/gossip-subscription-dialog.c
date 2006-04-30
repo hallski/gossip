@@ -33,7 +33,6 @@
 #include "gossip-subscription-dialog.h"
 #include "gossip-app.h"
 
-
 typedef struct {
 	GtkWidget      *dialog;
 	GtkWidget      *who_label;
@@ -52,7 +51,6 @@ typedef struct {
 	GossipVCard    *vcard;
 
 } GossipSubscriptionDialog;
-
 
 static void subscription_dialog_protocol_connected_cb    (GossipSession      *session,
 							  GossipAccount      *account,
@@ -75,7 +73,6 @@ static void subscription_dialog_vcard_cb                 (GossipResult        re
 static void subscription_dialog_request_dialog_cb        (GtkWidget          *dialog,
 							  gint                response,
 							  GossipSubscriptionDialog   *data);
-
 
 void
 gossip_subscription_dialog_init (GossipSession *session)
@@ -144,10 +141,11 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 		      NULL);
 	g_free (str);
 
-	gossip_event_manager_add (gossip_app_get_event_manager (),
-				  event, 
-				  (GossipEventActivatedFunction)subscription_dialog_event_activated_cb,
-				  G_OBJECT (protocol));
+	gossip_event_manager_add 
+		(gossip_app_get_event_manager (),
+		 event, 
+		 (GossipEventActivatedFunction) subscription_dialog_event_activated_cb,
+		 G_OBJECT (protocol));
 }
 
 static void
@@ -342,12 +340,8 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 				       gint                      response,
 				       GossipSubscriptionDialog *dialog)
 {
-	gboolean add_user;
-
 	g_return_if_fail (GOSSIP_IS_PROTOCOL (dialog->protocol));
 	g_return_if_fail (GOSSIP_IS_CONTACT (dialog->contact));
-
-	add_user = (gossip_contact_get_type (dialog->contact) == GOSSIP_CONTACT_TYPE_TEMPORARY);
 
 	if (response == GTK_RESPONSE_YES ||
 	    response == GTK_RESPONSE_NO) {
@@ -358,7 +352,7 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 						  dialog->contact, 
 						  subscribe);
 
-		if (subscribe && add_user) {
+		if (subscribe) {
 			GtkWidget   *group_entry;
 			const gchar *name;
 			const gchar *group;

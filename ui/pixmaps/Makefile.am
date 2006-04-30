@@ -1,19 +1,20 @@
 imagedir = $(datadir)/gossip
 
-image_DATA =			\
-	gossip-available.png    \
-	gossip-away.png		\
-	gossip-busy.png		\
-	gossip-extended-away.png \
-	gossip-message.png	\
-	gossip-group-message.png \
-	gossip-offline.png	\
-	gossip-typing.png	\
-	channel-old4.png	\
-	my-user_48.png		\
-	query_48.png		\
-	watermark.png		\
-	vcard_16.png		\
+image_DATA =				\
+	gossip-offline.png		\
+	gossip-available.png    	\
+	gossip-busy.png			\
+	gossip-away.png			\
+	gossip-extended-away.png 	\
+	gossip-pending.png 		\
+	gossip-message.png		\
+	gossip-typing.png		\
+	gossip-group-message.png 	\
+	channel-old4.png		\
+	my-user_48.png			\
+	query_48.png			\
+	watermark.png			\
+	vcard_16.png			\
 	vcard_48.png
 
 icondir = $(datadir)/icons/hicolor/48x48/apps

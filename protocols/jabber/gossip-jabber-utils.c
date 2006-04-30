@@ -20,6 +20,7 @@
 
 #include "string.h"
 
+#include "gossip-jabber.h"
 #include "gossip-jabber-utils.h"
 #include "gossip-jid.h"
 
@@ -96,30 +97,43 @@ gossip_jabber_get_message_timestamp (LmMessage *m)
 	return gossip_time_from_tm (tm);
 }
 
-const gchar *
-gossip_jabber_get_message_conference (LmMessage *m)
+GossipChatroomInvite *
+gossip_jabber_get_message_conference (GossipJabber *jabber,
+				      LmMessage    *m)
 {
-	LmMessageNode *node;
-	const gchar   *xmlns;
-	const gchar   *conference = NULL;
+	LmMessageNode        *node;
+	GossipChatroomInvite *invite;
+	GossipContact        *contact;
+	const gchar          *contact_id;
+	const gchar          *id;
+	const gchar          *reason;
 
 	g_return_val_if_fail (m != NULL, NULL);
 	g_return_val_if_fail (m->node != NULL, NULL);
 	g_return_val_if_fail (m->node->children != NULL, NULL);
 	
-	for (node = m->node->children; node && node->name; node = node->next) {
-		if (strcmp (node->name, "x") != 0) {
-			continue;
-		}
+	node = lm_message_node_find_child (m->node, "invite");
+	if (!node) {
+		return NULL;
+	}
 
-		xmlns = lm_message_node_get_attribute (node, "xmlns");
-		if (xmlns && strcmp (xmlns, "jabber:x:conference") == 0) {
-			conference = lm_message_node_get_attribute 
-				(node, "jid");
-		}
-        }
+	contact_id = lm_message_node_get_attribute (node, "from");
+	contact = gossip_jabber_get_contact_from_jid (jabber, 
+						      contact_id, 
+						      NULL,
+						      TRUE);
 
-	return conference;
+	id = lm_message_node_get_attribute (m->node, "from");
+
+	node = lm_message_node_find_child (node, "reason");
+	if (node) {
+		reason = lm_message_node_get_value (node);
+	}
+
+	invite = gossip_chatroom_invite_new (contact, id, reason);
+	g_object_unref (contact);
+
+	return invite;
 }
 
 gboolean

@@ -44,8 +44,8 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
-#define DEBUG_MSG(x)  
-/*  #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
 #define TIMESTAMP_INTERVAL 300
@@ -209,6 +209,8 @@ static void       chat_view_insert_text_with_emoticons (GtkTextBuffer           
 							const gchar              *str);
 static gboolean   chat_view_is_scrolled_down           (GossipChatView           *view);
 static void       chat_view_invite_accept_cb           (GtkWidget                *button,
+							gpointer                  user_data);
+static void       chat_view_invite_decline_cb          (GtkWidget                *button,
 							gpointer                  user_data);
 static void       chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
 							GossipChatroomJoinResult  result,
@@ -1216,13 +1218,19 @@ chat_view_invite_accept_cb (GtkWidget *button,
 	GossipAccount          *account;
 	GossipContact          *contact;
 	GossipChatroomProvider *provider;
+	GossipChatroomInvite   *invite;
+	GtkWidget              *other_button;
 	const gchar            *nickname;
-	const gchar            *invite;
+	const gchar            *reason;
 
 	invite = g_object_get_data (G_OBJECT (button), "invite");
-	contact = g_object_get_data (G_OBJECT (button), "contact");
+	other_button = g_object_get_data (G_OBJECT (button), "other_button");
 
 	gtk_widget_set_sensitive (button, FALSE);
+	gtk_widget_set_sensitive (other_button, FALSE);
+
+	contact = gossip_chatroom_invite_get_invitor (invite);
+	reason = gossip_chatroom_invite_get_reason (invite);
 
 	session = gossip_app_get_session ();
 	account = gossip_contact_get_account (contact);
@@ -1231,8 +1239,36 @@ chat_view_invite_accept_cb (GtkWidget *button,
 
 	gossip_chatroom_provider_invite_accept (provider,
 						chat_view_invite_join_cb,
-						nickname,
-						invite);
+						invite,
+						nickname);
+}
+
+static void
+chat_view_invite_decline_cb (GtkWidget *button,
+			     gpointer   user_data)
+{
+	GossipSession          *session;
+	GossipAccount          *account;
+	GossipContact          *contact;
+	GossipChatroomProvider *provider;
+	GossipChatroomInvite   *invite;
+	GtkWidget              *other_button;
+	const gchar            *reason;
+
+	invite = g_object_get_data (G_OBJECT (button), "invite");
+	other_button = g_object_get_data (G_OBJECT (button), "other_button");
+
+	gtk_widget_set_sensitive (button, FALSE);
+	gtk_widget_set_sensitive (other_button, FALSE);
+
+	contact = gossip_chatroom_invite_get_invitor (invite);
+
+	session = gossip_app_get_session ();
+	account = gossip_contact_get_account (contact);
+	provider = gossip_session_get_chatroom_provider (session, account);
+
+	reason = _("Your invitation has been declined");
+	gossip_chatroom_provider_invite_decline (provider, invite, reason);
 }
 
 static void
@@ -1424,18 +1460,22 @@ void
 gossip_chat_view_append_invite (GossipChatView *view,
 				GossipMessage  *message)
 {
-	GossipChatViewPriv *priv;
-	GossipContact      *sender;
-	const gchar        *invite;
-	const gchar        *body;
-	GtkTextChildAnchor *anchor;
-	GtkTextIter         iter;
-	GtkWidget          *widget;
-	const gchar        *used_msg;
-	const gchar        *used_invite;
-	gchar              *str;
-	gboolean            bottom;
-	const gchar        *tag;
+	GossipChatViewPriv   *priv;
+	GossipContact        *sender;
+	GossipChatroomInvite *invite;
+	const gchar          *body;
+	GtkTextChildAnchor   *anchor;
+	GtkTextIter           iter;
+	GtkWidget            *button_accept;
+	GtkWidget            *button_decline;
+	const gchar          *used_id;
+	const gchar          *used_reason;
+	const gchar          *id;
+	const gchar          *reason;
+	gchar                *str;
+	gboolean              bottom;
+	const gchar          *tag;
+
 
 	priv = GET_PRIV (view);
 
@@ -1449,56 +1489,87 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	sender = gossip_message_get_sender (message);
 	invite = gossip_message_get_invite (message);
-	body = gossip_message_get_body (message);
-		
+
 	chat_view_maybe_append_date_and_time (view, message);
 
-	if (body && body[0]) {
-		used_msg = body;
+	reason = gossip_chatroom_invite_get_reason (invite);
+
+	if (reason && strlen (reason) > 0) {
+		used_reason = reason;
 	} else {
-		used_msg = _("You have been invited to join a chat conference.");
+		used_reason = _("You have been invited to join a chat conference.");
 	}
 
 	/* Don't include the invite in the chat window if it is part of the
 	 * actual request - some chat clients send this and it looks weird
 	 * repeated.
 	 */
-	if (strstr (body, invite)) {
-		used_invite = NULL;
+	id = gossip_chatroom_invite_get_id (invite);
+
+	if (!body || strstr (body, id)) {
+		used_id = NULL;
 	} else {
-		used_invite = invite;
+		used_id = id;
 	}
 
 	str = g_strdup_printf ("\n%s\n%s%s%s%s\n",
-			       used_msg,
-			       used_invite ? "(" : "",
-			       used_invite ? used_invite : "",
-			       used_invite ? ")" : "",
-			       used_invite ? "\n" : "");
+			       used_reason,
+			       used_id ? "(" : "",
+			       used_id ? used_id : "",
+			       used_id ? ")" : "",
+			       used_id ? "\n" : "");
 	chat_view_append_text (view, str, tag);
 	g_free (str);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+
 	anchor = gtk_text_buffer_create_child_anchor (priv->buffer, &iter);
 
-	widget = gtk_button_new_with_label (_("Accept"));
-	g_object_set_data_full (G_OBJECT (widget), "invite",
-				g_strdup (invite), 
-				g_free);
- 	g_object_set_data_full (G_OBJECT (widget), "contact",
- 				g_object_ref (sender), 
+	button_accept = gtk_button_new_with_label (_("Accept"));
+	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
+					   button_accept,
+					   anchor);
+
+	gtk_widget_show (button_accept);
+
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  " ",
+						  1,
+						  tag,
+						  NULL);
+
+	anchor = gtk_text_buffer_create_child_anchor (priv->buffer, &iter);
+
+	button_decline = gtk_button_new_with_label (_("Decline"));
+	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
+					   button_decline,
+					   anchor);
+
+	gtk_widget_show (button_decline);
+
+	/* Set up data */
+	g_object_set_data_full (G_OBJECT (button_accept), "invite",
+				gossip_chatroom_invite_ref (invite), 
+				(GDestroyNotify) gossip_chatroom_invite_unref);
+ 	g_object_set_data_full (G_OBJECT (button_accept), "other_button",
+ 				g_object_ref (button_decline), 
 				g_object_unref);
 
-	g_signal_connect (widget,
-			  "clicked",
+	g_signal_connect (button_accept, "clicked",
 			  G_CALLBACK (chat_view_invite_accept_cb),
 			  NULL);
 
-	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view),
-					   widget,
-					   anchor);
+	g_object_set_data_full (G_OBJECT (button_decline), "invite",
+				gossip_chatroom_invite_ref (invite), 
+				(GDestroyNotify) gossip_chatroom_invite_unref);
+ 	g_object_set_data_full (G_OBJECT (button_decline), "other_button",
+ 				g_object_ref (button_accept), 
+				g_object_unref);
 
-	gtk_widget_show_all (widget);
+	g_signal_connect (button_decline, "clicked",
+			  G_CALLBACK (chat_view_invite_decline_cb),
+			  NULL);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,

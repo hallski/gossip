@@ -21,16 +21,19 @@
 
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-time.h>
+#include <libgossip/gossip-chatroom.h>
 
 /* utils */
-const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence *presence);
-GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar    *str);
-gossip_time_t       gossip_jabber_get_message_timestamp    (LmMessage      *m);
-const gchar *       gossip_jabber_get_message_conference   (LmMessage      *m);
-gboolean            gossip_jabber_get_message_is_event     (LmMessage      *m);
-gboolean            gossip_jabber_get_message_is_composing (LmMessage      *m);
-gchar *             gossip_jabber_get_name_to_use          (const gchar    *jid_str,
-							    const gchar    *nickname,  
-							    const gchar    *full_name);
+const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence  *presence);
+GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar     *str);
+gossip_time_t       gossip_jabber_get_message_timestamp    (LmMessage       *m);
+GossipChatroomInvite *
+                    gossip_jabber_get_message_conference   (GossipJabber    *jabber,
+							    LmMessage       *m);
+gboolean            gossip_jabber_get_message_is_event     (LmMessage       *m);
+gboolean            gossip_jabber_get_message_is_composing (LmMessage       *m);
+gchar *             gossip_jabber_get_name_to_use          (const gchar     *jid_str,
+							    const gchar     *nickname,
+							    const gchar     *full_name);
 
 #endif /* __GOSSIP_JABBER_UTILS_H__ */

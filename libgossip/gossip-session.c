@@ -1348,8 +1348,9 @@ gossip_session_remove_contact (GossipSession *session,
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
         g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	
-	/* get the activate resource, needed to be able to lock the
-	   chat against a certain resource */
+	/* Get the activate resource, needed to be able to lock the
+	 * chat against a certain resource.
+	 */
 
 	priv = GET_PRIV (session);
 

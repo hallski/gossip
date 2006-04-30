@@ -843,9 +843,9 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 {
 	GossipPrivateChatPriv *priv;
 	GossipContact         *sender;
+	GossipChatroomInvite  *invite;
 	const gchar           *resource;
 	const gchar           *subject;
-	const gchar           *invite;
 	
         g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
         g_return_if_fail (GOSSIP_IS_MESSAGE (message));

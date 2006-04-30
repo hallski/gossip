@@ -28,6 +28,7 @@ static GtkStockItem stock_items[] = {
 	{ GOSSIP_STOCK_BUSY,                    NULL },
 	{ GOSSIP_STOCK_AWAY,                    NULL },
 	{ GOSSIP_STOCK_EXT_AWAY,                NULL },    
+	{ GOSSIP_STOCK_PENDING,                 NULL },
 	{ GOSSIP_STOCK_MESSAGE,                 NULL },
 	{ GOSSIP_STOCK_TYPING,                  NULL },
 	{ GOSSIP_STOCK_CONTACT_INFORMATION,     NULL },

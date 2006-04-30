@@ -251,6 +251,15 @@ notify_new_message (GossipEventManager *event_manager,
 
 	contact = gossip_message_get_sender (message);
 
+	body = gossip_message_get_body (message);
+	len = g_utf8_strlen (body, -1);
+	
+	if (len < 1) {
+		DEBUG_MSG (("Notify: Ignoring new message from:'%s', no message content", 
+			    gossip_contact_get_id (contact)));
+		return NULL;
+	}
+
 	DEBUG_MSG (("Notify: Setting up notification for new message from:'%s'", 
 		   gossip_contact_get_id (contact)));
 
@@ -259,8 +268,6 @@ notify_new_message (GossipEventManager *event_manager,
 	title = g_strdup_printf (_("New message from %s"), 
 				 gossip_contact_get_name (contact));
 
-	body = gossip_message_get_body (message);
-	len = g_utf8_strlen (body, -1);
 	len = MIN (len, NOTIFY_MESSAGE_MAX_LEN);
 	str = g_markup_printf_escaped ("%*s", len, body);
 
@@ -395,12 +402,15 @@ notify_event_added_cb (GossipEventManager *event_manager,
 		 */
 		if (! g_hash_table_lookup (message_notifications, contact)) {
 			notify = notify_new_message (event_manager, message);
-			g_hash_table_insert (message_notifications,
-					     contact,
-					     g_object_ref (event));
-  			g_hash_table_insert (event_notifications,   
-  					     notify,   
-  					     g_object_ref (event));  
+			
+			if (notify) {
+				g_hash_table_insert (message_notifications,
+						     contact,
+						     g_object_ref (event));
+				g_hash_table_insert (event_notifications,   
+						     notify,   
+						     g_object_ref (event));  
+			}
 		}
 	}
 }

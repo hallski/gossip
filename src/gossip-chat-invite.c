@@ -255,26 +255,25 @@ chat_invite_dialog_response_cb (GtkWidget      *dialog,
 				gint            response, 
 				ChatInviteData *cid) 
 {
-	const gchar *invite;
-
 	if (response == GTK_RESPONSE_OK) {
 		GossipSession          *session;
 		GossipAccount          *account;
 		GossipChatroomProvider *provider;
+		const gchar            *reason;
 
 		session = gossip_app_get_session ();
 		account = gossip_contact_get_account (cid->contact);
 		provider = gossip_session_get_chatroom_provider (session, account);
 
-		invite = gtk_entry_get_text (GTK_ENTRY (cid->entry));
+		reason = gtk_entry_get_text (GTK_ENTRY (cid->entry));
 
 		/* NULL uses the other end (in their language) */
-		invite = (strlen (invite) > 0) ? invite : NULL;
+		reason = (strlen (reason) > 0) ? reason : NULL;
 
 		gossip_chatroom_provider_invite (provider,
 						 cid->id,
-						 gossip_contact_get_id (cid->contact),
-						 invite);
+						 cid->contact,
+						 reason);
 	}
 	
 	g_object_unref (cid->contact);

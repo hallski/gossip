@@ -25,6 +25,7 @@
 
 #include "gossip-contact.h"
 #include "gossip-time.h"
+#include "gossip-chatroom.h"
 
 #define GOSSIP_TYPE_MESSAGE         (gossip_message_get_gtype ())
 #define GOSSIP_MESSAGE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_MESSAGE, GossipMessage))
@@ -51,36 +52,40 @@ typedef enum {
 } GossipMessageType;
 
 GType             gossip_message_get_gtype               (void) G_GNUC_CONST;
-GossipMessage *   gossip_message_new                     (GossipMessageType  type,
-							  GossipContact     *to);
-GossipMessageType gossip_message_get_type                (GossipMessage     *message);
-GossipContact *   gossip_message_get_recipient           (GossipMessage     *message);
-void              gossip_message_set_recipient           (GossipMessage     *message,
-							  GossipContact     *contact);
-const gchar *     gossip_message_get_explicit_resource   (GossipMessage     *message);
-void              gossip_message_set_explicit_resource   (GossipMessage     *message,
-							  const gchar       *resource);
-GossipContact *   gossip_message_get_sender              (GossipMessage     *message);
-void              gossip_message_set_sender              (GossipMessage     *message,
-							  GossipContact     *contact);
-const gchar *     gossip_message_get_subject             (GossipMessage     *message);
-void              gossip_message_set_subject             (GossipMessage     *message,
-							  const gchar       *subject);
-const gchar *     gossip_message_get_body                (GossipMessage     *message);
-void              gossip_message_set_body                (GossipMessage     *message,
-							  const gchar       *body);
-const gchar *     gossip_message_get_thread              (GossipMessage     *message);
-void              gossip_message_set_thread              (GossipMessage     *message,
-							  const gchar       *thread);
+GossipMessage *   gossip_message_new                     (GossipMessageType     type,
+							  GossipContact        *to);
+GossipMessageType gossip_message_get_type                (GossipMessage        *message);
+GossipContact *   gossip_message_get_recipient           (GossipMessage        *message);
+void              gossip_message_set_recipient           (GossipMessage        *message,
+							  GossipContact        *contact);
+const gchar *     gossip_message_get_explicit_resource   (GossipMessage        *message);
+void              gossip_message_set_explicit_resource   (GossipMessage        *message,
+							  const gchar          *resource);
+GossipContact *   gossip_message_get_sender              (GossipMessage        *message);
+void              gossip_message_set_sender              (GossipMessage        *message,
+							  GossipContact        *contact);
+const gchar *     gossip_message_get_subject             (GossipMessage        *message);
+void              gossip_message_set_subject             (GossipMessage        *message,
+							  const gchar          *subject);
+const gchar *     gossip_message_get_body                (GossipMessage        *message);
+void              gossip_message_set_body                (GossipMessage        *message,
+							  const gchar          *body);
+const gchar *     gossip_message_get_thread              (GossipMessage        *message);
+void              gossip_message_set_thread              (GossipMessage        *message,
+							  const gchar          *thread);
+
+
 
 /* What return value should we have here? */ 
-gossip_time_t     gossip_message_get_timestamp           (GossipMessage     *message);
-void              gossip_message_set_timestamp           (GossipMessage     *message,
-							  gossip_time_t      timestamp);
-const gchar *     gossip_message_get_invite              (GossipMessage     *message);
-void              gossip_message_set_invite              (GossipMessage     *message,
-							  const gchar       *conference);
-void              gossip_message_request_composing       (GossipMessage     *message);
-gboolean          gossip_message_is_requesting_composing (GossipMessage     *message);
+gossip_time_t     gossip_message_get_timestamp           (GossipMessage        *message);
+void              gossip_message_set_timestamp           (GossipMessage        *message,
+							  gossip_time_t         timestamp);
+
+GossipChatroomInvite *
+                  gossip_message_get_invite              (GossipMessage        *message); 
+void              gossip_message_set_invite              (GossipMessage        *message,
+							  GossipChatroomInvite *invite);
+void              gossip_message_request_composing       (GossipMessage        *message);
+gboolean          gossip_message_is_requesting_composing (GossipMessage        *message);
 
 #endif /* __GOSSIP_MESSAGE_H__ */

@@ -2203,7 +2203,7 @@ contact_list_item_menu_remove_cb (gpointer   data,
 	}
 
 	g_object_unref (contact);
-}
+} 
 
 static void
 contact_list_group_menu_rename_cb (gpointer   data,

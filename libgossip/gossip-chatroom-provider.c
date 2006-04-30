@@ -27,7 +27,7 @@
 #include "gossip-chatroom-provider.h"
 #include "libgossip-marshal.h"
 
-static void  chatroom_provider_base_init (gpointer g_class);
+static void chatroom_provider_base_init (gpointer g_class);
 
 enum {
 	CHATROOM_JOINED,
@@ -271,39 +271,53 @@ gossip_chatroom_provider_find (GossipChatroomProvider *provider,
 void
 gossip_chatroom_provider_invite (GossipChatroomProvider *provider,
 				 GossipChatroomId        id,
-				 const gchar            *contact_id,
-				 const gchar            *invite)
+				 GossipContact          *contact,
+				 const gchar            *reason)
 {
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (id > 0);
-	g_return_if_fail (contact_id != NULL);
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	/* invite can be NULL */
-
+	/* The invite reason can be NULL */
 	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite) {
 		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite (provider,
 								       id,
-								       contact_id, 
-								       invite);
+								       contact, 
+								       reason);
 	}
 }
 
 void
 gossip_chatroom_provider_invite_accept (GossipChatroomProvider *provider,
 					GossipChatroomJoinCb    callback,
-					const gchar            *nickname,
-					const gchar            *invite_id)
+					GossipChatroomInvite   *invite,
+					const gchar            *nickname)
 {
 	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
 	g_return_if_fail (callback != NULL);
+	g_return_if_fail (invite != NULL);
 	g_return_if_fail (nickname != NULL);
-	g_return_if_fail (invite_id != NULL);
 
 	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite_accept) {
 		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite_accept (provider,
 									      callback,
-									      nickname,
-									      invite_id);
+									      invite,
+									      nickname);
+	}
+}
+
+void
+gossip_chatroom_provider_invite_decline (GossipChatroomProvider *provider,
+					 GossipChatroomInvite   *invite,
+					 const gchar            *reason)
+{
+	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
+	g_return_if_fail (invite != NULL);
+
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite_decline) {
+		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite_decline (provider,
+									       invite,
+									       reason);
 	}
 }
 
