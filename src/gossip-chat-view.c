@@ -1489,6 +1489,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	sender = gossip_message_get_sender (message);
 	invite = gossip_message_get_invite (message);
+	body = gossip_message_get_body (message);
 
 	chat_view_maybe_append_date_and_time (view, message);
 

@@ -106,7 +106,7 @@ gossip_jabber_get_message_conference (GossipJabber *jabber,
 	GossipContact        *contact;
 	const gchar          *contact_id;
 	const gchar          *id;
-	const gchar          *reason;
+	const gchar          *reason = NULL;
 
 	g_return_val_if_fail (m != NULL, NULL);
 	g_return_val_if_fail (m->node != NULL, NULL);
