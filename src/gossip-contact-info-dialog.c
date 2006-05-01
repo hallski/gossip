@@ -264,6 +264,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	const gchar             *str;
 	
 	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
+	g_object_unref (contact);
 	
 	if (!dialog) {
 		return;
@@ -499,13 +500,11 @@ contact_info_dialog_destroy_cb (GtkWidget               *widget,
 	if (dialog->contact_signal_handler) {
 		g_signal_handler_disconnect (gossip_app_get_session (), 
 					     dialog->contact_signal_handler);
-		g_object_unref (dialog->contact);
 	}
 
 	if (dialog->presence_signal_handler) {
 		g_signal_handler_disconnect (gossip_app_get_session (), 
 					     dialog->presence_signal_handler);
-		g_object_unref (dialog->contact);
 	}
 
 	g_hash_table_remove (contact_info_dialogs, dialog->contact);

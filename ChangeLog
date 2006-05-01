@@ -1,3 +1,11 @@
+2006-05-01  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-info-dialog.c: Fixed some loose ends that I
+	missed yesterday for #332539.
+
+	* src/gossip-ui-utils.c: Show the GOSSIP_STOCK_PENDING icon when
+	subscription is not BOTH and not FROM (instead of just BOTH).
+
 2006-04-30  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-provider.[ch]: 

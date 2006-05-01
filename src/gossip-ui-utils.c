@@ -643,7 +643,8 @@ gossip_pixbuf_for_presence (GossipPresence *presence)
 GdkPixbuf *  
 gossip_pixbuf_for_contact (GossipContact *contact)
 {
-	GossipPresence *presence;
+	GossipPresence     *presence;
+	GossipSubscription  subscription;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 
 			      gossip_pixbuf_offline ());
@@ -654,7 +655,10 @@ gossip_pixbuf_for_contact (GossipContact *contact)
 		return gossip_pixbuf_for_presence (presence);
 	}
 
-	if (gossip_contact_get_subscription (contact) != GOSSIP_SUBSCRIPTION_BOTH) {
+	subscription = gossip_contact_get_subscription (contact);
+
+	if (subscription != GOSSIP_SUBSCRIPTION_BOTH && 
+	    subscription != GOSSIP_SUBSCRIPTION_TO) {
 		return gossip_pixbuf_from_stock (GOSSIP_STOCK_PENDING, 
 						 GTK_ICON_SIZE_MENU);
 	}
