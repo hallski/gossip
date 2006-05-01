@@ -1468,14 +1468,11 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	GtkTextIter           iter;
 	GtkWidget            *button_accept;
 	GtkWidget            *button_decline;
-	const gchar          *used_id;
-	const gchar          *used_reason;
 	const gchar          *id;
 	const gchar          *reason;
-	gchar                *str;
 	gboolean              bottom;
 	const gchar          *tag;
-
+	GString              *s;
 
 	priv = GET_PRIV (view);
 
@@ -1495,10 +1492,23 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	reason = gossip_chatroom_invite_get_reason (invite);
 
-	if (reason && strlen (reason) > 0) {
-		used_reason = reason;
-	} else {
-		used_reason = _("You have been invited to join a chat conference.");
+	s = g_string_new ("");
+	if (body && strlen (body) > 0) {
+		s = g_string_append (s, body);
+	}
+
+	/* Make sure the reason is not the body (or in the body) */
+	if (reason && strlen (reason) > 0 && !strstr (body, reason)) {
+		if (s->len > 0) {
+			s = g_string_append_c (s, '\n');
+		}
+
+		s = g_string_append (s, reason);
+	}
+	
+	if (s->len < 1) {
+		s = g_string_append 
+			(s, _("You have been invited to join a chat conference."));
 	}
 
 	/* Don't include the invite in the chat window if it is part of the
@@ -1507,20 +1517,14 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	 */
 	id = gossip_chatroom_invite_get_id (invite);
 
-	if (!body || strstr (body, id)) {
-		used_id = NULL;
-	} else {
-		used_id = id;
+	if (!strstr (s->str, id)) {
+		g_string_append_printf (s, "\n(%s)\n", id);
 	}
 
-	str = g_strdup_printf ("\n%s\n%s%s%s%s\n",
-			       used_reason,
-			       used_id ? "(" : "",
-			       used_id ? used_id : "",
-			       used_id ? ")" : "",
-			       used_id ? "\n" : "");
-	chat_view_append_text (view, str, tag);
-	g_free (str);
+	s = g_string_prepend_c (s, '\n');
+	
+	chat_view_append_text (view, s->str, tag);
+	g_string_free (s, TRUE);
 
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 

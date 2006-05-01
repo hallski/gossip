@@ -1017,7 +1017,7 @@ gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 	lm_message_node_set_attributes (m->node, 
 					"from", gossip_contact_get_id (room->own_contact), 
 					NULL);
-
+	
 	parent = lm_message_node_add_child (m->node, "x", NULL);
 	lm_message_node_set_attributes (parent, "xmlns", XMPP_MUC_USER_XMLNS, NULL);
 

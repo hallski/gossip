@@ -7,6 +7,8 @@ NEWS in 0.11:
 icon when the pointer is hovering over it. Clicking the 'x' will still
 close the tab. Comments relating to this change can be found against
 the original bug #322030 (Martyn).  
+- Fixed #340259, Make sure the chatroom address is displayed in
+chatroom invitations (Keywan Najafi Tonekaboni).
 - Fixed #339655, Added a "decline" button for chat room invitations
 (Keywan Najafi Tonekaboni).  
 - Fixed #116787, Use a pending icon for subscribing contacts (images

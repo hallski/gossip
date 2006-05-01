@@ -1,5 +1,17 @@
 2006-05-01  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber.c: 
+	* src/gossip-chat-view.c: Some minor changes to the way the invite
+	text is presented in the chat window. This is a sticky area
+	because of older GC ways of doing this and newer MUC API it means
+	the body CAN be the same as the reason and either could contain
+	the room id. Hopefully, this update means that you should always
+	get the reason/body and the room id but never duplicate
+	information, fixes #340259 (Keywan Najafi Tonekaboni).
+
+2006-05-01  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-info-dialog.c: Fixed some loose ends that I
 	missed yesterday for #332539.
 

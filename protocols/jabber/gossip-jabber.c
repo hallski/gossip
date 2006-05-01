@@ -2191,9 +2191,9 @@ jabber_message_handler (LmMessageHandler *handler,
 		 */
 		from = invitor;
 		
-		/* We usually don't have a <body> element for the
-		 * chatroom invitations, so just set it to an empty
-		 * string. 
+		/* Make sure we have some sort of body for
+		 * invitations, since it is not necessary but should
+		 * really exist.
 		 */
 		body = "";
 	}
