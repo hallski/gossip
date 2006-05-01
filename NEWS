@@ -30,7 +30,7 @@ window (Keywan Najafi Tonekaboni).
 - Fixed #332254, Don't crash when clicking "Subscribe" in the contact
 info dialog (Wouter Bolsterlee). 
 - Fixed #336442, Fixed inconsistent presence state, with multiple
-accounts it would sometimes be online when offline and visa versa
+accounts it would sometimes be online when offline and visa verse
 (Braden).
 - Fixed #335504, Make sure we give error feedback when authentication
 fails with only ONE account (Paul Van Tilburg).
@@ -39,7 +39,7 @@ by the other contact. This was causing empty messages to occur (Ross
 Burton). 
 - Fixed #141577, Clean up composing state if stuck after 45 seconds
 (Richard). 
-- Fixed #337837, Update the LINGUAS to be inline with the documented
+- Fixed #337837, Update the LINGUAS to be in line with the documented
 (http://live.gnome.org/GnomeGoals/PoLinguas) GONME goals, (patch by
 Caio Marcelo).  
 - Fixed #335030, Allow rejoining group chats after disconnecting
@@ -57,7 +57,7 @@ Bolsterlee).
 - Fixed #337647, Don't show status notifications when busy (Richard).
 - Fixed #336395, Silence log warnings on 64bit systems (Caio Marcelo).
 - Fixed #337623, Silence regexp warning (Caio Marcelo, Richard).
-- Fixed #337645, Don't leak the presence chooser popup menu (based on
+- Fixed #337645, Don't leak the presence chooser pop up menu (based on
 patch from Dimitur Kirov, Richard).
 - Fixed #336456, Don't put "Gossip" in front of every window title
 (Wouter Bolsterlee, Brian Pepple). 
@@ -66,7 +66,7 @@ Nickurak).
 - Fixed #336222, Add a "send message" button to online notifications
 (Wouter Bolsterlee). 
 - Fixed #163816, Highlight and make mailto: URLs work (Micke).
-- Fixed #309912, Don't propergate Jabber messages with no <body>
+- Fixed #309912, Don't propagate Jabber messages with no <body>
 element (Ralph Meijer).  
 - Fixed #336375, Use theme friendly icons (Brian Pepple).
 - Fixed #336395, Fixed some type compilation warnings (Richard).
@@ -93,17 +93,26 @@ Pepple).
 - Fixed #335064, Try to fix make install failing in help directory
 (Richard). 
 
+Translations:
+Clytie Siddall (vi)
+Francisco Javier F. Serrador (es)
+Kjartan Maraas (no)
+Ole Laursen (da)
+Richard Hult, Daniel Nylander (sv)
+Wouter Bolsterlee, Vincent van Adrighem (nl)
+Žygimantas Beručka (lt)
+
 
 NEWS in 0.10.2:
 ===============
-- Add runtime controlled debugging facilities (Richard).
+- Add run-time controlled debugging facilities (Richard).
 - Display an event in the group# chat window when a user changes the
 topic, previously it just happened with no indication of who changed
 it or when (Kristian Rietveld).
 - Changed the account ID for Jabber IDs back to 'username@server' and
 make the resource a separate entity in the accounts.xml (note: there
 is some extra code to make sure the same problems that occurred last
-time don't reoccurr this time with invalid usernames when trying to
+time don't reoccur this time with invalid user names when trying to
 connect) (Martyn). 
 - Updated the spell checker dialog to use "Replace" instead of "OK"
 (Martyn). 
@@ -118,14 +127,14 @@ checked before proceeding to the following page (Martyn).
 progress bar when saving or loading, it just makes widgets
 insensitive. Also the buttons are now Save and Cancel which is clearer
 (Martyn). 
-- Fixed the jabber chatroom join presence handling so it actually
+- Fixed the jabber chat room join presence handling so it actually
 checks the presence message is for the right room instead of just
 accepting any old presence message - this means auto-connecting on
-startup works properly and will also give the correct error if you
+start up works properly and will also give the correct error if you
 can't join for some reason (Martyn).
-- The chatrooms window now allows selection of multiple rooms for
-joining, deleteing, etc and the dialog will close when a rooms are
-joined. Chatrooms will also be joined on the treeview "row-activate"
+- The chat rooms window now allows selection of multiple rooms for
+joining, deleting, etc and the dialog will close when a rooms are
+joined. Chat rooms will also be joined on the treeview "row-activate"
 signal now (Martyn).
 - Updated the CSS used for logging so the font isn't so big (Martyn).
 - Improve the X screensaver detection (Richard, Tommi Komulainen).
@@ -139,7 +148,7 @@ checking (Nickolay V. Shmyrev, Richard).
 than the owner (Richard).
 - Fixed #332058, Don't spell check chat commands like "/me" (Ross
 Burton). 
-- Fixed #332063, Don't spell check numberic strings, e.g. "1234" (Ross
+- Fixed #332063, Don't spell check numeric strings, e.g. "1234" (Ross
 Burton). 
 - Fixed #332169, Update the libnotify code to work with the 0.3.2 API
 (Martyn, Brian Pepple).
@@ -218,7 +227,7 @@ News in 0.10:
 - Added support for changing topics in group chat (Martyn). 
 - Added support incoming message sound if your name is used in group
 chat (Martyn). 
-- Reworked the chat code in places and added the beginings of a theme
+- Reworked the chat code in places and added the beginnings of a theme
 engine (Richard). 
 - Reworked the group chat join code (Martyn).
 - Reworked the group chat configuration to use an XML file (Martyn). 
@@ -258,9 +267,9 @@ information about offline contacts (Wouter Bolsterlee).
 when removing a contact (Wouter Bolsterlee).   
 - Fixed #331228, GTK+ gtk_widget_hide() warning causing a crash (Diego
 González). 
-- Fixed #330830, Make sure the chatrooms window clears widget values
+- Fixed #330830, Make sure the chat rooms window clears widget values
 when closed (since it is hidden) (Paul Van Tilburg).  
-- Fixed #330828, Make sure the nickname for chatrooms is honored (Paul
+- Fixed #330828, Make sure the nickname for chat rooms is honoured (Paul
 Van Tilburg). 
 - Fixed #330916, Missing files in POTFILES.in (Brian Pepple). 
 - Fixed #306321, Make sure errors returned from failed registration
@@ -268,7 +277,7 @@ attempts are more user friendly rather than esoteric (Joe Shaw).
 - Fixed #131290, Fixed nickname used in chat to be the full name from
 the users vcard, which is also now set when registering new accounts
 (Michal Janeczek).  
-- Fixed #321569, Possibility to set server seperately from jabber id
+- Fixed #321569, Possibility to set server separately from jabber id
 in the startup wizard (Brian Pepple).  
 - Fixed #325841, Support automatically joining chat rooms when
 connecting to the server (Martyn, Ross Burton).  
@@ -333,7 +342,7 @@ Next (bram@luon.net).
 Taylor).   
 - Fixed #156285, Added completion to the status preset dialogs
 (Martyn).  
-- Fixed #313486, Stop crash when joining a group chat and canceling it
+- Fixed #313486, Stop crash when joining a group chat and cancelling it
 immediately after (Brian Pepple). 
 
 Translations:
@@ -351,7 +360,7 @@ Translations:
 
 New in 0.9:
 ============
-- This release features a large refactoring to make further
+- This release features a large re-factoring to make further
 development easier. 
 - Part of the works has also been to make the current features more
 stable and better implement. 
@@ -380,8 +389,8 @@ News in 0.7.8:
 
 News in 0.7.7:
 ==============
-- Make the groupchat input area the same as in chats (Geert-Jan).
-- Improved URL recognizer (Johan Hammar).
+- Make the group chat input area the same as in chats (Geert-Jan).
+- Improved URL recogniser (Johan Hammar).
 - Fixed name bug when chatting with people not in your contact list
 (Micke).
 - Cut supported in chat windows (cuts from input area) (Thomas
@@ -402,7 +411,7 @@ News in 0.7.6:
 - Show new message icon as window icon when new message arrived
 (Sergey Dolgopolov).
 - Crash fixes (Micke).
-- Allow IP-numbers as hostpart of the JID (Fabio Bonelli).
+- Allow IP-numbers as host part of the JID (Fabio Bonelli).
 - Added copy&paste to chat windows (Micke).
 - Fixed drawing error in chat windows tabs with certain themes
 (Geert-Jan). 
@@ -410,7 +419,7 @@ News in 0.7.6:
 Henry).
 - Store log files as lowercase JID (Micke).
 - Resubscribe support if subscription isn't both way (Ross Burton)
-- Show presence icon in new message popup list (Micke).
+- Show presence icon in new message pop up list (Micke).
 - Added support for editing your own vCard (Martyn Russel, Micke).
 - New translations (en_CA, uk, eo, ar).
 - Updated translations (lt, cs, en_GB, nl, ca, pt_BR, sv, zh_CN, da,
@@ -453,7 +462,7 @@ toggling visibility.
 - Make links clickable in logs.
 - Handle incoming private chats through group chats correctly.
 - An experimental and optional dbus interface.
-- Add status submenu to the notification area icon.
+- Add status sub-menu to the notification area icon.
 - Limit the length of the status text in the contact list.
 - Plug memory leaks.
 - When detaching a tab, put the new window at the pointer.
@@ -471,13 +480,13 @@ News in 0.7:
 ============
 * Fixes to the chat window (URL matching, clear chat).
 * New application icon from Dan Taylor.
-* Chat window entry autoexpands instead of using a disclosure widget.
+* Chat window entry auto-expands instead of using a disclosure widget.
 * Store state of contact list (visibility, position and size) between
 sessions.  
 * Don't show groups with no contacts.
 * Presence setting system greatly improved.
 * Edit groups support added.
-* Made the autoback timeout longer (30 secs).
+* Made the auto-back timeout longer (30 secs).
 * Better keynav support.
 * A couple of crash fixes.
 * Several smaller bugs fixed.
@@ -492,7 +501,7 @@ News in 0.6:
 * New icons.
 * Tabbed chat windows.
 * Conversation logging.
-* Nicer timestamping.
+* Nicer time stamping.
 * Many bug fixes and small improvements.
 * Updated and new translations (az, ca, cs, cy, da, de, es, fr, fr,
 it, nl, no, pl, pt, ru, sr, sr@Latn, sv, zh_CN, zh_TW). 
@@ -518,7 +527,7 @@ News in 0.4:
 * Fixed the contact information window to actually show useful information.
 * Proper error checking when entering group chat.
 * Plugged a couple of memory leaks.
-* Support for autoaway.
+* Support for auto away.
 * Fixed disconnect/connect problems.
 * Support for disabling graphical smileys.
 * Support for disabling sound events.
@@ -526,7 +535,7 @@ News in 0.4:
 * Made renaming of contacts work.
 * Made it possible to remove contacts from the roster.
 * Added remember password to password dialog.
-* Added bugzilla info.
+* Added Bugzilla info.
 * Improvements to add contact dialog.
-* Notification in titlebar when new messages arrive to unfocused windows.
+* Notification in title bar when new messages arrive to unfocused windows.
 * New translations: nl, cs, es, cy, ru.

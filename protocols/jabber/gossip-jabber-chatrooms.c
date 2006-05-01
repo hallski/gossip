@@ -30,8 +30,8 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
 
-/* #define DEBUG_MSG(x) x */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+#define DEBUG_MSG(x) 
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define XMPP_MUC_USER_XMLNS "http://jabber.org/protocol/muc#user"
 
