@@ -1,3 +1,9 @@
+2006-05-04  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-presence.c: (presence_get_default_status),
+	(gossip_presence_get_status): Don't try to translate macros, use
+	the real strings. Fixes the non-translated status strings.
+
 2006-05-03  Richard Hult  <richard@imendio.com>
 
 	* src/eggtrayicon.c: Apply the transparency patch from bug

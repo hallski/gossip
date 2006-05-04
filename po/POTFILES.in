@@ -5,10 +5,11 @@ gossip.desktop.in.in
 gossip.schemas.in
 
 libgossip/gossip-account.c
-libgossip/gossip-contact.c
-libgossip/gossip-protocol.c
 libgossip/gossip-chatroom.c
 libgossip/gossip-chatroom-provider.c
+libgossip/gossip-contact.c
+libgossip/gossip-presence.c
+libgossip/gossip-protocol.c
 
 protocols/jabber/gossip-jabber.c
 

@@ -1,3 +1,9 @@
+2006-05-04  Richard Hult  <richard@imendio.com>
+
+	* POTFILES.in: Add gossip-presence.c.
+
+	* sv.po: Update.
+
 2006-05-04  Wouter Bolsterlee  <uws+gnome@xs4all.nl>
 
 	* nl.po: Translation updated by Wouter Bolsterlee.

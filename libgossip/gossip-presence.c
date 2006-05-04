@@ -26,11 +26,6 @@
 #include "gossip-utils.h"
 #include "gossip-presence.h"
 
-#define OFFLINE_MESSAGE "Offline"
-
-#define AVAILABLE_MESSAGE "Available"
-#define AWAY_MESSAGE "Away"
-#define BUSY_MESSAGE "Busy"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE, GossipPresencePriv))
 
@@ -216,18 +211,18 @@ presence_get_default_status (GossipPresenceState state)
 {
 	switch (state) {
 	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		return _(AVAILABLE_MESSAGE);
+		return _("Available");
 		break;
 	case GOSSIP_PRESENCE_STATE_BUSY:
-		return _(BUSY_MESSAGE);
+		return _("Busy");
 		break;
 	case GOSSIP_PRESENCE_STATE_AWAY:
 	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-		return _(AWAY_MESSAGE);
+		return _("Away");
 		break;
 	}
 
-	return _(AVAILABLE_MESSAGE);
+	return _("Available");
 }
 
 GossipPresence *
@@ -309,7 +304,7 @@ gossip_presence_get_status (GossipPresence *presence)
 	GossipPresencePriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
-			      _(OFFLINE_MESSAGE));
+			      _("Offline"));
 
 	priv = GET_PRIV (presence);
 

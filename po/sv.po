@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-30 10:52+0200\n"
+"POT-Creation-Date: 2006-05-04 18:50+0200\n"
 "PO-Revision-Date: 2006-04-18 22:44+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -158,10 +158,68 @@ msgstr "X-positionen av huvudfönstret"
 msgid "Y position of main window"
 msgstr "Y-positionen av huvudfönstret"
 
-#: ../libgossip/gossip-contact.c:769 ../src/gossip-app.c:2038
-#: ../src/gossip-contact-info-dialog.c:166 ../src/gossip-galago.c:160
+#: ../libgossip/gossip-chatroom.c:834
+msgid "Normal"
+msgstr "Normalt"
+
+#: ../libgossip/gossip-chatroom.c:845
+msgid "Joining"
+msgstr "Går in"
+
+#: ../libgossip/gossip-chatroom.c:847
+msgid "Active"
+msgstr "Aktivt"
+
+#: ../libgossip/gossip-chatroom.c:849 ../ui/group-chat.glade.h:7
+msgid "Inactive"
+msgstr "Inaktivt"
+
+#: ../libgossip/gossip-chatroom.c:851
+msgid "Unknown"
+msgstr "Okänt"
+
+#: ../libgossip/gossip-chatroom.c:853
+msgid "Error"
+msgstr "Fel"
+
+#: ../libgossip/gossip-chatroom-provider.c:343
+msgid "The nickname you have chosen is already in use."
+msgstr "Smeknamnet du har valt är upptaget."
+
+#: ../libgossip/gossip-chatroom-provider.c:347
+msgid "The chat room you tried to join requires a password."
+msgstr "Chattrummet du försökte gå in i kräver ett lösenord."
+
+#: ../libgossip/gossip-chatroom-provider.c:351
+msgid "The remote conference server did not respond in a sensible time."
+msgstr "Fjärrkonferensservern svarade inte inom en rimlig tid."
+
+#: ../libgossip/gossip-chatroom-provider.c:355
+msgid "The conference server you tried to join could not be found."
+msgstr "Konferensservern du försökte gå in på kunde inte hittas."
+
+#: ../libgossip/gossip-chatroom-provider.c:359
+msgid "An unknown error occurred, check your details are correct."
+msgstr ""
+"Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
+
+#: ../libgossip/gossip-contact.c:769 ../libgossip/gossip-presence.c:307
+#: ../src/gossip-app.c:2038 ../src/gossip-contact-info-dialog.c:166
+#: ../src/gossip-galago.c:160
 msgid "Offline"
 msgstr "Frånkopplad"
+
+#: ../libgossip/gossip-presence.c:214 ../libgossip/gossip-presence.c:225
+msgid "Available"
+msgstr "Tillgänglig"
+
+#: ../libgossip/gossip-presence.c:217
+msgid "Busy"
+msgstr "Upptagen"
+
+#: ../libgossip/gossip-presence.c:221
+msgid "Away"
+msgstr "Frånvarande"
 
 #: ../libgossip/gossip-protocol.c:673
 msgid "An unknown error occurred."
@@ -203,56 +261,11 @@ msgstr "Denna funktion är inte auktoriserad."
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Ett oväntat specifikt protokollfel inträffade."
 
-#: ../libgossip/gossip-chatroom.c:823
-msgid "Normal"
-msgstr "Normalt"
-
-#: ../libgossip/gossip-chatroom.c:834
-msgid "Joining"
-msgstr "Går in"
-
-#: ../libgossip/gossip-chatroom.c:836
-msgid "Active"
-msgstr "Aktivt"
-
-#: ../libgossip/gossip-chatroom.c:838 ../ui/group-chat.glade.h:7
-msgid "Inactive"
-msgstr "Inaktivt"
-
-#: ../libgossip/gossip-chatroom.c:840
-msgid "Unknown"
-msgstr "Okänt"
-
-#: ../libgossip/gossip-chatroom.c:842
-msgid "Error"
-msgstr "Fel"
-
-#: ../libgossip/gossip-chatroom-provider.c:329
-msgid "The nickname you have chosen is already in use."
-msgstr "Smeknamnet du har valt är upptaget."
-
-#: ../libgossip/gossip-chatroom-provider.c:333
-msgid "The chat room you tried to join requires a password."
-msgstr "Chattrummet du försökte gå in i kräver ett lösenord."
-
-#: ../libgossip/gossip-chatroom-provider.c:337
-msgid "The remote conference server did not respond in a sensible time."
-msgstr "Fjärrkonferensservern svarade inte inom en rimlig tid."
-
-#: ../libgossip/gossip-chatroom-provider.c:341
-msgid "The conference server you tried to join could not be found."
-msgstr "Konferensservern du försökte gå in på kunde inte hittas."
-
-#: ../libgossip/gossip-chatroom-provider.c:345
-msgid "An unknown error occurred, check your details are correct."
-msgstr ""
-"Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
-
-#: ../protocols/jabber/gossip-jabber.c:1053
+#: ../protocols/jabber/gossip-jabber.c:1056
 msgid "Connection could not be opened"
 msgstr "Anslutning kunde inte öppnas"
 
-#: ../protocols/jabber/gossip-jabber.c:1101
+#: ../protocols/jabber/gossip-jabber.c:1104
 msgid "Couldn't send message!"
 msgstr "Kunde inte sända meddelande!"
 
@@ -373,38 +386,39 @@ msgid ""
 msgstr ""
 "Eventuella konversationer och chattrum kommer inte tas bort.\n"
 "\n"
-"Om du senare lägger till kontot igen, kommer dessa fortfarande vara tillgängliga."
+"Om du senare lägger till kontot igen, kommer dessa fortfarande vara "
+"tillgängliga."
 
-#: ../src/gossip-add-contact-window.c:158
+#: ../src/gossip-add-contact-window.c:153
 msgid "Jabber"
 msgstr "Jabber"
 
-#: ../src/gossip-add-contact-window.c:227
+#: ../src/gossip-add-contact-window.c:223
 msgid "No information is available for this contact."
 msgstr "Ingen information finns tillgänglig för denna kontakt."
 
-#: ../src/gossip-add-contact-window.c:355
+#: ../src/gossip-add-contact-window.c:358
 msgid "Information requested, please wait..."
 msgstr "Information begärd, var vänlig vänta..."
 
-#: ../src/gossip-add-contact-window.c:405
+#: ../src/gossip-add-contact-window.c:408
 #, c-format
 msgid "%s will be added to your contact list."
 msgstr "%s kommer att läggas till i din kontaktlista."
 
-#: ../src/gossip-add-contact-window.c:424
+#: ../src/gossip-add-contact-window.c:427
 #: ../src/gossip-contact-info-dialog.c:483
-#: ../src/gossip-subscription-dialog.c:372
+#: ../src/gossip-subscription-dialog.c:366
 msgid "I would like to add you to my contact list."
 msgstr "Jag vill lägga till dig i min kontaktlista."
 
-#: ../src/gossip-add-contact-window.c:476
+#: ../src/gossip-add-contact-window.c:479
 #, c-format
 msgid "%s ID of new contact:"
 msgstr "%s id för ny kontakt:"
 
 #. must be a jabber system selected
-#: ../src/gossip-add-contact-window.c:481
+#: ../src/gossip-add-contact-window.c:484
 #, c-format
 msgid "Example: %s"
 msgstr "Exempel: %s"
@@ -462,30 +476,38 @@ msgstr ""
 "Ange ditt inbjudningsmeddelande till:\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1459
+#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1511
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
-#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:259
+#: ../src/gossip-chat-manager.c:148 ../src/gossip-notify.c:268
 #, c-format
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: ../src/gossip-chat-view.c:430
+#: ../src/gossip-chat-view.c:432
 msgid "_Copy Link Address"
 msgstr "_Kopiera länkadress"
 
-#: ../src/gossip-chat-view.c:438
+#: ../src/gossip-chat-view.c:440
 msgid "_Open Link"
 msgstr "_Öppna länk"
 
-#: ../src/gossip-chat-view.c:778
+#: ../src/gossip-chat-view.c:780
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-view.c:1484
+#: ../src/gossip-chat-view.c:1270
+msgid "Your invitation has been declined"
+msgstr "Ditt inbjudan har nekats."
+
+#: ../src/gossip-chat-view.c:1533
 msgid "Accept"
 msgstr "Acceptera"
+
+#: ../src/gossip-chat-view.c:1549
+msgid "Decline"
+msgstr "Neka"
 
 #: ../src/gossip-chat-window.c:527
 msgid "Close this chat window"
@@ -505,17 +527,17 @@ msgid "Name:"
 msgstr "Namn:"
 
 #: ../src/gossip-contact-info-dialog.c:297
-#: ../src/gossip-contact-info-dialog.c:616 ../ui/main.glade.h:23
+#: ../src/gossip-contact-info-dialog.c:614 ../ui/main.glade.h:23
 msgid "Alias:"
 msgstr "Alias:"
 
 #. set labels
-#: ../src/gossip-contact-info-dialog.c:606
+#: ../src/gossip-contact-info-dialog.c:604
 #, c-format
 msgid "Contact Information for %s"
 msgstr "Kontaktinformation för %s"
 
-#: ../src/gossip-contact-info-dialog.c:640
+#: ../src/gossip-contact-info-dialog.c:638
 msgid "Requested Information"
 msgstr "Information efterfrågad"
 
@@ -589,7 +611,7 @@ msgstr "Grupp"
 
 #: ../src/gossip-edit-groups-dialog.c:292
 #: ../src/gossip-edit-groups-dialog.c:302
-#: ../src/gossip-subscription-dialog.c:194
+#: ../src/gossip-subscription-dialog.c:192
 msgid "Unsorted"
 msgstr "Osorterade"
 
@@ -718,7 +740,7 @@ msgstr "Exempel"
 msgid "%s has come online"
 msgstr "%s anslöt sig"
 
-#: ../src/gossip-notify.c:168 ../src/gossip-notify.c:281
+#: ../src/gossip-notify.c:168 ../src/gossip-notify.c:288
 msgid "Default"
 msgstr "Standard"
 
@@ -726,11 +748,11 @@ msgstr "Standard"
 msgid "Chat!"
 msgstr "Chatta!"
 
-#: ../src/gossip-notify.c:284
+#: ../src/gossip-notify.c:291
 msgid "Respond"
 msgstr "Svara"
 
-#: ../src/gossip-notify.c:287 ../ui/main.glade.h:31
+#: ../src/gossip-notify.c:294 ../ui/main.glade.h:31
 msgid "Contact Information"
 msgstr "Kontaktinformation"
 
@@ -780,26 +802,26 @@ msgstr "Ord"
 msgid "Suggestions for the word"
 msgstr "Förslag för ordet"
 
-#: ../src/gossip-subscription-dialog.c:138
+#: ../src/gossip-subscription-dialog.c:135
 #, c-format
 msgid "New subscription request from %s"
 msgstr "Prenumerationsförfrågan från %s"
 
-#: ../src/gossip-subscription-dialog.c:267
+#: ../src/gossip-subscription-dialog.c:265
 #, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "%s vill bli tillagd till din kontaktlista."
 
-#: ../src/gossip-subscription-dialog.c:269
+#: ../src/gossip-subscription-dialog.c:267
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Vill du lägga till %s till din kontaktlista?"
 
-#: ../src/gossip-subscription-dialog.c:275
+#: ../src/gossip-subscription-dialog.c:273
 msgid "Someone wants to be added to your contact list."
 msgstr "Någon vill bli tillagd till din kontaktlista."
 
-#: ../src/gossip-subscription-dialog.c:276
+#: ../src/gossip-subscription-dialog.c:274
 msgid "Do you want to add this person to your contact list?"
 msgstr "Vill du lägga till denna person till din kontaktlista?"
 
@@ -1812,15 +1834,6 @@ msgstr "_Ja"
 
 #~ msgid "_Jabber ID of new contact:"
 #~ msgstr "_Jabber-id för ny kontakt:"
-
-#~ msgid "Available"
-#~ msgstr "Tillgänglig"
-
-#~ msgid "Busy"
-#~ msgstr "Upptagen"
-
-#~ msgid "Away"
-#~ msgstr "Frånvarande"
 
 #~ msgid "<b>Preferences</b>"
 #~ msgstr "<b>Inställningar</b>"
