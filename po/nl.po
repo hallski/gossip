@@ -6,12 +6,11 @@
 # Vincent van Adrighem <V.vanAdrighem@dirck.mine.nu>, 2003.
 # Taco Witte <tcwitte@cs.uu.nl>, 2003-2004.
 # Wouter Bolsterlee <uws+gnome@xs4all.nl>, 2006.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-04 17:25+0200\n"
+"POT-Creation-Date: 2006-05-08 22:59+0200\n"
 "PO-Revision-Date: 2006-05-04 17:26+0200\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -151,51 +150,6 @@ msgstr "X-positie van hoofdvenster"
 msgid "Y position of main window"
 msgstr "Y-positie van hoofdvenster"
 
-#: ../libgossip/gossip-contact.c:769 ../src/gossip-app.c:2038
-#: ../src/gossip-contact-info-dialog.c:166 ../src/gossip-galago.c:160
-msgid "Offline"
-msgstr "Offline"
-
-#: ../libgossip/gossip-protocol.c:673
-msgid "An unknown error occurred."
-msgstr "Een onbekende fout is opgetreden."
-
-#: ../libgossip/gossip-protocol.c:677
-msgid "Connection refused."
-msgstr "Verbinding geweigerd."
-
-#: ../libgossip/gossip-protocol.c:680
-msgid "Server address could not be resolved."
-msgstr "Het serveradres kon niet opgevraagd worden."
-
-#: ../libgossip/gossip-protocol.c:683
-msgid "Connection timed out."
-msgstr "Er kan geen verbinding gemaakt worden."
-
-#: ../libgossip/gossip-protocol.c:686
-msgid "Authentication failed."
-msgstr "Aanmelden mislukt."
-
-#: ../libgossip/gossip-protocol.c:689
-msgid "The username you are trying already exists."
-msgstr "Deze gebruikersnaam is al in gebruik."
-
-#: ../libgossip/gossip-protocol.c:692
-msgid "The username you are trying is not valid."
-msgstr "Deze gebruikersnaam is niet geldig."
-
-#: ../libgossip/gossip-protocol.c:695
-msgid "This feature is unavailable."
-msgstr "Deze functie is niet beschikbaar."
-
-#: ../libgossip/gossip-protocol.c:698
-msgid "This feature is unauthorized."
-msgstr "Deze functie is niet toegankelijk."
-
-#: ../libgossip/gossip-protocol.c:701
-msgid "A specific protocol error occurred that was unexpected."
-msgstr "Er is een onverwachtse protocolfout opgetreden."
-
 #: ../libgossip/gossip-chatroom.c:834
 msgid "Normal"
 msgstr "Normaal"
@@ -240,6 +194,64 @@ msgstr "De chatserver kon niet gevonden worden."
 #: ../libgossip/gossip-chatroom-provider.c:359
 msgid "An unknown error occurred, check your details are correct."
 msgstr "Er is een onbekende fout opgetreden. Controleer uw gegevens."
+
+#: ../libgossip/gossip-contact.c:769 ../libgossip/gossip-presence.c:307
+#: ../src/gossip-app.c:2038 ../src/gossip-contact-info-dialog.c:166
+#: ../src/gossip-galago.c:160
+msgid "Offline"
+msgstr "Offline"
+
+#: ../libgossip/gossip-presence.c:214 ../libgossip/gossip-presence.c:225
+msgid "Available"
+msgstr "Beschikbaar"
+
+#: ../libgossip/gossip-presence.c:217
+msgid "Busy"
+msgstr "Bezig"
+
+#: ../libgossip/gossip-presence.c:221
+msgid "Away"
+msgstr "Afwezig"
+
+#: ../libgossip/gossip-protocol.c:673
+msgid "An unknown error occurred."
+msgstr "Een onbekende fout is opgetreden."
+
+#: ../libgossip/gossip-protocol.c:677
+msgid "Connection refused."
+msgstr "Verbinding geweigerd."
+
+#: ../libgossip/gossip-protocol.c:680
+msgid "Server address could not be resolved."
+msgstr "Het serveradres kon niet opgevraagd worden."
+
+#: ../libgossip/gossip-protocol.c:683
+msgid "Connection timed out."
+msgstr "Er kan geen verbinding gemaakt worden."
+
+#: ../libgossip/gossip-protocol.c:686
+msgid "Authentication failed."
+msgstr "Aanmelden mislukt."
+
+#: ../libgossip/gossip-protocol.c:689
+msgid "The username you are trying already exists."
+msgstr "Deze gebruikersnaam is al in gebruik."
+
+#: ../libgossip/gossip-protocol.c:692
+msgid "The username you are trying is not valid."
+msgstr "Deze gebruikersnaam is niet geldig."
+
+#: ../libgossip/gossip-protocol.c:695
+msgid "This feature is unavailable."
+msgstr "Deze functie is niet beschikbaar."
+
+#: ../libgossip/gossip-protocol.c:698
+msgid "This feature is unauthorized."
+msgstr "Deze functie is niet toegankelijk."
+
+#: ../libgossip/gossip-protocol.c:701
+msgid "A specific protocol error occurred that was unexpected."
+msgstr "Er is een onverwachtse protocolfout opgetreden."
 
 #: ../protocols/jabber/gossip-jabber.c:1056
 msgid "Connection could not be opened"
@@ -757,7 +769,7 @@ msgstr "Bezig..."
 
 #: ../src/gossip-presence-chooser.c:530
 msgid "Away..."
-msgstr "Weg..."
+msgstr "Afwezig..."
 
 #: ../src/gossip-presence-chooser.c:539
 msgid "Clear List"
