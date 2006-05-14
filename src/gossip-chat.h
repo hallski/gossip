@@ -71,15 +71,24 @@ struct _GossipChatClass {
 	GdkPixbuf *      (*get_status_pixbuf)(GossipChat  *chat);
 	GossipContact *  (*get_contact)      (GossipChat  *chat);
 	GossipContact *  (*get_own_contact)  (GossipChat  *chat);
-	void             (*get_geometry)     (GossipChat  *chat,
-					      gint        *width,
-					      gint        *height);
+	GossipChatroom * (*get_chatroom)     (GossipChat  *chat);
 	GtkWidget *      (*get_widget)       (GossipChat  *chat);
-	gboolean         (*get_group_chat)   (GossipChat  *chat); 
 
 	gboolean         (*get_show_contacts)(GossipChat  *chat);
 	void             (*set_show_contacts)(GossipChat  *chat,
 					      gboolean     show);
+
+	gboolean         (*is_group_chat)    (GossipChat  *chat); 
+        void             (*save_geometry)    (GossipChat  *chat,
+					      gint         x,
+					      gint         y,
+					      gint         w,
+					      gint         h);
+	void             (*load_geometry)    (GossipChat  *chat,
+					      gint        *x,
+					      gint        *y,
+					      gint        *w,
+					      gint        *h);
 };
 
 GType             gossip_chat_get_type              (void);
@@ -99,14 +108,24 @@ gchar *           gossip_chat_get_tooltip           (GossipChat       *chat);
 GdkPixbuf *       gossip_chat_get_status_pixbuf     (GossipChat       *chat);
 GossipContact *   gossip_chat_get_contact           (GossipChat       *chat);
 GossipContact *   gossip_chat_get_own_contact       (GossipChat       *chat);
-void              gossip_chat_get_geometry          (GossipChat       *chat,
-						     int              *width,
-						     int              *height);
+GossipChatroom *  gossip_chat_get_chatroom          (GossipChat       *chat);
 GtkWidget *       gossip_chat_get_widget            (GossipChat       *chat);
-gboolean          gossip_chat_get_group_chat        (GossipChat       *chat);
 gboolean          gossip_chat_get_show_contacts     (GossipChat       *chat);
 void              gossip_chat_set_show_contacts     (GossipChat       *chat,
 						     gboolean          show);
+
+gboolean          gossip_chat_is_group_chat         (GossipChat       *chat);
+
+void              gossip_chat_save_geometry         (GossipChat       *chat,
+						     gint              x,
+						     gint              y,
+						     gint              w,
+						     gint              h);
+void              gossip_chat_load_geometry         (GossipChat       *chat,
+						     gint             *x,
+						     gint             *y,
+						     gint             *w,
+						     gint             *h);
 
 /* For spell checker dialog to correct the misspelled word. */
 gboolean          gossip_chat_get_is_command        (const gchar      *str);

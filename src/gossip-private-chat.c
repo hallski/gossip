@@ -108,9 +108,6 @@ static gboolean       private_chat_delete_event_cb              (GtkWidget      
 static const gchar *  private_chat_get_name                     (GossipChat             *chat);
 static gchar *        private_chat_get_tooltip                  (GossipChat             *chat);
 static GdkPixbuf *    private_chat_get_status_pixbuf            (GossipChat             *chat);
-static void           private_chat_get_geometry                 (GossipChat             *chat,
-								 int                    *width,
-								 int                    *height);
 static GtkWidget *    private_chat_get_widget                   (GossipChat             *chat);
 static GossipContact *private_chat_get_contact                  (GossipChat             *chat);
 static GossipContact *private_chat_get_own_contact              (GossipChat             *chat);
@@ -137,7 +134,6 @@ gossip_private_chat_class_init (GossipPrivateChatClass *klass)
 	chat_class->get_status_pixbuf = private_chat_get_status_pixbuf;
 	chat_class->get_contact       = private_chat_get_contact;
 	chat_class->get_own_contact   = private_chat_get_own_contact;
-	chat_class->get_geometry      = private_chat_get_geometry;
 	chat_class->get_widget        = private_chat_get_widget;
 }
 
@@ -742,15 +738,6 @@ private_chat_get_own_contact (GossipChat *chat)
 	priv = p_chat->priv;
 
 	return priv->own_contact;
-}
-
-static void
-private_chat_get_geometry (GossipChat *chat,
-		           int        *width,
-			   int        *height)
-{
-	*width  = 350;
-	*height = 250;
 }
 
 static GtkWidget *

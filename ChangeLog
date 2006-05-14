@@ -1,3 +1,11 @@
+2006-05-14  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: 
+	* src/gossip-chat.[ch]: 
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Save the geometry of chat windows and
+	remember it based on the contact ID, fixes #141855 (Mikael Hallendal).
+
 2006-05-04  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-presence.c: (presence_get_default_status),

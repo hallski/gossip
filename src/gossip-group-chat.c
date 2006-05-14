@@ -86,108 +86,105 @@ typedef struct {
 	GtkWidget       *entry;
 } ChatInviteData;
 
-static void           group_chat_contact_list_iface_init     (GossipContactListIfaceClass  *iface);
-static void           group_chat_finalize                    (GObject                      *object);
-static void           group_chats_init                       (void);
-static gboolean       group_chat_key_press_event_cb          (GtkWidget                    *widget,
-							      GdkEventKey                  *event,
-							      GossipGroupChat              *chat);
-static gboolean       group_chat_focus_in_event_cb           (GtkWidget                    *widget,
-							      GdkEvent                     *event,
-							      GossipGroupChat              *chat);
-static void           group_chat_drag_data_received          (GtkWidget                    *widget,
-							      GdkDragContext               *context,
-							      int                           x,
-							      int                           y,
-							      GtkSelectionData             *selection,
-							      guint                         info,
-							      guint                         time,
-							      GossipGroupChat              *chat);
-static void           group_chat_row_activated_cb            (GtkTreeView                  *view,
-							      GtkTreePath                  *path,
-							      GtkTreeViewColumn            *col,
-							      GossipGroupChat              *chat);
-static void           group_chat_widget_destroy_cb           (GtkWidget                    *widget,
-							      GossipGroupChat              *chat);
-static gint           group_chat_contacts_sort_func          (GtkTreeModel                 *model,
-							      GtkTreeIter                  *iter_a,
-							      GtkTreeIter                  *iter_b,
-							      gpointer                      user_data);
-static void           group_chat_contacts_setup              (GossipGroupChat              *chat);
-static gboolean       group_chat_contacts_find_foreach       (GtkTreeModel                 *model,
-							      GtkTreePath                  *path,
-							      GtkTreeIter                  *iter,
-							      ContactFindData              *data);
-static gboolean       group_chat_contacts_find                (GossipGroupChat              *chat,
-							      GossipContact                *contact,
-							      GtkTreeIter                  *iter);
-static gint           group_chat_contacts_completion_func    (const gchar                  *s1,
-							      const gchar                  *s2,
-							      gsize                         n);
-static void           group_chat_connected_cb                (GossipSession                *session,
-							      GossipGroupChat              *chat);
-static void           group_chat_disconnected_cb             (GossipSession                *session,
-							      GossipGroupChat              *chat);
-static void           group_chat_create_gui                  (GossipGroupChat              *chat);
-static void           group_chat_joined_cb                   (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipGroupChat              *chat);
-static void           group_chat_new_message_cb              (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipMessage                *message,
-							      GossipGroupChat              *chat);
-static void           group_chat_new_event_cb                (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      const gchar                  *event,
-							      GossipGroupChat              *chat);
-static void           group_chat_topic_changed_cb            (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipContact                *who,
-							      const gchar                  *new_topic,
-							      GossipGroupChat              *chat);
-static void           group_chat_contact_joined_cb           (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipContact                *contact,
-							      GossipGroupChat              *chat);
-static void           group_chat_contact_left_cb             (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipContact                *contact,
-							      GossipGroupChat              *chat);
-static void           group_chat_contact_presence_updated_cb (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipContact                *contact,
-							      GossipGroupChat              *chat);
-static void           group_chat_contact_updated_cb          (GossipChatroomProvider       *provider,
-							      gint                          id,
-							      GossipContact                *contact,
-							      GossipGroupChat              *chat);
-static void           group_chat_topic_activate_cb           (GtkEntry                     *entry,
-							      GossipGroupChat              *chat);
-static void           group_chat_private_chat_new            (GossipGroupChat              *chat,
-							      GossipContact                *contact);
-static void           group_chat_private_chat_removed        (GossipGroupChat              *chat,
-							      GossipChat                   *private_chat);
-static void           group_chat_private_chat_stop_foreach   (GossipChat                   *private_chat,
-							      GossipGroupChat              *chat);
-static void           group_chat_send                        (GossipGroupChat              *chat);
-static gboolean       group_chat_get_nick_list_foreach       (GtkTreeModel                 *model,
-							      GtkTreePath                  *path,
-							      GtkTreeIter                  *iter,
-							      GList                       **list);
-static GList *        group_chat_get_nick_list               (GossipGroupChat              *chat);
-static GtkWidget *    group_chat_get_widget                  (GossipChat                   *chat);
-static const gchar *  group_chat_get_name                    (GossipChat                   *chat);
-static gchar *        group_chat_get_tooltip                 (GossipChat                   *chat);
-static GdkPixbuf *    group_chat_get_status_pixbuf           (GossipChat                   *chat);
-static GossipContact *group_chat_get_contact                 (GossipChat                   *chat);
-static GossipContact *group_chat_get_own_contact             (GossipChat                   *chat);
-static void           group_chat_get_geometry                (GossipChat                   *chat,
-							      gint                         *width,
-							      gint                         *height);
-static gboolean       group_chat_get_group_chat              (GossipChat                   *chat);
-static gboolean       group_chat_get_show_contacts           (GossipChat                   *chat);
-static void           group_chat_set_show_contacts           (GossipChat                   *chat,
-							      gboolean                      show);
+static void            group_chat_contact_list_iface_init     (GossipContactListIfaceClass  *iface);
+static void            group_chat_finalize                    (GObject                      *object);
+static void            group_chats_init                       (void);
+static gboolean        group_chat_key_press_event_cb          (GtkWidget                    *widget,
+							       GdkEventKey                  *event,
+							       GossipGroupChat              *chat);
+static gboolean        group_chat_focus_in_event_cb           (GtkWidget                    *widget,
+							       GdkEvent                     *event,
+							       GossipGroupChat              *chat);
+static void            group_chat_drag_data_received          (GtkWidget                    *widget,
+							       GdkDragContext               *context,
+							       int                           x,
+							       int                           y,
+							       GtkSelectionData             *selection,
+							       guint                         info,
+							       guint                         time,
+							       GossipGroupChat              *chat);
+static void            group_chat_row_activated_cb            (GtkTreeView                  *view,
+							       GtkTreePath                  *path,
+							       GtkTreeViewColumn            *col,
+							       GossipGroupChat              *chat);
+static void            group_chat_widget_destroy_cb           (GtkWidget                    *widget,
+							       GossipGroupChat              *chat);
+static gint            group_chat_contacts_sort_func          (GtkTreeModel                 *model,
+							       GtkTreeIter                  *iter_a,
+							       GtkTreeIter                  *iter_b,
+							       gpointer                      user_data);
+static void            group_chat_contacts_setup              (GossipGroupChat              *chat);
+static gboolean        group_chat_contacts_find_foreach       (GtkTreeModel                 *model,
+							       GtkTreePath                  *path,
+							       GtkTreeIter                  *iter,
+							       ContactFindData              *data);
+static gboolean        group_chat_contacts_find               (GossipGroupChat              *chat,
+							       GossipContact                *contact,
+							       GtkTreeIter                  *iter);
+static gint            group_chat_contacts_completion_func    (const gchar                  *s1,
+							       const gchar                  *s2,
+							       gsize                         n);
+static void            group_chat_connected_cb                (GossipSession                *session,
+							       GossipGroupChat              *chat);
+static void            group_chat_disconnected_cb             (GossipSession                *session,
+							       GossipGroupChat              *chat);
+static void            group_chat_create_gui                  (GossipGroupChat              *chat);
+static void            group_chat_joined_cb                   (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipGroupChat              *chat);
+static void            group_chat_new_message_cb              (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipMessage                *message,
+							       GossipGroupChat              *chat);
+static void            group_chat_new_event_cb                (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       const gchar                  *event,
+							       GossipGroupChat              *chat);
+static void            group_chat_topic_changed_cb            (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipContact                *who,
+							       const gchar                  *new_topic,
+							       GossipGroupChat              *chat);
+static void            group_chat_contact_joined_cb           (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipContact                *contact,
+							       GossipGroupChat              *chat);
+static void            group_chat_contact_left_cb             (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipContact                *contact,
+							       GossipGroupChat              *chat);
+static void            group_chat_contact_presence_updated_cb (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipContact                *contact,
+							       GossipGroupChat              *chat);
+static void            group_chat_contact_updated_cb          (GossipChatroomProvider       *provider,
+							       gint                          id,
+							       GossipContact                *contact,
+							       GossipGroupChat              *chat);
+static void            group_chat_topic_activate_cb           (GtkEntry                     *entry,
+							       GossipGroupChat              *chat);
+static void            group_chat_private_chat_new            (GossipGroupChat              *chat,
+							       GossipContact                *contact);
+static void            group_chat_private_chat_removed        (GossipGroupChat              *chat,
+							       GossipChat                   *private_chat);
+static void            group_chat_private_chat_stop_foreach   (GossipChat                   *private_chat,
+							       GossipGroupChat              *chat);
+static void            group_chat_send                        (GossipGroupChat              *chat);
+static gboolean        group_chat_get_nick_list_foreach       (GtkTreeModel                 *model,
+							       GtkTreePath                  *path,
+							       GtkTreeIter                  *iter,
+							       GList                       **list);
+static GList *         group_chat_get_nick_list               (GossipGroupChat              *chat);
+static GtkWidget *     group_chat_get_widget                  (GossipChat                   *chat);
+static const gchar *   group_chat_get_name                    (GossipChat                   *chat);
+static gchar *         group_chat_get_tooltip                 (GossipChat                   *chat);
+static GdkPixbuf *     group_chat_get_status_pixbuf           (GossipChat                   *chat);
+static GossipContact * group_chat_get_own_contact             (GossipChat                   *chat);
+static GossipChatroom *group_chat_get_chatroom                (GossipChat                   *chat);
+static gboolean        group_chat_get_show_contacts           (GossipChat                   *chat);
+static void            group_chat_set_show_contacts           (GossipChat                   *chat,
+							       gboolean                      show);
+static gboolean        group_chat_is_group_chat               (GossipChat                   *chat);
 
 enum {
 	COL_STATUS,
@@ -227,13 +224,13 @@ gossip_group_chat_class_init (GossipGroupChatClass *klass)
 	chat_class->get_name          = group_chat_get_name;
 	chat_class->get_tooltip       = group_chat_get_tooltip;
 	chat_class->get_status_pixbuf = group_chat_get_status_pixbuf;
-	chat_class->get_contact       = group_chat_get_contact;
+	chat_class->get_contact       = NULL;
 	chat_class->get_own_contact   = group_chat_get_own_contact;
-	chat_class->get_geometry      = group_chat_get_geometry;
+	chat_class->get_chatroom      = group_chat_get_chatroom;
 	chat_class->get_widget        = group_chat_get_widget;
-	chat_class->get_group_chat    = group_chat_get_group_chat;
 	chat_class->get_show_contacts = group_chat_get_show_contacts;
 	chat_class->set_show_contacts = group_chat_set_show_contacts;
+	chat_class->is_group_chat     = group_chat_is_group_chat;
 
 	g_type_class_add_private (object_class, sizeof (GossipGroupChatPriv));
 }
@@ -1288,14 +1285,6 @@ group_chat_get_status_pixbuf (GossipChat *chat)
 }
 
 static GossipContact *
-group_chat_get_contact (GossipChat *chat)
-{
-	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
-
-	return NULL;
-}
-
-static GossipContact *
 group_chat_get_own_contact (GossipChat *chat)
 {
 	GossipGroupChat     *group_chat;
@@ -1309,21 +1298,19 @@ group_chat_get_own_contact (GossipChat *chat)
 	return priv->own_contact;
 }
 
-static void
-group_chat_get_geometry (GossipChat *chat,
-		         gint       *width,
-		 	 gint       *height)
+static GossipChatroom *
+group_chat_get_chatroom (GossipChat *chat)
 {
-	*width  = 600;
-	*height = 400;
-}
+	GossipGroupChat     *group_chat;
+	GossipGroupChatPriv *priv;
 
-static gboolean
-group_chat_get_group_chat (GossipChat *chat)
-{
-	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
 
-	return TRUE;
+	group_chat = GOSSIP_GROUP_CHAT (chat);
+	priv = GET_PRIV (group_chat);
+
+ 	return gossip_chatroom_provider_find (priv->chatroom_provider, 
+					      priv->chatroom_id);
 }
 
 static gboolean
@@ -1362,6 +1349,14 @@ group_chat_set_show_contacts (GossipChat *chat,
 		priv->contacts_width = gtk_paned_get_position (GTK_PANED (priv->hpaned));
 		gtk_widget_hide (priv->contacts_sw);
 	}
+}
+
+static gboolean
+group_chat_is_group_chat (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
+
+	return TRUE;
 }
 
 /* Scroll down after the back-log has been received. */

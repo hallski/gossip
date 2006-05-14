@@ -21,6 +21,7 @@
 
 #include <config.h>
 #include <string.h>
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
@@ -46,7 +47,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
 #define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 static void       gossip_chat_window_class_init         (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init               (GossipChatWindow      *window);
@@ -73,6 +74,10 @@ static void       chat_window_update_status             (GossipChatWindow      *
 							 GossipChat            *chat);
 static void       chat_window_update_title              (GossipChatWindow      *window);
 static void       chat_window_update_menu               (GossipChatWindow      *window);
+static gboolean   chat_window_save_geometry_timeout_cb  (GossipChatWindow      *window);
+static gboolean   chat_window_configure_event_cb        (GtkWidget             *widget,
+							 GdkEventConfigure     *event,
+							 GossipChatWindow      *window);
 static void       chat_window_conv_activate_cb          (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_clear_activate_cb         (GtkWidget             *menuitem,
@@ -157,7 +162,9 @@ struct _GossipChatWindowPriv {
 	GList       *chats;
 	GList       *chats_new_msg;
 	GList       *chats_composing;
+
 	GossipChat  *current_chat;
+
 	gboolean     new_msg;
 
 	GtkWidget   *dialog;
@@ -188,6 +195,13 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_tabs_left;
 	GtkWidget   *menu_tabs_right;
 	GtkWidget   *menu_tabs_detach;
+
+	/* Geometry information */
+	guint        save_geometry_id;
+	gint         last_x;
+	gint         last_y;
+	gint         last_w;
+	gint         last_h;
 };
 
 static GList *chat_windows = NULL;
@@ -260,6 +274,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 
 	gossip_glade_connect (glade, 
 			      window,
+			      "chat_window", "configure-event", chat_window_configure_event_cb,
 			      "menu_conv", "activate", chat_window_conv_activate_cb,
 			      "menu_conv_clear", "activate", chat_window_clear_activate_cb,
 			      "menu_conv_log", "activate", chat_window_log_activate_cb,
@@ -448,6 +463,11 @@ gossip_chat_window_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
 					      chat_window_disconnected_cb,
 					      window);
+
+	if (priv->save_geometry_id != 0) {
+		g_source_remove (priv->save_geometry_id);
+		priv->save_geometry_id = 0;
+	}
 
 	chat_windows = g_list_remove (chat_windows, window);
 	gtk_widget_destroy (priv->dialog);
@@ -728,7 +748,7 @@ chat_window_update_menu (GossipChatWindow *window)
 	gtk_widget_set_sensitive (priv->menu_tabs_right, !last_page);
 	gtk_widget_set_sensitive (priv->menu_conv_info, contact != NULL);
 
-	if (gossip_chat_get_group_chat (priv->current_chat)) {
+	if (gossip_chat_is_group_chat (priv->current_chat)) {
 		GossipGroupChat       *group_chat;
 		GossipChatroomManager *manager;
 		GossipChatroomId       id;
@@ -862,7 +882,7 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 
 	priv = GET_PRIV (window);
 
-	if (gossip_chat_get_group_chat (priv->current_chat)) {
+	if (gossip_chat_is_group_chat (priv->current_chat)) {
 		GossipGroupChat        *group_chat;
 		GossipChatroomProvider *provider;
 		GossipChatroom         *chatroom;
@@ -897,6 +917,54 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 	gossip_contact_info_dialog_show (contact);
 }
 
+static gboolean
+chat_window_save_geometry_timeout_cb (GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	gossip_chat_save_geometry (priv->current_chat, 
+				   priv->last_x, priv->last_y, 
+				   priv->last_w, priv->last_h);
+
+	priv->save_geometry_id = 0;
+
+	return FALSE;
+}
+
+static gboolean 
+chat_window_configure_event_cb (GtkWidget         *widget,
+				GdkEventConfigure *event,
+				GossipChatWindow  *window)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	/* Only save geometry information if there is ONE chat visible */
+	if (g_list_length (priv->chats) > 1) {
+		return FALSE;
+	}
+
+	if (priv->save_geometry_id != 0) {
+		g_source_remove (priv->save_geometry_id);
+		priv->save_geometry_id = 0;
+	}
+
+	priv->save_geometry_id = 
+		g_timeout_add (500,
+			       (GSourceFunc) chat_window_save_geometry_timeout_cb,
+			       window);
+
+	priv->last_x = event->x;
+	priv->last_y = event->y;
+	priv->last_w = event->width;
+	priv->last_h = event->height;
+
+	return FALSE;
+}
+
 static void
 chat_window_conv_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
@@ -906,7 +974,7 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 
 	priv = GET_PRIV (window);
 	
-	if (gossip_chat_get_group_chat (priv->current_chat)) {
+	if (gossip_chat_is_group_chat (priv->current_chat)) {
 		GossipGroupChat        *group_chat;
 		GossipChatroomProvider *provider;
 		GossipChatroom         *chatroom;
@@ -976,7 +1044,7 @@ chat_window_add_room_activate_cb (GtkWidget        *menuitem,
 
 	g_return_if_fail (priv->current_chat != NULL);
 
-	if (!gossip_chat_get_group_chat (priv->current_chat)) {
+	if (!gossip_chat_is_group_chat (priv->current_chat)) {
 		return;
 	}
 
@@ -1244,7 +1312,7 @@ chat_window_new_message_cb (GossipChat       *chat,
 
 		own_contact = gossip_chat_get_own_contact (chat);
 
-		if (gossip_chat_get_group_chat (chat)) {
+		if (gossip_chat_is_group_chat (chat)) {
 			DEBUG_MSG (("ChatWindow: Should we highlight this nick?"));
 			if (gossip_chat_should_highlight_nick (message, own_contact)) {
 				gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
@@ -1551,11 +1619,35 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	label = chat_window_create_label (window, chat);
 
 	if (g_list_length (priv->chats) == 0) {
-		gint width, height;
+		gint current_x, current_y, current_w, current_h;
+		gint x, y, w, h;
 
-		/* First chat, resize the window to its preferred size. */
-		gossip_chat_get_geometry (chat, &width, &height);
-		gtk_window_resize (GTK_WINDOW (priv->dialog), width, height);
+		gtk_window_get_position (GTK_WINDOW (priv->dialog), 
+					 &current_x, &current_y);
+
+		gtk_window_get_size (GTK_WINDOW (priv->dialog), 
+				     &current_w, &current_h);
+
+		gossip_chat_load_geometry (chat, &x, &y, &w, &h);
+
+		if (x < 1) {
+			x = current_x;
+		}
+
+		if (y < 1) {
+			y = current_y;
+		}
+
+		if (w < 1) {
+			w = current_w;
+		}
+
+		if (h < 1) {
+			h = current_h;
+		}
+
+		gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
+		gtk_window_resize (GTK_WINDOW (priv->dialog), w, h);
 	}
 
 	gossip_notebook_insert_page (GOSSIP_NOTEBOOK (priv->notebook),
@@ -1613,4 +1705,3 @@ gossip_chat_window_has_focus (GossipChatWindow *window)
 
 	return has_focus;
 }
-
