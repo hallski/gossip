@@ -645,6 +645,12 @@ app_setup (GossipAccountManager *manager)
 					GCONF_PATH "/ui/main_window_hidden", 
 					NULL);
 
+	/* If doesn't have tray, show window and mask "actions_hide_list" */
+	if (!app_have_tray()) {
+		hidden = FALSE;
+		gtk_widget_hide(GTK_WIDGET(priv->actions_hide_list));
+	}
+
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
 					show_offline);
 
@@ -822,7 +828,7 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 				    GossipApp   *app) 
 {
 	if (event->keyval == GDK_Escape) {
-		gtk_widget_hide (window);
+		app_toggle_visibility();
 	}
 
 	return FALSE;
@@ -1067,7 +1073,7 @@ app_toggle_visibility (void)
 
 	visible = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 
-	if (visible) {
+	if (visible && app_have_tray()) {
 		gtk_widget_hide (priv->window);
 		
 		gconf_client_set_bool (priv->gconf_client, 

@@ -1,5 +1,13 @@
 2006-05-14  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: Make Escape toggle the visibility instead of
+	explicity set it and show the main window if there is no
+	notification area disabling any further method to hide the main
+	window, fixes #338054 (Kristian Rietveld, patch by Caio Marcelo)
+	and #132632 (Frederic Crozat).
+
+2006-05-14  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: Use the old method of showing an 'x'
 	on the right hand side of a tab, but ONLY when the pointer enters
 	the window.
