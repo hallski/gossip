@@ -1,3 +1,9 @@
+NEWS in 0.11.1:
+===============
+- Fixed #141855, Remember chat window geometry by contact id (Mikael
+Hallendal). 
+
+
 NEWS in 0.11:
 =============
 - Added a smiley menu and context menu for chat windows (Martyn). 
