@@ -59,14 +59,13 @@ static void       chat_window_accel_cb                  (GtkAccelGroup         *
 							 guint                  key,
 							 GdkModifierType        mod,
 							 GossipChatWindow      *window);
-static gboolean   chat_window_status_enter_notify_cb    (GtkWidget             *widget,
+static gboolean   chat_window_tab_enter_notify_cb       (GtkWidget             *widget,
 							 GdkEventCrossing      *event,
 							 GossipChat            *chat);
-static gboolean   chat_window_status_leave_notify_cb    (GtkWidget             *widget,
+static gboolean   chat_window_tab_leave_notify_cb       (GtkWidget             *widget,
 							 GdkEventCrossing      *event,
 							 GossipChat            *chat);
-static gboolean   chat_window_status_button_press_cb    (GtkWidget             *widget,
-							 GdkEventButton        *event,
+static void       chat_window_close_clicked_cb          (GtkWidget             *button,
 							 GossipChat            *chat);
 static GtkWidget *chat_window_create_label              (GossipChatWindow      *window,
 							 GossipChat            *chat);
@@ -229,6 +228,16 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 	object_class->finalize = gossip_chat_window_finalize;
 
 	g_type_class_add_private (object_class, sizeof (GossipChatWindowPriv));
+
+	/* Set up a style for the close button with no focus padding. */ 	 
+	gtk_rc_parse_string ( 	 
+		"style \"gossip-close-button-style\"\n" 	 
+		"{\n" 	 
+		"  GtkWidget::focus-padding = 0\n" 	 
+		"  xthickness = 0\n" 	 
+		"  ythickness = 0\n" 	 
+		"}\n" 	 
+		"widget \"*.gossip-close-button\" style \"gossip-close-button-style\"");
 }
 
 static void
@@ -525,79 +534,140 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 }
 
 static gboolean
-chat_window_status_enter_notify_cb (GtkWidget        *widget,
-				    GdkEventCrossing *event,
-				    GossipChat       *chat)
+chat_window_tab_enter_notify_cb (GtkWidget        *widget,
+				 GdkEventCrossing *event,
+				 GossipChat       *chat)
 {
-	GossipChatWindow     *window;
-	GossipChatWindowPriv *priv;
-	GtkImage             *image;
-	GdkPixbuf            *pixbuf;
+	GtkButton *button;
 
-	pixbuf = gossip_pixbuf_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
-	image = g_object_get_data (G_OBJECT (chat), "chat-window-tab-image");
-	gtk_image_set_from_pixbuf (image, pixbuf);
-
-	/* Set tooltip */
-	window = gossip_chat_get_window (chat);
-	priv = GET_PRIV (window);
-
-	gtk_tooltips_set_tip (priv->tooltips,
-			      widget,
-			      _("Close this chat window"),
-			      NULL);
-
-	/* Allow closing with left button click */
- 	g_signal_connect (widget, "button_press_event", 
- 			  G_CALLBACK (chat_window_status_button_press_cb), 
- 			  chat); 
+	button = g_object_get_data (G_OBJECT (chat), "chat-window-tab-button");
+	gtk_widget_show (GTK_WIDGET (button));
 
 	return FALSE;
 }
 
 static gboolean
-chat_window_status_leave_notify_cb (GtkWidget        *widget,
-				    GdkEventCrossing *event,
-				    GossipChat       *chat)
+chat_window_tab_leave_notify_cb (GtkWidget        *widget,
+				 GdkEventCrossing *event,
+				 GossipChat       *chat)
 {
-	GossipChatWindow *window;
-	GtkImage         *image;
-	GdkPixbuf        *pixbuf;
+	GtkButton *button;
+	gint       w, h;
 
-	image = g_object_get_data (G_OBJECT (chat), "chat-window-tab-image");
+	gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
 
-	window = gossip_chat_get_window (chat);
-	pixbuf = chat_window_get_status_pixbuf (window, chat);
-	gtk_image_set_from_pixbuf (image, pixbuf);
-	
-	/* Stop the close window left mouse click ability */
- 	g_signal_handlers_disconnect_by_func (widget,
-					      chat_window_status_button_press_cb, 
-					      chat); 
-	return FALSE;
-}
-
-static gboolean
-chat_window_status_button_press_cb (GtkWidget      *widget,
-				    GdkEventButton *event,
-				    GossipChat     *chat)
-{
-	GossipChatWindow *window;
-
-	if (event->button != 1) {
-		return FALSE;
+	if (event->x < 0 || event->y < 0 || 
+	    event->x > w || event->y > h) {
+		button = g_object_get_data (G_OBJECT (chat), "chat-window-tab-button");
+		gtk_widget_hide (GTK_WIDGET (button));
 	}
+
+	return FALSE;
+}
+
+static void
+chat_window_close_clicked_cb (GtkWidget  *button,
+			      GossipChat *chat)
+{
+	GossipChatWindow *window;
 
 	window = gossip_chat_get_window (chat);
 	gossip_chat_window_remove_chat (window, chat);
-
-	return FALSE;
 }
 
 static GtkWidget *
 chat_window_create_label (GossipChatWindow *window,
 			  GossipChat       *chat)
 {
+	GossipChatWindowPriv *priv;
+	GtkWidget            *hbox;
+	GtkWidget            *name_label;
+	GtkWidget            *status_image;
+	GtkWidget            *close_button;
+	GtkWidget            *close_image;
+	const gchar          *name;
+	GtkWidget            *event_box; 
+	GtkWidget            *event_box_hbox; 
+	PangoAttrList        *attr_list;
+	PangoAttribute       *attr;
+	GtkRequisition        size;
+
+	priv = GET_PRIV (window);
+	
+	hbox = gtk_hbox_new (FALSE, 2);
+
+ 	event_box = gtk_event_box_new (); 
+ 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE); 
+
+	name = gossip_chat_get_name (chat);
+	name_label = gtk_label_new (name);
+
+	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
+	
+	attr_list = pango_attr_list_new ();
+	attr = pango_attr_scale_new (1/1.2);
+	attr->start_index = 0;
+	attr->end_index = -1;
+	pango_attr_list_insert (attr_list, attr);
+	gtk_label_set_attributes (GTK_LABEL (name_label), attr_list);
+	pango_attr_list_unref (attr_list);
+
+	gtk_misc_set_alignment (GTK_MISC (name_label), 0.0, 0.5);
+	g_object_set_data (G_OBJECT (chat), "chat-window-tab-label", name_label); 
+
+	status_image = gtk_image_new ();
+
+	event_box_hbox = gtk_hbox_new (FALSE, 2);
+
+	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (event_box_hbox), name_label, TRUE, TRUE, 0);
+
+	g_object_set_data (G_OBJECT (chat), "chat-window-tab-image", status_image);
+  	g_object_set_data (G_OBJECT (chat), "chat-window-tab-tooltip-widget", event_box);
+
+	chat_window_update_tooltip (window, chat);
+
+	close_button = gtk_button_new ();
+	gtk_button_set_relief (GTK_BUTTON (close_button), GTK_RELIEF_NONE);
+
+	/* We don't want focus/keynav for the button to avoid clutter, and
+	 * Ctrl-W works anyway.
+	 */
+	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_FOCUS);
+	GTK_WIDGET_UNSET_FLAGS (close_button, GTK_CAN_DEFAULT);
+
+	/* Set the name to make the special rc style match. */
+	gtk_widget_set_name (close_button, "gossip-close-button");
+	g_object_set_data (G_OBJECT (chat), "chat-window-tab-button", close_button);
+
+	close_image = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+
+	gtk_widget_size_request (close_image, &size);
+	gtk_widget_set_size_request (close_button, size.width, size.height);
+	
+	gtk_container_add (GTK_CONTAINER (close_button), close_image);
+	gtk_container_set_border_width (GTK_CONTAINER (close_button), 0);
+
+	gtk_container_add (GTK_CONTAINER (event_box), event_box_hbox);
+	gtk_box_pack_start (GTK_BOX (hbox), event_box, TRUE, TRUE, 0);
+	gtk_box_pack_end (GTK_BOX (hbox), close_button, FALSE, FALSE, 0);
+
+	g_signal_connect (close_button,
+			  "clicked",
+			  G_CALLBACK (chat_window_close_clicked_cb),
+			  chat);
+
+	/* Set up tooltip */
+	chat_window_update_tooltip (window, chat);
+
+	gtk_widget_show_all (hbox);
+
+	/* We do not show this to begin with. */
+	gtk_widget_hide (close_button);
+
+	return hbox;
+
+#if 0
 	GossipChatWindowPriv *priv;
 	GtkWidget            *hbox;
 	GtkWidget            *label;
@@ -660,7 +730,7 @@ chat_window_create_label (GossipChatWindow *window,
 			  G_CALLBACK (chat_window_status_enter_notify_cb),
 			  chat);
 	g_signal_connect (event_box_image, "leave-notify-event",
-			  G_CALLBACK (chat_window_status_leave_notify_cb),
+			  G_CALLBACK (chat_window_tab_leave_notify_cb),
 			  chat);
 
 	/* Set up tooltip */
@@ -670,6 +740,7 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_widget_show_all (event_box_tab);
 
 	return event_box_tab;
+#endif
 }
 
 static void
@@ -1394,6 +1465,7 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	GossipChatWindowPriv *priv;
 	GossipChat           *chat;
 	GtkWidget            *label;
+	gboolean              expand = TRUE;
 
  	DEBUG_MSG (("ChatWindow: Tab added"));
 
@@ -1409,7 +1481,21 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), child, label);
 
 	gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (notebook), child,
-					    TRUE, TRUE, GTK_PACK_START);
+					    expand, TRUE, GTK_PACK_START);
+
+	/* Set up motion events to show/hide the close button when the
+	 * pointer enters the tab area
+	 */
+	gtk_widget_add_events (GTK_WIDGET (priv->dialog), 
+			       GDK_ENTER_NOTIFY_MASK |
+			       GDK_LEAVE_NOTIFY_MASK);
+	g_signal_connect (priv->dialog, "enter-notify-event",
+			  G_CALLBACK (chat_window_tab_enter_notify_cb),
+			  chat);
+	g_signal_connect (priv->dialog, "leave-notify-event",
+			  G_CALLBACK (chat_window_tab_leave_notify_cb),
+			  chat);
+
 
 	g_signal_connect (chat, "status_changed",
 			  G_CALLBACK (chat_window_status_changed_cb),
@@ -1446,6 +1532,14 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	
 	gossip_chat_set_window (chat, NULL);
+
+	g_signal_handlers_disconnect_by_func (priv->dialog,
+					      G_CALLBACK (chat_window_tab_enter_notify_cb),
+					      chat);
+
+	g_signal_handlers_disconnect_by_func (priv->dialog,
+					      G_CALLBACK (chat_window_tab_leave_notify_cb),
+					      chat);
 
 	g_signal_handlers_disconnect_by_func (chat,
 					      G_CALLBACK (chat_window_status_changed_cb),

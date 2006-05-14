@@ -1,5 +1,11 @@
 2006-05-14  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-window.c: Use the old method of showing an 'x'
+	on the right hand side of a tab, but ONLY when the pointer enters
+	the window.
+
+2006-05-14  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: 
 	* src/gossip-chat.[ch]: 
 	* src/gossip-group-chat.c:
