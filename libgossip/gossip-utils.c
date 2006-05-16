@@ -319,7 +319,8 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 }
 
 gboolean 
-gossip_utils_xml_validate (xmlDoc *doc, const gchar *dtd_filename)
+gossip_utils_xml_validate (xmlDoc      *doc, 
+			   const gchar *dtd_filename)
 {
 	gchar        *path;
 	xmlValidCtxt  cvp;
@@ -336,4 +337,94 @@ gossip_utils_xml_validate (xmlDoc *doc, const gchar *dtd_filename)
 	g_free (path);
 	
         return ret;
+}
+
+guchar *
+gossip_base64_decode (const char *str, 
+		      gsize      *ret_len)
+{
+	guchar      *out = NULL;
+	gchar        tmp = 0;
+	const gchar *c;
+	gint32       tmp2 = 0;
+	gint         len = 0, n = 0;
+
+	g_return_val_if_fail (str != NULL, NULL);
+
+	c = str;
+
+	while (*c) {
+		if (*c >= 'A' && *c <= 'Z') {
+			tmp = *c - 'A';
+		} else if (*c >= 'a' && *c <= 'z') {
+			tmp = 26 + (*c - 'a');
+		} else if (*c >= '0' && *c <= 57) {
+			tmp = 52 + (*c - '0');
+		} else if (*c == '+') {
+			tmp = 62;
+		} else if (*c == '/') {
+			tmp = 63;
+		} else if (*c == '\r' || *c == '\n') {
+			c++;
+			continue;
+		} else if (*c == '=') {
+			if (n == 3) {
+				out = g_realloc (out, len + 2);
+				out[len] = (guchar)(tmp2 >> 10) & 0xff;
+				len++;
+				out[len] = (guchar)(tmp2 >> 2) & 0xff;
+				len++;
+			} else if (n == 2) {
+				out = g_realloc (out, len + 1);
+				out[len] = (guchar)(tmp2 >> 4) & 0xff;
+				len++;
+			}
+			break;
+		}
+
+		tmp2 = ((tmp2 << 6) | (tmp & 0xff));
+		n++;
+
+		if (n == 4) {
+			out = g_realloc (out, len + 3);
+			out[len] = (guchar)((tmp2 >> 16) & 0xff);
+			len++;
+			out[len] = (guchar)((tmp2 >> 8) & 0xff);
+			len++;
+			out[len] = (guchar)(tmp2 & 0xff);
+			len++;
+			tmp2 = 0;
+			n = 0;
+		}
+
+		c++;
+	}
+
+	out = g_realloc (out, len + 1);
+	out[len] = 0;
+
+	if (ret_len != NULL) {
+		*ret_len = len;
+	}
+
+	return out;
+}
+
+gchar *
+gossip_sha1_string (const guchar *buf,
+		    gsize         len) {
+	gchar  *hash_string;
+	gchar  *p;
+	guchar  hash[20];
+	gint    i;
+	
+	gcry_md_hash_buffer (GCRY_MD_SHA1, hash, buf, (size_t) len);
+	hash_string = g_malloc (sizeof(gchar)*41);
+	p = hash_string;
+
+	for (i=0; i<20; i++, p+=2) {
+		snprintf (p, 3, "%02x", hash[i]);
+	}
+
+	return hash_string;
 }

@@ -1,3 +1,21 @@
+2006-05-16  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* libgossip/gossip-contact.[ch]:
+	* libgossip/gossip-utils.[ch]:
+	* libgossip/gossip-vcard.[ch]:
+	* protocols/jabber/gossip-jabber-vcard.[ch]:
+	* protocols/jabber/gossip-jabber.c: 
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-main.c:
+	* src/gossip-ui-utils.[ch]:
+	* ui/main.glade: Added avatar support. Patch by Eitan Isaacson,
+	fixes #141854 (Mikael Hallendal). Some more work is needed to
+	toggle the contact list avatar in the preferences. Also, I
+	reworked the contact information dialog a little to make this look
+	a bit better.
+
 2006-05-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: Make Escape toggle the visibility instead of

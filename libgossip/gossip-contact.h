@@ -71,6 +71,8 @@ GossipContact *    gossip_contact_copy                      (GossipContact      
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);
+const guchar *     gossip_contact_get_avatar                (GossipContact      *contact,
+							     gsize              *avatar_size);
 GossipAccount *    gossip_contact_get_account               (GossipContact      *contact);
 void               gossip_contact_add_presence              (GossipContact      *contact,
 							     GossipPresence     *presence);
@@ -86,6 +88,9 @@ void               gossip_contact_set_id                    (GossipContact      
 							     const gchar        *id);
 void               gossip_contact_set_name                  (GossipContact      *contact,
 							     const gchar        *name);
+void               gossip_contact_set_avatar                (GossipContact      *contact,
+							     const guchar       *avatar,
+							     gsize               avatar_size);
 void               gossip_contact_set_account               (GossipContact      *contact,
 							     GossipAccount      *account);
 gboolean           gossip_contact_set_groups                (GossipContact      *contact,

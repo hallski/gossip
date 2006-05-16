@@ -164,7 +164,7 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 		skip2:
 			c3 = *inptr++;
 			*outptr++ = base64_alphabet[ c1 >> 2 ];
-			*outptr++ = base64_alphabet[ c2 >> 4 | ( (c1&0x3) << 4 ) ];
+			*outptr++ = base64_alphabet[ c2 >> 4 | ((c1&0x3) << 4) ];
 			*outptr++ = base64_alphabet[ ((c2 &0x0f) << 2 ) | (c3 >> 6) ];
 			*outptr++ = base64_alphabet[ c3 & 0x3f ];
 

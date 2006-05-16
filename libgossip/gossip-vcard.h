@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -41,28 +41,33 @@ struct _GossipVCardClass {
 	GObjectClass parent_class;
 };
 
-GType               gossip_vcard_get_type            (void) G_GNUC_CONST;
+GType         gossip_vcard_get_type        (void) G_GNUC_CONST;
 
-GossipVCard *       gossip_vcard_new                 (void); 
+GossipVCard * gossip_vcard_new             (void);
 
-const gchar *       gossip_vcard_get_name            (GossipVCard *vcard);
-void                gossip_vcard_set_name            (GossipVCard *vcard,
-						      const gchar *name);
-const gchar *       gossip_vcard_get_nickname        (GossipVCard *vcard);
-void                gossip_vcard_set_nickname        (GossipVCard *vcard,
-						      const gchar *nickname);
-const gchar *       gossip_vcard_get_email           (GossipVCard *vcard);
-void                gossip_vcard_set_email           (GossipVCard *vcard,
-						      const gchar *email);
-const gchar *       gossip_vcard_get_url             (GossipVCard *vcard);
-void                gossip_vcard_set_url             (GossipVCard *vcard,
-						      const gchar *url);
-const gchar *       gossip_vcard_get_country         (GossipVCard *vcard);
-void                gossip_vcard_set_country         (GossipVCard *vcard,
-						      const gchar *country);
-const gchar *       gossip_vcard_get_description     (GossipVCard *vcard);
-void                gossip_vcard_set_description     (GossipVCard *vcard,
-						      const gchar *desc);
+const gchar * gossip_vcard_get_name        (GossipVCard  *vcard);
+const gchar * gossip_vcard_get_nickname    (GossipVCard  *vcard);
+const gchar * gossip_vcard_get_email       (GossipVCard  *vcard);
+const gchar * gossip_vcard_get_url         (GossipVCard  *vcard);
+const gchar * gossip_vcard_get_country     (GossipVCard  *vcard);
+const gchar * gossip_vcard_get_description (GossipVCard  *vcard);
+const guchar *gossip_vcard_get_avatar      (GossipVCard  *vcard,
+					    gsize        *avatar_size);
+
+void          gossip_vcard_set_name        (GossipVCard  *vcard,
+					    const gchar  *name);
+void          gossip_vcard_set_nickname    (GossipVCard  *vcard,
+					    const gchar  *nickname);
+void          gossip_vcard_set_email       (GossipVCard  *vcard,
+					    const gchar  *email);
+void          gossip_vcard_set_url         (GossipVCard  *vcard,
+					    const gchar  *url);
+void          gossip_vcard_set_country     (GossipVCard  *vcard,
+					    const gchar  *country);
+void          gossip_vcard_set_description (GossipVCard  *vcard,
+					    const gchar  *desc);
+void          gossip_vcard_set_avatar      (GossipVCard  *vcard,
+					    const guchar *avatar_image,
+					    gsize         avatar_size);
 
 #endif /* __GOSSIP_VCARD_H__ */
-

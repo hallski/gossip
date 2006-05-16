@@ -37,7 +37,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 {
 	GossipVCard         *vcard;
 	GossipVCardCallback  callback;
-	LmMessageNode       *vcard_node, *node;
+	LmMessageNode       *vcard_node, *photo_node, *node;
 	LmMessageSubType     type;
 
 	if (!data || !data->callback) {
@@ -129,6 +129,19 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 	node = lm_message_node_get_child (vcard_node, "DESC");
 	if (node) {
 		gossip_vcard_set_description (vcard, node->value);
+	}
+
+	photo_node = lm_message_node_get_child (vcard_node, "PHOTO");
+	if (photo_node) {
+		node = lm_message_node_get_child (photo_node, "BINVAL");
+		if (node) {
+			guchar *decoded_avatar;
+			gsize   len;
+
+			decoded_avatar = gossip_base64_decode (node->value, &len);
+			gossip_vcard_set_avatar (vcard, decoded_avatar, len);
+			g_free (decoded_avatar);
+		}
 	}
 
 	(callback) (GOSSIP_RESULT_OK, vcard, data->user_data);

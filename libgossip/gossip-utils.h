@@ -23,6 +23,7 @@
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <gcrypt.h>
 
 #include "gossip-account.h"
 #include "gossip-presence.h"
@@ -61,5 +62,9 @@ gint     gossip_utils_str_n_case_cmp                      (const gchar     *s1,
 							   gsize            n);
 gboolean gossip_utils_xml_validate                        (xmlDoc          *doc,
 							   const gchar     *dtd_filename);
+guchar * gossip_base64_decode				  (const char      *str,
+							   gsize           *len);
+gchar *  gossip_sha1_string				  (const guchar    *buf,
+							   gsize            len);
 
 #endif /*  __GOSSIP_UTILS_H__ */

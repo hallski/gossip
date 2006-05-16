@@ -197,6 +197,11 @@ static void     contact_list_pixbuf_cell_data_func       (GtkTreeViewColumn  *tr
 							  GtkTreeModel       *model,
 							  GtkTreeIter        *iter,
 							  GossipContactList  *list);
+static void     contact_list_avatar_cell_data_func       (GtkTreeViewColumn  *tree_column,
+							  GtkCellRenderer    *cell,
+							  GtkTreeModel       *model,
+							  GtkTreeIter        *iter,
+							  GossipContactList  *list);
 static void     contact_list_text_cell_data_func         (GtkTreeViewColumn  *tree_column,
 							  GtkCellRenderer    *cell,
 							  GtkTreeModel       *model,
@@ -262,7 +267,8 @@ enum {
 static guint signals[LAST_SIGNAL];
 
 enum {
-	COL_PIXBUF,
+	COL_PIXBUF_STATUS,
+	COL_PIXBUF_AVATAR,
 	COL_NAME,
 	COL_STATUS,
 	COL_CONTACT,
@@ -810,7 +816,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		}
 	
 		gtk_tree_store_set (GTK_TREE_STORE (model), l->data,
-				    COL_PIXBUF, pixbuf,
+				    COL_PIXBUF_STATUS, pixbuf,
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_IS_ONLINE, now_online,
 				    -1);
@@ -891,7 +897,7 @@ contact_list_contact_composing_cb (GossipSession     *session,
 
 		if (pixbuf) {
 			gtk_tree_store_set (GTK_TREE_STORE (model), iter,
-					    COL_PIXBUF, pixbuf,
+					    COL_PIXBUF_STATUS, pixbuf,
 					    -1);
 		}
 
@@ -1072,7 +1078,7 @@ contact_list_get_group (GossipContactList *list,
 	       
 		gtk_tree_store_append (GTK_TREE_STORE (model), iter_to_set, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter_to_set,
-				    COL_PIXBUF, NULL,
+				    COL_PIXBUF_STATUS, NULL,
 				    COL_NAME, name,
 				    COL_IS_GROUP, TRUE,
 				    COL_IS_ACTIVE, FALSE,
@@ -1134,13 +1140,17 @@ contact_list_add_contact (GossipContactList *list,
 	/* If no groups just add it at the top level. */
 	groups = gossip_contact_get_groups (contact);
 	if (!groups) {
-		GdkPixbuf *pixbuf;
+		GdkPixbuf *pixbuf_status;
+		GdkPixbuf *pixbuf_avatar;
 
-		pixbuf = gossip_pixbuf_for_contact (contact);
+		pixbuf_status = gossip_pixbuf_for_contact (contact);
+		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact,
+									  GTK_ICON_SIZE_DND);
 		
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    COL_PIXBUF, pixbuf,
+				    COL_PIXBUF_STATUS, pixbuf_status,
+				    COL_PIXBUF_AVATAR, pixbuf_avatar,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_CONTACT, contact,
@@ -1150,13 +1160,18 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_COMPOSING, FALSE,
 				    -1);
 
-		g_object_unref (pixbuf);
+		if (pixbuf_avatar) {
+			g_object_unref (pixbuf_avatar);
+		}
+
+		g_object_unref (pixbuf_status);
 	}
 
 	/* Else add to each group. */
 	for (l = groups; l; l = l->next) {
 		GtkTreePath *path;
-		GdkPixbuf   *pixbuf;
+		GdkPixbuf   *pixbuf_status;
+		GdkPixbuf   *pixbuf_avatar;
 		const gchar *name;
 		gboolean     created;
 
@@ -1165,13 +1180,16 @@ contact_list_add_contact (GossipContactList *list,
 			continue;
 		}
 
-		pixbuf = gossip_pixbuf_for_contact (contact);
-
+		pixbuf_status = gossip_pixbuf_for_contact (contact);
+		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 
+									  GTK_ICON_SIZE_DND);
+		
 		contact_list_get_group (list, name, &iter_group, &created);
 
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
-				    COL_PIXBUF, pixbuf,
+				    COL_PIXBUF_STATUS, pixbuf_status,
+				    COL_PIXBUF_AVATAR, pixbuf_avatar,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_CONTACT, contact,
@@ -1181,7 +1199,11 @@ contact_list_add_contact (GossipContactList *list,
 				    COL_IS_COMPOSING, FALSE,
 				    -1);
 
-		g_object_unref (pixbuf);
+		if (pixbuf_avatar) {
+			g_object_unref (pixbuf_avatar);
+		}
+
+		g_object_unref (pixbuf_status);
 
 		if (!created) {
 			continue;
@@ -1256,14 +1278,15 @@ contact_list_create_model (GossipContactList *list)
 	GtkTreeModel *model;
 
 	model = GTK_TREE_MODEL (gtk_tree_store_new (COL_COUNT,
-						    GDK_TYPE_PIXBUF,
-						    G_TYPE_STRING,
-						    G_TYPE_STRING,
-						    GOSSIP_TYPE_CONTACT,
-						    G_TYPE_BOOLEAN,
-						    G_TYPE_BOOLEAN,
-						    G_TYPE_BOOLEAN,
-						    G_TYPE_BOOLEAN));
+						    GDK_TYPE_PIXBUF,     /* Status pixbuf */
+						    GDK_TYPE_PIXBUF,     /* Avatar pixbuf */
+						    G_TYPE_STRING,       /* Name */
+						    G_TYPE_STRING,       /* Status string */
+						    GOSSIP_TYPE_CONTACT, /* Contact type */
+						    G_TYPE_BOOLEAN,      /* Is group */
+						    G_TYPE_BOOLEAN,      /* Is active */
+						    G_TYPE_BOOLEAN,      /* Is online */
+						    G_TYPE_BOOLEAN));    /* Is composing */
 	
 	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (model),
 					 COL_NAME,
@@ -1318,6 +1341,18 @@ contact_list_setup_view (GossipContactList *list)
 
 	gtk_tree_view_column_set_cell_data_func (col, cell, 
 						 (GtkTreeCellDataFunc)contact_list_text_cell_data_func,
+						 list, NULL);
+
+	cell = gtk_cell_renderer_pixbuf_new ();
+	g_object_set (cell, 
+		      "xpad", (guint) 0,
+		      "ypad", (guint) 1,
+		      "visible", FALSE,
+		      NULL);
+	gtk_tree_view_column_pack_start (col, cell, FALSE);
+
+	gtk_tree_view_column_set_cell_data_func (col, cell, 
+						 (GtkTreeCellDataFunc)contact_list_avatar_cell_data_func,
 						 list, NULL);
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (list), col);
@@ -1710,7 +1745,36 @@ contact_list_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 	gtk_tree_model_get (model, iter, 
 			    COL_IS_GROUP, &is_group, 
 			    COL_IS_ACTIVE, &is_active, 
-			    COL_PIXBUF, &pixbuf,
+			    COL_PIXBUF_STATUS, &pixbuf,
+			    -1);
+
+	g_object_set (cell, 
+		      "visible", !is_group,
+		      "pixbuf", pixbuf,
+		      NULL); 
+
+	if (pixbuf) {
+		g_object_unref (pixbuf); 
+	}
+
+	contact_list_cell_set_background (list, cell, is_group, is_active);
+}
+
+static void  
+contact_list_avatar_cell_data_func (GtkTreeViewColumn *tree_column,
+				    GtkCellRenderer   *cell,
+				    GtkTreeModel      *model,
+				    GtkTreeIter       *iter,
+				    GossipContactList *list)
+{
+	GdkPixbuf *pixbuf;
+	gboolean   is_group;
+	gboolean   is_active;
+
+	gtk_tree_model_get (model, iter, 
+			    COL_PIXBUF_AVATAR, &pixbuf,
+			    COL_IS_GROUP, &is_group, 
+			    COL_IS_ACTIVE, &is_active, 
 			    -1);
 
 	g_object_set (cell, 
@@ -2345,7 +2409,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	for (l = iters; l; l = l->next) {
 		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    l->data, 
-				    COL_PIXBUF, pixbuf,
+				    COL_PIXBUF_STATUS, pixbuf,
 				    -1);
 	}
 
@@ -2456,7 +2520,7 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 
 		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    l->data, 
-				    COL_PIXBUF, pixbuf,
+				    COL_PIXBUF_STATUS, pixbuf,
 				    -1);
 	}
 

@@ -26,7 +26,7 @@
 #include <libgossip/gossip-async.h>
 #include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-account.h>
-
+#include <libgossip/gossip-utils.h>
 
 gboolean gossip_jabber_vcard_get                 (LmConnection          *connection,
 						  const gchar           *jid_str,

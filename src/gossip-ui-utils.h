@@ -34,57 +34,63 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-vcard.h>
 
 #include "gossip-chat-view.h"
 
-/* glade */
-void       gossip_glade_get_file_simple      (const gchar         *filename,
-					      const gchar         *root,
-					      const gchar         *domain,
-					      const gchar         *first_required_widget,
-					      ...);
-GladeXML * gossip_glade_get_file             (const gchar         *filename,
-					      const gchar         *root,
-					      const gchar         *domain,
-					      const gchar         *first_required_widget,
-					      ...);
-void       gossip_glade_connect              (GladeXML            *gui,
-					      gpointer             user_data,
-					      gchar               *first_widget,
-					      ...);
-void       gossip_glade_setup_size_group     (GladeXML            *gui,
-					      GtkSizeGroupMode     mode,
-					      gchar               *first_widget,
-					      ...);
+/* Glade */
+void       gossip_glade_get_file_simple             (const gchar         *filename,
+						     const gchar         *root,
+						     const gchar         *domain,
+						     const gchar         *first_required_widget,
+						     ...);
+GladeXML * gossip_glade_get_file                    (const gchar         *filename,
+						     const gchar         *root,
+						     const gchar         *domain,
+						     const gchar         *first_required_widget,
+						     ...);
+void       gossip_glade_connect                     (GladeXML            *gui,
+						     gpointer             user_data,
+						     gchar               *first_widget,
+						     ...);
+void       gossip_glade_setup_size_group            (GladeXML            *gui,
+						     GtkSizeGroupMode     mode,
+						     gchar               *first_widget,
+						     ...);
 
-/* dialogs */
-gchar *    gossip_password_dialog_run        (GossipAccount       *account,
-					      GtkWindow           *parent);
+/* Dialogs */
+gchar *    gossip_password_dialog_run               (GossipAccount       *account,
+						     GtkWindow           *parent);
 
-/* pixbufs */
-GdkPixbuf *gossip_pixbuf_from_stock          (const gchar         *stock,
-					      GtkIconSize          size);
-GdkPixbuf *gossip_pixbuf_from_account_type   (GossipAccountType    type,
-					      GtkIconSize          icon_size);
-GdkPixbuf *gossip_pixbuf_from_account        (GossipAccount       *account,
-					      GtkIconSize          icon_size);
-GdkPixbuf *gossip_pixbuf_from_account_status (GossipAccount       *account,
-					      GtkIconSize          icon_size,
-					      gboolean             online);
-GdkPixbuf *gossip_pixbuf_from_account_error  (GossipAccount       *account,
-					      GtkIconSize          icon_size);
-GdkPixbuf *gossip_pixbuf_from_smiley         (GossipSmiley         type,
-					      GtkIconSize          icon_size);
-GdkPixbuf *gossip_pixbuf_for_presence_state  (GossipPresenceState  state);
-GdkPixbuf *gossip_pixbuf_for_presence        (GossipPresence      *presence);
-GdkPixbuf *gossip_pixbuf_for_contact         (GossipContact       *contact);
-GdkPixbuf *gossip_pixbuf_offline             (void);
-
-GdkPixbuf *gossip_pixbuf_for_chatroom_status (GossipChatroom      *chatroom,
-					      GtkIconSize          icon_size);
+/* Pixbufs */
+GdkPixbuf *gossip_pixbuf_from_stock                 (const gchar         *stock,
+						     GtkIconSize          size);
+GdkPixbuf *gossip_pixbuf_from_account_type          (GossipAccountType    type,
+						     GtkIconSize          icon_size);
+GdkPixbuf *gossip_pixbuf_from_account               (GossipAccount       *account,
+						     GtkIconSize          icon_size);
+GdkPixbuf *gossip_pixbuf_from_account_status        (GossipAccount       *account,
+						     GtkIconSize          icon_size,
+						     gboolean             online);
+GdkPixbuf *gossip_pixbuf_from_account_error         (GossipAccount       *account,
+						     GtkIconSize          icon_size);
+GdkPixbuf *gossip_pixbuf_from_smiley                (GossipSmiley         type,
+						     GtkIconSize          icon_size);
+GdkPixbuf *gossip_pixbuf_for_presence_state         (GossipPresenceState  state);
+GdkPixbuf *gossip_pixbuf_for_presence               (GossipPresence      *presence);
+GdkPixbuf *gossip_pixbuf_for_contact                (GossipContact       *contact);
+GdkPixbuf *gossip_pixbuf_offline                    (void);
+GdkPixbuf *gossip_pixbuf_for_chatroom_status        (GossipChatroom      *chatroom,
+						     GtkIconSize          icon_size);
+GdkPixbuf *gossip_pixbuf_avatar_from_vcard          (GossipVCard         *vcard);
+GdkPixbuf *gossip_pixbuf_avatar_from_vcard_scaled   (GossipVCard         *vcard, 
+						     GtkIconSize          size);
+GdkPixbuf *gossip_pixbuf_avatar_from_contact        (GossipContact       *contact);
+GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact,
+						     GtkIconSize          size);
 	
-/* windows */
-gboolean   gossip_window_get_is_visible      (GtkWindow           *window);
-void       gossip_window_present             (GtkWindow           *window);
+/* Windows */
+gboolean   gossip_window_get_is_visible             (GtkWindow           *window);
+void       gossip_window_present                    (GtkWindow           *window);
 
 #endif /*  __GOSSIP_UI_UTILS_H__ */

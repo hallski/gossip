@@ -1,5 +1,6 @@
 NEWS in 0.11.1:
 ===============
+- Support for avatars. This work was carried out by Eitan Isaacson.
 - Fixed #338054, Don't hide the main window with Escape if there is no
 notification area to bring it back (Kristian Rietveld, patch by Caio
 Marcelo).

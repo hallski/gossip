@@ -199,6 +199,12 @@ static void             jabber_contact_remove               (GossipProtocol     
 							     GossipContact           *contact);
 static void             jabber_contact_update               (GossipProtocol          *protocol,
 							     GossipContact           *contact);
+static void             jabber_contact_is_avatar_latest_cb  (GossipResult             result,
+							     GossipVCard             *vcard,
+							     JabberData              *data);
+static void		jabber_contact_is_avatar_latest	    (GossipJabber	     *jabber,
+							     GossipContact	     *contact,
+							     LmMessageNode	     *m);
 static void             jabber_contact_vcard                (GossipJabber            *jabber,
 							     GossipContact           *contact);
 static void             jabber_contact_vcard_cb             (GossipResult             result,
@@ -1705,11 +1711,71 @@ static void
 jabber_contact_update (GossipProtocol *protocol, 
 		       GossipContact  *contact)
 {
-	/* we set the groups _and_ the name here, the rename function
-	   will do exactly what we want to do so just call that */
+	/* We set the groups _and_ the name here, the rename function
+	 * will do exactly what we want to do so just call that.
+	 */
 	jabber_contact_rename (protocol, 
 			       contact, 
 			       gossip_contact_get_name (contact));
+}
+
+static void
+jabber_contact_is_avatar_latest_cb (GossipResult  result,
+				    GossipVCard  *vcard,
+				    JabberData   *data)
+{
+	if (result == GOSSIP_RESULT_OK) {
+		const guchar *avatar;
+		gsize         avatar_size;
+
+		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
+		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
+
+		g_signal_emit_by_name (data->jabber, 
+				       "contact-updated", 
+				       data->contact);
+	}
+
+	jabber_data_free (data);
+}
+
+static void
+jabber_contact_is_avatar_latest (GossipJabber  *jabber, 
+				 GossipContact *contact,
+				 LmMessageNode *m)
+{
+	GossipJabberPriv *priv;
+	JabberData       *data;
+	LmMessageNode    *avatar_node;
+	const guchar     *avatar;
+	gsize             avatar_size;
+	gchar            *sha1;
+	gboolean          same;
+
+	priv = GET_PRIV (jabber);
+
+	avatar_node = lm_message_node_find_child (m, "upd:photo");
+	if (!avatar_node) {
+		gossip_contact_set_avatar (contact, NULL, 0);
+		return;
+	}	
+
+	avatar = gossip_contact_get_avatar (contact, &avatar_size);
+	sha1 = gossip_sha1_string (avatar, avatar_size);
+
+	same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
+	g_free (sha1);
+	
+	if (same) {
+		return;
+	}
+
+	data = jabber_data_new (jabber, contact, NULL);
+	gossip_jabber_vcard_get (priv->connection,
+				 gossip_contact_get_id (contact),
+				 (GossipVCardCallback) jabber_contact_is_avatar_latest_cb, 
+				 data, 
+				 NULL);
 }
 
 static void
@@ -1736,8 +1802,13 @@ jabber_contact_vcard_cb (GossipResult  result,
 			 JabberData   *data)
 {
 	if (result == GOSSIP_RESULT_OK) {
-		gchar *name;
+		gchar        *name;
+		const guchar *avatar;
+		gsize         avatar_size;
 
+		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
+		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
+		
 		name = gossip_jabber_get_name_to_use 
 			(gossip_contact_get_id (data->contact),
 			 gossip_vcard_get_nickname (vcard),
@@ -2270,8 +2341,12 @@ jabber_presence_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
-	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item, TRUE); 
+	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item, TRUE);
 
+	/* Check we are using the latest avatar for contacts */
+ 	jabber_contact_is_avatar_latest (jabber, contact, m->node); 
+
+	/* Get the type */
 	type = lm_message_node_get_attribute (m->node, "type");
 	if (!type) {
 		type = "available";

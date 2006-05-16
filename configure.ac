@@ -195,6 +195,20 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
 GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
 AC_SUBST(GLIB_GENMARSHAL)
 
+dnl -----------------------------------------------------------
+dnl Check for libgcrypt
+dnl -----------------------------------------------------------
+
+AC_PATH_PROG(LIBGCRYPT_CONFIG, libgcrypt-config, no)
+if test x"$LIBGCRYPT_CONFIG" = xno; then
+	AC_MSG_ERROR([gcrypt not found on system])
+else
+	LIBGCRYPT_CFLAGS=`$LIBGCRYPT_CONFIG --cflags`
+	LIBGCRYPT_LIBS=`$LIBGCRYPT_CONFIG --libs`
+
+	GOSSIP_JABBER_CFLAGS = "$GOSSIP_JABBER_CFLAGS $LIBGCRYPT_CFLAGS"
+	GOSSIP_JABBER_LDFLAGS = "$GOSSIP_JABBER_LDFLAGS $LIBGCRYPT_LDFLAGS"
+fi
 
 dnl -----------------------------------------------------------
 dnl Check for the XScreenSaver extension (used for autoaway)

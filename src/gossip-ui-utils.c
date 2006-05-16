@@ -35,6 +35,19 @@
 #define AWAY_MESSAGE "Away"
 #define BUSY_MESSAGE "Busy"
 
+struct SizeData {
+	gint     width;
+	gint     height;
+	gboolean preserve_aspect_ratio;
+};
+
+static void       pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
+						       int              width,
+						       int              height,
+						       struct SizeData *data);
+static GdkPixbuf *pixbuf_from_avatar_scaled           (const guchar    *avatar,
+						       gsize            len,
+						       GtkIconSize      size);
 
 static void
 tagify_bold_labels (GladeXML *xml)
@@ -699,3 +712,186 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 
 	return pixbuf;
 }
+
+GdkPixbuf *
+gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard) 
+{
+	GdkPixbuf	*pixbuf;
+	GdkPixbufLoader	*loader;
+	const guchar    *avatar;
+	gsize		 len;
+	
+	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
+	
+	avatar = gossip_vcard_get_avatar (vcard, &len);
+	if (!avatar) {
+		return NULL;
+	}
+
+	loader = gdk_pixbuf_loader_new ();
+
+	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
+		g_warning ("Couldn't write avatar image:%p with length:%d to pixbuf loader",
+			   avatar, len);
+		return NULL;
+	}
+
+	gdk_pixbuf_loader_close (loader, NULL);
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+	g_object_ref (pixbuf);
+	g_object_unref (loader);
+
+	return pixbuf;
+}
+
+GdkPixbuf *
+gossip_pixbuf_avatar_from_contact (GossipContact *contact) 
+{
+	GdkPixbuf	*pixbuf;
+	GdkPixbufLoader	*loader;
+	const guchar	*avatar;
+	gsize		 len;
+	
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+	
+	avatar = gossip_contact_get_avatar (contact, &len);
+	if (!avatar) {
+		return NULL;
+	}
+
+	loader = gdk_pixbuf_loader_new ();
+
+	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
+		g_warning ("Couldn't write avatar image:%p with length:%d to pixbuf loader",
+			   avatar, len);
+		return NULL;
+	}
+
+	gdk_pixbuf_loader_close (loader, NULL);
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+	g_object_ref (pixbuf);
+	g_object_unref (loader);
+
+	return pixbuf;
+}
+
+static void
+pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
+				     int              width,
+				     int              height,
+				     struct SizeData *data)
+{
+	g_return_if_fail (width > 0 && height > 0);
+
+	if (data->preserve_aspect_ratio && (data->width > 0 || data->height > 0)) {
+		if (width < data->width && height < data->height) {
+			width = width;
+			height = height;
+		}
+
+		if (data->width < 0) {
+			width = width * (double) data->height / (gdouble) height;
+			height = data->height;
+		} else if (data->height < 0) {
+			height = height * (double) data->width / (double) width;
+			width = data->width;
+		} else if ((double) height * (double) data->width >
+			   (double) width * (double) data->height) {
+			width = 0.5 + (double) width * (double) data->height / (double) height;
+			height = data->height;
+		} else {
+			height = 0.5 + (double) height * (double) data->width / (double) width;
+			width = data->width;
+		}
+	} else {
+		if (data->width > 0) {
+			width = data->width;
+		}
+
+		if (data->height > 0) {
+			height = data->height;
+		}
+	}
+
+	gdk_pixbuf_loader_set_size (loader, width, height);
+}
+
+static GdkPixbuf *
+pixbuf_from_avatar_scaled (const guchar *avatar, 
+			   gsize         len,
+			   GtkIconSize   size)
+{
+	GdkPixbuf        *pixbuf;
+	GdkPixbufLoader	 *loader;
+	struct SizeData   data;
+
+	if (!avatar) {
+		return NULL;
+	}
+
+	if (!gtk_icon_size_lookup (size, &data.width, &data.height)) {
+		data.height = data.width = 48;
+	}
+
+	data.preserve_aspect_ratio = TRUE;
+
+	loader = gdk_pixbuf_loader_new ();
+
+	g_signal_connect (loader, "size-prepared", 
+			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb), 
+			  &data);
+
+	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
+		g_warning ("Couldn't write avatar image:%p with length:%d to pixbuf loader",
+			   avatar, len);
+		return NULL;
+	}
+
+	gdk_pixbuf_loader_close (loader, NULL);
+
+	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
+
+	g_object_ref (pixbuf);
+	g_object_unref (loader);
+
+	return pixbuf;
+}
+
+GdkPixbuf *
+gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact, 
+					  GtkIconSize    size)
+{
+	const guchar *avatar;
+	gsize         len;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	avatar = gossip_contact_get_avatar (contact, &len);
+	if (!avatar) {
+		return NULL;
+	}
+
+	return pixbuf_from_avatar_scaled (avatar, len, size);
+}
+
+GdkPixbuf *
+gossip_pixbuf_avatar_from_vcard_scaled (GossipVCard *vcard, 
+					GtkIconSize  size)
+{
+	const guchar *avatar;
+	gsize	      len;
+	
+	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
+
+	avatar = gossip_vcard_get_avatar (vcard, &len);
+	if (!avatar) {
+		return NULL;
+	}
+
+	return pixbuf_from_avatar_scaled (avatar, len, size);
+}
+

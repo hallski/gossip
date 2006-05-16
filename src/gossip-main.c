@@ -38,6 +38,8 @@
 #include "gossip-stock.h"
 #include "gossip-app.h"
 
+#define GNOME_PARAM_GOPTION_CONTEXT "goption-context"
+
 static gboolean  no_connect = FALSE;
 static gboolean  list_accounts = FALSE;
 static gchar    *account_name = NULL;

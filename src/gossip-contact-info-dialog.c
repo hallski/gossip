@@ -38,8 +38,6 @@ typedef struct {
 
 	GtkWidget     *id_label;
 	GtkWidget     *name_label;
-	GtkWidget     *stub_id_label;
-	GtkWidget     *stub_name_label;
 	GtkWidget     *stub_email_label;
 	GtkWidget     *stub_web_label;
 	GtkWidget     *personal_status_label;
@@ -66,6 +64,7 @@ typedef struct {
 
 	GtkWidget     *description_vbox;
 	GtkWidget     *description_label;
+	GtkWidget     *avatar_image;
 
 	gulong         contact_signal_handler;
 	gulong         presence_signal_handler;
@@ -262,6 +261,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	GossipContactInfoDialog *dialog;
 	gboolean                 show_personal = FALSE;
 	const gchar             *str;
+	GdkPixbuf               *pixbuf;
 	
 	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
 	g_object_unref (contact);
@@ -277,7 +277,12 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 
 		return;
 	}
-
+	
+	pixbuf = gossip_pixbuf_avatar_from_vcard_scaled (vcard, GTK_ICON_SIZE_DIALOG);
+	if (pixbuf != NULL) {
+		gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->avatar_image), pixbuf);
+	}
+	
 	str = gossip_vcard_get_description (vcard);
 	if (str && strlen (str) > 0) {
 		gtk_label_set_text (GTK_LABEL (dialog->description_label), str);
@@ -289,12 +294,6 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	str = gossip_vcard_get_name (vcard);
 	if (str && strlen (str) > 0) {
 		gtk_label_set_text (GTK_LABEL (dialog->name_label), str);
-
-		gtk_label_set_text (GTK_LABEL (dialog->stub_name_label),
-				    _("Name:"));
-	} else {
-		gtk_label_set_text (GTK_LABEL (dialog->stub_name_label),
-				    _("Alias:"));
 	}
 	
 	str = gossip_vcard_get_email (vcard);
@@ -351,15 +350,8 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	}
 
 	if (show_personal) {
-		GtkSizeGroup *size_group;
-
 		gtk_widget_hide (dialog->personal_status_hbox);
 		gtk_widget_show (dialog->personal_table);
-
-		size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-		gtk_size_group_add_widget (size_group, dialog->stub_id_label);
-		gtk_size_group_add_widget (size_group, dialog->stub_email_label);
-		g_object_unref (size_group);
 	}
 }
 
@@ -425,7 +417,6 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 		gtk_widget_show (dialog->client_table);
 
 		size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-		gtk_size_group_add_widget (size_group, dialog->stub_id_label);
 		gtk_size_group_add_widget (size_group, dialog->stub_client_label);
 		g_object_unref (size_group);
 	} 
@@ -561,8 +552,6 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 				       "description_vbox", &dialog->description_vbox,
 				       "description_label", &dialog->description_label,
 				       "client_table", &dialog->client_table,
-				       "stub_id_label", &dialog->stub_id_label,
-				       "stub_name_label", &dialog->stub_name_label,
 				       "stub_email_label", &dialog->stub_email_label,
 				       "stub_web_label", &dialog->stub_web_label,
 				       "stub_client_label", &dialog->stub_client_label,
@@ -577,6 +566,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 				       "subscription_label", &dialog->subscription_label,
 				       "presence_list_vbox", &dialog->presence_list_vbox,
 				       "presence_table", &dialog->presence_table,
+				       "avatar_image", &dialog->avatar_image,
 				       NULL);
 
 	gossip_glade_connect (glade,
@@ -591,7 +581,6 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	/* Align widgets */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
-	gtk_size_group_add_widget (size_group, dialog->stub_name_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_email_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_web_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_client_label);
@@ -610,8 +599,6 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	gtk_label_set_text (GTK_LABEL (dialog->id_label), 
 			    gossip_contact_get_id (contact));
 
-	gtk_label_set_text (GTK_LABEL (dialog->stub_name_label),
-			    _("Alias:"));
 	gtk_label_set_text (GTK_LABEL (dialog->name_label), 
 			    gossip_contact_get_name (contact));
 
@@ -635,7 +622,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 
 	/* get vcard and version info */
 	str = g_strdup_printf ("<i>%s</i>", 
-			       _("Requested Information"));
+			       _("Information requested..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->personal_status_label), str);
 	gtk_label_set_markup (GTK_LABEL (dialog->client_status_label), str);
 	g_free (str);
