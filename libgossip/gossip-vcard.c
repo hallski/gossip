@@ -48,6 +48,7 @@ static void vcard_set_property (GObject      *object,
 				GParamSpec   *pspec);
 
 enum {
+	PROP_0,
 	PROP_NAME,
 	PROP_NICKNAME,
 	PROP_EMAIL,
