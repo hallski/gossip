@@ -1,3 +1,23 @@
+2006-05-17  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_message_handler): Don't use the room if it's not
+	found, fixes critical warnings.
+	* protocols/jabber/gossip-jabber.c:
+	(jabber_contact_is_avatar_latest): Check the node's value before
+	using it, fixes critical warnings.
+
+	* src/Makefile.am:
+	* src/gossip-avatar-image.[ch]: New widget for showing the avatar.
+	
+	* src/gossip-contact-info-dialog.c:
+	(contact_info_dialog_get_vcard_cb): Don't scale the avatar, get
+	the full scaled image and handle scaling in the avatar widget.
+	(gossip_contact_info_dialog_show): Set up the avatar widget.
+
+	* ui/main.glade: Remove the image and name the box so we can get
+	at it and add the image from code instead.
+
 2006-05-16  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-vcard.c: Add PROP_0 so we don't start at 0,

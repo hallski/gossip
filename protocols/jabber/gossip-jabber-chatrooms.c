@@ -315,13 +315,13 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 	jid = gossip_jid_new (from);
 
 	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
-	id = jabber_chatrooms_chatroom_get_id (room);
-
 	if (!room) {
 		gossip_jid_unref (jid);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
+	id = jabber_chatrooms_chatroom_get_id (room);
+
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
 		if (gossip_jid_get_resource (jid) == NULL) {

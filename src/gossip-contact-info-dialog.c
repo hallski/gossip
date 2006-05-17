@@ -29,6 +29,7 @@
 #include <libgossip/gossip-session.h>
 
 #include "gossip-app.h"
+#include "gossip-avatar-image.h"
 #include "gossip-contact-info-dialog.h"
 
 typedef struct {
@@ -278,9 +279,10 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		return;
 	}
 	
-	pixbuf = gossip_pixbuf_avatar_from_vcard_scaled (vcard, GTK_ICON_SIZE_DIALOG);
+	pixbuf = gossip_pixbuf_avatar_from_vcard (vcard);
 	if (pixbuf != NULL) {
-		gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->avatar_image), pixbuf);
+		gossip_avatar_image_set_pixbuf (GOSSIP_AVATAR_IMAGE (dialog->avatar_image), pixbuf);
+		g_object_unref (pixbuf);
 	}
 	
 	str = gossip_vcard_get_description (vcard);
@@ -521,6 +523,8 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	gchar                   *str, *tmp_str;
 	GtkSizeGroup            *size_group;
 	guint                    id;
+	GtkWidget               *avatar_image_placeholder;
+	GdkPixbuf               *pixbuf;
 
 	contact_info_dialog_init ();
 	
@@ -566,9 +570,21 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 				       "subscription_label", &dialog->subscription_label,
 				       "presence_list_vbox", &dialog->presence_list_vbox,
 				       "presence_table", &dialog->presence_table,
-				       "avatar_image", &dialog->avatar_image,
+				       "avatar_image_placeholder", &avatar_image_placeholder,
 				       NULL);
+	
+	dialog->avatar_image = gossip_avatar_image_new (NULL);
+	gtk_container_add (GTK_CONTAINER (avatar_image_placeholder),
+			   dialog->avatar_image);
 
+	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/vcard_48.png", NULL);
+	if (pixbuf) {
+		gossip_avatar_image_set_pixbuf (
+			GOSSIP_AVATAR_IMAGE (dialog->avatar_image), pixbuf);
+		g_object_unref (pixbuf);
+	}
+	gtk_widget_show (dialog->avatar_image);
+	
 	gossip_glade_connect (glade,
 			      dialog,
 			      "contact_information_dialog", "destroy", contact_info_dialog_destroy_cb,

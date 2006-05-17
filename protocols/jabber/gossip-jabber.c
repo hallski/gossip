@@ -1755,7 +1755,7 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 	priv = GET_PRIV (jabber);
 
 	avatar_node = lm_message_node_find_child (m, "upd:photo");
-	if (!avatar_node) {
+	if (!avatar_node || !avatar_node->value) {
 		gossip_contact_set_avatar (contact, NULL, 0);
 		return;
 	}	

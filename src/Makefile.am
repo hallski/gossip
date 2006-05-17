@@ -43,6 +43,7 @@ gossip_SOURCES = 				                        	\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
 	gossip-add-contact-window.c        gossip-add-contact-window.h		\
 	gossip-app.c	 	           gossip-app.h				\
+	gossip-avatar-image.c		   gossip-avatar-image.h		\
 	gossip-cell-renderer-text.c        gossip-cell-renderer-text.h          \
 	gossip-chat.c		           gossip-chat.h			\
 	gossip-chat-invite.c	           gossip-chat-invite.h			\
