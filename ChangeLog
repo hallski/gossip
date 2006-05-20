@@ -1,3 +1,7 @@
+2006-05-20  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Fix non-working check for gcrypt.
+
 2006-05-20  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-info-dialog.c:
