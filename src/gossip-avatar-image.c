@@ -19,12 +19,21 @@
  */
 
 #include <config.h>
+
+#include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 
 #include "gossip-avatar-image.h"
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImagePriv))
+
+#define WIDTH      48
+#define HEIGHT     48
+#define MAX_WIDTH  400
+#define MAX_HEIGHT 400
 
 typedef struct {
 	GtkWidget *eventbox;
@@ -34,7 +43,6 @@ typedef struct {
 	
 	GdkPixbuf *pixbuf;
 } GossipAvatarImagePriv;
-
 
 static void     avatar_image_finalize                (GObject           *object);
 static void     avatar_image_add_filter              (GossipAvatarImage *avatar_image);
@@ -46,15 +54,7 @@ static gboolean avatar_image_button_release_event_cb (GtkWidget         *widget,
 						      GdkEventButton    *event,
 						      GossipAvatarImage *avatar_image);
 
-
 G_DEFINE_TYPE (GossipAvatarImage, gossip_avatar_image, GTK_TYPE_EVENT_BOX);
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImagePriv))
-
-#define WIDTH 48
-#define HEIGHT 48
-#define MAX_WIDTH  400
-#define MAX_HEIGHT 400
-
 
 static void
 gossip_avatar_image_class_init (GossipAvatarImageClass *klass)
@@ -72,11 +72,12 @@ static void
 gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 {
 	GossipAvatarImagePriv *priv;
+	GtkTooltips           *tooltips;
 
 	priv = GET_PRIV (avatar_image);
 	
 	priv->image = gtk_image_new ();
-
+	
 	gtk_container_add (GTK_CONTAINER (avatar_image), priv->image);
 
 	/* FIXME: Should just override the methods instead. */
@@ -88,6 +89,10 @@ gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 			  "button-release-event",
 			  G_CALLBACK (avatar_image_button_release_event_cb),
 			  avatar_image);
+
+	tooltips = gtk_tooltips_new ();
+	gtk_tooltips_set_tip (tooltips, GTK_WIDGET (avatar_image), 
+			      _("Click to enlarge"), NULL);
 
 	avatar_image_add_filter (avatar_image);
 
@@ -108,7 +113,7 @@ avatar_image_finalize (GObject *object)
 	}
 	
 	if (priv->pixbuf) {
-		g_object_unref (priv->pixbuf);
+		g_object_unref(priv->pixbuf);
 	}
 	
 	G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);

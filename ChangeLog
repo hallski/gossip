@@ -1,3 +1,15 @@
+2006-05-20  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: Force avatar/VCard update for
+	contacts that come online because some clients don't support
+	JEP-0153 with the xml tags to tell us if they have an avatar or if
+	it has been updated. This means now that the roster will ALWAYS
+	show the avatars on the roster window.
+	
+	* src/gossip-avatar-image.c (gossip_avatar_image_init): Added a
+	tooltip to let people know they can click on the image to enlarge
+	it.
+
 2006-05-17  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber-chatrooms.c:

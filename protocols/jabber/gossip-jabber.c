@@ -204,7 +204,8 @@ static void             jabber_contact_is_avatar_latest_cb  (GossipResult       
 							     JabberData              *data);
 static void		jabber_contact_is_avatar_latest	    (GossipJabber	     *jabber,
 							     GossipContact	     *contact,
-							     LmMessageNode	     *m);
+							     LmMessageNode	     *m,
+							     gboolean                 force_update);
 static void             jabber_contact_vcard                (GossipJabber            *jabber,
 							     GossipContact           *contact);
 static void             jabber_contact_vcard_cb             (GossipResult             result,
@@ -426,7 +427,6 @@ jabber_finalize (GObject *obj)
 #ifdef USE_TRANSPORTS
  	gossip_transport_account_list_free (priv->account_list);
 #endif	
-/*  	g_free (priv); */
 }
 
 static void
@@ -1742,7 +1742,8 @@ jabber_contact_is_avatar_latest_cb (GossipResult  result,
 static void
 jabber_contact_is_avatar_latest (GossipJabber  *jabber, 
 				 GossipContact *contact,
-				 LmMessageNode *m)
+				 LmMessageNode *m,
+				 gboolean       force_update)
 {
 	GossipJabberPriv *priv;
 	JabberData       *data;
@@ -1754,20 +1755,22 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 
 	priv = GET_PRIV (jabber);
 
-	avatar_node = lm_message_node_find_child (m, "upd:photo");
-	if (!avatar_node || !avatar_node->value) {
-		gossip_contact_set_avatar (contact, NULL, 0);
-		return;
-	}	
+	if (!force_update) {
+		avatar_node = lm_message_node_find_child (m, "upd:photo");
+		if (!avatar_node || !avatar_node->value) {
+			gossip_contact_set_avatar (contact, NULL, 0);
+			return;
+		}	
 
-	avatar = gossip_contact_get_avatar (contact, &avatar_size);
-	sha1 = gossip_sha1_string (avatar, avatar_size);
-
-	same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
-	g_free (sha1);
+		avatar = gossip_contact_get_avatar (contact, &avatar_size);
+		sha1 = gossip_sha1_string (avatar, avatar_size);
+		
+		same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
+		g_free (sha1);
 	
-	if (same) {
-		return;
+		if (same) {
+			return;
+		}
 	}
 
 	data = jabber_data_new (jabber, contact, NULL);
@@ -2332,6 +2335,8 @@ jabber_presence_handler (LmMessageHandler *handler,
 
 	priv = GET_PRIV (jabber);
 
+	g_printerr ("**** PRESENCE MESSAGE\n");
+
 	from = lm_message_node_get_attribute (m->node, "from");
         DEBUG_MSG (("Protocol: New presence from:'%s'", 
 		   lm_message_node_get_attribute (m->node, "from")));
@@ -2342,9 +2347,6 @@ jabber_presence_handler (LmMessageHandler *handler,
 	}
 	
 	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item, TRUE);
-
-	/* Check we are using the latest avatar for contacts */
- 	jabber_contact_is_avatar_latest (jabber, contact, m->node); 
 
 	/* Get the type */
 	type = lm_message_node_get_attribute (m->node, "type");
@@ -2381,6 +2383,27 @@ jabber_presence_handler (LmMessageHandler *handler,
 								presence);
 			}
 		} else {
+			if (gossip_contact_get_presence_list (contact)) { 
+				/* Check avatar xml tags to see if we
+				 * have the latest.
+				 */
+				g_printerr ("**** CHECKING FOR LATEST AVATAR\n");
+				
+				jabber_contact_is_avatar_latest (jabber, contact, m->node, FALSE); 
+			} else {
+				/* Force retrieval of the latest avatar for
+				 * the contact because no presence information
+				 * should mean they were offline.
+				 * 
+				 * The reason we do this is because
+				 * some clients don't support the
+				 * avatar xml tags (JEP 0153).
+				 */
+				g_printerr ("**** FORCING UPDATE FOR LATEST AVATAR\n");
+				
+				jabber_contact_is_avatar_latest (jabber, contact, m->node, TRUE); 
+			}
+
 			gossip_presence_set_resource (presence, resource);
 			gossip_contact_add_presence (contact, presence);
 
