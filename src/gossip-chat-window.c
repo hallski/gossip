@@ -1586,10 +1586,10 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 				 &y,
 				 NULL);
 	
-	gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
-	
 	gossip_chat_window_remove_chat (window, chat);
 	gossip_chat_window_add_chat (new_window, chat);
+
+	gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
 
 	gtk_widget_show (priv->dialog);
 }
@@ -1713,35 +1713,23 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	label = chat_window_create_label (window, chat);
 
 	if (g_list_length (priv->chats) == 0) {
-		gint current_x, current_y, current_w, current_h;
 		gint x, y, w, h;
 
-		gtk_window_get_position (GTK_WINDOW (priv->dialog), 
-					 &current_x, &current_y);
-
-		gtk_window_get_size (GTK_WINDOW (priv->dialog), 
-				     &current_w, &current_h);
-
 		gossip_chat_load_geometry (chat, &x, &y, &w, &h);
-
-		if (x < 1) {
-			x = current_x;
+		
+		if (x >= 1 && y >= 1) {
+			/* Let the window manager position it if we
+			 * don't have good x, y coordinates.  
+			 */
+			gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
 		}
 
-		if (y < 1) {
-			y = current_y;
+		if (w >= 1 && h >= 1) {
+			/* Use the defaults from the glade file if we
+			 * don't have good w, h geometry.  
+			 */
+			gtk_window_resize (GTK_WINDOW (priv->dialog), w, h);
 		}
-
-		if (w < 1) {
-			w = current_w;
-		}
-
-		if (h < 1) {
-			h = current_h;
-		}
-
-		gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
-		gtk_window_resize (GTK_WINDOW (priv->dialog), w, h);
 	}
 
 	gossip_notebook_insert_page (GOSSIP_NOTEBOOK (priv->notebook),

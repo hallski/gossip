@@ -1,5 +1,12 @@
 2006-05-20  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-window.c: (gossip_chat_window_add_chat): If
+	the x, y, w, h geomtry is < 1 use the window manager and glade
+	defaults for positioning and size, fixes #342246 (Paul Van
+	Tilburg). 
+
+2006-05-20  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-ui-utils.c: (gossip_pixbuf_avatar_from_vcard),
 	(gossip_pixbuf_avatar_from_contact), (pixbuf_from_avatar_scaled):
 	Cleaned up some gsize warnings, based on a patch from Eitan
