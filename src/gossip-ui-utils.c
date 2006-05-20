@@ -731,7 +731,8 @@ gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard)
 	loader = gdk_pixbuf_loader_new ();
 
 	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
-		g_warning ("Couldn't write avatar image:%p with length:%d to pixbuf loader",
+		g_warning ("Couldn't write avatar image:%p with "
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader",
 			   avatar, len);
 		return NULL;
 	}
@@ -764,7 +765,8 @@ gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 	loader = gdk_pixbuf_loader_new ();
 
 	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
-		g_warning ("Couldn't write avatar image:%p with length:%d to pixbuf loader",
+		g_warning ("Couldn't write avatar image:%p with "
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader",
 			   avatar, len);
 		return NULL;
 	}
@@ -846,7 +848,8 @@ pixbuf_from_avatar_scaled (const guchar *avatar,
 			  &data);
 
 	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
-		g_warning ("Couldn't write avatar image:%p with length:%d to pixbuf loader",
+		g_warning ("Couldn't write avatar image:%p with "
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader",
 			   avatar, len);
 		return NULL;
 	}

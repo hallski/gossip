@@ -1,5 +1,12 @@
 2006-05-20  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-ui-utils.c: (gossip_pixbuf_avatar_from_vcard),
+	(gossip_pixbuf_avatar_from_contact), (pixbuf_from_avatar_scaled):
+	Cleaned up some gsize warnings, based on a patch from Eitan
+	Isaacson. 
+
+2006-05-20  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Force avatar/VCard update for
 	contacts that come online because some clients don't support
 	JEP-0153 with the xml tags to tell us if they have an avatar or if
