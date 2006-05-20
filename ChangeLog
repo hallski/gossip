@@ -1,5 +1,11 @@
 2006-05-20  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-info-dialog.c:
+	* ui/main.glade: Fixed some issues with the "Personal" information
+	group being visible with no child widgets shown. 
+
+2006-05-20  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: (gossip_chat_window_add_chat): If
 	the x, y, w, h geomtry is < 1 use the window manager and glade
 	defaults for positioning and size, fixes #342246 (Paul Van

@@ -2387,8 +2387,6 @@ jabber_presence_handler (LmMessageHandler *handler,
 				/* Check avatar xml tags to see if we
 				 * have the latest.
 				 */
-				g_printerr ("**** CHECKING FOR LATEST AVATAR\n");
-				
 				jabber_contact_is_avatar_latest (jabber, contact, m->node, FALSE); 
 			} else {
 				/* Force retrieval of the latest avatar for
@@ -2398,9 +2396,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 				 * The reason we do this is because
 				 * some clients don't support the
 				 * avatar xml tags (JEP 0153).
-				 */
-				g_printerr ("**** FORCING UPDATE FOR LATEST AVATAR\n");
-				
+				 */		
 				jabber_contact_is_avatar_latest (jabber, contact, m->node, TRUE); 
 			}
 

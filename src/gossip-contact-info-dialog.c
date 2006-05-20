@@ -43,6 +43,7 @@ typedef struct {
 	GtkWidget     *stub_web_label;
 	GtkWidget     *personal_status_label;
 	GtkWidget     *personal_status_hbox;
+	GtkWidget     *personal_vbox;
 	GtkWidget     *personal_table;
 
 	GtkWidget     *client_label;
@@ -221,12 +222,14 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 				  0, 0);
 		
 		widget = gtk_label_new (status);
+		gtk_label_set_line_wrap (GTK_LABEL (widget), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
 				  widget, 
 				  1, 2,
 				  i, i + 1, 
-				  GTK_FILL, 0,
+				  GTK_FILL, 
+				  GTK_FILL,
 				  0, 0);
 
 		if (!resource) {
@@ -242,12 +245,14 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 				  0, 0.5);
 
 		widget = gtk_label_new (resource);
+		gtk_label_set_line_wrap (GTK_LABEL (widget), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
 				  widget, 
 				  3, 4,
 				  i, i + 1,
-				  GTK_EXPAND | GTK_FILL, 0,
+				  GTK_EXPAND | GTK_FILL, 
+				  GTK_EXPAND | GTK_FILL,
 				  0, 0);
 	}
 
@@ -274,6 +279,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	if (result != GOSSIP_RESULT_OK) {
 		if (dialog->dialog) {
 			gtk_widget_hide (dialog->personal_status_hbox);
+			gtk_widget_hide (dialog->personal_vbox);
 		}
 
 		return;
@@ -351,9 +357,12 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		gtk_widget_hide (dialog->stub_web_label);
 	}
 
+	gtk_widget_hide (dialog->personal_status_hbox);
+
 	if (show_personal) {
-		gtk_widget_hide (dialog->personal_status_hbox);
-		gtk_widget_show (dialog->personal_table);
+		gtk_widget_show (dialog->personal_vbox);
+	} else {
+		gtk_widget_hide (dialog->personal_vbox);
 	}
 }
 
@@ -421,7 +430,9 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 		size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 		gtk_size_group_add_widget (size_group, dialog->stub_client_label);
 		g_object_unref (size_group);
-	} 
+	} else {
+		gtk_widget_hide (dialog->client_vbox);
+	}
 }
 
 static void
@@ -552,6 +563,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 				       "client_label", &dialog->client_label,
 				       "version_label", &dialog->version_label,
 				       "os_label", &dialog->os_label,
+				       "personal_vbox", &dialog->personal_vbox,
 				       "personal_table", &dialog->personal_table,
 				       "description_vbox", &dialog->description_vbox,
 				       "description_label", &dialog->description_label,
@@ -642,6 +654,9 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	gtk_label_set_markup (GTK_LABEL (dialog->personal_status_label), str);
 	gtk_label_set_markup (GTK_LABEL (dialog->client_status_label), str);
 	g_free (str);
+
+	gtk_widget_show (dialog->personal_vbox);
+	gtk_widget_show (dialog->client_vbox);
 
 	gossip_session_get_vcard (session,
 				  account,

@@ -1089,6 +1089,7 @@
 
 			      <child>
 				<widget class="GtkTable" id="personal_table">
+				  <property name="visible">True</property>
 				  <property name="n_rows">2</property>
 				  <property name="n_columns">2</property>
 				  <property name="homogeneous">False</property>
@@ -1529,7 +1530,6 @@
 
 	  <child>
 	    <widget class="GtkVBox" id="client_vbox">
-	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">6</property>
 
