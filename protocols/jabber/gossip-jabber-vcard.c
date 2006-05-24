@@ -244,7 +244,7 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	GossipCallbackData *data;
 	gboolean            result;
 	const guchar       *avatar;
-	gsize		    avatar_length;
+	gsize		    avatar_size;
 
 	connection = gossip_jabber_get_connection (jabber);
 
@@ -264,14 +264,14 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	lm_message_node_add_child (node, "DESC", 
 				   gossip_vcard_get_description (vcard)); 
 				   
-	avatar = gossip_vcard_get_avatar (vcard, &avatar_length);
+	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 	if (avatar != NULL) {
 		gchar *avatar_encoded;
 		
 		node = lm_message_node_add_child (node, "PHOTO", NULL);
 		lm_message_node_add_child (node, "TYPE", "image/jpeg"); 
 
-		avatar_encoded = gossip_base64_encode (avatar, avatar_length);
+		avatar_encoded = gossip_base64_encode (avatar, avatar_size);
 		lm_message_node_add_child (node, "BINVAL", avatar_encoded);
 		g_free (avatar_encoded);
 	}

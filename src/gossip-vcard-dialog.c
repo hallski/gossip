@@ -307,7 +307,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	GtkTextBuffer *buffer;
 	const gchar   *str;
 	const guchar  *avatar;
-	gsize          avatar_length;
+	gsize          avatar_size;
 
 	DEBUG_MSG (("VCardDialog: Got a VCard response"));
 
@@ -334,10 +334,10 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
 	gtk_text_buffer_set_text (buffer, STRING_EMPTY (str) ? "" : str, -1);
 
-	avatar = gossip_vcard_get_avatar (vcard, &avatar_length);
+	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 	if (avatar) {
 		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-						     (gchar*) avatar, avatar_length);
+						     (gchar*) avatar, avatar_size);
 	}	
 
 	/* Save position incase the next lookup fails. */
@@ -359,7 +359,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gchar                *description;
 	const gchar          *str;
 	gchar                *avatar;
-	gsize                 avatar_length;
+	gsize                 avatar_size;
 
 	if (!gossip_app_is_connected ()) {
 		DEBUG_MSG (("VCardDialog: Not connected, not setting VCard"));
@@ -387,8 +387,8 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	g_free (description);
 
 	gossip_image_chooser_get_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-					     &avatar, &avatar_length);
-	gossip_vcard_set_avatar (vcard, avatar, avatar_length);
+					     &avatar, &avatar_size);
+	gossip_vcard_set_avatar (vcard, avatar, avatar_size);
 
 	/* NOTE: if account is NULL, all accounts will get the same vcard */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
@@ -402,7 +402,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 
 	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);
 	contact = gossip_protocol_get_own_contact (protocol);
-	gossip_contact_set_avatar (GOSSIP_CONTACT(contact), avatar, avatar_length);
+	gossip_contact_set_avatar (GOSSIP_CONTACT(contact), avatar, avatar_size);
 
 	g_free (avatar);
 
