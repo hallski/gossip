@@ -865,8 +865,7 @@ chat_view_append_text (GossipChatView *view,
 	start = g_array_new (FALSE, FALSE, sizeof (gint));
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 
-	num_matches = gossip_utils_regex_match (GOSSIP_REGEX_ALL, 
-						body, start, end);
+	num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, body, start, end);
 
 	if (num_matches == 0) {
 		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
@@ -881,7 +880,7 @@ chat_view_append_text (GossipChatView *view,
 			e = g_array_index (end, gint, i);
 
 			if (s > last) {
-				tmp = gossip_utils_substring (body, last, s);
+				tmp = gossip_substring (body, last, s);
 
 				gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 				chat_view_insert_text_with_emoticons (priv->buffer,
@@ -890,7 +889,7 @@ chat_view_append_text (GossipChatView *view,
 				g_free (tmp);
 			}
 
-			tmp = gossip_utils_substring (body, s, e);
+			tmp = gossip_substring (body, s, e);
 
 			gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 			gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
@@ -907,7 +906,7 @@ chat_view_append_text (GossipChatView *view,
 		}
 
 		if (e < strlen (body)) {
-			tmp = gossip_utils_substring (body, e, strlen (body));
+			tmp = gossip_substring (body, e, strlen (body));
 
 			gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 			chat_view_insert_text_with_emoticons (priv->buffer,

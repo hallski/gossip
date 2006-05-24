@@ -103,7 +103,7 @@ status_presets_file_parse (const gchar *filename)
 		return;
 	}
 
-	if (!gossip_utils_xml_validate (doc, STATUS_PRESETS_DTD_FILENAME)) {
+	if (!gossip_xml_validate (doc, STATUS_PRESETS_DTD_FILENAME)) {
 		g_warning ("Failed to validate file:'%s'", filename);
 		xmlFreeDoc(doc);
 		xmlFreeParserCtxt (ctxt);

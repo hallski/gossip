@@ -41,8 +41,8 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
@@ -845,7 +845,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 		/* Set the vcard waiting to be sent to our jabber server once
 		 * connected. 
 		 */
-		gossip_jabber_vcard_set (priv->connection,
+		gossip_jabber_vcard_set (jabber,
 					 priv->vcard,
 					 NULL, NULL, NULL);
 		
@@ -1430,11 +1430,16 @@ jabber_set_presence (GossipProtocol *protocol,
 	GossipJabber        *jabber;
 	GossipJabberPriv    *priv;
 	LmMessage           *m;
+	LmMessageNode       *node;
+	GossipContact	    *contact;
 	GossipPresenceState  state;
 	const gchar         *show;
 	const gchar         *status;
 	const gchar         *priority;
-	
+	gchar               *sha1;
+	const guchar        *avatar;
+	gsize                avatar_size;
+
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
@@ -1450,7 +1455,7 @@ jabber_set_presence (GossipProtocol *protocol,
 
 	state = gossip_presence_get_state (presence);
 	status = gossip_presence_get_status (presence);
-
+	
 	show = gossip_jabber_presence_state_to_str (presence);
 	
 	switch (state) {
@@ -1468,10 +1473,16 @@ jabber_set_presence (GossipProtocol *protocol,
 		break;
 	}
 
-	DEBUG_MSG (("Protocol: Setting presence to:'%s', status:'%s', priority:'%s'", 
-		   show ? show : "available", 
-		   status ? status : "",
-		   priority));
+	contact = gossip_jabber_get_own_contact (jabber);
+	avatar = gossip_contact_get_avatar (contact, &avatar_size);
+	sha1 = gossip_sha1_string (avatar, avatar_size);
+
+	DEBUG_MSG (("Protocol: Setting presence to:'%s', status:'%s', "
+		    "priority:'%s' sha1:'%s' avatar_size:%" G_GSIZE_FORMAT " avatar:%p", 
+		    show ? show : "available", 
+		    status ? status : "",
+		    priority, sha1, 
+		    avatar_size, avatar));
 
 	if (show) {
 		lm_message_node_add_child (m->node, "show", show);
@@ -1482,11 +1493,24 @@ jabber_set_presence (GossipProtocol *protocol,
 	if (status) {
 		lm_message_node_add_child (m->node, "status", status);
 	}
+
+	node = lm_message_node_add_child (m->node, "x", "");
+	lm_message_node_set_attribute (node, "xmlns", "vcard-temp:x:update");
+
+	/* I can't think of an elegant way of doing this correctly so
+	 * I won't. We need to send an empty "x" element before we
+	 * download the user's vcard. And an empty "photo" element
+	 * when the user chooses not to use an avatar. 
+	 * 
+	 * See:
+	 * http://www.jabber.org/jeps/jep-0153.html#bizrules-presence 
+	 */
+	
+	lm_message_node_add_child (node, "photo", sha1);
+	g_free (sha1);
 	
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
-
-	gossip_jabber_chatrooms_set_presence (priv->chatrooms, presence);
 }
 
 static void
@@ -1519,13 +1543,14 @@ jabber_set_vcard (GossipProtocol        *protocol,
 		  gpointer               user_data,
 		  GError               **error)
 {
-	GossipJabber     *jabber;
-	GossipJabberPriv *priv; 
+	GossipJabber *jabber;
 
 	jabber = GOSSIP_JABBER (protocol);
-	priv = GET_PRIV (jabber);
 	
-	return gossip_jabber_vcard_set (priv->connection,
+	DEBUG_MSG (("Protocol: Setting vcard for '%s'", 
+		    gossip_vcard_get_name (vcard)))
+
+	return gossip_jabber_vcard_set (jabber,
 					vcard,
 					callback, user_data,
 					error);
@@ -1745,20 +1770,21 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 				 LmMessageNode *m,
 				 gboolean       force_update)
 {
-	GossipJabberPriv *priv;
-	JabberData       *data;
-	LmMessageNode    *avatar_node;
-	const guchar     *avatar;
-	gsize             avatar_size;
-	gchar            *sha1;
-	gboolean          same;
-
-	priv = GET_PRIV (jabber);
+	JabberData    *data;
+	LmMessageNode *avatar_node;
+	const guchar  *avatar;
+	gsize          avatar_size;
+	gchar         *sha1;
+	gboolean       same;
 
 	if (!force_update) {
-		avatar_node = lm_message_node_find_child (m, "upd:photo");
+		avatar_node = lm_message_node_find_child (m, "photo");
 		if (!avatar_node || !avatar_node->value) {
 			gossip_contact_set_avatar (contact, NULL, 0);
+
+			g_signal_emit_by_name (jabber,
+					       "contact-updated",
+					       contact);
 			return;
 		}	
 
@@ -1774,27 +1800,9 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 	}
 
 	data = jabber_data_new (jabber, contact, NULL);
-	gossip_jabber_vcard_get (priv->connection,
+	gossip_jabber_vcard_get (jabber,
 				 gossip_contact_get_id (contact),
 				 (GossipVCardCallback) jabber_contact_is_avatar_latest_cb, 
-				 data, 
-				 NULL);
-}
-
-static void
-jabber_contact_vcard (GossipJabber  *jabber,
-		      GossipContact *contact)
-{
-	GossipJabberPriv *priv;
-	JabberData       *data;
-	
-	priv = GET_PRIV (jabber);
-
-	data = jabber_data_new (jabber, contact, NULL);
-	
-	gossip_jabber_vcard_get (priv->connection,
-				 gossip_contact_get_id (contact),
-				 (GossipVCardCallback) jabber_contact_vcard_cb, 
 				 data, 
 				 NULL);
 }
@@ -1819,13 +1827,28 @@ jabber_contact_vcard_cb (GossipResult  result,
 		
 		gossip_contact_set_name (data->contact, name);
 		g_free (name);
-
+		
 		g_signal_emit_by_name (data->jabber, 
 				       "contact-updated", 
-				       data->contact);
+				       data->contact);	
 	}
 
 	jabber_data_free (data);
+}
+
+static void
+jabber_contact_vcard (GossipJabber  *jabber,
+		      GossipContact *contact)
+{
+	JabberData *data;
+	
+	data = jabber_data_new (jabber, contact, NULL);
+	
+	gossip_jabber_vcard_get (jabber,
+				 gossip_contact_get_id (contact),
+				 (GossipVCardCallback) jabber_contact_vcard_cb, 
+				 data, 
+				 NULL);
 }
 
 static void
@@ -2049,7 +2072,7 @@ jabber_get_vcard (GossipProtocol       *protocol,
 		jid_str = gossip_contact_get_id (priv->contact);
 	}
 	
-	return gossip_jabber_vcard_get (priv->connection,
+	return gossip_jabber_vcard_get (jabber,
 					jid_str,
 					callback, user_data, error);
 }
@@ -2335,8 +2358,6 @@ jabber_presence_handler (LmMessageHandler *handler,
 
 	priv = GET_PRIV (jabber);
 
-	g_printerr ("**** PRESENCE MESSAGE\n");
-
 	from = lm_message_node_get_attribute (m->node, "from");
         DEBUG_MSG (("Protocol: New presence from:'%s'", 
 		   lm_message_node_get_attribute (m->node, "from")));
@@ -2426,7 +2447,7 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 	LmMessageNode    *node;
 	const gchar      *xmlns;
 	
-	priv = jabber->priv;
+	priv = GET_PRIV (jabber);
 	
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GET &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_SET &&
@@ -3138,37 +3159,8 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 }
 
 void
-gossip_jabber_subscription_allow_all (GossipJabber *jabber)
-{
-	GossipJabberPriv *priv;
-	LmMessageHandler *handler;
-
-	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-	
-	priv = GET_PRIV (jabber);
-
-	handler = priv->subscription_handler;
-	if (handler) {
-		lm_connection_unregister_message_handler (priv->connection, 
-							  handler,
-							  LM_MESSAGE_TYPE_PRESENCE);
-		priv->subscription_handler = NULL;
-	}
-
-	/* set up handler to sliently catch the subscription request */
-	handler = lm_message_handler_new ((LmHandleMessageFunction)jabber_subscription_message_handler, 
-					  jabber, NULL);
-
-	lm_connection_register_message_handler (priv->connection,
-						handler,
-						LM_MESSAGE_TYPE_PRESENCE,
-						LM_HANDLER_PRIORITY_NORMAL);
-
-	priv->subscription_handler = handler;
-}
-
-void
-gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
+gossip_jabber_send_presence (GossipJabber   *jabber,
+			     GossipPresence *presence)
 {
 	GossipJabberPriv *priv;
 
@@ -3176,12 +3168,8 @@ gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
 
 	priv = GET_PRIV (jabber);
 
-	if (priv->subscription_handler) {
-		lm_connection_unregister_message_handler (priv->connection, 
-							  priv->subscription_handler,
-							  LM_MESSAGE_TYPE_PRESENCE);
-		priv->subscription_handler = NULL;
-	}
+	jabber_set_presence (GOSSIP_PROTOCOL (jabber), 
+			     presence ? presence : priv->presence);
 }
 
 void
@@ -3230,6 +3218,53 @@ gossip_jabber_send_unsubscribed (GossipJabber  *jabber,
 	lm_message_unref (m);
 }
 
+void
+gossip_jabber_subscription_allow_all (GossipJabber *jabber)
+{
+	GossipJabberPriv *priv;
+	LmMessageHandler *handler;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
+	
+	priv = GET_PRIV (jabber);
+
+	handler = priv->subscription_handler;
+	if (handler) {
+		lm_connection_unregister_message_handler (priv->connection, 
+							  handler,
+							  LM_MESSAGE_TYPE_PRESENCE);
+		priv->subscription_handler = NULL;
+	}
+
+	/* set up handler to sliently catch the subscription request */
+	handler = lm_message_handler_new ((LmHandleMessageFunction)jabber_subscription_message_handler, 
+					  jabber, NULL);
+
+	lm_connection_register_message_handler (priv->connection,
+						handler,
+						LM_MESSAGE_TYPE_PRESENCE,
+						LM_HANDLER_PRIORITY_NORMAL);
+
+	priv->subscription_handler = handler;
+}
+
+void
+gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
+{
+	GossipJabberPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
+
+	priv = GET_PRIV (jabber);
+
+	if (priv->subscription_handler) {
+		lm_connection_unregister_message_handler (priv->connection, 
+							  priv->subscription_handler,
+							  LM_MESSAGE_TYPE_PRESENCE);
+		priv->subscription_handler = NULL;
+	}
+}
+
 /*
  * Private functions 
  */
@@ -3257,4 +3292,3 @@ gossip_jabber_get_fts (GossipJabber *jabber)
 	
 	return priv->fts;
 }
-

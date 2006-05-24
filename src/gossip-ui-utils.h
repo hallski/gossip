@@ -82,8 +82,12 @@ GdkPixbuf *gossip_pixbuf_for_contact                (GossipContact       *contac
 GdkPixbuf *gossip_pixbuf_offline                    (void);
 GdkPixbuf *gossip_pixbuf_for_chatroom_status        (GossipChatroom      *chatroom,
 						     GtkIconSize          icon_size);
+GdkPixbuf *gossip_pixbuf_from_avatar_scaled         (const guchar        *avatar,
+						     gsize                len,
+						     gint                 width,
+						     gint                 height);
 GdkPixbuf *gossip_pixbuf_avatar_from_vcard          (GossipVCard         *vcard);
-GdkPixbuf *gossip_pixbuf_avatar_from_vcard_scaled   (GossipVCard         *vcard, 
+GdkPixbuf *gossip_pixbuf_avatar_from_vcard_scaled   (GossipVCard         *vcard,
 						     GtkIconSize          size);
 GdkPixbuf *gossip_pixbuf_avatar_from_contact        (GossipContact       *contact);
 GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact,

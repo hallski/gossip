@@ -22,12 +22,16 @@
 
 #include <stdlib.h> 
 
+#include <loudmouth/loudmouth.h>
+
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-jabber-vcard.h"
+#include "gossip-jabber-private.h"
 #include "gossip-jid.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
-
+/* #define DEBUG_MSG(x)  */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
 static LmHandlerResult 
 jabber_vcard_get_cb (LmMessageHandler   *handler,
@@ -152,18 +156,21 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 }
 
 gboolean
-gossip_jabber_vcard_get (LmConnection         *connection,
+gossip_jabber_vcard_get (GossipJabber         *jabber,
 			 const gchar          *jid_str, 
 			 GossipVCardCallback   callback,
 			 gpointer              user_data,
 			 GError              **error)
 {
+	LmConnection       *connection;
 	LmMessage          *m;
 	LmMessageNode      *node;
 	LmMessageHandler   *handler;
 	GossipJID          *jid;
 	GossipCallbackData *data;
 	const gchar        *jid_without_resource;
+
+	connection = gossip_jabber_get_connection (jabber);
 
 	jid = gossip_jid_new (jid_str);
 	jid_without_resource = gossip_jid_get_without_resource (jid);
@@ -186,8 +193,7 @@ gossip_jabber_vcard_get (LmConnection         *connection,
 					  data, 
 					  g_free);
 	
-	if (!lm_connection_send_with_reply (connection, m, 
-					    handler, error)) {
+	if (!lm_connection_send_with_reply (connection, m, handler, error)) {
 		lm_message_unref (m);
 		lm_message_handler_unref (handler);
 		return FALSE;
@@ -215,26 +221,37 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 
 	callback = data->callback;
 	(callback) (GOSSIP_RESULT_OK, data->user_data);
+
+	DEBUG_MSG (("Protocol: Setting presence after vcard"));
+	
+	/* Send our current presence to indicate the avatar has changed */
+	gossip_jabber_send_presence (GOSSIP_JABBER (data->internal_data), NULL);
 	
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
-gossip_jabber_vcard_set (LmConnection          *connection,
+gossip_jabber_vcard_set (GossipJabber          *jabber,
 			 GossipVCard           *vcard,
 			 GossipResultCallback   callback,
 			 gpointer               user_data,
 			 GError               **error)
 {
+	LmConnection       *connection;
 	LmMessage          *m;
 	LmMessageNode      *node;
 	LmMessageHandler   *handler;
 	GossipCallbackData *data;
 	gboolean            result;
+	const guchar       *avatar;
+	gsize		    avatar_length;
+
+	connection = gossip_jabber_get_connection (jabber);
 
 	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
+
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
@@ -245,12 +262,25 @@ gossip_jabber_vcard_set (LmConnection          *connection,
 	lm_message_node_add_child (node, "EMAIL",
 				   gossip_vcard_get_email (vcard));
 	lm_message_node_add_child (node, "DESC", 
-				   gossip_vcard_get_description (vcard));
-	
+				   gossip_vcard_get_description (vcard)); 
+				   
+	avatar = gossip_vcard_get_avatar (vcard, &avatar_length);
+	if (avatar != NULL) {
+		gchar *avatar_encoded;
+		
+		node = lm_message_node_add_child (node, "PHOTO", NULL);
+		lm_message_node_add_child (node, "TYPE", "image/jpeg"); 
+
+		avatar_encoded = gossip_base64_encode (avatar, avatar_length);
+		lm_message_node_add_child (node, "BINVAL", avatar_encoded);
+		g_free (avatar_encoded);
+	}
+
 	data = g_new0 (GossipCallbackData, 1);
 
 	data->callback = callback;
 	data->user_data = user_data;
+	data->internal_data = jabber;
 	
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_set_cb,
 					  data, 

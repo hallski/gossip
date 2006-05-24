@@ -46,18 +46,14 @@ gossip_jabber_presence_state_from_str (const gchar *str)
 {
 	if (!str || !str[0]) {
 		return GOSSIP_PRESENCE_STATE_AVAILABLE;
-	}
-	else if (strcmp (str, "dnd") == 0) {
+	} else if (strcmp (str, "dnd") == 0) {
 		return GOSSIP_PRESENCE_STATE_BUSY;
-	}
-	else if (strcmp (str, "away") == 0) {
+	} else if (strcmp (str, "away") == 0) {
 		return GOSSIP_PRESENCE_STATE_AWAY;
-	}
-	else if (strcmp (str, "xa") == 0) {
+	} else if (strcmp (str, "xa") == 0) {
 		return GOSSIP_PRESENCE_STATE_EXT_AWAY;
-	}
-	else if (strcmp (str, "chat") == 0) {
-		/* We treat this as available */
+	} else if (strcmp (str, "chat") == 0) {
+		/* We don't support chat, so treat it like available. */
 		return GOSSIP_PRESENCE_STATE_AVAILABLE;
 	}
 

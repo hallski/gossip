@@ -778,7 +778,7 @@ gossip_contact_name_case_n_compare (gconstpointer a,
 	name_a = gossip_contact_get_name (GOSSIP_CONTACT (a));
 	name_b = gossip_contact_get_name (GOSSIP_CONTACT (b));
 					  
-	return gossip_utils_str_n_case_cmp (name_a, name_b, -1);
+	return gossip_strncasecmp (name_a, name_b, -1);
 }
 
 gboolean

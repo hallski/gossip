@@ -24,7 +24,6 @@
 #include "gossip-vcard.h"
 #include "gossip-version-info.h"
 
-
 typedef enum {
 	GOSSIP_RESULT_OK,
 	GOSSIP_RESULT_ERROR_INVALID_REPLY,
@@ -33,12 +32,11 @@ typedef enum {
 	GOSSIP_RESULT_ERROR_UNAVAILABLE
 } GossipResult;
 
-
 typedef struct {
 	gpointer callback;
 	gpointer user_data;
+	gpointer internal_data;
 } GossipCallbackData;
-
 
 typedef void (*GossipRegisterCallback) (GossipResult       result,
 					GError            *error,

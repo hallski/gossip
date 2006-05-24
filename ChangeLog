@@ -1,3 +1,22 @@
+2006-05-24  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-utils.[ch]: Added gossip_base64_encode().
+	
+	* protocols/jabber/gossip-jabber-vcard.[ch]:
+	* protocols/jabber/gossip-jabber.[ch]: Make it possible to set
+	avatars and fix some other bugs from the recently added code to
+	retrieve avatars. 
+
+	* src/Makefile.am:
+	* src/gossip-image-chooser.[ch]: Added to display the users avatar
+	and make it possible to select the file you want to use. This also
+	has support for dragging and dropping files onto the widget (based
+	on Novell's e-image-chooser.[ch] but rewritten).
+	
+	* ui/main.glade:
+	* src/gossip-vcard-dialog.c: Added the GossipImageChooser so users
+	can set their avatars, patch by Eitan Isaacson. 
+
 2006-05-20  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Fix non-working check for gcrypt.

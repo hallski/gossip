@@ -31,15 +31,15 @@
 #define DEBUG_MSG(x)   
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
-static void utils_regex_init (void);
-static void utils_free_entry (GossipStatusEntry *entry);
+static void regex_init                  (void);
+static void status_message_free_foreach (GossipStatusEntry *entry);
 
 #define AVAILABLE_MESSAGE "Available"
 #define AWAY_MESSAGE      "Away"
 #define BUSY_MESSAGE      "Busy"
 
 GList *
-gossip_utils_get_status_messages (void)
+gossip_status_messages_get (void)
 {
 	GConfClient       *gconf_client;
 	GSList            *list, *l;
@@ -92,7 +92,7 @@ gossip_utils_get_status_messages (void)
 }
 
 void 
-gossip_utils_set_status_messages (GList *list)
+gossip_status_messages_set (GList *list)
 {
 	GConfClient       *gconf_client;
 	GList             *l;
@@ -136,21 +136,23 @@ gossip_utils_set_status_messages (GList *list)
 }
 
 static void
-utils_free_entry (GossipStatusEntry *entry)
+status_message_free_foreach (GossipStatusEntry *entry)
 {
 	g_free (entry->string);
 	g_free (entry);
 }
 
 void
-gossip_utils_free_status_messages (GList *list)
+gossip_status_messages_free (GList *list)
 {
-	g_list_foreach (list, (GFunc) utils_free_entry, NULL);
+	g_list_foreach (list, (GFunc) status_message_free_foreach, NULL);
 	g_list_free (list);
 }
 
 gchar *
-gossip_utils_substring (const gchar *str, gint start, gint end)
+gossip_substring (const gchar *str, 
+		  gint         start, 
+		  gint         end)
 {
 	return g_strndup (str + start, end - start);
 }
@@ -169,7 +171,7 @@ gossip_utils_substring (const gchar *str, gint start, gint end)
 static regex_t dingus[GOSSIP_REGEX_ALL];
 
 static void
-utils_regex_init (void)
+regex_init (void)
 {
 	static gboolean  inited = FALSE;
 	const gchar     *expression;
@@ -215,10 +217,10 @@ utils_regex_init (void)
 }
 
 gint
-gossip_utils_regex_match (GossipRegExType  type, 
-			  const gchar     *msg,
-			  GArray          *start,
-			  GArray          *end)
+gossip_regex_match (GossipRegExType  type, 
+		    const gchar     *msg,
+		    GArray          *start,
+		    GArray          *end)
 {
 	regmatch_t matches[1];
 	gint       ret = 0;
@@ -228,7 +230,7 @@ gossip_utils_regex_match (GossipRegExType  type,
 
 	g_return_val_if_fail (type >= 0 || type <= GOSSIP_REGEX_ALL, 0);
 
-	utils_regex_init ();
+	regex_init ();
 
 	while (!ret && type != GOSSIP_REGEX_ALL) {
 		ret = regexec (&dingus[type], msg + offset, 1, matches, 0);
@@ -273,37 +275,17 @@ gossip_utils_regex_match (GossipRegExType  type,
 	return num_matches;
 }
 
-GossipPresenceState
-gossip_utils_get_presence_state_from_show_string (const gchar *str)
-{
-	if (!str || !str[0]) {
-		return GOSSIP_PRESENCE_STATE_AVAILABLE;
-	}
-	else if (strcmp (str, "dnd") == 0) {
-		return GOSSIP_PRESENCE_STATE_BUSY;
-	}
-	else if (strcmp (str, "away") == 0) {
-		return GOSSIP_PRESENCE_STATE_AWAY;
-	}
-	else if (strcmp (str, "xa") == 0) {
-		return GOSSIP_PRESENCE_STATE_EXT_AWAY;
-	}
-	/* We don't support chat, so treat it like available. */
-	else if (strcmp (str, "chat") == 0) {
-		return GOSSIP_PRESENCE_STATE_AVAILABLE;
-	}
-
-	return GOSSIP_PRESENCE_STATE_AVAILABLE;
-}
-
 gint
-gossip_utils_str_case_cmp (const gchar *s1, const gchar *s2)
+gossip_strcasecmp (const gchar *s1, 
+		   const gchar *s2)
 {
-	return gossip_utils_str_n_case_cmp (s1, s2, -1);
+	return gossip_strncasecmp (s1, s2, -1);
 }	
 
 gint
-gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
+gossip_strncasecmp (const gchar *s1, 
+		    const gchar *s2, 
+		    gsize        n)
 {
 	gchar *u1, *u2;
 	gint   ret_val;
@@ -319,8 +301,8 @@ gossip_utils_str_n_case_cmp (const gchar *s1, const gchar *s2, gsize n)
 }
 
 gboolean 
-gossip_utils_xml_validate (xmlDoc      *doc, 
-			   const gchar *dtd_filename)
+gossip_xml_validate (xmlDoc      *doc, 
+		     const gchar *dtd_filename)
 {
 	gchar        *path;
 	xmlValidCtxt  cvp;
@@ -411,18 +393,67 @@ gossip_base64_decode (const char *str,
 }
 
 gchar *
-gossip_sha1_string (const guchar *buf,
+gossip_base64_encode (const guchar *data, 
+		      gsize         len)
+{
+	gchar              *out;
+	gchar              *rv;
+	static const gchar  alphabet[] =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+		"0123456789+/";
+
+	if (data == NULL || len < 1) {
+		return NULL;
+	}
+
+	rv = out = g_malloc (((len / 3) + 1) * 4 + 1);
+
+	for (; len >= 3; len -= 3) {
+		*out++ = alphabet[data[0] >> 2];
+		*out++ = alphabet[((data[0] << 4) & 0x30) | (data[1] >> 4)];
+		*out++ = alphabet[((data[1] << 2) & 0x3c) | (data[2] >> 6)];
+		*out++ = alphabet[data[2] & 0x3f];
+		data += 3;
+	}
+
+	if (len > 0) {
+		unsigned char fragment;
+
+		*out++ = alphabet[data[0] >> 2];
+		fragment = (data[0] << 4) & 0x30;
+
+		if (len > 1) {
+			fragment |= data[1] >> 4;
+		}
+
+		*out++ = alphabet[fragment];
+		*out++ = (len < 2) ? '=' : alphabet[(data[1] << 2) & 0x3c];
+		*out++ = '=';
+	}
+
+	*out = '\0';
+
+	return rv;
+}
+
+
+gchar *
+gossip_sha1_string (const guchar *data,
 		    gsize         len) {
 	gchar  *hash_string;
 	gchar  *p;
 	guchar  hash[20];
 	gint    i;
 	
-	gcry_md_hash_buffer (GCRY_MD_SHA1, hash, buf, (size_t) len);
-	hash_string = g_malloc (sizeof(gchar)*41);
+	if (data == NULL || len < 1) {
+		return g_strdup("");
+	}
+	
+	gcry_md_hash_buffer (GCRY_MD_SHA1, hash, data, (size_t) len);
+	hash_string = g_malloc (sizeof (gchar) * 41);
 	p = hash_string;
 
-	for (i=0; i<20; i++, p+=2) {
+	for (i = 0; i < 20; i++, p += 2) {
 		snprintf (p, 3, "%02x", hash[i]);
 	}
 

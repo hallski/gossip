@@ -41,13 +41,10 @@ struct SizeData {
 	gboolean preserve_aspect_ratio;
 };
 
-static void       pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
-						       int              width,
-						       int              height,
-						       struct SizeData *data);
-static GdkPixbuf *pixbuf_from_avatar_scaled           (const guchar    *avatar,
-						       gsize            len,
-						       GtkIconSize      size);
+static void pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
+						 gint             width,
+						 gint             height,
+						 struct SizeData *data);
 
 static void
 tagify_bold_labels (GladeXML *xml)
@@ -822,10 +819,11 @@ pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 	gdk_pixbuf_loader_set_size (loader, width, height);
 }
 
-static GdkPixbuf *
-pixbuf_from_avatar_scaled (const guchar *avatar, 
-			   gsize         len,
-			   GtkIconSize   size)
+GdkPixbuf *
+gossip_pixbuf_from_avatar_scaled (const guchar *avatar, 
+				  gsize         len,
+				  gint          width,
+				  gint          height)
 {
 	GdkPixbuf        *pixbuf;
 	GdkPixbufLoader	 *loader;
@@ -835,9 +833,8 @@ pixbuf_from_avatar_scaled (const guchar *avatar,
 		return NULL;
 	}
 
-	if (!gtk_icon_size_lookup (size, &data.width, &data.height)) {
-		data.height = data.width = 48;
-	}
+	data.width = width;
+	data.height = height;
 
 	data.preserve_aspect_ratio = TRUE;
 
@@ -870,6 +867,7 @@ gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact,
 {
 	const guchar *avatar;
 	gsize         len;
+	gint          width, height;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
@@ -878,7 +876,11 @@ gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact,
 		return NULL;
 	}
 
-	return pixbuf_from_avatar_scaled (avatar, len, size);
+	if (!gtk_icon_size_lookup (size, &width, &height)) {
+		height = width = 48;
+	}
+
+	return gossip_pixbuf_from_avatar_scaled (avatar, len, width, height);
 }
 
 GdkPixbuf *
@@ -887,6 +889,7 @@ gossip_pixbuf_avatar_from_vcard_scaled (GossipVCard *vcard,
 {
 	const guchar *avatar;
 	gsize	      len;
+	gint          width, height;
 	
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
 
@@ -895,6 +898,9 @@ gossip_pixbuf_avatar_from_vcard_scaled (GossipVCard *vcard,
 		return NULL;
 	}
 
-	return pixbuf_from_avatar_scaled (avatar, len, size);
-}
+	if (!gtk_icon_size_lookup (size, &width, &height)) {
+		height = width = 48;
+	}
 
+	return gossip_pixbuf_from_avatar_scaled (avatar, len, width, height);
+}

@@ -38,8 +38,7 @@ typedef struct _GossipJabberClass GossipJabberClass;
 typedef struct _GossipJabberPriv  GossipJabberPriv;
 
 struct _GossipJabber {
-	GossipProtocol    parent;
-	GossipJabberPriv *priv;
+	GossipProtocol parent;
 };
 
 
@@ -47,7 +46,6 @@ struct _GossipJabberClass {
 	GossipProtocolClass parent_class;
 };
 
-  
 GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
 gboolean       gossip_jabber_get_vcard                 (GossipJabber        *jabber,
 							GossipContact       *contact,
@@ -59,15 +57,13 @@ GossipContact *gossip_jabber_get_contact_from_jid      (GossipJabber        *jab
 							const gchar         *jid,
 							gboolean            *new_item,
 							gboolean             get_vcard);
+void           gossip_jabber_send_presence             (GossipJabber        *jabber,
+							GossipPresence      *presence);
 void           gossip_jabber_send_subscribed           (GossipJabber        *jabber,
 							GossipContact       *contact);
 void           gossip_jabber_send_unsubscribed         (GossipJabber        *jabber,
 							GossipContact       *contact);
 void           gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
 void           gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
-
-
-
-
 
 #endif /* __GOSSIP_JABBER_H__ */

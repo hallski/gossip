@@ -966,8 +966,7 @@ log_urlify (const gchar *msg)
 	start = g_array_new (FALSE, FALSE, sizeof (gint));
 	end = g_array_new (FALSE, FALSE, sizeof (gint));
 
-	num_matches = gossip_utils_regex_match (GOSSIP_REGEX_ALL, 
-						msg, start, end);
+	num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, msg, start, end);
 
 	if (num_matches == 0) {
 		esc = g_markup_escape_text (msg, -1);
@@ -984,14 +983,14 @@ log_urlify (const gchar *msg)
 			e = g_array_index (end, gint, i);
 
 			if (s > last) {
-				tmp = gossip_utils_substring (msg, last, s);
+				tmp = gossip_substring (msg, last, s);
 				esc = g_markup_escape_text (tmp, -1);
 				g_string_append (ret, esc);
 				g_free (tmp);
 				g_free (esc);
 			}
 
-			tmp = gossip_utils_substring (msg, s, e);
+			tmp = gossip_substring (msg, s, e);
 
 			g_string_append (ret, "<a href=\"");
 
@@ -1013,7 +1012,7 @@ log_urlify (const gchar *msg)
 		}
 
 		if (e < strlen (msg)) {
-			tmp = gossip_utils_substring (msg, e, strlen (msg));
+			tmp = gossip_substring (msg, e, strlen (msg));
 			esc = g_markup_escape_text (tmp, -1);
 			g_string_append (ret, esc);
 			g_free (tmp);

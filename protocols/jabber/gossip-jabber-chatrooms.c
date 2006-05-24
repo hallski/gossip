@@ -407,7 +407,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		presence = gossip_presence_new ();
  		node = lm_message_node_get_child (m->node, "show");
 		if (node) {
-			p_state = gossip_utils_get_presence_state_from_show_string (node->value);
+			p_state = gossip_jabber_presence_state_from_str (node->value);
 			gossip_presence_set_state (presence, p_state);
 		}
 		node = lm_message_node_get_child (m->node, "status");

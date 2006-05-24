@@ -365,7 +365,7 @@ gossip_jid_case_compare (gconstpointer a, gconstpointer  b)
 	str_a = gossip_jid_get_without_resource ((GossipJID *) a);
 	str_b = gossip_jid_get_without_resource ((GossipJID *) b);
 	
-	return gossip_utils_str_n_case_cmp (str_a, str_b, -1);
+	return gossip_strncasecmp (str_a, str_b, -1);
 }
 
 gboolean

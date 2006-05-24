@@ -145,13 +145,10 @@ jabber_ft_iq_si_handler (LmMessageHandler *handler,
 			 LmMessage        *m,
 			 GossipJabber     *jabber)
 {
-	GossipJabberPriv *priv;
 	LmMessageSubType  subtype;
 	LmMessageNode    *node;
 	const gchar      *xmlns;
 
-	priv = jabber->priv;
-	
 	subtype = lm_message_get_sub_type (m);
 
 	if (subtype != LM_MESSAGE_SUB_TYPE_GET &&

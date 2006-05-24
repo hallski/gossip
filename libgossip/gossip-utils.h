@@ -41,30 +41,37 @@ typedef struct {
 	gchar               *string;
 } GossipStatusEntry;
 
-GList *  gossip_utils_get_status_messages                 (void);
-void     gossip_utils_set_status_messages                 (GList           *list);
-void     gossip_utils_free_status_messages                (GList           *list);
+/* Status messages */
+GList *  gossip_status_messages_get  (void);
+void     gossip_status_messages_set  (GList           *list);
+void     gossip_status_messages_free (GList           *list);
 
-gchar *  gossip_utils_substring                           (const gchar     *str,
-							   gint             start,
-							   gint             end);
-gint     gossip_utils_regex_match                         (GossipRegExType  type,
-							   const gchar     *msg,
-							   GArray          *start,
-							   GArray          *end);
+/* Regular expressions */
+gchar *  gossip_substring            (const gchar     *str,
+				      gint             start,
+				      gint             end);
+gint     gossip_regex_match          (GossipRegExType  type,
+				      const gchar     *msg,
+				      GArray          *start,
+				      GArray          *end);
 
-GossipPresenceState 
-         gossip_utils_get_presence_state_from_show_string (const gchar     *str); 
-gint     gossip_utils_str_case_cmp                        (const gchar     *s1,
-							   const gchar     *s2);
-gint     gossip_utils_str_n_case_cmp                      (const gchar     *s1,
-							   const gchar     *s2,
-							   gsize            n);
-gboolean gossip_utils_xml_validate                        (xmlDoc          *doc,
-							   const gchar     *dtd_filename);
-guchar * gossip_base64_decode				  (const char      *str,
-							   gsize           *len);
-gchar *  gossip_sha1_string				  (const guchar    *buf,
-							   gsize            len);
+/* Strings */
+gint     gossip_strcasecmp           (const gchar     *s1,
+				      const gchar     *s2);
+gint     gossip_strncasecmp          (const gchar     *s1,
+				      const gchar     *s2,
+				      gsize            n);
+
+/* XML */
+gboolean gossip_xml_validate         (xmlDoc          *doc,
+				      const gchar     *dtd_filename);
+
+/* Encoding */
+guchar * gossip_base64_decode        (const gchar     *data,
+				      gsize           *len);
+gchar *  gossip_base64_encode        (const guchar    *data,
+				      gsize            len);
+gchar *  gossip_sha1_string          (const guchar    *data,
+				      gsize            len);
 
 #endif /*  __GOSSIP_UTILS_H__ */
