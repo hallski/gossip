@@ -41,7 +41,6 @@ struct _GossipJabber {
 	GossipProtocol parent;
 };
 
-
 struct _GossipJabberClass {
 	GossipProtocolClass parent_class;
 };
