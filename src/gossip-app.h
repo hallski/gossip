@@ -40,23 +40,19 @@
 #define GOSSIP_IS_APP_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_APP))
 #define GOSSIP_APP_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_APP, GossipAppClass))
 
-
 typedef struct _GossipApp      GossipApp;
 typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
 
-
 struct _GossipApp {
         GObject        parent;
 
-        GossipAppPriv *priv;
+/*         GossipAppPriv *priv; */
 };
-
 
 struct _GossipAppClass {
         GObjectClass parent_class;
 };
-
 
 GType                  gossip_app_get_type             (void) G_GNUC_CONST;
 

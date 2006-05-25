@@ -1,3 +1,16 @@
+2006-05-25  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c: Save and load accels so users can save their
+	shortcuts, fixes #326206 patch by Caio Marcelo.
+
+	* src/gossip-app.c: Added some startup debugging and made the
+	GossipAppPriv a private member of the GossipApp GOBject instead of
+	making it public in the header file.
+
+	* libgossip/*.c:
+	* protocols/jabber/*.c: 
+	* src/*.c: Use g_mkdir_with_parents() everywhere.
+	
 2006-05-25  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-vcard-dialog.c: (vcard_dialog_avatar_clicked_cb),

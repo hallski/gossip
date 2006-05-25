@@ -164,11 +164,11 @@ gossip_transport_protocol_get_all (void)
 	}
 
 	/* 
-	 * look up user files in ~/.gnome2/Gossip/protocols 
+	 * Look up user files in ~/.gnome2/Gossip/protocols 
 	 */
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, "protocols", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	}
 
 	DEBUG_MSG (("ProtocolTransport: Attempting to get a list of "

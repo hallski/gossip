@@ -485,7 +485,7 @@ chatroom_manager_get_all (GossipChatroomManager *manager)
 	if (!priv->chatrooms_file_name) {
 		dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 		if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+			g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		}
 		
 		file_with_path = g_build_filename (dir, CHATROOMS_XML_FILENAME, NULL);
@@ -693,23 +693,23 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 	GList                    *chatrooms;
 	GList                    *l;
 	gchar                    *dtd_file;
-	gchar                    *xml_dir;
-	gchar                    *xml_file;
+	gchar                    *dir;
+	gchar                    *file;
 					
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 
 	priv = GET_PRIV (manager);
 	
 	if (priv->chatrooms_file_name) {
-		xml_file = g_strdup (priv->chatrooms_file_name);
+		file = g_strdup (priv->chatrooms_file_name);
 	} else {
-		xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-		if (!g_file_test (xml_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			mkdir (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
+		if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+			g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		}
 					 
-		xml_file = g_build_filename (xml_dir, CHATROOMS_XML_FILENAME, NULL);
-		g_free (xml_dir);
+		file = g_build_filename (dir, CHATROOMS_XML_FILENAME, NULL);
+		g_free (dir);
 	}
 
 	dtd_file = g_build_filename (DTDDIR, CHATROOMS_DTD_FILENAME, NULL);
@@ -765,15 +765,15 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		g_free (type);
 	}
 
-	DEBUG_MSG (("ChatroomManager: Saving file:'%s'", xml_file));
-	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
+	DEBUG_MSG (("ChatroomManager: Saving file:'%s'", file));
+	xmlSaveFormatFileEnc (file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 
 	xmlCleanupParser ();
 
 	xmlMemoryDump ();
 	
-	g_free (xml_file);
+	g_free (file);
 
 	return TRUE;
 }

@@ -37,7 +37,7 @@ typedef struct _GossipChatViewClass GossipChatViewClass;
 typedef struct _GossipChatViewPriv  GossipChatViewPriv;
 
 struct _GossipChatView {
-	GtkTextView      parent;
+	GtkTextView parent;
 };
 
 struct _GossipChatViewClass {

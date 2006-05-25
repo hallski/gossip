@@ -32,19 +32,18 @@
 #define GOSSIP_IS_CHAT_WINDOW_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT_WINDOW))
 #define GOSSIP_CHAT_WINDOW_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowClass))
 
-typedef struct _GossipChatWindow GossipChatWindow;
+typedef struct _GossipChatWindow      GossipChatWindow;
 typedef struct _GossipChatWindowClass GossipChatWindowClass;
-typedef struct _GossipChatWindowPriv GossipChatWindowPriv;
+typedef struct _GossipChatWindowPriv  GossipChatWindowPriv;
 
 #include "gossip-chat.h"
 
 struct _GossipChatWindow {
-        GObject               parent;
-        GossipChatWindowPriv *priv;
+        GObject parent;
 };
 
 struct _GossipChatWindowClass {
-        GObjectClass          parent_class;
+        GObjectClass parent_class;
 };
 
 GType             gossip_chat_window_get_type        (void);

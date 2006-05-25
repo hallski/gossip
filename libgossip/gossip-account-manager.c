@@ -410,7 +410,7 @@ account_manager_get_all (GossipAccountManager *manager)
 	if (!priv->accounts_file_name) {
 		dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 		if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			mkdir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+			g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		}
 		
 		file_with_path = g_build_filename (dir, ACCOUNTS_XML_FILENAME, NULL);
@@ -673,7 +673,7 @@ account_manager_file_save (GossipAccountManager *manager)
 	} else {
 		xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 		if (!g_file_test (xml_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			mkdir (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
+			g_mkdir_with_parents (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 		}
 					 
 		xml_file = g_build_filename (xml_dir, ACCOUNTS_XML_FILENAME, NULL);
