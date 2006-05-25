@@ -1,6 +1,8 @@
 NEWS in 0.11.1:
 ===============
-- Support for avatars. This work was carried out by Eitan Isaacson.
+- Support avatars. This work was carried out by Eitan Isaacson.
+- Fixed #326206, Save GTK+ accelerators to ~/.gnome2/Gossip/accels.txt
+(Wouter Bolsterlee, patch by Caio Marcelo).
 - Fixed #342246, Use window manager geometry if we don't have saved
 coordinates for chat windows and make sure we use the x, y coordinates
 when dragging a tab out of the window instead of the last saved
