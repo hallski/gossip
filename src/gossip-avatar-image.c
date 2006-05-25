@@ -30,18 +30,14 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImagePriv))
 
-#define WIDTH      48
-#define HEIGHT     48
-#define MAX_WIDTH  400
-#define MAX_HEIGHT 400
+#define MAX_SMALL  48
+#define MAX_LARGE 400
 
 typedef struct {
-	GtkWidget *eventbox;
-	GtkWidget *image;
-
-	GtkWidget *popup;
-	
-	GdkPixbuf *pixbuf;
+	GtkWidget   *image;
+	GtkWidget   *popup;
+	GtkTooltips *tooltips;	
+	GdkPixbuf   *pixbuf;
 } GossipAvatarImagePriv;
 
 static void     avatar_image_finalize                (GObject           *object);
@@ -72,7 +68,6 @@ static void
 gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 {
 	GossipAvatarImagePriv *priv;
-	GtkTooltips           *tooltips;
 
 	priv = GET_PRIV (avatar_image);
 	
@@ -90,9 +85,7 @@ gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 			  G_CALLBACK (avatar_image_button_release_event_cb),
 			  avatar_image);
 
-	tooltips = gtk_tooltips_new ();
-	gtk_tooltips_set_tip (tooltips, GTK_WIDGET (avatar_image), 
-			      _("Click to enlarge"), NULL);
+	priv->tooltips = gtk_tooltips_new ();
 
 	avatar_image_add_filter (avatar_image);
 
@@ -115,6 +108,8 @@ avatar_image_finalize (GObject *object)
 	if (priv->pixbuf) {
 		g_object_unref(priv->pixbuf);
 	}
+
+	gtk_object_destroy (GTK_OBJECT (priv->tooltips));
 	
 	G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
 }
@@ -177,6 +172,29 @@ avatar_image_remove_filter (GossipAvatarImage *avatar_image)
 	gdk_window_remove_filter (NULL, avatar_image_filter_func, avatar_image);
 }
 
+static GdkPixbuf *
+avatar_image_scale_down_if_necessary (GdkPixbuf *pixbuf, gint max_size)
+{
+	gint      width, height;
+	gdouble   factor;
+
+	width = gdk_pixbuf_get_width (pixbuf);
+	height = gdk_pixbuf_get_height (pixbuf);
+
+	if (width > max_size || height > max_size) {
+		factor = (gdouble) max_size / MAX (width, height);
+		
+		width = width * factor;
+		height = height * factor;
+		
+		return gdk_pixbuf_scale_simple (pixbuf,
+						width, height,
+						GDK_INTERP_HYPER);
+	}
+
+	return g_object_ref (pixbuf);
+}
+
 static gboolean
 avatar_image_button_press_event_cb (GtkWidget         *widget,
 				    GdkEventButton    *event,
@@ -184,6 +202,7 @@ avatar_image_button_press_event_cb (GtkWidget         *widget,
 {
 	GossipAvatarImagePriv *priv;
 	GtkWidget             *popup;
+	GtkWidget             *frame;
 	GtkWidget             *image;
 	gint                   x, y;
 	gint                   popup_width, popup_height;
@@ -210,28 +229,23 @@ avatar_image_button_press_event_cb (GtkWidget         *widget,
 	/* Don't show a popup if the popup is smaller then the currently avatar
 	 * image.
 	 */
-	if (popup_height < height || popup_width < width) {
-		return FALSE;
-	}
-	if (height > MAX_WIDTH || width > MAX_HEIGHT) {
+	if (popup_height <= height || popup_width <= width) {
 		return FALSE;
 	}
 
-	/* Arbitrary size limit... */
-	if (popup_width > MAX_WIDTH || popup_height > MAX_HEIGHT) {
-		pixbuf = gdk_pixbuf_scale_simple (priv->pixbuf,
-						  MAX_WIDTH, MAX_HEIGHT,
-						  GDK_INTERP_HYPER);
-		popup_width = MAX_WIDTH;
-		popup_height = MAX_HEIGHT;
-	} else {
-		pixbuf = g_object_ref (priv->pixbuf);
-	}
+	pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_LARGE);
+	popup_width = gdk_pixbuf_get_width (pixbuf);
+	popup_height = gdk_pixbuf_get_height (pixbuf);
 	
 	popup = gtk_window_new (GTK_WINDOW_POPUP);
 
+	frame = gtk_frame_new (NULL);
+	gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_OUT);
+
+	gtk_container_add (GTK_CONTAINER (popup), frame);
+	
 	image = gtk_image_new ();
-	gtk_container_add (GTK_CONTAINER (popup), image);
+	gtk_container_add (GTK_CONTAINER (frame), image);
 
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
@@ -290,7 +304,7 @@ gossip_avatar_image_set_pixbuf (GossipAvatarImage *avatar_image,
 				GdkPixbuf         *pixbuf)
 {
 	GossipAvatarImagePriv *priv;
-	GdkPixbuf             *small_pixbuf;
+	GdkPixbuf             *scaled_pixbuf;
 	
 	priv = GET_PRIV (avatar_image);
 
@@ -306,11 +320,21 @@ gossip_avatar_image_set_pixbuf (GossipAvatarImage *avatar_image,
 
 	priv->pixbuf = g_object_ref (pixbuf);
 
-	small_pixbuf = gdk_pixbuf_scale_simple (pixbuf,
-						WIDTH, HEIGHT,
-						GDK_INTERP_HYPER);	
-	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), small_pixbuf);
-	g_object_unref (small_pixbuf);
+	scaled_pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_SMALL);
+	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), scaled_pixbuf);
+
+	if (scaled_pixbuf != priv->pixbuf) {
+		gtk_tooltips_set_tip (priv->tooltips,
+				      GTK_WIDGET (avatar_image),
+				      _("Click to enlarge"),
+				      NULL);
+	} else {
+		gtk_tooltips_set_tip (priv->tooltips,
+				      GTK_WIDGET (avatar_image),
+				      NULL, NULL);
+	}
+	
+	g_object_unref (scaled_pixbuf);
 
 	gtk_widget_show (priv->image);
 }

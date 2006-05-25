@@ -1,3 +1,12 @@
+2006-05-25  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-avatar-image.c: (gossip_avatar_image_init),
+	(avatar_image_finalize) (avatar_image_scale_down_if_necessary),
+	(avatar_image_button_press_event_cb),
+	(gossip_avatar_image_set_pixbuf): Only show tooltip if the image
+	is scaled down, keep aspect ratio when scaling. Add a frame to the
+	popup.
+	
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-vcard.c: Turned off debugging.
