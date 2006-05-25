@@ -7,7 +7,7 @@
 	is scaled down, keep aspect ratio when scaling. Add a frame to the
 	popup.
 	
-2006-05-26  Martyn Russell  <martyn@imendio.com>
+2006-05-25  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-vcard.c: Turned off debugging.
 	
