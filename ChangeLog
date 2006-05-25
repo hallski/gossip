@@ -1,5 +1,13 @@
 2006-05-25  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-vcard-dialog.c: (vcard_dialog_avatar_clicked_cb),
+	(vcard_dialog_scale_down_to_width),
+	(vcard_dialog_avatar_update_preview_cb): Set the size again on the
+	preview image and scale it down if necessary. Stops the preview
+	from changing the size of the dialog.
+
+2006-05-25  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-avatar-image.c: (gossip_avatar_image_init),
 	(avatar_image_finalize) (avatar_image_scale_down_if_necessary),
 	(avatar_image_button_press_event_cb),

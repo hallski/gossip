@@ -170,6 +170,7 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 	
 	image = gtk_image_new ();
 	gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER (chooser_dialog), image);
+	gtk_widget_set_size_request (image, AVATAR_MAX_WIDTH, AVATAR_MAX_HEIGHT);
 	gtk_widget_show (image);
 
 	g_signal_connect (chooser_dialog, "update-preview",
@@ -192,6 +193,29 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 	gtk_widget_destroy (chooser_dialog);
 }
 
+static GdkPixbuf *
+vcard_dialog_scale_down_to_width (GdkPixbuf *pixbuf, gint wanted_width)
+{
+	gint      width, height;
+	gdouble   factor;
+
+	width = gdk_pixbuf_get_width (pixbuf);
+	height = gdk_pixbuf_get_height (pixbuf);
+
+	if (width > wanted_width) {
+		factor = (gdouble) wanted_width / MAX (width, height);
+		
+		width = width * factor;
+		height = height * factor;
+
+		return gdk_pixbuf_scale_simple (pixbuf,
+						width, height,
+						GDK_INTERP_BILINEAR);
+	}
+
+	return g_object_ref (pixbuf);
+}
+
 static void 
 vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 				       GossipVCardDialog *dialog) 
@@ -203,6 +227,7 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 	if (uri) {
 		GtkWidget *image;
 		GdkPixbuf *pixbuf;
+		GdkPixbuf *scaled_pixbuf;
 		gchar     *mime_type;
 
 		if (!dialog->thumbs) {
@@ -214,9 +239,12 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 								     uri,
 								     mime_type);
 		image = gtk_file_chooser_get_preview_widget (chooser);
-		
-		if (pixbuf != NULL) {
-			gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
+
+		if (pixbuf) {
+			scaled_pixbuf = vcard_dialog_scale_down_to_width (
+				pixbuf, AVATAR_MAX_WIDTH);
+			gtk_image_set_from_pixbuf (GTK_IMAGE (image), scaled_pixbuf);
+			g_object_unref (scaled_pixbuf);
 			g_object_unref (pixbuf);
 		} else {
 			gtk_image_set_from_stock (GTK_IMAGE (image),
