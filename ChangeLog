@@ -1,3 +1,11 @@
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber-vcard.c: Turned off debugging.
+	
+	* src/gossip-vcard-dialog.c: Don't resize the preview
+	image for the file chooser when setting avatars, images were only
+	1/2 shown in some cases.
+
 2006-05-24  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-utils.[ch]: Added gossip_base64_encode().

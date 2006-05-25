@@ -30,8 +30,8 @@
 #include "gossip-jabber-private.h"
 #include "gossip-jid.h"
 
-/* #define DEBUG_MSG(x)  */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+#define DEBUG_MSG(x)
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 static LmHandlerResult 
 jabber_vcard_get_cb (LmMessageHandler   *handler,

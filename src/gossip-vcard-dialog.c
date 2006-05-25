@@ -163,14 +163,13 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 	gtk_window_set_transient_for (GTK_WINDOW (chooser_dialog), 
 				      GTK_WINDOW (dialog->dialog));
 
-/* 	gtk_dialog_set_default_response (GTK_DIALOG (chooser_dialog), GTK_RESPONSE_ACCEPT); */
-/* 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser_dialog), g_get_home_dir ()); */
+ 	gtk_dialog_set_default_response (GTK_DIALOG (chooser_dialog), GTK_RESPONSE_ACCEPT);
+ 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser_dialog), g_get_home_dir ()); 
 
 	gtk_file_chooser_set_use_preview_label (GTK_FILE_CHOOSER (chooser_dialog), FALSE);
 	
 	image = gtk_image_new ();
 	gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER (chooser_dialog), image);
-	gtk_widget_set_size_request (image, 96, 96);
 	gtk_widget_show (image);
 
 	g_signal_connect (chooser_dialog, "update-preview",
@@ -209,7 +208,6 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 		if (!dialog->thumbs) {
 			dialog->thumbs = gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
 		}
-
 		
 		mime_type = gnome_vfs_get_mime_type (uri);
 		pixbuf = gnome_thumbnail_factory_generate_thumbnail (dialog->thumbs,
