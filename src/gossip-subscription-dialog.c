@@ -178,13 +178,13 @@ subscription_dialog_setup_groups (GtkComboBoxEntry *comboboxentry)
 	GtkCellRenderer *renderer;
 	GtkTreeIter      iter;	
 	GList           *l;
-	GList           *groups;
+	GList           *all_groups;
 
 	store = gtk_list_store_new (1, G_TYPE_STRING);
 
-	groups = gossip_session_get_groups (gossip_app_get_session ());
+	all_groups = gossip_session_get_groups (gossip_app_get_session ());
 
-	for (l = groups; l; l = l->next) {
+	for (l = all_groups; l; l = l->next) {
 		const gchar *group;
 		
 		group = l->data;
@@ -210,6 +210,8 @@ subscription_dialog_setup_groups (GtkComboBoxEntry *comboboxentry)
 					NULL);
 
 	g_object_unref (store);
+
+	g_list_free (all_groups);
 }
 
 static void

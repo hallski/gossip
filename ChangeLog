@@ -1,5 +1,15 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-session.c: (gossip_session_get_groups):
+	* src/gossip-add-contact-window.c: (add_contact_window_2_prepare):
+	* src/gossip-edit-groups-dialog.c: (edit_groups_add_groups):
+	* src/gossip-subscription-dialog.c:
+	(subscription_dialog_setup_groups): Do not show duplicate groups
+	in add contact assistant, usually from multiple accounts, fixes
+	#339835 (Keywan Najafi Tonekaboni).
+	
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Turned debugging off.
 	
 	* src/gossip-chat-view.c: Make sure we update in real time the

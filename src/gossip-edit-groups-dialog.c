@@ -320,6 +320,8 @@ edit_groups_add_groups (GossipEditGroups *info, GList *groups)
 
 	g_list_foreach (my_groups, (GFunc) g_free, NULL); 
 	g_list_free (my_groups);
+
+	g_list_free (all_groups);
 }
 
 static gboolean 

@@ -319,7 +319,7 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 	GtkTreeIter           iter;
 	
 	const gchar          *id;
-	GList                *groups = NULL;
+	GList                *all_groups = NULL;
 	GList                *l;
 	GList                *group_strings = NULL;
 	gint                  changed;
@@ -362,14 +362,16 @@ add_contact_window_2_prepare (GnomeDruidPage   *page,
 	gtk_widget_show(window->two_vcard_label);
 	gtk_widget_hide(window->two_information_table);
 	
-	groups = gossip_session_get_groups (gossip_app_get_session ());
+	all_groups = gossip_session_get_groups (gossip_app_get_session ());
 	g_completion_clear_items (window->group_completion);
 
-	for (l = groups; l; l = l->next) {
+	for (l = all_groups; l; l = l->next) {
 		group_strings = g_list_prepend (group_strings, 
 						(gchar *) l->data);
 	}
 
+	g_list_free (all_groups);
+	
 	group_strings = g_list_sort (group_strings, (GCompareFunc) strcmp);
 
 	if (group_strings) {

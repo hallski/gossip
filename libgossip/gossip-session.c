@@ -20,6 +20,8 @@
 
 #include <config.h>
 
+#include <string.h>
+
 #include "libgossip-marshal.h"
 
 #include "gossip-session.h"
@@ -1473,8 +1475,9 @@ GList *
 gossip_session_get_groups (GossipSession *session)
 {
 	GossipSessionPriv *priv;
-	GList             *l, *all_groups = NULL;
-	
+	GList             *l, *j;
+	GList             *all_groups = NULL;
+
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
 	priv = GET_PRIV (session);
@@ -1486,8 +1489,12 @@ gossip_session_get_groups (GossipSession *session)
 		protocol = l->data;
 
 		groups = gossip_protocol_get_groups (protocol);
-		if (groups) {
-			all_groups = g_list_concat (all_groups, groups);
+		for (j = groups; j; j = j->next) {
+			if (!g_list_find_custom (all_groups, 
+						 j->data, 
+						 (GCompareFunc) strcmp)) {
+				all_groups = g_list_append (all_groups, j->data);
+			}
 		}
 	}
 
