@@ -42,7 +42,6 @@ typedef struct {
         GtkWidget *separate_windows_checkbutton;
 
 	GtkWidget *smileys_checkbutton;
-	GtkWidget *system_fonts_checkbutton;
 	GtkWidget *theme_combobox;
 
 	GtkWidget *spell_checker_vbox;
@@ -77,23 +76,23 @@ static void     preferences_set_string_from_gconf        (const gchar           
 static void     preferences_set_string_combo_from_gconf  (const gchar            *key,
 							  GtkWidget              *widget);
 static void     preferences_notify_int_cb                (GConfClient            *client,
-							  guint                   cnxn_id,
+							  guint                   id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
 static void     preferences_notify_string_cb             (GConfClient            *client,
-							  guint                   cnxn_id,
+							  guint                   id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
 static void     preferences_notify_string_combo_cb       (GConfClient            *client,
-							  guint                   cnxn_id,
+							  guint                   id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
 static void     preferences_notify_bool_cb               (GConfClient            *client,
-							  guint                   cnxn_id,
+							  guint                   id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
 static void     preferences_notify_sensitivity_cb        (GConfClient            *client,
-							  guint                   cnxn_id,
+							  guint                   id,
 							  GConfEntry             *entry,
 							  gpointer                user_data);
 static void     preferences_hookup_spin_button           (GossipPreferences      *preferences,
@@ -153,14 +152,13 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	preferences_hookup_sensitivity (preferences,
 					GCONF_PATH "/sound/play_sounds",
 					preferences->silent_away_checkbutton);
+	preferences_hookup_sensitivity (preferences,
+					GCONF_PATH "/sound/play_sounds",
+					preferences->silent_busy_checkbutton);
 
         preferences_hookup_toggle_button (preferences,
 					  GCONF_PATH "/ui/separate_chat_windows",
 					  preferences->separate_windows_checkbutton);
-
-        preferences_hookup_toggle_button (preferences,
-					  GCONF_PATH "/ui/system_fonts",
-					  preferences->system_fonts_checkbutton);
 
         preferences_hookup_toggle_button (preferences,
 					  GCONF_PATH "/conversation/graphical_smileys",
@@ -526,7 +524,7 @@ preferences_set_string_combo_from_gconf (const gchar *key, GtkWidget *widget)
 
 static void
 preferences_notify_int_cb (GConfClient *client,
-			   guint        cnxn_id,
+			   guint        id,
 			   GConfEntry  *entry,
 			   gpointer   user_data)
 {
@@ -540,7 +538,7 @@ preferences_notify_int_cb (GConfClient *client,
 
 static void
 preferences_notify_string_cb (GConfClient *client,
-			      guint        cnxn_id,
+			      guint        id,
 			      GConfEntry  *entry,
 			      gpointer     user_data)
 {
@@ -554,7 +552,7 @@ preferences_notify_string_cb (GConfClient *client,
 
 static void
 preferences_notify_string_combo_cb (GConfClient *client,
-				    guint        cnxn_id,
+				    guint        id,
 				    GConfEntry  *entry,
 				    gpointer     user_data)
 {
@@ -563,7 +561,7 @@ preferences_notify_string_combo_cb (GConfClient *client,
 
 static void
 preferences_notify_bool_cb (GConfClient *client,
-			    guint        cnxn_id,
+			    guint        id,
 			    GConfEntry  *entry,
 			    gpointer     user_data)
 {
@@ -577,7 +575,7 @@ preferences_notify_bool_cb (GConfClient *client,
 
 static void
 preferences_notify_sensitivity_cb (GConfClient *client,
-				   guint        cnxn_id,
+				   guint        id,
 				   GConfEntry  *entry,
 				   gpointer     user_data)
 {
@@ -850,7 +848,6 @@ gossip_preferences_show (void)
 		"silent_away_checkbutton", &preferences->silent_away_checkbutton,
 		"separate_windows_checkbutton", &preferences->separate_windows_checkbutton,
 		"smileys_checkbutton", &preferences->smileys_checkbutton,
-		"system_fonts_checkbutton", &preferences->system_fonts_checkbutton,
 		"theme_combobox", &preferences->theme_combobox,
 		"spell_checker_vbox", &preferences->spell_checker_vbox,
 		"spell_checker_treeview", &preferences->spell_checker_treeview,

@@ -299,12 +299,6 @@ gossip_chat_view_init (GossipChatView *view)
 	gconf_client = gossip_app_get_gconf_client ();
 	
 	/* Watch system font changes and preferences to turn it on/off too */
-	priv->gconf_use_system_fonts_id = 
-		gconf_client_notify_add (gconf_client,
-					 GCONF_PATH "/ui/system_fonts",
-					 (GConfClientNotifyFunc) chat_view_system_font_changed_cb,
-					 view, NULL, NULL);
-	
 	priv->gconf_system_fonts_id = 
 		gconf_client_notify_add (gconf_client,
 					 "/desktop/gnome/interface/document_font_name",
@@ -422,22 +416,14 @@ chat_view_system_font_update (GossipChatView *view,
 			      GConfClient    *gconf_client)
 {
 	PangoFontDescription *font_description = NULL;
-	gboolean              use_system_font;
+	gchar                *font_name;
 
-	use_system_font = gconf_client_get_bool (gconf_client, 
-						 GCONF_PATH "/ui/system_fonts", 
-						 NULL);
-
-	if (use_system_font) {
-		gchar *font_name;
-
-		font_name = gconf_client_get_string (gconf_client, 
-						     "/desktop/gnome/interface/document_font_name", 
-						     NULL);
-		
-		font_description = pango_font_description_from_string (font_name);
-		g_free (font_name);
-	}
+	font_name = gconf_client_get_string (gconf_client, 
+					     "/desktop/gnome/interface/document_font_name", 
+					     NULL);
+	
+	font_description = pango_font_description_from_string (font_name);
+	g_free (font_name);
 
 	gtk_widget_modify_font (GTK_WIDGET (view), font_description);
 

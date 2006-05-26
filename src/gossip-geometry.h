@@ -21,26 +21,23 @@
 #ifndef __GOSSIP_GEOMETRY_H__
 #define __GOSSIP_GEOMETRY_H__
 
-void gossip_geometry_save_for_chat (GossipChat *chat,
-				    gint        x,
-				    gint        y,
-				    gint        w,
-				    gint        h);
-
-void gossip_geometry_load_for_chat (GossipChat *chat,
-				    gint       *x,
-				    gint       *y,
-				    gint       *w,
-				    gint       *h);
-
-void gossip_geometry_save_for_main_window (gint x,
-				      gint y,
-				      gint w,
-					   gint h);
-
-void gossip_geometry_load_for_main_window (gint *x,
-				      gint *y,
-				      gint *w,
-					   gint *h);
+void gossip_geometry_save_for_chat        (GossipChat *chat,
+					   gint        x,
+					   gint        y,
+					   gint        w,
+					   gint        h);
+void gossip_geometry_load_for_chat        (GossipChat *chat,
+					   gint       *x,
+					   gint       *y,
+					   gint       *w,
+					   gint       *h);
+void gossip_geometry_save_for_main_window (gint        x,
+					   gint        y,
+					   gint        w,
+					   gint        h);
+void gossip_geometry_load_for_main_window (gint       *x,
+					   gint       *y,
+					   gint       *w,
+					   gint       *h);
 
 #endif /* __GOSSIP_GEOMETRY_H__ */
