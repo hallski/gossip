@@ -49,6 +49,7 @@
 #include "gossip-chatrooms-window.h"
 #include "gossip-contact-list.h"
 #include "gossip-ft-window.h"
+#include "gossip-geometry.h"
 #include "gossip-group-chat.h"
 #include "gossip-idle.h"
 #include "gossip-log-window.h"
@@ -413,11 +414,10 @@ app_setup (GossipAccountManager *manager)
         GossipAppPriv  *priv;
 	GladeXML       *glade;
 	GtkWidget      *sw;
-	gint            width, height;
 	GtkRequisition  req;
 	gboolean        show_offline;
 	GtkWidget      *show_offline_widget;
-	gint            x, y;
+	gint            x, y, w, h;
 	gboolean        hidden;
 	GtkWidget      *image;
 	
@@ -618,32 +618,22 @@ app_setup (GossipAccountManager *manager)
 
 	/* Set window size. */
 	DEBUG_MSG (("AppSetup: Configuring window geometry..."));
-	width = gconf_client_get_int (priv->gconf_client,
-				      GCONF_PATH "/ui/main_window_width",
-				      NULL);
+	gossip_geometry_load_for_main_window (&x, &y, &w, &h);
 
-	height = gconf_client_get_int (priv->gconf_client,
-				       GCONF_PATH "/ui/main_window_height",
-				       NULL);
+	if (w >= 1 && h >= 1) {
+		/* Use the defaults from the glade file if we
+		 * don't have good w, h geometry.  
+		 */
+		DEBUG_MSG (("AppSetup: Configuring window default size w:%d, h:%d", w, h)); 
+		gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
+	}
 
-	width = MAX (width, MIN_WIDTH);
-	gtk_window_set_default_size (GTK_WINDOW (priv->window), width, height);
-	DEBUG_MSG (("AppSetup: Configuring window default size to w:%d, h:%d", width, height)); 
-
-	/* Set window position. */
- 	x = gconf_client_get_int (priv->gconf_client, 
-				  GCONF_PATH "/ui/main_window_position_x",
-				  NULL);
-
-	y = gconf_client_get_int (priv->gconf_client, 
-				  GCONF_PATH "/ui/main_window_position_y", 
-				  NULL);
-
-	x = CLAMP (x, 0, gdk_screen_width () - width); 
-	y = CLAMP (y, 0, gdk_screen_height () - height); 
-
- 	if (x >= 0 && y >= 0) {
- 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
+	if (x >= 1 && y >= 1) {
+		/* Let the window manager position it if we
+		 * don't have good x, y coordinates.  
+		 */
+		DEBUG_MSG (("AppSetup: Configuring window default position x:%d, y:%d", x, y)); 
+		gtk_window_move (GTK_WINDOW (priv->window), x, y);
 	}
 
 	/* Set up current presence. */
@@ -1154,30 +1144,21 @@ app_toggle_visibility (void)
 				       GCONF_PATH "/ui/main_window_hidden", TRUE,
 				       NULL);
 	} else {
-		gint x, y;
-		gint width, height;
-		gint screen_width, screen_height;
+		gint x, y, w, h;
 
-		x = gconf_client_get_int (priv->gconf_client, 
-					  GCONF_PATH "/ui/main_window_position_x",
-					  NULL);
-		y = gconf_client_get_int (priv->gconf_client, 
-					  GCONF_PATH "/ui/main_window_position_y",
-					  NULL);
+		gossip_geometry_load_for_main_window (&x, &y, &w, &h);
 
-		width = gconf_client_get_int (priv->gconf_client,
-					      GCONF_PATH "/ui/main_window_width",
-					      NULL);
+		if (w >= 1 && h >= 1) {
+			/* Use the defaults from the glade file if we
+			 * don't have good w, h geometry.  
+			 */
+			gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
+		}
 		
-		height = gconf_client_get_int (priv->gconf_client,
-					       GCONF_PATH "/ui/main_window_height",
-					       NULL);
-	
-		screen_width = gdk_screen_width ();
-		screen_height = gdk_screen_height ();
-
-		if (x >= 0 && (x - width < screen_width) &&
-		    y >= 0 && (y - height < screen_height)) {
+		if (x >= 1 && y >= 1) {
+			/* Let the window manager position it if we
+			 * don't have good x, y coordinates.  
+			 */
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
 
@@ -2233,33 +2214,14 @@ static gboolean
 configure_event_idle_cb (GtkWidget *widget)
 {
 	GossipAppPriv *priv;
-	gint           width, height;
-	gint           x, y;
+	gint           x, y, w, h;
 	
 	priv = GET_PRIV (app);
 
-	gtk_window_get_size (GTK_WINDOW (widget), &width, &height);
+	gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
 	gtk_window_get_position (GTK_WINDOW (priv->window), &x, &y);
 
-	gconf_client_set_int (priv->gconf_client,
-			      GCONF_PATH "/ui/main_window_width",
-			      width,
-			      NULL);
-
-	gconf_client_set_int (priv->gconf_client,
-			      GCONF_PATH "/ui/main_window_height",
-			      height,
-			      NULL);
-	
-	gconf_client_set_int (priv->gconf_client,
- 			      GCONF_PATH "/ui/main_window_position_x",
- 			      x,
- 			      NULL);
- 
- 	gconf_client_set_int (priv->gconf_client,
- 			      GCONF_PATH "/ui/main_window_position_y",
- 			      y,
- 			      NULL);
+	gossip_geometry_save_for_main_window (x, y, w, h);
 
 	priv->size_timeout_id = 0;
 

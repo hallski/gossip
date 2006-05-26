@@ -58,6 +58,7 @@ gossip_SOURCES = 				                        	\
 	gossip-edit-chatroom-dialog.c      gossip-edit-chatroom-dialog.h	\
 	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
 	gossip-ft-window.c		   gossip-ft-window.h			\
+	gossip-geometry.c		   gossip-geometry.h			\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
 	gossip-image-chooser.c             gossip-image-chooser.h		\

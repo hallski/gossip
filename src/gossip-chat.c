@@ -24,20 +24,20 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
+#include "gossip-app.h"
+#include "gossip-chat.h"
 #include "gossip-chat-window.h"
+#include "gossip-geometry.h"
 #include "gossip-marshal.h"
+#include "gossip-preferences.h"
 #include "gossip-spell.h"
 #include "gossip-spell-dialog.h"
 #include "gossip-ui-utils.h"
-#include "gossip-preferences.h"
-#include "gossip-chat.h"
-#include "gossip-app.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT, GossipChatPriv))
 
@@ -90,7 +90,6 @@ GossipChatSpell *chat_spell_new                    (GossipChat      *chat,
 						    GtkTextIter      start,
 						    GtkTextIter      end);
 static void      chat_spell_free                   (GossipChatSpell *chat_spell);
-static gchar *   chat_window_get_geometry_filename (void);
 
 enum {
 	COMPOSING,
@@ -570,24 +569,6 @@ chat_spell_free (GossipChatSpell *chat_spell)
 	g_free (chat_spell);
 }
 
-static gchar *
-chat_window_get_geometry_filename (void)
-{
-	gchar *dir;
-	gchar *filename;
-
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("ChatWindow: Creating directory:'%s'", dir));
-		g_mkdir_with_parents (dir, CHAT_DIR_CREATE_MODE);
-	}
-
-	filename = g_build_filename (dir, CHAT_KEY_FILENAME, NULL);
-	g_free (dir);
-
-	return filename;
-}
-
 gboolean
 gossip_chat_get_is_command (const gchar *str)
 {
@@ -753,69 +734,7 @@ gossip_chat_save_geometry (GossipChat *chat,
 			   gint        w,
 			   gint        h)
 {
-	GError      *error = NULL;
-	GKeyFile    *key_file;
-	const gchar *id;
-
-	gchar       *filename;
-
-	GdkScreen   *screen;
-	gint         max_width;
-	gint         max_height;
-
-	gchar       *content;
-	gsize        length;
-	gchar       *str;
-
-	DEBUG_MSG (("Chat: Saving geometry: x:%d, y:%d, w:%d, h:%d\n", 
-		    x, y, w, h));
-
-	if (gossip_chat_is_group_chat (chat)) {
-		GossipChatroom *chatroom;
-
-		chatroom = gossip_chat_get_chatroom (chat);
-		id = gossip_chatroom_get_id_str (chatroom);
-	} else {
-		GossipContact *contact;
-
-		contact = gossip_chat_get_contact (chat);
-		id = gossip_contact_get_id (contact);
-	}
-
-	screen = gdk_screen_get_default ();
-	max_width = gdk_screen_get_width (screen);
-	max_height = gdk_screen_get_height (screen);
-
-	x = CLAMP (x, 0, max_width);
-	y = CLAMP (y, 0, max_height);
-
-	w = CLAMP (w, 100, max_width);
-	h = CLAMP (h, 100, max_height);
-
-	str = g_strdup_printf (CHAT_GEOMETRY_FORMAT, x, y, w, h);
-	
-	key_file = g_key_file_new ();
-
-	filename = chat_window_get_geometry_filename ();
-
-	g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL);
-	g_key_file_set_comment (key_file, CHAT_KEY_GROUP_CONTACTS, NULL, 
-				"Note: The format below is: X, Y, Width, Height", 
-				NULL);
-	g_key_file_set_string (key_file, CHAT_KEY_GROUP_CONTACTS, id, str);
-
-	g_free (str);
-
-	content = g_key_file_to_data (key_file, &length, NULL);
-	if (!g_file_set_contents (filename, content, length, &error)) { 
-		g_warning ("Couldn't save chat window geometry, error:%d->'%s'", 
-			   error->code, error->message);
-		g_error_free (error);
-	}
-
-	g_free (content);
-	g_free (filename);
-	g_key_file_free (key_file);
+	gossip_geometry_save_for_chat (chat, x, y, w, h);
 }
 
 void 
@@ -825,79 +744,7 @@ gossip_chat_load_geometry (GossipChat *chat,
 			   gint       *w,
 			   gint       *h)
 {
-	GKeyFile    *key_file;
-	const gchar *id;
-	gchar       *filename;
-	gchar       *str = NULL;
-
-	if (x) {
-		*x = 0;
-	}
-
-	if (y) {
-		*y = 0;
-	}
-
-	if (w) {
-		*w = 0;
-	}
-
-	if (h) {
-		*h = 0;
-	}
-
-	if (gossip_chat_is_group_chat (chat)) {
-		GossipChatroom *chatroom;
-
-		chatroom = gossip_chat_get_chatroom (chat);
-		id = gossip_chatroom_get_id_str (chatroom);
-	} else {
-		GossipContact *contact;
-
-		contact = gossip_chat_get_contact (chat);
-		id = gossip_contact_get_id (contact);
-	}
-
-	key_file = g_key_file_new ();
-
-	filename = chat_window_get_geometry_filename ();
-
-	if (g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL)) {
-		str = g_key_file_get_string (key_file, CHAT_KEY_GROUP_CONTACTS, id, NULL);
-	}
-
-	if (str) {
-		gint tmp_x, tmp_y, tmp_w, tmp_h;
-
-		sscanf (str, CHAT_GEOMETRY_FORMAT, &tmp_x, &tmp_y, &tmp_w, &tmp_h);
-
-		if (x) {
-			*x = tmp_x;
-		}
-		
-		if (y) {
-			*y = tmp_y;
-		}
-		
-		if (w) {
-			*w = tmp_w;
-		}
-		
-		if (h) {
-			*h = tmp_h;
-		}
-
-		g_free (str);
-	}
-
-	DEBUG_MSG (("Chat: Loading geometry: x:%d, y:%d, w:%d, h:%d\n", 
-		    x ? *x : -1, 
-		    y ? *y : -1, 
-		    w ? *w : -1, 
-		    h ? *h : -1));
-
-	g_free (filename);
-	g_key_file_free (key_file);
+	gossip_geometry_load_for_chat (chat, x, y, w, h);
 }
 
 void

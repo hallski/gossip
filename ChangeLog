@@ -1,6 +1,15 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
 	* gossip.schemas.in:
+	* src/Makefile.am:
+	* src/gossip-app.c:
+	* src/gossip-chat.c:
+	* src/gossip-geometry.[ch]: Added a geometry module to deal with
+	chat window and main window geometry collectively in one method.
+	
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
+	* gossip.schemas.in:
 	* src/gossip-chat-view.c:
 	* src/gossip-preferences.c: Fixed widget sensitivity
 	issue. Removed the preference to use the system font, just do it
