@@ -19,13 +19,18 @@
  */
 
 #include <config.h>
+
 #include <sys/types.h>
 #include <string.h>
 #include <time.h>
-#include <glib.h>
-#include <gtk/gtk.h>
-#include <gconf/gconf-client.h>
+
 #include <glib/gi18n.h>
+#include <gtk/gtkimage.h>
+#include <gtk/gtkmenu.h>
+#include <gtk/gtkmenuitem.h>
+#include <gtk/gtkimagemenuitem.h>
+#include <gtk/gtkstock.h>
+#include <gtk/gtkscrolledwindow.h>
 
 #ifdef USE_GNOMEVFS_FOR_URL
 #include <libgnomevfs/gnome-vfs.h>
@@ -38,9 +43,10 @@
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-chatroom-provider.h>
 
-#include "gossip-chat-view.h"
-#include "gossip-theme-manager.h"
 #include "gossip-app.h"
+#include "gossip-chat-view.h"
+#include "gossip-preferences.h"
+#include "gossip-theme-manager.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
@@ -75,6 +81,9 @@ struct _GossipChatViewPriv {
 	 * changed, so we know whether to insert a header or not.
 	 */
 	GossipContact *last_contact;
+
+	guint          gconf_system_fonts_id;
+	guint          gconf_use_system_fonts_id;
 };
 
 typedef struct {
@@ -175,75 +184,81 @@ static GossipSmileyPattern smileys[] = {
 
 static gint num_smileys = G_N_ELEMENTS (smileys);
 
-static void       gossip_chat_view_class_init          (GossipChatViewClass      *klass);
-static void       gossip_chat_view_init                (GossipChatView           *view);
-static void       chat_view_finalize                   (GObject                  *object);
-static gboolean   chat_view_drag_motion                (GtkWidget                *widget,
-							GdkDragContext           *context,
-							gint                      x,
-							gint                      y,
-							guint                     time);
-static void       chat_view_size_allocate              (GtkWidget                *widget,
-							GtkAllocation            *alloc);
-static void       chat_view_setup_tags                 (GossipChatView           *view);
-static void       chat_view_populate_popup             (GossipChatView           *view,
-							GtkMenu                  *menu,
-							gpointer                  user_data);
-static gboolean   chat_view_event_cb                   (GossipChatView           *view,
-							GdkEventMotion           *event,
-							GtkTextTag               *tag);
-static gboolean   chat_view_url_event_cb               (GtkTextTag               *tag,
-							GObject                  *object,
-							GdkEvent                 *event,
-							GtkTextIter              *iter,
-							GtkTextBuffer            *buffer);
-static void       chat_view_open_address               (const gchar              *url);
-static void       chat_view_open_address_cb            (GtkMenuItem              *menuitem,
-							const gchar              *url);
-static void       chat_view_copy_address_cb            (GtkMenuItem              *menuitem,
-							const gchar              *url);
-static void       chat_view_clear_view_cb              (GtkMenuItem              *menuitem,
-							GossipChatView           *view);
-static void       chat_view_insert_text_with_emoticons (GtkTextBuffer            *buf,
-							GtkTextIter              *iter,
-							const gchar              *str);
-static gboolean   chat_view_is_scrolled_down           (GossipChatView           *view);
-static void       chat_view_invite_accept_cb           (GtkWidget                *button,
-							gpointer                  user_data);
-static void       chat_view_invite_decline_cb          (GtkWidget                *button,
-							gpointer                  user_data);
-static void       chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
-							GossipChatroomJoinResult  result,
-							gint                      id,
-							gpointer                  user_data);
-static void       theme_manager_theme_changed_cb       (GossipThemeManager       *manager,
-							GossipChatView           *view);
-static void       chat_view_maybe_append_date_and_time (GossipChatView           *view,
-							GossipMessage            *msg);
-static void       chat_view_append_spacing             (GossipChatView           *view);
-static void       chat_view_append_text                (GossipChatView           *view,
-							const gchar              *body,
-							const gchar              *tag);
-static void       chat_view_maybe_append_fancy_header  (GossipChatView           *view,
-							GossipMessage            *msg,
-							GossipContact            *my_contact,
-							gboolean                  from_self);
-static void       chat_view_append_irc_action          (GossipChatView           *view,
-							GossipMessage            *msg,
-							GossipContact            *my_contact,
-							gboolean                  from_self);
-static void       chat_view_append_fancy_action        (GossipChatView           *view,
-							GossipMessage            *msg,
-							GossipContact            *my_contact,
-							gboolean                  from_self);
-static void       chat_view_append_irc_message         (GossipChatView           *view,
-							GossipMessage            *msg,
-							GossipContact            *contact,
-							gboolean                  from_self);
-static void       chat_view_append_fancy_message       (GossipChatView           *view,
-							GossipMessage            *msg,
-							GossipContact            *my_contact,
-							gboolean                  from_self);
+static void     gossip_chat_view_class_init          (GossipChatViewClass      *klass);
+static void     gossip_chat_view_init                (GossipChatView           *view);
+static void     chat_view_finalize                   (GObject                  *object);
+static gboolean chat_view_drag_motion                (GtkWidget                *widget,
+						      GdkDragContext           *context,
+						      gint                      x,
+						      gint                      y,
+						      guint                     time);
+static void     chat_view_size_allocate              (GtkWidget                *widget,
+						      GtkAllocation            *alloc);
+static void     chat_view_setup_tags                 (GossipChatView           *view);
+static void     chat_view_system_font_update         (GossipChatView           *view,
+						      GConfClient              *gconf_client);
+static void     chat_view_system_font_changed_cb     (GConfClient              *gconf_client,
+						      guint                     id,
+						      GConfEntry               *entry,
+						      GossipChatView           *view);
+static void     chat_view_populate_popup             (GossipChatView           *view,
+						      GtkMenu                  *menu,
+						      gpointer                  user_data);
+static gboolean chat_view_event_cb                   (GossipChatView           *view,
+						      GdkEventMotion           *event,
+						      GtkTextTag               *tag);
+static gboolean chat_view_url_event_cb               (GtkTextTag               *tag,
+						      GObject                  *object,
+						      GdkEvent                 *event,
+						      GtkTextIter              *iter,
+						      GtkTextBuffer            *buffer);
+static void     chat_view_open_address               (const gchar              *url);
+static void     chat_view_open_address_cb            (GtkMenuItem              *menuitem,
+						      const gchar              *url);
+static void     chat_view_copy_address_cb            (GtkMenuItem              *menuitem,
+						      const gchar              *url);
+static void     chat_view_clear_view_cb              (GtkMenuItem              *menuitem,
+						      GossipChatView           *view);
+static void     chat_view_insert_text_with_emoticons (GtkTextBuffer            *buf,
+						      GtkTextIter              *iter,
+						      const gchar              *str);
+static gboolean chat_view_is_scrolled_down           (GossipChatView           *view);
+static void     chat_view_invite_accept_cb           (GtkWidget                *button,
+						      gpointer                  user_data);
+static void     chat_view_invite_decline_cb          (GtkWidget                *button,
+						      gpointer                  user_data);
+static void     chat_view_invite_join_cb             (GossipChatroomProvider   *provider,
+						      GossipChatroomJoinResult  result,
+						      gint                      id,
+						      gpointer                  user_data);
+static void     theme_manager_theme_changed_cb       (GossipThemeManager       *manager,
+						      GossipChatView           *view);
+static void     chat_view_maybe_append_date_and_time (GossipChatView           *view,
+						      GossipMessage            *msg);
+static void     chat_view_append_spacing             (GossipChatView           *view);
+static void     chat_view_append_text                (GossipChatView           *view,
+						      const gchar              *body,
+						      const gchar              *tag);
+static void     chat_view_maybe_append_fancy_header  (GossipChatView           *view,
+						      GossipMessage            *msg,
+						      GossipContact            *my_contact,
+						      gboolean                  from_self);
+static void     chat_view_append_irc_action          (GossipChatView           *view,
+						      GossipMessage            *msg,
+						      GossipContact            *my_contact,
+						      gboolean                  from_self);
+static void     chat_view_append_fancy_action        (GossipChatView           *view,
+						      GossipMessage            *msg,
+						      GossipContact            *my_contact,
+						      gboolean                  from_self);
+static void     chat_view_append_irc_message         (GossipChatView           *view,
+						      GossipMessage            *msg,
+						      GossipContact            *contact,
+						      gboolean                  from_self);
+static void     chat_view_append_fancy_message       (GossipChatView           *view,
+						      GossipMessage            *msg,
+						      GossipContact            *my_contact,
+						      gboolean                  from_self);
 
 G_DEFINE_TYPE (GossipChatView, gossip_chat_view, GTK_TYPE_TEXT_VIEW);
 
@@ -264,6 +279,7 @@ static void
 gossip_chat_view_init (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
+	GConfClient        *gconf_client;
 
 	priv = GET_PRIV (view);
 
@@ -280,6 +296,25 @@ gossip_chat_view_init (GossipChatView *view)
 		      "cursor-visible", FALSE,
 		      NULL);
 
+	gconf_client = gossip_app_get_gconf_client ();
+	
+	/* Watch system font changes and preferences to turn it on/off too */
+	priv->gconf_use_system_fonts_id = 
+		gconf_client_notify_add (gconf_client,
+					 GCONF_PATH "/ui/system_fonts",
+					 (GConfClientNotifyFunc) chat_view_system_font_changed_cb,
+					 view, NULL, NULL);
+	
+	priv->gconf_system_fonts_id = 
+		gconf_client_notify_add (gconf_client,
+					 "/desktop/gnome/interface/document_font_name",
+					 (GConfClientNotifyFunc) chat_view_system_font_changed_cb,
+					 view, NULL, NULL);
+
+	/* Should we use GNOME's document font */
+	chat_view_system_font_update (view, gconf_client);
+
+	/* Set up formatting tags */
 	chat_view_setup_tags (view);
 
 	gossip_theme_manager_apply (gossip_theme_manager_get (), view);
@@ -299,6 +334,25 @@ gossip_chat_view_init (GossipChatView *view)
 static void
 chat_view_finalize (GObject *object)
 {
+	GossipChatView     *view;
+	GossipChatViewPriv *priv;
+	GConfClient        *gconf_client;
+
+	view = GOSSIP_CHAT_VIEW (object);
+	priv = GET_PRIV (view);
+
+	gconf_client = gossip_app_get_gconf_client ();
+
+	if (priv->gconf_system_fonts_id) {
+		gconf_client_notify_remove (gconf_client, priv->gconf_system_fonts_id);
+		priv->gconf_system_fonts_id = 0;
+	}
+
+	if (priv->gconf_use_system_fonts_id) {
+		gconf_client_notify_remove (gconf_client, priv->gconf_use_system_fonts_id);
+		priv->gconf_use_system_fonts_id = 0;
+	}
+
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
 }
 
@@ -361,6 +415,44 @@ chat_view_setup_tags (GossipChatView *view)
 			  "event",
 			  G_CALLBACK (chat_view_event_cb),
 			  tag);
+}
+
+static void
+chat_view_system_font_update (GossipChatView *view,
+			      GConfClient    *gconf_client)
+{
+	PangoFontDescription *font_description = NULL;
+	gboolean              use_system_font;
+
+	use_system_font = gconf_client_get_bool (gconf_client, 
+						 GCONF_PATH "/ui/system_fonts", 
+						 NULL);
+
+	if (use_system_font) {
+		gchar *font_name;
+
+		font_name = gconf_client_get_string (gconf_client, 
+						     "/desktop/gnome/interface/document_font_name", 
+						     NULL);
+		
+		font_description = pango_font_description_from_string (font_name);
+		g_free (font_name);
+	}
+
+	gtk_widget_modify_font (GTK_WIDGET (view), font_description);
+
+	if (font_description) {
+		pango_font_description_free (font_description);
+	}
+}
+
+static void
+chat_view_system_font_changed_cb (GConfClient    *gconf_client,
+				  guint           id,
+				  GConfEntry     *entry,
+				  GossipChatView *view)
+{
+	chat_view_system_font_update (view, gconf_client);	
 }
 
 static void

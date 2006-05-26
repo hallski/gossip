@@ -1,5 +1,18 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c: Turned debugging off.
+	
+	* src/gossip-chat-view.c: Make sure we update in real time the
+	font used from changes to the system font and the preference to
+	use the system font.
+
+	* gossip.schemas.in:
+	* src/gossip-preferences.c:
+	* ui/main.glade: Rearranged the preferences and added a "Use
+	System Font" option.
+
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c (jabber_contact_add): Escape
 	the group, name and message used in subscriptions to make sure we
 	are not disconnected when using special characters, fixes #342927,

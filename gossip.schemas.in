@@ -2,48 +2,6 @@
   <schemalist>
 
     <schema>
-      <key>/schemas/apps/gossip/conversation/graphical_smileys</key>
-      <applyto>/apps/gossip/conversation/graphical_smileys</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-         <short>Use graphical smileys</short>
-         <long>
-	 Whether or not to convert smileys into graphical images in
-	 conversations.
-         </long>
-      </locale>
-    </schema>
-    <schema>
-      <key>/schemas/apps/gossip/conversation/enable_spell_checker</key>
-      <applyto>/apps/gossip/conversation/enable_spell_checker</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-	<short>Enable spell checking</short>
-	<long>
-	  Whether spell checking should be turned on.
-	</long>
-      </locale>
-    </schema>
-
-    <schema>
-      <key>/schemas/apps/gossip/conversation/spell_checker_languages</key>
-      <applyto>/apps/gossip/conversation/spell_checker_languages</applyto>
-      <owner>gossip</owner>
-      <type>string</type>
-      <default>en</default>
-      <locale name="C">
-	<short>Spell checking languages</short>
-	<long>
-	  Comma separated list of spell checker languages to use (e.g. en, fr, nl).
-	</long>
-      </locale>
-    </schema>
-    
-    <schema>
       <key>/schemas/apps/gossip/contacts/show_offline</key>
       <applyto>/apps/gossip/contacts/show_offline</applyto>
       <owner>gossip</owner>
@@ -58,59 +16,17 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/sound/play_sounds</key>
-      <applyto>/apps/gossip/sound/play_sounds</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-         <short>Use notification sounds</short>
-         <long>
-	 Whether or not to play a sound when messages arrive.
-         </long>
-      </locale>
-    </schema>
-
-    <schema>
-      <key>/schemas/apps/gossip/sound/silent_away</key>
-      <applyto>/apps/gossip/sound/silent_away</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-         <short>Be silent when away</short>
-         <long>
-	 Whether or not to play sounds when away.
-         </long>
-      </locale>
-    </schema>
-
-    <schema>
-      <key>/schemas/apps/gossip/sound/silent_busy</key>
-      <applyto>/apps/gossip/sound/silent_busy</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>false</default>
-      <locale name="C">
-         <short>Be silent when busy</short>
-         <long>
-	 Whether or not to play sounds when busy.
-         </long>
-      </locale>
-    </schema>
-
-   <schema>
-      <key>/schemas/apps/gossip/conversation/theme</key>
-      <applyto>/apps/gossip/conversation/theme</applyto>
-      <owner>gossip</owner>
-      <type>string</type>
-      <default>classic</default>
-      <locale name="C">
-         <short>Chat window theme</short>
-         <long>
-           The theme that is used to display the conversation in chat windows.
-         </long>
-      </locale>
+       <key>/schemas/apps/gossip/ui/main_window_hidden</key>
+       <applyto>/apps/gossip/ui/main_window_hidden</applyto>
+       <owner>gossip</owner>
+       <type>bool</type>
+       <default>false</default>
+       <locale name="C">
+          <short>Hide main window</short>
+          <long>
+            Hide the main window.
+          </long>
+       </locale>
     </schema>
 
     <schema>
@@ -170,34 +86,6 @@
     </schema>
 
     <schema>
-       <key>/schemas/apps/gossip/ui/main_window_hidden</key>
-       <applyto>/apps/gossip/ui/main_window_hidden</applyto>
-       <owner>gossip</owner>
-       <type>bool</type>
-       <default>false</default>
-       <locale name="C">
-          <short>Hide main window</short>
-          <long>
-            Hide the main window.
-          </long>
-       </locale>
-    </schema>
-
-    <schema>
-       <key>/schemas/apps/gossip/ui/separate_chat_windows</key>
-       <applyto>/apps/gossip/ui/separate_chat_windows</applyto>
-       <owner>gossip</owner>
-       <type>bool</type>
-       <default>false</default>
-       <locale name="C">
-          <short>Open new chats in separate windows</short>
-          <long>
-	    Always open a separate chat window for new chats.
-          </long>
-       </locale>
-    </schema>
-
-    <schema>
        <key>/schemas/apps/gossip/ui/avatar_directory</key>
        <applyto>/apps/gossip/ui/avatar_directory</applyto>
        <owner>gossip</owner>
@@ -224,6 +112,120 @@
             Preset status messages.
           </long>
        </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/sound/play_sounds</key>
+      <applyto>/apps/gossip/sound/play_sounds</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use notification sounds</short>
+         <long>
+	 Whether or not to play a sound when messages arrive.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/sound/silent_away</key>
+      <applyto>/apps/gossip/sound/silent_away</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Be silent when away</short>
+         <long>
+	 Whether or not to play sounds when away.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/sound/silent_busy</key>
+      <applyto>/apps/gossip/sound/silent_busy</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+         <short>Be silent when busy</short>
+         <long>
+	 Whether or not to play sounds when busy.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+       <key>/schemas/apps/gossip/ui/separate_chat_windows</key>
+       <applyto>/apps/gossip/ui/separate_chat_windows</applyto>
+       <owner>gossip</owner>
+       <type>bool</type>
+       <default>false</default>
+       <locale name="C">
+          <short>Open new chats in separate windows</short>
+          <long>
+	    Always open a separate chat window for new chats.
+          </long>
+       </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/conversation/graphical_smileys</key>
+      <applyto>/apps/gossip/conversation/graphical_smileys</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use graphical smileys</short>
+         <long>
+	 Whether or not to convert smileys into graphical images in
+	 conversations.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/ui/system_fonts</key>
+      <applyto>/apps/gossip/ui/system_fonts</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use system fonts</short>
+         <long>
+	 Whether or not to use the fonts that the user is able to
+         configure over the fonts set by Gossip.
+         </long>
+      </locale>
+    </schema>
+  
+    <schema>
+      <key>/schemas/apps/gossip/conversation/theme</key>
+      <applyto>/apps/gossip/conversation/theme</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <default>classic</default>
+      <locale name="C">
+         <short>Chat window theme</short>
+         <long>
+           The theme that is used to display the conversation in chat windows.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/conversation/spell_checker_languages</key>
+      <applyto>/apps/gossip/conversation/spell_checker_languages</applyto>
+      <owner>gossip</owner>
+      <type>string</type>
+      <default>en</default>
+      <locale name="C">
+	<short>Spell checking languages</short>
+	<long>
+	  Comma separated list of spell checker languages to use (e.g. en, fr, nl).
+	</long>
+      </locale>
     </schema>
 
   </schemalist>  
