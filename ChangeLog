@@ -1,3 +1,11 @@
+2006-05-26  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-private-chat.c (gossip_private_chat_append_message):
+	Check the resource for NULL before using it.
+
+	* src/gossip-chat-view.c (chat_view_system_font_update): Check the
+	value we get from gconf before using it.
+
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-presence.[ch]:

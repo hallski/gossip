@@ -854,7 +854,11 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	if (resource) {
 		gboolean is_different;
 
-		is_different = g_ascii_strcasecmp (resource, priv->locked_resource) != 0;
+		if (priv->locked_resource) {
+			is_different = g_ascii_strcasecmp (resource, priv->locked_resource) != 0;
+		} else {
+			is_different = TRUE;
+		}
 
 		if (!priv->locked_resource || is_different) {
 			g_free (priv->locked_resource);

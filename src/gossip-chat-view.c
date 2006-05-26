@@ -422,9 +422,13 @@ chat_view_system_font_update (GossipChatView *view,
 					     "/desktop/gnome/interface/document_font_name", 
 					     NULL);
 	
-	font_description = pango_font_description_from_string (font_name);
-	g_free (font_name);
-
+	if (font_name) {
+		font_description = pango_font_description_from_string (font_name);
+		g_free (font_name);
+	} else {
+		font_description = NULL;
+	}
+	
 	gtk_widget_modify_font (GTK_WIDGET (view), font_description);
 
 	if (font_description) {
