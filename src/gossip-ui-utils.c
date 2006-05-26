@@ -632,6 +632,10 @@ gossip_pixbuf_for_presence_state (GossipPresenceState state)
 	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
 		stock = GOSSIP_STOCK_EXT_AWAY;
 		break;
+	case GOSSIP_PRESENCE_STATE_HIDDEN:
+	case GOSSIP_PRESENCE_STATE_UNAVAILABLE:
+		stock = GOSSIP_STOCK_OFFLINE;
+		break;
 	}
 
 	return gossip_pixbuf_from_stock (stock, GTK_ICON_SIZE_MENU);

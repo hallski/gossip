@@ -26,12 +26,9 @@
 #include "gossip-utils.h"
 #include "gossip-presence.h"
 
-
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE, GossipPresencePriv))
 
-
 typedef struct _GossipPresencePriv GossipPresencePriv;
-
 
 struct _GossipPresencePriv {
 	GossipPresenceState  state;
@@ -42,7 +39,6 @@ struct _GossipPresencePriv {
 	gint                 priority;
 };
 
-
 static void         presence_finalize           (GObject             *object);
 static void         presence_get_property       (GObject             *object,
 						 guint                param_id,
@@ -52,10 +48,7 @@ static void         presence_set_property       (GObject             *object,
 						 guint                param_id,
 						 const GValue        *value,
 						 GParamSpec          *pspec);
-static const gchar *presence_get_default_status (GossipPresenceState  state);
 
-
-/* properties */
 enum {
 	PROP_0,
 	PROP_STATE,
@@ -64,12 +57,9 @@ enum {
 	PROP_PRIORITY
 };
 
-
 G_DEFINE_TYPE (GossipPresence, gossip_presence, G_TYPE_OBJECT);
 
-
 static gpointer parent_class = NULL;
-
 
 static void
 gossip_presence_class_init (GossipPresenceClass *class)
@@ -206,25 +196,6 @@ presence_set_property (GObject      *object,
 	};
 }
 
-static const gchar *
-presence_get_default_status (GossipPresenceState state)
-{
-	switch (state) {
-	case GOSSIP_PRESENCE_STATE_AVAILABLE:
-		return _("Available");
-		break;
-	case GOSSIP_PRESENCE_STATE_BUSY:
-		return _("Busy");
-		break;
-	case GOSSIP_PRESENCE_STATE_AWAY:
-	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-		return _("Away");
-		break;
-	}
-
-	return _("Available");
-}
-
 GossipPresence *
 gossip_presence_new (void)
 {
@@ -255,6 +226,30 @@ gossip_presence_get_resource (GossipPresence *presence)
 	}
 
 	return NULL;
+}
+
+const gchar *
+gossip_presence_get_status (GossipPresence *presence)
+{
+	GossipPresencePriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
+			      _("Offline"));
+
+	priv = GET_PRIV (presence);
+
+	return priv->status;
+}
+
+gint
+gossip_presence_get_priority (GossipPresence *presence)
+{
+	GossipPresencePriv *priv;
+
+	priv = GET_PRIV (presence);
+	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 0);
+
+	return priv->priority;
 }
 
 void
@@ -298,19 +293,6 @@ gossip_presence_set_state (GossipPresence      *presence,
 	priv->state = state;
 }
 
-const gchar *
-gossip_presence_get_status (GossipPresence *presence)
-{
-	GossipPresencePriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
-			      _("Offline"));
-
-	priv = GET_PRIV (presence);
-
-	return priv->status;
-}
-
 void
 gossip_presence_set_status (GossipPresence *presence, 
 			    const gchar    *status)
@@ -327,17 +309,6 @@ gossip_presence_set_status (GossipPresence *presence,
 	} else {
 		priv->status = NULL;
 	}
-}
-
-gint
-gossip_presence_get_priority (GossipPresence *presence)
-{
-	GossipPresencePriv *priv;
-
-	priv = GET_PRIV (presence);
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 0);
-
-	return priv->priority;
 }
 
 void
@@ -404,5 +375,24 @@ gossip_presence_priority_sort_func (gconstpointer a,
 const gchar *
 gossip_presence_state_get_default_status (GossipPresenceState state)
 {
-	return presence_get_default_status (state);
+	switch (state) {
+	case GOSSIP_PRESENCE_STATE_AVAILABLE:
+		return _("Available");
+		break;
+
+	case GOSSIP_PRESENCE_STATE_BUSY:
+		return _("Busy");
+		break;
+
+	case GOSSIP_PRESENCE_STATE_AWAY:
+	case GOSSIP_PRESENCE_STATE_EXT_AWAY:
+		return _("Away");
+		break;
+
+	case GOSSIP_PRESENCE_STATE_HIDDEN:
+	case GOSSIP_PRESENCE_STATE_UNAVAILABLE:
+		return _("Unavailable");
+	}
+
+	return _("Available");
 }

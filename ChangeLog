@@ -1,5 +1,14 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-presence.[ch]:
+	* src/gossip-app.c:
+	* src/gossip-presence-chooser.[ch]: 
+	* src/gossip-ui-utils.c:
+	* ui/main.glade: Updated the presence chooser to be better looking
+	and more flexible, might need a little work in some places.
+
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
 	* gossip.schemas.in:
 	* src/Makefile.am:
 	* src/gossip-app.c:
