@@ -1,5 +1,13 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
+	* gossip.schemas.in:
+	* src/gossip-chat-view.c:
+	* src/gossip-preferences.c: Fixed widget sensitivity
+	issue. Removed the preference to use the system font, just do it
+	:) 
+
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.c: (gossip_session_get_groups):
 	* src/gossip-add-contact-window.c: (add_contact_window_2_prepare):
 	* src/gossip-edit-groups-dialog.c: (edit_groups_add_groups):
