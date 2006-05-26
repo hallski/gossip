@@ -296,6 +296,9 @@ ft_window_vcard_cb (GossipResult  result,
 		end = g_array_new (FALSE, FALSE, sizeof (gint));
 		
 		num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, url, start, end);
+
+		g_array_free (start, TRUE);
+		g_array_free (end, TRUE);
 	}
 
 	if (num_matches > 0) {

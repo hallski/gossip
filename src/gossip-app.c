@@ -243,6 +243,9 @@ static void            app_show_offline_key_changed_cb      (GConfClient        
 							     guint                     cnxn_id,
 							     GConfEntry               *entry,
 							     gpointer                  check_menu_item);
+static void            app_connect_no_accounts_response_cb  (GtkWidget                *widget,
+							     gint                      response,
+							     gpointer                  user_data);
 static gboolean        app_idle_check_cb                    (GossipApp                *app);
 static void            app_disconnect                       (void);
 static void            app_connection_items_setup           (GladeXML                 *glade);
@@ -1553,8 +1556,18 @@ app_idle_check_cb (GossipApp *app)
 }
 
 /*
- *
+ * App 
  */
+
+static void
+app_connect_no_accounts_response_cb (GtkWidget *widget,
+				     gint       response,
+				     gpointer   user_data)
+{
+	gtk_widget_destroy (widget);
+	gossip_accounts_dialog_show (NULL);
+}
+
 void
 gossip_app_connect (GossipAccount *account,
 		    gboolean       startup)
@@ -1580,11 +1593,12 @@ gossip_app_connect (GossipAccount *account,
 			_("Next you will be presented with the "
 			  "Account Information dialog to set your "
 			  "details up.")); 
-		
-		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
 
-		gossip_accounts_dialog_show (NULL);
+		g_signal_connect (dialog, "response", 
+				  G_CALLBACK (app_connect_no_accounts_response_cb),
+				  NULL);
+		
+		gtk_widget_show (dialog);
 		return;
 	}
 	

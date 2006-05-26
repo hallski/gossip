@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -294,7 +294,7 @@ subscription_dialog_vcard_cb (GossipResult              result,
 	gtk_label_set_text (GTK_LABEL (dialog->id_label_value), 
 			    gossip_contact_get_id (dialog->contact));
 
-	/* set up url button */
+	/* Set up url button */
 	if (url && strlen (url) > 0) {
 		GArray *start, *end;
 
@@ -302,9 +302,12 @@ subscription_dialog_vcard_cb (GossipResult              result,
 		end = g_array_new (FALSE, FALSE, sizeof (gint));
 		
 		num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, url, start, end);
+
+		g_array_free (start, TRUE);
+		g_array_free (end, TRUE);
 	}
 
-	/* add url button to table */
+	/* Add url button to table */
 	if (num_matches > 0) {
 		GtkWidget *href;
 		GtkWidget *alignment;

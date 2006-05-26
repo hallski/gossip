@@ -1,5 +1,23 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
-	
+
+	* protocols/jabber/gossip-jabber.c (jabber_contact_add): Escape
+	the group, name and message used in subscriptions to make sure we
+	are not disconnected when using special characters, fixes #342927,
+	unfortunately there is no way to unescape the markup with glib
+	which means the groups/contacts with special characters have
+	"amp;" and "apos;" in their names. This is something Loudmouth
+	should really handle.
+
+	* src/gossip-app.c:
+	* src/gossip-vcard-dialog.c: Don't use gtk_dialog_run() since
+	async programming is always better practise.
+
+	* src/gossip-subscription-dialog.c:
+	* src/gossip-ft-window.c: Make sure we free GArray's created when
+	using the gossip_regex_match().
+
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-manager.[ch]:
 	* src/gossip-log.c: 
 	* src/gossip-new-chatroom-dialog.c: Make sure we can add chatrooms

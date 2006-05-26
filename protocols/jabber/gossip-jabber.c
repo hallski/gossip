@@ -41,8 +41,8 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
@@ -1524,7 +1524,7 @@ jabber_set_subscription (GossipProtocol *protocol,
 
 	jabber = GOSSIP_JABBER (protocol);
 
-	DEBUG_MSG (("Protocol: Settting subscription for contact:'%s' as %s", 
+	DEBUG_MSG (("Protocol: Setting subscription for contact:'%s' as %s", 
 		   gossip_contact_get_id (contact),
 		   subscribed ? "subscribed" : "unsubscribed"));
 
@@ -1592,6 +1592,10 @@ jabber_contact_add (GossipProtocol *protocol,
 	GossipContactType   type;
 	GossipSubscription  subscription;
 	gboolean            ask = TRUE;
+	gchar              *escaped;
+
+	DEBUG_MSG (("Protocol: Adding contact:'%s' with name:'%s' and group:'%s'", 
+		    id, name, group));
 
         jabber = GOSSIP_JABBER (protocol);
         priv = GET_PRIV (jabber);
@@ -1599,15 +1603,24 @@ jabber_contact_add (GossipProtocol *protocol,
 	jid = gossip_jid_new (id);
 	contact = g_hash_table_lookup (priv->contacts, gossip_jid_get_without_resource (jid));
 
+	escaped = g_markup_escape_text (message, -1);
+
         /* Request subscription */
+	DEBUG_MSG (("Protocol: Sending subscribe request with message:'%s'...", message));
+
         m = lm_message_new_with_sub_type (id, LM_MESSAGE_TYPE_PRESENCE,
                                           LM_MESSAGE_SUB_TYPE_SUBSCRIBE);
-        lm_message_node_add_child (m->node, "status", message);
+        lm_message_node_add_child (m->node, "status", escaped);
+	g_free (escaped);
+
         lm_connection_send (priv->connection, m, NULL);
         lm_message_unref (m);
 
 	/* Add to roster */
-	m = lm_message_new_with_sub_type (NULL, LM_MESSAGE_TYPE_IQ,
+	DEBUG_MSG (("Protocol: Adding contact:'%s' to roster...", id));
+
+	m = lm_message_new_with_sub_type (NULL, 
+					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
 
 	node = lm_message_node_add_child (m->node, "query", NULL);
@@ -1623,27 +1636,39 @@ jabber_contact_add (GossipProtocol *protocol,
 		
 		ask &= type == GOSSIP_CONTACT_TYPE_TEMPORARY;
 		ask &= subscription != GOSSIP_SUBSCRIPTION_BOTH;
+
+		DEBUG_MSG (("Protocol: %s for subscription (type is %s and subscription is %s)...", 
+			    ask ? "Asking" : "Not asking",
+			    type == GOSSIP_CONTACT_TYPE_TEMPORARY ? "temporary" : "not temporary",
+			    subscription == GOSSIP_SUBSCRIPTION_BOTH ? "both" : "not both"));
 	} else {
+		DEBUG_MSG (("Protocol: Not asking for subscription (no contact)..."));
 		ask = FALSE;
 	}
+
+	escaped = g_markup_escape_text (name, -1);
 
 	if (ask) {
 		lm_message_node_set_attributes (node,
 						"jid", gossip_jid_get_without_resource (jid),
 						"subscription", "none",
 						"ask", "subscribe",
-						"name", name,
+						"name", escaped,
 						NULL);
 	} else {
 		/* Make sure we set the name incase we updated it */
 		lm_message_node_set_attributes (node,
 						"jid", gossip_jid_get_without_resource (jid),
-						"name", name,
+						"name", escaped,
 						NULL);
 	}
 
-        if (group && strcmp (group, "") != 0) {
-                lm_message_node_add_child (node, "group", group);
+	g_free (escaped);
+
+        if (group && g_utf8_strlen (group, -1) > 0) {
+		escaped = g_markup_escape_text (group, -1);
+                lm_message_node_add_child (node, "group", escaped);
+		g_free (escaped);
         }
 	
 	lm_connection_send (priv->connection, m, NULL);
@@ -1685,7 +1710,7 @@ jabber_contact_rename (GossipProtocol *protocol,
         g_free (escaped);
 	
         for (l = gossip_contact_get_groups (contact); l; l = l->next) {
-                escaped = g_markup_escape_text ((const gchar *) l->data, -1);
+                escaped = g_markup_escape_text (l->data, -1);
                 lm_message_node_add_child (node, "group", escaped);
                 g_free (escaped);
 	}	
@@ -1933,7 +1958,7 @@ jabber_group_rename_foreach_cb (const gchar     *jid,
 	for (l = gossip_contact_get_groups (contact); l; l = l->next) {
 		const gchar *group = (const gchar*) l->data;
 		
-		/* do not include the group we are renaming */
+		/* Do not include the group we are renaming */
 		if (group && strcmp (group, rg->group) == 0) {
 			continue;
 		}
@@ -1943,7 +1968,7 @@ jabber_group_rename_foreach_cb (const gchar     *jid,
 		g_free (escaped);
 	}	
 
-	/* add the new group name */
+	/* Add the new group name */
 	escaped = g_markup_escape_text (rg->new_name, -1);
 	lm_message_node_add_child (node, "group", escaped);
 	g_free (escaped);
@@ -2490,7 +2515,7 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 	}
 
 	if (xmlns && strcmp (xmlns, XMPP_REGISTER_XMLNS) == 0) {
-		/* do nothing at this point */
+		/* Do nothing at this point */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 	
@@ -2499,7 +2524,7 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
-	/* if a get, return error for unsupported IQ */
+	/* If a get, return error for unsupported IQ */
 	if (lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_GET ||
 	    lm_message_get_sub_type (m) == LM_MESSAGE_SUB_TYPE_SET) {
 		jabber_request_unknown (jabber, m);
@@ -2528,10 +2553,10 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	from = lm_message_node_get_attribute (m->node, "from");
 	to = g_strdup (from);
 
-	/* clean up */
+	/* Clean up */
 	lm_message_handler_invalidate (handler);
 	
-	/* send subscribed to them */
+	/* Send subscribed to them */
 	DEBUG_MSG (("Protocol: Sending subscribed message to new service:'%s'", to));
 	new_message = lm_message_new_with_sub_type (to,
 						    LM_MESSAGE_TYPE_PRESENCE,
@@ -2544,7 +2569,7 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	lm_connection_send (connection, new_message, NULL);
 	lm_message_unref (new_message);
 
-	/* send our presence */
+	/* Send our presence */
 	new_message = lm_message_new_with_sub_type (to, 
 						    LM_MESSAGE_TYPE_PRESENCE,
 						    LM_MESSAGE_SUB_TYPE_AVAILABLE);
@@ -2554,15 +2579,14 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	lm_connection_send (connection, new_message, NULL);
 	lm_message_unref (new_message);
 
-	/* clean up */
 	g_free (to);
 
- 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;	 
+ 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 
 /*
- * requests
+ * Requests
  */
 
 static void
@@ -2668,6 +2692,7 @@ jabber_request_roster (GossipJabber *jabber,
 			}
 			
 			if (subnode->value) {
+				/* FIXME: unescape the markup here: #342927 */
 				groups = g_list_append (groups, subnode->value);
 			}
 		}
@@ -3259,9 +3284,10 @@ gossip_jabber_subscription_allow_all (GossipJabber *jabber)
 		priv->subscription_handler = NULL;
 	}
 
-	/* set up handler to sliently catch the subscription request */
-	handler = lm_message_handler_new ((LmHandleMessageFunction)jabber_subscription_message_handler, 
-					  jabber, NULL);
+	/* Set up handler to sliently catch the subscription request */
+	handler = lm_message_handler_new 
+		((LmHandleMessageFunction) jabber_subscription_message_handler, 
+		 jabber, NULL);
 
 	lm_connection_register_message_handler (priv->connection,
 						handler,

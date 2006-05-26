@@ -93,27 +93,30 @@ typedef struct {
 	GnomeThumbnailFactory *thumbs;
 } GossipVCardDialog;
 
-static void     vcard_dialog_avatar_clicked_cb        (GtkWidget         *button,
-						       GossipVCardDialog *dialog);
-static void     vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
-						       GossipVCardDialog *dialog);
-static void     vcard_dialog_set_account_to_last      (GossipVCardDialog *dialog);
-static void     vcard_dialog_lookup_start             (GossipVCardDialog *dialog);
-static void     vcard_dialog_lookup_stop              (GossipVCardDialog *dialog);
-static void     vcard_dialog_get_vcard_cb             (GossipResult       result,
-						       GossipVCard       *vcard,
-						       GossipVCardDialog *dialog);
-static void     vcard_dialog_set_vcard                (GossipVCardDialog *dialog);
-static void     vcard_dialog_set_vcard_cb             (GossipResult       result,
-						       GossipVCardDialog *dialog);
-static gboolean vcard_dialog_timeout_cb               (GossipVCardDialog *dialog);
-static void     vcard_dialog_account_changed_cb       (GtkWidget         *combo_box,
-						       GossipVCardDialog *dialog);
-static void     vcard_dialog_response_cb              (GtkDialog         *widget,
-						       gint               response,
-						       GossipVCardDialog *dialog);
-static void     vcard_dialog_destroy_cb               (GtkWidget         *widget,
-						       GossipVCardDialog *dialog);
+static void     vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
+							 gint               response,
+							 GossipVCardDialog *dialog);
+static void     vcard_dialog_avatar_clicked_cb          (GtkWidget         *button,
+							 GossipVCardDialog *dialog);
+static void     vcard_dialog_avatar_update_preview_cb   (GtkFileChooser    *chooser,
+							 GossipVCardDialog *dialog);
+static void     vcard_dialog_set_account_to_last        (GossipVCardDialog *dialog);
+static void     vcard_dialog_lookup_start               (GossipVCardDialog *dialog);
+static void     vcard_dialog_lookup_stop                (GossipVCardDialog *dialog);
+static void     vcard_dialog_get_vcard_cb               (GossipResult       result,
+							 GossipVCard       *vcard,
+							 GossipVCardDialog *dialog);
+static void     vcard_dialog_set_vcard                  (GossipVCardDialog *dialog);
+static void     vcard_dialog_set_vcard_cb               (GossipResult       result,
+							 GossipVCardDialog *dialog);
+static gboolean vcard_dialog_timeout_cb                 (GossipVCardDialog *dialog);
+static void     vcard_dialog_account_changed_cb         (GtkWidget         *combo_box,
+							 GossipVCardDialog *dialog);
+static void     vcard_dialog_response_cb                (GtkDialog         *widget,
+							 gint               response,
+							 GossipVCardDialog *dialog);
+static void     vcard_dialog_destroy_cb                 (GtkWidget         *widget,
+							 GossipVCardDialog *dialog);
 
 /* Called from Glade, so it shouldn't be static. */
 GtkWidget *vcard_dialog_create_avatar_chooser (gpointer data);
@@ -139,12 +142,41 @@ vcard_dialog_create_avatar_chooser (gpointer data)
 }
 
 static void
+vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
+					 gint               response,
+					 GossipVCardDialog *dialog)
+{
+	if (response == GTK_RESPONSE_OK) {
+		gchar *filename;
+		gchar *path;
+
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget));
+		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
+						    filename);
+		g_free (filename);
+
+		path = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (widget));
+		if (path) {
+			gconf_client_set_string (gossip_app_get_gconf_client (),
+						 GCONF_PATH "/ui/avatar_directory",
+						 path,
+						 NULL);
+			g_free (path);
+		}
+	} else if (response == GTK_RESPONSE_NO) {
+		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
+						     NULL, 0);
+	}
+
+	gtk_widget_destroy (widget);
+}
+
+static void
 vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 				GossipVCardDialog *dialog) 
 {
 	GtkWidget *chooser_dialog;
 	gchar     *path;
-	gint       response;
 	GtkWidget *avatar_chooser;
 	GtkWidget *image;
 	
@@ -185,32 +217,11 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 			  G_CALLBACK (vcard_dialog_avatar_update_preview_cb), 
 			  dialog);
 
-	response = gtk_dialog_run (GTK_DIALOG (chooser_dialog));
+	g_signal_connect (chooser_dialog, "response",
+			  G_CALLBACK (vcard_dialog_avatar_chooser_response_cb),
+			  dialog);
 
-	if (response == GTK_RESPONSE_OK) {
-		gchar *filename;
-
-		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser_dialog));
-		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (avatar_chooser),
-						    filename);
-		g_free (filename);
-
-		path = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (chooser_dialog));
-		g_print ("%s\n", path);
-
-		if (path) {
-			gconf_client_set_string (gossip_app_get_gconf_client (),
-						 GCONF_PATH "/ui/avatar_directory",
-						 path,
-						 NULL);
-			g_free (path);
-		}
-	} else if (response == GTK_RESPONSE_NO) {
-		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (avatar_chooser),
-						     NULL, 0);
-	}
-
-	gtk_widget_destroy (chooser_dialog);
+	gtk_widget_show (chooser_dialog);
 }
 
 static GdkPixbuf *
