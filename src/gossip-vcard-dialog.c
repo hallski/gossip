@@ -19,17 +19,17 @@
  */
 
 #include <config.h>
+
 #include <string.h>
 #include <unistd.h>
+
+#include <gtk/gtk.h> 
 #include <glade/glade.h>
-#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <libgnomeui/gnome-href.h>
-#include <libgnomeui/libgnomeui.h> 
-#include <loudmouth/loudmouth.h>
-#include <libgnomevfs/gnome-vfs.h>
-#include <libgnomevfs/gnome-vfs-mime-handlers.h>
+#include <libgnomeui/libgnomeui.h>  
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
+#include <loudmouth/loudmouth.h>
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-protocol.h>

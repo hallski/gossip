@@ -25,14 +25,10 @@
 
 #include <string.h>
 
-#include <glib-object.h>
 #include <glib/gi18n.h>
-#include <gtk/gtkalignment.h>
-#include <gtk/gtkframe.h>
 #include <gtk/gtkimage.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkdnd.h>
-#include <gtk/gtk.h>
 
 #include <libgnomevfs/gnome-vfs-ops.h>
 
