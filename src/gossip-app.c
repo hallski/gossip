@@ -2207,9 +2207,8 @@ app_presence_chooser_changed_cb (GtkWidget           *chooser,
 	} else {
 		app_status_flash_start ();
 		app_set_away (status);
+		app_presence_updated ();
 	}
-
-	app_presence_updated ();
 }
 
 static gboolean
