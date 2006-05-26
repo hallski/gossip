@@ -269,7 +269,7 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 		gchar *avatar_encoded;
 		
 		node = lm_message_node_add_child (node, "PHOTO", NULL);
-		lm_message_node_add_child (node, "TYPE", "image/jpeg"); 
+		lm_message_node_add_child (node, "TYPE", "image/png"); 
 
 		avatar_encoded = gossip_base64_encode (avatar, avatar_size);
 		lm_message_node_add_child (node, "BINVAL", avatar_encoded);

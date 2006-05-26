@@ -91,7 +91,6 @@ typedef struct {
 	gint       last_account_selected;
 
 	GnomeThumbnailFactory *thumbs;
-	gchar     *person;
 } GossipVCardDialog;
 
 static void     vcard_dialog_avatar_clicked_cb        (GtkWidget         *button,
@@ -207,8 +206,8 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 			g_free (path);
 		}
 	} else if (response == GTK_RESPONSE_NO) {
-		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (avatar_chooser),
-						    dialog->person);
+		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (avatar_chooser),
+						     NULL, 0);
 	}
 
 	gtk_widget_destroy (chooser_dialog);
@@ -382,10 +381,8 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	gtk_text_buffer_set_text (buffer, STRING_EMPTY (str) ? "" : str, -1);
 
 	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
-	if (avatar) {
-		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-						     (gchar*) avatar, avatar_size);
-	}	
+	gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
+					     (gchar*) avatar, avatar_size);
 
 	/* Save position incase the next lookup fails. */
 	combo_box = GTK_COMBO_BOX (dialog->account_chooser);
@@ -543,9 +540,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 	GladeXML          *glade;
 	GList             *accounts;
 	GtkSizeGroup      *size_group;
-	GtkIconInfo       *icon;
-	GtkIconTheme      *theme;
-	GdkScreen         *screen;
 
 	dialog = g_new0 (GossipVCardDialog, 1);
 
@@ -595,17 +589,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 	g_signal_connect (dialog->button_image, "clicked",
 			  G_CALLBACK (vcard_dialog_avatar_clicked_cb),
 			  dialog);
-
-	screen = gtk_window_get_screen (GTK_WINDOW (dialog->dialog));
-	theme = gtk_icon_theme_get_for_screen (screen);
-
-	icon = gtk_icon_theme_lookup_icon (theme, "stock_person", 80, 0);
-	dialog->person = g_strdup (gtk_icon_info_get_filename (icon));
-
-	gtk_icon_info_free (icon);
-
-	gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser), 
-					    dialog->person);
 	
 	/* Sort out accounts */
 	session = gossip_app_get_session ();

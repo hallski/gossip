@@ -1,3 +1,11 @@
+2006-05-26  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber-vcard.c: Make sure we advertise
+	our vcard update with a presence message after setting it.
+	* protocols/jabber/gossip-jabber.c: 
+	* src/gossip-image-chooser.[ch]: 
+	* src/gossip-vcard-dialog.c: 
+	
 2006-05-26  Richard Hult  <richard@imendio.com>
 
 	Update my status from party hacker to real hacker:

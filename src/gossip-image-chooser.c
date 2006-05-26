@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /* 
- * Copyright (C) 2006  Imendio AB.
+ * Copyright (C) 2006 Imendio AB.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of version 2 of the GNU General Public
@@ -32,6 +32,7 @@
 #include <gtk/gtkimage.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkdnd.h>
+#include <gtk/gtk.h>
 
 #include <libgnomevfs/gnome-vfs-ops.h>
 
@@ -44,17 +45,17 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_IMAGE_CHOOSER_TYPE, GossipImageChooserPriv))
 
 typedef struct {
-	GtkWidget *image;
+	GtkWidget    *image;
 
-	gchar     *image_data;
-	gint       image_data_size;
+	gchar        *image_data;
+	gint          image_data_size;
 
-	gint       image_max_width;
-	gint       image_max_height;
+	gint          image_max_width;
+	gint          image_max_height;
 
-	GdkPixbuf  *pixbuf;
+	GdkPixbuf    *pixbuf;
 
-	gboolean   editable;
+	gboolean      editable;
 } GossipImageChooserPriv;
 
 static void       image_chooser_finalize              (GObject            *object);
@@ -63,7 +64,7 @@ static GdkPixbuf *image_chooser_scale_pixbuf          (GdkPixbuf          *pixbu
 						       gint                max_height);
 static gboolean   image_chooser_set_image_from_data   (GossipImageChooser *chooser,
 						       const gchar        *data,
-						       gsize               length);
+						       gsize               size);
 static gboolean   image_chooser_drag_motion_cb        (GtkWidget          *widget,
 						       GdkDragContext     *context,
 						       gint                x,
@@ -212,19 +213,27 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 		/* Scale down */
 		if ((new_width - max_width) > (new_height - max_height)) {
 			scale = (gfloat) max_width / new_width;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf down to %f (width is bigger)", scale));
+			DEBUG_MSG (("ImageChooser: Scaling pixbuf down to %f "
+				    "(width is bigger)", 
+				    scale));
 		} else {
 			scale = (gfloat) max_height / new_height;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf down to %f (height is bigger)", scale));
+			DEBUG_MSG (("ImageChooser: Scaling pixbuf down to %f "
+				    "(height is bigger)", 
+				    scale));
 		}
 	} else {
 		/* Scale up */
 		if (new_height > new_width) {
 			scale = (gfloat) new_height / max_height;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf up to %f (height is bigger)", scale));
+			DEBUG_MSG (("ImageChooser: Scaling pixbuf up to %f "
+				    "(height is bigger)", 
+				    scale));
 		} else { 
 			scale = (gfloat) new_width / max_width;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf up to %f (width is bigger)", scale));
+			DEBUG_MSG (("ImageChooser: Scaling pixbuf up to %f "
+				    "(width is bigger)", 
+				    scale));
 		}	
 	}
 	
@@ -253,23 +262,37 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 static gboolean
 image_chooser_set_image_from_data (GossipImageChooser *chooser,
 				   const gchar        *data, 
-				   gsize               length)
+				   gsize               size)
 {
 	GossipImageChooserPriv *priv;
 	GdkPixbufLoader        *loader;
-	GdkPixbuf              *pixbuf;
+	GdkPixbuf              *pixbuf;  
 	gboolean                success = FALSE;
 
 	priv = GET_PRIV (chooser);
 
-	loader = gdk_pixbuf_loader_new ();
-	gdk_pixbuf_loader_write (loader, data, length, NULL);
+	if (!data) {
+		/* Set image_data to NULL */
+		g_free (priv->image_data);
 
+		priv->image_data = NULL;
+		priv->image_data_size = 0;
+
+		gtk_image_set_from_icon_name (GTK_IMAGE (priv->image), 
+					      "stock_person", 
+					      GTK_ICON_SIZE_DIALOG);
+
+		return TRUE;
+	}
+
+	loader = gdk_pixbuf_loader_new ();
+	gdk_pixbuf_loader_write (loader, data, size, NULL);
+	
 	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
-	if (pixbuf) {
+	if (pixbuf) {  
 		GdkPixbuf *scaled_pixbuf;
 		gchar     *scaled_data;
-		gsize      scaled_length;     
+		gsize      scaled_size; 
 
 		/* Remember pixbuf */
 		if (priv->pixbuf) {
@@ -282,19 +305,20 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 		scaled_pixbuf = image_chooser_scale_pixbuf (pixbuf,
 							    priv->image_max_width,
 							    priv->image_max_height);
-
+		
 		gdk_pixbuf_save_to_buffer (scaled_pixbuf,
 					   &scaled_data,
-					   &scaled_length,
+					   &scaled_size,
 					   "png", 
 					   NULL,
+					   "compression", "9",
 					   NULL);
-
+		
 		g_free (priv->image_data);
-
+		
 		priv->image_data = scaled_data;
-		priv->image_data_size = scaled_length;
-
+		priv->image_data_size = scaled_size;
+		
 		/* Now update image */
 		scaled_pixbuf = image_chooser_scale_pixbuf (priv->pixbuf,
 							    priv->image->allocation.width,
@@ -302,16 +326,13 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 		
 		gtk_image_set_from_pixbuf (GTK_IMAGE (priv->image), scaled_pixbuf);
 		g_object_unref (scaled_pixbuf);
-
-		/* Tell the world */
-		g_signal_emit (chooser, signals[CHANGED], 0);
-
+		
 		success = TRUE;
-	}
-
+	} 
+	
 	gdk_pixbuf_loader_close (loader, NULL);
 	g_object_unref (loader);
-
+	
 	return success;
 }
 
@@ -438,15 +459,15 @@ image_chooser_drag_data_received_cb (GtkWidget          *widget,
 								      &info, 
 								      GNOME_VFS_FILE_INFO_DEFAULT);
 			if (result == GNOME_VFS_OK) {
-				GnomeVFSFileSize num_read;
+				GnomeVFSFileSize data_size;
 
 				data = g_malloc (info.size);
 
-				result = gnome_vfs_read (handle, data, info.size, &num_read);
+				result = gnome_vfs_read (handle, data, info.size, &data_size);
 				if (result == GNOME_VFS_OK) {
 					if (image_chooser_set_image_from_data (chooser, 
 									       data, 
-									       num_read)) {
+									       data_size)) {
 						handled = TRUE;
 					} else {
 						g_free (data);
@@ -477,16 +498,16 @@ gossip_image_chooser_set_from_file (GossipImageChooser *chooser,
 				    const char         *filename)
 {
 	gchar *data;
-	gsize  data_length;
+	gsize  data_size;
 
 	g_return_val_if_fail (GOSSIP_IS_IMAGE_CHOOSER (chooser), FALSE);
 	g_return_val_if_fail (filename, FALSE);
 
-	if (!g_file_get_contents (filename, &data, &data_length, NULL)) {
+	if (!g_file_get_contents (filename, &data, &data_size, NULL)) {
 		return FALSE;
 	}
 
-	if (!image_chooser_set_image_from_data (chooser, data, data_length)) {
+	if (!image_chooser_set_image_from_data (chooser, data, data_size)) {
 		g_free (data);
 	}
 
@@ -495,21 +516,17 @@ gossip_image_chooser_set_from_file (GossipImageChooser *chooser,
 
 gboolean
 gossip_image_chooser_set_image_data (GossipImageChooser *chooser, 
-				     gchar              *data, 
-				     gsize               data_length)
+				     const gchar        *data, 
+				     gsize               data_size)
 {
-	gchar *buf;
-
 	g_return_val_if_fail (GOSSIP_IS_IMAGE_CHOOSER (chooser), FALSE);
-	g_return_val_if_fail (data != NULL, FALSE);
 
-	buf = g_malloc (data_length);
-	memcpy (buf, data, data_length);
-
-	if (!image_chooser_set_image_from_data (chooser, buf, data_length)) {
-		g_free (buf);
+	if (!image_chooser_set_image_from_data (chooser, data, data_size)) {
 		return FALSE;
-	}
+	}	
+
+	/* Tell the world */
+	g_signal_emit (chooser, signals[CHANGED], 0);
 
 	return TRUE;
 }
@@ -551,20 +568,20 @@ gossip_image_chooser_set_image_max_size   (GossipImageChooser  *chooser,
 gboolean
 gossip_image_chooser_get_image_data (GossipImageChooser  *chooser, 
 				     gchar              **data,
-				     gsize               *data_length)
+				     gsize               *data_size)
 {
 	GossipImageChooserPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_IMAGE_CHOOSER (chooser), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
-	g_return_val_if_fail (data_length != NULL, FALSE);
+	g_return_val_if_fail (data_size != NULL, FALSE);
 
 	priv = GET_PRIV (chooser);
 
-	*data_length = priv->image_data_size;
-	*data = g_malloc (*data_length);
+	*data_size = priv->image_data_size;
+	*data = g_malloc (*data_size);
 
-	memcpy (*data, priv->image_data, *data_length);
+	memcpy (*data, priv->image_data, *data_size);
 
 	return TRUE;
 }

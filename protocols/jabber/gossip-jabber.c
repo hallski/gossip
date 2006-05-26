@@ -857,7 +857,6 @@ jabber_connection_auth_cb (LmConnection *connection,
 		 */
 		jabber_contact_vcard (jabber, priv->contact);
 	}
-
 }
 
 static void 
@@ -1813,9 +1812,10 @@ jabber_contact_vcard_cb (GossipResult  result,
 			 JabberData   *data)
 {
 	if (result == GOSSIP_RESULT_OK) {
-		gchar        *name;
-		const guchar *avatar;
-		gsize         avatar_size;
+		GossipContact *own_contact;
+		gchar         *name;
+		const guchar  *avatar;
+		gsize          avatar_size;
 
 		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
@@ -1827,10 +1827,18 @@ jabber_contact_vcard_cb (GossipResult  result,
 		
 		gossip_contact_set_name (data->contact, name);
 		g_free (name);
-		
+
 		g_signal_emit_by_name (data->jabber, 
 				       "contact-updated", 
 				       data->contact);	
+		
+		/* Send presence if this is the user's VCard
+		 * (Avatar support, JEP-0153)
+		 */
+		own_contact = jabber_get_own_contact (GOSSIP_PROTOCOL (data->jabber));
+		if (gossip_contact_equal (own_contact, data->contact)) {
+			gossip_jabber_send_presence (data->jabber, NULL);
+		}
 	}
 
 	jabber_data_free (data);

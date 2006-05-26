@@ -54,8 +54,8 @@ GtkWidget *gossip_image_chooser_new                (void);
 gboolean   gossip_image_chooser_set_from_file      (GossipImageChooser  *chooser,
 						    const gchar         *filename);
 gboolean   gossip_image_chooser_set_image_data     (GossipImageChooser  *chooser,
-						    gchar               *data,
-						    gsize                data_length);
+						    const gchar         *data,
+						    gsize                data_size);
 void       gossip_image_chooser_set_image_max_size (GossipImageChooser  *chooser,
 						    gint                 width,
 						    gint                 height);
@@ -63,7 +63,7 @@ void       gossip_image_chooser_set_editable       (GossipImageChooser  *chooser
 						    gboolean             editable);
 gboolean   gossip_image_chooser_get_image_data     (GossipImageChooser  *chooser,
 						    gchar              **data,
-						    gsize               *data_length);
+						    gsize               *data_size);
 void       gossip_image_chooser_get_image_max_size (GossipImageChooser  *chooser,
 						    gint                *width,
 						    gint                *height);
