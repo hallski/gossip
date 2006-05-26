@@ -186,21 +186,6 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/ui/system_fonts</key>
-      <applyto>/apps/gossip/ui/system_fonts</applyto>
-      <owner>gossip</owner>
-      <type>bool</type>
-      <default>true</default>
-      <locale name="C">
-         <short>Use system fonts</short>
-         <long>
-	 Whether or not to use the fonts that the user is able to
-         configure over the fonts set by Gossip.
-         </long>
-      </locale>
-    </schema>
-  
-    <schema>
       <key>/schemas/apps/gossip/conversation/theme</key>
       <applyto>/apps/gossip/conversation/theme</applyto>
       <owner>gossip</owner>
