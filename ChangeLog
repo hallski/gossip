@@ -1,8 +1,16 @@
 2006-05-26  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c: (chat_window_update_title): Add
+	message argument and use it to set the title to the sender. Update all callers.
+	* src/gossip-private-chat.c: (private_chat_update_locked_resource),
+	(private_chat_send): Only set non-away mode if we actually send a
+	message.
+
+2006-05-26  Richard Hult  <richard@imendio.com>
+
 	* gossip.schemas.in:
 	* src/gossip-vcard-dialog.c: (vcard_dialog_avatar_clicked_cb):
-	Save the last used directory and used it the next time.
+	Save the last used directory and use it the next time.
 
 2006-05-25  Martyn Russell  <martyn@imendio.com>
 

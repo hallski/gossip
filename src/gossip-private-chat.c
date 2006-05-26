@@ -244,8 +244,10 @@ private_chat_create_gui (GossipPrivateChat *chat)
 static void
 private_chat_update_locked_resource (GossipPrivateChat *chat)
 {
-	GossipPrivateChatPriv *priv = chat->priv;
+	GossipPrivateChatPriv *priv;
 	const gchar           *roster_resource;
+
+	priv = chat->priv;
 
 	if (!gossip_contact_is_online (priv->contact)) {
 		g_free (priv->roster_resource);
@@ -259,6 +261,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 
 	roster_resource = gossip_session_get_active_resource (gossip_app_get_session (), 
 							      priv->contact);
+
 	/* It seems like some agents don't set a resource sometimes (ICQ for
 	 * example). I don't know if it's a bug or not, but we need to handle
 	 * those cases either way.
@@ -301,8 +304,6 @@ private_chat_send (GossipPrivateChat *chat,
 
 	priv = chat->priv;
 
-	gossip_app_force_non_away ();
-
         if (msg == NULL || msg[0] == '\0') {
                 return;
         }
@@ -311,6 +312,8 @@ private_chat_send (GossipPrivateChat *chat,
 		gossip_chat_view_clear (GOSSIP_CHAT (chat)->view);
                 return;
         }
+
+	gossip_app_force_non_away ();
 
         private_chat_composing_remove_timeout (chat);
 

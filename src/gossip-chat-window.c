@@ -71,7 +71,8 @@ static GtkWidget *chat_window_create_label              (GossipChatWindow      *
 							 GossipChat            *chat);
 static void       chat_window_update_status             (GossipChatWindow      *window,
 							 GossipChat            *chat);
-static void       chat_window_update_title              (GossipChatWindow      *window);
+static void       chat_window_update_title              (GossipChatWindow      *window,
+							 GossipMessage         *message);
 static void       chat_window_update_menu               (GossipChatWindow      *window);
 static gboolean   chat_window_save_geometry_timeout_cb  (GossipChatWindow      *window);
 static gboolean   chat_window_configure_event_cb        (GtkWidget             *widget,
@@ -758,18 +759,32 @@ chat_window_update_status (GossipChatWindow *window,
 }
 
 static void
-chat_window_update_title (GossipChatWindow *window)
+chat_window_update_title (GossipChatWindow *window,
+			  GossipMessage    *message)
 {
 	GossipChatWindowPriv *priv;
+	const gchar          *name;
 	gchar                *title; 
 	GdkPixbuf 	     *pixbuf;
 
 	priv = GET_PRIV (window);
 
+	/* Use the name from the message if there is one, otherwise use the
+	 * current chat.
+	 */
+	if (message) {
+		GossipContact *sender;
+
+		sender = gossip_message_get_sender (message);
+		name = gossip_contact_get_name (sender);
+	} else {
+		name = gossip_chat_get_name (priv->current_chat);
+	}
+	
 	title = g_strdup_printf (("%s%s"),
 				 priv->new_msg ? "*" : "",
-				 gossip_chat_get_name (priv->current_chat));
-
+				 name);
+	
 	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);
 
 	if (priv->new_msg) {
@@ -1229,7 +1244,7 @@ chat_window_tabs_left_activate_cb (GtkWidget        *menuitem,
 				   gossip_chat_get_widget (chat),
 				   index - 1);
 
-	chat_window_update_title (window);
+	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1252,7 +1267,7 @@ chat_window_tabs_right_activate_cb (GtkWidget        *menuitem,
 				   gossip_chat_get_widget (chat),
 				   index + 1);
 
-	chat_window_update_title (window);
+	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1379,11 +1394,11 @@ chat_window_new_message_cb (GossipChat       *chat,
 		GossipContact *own_contact;
 
 		priv->new_msg = TRUE;
-		chat_window_update_title (window);
-
-		own_contact = gossip_chat_get_own_contact (chat);
+		chat_window_update_title (window, message);
 
 		if (gossip_chat_is_group_chat (chat)) {
+			own_contact = gossip_chat_get_own_contact (chat);
+
 			DEBUG_MSG (("ChatWindow: Should we highlight this nick?"));
 			if (gossip_chat_should_highlight_nick (message, own_contact)) {
 				gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
@@ -1452,7 +1467,7 @@ chat_window_switch_page_cb (GtkNotebook	     *notebook,
 	priv->current_chat = chat;
 	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, chat);
 
-	chat_window_update_title (window);
+	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1511,7 +1526,7 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 			  window);
 
 	chat_window_update_status (window, chat);
-	chat_window_update_title (window);
+	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 
 	gossip_chat_scroll_down (chat);
@@ -1614,7 +1629,7 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 
 	priv->new_msg = FALSE;
 
-	chat_window_update_title (window);
+	chat_window_update_title (window, NULL);
 
 	return FALSE;
 }
