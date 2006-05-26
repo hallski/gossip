@@ -198,6 +198,20 @@
     </schema>
 
     <schema>
+       <key>/schemas/apps/gossip/ui/avatar_directory</key>
+       <applyto>/apps/gossip/ui/avatar_directory</applyto>
+       <owner>gossip</owner>
+       <type>string</type>
+       <default></default>
+       <locale name="C">
+          <short>Default directory to select an avatar image from</short>
+          <long>
+	    The last directory that an avatar image was chosen from.
+          </long>
+       </locale>
+    </schema>
+
+    <schema>
       <key>/schemas/apps/gossip/status/preset_messages</key>
       <applyto>/apps/gossip/status/preset_messages</applyto>
       <owner>gossip</owner>

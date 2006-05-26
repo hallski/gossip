@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-25 10:36+0200\n"
+"POT-Creation-Date: 2006-05-26 09:32+0200\n"
 "PO-Revision-Date: 2006-04-18 22:44+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -52,109 +52,117 @@ msgstr ""
 "nl)."
 
 #: ../gossip.schemas.in.h:6
+msgid "Default directory to select an avatar image from"
+msgstr "Standardkatalog att välja avatarbild från"
+
+#: ../gossip.schemas.in.h:7
 msgid "Enable spell checking"
 msgstr "Slå på stavningskontroll"
 
-#: ../gossip.schemas.in.h:7
+#: ../gossip.schemas.in.h:8
 msgid "Height of main window"
 msgstr "Höjden på huvudfönstret"
 
 # Vi översätter "hide" med "dölj" i GNOME. Gömmer gör man något för att det
 # inte ska hittas, döljer gör man för att det inte ska synas.
-#: ../gossip.schemas.in.h:8
+#: ../gossip.schemas.in.h:9
 msgid "Hide main window"
 msgstr "Dölj huvudfönstret"
 
 # Vi översätter "hide" med "dölj" i GNOME. Gömmer gör man något för att det
 # inte ska hittas, döljer gör man för att det inte ska synas.
-#: ../gossip.schemas.in.h:9
+#: ../gossip.schemas.in.h:10
 msgid "Hide the main window."
 msgstr "Dölj huvudfönstret."
 
-#: ../gossip.schemas.in.h:10
+#: ../gossip.schemas.in.h:11
 msgid "Open new chats in separate windows"
 msgstr "Öppna nya chatter i separata fönster"
 
-#: ../gossip.schemas.in.h:11
+#: ../gossip.schemas.in.h:12
 msgid "Preset status messages"
 msgstr "Förinställda statusmeddelanden"
 
-#: ../gossip.schemas.in.h:12
+#: ../gossip.schemas.in.h:13
 msgid "Preset status messages."
 msgstr "Förinställda statusmeddelanden."
 
-#: ../gossip.schemas.in.h:13
+#: ../gossip.schemas.in.h:14
 msgid "Show offline contacts"
 msgstr "Visa frånkopplade kontakter"
 
-#: ../gossip.schemas.in.h:14
+#: ../gossip.schemas.in.h:15
 msgid "Spell checking languages"
 msgstr "Rättstavningsspråk"
 
-#: ../gossip.schemas.in.h:15
+#: ../gossip.schemas.in.h:16
 msgid "The X position of the main window."
 msgstr "X-positionen av huvudfönstret."
 
-#: ../gossip.schemas.in.h:16
+#: ../gossip.schemas.in.h:17
 msgid "The Y position of the main window."
 msgstr "Y-positionen av huvudfönstret."
 
-#: ../gossip.schemas.in.h:17
+#: ../gossip.schemas.in.h:18
 msgid "The height of the main window."
 msgstr "Höjden på huvudfönstret."
 
-#: ../gossip.schemas.in.h:18
+#: ../gossip.schemas.in.h:19
+msgid "The last directory that an avatar image was chosen from."
+msgstr "Den senaste katalogen som en avatarbild valdes från."
+
+#: ../gossip.schemas.in.h:20
 msgid "The theme that is used to display the conversation in chat windows."
 msgstr "Det tema som används för att visa konversionationer i chattfönster."
 
-#: ../gossip.schemas.in.h:19
+#: ../gossip.schemas.in.h:21
 msgid "The width of the main window."
 msgstr "Bredden på huvudfönstret."
 
-#: ../gossip.schemas.in.h:20
+#: ../gossip.schemas.in.h:22
 msgid "Use graphical smileys"
 msgstr "Använd grafiska smilisar"
 
-#: ../gossip.schemas.in.h:21
+#: ../gossip.schemas.in.h:23
 msgid "Use notification sounds"
 msgstr "Använd notifieringsljud"
 
-#: ../gossip.schemas.in.h:22
+#: ../gossip.schemas.in.h:24
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
 "Huruvida smilisar ska omvandlas till grafiska bilder eller inte i "
 "konversationer."
 
-#: ../gossip.schemas.in.h:23
+#: ../gossip.schemas.in.h:25
 msgid "Whether or not to play a sound when messages arrive."
 msgstr "Huruvida ljud ska spelas eller inte när meddelanden kommer."
 
-#: ../gossip.schemas.in.h:24
+#: ../gossip.schemas.in.h:26
 msgid "Whether or not to play sounds when away."
 msgstr "Huruvida ljud ska spelas eller inte under frånvaro."
 
-#: ../gossip.schemas.in.h:25
+#: ../gossip.schemas.in.h:27
 msgid "Whether or not to play sounds when busy."
 msgstr "Huruvida ljud ska spelas eller inte under upptagetläge."
 
-#: ../gossip.schemas.in.h:26
+#: ../gossip.schemas.in.h:28
 msgid "Whether or not to show contacts that are offline in the contact list."
 msgstr "Huruvida frånkopplade kontakter ska visas i kontaktlistan eller inte."
 
-#: ../gossip.schemas.in.h:27
+#: ../gossip.schemas.in.h:29
 msgid "Whether spell checking should be turned on."
 msgstr "Huruvida stavningskontroll ska vara påslaget."
 
-#: ../gossip.schemas.in.h:28
+#: ../gossip.schemas.in.h:30
 msgid "Width of the main window"
 msgstr "Bredden på huvudfönstret"
 
-#: ../gossip.schemas.in.h:29
+#: ../gossip.schemas.in.h:31
 msgid "X position of main window"
 msgstr "X-positionen av huvudfönstret"
 
-#: ../gossip.schemas.in.h:30
+#: ../gossip.schemas.in.h:32
 msgid "Y position of main window"
 msgstr "Y-positionen av huvudfönstret"
 
@@ -204,7 +212,7 @@ msgstr ""
 "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
 
 #: ../libgossip/gossip-contact.c:846 ../libgossip/gossip-presence.c:307
-#: ../src/gossip-app.c:2044 ../src/gossip-contact-info-dialog.c:167
+#: ../src/gossip-app.c:2125 ../src/gossip-contact-info-dialog.c:167
 #: ../src/gossip-galago.c:160
 msgid "Offline"
 msgstr "Frånkopplad"
@@ -423,35 +431,35 @@ msgstr "%s id för ny kontakt:"
 msgid "Example: %s"
 msgstr "Exempel: %s"
 
-#: ../src/gossip-app.c:539 ../ui/main.glade.h:131
+#: ../src/gossip-app.c:550 ../ui/main.glade.h:131
 msgid "_Connect"
 msgstr "An_slut"
 
-#: ../src/gossip-app.c:544 ../ui/main.glade.h:134
+#: ../src/gossip-app.c:555 ../ui/main.glade.h:134
 msgid "_Disconnect"
 msgstr "_Koppla ifrån"
 
-#: ../src/gossip-app.c:698
+#: ../src/gossip-app.c:721
 msgid "To summarize:"
 msgstr "Sammanfattning:"
 
-#: ../src/gossip-app.c:768
+#: ../src/gossip-app.c:791
 msgid "If you quit, you will lose all unread information."
 msgstr "Om du avslutar kommer all oläst information förloras."
 
-#: ../src/gossip-app.c:988
+#: ../src/gossip-app.c:1014
 msgid "Could not display the help contents."
 msgstr "Kunde inte visa hjälpinnehållet."
 
-#: ../src/gossip-app.c:1259
+#: ../src/gossip-app.c:1332
 msgid "Gossip, Instant Messaging Client"
 msgstr "Gossip, snabbmeddelandeklient"
 
-#: ../src/gossip-app.c:1499
+#: ../src/gossip-app.c:1578
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Du har inte konfigurerar ett snabbmeddelandekonto!"
 
-#: ../src/gossip-app.c:1501
+#: ../src/gossip-app.c:1580
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -826,19 +834,19 @@ msgstr "Loggar in med: %s"
 msgid "Remember Password?"
 msgstr "Kom ihåg lösenord?"
 
-#: ../src/gossip-vcard-dialog.c:152
+#: ../src/gossip-vcard-dialog.c:154
 msgid "Select Your Avatar Image"
-msgstr "Välj din visningsbild"
+msgstr "Välj din avatarbild"
 
-#: ../src/gossip-vcard-dialog.c:155
+#: ../src/gossip-vcard-dialog.c:157
 msgid "No Image"
 msgstr "Ingen bild"
 
-#: ../src/gossip-vcard-dialog.c:438
+#: ../src/gossip-vcard-dialog.c:485
 msgid "The server does not seem to be responding."
 msgstr "Servern verkar inte svara."
 
-#: ../src/gossip-vcard-dialog.c:439
+#: ../src/gossip-vcard-dialog.c:486
 msgid "Try again later."
 msgstr "Försök igen senare."
 
@@ -1118,14 +1126,14 @@ msgstr "Lägg till i statusmeddelandelistan"
 
 #: ../ui/main.glade.h:23
 msgid "Avatar:"
-msgstr ""
+msgstr "Avatar:"
 
 #: ../ui/main.glade.h:24
 msgid "Ch_at"
 msgstr "Ch_atta"
 
 #: ../ui/main.glade.h:26
-msgid "Chat th_eme: "
+msgid "Chat th_eme:"
 msgstr "Chatt_ema:"
 
 #: ../ui/main.glade.h:27

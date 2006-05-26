@@ -1,3 +1,9 @@
+2006-05-26  Richard Hult  <richard@imendio.com>
+
+	* gossip.schemas.in:
+	* src/gossip-vcard-dialog.c: (vcard_dialog_avatar_clicked_cb):
+	Save the last used directory and used it the next time.
+
 2006-05-25  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: Save and load accels so users can save their

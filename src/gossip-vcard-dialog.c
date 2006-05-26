@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <unistd.h>
 #include <glade/glade.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
@@ -29,7 +30,6 @@
 #include <libgnomevfs/gnome-vfs.h>
 #include <libgnomevfs/gnome-vfs-mime-handlers.h>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
-#include <unistd.h>
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-protocol.h>
@@ -40,6 +40,7 @@
 #include "gossip-app.h"
 #include "gossip-vcard-dialog.h"
 #include "gossip-image-chooser.h"
+#include "gossip-preferences.h"
 
 #define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
@@ -143,6 +144,7 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 				GossipVCardDialog *dialog) 
 {
 	GtkWidget *chooser_dialog;
+	gchar     *path;
 	gint       response;
 	GtkWidget *avatar_chooser;
 	GtkWidget *image;
@@ -164,7 +166,14 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 				      GTK_WINDOW (dialog->dialog));
 
  	gtk_dialog_set_default_response (GTK_DIALOG (chooser_dialog), GTK_RESPONSE_ACCEPT);
- 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser_dialog), g_get_home_dir ()); 
+
+	path = gconf_client_get_string (gossip_app_get_gconf_client (),
+					GCONF_PATH "/ui/avatar_directory",
+					NULL);
+
+ 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser_dialog),
+					     path ? path : g_get_home_dir ());
+	g_free (path);
 
 	gtk_file_chooser_set_use_preview_label (GTK_FILE_CHOOSER (chooser_dialog), FALSE);
 	
@@ -183,8 +192,20 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 		gchar *filename;
 
 		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser_dialog));
-		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (avatar_chooser), filename);
+		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (avatar_chooser),
+						    filename);
 		g_free (filename);
+
+		path = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (chooser_dialog));
+		g_print ("%s\n", path);
+
+		if (path) {
+			gconf_client_set_string (gossip_app_get_gconf_client (),
+						 GCONF_PATH "/ui/avatar_directory",
+						 path,
+						 NULL);
+			g_free (path);
+		}
 	} else if (response == GTK_RESPONSE_NO) {
 		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (avatar_chooser),
 						    dialog->person);
