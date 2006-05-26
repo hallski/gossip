@@ -1,10 +1,14 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
-	* protocols/jabber/gossip-jabber-vcard.c: Make sure we advertise
-	our vcard update with a presence message after setting it.
-	* protocols/jabber/gossip-jabber.c: 
+	* protocols/jabber/gossip-jabber-vcard.c: 
+	* protocols/jabber/gossip-jabber.c: Make sure we advertise
+	our presence after we retrieve our vcard on log in. Set the image
+	type to "image/png" instead of "image/jpeg".
+
 	* src/gossip-image-chooser.[ch]: 
-	* src/gossip-vcard-dialog.c: 
+	* src/gossip-vcard-dialog.c: Move the stock image "stock_person"
+	into the image chooser and use gtk_image_set_from_icon_name()
+	instead of obtaining it from the theme manually.
 	
 2006-05-26  Richard Hult  <richard@imendio.com>
 
