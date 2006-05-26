@@ -9,7 +9,8 @@
 	* gossip.schemas.in:
 	* src/gossip-preferences.c:
 	* ui/main.glade: Rearranged the preferences and added a "Use
-	System Font" option.
+	System Font" option, fixes #335471 (initial patch by Wouter
+	Bolsterlee).
 
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 

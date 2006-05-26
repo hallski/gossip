@@ -3,6 +3,8 @@ NEWS in 0.11.1:
 - Updated the chat window title for new messages to show the senders
 name not the tab you have currently selected (Richard).
 - Support avatars. This work was carried out by Eitan Isaacson.
+- Fixed #335471, Add a preference to use the system document font for
+chat windows (initial patch by Wouter Bolsterlee).
 - Fixed #337184, Make sure we can add chatrooms that may exist on
 other accounts (Keywan Najafi Tonekaboni).
 - Fixed #339652 and #127385, set the resource for messages (Richard).
