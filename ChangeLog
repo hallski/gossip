@@ -1,4 +1,12 @@
 2006-05-26  Martyn Russell  <martyn@imendio.com>
+	
+	* libgossip/gossip-chatroom-manager.[ch]:
+	* src/gossip-log.c: 
+	* src/gossip-new-chatroom-dialog.c: Make sure we can add chatrooms
+	which might also exist on other Jabber accounts, fixes #337184
+	(Keywan Najafi Tonekaboni). 
+
+2006-05-26  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-vcard.c: 
 	* protocols/jabber/gossip-jabber.c: Make sure we advertise

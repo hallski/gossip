@@ -406,7 +406,7 @@ log_get_chatroom_from_filename (GossipAccount *account,
 	server++;
 
 	manager = gossip_app_get_chatroom_manager ();
-	found = gossip_chatroom_manager_find_extended (manager, server, room);
+	found = gossip_chatroom_manager_find_extended (manager, account, server, room);
 
 	if (!found) {
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM, 

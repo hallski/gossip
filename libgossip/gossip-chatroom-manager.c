@@ -368,6 +368,7 @@ gossip_chatroom_manager_find (GossipChatroomManager *manager,
 
 GList *
 gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
+				       GossipAccount         *account,
 				       const gchar           *server,
 				       const gchar           *room)
 {
@@ -385,13 +386,22 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 		GossipChatroom *chatroom;
 		const gchar    *chatroom_server;
 		const gchar    *chatroom_room;
+		gboolean        same_account = FALSE;
 
 		chatroom = l->data;
 		
 		chatroom_server = gossip_chatroom_get_server (chatroom);
 		chatroom_room = gossip_chatroom_get_room (chatroom);
+
+		if (account) {
+			GossipAccount *this_account;
+
+			this_account = gossip_chatroom_get_account (chatroom);
+			same_account = gossip_account_equal (account, this_account);
+		}
 		
-		if (strcmp (server, chatroom_server) == 0 &&
+		if (same_account && 
+		    strcmp (server, chatroom_server) == 0 &&
 		    strcmp (room, chatroom_room) == 0) {
 			found = g_list_append (found, g_object_ref (chatroom));
 		}

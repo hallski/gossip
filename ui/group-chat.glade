@@ -678,7 +678,7 @@
 	  <property name="spacing">18</property>
 
 	  <child>
-	    <widget class="GtkLabel" id="label_preamble_custom">
+	    <widget class="GtkLabel" id="label_preamble">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Customize your own nickname, the server and chatroom which you wish to join.</property>
 	      <property name="use_underline">False</property>
@@ -703,13 +703,13 @@
 	  </child>
 
 	  <child>
-	    <widget class="GtkHBox" id="hbox_account_custom">
+	    <widget class="GtkHBox" id="hbox_account">
 	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkLabel" id="label_account_custom">
+		<widget class="GtkLabel" id="label_account">
 		  <property name="visible">True</property>
 		  <property name="label" translatable="yes">Account:</property>
 		  <property name="use_underline">False</property>
