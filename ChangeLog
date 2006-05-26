@@ -1,5 +1,14 @@
 2006-05-26  Richard Hult  <richard@imendio.com>
 
+	Update my status from party hacker to real hacker:
+
+	* protocols/jabber/gossip-jabber.c: (jabber_get_active_resource),
+	(jabber_message_handler): Correctly set the resource on incoming
+	messages and implement getting the active resource. Fixes bugs
+	#339652 and #127385.
+
+2006-05-26  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c: (chat_window_update_title): Add
 	message argument and use it to set the title to the sender. Update all callers.
 	* src/gossip-private-chat.c: (private_chat_update_locked_resource),

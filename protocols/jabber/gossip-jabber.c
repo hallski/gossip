@@ -2004,7 +2004,18 @@ static const gchar *
 jabber_get_active_resource (GossipProtocol *protocol,
 			    GossipContact  *contact)
 {
-	return NULL;
+	GList          *list;
+	GossipPresence *presence;
+	
+	list = gossip_contact_get_presence_list (contact);
+	if (!list) {
+		return NULL;
+	}
+
+	/* The first one is the active one. */
+	presence = list->data;
+	
+	return gossip_presence_get_resource (presence);
 }
 
 static GList *
@@ -2188,6 +2199,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	const gchar          *subject = NULL;
 	const gchar          *body = NULL;
 	GossipChatroomInvite *invite;
+	const gchar          *resource;
 
 	priv = GET_PRIV (jabber);
 	
@@ -2319,6 +2331,9 @@ jabber_message_handler (LmMessageHandler *handler,
 
 	gossip_message_set_sender (message, from);
 	gossip_message_set_body (message, body);
+
+	resource = gossip_jid_string_get_part_resource (from_str);
+	gossip_message_set_explicit_resource (message, resource);
 	
 	if (subject) {
 		gossip_message_set_subject (message, subject);
