@@ -14,6 +14,7 @@ Marcelo).
 notifcation area (Frederic Crozat, patch by Caio Marcelo).
 - Fixed #141855, Remember chat window geometry by contact id (Mikael
 Hallendal). 
+- Fixed resource handling, bugs #339652 and #127385.
 
 
 NEWS in 0.11:
