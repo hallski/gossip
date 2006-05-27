@@ -1,3 +1,14 @@
+2006-05-27  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-account-button.[ch]: Use "selection-done" signal
+	instead of "hide" and destroy the menu when done with it (not sure
+	what was happening to it before? Leaking? Also removed the 1
+	pixel gap between the button and the menu.
+	
+	* src/gossip-presence-chooser.[ch]: Don't use an entry, instead
+	use a GtkToggleButton so we have a button effect instead of a flat
+	widget with weird highlighting.
+
 2006-05-26  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: (app_presence_chooser_changed_cb): Only update

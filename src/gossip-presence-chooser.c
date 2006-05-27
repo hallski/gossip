@@ -38,13 +38,8 @@
 
 typedef struct {
 	GtkWidget           *hbox;
-
 	GtkWidget           *image;
-
-	GtkWidget           *event_box;
 	GtkWidget           *label;
-
-	GtkWidget           *entry;
  
 	GossipPresenceState  last_state;
 
@@ -56,58 +51,40 @@ typedef struct {
 	guint                flash_timeout_id;
 } GossipPresenceChooserPriv;
 
-static void     presence_chooser_finalize                    (GObject               *object);
-static void     presence_chooser_set_state                   (GossipPresenceChooser *chooser,
-							      GossipPresenceState    state,
-							      const gchar           *status,
-							      gboolean               save);
-static void     presence_chooser_dialog_response_cb          (GtkWidget             *dialog,
-							      gint                   response,
-							      GossipPresenceChooser *chooser);
-static void     presence_chooser_show_dialog                 (GossipPresenceChooser *chooser,
-							      GossipPresenceState    state);
-static void     presence_chooser_custom_activate_cb          (GtkWidget             *item,
-							      GossipPresenceChooser *chooser);
-static void     presence_chooser_clear_activate_cb           (GtkWidget             *item,
-							      GossipPresenceChooser *chooser);
-static void     presence_chooser_menu_add_item               (GossipPresenceChooser *chooser,
-							      GtkWidget             *menu,
-							      const gchar           *str,
-							      GossipPresenceState    state,
-							      gboolean               custom);
-static void     presence_chooser_menu_align_func             (GtkMenu               *menu,
-							      gint                  *x,
-							      gint                  *y,
-							      gboolean              *push_in,
-							      GossipPresenceChooser *chooser);
-static void     presence_chooser_menu_selection_done_cb      (GtkMenuShell          *menushell,
-							      GossipPresenceChooser *chooser);
-static void     presence_chooser_show_popup                  (GossipPresenceChooser *chooser);
-static void     presence_chooser_show_entry                  (GossipPresenceChooser *chooser);
-static void     presence_chooser_show_label                  (GossipPresenceChooser *chooser);
-static gboolean presence_chooser_enter_notify_event_cb       (GtkWidget             *chooser,
-							      GdkEventCrossing      *event,
-							      gpointer               user_data);
-static gboolean presence_chooser_leave_notify_event_cb       (GtkWidget             *chooser,
-							      GdkEventCrossing      *event,
-							      gpointer               user_data);
-static gboolean presence_chooser_configure_event_cb          (GtkWidget             *chooser,
-							      GdkEventConfigure     *event,
-							      gpointer               user_data);
-static gboolean presence_chooser_button_press_event_cb       (GtkWidget             *chooser,
-							      GdkEventButton        *event,
-							      gpointer               user_data);
-static gboolean presence_chooser_label_button_press_event_cb (GtkWidget             *event_box,
-							      GdkEventButton        *event,
-							      GossipPresenceChooser *chooser);
-static gboolean presence_chooser_focus_out_event_cb          (GtkWidget             *widget,
-							      GdkEventFocus         *event,
-							      GossipPresenceChooser *chooser);
-static void     presence_chooser_entry_activate_cb           (GtkEntry              *entry,
-							      GossipPresenceChooser *chooser);
-static gboolean presence_chooser_flash_timeout_cb            (GossipPresenceChooser *chooser);
+static void     presence_chooser_finalize               (GObject               *object);
+static void     presence_chooser_set_state              (GossipPresenceChooser *chooser,
+							 GossipPresenceState    state,
+							 const gchar           *status,
+							 gboolean               save);
+static void     presence_chooser_dialog_response_cb     (GtkWidget             *dialog,
+							 gint                   response,
+							 GossipPresenceChooser *chooser);
+static void     presence_chooser_show_dialog            (GossipPresenceChooser *chooser,
+							 GossipPresenceState    state);
+static void     presence_chooser_custom_activate_cb     (GtkWidget             *item,
+							 GossipPresenceChooser *chooser);
+static void     presence_chooser_clear_activate_cb      (GtkWidget             *item,
+							 GossipPresenceChooser *chooser);
+static void     presence_chooser_menu_add_item          (GossipPresenceChooser *chooser,
+							 GtkWidget             *menu,
+							 const gchar           *str,
+							 GossipPresenceState    state,
+							 gboolean               custom);
+static void     presence_chooser_menu_align_func        (GtkMenu               *menu,
+							 gint                  *x,
+							 gint                  *y,
+							 gboolean              *push_in,
+							 GossipPresenceChooser *chooser);
+static void     presence_chooser_menu_selection_done_cb (GtkMenuShell          *menushell,
+							 GossipPresenceChooser *chooser);
+static void     presence_chooser_menu_detach            (GtkWidget             *attach_widget,
+							 GtkMenu               *menu);
+static void     presence_chooser_menu_popup             (GossipPresenceChooser *chooser);
+static void     presence_chooser_button_clicked_cb      (GtkWidget             *chooser,
+							 gpointer               user_data);
+static gboolean presence_chooser_flash_timeout_cb       (GossipPresenceChooser *chooser);
 
-G_DEFINE_TYPE (GossipPresenceChooser, gossip_presence_chooser, GTK_TYPE_EVENT_BOX);
+G_DEFINE_TYPE (GossipPresenceChooser, gossip_presence_chooser, GTK_TYPE_TOGGLE_BUTTON);
 
 enum {
         CHANGED,
@@ -148,29 +125,26 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	/* Default to 1/2 a second flash interval */
 	priv->flash_interval = 500;
 
-	gtk_container_set_border_width (GTK_CONTAINER (chooser), 2);
+	gtk_button_set_relief (GTK_BUTTON (chooser), GTK_RELIEF_NONE);
 
 	alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (alignment);
-	gtk_container_add (GTK_CONTAINER (chooser), alignment);
-	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 6, 6);
+ 	gtk_container_add (GTK_CONTAINER (chooser), alignment); 
+	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 2, 2);
 
-	priv->hbox = gtk_hbox_new (FALSE, 2);
-	gtk_container_add (GTK_CONTAINER (alignment), priv->hbox);
+ 	priv->hbox = gtk_hbox_new (FALSE, 2); 
+	gtk_widget_show (priv->hbox);
+ 	gtk_container_add (GTK_CONTAINER (alignment), priv->hbox); 
 
 	priv->image = gtk_image_new ();
-  	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->image, FALSE, TRUE, 0);  
+	gtk_widget_show (priv->image);
+	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->image, FALSE, TRUE, 0);
 
-	priv->entry = gtk_entry_new ();
-	gtk_widget_show (priv->entry);
-
-	priv->event_box = gtk_event_box_new ();
-	priv->label = gtk_label_new (NULL);
-	gtk_label_set_ellipsize (GTK_LABEL (priv->label), PANGO_ELLIPSIZE_NONE);
-	gtk_misc_set_alignment (GTK_MISC (priv->label), 0, 0.5);
-	gtk_widget_set_size_request (priv->label, -1, 27); /* FIXME: don't use a fixed size */
-	gtk_container_add (GTK_CONTAINER (priv->event_box), priv->label);
-	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->event_box, FALSE, TRUE, 0);
+	priv->label = gtk_label_new ("Test");
+	gtk_widget_show (priv->label);
+	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->label, FALSE, TRUE, 0);
+ 	gtk_label_set_ellipsize (GTK_LABEL (priv->label), PANGO_ELLIPSIZE_NONE); 
+ 	gtk_misc_set_alignment (GTK_MISC (priv->label), 0, 0.5); 
 
 	alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (alignment);
@@ -178,53 +152,15 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 4, 0);
 
 	arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_OUT);
+	gtk_widget_show (arrow);
 	gtk_container_add (GTK_CONTAINER (alignment), arrow);
-
-	gtk_widget_show_all (GTK_WIDGET (chooser));
-
-	/* Reference widgets we need */
-	g_object_ref (priv->entry);
-	g_object_ref (priv->event_box);
 
 	/* We use this instead of "clicked" to get the button to disappear when
 	 * clicking on the label inside the button.
 	 */
-	gtk_widget_add_events (GTK_WIDGET (chooser), 
-			       GDK_ENTER_NOTIFY_MASK |
-			       GDK_LEAVE_NOTIFY_MASK | 
-			       GDK_BUTTON_PRESS_MASK | 
-			       GDK_STRUCTURE_MASK |
-			       GDK_SUBSTRUCTURE_MASK);
-
-	g_signal_connect (chooser, "enter-notify-event",
-			  G_CALLBACK (presence_chooser_enter_notify_event_cb),
-			  NULL);
-
-	g_signal_connect (chooser, "leave-notify-event",
-			  G_CALLBACK (presence_chooser_leave_notify_event_cb),
-			  NULL);
-
-	g_signal_connect (chooser, "configure-event",
-			  G_CALLBACK (presence_chooser_configure_event_cb),
-			  NULL);
-	
-	g_signal_connect (chooser,
-			  "button-press-event",
-			  G_CALLBACK (presence_chooser_button_press_event_cb),
-			  NULL);
-
-	gtk_widget_add_events (GTK_WIDGET (priv->event_box), 
-			       GDK_BUTTON_PRESS_MASK);
-
-	g_signal_connect (priv->event_box,
-			  "button-press-event",
-			  G_CALLBACK (presence_chooser_label_button_press_event_cb),
-			  chooser);
-
-	g_signal_connect (priv->entry,
-			  "activate",
-			  G_CALLBACK (presence_chooser_entry_activate_cb),
-			  chooser);
+        g_signal_connect (chooser, "clicked",
+                          G_CALLBACK (presence_chooser_button_clicked_cb),
+                          NULL);
 }
 
 static void
@@ -233,9 +169,6 @@ presence_chooser_finalize (GObject *object)
 	GossipPresenceChooserPriv *priv;
 
 	priv = GET_PRIV (object);
-
-	g_object_unref (priv->entry);
-	g_object_unref (priv->event_box);
 
 	if (priv->flash_timeout_id) {
 		g_source_remove (priv->flash_timeout_id);
@@ -500,15 +433,14 @@ presence_chooser_menu_align_func (GtkMenu               *menu,
 	GdkScreen      *screen;
 	gint            screen_height;
 
-	widget = gtk_bin_get_child (GTK_BIN (chooser));
+	widget = GTK_WIDGET (chooser);
 
 	gtk_widget_size_request (GTK_WIDGET (menu), &req);
 
-  	gdk_window_get_origin (widget->window, x, y);
+	gdk_window_get_origin (widget->window, x, y); 
 
-/* 	*x = widget->allocation.x; */
-/*  	*x -= abs (widget->allocation.width - GTK_WIDGET (menu)->allocation.width);  */
- 	*y += widget->allocation.y; 
+	*x += widget->allocation.x + 1;
+	*y += widget->allocation.y;
 
 	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
 	screen_height = gdk_screen_get_height (screen);	
@@ -522,9 +454,11 @@ presence_chooser_menu_align_func (GtkMenu               *menu,
 	if ((*y + req.height + widget->allocation.height) > screen_height) {
 		/* Can't put it below the button. */
 		*y -= req.height;
+		*y += 1;
 	} else {
 		/* Put menu below button. */
 		*y += widget->allocation.height;
+		*y -= 1;
 	}
 
 	*push_in = FALSE;
@@ -536,11 +470,28 @@ presence_chooser_menu_selection_done_cb (GtkMenuShell          *menushell,
 {
 	gtk_widget_destroy (GTK_WIDGET (menushell));
 
-	gtk_widget_set_state (GTK_WIDGET (chooser), GTK_STATE_NORMAL);
+	g_signal_handlers_block_by_func (chooser,
+					 presence_chooser_button_clicked_cb,
+					 NULL);
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser), FALSE);
+
+	g_signal_handlers_unblock_by_func (chooser,
+					   presence_chooser_button_clicked_cb,
+					   NULL);
+}
+
+static void   
+presence_chooser_menu_detach (GtkWidget *attach_widget,
+			      GtkMenu   *menu)
+{
+	/* We don't need to do anything, but attaching the menu means
+	 * we don't own the ref count and it is cleaned up properly. 
+	 */
 }
 
 static void
-presence_chooser_show_popup (GossipPresenceChooser *chooser)
+presence_chooser_menu_popup (GossipPresenceChooser *chooser)
 {
 	GossipPresenceChooserPriv *priv;
 	GtkWidget                 *menu;
@@ -553,6 +504,10 @@ presence_chooser_show_popup (GossipPresenceChooser *chooser)
 				G_CALLBACK (presence_chooser_menu_selection_done_cb),
 				chooser);
 
+	gtk_menu_attach_to_widget (GTK_MENU (menu), 
+				   GTK_WIDGET (chooser), 
+				   presence_chooser_menu_detach);
+
 	gtk_menu_popup (GTK_MENU (menu),
 			NULL, NULL,
 			(GtkMenuPositionFunc) presence_chooser_menu_align_func,
@@ -562,166 +517,10 @@ presence_chooser_show_popup (GossipPresenceChooser *chooser)
 }
 
 static void
-presence_chooser_show_entry (GossipPresenceChooser *chooser)
+presence_chooser_button_clicked_cb (GtkWidget *chooser,
+				    gpointer   user_data)
 {
-	GossipPresenceChooserPriv *priv;
-
-	priv = GET_PRIV (chooser);
-
-	gtk_container_remove (GTK_CONTAINER (priv->hbox), priv->event_box);
-	
-	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->entry, TRUE, TRUE, 0);
-	gtk_box_reorder_child (GTK_BOX (priv->hbox), priv->entry, 1);
-
-	gtk_widget_show (priv->entry);
-	gtk_widget_grab_focus (priv->entry);
-
-	g_signal_connect (priv->entry,
-			  "focus-out-event",
-			  G_CALLBACK (presence_chooser_focus_out_event_cb),
-			  chooser);
-}
-
-static void
-presence_chooser_show_label (GossipPresenceChooser *chooser)
-{
-	GossipPresenceChooserPriv *priv;
-
-	priv = GET_PRIV (chooser);
-
-	g_signal_handlers_disconnect_by_func (priv->entry,
-					      presence_chooser_focus_out_event_cb, 
-					      chooser);
-
-	gtk_container_remove (GTK_CONTAINER (priv->hbox), priv->entry);
-	
-	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->event_box, FALSE, TRUE, 0);
-	gtk_box_reorder_child (GTK_BOX (priv->hbox), priv->event_box, 1);
-
-	gtk_widget_show_all (priv->event_box);
- 	gtk_widget_set_state (GTK_WIDGET (chooser), GTK_STATE_NORMAL); 
-}
-
-static gboolean
-presence_chooser_enter_notify_event_cb (GtkWidget        *chooser,
-					GdkEventCrossing *event,
-					gpointer          user_data)
-{
-	GossipPresenceChooserPriv *priv;
-	static GdkCursor          *cursor = NULL;
-
-	if (GTK_WIDGET_STATE (chooser) == GTK_STATE_SELECTED) {
-		return FALSE;
-	}
-
-	priv = GET_PRIV (chooser);
-
-	if (!cursor) {
-		cursor = gdk_cursor_new (GDK_HAND2);
-	}
-
-	if (GTK_WIDGET_MAPPED (priv->entry)) {
-		gtk_widget_set_state (GTK_WIDGET (chooser), GTK_STATE_NORMAL);
-		gdk_window_set_cursor (GTK_WIDGET (chooser)->window, NULL);
-	} else {
-		gtk_widget_set_state (GTK_WIDGET (chooser), GTK_STATE_PRELIGHT);
-		gdk_window_set_cursor (GTK_WIDGET (chooser)->window, cursor);
-	}
-
-	return FALSE;
-}
-
-static gboolean
-presence_chooser_leave_notify_event_cb (GtkWidget        *chooser,
-					GdkEventCrossing *event,
-					gpointer          user_data)
-{
-	if (GTK_WIDGET_STATE (chooser) == GTK_STATE_SELECTED) {
-		return FALSE;
-	}
-
-	gtk_widget_set_state (GTK_WIDGET (chooser), GTK_STATE_NORMAL);
-	gdk_window_set_cursor (GTK_WIDGET (chooser)->window, NULL);
-
-	return FALSE;
-}
-
-static gboolean
-presence_chooser_configure_event_cb (GtkWidget         *chooser,
-				     GdkEventConfigure *event,
-				     gpointer           user_data)
-{
-	g_printerr ("*** trying to use width:%d, have width:%d\n", 
-		    chooser->requisition.width, chooser->allocation.width);
-	return FALSE;
-}
-
-static gboolean
-presence_chooser_button_press_event_cb (GtkWidget      *chooser,
-					GdkEventButton *event,
-					gpointer        user_data)
-{
-	if (event->type == GDK_2BUTTON_PRESS ||
-	    event->type == GDK_3BUTTON_PRESS) {
-		return FALSE;
-	}
-
-	if (event->button != 1) {
-		return FALSE;
-	}
-
-	presence_chooser_show_popup (GOSSIP_PRESENCE_CHOOSER (chooser));
-
-	return FALSE;
-}
-
-static gboolean
-presence_chooser_label_button_press_event_cb (GtkWidget             *event_box,
-					      GdkEventButton        *event,
-					      GossipPresenceChooser *chooser)
-{
-	if (event->type == GDK_2BUTTON_PRESS ||
-	    event->type == GDK_3BUTTON_PRESS) {
-		return FALSE;
-	}
-
-	if (event->button != 1) {
-		presence_chooser_show_popup (chooser);
-	} else {
-		presence_chooser_show_entry (chooser);
-	}
-
-	return FALSE;
-}
-
-static gboolean
-presence_chooser_focus_out_event_cb (GtkWidget             *widget,
-				     GdkEventFocus         *event,
-				     GossipPresenceChooser *chooser)
-{
-	presence_chooser_show_label (chooser); 
-
- 	gtk_widget_set_state (GTK_WIDGET (chooser), GTK_STATE_NORMAL); 
- 	gdk_window_set_cursor (GTK_WIDGET (chooser)->window, NULL); 
-
-	return FALSE;
-}
-
-static void
-presence_chooser_entry_activate_cb (GtkEntry              *entry,
-				    GossipPresenceChooser *chooser)
-{
-	GossipPresenceChooserPriv *priv;
-	const gchar               *status;
-
-	priv = GET_PRIV (chooser);
-
-	status = gtk_entry_get_text (entry);
-	if (strlen (status) > 0) {
-		presence_chooser_set_state (chooser, priv->last_state, status, FALSE);
-	}
-
-	presence_chooser_show_label (chooser);
+	presence_chooser_menu_popup (GOSSIP_PRESENCE_CHOOSER (chooser));
 }
 
 GtkWidget *
@@ -863,7 +662,6 @@ gossip_presence_chooser_set_status (GossipPresenceChooser *chooser,
 	priv = GET_PRIV (chooser);
 
 	gtk_label_set_text (GTK_LABEL (priv->label), status);
-	gtk_entry_set_text (GTK_ENTRY (priv->entry), status);
 }
 
 void       

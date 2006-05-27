@@ -59,13 +59,13 @@ static void       account_button_align_menu_func           (GtkMenu             
 							    gint                *y,
 							    gboolean            *push_in,
 							    GossipAccountButton *account_button);
-static void       account_button_menu_popdown              (GtkWidget           *menu,
+static void       account_button_menu_selection_done_cb    (GtkMenuShell        *menushell,
 							    GossipAccountButton *account_button);
 static void       account_button_menu_detach               (GtkWidget           *attach_widget,
 							    GtkMenu             *menu);
 static void       account_button_menu_popup                (GossipAccountButton *account_button);
-static void       account_button_clicked_cb                (GtkWidget           *button,
-							    GossipAccountButton *account_button);
+static void       account_button_clicked_cb                (GtkWidget           *widget,
+							    gpointer             user_data);
 static GtkWidget *account_button_create_menu               (GossipAccountButton *account_button);
 static void       account_button_update_tooltip            (GossipAccountButton *account_button);
 static void       account_button_edit_activate_cb          (GtkWidget           *menuitem,
@@ -115,7 +115,7 @@ gossip_account_button_init (GossipAccountButton *account_button)
 
         g_signal_connect (account_button, "clicked",
                           G_CALLBACK (account_button_clicked_cb),
-                          account_button);
+                          NULL);
 
 	session = gossip_app_get_session ();
 
@@ -206,7 +206,7 @@ account_button_align_menu_func (GtkMenu             *menu,
 
 	gdk_window_get_origin (widget->window, x, y); 
 
-	*x += widget->allocation.x;
+	*x += widget->allocation.x + 1;
 	*y += widget->allocation.y;
 
 	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
@@ -221,28 +221,32 @@ account_button_align_menu_func (GtkMenu             *menu,
 	if ((*y + req.height + widget->allocation.height) > screen_height) {
 		/* Can't put it below the button. */
 		*y -= req.height;
+		*y += 1;
 	} else {
 		/* Put menu below button. */
 		*y += widget->allocation.height;
+		*y -= 1;
 	}
 
 	*push_in = FALSE;
 }
 
 static void
-account_button_menu_popdown (GtkWidget           *menu,
-			     GossipAccountButton *account_button)
+account_button_menu_selection_done_cb (GtkMenuShell        *menushell,
+				       GossipAccountButton *account_button)
 {
+ 	gtk_widget_destroy (GTK_WIDGET (menushell)); 
+
 	g_signal_handlers_block_by_func (account_button,
 					 account_button_clicked_cb,
-					 account_button);
+					 NULL);
 
 	gtk_toggle_tool_button_set_active (
 		GTK_TOGGLE_TOOL_BUTTON (account_button), FALSE);
 
 	g_signal_handlers_unblock_by_func (account_button,
 					   account_button_clicked_cb,
-					   account_button);
+					   NULL);
 }
 
 static void   
@@ -261,8 +265,8 @@ account_button_menu_popup (GossipAccountButton *account_button)
 
 	menu = account_button_create_menu (account_button);
 
-	g_signal_connect (menu, "hide", 
-			  G_CALLBACK (account_button_menu_popdown),
+	g_signal_connect (menu, "selection-done", 
+			  G_CALLBACK (account_button_menu_selection_done_cb),
 			  account_button);
 
 	gtk_menu_attach_to_widget (GTK_MENU (menu), 
@@ -278,10 +282,10 @@ account_button_menu_popup (GossipAccountButton *account_button)
 }
 
 static void
-account_button_clicked_cb (GtkWidget           *button,
-			   GossipAccountButton *account_button)
+account_button_clicked_cb (GtkWidget *widget,
+			   gpointer   user_data)
 {
-	account_button_menu_popup (account_button);
+	account_button_menu_popup (GOSSIP_ACCOUNT_BUTTON (widget));
 }
 
 static void

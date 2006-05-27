@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,28 +23,22 @@
 
 #include <gtk/gtk.h>
 
-#define GOSSIP_TYPE_PRESENCE_CHOOSER \
-  (gossip_presence_chooser_get_type ())
-#define GOSSIP_PRESENCE_CHOOSER(o) \
-  (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooser))
-#define GOSSIP_PRESENCE_CHOOSER_CLASS(k) \
-  (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserClass))
-#define GOSSIP_IS_PRESENCE_CHOOSER(o) \
-  (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_PRESENCE_CHOOSER))
-#define GOSSIP_IS_PRESENCE_CHOOSER_CLASS(k) \
-  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_PRESENCE_CHOOSER))
-#define GOSSIP_PRESENCE_CHOOSER_GET_CLASS(o) \
-  (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserClass))
+#define GOSSIP_TYPE_PRESENCE_CHOOSER         (gossip_presence_chooser_get_type ())
+#define GOSSIP_PRESENCE_CHOOSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooser))
+#define GOSSIP_PRESENCE_CHOOSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserClass))
+#define GOSSIP_IS_PRESENCE_CHOOSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_PRESENCE_CHOOSER))
+#define GOSSIP_IS_PRESENCE_CHOOSER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_PRESENCE_CHOOSER))
+#define GOSSIP_PRESENCE_CHOOSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserClass))
 
 typedef struct _GossipPresenceChooser      GossipPresenceChooser;
 typedef struct _GossipPresenceChooserClass GossipPresenceChooserClass;
 
 struct _GossipPresenceChooser {
-        GtkHBox      parent;
+        GtkToggleButton parent;
 };
 
 struct _GossipPresenceChooserClass {
-        GtkHBoxClass parent_class;
+        GtkToggleButtonClass parent_class;
 };
 
 GType      gossip_presence_chooser_get_type           (void) G_GNUC_CONST;
