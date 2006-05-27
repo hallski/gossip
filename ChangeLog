@@ -1,5 +1,12 @@
 2006-05-27  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-presence-chooser.c: Use "button-press-event" instead
+	of "clicked" so the mouse can be pressed and dragged onto the menu
+	drop down. Also unset CAN_FOCUS so we don't get focus after
+	clicking on the widget.
+
+2006-05-27  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-account-button.[ch]: Use "selection-done" signal
 	instead of "hide" and destroy the menu when done with it (not sure
 	what was happening to it before? Leaking? Also removed the 1

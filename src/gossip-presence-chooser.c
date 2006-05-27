@@ -80,7 +80,8 @@ static void     presence_chooser_menu_selection_done_cb (GtkMenuShell          *
 static void     presence_chooser_menu_detach            (GtkWidget             *attach_widget,
 							 GtkMenu               *menu);
 static void     presence_chooser_menu_popup             (GossipPresenceChooser *chooser);
-static void     presence_chooser_button_clicked_cb      (GtkWidget             *chooser,
+static gboolean presence_chooser_button_press_event_cb  (GtkWidget             *chooser,
+							 GdkEventButton        *event,
 							 gpointer               user_data);
 static gboolean presence_chooser_flash_timeout_cb       (GossipPresenceChooser *chooser);
 
@@ -126,6 +127,7 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	priv->flash_interval = 500;
 
 	gtk_button_set_relief (GTK_BUTTON (chooser), GTK_RELIEF_NONE);
+	GTK_WIDGET_UNSET_FLAGS (chooser, GTK_CAN_FOCUS);
 
 	alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (alignment);
@@ -140,7 +142,7 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	gtk_widget_show (priv->image);
 	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->image, FALSE, TRUE, 0);
 
-	priv->label = gtk_label_new ("Test");
+	priv->label = gtk_label_new (NULL);
 	gtk_widget_show (priv->label);
 	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->label, FALSE, TRUE, 0);
  	gtk_label_set_ellipsize (GTK_LABEL (priv->label), PANGO_ELLIPSIZE_NONE); 
@@ -158,8 +160,8 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	/* We use this instead of "clicked" to get the button to disappear when
 	 * clicking on the label inside the button.
 	 */
-        g_signal_connect (chooser, "clicked",
-                          G_CALLBACK (presence_chooser_button_clicked_cb),
+        g_signal_connect (chooser, "button-press-event",
+                          G_CALLBACK (presence_chooser_button_press_event_cb),
                           NULL);
 }
 
@@ -471,13 +473,13 @@ presence_chooser_menu_selection_done_cb (GtkMenuShell          *menushell,
 	gtk_widget_destroy (GTK_WIDGET (menushell));
 
 	g_signal_handlers_block_by_func (chooser,
-					 presence_chooser_button_clicked_cb,
+					 presence_chooser_button_press_event_cb,
 					 NULL);
 
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser), FALSE);
 
 	g_signal_handlers_unblock_by_func (chooser,
-					   presence_chooser_button_clicked_cb,
+					   presence_chooser_button_press_event_cb,
 					   NULL);
 }
 
@@ -516,11 +518,22 @@ presence_chooser_menu_popup (GossipPresenceChooser *chooser)
 			gtk_get_current_event_time ());
 }
 
-static void
-presence_chooser_button_clicked_cb (GtkWidget *chooser,
-				    gpointer   user_data)
+static gboolean 
+presence_chooser_button_press_event_cb (GtkWidget      *chooser,
+					GdkEventButton *event,
+					gpointer        user_data)
 {
+	if (event->type != GDK_BUTTON_PRESS) {
+		return FALSE;
+	}
+
+	if (event->button != 1) {
+		return FALSE;
+	}
+
 	presence_chooser_menu_popup (GOSSIP_PRESENCE_CHOOSER (chooser));
+
+	return FALSE;
 }
 
 GtkWidget *
