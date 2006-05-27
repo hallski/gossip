@@ -500,6 +500,16 @@ presence_chooser_menu_popup (GossipPresenceChooser *chooser)
 
 	priv = GET_PRIV (chooser);
 
+	g_signal_handlers_block_by_func (chooser,
+					 presence_chooser_button_press_event_cb,
+					 NULL);
+
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser), TRUE);
+
+	g_signal_handlers_unblock_by_func (chooser,
+					   presence_chooser_button_press_event_cb,
+					   NULL);
+
 	menu = gossip_presence_chooser_create_menu (chooser);
 	
 	g_signal_connect_after (menu, "selection-done", 
