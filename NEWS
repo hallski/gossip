@@ -20,9 +20,15 @@ position (Paul Van Tilburg, Richard).
 notification area to bring it back (Kristian Rietveld, patch by Caio
 Marcelo).
 - Fixed #132632, Don't hide the main window on startup if there is no
-notifcation area (Frederic Crozat, patch by Caio Marcelo).
+notification area (Frederic Crozat, patch by Caio Marcelo).
 - Fixed #141855, Remember chat window geometry by contact id (Mikael
 Hallendal). 
+
+Translations:
+Clytie Siddall (vi)
+Francisco Javier F. Serrador (es)
+Richard Hult (sv)
+Wouter Bolsterlee (nl)
 
 
 NEWS in 0.11:
