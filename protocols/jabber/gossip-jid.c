@@ -221,7 +221,8 @@ gossip_jid_unref (GossipJID *jid)
 }
 
 gboolean
-gossip_jid_equals (GossipJID *jid_a, GossipJID *jid_b)
+gossip_jid_equals (GossipJID *jid_a, 
+		   GossipJID *jid_b)
 {
 	g_return_val_if_fail (jid_a != NULL, FALSE);
 	g_return_val_if_fail (jid_b != NULL, FALSE);
@@ -234,7 +235,8 @@ gossip_jid_equals (GossipJID *jid_a, GossipJID *jid_b)
 }
 
 gboolean
-gossip_jid_equals_without_resource (GossipJID *jid_a, GossipJID *jid_b)
+gossip_jid_equals_without_resource (GossipJID *jid_a, 
+				    GossipJID *jid_b)
 {
 	const gchar *a, *b;
 	
@@ -358,7 +360,8 @@ gossip_jid_string_get_part_resource (const gchar *str)
 }
 
 gint
-gossip_jid_case_compare (gconstpointer a, gconstpointer  b)
+gossip_jid_case_compare (gconstpointer a, 
+			 gconstpointer b)
 {
 	const gchar *str_a, *str_b;
 
@@ -369,7 +372,8 @@ gossip_jid_case_compare (gconstpointer a, gconstpointer  b)
 }
 
 gboolean
-gossip_jid_equal (gconstpointer v1, gconstpointer v2)
+gossip_jid_equal (gconstpointer v1, 
+		  gconstpointer v2)
 {
 	const gchar *a, *b;
 

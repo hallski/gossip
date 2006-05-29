@@ -1,3 +1,12 @@
+2006-05-29  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c:
+	* src/gossip-presence-chooser.c: Sort out some small alignment
+	issues and set the chooser to expand otherwise when the string is
+	too wide we can't make use of the ellipsize feature, this really
+	sucks that we can't do this - Richard and I spent a few days
+	playing with different methods to do this to no avail :/
+
 2006-05-29  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_update_title),

@@ -572,8 +572,9 @@ app_setup (GossipAccountManager *manager)
 	gtk_widget_show (GTK_WIDGET (item));
  	gtk_container_add (GTK_CONTAINER (item), priv->presence_chooser); 
 	gtk_tool_item_set_is_important (item, TRUE);
+ 	gtk_tool_item_set_expand (item, TRUE); 
+	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
 
-	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, 0);
 	g_signal_connect (priv->presence_chooser,
 			  "changed",
 			  G_CALLBACK (app_presence_chooser_changed_cb),
