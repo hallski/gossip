@@ -1,5 +1,9 @@
 2006-05-29  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.11.1.
+
+2006-05-29  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c:
 	* src/gossip-presence-chooser.c: Sort out some small alignment
 	issues and set the chooser to expand otherwise when the string is
