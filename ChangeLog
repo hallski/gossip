@@ -1,3 +1,12 @@
+2006-05-29  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_update_title),
+	(chat_window_tabs_left_activate_cb),
+	(chat_window_tabs_right_activate_cb), (chat_window_new_message_cb):
+	Get the name to show from the chat, not the message to get nicks
+	and group chat names to work nicer. Improves my previous changes
+	here.
+
 2006-05-27  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-presence-chooser.c: Use "button-press-event" instead

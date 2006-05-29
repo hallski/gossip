@@ -72,7 +72,7 @@ static GtkWidget *chat_window_create_label              (GossipChatWindow      *
 static void       chat_window_update_status             (GossipChatWindow      *window,
 							 GossipChat            *chat);
 static void       chat_window_update_title              (GossipChatWindow      *window,
-							 GossipMessage         *message);
+							 GossipChat            *chat);
 static void       chat_window_update_menu               (GossipChatWindow      *window);
 static gboolean   chat_window_save_geometry_timeout_cb  (GossipChatWindow      *window);
 static gboolean   chat_window_configure_event_cb        (GtkWidget             *widget,
@@ -760,7 +760,7 @@ chat_window_update_status (GossipChatWindow *window,
 
 static void
 chat_window_update_title (GossipChatWindow *window,
-			  GossipMessage    *message)
+			  GossipChat       *chat)
 {
 	GossipChatWindowPriv *priv;
 	const gchar          *name;
@@ -769,18 +769,16 @@ chat_window_update_title (GossipChatWindow *window,
 
 	priv = GET_PRIV (window);
 
-	/* Use the name from the message if there is one, otherwise use the
-	 * current chat.
+	/* Use the name from the supplied chat, which happens when we get a
+	 * message from an tab other than the active one. This makes it easier
+	 * to see who talked to you when you have multiple tabs.
 	 */
-	if (message) {
-		GossipContact *sender;
-
-		sender = gossip_message_get_sender (message);
-		name = gossip_contact_get_name (sender);
+	if (chat) {
+		name = gossip_chat_get_name (chat);
 	} else {
 		name = gossip_chat_get_name (priv->current_chat);
 	}
-	
+
 	title = g_strdup_printf (("%s%s"),
 				 priv->new_msg ? "*" : "",
 				 name);
@@ -1225,7 +1223,7 @@ chat_window_paste_activate_cb (GtkWidget        *menuitem,
 
 static void
 chat_window_tabs_left_activate_cb (GtkWidget        *menuitem,
-				  GossipChatWindow *window)
+				   GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GossipChat           *chat;
@@ -1251,7 +1249,7 @@ chat_window_tabs_left_activate_cb (GtkWidget        *menuitem,
 
 static void
 chat_window_tabs_right_activate_cb (GtkWidget        *menuitem,
-				   GossipChatWindow *window)
+				    GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
 	GossipChat           *chat;
@@ -1394,7 +1392,7 @@ chat_window_new_message_cb (GossipChat       *chat,
 		GossipContact *own_contact;
 
 		priv->new_msg = TRUE;
-		chat_window_update_title (window, message);
+		chat_window_update_title (window, chat);
 
 		if (gossip_chat_is_group_chat (chat)) {
 			own_contact = gossip_chat_get_own_contact (chat);
