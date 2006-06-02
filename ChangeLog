@@ -1,3 +1,21 @@
+2006-06-02  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.[ch]: Add a function to be
+	able to join ALL favourite chatroooms.
+	
+	* libgossip/gossip-chatroom.[ch]:
+	* libgossip/gossip-chatroom.dtd:
+	* libgossip/libgossip-marshal.list: Added "favourite" property
+
+	* src/gossip-app.c: Make it possible to join all favourites
+	instead of going into the chat room window and selecting the rooms
+	you want to join.
+	
+	* src/gossip-chatrooms-window.c:
+	* src/gossip-edit-chatroom-dialog.c:
+	* ui/group-chat.glade:
+	* ui/main.glade: Updated to handle the new "favourite" property.
+	
 2006-05-29  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.11.1.

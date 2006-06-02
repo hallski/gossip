@@ -124,6 +124,7 @@ struct _GossipAppPriv {
 	GtkWidget             *actions_connect;
 	GtkWidget             *actions_disconnect;
 	GtkWidget             *actions_hide_list;
+	GtkWidget             *actions_group_chat_join;
 
 	/* Accounts toolbar */
 	GtkWidget             *accounts_toolbar;
@@ -188,7 +189,9 @@ static void            app_new_message_cb                   (GtkWidget          
 							     GossipApp                *app);
 static void            app_history_cb                       (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_join_group_chat_cb               (GtkWidget                *window,
+static void            app_group_chat_join_cb               (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_group_chat_rooms_cb              (GtkWidget                *window,
 							     GossipApp                *app);
 static void            app_add_contact_cb                   (GtkWidget                *widget,
 							     GossipApp                *app);
@@ -288,8 +291,12 @@ static void            app_tray_flash_start                 (void);
 static void            app_tray_flash_maybe_stop            (void);
 static void            app_chatroom_auto_connect_update_cb  (GossipChatroomManager    *manager,
 							     GossipChatroomProvider   *provider,
-							     GossipChatroomId          id,
+							     GossipChatroom           *chatroom,
 							     GossipChatroomJoinResult  result,
+							     gpointer                  user_data);
+static void            app_chatroom_favourite_update        (void);
+static void            app_chatroom_favourite_update_cb     (GossipChatroomManager    *manager,
+							     GossipChatroom           *chatroom,
 							     gpointer                  user_data);
 static void            app_event_added_cb                   (GossipEventManager       *manager,
 							     GossipEvent              *event,
@@ -498,6 +505,10 @@ app_setup (GossipAccountManager *manager)
 			  G_CALLBACK (app_chatroom_auto_connect_update_cb),
 			  NULL);
 
+	g_signal_connect (priv->chatroom_manager, "chatroom-favourite-update",
+			  G_CALLBACK (app_chatroom_favourite_update_cb),
+			  NULL);
+
 	g_signal_connect (priv->event_manager, "event-added",
 			  G_CALLBACK (app_event_added_cb),
 			  NULL);
@@ -516,6 +527,7 @@ app_setup (GossipAccountManager *manager)
 				       "actions_disconnect", &priv->actions_disconnect,
 				       "actions_show_offline", &show_offline_widget,
 				       "actions_hide_list", &priv->actions_hide_list,
+				       "actions_group_chat_join", &priv->actions_group_chat_join,
 				       "accounts_toolbar", &priv->accounts_toolbar,
 				       "presence_toolbar", &priv->presence_toolbar,
 				       "roster_scrolledwindow", &sw,
@@ -532,7 +544,8 @@ app_setup (GossipAccountManager *manager)
  			      "actions_disconnect", "activate", app_disconnect_cb, 
 			      "actions_new_message", "activate", app_new_message_cb,
 			      "actions_history", "activate", app_history_cb,
-			      "actions_join_group_chat", "activate", app_join_group_chat_cb,
+			      "actions_group_chat_join", "activate", app_group_chat_join_cb,
+			      "actions_group_chat_rooms", "activate", app_group_chat_rooms_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
 			      "actions_show_offline", "toggled", app_show_offline_cb,
 			      "edit_accounts", "activate", app_accounts_cb,
@@ -912,8 +925,19 @@ app_history_cb (GtkWidget *widget,
 }
 
 static void
-app_join_group_chat_cb (GtkWidget *window,
+app_group_chat_join_cb (GtkWidget *window,
 			GossipApp *app)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+	
+	gossip_chatroom_manager_join_favourites (priv->chatroom_manager);
+}
+
+static void
+app_group_chat_rooms_cb (GtkWidget *window,
+			 GossipApp *app)
 {
 	gossip_chatrooms_window_show (NULL, FALSE);
 }
@@ -1036,6 +1060,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	app_connection_items_update ();
 	app_accounts_update_toolbar ();
+	app_chatroom_favourite_update ();
 	app_presence_updated ();
 }
 
@@ -1051,6 +1076,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 
  	app_connection_items_update ();
 	app_accounts_update_toolbar ();
+	app_chatroom_favourite_update ();
 	app_presence_updated ();
 }
 
@@ -1650,7 +1676,7 @@ app_connection_items_setup (GladeXML *glade)
 
 	const gchar   *widgets_connected[] = {
 		"actions_disconnect",
-		"actions_join_group_chat",
+		"actions_group_chat",
 		"actions_new_message",
 		"actions_add_contact",
 		"edit_personal_information"
@@ -1691,11 +1717,11 @@ app_connection_items_update (void)
 
 	priv = GET_PRIV (app);
 
-	/* get account count for: 
-	   - connected and disabled, 
-	   - connected and enabled 
-	   - disabled and enabled 
-	*/
+	/* Get account count for: 
+	 *  - connected and disabled, 
+	 *  - connected and enabled 
+	 *  - disabled and enabled 
+	 */
 	gossip_session_count_accounts (priv->session,
 				       &connected, 
 				       &disconnected);
@@ -1724,7 +1750,7 @@ gossip_app_is_connected (void)
 }
 
 /*
- * toolbar for accounts
+ * Toolbar for accounts
  */
 static void
 app_accounts_account_notify_cb (GossipAccount *account,
@@ -2366,14 +2392,12 @@ app_tray_flash_maybe_stop (void)
 static void
 app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
 				     GossipChatroomProvider   *provider,
-				     GossipChatroomId          id,
+				     GossipChatroom           *chatroom,
 				     GossipChatroomJoinResult  result,
 				     gpointer                  user_data)
 {
-	GossipChatroom *chatroom;
-	const gchar    *name;
+	const gchar *name;
 
-	chatroom = gossip_chatroom_provider_find (provider, id);
 	name = gossip_chatroom_get_name (chatroom);
 
 	switch (result) {
@@ -2389,12 +2413,70 @@ app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
 	case GOSSIP_CHATROOM_JOIN_OK:
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
 		DEBUG_MSG (("AppChatroom: Auto connect update: success for room:'%s'", name));
-		gossip_group_chat_new (provider, id);
+		gossip_group_chat_new (provider, 
+				       gossip_chatroom_get_id (chatroom));
 		break;
 
  	case GOSSIP_CHATROOM_JOIN_CANCELED:
 		break;
 	}
+}
+
+static void
+app_chatroom_favourite_update (void)
+{
+	GossipAppPriv *priv;
+	GList         *accounts;
+	GList         *chatrooms;
+	GList         *l;
+		
+	priv = GET_PRIV (app);
+
+	accounts = gossip_session_get_accounts (priv->session);
+	if (!accounts) {
+		gtk_widget_set_sensitive (priv->actions_group_chat_join, FALSE);
+		return;
+	}
+
+	chatrooms = gossip_chatroom_manager_get_chatrooms (priv->chatroom_manager, NULL);
+	if (!chatrooms) {
+		gtk_widget_set_sensitive (priv->actions_group_chat_join, FALSE);
+		return;
+	}
+
+	for (l = chatrooms; l; l = l->next) {
+		GossipChatroom *chatroom;
+		GossipAccount  *account;
+
+		chatroom = l->data;
+		account = gossip_chatroom_get_account (chatroom);
+
+		if (!gossip_chatroom_get_favourite (chatroom)) {
+ 			continue;
+		}
+
+		if (!gossip_session_is_connected (priv->session, account)) {
+			continue;
+		}
+
+		/* If we find at least ONE chatroom that is a
+		 * favourite on an account that _IS_ connected, we
+		 * make the join favourites option available.
+		 */
+		gtk_widget_set_sensitive (priv->actions_group_chat_join, TRUE);
+		return;
+	}
+
+	/* We found NO chatrooms with favourites for online accounts */
+	gtk_widget_set_sensitive (priv->actions_group_chat_join, FALSE);
+}
+
+static void
+app_chatroom_favourite_update_cb (GossipChatroomManager *manager,
+				  GossipChatroom        *chatroom,
+				  gpointer               user_data)
+{
+	app_chatroom_favourite_update ();
 }
 
 static void

@@ -39,6 +39,7 @@ typedef struct {
 	GtkWidget      *entry_server;
 	GtkWidget      *entry_room;
 	GtkWidget      *checkbutton_auto_connect;
+	GtkWidget      *checkbutton_favourite;
 	GtkWidget      *button_save;
 
 	GossipChatroom *chatroom;
@@ -79,6 +80,10 @@ edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 
 	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect);
 	g_object_set (dialog->chatroom, "auto_connect", 
+		      gtk_toggle_button_get_active (togglebutton), NULL);
+
+	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_favourite);
+	g_object_set (dialog->chatroom, "favourite", 
 		      gtk_toggle_button_get_active (togglebutton), NULL);
 
 	gossip_chatroom_manager_store (manager);
@@ -147,6 +152,7 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				       "entry_server", &dialog->entry_server,
 				       "entry_room", &dialog->entry_room,
 				       "checkbutton_auto_connect", &dialog->checkbutton_auto_connect,
+				       "checkbutton_favourite", &dialog->checkbutton_favourite,
 				       "button_save", &dialog->button_save,
 				       NULL);
 	
@@ -173,6 +179,9 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 	gtk_toggle_button_set_active (
 		GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),
 		gossip_chatroom_get_auto_connect (chatroom));
+	gtk_toggle_button_set_active (
+		GTK_TOGGLE_BUTTON (dialog->checkbutton_favourite),
+		gossip_chatroom_get_favourite (chatroom));
 
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);

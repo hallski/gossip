@@ -45,6 +45,7 @@ struct _GossipChatroomPriv {
 	gchar                *room;
 	gchar                *password;
 	gboolean              auto_connect;
+	gboolean              favourite;
 	
 	GossipChatroomStatus  status;
 	gchar                *last_error;
@@ -83,6 +84,7 @@ enum {
 	PROP_ROOM,
 	PROP_PASSWORD,
 	PROP_AUTO_CONNECT,
+	PROP_FAVOURITE,
 	PROP_STATUS,
 	PROP_LAST_ERROR,
 	PROP_ACCOUNT,
@@ -217,6 +219,14 @@ chatroom_class_init (GossipChatroomClass *class)
 							       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_FAVOURITE,
+					 g_param_spec_boolean ("favourite",
+							       "Chatroom Favourite",
+							       "Used to connect favourites quickly",
+							       FALSE,
+							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_STATUS,
 					 g_param_spec_int ("status",
 							   "Chatroom Status",
@@ -280,8 +290,9 @@ chatroom_init (GossipChatroom *chatroom)
 	priv->password     = NULL;
 
 	priv->auto_connect = FALSE;
-	priv->status       = GOSSIP_CHATROOM_STATUS_INACTIVE;
+	priv->favourite    = FALSE;
 
+	priv->status       = GOSSIP_CHATROOM_STATUS_INACTIVE;
 	priv->last_error   = NULL;
 
 	priv->account      = NULL;
@@ -349,6 +360,9 @@ chatroom_get_property (GObject    *object,
 	case PROP_AUTO_CONNECT:
 		g_value_set_boolean (value, priv->auto_connect);
 		break;
+	case PROP_FAVOURITE:
+		g_value_set_boolean (value, priv->favourite);
+		break;
 	case PROP_STATUS:
 		g_value_set_int (value, priv->status);
 		break;
@@ -402,6 +416,10 @@ chatroom_set_property (GObject      *object,
 	case PROP_AUTO_CONNECT:
 		gossip_chatroom_set_auto_connect (GOSSIP_CHATROOM (object),
 						 g_value_get_boolean (value));
+		break;
+	case PROP_FAVOURITE:
+		gossip_chatroom_set_favourite (GOSSIP_CHATROOM (object),
+					       g_value_get_boolean (value));
 		break;
 	case PROP_STATUS:
 		gossip_chatroom_set_status (GOSSIP_CHATROOM (object),
@@ -519,10 +537,21 @@ gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), TRUE);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
 
 	priv = GET_PRIV (chatroom);
 	return priv->auto_connect;
+}
+
+gboolean
+gossip_chatroom_get_favourite (GossipChatroom *chatroom)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), FALSE);
+
+	priv = GET_PRIV (chatroom);
+	return priv->favourite;
 }
 
 GossipChatroomStatus
@@ -677,6 +706,21 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 	priv->auto_connect = auto_connect;
 
 	g_object_notify (G_OBJECT (chatroom), "auto_connect");
+	g_signal_emit (chatroom, signals[CHANGED], 0);
+}
+
+void
+gossip_chatroom_set_favourite (GossipChatroom *chatroom,
+			       gboolean        favourite)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+
+	priv = GET_PRIV (chatroom);
+	priv->favourite = favourite;
+
+	g_object_notify (G_OBJECT (chatroom), "favourite");
 	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 

@@ -71,6 +71,7 @@ const gchar *      gossip_chatroom_get_server         (GossipChatroom       *cha
 const gchar *      gossip_chatroom_get_room           (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_password       (GossipChatroom       *chatroom);
 gboolean           gossip_chatroom_get_auto_connect   (GossipChatroom       *chatroom);
+gboolean           gossip_chatroom_get_favourite      (GossipChatroom       *chatroom);
 GossipChatroomStatus
                    gossip_chatroom_get_status         (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_last_error     (GossipChatroom       *chatroom);
@@ -90,6 +91,8 @@ void               gossip_chatroom_set_password       (GossipChatroom       *cha
 						       const gchar          *password);
 void               gossip_chatroom_set_auto_connect   (GossipChatroom       *chatroom,
 						       gboolean              auto_connect);
+void               gossip_chatroom_set_favourite      (GossipChatroom       *chatroom,
+						       gboolean              favourite);
 void               gossip_chatroom_set_status         (GossipChatroom       *chatroom,
 						       GossipChatroomStatus  status);
 void               gossip_chatroom_set_last_error     (GossipChatroom       *chatroom,

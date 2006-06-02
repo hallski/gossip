@@ -5912,7 +5912,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image312">
+			<widget class="GtkImage" id="image393">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -5932,7 +5932,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image313">
+			<widget class="GtkImage" id="image394">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -5958,7 +5958,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image314">
+			<widget class="GtkImage" id="image395">
 			  <property name="visible">True</property>
 			  <property name="pixbuf">gossip-message.png</property>
 			  <property name="xalign">0.5</property>
@@ -5978,7 +5978,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F3" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image315">
+			<widget class="GtkImage" id="image396">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -5992,10 +5992,49 @@ This name could be something associated with the service provider, for example, 
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="actions_join_group_chat">
+		    <widget class="GtkMenuItem" id="actions_group_chat">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">Join _Group Chat...</property>
+		      <property name="label" translatable="yes">_Group Chat</property>
 		      <property name="use_underline">True</property>
+
+		      <child>
+			<widget class="GtkMenu" id="actions_join_group_chat_menu">
+
+			  <child>
+			    <widget class="GtkMenuItem" id="actions_group_chat_join">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Join _Favourites</property>
+			      <property name="use_underline">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkSeparatorMenuItem" id="separator7">
+			      <property name="visible">True</property>
+			    </widget>
+			  </child>
+
+			  <child>
+			    <widget class="GtkImageMenuItem" id="actions_group_chat_rooms">
+			      <property name="visible">True</property>
+			      <property name="label" translatable="yes">Chat Rooms...</property>
+			      <property name="use_underline">True</property>
+			      <accelerator key="F8" modifiers="0" signal="activate"/>
+
+			      <child internal-child="image">
+				<widget class="GtkImage" id="image397">
+				  <property name="visible">True</property>
+				  <property name="pixbuf">gossip-group-message.png</property>
+				  <property name="xalign">0.5</property>
+				  <property name="yalign">0.5</property>
+				  <property name="xpad">0</property>
+				  <property name="ypad">0</property>
+				</widget>
+			      </child>
+			    </widget>
+			  </child>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 
@@ -6012,7 +6051,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image316">
+			<widget class="GtkImage" id="image398">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -6103,7 +6142,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image317">
+			<widget class="GtkImage" id="image399">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -6136,7 +6175,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image318">
+			<widget class="GtkImage" id="image400">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>

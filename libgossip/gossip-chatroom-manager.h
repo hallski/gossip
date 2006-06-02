@@ -45,27 +45,29 @@ struct _GossipChatroomManagerClass {
 	GObjectClass parent_class;
 };
 
-GType           gossip_chatroom_manager_get_type      (void) G_GNUC_CONST;
+GType           gossip_chatroom_manager_get_type        (void) G_GNUC_CONST;
 GossipChatroomManager *
-                gossip_chatroom_manager_new           (GossipAccountManager  *manager,
-						       GossipSession         *session,
-						       const gchar           *filename);
-gboolean        gossip_chatroom_manager_add           (GossipChatroomManager *manager,
-						       GossipChatroom        *chatroom);
-void            gossip_chatroom_manager_remove        (GossipChatroomManager *manager,
-						       GossipChatroom        *chatroom);
-GList *         gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
-						       GossipAccount         *account);
-guint           gossip_chatroom_manager_get_count     (GossipChatroomManager *manager);
-GossipChatroom *gossip_chatroom_manager_get_default   (GossipChatroomManager *manager);
-GossipChatroom *gossip_chatroom_manager_find          (GossipChatroomManager *manager,
-						       GossipChatroomId       id);
-GList *         gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
-						       GossipAccount         *account,
-						       const gchar           *server,
-						       const gchar           *room);
-void            gossip_chatroom_manager_set_default   (GossipChatroomManager *manager,
-						       GossipChatroom        *chatroom);
-gboolean        gossip_chatroom_manager_store         (GossipChatroomManager *manager);
+                gossip_chatroom_manager_new             (GossipAccountManager  *manager,
+							 GossipSession         *session,
+							 const gchar           *filename);
+gboolean        gossip_chatroom_manager_add             (GossipChatroomManager *manager,
+							 GossipChatroom        *chatroom);
+void            gossip_chatroom_manager_remove          (GossipChatroomManager *manager,
+							 GossipChatroom        *chatroom);
+GossipChatroom *gossip_chatroom_manager_find            (GossipChatroomManager *manager,
+							 GossipChatroomId       id);
+GList *         gossip_chatroom_manager_find_extended   (GossipChatroomManager *manager,
+							 GossipAccount         *account,
+							 const gchar           *server,
+							 const gchar           *room);
+gboolean        gossip_chatroom_manager_store           (GossipChatroomManager *manager);
+void            gossip_chatroom_manager_join_favourites (GossipChatroomManager *manager);
+GList *         gossip_chatroom_manager_get_chatrooms   (GossipChatroomManager *manager,
+							 GossipAccount         *account);
+guint           gossip_chatroom_manager_get_count       (GossipChatroomManager *manager,
+							 GossipAccount         *account);
+GossipChatroom *gossip_chatroom_manager_get_default     (GossipChatroomManager *manager);
+void            gossip_chatroom_manager_set_default     (GossipChatroomManager *manager,
+							 GossipChatroom        *chatroom);
 
 #endif /* __GOSSIP_CHATROOM_MANAGER_H__ */

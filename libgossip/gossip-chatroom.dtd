@@ -1,6 +1,7 @@
 <!--
   DTD for Gossips Chat Rooms.
-  by Martyn Russell <mr@gnome.org>
+  by Martyn Russell <martyn@imendio.com>
+  v0.2
 -->
 
 <!-- Root element. -->
@@ -9,7 +10,7 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT chatroom 
-    (type,name,(nick?),server,room,(password?),(auto_connect?),(account?))>
+    (type,name,(nick?),server,room,(password?),(auto_connect?),(favourite?),(account?))>
 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
@@ -18,5 +19,6 @@
 <!ELEMENT room (#PCDATA)>
 <!ELEMENT password (#PCDATA)>
 <!ELEMENT auto_connect (#PCDATA)>
+<!ELEMENT favourite (#PCDATA)>
 <!ELEMENT account (#PCDATA)>
 
