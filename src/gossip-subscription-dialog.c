@@ -170,7 +170,7 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 	gossip_event_manager_add 
 		(gossip_app_get_event_manager (),
 		 event, 
-		 (GossipEventActivatedFunction) subscription_dialog_event_activated_cb,
+		 (GossipEventActivateFunction) subscription_dialog_event_activated_cb,
 		 G_OBJECT (protocol));
 }
 

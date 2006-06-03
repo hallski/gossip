@@ -154,7 +154,7 @@ ft_window_request_cb (GossipProtocol *protocol,
 
 	gossip_event_manager_add (gossip_app_get_event_manager (),
 				  event, 
-				  (GossipEventActivatedFunction)ft_window_event_activated_cb,
+				  (GossipEventActivateFunction) ft_window_event_activated_cb,
 				  G_OBJECT (protocol));
 }
 

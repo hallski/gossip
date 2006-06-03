@@ -33,6 +33,8 @@
 typedef struct _GossipEvent      GossipEvent;
 typedef struct _GossipEventClass GossipEventClass;
 
+typedef gint GossipEventId;
+
 struct _GossipEvent {
 	GObject parent;
 };
@@ -53,18 +55,17 @@ typedef enum {
 
 GType           gossip_event_get_gtype   (void) G_GNUC_CONST;
 GossipEvent *   gossip_event_new         (GossipEventType  type);
-gint            gossip_event_get_id      (GossipEvent     *event);
+GossipEventId   gossip_event_get_id      (GossipEvent     *event);
 GossipEventType gossip_event_get_type    (GossipEvent     *event);
 const gchar *   gossip_event_get_message (GossipEvent     *event);
-
 
 /* Should probably subclass event instead */
 GObject *       gossip_event_get_data    (GossipEvent     *event);
 void            gossip_event_set_data    (GossipEvent     *event,
 					  GObject         *data);
-gboolean        gossip_event_equal       (gconstpointer    v1,
-					  gconstpointer    v2);
 guint           gossip_event_hash        (gconstpointer    key);
+gboolean        gossip_event_equal       (gconstpointer    a,
+					  gconstpointer    b);
 gint            gossip_event_compare     (gconstpointer    a,
 					  gconstpointer    b);
 

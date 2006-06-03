@@ -1,5 +1,24 @@
 2006-06-03  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-event-manager.[ch]: Support activating an event
+	by id not just the GObject. 
+	
+	* libgossip/gossip-event.[ch]: Cleaned up and made event id a type
+	instead of just a gint.
+
+	* protocols/jabber/gossip-jabber.c: For the time being, _ALWAYS_
+	add contacts to the roster when sending subscribed (instead of
+	just when they are a temporary contact) there were some cases
+	where new contacts wouldn't show on the roster.
+	
+	* src/gossip-contact-list.c: 
+	* src/gossip-marshal.list:
+	* src/gossip-subscription-dialog.c: Show a flashing question mark
+	for subscription requests in the roster so we don't depend on the
+	notification area for them.
+
+2006-06-03  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bumped version to 0.11.2.
 	
 	* protocols/jabber/gossip-jabber.c: 

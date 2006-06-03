@@ -27,7 +27,7 @@
 typedef struct _GossipEventPriv GossipEventPriv;
 
 struct _GossipEventPriv {
-	gint             id;
+	GossipEventId    id;
 	GossipEventType  type;
 
 	gchar           *msg;
@@ -82,7 +82,6 @@ gossip_event_get_gtype (void)
 	}
 
 	return type;
-
 }
 
 static void
@@ -140,15 +139,15 @@ gossip_event_class_init (GossipEventClass *klass)
 static void
 gossip_event_init (GossipEvent *event)
 {
-	GossipEventPriv *priv;
-	static gint      id = 0;
+	GossipEventPriv      *priv;
+	static GossipEventId  id = 0;
 
 	priv = GET_PRIV (event);
 
-	priv->msg  = NULL;
+	priv->msg = NULL;
 	priv->data = NULL;
 
-	priv->id   = ++id;
+	priv->id = ++id;
 }
 
 static void
@@ -238,7 +237,7 @@ gossip_event_new (GossipEventType type)
 			     NULL);
 }
 
-gint
+GossipEventId
 gossip_event_get_id (GossipEvent *event)
 {
 	GossipEventPriv *priv;
@@ -287,7 +286,8 @@ gossip_event_get_data (GossipEvent *event)
 }
 
 void
-gossip_event_set_data (GossipEvent *event, GObject *data)
+gossip_event_set_data (GossipEvent *event, 
+		       GObject     *data)
 {
 	GossipEventPriv *priv;
 
@@ -302,24 +302,10 @@ gossip_event_set_data (GossipEvent *event, GObject *data)
 	priv->data = g_object_ref (data);
 }
 
-gboolean
-gossip_event_equal (gconstpointer v1, gconstpointer v2)
-{
-	gint id1, id2;
-	
-	g_return_val_if_fail (GOSSIP_IS_EVENT (v1), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_EVENT (v2), FALSE);
-
-	id1 = gossip_event_get_id (GOSSIP_EVENT (v1));
-	id2 = gossip_event_get_id (GOSSIP_EVENT (v2));
-	
-	return (id1 == id2);
-}
-
 guint 
 gossip_event_hash (gconstpointer key)
 {
-	gint id;
+	GossipEventId id;
 	
 	g_return_val_if_fail (GOSSIP_IS_EVENT (key), 0);
 
@@ -328,11 +314,28 @@ gossip_event_hash (gconstpointer key)
 	return g_int_hash (&id);
 }
 
-gint
-gossip_event_compare (gconstpointer a, gconstpointer b)
+gboolean
+gossip_event_equal (gconstpointer a, 
+		    gconstpointer b)
 {
-	gint id_a;
-	gint id_b;
+	GossipEventId id_a;
+	GossipEventId id_b;
+	
+	g_return_val_if_fail (GOSSIP_IS_EVENT (a), FALSE);
+	g_return_val_if_fail (GOSSIP_IS_EVENT (b), FALSE);
+
+	id_a = gossip_event_get_id (GOSSIP_EVENT (a));
+	id_b = gossip_event_get_id (GOSSIP_EVENT (b));
+	
+	return (id_a == id_b);
+}
+
+gint
+gossip_event_compare (gconstpointer a, 
+		      gconstpointer b)
+{
+	GossipEventId id_a;
+	GossipEventId id_b;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (a), 0);
 	g_return_val_if_fail (GOSSIP_IS_EVENT (b), 0);

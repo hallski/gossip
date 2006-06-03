@@ -26,14 +26,11 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT_MANAGER, GossipEventManagerPriv))
 
-
 typedef struct _GossipEventManagerPriv GossipEventManagerPriv;
-
 
 struct _GossipEventManagerPriv {
 	GHashTable *events;
 };
-
 
 enum {
 	EVENT_ADDED,
@@ -41,26 +38,29 @@ enum {
 	LAST_SIGNAL
 };
 
-
 static guint signals[LAST_SIGNAL] = {0};
 
-
 typedef struct {
-	GossipEvent                  *event;
-	GossipEventActivatedFunction  callback;
-	GObject                      *issuer;
+	GossipEvent                 *event;
+	GossipEventActivateFunction  callback;
+	GObject                     *issuer;
 } EventData;
 
+struct FindEvent {
+	GossipEventId  event_id;
+	GossipEvent   *event;
+};
 
-static void event_manager_finalize              (GObject      *object);
-static void event_manager_free_event            (EventData    *data);
-static void event_manager_get_events_foreach_cb (GossipEvent  *event,
-						 EventData    *data,
-						 GList       **list);
-
+static void     event_manager_finalize              (GObject      *object);
+static void     event_manager_free_event            (EventData    *data);
+static void     event_manager_get_events_foreach_cb (GossipEvent  *event,
+						     EventData    *data,
+						     GList       **list);
+static gboolean event_manager_find_foreach          (GossipEvent  *event,
+						     EventData    *event_data,
+						     gpointer     *p);
 
 G_DEFINE_TYPE (GossipEventManager, gossip_event_manager, G_TYPE_OBJECT);
-
 
 static void
 gossip_event_manager_class_init (GossipEventManagerClass *klass)
@@ -131,10 +131,10 @@ gossip_event_manager_new (void)
 }
 
 void
-gossip_event_manager_add (GossipEventManager           *manager,
-			  GossipEvent                  *event,
-			  GossipEventActivatedFunction  callback,
-			  GObject                      *object)
+gossip_event_manager_add (GossipEventManager          *manager,
+			  GossipEvent                 *event,
+			  GossipEventActivateFunction  callback,
+			  GObject                     *object)
 
 {
 	GossipEventManagerPriv *priv;
@@ -148,6 +148,7 @@ gossip_event_manager_add (GossipEventManager           *manager,
 	priv = GET_PRIV (manager);
 
 	data = g_new0 (EventData, 1);
+
 	data->event    = g_object_ref (event);
 	data->issuer   = g_object_ref (object);
 	data->callback = callback;
@@ -181,7 +182,8 @@ gossip_event_manager_remove (GossipEventManager *manager,
 }
 
 void 
-gossip_event_manager_activate (GossipEventManager *manager, GossipEvent *event)
+gossip_event_manager_activate (GossipEventManager *manager, 
+			       GossipEvent        *event)
 {	
 	GossipEventManagerPriv *priv;
 	EventData              *data;
@@ -191,7 +193,6 @@ gossip_event_manager_activate (GossipEventManager *manager, GossipEvent *event)
 	priv = GET_PRIV (manager);
 
 	data = g_hash_table_lookup (priv->events, event);
-
 	if (!data) {
 		return;
 	}
@@ -199,6 +200,55 @@ gossip_event_manager_activate (GossipEventManager *manager, GossipEvent *event)
 	(data->callback) (manager, event, data->issuer);
 
 	gossip_event_manager_remove (manager, event, data->issuer);
+}
+
+static gboolean
+event_manager_find_foreach (GossipEvent *event,
+			    EventData   *event_data,
+			    gpointer    *p)
+{
+	GossipEventId event_id;
+
+	event_id = GPOINTER_TO_INT (p);
+
+	if (gossip_event_get_id (event) == event_id) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void        
+gossip_event_manager_activate_by_id (GossipEventManager *manager,
+				     GossipEventId       event_id)
+{
+	GossipEventManagerPriv *priv;
+	EventData              *data;
+
+	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (manager));
+
+	priv = GET_PRIV (manager);
+
+	data = g_hash_table_find (priv->events, 
+				  (GHRFunc) event_manager_find_foreach, 
+				  GINT_TO_POINTER (event_id));
+	if (!data) {
+		return;
+	}
+
+	(data->callback) (manager, data->event, data->issuer);
+
+	gossip_event_manager_remove (manager, data->event, data->issuer);
+}
+
+static void
+event_manager_get_events_foreach_cb (GossipEvent  *event,
+				     EventData    *data,
+				     GList       **list)
+{
+	if (list) {
+		*list = g_list_append (*list, event);
+	}
 }
 
 GList *
@@ -212,20 +262,10 @@ gossip_event_manager_get_events (GossipEventManager *manager)
 	priv = GET_PRIV (manager);
 
 	g_hash_table_foreach (priv->events, 
-			      (GHFunc)event_manager_get_events_foreach_cb,
+			      (GHFunc) event_manager_get_events_foreach_cb,
 			      &list);
 
 	return list;
-}
-
-static void
-event_manager_get_events_foreach_cb (GossipEvent  *event,
-				     EventData    *data,
-				     GList       **list)
-{
-	if (list) {
-		*list = g_list_append (*list, event);
-	}
 }
 
 guint 

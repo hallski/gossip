@@ -1591,6 +1591,7 @@ jabber_contact_add (GossipProtocol *protocol,
 	GossipContact      *contact;
 	GossipSubscription  subscription;
 	gchar              *escaped;
+	gboolean            add_to_roster;
 
 	DEBUG_MSG (("Protocol: Adding contact:'%s' with name:'%s' and group:'%s'", 
 		    id, name, group));
@@ -1607,8 +1608,14 @@ jabber_contact_add (GossipProtocol *protocol,
 		subscription = GOSSIP_SUBSCRIPTION_NONE;
 	}
 
-	/* Add to roster IF not on it */
-	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {
+	/* We would normally only add to roster IF not on it but we
+	 * always do this because the server will inforce it otherwise
+	 * and it makes sense to use our provided name/group, etc 
+	 */
+	add_to_roster = TRUE;
+/* 	add_to_roster = gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY; */
+
+	if (add_to_roster) {
 		DEBUG_MSG (("Protocol: Adding contact:'%s' to roster...", id));
 		
 		m = lm_message_new_with_sub_type (NULL, 

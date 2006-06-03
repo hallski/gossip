@@ -306,6 +306,7 @@ static void            app_event_removed_cb                 (GossipEventManager 
 							     gpointer                  user_data);
 static void            app_contact_activated_cb             (GossipContactList        *contact_list,
 							     GossipContact            *contact,
+							     GossipEventId             event_id,
 							     gpointer                  user_data);
 
 static GObjectClass *parent_class;
@@ -1341,10 +1342,13 @@ app_tray_create (void)
 {
 	GossipAppPriv *priv;
 	GdkPixbuf     *pixbuf;
+	gchar         *name;
 
 	priv = GET_PRIV (app);
 
-	priv->tray_icon = egg_tray_icon_new (_("Gossip, Instant Messaging Client"));
+	name = g_strdup_printf ("%s, Instant Messaging Client", PACKAGE_NAME);
+	priv->tray_icon = egg_tray_icon_new (name);
+	g_free (name);
 
 	priv->tray_event_box = gtk_event_box_new ();
 	priv->tray_image = gtk_image_new ();
@@ -2328,15 +2332,31 @@ app_tray_flash_timeout_func (gpointer data)
 	is_flashing = gossip_presence_chooser_is_flashing
 		(GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
 
-	if (is_flashing) {
-		if (on) {
+	if (on) {
+		if (is_flashing) {
 			pixbuf = gossip_pixbuf_for_presence (priv->presence);
 		}
-	}
-	else if (priv->tray_flash_icons != NULL) {
-		if (on) {
-			pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, 
-							   GTK_ICON_SIZE_MENU);
+		else if (priv->tray_flash_icons != NULL) {
+			GossipEvent *event;
+			const gchar *stock_id = NULL;
+
+			event = priv->tray_flash_icons->data;
+			switch (gossip_event_get_type (event)) {
+			case GOSSIP_EVENT_NEW_MESSAGE:
+				stock_id = GOSSIP_STOCK_MESSAGE;
+				break;
+			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+				stock_id = GTK_STOCK_DIALOG_QUESTION;
+				break;
+
+			default:
+				break;
+			}
+			
+			if (stock_id) {
+				pixbuf = gossip_pixbuf_from_stock (stock_id, 
+								   GTK_ICON_SIZE_MENU);
+			}
 		}
 	}
 
@@ -2536,12 +2556,19 @@ app_event_removed_cb (GossipEventManager *manager,
 static void
 app_contact_activated_cb (GossipContactList *contact_list,
 			  GossipContact     *contact,
+			  GossipEventId      event_id,
 			  gpointer           user_data)
 {
 	GossipAppPriv *priv;
 
 	priv = GET_PRIV (app);
 
+	if (event_id > 0) {
+		gossip_event_manager_activate_by_id (priv->event_manager, event_id);
+		return;
+	}
+
+	/* Default to starting chat */
 	gossip_chat_manager_show_chat (priv->chat_manager, contact);
 }
 
