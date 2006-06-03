@@ -15,7 +15,7 @@
 	* src/gossip-marshal.list:
 	* src/gossip-subscription-dialog.c: Show a flashing question mark
 	for subscription requests in the roster so we don't depend on the
-	notification area for them.
+	notification area for them, fixes #342928 (Martyn)
 
 2006-06-03  Martyn Russell  <martyn@imendio.com>
 

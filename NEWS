@@ -1,6 +1,6 @@
 NEWS in 0.11.2:
 ===============
-- Show subscription requests in the roster instead of JUST the
+- Fixed #342928, Show subscription requests in the roster instead of JUST the
 notification tray which isn't ideal for people without one (Martyn).
 - Fixed #343375, Make sure we follow the XMPP spec for RFC 3921 with
 regards to adding and removing contacts. Subscription was broken
