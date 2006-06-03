@@ -33,8 +33,8 @@
 #include "gossip-subscription-dialog.h"
 #include "gossip-app.h"
 
-/* #define DEBUG_MSG(x) */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+#define DEBUG_MSG(x)
+/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 typedef struct {
 	GtkWidget      *dialog;
@@ -143,7 +143,7 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 	
 	/* If the contact is on our contact list and we get a
 	 * subscription request when we already have subscription
-	 * "FROM" them then we silently send back subscribed because
+	 * "TO" them then we silently send back subscribed because
 	 * we obviously want them on our roster, there is no need to
 	 * show a dialog and confirm it with the user.
 	 */

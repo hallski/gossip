@@ -1,5 +1,12 @@
 2006-06-03  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: Bumped version to 0.11.2.
+	
+	* protocols/jabber/gossip-jabber.c: 
+	* src/gossip-subscription-dialog.c: Removed debuging.
+
+2006-06-03  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: (jabber_contact_add),
 	(jabber_contact_remove): Revised (according to the XMPP spec for
 	RFC 3921) the adding and removing of contacts, fixes #343375
