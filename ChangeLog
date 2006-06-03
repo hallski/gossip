@@ -1,3 +1,8 @@
+2006-06-03  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-new-message-dialog.c (new_message_dialog_response):
+	Rearrange to get down the indentation level a bit.
+
 2006-06-02  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.[ch]: Add a function to be

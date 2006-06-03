@@ -342,59 +342,55 @@ new_message_dialog_response (GtkWidget              *widget,
 			     gint                    response, 
 			     GossipNewMessageDialog *dialog)
 {
-	if (response == GTK_RESPONSE_OK) {
-		GtkTreeView       *view;
-		GtkTreeModel      *model;
-		GtkTreeSelection  *selection;
-		GtkTreeIter        iter;
-
-		GossipSession     *session;
-		GossipContact     *contact;
-		GossipChatManager *chat_manager;
-
-		gboolean           created = FALSE;
-
-		view = GTK_TREE_VIEW (dialog->treeview);
-		selection = gtk_tree_view_get_selection (view);
-
-		session = gossip_app_get_session ();
-		chat_manager = gossip_app_get_chat_manager ();
-
-		if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-			GossipAccount        *account;
-			GossipAccountChooser *accounts_chooser;
-
-			const gchar          *text;
-
-			accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
-			account = gossip_account_chooser_get_account (accounts_chooser);
-
-			text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
-
-			contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
-			gossip_contact_set_id (contact, text);
-
-			g_object_unref (account);
-
-			created = TRUE;
-		} else {
-			gtk_tree_model_get (model, &iter, 
-					    COL_POINTER, &contact, 
-					    -1);
-		}
-
-		gossip_chat_manager_show_chat (chat_manager, contact);
-
-		/* Sounds weird I know, but we only unref the model
-		 * contact, the created contact is needed for chat,
-		 * etc.
-		 */
-		if (!created) {
-			g_object_unref (contact);
-		}
+	GtkTreeView       *view;
+	GtkTreeModel      *model;
+	GtkTreeSelection  *selection;
+	GtkTreeIter        iter;
+	GossipContact     *contact;
+	GossipChatManager *chat_manager;
+	gboolean           created = FALSE;
+	
+	if (response != GTK_RESPONSE_OK) {
+		gtk_widget_destroy (dialog->dialog);
+		return;
 	}
 
+	view = GTK_TREE_VIEW (dialog->treeview);
+	selection = gtk_tree_view_get_selection (view);
+	
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		GossipAccount        *account;
+		GossipAccountChooser *accounts_chooser;
+		const gchar          *text;
+		
+		accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
+		account = gossip_account_chooser_get_account (accounts_chooser);
+		
+		text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
+		
+		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
+		gossip_contact_set_id (contact, text);
+		
+		g_object_unref (account);
+		
+		created = TRUE;
+	} else {
+		gtk_tree_model_get (model, &iter, 
+				    COL_POINTER, &contact, 
+				    -1);
+	}
+	
 	gtk_widget_destroy (dialog->dialog);
+	
+	chat_manager = gossip_app_get_chat_manager ();
+	gossip_chat_manager_show_chat (chat_manager, contact);
+	
+	/* Sounds weird I know, but we only unref the model contact, the
+	 * created contact is needed for chat, etc.
+	 */
+	if (!created) {
+		g_object_unref (contact);
+	}
 }
 
 void
