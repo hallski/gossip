@@ -1,3 +1,11 @@
+NEWS in 0.11.2:
+===============
+- Fixed #343375, Make sure we follow the XMPP spec for RFC 3921 with
+regards to adding and removing contacts. Subscription was broken
+somehow since 0.10 (Jonatan Magnusson).
+- Fixed #339285, Move to new LINGUAS method (patch by Przemyslaw
+  Grzegorczyk).
+
 NEWS in 0.11.1:
 ===============
 - Updated the chat window title for new messages to show the senders

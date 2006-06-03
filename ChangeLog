@@ -1,3 +1,19 @@
+2006-06-03  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: (jabber_contact_add),
+	(jabber_contact_remove): Revised (according to the XMPP spec for
+	RFC 3921) the adding and removing of contacts, fixes #343375
+	(Jonatan Magnusson).
+	
+	* src/gossip-subscription-dialog.c: Silently accept subscription
+	requests from contacts that are both on our roster and we have
+	just asked for subscription from anyway, this halves the number of
+	clicks to set up a new contact.
+
+	* protocols/jabber/gossip-jabber-vcard.c (jabber_vcard_get_cb):
+	Don't return _REMOVE_MESSAGE in loudmouth message handler callback
+	for presence messages, since other things might need that information.
+
 2006-06-03  Richard Hult  <richard@imendio.com>
 
 	* autogen.sh:

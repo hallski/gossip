@@ -33,6 +33,9 @@
 #include "gossip-subscription-dialog.h"
 #include "gossip-app.h"
 
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+
 typedef struct {
 	GtkWidget      *dialog;
 	GtkWidget      *who_label;
@@ -127,8 +130,31 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 				GossipContact  *contact,
 				gpointer        user_data)
 {
-	GossipEvent      *event;
-	gchar            *str;
+	GossipEvent        *event;
+	GossipContactType   type;
+	GossipSubscription  subscription;
+	gchar              *str;
+
+	DEBUG_MSG (("SubscriptionDialog: New request from:'%s'", 
+		    gossip_contact_get_id (contact)));
+
+	type = gossip_contact_get_type (contact);
+	subscription = gossip_contact_get_subscription (contact);
+	
+	/* If the contact is on our contact list and we get a
+	 * subscription request when we already have subscription
+	 * "FROM" them then we silently send back subscribed because
+	 * we obviously want them on our roster, there is no need to
+	 * show a dialog and confirm it with the user.
+	 */
+	if (type == GOSSIP_CONTACT_TYPE_CONTACTLIST && 
+	    subscription == GOSSIP_SUBSCRIPTION_TO) {
+		DEBUG_MSG (("SubscriptionDialog: Silently accepting request"));
+		gossip_protocol_set_subscription (protocol, contact, TRUE);
+		return;
+	}
+
+	DEBUG_MSG (("SubscriptionDialog: Adding request to event manager"));
 
 	event = gossip_event_new (GOSSIP_EVENT_SUBSCRIPTION_REQUEST);
 
@@ -349,14 +375,16 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 
 	if (response == GTK_RESPONSE_YES ||
 	    response == GTK_RESPONSE_NO) {
-		gboolean subscribe;
+		gboolean subscribed;
 
-		subscribe = (response == GTK_RESPONSE_YES);
+		DEBUG_MSG (("SubscriptionDialog: Sending subscribed"));
+
+		subscribed = (response == GTK_RESPONSE_YES);
 		gossip_protocol_set_subscription (dialog->protocol, 
 						  dialog->contact, 
-						  subscribe);
+						  subscribed);
 
-		if (subscribe) {
+		if (subscribed) {
 			GtkWidget   *group_entry;
 			const gchar *name;
 			const gchar *group;
@@ -368,6 +396,8 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 			group = gtk_entry_get_text (GTK_ENTRY (group_entry));
 
 			message = _("I would like to add you to my contact list.");
+
+			DEBUG_MSG (("SubscriptionDialog: Adding contact"));
 					
 			gossip_protocol_add_contact (dialog->protocol,
 						     gossip_contact_get_id (dialog->contact),

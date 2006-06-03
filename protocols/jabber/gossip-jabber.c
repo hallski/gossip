@@ -41,8 +41,8 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+/* #define DEBUG_MSG(x) */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
@@ -1589,9 +1589,7 @@ jabber_contact_add (GossipProtocol *protocol,
         GossipJabberPriv   *priv;
 	GossipJID          *jid;
 	GossipContact      *contact;
-	GossipContactType   type;
 	GossipSubscription  subscription;
-	gboolean            ask = TRUE;
 	gchar              *escaped;
 
 	DEBUG_MSG (("Protocol: Adding contact:'%s' with name:'%s' and group:'%s'", 
@@ -1603,76 +1601,63 @@ jabber_contact_add (GossipProtocol *protocol,
 	jid = gossip_jid_new (id);
 	contact = g_hash_table_lookup (priv->contacts, gossip_jid_get_without_resource (jid));
 
-	escaped = g_markup_escape_text (message, -1);
+	if (contact) {
+		subscription = gossip_contact_get_subscription (contact);
+	} else {
+		subscription = GOSSIP_SUBSCRIPTION_NONE;
+	}
+
+	/* Add to roster IF not on it */
+	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {
+		DEBUG_MSG (("Protocol: Adding contact:'%s' to roster...", id));
+		
+		m = lm_message_new_with_sub_type (NULL, 
+						  LM_MESSAGE_TYPE_IQ,
+						  LM_MESSAGE_SUB_TYPE_SET);
+		
+		node = lm_message_node_add_child (m->node, "query", NULL);
+		lm_message_node_set_attributes (node,
+						"xmlns", XMPP_ROSTER_XMLNS, NULL);
+		
+		node = lm_message_node_add_child (node, "item", NULL);
+		
+		escaped = g_markup_escape_text (name, -1);
+		lm_message_node_set_attributes (node, 
+						"jid", gossip_jid_get_without_resource (jid), 
+						"name", escaped,
+						NULL);
+		g_free (escaped);
+		
+		if (group && g_utf8_strlen (group, -1) > 0) {
+			escaped = g_markup_escape_text (group, -1);
+			lm_message_node_add_child (node, "group", escaped);
+			g_free (escaped);
+		}
+		
+		lm_connection_send (priv->connection, m, NULL);
+		lm_message_unref (m);
+	}
 
         /* Request subscription */
-	DEBUG_MSG (("Protocol: Sending subscribe request with message:'%s'...", message));
-
-        m = lm_message_new_with_sub_type (id, LM_MESSAGE_TYPE_PRESENCE,
-                                          LM_MESSAGE_SUB_TYPE_SUBSCRIBE);
-        lm_message_node_add_child (m->node, "status", escaped);
-	g_free (escaped);
-
-        lm_connection_send (priv->connection, m, NULL);
-        lm_message_unref (m);
-
-	/* Add to roster */
-	DEBUG_MSG (("Protocol: Adding contact:'%s' to roster...", id));
-
-	m = lm_message_new_with_sub_type (NULL, 
-					  LM_MESSAGE_TYPE_IQ,
-					  LM_MESSAGE_SUB_TYPE_SET);
-
-	node = lm_message_node_add_child (m->node, "query", NULL);
-	lm_message_node_set_attributes (node,
-					"xmlns", XMPP_ROSTER_XMLNS, NULL);
-
-	node = lm_message_node_add_child (node, "item", NULL);
-
-	/* Only ask for subscription if we already have NONE */
-	if (contact) {
-		type = gossip_contact_get_type (contact);
-		subscription = gossip_contact_get_subscription (contact);
+	if (subscription == GOSSIP_SUBSCRIPTION_NONE ||
+	    subscription == GOSSIP_SUBSCRIPTION_FROM) {
+		DEBUG_MSG (("Protocol: Sending subscribe request with message:'%s'...", 
+			    message));
 		
-		ask &= type == GOSSIP_CONTACT_TYPE_TEMPORARY;
-		ask &= subscription != GOSSIP_SUBSCRIPTION_BOTH;
-
-		DEBUG_MSG (("Protocol: %s for subscription (type is %s and subscription is %s)...", 
-			    ask ? "Asking" : "Not asking",
-			    type == GOSSIP_CONTACT_TYPE_TEMPORARY ? "temporary" : "not temporary",
-			    subscription == GOSSIP_SUBSCRIPTION_BOTH ? "both" : "not both"));
-	} else {
-		DEBUG_MSG (("Protocol: Not asking for subscription (no contact)..."));
-		ask = FALSE;
-	}
-
-	escaped = g_markup_escape_text (name, -1);
-
-	if (ask) {
-		lm_message_node_set_attributes (node,
-						"jid", gossip_jid_get_without_resource (jid),
-						"subscription", "none",
-						"ask", "subscribe",
-						"name", escaped,
-						NULL);
-	} else {
-		/* Make sure we set the name incase we updated it */
-		lm_message_node_set_attributes (node,
-						"jid", gossip_jid_get_without_resource (jid),
-						"name", escaped,
-						NULL);
-	}
-
-	g_free (escaped);
-
-        if (group && g_utf8_strlen (group, -1) > 0) {
-		escaped = g_markup_escape_text (group, -1);
-                lm_message_node_add_child (node, "group", escaped);
+		m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (jid), 
+						  LM_MESSAGE_TYPE_PRESENCE,
+						  LM_MESSAGE_SUB_TYPE_SUBSCRIBE);
+		
+		escaped = g_markup_escape_text (message, -1);
+		lm_message_node_add_child (m->node, "status", escaped);
 		g_free (escaped);
-        }
-	
-	lm_connection_send (priv->connection, m, NULL);
-	lm_message_unref (m);
+		
+		lm_connection_send (priv->connection, m, NULL);
+		lm_message_unref (m);
+	} else {
+		DEBUG_MSG (("Protocol: NOT Sending subscribe request, "
+			    "subscription is either TO or BOTH"));
+	}
 
 	gossip_jid_unref (jid);
 }
@@ -1731,6 +1716,7 @@ jabber_contact_remove (GossipProtocol *protocol,
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
+	/* Next remove the contact from the roster */
 	m = lm_message_new_with_sub_type (NULL,
  					  LM_MESSAGE_TYPE_IQ,
  					  LM_MESSAGE_SUB_TYPE_SET);
@@ -1748,12 +1734,6 @@ jabber_contact_remove (GossipProtocol *protocol,
  	
  	lm_connection_send (priv->connection, m, NULL);
  	lm_message_unref (m);
-
-	m = lm_message_new_with_sub_type (gossip_contact_get_id (contact),
-					  LM_MESSAGE_TYPE_PRESENCE,
-					  LM_MESSAGE_SUB_TYPE_UNSUBSCRIBE);
-	lm_connection_send (priv->connection, m, NULL);
-	lm_message_unref (m);
 }
 
 static void

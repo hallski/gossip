@@ -45,7 +45,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 	LmMessageSubType     type;
 
 	if (!data || !data->callback) {
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	callback = data->callback;
@@ -83,7 +83,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			    NULL,
 			    data->user_data);
 
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	} 
 
 	/* no vcard node */
@@ -93,7 +93,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			    NULL,
 			    data->user_data);
 
-		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	/* everything else must be OK */
@@ -152,7 +152,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 
 	g_object_unref (vcard);
 
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
 gboolean
