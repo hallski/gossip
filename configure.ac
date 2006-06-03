@@ -17,7 +17,7 @@ AM_PATH_GLIB_2_0
 AC_PATH_XTRA
 
 GNOME_DOC_INIT
-AC_PROG_INTLTOOL
+IT_PROG_INTLTOOL([0.35.0])
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 
@@ -271,10 +271,7 @@ dnl Language Support
 dnl -----------------------------------------------------------
 GETTEXT_PACKAGE=gossip
 AC_SUBST(GETTEXT_PACKAGE)
-AC_SUBST([CONFIG_STATUS_DEPENDENCIES],['$(top_srcdir)/po/LINGUAS'])
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
-
-ALL_LINGUAS="`cat "$srcdir/po/LINGUAS" | grep -v '^#'`"
 
 
 AM_GLIB_GNU_GETTEXT
