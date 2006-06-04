@@ -1762,14 +1762,10 @@ gossip_chat_view_find (GossipChatView *view,
 	GtkTextIter         iter_at_mark;
 	GtkTextIter         iter_match_start;
 	GtkTextIter         iter_match_end;
-
 	static GtkTextMark *find_mark = NULL;
 	static gboolean     wrapped = FALSE;
-        
 	gboolean            found;
 	gboolean            from_start = FALSE;
-
-	gchar              *str;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 	g_return_if_fail (search_criteria != NULL);
@@ -1791,14 +1787,11 @@ gossip_chat_view_find (GossipChatView *view,
 		from_start = TRUE;
 	}
 
-	str = g_utf8_casefold (search_criteria, -1);
-	found = gtk_text_iter_forward_search (&iter_at_mark, 
-					      str, 
-					      GTK_TEXT_SEARCH_TEXT_ONLY, 
-					      &iter_match_start, 
-					      &iter_match_end,
-					      NULL);
-	g_free (str);
+	found = gossip_text_iter_forward_search (&iter_at_mark,
+						 search_criteria,
+						 &iter_match_start, 
+						 &iter_match_end,
+						 NULL);
     
 	if (!found) {
 		if (from_start) {
@@ -1838,10 +1831,7 @@ gossip_chat_view_highlight (GossipChatView *view,
 	GtkTextIter    iter_end;
 	GtkTextIter    iter_match_start;
 	GtkTextIter    iter_match_end;
-	        
 	gboolean       found;
-
-	gchar         *str;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
@@ -1858,15 +1848,12 @@ gossip_chat_view_highlight (GossipChatView *view,
 		return;
 	}
 
-	str = g_utf8_casefold (text, -1);
-
 	while (TRUE) {
-		found = gtk_text_iter_forward_search (&iter, 
-						      str, 
-						      GTK_TEXT_SEARCH_TEXT_ONLY, 
-						      &iter_match_start, 
-						      &iter_match_end,
-						      NULL);
+		found = gossip_text_iter_forward_search (&iter, 
+							 text, 
+							 &iter_match_start, 
+							 &iter_match_end,
+							 NULL);
 
 		if (!found) {
 			break;
@@ -1879,8 +1866,6 @@ gossip_chat_view_highlight (GossipChatView *view,
 		iter = iter_match_end;
 		gtk_text_iter_forward_char (&iter);
 	}
-
-	g_free (str);
 }
 
 void

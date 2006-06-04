@@ -7,6 +7,7 @@ regards to adding and removing contacts. Subscription was broken
 somehow since 0.10 (Jonatan Magnusson).
 - Fixed #339285, Move to new LINGUAS method (patch by Przemyslaw
   Grzegorczyk).
+- Fixed #339679, Use case insensitive search in the logs.
 
 NEWS in 0.11.1:
 ===============

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2005 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
  * Copyright (C) 2005      Martyn Russell <mr@gnome.org>
  *
@@ -92,7 +92,13 @@ GdkPixbuf *gossip_pixbuf_avatar_from_vcard_scaled   (GossipVCard         *vcard,
 GdkPixbuf *gossip_pixbuf_avatar_from_contact        (GossipContact       *contact);
 GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact,
 						     GtkIconSize          size);
-	
+
+gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
+						     const gchar         *str,
+						     GtkTextIter         *match_start,
+						     GtkTextIter         *match_end,
+						     const GtkTextIter   *limit);
+
 /* Windows */
 gboolean   gossip_window_get_is_visible             (GtkWindow           *window);
 void       gossip_window_present                    (GtkWindow           *window);

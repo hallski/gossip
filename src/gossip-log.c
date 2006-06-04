@@ -2118,7 +2118,7 @@ gossip_log_search_new (const gchar *text)
 			
 			hit = g_new0 (GossipLogSearchHit, 1);
 
-			hit->account = account;
+			hit->account = g_object_ref (account);
 			hit->contact = log_get_contact (account, contact_id);
 
 			hit->date = log_get_date_from_filename (filename);

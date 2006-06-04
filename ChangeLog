@@ -1,3 +1,16 @@
+2006-06-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.c (gossip_chat_view_find)
+	(gossip_chat_view_highlight): Use the case insensitive search
+	here, fixes bug #339679.
+
+	* src/gossip-ui-utils.c: Add case insensitive text iter search
+	from gtksourceview.
+
+	* src/gossip-log.c (gossip_log_search_new): Ref the account, since
+	it's unreffed when freed, fixes crash when searching more than
+	once.
+
 2006-06-03  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-event-manager.[ch]: Support activating an event
