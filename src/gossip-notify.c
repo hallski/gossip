@@ -26,6 +26,7 @@
 #include "gossip-app.h"
 #include "gossip-contact-info-dialog.h"
 #include "gossip-notify.h"
+#include "gossip-preferences.h"
 #include "gossip-stock.h"
 
 #define DEBUG_MSG(x)
@@ -142,6 +143,15 @@ notify_contact_online (GossipContact *contact)
 	gchar              *title;
 	const gchar        *status;
 	GError             *error = NULL;
+	gboolean            show_popup;
+
+	show_popup = gconf_client_get_bool (gossip_app_get_gconf_client (),
+					    GCONF_POPUPS_WHEN_AVAILABLE,
+					    NULL);
+
+	if (!show_popup) {
+		return;
+	}
 
 	if (notify_get_is_busy ()) {
 		return;

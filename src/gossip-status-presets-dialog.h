@@ -21,8 +21,6 @@
 #ifndef __GOSSIP_STATUS_PRESETS_DIALOG_H__
 #define __GOSSIP_STATUS_PRESETS_DIALOG_H__
 
-#define GCONF_PATH "/apps/gossip"
-
 void gossip_status_presets_dialog_show (void);
 
 #endif /* __GOSSIP_STATUS_PRESETS_DIALOG_H__ */

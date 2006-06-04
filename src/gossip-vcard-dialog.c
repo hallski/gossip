@@ -158,7 +158,7 @@ vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
 		path = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (widget));
 		if (path) {
 			gconf_client_set_string (gossip_app_get_gconf_client (),
-						 GCONF_PATH "/ui/avatar_directory",
+						 GCONF_UI_AVATAR_DIRECTORY,
 						 path,
 						 NULL);
 			g_free (path);
@@ -199,7 +199,7 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
  	gtk_dialog_set_default_response (GTK_DIALOG (chooser_dialog), GTK_RESPONSE_ACCEPT);
 
 	path = gconf_client_get_string (gossip_app_get_gconf_client (),
-					GCONF_PATH "/ui/avatar_directory",
+					GCONF_UI_AVATAR_DIRECTORY,
 					NULL);
 
  	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser_dialog),

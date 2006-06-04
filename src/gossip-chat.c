@@ -208,7 +208,7 @@ gossip_chat_init (GossipChat *chat)
 
 	/* get spelling languages */
 	value = gconf_client_get_string (gossip_app_get_gconf_client (),
-					 GCONF_PATH "/conversation/spell_checker_languages", 
+					 GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
 					 NULL);
 	
 	if (value) {

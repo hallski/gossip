@@ -661,11 +661,11 @@ app_setup (GossipAccountManager *manager)
 	/* Set up 'show_offline' config hooks to know when it changes. */
 	DEBUG_MSG (("AppSetup: Configuring miscellaneous settings"));
 	show_offline = gconf_client_get_bool (priv->gconf_client,
-					      GCONF_PATH "/contacts/show_offline",
+					      GCONF_CONTACTS_SHOW_OFFLINE,
 					      NULL);
 
 	gconf_client_notify_add (priv->gconf_client,
-				 GCONF_PATH "/contacts/show_offline",
+				 GCONF_CONTACTS_SHOW_OFFLINE,
 				 app_show_offline_key_changed_cb,
 				 show_offline_widget,
 				 NULL, NULL);
@@ -675,13 +675,13 @@ app_setup (GossipAccountManager *manager)
 
 	/* Set window to be hidden / shown. */
 	hidden = gconf_client_get_bool (priv->gconf_client, 
-					GCONF_PATH "/ui/main_window_hidden", 
+					GCONF_UI_MAIN_WINDOW_HIDDEN,
 					NULL);
 
 	/* If doesn't have tray, show window and mask "actions_hide_list" */
 	if (!app_have_tray()) {
 		hidden = FALSE;
-		gtk_widget_hide(GTK_WIDGET(priv->actions_hide_list));
+		gtk_widget_hide (GTK_WIDGET (priv->actions_hide_list));
 	}
 
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
@@ -966,7 +966,7 @@ app_show_offline_cb (GtkCheckMenuItem *item,
 	current = gtk_check_menu_item_get_active (item);
 
 	gconf_client_set_bool (priv->gconf_client,
-			       GCONF_PATH "/contacts/show_offline",
+			       GCONF_CONTACTS_SHOW_OFFLINE,
 			       current,
 			       NULL);
 
@@ -1173,7 +1173,7 @@ app_toggle_visibility (void)
 		gtk_widget_hide (priv->window);
 		
 		gconf_client_set_bool (priv->gconf_client, 
-				       GCONF_PATH "/ui/main_window_hidden", TRUE,
+				       GCONF_UI_MAIN_WINDOW_HIDDEN, TRUE,
 				       NULL);
 	} else {
 		gint x, y, w, h;
@@ -1197,7 +1197,7 @@ app_toggle_visibility (void)
 		gossip_window_present (GTK_WINDOW (priv->window));
 
 		gconf_client_set_bool (priv->gconf_client, 
-				       GCONF_PATH "/ui/main_window_hidden", FALSE,
+				       GCONF_UI_MAIN_WINDOW_HIDDEN, FALSE,
 				       NULL);
 	}
 }

@@ -1,5 +1,9 @@
 NEWS in 0.11.2:
 ===============
+Cleaned up the preferences and some of the gconf keys have changed, this
+means some of your preferences might need resetting.
+
+- Added a preference to disable the contact online notifications (Martyn).
 - Fixed #342928, Show subscription requests in the roster instead of JUST the
 notification tray which isn't ideal for people without one (Martyn).
 - Fixed #343375, Make sure we follow the XMPP spec for RFC 3921 with
@@ -7,9 +11,9 @@ regards to adding and removing contacts. Subscription was broken
 somehow since 0.10 (Jonatan Magnusson).
 - Fixed #339285, Move to new LINGUAS method (patch by Przemyslaw
   Grzegorczyk).
-- Fixed #339679, Use case insensitive search in the logs.
-- Fixed #343511, Support scroll events in the presence chooser.
-- Fixed #331773, Ask for confirmation before clearing the list
+- Fixed #339679, Use case insensitive search in the logs (Richard).
+- Fixed #343511, Support scroll events in the presence chooser (Richard).
+- Fixed #331773, Ask for confirmation before clearing the list (Richard).
 
 
 NEWS in 0.11.1:

@@ -59,8 +59,8 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/sound/play_sounds</key>
-      <applyto>/apps/gossip/sound/play_sounds</applyto>
+      <key>/schemas/apps/gossip/notifications/play_sounds</key>
+      <applyto>/apps/gossip/notifications/play_sounds</applyto>
       <owner>gossip</owner>
       <type>bool</type>
       <default>true</default>
@@ -73,13 +73,13 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/sound/silent_away</key>
-      <applyto>/apps/gossip/sound/silent_away</applyto>
+      <key>/schemas/apps/gossip/notifications/sound_when_away</key>
+      <applyto>/apps/gossip/notifications/sound_when_away</applyto>
       <owner>gossip</owner>
       <type>bool</type>
-      <default>true</default>
+      <default>false</default>
       <locale name="C">
-         <short>Be silent when away</short>
+         <short>Enable sound when away</short>
          <long>
 	 Whether or not to play sounds when away.
          </long>
@@ -87,15 +87,29 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/sound/silent_busy</key>
-      <applyto>/apps/gossip/sound/silent_busy</applyto>
+      <key>/schemas/apps/gossip/notifications/sound_when_busy</key>
+      <applyto>/apps/gossip/notifications/sound_when_busy</applyto>
       <owner>gossip</owner>
       <type>bool</type>
-      <default>false</default>
+      <default>true</default>
       <locale name="C">
-         <short>Be silent when busy</short>
+         <short>Enable sound when busy</short>
          <long>
 	 Whether or not to play sounds when busy.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/notifications/popup_when_contact_available</key>
+      <applyto>/apps/gossip/notifications/popup_when_contact_available</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Enable popup when contact is available</short>
+         <long>
+	 Whether or not to show a popup when a contact becomes available.
          </long>
       </locale>
     </schema>

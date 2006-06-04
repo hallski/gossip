@@ -36,16 +36,16 @@ typedef struct {
 	GtkWidget *dialog;
 	GtkWidget *notebook;
 
-	GtkWidget *sound_checkbutton;
-	GtkWidget *silent_busy_checkbutton;
-	GtkWidget *silent_away_checkbutton;
-        GtkWidget *separate_windows_checkbutton;
+	GtkWidget *checkbutton_sounds_for_messages;
+	GtkWidget *checkbutton_sounds_when_busy;
+	GtkWidget *checkbutton_sounds_when_away;
+	GtkWidget *checkbutton_popups_when_available;
 
-	GtkWidget *smileys_checkbutton;
-	GtkWidget *theme_combobox;
+	GtkWidget *checkbutton_show_smileys;
+	GtkWidget *combobox_chat_theme;
+        GtkWidget *checkbutton_separate_chat_windows;
 
-	GtkWidget *spell_checker_vbox;
-	GtkWidget *spell_checker_treeview;
+	GtkWidget *treeview_spell_checker;
 
 	GList     *gconf_ids;
 } GossipPreferences;
@@ -141,32 +141,36 @@ static void
 preferences_setup_widgets (GossipPreferences *preferences)
 {
 	preferences_hookup_toggle_button (preferences,
-					  GCONF_PATH "/sound/play_sounds",
-					  preferences->sound_checkbutton);
+					  GCONF_SOUNDS_FOR_MESSAGES,
+					  preferences->checkbutton_sounds_for_messages);
 	preferences_hookup_toggle_button (preferences,
-					  GCONF_PATH "/sound/silent_away",
-					  preferences->silent_away_checkbutton);
+					  GCONF_SOUNDS_WHEN_AWAY,
+					  preferences->checkbutton_sounds_when_away);
 	preferences_hookup_toggle_button (preferences,
-					  GCONF_PATH "/sound/silent_busy",
-					  preferences->silent_busy_checkbutton);
+					  GCONF_SOUNDS_WHEN_BUSY,
+					  preferences->checkbutton_sounds_when_busy);
+	preferences_hookup_toggle_button (preferences,
+					  GCONF_POPUPS_WHEN_AVAILABLE,
+					  preferences->checkbutton_popups_when_available);
+
 	preferences_hookup_sensitivity (preferences,
-					GCONF_PATH "/sound/play_sounds",
-					preferences->silent_away_checkbutton);
+					GCONF_SOUNDS_FOR_MESSAGES,
+					preferences->checkbutton_sounds_when_away);
 	preferences_hookup_sensitivity (preferences,
-					GCONF_PATH "/sound/play_sounds",
-					preferences->silent_busy_checkbutton);
+					GCONF_SOUNDS_FOR_MESSAGES,
+					preferences->checkbutton_sounds_when_busy);
 
         preferences_hookup_toggle_button (preferences,
-					  GCONF_PATH "/ui/separate_chat_windows",
-					  preferences->separate_windows_checkbutton);
+					  GCONF_UI_SEPARATE_CHAT_WINDOWS,
+					  preferences->checkbutton_separate_chat_windows);
 
         preferences_hookup_toggle_button (preferences,
-					  GCONF_PATH "/conversation/graphical_smileys",
-					  preferences->smileys_checkbutton);
+					  GCONF_CHAT_SHOW_SMILEYS,
+					  preferences->checkbutton_show_smileys);
 
 	preferences_hookup_string_combo (preferences,
-					 GCONF_PATH "/conversation/theme",
-					 preferences->theme_combobox);
+					 GCONF_CHAT_THEME,
+					 preferences->combobox_chat_theme);
 }
 
 static void 
@@ -180,7 +184,7 @@ preferences_languages_setup (GossipPreferences *preferences)
 	GtkCellRenderer   *renderer;
 	guint              col_offset;
 
-	view = GTK_TREE_VIEW (preferences->spell_checker_treeview);
+	view = GTK_TREE_VIEW (preferences->treeview_spell_checker);
 
 	store = gtk_list_store_new (COL_LANG_COUNT,
 				    G_TYPE_BOOLEAN,  /* enabled */
@@ -231,7 +235,7 @@ preferences_languages_add (GossipPreferences *preferences)
 	GossipSpell  *spell;
 	GList        *codes, *l;
 
-	view = GTK_TREE_VIEW (preferences->spell_checker_treeview);
+	view = GTK_TREE_VIEW (preferences->treeview_spell_checker);
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
 
 	spell = gossip_spell_new (NULL);
@@ -272,7 +276,7 @@ preferences_languages_save (GossipPreferences *preferences)
 
 	gchar             *languages = NULL;
 
-	view = GTK_TREE_VIEW (preferences->spell_checker_treeview);
+	view = GTK_TREE_VIEW (preferences->treeview_spell_checker);
 	model = gtk_tree_view_get_model (view);
 	
 	gtk_tree_model_foreach (model,
@@ -285,7 +289,7 @@ preferences_languages_save (GossipPreferences *preferences)
 	}
 	
 	gconf_client_set_string (gossip_app_get_gconf_client (),
-				 GCONF_PATH "/conversation/spell_checker_languages", 
+				 GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
 				 languages,
 				 NULL);
 
@@ -339,7 +343,7 @@ preferences_languages_load (GossipPreferences *preferences)
 
 	value = gconf_client_get_string (
 		gossip_app_get_gconf_client (),
-		GCONF_PATH "/conversation/spell_checker_languages", 
+		GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
 		NULL);
 	
 	if (!value) {
@@ -349,7 +353,7 @@ preferences_languages_load (GossipPreferences *preferences)
 	vlanguages = g_strsplit (value, ",", -1);
 	g_free (value);
 
-	view = GTK_TREE_VIEW (preferences->spell_checker_treeview);
+	view = GTK_TREE_VIEW (preferences->treeview_spell_checker);
 	model = gtk_tree_view_get_model (view);
 
 	gtk_tree_model_foreach (model,
@@ -401,7 +405,7 @@ preferences_languages_cell_toggled_cb (GtkCellRendererToggle *cell,
 	GtkTreeIter   iter;
 	gboolean      enabled;
 
-	view = GTK_TREE_VIEW (preferences->spell_checker_treeview);
+	view = GTK_TREE_VIEW (preferences->treeview_spell_checker);
 	model = gtk_tree_view_get_model (view);
 	store = GTK_LIST_STORE (model);
 	
@@ -425,7 +429,7 @@ preferences_themes_setup (GossipPreferences *preferences)
 	GtkListStore    *model;
 	GtkTreeIter      iter;
 
-	combo = GTK_COMBO_BOX (preferences->theme_combobox);
+	combo = GTK_COMBO_BOX (preferences->combobox_chat_theme);
 
 	model = gtk_list_store_new (COL_COMBO_COUNT,
 				    G_TYPE_STRING,
@@ -843,14 +847,14 @@ gossip_preferences_show (void)
 		NULL,
 		"preferences_dialog", &preferences->dialog,
 		"notebook", &preferences->notebook,
-		"sound_checkbutton", &preferences->sound_checkbutton,
-		"silent_busy_checkbutton", &preferences->silent_busy_checkbutton,
-		"silent_away_checkbutton", &preferences->silent_away_checkbutton,
-		"separate_windows_checkbutton", &preferences->separate_windows_checkbutton,
-		"smileys_checkbutton", &preferences->smileys_checkbutton,
-		"theme_combobox", &preferences->theme_combobox,
-		"spell_checker_vbox", &preferences->spell_checker_vbox,
-		"spell_checker_treeview", &preferences->spell_checker_treeview,
+		"checkbutton_sounds_for_messages", &preferences->checkbutton_sounds_for_messages,
+		"checkbutton_sounds_when_busy", &preferences->checkbutton_sounds_when_busy,
+		"checkbutton_sounds_when_away", &preferences->checkbutton_sounds_when_away,
+		"checkbutton_popups_when_available", &preferences->checkbutton_popups_when_available,
+		"checkbutton_separate_chat_windows", &preferences->checkbutton_separate_chat_windows,
+		"checkbutton_show_smileys", &preferences->checkbutton_show_smileys,
+		"combobox_chat_theme", &preferences->combobox_chat_theme,
+		"treeview_spell_checker", &preferences->treeview_spell_checker,
 		NULL);
 
 	gossip_glade_connect (glade, 

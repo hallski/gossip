@@ -121,7 +121,9 @@ gossip_sound_play (GossipSound sound)
 	GossipSession       *session;
         GossipPresence      *p;
         GossipPresenceState  state;
-	gboolean             enabled, silent_busy, silent_away;
+	gboolean             enabled;
+	gboolean             sounds_when_busy;
+	gboolean             sounds_when_away;
 
 	session = gossip_app_get_session ();
 
@@ -135,29 +137,29 @@ gossip_sound_play (GossipSound sound)
 	}
 
 	enabled = gconf_client_get_bool (gossip_app_get_gconf_client (),
-					 GCONF_PATH "/sound/play_sounds",
+					 GCONF_SOUNDS_FOR_MESSAGES,
 					 NULL);
 	if (!enabled) {
 		DEBUG_MSG (("Sound: Preferences have sound disabled."));
 		return;
 	}
 
-	silent_busy = gconf_client_get_bool (gossip_app_get_gconf_client (),
-					     GCONF_PATH "/sound/silent_busy",
-					     NULL);
-	silent_away = gconf_client_get_bool (gossip_app_get_gconf_client (),
-					     GCONF_PATH "/sound/silent_away",
-					     NULL);
+	sounds_when_busy = gconf_client_get_bool (gossip_app_get_gconf_client (),
+						  GCONF_SOUNDS_WHEN_BUSY,
+						  NULL);
+	sounds_when_away = gconf_client_get_bool (gossip_app_get_gconf_client (),
+						  GCONF_SOUNDS_WHEN_AWAY,
+						  NULL);
 
         p = gossip_session_get_presence (gossip_app_get_session ());
         state = gossip_presence_get_state (p);
 
-        if (silent_busy && state == GOSSIP_PRESENCE_STATE_BUSY) {
+        if (!sounds_when_busy && state == GOSSIP_PRESENCE_STATE_BUSY) {
 		return;
 	}
 
-	if (silent_away && (state == GOSSIP_PRESENCE_STATE_AWAY || 
-			    state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
+	if (!sounds_when_away && (state == GOSSIP_PRESENCE_STATE_AWAY || 
+				  state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
 		return;
 	}
 

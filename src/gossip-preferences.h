@@ -23,6 +23,20 @@
 
 #define GCONF_PATH "/apps/gossip"
 
+#define GCONF_SOUNDS_FOR_MESSAGES          GCONF_PATH "/notifications/sounds_for_messages"
+#define GCONF_SOUNDS_WHEN_AWAY             GCONF_PATH "/notifications/sounds_when_away"
+#define GCONF_SOUNDS_WHEN_BUSY             GCONF_PATH "/notifications/sounds_when_busy"
+#define GCONF_POPUPS_WHEN_AVAILABLE        GCONF_PATH "/notifications/popups_when_available"
+#define GCONF_CHAT_SHOW_SMILEYS            GCONF_PATH "/conversation/graphical_smileys"
+#define GCONF_CHAT_THEME                   GCONF_PATH "/conversation/theme"
+#define GCONF_CHAT_SPELL_CHECKER_LANGUAGES GCONF_PATH "/conversation/spell_checker_languages"
+
+#define GCONF_UI_SEPARATE_CHAT_WINDOWS     GCONF_PATH "/ui/separate_chat_windows"
+#define GCONF_UI_MAIN_WINDOW_HIDDEN        GCONF_PATH "/ui/main_window_hidden"
+#define GCONF_UI_AVATAR_DIRECTORY          GCONF_PATH "/ui/avatar_directory"
+
+#define GCONF_CONTACTS_SHOW_OFFLINE        GCONF_PATH "/contacts/show_offline"
+
 void gossip_preferences_show               (void);
 void gossip_preferences_show_status_editor (void);
 

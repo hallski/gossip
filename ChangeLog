@@ -1,3 +1,24 @@
+2006-06-04  Martyn Russell  <martyn@imendio.com>
+
+	* gossip.schemas.in: Updated some of the gconf key locations, now
+	sounds are not in a "sounds" parent of their own, they are in a
+	"notifications" parent since we now have popup preferences too.
+	
+	* ui/main.glade:
+	* src/gossip-notify.c:
+	* src/gossip-preferences.[ch]: Reworked the preferences a bit so
+	we have the gconf keys defined in ONE place instead of everywhere
+	and added a preference to be able to disable the "Joe Bloggs has
+	become	available" notification. 
+	
+	* src/gossip-app.c:
+	* src/gossip-chat.c:
+	* src/gossip-sound.c: 
+	* src/gossip-status-presets-dialog.h:
+	* src/gossip-theme-manager.c:
+	* src/gossip-vcard-dialog.c: Use the new defined gconf keys in
+	gossip-preferences.h. 
+
 2006-06-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-presence-chooser.c:
@@ -40,6 +61,11 @@
 	* src/gossip-log.c (gossip_log_search_new): Ref the account, since
 	it's unreffed when freed, fixes crash when searching more than
 	once.
+
+2006-06-03  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-contact.c (gossip_contact_name_case_n_compare):
+	Respect the size parameter.
 
 2006-06-03  Martyn Russell  <martyn@imendio.com>
 
