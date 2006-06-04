@@ -1,5 +1,25 @@
 2006-06-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c: (gossip_presence_chooser_init):
+	Don't unset CAN_FOCUS, make the button not take focus on click
+	instead, makes keynav work again.
+	(presence_chooser_menu_selection_done_cb),
+	(presence_chooser_menu_destroy_cb), (presence_chooser_menu_popup),
+	(presence_chooser_menu_popdown), (presence_chooser_toggled_cb):
+	Rework how the popping up/down works by using the toggled signal
+	instead of button press to we don't have to sync the toggling
+	manually.
+
+	(presence_chooser_state_and_status_new),
+	(presence_chooser_get_presets), (presence_chooser_scroll_event_cb):
+	Fix bug #343511, support scroll events in the presence chooser.
+
+2006-06-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-presence-chooser.c (gossip_presence_chooser_init):
+	Don't unset CAN_FOCUS, but set focus_on_click to FALSE to get
+	keynav working here.
+
 	* libgossip/gossip-account-manager.c (account_manager_file_save):
 	Plug leak.
 	(gossip_account_manager_get_default): Plug leak.
