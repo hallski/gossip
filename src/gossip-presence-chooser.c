@@ -365,7 +365,31 @@ static void
 presence_chooser_clear_activate_cb (GtkWidget             *item,
 				    GossipPresenceChooser *chooser)
 {
-	gossip_status_presets_reset ();
+	GtkWidget *dialog;
+
+	dialog = gtk_message_dialog_new (
+		GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (chooser))),
+		GTK_DIALOG_DESTROY_WITH_PARENT,
+		GTK_MESSAGE_QUESTION,
+		GTK_BUTTONS_NONE,
+		_("Are you sure you want to empy the "
+		  "list?"));
+
+	gtk_message_dialog_format_secondary_text (
+		GTK_MESSAGE_DIALOG (dialog),
+		_("This will remove any custom messages you have "
+		  "added to the list of preset status messages."));
+
+	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+				_("Cancel"), GTK_RESPONSE_CANCEL,
+				_("Clear List"), GTK_RESPONSE_OK,
+				NULL);
+
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
+		gossip_status_presets_reset ();
+	}
+
+	gtk_widget_destroy (dialog);
 }
 
 static void
@@ -802,14 +826,14 @@ gossip_presence_chooser_create_menu (GossipPresenceChooser *chooser)
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
-	item = gtk_menu_item_new_with_label (_("Clear List"));
+	item = gtk_menu_item_new_with_label (_("Clear List..."));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
 	g_signal_connect (item,
 			  "activate",
 			  G_CALLBACK (presence_chooser_clear_activate_cb),
-			  NULL);
+			  chooser);
 
 	return menu;
 }

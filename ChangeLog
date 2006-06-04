@@ -1,5 +1,11 @@
 2006-06-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c:
+	(presence_chooser_clear_activate_cb): Ask for confirmation before
+	clearing the list, fixes bug #331773.
+
+2006-06-04  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-presence-chooser.c: (gossip_presence_chooser_init):
 	Don't unset CAN_FOCUS, make the button not take focus on click
 	instead, makes keynav work again.

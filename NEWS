@@ -8,6 +8,9 @@ somehow since 0.10 (Jonatan Magnusson).
 - Fixed #339285, Move to new LINGUAS method (patch by Przemyslaw
   Grzegorczyk).
 - Fixed #339679, Use case insensitive search in the logs.
+- Fixed #343511, Support scroll events in the presence chooser.
+- Fixed #331773, Ask for confirmation before clearing the list
+
 
 NEWS in 0.11.1:
 ===============
