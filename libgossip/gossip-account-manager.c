@@ -368,7 +368,9 @@ gossip_account_manager_get_default (GossipAccountManager *manager)
 			GList         *l;
 
 			l = gossip_account_manager_get_accounts (manager);
-			account = g_list_nth_data (l, 0);
+			account = g_object_ref (l->data);
+
+			g_list_foreach (l, (GFunc) g_object_unref, NULL);
 			g_list_free (l);
 
 			name = gossip_account_get_name (account);
@@ -749,6 +751,9 @@ account_manager_file_save (GossipAccountManager *manager)
 
 	g_free (xml_file);
 
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
+	g_list_free (accounts);
+	
 	return TRUE;
 }
 

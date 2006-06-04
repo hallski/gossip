@@ -1,5 +1,9 @@
 2006-06-04  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-account-manager.c (account_manager_file_save):
+	Plug leak.
+	(gossip_account_manager_get_default): Plug leak.
+
 	* src/gossip-chat-view.c (gossip_chat_view_find)
 	(gossip_chat_view_highlight): Use the case insensitive search
 	here, fixes bug #339679.
