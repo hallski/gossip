@@ -1,3 +1,8 @@
+2006-06-05  Martyn Russell  <martyn@imendio.com>
+
+	* ui/main.glade: Updated some of the terminology used in the
+	lables and rearranged the options a bit.
+
 2006-06-04  Martyn Russell  <martyn@imendio.com>
 
 	* gossip.schemas.in: Updated some of the gconf key locations, now
