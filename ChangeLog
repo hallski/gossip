@@ -1,3 +1,9 @@
+2006-06-06  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-account-button.c: (account_button_update_tooltip):
+	- Use the name of the account instead of the ID in the accounts
+	  toolbar tooltip.
+
 2006-06-05  Martyn Russell  <martyn@imendio.com>
 
 	* ui/main.glade: Updated some of the terminology used in the

@@ -428,7 +428,7 @@ account_button_update_tooltip (GossipAccountButton *account_button)
 			       "%s"  /* suggestion 1 */
 			       "%s"  /* line feed */
 			       "%s", /* suggestion 2 */
-			       gossip_account_get_id (priv->account),
+			       gossip_account_get_name (priv->account),
 			       error ? "\n\n" : "",
 			       error ? error : "",
 			       error ? "\n" : "",
