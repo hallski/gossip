@@ -1,3 +1,9 @@
+2006-06-08  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-presence-chooser.c:
+	(presence_chooser_clear_activate_cb): Use the stock
+	GTK_STOCK_CANCEL instead of _("Cancel"). Naughty Richard! :)
+
 2006-06-06  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-account-button.c: (account_button_update_tooltip):

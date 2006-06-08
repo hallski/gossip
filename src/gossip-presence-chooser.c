@@ -381,7 +381,7 @@ presence_chooser_clear_activate_cb (GtkWidget             *item,
 		  "added to the list of preset status messages."));
 
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-				_("Cancel"), GTK_RESPONSE_CANCEL,
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				_("Clear List"), GTK_RESPONSE_OK,
 				NULL);
 
