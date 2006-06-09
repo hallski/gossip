@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-09 09:37+0200\n"
-"PO-Revision-Date: 2006-06-09 09:38+0200\n"
+"POT-Creation-Date: 2006-06-09 09:52+0200\n"
+"PO-Revision-Date: 2006-06-09 09:52+0200\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,7 @@ msgstr "Standaardmap voor het kiezen van gebruikersafbeeldingen"
 
 #: ../gossip.schemas.in.h:5
 msgid "Enable popup when contact is available"
-msgstr "Notificatiebericht tonen als een contact beschikbaar is"
+msgstr "Notificatiebericht tonen als een contact online komt"
 
 #: ../gossip.schemas.in.h:6
 msgid "Enable sound when away"
@@ -121,7 +121,7 @@ msgstr "Geluiden afspelen indien bezig."
 
 #: ../gossip.schemas.in.h:23
 msgid "Whether or not to show a popup when a contact becomes available."
-msgstr "Een notificatiebericht tonen als een contact beschikbaar is."
+msgstr "Een notificatiebericht tonen als een contact online komt."
 
 #: ../gossip.schemas.in.h:24
 msgid "Whether or not to show contacts that are offline in the contact list."
@@ -1189,7 +1189,7 @@ msgstr "Geluid afspelen indien _bezig"
 
 #: ../ui/main.glade.h:43
 msgid "Enable when contacts come online"
-msgstr "Tonen als contacten beschikbaar zijn"
+msgstr "Notificatiebericht tonen als contacten online komen"
 
 #: ../ui/main.glade.h:44
 msgid "Enter a name for this account."
@@ -1330,7 +1330,7 @@ msgstr "Bijnaam:"
 
 #: ../ui/main.glade.h:77
 msgid "Notifications"
-msgstr "Notificaties"
+msgstr "Notificatieberichten"
 
 #: ../ui/main.glade.h:78
 msgid "OS:"
