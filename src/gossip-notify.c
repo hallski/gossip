@@ -250,23 +250,25 @@ notify_new_message (GossipEventManager *event_manager,
 		    GossipMessage      *message)
 { 
 	GossipContact      *contact;
-	NotifyNotification *notify = NULL;
+	NotifyNotification *notify;
 	GdkPixbuf          *pixbuf;
 	gchar              *title;
-	gchar              *msg;
-	const gchar        *body;
+	gchar              *body_copy;
+	const gchar        *body_stripped;
 	gchar              *str;
 	gint                len;
 	GError             *error = NULL;
 
 	contact = gossip_message_get_sender (message);
 
-	body = gossip_message_get_body (message);
-	len = g_utf8_strlen (body, -1);
+	body_copy = g_strdup (gossip_message_get_body (message));
+	body_stripped = g_strstrip (body_copy);
 	
+	len = g_utf8_strlen (body_stripped, -1);
 	if (len < 1) {
 		DEBUG_MSG (("Notify: Ignoring new message from:'%s', no message content", 
 			    gossip_contact_get_id (contact)));
+		g_free (body_copy);
 		return NULL;
 	}
 
@@ -278,15 +280,18 @@ notify_new_message (GossipEventManager *event_manager,
 	title = g_strdup_printf (_("New message from %s"), 
 				 gossip_contact_get_name (contact));
 
-	len = MIN (len, NOTIFY_MESSAGE_MAX_LEN);
-	str = g_markup_printf_escaped ("%*s", len, body);
+	if (len >= NOTIFY_MESSAGE_MAX_LEN) {
+		gchar *end;
 
-	msg = g_strdup_printf ("\"%s%s\"",
-			       str, 
-			       len >= NOTIFY_MESSAGE_MAX_LEN ? "..." : "");
-	g_free (str);
+		end = g_utf8_offset_to_pointer (body_stripped, NOTIFY_MESSAGE_MAX_LEN);
+		end[0] = '\0';
+		
+		str = g_markup_printf_escaped ("%s...", body_stripped);
+	} else {
+		str = g_markup_printf_escaped ("%s", body_stripped);
+	}
 
-	notify = notify_notification_new (title, msg, NULL, NULL);
+	notify = notify_notification_new (title, str, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIME);
@@ -311,8 +316,9 @@ notify_new_message (GossipEventManager *event_manager,
 		g_error_free (error);
 	}
 
-	g_free (msg);
+	g_free (str);
 	g_free (title);
+	g_free (body_copy);
 
 	if (pixbuf) {
 		g_object_unref (pixbuf);
@@ -418,7 +424,7 @@ notify_event_added_cb (GossipEventManager *event_manager,
 						     contact,
 						     g_object_ref (event));
 				g_hash_table_insert (event_notifications,   
-						     notify,   
+						     notify,
 						     g_object_ref (event));  
 			}
 		}

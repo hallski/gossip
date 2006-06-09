@@ -1,3 +1,9 @@
+2006-06-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-notify.c (notify_new_message): Strip leading/trailing
+	whitespace from message before cutting of at the max len, and
+	don't cut in the middle of multibyte characters.
+
 2006-06-08  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-presence-chooser.c:
