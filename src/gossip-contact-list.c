@@ -63,6 +63,7 @@
 
 struct _GossipContactListPriv {
 	gboolean             show_offline;
+	gboolean             show_avatars;
 	gboolean             show_active;
 
 	GHashTable          *groups;
@@ -81,6 +82,11 @@ typedef struct {
 	gboolean        flash_on;
 	guint           flash_timeout_id;
 } FlashData;
+
+typedef struct {
+	GossipContactList *list;
+	GossipContact     *contact;
+} FlashTimeoutData;
 
 typedef struct {
 	gchar       *name;
@@ -253,13 +259,19 @@ static void     contact_list_item_menu_remove_cb         (gpointer            da
 static void     contact_list_group_menu_rename_cb        (gpointer            data,
 							  guint               action,
 							  GtkWidget          *widget);
+static void     contact_list_free_flash_timeout_data     (FlashTimeoutData   *timeout_data);
+static void     contact_list_flash_free_data             (FlashData          *data);
+static gboolean contact_list_flash_timeout_func          (FlashTimeoutData   *timeout_data);
 static void     contact_list_event_added_cb              (GossipEventManager *manager,
 							  GossipEvent        *event,
 							  GossipContactList  *list);
 static void     contact_list_event_removed_cb            (GossipEventManager *manager,
 							  GossipEvent        *event,
 							  GossipContactList  *list);
-static void     contact_list_flash_free_data             (FlashData          *data);
+static gboolean contact_list_set_show_avatars_foreach    (GtkTreeModel       *model,
+							  GtkTreePath        *path,
+							  GtkTreeIter        *iter,
+							  gpointer            show_avatars);
 
 enum {
         CONTACT_ACTIVATED,
@@ -271,6 +283,7 @@ static guint signals[LAST_SIGNAL];
 enum {
 	COL_PIXBUF_STATUS,
 	COL_PIXBUF_AVATAR,
+	COL_PIXBUF_AVATAR_VISIBLE,
 	COL_NAME,
 	COL_STATUS,
 	COL_CONTACT,
@@ -283,7 +296,8 @@ enum {
 
 enum {
 	PROP_0,
-	PROP_SHOW_OFFLINE
+	PROP_SHOW_OFFLINE,
+	PROP_SHOW_AVATARS
 };
 
 enum {
@@ -435,6 +449,17 @@ gossip_contact_list_class_init (GossipContactListClass *klass)
 					 PROP_SHOW_OFFLINE,
 					 param);
 
+	param = g_param_spec_boolean ("show_avatars",
+				      "Show Avatars",
+				      "Whether contact list should display "
+				      "avatars for contacts",
+				      TRUE,
+				      G_PARAM_READWRITE);
+
+	g_object_class_install_property (object_class,
+					 PROP_SHOW_AVATARS,
+					 param);
+
 	g_type_class_add_private (object_class, sizeof (GossipContactListPriv));
 }
 
@@ -561,6 +586,9 @@ contact_list_get_property (GObject    *object,
 	case PROP_SHOW_OFFLINE:
 		g_value_set_boolean (value, priv->show_offline);
 		break;
+	case PROP_SHOW_AVATARS:
+		g_value_set_boolean (value, priv->show_avatars);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -580,6 +608,10 @@ contact_list_set_property (GObject      *object,
 	switch (param_id) {
 	case PROP_SHOW_OFFLINE:
 		gossip_contact_list_set_show_offline (GOSSIP_CONTACT_LIST (object),
+						      g_value_get_boolean (value));
+		break;
+	case PROP_SHOW_AVATARS:
+		gossip_contact_list_set_show_avatars (GOSSIP_CONTACT_LIST (object),
 						      g_value_get_boolean (value));
 		break;
 	default:
@@ -1154,6 +1186,7 @@ contact_list_add_contact (GossipContactList *list,
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
 				    COL_PIXBUF_AVATAR, pixbuf_avatar,
+				    COL_PIXBUF_AVATAR_VISIBLE, priv->show_avatars,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_CONTACT, contact,
@@ -1193,6 +1226,7 @@ contact_list_add_contact (GossipContactList *list,
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
 				    COL_PIXBUF_AVATAR, pixbuf_avatar,
+				    COL_PIXBUF_AVATAR_VISIBLE, priv->show_avatars,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_CONTACT, contact,
@@ -1283,6 +1317,7 @@ contact_list_create_model (GossipContactList *list)
 	model = GTK_TREE_MODEL (gtk_tree_store_new (COL_COUNT,
 						    GDK_TYPE_PIXBUF,     /* Status pixbuf */
 						    GDK_TYPE_PIXBUF,     /* Avatar pixbuf */
+						    G_TYPE_BOOLEAN,      /* Avatar pixbuf visible */
 						    G_TYPE_STRING,       /* Name */
 						    G_TYPE_STRING,       /* Status string */
 						    GOSSIP_TYPE_CONTACT, /* Contact type */
@@ -1771,17 +1806,19 @@ contact_list_avatar_cell_data_func (GtkTreeViewColumn *tree_column,
 				    GossipContactList *list)
 {
 	GdkPixbuf *pixbuf;
+	gboolean   show_avatar;
 	gboolean   is_group;
 	gboolean   is_active;
 
 	gtk_tree_model_get (model, iter, 
 			    COL_PIXBUF_AVATAR, &pixbuf,
+			    COL_PIXBUF_AVATAR_VISIBLE, &show_avatar,
 			    COL_IS_GROUP, &is_group, 
 			    COL_IS_ACTIVE, &is_active, 
 			    -1);
 
 	g_object_set (cell, 
-		      "visible", !is_group,
+		      "visible", !is_group && show_avatar,
 		      "pixbuf", pixbuf,
 		      NULL); 
 
@@ -2347,19 +2384,14 @@ contact_list_group_menu_rename_cb (gpointer   data,
 	g_free (group);
 }
 
-typedef struct {
-	GossipContactList *list;
-	GossipContact     *contact;
-} FlashTimeoutData;
-
 static void
-contact_list_free_flash_timeout_data (FlashTimeoutData *t_data)
+contact_list_free_flash_timeout_data (FlashTimeoutData *timeout_data)
 {
-	g_return_if_fail (t_data != NULL);
+	g_return_if_fail (timeout_data != NULL);
 
-	g_object_unref (t_data->contact);
+	g_object_unref (timeout_data->contact);
 
-	g_free (t_data);
+	g_free (timeout_data);
 }
 
 static void
@@ -2375,7 +2407,7 @@ contact_list_flash_free_data (FlashData *data)
 }
 
 static gboolean
-contact_list_flash_timeout_func (FlashTimeoutData *t_data)
+contact_list_flash_timeout_func (FlashTimeoutData *timeout_data)
 {
 	GossipContactList     *list;
 	GossipContactListPriv *priv;
@@ -2387,10 +2419,10 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 	gboolean               retval = FALSE;
 	const gchar           *stock_id = NULL;
 	
-	list = t_data->list;
+	list = timeout_data->list;
 	priv = GET_PRIV (list);
 	
-	contact = t_data->contact;
+	contact = timeout_data->contact;
 	
 	iters = contact_list_find_contact (list, contact);
 	if (!iters) {
@@ -2440,7 +2472,6 @@ contact_list_flash_timeout_func (FlashTimeoutData *t_data)
 
 	return retval;
 }
-
 
 static void
 contact_list_event_added_cb (GossipEventManager *manager,
@@ -2578,6 +2609,21 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 	g_list_free (iters);
 }
 
+static gboolean    
+contact_list_set_show_avatars_foreach (GtkTreeModel *model,
+				       GtkTreePath  *path,
+				       GtkTreeIter  *iter,
+				       gpointer      show_avatars)
+{
+	gtk_tree_store_set (GTK_TREE_STORE (model), iter,
+			    COL_PIXBUF_AVATAR_VISIBLE, GPOINTER_TO_INT (show_avatars), 
+			    -1);
+
+	gtk_tree_model_row_changed (model, path, iter);  
+
+	return FALSE;
+}
+
 GossipContactList *
 gossip_contact_list_new (void)
 {
@@ -2641,9 +2687,25 @@ gossip_contact_list_get_selected_group (GossipContactList *list)
 gboolean
 gossip_contact_list_get_show_offline (GossipContactList *list)
 {
+	GossipContactListPriv *priv;
+
 	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), FALSE);
 
-	return list->priv->show_offline;
+	priv = GET_PRIV (list);
+
+	return priv->show_offline;
+}
+
+gboolean
+gossip_contact_list_get_show_avatars (GossipContactList *list)
+{
+	GossipContactListPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), TRUE);
+
+	priv = GET_PRIV (list);
+
+	return priv->show_avatars;
 }
 
 void         
@@ -2679,4 +2741,25 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 
 	/* Restore to original setting. */
 	priv->show_active = show_active;
+}
+
+void         
+gossip_contact_list_set_show_avatars (GossipContactList *list,
+				      gboolean           show_avatars)
+{
+	GossipContactListPriv *priv;
+	GtkTreeModel          *model;
+		
+	g_return_if_fail (GOSSIP_IS_CONTACT_LIST (list));
+
+	priv = GET_PRIV (list);
+
+	priv->show_avatars = show_avatars;
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) 
+				contact_list_set_show_avatars_foreach, 
+				GINT_TO_POINTER (show_avatars));
 }

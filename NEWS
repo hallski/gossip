@@ -1,7 +1,8 @@
 NEWS in 0.11.2:
 ===============
-Cleaned up the preferences and some of the gconf keys have changed, this
+- Cleaned up the preferences and some of the gconf keys have changed, this
 means some of your preferences might need resetting.
+- Make avatars optional (in the preferences).
 
 - Added a preference to disable the contact online notifications (Martyn).
 - Fixed #342928, Show subscription requests in the roster instead of JUST the

@@ -34,6 +34,7 @@
 #define GCONF_UI_SEPARATE_CHAT_WINDOWS     GCONF_PATH "/ui/separate_chat_windows"
 #define GCONF_UI_MAIN_WINDOW_HIDDEN        GCONF_PATH "/ui/main_window_hidden"
 #define GCONF_UI_AVATAR_DIRECTORY          GCONF_PATH "/ui/avatar_directory"
+#define GCONF_UI_SHOW_AVATARS              GCONF_PATH "/ui/show_avatars"
 
 #define GCONF_CONTACTS_SHOW_OFFLINE        GCONF_PATH "/contacts/show_offline"
 

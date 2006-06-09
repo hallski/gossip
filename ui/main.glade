@@ -3741,10 +3741,31 @@ This name could be something associated with the service provider, for example, 
 			  <property name="spacing">6</property>
 
 			  <child>
+			    <widget class="GtkCheckButton" id="checkbutton_show_avatars">
+			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Avatars are user chosen images shown on the roster and in chat windows.</property>
+			      <property name="can_focus">True</property>
+			      <property name="label" translatable="yes">Show _avatars</property>
+			      <property name="use_underline">True</property>
+			      <property name="relief">GTK_RELIEF_NORMAL</property>
+			      <property name="focus_on_click">True</property>
+			      <property name="active">True</property>
+			      <property name="inconsistent">False</property>
+			      <property name="draw_indicator">True</property>
+			    </widget>
+			    <packing>
+			      <property name="padding">0</property>
+			      <property name="expand">False</property>
+			      <property name="fill">False</property>
+			    </packing>
+			  </child>
+
+			  <child>
 			    <widget class="GtkCheckButton" id="checkbutton_show_smileys">
 			      <property name="visible">True</property>
+			      <property name="tooltip" translatable="yes">Convert smiley text into images when chatting.</property>
 			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Convert _smileys to graphical images</property>
+			      <property name="label" translatable="yes">Show _smileys</property>
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -3768,7 +3789,7 @@ This name could be something associated with the service provider, for example, 
 			      <child>
 				<widget class="GtkLabel" id="label586">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Th_eme:</property>
+				  <property name="label" translatable="yes">Chat Th_eme:</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -4085,7 +4106,7 @@ This name could be something associated with the service provider, for example, 
 			<widget class="GtkCheckButton" id="checkbutton_popups_when_available">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Enable when contacts come online</property>
+			  <property name="label" translatable="yes">Enable when contacts come _online</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>

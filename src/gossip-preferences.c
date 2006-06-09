@@ -34,16 +34,18 @@
 
 typedef struct {
 	GtkWidget *dialog;
+
 	GtkWidget *notebook;
+
+	GtkWidget *checkbutton_show_avatars;
+	GtkWidget *checkbutton_show_smileys;
+	GtkWidget *combobox_chat_theme;
+        GtkWidget *checkbutton_separate_chat_windows;
 
 	GtkWidget *checkbutton_sounds_for_messages;
 	GtkWidget *checkbutton_sounds_when_busy;
 	GtkWidget *checkbutton_sounds_when_away;
 	GtkWidget *checkbutton_popups_when_available;
-
-	GtkWidget *checkbutton_show_smileys;
-	GtkWidget *combobox_chat_theme;
-        GtkWidget *checkbutton_separate_chat_windows;
 
 	GtkWidget *treeview_spell_checker;
 
@@ -163,6 +165,10 @@ preferences_setup_widgets (GossipPreferences *preferences)
         preferences_hookup_toggle_button (preferences,
 					  GCONF_UI_SEPARATE_CHAT_WINDOWS,
 					  preferences->checkbutton_separate_chat_windows);
+
+	preferences_hookup_toggle_button (preferences,
+					  GCONF_UI_SHOW_AVATARS,
+					  preferences->checkbutton_show_avatars);
 
         preferences_hookup_toggle_button (preferences,
 					  GCONF_CHAT_SHOW_SMILEYS,
@@ -847,13 +853,14 @@ gossip_preferences_show (void)
 		NULL,
 		"preferences_dialog", &preferences->dialog,
 		"notebook", &preferences->notebook,
+		"checkbutton_show_avatars", &preferences->checkbutton_show_avatars,
+		"checkbutton_show_smileys", &preferences->checkbutton_show_smileys,
+		"combobox_chat_theme", &preferences->combobox_chat_theme,
+		"checkbutton_separate_chat_windows", &preferences->checkbutton_separate_chat_windows,
 		"checkbutton_sounds_for_messages", &preferences->checkbutton_sounds_for_messages,
 		"checkbutton_sounds_when_busy", &preferences->checkbutton_sounds_when_busy,
 		"checkbutton_sounds_when_away", &preferences->checkbutton_sounds_when_away,
 		"checkbutton_popups_when_available", &preferences->checkbutton_popups_when_available,
-		"checkbutton_separate_chat_windows", &preferences->checkbutton_separate_chat_windows,
-		"checkbutton_show_smileys", &preferences->checkbutton_show_smileys,
-		"combobox_chat_theme", &preferences->combobox_chat_theme,
 		"treeview_spell_checker", &preferences->treeview_spell_checker,
 		NULL);
 

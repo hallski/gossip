@@ -2,8 +2,8 @@
   <schemalist>
 
     <schema>
-      <key>/schemas/apps/gossip/contacts/show_offline</key>
-      <applyto>/apps/gossip/contacts/show_offline</applyto>
+      <key>/schemas/apps/gossip/ui/show_offline</key>
+      <applyto>/apps/gossip/ui/show_offline</applyto>
       <owner>gossip</owner>
       <type>bool</type>
       <default>false</default>
@@ -11,6 +11,21 @@
         <short>Show offline contacts</short>
 	<long>
 	Whether or not to show contacts that are offline in the contact list.
+	</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gossip/ui/show_avatars</key>
+      <applyto>/apps/gossip/ui/show_avatars</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Show avatars</short>
+	<long>
+	Whether or not to show avatars for contacts in the contact
+      list and chat windows.
 	</long>
       </locale>
     </schema>

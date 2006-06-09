@@ -244,6 +244,10 @@ static void            app_show_offline_key_changed_cb      (GConfClient        
 							     guint                     cnxn_id,
 							     GConfEntry               *entry,
 							     gpointer                  check_menu_item);
+static void            app_show_avatars_key_changed_cb      (GConfClient              *client,
+							     guint                     cnxn_id,
+							     GConfEntry               *entry,
+							     gpointer                  user_data);
 static void            app_connect_no_accounts_response_cb  (GtkWidget                *widget,
 							     gint                      response,
 							     gpointer                  user_data);
@@ -422,6 +426,7 @@ app_setup (GossipAccountManager *manager)
 	GtkRequisition  req;
 	gboolean        show_offline;
 	GtkWidget      *show_offline_widget;
+	gboolean        show_avatars;
 	gint            x, y, w, h;
 	gboolean        hidden;
 	GtkWidget      *image;
@@ -672,6 +677,18 @@ app_setup (GossipAccountManager *manager)
 
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
 					show_offline);
+
+	/* Show avatars? */
+	show_avatars = gconf_client_get_bool (priv->gconf_client,
+					      GCONF_UI_SHOW_AVATARS,
+					      NULL);
+
+	gconf_client_notify_add (priv->gconf_client,
+				 GCONF_UI_SHOW_AVATARS,
+				 app_show_avatars_key_changed_cb,
+				 NULL, NULL, NULL);
+
+	g_object_set (priv->contact_list, "show-avatars", show_avatars, NULL);
 
 	/* Set window to be hidden / shown. */
 	hidden = gconf_client_get_bool (priv->gconf_client, 
@@ -1453,6 +1470,21 @@ app_show_offline_key_changed_cb (GConfClient *client,
 
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (check_menu_item),
 					show_offline);
+}
+
+static void
+app_show_avatars_key_changed_cb (GConfClient *client,
+				 guint        cnxn_id,
+				 GConfEntry  *entry,
+				 gpointer     user_data)
+{
+	GossipAppPriv *priv;
+	gboolean       show_avatars;
+
+	priv = GET_PRIV (app);
+
+	show_avatars = gconf_value_get_bool (gconf_entry_get_value (entry));
+	gossip_contact_list_set_show_avatars (priv->contact_list, show_avatars);
 }
 
 /*

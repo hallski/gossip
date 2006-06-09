@@ -1,3 +1,11 @@
+2006-06-09  Martyn Russell  <martyn@imendio.com>
+
+	* gossip.schemas.in:
+	* src/gossip-app.c: 
+	* src/gossip-contact-list.[ch]:
+	* src/gossip-preferences.[ch]:
+	* ui/main.glade: Make avatars a preference.
+
 2006-06-09  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-notify.c (notify_new_message): Strip leading/trailing
