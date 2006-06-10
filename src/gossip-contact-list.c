@@ -1384,7 +1384,7 @@ contact_list_setup_view (GossipContactList *list)
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell, 
 		      "xpad", (guint) 0,
-		      "ypad", (guint) 1,
+		      "ypad", (guint) 0,
 		      "visible", FALSE,
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);

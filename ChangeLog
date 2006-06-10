@@ -1,5 +1,9 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-list.c (contact_list_setup_view): Set the
+	ypad to 0, makes it somewhat less likely that the row height will
+	be different when there is an avatar.
+
 	* src/gossip-chat.c: (chat_finalize):
 	* src/gossip-private-chat.c: (private_chat_finalize): Don't free
 	private data added with g_type_class_add_private().
