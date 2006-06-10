@@ -617,7 +617,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 
 	g_object_unref (size_group);
 	
-	/* set labels */
+	/* Set labels */
 	tmp_str = g_strdup_printf (_("Contact Information for %s"), 
 				   gossip_contact_get_name (contact));
 
@@ -630,25 +630,25 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	gtk_label_set_text (GTK_LABEL (dialog->name_label), 
 			    gossip_contact_get_name (contact));
 
-	/* set details */
+	/* Set details */
 	contact_info_dialog_update_subscription (dialog);
 	contact_info_dialog_update_presences (dialog);
 		
-	/* subscription listener */
+	/* Subscription listener */
 	id = g_signal_connect (session,
 			       "contact-updated",
 			       G_CALLBACK (contact_info_dialog_contact_updated_cb), 
 			       NULL);
 	dialog->contact_signal_handler = id;
 
-	/* presence listener */
+	/* Presence listener */
 	id = g_signal_connect (session,
 			       "contact-presence-updated",
 			       G_CALLBACK (contact_info_dialog_presence_updated_cb),
 			       NULL);
 	dialog->presence_signal_handler = id;
 
-	/* get vcard and version info */
+	/* Get vcard and version info */
 	str = g_strdup_printf ("<i>%s</i>", 
 			       _("Information requested..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->personal_status_label), str);

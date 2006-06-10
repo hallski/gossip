@@ -1,3 +1,20 @@
+2006-06-10  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: Use the gconf path definition in the
+	preferences header instead of a static string for the separate new
+	window lookup.
+	
+	* src/gossip-presence-chooser.c: Change the left and right padding
+	to 2 instead of 4, it looks better against the accounts toolbar
+	now.
+	
+	* src/gossip-private-chat.[ch]: 
+	* ui/chat.glade: Added support for showing avatars in the chat
+	window. I am not sure this is the best way yet, but it is a start
+	and it can be turned off in the preferences. Also make sure we use
+	g_type_class_add_private() instead of creating our own private
+	memory, etc.  
+
 2006-06-10  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.c: (chat_view_finalize): Remove unused

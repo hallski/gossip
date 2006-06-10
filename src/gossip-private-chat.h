@@ -45,8 +45,7 @@ typedef struct _GossipPrivateChatPriv GossipPrivateChatPriv;
 #include "gossip-chat-window.h"
 
 struct _GossipPrivateChat {
-	GossipChat             parent;
-        GossipPrivateChatPriv *priv;
+	GossipChat parent;
 };
 
 struct _GossipPrivateChatClass {

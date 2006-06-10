@@ -137,7 +137,7 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (alignment);
  	gtk_container_add (GTK_CONTAINER (chooser), alignment); 
-	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 4, 4);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 2, 2);
 
  	priv->hbox = gtk_hbox_new (FALSE, 2); 
 	gtk_widget_show (priv->hbox);

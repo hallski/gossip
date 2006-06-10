@@ -1,8 +1,9 @@
 NEWS in 0.11.2:
 ===============
+- Added avatars to the chat window (Martyn). 
 - Cleaned up the preferences and some of the gconf keys have changed, this
-means some of your preferences might need resetting.
-- Make avatars optional (in the preferences).
+means some of your preferences might need resetting (Martyn).
+- Added a preference for showing avatars (Martyn).
 - Added a preference to disable the contact online notifications (Martyn).
 - Stop flashing the task list a while after new messages arrive (Richard).
 - Fixed #342928, Show subscription requests in the roster instead of JUST the

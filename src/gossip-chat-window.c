@@ -421,20 +421,13 @@ GossipChatWindow *
 gossip_chat_window_get_default (void)
 {
 	GList       *l;
-        gboolean     separate_windows = TRUE;
-        GConfClient *gconf;
-        GError      *error;
+        GConfClient *gconf_client;
+        gboolean     separate_windows;
         
-        gconf = gconf_client_get_default ();
-
-        error = NULL;
-        separate_windows = gconf_client_get_bool (gconf,
-                                                  "/apps/gossip/ui/separate_chat_windows",
-                                                  &error);
-        if (error) {
-                separate_windows = FALSE;
-                g_error_free (error);
-        }
+	gconf_client = gossip_app_get_gconf_client ();
+        separate_windows = gconf_client_get_bool (gconf_client,
+                                                  GCONF_UI_SEPARATE_CHAT_WINDOWS,
+                                                  NULL);
 
         if (separate_windows) {
                 /* Always create a new window */
