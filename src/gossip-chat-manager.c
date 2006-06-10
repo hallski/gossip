@@ -52,16 +52,12 @@ static void chat_manager_event_activated_cb (GossipEventManager *event_manager,
 G_DEFINE_TYPE (GossipChatManager, gossip_chat_manager, G_TYPE_OBJECT);
 
 
-static gpointer parent_class = NULL;
-
-
 static void
 gossip_chat_manager_class_init (GossipChatManagerClass *class)
 {
 	GObjectClass *object_class;
 
 	object_class = G_OBJECT_CLASS (class);
-	parent_class = g_type_class_peek_parent (class);
 
 	object_class->finalize = chat_manager_finalize;
 
@@ -101,6 +97,8 @@ chat_manager_finalize (GObject *object)
 
 	g_hash_table_destroy (priv->chats);
 	g_hash_table_destroy (priv->events);
+
+	G_OBJECT_CLASS (gossip_chat_manager_parent_class)->finalize (object);
 }
 
 static void

@@ -280,7 +280,7 @@ account_finalize (GObject *object)
 	g_free (priv->resource);
 	g_free (priv->server);
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
 static void

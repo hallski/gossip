@@ -198,7 +198,7 @@ ft_finalize (GObject *object)
 	g_free (priv->file_name);
 	g_free (priv->file_mime_type);
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
 static void

@@ -59,15 +59,12 @@ enum {
 
 G_DEFINE_TYPE (GossipPresence, gossip_presence, G_TYPE_OBJECT);
 
-static gpointer parent_class = NULL;
-
 static void
 gossip_presence_class_init (GossipPresenceClass *class)
 {
 	GObjectClass *object_class;
 
 	object_class = G_OBJECT_CLASS (class);
-	parent_class = g_type_class_peek_parent (class);
 
 	object_class->finalize     = presence_finalize;
 	object_class->get_property = presence_get_property;
@@ -132,7 +129,7 @@ presence_finalize (GObject *object)
 	g_free (priv->status);
 	g_free (priv->resource);
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_presence_parent_class)->finalize) (object);
 }
 
 static void

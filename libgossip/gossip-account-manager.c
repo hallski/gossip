@@ -30,10 +30,10 @@
 #include "gossip-utils.h"
 #include "gossip-account-manager.h"
 
-#define RESOURCE_HACK /* For splitting an id of user@server/resource
-		       * to just user@server with resource in it's own
-		       * xml tags (for Gossip release 0.10.2).
-		       */
+/* For splitting an id of user@server/resource to just user@server with resource
+ * in it's own xml tags (for Gossip release 0.10.2).
+ */
+#define RESOURCE_HACK
 
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
@@ -133,6 +133,8 @@ account_manager_finalize (GObject *object)
 
 	g_free (priv->default_name);
 	g_free (priv->default_name_override);
+
+	G_OBJECT_CLASS (gossip_account_manager_parent_class)->finalize (object);
 }
 
 GossipAccountManager *

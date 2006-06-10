@@ -234,7 +234,7 @@ gossip_message_finalize (GObject *object)
 		gossip_chatroom_invite_unref (priv->invite);
 	}
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
 static void

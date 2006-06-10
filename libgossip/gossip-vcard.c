@@ -61,15 +61,12 @@ enum {
 
 G_DEFINE_TYPE (GossipVCard, gossip_vcard, G_TYPE_OBJECT);
 
-static gpointer parent_class = NULL;
-
 static void
 gossip_vcard_class_init (GossipVCardClass *class)
 {
 	GObjectClass *object_class;
 
 	object_class = G_OBJECT_CLASS (class);
-	parent_class = g_type_class_peek_parent (class);
 
 	object_class->finalize		= vcard_finalize;
 	object_class->get_property	= vcard_get_property;
@@ -169,7 +166,7 @@ vcard_finalize (GObject *object)
 	g_free (priv->description);
 	g_free (priv->avatar);
 	
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_vcard_parent_class)->finalize) (object);
 }
 
 static void

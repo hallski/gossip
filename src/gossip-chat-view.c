@@ -87,7 +87,7 @@ struct _GossipChatViewPriv {
 
 typedef struct {
 	GossipSmiley  smiley;
-	gchar        *pattern;
+	const gchar  *pattern;
 	gint          index;
 } GossipSmileyPattern;
 
@@ -230,7 +230,7 @@ static void     chat_view_invite_join_cb             (GossipChatroomProvider   *
 						      GossipChatroomJoinResult  result,
 						      gint                      id,
 						      gpointer                  user_data);
-static void     theme_manager_theme_changed_cb       (GossipThemeManager       *manager,
+static void     chat_view_theme_changed_cb           (GossipThemeManager       *manager,
 						      GossipChatView           *view);
 static void     chat_view_maybe_append_date_and_time (GossipChatView           *view,
 						      GossipMessage            *msg);
@@ -297,17 +297,14 @@ gossip_chat_view_init (GossipChatView *view)
 
 	gconf_client = gossip_app_get_gconf_client ();
 	
-	/* Watch system font changes and preferences to turn it on/off too */
 	priv->gconf_system_fonts_id = 
 		gconf_client_notify_add (gconf_client,
 					 "/desktop/gnome/interface/document_font_name",
 					 (GConfClientNotifyFunc) chat_view_system_font_changed_cb,
 					 view, NULL, NULL);
 
-	/* Should we use GNOME's document font */
 	chat_view_system_font_update (view, gconf_client);
 
-	/* Set up formatting tags */
 	chat_view_setup_tags (view);
 
 	gossip_theme_manager_apply (gossip_theme_manager_get (), view);
@@ -319,7 +316,7 @@ gossip_chat_view_init (GossipChatView *view)
 
 	g_signal_connect_object (gossip_theme_manager_get (),
 				 "theme-changed",
-				 G_CALLBACK (theme_manager_theme_changed_cb),
+				 G_CALLBACK (chat_view_theme_changed_cb),
 				 view,
 				 0);
 }
@@ -1355,8 +1352,8 @@ chat_view_invite_join_cb (GossipChatroomProvider   *provider,
 }
 
 static void
-theme_manager_theme_changed_cb (GossipThemeManager *manager,
-				GossipChatView     *view)
+chat_view_theme_changed_cb (GossipThemeManager *manager,
+			    GossipChatView     *view)
 {
 	GossipChatViewPriv *priv;
 	
@@ -1682,7 +1679,6 @@ void
 gossip_chat_view_scroll_down (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
-
 	GtkTextBuffer      *buffer;
 	GtkTextIter         iter;
 	GtkTextMark        *mark;

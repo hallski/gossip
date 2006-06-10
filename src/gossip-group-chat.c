@@ -201,8 +201,7 @@ static GtkTargetEntry drop_types[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
-static GHashTable   *group_chats = NULL;
-static GObjectClass *parent_class = NULL;
+static GHashTable *group_chats = NULL;
 
 G_DEFINE_TYPE_WITH_CODE (GossipGroupChat, gossip_group_chat, 
 			 GOSSIP_TYPE_CHAT,
@@ -216,7 +215,6 @@ gossip_group_chat_class_init (GossipGroupChatClass *klass)
 	GossipChatClass *chat_class;
 
 	object_class = G_OBJECT_CLASS (klass);
-	parent_class = g_type_class_peek_parent (klass);
 	chat_class = GOSSIP_CHAT_CLASS (klass);
             
         object_class->finalize = group_chat_finalize;
@@ -294,7 +292,7 @@ group_chat_finalize (GObject *object)
 		g_object_unref (priv->own_contact);
 	}
 
-/* 	G_OBJECT_CLASS (parent_class)->finalize (object); */
+ 	G_OBJECT_CLASS (gossip_group_chat_parent_class)->finalize (object);
 }
 
 static void

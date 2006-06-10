@@ -158,7 +158,6 @@ enum {
 };
 
 static guint    signals[LAST_SIGNAL] = {0};
-static gpointer parent_class;
 
 G_DEFINE_TYPE (GossipSession, gossip_session, G_TYPE_OBJECT);
 
@@ -168,8 +167,6 @@ gossip_session_class_init (GossipSessionClass *klass)
 	GObjectClass *object_class;
 	
 	object_class = G_OBJECT_CLASS (klass);
-
-	parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize = session_finalize;
 
@@ -405,7 +402,7 @@ session_finalize (GObject *object)
  		g_object_unref (priv->account_manager); 
  	} 
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_session_parent_class)->finalize) (object);
 }
 
 static void

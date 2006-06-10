@@ -238,7 +238,7 @@ contact_finalize (GObject *object)
 	
 	g_object_unref (priv->account);
 	
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
 static void

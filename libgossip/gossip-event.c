@@ -161,6 +161,8 @@ gossip_event_finalize (GObject *object)
 	if (priv->data) {
 		g_object_unref (priv->data);
 	}
+
+	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
 static void

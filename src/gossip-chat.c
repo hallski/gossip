@@ -101,8 +101,6 @@ enum {
 
 static guint chat_signals[LAST_SIGNAL] = { 0 };
 
-static GObjectClass *parent_class = NULL;
-
 G_DEFINE_TYPE (GossipChat, gossip_chat, G_TYPE_OBJECT);
 
 static void
@@ -111,7 +109,6 @@ gossip_chat_class_init (GossipChatClass *klass)
 	GObjectClass *object_class;
 
 	object_class = G_OBJECT_CLASS (klass);
-	parent_class = g_type_class_peek_parent (klass);
 
 	object_class->finalize = chat_finalize;
 
@@ -250,7 +247,7 @@ chat_finalize (GObject *object)
 		gossip_spell_unref (priv->spell);
 	}
 
-	G_OBJECT_CLASS (parent_class)->finalize (object);
+	G_OBJECT_CLASS (gossip_chat_parent_class)->finalize (object);
 }
 
 static void

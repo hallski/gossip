@@ -117,7 +117,7 @@ typedef struct {
 
 static void             gossip_jabber_class_init            (GossipJabberClass       *klass);
 static void             gossip_jabber_init                  (GossipJabber            *jabber);
-static void             jabber_finalize                     (GObject                 *obj);
+static void             jabber_finalize                     (GObject                 *object);
 static void             jabber_setup                        (GossipProtocol          *protocol,
 							     GossipAccount           *account);
 static void             jabber_setup_connection             (GossipJabber            *jabber);
@@ -393,12 +393,12 @@ gossip_jabber_init (GossipJabber *jabber)
 }
 	
 static void
-jabber_finalize (GObject *obj)
+jabber_finalize (GObject *object)
 {
  	GossipJabber     *jabber;
  	GossipJabberPriv *priv;
 
- 	jabber = GOSSIP_JABBER (obj);
+ 	jabber = GOSSIP_JABBER (object);
  	priv = GET_PRIV (jabber);
 
 	if (priv->account) {
@@ -426,7 +426,9 @@ jabber_finalize (GObject *obj)
 	
 #ifdef USE_TRANSPORTS
  	gossip_transport_account_list_free (priv->account_list);
-#endif	
+#endif
+
+	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
 }
 
 static void

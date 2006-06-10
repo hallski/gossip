@@ -113,6 +113,8 @@ event_manager_finalize (GObject *object)
 	priv = GET_PRIV (object);
 
 	g_hash_table_destroy (priv->events);
+
+	(G_OBJECT_CLASS (gossip_event_manager_parent_class)->finalize) (object);
 }
 
 static void

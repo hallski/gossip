@@ -53,7 +53,6 @@ enum {
 
 G_DEFINE_TYPE (GossipVersionInfo, gossip_version_info, G_TYPE_OBJECT);
 
-static gpointer parent_class = NULL;
 
 static void
 gossip_version_info_class_init (GossipVersionInfoClass *class)
@@ -61,7 +60,6 @@ gossip_version_info_class_init (GossipVersionInfoClass *class)
 	GObjectClass *object_class;
 
 	object_class = G_OBJECT_CLASS (class);
-	parent_class = g_type_class_peek_parent (class);
 
 	object_class->finalize     = version_info_finalize;
 	object_class->get_property = version_info_get_property;
@@ -114,8 +112,7 @@ version_info_finalize (GObject *object)
 	g_free (priv->version);
 	g_free (priv->os);
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
-
+	(G_OBJECT_CLASS (gossip_version_info_parent_class)->finalize) (object);
 }
 
 static void

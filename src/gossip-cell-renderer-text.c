@@ -80,9 +80,6 @@ enum {
 G_DEFINE_TYPE (GossipCellRendererText, gossip_cell_renderer_text, GTK_TYPE_CELL_RENDERER_TEXT);
 
 
-static gpointer parent_class;
-
-
 static void 
 gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 {
@@ -92,8 +89,6 @@ gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 	object_class = G_OBJECT_CLASS (klass);
 	cell_class   = GTK_CELL_RENDERER_CLASS (klass);
 	
-	parent_class = g_type_class_peek_parent (klass);
-
 	object_class->finalize = cell_renderer_text_finalize;
 
 	object_class->get_property = cell_renderer_text_get_property;
@@ -156,7 +151,7 @@ cell_renderer_text_finalize (GObject *object)
 
 	g_free (priv);
 
-	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
+	(G_OBJECT_CLASS (gossip_cell_renderer_text_parent_class)->finalize) (object);
 }
 
 static void
@@ -239,10 +234,11 @@ cell_renderer_text_get_size (GtkCellRenderer *cell,
 	
 	cell_renderer_text_update_text (celltext, widget, 0, 0);
 
-	(GTK_CELL_RENDERER_CLASS (parent_class)->get_size) (cell, widget,
-							    cell_area, 
-							    x_offset, y_offset,
-							    width, height);
+	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->get_size) (
+		cell, widget,
+		cell_area, 
+		x_offset, y_offset,
+		width, height);
 }
 
 static void
@@ -264,11 +260,12 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 					cell_area->width,
 					(flags & GTK_CELL_RENDERER_SELECTED));
 
-	(GTK_CELL_RENDERER_CLASS (parent_class)->render) (cell, window, 
-							  widget, 
-							  background_area,
-							  cell_area,
-							  expose_area, flags);
+	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->render) (
+		cell, window, 
+		widget, 
+		background_area,
+		cell_area,
+		expose_area, flags);
 }
 
 static void

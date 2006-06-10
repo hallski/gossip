@@ -70,7 +70,8 @@ gossip_tray_class_init (GossipTrayClass *klass)
 
 static void
 gossip_tray_init (GossipTray *tray)
-{}
+{
+}
 
 static void
 tray_finalize (GObject *object)
@@ -82,6 +83,8 @@ tray_finalize (GObject *object)
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
 	}
+
+	G_OBJECT_CLASS (gossip_tray_parent_class)->finalize (object);
 }
 
 static gboolean

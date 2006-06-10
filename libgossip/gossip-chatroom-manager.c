@@ -189,6 +189,8 @@ chatroom_manager_finalize (GObject *object)
 	g_free (priv->chatrooms_file_name);
 
 	g_free (priv->default_name);
+
+	(G_OBJECT_CLASS (gossip_chatroom_manager_parent_class)->finalize) (object);
 }
 
 GossipChatroomManager *

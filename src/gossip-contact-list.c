@@ -570,6 +570,7 @@ gossip_contact_list_init (GossipContactList *list)
 static void
 contact_list_finalize (GObject *object)
 {
+	G_OBJECT_CLASS (gossip_contact_list_parent_class)->finalize (object);
 }
 
 static void

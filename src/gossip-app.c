@@ -313,7 +313,6 @@ static void            app_contact_activated_cb             (GossipContactList  
 							     GossipEventId             event_id,
 							     gpointer                  user_data);
 
-static GObjectClass *parent_class;
 static GossipApp    *app;
 
 G_DEFINE_TYPE (GossipApp, gossip_app, G_TYPE_OBJECT);
@@ -323,8 +322,6 @@ gossip_app_class_init (GossipAppClass *klass)
 {
         GObjectClass  *object_class = G_OBJECT_CLASS (klass);
 	
-        parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-      
         object_class->finalize = app_finalize;
 
 	g_type_class_add_private (object_class, sizeof (GossipAppPriv));
@@ -412,9 +409,7 @@ app_finalize (GObject *object)
 	gossip_dbus_finalize (priv->session); 
 #endif
 
-	if (G_OBJECT_CLASS (parent_class)->finalize) {
-                (* G_OBJECT_CLASS (parent_class)->finalize) (object);
-        }
+	G_OBJECT_CLASS (gossip_app_parent_class)->finalize (object);
 }
 
 static void
