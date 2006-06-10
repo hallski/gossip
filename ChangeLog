@@ -1,5 +1,14 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c: (gossip_chat_window_finalize),
+	(chat_window_update_title), (chat_window_new_message_cb),
+	(chat_window_urgency_timeout_func), (chat_window_set_urgency_hint):
+	Remove the urgency hint after a timeout, to stop driving me crazy.
+	Also try removing the "*" before the window title, since we have
+	the icon and urgency hint now.
+
+2006-06-10  Richard Hult  <richard@imendio.com>
+
 	* ui/file-transfer.glade:
 	* ui/group-chat.glade:
 	* ui/main.glade: Remove more periods from tooltip strings, tweak

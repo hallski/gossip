@@ -154,6 +154,8 @@ static void       chat_window_drag_data_received        (GtkWidget             *
 							 guint                  info,
 							 guint                  time,
 							 GossipChatWindow      *window);
+static void       chat_window_set_urgency_hint           (GossipChatWindow     *window,
+							  gboolean              urgent);
 
 /* Called from Glade, so it shouldn't be static. */
 GtkWidget * chat_window_create_notebook (gpointer data);
@@ -167,6 +169,8 @@ struct _GossipChatWindowPriv {
 
 	gboolean     new_msg;
 
+	guint        urgency_timeout_id;
+	
 	GtkWidget   *dialog;
 	GtkWidget   *notebook;
 
@@ -220,6 +224,8 @@ static GtkTargetEntry drop_types[] = {
 };
 
 G_DEFINE_TYPE (GossipChatWindow, gossip_chat_window, G_TYPE_OBJECT);
+
+#define URGENCY_TIMEOUT 15*1000
 
 static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)
@@ -476,7 +482,10 @@ gossip_chat_window_finalize (GObject *object)
 
 	if (priv->save_geometry_id != 0) {
 		g_source_remove (priv->save_geometry_id);
-		priv->save_geometry_id = 0;
+	}
+
+	if (priv->urgency_timeout_id != 0) {
+		g_source_remove (priv->urgency_timeout_id);
 	}
 
 	chat_windows = g_list_remove (chat_windows, window);
@@ -764,7 +773,6 @@ chat_window_update_title (GossipChatWindow *window,
 {
 	GossipChatWindowPriv *priv;
 	const gchar          *name;
-	gchar                *title; 
 	GdkPixbuf 	     *pixbuf;
 
 	priv = GET_PRIV (window);
@@ -779,11 +787,7 @@ chat_window_update_title (GossipChatWindow *window,
 		name = gossip_chat_get_name (priv->current_chat);
 	}
 
-	title = g_strdup_printf (("%s%s"),
-				 priv->new_msg ? "*" : "",
-				 name);
-	
-	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);
+	gtk_window_set_title (GTK_WINDOW (priv->dialog), name);
 
 	if (priv->new_msg) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
@@ -791,11 +795,8 @@ chat_window_update_title (GossipChatWindow *window,
 		gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
         } else {
 		gtk_window_set_icon (GTK_WINDOW (priv->dialog), NULL);
-		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
-		DEBUG_MSG (("ChatWindow: Turning off urgency hint"));
+		chat_window_set_urgency_hint (window, FALSE);
 	}
-
-	g_free (title);
 }
 
 static void
@@ -1399,11 +1400,11 @@ chat_window_new_message_cb (GossipChat       *chat,
 
 			DEBUG_MSG (("ChatWindow: Should we highlight this nick?"));
 			if (gossip_chat_should_highlight_nick (message, own_contact)) {
-				gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
+				chat_window_set_urgency_hint (window, TRUE);
 				DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
 			}
 		} else {
-			gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
+			chat_window_set_urgency_hint (window, TRUE);
 			DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
 		}
 	}
@@ -1680,6 +1681,50 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	gossip_chat_manager_show_chat (manager, contact);
 	
 	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
+}
+
+static gboolean
+chat_window_urgency_timeout_func (GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
+
+	priv->urgency_timeout_id = 0;
+
+	return FALSE;
+}
+
+static void
+chat_window_set_urgency_hint (GossipChatWindow *window,
+			      gboolean          urgent)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	if (!urgent) {
+		/* Remove any existing hint and timeout. */
+		if (priv->urgency_timeout_id) {
+			gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
+			g_source_remove (priv->urgency_timeout_id);
+		}
+		return;
+	}	
+	
+	/* Add a new hint and renew any exising timeout or add a new one. */
+	if (priv->urgency_timeout_id) {
+		g_source_remove (priv->urgency_timeout_id);
+	} else {
+		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
+	}
+
+	priv->urgency_timeout_id = g_timeout_add (
+		URGENCY_TIMEOUT,
+		(GSourceFunc) chat_window_urgency_timeout_func,
+		window);
 }
 
 GtkWidget *
