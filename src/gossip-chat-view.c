@@ -83,7 +83,6 @@ struct _GossipChatViewPriv {
 	GossipContact *last_contact;
 
 	guint          gconf_system_fonts_id;
-	guint          gconf_use_system_fonts_id;
 };
 
 typedef struct {
@@ -339,12 +338,6 @@ chat_view_finalize (GObject *object)
 
 	if (priv->gconf_system_fonts_id) {
 		gconf_client_notify_remove (gconf_client, priv->gconf_system_fonts_id);
-		priv->gconf_system_fonts_id = 0;
-	}
-
-	if (priv->gconf_use_system_fonts_id) {
-		gconf_client_notify_remove (gconf_client, priv->gconf_use_system_fonts_id);
-		priv->gconf_use_system_fonts_id = 0;
 	}
 
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);

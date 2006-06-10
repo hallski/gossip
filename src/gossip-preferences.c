@@ -453,6 +453,14 @@ preferences_themes_setup (GossipPreferences *preferences)
 			    COL_COMBO_NAME, "blue",
 			    -1);
 	
+#if 0
+	gtk_list_store_append (model, &iter);
+	gtk_list_store_set (model, &iter,
+			    COL_COMBO_VISIBLE_NAME, _("Dark"),
+			    COL_COMBO_NAME, "dark",
+			    -1);
+#endif
+	
 	gtk_combo_box_set_model (combo, GTK_TREE_MODEL (model));
 	g_object_unref (model);
 }	

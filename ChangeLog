@@ -1,5 +1,22 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-view.c: (chat_view_finalize): Remove unused
+	use_system_fonts stuff.
+	
+	* src/gossip-preferences.c: (preferences_themes_setup): Add
+	commented out test theme.
+	
+	* src/gossip-theme-manager.c: (gossip_theme_manager_init),
+	(theme_manager_finalize), (theme_manager_notify_func),
+	(theme_manager_fixup_tag_table),
+	(theme_manager_apply_theme_classic),
+	(theme_manager_apply_theme_blue),
+	(theme_manager_apply_theme), (gossip_theme_manager_apply):
+	Refactor a bit in preparation for dynamic themes instead of just
+	hard-coded ones.
+
+2006-06-10  Richard Hult  <richard@imendio.com>
+
 	* ui/main.glade: Set mnemonic target for the theme combo, bug
 	#344438.
 
