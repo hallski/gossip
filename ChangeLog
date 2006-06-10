@@ -1,3 +1,9 @@
+2006-06-10  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c: (chat_finalize):
+	* src/gossip-private-chat.c: (private_chat_finalize): Don't free
+	private data added with g_type_class_add_private().
+
 2006-06-10  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: Use the gconf path definition in the

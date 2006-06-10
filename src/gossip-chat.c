@@ -248,7 +248,6 @@ chat_finalize (GObject *object)
 
 	if (priv->spell) {
 		gossip_spell_unref (priv->spell);
-		g_free (priv);
 	}
 
 	G_OBJECT_CLASS (parent_class)->finalize (object);

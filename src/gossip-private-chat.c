@@ -192,8 +192,6 @@ private_chat_finalize (GObject *object)
 
 	private_chat_composing_remove_timeout (chat);
 	
-        g_free (priv);
-
         G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
