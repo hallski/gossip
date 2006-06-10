@@ -1,5 +1,23 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-chatroom-manager.c:
+	(gossip_chatroom_manager_join_favourites),
+	(chatroom_manager_file_save):
+	* libgossip/gossip-chatroom.c: (gossip_chatroom_get_is_favourite):
+	* libgossip/gossip-chatroom.h:
+	* src/gossip-app.c: (app_chatroom_favourite_update):
+	* src/gossip-chatrooms-window.c: (chatrooms_window_model_add),
+	(chatrooms_window_chatroom_changed_foreach):
+	* src/gossip-edit-chatroom-dialog.c:
+	(gossip_edit_chatroom_dialog_show):
+	(gossip_chatroom_get_is_favourite): 
+	- Rename from _get_favourite to follow g* style and make it more
+	clear (probably needs doing for some other functions as well).
+	- Only join favorites, not all chatrooms.
+
+2006-06-10  Richard Hult  <richard@imendio.com>
+
+
 	* src/*.c:
 	* protocols/jabber/*.c:
 	* libgossip/*.c: (*_class_init, *_finalize): Make sure we chain

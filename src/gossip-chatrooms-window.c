@@ -649,7 +649,7 @@ chatrooms_window_model_add (GossipChatroomsWindow *window,
 	gtk_list_store_set (store, &iter,
 			    COL_NAME, gossip_chatroom_get_name (chatroom),
 			    COL_AUTO_CONNECT, gossip_chatroom_get_auto_connect (chatroom), 
-			    COL_FAVOURITE, gossip_chatroom_get_favourite (chatroom), 
+			    COL_FAVOURITE, gossip_chatroom_get_is_favourite (chatroom), 
 			    COL_POINTER, chatroom,
 			    -1);
 
@@ -947,7 +947,7 @@ chatrooms_window_chatroom_changed_foreach (GtkTreeModel   *model,
 		 */
 
 		gtk_list_store_set (GTK_LIST_STORE (model), iter,
-				    COL_FAVOURITE, gossip_chatroom_get_favourite (chatroom),
+				    COL_FAVOURITE, gossip_chatroom_get_is_favourite (chatroom),
 				    -1);
 
 		gtk_tree_model_row_changed (model, path, iter);

@@ -181,7 +181,7 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 		gossip_chatroom_get_auto_connect (chatroom));
 	gtk_toggle_button_set_active (
 		GTK_TOGGLE_BUTTON (dialog->checkbutton_favourite),
-		gossip_chatroom_get_favourite (chatroom));
+		gossip_chatroom_get_is_favourite (chatroom));
 
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);

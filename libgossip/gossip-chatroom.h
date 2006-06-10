@@ -71,7 +71,7 @@ const gchar *      gossip_chatroom_get_server         (GossipChatroom       *cha
 const gchar *      gossip_chatroom_get_room           (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_password       (GossipChatroom       *chatroom);
 gboolean           gossip_chatroom_get_auto_connect   (GossipChatroom       *chatroom);
-gboolean           gossip_chatroom_get_favourite      (GossipChatroom       *chatroom);
+gboolean           gossip_chatroom_get_is_favourite   (GossipChatroom       *chatroom);
 GossipChatroomStatus
                    gossip_chatroom_get_status         (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_last_error     (GossipChatroom       *chatroom);

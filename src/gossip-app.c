@@ -2498,7 +2498,7 @@ app_chatroom_favourite_update (void)
 		chatroom = l->data;
 		account = gossip_chatroom_get_account (chatroom);
 
-		if (!gossip_chatroom_get_favourite (chatroom)) {
+		if (!gossip_chatroom_get_is_favourite (chatroom)) {
  			continue;
 		}
 

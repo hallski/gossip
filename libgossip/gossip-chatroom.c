@@ -544,7 +544,7 @@ gossip_chatroom_get_auto_connect (GossipChatroom *chatroom)
 }
 
 gboolean
-gossip_chatroom_get_favourite (GossipChatroom *chatroom)
+gossip_chatroom_get_is_favourite (GossipChatroom *chatroom)
 {
 	GossipChatroomPriv *priv;
 

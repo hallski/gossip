@@ -550,6 +550,11 @@ gossip_chatroom_manager_join_favourites (GossipChatroomManager *manager)
 		GossipAccount          *account;
 
 		chatroom = l->data;
+
+		if (!gossip_chatroom_get_is_favourite (chatroom)) {
+			continue;
+		}
+		
 		account = gossip_chatroom_get_account (chatroom);
 
 		if (!gossip_session_is_connected (priv->session, account)) {
@@ -863,7 +868,7 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 		xmlNewTextChild (node, NULL, "password", gossip_chatroom_get_password (chatroom));
 		xmlNewChild (node, NULL, "auto_connect", gossip_chatroom_get_auto_connect (chatroom) ? "yes" : "no");
-		xmlNewChild (node, NULL, "favourite", gossip_chatroom_get_favourite (chatroom) ? "yes" : "no");
+		xmlNewChild (node, NULL, "favourite", gossip_chatroom_get_is_favourite (chatroom) ? "yes" : "no");
 
 		account = gossip_chatroom_get_account (chatroom);
 		if (account) {
