@@ -17,7 +17,6 @@
 
 2006-06-10  Richard Hult  <richard@imendio.com>
 
-
 	* src/*.c:
 	* protocols/jabber/*.c:
 	* libgossip/*.c: (*_class_init, *_finalize): Make sure we chain
