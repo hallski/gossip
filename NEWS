@@ -3,8 +3,8 @@ NEWS in 0.11.2:
 - Cleaned up the preferences and some of the gconf keys have changed, this
 means some of your preferences might need resetting.
 - Make avatars optional (in the preferences).
-
 - Added a preference to disable the contact online notifications (Martyn).
+- Stop flashing the task list a while after new messages arrive (Richard).
 - Fixed #342928, Show subscription requests in the roster instead of JUST the
 notification tray which isn't ideal for people without one (Martyn).
 - Fixed #343375, Make sure we follow the XMPP spec for RFC 3921 with
@@ -15,6 +15,7 @@ somehow since 0.10 (Jonatan Magnusson).
 - Fixed #339679, Use case insensitive search in the logs (Richard).
 - Fixed #343511, Support scroll events in the presence chooser (Richard).
 - Fixed #331773, Ask for confirmation before clearing the list (Richard).
+- Fixed #344438, Set mnemonic target for the theme combo (Richard).
 
 
 NEWS in 0.11.1:

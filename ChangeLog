@@ -1,5 +1,10 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Set mnemonic target for the theme combo, bug
+	#344438.
+
+2006-06-10  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c: (gossip_chat_window_finalize),
 	(chat_window_update_title), (chat_window_new_message_cb),
 	(chat_window_urgency_timeout_func), (chat_window_set_urgency_hint):
