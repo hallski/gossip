@@ -1,5 +1,11 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-event-manager.c (gossip_event_manager_activate)
+	(gossip_event_manager_activate_by_id): Ref the event and issuer
+	around the callback into "user" code, so that the data doesn't go
+	away from under us. Fixes a crash when clicking a blinking contact
+	in the contact list.
+
 	* libgossip/gossip-chatroom-manager.c:
 	(gossip_chatroom_manager_join_favourites),
 	(chatroom_manager_file_save):

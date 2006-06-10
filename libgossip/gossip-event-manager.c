@@ -189,6 +189,7 @@ gossip_event_manager_activate (GossipEventManager *manager,
 {	
 	GossipEventManagerPriv *priv;
 	EventData              *data;
+	GObject                *issuer;
 
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (manager));
 
@@ -199,9 +200,15 @@ gossip_event_manager_activate (GossipEventManager *manager,
 		return;
 	}
 
+	event = g_object_ref (event);
+	issuer = g_object_ref (data->issuer);
+
 	(data->callback) (manager, event, data->issuer);
 
-	gossip_event_manager_remove (manager, event, data->issuer);
+	gossip_event_manager_remove (manager, event, issuer);
+
+	g_object_unref (event);
+	g_object_unref (issuer);
 }
 
 static gboolean
@@ -226,6 +233,8 @@ gossip_event_manager_activate_by_id (GossipEventManager *manager,
 {
 	GossipEventManagerPriv *priv;
 	EventData              *data;
+	GossipEvent            *event;
+	GObject                *issuer;
 
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (manager));
 
@@ -234,13 +243,20 @@ gossip_event_manager_activate_by_id (GossipEventManager *manager,
 	data = g_hash_table_find (priv->events, 
 				  (GHRFunc) event_manager_find_foreach, 
 				  GINT_TO_POINTER (event_id));
+	
 	if (!data) {
 		return;
 	}
 
+	event = g_object_ref (data->event);
+	issuer = g_object_ref (data->issuer);
+	
 	(data->callback) (manager, data->event, data->issuer);
 
-	gossip_event_manager_remove (manager, data->event, data->issuer);
+	gossip_event_manager_remove (manager, event, issuer);
+
+	g_object_unref (event);
+	g_object_unref (issuer);
 }
 
 static void
