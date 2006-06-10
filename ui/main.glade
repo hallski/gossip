@@ -3743,7 +3743,7 @@ This name could be something associated with the service provider, for example, 
 			  <child>
 			    <widget class="GtkCheckButton" id="checkbutton_show_avatars">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Avatars are user chosen images shown on the roster and in chat windows.</property>
+			      <property name="tooltip" translatable="yes">Avatars are user chosen images shown in the contact list</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Show _avatars</property>
 			      <property name="use_underline">True</property>
@@ -3763,9 +3763,9 @@ This name could be something associated with the service provider, for example, 
 			  <child>
 			    <widget class="GtkCheckButton" id="checkbutton_show_smileys">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Convert smiley text into images when chatting.</property>
+			      <property name="tooltip" translatable="yes">Convert smiley text into images when chatting</property>
 			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Show _smileys</property>
+			      <property name="label" translatable="yes">Show _smileys as images</property>
 			      <property name="use_underline">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -4106,7 +4106,7 @@ This name could be something associated with the service provider, for example, 
 			<widget class="GtkCheckButton" id="checkbutton_popups_when_available">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
-			  <property name="label" translatable="yes">Enable when contacts come _online</property>
+			  <property name="label" translatable="yes">Display notifications when contacts come _online</property>
 			  <property name="use_underline">True</property>
 			  <property name="relief">GTK_RELIEF_NORMAL</property>
 			  <property name="focus_on_click">True</property>
@@ -4290,9 +4290,9 @@ This name could be something associated with the service provider, for example, 
 			      <child>
 				<widget class="GtkLabel" id="label616">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">The list of languages here reflects only the languages for which you have a dictionary installed.</property>
+				  <property name="label" translatable="yes">&lt;small&gt;The list of languages reflects only the languages for which you have a dictionary installed.&lt;/small&gt;</property>
 				  <property name="use_underline">False</property>
-				  <property name="use_markup">False</property>
+				  <property name="use_markup">True</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>
 				  <property name="wrap">True</property>
 				  <property name="selectable">False</property>
