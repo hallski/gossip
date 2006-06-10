@@ -1327,7 +1327,7 @@
 			  <child>
 			    <widget class="GtkButton" id="subscribe_button">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Press Subscribe to request to receive their status.</property>
+			      <property name="tooltip" translatable="yes">Press Subscribe to request to receive their status</property>
 			      <property name="can_focus">True</property>
 			      <property name="relief">GTK_RELIEF_NORMAL</property>
 			      <property name="focus_on_click">True</property>
@@ -2367,7 +2367,7 @@
 		      <child>
 			<widget class="GtkEntry" id="name_entry">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">This is the name that will be used on your roster for this contact.</property>
+			  <property name="tooltip" translatable="yes">This is the name that will be used on your roster for this contact</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">True</property>
@@ -2889,7 +2889,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <child>
 			<widget class="GtkEntry" id="3_password_entry">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">You can leave this blank if you don't want your password stored on a public machine. If you decide to do this, you will be prompted each time you connect for a password.</property>
+			  <property name="tooltip" translatable="yes">Leave this blank if you don't want your password stored on a public machine. If you decide to do this, you will be prompted each time you connect for a password</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">False</property>
@@ -2945,7 +2945,7 @@ To get started, just click &quot;Forward&quot;.</property>
 
 		      <child>
 			<widget class="GtkEntry" id="3_name_entry">
-			  <property name="tooltip" translatable="yes">Enter your real name here.</property>
+			  <property name="tooltip" translatable="yes">Enter your real name here</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">True</property>
@@ -3146,7 +3146,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			  <child>
 			    <widget class="GtkEntry" id="4_server_entry">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Enter the server used in the connection for this account.</property>
+			      <property name="tooltip" translatable="yes">Enter the server used in the connection for this account</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -3168,7 +3168,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			  <child>
 			    <widget class="GtkEntry" id="4_port_entry">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Enter the port used in the connection for this account.</property>
+			      <property name="tooltip" translatable="yes">Enter the port used in the connection for this account</property>
 			      <property name="can_focus">True</property>
 			      <property name="editable">True</property>
 			      <property name="visibility">True</property>
@@ -3268,7 +3268,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <child>
 			<widget class="GtkCheckButton" id="4_ssl_checkbutton">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">For increased security, enable this option.</property>
+			  <property name="tooltip" translatable="yes">For increased security, enable this option</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Use _encryption (SSL)</property>
 			  <property name="use_underline">True</property>
@@ -3288,7 +3288,7 @@ To get started, just click &quot;Forward&quot;.</property>
 		      <child>
 			<widget class="GtkCheckButton" id="4_proxy_checkbutton">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">If you have another machine on your network which 'proxies' the connection to the internet and you want to use it, enable this option.</property>
+			  <property name="tooltip" translatable="yes">If you have another machine on your network which 'proxies' the connection to the internet and you want to use it, enable this option</property>
 			  <property name="can_focus">True</property>
 			  <property name="label" translatable="yes">Use system pro_xy</property>
 			  <property name="use_underline">True</property>
@@ -3379,7 +3379,7 @@ This name could be something associated with the service provider, for example, 
 		      <child>
 			<widget class="GtkEntry" id="5_name_entry">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">Enter a name for this account.</property>
+			  <property name="tooltip" translatable="yes">Enter a name for this account</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
 			  <property name="visibility">True</property>
@@ -3763,7 +3763,6 @@ This name could be something associated with the service provider, for example, 
 			  <child>
 			    <widget class="GtkCheckButton" id="checkbutton_show_smileys">
 			      <property name="visible">True</property>
-			      <property name="tooltip" translatable="yes">Convert smiley text into images when chatting</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Show _smileys as images</property>
 			      <property name="use_underline">True</property>
@@ -4991,7 +4990,7 @@ This name could be something associated with the service provider, for example, 
 		  <child>
 		    <widget class="GtkEntry" id="entry_name">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">This name will be used to identify you when new contacts lookup your details.</property>
+		      <property name="tooltip" translatable="yes">This name will be used to identify you when new contacts lookup your details</property>
 		      <property name="can_focus">True</property>
 		      <property name="has_focus">True</property>
 		      <property name="editable">True</property>
@@ -5014,7 +5013,7 @@ This name could be something associated with the service provider, for example, 
 		  <child>
 		    <widget class="GtkEntry" id="entry_nickname">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">This name will be used to identify you in chat windows.</property>
+		      <property name="tooltip" translatable="yes">This name will be used to identify you in chat windows</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -5701,7 +5700,7 @@ This name could be something associated with the service provider, for example, 
 		      <child>
 			<widget class="GtkEntry" id="name_entry">
 			  <property name="visible">True</property>
-			  <property name="tooltip" translatable="yes">This acts as a filter to the contact list below. You can use segments of contact's name or ID, for example, &quot;jabber.org&quot; will list everyone using that server. </property>
+			  <property name="tooltip" translatable="yes">This acts as a filter to the contact list below. You can use segments of contact's name or ID, for example, &quot;jabber.org&quot; will list everyone using that server</property>
 			  <property name="can_focus">True</property>
 			  <property name="has_focus">True</property>
 			  <property name="editable">True</property>

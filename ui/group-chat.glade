@@ -514,7 +514,7 @@
 		  <child>
 		    <widget class="GtkCheckButton" id="checkbutton_auto_connect">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Join this chat room when Gossip starts and you are connected.</property>
+		      <property name="tooltip" translatable="yes">Join this chat room when Gossip starts and you are connected</property>
 		      <property name="can_focus">True</property>
 		      <property name="label" translatable="yes">Join room on start_up</property>
 		      <property name="use_underline">True</property>
@@ -534,7 +534,7 @@
 		  <child>
 		    <widget class="GtkCheckButton" id="checkbutton_favourite">
 		      <property name="visible">True</property>
-		      <property name="tooltip" translatable="yes">Join this chat room when Gossip starts and you are connected.</property>
+		      <property name="tooltip" translatable="yes">Join this chat room when Gossip starts and you are connected</property>
 		      <property name="can_focus">True</property>
 		      <property name="label" translatable="yes">Add to _favourites</property>
 		      <property name="use_underline">True</property>

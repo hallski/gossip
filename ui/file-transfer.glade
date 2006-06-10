@@ -109,7 +109,7 @@
 	    <widget class="GtkButton" id="button_accept">
 	      <property name="visible">True</property>
 	      <property name="sensitive">False</property>
-	      <property name="tooltip" translatable="yes">Not supported yet.</property>
+	      <property name="tooltip" translatable="yes">Not supported yet</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>

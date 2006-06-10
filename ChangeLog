@@ -1,5 +1,12 @@
 2006-06-10  Richard Hult  <richard@imendio.com>
 
+	* ui/file-transfer.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade: Remove more periods from tooltip strings, tweak
+	some strings.
+
+2006-06-10  Richard Hult  <richard@imendio.com>
+
 	* ui/main.glade: Remove periods in tooltip strings, tweak some
 	strings.
 
