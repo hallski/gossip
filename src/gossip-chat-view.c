@@ -601,16 +601,43 @@ chat_view_url_event_cb (GtkTextTag    *tag,
 static void
 chat_view_open_address (const gchar *url)
 {
-#ifdef USE_GNOMEVFS_FOR_URL
-	GnomeVFSResult result;
+	gchar *real_url;
 
-	result = gnome_vfs_url_show (url);
-	if (result == GNOME_VFS_OK) {
-		g_warning ("Couldn't show URL:'%s'", url);
+	/* The URL opening code can't handle schemeless strings, so we try to be
+	 * smart and add http if there is no scheme or doesn't look like a mail
+	 * address. This should work in most cases, and let us click on strings
+	 * like "www.gnome.org".
+	 */
+	if (!g_str_has_prefix (url, "http://") &&
+	    !strstr (url, ":/") &&
+	    !strstr (url, "@")) {
+		real_url = g_strdup_printf ("http://%s", url);
+	} else {
+		real_url = g_strdup (url);
+	}
+
+#ifdef USE_GNOMEVFS_FOR_URL
+	{
+		GnomeVFSResult result;
+		
+		result = gnome_vfs_url_show (real_url);
+		if (result != GNOME_VFS_OK) {
+			g_warning ("Couldn't show URL:'%s'", real_url);
+		}
 	}
 #else
-	gnome_url_show (url, NULL);
+	{
+		GError *error = NULL;
+		
+		gnome_url_show (real_url, &error);
+		if (error) {
+			g_warning ("Couldn't show URL:'%s'", real_url);
+			g_error_free (error);
+		}
+	}
 #endif
+
+	g_free (real_url);
 }
 
 static void

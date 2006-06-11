@@ -1,3 +1,8 @@
+2006-06-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.c (chat_view_open_address): Make
+	scheme-less links work again.
+
 2006-06-10  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-event-manager.c (gossip_event_manager_activate)
