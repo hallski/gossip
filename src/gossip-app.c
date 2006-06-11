@@ -55,6 +55,7 @@
 #include "gossip-log-window.h"
 #include "gossip-marshal.h"
 #include "gossip-new-account-window.h"
+#include "gossip-new-chatroom-dialog.h"
 #include "gossip-new-message-dialog.h"
 #include "gossip-preferences.h"
 #include "gossip-presence-chooser.h"
@@ -124,7 +125,7 @@ struct _GossipAppPriv {
 	GtkWidget             *actions_connect;
 	GtkWidget             *actions_disconnect;
 	GtkWidget             *actions_hide_list;
-	GtkWidget             *actions_group_chat_join;
+	GtkWidget             *actions_group_chat_join;   
 
 	/* Accounts toolbar */
 	GtkWidget             *accounts_toolbar;
@@ -188,6 +189,8 @@ static void            app_disconnect_cb                    (GtkWidget          
 static void            app_new_message_cb                   (GtkWidget                *widget,
 							     GossipApp                *app);
 static void            app_history_cb                       (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_group_chat_new_cb                (GtkWidget                *window,
 							     GossipApp                *app);
 static void            app_group_chat_join_cb               (GtkWidget                *window,
 							     GossipApp                *app);
@@ -545,6 +548,7 @@ app_setup (GossipAccountManager *manager)
  			      "actions_disconnect", "activate", app_disconnect_cb, 
 			      "actions_new_message", "activate", app_new_message_cb,
 			      "actions_history", "activate", app_history_cb,
+			      "actions_group_chat_new", "activate", app_group_chat_new_cb,
 			      "actions_group_chat_join", "activate", app_group_chat_join_cb,
 			      "actions_group_chat_rooms", "activate", app_group_chat_rooms_cb,
 			      "actions_add_contact", "activate", app_add_contact_cb,
@@ -935,6 +939,17 @@ app_history_cb (GtkWidget *widget,
 	priv = GET_PRIV (app);
 
 	gossip_log_window_show (NULL, NULL);
+}
+
+static void
+app_group_chat_new_cb (GtkWidget *window,
+		       GossipApp *app)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+	
+	gossip_new_chatroom_dialog_show (GTK_WINDOW (priv->window));
 }
 
 static void

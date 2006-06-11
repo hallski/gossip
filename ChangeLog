@@ -1,5 +1,11 @@
 2006-06-11  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: 
+	* ui/main.glade: Added a "Join New..." option to the group chat
+	submenu in the main window.
+
+2006-06-11  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-protocol.h:
 	* src/gossip-log.c: (gossip_log_message_for_chatroom):
 	* src/gossip-new-chatroom-dialog.c:
