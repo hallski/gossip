@@ -30,19 +30,11 @@
 #include "gossip-vcard.h"
 
 #define GOSSIP_TYPE_PROTOCOL         (gossip_protocol_get_type ())
-#define GOSSIP_PROTOCOL(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
- 			              GOSSIP_TYPE_PROTOCOL, GossipProtocol))
-#define GOSSIP_PROTOCOL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				      GOSSIP_TYPE_PROTOCOL, \
-			              GossipProtocolClass))
-#define GOSSIP_IS_PROTOCOL(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o),\
-			              GOSSIP_TYPE_PROTOCOL))
-#define GOSSIP_IS_PROTOCOL_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
-				      GOSSIP_TYPE_PROTOCOL))
-#define GOSSIP_PROTOCOL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o),\
-				      GOSSIP_TYPE_PROTOCOL, \
-				      GossipProtocolClass))
-
+#define GOSSIP_PROTOCOL(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PROTOCOL, GossipProtocol))
+#define GOSSIP_PROTOCOL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_PROTOCOL, GossipProtocolClass))
+#define GOSSIP_IS_PROTOCOL(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_PROTOCOL))
+#define GOSSIP_IS_PROTOCOL_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_PROTOCOL))
+#define GOSSIP_PROTOCOL_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_PROTOCOL, GossipProtocolClass))
 
 typedef enum {
 	GOSSIP_PROTOCOL_NO_CONNECTION,
@@ -56,15 +48,12 @@ typedef enum {
 	GOSSIP_PROTOCOL_SPECIFIC_ERROR,
 } GossipProtocolError;
 
-
 typedef struct _GossipProtocol      GossipProtocol;
 typedef struct _GossipProtocolClass GossipProtocolClass;
-
 
 struct _GossipProtocol {
 	GObject parent;
 };
-
 
 struct _GossipProtocolClass {
 	GObjectClass parent_class;
@@ -140,7 +129,6 @@ struct _GossipProtocolClass {
 					        gpointer         user_data);
 	void            (*register_cancel)     (GossipProtocol  *protocol);
 };
-
 
 GType           gossip_protocol_get_type              (void) G_GNUC_CONST;
 

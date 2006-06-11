@@ -1916,7 +1916,7 @@ gossip_log_message_for_chatroom (GossipChatroom *chatroom,
 	GossipAccount *account;
 	GossipContact *contact;
 	GossipContact *own_contact;
-        const gchar   *filename;
+        gchar         *filename;
 	FILE          *file;
 	gchar         *timestamp;
 	gchar         *body;
@@ -1961,6 +1961,7 @@ gossip_log_message_for_chatroom (GossipChatroom *chatroom,
 	}
 
 	if (!file) {
+		g_free (filename);
 		return;
 	}
 
@@ -2008,6 +2009,7 @@ gossip_log_message_for_chatroom (GossipChatroom *chatroom,
 	g_free (body);
 	g_free (name);
 	g_free (contact_id);
+	g_free (filename);
 
 	log_handlers_notify_all (own_contact, NULL, chatroom, message);
 	g_object_unref (own_contact);

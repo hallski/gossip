@@ -104,7 +104,7 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
 	GossipProtocol       *protocol;
-	const gchar          *server;
+	gchar                *server;
 	const gchar          *nickname;
 
 	session = gossip_app_get_session ();
@@ -127,6 +127,7 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 		conference_server = g_strconcat ("conference.", server, NULL);
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), conference_server);
 		g_free (conference_server);
+		g_free (server);
 	} 
 }
 
