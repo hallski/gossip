@@ -1,3 +1,9 @@
+2006-06-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-avatar-image.c (avatar_image_button_release_event_cb)
+	(avatar_image_button_press_event_cb): Return TRUE if we handle the
+	event, so that dragging the image doesn't initiate notebook dnd.
+
 2006-06-11  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber-ft.c (jabber_ft_handle_error):

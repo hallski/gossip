@@ -230,7 +230,7 @@ avatar_image_button_press_event_cb (GtkWidget         *widget,
 	 * image.
 	 */
 	if (popup_height <= height || popup_width <= width) {
-		return FALSE;
+		return TRUE;
 	}
 
 	pixbuf = avatar_image_scale_down_if_necessary (priv->pixbuf, MAX_LARGE);
@@ -261,7 +261,7 @@ avatar_image_button_press_event_cb (GtkWidget         *widget,
 	
 	gtk_widget_show_all (popup);
 
-	return FALSE;
+	return TRUE;
 }
 
 static gboolean
@@ -278,13 +278,13 @@ avatar_image_button_release_event_cb (GtkWidget         *widget,
 	}
 
 	if (!priv->popup) {
-		return FALSE;
+		return TRUE;
 	}
 	
 	gtk_widget_destroy (priv->popup);
 	priv->popup = NULL;
 		
-	return FALSE;
+	return TRUE;
 }
 
 GtkWidget *
