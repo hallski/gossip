@@ -18,6 +18,11 @@ somehow since 0.10 (Jonatan Magnusson).
 - Fixed #331773, Ask for confirmation before clearing the list (Richard).
 - Fixed #344438, Set mnemonic target for the theme combo (Richard).
 
+Translations:
+Jordi Mallach (ca)
+Richard Hult (sv)
+Wouter Bolsterlee (nl)
+
 
 NEWS in 0.11.1:
 ===============

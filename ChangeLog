@@ -1,3 +1,7 @@
+2006-06-11  Martyn Russell  <martyn@imendio.com>
+
+	* Release 0.11.2.
+
 2006-06-11  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-avatar-image.c (avatar_image_button_release_event_cb)

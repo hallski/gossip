@@ -379,7 +379,11 @@ private_chat_update_avatar (GossipPrivateChat *chat)
 	}
 
 	if (pixbuf) {
-		gtk_widget_show (priv->avatar_image_placeholder);
+		/* FIXME: We are not happy with the positioning of
+		 * this for the time being it will be hidden.
+		 */
+		gtk_widget_hide (priv->avatar_image_placeholder);
+/* 		gtk_widget_show (priv->avatar_image_placeholder); */
 	} else {
 		gtk_widget_hide (priv->avatar_image_placeholder);
 	}
