@@ -285,8 +285,7 @@ jabber_ft_handle_error (GossipJabber *jabber,
 
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 	if (!ft) {
-		g_warning ("Could not find GossipFT* from id:'%s'", 
-			   id_str);
+		DEBUG_MSG (("ProtocolFT: Could not find GossipFT* id:'%s'", id_str));
 		return;
 	}
 
