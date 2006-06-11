@@ -1,3 +1,8 @@
+2006-06-11  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: Added src/gossip-avatar-image.c, ran make update-po
+	to clean out the old crap too.
+
 2006-06-10  Richard Hult  <richard@imendio.com>
 
 	* sv.po: Update.
