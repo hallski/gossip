@@ -1,3 +1,10 @@
+2006-06-14  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version to 0.11.3.
+
+	* src/gossip-galago.c: Updated to work with the libgalago 0.5.x
+	API, fixes #339333, patch by Brian Pepple.
+
 2006-06-14  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c 
