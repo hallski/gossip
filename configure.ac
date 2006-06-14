@@ -16,35 +16,29 @@ AM_PROG_LIBTOOL
 AM_PATH_GLIB_2_0 
 AC_PATH_XTRA
 
+AC_PATH_PROG(GCONFTOOL, gconftool-2)
+AM_GCONF_SOURCE_2
+
 GNOME_DOC_INIT
 IT_PROG_INTLTOOL([0.35.0])
 
-AC_PATH_PROG(GCONFTOOL, gconftool-2)
-
 IDT_COMPILE_WARNINGS
 
-AM_GCONF_SOURCE_2
 
 dnl -----------------------------------------------------------
-dnl
-dnl Library Dependencies, uses pkg-config to detect correct version, etc
-dnl
+dnl Library version dependencies
 dnl -----------------------------------------------------------
-
-dnl AC_SUBST is required to ensure that the versions number end up into the
-dnl spec file.
-
-AC_SUBST(LIBXML_REQUIRED, 2.6.16)
-AC_SUBST(LIBXSLT_REQUIRED, 1.0.0)
-AC_SUBST(LIBEXSLT_REQUIRED, 0.8.0)
-AC_SUBST(GLIB_REQUIRED, 2.8.0)
-AC_SUBST(GTK_REQUIRED, 2.8.0)
-AC_SUBST(LIBGLADE_REQUIRED, 2.0.0)
-AC_SUBST(LOUDMOUTH_REQUIRED, 1.0)
-AC_SUBST(GCONF_REQUIRED, 1.2.0)
-AC_SUBST(LIBGNOME_REQUIRED, 2.0.0)
-AC_SUBST(LIBGNOMEVFS_REQUIRED, 2.0.0)
-AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED.0.2.90)
+LIBXML_REQUIRED=2.6.16
+LIBXSLT_REQUIRED=1.0.0
+LIBEXSLT_REQUIRED=0.8.0
+GLIB_REQUIRED=2.8.0
+GTK_REQUIRED=2.8.0
+LIBGLADE_REQUIRED=2.0.0
+LOUDMOUTH_REQUIRED=1.0
+GCONF_REQUIRED=1.2.0
+LIBGNOME_REQUIRED=2.0.0
+LIBGNOMEVFS_REQUIRED=2.0.0
+DESKTOP_FILE_UTILS_REQUIRED=0.2.90
 
 
 dnl -----------------------------------------------------------
@@ -192,13 +186,10 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
 	libxml-2.0 >= $LIBXML_REQUIRED
 ])
 
-GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
-AC_SUBST(GLIB_GENMARSHAL)
 
 dnl -----------------------------------------------------------
 dnl Check for libgcrypt
 dnl -----------------------------------------------------------
-
 AC_PATH_PROG(LIBGCRYPT_CONFIG, libgcrypt-config, no)
 if test x"$LIBGCRYPT_CONFIG" = xno; then
 	AC_MSG_ERROR([gcrypt not found on system])
@@ -209,6 +200,7 @@ else
 	GOSSIP_JABBER_CFLAGS="$GOSSIP_JABBER_CFLAGS $LIBGCRYPT_CFLAGS"
 	GOSSIP_JABBER_LDFLAGS="$GOSSIP_JABBER_LDFLAGS $LIBGCRYPT_LDFLAGS"
 fi
+
 
 dnl -----------------------------------------------------------
 dnl Check for the XScreenSaver extension (used for autoaway)
@@ -273,24 +265,22 @@ GETTEXT_PACKAGE=gossip
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Gettext package name])
 
-
 AM_GLIB_GNU_GETTEXT
 
 
 dnl -----------------------------------------------------------
-
 AC_OUTPUT([
-Makefile
-ui/Makefile
-ui/pixmaps/Makefile
-libgossip/Makefile
-src/Makefile
-src/sounds/Makefile
-protocols/Makefile
-protocols/jabber/Makefile
-po/Makefile.in
-help/Makefile
-gossip.desktop.in
+	Makefile
+	ui/Makefile
+	ui/pixmaps/Makefile
+	libgossip/Makefile
+	src/Makefile
+	src/sounds/Makefile
+	protocols/Makefile
+	protocols/jabber/Makefile
+	po/Makefile.in
+	help/Makefile
+	gossip.desktop.in
 ])
 
 echo
