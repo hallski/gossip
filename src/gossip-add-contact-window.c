@@ -234,7 +234,7 @@ add_contact_window_vcard_handler (GossipResult       result,
 
 	/* name */
 	str = gossip_vcard_get_name (vcard);
-	if (str && g_utf8_strlen (str, -1) > 0) {
+	if (str && strlen (str) > 0) {
 		gtk_widget_show (window->two_name_label);
 		gtk_widget_show (window->two_name_stub_label);
 		gtk_label_set_text (GTK_LABEL (window->two_name_label), str);
@@ -250,7 +250,7 @@ add_contact_window_vcard_handler (GossipResult       result,
 	
 	/* email */
 	str = gossip_vcard_get_email (vcard);
-	if (str && g_utf8_strlen (str, -1) > 0) {
+	if (str && strlen (str) > 0) {
 		gtk_widget_show (window->two_email_label);
 		gtk_widget_show (window->two_email_stub_label);
 		gtk_label_set_text (GTK_LABEL (window->two_email_label), str);
@@ -262,7 +262,7 @@ add_contact_window_vcard_handler (GossipResult       result,
 
 	/* country */
 	str = gossip_vcard_get_country (vcard);
-	if (str && g_utf8_strlen (str, -1) > 0) {
+	if (str && strlen (str) > 0) {
 		gtk_widget_show (window->two_country_label);
 		gtk_widget_show (window->two_country_stub_label);
 		gtk_label_set_text (GTK_LABEL (window->two_country_label), str);

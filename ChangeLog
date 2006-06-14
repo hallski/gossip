@@ -1,3 +1,20 @@
+2006-06-14  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (chat_window_insert_smiley_activate_cb)
+	(chat_window_set_urgency_hint): Fix bug in the urgency timeout
+	logic that kept the urgency hint from being set more than once per
+	window.
+
+	* src/gossip-add-contact-window.c (add_contact_window_vcard_handler):
+	* src/gossip-chat.c (gossip_chat_correct_word): Get the number of
+	bytes, not chars.
+
+	* src/gossip-chat-window.c (chat_window_update_title): Add back
+	the "*" in front of the title for windows with new messages, but
+	with a space before the name. It was simply too subtle without
+	this.
+	- Plug leak of a pixbuf.
+
 2006-06-14  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version to 0.11.3.

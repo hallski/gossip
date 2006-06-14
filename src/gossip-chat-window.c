@@ -786,6 +786,7 @@ chat_window_update_title (GossipChatWindow *window,
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
 		gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
+		g_object_unref (pixbuf);
         } else {
 		gtk_window_set_icon (GTK_WINDOW (priv->dialog), NULL);
 		chat_window_set_urgency_hint (window, FALSE);
@@ -923,8 +924,7 @@ chat_window_insert_smiley_activate_cb (GtkWidget        *menuitem,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 	gtk_text_buffer_insert (buffer, &iter, 
-				smiley, 
-				g_utf8_strlen (smiley, -1));
+				smiley, -1);
 }
 
 static void
@@ -1394,11 +1394,9 @@ chat_window_new_message_cb (GossipChat       *chat,
 			DEBUG_MSG (("ChatWindow: Should we highlight this nick?"));
 			if (gossip_chat_should_highlight_nick (message, own_contact)) {
 				chat_window_set_urgency_hint (window, TRUE);
-				DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
 			}
 		} else {
 			chat_window_set_urgency_hint (window, TRUE);
-			DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
 		}
 	}
 
@@ -1683,6 +1681,7 @@ chat_window_urgency_timeout_func (GossipChatWindow *window)
 
 	priv = GET_PRIV (window);
 
+	DEBUG_MSG (("ChatWindow: Turning off urgency hint"));
 	gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
 
 	priv->urgency_timeout_id = 0;
@@ -1701,8 +1700,10 @@ chat_window_set_urgency_hint (GossipChatWindow *window,
 	if (!urgent) {
 		/* Remove any existing hint and timeout. */
 		if (priv->urgency_timeout_id) {
+			DEBUG_MSG (("ChatWindow: Turning off urgency hint"));
 			gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
 			g_source_remove (priv->urgency_timeout_id);
+			priv->urgency_timeout_id = 0;
 		}
 		return;
 	}	
@@ -1711,6 +1712,7 @@ chat_window_set_urgency_hint (GossipChatWindow *window,
 	if (priv->urgency_timeout_id) {
 		g_source_remove (priv->urgency_timeout_id);
 	} else {
+		DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
 		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
 	}
 

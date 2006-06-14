@@ -21,10 +21,8 @@
  */
 
 #include <config.h>
-
 #include <string.h>
 #include <stdlib.h>
-
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
@@ -57,8 +55,9 @@ struct _GossipChatPriv {
 
 	GossipSpell      *spell;
 
-	/* Used to automatically shrink a window that has temporarily
-	   grown due to long input */
+	/* Used to automatically shrink a window that has temporarily grown due
+	 * to long input.
+	 */
 	gint              padding_height;
 	gint              default_window_height;
 	gint              last_input_height;
@@ -85,7 +84,7 @@ static void      chat_text_populate_popup_cb       (GtkTextView     *view,
 						    GossipChat      *chat);
 static void      chat_text_check_word_spelling_cb  (GtkMenuItem     *menuitem,
 						    GossipChatSpell *chat_spell);
-GossipChatSpell *chat_spell_new                    (GossipChat      *chat,
+static GossipChatSpell *chat_spell_new             (GossipChat      *chat,
 						    const gchar     *word,
 						    GtkTextIter      start,
 						    GtkTextIter      end);
@@ -432,8 +431,7 @@ chat_insert_smiley_activate_cb (GtkWidget  *menuitem,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	gtk_text_buffer_get_end_iter (buffer, &iter);
 	gtk_text_buffer_insert (buffer, &iter, 
-				smiley, 
-				g_utf8_strlen (smiley, -1));
+				smiley, -1);
 }
 
 static void
@@ -451,10 +449,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 	GossipChatSpell *chat_spell;
 	GtkWidget       *smiley_menu;
 
-	/*
-	 * Add the emoticon menu.
-	 */
-
+	/* Add the emoticon menu. */
 	item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
@@ -468,10 +463,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 		chat);
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), smiley_menu);
 
-	/*
-	 * Add the spell check menu item.
-	 */
-
+	/* Add the spell check menu item. */
 	buffer = gtk_text_view_get_buffer (view);
 	table = gtk_text_buffer_get_tag_table (buffer);
 
@@ -533,7 +525,7 @@ chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem,
 				  chat_spell->word);
 }
 
-GossipChatSpell *
+static GossipChatSpell *
 chat_spell_new (GossipChat  *chat, 
 		const gchar *word,
 		GtkTextIter  start,
@@ -601,7 +593,7 @@ gossip_chat_correct_word (GossipChat  *chat,
 	gtk_text_buffer_delete (buffer, &start, &end);
 	gtk_text_buffer_insert (buffer, &start, 
 				new_word, 
-				g_utf8_strlen (new_word, -1));
+				strlen (new_word));
 }
 
 const gchar *
@@ -932,8 +924,8 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 		}
 	}
 
-	ch = ch + g_utf8_strlen (cf_to, -1);
-	if (ch >= cf_msg + g_utf8_strlen (cf_msg, -1)) {
+	ch = ch + strlen (cf_to);
+	if (ch >= cf_msg + strlen (cf_msg)) {
 		ret_val = TRUE;
 		goto finished;
 	}
