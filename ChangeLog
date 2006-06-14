@@ -9,11 +9,8 @@
 	* src/gossip-chat.c (gossip_chat_correct_word): Get the number of
 	bytes, not chars.
 
-	* src/gossip-chat-window.c (chat_window_update_title): Add back
-	the "*" in front of the title for windows with new messages, but
-	with a space before the name. It was simply too subtle without
-	this.
-	- Plug leak of a pixbuf.
+	* src/gossip-chat-window.c (chat_window_update_title): Plug leak
+	of a pixbuf.
 
 2006-06-14  Martyn Russell  <martyn@imendio.com>
 
