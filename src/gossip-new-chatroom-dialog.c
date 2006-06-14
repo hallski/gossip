@@ -554,6 +554,8 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 			      "checkbutton_add", "toggled", new_chatroom_dialog_checkbutton_add_toggled_cb,
 			      NULL);
 
+	g_object_unref (glade);
+
 	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);
 
 	/* look and feel - aligning... */
@@ -597,7 +599,6 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 
 	gtk_widget_grab_focus (dialog->entry_nickname);
 
-	/* last touches */
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->window), 
 					      GTK_WINDOW (parent));

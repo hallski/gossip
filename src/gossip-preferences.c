@@ -878,6 +878,8 @@ gossip_preferences_show (void)
 			      "preferences_dialog", "response", preferences_response_cb,
 			      NULL);
 
+	g_object_unref (glade);
+
 	g_object_add_weak_pointer (G_OBJECT (preferences->dialog), (gpointer) &preferences);
 	
 	preferences_themes_setup (preferences);

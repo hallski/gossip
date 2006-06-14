@@ -385,6 +385,8 @@ gossip_status_presets_dialog_show (void)
  			      "remove_button", "clicked", status_presets_remove_button_clicked_cb, 
 			      NULL);
 
+	g_object_unref (gui);
+
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
 
  	sizegroup = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL); 

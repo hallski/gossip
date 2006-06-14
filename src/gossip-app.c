@@ -2500,6 +2500,9 @@ app_chatroom_favourite_update (void)
 		return;
 	}
 
+	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_free (accounts);
+
 	chatrooms = gossip_chatroom_manager_get_chatrooms (priv->chatroom_manager, NULL);
 	if (!chatrooms) {
 		gtk_widget_set_sensitive (priv->actions_group_chat_join, FALSE);

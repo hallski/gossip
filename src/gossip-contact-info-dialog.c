@@ -531,7 +531,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	GossipSession           *session;
 	GossipAccount           *account;
 	GladeXML                *glade;
-	gchar                   *str, *tmp_str;
+	gchar                   *str;
 	GtkSizeGroup            *size_group;
 	guint                    id;
 	GtkWidget               *avatar_image_placeholder;
@@ -618,12 +618,6 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	g_object_unref (size_group);
 	
 	/* Set labels */
-	tmp_str = g_strdup_printf (_("Contact Information for %s"), 
-				   gossip_contact_get_name (contact));
-
-	str = g_markup_escape_text (tmp_str, -1);
-	g_free (tmp_str);
-	
 	gtk_label_set_text (GTK_LABEL (dialog->id_label), 
 			    gossip_contact_get_id (contact));
 

@@ -1755,6 +1755,8 @@ gossip_log_window_show (GossipContact  *contact,
 			      "button_close", "clicked", log_window_button_close_clicked_cb,
 			      NULL);
 
+	g_object_unref (glade);
+
 	g_object_add_weak_pointer (G_OBJECT (window->window),
 				   (gpointer) &window);
 

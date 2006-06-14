@@ -1526,7 +1526,7 @@ gossip_log_message_for_contact (GossipMessage *message,
 	GossipContact *contact;
 	GossipContact *own_contact;
 	GossipContact *own_contact_saved;
-        const gchar   *filename;
+        gchar         *filename;
 	FILE          *file;
 	const gchar   *to_or_from = "";
 	gchar         *timestamp;
@@ -1608,7 +1608,10 @@ gossip_log_message_for_contact (GossipMessage *message,
 		log_set_name (account, contact);
 	}
 
+	g_object_unref (own_contact_saved);
+	
 	if (!file) {
+		g_free (filename);
 		return;
 	}
 
@@ -1661,6 +1664,7 @@ gossip_log_message_for_contact (GossipMessage *message,
 		g_chmod (filename, LOG_FILE_CREATE_MODE);
 	}
 
+	g_free (filename);
 	g_free (timestamp);
 	g_free (body);
 	g_free (resource);

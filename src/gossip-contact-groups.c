@@ -236,6 +236,7 @@ contact_groups_file_save (void)
 	xmlMemoryDump ();
 	
 	g_free (file);
+	g_free (dtd_file);
 
 	return TRUE;
 }

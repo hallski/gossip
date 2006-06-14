@@ -655,7 +655,11 @@ jabber_logout_contact_foreach (gpointer       key,
 	/* Set each contact to be offline, since they effectively are
 	 * now we don't know.
 	 */
-	presences = gossip_contact_get_presence_list (contact);
+	presences = g_list_copy (gossip_contact_get_presence_list (contact));
+
+	/* Copy the list since it will be modified during traversal
+	 * otherwise.
+	 */
 	for (l = presences; l; l = l->next) {
 		presence = l->data;
 
@@ -666,6 +670,8 @@ jabber_logout_contact_foreach (gpointer       key,
 		gossip_contact_remove_presence (contact, presence);
 	}
 
+	g_list_free (presences);
+	
 	g_signal_emit_by_name (jabber, "contact-removed", contact);
 	return TRUE;
 }

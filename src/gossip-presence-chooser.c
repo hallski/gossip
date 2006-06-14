@@ -274,6 +274,8 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 				       "add_checkbutton", &checkbutton,
 				       NULL);
 
+	g_object_unref (glade);
+
 	g_signal_connect (dialog,
 			  "destroy",
 			  G_CALLBACK (gtk_widget_destroyed),

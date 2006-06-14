@@ -1,5 +1,33 @@
 2006-06-14  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c 
+	(jabber_logout_contact_foreach): Copy the presence list since it's
+	modified during traversal.
+
+	* src/gossip-contact-groups.c: (contact_groups_file_save): Free
+	dtd filename.
+
+	* src/gossip-chatrooms-window.c: (gossip_chatrooms_window_show):
+	* src/gossip-log-window.c: (gossip_log_window_show):
+	* src/gossip-new-chatroom-dialog.c: 
+	(gossip_new_chatroom_dialog_show):
+	* src/gossip-preferences.c: (gossip_preferences_show):
+	* src/gossip-presence-chooser.c: (presence_chooser_show_dialog):
+	* src/gossip-status-presets-dialog.c:
+	(gossip_status_presets_dialog_show): Unref glade objects.
+	
+	* src/gossip-app.c (app_chatroom_favourite_update): Free the
+	accounts list.
+
+	* src/gossip-log.c (gossip_log_message_for_contact): Unref
+	own_contact_saved, and free the filename.
+	
+	* src/gossip-contact-info-dialog.c 
+	(gossip_contact_info_dialog_show): Remove unused string (plugs
+	leak).
+
+2006-06-14  Richard Hult  <richard@imendio.com>
+
 	* configure.ac: Clean up a bit, remove obsolete stuff.
 
 2006-06-11  Martyn Russell  <martyn@imendio.com>

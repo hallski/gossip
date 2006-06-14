@@ -1045,6 +1045,8 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 			      "button_join", "clicked", chatrooms_window_join_clicked_cb,
 			      NULL);
 
+	g_object_unref (glade);
+
 	g_signal_connect_swapped (window->window, "delete_event",
 				  G_CALLBACK (gtk_widget_hide_on_delete), 
 				  window->window);
