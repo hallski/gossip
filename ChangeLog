@@ -1,3 +1,9 @@
+2006-06-15  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-log.[ch]:
+	* src/gossip-private-chat.c: Show the chat history in new chat
+	windows to show the previous conversations.
+
 2006-06-15  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.[ch]:

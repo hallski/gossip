@@ -50,6 +50,7 @@ GList *        gossip_log_get_messages_for_contact  (GossipContact        *conta
 void           gossip_log_message_for_contact       (GossipMessage        *message,
 						     gboolean              incoming);
 gboolean       gossip_log_exists_for_contact        (GossipContact        *contact);
+GList *        gossip_log_get_last_for_contact      (GossipContact        *contact);
 
 /* Chatroom functions */
 GList *        gossip_log_get_dates_for_chatroom    (GossipChatroom       *chatroom);

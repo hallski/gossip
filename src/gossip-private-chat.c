@@ -229,7 +229,6 @@ private_chat_create_ui (GossipPrivateChat *chat)
 	gtk_widget_show (GOSSIP_CHAT (chat)->input_text_view);
 
 	g_object_ref (priv->widget);
-
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
 	g_signal_connect (GOSSIP_CHAT (chat)->input_text_view,
@@ -826,6 +825,11 @@ gossip_private_chat_new (GossipContact *own_contact,
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
 	GConfClient           *gconf_client;
+	GossipChatView        *view;
+	GossipContact         *sender;
+	GossipMessage         *message;
+	GList                 *messages;
+	GList                 *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
@@ -839,6 +843,8 @@ gossip_private_chat_new (GossipContact *own_contact,
 
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
+	view = GOSSIP_CHAT (chat)->view;
+
 	/* Set up avatar */
 	gconf_client = gossip_app_get_gconf_client ();
 
@@ -848,6 +854,37 @@ gossip_private_chat_new (GossipContact *own_contact,
 				 chat, NULL, NULL);
 
 	private_chat_update_avatar (chat);
+
+	/* Turn off scrolling temporarily */
+	gossip_chat_view_scroll (view, FALSE);
+
+	/* Add messages from last conversation */
+	messages = gossip_log_get_last_for_contact (priv->contact);
+
+	for (l = messages; l; l = l->next) {
+		message = l->data;
+
+		sender = gossip_message_get_sender (message);
+
+		if (gossip_contact_equal (priv->own_contact, sender)) {
+			gossip_chat_view_append_message_from_self (view, 
+								   message,
+								   priv->own_contact);
+		} else {
+			gossip_chat_view_append_message_from_other (view, 
+								    message,
+								    sender);
+		}
+	}
+
+ 	g_list_foreach (messages, (GFunc) g_object_unref, NULL);
+	g_list_free (messages);
+
+	/* Turn back on scrolling */
+	gossip_chat_view_scroll (view, TRUE);
+
+	/* Scroll to the most recent messages */
+	gossip_chat_view_scroll_down (view);
 
 	/* Set up signals */
 	g_signal_connect_object (gossip_app_get_session (),

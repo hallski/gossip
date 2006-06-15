@@ -1691,6 +1691,29 @@ gossip_log_exists_for_contact (GossipContact *contact)
 	return exists;
 }
 
+GList *
+gossip_log_get_last_for_contact (GossipContact *contact)
+{
+	GList *messages;
+	GList *dates;
+	GList *l;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	dates = gossip_log_get_dates_for_contact (contact);
+	if (g_list_length (dates) < 1) {
+		return NULL;
+	}
+
+	l = g_list_last (dates);
+	messages = gossip_log_get_messages_for_contact (contact, l->data);
+	
+	g_list_foreach (dates, (GFunc) g_free, NULL);
+	g_list_free (dates);
+
+	return messages;
+}
+
 #ifdef DEPRECATED
 void
 gossip_log_show_for_contact (GtkWidget     *window, 
