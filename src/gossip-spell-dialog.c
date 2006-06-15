@@ -37,7 +37,6 @@ struct _GossipSpellDialog {
 	GtkWidget   *treeview_words;
 
 	GossipChat  *chat;
-	GossipSpell *spell;
 
 	gchar       *word;
 	GtkTextIter  start;
@@ -93,35 +92,29 @@ static void
 spell_dialog_populate_suggestions (GossipSpellDialog *dialog)
 {
 	GossipChat   *chat;
-
-	GList        *l;
-	GList        *suggestions;
-
 	GtkTreeModel *model;
 	GtkListStore *store;
+	GList        *suggestions, *l;
 
 	chat = dialog->chat;
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->treeview_words));
 	store = GTK_LIST_STORE (model);
 
-	suggestions = gossip_spell_suggestions (dialog->spell, dialog->word);
-
-	if (!suggestions) {
-		return;
-	}
-
-	for (l=suggestions; l; l=l->next) {
+	suggestions = gossip_spell_get_suggestions (dialog->word);
+	for (l = suggestions; l; l=l->next) {
 		GtkTreeIter  iter;
 		gchar       *word;
-
+		
 		word = l->data;
+
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, COL_SPELL_WORD, word, -1);
+		gtk_list_store_set (store, &iter,
+				    COL_SPELL_WORD, word,
+				    -1);
 	}
 
-	g_list_foreach (suggestions, (GFunc)g_free, NULL);
-	g_list_free (suggestions);
+	gossip_spell_free_suggestions (suggestions);
 }
 
 static void
@@ -204,7 +197,6 @@ spell_dialog_response_cb (GtkWidget         *widget,
 
 void
 gossip_spell_dialog_show (GossipChat  *chat,
-			  GossipSpell *spell,
 			  GtkTextIter  start,
 			  GtkTextIter  end,
 			  const gchar *word)
@@ -215,12 +207,10 @@ gossip_spell_dialog_show (GossipChat  *chat,
 
 	g_return_if_fail (chat != NULL);
 	g_return_if_fail (word != NULL);
-	g_return_if_fail (strlen (word) > 0);
 
 	dialog = g_new0 (GossipSpellDialog, 1);
 
 	dialog->chat = g_object_ref (chat);
-	dialog->spell = spell;
 
 	dialog->word = g_strdup (word);
 

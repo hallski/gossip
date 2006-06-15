@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2005 Imendio AB
+ * Copyright (C) 2002-2006 Imendio AB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  * Copyright (C) 2004      Martyn Russell <mr@gnome.org>
  *
@@ -53,8 +53,8 @@
 struct _GossipChatPriv {
 	GossipChatWindow *window;
 
-	GossipSpell      *spell;
-
+	GtkTooltips      *tooltips;
+	
 	/* Used to automatically shrink a window that has temporarily grown due
 	 * to long input.
 	 */
@@ -160,9 +160,6 @@ gossip_chat_init (GossipChat *chat)
 	GossipChatPriv *priv;
 	GtkTextBuffer  *buffer;
 
-	gchar          *value;
-	GList          *languages = NULL;
-
 	chat->view = gossip_chat_view_new ();
 	chat->input_text_view = gtk_text_view_new ();
 	chat->is_first_char = TRUE;
@@ -178,6 +175,8 @@ gossip_chat_init (GossipChat *chat)
 
 	priv = GET_PRIV (chat);
 
+	priv->tooltips = gtk_tooltips_new ();
+	
 	priv->default_window_height = -1;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
@@ -201,34 +200,6 @@ gossip_chat_init (GossipChat *chat)
 				    "misspelled",
 				    "underline", PANGO_UNDERLINE_ERROR,
 				    NULL);
-
-	/* get spelling languages */
-	value = gconf_client_get_string (gossip_app_get_gconf_client (),
-					 GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
-					 NULL);
-	
-	if (value) {
-		gchar **vlanguages;
-		gchar  *lang;
-		gint    i;
-
-		vlanguages = g_strsplit (value, ",", -1);
-		
-		for (i = 0, lang = vlanguages[i]; lang; lang = vlanguages[++i]) {
-			languages = g_list_append (languages, g_strdup (lang));
-		}
-
-		g_strfreev (vlanguages);
-	}
-	
-	g_free (value);
-	
-	priv->spell = gossip_spell_new (languages);
-	
-	if (languages) {
-		g_list_foreach (languages, (GFunc)g_free, NULL);
-		g_list_free (languages);
-	}
 }
 
 static void
@@ -237,14 +208,8 @@ chat_finalize (GObject *object)
 	GossipChat     *chat;
 	GossipChatPriv *priv;
 
-	g_return_if_fail (GOSSIP_IS_CHAT (object));
-
 	chat = GOSSIP_CHAT (object);
 	priv = GET_PRIV (chat);
-
-	if (priv->spell) {
-		gossip_spell_unref (priv->spell);
-	}
 
 	G_OBJECT_CLASS (gossip_chat_parent_class)->finalize (object);
 }
@@ -253,7 +218,6 @@ static void
 chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 {
 	GossipChatPriv *priv;
-
 	GtkTextIter     start, end;
 	gchar          *str;
 	gboolean        spell_checker;
@@ -294,7 +258,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 		return;
 	}
 
-	if (!gossip_spell_supported () || !gossip_spell_has_backend (priv->spell)) {
+	if (!gossip_spell_supported ()) {
 		return;
 	}
 	
@@ -326,7 +290,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 
 		/* spell check string */
   		if (!gossip_chat_get_is_command (str)) { 
-			correct = gossip_spell_check (priv->spell, str);
+			correct = gossip_spell_check (str);
  		} else { 
  			correct = TRUE; 
  		} 
@@ -439,6 +403,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 			     GtkMenu     *menu,
 			     GossipChat  *chat)
 {
+	GossipChatPriv  *priv;
 	GtkTextBuffer   *buffer;
 	GtkTextTagTable *table;
 	GtkTextTag      *tag;
@@ -449,6 +414,8 @@ chat_text_populate_popup_cb (GtkTextView *view,
 	GossipChatSpell *chat_spell;
 	GtkWidget       *smiley_menu;
 
+	priv = GET_PRIV (view);
+	
 	/* Add the emoticon menu. */
 	item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
@@ -460,7 +427,8 @@ chat_text_populate_popup_cb (GtkTextView *view,
 
 	smiley_menu = gossip_chat_view_get_smiley_menu (
 		G_CALLBACK (chat_insert_smiley_activate_cb), 
-		chat);
+		chat,
+		priv->tooltips);
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), smiley_menu);
 
 	/* Add the spell check menu item. */
@@ -514,12 +482,7 @@ static void
 chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem, 
 				  GossipChatSpell *chat_spell)
 {
-	GossipChatPriv *priv;
-
-	priv = GET_PRIV (chat_spell->chat);
-
 	gossip_spell_dialog_show (chat_spell->chat,
-				  priv->spell,
 				  chat_spell->start,
 				  chat_spell->end,
 				  chat_spell->word);
@@ -533,16 +496,10 @@ chat_spell_new (GossipChat  *chat,
 {
 	GossipChatSpell *chat_spell;
 
-	g_return_val_if_fail (chat != NULL, NULL);
-	g_return_val_if_fail (word != NULL, NULL);
-
 	chat_spell = g_new0 (GossipChatSpell, 1);
 
 	chat_spell->chat = g_object_ref (chat);
-
-
 	chat_spell->word = g_strdup (word);
-
 	chat_spell->start = start;
 	chat_spell->end = end;
 	
@@ -561,7 +518,10 @@ gboolean
 gossip_chat_get_is_command (const gchar *str)
 {
 	g_return_val_if_fail (str != NULL, FALSE);
-	g_return_val_if_fail (strlen (str) > 0, FALSE);
+
+	if (str[0] != '/') {
+		return FALSE;
+	}
 	
 	if (g_str_has_prefix (str, "/me")) {
 		return TRUE;
@@ -586,14 +546,13 @@ gossip_chat_correct_word (GossipChat  *chat,
 
 	g_return_if_fail (chat != NULL);
 	g_return_if_fail (new_word != NULL);
-	g_return_if_fail (strlen (new_word) > 0);
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 
 	gtk_text_buffer_delete (buffer, &start, &end);
 	gtk_text_buffer_insert (buffer, &start, 
 				new_word, 
-				strlen (new_word));
+				-1);
 }
 
 const gchar *
@@ -885,11 +844,11 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 	gchar         *ch;
 	gboolean       ret_val;
 
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
+
 	DEBUG_MSG (("Chat: Highlighting nickname"));
 
 	ret_val = FALSE;
-
-	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
 
 	msg = gossip_message_get_body (message);
 	if (!msg) {

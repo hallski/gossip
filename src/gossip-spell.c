@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,175 +22,52 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
+#include <glib/gi18n.h>
+#include <gconf/gconf-client.h>
 
 #ifdef HAVE_ASPELL
 #include <aspell.h>
-#endif /* HAVE_ASPELL */
-
-#include <glib/gi18n.h>
+#endif
 
 #include "gossip-spell.h"
+#include "gossip-app.h"
+#include "gossip-preferences.h"
 
 #define DEBUG_MSG(x)  
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
 
-typedef struct {
 #ifdef HAVE_ASPELL
+
+/* Note: We could use aspell_reset_cache (NULL); periodically if we wanted
+ * to...
+ */
+
+typedef struct {
 	AspellConfig       *spell_config;
 	AspellCanHaveError *spell_possible_err;
         AspellSpeller      *spell_checker;
-#endif /* HAVE_ASPELL */
 } SpellLanguage;
 
-struct _GossipSpell {
-	gint                ref_count;
-	GList              *languages;
-	gboolean            has_backend;
-	GHashTable         *lang_names;
-};
 
-static void spell_free (GossipSpell *spell);
+#define ISO_CODES_DATADIR    ISO_CODES_PREFIX "/share/xml/iso-codes"
+#define ISO_CODES_LOCALESDIR ISO_CODES_PREFIX "/share/locale"
 
-#define ISO_CODES_DATADIR    ISO_CODES_PREFIX"/share/xml/iso-codes"
-#define ISO_CODES_LOCALESDIR ISO_CODES_PREFIX"/share/locale"
+
+static GHashTable  *iso_code_names = NULL;
+static GList       *languages = NULL;
+static gboolean     gconf_notify_inited = FALSE;
+
 
 static void
-spell_free (GossipSpell *spell)
+spell_iso_codes_parse_start_tag (GMarkupParseContext  *ctx,
+				 const gchar          *element_name,
+				 const gchar         **attr_names,
+				 const gchar         **attr_values,
+				 gpointer              data,
+				 GError              **error)
 {
-	g_return_if_fail (spell != NULL);
-	
-	g_list_foreach (spell->languages, (GFunc)g_free, NULL);
-	g_list_free (spell->languages);
-	
-	if (spell->lang_names) {
-		g_hash_table_destroy (spell->lang_names);
-	}
-
-	g_free (spell);
-}	
-
-GossipSpell * 
-gossip_spell_new (GList *languages)
-{
-#ifndef HAVE_ASPELL
-
-	return NULL;
-#else 
-	GossipSpell *spell;
-
-	DEBUG_MSG (("Spell: Initiating")); 
-
-	spell = g_new0 (GossipSpell, 1);
-
-	spell->ref_count = 1;
-
-	if (!languages) {
-		SpellLanguage *lang;
-		const gchar   *language = NULL;
-
-		language = getenv ("LANG");
-		if (!language) {
-			language = "en";
-			DEBUG_MSG (("Spell: Using default language ('%s')", language)); 
-		} else {
-			DEBUG_MSG (("Spell: Using language from environment variable LANG ('%s')", language)); 
-		}
-
-		
-		lang = g_new0 (SpellLanguage, 1);
-
-		lang->spell_config = new_aspell_config ();
-		
-		aspell_config_replace (lang->spell_config, "encoding", "utf-8");
-		aspell_config_replace (lang->spell_config, "lang", language);
-		
-		lang->spell_possible_err = new_aspell_speller (lang->spell_config);
-		
-		if (aspell_error_number (lang->spell_possible_err) == 0) {
-			lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
-			spell->has_backend = TRUE;
-			
-			DEBUG_MSG (("Spell: Using ASpell back end for language:'%s'", language)); 
-		} else {
-			DEBUG_MSG (("Spell: No back end supported")); 
-		}
-
- 		spell->languages = g_list_append (spell->languages, lang);
-	} else {
-		GList *l;
-
-		for (l = languages; l; l = l->next) {
-			SpellLanguage *lang;
-			const gchar   *language;
-
-			language = l->data;
-
-			DEBUG_MSG (("Spell: Using language:'%s'", language)); 
-
-			lang = g_new0 (SpellLanguage, 1);
-			
-			lang->spell_config = new_aspell_config();
-			
-			aspell_config_replace (lang->spell_config, "encoding", "utf-8");
-			aspell_config_replace (lang->spell_config, "lang", language);
-
-			lang->spell_possible_err = new_aspell_speller (lang->spell_config);
-
-			if (aspell_error_number (lang->spell_possible_err) == 0) {
-				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
-				spell->has_backend = TRUE;
-				
-				DEBUG_MSG (("Spell: Using ASpell back end for language:'%s'", language)); 
-			}
-
-			spell->languages = g_list_append (spell->languages, lang);
-		}
-	}
-
-	return spell;
-#endif /* HAVE_ASPELL */
-}
-
-GossipSpell *
-gossip_spell_ref (GossipSpell *spell)
-{
-	g_return_val_if_fail (spell != NULL, NULL);
-
-	spell->ref_count++;
-	return spell;
-}
-
-void
-gossip_spell_unref (GossipSpell *spell)
-{
-	g_return_if_fail (spell != NULL);
-
-	spell->ref_count--;
-
-	if (spell->ref_count < 1) {
-		spell_free (spell);
-	}
-}
-
-gboolean
-gossip_spell_has_backend (GossipSpell *spell)
-{
-	g_return_val_if_fail (spell != NULL, FALSE);
-
-	return spell->has_backend;
-}
-
-#ifdef HAVE_ASPELL
-static void
-gossip_spell_lang_table_parse_start_tag (GMarkupParseContext *ctx,
-					 const gchar         *element_name,
-					 const gchar        **attr_names,
-					 const gchar        **attr_values,
-					 gpointer             data,
-					 GError             **error)
-{
-	GossipSpell *spell = (GossipSpell *)data;
-	const char  *ccode_longB, *ccode_longT, *ccode, *lang_name;
+	const gchar *ccode_longB, *ccode_longT, *ccode;
+	const gchar *lang_name;
 
 	if (!g_str_equal (element_name, "iso_639_entry") ||
 	    attr_names == NULL || attr_values == NULL) {
@@ -203,23 +81,17 @@ gossip_spell_lang_table_parse_start_tag (GMarkupParseContext *ctx,
 
 	while (*attr_names && *attr_values) {
 		if (g_str_equal (*attr_names, "iso_639_1_code")) {
-			/* skip if empty */
 			if (**attr_values) {
-				g_return_if_fail (strlen (*attr_values) == 2);
 				ccode = *attr_values;
 			}
 		}
 		else if (g_str_equal (*attr_names, "iso_639_2B_code")) {
-			/* skip if empty */
 			if (**attr_values) {
-				g_return_if_fail (strlen (*attr_values) == 3);
 				ccode_longB = *attr_values;
 			}
 		}
 		else if (g_str_equal (*attr_names, "iso_639_2T_code")) {
-			/* skip if empty */
 			if (**attr_values) {
-				g_return_if_fail (strlen (*attr_values) == 3);
 				ccode_longT = *attr_values;
 			}
 		}
@@ -231,51 +103,51 @@ gossip_spell_lang_table_parse_start_tag (GMarkupParseContext *ctx,
 		attr_values++;
 	}
 
-	if (lang_name == NULL) {
+	if (!lang_name) {
 		return;
 	}
 
-	if (ccode != NULL) {
-		g_hash_table_insert (spell->lang_names,
+	if (ccode) {
+		g_hash_table_insert (iso_code_names,
 				     g_strdup (ccode),
 				     g_strdup (lang_name));
 	}
 	
-	if (ccode_longB != NULL) {
-		g_hash_table_insert (spell->lang_names,
+	if (ccode_longB) {
+		g_hash_table_insert (iso_code_names,
 				     g_strdup (ccode_longB),
 				     g_strdup (lang_name));
 	}
 	
-	if (ccode_longT != NULL) {
-		g_hash_table_insert (spell->lang_names,
+	if (ccode_longT) {
+		g_hash_table_insert (iso_code_names,
 				     g_strdup (ccode_longT),
 				     g_strdup (lang_name));
 	}
 }
 
 static void
-gossip_spell_lang_table_init (GossipSpell *spell)
+spell_iso_code_names_init (void)
 {
 	GError *err = NULL;
 	gchar  *buf;
 	gsize   buf_len;
 
-	spell->lang_names = g_hash_table_new_full (g_str_hash, g_str_equal,
-						   g_free, g_free);
+	iso_code_names = g_hash_table_new_full (g_str_hash, g_str_equal,
+					   g_free, g_free);
 
 	bindtextdomain ("iso_639", ISO_CODES_LOCALESDIR);
 	bind_textdomain_codeset ("iso_639", "UTF-8");
 
+	/* FIXME: We should read this in chunks and pass to the parser. */
 	if (g_file_get_contents (ISO_CODES_DATADIR "/iso_639.xml", &buf, &buf_len, &err)) {
 		GMarkupParseContext *ctx;
 		GMarkupParser        parser = {
-			gossip_spell_lang_table_parse_start_tag,
+			spell_iso_codes_parse_start_tag,
 			NULL, NULL, NULL, NULL
 		};
 
-		ctx = g_markup_parse_context_new (&parser, 0, spell, NULL);
-
+		ctx = g_markup_parse_context_new (&parser, 0, NULL, NULL);
 		if (!g_markup_parse_context_parse (ctx, buf, buf_len, &err)) {
 			g_warning ("Failed to parse '%s': %s",
 				   ISO_CODES_DATADIR"/iso_639.xml",
@@ -291,112 +163,155 @@ gossip_spell_lang_table_init (GossipSpell *spell)
 		g_error_free (err);
 	}
 }
-#endif /* HAVE_ASPELL */
+
+static void
+spell_languages_notify_cb (GConfClient *client,
+			   guint        cnxn_id,
+			   GConfEntry  *entry,
+			   gpointer     user_data)
+{
+	GList *l;
+	
+	/* We just reset the languages list. */
+	for (l = languages; l; l = l->next) {
+		SpellLanguage *lang;
+
+		lang = l->data;
+
+		delete_aspell_config (lang->spell_config);
+		delete_aspell_speller (lang->spell_checker);
+		
+		g_free (lang);
+	}
+
+	g_list_free (languages);
+	languages = NULL;
+}
+	
+static void
+spell_setup_languages (void)
+{
+	gchar  *str;
+
+	if (!gconf_notify_inited) {
+		gconf_client_notify_add (gossip_app_get_gconf_client (),
+					 GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
+					 spell_languages_notify_cb,
+					 NULL, NULL, NULL);
+		
+		gconf_notify_inited = TRUE;
+	}
+	
+	if (languages) {
+		return;
+	}
+
+	str = gconf_client_get_string (gossip_app_get_gconf_client (),
+				       GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
+				       NULL);
+	if (str) {
+		gchar **strv;
+		gint    i;
+
+		strv = g_strsplit (str, ",", -1);
+
+		i = 0;
+		while (strv && strv[i]) {
+			SpellLanguage *lang;
+			
+			lang = g_new0 (SpellLanguage, 1);
+		
+			lang->spell_config = new_aspell_config();
+		
+			aspell_config_replace (lang->spell_config, "encoding", "utf-8");
+			aspell_config_replace (lang->spell_config, "lang", strv[i++]);
+		
+			lang->spell_possible_err = new_aspell_speller (lang->spell_config);
+		
+			if (aspell_error_number (lang->spell_possible_err) == 0) {
+				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
+			}
+		
+			languages = g_list_append (languages, lang);
+		}
+		
+		if (strv) {
+			g_strfreev (strv);
+		}
+	}
+
+	g_free (str);
+}
 
 const char *
-gossip_spell_get_language_name (GossipSpell *spell, const char *lang)
+gossip_spell_get_language_name (const char *code)
 {
-#if HAVE_ASPELL
-	const gchar *lang_name;
-	gint         len;
-	
-	if (lang == NULL) {
-		return "";
-	}
+	const gchar *name;
 
-	len = strlen (lang);
-	if (len != 2 && len != 3) {
-		return "";
-	}
+	g_return_val_if_fail (code != NULL, NULL);
 
-	if (!spell->lang_names) {
-		gossip_spell_lang_table_init (spell);
+	if (!iso_code_names) {
+		spell_iso_code_names_init ();
 	}
 	
-	lang_name = (const gchar*) g_hash_table_lookup (spell->lang_names, lang);
-
-	if (lang_name) {
-		return dgettext ("iso_639", lang_name);
+	name = g_hash_table_lookup (iso_code_names, code);
+	if (!name) {
+		return NULL;
 	}
 	
-#endif /* HAVE_ASPELL */
-	return "";
+	return dgettext ("iso_639", name);
 }
 
 GList *
-gossip_spell_get_language_codes (GossipSpell *spell)
+gossip_spell_get_language_codes (void)
 {
-#ifdef HAVE_ASPELL
 	AspellConfig              *config;
 	AspellDictInfoList        *dlist;
 	AspellDictInfoEnumeration *dels;
 	const AspellDictInfo      *entry;
 	GList                     *codes = NULL;
 
-	g_return_val_if_fail (spell != NULL, FALSE);
-
-	DEBUG_MSG (("Spell: Listing available language codes:"));
-
 	config = new_aspell_config ();
-
-	/* the returned pointer should _not_ need to be deleted */
 	dlist = get_aspell_dict_info_list (config);
-
-	/* config is no longer needed */
-	delete_aspell_config (config);
-
 	dels = aspell_dict_info_list_elements (dlist);
 
 	while ((entry = aspell_dict_info_enumeration_next (dels)) != 0) {
-		if (g_list_find_custom (codes, entry->code, (GCompareFunc)strcmp)) {
+		if (g_list_find_custom (codes, entry->code, (GCompareFunc) strcmp)) {
 			continue;
 		}
 
-		DEBUG_MSG (("Spell:  + %s (%s)", 
-			   entry->code, 
-			   gossip_spell_get_language_name (entry->code)));
 		codes = g_list_append (codes, g_strdup (entry->code));
 	}
 
 	delete_aspell_dict_info_enumeration (dels);
-
-	DEBUG_MSG (("Spell: %d language codes in total:", g_list_length (codes)));
+	delete_aspell_config (config);
 
 	return codes;
-#else  /* HAVE_ASPELL */
-	return NULL;
-#endif /* HAVE_ASPELL */
+}
+
+void
+gossip_spell_free_language_codes (GList *codes)
+{
+	g_list_foreach (codes, (GFunc) g_free, NULL);
+	g_list_free (codes);
 }
 
 gboolean
-gossip_spell_check (GossipSpell *spell, 
-		    const gchar *word)
+gossip_spell_check (const gchar *word)
 {
-#ifdef HAVE_ASPELL
-	GList    *l;
-#endif /* HAVE_ASPELL */
-
-	gint         langs;
+	GList       *l;
+	gint         n_langs;
 	gboolean     correct = FALSE;
-
 	gint         len;
-
 	const gchar *p;
 	gunichar     c;
-
 	gboolean     digit;
 
-	g_return_val_if_fail (spell != NULL, FALSE);
 	g_return_val_if_fail (word != NULL, FALSE);
 
-	len = strlen (word);
-	g_return_val_if_fail (len > 0, FALSE);
+	spell_setup_languages ();
 
-	if (!spell->languages) {
-		return FALSE;
-	}
-
-	/* Ignore certan cases like numbers, etc. */
+	/* Ignore certain cases like numbers, etc. */
 	for (p = word, digit = TRUE; *p && digit; p = g_utf8_next_char (p)) {
 		c = g_utf8_get_char (p);
 		digit = g_unichar_isdigit (c);
@@ -408,68 +323,54 @@ gossip_spell_check (GossipSpell *spell,
 		return TRUE;
 	}
 		
-	langs = g_list_length (spell->languages);
-
-#ifdef HAVE_ASPELL
-	for (l = spell->languages; l; l = l->next) {
+	len = strlen (word);
+	n_langs = g_list_length (languages);
+	for (l = languages; l; l = l->next) {
 		SpellLanguage *lang;
-
+		
 		lang = l->data;
-		if (!lang) {
-			continue;
-		}
 
 		correct = aspell_speller_check (lang->spell_checker, word, len);
-		if (langs > 1 && correct) {
+		if (n_langs > 1 && correct) {
 			break;
 		}
 	}
-#endif /* HAVE_ASPELL */
 
 	return correct;
 }
 
 GList *
-gossip_spell_suggestions (GossipSpell *spell, 
-			  const gchar *word)
+gossip_spell_get_suggestions (const gchar *word)
 {
-#ifdef HAVE_ASPELL
-	GList *l1;
-#endif /* HAVE_ASPELL */
-	GList *l2 = NULL;
+	GList                   *l1;
+	GList                   *l2 = NULL;
+	const AspellWordList    *suggestions;
+	AspellStringEnumeration *elements;
+	const char              *next;
+	gint                     len;
 
-#ifdef HAVE_ASPELL
-	AspellWordList *suggestions = NULL;
-	AspellStringEnumeration *elements = NULL;
-
-	const char *next = NULL;
-#endif /* HAVE_ASPELL */
-
-	g_return_val_if_fail (spell != NULL, NULL);
 	g_return_val_if_fail (word != NULL, NULL);
-	g_return_val_if_fail (word[0] != 0, NULL);
 
-#ifdef HAVE_ASPELL
-	for (l1 = spell->languages; l1; l1 = l1->next) {
+	spell_setup_languages ();
+
+	len = strlen (word);
+
+	for (l1 = languages; l1; l1 = l1->next) {
 		SpellLanguage *lang;
-
+		
 		lang = l1->data;
-		if (!lang) {
-			continue;
-		}
-
-		suggestions = (AspellWordList*) aspell_speller_suggest (lang->spell_checker,
-								word, strlen (word));
-
+		
+		suggestions = aspell_speller_suggest (lang->spell_checker,
+						      word, len);
+		
 		elements = aspell_word_list_elements (suggestions);
 		
-		while ((next = aspell_string_enumeration_next (elements)) != NULL) {
+		while ((next = aspell_string_enumeration_next (elements))) {
 			l2 = g_list_append (l2, g_strdup (next));
 		}
+
+		delete_aspell_string_enumeration (elements);
 	}
-	
-	delete_aspell_string_enumeration (elements);
-#endif /* HAVE_ASPELL */
 
 	return l2;
 }
@@ -481,9 +382,48 @@ gossip_spell_supported (void)
 		return FALSE;
 	}
 
-#ifdef HAVE_ASPELL
 	return TRUE;
-#else  /* HAVE_ASPELL */
-	return FALSE;
-#endif /* HAVE_ASPELL */
 }
+
+#else /* not HAVE_ASPELL */
+
+gboolean
+gossip_spell_supported (void)
+{
+	return FALSE;
+}
+
+GList *
+gossip_spell_get_suggestions (const gchar *word)
+{
+	return NULL;
+}
+
+gboolean
+gossip_spell_check (const gchar *word)
+{
+	return TRUE;
+}
+
+const char *
+gossip_spell_get_language_name (const char *lang)
+{
+	return NULL;
+}
+
+GList *
+gossip_spell_get_language_codes (void)
+{
+	return NULL;
+}
+
+#endif /* HAVE_ASPELL */
+
+
+void
+gossip_spell_free_suggestions (GList *suggestions)
+{
+	g_list_foreach (suggestions, (GFunc) g_free, NULL);
+	g_list_free (suggestions);
+}
+

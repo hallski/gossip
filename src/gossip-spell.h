@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,20 +26,13 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GossipSpell GossipSpell;
-
-GossipSpell *gossip_spell_new                (GList       *languages);
-GossipSpell *gossip_spell_ref                (GossipSpell *spell);
-void         gossip_spell_unref              (GossipSpell *spell);
-gboolean     gossip_spell_has_backend        (GossipSpell *spell);
-gboolean     gossip_spell_check              (GossipSpell *spell,
-					      const gchar *word);
-GList *      gossip_spell_suggestions        (GossipSpell *spell,
-					      const gchar *word);
-gboolean     gossip_spell_supported          (void);
-const gchar *gossip_spell_get_language_name  (GossipSpell *spell,
-					      const gchar *code);
-GList       *gossip_spell_get_language_codes (GossipSpell *spell);
+gboolean     gossip_spell_supported           (void);
+const gchar *gossip_spell_get_language_name   (const gchar *code);
+GList       *gossip_spell_get_language_codes  (void);
+void         gossip_spell_free_language_codes (GList       *codes);
+gboolean     gossip_spell_check               (const gchar *word);
+GList *      gossip_spell_get_suggestions     (const gchar *word);
+void         gossip_spell_free_suggestions    (GList        *suggestions);
 
 G_END_DECLS
 

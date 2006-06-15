@@ -1,3 +1,18 @@
+2006-06-15  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.[ch]:
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c:
+	* src/gossip-preferences.c:
+	* src/gossip-spell-dialog.[ch]:
+	* src/gossip-spell.[ch]: A bit too much for a detailed
+	log. Reworked the spell shecking code so that we only create one
+	aspell checker per language instead of one per language and chat
+	view. Also update the used languages when the preference changed.
+	- Don't create one tooltips object per smiley * 2, just one per
+	chat window.
+	- Other small changes and cleanups.
+
 2006-06-14  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c (chat_window_insert_smiley_activate_cb)

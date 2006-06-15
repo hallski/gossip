@@ -22,6 +22,7 @@
 #define __GOSSIP_CHAT_VIEW_H__
 
 #include <gtk/gtktextview.h>
+#include <gtk/gtktooltips.h>
 
 #include <libgossip/gossip-message.h>
 
@@ -111,6 +112,7 @@ void            gossip_chat_view_set_irc_style             (GossipChatView *view
 GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smiley);
 const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smiley);
 GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,
-							    gpointer        user_data);
+							    gpointer        user_data,
+							    GtkTooltips    *tooltips);	
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2004 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,14 +23,13 @@
 #define __GOSSIP_SPELL_DIALOG_H__
 
 #include <glib.h>
+#include <gtk/gtktextiter.h>
 
 #include "gossip-chat.h"
-#include "gossip-spell.h"
 
 G_BEGIN_DECLS
 
 void gossip_spell_dialog_show (GossipChat  *chat, 
-			       GossipSpell *spell,
 			       GtkTextIter  start,
 			       GtkTextIter  end,
 			       const gchar *word);

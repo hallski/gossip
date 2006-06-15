@@ -238,40 +238,31 @@ preferences_languages_add (GossipPreferences *preferences)
 {
 	GtkTreeView  *view;
 	GtkListStore *store;
-	GossipSpell  *spell;
 	GList        *codes, *l;
 
 	view = GTK_TREE_VIEW (preferences->treeview_spell_checker);
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
 
-	spell = gossip_spell_new (NULL);
-	codes = gossip_spell_get_language_codes (spell);
-
+	codes = gossip_spell_get_language_codes ();
 	for (l = codes; l; l = l->next) {
 		GtkTreeIter  iter;
 		const gchar *code;
-		const gchar *language;
+		const gchar *name;
 
 		code = l->data; 
-		language = gossip_spell_get_language_name (spell, code);
-		
-		if (!language || strlen (language) < 1) {
+		name = gossip_spell_get_language_name (code);
+		if (!name) {
 			continue;
 		}
 
 		gtk_list_store_append (store, &iter);
 		gtk_list_store_set (store, &iter, 
 				    COL_LANG_CODE, code,
-				    COL_LANG_NAME, language,
+				    COL_LANG_NAME, name,
 				    -1);
 	}
 
-	g_list_foreach (codes, (GFunc)g_free, NULL);
-	g_list_free (codes);
-
-	if (spell) {
-		gossip_spell_unref (spell);
-	}
+	gossip_spell_free_language_codes (codes);
 }
 
 static void

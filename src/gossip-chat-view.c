@@ -181,7 +181,7 @@ static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_SICK,         ")o+", 0 }
 };
 
-static gint num_smileys = G_N_ELEMENTS (smileys);
+static gint         num_smileys = G_N_ELEMENTS (smileys);
 
 static void     gossip_chat_view_class_init          (GossipChatViewClass      *klass);
 static void     gossip_chat_view_init                (GossipChatView           *view);
@@ -1971,22 +1971,21 @@ gossip_chat_view_get_smiley_text (GossipSmiley smiley)
 }
 
 GtkWidget *
-gossip_chat_view_get_smiley_menu (GCallback callback, 
-				  gpointer  user_data)
+gossip_chat_view_get_smiley_menu (GCallback    callback, 
+				  gpointer     user_data,
+				  GtkTooltips *tooltips)
 {
 	GtkWidget *menu;
 	gint       x;
 	gint       y;
 	gint       i;
 
-	/* Set up smiley menu */
 	menu = gtk_menu_new ();
 
 	for (i = 0, x = 0, y = 0; i < GOSSIP_SMILEY_COUNT; i++) {
 		GtkWidget   *item;
 		GtkWidget   *image;
 		GdkPixbuf   *pixbuf;
-		GtkTooltips *tooltips;
 		const gchar *smiley_text;
 
 		pixbuf = gossip_chat_view_get_smiley_image (i);
@@ -2004,7 +2003,6 @@ gossip_chat_view_get_smiley_menu (GCallback callback,
 
 		smiley_text = gossip_chat_view_get_smiley_text (i);
 
-		tooltips = gtk_tooltips_new ();
 		gtk_tooltips_set_tip (tooltips, 
 				      item, 
 				      smiley_text, 

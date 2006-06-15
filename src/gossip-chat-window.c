@@ -261,6 +261,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 
 	priv = GET_PRIV (window);
 
+	priv->tooltips = gtk_tooltips_new ();
+
 	glade = gossip_glade_get_file (GLADEDIR "/chat.glade",
 				       "chat_window",
 				       NULL,
@@ -335,7 +337,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 	/* Set up smiley menu */
 	menu = gossip_chat_view_get_smiley_menu (
 		G_CALLBACK (chat_window_insert_smiley_activate_cb), 
-		window);
+		window,
+		priv->tooltips);
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_edit_insert_smiley), menu);
 
 	/* Set up signals we can't do with glade since we may need to
@@ -409,8 +412,6 @@ gossip_chat_window_init (GossipChatWindow *window)
 	priv->chats_new_msg = NULL;
 	priv->chats_composing = NULL;
 	priv->current_chat = NULL;
-
-	priv->tooltips = gtk_tooltips_new ();
 }
 
 /* Returns the window to open a new tab in if there is only one window
