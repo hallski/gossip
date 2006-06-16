@@ -1,3 +1,9 @@
+2006-06-16  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-account-manager.c: (account_manager_file_parse),
+	(account_manager_file_save): Fix style.
+	* src/gossip-app.c: (app_chatroom_favourite_update): Plug leak.
+
 2006-06-15  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log.[ch]:

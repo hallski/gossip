@@ -2489,8 +2489,8 @@ app_chatroom_favourite_update (void)
 {
 	GossipAppPriv *priv;
 	GList         *accounts;
-	GList         *chatrooms;
-	GList         *l;
+	GList         *chatrooms, *l;
+	gboolean       found;
 		
 	priv = GET_PRIV (app);
 
@@ -2504,22 +2504,18 @@ app_chatroom_favourite_update (void)
 	g_list_free (accounts);
 
 	chatrooms = gossip_chatroom_manager_get_chatrooms (priv->chatroom_manager, NULL);
-	if (!chatrooms) {
-		gtk_widget_set_sensitive (priv->actions_group_chat_join, FALSE);
-		return;
-	}
-
+	found = FALSE;
+	
 	for (l = chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
 		GossipAccount  *account;
 
 		chatroom = l->data;
-		account = gossip_chatroom_get_account (chatroom);
-
 		if (!gossip_chatroom_get_is_favourite (chatroom)) {
  			continue;
 		}
 
+		account = gossip_chatroom_get_account (chatroom);
 		if (!gossip_session_is_connected (priv->session, account)) {
 			continue;
 		}
@@ -2528,12 +2524,13 @@ app_chatroom_favourite_update (void)
 		 * favourite on an account that _IS_ connected, we
 		 * make the join favourites option available.
 		 */
-		gtk_widget_set_sensitive (priv->actions_group_chat_join, TRUE);
-		return;
+		found = TRUE;
+		break;
 	}
 
-	/* We found NO chatrooms with favourites for online accounts */
-	gtk_widget_set_sensitive (priv->actions_group_chat_join, FALSE);
+	gtk_widget_set_sensitive (priv->actions_group_chat_join, found);
+
+	g_list_free (chatrooms);
 }
 
 static void

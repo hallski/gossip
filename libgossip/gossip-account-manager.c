@@ -645,7 +645,7 @@ account_manager_file_parse (GossipAccountManager *manager,
 	
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
-	
+
 #ifdef RESOURCE_HACK
 	if (need_saving) {
 		g_printerr ("Saving accounts... \n");
@@ -690,7 +690,7 @@ account_manager_file_save (GossipAccountManager *manager)
 	root = xmlNewNode (NULL, "accounts");
 	xmlDocSetRootElement (doc, root);
 
-	dtd = xmlCreateIntSubset (doc,"accounts", NULL,dtd_file);
+	dtd = xmlCreateIntSubset (doc, "accounts", NULL, dtd_file);
 
 	if (!priv->default_name) {
 		priv->default_name = g_strdup ("Default");
