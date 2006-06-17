@@ -29,6 +29,7 @@
 #include <panel-applet-gconf.h>
 
 #include "peekaboo-applet.h"
+#include "peekaboo-galago.h"
 
 typedef struct {
 	GtkWidget   *applet_widget;
@@ -37,15 +38,19 @@ typedef struct {
 	GtkTooltips *tooltips;
 } PeekabooApplet;
 
-static void applet_about_cb         (BonoboUIComponent *uic,
+static void applet_toggle_roster_cb (BonoboUIComponent *uic,
 				     PeekabooApplet    *applet, 
 				     const gchar       *verb_name);
-static void applet_toggle_roster_cb (BonoboUIComponent *uic,
+static void applet_preferences_cb   (BonoboUIComponent *uic,
+				     PeekabooApplet    *applet, 
+				     const gchar       *verb_name);
+static void applet_about_cb         (BonoboUIComponent *uic,
 				     PeekabooApplet    *applet, 
 				     const gchar       *verb_name);
 
 static const BonoboUIVerb applet_menu_verbs [] = {
 	BONOBO_UI_VERB ("toggle_roster", applet_toggle_roster_cb),
+	BONOBO_UI_VERB ("preferences", applet_preferences_cb),
 	BONOBO_UI_VERB ("about", applet_about_cb),
 	BONOBO_UI_VERB_END
 };
@@ -137,6 +142,18 @@ applet_toggle_roster_cb (BonoboUIComponent *uic,
 			 const gchar       *verb_name)
 {
 	applet_dbus_toggle_roster (applet);	
+}
+
+static void
+applet_preferences_cb (BonoboUIComponent *uic, 
+		       PeekabooApplet    *applet, 
+		       const gchar       *verb_name)
+{
+ 	GList *services;
+ 	GList *people;
+
+	services = peekaboo_galago_get_services ();	
+	people = peekaboo_galago_get_people ();	
 }
 
 static void
@@ -249,6 +266,9 @@ applet_new (PanelApplet *parent_applet)
 			  G_CALLBACK (applet_change_size_cb), applet);
 	g_signal_connect (panel_applet_get_control (PANEL_APPLET (applet->applet_widget)), "destroy",
 			  G_CALLBACK (applet_destroy_cb), applet);
+
+	/* Initialise other modules */
+	peekaboo_galago_init ();
 
 	return TRUE;
 }

@@ -33,8 +33,10 @@
 /* #define DEBUG_MSG(x)  */
 #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
 
-
+#ifdef DEPRECATED
 static const char *   galago_generate_person_id          (GossipContact  *contact);
+#endif
+
 static GalagoService *gossip_galago_get_service          (GossipAccount  *account);
 static GalagoAccount *galago_get_account                 (GossipAccount  *account);
 static void           galago_set_status                  (GalagoAccount  *account,
@@ -56,7 +58,6 @@ static void           galago_contact_removed_cb          (GossipSession  *sessio
 							  gpointer        user_data);
 static void           galago_setup_accounts              (GossipSession  *session);
 
-
 static GalagoPerson *me = NULL;
 
 /* hash of GossipContact to GalagoPerson */
@@ -66,49 +67,51 @@ static GHashTable *person_table = NULL;
 /* TODO: change key to GossipAccount */
 static GHashTable *accounts = NULL;
 
-
+#ifdef DEPRECATED
 static const char *
 galago_generate_person_id (GossipContact *contact)
 {
 	static int id = 0;
 	static char temp[64];
+
 	g_return_val_if_fail (contact != NULL, NULL);
 	g_snprintf (temp, sizeof (temp), "person-%d", id++);
+
 	return temp;
 }
+#endif /* DEPRECATED */
 
 static GalagoService *
 gossip_galago_get_service (GossipAccount *account)
 {
-	static GalagoService *service = NULL;
+	static GalagoService *gs = NULL;
 
 	g_return_val_if_fail (account != NULL, NULL);
 
 	/* TODO: get service from account type */
-	if (!service) {
-		service = galago_create_service (GALAGO_SERVICE_ID_JABBER, 
-						 GALAGO_SERVICE_ID_JABBER,
-						 0);
+	if (!gs) {
+		gs = galago_create_service (GALAGO_SERVICE_ID_JABBER, 
+					    GALAGO_SERVICE_ID_JABBER,
+					    0);
 	}
 
-	return service;
+	return gs;
 }
 
 static GalagoAccount *
 galago_get_account (GossipAccount *account)
 {
 	GalagoAccount *ga;
-	GalagoService *service;
+	GalagoService *gs;
+	const gchar   *account_id;
   
-	ga = g_hash_table_lookup (accounts, gossip_account_get_id (account));
+	account_id = gossip_account_get_id (account);
+
+	ga = g_hash_table_lookup (accounts, account_id);
 	if (!ga) {
-		service = gossip_galago_get_service (account);
-		ga = galago_service_create_account (service, 
-						    me,
-						    gossip_account_get_id (account));
-		g_hash_table_insert (accounts, 
-				     g_strdup (gossip_account_get_id (account)), 
-				     ga);
+		gs = gossip_galago_get_service (account);
+		ga = galago_service_create_account (gs, me, account_id);
+		g_hash_table_insert (accounts, g_strdup (account_id), ga);
 	}
 
 	return ga;
@@ -119,8 +122,8 @@ galago_set_status (GalagoAccount  *account,
 		   GossipPresence *presence)
 {
 	GossipPresenceState  state;
-	GalagoPresence      *galago_presence;
-	GalagoStatusType     type;
+	GalagoPresence      *gp;
+	GalagoStatusType     gst;
 	char                *id;
 	const char          *status;
 
@@ -129,19 +132,19 @@ galago_set_status (GalagoAccount  *account,
 						
 		switch (state) {
 		case GOSSIP_PRESENCE_STATE_AVAILABLE:
-			type = GALAGO_STATUS_AVAILABLE;
+			gst = GALAGO_STATUS_AVAILABLE;
 			id = GALAGO_STATUS_ID_AVAILABLE;
 			break;
 		case GOSSIP_PRESENCE_STATE_BUSY:
-			type = GALAGO_STATUS_AVAILABLE;
+			gst = GALAGO_STATUS_AVAILABLE;
 			id = GALAGO_STATUS_ID_BUSY;
 			break;
 		case GOSSIP_PRESENCE_STATE_AWAY:
-			type = GALAGO_STATUS_AWAY;
+			gst = GALAGO_STATUS_AWAY;
 			id = GALAGO_STATUS_ID_AWAY;
 			break;
 		case GOSSIP_PRESENCE_STATE_EXT_AWAY:
-			type = GALAGO_STATUS_EXTENDED_AWAY;
+			gst = GALAGO_STATUS_EXTENDED_AWAY;
 			id = GALAGO_STATUS_ID_EXTENDED_AWAY;
 			break;
 		default:
@@ -149,25 +152,28 @@ galago_set_status (GalagoAccount  *account,
 		}
 		
 		status = gossip_presence_get_status (presence);
-		if (!status)
+		if (!status) {
 			status = gossip_presence_state_get_default_status (state);
+		}
+
 		DEBUG_MSG (("Galago: Setting status to %s", status));
 	} else {
 		DEBUG_MSG (("Galago: Setting status to offline"));
-		type = GALAGO_STATUS_OFFLINE;
+
+		gst = GALAGO_STATUS_OFFLINE;
 		id = GALAGO_STATUS_ID_OFFLINE;
+
 		status = _("Offline");
 	}
 
-	galago_presence = galago_account_create_presence (account);
-	galago_presence_clear_statuses (galago_presence);
-	galago_presence_add_status (galago_presence, 
-				    galago_status_new (type, id, status, TRUE));
+	gp = galago_account_create_presence (account);
+	galago_presence_clear_statuses (gp);
+	galago_presence_add_status (gp, galago_status_new (gst, id, status, TRUE));
 }
 
 static void
-galago_presence_changed_cb (GossipSession  *gossip_session, 
-			    GossipPresence *gossip_presence,
+galago_presence_changed_cb (GossipSession  *session, 
+			    GossipPresence *presence,
 			    gpointer        userdata)
 {
 	GList *accounts;
@@ -175,18 +181,18 @@ galago_presence_changed_cb (GossipSession  *gossip_session,
 
 	DEBUG_MSG (("Galago: Session presence changed"));
 
-	accounts = gossip_session_get_accounts (gossip_session);
+	accounts = gossip_session_get_accounts (session);
 
 	for (l = accounts; l != NULL; l = l->next) {
-		GossipAccount *gossip_account;
-		GalagoAccount *galago_account;
+		GossipAccount *account;
+		GalagoAccount *ga;
 
-		gossip_account = GOSSIP_ACCOUNT (l->data);
-		galago_account = galago_get_account (gossip_account);
-		galago_set_status (galago_account, gossip_presence);
+		account = GOSSIP_ACCOUNT (l->data);
+		ga = galago_get_account (account);
+		galago_set_status (ga, presence);
 	}
 
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 }
 
@@ -195,30 +201,32 @@ galago_contact_added_cb (GossipSession *session,
 			 GossipContact *contact, 
 			 gpointer       user_data)
 {
-	GalagoService *service;
-	GalagoAccount *my_gaccount, *gaccount;
-	GalagoPerson  *person;
+	GossipAccount *account;
+	GalagoService *gs;
+	GalagoAccount *ga_me, *ga;
+	GalagoPerson  *gpe;
+	const gchar   *contact_id;
 
-	DEBUG_MSG (("Galago: Contact added:'%s'", 
-		   gossip_contact_get_id (contact)));
+	account = gossip_contact_get_account (contact);
+	contact_id = gossip_contact_get_id (contact);
 
-	my_gaccount = galago_get_account (gossip_contact_get_account (contact));
-	service = galago_account_get_service (my_gaccount);
+	DEBUG_MSG (("Galago: Contact added:'%s'", contact_id));
 
-	person = g_hash_table_lookup (person_table, contact);
-	if (person == NULL) {
-		person = galago_create_person (galago_generate_person_id (contact));
-		g_hash_table_insert (person_table, contact, person);
+	ga_me = galago_get_account (account);
+	gs = galago_account_get_service (ga_me);
+
+	gpe = g_hash_table_lookup (person_table, contact);
+	if (gpe == NULL) {
+		/* We did generate a person id here, not sure why? */
+		gpe = galago_create_person (contact_id);
+		g_hash_table_insert (person_table, contact, gpe);
 	}
 
-	gaccount = galago_service_create_account (service, 
-						  person,
-						  gossip_contact_get_id (contact));
-	galago_account_set_display_name (gaccount, 
-					 gossip_contact_get_name (contact));
-	galago_set_status (gaccount, gossip_contact_get_active_presence (contact));
+	ga = galago_service_create_account (gs, gpe, contact_id);
+	galago_account_set_display_name (ga, gossip_contact_get_name (contact));
+	galago_set_status (ga, gossip_contact_get_active_presence (contact));
 
-	galago_account_add_contact (my_gaccount, gaccount);
+	galago_account_add_contact (ga_me, ga);
 }
 
 static void
@@ -237,36 +245,35 @@ galago_contact_presence_updated_cb (GossipSession *session,
 				    GossipContact *contact,
 				    gpointer       user_data)
 {
+	GossipAccount  *account;
 	GossipPresence *presence;
-	GalagoService  *service;
-	GalagoPerson   *person;
-	GalagoAccount  *gaccount, *my_gaccount;
+	GalagoService  *gs;
+	GalagoPerson   *gpe;
+	GalagoAccount  *ga, *ga_me;
 
 	DEBUG_MSG (("Galago: Contact presence updated:'%s'", 
 		   gossip_contact_get_id (contact)));
-
-	my_gaccount = galago_get_account (gossip_contact_get_account (contact));
+	
+	account = gossip_contact_get_account (contact);
+	ga_me = galago_get_account (account);
 
 	presence = gossip_contact_get_active_presence (contact);
 
-	person = g_hash_table_lookup (person_table, contact);
-	if (!person) { 
+	gpe = g_hash_table_lookup (person_table, contact);
+	if (!gpe) { 
 		g_warning ("Cannot find person"); 
 		return;
 	}
 
-	service = gossip_galago_get_service (gossip_contact_get_account (contact));
-	gaccount = galago_person_get_account (person, 
-					      service, 
-					      gossip_contact_get_id (contact), 
-					      FALSE);
-	if (!gaccount) { 
+	gs = gossip_galago_get_service (account);
+	ga = galago_person_get_account (gpe, gs, gossip_contact_get_id (contact), FALSE);
+	if (!ga) { 
 		g_warning ("Cannot find account"); 
 		return;
 	}
 
-	galago_account_set_connected (gaccount, gossip_contact_is_online (contact));
-	galago_set_status (gaccount, presence);
+	galago_account_set_connected (ga, gossip_contact_is_online (contact));
+	galago_set_status (ga, presence);
 }
 
 static void
@@ -274,27 +281,27 @@ galago_contact_removed_cb (GossipSession *session,
 			   GossipContact *contact,
 			   gpointer       user_data)
 {
-	GalagoAccount *my_galago_account, *galago_account;
-	GalagoService *service;
-	GalagoPerson  *galago_person;
+	GossipAccount *account;
+	GalagoAccount *ga, *ga_me;
+	GalagoService *gs;
+	GalagoPerson  *gpe;
 
 	DEBUG_MSG (("Galago: Contact removed:'%s'", 
 		   gossip_contact_get_id (contact)));
 
-	my_galago_account = galago_get_account (gossip_contact_get_account (contact));
-	service = galago_account_get_service (my_galago_account);
+	account = gossip_contact_get_account (contact);
 
-	galago_person = g_hash_table_lookup (person_table, contact);
-	if (!galago_person) { 
+	ga_me = galago_get_account (account);
+	gs = galago_account_get_service (ga_me);
+
+	gpe = g_hash_table_lookup (person_table, contact);
+	if (!gpe) { 
 		g_warning ("Cannot find person"); 
 		return;
 	}
 	
-	galago_account = galago_person_get_account (galago_person, 
-						    service, 
-						    gossip_contact_get_id (contact), 
-						    FALSE);
-	galago_account_remove_contact (my_galago_account, galago_account);
+	ga = galago_person_get_account (gpe, gs, gossip_contact_get_id (contact), FALSE);
+	galago_account_remove_contact (ga_me, ga);
 }
 
 static void
@@ -310,12 +317,12 @@ galago_setup_accounts (GossipSession *session)
 	for (l = accounts; l != NULL; l = l->next) {
 		GossipAccount  *account;
 		GossipPresence *presence = NULL;
-		GalagoAccount  *galago_account;
+		GalagoAccount  *ga;
 
 		account = GOSSIP_ACCOUNT (l->data);
 
-		galago_account = galago_get_account (account);
-		galago_account_set_connected (galago_account, 
+		ga = galago_get_account (account);
+		galago_account_set_connected (ga, 
 					      gossip_session_is_connected (session, account));
 
 		presence = gossip_session_get_presence (session);
@@ -324,7 +331,7 @@ galago_setup_accounts (GossipSession *session)
 		}
 	}
 
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 }
 

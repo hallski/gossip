@@ -5,9 +5,9 @@ INCLUDES = 							\
 	$(PEEKABOO_CFLAGS)
 
 libexec_PROGRAMS = peekaboo-applet
-peekaboo_applet_SOURCES = 	\
-	peekaboo-applet.c 	\
-	peekaboo-applet.h
+peekaboo_applet_SOURCES = 					\
+	peekaboo-applet.c 	peekaboo-applet.h		\
+	peekaboo-galago.c 	peekaboo-galago.h	
 
 peekaboo_applet_LDFLAGS = 	\
 	$(PEEKABOO_LIBS)

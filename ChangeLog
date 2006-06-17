@@ -1,5 +1,12 @@
 2006-06-17  Martyn Russell  <martyn@imendio.com>
 
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.c:
+	* src/gossip-galago.c: Made a start on listing contacts in the
+	applet using Galago.
+
+2006-06-17  Martyn Russell  <martyn@imendio.com>
+
 	* Makefile.am:
 	* configure.ac:
 	* peekaboo/Makefile.am:
