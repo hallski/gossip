@@ -228,7 +228,6 @@ static gchar *         app_session_get_password_cb          (GossipSession      
 							     gpointer                  user_data);
 static void            app_accels_load                      (void);
 static void            app_accels_save                      (void);
-static void            app_toggle_visibility                (void);
 static void            app_show_hide_list_cb                (GtkWidget                *widget,
 							     GossipApp                *app);
 static void            app_popup_new_message_cb             (GtkWidget                *widget,
@@ -287,7 +286,7 @@ static void            app_status_clear_away                (void);
 static void            app_presence_chooser_changed_cb      (GtkWidget                *chooser,
 							     GossipPresenceState       state,
 							     const gchar              *status,
-							     gpointer                  data);
+							     gpointer                  user_data);
 static gboolean        configure_event_idle_cb              (GtkWidget                *widget);
 static gboolean        app_window_configure_event_cb        (GtkWidget                *widget,
 							     GdkEventConfigure        *event,
@@ -447,7 +446,7 @@ app_setup (GossipAccountManager *manager)
 	DEBUG_MSG (("AppSetup: Initialising 3rd party modules (dbus, galago, etc)"));
 
 #ifdef HAVE_DBUS
-        gossip_dbus_init (priv->session);
+        gossip_dbus_init_for_session (priv->session);
 #endif
 
 #ifdef HAVE_GALAGO
@@ -882,7 +881,7 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 				    GossipApp   *app) 
 {
 	if (event->keyval == GDK_Escape) {
-		app_toggle_visibility();
+		gossip_app_toggle_visibility();
 	}
 
 	return FALSE;
@@ -1186,8 +1185,8 @@ app_accels_save (void)
 /*
  * Notification area signals
  */
-static void
-app_toggle_visibility (void)
+void
+gossip_app_toggle_visibility (void)
 {
 	GossipAppPriv *priv;
 	gboolean       visible;
@@ -1233,7 +1232,7 @@ static void
 app_show_hide_list_cb (GtkWidget *widget,
 		       GossipApp *app)
 {
-	app_toggle_visibility ();
+	gossip_app_toggle_visibility ();
 }
 
 static void
@@ -1296,7 +1295,7 @@ app_tray_button_press_cb (GtkWidget      *widget,
 		GossipEvent *event;
 
 		if (!priv->tray_flash_icons) {
-			app_toggle_visibility ();
+			gossip_app_toggle_visibility ();
 			return TRUE;
 		}
 		
@@ -2232,7 +2231,7 @@ app_status_clear_away (void)
 }
 
 void
-gossip_app_force_non_away (void)
+gossip_app_set_not_away (void)
 {
 	GossipAppPriv *priv;
 
@@ -2248,11 +2247,9 @@ gossip_app_force_non_away (void)
 	}
 }
 
-static void
-app_presence_chooser_changed_cb (GtkWidget           *chooser,
-				 GossipPresenceState  state,
-				 const gchar         *status,
-				 gpointer             data)
+void
+gossip_app_set_presence (GossipPresenceState  state,
+			 const gchar         *status)
 {
 	GossipAppPriv *priv;
 
@@ -2282,6 +2279,15 @@ app_presence_chooser_changed_cb (GtkWidget           *chooser,
 		app_set_away (status);
 		app_presence_updated ();
 	}
+}
+
+static void
+app_presence_chooser_changed_cb (GtkWidget           *chooser,
+				 GossipPresenceState  state,
+				 const gchar         *status,
+				 gpointer             user_data)
+{
+	gossip_app_set_presence (state, status);
 }
 
 static gboolean

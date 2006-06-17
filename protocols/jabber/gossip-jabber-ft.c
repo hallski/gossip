@@ -316,19 +316,14 @@ jabber_ft_error (GossipJabber  *jabber,
 		 GossipFTError  code,
 		 const gchar   *reason)
 {
-	GError        *error;
-	static GQuark  quark = 0;
+	GError *error;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
 	g_return_if_fail (GOSSIP_IS_FT (ft));
 	g_return_if_fail (signal != NULL);
 	g_return_if_fail (reason != NULL);
 
-	if (!quark) {
-		quark = g_quark_from_static_string ("gossip-jabber-ft");
-	}
-
-	error = g_error_new_literal (quark, code, reason);
+	error = g_error_new_literal (gossip_jabber_error_quark(), code, reason);
 	g_signal_emit_by_name (jabber, signal, ft, error);
  	g_error_free (error); 
 }

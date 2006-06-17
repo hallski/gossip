@@ -325,7 +325,7 @@ private_chat_send (GossipPrivateChat *chat,
                 return;
         }
 
-	gossip_app_force_non_away ();
+	gossip_app_set_not_away ();
 
         private_chat_composing_remove_timeout (chat);
 

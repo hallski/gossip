@@ -24,194 +24,215 @@
 #include "gossip-app.h"
 #include "gossip-dbus.h"
 
-static void              dbus_unregistered_func     (DBusConnection *connection,
-						     gpointer        user_data);
-static void              dbus_send_ok_reply         (DBusConnection *bus,
-						     DBusMessage    *message);
-static DBusHandlerResult dbus_handle_set_presence   (DBusConnection *bus,
-						     DBusMessage    *message);
-static DBusHandlerResult dbus_handle_force_non_away (DBusConnection *bus,
-						     DBusMessage    *message);
-static DBusHandlerResult dbus_message_func          (DBusConnection *connection,
-						     DBusMessage    *message,
-						     gpointer        user_data);
+/* #define DEBUG_MSG(x)  */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
 
-static DBusHandlerResult dbus_handle_pre_net_down   (DBusConnection *bus,
-						     DBusMessage    *message);
+#define GOSSIP_DBUS_ERROR_DOMAIN "GossipDBus"
 
-static DBusHandlerResult dbus_handle_post_net_up    (DBusConnection *bus, 
-						     DBusMessage    *message);
+/* Set up the DBus GObject to use */
+typedef struct GossipDBus GossipDBus;
+typedef struct GossipDBusClass GossipDBusClass;
+
+GType gossip_dbus_get_type (void);
+
+struct GossipDBus {
+	GObject parent;
+};
+
+struct GossipDBusClass {
+	GObjectClass parent;
+};
+
+#define GOSSIP_DBUS_SERVICE           "org.gnome.Gossip"
+#define GOSSIP_DBUS_INTERFACE         "org.gnome.Gossip"
+#define GOSSIP_DBUS_PATH              "/org/gnome/Gossip"
+
+#define GOSSIP_TYPE_DBUS              (gossip_dbus_get_type ())
+#define GOSSIP_DBUS(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GOSSIP_TYPE_DBUS, GossipDBus))
+#define GOSSIP_DBUS_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GOSSIP_TYPE_DBUS, GossipDBusClass))
+#define GOSSIP_IS_OBJECT(object)      (G_TYPE_CHECK_INSTANCE_TYPE ((object), GOSSIP_TYPE_DBUS))
+#define GOSSIP_IS_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GOSSIP_TYPE_DBUS))
+#define GOSSIP_DBUS_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GOSSIP_TYPE_DBUS, GossipDBusClass))
+
+G_DEFINE_TYPE(GossipDBus, gossip_dbus, G_TYPE_OBJECT)
+
+gboolean gossip_dbus_set_presence       (GossipDBus   *obj,
+					 const char   *state,
+					 const char   *status,
+					 GError      **error);
+gboolean gossip_dbus_set_not_away       (GossipDBus   *obj,
+					 GError      **error);
+gboolean gossip_dbus_set_network_status (GossipDBus   *obj,
+					 gboolean      up,
+					 GError      **error);
+gboolean gossip_dbus_send_message       (GossipDBus   *obj,
+					 const gchar  *contact_id,
+					 GError      **error);
+gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
+					 GError      **error);
+
+#include "gossip-dbus-glue.h"
 
 static GossipSession *saved_session = NULL;
 
-static DBusObjectPathVTable vtable = {
-	dbus_unregistered_func,
-	dbus_message_func,
-	NULL,
-};
+static void
+gossip_dbus_init (GossipDBus *obj)
+{
+}
+
+static void
+gossip_dbus_class_init (GossipDBusClass *klass)
+{
+}
 
 gboolean
-gossip_dbus_init (GossipSession *session)
+gossip_dbus_set_presence (GossipDBus   *obj, 
+			  const char   *state, 
+			  const char   *status,
+			  GError      **error)
 {
-	DBusConnection  *bus;
-	DBusError        error;
+	GossipPresenceState show;
 
-	static gboolean  inited = FALSE;
+	DEBUG_MSG (("DBus: Setting presence to state:'%s', status:'%s'", state, status));
 
-	g_return_val_if_fail (session != NULL, FALSE);
-
-	/* FIXME: better way to do this? */
-	if (saved_session) {
-		g_object_unref (saved_session);
-		saved_session = NULL;
+	if (strcasecmp (state, "available") == 0) {
+		show = GOSSIP_PRESENCE_STATE_AVAILABLE;
+	} 
+	else if (strcasecmp (state, "busy") == 0) {
+  		show = GOSSIP_PRESENCE_STATE_BUSY;
 	}
-	
-	saved_session = g_object_ref (session);
-
-	if (inited) {
-		return TRUE;
+	else if (strcasecmp (state, "away") == 0) {
+  		show = GOSSIP_PRESENCE_STATE_AWAY;
 	}
+	else if (strcasecmp (state, "xa") == 0) {
+  		show = GOSSIP_PRESENCE_STATE_EXT_AWAY;
+	} else {
+		DEBUG_MSG (("DBus: Presence state:'%s' not recognised, try 'available', "
+			    "'busy', 'away', or 'xa'", state));
 
-	inited = TRUE;
+		g_set_error (error, gossip_dbus_error_quark (), 0, 
+			     "State:'%s' unrecognised, try 'available', 'busy', 'away', or 'xa'", 
+			     state);
 
-	bus = dbus_bus_get(DBUS_BUS_SESSION, NULL);
-	if (!bus) {
-		return FALSE;
-	}
-  
-	dbus_error_init (&error);
-	dbus_connection_setup_with_g_main(bus, NULL);
-	if (dbus_error_is_set (&error)) {
-		g_warning ("Failed to setup dbus connection");
-		dbus_error_free (&error);
-		return FALSE;
-	}
-
-	dbus_bus_request_name (bus, GOSSIP_DBUS_SERVICE, 0, &error);
-	if (dbus_error_is_set (&error)) {
-		g_warning ("Failed to acquire gossip service.");
-		dbus_error_free (&error);
 		return FALSE;
 	}
 	
-	if (!dbus_connection_register_object_path (bus,
-						   GOSSIP_DBUS_OBJECT,
-						   &vtable,
-						   NULL)) {
-		g_warning ("Failed to register object path.");
-		return FALSE;
-	}
+	gossip_app_set_presence (show, status);
+
+	return TRUE;
+}
+
+gboolean
+gossip_dbus_set_not_away (GossipDBus  *obj, 
+			  GError     **error)
+{
+	DEBUG_MSG (("DBus: Setting presence to NOT AWAY"));
+	gossip_app_set_not_away ();
 	
 	return TRUE;
 }
 
-static void
-dbus_unregistered_func (DBusConnection *connection,
-			gpointer        user_data)
+gboolean
+gossip_dbus_set_network_status (GossipDBus *obj, 
+				gboolean    up, 
+				GError     **error)
 {
+	DEBUG_MSG (("DBus: Setting network status %s", up ? "up" : "down"));
+	
+	if (up) {
+		gossip_app_net_up ();
+	} else {
+		gossip_app_net_down ();
+	}
+ 
+	return TRUE;
 }
 
-static void
-dbus_send_ok_reply (DBusConnection *bus,
-		    DBusMessage    *message)
+gboolean
+gossip_dbus_send_message (GossipDBus   *obj, 
+			  const gchar  *contact_id, 
+			  GError      **error)
 {
-	DBusMessage *reply;
-	
-	reply = dbus_message_new_method_return (message);
-	
-	dbus_connection_send (bus, reply, NULL);
-	dbus_message_unref (reply);
+	GossipChatManager *manager;
+	GossipContact     *contact;
+
+	DEBUG_MSG (("DBus: Sending message to contact:'%s'", contact_id));
+
+	contact = gossip_session_find_contact (saved_session, contact_id);
+	if (!contact) {
+		g_set_error (error, gossip_dbus_error_quark (), 0, 
+			     "Contact:'%s' not found", contact_id);
+		return FALSE;
+	}
+
+	manager = gossip_app_get_chat_manager ();
+	gossip_chat_manager_show_chat (manager, contact);
+
+	return TRUE;
 }
 
-static DBusHandlerResult
-dbus_handle_set_presence (DBusConnection *bus,
-			  DBusMessage    *message)
+gboolean 
+gossip_dbus_toggle_roster (GossipDBus  *obj,
+			   GError     **error)
 {
-	DBusMessageIter  iter;
-	GossipPresence  *presence;
-	gint             show;
-	gchar           *status = NULL;
-	
-	dbus_message_iter_init (message, &iter);
+	DEBUG_MSG (("DBus: Toggling roster visibility"));
+	gossip_app_toggle_visibility ();
 
-	dbus_message_iter_get_basic (&iter, &show);
-	if (dbus_message_iter_next (&iter)) {
-		dbus_message_iter_get_basic (&iter, &status);
-	}
-
-	presence = gossip_presence_new_full (show, status);
-	gossip_session_set_presence (saved_session, presence);
-	g_object_unref (presence);
-
-	if (status) {
-		dbus_free (status);
-	}
-	
-	dbus_send_ok_reply (bus, message);
-
-	return DBUS_HANDLER_RESULT_HANDLED;
+	return TRUE;
 }
 
-static DBusHandlerResult
-dbus_handle_force_non_away (DBusConnection *bus,
-			    DBusMessage    *message)
-{	
-	gossip_app_force_non_away ();
-	
-	dbus_send_ok_reply (bus, message);
-	
-	return DBUS_HANDLER_RESULT_HANDLED;
-}
-
-static DBusHandlerResult
-dbus_handle_pre_net_down (DBusConnection *bus, DBusMessage *message)
-{	
-	g_print ("Pre net down\n");
-	gossip_app_net_down ();
-
-	dbus_send_ok_reply (bus, message);
-	
-	return DBUS_HANDLER_RESULT_HANDLED;
-}
-
-static DBusHandlerResult
-dbus_handle_post_net_up (DBusConnection *bus, DBusMessage *message)
-{	
-	g_print ("Post net up\n");
-	gossip_app_net_up ();
-
-	dbus_send_ok_reply (bus, message);
-	
-	return DBUS_HANDLER_RESULT_HANDLED;
-}
-
-static DBusHandlerResult
-dbus_message_func (DBusConnection *connection,
-		   DBusMessage    *message,
-		   gpointer        user_data)
+GQuark
+gossip_dbus_error_quark (void)
 {
-
-	if (dbus_message_is_method_call (message,
-					 GOSSIP_DBUS_INTERFACE,
-					 GOSSIP_DBUS_SET_PRESENCE)) {
-		return dbus_handle_set_presence (connection, message);
-	}
-	else if (dbus_message_is_method_call (message,
-					      GOSSIP_DBUS_INTERFACE,
-					      GOSSIP_DBUS_FORCE_NON_AWAY)) {
-		return dbus_handle_force_non_away (connection, message);
-	}
-	else if (dbus_message_is_method_call (message,
-					      GOSSIP_DBUS_INTERFACE,
-					      GOSSIP_DBUS_PRE_NET_DOWN)) {
-		return dbus_handle_pre_net_down (connection, message);
-	}
-	else if (dbus_message_is_method_call (message,
-					      GOSSIP_DBUS_INTERFACE,
-					      GOSSIP_DBUS_POST_NET_UP)) {
-		return dbus_handle_post_net_up (connection, message);
-	}
-
-	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+        return g_quark_from_static_string (GOSSIP_DBUS_ERROR_DOMAIN);
 }
 
+gboolean
+gossip_dbus_init_for_session (GossipSession *session)
+{
+	DBusGConnection *bus;
+	DBusGProxy      *bus_proxy;
+	GError          *error = NULL;
+	GossipDBus      *obj;
+	guint            request_name_result;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
+
+	if (saved_session) {
+		DEBUG_MSG (("DBus: Already initiated"));
+		return TRUE;
+	}
+	
+	saved_session = g_object_ref (session);
+
+	dbus_g_object_type_install_info (GOSSIP_TYPE_DBUS, &dbus_glib_gossip_dbus_object_info);
+
+	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
+	if (!bus) {
+		g_warning ("Couldn't connect to the session bus");
+		return FALSE;
+	}
+	
+	bus_proxy = dbus_g_proxy_new_for_name (bus, 
+					       "org.freedesktop.DBus",
+					       "/org/freedesktop/DBus",
+					       "org.freedesktop.DBus");
+
+	if (!dbus_g_proxy_call (bus_proxy, "RequestName", &error,
+				G_TYPE_STRING, GOSSIP_DBUS_SERVICE,
+				G_TYPE_UINT, 0,
+				G_TYPE_INVALID,
+				G_TYPE_UINT, &request_name_result,
+				G_TYPE_INVALID)) {
+		g_warning ("Failed to acquire %s", GOSSIP_DBUS_SERVICE);
+		return FALSE;
+	}
+	
+	obj = g_object_new (GOSSIP_TYPE_DBUS, NULL);
+
+	dbus_g_connection_register_g_object (bus, GOSSIP_DBUS_PATH, G_OBJECT (obj));
+	
+	DEBUG_MSG (("DBus: Initiated, service running"));
+
+	return TRUE;
+}

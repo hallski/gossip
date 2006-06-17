@@ -45,9 +45,7 @@ typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
 
 struct _GossipApp {
-        GObject        parent;
-
-/*         GossipAppPriv *priv; */
+        GObject parent;
 };
 
 struct _GossipAppClass {
@@ -65,8 +63,10 @@ void                   gossip_app_create               (GossipAccountManager *ma
 GossipApp *            gossip_app_get                  (void);
 
 gboolean               gossip_app_is_connected         (void);
-void                   gossip_app_force_non_away       (void);
-
+void                   gossip_app_toggle_visibility    (void);
+void                   gossip_app_set_not_away         (void);
+void                   gossip_app_set_presence         (GossipPresenceState   state,
+							const gchar          *status);
 GtkWidget *            gossip_app_get_window           (void);
 GConfClient *          gossip_app_get_gconf_client     (void);
 

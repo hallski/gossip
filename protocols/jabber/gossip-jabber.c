@@ -46,21 +46,23 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
+#define GOSSIP_JABBER_ERROR_DOMAIN "GossipJabber"
+
 /* Common XMPP XML namespaces we use. */
-#define XMPP_VERSION_XMLNS  "jabber:iq:version"
-#define XMPP_ROSTER_XMLNS   "jabber:iq:roster"
-#define XMPP_REGISTER_XMLNS "jabber:iq:register"
+#define XMPP_VERSION_XMLNS         "jabber:iq:version"
+#define XMPP_ROSTER_XMLNS          "jabber:iq:roster"
+#define XMPP_REGISTER_XMLNS        "jabber:iq:register"
 
 /* We use 3.5 minutes because if the port is just wrong then it
  * will timeout before then with that error.
  */
-#define CONNECT_TIMEOUT     210 
+#define CONNECT_TIMEOUT            210 
 
 /* This is the timeout we will accept the user to be composing for
  * before we assume it is stuck and the server has failed to tell us
  * the user has stopped composing.
  */
-#define COMPOSING_TIMEOUT   45
+#define COMPOSING_TIMEOUT          45
   
 struct _GossipJabberPriv {
 	LmConnection          *connection;
@@ -3124,6 +3126,12 @@ jabber_data_free (JabberData *data)
 /* 
  * External functions 
  */ 
+
+GQuark
+gossip_jabber_error_quark (void)
+{
+        return g_quark_from_static_string (GOSSIP_JABBER_ERROR_DOMAIN);
+}
 
 GossipAccount *
 gossip_jabber_get_account (GossipJabber *jabber)

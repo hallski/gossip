@@ -1172,7 +1172,7 @@ group_chat_send (GossipGroupChat *chat)
 	if (!handled_command) {
 		gossip_chatroom_provider_send (priv->chatroom_provider, priv->chatroom_id, msg);
 		
-		gossip_app_force_non_away ();
+		gossip_app_set_not_away ();
 	}
 
 	g_free (msg);

@@ -15,6 +15,11 @@ AM_CPPFLAGS =	                                 	\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
 	$(GOSSIP_CFLAGS) $(WARN_CFLAGS)
 
+dbus_binding_sources = gossip-dbus.xml
+
+gossip-dbus-glue.h: $(dbus_binding_sources)
+	$(LIBTOOL) --mode=execute $(DBUSBINDINGTOOL) --prefix=gossip_dbus --mode=glib-server --output=gossip-dbus-glue.h $(dbus_binding_sources)
+
 if HAVE_DBUS
 dbus_sources =									\
 	gossip-dbus.c                  	    gossip-dbus.h
@@ -113,7 +118,8 @@ gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
 
 BUILT_SOURCES = 					\
 	gossip-marshal.h				\
-	gossip-marshal.c
+	gossip-marshal.c				\
+	gossip-dbus-glue.h
 
 CLEANFILES = $(BUILT_SOURCES)
 
@@ -121,5 +127,8 @@ EXTRA_DIST =						\
 	gossip-log.xsl					\
 	gossip-marshal.list                             \
 	$(dtd_DATA)					\
-	$(dbus_sources)
+	$(dbus_sources)					\
+	$(dbus_binding_sources)				\
+	$(galago_sources)				\
+	$(libnotify_sources)
 

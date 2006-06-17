@@ -1,3 +1,75 @@
+2006-06-17  Martyn Russell  <martyn@imendio.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* peekaboo/Makefile.am:
+	* peekaboo/data/GNOME_Peekaboo_Applet.server.in.in:
+	* peekaboo/data/GNOME_Peekaboo_Applet.xml:
+	* peekaboo/data/Makefile.am:
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.[ch]:
+	* protocols/jabber/gossip-jabber-ft.c: 
+	* protocols/jabber/gossip-jabber.[ch]: 
+	* src/Makefile.am:
+	* src/gossip-app.[ch]:
+	* src/gossip-dbus.[ch]:
+	* src/gossip-dbus.xml:
+	* src/gossip-group-chat.c:
+	* src/gossip-private-chat.c: Merged changes in from PEEKABOO branch.
+
+2006-06-17  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* peekaboo/data/GNOME_Peekaboo_Applet.xml:
+	* peekaboo/src/peekaboo-applet.c: 
+	* src/gossip-dbus.[ch]: 
+	* src/gossip-dbus.xml: Added toggle roster and send message
+	functionality. 
+	
+	* protocols/jabber/gossip-jabber-ft.c: 
+	* protocols/jabber/gossip-jabber.[ch]: Fixed the way we do the
+	error quark here to make sure it is done properly.
+	 
+	* src/gossip-app.[ch]: Make sure when we set the presence via dbus,
+	the application changes too, don't just the Jabber message. Make
+	some API public, like toggling visibility of the roster so it can
+	be done via dbus.
+
+2006-06-16  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.h:
+	* src/gossip-dbus.c:
+	* src/gossip-dbus.xml: Update the dbus interface to make sure the
+	original stuff we supported still works.
+
+2006-06-16  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/gossip-app.c: (app_setup):
+	* src/gossip-dbus.c: (gossip_dbus_init), (gossip_dbus_class_init),
+	(gossip_dbus_set_presence), (gossip_dbus_init_for_session):
+	* src/gossip-dbus.h:
+	* src/gossip-dbus.xml: Updated the dbus stuff to use a gobject so
+	we can have signalling with remote methods and the interface all
+	done with an XML file.
+
+2006-06-16  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* peekaboo/Makefile.am: Minor build clean ups. Make sure we only
+	build peekaboo when we have DBus, applet support, etc and don't
+	make it compulsory.
+
+2006-06-16  Martyn Russell  <martyn@imendio.com>
+
+	* peekaboo/data/GNOME_Peekaboo_Applet.server.in.in:
+	* peekaboo/data/GNOME_Peekaboo_Applet.xml:
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.c: (applet_new),
+	(peekaboo_applet_factory): Fix things up so the applet is now added
+	properly without error and all the relevant files are found correctly.
+
 2006-06-16  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-account-manager.c: (account_manager_file_parse),
@@ -225,12 +297,28 @@
 	* src/gossip-preferences.[ch]:
 	* ui/main.glade: Make avatars a preference.
 
+2006-06-09  Martyn Russell  <martyn@imendio.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* peekaboo/Makefile.am:
+	* peekaboo/data/GNOME_Peekaboo_Applet.server.in.in:
+	* peekaboo/data/GNOME_Peekaboo_Applet.xml:
+	* peekaboo/data/Makefile.am:
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.[ch]: Added the initial files for
+	an applet.
+
+2006-06-09  Martyn Russell  <martyn@imendio.com>
+
+	* Branch PEEKABOO created for Gossip applet work.
+
 2006-06-09  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-notify.c (notify_new_message): Strip leading/trailing
 	whitespace from message before cutting of at the max len, and
 	don't cut in the middle of multibyte characters.
-
+	
 2006-06-08  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-presence-chooser.c:

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/">
+  <interface name="org.gnome.Gossip">
+    <method name="SetPresence">
+      <arg name="state" type="s" direction="in"/>
+      <arg name="status" type="s" direction="in"/>
+    </method>
+    <method name="SetNotAway">
+    </method>
+    <method name="SetNetworkStatus">
+      <arg name="up" type="b" direction="in"/>
+    </method>
+    <method name="SendMessage">
+      <arg name="contact" type="s" direction="in"/>
+    </method>
+    <method name="ToggleRoster">
+    </method>
+  </interface>
+</node>
+

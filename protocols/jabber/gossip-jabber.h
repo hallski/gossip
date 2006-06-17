@@ -33,6 +33,8 @@
 #define GOSSIP_IS_JABBER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_JABBER))
 #define GOSSIP_JABBER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_JABBER, GossipJabberClass))
 
+#define GOSSIP_JABBER_ERROR        gnome_jabber_error_quark()
+
 typedef struct _GossipJabber      GossipJabber;
 typedef struct _GossipJabberClass GossipJabberClass;
 typedef struct _GossipJabberPriv  GossipJabberPriv;
@@ -44,6 +46,8 @@ struct _GossipJabber {
 struct _GossipJabberClass {
 	GossipProtocolClass parent_class;
 };
+
+GQuark         gossip_jabber_error_quark               (void) G_GNUC_CONST;
 
 GType          gossip_jabber_get_type                  (void) G_GNUC_CONST;
 gboolean       gossip_jabber_get_vcard                 (GossipJabber        *jabber,
