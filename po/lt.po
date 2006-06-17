@@ -1,21 +1,25 @@
+# translation of lt.po to Lithuanian
 # Lithuanian translation of gossip.
 # Copyright (C) 2004-2006 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gossip package.	
+# This file is distributed under the same license as the gossip package.
+#
+#
 # Justina Klingaitė <justina.klingaite@gmail.com>, 2006.
 # Žygimantas Beručka <zygis@gnome.org>, 2004-2006.
-# 
-# 
+# Gintautas Miliauskas <gintas@akl.lt>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: gossip HEAD\n"
+"Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-06-11 09:37+0100\n"
-"PO-Revision-Date: 2006-04-18 13:32+0300\n"
-"Last-Translator: Žygimantas Beručka <zygis@gnome.org>\n"
+"PO-Revision-Date: 2006-06-18 01:34+0300\n"
+"Last-Translator: Gintautas Miliauskas <gintas@akl.lt>\n"
 "Language-Team: Lithuanian <komp_lt@konferencijos.lt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.2\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: ../gossip.desktop.in.in.h:1
 msgid "Gossip Instant Messenger"
@@ -31,31 +35,27 @@ msgstr "Naujiems pokalbiams visada atverti atskirą pokalbio langą."
 
 #: ../gossip.schemas.in.h:2
 msgid "Chat window theme"
-msgstr "Pakalbio lango tema"
+msgstr "Pokalbio lango tema"
 
 #: ../gossip.schemas.in.h:3
-msgid ""
-"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
-msgstr ""
-"Kableliu atskirtų kalbų, kurių rašyba tikrinama, sąrašas (pvz. lt, en, fr)."
+msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgstr "Kableliu atskirtų kalbų, kurių rašyba tikrinama, sąrašas (pvz. lt, en, fr)."
 
 #: ../gossip.schemas.in.h:4
 msgid "Default directory to select an avatar image from"
-msgstr ""
+msgstr "Katalogas, iš kurio renkamas paveikslėlis"
 
 #: ../gossip.schemas.in.h:5
 msgid "Enable popup when contact is available"
-msgstr ""
+msgstr "Įjungti iššokantį langą, rodomą žmogui prisijungus"
 
 #: ../gossip.schemas.in.h:6
-#, fuzzy
 msgid "Enable sound when away"
-msgstr "Atjungti garsus kai m_anęs nėra"
+msgstr "Atjungti garsus, kai manęs nėra"
 
 #: ../gossip.schemas.in.h:7
-#, fuzzy
 msgid "Enable sound when busy"
-msgstr "Atjungti garsus kai aš _užsiėmęs"
+msgstr "Atjungti garsus, kai aš užsiėmęs"
 
 #: ../gossip.schemas.in.h:8
 msgid "Hide main window"
@@ -78,9 +78,8 @@ msgid "Preset status messages."
 msgstr "Iš anksto nustatytos būsenos žinutės."
 
 #: ../gossip.schemas.in.h:13
-#, fuzzy
 msgid "Show avatars"
-msgstr "_Rodyti bičiulius"
+msgstr "Rodyti bičiulių paveikslėlius"
 
 #: ../gossip.schemas.in.h:14
 msgid "Show offline contacts"
@@ -92,7 +91,7 @@ msgstr "Kalbų rašybos tikrinimas"
 
 #: ../gossip.schemas.in.h:16
 msgid "The last directory that an avatar image was chosen from."
-msgstr ""
+msgstr "Paskutinis katalogas, iš kurio pasirinktas paveikslėlis."
 
 #: ../gossip.schemas.in.h:17
 msgid "The theme that is used to display the conversation in chat windows."
@@ -107,8 +106,7 @@ msgid "Use notification sounds"
 msgstr "Naudoti įspėjimo garsus"
 
 #: ../gossip.schemas.in.h:20
-msgid ""
-"Whether or not to convert smileys into graphical images in conversations."
+msgid "Whether or not to convert smileys into graphical images in conversations."
 msgstr "Ar pokalbiuose paversti šypsenėles į grafinius paveiksliukus."
 
 #: ../gossip.schemas.in.h:21
@@ -124,16 +122,14 @@ msgid "Whether or not to play sounds when busy."
 msgstr "Ar groti garsu kai tu užsiėmęs."
 
 #: ../gossip.schemas.in.h:24
-#, fuzzy
 msgid "Whether or not to show a popup when a contact becomes available."
-msgstr "Ar sugroti garsą kai atvyksta nauja žinutė."
+msgstr "Ar rodyti iššokantį langą, kai žmogus prisijungia prie tinklo."
 
 #: ../gossip.schemas.in.h:25
-#, fuzzy
 msgid ""
 "Whether or not to show avatars for contacts in the contact list and chat "
 "windows."
-msgstr "Ar bičiulių sąraše rodyti bičiulius, kurie yra atsijungę."
+msgstr "Ar rodyti pašnekovų paveikslėlius kontaktų sąraše ir pokalbių languose."
 
 #: ../gossip.schemas.in.h:26
 msgid "Whether or not to show contacts that are offline in the contact list."
@@ -192,26 +188,22 @@ msgstr "Atsijungęs"
 #: ../libgossip/gossip-presence.c:377 ../libgossip/gossip-presence.c:394
 #: ../src/gossip-presence-chooser.c:615 ../src/gossip-presence-chooser.c:717
 #: ../src/gossip-presence-chooser.c:747
-#, fuzzy
 msgid "Available"
-msgstr "Esu..."
+msgstr "Esu"
 
 #: ../libgossip/gossip-presence.c:381 ../src/gossip-presence-chooser.c:627
 #: ../src/gossip-presence-chooser.c:775
-#, fuzzy
 msgid "Busy"
-msgstr "Užsiėmęs..."
+msgstr "Užsiėmęs"
 
 #: ../libgossip/gossip-presence.c:386 ../src/gossip-presence-chooser.c:639
 #: ../src/gossip-presence-chooser.c:803
-#, fuzzy
 msgid "Away"
-msgstr "Manęs nėra..."
+msgstr "Manęs nėra."
 
 #: ../libgossip/gossip-presence.c:391
-#, fuzzy
 msgid "Unavailable"
-msgstr "Esu..."
+msgstr "Neprieinamas"
 
 #: ../libgossip/gossip-protocol.c:673
 msgid "An unknown error occurred."
@@ -364,6 +356,8 @@ msgid ""
 "You are about to remove your %s account!\n"
 "Are you sure you want to proceed?"
 msgstr ""
+"Ištrinsite abonementą %s!\n"
+"Ar tikrai norite tęsti?"
 
 #: ../src/gossip-accounts-dialog.c:1214
 msgid ""
@@ -373,6 +367,10 @@ msgid ""
 "Should you decide to add the account back at a later time, they will still "
 "be available."
 msgstr ""
+"Susiję pokalbiai bei pokalbių kambariai nebus ištrinti,\n"
+"jei nuspręsite tęsti.\n"
+"\n"
+"Jei vėliau vėl pridėsite abonementą, jie vis dar bus prieinami."
 
 #: ../src/gossip-add-contact-window.c:153
 msgid "Jabber"
@@ -442,7 +440,7 @@ msgstr ""
 
 #: ../src/gossip-avatar-image.c:329
 msgid "Click to enlarge"
-msgstr ""
+msgstr "Spauskite padidinti"
 
 #: ../src/gossip-chat.c:462
 msgid "Insert Smiley"
@@ -483,9 +481,8 @@ msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
 #: ../src/gossip-chat-view.c:1368
-#, fuzzy
 msgid "Your invitation has been declined"
-msgstr "Jūsų rinkmenos siuntimo atsisakyta."
+msgstr "Jūsų pakvietimo buvo atsisakyta"
 
 #: ../src/gossip-chat-view.c:1631
 msgid "Accept"
@@ -493,26 +490,23 @@ msgstr "Priimti"
 
 #: ../src/gossip-chat-view.c:1647
 msgid "Decline"
-msgstr ""
+msgstr "Atsisakyti"
 
 #: ../src/gossip-chat-window.c:1330
 msgid "Typing a message."
 msgstr "Rašoma žinutė."
 
 #: ../src/gossip-chatrooms-window.c:170
-#, fuzzy
 msgid "Auto Connect"
-msgstr "Nutraukti prisijungimą"
+msgstr "Automatiškai prisijungti"
 
 #: ../src/gossip-chatrooms-window.c:182
-#, fuzzy
 msgid "Chat Room"
-msgstr "Pokalbių kambariai"
+msgstr "Pokalbių kambarys"
 
 #: ../src/gossip-chatrooms-window.c:212
-#, fuzzy
 msgid "Favourite"
-msgstr "Į_dėti į mėgstamiausius"
+msgstr "Mėgiamass"
 
 #: ../src/gossip-chatrooms-window.c:786
 #: ../src/gossip-new-chatroom-dialog.c:172 ../ui/group-chat.glade.h:9
@@ -526,12 +520,10 @@ msgid "Contact Information for %s"
 msgstr "Bičiulio %s informacija"
 
 #: ../src/gossip-contact-info-dialog.c:653 ../ui/main.glade.h:71
-#, fuzzy
 msgid "Information requested..."
-msgstr "Informacija užklausta, prašome palaukti..."
+msgstr "Informacija užklausta..."
 
 #: ../src/gossip-contact-list.c:322
-#, fuzzy
 msgid "/Contact Infor_mation"
 msgstr "/_Bičiulio informacija"
 
@@ -757,18 +749,17 @@ msgstr "Mėlyna"
 
 #: ../src/gossip-preferences.c:459
 msgid "Dark"
-msgstr ""
+msgstr "Tamsi"
 
 #: ../src/gossip-presence-chooser.c:375
-#, fuzzy
 msgid "Are you sure you want to empy the list?"
-msgstr "Ar norite priimti šią rinkmeną?"
+msgstr "Ar norite išvalyti sąrašą?"
 
 #: ../src/gossip-presence-chooser.c:380
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
-msgstr ""
+msgstr "Visos žinutės iš greitų būsenos žinučių sąrašo bus ištrintos."
 
 #: ../src/gossip-presence-chooser.c:385
 msgid "Clear List"
@@ -776,14 +767,12 @@ msgstr "Išvalyti sąrašą"
 
 #: ../src/gossip-presence-chooser.c:764 ../src/gossip-presence-chooser.c:792
 #: ../src/gossip-presence-chooser.c:820
-#, fuzzy
 msgid "Custom message..."
-msgstr "_Nauja žinutė..."
+msgstr "Nurodyta žinutė..."
 
 #: ../src/gossip-presence-chooser.c:829
-#, fuzzy
 msgid "Clear List..."
-msgstr "Išvalyti sąrašą"
+msgstr "Išvalyti sąrašą..."
 
 #: ../src/gossip-private-chat.c:484
 #, c-format
@@ -842,11 +831,11 @@ msgstr "Atsiminti slaptažodį?"
 
 #: ../src/gossip-vcard-dialog.c:185
 msgid "Select Your Avatar Image"
-msgstr ""
+msgstr "Pasirinkite savo paveikslėlį"
 
 #: ../src/gossip-vcard-dialog.c:188
 msgid "No Image"
-msgstr ""
+msgstr "Paveikslėlio nėra "
 
 #: ../src/gossip-vcard-dialog.c:493
 msgid "The server does not seem to be responding."
@@ -869,12 +858,10 @@ msgid "Contact goes online"
 msgstr "Bičiulis prisijungia"
 
 #: ../ui/chat.glade.h:2
-#, fuzzy
 msgid "Contact Infor_mation"
-msgstr "Bičiulio informacija"
+msgstr "Bičiulio infor_macija"
 
 #: ../ui/chat.glade.h:3
-#, fuzzy
 msgid "In_vite"
 msgstr "_Pakviesti"
 
@@ -951,7 +938,6 @@ msgid "File size:"
 msgstr "Rinkmenos dydis:"
 
 #: ../ui/file-transfer.glade.h:6
-#, fuzzy
 msgid "Not supported yet"
 msgstr "Dar nepalaikoma."
 
@@ -976,7 +962,6 @@ msgid "Account:"
 msgstr "Abonementas:"
 
 #: ../ui/group-chat.glade.h:2
-#, fuzzy
 msgid "Add to _favourites"
 msgstr "Į_dėti į mėgstamiausius"
 
@@ -985,10 +970,8 @@ msgid "Chat Rooms"
 msgstr "Pokalbių kambariai"
 
 #: ../ui/group-chat.glade.h:4
-msgid ""
-"Customize your own nickname, the server and chatroom which you wish to join."
-msgstr ""
-"Nurodykite Jūsų slapyardį, serverį bei pageidaujamą įeiti pokalbių kambarį."
+msgid "Customize your own nickname, the server and chatroom which you wish to join."
+msgstr "Nurodykite Jūsų slapyardį, serverį bei pageidaujamą įeiti pokalbių kambarį."
 
 #: ../ui/group-chat.glade.h:5
 msgid "Edit Chat Room"
@@ -1011,10 +994,8 @@ msgid "Join the chat room"
 msgstr "Įeiti į pokalbių kambarį"
 
 #: ../ui/group-chat.glade.h:12
-#, fuzzy
 msgid "Join this chat room when Gossip starts and you are connected"
-msgstr ""
-"Įeiti į šį pokalbių kambarį, kai paleidžiamas Gossip ir jums prisijungus."
+msgstr "Įeiti į šį pokalbių kambarį, kai paleidžiamas Gossip ir jums prisijungus."
 
 #: ../ui/group-chat.glade.h:13
 msgid "N_ame:"
@@ -1073,33 +1054,28 @@ msgid "<b>About</b>"
 msgstr "<b>Apie</b>"
 
 #: ../ui/main.glade.h:4
-#, fuzzy
 msgid "<b>Account</b>"
-msgstr "<b>Apie</b>"
+msgstr "<b>Abonementas</b>"
 
 #: ../ui/main.glade.h:5
-#, fuzzy
 msgid "<b>Appearance</b>"
-msgstr "<b>Išvaizda ir elgsena</b>"
+msgstr "<b>Išvaizda</b>"
 
 #: ../ui/main.glade.h:6
-#, fuzzy
 msgid "<b>Audio</b>"
-msgstr "<b>Apie</b>"
+msgstr "<b>Garsai</b>"
 
 #: ../ui/main.glade.h:7
-#, fuzzy
 msgid "<b>Behaviour</b>"
-msgstr "<b>Išvaizda ir elgsena</b>"
+msgstr "<b>Elgsena</b>"
 
 #: ../ui/main.glade.h:8
 msgid "<b>Client Information</b>"
 msgstr "<b>Kliento informacija</b>"
 
 #: ../ui/main.glade.h:9
-#, fuzzy
 msgid "<b>Connection</b>"
-msgstr "Prisijungimas"
+msgstr "<b>Prisijungimas</b>"
 
 #: ../ui/main.glade.h:10
 msgid "<b>Information requested, please wait...</b>"
@@ -1118,16 +1094,14 @@ msgid "<b>Status</b>"
 msgstr "<b>Būsena</b>"
 
 #: ../ui/main.glade.h:14
-#, fuzzy
 msgid "<b>Visual</b>"
-msgstr "<b>Nustatymai</b>"
+msgstr "<b>Vaizdas</b>"
 
 #: ../ui/main.glade.h:15
-#, fuzzy
 msgid ""
 "<small>The list of languages reflects only the languages for which you have "
 "a dictionary installed.</small>"
-msgstr "Šiame kalbų sąraše yra tik tos kalbos, kurių žodynus turite įdiegę."
+msgstr "<small>Šiame kalbų sąraše yra tik tos kalbos, kurių žodynus turite įdiegę.</small>"
 
 #: ../ui/main.glade.h:16
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
@@ -1159,32 +1133,29 @@ msgstr "Įdėti į būsenų žinučių sąrašą"
 
 #: ../ui/main.glade.h:25
 msgid "Avatar:"
-msgstr ""
+msgstr "Paveikslėlis:"
 
 #: ../ui/main.glade.h:26
 msgid "Avatars are user chosen images shown in the contact list"
-msgstr ""
+msgstr "Paveikslėliai, pasirinkti naudotojų, rodomi bičiulių sąraše."
 
 #: ../ui/main.glade.h:27
 msgid "Ch_at"
 msgstr "Pok_albis"
 
 #: ../ui/main.glade.h:29
-#, fuzzy
 msgid "Chat Rooms..."
-msgstr "Pokalbių kambariai"
+msgstr "Pokalbių kambariai..."
 
 #: ../ui/main.glade.h:30
-#, fuzzy
 msgid "Chat Th_eme:"
-msgstr "Pakalbio t_ema:"
+msgstr "Pokalbio t_ema:"
 
 #: ../ui/main.glade.h:31
 msgid "Client:"
 msgstr "Klientas:"
 
 #: ../ui/main.glade.h:32
-#, fuzzy
 msgid "Connect on S_tartup"
 msgstr "Prisij_ungti paleidimo metu"
 
@@ -1197,9 +1168,8 @@ msgid "Contact information"
 msgstr "Bičiulio informacija"
 
 #: ../ui/main.glade.h:36
-#, fuzzy
 msgid "Contacts"
-msgstr "Pridėti bičiulį"
+msgstr "Bičiuliai"
 
 #: ../ui/main.glade.h:37
 msgid "Country:"
@@ -1215,7 +1185,7 @@ msgstr "Aprašymas:"
 
 #: ../ui/main.glade.h:40
 msgid "Display notifications when contacts come _online"
-msgstr ""
+msgstr "Rodyti pranešimus, kai bičiuliai prisijungia"
 
 #: ../ui/main.glade.h:41
 msgid "Do you already have an account set up on a server?"
@@ -1230,19 +1200,16 @@ msgid "Email:"
 msgstr "El. paštas:"
 
 #: ../ui/main.glade.h:44
-#, fuzzy
 msgid "Enable sounds when _away"
-msgstr "Atjungti garsus kai m_anęs nėra"
+msgstr "Įjungti garsus, kai m_anęs nėra"
 
 #: ../ui/main.glade.h:45
-#, fuzzy
 msgid "Enable sounds when _busy"
-msgstr "Atjungti garsus kai aš _užsiėmęs"
+msgstr "Įjungti garsus, kai aš _užsiėmęs"
 
 #: ../ui/main.glade.h:46
-#, fuzzy
 msgid "Enter a name for this account"
-msgstr "Įveskite šio abonemento pavadinimą."
+msgstr "Įveskite šio abonemento pavadinimą"
 
 #: ../ui/main.glade.h:47
 msgid "Enter status message:"
@@ -1250,18 +1217,15 @@ msgstr "Įveskite būsenos žinutę:"
 
 #: ../ui/main.glade.h:48
 msgid "Enter the name or contact ID of the person you want to chat to below:"
-msgstr ""
-"Žemiau įveskite asmens, su kuriuo norite kalbėti, vardą ar bičiulio ID:"
+msgstr "Žemiau įveskite asmens, su kuriuo norite kalbėti, vardą ar bičiulio ID:"
 
 #: ../ui/main.glade.h:49
-#, fuzzy
 msgid "Enter the port used in the connection for this account"
-msgstr "Įveskite prievadą naudojamą šio abonemento prisijungimui."
+msgstr "Įveskite prievadą, naudojamą šio abonemento prisijungimui."
 
 #: ../ui/main.glade.h:50
-#, fuzzy
 msgid "Enter the server used in the connection for this account"
-msgstr "Įveskite serverį naudojamą šio abonemento prisijungimui."
+msgstr "Įveskite serverį, naudojamą šio abonemento prisijungimui."
 
 #: ../ui/main.glade.h:51
 msgid "Enter the user's contact ID:"
@@ -1272,7 +1236,6 @@ msgid "Enter your account password:"
 msgstr "Įveskite Jūsų abonemento slaptažodį:"
 
 #: ../ui/main.glade.h:53
-#, fuzzy
 msgid "Enter your real name here"
 msgstr "Čia įveskite savo tikrąjį vardą."
 
@@ -1281,7 +1244,6 @@ msgid "Finished"
 msgstr "Baigta"
 
 #: ../ui/main.glade.h:55
-#, fuzzy
 msgid "For increased security, enable this option"
 msgstr "Įjunkite šią parinktį didesniam saugumui."
 
@@ -1318,20 +1280,18 @@ msgid "ID:"
 msgstr "ID:"
 
 #: ../ui/main.glade.h:66
-msgid ""
-"If you chose to decide later you will be asked the next time you log on."
+msgid "If you chose to decide later you will be asked the next time you log on."
 msgstr ""
 "Jeigu pasirinksite nuspręsti vėliau, Jūsų bus paklausta kito prisijungimo "
 "metu."
 
 #: ../ui/main.glade.h:67
-#, fuzzy
 msgid ""
 "If you have another machine on your network which 'proxies' the connection "
 "to the internet and you want to use it, enable this option"
 msgstr ""
 "Jeigu Jūsų tinkle yra kompiuteris, kuris tarpininkauja ryšiui su internetu "
-"ir Jūs norite jį naudoti, pasirinkite šią parinktį."
+"ir norite jį naudoti, pasirinkite šią parinktį."
 
 #: ../ui/main.glade.h:68
 msgid ""
@@ -1360,12 +1320,10 @@ msgid "Jabber ID:"
 msgstr "Jabber ID:"
 
 #: ../ui/main.glade.h:73
-#, fuzzy
 msgid "Join _Favourites"
 msgstr "Į_dėti į mėgstamiausius"
 
 #: ../ui/main.glade.h:74
-#, fuzzy
 msgid ""
 "Leave this blank if you don't want your password stored on a public machine. "
 "If you decide to do this, you will be prompted each time you connect for a "
@@ -1396,16 +1354,14 @@ msgid "Nickname:"
 msgstr "Pravardė:"
 
 #: ../ui/main.glade.h:80
-#, fuzzy
 msgid "Notifications"
-msgstr "Naudoti įspėjimo garsus"
+msgstr "Pranešimai"
 
 #: ../ui/main.glade.h:81
 msgid "OS:"
 msgstr "OS:"
 
 #: ../ui/main.glade.h:82
-#, fuzzy
 msgid "Pass_word:"
 msgstr "Sla_ptažodis:"
 
@@ -1422,7 +1378,6 @@ msgid "Preferences"
 msgstr "Nustatymai"
 
 #: ../ui/main.glade.h:86
-#, fuzzy
 msgid "Press Subscribe to request to receive their status"
 msgstr "Norėdami gauti informaciją apie jų buvimą, spauskite „Užsisakyti“."
 
@@ -1435,9 +1390,8 @@ msgid "Registration"
 msgstr "Registracija"
 
 #: ../ui/main.glade.h:89
-#, fuzzy
 msgid "Reso_urce:"
-msgstr "Resursas:"
+msgstr "Res_ursas:"
 
 #: ../ui/main.glade.h:90
 msgid "Resource:"
@@ -1461,12 +1415,11 @@ msgstr "Rodyti _atsijungusius bičiulius"
 
 #: ../ui/main.glade.h:95
 msgid "Show _avatars"
-msgstr ""
+msgstr "Rodyti _paveikslėlius"
 
 #: ../ui/main.glade.h:96
-#, fuzzy
 msgid "Show _smileys as images"
-msgstr "Paversti šyp_senėles į grafinius paveiksliukus"
+msgstr "Versti šyp_senėles į grafinius paveiksliukus"
 
 #: ../ui/main.glade.h:97
 msgid "Spell Checker"
@@ -1493,33 +1446,28 @@ msgid "Suggestions for the word:"
 msgstr "Žodžio pasiūlymai:"
 
 #: ../ui/main.glade.h:103
-#, fuzzy
 msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server"
 msgstr ""
 "Tai veikia kaip žemiau esančio kontaktų sąrašo filtras. Galite naudoti "
-"bičiulio vardo ar ID dalis. Pvz., „akl.lt“ parodys visų naudojančių tą "
-"serverį sąrašą."
+"bičiulio vardo ar ID dalis. Pvz., „akl.lt“ parodys visų, naudojančių šį "
+"serverį, sąrašą."
 
 #: ../ui/main.glade.h:104
-#, fuzzy
 msgid "This is the name that will be used on your roster for this contact"
-msgstr "Tai vardas, kuris bus naudojamas šiam bičiuliui Jūsų bičiulių sąraše."
+msgstr "Tai vardas, kuris bus naudojamas šiam bičiuliui Jūsų bičiulių sąraše"
 
 #: ../ui/main.glade.h:105
-#, fuzzy
 msgid "This name will be used to identify you in chat windows"
-msgstr "Šis vardas bus naudojamas identifikuoti Jus pokalbių languose."
+msgstr "Šis vardas bus naudojamas identifikuoti Jus pokalbių languose"
 
 #: ../ui/main.glade.h:106
-#, fuzzy
-msgid ""
-"This name will be used to identify you when new contacts lookup your details"
+msgid "This name will be used to identify you when new contacts lookup your details"
 msgstr ""
 "Šis vardas bus naudojamas identifikuoti Jus, kai bičiuliai žiūrės Jūsų "
-"informaciją."
+"informaciją"
 
 #: ../ui/main.glade.h:107
 msgid "Use _encryption (SSL)"
@@ -1638,9 +1586,8 @@ msgid "_Forget"
 msgstr "_Pamiršti"
 
 #: ../ui/main.glade.h:140
-#, fuzzy
 msgid "_Group Chat"
-msgstr "Grupinis pokalbis"
+msgstr "_Grupinis pokalbis"
 
 #: ../ui/main.glade.h:141
 msgid "_Hide Contact List"
@@ -1671,9 +1618,8 @@ msgid "_Play sound when messages arrive"
 msgstr "_Gavus žinutę sugroti garsą"
 
 #: ../ui/main.glade.h:148
-#, fuzzy
 msgid "_Port:"
-msgstr "Prievadas:"
+msgstr "_Prievadas:"
 
 #: ../ui/main.glade.h:149
 msgid "_Preferences"
@@ -1695,80 +1641,3 @@ msgstr "_Užsisakyti"
 msgid "_Yes"
 msgstr "_Taip"
 
-#~ msgid "Be silent when away"
-#~ msgstr "Tylėti, kai manęs nėra"
-
-#~ msgid "Be silent when busy"
-#~ msgstr "Tylėti, kai aš užsiėmęs(usi)"
-
-#~ msgid "Enable spell checking"
-#~ msgstr "Įjungti rašybos tikrinimą"
-
-#~ msgid "Height of main window"
-#~ msgstr "Pagrindinio lango aukštis"
-
-#~ msgid "The X position of the main window."
-#~ msgstr "Pagrindinio lango X pozicija."
-
-#~ msgid "The Y position of the main window."
-#~ msgstr "Pagrindinio lango Y pozicija."
-
-#~ msgid "The height of the main window."
-#~ msgstr "Pagrindinio lango aukštis."
-
-#~ msgid "The width of the main window."
-#~ msgstr "Pagrindinio lango plotis."
-
-#~ msgid "Whether spell checking should be turned on."
-#~ msgstr "Ar turėtų būti įjungtas klaidų tikrinimas."
-
-#~ msgid "Width of the main window"
-#~ msgstr "Pagrindinio lango plotis"
-
-#~ msgid "X position of main window"
-#~ msgstr "Pagrindinio lango X pozicija"
-
-#~ msgid "Y position of main window"
-#~ msgstr "Pagrindinio lango Y pozicija"
-
-#~ msgid "Gossip, Instant Messaging Client"
-#~ msgstr "Gossip, greitų žinučių perdavimo klientas"
-
-#~ msgid "Close this chat window"
-#~ msgstr "Užverti šį pokalbio langą"
-
-#~ msgid "Alias:"
-#~ msgstr "Slapyvardis:"
-
-#~ msgid "Requested Information"
-#~ msgstr "Užklausta informacija"
-
-#~ msgid "C_lear"
-#~ msgstr "Išva_lyti"
-
-#~ msgid "Contact _Information"
-#~ msgstr "Bičiulio _informacija"
-
-#~ msgid "<b>Sound</b>"
-#~ msgstr "<b>Garsas</b>"
-
-#~ msgid "Browse"
-#~ msgstr "Naršyti"
-
-#~ msgid "Check spelling while I _type"
-#~ msgstr "Tikrinti rašybą, kol aš _rašau"
-
-#~ msgid "Gossip - Accounts"
-#~ msgstr "Gossip - Abonementai"
-
-#~ msgid "Join _Group Chat..."
-#~ msgstr "Prisijungti prie _grupinio pokalbio..."
-
-#~ msgid "Por_t:"
-#~ msgstr "Pri_evadas:"
-
-#~ msgid "Requested information."
-#~ msgstr "Užklausta informacija."
-
-#~ msgid "Requesting contact information, please wait..."
-#~ msgstr "Užklausiama bičiulio informacija, prašome palaukti..."
