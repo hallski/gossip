@@ -1506,9 +1506,9 @@ contact_list_drag_data_received (GtkWidget         *widget,
 
 		gossip_contact_set_groups (contact, NULL);
 	} else {
-		GList       *l, *new_groups;
-		gchar       *name;
-		gboolean     is_group;
+		GList    *l, *new_groups;
+		gchar    *name;
+		gboolean  is_group;
 
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
 		name = contact_list_get_parent_group (model, path, &is_group); 
@@ -1522,11 +1522,13 @@ contact_list_drag_data_received (GtkWidget         *widget,
 		/* Get source group information. */
 		priv = GET_PRIV (widget);
 		if (!priv->drag_row) {
+			g_free (name);
 			return;
 		}
 
 		path = gtk_tree_row_reference_get_path (priv->drag_row);
 		if (!path) {
+			g_free (name);
 			return;
 		}
 
@@ -1551,13 +1553,22 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			    strcmp (str, old_group) == 0) {
 				continue;
 			}
+
+			if (str == NULL) {
+				g_print ("eek, null group\n");
+				continue;
+			}
 			
 			new_groups = g_list_append (new_groups, g_strdup (str));
 		}
-		
+
 		if (drag_success) {
-			new_groups = g_list_append (new_groups, name);
+			if (name) {
+				new_groups = g_list_append (new_groups, name);
+			}
 			gossip_contact_set_groups (contact, new_groups);
+		} else {
+			g_free (name);
 		}
 	}
 
@@ -1604,10 +1615,12 @@ contact_list_drag_motion (GtkWidget      *widget,
 		return TRUE;
 	}
 
-	g_source_remove_by_user_data (dm);
-	
 	if (dm) {
-		gtk_tree_path_free (dm->path); 
+		gtk_tree_path_free (dm->path);
+		if (dm->timeout_id) {
+			g_source_remove (dm->timeout_id);
+		}
+	
 		g_free (dm); 
 		
 		dm = NULL;
@@ -1619,9 +1632,10 @@ contact_list_drag_motion (GtkWidget      *widget,
 		dm->list = GOSSIP_CONTACT_LIST (widget);
 		dm->path = gtk_tree_path_copy (path);
 		
-		g_timeout_add (1500, 
-			       (GSourceFunc) contact_list_drag_motion_cb, 
-			       dm);
+		dm->timeout_id = g_timeout_add (
+			1500, 
+			(GSourceFunc) contact_list_drag_motion_cb, 
+			dm);
 	}
 
 	return TRUE;
@@ -1630,14 +1644,12 @@ contact_list_drag_motion (GtkWidget      *widget,
 static gboolean
 contact_list_drag_motion_cb (DragMotionData *data)
 {
-        g_return_val_if_fail (data != NULL, FALSE);
-        g_return_val_if_fail (data->list != NULL, FALSE);
-        g_return_val_if_fail (data->path != NULL, FALSE);
-
         gtk_tree_view_expand_row (GTK_TREE_VIEW (data->list), 
 				  data->path, 
 				  FALSE);
 
+	data->timeout_id = 0;
+	
         return FALSE;
 }
 

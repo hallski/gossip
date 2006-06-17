@@ -1,5 +1,15 @@
 2006-06-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-list.c (contact_list_drag_data_received):
+	Plug leak.
+	(contact_list_drag_motion): Keep the timeout id and remove the
+	drag motion timeeout source only when necessary.
+	(contact_list_drag_data_received): Don't insert a null group name
+	in the groups list. Fixes bug #345000.
+
+	* libgossip/gossip-contact.c (gossip_contact_set_groups): Make
+	this work for set_groups (get_groups ()), and free old list.
+
 	* protocols/jabber/gossip-jabber-ft.c (jabber_ft_handle_error):
 	Check if there is a filetransfer before trying to do something
 	else. Fixes crash when we get any error (unrelated to file

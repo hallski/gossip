@@ -689,21 +689,22 @@ gossip_contact_set_groups (GossipContact *contact,
 			   GList         *groups)
 {
 	GossipContactPriv *priv;
-	GList             *l;
+	GList             *old_groups, *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 	
 	priv = GET_PRIV (contact);
 
-	if (priv->groups) {
-		g_list_foreach (priv->groups, (GFunc)g_free, NULL);
-		priv->groups = NULL;
-	}
+	old_groups = priv->groups;
+	priv->groups = NULL;
 
 	for (l = groups; l; l = l->next) {
 		priv->groups = g_list_append (priv->groups, 
 					      g_strdup (l->data));
 	}
+	
+	g_list_foreach (old_groups, (GFunc) g_free, NULL);
+	g_list_free (old_groups);
 
 	return TRUE;
 }
@@ -736,7 +737,7 @@ gossip_contact_compare (gconstpointer a,
 	id_a = gossip_contact_get_id (GOSSIP_CONTACT (a));
 	id_b = gossip_contact_get_id (GOSSIP_CONTACT (b));
 
-	/* FIXME: Maybe use utf8 strcmp? */
+	/* FIXME: Maybe use utf8 strcmp? At least jabber ids are UTF8. */
 	return strcmp (id_a, id_b);
 }
 
