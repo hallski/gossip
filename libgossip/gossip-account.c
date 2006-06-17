@@ -702,14 +702,6 @@ gossip_account_equal (gconstpointer a,
 	priv1 = GET_PRIV (a);
 	priv2 = GET_PRIV (b);
 
-	if (!priv1) {
-		return FALSE;
-	}
-
-	if (!priv2) {
-		return FALSE;
-	}
-	
 	return (priv1->unique_id == priv2->unique_id);
 }
 

@@ -1,3 +1,12 @@
+2006-06-18  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c
+	(gossip_chatroom_manager_find_extended): Skip the room if there is
+	no account, fixes critical warnings.
+
+	* libgossip/gossip-account.c (gossip_account_equal): No need to
+	check if the priv data exists.
+
 2006-06-17  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-presence-chooser.c (gossip_presence_chooser_init)

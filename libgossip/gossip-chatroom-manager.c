@@ -455,7 +455,11 @@ gossip_chatroom_manager_find_extended (GossipChatroomManager *manager,
 			GossipAccount *this_account;
 
 			this_account = gossip_chatroom_get_account (chatroom);
-			same_account = gossip_account_equal (account, this_account);
+			if (this_account) {
+				same_account = gossip_account_equal (account, this_account);
+			} else {
+				same_account = FALSE;
+			}
 		}
 		
 		if (same_account && 
