@@ -270,6 +270,12 @@ jabber_ft_handle_error (GossipJabber *jabber,
 
 	id_str = lm_message_node_get_attribute (m->node, "id");
 
+	ft = g_hash_table_lookup (fts->ft_ids, id_str);
+	if (!ft) {
+		DEBUG_MSG (("ProtocolFT: Could not find GossipFT* id:'%s'", id_str));
+		return;
+	}
+
 	from_str = lm_message_node_get_attribute (m->node, "from");
 	from = gossip_jabber_get_contact_from_jid (jabber, from_str, NULL, TRUE);	
 
@@ -282,13 +288,6 @@ jabber_ft_handle_error (GossipJabber *jabber,
 		  error_code_str,
 		  error_reason));
 	
-
-	ft = g_hash_table_lookup (fts->ft_ids, id_str);
-	if (!ft) {
-		DEBUG_MSG (("ProtocolFT: Could not find GossipFT* id:'%s'", id_str));
-		return;
-	}
-
 	switch (atoi (error_code_str)) {
 	case 400:
 		error_code = GOSSIP_FT_ERROR_UNSUPPORTED;

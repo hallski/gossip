@@ -1,5 +1,12 @@
 2006-06-17  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/gossip-jabber-ft.c (jabber_ft_handle_error):
+	Check if there is a filetransfer before trying to do something
+	else. Fixes crash when we get any error (unrelated to file
+	tranfers).
+
+2006-06-17  Richard Hult  <richard@imendio.com>
+
 	* protocols/jabber/gossip-jid.c (gossip_jid_new,
 	gossip_jid_set_without_resource): Casefold the node part, to bring
 	us a bit closer to the spec. Should also fix bug #306369.
@@ -9,7 +16,7 @@
 	
 	(gossip_jid_equals),
 	(gossip_jid_equals_without_resource), (gossip_jid_equal),
-	(gossip_jid_hash): Add comments about some problems..
+	(gossip_jid_hash): Add comments about some problems.
 	
 	* src/gossip-chat.c: Remove obsolete defines.
 	
