@@ -440,11 +440,10 @@ jabber_setup (GossipProtocol *protocol,
  	GossipJabber     *jabber;
  	GossipJabberPriv *priv;
  	LmMessageHandler *handler;
-	gchar            *id;
 	GossipJID        *jid;
 	
- 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
-  	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+        g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+        g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	
  	jabber = GOSSIP_JABBER (protocol);
  	priv = GET_PRIV (jabber);
@@ -454,16 +453,10 @@ jabber_setup (GossipProtocol *protocol,
  	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 	
-	id = g_strdup_printf ("%s/%s", 
-			      gossip_account_get_id (account),
-			      gossip_account_get_resource (account));
-	jid = gossip_jid_new (id);
-
 	g_object_set (priv->contact,
-		      "id", id,          /* we need FULL JID here */
-		      "name", id,
+		      "id", gossip_account_get_id (account),
+		      "name", gossip_account_get_id (account),
 		      NULL);
-	g_free (id);
 
 	priv->connection = lm_connection_new (gossip_account_get_server (account));
 
@@ -475,8 +468,9 @@ jabber_setup (GossipProtocol *protocol,
 					       jabber, NULL);
 
 	lm_connection_set_port (priv->connection, gossip_account_get_port (account));
-	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
 
+	jid = gossip_jid_new (gossip_account_get_id (account));
+	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
 	gossip_jid_unref (jid);
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_message_handler,

@@ -58,6 +58,26 @@ jid_locate_resource (const gchar *str)
 	return NULL;
 }
 
+/* Casefolds the node part (the part before @). */
+static gchar *
+jid_casefold_node (const gchar *str)
+{
+	gchar       *tmp;
+	gchar       *ret;
+	const gchar *at;
+
+	at = strchr (str, '@');
+	if (!at) {
+		return g_strdup (str);
+	}
+
+	tmp = g_utf8_casefold (str, at - str);
+	ret = g_strconcat (tmp, at, NULL);
+	g_free (tmp);
+	
+	return ret;
+}
+
 GossipJID *
 gossip_jid_new (const gchar *str_jid)
 {
@@ -67,7 +87,7 @@ gossip_jid_new (const gchar *str_jid)
 
 	jid = g_new0 (GossipJID, 1);
 	jid->ref_count = 1;
-	jid->full = g_strdup (str_jid);
+	jid->full = jid_casefold_node (str_jid);
 
 	jid->resource = jid_locate_resource (jid->full);
 	if (jid->resource) {
@@ -93,7 +113,7 @@ gossip_jid_set_without_resource (GossipJID *jid, const gchar *str)
 	g_free (jid->full);
 	g_free (jid->no_resource);
 
-	jid->no_resource = g_strdup (str);
+	jid->no_resource = jid_casefold_node (str);
 
 	if (resource) {
 		jid->full = g_strdup_printf ("%s/%s",
@@ -226,7 +246,11 @@ gossip_jid_equals (GossipJID *jid_a,
 {
 	g_return_val_if_fail (jid_a != NULL, FALSE);
 	g_return_val_if_fail (jid_b != NULL, FALSE);
-	
+
+	/* NOTE: This is not strictly correct, since the node and resource are
+	 * UTF8, and the domain have other rules. The node is also already
+	 * casefolded.
+	 */
 	if (g_ascii_strcasecmp (jid_a->full, jid_b->full) == 0) {
 		return TRUE;
 	}
@@ -246,6 +270,10 @@ gossip_jid_equals_without_resource (GossipJID *jid_a,
 	a = gossip_jid_get_without_resource (jid_a);
 	b = gossip_jid_get_without_resource (jid_b);
 	
+	/* NOTE: This is not strictly correct, since the node and resource are
+	 * UTF8, and the domain have other rules. The node is also already
+	 * casefolded.
+	 */
 	if (g_ascii_strcasecmp (a, b) == 0) {
 		return TRUE;
 	}
@@ -383,6 +411,10 @@ gossip_jid_equal (gconstpointer v1,
 	a = gossip_jid_get_without_resource ((GossipJID *) v1);
 	b = gossip_jid_get_without_resource ((GossipJID *) v2);
 
+	/* NOTE: This is not strictly correct, since the node and resource are
+	 * UTF8, and the domain have other rules. The node is also already
+	 * casefolded.
+	 */
 	return g_ascii_strcasecmp (a, b) == 0;
 }
 
@@ -393,6 +425,10 @@ gossip_jid_hash (gconstpointer key)
 	gchar     *lower;
 	guint      ret_val;
 
+	/* NOTE: This is not strictly correct, since the node and resource are
+	 * UTF8, and the domain have other rules. The node is also already
+	 * casefolded.
+	 */
 	lower = g_ascii_strdown (gossip_jid_get_without_resource (jid), -1);
 	ret_val = g_str_hash (lower);
 	g_free (lower);

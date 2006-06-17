@@ -31,7 +31,6 @@
 #include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
-#include "gossip-avatar-image.h"
 #include "gossip-chat-window.h"
 #include "gossip-chat-view.h"
 #include "gossip-chat.h"
@@ -60,14 +59,12 @@ struct _GossipPrivateChatPriv {
 	gchar            *roster_resource;
 
         guint             composing_stop_timeout_id;
-	
+	guint             scroll_idle_id;
+
 	gboolean          is_online;
 
         GtkWidget        *widget;
 	GtkWidget	 *text_view_sw;
-
-	GtkWidget        *avatar_image;
-	GtkWidget        *avatar_image_placeholder;
 };
 
 static void           gossip_private_chat_class_init            (GossipPrivateChatClass *klass);
@@ -76,11 +73,6 @@ static void           private_chat_finalize                     (GObject        
 static void           private_chat_create_ui                    (GossipPrivateChat      *chat);
 static void           private_chat_send                         (GossipPrivateChat      *chat,
 								 const gchar            *msg);
-static void           private_chat_update_avatar                (GossipPrivateChat      *chat);
-static void           private_chat_show_avatars_key_changed_cb  (GConfClient            *client,
-								 guint                   cnxn_id,
-								 GConfEntry             *entry,
-								 GossipPrivateChat      *chat);
 static void           private_chat_composing_start              (GossipPrivateChat      *chat);
 static void           private_chat_composing_stop               (GossipPrivateChat      *chat);
 static void           private_chat_composing_remove_timeout     (GossipPrivateChat      *chat);
@@ -190,6 +182,10 @@ private_chat_finalize (GObject *object)
 		g_object_unref (priv->own_contact);
 	}
 
+	if (priv->scroll_idle_id) {
+		g_source_remove (priv->scroll_idle_id);
+	}
+	
 	private_chat_composing_remove_timeout (chat);
 	
         G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -210,15 +206,7 @@ private_chat_create_ui (GossipPrivateChat *chat)
                                       "chat_widget", &priv->widget,
                                       "chat_view_sw", &priv->text_view_sw,
 				      "input_text_view_sw", &input_text_view_sw,
-				      "avatar_image_placeholder", &priv->avatar_image_placeholder,
                                       NULL);
-
-	priv->avatar_image = gossip_avatar_image_new (NULL);
-	gtk_container_add (GTK_CONTAINER (priv->avatar_image_placeholder),
-			   priv->avatar_image);
-
-	gtk_widget_show (priv->avatar_image);
-	gtk_widget_hide (priv->avatar_image_placeholder);
 
 	gtk_container_add (GTK_CONTAINER (priv->text_view_sw),
 			   GTK_WIDGET (GOSSIP_CHAT (chat)->view));
@@ -353,51 +341,6 @@ private_chat_send (GossipPrivateChat *chat,
 }
 
 static void
-private_chat_update_avatar (GossipPrivateChat *chat)
-{
-	GossipPrivateChatPriv *priv;
-	GConfClient           *gconf_client;
-	GdkPixbuf             *pixbuf = NULL;
-	gboolean               show_avatars;
-
-	priv = GET_PRIV (chat);
-
-	gconf_client = gossip_app_get_gconf_client ();
-
-	show_avatars = gconf_client_get_bool (gconf_client,
-					      GCONF_UI_SHOW_AVATARS,
-					      NULL);
-
-	if (show_avatars) {
-		pixbuf = gossip_pixbuf_avatar_from_contact (priv->contact);
-		if (pixbuf) {
-			gossip_avatar_image_set_pixbuf (GOSSIP_AVATAR_IMAGE (priv->avatar_image), 
-							pixbuf);
-			g_object_unref (pixbuf);
-		}
-	}
-
-	if (pixbuf) {
-		/* FIXME: We are not happy with the positioning of
-		 * this for the time being it will be hidden.
-		 */
-		gtk_widget_hide (priv->avatar_image_placeholder);
-/* 		gtk_widget_show (priv->avatar_image_placeholder); */
-	} else {
-		gtk_widget_hide (priv->avatar_image_placeholder);
-	}
-}
-
-static void
-private_chat_show_avatars_key_changed_cb (GConfClient       *client,
-					  guint              cnxn_id,
-					  GConfEntry        *entry,
-					  GossipPrivateChat *chat)
-{
-	private_chat_update_avatar (chat);
-}
-
-static void
 private_chat_composing_start (GossipPrivateChat *chat)
 {
         GossipPrivateChatPriv *priv;
@@ -464,9 +407,6 @@ private_chat_contact_presence_updated (gpointer           not_used,
 {
 	GossipPrivateChatPriv *priv;
 
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
-	g_return_if_fail (contact != NULL);
-	
 	priv = GET_PRIV (chat);
 
 	if (!gossip_contact_equal (contact, priv->contact)) {
@@ -508,8 +448,6 @@ private_chat_contact_presence_updated (gpointer           not_used,
 
 		priv->is_online = TRUE;
 	}
-
-	private_chat_update_avatar (chat);
 }
 
 static void
@@ -519,9 +457,6 @@ private_chat_contact_updated (gpointer           not_used,
 {
 	GossipPrivateChatPriv *priv;
 
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
-	g_return_if_fail (contact != NULL);
-	
 	priv = GET_PRIV (chat);
 
 	if (!gossip_contact_equal (contact, priv->contact)) {
@@ -533,8 +468,6 @@ private_chat_contact_updated (gpointer           not_used,
 		priv->name = g_strdup (gossip_contact_get_name (contact));
 		g_signal_emit_by_name (chat, "name-changed", priv->name);
 	}
-
-	private_chat_update_avatar (chat);
 }
 
 static void
@@ -543,9 +476,6 @@ private_chat_contact_added (gpointer           not_user,
 		            GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
-	g_return_if_fail (contact != NULL);
 
 	priv = GET_PRIV (chat);
 	
@@ -563,8 +493,6 @@ private_chat_connected_cb (GossipSession     *session,
 {
 	GossipPrivateChatPriv *priv;
 
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
-
 	priv = GET_PRIV (chat);
 
 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE);
@@ -577,8 +505,6 @@ private_chat_disconnected_cb (GossipSession     *session,
 			      GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
 
 	priv = GET_PRIV (chat);
 
@@ -597,8 +523,6 @@ private_chat_composing_cb (GossipSession *session,
 {
 	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat));
 
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
 	priv = GET_PRIV (p_chat);
@@ -810,12 +734,26 @@ private_chat_get_widget (GossipChat *chat)
 	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
-
 	p_chat = GOSSIP_PRIVATE_CHAT (chat);
 	priv = GET_PRIV (p_chat);
 
 	return priv->widget;
+}
+
+/* Scroll down after the back-log has been received. */
+static gboolean
+private_chat_scroll_down_idle_func (GossipChat *chat)
+{
+	GossipPrivateChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+
+	gossip_chat_scroll_down (chat);
+ 	g_object_unref (chat);
+	
+	priv->scroll_idle_id = 0;
+	
+	return FALSE;
 }
 
 GossipPrivateChat *
@@ -824,12 +762,11 @@ gossip_private_chat_new (GossipContact *own_contact,
 {
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
-	GConfClient           *gconf_client;
 	GossipChatView        *view;
 	GossipContact         *sender;
 	GossipMessage         *message;
-	GList                 *messages;
-	GList                 *l;
+	GList                 *messages, *l;
+	gint                   num_messages, i;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
@@ -845,27 +782,21 @@ gossip_private_chat_new (GossipContact *own_contact,
 
 	view = GOSSIP_CHAT (chat)->view;
 
-	/* Set up avatar */
-	gconf_client = gossip_app_get_gconf_client ();
-
-	gconf_client_notify_add (gconf_client,
-				 GCONF_UI_SHOW_AVATARS,
-				 (GConfClientNotifyFunc) private_chat_show_avatars_key_changed_cb,
-				 chat, NULL, NULL);
-
-	private_chat_update_avatar (chat);
-
 	/* Turn off scrolling temporarily */
 	gossip_chat_view_scroll (view, FALSE);
 
 	/* Add messages from last conversation */
 	messages = gossip_log_get_last_for_contact (priv->contact);
+	num_messages  = g_list_length (messages);
 
-	for (l = messages; l; l = l->next) {
+	for (l = messages, i = 0; l; l = l->next, i++) {
 		message = l->data;
 
-		sender = gossip_message_get_sender (message);
+		if (num_messages - i > 10) {
+			continue;
+		}
 
+		sender = gossip_message_get_sender (message);
 		if (gossip_contact_equal (priv->own_contact, sender)) {
 			gossip_chat_view_append_message_from_self (view, 
 								   message,
@@ -884,7 +815,9 @@ gossip_private_chat_new (GossipContact *own_contact,
 	gossip_chat_view_scroll (view, TRUE);
 
 	/* Scroll to the most recent messages */
-	gossip_chat_view_scroll_down (view);
+	g_object_ref (chat);
+	priv->scroll_idle_id = g_idle_add (
+		(GSourceFunc) private_chat_scroll_down_idle_func, chat);
 
 	/* Set up signals */
 	g_signal_connect_object (gossip_app_get_session (),
@@ -902,11 +835,7 @@ gossip_private_chat_new (GossipContact *own_contact,
 				 G_CALLBACK (private_chat_contact_added),
 				 chat, 0);
 
-	if (gossip_contact_is_online (priv->contact)) {
-		priv->is_online = TRUE;
-	} else {
-		priv->is_online = FALSE;
-	}
+	priv->is_online = gossip_contact_is_online (priv->contact);
 
 	return chat;
 }

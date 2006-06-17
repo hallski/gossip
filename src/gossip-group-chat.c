@@ -69,6 +69,8 @@ struct _GossipGroupChatPriv {
 	GHashTable             *contacts;
 	GList                  *private_chats;
 
+	guint                   scroll_idle_id;
+
 	gint                    contacts_width;
 	gboolean                contacts_visible;
 };
@@ -292,6 +294,10 @@ group_chat_finalize (GObject *object)
 		g_object_unref (priv->own_contact);
 	}
 
+	if (priv->scroll_idle_id) {
+		g_source_remove (priv->scroll_idle_id);
+	}
+	
  	G_OBJECT_CLASS (gossip_group_chat_parent_class)->finalize (object);
 }
 
@@ -477,12 +483,12 @@ group_chat_drag_data_received (GtkWidget        *widget,
 	priv = GET_PRIV (chat);
 
 	id = (const gchar*) selection->data;
-	g_print ("Received drag & drop contact from roster with id:'%s'\n", id);
+	/*g_print ("Received drag & drop contact from roster with id:'%s'\n", id);*/
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	
 	if (!contact) {
-		g_print ("No contact found associated with drag & drop\n");
+		/*g_print ("No contact found associated with drag & drop\n");*/
 		return;
 	}
 
@@ -1359,12 +1365,40 @@ group_chat_is_group_chat (GossipChat *chat)
 
 /* Scroll down after the back-log has been received. */
 static gboolean
-group_chat_scroll_down_func (GossipChat *chat)
+group_chat_scroll_down_idle_func (GossipChat *chat)
 {
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+	
 	gossip_chat_scroll_down (chat);
  	g_object_unref (chat);
 
+	priv->scroll_idle_id = 0;
+
 	return FALSE;
+}
+
+/* Copied from the jabber backend for now since we don't have an abstraction for
+ * "contacts" for group chats. Casefolds the node part (the part before @).
+ */
+static gchar *
+jid_casefold_node (const gchar *str)
+{
+	gchar       *tmp;
+	gchar       *ret;
+	const gchar *at;
+
+	at = strchr (str, '@');
+	if (!at) {
+		return g_strdup (str);
+	}
+
+	tmp = g_utf8_casefold (str, at - str);
+	ret = g_strconcat (tmp, at, NULL);
+	g_free (tmp);
+	
+	return ret;
 }
 
 GossipGroupChat *
@@ -1373,8 +1407,9 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 {
 	GossipGroupChat     *chat;
 	GossipGroupChatPriv *priv;
-	GossipContact       *own_contact;
+	gchar               *casefolded_id;
  	gchar               *own_contact_id;
+	GossipContact       *own_contact;
 	GossipChatroom      *chatroom;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
@@ -1392,10 +1427,14 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	chatroom = gossip_chatroom_provider_find (provider, id);
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
-	own_contact_id = g_strdup_printf ("%s/%s", 
-					  gossip_chatroom_get_id_str (chatroom),
-					  gossip_chatroom_get_nick (chatroom));
+	casefolded_id = jid_casefold_node (gossip_chatroom_get_id_str (chatroom));
 	
+	own_contact_id = g_strdup_printf ("%s/%s", 
+					  casefolded_id,
+					  gossip_chatroom_get_nick (chatroom));
+
+	g_free (casefolded_id);
+
 	own_contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY, 
 					       gossip_chatroom_get_account (chatroom),
 					       own_contact_id,
@@ -1458,7 +1497,8 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	gossip_chat_present (GOSSIP_CHAT (chat));
 
  	g_object_ref (chat);
-	g_idle_add ((GSourceFunc) group_chat_scroll_down_func, chat);
+	priv->scroll_idle_id = g_idle_add (
+		(GSourceFunc) group_chat_scroll_down_idle_func, chat);
 	
 	return chat;
 }

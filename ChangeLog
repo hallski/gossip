@@ -1,3 +1,36 @@
+2006-06-17  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/gossip-jid.c (gossip_jid_new,
+	gossip_jid_set_without_resource): Casefold the node part, to bring
+	us a bit closer to the spec. Should also fix bug #306369.
+
+	* protocols/jabber/gossip-jabber.c: (jabber_setup): Don't include
+	the resource as part of the id, it's kept separetely.
+	
+	(gossip_jid_equals),
+	(gossip_jid_equals_without_resource), (gossip_jid_equal),
+	(gossip_jid_hash): Add comments about some problems..
+	
+	* src/gossip-chat.c: Remove obsolete defines.
+	
+	* src/gossip-group-chat.c: (group_chat_finalize),
+	(group_chat_drag_data_received),
+	(group_chat_scroll_down_idle_func), (jid_casefold_node),
+	(gossip_group_chat_new): Remove debug output, make sure we remove
+	the scroll idle on finalize and casefold the room jid when
+	entering a room. Makes group chats work better with spec-following
+	servers.
+ 	
+	* src/gossip-private-chat.c: (private_chat_finalize),
+	(private_chat_create_ui), (private_chat_scroll_down_idle_func),
+	(gossip_private_chat_new): Limit the backlog to the last 10
+	messages, and scroll to the bottom after inserting them. Remove
+	the disabled avatar support. Also clean out some g_return_ in
+	static functions.
+
+	* ui/chat.glade: Remove the avatar-in-chat-window support in
+	preparation for another variant.
+
 2006-06-17  Martyn Russell  <martyn@imendio.com>
 
 	* peekaboo/src/Makefile.am:

@@ -45,11 +45,6 @@
 #define CHAT_DIR_CREATE_MODE    (S_IRUSR | S_IWUSR | S_IXUSR)
 #define CHAT_FILE_CREATE_MODE   (S_IRUSR | S_IWUSR)
 
-#define CHAT_KEY_FILENAME       "geometry.ini"
-#define CHAT_KEY_GROUP_CONTACTS "Chat"
-
-#define CHAT_GEOMETRY_FORMAT    "%d,%d,%d,%d"
-
 struct _GossipChatPriv {
 	GossipChatWindow *window;
 
