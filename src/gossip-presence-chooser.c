@@ -85,6 +85,9 @@ static void     presence_chooser_menu_popup             (GossipPresenceChooser *
 static void     presence_chooser_menu_popdown           (GossipPresenceChooser *chooser);
 static void     presence_chooser_toggled_cb             (GtkWidget             *chooser,
 							 gpointer               user_data);
+static gboolean presence_chooser_button_press_event_cb  (GtkWidget             *chooser,
+							 GdkEventButton        *event,
+							 gpointer               user_data);
 static gboolean presence_chooser_scroll_event_cb        (GtkWidget             *chooser,
 							 GdkEventScroll        *event,
 							 gpointer               user_data);
@@ -165,6 +168,9 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 
         g_signal_connect (chooser, "toggled",
                           G_CALLBACK (presence_chooser_toggled_cb),
+                          NULL);
+        g_signal_connect (chooser, "button-press-event",
+                          G_CALLBACK (presence_chooser_button_press_event_cb),
                           NULL);
         g_signal_connect (chooser, "scroll-event",
                           G_CALLBACK (presence_chooser_scroll_event_cb),
@@ -584,6 +590,23 @@ presence_chooser_toggled_cb (GtkWidget *chooser,
 	} else {
 		presence_chooser_menu_popdown (GOSSIP_PRESENCE_CHOOSER (chooser));
 	}
+}
+
+static gboolean
+presence_chooser_button_press_event_cb (GtkWidget      *chooser,
+					GdkEventButton *event,
+					gpointer        user_data)
+{
+	if (event->button != 1 || event->type != GDK_BUTTON_PRESS) {
+		return FALSE;
+	}
+
+	if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (chooser))) {
+			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser), TRUE);
+			return TRUE;
+		}
+
+	return FALSE;
 }
 
 typedef struct {

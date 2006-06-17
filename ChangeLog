@@ -1,5 +1,11 @@
 2006-06-17  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c (gossip_presence_chooser_init)
+	(presence_chooser_button_press_event_cb): Fix bug #344637, popup
+	menu on mouse down.
+
+2006-06-17  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-contact-list.c (contact_list_drag_data_received):
 	Plug leak.
 	(contact_list_drag_motion): Keep the timeout id and remove the
