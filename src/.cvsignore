@@ -6,3 +6,4 @@ gossip
 gossip-marshal.c
 gossip-marshal.h
 *.swp
+gossip-dbus-glue.h
