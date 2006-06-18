@@ -51,6 +51,7 @@ GType              gossip_chat_manager_get_type       (void) G_GNUC_CONST;
 GossipChatManager *gossip_chat_manager_new            (void);
 GossipPrivateChat *gossip_chat_manager_get_chat       (GossipChatManager *manager,
 						       GossipContact     *contact);
+GList *            gossip_chat_manager_get_chats      (GossipChatManager *manager);
 void               gossip_chat_manager_show_chat      (GossipChatManager *manager,
 						       GossipContact     *contact);
 GossipGroupChat *  gossip_chat_manager_get_group_chat (GossipChatManager *manager,

@@ -2,6 +2,7 @@
   <popups>
     <popup name="button3">
       <menuitem name="Toggle Roster" verb="toggle_roster" _label="_Show/Hide Contact List"/>
+      <separator/>
       <menuitem name="Preferences" verb="preferences" _label="_Preferences" pixtype="stock" pixname="gtk-properties"/>
       <menuitem name="About" verb="about" _label="_About" pixtype="stock" pixname="gtk-about"/>
     </popup>

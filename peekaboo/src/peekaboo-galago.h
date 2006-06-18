@@ -23,8 +23,15 @@
 
 #include <glib.h>
 
-gboolean peekaboo_galago_init         (void);
-GList *  peekaboo_galago_get_services (void);
-GList *  peekaboo_galago_get_people   (void);
+#include <libgossip/gossip-presence.h>
+
+gboolean peekaboo_galago_init               (void);
+GList *  peekaboo_galago_get_services       (void);
+GList *  peekaboo_galago_get_people         (void);
+GList *  peekaboo_galago_get_accounts       (void);
+gboolean peekaboo_galago_get_state_and_name (const gchar          *id,
+					     gchar               **name,
+					     GossipPresenceState  *state);
+
 
 #endif /* __PEEKABO_GALAGO_H__ */

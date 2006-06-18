@@ -21,11 +21,12 @@
 #include <config.h>
 #include <string.h>
 
+#include <libgossip/gossip-debug.h>
+
 #include "gossip-app.h"
 #include "gossip-dbus.h"
 
-/* #define DEBUG_MSG(x)  */
-#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");
+#define DEBUG_DOMAIN "DBUS"
 
 #define GOSSIP_DBUS_ERROR_DOMAIN "GossipDBus"
 
@@ -70,6 +71,9 @@ gboolean gossip_dbus_send_message       (GossipDBus   *obj,
 					 GError      **error);
 gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
 					 GError      **error);
+gboolean gossip_dbus_get_open_chats     (GossipDBus   *obj,
+					 char       ***contacts,
+					 GError      **error);
 
 #include "gossip-dbus-glue.h"
 
@@ -93,7 +97,7 @@ gossip_dbus_set_presence (GossipDBus   *obj,
 {
 	GossipPresenceState show;
 
-	DEBUG_MSG (("DBus: Setting presence to state:'%s', status:'%s'", state, status));
+	gossip_debug (DEBUG_DOMAIN, "Setting presence to state:'%s', status:'%s'", state, status);
 
 	if (strcasecmp (state, "available") == 0) {
 		show = GOSSIP_PRESENCE_STATE_AVAILABLE;
@@ -107,8 +111,8 @@ gossip_dbus_set_presence (GossipDBus   *obj,
 	else if (strcasecmp (state, "xa") == 0) {
   		show = GOSSIP_PRESENCE_STATE_EXT_AWAY;
 	} else {
-		DEBUG_MSG (("DBus: Presence state:'%s' not recognised, try 'available', "
-			    "'busy', 'away', or 'xa'", state));
+		gossip_debug (DEBUG_DOMAIN, "Presence state:'%s' not recognised, try 'available', "
+			    "'busy', 'away', or 'xa'", state);
 
 		g_set_error (error, gossip_dbus_error_quark (), 0, 
 			     "State:'%s' unrecognised, try 'available', 'busy', 'away', or 'xa'", 
@@ -126,7 +130,7 @@ gboolean
 gossip_dbus_set_not_away (GossipDBus  *obj, 
 			  GError     **error)
 {
-	DEBUG_MSG (("DBus: Setting presence to NOT AWAY"));
+	gossip_debug (DEBUG_DOMAIN, "Setting presence to NOT AWAY");
 	gossip_app_set_not_away ();
 	
 	return TRUE;
@@ -137,7 +141,7 @@ gossip_dbus_set_network_status (GossipDBus *obj,
 				gboolean    up, 
 				GError     **error)
 {
-	DEBUG_MSG (("DBus: Setting network status %s", up ? "up" : "down"));
+	gossip_debug (DEBUG_DOMAIN, "Setting network status %s", up ? "up" : "down");
 	
 	if (up) {
 		gossip_app_net_up ();
@@ -156,7 +160,7 @@ gossip_dbus_send_message (GossipDBus   *obj,
 	GossipChatManager *manager;
 	GossipContact     *contact;
 
-	DEBUG_MSG (("DBus: Sending message to contact:'%s'", contact_id));
+	gossip_debug (DEBUG_DOMAIN, "Sending message to contact:'%s'", contact_id);
 
 	contact = gossip_session_find_contact (saved_session, contact_id);
 	if (!contact) {
@@ -175,8 +179,35 @@ gboolean
 gossip_dbus_toggle_roster (GossipDBus  *obj,
 			   GError     **error)
 {
-	DEBUG_MSG (("DBus: Toggling roster visibility"));
+	gossip_debug (DEBUG_DOMAIN, "Toggling roster visibility");
 	gossip_app_toggle_visibility ();
+
+	return TRUE;
+}
+
+gboolean 
+gossip_dbus_get_open_chats (GossipDBus   *obj,
+			    char       ***contacts,
+			    GError      **error)
+{
+	GossipChatManager *manager;
+	GList             *chats;
+	GList             *l;
+	gint               n, i;
+
+	gossip_debug (DEBUG_DOMAIN, "Getting open chats");
+
+	manager = gossip_app_get_chat_manager ();
+	chats = gossip_chat_manager_get_chats (manager);
+	
+	n = g_list_length (chats) + 1;
+	*contacts = g_new0 (char*, n);
+
+	for (l = chats, i = 0; l; l = l->next, i++) {
+		(*contacts)[i] = l->data;   
+	}
+	
+ 	g_list_free (chats); 
 
 	return TRUE;
 }
@@ -199,9 +230,11 @@ gossip_dbus_init_for_session (GossipSession *session)
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 
 	if (saved_session) {
-		DEBUG_MSG (("DBus: Already initiated"));
+		gossip_debug (DEBUG_DOMAIN, "Already initiated");
 		return TRUE;
 	}
+
+	gossip_debug (DEBUG_DOMAIN, "Initiating...");
 	
 	saved_session = g_object_ref (session);
 
@@ -232,7 +265,7 @@ gossip_dbus_init_for_session (GossipSession *session)
 
 	dbus_g_connection_register_g_object (bus, GOSSIP_DBUS_PATH, G_OBJECT (obj));
 	
-	DEBUG_MSG (("DBus: Initiated, service running"));
+	gossip_debug (DEBUG_DOMAIN, "Service running");
 
 	return TRUE;
 }

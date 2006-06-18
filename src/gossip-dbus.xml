@@ -16,6 +16,9 @@
     </method>
     <method name="ToggleRoster">
     </method>
+    <method name="GetOpenChats">
+      <arg name="contacts" type="as" direction="out"/>
+    </method>
   </interface>
 </node>
 

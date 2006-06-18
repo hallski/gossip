@@ -28,29 +28,27 @@
 
 #define DEBUG_DOMAIN "ChatManager"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-		       GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerPriv))
 
 typedef struct _GossipChatManagerPriv GossipChatManagerPriv;
 
 struct _GossipChatManagerPriv {
 	GHashTable *chats;
-
 	GHashTable *events;
 };
 
-
-static void chat_manager_finalize           (GObject            *object);
-static void chat_manager_new_message_cb     (GossipSession      *session,
-					     GossipMessage      *msg,
-					     GossipChatManager  *manager);
-static void chat_manager_event_activated_cb (GossipEventManager *event_manager,
-					     GossipEvent        *event,
-					     GObject            *object);
-
+static void chat_manager_finalize           (GObject             *object);
+static void chat_manager_new_message_cb     (GossipSession       *session,
+					     GossipMessage       *msg,
+					     GossipChatManager   *manager);
+static void chat_manager_event_activated_cb (GossipEventManager  *event_manager,
+					     GossipEvent         *event,
+					     GObject             *object);
+static void chat_manager_get_chats_foreach  (GossipContact       *contact,
+					     GossipPrivateChat   *chat,
+					     GList              **chats);
 
 G_DEFINE_TYPE (GossipChatManager, gossip_chat_manager, G_TYPE_OBJECT);
-
 
 static void
 gossip_chat_manager_class_init (GossipChatManagerClass *class)
@@ -176,6 +174,17 @@ chat_manager_event_activated_cb (GossipEventManager *event_manager,
 	gossip_chat_manager_show_chat (GOSSIP_CHAT_MANAGER (object), contact);
 }
 
+static void 
+chat_manager_get_chats_foreach (GossipContact      *contact,
+				GossipPrivateChat  *chat,
+				GList             **chats)
+{
+	const gchar *contact_id;
+
+	contact_id = gossip_contact_get_id (contact);
+	*chats = g_list_prepend (*chats, g_strdup (contact_id));
+}
+
 GossipChatManager *
 gossip_chat_manager_new (void)
 {
@@ -217,6 +226,23 @@ gossip_chat_manager_get_chat (GossipChatManager *manager,
 	return chat;
 }
 
+GList *
+gossip_chat_manager_get_chats (GossipChatManager *manager)
+{
+	GossipChatManagerPriv *priv;
+	GList                 *chats = NULL;
+	
+	g_return_val_if_fail (GOSSIP_IS_CHAT_MANAGER (manager), NULL);
+	
+	priv = GET_PRIV (manager);
+
+	g_hash_table_foreach (priv->chats, 
+			      (GHFunc) chat_manager_get_chats_foreach,
+			      &chats);
+
+	return chats;
+}
+
 void
 gossip_chat_manager_show_chat (GossipChatManager *manager, 
 			       GossipContact     *contact)
@@ -249,4 +275,3 @@ gossip_chat_manager_get_group_chat (GossipChatManager *manager,
 {
         return NULL;
 }
-

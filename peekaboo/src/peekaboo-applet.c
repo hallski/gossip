@@ -31,6 +31,9 @@
 #include "peekaboo-applet.h"
 #include "peekaboo-galago.h"
 
+/* #define DEBUG_MSG(x)  */
+#define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
+
 typedef struct {
 	GtkWidget   *applet_widget;
 	GtkWidget   *image;
@@ -61,6 +64,35 @@ static const char* authors[] = {
 };
 
 static void
+applet_dbus_send_message (PeekabooApplet *applet, 
+			  const gchar    *contact_id)
+{
+	DBusGConnection  *bus;
+	DBusGProxy       *remote_object;
+	GError           *error = NULL;
+
+	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
+	if (!bus) {
+		g_warning ("Could not connect to session bus");
+		return;
+	}
+	
+	remote_object = dbus_g_proxy_new_for_name (bus,
+						   "org.gnome.Gossip",
+						   "/org/gnome/Gossip",
+						   "org.gnome.Gossip");
+	
+	if (!dbus_g_proxy_call (remote_object, "SendMessage", &error,
+				G_TYPE_STRING, contact_id, G_TYPE_INVALID,
+				G_TYPE_INVALID)) {
+		g_warning ("Failed to complete 'SendMessage' request. %s", 
+			   error->message);
+	}
+	
+  	g_object_unref (G_OBJECT (remote_object));
+}
+
+static void
 applet_dbus_toggle_roster (PeekabooApplet *applet)
 {
 	DBusGConnection  *bus;
@@ -89,12 +121,15 @@ applet_dbus_toggle_roster (PeekabooApplet *applet)
 }
 
 static void
-applet_dbus_send_message (PeekabooApplet *applet, 
-			  const gchar    *contact_id)
+applet_dbus_get_open_chats (PeekabooApplet *applet)
 {
 	DBusGConnection  *bus;
 	DBusGProxy       *remote_object;
 	GError           *error = NULL;
+	char            **chats;
+	char            **p;
+	gchar            *name;
+	GossipPresenceState state;
 
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
@@ -107,14 +142,27 @@ applet_dbus_send_message (PeekabooApplet *applet,
 						   "/org/gnome/Gossip",
 						   "org.gnome.Gossip");
 	
-	if (!dbus_g_proxy_call (remote_object, "SendMessage", &error,
-				G_TYPE_STRING, contact_id, G_TYPE_INVALID,
-				G_TYPE_INVALID)) {
-		g_warning ("Failed to complete 'SendMessage' request. %s", 
+	if (!dbus_g_proxy_call (remote_object, "GetOpenChats", &error,
+				G_TYPE_INVALID,
+				G_TYPE_STRV, &chats, G_TYPE_INVALID)) {
+		g_warning ("Failed to complete 'GetOpenChats' request. %s", 
 			   error->message);
 	}
 	
   	g_object_unref (G_OBJECT (remote_object));
+
+	DEBUG_MSG (("Open chats:"));
+	for (p = chats; *p; p++) {
+		if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) {
+			DEBUG_MSG (("\t\"%s\"", *p));
+			continue;
+		}
+		
+		DEBUG_MSG (("\tid:'%s', name:'%s'", *p, name));
+		g_free (name);
+	}
+		
+	g_strfreev (chats);
 }
 
 static void
@@ -151,9 +199,11 @@ applet_preferences_cb (BonoboUIComponent *uic,
 {
  	GList *services;
  	GList *people;
+ 	GList *accounts;
 
 	services = peekaboo_galago_get_services ();	
 	people = peekaboo_galago_get_people ();	
+	accounts = peekaboo_galago_get_accounts ();	
 }
 
 static void
@@ -197,6 +247,21 @@ applet_entry_button_press_event_cb (GtkWidget      *widget,
 #endif
 
 	return FALSE;
+}
+
+static gboolean
+applet_button_press_event_cb (GtkWidget      *widget,
+			      GdkEventButton *event, 
+			      PeekabooApplet *applet)
+{
+	if (event->button != 1 || 
+	    event->type != GDK_BUTTON_PRESS) {
+		return FALSE;
+	}
+
+	applet_dbus_get_open_chats (applet);
+
+	return TRUE;
 }
 
 static void
@@ -248,9 +313,11 @@ applet_new (PanelApplet *parent_applet)
 	gtk_entry_set_width_chars (GTK_ENTRY (applet->entry), 15);
 	gtk_widget_show (applet->entry);
 
-	g_signal_connect (applet->entry, "activate",
+	g_signal_connect (applet->entry, 
+			  "activate",
 			  G_CALLBACK (applet_entry_activate_cb), applet);
-	g_signal_connect (applet->entry, "button_press_event", 
+	g_signal_connect (applet->entry, 
+			  "button_press_event", 
 			  G_CALLBACK (applet_entry_button_press_event_cb), applet);
 
   	panel_applet_setup_menu_from_file (PANEL_APPLET (applet->applet_widget),
@@ -262,9 +329,14 @@ applet_new (PanelApplet *parent_applet)
 
 	gtk_widget_show (applet->applet_widget);
   
-	g_signal_connect (G_OBJECT (applet->applet_widget), "change_size",
+	g_signal_connect (GTK_OBJECT (applet->applet_widget), 
+			  "button_press_event",
+			  G_CALLBACK (applet_button_press_event_cb), applet);
+	g_signal_connect (G_OBJECT (applet->applet_widget), 
+			  "change_size",
 			  G_CALLBACK (applet_change_size_cb), applet);
-	g_signal_connect (panel_applet_get_control (PANEL_APPLET (applet->applet_widget)), "destroy",
+	g_signal_connect (panel_applet_get_control (PANEL_APPLET (applet->applet_widget)), 
+			  "destroy",
 			  G_CALLBACK (applet_destroy_cb), applet);
 
 	/* Initialise other modules */

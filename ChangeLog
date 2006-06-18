@@ -1,3 +1,25 @@
+2006-06-18  Martyn Russell  <martyn@imendio.com>
+
+	* peekaboo/data/GNOME_Peekaboo_Applet.xml: Added separator between
+	applet functions and general panel functions.
+	
+	* src/gossip-dbus.c:
+	* src/gossip-dbus.xml:
+	* peekaboo/src/peekaboo-applet.c: Added dbus call to get a list of
+	open chat windows.
+	
+	* peekaboo/src/peekaboo-galago.[ch]: Added functions to get the name
+	and Gossip presence state from galago by contact id. So now we can
+	get a list of open chat windows with the contact ids and their
+	presence details. This will be used in a menu of some kind soon.
+	
+	* src/gossip-chat-manager.[ch]: Added a function to get a list of
+	chat windows currently created.
+ 	
+	* src/gossip-galago.c: Reworked the code a little but and fixed
+	the presence update function so we ONLY say we are online for
+	accounts which are connected NOT all accounts.
+
 2006-06-18  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-manager.c: Move to gossip_debug.
