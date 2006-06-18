@@ -1,3 +1,7 @@
+2006-06-18  Richard Hult  <richard@imendio.com>
+
+	* POTFILES.skip: Add peekaboo files here for now.
+
 2006-06-18  Gintautas Miliauskas  <gintas@akl.lt>
 
 	* lt.po: Updated Lithuanian translation.

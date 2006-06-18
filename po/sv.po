@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-11 18:16+0200\n"
+"POT-Creation-Date: 2006-06-18 09:46+0200\n"
 "PO-Revision-Date: 2006-04-18 22:44+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -191,25 +191,25 @@ msgid "An unknown error occurred, check your details are correct."
 msgstr ""
 "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
 
-#: ../libgossip/gossip-contact.c:846 ../libgossip/gossip-presence.c:234
-#: ../src/gossip-app.c:2194 ../src/gossip-contact-info-dialog.c:167
-#: ../src/gossip-galago.c:160
+#: ../libgossip/gossip-contact.c:847 ../libgossip/gossip-presence.c:234
+#: ../src/gossip-app.c:2193 ../src/gossip-contact-info-dialog.c:167
+#: ../src/gossip-galago.c:166
 msgid "Offline"
 msgstr "Frånkopplad"
 
 #: ../libgossip/gossip-presence.c:377 ../libgossip/gossip-presence.c:394
-#: ../src/gossip-presence-chooser.c:615 ../src/gossip-presence-chooser.c:717
-#: ../src/gossip-presence-chooser.c:747
+#: ../src/gossip-presence-chooser.c:640 ../src/gossip-presence-chooser.c:742
+#: ../src/gossip-presence-chooser.c:772
 msgid "Available"
 msgstr "Tillgänglig"
 
-#: ../libgossip/gossip-presence.c:381 ../src/gossip-presence-chooser.c:627
-#: ../src/gossip-presence-chooser.c:775
+#: ../libgossip/gossip-presence.c:381 ../src/gossip-presence-chooser.c:652
+#: ../src/gossip-presence-chooser.c:800
 msgid "Busy"
 msgstr "Upptagen"
 
-#: ../libgossip/gossip-presence.c:386 ../src/gossip-presence-chooser.c:639
-#: ../src/gossip-presence-chooser.c:803
+#: ../libgossip/gossip-presence.c:386 ../src/gossip-presence-chooser.c:664
+#: ../src/gossip-presence-chooser.c:828
 msgid "Away"
 msgstr "Frånvarande"
 
@@ -257,11 +257,11 @@ msgstr "Denna funktion är inte auktoriserad."
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Ett oväntat specifikt protokollfel inträffade."
 
-#: ../protocols/jabber/gossip-jabber.c:1063
+#: ../protocols/jabber/gossip-jabber.c:1065
 msgid "Connection could not be opened"
 msgstr "Anslutning kunde inte öppnas"
 
-#: ../protocols/jabber/gossip-jabber.c:1111
+#: ../protocols/jabber/gossip-jabber.c:1113
 msgid "Couldn't send message!"
 msgstr "Kunde inte sända meddelande!"
 
@@ -325,8 +325,8 @@ msgstr "Koppla ifrån"
 msgid "Edit"
 msgstr "Redigera"
 
-#: ../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:703
-#: ../src/gossip-private-chat.c:569
+#: ../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:709
+#: ../src/gossip-private-chat.c:500
 msgid "Connected"
 msgstr "Anslöts"
 
@@ -334,8 +334,8 @@ msgstr "Anslöts"
 msgid "Connecting"
 msgstr "Ansluter"
 
-#: ../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:714
-#: ../src/gossip-private-chat.c:584
+#: ../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:720
+#: ../src/gossip-private-chat.c:513
 msgid "Disconnected"
 msgstr "Kopplades ifrån"
 
@@ -419,31 +419,31 @@ msgstr "%s id för ny kontakt:"
 msgid "Example: %s"
 msgstr "Exempel: %s"
 
-#: ../src/gossip-app.c:568 ../ui/main.glade.h:135
+#: ../src/gossip-app.c:567 ../ui/main.glade.h:135
 msgid "_Connect"
 msgstr "An_slut"
 
-#: ../src/gossip-app.c:573 ../ui/main.glade.h:138
+#: ../src/gossip-app.c:572 ../ui/main.glade.h:138
 msgid "_Disconnect"
 msgstr "_Koppla ifrån"
 
-#: ../src/gossip-app.c:749
+#: ../src/gossip-app.c:748
 msgid "To summarize:"
 msgstr "Sammanfattning:"
 
-#: ../src/gossip-app.c:819
+#: ../src/gossip-app.c:818
 msgid "If you quit, you will lose all unread information."
 msgstr "Om du avslutar kommer all oläst information förloras."
 
-#: ../src/gossip-app.c:1064
+#: ../src/gossip-app.c:1063
 msgid "Could not display the help contents."
 msgstr "Kunde inte visa hjälpinnehållet."
 
-#: ../src/gossip-app.c:1616
+#: ../src/gossip-app.c:1615
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Du har inte konfigurerar ett snabbmeddelandekonto!"
 
-#: ../src/gossip-app.c:1618
+#: ../src/gossip-app.c:1617
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -455,11 +455,11 @@ msgstr ""
 msgid "Click to enlarge"
 msgstr "Klicka för att förstora"
 
-#: ../src/gossip-chat.c:462
+#: ../src/gossip-chat.c:419
 msgid "Insert Smiley"
 msgstr "Infoga smilis"
 
-#: ../src/gossip-chat.c:512
+#: ../src/gossip-chat.c:467
 msgid "_Check Word Spelling..."
 msgstr "_Kontrollera stavning..."
 
@@ -472,7 +472,7 @@ msgstr ""
 "Ange ditt inbjudningsmeddelande till:\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1609
+#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1647
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
@@ -493,19 +493,19 @@ msgstr "_Öppna länk"
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-view.c:1368
+#: ../src/gossip-chat-view.c:1406
 msgid "Your invitation has been declined"
 msgstr "Ditt inbjudan har nekats."
 
-#: ../src/gossip-chat-view.c:1631
+#: ../src/gossip-chat-view.c:1669
 msgid "Accept"
 msgstr "Acceptera"
 
-#: ../src/gossip-chat-view.c:1647
+#: ../src/gossip-chat-view.c:1685
 msgid "Decline"
 msgstr "Neka"
 
-#: ../src/gossip-chat-window.c:1330
+#: ../src/gossip-chat-window.c:1331
 msgid "Typing a message."
 msgstr "Skriver ett meddelande."
 
@@ -526,13 +526,7 @@ msgstr "Favorit"
 msgid "Join"
 msgstr "Gå in"
 
-#. Set labels
-#: ../src/gossip-contact-info-dialog.c:621
-#, c-format
-msgid "Contact Information for %s"
-msgstr "Kontaktinformation för %s"
-
-#: ../src/gossip-contact-info-dialog.c:653 ../ui/main.glade.h:70
+#: ../src/gossip-contact-info-dialog.c:647 ../ui/main.glade.h:70
 msgid "Information requested..."
 msgstr "Information begärd..."
 
@@ -569,7 +563,7 @@ msgstr "/Visa tidigare konversationer"
 msgid "/Re_name group"
 msgstr "/Byt _namn på grupp"
 
-#: ../src/gossip-contact-list.c:2170
+#: ../src/gossip-contact-list.c:2182
 #, c-format
 msgid ""
 "Please enter a new nickname for the contact\n"
@@ -578,11 +572,11 @@ msgstr ""
 "Ange ett nytt smeknamn för kontakten\n"
 "%s"
 
-#: ../src/gossip-contact-list.c:2288
+#: ../src/gossip-contact-list.c:2300
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Vill du ta bort denna kontakt från din kontaktlista?"
 
-#: ../src/gossip-contact-list.c:2344
+#: ../src/gossip-contact-list.c:2356
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -645,12 +639,12 @@ msgid "Select a file"
 msgstr "Välj en fil"
 
 #. send event to chat window
-#: ../src/gossip-group-chat.c:490
+#: ../src/gossip-group-chat.c:496
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "Inbjöd %s till att gå med i chattkonferens."
 
-#: ../src/gossip-group-chat.c:921
+#: ../src/gossip-group-chat.c:927
 #, c-format
 msgid "%s has set the topic"
 msgstr "%s har satt ämnet"
@@ -730,7 +724,7 @@ msgstr "Hemma"
 msgid "Example"
 msgstr "Exempel"
 
-#: ../src/gossip-notify.c:166 ../src/gossip-private-chat.c:499
+#: ../src/gossip-notify.c:166 ../src/gossip-private-chat.c:442
 #, c-format
 msgid "%s has come online"
 msgstr "%s anslöt sig"
@@ -755,23 +749,23 @@ msgstr "Kontaktinformation"
 msgid "Language"
 msgstr "Språk"
 
-#: ../src/gossip-preferences.c:446
+#: ../src/gossip-preferences.c:437
 msgid "Classic"
 msgstr "Klassiskt"
 
-#: ../src/gossip-preferences.c:452
+#: ../src/gossip-preferences.c:443
 msgid "Blue"
 msgstr "Blått"
 
-#: ../src/gossip-preferences.c:459
+#: ../src/gossip-preferences.c:450
 msgid "Dark"
 msgstr "Mörkt"
 
-#: ../src/gossip-presence-chooser.c:375
+#: ../src/gossip-presence-chooser.c:383
 msgid "Are you sure you want to empy the list?"
 msgstr "Är du säker på att du vill tömma listan?"
 
-#: ../src/gossip-presence-chooser.c:380
+#: ../src/gossip-presence-chooser.c:388
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
@@ -779,34 +773,34 @@ msgstr ""
 "Detta kommer att ta bort de meddelanden du har lagt till i listan med "
 "förinställda statusmeddelanden"
 
-#: ../src/gossip-presence-chooser.c:385
+#: ../src/gossip-presence-chooser.c:393
 msgid "Clear List"
 msgstr "Töm listan"
 
-#: ../src/gossip-presence-chooser.c:764 ../src/gossip-presence-chooser.c:792
-#: ../src/gossip-presence-chooser.c:820
+#: ../src/gossip-presence-chooser.c:789 ../src/gossip-presence-chooser.c:817
+#: ../src/gossip-presence-chooser.c:845
 msgid "Custom message..."
 msgstr "Eget meddelande..."
 
-#: ../src/gossip-presence-chooser.c:829
+#: ../src/gossip-presence-chooser.c:854
 msgid "Clear List..."
 msgstr "Töm listan..."
 
-#: ../src/gossip-private-chat.c:484
+#: ../src/gossip-private-chat.c:427
 #, c-format
 msgid "%s went offline"
 msgstr "%s kopplade från"
 
-#: ../src/gossip-private-chat.c:945
+#: ../src/gossip-private-chat.c:915
 #, c-format
 msgid "Subject: %s"
 msgstr "Ämne: %s"
 
-#: ../src/gossip-spell-dialog.c:78
+#: ../src/gossip-spell-dialog.c:77
 msgid "Word"
 msgstr "Ord"
 
-#: ../src/gossip-spell-dialog.c:248
+#: ../src/gossip-spell-dialog.c:238
 msgid "Suggestions for the word"
 msgstr "Förslag för ordet"
 
@@ -1668,6 +1662,29 @@ msgstr "_Prenumerera"
 msgid "_Yes"
 msgstr "_Ja"
 
+#~ msgid "Instant Messaging Applet"
+#~ msgstr "Snabbmeddelandeapplet"
+
+#~ msgid "Peekaboo"
+#~ msgstr "Peekaboo"
+
+#~ msgid "_About"
+#~ msgstr "_Om"
+
+# Vi översätter "hide" med "dölj" i GNOME. Gömmer gör man något för att det
+# inte ska hittas, döljer gör man för att det inte ska synas.
+#~ msgid "_Show/Hide Contact List"
+#~ msgstr "_Dölj/Visa kontaktlista"
+
+#~ msgid "Send someone an Instant Message"
+#~ msgstr "Skicka ett snabbmeddelande till någon"
+
+#~ msgid "An instant messaging applet."
+#~ msgstr "En snabbmeddelandeklient för GNOME"
+
+#~ msgid "Contact Information for %s"
+#~ msgstr "Kontaktinformation för %s"
+
 #~ msgid "Convert smiley text into images when chatting"
 #~ msgstr "Konvertera textsmilisar till bilder"
 
@@ -1682,9 +1699,6 @@ msgstr "_Ja"
 
 #~ msgid "<b>Sounds</b>"
 #~ msgstr "<b>Ljud</b>"
-
-#~ msgid "Gossip, Instant Messaging Client"
-#~ msgstr "Gossip, snabbmeddelandeklient"
 
 #~ msgid "Join _Group Chat..."
 #~ msgstr "_Gå in i gruppchatt..."
