@@ -24,8 +24,8 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-/* Set GOSSIP_DEBUG to a colon separated list of domains, or "all" to get all
- * debug output.
+/* Set GOSSIP_DEBUG to a colon/comma/space separated list of domains, or "all"
+ * to get all debug output.
  */
 
 #include "gossip-debug.h"
@@ -45,7 +45,7 @@ debug_init (void)
 		env = g_getenv ("GOSSIP_DEBUG");
 
 		if (env) {
-			debug_strv = g_strsplit (env, ":", 0);
+			debug_strv = g_strsplit_set (env, ":, ", 0);
 		} else {
 			debug_strv = NULL;
 		}

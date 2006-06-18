@@ -1,5 +1,8 @@
 2006-06-18  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-debug.c (debug_init): Add space and comma as
+	separators.
+
 	* libgossip/gossip-chatroom-manager.c
 	(gossip_chatroom_manager_find_extended): Skip the room if there is
 	no account, fixes critical warnings.
