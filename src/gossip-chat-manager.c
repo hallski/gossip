@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,17 +19,17 @@
  */
 
 #include <config.h>
-
 #include <glib/gi18n.h>
+
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-chat.h"
 #include "gossip-chat-manager.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "ChatManager"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerPriv))
-
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerPriv))
 
 typedef struct _GossipChatManagerPriv GossipChatManagerPriv;
 
@@ -121,8 +121,8 @@ chat_manager_new_message_cb (GossipSession     *session,
 
 	/* Add event to event manager if one doesn't exist already. */
 	if (!chat) {
-		DEBUG_MSG (("ChatManager: New chat for: %s", 
-			    gossip_contact_get_id (sender)));
+		gossip_debug (DEBUG_DOMAIN, "New chat for: %s", 
+			      gossip_contact_get_id (sender));
 		chat = gossip_chat_manager_get_chat (manager, sender);
 
 		if (!old_event) {
@@ -210,8 +210,8 @@ gossip_chat_manager_get_chat (GossipChatManager *manager,
 				     g_object_ref (contact),
 				     chat);
 
-		DEBUG_MSG (("ChatManager: Creating a new chat: %s",
-			   gossip_contact_get_id (contact)));
+		gossip_debug (DEBUG_DOMAIN, "Creating a new chat: %s",
+			      gossip_contact_get_id (contact));
 	}
 
 	return chat;

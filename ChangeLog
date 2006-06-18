@@ -1,5 +1,7 @@
 2006-06-18  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-manager.c: Move to gossip_debug.
+
 	* libgossip/gossip-debug.c (debug_init): Add space and comma as
 	separators.
 
