@@ -417,6 +417,11 @@ gossip_spell_get_language_codes (void)
 	return NULL;
 }
 
+void
+gossip_spell_free_language_codes (GList *codes)
+{
+}
+
 #endif /* HAVE_ASPELL */
 
 
