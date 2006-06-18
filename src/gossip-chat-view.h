@@ -81,10 +81,12 @@ GType           gossip_chat_view_get_type                  (void) G_GNUC_CONST;
 GossipChatView *gossip_chat_view_new                       (void);
 void            gossip_chat_view_append_message_from_self  (GossipChatView *view,
 							    GossipMessage  *msg,
-							    GossipContact  *my_contact);
+							    GossipContact  *my_contact,
+							    GdkPixbuf      *avatar);
 void            gossip_chat_view_append_message_from_other (GossipChatView *view,
 							    GossipMessage  *msg,
-							    GossipContact  *my_contact);
+							    GossipContact  *my_contact,
+							    GdkPixbuf      *avatar);
 void            gossip_chat_view_append_event              (GossipChatView *view,
 							    const gchar    *str);
 void            gossip_chat_view_append_invite             (GossipChatView *view,

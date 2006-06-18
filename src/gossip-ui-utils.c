@@ -844,7 +844,6 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 
 	data.width = width;
 	data.height = height;
-
 	data.preserve_aspect_ratio = TRUE;
 
 	loader = gdk_pixbuf_loader_new ();
@@ -872,11 +871,11 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 
 GdkPixbuf *
 gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact, 
-					  GtkIconSize    size)
+					  gint           width,
+					  gint           height)
 {
 	const guchar *avatar;
 	gsize         len;
-	gint          width, height;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
@@ -884,11 +883,7 @@ gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact,
 	if (!avatar) {
 		return NULL;
 	}
-
-	if (!gtk_icon_size_lookup (size, &width, &height)) {
-		height = width = 48;
-	}
-
+	
 	return gossip_pixbuf_from_avatar_scaled (avatar, len, width, height);
 }
 

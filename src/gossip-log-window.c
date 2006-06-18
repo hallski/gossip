@@ -301,11 +301,13 @@ log_window_search_changed_cb (GtkTreeSelection *selection,
 		if (gossip_contact_equal (own_contact, sender)) {
 			gossip_chat_view_append_message_from_self (window->chatview_search, 
 								   message,
-								   own_contact);
+								   own_contact,
+								   NULL);
 		} else {
 			gossip_chat_view_append_message_from_other (window->chatview_search, 
 								    message,
-								    sender);
+								    sender,
+								    NULL);
 		}
 	}
 
@@ -759,11 +761,13 @@ log_window_contacts_new_message_cb (GossipContact   *own_contact,
 	if (gossip_contact_equal (own_contact, sender)) {
 		gossip_chat_view_append_message_from_self (window->chatview_contacts, 
 							   message,
-							   own_contact);
+							   own_contact,
+							   NULL);
 	} else {
 		gossip_chat_view_append_message_from_other (window->chatview_contacts, 
 							    message,
-							    sender);
+							    sender,
+							    NULL);
 	}
 
 	/* Scroll to the most recent messages */
@@ -948,11 +952,13 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 		if (gossip_contact_equal (own_contact, sender)) {
 			gossip_chat_view_append_message_from_self (window->chatview_contacts, 
 								   message,
-								   own_contact);
+								   own_contact,
+								   NULL);
 		} else {
 			gossip_chat_view_append_message_from_other (window->chatview_contacts, 
 								    message,
-								    sender);
+								    sender,
+								    NULL);
 		}
 	}
 
@@ -1343,11 +1349,13 @@ log_window_chatrooms_new_message_cb (GossipContact   *own_contact,
 	if (gossip_contact_equal (own_contact, sender)) {
 		gossip_chat_view_append_message_from_self (window->chatview_chatrooms, 
 							   message,
-							   own_contact);
+							   own_contact,
+							   NULL);
 	} else {
 		gossip_chat_view_append_message_from_other (window->chatview_chatrooms, 
 							    message,
-							    sender);
+							    sender,
+							    NULL);
 	}
 
 	/* Scroll to the most recent messages */
@@ -1534,11 +1542,13 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 		if (gossip_contact_equal (own_contact, sender)) {
 			gossip_chat_view_append_message_from_self (window->chatview_chatrooms, 
 								   message,
-								   own_contact);
+								   own_contact,
+								   NULL);
 		} else {
 			gossip_chat_view_append_message_from_other (window->chatview_chatrooms, 
 								    message,
-								    sender);
+								    sender,
+								    NULL);
 		}
 	}
 

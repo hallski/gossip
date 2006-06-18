@@ -28,7 +28,8 @@
 
 #include "gossip-avatar-image.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImagePriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImagePriv))
 
 #define MAX_SMALL  48
 #define MAX_LARGE 400
@@ -106,7 +107,7 @@ avatar_image_finalize (GObject *object)
 	}
 	
 	if (priv->pixbuf) {
-		g_object_unref(priv->pixbuf);
+		g_object_unref (priv->pixbuf);
 	}
 
 	gtk_object_destroy (GTK_OBJECT (priv->tooltips));

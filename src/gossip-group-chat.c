@@ -862,12 +862,14 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 			gossip_chat_view_append_message_from_self (
 				GOSSIP_CHAT (chat)->view,
 				message,
-				priv->own_contact);
+				priv->own_contact,
+				NULL);
 		} else {
 			gossip_chat_view_append_message_from_other (
 				GOSSIP_CHAT (chat)->view,
 				message,
-				priv->own_contact);
+				priv->own_contact,
+				NULL);
 		}
 	}
 	

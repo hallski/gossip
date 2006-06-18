@@ -90,9 +90,11 @@ GdkPixbuf *gossip_pixbuf_avatar_from_vcard          (GossipVCard         *vcard)
 GdkPixbuf *gossip_pixbuf_avatar_from_vcard_scaled   (GossipVCard         *vcard,
 						     GtkIconSize          size);
 GdkPixbuf *gossip_pixbuf_avatar_from_contact        (GossipContact       *contact);
-GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact,
-						     GtkIconSize          size);
+GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact, 
+						     gint                 width,
+						     gint                 height);
 
+/* Text view */
 gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
 						     const gchar         *str,
 						     GtkTextIter         *match_start,

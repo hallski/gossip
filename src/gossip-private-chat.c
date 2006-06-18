@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2004 Imendio AB
+ * Copyright (C) 2002-2006 Imendio AB
  * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  *
  * This program is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 #include <libgnomeui/gnome-href.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
@@ -43,8 +44,7 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "PrivateChat"
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
@@ -54,7 +54,10 @@ struct _GossipPrivateChatPriv {
         GossipContact    *contact;
         GossipContact    *own_contact;
 	gchar            *name;
-	
+
+	GdkPixbuf        *own_avatar;
+	GdkPixbuf        *other_avatar;
+
 	gchar            *locked_resource;
 	gchar            *roster_resource;
 
@@ -105,24 +108,30 @@ static gboolean       private_chat_text_view_focus_in_event_cb  (GtkWidget      
 static gboolean       private_chat_delete_event_cb              (GtkWidget              *widget,
 								 GdkEvent               *event,
 								 GossipPrivateChat      *chat);
+static void           private_chat_own_avatar_notify_cb         (GossipContact          *contact,
+								 GParamSpec             *pspec,
+								 GossipPrivateChat      *chat);
+static void           private_chat_other_avatar_notify_cb       (GossipContact          *contact,
+								 GParamSpec             *pspec,
+								 GossipPrivateChat      *chat);
 static const gchar *  private_chat_get_name                     (GossipChat             *chat);
 static gchar *        private_chat_get_tooltip                  (GossipChat             *chat);
 static GdkPixbuf *    private_chat_get_status_pixbuf            (GossipChat             *chat);
 static GtkWidget *    private_chat_get_widget                   (GossipChat             *chat);
 static GossipContact *private_chat_get_contact                  (GossipChat             *chat);
 static GossipContact *private_chat_get_own_contact              (GossipChat             *chat);
-
- static GObjectClass *parent_class  = NULL;
+static GdkPixbuf *    private_chat_pad_to_size                  (GdkPixbuf              *pixbuf, 
+								 gint                    width,
+								 gint                    height,
+								 gint                    extra_padding_right);
 
 G_DEFINE_TYPE (GossipPrivateChat, gossip_private_chat, GOSSIP_TYPE_CHAT);
 
 static void
 gossip_private_chat_class_init (GossipPrivateChatClass *klass)
 {
-        GObjectClass *object_class = G_OBJECT_CLASS (klass);
+        GObjectClass    *object_class = G_OBJECT_CLASS (klass);
 	GossipChatClass *chat_class = GOSSIP_CHAT_CLASS (klass);
-
-        parent_class = g_type_class_peek_parent (klass);
 
         object_class->finalize = private_chat_finalize;
 	
@@ -147,7 +156,7 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 
         private_chat_create_ui (chat);
 
-	DEBUG_MSG (("PrivateChat: Connecting"));
+	gossip_debug (DEBUG_DOMAIN, "Connecting");
 
 	g_signal_connect_object (gossip_app_get_session (),
 				 "connected",
@@ -174,12 +183,20 @@ private_chat_finalize (GObject *object)
 	chat = GOSSIP_PRIVATE_CHAT (object);
 	priv = GET_PRIV (chat);
 
-	if (priv->own_contact) {
+	if (priv->contact) {
 		g_object_unref (priv->contact);
 	}
 
 	if (priv->own_contact) {
 		g_object_unref (priv->own_contact);
+	}
+
+	if (priv->own_avatar) {
+		g_object_unref (priv->own_avatar);
+	}
+
+	if (priv->other_avatar) {
+		g_object_unref (priv->other_avatar);
 	}
 
 	if (priv->scroll_idle_id) {
@@ -188,7 +205,7 @@ private_chat_finalize (GObject *object)
 	
 	private_chat_composing_remove_timeout (chat);
 	
-        G_OBJECT_CLASS (parent_class)->finalize (object);
+        G_OBJECT_CLASS (gossip_private_chat_parent_class)->finalize (object);
 }
 
 static void
@@ -277,7 +294,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 	
 	if (priv->roster_resource &&
 	    g_ascii_strcasecmp (priv->roster_resource, roster_resource) == 0) {
-		DEBUG_MSG (("PrivateChat: Roster unchanged"));
+		gossip_debug (DEBUG_DOMAIN, "Roster unchanged");
 
 		if (!priv->locked_resource) {
 			priv->locked_resource = g_strdup (roster_resource);
@@ -286,7 +303,7 @@ private_chat_update_locked_resource (GossipPrivateChat *chat)
 		return;
 	}
 	
-	DEBUG_MSG (("PrivateChat: New roster resource: %s", roster_resource));
+	gossip_debug (DEBUG_DOMAIN, "New roster resource: %s", roster_resource);
 	
 	g_free (priv->roster_resource);
 	priv->roster_resource = g_strdup (roster_resource);
@@ -333,7 +350,8 @@ private_chat_send (GossipPrivateChat *chat,
 
 	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view, 
 						   message, 
-						   priv->own_contact);
+						   priv->own_contact,
+						   priv->own_avatar);
 
 	gossip_session_send_message (gossip_app_get_session (), message);
 	
@@ -413,8 +431,8 @@ private_chat_contact_presence_updated (gpointer           not_used,
 		return;
 	}
 
-	DEBUG_MSG (("PrivateChat: Presence update for contact:'%s'", 
-		   gossip_contact_get_id (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Presence update for contact: %s",
+		      gossip_contact_get_id (contact));
 
 	g_signal_emit_by_name (chat, "status-changed");
 
@@ -482,9 +500,18 @@ private_chat_contact_added (gpointer           not_user,
 	if (!gossip_contact_equal (contact, priv->contact)) {
 		return;
 	}
-	
+
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_other_avatar_notify_cb,
+					      chat);
+		
 	g_object_unref (priv->contact);
 	priv->contact = g_object_ref (contact);
+
+	g_signal_connect (priv->contact,
+			  "notify::avatar",
+			  G_CALLBACK (private_chat_other_avatar_notify_cb),
+			  chat);
 }
 
 static void
@@ -528,9 +555,9 @@ private_chat_composing_cb (GossipSession *session,
 	priv = GET_PRIV (p_chat);
 
 	if (gossip_contact_equal (contact, priv->contact)) {
-		DEBUG_MSG (("PrivateChat: Contact:'%s' %s typing",
-			   gossip_contact_get_name (contact),
-			   composing ? "is" : "is not"));
+		gossip_debug (DEBUG_DOMAIN, "Contact: '%s' %s typing",
+			      gossip_contact_get_name (contact),
+			      composing ? "is" : "is not");
 
 		g_signal_emit_by_name (chat, "composing", composing);
 	}
@@ -646,6 +673,52 @@ private_chat_delete_event_cb (GtkWidget         *widget,
 		              GossipPrivateChat *chat)
 {
 	return TRUE;
+}
+
+static void
+private_chat_own_avatar_notify_cb (GossipContact     *contact,
+				   GParamSpec        *pspec,
+				   GossipPrivateChat *chat)
+{
+	GossipPrivateChatPriv *priv;
+	GdkPixbuf             *pixbuf;
+
+	priv = GET_PRIV (chat);
+	
+	if (priv->own_avatar) {
+		g_object_unref (priv->own_avatar);
+	}
+	
+	pixbuf = gossip_pixbuf_avatar_from_contact_scaled (priv->own_contact, 32, 32);
+	if (pixbuf) {
+		priv->own_avatar = private_chat_pad_to_size (pixbuf, 32, 32, 6);
+		g_object_unref (pixbuf);
+	} else {
+		priv->own_avatar = NULL;
+	}
+}
+
+static void
+private_chat_other_avatar_notify_cb (GossipContact     *contact,
+				     GParamSpec        *pspec,
+				     GossipPrivateChat *chat)
+{
+	GossipPrivateChatPriv *priv;
+	GdkPixbuf             *pixbuf;
+
+	priv = GET_PRIV (chat);
+	
+	if (priv->other_avatar) {
+		g_object_unref (priv->other_avatar);
+	}
+	
+	pixbuf = gossip_pixbuf_avatar_from_contact_scaled (priv->contact, 32, 32);
+	if (pixbuf) {
+		priv->other_avatar = private_chat_pad_to_size (pixbuf, 32, 32, 6);
+		g_object_unref (pixbuf);
+	} else {
+		priv->other_avatar = NULL;
+	}
 }
 
 static const gchar *
@@ -780,6 +853,19 @@ gossip_private_chat_new (GossipContact *own_contact,
 
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
+	g_signal_connect (priv->own_contact,
+			  "notify::avatar",
+			  G_CALLBACK (private_chat_own_avatar_notify_cb),
+			  chat);
+	
+	g_signal_connect (priv->contact,
+			  "notify::avatar",
+			  G_CALLBACK (private_chat_other_avatar_notify_cb),
+			  chat);
+
+	private_chat_own_avatar_notify_cb (priv->own_contact, NULL, chat);
+	private_chat_other_avatar_notify_cb (priv->contact, NULL, chat);
+	
 	view = GOSSIP_CHAT (chat)->view;
 
 	/* Turn off scrolling temporarily */
@@ -800,11 +886,13 @@ gossip_private_chat_new (GossipContact *own_contact,
 		if (gossip_contact_equal (priv->own_contact, sender)) {
 			gossip_chat_view_append_message_from_self (view, 
 								   message,
-								   priv->own_contact);
+								   priv->own_contact,
+								   priv->own_avatar);
 		} else {
 			gossip_chat_view_append_message_from_other (view, 
 								    message,
-								    sender);
+								    sender,
+								    priv->other_avatar);
 		}
 	}
 
@@ -882,8 +970,8 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	priv = GET_PRIV (chat);
 	
-	DEBUG_MSG (("PrivateChat: Appending message ('%s')",
-		   gossip_contact_get_name (gossip_message_get_sender (message))));
+	gossip_debug (DEBUG_DOMAIN, "Appending message ('%s')",
+		   gossip_contact_get_name (gossip_message_get_sender (message)));
 
 	sender = gossip_message_get_sender (message);
 	if (!gossip_contact_equal (priv->contact, sender)) {
@@ -924,7 +1012,8 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 	} else {
 		gossip_chat_view_append_message_from_other (GOSSIP_CHAT (chat)->view,
 							    message,
-							    priv->own_contact);
+							    priv->own_contact,
+							    priv->other_avatar);
 	}
 
 	if (gossip_chat_should_play_sound (GOSSIP_CHAT (chat))) {
@@ -933,3 +1022,43 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 
 	g_signal_emit_by_name (chat, "new-message", message);
 }
+
+/* Pads a pixbuf to the specified size, by centering it in a larger transparent
+ * pixbuf. Returns a new ref.
+ */
+static GdkPixbuf *
+private_chat_pad_to_size (GdkPixbuf *pixbuf, 
+			  gint       width,
+			  gint       height,
+			  gint       extra_padding_right)
+{
+	gint       src_width, src_height;
+	GdkPixbuf *padded;
+	gint       x_offset, y_offset;
+
+	src_width = gdk_pixbuf_get_width (pixbuf);
+	src_height = gdk_pixbuf_get_height (pixbuf);
+	
+	x_offset = (width - src_width) / 2;
+	y_offset = (height - src_height) / 2;
+
+	padded = gdk_pixbuf_new (gdk_pixbuf_get_colorspace (pixbuf),
+				 TRUE, /* alpha */
+				 gdk_pixbuf_get_bits_per_sample (pixbuf),
+				 width + extra_padding_right,
+				 height);
+
+	gdk_pixbuf_fill (padded, 0);
+
+	gdk_pixbuf_copy_area (pixbuf,
+			      0, /* source coords */
+			      0,
+			      src_width,
+			      src_height,
+			      padded,
+			      x_offset, /* dest coords */
+			      y_offset); 
+
+	return padded;
+}
+

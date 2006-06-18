@@ -1181,7 +1181,7 @@ contact_list_add_contact (GossipContactList *list,
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
 		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact,
-									  GTK_ICON_SIZE_DND);
+									  32, 32);
 		
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
@@ -1218,8 +1218,8 @@ contact_list_add_contact (GossipContactList *list,
 		}
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
-		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 
-									  GTK_ICON_SIZE_DND);
+		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact,
+									  32, 32);
 		
 		contact_list_get_group (list, name, &iter_group, &created);
 

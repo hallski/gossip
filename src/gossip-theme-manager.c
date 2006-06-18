@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -35,18 +35,28 @@
 #include "gossip-preferences.h"
 #include "gossip-app.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
 	gchar    *name;
-	guint     notify_id;
+	guint     name_notify_id;
+
+	gboolean  show_avatars;
+	guint     show_avatars_notify_id;
+
+	gboolean  irc_style;
 } GossipThemeManagerPriv;
 
-static void theme_manager_finalize    (GObject     *object);
-static void theme_manager_notify_func (GConfClient *client,
-				       guint        id,
-				       GConfEntry  *entry,
-				       gpointer     user_data);
+static void theme_manager_finalize                 (GObject     *object);
+static void theme_manager_name_notify_func         (GConfClient *client,
+						    guint        id,
+						    GConfEntry  *entry,
+						    gpointer     user_data);
+static void theme_manager_show_avatars_notify_func (GConfClient *client,
+						    guint        id,
+						    GConfEntry  *entry,
+						    gpointer     user_data);
 
 enum {
 	THEME_CHANGED,
@@ -81,33 +91,50 @@ static void
 gossip_theme_manager_init (GossipThemeManager *manager)
 {
 	GossipThemeManagerPriv *priv;
+	GConfClient            *client;
 
 	priv = GET_PRIV (manager);
 
-	priv->notify_id = gconf_client_notify_add (
-		gossip_app_get_gconf_client (),
-		GCONF_CHAT_THEME,
-		theme_manager_notify_func,
-		manager,
-		NULL,
-		NULL);
-
-	priv->name = gconf_client_get_string (gossip_app_get_gconf_client (),
+	client = gossip_app_get_gconf_client ();
+	
+	priv->name_notify_id =
+		gconf_client_notify_add (client, 
+					 GCONF_CHAT_THEME,
+					 theme_manager_name_notify_func,
+					 manager,
+					 NULL,
+					 NULL);
+	
+	priv->name = gconf_client_get_string (client,
 					      GCONF_CHAT_THEME,
 					      NULL);
+
+	/* Unused right now, but will be used soon. */
+	priv->show_avatars_notify_id = 
+		gconf_client_notify_add (client,
+					 GCONF_UI_SHOW_AVATARS,
+					 theme_manager_show_avatars_notify_func,
+					 manager,
+					 NULL,
+					 NULL);
+
+	priv->show_avatars = gconf_client_get_bool (client,
+						    GCONF_UI_SHOW_AVATARS,
+						    NULL);
 }
 
 static void
 theme_manager_finalize (GObject *object)
 {
 	GossipThemeManagerPriv *priv;
-
+	GConfClient            *client;
+	
 	priv = GET_PRIV (object);
 
-	if (priv->notify_id) {
-		gconf_client_notify_remove (gossip_app_get_gconf_client (),
-					    priv->notify_id);
-	}
+	client = gossip_app_get_gconf_client ();
+	
+	gconf_client_notify_remove (client, priv->name_notify_id);
+	gconf_client_notify_remove (client, priv->show_avatars_notify_id);
 		
 	g_free (priv->name);
 	
@@ -115,15 +142,16 @@ theme_manager_finalize (GObject *object)
 }
 
 static void
-theme_manager_notify_func (GConfClient *client,
-			   guint        id,
+theme_manager_name_notify_func (GConfClient *client,
+				guint        id,
 			   GConfEntry  *entry,
-			   gpointer     user_data)
+				gpointer     user_data)
 {
-	GossipThemeManager     *manager = user_data;
+	GossipThemeManager     *manager;
 	GossipThemeManagerPriv *priv;
 	GConfValue             *value;
 
+	manager = user_data;
 	priv = GET_PRIV (manager);
 
 	g_free (priv->name);
@@ -136,6 +164,27 @@ theme_manager_notify_func (GConfClient *client,
 	}
 	
 	g_signal_emit (manager, signals[THEME_CHANGED], 0, NULL);
+}
+
+static void
+theme_manager_show_avatars_notify_func (GConfClient *client,
+					guint        id,
+					GConfEntry  *entry,
+					gpointer     user_data)
+{
+	GossipThemeManager     *manager;
+	GossipThemeManagerPriv *priv;
+	GConfValue             *value;
+
+	manager = user_data;
+	priv = GET_PRIV (manager);
+
+	value = gconf_entry_get_value (entry);
+	if (value == NULL || value->type != GCONF_VALUE_BOOL) {
+		priv->show_avatars = FALSE;
+	} else {
+		priv->show_avatars = gconf_value_get_bool (value);
+	}
 }
 
 static void
@@ -197,30 +246,40 @@ theme_manager_fixup_tag_table (GossipThemeManager *theme_manager,
 	
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
-	theme_manager_ensure_tag_by_name (buffer, "fancy-spacing");
+	/* "Fancy" style tags. */
 	theme_manager_ensure_tag_by_name (buffer, "fancy-header-self");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-header-self-avatar");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-avatar-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-line-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-body-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-action-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-highlight-self");
+
 	theme_manager_ensure_tag_by_name (buffer, "fancy-header-other");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-header-other-avatar");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-avatar-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-line-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-body-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-action-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-highlight-other");
+
+	theme_manager_ensure_tag_by_name (buffer, "fancy-spacing");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-time");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-event");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-invite");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-link");
 
-	theme_manager_ensure_tag_by_name (buffer, "irc-spacing");
+	/* IRC style tags. */
 	theme_manager_ensure_tag_by_name (buffer, "irc-nick-self");
 	theme_manager_ensure_tag_by_name (buffer, "irc-body-self");
 	theme_manager_ensure_tag_by_name (buffer, "irc-action-self");
-	theme_manager_ensure_tag_by_name (buffer, "irc-nick-highlight");
+	
 	theme_manager_ensure_tag_by_name (buffer, "irc-nick-other");
 	theme_manager_ensure_tag_by_name (buffer, "irc-body-other");
 	theme_manager_ensure_tag_by_name (buffer, "irc-action-other");
+
+	theme_manager_ensure_tag_by_name (buffer, "irc-nick-highlight");
+	theme_manager_ensure_tag_by_name (buffer, "irc-spacing");
 	theme_manager_ensure_tag_by_name (buffer, "irc-time");
 	theme_manager_ensure_tag_by_name (buffer, "irc-event");
 	theme_manager_ensure_tag_by_name (buffer, "irc-invite");
@@ -241,7 +300,7 @@ theme_manager_apply_theme_classic (GossipThemeManager *manager,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	table = gtk_text_buffer_get_tag_table (buffer);
 
-	gossip_chat_view_set_irc_style (view, TRUE);
+	priv->irc_style = TRUE;
 
 	tag = theme_manager_init_tag_by_name (table, "irc-spacing");
 	g_object_set (tag,
@@ -338,7 +397,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	table = gtk_text_buffer_get_tag_table (buffer);
 
-	gossip_chat_view_set_irc_style (view, FALSE);
+	priv->irc_style = FALSE;
 
 #define BLUE_BODY_SELF "#dcdcdc"
 #define BLUE_HEAD_SELF "#b9b9b9"
@@ -353,7 +412,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "size", 3000,
 		      NULL);
 	theme_manager_add_tag (table, tag);
-	
+
 	tag = theme_manager_init_tag_by_name (table, "fancy-header-self");
 	g_object_set (tag,
 		      "foreground", "black",
@@ -361,6 +420,15 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "pixels-above-lines", 2,
 		      "pixels-below-lines", 2,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-header-self-avatar");
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-avatar-self");
+	g_object_set (tag,
+		      "paragraph-background", BLUE_HEAD_SELF,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -375,7 +443,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 	g_object_set (tag,
 		      "foreground", "black",
 		      "paragraph-background", BLUE_BODY_SELF,
-		      "pixels-above-lines", 2,
+		      "pixels-above-lines", 4,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -384,7 +452,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "foreground", "brown4",
 		      "style", PANGO_STYLE_ITALIC,
 		      "paragraph-background", BLUE_BODY_SELF,
-		      "pixels-above-lines", 2,
+		      "pixels-above-lines", 4,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
@@ -393,7 +461,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "foreground", "black",
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "paragraph-background", BLUE_BODY_SELF,
-		      "pixels-above-lines", 2,
+		      "pixels-above-lines", 4,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -404,6 +472,15 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "pixels-above-lines", 2,
 		      "pixels-below-lines", 2,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-header-other-avatar");
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-avatar-other");
+	g_object_set (tag,
+		      "paragraph-background", BLUE_HEAD_OTHER,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -418,7 +495,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 	g_object_set (tag,
 		      "foreground", "black",
 		      "paragraph-background", BLUE_BODY_OTHER,
-		      "pixels-above-lines", 2,
+		      "pixels-above-lines", 4,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
@@ -427,7 +504,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "foreground", "brown4",
 		      "style", PANGO_STYLE_ITALIC,
 		      "paragraph-background", BLUE_BODY_OTHER,
-		      "pixels-above-lines", 2,
+		      "pixels-above-lines", 4,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -436,7 +513,7 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      "foreground", "black",
 		      "weight", PANGO_WEIGHT_BOLD,
 		      "paragraph-background", BLUE_BODY_OTHER,
-		      "pixels-above-lines", 2,
+		      "pixels-above-lines", 4,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -472,146 +549,6 @@ static void
 theme_manager_apply_theme_dark (GossipThemeManager *manager,
 				GossipChatView     *view)
 {
-	GossipThemeManagerPriv *priv;
-	GtkTextBuffer          *buffer;
-	GtkTextTagTable        *table;
-	GtkTextTag             *tag;
-
-	priv = GET_PRIV (manager);
-
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-	table = gtk_text_buffer_get_tag_table (buffer);
-
-	gossip_chat_view_set_irc_style (view, FALSE);
-
-#define DARK_BODY_SELF "#6d6056"
-#define DARK_HEAD_SELF "#584c43" //60564e"
-#define DARK_LINE_SELF "#534b45"
-#define DARK_TEXT_SELF "#eeeeee"
-
-#define DARK_BODY_OTHER "#969292"
-#define DARK_HEAD_OTHER "#827878"
-#define DARK_LINE_OTHER "#787474"
-#define DARK_TEXT_OTHER "#eeeeee"
-
-	tag = theme_manager_init_tag_by_name (table, "fancy-spacing");
-	g_object_set (tag,
-		      "size", 3000,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-header-self");
-	g_object_set (tag,
-		      "foreground", DARK_TEXT_SELF,
-		      "paragraph-background", DARK_HEAD_SELF,
-		      "weight", PANGO_WEIGHT_BOLD,
-		      "pixels-above-lines", 2,
-		      "pixels-below-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-line-self");
-	g_object_set (tag,
-		      "size", 1,
-		      "paragraph-background", DARK_LINE_SELF,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-body-self");
-	g_object_set (tag,
-		      "foreground", DARK_TEXT_SELF,
-		      "paragraph-background", DARK_BODY_SELF,
-		      "pixels-above-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-action-self");
-	g_object_set (tag,
-		      "foreground", "brown4",
-		      "style", PANGO_STYLE_ITALIC,
-		      "paragraph-background", DARK_BODY_SELF,
-		      "pixels-above-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-
-	tag = theme_manager_init_tag_by_name (table, "fancy-highlight-self");
-	g_object_set (tag,
-		      "foreground", DARK_TEXT_SELF,
-		      "weight", PANGO_WEIGHT_BOLD,
-		      "paragraph-background", DARK_BODY_SELF,
-		      "pixels-above-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-header-other");
-	g_object_set (tag,
-		      "foreground", DARK_TEXT_OTHER,
-		      "paragraph-background", DARK_HEAD_OTHER,
-		      "weight", PANGO_WEIGHT_BOLD,
-		      "pixels-above-lines", 2,
-		      "pixels-below-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-line-other");
-	g_object_set (tag,
-		      "size", 1,
-		      "paragraph-background", DARK_LINE_OTHER,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-body-other");
-	g_object_set (tag,
-		      "foreground", DARK_TEXT_OTHER,
-		      "paragraph-background", DARK_BODY_OTHER,
-		      "pixels-above-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-
-	tag = theme_manager_init_tag_by_name (table, "fancy-action-other");
-	g_object_set (tag,
-		      "foreground", "brown4",
-		      "style", PANGO_STYLE_ITALIC,
-		      "paragraph-background", DARK_BODY_OTHER,
-		      "pixels-above-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-highlight-other");
-	g_object_set (tag,
-		      "foreground", DARK_TEXT_OTHER,
-		      "weight", PANGO_WEIGHT_BOLD,
-		      "paragraph-background", DARK_BODY_OTHER,
-		      "pixels-above-lines", 2,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-time");
-	g_object_set (tag,
-		      "foreground", "darkgrey",
-		      "justification", GTK_JUSTIFY_CENTER,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-	
-	tag = theme_manager_init_tag_by_name (table, "fancy-event");
-	g_object_set (tag,
-		      "foreground", DARK_LINE_OTHER,
-		      "justification", GTK_JUSTIFY_LEFT,
-		      NULL);
-	theme_manager_add_tag (table, tag);
-
-	tag = theme_manager_init_tag_by_name (table, "fancy-invite");
-	g_object_set (tag,
-		      "foreground", "sienna",
-		      NULL);
-	theme_manager_add_tag (table, tag);
-
-	tag = theme_manager_init_tag_by_name (table, "fancy-link");
-	g_object_set (tag,
-		      "foreground", "#49789e",
-		      "underline", PANGO_UNDERLINE_SINGLE,
-		      NULL);
-	theme_manager_add_tag (table, tag);
 }
 
 static void
@@ -619,6 +556,10 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 			   GossipChatView     *view,
 			   const gchar        *name)
 {
+	GossipThemeManagerPriv *priv;
+
+	priv = GET_PRIV (manager);
+	
 	if (strcmp (name, "dark") == 0) {
 		theme_manager_apply_theme_dark (manager, view);
 	}
@@ -628,6 +569,8 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 		theme_manager_apply_theme_classic (manager, view);
 	}
 	
+	gossip_chat_view_set_irc_style (view, priv->irc_style);
+
 	/* Make sure all tags are present. Note: not useful now but when we have
 	 * user defined theme it will be.
 	 */
@@ -643,6 +586,70 @@ gossip_theme_manager_apply (GossipThemeManager *manager,
 	priv = GET_PRIV (manager);
 	
 	theme_manager_apply_theme (manager, view, priv->name);
+}
+
+/* FIXME: A bit ugly. We should probably change the scheme so that instead of
+ * the manager signalling, views are registered and applied to automatically.
+ */
+void
+gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
+					  GossipChatView     *view,
+					  gboolean            show)
+{
+	GossipThemeManagerPriv *priv;
+	GtkTextBuffer          *buffer;
+	GtkTextTagTable        *table;
+	GtkTextTag             *tag_text_self, *tag_text_other;
+	GtkTextTag             *tag_image_self, *tag_image_other;
+
+	priv = GET_PRIV (manager);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	table = gtk_text_buffer_get_tag_table (buffer);
+
+	tag_text_self = gtk_text_tag_table_lookup (table, "fancy-header-self-avatar");
+	tag_text_other = gtk_text_tag_table_lookup (table, "fancy-header-other-avatar");
+
+	tag_image_self = gtk_text_tag_table_lookup (table, "fancy-avatar-self");
+	tag_image_other = gtk_text_tag_table_lookup (table, "fancy-avatar-other");
+
+	if (!show) {
+		g_object_set (tag_text_self,
+			      "rise", 0,
+			      NULL);
+		g_object_set (tag_text_other,
+			      "rise", 0,
+			      NULL);
+		g_object_set (tag_image_self,
+			      "invisible", TRUE,
+			      NULL);
+		g_object_set (tag_image_other,
+			      "invisible", TRUE,
+			      NULL);
+	} else {
+		GtkTextAttributes *attrs;
+		gint               size;
+		gint               rise;
+		
+		attrs = gtk_text_view_get_default_attributes (GTK_TEXT_VIEW (view));
+		size = pango_font_description_get_size (attrs->font);
+		rise = MAX (0, (32 * PANGO_SCALE - size) / 2.0);
+
+		g_object_set (tag_text_self,
+			      "rise", rise,
+			      NULL);
+		g_object_set (tag_text_other,
+			      "rise", rise,
+			      NULL);
+		g_object_set (tag_image_self,
+			      "invisible", FALSE,
+			      NULL);
+		g_object_set (tag_image_other,
+			      "invisible", FALSE,
+			      NULL);
+
+		gtk_text_attributes_unref (attrs);
+	}
 }
 
 GossipThemeManager *

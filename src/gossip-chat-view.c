@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2005 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,11 +19,9 @@
  */
 
 #include <config.h>
-
 #include <sys/types.h>
 #include <string.h>
 #include <time.h>
-
 #include <glib/gi18n.h>
 #include <gtk/gtkimage.h>
 #include <gtk/gtkmenu.h>
@@ -38,6 +36,7 @@
 #include <libgnome/gnome-url.h>
 #endif
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-time.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-session.h>
@@ -48,16 +47,15 @@
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj),	\
+		       GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "ChatView"
 
 /* Number of seconds between timestamps when using normal mode, 5 minutes. */
 #define TIMESTAMP_INTERVAL 300
 
-/* Maximum lines in any chat buffer, see bug #141292. */
-#define MAX_LINES 1000
+#define MAX_LINES 800
 
 typedef enum {
 	BLOCK_TYPE_NONE,
@@ -82,7 +80,8 @@ struct _GossipChatViewPriv {
 	 */
 	GossipContact *last_contact;
 
-	guint          gconf_system_fonts_id;
+	guint          notify_system_fonts_id;
+	guint          notify_show_avatars_id;
 };
 
 typedef struct {
@@ -181,8 +180,6 @@ static GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_SICK,         ")o+", 0 }
 };
 
-static gint         num_smileys = G_N_ELEMENTS (smileys);
-
 static void     gossip_chat_view_class_init          (GossipChatViewClass      *klass);
 static void     gossip_chat_view_init                (GossipChatView           *view);
 static void     chat_view_finalize                   (GObject                  *object);
@@ -196,10 +193,14 @@ static void     chat_view_size_allocate              (GtkWidget                *
 static void     chat_view_setup_tags                 (GossipChatView           *view);
 static void     chat_view_system_font_update         (GossipChatView           *view,
 						      GConfClient              *gconf_client);
-static void     chat_view_system_font_changed_cb     (GConfClient              *gconf_client,
+static void     chat_view_system_font_notify_cb      (GConfClient              *gconf_client,
 						      guint                     id,
 						      GConfEntry               *entry,
-						      GossipChatView           *view);
+						      gpointer                  user_data);
+static void     chat_view_show_avatars_notify_cb     (GConfClient              *gconf_client,
+						      guint                     id,
+						      GConfEntry               *entry,
+						      gpointer                  user_data);
 static void     chat_view_populate_popup             (GossipChatView           *view,
 						      GtkMenu                  *menu,
 						      gpointer                  user_data);
@@ -241,7 +242,8 @@ static void     chat_view_append_text                (GossipChatView           *
 static void     chat_view_maybe_append_fancy_header  (GossipChatView           *view,
 						      GossipMessage            *msg,
 						      GossipContact            *my_contact,
-						      gboolean                  from_self);
+						      gboolean                  from_self,
+						      GdkPixbuf                *avatar);
 static void     chat_view_append_irc_action          (GossipChatView           *view,
 						      GossipMessage            *msg,
 						      GossipContact            *my_contact,
@@ -297,18 +299,29 @@ gossip_chat_view_init (GossipChatView *view)
 
 	gconf_client = gossip_app_get_gconf_client ();
 	
-	priv->gconf_system_fonts_id = 
+	priv->notify_system_fonts_id = 
 		gconf_client_notify_add (gconf_client,
 					 "/desktop/gnome/interface/document_font_name",
-					 (GConfClientNotifyFunc) chat_view_system_font_changed_cb,
+					 chat_view_system_font_notify_cb,
 					 view, NULL, NULL);
-
 	chat_view_system_font_update (view, gconf_client);
+	
+	priv->notify_show_avatars_id = 
+		gconf_client_notify_add (gconf_client,
+					 GCONF_UI_SHOW_AVATARS,
+					 chat_view_show_avatars_notify_cb,
+					 view, NULL, NULL);
 
 	chat_view_setup_tags (view);
 
 	gossip_theme_manager_apply (gossip_theme_manager_get (), view);
-	
+	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
+						  view,
+						  gconf_client_get_bool (
+							  gconf_client,
+							  GCONF_UI_SHOW_AVATARS,
+							  NULL));
+
 	g_signal_connect (view,
 			  "populate-popup",
 			  G_CALLBACK (chat_view_populate_popup),
@@ -332,10 +345,8 @@ chat_view_finalize (GObject *object)
 	priv = GET_PRIV (view);
 
 	gconf_client = gossip_app_get_gconf_client ();
-
-	if (priv->gconf_system_fonts_id) {
-		gconf_client_notify_remove (gconf_client, priv->gconf_system_fonts_id);
-	}
+	gconf_client_notify_remove (gconf_client, priv->notify_system_fonts_id);
+	gconf_client_notify_remove (gconf_client, priv->notify_show_avatars_id);
 
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
 }
@@ -427,12 +438,46 @@ chat_view_system_font_update (GossipChatView *view,
 }
 
 static void
-chat_view_system_font_changed_cb (GConfClient    *gconf_client,
+chat_view_system_font_notify_cb (GConfClient    *gconf_client,
+				 guint           id,
+				 GConfEntry     *entry,
+				 gpointer        user_data)
+{
+	GossipChatView *view;
+
+	view = user_data;
+	chat_view_system_font_update (view, gconf_client);
+	
+	/* Ugly, again, to adjust the vertical position of the nick... Will fix
+	 * this when reworking the theme manager so that view register
+	 * themselves with it instead of the other way around.
+	 */
+	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
+						  view,
+						  gconf_client_get_bool (
+							  gconf_client,
+							  GCONF_UI_SHOW_AVATARS,
+							  NULL));
+}
+
+static void
+chat_view_show_avatars_notify_cb (GConfClient    *gconf_client,
 				  guint           id,
 				  GConfEntry     *entry,
-				  GossipChatView *view)
+				  gpointer        user_data)
 {
-	chat_view_system_font_update (view, gconf_client);	
+	GossipChatView     *view;
+	GossipChatViewPriv *priv;
+	GConfValue         *value;
+
+	view = user_data;
+	priv = GET_PRIV (view);
+
+	value = gconf_entry_get_value (entry);
+	
+	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
+						  view,
+						  gconf_value_get_bool (value));
 }
 
 static void
@@ -691,7 +736,7 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 		gint         len;
 		const gchar *start;
 
-		for (i = 0; i < num_smileys; i++) {
+		for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
 			smileys[i].index = 0;
 		}
 
@@ -712,7 +757,7 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 			if (submatch != -1 || prev_c == 0 || g_unichar_isspace (prev_c)) {
 				submatch = -1;
 
-				for (i = 0; i < num_smileys; i++) {
+				for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
 					if (smileys[i].pattern[smileys[i].index] == c) {
 						submatch = i;
 
@@ -1037,7 +1082,8 @@ static void
 chat_view_maybe_append_fancy_header (GossipChatView *view,
 				     GossipMessage  *msg,
 				     GossipContact  *my_contact,
-				     gboolean        from_self)
+				     gboolean        from_self,
+				     GdkPixbuf      *avatar)
 {
 	GossipChatViewPriv *priv;
 	GossipContact      *contact;
@@ -1046,13 +1092,14 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 	GtkTextIter         iter;
 	gchar              *tmp;
 	const gchar        *tag;
+	const gchar        *avatar_tag;
 	const gchar        *line_tag;
 
 	priv = GET_PRIV (view);
 
 	contact = gossip_message_get_sender (msg);
 	
-	DEBUG_MSG (("ChatView: Maybe add fancy header"));
+	gossip_debug (DEBUG_DOMAIN, "Maybe add fancy header");
 
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
@@ -1101,16 +1148,44 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 						  line_tag,
 						  NULL);
 
+	if (avatar) {
+		GtkTextIter start;
+		
+		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+ 		gtk_text_buffer_insert_pixbuf (priv->buffer, &iter, avatar);
+
+		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+		start = iter;
+		gtk_text_iter_backward_char (&start);
+
+		if (from_self) {
+			gtk_text_buffer_apply_tag_by_name (priv->buffer,
+							   "fancy-avatar-self",
+							   &start, &iter);
+			avatar_tag = "fancy-header-self-avatar";
+		} else {
+			gtk_text_buffer_apply_tag_by_name (priv->buffer,
+							   "fancy-avatar-other",
+							   &start, &iter);
+			avatar_tag = "fancy-header-other-avatar";
+		}			
+		
+	} else {
+		avatar_tag = NULL;
+	}
+
 	tmp = g_strdup_printf ("%s\n", name);
+
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
 						  &iter,
 						  tmp,
 						  -1,
 						  tag,
+						  avatar_tag,
 						  NULL);
 	g_free (tmp);
-	
+
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
 						  &iter,
@@ -1135,7 +1210,7 @@ chat_view_append_irc_action (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	DEBUG_MSG (("ChatView: Add IRC action"));
+	gossip_debug (DEBUG_DOMAIN, "Add IRC action");
 
 	/* Skip the "/me ". */
 	if (from_self) {
@@ -1189,7 +1264,7 @@ chat_view_append_fancy_action (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	DEBUG_MSG (("ChatView: Add fancy action"));
+	gossip_debug (DEBUG_DOMAIN, "Add fancy action");
 
 	contact = gossip_message_get_sender (msg);
 
@@ -1238,7 +1313,7 @@ chat_view_append_irc_message (GossipChatView *view,
 
 	priv = GET_PRIV (view);
 
-	DEBUG_MSG (("ChatView: Add IRC message"));
+	gossip_debug (DEBUG_DOMAIN, "Add IRC message");
 
 	body = gossip_message_get_body (msg);
 
@@ -1401,7 +1476,8 @@ gossip_chat_view_new (void)
 void
 gossip_chat_view_append_message_from_self (GossipChatView *view,
 					   GossipMessage  *msg,
-					   GossipContact  *my_contact)
+					   GossipContact  *my_contact,
+					   GdkPixbuf      *avatar)
 {
 	GossipChatViewPriv *priv;
 	const gchar        *body;
@@ -1420,7 +1496,9 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	chat_view_maybe_append_date_and_time (view, msg);
 
 	if (!priv->irc_style) {
-		chat_view_maybe_append_fancy_header (view, msg, my_contact, TRUE);
+		chat_view_maybe_append_fancy_header (view, msg,
+						     my_contact,
+						     TRUE, avatar);
 	}
 	
 	/* Handle action messages (/me) and normal messages, in combination with
@@ -1457,7 +1535,8 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 void
 gossip_chat_view_append_message_from_other (GossipChatView *view,
 					    GossipMessage  *msg,
-					    GossipContact  *contact)
+					    GossipContact  *contact,
+					    GdkPixbuf      *avatar)
 {
 	GossipChatViewPriv *priv;
 	const gchar        *body;
@@ -1476,7 +1555,9 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	chat_view_maybe_append_date_and_time (view, msg);
 
 	if (!priv->irc_style) {
-		chat_view_maybe_append_fancy_header (view, msg, contact, FALSE);
+		chat_view_maybe_append_fancy_header (view, msg,
+						     contact, FALSE,
+						     avatar);
 	}
 	
 	/* Handle action messages (/me) and normal messages, in combination with
@@ -1699,7 +1780,8 @@ gossip_chat_view_scroll (GossipChatView *view,
 
 	priv->allow_scrolling = allow_scrolling;
 
-	DEBUG_MSG (("ChatView: Scrolling %s", allow_scrolling ? "enabled" : "disabled"));
+	gossip_debug (DEBUG_DOMAIN, "Scrolling %s",
+		      allow_scrolling ? "enabled" : "disabled");
 }
 
 void
@@ -1716,7 +1798,7 @@ gossip_chat_view_scroll_down (GossipChatView *view)
 		return;
 	}
 
-	DEBUG_MSG (("ChatView: Scrolling down"));
+	gossip_debug (DEBUG_DOMAIN, "Scrolling down");
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 
@@ -2023,3 +2105,4 @@ gossip_chat_view_get_smiley_menu (GCallback    callback,
 
 	return menu;
 }
+

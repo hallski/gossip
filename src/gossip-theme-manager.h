@@ -45,8 +45,11 @@ struct _GossipThemeManagerClass {
 };
 
 GType               gossip_theme_manager_get_type (void) G_GNUC_CONST;
-GossipThemeManager *gossip_theme_manager_get      (void);
-void                gossip_theme_manager_apply    (GossipThemeManager *manager,
-						   GossipChatView     *view);
+GossipThemeManager *gossip_theme_manager_get                 (void);
+void                gossip_theme_manager_apply               (GossipThemeManager *manager,
+							      GossipChatView     *view);
+void                gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
+							      GossipChatView     *view,
+							      gboolean            show);
 
 #endif /* __GOSSIP_THEME_MANAGER_H__ */
