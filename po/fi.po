@@ -1,0 +1,1717 @@
+# This file is distributed under the same license as the gossip package.
+# Copyright (C) 2006 Samuli Seppänen and Henna Nykänen.
+#
+# Samuli Seppänen & Henna Nykänen <sjsepp@utu.fi>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gossip\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-06-18 12:43+0300\n"
+"PO-Revision-Date: 2006-06-18 12:54+0300\n"
+"Last-Translator: Samuli Seppänen & Henna Nykänen <sjsepp@utu.fi>\n"
+"Language-Team:  <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10.2\n"
+
+#: ../gossip.desktop.in.in.h:1
+msgid "Gossip Instant Messenger"
+msgstr "Gossip-pikaviestiohjelma"
+
+#: ../gossip.desktop.in.in.h:2
+msgid "Instant Messenger"
+msgstr "Pikaviestiohjelma"
+
+#: ../gossip.schemas.in.h:1
+msgid "Always open a separate chat window for new chats."
+msgstr "Avaa aina uusi ikkuna uusille keskusteluille."
+
+#: ../gossip.schemas.in.h:2
+msgid "Chat window theme"
+msgstr "Keskusteluikkunan teema"
+
+#: ../gossip.schemas.in.h:3
+msgid ""
+"Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgstr ""
+"Pilkuilla erotettu luettelo kielentarkastuksessa käytettävistä kielistä "
+"(esim. en, fr, nl)."
+
+#: ../gossip.schemas.in.h:4
+msgid "Default directory to select an avatar image from"
+msgstr "Oletushakemisto, josta avatar-kuvat haetaan"
+
+#: ../gossip.schemas.in.h:5
+msgid "Enable popup when contact is available"
+msgstr "Näytä ponnahdusikkuna, kun yhteystieto on linjoilla"
+
+#: ../gossip.schemas.in.h:6
+msgid "Enable sound when away"
+msgstr "Käytä ääniä poissa-tilassa"
+
+#: ../gossip.schemas.in.h:7
+msgid "Enable sound when busy"
+msgstr "Käytä ääniä varattu-tilassa"
+
+#: ../gossip.schemas.in.h:8
+msgid "Hide main window"
+msgstr "Piilota pääikkuna"
+
+#: ../gossip.schemas.in.h:9
+msgid "Hide the main window."
+msgstr "Piilota pääikkuna."
+
+#: ../gossip.schemas.in.h:10
+msgid "Open new chats in separate windows"
+msgstr "Avaa uusi ikkuna uusille keskusteluille"
+
+#: ../gossip.schemas.in.h:11
+msgid "Preset status messages"
+msgstr "Palauta tilaviestien oletusasetukset"
+
+#: ../gossip.schemas.in.h:12
+msgid "Preset status messages."
+msgstr "Palauta tilaviestien oletusasetukset."
+
+#: ../gossip.schemas.in.h:13
+msgid "Show avatars"
+msgstr "Näytä avatar-kuvat"
+
+#: ../gossip.schemas.in.h:14
+msgid "Show offline contacts"
+msgstr "Näytä linjoilta poissa olevat tuttavat"
+
+#: ../gossip.schemas.in.h:15
+msgid "Spell checking languages"
+msgstr "Kielentarkastuksessa käytetyt kielet"
+
+#: ../gossip.schemas.in.h:16
+msgid "The last directory that an avatar image was chosen from."
+msgstr "Viimeisin hakemisto, josta avatar-kuva oli valittu."
+
+#: ../gossip.schemas.in.h:17
+msgid "The theme that is used to display the conversation in chat windows."
+msgstr "Keskusteluikkunoissa käytettävä teema."
+
+#: ../gossip.schemas.in.h:18
+msgid "Use graphical smileys"
+msgstr "Käytä hymiökuvakkeita"
+
+#: ../gossip.schemas.in.h:19
+msgid "Use notification sounds"
+msgstr "Käytä merkkiääniä"
+
+#: ../gossip.schemas.in.h:20
+msgid ""
+"Whether or not to convert smileys into graphical images in conversations."
+msgstr "Muunnetaanko hymiöt graafisiksi?"
+
+#: ../gossip.schemas.in.h:21
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "Annetaanko viestien saapuessa merkkiääni?"
+
+#: ../gossip.schemas.in.h:22
+msgid "Whether or not to play sounds when away."
+msgstr "Käytetäänko merkkiääniä Poissa-tilassa?"
+
+#: ../gossip.schemas.in.h:23
+msgid "Whether or not to play sounds when busy."
+msgstr "Käytetäänkö merkkiääniä Varattu-tilassa?"
+
+#: ../gossip.schemas.in.h:24
+#, fuzzy
+msgid "Whether or not to show a popup when a contact becomes available."
+msgstr "Annetaanko viestien saapuessa merkkiääni?"
+
+#: ../gossip.schemas.in.h:25
+#, fuzzy
+msgid ""
+"Whether or not to show avatars for contacts in the contact list and chat "
+"windows."
+msgstr "Näytetäänkö tuttavalistassa myös linjoilta poissa olevat tuttavat?"
+
+#: ../gossip.schemas.in.h:26
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "Näytetäänkö tuttavalistassa myös linjoilta poissa olevat tuttavat?"
+
+#: ../libgossip/gossip-chatroom.c:878
+msgid "Normal"
+msgstr "Normaali"
+
+#: ../libgossip/gossip-chatroom.c:889
+msgid "Joining"
+msgstr "Liitytään keskusteluun"
+
+#: ../libgossip/gossip-chatroom.c:891
+msgid "Active"
+msgstr "Aktiivinen"
+
+#: ../libgossip/gossip-chatroom.c:893 ../ui/group-chat.glade.h:8
+msgid "Inactive"
+msgstr "Ei-aktiivinen"
+
+#: ../libgossip/gossip-chatroom.c:895
+msgid "Unknown"
+msgstr "Tuntematon"
+
+#: ../libgossip/gossip-chatroom.c:897
+msgid "Error"
+msgstr "Virhe"
+
+#: ../libgossip/gossip-chatroom-provider.c:343
+msgid "The nickname you have chosen is already in use."
+msgstr "Valitsemasi nimimerkki on jo käytössä."
+
+#: ../libgossip/gossip-chatroom-provider.c:347
+msgid "The chat room you tried to join requires a password."
+msgstr "Keskusteluhuoneeseen vaaditaan salasana."
+
+#: ../libgossip/gossip-chatroom-provider.c:351
+msgid "The remote conference server did not respond in a sensible time."
+msgstr "Ryhmäkeskustelupalvelin ei vastannut kohtuullisessa ajassa."
+
+#: ../libgossip/gossip-chatroom-provider.c:355
+msgid "The conference server you tried to join could not be found."
+msgstr "Ryhmäkeskustelupalvelinta ei löytynyt."
+
+#: ../libgossip/gossip-chatroom-provider.c:359
+msgid "An unknown error occurred, check your details are correct."
+msgstr "Tuntematon virhe, tarkasta asetuksesi."
+
+#: ../libgossip/gossip-contact.c:847 ../libgossip/gossip-presence.c:234
+#: ../src/gossip-app.c:2193 ../src/gossip-contact-info-dialog.c:167
+#: ../src/gossip-galago.c:166
+msgid "Offline"
+msgstr "Poissa linjoilta"
+
+#: ../libgossip/gossip-presence.c:377 ../libgossip/gossip-presence.c:394
+#: ../src/gossip-presence-chooser.c:640 ../src/gossip-presence-chooser.c:742
+#: ../src/gossip-presence-chooser.c:772
+msgid "Available"
+msgstr "Tavoitettavissa"
+
+#: ../libgossip/gossip-presence.c:381 ../src/gossip-presence-chooser.c:652
+#: ../src/gossip-presence-chooser.c:800
+msgid "Busy"
+msgstr "Varattu"
+
+#: ../libgossip/gossip-presence.c:386 ../src/gossip-presence-chooser.c:664
+#: ../src/gossip-presence-chooser.c:828
+msgid "Away"
+msgstr "Poissa"
+
+#: ../libgossip/gossip-presence.c:391
+msgid "Unavailable"
+msgstr "Ei tavoitettavissa"
+
+#: ../libgossip/gossip-protocol.c:673
+msgid "An unknown error occurred."
+msgstr "Tuntematon virhe."
+
+#: ../libgossip/gossip-protocol.c:677
+msgid "Connection refused."
+msgstr "Yhteys torjuttu."
+
+#: ../libgossip/gossip-protocol.c:680
+msgid "Server address could not be resolved."
+msgstr "Palvelinta ei löydetty."
+
+#: ../libgossip/gossip-protocol.c:683
+msgid "Connection timed out."
+msgstr "Yhteys aikakatkaistiin."
+
+#: ../libgossip/gossip-protocol.c:686
+msgid "Authentication failed."
+msgstr "Todennus epäonnistui."
+
+#: ../libgossip/gossip-protocol.c:689
+msgid "The username you are trying already exists."
+msgstr "Käyttäjätunnus on jo olemassa."
+
+#: ../libgossip/gossip-protocol.c:692
+msgid "The username you are trying is not valid."
+msgstr "Käyttäjätunnus ei ole voimassa."
+
+#: ../libgossip/gossip-protocol.c:695
+msgid "This feature is unavailable."
+msgstr "Ominaisuus puuttuu."
+
+#: ../libgossip/gossip-protocol.c:698
+msgid "This feature is unauthorized."
+msgstr "Ominaisuuden käyttö ei ole sallittu."
+
+#: ../libgossip/gossip-protocol.c:701
+msgid "A specific protocol error occurred that was unexpected."
+msgstr "Odottamaton protokollavirhe."
+
+#: ../protocols/jabber/gossip-jabber.c:1065
+msgid "Connection could not be opened"
+msgstr "Yhteyttä ei voitu avata"
+
+#: ../protocols/jabber/gossip-jabber.c:1113
+msgid "Couldn't send message!"
+msgstr "Viestiä ei voitu lähettää!"
+
+#: ../src/gossip-about-dialog.c:62
+msgid ""
+"Gossip is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+msgstr ""
+"Gossip is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+
+#: ../src/gossip-about-dialog.c:66
+msgid ""
+"Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+msgstr ""
+"Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+
+#: ../src/gossip-about-dialog.c:70
+msgid ""
+"You should have received a copy of the GNU General Public License along with "
+"Gossip; if not, write to the Free Software Foundation, Inc., 59 Temple "
+"Place, Suite 330, Boston, MA  02111-1307  USA"
+msgstr ""
+"You should have received a copy of the GNU General Public License along with "
+"Gossip; if not, write to the Free Software Foundation, Inc., 59 Temple "
+"Place, Suite 330, Boston, MA  02111-1307  USA"
+
+#: ../src/gossip-about-dialog.c:107
+msgid "An Instant Messaging client for GNOME"
+msgstr "Gnomen pikaviestiohjelma"
+
+#: ../src/gossip-about-dialog.c:113
+msgid "translator-credits"
+msgstr ""
+"Samuli Seppänen\n"
+"Henna Nykänen"
+
+#: ../src/gossip-account-button.c:334
+msgid "Stop Connecting"
+msgstr "Katkaise yhteys"
+
+#: ../src/gossip-account-button.c:341 ../src/gossip-accounts-dialog.c:243
+msgid "Connect"
+msgstr "Yhdistä"
+
+#: ../src/gossip-account-button.c:349 ../src/gossip-accounts-dialog.c:240
+msgid "Disconnect"
+msgstr "Katkaise yhteys"
+
+#: ../src/gossip-account-button.c:360
+msgid "Edit"
+msgstr "Muokkaa"
+
+#: ../src/gossip-account-button.c:391 ../src/gossip-group-chat.c:709
+#: ../src/gossip-private-chat.c:500
+msgid "Connected"
+msgstr "Yhdistetty"
+
+#: ../src/gossip-account-button.c:393
+msgid "Connecting"
+msgstr "Yhdistetään"
+
+#: ../src/gossip-account-button.c:393 ../src/gossip-group-chat.c:720
+#: ../src/gossip-private-chat.c:513
+msgid "Disconnected"
+msgstr "Ei yhteyttä"
+
+#: ../src/gossip-account-button.c:406
+msgid "Perhaps you are trying to connect to the wrong port?"
+msgstr "Onko palvelimen portti varmasti oikea?"
+
+#: ../src/gossip-account-button.c:407
+msgid "Perhaps the service is not currently running?"
+msgstr "Onko palvelu varmasti käynnissä?"
+
+#: ../src/gossip-account-button.c:410 ../src/gossip-account-button.c:419
+msgid "Check your connection details."
+msgstr "Tarkasta yhteysasetuksesi."
+
+#: ../src/gossip-account-button.c:413
+msgid "Perhaps the server is not running this service."
+msgstr "Palvelu ei ole ehkä käytössä tällä palvelimella."
+
+#: ../src/gossip-account-button.c:416
+msgid "Check your username and password are correct."
+msgstr "Tarkasta käyttäjätunnuksesi ja salasanasi."
+
+#: ../src/gossip-accounts-dialog.c:481 ../ui/main.glade.h:21
+msgid "Accounts"
+msgstr "Käyttäjätilit"
+
+#: ../src/gossip-accounts-dialog.c:1208
+#, c-format
+msgid ""
+"You are about to remove your %s account!\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Olet poistamassa %s-tilisi!\n"
+"Haluatko varmasti jatkaa?"
+
+#: ../src/gossip-accounts-dialog.c:1214
+msgid ""
+"Any associated conversations and chat rooms will NOT be removed if you "
+"decide to proceed.\n"
+"\n"
+"Should you decide to add the account back at a later time, they will still "
+"be available."
+msgstr ""
+
+#: ../src/gossip-add-contact-window.c:153
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../src/gossip-add-contact-window.c:223
+msgid "No information is available for this contact."
+msgstr "Tuttavasta ei ole tietoja."
+
+#: ../src/gossip-add-contact-window.c:358
+msgid "Information requested, please wait..."
+msgstr "Pyydetään tietoja, odota hetki..."
+
+#: ../src/gossip-add-contact-window.c:410
+#, c-format
+msgid "%s will be added to your contact list."
+msgstr "%s liitetään tuttavalistallesi."
+
+#: ../src/gossip-add-contact-window.c:429
+#: ../src/gossip-contact-info-dialog.c:487
+#: ../src/gossip-subscription-dialog.c:398
+msgid "I would like to add you to my contact list."
+msgstr "Haluaisin liittää sinut tuttavalistaani."
+
+#: ../src/gossip-add-contact-window.c:481
+#, c-format
+msgid "%s ID of new contact:"
+msgstr "%s ID uudelle tuttavalle:"
+
+#. must be a jabber system selected
+#: ../src/gossip-add-contact-window.c:486
+#, c-format
+msgid "Example: %s"
+msgstr "Esimerkki: %s"
+
+#: ../src/gossip-app.c:567 ../ui/main.glade.h:135
+msgid "_Connect"
+msgstr "_Yhdistä"
+
+#: ../src/gossip-app.c:572 ../ui/main.glade.h:138
+msgid "_Disconnect"
+msgstr "_Katkaise yhteys"
+
+#: ../src/gossip-app.c:748
+msgid "To summarize:"
+msgstr "Yhteenveto:"
+
+#: ../src/gossip-app.c:818
+msgid "If you quit, you will lose all unread information."
+msgstr "Jos lopetat, menetät kaiken lukemattoman tiedon."
+
+#: ../src/gossip-app.c:1063
+msgid "Could not display the help contents."
+msgstr "Ohjetiedostoa ei voida näyttää."
+
+#: ../src/gossip-app.c:1615
+msgid "You have no Instant Messaging accounts configured!"
+msgstr "Käyttäjätilejä ei ole määritetty!"
+
+#: ../src/gossip-app.c:1617
+msgid ""
+"Next you will be presented with the Account Information dialog to set your "
+"details up."
+msgstr "Seuraavaksi luodaan käyttäjätilin asetukset."
+
+#: ../src/gossip-avatar-image.c:329
+msgid "Click to enlarge"
+msgstr "Napsauta suurentaaksesi"
+
+#: ../src/gossip-chat.c:419
+msgid "Insert Smiley"
+msgstr "Lisää hymiö"
+
+#: ../src/gossip-chat.c:467
+msgid "_Check Word Spelling..."
+msgstr "_Tarkasta oikeinkirjoitus..."
+
+#: ../src/gossip-chat-invite.c:209
+#, c-format
+msgid ""
+"Please enter your invitation message to:\n"
+"%s"
+msgstr ""
+"Kirjoita tähän kutsuviesti tuttavalle:\n"
+"%s"
+
+#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1609
+msgid "You have been invited to join a chat conference."
+msgstr "Olet saanut kutsun ryhmäkeskusteluun."
+
+#: ../src/gossip-chat-manager.c:146 ../src/gossip-notify.c:280
+#, c-format
+msgid "New message from %s"
+msgstr "Uusi viesti tuttavalta %s"
+
+#: ../src/gossip-chat-view.c:504
+msgid "_Copy Link Address"
+msgstr "_Kopioi linkin osoite"
+
+#: ../src/gossip-chat-view.c:512
+msgid "_Open Link"
+msgstr "_Avaa linkki"
+
+#: ../src/gossip-chat-view.c:879
+msgid "%A %d %B %Y"
+msgstr "%A %d. %Bta %Y"
+
+#: ../src/gossip-chat-view.c:1368
+msgid "Your invitation has been declined"
+msgstr "Kutsuasi ei hyväksytty"
+
+#: ../src/gossip-chat-view.c:1631
+msgid "Accept"
+msgstr "Hyväksy"
+
+#: ../src/gossip-chat-view.c:1647
+msgid "Decline"
+msgstr "Kieltäydy"
+
+#: ../src/gossip-chat-window.c:1331
+msgid "Typing a message."
+msgstr "Kirjoittaa viestiä."
+
+#: ../src/gossip-chatrooms-window.c:170
+msgid "Auto Connect"
+msgstr "Yhdistä automaattisesti"
+
+#: ../src/gossip-chatrooms-window.c:182
+msgid "Chat Room"
+msgstr "Keskusteluhuone"
+
+#: ../src/gossip-chatrooms-window.c:212
+msgid "Favourite"
+msgstr "Suosikki"
+
+#: ../src/gossip-chatrooms-window.c:786
+#: ../src/gossip-new-chatroom-dialog.c:172 ../ui/group-chat.glade.h:9
+msgid "Join"
+msgstr "Liity"
+
+#: ../src/gossip-contact-info-dialog.c:647 ../ui/main.glade.h:70
+msgid "Information requested..."
+msgstr "Pyydetään tietoja..."
+
+#: ../src/gossip-contact-list.c:322
+msgid "/Contact Infor_mation"
+msgstr "/_Yhteystiedot"
+
+#: ../src/gossip-contact-list.c:334
+msgid "/Re_name Contact"
+msgstr "/Nimeä tuttava _uudelleen"
+
+#: ../src/gossip-contact-list.c:340
+msgid "/_Edit Groups"
+msgstr "/Muokkaa _ryhmiä"
+
+#: ../src/gossip-contact-list.c:346
+msgid "/_Remove Contact"
+msgstr "/_Poista tuttava"
+
+#: ../src/gossip-contact-list.c:358
+msgid "/_Invite to Chat Room"
+msgstr "/K_utsu keskusteluhuoneeseen"
+
+#: ../src/gossip-contact-list.c:370
+msgid "/_Send File..."
+msgstr "/_Lähetä tiedosto"
+
+#: ../src/gossip-contact-list.c:382
+msgid "/_View Previous Conversations"
+msgstr "/Näytä _edelliset keskustelut"
+
+#: ../src/gossip-contact-list.c:391
+msgid "/Re_name group"
+msgstr "/Nimeä ryh_mä uudelleen"
+
+#: ../src/gossip-contact-list.c:2182
+#, c-format
+msgid ""
+"Please enter a new nickname for the contact\n"
+"%s"
+msgstr ""
+"Anna uusi nimimerkki tuttavalle\n"
+"%s"
+
+#: ../src/gossip-contact-list.c:2300
+msgid "Do you want to remove this contact from your roster?"
+msgstr "Haluatko poistaa tämän tuttavan listaltasi?"
+
+#: ../src/gossip-contact-list.c:2356
+#, c-format
+msgid ""
+"Please enter a new name for the group:\n"
+"%s"
+msgstr "Anna ryhmälle %s uusi nimi:"
+
+#: ../src/gossip-edit-groups-dialog.c:161
+#, c-format
+msgid "Edit groups for %s"
+msgstr "Muokkaa %s:n ryhmiä"
+
+#: ../src/gossip-edit-groups-dialog.c:230
+msgid "Select"
+msgstr "Valitse"
+
+#: ../src/gossip-edit-groups-dialog.c:241
+msgid "Group"
+msgstr "Ryhmä"
+
+#: ../src/gossip-edit-groups-dialog.c:292
+#: ../src/gossip-edit-groups-dialog.c:302
+#: ../src/gossip-subscription-dialog.c:218
+msgid "Unsorted"
+msgstr "Järjestämätön"
+
+#: ../src/gossip-ft-window.c:146
+#, c-format
+msgid "New file transfer request from %s"
+msgstr "Tiedostonsiirtopyyntö tuttavalta %s"
+
+#: ../src/gossip-ft-window.c:178
+msgid "File transfer is not supported by both parties."
+msgstr "Molemmat osapuolet eivät tue tiedostonsiirtoa."
+
+#: ../src/gossip-ft-window.c:182
+msgid "Your file transfer offer declined."
+msgstr "Tiedostonsiirtopyyntö torjuttu."
+
+#: ../src/gossip-ft-window.c:183
+msgid "The other user decided not to continue."
+msgstr "Vastapuoli keskeytti tiedostonsiirron."
+
+#: ../src/gossip-ft-window.c:188
+msgid "Unknown error occurred during file transfer."
+msgstr "Tiedostonsiirrossa tapahtui tuntematon virhe."
+
+#: ../src/gossip-ft-window.c:272
+#, c-format
+msgid "%s would like to send you a file."
+msgstr "%s haluaa lähettää sinulle tiedoston."
+
+#: ../src/gossip-ft-window.c:275
+msgid "Someone would like to send you a file."
+msgstr "Sinulle halutaan lähettää tiedosto."
+
+#: ../src/gossip-ft-window.c:410
+msgid "Select a file"
+msgstr "Valitse tiedosto"
+
+#. send event to chat window
+#: ../src/gossip-group-chat.c:496
+#, c-format
+msgid "Invited %s to join this chat conference."
+msgstr "Kutsuttiin %s ryhmäkeskusteluun."
+
+#: ../src/gossip-group-chat.c:927
+#, c-format
+msgid "%s has set the topic"
+msgstr "%s on valinnut aiheen"
+
+#: ../src/gossip-log.c:1056
+msgid "Conversation Log"
+msgstr "Keskusteluloki"
+
+#: ../src/gossip-log-window.c:446
+msgid "Account"
+msgstr "Käyttäjätili"
+
+#: ../src/gossip-log-window.c:453
+msgid "Conversation With"
+msgstr "Keskustelukumppani"
+
+#: ../src/gossip-log-window.c:463
+msgid "Date"
+msgstr "Päivämäärä"
+
+#: ../src/gossip-main.c:50
+msgid "Don't connect on startup"
+msgstr "Älä yhdistä käynnistettäessä"
+
+#: ../src/gossip-main.c:54
+msgid "List the available accounts"
+msgstr "Näytä kaikki käyttäjätilit"
+
+#: ../src/gossip-main.c:58
+msgid "Which account to connect to on startup"
+msgstr "Käyttäjätili, johon yhdistetään käynnistettäessä"
+
+#: ../src/gossip-main.c:59
+msgid "ACCOUNT-NAME"
+msgstr "KÄYTTÄJÄTILIN NIMI"
+
+#: ../src/gossip-main.c:77
+msgid "- Gossip Instant Messenger"
+msgstr "- Gossip-pikaviestiohjelma"
+
+#: ../src/gossip-main.c:99
+msgid "You can not use --no-connect together with --account"
+msgstr "Et voi käyttää valitsinta --no-connect valitsimen --account kanssa"
+
+#: ../src/gossip-main.c:110
+msgid "No accounts available."
+msgstr "Käyttäjätilejä ei ole luotu."
+
+#: ../src/gossip-main.c:115
+msgid "Available accounts:"
+msgstr "Käyttäjätilit:"
+
+#: ../src/gossip-main.c:125
+msgid "[default]"
+msgstr "[oletus]"
+
+#: ../src/gossip-main.c:140
+#, c-format
+msgid "There is no account with the name '%s'."
+msgstr "Käyttäjätiliä %s ei ole olemassa."
+
+#: ../src/gossip-new-account-window.c:186
+msgid "Failed to register your new account settings"
+msgstr "Käyttäjätilin asetusten rekisteröinti epäonnistui. "
+
+#: ../src/gossip-new-account-window.c:215
+msgid "Registering account"
+msgstr "Rekisteröidään käyttäjätiliä"
+
+#: ../src/gossip-new-account-window.c:312 ../ui/main.glade.h:63
+msgid "Home"
+msgstr "Koti"
+
+#: ../src/gossip-new-account-window.c:404
+msgid "Example"
+msgstr "Esimerkki"
+
+#: ../src/gossip-notify.c:166 ../src/gossip-private-chat.c:442
+#, c-format
+msgid "%s has come online"
+msgstr "%s on kirjautunut sisään"
+
+#: ../src/gossip-notify.c:178 ../src/gossip-notify.c:303
+msgid "Default"
+msgstr "Oletus"
+
+#: ../src/gossip-notify.c:181
+msgid "Chat!"
+msgstr "Keskustele!"
+
+#: ../src/gossip-notify.c:306
+msgid "Respond"
+msgstr "Vastaa"
+
+#: ../src/gossip-notify.c:309 ../ui/main.glade.h:33
+msgid "Contact Information"
+msgstr "Yhteystiedot"
+
+#: ../src/gossip-preferences.c:220
+msgid "Language"
+msgstr "Kieli"
+
+#: ../src/gossip-preferences.c:437
+msgid "Classic"
+msgstr "Perinteinen"
+
+#: ../src/gossip-preferences.c:443
+msgid "Blue"
+msgstr "Sininen"
+
+#: ../src/gossip-preferences.c:450
+msgid "Dark"
+msgstr "Tumma"
+
+#: ../src/gossip-presence-chooser.c:383
+msgid "Are you sure you want to empy the list?"
+msgstr "Haluatko varmasti tyhjentää listan?"
+
+#: ../src/gossip-presence-chooser.c:388
+msgid ""
+"This will remove any custom messages you have added to the list of preset "
+"status messages."
+msgstr ""
+"Tämä poistaa omat viestisi, jotka olet lisännyt tilaviestien esivalintojen "
+"listaan."
+
+#: ../src/gossip-presence-chooser.c:393
+msgid "Clear List"
+msgstr "Tyhjennä lista"
+
+#: ../src/gossip-presence-chooser.c:789 ../src/gossip-presence-chooser.c:817
+#: ../src/gossip-presence-chooser.c:845
+msgid "Custom message..."
+msgstr "_Oma viesti..."
+
+#: ../src/gossip-presence-chooser.c:854
+msgid "Clear List..."
+msgstr "Tyhjennä lista..."
+
+#: ../src/gossip-private-chat.c:427
+#, c-format
+msgid "%s went offline"
+msgstr "%s poistui linjoilta"
+
+#: ../src/gossip-private-chat.c:915
+#, c-format
+msgid "Subject: %s"
+msgstr "Otsikko: %s"
+
+#: ../src/gossip-spell-dialog.c:77
+msgid "Word"
+msgstr "Sana"
+
+#: ../src/gossip-spell-dialog.c:238
+msgid "Suggestions for the word"
+msgstr "Korjausehdotukset"
+
+#: ../src/gossip-subscription-dialog.c:161
+#, c-format
+msgid "New subscription request from %s"
+msgstr "%s haluaa liittyä tuttavalistallesi"
+
+#: ../src/gossip-subscription-dialog.c:293
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr "%s haluaa tuttavalistallesi."
+
+#: ../src/gossip-subscription-dialog.c:295
+#, c-format
+msgid "Do you want to add %s to your contact list?"
+msgstr "Lisätäänkö tuttava %s listallesi?"
+
+#: ../src/gossip-subscription-dialog.c:301
+msgid "Someone wants to be added to your contact list."
+msgstr "Joku haluaa tulla lisätyksi tuttavalistaasi."
+
+#: ../src/gossip-subscription-dialog.c:302
+msgid "Do you want to add this person to your contact list?"
+msgstr "Haluatko lisätä tämän henkilön tuttavalistallesi?"
+
+#: ../src/gossip-ui-utils.c:250
+#, c-format
+msgid "Please enter your %s account password"
+msgstr "Käyttäjätilisi %s salasana"
+
+#: ../src/gossip-ui-utils.c:260
+#, c-format
+msgid "Logging in with: %s"
+msgstr "Kirjaudutaan sisään käyttäjänä %s"
+
+#: ../src/gossip-ui-utils.c:265
+msgid "Remember Password?"
+msgstr "Muistetaanko salasana?"
+
+#: ../src/gossip-vcard-dialog.c:185
+msgid "Select Your Avatar Image"
+msgstr "Valitse avatar-kuvasi"
+
+#: ../src/gossip-vcard-dialog.c:188
+msgid "No Image"
+msgstr "Ei kuvaa"
+
+#: ../src/gossip-vcard-dialog.c:493
+msgid "The server does not seem to be responding."
+msgstr "Palvelin ei vastaa."
+
+#: ../src/gossip-vcard-dialog.c:494
+msgid "Try again later."
+msgstr "Yritä uudelleen myöhemmin."
+
+#: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:1
+msgid "Chat"
+msgstr "Keskustelu"
+
+#: ../src/sounds/gossip.soundlist.in.h:2
+msgid "Contact goes offline"
+msgstr "Tuttava on poistunut linjoilta"
+
+#: ../src/sounds/gossip.soundlist.in.h:3
+msgid "Contact goes online"
+msgstr "Tuttava on kirjautunut sisään"
+
+#: ../ui/chat.glade.h:2
+msgid "Contact Infor_mation"
+msgstr "_Yhteystiedot"
+
+#: ../ui/chat.glade.h:3
+msgid "In_vite"
+msgstr "_Kutsu"
+
+#: ../ui/chat.glade.h:4
+msgid "Insert _Smiley"
+msgstr "Lisää _hymiö"
+
+#: ../ui/chat.glade.h:5
+msgid "Move Tab _Left"
+msgstr "Siirrä välilehti _vasemmalle"
+
+#: ../ui/chat.glade.h:6
+msgid "Move Tab _Right"
+msgstr "Siirrä välilehti _oikealle"
+
+#: ../ui/chat.glade.h:7 ../ui/main.glade.h:133
+msgid "_Add Contact..."
+msgstr "Lisää _tuttava..."
+
+#: ../ui/chat.glade.h:8
+msgid "_Add To Favorites"
+msgstr "Lisää _suosikkeihin"
+
+#: ../ui/chat.glade.h:9
+msgid "_Conversation"
+msgstr "_Keskustelu"
+
+#: ../ui/chat.glade.h:10
+msgid "_Detach Tab"
+msgstr "_Irrota välilehti"
+
+#: ../ui/chat.glade.h:11
+msgid "_Next Tab"
+msgstr "_Seuraava välilehti"
+
+#: ../ui/chat.glade.h:12
+msgid "_Previous Tab"
+msgstr "_Edellinen välilehti"
+
+#: ../ui/chat.glade.h:13
+msgid "_Room"
+msgstr "_Huone"
+
+#: ../ui/chat.glade.h:14
+msgid "_Show Contacts"
+msgstr "_Näytä tuttavat"
+
+#: ../ui/chat.glade.h:15
+msgid "_Tabs"
+msgstr "V_älilehdet"
+
+#: ../ui/chat.glade.h:16 ../ui/main.glade.h:154
+msgid "_View Previous Conversations"
+msgstr "_Näytä edelliset keskustelut"
+
+#: ../ui/file-transfer.glade.h:1
+msgid "Contact ID:"
+msgstr "Käyttäjätunnus:"
+
+#: ../ui/file-transfer.glade.h:2
+msgid "Do you want to accept this file?"
+msgstr "Hyväksytäänkö tiedosto?"
+
+#: ../ui/file-transfer.glade.h:3
+msgid "File Transfer Request"
+msgstr "Tiedostonsiirtopyyntö"
+
+#: ../ui/file-transfer.glade.h:4
+msgid "File name:"
+msgstr "Tiedostonimi:"
+
+#: ../ui/file-transfer.glade.h:5
+msgid "File size:"
+msgstr "Tiedoston koko:"
+
+#: ../ui/file-transfer.glade.h:6
+msgid "Not supported yet"
+msgstr "Toiminto ei ole tuettu"
+
+#: ../ui/file-transfer.glade.h:7
+msgid "This person wishes to send you this file:"
+msgstr "Tuttava haluaa lähettää sinulle seuraavan tiedoston:"
+
+#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:112
+msgid "Web site:"
+msgstr "WWW-sivusto:"
+
+#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:131
+msgid "_Accept"
+msgstr "_Hyväksy"
+
+#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:137
+msgid "_Deny"
+msgstr "H_ylkää"
+
+#: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:20
+msgid "Account:"
+msgstr "Käyttäjätili:"
+
+#: ../ui/group-chat.glade.h:2
+msgid "Add to _favourites"
+msgstr "Lisää _suosikkeihin"
+
+#: ../ui/group-chat.glade.h:3 ../ui/main.glade.h:28
+msgid "Chat Rooms"
+msgstr "Keskusteluhuoneet"
+
+#: ../ui/group-chat.glade.h:4
+msgid ""
+"Customize your own nickname, the server and chatroom which you wish to join."
+msgstr "Valitse nimimerkki, palvelin ja keskusteluhuone, johon liitytään."
+
+#: ../ui/group-chat.glade.h:5
+msgid "Edit Chat Room"
+msgstr "Muokkaa keskusteluhuoneen asetuksia"
+
+#: ../ui/group-chat.glade.h:6
+msgid "Edit your chat room details:"
+msgstr "Muokkaa keskusteluhuoneen asetuksia:"
+
+#: ../ui/group-chat.glade.h:7
+msgid "Group Chat"
+msgstr "Ryhmäkeskustelu"
+
+#: ../ui/group-chat.glade.h:10
+msgid "Join room on start_up"
+msgstr "Yhdistä _keskusteluhuoneeseen käynnistettäessä"
+
+#: ../ui/group-chat.glade.h:11
+msgid "Join the chat room"
+msgstr "Yhdistä keskusteluhuoneeseen"
+
+#: ../ui/group-chat.glade.h:12
+msgid "Join this chat room when Gossip starts and you are connected"
+msgstr "Yhdistä tähän keskusteluhuoneeseen, kun yhteys on muodostettu"
+
+#: ../ui/group-chat.glade.h:13
+msgid "N_ame:"
+msgstr "_Nimi:"
+
+#: ../ui/group-chat.glade.h:14
+msgid "Na_me:"
+msgstr "_Nimi:"
+
+#: ../ui/group-chat.glade.h:15
+msgid "New Chat Room"
+msgstr "Uusi keskusteluhuone"
+
+#: ../ui/group-chat.glade.h:16
+msgid ""
+"Pick a saved chat room from the presets available below and click Join to "
+"start chatting."
+msgstr ""
+"Valitse tallennettu keskusteluhuone allaolevasta listasta ja napsauta Liity "
+"aloittaaksesi keskustelun."
+
+#: ../ui/group-chat.glade.h:17
+msgid "S_erver:"
+msgstr "_Palvelin:"
+
+#: ../ui/group-chat.glade.h:18
+msgid "Save _this chat room"
+msgstr "_Tallenna keskusteluhuone"
+
+#: ../ui/group-chat.glade.h:19
+msgid "_Nickname:"
+msgstr "_Nimimerkki:"
+
+#: ../ui/group-chat.glade.h:20
+msgid "_Room:"
+msgstr "_Keskusteluhuone:"
+
+#: ../ui/group-chat.glade.h:21 ../ui/main.glade.h:151
+msgid "_Server:"
+msgstr "Pal_velin:"
+
+#: ../ui/group-chat.glade.h:22
+msgid "_Topic:"
+msgstr "_Aihe:"
+
+#: ../ui/main.glade.h:1
+msgid "    "
+msgstr "    "
+
+#: ../ui/main.glade.h:2
+msgid "-"
+msgstr "-"
+
+#: ../ui/main.glade.h:3
+msgid "<b>About</b>"
+msgstr "<b>Tietoja</b>"
+
+#: ../ui/main.glade.h:4
+msgid "<b>Account</b>"
+msgstr "<b>Tili</b>"
+
+#: ../ui/main.glade.h:5
+msgid "<b>Appearance</b>"
+msgstr "<b>Ulkoasu</b>"
+
+#: ../ui/main.glade.h:6
+msgid "<b>Audio</b>"
+msgstr "<b>Ääni</b>"
+
+#: ../ui/main.glade.h:7
+msgid "<b>Behaviour</b>"
+msgstr "<b>Toiminta</b>"
+
+#: ../ui/main.glade.h:8
+msgid "<b>Client Information</b>"
+msgstr "<b>Tietoja asiakasohjelmasta</b>"
+
+#: ../ui/main.glade.h:9
+msgid "<b>Connection</b>"
+msgstr "<b>Yhteys</b>"
+
+#: ../ui/main.glade.h:10
+msgid "<b>Information requested, please wait...</b>"
+msgstr "<b>Kysely käynnissä, odota...</b>"
+
+#: ../ui/main.glade.h:11
+msgid "<b>Languages</b>"
+msgstr "<b>Kielet</b>"
+
+#: ../ui/main.glade.h:12
+msgid "<b>Personal Details</b>"
+msgstr "<b>Henkilötiedot</b>"
+
+#: ../ui/main.glade.h:13
+msgid "<b>Status</b>"
+msgstr "<b>Tila</b>"
+
+#: ../ui/main.glade.h:14
+msgid "<b>Visual</b>"
+msgstr "<b>Ulkoasu</b>"
+
+#: ../ui/main.glade.h:15
+#, fuzzy
+msgid ""
+"<small>The list of languages reflects only the languages for which you have "
+"a dictionary installed.</small>"
+msgstr "Listassa on vain ne kielet, joiden sanakirja on asennettu."
+
+#: ../ui/main.glade.h:16
+msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
+msgstr "<span size=\"smaller\">Esimerkki: Seppo tai seppo@server.org</span>"
+
+#: ../ui/main.glade.h:17
+msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
+msgstr "<span size=\"smaller\">Esimerkki: seppo@jabber.org</span>"
+
+#: ../ui/main.glade.h:18
+msgid "<span size=\"smaller\">Example:</span>"
+msgstr "<span size=\"smaller\">Esimerkki:</span>"
+
+#: ../ui/main.glade.h:19
+msgid "Account Name"
+msgstr "Käyttäjätilin nimi"
+
+#: ../ui/main.glade.h:22
+msgid "Add Contact"
+msgstr "Lisää tuttava"
+
+#: ../ui/main.glade.h:23
+msgid "Add a contact"
+msgstr "Lisää tuttava"
+
+#: ../ui/main.glade.h:24
+msgid "Add to status message list"
+msgstr "Lisää tilaviesteihin"
+
+#: ../ui/main.glade.h:25
+msgid "Avatar:"
+msgstr "Avatar:"
+
+#: ../ui/main.glade.h:26
+msgid "Avatars are user chosen images shown in the contact list"
+msgstr ""
+
+#: ../ui/main.glade.h:27
+msgid "Ch_at"
+msgstr "_Keskustele"
+
+#: ../ui/main.glade.h:29
+msgid "Chat Th_eme:"
+msgstr "Keskustelun _teema:"
+
+#: ../ui/main.glade.h:30
+msgid "Client:"
+msgstr "Asiakasohjelma:"
+
+#: ../ui/main.glade.h:31
+msgid "Connect on S_tartup"
+msgstr "_Yhdistä käynnistettäessä"
+
+#: ../ui/main.glade.h:32
+msgid "Connection Details"
+msgstr "Yhteyden tiedot"
+
+#: ../ui/main.glade.h:34
+msgid "Contact information"
+msgstr "Yhteystiedot"
+
+#: ../ui/main.glade.h:35
+msgid "Contacts"
+msgstr "Tuttavat"
+
+#: ../ui/main.glade.h:36
+msgid "Country:"
+msgstr "Maa:"
+
+#: ../ui/main.glade.h:37
+msgid "Decide _Later"
+msgstr "_Päätä myöhemmin"
+
+#: ../ui/main.glade.h:38
+msgid "Description:"
+msgstr "Kuvaus:"
+
+#: ../ui/main.glade.h:39
+msgid "Display notifications when contacts come _online"
+msgstr "Näytä huomautuksia, kun yhteystiedot saapuvat _linjoille"
+
+#: ../ui/main.glade.h:40
+msgid "Do you already have an account set up on a server?"
+msgstr "Oletko jo luonut käyttäjätilin palvelimelle?"
+
+#: ../ui/main.glade.h:41
+msgid "Edit Groups"
+msgstr "Muokkaa ryhmiä"
+
+#: ../ui/main.glade.h:42
+msgid "Email:"
+msgstr "Sähköposti:"
+
+#: ../ui/main.glade.h:43
+msgid "Enable sounds when _away"
+msgstr "Merkkiäänet poissa-tilassa"
+
+#: ../ui/main.glade.h:44
+msgid "Enable sounds when _busy"
+msgstr "Merkkiäänet varattu-tilassa"
+
+#: ../ui/main.glade.h:45
+msgid "Enter a name for this account"
+msgstr "Anna nimi käyttäjätilille"
+
+#: ../ui/main.glade.h:46
+msgid "Enter status message:"
+msgstr "Tilaviesti:"
+
+#: ../ui/main.glade.h:47
+msgid "Enter the name or contact ID of the person you want to chat to below:"
+msgstr "Tuttavan nimi tai käyttäjätunnus:"
+
+#: ../ui/main.glade.h:48
+msgid "Enter the port used in the connection for this account"
+msgstr "Tämän tilin yhdeydelle käytettävä portti"
+
+#: ../ui/main.glade.h:49
+msgid "Enter the server used in the connection for this account"
+msgstr "Tämän tilin yhteydelle käytettävä palvelin"
+
+#: ../ui/main.glade.h:50
+msgid "Enter the user's contact ID:"
+msgstr "Käyttäjätunnus:"
+
+#: ../ui/main.glade.h:51
+msgid "Enter your account password:"
+msgstr "Salasana:"
+
+#: ../ui/main.glade.h:52
+msgid "Enter your real name here"
+msgstr "Syötä oma nimesi"
+
+#: ../ui/main.glade.h:53
+msgid "Finished"
+msgstr "Lopetettiin"
+
+#: ../ui/main.glade.h:54
+msgid "For increased security, enable this option"
+msgstr "Valitse tämä, jos haluat enemmän tietoturvaa"
+
+#: ../ui/main.glade.h:55
+msgid "General"
+msgstr "Yleinen"
+
+#: ../ui/main.glade.h:56
+msgid "Gossip"
+msgstr "Gossip"
+
+#: ../ui/main.glade.h:57
+msgid ""
+"Gossip is a modern client for the Jabber Instant Messaging system.\n"
+"\n"
+"This assistant will help you configure Gossip and connect you to your "
+"favorite Jabber server.\n"
+"\n"
+"To get started, just click \"Forward\"."
+msgstr ""
+"Gossip on nykyaikainen Jabber-pikaviestinohjelma\n"
+"\n"
+"Tämän asetusohjelman avulla saat helposti säädettyä Gossipin asetukset "
+"kohdalleen.\n"
+"\n"
+"Paina \"Eteenpäin\" jatkaaksesi."
+
+#: ../ui/main.glade.h:62
+msgid "Group:"
+msgstr "Ryhmä:"
+
+#: ../ui/main.glade.h:64
+msgid "ID:"
+msgstr "Käyttäjätunnus:"
+
+#: ../ui/main.glade.h:65
+msgid ""
+"If you chose to decide later you will be asked the next time you log on."
+msgstr ""
+"Jos haluat päättää myöhemmin, sinulta kysytään tätä uudestaan kirjautuessasi "
+"sisään seuraavan kerran."
+
+#: ../ui/main.glade.h:66
+#, fuzzy
+msgid ""
+"If you have another machine on your network which 'proxies' the connection "
+"to the internet and you want to use it, enable this option"
+msgstr "Jos Internet-yhteytesi kulkee välipalvelimen kautta, valitse tämä."
+
+#: ../ui/main.glade.h:67
+msgid ""
+"If you need to set specific connection details, like a different server or "
+"port, you can configure that here:"
+msgstr ""
+"Jos tarvitset erityisiä yhteysasetuksia, esimerkiksi vaihtoehtoisen "
+"palvelimen tai portin, voit muokata asetuksia tästä:"
+
+#: ../ui/main.glade.h:68
+msgid ""
+"In order to subscribe to presence notifications from the user, a request "
+"will be sent. Until this request is approved, the user will always be shown "
+"as \"Offline\" in your contact list."
+msgstr ""
+"Nähdäksesi milloin tuttavasi on linjoilla, sinun tulee liittyä hänen "
+"tuttavalistalleen. Tuttavasi tila on \"Poissa linjoilta\" kunnes hän on "
+"hyväksynyt liittymispyyntösi."
+
+#: ../ui/main.glade.h:69
+msgid "In which group do you want to place this contact?"
+msgstr "Mihin ryhmään tuttava liitetään?"
+
+#: ../ui/main.glade.h:71
+msgid "Jabber ID:"
+msgstr "Jabber-käyttäjätunnus:"
+
+#: ../ui/main.glade.h:72
+msgid "Join _Favourites"
+msgstr "Liity _suosikkeihin"
+
+#: ../ui/main.glade.h:73
+msgid "Join _New..."
+msgstr "Liity _uuteen..."
+
+#: ../ui/main.glade.h:74
+#, fuzzy
+msgid ""
+"Leave this blank if you don't want your password stored on a public machine. "
+"If you decide to do this, you will be prompted each time you connect for a "
+"password"
+msgstr ""
+"Jätä tämä kohta tyhjäksi, jos et halua, että salasanasi tallennetaan tälle "
+"tietokoneelle. Siinä tapauksessa joudut kirjoittamaan salasanasi aina "
+"kirjautuessasi sisään."
+
+#: ../ui/main.glade.h:75
+msgid "Login I_D:"
+msgstr "_Käyttäjätunnus:"
+
+#: ../ui/main.glade.h:76
+msgid "Name:"
+msgstr "Nimi:"
+
+#: ../ui/main.glade.h:77
+msgid "New Account"
+msgstr "Uusi käyttäjätili"
+
+#: ../ui/main.glade.h:78
+msgid "New Message"
+msgstr "Uusi viesti"
+
+#: ../ui/main.glade.h:79
+msgid "Nickname:"
+msgstr "Nimimerkki:"
+
+#: ../ui/main.glade.h:80
+msgid "Notifications"
+msgstr "Huomautukset"
+
+#: ../ui/main.glade.h:81
+msgid "OS:"
+msgstr "Käyttöjärjestelmä:"
+
+#: ../ui/main.glade.h:82
+msgid "Pass_word:"
+msgstr "S_alasana:"
+
+#: ../ui/main.glade.h:83
+msgid "Personal Details"
+msgstr "Henkilötiedot"
+
+#: ../ui/main.glade.h:84
+msgid "Port:"
+msgstr "Portti:"
+
+#: ../ui/main.glade.h:85
+msgid "Preferences"
+msgstr "Asetukset"
+
+#: ../ui/main.glade.h:86
+#, fuzzy
+msgid "Press Subscribe to request to receive their status"
+msgstr ""
+"Napsauta painiketta Liittymispyyntö nähdäksesi milloin tuttavasi ovat "
+"linjoilla."
+
+#: ../ui/main.glade.h:87
+msgid "Registering Account"
+msgstr "Käyttäjätiliä rekisteröidään"
+
+#: ../ui/main.glade.h:88
+msgid "Registration"
+msgstr "Rekisteröityminen"
+
+#: ../ui/main.glade.h:89
+msgid "Reso_urce:"
+msgstr "Res_urssi:"
+
+#: ../ui/main.glade.h:90
+msgid "Resource:"
+msgstr "Resurssi:"
+
+#: ../ui/main.glade.h:91
+msgid "Search"
+msgstr "Etsi"
+
+#: ../ui/main.glade.h:92
+msgid "Sending request"
+msgstr "Pyyntöä lähetetään"
+
+#: ../ui/main.glade.h:93
+msgid "Server:"
+msgstr "Palvelin:"
+
+#: ../ui/main.glade.h:94
+msgid "Show _Offline Contacts"
+msgstr "Näytä _poissa linjoilta olevat tuttavat"
+
+#: ../ui/main.glade.h:95
+msgid "Show _avatars"
+msgstr "Näytä _avattaret"
+
+#: ../ui/main.glade.h:96
+msgid "Show _smileys as images"
+msgstr "Näytä _hymiöt hymiökuvakkeina"
+
+#: ../ui/main.glade.h:97
+msgid "Spell Checker"
+msgstr "Kielentarkastus"
+
+#: ../ui/main.glade.h:98
+msgid "Spell Checking"
+msgstr "Kielentarkastus"
+
+#: ../ui/main.glade.h:99
+msgid "Status"
+msgstr "Tila"
+
+#: ../ui/main.glade.h:100
+msgid "Status Message Presets"
+msgstr "Tilaviestien oletusasetukset"
+
+#: ../ui/main.glade.h:101
+msgid "Subscription Request"
+msgstr "Liittymispyyntö"
+
+#: ../ui/main.glade.h:102
+msgid "Suggestions for the word:"
+msgstr "Korjausehdotuksia:"
+
+#: ../ui/main.glade.h:103
+#, fuzzy
+msgid ""
+"This acts as a filter to the contact list below. You can use segments of "
+"contact's name or ID, for example, \"jabber.org\" will list everyone using "
+"that server"
+msgstr ""
+"Tämän avulla voit näyttää haluamasi osan tuttavalistasta.Voit syöttää tähän "
+"osan tuttavan nimestä tai osoitteesta, esimerkiksi \"jabber.org\", jolloin "
+"näet tälle palvelimelle kirjautuneet tuttavat. "
+
+#: ../ui/main.glade.h:104
+#, fuzzy
+msgid "This is the name that will be used on your roster for this contact"
+msgstr "Tuttavastasi tullaan käyttämään tätä nimeä."
+
+#: ../ui/main.glade.h:105
+#, fuzzy
+msgid "This name will be used to identify you in chat windows"
+msgstr "Tulet näkymään keskusteluissa tällä nimellä."
+
+#: ../ui/main.glade.h:106
+#, fuzzy
+msgid ""
+"This name will be used to identify you when new contacts lookup your details"
+msgstr "Uudet tuttavat näkevät sinut tämän nimisenä etsiessään tietojasi."
+
+#: ../ui/main.glade.h:107
+msgid "Use _encryption (SSL)"
+msgstr "Käytä _salausta (SSL)"
+
+#: ../ui/main.glade.h:108
+msgid "Use system pro_xy"
+msgstr "Käytä järjestelmän _välipalvelinta"
+
+#: ../ui/main.glade.h:109
+msgid "Version:"
+msgstr "Versio:"
+
+#: ../ui/main.glade.h:110
+msgid "View Previous Conversations"
+msgstr "Näytä edelliset keskustelut"
+
+#: ../ui/main.glade.h:111
+msgid "Web Site:"
+msgstr "WWW-sivusto:"
+
+#: ../ui/main.glade.h:113
+msgid "Welcome to Gossip"
+msgstr "Tervetuloa Gossipiin"
+
+#: ../ui/main.glade.h:114
+msgid "What instant messaging system does the contact use?"
+msgstr "Tuttavasi käyttämä pikaviestiohjelma"
+
+#: ../ui/main.glade.h:115
+msgid "What is your name?"
+msgstr "Nimesi"
+
+#: ../ui/main.glade.h:116
+msgid ""
+"What name do you want to use to identify this account?\n"
+"\n"
+"This name could be something associated with the service provider, for "
+"example, <b>Google</b>."
+msgstr ""
+"Käyttäjätilisi nimi\n"
+"\n"
+"Gossip käyttää sitä käyttäjäprofiilisi nimenä."
+
+#: ../ui/main.glade.h:119
+msgid "What nickname do you want to use for this contact?"
+msgstr "Nimimerkki tuttavallesi"
+
+#: ../ui/main.glade.h:120
+msgid "What password do you want to use?"
+msgstr "Salasana"
+
+#: ../ui/main.glade.h:121
+msgid "What username do you use?"
+msgstr "Nykyinen käyttäjätunnus"
+
+#: ../ui/main.glade.h:122
+msgid "What username do you want to use?"
+msgstr "Uusi käyttäjätunnus"
+
+#: ../ui/main.glade.h:123
+msgid "Which account do you want to add this contact to?"
+msgstr "Mihin käyttäjätiliin tämä tuttava liitetään?"
+
+#: ../ui/main.glade.h:124
+msgid "Which account do you want to use?"
+msgstr "Käyttäjätili jota haluat käyttää"
+
+#: ../ui/main.glade.h:125
+msgid "You are not subscribed to this contact."
+msgstr "Et ole tuttavasi listalla."
+
+#: ../ui/main.glade.h:126
+msgid ""
+"You can change your account settings later by selecting the Edit->Accounts "
+"menu item."
+msgstr ""
+"Voit muuttaa käyttäjätilisi asetuksia myöhemmin valitsemalla Muokkaa - "
+"Käyttäjätilit."
+
+#: ../ui/main.glade.h:127
+msgid ""
+"You need to set a name for the connection, for example, <b>Home</b> or "
+"<b>Laptop</b>."
+msgstr ""
+"Anna nimi yhteydelle, esimerkiksi <b>Kotikone</b> tai <b>Kannettava</b>."
+
+#: ../ui/main.glade.h:128
+msgid "Your Account"
+msgstr "Käyttäjätilisi"
+
+#: ../ui/main.glade.h:129
+msgid "Your Identity"
+msgstr "Henkilötietosi"
+
+#: ../ui/main.glade.h:130
+msgid "Your new account has now been set up."
+msgstr "Käyttäjätili on luotu."
+
+#: ../ui/main.glade.h:132
+msgid "_Accounts"
+msgstr "_Käyttäjätilit"
+
+#: ../ui/main.glade.h:134
+msgid "_Chat"
+msgstr "_Keskustele"
+
+#: ../ui/main.glade.h:136
+msgid "_Contents"
+msgstr "_Sisältö"
+
+#: ../ui/main.glade.h:139
+msgid "_Forget"
+msgstr "_Poista"
+
+#: ../ui/main.glade.h:140
+msgid "_Group Chat"
+msgstr "_Ryhmäkeskustelu"
+
+#: ../ui/main.glade.h:141
+msgid "_Hide Contact List"
+msgstr "Piil_ota tuttavalista"
+
+#: ../ui/main.glade.h:142
+msgid "_Name:"
+msgstr "_Nimi:"
+
+#: ../ui/main.glade.h:143
+msgid "_New Message..."
+msgstr "_Uusi viesti..."
+
+#: ../ui/main.glade.h:144
+msgid "_No"
+msgstr "_Ei"
+
+#: ../ui/main.glade.h:145
+msgid "_Open new chats in separate windows"
+msgstr "_Avaa uusi ikkuna uusille keskusteluille"
+
+#: ../ui/main.glade.h:146
+msgid "_Personal Information"
+msgstr "_Henkilötiedot"
+
+#: ../ui/main.glade.h:147
+msgid "_Play sound when messages arrive"
+msgstr "_Merkkiääni viestin saapuessa"
+
+#: ../ui/main.glade.h:148
+msgid "_Port:"
+msgstr "_Portti:"
+
+#: ../ui/main.glade.h:149
+msgid "_Preferences"
+msgstr "_Asetukset"
+
+#: ../ui/main.glade.h:150
+msgid "_Search..."
+msgstr "_Etsi..."
+
+#: ../ui/main.glade.h:152
+msgid "_Show Contact List"
+msgstr "_Näytä tuttavalista"
+
+#: ../ui/main.glade.h:153
+msgid "_Subscribe"
+msgstr "_Liittymispyyntö"
+
+#: ../ui/main.glade.h:155
+msgid "_Yes"
+msgstr "_Kyllä"
+
+#~ msgid "Be silent when away"
+#~ msgstr "Ei merkkiääniä Poissa-tilassa"
+
+#~ msgid "Be silent when busy"
+#~ msgstr "Ei merkkiääniä Varattu-tilassa"
+
+#~ msgid "Enable spell checking"
+#~ msgstr "Ota käyttöön kielentarkastus"
+
+#~ msgid "Height of main window"
+#~ msgstr "Pääikkunan korkeus"
+
+#~ msgid "The X position of the main window."
+#~ msgstr "Pääikkunan X-koordinaatti."
+
+#~ msgid "The Y position of the main window."
+#~ msgstr "Pääikkunan Y-koordinaatti."
+
+#~ msgid "The height of the main window."
+#~ msgstr "Pääikkunan korkeus."
+
+#~ msgid "The width of the main window."
+#~ msgstr "Pääikkunan leveys."
+
+#~ msgid "Whether spell checking should be turned on."
+#~ msgstr "Otetaanko kielentarkastus käyttöön?"
+
+#~ msgid "Width of the main window"
+#~ msgstr "Pääikkunan leveys"
+
+#~ msgid "X position of main window"
+#~ msgstr "Pääikkunan X-koordinaatti"
+
+#~ msgid "Y position of main window"
+#~ msgstr "Pääikkunan Y-koordinaatti"
+
+#~ msgid "Gossip, Instant Messaging Client"
+#~ msgstr "Gossip-pikaviestiohjelma"
+
+#~ msgid "Close this chat window"
+#~ msgstr "Sulje keskusteluikkuna"
+
+#~ msgid "Alias:"
+#~ msgstr "Nimimerkki:"
+
+#~ msgid "Contact Information for %s"
+#~ msgstr "Tuttavan %s yhteystiedot"
+
+#~ msgid "Requested Information"
+#~ msgstr "Pyydetyt tiedot"
+
+#~ msgid "C_lear"
+#~ msgstr "_Tyhjennä"
+
+#~ msgid "Contact _Information"
+#~ msgstr "_Yhteystiedot"
+
+#~ msgid "<b>Sound</b>"
+#~ msgstr "<b>Ääni</b>"
+
+#~ msgid "Check spelling while I _type"
+#~ msgstr "_Tarkasta oikeinkirjoitus kirjoitettaessa"
+
+#~ msgid "Gossip - Accounts"
+#~ msgstr "Gossip – Käyttäjätilit"
+
+#~ msgid "Join _Group Chat..."
+#~ msgstr "_Liity ryhmäkeskusteluun"
+
+#~ msgid "Por_t:"
+#~ msgstr "P_ortti:"
+
+#~ msgid "Requested information."
+#~ msgstr "Pyydetyt tiedot."
+
+#~ msgid "Requesting contact information, please wait..."
+#~ msgstr "Pyydetään yhteystietoja, odota hetki..."

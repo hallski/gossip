@@ -1,3 +1,8 @@
+2006-06-18  Ilkka Tuohela  <hile@iki.fi>
+
+	* LINGUAS: Added fi to language list
+	* fi.po: Added Finnish translation
+
 2006-06-18  Richard Hult  <richard@imendio.com>
 
 	* POTFILES.skip: Add peekaboo files here for now.
