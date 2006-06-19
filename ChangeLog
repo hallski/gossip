@@ -1,8 +1,12 @@
 2006-06-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-private-chat.c
+	(private_chat_input_key_press_event_cb): Eat tabs to behave like
+	the group chat, bug #337471.
+
 	* ui/main.glade: Tweak string.
 	* src/gossip-log-window.c (gossip_log_window_show): Remove close
-	button from log window, bug #344439.
+	button from log window, obsoletes bug #344439.
 
 2006-06-19  Richard Hult  <richard@imendio.com>
 

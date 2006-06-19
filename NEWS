@@ -6,6 +6,7 @@ Fixed #345000, Don't insert a null group name in the groups list (Richard).
 Fixed #306369, Case fold Jabber IDs (Richard).
 Fixed #339333, Update the Galago support to work with the new 0.5.x
 API, patch by Brian Pepple.
+Fixed #337471, Don't insert tab in private chats when hitting Tab (Richard).
 
 
 NEWS in 0.11.2:

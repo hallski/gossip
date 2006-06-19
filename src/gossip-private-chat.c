@@ -599,6 +599,10 @@ private_chat_input_key_press_event_cb (GtkWidget         *widget,
 	
 	priv = GET_PRIV (chat);
 
+	if (event->keyval == GDK_Tab && !(event->state & GDK_CONTROL_MASK)) {
+		return TRUE;
+	}
+	
 	/* Catch enter but not ctrl/shift-enter */
 	if (IS_ENTER (event->keyval) && !(event->state & GDK_SHIFT_MASK)) {
 		GtkTextView *view;
