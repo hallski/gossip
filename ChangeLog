@@ -1,5 +1,10 @@
 2006-06-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c: Add timeout before updating the
+	presence when scrolling.
+
+2006-06-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-contact-info-dialog.c:
 	* ui/main.glade: Tweak a bit, set the default width instead of a
 	fixed width, make the window resizable, and hide all sections by

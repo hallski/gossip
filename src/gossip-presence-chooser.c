@@ -51,9 +51,12 @@ typedef struct {
 	GossipPresenceState  flash_state_2;
 
 	guint                flash_timeout_id;
+
+	guint                scroll_timeout_id;
 } GossipPresenceChooserPriv;
 
 static void     presence_chooser_finalize               (GObject               *object);
+static void     presence_chooser_reset_scroll_timeout   (GossipPresenceChooser *chooser);
 static void     presence_chooser_set_state              (GossipPresenceChooser *chooser,
 							 GossipPresenceState    state,
 							 const gchar           *status,
@@ -153,7 +156,6 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	priv->label = gtk_label_new (NULL);
 	gtk_widget_show (priv->label);
 	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->label, TRUE, TRUE, 0);
-/*  	gtk_label_set_ellipsize (GTK_LABEL (priv->label), PANGO_ELLIPSIZE_NONE);  */
 	gtk_label_set_ellipsize (GTK_LABEL (priv->label), PANGO_ELLIPSIZE_END);
  	gtk_misc_set_alignment (GTK_MISC (priv->label), 0, 0.5); 
 
@@ -186,10 +188,26 @@ presence_chooser_finalize (GObject *object)
 
 	if (priv->flash_timeout_id) {
 		g_source_remove (priv->flash_timeout_id);
-		priv->flash_timeout_id = 0;
+	}
+
+	if (priv->scroll_timeout_id) {
+		g_source_remove (priv->scroll_timeout_id);
 	}
 
 	G_OBJECT_CLASS (gossip_presence_chooser_parent_class)->finalize (object);
+}
+
+static void
+presence_chooser_reset_scroll_timeout (GossipPresenceChooser *chooser)
+{
+	GossipPresenceChooserPriv *priv;
+
+	priv = GET_PRIV (chooser);
+
+	if (priv->scroll_timeout_id) {
+		g_source_remove (priv->scroll_timeout_id);
+		priv->scroll_timeout_id = 0;
+	}
 }
 
 static void
@@ -216,6 +234,7 @@ presence_chooser_set_state (GossipPresenceChooser *chooser,
 
 	priv->last_state = state;
 
+	presence_chooser_reset_scroll_timeout (chooser);
 	g_signal_emit (chooser, signals[CHANGED], 0, state, status);
 }
 
@@ -366,6 +385,7 @@ presence_chooser_noncustom_activate_cb (GtkWidget             *item,
 	status = g_object_get_data (G_OBJECT (item), "status");
 	state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (item), "state"));
 
+	presence_chooser_reset_scroll_timeout (chooser);
 	g_signal_emit (chooser, signals[CHANGED], 0, state, status);
 }
 
@@ -610,8 +630,9 @@ presence_chooser_button_press_event_cb (GtkWidget      *chooser,
 }
 
 typedef struct {
-	GossipPresenceState  state;
-	const gchar         *status;
+	GossipPresenceChooser *chooser;
+	GossipPresenceState    state;
+	gchar                 *status;
 } StateAndStatus;
 
 static StateAndStatus *
@@ -623,7 +644,7 @@ presence_chooser_state_and_status_new (GossipPresenceState  state,
 	sas = g_new0 (StateAndStatus, 1);
 
 	sas->state = state;
-	sas->status = status;
+	sas->status = (gchar *) status;
 
 	return sas;
 }
@@ -673,6 +694,25 @@ presence_chooser_get_presets (GossipPresenceChooser *chooser)
 	g_list_free (presets);
 
 	return list;
+}
+
+static gboolean
+presence_chooser_scroll_timeout_cb (StateAndStatus *sas)
+{
+	GossipPresenceChooserPriv *priv;
+
+	priv = GET_PRIV (sas->chooser);
+	
+	g_signal_emit (sas->chooser, signals[CHANGED], 0,
+		       sas->state, sas->status);
+	
+	priv->scroll_timeout_id = 0;
+
+	g_object_unref (sas->chooser);
+	g_free (sas->status);
+	g_free (sas);
+
+	return FALSE;
 }
 
 static gboolean
@@ -727,16 +767,31 @@ presence_chooser_scroll_event_cb (GtkWidget      *chooser,
 
 		sas = NULL;
 	}
-			
-	if (sas) {
-		g_signal_emit (chooser, signals[CHANGED], 0,
-			       sas->state, sas->status);
 
+	if (sas) {
+		StateAndStatus *sas_copy;
+		
+		presence_chooser_reset_scroll_timeout (GOSSIP_PRESENCE_CHOOSER (chooser));
+
+		sas_copy = presence_chooser_state_and_status_new (
+			sas->state, g_strdup (sas->status));
+		sas_copy->chooser = g_object_ref (chooser);
+		
+		priv->scroll_timeout_id =
+			g_timeout_add (500,
+				       (GSourceFunc) presence_chooser_scroll_timeout_cb,
+				       sas_copy);
+
+		gossip_presence_chooser_set_status (GOSSIP_PRESENCE_CHOOSER (chooser),
+						    sas->status);
+		gossip_presence_chooser_set_state (GOSSIP_PRESENCE_CHOOSER (chooser),
+						   sas->state);
 	}
 	else if (!match) {
 		/* If we didn't get any match at all, it means the last state
 		 * was a custom one. Just switch to the first one.
 		 */ 
+		presence_chooser_reset_scroll_timeout (GOSSIP_PRESENCE_CHOOSER (chooser));
 		g_signal_emit (chooser, signals[CHANGED], 0,
 			       GOSSIP_PRESENCE_STATE_AVAILABLE,
 			       _("Available"));
