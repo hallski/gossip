@@ -1,6 +1,8 @@
 2006-06-19  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Tweak string.
+	* src/gossip-log-window.c (gossip_log_window_show): Remove close
+	button from log window, bug #344439.
 
 2006-06-19  Richard Hult  <richard@imendio.com>
 

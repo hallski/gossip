@@ -61,9 +61,6 @@ typedef struct {
 	GossipChatView *chatview_chatrooms;
 
 	gchar          *last_search;
-
-
-	GtkWidget      *button_close;
 } GossipLogWindow;
 
 /* Searching */
@@ -155,8 +152,6 @@ static void            log_window_calendar_chatrooms_month_changed_cb (GtkWidget
 static void            log_window_entry_chatrooms_changed_cb          (GtkWidget        *entry,
 								       GossipLogWindow  *window);
 static void            log_window_entry_chatrooms_activate_cb         (GtkWidget        *entry,
-								       GossipLogWindow  *window);
-static void            log_window_button_close_clicked_cb             (GtkWidget        *widget,
 								       GossipLogWindow  *window);
 static void            log_window_destroy_cb                          (GtkWidget        *widget,
 								       GossipLogWindow  *window);
@@ -1684,13 +1679,6 @@ log_window_entry_chatrooms_activate_cb (GtkWidget       *entry,
  * Other window callbacks 
  */
 static void
-log_window_button_close_clicked_cb (GtkWidget       *widget,
-				    GossipLogWindow *window)
-{
-	gtk_widget_destroy (window->window);
-}
-
-static void
 log_window_destroy_cb (GtkWidget       *widget, 
 		       GossipLogWindow *window)
 {
@@ -1750,7 +1738,6 @@ gossip_log_window_show (GossipContact  *contact,
 				       "vbox_chatrooms", &window->vbox_chatrooms,
  				       "treeview_chatrooms", &window->treeview_chatrooms, 
 				       "scrolledwindow_chatrooms", &window->scrolledwindow_chatrooms,
-				       "button_close", &window->button_close,
 				       NULL);
 	
 	gossip_glade_connect (glade, 
@@ -1762,7 +1749,6 @@ gossip_log_window_show (GossipContact  *contact,
 			      "entry_contacts", "activate", log_window_entry_contacts_activate_cb,
 			      "entry_chatrooms", "changed", log_window_entry_chatrooms_changed_cb,
 			      "entry_chatrooms", "activate", log_window_entry_chatrooms_activate_cb,
-			      "button_close", "clicked", log_window_button_close_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
