@@ -70,6 +70,8 @@ typedef struct {
 
 	gulong         contact_signal_handler;
 	gulong         presence_signal_handler;
+
+	guint          show_timeout_id;
 } GossipContactInfoDialog;
 
 static void contact_info_dialog_init                 (void);
@@ -138,7 +140,6 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 	GdkPixbuf   *pixbuf = NULL;
 	const gchar *status = NULL;
 	const gchar *resource = NULL;
-
 	GList       *presences, *l;
 	gint         i = 0;
 	gint         cols = 4;
@@ -511,6 +512,10 @@ contact_info_dialog_destroy_cb (GtkWidget               *widget,
 					     dialog->presence_signal_handler);
 	}
 
+	if (dialog->show_timeout_id) {
+		g_source_remove (dialog->show_timeout_id);
+	}
+	
 	g_hash_table_remove (contact_info_dialogs, dialog->contact);
 	
 	g_free (dialog);
@@ -522,6 +527,16 @@ contact_info_dialog_response_cb (GtkWidget               *widget,
 				 GossipContactInfoDialog *dialog)
 {
 	gtk_widget_destroy (dialog->dialog);
+}
+
+static gboolean
+contact_info_dialog_show_timeout_cb (GossipContactInfoDialog *dialog)
+{
+	gtk_widget_show (dialog->dialog);
+
+	dialog->show_timeout_id = 0;
+
+	return FALSE;
 }
 
 void
@@ -538,7 +553,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	GdkPixbuf               *pixbuf;
 
 	contact_info_dialog_init ();
-	
+
 	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
 	if (dialog) {
 		gtk_window_present (GTK_WINDOW (dialog->dialog));
@@ -665,6 +680,9 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 				    g_object_ref (contact), 
 				    NULL);
 	
-	gtk_widget_show (dialog->dialog);
+	dialog->show_timeout_id =
+		g_timeout_add (500,
+			       (GSourceFunc) contact_info_dialog_show_timeout_cb,
+			       dialog);
 }
 

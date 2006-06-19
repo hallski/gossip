@@ -1,5 +1,14 @@
 2006-06-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-info-dialog.c:
+	* ui/main.glade: Tweak a bit, set the default width instead of a
+	fixed width, make the window resizable, and hide all sections by
+	default. Also delay showing the window for half a second, in many
+	cases this will be enough to get the info and makes things jump
+	around less. Also fixes problems with cut-off labels.
+
+2006-06-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-private-chat.c
 	(private_chat_input_key_press_event_cb): Eat tabs to behave like
 	the group chat, bug #337471.
