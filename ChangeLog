@@ -7,6 +7,9 @@
 	cases this will be enough to get the info and makes things jump
 	around less. Also fixes problems with cut-off labels.
 
+	* ui/main.glade: Remove padding from the log window, based on
+	patch from Wouter Bolsterlee.
+	
 2006-06-19  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-private-chat.c
