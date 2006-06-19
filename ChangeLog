@@ -1,5 +1,9 @@
 2006-06-19  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Tweak string.
+
+2006-06-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat.c (chat_text_populate_popup_cb): Fix crash on
 	right-click in the entry.
 
