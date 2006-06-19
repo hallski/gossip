@@ -409,7 +409,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 	GossipChatSpell *chat_spell;
 	GtkWidget       *smiley_menu;
 
-	priv = GET_PRIV (view);
+	priv = GET_PRIV (chat);
 	
 	/* Add the emoticon menu. */
 	item = gtk_separator_menu_item_new ();
