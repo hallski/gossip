@@ -24,12 +24,13 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <dbus/dbus-glib.h>
 #include <bonobo/bonobo-ui-component.h>
 #include <panel-applet-gconf.h>
 
 #include "peekaboo-applet.h"
+#include "peekaboo-dbus.h"
 #include "peekaboo-galago.h"
+#include "peekaboo-utils.h"
 
 /* #define DEBUG_MSG(x)  */
 #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); 
@@ -64,108 +65,6 @@ static const char* authors[] = {
 };
 
 static void
-applet_dbus_send_message (PeekabooApplet *applet, 
-			  const gchar    *contact_id)
-{
-	DBusGConnection  *bus;
-	DBusGProxy       *remote_object;
-	GError           *error = NULL;
-
-	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-	if (!bus) {
-		g_warning ("Could not connect to session bus");
-		return;
-	}
-	
-	remote_object = dbus_g_proxy_new_for_name (bus,
-						   "org.gnome.Gossip",
-						   "/org/gnome/Gossip",
-						   "org.gnome.Gossip");
-	
-	if (!dbus_g_proxy_call (remote_object, "SendMessage", &error,
-				G_TYPE_STRING, contact_id, G_TYPE_INVALID,
-				G_TYPE_INVALID)) {
-		g_warning ("Failed to complete 'SendMessage' request. %s", 
-			   error->message);
-	}
-	
-  	g_object_unref (G_OBJECT (remote_object));
-}
-
-static void
-applet_dbus_toggle_roster (PeekabooApplet *applet)
-{
-	DBusGConnection  *bus;
-	DBusGProxy       *remote_object;
-	GError           *error = NULL;
-
-	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-	if (!bus) {
-		g_warning ("Could not connect to session bus");
-		return;
-	}
-	
-	remote_object = dbus_g_proxy_new_for_name (bus,
-						   "org.gnome.Gossip",
-						   "/org/gnome/Gossip",
-						   "org.gnome.Gossip");
-	
-	if (!dbus_g_proxy_call (remote_object, "ToggleRoster", &error,
-				G_TYPE_INVALID,
-				G_TYPE_INVALID)) {
-		g_warning ("Failed to complete 'ToggleRoster' request. %s", 
-			   error->message);
-	}
-	
-  	g_object_unref (G_OBJECT (remote_object));
-}
-
-static void
-applet_dbus_get_open_chats (PeekabooApplet *applet)
-{
-	DBusGConnection  *bus;
-	DBusGProxy       *remote_object;
-	GError           *error = NULL;
-	char            **chats;
-	char            **p;
-	gchar            *name;
-	GossipPresenceState state;
-
-	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-	if (!bus) {
-		g_warning ("Could not connect to session bus");
-		return;
-	}
-	
-	remote_object = dbus_g_proxy_new_for_name (bus,
-						   "org.gnome.Gossip",
-						   "/org/gnome/Gossip",
-						   "org.gnome.Gossip");
-	
-	if (!dbus_g_proxy_call (remote_object, "GetOpenChats", &error,
-				G_TYPE_INVALID,
-				G_TYPE_STRV, &chats, G_TYPE_INVALID)) {
-		g_warning ("Failed to complete 'GetOpenChats' request. %s", 
-			   error->message);
-	}
-	
-  	g_object_unref (G_OBJECT (remote_object));
-
-	DEBUG_MSG (("Open chats:"));
-	for (p = chats; *p; p++) {
-		if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) {
-			DEBUG_MSG (("\t\"%s\"", *p));
-			continue;
-		}
-		
-		DEBUG_MSG (("\tid:'%s', name:'%s'", *p, name));
-		g_free (name);
-	}
-		
-	g_strfreev (chats);
-}
-
-static void
 applet_set_tooltip (PeekabooApplet *applet,
 		    const gchar    *message) 
 {
@@ -189,7 +88,8 @@ applet_toggle_roster_cb (BonoboUIComponent *uic,
 			 PeekabooApplet    *applet, 
 			 const gchar       *verb_name)
 {
-	applet_dbus_toggle_roster (applet);	
+	DEBUG_MSG (("Applet: Toggling roster visibility"));
+	peekaboo_dbus_toggle_roster ();	
 }
 
 static void
@@ -232,7 +132,7 @@ applet_entry_activate_cb (GtkEntry       *entry,
 		return;
 	}
 
-	applet_dbus_send_message (applet, text);
+	peekaboo_dbus_send_message (text);
 
 	gtk_entry_set_text (entry, "");
 }
@@ -249,34 +149,141 @@ applet_entry_button_press_event_cb (GtkWidget      *widget,
 	return FALSE;
 }
 
+static void
+applet_menu_item_activate_cb (GtkMenuItem *item,
+			      gpointer     user_data)
+{
+	const gchar *contact_id;
+
+	contact_id = g_object_get_data (G_OBJECT (item), "contact_id");
+
+	DEBUG_MSG (("Applet: Sending message to:'%s'", contact_id));
+	peekaboo_dbus_send_message (contact_id);
+}
+
+static void
+applet_menu_position_func (GtkMenu        *menu,
+			   gint           *x,
+			   gint           *y,
+			   gboolean       *push_in,
+			   PeekabooApplet *applet)
+{
+	GtkWidget      *widget;
+	GtkRequisition  req;
+	GdkScreen      *screen;
+	gint            screen_height;
+
+	widget = GTK_WIDGET (applet->applet_widget);
+
+	gtk_widget_size_request (GTK_WIDGET (menu), &req);
+
+	gdk_window_get_origin (widget->window, x, y); 
+
+	*x += widget->allocation.x;
+	*y += widget->allocation.y;
+
+	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
+	screen_height = gdk_screen_get_height (screen);	
+
+	if (req.height > screen_height) {
+		/* Too big for screen height anyway. */
+		*y = 0;
+		return;
+	}
+
+	if ((*y + req.height + widget->allocation.height) > screen_height) {
+		/* Can't put it below the button. */
+		*y -= req.height;
+		*y += 1;
+	} else {
+		/* Put menu below button. */
+		*y += widget->allocation.height;
+		*y -= 1;
+	}
+
+	*push_in = FALSE;
+}
+
 static gboolean
 applet_button_press_event_cb (GtkWidget      *widget,
 			      GdkEventButton *event, 
 			      PeekabooApplet *applet)
 {
+	GtkWidget            *menu;
+	GtkWidget            *item;
+	GtkWidget            *image;
+	gchar                *name;
+	const gchar          *stock_id;
+	gchar               **chats;
+	gchar               **p;
+	GossipPresenceState   state;
+
 	if (event->button != 1 || 
 	    event->type != GDK_BUTTON_PRESS) {
 		return FALSE;
 	}
 
-	applet_dbus_get_open_chats (applet);
+	chats = peekaboo_dbus_get_open_chats ();
+	if (!chats || !chats[0]) {
+		g_strfreev (chats);
+		return;
+	}
+
+	menu = gtk_menu_new ();
+
+	DEBUG_MSG (("Applet: Open chats:"));
+	for (p = chats; *p; p++) {
+		if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) {
+			DEBUG_MSG (("\t\"%s\"", *p));
+			continue;
+		}
+
+		DEBUG_MSG (("\tid:'%s', name:'%s'", *p, name));
+		
+		item = gtk_image_menu_item_new_with_label (name);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+		gtk_widget_show (item);
+
+		stock_id = peekaboo_presence_state_to_stock_id (state);
+		image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
+		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+		gtk_widget_show (image);
+
+		g_object_set_data_full (G_OBJECT (item), "contact_id", g_strdup (*p), g_free);
+		
+		g_signal_connect (item, "activate", 
+				  G_CALLBACK (applet_menu_item_activate_cb),
+				  NULL);
+
+		g_free (name);
+	}
+
+	g_strfreev (chats);
+		
+	/* Popup menu */
+	gtk_widget_show (menu);
+
+	gtk_menu_popup (GTK_MENU (menu), 
+			NULL, NULL, 
+			(GtkMenuPositionFunc) applet_menu_position_func,
+			applet, 
+			event->button, event->time);
+
+	/* FIXME: attach menu to widget or at least hook up the hide
+	 * signal and destroy the menu then. 
+	 */
 
 	return TRUE;
 }
 
 static void
-applet_change_size_cb (PanelApplet   *widget, 
-		       gint           size, 
+applet_change_size_cb (PanelApplet    *widget, 
+		       gint            size, 
 		       PeekabooApplet *applet)
 {
-	gtk_image_set_from_icon_name (GTK_IMAGE (applet->image), 
-				      "stock_contact", 
-				      GTK_ICON_SIZE_MENU);
+	gtk_image_set_pixel_size (GTK_IMAGE (applet->image), size);
 }
 
-/*
- * Callback from Bonobo when the control is destroyed.
- */
 static void
 applet_destroy_cb (BonoboObject  *object, 
 		   PeekabooApplet *applet)
@@ -305,13 +312,15 @@ applet_new (PanelApplet *parent_applet)
 	gtk_box_pack_start (GTK_BOX (hbox), applet->image, FALSE, FALSE, 0);
 	gtk_image_set_from_icon_name (GTK_IMAGE (applet->image),
 				      "gossip",
-				      GTK_ICON_SIZE_MENU);
+				      GTK_ICON_SIZE_INVALID);
+	gtk_image_set_pixel_size (GTK_IMAGE (applet->image), 
+				  panel_applet_get_size (parent_applet) - 2);
 	gtk_widget_show (applet->image);
 
 	applet->entry = gtk_entry_new ();
 	gtk_box_pack_start (GTK_BOX (hbox), applet->entry, TRUE, TRUE, 0);
 	gtk_entry_set_width_chars (GTK_ENTRY (applet->entry), 15);
-	gtk_widget_show (applet->entry);
+/* 	gtk_widget_show (applet->entry); */
 
 	g_signal_connect (applet->entry, 
 			  "activate",
@@ -319,6 +328,11 @@ applet_new (PanelApplet *parent_applet)
 	g_signal_connect (applet->entry, 
 			  "button_press_event", 
 			  G_CALLBACK (applet_entry_button_press_event_cb), applet);
+
+	panel_applet_set_flags (PANEL_APPLET (applet->applet_widget), 
+				PANEL_APPLET_EXPAND_MINOR);
+	panel_applet_set_background_widget (PANEL_APPLET (applet->applet_widget),
+					    GTK_WIDGET (applet->applet_widget));
 
   	panel_applet_setup_menu_from_file (PANEL_APPLET (applet->applet_widget),
 					   NULL,
@@ -341,6 +355,7 @@ applet_new (PanelApplet *parent_applet)
 
 	/* Initialise other modules */
 	peekaboo_galago_init ();
+	peekaboo_stock_init ();
 
 	return TRUE;
 }

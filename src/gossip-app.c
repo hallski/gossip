@@ -881,7 +881,7 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 				    GossipApp   *app) 
 {
 	if (event->keyval == GDK_Escape) {
-		gossip_app_toggle_visibility();
+		gossip_app_toggle_visibility ();
 	}
 
 	return FALSE;
@@ -1185,6 +1185,17 @@ app_accels_save (void)
 /*
  * Notification area signals
  */
+
+gboolean
+gossip_app_is_window_visible (void)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	return gossip_window_get_is_visible (GTK_WINDOW (priv->window));
+}
+
 void
 gossip_app_toggle_visibility (void)
 {

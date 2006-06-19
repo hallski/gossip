@@ -71,6 +71,9 @@ gboolean gossip_dbus_send_message       (GossipDBus   *obj,
 					 GError      **error);
 gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
 					 GError      **error);
+gboolean gossip_dbus_get_roster_visible (GossipDBus   *obj,
+					 gboolean     *visible,
+					 GError      **error);
 gboolean gossip_dbus_get_open_chats     (GossipDBus   *obj,
 					 char       ***contacts,
 					 GError      **error);
@@ -181,6 +184,18 @@ gossip_dbus_toggle_roster (GossipDBus  *obj,
 {
 	gossip_debug (DEBUG_DOMAIN, "Toggling roster visibility");
 	gossip_app_toggle_visibility ();
+
+	return TRUE;
+}
+
+gboolean 
+gossip_dbus_get_roster_visible (GossipDBus   *obj,
+				gboolean     *visible,
+				GError      **error)
+{
+	gossip_debug (DEBUG_DOMAIN, "Getting roster visiblity");
+
+	*visible = gossip_app_is_window_visible ();
 
 	return TRUE;
 }

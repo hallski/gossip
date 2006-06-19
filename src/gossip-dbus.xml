@@ -16,6 +16,9 @@
     </method>
     <method name="ToggleRoster">
     </method>
+    <method name="GetRosterVisible">
+      <arg name="visible" type="b" direction="out"/>
+    </method>
     <method name="GetOpenChats">
       <arg name="contacts" type="as" direction="out"/>
     </method>

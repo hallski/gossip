@@ -1,3 +1,30 @@
+2006-06-20  Martyn Russell  <martyn@imendio.com>
+
+	* peekaboo/data/GNOME_Peekaboo_Applet.xml: Updated the toggle
+	roster visibility label.
+	
+	* peekaboo/src/Makefile.am: 
+	* peekaboo/src/peekaboo-dbus.[ch]:
+	* peekaboo/src/peekaboo-stock.[ch]: Put all dbus functions in
+	their own source module. Added a stock icon module and a utils
+	module too. 
+	
+	* peekaboo/src/peekaboo-applet.c: Loads of cool stuff:
+	- Hide the GTkEntry.
+	- Make the background transparent. 
+	- Make the Gossip icon the size of the panel instead of
+	GTK_ICON_SIZE_MENU.  
+	- Show a menu on left click with contacts (and their state) which
+	we have open chat windows for. Clicking on them shows the chat
+	window on your desktop whereever you are.
+
+	* src/gossip-chat-manager.c: Sort the list of open chats we return
+	alphabetically. 
+	
+	* src/gossip-app.[ch]:
+	* src/gossip-dbus.c: 
+	* src/gossip-dbus.xml: Added GetRosterVisible dbus interface.
+
 2006-06-19  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-presence-chooser.c: Add timeout before updating the

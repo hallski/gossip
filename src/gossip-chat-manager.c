@@ -19,6 +19,9 @@
  */
 
 #include <config.h>
+
+#include <string.h>
+
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-debug.h>
@@ -239,6 +242,8 @@ gossip_chat_manager_get_chats (GossipChatManager *manager)
 	g_hash_table_foreach (priv->chats, 
 			      (GHFunc) chat_manager_get_chats_foreach,
 			      &chats);
+
+	chats = g_list_sort (chats, (GCompareFunc) strcmp);
 
 	return chats;
 }
