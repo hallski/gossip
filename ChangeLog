@@ -1,3 +1,10 @@
+2006-06-20  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c (contact_list_setup_view): Set the
+	size of the pixuf renderer to 32x32 so we get the same height rows
+	when showing avatars (only affects the size then).
+	- Move this file to gossip_debug.
+
 2006-06-20  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: (gossip_app_connect): Don't call dbus

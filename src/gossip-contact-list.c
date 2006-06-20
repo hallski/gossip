@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-app.h"
 #include "gossip-cell-renderer-text.h"
@@ -43,10 +44,10 @@
 #include "gossip-notify.h"
 #endif
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "ContactList"
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
@@ -624,7 +625,7 @@ contact_list_set_property (GObject      *object,
 static void
 contact_list_connected_cb (GossipSession *session, GossipContactList *list)
 {
-	DEBUG_MSG (("ContactList: Connected"));
+	gossip_debug (DEBUG_DOMAIN, "Connected");
 
 	g_timeout_add (ACTIVE_USER_WAIT_TO_ENABLE_TIME, 
 		       (GSourceFunc) contact_list_show_active_users_cb,
@@ -654,8 +655,8 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	priv = GET_PRIV (list);
 
-	DEBUG_MSG (("ContactList: Contact added: %s",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact added: %s",
+		      gossip_contact_get_name (contact));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
 		return;
@@ -682,16 +683,16 @@ contact_list_contact_updated_cb (GossipSession     *session,
 
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-		DEBUG_MSG (("ContactList: Update to none-contact list "
-			   "contact (doing nothing)"));
+		gossip_debug (DEBUG_DOMAIN, "Update to none-contact list "
+			      "contact (doing nothing)");
 		return;
 	}
-
+	
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	presence = gossip_contact_get_active_presence (contact);
 
-	DEBUG_MSG (("ContactList: Contact updated: %s",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact updated: %s",
+		      gossip_contact_get_name (contact));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
 		return;
@@ -723,10 +724,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 	gboolean               do_remove = FALSE;
 	gboolean               do_set_active = FALSE;
 	gboolean               do_set_refresh = FALSE;
-
 	GossipAccount         *account;
 	gdouble                seconds = 0;
-
 	gboolean               is_composing;
 	const GdkPixbuf       *pixbuf;
  	GdkPixbuf             *pixbuf_composing;
@@ -738,8 +737,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-		DEBUG_MSG (("ContactList: Presence from none-contact list "
-			   "contact (doing nothing)"));
+		gossip_debug (DEBUG_DOMAIN, "Presence from none-contact list "
+			      "contact (doing nothing)");
 		return;
 	}
 
@@ -778,9 +777,9 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			do_set_refresh = TRUE;
 
 			set_model = TRUE;
-			DEBUG_MSG (("ContactList: Remove item (after timeout)")); 
+			gossip_debug (DEBUG_DOMAIN, "Remove item (after timeout)"); 
 		} else {
-			DEBUG_MSG (("ContactList: Remove item (now)!")); 
+			gossip_debug (DEBUG_DOMAIN, "Remove item (now)!"); 
 			contact_list_remove_contact (list, contact);
 		}
 	}
@@ -796,7 +795,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (priv->show_active) {
 			do_set_active = TRUE;
 
-			DEBUG_MSG (("ContactList: Set active (contact added)")); 
+			gossip_debug (DEBUG_DOMAIN, "Set active (contact added)");
 		}
 
 	} else {
@@ -822,14 +821,13 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 					str = "offline -> online"; 
 				}
 
-				DEBUG_MSG (("ContactList: Set active (contact updated %s)", str)); 
-
+				gossip_debug (DEBUG_DOMAIN, "Set active (contact updated %s)", str);
 			} else {
 				/* Was TRUE for presence updates. */
 				/* do_set_active = FALSE;  */
 				do_set_refresh = TRUE;
 				
-				DEBUG_MSG (("ContactList: Set active (contact updated)")); 
+				gossip_debug (DEBUG_DOMAIN, "Set active (contact updated)");
 			}
 		}
 
@@ -886,8 +884,8 @@ contact_list_contact_removed_cb (GossipSession     *session,
 				 GossipContact     *contact,
 				 GossipContactList *list)
 {
-	DEBUG_MSG (("ContactList: Contact removed: %s",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact removed: %s",
+		   gossip_contact_get_name (contact));
 
 	contact_list_remove_contact (list, contact);
 }
@@ -902,10 +900,10 @@ contact_list_contact_composing_cb (GossipSession     *session,
 	GtkTreeModel          *model;
 	GList                 *iters, *l;
 	GdkPixbuf             *pixbuf = NULL;
-
-	DEBUG_MSG (("ContactList: Contact %s typing:'%s'",
-		   composing ? "is" : "is not",
-		   gossip_contact_get_name (contact)));
+	
+	gossip_debug (DEBUG_DOMAIN, "Contact %s typing: '%s'",
+		      composing ? "is" : "is not",
+		      gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (list);
 
@@ -971,7 +969,7 @@ contact_list_contact_set_active (GossipContactList *list,
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
 				    COL_IS_ACTIVE, active,
 				    -1);
-		DEBUG_MSG (("ContactList: Set item %s", active ? "active" : "inactive"));
+		gossip_debug (DEBUG_DOMAIN, "Set item %s", active ? "active" : "inactive");
 	
  		if (set_changed) { 
  			path = gtk_tree_model_get_path (model, iter); 
@@ -1027,12 +1025,12 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	if (data->remove && 
 	    !priv->show_offline && 
 	    !gossip_contact_is_online (data->contact)) {
-		DEBUG_MSG (("ContactList: Remove item (active timeout)!"));
+		gossip_debug (DEBUG_DOMAIN, "Remove item (active timeout)!");
 		contact_list_remove_contact (data->list,
 					     data->contact);
 	}
 
-	DEBUG_MSG (("ContactList: Setting contact to no longer be active"));
+	gossip_debug (DEBUG_DOMAIN, "Setting contact to no longer be active");
 	contact_list_contact_set_active (data->list, 
 					 data->contact,
 					 FALSE,
@@ -1180,8 +1178,8 @@ contact_list_add_contact (GossipContactList *list,
 		GdkPixbuf *pixbuf_avatar;
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
-		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact,
-									  32, 32);
+		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (
+			contact, 32, 32);
 		
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
@@ -1218,8 +1216,8 @@ contact_list_add_contact (GossipContactList *list,
 		}
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
-		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact,
-									  32, 32);
+		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (
+			contact, 32, 32);
 		
 		contact_list_get_group (list, name, &iter_group, &created);
 
@@ -1387,6 +1385,8 @@ contact_list_setup_view (GossipContactList *list)
 		      "xpad", (guint) 0,
 		      "ypad", (guint) 0,
 		      "visible", FALSE,
+		      "width", 32,
+		      "height", 32,
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 
@@ -1473,14 +1473,14 @@ contact_list_drag_data_received (GtkWidget         *widget,
 	gboolean                 drag_del = FALSE;
 
 	id = (const gchar*) selection->data;
-	DEBUG_MSG (("ContactList: Received %s%s drag & drop contact from roster with id:'%s'", 
-		   context->action == GDK_ACTION_MOVE ? "move" : "", 
-		   context->action == GDK_ACTION_COPY ? "copy" : "", 
-		   id));
+	gossip_debug (DEBUG_DOMAIN, "Received %s%s drag & drop contact from roster with id:'%s'",
+		      context->action == GDK_ACTION_MOVE ? "move" : "", 
+		      context->action == GDK_ACTION_COPY ? "copy" : "", 
+		      id);
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	if (!contact) {
-		DEBUG_MSG (("ContactList: No contact found associated with drag & drop"));
+		gossip_debug (DEBUG_DOMAIN, "No contact found associated with drag & drop");
 		return;
 	}
 
