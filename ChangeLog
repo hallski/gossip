@@ -1,3 +1,8 @@
+2006-06-20  Richard Hult  <richard@imendio.com>
+
+	* ui/main.glade: Fix my earlier breakage, show the presence info
+	again. Thanks Martyn!
+
 2006-06-20  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version to 0.12.
