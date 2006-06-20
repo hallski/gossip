@@ -1,5 +1,11 @@
 2006-06-20  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: (gossip_app_connect): Don't call dbus
+	functions unless we have support for dbus, fixes #345465 (Baptiste
+	Mille-Mathias).
+
+2006-06-20  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c: Add a tooltip for the notification area icon
 	when there is no event waiting, fixes #345326 (Wouter Bolsterlee).
 

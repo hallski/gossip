@@ -14,7 +14,10 @@ API, (patch by Brian Pepple).
 - Fixed #306369, Case fold Jabber IDs (Richard).
 - Fixed #337471, Don't insert tab in private chats when hitting Tab
 (Richard).
-- Fixed #345326, Show a tooltip for the notification area icon (Martyn). 
+- Fixed #345326, Show a tooltip for the notification area icon
+(Martyn). 
+- Fixed #345465, Don't call Network Manager DBus functions without
+DBus support (Martyn).
 
 
 NEWS in 0.11.2:

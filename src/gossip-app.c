@@ -1661,12 +1661,14 @@ gossip_app_connect (GossipAccount *account,
 		return;
 	}
 
+#ifdef HAVE_DBUS
 	/* Don't try to automatically connect if we have Network
 	 * Manager state and we are NOT connected.
 	 */
 	if (gossip_dbus_nm_get_state (&connected) && !connected) {
 		return;
 	}
+#endif
 
 	gossip_session_connect (priv->session, account, startup);
 }
