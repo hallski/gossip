@@ -1424,6 +1424,8 @@ app_tray_create (void)
 #ifdef HAVE_LIBNOTIFY
 	gossip_notify_set_attach_widget (GTK_WIDGET (priv->tray_icon));
 #endif
+
+	app_tray_update_tooltip ();
 }
 
 static void
@@ -1435,9 +1437,29 @@ app_tray_update_tooltip (void)
 	priv = GET_PRIV (app);
 
 	if (!priv->tray_flash_icons) {
+		const gchar *status;
+		gchar       *str;
+
+		if (gossip_app_is_connected ()) {
+			GossipPresence      *presence;
+			GossipPresenceState  state;
+			
+			presence = app_get_effective_presence ();
+			state = gossip_presence_get_state (presence);
+			status = gossip_presence_get_status (presence);
+			
+			if (!status) {
+				status = gossip_presence_state_get_default_status (state);
+			}
+		} else {
+			status = _("Disconnected");
+		}
+
+		str = g_strdup_printf ("%s - %s", PACKAGE_NAME, status);
 		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tray_tooltips),
-				      priv->tray_event_box,
-				      NULL, NULL);
+				      priv->tray_event_box, str, str);
+		g_free (str);
+
 		return;
 	}
 
@@ -2228,6 +2250,8 @@ app_presence_updated (void)
 		(GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser), status);
 		
 	gossip_session_set_presence (priv->session, presence);
+
+	app_tray_update_tooltip ();
 }
 
 /* clears status data from autoaway mode */ 

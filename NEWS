@@ -6,7 +6,7 @@ memory use at an all time low now (Richard).
 more popular functions of Instant Messaging (Martyn).
 - Remove close button from log window (Richard).
 - Fixed #313177, Use GNOME Network Manager to know about connection
-state and connect/disconnect accordingly (Martyn, Diego González).
+state and connect/disconnect accordingly (Martyn).
 - Fixed #339333, Update the Galago support to work with the new 0.5.x
 API, (patch by Brian Pepple).
 - Fixed #344637, Popup presence chooser menu on mouse down (Richard).
@@ -14,6 +14,7 @@ API, (patch by Brian Pepple).
 - Fixed #306369, Case fold Jabber IDs (Richard).
 - Fixed #337471, Don't insert tab in private chats when hitting Tab
 (Richard).
+- Fixed #345326, Show a tooltip for the notification area icon (Martyn). 
 
 
 NEWS in 0.11.2:
