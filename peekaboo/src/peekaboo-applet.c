@@ -30,6 +30,7 @@
 #include "peekaboo-applet.h"
 #include "peekaboo-dbus.h"
 #include "peekaboo-galago.h"
+#include "peekaboo-stock.h"
 #include "peekaboo-utils.h"
 
 /* #define DEBUG_MSG(x)  */
@@ -162,6 +163,14 @@ applet_menu_item_activate_cb (GtkMenuItem *item,
 }
 
 static void
+applet_menu_new_message_activate_cb (GtkMenuItem *item,
+				     gpointer     user_data)
+{
+	DEBUG_MSG (("Applet: New message"));
+	peekaboo_dbus_new_message ();
+}
+
+static void
 applet_menu_position_func (GtkMenu        *menu,
 			   gint           *x,
 			   gint           *y,
@@ -223,39 +232,53 @@ applet_button_press_event_cb (GtkWidget      *widget,
 		return FALSE;
 	}
 
-	chats = peekaboo_dbus_get_open_chats ();
-	if (!chats || !chats[0]) {
-		g_strfreev (chats);
-		return;
-	}
-
 	menu = gtk_menu_new ();
 
-	DEBUG_MSG (("Applet: Open chats:"));
-	for (p = chats; *p; p++) {
-		if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) {
-			DEBUG_MSG (("\t\"%s\"", *p));
-			continue;
-		}
+	item = gtk_image_menu_item_new_with_label (_("New Message..."));
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+	gtk_widget_show (item);
+	
+	image = gtk_image_new_from_stock (PEEKABOO_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
+	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+	gtk_widget_show (image);
 
-		DEBUG_MSG (("\tid:'%s', name:'%s'", *p, name));
-		
-		item = gtk_image_menu_item_new_with_label (name);
+	g_signal_connect (item, "activate", 
+			  G_CALLBACK (applet_menu_new_message_activate_cb),
+			  NULL);
+
+	chats = peekaboo_dbus_get_open_chats ();
+	if (chats && chats[0]) {
+		item = gtk_separator_menu_item_new ();
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 		gtk_widget_show (item);
-
-		stock_id = peekaboo_presence_state_to_stock_id (state);
-		image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-		gtk_widget_show (image);
-
-		g_object_set_data_full (G_OBJECT (item), "contact_id", g_strdup (*p), g_free);
 		
-		g_signal_connect (item, "activate", 
-				  G_CALLBACK (applet_menu_item_activate_cb),
-				  NULL);
+		DEBUG_MSG (("Applet: Open chats:"));
+		for (p = chats; *p; p++) {
+			if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) {
+				DEBUG_MSG (("\t\"%s\"", *p));
+				continue;
+			}
+			
+			DEBUG_MSG (("\tid:'%s', name:'%s'", *p, name));
 
-		g_free (name);
+			item = gtk_image_menu_item_new_with_label (name);
+			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+			gtk_widget_show (item);
+			
+			stock_id = peekaboo_presence_state_to_stock_id (state);
+			image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_MENU);
+			gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+			gtk_widget_show (image);
+			
+			g_object_set_data_full (G_OBJECT (item), "contact_id", 
+						g_strdup (*p), g_free);
+			
+			g_signal_connect (item, "activate", 
+					  G_CALLBACK (applet_menu_item_activate_cb),
+					  NULL);
+			
+			g_free (name);
+		}
 	}
 
 	g_strfreev (chats);

@@ -55,7 +55,7 @@ dnl -----------------------------------------------------------
 AC_ARG_ENABLE(dbus,
               AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
                              [compile with dbus support]), ,
-              enable_dbus=no)
+              enable_dbus=auto)
 
 if test "x$enable_dbus" != "xno"; then
    dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"

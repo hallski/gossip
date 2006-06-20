@@ -23,9 +23,10 @@
 
 #include <dbus/dbus-glib.h>
 
-void     peekaboo_dbus_send_message       (const gchar *contact_id);
-void     peekaboo_dbus_toggle_roster      (void);
 gboolean peekaboo_dbus_get_roster_visible (void);
 char **  peekaboo_dbus_get_open_chats     (void);
+void     peekaboo_dbus_send_message       (const gchar *contact_id);
+void     peekaboo_dbus_new_message        (void);
+void     peekaboo_dbus_toggle_roster      (void);
 
 #endif /* __PEEKABO_DBUS_H__ */

@@ -11,16 +11,18 @@
     <method name="SetNetworkStatus">
       <arg name="up" type="b" direction="in"/>
     </method>
-    <method name="SendMessage">
-      <arg name="contact" type="s" direction="in"/>
-    </method>
-    <method name="ToggleRoster">
-    </method>
     <method name="GetRosterVisible">
       <arg name="visible" type="b" direction="out"/>
     </method>
     <method name="GetOpenChats">
       <arg name="contacts" type="as" direction="out"/>
+    </method>
+    <method name="SendMessage">
+      <arg name="contact" type="s" direction="in"/>
+    </method>
+    <method name="NewMessage">
+    </method>
+    <method name="ToggleRoster">
     </method>
   </interface>
 </node>

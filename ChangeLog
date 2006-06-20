@@ -1,3 +1,13 @@
+2006-06-21  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Make dbus support automatic by default instead of
+	disabled.
+
+	* peekaboo/src/peekaboo-applet.c:
+	* peekaboo/src/peekaboo-dbus.[ch]: 
+	* src/gossip-dbus.c:
+	* src/gossip-dbus.xml: Support "New Message" interface.
+
 2006-06-20  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_tray_update_tooltip): Just put the status

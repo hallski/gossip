@@ -25,6 +25,7 @@
 
 #include "gossip-app.h"
 #include "gossip-dbus.h"
+#include "gossip-new-message-dialog.h"
 
 #define DEBUG_DOMAIN "DBUS"
 
@@ -72,16 +73,18 @@ gboolean gossip_dbus_set_not_away       (GossipDBus   *obj,
 gboolean gossip_dbus_set_network_status (GossipDBus   *obj,
 					 gboolean      up,
 					 GError      **error);
-gboolean gossip_dbus_send_message       (GossipDBus   *obj,
-					 const gchar  *contact_id,
-					 GError      **error);
-gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
-					 GError      **error);
 gboolean gossip_dbus_get_roster_visible (GossipDBus   *obj,
 					 gboolean     *visible,
 					 GError      **error);
 gboolean gossip_dbus_get_open_chats     (GossipDBus   *obj,
 					 char       ***contacts,
+					 GError      **error);
+gboolean gossip_dbus_send_message       (GossipDBus   *obj,
+					 const gchar  *contact_id,
+					 GError      **error);
+gboolean gossip_dbus_new_message        (GossipDBus   *obj,
+					 GError      **error);
+gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
 					 GError      **error);
 
 #include "gossip-dbus-glue.h"
@@ -161,39 +164,6 @@ gossip_dbus_set_network_status (GossipDBus *obj,
 	return TRUE;
 }
 
-gboolean
-gossip_dbus_send_message (GossipDBus   *obj, 
-			  const gchar  *contact_id, 
-			  GError      **error)
-{
-	GossipChatManager *manager;
-	GossipContact     *contact;
-
-	gossip_debug (DEBUG_DOMAIN, "Sending message to contact:'%s'", contact_id);
-
-	contact = gossip_session_find_contact (saved_session, contact_id);
-	if (!contact) {
-		g_set_error (error, gossip_dbus_error_quark (), 0, 
-			     "Contact:'%s' not found", contact_id);
-		return FALSE;
-	}
-
-	manager = gossip_app_get_chat_manager ();
-	gossip_chat_manager_show_chat (manager, contact);
-
-	return TRUE;
-}
-
-gboolean 
-gossip_dbus_toggle_roster (GossipDBus  *obj,
-			   GError     **error)
-{
-	gossip_debug (DEBUG_DOMAIN, "Toggling roster visibility");
-	gossip_app_toggle_visibility ();
-
-	return TRUE;
-}
-
 gboolean 
 gossip_dbus_get_roster_visible (GossipDBus   *obj,
 				gboolean     *visible,
@@ -229,6 +199,49 @@ gossip_dbus_get_open_chats (GossipDBus   *obj,
 	}
 	
  	g_list_free (chats); 
+
+	return TRUE;
+}
+
+gboolean
+gossip_dbus_send_message (GossipDBus   *obj, 
+			  const gchar  *contact_id, 
+			  GError      **error)
+{
+	GossipChatManager *manager;
+	GossipContact     *contact;
+
+	gossip_debug (DEBUG_DOMAIN, "Sending message to contact:'%s'", contact_id);
+
+	contact = gossip_session_find_contact (saved_session, contact_id);
+	if (!contact) {
+		g_set_error (error, gossip_dbus_error_quark (), 0, 
+			     "Contact:'%s' not found", contact_id);
+		return FALSE;
+	}
+
+	manager = gossip_app_get_chat_manager ();
+	gossip_chat_manager_show_chat (manager, contact);
+
+	return TRUE;
+}
+
+gboolean 
+gossip_dbus_new_message (GossipDBus  *obj,
+			 GError     **error)
+{
+	gossip_debug (DEBUG_DOMAIN, "New message");
+	gossip_new_message_dialog_show (NULL);
+
+	return TRUE;
+}
+
+gboolean 
+gossip_dbus_toggle_roster (GossipDBus  *obj,
+			   GError     **error)
+{
+	gossip_debug (DEBUG_DOMAIN, "Toggling roster visibility");
+	gossip_app_toggle_visibility ();
 
 	return TRUE;
 }
