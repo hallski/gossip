@@ -15,7 +15,7 @@ resources_DATA = \
 	GNOME_Peekaboo_Applet.xml
 # 	peekaboo-applet.glade
 
-peekaboobindir = $(libdir)/peekaboo-applet
+peekaboobindir = $(libexecdir)
 
 # Build rules
 @INTLTOOL_SERVER_RULE@

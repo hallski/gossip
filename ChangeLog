@@ -1,5 +1,13 @@
 2006-06-20  Martyn Russell  <martyn@imendio.com>
 
+	* peekaboo/data/GNOME_Peekaboo_Applet.server.in.in:
+	* peekaboo/data/Makefile.am: Put Peekaboo in the "Internet" group
+	for the applet selector and fix the path to the executable so it
+	will actually load without running it separately on the command
+	line. 
+
+2006-06-20  Martyn Russell  <martyn@imendio.com>
+
 	* peekaboo/data/GNOME_Peekaboo_Applet.xml: Updated the toggle
 	roster visibility label.
 	

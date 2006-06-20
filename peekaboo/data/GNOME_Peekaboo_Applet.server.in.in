@@ -18,7 +18,7 @@
         </oaf_attribute>
         <oaf_attribute name="name" type="string" _value="Peekaboo"/>
         <oaf_attribute name="description" type="string" _value="Instant Messaging Applet"/>
-        <oaf_attribute name="panel:category" type="string" value="Accessories"/>
+        <oaf_attribute name="panel:category" type="string" value="Internet"/>
         <oaf_attribute name="panel:icon" type="string" value="gossip.png"/>
 </oaf_server>
 
