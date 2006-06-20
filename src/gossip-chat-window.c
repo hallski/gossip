@@ -757,6 +757,8 @@ chat_window_update_status (GossipChatWindow *window,
 	pixbuf = chat_window_get_status_pixbuf (window, chat);
 	image = g_object_get_data (G_OBJECT (chat), "chat-window-tab-image");
 	gtk_image_set_from_pixbuf (image, pixbuf);
+
+	g_object_unref (pixbuf);
 	
 	chat_window_update_tooltip (window, chat);
 }

@@ -562,6 +562,10 @@ jabber_login (GossipProtocol *protocol)
 
 	DEBUG_MSG (("Protocol: Logging in Jabber"));
 
+	if (priv->presence) {
+		g_object_unref (priv->presence);
+	}
+	
 	priv->presence = gossip_presence_new ();
 	gossip_presence_set_state (priv->presence, 
 				   GOSSIP_PRESENCE_STATE_AVAILABLE);
@@ -577,7 +581,6 @@ jabber_login (GossipProtocol *protocol)
 	result = lm_connection_open (priv->connection, 
 				     (LmResultFunction) jabber_connection_open_cb,
 				     jabber, NULL, &error);
-
 
 	if (result && !error) {
 		/* FIXME: add timeout incase we get nothing back from
@@ -2293,8 +2296,7 @@ jabber_message_handler (LmMessageHandler *handler,
 					     g_object_ref (from),
 					     GINT_TO_POINTER (TRUE));
 		} else {
-			g_hash_table_remove (priv->composing_requests, 
-					     g_object_ref (from));
+			g_hash_table_remove (priv->composing_requests, from);
 		}
 		
 		DEBUG_MSG (("Protocol: Contact:'%s' %s composing info...",
@@ -2653,10 +2655,9 @@ jabber_request_roster (GossipJabber *jabber,
 		gboolean       updated;
 		LmMessageNode *subnode;
 		LmMessageNode *child;
-		GList         *groups = NULL;
-
+		GList         *groups;
 		const gchar   *name;
-		GList         *new_groups = NULL;
+		GList         *new_groups;
 		gboolean       name_updated, groups_updated;
 		
 
@@ -2677,6 +2678,7 @@ jabber_request_roster (GossipJabber *jabber,
 		g_object_set (contact, "type", GOSSIP_CONTACT_TYPE_CONTACTLIST, NULL);
 
 		/* Groups */
+		groups = NULL;
 		for (subnode = node->children; subnode; subnode = subnode->next) {
 			if (strcmp (subnode->name, "group") != 0) {
 				continue;
@@ -2692,6 +2694,8 @@ jabber_request_roster (GossipJabber *jabber,
 		if (groups) {
 			gossip_contact_set_groups (contact, groups);
 		}
+		
+		g_list_free (groups);
 
 		/* Subscription */
 		subscription = lm_message_node_get_attribute (node, "subscription");
@@ -2726,6 +2730,7 @@ jabber_request_roster (GossipJabber *jabber,
 			gossip_contact_set_name (contact, name);
 		}
 
+		new_groups = NULL;
 		for (child = node->children; child; child = child->next) {
 			if (strcmp (child->name, "group") == 0 && child->value) {
 				new_groups = g_list_append (new_groups, child->value);
@@ -2733,12 +2738,12 @@ jabber_request_roster (GossipJabber *jabber,
 		}
 
 		if (new_groups) {
-			/* Does not get free'd */
 			groups_updated = gossip_contact_set_groups (contact, new_groups);
 		}
 
+		g_list_free (new_groups);
+		
 		updated = (name_updated || groups_updated);
-
 		
 		if (new_item) {
 			g_signal_emit_by_name (jabber, 

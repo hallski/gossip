@@ -87,6 +87,8 @@ gossip_avatar_image_init (GossipAvatarImage *avatar_image)
 			  avatar_image);
 
 	priv->tooltips = gtk_tooltips_new ();
+	g_object_ref (priv->tooltips);
+	gtk_object_sink (GTK_OBJECT (priv->tooltips));
 
 	avatar_image_add_filter (avatar_image);
 
@@ -110,7 +112,7 @@ avatar_image_finalize (GObject *object)
 		g_object_unref (priv->pixbuf);
 	}
 
-	gtk_object_destroy (GTK_OBJECT (priv->tooltips));
+	g_object_unref (priv->tooltips);
 	
 	G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
 }

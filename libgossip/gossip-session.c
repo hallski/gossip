@@ -19,11 +19,9 @@
  */
 
 #include <config.h>
-
 #include <string.h>
 
 #include "libgossip-marshal.h"
-
 #include "gossip-session.h"
 
 #define DEBUG_MSG(x) 
@@ -386,6 +384,10 @@ session_finalize (GObject *object)
 		g_list_free (priv->contacts);
 	}
 
+	if (priv->presence) {
+		g_object_unref (priv->presence);
+	}
+
 	if (priv->timers) {
 		g_hash_table_destroy (priv->timers);
 	}
@@ -498,7 +500,7 @@ session_protocol_logged_out (GossipProtocol *protocol,
 	if (priv->connected_counter > 0) {
 		priv->connected_counter--;
 	}
-	
+
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
 	
 	if (priv->connected_counter == 0) {
@@ -958,8 +960,6 @@ gossip_session_connect (GossipSession *session,
 
 	/* Connect one account if provided */
 	if (account) {
-		g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-		
 		session_connect (session, account);
 		return;
 	}
@@ -1686,6 +1686,6 @@ gossip_session_get_version (GossipSession          *session,
 	}
 	
 	return gossip_protocol_get_version (protocol, contact, 
-						  callback, user_data,
-						  error);
+					    callback, user_data,
+					    error);
 }

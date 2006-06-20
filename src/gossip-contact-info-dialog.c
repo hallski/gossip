@@ -423,14 +423,8 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 	}
 
 	if (show_client_info) {
-		GtkSizeGroup *size_group;
-
 		gtk_widget_hide (dialog->client_status_hbox);
 		gtk_widget_show (dialog->client_table);
-
-		size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-		gtk_size_group_add_widget (size_group, dialog->stub_client_label);
-		g_object_unref (size_group);
 	} else {
 		gtk_widget_hide (dialog->client_vbox);
 	}

@@ -154,7 +154,7 @@ version_info_set_property (GObject      *object,
 	switch (param_id) {
 	case PROP_NAME:
 		gossip_version_info_set_name (GOSSIP_VERSION_INFO (object), 
-				       g_value_get_string (value));
+					      g_value_get_string (value));
 		break;
 	case PROP_VERSION:
 		gossip_version_info_set_version (GOSSIP_VERSION_INFO (object), 

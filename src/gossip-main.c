@@ -93,8 +93,6 @@ main (int argc, char *argv[])
 	/* Get all accounts. */
  	account_manager = gossip_account_manager_new (NULL);
 
-	accounts = gossip_account_manager_get_accounts (account_manager);
-
 	if (account_name && no_connect) {
 		g_printerr (_("You can not use --no-connect together with --account"));
 		g_printerr ("\n");
@@ -106,7 +104,8 @@ main (int argc, char *argv[])
 		GList         *l;
 		GossipAccount *def = NULL;
 
-		if (g_list_length ((GList*)accounts) < 1) {
+		accounts = gossip_account_manager_get_accounts (account_manager);
+		if (!accounts) {
 			g_printerr (_("No accounts available."));
 			g_printerr ("\n");
 		} else {
@@ -128,6 +127,7 @@ main (int argc, char *argv[])
 			g_printerr ("\n");
 		}
 
+		g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 		g_list_free (accounts);
 
 		return EXIT_SUCCESS;
@@ -141,13 +141,9 @@ main (int argc, char *argv[])
 				    account_name);
 			g_printerr ("\n");
 
-			g_list_free (accounts);
-
 			return EXIT_FAILURE;
 		}
 	}
-
-	g_list_free (accounts);
 
 	gossip_stock_init ();
 	gossip_app_create (account_manager);

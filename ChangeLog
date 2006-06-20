@@ -1,3 +1,53 @@
+2006-06-20  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c:
+	(gossip_chatroom_manager_get_chatrooms): Small cleanup.
+	(gossip_chatroom_manager_get_count, chatroom_manager_get_all,
+	(chatroom_manager_file_parse): Remove "internal" g_return_if_fail
+	calls.
+	(chatroom_manager_file_save,
+	chatroom_manager_protocol_connected_cb): Plug leaks.
+	
+	* libgossip/gossip-session.c: (session_finalize): Plug leak.
+	(gossip_session_connect): Remove internal precondition.
+	(gossip_session_get_version): Reindent.
+
+	* libgossip/gossip-version-info.c: (version_info_set_property):
+	* protocols/jabber/gossip-jabber-services.c:
+	(gossip_jabber_services_get_version): Reindent.
+
+	* protocols/jabber/gossip-jabber.c: (jabber_login): Plug leak.
+	(jabber_message_handler): Don't ref the contact when removing it
+	from the hash table, looks like a cut and paste error.
+	(jabber_request_roster): Plug leak of group list.
+
+	* src/gossip-account-button.c: (gossip_account_button_init),
+	(account_button_finalize): Don't leak the tooltips.
+	(account_button_update_tooltip): Don't create a tooltip each time
+	we change it.
+	
+	* src/gossip-app.c: (app_tray_destroy_cb), (app_tray_create):
+	Don't leak tooltips.
+
+	* src/gossip-avatar-image.c: (gossip_avatar_image_init),
+	(avatar_image_finalize): Don't leak tooltips.
+
+	* src/gossip-chat-view.c: (chat_view_event_cb): Don't set a beam
+	cursor for the text view, just unset the cursor to get the
+	default.
+
+	* src/gossip-chat-window.c: (chat_window_update_status): Plug
+	leaked pixbuf ref.
+
+	* src/gossip-contact-info-dialog.c:
+	(contact_info_dialog_get_version_cb): Remove unused size group.
+
+	* src/gossip-main.c: (main): Plug leak (and don't get the list of
+	accounts when not needed).
+
+	* src/gossip-presence-chooser.c: Plug leak of status strings when
+	using the scrollwheel.
+
 2006-06-20  Martyn Russell  <martyn@imendio.com>
 
 	* peekaboo/data/GNOME_Peekaboo_Applet.server.in.in:

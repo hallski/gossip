@@ -1265,7 +1265,6 @@ app_tray_destroy_cb (GtkWidget *widget,
 	priv->tray_icon = NULL;
 	priv->tray_event_box = NULL;
 	priv->tray_image = NULL;
-	priv->tray_tooltips = NULL;
 
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
@@ -1397,7 +1396,9 @@ app_tray_create (void)
 	gtk_container_add (GTK_CONTAINER (priv->tray_event_box),
 			   priv->tray_image);
 
-	priv->tray_tooltips = gtk_tooltips_new ();
+	if (!priv->tray_tooltips) {
+		priv->tray_tooltips = gtk_tooltips_new ();
+	}
 	
 	gtk_widget_show (priv->tray_event_box);
 	gtk_widget_show (priv->tray_image);

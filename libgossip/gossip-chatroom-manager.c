@@ -332,17 +332,17 @@ gossip_chatroom_manager_get_chatrooms (GossipChatroomManager *manager,
 				       GossipAccount         *account)
 {
 	GossipChatroomManagerPriv *priv;
-	GList                     *chatrooms = NULL;
-	GList                     *l;
+	GList                     *chatrooms, *l;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), NULL);
 
 	priv = GET_PRIV (manager);
 
 	if (!account) {
-		return chatrooms = g_list_copy (priv->chatrooms);
+		return g_list_copy (priv->chatrooms);
 	}	
 
+	chatrooms = NULL;
 	for (l = priv->chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
 		GossipAccount  *this_account;
@@ -378,8 +378,6 @@ gossip_chatroom_manager_get_count (GossipChatroomManager *manager,
 		return g_list_length (priv->chatrooms);
 	}
 
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), 0);
-	
 	for (l = priv->chatrooms; l; l = l->next) {
 		GossipChatroom *chatroom;
 		GossipAccount  *this_account;
@@ -585,8 +583,6 @@ chatroom_manager_get_all (GossipChatroomManager *manager)
 	gchar                     *dir;
 	gchar                     *file_with_path = NULL;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
-
 	priv = GET_PRIV (manager);
 
 	/* Use default if no file specified. */
@@ -744,9 +740,6 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
 	xmlNodePtr                node;
 	gchar                    *str;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
-
 	priv = GET_PRIV (manager);
 	
 	DEBUG_MSG (("ChatroomManager: Attempting to parse file:'%s'...", filename));
@@ -812,8 +805,6 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 	gchar                    *dtd_file;
 	gchar                    *dir;
 	gchar                    *file;
-					
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 
 	priv = GET_PRIV (manager);
 	
@@ -888,8 +879,9 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 	xmlFreeDoc (doc);
 
 	xmlCleanupParser ();
-
 	xmlMemoryDump ();
+
+	g_list_free (chatrooms);
 	
 	g_free (file);
 
@@ -918,8 +910,6 @@ chatroom_manager_protocol_connected_cb (GossipSession         *session,
 {
 	GossipChatroomManagerPriv *priv;
 	GList                     *chatrooms, *l;
-
-	g_return_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager));
 
 	priv = GET_PRIV (manager);
 	
@@ -950,4 +940,6 @@ chatroom_manager_protocol_connected_cb (GossipSession         *session,
 								  chatroom);
 		}
 	}
+
+	g_list_free (chatrooms);
 }

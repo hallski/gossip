@@ -52,7 +52,10 @@ typedef struct {
 
 	guint                flash_timeout_id;
 
+	/* The handle the kind of unnessecary scroll support. */
 	guint                scroll_timeout_id;
+	GossipPresenceState  scroll_state;
+	gchar               *scroll_status;
 } GossipPresenceChooserPriv;
 
 static void     presence_chooser_finalize               (GObject               *object);
@@ -208,6 +211,9 @@ presence_chooser_reset_scroll_timeout (GossipPresenceChooser *chooser)
 		g_source_remove (priv->scroll_timeout_id);
 		priv->scroll_timeout_id = 0;
 	}
+
+	g_free (priv->scroll_status);
+	priv->scroll_status = NULL;
 }
 
 static void
@@ -630,9 +636,8 @@ presence_chooser_button_press_event_cb (GtkWidget      *chooser,
 }
 
 typedef struct {
-	GossipPresenceChooser *chooser;
-	GossipPresenceState    state;
-	gchar                 *status;
+	GossipPresenceState  state;
+	const gchar         *status;
 } StateAndStatus;
 
 static StateAndStatus *
@@ -644,7 +649,7 @@ presence_chooser_state_and_status_new (GossipPresenceState  state,
 	sas = g_new0 (StateAndStatus, 1);
 
 	sas->state = state;
-	sas->status = (gchar *) status;
+	sas->status = status;
 
 	return sas;
 }
@@ -697,20 +702,20 @@ presence_chooser_get_presets (GossipPresenceChooser *chooser)
 }
 
 static gboolean
-presence_chooser_scroll_timeout_cb (StateAndStatus *sas)
+presence_chooser_scroll_timeout_cb (GossipPresenceChooser *chooser)
 {
 	GossipPresenceChooserPriv *priv;
 
-	priv = GET_PRIV (sas->chooser);
+	priv = GET_PRIV (chooser);
 	
-	g_signal_emit (sas->chooser, signals[CHANGED], 0,
-		       sas->state, sas->status);
+	g_signal_emit (chooser, signals[CHANGED], 0,
+		       priv->scroll_state,
+		       priv->scroll_status);
 	
 	priv->scroll_timeout_id = 0;
 
-	g_object_unref (sas->chooser);
-	g_free (sas->status);
-	g_free (sas);
+	g_free (priv->scroll_status);
+	priv->scroll_status = NULL;
 
 	return FALSE;
 }
@@ -769,18 +774,15 @@ presence_chooser_scroll_event_cb (GtkWidget      *chooser,
 	}
 
 	if (sas) {
-		StateAndStatus *sas_copy;
-		
 		presence_chooser_reset_scroll_timeout (GOSSIP_PRESENCE_CHOOSER (chooser));
 
-		sas_copy = presence_chooser_state_and_status_new (
-			sas->state, g_strdup (sas->status));
-		sas_copy->chooser = g_object_ref (chooser);
+		priv->scroll_status = g_strdup (sas->status);
+		priv->scroll_state = sas->state;
 		
 		priv->scroll_timeout_id =
 			g_timeout_add (500,
 				       (GSourceFunc) presence_chooser_scroll_timeout_cb,
-				       sas_copy);
+				       chooser);
 
 		gossip_presence_chooser_set_status (GOSSIP_PRESENCE_CHOOSER (chooser),
 						    sas->status);

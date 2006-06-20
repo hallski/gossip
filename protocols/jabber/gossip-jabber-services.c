@@ -182,7 +182,6 @@ gossip_jabber_services_get_version (LmConnection           *connection,
 	
 	result = lm_connection_send_with_reply (connection, m, handler, error);
 
-
 	lm_message_unref (m);
 	lm_message_handler_unref (handler);
 
