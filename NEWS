@@ -1,12 +1,19 @@
-NEWS in 0.11.3:
-===============
-Cleaned up several memory leaks (Richard).
-Fixed #344637, Popup presence chooser menu on mouse down (Richard).
-Fixed #345000, Don't insert a null group name in the groups list (Richard).
-Fixed #306369, Case fold Jabber IDs (Richard).
-Fixed #339333, Update the Galago support to work with the new 0.5.x
-API, patch by Brian Pepple.
-Fixed #337471, Don't insert tab in private chats when hitting Tab (Richard).
+NEWS in 0.12:
+=============
+- Copious memory leaks quashed by our (now) FULL time uber hacker,
+memory use at an all time low now (Richard).
+- Added Peekaboo, an applet to quickly show chat windows and some of the
+more popular functions of Instant Messaging (Martyn).
+- Remove close button from log window (Richard).
+- Fixed #313177, Use GNOME Network Manager to know about connection
+state and connect/disconnect accordingly (Martyn, Diego González).
+- Fixed #339333, Update the Galago support to work with the new 0.5.x
+API, (patch by Brian Pepple).
+- Fixed #344637, Popup presence chooser menu on mouse down (Richard).
+- Fixed #345000, Don't insert a null group name in the groups list (Richard).
+- Fixed #306369, Case fold Jabber IDs (Richard).
+- Fixed #337471, Don't insert tab in private chats when hitting Tab
+(Richard).
 
 
 NEWS in 0.11.2:

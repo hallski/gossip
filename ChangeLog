@@ -1,3 +1,14 @@
+2006-06-20  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version to 0.12.
+	
+	* src/gossip-app.c: If we have GNOME Network Manager support via
+	dbus, only connect IF we have a connected interface.
+	
+	* src/gossip-dbus.[ch]: Support GNOME Network Manager. We now
+	watch for state changes and disconnect/connect when the interface
+	goes up and down accordingly, fixes #313177 (Diego González).
+
 2006-06-20  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c:

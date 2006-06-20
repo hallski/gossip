@@ -30,4 +30,8 @@
 GQuark   gossip_dbus_error_quark      (void) G_GNUC_CONST;
 gboolean gossip_dbus_init_for_session (GossipSession *session);
 
+/* GNOME Network Manager */
+gboolean gossip_dbus_nm_setup         (void);
+gboolean gossip_dbus_nm_get_state     (gboolean      *connected);
+
 #endif /* __DBUS_H__ */

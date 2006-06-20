@@ -30,6 +30,8 @@
 
 #define GOSSIP_DBUS_ERROR_DOMAIN "GossipDBus"
 
+static void dbus_nm_setup (void);
+
 /* Set up the DBus GObject to use */
 typedef struct GossipDBus GossipDBus;
 typedef struct GossipDBusClass GossipDBusClass;
@@ -44,9 +46,13 @@ struct GossipDBusClass {
 	GObjectClass parent;
 };
 
+#define FREEDESKTOP_DBUS_SERVICE      "org.freedesktop.DBus"
+#define FREEDESKTOP_DBUS_PATH         "/org/freedesktop/DBus"
+#define FREEDESKTOP_DBUS_INTERFACE    "org.freedesktop.DBus"
+
 #define GOSSIP_DBUS_SERVICE           "org.gnome.Gossip"
-#define GOSSIP_DBUS_INTERFACE         "org.gnome.Gossip"
 #define GOSSIP_DBUS_PATH              "/org/gnome/Gossip"
+#define GOSSIP_DBUS_INTERFACE         "org.gnome.Gossip"
 
 #define GOSSIP_TYPE_DBUS              (gossip_dbus_get_type ())
 #define GOSSIP_DBUS(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GOSSIP_TYPE_DBUS, GossipDBus))
@@ -262,9 +268,9 @@ gossip_dbus_init_for_session (GossipSession *session)
 	}
 	
 	bus_proxy = dbus_g_proxy_new_for_name (bus, 
-					       "org.freedesktop.DBus",
-					       "/org/freedesktop/DBus",
-					       "org.freedesktop.DBus");
+					       FREEDESKTOP_DBUS_SERVICE,
+					       FREEDESKTOP_DBUS_PATH,
+					       FREEDESKTOP_DBUS_INTERFACE);
 
 	if (!dbus_g_proxy_call (bus_proxy, "RequestName", &error,
 				G_TYPE_STRING, GOSSIP_DBUS_SERVICE,
@@ -282,5 +288,154 @@ gossip_dbus_init_for_session (GossipSession *session)
 	
 	gossip_debug (DEBUG_DOMAIN, "Service running");
 
+	/* Set up GNOME Netwrk Manager if available */
+	dbus_nm_setup ();
+
+	return TRUE;
+}
+
+/*
+ * GNOME Network Manager
+ */
+
+#define NM_DBUS_SERVICE   "org.freedesktop.NetworkManager"
+#define NM_DBUS_PATH      "/org/freedesktop/NetworkManager"
+#define NM_DBUS_INTERFACE "org.freedesktop.NetworkManager"
+
+typedef enum NMState {
+	NM_STATE_UNKNOWN = 0,
+	NM_STATE_ASLEEP,
+	NM_STATE_CONNECTING,
+	NM_STATE_CONNECTED,
+	NM_STATE_DISCONNECTED
+} NMState;
+
+static const gchar *
+dbus_nm_state_to_string (guint32 state)
+{
+	switch (state) {
+	case NM_STATE_ASLEEP:
+		return "asleep";
+	case NM_STATE_CONNECTING:   
+		return "connecting";
+	case NM_STATE_CONNECTED:    
+		return "connected";
+	case NM_STATE_DISCONNECTED: 
+		return "disconnected";
+	case NM_STATE_UNKNOWN:
+	default:                    
+		return "unknown";
+	}
+}
+
+static void
+dbus_nm_state_cb (DBusGProxy *proxy, 
+		  guint       state,
+		  gpointer    user_data) 
+{
+	gossip_debug (DEBUG_DOMAIN, "New network state:'%s'", 
+		      dbus_nm_state_to_string (state));
+
+	switch (state) {
+	case NM_STATE_ASLEEP:
+	case NM_STATE_DISCONNECTED:
+	case NM_STATE_UNKNOWN:
+		gossip_app_net_down ();
+		break;
+	case NM_STATE_CONNECTED:
+		gossip_app_net_up ();
+		break;
+	default:
+		break;
+	}
+}
+
+static void
+dbus_nm_setup (void)
+{
+	DBusGConnection *bus;
+	DBusGProxy      *remote_object;
+	GError          *error = NULL;
+
+	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, &error);
+	if (!bus) {
+		g_warning ("Could not connect to system bus");
+		return;
+	}
+	
+	remote_object = dbus_g_proxy_new_for_name (bus, 
+						   NM_DBUS_SERVICE, 
+						   NM_DBUS_PATH, 
+						   NM_DBUS_INTERFACE);
+
+	if (!remote_object) {
+		g_warning ("Could not connect to Network Manager");
+		return;
+	}
+
+	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT, 
+					   G_TYPE_NONE, G_TYPE_UINT, G_TYPE_INVALID);
+
+	/* Tell DBus what the type signature of the signal callback is; this
+	 * allows us to sanity-check incoming messages before invoking the
+	 * callback.  You need to do this once for each proxy you create,
+	 * not every time you want to connect to the signal.
+	 */
+	dbus_g_proxy_add_signal (remote_object, "StateChange",
+				 G_TYPE_UINT, G_TYPE_INVALID);
+
+	/* Actually connect to the signal. Note you can call
+	 * dbus_g_proxy_connect_signal multiple times for one invocation of
+	 * dbus_g_proxy_add_signal.
+	 */
+	dbus_g_proxy_connect_signal (remote_object, "StateChange", 
+				     G_CALLBACK (dbus_nm_state_cb),
+				     NULL, NULL);
+
+	/* FIXME: When do we unref the remote object? */
+} 
+
+gboolean 
+gossip_dbus_nm_get_state (gboolean *connected)
+{
+	DBusGConnection *bus;
+	DBusGProxy      *remote_object;
+	GError          *error = NULL;
+	guint32          state;
+	
+	g_return_val_if_fail (connected != NULL, FALSE);
+
+	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, &error);
+	if (!bus) {
+		g_warning ("Could not connect to system bus");
+		return FALSE;
+	}
+	
+	remote_object = dbus_g_proxy_new_for_name (bus, 
+						   NM_DBUS_SERVICE, 
+						   NM_DBUS_PATH, 
+						   NM_DBUS_INTERFACE);
+
+	if (!remote_object) {
+		g_warning ("Could not connect to Network Manager");
+		return FALSE;
+	}
+	
+	if (!dbus_g_proxy_call (remote_object, "state", &error,
+				G_TYPE_INVALID, 
+				G_TYPE_UINT, &state, G_TYPE_INVALID)) {
+		g_warning ("Failed to complete 'state' request. %s", 
+			   error->message);
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Current network state:'%s'", 
+		      dbus_nm_state_to_string (state));
+
+	if (connected) {
+		*connected = state == NM_STATE_CONNECTED;
+	}
+
+  	g_object_unref (remote_object);
+	
 	return TRUE;
 }

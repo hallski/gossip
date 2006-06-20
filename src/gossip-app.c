@@ -1610,6 +1610,7 @@ gossip_app_connect (GossipAccount *account,
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
+	gboolean              connected = TRUE;
 
 	priv = GET_PRIV (app);
 
@@ -1637,7 +1638,14 @@ gossip_app_connect (GossipAccount *account,
 		gtk_widget_show (dialog);
 		return;
 	}
-	
+
+	/* Don't try to automatically connect if we have Network
+	 * Manager state and we are NOT connected.
+	 */
+	if (gossip_dbus_nm_get_state (&connected) && !connected) {
+		return;
+	}
+
 	gossip_session_connect (priv->session, account, startup);
 }
 
