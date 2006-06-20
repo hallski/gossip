@@ -1438,7 +1438,6 @@ app_tray_update_tooltip (void)
 
 	if (!priv->tray_flash_icons) {
 		const gchar *status;
-		gchar       *str;
 
 		if (gossip_app_is_connected ()) {
 			GossipPresence      *presence;
@@ -1455,10 +1454,8 @@ app_tray_update_tooltip (void)
 			status = _("Disconnected");
 		}
 
-		str = g_strdup_printf ("%s - %s", PACKAGE_NAME, status);
 		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tray_tooltips),
-				      priv->tray_event_box, str, str);
-		g_free (str);
+				      priv->tray_event_box, status, status);
 
 		return;
 	}
