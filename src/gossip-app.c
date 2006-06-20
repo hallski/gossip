@@ -1632,7 +1632,9 @@ gossip_app_connect (GossipAccount *account,
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
+#ifdef HAVE_DBUS	
 	gboolean              connected = TRUE;
+#endif
 
 	priv = GET_PRIV (app);
 
