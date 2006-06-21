@@ -1,5 +1,13 @@
 2006-06-21  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-private-chat.c (private_chat_finalize): Free the name
+	and resources.
+
+	* protocols/jabber/gossip-jabber.c (jabber_message_handler): Get
+	the name from the resource of the sender for group chat
+	messages. This makes priv chats from group chats have the right
+	sender name, fixes bug #319713.
+
 	* src/gossip-contact-list.c: (contact_list_search_equal_func),
 	(contact_list_setup_view): Setup a search function so that the
 	typehead search actually does something.

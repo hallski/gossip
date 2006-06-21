@@ -2355,6 +2355,26 @@ jabber_message_handler (LmMessageHandler *handler,
 	message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
 				      priv->contact);
 
+	/* To make the sender right in private chat messages sent from
+	 * groupchats, we take the name from the resource, which carries the
+	 * nick for those messages.
+	 */
+	if (gossip_jabber_chatrooms_get_jid_is_chatroom (priv->chatrooms,
+							 from_str)) {
+		GossipJID   *jid;
+		const gchar *resource;
+
+		jid = gossip_jid_new (from_str);
+		resource = gossip_jid_get_resource (jid);
+		if (!resource) {
+			resource = "";
+		}
+		
+		gossip_contact_set_name (from, resource);
+
+		gossip_jid_unref (jid);
+	}
+		
 	gossip_message_set_sender (message, from);
 	gossip_message_set_body (message, body);
 

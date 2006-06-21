@@ -42,7 +42,8 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
 
 #define DEBUG_DOMAIN "PrivateChat"
 
@@ -202,6 +203,10 @@ private_chat_finalize (GObject *object)
 	if (priv->scroll_idle_id) {
 		g_source_remove (priv->scroll_idle_id);
 	}
+
+	g_free (priv->name);
+	g_free (priv->locked_resource);
+	g_free (priv->roster_resource);
 	
 	private_chat_composing_remove_timeout (chat);
 	
@@ -728,13 +733,11 @@ private_chat_other_avatar_notify_cb (GossipContact     *contact,
 static const gchar *
 private_chat_get_name (GossipChat *chat)
 {
-	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
-	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv = GET_PRIV (p_chat);
+	priv = GET_PRIV (chat);
 
 	return priv->name;
 }
@@ -742,15 +745,13 @@ private_chat_get_name (GossipChat *chat)
 static gchar *
 private_chat_get_tooltip (GossipChat *chat)
 {
-	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 	GossipContact         *contact;
 	const gchar           *status;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
-	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv = GET_PRIV (p_chat);
+	priv = GET_PRIV (chat);
 
 	contact = gossip_chat_get_contact (chat);
 	status = gossip_contact_get_status (contact);
@@ -763,14 +764,12 @@ private_chat_get_tooltip (GossipChat *chat)
 GdkPixbuf *
 private_chat_get_status_pixbuf (GossipChat *chat)
 {
-	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 	GossipContact         *contact;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
-	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv = GET_PRIV (p_chat);
+	priv = GET_PRIV (chat);
 
 	contact = gossip_chat_get_contact (chat);
 
@@ -780,13 +779,11 @@ private_chat_get_status_pixbuf (GossipChat *chat)
 static GossipContact *
 private_chat_get_contact (GossipChat *chat)
 {
-	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
-	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv = GET_PRIV (p_chat);
+	priv = GET_PRIV (chat);
 
 	return priv->contact;
 }
@@ -794,13 +791,11 @@ private_chat_get_contact (GossipChat *chat)
 static GossipContact *
 private_chat_get_own_contact (GossipChat *chat)
 {
-	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), NULL);
 
-	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv = GET_PRIV (p_chat);
+	priv = GET_PRIV (chat);
 
 	return priv->own_contact;
 }
@@ -808,11 +803,9 @@ private_chat_get_own_contact (GossipChat *chat)
 static GtkWidget *
 private_chat_get_widget (GossipChat *chat)
 {
-	GossipPrivateChat     *p_chat;
 	GossipPrivateChatPriv *priv;
 
-	p_chat = GOSSIP_PRIVATE_CHAT (chat);
-	priv = GET_PRIV (p_chat);
+	priv = GET_PRIV (chat);
 
 	return priv->widget;
 }
