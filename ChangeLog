@@ -1,5 +1,23 @@
 2006-06-21  Martyn Russell  <martyn@imendio.com>
 
+	* help/C/figures/gossip-available.png:
+	* help/C/figures/gossip-away.png:
+	* help/C/figures/gossip-busy.png:
+	* help/C/figures/gossip-extended-away.png:
+	* help/C/figures/gossip-group-message.png:
+	* help/C/figures/gossip-message.png:
+	* help/C/figures/gossip-offline.png:
+	* help/C/figures/gossip-typing.png:
+	* help/C/figures/gossip_new_chat_room.png:
+	* help/C/figures/gossip_personal_details.png:
+	* help/C/figures/gossip_roster.png:
+	* help/C/figures/gossip_status_message.png:
+	* help/C/gossip.xml:
+	* help/Makefile.am: Update help documentation, fixes #345492 
+	(patch by Brian Pepple, Keywan Najafi Tonekaboni).
+
+2006-06-21  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Make dbus support automatic by default instead of
 	disabled.
 

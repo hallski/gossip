@@ -19,6 +19,7 @@ API, (patch by Brian Pepple).
 (Martyn). 
 - Fixed #345465, Don't call Network Manager DBus functions without
 DBus support (Martyn).
+- Fixed #345492, Updated the help documentation, patch by Brian Pepple, Keywan Najafi Tonekaboni.
 
 
 NEWS in 0.11.2:
