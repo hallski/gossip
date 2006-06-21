@@ -27,6 +27,7 @@
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
@@ -44,10 +45,9 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatPriv))
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
-
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
+
+#define DEBUG_DOMAIN "GroupChat"
 
 struct _GossipGroupChatPriv {
 	GossipContact          *own_contact;
@@ -815,7 +815,7 @@ group_chat_joined_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	DEBUG_MSG (("GroupChat: [%d] Joined", id));
+	gossip_debug (DEBUG_DOMAIN, "[%d] Joined", id);
 
 	chatview = GOSSIP_CHAT (chat)->view;
 
@@ -848,7 +848,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	DEBUG_MSG (("GroupChat: [%d] New message", id));
+	gossip_debug (DEBUG_DOMAIN, "[%d] New message", id);
 
 	invite = gossip_message_get_invite (message);
 	if (invite) {
@@ -899,7 +899,7 @@ group_chat_new_event_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	DEBUG_MSG (("GroupChat: [%d] New event:'%s'", id, event));
+	gossip_debug (DEBUG_DOMAIN, "[%d] New event:'%s'", id, event);
 
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
 }
@@ -921,8 +921,8 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	DEBUG_MSG (("GroupChat: [%d] Topic changed by:'%s' to:'%s'", 
-		    id, gossip_contact_get_id (who), new_topic));
+	gossip_debug (DEBUG_DOMAIN, "[%d] Topic changed by:'%s' to:'%s'", 
+		      id, gossip_contact_get_id (who), new_topic);
 	
 	gtk_entry_set_text (GTK_ENTRY (priv->topic_entry), new_topic);
 	
@@ -952,8 +952,8 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	DEBUG_MSG (("GroupChat: [%d] Contact joined:'%s'", 
-		    id, gossip_contact_get_id (contact)));
+	gossip_debug (DEBUG_DOMAIN, "[%d] Contact joined:'%s'", 
+		      id, gossip_contact_get_id (contact));
 
 	pixbuf = gossip_pixbuf_for_contact (contact);
 	
@@ -986,8 +986,8 @@ group_chat_contact_left_cb (GossipChatroomProvider *provider,
 		return;
 	}
 
-	DEBUG_MSG (("GroupChat: [%d] Contact left:'%s'", 
-		    id, gossip_contact_get_id (contact)));
+	gossip_debug (DEBUG_DOMAIN, "[%d] Contact left:'%s'", 
+		      id, gossip_contact_get_id (contact));
 	
 	if (group_chat_contacts_find (chat, contact, &iter)) {
 		GtkTreeModel *model;
@@ -1012,6 +1012,9 @@ group_chat_contact_presence_updated_cb (GossipChatroomProvider *provider,
 	if (priv->chatroom_id != id) {
 		return;
 	}
+
+	gossip_debug (DEBUG_DOMAIN, "[%d] Contact Presence Updated:'%s'", 
+		      id, gossip_contact_get_id (contact));
 
 	if (group_chat_contacts_find (chat, contact, &iter)) {
 		GdkPixbuf    *pixbuf;

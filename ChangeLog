@@ -1,3 +1,13 @@
+2006-06-21  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-group-chat.c: Move these files to gossip_debug.
+
+	* protocols/jabber/gossip-jabber.c: Make sure we set our presence
+	in chatrooms.
+	
+
 2006-06-21  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-private-chat.c (private_chat_finalize): Free the name

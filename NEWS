@@ -6,6 +6,8 @@ memory use at an all time low now (Richard).
 more popular functions of Instant Messaging (Martyn).
 - Remove close button from log window (Richard).
 - Show avatars in chat views (Richard, Martyn).
+- Make sure we set our own presence in chatrooms, not just on the
+roster (Martyn).
 - Fixed #313177, Use GNOME Network Manager to know about connection
 state and connect/disconnect accordingly (Martyn).
 - Fixed #339333, Update the Galago support to work with the new 0.5.x
@@ -19,8 +21,11 @@ API, (patch by Brian Pepple).
 (Martyn). 
 - Fixed #345465, Don't call Network Manager DBus functions without
 DBus support (Martyn).
-- Fixed #345492, Updated the help documentation, patch by Brian Pepple, Keywan Najafi Tonekaboni.
-- Fixed #319713, Priv chats started from group chats show the wrong contact name.
+- Fixed #345492, Updated the help documentation, (patch by Brian
+Pepple, Keywan Najafi Tonekaboni).
+- Fixed #319713, Private chats started from group chats show the wrong
+contact name (Richard).
+
 
 NEWS in 0.11.2:
 ===============
