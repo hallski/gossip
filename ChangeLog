@@ -1,5 +1,12 @@
 2006-06-21  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chatrooms-window.c:
+	(chatrooms_window_row_activated_cb): - Fixed #343687, Don't allow
+	joining group chats already open by double clicking on the chat
+	room in the join window, fixes #343687 (Kristian Rietveld). 
+
+2006-06-21  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber-chatrooms.c:
 	* protocols/jabber/gossip-jabber.c:
 	* src/gossip-group-chat.c: Move these files to gossip_debug.

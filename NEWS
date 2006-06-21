@@ -25,6 +25,8 @@ DBus support (Martyn).
 Pepple, Keywan Najafi Tonekaboni).
 - Fixed #319713, Private chats started from group chats show the wrong
 contact name (Richard).
+- Fixed #343687, Don't allow joining group chats already open by
+double clicking on the chat room in the join window (Martyn).
 
 
 NEWS in 0.11.2:
