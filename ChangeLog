@@ -1,3 +1,9 @@
+2006-06-21  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c: (contact_list_search_equal_func),
+	(contact_list_setup_view): Setup a search function so that the
+	typehead search actually does something.
+
 2006-06-21  Martyn Russell  <martyn@imendio.com>
 
 	* help/C/figures/gossip-available.png:

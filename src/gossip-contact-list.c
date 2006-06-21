@@ -169,6 +169,11 @@ static void     contact_list_add_contact                 (GossipContactList  *li
 static void     contact_list_remove_contact              (GossipContactList  *list,
 							  GossipContact      *contact);
 static void     contact_list_create_model                (GossipContactList  *list);
+static gboolean contact_list_search_equal_func           (GtkTreeModel       *model,
+							  gint                column,
+							  const gchar        *key,
+							  GtkTreeIter        *iter,
+							  gpointer            search_data);
 static void     contact_list_setup_view                  (GossipContactList  *list);
 static void     contact_list_drag_data_received          (GtkWidget          *widget,
 							  GdkDragContext     *context,
@@ -512,7 +517,7 @@ gossip_contact_list_init (GossipContactList *list)
 				       G_N_ELEMENTS (group_menu_items),
 				       group_menu_items,
 				       list);
-        
+	
         /* Signal connection. */
 	g_signal_connect (gossip_app_get_session (),
 			  "connected",
@@ -1337,12 +1342,48 @@ contact_list_create_model (GossipContactList *list)
 	gtk_tree_view_set_model (GTK_TREE_VIEW (list), model);
 }
 
+static gboolean
+contact_list_search_equal_func (GtkTreeModel *model,
+				gint          column,
+				const gchar  *key,
+				GtkTreeIter  *iter,
+				gpointer      search_data)
+{
+	gchar    *name, *name_folded;
+	gchar    *key_folded;
+	gboolean  ret;
+
+	gtk_tree_model_get (model, iter,
+			    COL_NAME, &name,
+			    -1);
+
+	name_folded = g_utf8_casefold (name, -1);
+	key_folded = g_utf8_casefold (key, -1);
+	
+	if (strstr (name_folded, key_folded)) {
+		ret = FALSE;
+	} else {
+		ret = TRUE;
+	}
+
+	g_free (name);
+	g_free (name_folded);
+	g_free (key_folded);
+	
+	return ret;
+}
+	
 static void 
 contact_list_setup_view (GossipContactList *list)
 {
 	GtkCellRenderer   *cell;
 	GtkTreeViewColumn *col;
 	gint               i;
+
+	gtk_tree_view_set_search_equal_func (GTK_TREE_VIEW (list),
+					     contact_list_search_equal_func,
+					     list,
+					     NULL);
 
 	g_object_set (list, 
 		      "headers-visible", FALSE,
