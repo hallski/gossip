@@ -1868,7 +1868,10 @@ gossip_app_net_up (void)
 
 	/* Connect all that went down before */
 	if (!tmp_account_list) {
-		/* Nothing to connect */
+		/* If no previous disconnect then we just 
+		 * connect the default connect on startup accounts
+		 */
+		gossip_app_connect (NULL, TRUE);
 		return;
 	}
 

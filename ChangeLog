@@ -1,5 +1,13 @@
 2006-06-22  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: (gossip_app_net_up): If there are no accounts from
+	the network being down the last time, just connect as if we are
+	starting Gossip for the first time, i.e. autoconnect accounts get
+	connected. This means Gossip should connect when starting the computer
+	once the network is available.
+
+2006-06-22  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.c: Cleverly connect accounts based on
 	auto-connect setting and if ALL accounts have the same value. This
 	way we don't need an "Enable" option per account and it works
