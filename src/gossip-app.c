@@ -317,7 +317,7 @@ static void            app_presence_chooser_changed_cb      (GtkWidget          
 							     GossipPresenceState       state,
 							     const gchar              *status,
 							     gpointer                  user_data);
-static gboolean        configure_event_idle_cb              (GtkWidget                *widget);
+static gboolean        configure_event_timeout_cb           (GtkWidget                *widget);
 static gboolean        app_window_configure_event_cb        (GtkWidget                *widget,
 							     GdkEventConfigure        *event,
 							     GossipApp                *app);
@@ -664,7 +664,7 @@ app_setup (GossipAccountManager *manager)
         gtk_widget_show (priv->throbber);
 
         item = gtk_tool_item_new ();
-        gtk_container_add (GTK_CONTAINER (item), priv->throbber);
+	gtk_container_add (GTK_CONTAINER (item), priv->throbber);
         gtk_widget_show (GTK_WIDGET (item));
 
         gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
@@ -1373,6 +1373,18 @@ gossip_app_toggle_visibility (void)
 	visible = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 
 	if (visible && app_have_tray()) {
+		gint x, y, w, h;
+
+		gtk_window_get_size (GTK_WINDOW (priv->window), &w, &h);
+		gtk_window_get_position (GTK_WINDOW (priv->window), &x, &y);
+		
+		gossip_geometry_save_for_main_window (x, y, w, h);
+
+		if (priv->size_timeout_id) {
+			g_source_remove (priv->size_timeout_id);
+			priv->size_timeout_id = 0;
+		}
+
 		gtk_widget_hide (priv->window);
 		
 		gconf_client_set_bool (priv->gconf_client, 
@@ -2656,7 +2668,7 @@ app_presence_chooser_changed_cb (GtkWidget           *chooser,
 }
 
 static gboolean
-configure_event_idle_cb (GtkWidget *widget)
+configure_event_timeout_cb (GtkWidget *widget)
 {
 	GossipAppPriv *priv;
 	gint           x, y, w, h;
@@ -2686,8 +2698,8 @@ app_window_configure_event_cb (GtkWidget         *widget,
 		g_source_remove (priv->size_timeout_id);
 	}
 	
-	priv->size_timeout_id = g_timeout_add (1000,
-					       (GSourceFunc) configure_event_idle_cb,
+	priv->size_timeout_id = g_timeout_add (500,
+					       (GSourceFunc) configure_event_timeout_cb,
 					       widget);
 
 	return FALSE;

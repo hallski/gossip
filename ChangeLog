@@ -1,5 +1,12 @@
 2006-06-22  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (gossip_app_toggle_visibility),
+	(configure_event_timeout_cb), (app_window_configure_event_cb):
+	Half the time of the timeout used when saving the contact list
+	geometry and also save right before hiding. Fixes bug #345636.
+
+2006-06-22  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-private-chat.c: (gossip_private_chat_init),
 	(private_chat_protocol_connected_cb),
 	(private_chat_protocol_disconnected_cb): Use the per protocol
