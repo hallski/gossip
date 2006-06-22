@@ -1,5 +1,21 @@
 2006-06-22  Richard Hult  <richard@imendio.com>
 
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.c: Add warning flags and fix a
+	couple of warnings.
+	- Use size-allocate to get the right size, the one provided by the
+	applet API doesn't seem to do the trick.
+
+	* peekaboo/src/peekaboo-dbus.c: Fix a few warnings.
+
+	* protocols/jabber/gossip-jabber-chatrooms.c
+	(gossip_jabber_chatrooms_leave, gossip_jabber_chatrooms_cancel):
+	Remove g_warning about unknown chatroom because it will happen if
+	we reconnect and close an old window for example.
+	- Remove unneccesary casts.
+
+2006-06-22  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-group-chat.c (group_chat_get_status_pixbuf): Handle
 	the case when a chatroom can't be found.
 

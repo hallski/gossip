@@ -802,7 +802,6 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 	room = g_hash_table_lookup (chatrooms->room_id_hash, 
 				    GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
@@ -849,8 +848,8 @@ gossip_jabber_chatrooms_send (GossipJabberChatrooms *chatrooms,
 	g_return_if_fail (chatrooms != NULL);
 	g_return_if_fail (message != NULL);
 
-	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
-						      GINT_TO_POINTER (id));
+	room = g_hash_table_lookup (chatrooms->room_id_hash, 
+				    GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
@@ -879,8 +878,8 @@ gossip_jabber_chatrooms_change_topic (GossipJabberChatrooms *chatrooms,
 	g_return_if_fail (chatrooms != NULL);
 	g_return_if_fail (new_topic != NULL);
 
-	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
-						      GINT_TO_POINTER (id));
+	room = g_hash_table_lookup (chatrooms->room_id_hash, 
+				    GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
@@ -912,8 +911,8 @@ gossip_jabber_chatrooms_change_nick (GossipJabberChatrooms *chatrooms,
 	g_return_if_fail (chatrooms != NULL);
 	g_return_if_fail (new_nick != NULL);
 
-	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
-						      GINT_TO_POINTER (id));
+	room = g_hash_table_lookup (chatrooms->room_id_hash, 
+				    GINT_TO_POINTER (id));
 	if (!room) {
 		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
@@ -940,10 +939,9 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 
 	g_return_if_fail (chatrooms != NULL);
 
-	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
-						      GINT_TO_POINTER (id));
+	room = g_hash_table_lookup (chatrooms->room_id_hash, 
+				    GINT_TO_POINTER (id));
 	if (!room) {
-		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);
 		return;
 	}
 
@@ -976,8 +974,8 @@ gossip_jabber_chatrooms_find (GossipJabberChatrooms *chatrooms,
 
 	g_return_val_if_fail (chatrooms != NULL, NULL);
 
-	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash,
-						      GINT_TO_POINTER (id));
+	room = g_hash_table_lookup (chatrooms->room_id_hash,
+				    GINT_TO_POINTER (id));
 	if (!room) {
 		return NULL;
 	}
@@ -999,8 +997,8 @@ gossip_jabber_chatrooms_invite (GossipJabberChatrooms *chatrooms,
 	g_return_if_fail (chatrooms != NULL);
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
-	room = (JabberChatroom*) g_hash_table_lookup (chatrooms->room_id_hash, 
-						      GINT_TO_POINTER (id));
+	room = g_hash_table_lookup (chatrooms->room_id_hash, 
+				    GINT_TO_POINTER (id));
 
 	if (!room) {
 		g_warning ("ProtocolChatrooms: Unknown chatroom id: %d", id);

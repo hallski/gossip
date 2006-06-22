@@ -3,7 +3,7 @@ INCLUDES = 							\
 	-DPKGDATADIR=\""$(pkgdatadir)"\"	 		\
 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" 	\
 	-DIMAGEDIR=\"$(datadir)/gossip\"			\
-	$(PEEKABOO_CFLAGS)
+	$(PEEKABOO_CFLAGS) $(WARN_CFLAGS)
 
 libexec_PROGRAMS = peekaboo-applet
 peekaboo_applet_SOURCES = 					\

@@ -42,7 +42,7 @@ peekaboo_dbus_get_roster_visible (void)
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
 		g_warning ("Could not connect to session bus");
-		return;
+		return FALSE;
 	}
 	
 	remote_object = dbus_g_proxy_new_for_name (bus,
@@ -73,7 +73,7 @@ peekaboo_dbus_get_open_chats (void)
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
 		g_warning ("Could not connect to session bus");
-		return;
+		return NULL;;
 	}
 	
 	remote_object = dbus_g_proxy_new_for_name (bus,
@@ -88,7 +88,7 @@ peekaboo_dbus_get_open_chats (void)
 			   error->message);
 	}
 	
-  	g_object_unref (G_OBJECT (remote_object));
+  	g_object_unref (remote_object);
 
 	return chats;
 }
@@ -118,7 +118,7 @@ peekaboo_dbus_send_message (const gchar *contact_id)
 			   error->message);
 	}
 	
-  	g_object_unref (G_OBJECT (remote_object));
+  	g_object_unref (remote_object);
 }
 
 void

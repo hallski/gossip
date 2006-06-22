@@ -54,9 +54,9 @@ static void applet_about_cb         (BonoboUIComponent *uic,
 				     const gchar       *verb_name);
 
 static const BonoboUIVerb applet_menu_verbs [] = {
-	BONOBO_UI_VERB ("toggle_roster", applet_toggle_roster_cb),
-	BONOBO_UI_VERB ("preferences", applet_preferences_cb),
-	BONOBO_UI_VERB ("about", applet_about_cb),
+	BONOBO_UI_UNSAFE_VERB ("toggle_roster", applet_toggle_roster_cb),
+	BONOBO_UI_UNSAFE_VERB ("preferences", applet_preferences_cb),
+	BONOBO_UI_UNSAFE_VERB ("about", applet_about_cb),
 	BONOBO_UI_VERB_END
 };
 
@@ -300,11 +300,22 @@ applet_button_press_event_cb (GtkWidget      *widget,
 }
 
 static void
-applet_change_size_cb (PanelApplet    *widget, 
-		       gint            size, 
-		       PeekabooApplet *applet)
+applet_size_allocate_cb (GtkWidget      *widget,
+			 GtkAllocation  *allocation,
+			 PeekabooApplet *applet)
 {
-	gtk_image_set_pixel_size (GTK_IMAGE (applet->image), size);
+        gint              size;
+	PanelAppletOrient orient;
+	
+	orient = panel_applet_get_orient (PANEL_APPLET (widget));
+        if (orient == PANEL_APPLET_ORIENT_LEFT ||
+            orient == PANEL_APPLET_ORIENT_RIGHT) {
+                size = allocation->width;
+        } else {
+                size = allocation->height;
+        }
+
+        gtk_image_set_pixel_size (GTK_IMAGE (applet->image), size - 2);
 }
 
 static void
@@ -336,8 +347,6 @@ applet_new (PanelApplet *parent_applet)
 	gtk_image_set_from_icon_name (GTK_IMAGE (applet->image),
 				      "gossip",
 				      GTK_ICON_SIZE_INVALID);
-	gtk_image_set_pixel_size (GTK_IMAGE (applet->image), 
-				  panel_applet_get_size (parent_applet) - 2);
 	gtk_widget_show (applet->image);
 
 	applet->entry = gtk_entry_new ();
@@ -365,13 +374,13 @@ applet_new (PanelApplet *parent_applet)
 					   applet);                               
 
 	gtk_widget_show (applet->applet_widget);
-  
-	g_signal_connect (GTK_OBJECT (applet->applet_widget), 
+
+	g_signal_connect (applet->applet_widget,
 			  "button_press_event",
 			  G_CALLBACK (applet_button_press_event_cb), applet);
-	g_signal_connect (G_OBJECT (applet->applet_widget), 
-			  "change_size",
-			  G_CALLBACK (applet_change_size_cb), applet);
+	g_signal_connect (applet->applet_widget,
+			  "size_allocate",
+			  G_CALLBACK (applet_size_allocate_cb), applet);
 	g_signal_connect (panel_applet_get_control (PANEL_APPLET (applet->applet_widget)), 
 			  "destroy",
 			  G_CALLBACK (applet_destroy_cb), applet);
