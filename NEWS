@@ -28,6 +28,8 @@ Pepple, Keywan Najafi Tonekaboni).
 contact name (Richard).
 - Fixed #343687, Don't allow joining group chats already open by
 double clicking on the chat room in the join window (Martyn).
+- Fixed #345657, Initialise the errors hash table in gossip_app_init()
+so we don't crash trying to use it (Martyn).
 
 
 NEWS in 0.11.2:

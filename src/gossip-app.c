@@ -368,6 +368,10 @@ gossip_app_init (GossipApp *singleton_app)
 
 	priv = GET_PRIV (app);
 
+	priv->errors = g_hash_table_new_full (gossip_account_hash,
+					      gossip_account_equal,
+					      g_object_unref,
+					      (GDestroyNotify) gtk_widget_destroy);
 	priv->tooltips = gtk_tooltips_new ();
 	g_object_ref_sink (priv->tooltips);
 }
@@ -394,6 +398,10 @@ app_finalize (GObject *object)
 	g_list_free (priv->widgets_disconnected);
 
 	manager = gossip_session_get_account_manager (priv->session);
+
+	if (priv->errors) {
+		g_hash_table_destroy (priv->errors);
+	}
 	
 	if (priv->tooltips) {
 		g_object_unref (priv->tooltips);
@@ -2041,13 +2049,6 @@ app_accounts_error_display (GossipAccount *account,
 
 	priv = GET_PRIV (app);
 
-	if (!priv->errors) {
-		priv->errors = g_hash_table_new_full (gossip_account_hash,
-						      gossip_account_equal,
-						      g_object_unref,
-						      (GDestroyNotify) gtk_widget_destroy);
-	}
-	
 	child = g_hash_table_lookup (priv->errors, account);
 	if (child) {
 		label = g_object_get_data (G_OBJECT (child), "label");
