@@ -1,3 +1,8 @@
+2006-06-22  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-group-chat.c (group_chat_get_status_pixbuf): Handle
+	the case when a chatroom can't be found.
+
 2006-06-22  Martyn Russell  <martyn@imendio.com>
 
 	* help/C/gossip.xml:

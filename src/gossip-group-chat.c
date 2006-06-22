@@ -1283,7 +1283,9 @@ group_chat_get_status_pixbuf (GossipChat *chat)
  	priv = GET_PRIV (group_chat); 
 
  	chatroom = gossip_chatroom_provider_find (priv->chatroom_provider, priv->chatroom_id);
-	pixbuf = gossip_pixbuf_for_chatroom_status (chatroom, GTK_ICON_SIZE_MENU);
+	if (chatroom) {
+		pixbuf = gossip_pixbuf_for_chatroom_status (chatroom, GTK_ICON_SIZE_MENU);
+	}
 
 	if (!pixbuf) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_GROUP_MESSAGE,
