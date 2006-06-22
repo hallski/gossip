@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "libgossip-marshal.h"
+#include "gossip-debug.h"
 #include "gossip-session.h"
 
 #define DEBUG_DOMAIN "Session"
