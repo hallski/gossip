@@ -18,7 +18,7 @@ AM_CPPFLAGS =	                                 	\
 dbus_binding_sources = gossip-dbus.xml
 
 gossip-dbus-glue.h: $(dbus_binding_sources)
-	$(LIBTOOL) --mode=execute $(DBUSBINDINGTOOL) --prefix=gossip_dbus --mode=glib-server --output=gossip-dbus-glue.h $(dbus_binding_sources)
+	$(LIBTOOL) --mode=execute $(DBUSBINDINGTOOL) --prefix=gossip_dbus --mode=glib-server --output=gossip-dbus-glue.h $(srcdir)/$(dbus_binding_sources)
 
 if HAVE_DBUS
 dbus_sources =									\

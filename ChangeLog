@@ -1,5 +1,10 @@
 2006-06-22  Martyn Russell  <martyn@imendio.com>
 
+	* help/C/gossip.xml:
+	* src/Makefile.am: Fixed make dist check errors.
+
+2006-06-22  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-session.[ch]: Added a "connecting" counter.
 
 	* src/gossip-throbber.[ch]: Taken from Nautilus and cleaned up.
