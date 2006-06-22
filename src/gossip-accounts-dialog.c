@@ -72,8 +72,7 @@ typedef struct {
 static void           accounts_dialog_setup                     (GossipAccountsDialog  *dialog);
 static void           accounts_dialog_update_connect_button     (GossipAccountsDialog  *dialog);
 static void           accounts_dialog_update_account            (GossipAccountsDialog  *dialog,
-								 GossipAccount         *account);
-static void           accounts_dialog_block_widgets             (GossipAccountsDialog  *dialog,
+								 GossipAccount         *account);   static void           accounts_dialog_block_widgets             (GossipAccountsDialog  *dialog,
 								 gboolean               block);
 static void           accounts_dialog_save                      (GossipAccountsDialog  *dialog,
 								 GossipAccount         *account);
@@ -104,6 +103,10 @@ static void           accounts_dialog_account_removed_cb        (GossipAccountMa
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_account_name_changed_cb   (GossipAccount         *account,
 								 GParamSpec            *param,
+								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_protocol_connecting_cb    (GossipSession         *session,
+								 GossipAccount         *account,
+								 GossipProtocol        *protocol,
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_protocol_connected_cb     (GossipSession         *session,
 								 GossipAccount         *account,
@@ -148,6 +151,7 @@ enum {
 	COL_EDITABLE,
 	COL_DEFAULT,
 	COL_CONNECTED, 
+	COL_CONNECTING, 
 	COL_AUTO_CONNECT,
 	COL_ACCOUNT_POINTER,
 	COL_COUNT
@@ -223,6 +227,7 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 	const gchar      *stock_id;
 	const gchar      *label;
 	gboolean          is_connected;
+	gboolean          is_connecting;
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -231,17 +236,25 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 		return;
 	}
 
-	gtk_tree_model_get (model, &iter, COL_CONNECTED, &is_connected, -1);
-	
-	/* The stock items are not defined correctly in GTK+ so we do it
-	 * ourselves (#318939). 
-	 */
-	if (is_connected) {
-		label = _("Disconnect");
-		stock_id = "gtk-disconnect";
+	gtk_tree_model_get (model, &iter, 
+			    COL_CONNECTED, &is_connected, 
+			    COL_CONNECTING, &is_connecting, 
+			    -1);
+
+	if (is_connecting) {
+		label = _("Stop");
+		stock_id = "gtk-stop";
 	} else {
-		label = _("Connect");
-		stock_id = "gtk-connect";
+		/* The stock items are not defined correctly in GTK+ so we do it
+		 * ourselves (#318939). 
+		 */
+		if (is_connected) {
+			label = _("Disconnect");
+			stock_id = "gtk-disconnect";
+		} else {
+			label = _("Connect");
+			stock_id = "gtk-connect";
+		}
 	}
 
 	image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
@@ -444,7 +457,8 @@ accounts_dialog_model_setup (GossipAccountsDialog *dialog)
 				    G_TYPE_STRING,        /* name */
 				    G_TYPE_BOOLEAN,       /* editable */
 				    G_TYPE_BOOLEAN,       /* default */
-				    G_TYPE_BOOLEAN,       /* connected */
+ 				    G_TYPE_BOOLEAN,       /* connected */
+ 				    G_TYPE_BOOLEAN,       /* connecting */
 				    G_TYPE_BOOLEAN,       /* auto start */
 				    GOSSIP_TYPE_ACCOUNT); /* account */ 
 	
@@ -1006,6 +1020,63 @@ accounts_dialog_entry_port_insert_text_cb (GtkEditable          *editable,
 }
 
 static void
+accounts_dialog_protocol_connecting_cb (GossipSession        *session,
+					GossipAccount        *account,
+					GossipProtocol       *protocol,
+					GossipAccountsDialog *dialog)
+{
+	GtkTreeView      *view;
+	GtkTreeSelection *selection;
+	GtkTreeModel     *model;
+	GtkTreeIter       iter;
+	gboolean          ok;
+	GossipAccount    *selected_account;
+
+	selected_account = accounts_dialog_model_get_selected (dialog);
+	if (selected_account) {
+		if (gossip_account_equal (selected_account, account)) {
+			gtk_widget_set_sensitive (dialog->button_remove, FALSE);
+		}
+		
+		g_object_unref (selected_account);
+	}
+
+	view = GTK_TREE_VIEW (dialog->treeview);
+	selection = gtk_tree_view_get_selection (view);
+	model = gtk_tree_view_get_model (view);
+
+	for (ok = gtk_tree_model_get_iter_first (model, &iter);
+	     ok;
+	     ok = gtk_tree_model_iter_next (model, &iter)) {
+		GossipAccount *this_account;
+		gboolean       equal;
+		
+		gtk_tree_model_get (model, &iter, 
+				    COL_ACCOUNT_POINTER, &this_account, 
+				    -1);
+		
+		equal = gossip_account_equal (this_account, account);
+		g_object_unref (this_account);
+
+		if (equal) {
+			GtkTreePath *path;
+
+			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+					    COL_CONNECTING, TRUE,
+					    -1);
+
+			path = gtk_tree_model_get_path (model, &iter);
+			gtk_tree_model_row_changed (model, path, &iter);
+			gtk_tree_path_free (path);
+
+			break;
+		}
+	}
+
+	accounts_dialog_update_connect_button (dialog);
+}
+
+static void
 accounts_dialog_protocol_connected_cb (GossipSession        *session,
 				       GossipAccount        *account,
 				       GossipProtocol       *protocol,
@@ -1049,6 +1120,7 @@ accounts_dialog_protocol_connected_cb (GossipSession        *session,
 
 			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 					    COL_CONNECTED, TRUE,
+					    COL_CONNECTING, FALSE,
 					    -1);
 
 			path = gtk_tree_model_get_path (model, &iter);
@@ -1107,6 +1179,7 @@ accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 
 			gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 					    COL_CONNECTED, FALSE,
+					    COL_CONNECTING, FALSE,
 					    -1);
 
 			path = gtk_tree_model_get_path (model, &iter);
@@ -1145,21 +1218,51 @@ static void
 accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 					   GossipAccountsDialog *dialog)
 {
+	GtkTreeView          *view;
+	GtkTreeModel         *model;
+	GtkTreeSelection     *selection;
+	GtkTreeIter           iter;
 	GossipSession        *session;
 	GossipAccountManager *manager;
 	GossipAccount        *account;
+	gboolean              is_connected = FALSE;
+	gboolean              is_connecting = FALSE;
+	gboolean              should_connect;
+	
+	view = GTK_TREE_VIEW (dialog->treeview);
+	selection = gtk_tree_view_get_selection (view);
+	
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		g_warning ("No selection but connect button clicked?");
+		return;
+	}
+
+	gtk_tree_model_get (model, &iter, 
+			    COL_CONNECTED, &is_connected,
+			    COL_CONNECTING, &is_connecting,
+			    -1);
 
 	session = gossip_app_get_session ();
  	manager = gossip_session_get_account_manager (session);
 
 	account = accounts_dialog_model_get_selected (dialog);
 
-	if (gossip_session_is_connected (session, account)) {
-		gossip_session_disconnect (session, account);
+	if (!is_connected) {
+		if (is_connecting) {
+			should_connect = FALSE;
+		} else {
+			should_connect = TRUE;
+		}
 	} else {
-		gossip_session_connect (session, account, FALSE);
+		should_connect = FALSE;
 	}
 
+	if (should_connect) {
+		gossip_session_connect (session, account, FALSE);
+	} else {
+		gossip_session_disconnect (session, account);
+	}
+	
 	g_object_unref (account);
 }
 
@@ -1268,6 +1371,10 @@ accounts_dialog_destroy_cb (GtkWidget            *widget,
 
 	g_signal_handlers_disconnect_by_func (manager,
 					      accounts_dialog_account_removed_cb, 
+					      dialog);
+
+	g_signal_handlers_disconnect_by_func (session,
+					      accounts_dialog_protocol_connecting_cb, 
 					      dialog);
 
 	g_signal_handlers_disconnect_by_func (session,
@@ -1381,6 +1488,10 @@ gossip_accounts_dialog_show (GossipAccount *account)
 
 	g_signal_connect (manager, "account_removed",
 			  G_CALLBACK (accounts_dialog_account_removed_cb), 
+			  dialog);
+
+	g_signal_connect (session, "protocol-connecting",
+			  G_CALLBACK (accounts_dialog_protocol_connecting_cb), 
 			  dialog);
 
 	g_signal_connect (session, "protocol-connected",

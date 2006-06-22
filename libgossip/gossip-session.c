@@ -24,8 +24,7 @@
 #include "libgossip-marshal.h"
 #include "gossip-session.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "Session"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_SESSION, GossipSessionPriv))
 
@@ -65,7 +64,14 @@ struct GetAccounts {
 
 struct ConnectData {
 	GossipSession *session;
+	gboolean       connect_all;
 	gboolean       startup;
+};
+
+struct ConnectFind {
+	gboolean       first;
+	gboolean       last;
+	gboolean       same;
 };
 
 static void            gossip_session_class_init                 (GossipSessionClass   *klass);
@@ -124,6 +130,9 @@ static void            session_account_removed_cb                (GossipAccountM
 								  GossipSession        *session);
 static void            session_connect                           (GossipSession        *session,
 								  GossipAccount        *account);
+static void            session_connect_match_foreach_cb          (GossipAccount        *account,
+								  GossipProtocol       *protocol,
+								  struct ConnectFind   *cf);
 static void            session_connect_foreach_cb                (GossipAccount        *account,
 								  GossipProtocol       *protocol,
 								  struct ConnectData   *cd);
@@ -211,9 +220,9 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
+			      libgossip_marshal_VOID__OBJECT_OBJECT,
 			      G_TYPE_NONE, 
-			      1, GOSSIP_TYPE_ACCOUNT);
+			      2, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL);
 
 	signals[PROTOCOL_CONNECTED] = 
 		g_signal_new ("protocol-connected",
@@ -241,9 +250,9 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
+			      libgossip_marshal_VOID__OBJECT_OBJECT,
 			      G_TYPE_NONE, 
-			      1, GOSSIP_TYPE_ACCOUNT);
+			      2, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL);
 	
 	signals[PROTOCOL_ERROR] = 
 		g_signal_new ("protocol-error",
@@ -452,7 +461,7 @@ session_protocol_logged_in (GossipProtocol *protocol,
 	GossipSessionPriv *priv;
 	GTimer            *timer;
 
-	DEBUG_MSG (("Session: Protocol logged in"));
+	gossip_debug (DEBUG_DOMAIN, "Protocol logged in");
 
 	priv = GET_PRIV (session);
 
@@ -488,7 +497,8 @@ session_protocol_logged_out (GossipProtocol *protocol,
 	gdouble            seconds;
 
 	seconds = gossip_session_get_connected_time (session, account);
-	DEBUG_MSG (("Session: Protocol logged out (after %.2f seconds)", seconds));
+	gossip_debug (DEBUG_DOMAIN, "Protocol logged out (after %.2f seconds)", 
+		      seconds);
 
 	priv = GET_PRIV (session);
 
@@ -534,8 +544,8 @@ session_protocol_contact_added (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 
-	DEBUG_MSG (("Session: Contact added '%s'",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact added '%s'",
+		      gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (session);
 	
@@ -550,8 +560,8 @@ session_protocol_contact_updated (GossipProtocol *protocol,
 				  GossipContact  *contact,
 				  GossipSession  *session)
 {
-	DEBUG_MSG (("Session: Contact updated '%s'",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact updated '%s'",
+		      gossip_contact_get_name (contact));
 
 	g_signal_emit (session, signals[CONTACT_UPDATED], 0, contact);
 }
@@ -561,8 +571,8 @@ session_protocol_contact_presence_updated (GossipProtocol *protocol,
 					   GossipContact  *contact,
 					   GossipSession  *session)
 {
-	DEBUG_MSG (("Session: Contact presence updated '%s'",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact presence updated '%s'",
+		      gossip_contact_get_name (contact));
 	g_signal_emit (session, signals[CONTACT_PRESENCE_UPDATED], 0, contact);
 }
 
@@ -573,8 +583,8 @@ session_protocol_contact_removed (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 	
-	DEBUG_MSG (("Session: Contact removed '%s'",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact removed '%s'",
+		   gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (session);
 	
@@ -592,9 +602,9 @@ session_protocol_composing (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 	
-	DEBUG_MSG (("Session: Contact %s composing:'%s'",
-		   composing ? "is" : "is not",
-		   gossip_contact_get_name (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Contact %s composing:'%s'",
+		      composing ? "is" : "is not",
+		      gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (session);
 	
@@ -608,7 +618,7 @@ session_protocol_get_password (GossipProtocol *protocol,
 {
 	gchar *password = NULL;
 
-	DEBUG_MSG (("Session: Get password"));
+	gossip_debug (DEBUG_DOMAIN, "Get password");
 
 	g_signal_emit (session, signals[GET_PASSWORD], 0, account, &password);
 	
@@ -623,8 +633,8 @@ session_protocol_error (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 
-	DEBUG_MSG (("Session: Error:%d->'%s'", 
-		   error->code, error->message));
+	gossip_debug (DEBUG_DOMAIN, "Error:%d->'%s'", 
+		      error->code, error->message);
 
 	priv = GET_PRIV (session);
 
@@ -957,12 +967,84 @@ session_account_removed_cb (GossipAccountManager *manager,
 	gossip_session_remove_account (session, account);
 }
 
+static void
+session_connect (GossipSession *session,
+		 GossipAccount *account) 
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, account);
+	
+	if (gossip_protocol_is_connected (protocol)) {
+		return;
+	}
+	
+	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, protocol);
+	priv->connecting_counter++;
+
+	/* Can we not just pass the GossipAccount on the GObject init? */
+	gossip_protocol_setup (protocol, account);
+	
+	/* Setup the network connection */
+	gossip_protocol_login (protocol);
+}
+
+static void
+session_connect_match_foreach_cb (GossipAccount      *account,
+				  GossipProtocol     *protocol,
+				  struct ConnectFind *cf)
+{
+	if (!cf->first && !cf->same) {
+		return;
+	}
+
+	if (cf->first) {
+		cf->first = FALSE;
+		cf->last = gossip_account_get_auto_connect (account);
+		return;
+	}
+
+	if (gossip_account_get_auto_connect (account) == cf->last) {
+		cf->same = TRUE;
+	} else {
+		cf->same = FALSE;
+	}
+}
+
+static void
+session_connect_foreach_cb (GossipAccount      *account,
+			    GossipProtocol     *protocol,
+			    struct ConnectData *cd)
+{
+	/* Connect it if this is a startup request and we have an auto
+	 * connecting account.
+	 */
+	if (cd->startup) {
+		if (gossip_account_get_auto_connect (account)) { 
+			session_connect (cd->session, account);
+		}
+		return; 
+	} 
+
+	/* Connect it if we should be connecting ALL accounts anyway. */
+	if (cd->connect_all) {
+		session_connect (cd->session, account);
+	} 
+	else if (gossip_account_get_auto_connect (account)) {
+		session_connect (cd->session, account);
+	}
+}
+
 void
 gossip_session_connect (GossipSession *session,
 			GossipAccount *account,
 			gboolean       startup)
 {
 	GossipSessionPriv  *priv;
+	struct ConnectFind  cf;
 	struct ConnectData  cd;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -985,6 +1067,19 @@ gossip_session_connect (GossipSession *session,
 		return;
 	}
 
+	/* We do some clever stuff here and check that ALL accounts
+	 * are either auto connecting or not, if they are all the same
+	 * then we connect ALL accounts, if not, we just connect the
+	 * auto connect accounts 
+	 */
+	cf.first = TRUE;
+	cf.same = TRUE;
+
+	g_hash_table_foreach (priv->accounts,
+			      (GHFunc) session_connect_match_foreach_cb,
+			      &cf);
+
+	cd.connect_all = cf.same;
 	cd.session = session;
 	cd.startup = startup;
 
@@ -995,41 +1090,33 @@ gossip_session_connect (GossipSession *session,
 }
 
 static void
-session_connect (GossipSession *session,
-		 GossipAccount *account) 
+session_disconnect (GossipSession *session,
+		    GossipAccount *account) 
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 
 	priv = GET_PRIV (session);
-
+	
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	
 	protocol = g_hash_table_lookup (priv->accounts, account);
 	
-	if (gossip_protocol_is_connected (protocol)) {
-		return;
-	}
+	g_signal_emit (session, signals[PROTOCOL_DISCONNECTING], 0, account, protocol);
 	
-	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account);
-	priv->connecting_counter++;
-
-	/* can we not just pass the GossipAccount on the GObject init? */
-	gossip_protocol_setup (protocol, account);
-	
-	/* setup the network connection */
-	gossip_protocol_login (protocol);
+	gossip_protocol_logout (protocol);
 }
 
 static void
-session_connect_foreach_cb (GossipAccount      *account,
-			    GossipProtocol     *protocol,
-			    struct ConnectData *cd)
+session_disconnect_foreach_cb (GossipAccount  *account,
+			       GossipProtocol *protocol,
+			       GossipSession  *session)
 {
- 	if (cd->startup && 
-	    !gossip_account_get_auto_connect (account)) { 
- 		return; 
- 	} 
+	GossipSessionPriv *priv;
 
-	session_connect (cd->session, account);
+	priv = GET_PRIV (session);
+	
+	session_disconnect (session, account);
 }
 
 void
@@ -1054,37 +1141,6 @@ gossip_session_disconnect (GossipSession *session,
 	g_hash_table_foreach (priv->accounts,
 			      (GHFunc)session_disconnect_foreach_cb,
 			      session);
-}
-
-
-static void
-session_disconnect (GossipSession *session,
-		    GossipAccount *account) 
-{
-	GossipSessionPriv *priv;
-	GossipProtocol    *protocol;
-
-	priv = GET_PRIV (session);
-	
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	
-	protocol = g_hash_table_lookup (priv->accounts, account);
-	
-	g_signal_emit (session, signals[PROTOCOL_DISCONNECTING], 0, account);
-	
-	gossip_protocol_logout (protocol);
-}
-
-static void
-session_disconnect_foreach_cb (GossipAccount  *account,
-			       GossipProtocol *protocol,
-			       GossipSession  *session)
-{
-	GossipSessionPriv *priv;
-
-	priv = GET_PRIV (session);
-	
-	session_disconnect (session, account);
 }
 
 void 

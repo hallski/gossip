@@ -1,3 +1,32 @@
+2006-06-22  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-session.c: Cleverly connect accounts based on
+	auto-connect setting and if ALL accounts have the same value. This
+	way we don't need an "Enable" option per account and it works
+	quite nicely with the Chat->Connect and Chat->Disconnect
+	actions. Also updated this module to use gossip_debug.
+	
+	* protocols/jabber/gossip-jabber.c: Don't require the connection
+	to be open to call lm_connection_close(). Also, fixed a bug in
+	Loudmouth related to this where lm_connection_close() doesn't
+	clean up the connection properly if you are pending.
+	
+	* src/gossip-account-button.c: Updated the ::protocol-connecting
+	and :: protocol-disconnecting signals to include the protocol
+	object.
+	
+	* src/gossip-accounts-dialog.c: Updated to actually make it
+	possible to stop connections pending and show a Stop button while
+	they are.
+
+	* src/gossip-app.c: 
+	- Updated the error messages we show when connections fail to use
+	a smaller icon and the GTK_STOCK_DISCONNECT. 
+	- Change the "Clear" button to a small 'x' like we have for chat
+	windows. 
+	- Added a tooltip for the throbber.
+	- Make clicking on the throbber show the accounts window.
+
 2006-06-22  Richard Hult  <richard@imendio.com>
 
 	* peekaboo/src/Makefile.am:

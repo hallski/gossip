@@ -130,6 +130,9 @@ struct _GossipAppPriv {
 	GtkWidget             *errors_vbox;
 	GHashTable            *errors;
 
+	/* Tooltips for all widgets */
+	GtkTooltips           *tooltips;
+
 	/* Menu widgets */
 	GtkWidget             *actions_connect;
 	GtkWidget             *actions_disconnect;
@@ -143,7 +146,6 @@ struct _GossipAppPriv {
 	EggTrayIcon           *tray_icon;
 	GtkWidget             *tray_event_box;
 	GtkWidget             *tray_image;
-	GtkTooltips           *tray_tooltips;
 	GList                 *tray_flash_icons;
 	guint                  tray_flash_timeout_id;
 
@@ -221,6 +223,9 @@ static void            app_about_cb                         (GtkWidget          
 							     GossipApp                *app);
 static void            app_help_cb                          (GtkWidget                *window,
 							     GossipApp                *app);
+static gboolean        app_throbber_button_press_event_cb   (GtkWidget                *throbber,
+							     GdkEventButton           *event,
+							     gpointer                  user_data);
 static void            app_session_protocol_connecting_cb   (GossipSession            *session,
 							     GossipAccount            *account,
 							     GossipProtocol           *protocol,
@@ -362,6 +367,9 @@ gossip_app_init (GossipApp *singleton_app)
 	app = singleton_app;
 
 	priv = GET_PRIV (app);
+
+	priv->tooltips = gtk_tooltips_new ();
+	g_object_ref_sink (priv->tooltips);
 }
 
 static void
@@ -387,6 +395,10 @@ app_finalize (GObject *object)
 
 	manager = gossip_session_get_account_manager (priv->session);
 	
+	if (priv->tooltips) {
+		g_object_unref (priv->tooltips);
+	}
+
 #ifdef USE_ORIGINAL_TOOLBAR_CODE
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_added_cb, 
@@ -450,14 +462,15 @@ app_setup (GossipAccountManager *manager)
         GossipAppPriv  *priv;
 	GladeXML       *glade;
 	GtkWidget      *sw;
-	GtkRequisition  req;
-	gboolean        show_offline;
-	GtkWidget      *show_offline_widget;
-	gboolean        show_avatars;
-	gint            x, y, w, h;
-	gboolean        hidden;
 	GtkWidget      *image;
 	GtkToolItem    *item;
+	GtkWidget      *show_offline_widget;
+	GtkRequisition  req;
+	gchar          *str;
+	gboolean        show_offline;
+	gboolean        show_avatars;
+	gboolean        hidden;
+	gint            x, y, w, h;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
@@ -647,7 +660,16 @@ app_setup (GossipAccountManager *manager)
         gtk_widget_show (GTK_WIDGET (item));
 
         gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
-	
+
+	str = _("Click to show accounts and any pending connections.");
+	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
+			      priv->throbber, str, str);
+
+	g_signal_connect (priv->throbber, 
+			  "button-press-event",
+			  G_CALLBACK (app_throbber_button_press_event_cb),
+			  NULL);
+
 	/* Set up contact list. */
 	priv->contact_list = gossip_contact_list_new ();
 
@@ -1127,6 +1149,21 @@ app_help_cb (GtkWidget *window,
 /* 
  * libgossip signals 
  */
+static gboolean
+app_throbber_button_press_event_cb (GtkWidget      *throbber,
+				    GdkEventButton *event,
+				    gpointer        user_data)
+{
+	if (event->type != GDK_BUTTON_PRESS || 
+	    event->button != 1) {
+		return FALSE;
+	}
+
+	gossip_accounts_dialog_show (NULL);
+
+	return FALSE;
+}
+
 static void
 app_session_protocol_connecting_cb (GossipSession  *session,
 				    GossipAccount  *account,
@@ -1165,6 +1202,8 @@ app_session_protocol_connected_cb (GossipSession  *session,
 	if (connecting < 1) {
 		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
 	}
+
+	g_hash_table_remove (priv->errors, account);
 
 	app_connection_items_update ();
 #ifdef USE_ORIGINAL_TOOLBAR_CODE
@@ -1515,10 +1554,6 @@ app_tray_create (void)
 	gtk_container_add (GTK_CONTAINER (priv->tray_event_box),
 			   priv->tray_image);
 
-	if (!priv->tray_tooltips) {
-		priv->tray_tooltips = gtk_tooltips_new ();
-	}
-	
 	gtk_widget_show (priv->tray_event_box);
 	gtk_widget_show (priv->tray_image);
 
@@ -1573,7 +1608,7 @@ app_tray_update_tooltip (void)
 			status = _("Disconnected");
 		}
 
-		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tray_tooltips),
+		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
 				      priv->tray_event_box, status, status);
 
 		return;
@@ -1581,7 +1616,7 @@ app_tray_update_tooltip (void)
 
 	event = priv->tray_flash_icons->data;
 
-	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tray_tooltips),
+	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
 			      priv->tray_event_box,
 			      gossip_event_get_message (event),
 			      gossip_event_get_message (event));
@@ -1990,11 +2025,15 @@ app_accounts_error_display (GossipAccount *account,
 {
 	GossipAppPriv *priv;
 	GtkWidget     *child;
-	GtkWidget     *vbox;
-	GtkWidget     *hbox;
+	GtkWidget     *table;
 	GtkWidget     *image;
+	GtkWidget     *button_edit;
+	GtkWidget     *alignment;
+	GtkWidget     *hbox;
 	GtkWidget     *label;
-	GtkWidget     *button;
+	GtkWidget     *fixed;
+	GtkWidget     *vbox;
+	GtkWidget     *button_close;
 	gchar         *str;
 
 	priv = GET_PRIV (app);
@@ -2006,64 +2045,111 @@ app_accounts_error_display (GossipAccount *account,
 						      (GDestroyNotify) gtk_widget_destroy);
 	}
 	
-	if (g_hash_table_lookup (priv->errors, account)) {
+	child = g_hash_table_lookup (priv->errors, account);
+	if (child) {
+		label = g_object_get_data (G_OBJECT (child), "label");
+
+		/* Just set the latest error and return */
+		str = g_markup_printf_escaped ("<b>%s</b>\n%s", 
+					       gossip_account_get_name (account), 
+					       error->message);
+		gtk_label_set_markup (GTK_LABEL (label), str);
+		g_free (str);
+	
 		return;
 	}
-
-	child = gtk_hbox_new (FALSE, 6);
-	gtk_container_set_border_width (GTK_CONTAINER (child), 6);
+	
+	child = gtk_vbox_new (FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (priv->errors_vbox), child, FALSE, TRUE, 0);
+	gtk_container_set_border_width (GTK_CONTAINER (child), 6);
 	gtk_widget_show (child);
 
-	image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_ERROR, 
-					  GTK_ICON_SIZE_DND);
-	gtk_misc_set_alignment (GTK_MISC (image), 0, 0);
-	gtk_box_pack_start (GTK_BOX (child), image, FALSE, TRUE, 0);
+	table = gtk_table_new (2, 4, FALSE);
+	gtk_widget_show (table);
+	gtk_box_pack_start (GTK_BOX (child), table, TRUE, TRUE, 0);
+	gtk_table_set_row_spacings (GTK_TABLE (table), 12);
+	gtk_table_set_col_spacings (GTK_TABLE (table), 6);
+	
+	image = gtk_image_new_from_stock (GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_MENU);
 	gtk_widget_show (image);
-
+	gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 2,
+			  (GtkAttachOptions) (GTK_FILL),
+			  (GtkAttachOptions) (GTK_FILL), 0, 0);
+	gtk_misc_set_alignment (GTK_MISC (image), 0.5, 0);
+	
+	button_edit = gtk_button_new ();
+	gtk_widget_show (button_edit);
+	gtk_table_attach (GTK_TABLE (table), button_edit, 1, 2, 1, 2,
+			  (GtkAttachOptions) (GTK_FILL),
+			  (GtkAttachOptions) (0), 0, 0);
+	
+	alignment = gtk_alignment_new (0.5, 0.5, 0, 0);
+	gtk_widget_show (alignment);
+	gtk_container_add (GTK_CONTAINER (button_edit), alignment);
+	
+	hbox = gtk_hbox_new (FALSE, 2);
+	gtk_widget_show (hbox);
+	gtk_container_add (GTK_CONTAINER (alignment), hbox);
+	
+	image = gtk_image_new_from_stock (GTK_STOCK_EDIT, GTK_ICON_SIZE_BUTTON);
+	gtk_widget_show (image);
+	gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+	
+	label = gtk_label_new_with_mnemonic (_("Edit Account _Details"));
+	gtk_widget_show (label);
+	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+	
+	fixed = gtk_fixed_new ();
+	gtk_widget_show (fixed);
+	gtk_table_attach (GTK_TABLE (table), fixed, 2, 3, 1, 2,
+			  (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
+			  (GtkAttachOptions) (GTK_FILL), 0, 0);
+	
 	vbox = gtk_vbox_new (FALSE, 6);
-	gtk_box_pack_start (GTK_BOX (child), vbox, FALSE, TRUE, 0);
 	gtk_widget_show (vbox);
+	gtk_table_attach (GTK_TABLE (table), vbox, 3, 4, 0, 2,
+			  (GtkAttachOptions) (GTK_FILL),
+			  (GtkAttachOptions) (GTK_FILL), 0, 0);
+	
+	button_close = gtk_button_new ();
+	gtk_widget_show (button_close);
+	gtk_box_pack_start (GTK_BOX (vbox), button_close, FALSE, FALSE, 0);
+	gtk_button_set_relief (GTK_BUTTON (button_close), GTK_RELIEF_NONE);
+
+	
+	image = gtk_image_new_from_stock ("gtk-close", GTK_ICON_SIZE_MENU);
+	gtk_widget_show (image);
+	gtk_container_add (GTK_CONTAINER (button_close), image);
+	
+	label = gtk_label_new ("");
+	gtk_widget_show (label);
+	gtk_table_attach (GTK_TABLE (table), label, 1, 3, 0, 1,
+			  (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL),
+			  (GtkAttachOptions) (GTK_EXPAND | GTK_SHRINK | GTK_FILL), 0, 0);
+	gtk_widget_set_size_request (label, 175, -1);
+	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+	gtk_misc_set_alignment (GTK_MISC (label), 0, 0);
 
 	str = g_markup_printf_escaped ("<b>%s</b>\n%s", 
 				       gossip_account_get_name (account), 
 				       error->message);
-
-	label = gtk_label_new ("");
 	gtk_label_set_markup (GTK_LABEL (label), str);
-	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
-	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
- 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0); 
-	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
-	gtk_widget_show (label);
-
 	g_free (str);
 
-	hbox = gtk_hbox_new (FALSE, 6);
-	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
-	gtk_widget_show (hbox);
+	g_object_set_data (G_OBJECT (child), "label", label);
 
-	button = gtk_button_new_from_stock (GTK_STOCK_EDIT);
-/* 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE); */
-	gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
-	gtk_widget_show (button);
-
-	g_signal_connect_object (button, "clicked", 
+	g_signal_connect_object (button_edit, "clicked", 
 				 G_CALLBACK (app_accounts_error_edit_clicked_cb),
 				 account, 0);
 
-	button = gtk_button_new_from_stock (GTK_STOCK_CLEAR);
-/* 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE); */
-	gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
-	gtk_widget_show (button);
-
-	g_signal_connect_object (button, "clicked", 
+	g_signal_connect_object (button_close, "clicked", 
 				 G_CALLBACK (app_accounts_error_clear_clicked_cb),
 				 account, 0);
 
 	gtk_widget_show (priv->errors_vbox);
 
-	g_hash_table_insert (priv->errors, g_object_ref (account), child);	       
+	g_hash_table_insert (priv->errors, g_object_ref (account), child);
 }
 
 #ifdef USE_ORIGINAL_TOOLBAR_CODE

@@ -636,8 +636,7 @@ jabber_logout (GossipProtocol *protocol)
 
 	priv->disconnect_request = TRUE;
 
-	if (priv->connection && 
-	    lm_connection_is_open (priv->connection)) {
+	if (priv->connection) {
 		lm_connection_close (priv->connection, NULL);
 	}
 }

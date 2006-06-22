@@ -76,9 +76,11 @@ static void       account_button_connection_activate_cb    (GtkWidget           
 static gboolean   account_button_connecting_timeout_cb     (GossipAccountButton *account_button);
 static void       account_button_protocol_connecting_cb    (GossipSession       *session,
 							    GossipAccount       *account,
+							    GossipProtocol      *protocol,
 							    GossipAccountButton *account_button);
 static void       account_button_protocol_disconnecting_cb (GossipSession       *session,
 							    GossipAccount       *account,
+							    GossipProtocol      *protocol,
 							    GossipAccountButton *account_button);
 static void       account_button_protocol_connected_cb     (GossipSession       *session,
 							    GossipAccount       *account,
@@ -489,6 +491,7 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 static void
 account_button_protocol_connecting_cb (GossipSession       *session,
 				       GossipAccount       *account,
+				       GossipProtocol      *protocol,
 				       GossipAccountButton *account_button)
 {
 	GossipAccountButtonPriv *priv;
@@ -526,6 +529,7 @@ account_button_protocol_connecting_cb (GossipSession       *session,
 static void 
 account_button_protocol_disconnecting_cb (GossipSession       *session,
 					  GossipAccount       *account,
+					  GossipProtocol      *protocol,
 					  GossipAccountButton *account_button)
 {
 	GossipAccountButtonPriv *priv;
