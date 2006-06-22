@@ -1,3 +1,19 @@
+2006-06-22  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-session.[ch]: Added a "connecting" counter.
+
+	* src/gossip-throbber.[ch]: Taken from Nautilus and cleaned up.
+
+	* src/Makefile.am:
+	* src/gossip-app.c: 
+	* ui/main.glade: Loads of stuff:
+	- Added gossip_debug.
+	- Added the gnome throbber for "connecting" states.
+	- #ifdef'd the old account toolbar work out and replaced it with
+	something much better.
+	- TODO: make it possible to show accounts from throbber.
+	- TODO: make it possible to stop connecting from accounts window.
+	
 2006-06-21  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chatrooms-window.c:
@@ -13,7 +29,6 @@
 
 	* protocols/jabber/gossip-jabber.c: Make sure we set our presence
 	in chatrooms.
-	
 
 2006-06-21  Richard Hult  <richard@imendio.com>
 

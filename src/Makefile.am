@@ -84,6 +84,7 @@ gossip_SOURCES = 				                        	\
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
 	gossip-status-presets.c		   gossip-status-presets.h	       	\
 	gossip-subscription-dialog.c       gossip-subscription-dialog.h		\
+	gossip-throbber.c       	   gossip-throbber.h			\
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
 	gossip-theme-manager.c	    	   gossip-theme-manager.h		\

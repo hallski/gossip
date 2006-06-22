@@ -33,6 +33,7 @@
 #include <libgnomeui/libgnomeui.h>
 
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-presence.h>
 #include <libgossip/gossip-protocol.h>
@@ -64,6 +65,7 @@
 #include "gossip-status-presets.h"
 #include "gossip-stock.h"
 #include "gossip-subscription-dialog.h"
+#include "gossip-throbber.h"
 #include "gossip-ui-utils.h"
 #include "gossip-vcard-dialog.h"
 
@@ -81,8 +83,13 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_APP, GossipAppPriv))
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN_SETUP     "AppSetup"
+#define DEBUG_DOMAIN_ACCELS    "AppAccels"
+#define DEBUG_DOMAIN_IDLE      "AppIdle"
+#define DEBUG_DOMAIN_ACCOUNTS  "AppAccounts"
+#define DEBUG_DOMAIN_CHATROOMS "AppChatrooms"
+#define DEBUG_DOMAIN_TRAY      "AppTray"
+#define DEBUG_DOMAIN_SESSION   "AppSession"
 
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
@@ -120,6 +127,8 @@ struct _GossipAppPriv {
 	/* Main widgets */
 	GtkWidget             *window;
 	GtkWidget             *main_vbox;
+	GtkWidget             *errors_vbox;
+	GHashTable            *errors;
 
 	/* Menu widgets */
 	GtkWidget             *actions_connect;
@@ -129,7 +138,6 @@ struct _GossipAppPriv {
 
 	/* Accounts toolbar */
 	GtkWidget             *accounts_toolbar;
-	GHashTable            *accounts;
 
 	/* Tray */
 	EggTrayIcon           *tray_icon;
@@ -143,6 +151,9 @@ struct _GossipAppPriv {
 	GtkWidget             *popup_menu_status_item;
 	GtkWidget             *popup_menu_show_list_item;
 	 
+	/* Throbber */
+	GtkWidget             *throbber;
+
 	/* Widgets that are enabled when we're connected/disconnected */
 	GList                 *widgets_connected;
 	GList                 *widgets_disconnected;
@@ -210,6 +221,10 @@ static void            app_about_cb                         (GtkWidget          
 							     GossipApp                *app);
 static void            app_help_cb                          (GtkWidget                *window,
 							     GossipApp                *app);
+static void            app_session_protocol_connecting_cb   (GossipSession            *session,
+							     GossipAccount            *account,
+							     GossipProtocol           *protocol,
+							     gpointer                  user_data);
 static void            app_session_protocol_connected_cb    (GossipSession            *session,
 							     GossipAccount            *account,
 							     GossipProtocol           *protocol,
@@ -245,7 +260,7 @@ static void            app_status_flash_stop                (void);
 static void            app_show_offline_key_changed_cb      (GConfClient              *client,
 							     guint                     cnxn_id,
 							     GConfEntry               *entry,
-							     gpointer                  check_menu_item);
+ 							     gpointer                  check_menu_item);
 static void            app_show_avatars_key_changed_cb      (GConfClient              *client,
 							     guint                     cnxn_id,
 							     GConfEntry               *entry,
@@ -257,9 +272,11 @@ static gboolean        app_idle_check_cb                    (GossipApp          
 static void            app_disconnect                       (void);
 static void            app_connection_items_setup           (GladeXML                 *glade);
 static void            app_connection_items_update          (void);
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 static void            app_accounts_account_notify_cb       (GossipAccount            *account,
 							     GParamSpec               *param,
 							     gpointer                  user_data);
+
 static void            app_accounts_account_added_cb        (GossipAccountManager     *manager,
 							     GossipAccount            *account,
 							     gpointer                  user_data);
@@ -274,6 +291,14 @@ static void            app_accounts_update_separator        (void);
 static void            app_accounts_update_toolbar          (void);
 static void            app_accounts_add                     (GossipAccount            *account);
 static void            app_accounts_remove                  (GossipAccount            *account);
+#else
+static void            app_accounts_error_edit_clicked_cb   (GtkButton                *button,
+							     GossipAccount            *account);
+static void            app_accounts_error_clear_clicked_cb  (GtkButton                *button,
+							     GossipAccount            *account);
+static void            app_accounts_error_display           (GossipAccount            *account,
+							     GError                   *error);
+#endif
 static GossipPresence *app_get_effective_presence           (void);
 static void            app_set_away                         (const gchar              *status);
 static GdkPixbuf *     app_get_current_status_pixbuf        (void);
@@ -362,13 +387,18 @@ app_finalize (GObject *object)
 
 	manager = gossip_session_get_account_manager (priv->session);
 	
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_added_cb, 
 					      NULL);
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_removed_cb, 
 					      NULL);
+#endif
 
+	g_signal_handlers_disconnect_by_func (priv->session,
+					      app_session_protocol_connecting_cb, 
+					      NULL);
 	g_signal_handlers_disconnect_by_func (priv->session,
 					      app_session_protocol_connected_cb, 
 					      NULL);
@@ -429,7 +459,7 @@ app_setup (GossipAccountManager *manager)
 	GtkWidget      *image;
 	GtkToolItem    *item;
 
-	DEBUG_MSG (("AppSetup: Beginning..."));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
 	priv = GET_PRIV (app);
 
@@ -443,7 +473,7 @@ app_setup (GossipAccountManager *manager)
 	priv->session = gossip_session_new (manager);
 
 	/* Is this the best place for this, perhaps in gossip-main.c? */
-	DEBUG_MSG (("AppSetup: Initialising 3rd party modules (dbus, galago, etc)"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising 3rd party modules (dbus, galago, etc)");
 
 #ifdef HAVE_DBUS
         gossip_dbus_init_for_session (priv->session);
@@ -454,17 +484,17 @@ app_setup (GossipAccountManager *manager)
 #endif
 
 	/* Call init session dependent modules */
-	DEBUG_MSG (("AppSetup: Initialising session listeners (subscription, file transfer, etc)"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising session listeners (subscription, file transfer, etc)");
 	gossip_subscription_dialog_init (priv->session);
 	gossip_ft_window_init (priv->session);
 
 	/* Do we need first time start up druid? */
 	if (gossip_new_account_window_is_needed ()) {
-		DEBUG_MSG (("AppSetup: Showing new account window for first time run"));
+		gossip_debug (DEBUG_DOMAIN_SETUP, "Showing new account window for first time run");
 		gossip_new_account_window_show (NULL);
 	}
 
-	DEBUG_MSG (("AppSetup: Initialising managers (chatroom, chat, event)"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising managers (chatroom, chat, event)");
 	priv->chatroom_manager = gossip_chatroom_manager_new (manager, 
 							      priv->session, 
 							      NULL);
@@ -472,7 +502,7 @@ app_setup (GossipAccountManager *manager)
 	priv->chat_manager = gossip_chat_manager_new ();
  	priv->event_manager = gossip_event_manager_new (); 
 
-	DEBUG_MSG (("AppSetup: Initialising notification handlers (libnotify, sound)"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising notification handlers (libnotify, sound)");
 #ifdef HAVE_LIBNOTIFY
 	gossip_notify_init (priv->session,
 			    priv->event_manager);
@@ -480,12 +510,18 @@ app_setup (GossipAccountManager *manager)
 
 	gossip_sound_init (priv->session);
 
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 	g_signal_connect (manager, "account_added",
 			  G_CALLBACK (app_accounts_account_added_cb), 
 			  NULL);
 
 	g_signal_connect (manager, "account_removed",
 			  G_CALLBACK (app_accounts_account_removed_cb), 
+			  NULL);
+#endif
+
+	g_signal_connect (priv->session, "protocol-connecting",
+			  G_CALLBACK (app_session_protocol_connecting_cb),
 			  NULL);
 
 	g_signal_connect (priv->session, "protocol-connected",
@@ -520,12 +556,13 @@ app_setup (GossipAccountManager *manager)
 			  NULL);
 
 	/* set up interface */
-	DEBUG_MSG (("AppSetup: Initialising interface"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising interface");
 	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
 				       "main_window",
 				       NULL,
 				       "main_window", &priv->window,
 				       "main_vbox", &priv->main_vbox,
+				       "errors_vbox", &priv->errors_vbox,
 				       "actions_connect", &priv->actions_connect,
 				       "actions_disconnect", &priv->actions_disconnect,
 				       "actions_show_offline", &show_offline_widget,
@@ -560,7 +597,7 @@ app_setup (GossipAccountManager *manager)
 			      NULL);
 
 	/* Set up menu */
-	DEBUG_MSG (("AppSetup: Configuring menu"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring menu");
 	g_object_get (GTK_IMAGE_MENU_ITEM (priv->actions_connect), "image", &image, NULL);
 	gtk_image_set_from_stock (GTK_IMAGE (image), GTK_STOCK_CONNECT, GTK_ICON_SIZE_MENU);
 	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_connect)->child), 
@@ -579,7 +616,7 @@ app_setup (GossipAccountManager *manager)
 	g_object_unref (glade);
 
 	/* Set up presence chooser */
-	DEBUG_MSG (("AppSetup: Configuring specialised widgets"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring specialised widgets");
 	priv->presence_chooser = gossip_presence_chooser_new ();
 	gtk_widget_show (priv->presence_chooser);
 	gossip_presence_chooser_set_flash_interval (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser), 
@@ -599,6 +636,17 @@ app_setup (GossipAccountManager *manager)
 
 	priv->widgets_connected = g_list_prepend (priv->widgets_connected,
 						  priv->presence_chooser);
+
+	/* Set up the throbber */
+	priv->throbber = gossip_throbber_new ();
+	gossip_throbber_set_small_mode (GOSSIP_THROBBER (priv->throbber), TRUE);
+        gtk_widget_show (priv->throbber);
+
+        item = gtk_tool_item_new ();
+        gtk_container_add (GTK_CONTAINER (item), priv->throbber);
+        gtk_widget_show (GTK_WIDGET (item));
+
+        gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
 	
 	/* Set up contact list. */
 	priv->contact_list = gossip_contact_list_new ();
@@ -608,7 +656,7 @@ app_setup (GossipAccountManager *manager)
 			  NULL);
 
 	/* Get saved presence presets. */
-	DEBUG_MSG (("AppSetup: Configuring presets"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring presets");
 	gossip_status_presets_get_all ();
 
 	/* Set up saved presence information. */
@@ -623,30 +671,34 @@ app_setup (GossipAccountManager *manager)
 			   GTK_WIDGET (priv->contact_list));
 
 	/* Set up notification area / tray. */
-	DEBUG_MSG (("AppSetup: Configuring notification area widgets"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
 	app_tray_create_menu ();
 	app_tray_create ();
 
 	/* Load user-defined accelerators. */
-	DEBUG_MSG (("AppSetup: Configuring accels"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accels");
 	app_accels_load ();
 
 	/* Set up accounts area. */
-	DEBUG_MSG (("AppSetup: Configuring accounts toolbar"));
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accounts toolbar");
 	app_accounts_create ();
+#else
+	gtk_widget_hide (priv->accounts_toolbar);
+#endif
 
 	/* Set the idle time checker. */
 	g_timeout_add (2 * 1000, (GSourceFunc) app_idle_check_cb, app);
 
 	/* Set window size. */
-	DEBUG_MSG (("AppSetup: Configuring window geometry..."));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window geometry...");
 	gossip_geometry_load_for_main_window (&x, &y, &w, &h);
 
 	if (w >= 1 && h >= 1) {
 		/* Use the defaults from the glade file if we
 		 * don't have good w, h geometry.  
 		 */
-		DEBUG_MSG (("AppSetup: Configuring window default size w:%d, h:%d", w, h)); 
+		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default size w:%d, h:%d", w, h); 
 		gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
 	}
 
@@ -654,7 +706,7 @@ app_setup (GossipAccountManager *manager)
 		/* Let the window manager position it if we
 		 * don't have good x, y coordinates.  
 		 */
-		DEBUG_MSG (("AppSetup: Configuring window default position x:%d, y:%d", x, y)); 
+		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default position x:%d, y:%d", x, y); 
 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
 	}
 
@@ -662,7 +714,7 @@ app_setup (GossipAccountManager *manager)
 	app_presence_updated ();
 
 	/* Set up 'show_offline' config hooks to know when it changes. */
-	DEBUG_MSG (("AppSetup: Configuring miscellaneous settings"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring miscellaneous settings");
 	show_offline = gconf_client_get_bool (priv->gconf_client,
 					      GCONF_CONTACTS_SHOW_OFFLINE,
 					      NULL);
@@ -722,7 +774,7 @@ app_setup (GossipAccountManager *manager)
 
 	app_connection_items_update ();
 
-	DEBUG_MSG (("AppSetup: Complete!"));
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Complete!");
 }
 
 static gboolean 
@@ -1076,17 +1128,48 @@ app_help_cb (GtkWidget *window,
  * libgossip signals 
  */
 static void
+app_session_protocol_connecting_cb (GossipSession  *session,
+				    GossipAccount  *account,
+				    GossipProtocol *protocol,
+				    gpointer        user_data)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", 
+		      gossip_account_get_id (account));
+
+	gossip_throbber_start (GOSSIP_THROBBER (priv->throbber));
+}
+
+static void
 app_session_protocol_connected_cb (GossipSession  *session,
 				   GossipAccount  *account,
 				   GossipProtocol *protocol,
 				   gpointer        user_data)
 {
-	GossipAppPriv  *priv;
+	GossipAppPriv *priv;
+	gboolean       connecting;
 
 	priv = GET_PRIV (app);
 
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Connected account:'%s'", 
+		      gossip_account_get_id (account));
+
+	gossip_session_count_accounts (priv->session,
+				       NULL, 
+				       &connecting,
+				       NULL);
+
+	if (connecting < 1) {
+		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
+	}
+
 	app_connection_items_update ();
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 	app_accounts_update_toolbar ();
+#endif
 	app_chatroom_favourite_update ();
 	app_presence_updated ();
 }
@@ -1098,11 +1181,26 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 				      gpointer        user_data)
 {
 	GossipAppPriv *priv;
+	gboolean       connecting;
 
 	priv = GET_PRIV (app);
 
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Disconnected account:'%s'", 
+		      gossip_account_get_id (account));
+
+	gossip_session_count_accounts (priv->session,
+				       NULL, 
+				       &connecting,
+				       NULL);
+
+	if (connecting < 1) {
+		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
+	}
+
  	app_connection_items_update ();
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 	app_accounts_update_toolbar ();
+#endif
 	app_chatroom_favourite_update ();
 	app_presence_updated ();
 }
@@ -1114,11 +1212,32 @@ app_session_protocol_error_cb (GossipSession  *session,
 			       GError         *error,
 			       gpointer        user_data)
 {
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 	GossipAppPriv *priv;
 
 	priv = GET_PRIV (app);
 
 	gtk_widget_show (priv->accounts_toolbar);
+#else
+	GossipAppPriv *priv;
+	gboolean       connecting;
+
+	priv = GET_PRIV (app);
+
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Error for account:'%s'", 
+		      gossip_account_get_id (account));
+
+	gossip_session_count_accounts (priv->session,
+				       NULL, 
+				       &connecting,
+				       NULL);
+
+	if (connecting < 1) {
+		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
+	}
+
+	app_accounts_error_display (account, error);	
+#endif
 }
 
 static gchar * 
@@ -1155,7 +1274,7 @@ app_accels_load (void)
 	g_free (dir);
 
 	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
-		DEBUG_MSG (("AppAccels: Loading from:'%s'", file_with_path));
+		gossip_debug (DEBUG_DOMAIN_ACCELS, "Loading from:'%s'", file_with_path);
 		gtk_accel_map_load (file_with_path);
 	}
 	
@@ -1176,7 +1295,7 @@ app_accels_save (void)
 	file_with_path = g_build_filename (dir, ACCELS_FILENAME, NULL);
 	g_free (dir);
 
-	DEBUG_MSG (("AppAccels: Saving to:'%s'", file_with_path));
+	gossip_debug (DEBUG_DOMAIN_ACCELS, "Saving to:'%s'", file_with_path);
 	gtk_accel_map_save (file_with_path);
 	
 	g_free (file_with_path);
@@ -1549,7 +1668,7 @@ app_idle_check_cb (GossipApp *app)
 	presence = app_get_effective_presence ();
 	state = gossip_presence_get_state (presence);
 
-	/* DEBUG_MSG (("AppIdle: Idle for:%d", idle)); */
+	/* gossip_debug (DEBUG_DOMAIN_IDLE, "Idle for:%d", idle); */
 
 	/* We're going away, allow some slack. */
 	if (priv->leave_time > 0) {
@@ -1558,7 +1677,7 @@ app_idle_check_cb (GossipApp *app)
 			app_status_flash_stop ();
 
 			gossip_idle_reset ();
-			DEBUG_MSG (("AppIdle: OK, away now."));
+			gossip_debug (DEBUG_DOMAIN_IDLE, "OK, away now.");
 		}
 		
 		return TRUE;
@@ -1573,7 +1692,7 @@ app_idle_check_cb (GossipApp *app)
 		}
 
 		/* Presence will already be away. */
-		DEBUG_MSG (("AppIdle: Going to ext away..."));
+		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to ext away...");
 		gossip_presence_set_state (priv->away_presence, 
 					   GOSSIP_PRESENCE_STATE_EXT_AWAY);
 		presence_changed = TRUE;
@@ -1581,7 +1700,7 @@ app_idle_check_cb (GossipApp *app)
 	else if (state != GOSSIP_PRESENCE_STATE_AWAY && 
 		 state != GOSSIP_PRESENCE_STATE_EXT_AWAY &&
 		 idle > AWAY_TIME) {
-		DEBUG_MSG (("AppIdle: Going to away..."));
+		gossip_debug (DEBUG_DOMAIN_IDLE, "Going to away...");
 		app_set_away (NULL);
 		presence_changed = TRUE;
 	}
@@ -1589,16 +1708,16 @@ app_idle_check_cb (GossipApp *app)
 		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
 		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= 0) {
-			DEBUG_MSG (("AppIdle: Slack, do nothing."));
+			gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing.");
 			app_status_flash_start ();
 		}
 		else if (idle < -BACK_SLACK) {
-			DEBUG_MSG (("AppIdle: No more slack, break interrupted."));
+			gossip_debug (DEBUG_DOMAIN_IDLE, "No more slack, break interrupted.");
 			app_status_clear_away ();
 			return TRUE;
 		}
 		else if (idle > BACK_SLACK) {
-			DEBUG_MSG (("AppIdle: Don't interrupt break."));
+			gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break.");
 			app_status_flash_stop ();
 		}
 	}
@@ -1812,6 +1931,7 @@ app_connection_items_update (void)
 	 */
 	gossip_session_count_accounts (priv->session,
 				       &connected, 
+				       NULL,
 				       &disconnected);
 
 	for (l = priv->widgets_connected; l; l = l->next) {
@@ -1840,6 +1960,114 @@ gossip_app_is_connected (void)
 /*
  * Toolbar for accounts
  */
+
+static void
+app_accounts_error_edit_clicked_cb (GtkButton     *button,
+				    GossipAccount *account)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	gossip_accounts_dialog_show (account);
+	g_hash_table_remove (priv->errors, account);
+}
+
+static void
+app_accounts_error_clear_clicked_cb (GtkButton     *button,
+				     GossipAccount *account)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	g_hash_table_remove (priv->errors, account);
+}
+
+static void
+app_accounts_error_display (GossipAccount *account,
+			    GError        *error)
+{
+	GossipAppPriv *priv;
+	GtkWidget     *child;
+	GtkWidget     *vbox;
+	GtkWidget     *hbox;
+	GtkWidget     *image;
+	GtkWidget     *label;
+	GtkWidget     *button;
+	gchar         *str;
+
+	priv = GET_PRIV (app);
+
+	if (!priv->errors) {
+		priv->errors = g_hash_table_new_full (gossip_account_hash,
+						      gossip_account_equal,
+						      g_object_unref,
+						      (GDestroyNotify) gtk_widget_destroy);
+	}
+	
+	if (g_hash_table_lookup (priv->errors, account)) {
+		return;
+	}
+
+	child = gtk_hbox_new (FALSE, 6);
+	gtk_container_set_border_width (GTK_CONTAINER (child), 6);
+	gtk_box_pack_start (GTK_BOX (priv->errors_vbox), child, FALSE, TRUE, 0);
+	gtk_widget_show (child);
+
+	image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_ERROR, 
+					  GTK_ICON_SIZE_DND);
+	gtk_misc_set_alignment (GTK_MISC (image), 0, 0);
+	gtk_box_pack_start (GTK_BOX (child), image, FALSE, TRUE, 0);
+	gtk_widget_show (image);
+
+	vbox = gtk_vbox_new (FALSE, 6);
+	gtk_box_pack_start (GTK_BOX (child), vbox, FALSE, TRUE, 0);
+	gtk_widget_show (vbox);
+
+	str = g_markup_printf_escaped ("<b>%s</b>\n%s", 
+				       gossip_account_get_name (account), 
+				       error->message);
+
+	label = gtk_label_new ("");
+	gtk_label_set_markup (GTK_LABEL (label), str);
+	gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+ 	gtk_misc_set_alignment (GTK_MISC (label), 0, 0); 
+	gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
+	gtk_widget_show (label);
+
+	g_free (str);
+
+	hbox = gtk_hbox_new (FALSE, 6);
+	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
+	gtk_widget_show (hbox);
+
+	button = gtk_button_new_from_stock (GTK_STOCK_EDIT);
+/* 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE); */
+	gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
+	gtk_widget_show (button);
+
+	g_signal_connect_object (button, "clicked", 
+				 G_CALLBACK (app_accounts_error_edit_clicked_cb),
+				 account, 0);
+
+	button = gtk_button_new_from_stock (GTK_STOCK_CLEAR);
+/* 	gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE); */
+	gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
+	gtk_widget_show (button);
+
+	g_signal_connect_object (button, "clicked", 
+				 G_CALLBACK (app_accounts_error_clear_clicked_cb),
+				 account, 0);
+
+	gtk_widget_show (priv->errors_vbox);
+
+	g_hash_table_insert (priv->errors, g_object_ref (account), child);	       
+}
+
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
+
 static void
 app_accounts_account_notify_cb (GossipAccount *account,
 				GParamSpec    *param,
@@ -1853,7 +2081,7 @@ app_accounts_account_added_cb (GossipAccountManager *manager,
 			       GossipAccount        *account,
 			       gpointer              user_data)
 {
-	DEBUG_MSG (("AppAccounts: Account added"));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Account added");
 	app_accounts_rearrange ();
 	app_connection_items_update ();
 }
@@ -1863,7 +2091,7 @@ app_accounts_account_removed_cb (GossipAccountManager *manager,
 				 GossipAccount        *account,
 				 gpointer              user_data)
 {
-	DEBUG_MSG (("AppAccounts: Account removed"));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Account removed");
 	app_accounts_remove (account);
 	app_connection_items_update ();
 }
@@ -1912,7 +2140,7 @@ app_accounts_rearrange (void)
 
 	priv = GET_PRIV (app);
 
-	DEBUG_MSG (("AppAccounts: Rearranging toolbar"));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Rearranging toolbar");
 
 	/* Remove all children for a reshuffle */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -1936,7 +2164,7 @@ app_accounts_create (void)
 
 	priv = GET_PRIV (app);
 
-	DEBUG_MSG (("AppAccounts: Creating toolbar"));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Creating toolbar");
 
 	manager = gossip_session_get_account_manager (priv->session);
 	accounts = gossip_account_manager_get_accounts (manager);
@@ -1967,7 +2195,7 @@ app_accounts_update_separator (void)
 
 	priv = GET_PRIV (app);
 
-	DEBUG_MSG (("AppAccounts: Updating toolbar separator position"));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Updating toolbar separator position");
 
 	/* Remove current separator */
 	children = gtk_container_get_children (GTK_CONTAINER (priv->accounts_toolbar));
@@ -2042,7 +2270,7 @@ app_accounts_update_toolbar (void)
 		gtk_widget_show (priv->accounts_toolbar);
 	}
 
-	DEBUG_MSG (("AppAccounts: There are %d accounts on the toolbar", count));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "There are %d accounts on the toolbar", count);
 
 	g_list_free (children);
 }
@@ -2056,8 +2284,8 @@ app_accounts_add (GossipAccount *account)
 
 	priv = GET_PRIV (app);
 
-	DEBUG_MSG (("AppAccounts: Adding account with id:'%s'", 
-		   gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Adding account with id:'%s'", 
+		      gossip_account_get_id (account));
 
 	account_button = gossip_account_button_new ();
 	gossip_account_button_set_account (GOSSIP_ACCOUNT_BUTTON (account_button), 
@@ -2095,8 +2323,8 @@ app_accounts_remove (GossipAccount *account)
 
 	priv = GET_PRIV (app);
 
-	DEBUG_MSG (("AppAccounts: Removing account with id:'%s'", 
-		   gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN_ACCOUNTS, "Removing account with id:'%s'", 
+		      gossip_account_get_id (account));
 
 	container = GTK_CONTAINER (priv->accounts_toolbar);
 	children = gtk_container_get_children (container);
@@ -2130,6 +2358,8 @@ app_accounts_remove (GossipAccount *account)
 	/* Show/hide toolbar */
 	app_accounts_update_toolbar ();
 }
+
+#endif /* USE_ORIGINAL_TOOLBAR_CODE */
 
 static GossipPresence *
 app_get_effective_presence (void)
@@ -2519,13 +2749,13 @@ app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
 	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
-		DEBUG_MSG (("AppChatroom: Auto connect update: failed for room:'%s'", name));
+		gossip_debug (DEBUG_DOMAIN_CHATROOMS, "Auto connect update: failed for room:'%s'", name);
 		gossip_chatrooms_window_show (NULL, TRUE);
 		break;
 
 	case GOSSIP_CHATROOM_JOIN_OK:
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
-		DEBUG_MSG (("AppChatroom: Auto connect update: success for room:'%s'", name));
+		gossip_debug (DEBUG_DOMAIN_CHATROOMS, "Auto connect update: success for room:'%s'", name);
 		gossip_group_chat_new (provider, 
 				       gossip_chatroom_get_id (chatroom));
 		break;
@@ -2600,7 +2830,7 @@ app_event_added_cb (GossipEventManager *manager,
 	GossipAppPriv *priv;
 	GList         *l;
 		
-	DEBUG_MSG (("AppTray: Start blink"));
+	gossip_debug (DEBUG_DOMAIN_TRAY, "Start blink");
 
 	priv = GET_PRIV (app);
 	
@@ -2628,13 +2858,13 @@ app_event_removed_cb (GossipEventManager *manager,
 
 	priv = GET_PRIV (app);
 
-	DEBUG_MSG (("AppTray: Stop blink"));
+	gossip_debug (DEBUG_DOMAIN_TRAY, "Stop blink");
 	l = g_list_find_custom (priv->tray_flash_icons, event,
 				gossip_event_compare);
 
 	if (!l) {
 		/* Not flashing this event */
-		DEBUG_MSG (("AppTray: Couldn't find event"));
+		gossip_debug (DEBUG_DOMAIN_TRAY, "Couldn't find event");
 		return;
 	}
 

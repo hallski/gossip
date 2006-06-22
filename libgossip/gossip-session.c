@@ -42,6 +42,7 @@ struct _GossipSessionPriv {
 	GList                *contacts;
 
 	guint                 connected_counter;
+	guint                 connecting_counter;
 
 	GHashTable           *timers; /* connected time */
 };
@@ -455,7 +456,7 @@ session_protocol_logged_in (GossipProtocol *protocol,
 
 	priv = GET_PRIV (session);
 
-	/* setup timer */
+	/* Setup timer */
 	timer = g_timer_new ();
 	g_timer_start (timer);
 
@@ -463,8 +464,12 @@ session_protocol_logged_in (GossipProtocol *protocol,
 			     g_object_ref (account), 
 			     timer);
 	
-	/* update some status? */
+	/* Update some status? */
 	priv->connected_counter++;
+
+	if (priv->connecting_counter > 0) {
+		priv->connecting_counter--;
+	}
 
 	g_signal_emit (session, signals[PROTOCOL_CONNECTED], 0, account, protocol);
 
@@ -499,6 +504,10 @@ session_protocol_logged_out (GossipProtocol *protocol,
 	/* Don't go lower than 0 */
 	if (priv->connected_counter > 0) {
 		priv->connected_counter--;
+	}
+
+	if (priv->connecting_counter > 0) {
+		priv->connecting_counter--;
 	}
 
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
@@ -612,9 +621,16 @@ session_protocol_error (GossipProtocol *protocol,
 			GError         *error,
 			GossipSession  *session)
 {
+	GossipSessionPriv *priv;
 
 	DEBUG_MSG (("Session: Error:%d->'%s'", 
 		   error->code, error->message));
+
+	priv = GET_PRIV (session);
+
+	if (priv->connecting_counter > 0) {
+		priv->connecting_counter--;
+	}
 
 	g_signal_emit (session, signals[PROTOCOL_ERROR], 0, protocol, account, error); 
 }
@@ -774,6 +790,7 @@ gossip_session_get_connected_time (GossipSession *session,
 void 
 gossip_session_count_accounts (GossipSession *session,
 			       guint         *connected,
+			       guint         *connecting,
 			       guint         *disconnected)
 {
 	GossipSessionPriv    *priv;
@@ -798,6 +815,10 @@ gossip_session_count_accounts (GossipSession *session,
 
 	if (disconnected) {
 		*disconnected = ca.disconnected;
+	}
+
+	if (connecting) {
+		*connecting = priv->connecting_counter;
 	}
 }
 
@@ -989,6 +1010,7 @@ session_connect (GossipSession *session,
 	}
 	
 	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account);
+	priv->connecting_counter++;
 
 	/* can we not just pass the GossipAccount on the GObject init? */
 	gossip_protocol_setup (protocol, account);

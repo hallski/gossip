@@ -76,6 +76,7 @@ gdouble         gossip_session_get_connected_time      (GossipSession           
 
 void            gossip_session_count_accounts          (GossipSession           *session,
 							guint                   *connected,
+							guint                   *connecting,
 							guint                   *disconnected);
 
 gboolean        gossip_session_add_account             (GossipSession           *session,
