@@ -90,9 +90,13 @@ static void           private_chat_contact_updated              (gpointer       
 static void           private_chat_contact_added                (gpointer                not_used,
 								 GossipContact          *contact,
 								 GossipPrivateChat      *chat);
-static void           private_chat_connected_cb                 (GossipSession          *session,
+static void           private_chat_protocol_connected_cb        (GossipSession          *session,
+								 GossipAccount          *account,
+								 GossipProtocol         *protocol,
 								 GossipPrivateChat      *chat);
-static void           private_chat_disconnected_cb              (GossipSession          *session,
+static void           private_chat_protocol_disconnected_cb     (GossipSession          *session,
+								 GossipAccount          *account,
+								 GossipProtocol         *protocol,
 								 GossipPrivateChat      *chat);
 static void           private_chat_composing_cb                 (GossipSession          *session,
 								 GossipContact          *contact,
@@ -160,13 +164,13 @@ gossip_private_chat_init (GossipPrivateChat *chat)
 	gossip_debug (DEBUG_DOMAIN, "Connecting");
 
 	g_signal_connect_object (gossip_app_get_session (),
-				 "connected",
-				 G_CALLBACK (private_chat_connected_cb),
+				 "protocol-connected",
+				 G_CALLBACK (private_chat_protocol_connected_cb),
 				 chat, 0);
 
 	g_signal_connect_object (gossip_app_get_session (),
-				 "disconnected",
-				 G_CALLBACK (private_chat_disconnected_cb),
+				 "protocol-disconnected",
+				 G_CALLBACK (private_chat_protocol_disconnected_cb),
 				 chat, 0);
 	
 	g_signal_connect_object (gossip_app_get_session (),
@@ -520,12 +524,20 @@ private_chat_contact_added (gpointer           not_user,
 }
 
 static void
-private_chat_connected_cb (GossipSession     *session, 
-			   GossipPrivateChat *chat)
+private_chat_protocol_connected_cb (GossipSession     *session,
+				    GossipAccount     *account,
+				    GossipProtocol    *protocol,
+				    GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
+	GossipAccount         *this_account;
 
 	priv = GET_PRIV (chat);
+
+	this_account = gossip_contact_get_account (priv->own_contact);
+	if (!gossip_account_equal (this_account, account)) {
+		return;
+	}
 
 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE);
 
@@ -533,16 +545,26 @@ private_chat_connected_cb (GossipSession     *session,
 }
 
 static void
-private_chat_disconnected_cb (GossipSession     *session, 
-			      GossipPrivateChat *chat)
+private_chat_protocol_disconnected_cb (GossipSession     *session,
+				       GossipAccount     *account,
+				       GossipProtocol    *protocol,
+				       GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
+	GossipAccount         *this_account;
 
 	priv = GET_PRIV (chat);
+
+	this_account = gossip_contact_get_account (priv->own_contact);
+	if (!gossip_account_equal (this_account, account)) {
+		return;
+	}
 
 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE);
 
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected"));
+
+	g_signal_emit_by_name (chat, "status-changed");
 
 	private_chat_composing_remove_timeout (chat);
 }

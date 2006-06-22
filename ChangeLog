@@ -1,3 +1,11 @@
+2006-06-22  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-private-chat.c: (gossip_private_chat_init),
+	(private_chat_protocol_connected_cb),
+	(private_chat_protocol_disconnected_cb): Use the per protocol
+	connected/disconnected signals and make sure it's the right one
+	before acting, and update the status when we get disconnected.
+
 2006-06-22  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: (gossip_app_init), (app_finalize),
