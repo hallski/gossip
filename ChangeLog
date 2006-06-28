@@ -1,3 +1,8 @@
+2006-06-28  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-theme-manager.c: (theme_manager_apply_theme): Make
+	sure we check name before comparing it to known themes.	
+
 2006-06-22  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (gossip_app_toggle_visibility),

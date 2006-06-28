@@ -560,13 +560,17 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 
 	priv = GET_PRIV (manager);
 	
-	if (strcmp (name, "dark") == 0) {
-		theme_manager_apply_theme_dark (manager, view);
-	}
-	else if (strcmp (name, "blue") == 0) {
-		theme_manager_apply_theme_blue (manager, view);
-	} else {
+	if (!name) {
 		theme_manager_apply_theme_classic (manager, view);
+		return;
+	} else {
+		if (strcmp (name, "dark") == 0) {
+			theme_manager_apply_theme_dark (manager, view);
+		} else if (strcmp (name, "blue") == 0) {
+			theme_manager_apply_theme_blue (manager, view);
+		} else {
+			theme_manager_apply_theme_classic (manager, view);
+		}
 	}
 	
 	gossip_chat_view_set_irc_style (view, priv->irc_style);
