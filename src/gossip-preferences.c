@@ -30,6 +30,7 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 #include "gossip-preferences.h"
+#include "gossip-theme-manager.h"
 #include "gossip-spell.h"
 
 typedef struct {
@@ -425,6 +426,8 @@ preferences_themes_setup (GossipPreferences *preferences)
 	GtkComboBox     *combo;
 	GtkListStore    *model;
 	GtkTreeIter      iter;
+	const gchar    **themes;
+	gint             i;
 
 	combo = GTK_COMBO_BOX (preferences->combobox_chat_theme);
 
@@ -432,25 +435,14 @@ preferences_themes_setup (GossipPreferences *preferences)
 				    G_TYPE_STRING,
 				    G_TYPE_STRING);
 
-	gtk_list_store_append (model, &iter);
-	gtk_list_store_set (model, &iter,
-			    COL_COMBO_VISIBLE_NAME, _("Classic"),
-			    COL_COMBO_NAME, "classic",
-			    -1);
-	
-	gtk_list_store_append (model, &iter);
-	gtk_list_store_set (model, &iter,
-			    COL_COMBO_VISIBLE_NAME, _("Blue"),
-			    COL_COMBO_NAME, "blue",
-			    -1);
-	
-#if 0
-	gtk_list_store_append (model, &iter);
-	gtk_list_store_set (model, &iter,
-			    COL_COMBO_VISIBLE_NAME, _("Dark"),
-			    COL_COMBO_NAME, "dark",
-			    -1);
-#endif
+	themes = gossip_theme_manager_get_themes ();
+ 	for (i = 0; themes[i]; i += 2) {
+		gtk_list_store_append (model, &iter);
+		gtk_list_store_set (model, &iter,
+				    COL_COMBO_VISIBLE_NAME, themes[i + 1],
+				    COL_COMBO_NAME, themes[i],
+				    -1);
+	}
 	
 	gtk_combo_box_set_model (combo, GTK_TREE_MODEL (model));
 	g_object_unref (model);

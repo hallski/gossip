@@ -31,7 +31,6 @@
 #define GOSSIP_IS_THEME_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_THEME_MANAGER))
 #define GOSSIP_THEME_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerClass))
 
-
 typedef struct _GossipThemeManager      GossipThemeManager;
 typedef struct _GossipThemeManagerClass GossipThemeManagerClass;
 
@@ -39,13 +38,13 @@ struct _GossipThemeManager {
 	GObject      parent;
 };
 
-
 struct _GossipThemeManagerClass {
 	GObjectClass parent_class;
 };
 
-GType               gossip_theme_manager_get_type (void) G_GNUC_CONST;
+GType               gossip_theme_manager_get_type            (void) G_GNUC_CONST;
 GossipThemeManager *gossip_theme_manager_get                 (void);
+const gchar **      gossip_theme_manager_get_themes          (void);
 void                gossip_theme_manager_apply               (GossipThemeManager *manager,
 							      GossipChatView     *view);
 void                gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,

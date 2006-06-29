@@ -21,7 +21,6 @@
 /* TODO:
  *
  * add another theme
- * add _get_all() + UI to choose
  * clear the tags before reusing them
  *
  */
@@ -29,14 +28,14 @@
 #include <config.h>
 #include <string.h>
 #include <gconf/gconf-client.h>
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
 #include "gossip-theme-manager.h"
 #include "gossip-preferences.h"
 #include "gossip-app.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-		       GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
 	gchar    *name;
@@ -48,15 +47,33 @@ typedef struct {
 	gboolean  irc_style;
 } GossipThemeManagerPriv;
 
-static void theme_manager_finalize                 (GObject     *object);
-static void theme_manager_name_notify_func         (GConfClient *client,
-						    guint        id,
-						    GConfEntry  *entry,
-						    gpointer     user_data);
-static void theme_manager_show_avatars_notify_func (GConfClient *client,
-						    guint        id,
-						    GConfEntry  *entry,
-						    gpointer     user_data);
+static void        theme_manager_finalize                 (GObject            *object);
+static void        theme_manager_name_notify_func         (GConfClient        *client,
+							   guint               id,
+							   GConfEntry         *entry,
+							   gpointer            user_data);
+static void        theme_manager_show_avatars_notify_func (GConfClient        *client,
+							   guint               id,
+							   GConfEntry         *entry,
+							   gpointer            user_data);
+static void        theme_manager_ensure_tag_by_name       (GtkTextBuffer      *buffer,
+							   const gchar        *name);
+static gboolean    theme_manager_ensure_theme_exists      (const gchar        *name);
+static GtkTextTag *theme_manager_init_tag_by_name         (GtkTextTagTable    *table,
+							   const gchar        *name);
+static void        theme_manager_add_tag                  (GtkTextTagTable    *table,
+							   GtkTextTag         *tag);
+static void        theme_manager_fixup_tag_table          (GossipThemeManager *theme_manager,
+							   GossipChatView     *view);
+static void        theme_manager_apply_theme_classic      (GossipThemeManager *manager,
+							   GossipChatView     *view);
+static void        theme_manager_apply_theme_clear        (GossipThemeManager *manager,
+							   GossipChatView     *view);
+static void        theme_manager_apply_theme_blue         (GossipThemeManager *manager,
+							   GossipChatView     *view);
+static void        theme_manager_apply_theme              (GossipThemeManager *manager,
+							   GossipChatView     *view,
+							   const gchar        *name);
 
 enum {
 	THEME_CHANGED,
@@ -64,6 +81,13 @@ enum {
 };
 
 static guint signals[LAST_SIGNAL] = { 0 };
+
+static const gchar *themes[] = {
+	"classic", N_("Classic"),
+	"clear", N_("Clear"),
+	"blue", N_("Blue"),
+	NULL
+};
 
 G_DEFINE_TYPE (GossipThemeManager, gossip_theme_manager, G_TYPE_OBJECT);
 
@@ -144,7 +168,7 @@ theme_manager_finalize (GObject *object)
 static void
 theme_manager_name_notify_func (GConfClient *client,
 				guint        id,
-			   GConfEntry  *entry,
+				GConfEntry  *entry,
 				gpointer     user_data)
 {
 	GossipThemeManager     *manager;
@@ -202,6 +226,24 @@ theme_manager_ensure_tag_by_name (GtkTextBuffer *buffer,
 					    name,
 					    NULL);
 	}
+}
+
+static gboolean
+theme_manager_ensure_theme_exists (const gchar *name)
+{
+	gint i;
+
+	if (!name || strlen (name) < 1) {
+		return FALSE;
+	}
+
+ 	for (i = 0; themes[i]; i += 2) {
+		if (strcmp (themes[i], name) == 0) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 static GtkTextTag *
@@ -384,6 +426,160 @@ theme_manager_apply_theme_classic (GossipThemeManager *manager,
 }
 
 static void
+theme_manager_apply_theme_clear (GossipThemeManager *manager,
+				 GossipChatView     *view)
+{
+	GossipThemeManagerPriv *priv;
+	GtkTextBuffer          *buffer;
+	GtkTextTagTable        *table;
+	GtkTextTag             *tag;
+
+	priv = GET_PRIV (manager);
+
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
+	table = gtk_text_buffer_get_tag_table (buffer);
+
+	priv->irc_style = FALSE;
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-spacing");
+	g_object_set (tag,
+		      "size", 3000,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-header-self");
+	g_object_set (tag,
+		      "foreground", "black",
+/* 		      "paragraph-background", BLUE_HEAD_SELF, */
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-header-self-avatar");
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-avatar-self");
+/* 	g_object_set (tag, */
+/* 		      "paragraph-background", BLUE_HEAD_SELF, */
+/* 		      NULL); */
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-self");
+	g_object_set (tag,
+		      "size", 1,
+/* 		      "paragraph-background", BLUE_LINE_SELF, */
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-body-self");
+	g_object_set (tag,
+/* 		      "foreground", "black", */
+/* 		      "paragraph-background", BLUE_BODY_SELF, */
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-action-self");
+	g_object_set (tag,
+/* 		      "foreground", "brown4", */
+		      "style", PANGO_STYLE_ITALIC,
+/* 		      "paragraph-background", BLUE_BODY_SELF, */
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-highlight-self");
+	g_object_set (tag,
+/* 		      "foreground", "black", */
+		      "weight", PANGO_WEIGHT_BOLD,
+/* 		      "paragraph-background", BLUE_BODY_SELF, */
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-header-other");
+	g_object_set (tag,
+/* 		      "foreground", "black", */
+/* 		      "paragraph-background", BLUE_HEAD_OTHER, */
+		      "weight", PANGO_WEIGHT_BOLD,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-header-other-avatar");
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-avatar-other");
+/* 	g_object_set (tag, */
+/* 		      "paragraph-background", BLUE_HEAD_OTHER, */
+/* 		      NULL); */
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-other");
+	g_object_set (tag,
+		      "size", 1,
+/* 		      "paragraph-background", BLUE_LINE_OTHER, */
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-body-other");
+	g_object_set (tag,
+/* 		      "foreground", "black", */
+/* 		      "paragraph-background", BLUE_BODY_OTHER, */
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-action-other");
+	g_object_set (tag,
+/* 		      "foreground", "brown4", */
+		      "style", PANGO_STYLE_ITALIC,
+/* 		      "paragraph-background", BLUE_BODY_OTHER, */
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-highlight-other");
+	g_object_set (tag,
+/* 		      "foreground", "black", */
+		      "weight", PANGO_WEIGHT_BOLD,
+/* 		      "paragraph-background", BLUE_BODY_OTHER, */
+		      "pixels-above-lines", 4,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-time");
+	g_object_set (tag,
+/* 		      "foreground", "darkgrey", */
+		      "justification", GTK_JUSTIFY_CENTER,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-event");
+	g_object_set (tag,
+/* 		      "foreground", BLUE_LINE_OTHER, */
+		      "justification", GTK_JUSTIFY_LEFT,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-invite");
+/* 	g_object_set (tag, */
+/*  		      "foreground", "sienna",  */
+/* 		      NULL); */
+	theme_manager_add_tag (table, tag);
+
+	tag = theme_manager_init_tag_by_name (table, "fancy-link");
+	g_object_set (tag,
+/* 		      "foreground", "#49789e", */
+		      "underline", PANGO_UNDERLINE_SINGLE,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+}
+
+static void
 theme_manager_apply_theme_blue (GossipThemeManager *manager,
 				GossipChatView     *view)
 {
@@ -546,12 +742,6 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 }
 
 static void
-theme_manager_apply_theme_dark (GossipThemeManager *manager,
-				GossipChatView     *view)
-{
-}
-
-static void
 theme_manager_apply_theme (GossipThemeManager *manager,
 			   GossipChatView     *view,
 			   const gchar        *name)
@@ -559,18 +749,17 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 	GossipThemeManagerPriv *priv;
 
 	priv = GET_PRIV (manager);
-	
-	if (!name) {
-		theme_manager_apply_theme_classic (manager, view);
-		return;
-	} else {
-		if (strcmp (name, "dark") == 0) {
-			theme_manager_apply_theme_dark (manager, view);
+
+	if (theme_manager_ensure_theme_exists (name)) {
+		if (strcmp (name, "classic") == 0) {
+			theme_manager_apply_theme_classic (manager, view);
+		} else if (strcmp (name, "clear") == 0) {
+			theme_manager_apply_theme_clear (manager, view);
 		} else if (strcmp (name, "blue") == 0) {
 			theme_manager_apply_theme_blue (manager, view);
-		} else {
-			theme_manager_apply_theme_classic (manager, view);
 		}
+	} else {
+		theme_manager_apply_theme_classic (manager, view);
 	}
 	
 	gossip_chat_view_set_irc_style (view, priv->irc_style);
@@ -579,6 +768,24 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 	 * user defined theme it will be.
 	 */
 	theme_manager_fixup_tag_table (manager, view);
+}
+
+GossipThemeManager *
+gossip_theme_manager_get (void)
+{
+	static GossipThemeManager *manager = NULL;
+
+	if (!manager) {
+		manager = g_object_new (GOSSIP_TYPE_THEME_MANAGER, NULL);
+	}
+	
+	return manager;
+}
+
+const gchar **
+gossip_theme_manager_get_themes (void)
+{
+	return themes;
 }
 
 void
@@ -654,17 +861,5 @@ gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
 
 		gtk_text_attributes_unref (attrs);
 	}
-}
-
-GossipThemeManager *
-gossip_theme_manager_get (void)
-{
-	static GossipThemeManager *manager = NULL;
-
-	if (!manager) {
-		manager = g_object_new (GOSSIP_TYPE_THEME_MANAGER, NULL);
-	}
-	
-	return manager;
 }
 

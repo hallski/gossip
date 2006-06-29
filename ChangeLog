@@ -1,3 +1,11 @@
+2006-06-29  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-preferences.c:
+	* src/gossip-theme-manager.[ch]: Added a clear theme which uses
+	the same foreground and background colours and the avatars in
+	chats. Also added the ability to request a list of themes from the
+	theme manager for the preferences combo box.
+
 2006-06-29  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-accounts-dialog.c
