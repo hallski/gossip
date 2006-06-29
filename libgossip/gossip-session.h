@@ -92,6 +92,8 @@ void            gossip_session_disconnect              (GossipSession           
 							GossipAccount           *account);
 gboolean        gossip_session_is_connected            (GossipSession           *session,
 							GossipAccount           *account);
+gboolean        gossip_session_is_connecting           (GossipSession           *session,
+							GossipAccount           *account);
 void            gossip_session_send_message            (GossipSession           *session,
 							GossipMessage           *message);
 void            gossip_session_send_composing          (GossipSession           *session,

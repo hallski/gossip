@@ -1,3 +1,17 @@
+2006-06-29  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.[ch]:
+	* protocols/jabber/gossip-jabber.c: Added _is_connecting() function.
+	
+	* src/gossip-accounts-dialog.c: Actually provide feedback when
+	connecting by flashing the account image.
+	
+	* src/gossip-app.c: Fixed a bug where you couldn't connect to
+	localhost if network manager said your network was disconnected.
+	
+	* ui/main.glade: Added shortcut for accounts (F4).
+
 2006-06-28  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-theme-manager.c: (theme_manager_apply_theme): Make

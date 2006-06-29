@@ -64,6 +64,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->login                = NULL;
 	klass->logout               = NULL;
 	klass->is_connected         = NULL;
+	klass->is_connecting        = NULL;
 	klass->is_valid_username    = NULL;
 	klass->get_example_username = NULL;
 	klass->get_default_server   = NULL;
@@ -274,6 +275,21 @@ gossip_protocol_is_connected (GossipProtocol *protocol)
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->is_connected) {
 		return klass->is_connected (protocol);
+	}
+
+	return FALSE;
+}
+
+gboolean
+gossip_protocol_is_connecting (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->is_connecting) {
+		return klass->is_connecting (protocol);
 	}
 
 	return FALSE;

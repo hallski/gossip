@@ -55,6 +55,7 @@ struct FindAccount {
 struct CountAccounts {
 	GossipSession *session;
 	guint          connected;
+	guint          connecting;
 	guint          disconnected;
 };
 
@@ -814,22 +815,29 @@ gossip_session_count_accounts (GossipSession *session,
 	ca.session = session;
 
 	ca.connected = 0;
+	ca.connecting = 0;
 	ca.disconnected = 0;
 
 	g_hash_table_foreach (priv->accounts, 
-			      (GHFunc)session_count_accounts_foreach_cb,
+			      (GHFunc) session_count_accounts_foreach_cb,
 			      &ca);
 
-	if (connected) {
-		*connected = ca.connected;
-	}
+	/* Here we update our own numbers, should we be doing this? I
+	 * am not sure but fuck it let's do it anyway :)
+	 */
+	priv->connected_counter = ca.connected;
+	priv->connecting_counter = ca.connecting;
 
-	if (disconnected) {
-		*disconnected = ca.disconnected;
+	if (connected) {
+		*connected = priv->connected_counter;
 	}
 
 	if (connecting) {
 		*connecting = priv->connecting_counter;
+	}
+
+	if (disconnected) {
+		*disconnected = ca.disconnected;
 	}
 }
 
@@ -846,6 +854,10 @@ session_count_accounts_foreach_cb (GossipAccount        *account,
 		ca->connected++;
 	} else {
 		ca->disconnected++;
+
+		if (gossip_protocol_is_connecting (protocol)) {
+			ca->connecting++;
+		}
 	}
 }
 
@@ -1274,7 +1286,32 @@ gossip_session_is_connected (GossipSession *session,
 	} 
 
 	/* Fall back to counter if no account is provided */
+	gossip_session_count_accounts (session, NULL, NULL, NULL);
+
 	return (priv->connected_counter > 0);
+}
+
+gboolean
+gossip_session_is_connecting (GossipSession *session,
+			      GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
+	
+	priv = GET_PRIV (session);
+
+	if (account) {
+		protocol = g_hash_table_lookup (priv->accounts, account);
+		
+		return gossip_protocol_is_connecting (protocol);
+	} 
+
+	/* Fall back to counter if no account is provided */
+	gossip_session_count_accounts (session, NULL, NULL, NULL);
+
+	return (priv->connecting_counter > 0);
 }
 
 const gchar *
