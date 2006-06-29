@@ -1,5 +1,10 @@
 2006-06-29  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-accounts-dialog.c
+	(accounts_dialog_protocol_connected_cb)
+	(accounts_dialog_protocol_disconnected_cb): Check the id before
+	removing the source.
+
 	* src/gossip-app.c (app_setup): Remove trailing period from tooltip.
 
 2006-06-29  Martyn Russell  <martyn@imendio.com>

@@ -1147,7 +1147,7 @@ accounts_dialog_protocol_connected_cb (GossipSession        *session,
 	guint             connecting;
 
 	gossip_session_count_accounts (session, NULL, &connecting, NULL); 
-	if (connecting < 1) {
+	if (connecting < 1 && dialog->connecting_id) {
 		g_source_remove (dialog->connecting_id);
 		dialog->connecting_id = 0;
 	}
@@ -1213,7 +1213,7 @@ accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 	guint             connecting;
 
 	gossip_session_count_accounts (session, NULL, &connecting, NULL); 
-	if (connecting < 1) {
+	if (connecting < 1 && dialog->connecting_id) {
 		g_source_remove (dialog->connecting_id);
 		dialog->connecting_id = 0;
 	}
