@@ -669,7 +669,7 @@ app_setup (GossipAccountManager *manager)
 
         gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
 
-	str = _("Click to show accounts and any pending connections.");
+	str = _("Click to show accounts and any pending connections");
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
 			      priv->throbber, str, str);
 
