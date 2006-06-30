@@ -1535,11 +1535,19 @@ gossip_log_message_for_contact (GossipMessage *message,
 	gchar         *name;
 	gchar         *contact_id;
 	const gchar   *str; 
+	const gchar   *body_str; 
 	gboolean       new_file = FALSE;
 	gboolean       save_contact = FALSE;
 	gboolean       save_own_contact = FALSE;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
+
+	body_str = gossip_message_get_body (message);
+	if (!body_str || strcmp (body_str, "") == 0) {
+		g_print ("Won't log this\n");
+		return;
+	}
+	body = log_urlify (body_str);
 
 	if (incoming) {
 		to_or_from = "from";
@@ -1616,14 +1624,6 @@ gossip_log_message_for_contact (GossipMessage *message,
 	}
 
 	timestamp = log_get_timestamp_from_message (message);
-
-	/* Make sure we escape all data written */
-	str = gossip_message_get_body (message); 
-        if (str) {
-		body = log_urlify (str);
-	} else {
-		body = g_strdup ("");
-	}
 
 	str = gossip_contact_get_name (contact);
 	if (!str) {

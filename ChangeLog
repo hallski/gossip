@@ -1,3 +1,9 @@
+2006-06-30  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-log.c: (gossip_log_message_for_contact):
+	- Don't log empty messages.
+	- Fixes #346298.
+
 2006-06-29  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-preferences.c:

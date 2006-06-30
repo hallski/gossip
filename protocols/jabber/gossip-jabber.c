@@ -2374,7 +2374,7 @@ jabber_message_handler (LmMessageHandler *handler,
 		gossip_debug (DEBUG_DOMAIN, "Dropping new message, no <body> element");
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	node = lm_message_node_get_child (m->node, "thread");
 	if (node) {
 		thread = node->value;
