@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-22 16:33+0200\n"
-"PO-Revision-Date: 2006-06-22 16:34+0200\n"
+"POT-Creation-Date: 2006-06-30 10:04+0200\n"
+"PO-Revision-Date: 2006-06-30 10:05+0200\n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -185,7 +185,7 @@ msgid "An unknown error occurred, check your details are correct."
 msgstr "Er is een onbekende fout opgetreden. Controleer uw gegevens."
 
 #: ../libgossip/gossip-contact.c:847 ../libgossip/gossip-presence.c:234
-#: ../src/gossip-app.c:2552 ../src/gossip-contact-info-dialog.c:168
+#: ../src/gossip-app.c:2571 ../src/gossip-contact-info-dialog.c:168
 #: ../src/gossip-galago.c:180
 msgid "Offline"
 msgstr "Offline"
@@ -210,51 +210,51 @@ msgstr "Afwezig"
 msgid "Unavailable"
 msgstr "Niet beschikbaar"
 
-#: ../libgossip/gossip-protocol.c:673
+#: ../libgossip/gossip-protocol.c:689
 msgid "An unknown error occurred."
 msgstr "Een onbekende fout is opgetreden."
 
-#: ../libgossip/gossip-protocol.c:677
+#: ../libgossip/gossip-protocol.c:693
 msgid "Connection refused."
 msgstr "Verbinding geweigerd."
 
-#: ../libgossip/gossip-protocol.c:680
+#: ../libgossip/gossip-protocol.c:696
 msgid "Server address could not be resolved."
 msgstr "Het serveradres kon niet opgevraagd worden."
 
-#: ../libgossip/gossip-protocol.c:683
+#: ../libgossip/gossip-protocol.c:699
 msgid "Connection timed out."
 msgstr "Er kan geen verbinding gemaakt worden."
 
-#: ../libgossip/gossip-protocol.c:686
+#: ../libgossip/gossip-protocol.c:702
 msgid "Authentication failed."
 msgstr "Aanmelden mislukt."
 
-#: ../libgossip/gossip-protocol.c:689
+#: ../libgossip/gossip-protocol.c:705
 msgid "The username you are trying already exists."
 msgstr "Deze gebruikersnaam is al in gebruik."
 
-#: ../libgossip/gossip-protocol.c:692
+#: ../libgossip/gossip-protocol.c:708
 msgid "The username you are trying is not valid."
 msgstr "Deze gebruikersnaam is niet geldig."
 
-#: ../libgossip/gossip-protocol.c:695
+#: ../libgossip/gossip-protocol.c:711
 msgid "This feature is unavailable."
 msgstr "Deze functie is niet beschikbaar."
 
-#: ../libgossip/gossip-protocol.c:698
+#: ../libgossip/gossip-protocol.c:714
 msgid "This feature is unauthorized."
 msgstr "Deze functie is niet toegankelijk."
 
-#: ../libgossip/gossip-protocol.c:701
+#: ../libgossip/gossip-protocol.c:717
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Er is een onverwachtse protocolfout opgetreden."
 
-#: ../protocols/jabber/gossip-jabber.c:1067
+#: ../protocols/jabber/gossip-jabber.c:1069
 msgid "Connection could not be opened"
 msgstr "Verbinding kon niet gemaakt worden"
 
-#: ../protocols/jabber/gossip-jabber.c:1115
+#: ../protocols/jabber/gossip-jabber.c:1117
 msgid "Couldn't send message!"
 msgstr "Bericht kon niet verzonden worden!"
 
@@ -307,11 +307,11 @@ msgstr ""
 msgid "Stop Connecting"
 msgstr "Verbinding afbreken"
 
-#: ../src/gossip-account-button.c:353 ../src/gossip-accounts-dialog.c:255
+#: ../src/gossip-account-button.c:353 ../src/gossip-accounts-dialog.c:266
 msgid "Connect"
 msgstr "Verbinden"
 
-#: ../src/gossip-account-button.c:361 ../src/gossip-accounts-dialog.c:252
+#: ../src/gossip-account-button.c:361 ../src/gossip-accounts-dialog.c:263
 msgid "Disconnect"
 msgstr "Verbinding ver_breken"
 
@@ -320,7 +320,7 @@ msgid "Edit"
 msgstr "Bewerken"
 
 #: ../src/gossip-account-button.c:401 ../src/gossip-group-chat.c:709
-#: ../src/gossip-private-chat.c:532
+#: ../src/gossip-private-chat.c:544
 msgid "Connected"
 msgstr "Verbonden"
 
@@ -328,8 +328,8 @@ msgstr "Verbonden"
 msgid "Connecting"
 msgstr "Verbinden"
 
-#: ../src/gossip-account-button.c:403 ../src/gossip-app.c:1608
-#: ../src/gossip-group-chat.c:720 ../src/gossip-private-chat.c:545
+#: ../src/gossip-account-button.c:403 ../src/gossip-app.c:1628
+#: ../src/gossip-group-chat.c:720 ../src/gossip-private-chat.c:565
 msgid "Disconnected"
 msgstr "Verbinding verbroken"
 
@@ -353,15 +353,15 @@ msgstr "Wellicht heeft de server deze dienst niet ingeschakeld."
 msgid "Check your username and password are correct."
 msgstr "Controleer of de gebruikersnaam en het wachtwoord correct zijn."
 
-#: ../src/gossip-accounts-dialog.c:245
+#: ../src/gossip-accounts-dialog.c:256
 msgid "Stop"
 msgstr "Afbreken"
 
-#: ../src/gossip-accounts-dialog.c:495 ../ui/main.glade.h:21
+#: ../src/gossip-accounts-dialog.c:506 ../ui/main.glade.h:21
 msgid "Accounts"
 msgstr "Accounts"
 
-#: ../src/gossip-accounts-dialog.c:1311
+#: ../src/gossip-accounts-dialog.c:1385
 #, c-format
 msgid ""
 "You are about to remove your %s account!\n"
@@ -370,7 +370,7 @@ msgstr ""
 "Het account ‘%s’ zal verwijderd worden!\n"
 "Weet u zeker dat u wilt doorgaan?"
 
-#: ../src/gossip-accounts-dialog.c:1317
+#: ../src/gossip-accounts-dialog.c:1391
 msgid ""
 "Any associated conversations and chat rooms will NOT be removed if you "
 "decide to proceed.\n"
@@ -417,35 +417,35 @@ msgstr "%s ID van nieuw contact:"
 msgid "Example: %s"
 msgstr "Voorbeeld: %s"
 
-#: ../src/gossip-app.c:617 ../ui/main.glade.h:136
+#: ../src/gossip-app.c:625 ../ui/main.glade.h:136
 msgid "_Connect"
 msgstr "_Verbinden"
 
-#: ../src/gossip-app.c:622 ../ui/main.glade.h:139
+#: ../src/gossip-app.c:630 ../ui/main.glade.h:139
 msgid "_Disconnect"
 msgstr "Verbinding ver_breken"
 
-#: ../src/gossip-app.c:664
-msgid "Click to show accounts and any pending connections."
-msgstr "Klik hier om de accounts en verbindingen te bekijken."
+#: ../src/gossip-app.c:672
+msgid "Show accounts and pending connections"
+msgstr "Accounts en verbindingen tonen"
 
-#: ../src/gossip-app.c:822
+#: ../src/gossip-app.c:830
 msgid "To summarize:"
 msgstr "Samengevat:"
 
-#: ../src/gossip-app.c:892
+#: ../src/gossip-app.c:900
 msgid "If you quit, you will lose all unread information."
 msgstr "Alle ongelezen berichten zullen bij afsluiten verloren gaan."
 
-#: ../src/gossip-app.c:1137
+#: ../src/gossip-app.c:1145
 msgid "Could not display the help contents."
 msgstr "De hulptekst kan niet worden weergegeven."
 
-#: ../src/gossip-app.c:1803
+#: ../src/gossip-app.c:1823
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Er zijn geen chat-accounts ingesteld!"
 
-#: ../src/gossip-app.c:1805
+#: ../src/gossip-app.c:1825
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -453,7 +453,7 @@ msgstr ""
 "De volgende stap is het invullen van uw accountgegevens in het "
 "accountvenster."
 
-#: ../src/gossip-app.c:2098
+#: ../src/gossip-app.c:2117
 msgid "Edit Account _Details"
 msgstr "Accountgegevens _bewerken"
 
@@ -729,7 +729,7 @@ msgstr "Thuis"
 msgid "Example"
 msgstr "Voorbeeld"
 
-#: ../src/gossip-notify.c:166 ../src/gossip-private-chat.c:465
+#: ../src/gossip-notify.c:166 ../src/gossip-private-chat.c:469
 #, c-format
 msgid "%s has come online"
 msgstr "%s is nu online"
@@ -750,21 +750,9 @@ msgstr "Beantwoorden"
 msgid "Contact Information"
 msgstr "Contactinformatie"
 
-#: ../src/gossip-preferences.c:220
+#: ../src/gossip-preferences.c:221
 msgid "Language"
 msgstr "Taal"
-
-#: ../src/gossip-preferences.c:437
-msgid "Classic"
-msgstr "Klassiek"
-
-#: ../src/gossip-preferences.c:443
-msgid "Blue"
-msgstr "Blauw"
-
-#: ../src/gossip-preferences.c:450
-msgid "Dark"
-msgstr "Donker"
 
 #: ../src/gossip-presence-chooser.c:409
 msgid "Are you sure you want to empy the list?"
@@ -791,12 +779,12 @@ msgstr "Aangepast bericht…"
 msgid "Clear List..."
 msgstr "Lijst wissen…"
 
-#: ../src/gossip-private-chat.c:450
+#: ../src/gossip-private-chat.c:454
 #, c-format
 msgid "%s went offline"
 msgstr "%s ging offline"
 
-#: ../src/gossip-private-chat.c:1000
+#: ../src/gossip-private-chat.c:1022
 #, c-format
 msgid "Subject: %s"
 msgstr "Onderwerp: %s"
@@ -1671,6 +1659,15 @@ msgstr "_Inschrijven"
 #: ../ui/main.glade.h:156
 msgid "_Yes"
 msgstr "_Ja"
+
+#~ msgid "Classic"
+#~ msgstr "Klassiek"
+
+#~ msgid "Blue"
+#~ msgstr "Blauw"
+
+#~ msgid "Dark"
+#~ msgstr "Donker"
 
 #~ msgid "Contact Information for %s"
 #~ msgstr "Contact informatie voor %s"
