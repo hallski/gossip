@@ -1,5 +1,14 @@
 2006-06-30  Mikael Hallendal  <micke@imendio.com>
 
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_treeview_row_activated_cb),
+	(gossip_accounts_dialog_show):
+	- Connect/Disconnect when double clicking on an account in the
+	  accounts list.
+	- Fixes #346294.
+
+2006-06-30  Mikael Hallendal  <micke@imendio.com>
+
 	* src/gossip-log.c: (gossip_log_message_for_contact):
 	- Don't log empty messages.
 	- Fixes #346298.

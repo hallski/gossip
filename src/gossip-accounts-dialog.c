@@ -148,6 +148,10 @@ static void           accounts_dialog_remove_response_cb        (GtkWidget      
 								 GossipAccount         *account);
 static void           accounts_dialog_button_remove_clicked_cb  (GtkWidget             *button,
 								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_treeview_row_activated_cb (GtkTreeView           *tree_view,
+								 GtkTreePath           *path,
+								 GtkTreeViewColumn     *column,
+								 gpointer              *dialog);
 static gboolean       accounts_dialog_foreach                   (GtkTreeModel          *model,
 								 GtkTreePath           *path,
 								 GtkTreeIter           *iter,
@@ -1401,6 +1405,18 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
 	gtk_widget_show (message_dialog);
 }
 
+static void
+accounts_dialog_treeview_row_activated_cb (GtkTreeView           *tree_view,
+					   GtkTreePath           *path,
+					   GtkTreeViewColumn     *column,
+					   gpointer              *data)
+{
+	GossipAccountsDialog *dialog = (GossipAccountsDialog *) data;
+
+	accounts_dialog_button_connect_clicked_cb (dialog->button_connect,
+						   dialog);
+}
+
 static gboolean
 accounts_dialog_foreach (GtkTreeModel         *model,
 			 GtkTreePath          *path,
@@ -1551,6 +1567,7 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
 			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
 			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
+			      "treeview", "row-activated", accounts_dialog_treeview_row_activated_cb,
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);
