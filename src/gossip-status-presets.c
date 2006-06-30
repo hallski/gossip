@@ -22,28 +22,28 @@
 #include <config.h>
 
 #include <string.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
 #include <libgnomevfs/gnome-vfs.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "libgossip/gossip-utils.h"
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-status-presets.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "StatusPresets"
 
 #define STATUS_PRESETS_XML_FILENAME "status-presets.xml"
 #define STATUS_PRESETS_DTD_FILENAME "gossip-status-presets.dtd"
 #define STATUS_PRESETS_MAX_EACH     15
 
-
 typedef struct {
 	gchar               *status;
 	GossipPresenceState  state;
 } StatusPreset;
-
 
 static void          status_presets_file_parse    (const gchar         *filename);
 static gboolean      status_presets_file_save     (void);
@@ -51,9 +51,7 @@ static StatusPreset *status_preset_new            (const gchar         *status,
 						   GossipPresenceState  state);
 static void          status_preset_free           (StatusPreset        *status);
 
-
 static GList *presets = NULL; 
-
 
 void
 gossip_status_presets_get_all (void)
@@ -91,7 +89,7 @@ status_presets_file_parse (const gchar *filename)
 	xmlNodePtr        presets_node;
 	xmlNodePtr        node;
 	
-	DEBUG_MSG (("StatusPresets: Attempting to parse file:'%s'...", filename));
+	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 
  	ctxt = xmlNewParserCtxt ();
 
@@ -151,7 +149,7 @@ status_presets_file_parse (const gchar *filename)
 		node = node->next;
 	}
 	
-	DEBUG_MSG (("StatusPresets: Parsed %d status presets", g_list_length (presets)));
+	gossip_debug (DEBUG_DOMAIN, "Parsed %d status presets", g_list_length (presets));
 
 	xmlFreeDoc (doc);
 	xmlFreeParserCtxt (ctxt);
@@ -242,7 +240,7 @@ status_presets_file_save (void)
 		xmlNewProp (subnode, "presence", state);	
 	}
 
-	DEBUG_MSG (("StatusPresets: Saving file:'%s'", file));
+	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", file);
 	xmlSaveFormatFileEnc (file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 

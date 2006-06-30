@@ -4707,7 +4707,7 @@ This name could be something associated with the service provider, for example, 
 	      <property name="spacing">6</property>
 
 	      <child>
-		<widget class="GtkImage" id="status_image">
+		<widget class="GtkImage" id="image_status">
 		  <property name="visible">True</property>
 		  <property name="xalign">0.5</property>
 		  <property name="yalign">0.5</property>
@@ -4754,17 +4754,11 @@ This name could be something associated with the service provider, for example, 
 	  </child>
 
 	  <child>
-	    <widget class="GtkEntry" id="status_entry">
+	    <widget class="GtkComboBoxEntry" id="comboentry_status">
 	      <property name="visible">True</property>
-	      <property name="can_focus">True</property>
-	      <property name="editable">True</property>
-	      <property name="visibility">True</property>
-	      <property name="max_length">0</property>
-	      <property name="text" translatable="yes"></property>
+	      <property name="add_tearoffs">False</property>
 	      <property name="has_frame">True</property>
-	      <property name="invisible_char">*</property>
-	      <property name="activates_default">True</property>
-	      <property name="width_chars">35</property>
+	      <property name="focus_on_click">True</property>
 	    </widget>
 	    <packing>
 	      <property name="padding">0</property>
@@ -4774,10 +4768,10 @@ This name could be something associated with the service provider, for example, 
 	  </child>
 
 	  <child>
-	    <widget class="GtkCheckButton" id="add_checkbutton">
+	    <widget class="GtkCheckButton" id="checkbutton_add">
 	      <property name="visible">True</property>
 	      <property name="can_focus">True</property>
-	      <property name="label" translatable="yes">Add to status message list</property>
+	      <property name="label" translatable="yes">_Add to status message list</property>
 	      <property name="use_underline">True</property>
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>

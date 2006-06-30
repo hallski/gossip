@@ -1,3 +1,11 @@
+2006-06-30  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-status-presets.c: Use gossip_debug().
+
+	* src/gossip-presence-chooser.[ch]: 
+	* ui/main.glade: Use a combo box entry and remember all the
+	presence status' for the current session. 
+
 2006-06-30  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-accounts-dialog.c:

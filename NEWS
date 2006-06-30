@@ -31,7 +31,9 @@ double clicking on the chat room in the join window (Martyn).
 - Fixed #345657, Initialise the errors hash table in gossip_app_init()
 so we don't crash trying to use it (Martyn).
 - Fixed #345636, Contact list geometry is not always saved (Richard).
-
+- Fixed #346298, Don't log empty messages (Mikael).
+- Fixed #346294, Connect or Disconnect when double clicking on an
+account in the accounts dialog (Mikael).
 
 NEWS in 0.11.2:
 ===============

@@ -249,15 +249,21 @@ presence_chooser_dialog_response_cb (GtkWidget             *dialog,
 				     gint                   response,
 				     GossipPresenceChooser *chooser)
 {
-	GtkWidget           *entry;
-	GtkWidget           *checkbutton;
-	GossipPresenceState  state;
-	const gchar         *status;
-	gboolean             save;
-
 	if (response == GTK_RESPONSE_OK) {
+		GtkWidget           *entry;
+		GtkWidget           *checkbutton;
+		GtkListStore        *store;
+		GtkTreeIter          iter;
+		GossipPresenceState  state;
+		const gchar         *status;
+		gboolean             save;
+
 		entry = g_object_get_data (G_OBJECT (dialog), "entry");
 		status = gtk_entry_get_text (GTK_ENTRY (entry));
+
+		store = g_object_get_data (G_OBJECT (dialog), "store");
+		gtk_list_store_append (store, &iter);
+		gtk_list_store_set (store, &iter, 0, status, -1);
 
 		state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dialog), "state"));
 
@@ -276,17 +282,15 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 {
         GossipPresenceChooserPriv *priv;
 	static GtkWidget          *dialog;
+	static GtkListStore       *store[3] = { NULL, NULL, NULL };
 	GladeXML                  *glade;
+	GtkWidget                 *parent;
 	GtkWidget                 *image;
+	GtkWidget                 *combo;
 	GtkWidget                 *entry;
 	GtkWidget                 *checkbutton;
-	GtkTreeIter                iter;
-	const gchar               *default_status;
-	GtkEntryCompletion        *completion;
 	GdkPixbuf                 *pixbuf;
-	GtkListStore              *store;
-	GList                     *presets, *l;
-	GtkWidget                 *parent;
+	const gchar               *default_status;
 	gboolean                   visible;
 
         priv = GET_PRIV (chooser);
@@ -300,55 +304,42 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 				       "status_message_dialog",
 				       NULL,
 				       "status_message_dialog", &dialog,
-				       "status_entry", &entry,
-				       "status_image", &image,
-				       "add_checkbutton", &checkbutton,
+				       "comboentry_status", &combo,
+				       "image_status", &image,
+				       "checkbutton_add", &checkbutton,
 				       NULL);
 
 	g_object_unref (glade);
 
-	g_signal_connect (dialog,
-			  "destroy",
+	g_signal_connect (dialog, "destroy",
 			  G_CALLBACK (gtk_widget_destroyed),
 			  &dialog);
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (presence_chooser_dialog_response_cb),
+			  chooser);
 
 	pixbuf = gossip_pixbuf_for_presence_state (state);
 	gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
 	g_object_unref (pixbuf);
 
-	store = gtk_list_store_new (1, G_TYPE_STRING);
-
-	presets = gossip_status_presets_get (state, -1);
-	for (l = presets; l; l = l->next) {
-		const gchar *status;
-
-		status = l->data;
-		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, status, -1);
+	if (!store[state]) {
+		store[state] = gtk_list_store_new (1, G_TYPE_STRING);
 	}
-
-	g_list_free (presets);
 
 	default_status = gossip_presence_state_get_default_status (state);
 
-	gtk_list_store_append (store, &iter);
-	gtk_list_store_set (store, &iter, 0, default_status, -1);
+	entry = GTK_BIN (combo)->child;
 	gtk_entry_set_text (GTK_ENTRY (entry), default_status);
+	gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
+	gtk_entry_set_width_chars (GTK_ENTRY (entry), 25);
 
-	completion = gtk_entry_completion_new ();
-	gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
-	gtk_entry_completion_set_text_column (completion, 0);
-	gtk_entry_set_completion (GTK_ENTRY (entry), completion);
-	g_object_unref (completion);
-
-	g_object_unref (store);
+	gtk_combo_box_set_model (GTK_COMBO_BOX (combo), GTK_TREE_MODEL (store[state]));
+	gtk_combo_box_entry_set_text_column (GTK_COMBO_BOX_ENTRY (combo), 0);
 
 	/* We make the dialog transient to the app window if it's visible. */
 	parent = gossip_app_get_window ();
 
-	g_object_get (parent,
-		      "visible", &visible,
-		      NULL);
+	g_object_get (parent, "visible", &visible, NULL);
 
 	visible = visible && !(gdk_window_get_state (parent->window) &
 			       GDK_WINDOW_STATE_ICONIFIED);
@@ -358,14 +349,10 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 					      GTK_WINDOW (parent));
 	}
 
+	g_object_set_data (G_OBJECT (dialog), "store", store[state]);
 	g_object_set_data (G_OBJECT (dialog), "entry", entry);
 	g_object_set_data (G_OBJECT (dialog), "checkbutton", checkbutton);
 	g_object_set_data (G_OBJECT (dialog), "state", GINT_TO_POINTER (state));
-
-	g_signal_connect (dialog,
-			  "response",
-			  G_CALLBACK (presence_chooser_dialog_response_cb),
-			  chooser);
 
 	gtk_widget_show_all (dialog);
 }
