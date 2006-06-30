@@ -306,9 +306,12 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_add_action (notify, "respond", _("Respond"),
 					(NotifyActionCallback) notify_new_message_default_cb,
 					g_object_ref (event_manager), NULL);
-	notify_notification_add_action (notify, "contact", _("Contact Information"),
-					(NotifyActionCallback) notify_new_message_contact_cb,
-					g_object_ref (event_manager), NULL);
+	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {
+		notify_notification_add_action (
+			notify, "contact", _("Contact Information"),
+			(NotifyActionCallback) notify_new_message_contact_cb,
+			g_object_ref (event_manager), NULL);
+	}
 	
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",

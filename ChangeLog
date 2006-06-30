@@ -1,5 +1,10 @@
 2006-06-30  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-notify.c (notify_new_message): Only show "get contact
+	info" button if the contact is not in the contact list.
+
+2006-06-30  Richard Hult  <richard@imendio.com>
+
 	* libgossip/gossip-contact.c: (gossip_contact_set_id),
 	(gossip_contact_set_name), (gossip_contact_set_avatar),
 	(gossip_contact_set_account), (gossip_contact_set_subscription):
