@@ -20,6 +20,7 @@
 
 #include <config.h>
 #include <string.h>
+#include <dbus/dbus-glib-bindings.h>
 
 #include <libgossip/gossip-debug.h>
 
@@ -259,7 +260,6 @@ gossip_dbus_init_for_session (GossipSession *session)
 	DBusGProxy      *bus_proxy;
 	GError          *error = NULL;
 	GossipDBus      *obj;
-	guint            request_name_result;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 
@@ -285,20 +285,20 @@ gossip_dbus_init_for_session (GossipSession *session)
 					       FREEDESKTOP_DBUS_PATH,
 					       FREEDESKTOP_DBUS_INTERFACE);
 
-	if (!dbus_g_proxy_call (bus_proxy, "RequestName", &error,
-				G_TYPE_STRING, GOSSIP_DBUS_SERVICE,
-				G_TYPE_UINT, 0,
-				G_TYPE_INVALID,
-				G_TYPE_UINT, &request_name_result,
-				G_TYPE_INVALID)) {
-		g_warning ("Failed to acquire %s", GOSSIP_DBUS_SERVICE);
-		return FALSE;
-	}
-	
 	obj = g_object_new (GOSSIP_TYPE_DBUS, NULL);
 
 	dbus_g_connection_register_g_object (bus, GOSSIP_DBUS_PATH, G_OBJECT (obj));
 	
+	if (!org_freedesktop_DBus_request_name (bus_proxy,
+						GOSSIP_DBUS_SERVICE,
+						0, NULL, &error)) {
+		g_warning ("Failed to acquire %s: %s",
+			   GOSSIP_DBUS_SERVICE,
+			   error->message);
+		g_error_free (error);
+		return FALSE;
+	}
+
 	gossip_debug (DEBUG_DOMAIN, "Service running");
 
 	/* Set up GNOME Netwrk Manager if available */

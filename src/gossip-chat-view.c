@@ -1091,7 +1091,8 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 	gchar              *tmp;
 	const gchar        *tag;
 	const gchar        *avatar_tag;
-	const gchar        *line_tag;
+	const gchar        *line_top_tag;
+	const gchar        *line_bottom_tag;
 
 	priv = GET_PRIV (view);
 
@@ -1103,12 +1104,14 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 		name = gossip_contact_get_name (my_contact);
 		
 		tag = "fancy-header-self";
-		line_tag = "fancy-line-self";
+		line_top_tag = "fancy-line-top-self";
+		line_bottom_tag = "fancy-line-bottom-self";
 	} else {
 		name = gossip_contact_get_name (contact);
 		
 		tag = "fancy-header-other";
-		line_tag = "fancy-line-other";
+		line_top_tag = "fancy-line-top-other";
+		line_bottom_tag = "fancy-line-bottom-other";
 	}
 
 	header = FALSE;
@@ -1143,7 +1146,7 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 						  &iter,
 						  "\n",
 						  -1,
-						  line_tag,
+						  line_top_tag,
 						  NULL);
 
 	if (avatar) {
@@ -1189,7 +1192,7 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 						  &iter,
 						  "\n",
 						  -1,
-						  line_tag,
+						  line_bottom_tag,
 						  NULL);
 }
 
@@ -1995,20 +1998,24 @@ gossip_chat_view_set_irc_style (GossipChatView *view,
 				gboolean        irc_style)
 {
 	GossipChatViewPriv *priv;
-	gint                margin;
 	
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = GET_PRIV (view);
 
 	priv->irc_style = irc_style;
+}
 
-	if (priv->irc_style) {
-		margin = 3;
-	} else {
-		margin = 0;
-	}
+void
+gossip_chat_view_set_margin (GossipChatView *view,
+			     gint            margin)
+{
+	GossipChatViewPriv *priv;
 	
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
+	priv = GET_PRIV (view);
+
 	g_object_set (view,
 		      "left-margin", margin,
 		      "right-margin", margin,

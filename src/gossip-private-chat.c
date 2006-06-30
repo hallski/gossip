@@ -738,7 +738,7 @@ private_chat_other_avatar_notify_cb (GossipContact     *contact,
 	GdkPixbuf             *pixbuf;
 
 	priv = GET_PRIV (chat);
-	
+
 	if (priv->other_avatar) {
 		g_object_unref (priv->other_avatar);
 	}

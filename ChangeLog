@@ -1,3 +1,22 @@
+2006-06-30  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-contact.c: (gossip_contact_set_id),
+	(gossip_contact_set_name), (gossip_contact_set_avatar),
+	(gossip_contact_set_account), (gossip_contact_set_subscription):
+	Notify when changing properties through setters.
+	
+	* src/gossip-theme-manager.c: (theme_manager_fixup_tag_table),
+	(theme_manager_apply_theme_clear),
+	(theme_manager_apply_theme_blue), (theme_manager_apply_theme): 
+	* src/gossip-chat-view.[ch]: (chat_view_maybe_append_fancy_header),
+	(gossip_chat_view_set_irc_style), (gossip_chat_view_set_margin):
+	Refactor a bit and make it possible for themes to set the margins
+	and split the header lines into two, one for the top and one for
+	the bottom.
+
+	* src/gossip-dbus.c: (gossip_dbus_init_for_session): Use the
+	generated API instead of the raw proxy API.
+
 2006-06-30  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-status-presets.c: Use gossip_debug().

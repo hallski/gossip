@@ -292,7 +292,8 @@ theme_manager_fixup_tag_table (GossipThemeManager *theme_manager,
 	theme_manager_ensure_tag_by_name (buffer, "fancy-header-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-header-self-avatar");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-avatar-self");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-line-self");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-line-top-self");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-line-bottom-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-body-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-action-self");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-highlight-self");
@@ -300,7 +301,8 @@ theme_manager_fixup_tag_table (GossipThemeManager *theme_manager,
 	theme_manager_ensure_tag_by_name (buffer, "fancy-header-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-header-other-avatar");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-avatar-other");
-	theme_manager_ensure_tag_by_name (buffer, "fancy-line-other");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-line-top-other");
+	theme_manager_ensure_tag_by_name (buffer, "fancy-line-bottom-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-body-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-action-other");
 	theme_manager_ensure_tag_by_name (buffer, "fancy-highlight-other");
@@ -449,11 +451,7 @@ theme_manager_apply_theme_clear (GossipThemeManager *manager,
 
 	tag = theme_manager_init_tag_by_name (table, "fancy-header-self");
 	g_object_set (tag,
-		      "foreground", "black",
-/* 		      "paragraph-background", BLUE_HEAD_SELF, */
 		      "weight", PANGO_WEIGHT_BOLD,
-		      "pixels-above-lines", 2,
-		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -461,23 +459,25 @@ theme_manager_apply_theme_clear (GossipThemeManager *manager,
 	theme_manager_add_tag (table, tag);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-avatar-self");
-/* 	g_object_set (tag, */
-/* 		      "paragraph-background", BLUE_HEAD_SELF, */
-/* 		      NULL); */
 	theme_manager_add_tag (table, tag);
 	
-	tag = theme_manager_init_tag_by_name (table, "fancy-line-self");
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-top-self");
+	g_object_set (tag,
+		      "size", 6 * PANGO_SCALE,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-bottom-self");
 	g_object_set (tag,
 		      "size", 1,
-/* 		      "paragraph-background", BLUE_LINE_SELF, */
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-body-self");
 	g_object_set (tag,
-/* 		      "foreground", "black", */
 /* 		      "paragraph-background", BLUE_BODY_SELF, */
-		      "pixels-above-lines", 4,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -485,27 +485,22 @@ theme_manager_apply_theme_clear (GossipThemeManager *manager,
 	g_object_set (tag,
 /* 		      "foreground", "brown4", */
 		      "style", PANGO_STYLE_ITALIC,
-/* 		      "paragraph-background", BLUE_BODY_SELF, */
-		      "pixels-above-lines", 4,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
 	tag = theme_manager_init_tag_by_name (table, "fancy-highlight-self");
 	g_object_set (tag,
-/* 		      "foreground", "black", */
 		      "weight", PANGO_WEIGHT_BOLD,
-/* 		      "paragraph-background", BLUE_BODY_SELF, */
-		      "pixels-above-lines", 4,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-header-other");
 	g_object_set (tag,
-/* 		      "foreground", "black", */
-/* 		      "paragraph-background", BLUE_HEAD_OTHER, */
 		      "weight", PANGO_WEIGHT_BOLD,
-		      "pixels-above-lines", 2,
-		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
@@ -513,23 +508,24 @@ theme_manager_apply_theme_clear (GossipThemeManager *manager,
 	theme_manager_add_tag (table, tag);
 
 	tag = theme_manager_init_tag_by_name (table, "fancy-avatar-other");
-/* 	g_object_set (tag, */
-/* 		      "paragraph-background", BLUE_HEAD_OTHER, */
-/* 		      NULL); */
 	theme_manager_add_tag (table, tag);
 	
-	tag = theme_manager_init_tag_by_name (table, "fancy-line-other");
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-top-other");
+	g_object_set (tag,
+		      "size", 6 * PANGO_SCALE,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-bottom-other");
 	g_object_set (tag,
 		      "size", 1,
-/* 		      "paragraph-background", BLUE_LINE_OTHER, */
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-body-other");
 	g_object_set (tag,
-/* 		      "foreground", "black", */
-/* 		      "paragraph-background", BLUE_BODY_OTHER, */
-		      "pixels-above-lines", 4,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
@@ -537,17 +533,16 @@ theme_manager_apply_theme_clear (GossipThemeManager *manager,
 	g_object_set (tag,
 /* 		      "foreground", "brown4", */
 		      "style", PANGO_STYLE_ITALIC,
-/* 		      "paragraph-background", BLUE_BODY_OTHER, */
-		      "pixels-above-lines", 4,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-highlight-other");
 	g_object_set (tag,
-/* 		      "foreground", "black", */
 		      "weight", PANGO_WEIGHT_BOLD,
-/* 		      "paragraph-background", BLUE_BODY_OTHER, */
-		      "pixels-above-lines", 4,
+		      "pixels-above-lines", 2,
+		      "pixels-below-lines", 2,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
@@ -628,7 +623,14 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
-	tag = theme_manager_init_tag_by_name (table, "fancy-line-self");
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-top-self");
+	g_object_set (tag,
+		      "size", 1,
+		      "paragraph-background", BLUE_LINE_SELF,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-bottom-self");
 	g_object_set (tag,
 		      "size", 1,
 		      "paragraph-background", BLUE_LINE_SELF,
@@ -680,7 +682,14 @@ theme_manager_apply_theme_blue (GossipThemeManager *manager,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
-	tag = theme_manager_init_tag_by_name (table, "fancy-line-other");
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-top-other");
+	g_object_set (tag,
+		      "size", 1,
+		      "paragraph-background", BLUE_LINE_OTHER,
+		      NULL);
+	theme_manager_add_tag (table, tag);
+	
+	tag = theme_manager_init_tag_by_name (table, "fancy-line-bottom-other");
 	g_object_set (tag,
 		      "size", 1,
 		      "paragraph-background", BLUE_LINE_OTHER,
@@ -747,21 +756,27 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 			   const gchar        *name)
 {
 	GossipThemeManagerPriv *priv;
+	gint                    margin;
 
 	priv = GET_PRIV (manager);
 
 	if (theme_manager_ensure_theme_exists (name)) {
 		if (strcmp (name, "classic") == 0) {
 			theme_manager_apply_theme_classic (manager, view);
+			margin = 3;
 		} else if (strcmp (name, "clear") == 0) {
 			theme_manager_apply_theme_clear (manager, view);
+			margin = 3;
 		} else if (strcmp (name, "blue") == 0) {
 			theme_manager_apply_theme_blue (manager, view);
+			margin = 0;
 		}
 	} else {
 		theme_manager_apply_theme_classic (manager, view);
+		margin = 3;
 	}
 	
+	gossip_chat_view_set_margin (view, 3);
 	gossip_chat_view_set_irc_style (view, priv->irc_style);
 
 	/* Make sure all tags are present. Note: not useful now but when we have
@@ -845,7 +860,7 @@ gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
 		attrs = gtk_text_view_get_default_attributes (GTK_TEXT_VIEW (view));
 		size = pango_font_description_get_size (attrs->font);
 		rise = MAX (0, (32 * PANGO_SCALE - size) / 2.0);
-
+		
 		g_object_set (tag_text_self,
 			      "rise", rise,
 			      NULL);

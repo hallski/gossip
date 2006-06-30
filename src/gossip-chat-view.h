@@ -111,6 +111,8 @@ void            gossip_chat_view_copy_clipboard            (GossipChatView *view
 gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
 void            gossip_chat_view_set_irc_style             (GossipChatView *view,
 							    gboolean        irc_style);
+void            gossip_chat_view_set_margin                (GossipChatView *view,
+							    gint            margin);
 GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smiley);
 const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smiley);
 GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,

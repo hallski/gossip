@@ -557,6 +557,8 @@ gossip_contact_set_id (GossipContact *contact,
 
 	g_free (priv->id);
 	priv->id = g_strdup (id);
+
+	g_object_notify (G_OBJECT (contact), "id");
 }
 
 void
@@ -572,6 +574,8 @@ gossip_contact_set_name (GossipContact *contact,
 
 	g_free (priv->name);
 	priv->name = g_strdup (name);
+
+	g_object_notify (G_OBJECT (contact), "name"); 
 }
 
 void 
@@ -594,6 +598,9 @@ gossip_contact_set_avatar (GossipContact *contact,
 		priv->avatar = NULL;
 		priv->avatar_size = 0;
 	}
+
+	g_object_notify (G_OBJECT (contact), "avatar"); 
+	g_object_notify (G_OBJECT (contact), "avatar-size"); 
 }
 
 void
@@ -616,6 +623,8 @@ gossip_contact_set_account (GossipContact *contact,
 	} else {
 		priv->account = NULL;
 	}
+
+	g_object_notify (G_OBJECT (contact), "account"); 
 }
 
 void 
@@ -720,9 +729,9 @@ gossip_contact_set_subscription (GossipContact      *contact,
 	priv = GET_PRIV (contact);
 
 	priv->subscription = subscription;
+
+	g_object_notify (G_OBJECT (contact), "subscription");
 }
-
-
 
 gint
 gossip_contact_compare (gconstpointer a,
