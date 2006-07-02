@@ -1,5 +1,18 @@
 2006-07-02  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-dbus.[ch]: (gossip_dbus_init_for_session): Don't
+	queue up the name.
+	
+	* src/gossip-app.[ch]: Move dbus stuff from here...
+	* src/gossip-main.c: (main): To here to make the single instance
+	code not have to setup the whole app just to quit.
+
+	* src/gossip-chat-view.c: (gossip_chat_view_append_event): Remove
+	duplicate spacing that happens in some cases when adding
+	timestamp.
+
+2006-07-02  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-theme-manager.c: Add new theme and change the name of
 	the old clear to simple, use clear for the new one.
 

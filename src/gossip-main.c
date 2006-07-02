@@ -31,11 +31,21 @@
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
 
+#ifdef HAVE_DBUS
+#include "gossip-dbus.h"
+#endif
+
+#ifdef HAVE_GALAGO
+#include "gossip-galago.h"
+#endif
+
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-account.h>
+#include <libgossip/gossip-session.h>
 
 #include "gossip-preferences.h"
 #include "gossip-stock.h"
+#include "gossip-dbus.h"
 #include "gossip-app.h"
 
 #define GNOME_PARAM_GOPTION_CONTEXT "goption-context"
@@ -68,12 +78,12 @@ static const GOptionEntry options[] = {
 int
 main (int argc, char *argv[])
 {
-	GnomeProgram          *program;
-	GossipAccountManager  *account_manager;
-	GossipAccount         *account = NULL;
-	GOptionContext        *context;
-	GList                 *accounts;
-
+	GnomeProgram         *program;
+	GossipSession        *session;
+	GossipAccountManager *account_manager;
+	GossipAccount        *account = NULL;
+	GOptionContext       *context;
+	GList                *accounts;
 	
 	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -151,7 +161,19 @@ main (int argc, char *argv[])
 	}
 
 	gossip_stock_init ();
-	gossip_app_create (account_manager, multiple_instances);
+
+      	session = gossip_session_new (account_manager);
+
+#ifdef HAVE_DBUS
+	gossip_dbus_init_for_session (session, multiple_instances);
+#endif
+	
+#ifdef HAVE_GALAGO
+	gossip_galago_init (priv->session);
+#endif
+
+	gossip_app_create (session, account_manager);
+	g_object_unref (session);
 	
 	if (!no_connect) {
 		gossip_app_connect (account, TRUE);

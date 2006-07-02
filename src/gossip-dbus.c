@@ -19,6 +19,7 @@
  */
 
 #include <config.h>
+#include <stdlib.h>
 #include <string.h>
 #include <dbus/dbus-glib-bindings.h>
 
@@ -270,12 +271,14 @@ gossip_dbus_error_quark (void)
 }
 
 gboolean
-gossip_dbus_init_for_session (GossipSession *session)
+gossip_dbus_init_for_session (GossipSession *session,
+			      gboolean       multiple_instances)
 {
 	DBusGConnection *bus;
 	DBusGProxy      *bus_proxy;
 	GError          *error = NULL;
 	GossipDBus      *obj;
+	guint            result;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 
@@ -306,7 +309,8 @@ gossip_dbus_init_for_session (GossipSession *session)
 	
 	if (!org_freedesktop_DBus_request_name (bus_proxy,
 						GOSSIP_DBUS_SERVICE,
-						0, NULL, &error)) {
+						DBUS_NAME_FLAG_DO_NOT_QUEUE,
+						&result, &error)) {
 		g_warning ("Failed to acquire %s: %s",
 			   GOSSIP_DBUS_SERVICE,
 			   error->message);
@@ -314,6 +318,13 @@ gossip_dbus_init_for_session (GossipSession *session)
 		return FALSE;
 	}
 
+	if (!multiple_instances && result == DBUS_REQUEST_NAME_REPLY_EXISTS) {
+		gossip_debug (DEBUG_DOMAIN, "Gossip is already running");
+		
+		dbus_gossip_show (TRUE);
+		exit (EXIT_SUCCESS);
+	}
+	
 	/* Set up GNOME Netwrk Manager if available so we get signals */
 	dbus_nm_init ();
 
@@ -547,7 +558,8 @@ dbus_gossip_show (gboolean show)
 	}
 		
 	if (!dbus_g_proxy_call (bus_proxy, "SetRosterVisible", &error,
-				G_TYPE_BOOLEAN, show, G_TYPE_INVALID,
+				G_TYPE_BOOLEAN, show,
+				G_TYPE_INVALID,
 				G_TYPE_INVALID)) {
 		g_warning ("Failed to complete 'SetRosterVisible' request. %s", 
 			   error->message);
@@ -557,45 +569,5 @@ dbus_gossip_show (gboolean show)
 	g_object_unref (bus_proxy);
 
 	return success;
-}
-
-gboolean
-gossip_dbus_gossip_is_running (gboolean *running,
-			       gboolean  show_if_found)
-{
-	DBusGProxy *bus_proxy;
-	GError     *error = NULL;
-	guint       flags = 0;
-	guint       result;
-
-	g_return_val_if_fail (running != NULL, FALSE);
-
-	if ((bus_proxy = dbus_freedesktop_init ()) == NULL) {
-		return FALSE;
-	}
-
-	flags &= DBUS_NAME_FLAG_DO_NOT_QUEUE; 
-
-	if (!dbus_g_proxy_call (bus_proxy, "RequestName", &error,
-				G_TYPE_STRING, GOSSIP_DBUS_SERVICE,
-				G_TYPE_UINT, &flags,
-				G_TYPE_INVALID,
-				G_TYPE_UINT, &result,
-				G_TYPE_INVALID)) {
-		g_warning ("Failed to request name information for %s", GOSSIP_DBUS_SERVICE);
-		return FALSE;
-	}
-	
-	if (result == DBUS_REQUEST_NAME_REPLY_EXISTS) {
-		gossip_debug (DEBUG_DOMAIN, "Gossip is already running");
-
-		if (show_if_found) {
-			dbus_gossip_show (TRUE);
-		}
-		
-		return TRUE;
-	}
-	
-	return FALSE;
 }
 

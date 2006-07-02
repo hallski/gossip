@@ -179,8 +179,8 @@ struct _GossipAppPriv {
 static void            gossip_app_class_init                (GossipAppClass           *klass);
 static void            gossip_app_init                      (GossipApp                *singleton_app);
 static void            app_finalize                         (GObject                  *object);
-static void            app_setup                            (GossipAccountManager     *manager,
-							     gboolean                  multiple_instances);
+static void            app_setup                            (GossipSession            *session,
+							     GossipAccountManager     *manager);
 static gboolean        app_main_window_quit_confirm         (GossipApp                *app,
 							     GtkWidget                *window);
 static void            app_main_window_quit_confirm_cb      (GtkWidget                *dialog,
@@ -466,8 +466,8 @@ app_finalize (GObject *object)
 }
 
 static void
-app_setup (GossipAccountManager *manager,
-	   gboolean              multiple_instances) 
+app_setup (GossipSession        *session,
+	   GossipAccountManager *manager)
 {
         GossipAppPriv  *priv;
 	GladeXML       *glade;
@@ -480,7 +480,6 @@ app_setup (GossipAccountManager *manager,
 	gboolean        show_offline;
 	gboolean        show_avatars;
 	gboolean        hidden;
-	gboolean        already_running;
 	gint            x, y, w, h;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
@@ -494,31 +493,7 @@ app_setup (GossipAccountManager *manager,
 			      GCONF_CLIENT_PRELOAD_ONELEVEL,
 			      NULL);
 	
-	priv->session = gossip_session_new (manager);
-
-	/* Is this the best place for this, perhaps in gossip-main.c? */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising 3rd party modules (dbus, galago, etc)");
-
-#ifdef HAVE_DBUS
-	/* Check if already running... */
-	if (gossip_dbus_gossip_is_running (&already_running, TRUE)) {
-		if (already_running && !multiple_instances) {
-			exit (EXIT_SUCCESS);
-		}
-	}
-
-	/* NOTE: This MUST occur AFTER the check for gossip already
-	 * running.
-	 */
-        gossip_dbus_init_for_session (priv->session);
-#else
-	/* In reality, without DBus we don't know */
-	already_running = FALSE;
-#endif
-
-#ifdef HAVE_GALAGO
-	gossip_galago_init (priv->session);
-#endif
+	priv->session = g_object_ref (session);
 
 	/* Call init session dependent modules */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising session listeners (subscription, file transfer, etc)");
@@ -540,9 +515,9 @@ app_setup (GossipAccountManager *manager,
  	priv->event_manager = gossip_event_manager_new (); 
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising notification handlers (libnotify, sound)");
+
 #ifdef HAVE_LIBNOTIFY
-	gossip_notify_init (priv->session,
-			    priv->event_manager);
+	gossip_notify_init (priv->session, priv->event_manager);
 #endif
 
 	gossip_sound_init (priv->session);
@@ -1941,14 +1916,16 @@ gossip_app_net_up (void)
 }
 
 void
-gossip_app_create (GossipAccountManager *manager,
-		   gboolean              multiple_instances)
+gossip_app_create (GossipSession        *session,
+		   GossipAccountManager *manager)
+		   
 {
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 	
 	g_object_new (GOSSIP_TYPE_APP, NULL);
 	
-	app_setup (manager, multiple_instances);
+	app_setup (session, manager);
 }
 
 GossipApp *

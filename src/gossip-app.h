@@ -53,16 +53,13 @@ struct _GossipAppClass {
 };
 
 GType                  gossip_app_get_type             (void) G_GNUC_CONST;
-
 void                   gossip_app_connect              (GossipAccount        *account,
 							gboolean              startup);
 void                   gossip_app_net_down             (void);
 void                   gossip_app_net_up               (void);
-
-void                   gossip_app_create               (GossipAccountManager *manager,
-							gboolean              multiple_instances);
+void                   gossip_app_create               (GossipSession        *session,
+							GossipAccountManager *manager);
 GossipApp *            gossip_app_get                  (void);
-
 gboolean               gossip_app_is_connected         (void);
 gboolean               gossip_app_is_window_visible    (void);
 void                   gossip_app_toggle_visibility    (void);
@@ -72,7 +69,6 @@ void                   gossip_app_set_presence         (GossipPresenceState   st
 							const gchar          *status);
 GtkWidget *            gossip_app_get_window           (void);
 GConfClient *          gossip_app_get_gconf_client     (void);
-
 GossipSession *        gossip_app_get_session          (void);
 GossipChatroomManager *gossip_app_get_chatroom_manager (void);
 GossipChatManager *    gossip_app_get_chat_manager     (void);
