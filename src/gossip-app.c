@@ -179,7 +179,8 @@ struct _GossipAppPriv {
 static void            gossip_app_class_init                (GossipAppClass           *klass);
 static void            gossip_app_init                      (GossipApp                *singleton_app);
 static void            app_finalize                         (GObject                  *object);
-static void            app_setup                            (GossipAccountManager     *manager);
+static void            app_setup                            (GossipAccountManager     *manager,
+							     gboolean                  multiple_instances);
 static gboolean        app_main_window_quit_confirm         (GossipApp                *app,
 							     GtkWidget                *window);
 static void            app_main_window_quit_confirm_cb      (GtkWidget                *dialog,
@@ -465,7 +466,8 @@ app_finalize (GObject *object)
 }
 
 static void
-app_setup (GossipAccountManager *manager) 
+app_setup (GossipAccountManager *manager,
+	   gboolean              multiple_instances) 
 {
         GossipAppPriv  *priv;
 	GladeXML       *glade;
@@ -478,6 +480,7 @@ app_setup (GossipAccountManager *manager)
 	gboolean        show_offline;
 	gboolean        show_avatars;
 	gboolean        hidden;
+	gboolean        already_running;
 	gint            x, y, w, h;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
@@ -497,7 +500,20 @@ app_setup (GossipAccountManager *manager)
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising 3rd party modules (dbus, galago, etc)");
 
 #ifdef HAVE_DBUS
+	/* Check if already running... */
+	if (gossip_dbus_gossip_is_running (&already_running, TRUE)) {
+		if (already_running && !multiple_instances) {
+			exit (EXIT_SUCCESS);
+		}
+	}
+
+	/* NOTE: This MUST occur AFTER the check for gossip already
+	 * running.
+	 */
         gossip_dbus_init_for_session (priv->session);
+#else
+	/* In reality, without DBus we don't know */
+	already_running = FALSE;
 #endif
 
 #ifdef HAVE_GALAGO
@@ -1417,6 +1433,21 @@ gossip_app_toggle_visibility (void)
 	}
 }
 
+void
+gossip_app_set_visibility (gboolean visible)
+{
+	GtkWidget *window;
+
+	window = gossip_app_get_window ();
+	
+	if (visible) {
+		gossip_window_present (GTK_WINDOW (window));
+	} else {
+		gtk_widget_hide (window);
+	}
+}
+
+
 static void
 app_show_hide_list_cb (GtkWidget *widget,
 		       GossipApp *app)
@@ -1910,13 +1941,14 @@ gossip_app_net_up (void)
 }
 
 void
-gossip_app_create (GossipAccountManager *manager)
+gossip_app_create (GossipAccountManager *manager,
+		   gboolean              multiple_instances)
 {
 	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 	
 	g_object_new (GOSSIP_TYPE_APP, NULL);
 	
-	app_setup (manager);
+	app_setup (manager, multiple_instances);
 }
 
 GossipApp *

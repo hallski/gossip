@@ -35,6 +35,7 @@ so we don't crash trying to use it (Martyn).
 - Fixed #346294, Connect or Disconnect when double clicking on an
 account in the accounts dialog (Mikael).
 - Fixed #344294, Chat colors are not theme friendly (Martyn, Richard).
+- Fixed #158440, Don't start multiple instances of Gossip (Martyn).
 
 
 NEWS in 0.11.2:

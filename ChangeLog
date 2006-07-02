@@ -1,3 +1,18 @@
+2006-07-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-main.c:
+	* src/gossip-app.[ch]: Check if Gossip already running over dbus
+	before starting another instance. This can be by-passed with the
+	"-m" command line flag. If a previous instance already exists, the
+	other one is shown (this ONLY works with DBUS support). This fixes
+	#158440 (Keywan Najafi Tonekaboni).  
+
+	* src/gossip-dbus.[ch]: Reworked the code so that the bus proxy is
+	returned by dbus_nm_init() and dbus_freedesktop_init() so we make
+	sure there is only one instance of each DBusGProxy*.
+	
+	* src/gossip-dbus.xml: Added "SetRosterVisible" method.
+
 2006-07-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-theme-manager.c (theme_manager_apply_theme): Tweak

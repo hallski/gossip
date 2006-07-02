@@ -41,6 +41,7 @@
 #define GNOME_PARAM_GOPTION_CONTEXT "goption-context"
 
 static gboolean  no_connect = FALSE;
+static gboolean  multiple_instances = FALSE;
 static gboolean  list_accounts = FALSE;
 static gchar    *account_name = NULL;
 
@@ -48,6 +49,10 @@ static const GOptionEntry options[] = {
 	{ "no-connect", 'n', 
 	  0, G_OPTION_ARG_NONE, &no_connect,
 	  N_("Don't connect on startup"),
+	  NULL },
+	{ "multiple-instances", 'm', 
+	  0, G_OPTION_ARG_NONE, &multiple_instances,
+	  N_("Allow multiple instances of the application to run at the same time"),
 	  NULL },
 	{ "list-accounts", 'l', 
 	  0, G_OPTION_ARG_NONE, &list_accounts,
@@ -146,7 +151,7 @@ main (int argc, char *argv[])
 	}
 
 	gossip_stock_init ();
-	gossip_app_create (account_manager);
+	gossip_app_create (account_manager, multiple_instances);
 	
 	if (!no_connect) {
 		gossip_app_connect (account, TRUE);

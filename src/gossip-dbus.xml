@@ -11,6 +11,9 @@
     <method name="SetNetworkStatus">
       <arg name="up" type="b" direction="in"/>
     </method>
+    <method name="SetRosterVisible">
+      <arg name="visible" type="b" direction="in"/>
+    </method>
     <method name="GetRosterVisible">
       <arg name="visible" type="b" direction="out"/>
     </method>

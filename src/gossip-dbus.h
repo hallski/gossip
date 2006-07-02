@@ -27,11 +27,18 @@
 
 #define GOSSIP_DBUS_ERROR gnome_dbus_error_quark()
 
-GQuark   gossip_dbus_error_quark      (void) G_GNUC_CONST;
-gboolean gossip_dbus_init_for_session (GossipSession *session);
+GQuark   gossip_dbus_error_quark          (void) G_GNUC_CONST;
+
+/* Session */
+gboolean gossip_dbus_init_for_session     (GossipSession *session);
+void     gossip_dbus_finalize_for_session (void);
 
 /* GNOME Network Manager */
-gboolean gossip_dbus_nm_setup         (void);
-gboolean gossip_dbus_nm_get_state     (gboolean      *connected);
+gboolean gossip_dbus_nm_setup             (void);
+gboolean gossip_dbus_nm_get_state         (gboolean      *connected);
 
-#endif /* __DBUS_H__ */
+/* Gossip */
+gboolean gossip_dbus_gossip_is_running    (gboolean      *running,
+					   gboolean       show_if_running);
+
+#endif /* __GOSSIP_DBUS_H__ */

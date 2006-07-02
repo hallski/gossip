@@ -32,7 +32,10 @@
 
 #define GOSSIP_DBUS_ERROR_DOMAIN "GossipDBus"
 
-static void dbus_nm_setup (void);
+/* None-generated functions */
+static DBusGProxy *dbus_freedesktop_init (void);
+static DBusGProxy *dbus_nm_init          (void);
+static gboolean    dbus_gossip_show      (gboolean show);
 
 /* Set up the DBus GObject to use */
 typedef struct GossipDBus GossipDBus;
@@ -47,10 +50,6 @@ struct GossipDBus {
 struct GossipDBusClass {
 	GObjectClass parent;
 };
-
-#define FREEDESKTOP_DBUS_SERVICE      "org.freedesktop.DBus"
-#define FREEDESKTOP_DBUS_PATH         "/org/freedesktop/DBus"
-#define FREEDESKTOP_DBUS_INTERFACE    "org.freedesktop.DBus"
 
 #define GOSSIP_DBUS_SERVICE           "org.gnome.Gossip"
 #define GOSSIP_DBUS_PATH              "/org/gnome/Gossip"
@@ -73,6 +72,9 @@ gboolean gossip_dbus_set_not_away       (GossipDBus   *obj,
 					 GError      **error);
 gboolean gossip_dbus_set_network_status (GossipDBus   *obj,
 					 gboolean      up,
+					 GError      **error);
+gboolean gossip_dbus_set_roster_visible (GossipDBus   *obj,
+					 gboolean      visible,
 					 GError      **error);
 gboolean gossip_dbus_get_roster_visible (GossipDBus   *obj,
 					 gboolean     *visible,
@@ -154,7 +156,8 @@ gossip_dbus_set_network_status (GossipDBus *obj,
 				gboolean    up, 
 				GError     **error)
 {
-	gossip_debug (DEBUG_DOMAIN, "Setting network status %s", up ? "up" : "down");
+	gossip_debug (DEBUG_DOMAIN, "Setting network status %s", 
+		      up ? "up" : "down");
 	
 	if (up) {
 		gossip_app_net_up ();
@@ -162,6 +165,19 @@ gossip_dbus_set_network_status (GossipDBus *obj,
 		gossip_app_net_down ();
 	}
  
+	return TRUE;
+}
+
+gboolean
+gossip_dbus_set_roster_visible (GossipDBus  *obj,
+				gboolean     visible,
+				GError     **error)
+{
+	gossip_debug (DEBUG_DOMAIN, "Setting roster window to be %s",
+		      visible ? "shown" : "hidden");
+
+	gossip_app_set_visibility (visible);
+
 	return TRUE;
 }
 
@@ -268,22 +284,21 @@ gossip_dbus_init_for_session (GossipSession *session)
 		return TRUE;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Initiating...");
-	
 	saved_session = g_object_ref (session);
 
-	dbus_g_object_type_install_info (GOSSIP_TYPE_DBUS, &dbus_glib_gossip_dbus_object_info);
-
+	gossip_debug (DEBUG_DOMAIN, "Initialising Gossip object");
+	
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
 		g_warning ("Couldn't connect to the session bus");
 		return FALSE;
 	}
-	
-	bus_proxy = dbus_g_proxy_new_for_name (bus, 
-					       FREEDESKTOP_DBUS_SERVICE,
-					       FREEDESKTOP_DBUS_PATH,
-					       FREEDESKTOP_DBUS_INTERFACE);
+
+	if ((bus_proxy = dbus_freedesktop_init ()) == NULL) {
+		return FALSE;
+	}
+
+	dbus_g_object_type_install_info (GOSSIP_TYPE_DBUS, &dbus_glib_gossip_dbus_object_info);
 
 	obj = g_object_new (GOSSIP_TYPE_DBUS, NULL);
 
@@ -299,12 +314,58 @@ gossip_dbus_init_for_session (GossipSession *session)
 		return FALSE;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Service running");
+	/* Set up GNOME Netwrk Manager if available so we get signals */
+	dbus_nm_init ();
 
-	/* Set up GNOME Netwrk Manager if available */
-	dbus_nm_setup ();
+	gossip_debug (DEBUG_DOMAIN, "Ready");
 
 	return TRUE;
+}
+
+
+void 
+gossip_dbus_finalize_for_session (void)
+{
+	g_object_unref (saved_session);
+}
+
+/*
+ * Freedesktop
+ */
+
+#define FREEDESKTOP_DBUS_SERVICE      "org.freedesktop.DBus"
+#define FREEDESKTOP_DBUS_PATH         "/org/freedesktop/DBus"
+#define FREEDESKTOP_DBUS_INTERFACE    "org.freedesktop.DBus"
+
+static DBusGProxy *
+dbus_freedesktop_init (void)
+{
+	DBusGConnection   *bus;
+	static DBusGProxy *bus_proxy = NULL;
+	GError            *error = NULL;
+
+	if (bus_proxy) {
+		return bus_proxy;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Initialising Freedesktop proxy");
+
+	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
+	if (!bus) {
+		g_warning ("Couldn't connect to the session bus");
+		return NULL;
+	}
+	
+	bus_proxy = dbus_g_proxy_new_for_name (bus, 
+					       FREEDESKTOP_DBUS_SERVICE,
+					       FREEDESKTOP_DBUS_PATH,
+					       FREEDESKTOP_DBUS_INTERFACE);
+	
+	if (!bus_proxy) {
+		g_warning ("Could not connect to Freedesktop");
+	}
+
+	return bus_proxy;
 }
 
 /*
@@ -363,27 +424,33 @@ dbus_nm_state_cb (DBusGProxy *proxy,
 	}
 }
 
-static void
-dbus_nm_setup (void)
+static DBusGProxy *
+dbus_nm_init (void)
 {
-	DBusGConnection *bus;
-	DBusGProxy      *remote_object;
-	GError          *error = NULL;
+	DBusGConnection   *bus;
+	static DBusGProxy *bus_proxy = NULL;
+	GError            *error = NULL;
+
+	if (bus_proxy) {
+		return bus_proxy;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Initialising Network Manager proxy");
 
 	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, &error);
 	if (!bus) {
 		g_warning ("Could not connect to system bus");
-		return;
+		return FALSE;
 	}
 	
-	remote_object = dbus_g_proxy_new_for_name (bus, 
-						   NM_DBUS_SERVICE, 
-						   NM_DBUS_PATH, 
-						   NM_DBUS_INTERFACE);
-
-	if (!remote_object) {
+	bus_proxy = dbus_g_proxy_new_for_name (bus, 
+					       NM_DBUS_SERVICE, 
+					       NM_DBUS_PATH, 
+					       NM_DBUS_INTERFACE);
+	
+	if (!bus_proxy) {
 		g_warning ("Could not connect to Network Manager");
-		return;
+		return NULL;
 	}
 
 	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT, 
@@ -394,29 +461,37 @@ dbus_nm_setup (void)
 	 * callback.  You need to do this once for each proxy you create,
 	 * not every time you want to connect to the signal.
 	 */
-	dbus_g_proxy_add_signal (remote_object, "StateChange",
+	dbus_g_proxy_add_signal (bus_proxy, "StateChange",
 				 G_TYPE_UINT, G_TYPE_INVALID);
 
 	/* Actually connect to the signal. Note you can call
 	 * dbus_g_proxy_connect_signal multiple times for one invocation of
 	 * dbus_g_proxy_add_signal.
 	 */
-	dbus_g_proxy_connect_signal (remote_object, "StateChange", 
+	dbus_g_proxy_connect_signal (bus_proxy, "StateChange", 
 				     G_CALLBACK (dbus_nm_state_cb),
 				     NULL, NULL);
 
-	/* FIXME: When do we unref the remote object? */
+	return bus_proxy;
 } 
 
 gboolean 
 gossip_dbus_nm_get_state (gboolean *connected)
 {
 	DBusGConnection *bus;
-	DBusGProxy      *remote_object;
+	DBusGProxy      *bus_proxy;
 	GError          *error = NULL;
 	guint32          state;
 	
 	g_return_val_if_fail (connected != NULL, FALSE);
+
+	/* Set the initial value of connected incase we have to return */
+	*connected = FALSE;
+
+	/* Make sure we have set up Network Manager connections */
+	if ((bus_proxy = dbus_nm_init ()) == NULL) {
+		return FALSE;
+	}
 
 	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, &error);
 	if (!bus) {
@@ -424,17 +499,7 @@ gossip_dbus_nm_get_state (gboolean *connected)
 		return FALSE;
 	}
 	
-	remote_object = dbus_g_proxy_new_for_name (bus, 
-						   NM_DBUS_SERVICE, 
-						   NM_DBUS_PATH, 
-						   NM_DBUS_INTERFACE);
-
-	if (!remote_object) {
-		g_warning ("Could not connect to Network Manager");
-		return FALSE;
-	}
-	
-	if (!dbus_g_proxy_call (remote_object, "state", &error,
+	if (!dbus_g_proxy_call (bus_proxy, "state", &error,
 				G_TYPE_INVALID, 
 				G_TYPE_UINT, &state, G_TYPE_INVALID)) {
 		g_warning ("Failed to complete 'state' request. %s", 
@@ -448,7 +513,89 @@ gossip_dbus_nm_get_state (gboolean *connected)
 		*connected = state == NM_STATE_CONNECTED;
 	}
 
-  	g_object_unref (remote_object);
-	
 	return TRUE;
 }
+
+/*
+ * Gossip 
+ */
+static gboolean
+dbus_gossip_show (gboolean show)
+{
+	DBusGConnection *bus;
+	DBusGProxy      *bus_proxy;
+	GError          *error = NULL;
+	gboolean         success = TRUE;
+	
+	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
+	if (!bus) {
+		g_warning ("Could not connect to system bus");
+		return FALSE;
+	}
+
+	/* We are doing this because normally we wouldn't have a
+	 * connection to ourselves.
+	 */
+	bus_proxy = dbus_g_proxy_new_for_name (bus, 
+					       GOSSIP_DBUS_SERVICE,
+					       GOSSIP_DBUS_PATH,
+					       GOSSIP_DBUS_INTERFACE);
+
+	if (!bus_proxy) {
+		g_warning ("Could not connect to other instance of Gossip");
+		return FALSE;
+	}
+		
+	if (!dbus_g_proxy_call (bus_proxy, "SetRosterVisible", &error,
+				G_TYPE_BOOLEAN, show, G_TYPE_INVALID,
+				G_TYPE_INVALID)) {
+		g_warning ("Failed to complete 'SetRosterVisible' request. %s", 
+			   error->message);
+		success = FALSE;
+	}
+
+	g_object_unref (bus_proxy);
+
+	return success;
+}
+
+gboolean
+gossip_dbus_gossip_is_running (gboolean *running,
+			       gboolean  show_if_found)
+{
+	DBusGProxy *bus_proxy;
+	GError     *error = NULL;
+	guint       flags = 0;
+	guint       result;
+
+	g_return_val_if_fail (running != NULL, FALSE);
+
+	if ((bus_proxy = dbus_freedesktop_init ()) == NULL) {
+		return FALSE;
+	}
+
+	flags &= DBUS_NAME_FLAG_DO_NOT_QUEUE; 
+
+	if (!dbus_g_proxy_call (bus_proxy, "RequestName", &error,
+				G_TYPE_STRING, GOSSIP_DBUS_SERVICE,
+				G_TYPE_UINT, &flags,
+				G_TYPE_INVALID,
+				G_TYPE_UINT, &result,
+				G_TYPE_INVALID)) {
+		g_warning ("Failed to request name information for %s", GOSSIP_DBUS_SERVICE);
+		return FALSE;
+	}
+	
+	if (result == DBUS_REQUEST_NAME_REPLY_EXISTS) {
+		gossip_debug (DEBUG_DOMAIN, "Gossip is already running");
+
+		if (show_if_found) {
+			dbus_gossip_show (TRUE);
+		}
+		
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+

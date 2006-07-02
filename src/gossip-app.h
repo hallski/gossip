@@ -59,12 +59,14 @@ void                   gossip_app_connect              (GossipAccount        *ac
 void                   gossip_app_net_down             (void);
 void                   gossip_app_net_up               (void);
 
-void                   gossip_app_create               (GossipAccountManager *manager);
+void                   gossip_app_create               (GossipAccountManager *manager,
+							gboolean              multiple_instances);
 GossipApp *            gossip_app_get                  (void);
 
 gboolean               gossip_app_is_connected         (void);
 gboolean               gossip_app_is_window_visible    (void);
 void                   gossip_app_toggle_visibility    (void);
+void                   gossip_app_set_visibility       (gboolean              visible);
 void                   gossip_app_set_not_away         (void);
 void                   gossip_app_set_presence         (GossipPresenceState   state,
 							const gchar          *status);
