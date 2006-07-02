@@ -1,5 +1,12 @@
 2006-07-02  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-log.c: Use gossip_log() and DON'T log messages from
+	temporary contacts, since I was getting a lot of ICQ weirdos send
+	me messages and my log window shows all their crap IDs at the top
+	because they are numbers :(
+
+2006-07-02  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-main.c:
 	* src/gossip-app.[ch]: Check if Gossip already running over dbus
 	before starting another instance. This can be by-passed with the
