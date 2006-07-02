@@ -225,7 +225,7 @@ static GtkTargetEntry drop_types[] = {
 
 G_DEFINE_TYPE (GossipChatWindow, gossip_chat_window, G_TYPE_OBJECT);
 
-#define URGENCY_TIMEOUT 15*1000
+#define URGENCY_TIMEOUT 60*1000
 
 static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)

@@ -1,5 +1,7 @@
 2006-07-02  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c (URGENCY_TIMEOUT): Raise to a minute.
+
 	* src/gossip-preferences.c (preferences_themes_setup): Translate
 	the theme names.
 
