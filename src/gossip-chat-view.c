@@ -392,6 +392,9 @@ chat_view_setup_tags (GossipChatView *view)
 				    "cut",
 				    NULL);
 
+	/* FIXME: Move to the theme and come up with something that looks a bit
+	 * nicer.
+	 */
 	gtk_text_buffer_create_tag (priv->buffer,
 				    "highlight",
 				    "background", "yellow",

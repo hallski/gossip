@@ -117,6 +117,5 @@ GdkPixbuf *     gossip_chat_view_get_smiley_image          (GossipSmiley    smil
 const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smiley);
 GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,
 							    gpointer        user_data,
-							    GtkTooltips    *tooltips);	
-
+							    GtkTooltips    *tooltips);
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

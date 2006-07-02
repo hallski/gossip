@@ -61,7 +61,7 @@ static void        theme_manager_fixup_tag_table          (GossipThemeManager *t
 							   GossipChatView     *view);
 static void        theme_manager_apply_theme_classic      (GossipThemeManager *manager,
 							   GossipChatView     *view);
-static void        theme_manager_apply_theme_clear        (GossipThemeManager *manager,
+static void        theme_manager_apply_theme_clean        (GossipThemeManager *manager,
 							   GossipChatView     *view);
 static void        theme_manager_apply_theme_blue         (GossipThemeManager *manager,
 							   GossipChatView     *view);
@@ -79,7 +79,7 @@ static guint signals[LAST_SIGNAL] = { 0 };
 static const gchar *themes[] = {
 	"classic", N_("Classic"),
 	"simple", N_("Simple"),
-	"clear", N_("Clear"),
+	"clean", N_("Clean"),
 	"blue", N_("Blue"),
 	NULL
 };
@@ -583,8 +583,8 @@ theme_manager_apply_theme_simple (GossipThemeManager *manager,
 }
 
 static void
-theme_manager_apply_theme_clear (GossipThemeManager *manager,
-				   GossipChatView     *view)
+theme_manager_apply_theme_clean (GossipThemeManager *manager,
+				 GossipChatView     *view)
 {
 	GossipThemeManagerPriv *priv;
 	GtkTextBuffer          *buffer;
@@ -895,8 +895,8 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 	theme_manager_fixup_tag_table (manager, view);
 	
 	if (theme_manager_ensure_theme_exists (name)) {
-		if (strcmp (name, "clear") == 0) {
-			theme_manager_apply_theme_clear (manager, view);
+		if (strcmp (name, "clean") == 0) {
+			theme_manager_apply_theme_clean (manager, view);
 			margin = 3;
 		}
 		else if (strcmp (name, "simple") == 0) {
