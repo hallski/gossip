@@ -280,7 +280,6 @@ gossip_throbber_stop (GossipThrobber *throbber)
 
 	gossip_throbber_remove_update_callback (throbber);
 	gtk_widget_queue_draw (GTK_WIDGET (throbber));
-
 }
 
 static void

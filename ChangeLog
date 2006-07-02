@@ -1,5 +1,13 @@
 2006-07-02  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-theme-manager.c (theme_manager_apply_theme): Tweak
+	the side margins for the themes.
+
+	* protocols/jabber/gossip-jabber-chatrooms.c
+	(jabber_chatrooms_presence_handler): Plug leak (presence object).
+
+2006-07-02  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-notify.c (notify_new_message): Change the respond
 	button to say show.
 

@@ -461,6 +461,8 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		was_offline = !gossip_contact_is_online (contact);
 		gossip_contact_add_presence (contact, presence);
 
+		g_object_unref (presence);
+
 		/* is contact new or updated */
 		if (new_contact || was_offline) {
 			gossip_debug (DEBUG_DOMAIN, "ID[%d] Presence for new joining contact:'%s'",

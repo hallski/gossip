@@ -483,7 +483,6 @@ theme_manager_apply_theme_clear (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-body-self");
 	g_object_set (tag,
-/* 		      "paragraph-background", BLUE_BODY_SELF, */
 		      "pixels-above-lines", 2,
 		      "pixels-below-lines", 2,
 		      NULL);
@@ -771,19 +770,19 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 	if (theme_manager_ensure_theme_exists (name)) {
 		if (strcmp (name, "clear") == 0) {
 			theme_manager_apply_theme_clear (manager, view);
-			margin = 2;
+			margin = 3;
 		} else if (strcmp (name, "blue") == 0) {
 			theme_manager_apply_theme_blue (manager, view);
-			margin = 2;
+			margin = 0;
 		}
 		/* Fall back to classic. */
 		else /*if (strcmp (name, "classic") == 0) */ {
 			theme_manager_apply_theme_classic (manager, view);
-			margin = 2;
+			margin = 3;
 		}
 	} else {
 		theme_manager_apply_theme_classic (manager, view);
-		margin = 2;
+		margin = 3;
 	}
 
 	gossip_chat_view_set_margin (view, margin);
