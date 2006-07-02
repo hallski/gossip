@@ -9,6 +9,7 @@ more popular functions of Instant Messaging (Martyn).
 - Make sure we set our own presence in chatrooms, not just on the
 roster (Martyn).
 - Use the GNOME throbber to show the user when we are connecting (Martyn).
+- Added two new themes, Simple and Clear (Martyn, Richard).
 - Fixed #313177, Use GNOME Network Manager to know about connection
 state and connect/disconnect accordingly (Martyn).
 - Fixed #339333, Update the Galago support to work with the new 0.5.x
