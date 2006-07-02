@@ -1630,7 +1630,8 @@ gossip_chat_view_append_event (GossipChatView *view,
 	}
 	
 	if (priv->last_block_type != BLOCK_TYPE_EVENT) {
-		//chat_view_append_spacing (view);
+		/* Comment out for now. */
+		/*chat_view_append_spacing (view);*/
 	}
 
 	chat_view_maybe_append_date_and_time (view, NULL);
