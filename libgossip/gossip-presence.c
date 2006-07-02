@@ -160,7 +160,7 @@ presence_get_property (GObject    *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};
+	}
 }
 static void
 presence_set_property (GObject      *object,
@@ -190,7 +190,7 @@ presence_set_property (GObject      *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};
+	}
 }
 
 GossipPresence *
@@ -262,6 +262,8 @@ gossip_presence_set_resource (GossipPresence *presence,
 
 	g_free (priv->resource);
 	priv->resource = g_strdup (resource);
+
+	g_object_notify (G_OBJECT (presence), "resource");
 }
 
 GossipPresenceState
@@ -288,6 +290,8 @@ gossip_presence_set_state (GossipPresence      *presence,
 	priv = GET_PRIV (presence);
 
 	priv->state = state;
+
+	g_object_notify (G_OBJECT (presence), "state");	
 }
 
 void
@@ -306,6 +310,8 @@ gossip_presence_set_status (GossipPresence *presence,
 	} else {
 		priv->status = NULL;
 	}
+
+	g_object_notify (G_OBJECT (presence), "status");
 }
 
 void
@@ -319,6 +325,8 @@ gossip_presence_set_priority (GossipPresence *presence,
 	priv = GET_PRIV (presence);
 
 	priv->priority = priority;
+
+	g_object_notify (G_OBJECT (presence), "priority");
 }
 
 gboolean

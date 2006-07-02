@@ -1,3 +1,15 @@
+2006-07-01  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-message.c (gossip_message_set_sender)
+	(gossip_message_set_subject, gossip_message_set_body)
+	(gossip_message_set_thread, gossip_message_set_timestamp)
+	(gossip_message_set_invite, gossip_message_request_composing,
+	gossip_message_set_recipient): Notify when setting properties.
+
+	* libgossip/gossip-presence.c (gossip_presence_set_priority)
+	(gossip_presence_set_status, gossip_presence_set_state)
+	(gossip_presence_set_resource): Notify.
+
 2006-06-30  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-notify.c (notify_new_message): Only show "get contact

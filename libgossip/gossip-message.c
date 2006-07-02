@@ -364,17 +364,21 @@ void
 gossip_message_set_recipient (GossipMessage *message, GossipContact *contact)
 {
 	GossipMessagePriv *priv;
+	GossipContact     *old_recipient;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
 	priv = GET_PRIV (message);
+
+	old_recipient = priv->recipient;
+	priv->recipient = g_object_ref (contact);
 	
-	if (priv->recipient) {
-		g_object_unref (priv->recipient);
+	if (old_recipient) {
+		g_object_unref (old_recipient);
 	}
 
-	priv->recipient = g_object_ref (contact);
+	g_object_notify (G_OBJECT (message), "recipient");
 }
 
 const gchar *
@@ -406,6 +410,8 @@ gossip_message_set_explicit_resource (GossipMessage *message,
 	} else {
 		priv->resource = g_strdup ("");
 	}
+
+	g_object_notify (G_OBJECT (message), "resource");
 }
 
 GossipContact * 
@@ -424,17 +430,21 @@ void
 gossip_message_set_sender (GossipMessage *message, GossipContact *contact)
 {
 	GossipMessagePriv *priv;
+	GossipContact     *old_sender;
 	
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	
 	priv = GET_PRIV (message);
 
-	if (priv->sender) {
-		g_object_unref (priv->sender);
+	old_sender = priv->sender;
+	priv->sender = g_object_ref (contact);
+	
+	if (old_sender) {
+		g_object_unref (old_sender);
 	}
 	
-	priv->sender = g_object_ref (contact);
+	g_object_notify (G_OBJECT (message), "sender");
 }
 
 const gchar *
@@ -466,6 +476,8 @@ gossip_message_set_subject (GossipMessage *message,
 	} else {
 		priv->subject = NULL;
 	}
+
+	g_object_notify (G_OBJECT (message), "subject");
 }
 
 const gchar *
@@ -497,6 +509,8 @@ gossip_message_set_body (GossipMessage *message,
 	} else {
 		priv->body = NULL;
 	}
+
+	g_object_notify (G_OBJECT (message), "body");
 }
 
 const gchar *
@@ -528,6 +542,8 @@ gossip_message_set_thread (GossipMessage *message,
 	} else {
 		priv->thread = NULL;
 	}
+
+	g_object_notify (G_OBJECT (message), "thread");
 }
 
 gossip_time_t
@@ -558,6 +574,8 @@ gossip_message_set_timestamp (GossipMessage *message,
 	} else {
 		priv->timestamp = timestamp;
 	}
+
+	g_object_notify (G_OBJECT (message), "timestamp");
 }
 
 GossipChatroomInvite *
@@ -576,21 +594,26 @@ void
 gossip_message_set_invite (GossipMessage        *message, 
 			   GossipChatroomInvite *invite)
 {
-	GossipMessagePriv *priv;
+	GossipMessagePriv    *priv;
+	GossipChatroomInvite *old_invite;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	
 	priv = GET_PRIV (message);
 
-	if (priv->invite) {
-		gossip_chatroom_invite_unref (priv->invite);
-	}
-
+	old_invite = priv->invite;
+	
 	if (invite) {
 		priv->invite = gossip_chatroom_invite_ref (invite);
 	} else {
 		priv->invite = NULL;
 	}
+
+	if (old_invite) {
+		gossip_chatroom_invite_unref (old_invite);
+	}
+
+	g_object_notify (G_OBJECT (message), "invite");
 }
 
 void         
@@ -603,6 +626,8 @@ gossip_message_request_composing (GossipMessage *message)
 	priv = GET_PRIV (message);
 
 	priv->request_composing = TRUE;
+
+	g_object_notify (G_OBJECT (message), "request_composing");
 }
 
 gboolean
