@@ -11,5 +11,6 @@ src/gossip-transport-add-window.c
 src/gossip-status-presets-dialog.c
 
 peekaboo/data/GNOME_Peekaboo_Applet.server.in.in
+peekaboo/data/GNOME_Peekaboo_Applet.server.in
 peekaboo/data/GNOME_Peekaboo_Applet.xml
 peekaboo/src/peekaboo-applet.c

@@ -47,6 +47,7 @@ src/gossip-spell.c
 src/gossip-spell-dialog.c
 src/gossip-subscription-dialog.c
 src/gossip-ui-utils.c
+src/gossip-theme-manager.c
 src/gossip-vcard-dialog.c
 src/sounds/gossip.soundlist.in
 

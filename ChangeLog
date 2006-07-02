@@ -1,3 +1,8 @@
+2006-07-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-preferences.c (preferences_themes_setup): Translate
+	the theme names.
+
 2006-07-01  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-message.c (gossip_message_set_sender)
@@ -12,7 +17,7 @@
 
 2006-06-30  Richard Hult  <richard@imendio.com>
 
-	* src/gossip-notify.c (notify_new_message): Only show "get contact
+	* src/gossipb-notify.c (notify_new_message): Only show "get contact
 	info" button if the contact is not in the contact list.
 
 2006-06-30  Richard Hult  <richard@imendio.com>

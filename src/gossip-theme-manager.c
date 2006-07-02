@@ -20,9 +20,7 @@
 
 /* TODO:
  *
- * add another theme
- * clear the tags before reusing them
- *
+ * Clear the tags before reusing them
  */
 
 #include <config.h>
@@ -35,7 +33,8 @@
 #include "gossip-preferences.h"
 #include "gossip-app.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
 	gchar    *name;

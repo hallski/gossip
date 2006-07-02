@@ -439,7 +439,7 @@ preferences_themes_setup (GossipPreferences *preferences)
  	for (i = 0; themes[i]; i += 2) {
 		gtk_list_store_append (model, &iter);
 		gtk_list_store_set (model, &iter,
-				    COL_COMBO_VISIBLE_NAME, themes[i + 1],
+				    COL_COMBO_VISIBLE_NAME, _(themes[i + 1]),
 				    COL_COMBO_NAME, themes[i],
 				    -1);
 	}
