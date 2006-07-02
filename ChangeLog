@@ -1,3 +1,11 @@
+2006-07-02  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-theme-manager.c: Add new theme and change the name of
+	the old clear to simple, use clear for the new one.
+
+	* src/gossip-chat-view.c (chat_view_event_cb): Be more defensive
+	to try and fix a crash when switching avatars on and off.
+
 2006-07-02  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-log.c: Use gossip_log() and DON'T log messages from

@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-02 10:33+0200\n"
+"POT-Creation-Date: 2006-07-02 12:59+0200\n"
 "PO-Revision-Date: 2006-06-25 17:19+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -192,7 +192,7 @@ msgstr ""
 "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekta."
 
 #: ../libgossip/gossip-contact.c:856 ../libgossip/gossip-presence.c:234
-#: ../src/gossip-app.c:2571 ../src/gossip-contact-info-dialog.c:168
+#: ../src/gossip-app.c:2603 ../src/gossip-contact-info-dialog.c:168
 #: ../src/gossip-galago.c:180
 msgid "Offline"
 msgstr "Frånkopplad"
@@ -334,7 +334,7 @@ msgstr "Anslöts"
 msgid "Connecting"
 msgstr "Ansluter"
 
-#: ../src/gossip-account-button.c:403 ../src/gossip-app.c:1628
+#: ../src/gossip-account-button.c:403 ../src/gossip-app.c:1659
 #: ../src/gossip-group-chat.c:720 ../src/gossip-private-chat.c:565
 msgid "Disconnected"
 msgstr "Kopplades ifrån"
@@ -423,35 +423,35 @@ msgstr "%s id för ny kontakt:"
 msgid "Example: %s"
 msgstr "Exempel: %s"
 
-#: ../src/gossip-app.c:625 ../ui/main.glade.h:136
+#: ../src/gossip-app.c:641 ../ui/main.glade.h:136
 msgid "_Connect"
 msgstr "An_slut"
 
-#: ../src/gossip-app.c:630 ../ui/main.glade.h:139
+#: ../src/gossip-app.c:646 ../ui/main.glade.h:139
 msgid "_Disconnect"
 msgstr "_Koppla ifrån"
 
-#: ../src/gossip-app.c:672
+#: ../src/gossip-app.c:688
 msgid "Show accounts and pending connections"
 msgstr "Visa konton och avvaktande anslutningar"
 
-#: ../src/gossip-app.c:830
+#: ../src/gossip-app.c:846
 msgid "To summarize:"
 msgstr "Sammanfattning:"
 
-#: ../src/gossip-app.c:900
+#: ../src/gossip-app.c:916
 msgid "If you quit, you will lose all unread information."
 msgstr "Om du avslutar kommer all oläst information förloras."
 
-#: ../src/gossip-app.c:1145
+#: ../src/gossip-app.c:1161
 msgid "Could not display the help contents."
 msgstr "Kunde inte visa hjälpinnehållet."
 
-#: ../src/gossip-app.c:1823
+#: ../src/gossip-app.c:1854
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Du har inte konfigurerar ett snabbmeddelandekonto!"
 
-#: ../src/gossip-app.c:1825
+#: ../src/gossip-app.c:1856
 msgid ""
 "Next you will be presented with the Account Information dialog to set your "
 "details up."
@@ -459,7 +459,7 @@ msgstr ""
 "Kontoinformationsdialogen kommer nu att visas så att du kan mata in din "
 "information."
 
-#: ../src/gossip-app.c:2117
+#: ../src/gossip-app.c:2149
 msgid "Edit Account _Details"
 msgstr "Redigera konto_detaljer"
 
@@ -484,7 +484,7 @@ msgstr ""
 "Ange ditt inbjudningsmeddelande till:\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1701
+#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1705
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
@@ -501,19 +501,19 @@ msgstr "_Kopiera länkadress"
 msgid "_Open Link"
 msgstr "_Öppna länk"
 
-#: ../src/gossip-chat-view.c:922
+#: ../src/gossip-chat-view.c:926
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-view.c:1444
+#: ../src/gossip-chat-view.c:1448
 msgid "Your invitation has been declined"
 msgstr "Ditt inbjudan har nekats."
 
-#: ../src/gossip-chat-view.c:1723
+#: ../src/gossip-chat-view.c:1727
 msgid "Accept"
 msgstr "Acceptera"
 
-#: ../src/gossip-chat-view.c:1739
+#: ../src/gossip-chat-view.c:1743
 msgid "Decline"
 msgstr "Neka"
 
@@ -677,45 +677,49 @@ msgstr "Konversation med"
 msgid "Date"
 msgstr "Datum"
 
-#: ../src/gossip-main.c:50
+#: ../src/gossip-main.c:51
 msgid "Don't connect on startup"
 msgstr "Anslut inte vid uppstart"
 
+#: ../src/gossip-main.c:55
+msgid "Allow multiple instances of the application to run at the same time"
+msgstr "Tillåt flera instanser av applikationen att köras samtidigt"
+
 # "Lista" som verb brukar vi inte använda; hellre "visa" eller möjligtvis
 # "visa i lista"
-#: ../src/gossip-main.c:54
+#: ../src/gossip-main.c:59
 msgid "List the available accounts"
 msgstr "Visa tillgängliga konton"
 
-#: ../src/gossip-main.c:58
+#: ../src/gossip-main.c:63
 msgid "Which account to connect to on startup"
 msgstr "Konto att ansluta till vid uppstart"
 
-#: ../src/gossip-main.c:59
+#: ../src/gossip-main.c:64
 msgid "ACCOUNT-NAME"
 msgstr "KONTONAMN"
 
-#: ../src/gossip-main.c:77
+#: ../src/gossip-main.c:82
 msgid "- Gossip Instant Messenger"
 msgstr "- Gossip snabbmeddelandeklient"
 
-#: ../src/gossip-main.c:97
+#: ../src/gossip-main.c:102
 msgid "You can not use --no-connect together with --account"
 msgstr "Du kan inte använda --no-connect tillsammans med --account"
 
-#: ../src/gossip-main.c:109
+#: ../src/gossip-main.c:114
 msgid "No accounts available."
 msgstr "Inga konton tillgängliga."
 
-#: ../src/gossip-main.c:114
+#: ../src/gossip-main.c:119
 msgid "Available accounts:"
 msgstr "Tillgängliga konton:"
 
-#: ../src/gossip-main.c:124
+#: ../src/gossip-main.c:129
 msgid "[default]"
 msgstr "[standard]"
 
-#: ../src/gossip-main.c:140
+#: ../src/gossip-main.c:145
 #, c-format
 msgid "There is no account with the name '%s'."
 msgstr "Det finns inget konto med namnet \"%s\"."
@@ -846,10 +850,14 @@ msgid "Classic"
 msgstr "Klassiskt"
 
 #: ../src/gossip-theme-manager.c:81
+msgid "Simple"
+msgstr "Enkelt"
+
+#: ../src/gossip-theme-manager.c:82
 msgid "Clear"
 msgstr "Tydligt"
 
-#: ../src/gossip-theme-manager.c:82
+#: ../src/gossip-theme-manager.c:83
 msgid "Blue"
 msgstr "Blått"
 

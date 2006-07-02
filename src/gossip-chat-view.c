@@ -583,6 +583,10 @@ chat_view_event_cb (GossipChatView *view,
 
 	/* Get where the pointer really is. */
 	win = gtk_text_view_get_window (GTK_TEXT_VIEW (view), type);
+	if (!win) {
+		return FALSE;
+	}
+
 	gdk_window_get_pointer (win, &x, &y, NULL);
 
 	/* Get the iter where the cursor is at */
