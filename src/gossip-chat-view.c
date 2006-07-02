@@ -1465,6 +1465,16 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	
 	gossip_theme_manager_apply (manager, view);
+
+	/* Needed for now to update the "rise" property of the names to get it
+	 * vertically centered.
+	 */
+	gossip_theme_manager_update_show_avatars (manager,
+						  view,
+						  gconf_client_get_bool (
+							  gossip_app_get_gconf_client (),
+							  GCONF_UI_SHOW_AVATARS,
+							  NULL));
 }
 
 GossipChatView *

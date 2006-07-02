@@ -1,5 +1,15 @@
 2006-07-02  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-theme-manager.c (theme_manager_init_tag_by_name):
+	Clear the old values when changing themes.
+
+	* src/gossip-chat-view.c (chat_view_theme_changed_cb): Update the
+	avatar tags as a workaround for now, needs to be done a bit nicer
+	later on. Makes the "rise" property of the name tag to be set
+	properly when changing themes.
+
+2006-07-02  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c (URGENCY_TIMEOUT): Raise to a minute.
 
 	* src/gossip-preferences.c (preferences_themes_setup): Translate

@@ -257,7 +257,21 @@ theme_manager_init_tag_by_name (GtkTextTagTable *table,
 		return gtk_text_tag_new (name);
 	}
 
-	/* FIXME: Clear it... */
+	/* Clear the old values so that we don't affect the new theme. */
+	g_object_set (tag,
+		      "background-set", FALSE,
+		      "foreground-set", FALSE,
+		      "invisible-set", FALSE,
+		      "justification-set", FALSE,
+		      "paragraph-background-set", FALSE,
+		      "pixels-above-lines-set", FALSE,
+		      "pixels-below-lines-set", FALSE,
+		      "rise-set", FALSE,
+		      "scale-set", FALSE,
+		      "size-set", FALSE,
+		      "style-set", FALSE,
+		      "weight-set", FALSE,
+		      NULL);
 
 	return tag;
 }
@@ -760,22 +774,24 @@ theme_manager_apply_theme (GossipThemeManager *manager,
 	priv = GET_PRIV (manager);
 
 	if (theme_manager_ensure_theme_exists (name)) {
-		if (strcmp (name, "classic") == 0) {
-			theme_manager_apply_theme_classic (manager, view);
-			margin = 3;
-		} else if (strcmp (name, "clear") == 0) {
+		if (strcmp (name, "clear") == 0) {
 			theme_manager_apply_theme_clear (manager, view);
-			margin = 3;
+			margin = 2;
 		} else if (strcmp (name, "blue") == 0) {
 			theme_manager_apply_theme_blue (manager, view);
-			margin = 0;
+			margin = 2;
+		}
+		/* Fall back to classic. */
+		else /*if (strcmp (name, "classic") == 0) */ {
+			theme_manager_apply_theme_classic (manager, view);
+			margin = 2;
 		}
 	} else {
 		theme_manager_apply_theme_classic (manager, view);
-		margin = 3;
+		margin = 2;
 	}
-	
-	gossip_chat_view_set_margin (view, 3);
+
+	gossip_chat_view_set_margin (view, margin);
 	gossip_chat_view_set_irc_style (view, priv->irc_style);
 
 	/* Make sure all tags are present. Note: not useful now but when we have
