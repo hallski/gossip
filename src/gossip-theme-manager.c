@@ -18,11 +18,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* TODO:
- *
- * Clear the tags before reusing them
- */
-
 #include <config.h>
 #include <string.h>
 #include <gconf/gconf-client.h>
