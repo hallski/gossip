@@ -1,5 +1,8 @@
 2006-07-02  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-notify.c (notify_new_message): Change the respond
+	button to say show.
+
 	* src/gossip-theme-manager.c (theme_manager_init_tag_by_name):
 	Clear the old values when changing themes.
 

@@ -303,7 +303,7 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_add_action (notify, "default", _("Default"),
 					(NotifyActionCallback) notify_new_message_default_cb,
 					g_object_ref (event_manager), NULL);
-	notify_notification_add_action (notify, "respond", _("Respond"),
+	notify_notification_add_action (notify, "respond", _("Show"),
 					(NotifyActionCallback) notify_new_message_default_cb,
 					g_object_ref (event_manager), NULL);
 	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {

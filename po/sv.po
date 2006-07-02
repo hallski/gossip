@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-02 09:19+0200\n"
+"POT-Creation-Date: 2006-07-02 10:33+0200\n"
 "PO-Revision-Date: 2006-06-25 17:19+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -484,7 +484,7 @@ msgstr ""
 "Ange ditt inbjudningsmeddelande till:\n"
 "%s"
 
-#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1691
+#: ../src/gossip-chat-invite.c:222 ../src/gossip-chat-view.c:1701
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
@@ -509,11 +509,11 @@ msgstr "%A %d %B %Y"
 msgid "Your invitation has been declined"
 msgstr "Ditt inbjudan har nekats."
 
-#: ../src/gossip-chat-view.c:1713
+#: ../src/gossip-chat-view.c:1723
 msgid "Accept"
 msgstr "Acceptera"
 
-#: ../src/gossip-chat-view.c:1729
+#: ../src/gossip-chat-view.c:1739
 msgid "Decline"
 msgstr "Neka"
 
@@ -750,8 +750,8 @@ msgid "Chat!"
 msgstr "Chatta!"
 
 #: ../src/gossip-notify.c:306
-msgid "Respond"
-msgstr "Svara"
+msgid "Show"
+msgstr "Visa"
 
 #: ../src/gossip-notify.c:311 ../ui/main.glade.h:32
 msgid "Contact Information"
@@ -841,15 +841,15 @@ msgstr "Loggar in med: %s"
 msgid "Remember Password?"
 msgstr "Kom ihåg lösenord?"
 
-#: ../src/gossip-theme-manager.c:85
+#: ../src/gossip-theme-manager.c:80
 msgid "Classic"
 msgstr "Klassiskt"
 
-#: ../src/gossip-theme-manager.c:86
+#: ../src/gossip-theme-manager.c:81
 msgid "Clear"
 msgstr "Tydligt"
 
-#: ../src/gossip-theme-manager.c:87
+#: ../src/gossip-theme-manager.c:82
 msgid "Blue"
 msgstr "Blått"
 
@@ -1677,6 +1677,9 @@ msgstr "_Prenumerera"
 #: ../ui/main.glade.h:156
 msgid "_Yes"
 msgstr "_Ja"
+
+#~ msgid "Respond"
+#~ msgstr "Svara"
 
 #~ msgid "Dark"
 #~ msgstr "Mörkt"
