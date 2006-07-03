@@ -72,7 +72,7 @@ static gboolean            notify_event_remove_foreach        (gpointer         
 static void                notify_event_removed_cb            (GossipEventManager *event_manager,
 							       GossipEvent        *event,
 							       gpointer            user_data);
-static void                notify_event_destroy_cb            (NotifyNotification *notify);
+//static void                notify_event_destroy_cb            (NotifyNotification *notify);
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
@@ -116,6 +116,13 @@ notify_online_action_cb (NotifyNotification *notify,
 	}
 
 	g_object_unref (contact);
+}
+
+static void
+notify_closed_cb (NotifyNotification *notify,
+		  gpointer            user_data)
+{
+	g_object_unref (notify);
 }
 
 static gboolean
@@ -171,6 +178,11 @@ notify_contact_online (GossipContact *contact)
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_LOW);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_closed_cb),
+			  NULL);
+
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
 	}
@@ -187,7 +199,7 @@ notify_contact_online (GossipContact *contact)
 			   error->message);
 		g_error_free (error);
 	}
-	
+
 	g_free (title);
 
 	if (pixbuf) {
@@ -295,6 +307,11 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIME);
+
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_closed_cb),
+			  NULL);
 
 	if (attach_widget) {
 		notify_notification_attach_to_widget (notify, attach_widget);
@@ -427,7 +444,7 @@ notify_event_added_cb (GossipEventManager *event_manager,
 						     contact,
 						     g_object_ref (event));
 				g_hash_table_insert (event_notifications,   
-						     notify,
+						     g_object_ref (notify),
 						     g_object_ref (event));  
 			}
 		}
@@ -457,12 +474,6 @@ notify_event_removed_cb (GossipEventManager *event_manager,
 	g_hash_table_foreach_remove (event_notifications, 
 				     (GHRFunc) notify_event_remove_foreach,
 				     event);
-}
-
-static void
-notify_event_destroy_cb (NotifyNotification *notify)
-{
-	notify_notification_close (notify, NULL);
 }
 
 void
@@ -507,7 +518,7 @@ gossip_notify_init (GossipSession      *session,
 
 	event_notifications = g_hash_table_new_full (g_direct_hash,
 						     g_direct_equal,
-						     (GDestroyNotify) notify_event_destroy_cb,
+						     (GDestroyNotify) g_object_unref,//notify_event_destroy_cb,
 						     (GDestroyNotify) g_object_unref);
 
 	account_states = g_hash_table_new_full (gossip_account_hash,

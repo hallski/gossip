@@ -1,3 +1,9 @@
+2006-07-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-notify.c: (notify_closed_cb), (notify_contact_online),
+	(notify_new_message), (notify_event_added_cb),
+	(gossip_notify_init): Don't leak all notify objects.
+
 2006-07-03  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-list.c: Remove debug output, break some long
@@ -33,7 +39,7 @@
 
 	* src/gossip-chat-view.c: (gossip_chat_view_append_event): Remove
 	duplicate spacing that happens in some cases when adding
-	timestamp.
+	timestamps.
 
 2006-07-02  Richard Hult  <richard@imendio.com>
 
