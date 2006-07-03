@@ -90,7 +90,7 @@ typedef struct {
 } FlashTimeoutData;
 
 typedef struct {
-	gchar       *name;
+	const gchar *name;
 	gboolean     found;
 	GtkTreeIter  iter;
 } FindGroup;
@@ -1099,18 +1099,18 @@ contact_list_get_group (GossipContactList *list,
 			gboolean          *created) 
 {
 	GtkTreeModel *model;
-	FindGroup    *fg;
+	FindGroup     fg;
 
-	fg = g_new0 (FindGroup, 1);
+	memset (&fg, 0, sizeof (fg));
 
-	fg->name = g_strdup (name);
+	fg.name = name;
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	gtk_tree_model_foreach (model, 
 				(GtkTreeModelForeachFunc) contact_list_get_group_foreach, 
-				fg);
+				&fg);
 
-	if (!fg->found) {
+	if (!fg.found) {
 		if (created) {
 			*created = TRUE;
 		}
@@ -1128,11 +1128,8 @@ contact_list_get_group (GossipContactList *list,
 			*created = FALSE;
 		}
 
-		*iter_to_set = fg->iter;
+		*iter_to_set = fg.iter;
 	}
-
-	g_free (fg->name);
-	g_free (fg);
 }
 
 static gboolean
@@ -1256,21 +1253,19 @@ contact_list_add_contact (GossipContactList *list,
 		}
 		
 		if (gossip_contact_group_get_expanded (name)) {
-			g_signal_handlers_block_by_func (GTK_TREE_VIEW (list), 
+			g_signal_handlers_block_by_func (list, 
 							 contact_list_row_expand_or_collapse_cb,
 							 GINT_TO_POINTER (TRUE));
-			gtk_tree_view_expand_row (GTK_TREE_VIEW (list),
-						  path, TRUE);
-			g_signal_handlers_unblock_by_func (GTK_TREE_VIEW (list), 
+			gtk_tree_view_expand_row (GTK_TREE_VIEW (list), path, TRUE);
+			g_signal_handlers_unblock_by_func (list, 
 							   contact_list_row_expand_or_collapse_cb,
 							   GINT_TO_POINTER (TRUE));
 		} else {
-			g_signal_handlers_block_by_func (GTK_TREE_VIEW (list), 
+			g_signal_handlers_block_by_func (list,
 							 contact_list_row_expand_or_collapse_cb,
 							 GINT_TO_POINTER (FALSE));
-			gtk_tree_view_collapse_row (GTK_TREE_VIEW (list),
-						    path);
-			g_signal_handlers_unblock_by_func (GTK_TREE_VIEW (list), 
+			gtk_tree_view_collapse_row (GTK_TREE_VIEW (list), path);
+			g_signal_handlers_unblock_by_func (list,
 							   contact_list_row_expand_or_collapse_cb,
 							   GINT_TO_POINTER (FALSE));
 		}
@@ -1318,17 +1313,18 @@ contact_list_create_model (GossipContactList *list)
 {
 	GtkTreeModel *model;
 
-	model = GTK_TREE_MODEL (gtk_tree_store_new (COL_COUNT,
-						    GDK_TYPE_PIXBUF,     /* Status pixbuf */
-						    GDK_TYPE_PIXBUF,     /* Avatar pixbuf */
-						    G_TYPE_BOOLEAN,      /* Avatar pixbuf visible */
-						    G_TYPE_STRING,       /* Name */
-						    G_TYPE_STRING,       /* Status string */
-						    GOSSIP_TYPE_CONTACT, /* Contact type */
-						    G_TYPE_BOOLEAN,      /* Is group */
-						    G_TYPE_BOOLEAN,      /* Is active */
-						    G_TYPE_BOOLEAN,      /* Is online */
-						    G_TYPE_BOOLEAN));    /* Is composing */
+	model = GTK_TREE_MODEL (
+		gtk_tree_store_new (COL_COUNT,
+				    GDK_TYPE_PIXBUF,     /* Status pixbuf */
+				    GDK_TYPE_PIXBUF,     /* Avatar pixbuf */
+				    G_TYPE_BOOLEAN,      /* Avatar pixbuf visible */
+				    G_TYPE_STRING,       /* Name */
+				    G_TYPE_STRING,       /* Status string */
+				    GOSSIP_TYPE_CONTACT, /* Contact type */
+				    G_TYPE_BOOLEAN,      /* Is group */
+				    G_TYPE_BOOLEAN,      /* Is active */
+				    G_TYPE_BOOLEAN,      /* Is online */
+				    G_TYPE_BOOLEAN));    /* Is composing */
 	
 	gtk_tree_sortable_set_sort_func (GTK_TREE_SORTABLE (model),
 					 COL_NAME,
@@ -1400,10 +1396,11 @@ contact_list_setup_view (GossipContactList *list)
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 
-	gtk_tree_view_column_set_cell_data_func (col, cell, 
-						 (GtkTreeCellDataFunc)contact_list_pixbuf_cell_data_func,
-						 list, NULL);
-					    
+	gtk_tree_view_column_set_cell_data_func (
+		col, cell, 
+		(GtkTreeCellDataFunc) contact_list_pixbuf_cell_data_func,
+		list, NULL);
+	
 	cell = gossip_cell_renderer_text_new ();
 	g_object_set (cell,
 		      "xpad", (guint) 4, 
@@ -1417,9 +1414,10 @@ contact_list_setup_view (GossipContactList *list)
 	gtk_tree_view_column_add_attribute (col, cell,
 					    "is_group", COL_IS_GROUP);
 
-	gtk_tree_view_column_set_cell_data_func (col, cell, 
-						 (GtkTreeCellDataFunc)contact_list_text_cell_data_func,
-						 list, NULL);
+	gtk_tree_view_column_set_cell_data_func (
+		col, cell, 
+		(GtkTreeCellDataFunc) contact_list_text_cell_data_func,
+		list, NULL);
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell, 
@@ -1431,9 +1429,10 @@ contact_list_setup_view (GossipContactList *list)
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
 
-	gtk_tree_view_column_set_cell_data_func (col, cell, 
-						 (GtkTreeCellDataFunc)contact_list_avatar_cell_data_func,
-						 list, NULL);
+	gtk_tree_view_column_set_cell_data_func (
+		col, cell, 
+		(GtkTreeCellDataFunc) contact_list_avatar_cell_data_func,
+		list, NULL);
 
 	gtk_tree_view_append_column (GTK_TREE_VIEW (list), col);
 
@@ -1596,7 +1595,6 @@ contact_list_drag_data_received (GtkWidget         *widget,
 			}
 
 			if (str == NULL) {
-				g_print ("eek, null group\n");
 				continue;
 			}
 			
@@ -2124,25 +2122,21 @@ contact_list_find_contact (GossipContactList *list,
 			   GossipContact     *contact)
 {
 	GtkTreeModel *model;
-
-	FindContact  *fc;
+	FindContact   fc;
 	GList        *l = NULL;
 
-	fc = g_new0 (FindContact, 1);
+	memset (&fc, 0, sizeof (fc));
 	
-	fc->contact = g_object_ref (contact);
-		
+	fc.contact = contact;
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 	gtk_tree_model_foreach (model, 
 				(GtkTreeModelForeachFunc) contact_list_find_contact_foreach, 
-				fc);
-
-	if (fc->found) {
-		l = fc->iters;
+				&fc);
+	
+	if (fc.found) {
+		l = fc.iters;
 	}
-
-	g_object_unref (fc->contact);
-	g_free (fc);
 
 	return l;
 }

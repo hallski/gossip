@@ -181,6 +181,7 @@ main (int argc, char *argv[])
 	
 	gtk_main ();
 
+	g_object_unref (session);
 	g_object_unref (account_manager);
 
 	g_object_unref (program);

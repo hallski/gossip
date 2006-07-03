@@ -1,5 +1,15 @@
 2006-07-03  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-list.c: Remove debug output, break some long
+	lines, don't create and free the temporary structs for finding
+	groups/contacts, use the stack instead.
+
+	* src/gossip-main.c: (main): Unref the session when quitting.
+
+	* src/gossip-notify.c: Coding style.
+
+2006-07-03  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c (gossip_chat_window_finalize)
 	(gossip_chat_window_init): Plug leak of tooltips object.
 

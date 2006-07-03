@@ -76,7 +76,7 @@ static void                notify_event_destroy_cb            (NotifyNotificatio
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
-	NOTIFY_SHOW_ROSTER,
+	NOTIFY_SHOW_ROSTER
 };
 
 static GHashTable *account_states = NULL;
@@ -419,7 +419,7 @@ notify_event_added_cb (GossipEventManager *event_manager,
 		/* Find out if there are any other messages waiting,
 		 * if not, show a notification.
 		 */
-		if (! g_hash_table_lookup (message_notifications, contact)) {
+		if (!g_hash_table_lookup (message_notifications, contact)) {
 			notify = notify_new_message (event_manager, message);
 			
 			if (notify) {
