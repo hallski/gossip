@@ -261,8 +261,9 @@ gossip_chat_window_init (GossipChatWindow *window)
 
 	priv = GET_PRIV (window);
 
-	priv->tooltips = gtk_tooltips_new ();
-
+	priv->tooltips = g_object_ref (gtk_tooltips_new ());
+	gtk_object_sink (GTK_OBJECT (priv->tooltips));
+	
 	glade = gossip_glade_get_file (GLADEDIR "/chat.glade",
 				       "chat_window",
 				       NULL,
@@ -484,6 +485,8 @@ gossip_chat_window_finalize (GObject *object)
 
 	chat_windows = g_list_remove (chat_windows, window);
 	gtk_widget_destroy (priv->dialog);
+
+	g_object_unref (priv->tooltips);
 
 	G_OBJECT_CLASS (gossip_chat_window_parent_class)->finalize (object);
 }

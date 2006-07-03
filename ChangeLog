@@ -1,3 +1,17 @@
+2006-07-03  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (gossip_chat_window_finalize)
+	(gossip_chat_window_init): Plug leak of tooltips object.
+
+	* src/gossip-app.c (gossip_app_init): Don't use g_objetct_ref_sink
+	since it's only in glib 2.10.
+
+	* src/gossip-chat-view.c (chat_view_event_cb): Only create the
+	mouse cursor if needed.
+
+	* src/gossip-log.c (gossip_log_get_messages_for_contact): Plug
+	another per-message leak.
+
 2006-07-02  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-dbus.[ch]: (gossip_dbus_init_for_session): Don't

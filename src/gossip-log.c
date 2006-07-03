@@ -1393,10 +1393,6 @@ gossip_log_get_messages_for_contact (GossipContact *contact,
 		return NULL;
 	}
 
-	/* Get own contact from log contact. */
-	account = gossip_contact_get_account (contact);
-	own_contact = gossip_log_get_own_contact (account);
-
 	/* Create parser. */
  	ctxt = xmlNewParserCtxt ();
 
@@ -1417,6 +1413,10 @@ gossip_log_get_messages_for_contact (GossipContact *contact,
 		xmlFreeParserCtxt (ctxt);
 		return NULL;
 	}
+
+	/* Get own contact from log contact. */
+	account = gossip_contact_get_account (contact);
+	own_contact = gossip_log_get_own_contact (account);
 
 	if (gossip_contact_get_name (own_contact) == NULL ||
 	    strcmp (gossip_contact_get_id (own_contact),
@@ -1508,6 +1508,8 @@ gossip_log_get_messages_for_contact (GossipContact *contact,
 		xmlFree (name);
 		xmlFree (body);
 	}
+
+	g_object_unref (own_contact);
 	
  	gossip_debug (DEBUG_DOMAIN, "Parsed %d messages", g_list_length (messages)); 
 

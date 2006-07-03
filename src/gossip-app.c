@@ -373,8 +373,8 @@ gossip_app_init (GossipApp *singleton_app)
 					      gossip_account_equal,
 					      g_object_unref,
 					      (GDestroyNotify) gtk_widget_destroy);
-	priv->tooltips = gtk_tooltips_new ();
-	g_object_ref_sink (priv->tooltips);
+	priv->tooltips = g_object_ref (gtk_tooltips_new ());
+	gtk_object_sink (GTK_OBJECT (priv->tooltips));
 }
 
 static void

@@ -601,11 +601,10 @@ chat_view_event_cb (GossipChatView *view,
 					    &iter,
 					    buf_x, buf_y);
 
-	if (!hand) {
-		hand = gdk_cursor_new (GDK_HAND2);
-	}
-
 	if (gtk_text_iter_has_tag (&iter, tag)) {
+		if (!hand) {
+			hand = gdk_cursor_new (GDK_HAND2);
+		}
 		gdk_window_set_cursor (win, hand);
 	} else {
 		gdk_window_set_cursor (win, NULL);
