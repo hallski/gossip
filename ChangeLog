@@ -35,7 +35,7 @@
 
 2006-07-02  Martyn Russell  <martyn@imendio.com>
 
-	* src/gossip-log.c: Use gossip_log() and DON'T log messages from
+	* src/gossip-log.c: Use gossip_debug() and DON'T log messages from
 	temporary contacts, since I was getting a lot of ICQ weirdos send
 	me messages and my log window shows all their crap IDs at the top
 	because they are numbers :(
