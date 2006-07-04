@@ -1,5 +1,11 @@
 2006-07-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (gossip_app_connect):
+	* src/gossip-dbus.c: (gossip_dbus_nm_get_state): Tweak the logic
+	so autoconnect still works without network manager.
+
+2006-07-04  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-notify.c (notify_event_remove_foreach)
 	(notify_message_remove_foreach): Split up in two and close the
 	notification bubble when removing events, fixes a bug introduced

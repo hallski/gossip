@@ -1809,9 +1809,6 @@ gossip_app_connect (GossipAccount *account,
 {
 	GossipAppPriv        *priv;
 	GossipAccountManager *manager;
-#ifdef HAVE_DBUS	
-	gboolean              connected = TRUE;
-#endif
 
 	priv = GET_PRIV (app);
 
@@ -1842,11 +1839,13 @@ gossip_app_connect (GossipAccount *account,
 
 #ifdef HAVE_DBUS
 	if (startup) {
+		gboolean connected = TRUE;
+
 		/* Don't try to automatically connect if we have Network
 		 * Manager state and we are NOT connected. 
 		 */
 
-		if (!gossip_dbus_nm_get_state (&connected) || !connected) {
+		if (gossip_dbus_nm_get_state (&connected) && !connected) {
 			return;
 		}
 	}

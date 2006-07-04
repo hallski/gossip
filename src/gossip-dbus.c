@@ -513,8 +513,9 @@ gossip_dbus_nm_get_state (gboolean *connected)
 	if (!dbus_g_proxy_call (bus_proxy, "state", &error,
 				G_TYPE_INVALID, 
 				G_TYPE_UINT, &state, G_TYPE_INVALID)) {
-		g_warning ("Failed to complete 'state' request. %s", 
-			   error->message);
+		gossip_debug (DEBUG_DOMAIN, "Failed to complete 'state' request. %s", 
+			      error->message);
+		return FALSE;
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Current network state:'%s'", 
