@@ -1,5 +1,12 @@
 2006-07-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-notify.c (notify_event_remove_foreach)
+	(notify_message_remove_foreach): Split up in two and close the
+	notification bubble when removing events, fixes a bug introduced
+	yesterday.
+
+2006-07-04  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-log.c (gossip_log_message_for_contact): Don't
 	"urlify", just escape and do it as late as possible to avoid a
 	leak on failure. Also fixes bug #346496.

@@ -72,7 +72,6 @@ static gboolean            notify_event_remove_foreach        (gpointer         
 static void                notify_event_removed_cb            (GossipEventManager *event_manager,
 							       GossipEvent        *event,
 							       gpointer            user_data);
-//static void                notify_event_destroy_cb            (NotifyNotification *notify);
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
@@ -84,6 +83,7 @@ static GHashTable *contact_states = NULL;
 static GHashTable *message_notifications = NULL;
 static GHashTable *event_notifications = NULL;
 static GtkWidget  *attach_widget = NULL;
+
 
 static const gchar *
 notify_get_status_from_presence (GossipPresence *presence)
@@ -222,12 +222,12 @@ notify_new_message_default_cb (NotifyNotification *notify,
 		contact = gossip_message_get_sender (message);
 	
 		gossip_event_manager_activate (event_manager, event);
+
+		g_hash_table_remove (event_notifications, notify);
+		g_hash_table_remove (message_notifications, contact);
 	} else {
 		g_warning ("No event found for NotifyNotification: %p", notify);
 	}
-
-	g_hash_table_remove (event_notifications, notify);
-	g_hash_table_remove (message_notifications, contact);
 
 	g_object_unref (event_manager);
 }
@@ -247,12 +247,12 @@ notify_new_message_contact_cb (NotifyNotification *notify,
 		contact = gossip_message_get_sender (message);
 
 		gossip_contact_info_dialog_show (contact);
+
+		g_hash_table_remove (event_notifications, notify);
+		g_hash_table_remove (message_notifications, contact);
 	} else {
 		g_warning ("No event found for Notification: %p", notify);
 	}
-
-	g_hash_table_remove (event_notifications, notify);
-	g_hash_table_remove (message_notifications, contact);
 
 	g_object_unref (event_manager);
 }
@@ -452,14 +452,27 @@ notify_event_added_cb (GossipEventManager *event_manager,
 }
 
 static gboolean
-notify_event_remove_foreach (gpointer key,
+notify_message_remove_foreach (gpointer     key,
 			     GossipEvent *event,
 			     GossipEvent *event_to_compare)
 {
 	if (gossip_event_equal (event, event_to_compare)) {
 		return TRUE;
 	}
+	
+	return FALSE;
+}
 
+static gboolean
+notify_event_remove_foreach (gpointer     key,
+			     GossipEvent *event,
+			     GossipEvent *event_to_compare)
+{
+	if (gossip_event_equal (event, event_to_compare)) {
+		notify_notification_close (key, NULL);
+		return TRUE;
+	}
+	
 	return FALSE;
 }
 
@@ -469,7 +482,7 @@ notify_event_removed_cb (GossipEventManager *event_manager,
 			 gpointer            user_data)
 {
 	g_hash_table_foreach_remove (message_notifications, 
-				     (GHRFunc) notify_event_remove_foreach,
+				     (GHRFunc) notify_message_remove_foreach,
 				     event);
 	g_hash_table_foreach_remove (event_notifications, 
 				     (GHRFunc) notify_event_remove_foreach,
@@ -518,7 +531,7 @@ gossip_notify_init (GossipSession      *session,
 
 	event_notifications = g_hash_table_new_full (g_direct_hash,
 						     g_direct_equal,
-						     (GDestroyNotify) g_object_unref,//notify_event_destroy_cb,
+						     (GDestroyNotify) g_object_unref,
 						     (GDestroyNotify) g_object_unref);
 
 	account_states = g_hash_table_new_full (gossip_account_hash,
