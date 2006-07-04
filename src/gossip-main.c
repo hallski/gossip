@@ -169,7 +169,7 @@ main (int argc, char *argv[])
 #endif
 	
 #ifdef HAVE_GALAGO
-	gossip_galago_init (priv->session);
+	gossip_galago_init (session);
 #endif
 
 	gossip_app_create (session, account_manager);
