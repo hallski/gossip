@@ -149,8 +149,6 @@ static gboolean        log_set_name                            (GossipAccount   
 								GossipContact   *contact);
 static gboolean        log_set_own_name                        (GossipAccount   *account,
 								GossipContact   *contact);
-static gchar *         log_urlify                              (const gchar     *msg);
-
 
 #ifdef DEPRECATED 
 static gboolean        log_transform                           (const gchar     *infile,
@@ -953,79 +951,6 @@ log_set_own_name (GossipAccount *account,
 	return ok;
 }
 
-static gchar *
-log_urlify (const gchar *msg)
-{
-	gint     num_matches, i;
-	GArray  *start, *end;
-	GString *ret;
-	gchar   *esc;
-
-	ret = g_string_new (NULL);
-
-	start = g_array_new (FALSE, FALSE, sizeof (gint));
-	end = g_array_new (FALSE, FALSE, sizeof (gint));
-
-	num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, msg, start, end);
-
-	if (num_matches == 0) {
-		esc = g_markup_escape_text (msg, -1);
-		g_string_append (ret, esc);
-		g_free (esc);
-	} else {
-		gint   last = 0;
-		gint   s = 0, e = 0;
-		gchar *tmp;
-
-		for (i = 0; i < num_matches; i++) {
-
-			s = g_array_index (start, gint, i);
-			e = g_array_index (end, gint, i);
-
-			if (s > last) {
-				tmp = gossip_substring (msg, last, s);
-				esc = g_markup_escape_text (tmp, -1);
-				g_string_append (ret, esc);
-				g_free (tmp);
-				g_free (esc);
-			}
-
-			tmp = gossip_substring (msg, s, e);
-
-			g_string_append (ret, "<a href=\"");
-
-			esc = g_markup_escape_text (tmp, -1);
-			g_string_append (ret, esc);
-			g_free (esc);
-
-			g_string_append (ret, "\">");
-
-			esc = g_markup_escape_text (tmp, -1);
-			g_string_append (ret, esc);
-			g_free (esc);
-
-			g_string_append (ret, "</a>");
-
-			last = e;
-
-			g_free (tmp);
-		}
-
-		if (e < strlen (msg)) {
-			tmp = gossip_substring (msg, e, strlen (msg));
-			esc = g_markup_escape_text (tmp, -1);
-			g_string_append (ret, esc);
-			g_free (tmp);
-			g_free (esc);
-		}
-	}
-
-	g_array_free (start, TRUE);
-	g_array_free (end, TRUE);
-
-	return g_string_free (ret, FALSE);
-}
-
 #ifdef DEPRECATED
 
 static gboolean
@@ -1566,8 +1491,6 @@ gossip_log_message_for_contact (GossipMessage *message,
 		own_contact = gossip_message_get_sender (message);
 	}
 
-	body = log_urlify (body_str);
-
 	account = gossip_contact_get_account (contact);
 	own_contact_saved = gossip_log_get_own_contact (account);
 
@@ -1631,6 +1554,8 @@ gossip_log_message_for_contact (GossipMessage *message,
 		g_free (filename);
 		return;
 	}
+
+	body = g_markup_escape_text (body_str, -1);
 
 	timestamp = log_get_timestamp_from_message (message);
 
@@ -1959,11 +1884,18 @@ gossip_log_message_for_chatroom (GossipChatroom *chatroom,
 	gchar         *name;
 	gchar         *contact_id;
 	const gchar   *str; 
+	const gchar   *body_str; 
 	gboolean       new_file = FALSE;
 	gboolean       save_contact = FALSE;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 
+	body_str = gossip_message_get_body (message);
+	if (!body_str || strcmp (body_str, "") == 0) {
+		gossip_debug (DEBUG_DOMAIN, "Skipping message with no content");
+		return;
+	}
+	
 	contact = gossip_message_get_sender (message);
 
 	account = gossip_chatroom_get_account (chatroom);
@@ -2003,13 +1935,7 @@ gossip_log_message_for_chatroom (GossipChatroom *chatroom,
 
 	timestamp = log_get_timestamp_from_message (message);
 
-	/* Make sure we escape all data written */
-	str = gossip_message_get_body (message); 
-        if (str) {
-		body = log_urlify (str);
-	} else {
-		body = g_strdup ("");
-	}
+	body = g_markup_escape_text (body_str, -1);
 
 	str = gossip_contact_get_name (contact);
 	if (!str) {

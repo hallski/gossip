@@ -34,9 +34,6 @@
 static void regex_init                  (void);
 static void status_message_free_foreach (GossipStatusEntry *entry);
 
-#define AVAILABLE_MESSAGE "Available"
-#define AWAY_MESSAGE      "Away"
-#define BUSY_MESSAGE      "Busy"
 
 GList *
 gossip_status_messages_get (void)

@@ -2036,9 +2036,9 @@ contact_list_row_expand_or_collapse_cb (GossipContactList *list,
 					GtkTreePath       *path,
 					gpointer           user_data)
 {
-	GtkTreeModel          *model;
-	gchar                 *name;
-	gboolean               expanded;
+	GtkTreeModel *model;
+	gchar        *name;
+	gboolean      expanded;
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 

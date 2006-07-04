@@ -611,7 +611,7 @@ account_manager_file_parse (GossipAccountManager *manager,
 
 	if (!gossip_xml_validate (doc, ACCOUNTS_DTD_FILENAME)) {
 		g_warning ("Failed to validate file:'%s'", filename);
-		xmlFreeDoc(doc);
+		xmlFreeDoc (doc);
 		xmlFreeParserCtxt (ctxt);
 		return FALSE;
 	}
