@@ -29,7 +29,7 @@
 #include "gossip-sound.h"
 
 
-#define DEBUG_MSG(x)   
+#define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 /* Time to wait before we use sounds for an account after it has gone
@@ -41,9 +41,11 @@ static void sound_contact_presence_updated_cb (GossipSession *session,
 					       GossipContact *contact,
 					       gpointer       user_data);
 
-static GHashTable *account_states = NULL;
-static GHashTable *contact_states = NULL;
-static gboolean    sound_enabled = TRUE;
+static GHashTable    *account_states = NULL;
+static GHashTable    *contact_states = NULL;
+static gboolean       sound_disabled = FALSE;
+static GossipSession *saved_session = NULL;
+
 
 static gboolean
 sound_protocol_timeout_cb (GossipAccount *account)
@@ -71,6 +73,35 @@ sound_protocol_connected_cb (GossipSession  *session,
 			    (GSourceFunc) sound_protocol_timeout_cb, 
 			    account);
 	g_hash_table_insert (account_states, account, GUINT_TO_POINTER (id));
+}
+
+static gboolean
+sound_disconnected_contact_foreach (GossipContact  *contact,
+				    GossipPresence *presence,
+				    GossipAccount  *account)
+{
+	GossipAccount *contact_account;
+
+	contact_account = gossip_contact_get_account (contact);
+	
+	if (gossip_account_equal (contact_account, account)) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+sound_protocol_disconnected_cb (GossipSession  *session,
+				GossipAccount  *account,
+				GossipProtocol *protocol,
+				gpointer        user_data)
+{
+	g_hash_table_remove (account_states, account);
+
+	g_hash_table_foreach_remove (contact_states,
+				     (GHRFunc) sound_disconnected_contact_foreach,
+				     account);
 }
 
 static void
@@ -131,7 +162,7 @@ gossip_sound_play (GossipSound sound)
 	 * happen that we need to mute sound - e.g. changing roster
 	 * contacts.
 	 */
-	if (!sound_enabled) {
+	if (sound_disabled) {
 		DEBUG_MSG (("Sound: Play request ignored, sound currently disabled."));
 		return;
 	}
@@ -183,24 +214,20 @@ gossip_sound_play (GossipSound sound)
 }		
 
 void 
-gossip_sound_toggle (gboolean enabled)
+gossip_sound_set_enabled (gboolean enabled)
 {
-	sound_enabled = enabled;
+	sound_disabled = !enabled;
 }
 
 void 
 gossip_sound_init (GossipSession *session)
 {
-	static gboolean inited = FALSE;
-
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
-	if (inited) {
-		return;
-	}
+	g_assert (saved_session == NULL);
 
-	DEBUG_MSG (("Sound: Initiating..."));
-	
+	saved_session = g_object_ref (session);
+
 	account_states = g_hash_table_new_full (gossip_account_hash,
 						gossip_account_equal,
 						(GDestroyNotify) g_object_unref,
@@ -211,12 +238,34 @@ gossip_sound_init (GossipSession *session)
 						(GDestroyNotify) g_object_unref,
 						(GDestroyNotify) g_object_unref);
 
-	g_signal_connect (session, "protocol-connected",
+	g_signal_connect (session,
+			  "protocol-connected",
 			  G_CALLBACK (sound_protocol_connected_cb),
 			  NULL);
-	g_signal_connect (session, "contact-presence-updated",
+	g_signal_connect (session,
+			  "protocol-disconnected",
+			  G_CALLBACK (sound_protocol_disconnected_cb),
+			  NULL);
+	g_signal_connect (session,
+			  "contact-presence-updated",
 			  G_CALLBACK (sound_contact_presence_updated_cb),
 			  NULL);
+}
 
- 	inited = TRUE;
+void 
+gossip_sound_finalize (void)
+{
+	g_assert (saved_session != NULL);
+
+	g_signal_handlers_disconnect_by_func (saved_session,
+					      sound_protocol_connected_cb,
+					      NULL);
+	g_signal_handlers_disconnect_by_func (saved_session,
+					      sound_contact_presence_updated_cb,
+					      NULL);
+	
+	g_hash_table_destroy (account_states);
+	g_hash_table_destroy (contact_states);
+
+	g_object_unref (saved_session);
 }

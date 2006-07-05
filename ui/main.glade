@@ -6162,7 +6162,6 @@ This name could be something associated with the service provider, for example, 
 
       <child>
 	<widget class="GtkToolbar" id="accounts_toolbar">
-	  <property name="visible">True</property>
 	  <property name="orientation">GTK_ORIENTATION_HORIZONTAL</property>
 	  <property name="toolbar_style">GTK_TOOLBAR_BOTH_HORIZ</property>
 	  <property name="tooltips">True</property>
@@ -6239,7 +6238,6 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkWindow" id="log_window">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">View Previous Conversations</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
@@ -6818,7 +6816,6 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="accounts_dialog">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Accounts</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>

@@ -60,6 +60,10 @@ static void                notify_protocol_connected_cb       (GossipSession    
 							       GossipAccount      *account,
 							       GossipProtocol     *protocol,
 							       gpointer            user_data);
+static void                notify_protocol_disconnected_cb    (GossipSession      *session,
+							       GossipAccount      *account,
+							       GossipProtocol     *protocol,
+							       gpointer            user_data);
 static void                notify_contact_presence_updated_cb (GossipSession      *session,
 							       GossipContact      *contact,
 							       gpointer            user_data);
@@ -354,6 +358,56 @@ notify_protocol_timeout_cb (GossipAccount *account)
 	return FALSE;
 }
 
+
+static gboolean
+notify_disconnected_message_foreach (GossipContact  *contact,
+				     GossipEvent    *event,
+				     GossipAccount  *account)
+{
+	GossipAccount *contact_account;
+
+	contact_account = gossip_contact_get_account (contact);
+	
+	if (gossip_account_equal (contact_account, account)) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+notify_disconnected_contact_foreach (GossipContact  *contact,
+				     GossipPresence *presence,
+				     GossipAccount  *account)
+{
+	GossipAccount *contact_account;
+
+	contact_account = gossip_contact_get_account (contact);
+	
+	if (gossip_account_equal (contact_account, account)) {
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+notify_protocol_disconnected_cb (GossipSession  *session,
+				 GossipAccount  *account,
+				 GossipProtocol *protocol,
+				 gpointer        user_data)
+{
+	g_hash_table_remove (account_states, account);
+	
+	g_hash_table_foreach_remove (message_notifications,
+				     (GHRFunc) notify_disconnected_message_foreach,
+				     account);
+	
+	g_hash_table_foreach_remove (contact_states,
+				     (GHRFunc) notify_disconnected_contact_foreach,
+				     account);
+}
+
 static void
 notify_protocol_connected_cb (GossipSession  *session,
 			      GossipAccount  *account,
@@ -547,6 +601,9 @@ gossip_notify_init (GossipSession      *session,
 	g_signal_connect (session, "protocol-connected",
 			  G_CALLBACK (notify_protocol_connected_cb),
 			  NULL);
+	g_signal_connect (session, "protocol-disconnected",
+			  G_CALLBACK (notify_protocol_disconnected_cb),
+			  NULL);
 	g_signal_connect (session, "contact-presence-updated",
 			  G_CALLBACK (notify_contact_presence_updated_cb),
 			  NULL);
@@ -559,4 +616,15 @@ gossip_notify_init (GossipSession      *session,
 			  NULL);
 
  	inited = TRUE;
+}
+
+void
+gossip_notify_finalize (void)
+{
+	g_hash_table_destroy (account_states);
+	g_hash_table_destroy (contact_states);
+	g_hash_table_destroy (message_notifications);
+	g_hash_table_destroy (event_notifications);
+
+	notify_uninit ();
 }

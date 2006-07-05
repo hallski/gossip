@@ -26,6 +26,8 @@
 
 void gossip_notify_init              (GossipSession      *session,
 				      GossipEventManager *event_manager);
+void gossip_notify_finalize          (void);
+
 void gossip_notify_set_attach_widget (GtkWidget          *new_attach_widget);
 
 #endif /* __GOSSIP_NOTIFY_H__ */

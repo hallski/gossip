@@ -412,6 +412,10 @@ jabber_finalize (GObject *object)
 	if (priv->vcard) {
 		g_object_unref (priv->vcard);
 	}
+
+	if (priv->presence) {
+		g_object_unref (priv->presence);
+	}
 	
 	g_hash_table_destroy (priv->contacts);
 
@@ -425,7 +429,6 @@ jabber_finalize (GObject *object)
 
 	if (priv->connection_timeout_id != 0) {
 		g_source_remove (priv->connection_timeout_id);
-		priv->connection_timeout_id = 0;
 	}
 	
 #ifdef USE_TRANSPORTS

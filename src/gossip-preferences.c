@@ -423,11 +423,11 @@ preferences_languages_cell_toggled_cb (GtkCellRendererToggle *cell,
 static void
 preferences_themes_setup (GossipPreferences *preferences)
 {
-	GtkComboBox     *combo;
-	GtkListStore    *model;
-	GtkTreeIter      iter;
-	const gchar    **themes;
-	gint             i;
+	GtkComboBox   *combo;
+	GtkListStore  *model;
+	GtkTreeIter    iter;
+	const gchar  **themes;
+	gint           i;
 
 	combo = GTK_COMBO_BOX (preferences->combobox_chat_theme);
 

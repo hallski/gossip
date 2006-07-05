@@ -1,9 +1,42 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* ui/main.glade: Hide the accounts toolbar by default (since it's
+	unused now), and also the accounts dialog and the log window (we
+	show them with code).
+
+	* src/gossip-app.c (app_finalize): Destroy the popup menu and the
+	tray icon. Unref the gconf client, finalize the notify and sound
+	code, unref the presence and away presence, unref the chatroom
+	manager and session.
+	(app_setup): Put some more code inside USE_ORIGINAL_TOOLBAR_CODE
+	ifdefs.
+	(app_show_offline_cb): Adapt to change in the gossip_sound_* API.
+
+	* src/gossip-notify.c (gossip_notify_finalize)
+	(notify_disconnected_message_foreach)
+	(notify_disconnected_contact_foreach)
+	(notify_protocol_disconnected_cb): Free data on disconnect.
+	- Also make it possible to free everything before we exit.
+
+	* src/gossip-sound.[ch] (sound_protocol_disconnected_cb)
+	(sound_disconnected_contact_foreach, gossip_sound_finalize):
+	Remove accounts/presence/etc when we get disconnected. Make it
+	possible to free everything when we exit.
+	(gossip_sound_set_enabled): Change name from _toggle().
+
+	* src/gossip-preferences.c (preferences_themes_setup): Reindent.
+
+	* protocols/jabber/gossip-jabber.c (jabber_finalize): Free the
+	presence.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-stock.[ch] (gossip_stock_init,
 	gossip_stock_finalize): Unref the factory and icon set, make it
 	possible to remove the icons at exit time to make it easier to
 	find leaks.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-ft-window.c (gossip_ft_window_init)
 	(gossip_ft_window_finalize): Keep a ref to the session while using

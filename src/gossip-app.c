@@ -91,6 +91,8 @@
 #define DEBUG_DOMAIN_TRAY      "AppTray"
 #define DEBUG_DOMAIN_SESSION   "AppSession"
 
+#define DEBUG_QUIT
+
 /* Number of seconds before entering autoaway and extended autoaway. */
 #define	AWAY_TIME (5*60) 
 #define	EXT_AWAY_TIME (30*60)
@@ -140,7 +142,9 @@ struct _GossipAppPriv {
 	GtkWidget             *actions_group_chat_join;   
 
 	/* Accounts toolbar */
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 	GtkWidget             *accounts_toolbar;
+#endif
 
 	/* Tray */
 	EggTrayIcon           *tray_icon;
@@ -398,17 +402,35 @@ app_finalize (GObject *object)
 	g_list_free (priv->widgets_connected);
 	g_list_free (priv->widgets_disconnected);
 
-	manager = gossip_session_get_account_manager (priv->session);
-
 	if (priv->errors) {
 		g_hash_table_destroy (priv->errors);
 	}
+
+	gtk_widget_destroy (priv->popup_menu);
 	
-	if (priv->tooltips) {
-		g_object_unref (priv->tooltips);
+	g_object_unref (priv->tooltips);
+
+	if (priv->tray_icon) {
+		/* Disconnect so it doesn't get recreated when we destroy it. */
+		g_signal_handlers_disconnect_by_func (priv->tray_icon,
+						      app_tray_destroy_cb,
+						      priv->tray_event_box);
+		
+		gtk_widget_destroy (GTK_WIDGET (priv->tray_icon));
 	}
 
+	g_object_unref (priv->gconf_client);
+
+#ifdef HAVE_LIBNOTIFY
+	gossip_notify_finalize ();
+#endif
+
+	gossip_sound_finalize ();
+
+	manager = gossip_session_get_account_manager (priv->session);
+
 #ifdef USE_ORIGINAL_TOOLBAR_CODE
+
 	g_signal_handlers_disconnect_by_func (manager,
 					      app_accounts_account_added_cb, 
 					      NULL);
@@ -444,23 +466,21 @@ app_finalize (GObject *object)
 					      app_event_removed_cb, 
 					      NULL);
 
-	
-	if (priv->event_manager) {
-		g_object_unref (priv->event_manager);
+	if (priv->presence) {
+		g_object_unref (priv->presence);
 	}
 
-	if (priv->chat_manager) {
-		g_object_unref (priv->chat_manager);
+	if (priv->away_presence) {
+		g_object_unref (priv->away_presence);
 	}
 
-	/* call init session dependent modules */
+	g_object_unref (priv->event_manager);
+	g_object_unref (priv->chat_manager);
+	g_object_unref (priv->chatroom_manager);
+	g_object_unref (priv->session);
+
 	gossip_ft_window_finalize (priv->session);
 	gossip_subscription_dialog_finalize (priv->session);
-
-#if 0
- 	gossip_galago_finalize (priv->session); 
-	gossip_dbus_finalize (priv->session); 
-#endif
 
 	G_OBJECT_CLASS (gossip_app_parent_class)->finalize (object);
 }
@@ -580,7 +600,9 @@ app_setup (GossipSession        *session,
 				       "actions_show_offline", &show_offline_widget,
 				       "actions_hide_list", &priv->actions_hide_list,
 				       "actions_group_chat_join", &priv->actions_group_chat_join,
+#ifdef USE_ORIGINAL_TOOLBAR_CODE
 				       "accounts_toolbar", &priv->accounts_toolbar,
+#endif
 				       "presence_toolbar", &priv->presence_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       NULL);
@@ -704,8 +726,6 @@ app_setup (GossipSession        *session,
 #ifdef USE_ORIGINAL_TOOLBAR_CODE
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accounts toolbar");
 	app_accounts_create ();
-#else
-	gtk_widget_hide (priv->accounts_toolbar);
 #endif
 
 	/* Set the idle time checker. */
@@ -937,7 +957,11 @@ app_main_window_destroy_cb (GtkWidget *window,
 	/* Save user-defined accelerators. */
 	app_accels_save ();
 
+#ifdef DEBUG_QUIT
+	gtk_main_quit ();
+#else	
 	exit (EXIT_SUCCESS);
+#endif
 }
 
 static gboolean
@@ -1069,13 +1093,10 @@ app_show_offline_cb (GtkCheckMenuItem *item,
 			       current,
 			       NULL);
 
-	/* turn off while we alter the contact list */
-	gossip_sound_toggle (FALSE);
-
+	/* Turn off sound just while we alter the contact list. */
+	gossip_sound_set_enabled (FALSE);
 	g_object_set (priv->contact_list, "show_offline", current, NULL);
-
-	/* turn on back to normal */
-	gossip_sound_toggle (TRUE);
+	gossip_sound_set_enabled (TRUE);
 }
 
 static void
@@ -2568,9 +2589,7 @@ app_presence_updated (void)
 	priv = GET_PRIV (app);
 
 	pixbuf = app_get_current_status_pixbuf ();
-
 	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
-	
 	g_object_unref (pixbuf);
 	
 	if (!gossip_session_is_connected (priv->session, NULL)) {
