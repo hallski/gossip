@@ -228,7 +228,10 @@ accounts_dialog_setup (GossipAccountsDialog *dialog)
 				  G_CALLBACK (accounts_dialog_account_name_changed_cb), dialog);
 	}
 
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
+
+	g_object_unref (default_account);
 }
 
 static void

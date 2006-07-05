@@ -55,26 +55,6 @@ static gboolean  multiple_instances = FALSE;
 static gboolean  list_accounts = FALSE;
 static gchar    *account_name = NULL;
 
-static const GOptionEntry options[] = {
-	{ "no-connect", 'n', 
-	  0, G_OPTION_ARG_NONE, &no_connect,
-	  N_("Don't connect on startup"),
-	  NULL },
-	{ "multiple-instances", 'm', 
-	  0, G_OPTION_ARG_NONE, &multiple_instances,
-	  N_("Allow multiple instances of the application to run at the same time"),
-	  NULL },
-	{ "list-accounts", 'l', 
-	  0, G_OPTION_ARG_NONE, &list_accounts,
-	  N_("List the available accounts"),
-	  NULL },
-	{ "account", 'a', 
-	  0, G_OPTION_ARG_STRING, &account_name,
-	  N_("Which account to connect to on startup"),
-	  N_("ACCOUNT-NAME") },
-	{ NULL }
-};	
-
 int
 main (int argc, char *argv[])
 {
@@ -84,6 +64,25 @@ main (int argc, char *argv[])
 	GossipAccount        *account = NULL;
 	GOptionContext       *context;
 	GList                *accounts;
+	GOptionEntry          options[] = {
+		{ "no-connect", 'n', 
+		  0, G_OPTION_ARG_NONE, &no_connect,
+		  N_("Don't connect on startup"),
+		  NULL },
+		{ "multiple-instances", 'm', 
+		  0, G_OPTION_ARG_NONE, &multiple_instances,
+		  N_("Allow multiple instances of the application to run at the same time"),
+		  NULL },
+		{ "list-accounts", 'l', 
+		  0, G_OPTION_ARG_NONE, &list_accounts,
+		  N_("List the available accounts"),
+		  NULL },
+		{ "account", 'a', 
+		  0, G_OPTION_ARG_STRING, &account_name,
+		  N_("Which account to connect to on startup"),
+		  N_("ACCOUNT-NAME") },
+		{ NULL }
+	};	
 	
 	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -193,3 +192,20 @@ main (int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+/*
+
+  Still leaked from just starting up, connecting two accounts, disconnecting,
+  quitting:
+
+  2 GossipPresence, 64 bytes
+  2 GossipJabber, 160 bytes
+  4 GossipContact, 208 bytes
+  4 GossipAccount, 272 bytes
+
+  Having a chat window open and connecting/disconnecting a few times before
+  quitting:
+  
+  5 GossipAccount, 340 bytes
+  10 GossipContact, 520 bytes
+  
+*/

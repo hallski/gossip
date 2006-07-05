@@ -1,5 +1,12 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c (main): Put the options inside main.
+
+	* src/gossip-accounts-dialog.c (accounts_dialog_setup): Unref the
+	accounts.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-group-chat.c: Make drop_types const.
 
 	* src/gossip-chat-window.c (gossip_chat_window_init): Unref the accel_group.
