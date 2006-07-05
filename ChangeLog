@@ -1,5 +1,11 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c (main): Free stuff when exiting, the session
+	and account manager, stock items, the app, our dbus stuff. This
+	makes it easier to spot real leaks.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* ui/main.glade: Hide the accounts toolbar by default (since it's
 	unused now), and also the accounts dialog and the log window (we
 	show them with code).

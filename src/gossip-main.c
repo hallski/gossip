@@ -100,8 +100,6 @@ main (int argc, char *argv[])
 				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
 
-	g_option_context_free (context);
-
 	g_set_application_name (PACKAGE_NAME);
 	gtk_window_set_default_icon_name ("gossip");
 
@@ -174,6 +172,7 @@ main (int argc, char *argv[])
 
 	gossip_app_create (session, account_manager);
 	g_object_unref (session);
+	g_object_unref (account_manager);
 	
 	if (!no_connect) {
 		gossip_app_connect (account, TRUE);
@@ -181,10 +180,16 @@ main (int argc, char *argv[])
 	
 	gtk_main ();
 
-	g_object_unref (session);
-	g_object_unref (account_manager);
+#ifdef HAVE_DBUS
+	gossip_dbus_finalize_for_session ();
+#endif
+
+	g_object_unref (gossip_app_get ());
+
+	gossip_stock_finalize ();
 
 	g_object_unref (program);
 
 	return EXIT_SUCCESS;
 }
+
