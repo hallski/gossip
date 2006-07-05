@@ -217,22 +217,12 @@ contact_finalize (GObject *object)
 	g_free (priv->avatar);
 
 	if (priv->presences) {
-		GList *l;
-
-		for (l = priv->presences; l; l = l->next) {
-			g_object_unref (l->data);
-		}
-
+		g_list_foreach (priv->presences, (GFunc) g_object_unref, NULL);
 		g_list_free (priv->presences);
 	}
 
 	if (priv->groups) {
-		GList *l;
-
-		for (l = priv->groups; l; l = l->next) {
-			g_free (l->data);
-		}
-
+		g_list_foreach (priv->groups, (GFunc) g_free, NULL);
 		g_list_free (priv->groups);
 	}
 	

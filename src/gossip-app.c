@@ -1888,10 +1888,10 @@ gossip_app_net_down (void)
 
 	priv = GET_PRIV (app);
 
-	/* Disconnect all and store a list */
+	/* Disconnect all and store a list. */
 	accounts = gossip_session_get_accounts (priv->session);
 	for (l = accounts; l; l = l->next) {
-		GossipAccount *account = GOSSIP_ACCOUNT (l->data);
+		GossipAccount *account = l->data;
 
 		if (!gossip_session_is_connected (priv->session, account)) {
 			continue;
@@ -1903,7 +1903,7 @@ gossip_app_net_down (void)
 		gossip_session_disconnect (priv->session, account);
 	}
 
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 }
 
@@ -1915,17 +1915,17 @@ gossip_app_net_up (void)
 
 	priv = GET_PRIV (app);
 
-	/* Connect all that went down before */
+	/* Connect all that went down before. */
 	if (!tmp_account_list) {
 		/* If no previous disconnect then we just 
-		 * connect the default connect on startup accounts
+		 * connect the default connect on startup accounts.
 		 */
 		gossip_app_connect (NULL, TRUE);
 		return;
 	}
 
 	for (l = tmp_account_list; l; l = l->next) {
-		GossipAccount *account = GOSSIP_ACCOUNT (l->data);
+		GossipAccount *account = l->data;
 		
 		gossip_session_connect (priv->session, account, FALSE);
 		g_object_unref (account);
@@ -2913,7 +2913,7 @@ app_chatroom_favourite_update (void)
 		return;
 	}
 
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
 	chatrooms = gossip_chatroom_manager_get_chatrooms (priv->chatroom_manager, NULL);
@@ -2932,7 +2932,7 @@ app_chatroom_favourite_update (void)
 		if (!gossip_session_is_connected (priv->session, account)) {
 			continue;
 		}
-
+		
 		/* If we find at least ONE chatroom that is a
 		 * favourite on an account that _IS_ connected, we
 		 * make the join favourites option available.

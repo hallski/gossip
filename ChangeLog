@@ -1,5 +1,39 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	(gossip_account_manager_get_default): Fix bug where we sometimes
+	returned an increased refcount account, sometimes not. Now we
+	never do.
+
+	* src/gossip-main.c: (main): Revert the earlier change due to the
+	above.
+
+	* libgossip/gossip-chatroom-manager.c:
+	(chatroom_manager_file_save): Don't unref since
+	gossip_chatroom_get_account doesn't increase the refcount now.
+	
+	* libgossip/gossip-chatroom.c: (gossip_chatroom_get_account):
+	Don't increase the refcount.
+	
+	* libgossip/gossip-contact.c: (contact_finalize): Tweak style.
+	
+	* libgossip/gossip-session.c: (session_finalize): No need to check
+	for NULL when dealing with lists since NULL is a valid list. Also
+	don't check for things that we know are there (since they are
+	created in init). Makes the code a bit less verbose.
+	(session_protocol_logged_in): Don't call g_timer_start since
+	creating the timer does just that.
+
+	* src/gossip-accounts-dialog.c: (accounts_dialog_setup): Revert
+	earlier change, now don't unref the default account.
+	
+	* src/gossip-app.c: Some style tweaks.
+
+	* src/gossip-main.c: Don't use the default account if there isn't
+	one.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-main.c (main): Put the options inside main.
 
 	* src/gossip-accounts-dialog.c (accounts_dialog_setup): Unref the

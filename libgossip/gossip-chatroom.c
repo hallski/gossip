@@ -591,7 +591,7 @@ gossip_chatroom_get_account (GossipChatroom *chatroom)
 		return NULL;
 	}
 
-	return g_object_ref (priv->account);
+	return priv->account;
 }
 
 void 

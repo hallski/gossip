@@ -131,7 +131,7 @@ main (int argc, char *argv[])
 			GossipAccount *account = l->data;
 			
 			g_print (" %s", gossip_account_get_name (account));
-			if (gossip_account_equal (account, def)) {
+			if (def && gossip_account_equal (account, def)) {
 				g_printerr (" ");
 				g_printerr (_("[default]"));
 			}
@@ -194,14 +194,14 @@ main (int argc, char *argv[])
 
 /*
 
-  Still leaked from just starting up, connecting two accounts, disconnecting,
-  quitting:
+  Still leaked from just starting up, connecting one account, disconnecting it
+  from the menu, quitting:
 
   2 GossipPresence, 64 bytes
-  2 GossipJabber, 160 bytes
-  4 GossipContact, 208 bytes
-  4 GossipAccount, 272 bytes
-
+  1 GossipAccount, 64 bytes
+  1 GossipJabber, 80 bytes
+  2 GossipContact, 104 bytes
+  
   Having a chat window open and connecting/disconnecting a few times before
   quitting:
   

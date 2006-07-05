@@ -376,27 +376,19 @@ session_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 	
-	if (priv->accounts) {
-		g_hash_table_destroy (priv->accounts);
-	}
+	g_hash_table_destroy (priv->accounts);
 
-	if (priv->protocols) {
-		g_list_foreach (priv->protocols, (GFunc) g_object_unref, NULL);
-		g_list_free (priv->protocols);
-	}
+	g_list_foreach (priv->protocols, (GFunc) g_object_unref, NULL);
+	g_list_free (priv->protocols);
 
-	if (priv->contacts) {
-		g_list_foreach (priv->contacts, (GFunc) g_object_unref, NULL);
-		g_list_free (priv->contacts);
-	}
+	g_list_foreach (priv->contacts, (GFunc) g_object_unref, NULL);
+	g_list_free (priv->contacts);
 
 	if (priv->presence) {
 		g_object_unref (priv->presence);
 	}
 
-	if (priv->timers) {
-		g_hash_table_destroy (priv->timers);
-	}
+	g_hash_table_destroy (priv->timers);
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
 					      session_account_added_cb, 
@@ -453,19 +445,14 @@ session_protocol_logged_in (GossipProtocol *protocol,
 			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
-	GTimer            *timer;
 
 	gossip_debug (DEBUG_DOMAIN, "Protocol logged in");
 
 	priv = GET_PRIV (session);
 
-	/* Setup timer */
-	timer = g_timer_new ();
-	g_timer_start (timer);
-
 	g_hash_table_insert (priv->timers, 
 			     g_object_ref (account), 
-			     timer);
+			     g_timer_new ());
 	
 	/* Update some status? */
 	priv->connected_counter++;
@@ -1056,8 +1043,6 @@ gossip_session_connect (GossipSession *session,
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
 	priv = GET_PRIV (session);
-
-	g_return_if_fail (priv->accounts != NULL);
 
 	g_signal_emit (session, signals[CONNECTING], 0);
 

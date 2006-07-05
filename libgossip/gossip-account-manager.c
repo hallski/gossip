@@ -126,7 +126,7 @@ account_manager_finalize (GObject *object)
 	
 	priv = GET_PRIV (object);
 
-	g_list_foreach (priv->accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (priv->accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (priv->accounts);
 
 	g_free (priv->accounts_file_name);
@@ -370,14 +370,15 @@ gossip_account_manager_get_default (GossipAccountManager *manager)
 			GList         *l;
 
 			l = gossip_account_manager_get_accounts (manager);
-			account = g_object_ref (l->data);
-
-			g_list_foreach (l, (GFunc) g_object_unref, NULL);
-			g_list_free (l);
+			account = l->data;
 
 			name = gossip_account_get_name (account);
 			gossip_account_manager_set_default (manager, account);
 
+			g_list_foreach (l, (GFunc) g_object_unref, NULL);
+			g_list_free (l);
+
+			/* We return the default account ref here. */
 			return account;
 		}
 	} else {

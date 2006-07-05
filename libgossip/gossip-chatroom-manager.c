@@ -867,7 +867,6 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		account = gossip_chatroom_get_account (chatroom);
 		if (account) {
 			xmlNewTextChild (node, NULL, "account", gossip_account_get_name (account));
-			g_object_unref (account);
 		}
 
 		g_free (type);

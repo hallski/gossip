@@ -230,8 +230,6 @@ accounts_dialog_setup (GossipAccountsDialog *dialog)
 
 	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
-
-	g_object_unref (default_account);
 }
 
 static void
