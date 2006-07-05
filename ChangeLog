@@ -1,5 +1,10 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-group-chat.c: Make drop_types const.
+
+	* src/gossip-chat-window.c (gossip_chat_window_init): Unref the accel_group.
+	- Make accel keys and drop type const.
+
 	* src/gossip-chat-view.c: Make the smiley data const, stop
 	searching when a matching smiley has been found. Delete the marks
 	we create in the text view. Unref the last_contact on finalize.
