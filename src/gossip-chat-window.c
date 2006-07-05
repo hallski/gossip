@@ -210,7 +210,7 @@ struct _GossipChatWindowPriv {
 
 static GList *chat_windows = NULL;
 
-static guint tab_accel_keys[] = {
+static const guint tab_accel_keys[] = {
 	GDK_1, GDK_2, GDK_3, GDK_4, GDK_5,
 	GDK_6, GDK_7, GDK_8, GDK_9, GDK_0
 };
@@ -219,7 +219,7 @@ enum DndDropType {
 	DND_DROP_TYPE_CONTACT_ID,
 };
 
-static GtkTargetEntry drop_types[] = {
+static const GtkTargetEntry drop_types[] = {
 	{ "text/contact-id", 0, DND_DROP_TYPE_CONTACT_ID },
 };
 
@@ -326,6 +326,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 					 0,
 					 closure);
 	}
+
+	g_object_unref (accel_group);
 
 	/* Set the contact information menu item image to the Gossip
 	 * stock image 

@@ -199,7 +199,7 @@ enum DndDragType {
 	DND_DRAG_TYPE_CONTACT_ID,
 };
 
-static GtkTargetEntry drop_types[] = {
+static const GtkTargetEntry drop_types[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
