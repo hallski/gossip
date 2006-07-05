@@ -490,6 +490,8 @@ contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget,
 				    gossip_contact_get_name (dialog->contact),
 				    NULL, /* group */
 				    message);
+
+	g_object_unref (account);
 }
 
 static void
@@ -678,5 +680,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 		g_timeout_add (500,
 			       (GSourceFunc) contact_info_dialog_show_timeout_cb,
 			       dialog);
+
+	g_object_unref (account);
 }
 

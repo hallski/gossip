@@ -1,5 +1,13 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-theme-manager.c (theme_manager_add_tag): Unref the
+	tag after adding it to the tag table.
+
+	* src/gossip-contact-info-dialog.c (gossip_contact_info_dialog_show)
+	(contact_info_dialog_subscribe_clicked_cb): Unref the account here.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-dbus.c: Refactor a bit so that we can free all the
 	proxies when quitting.
 	

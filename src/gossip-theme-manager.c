@@ -287,6 +287,8 @@ theme_manager_add_tag (GtkTextTagTable *table,
 	}	
 
 	gtk_text_tag_table_add (table, tag);
+
+	g_object_unref (tag);
 }
 
 static void
