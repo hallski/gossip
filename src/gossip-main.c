@@ -197,8 +197,8 @@ main (int argc, char *argv[])
   Still leaked from just starting up, connecting one account, disconnecting it
   from the menu, quitting:
 
-  2 GossipPresence, 64 bytes
   1 GossipAccount, 64 bytes
+  2 GossipPresence, 64 bytes
   1 GossipJabber, 80 bytes
   2 GossipContact, 104 bytes
   

@@ -576,6 +576,16 @@ gossip_contact_list_init (GossipContactList *list)
 static void
 contact_list_finalize (GObject *object)
 {
+	GossipContactListPriv *priv;
+
+	priv = GET_PRIV (object);
+
+	g_hash_table_destroy (priv->groups);
+	g_hash_table_destroy (priv->flash_table);
+
+	gtk_object_destroy (GTK_OBJECT (priv->item_popup_factory));
+	gtk_object_destroy (GTK_OBJECT (priv->group_popup_factory));
+	
 	G_OBJECT_CLASS (gossip_contact_list_parent_class)->finalize (object);
 }
 
@@ -688,8 +698,10 @@ contact_list_contact_updated_cb (GossipSession     *session,
 
 	type = gossip_contact_get_type (contact);
 	if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
-		gossip_debug (DEBUG_DOMAIN, "Update to none-contact list "
-			      "contact (doing nothing)");
+		gossip_debug (DEBUG_DOMAIN,
+			      "Update to none-contact list "
+			      "contact %s (doing nothing)",
+			      gossip_contact_get_name (contact));
 		return;
 	}
 	
@@ -2084,7 +2096,7 @@ contact_list_sort_func (GtkTreeModel *model,
 	} else if (contact_a && !contact_b) {
 		ret_val = -1;
 	} else {
-		ret_val = g_ascii_strcasecmp (name_a, name_b);
+		ret_val = g_utf8_collate (name_a, name_b);
 	}
 
 	g_free (name_a);
@@ -2168,7 +2180,7 @@ contact_list_find_contact_foreach (GtkTreeModel *model,
 static gchar *
 contact_list_item_factory_translate_func (const gchar *path, gpointer data)
 {
-	return _((gchar *) path);
+	return _(path);
 }
 
 static void
@@ -2294,6 +2306,8 @@ contact_list_item_menu_send_file_cb (gpointer   data,
         }
 	
         gossip_ft_window_send_file (contact);
+
+	g_object_unref (contact);
 }
 
 static void
@@ -2732,6 +2746,7 @@ gossip_contact_list_get_selected_group (GossipContactList *list)
 			    -1);
 
 	if (!is_group) {
+		g_free (name);
 		return NULL;
 	}
 

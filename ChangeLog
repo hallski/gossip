@@ -1,5 +1,12 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-contact-list.c (contact_list_sort_func): Use
+	g_utf8_collate, the names are not ascii.
+	(gossip_contact_list_get_selected_group): Free name.
+	(contact_list_finalize): Free stuff.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* libgossip/gossip-account-manager.c:
 	(gossip_account_manager_get_default): Fix bug where we sometimes
 	returned an increased refcount account, sometimes not. Now we
