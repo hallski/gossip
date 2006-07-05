@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <libgnomeui/libgnomeui.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-event-manager.h>
@@ -33,8 +34,7 @@
 #include "gossip-subscription-dialog.h"
 #include "gossip-app.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "SubscriptionDialog"
 
 typedef struct {
 	GtkWidget      *dialog;
@@ -139,8 +139,8 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 	GossipSubscription  subscription;
 	gchar              *str;
 
-	DEBUG_MSG (("SubscriptionDialog: New request from:'%s'", 
-		    gossip_contact_get_id (contact)));
+	gossip_debug (DEBUG_DOMAIN, "New request from:'%s'", 
+		      gossip_contact_get_id (contact));
 
 	type = gossip_contact_get_type (contact);
 	subscription = gossip_contact_get_subscription (contact);
@@ -153,12 +153,12 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 	 */
 	if (type == GOSSIP_CONTACT_TYPE_CONTACTLIST && 
 	    subscription == GOSSIP_SUBSCRIPTION_TO) {
-		DEBUG_MSG (("SubscriptionDialog: Silently accepting request"));
+		gossip_debug (DEBUG_DOMAIN, "Silently accepting request");
 		gossip_protocol_set_subscription (protocol, contact, TRUE);
 		return;
 	}
 
-	DEBUG_MSG (("SubscriptionDialog: Adding request to event manager"));
+	gossip_debug (DEBUG_DOMAIN, "Adding request to event manager");
 
 	event = gossip_event_new (GOSSIP_EVENT_SUBSCRIPTION_REQUEST);
 
@@ -381,7 +381,7 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 	    response == GTK_RESPONSE_NO) {
 		gboolean subscribed;
 
-		DEBUG_MSG (("SubscriptionDialog: Sending subscribed"));
+		gossip_debug (DEBUG_DOMAIN, "Sending subscribed");
 
 		subscribed = (response == GTK_RESPONSE_YES);
 		gossip_protocol_set_subscription (dialog->protocol, 
@@ -401,7 +401,7 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 
 			message = _("I would like to add you to my contact list.");
 
-			DEBUG_MSG (("SubscriptionDialog: Adding contact"));
+			gossip_debug (DEBUG_DOMAIN, "Adding contact");
 					
 			gossip_protocol_add_contact (dialog->protocol,
 						     gossip_contact_get_id (dialog->contact),

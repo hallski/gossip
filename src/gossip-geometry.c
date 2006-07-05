@@ -25,22 +25,21 @@
 #include <glib.h>
 
 #include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-chat.h"
 #include "gossip-geometry.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+#define DEBUG_DOMAIN "Geometry"
 
-#define GEOMETRY_DIR_CREATE_MODE   (S_IRUSR | S_IWUSR | S_IXUSR)
-#define GEOMETRY_FILE_CREATE_MODE  (S_IRUSR | S_IWUSR)
+#define GEOMETRY_DIR_CREATE_MODE  (S_IRUSR | S_IWUSR | S_IXUSR)
+#define GEOMETRY_FILE_CREATE_MODE (S_IRUSR | S_IWUSR)
 
-#define GEOMETRY_KEY_FILENAME      "geometry.ini"
+#define GEOMETRY_KEY_FILENAME     "geometry.ini"
   
-#define GEOMETRY_FORMAT            "%d,%d,%d,%d"
+#define GEOMETRY_FORMAT           "%d,%d,%d,%d"
 
 static gchar *geometry_get_filename (void);
-
 
 static gchar *
 geometry_get_filename (void)
@@ -50,7 +49,7 @@ geometry_get_filename (void)
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		DEBUG_MSG (("ChatWindow: Creating directory:'%s'", dir));
+		gossip_debug (DEBUG_DOMAIN, "Creating directory:'%s'", dir);
 		g_mkdir_with_parents (dir, GEOMETRY_DIR_CREATE_MODE);
 	}
 
@@ -81,8 +80,8 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	gsize        length;
 	gchar       *str;
 
-	DEBUG_MSG (("Geometry: Saving for chat: x:%d, y:%d, w:%d, h:%d\n", 
-		    x, y, w, h));
+	gossip_debug (DEBUG_DOMAIN, "Saving for chat: x:%d, y:%d, w:%d, h:%d\n", 
+		      x, y, w, h);
 
 	if (gossip_chat_is_group_chat (chat)) {
 		GossipChatroom *chatroom;
@@ -201,11 +200,11 @@ gossip_geometry_load_for_chat (GossipChat *chat,
 		g_free (str);
 	}
 
-	DEBUG_MSG (("Geometry: Loading for chat: x:%d, y:%d, w:%d, h:%d\n", 
-		    x ? *x : -1, 
-		    y ? *y : -1, 
-		    w ? *w : -1, 
-		    h ? *h : -1));
+	gossip_debug (DEBUG_DOMAIN, "Loading for chat: x:%d, y:%d, w:%d, h:%d\n", 
+		      x ? *x : -1, 
+		      y ? *y : -1, 
+		      w ? *w : -1, 
+		      h ? *h : -1);
 
 	g_free (filename);
 	g_key_file_free (key_file);
@@ -230,8 +229,8 @@ gossip_geometry_save_for_main_window (gint x,
 	gsize      length;
 	gchar     *str;
 
-	DEBUG_MSG (("Geometry: Saving for main window: x:%d, y:%d, w:%d, h:%d\n", 
-		    x, y, w, h));
+	gossip_debug (DEBUG_DOMAIN, "Saving for main window: x:%d, y:%d, w:%d, h:%d\n", 
+		      x, y, w, h);
 
 	screen = gdk_screen_get_default ();
 	max_width = gdk_screen_get_width (screen);
@@ -324,11 +323,11 @@ gossip_geometry_load_for_main_window (gint *x,
 		g_free (str);
 	}
 
-	DEBUG_MSG (("Geometry: Loading for main window: x:%d, y:%d, w:%d, h:%d\n", 
-		    x ? *x : -1, 
-		    y ? *y : -1, 
-		    w ? *w : -1, 
-		    h ? *h : -1));
+	gossip_debug (DEBUG_DOMAIN, "Loading for main window: x:%d, y:%d, w:%d, h:%d\n", 
+		      x ? *x : -1, 
+		      y ? *y : -1, 
+		      w ? *w : -1, 
+		      h ? *h : -1);
 
 	g_free (filename);
 	g_key_file_free (key_file);

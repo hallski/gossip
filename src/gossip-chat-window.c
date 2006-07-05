@@ -28,6 +28,7 @@
 #include <glib/gi18n.h>
 #include <gconf/gconf-client.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
 
 #include "gossip-add-contact-window.h"
@@ -46,8 +47,7 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowPriv))
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "ChatWindow"
 
 static void       gossip_chat_window_class_init         (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init               (GossipChatWindow      *window);
@@ -1300,7 +1300,7 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 
 	priv = GET_PRIV (window);
 
-	DEBUG_MSG (("ChatWindow: Delete event received"));
+	gossip_debug (DEBUG_DOMAIN, "Delete event received");
 
 	list = g_list_copy (priv->chats);
 
@@ -1389,7 +1389,7 @@ chat_window_new_message_cb (GossipChat       *chat,
 
 	priv = GET_PRIV (window);
 
-	DEBUG_MSG (("ChatWindow: New message, do we have focus?"));
+	gossip_debug (DEBUG_DOMAIN, "New message, do we have focus?");
 	if (!gossip_chat_window_has_focus (window)) {
 		GossipContact *own_contact;
 
@@ -1399,7 +1399,7 @@ chat_window_new_message_cb (GossipChat       *chat,
 		if (gossip_chat_is_group_chat (chat)) {
 			own_contact = gossip_chat_get_own_contact (chat);
 
-			DEBUG_MSG (("ChatWindow: Should we highlight this nick?"));
+			gossip_debug (DEBUG_DOMAIN, "Should we highlight this nick?");
 			if (gossip_chat_should_highlight_nick (message, own_contact)) {
 				chat_window_set_urgency_hint (window, TRUE);
 			}
@@ -1451,7 +1451,7 @@ chat_window_switch_page_cb (GtkNotebook	     *notebook,
 	GossipChat           *chat;
 	GtkWidget            *child;
 
- 	DEBUG_MSG (("ChatWindow: Tab switched"));
+ 	gossip_debug (DEBUG_DOMAIN, "Tab switched");
 
 	priv = GET_PRIV (window);
 
@@ -1480,7 +1480,7 @@ chat_window_tab_added_cb (GossipNotebook   *notebook,
 	GtkWidget            *label;
 	gboolean              expand = TRUE;
 
- 	DEBUG_MSG (("ChatWindow: Tab added"));
+ 	gossip_debug (DEBUG_DOMAIN, "Tab added");
 
 	priv = GET_PRIV (window);
 
@@ -1538,7 +1538,7 @@ chat_window_tab_removed_cb (GossipNotebook   *notebook,
 	GossipChatWindowPriv *priv;
 	GossipChat           *chat;
 
-	DEBUG_MSG (("ChatWindow: Tab removed"));
+	gossip_debug (DEBUG_DOMAIN, "Tab removed");
 
 	priv = GET_PRIV (window);
 
@@ -1586,7 +1586,7 @@ chat_window_tab_detached_cb (GossipNotebook   *notebook,
 	GossipChat	     *chat;
 	gint                  x, y;
 
-	DEBUG_MSG (("ChatWindow: Tab detached"));
+	gossip_debug (DEBUG_DOMAIN, "Tab detached");
 
 	chat = g_object_get_data (G_OBJECT (child), "chat");
 	new_window = gossip_chat_window_new ();
@@ -1611,7 +1611,7 @@ static void
 chat_window_tabs_reordered_cb (GossipNotebook   *notebook,
 			       GossipChatWindow *window)
 {
- 	DEBUG_MSG (("ChatWindow: Tabs reordered"));
+ 	gossip_debug (DEBUG_DOMAIN, "Tabs reordered");
 
 	chat_window_update_menu (window);
 }
@@ -1649,15 +1649,15 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	const gchar       *id;
 
 	id = (const gchar*) selection->data;
-	DEBUG_MSG (("ChatWindow: Received drag & drop contact "
-		    "from roster with id:'%s'", 
-		    id));
+	gossip_debug (DEBUG_DOMAIN, "Received drag & drop contact "
+		      "from roster with id:'%s'", 
+		      id);
 
 	contact = gossip_session_find_contact (gossip_app_get_session (), id);
 	
 	if (!contact) {
-		DEBUG_MSG (("ChatWindow: No contact found associated "
-			    "with drag & drop"));
+		gossip_debug (DEBUG_DOMAIN, "No contact found associated "
+			      "with drag & drop");
 		return;
 	}
 
@@ -1689,7 +1689,7 @@ chat_window_urgency_timeout_func (GossipChatWindow *window)
 
 	priv = GET_PRIV (window);
 
-	DEBUG_MSG (("ChatWindow: Turning off urgency hint"));
+	gossip_debug (DEBUG_DOMAIN, "Turning off urgency hint");
 	gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
 
 	priv->urgency_timeout_id = 0;
@@ -1708,7 +1708,7 @@ chat_window_set_urgency_hint (GossipChatWindow *window,
 	if (!urgent) {
 		/* Remove any existing hint and timeout. */
 		if (priv->urgency_timeout_id) {
-			DEBUG_MSG (("ChatWindow: Turning off urgency hint"));
+			gossip_debug (DEBUG_DOMAIN, "Turning off urgency hint");
 			gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), FALSE);
 			g_source_remove (priv->urgency_timeout_id);
 			priv->urgency_timeout_id = 0;
@@ -1720,7 +1720,7 @@ chat_window_set_urgency_hint (GossipChatWindow *window,
 	if (priv->urgency_timeout_id) {
 		g_source_remove (priv->urgency_timeout_id);
 	} else {
-		DEBUG_MSG (("ChatWindow: Turning on urgency hint"));
+		gossip_debug (DEBUG_DOMAIN, "Turning on urgency hint");
 		gtk_window_set_urgency_hint (GTK_WINDOW (priv->dialog), TRUE);
 	}
 
@@ -1767,7 +1767,7 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	GossipChatWindowPriv *priv;
 	GtkWidget            *label;
 
-	DEBUG_MSG (("ChatWindow: Adding chat"));
+	gossip_debug (DEBUG_DOMAIN, "Adding chat");
 
 	priv = GET_PRIV (window);
 	
@@ -1809,7 +1809,7 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 {
 	GossipChatWindowPriv *priv;
 
-	DEBUG_MSG (("ChatWindow: Removing chat"));
+	gossip_debug (DEBUG_DOMAIN, "Removing chat");
 
 	priv = GET_PRIV (window);
 

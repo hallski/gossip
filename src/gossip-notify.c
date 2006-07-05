@@ -23,14 +23,15 @@
 #include <glib/gi18n.h>
 #include <libnotify/notify.h>
 
+#include <libgossip/gossip-debug.h>
+
 #include "gossip-app.h"
 #include "gossip-contact-info-dialog.h"
 #include "gossip-notify.h"
 #include "gossip-preferences.h"
 #include "gossip-stock.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "Notify"
 
 #define NOTIFY_MESSAGE_TIME 20000
 
@@ -168,8 +169,8 @@ notify_contact_online (GossipContact *contact)
 		return;
 	}
 	
-	DEBUG_MSG (("Notify: Setting up notification for online contact:'%s'", 
-		   gossip_contact_get_id (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Setting up notification for online contact:'%s'", 
+		      gossip_contact_get_id (contact));
 
 	presence = gossip_contact_get_active_presence (contact);
 	pixbuf = gossip_pixbuf_for_presence (presence);
@@ -282,14 +283,14 @@ notify_new_message (GossipEventManager *event_manager,
 	
 	len = g_utf8_strlen (body_stripped, -1);
 	if (len < 1) {
-		DEBUG_MSG (("Notify: Ignoring new message from:'%s', no message content", 
-			    gossip_contact_get_id (contact)));
+		gossip_debug (DEBUG_DOMAIN, "Ignoring new message from:'%s', no message content", 
+			      gossip_contact_get_id (contact));
 		g_free (body_copy);
 		return NULL;
 	}
 
-	DEBUG_MSG (("Notify: Setting up notification for new message from:'%s'", 
-		   gossip_contact_get_id (contact)));
+	gossip_debug (DEBUG_DOMAIN, "Setting up notification for new message from:'%s'", 
+		      gossip_contact_get_id (contact));
 
 	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
 
@@ -420,8 +421,8 @@ notify_protocol_connected_cb (GossipSession  *session,
 		return;
 	}
 
-	DEBUG_MSG (("Notify: Account update, account:'%s' is now online",
-		    gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN, "Account update, account:'%s' is now online",
+		      gossip_account_get_id (account));
 
 	id = g_timeout_add (NOTIFY_WAIT_TIME,
 			    (GSourceFunc) notify_protocol_timeout_cb, 
@@ -443,8 +444,8 @@ notify_contact_presence_updated_cb (GossipSession *session,
 	presence = gossip_contact_get_active_presence (contact);
 	if (!presence) {
 		if (g_hash_table_lookup (contact_states, contact)) {
-			DEBUG_MSG (("Notify: Presence update, contact:'%s' is now offline",
-				    gossip_contact_get_id (contact)));
+			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now offline",
+				      gossip_contact_get_id (contact));
 		}
 			
 		g_hash_table_remove (contact_states, contact);
@@ -459,8 +460,8 @@ notify_contact_presence_updated_cb (GossipSession *session,
 		 */
 		if (!g_hash_table_lookup (account_states, account) && 
 		    !g_hash_table_lookup (contact_states, contact)) {
-			DEBUG_MSG (("Notify: Presence update, contact:'%s' is now online",
-				    gossip_contact_get_id (contact)));
+			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now online",
+				      gossip_contact_get_id (contact));
 			notify_contact_online (contact);
 		}
 		
@@ -567,7 +568,7 @@ gossip_notify_init (GossipSession      *session,
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (event_manager));
 	
-	DEBUG_MSG (("Notify: Initiating..."));
+	gossip_debug (DEBUG_DOMAIN, "Initiating...");
 
 	if (inited) {
 		return;

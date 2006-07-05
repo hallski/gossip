@@ -23,14 +23,13 @@
 #include <libgnome/gnome-triggers.h>
 
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-preferences.h"
 #include "gossip-app.h"
 #include "gossip-sound.h"
 
-
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "Sound"
 
 /* Time to wait before we use sounds for an account after it has gone
  * online/offline, so we don't spam the sound with online's, etc 
@@ -45,7 +44,6 @@ static GHashTable    *account_states = NULL;
 static GHashTable    *contact_states = NULL;
 static gboolean       sound_disabled = FALSE;
 static GossipSession *saved_session = NULL;
-
 
 static gboolean
 sound_protocol_timeout_cb (GossipAccount *account)
@@ -66,8 +64,8 @@ sound_protocol_connected_cb (GossipSession  *session,
 		return;
 	}
 
-	DEBUG_MSG (("Sound: Account update, account:'%s' is now online",
-		    gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN, "Account update, account:'%s' is now online",
+		      gossip_account_get_id (account));
 
 	id = g_timeout_add (SOUND_WAIT_TIME,
 			    (GSourceFunc) sound_protocol_timeout_cb, 
@@ -118,8 +116,8 @@ sound_contact_presence_updated_cb (GossipSession *session,
 	presence = gossip_contact_get_active_presence (contact);
 	if (!presence) {
 		if (g_hash_table_lookup (contact_states, contact)) {
-			DEBUG_MSG (("Sound: Presence update, contact:'%s' is now offline",
-				    gossip_contact_get_id (contact)));
+			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now offline",
+				      gossip_contact_get_id (contact));
 			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
 		}
 			
@@ -135,8 +133,8 @@ sound_contact_presence_updated_cb (GossipSession *session,
 		 */
 		if (!g_hash_table_lookup (account_states, account) && 
 		    !g_hash_table_lookup (contact_states, contact)) {
-			DEBUG_MSG (("Sound: Presence update, contact:'%s' is now online",
-				    gossip_contact_get_id (contact)));
+			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now online",
+				      gossip_contact_get_id (contact));
 			gossip_sound_play (GOSSIP_SOUND_ONLINE);
 		}
 
@@ -163,7 +161,7 @@ gossip_sound_play (GossipSound sound)
 	 * contacts.
 	 */
 	if (sound_disabled) {
-		DEBUG_MSG (("Sound: Play request ignored, sound currently disabled."));
+		gossip_debug (DEBUG_DOMAIN, "Play request ignored, sound currently disabled.");
 		return;
 	}
 
@@ -171,7 +169,7 @@ gossip_sound_play (GossipSound sound)
 					 GCONF_SOUNDS_FOR_MESSAGES,
 					 NULL);
 	if (!enabled) {
-		DEBUG_MSG (("Sound: Preferences have sound disabled."));
+		gossip_debug (DEBUG_DOMAIN, "Preferences have sound disabled.");
 		return;
 	}
 
@@ -196,19 +194,19 @@ gossip_sound_play (GossipSound sound)
 
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
-		DEBUG_MSG (("Sound: Triggering 'Chat' event."));
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' event.");
 		gnome_triggers_do (NULL, NULL, "gossip", "Chat", NULL);
 		break;
 	case GOSSIP_SOUND_ONLINE:
-		DEBUG_MSG (("Sound: Triggering 'Online' event."));
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Online' event.");
 		gnome_triggers_do (NULL, NULL, "gossip", "Online", NULL);
 		break;
 	case GOSSIP_SOUND_OFFLINE:
-		DEBUG_MSG (("Sound: Triggering 'Offline' event."));
+		gossip_debug (DEBUG_DOMAIN, "Triggering 'Offline' event.");
 		gnome_triggers_do (NULL, NULL, "gossip", "Offline", NULL);
 		break;
 	default:
-		DEBUG_MSG (("Sound: Unknown sound type."));
+		gossip_debug (DEBUG_DOMAIN, "Unknown sound type.");
 		return;
 	}
 }		

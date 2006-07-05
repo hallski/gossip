@@ -22,6 +22,7 @@
 #include <libgnomeui/libgnomeui.h>
 #include <libgnomevfs/gnome-vfs.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-event-manager.h>
 #include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-protocol.h>
@@ -30,16 +31,13 @@
 #include "gossip-ft-window.h"
 #include "gossip-app.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
-
+#define DEBUG_DOMAIN "FileTransferWindow"
 
 typedef struct {
 	GossipProtocol *protocol;
 	GossipFT       *ft;
 	GossipVCard    *vcard;
 } FTData;
-
 
 static void ft_window_protocol_connected_cb    (GossipSession      *session,
 						GossipAccount      *account,
@@ -69,7 +67,6 @@ static void ft_window_filechooser_create       (GossipContact      *contact);
 static void ft_window_filechooser_response_cb  (GtkDialog          *dialog,
 						gint                response_id,
 						GossipContact      *contact);
-
 
 void
 gossip_ft_window_init (GossipSession *session)
@@ -404,7 +401,7 @@ ft_window_filechooser_create (GossipContact *contact)
 	GtkWidget     *dialog;
 	GtkFileFilter *filter;
 
-	DEBUG_MSG (("FileTransferWindow: Creating filechooser..."));
+	gossip_debug (DEBUG_DOMAIN, "Creating filechooser...");
 
 	dialog = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
 			       "action", GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -446,14 +443,14 @@ ft_window_filechooser_response_cb (GtkDialog     *dialog,
 		if (list) {
 			GSList *l;
 			
-			DEBUG_MSG (("FileTransferWindow: File chooser selected files:"));
+			gossip_debug (DEBUG_DOMAIN, "File chooser selected files:");
 			
 			for (l = list; l; l = l->next) {
 				gchar *file;
 				
 				file = l->data;
 				
-				DEBUG_MSG (("FileTransferWindow: \t%s", file));
+				gossip_debug (DEBUG_DOMAIN, "\t%s", file);
 				gossip_ft_window_send_file_from_uri (contact, file);
 				
 				g_free (file);
@@ -461,7 +458,7 @@ ft_window_filechooser_response_cb (GtkDialog     *dialog,
 			
 			g_slist_free (list);
 		} else {
-			DEBUG_MSG (("FileTransferWindow: File chooser had no files selected"));
+			gossip_debug (DEBUG_DOMAIN, "File chooser had no files selected");
 		}
 	}
 

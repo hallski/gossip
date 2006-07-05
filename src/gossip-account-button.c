@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 
@@ -33,8 +34,7 @@
 #include "gossip-accounts-dialog.h"
 #include "gossip-account-button.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "AccountButton"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonPriv))
 
@@ -461,8 +461,8 @@ account_button_connecting_timeout_cb (GossipAccountButton *account_button)
 
 	priv = GET_PRIV (account_button);
 
-	DEBUG_MSG (("AccountButton: Account:'%s' timed out trying to connect", 
-		    gossip_account_get_id (priv->account)));
+	gossip_debug (DEBUG_DOMAIN, "Account:'%s' timed out trying to connect", 
+		      gossip_account_get_id (priv->account));
 
 
 	if (!priv->account) {
@@ -502,8 +502,8 @@ account_button_protocol_connecting_cb (GossipSession       *session,
 		return;
 	}
 
-	DEBUG_MSG (("AccountButton: Account:'%s' connecting", 
-		    gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN, "Account:'%s' connecting", 
+		      gossip_account_get_id (account));
 
 	if (priv->last_error) {
 		g_error_free (priv->last_error);
@@ -540,8 +540,8 @@ account_button_protocol_disconnecting_cb (GossipSession       *session,
 		return;
 	}
 
-	DEBUG_MSG (("AccountButton: Account:'%s' disconnecting", 
-		    gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN, "Account:'%s' disconnecting", 
+		      gossip_account_get_id (account));
 
 	priv->connected = FALSE;
 	priv->connecting = FALSE;
@@ -564,8 +564,8 @@ account_button_protocol_connected_cb (GossipSession       *session,
 		return;
 	}
 
-	DEBUG_MSG (("AccountButton: Account:'%s' connected", 
-		    gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN, "Account:'%s' connected", 
+		      gossip_account_get_id (account));
 
 	if (priv->last_error) {
 		g_error_free (priv->last_error);
@@ -593,8 +593,8 @@ account_button_protocol_disconnected_cb (GossipSession       *session,
 		return;
 	}
 
-	DEBUG_MSG (("AccountButton: Account:'%s' disconnected", 
-		    gossip_account_get_id (account)));
+	gossip_debug (DEBUG_DOMAIN, "Account:'%s' disconnected", 
+		      gossip_account_get_id (account));
 	
 	priv->connected = FALSE;
 	priv->connecting = FALSE;
@@ -618,10 +618,10 @@ account_button_protocol_error_cb (GossipSession       *session,
  		return; 
  	} 
 
-	DEBUG_MSG (("AccountButton: Account:'%s' error:%d->'%s'", 
-		    gossip_account_get_id (account),
-		    error->code, 
-		    error->message));
+	gossip_debug (DEBUG_DOMAIN, "Account:'%s' error:%d->'%s'", 
+		      gossip_account_get_id (account),
+		      error->code, 
+		      error->message);
 
 	priv->connecting = FALSE;
 

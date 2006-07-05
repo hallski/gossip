@@ -20,8 +20,10 @@
  */
 
 #include <config.h>
+
 #include <string.h>
 #include <stdlib.h>
+
 #include <glib/gi18n.h>
 #include <gconf/gconf-client.h>
 
@@ -29,12 +31,13 @@
 #include <aspell.h>
 #endif
 
+#include <libgossip/gossip-debug.h>
+
 #include "gossip-spell.h"
 #include "gossip-app.h"
 #include "gossip-preferences.h"
 
-#define DEBUG_MSG(x)  
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+#define DEBUG_DOMAIN "Spell"
 
 #ifdef HAVE_ASPELL
 
@@ -319,7 +322,7 @@ gossip_spell_check (const gchar *word)
 
 	if (digit) {
 		/* We don't spell check digits. */
-		DEBUG_MSG (("Not spell checking word:'%s', it is all digits", word));
+		gossip_debug (DEBUG_DOMAIN, "Not spell checking word:'%s', it is all digits", word);
 		return TRUE;
 	}
 		

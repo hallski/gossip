@@ -28,32 +28,28 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "libgossip/gossip-utils.h"
+#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-contact-groups.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "ContactGroups" 
 
 #define CONTACT_GROUPS_XML_FILENAME "contact-groups.xml"
 #define CONTACT_GROUPS_DTD_FILENAME "gossip-contact-groups.dtd"
-
 
 typedef struct {
 	gchar    *name;
 	gboolean  expanded;
 } ContactGroup;
 
-
-static void          contact_groups_file_parse    (const gchar  *filename);
-static gboolean      contact_groups_file_save     (void);
-
-static ContactGroup *contact_group_new            (const gchar  *name,
-						   gboolean      expanded);
-static void          contact_group_free           (ContactGroup *group);
-
+static void          contact_groups_file_parse (const gchar  *filename);
+static gboolean      contact_groups_file_save  (void);
+static ContactGroup *contact_group_new         (const gchar  *name,
+						gboolean      expanded);
+static void          contact_group_free        (ContactGroup *group);
 
 static GList *groups = NULL; 
-
 
 void
 gossip_contact_groups_get_all (void)
@@ -92,7 +88,7 @@ contact_groups_file_parse (const gchar *filename)
 	xmlNodePtr        account;
 	xmlNodePtr        node;
 	
-	DEBUG_MSG (("ContactGroups: Attempting to parse file:'%s'...", filename));
+	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 	
  	ctxt = xmlNewParserCtxt ();
 
@@ -155,7 +151,7 @@ contact_groups_file_parse (const gchar *filename)
 		node = node->next;
 	}
 	
-	DEBUG_MSG (("ContactGroups: Parsed %d contact groups", g_list_length (groups)));
+	gossip_debug (DEBUG_DOMAIN, "Parsed %d contact groups", g_list_length (groups));
 	  
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
@@ -227,7 +223,7 @@ contact_groups_file_save (void)
 		xmlNewProp (subnode, "name", cg->name);
 	}
 
-	DEBUG_MSG (("ContactGroups: Saving file:'%s'", file));
+	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", file);
 	xmlSaveFormatFileEnc (file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 

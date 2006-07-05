@@ -29,14 +29,14 @@
 #include <gtk/gtkimage.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkdnd.h>
-
 #include <libgnomevfs/gnome-vfs-ops.h>
+
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-marshal.h"
 #include "gossip-image-chooser.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "ImageChooser"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_IMAGE_CHOOSER_TYPE, GossipImageChooserPriv))
 
@@ -197,55 +197,55 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 	new_height = gdk_pixbuf_get_height (pixbuf);
 	new_width = gdk_pixbuf_get_width (pixbuf);
 
-	DEBUG_MSG (("ImageChooser: Scaling pixbuf size "
-		    "(width:%d, height:%d, max width:%d, max height:%d)...", 
-		    new_width, new_height, max_width, max_height));
+	gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf size "
+		      "(width:%d, height:%d, max width:%d, max height:%d)...", 
+		      new_width, new_height, max_width, max_height);
 	
 	if ((max_width <= 0 && max_height <= 0) || 
 	    (max_width > new_width && max_height > new_height)) {
-		DEBUG_MSG (("ImageChooser: Scaling pixbuf to 1.0"));
+		gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf to 1.0");
 		scale = 1.0;
 	} else if (new_width > max_width || new_height > max_height) {
 		/* Scale down */
 		if ((new_width - max_width) > (new_height - max_height)) {
 			scale = (gfloat) max_width / new_width;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf down to %f "
-				    "(width is bigger)", 
-				    scale));
+			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf down to %f "
+				      "(width is bigger)", 
+				      scale);
 		} else {
 			scale = (gfloat) max_height / new_height;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf down to %f "
-				    "(height is bigger)", 
-				    scale));
+			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf down to %f "
+				      "(height is bigger)", 
+				      scale);
 		}
 	} else {
 		/* Scale up */
 		if (new_height > new_width) {
 			scale = (gfloat) new_height / max_height;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf up to %f "
-				    "(height is bigger)", 
-				    scale));
+			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf up to %f "
+				      "(height is bigger)", 
+				      scale);
 		} else { 
 			scale = (gfloat) new_width / max_width;
-			DEBUG_MSG (("ImageChooser: Scaling pixbuf up to %f "
-				    "(width is bigger)", 
-				    scale));
+			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf up to %f "
+				      "(width is bigger)", 
+				      scale);
 		}	
 	}
 	
 	if (scale == 1.0) {
 		scaled = g_object_ref (pixbuf);
 		
-		DEBUG_MSG (("ImageChooser: Using width:%d, height:%d", 
-			    new_width, new_height));
+		gossip_debug (DEBUG_DOMAIN, "Using width:%d, height:%d", 
+			      new_width, new_height);
 	} else {
 		new_width *= scale;
 		new_height *= scale;
 		new_width = MIN (new_width, max_width);
 		new_height = MIN (new_height, max_height);
 		
-		DEBUG_MSG (("ImageChooser: Using width:%d, height:%d", 
-			    new_width, new_height));
+		gossip_debug (DEBUG_DOMAIN, "Using width:%d, height:%d", 
+			      new_width, new_height);
 		
 		scaled = gdk_pixbuf_scale_simple (pixbuf,
 						  new_width, new_height,

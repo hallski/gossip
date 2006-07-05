@@ -31,10 +31,11 @@
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #include <loudmouth/loudmouth.h>
 
-#include <libgossip/gossip-session.h>
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
-#include <libgossip/gossip-vcard.h>
+#include <libgossip/gossip-session.h>
 #include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-vcard.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"
@@ -42,8 +43,7 @@
 #include "gossip-image-chooser.h"
 #include "gossip-preferences.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "VCardDialog"
 
 #define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
@@ -366,12 +366,12 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	const guchar  *avatar;
 	gsize          avatar_size;
 
-	DEBUG_MSG (("VCardDialog: Got a VCard response"));
+	gossip_debug (DEBUG_DOMAIN, "Got a VCard response");
 
 	vcard_dialog_lookup_stop (dialog);
 
 	if (result != GOSSIP_RESULT_OK) {
-		DEBUG_MSG (("VCardDialog: VCard result was not good"));
+		gossip_debug (DEBUG_DOMAIN, "VCard result was not good");
 		return;
 	}
 
@@ -417,7 +417,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gsize                 avatar_size;
 
 	if (!gossip_app_is_connected ()) {
-		DEBUG_MSG (("VCardDialog: Not connected, not setting VCard"));
+		gossip_debug (DEBUG_DOMAIN, "Not connected, not setting VCard");
 		return;
 	}
 
@@ -468,7 +468,7 @@ static void
 vcard_dialog_set_vcard_cb (GossipResult       result, 
 			   GossipVCardDialog *dialog)
 {
-	DEBUG_MSG (("VCardDialog: Got a VCard response"));
+	gossip_debug (DEBUG_DOMAIN, "Got a VCard response");
 	
 	gtk_widget_destroy (dialog->dialog);
 }

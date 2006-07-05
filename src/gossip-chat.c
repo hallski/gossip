@@ -21,11 +21,15 @@
  */
 
 #include <config.h>
+
 #include <string.h>
 #include <stdlib.h>
+
 #include <gtk/gtk.h>
 #include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
+
+#include <libgossip/gossip-debug.h>
 
 #include "gossip-app.h"
 #include "gossip-chat.h"
@@ -39,11 +43,10 @@
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT, GossipChatPriv))
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+#define DEBUG_DOMAIN "Chat"
 
-#define CHAT_DIR_CREATE_MODE    (S_IRUSR | S_IWUSR | S_IXUSR)
-#define CHAT_FILE_CREATE_MODE   (S_IRUSR | S_IWUSR)
+#define CHAT_DIR_CREATE_MODE  (S_IRUSR | S_IWUSR | S_IXUSR)
+#define CHAT_FILE_CREATE_MODE (S_IRUSR | S_IWUSR)
 
 struct _GossipChatPriv {
 	GossipChatWindow *window;
@@ -66,24 +69,24 @@ typedef struct {
        	GtkTextIter  end;
 } GossipChatSpell;
 
-static void      gossip_chat_class_init            (GossipChatClass *klass);
-static void      gossip_chat_init                  (GossipChat      *chat);
-static void      chat_finalize                     (GObject         *object);
-static void      chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
-						    GossipChat      *chat);
-static void      chat_text_view_size_allocate_cb   (GtkWidget       *widget,
-						    GtkAllocation   *allocation,
-						    GossipChat      *chat);
-static void      chat_text_populate_popup_cb       (GtkTextView     *view,
-						    GtkMenu         *menu,
-						    GossipChat      *chat);
-static void      chat_text_check_word_spelling_cb  (GtkMenuItem     *menuitem,
-						    GossipChatSpell *chat_spell);
-static GossipChatSpell *chat_spell_new             (GossipChat      *chat,
-						    const gchar     *word,
-						    GtkTextIter      start,
-						    GtkTextIter      end);
-static void      chat_spell_free                   (GossipChatSpell *chat_spell);
+static void             gossip_chat_class_init            (GossipChatClass *klass);
+static void             gossip_chat_init                  (GossipChat      *chat);
+static void             chat_finalize                     (GObject         *object);
+static void             chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
+							   GossipChat      *chat);
+static void             chat_text_view_size_allocate_cb   (GtkWidget       *widget,
+							   GtkAllocation   *allocation,
+							   GossipChat      *chat);
+static void             chat_text_populate_popup_cb       (GtkTextView     *view,
+							   GtkMenu         *menu,
+							   GossipChat      *chat);
+static void             chat_text_check_word_spelling_cb  (GtkMenuItem     *menuitem,
+							   GossipChatSpell *chat_spell);
+static GossipChatSpell *chat_spell_new                    (GossipChat      *chat,
+							   const gchar     *word,
+							   GtkTextIter      start,
+							   GtkTextIter      end);
+static void             chat_spell_free                   (GossipChatSpell *chat_spell);
 
 enum {
 	COMPOSING,
@@ -841,7 +844,7 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
 
-	DEBUG_MSG (("Chat: Highlighting nickname"));
+	gossip_debug (DEBUG_DOMAIN, "Highlighting nickname");
 
 	ret_val = FALSE;
 
