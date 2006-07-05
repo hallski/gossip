@@ -80,6 +80,8 @@ static void subscription_dialog_request_dialog_cb        (GtkWidget          *di
 void
 gossip_subscription_dialog_init (GossipSession *session)
 {
+	g_object_ref (session);
+
 	g_signal_connect (session, 
 			  "protocol-connected",
 			  G_CALLBACK (subscription_dialog_protocol_connected_cb),
@@ -100,6 +102,8 @@ gossip_subscription_dialog_finalize (GossipSession *session)
  	g_signal_handlers_disconnect_by_func (session, 
 					      subscription_dialog_protocol_disconnected_cb, 
 					      NULL);
+
+	g_object_unref (session);
 }
 
 static void

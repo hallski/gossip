@@ -74,6 +74,8 @@ static void ft_window_filechooser_response_cb  (GtkDialog          *dialog,
 void
 gossip_ft_window_init (GossipSession *session)
 {
+ 	g_object_ref (session);
+	
 	g_signal_connect (session, 
 			  "protocol-connected",
 			  G_CALLBACK (ft_window_protocol_connected_cb),
@@ -94,6 +96,8 @@ gossip_ft_window_finalize (GossipSession *session)
  	g_signal_handlers_disconnect_by_func (session, 
 					      ft_window_protocol_disconnected_cb, 
 					      NULL);
+
+	g_object_unref (session);
 }
 
 /*

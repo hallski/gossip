@@ -1,5 +1,14 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-ft-window.c (gossip_ft_window_init)
+	(gossip_ft_window_finalize): Keep a ref to the session while using
+	it.
+
+	* src/gossip-subscription-dialog.c (gossip_subscription_dialog_finalize)
+	(gossip_subscription_dialog_init): Dito. 
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* libgossip/gossip-session.c (session_finalize): Make consistent
 	with the rest of the code.
 	(gossip_session_new): Unref the accounts.
