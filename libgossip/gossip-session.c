@@ -373,7 +373,6 @@ static void
 session_finalize (GObject *object)
 {
 	GossipSessionPriv *priv;
-	GList             *l;
 
 	priv = GET_PRIV (object);
 	
@@ -382,17 +381,12 @@ session_finalize (GObject *object)
 	}
 
 	if (priv->protocols) {
-		g_list_foreach (priv->protocols, 
-				(GFunc)g_object_unref,
-				NULL);
+		g_list_foreach (priv->protocols, (GFunc) g_object_unref, NULL);
 		g_list_free (priv->protocols);
 	}
 
 	if (priv->contacts) {
-		for (l = priv->contacts; l; l = l->next) {
-			g_object_unref (l->data);
-		}
-
+		g_list_foreach (priv->contacts, (GFunc) g_object_unref, NULL);
 		g_list_free (priv->contacts);
 	}
 
@@ -406,15 +400,13 @@ session_finalize (GObject *object)
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
 					      session_account_added_cb, 
-					      GOSSIP_SESSION (object));
+					      object);
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
 					      session_account_removed_cb, 
-					      GOSSIP_SESSION (object));
+					      object);
 
- 	if (priv->account_manager) { 
- 		g_object_unref (priv->account_manager); 
- 	} 
+	g_object_unref (priv->account_manager); 
 
 	(G_OBJECT_CLASS (gossip_session_parent_class)->finalize) (object);
 }
@@ -712,6 +704,7 @@ gossip_session_new (GossipAccountManager *manager)
 		gossip_session_add_account (session, account);
 	}
 
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
 	return session;
@@ -822,8 +815,8 @@ gossip_session_count_accounts (GossipSession *session,
 			      (GHFunc) session_count_accounts_foreach_cb,
 			      &ca);
 
-	/* Here we update our own numbers, should we be doing this? I
-	 * am not sure but fuck it let's do it anyway :)
+	/* Here we update our own numbers, should we be doing this? I am not
+	 * sure but let's do it anyway :)
 	 */
 	priv->connected_counter = ca.connected;
 	priv->connecting_counter = ca.connecting;

@@ -179,15 +179,14 @@ chatroom_manager_finalize (GObject *object)
 	}
 
 	if (priv->session) {
-		g_object_unref (priv->session);
-
 		g_signal_handlers_disconnect_by_func (priv->session, 
 						      chatroom_manager_protocol_connected_cb, 
-						      NULL);
+						      object);
+
+		g_object_unref (priv->session);
 	}
 	
 	g_free (priv->chatrooms_file_name);
-
 	g_free (priv->default_name);
 
 	(G_OBJECT_CLASS (gossip_chatroom_manager_parent_class)->finalize) (object);

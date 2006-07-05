@@ -1,3 +1,12 @@
+2006-07-05  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-session.c (session_finalize): Make consistent
+	with the rest of the code.
+	(gossip_session_new): Unref the accounts.
+
+	* libgossip/gossip-chatroom-manager.c (chatroom_manager_finalize):
+	Unref the session only after we are done using it.
+
 2006-07-05  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.12.
