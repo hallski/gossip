@@ -4,6 +4,8 @@
 	g_utf8_collate, the names are not ascii.
 	(gossip_contact_list_get_selected_group): Free name.
 	(contact_list_finalize): Free stuff.
+	(contact_list_contact_presence_updated_cb): Only unref if there
+	was an account.
 
 2006-07-05  Richard Hult  <richard@imendio.com>
 

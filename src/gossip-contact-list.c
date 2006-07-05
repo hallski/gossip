@@ -786,6 +786,7 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 		if (account) {
 			seconds = gossip_session_get_connected_time (session, 
 								     account);
+			g_object_unref (account);
 		}
 
 		if (priv->show_active) {
@@ -799,14 +800,13 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			gossip_debug (DEBUG_DOMAIN, "Remove item (now)!"); 
 			contact_list_remove_contact (list, contact);
 		}
-
-		g_object_unref (account);
 	}
 	else if (!in_list && should_be_in_list) {
 		account = gossip_session_find_account (session, contact);
 		if (account) {
 			seconds = gossip_session_get_connected_time (session, 
 								     account);
+			g_object_unref (account);
 		}
 
 		contact_list_add_contact (list, contact);
@@ -816,9 +816,6 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 			gossip_debug (DEBUG_DOMAIN, "Set active (contact added)");
 		}
-
-		g_object_unref (account);
-
 	} else {
 		/* Get online state before. */
 		if (iters && g_list_length (iters) > 0) {
