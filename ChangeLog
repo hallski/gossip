@@ -5,9 +5,6 @@
 	returned an increased refcount account, sometimes not. Now we
 	never do.
 
-	* src/gossip-main.c: (main): Revert the earlier change due to the
-	above.
-
 	* libgossip/gossip-chatroom-manager.c:
 	(chatroom_manager_file_save): Don't unref since
 	gossip_chatroom_get_account doesn't increase the refcount now.
