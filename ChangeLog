@@ -1,5 +1,11 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-view.c: Make the smiley data const, stop
+	searching when a matching smiley has been found. Delete the marks
+	we create in the text view. Unref the last_contact on finalize.
+
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-contact-list.c
 	(contact_list_contact_presence_updated_cb): Unref account.
 	(contact_list_create_model): Unref tree model.

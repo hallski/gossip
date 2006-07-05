@@ -87,97 +87,97 @@ struct _GossipChatViewPriv {
 typedef struct {
 	GossipSmiley  smiley;
 	const gchar  *pattern;
-	gint          index;
 } GossipSmileyPattern;
 
-static GossipSmileyPattern smileys[] = {
-	{ GOSSIP_SMILEY_NORMAL,       ":)",  0 },
-	{ GOSSIP_SMILEY_WINK,         ";)",  0 },
-	{ GOSSIP_SMILEY_WINK,         ";-)", 0 },
-	{ GOSSIP_SMILEY_BIGEYE,       "=)",  0 },
-	{ GOSSIP_SMILEY_NOSE,         ":-)", 0 },
-	{ GOSSIP_SMILEY_CRY,          ":'(", 0 },
-	{ GOSSIP_SMILEY_SAD,          ":(",  0 },
-	{ GOSSIP_SMILEY_SAD,          ":-(", 0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,    ":/",  0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,    ":\\", 0 },
-	{ GOSSIP_SMILEY_BIGSMILE,     ":D",  0 },
-	{ GOSSIP_SMILEY_BIGSMILE,     ":-D", 0 },
-	{ GOSSIP_SMILEY_INDIFFERENT,  ":|",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ":p",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ":-p", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ":P",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ":-P", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ";p",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ";-p", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ";P",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       ";-P", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,      ":o",  0 },
-	{ GOSSIP_SMILEY_SHOCKED,      ":-o", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,      ":O",  0 },
-	{ GOSSIP_SMILEY_SHOCKED,      ":-O", 0 },
-	{ GOSSIP_SMILEY_COOL,         "8)",  0 },
-	{ GOSSIP_SMILEY_COOL,         "B)",  0 },
-	{ GOSSIP_SMILEY_SORRY,        "*|",  0 },
-	{ GOSSIP_SMILEY_KISS,         ":*",  0 },
-	{ GOSSIP_SMILEY_SHUTUP,       ":#",  0 },
-	{ GOSSIP_SMILEY_SHUTUP,       ":-#", 0 },
-	{ GOSSIP_SMILEY_YAWN,         "|O",  0 },
-	{ GOSSIP_SMILEY_CONFUSED,     ":S",  0 },
-	{ GOSSIP_SMILEY_CONFUSED,     ":s",  0 },
-	{ GOSSIP_SMILEY_ANGEL,        "<)",  0 },
-	{ GOSSIP_SMILEY_OOOH,         ":x",  0 },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "*)",  0 },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "*-)", 0 },
-	{ GOSSIP_SMILEY_BLUSH,        "*S",  0 },
-	{ GOSSIP_SMILEY_BLUSH,        "*s",  0 },
-	{ GOSSIP_SMILEY_BLUSH,        "*$",  0 },
-	{ GOSSIP_SMILEY_COOLBIGSMILE, "8D",  0 },
-	{ GOSSIP_SMILEY_ANGRY,        ":@",  0 },
-	{ GOSSIP_SMILEY_BOSS,         "@)",  0 },
-	{ GOSSIP_SMILEY_MONKEY,       "#)",  0 },
-	{ GOSSIP_SMILEY_SILLY,        "O)",  0 },
-	{ GOSSIP_SMILEY_SICK,         "+o(", 0 },
-
-	/* backward smiley's */
-	{ GOSSIP_SMILEY_NORMAL,       "(:",  0 },
-	{ GOSSIP_SMILEY_WINK,         "(;",  0 },
-	{ GOSSIP_SMILEY_WINK,         "(-;", 0 },
-	{ GOSSIP_SMILEY_BIGEYE,       "(=",  0 },
-	{ GOSSIP_SMILEY_NOSE,         "(-:", 0 },
-	{ GOSSIP_SMILEY_CRY,          ")':", 0 },
-	{ GOSSIP_SMILEY_SAD,          "):",  0 },
-	{ GOSSIP_SMILEY_SAD,          ")-:", 0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,    "/:",  0 },
-	{ GOSSIP_SMILEY_SCEPTICAL,    "//:", 0 },
-	{ GOSSIP_SMILEY_INDIFFERENT,  "|:",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       "d:",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       "d-:", 0 },
-	{ GOSSIP_SMILEY_TOUNGE,       "d;",  0 },
-	{ GOSSIP_SMILEY_TOUNGE,       "d-;", 0 },
-	{ GOSSIP_SMILEY_SHOCKED,      "o:",  0 },
-	{ GOSSIP_SMILEY_SHOCKED,      "O:",  0 },
-	{ GOSSIP_SMILEY_COOL,         "(8",  0 },
-	{ GOSSIP_SMILEY_COOL,         "(B",  0 },
-	{ GOSSIP_SMILEY_SORRY,        "|*",  0 },
-	{ GOSSIP_SMILEY_KISS,         "*:",  0 },
-	{ GOSSIP_SMILEY_SHUTUP,       "#:",  0 },
-	{ GOSSIP_SMILEY_SHUTUP,       "#-:", 0 },
-	{ GOSSIP_SMILEY_YAWN,         "O|",  0 },
-	{ GOSSIP_SMILEY_CONFUSED,     "S:",  0 },
-	{ GOSSIP_SMILEY_CONFUSED,     "s:",  0 },
-	{ GOSSIP_SMILEY_ANGEL,        "(>",  0 },
-	{ GOSSIP_SMILEY_OOOH,         "x:",  0 },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "(*",  0 },
-	{ GOSSIP_SMILEY_LOOKAWAY,     "(-*", 0 },
-	{ GOSSIP_SMILEY_BLUSH,        "S*",  0 },
-	{ GOSSIP_SMILEY_BLUSH,        "s*",  0 },
-	{ GOSSIP_SMILEY_BLUSH,        "$*",  0 },
-	{ GOSSIP_SMILEY_ANGRY,        "@:",  0 },
-	{ GOSSIP_SMILEY_BOSS,         "(@",  0 },
-	{ GOSSIP_SMILEY_MONKEY,       "#)",  0 },
-	{ GOSSIP_SMILEY_SILLY,        "(O",  0 },
-	{ GOSSIP_SMILEY_SICK,         ")o+", 0 }
+static const GossipSmileyPattern smileys[] = {
+	/* Forward smileys. */
+	{ GOSSIP_SMILEY_NORMAL,       ":)"  },
+	{ GOSSIP_SMILEY_WINK,         ";)"  },
+	{ GOSSIP_SMILEY_WINK,         ";-)" },
+	{ GOSSIP_SMILEY_BIGEYE,       "=)"  },
+	{ GOSSIP_SMILEY_NOSE,         ":-)" },
+	{ GOSSIP_SMILEY_CRY,          ":'(" },
+	{ GOSSIP_SMILEY_SAD,          ":("  },
+	{ GOSSIP_SMILEY_SAD,          ":-(" },
+	{ GOSSIP_SMILEY_SCEPTICAL,    ":/"  },
+	{ GOSSIP_SMILEY_SCEPTICAL,    ":\\" },
+	{ GOSSIP_SMILEY_BIGSMILE,     ":D"  },
+	{ GOSSIP_SMILEY_BIGSMILE,     ":-D" },
+	{ GOSSIP_SMILEY_INDIFFERENT,  ":|"  },
+	{ GOSSIP_SMILEY_TOUNGE,       ":p"  },
+	{ GOSSIP_SMILEY_TOUNGE,       ":-p" },
+	{ GOSSIP_SMILEY_TOUNGE,       ":P"  },
+	{ GOSSIP_SMILEY_TOUNGE,       ":-P" },
+	{ GOSSIP_SMILEY_TOUNGE,       ";p"  },
+	{ GOSSIP_SMILEY_TOUNGE,       ";-p" },
+	{ GOSSIP_SMILEY_TOUNGE,       ";P"  },
+	{ GOSSIP_SMILEY_TOUNGE,       ";-P" },
+	{ GOSSIP_SMILEY_SHOCKED,      ":o"  },
+	{ GOSSIP_SMILEY_SHOCKED,      ":-o" },
+	{ GOSSIP_SMILEY_SHOCKED,      ":O"  },
+	{ GOSSIP_SMILEY_SHOCKED,      ":-O" },
+	{ GOSSIP_SMILEY_COOL,         "8)"  },
+	{ GOSSIP_SMILEY_COOL,         "B)"  },
+	{ GOSSIP_SMILEY_SORRY,        "*|"  },
+	{ GOSSIP_SMILEY_KISS,         ":*"  },
+	{ GOSSIP_SMILEY_SHUTUP,       ":#"  },
+	{ GOSSIP_SMILEY_SHUTUP,       ":-#" },
+	{ GOSSIP_SMILEY_YAWN,         "|O"  },
+	{ GOSSIP_SMILEY_CONFUSED,     ":S"  },
+	{ GOSSIP_SMILEY_CONFUSED,     ":s"  },
+	{ GOSSIP_SMILEY_ANGEL,        "<)"  },
+	{ GOSSIP_SMILEY_OOOH,         ":x"  },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "*)"  },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "*-)" },
+	{ GOSSIP_SMILEY_BLUSH,        "*S"  },
+	{ GOSSIP_SMILEY_BLUSH,        "*s"  },
+	{ GOSSIP_SMILEY_BLUSH,        "*$"  },
+	{ GOSSIP_SMILEY_COOLBIGSMILE, "8D"  },
+	{ GOSSIP_SMILEY_ANGRY,        ":@"  },
+	{ GOSSIP_SMILEY_BOSS,         "@)"  },
+	{ GOSSIP_SMILEY_MONKEY,       "#)"  },
+	{ GOSSIP_SMILEY_SILLY,        "O)"  },
+	{ GOSSIP_SMILEY_SICK,         "+o(" },
+	
+	/* Backward smileys. */
+	{ GOSSIP_SMILEY_NORMAL,       "(:"  },
+	{ GOSSIP_SMILEY_WINK,         "(;"  },
+	{ GOSSIP_SMILEY_WINK,         "(-;" },
+	{ GOSSIP_SMILEY_BIGEYE,       "(="  },
+	{ GOSSIP_SMILEY_NOSE,         "(-:" },
+	{ GOSSIP_SMILEY_CRY,          ")':" },
+	{ GOSSIP_SMILEY_SAD,          "):"  },
+	{ GOSSIP_SMILEY_SAD,          ")-:" },
+	{ GOSSIP_SMILEY_SCEPTICAL,    "/:"  },
+	{ GOSSIP_SMILEY_SCEPTICAL,    "//:" },
+	{ GOSSIP_SMILEY_INDIFFERENT,  "|:"  },
+	{ GOSSIP_SMILEY_TOUNGE,       "d:"  },
+	{ GOSSIP_SMILEY_TOUNGE,       "d-:" },
+	{ GOSSIP_SMILEY_TOUNGE,       "d;"  },
+	{ GOSSIP_SMILEY_TOUNGE,       "d-;" },
+	{ GOSSIP_SMILEY_SHOCKED,      "o:"  },
+	{ GOSSIP_SMILEY_SHOCKED,      "O:"  },
+	{ GOSSIP_SMILEY_COOL,         "(8"  },
+	{ GOSSIP_SMILEY_COOL,         "(B"  },
+	{ GOSSIP_SMILEY_SORRY,        "|*"  },
+	{ GOSSIP_SMILEY_KISS,         "*:"  },
+	{ GOSSIP_SMILEY_SHUTUP,       "#:"  },
+	{ GOSSIP_SMILEY_SHUTUP,       "#-:" },
+	{ GOSSIP_SMILEY_YAWN,         "O|"  },
+	{ GOSSIP_SMILEY_CONFUSED,     "S:"  },
+	{ GOSSIP_SMILEY_CONFUSED,     "s:"  },
+	{ GOSSIP_SMILEY_ANGEL,        "(>"  },
+	{ GOSSIP_SMILEY_OOOH,         "x:"  },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "(*"  },
+	{ GOSSIP_SMILEY_LOOKAWAY,     "(-*" },
+	{ GOSSIP_SMILEY_BLUSH,        "S*"  },
+	{ GOSSIP_SMILEY_BLUSH,        "s*"  },
+	{ GOSSIP_SMILEY_BLUSH,        "$*"  },
+	{ GOSSIP_SMILEY_ANGRY,        "@:"  },
+	{ GOSSIP_SMILEY_BOSS,         "(@"  },
+	{ GOSSIP_SMILEY_MONKEY,       "#)"  },
+	{ GOSSIP_SMILEY_SILLY,        "(O"  },
+	{ GOSSIP_SMILEY_SICK,         ")o+" }
 };
 
 static void     gossip_chat_view_class_init          (GossipChatViewClass      *klass);
@@ -347,6 +347,10 @@ chat_view_finalize (GObject *object)
 	gconf_client = gossip_app_get_gconf_client ();
 	gconf_client_notify_remove (gconf_client, priv->notify_system_fonts_id);
 	gconf_client_notify_remove (gconf_client, priv->notify_show_avatars_id);
+
+	if (priv->last_contact) {
+		g_object_unref (priv->last_contact);
+	}
 
 	G_OBJECT_CLASS (gossip_chat_view_parent_class)->finalize (object);
 }
@@ -736,13 +740,12 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 	}
 
 	while (*str) {
+		gint         smileys_index[G_N_ELEMENTS (smileys)];
 		GdkPixbuf   *pixbuf;
 		gint         len;
 		const gchar *start;
 
-		for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
-			smileys[i].index = 0;
-		}
+		memset (smileys_index, 0, sizeof (smileys_index));
 
 		match = -1;
 		submatch = -1;
@@ -762,17 +765,22 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 				submatch = -1;
 
 				for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
-					if (smileys[i].pattern[smileys[i].index] == c) {
+					if (smileys[i].pattern[smileys_index[i]] == c) {
 						submatch = i;
 
-						smileys[i].index++;
-						if (!smileys[i].pattern[smileys[i].index]) {
+						smileys_index[i]++;
+						if (!smileys[i].pattern[smileys_index[i]]) {
 							match = i;
+							break;
 						}
 					} else {
-						smileys[i].index = 0;
+						smileys_index[i] = 0;
 					}
 				}
+			}
+
+			if (match != -1) {
+				break;
 			}
 
 			prev_c = c;
@@ -1832,6 +1840,8 @@ gossip_chat_view_scroll_down (GossipChatView *view)
 				      FALSE,
 				      0,
 				      0);
+
+	gtk_text_buffer_delete_mark (buffer, mark);
 }
 
 gboolean
@@ -1934,7 +1944,9 @@ gossip_chat_view_find (GossipChatView *view,
 				      0.5);
 
 	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
-	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);	
+	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);
+
+	gtk_text_buffer_delete_mark (buffer, find_mark);
 }
 
 void
