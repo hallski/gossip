@@ -1,5 +1,10 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-dbus.c: Refactor a bit so that we can free all the
+	proxies when quitting.
+	
+2006-07-05  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-main.c (main): Free stuff when exiting, the session
 	and account manager, stock items, the app, our dbus stuff. This
 	makes it easier to spot real leaks.

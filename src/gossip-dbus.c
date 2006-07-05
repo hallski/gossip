@@ -94,6 +94,10 @@ gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
 #include "gossip-dbus-glue.h"
 
 static GossipSession *saved_session = NULL;
+static GossipDBus    *gossip_dbus = NULL;
+static DBusGProxy    *bus_proxy = NULL;
+static DBusGProxy    *nm_proxy = NULL;
+
 
 static void
 gossip_dbus_init (GossipDBus *obj)
@@ -275,9 +279,8 @@ gossip_dbus_init_for_session (GossipSession *session,
 			      gboolean       multiple_instances)
 {
 	DBusGConnection *bus;
-	DBusGProxy      *bus_proxy;
+	DBusGProxy      *proxy;
 	GError          *error = NULL;
-	GossipDBus      *obj;
 	guint            result;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
@@ -296,18 +299,19 @@ gossip_dbus_init_for_session (GossipSession *session,
 		g_warning ("Couldn't connect to the session bus");
 		return FALSE;
 	}
-
-	if ((bus_proxy = dbus_freedesktop_init ()) == NULL) {
+	
+	proxy = dbus_freedesktop_init ();
+	if (!proxy) {
 		return FALSE;
 	}
 
 	dbus_g_object_type_install_info (GOSSIP_TYPE_DBUS, &dbus_glib_gossip_dbus_object_info);
 
-	obj = g_object_new (GOSSIP_TYPE_DBUS, NULL);
+	gossip_dbus = g_object_new (GOSSIP_TYPE_DBUS, NULL);
 
-	dbus_g_connection_register_g_object (bus, GOSSIP_DBUS_PATH, G_OBJECT (obj));
+	dbus_g_connection_register_g_object (bus, GOSSIP_DBUS_PATH, G_OBJECT (gossip_dbus));
 	
-	if (!org_freedesktop_DBus_request_name (bus_proxy,
+	if (!org_freedesktop_DBus_request_name (proxy,
 						GOSSIP_DBUS_SERVICE,
 						DBUS_NAME_FLAG_DO_NOT_QUEUE,
 						&result, &error)) {
@@ -325,7 +329,7 @@ gossip_dbus_init_for_session (GossipSession *session,
 		exit (EXIT_SUCCESS);
 	}
 	
-	/* Set up GNOME Netwrk Manager if available so we get signals */
+	/* Set up GNOME Network Manager if available so we get signals. */
 	dbus_nm_init ();
 
 	gossip_debug (DEBUG_DOMAIN, "Ready");
@@ -333,10 +337,13 @@ gossip_dbus_init_for_session (GossipSession *session,
 	return TRUE;
 }
 
-
 void 
 gossip_dbus_finalize_for_session (void)
 {
+	g_object_unref (bus_proxy);
+	g_object_unref (nm_proxy);
+
+	g_object_unref (gossip_dbus);
 	g_object_unref (saved_session);
 }
 
@@ -351,9 +358,8 @@ gossip_dbus_finalize_for_session (void)
 static DBusGProxy *
 dbus_freedesktop_init (void)
 {
-	DBusGConnection   *bus;
-	static DBusGProxy *bus_proxy = NULL;
-	GError            *error = NULL;
+	DBusGConnection *bus;
+	GError          *error = NULL;
 
 	if (bus_proxy) {
 		return bus_proxy;
@@ -366,12 +372,12 @@ dbus_freedesktop_init (void)
 		g_warning ("Couldn't connect to the session bus");
 		return NULL;
 	}
-	
-	bus_proxy = dbus_g_proxy_new_for_name (bus, 
+
+	bus_proxy = dbus_g_proxy_new_for_name (bus,
 					       FREEDESKTOP_DBUS_SERVICE,
 					       FREEDESKTOP_DBUS_PATH,
 					       FREEDESKTOP_DBUS_INTERFACE);
-	
+
 	if (!bus_proxy) {
 		g_warning ("Could not connect to Freedesktop");
 	}
@@ -438,28 +444,26 @@ dbus_nm_state_cb (DBusGProxy *proxy,
 static DBusGProxy *
 dbus_nm_init (void)
 {
-	DBusGConnection   *bus;
-	static DBusGProxy *bus_proxy = NULL;
-	GError            *error = NULL;
+	DBusGConnection *bus;
 
-	if (bus_proxy) {
-		return bus_proxy;
+	if (nm_proxy) {
+		return nm_proxy;
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Initialising Network Manager proxy");
 
-	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, &error);
+	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, NULL);
 	if (!bus) {
 		g_warning ("Could not connect to system bus");
 		return FALSE;
 	}
 	
-	bus_proxy = dbus_g_proxy_new_for_name (bus, 
+	nm_proxy = dbus_g_proxy_new_for_name (bus,  // koko
 					       NM_DBUS_SERVICE, 
 					       NM_DBUS_PATH, 
 					       NM_DBUS_INTERFACE);
-	
-	if (!bus_proxy) {
+
+	if (!nm_proxy) {
 		g_warning ("Could not connect to Network Manager");
 		return NULL;
 	}
@@ -472,27 +476,25 @@ dbus_nm_init (void)
 	 * callback.  You need to do this once for each proxy you create,
 	 * not every time you want to connect to the signal.
 	 */
-	dbus_g_proxy_add_signal (bus_proxy, "StateChange",
+	dbus_g_proxy_add_signal (nm_proxy, "StateChange",
 				 G_TYPE_UINT, G_TYPE_INVALID);
 
 	/* Actually connect to the signal. Note you can call
 	 * dbus_g_proxy_connect_signal multiple times for one invocation of
 	 * dbus_g_proxy_add_signal.
 	 */
-	dbus_g_proxy_connect_signal (bus_proxy, "StateChange", 
+	dbus_g_proxy_connect_signal (nm_proxy, "StateChange", 
 				     G_CALLBACK (dbus_nm_state_cb),
 				     NULL, NULL);
 
-	return bus_proxy;
+	return nm_proxy;
 } 
 
 gboolean 
 gossip_dbus_nm_get_state (gboolean *connected)
 {
-	DBusGConnection *bus;
-	DBusGProxy      *bus_proxy;
-	GError          *error = NULL;
-	guint32          state;
+	GError  *error = NULL;
+	guint32  state;
 	
 	g_return_val_if_fail (connected != NULL, FALSE);
 
@@ -500,17 +502,11 @@ gossip_dbus_nm_get_state (gboolean *connected)
 	*connected = FALSE;
 
 	/* Make sure we have set up Network Manager connections */
-	if ((bus_proxy = dbus_nm_init ()) == NULL) {
+	if (!dbus_nm_init ()) {
 		return FALSE;
 	}
 
-	bus = dbus_g_bus_get (DBUS_BUS_SYSTEM, &error);
-	if (!bus) {
-		g_warning ("Could not connect to system bus");
-		return FALSE;
-	}
-	
-	if (!dbus_g_proxy_call (bus_proxy, "state", &error,
+	if (!dbus_g_proxy_call (nm_proxy, "state", &error,
 				G_TYPE_INVALID, 
 				G_TYPE_UINT, &state, G_TYPE_INVALID)) {
 		gossip_debug (DEBUG_DOMAIN, "Failed to complete 'state' request. %s", 
@@ -535,7 +531,7 @@ static gboolean
 dbus_gossip_show (gboolean show)
 {
 	DBusGConnection *bus;
-	DBusGProxy      *bus_proxy;
+	DBusGProxy      *proxy;
 	GError          *error = NULL;
 	gboolean         success = TRUE;
 	
@@ -548,17 +544,17 @@ dbus_gossip_show (gboolean show)
 	/* We are doing this because normally we wouldn't have a
 	 * connection to ourselves.
 	 */
-	bus_proxy = dbus_g_proxy_new_for_name (bus, 
-					       GOSSIP_DBUS_SERVICE,
-					       GOSSIP_DBUS_PATH,
-					       GOSSIP_DBUS_INTERFACE);
-
-	if (!bus_proxy) {
+	proxy = dbus_g_proxy_new_for_name (bus, 
+					   GOSSIP_DBUS_SERVICE,
+					   GOSSIP_DBUS_PATH,
+					   GOSSIP_DBUS_INTERFACE);
+	
+	if (!proxy) {
 		g_warning ("Could not connect to other instance of Gossip");
 		return FALSE;
 	}
 		
-	if (!dbus_g_proxy_call (bus_proxy, "SetRosterVisible", &error,
+	if (!dbus_g_proxy_call (proxy, "SetRosterVisible", &error,
 				G_TYPE_BOOLEAN, show,
 				G_TYPE_INVALID,
 				G_TYPE_INVALID)) {
@@ -567,7 +563,7 @@ dbus_gossip_show (gboolean show)
 		success = FALSE;
 	}
 
-	g_object_unref (bus_proxy);
+	g_object_unref (proxy);
 
 	return success;
 }
