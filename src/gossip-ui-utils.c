@@ -25,20 +25,14 @@
 
 #include <config.h>
 #include <string.h>
-#include <time.h>
-#include <sys/types.h>
-#include <regex.h>
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
-#include <libgnome/gnome-url.h>
-#include <glib/gi18n.h>
+
 #include "gossip-stock.h"
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
 
-#define AVAILABLE_MESSAGE "Available"
-#define AWAY_MESSAGE "Away"
-#define BUSY_MESSAGE "Busy"
 
 struct SizeData {
 	gint     width;
@@ -50,35 +44,6 @@ static void pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 						 gint             width,
 						 gint             height,
 						 struct SizeData *data);
-
-static void
-tagify_bold_labels (GladeXML *xml)
-{
-        const gchar *str;
-        gchar       *s;
-        GtkWidget   *label;
-	GList       *labels, *l;
-
-	labels = glade_xml_get_widget_prefix (xml, "boldlabel");
-
-	for (l = labels; l; l = l->next) {
-		label = l->data;
-
-		if (!GTK_IS_LABEL (label)) {
-			g_warning ("Not a label, check your glade file.");
-			continue;
-		}
- 
-		str = gtk_label_get_text (GTK_LABEL (label));
-
-		s = g_strdup_printf ("<b>%s</b>", str);
-		gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
-		gtk_label_set_label (GTK_LABEL (label), s);
-		g_free (s);
-	}
-
-	g_list_free (labels);
-}
 
 static GladeXML *
 get_glade_file (const gchar *filename,
@@ -109,8 +74,6 @@ get_glade_file (const gchar *filename,
 		}
 	}
 
-	tagify_bold_labels (gui);
-	
 	return gui;
 }
 

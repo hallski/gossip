@@ -324,7 +324,7 @@ enum {
 
 #define GIF_CB(x)    ((GtkItemFactoryCallback)(x))
 
-static GtkItemFactoryEntry item_menu_items[] = {
+static const GtkItemFactoryEntry item_menu_items[] = {
 	{ N_("/Contact Infor_mation"),
 	  NULL,
 	  GIF_CB (contact_list_item_menu_info_cb),
@@ -393,7 +393,7 @@ static GtkItemFactoryEntry item_menu_items[] = {
 	  GTK_STOCK_JUSTIFY_LEFT }
 };
 
-static GtkItemFactoryEntry group_menu_items[] = {
+static const GtkItemFactoryEntry group_menu_items[] = {
 	{ N_("/Re_name group"),
 	  NULL,
 	  GIF_CB (contact_list_group_menu_rename_cb),
@@ -408,14 +408,14 @@ enum DndDragType {
 	DND_DRAG_TYPE_CONTACT_ID,
 };
 
-static GtkTargetEntry drag_types_dest[] = {
+static const GtkTargetEntry drag_types_dest[] = {
 	{ "STRING",          0, DND_DRAG_TYPE_STRING },
 	{ "text/plain",      0, DND_DRAG_TYPE_STRING },
 	{ "text/uri-list",   0, DND_DRAG_TYPE_URL },
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
-static GtkTargetEntry drag_types_source[] = {
+static const GtkTargetEntry drag_types_source[] = {
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
 };
 
@@ -510,12 +510,12 @@ gossip_contact_list_init (GossipContactList *list)
 
 	gtk_item_factory_create_items (priv->item_popup_factory,
 				       G_N_ELEMENTS (item_menu_items),
-				       item_menu_items,
+				       (GtkItemFactoryEntry *) item_menu_items,
                                        list);
 	
 	gtk_item_factory_create_items (priv->group_popup_factory,
 				       G_N_ELEMENTS (group_menu_items),
-				       group_menu_items,
+				       (GtkItemFactoryEntry *) group_menu_items,
 				       list);
 	
         /* Signal connection. */
@@ -787,6 +787,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 			gossip_debug (DEBUG_DOMAIN, "Remove item (now)!"); 
 			contact_list_remove_contact (list, contact);
 		}
+
+		g_object_unref (account); // koko
 	}
 	else if (!in_list && should_be_in_list) {
 		account = gossip_session_find_account (session, contact);
@@ -802,6 +804,8 @@ contact_list_contact_presence_updated_cb (GossipSession     *session,
 
 			gossip_debug (DEBUG_DOMAIN, "Set active (contact added)");
 		}
+
+		g_object_unref (account); // koko
 
 	} else {
 		/* Get online state before. */
@@ -1336,6 +1340,8 @@ contact_list_create_model (GossipContactList *list)
 					      GTK_SORT_ASCENDING);
 
 	gtk_tree_view_set_model (GTK_TREE_VIEW (list), model);
+
+	g_object_unref (model);
 }
 
 static gboolean

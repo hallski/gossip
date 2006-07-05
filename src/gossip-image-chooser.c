@@ -104,7 +104,7 @@ enum DndTargetType {
 	DND_TARGET_TYPE_URI_LIST
 };
 
-static GtkTargetEntry drop_types[] = {
+static const GtkTargetEntry drop_types[] = {
 	{ URI_LIST_TYPE, 0, DND_TARGET_TYPE_URI_LIST },
 };
 
