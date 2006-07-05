@@ -22,6 +22,8 @@
 #include <gtk/gtk.h>
 #include "gossip-stock.h"
 
+static GtkIconFactory *icon_factory = NULL;
+
 static GtkStockItem stock_items[] = {
 	{ GOSSIP_STOCK_OFFLINE,                 NULL },     
 	{ GOSSIP_STOCK_AVAILABLE,               NULL },
@@ -38,29 +40,43 @@ static GtkStockItem stock_items[] = {
 void
 gossip_stock_init (void)
 {
-       GtkIconFactory *icon_factory;
-       GtkIconSet     *icon_set;
-       GdkPixbuf      *pixbuf;
-       gint            i;
-       gchar          *filename;
-       
-       gtk_stock_add (stock_items, G_N_ELEMENTS (stock_items));
-       
-       icon_factory = gtk_icon_factory_new ();
-       gtk_icon_factory_add_default (icon_factory);
-       
-       for (i = 0; i < G_N_ELEMENTS (stock_items); i++) {
-	       filename = g_strdup_printf (IMAGEDIR "/%s.png", stock_items[i].stock_id);
-	       pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
-	       g_free (filename);
+	GtkIconSet *icon_set;
+	gint        i;
+	
+	g_assert (icon_factory == NULL);
+	
+	gtk_stock_add (stock_items, G_N_ELEMENTS (stock_items));
+	
+	icon_factory = gtk_icon_factory_new ();
+	gtk_icon_factory_add_default (icon_factory);
+	g_object_unref (icon_factory);
+	
+	for (i = 0; i < G_N_ELEMENTS (stock_items); i++) {
+		gchar     *filename;
+		GdkPixbuf *pixbuf;
 
-	       icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-	       
-	       gtk_icon_factory_add (icon_factory,
-				     stock_items[i].stock_id,
-				     icon_set);
-
-	       g_object_unref (pixbuf);
-       }
+		filename = g_strdup_printf (IMAGEDIR "/%s.png", stock_items[i].stock_id);
+		pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
+		g_free (filename);
+		
+		icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+		
+		gtk_icon_factory_add (icon_factory,
+				      stock_items[i].stock_id,
+				      icon_set);
+		
+		gtk_icon_set_unref (icon_set);
+		
+		g_object_unref (pixbuf);
+	}
 }
 
+void
+gossip_stock_finalize (void)
+{
+	g_assert (icon_factory != NULL);
+	
+	gtk_icon_factory_remove_default (icon_factory);
+	
+	icon_factory = NULL;
+}

@@ -1,5 +1,10 @@
 2006-07-05  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-stock.[ch] (gossip_stock_init,
+	gossip_stock_finalize): Unref the factory and icon set, make it
+	possible to remove the icons at exit time to make it easier to
+	find leaks.
+
 	* src/gossip-ft-window.c (gossip_ft_window_init)
 	(gossip_ft_window_finalize): Keep a ref to the session while using
 	it.
