@@ -1,3 +1,10 @@
+2006-07-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-view.c: (chat_view_insert_text_with_emoticons):
+	Fix a bug I introduced yesterday where whitespace was eaten. Also
+	fix the longstanding bug where the smiley detection was a bit too
+	eager, for example converting "do:" into a smiley.
+
 2006-07-05  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-account-button.c:

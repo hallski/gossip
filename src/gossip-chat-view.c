@@ -765,22 +765,25 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 				submatch = -1;
 
 				for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
-					if (smileys[i].pattern[smileys_index[i]] == c) {
+					/* Only try to match if we already have
+					 * a beginning match for the pattern, or
+					 * if it's the first character in the
+					 * pattern, if it's not in the middle of
+					 * a word.
+					 */
+					if (((smileys_index[i] == 0 && (prev_c == 0 || g_unichar_isspace (prev_c))) ||
+					     smileys_index[i] > 0) &&
+					    smileys[i].pattern[smileys_index[i]] == c) {
 						submatch = i;
-
+						
 						smileys_index[i]++;
 						if (!smileys[i].pattern[smileys_index[i]]) {
 							match = i;
-							break;
 						}
 					} else {
 						smileys_index[i] = 0;
 					}
 				}
-			}
-
-			if (match != -1) {
-				break;
 			}
 
 			prev_c = c;
