@@ -1,3 +1,8 @@
+2006-07-07  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-dbus.c (gossip_dbus_init_for_session): Complete the
+	startup notification, fixes bug #346770.
+
 2006-07-06  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-view.c: (chat_view_insert_text_with_emoticons):

@@ -324,8 +324,10 @@ gossip_dbus_init_for_session (GossipSession *session,
 
 	if (!multiple_instances && result == DBUS_REQUEST_NAME_REPLY_EXISTS) {
 		gossip_debug (DEBUG_DOMAIN, "Gossip is already running");
-		
+
 		dbus_gossip_show (TRUE);
+		gdk_notify_startup_complete ();
+
 		exit (EXIT_SUCCESS);
 	}
 	
