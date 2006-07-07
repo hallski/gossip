@@ -1,5 +1,11 @@
 2006-07-07  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-spell.c: (spell_setup_languages),
+	(gossip_spell_check): Patch from Tommi Komulainen to fix bug
+	#346763, crash when no dictionaries are installed.
+
+2006-07-07  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-dbus.c (gossip_dbus_init_for_session): Complete the
 	startup notification, fixes bug #346770.
 

@@ -233,9 +233,12 @@ spell_setup_languages (void)
 		
 			if (aspell_error_number (lang->spell_possible_err) == 0) {
 				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
+				languages = g_list_append (languages, lang);
 			}
-		
-			languages = g_list_append (languages, lang);
+			else {
+				delete_aspell_config (lang->spell_config);
+				g_free (lang);
+			}
 		}
 		
 		if (strv) {
@@ -313,6 +316,10 @@ gossip_spell_check (const gchar *word)
 	g_return_val_if_fail (word != NULL, FALSE);
 
 	spell_setup_languages ();
+
+	if (!languages) {
+		return TRUE;
+	}
 
 	/* Ignore certain cases like numbers, etc. */
 	for (p = word, digit = TRUE; *p && digit; p = g_utf8_next_char (p)) {
