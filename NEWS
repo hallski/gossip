@@ -4,8 +4,8 @@ NEW in 0.13:
 - More memory usage trimming (Richard).
 - Fixed #346770, Complete the startup notification when there is a
 second instance running already (Richard).
-- Fixed #346763, Don' crash when no dictionaries are installed (patch
-- from Tommi Komulainen). 
+- Fixed #346763, Don't crash when no dictionaries are installed (patch
+from Tommi Komulainen).
 
 
 NEWS in 0.12:
