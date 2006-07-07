@@ -1,4 +1,4 @@
-AC_INIT(Gossip, 0.12, gossip)
+AC_INIT(Gossip, 0.13, gossip)
 AC_PREREQ(2.59)
 AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
 
