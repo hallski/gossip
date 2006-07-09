@@ -362,6 +362,7 @@ log_get_account_id_from_filename (const gchar *filename)
 	gchar       *log_directory;
 	const gchar *p1;
 	const gchar *p2;
+	gchar       *ret;
 
 	log_check_dir (&log_directory);
 	
@@ -379,7 +380,9 @@ log_get_account_id_from_filename (const gchar *filename)
 		return NULL;
 	}
 
-	return g_strndup (p1, p2 - p1); 
+	ret = g_strndup (p1, p2 - p1);
+	g_free (log_directory);
+	return ret;
 }
 
 static GossipChatroom *
@@ -587,6 +590,8 @@ log_get_all_log_files (GList **files)
 	*files = NULL;
 
 	if (log_check_dir (&log_directory)) {
+		g_free (log_directory);
+
 		gossip_debug (DEBUG_DOMAIN, "No log directory exists");
 		return TRUE;
 	}
@@ -1155,6 +1160,7 @@ gossip_log_get_chatrooms (GossipAccount *account)
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
 	if (log_check_dir (&log_directory)) {
+		g_free (log_directory);
 		gossip_debug (DEBUG_DOMAIN, "No log directory exists");
 		return NULL;
 	}
@@ -1240,6 +1246,7 @@ gossip_log_get_dates_for_contact (GossipContact *contact)
 	account = gossip_contact_get_account (contact);
 	
 	if (log_check_dir (&log_directory)) {
+		g_free (log_directory);
 		gossip_debug (DEBUG_DOMAIN, "No log directory exists");
 		return NULL;
 	}
@@ -1699,6 +1706,7 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 	}
 	
 	if (log_check_dir (&log_directory)) {
+		g_free (log_directory);
 		gossip_debug (DEBUG_DOMAIN, "No log directory exists");
 		return NULL;
 	}
@@ -2048,26 +2056,30 @@ gossip_log_search_new (const gchar *text)
 	}
 
 	session = gossip_app_get_session ();
- 	manager = gossip_session_get_account_manager (session);
+	manager = gossip_session_get_account_manager (session);
 
 	for (l = files; l; l = l->next) {
+		GMappedFile *file;
+		gsize        length;
+
 		filename = l->data;
 
-		if (!g_file_get_contents (filename, &contents, NULL, NULL)) {
-			continue;
-		}
-		
-		if (!contents || strlen (contents) < 1) {
-			continue;
-		}
-		
 		/* FIXME: Handle chatrooms */
 		if (strstr (filename, LOG_DIR_CHATROOMS)) {
 			continue;
 		}
 
-		contents_casefold = g_utf8_casefold (contents, -1);
-		g_free (contents);
+		file = g_mapped_file_new (filename, FALSE, NULL);
+		if (!file) {
+			continue;
+		}
+
+		length = g_mapped_file_get_length (file);
+		contents = g_mapped_file_get_contents (file);
+
+		contents_casefold = g_utf8_casefold (contents, length);
+
+		g_mapped_file_free (file);
 
 		if (strstr (contents_casefold, text_casefold)) {
 			GossipLogSearchHit *hit;
