@@ -6,7 +6,8 @@ NEW in 0.13:
 second instance running already (Richard).
 - Fixed #346763, Don't crash when no dictionaries are installed (patch
 from Tommi Komulainen).
-- Fixed #347006, Cope with restarted system bus.
+- Fixed #347006, Cope with restarted system bus (Richard).
+- Fixed #346929, Don't send empty messages in group chats (Richard).
 
 
 NEWS in 0.12:

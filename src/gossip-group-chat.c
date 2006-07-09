@@ -1148,7 +1148,12 @@ group_chat_send (GossipGroupChat *chat)
 
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	msg = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
-	
+
+	if (msg == NULL || msg[0] == '\0') {
+		g_free (msg);
+                return;
+        }
+
 	/* Clear the input field. */
 	gtk_text_buffer_set_text (buffer, "", -1);
 

@@ -1,5 +1,10 @@
 2006-07-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-group-chat.c (group_chat_send): Don't send empty
+	messages, bug #346929.
+
+2006-07-09  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-dbus.c: (nm_proxy_restart_timeout_cb),
 	(nm_proxy_notify_cb), (dbus_nm_init), (gossip_dbus_nm_get_state):
 	Add the usual workaround to survive a restart system bus to cope
