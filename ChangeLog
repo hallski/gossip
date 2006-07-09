@@ -1,5 +1,13 @@
 2006-07-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-dbus.c: (nm_proxy_restart_timeout_cb),
+	(nm_proxy_notify_cb), (dbus_nm_init), (gossip_dbus_nm_get_state):
+	Add the usual workaround to survive a restart system bus to cope
+	with braindead distro behavior of restarting the system bus when
+	installing packages that provide services. Fixes bug #347006.
+
+2006-07-09  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-manager.[ch]: Remove unused, unimplemented
 	function.
 

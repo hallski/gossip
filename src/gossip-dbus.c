@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dbus/dbus-glib-bindings.h>
+#include <dbus/dbus-glib-lowlevel.h>
 
 #include <libgossip/gossip-debug.h>
 
@@ -35,7 +36,7 @@
 
 /* None-generated functions */
 static DBusGProxy *dbus_freedesktop_init (void);
-static DBusGProxy *dbus_nm_init          (void);
+static gboolean    dbus_nm_init          (void);
 static gboolean    dbus_gossip_show      (gboolean show);
 
 /* Set up the DBus GObject to use */
@@ -96,7 +97,10 @@ gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
 static GossipSession *saved_session = NULL;
 static GossipDBus    *gossip_dbus = NULL;
 static DBusGProxy    *bus_proxy = NULL;
+
 static DBusGProxy    *nm_proxy = NULL;
+static gint           nm_proxy_restart_retries = 0;
+static guint          nm_proxy_restart_timeout_id = 0;
 
 
 static void
@@ -443,13 +447,50 @@ dbus_nm_state_cb (DBusGProxy *proxy,
 	}
 }
 
-static DBusGProxy *
+static gboolean
+nm_proxy_restart_timeout_cb (gpointer user_data)
+{
+	if (dbus_nm_init ()) {
+		nm_proxy_restart_timeout_id = 0;
+		return FALSE;
+	}
+
+	nm_proxy_restart_retries--;
+	if (nm_proxy_restart_retries == 0) {
+		nm_proxy_restart_timeout_id = 0;
+		return FALSE;
+	}
+
+	return TRUE;
+}
+		
+static void
+nm_proxy_notify_cb (gpointer conn,
+		    GObject *where_the_object_was)
+{
+	dbus_connection_unref (conn);
+
+	nm_proxy = NULL;
+	nm_proxy_restart_retries = 5;
+
+	if (nm_proxy_restart_timeout_id) {
+		g_source_remove (nm_proxy_restart_timeout_id);
+	}
+	
+	nm_proxy_restart_timeout_id = 
+		g_timeout_add (10*1000,
+			       nm_proxy_restart_timeout_cb,
+			       NULL);
+}
+
+static gboolean
 dbus_nm_init (void)
 {
 	DBusGConnection *bus;
+	DBusConnection  *conn;
 
 	if (nm_proxy) {
-		return nm_proxy;
+		return TRUE;
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Initialising Network Manager proxy");
@@ -459,37 +500,33 @@ dbus_nm_init (void)
 		g_warning ("Could not connect to system bus");
 		return FALSE;
 	}
+
+	conn = dbus_g_connection_get_connection (bus);
+	dbus_connection_set_exit_on_disconnect (conn, FALSE);
 	
-	nm_proxy = dbus_g_proxy_new_for_name (bus,  // koko
+	nm_proxy = dbus_g_proxy_new_for_name (bus,
 					       NM_DBUS_SERVICE, 
 					       NM_DBUS_PATH, 
 					       NM_DBUS_INTERFACE);
 
 	if (!nm_proxy) {
 		g_warning ("Could not connect to Network Manager");
-		return NULL;
+		return FALSE;
 	}
 
+	g_object_weak_ref (G_OBJECT (nm_proxy), nm_proxy_notify_cb, conn);
+	
 	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT, 
 					   G_TYPE_NONE, G_TYPE_UINT, G_TYPE_INVALID);
 
-	/* Tell DBus what the type signature of the signal callback is; this
-	 * allows us to sanity-check incoming messages before invoking the
-	 * callback.  You need to do this once for each proxy you create,
-	 * not every time you want to connect to the signal.
-	 */
 	dbus_g_proxy_add_signal (nm_proxy, "StateChange",
 				 G_TYPE_UINT, G_TYPE_INVALID);
 
-	/* Actually connect to the signal. Note you can call
-	 * dbus_g_proxy_connect_signal multiple times for one invocation of
-	 * dbus_g_proxy_add_signal.
-	 */
 	dbus_g_proxy_connect_signal (nm_proxy, "StateChange", 
 				     G_CALLBACK (dbus_nm_state_cb),
 				     NULL, NULL);
 
-	return nm_proxy;
+	return TRUE;
 } 
 
 gboolean 
@@ -502,6 +539,11 @@ gossip_dbus_nm_get_state (gboolean *connected)
 
 	/* Set the initial value of connected incase we have to return */
 	*connected = FALSE;
+
+	if (nm_proxy_restart_timeout_id) {
+		/* We are still trying to reconnect to the restarted bus. */
+		return FALSE;
+	}
 
 	/* Make sure we have set up Network Manager connections */
 	if (!dbus_nm_init ()) {
@@ -539,7 +581,7 @@ dbus_gossip_show (gboolean show)
 	
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
-		g_warning ("Could not connect to system bus");
+		g_warning ("Could not connect to session bus");
 		return FALSE;
 	}
 
