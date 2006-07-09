@@ -1,5 +1,12 @@
 2006-07-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-new-chatroom-dialog.c
+	(new_chatroom_dialog_response_cb): Cancel any ongoing join
+	attempts when the dialog is dismissed, fixes a crash when the join
+	timeout is triggered.
+
+2006-07-09  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-new-message-dialog.c (new_message_dialog_setup_view):
 	Unref the tree model and filter model here...
 	(new_message_dialog_destroy): not here.

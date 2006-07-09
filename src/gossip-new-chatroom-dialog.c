@@ -146,6 +146,8 @@ new_chatroom_dialog_update_join_button (GossipNewChatroomDialog *dialog)
 	GtkButton             *button;
 	GtkWidget             *image;
 
+	g_print ("update join, dialog: %p\n", dialog);
+	
 	/* First get button and icon */
 	button = GTK_BUTTON (dialog->button_join);
 
@@ -472,6 +474,8 @@ new_chatroom_dialog_response_cb (GtkWidget               *widget,
 		}
 
 		return;
+	} else {
+		new_chatroom_dialog_join_cancel (dialog);
 	}
 
 	gtk_widget_destroy (widget);
