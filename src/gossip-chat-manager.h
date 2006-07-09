@@ -54,9 +54,6 @@ GossipPrivateChat *gossip_chat_manager_get_chat       (GossipChatManager *manage
 GList *            gossip_chat_manager_get_chats      (GossipChatManager *manager);
 void               gossip_chat_manager_show_chat      (GossipChatManager *manager,
 						       GossipContact     *contact);
-GossipGroupChat *  gossip_chat_manager_get_group_chat (GossipChatManager *manager,
-						       const gchar       *name,
-						       gint               id);
 
 #endif /* __GOSSIP_CHAT_MANAGER_H__ */
 

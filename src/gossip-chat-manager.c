@@ -273,10 +273,3 @@ gossip_chat_manager_show_chat (GossipChatManager *manager,
 	}
 }
 
-GossipGroupChat *
-gossip_chat_manager_get_group_chat (GossipChatManager *manager,
-                                    const gchar       *name,
-                                    gint               id)
-{
-        return NULL;
-}
