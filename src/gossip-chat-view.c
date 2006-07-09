@@ -74,6 +74,9 @@ struct _GossipChatViewPriv {
 	BlockType      last_block_type;
 
 	gboolean       allow_scrolling;
+	
+	GtkTextMark   *find_mark;
+	gboolean       find_wrapped;
 
 	/* This is for the group chat so we know if the "other" last contact
 	 * changed, so we know whether to insert a header or not.
@@ -1887,35 +1890,55 @@ gossip_chat_view_find (GossipChatView *view,
 		       const gchar    *search_criteria,
 		       gboolean        new_search)
 {
+	GossipChatViewPriv *priv;
 	GtkTextBuffer      *buffer;
 	GtkTextIter         iter_at_mark;
 	GtkTextIter         iter_match_start;
 	GtkTextIter         iter_match_end;
-	static GtkTextMark *find_mark = NULL;
-	static gboolean     wrapped = FALSE;
 	gboolean            found;
 	gboolean            from_start = FALSE;
 
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 	g_return_if_fail (search_criteria != NULL);
-	g_return_if_fail (strlen (search_criteria) > 0);
 
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-    
+	priv = GET_PRIV (view);
+	
+	buffer = priv->buffer;
+	
+	if (strlen (search_criteria) == 0) {
+		if (priv->find_mark) {
+			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
+			
+			gtk_text_buffer_move_mark (buffer,
+						   priv->find_mark,
+						   &iter_at_mark);
+			gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+						      priv->find_mark,
+						      0.0,
+						      TRUE,
+						      0.0,
+						      0.0);
+			gtk_text_buffer_select_range (buffer,
+						      &iter_at_mark,
+						      &iter_at_mark);
+		}
+		
+		return;
+	}
+	
 	if (new_search) {
-		find_mark = NULL;
 		from_start = TRUE;
 	}
      
-	if (find_mark) {
-		gtk_text_buffer_get_iter_at_mark (buffer, &iter_at_mark, find_mark);
-		gtk_text_buffer_delete_mark (buffer, find_mark); 
-		find_mark = NULL;
+	if (priv->find_mark) {
+		gtk_text_buffer_get_iter_at_mark (buffer,
+						  &iter_at_mark,
+						  priv->find_mark);
 	} else {
 		gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
 		from_start = TRUE;
 	}
-
+	
 	found = gossip_text_iter_forward_search (&iter_at_mark,
 						 search_criteria,
 						 &iter_match_start, 
@@ -1928,19 +1951,28 @@ gossip_chat_view_find (GossipChatView *view,
 		}
 	
 		/* Here we wrap around. */
-		if (!new_search && !wrapped) {
-			wrapped = TRUE;
+		if (!new_search && !priv->find_wrapped) {
+			priv->find_wrapped = TRUE;
 			gossip_chat_view_find (view, search_criteria, FALSE);
-			wrapped = FALSE;
+			priv->find_wrapped = FALSE;
 		}
 
 		return;
 	}
     
 	/* Set new mark and show on screen */
-	find_mark = gtk_text_buffer_create_mark (buffer, NULL, &iter_match_end, TRUE); 
+	if (!priv->find_mark) {
+		priv->find_mark = gtk_text_buffer_create_mark (buffer, NULL,
+							       &iter_match_end,
+							       TRUE);
+	} else {
+		gtk_text_buffer_move_mark (buffer,
+					   priv->find_mark,
+					   &iter_match_end);
+	}
+	
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-				      find_mark,
+				      priv->find_mark,
 				      0.0,
 				      TRUE,
 				      0.5,
@@ -1948,8 +1980,6 @@ gossip_chat_view_find (GossipChatView *view,
 
 	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
 	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);
-
-	gtk_text_buffer_delete_mark (buffer, find_mark);
 }
 
 void
@@ -1979,7 +2009,7 @@ gossip_chat_view_highlight (GossipChatView *view,
 		return;
 	}
 
-	while (TRUE) {
+	while (1) {
 		found = gossip_text_iter_forward_search (&iter, 
 							 text, 
 							 &iter_match_start, 

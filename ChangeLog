@@ -1,5 +1,12 @@
 2006-07-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-view.c (gossip_chat_view_find): Put the
+	mark/wrapped variables in the priv struct instead of in a static
+	variable so this works properly. Also reset the highlighting when
+	we search for an empty string.
+
+2006-07-09  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-new-chatroom-dialog.c
 	(new_chatroom_dialog_response_cb): Cancel any ongoing join
 	attempts when the dialog is dismissed, fixes a crash when the join
