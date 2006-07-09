@@ -256,6 +256,9 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 
 	gtk_tree_view_set_model (view, filter);
 
+	g_object_unref (model);
+	g_object_unref (filter);
+
 	/* new column */
 	column = gtk_tree_view_column_new ();
 
@@ -293,7 +296,6 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 			  G_CALLBACK (new_message_dialog_selection_changed), 
 			  dialog);
 
-	/* remember store and filter */
 	dialog->store = store;
 	dialog->filter = filter;
 }
@@ -310,7 +312,7 @@ new_message_dialog_name_entry_changed (GtkEntry               *entry,
 	view = GTK_TREE_VIEW (dialog->treeview);
 	model = gtk_tree_view_get_model (view);
 
-        if (gtk_tree_model_iter_n_children (model, NULL) == 1) {
+        if (gtk_tree_model_iter_n_children (model, NULL) > 0) {
 		GtkTreeSelection *selection;
 		GtkTreeIter       iter;
 
@@ -326,14 +328,6 @@ static void
 new_message_dialog_destroy (GtkWidget              *widget,
 			    GossipNewMessageDialog *dialog)
 {
-	if (dialog->store) {
-		g_object_unref (dialog->store);
-	}
-
-	if (dialog->filter) {
-		g_object_unref (dialog->filter);
-	}
-
  	g_free (dialog); 
 }
 
@@ -348,7 +342,6 @@ new_message_dialog_response (GtkWidget              *widget,
 	GtkTreeIter        iter;
 	GossipContact     *contact;
 	GossipChatManager *chat_manager;
-	gboolean           created = FALSE;
 	
 	if (response != GTK_RESPONSE_OK) {
 		gtk_widget_destroy (dialog->dialog);
@@ -357,7 +350,9 @@ new_message_dialog_response (GtkWidget              *widget,
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
-	
+
+	contact = NULL;
+
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		GossipAccount        *account;
 		GossipAccountChooser *accounts_chooser;
@@ -369,11 +364,9 @@ new_message_dialog_response (GtkWidget              *widget,
 		text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 		
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
-		gossip_contact_set_id (contact, text);
-		
-		g_object_unref (account);
-		
-		created = TRUE;
+		if (contact) {
+			gossip_contact_set_id (contact, text);
+		}
 	} else {
 		gtk_tree_model_get (model, &iter, 
 				    COL_POINTER, &contact, 
@@ -381,14 +374,11 @@ new_message_dialog_response (GtkWidget              *widget,
 	}
 	
 	gtk_widget_destroy (dialog->dialog);
-	
-	chat_manager = gossip_app_get_chat_manager ();
-	gossip_chat_manager_show_chat (chat_manager, contact);
-	
-	/* Sounds weird I know, but we only unref the model contact, the
-	 * created contact is needed for chat, etc.
-	 */
-	if (!created) {
+
+	if (contact) {
+		chat_manager = gossip_app_get_chat_manager ();
+		gossip_chat_manager_show_chat (chat_manager, contact);
+		
 		g_object_unref (contact);
 	}
 }
@@ -442,7 +432,7 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 		gtk_widget_hide (dialog->accounts_vbox);
 	}
 	
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
 	if (parent) {

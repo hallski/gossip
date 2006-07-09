@@ -1,5 +1,13 @@
 2006-07-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-new-message-dialog.c (new_message_dialog_setup_view):
+	Unref the tree model and filter model here...
+	(new_message_dialog_destroy): not here.
+	(new_message_dialog_response): Always unref the contact here, the
+	chat window/manager etc will keep their own refs.
+	(new_message_dialog_name_entry_changed): Select the first one even
+	if there are more than one matches, fixes bug #346931.
+
 	* src/gossip-group-chat.c (group_chat_send): Don't send empty
 	messages, bug #346929.
 

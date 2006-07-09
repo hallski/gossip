@@ -8,6 +8,8 @@ second instance running already (Richard).
 from Tommi Komulainen).
 - Fixed #347006, Cope with restarted system bus (Richard).
 - Fixed #346929, Don't send empty messages in group chats (Richard).
+- Fixed #346931, Always select a match if there are any in the new
+message dialog (Richard).
 
 
 NEWS in 0.12:
