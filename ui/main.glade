@@ -4820,7 +4820,7 @@ This name could be something associated with the service provider, for example, 
       <property name="use_underline">True</property>
 
       <child internal-child="image">
-	<widget class="GtkImage" id="image170">
+	<widget class="GtkImage" id="image566">
 	  <property name="visible">True</property>
 	  <property name="pixbuf">gossip-message.png</property>
 	  <property name="xalign">0.5</property>
@@ -4847,9 +4847,10 @@ This name could be something associated with the service provider, for example, 
   </child>
 
   <child>
-    <widget class="GtkImageMenuItem" id="tray_quit">
+    <widget class="GtkMenuItem" id="tray_quit">
       <property name="visible">True</property>
-      <property name="stock_item">GNOMEUIINFO_MENU_EXIT_ITEM</property>
+      <property name="label" translatable="yes">_Quit</property>
+      <property name="use_underline">True</property>
     </widget>
   </child>
 </widget>
@@ -5844,7 +5845,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image511">
+			<widget class="GtkImage" id="image567">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -5864,7 +5865,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image512">
+			<widget class="GtkImage" id="image568">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-execute</property>
 			  <property name="icon_size">1</property>
@@ -5891,7 +5892,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image513">
+			<widget class="GtkImage" id="image569">
 			  <property name="visible">True</property>
 			  <property name="pixbuf">gossip-message.png</property>
 			  <property name="xalign">0.5</property>
@@ -5911,7 +5912,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F3" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image514">
+			<widget class="GtkImage" id="image570">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -5940,7 +5941,7 @@ This name could be something associated with the service provider, for example, 
 			      <property name="use_underline">True</property>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image515">
+				<widget class="GtkImage" id="image571">
 				  <property name="visible">True</property>
 				  <property name="stock">gtk-new</property>
 				  <property name="icon_size">1</property>
@@ -5975,7 +5976,7 @@ This name could be something associated with the service provider, for example, 
 			      <property name="use_underline">True</property>
 
 			      <child internal-child="image">
-				<widget class="GtkImage" id="image516">
+				<widget class="GtkImage" id="image572">
 				  <property name="visible">True</property>
 				  <property name="pixbuf">gossip-group-message.png</property>
 				  <property name="xalign">0.5</property>
@@ -6004,7 +6005,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image517">
+			<widget class="GtkImage" id="image573">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -6050,7 +6051,21 @@ This name could be something associated with the service provider, for example, 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="file_quit">
 		      <property name="visible">True</property>
-		      <property name="stock_item">GNOMEUIINFO_MENU_EXIT_ITEM</property>
+		      <property name="label" translatable="yes">_Quit</property>
+		      <property name="use_underline">True</property>
+		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image574">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-quit</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 		</widget>
@@ -6061,7 +6076,8 @@ This name could be something associated with the service provider, for example, 
 	  <child>
 	    <widget class="GtkMenuItem" id="edit">
 	      <property name="visible">True</property>
-	      <property name="stock_item">GNOMEUIINFO_MENU_EDIT_TREE</property>
+	      <property name="label" translatable="yes">_Edit</property>
+	      <property name="use_underline">True</property>
 
 	      <child>
 		<widget class="GtkMenu" id="edit_menu">
@@ -6096,7 +6112,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image518">
+			<widget class="GtkImage" id="image575">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -6116,7 +6132,8 @@ This name could be something associated with the service provider, for example, 
 	  <child>
 	    <widget class="GtkMenuItem" id="help">
 	      <property name="visible">True</property>
-	      <property name="stock_item">GNOMEUIINFO_MENU_HELP_TREE</property>
+	      <property name="label" translatable="yes">_Help</property>
+	      <property name="use_underline">True</property>
 
 	      <child>
 		<widget class="GtkMenu" id="help_menu">
@@ -6129,7 +6146,7 @@ This name could be something associated with the service provider, for example, 
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image519">
+			<widget class="GtkImage" id="image576">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -6145,7 +6162,20 @@ This name could be something associated with the service provider, for example, 
 		  <child>
 		    <widget class="GtkImageMenuItem" id="help_about">
 		      <property name="visible">True</property>
-		      <property name="stock_item">GNOMEUIINFO_MENU_ABOUT_ITEM</property>
+		      <property name="label" translatable="yes">_About</property>
+		      <property name="use_underline">True</property>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image577">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-about</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
 		    </widget>
 		  </child>
 		</widget>

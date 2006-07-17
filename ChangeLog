@@ -1,3 +1,11 @@
+2006-07-17  Richard Hult  <richard@imendio.com>
+
+	* ui/chat.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade: Don't use gnome stock items for the menus, since
+	we get mnemonic conflicts and to start (slowly) getting rid of the
+	libgnome* dependency.
+
 2006-07-09  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-log.c: (log_get_account_id_from_filename),
