@@ -22,7 +22,6 @@ AM_GCONF_SOURCE_2
 GNOME_DOC_INIT
 IT_PROG_INTLTOOL([0.35.0])
 
-AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
 
 IDT_COMPILE_WARNINGS
@@ -49,11 +48,13 @@ AC_ARG_WITH(backend,
 	    ac_backend=gnome)
 
 if test "x$ac_backend" = xgnome; then
-    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
+   AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
+   gconf_pkgconfig=gconf-2.0
 elif test "x$ac_backend" = xcocoa; then
-    AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
+   AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
+   gconf_pkgconfig=
 else
-    AC_MSG_ERROR([Incorrect backend])
+   AC_MSG_ERROR([Incorrect backend])
 fi
 
 AM_CONDITIONAL(HAVE_GNOME, test x$ac_backend = xgnome)
@@ -175,7 +176,7 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
    gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
-   gconf-2.0 >= $GCONF_REQUIRED
+   $gconf_pkgconfig
 ])
 
 PKG_CHECK_MODULES(GOSSIP,
