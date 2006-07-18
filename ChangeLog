@@ -1,5 +1,11 @@
 2006-07-18  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-conf-gnome.c: Add string list...
+
+	* libgossip/gossip-utils.c: ...and use it here.
+
+2006-07-18  Richard Hult  <richard@imendio.com>
+
 	* configure.ac: Don't AC_SUBST the verison numbers, we're not
 	using those outside configure. 
 	- Add a backend option.

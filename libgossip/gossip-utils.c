@@ -24,9 +24,10 @@
 #include <time.h>
 #include <sys/types.h>
 #include <regex.h>
-#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
+
 #include "gossip-utils.h"
+#include "gossip-conf.h"
 
 #define DEBUG_MSG(x)   
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
@@ -38,20 +39,14 @@ static void status_message_free_foreach (GossipStatusEntry *entry);
 GList *
 gossip_status_messages_get (void)
 {
-	GConfClient       *gconf_client;
 	GSList            *list, *l;
 	GList             *ret = NULL;
 	GossipStatusEntry *entry;
 	const gchar       *status;
 	
-	gconf_client = gconf_client_get_default ();
-	
-	list = gconf_client_get_list (gconf_client,
-				      "/apps/gossip/status/preset_messages",
-				      GCONF_VALUE_STRING,
-				      NULL);
-
-	g_object_unref (gconf_client);
+	gossip_conf_get_string_list (gossip_conf_get (),
+				     "/apps/gossip/status/preset_messages",
+				     &list);
 
 	/* This is really ugly, but we can't store a list of pairs and a dir
 	 * with entries wouldn't work since we have no guarantee on the order of
@@ -85,13 +80,11 @@ gossip_status_messages_get (void)
 	g_slist_free (list);
 	
 	return ret;
-
 }
 
 void 
 gossip_status_messages_set (GList *list)
 {
-	GConfClient       *gconf_client;
 	GList             *l;
 	GossipStatusEntry *entry;
 	GSList            *slist = NULL;
@@ -120,13 +113,9 @@ gossip_status_messages_set (GList *list)
 		slist = g_slist_append (slist, str);
 	}
 
-	gconf_client = gconf_client_get_default ();
-	gconf_client_set_list (gconf_client,
-			       "/apps/gossip/status/preset_messages",
-			       GCONF_VALUE_STRING,
-			       slist,
-			       NULL);
-	g_object_unref (gconf_client);
+	gossip_conf_set_string_list (gossip_conf_get (),
+				     "/apps/gossip/status/preset_messages",
+				     slist);
 
 	g_slist_foreach (slist, (GFunc) g_free, NULL);
 	g_slist_free (slist);
@@ -436,7 +425,9 @@ gossip_base64_encode (const guchar *data,
 
 gchar *
 gossip_sha1_string (const guchar *data,
-		    gsize         len) {
+		    gsize         len)
+{
+#if 0
 	gchar  *hash_string;
 	gchar  *p;
 	guchar  hash[20];
@@ -455,4 +446,6 @@ gossip_sha1_string (const guchar *data,
 	}
 
 	return hash_string;
+#endif
+	return g_strdup ("");
 }

@@ -19,7 +19,6 @@
  */
 
 #include <config.h>
-#include <glib/gi18n.h>
 #include <string.h>
 #include <gconf/gconf-client.h>
 
@@ -101,7 +100,7 @@ conf_finalize (GObject *object)
 				 HTTP_PROXY_ROOT,
 				 NULL);
 
-	g_free (priv->gconf_client);
+	g_object_unref (priv->gconf_client);
 
 	G_OBJECT_CLASS (gossip_conf_parent_class)->finalize (object);
 }
@@ -243,6 +242,48 @@ gossip_conf_get_string (GossipConf   *conf,
 	*value = gconf_client_get_string (priv->gconf_client,
 					  key,
 					  &error);
+	if (error) {
+		g_error_free (error);
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+gboolean
+gossip_conf_set_string_list (GossipConf  *conf,
+			     const gchar *key,
+			     GSList      *value)
+{
+	GossipConfPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+
+	priv = GET_PRIV (conf);
+
+	return gconf_client_set_string_list (priv->gconf_client,
+					     key,
+					     value,
+					     NULL);
+}
+
+gboolean
+gossip_conf_get_string_list (GossipConf   *conf,
+			     const gchar  *key,
+			     GSList      **value)
+{
+	GossipConfPriv *priv;
+	GError          *error = NULL;
+
+	*value = NULL;
+	
+	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+
+	priv = GET_PRIV (conf);
+
+	*value = gconf_client_get_string_list (priv->gconf_client,
+					       key,
+					       &error);
 	if (error) {
 		g_error_free (error);
 		return FALSE;
