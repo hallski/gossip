@@ -19,10 +19,8 @@
  */
 
 #include <config.h>
-
 #include <string.h>
 #include <unistd.h>
-
 #include <gtk/gtk.h> 
 #include <glade/glade.h>
 #include <glib/gi18n.h>
@@ -32,6 +30,7 @@
 #include <loudmouth/loudmouth.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-utils.h>
@@ -157,10 +156,9 @@ vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
 
 		path = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (widget));
 		if (path) {
-			gconf_client_set_string (gossip_app_get_gconf_client (),
-						 GCONF_UI_AVATAR_DIRECTORY,
-						 path,
-						 NULL);
+			gossip_conf_set_string (gossip_conf_get (),
+						 GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
+						 path);
 			g_free (path);
 		}
 	} else if (response == GTK_RESPONSE_NO) {
@@ -198,10 +196,11 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 
  	gtk_dialog_set_default_response (GTK_DIALOG (chooser_dialog), GTK_RESPONSE_ACCEPT);
 
-	path = gconf_client_get_string (gossip_app_get_gconf_client (),
-					GCONF_UI_AVATAR_DIRECTORY,
-					NULL);
-
+	path = NULL;
+	gossip_conf_get_string (gossip_conf_get (),
+				 GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
+				 &path);
+	
  	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser_dialog),
 					     path ? path : g_get_home_dir ());
 	g_free (path);

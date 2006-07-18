@@ -20,9 +20,10 @@
 
 #include <config.h>
 #include <string.h>
-#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-theme-manager.h"
 #include "gossip-preferences.h"
@@ -42,13 +43,11 @@ typedef struct {
 } GossipThemeManagerPriv;
 
 static void        theme_manager_finalize                 (GObject            *object);
-static void        theme_manager_name_notify_func         (GConfClient        *client,
-							   guint               id,
-							   GConfEntry         *entry,
+static void        theme_manager_notify_name_cb           (GossipConf         *conf,
+							   const gchar        *key,
 							   gpointer            user_data);
-static void        theme_manager_show_avatars_notify_func (GConfClient        *client,
-							   guint               id,
-							   GConfEntry         *entry,
+static void        theme_manager_notify_show_avatars_cb   (GossipConf         *conf,
+							   const gchar        *key,
 							   gpointer            user_data);
 static void        theme_manager_ensure_tag_by_name       (GtkTextBuffer      *buffer,
 							   const gchar        *name);
@@ -110,50 +109,40 @@ static void
 gossip_theme_manager_init (GossipThemeManager *manager)
 {
 	GossipThemeManagerPriv *priv;
-	GConfClient            *client;
 
 	priv = GET_PRIV (manager);
 
-	client = gossip_app_get_gconf_client ();
-	
 	priv->name_notify_id =
-		gconf_client_notify_add (client, 
-					 GCONF_CHAT_THEME,
-					 theme_manager_name_notify_func,
-					 manager,
-					 NULL,
-					 NULL);
-	
-	priv->name = gconf_client_get_string (client,
-					      GCONF_CHAT_THEME,
-					      NULL);
+		gossip_conf_notify_add (gossip_conf_get (),
+					GOSSIP_PREFS_CHAT_THEME,
+					theme_manager_notify_name_cb,
+					manager);
 
+	gossip_conf_get_string (gossip_conf_get (),
+				GOSSIP_PREFS_CHAT_THEME,
+				&priv->name);
+	
 	/* Unused right now, but will be used soon. */
 	priv->show_avatars_notify_id = 
-		gconf_client_notify_add (client,
-					 GCONF_UI_SHOW_AVATARS,
-					 theme_manager_show_avatars_notify_func,
-					 manager,
-					 NULL,
-					 NULL);
+		gossip_conf_notify_add (gossip_conf_get (),
+					GOSSIP_PREFS_UI_SHOW_AVATARS,
+					theme_manager_notify_show_avatars_cb,
+					manager);
 
-	priv->show_avatars = gconf_client_get_bool (client,
-						    GCONF_UI_SHOW_AVATARS,
-						    NULL);
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_UI_SHOW_AVATARS,
+			      &priv->show_avatars);
 }
 
 static void
 theme_manager_finalize (GObject *object)
 {
 	GossipThemeManagerPriv *priv;
-	GConfClient            *client;
 	
 	priv = GET_PRIV (object);
 
-	client = gossip_app_get_gconf_client ();
-	
-	gconf_client_notify_remove (client, priv->name_notify_id);
-	gconf_client_notify_remove (client, priv->show_avatars_notify_id);
+	gossip_conf_notify_remove (gossip_conf_get (), priv->name_notify_id);
+	gossip_conf_notify_remove (gossip_conf_get (), priv->show_avatars_notify_id);
 		
 	g_free (priv->name);
 	
@@ -161,48 +150,46 @@ theme_manager_finalize (GObject *object)
 }
 
 static void
-theme_manager_name_notify_func (GConfClient *client,
-				guint        id,
-				GConfEntry  *entry,
-				gpointer     user_data)
+theme_manager_notify_name_cb (GossipConf  *conf,
+			      const gchar *key,
+			      gpointer     user_data)
 {
 	GossipThemeManager     *manager;
 	GossipThemeManagerPriv *priv;
-	GConfValue             *value;
+	gchar                  *name;
 
 	manager = user_data;
 	priv = GET_PRIV (manager);
 
 	g_free (priv->name);
-	
-	value = gconf_entry_get_value (entry);
-	if (value == NULL || value->type != GCONF_VALUE_STRING) {
+
+	name = NULL;
+	if (!gossip_conf_get_string (conf, key, &name) || name == NULL || name[0] == 0) {
 		priv->name = g_strdup ("classic");
+		g_free (name);
 	} else {
-		priv->name = g_strdup (gconf_value_get_string (value));
+		priv->name = name;
 	}
 	
 	g_signal_emit (manager, signals[THEME_CHANGED], 0, NULL);
 }
 
 static void
-theme_manager_show_avatars_notify_func (GConfClient *client,
-					guint        id,
-					GConfEntry  *entry,
-					gpointer     user_data)
+theme_manager_notify_show_avatars_cb (GossipConf  *conf,
+				      const gchar *key,
+				      gpointer     user_data)
 {
 	GossipThemeManager     *manager;
 	GossipThemeManagerPriv *priv;
-	GConfValue             *value;
+	gboolean                value;
 
 	manager = user_data;
 	priv = GET_PRIV (manager);
 
-	value = gconf_entry_get_value (entry);
-	if (value == NULL || value->type != GCONF_VALUE_BOOL) {
+	if (!gossip_conf_get_bool (conf, key, &value)) {
 		priv->show_avatars = FALSE;
 	} else {
-		priv->show_avatars = gconf_value_get_bool (value);
+		priv->show_avatars = value;
 	}
 }
 

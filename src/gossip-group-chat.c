@@ -23,7 +23,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
-#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-chatroom-provider.h>

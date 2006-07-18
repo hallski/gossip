@@ -20,18 +20,16 @@
  */
 
 #include <config.h>
-
 #include <string.h>
 #include <stdlib.h>
-
 #include <glib/gi18n.h>
-#include <gconf/gconf-client.h>
 
 #ifdef HAVE_ASPELL
 #include <aspell.h>
 #endif
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-spell.h"
 #include "gossip-app.h"
@@ -58,7 +56,7 @@ typedef struct {
 
 static GHashTable  *iso_code_names = NULL;
 static GList       *languages = NULL;
-static gboolean     gconf_notify_inited = FALSE;
+static gboolean     gossip_conf_notify_inited = FALSE;
 
 
 static void
@@ -168,13 +166,12 @@ spell_iso_code_names_init (void)
 }
 
 static void
-spell_languages_notify_cb (GConfClient *client,
-			   guint        cnxn_id,
-			   GConfEntry  *entry,
+spell_notify_languages_cb (GossipConf  *conf,
+			   const gchar *key,
 			   gpointer     user_data)
 {
 	GList *l;
-	
+
 	/* We just reset the languages list. */
 	for (l = languages; l; l = l->next) {
 		SpellLanguage *lang;
@@ -196,26 +193,24 @@ spell_setup_languages (void)
 {
 	gchar  *str;
 
-	if (!gconf_notify_inited) {
-		gconf_client_notify_add (gossip_app_get_gconf_client (),
-					 GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
-					 spell_languages_notify_cb,
-					 NULL, NULL, NULL);
+	if (!gossip_conf_notify_inited) {
+		gossip_conf_notify_add (gossip_conf_get (),
+					 GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
+					 spell_notify_languages_cb, NULL);
 		
-		gconf_notify_inited = TRUE;
+		gossip_conf_notify_inited = TRUE;
 	}
 	
 	if (languages) {
 		return;
 	}
 
-	str = gconf_client_get_string (gossip_app_get_gconf_client (),
-				       GCONF_CHAT_SPELL_CHECKER_LANGUAGES,
-				       NULL);
-	if (str) {
+	if (gossip_conf_get_string (gossip_conf_get (),
+				     GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
+				     &str) && str) {
 		gchar **strv;
 		gint    i;
-
+		
 		strv = g_strsplit (str, ",", -1);
 
 		i = 0;
@@ -244,9 +239,9 @@ spell_setup_languages (void)
 		if (strv) {
 			g_strfreev (strv);
 		}
-	}
 
-	g_free (str);
+		g_free (str);
+	}
 }
 
 const char *

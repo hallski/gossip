@@ -1,3 +1,37 @@
+2006-07-18  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Don't AC_SUBST the verison numbers, we're not
+	using those outside configure. 
+	- Add a backend option.
+	- Remove lib(e)xslt, since we're not using that for the logs
+	anymore.
+	- Remove gconf as dependency on the UI, it's pulled in by
+	libgossip now.
+	
+	* libgossip/gossip-conf*.[ch]:
+	* libgossip/Makefile.am: Add gossip-conf.h and
+	gossip-conf-gnome.c.
+	
+	* src/gossip-app.c:
+	* src/gossip-chat-view.c:
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-notify.c:
+	* src/gossip-preferences.c:
+	* src/gossip-private-chat.c:
+	* src/gossip-sound.c:
+	* src/gossip-spell.c:
+	* src/gossip-theme-manager.c:
+	* src/gossip-vcard-dialog.c: Move all the direct gconf use to
+	gossip-conf.
+	- Also remove the old unused accounts toolbar code.
+
+	* src/gossip-log.c: Remove the old unused log transformation code.
+
+	* protocols/jabber/gossip-jabber.c (jabber_set_proxy): Use
+	gossip_conf to get the proxy settings.
+
 2006-07-18  Francisco Javier F. Serrador  <serrador@openshine.com>
 
 	* src/gossip-about-dialog.c: Updated FSF snail mail address on

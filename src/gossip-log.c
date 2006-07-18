@@ -150,11 +150,6 @@ static gboolean        log_set_name                            (GossipAccount   
 static gboolean        log_set_own_name                        (GossipAccount   *account,
 								GossipContact   *contact);
 
-#ifdef DEPRECATED 
-static gboolean        log_transform                           (const gchar     *infile,
-							        gint             fd);
-static void            log_show                                (GossipLog       *log);
-#endif
 
 static GHashTable *contact_files = NULL;
 static GHashTable *message_handlers = NULL;
@@ -956,127 +951,6 @@ log_set_own_name (GossipAccount *account,
 	return ok;
 }
 
-#ifdef DEPRECATED
-
-static gboolean
-log_transform (const gchar *infile, 
-	       gint         fd)
-{
-        xsltStylesheet  *stylesheet;
-        xmlDoc          *xml_doc;
-        xmlDoc          *html_doc;
-	gchar           *title;
-	const gchar     *params[6];
-
-	/* Setup libxml. */
-	xmlSubstituteEntitiesDefault (1);
-	xmlLoadExtDtdDefaultValue = 1;
-	exsltRegisterAll ();
-
-        stylesheet = xsltParseStylesheetFile ((const xmlChar *)STYLESHEETDIR "/gossip-log.xsl");
-	if (!stylesheet) {
-		return FALSE;
-	}
-
-        xml_doc = xmlParseFile (infile);
-	if (!xml_doc) {
-		return FALSE;
-	}
-
-	title = g_strconcat ("\"", _("Conversation Log"), "\"", NULL);
-
-	/* Set params to be passed to stylesheet. */
-	params[0] = "title";
-	params[1] = title;
-        params[2] = NULL;
-
-        html_doc = xsltApplyStylesheet (stylesheet, xml_doc, params);
-	if (!html_doc) {
-		xmlFreeDoc (xml_doc);
-		return FALSE;
-	}
-
-        xmlFreeDoc (xml_doc);
-
-	xsltSaveResultToFd (fd, html_doc, stylesheet);
-
-	xsltFreeStylesheet (stylesheet);
-        xmlFreeDoc (html_doc);
-
-	g_free (title);
-
-	return TRUE;
-}
-
-static void
-log_show (GossipLog *log)
-{
-	GossipLogPriv  *priv;
-#ifdef USE_GNOMEVFS_FOR_URL
-	GnomeVFSResult  result;
-#endif
-	gchar          *filename = NULL;
-	gchar          *outfile;
-	gchar          *url;
-	FILE           *file;
-	gint            fd;
-
-	priv = GET_PRIV (log);
-
-	if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
-		file = g_fopen (priv->filename, "w+");
-		if (file) {
-			g_fprintf (file, LOG_HEADER LOG_FOOTER);
-			fclose (file);
-		}
-	}
-
-	if (!g_file_test (priv->filename, G_FILE_TEST_EXISTS)) {
-		return;
-	}
-
-	fd = g_file_open_tmp ("gossip-log-XXXXXX", &outfile, NULL);
-	if (fd == -1) {
-		return;
-	}
-
-	gossip_debug (DEBUG_DOMAIN, "Using temporary file:'%s'", outfile);
-
-	if (!log_transform (priv->filename, fd)) {
-		g_warning ("Couldn't transform log file:'%s'", outfile);
-		g_free (outfile);
-		return;
-	}
-
-	close (fd);
-
-	filename = g_strconcat (outfile, ".html", NULL);
-	if (rename (outfile, filename) == -1) {
-		g_warning ("Couldn't rename temporary log file:'%s' to '%s'", 
-			   outfile, filename);
-		g_free (outfile);
-		g_free (filename);
-		return;
-	}
-
-	g_free (outfile);
-
-	url = g_strconcat (LOG_FILENAME_PREFIX, filename, NULL);
-
-#ifdef USE_GNOMEVFS_FOR_URL
-	result = gnome_vfs_url_show (url);
-	if (result == GNOME_VFS_OK) {
-		g_warning ("Couldn't show log file:'%s'", filename);
-	}
-#else
-	gnome_url_show (url, NULL);
-#endif
-
-	g_free (url);
-	g_free (filename);
-}
-
-#endif /* DEPRECATED */
 
 GList *
 gossip_log_get_contacts (GossipAccount *account)
@@ -1655,32 +1529,6 @@ gossip_log_get_last_for_contact (GossipContact *contact)
 	return messages;
 }
 
-#ifdef DEPRECATED
-void
-gossip_log_show_for_contact (GtkWidget     *window, 
-			     GossipContact *contact)
-{
-	GdkCursor *cursor;
-	GossipLog *log;
-
-	cursor = gdk_cursor_new (GDK_WATCH);
-
-	gdk_window_set_cursor (window->window, cursor);
-	gdk_cursor_unref (cursor);
-
-	/* Let the UI redraw before we start the slow transformation. */
-	while (gtk_events_pending ()) {
-		gtk_main_iteration ();
-	}
-
-	log = gossip_log_lookup_for_contact (contact);
-	
-	log_show (log);
-
-	gdk_window_set_cursor (window->window, NULL);
-}
-#endif /* DEPRECATED */
-
 /*
  * Chatroom functions 
  */
@@ -2002,16 +1850,14 @@ gossip_log_exists_for_chatroom (GossipChatroom *chatroom)
 	return exists;
 }
 
-#ifdef DEPRECATED 
-void
-gossip_log_show_for_chatroom (GtkWidget      *window,
-			      GossipChatroom *chatroom)
+/* FIXME: Use this code for searching since that is really slow. */
+#if 0
+static void
+log_foo (GtkWidget *window)
 {
 	GdkCursor *cursor;
-	GossipLog *log;
 
 	cursor = gdk_cursor_new (GDK_WATCH);
-
 	gdk_window_set_cursor (window->window, cursor);
 	gdk_cursor_unref (cursor);
 
@@ -2020,13 +1866,11 @@ gossip_log_show_for_chatroom (GtkWidget      *window,
 		gtk_main_iteration ();
 	}
 
-	log = gossip_log_lookup_for_chatroom (chatroom);
-	
-	log_show (log);
+	// ...
 
 	gdk_window_set_cursor (window->window, NULL);	
 }
-#endif /* DEPRECATED */
+#endif
 
 /*
  * Searching

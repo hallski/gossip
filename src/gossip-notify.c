@@ -24,6 +24,7 @@
 #include <libnotify/notify.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-app.h"
 #include "gossip-contact-info-dialog.h"
@@ -157,9 +158,11 @@ notify_contact_online (GossipContact *contact)
 	GError             *error = NULL;
 	gboolean            show_popup;
 
-	show_popup = gconf_client_get_bool (gossip_app_get_gconf_client (),
-					    GCONF_POPUPS_WHEN_AVAILABLE,
-					    NULL);
+	if (!gossip_conf_get_bool (gossip_conf_get (),
+				   GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
+				   &show_popup)) {
+		return;
+	}
 
 	if (!show_popup) {
 		return;

@@ -22,9 +22,9 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
+#include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
@@ -315,7 +315,6 @@ static JabberData *     jabber_data_new                     (GossipJabber       
 							     gpointer                 user_data);
 static void             jabber_data_free                    (JabberData              *data);
 
-extern GConfClient *gconf_client;
 
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CHATROOM_PROVIDER,
@@ -2165,63 +2164,41 @@ jabber_get_version (GossipProtocol         *protocol,
 						   error);
 }
 
-#define CONF_HTTP_PROXY_PREFIX "/system/http_proxy"
-
 void
 jabber_set_proxy (LmConnection *conn)
 {
-	gboolean     use_http_proxy;
-	GConfClient *gconf_client;
+	gboolean  use_http_proxy;
+	gchar    *host;
+	gint      port;
+	gboolean  use_auth;
+	gchar    *username;
+	gchar    *password;
 
-	gconf_client = gconf_client_get_default ();
-	
-	use_http_proxy = gconf_client_get_bool (gconf_client,
-						CONF_HTTP_PROXY_PREFIX "/use_http_proxy",
-						NULL);
+	gossip_conf_get_http_proxy (gossip_conf_get (),
+				    &use_http_proxy,
+				    &host,
+				    &port,
+				    &use_auth,
+				    &username,
+				    &password);
 	if (use_http_proxy) {
 		LmProxy  *proxy;
-		gchar    *host;
-		gint      port;
-		gboolean  use_auth;
 		
-		host = gconf_client_get_string (gconf_client,
-						CONF_HTTP_PROXY_PREFIX "/host",
-						NULL);
-
-		port = gconf_client_get_int (gconf_client,
-					     CONF_HTTP_PROXY_PREFIX "/port",
-					     NULL);
-
 		proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
 						  host, (guint) port);
-		g_free (host);
-
 		lm_connection_set_proxy (conn, proxy);
 
-		use_auth = gconf_client_get_bool (gconf_client,
-						  CONF_HTTP_PROXY_PREFIX "/use_authentication",
-						  NULL);
 		if (use_auth) {
-			gchar *username;
-			gchar *password;
-
-			username = gconf_client_get_string (gconf_client,
-							    CONF_HTTP_PROXY_PREFIX "/authentication_user",
-							    NULL);
-			password = gconf_client_get_string (gconf_client,
-							    CONF_HTTP_PROXY_PREFIX "/authentication_password",
-							    NULL);
 			lm_proxy_set_username (proxy, username);
 			lm_proxy_set_password (proxy, password);
-
-			g_free (username);
-			g_free (password);
 		}
 		
 		lm_proxy_unref (proxy);
 	}
 
-	g_object_unref (gconf_client);
+	g_free (host);
+	g_free (username);
+	g_free (password);
 }
 
 static gboolean

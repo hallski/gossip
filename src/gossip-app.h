@@ -21,9 +21,7 @@
 #ifndef __GOSSIP_APP_H__
 #define __GOSSIP_APP_H__
 
-#include <glib-object.h>
 #include <gtk/gtkwidget.h>
-#include <gconf/gconf-client.h>
 
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-chatroom-manager.h>
@@ -68,7 +66,6 @@ void                   gossip_app_set_not_away         (void);
 void                   gossip_app_set_presence         (GossipPresenceState   state,
 							const gchar          *status);
 GtkWidget *            gossip_app_get_window           (void);
-GConfClient *          gossip_app_get_gconf_client     (void);
 GossipSession *        gossip_app_get_session          (void);
 GossipChatroomManager *gossip_app_get_chatroom_manager (void);
 GossipChatManager *    gossip_app_get_chat_manager     (void);

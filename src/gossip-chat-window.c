@@ -21,14 +21,13 @@
 
 #include <config.h>
 #include <string.h>
-
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
-#include <gconf/gconf-client.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-protocol.h>
 
 #include "gossip-add-contact-window.h"
@@ -424,15 +423,13 @@ gossip_chat_window_init (GossipChatWindow *window)
 GossipChatWindow *
 gossip_chat_window_get_default (void)
 {
-	GList       *l;
-        GConfClient *gconf_client;
-        gboolean     separate_windows;
-        
-	gconf_client = gossip_app_get_gconf_client ();
-        separate_windows = gconf_client_get_bool (gconf_client,
-                                                  GCONF_UI_SEPARATE_CHAT_WINDOWS,
-                                                  NULL);
+	GList    *l;
+        gboolean  separate_windows = TRUE;
 
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
+			      &separate_windows);
+	
         if (separate_windows) {
                 /* Always create a new window */
                 return NULL;

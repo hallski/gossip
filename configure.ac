@@ -27,26 +27,37 @@ AC_PATH_PROG(DBUSBINDINGTOOL, dbus-binding-tool)
 
 IDT_COMPILE_WARNINGS
 
+LIBXML_REQUIRED=2.6.16
+GLIB_REQUIRED=2.8.0
+GTK_REQUIRED=2.8.0
+LIBGLADE_REQUIRED=2.0.0
+LOUDMOUTH_REQUIRED=1.0
+GCONF_REQUIRED=1.2.0
+LIBGNOME_REQUIRED=2.0.0
+LIBGNOMEVFS_REQUIRED=2.0.0
+DESKTOP_FILE_UTILS_REQUIRED=0.2.90
+LIBPANELAPPLET_REQUIRED=2.8.0
+
 
 dnl -----------------------------------------------------------
-dnl Library Dependencies, uses pkg-config to detect correct version, etc
+dnl Backend (currently GNOME or Cocoa)
 dnl -----------------------------------------------------------
+AC_ARG_WITH(backend,
+	    AS_HELP_STRING([--with-backend=@<:@gnome|cocoa@:>@], 
+			   [Which backend to use [[default=gnome]]]),
+	    ac_backend=$withval,
+	    ac_backend=gnome)
 
-dnl AC_SUBST is required to ensure that the versions number end up into the
-dnl spec file.
+if test "x$ac_backend" = xgnome; then
+    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
+elif test "x$ac_backend" = xcocoa; then
+    AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
+else
+    AC_MSG_ERROR([Incorrect backend])
+fi
 
-AC_SUBST(LIBXML_REQUIRED, 2.6.16)
-AC_SUBST(LIBXSLT_REQUIRED, 1.0.0)
-AC_SUBST(LIBEXSLT_REQUIRED, 0.8.0)
-AC_SUBST(GLIB_REQUIRED, 2.8.0)
-AC_SUBST(GTK_REQUIRED, 2.8.0)
-AC_SUBST(LIBGLADE_REQUIRED, 2.0.0)
-AC_SUBST(LOUDMOUTH_REQUIRED, 1.0)
-AC_SUBST(GCONF_REQUIRED, 1.2.0)
-AC_SUBST(LIBGNOME_REQUIRED, 2.0.0)
-AC_SUBST(LIBGNOMEVFS_REQUIRED, 2.0.0)
-AC_SUBST(DESKTOP_FILE_UTILS_REQUIRED. 0.2.90)
-AC_SUBST(LIBPANELAPPLET_REQUIRED, 2.8.0)
+AM_CONDITIONAL(HAVE_GNOME, test x$ac_backend = xgnome)
+AM_CONDITIONAL(HAVE_COCOA, test x$ac_backend = xcocoa)
 
 
 dnl -----------------------------------------------------------
@@ -58,7 +69,7 @@ AC_ARG_ENABLE(dbus,
               enable_dbus=auto)
 
 if test "x$enable_dbus" != "xno"; then
-   dbus_pkgconfig_tmp="dbus-1 >= 0.31 dbus-glib-1"
+   dbus_pkgconfig_tmp="dbus-1 >= 0.60 dbus-glib-1"
    PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
    if test x$have_dbus = xyes; then
       AC_DEFINE(HAVE_DBUS, 1, [d-bus support])
@@ -170,14 +181,11 @@ PKG_CHECK_MODULES(LIBGOSSIP,
 PKG_CHECK_MODULES(GOSSIP,
 [
    libxml-2.0 >= $LIBXML_REQUIRED
-   libxslt >= $LIBXSLT_REQUIRED
-   libexslt >= $LIBEXSLT_REQUIRED
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
    gtk+-2.0 >= $GTK_REQUIRED
    libglade-2.0 >= $LIBGLADE_REQUIRED 
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
-   gconf-2.0 >= $GCONF_REQUIRED
    libgnomeui-2.0 >= $LIBGNOME_REQUIRED
    $iso_codes_pkgconfig
    $dbus_pkgconfig
@@ -190,7 +198,6 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
-   gconf-2.0 >= $GCONF_REQUIRED
    gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
    libxml-2.0 >= $LIBXML_REQUIRED
 ])
@@ -333,12 +340,11 @@ AC_OUTPUT([
 ])
 
 echo
-echo "Gossip prefix: $prefix"
-echo 
-echo "DBUS         : $have_dbus"
-echo "Galago       : $have_galago"
-echo "ASpell       : $have_aspell"
-echo "Notify       : $have_libnotify"
-echo
-echo "Peekaboo     : $have_peekaboo (requires DBUS & Galago)"
+echo "Prefix:   $prefix"
+echo "Backend:  $ac_backend"
+echo "DBUS:     $have_dbus"
+echo "Galago:   $have_galago"
+echo "ASpell:   $have_aspell"
+echo "Notify:   $have_libnotify"
+echo "Peekaboo: $have_peekaboo (requires DBUS & Galago)"
 echo

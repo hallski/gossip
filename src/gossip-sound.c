@@ -24,6 +24,7 @@
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-preferences.h"
 #include "gossip-app.h"
@@ -165,21 +166,21 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 
-	enabled = gconf_client_get_bool (gossip_app_get_gconf_client (),
-					 GCONF_SOUNDS_FOR_MESSAGES,
-					 NULL);
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
+			       &enabled);
 	if (!enabled) {
 		gossip_debug (DEBUG_DOMAIN, "Preferences have sound disabled.");
 		return;
 	}
 
-	sounds_when_busy = gconf_client_get_bool (gossip_app_get_gconf_client (),
-						  GCONF_SOUNDS_WHEN_BUSY,
-						  NULL);
-	sounds_when_away = gconf_client_get_bool (gossip_app_get_gconf_client (),
-						  GCONF_SOUNDS_WHEN_AWAY,
-						  NULL);
-
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
+			       &sounds_when_busy);
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
+			       &sounds_when_away);
+	
         p = gossip_session_get_presence (gossip_app_get_session ());
         state = gossip_presence_get_state (p);
 

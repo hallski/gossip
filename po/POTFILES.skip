@@ -3,7 +3,6 @@
 gossip.desktop.in
 ui/transports.glade
 
-protocols/jabber/gossip-jabber-chatrooms.c
 src/eggtrayicon.c
 src/gossip-tray.c
 src/gossip-transport-accounts-window.c

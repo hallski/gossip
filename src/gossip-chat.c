@@ -26,10 +26,10 @@
 #include <stdlib.h>
 
 #include <gtk/gtk.h>
-#include <gconf/gconf-client.h>
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 
 #include "gossip-app.h"
 #include "gossip-chat.h"
@@ -218,14 +218,14 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
 	GossipChatPriv *priv;
 	GtkTextIter     start, end;
 	gchar          *str;
-	gboolean        spell_checker;
+	gboolean        spell_checker = FALSE;
 
 	priv = GET_PRIV (chat);
 
- 	spell_checker = gconf_client_get_bool (gossip_app_get_gconf_client (), 
-					       "/apps/gossip/conversation/enable_spell_checker", 
-					       NULL); 
-
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED, 
+			      &spell_checker); 
+	
 	if (chat->is_first_char) {
 		GtkRequisition  req;
 		gint            window_height;

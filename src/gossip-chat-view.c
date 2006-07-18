@@ -37,6 +37,7 @@
 #endif
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-time.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-session.h>
@@ -194,15 +195,12 @@ static gboolean chat_view_drag_motion                (GtkWidget                *
 static void     chat_view_size_allocate              (GtkWidget                *widget,
 						      GtkAllocation            *alloc);
 static void     chat_view_setup_tags                 (GossipChatView           *view);
-static void     chat_view_system_font_update         (GossipChatView           *view,
-						      GConfClient              *gconf_client);
-static void     chat_view_system_font_notify_cb      (GConfClient              *gconf_client,
-						      guint                     id,
-						      GConfEntry               *entry,
+static void     chat_view_system_font_update         (GossipChatView           *view);
+static void     chat_view_notify_system_font_cb      (GossipConf               *conf,
+						      const gchar              *key,
 						      gpointer                  user_data);
-static void     chat_view_show_avatars_notify_cb     (GConfClient              *gconf_client,
-						      guint                     id,
-						      GConfEntry               *entry,
+static void     chat_view_notify_show_avatars_cb     (GossipConf               *conf,
+						      const gchar              *key,
 						      gpointer                  user_data);
 static void     chat_view_populate_popup             (GossipChatView           *view,
 						      GtkMenu                  *menu,
@@ -283,8 +281,8 @@ static void
 gossip_chat_view_init (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
-	GConfClient        *gconf_client;
-
+	gboolean            show_avatars;
+		
 	priv = GET_PRIV (view);
 
 	priv->buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
@@ -300,31 +298,31 @@ gossip_chat_view_init (GossipChatView *view)
 		      "cursor-visible", FALSE,
 		      NULL);
 
-	gconf_client = gossip_app_get_gconf_client ();
-	
 	priv->notify_system_fonts_id = 
-		gconf_client_notify_add (gconf_client,
+		gossip_conf_notify_add (gossip_conf_get (),
 					 "/desktop/gnome/interface/document_font_name",
-					 chat_view_system_font_notify_cb,
-					 view, NULL, NULL);
-	chat_view_system_font_update (view, gconf_client);
+					 chat_view_notify_system_font_cb,
+					 view);
+	chat_view_system_font_update (view);
 	
 	priv->notify_show_avatars_id = 
-		gconf_client_notify_add (gconf_client,
-					 GCONF_UI_SHOW_AVATARS,
-					 chat_view_show_avatars_notify_cb,
-					 view, NULL, NULL);
+		gossip_conf_notify_add (gossip_conf_get (),
+					 GOSSIP_PREFS_UI_SHOW_AVATARS,
+					 chat_view_notify_show_avatars_cb,
+					 view);
 
 	chat_view_setup_tags (view);
 
 	gossip_theme_manager_apply (gossip_theme_manager_get (), view);
-	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
-						  view,
-						  gconf_client_get_bool (
-							  gconf_client,
-							  GCONF_UI_SHOW_AVATARS,
-							  NULL));
 
+	show_avatars = FALSE;
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_UI_SHOW_AVATARS,
+			       &show_avatars);
+	
+	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
+						  view, show_avatars);
+	
 	g_signal_connect (view,
 			  "populate-popup",
 			  G_CALLBACK (chat_view_populate_popup),
@@ -342,14 +340,12 @@ chat_view_finalize (GObject *object)
 {
 	GossipChatView     *view;
 	GossipChatViewPriv *priv;
-	GConfClient        *gconf_client;
 
 	view = GOSSIP_CHAT_VIEW (object);
 	priv = GET_PRIV (view);
 
-	gconf_client = gossip_app_get_gconf_client ();
-	gconf_client_notify_remove (gconf_client, priv->notify_system_fonts_id);
-	gconf_client_notify_remove (gconf_client, priv->notify_show_avatars_id);
+	gossip_conf_notify_remove (gossip_conf_get (), priv->notify_system_fonts_id);
+	gossip_conf_notify_remove (gossip_conf_get (), priv->notify_show_avatars_id);
 
 	if (priv->last_contact) {
 		g_object_unref (priv->last_contact);
@@ -423,17 +419,14 @@ chat_view_setup_tags (GossipChatView *view)
 }
 
 static void
-chat_view_system_font_update (GossipChatView *view,
-			      GConfClient    *gconf_client)
+chat_view_system_font_update (GossipChatView *view)
 {
 	PangoFontDescription *font_description = NULL;
 	gchar                *font_name;
 
-	font_name = gconf_client_get_string (gconf_client, 
-					     "/desktop/gnome/interface/document_font_name", 
-					     NULL);
-	
-	if (font_name) {
+	if (gossip_conf_get_string (gossip_conf_get (),
+				     "/desktop/gnome/interface/document_font_name",
+				     &font_name) && font_name) {
 		font_description = pango_font_description_from_string (font_name);
 		g_free (font_name);
 	} else {
@@ -448,46 +441,45 @@ chat_view_system_font_update (GossipChatView *view,
 }
 
 static void
-chat_view_system_font_notify_cb (GConfClient    *gconf_client,
-				 guint           id,
-				 GConfEntry     *entry,
-				 gpointer        user_data)
+chat_view_notify_system_font_cb (GossipConf  *conf,
+				 const gchar *key,
+				 gpointer     user_data)
 {
 	GossipChatView *view;
+	gboolean        show_avatars = FALSE;
 
 	view = user_data;
-	chat_view_system_font_update (view, gconf_client);
+
+	chat_view_system_font_update (view);
 	
 	/* Ugly, again, to adjust the vertical position of the nick... Will fix
 	 * this when reworking the theme manager so that view register
 	 * themselves with it instead of the other way around.
 	 */
+	gossip_conf_get_bool (conf,
+			       GOSSIP_PREFS_UI_SHOW_AVATARS,
+			       &show_avatars);
+	
 	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
-						  view,
-						  gconf_client_get_bool (
-							  gconf_client,
-							  GCONF_UI_SHOW_AVATARS,
-							  NULL));
+						  view, show_avatars);
 }
 
 static void
-chat_view_show_avatars_notify_cb (GConfClient    *gconf_client,
-				  guint           id,
-				  GConfEntry     *entry,
-				  gpointer        user_data)
+chat_view_notify_show_avatars_cb (GossipConf  *conf,
+				  const gchar *key,
+				  gpointer     user_data)
 {
 	GossipChatView     *view;
 	GossipChatViewPriv *priv;
-	GConfValue         *value;
+	gboolean            show_avatars = FALSE;
 
 	view = user_data;
 	priv = GET_PRIV (view);
 
-	value = gconf_entry_get_value (entry);
+	gossip_conf_get_bool (conf, key, &show_avatars);
 	
 	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
-						  view,
-						  gconf_value_get_bool (value));
+						  view, show_avatars);
 }
 
 static void
@@ -730,12 +722,11 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 	gint         i;
 	gint         match;
 	gint         submatch;
-	gboolean     use_smileys;
+	gboolean     use_smileys = FALSE;
 
-	use_smileys = gconf_client_get_bool (
-		gossip_app_get_gconf_client (),
-		"/apps/gossip/conversation/graphical_smileys",
-		NULL);
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
+			       &use_smileys);
 
 	if (!use_smileys) {
 		gtk_text_buffer_insert (buf, iter, str, -1);
@@ -1479,7 +1470,8 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 			    GossipChatView     *view)
 {
 	GossipChatViewPriv *priv;
-	
+	gboolean            show_avatars = FALSE;
+
 	priv = GET_PRIV (view);
 	
 	priv->last_block_type = BLOCK_TYPE_NONE;
@@ -1489,12 +1481,10 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 	/* Needed for now to update the "rise" property of the names to get it
 	 * vertically centered.
 	 */
-	gossip_theme_manager_update_show_avatars (manager,
-						  view,
-						  gconf_client_get_bool (
-							  gossip_app_get_gconf_client (),
-							  GCONF_UI_SHOW_AVATARS,
-							  NULL));
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_UI_SHOW_AVATARS,
+			       &show_avatars);
+	gossip_theme_manager_update_show_avatars (manager, view, show_avatars);
 }
 
 GossipChatView *

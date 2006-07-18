@@ -8,6 +8,13 @@ AM_CPPFLAGS =                                           \
 
 noinst_LTLIBRARIES = libgossip.la
 
+if HAVE_GNOME
+  gossip_conf_impl = gossip-conf-gnome.c
+endif
+if HAVE_COCOA
+  gossip_conf_impl = gossip-conf-cocoa.c
+endif
+
 libgossip_la_SOURCES =             			\
 	gossip-account.c           			\
 	gossip-account.h           			\
@@ -34,6 +41,8 @@ libgossip_la_SOURCES =             			\
 	gossip-ft-provider.h 				\
 	gossip-message.c           			\
 	gossip-message.h           			\
+	$(gossip_conf_impl)				\
+	gossip-conf.h          				\
 	gossip-presence.c          			\
 	gossip-presence.h          			\
 	gossip-protocol.c          			\

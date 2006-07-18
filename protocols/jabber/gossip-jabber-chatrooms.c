@@ -21,7 +21,6 @@
 #include <config.h>
 #include <stdlib.h>
 #include <string.h>
-#include <glib/gi18n.h>
 
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-debug.h>
