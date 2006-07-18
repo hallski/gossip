@@ -1,3 +1,8 @@
+2006-07-18  Francisco Javier F. Serrador  <serrador@openshine.com>
+
+	* src/gossip-about-dialog.c: Updated FSF snail mail address on
+	license []
+
 2006-07-17  Richard Hult  <richard@imendio.com>
 
 	* ui/chat.glade:
