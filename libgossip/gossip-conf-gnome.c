@@ -26,7 +26,7 @@
 
 #define GOSSIP_CONF_ROOT       "/apps/gossip"
 #define HTTP_PROXY_ROOT        "/system/http_proxy"
-#define DESKTOP_INTERFACE_ROOT "/desktop/gnome/interface/"
+#define DESKTOP_INTERFACE_ROOT "/desktop/gnome/interface"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONF, GossipConfPriv))
 
@@ -261,10 +261,11 @@ gossip_conf_set_string_list (GossipConf  *conf,
 
 	priv = GET_PRIV (conf);
 
-	return gconf_client_set_string_list (priv->gconf_client,
-					     key,
-					     value,
-					     NULL);
+	return gconf_client_set_list (priv->gconf_client,
+				      key,
+				      GCONF_VALUE_STRING,
+				      value,
+				      NULL);
 }
 
 gboolean
@@ -281,9 +282,10 @@ gossip_conf_get_string_list (GossipConf   *conf,
 
 	priv = GET_PRIV (conf);
 
-	*value = gconf_client_get_string_list (priv->gconf_client,
-					       key,
-					       &error);
+	*value = gconf_client_get_list (priv->gconf_client,
+					key,
+					GCONF_VALUE_STRING,
+					&error);
 	if (error) {
 		g_error_free (error);
 		return FALSE;
