@@ -41,40 +41,46 @@ typedef struct {
 typedef void (*GossipConfNotifyFunc) (GossipConf *conf, const gchar *key, gpointer user_data);
 
 
-GType       gossip_conf_get_type       (void) G_GNUC_CONST;
-GossipConf *gossip_conf_get            (void);
-void        gossip_conf_shutdown       (void);
-guint       gossip_conf_notify_add     (GossipConf            *conf,
-					const gchar           *key,
-					GossipConfNotifyFunc   func,
-					gpointer               data);
-gboolean    gossip_conf_notify_remove  (GossipConf            *conf,
-					guint                  id);
-gboolean    gossip_conf_set_int        (GossipConf            *conf,
-					const gchar           *key,
-					gint                   value);
-gboolean    gossip_conf_get_int        (GossipConf            *conf,
-					const gchar           *key,
-					gint                  *value);
-gboolean    gossip_conf_set_bool       (GossipConf            *conf,
-					const gchar           *key,
-					gboolean               value);
-gboolean    gossip_conf_get_bool       (GossipConf            *conf,
-					const gchar           *key,
-					gboolean              *value);
-gboolean    gossip_conf_set_string     (GossipConf            *conf,
-					const gchar           *key,
-					const gchar           *value);
-gboolean    gossip_conf_get_string     (GossipConf            *conf,
-					const gchar           *key,
-					gchar                **value);
-gboolean    gossip_conf_get_http_proxy (GossipConf            *conf,
-					gboolean              *use_http_proxy,
-					gchar                **host,
-					gint                  *port,
-					gboolean              *use_auth,
-					gchar                **username,
-					gchar                **password);
+GType       gossip_conf_get_type        (void) G_GNUC_CONST;
+GossipConf *gossip_conf_get             (void);
+void        gossip_conf_shutdown        (void);
+guint       gossip_conf_notify_add      (GossipConf            *conf,
+					 const gchar           *key,
+					 GossipConfNotifyFunc   func,
+					 gpointer               data);
+gboolean    gossip_conf_notify_remove   (GossipConf            *conf,
+					 guint                  id);
+gboolean    gossip_conf_set_int         (GossipConf            *conf,
+					 const gchar           *key,
+					 gint                   value);
+gboolean    gossip_conf_get_int         (GossipConf            *conf,
+					 const gchar           *key,
+					 gint                  *value);
+gboolean    gossip_conf_set_bool        (GossipConf            *conf,
+					 const gchar           *key,
+					 gboolean               value);
+gboolean    gossip_conf_get_bool        (GossipConf            *conf,
+					 const gchar           *key,
+					 gboolean              *value);
+gboolean    gossip_conf_set_string      (GossipConf            *conf,
+					 const gchar           *key,
+					 const gchar           *value);
+gboolean    gossip_conf_get_string      (GossipConf            *conf,
+					 const gchar           *key,
+					 gchar                **value);
+gboolean    gossip_conf_set_string_list (GossipConf            *conf,
+					 const gchar           *key,
+					 GSList                *value);
+gboolean    gossip_conf_get_string_list (GossipConf            *conf,
+					 const gchar           *key,
+					 GSList              **value);
+gboolean    gossip_conf_get_http_proxy  (GossipConf            *conf,
+					 gboolean              *use_http_proxy,
+					 gchar                **host,
+					 gint                  *port,
+					 gboolean              *use_auth,
+					 gchar                **username,
+					 gchar                **password);
 
 #endif /* __GOSSIP_CONF_H__ */
 
