@@ -105,4 +105,6 @@ gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
 gboolean   gossip_window_get_is_visible             (GtkWindow           *window);
 void       gossip_window_present                    (GtkWindow           *window);
 
+void       gossip_url_show                          (const char          *url);
+
 #endif /*  __GOSSIP_UI_UTILS_H__ */
