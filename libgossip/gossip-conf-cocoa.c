@@ -18,6 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* TODO: notifications, string list, org.gnome.gossip domain. */
+
 #include <config.h>
 #include <string.h>
 #include <Cocoa/Cocoa.h>
@@ -109,14 +111,8 @@ gossip_conf_init (GossipConf *conf)
 		@"NO", @GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
 		nil];
 
-	/* FIXME: Should have org.gnome.gossip... needs a bundle I think. */
-	[priv->defaults setPersistentDomain: dict forName: @"gossip"];
-
-	/* Only setup defaults the first time we're launched. */
-	if ([priv->defaults stringForKey: @GOSSIP_PREFS_UI_AVATAR_DIRECTORY] == nil) {
-		[priv->defaults registerDefaults: dict];
-		[priv->defaults synchronize];
-	}
+	/* Setup defaults. FIXME: Can we do this only when needed? */
+	[priv->defaults registerDefaults: dict];
 
 	POOL_RELEASE;
 }
@@ -202,6 +198,8 @@ gossip_conf_get_int (GossipConf  *conf,
 	string = [NSString stringWithUTF8String: key];
 	*value = [priv->defaults integerForKey: string];
 
+	[priv->defaults synchronize];
+	
 	POOL_RELEASE;
 	
 	return TRUE;
@@ -271,6 +269,8 @@ gossip_conf_set_string (GossipConf  *conf,
 	nsvalue = [NSString stringWithUTF8String: value];
 	[priv->defaults setObject: nsvalue forKey: string];
 
+	[priv->defaults synchronize];
+	
 	POOL_RELEASE;
 	
 	return TRUE;
@@ -451,4 +451,3 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 	return TRUE;
 }
 
-// TODO: persistance, notifications, string list
