@@ -1,5 +1,13 @@
 2006-07-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c (chat_window_configure_event_cb)
+	(chat_window_save_geometry_timeout_cb): Use 
+	gtk_window_get_size/position, not the configure event values, since
+	we need to take the window frame in consideration. Fixes saving
+	chat window positions.
+
+2006-07-19  Richard Hult  <richard@imendio.com>
+
 	* libgossip/gossip-conf-cocoa.c (gossip_conf_init): Setup defaults.
 
 	* src/gossip-preferences.c: Fixup getting NULL strings.

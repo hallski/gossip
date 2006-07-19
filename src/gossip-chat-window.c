@@ -199,12 +199,7 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_tabs_right;
 	GtkWidget   *menu_tabs_detach;
 
-	/* Geometry information */
 	guint        save_geometry_id;
-	gint         last_x;
-	gint         last_y;
-	gint         last_w;
-	gint         last_h;
 };
 
 static GList *chat_windows = NULL;
@@ -1004,12 +999,14 @@ static gboolean
 chat_window_save_geometry_timeout_cb (GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
+	gint                  x, y, w, h;
 
 	priv = GET_PRIV (window);
 
-	gossip_chat_save_geometry (priv->current_chat, 
-				   priv->last_x, priv->last_y, 
-				   priv->last_w, priv->last_h);
+	gtk_window_get_size (GTK_WINDOW (priv->dialog), &w, &h);
+	gtk_window_get_position (GTK_WINDOW (priv->dialog), &x, &y);     
+
+	gossip_chat_save_geometry (priv->current_chat, x, y, w, h);
 
 	priv->save_geometry_id = 0;
 
@@ -1025,25 +1022,19 @@ chat_window_configure_event_cb (GtkWidget         *widget,
 
 	priv = GET_PRIV (window);
 
-	/* Only save geometry information if there is ONE chat visible */
+	/* Only save geometry information if there is ONE chat visible. */
 	if (g_list_length (priv->chats) > 1) {
 		return FALSE;
 	}
 
 	if (priv->save_geometry_id != 0) {
 		g_source_remove (priv->save_geometry_id);
-		priv->save_geometry_id = 0;
 	}
 
 	priv->save_geometry_id = 
 		g_timeout_add (500,
 			       (GSourceFunc) chat_window_save_geometry_timeout_cb,
 			       window);
-
-	priv->last_x = event->x;
-	priv->last_y = event->y;
-	priv->last_w = event->width;
-	priv->last_h = event->height;
 
 	return FALSE;
 }
@@ -1712,7 +1703,7 @@ chat_window_set_urgency_hint (GossipChatWindow *window,
 		}
 		return;
 	}	
-	
+
 	/* Add a new hint and renew any exising timeout or add a new one. */
 	if (priv->urgency_timeout_id) {
 		g_source_remove (priv->urgency_timeout_id);
