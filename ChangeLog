@@ -1,5 +1,8 @@
 2006-07-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-ui-utils.c: Include the gnome includes when
+	appropriate.
+
 	* src/gossip-about-dialog.c (about_dialog_activate_link_cb):
 	* src/gossip-chat-view.c (chat_view_url_event_cb)
 	(chat_view_open_address_cb): Use gossip_url_show.

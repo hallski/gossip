@@ -29,7 +29,9 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#ifdef HAVE_COCOA
+#ifdef HAVE_GNOME
+#include <libgnome/gnome-url.h>
+#elif defined (HAVE_COCOA)
 #include <Cocoa/Cocoa.h>
 #endif
 
@@ -44,9 +46,10 @@ struct SizeData {
 	gboolean preserve_aspect_ratio;
 };
 
-static void pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
-						 gint             width,
-						 gint             height,
+static void
+pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
+				     gint             width,
+				     gint             height,
 						 struct SizeData *data);
 
 static GladeXML *
