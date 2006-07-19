@@ -19,17 +19,11 @@
  */
 
 #include <config.h>
-
 #include <glib/gi18n.h>
 #include <gtk/gtkaboutdialog.h>
 
-#ifdef USE_GNOMEVFS_FOR_URL
-#include <libgnomevfs/gnome-vfs.h>
-#else
-#include <libgnome/gnome-url.h>
-#endif
-
 #include "gossip-about-dialog.h"
+#include "gossip-ui-utils.h"
 
 #define WEB_SITE "http://developer.imendio.com/wiki/gossip"
 
@@ -77,16 +71,7 @@ about_dialog_activate_link_cb (GtkAboutDialog *about,
 			       const gchar    *link,
 			       gpointer        data)
 {
-#ifdef USE_GNOMEVFS_FOR_URL
-	GnomeVFSResult result;
-
-	result = gnome_vfs_url_show (link);
-	if (result != GNOME_VFS_OK) {
-		g_warning ("Couldn't show URL:'%s'", link);
-	}
-#else
-	gnome_url_show (link, NULL);
-#endif
+	gossip_url_show (link);
 }
 
 void

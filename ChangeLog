@@ -1,5 +1,14 @@
 2006-07-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-about-dialog.c (about_dialog_activate_link_cb):
+	* src/gossip-chat-view.c (chat_view_url_event_cb)
+	(chat_view_open_address_cb): Use gossip_url_show.
+
+	* src/gossip-ui-utils.c (fixup_url, gossip_url_show): Move here
+	from the various places it was used before and add cocoa impl.
+
+2006-07-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-chat-window.c (chat_window_configure_event_cb)
 	(chat_window_save_geometry_timeout_cb): Use 
 	gtk_window_get_size/position, not the configure event values, since

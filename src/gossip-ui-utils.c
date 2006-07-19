@@ -29,6 +29,10 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
+#ifdef HAVE_COCOA
+#include <Cocoa/Cocoa.h>
+#endif
+
 #include "gossip-stock.h"
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
@@ -689,6 +693,7 @@ gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard)
 	GdkPixbufLoader	*loader;
 	const guchar    *avatar;
 	gsize		 len;
+	GError          *error = NULL;
 	
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
 	
@@ -699,10 +704,11 @@ gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard)
 
 	loader = gdk_pixbuf_loader_new ();
 
-	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
+	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
-			   "length:%" G_GSIZE_FORMAT " to pixbuf loader",
-			   avatar, len);
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
+			   avatar, len, error->message);
+		g_error_free (error);
 		return NULL;
 	}
 
@@ -723,6 +729,7 @@ gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 	GdkPixbufLoader	*loader;
 	const guchar	*avatar;
 	gsize		 len;
+	GError          *error = NULL;
 	
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 	
@@ -733,10 +740,11 @@ gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 
 	loader = gdk_pixbuf_loader_new ();
 
-	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
+	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
-			   "length:%" G_GSIZE_FORMAT " to pixbuf loader",
-			   avatar, len);
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
+			   avatar, len, error->message);
+		g_error_free (error);
 		return NULL;
 	}
 
@@ -800,6 +808,7 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 	GdkPixbuf        *pixbuf;
 	GdkPixbufLoader	 *loader;
 	struct SizeData   data;
+	GError           *error = NULL;
 
 	if (!avatar) {
 		return NULL;
@@ -815,10 +824,11 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb), 
 			  &data);
 
-	if (!gdk_pixbuf_loader_write (loader, avatar, len, NULL)) {
+	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
-			   "length:%" G_GSIZE_FORMAT " to pixbuf loader",
-			   avatar, len);
+			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
+			   avatar, len, error->message);
+		g_error_free (error);
 		return NULL;
 	}
 
@@ -1287,3 +1297,63 @@ gossip_text_iter_forward_search (const GtkTextIter   *iter,
 
 	return retval;
 }
+
+/* The URL opening code can't handle schemeless strings, so we try to be
+ * smart and add http if there is no scheme or doesn't look like a mail
+ * address. This should work in most cases, and let us click on strings
+ * like "www.gnome.org".
+ */
+static gchar *
+fixup_url (const gchar *url)
+{
+	gchar *real_url;
+
+	if (!g_str_has_prefix (url, "http://") &&
+	    !strstr (url, ":/") &&
+	    !strstr (url, "@")) {
+		real_url = g_strdup_printf ("http://%s", url);
+	} else {
+		real_url = g_strdup (url);
+	}
+
+	return real_url;
+}
+
+#ifdef HAVE_GNOME
+void
+gossip_url_show (const char *url)
+{
+	gchar  *real_url;
+	GError *error = NULL;
+
+	real_url = fixup_url (url);
+	gnome_url_show (real_url, &error);
+	if (error) {
+		g_warning ("Couldn't show URL:'%s'", real_url);
+		g_error_free (error);
+	}
+
+	g_free (real_url);
+}
+#elif defined(HAVE_COCOA)
+void
+gossip_url_show (const char *url)
+{
+	gchar  *real_url;
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+	real_url = fixup_url (url);
+	
+	NSString *string = [NSString stringWithUTF8String: real_url];
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:string]];
+
+	[pool release];
+	
+	g_free (real_url);
+}
+#else
+void
+gossip_url_show (const char *url)
+{
+}
+#endif
