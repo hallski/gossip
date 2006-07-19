@@ -1,3 +1,9 @@
+2006-07-19  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-conf-cocoa.c (gossip_conf_init): Setup defaults.
+
+	* src/gossip-preferences.c: Fixup getting NULL strings.
+
 2006-07-18  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Only require gconf when building with gnome.

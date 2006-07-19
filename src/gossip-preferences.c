@@ -328,15 +328,14 @@ preferences_languages_save_foreach (GtkTreeModel  *model,
 static void 
 preferences_languages_load (GossipPreferences *preferences)
 {
-	GtkTreeView    *view;
-	GtkTreeModel   *model;
-
-	gchar          *value;
-	gchar         **vlanguages;
+	GtkTreeView   *view;
+	GtkTreeModel  *model;
+	gchar         *value;
+	gchar        **vlanguages;
 
 	if (!gossip_conf_get_string (gossip_conf_get (),
 				      GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
-				      &value)) {
+				      &value) || !value) {
 		return;
 	}
 
@@ -465,7 +464,7 @@ preferences_widget_sync_string (const gchar *key, GtkWidget *widget)
 {
 	gchar *value;
 	
-	if (gossip_conf_get_string (gossip_conf_get (), key, &value)) {
+	if (gossip_conf_get_string (gossip_conf_get (), key, &value) && value) {
 		gtk_entry_set_text (GTK_ENTRY (widget), value);
 		g_free (value);
 	}
@@ -535,7 +534,7 @@ preferences_notify_string_cb (GossipConf  *conf,
 {
 	gchar *value;
 	
-	if (gossip_conf_get_string (conf, key, &value)) {
+	if (gossip_conf_get_string (conf, key, &value) && value) {
 		gtk_entry_set_text (GTK_ENTRY (user_data), value);
 		g_free (value);
 	}

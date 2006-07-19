@@ -64,10 +64,61 @@ static void
 gossip_conf_init (GossipConf *conf)
 {
 	GossipConfPriv *priv;
+	NSDictionary   *dict;
 
 	priv = GET_PRIV (conf);
 
 	priv->defaults = [NSUserDefaults standardUserDefaults];
+
+	POOL_ALLOC;
+
+	/* FIXME: We should probably share those in gossip-conf.h
+	 * instead of in the GUI, or have a way for the GUI to register
+	 * them.
+	 */
+	
+#define GOSSIP_PREFS_PATH "/apps/gossip"
+
+#define GOSSIP_PREFS_SOUNDS_FOR_MESSAGES          GOSSIP_PREFS_PATH "/notifications/sounds_for_messages"
+#define GOSSIP_PREFS_SOUNDS_WHEN_AWAY             GOSSIP_PREFS_PATH "/notifications/sounds_when_away"
+#define GOSSIP_PREFS_SOUNDS_WHEN_BUSY             GOSSIP_PREFS_PATH "/notifications/sounds_when_busy"
+#define GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE        GOSSIP_PREFS_PATH "/notifications/popups_when_available"
+#define GOSSIP_PREFS_CHAT_SHOW_SMILEYS            GOSSIP_PREFS_PATH "/conversation/graphical_smileys"
+#define GOSSIP_PREFS_CHAT_THEME                   GOSSIP_PREFS_PATH "/conversation/theme"
+#define GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES GOSSIP_PREFS_PATH "/conversation/spell_checker_languages"
+#define GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED   GOSSIP_PREFS_PATH "/conversation/enable_spell_checker"
+#define GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS     GOSSIP_PREFS_PATH "/ui/separate_chat_windows"
+#define GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN        GOSSIP_PREFS_PATH "/ui/main_window_hidden"
+#define GOSSIP_PREFS_UI_AVATAR_DIRECTORY          GOSSIP_PREFS_PATH "/ui/avatar_directory"
+#define GOSSIP_PREFS_UI_SHOW_AVATARS              GOSSIP_PREFS_PATH "/ui/show_avatars"
+#define GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE        GOSSIP_PREFS_PATH "/contacts/show_offline"
+
+	dict = [NSDictionary dictionaryWithObjectsAndKeys:
+		@"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES, 
+		@"NO", @GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
+		@"NO", @GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
+		@"NO", @GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
+		@"YES", @GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
+		@"clean", @GOSSIP_PREFS_CHAT_THEME,
+		@"", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
+		@"NO", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
+		@"NO", @GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
+		@"NO", @GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
+		@"", @GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
+		@"YES", @GOSSIP_PREFS_UI_SHOW_AVATARS,
+		@"NO", @GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
+		nil];
+
+	/* FIXME: Should have org.gnome.gossip... needs a bundle I think. */
+	[priv->defaults setPersistentDomain: dict forName: @"gossip"];
+
+	/* Only setup defaults the first time we're launched. */
+	if ([priv->defaults stringForKey: @GOSSIP_PREFS_UI_AVATAR_DIRECTORY] == nil) {
+		[priv->defaults registerDefaults: dict];
+		[priv->defaults synchronize];
+	}
+
+	POOL_RELEASE;
 }
 
 static void
@@ -77,6 +128,8 @@ conf_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
+	g_print ("finalizing conf...\n");
+	
 	/*	gconf_client_remove_dir (priv->gconf_client,
 				 GOSSIP_CONF_ROOT,
 				 NULL);
@@ -88,6 +141,8 @@ conf_finalize (GObject *object)
 				 NULL);
 	*/
 	
+	[priv->defaults synchronize];
+
 	G_OBJECT_CLASS (gossip_conf_parent_class)->finalize (object);
 }
 
@@ -168,9 +223,13 @@ gossip_conf_set_bool (GossipConf  *conf,
 
 	POOL_ALLOC;
 
+	g_print ("setting %s to %d\n", key, value);
+	
 	string = [NSString stringWithUTF8String: key];
-	[priv->defaults setBool: value forKey: string];
+	[priv->defaults setBool: (value ? YES : NO) forKey: string];
 
+	[priv->defaults synchronize];
+	
 	POOL_RELEASE;
 	 
 	return TRUE;
@@ -191,7 +250,7 @@ gossip_conf_get_bool (GossipConf  *conf,
 	POOL_ALLOC;
 	
 	string = [NSString stringWithUTF8String: key];
-	*value = [priv->defaults boolForKey: string];
+	*value = ([priv->defaults boolForKey: string] == YES ? TRUE : FALSE); 
 
 	POOL_RELEASE;
 	
@@ -242,7 +301,7 @@ gossip_conf_get_string (GossipConf   *conf,
 
 	POOL_RELEASE;
 
-	return *value != NULL;
+	return TRUE;
 }
 
 gboolean
@@ -396,3 +455,4 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 	return TRUE;
 }
 
+// TODO: persistance, notifications, string list
