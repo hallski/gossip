@@ -128,8 +128,6 @@ conf_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
-	g_print ("finalizing conf...\n");
-	
 	/*	gconf_client_remove_dir (priv->gconf_client,
 				 GOSSIP_CONF_ROOT,
 				 NULL);
@@ -223,10 +221,8 @@ gossip_conf_set_bool (GossipConf  *conf,
 
 	POOL_ALLOC;
 
-	g_print ("setting %s to %d\n", key, value);
-	
 	string = [NSString stringWithUTF8String: key];
-	[priv->defaults setBool: (value ? YES : NO) forKey: string];
+	[priv->defaults setBool: value forKey: string];
 
 	[priv->defaults synchronize];
 	
@@ -250,7 +246,7 @@ gossip_conf_get_bool (GossipConf  *conf,
 	POOL_ALLOC;
 	
 	string = [NSString stringWithUTF8String: key];
-	*value = ([priv->defaults boolForKey: string] == YES ? TRUE : FALSE); 
+	*value = [priv->defaults boolForKey: string];
 
 	POOL_RELEASE;
 	
