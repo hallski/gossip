@@ -1,5 +1,10 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+        * src/gossip-cell-renderer-text.c: Simplify a bit and try to get
+	the cell always show two lines... probably won't help.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
         * src/gossip-contact-groups.c: Remove unused includes.
 	* src/gossip-throbber.c: Use G_DEFINE_TYPE, remove gnome includes.
 	* src/gossip-geometry.c: Tweak the positioning so that it won't

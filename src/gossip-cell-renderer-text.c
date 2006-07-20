@@ -18,11 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <string.h>
-
 #include <config.h>
-
-#include <glib/gi18n.h>
+#include <string.h>
 
 #include "gossip-cell-renderer-text.h"
 
@@ -279,8 +276,8 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	PangoAttribute             *attr_color, *attr_style, *attr_size;
 	GtkStyle                   *style;
 	GdkColor                    color;
+	const gchar                *status;
 	gchar                      *str;
-	gboolean                    show_status = FALSE;
 
 	priv = cell->priv;
 
@@ -297,15 +294,6 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 			      NULL);
 		return;
 	}
-
-	if (!priv->is_group && (priv->status && strlen (priv->status) > 0)) {
-		show_status = TRUE;
-	} 
-
-	str = g_strdup_printf ("%s%s%s", 
-			       priv->name, 
-			       !show_status ? "" : "\n",
-			       !show_status ? "" : priv->status);
 
  	style = gtk_widget_get_style (widget);
 	color = style->text_aa[GTK_STATE_NORMAL];
@@ -325,9 +313,18 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
    	}   
 
 	attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
+
 	attr_size->start_index = attr_style->start_index;
 	attr_size->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_size);
+
+	if (!priv->status || !priv->status[0]) {
+		status = "";
+	} else {
+		status = priv->status;
+	}
+	
+	str = g_strdup_printf ("%s\n%s", priv->name, status);
 
 	g_object_set (cell,
 		      "visible", TRUE,
@@ -336,9 +333,8 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		      "attributes", attr_list,
 		      NULL);
       
-	pango_attr_list_unref (attr_list);
-
 	g_free (str);
+	pango_attr_list_unref (attr_list);
 }
 
 GtkCellRenderer * 
