@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#if HAVE_GNOME0
+#if HAVE_GNOME
 #include <libgnomeui/gnome-druid.h>
 #endif
 

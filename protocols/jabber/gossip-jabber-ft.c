@@ -19,12 +19,13 @@
  */
 
 #include <config.h>
-
 #include <string.h>
 #include <stdlib.h>
-
 #include <loudmouth/loudmouth.h>
+
+#ifdef HAVE_GNOME
 #include <libgnomevfs/gnome-vfs.h>
+#endif
 
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-private.h"
@@ -336,22 +337,16 @@ jabber_ft_get_file_details (const gchar  *uri,
 			    gchar       **file_size,
 			    gchar       **mime_type)
 {
-	GnomeVFSFileInfo file_info;
-	GnomeVFSResult   result;
-	/*  	GnomeVFSURI      *uri;  */
+#ifdef HAVE_GNOME
+	GnomeVFSFileInfo *file_info;
+	GnomeVFSResult    result;
 
 	DEBUG_MSG (("ProtocolFT: Getting file info for URI:'%s'", uri));
 
-	/*  	uri = gnome_vfs_uri_new (file_name); */
-
-	/* 	if (!gnome_vfs_uri_exists (uri)) { */
-	/* 		DEBUG_MSG (("ProtocolFT: URI:'%s' does not exist", file_name)); */
-	/* 		gnome_vfs_uri_unref (uri); */
-	/* 		return; */
-	/* 	} */
-
+	file_info = gnome_vfs_file_info_new ();
+	
 	result = gnome_vfs_get_file_info (uri,
-					  &file_info, 
+					  file_info, 
 					  GNOME_VFS_FILE_INFO_DEFAULT);
 
 	if (result != GNOME_VFS_OK) {
@@ -360,11 +355,11 @@ jabber_ft_get_file_details (const gchar  *uri,
 	}
 	
 	if (file_name) {
-		*file_name = g_strdup (file_info.name);
+		*file_name = g_strdup (file_info->name);
 	}
 
 	if (file_size) {
-		*file_size = g_strdup_printf ("%d", (guint)file_info.size);
+		*file_size = g_strdup_printf ("%d", (guint) file_info->size);
 	}
 
 	if (mime_type) {
@@ -378,9 +373,11 @@ jabber_ft_get_file_details (const gchar  *uri,
 		} 
 	}
 
-	gnome_vfs_file_info_unref (&file_info);
+	gnome_vfs_file_info_unref (file_info);
 	
 	return TRUE;
+#endif
+	return FALSE;
 }
 
 static gchar *

@@ -25,15 +25,15 @@ libgossip_jabber_la_SOURCES =                   \
 	gossip-jabber-utils.c			\
 	gossip-jabber-utils.h			\
 	gossip-jid.c                            \
-	gossip-jid.h                            \
+	gossip-jid.h				\
 	gossip-sha.c                            \
-	gossip-sha.h                            \
-	gossip-transport-accounts.c             \
-	gossip-transport-accounts.h             \
-	gossip-transport-discover.c             \
-	gossip-transport-discover.h             \
-	gossip-transport-protocol.c             \
-	gossip-transport-protocol.h             \
-	gossip-transport-register.c             \
-	gossip-transport-register.h
+	gossip-sha.h
 
+#	gossip-transport-accounts.c             \
+#	gossip-transport-accounts.h             \
+#	gossip-transport-discover.c             \
+#	gossip-transport-discover.h             \
+#	gossip-transport-protocol.c             \
+#	gossip-transport-protocol.h             \
+#	gossip-transport-register.c             \
+#	gossip-transport-register.h

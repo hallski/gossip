@@ -1,5 +1,12 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/Makefile.am: Remove unsed bits.
+	* protocols/jabber/gossip-jabber-ft.c: Add backend ifdefs.
+
+	* src/gossip-add-contact-window.c: Fix build.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-avatar-image.c: Add backend ifdefs.
 
 2006-07-20  Richard Hult  <richard@imendio.com>
