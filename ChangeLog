@@ -1,5 +1,10 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+        * src/gossip-status-presets.c: Remove unused includes and clean up
+	a bit.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
         * src/gossip-vcard-dialog.c: Only use the thumbnail stuff with
 	GNOME (should probably remove it completely...). Remove unused
 	includes.

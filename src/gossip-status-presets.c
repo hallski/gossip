@@ -20,12 +20,11 @@
  */
 
 #include <config.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <string.h>
-
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <libgnomevfs/gnome-vfs.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -67,14 +66,11 @@ gossip_status_presets_get_all (void)
 	}
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	}
-
+	g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	file_with_path = g_build_filename (dir, STATUS_PRESETS_XML_FILENAME, NULL);
 	g_free (dir);
 
-	if (g_file_test(file_with_path, G_FILE_TEST_EXISTS)) {
+	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
 		status_presets_file_parse (file_with_path);
 	}
 	
@@ -189,10 +185,7 @@ status_presets_file_save (void)
 	gint        count[4] = { 0, 0, 0, 0};
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	}
-
+	g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	file = g_build_filename (dir, STATUS_PRESETS_XML_FILENAME, NULL);
 	g_free (dir);
 
