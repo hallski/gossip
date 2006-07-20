@@ -21,8 +21,11 @@
 #include <config.h>
 #include <string.h>
 #include <gtk/gtk.h>
-#include <libgnomeui/gnome-druid.h>
 #include <glib/gi18n.h>
+
+#if HAVE_GNOME0
+#include <libgnomeui/gnome-druid.h>
+#endif
 
 #include <libgossip/gossip-utils.h>
 
@@ -81,6 +84,8 @@ enum {
 	COL_SYS_PROTOCOL,
 	COL_SYS_COUNT
 };
+
+#if HAVE_GNOME
 
 static void           add_contact_window_setup_systems                (GList            *accounts,
 								       GossipAddContact *window);
@@ -692,3 +697,14 @@ gossip_add_contact_window_show (GtkWindow     *parent,
 
 	gtk_widget_show (window->window);
 }
+
+#else 
+
+void
+gossip_add_contact_window_show (GtkWindow     *parent,
+				GossipContact *contact)
+{
+}
+
+#endif
+
