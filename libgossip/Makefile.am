@@ -4,7 +4,7 @@ AM_CPPFLAGS =                                           \
 	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\" \
 	-DDTDDIR=\"$(datadir)/gossip\"			\
 	-I$(top_srcdir)/protocols/jabber                \
-	$(LIBGOSSIP_CFLAGS) $(WARN_CFLAGS)
+	$(LIBGOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
 
 noinst_LTLIBRARIES = libgossip.la
 

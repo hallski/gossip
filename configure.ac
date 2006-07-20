@@ -50,12 +50,24 @@ AC_ARG_WITH(backend,
 if test "x$ac_backend" = xgnome; then
    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
    gconf_pkgconfig=gconf-2.0
+   gnome_vfs_pkgconfig=gnome-vfs-2.0
+   libgnomeui=libgnomeui-2.0
+   BACKEND_CFLAGS=
+   BACKEND_LDFLAGS=
 elif test "x$ac_backend" = xcocoa; then
    AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
    gconf_pkgconfig=
+   gnome_vfs_pkgconfig=
+   libgnomeui=
+   AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, false)
+   BACKEND_CFLAGS="-xobjective-c"
+   BACKEND_LDFLAGS="-framework AppKit -lobjc"
 else
    AC_MSG_ERROR([Incorrect backend])
 fi
+
+AC_SUBST(BACKEND_CFLAGS)
+AC_SUBST(BACKEND_LDFLAGS)
 
 AM_CONDITIONAL(HAVE_GNOME, test x$ac_backend = xgnome)
 AM_CONDITIONAL(HAVE_COCOA, test x$ac_backend = xcocoa)
@@ -175,7 +187,6 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    libxml-2.0 >= $LIBXML_REQUIRED
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
-   gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
    $gconf_pkgconfig
 ])
 
@@ -187,11 +198,12 @@ PKG_CHECK_MODULES(GOSSIP,
    gtk+-2.0 >= $GTK_REQUIRED
    libglade-2.0 >= $LIBGLADE_REQUIRED 
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
-   libgnomeui-2.0 >= $LIBGNOME_REQUIRED
    $iso_codes_pkgconfig
    $dbus_pkgconfig
    $galago_pkgconfig
    $libnotify_pkgconfig
+   $libgnomeui_pkgconfig
+   $gnome_vfs_pkgconfig
 ])
 
 PKG_CHECK_MODULES(GOSSIP_JABBER,
@@ -199,8 +211,8 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
-   gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
    libxml-2.0 >= $LIBXML_REQUIRED
+   $gnome_vfs_pkgconfig
 ])
 
 if test x$have_dbus = xyes -a x$have_galago = xyes; then
