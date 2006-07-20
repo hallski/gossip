@@ -1360,3 +1360,16 @@ gossip_url_show (const char *url)
 {
 }
 #endif
+
+/* FIXME: Replace with GtkLinkButton in 2.10. */
+GtkWidget *
+gossip_link_button_new (const gchar *url,
+			const gchar *title)
+{
+#ifdef HAVE_GNOME
+	return gnome_href_new (url, title);
+#else
+	return gtk_label_new (title);
+#endif
+}
+

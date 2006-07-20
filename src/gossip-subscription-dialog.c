@@ -19,10 +19,8 @@
  */
 
 #include <string.h>
-
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include <libgnomeui/libgnomeui.h>
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
@@ -344,7 +342,7 @@ subscription_dialog_vcard_cb (GossipResult              result,
 		GtkWidget *href;
 		GtkWidget *alignment;
 
-		href = gnome_href_new (url, url);
+		href = gossip_link_button_new (url, url);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);

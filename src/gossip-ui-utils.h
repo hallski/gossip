@@ -107,4 +107,7 @@ void       gossip_window_present                    (GtkWindow           *window
 
 void       gossip_url_show                          (const char          *url);
 
+GtkWidget *gossip_link_button_new                   (const gchar         *url,
+						     const gchar         *title);
+
 #endif /*  __GOSSIP_UI_UTILS_H__ */

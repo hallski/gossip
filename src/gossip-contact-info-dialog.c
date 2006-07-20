@@ -23,13 +23,13 @@
 #include <glade/glade.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include <libgnomeui/gnome-href.h>
 
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-session.h>
 
 #include "gossip-app.h"
 #include "gossip-avatar-image.h"
+#include "gossip-ui-utils.h"
 #include "gossip-contact-info-dialog.h"
 
 typedef struct {
@@ -313,8 +313,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		show_personal = TRUE;
 
 		link = g_strdup_printf ("mailto:%s", str);
-		
-		href = gnome_href_new (link, str);
+		href = gossip_link_button_new (link, str);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -340,7 +339,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 
 		show_personal = TRUE;
 
-		href = gnome_href_new (str, str);
+		href = gossip_link_button_new (str, str);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
