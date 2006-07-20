@@ -614,13 +614,13 @@ theme_manager_apply_theme_clean (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-line-top-self");
 	g_object_set (tag,
-		      "size", 1,
+		      "size", 1 * PANGO_SCALE,
 		      "paragraph-background", ELEGANT_LINE,
 		      NULL);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-line-bottom-self");
 	g_object_set (tag,
-		      "size", 2,
+		      "size", 1 * PANGO_SCALE,
 		      NULL);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-action-self");
@@ -653,13 +653,13 @@ theme_manager_apply_theme_clean (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-line-top-other");
 	g_object_set (tag,
-		      "size", 1,
+		      "size", 1 * PANGO_SCALE,
 		      "paragraph-background", ELEGANT_LINE,
 		      NULL);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-line-bottom-other");
 	g_object_set (tag,
-		      "size", 2,
+		      "size", 1 * PANGO_SCALE,
 		      NULL);
 		
 	tag = theme_manager_init_tag_by_name (table, "fancy-action-other");

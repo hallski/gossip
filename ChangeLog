@@ -1,5 +1,14 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-theme-manager.c: (theme_manager_apply_theme_clean):
+	Tweak the size of the lines for the header.
+
+	* src/gossip-idle.c: Dummy implementation for xss-less systems.
+
+	* src/gossip-sound.c: Protect with HAVE_GNOME for now.
+	
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-log.c: Put escaping/unescaping in functions so that we
 	can easily change the implementation (I doubt that they are needed
 	actually).

@@ -21,10 +21,19 @@
 #include <config.h>
 #include <time.h>
 #include <stdlib.h>
+
+/* FIXME: change configure to allow non-xss systems. */
+#ifdef HAVE_GNOME
+#define HAVE_XSS
+#endif
+
+#ifdef HAVE_XSS
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
+#endif
+
 #include <gdk/gdk.h>
 #include "gossip-idle.h"
 
@@ -33,6 +42,7 @@ static time_t timestamp = 0;
 gint32
 gossip_idle_get_seconds (void)
 {
+#ifdef HAVE_XSS
 	static gboolean          inited = FALSE;
 	static XScreenSaverInfo *ss_info = NULL;
 	gint                     event_base;
@@ -61,6 +71,10 @@ gossip_idle_get_seconds (void)
 	timestamp = time (NULL);
 
 	return idle;
+#else
+	/* Pretend we are never idle for now. */
+	return 5;
+#endif
 }
 
 void

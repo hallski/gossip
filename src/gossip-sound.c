@@ -19,8 +19,11 @@
  */
 
 #include <config.h>
+
+#ifdef HAVE_GNOME
 #include <libgnome/gnome-sound.h>
 #include <libgnome/gnome-triggers.h>
+#endif
 
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-debug.h>
@@ -193,6 +196,7 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 
+#ifdef HAVE_GNOME
 	switch (sound) {
 	case GOSSIP_SOUND_CHAT:
 		gossip_debug (DEBUG_DOMAIN, "Triggering 'Chat' event.");
@@ -210,6 +214,7 @@ gossip_sound_play (GossipSound sound)
 		gossip_debug (DEBUG_DOMAIN, "Unknown sound type.");
 		return;
 	}
+#endif
 }		
 
 void 
