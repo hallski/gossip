@@ -31,7 +31,7 @@ static void about_dialog_activate_link_cb (GtkAboutDialog  *about,
 					   const gchar     *link,
 					   gpointer         data);
 
-const char *authors[] = {
+static const char *authors[] = {
 	"Mikael Hallendal",
 	"Richard Hult",
 	"Martyn Russell",
@@ -40,19 +40,19 @@ const char *authors[] = {
 	NULL
 };
 
-const char *documenters[] = {
+static const char *documenters[] = {
 	"Daniel Taylor",
 	"Keywan Najafi Tonekaboni",
 	"Brian Pepple",
 	NULL
 };
 
-const char *artists[] = {
+static const char *artists[] = {
 	"Daniel Taylor",
 	NULL
 };
 
-const char *license[] = {
+static const char *license[] = {
 	N_("Gossip is free software; you can redistribute it and/or modify "
 	   "it under the terms of the GNU General Public License as published by "
 	   "the Free Software Foundation; either version 2 of the License, or "

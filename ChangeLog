@@ -1,5 +1,7 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+        * src/gossip-about-dialog.c: Make the authors etc info static.
+
 	* configure.ac: Fix the gnome backend checks.
 	* src/Makefile.am: Use backend flags.
 	* src/gossip-main.c: Work a bit better without dbus.
