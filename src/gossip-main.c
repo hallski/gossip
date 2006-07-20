@@ -28,8 +28,6 @@
 #ifdef HAVE_GNOME
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
-#elif defined(HAVE_COCOA)
-#include <Cocoa/Cocoa.h>
 #endif
 
 #include <libgossip/gossip-account-manager.h>
@@ -110,19 +108,8 @@ main (int argc, char *argv[])
 			    GETTEXT_PACKAGE,
 			    NULL);
 #endif
-	
-	gtk_window_set_default_icon_name ("gossip");
 
-#ifdef HAVE_COCOA
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	
-	NSImage *image = [[NSImage alloc] initWithContentsOfFile:
-			  @PREFIX"/share/icons/hicolor/48x48/apps/gossip.png"];
-	[NSApp setApplicationIconImage: image];
-	[image release];
-	
-	[pool release];
-#endif
+	gossip_window_set_default_icon_name ("gossip");
 
 	/* Get all accounts. */
  	account_manager = gossip_account_manager_new (NULL);

@@ -1,5 +1,10 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-main.c:
+	* src/gossip-ui-utils.c: Move setting the window icon here.
+	
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* protocols/jabber/Makefile.am: Remove unsed bits.
 	* protocols/jabber/gossip-jabber-ft.c: Add backend ifdefs.
 

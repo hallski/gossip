@@ -1374,3 +1374,20 @@ gossip_link_button_new (const gchar *url,
 #endif
 }
 
+void
+gossip_window_set_default_icon_name (const gchar *name)
+{
+#ifdef HAVE_GNOME
+	gtk_window_set_default_icon_name (name);
+#elif defined(HAVE_COCOA)
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+	/* FIXME: Do this in a proper way at some point, probably in GTK+? */
+	NSImage *image = [[NSImage alloc] initWithContentsOfFile:
+			  @PREFIX"/share/icons/hicolor/48x48/apps/gossip.png"];
+	[NSApp setApplicationIconImage: image];
+	[image release];
+	
+	[pool release];
+#endif
+}
