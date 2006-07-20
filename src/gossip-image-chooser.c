@@ -22,14 +22,15 @@
  */
 
 #include <config.h>
-
 #include <string.h>
-
 #include <glib/gi18n.h>
 #include <gtk/gtkimage.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkdnd.h>
+
+#ifdef HAVE_GNOME
 #include <libgnomevfs/gnome-vfs-ops.h>
+#endif
 
 #include <libgossip/gossip-debug.h>
 
@@ -434,6 +435,7 @@ image_chooser_drag_data_received_cb (GtkWidget          *widget,
 	target_type = gdk_atom_name (selection_data->target);
 
 	if (!strcmp (target_type, URI_LIST_TYPE)) {
+#ifdef HAVE_GNOME
 		GnomeVFSHandle   *handle;
 		GnomeVFSResult    result;
 		GnomeVFSFileInfo  info;
@@ -474,10 +476,10 @@ image_chooser_drag_data_received_cb (GtkWidget          *widget,
 			}
 
 			gnome_vfs_close (handle);
-
 		}
 
 		g_free (uri);
+#endif
 	}
 
 	gtk_drag_finish (context, handled, FALSE, time);

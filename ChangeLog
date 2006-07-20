@@ -1,5 +1,9 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-image-chooser.c: Add backend ifdefs.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-ui-utils.c: Add gossip_link_button_new().
         * src/gossip-subscription-dialog.c:
         * src/gossip-contact-info-dialog.c: Use it here.
