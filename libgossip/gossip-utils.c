@@ -421,31 +421,3 @@ gossip_base64_encode (const guchar *data,
 
 	return rv;
 }
-
-
-gchar *
-gossip_sha1_string (const guchar *data,
-		    gsize         len)
-{
-#if 0
-	gchar  *hash_string;
-	gchar  *p;
-	guchar  hash[20];
-	gint    i;
-	
-	if (data == NULL || len < 1) {
-		return g_strdup("");
-	}
-	
-	gcry_md_hash_buffer (GCRY_MD_SHA1, hash, data, (size_t) len);
-	hash_string = g_malloc (sizeof (gchar) * 41);
-	p = hash_string;
-
-	for (i = 0; i < 20; i++, p += 2) {
-		snprintf (p, 3, "%02x", hash[i]);
-	}
-
-	return hash_string;
-#endif
-	return g_strdup ("");
-}

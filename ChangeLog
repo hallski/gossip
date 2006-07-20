@@ -1,5 +1,13 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-utils.[ch]: Remove sha.
+	
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-chatroom-manager.c: Don't include gnome-vfs,
+	it's not used here.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* configure.ac: Remove gcrypt check and fix the xss check.
 
 2006-07-20  Richard Hult  <richard@imendio.com>
