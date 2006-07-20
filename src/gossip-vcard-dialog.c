@@ -24,10 +24,11 @@
 #include <gtk/gtk.h> 
 #include <glade/glade.h>
 #include <glib/gi18n.h>
-#include <libgnomeui/gnome-href.h>
+
+#ifdef HAVE_GNOME
 #include <libgnomeui/libgnomeui.h>  
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
-#include <loudmouth/loudmouth.h>
+#endif
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
@@ -89,7 +90,9 @@ typedef struct {
 
 	gint       last_account_selected;
 
+#ifdef HAVE_GNOME
 	GnomeThumbnailFactory *thumbs;
+#endif
 } GossipVCardDialog;
 
 static void     vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
@@ -223,6 +226,7 @@ vcard_dialog_avatar_clicked_cb (GtkWidget         *button,
 	gtk_widget_show (chooser_dialog);
 }
 
+#ifdef HAVE_GNOME
 static GdkPixbuf *
 vcard_dialog_scale_down_to_width (GdkPixbuf *pixbuf, gint wanted_width)
 {
@@ -245,11 +249,13 @@ vcard_dialog_scale_down_to_width (GdkPixbuf *pixbuf, gint wanted_width)
 
 	return g_object_ref (pixbuf);
 }
+#endif
 
 static void 
 vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 				       GossipVCardDialog *dialog) 
 {
+#ifdef HAVE_GNOME
 	gchar *uri;
 
 	uri = gtk_file_chooser_get_preview_uri (chooser);
@@ -260,10 +266,11 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 		GdkPixbuf *scaled_pixbuf;
 		gchar     *mime_type;
 
-		if (!dialog->thumbs) {
-			dialog->thumbs = gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
+		*if (!dialog->thumbs) {
+			dialog->thumbs =
+				gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
 		}
-		
+
 		mime_type = gnome_vfs_get_mime_type (uri);
 		pixbuf = gnome_thumbnail_factory_generate_thumbnail (dialog->thumbs,
 								     uri,
@@ -286,6 +293,7 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 	}
 
 	gtk_file_chooser_set_preview_widget_active (chooser, TRUE);
+#endif
 }
 
 static void
