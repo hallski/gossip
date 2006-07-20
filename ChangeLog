@@ -1,5 +1,9 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Remove gcrypt check and fix the xss check.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* configure.ac: Make the lack of xss non-fatal.
 
 	* protocols/jabber/Makefile.am:

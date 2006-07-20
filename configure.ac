@@ -234,20 +234,6 @@ PKG_CHECK_MODULES(PANEL_VER, libpanelapplet-2.0 >= 2.9.4,
 		  PANEL_VER="-DUSE_OLDER_PANEL_APPLET")
 AC_SUBST(PANEL_VER)
 
-dnl -----------------------------------------------------------
-dnl Check for libgcrypt
-dnl -----------------------------------------------------------
-AC_PATH_PROG(LIBGCRYPT_CONFIG, libgcrypt-config, no)
-if test x"$LIBGCRYPT_CONFIG" = xno; then
-   AC_MSG_ERROR([gcrypt not found on system])
-else
-   LIBGCRYPT_CFLAGS=`$LIBGCRYPT_CONFIG --cflags`
-   LIBGCRYPT_LIBS=`$LIBGCRYPT_CONFIG --libs`
-
-   GOSSIP_JABBER_CFLAGS="$GOSSIP_JABBER_CFLAGS $LIBGCRYPT_CFLAGS"
-   GOSSIP_JABBER_LDFLAGS="$GOSSIP_JABBER_LDFLAGS $LIBGCRYPT_LDFLAGS"
-fi
-
 
 dnl -----------------------------------------------------------
 dnl Check for the XScreenSaver extension (used for autoaway)
@@ -267,6 +253,7 @@ if test x$ac_backend = xgnome; then
       [
          have_xss="yes"
          XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
+	 AC_DEFINE(HAVE_XSS, 1, [Define if we have xss])
       ], 
       [
          LIBS=$save_LIBS
@@ -275,14 +262,13 @@ if test x$ac_backend = xgnome; then
          [
             have_xss="yes"
             XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXext -lX11"],[])
+	    AC_DEFINE(HAVE_XSS, 1, [Define if we have xss])
          ])
          LIBS=$save_LIBS
       ])
 
    AC_SUBST(XSS_LIBS)
 fi
-
-AC_DEFINE(HAVE_XSS, test x$have_xss, [Define if we have xss])
 
 
 dnl -----------------------------------------------------------
