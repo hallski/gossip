@@ -23,8 +23,11 @@
 #include <glib/gi18n.h>
 #include <gdk/gdkkeysyms.h>
 #include <gdk/gdk.h>
-#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
+
+#ifdef HAVE_GNOME
+#include <gdk/gdkx.h>
+#endif
 
 #include "gossip-avatar-image.h"
 
@@ -117,6 +120,7 @@ avatar_image_finalize (GObject *object)
 	G_OBJECT_CLASS (gossip_avatar_image_parent_class)->finalize (object);
 }
 
+#ifdef HAVE_GNOME
 static GdkFilterReturn
 avatar_image_filter_func (GdkXEvent  *gdkxevent,
 			  GdkEvent   *event,
@@ -142,10 +146,12 @@ avatar_image_filter_func (GdkXEvent  *gdkxevent,
 	
 	return GDK_FILTER_CONTINUE;
 }
+#endif
 
 static void
 avatar_image_add_filter (GossipAvatarImage *avatar_image)
 {
+#ifdef HAVE_GNOME
 	Window     window;
 	GdkWindow *gdkwindow;
 	gint       mask;
@@ -167,12 +173,15 @@ avatar_image_add_filter (GossipAvatarImage *avatar_image)
 	gdk_error_trap_pop ();
 	
 	gdk_window_add_filter (NULL, avatar_image_filter_func, avatar_image);
+#endif
 }
 
 static void
 avatar_image_remove_filter (GossipAvatarImage *avatar_image)
 {
+#ifdef HAVE_GNOME
 	gdk_window_remove_filter (NULL, avatar_image_filter_func, avatar_image);
+#endif
 }
 
 static GdkPixbuf *
