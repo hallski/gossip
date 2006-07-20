@@ -266,7 +266,7 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 		GdkPixbuf *scaled_pixbuf;
 		gchar     *mime_type;
 
-		*if (!dialog->thumbs) {
+		if (!dialog->thumbs) {
 			dialog->thumbs =
 				gnome_thumbnail_factory_new (GNOME_THUMBNAIL_SIZE_NORMAL);
 		}
