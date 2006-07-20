@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
-#include <libgnome/gnome-config.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 

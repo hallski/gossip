@@ -22,7 +22,6 @@
 #include <string.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
-#include <loudmouth/loudmouth.h>
 
 #include "gossip-app.h"
 #include "gossip-edit-groups-dialog.h"
