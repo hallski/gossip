@@ -21,11 +21,11 @@
 #include <config.h>
 #include <string.h>
 #include <ctype.h>
-
-#include <libgnomeui/gnome-druid.h>
-#include <libgnome/gnome-config.h>
 #include <glib/gi18n.h>
-#include <loudmouth/loudmouth.h>
+
+#ifdef HAVE_GNOME
+#include <libgnomeui/gnome-druid.h>
+#endif
 
 #include <libgossip/gossip-protocol.h>
 
@@ -97,7 +97,7 @@ typedef struct {
 
 } GossipNewAccountWindow;
 
-
+#ifdef HAVE_GNOME
 static gboolean new_account_window_progress_pulse_cb   (GtkWidget               *progressbar);
 static void     new_account_window_register_cb         (GossipResult             result, 
 							GError                  *error,
@@ -652,6 +652,7 @@ new_account_window_destroy (GtkWidget              *widget,
 
 	g_free (window);
 }
+#endif
 
 gboolean
 gossip_new_account_window_is_needed (void)
@@ -683,6 +684,7 @@ gossip_new_account_window_is_needed (void)
 void
 gossip_new_account_window_show (GtkWindow *parent)
 {
+#ifdef HAVE_GNOME
 	GossipNewAccountWindow *window;
 	GossipAccountType       type;
 	GladeXML               *glade;
@@ -780,7 +782,7 @@ gossip_new_account_window_show (GtkWindow *parent)
 		      "can-default", TRUE,
 		      "has-default", TRUE,
 		      NULL);
-
+	
 	/* set default account type */
 	type = new_account_window_get_account_type (window);
 	window->selected_protocol = gossip_protocol_new_from_account_type (type);
@@ -814,4 +816,5 @@ gossip_new_account_window_show (GtkWindow *parent)
 		window->gtk_main_started = TRUE;
 		gtk_main ();
 	}
+#endif
 }

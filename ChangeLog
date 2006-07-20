@@ -1,5 +1,16 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+        * src/gossip-main.c: Only use gnome program when available.
+
+        * src/gossip-transport-add-window.c:
+	* src/gossip-transport-accounts-window.c: 
+	* src/gossip-accounts-dialog.c: Remove unused includes.
+	
+	* src/gossip-new-account-window.c: Protect with HAVE_GNOME until
+	we have GtkAssistant. Remove unused includes.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
         * src/gossip-cell-renderer-text.c: Simplify a bit and try to get
 	the cell always show two lines... probably won't help.
 

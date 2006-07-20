@@ -24,8 +24,13 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include <glib/gi18n.h>
+
+#ifdef HAVE_GNOME
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
+#elif defined(HAVE_COCOA)
+#include <Cocoa/Cocoa.h>
+#endif
 
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-account.h>
@@ -53,7 +58,9 @@ static gchar    *account_name = NULL;
 int
 main (int argc, char *argv[])
 {
+#ifdef HAVE_GNOME
 	GnomeProgram         *program;
+#endif
 	GossipSession        *session;
 	GossipAccountManager *account_manager;
 	GossipAccount        *account = NULL;
@@ -86,6 +93,9 @@ main (int argc, char *argv[])
 	context = g_option_context_new (_("- Gossip Instant Messenger"));
 	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);	
 
+	g_set_application_name (PACKAGE_NAME);
+
+#ifdef HAVE_GNOME
 	program = gnome_program_init ("gossip", PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
                                       argc, argv,
@@ -93,9 +103,26 @@ main (int argc, char *argv[])
 				      GNOME_PARAM_GOPTION_CONTEXT, context,
 				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
-
-	g_set_application_name (PACKAGE_NAME);
+#else
+	gtk_init_with_args (&argc, &argv,
+			    _("- Gossip Instant Messenger"),
+			    options,
+			    GETTEXT_PACKAGE,
+			    NULL);
+#endif
+	
 	gtk_window_set_default_icon_name ("gossip");
+
+#ifdef HAVE_COCOA
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	
+	NSImage *image = [[NSImage alloc] initWithContentsOfFile:
+			  @PREFIX"/share/icons/hicolor/48x48/apps/gossip.png"];
+	[NSApp setApplicationIconImage: image];
+	[image release];
+	
+	[pool release];
+#endif
 
 	/* Get all accounts. */
  	account_manager = gossip_account_manager_new (NULL);
@@ -182,8 +209,10 @@ main (int argc, char *argv[])
 
 	gossip_stock_finalize ();
 
+#ifdef HAVE_GNOME
 	g_object_unref (program);
-
+#endif
+	
 	return EXIT_SUCCESS;
 }
 

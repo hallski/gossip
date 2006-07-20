@@ -22,12 +22,9 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
-
-#include <loudmouth/loudmouth.h>
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-protocol.h>
