@@ -1,3 +1,9 @@
+2006-07-20  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-log.c: Put escaping/unescaping in functions so that we
+	can easily change the implementation (I doubt that they are needed
+	actually).
+
 2006-07-19  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-ui-utils.c: Include the gnome includes when

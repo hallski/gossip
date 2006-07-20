@@ -53,21 +53,13 @@
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
-#ifdef USE_GNOMEVFS_FOR_URL
-#include <libgnomevfs/gnome-vfs.h>
-#else
-#include <libgnome/gnome-url.h>
-#endif
-
-#include <libgnomevfs/gnome-vfs-utils.h>
-#include <libxslt/xslt.h>
-#include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
-#include "libexslt/exslt.h"
-
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-message.h>
 #include <libgossip/gossip-utils.h>
+
+#ifdef HAVE_GNOME
+#include <libgnomevfs/gnome-vfs-utils.h>
+#endif
 
 #include "gossip-app.h"
 #include "gossip-log.h"
@@ -115,6 +107,8 @@ struct _GossipLogSearchHit {
 	gchar         *date;
 };
 
+static gchar *         log_escape                              (const gchar    *str);
+static gchar *         log_unescape                            (const gchar    *str);
 static void            log_handlers_notify_foreach             (GossipLogMessageFunc   func,
 								HandlerData           *data,
 								GList                **list);
@@ -153,6 +147,26 @@ static gboolean        log_set_own_name                        (GossipAccount   
 
 static GHashTable *contact_files = NULL;
 static GHashTable *message_handlers = NULL;
+
+static gchar *
+log_escape (const gchar *str)
+{
+#ifdef HAVE_GNOME
+	return gnome_vfs_escape_host_and_path_string (str);
+#else
+	return g_strdup (str);
+#endif
+}
+
+static gchar *
+log_unescape (const gchar *str)
+{
+#ifdef HAVE_GNOME
+	return gnome_vfs_unescape_string_for_display (str);
+#else
+	return g_strdup (str);
+#endif
+}
 
 static void
 log_handler_free (HandlerData *data)
@@ -637,12 +651,12 @@ log_get_filename_by_date_for_contact (GossipContact *contact,
 	}
 	
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	log_check_dir (&log_directory);
 
 	contact_id = gossip_contact_get_id (contact);
-	contact_id_escaped = gnome_vfs_escape_host_and_path_string (contact_id);
+	contact_id_escaped = log_escape (contact_id);
 	
 	basename = g_strconcat (date, LOG_FILENAME_SUFFIX, NULL);
 	filename = g_build_filename (log_directory,
@@ -703,12 +717,12 @@ log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 	}
 	
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	log_check_dir (&log_directory);
 
 	chatroom_id = gossip_chatroom_get_id_str (chatroom);
-	chatroom_id_escaped = gnome_vfs_escape_host_and_path_string (chatroom_id);
+	chatroom_id_escaped = log_escape (chatroom_id);
 	
 	basename = g_strconcat (date, LOG_FILENAME_SUFFIX, NULL);
 	filename = g_build_filename (log_directory,
@@ -765,7 +779,7 @@ log_get_contacts_filename (GossipAccount *account)
 		    gossip_account_get_id (account)); 
 
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	log_check_dir (&log_directory);
 
@@ -951,7 +965,6 @@ log_set_own_name (GossipAccount *account,
 	return ok;
 }
 
-
 GList *
 gossip_log_get_contacts (GossipAccount *account)
 {
@@ -973,7 +986,7 @@ gossip_log_get_contacts (GossipAccount *account)
 	}
 
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	directory = g_build_path (G_DIR_SEPARATOR_S, 
 				  log_directory, 
@@ -1001,7 +1014,7 @@ gossip_log_get_contacts (GossipAccount *account)
 			continue;
 		}
 
- 		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
+ 		filename_unescaped = log_unescape (filename);
 		contact = log_get_contact (account, filename_unescaped);
 		g_free (filename_unescaped);
 
@@ -1040,7 +1053,7 @@ gossip_log_get_chatrooms (GossipAccount *account)
 	}
 
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	directory = g_build_path (G_DIR_SEPARATOR_S, 
 				  log_directory, 
@@ -1071,7 +1084,7 @@ gossip_log_get_chatrooms (GossipAccount *account)
 
 		g_free (full);
 		
- 		filename_unescaped = gnome_vfs_unescape_string_for_display (filename);
+ 		filename_unescaped = log_unescape (filename);
 		chatroom = log_get_chatroom_from_filename (account, filename_unescaped);
 
 		g_free (filename_unescaped);
@@ -1126,10 +1139,10 @@ gossip_log_get_dates_for_contact (GossipContact *contact)
 	}
 
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	contact_id = gossip_contact_get_id (contact);
-	contact_id_escaped = gnome_vfs_escape_host_and_path_string (contact_id);
+	contact_id_escaped = log_escape (contact_id);
 
 	directory = g_build_path (G_DIR_SEPARATOR_S, 
 				  log_directory, 
@@ -1560,10 +1573,10 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 	}
 
 	account_id = gossip_account_get_id (account);
-	account_id_escaped = gnome_vfs_escape_host_and_path_string (account_id);
+	account_id_escaped = log_escape (account_id);
 
 	chatroom_id = gossip_chatroom_get_id_str (chatroom);
-	chatroom_id_escaped = gnome_vfs_escape_host_and_path_string (chatroom_id);
+	chatroom_id_escaped = log_escape (chatroom_id);
 	
 	directory = g_build_path (G_DIR_SEPARATOR_S, 
 				  log_directory, 
