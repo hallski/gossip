@@ -23,7 +23,7 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#if HAVE_GNOME
+#ifdef HAVE_GNOME
 #include <libgnomeui/gnome-druid.h>
 #endif
 
@@ -85,7 +85,7 @@ enum {
 	COL_SYS_COUNT
 };
 
-#if HAVE_GNOME
+#ifdef HAVE_GNOME
 
 static void           add_contact_window_setup_systems                (GList            *accounts,
 								       GossipAddContact *window);
