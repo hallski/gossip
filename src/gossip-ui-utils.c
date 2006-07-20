@@ -31,6 +31,7 @@
 
 #ifdef HAVE_GNOME
 #include <libgnome/gnome-url.h>
+#include <libgnomeui/gnome-href.h>
 #elif defined (HAVE_COCOA)
 #include <Cocoa/Cocoa.h>
 #endif
