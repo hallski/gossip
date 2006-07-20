@@ -19,9 +19,7 @@
  */
 
 #include <config.h>
-
 #include <sys/stat.h>
-
 #include <glib.h>
 
 #include <libgossip/gossip-chatroom.h>
@@ -69,13 +67,10 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	GError      *error = NULL;
 	GKeyFile    *key_file;
 	const gchar *id;
-
 	gchar       *filename;
-
 	GdkScreen   *screen;
 	gint         max_width;
 	gint         max_height;
-
 	gchar       *content;
 	gsize        length;
 	gchar       *str;
@@ -99,11 +94,11 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	max_width = gdk_screen_get_width (screen);
 	max_height = gdk_screen_get_height (screen);
 
-	x = CLAMP (x, 0, max_width);
-	y = CLAMP (y, 0, max_height);
-
 	w = CLAMP (w, 100, max_width);
 	h = CLAMP (h, 100, max_height);
+
+	x = CLAMP (x, 0, max_width - w);
+	y = CLAMP (y, 0, max_height - h);
 
 	str = g_strdup_printf (GEOMETRY_FORMAT, x, y, w, h);
 	
@@ -218,13 +213,10 @@ gossip_geometry_save_for_main_window (gint x,
 {
 	GError    *error = NULL;
 	GKeyFile  *key_file;
-
 	gchar     *filename;
-
 	GdkScreen *screen;
 	gint       max_width;
 	gint       max_height;
-
 	gchar     *content;
 	gsize      length;
 	gchar     *str;
@@ -236,11 +228,11 @@ gossip_geometry_save_for_main_window (gint x,
 	max_width = gdk_screen_get_width (screen);
 	max_height = gdk_screen_get_height (screen);
 
-	x = CLAMP (x, 0, max_width);
-	y = CLAMP (y, 0, max_height);
+	w = CLAMP (w, 0, max_width);
+	h = CLAMP (h, 0, max_height);
 
-	w = CLAMP (w, 100, max_width);
-	h = CLAMP (h, 100, max_height);
+	x = CLAMP (x, 0, max_width - w);
+	y = CLAMP (y, 0, max_height - h);
 
 	str = g_strdup_printf (GEOMETRY_FORMAT, x, y, w, h);
 	

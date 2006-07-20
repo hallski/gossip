@@ -1,5 +1,12 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+        * src/gossip-contact-groups.c: Remove unused includes.
+	* src/gossip-throbber.c: Use G_DEFINE_TYPE, remove gnome includes.
+	* src/gossip-geometry.c: Tweak the positioning so that it won't
+	put windows outside the screen.
+
+2006-07-20  Richard Hult  <richard@imendio.com>
+
         * src/gossip-status-presets.c: Remove unused includes and clean up
 	a bit.
 

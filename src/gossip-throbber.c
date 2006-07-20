@@ -21,13 +21,8 @@
 
 #include <config.h>
 #include <math.h>
-
 #include <gdk-pixbuf/gdk-pixbuf.h>
-#include <gtk/gtksignal.h>
-#include <glib/gi18n.h>
-#include <libgnome/gnome-macros.h>
-#include <libgnome/gnome-util.h>
-#include <gtk/gtkicontheme.h>
+#include <gtk/gtk.h>
 
 #include "gossip-throbber.h"
 
@@ -55,7 +50,7 @@ static void gossip_throbber_theme_changed          (GtkIconTheme   *icon_theme,
 						    GossipThrobber *throbber);
 static void gossip_throbber_remove_update_callback (GossipThrobber *throbber);
 
-GNOME_CLASS_BOILERPLATE (GossipThrobber, gossip_throbber, GtkEventBox, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE (GossipThrobber, gossip_throbber, GTK_TYPE_EVENT_BOX)
 
 static gboolean
 is_throbbing (GossipThrobber *throbber)
@@ -103,7 +98,7 @@ get_throbber_dimensions (GossipThrobber *throbber,
 }
 
 static void
-gossip_throbber_instance_init (GossipThrobber *throbber)
+gossip_throbber_init (GossipThrobber *throbber)
 {
 	GtkWidget *widget = GTK_WIDGET (throbber);
 	
@@ -218,7 +213,7 @@ gossip_throbber_map (GtkWidget *widget)
 	
 	throbber = GOSSIP_THROBBER (widget);
 	
-	GNOME_CALL_PARENT (GTK_WIDGET_CLASS, map, (widget));
+	GTK_WIDGET_CLASS (gossip_throbber_parent_class)->map (widget);
 	throbber->details->ready = TRUE;
 }
 
@@ -460,7 +455,7 @@ gossip_throbber_finalize (GObject *object)
 
 	g_free (throbber->details);
 
-	G_OBJECT_CLASS (parent_class)->finalize (object);
+	G_OBJECT_CLASS (gossip_throbber_parent_class)->finalize (object);
 }
 
 static void
