@@ -13,7 +13,7 @@ AM_CPPFLAGS =	                                 	\
 	-DSTYLESHEETDIR=\"$(datadir)/gossip\"		\
 	-DDTDDIR=\"$(datadir)/gossip\"			\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
-	$(GOSSIP_CFLAGS) $(WARN_CFLAGS)
+	$(GOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
 
 dbus_binding_sources = gossip-dbus.xml
 
@@ -93,7 +93,7 @@ gossip_SOURCES = 				                        	\
 gossip_LDADD = $(GOSSIP_LIBS) $(XSS_LIBS)					\
 	$(top_builddir)/libgossip/libgossip.la
 
-gossip_LDFLAGS = -export-dynamic
+gossip_LDFLAGS = -export-dynamic $(BACKEND_LDFLAGS)
 
 dtddir = $(datadir)/gossip
 dtd_DATA = 									\

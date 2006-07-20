@@ -51,14 +51,14 @@ if test "x$ac_backend" = xgnome; then
    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
    gconf_pkgconfig=gconf-2.0
    gnome_vfs_pkgconfig=gnome-vfs-2.0
-   libgnomeui=libgnomeui-2.0
+   libgnomeui_pkgconfig=libgnomeui-2.0
    BACKEND_CFLAGS=
    BACKEND_LDFLAGS=
 elif test "x$ac_backend" = xcocoa; then
    AC_DEFINE(HAVE_COCOA, 1, [whether to use the Cocoa backend])
    gconf_pkgconfig=
    gnome_vfs_pkgconfig=
-   libgnomeui=
+   libgnomeui_pkgconfig=
    AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, false)
    BACKEND_CFLAGS="-xobjective-c"
    BACKEND_LDFLAGS="-framework AppKit -lobjc"

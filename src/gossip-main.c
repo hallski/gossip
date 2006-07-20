@@ -21,15 +21,15 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
-
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkmain.h>
+#include <gtk/gtk.h>
+#include <glib.h>
 #include <glib/gi18n.h>
-#include <glib/goption.h>
-
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
+
+#include <libgossip/gossip-account-manager.h>
+#include <libgossip/gossip-account.h>
+#include <libgossip/gossip-session.h>
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
@@ -39,13 +39,8 @@
 #include "gossip-galago.h"
 #endif
 
-#include <libgossip/gossip-account-manager.h>
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-session.h>
-
 #include "gossip-preferences.h"
 #include "gossip-stock.h"
-#include "gossip-dbus.h"
 #include "gossip-app.h"
 
 #define GNOME_PARAM_GOPTION_CONTEXT "goption-context"
