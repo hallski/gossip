@@ -252,34 +252,37 @@ fi
 dnl -----------------------------------------------------------
 dnl Check for the XScreenSaver extension (used for autoaway)
 dnl -----------------------------------------------------------
-x_libs="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
 have_xss="no"
 
-AC_CHECK_FUNC(XScreenSaverQueryInfo, [
-   have_xss="yes"], [
-   save_LIBS=$LIBS
-   LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
-   AC_CHECK_LIB(Xss, XScreenSaverQueryInfo, 
-   [
-      have_xss="yes"
-      XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
-   ], 
-   [
-      LIBS=$save_LIBS
-      LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXext -lX11"
-      AC_CHECK_LIB(Xext, XScreenSaverQueryInfo, 
+# Only check for XSS under GNOME, it doesn't make sense to find it
+# when we're not using X (like on OSX).
+if test x$ac_backend = xgnome; then
+   x_libs="$X_PRE_LIBS $X_LIBS -lX11 $X_EXTRA_LIBS"
+
+   AC_CHECK_FUNC(XScreenSaverQueryInfo, [
+      have_xss="yes"], [
+      save_LIBS=$LIBS
+      LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
+      AC_CHECK_LIB(Xss, XScreenSaverQueryInfo, 
       [
          have_xss="yes"
-         XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXext -lX11"],[])
+         XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXss -lXext -lX11"
+      ], 
+      [
+         LIBS=$save_LIBS
+         LIBS="$LIBS $X_PRE_LIBS $X_LIBS -lXext -lX11"
+         AC_CHECK_LIB(Xext, XScreenSaverQueryInfo, 
+         [
+            have_xss="yes"
+            XSS_LIBS="$X_PRE_LIBS $X_LIBS -lXext -lX11"],[])
+         ])
+         LIBS=$save_LIBS
       ])
-      LIBS=$save_LIBS
-   ])
 
-AC_SUBST(XSS_LIBS)
-
-if test "x$have_xss" = "xno"; then
-   AC_MSG_ERROR([Couldn't find XScreenSaver extension.])
+   AC_SUBST(XSS_LIBS)
 fi
+
+AC_DEFINE(HAVE_XSS, test x$have_xss, [Define if we have xss])
 
 
 dnl -----------------------------------------------------------
@@ -347,5 +350,6 @@ echo "DBUS:     $have_dbus"
 echo "Galago:   $have_galago"
 echo "ASpell:   $have_aspell"
 echo "Notify:   $have_libnotify"
+echo "XSS:      $have_xss (only with GNOME)"
 echo "Peekaboo: $have_peekaboo (requires DBUS & Galago)"
 echo

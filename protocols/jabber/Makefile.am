@@ -26,6 +26,8 @@ libgossip_jabber_la_SOURCES =                   \
 	gossip-jabber-utils.h			\
 	gossip-jid.c                            \
 	gossip-jid.h                            \
+	gossip-sha.c                            \
+	gossip-sha.h                            \
 	gossip-transport-accounts.c             \
 	gossip-transport-accounts.h             \
 	gossip-transport-discover.c             \

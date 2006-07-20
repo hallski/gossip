@@ -22,11 +22,6 @@
 #include <time.h>
 #include <stdlib.h>
 
-/* FIXME: change configure to allow non-xss systems. */
-#ifdef HAVE_GNOME
-#define HAVE_XSS
-#endif
-
 #ifdef HAVE_XSS
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

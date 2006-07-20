@@ -19,7 +19,6 @@
  */
 
 #include <config.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include <glib/gi18n.h>
@@ -29,7 +28,6 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-vcard.h>
-#include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-chatroom-provider.h>
 #include <libgossip/gossip-ft-provider.h>
 
@@ -41,6 +39,7 @@
 #include "gossip-transport-accounts.h"
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
+#include "gossip-sha.h"
 
 #define DEBUG_DOMAIN "Jabber"
 
@@ -1508,7 +1507,7 @@ jabber_set_presence (GossipProtocol *protocol,
 
 	contact = gossip_jabber_get_own_contact (jabber);
 	avatar = gossip_contact_get_avatar (contact, &avatar_size);
-	sha1 = gossip_sha1_string (avatar, avatar_size);
+	sha1 = gossip_sha_hash (avatar, avatar_size);
 
 	gossip_debug (DEBUG_DOMAIN, "Setting presence to:'%s', status:'%s', "
 		      "priority:'%s' sha1:'%s' avatar_size:%" G_GSIZE_FORMAT " avatar:%p", 
@@ -1837,7 +1836,7 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 		}	
 
 		avatar = gossip_contact_get_avatar (contact, &avatar_size);
-		sha1 = gossip_sha1_string (avatar, avatar_size);
+		sha1 = gossip_sha_hash (avatar, avatar_size);
 		
 		same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
 		g_free (sha1);

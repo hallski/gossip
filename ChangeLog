@@ -1,5 +1,15 @@
 2006-07-20  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Make the lack of xss non-fatal.
+
+	* protocols/jabber/Makefile.am:
+	* protocols/jabber/gossip-jabber.c: (jabber_set_presence),
+	(jabber_contact_is_avatar_latest): Use gossip_sha.
+
+	* src/gossip-idle.c: Use HAVE_XSS.
+	
+2006-07-20  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-theme-manager.c: (theme_manager_apply_theme_clean):
 	Tweak the size of the lines for the header.
 
