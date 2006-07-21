@@ -230,6 +230,13 @@ gossip_sound_init (GossipSession *session)
 
 	g_assert (saved_session == NULL);
 
+#ifdef HAVE_GNOME
+	gnome_sound_init (NULL);
+	gnome_sound_sample_load ("gossip/Chat", DATADIR "/sounds/gossip/chat1.wav");
+	gnome_sound_sample_load ("gossip/Online", DATADIR "/sounds/gossip/online.wav");
+	gnome_sound_sample_load ("gossip/Offline", DATADIR "/sounds/gossip/offline.wav");
+#endif
+	
 	saved_session = g_object_ref (session);
 
 	account_states = g_hash_table_new_full (gossip_account_hash,

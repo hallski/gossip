@@ -1,5 +1,9 @@
 2006-07-22  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-sound.c (gossip_sound_init): Init the sounds and
+	pre-load the samples, fixes the sound playing that has been broken
+	for a while, bug #347670. Patch by Sam Morris.
+
 	* configure.ac: Add carbon and iokit frameworks.
 	* src/gossip-app.c: (app_status_flash_start), (app_event_added_cb):
 	Try bouncing when events are added instead of when flashing the 
