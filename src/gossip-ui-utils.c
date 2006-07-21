@@ -30,6 +30,7 @@
 #include <glade/glade.h>
 
 #ifdef HAVE_GNOME
+#include <gdk/gdkx.h>
 #include <libgnome/gnome-url.h>
 #include <libgnomeui/libgnomeui.h>
 #elif defined (HAVE_COCOA)

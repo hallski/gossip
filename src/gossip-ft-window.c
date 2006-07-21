@@ -19,7 +19,9 @@
  */
 
 #include <config.h>
+#include <string.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 
 #ifdef HAVE_GNOME
 #include <libgnomevfs/gnome-vfs.h>
@@ -312,7 +314,7 @@ ft_window_vcard_cb (GossipResult  result,
 		GtkWidget *href;
 		GtkWidget *alignment;
 
-		href = gossip_link_button_new (url);
+		href = gossip_link_button_new (url, url);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);

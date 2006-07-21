@@ -32,7 +32,6 @@
 
 #ifdef HAVE_GNOME
 #include <libgnomeui/libgnomeui.h>
-#include <gdk/gdkx.h>
 #include "eggtrayicon.h"
 #endif
 
@@ -1478,7 +1477,7 @@ app_tray_create (void)
 	priv = GET_PRIV (app);
 
 	name = g_strdup_printf ("%s, Instant Messaging Client", PACKAGE_NAME);
-	priv->tray_icon = egg_tray_icon_new (name);
+	priv->tray_icon = GTK_WIDGET (egg_tray_icon_new (name));
 	g_free (name);
 
 	priv->tray_event_box = gtk_event_box_new ();
