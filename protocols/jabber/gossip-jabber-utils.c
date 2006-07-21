@@ -64,14 +64,14 @@ gossip_time_t
 gossip_jabber_get_message_timestamp (LmMessage *m)
 {
 	LmMessageNode *node;
-	const gchar   *timestamp_s = NULL;
 	const gchar   *xmlns;
-	struct tm     *tm;
+	const gchar   *stamp;
+	gossip_time_t  t;
 	
 	g_return_val_if_fail (m != NULL, gossip_time_get_current ());
 	g_return_val_if_fail (m->node != NULL, gossip_time_get_current ());
-	g_return_val_if_fail (m->node->children != NULL, gossip_time_get_current ());
 
+	stamp = NULL;
 	for (node = m->node->children; node && node->name; node = node->next) {
 		if (strcmp (node->name, "x") != 0) {
 			continue;
@@ -79,18 +79,21 @@ gossip_jabber_get_message_timestamp (LmMessage *m)
 
 		xmlns = lm_message_node_get_attribute (node, "xmlns");
 		if (xmlns && strcmp (xmlns, "jabber:x:delay") == 0) {
-			timestamp_s = lm_message_node_get_attribute 
-				(node, "stamp");
+			stamp = lm_message_node_get_attribute (node, "stamp");
+			break;
 		}
         }
 
-	if (!timestamp_s) {
+	if (!stamp) {
 		return gossip_time_get_current ();
 	} 
-	
-	tm = lm_utils_get_localtime (timestamp_s);
 
-	return gossip_time_from_tm (tm);
+	t = gossip_time_parse (stamp);
+	if (!t) {
+		return gossip_time_get_current ();
+	}		
+
+	return t;
 }
 
 GossipChatroomInvite *

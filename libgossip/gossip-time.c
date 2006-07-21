@@ -19,115 +19,77 @@
  */
 
 #include <config.h>
-
 #include <string.h>
-#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
 #include "gossip-time.h"
 
-static gchar *time_tz_orig = NULL;
-
-static void
-time_set_tz_utc (void)
-{
-        const gchar *tmp;
-
-        if (time_tz_orig == NULL) {
-                tmp = g_getenv ("TZ");
-
-                if (tmp != NULL) {
-                        time_tz_orig = g_strconcat ("TZ=", tmp, NULL);
-                } else {
-                        time_tz_orig = g_strdup ("TZ");
-                }
-        }
-
-        putenv ("TZ=UTC");
-}
-
-static void
-time_reset_tz (void)
-{
-        if (time_tz_orig != NULL) {
-                putenv (time_tz_orig);
-        }
-}
-
-gossip_time_t
-gossip_time_from_tm (struct tm *tm)
-{
-	gossip_time_t t;
-
-	time_set_tz_utc ();
-	t = mktime (tm);
-        time_reset_tz ();
-
-	return t;
-}
-
-struct tm *
-gossip_time_to_tm (gossip_time_t t)
-{
-        time_t tt;
-
-        tt = t;
-
-        return gmtime (&tt);
-}
+/* Note: gossip_time_t is always in UTC. */
 
 gossip_time_t
 gossip_time_get_current (void)
 {
-	time_t     t;
-	struct tm *tm;
-	
-	t  = time (NULL);
-	tm = localtime (&t);
-
-	return gossip_time_from_tm (tm);
+	return time (NULL);
 }
 
-gchar *
-gossip_time_to_timestamp (gossip_time_t t)
-{
-	gchar      stamp[128];
-	struct tm *tm;
-
-	if (t <= 0) {
-		t = gossip_time_get_current ();
-	}
-
-	tm = gossip_time_to_tm (t);
-	strftime (stamp, sizeof (stamp), "%H:%M", tm);
-
-	return g_strdup (stamp);
-}
-
-gchar *
-gossip_time_to_timestamp_full (gossip_time_t  t,
-			       const gchar   *format)
-{
-	gchar      stamp[128];
-	struct tm *tm;
-	
-	if (t <= 0) {
-		t = gossip_time_get_current ();
-	}
-
-	tm = gossip_time_to_tm (t);
-	strftime (stamp, sizeof (stamp), format, tm);
-
-	return g_strdup (stamp);
-}
-
-gossip_time_t 
-gossip_time_from_string_full (const gchar *time,
-			      const gchar *format)
+/* The format is: "20021209T23:51:30" and is in UTC. 0 is returned on failure. */
+gossip_time_t
+gossip_time_parse (const gchar *str)
 {
 	struct tm tm;
+	gint      year, month;
 	
 	memset (&tm, 0, sizeof (struct tm));
 
-	strptime (time, format, &tm);
-	return gossip_time_from_tm (&tm);
+	if (sscanf (str, "%4d%2d%2dT%2d:%2d:%2d", 
+		    &year, &month, &tm.tm_mday, &tm.tm_hour,
+		    &tm.tm_min, &tm.tm_sec) != 6) {
+		return 0;
+	}
+
+	tm.tm_year = year - 1900;
+	tm.tm_mon = month - 1;
+	tm.tm_isdst = -1;
+
+ 	return timegm (&tm);
 }
+
+/* Converts the UTC timestamp to a string, also in UTC. Returns NULL on failure. */
+gchar *
+gossip_time_to_string_utc (gossip_time_t  t,
+			   const gchar   *format)
+{
+	gchar      stamp[128];
+	struct tm *tm;
+
+	g_return_val_if_fail (t > 0, NULL);
+	g_return_val_if_fail (format != NULL, NULL);
+	
+	tm = gmtime (&t);
+	if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
+		return NULL;
+	}
+	
+	return g_strdup (stamp);
+}
+
+/* Converts the UTC timestamp to a string, in local time. Returns NULL on failure. */
+gchar *
+gossip_time_to_string_local (gossip_time_t  t,
+			     const gchar   *format)
+{
+	gchar      stamp[128];
+	struct tm *tm;
+
+	g_return_val_if_fail (t > 0, NULL);
+	g_return_val_if_fail (format != NULL, NULL);
+	
+	tm = localtime (&t);
+	if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
+		return NULL;
+	}
+	
+	return g_strdup (stamp);
+}
+

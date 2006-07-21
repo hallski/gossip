@@ -331,7 +331,13 @@ log_get_timestamp_from_message (GossipMessage *message)
 	gossip_time_t t;
 
 	t = gossip_message_get_timestamp (message);
-	return gossip_time_to_timestamp_full (t, LOG_TIME_FORMAT_FULL);
+
+	/* We keep the timestamps in the messages as UTC. */
+	
+	g_print ("logging message at %s\n",
+		 gossip_time_to_string_utc (t, LOG_TIME_FORMAT_FULL));
+	
+	return gossip_time_to_string_utc (t, LOG_TIME_FORMAT_FULL);
 }
 
 static gchar *
@@ -340,7 +346,7 @@ log_get_timestamp_filename (void)
 	gossip_time_t t;
 
 	t = gossip_time_get_current ();
-	return gossip_time_to_timestamp_full (t, LOG_TIME_FORMAT);
+	return gossip_time_to_string_local (t, LOG_TIME_FORMAT);
 }
 
 static gchar *
@@ -1102,13 +1108,16 @@ gossip_log_get_chatrooms (GossipAccount *account)
 	return chatrooms;
 }
 
+// FIXME: Move to gossip-log-window.c
 gchar *
 gossip_log_get_date_readable (const gchar *date)
 {
 	gossip_time_t t;
-	
-	t = gossip_time_from_string_full (date, LOG_TIME_FORMAT);
-	return gossip_time_to_timestamp_full (t, "%a %d %b %Y");
+
+	// koko this won't work as the input doesn't have the time.
+	t = gossip_time_parse (date); //, LOG_TIME_FORMAT);
+
+	return gossip_time_to_string_local (t, "%a %d %b %Y");
 }
 
 /*
@@ -1299,7 +1308,7 @@ gossip_log_get_messages_for_contact (GossipContact *contact,
 		body = xmlNodeGetContent (node);
 		
 		time = xmlGetProp (node, "time");
-		t = gossip_time_from_string_full (time, "%Y%m%dT%H:%M:%S");
+		t = gossip_time_parse (time);
 		
 		name = xmlGetProp (node, "nick");
 		
@@ -1704,7 +1713,7 @@ gossip_log_get_messages_for_chatroom (GossipChatroom *chatroom,
 		body = xmlNodeGetContent (node);
 		
 		time = xmlGetProp (node, "time");
-		t = gossip_time_from_string_full (time, "%Y%m%dT%H:%M:%S");
+		t = gossip_time_parse (time);
 
 		sent = gossip_contact_equal (contact, own_contact);
 		

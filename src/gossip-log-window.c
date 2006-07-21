@@ -783,7 +783,7 @@ log_window_contacts_is_today_selected (GossipLogWindow *window)
 	gboolean       selected;
 
 	t = gossip_time_get_current ();
-	timestamp = gossip_time_to_timestamp_full (t, "%Y%m%d");
+	timestamp = gossip_time_to_string_local (t, "%Y%m%d");
 
 	sscanf (timestamp, "%4d%2d%2d", &year, &month, &day);
 
@@ -1371,7 +1371,7 @@ log_window_chatrooms_is_today_selected (GossipLogWindow *window)
 	gboolean       selected;
 
 	t = gossip_time_get_current ();
-	timestamp = gossip_time_to_timestamp_full (t, "%Y%m%d");
+	timestamp = gossip_time_to_string_local (t, "%Y%m%d");
 
 	sscanf (timestamp, "%4d%2d%2d", &year, &month, &day);
 

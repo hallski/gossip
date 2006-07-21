@@ -880,7 +880,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	
 	if (append_date) {
 		gchar buf[256];
-		
+
 		g_date_strftime (buf, 256, _("%A %d %B %Y"), date);
 		g_string_append (str, buf);
 
@@ -895,7 +895,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	if (append_time) {
 		gchar *tmp;
 
-		tmp = gossip_time_to_timestamp (timestamp);
+		tmp = gossip_time_to_string_local (timestamp, GOSSIP_TIME_FORMAT_DISPLAY_SHORT);
 		g_string_append (str, tmp);
 		g_free (tmp);
 	}
