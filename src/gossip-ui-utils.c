@@ -31,7 +31,7 @@
 
 #ifdef HAVE_GNOME
 #include <libgnome/gnome-url.h>
-#include <libgnomeui/gnome-href.h>
+#include <libgnomeui/libgnomeui.h>
 #elif defined (HAVE_COCOA)
 #include <Cocoa/Cocoa.h>
 #endif
@@ -1362,6 +1362,39 @@ gossip_url_show (const char *url)
 }
 #endif
 
+void
+gossip_help_show (void)
+{
+#ifdef HAVE_GNOME
+	gboolean   ok;
+	GtkWidget *dialog;
+	GError    *err = NULL;
+
+	ok = gnome_help_display ("gossip.xml", NULL, &err);
+	if (ok) {
+		return;
+	}
+
+	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
+						     GTK_DIALOG_DESTROY_WITH_PARENT,
+						     GTK_MESSAGE_ERROR,
+						     GTK_BUTTONS_CLOSE,
+						     "<b>%s</b>\n\n%s",
+						     _("Could not display the help contents."),
+						     err->message);
+	
+	g_signal_connect_swapped (dialog, "response",
+				  G_CALLBACK (gtk_widget_destroy),
+				  dialog);
+
+	gtk_widget_show (dialog);
+		
+	g_error_free (err);
+#elif defined(HAVE_COCOA)
+	/* Nothing for now. */
+#endif
+}
+
 /* FIXME: Replace with GtkLinkButton in 2.10. */
 GtkWidget *
 gossip_link_button_new (const gchar *url,
@@ -1391,3 +1424,39 @@ gossip_window_set_default_icon_name (const gchar *name)
 	[pool release];
 #endif
 }
+
+gboolean
+gossip_have_tray (void)
+{
+#ifdef HAVE_GNOME
+	Screen *xscreen = DefaultScreenOfDisplay (gdk_display);
+	Atom    selection_atom;
+	char   *selection_atom_name;
+	
+	selection_atom_name = g_strdup_printf ("_NET_SYSTEM_TRAY_S%d",
+					       XScreenNumberOfScreen (xscreen));
+	selection_atom = XInternAtom (DisplayOfScreen (xscreen), selection_atom_name, False);
+	g_free (selection_atom_name);
+	
+	if (XGetSelectionOwner (DisplayOfScreen (xscreen), selection_atom)) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+#else
+	return FALSE;
+#endif
+}
+
+void
+gossip_request_user_attention (void)
+{
+#ifdef HAVE_GNOME
+	/* Nothing for now. */
+#elif defined(HAVE_COCOA)
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	[NSApp requestUserAttention: NSInformationalRequest];
+	[pool release];
+#endif
+}
+

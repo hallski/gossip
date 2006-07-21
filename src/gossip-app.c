@@ -21,16 +21,20 @@
  */
 
 #include <config.h>
-#include <sys/utsname.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <gdk/gdkkeysyms.h>
-#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
-#include <loudmouth/loudmouth.h>
 #include <glib/gi18n.h>
+
+#ifdef HAVE_GNOME
 #include <libgnomeui/libgnomeui.h>
+#include <gdk/gdkx.h>
+#include "eggtrayicon.h"
+#endif
 
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
@@ -39,8 +43,6 @@
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-conf.h>
-
-#include "eggtrayicon.h"
 
 #include "gossip-about-dialog.h"
 #include "gossip-account-button.h"
@@ -81,6 +83,7 @@
 #ifdef HAVE_LIBNOTIFY
 #include "gossip-notify.h"
 #endif
+
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_APP, GossipAppPriv))
 
@@ -141,7 +144,7 @@ struct _GossipAppPriv {
 	GtkWidget             *actions_group_chat_join;   
 
 	/* Tray */
-	EggTrayIcon           *tray_icon;
+	/*EggTrayIcon*/ GtkWidget           *tray_icon;
 	GtkWidget             *tray_event_box;
 	GtkWidget             *tray_image;
 	GList                 *tray_flash_icons;
@@ -297,7 +300,6 @@ static gboolean        configure_event_timeout_cb           (GtkWidget          
 static gboolean        app_window_configure_event_cb        (GtkWidget                *widget,
 							     GdkEventConfigure        *event,
 							     GossipApp                *app);
-static gboolean        app_have_tray                        (void);
 static gboolean        app_tray_flash_timeout_func          (gpointer                  data);
 static void            app_tray_flash_start                 (void);
 static void            app_tray_flash_maybe_stop            (void);
@@ -488,6 +490,7 @@ app_setup (GossipSession        *session,
 	gossip_debug (DEBUG_DOMAIN_SETUP,
 		      "Initialising managers "
 		      "(chatroom, chat, event)");
+
 	priv->chatroom_manager = gossip_chatroom_manager_new (manager, 
 							      priv->session, 
 							      NULL);
@@ -725,7 +728,7 @@ app_setup (GossipSession        *session,
 	/* Set window to be hidden. If doesn't have tray, show window and mask
 	 * "actions_hide_list".
 	 */
-	if (!app_have_tray()) {
+	if (!gossip_have_tray ()) {
 		hidden = FALSE;
 		gtk_widget_hide (GTK_WIDGET (priv->actions_hide_list));
 	} else {
@@ -777,7 +780,7 @@ app_main_window_quit_confirm (GossipApp *app,
 
 		GtkWidget *dialog;
 		gchar     *str;
-		gchar     *oldstr = NULL;
+		gchar     *oldstr;
 
 		str = g_strconcat (_("To summarize:"), "\n", NULL);
 
@@ -794,10 +797,9 @@ app_main_window_quit_confirm (GossipApp *app,
 
 			count[type]++;
 		}
-		
+
+		str = g_strdup ("");
 		for (i = 0; i < GOSSIP_EVENT_ERROR; i++) {
-			gchar *str_single = NULL;
-			gchar *str_plural = NULL;
 			gchar *info;
 			gchar *format;
 
@@ -807,38 +809,41 @@ app_main_window_quit_confirm (GossipApp *app,
 			
 			switch (i) {
 			case GOSSIP_EVENT_NEW_MESSAGE: 
-				str_single = "%d New message";
-				str_plural = "%d New messages";
+				format = ngettext ("%d new message",
+						   "%d new messages",
+						   count[i]);
 				break;
 			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST: 
-				str_single = "%d Subscription request";
-				str_plural = "%d Subscription requests";
+				format = ngettext ("%d subscription request",
+						   "%d subscription requests",
+						   count[i]);
 				break;
 			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST: 
-				str_single = "%d File transfer request";
-				str_plural = "%d File transfer requests";
+				format = ngettext ("%d file transfer request",
+						   "%d file transfer requests",
+						   count[i]);
 				break;
 			case GOSSIP_EVENT_SERVER_MESSAGE: 
-				str_single = "%d Server message";
-				str_plural = "%d Server messages";
+				format = ngettext ("%d server message",
+						   "%d server messages",
+						   count[i]);
 				break;
 			case GOSSIP_EVENT_ERROR: 
-				str_single = "%d Error";
-				str_plural = "%d Errors";
+				format = ngettext ("%d error",
+						   "%d errors",
+						   count[i]);
+				break;
+			default:
+				format = "";
 				break;
 			}
 
-			format = ngettext (str_single, str_plural, count[i]);
 			info = g_strdup_printf (format, count[i]);
 
-			if (oldstr) {
-				g_free (oldstr);
-			}
-
 			oldstr = str;
-
-			str = g_strconcat (str, "\n", "\t", info, NULL);
+			str = g_strconcat (str, info, "\n",NULL);
 			g_free (info);
+			g_free (oldstr);
 		}
 
 		g_list_free (events);
@@ -858,15 +863,14 @@ app_main_window_quit_confirm (GossipApp *app,
 		
 		gtk_widget_show (dialog);
 
+		g_free (str);
+		
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-/*
- * window signals
- */
 static void
 app_main_window_quit_confirm_cb (GtkWidget *dialog,
 				 gint       response,
@@ -1079,36 +1083,9 @@ static void
 app_help_cb (GtkWidget *window,
 	     GossipApp *app)
 {
-	gboolean   ok;
-
-	GtkWidget *dialog;
-	GError    *err = NULL;
-
-	ok = gnome_help_display ("gossip.xml", NULL, &err);
-	if (ok) {
-		return;
-	}
-
-	dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (gossip_app_get_window ()),
-						     GTK_DIALOG_DESTROY_WITH_PARENT,
-						     GTK_MESSAGE_ERROR,
-						     GTK_BUTTONS_CLOSE,
-						     "<b>%s</b>\n\n%s",
-						     _("Could not display the help contents."),
-						     err->message);
-	
-	g_signal_connect_swapped (dialog, "response",
-				  G_CALLBACK (gtk_widget_destroy),
-				  dialog);
-
-	gtk_widget_show (dialog);
-		
-	g_error_free (err);
+	gossip_help_show ();
 }
 
-/* 
- * libgossip signals 
- */
 static gboolean
 app_throbber_button_press_event_cb (GtkWidget      *throbber,
 				    GdkEventButton *event,
@@ -1251,10 +1228,6 @@ app_accels_load (void)
 	gchar *file_with_path;
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	}
-
 	file_with_path = g_build_filename (dir, ACCELS_FILENAME, NULL);
 	g_free (dir);
 
@@ -1273,10 +1246,7 @@ app_accels_save (void)
 	gchar *file_with_path;
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	}
-
+	g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	file_with_path = g_build_filename (dir, ACCELS_FILENAME, NULL);
 	g_free (dir);
 
@@ -1285,10 +1255,6 @@ app_accels_save (void)
 	
 	g_free (file_with_path);
 }
-
-/*
- * Notification area signals
- */
 
 gboolean
 gossip_app_is_window_visible (void)
@@ -1310,7 +1276,7 @@ gossip_app_toggle_visibility (void)
 
 	visible = gossip_window_get_is_visible (GTK_WINDOW (priv->window));
 
-	if (visible && app_have_tray()) {
+	if (visible && gossip_have_tray ()) {
 		gint x, y, w, h;
 
 		gtk_window_get_size (GTK_WINDOW (priv->window), &w, &h);
@@ -1402,7 +1368,7 @@ app_tray_destroy_cb (GtkWidget *widget,
 	app_tray_create ();
 	
 	/* Show the window in case the notification area was removed */
-	if (!app_have_tray ()) {
+	if (!gossip_have_tray ()) {
 		gtk_widget_show (priv->window);
 	}
 
@@ -1504,6 +1470,7 @@ app_tray_create_menu (void)
 static void
 app_tray_create (void)
 {
+#ifdef HAVE_GNOME
 	GossipAppPriv *priv;
 	GdkPixbuf     *pixbuf;
 	gchar         *name;
@@ -1550,6 +1517,11 @@ app_tray_create (void)
 #endif
 
 	app_tray_update_tooltip ();
+#else
+	if (0) {
+		app_tray_button_press_cb (NULL, NULL, NULL);
+	}
+#endif
 }
 
 static void
@@ -1578,19 +1550,23 @@ app_tray_update_tooltip (void)
 			status = _("Disconnected");
 		}
 
-		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
-				      priv->tray_event_box, status, status);
-
+		if (priv->tray_event_box) {
+			gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
+					      priv->tray_event_box, status, status);
+		}
+		
 		return;
 	}
 
 	event = priv->tray_flash_icons->data;
 
-	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
-			      priv->tray_event_box,
-			      gossip_event_get_message (event),
-			      gossip_event_get_message (event));
-}	
+	if (priv->tray_event_box) {
+		gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
+				      priv->tray_event_box,
+				      gossip_event_get_message (event),
+				      gossip_event_get_message (event));
+	}	
+}
 
 static void
 app_status_flash_start (void)
@@ -1598,6 +1574,8 @@ app_status_flash_start (void)
 	GossipAppPriv *priv;
 	
 	priv = GET_PRIV (app);
+
+	gossip_request_user_attention ();
 	
 	gossip_presence_chooser_flash_start (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
 					     app_get_current_state (),
@@ -2209,9 +2187,11 @@ app_presence_updated (void)
 	
 	priv = GET_PRIV (app);
 
-	pixbuf = app_get_current_status_pixbuf ();
-	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
-	g_object_unref (pixbuf);
+	if (priv->tray_image) {
+		pixbuf = app_get_current_status_pixbuf ();
+		gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
+		g_object_unref (pixbuf);
+	}
 	
 	if (!gossip_session_is_connected (priv->session, NULL)) {
 		gossip_presence_chooser_set_status (
@@ -2327,7 +2307,7 @@ configure_event_timeout_cb (GtkWidget *widget)
 	priv = GET_PRIV (app);
 
 	gtk_window_get_size (GTK_WINDOW (widget), &w, &h);
-	gtk_window_get_position (GTK_WINDOW (priv->window), &x, &y);
+	gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
 
 	gossip_geometry_save_for_main_window (x, y, w, h);
 
@@ -2367,25 +2347,6 @@ gossip_app_get_window (void)
 }
 
 static gboolean
-app_have_tray (void)
-{
-	Screen *xscreen = DefaultScreenOfDisplay (gdk_display);
-	Atom    selection_atom;
-	char   *selection_atom_name;
-	
-	selection_atom_name = g_strdup_printf ("_NET_SYSTEM_TRAY_S%d",
-					       XScreenNumberOfScreen (xscreen));
-	selection_atom = XInternAtom (DisplayOfScreen (xscreen), selection_atom_name, False);
-	g_free (selection_atom_name);
-	
-	if (XGetSelectionOwner (DisplayOfScreen (xscreen), selection_atom)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-}
-
-static gboolean
 app_tray_flash_timeout_func (gpointer data)
 {
 	GossipAppPriv   *priv;
@@ -2395,6 +2356,10 @@ app_tray_flash_timeout_func (gpointer data)
 
 	priv = GET_PRIV (app);
 
+	if (!priv->tray_image) {
+		return TRUE;
+	}
+	
 	is_flashing = gossip_presence_chooser_is_flashing
 		(GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser));
 
@@ -2465,9 +2430,11 @@ app_tray_flash_maybe_stop (void)
 		return;
 	}
 
-	pixbuf = app_get_current_status_pixbuf ();
-	gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
-	g_object_unref (pixbuf);
+	if (priv->tray_image) {
+		pixbuf = app_get_current_status_pixbuf ();
+		gtk_image_set_from_pixbuf (GTK_IMAGE (priv->tray_image), pixbuf);
+		g_object_unref (pixbuf);
+	}
 	
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);

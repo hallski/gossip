@@ -1377,9 +1377,12 @@ chat_window_new_message_cb (GossipChat       *chat,
 
 	priv = GET_PRIV (window);
 
-	gossip_debug (DEBUG_DOMAIN, "New message, do we have focus?");
+	gossip_request_user_attention ();
+	
 	if (!gossip_chat_window_has_focus (window)) {
 		GossipContact *own_contact;
+
+		gossip_debug (DEBUG_DOMAIN, "New message, no focus");
 
 		priv->new_msg = TRUE;
 		chat_window_update_title (window, chat);
@@ -1387,13 +1390,15 @@ chat_window_new_message_cb (GossipChat       *chat,
 		if (gossip_chat_is_group_chat (chat)) {
 			own_contact = gossip_chat_get_own_contact (chat);
 
-			gossip_debug (DEBUG_DOMAIN, "Should we highlight this nick?");
 			if (gossip_chat_should_highlight_nick (message, own_contact)) {
+				gossip_debug (DEBUG_DOMAIN, "Highlight this nick");
 				chat_window_set_urgency_hint (window, TRUE);
 			}
 		} else {
 			chat_window_set_urgency_hint (window, TRUE);
 		}
+	} else {
+		gossip_debug (DEBUG_DOMAIN, "New message, we have focus");
 	}
 
 	if (chat == priv->current_chat) {

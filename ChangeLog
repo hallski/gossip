@@ -1,5 +1,33 @@
 2006-07-21  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: Make this work better without a tray. Move help
+	 showing code to the ui utils. Fixup ngettext usage and plug a few 
+	leaks. Use "request user attention" API in ui utils.
+
+	* src/gossip-chat-window.c: (chat_window_new_message_cb): Request
+	user attention.                                       
+
+	* src/gossip-ui-utils.c: (gossip_help_show), (gossip_have_tray),
+	(gossip_request_user_attention): Move some stuff from app here.
+
+2006-07-21  Richard Hult  <richard@imendio.com>
+
+	reviewed by: <delete if not using a buddy>
+
+	* src/gossip-app.c: (app_setup), (app_main_window_quit_confirm),
+	(app_help_cb), (app_accels_load), (app_accels_save),
+	(gossip_app_toggle_visibility), (app_tray_destroy_cb),
+	(app_tray_create), (app_tray_update_tooltip),
+	(app_status_flash_start), (app_presence_updated),
+	(configure_event_timeout_cb), (app_tray_flash_timeout_func),
+	(app_tray_flash_maybe_stop):
+	* src/gossip-chat-window.c: (chat_window_new_message_cb):
+	* src/gossip-ui-utils.c: (gossip_help_show), (gossip_have_tray),
+	(gossip_request_user_attention):
+	* src/gossip-ui-utils.h:
+
+2006-07-21  Richard Hult  <richard@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c:
 	* protocols/jabber/gossip-sha.c: (gossip_sha_hash):
 	* protocols/jabber/gossip-sha.h: Fix warnings and make distcheck.
