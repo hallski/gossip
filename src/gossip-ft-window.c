@@ -18,9 +18,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
 #include <glib/gi18n.h>
-#include <libgnomeui/libgnomeui.h>
+
+#ifdef HAVE_GNOME
 #include <libgnomevfs/gnome-vfs.h>
+#endif
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-event-manager.h>
@@ -29,6 +32,7 @@
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-ft-window.h"
+#include "gossip-ui-utils.h"
 #include "gossip-app.h"
 
 #define DEBUG_DOMAIN "FileTransferWindow"
@@ -38,6 +42,8 @@ typedef struct {
 	GossipFT       *ft;
 	GossipVCard    *vcard;
 } FTData;
+
+#ifdef HAVE_GNOME
 
 static void ft_window_protocol_connected_cb    (GossipSession      *session,
 						GossipAccount      *account,
@@ -306,7 +312,7 @@ ft_window_vcard_cb (GossipResult  result,
 		GtkWidget *href;
 		GtkWidget *alignment;
 
-		href = gnome_href_new (url, url);
+		href = gossip_link_button_new (url);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -465,3 +471,28 @@ ft_window_filechooser_response_cb (GtkDialog     *dialog,
 	g_object_unref (contact);
 	gtk_widget_destroy (GTK_WIDGET (dialog));
 }
+
+#else
+
+void
+gossip_ft_window_init               (GossipSession *session)
+{
+}
+
+void
+gossip_ft_window_finalize           (GossipSession *session)
+{
+}
+
+void
+gossip_ft_window_send_file          (GossipContact *account)
+{
+}
+
+void
+gossip_ft_window_send_file_from_uri (GossipContact *contact,
+				     const gchar   *file)
+{
+}
+
+#endif
