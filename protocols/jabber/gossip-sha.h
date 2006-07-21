@@ -23,7 +23,7 @@
 
 #include <glib.h>
 
-gchar * gossip_sha_hash (const gchar *str,
-			 gsize        len);
+gchar * gossip_sha_hash (const guchar *str,
+			 gsize         len);
 
 #endif /* __GOSSIP_SHA_H__ */

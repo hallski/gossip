@@ -31,12 +31,17 @@
 #include <libgossip/gossip-chatroom-provider.h>
 #include <libgossip/gossip-ft-provider.h>
 
+#include "gossip-jid.h"
 #include "gossip-jabber-chatrooms.h"
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-vcard.h"
 #include "gossip-jabber-services.h"
 #include "gossip-jabber-utils.h"
+
+#ifdef USE_TRANSPORTS
 #include "gossip-transport-accounts.h"
+#endif
+
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 #include "gossip-sha.h"
@@ -92,7 +97,9 @@ struct _GossipJabberPriv {
 	GHashTable            *composing_requests;
 
 	/* Transport stuff... is this in the right place? */
+#ifdef USE_TRANSPORTS
 	GossipTransportAccountList *account_list;
+#endif
 	LmMessageHandler      *subscription_handler;
 };
 

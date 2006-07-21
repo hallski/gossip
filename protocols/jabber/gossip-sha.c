@@ -602,14 +602,14 @@ SHA1Final (SHA1Context *sc, guint8 hash[SHA1_HASH_SIZE])
 #endif
 
 gchar *
-gossip_sha_hash (const gchar *str, gsize len)
+gossip_sha_hash (const guchar *str, gsize len)
 {
         static gchar  ret_val[41];
         SHA1Context   ctx;
         guint8         hash[SHA1_HASH_SIZE];
         gchar        *ch;
         guint          i;
-        
+
         SHA1Init (&ctx);
         SHA1Update (&ctx, str, len);
         SHA1Final (&ctx, hash);

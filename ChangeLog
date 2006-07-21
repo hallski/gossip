@@ -1,5 +1,11 @@
 2006-07-21  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c:
+	* protocols/jabber/gossip-sha.c: (gossip_sha_hash):
+	* protocols/jabber/gossip-sha.h: Fix warnings and make distcheck.
+
+2006-07-21  Richard Hult  <richard@imendio.com>
+
 	* src/Makefile.am: Don't try to generate the dbus bindings when we
 	don't have dbus, and conditionally include eggtray.
 
@@ -19,7 +25,7 @@
 	times, always keep them in UTC and only go to local time for
 	display. Should fix bug #338463.
 
-2006-07-21  Richard Hult  <richard@imendio.com>
+2006-07-21  Ric0hard Hult  <richard@imendio.com>
 
 	* src/gossip-cell-renderer-text.c: Fix bug I introduced the other
 	day, that broke the contact list for group chats. Try to do a bit
