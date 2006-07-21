@@ -26,12 +26,10 @@
 struct _GossipCellRendererTextPriv {
 	gchar    *name;
 	gchar    *status;
-
-	gint      width;
-
-	gboolean  dirty;
-
 	gboolean  is_group;
+
+	gboolean  is_valid;
+	gboolean  is_selected;
 };
 
 static void gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass);
@@ -61,7 +59,6 @@ static void cell_renderer_text_render            (GtkCellRenderer             *c
 						  GtkCellRendererState         flags);
 static void cell_renderer_text_update_text       (GossipCellRendererText      *cell,
 						  GtkWidget                   *widget,
-						  gint                         new_width,
 						  gboolean                     selected);
 
 
@@ -198,15 +195,18 @@ cell_renderer_text_set_property (GObject      *object,
 		str = g_value_get_string (value);
 		priv->name = g_strdup (str ? str : "");
 		g_strdelimit (priv->name, "\n\r\t", ' ');
+		priv->is_valid = FALSE;
 		break;
 	case PROP_STATUS:
 		g_free (priv->status);
 		str = g_value_get_string (value);
 		priv->status = g_strdup (str ? str : "");
 		g_strdelimit (priv->status, "\n\r\t", ' ');
+		priv->is_valid = FALSE;
 		break;
 	case PROP_IS_GROUP:
 		priv->is_group = g_value_get_boolean (value);
+		priv->is_valid = FALSE;
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -225,17 +225,17 @@ cell_renderer_text_get_size (GtkCellRenderer *cell,
 {
 	GossipCellRendererText     *celltext;
 	GossipCellRendererTextPriv *priv;
-
+	
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
 	priv     = celltext->priv;
-	
-	cell_renderer_text_update_text (celltext, widget, 0, 0);
 
-	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->get_size) (
-		cell, widget,
-		cell_area, 
-		x_offset, y_offset,
-		width, height);
+	/* Only update if not already valid so we get the right size. */
+	cell_renderer_text_update_text (celltext, widget, priv->is_selected);
+	
+	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->get_size) (cell, widget,
+										      cell_area,
+										      x_offset, y_offset,
+										      width, height);
 }
 
 static void
@@ -247,14 +247,12 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 			   GdkRectangle         *expose_area,
 			   GtkCellRendererState  flags)
 {
-	GossipCellRendererText     *celltext;
-	GossipCellRendererTextPriv *priv;
+	GossipCellRendererText *celltext;
 
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
-	priv     = celltext->priv;
 
-	cell_renderer_text_update_text (celltext, widget, 
-					cell_area->width,
+	cell_renderer_text_update_text (celltext,
+					widget, 
 					(flags & GTK_CELL_RENDERER_SELECTED));
 
 	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->render) (
@@ -268,22 +266,19 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 static void
 cell_renderer_text_update_text (GossipCellRendererText *cell, 
 				GtkWidget              *widget,
-				gint                    new_width,
 				gboolean                selected)
 {
 	GossipCellRendererTextPriv *priv;
 	PangoAttrList              *attr_list;
 	PangoAttribute             *attr_color, *attr_style, *attr_size;
 	GtkStyle                   *style;
-	GdkColor                    color;
-	const gchar                *status;
 	gchar                      *str;
 
 	priv = cell->priv;
 
-	priv->width = new_width;
-
-	attr_color = NULL;
+	if (priv->is_valid && priv->is_selected == selected) {
+		return;
+	}
 
 	if (priv->is_group) {
 		g_object_set (cell, 
@@ -292,11 +287,13 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 			      "text", priv->name,
 			      "attributes", NULL,
 			      NULL);
+
+		priv->is_selected = selected;
+		priv->is_valid = TRUE;
 		return;
 	}
-
+	
  	style = gtk_widget_get_style (widget);
-	color = style->text_aa[GTK_STATE_NORMAL];
 
 	attr_list = pango_attr_list_new ();
 
@@ -306,7 +303,11 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	pango_attr_list_insert (attr_list, attr_style);
 
   	if (!selected) {  
-   		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);   
+		GdkColor color;
+		
+		color = style->text_aa[GTK_STATE_NORMAL];
+
+		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);   
    		attr_color->start_index = attr_style->start_index;   
    		attr_color->end_index = -1;   
    		pango_attr_list_insert (attr_list, attr_color);   
@@ -319,13 +320,11 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	pango_attr_list_insert (attr_list, attr_size);
 
 	if (!priv->status || !priv->status[0]) {
-		status = "";
+		str = g_strdup (priv->name);
 	} else {
-		status = priv->status;
+		str = g_strdup_printf ("%s\n%s", priv->name, priv->status);
 	}
 	
-	str = g_strdup_printf ("%s\n%s", priv->name, status);
-
 	g_object_set (cell,
 		      "visible", TRUE,
 		      "weight", PANGO_WEIGHT_NORMAL,
@@ -335,6 +334,9 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
       
 	g_free (str);
 	pango_attr_list_unref (attr_list);
+
+	priv->is_selected = selected;
+	priv->is_valid = TRUE;
 }
 
 GtkCellRenderer * 

@@ -1,3 +1,9 @@
+2006-07-21  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-cell-renderer-text.c: Fix bug I introduced the other
+	day, that broke the contact list for group chats. Try to do a bit
+	less work unless necessary.
+
 2006-07-20  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-main.c:
