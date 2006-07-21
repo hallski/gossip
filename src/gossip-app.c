@@ -1574,8 +1574,6 @@ app_status_flash_start (void)
 	
 	priv = GET_PRIV (app);
 
-	gossip_request_user_attention ();
-	
 	gossip_presence_chooser_flash_start (GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
 					     app_get_current_state (),
 					     app_get_previous_state ());
@@ -2539,9 +2537,9 @@ app_event_added_cb (GossipEventManager *manager,
 	GossipAppPriv *priv;
 	GList         *l;
 		
-	gossip_debug (DEBUG_DOMAIN_TRAY, "Start blink");
-
 	priv = GET_PRIV (app);
+	
+	gossip_request_user_attention ();
 	
 	l = g_list_find_custom (priv->tray_flash_icons, 
 				event, gossip_event_compare);
@@ -2567,13 +2565,11 @@ app_event_removed_cb (GossipEventManager *manager,
 
 	priv = GET_PRIV (app);
 
-	gossip_debug (DEBUG_DOMAIN_TRAY, "Stop blink");
 	l = g_list_find_custom (priv->tray_flash_icons, event,
 				gossip_event_compare);
 
 	if (!l) {
 		/* Not flashing this event */
-		gossip_debug (DEBUG_DOMAIN_TRAY, "Couldn't find event");
 		return;
 	}
 
@@ -2600,7 +2596,6 @@ app_contact_activated_cb (GossipContactList *contact_list,
 		return;
 	}
 
-	/* Default to starting chat */
 	gossip_chat_manager_show_chat (priv->chat_manager, contact);
 }
 

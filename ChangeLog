@@ -1,3 +1,13 @@
+2006-07-22  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Add carbon and iokit frameworks.
+	* src/gossip-app.c: (app_status_flash_start), (app_event_added_cb):
+	Try bouncing when events are added instead of when flashing the 
+	tray.
+
+	* src/gossip-idle.c: (gossip_idle_get_seconds): Implement for the 
+	mac backend so that I can go auto-away.
+
 2006-07-21  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: Make this work better without a tray. Move help

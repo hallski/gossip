@@ -27,18 +27,22 @@
 #include <X11/Xutil.h>
 #include <X11/extensions/scrnsaver.h>
 #include <gdk/gdkx.h>
+#elif defined(HAVE_COCOA)
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreServices/CoreServices.h>
+#include <IOKit/IOKitLib.h>
 #endif
 
 #include <gdk/gdk.h>
 #include "gossip-idle.h"
 
-static time_t timestamp = 0;
+static time_t timestamp = 0;;
 
 gint32
 gossip_idle_get_seconds (void)
 {
-#ifdef HAVE_XSS
 	static gboolean          inited = FALSE;
+#ifdef HAVE_XSS
 	static XScreenSaverInfo *ss_info = NULL;
 	gint                     event_base;
 	gint                     error_base;
@@ -66,8 +70,67 @@ gossip_idle_get_seconds (void)
 	timestamp = time (NULL);
 
 	return idle;
+	
+#elif defined(HAVE_COCOA)
+	static mach_port_t         port;
+	static io_registry_entry_t object;
+	CFMutableDictionaryRef     properties;
+	CFTypeRef                  idle_object;
+	uint64_t                   idle_time;
+	
+	if (!inited) {
+		io_iterator_t iter;
+
+		timestamp = time (NULL);
+
+		inited = TRUE;
+		
+		IOMasterPort (MACH_PORT_NULL, &port);
+		IOServiceGetMatchingServices (port,
+					      IOServiceMatching ("IOHIDSystem"),
+					      &iter);
+		if (iter == 0) {
+			g_warning ("Couldn't access IOHIDSystem\n");
+			return 0;
+		}
+
+		object = IOIteratorNext (iter);
+	}
+	
+	if (!object) {
+		return 5;
+	}
+
+	idle_time = 5;
+	properties = 0;
+	if (IORegistryEntryCreateCFProperties (object, &properties, kCFAllocatorDefault, 0) ==
+	    KERN_SUCCESS && properties != NULL) {
+		CFTypeID type;
+
+		idle_object = CFDictionaryGetValue (properties, CFSTR ("HIDIdleTime"));
+
+		type = CFGetTypeID (idle_object);
+		if (type == CFNumberGetTypeID ()) {
+			CFNumberGetValue ((CFNumberRef) idle_object,
+					  kCFNumberSInt64Type,
+					  &idle_time);
+			idle_time >>= 30;
+		} else {
+			idle_time = 5;
+		}
+	}
+
+	CFRelease ((CFTypeRef) properties);
+
+	/* When idle time is low enough, we're not really idle. */
+	if (idle_time < 3) {
+		return timestamp - time (NULL);
+	}
+	
+	timestamp = time (NULL);
+
+	return idle_time;
 #else
-	/* Pretend we are never idle for now. */
 	return 5;
 #endif
 }

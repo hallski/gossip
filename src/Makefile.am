@@ -94,7 +94,7 @@ gossip_SOURCES = 				                        	\
 
 
 gossip_LDADD = $(GOSSIP_LIBS) $(XSS_LIBS)					\
-	$(top_builddir)/libgossip/libgossip.la 
+	$(top_builddir)/libgossip/libgossip.la
 
 gossip_LDFLAGS = -export-dynamic $(BACKEND_LDFLAGS)
 

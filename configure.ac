@@ -61,7 +61,7 @@ elif test "x$ac_backend" = xcocoa; then
    libgnomeui_pkgconfig=
    AM_CONDITIONAL(GCONF_SCHEMAS_INSTALL, false)
    BACKEND_CFLAGS="-xobjective-c"
-   BACKEND_LDFLAGS="-framework AppKit -lobjc"
+   BACKEND_LDFLAGS="-framework AppKit -framework IOKit -framework Carbon -lobjc"
 else
    AC_MSG_ERROR([Incorrect backend])
 fi
