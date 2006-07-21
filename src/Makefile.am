@@ -15,26 +15,28 @@ AM_CPPFLAGS =	                                 	\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
 	$(GOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
 
+if HAVE_DBUS
 dbus_binding_sources = gossip-dbus.xml
 
 gossip-dbus-glue.h: $(dbus_binding_sources)
-	$(LIBTOOL) --mode=execute $(DBUSBINDINGTOOL) --prefix=gossip_dbus --mode=glib-server --output=gossip-dbus-glue.h $(srcdir)/$(dbus_binding_sources)
+	$(LIBTOOL) --mode=execute $(DBUSBINDINGTOOL) --prefix=gossip_dbus \
+	--mode=glib-server --output=gossip-dbus-glue.h $(srcdir)/$(dbus_binding_sources)
 
-if HAVE_DBUS
-dbus_sources =									\
-	gossip-dbus.c                  	    gossip-dbus.h
+dbus_sources = gossip-dbus.c gossip-dbus.h
+dbus_generated = gossip-dbus-glue.h
 endif
 
 if HAVE_GALAGO
-galago_sources =			                                        \
-	gossip-galago.c                     gossip-galago.h
+galago_sources = gossip-galago.c gossip-galago.h
 endif
 
 if HAVE_LIBNOTIFY
-libnotify_sources =			                                        \
-	gossip-notify.c                     gossip-notify.h
+libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
+if HAVE_GNOME
+eggtray_sources = eggtrayicon.c eggtrayicon.h
+endif
 
 bin_PROGRAMS = gossip
 
@@ -42,6 +44,7 @@ gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	$(galago_sources)		     	                        	\
 	$(libnotify_sources)		     	                        	\
+	$(eggtray_sources)		     	                        	\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-button.c		   gossip-account-button.h		\
@@ -87,11 +90,11 @@ gossip_SOURCES = 				                        	\
 	gossip-throbber.c       	   gossip-throbber.h			\
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
-	gossip-theme-manager.c	    	   gossip-theme-manager.h		\
-	eggtrayicon.c		           eggtrayicon.h
+	gossip-theme-manager.c	    	   gossip-theme-manager.h		
+
 
 gossip_LDADD = $(GOSSIP_LIBS) $(XSS_LIBS)					\
-	$(top_builddir)/libgossip/libgossip.la
+	$(top_builddir)/libgossip/libgossip.la 
 
 gossip_LDFLAGS = -export-dynamic $(BACKEND_LDFLAGS)
 
@@ -120,7 +123,7 @@ gossip-marshal-main.c: gossip-marshal.c gossip-marshal.h
 BUILT_SOURCES = 					\
 	gossip-marshal.h				\
 	gossip-marshal.c				\
-	gossip-dbus-glue.h
+	$(dbus_generated)
 
 CLEANFILES = $(BUILT_SOURCES)
 
@@ -131,5 +134,6 @@ EXTRA_DIST =						\
 	$(dbus_sources)					\
 	$(dbus_binding_sources)				\
 	$(galago_sources)				\
-	$(libnotify_sources)
+	$(libnotify_sources)				\
+	$(eggtray_sources)
 
