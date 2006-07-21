@@ -333,10 +333,6 @@ log_get_timestamp_from_message (GossipMessage *message)
 	t = gossip_message_get_timestamp (message);
 
 	/* We keep the timestamps in the messages as UTC. */
-	
-	g_print ("logging message at %s\n",
-		 gossip_time_to_string_utc (t, LOG_TIME_FORMAT_FULL));
-	
 	return gossip_time_to_string_utc (t, LOG_TIME_FORMAT_FULL);
 }
 
