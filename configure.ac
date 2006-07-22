@@ -41,11 +41,13 @@ LIBPANELAPPLET_REQUIRED=2.8.0
 dnl -----------------------------------------------------------
 dnl Backend (currently GNOME or Cocoa)
 dnl -----------------------------------------------------------
+# Checking for carbon since it's C. Should check for cocoa really.
+AC_CHECK_HEADER([Carbon/Carbon.h], auto_backend=cocoa, auto_backend=gnome)
 AC_ARG_WITH(backend,
-	    AS_HELP_STRING([--with-backend=@<:@gnome|cocoa@:>@], 
-			   [Which backend to use [[default=gnome]]]),
+	    AS_HELP_STRING([--with-backend=@<:@gnome|cocoa|auto@:>@], 
+			   [Which backend to use [[default=auto]]]),
 	    ac_backend=$withval,
-	    ac_backend=gnome)
+	    ac_backend=$auto_backend)
 
 if test "x$ac_backend" = xgnome; then
    AC_DEFINE(HAVE_GNOME, 1, [whether to use the GNOME backend])
@@ -63,7 +65,7 @@ elif test "x$ac_backend" = xcocoa; then
    BACKEND_CFLAGS="-xobjective-c"
    BACKEND_LDFLAGS="-framework AppKit -framework IOKit -framework Carbon -lobjc"
 else
-   AC_MSG_ERROR([Incorrect backend])
+   AC_MSG_ERROR([Invalid backend])
 fi
 
 AC_SUBST(BACKEND_CFLAGS)
@@ -85,8 +87,11 @@ if test "x$enable_dbus" != "xno"; then
    dbus_pkgconfig_tmp="dbus-1 >= 0.60 dbus-glib-1"
    PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
    if test x$have_dbus = xyes; then
+      AC_MSG_RESULT(yes)
       AC_DEFINE(HAVE_DBUS, 1, [d-bus support])
       dbus_pkgconfig=$dbus_pkgconfig_tmp
+  else
+      AC_MSG_RESULT(no)
   fi
 else
    have_dbus=no

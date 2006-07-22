@@ -1,5 +1,10 @@
 2006-07-22  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Make backend check automatic and fix the output of
+	the dbus check.
+
+2006-07-22  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-sound.c (gossip_sound_init): Init the sounds and
 	pre-load the samples, fixes the sound playing that has been broken
 	for a while, bug #347670. Patch by Sam Morris.
