@@ -27,19 +27,19 @@
 gchar *
 gossip_paths_get_glade_path (const gchar *filename)
 {
-	return g_build_filename (GOSSIP, filename, NULL);
+	return g_build_filename (DATADIR, GOSSIP, filename, NULL);
 }
 
 gchar *
 gossip_paths_get_image_path (const gchar *filename)
 {
-	return g_build_filename (GOSSIP, filename, NULL);
+	return g_build_filename (DATADIR, GOSSIP, filename, NULL);
 }
 
 gchar *
 gossip_paths_get_dtd_path (const gchar *filename)
 {
-	return g_build_filename (GOSSIP, filename, NULL);
+	return g_build_filename (DATADIR, GOSSIP, filename, NULL);
 }
 
 gchar *

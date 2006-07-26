@@ -1228,7 +1228,7 @@ app_accels_load (void)
 	filename = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, ACCELS_FILENAME, NULL);
 	if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		gossip_debug (DEBUG_DOMAIN_ACCELS, "Loading from:'%s'", filename);
-		gtk_accel_map_load (filename;
+		gtk_accel_map_load (filename);
 	}
 	
 	g_free (filename);
