@@ -1354,7 +1354,6 @@ jabber_send_message (GossipProtocol *protocol,
 
 	recipient = gossip_message_get_recipient (message);
 
-	/* FIXME: Create a full JID (with resource) and send to that */
 	recipient_id = gossip_contact_get_id (recipient);
 	resource = gossip_message_get_explicit_resource (message);
 

@@ -11,6 +11,7 @@ from Tommi Komulainen).
 - Fixed #346931, Always select a match if there are any in the new
 message dialog (Richard).
 - Fixed #347670, Make sound notifications work again (Sam Morris).
+- Fixed #347383, Messages are sent from the wrong account (Richard).
 
 
 NEWS in 0.12:

@@ -47,34 +47,34 @@ struct _GossipSessionPriv {
 	GHashTable           *timers; /* connected time */
 };
 
-struct FindAccount {
+typedef struct {
 	const gchar   *contact_id;
 	GossipAccount *account;
-};
+} FindAccount;
 
-struct CountAccounts {
+typedef struct {
 	GossipSession *session;
 	guint          connected;
 	guint          connecting;
 	guint          disconnected;
-};
+} CountAccounts;
 
-struct GetAccounts {
+typedef struct {
 	GossipSession *session;
 	GList         *accounts;
-};
+} GetAccounts;
 
-struct ConnectData {
+typedef struct {
 	GossipSession *session;
 	gboolean       connect_all;
 	gboolean       startup;
-};
+} ConnectData;
 
-struct ConnectFind {
+typedef struct {
 	gboolean       first;
 	gboolean       last;
 	gboolean       same;
-};
+} ConnectFind;
 
 static void            gossip_session_class_init                 (GossipSessionClass   *klass);
 static void            gossip_session_init                       (GossipSession        *session);
@@ -115,15 +115,6 @@ static void            session_protocol_error                    (GossipProtocol
 								  GossipSession        *session);
 static GossipProtocol *session_get_protocol                      (GossipSession        *session,
 								  GossipContact        *contact);
-static void            session_get_accounts_foreach_cb           (GossipAccount        *account,
-								  GossipProtocol       *protocol,
-								  struct GetAccounts   *ga);
-static void            session_count_accounts_foreach_cb         (GossipAccount        *account,
-								  GossipProtocol       *protocol,
-								  struct CountAccounts *ca);
-static void            session_find_account_foreach_cb           (GossipAccount        *account,
-								  GossipProtocol       *protocol,
-								  struct FindAccount   *fa);
 static void            session_account_added_cb                  (GossipAccountManager *manager,
 								  GossipAccount        *account,
 								  GossipSession        *session);
@@ -132,17 +123,8 @@ static void            session_account_removed_cb                (GossipAccountM
 								  GossipSession        *session);
 static void            session_connect                           (GossipSession        *session,
 								  GossipAccount        *account);
-static void            session_connect_match_foreach_cb          (GossipAccount        *account,
-								  GossipProtocol       *protocol,
-								  struct ConnectFind   *cf);
-static void            session_connect_foreach_cb                (GossipAccount        *account,
-								  GossipProtocol       *protocol,
-								  struct ConnectData   *cd);
 static void            session_disconnect                        (GossipSession        *session,
 								  GossipAccount        *account);
-static void            session_disconnect_foreach_cb             (GossipAccount        *account,
-								  GossipProtocol       *protocol,
-								  GossipSession        *session);
 	
 enum {
 	CONNECTING,
@@ -723,12 +705,24 @@ gossip_session_get_account_manager (GossipSession *session)
 	return priv->account_manager;
 }
 
+static void
+session_get_accounts_foreach_cb (GossipAccount  *account,
+				 GossipProtocol *protocol,
+				 GetAccounts    *ga)
+{
+	GossipSessionPriv *priv;
+
+	priv = GET_PRIV (ga->session);
+
+	ga->accounts = g_list_append (ga->accounts, g_object_ref (account));
+}
+
 GList *
 gossip_session_get_accounts (GossipSession *session)
 {
-	GossipSessionPriv  *priv;
-	struct GetAccounts  ga;
-	GList              *list;
+	GossipSessionPriv *priv;
+	GetAccounts        ga;
+	GList             *list;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	
@@ -738,24 +732,12 @@ gossip_session_get_accounts (GossipSession *session)
 	ga.accounts = NULL;
 
 	g_hash_table_foreach (priv->accounts, 
-			      (GHFunc)session_get_accounts_foreach_cb,
+			      (GHFunc) session_get_accounts_foreach_cb,
 			      &ga);
 
 	list = ga.accounts;
 
 	return list;
-}
-
-static void
-session_get_accounts_foreach_cb (GossipAccount      *account,
-				 GossipProtocol     *protocol,
-				 struct GetAccounts *ga)
-{
-	GossipSessionPriv *priv;
-
-	priv = GET_PRIV (ga->session);
-
-	ga->accounts = g_list_append (ga->accounts, g_object_ref (account));
 }
 
 gdouble
@@ -779,14 +761,34 @@ gossip_session_get_connected_time (GossipSession *session,
 	return g_timer_elapsed (timer, &ms);
 }
 
+static void
+session_count_accounts_foreach_cb (GossipAccount  *account,
+				   GossipProtocol *protocol,
+				   CountAccounts  *ca)
+{
+	GossipSessionPriv *priv;
+
+	priv = GET_PRIV (ca->session);
+
+	if (gossip_protocol_is_connected (protocol)) {
+		ca->connected++;
+	} else {
+		ca->disconnected++;
+
+		if (gossip_protocol_is_connecting (protocol)) {
+			ca->connecting++;
+		}
+	}
+}
+
 void 
 gossip_session_count_accounts (GossipSession *session,
 			       guint         *connected,
 			       guint         *connecting,
 			       guint         *disconnected)
 {
-	GossipSessionPriv    *priv;
-	struct CountAccounts  ca;
+	GossipSessionPriv *priv;
+	CountAccounts      ca;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	
@@ -821,26 +823,6 @@ gossip_session_count_accounts (GossipSession *session,
 	}
 }
 
-static void
-session_count_accounts_foreach_cb (GossipAccount        *account,
-				   GossipProtocol       *protocol,
-				   struct CountAccounts *ca)
-{
-	GossipSessionPriv *priv;
-
-	priv = GET_PRIV (ca->session);
-
-	if (gossip_protocol_is_connected (protocol)) {
-		ca->connected++;
-	} else {
-		ca->disconnected++;
-
-		if (gossip_protocol_is_connecting (protocol)) {
-			ca->connecting++;
-		}
-	}
-}
-
 gboolean 
 gossip_session_add_account (GossipSession *session,
 			    GossipAccount *account)
@@ -854,11 +836,9 @@ gossip_session_add_account (GossipSession *session,
 
 	priv = GET_PRIV (session);
 
-	/* check this account is not already set up */
 	protocol = g_hash_table_lookup (priv->accounts, account);
-	
 	if (protocol) {
-		/* already added */
+		/* Already added. */
 		return TRUE;
 	}
 
@@ -866,19 +846,15 @@ gossip_session_add_account (GossipSession *session,
 	protocol = gossip_protocol_new_from_account_type (type);
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
-	/* add to list */
 	priv->protocols = g_list_append (priv->protocols, 
 					 g_object_ref (protocol));
 
-	/* add to hash table */
 	g_hash_table_insert (priv->accounts, 
 			     g_object_ref (account), 
 			     g_object_ref (protocol));
 
-	/* connect up all signals */ 
 	session_protocol_signals_setup (session, protocol);
 
-	/* clean up */
 	g_object_unref (protocol);
 			
 	return TRUE;
@@ -896,28 +872,35 @@ gossip_session_remove_account (GossipSession *session,
 
 	priv = GET_PRIV (session);
 
-	/* get protocol details for this account */
 	protocol = g_hash_table_lookup (priv->accounts, account);
 	
 	if (!protocol) {
-		/* not added in the first place */
+		/* Not added in the first place. */
 		return TRUE;
 	}
 
-	/* remove from list */
 	priv->protocols = g_list_remove (priv->protocols, protocol);
 	g_object_unref (protocol);
 
-	/* remove from hash table */
 	return g_hash_table_remove (priv->accounts, account);
+}
+
+static void
+session_find_account_foreach_cb (GossipAccount  *account,
+				 GossipProtocol *protocol,
+				 FindAccount    *fa)
+{
+	if (gossip_protocol_find_contact (protocol, fa->contact_id)) {
+		fa->account = g_object_ref (account);
+	}
 }
 
 GossipAccount * 
 gossip_session_find_account (GossipSession *session,
 			     GossipContact *contact)
 {
-	GossipSessionPriv  *priv;
-	struct FindAccount  fa;
+	GossipSessionPriv *priv;
+	FindAccount        fa;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
@@ -928,20 +911,52 @@ gossip_session_find_account (GossipSession *session,
 	fa.account = NULL;
 
 	g_hash_table_foreach (priv->accounts, 
-			      (GHFunc)session_find_account_foreach_cb,
+			      (GHFunc) session_find_account_foreach_cb,
 			      &fa);
 
 	return fa.account;
 }
 
 static void
-session_find_account_foreach_cb (GossipAccount      *account,
-				 GossipProtocol     *protocol,
-				 struct FindAccount *fa)
+session_find_account_for_own_contact_foreach_cb (GossipAccount  *account,
+						 GossipProtocol *protocol,
+						 FindAccount    *fa)
 {
-	if (gossip_protocol_find_contact (protocol, fa->contact_id)) {
+	GossipContact *own_contact;
+	const gchar   *id;
+
+	own_contact = gossip_protocol_get_own_contact (protocol);
+	if (!own_contact) {
+		return;
+	}
+	
+	id = gossip_contact_get_id (own_contact);
+	
+	if (g_str_equal (id, fa->contact_id)) {
 		fa->account = g_object_ref (account);
 	}
+}
+
+GossipAccount * 
+gossip_session_find_account_for_own_contact (GossipSession *session,
+					     GossipContact *own_contact)
+{
+	GossipSessionPriv *priv;
+	FindAccount        fa;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
+	
+	priv = GET_PRIV (session);
+
+	fa.contact_id = gossip_contact_get_id (own_contact);
+	fa.account = NULL;
+
+	g_hash_table_foreach (priv->accounts, 
+			      (GHFunc) session_find_account_for_own_contact_foreach_cb,
+			      &fa);
+
+	return fa.account;
 }
 
 static void
@@ -986,9 +1001,9 @@ session_connect (GossipSession *session,
 }
 
 static void
-session_connect_match_foreach_cb (GossipAccount      *account,
-				  GossipProtocol     *protocol,
-				  struct ConnectFind *cf)
+session_connect_match_foreach_cb (GossipAccount  *account,
+				  GossipProtocol *protocol,
+				  ConnectFind    *cf)
 {
 	if (!cf->first && !cf->same) {
 		return;
@@ -1008,9 +1023,9 @@ session_connect_match_foreach_cb (GossipAccount      *account,
 }
 
 static void
-session_connect_foreach_cb (GossipAccount      *account,
-			    GossipProtocol     *protocol,
-			    struct ConnectData *cd)
+session_connect_foreach_cb (GossipAccount  *account,
+			    GossipProtocol *protocol,
+			    ConnectData    *cd)
 {
 	/* Connect it if this is a startup request and we have an auto
 	 * connecting account.
@@ -1036,9 +1051,9 @@ gossip_session_connect (GossipSession *session,
 			GossipAccount *account,
 			gboolean       startup)
 {
-	GossipSessionPriv  *priv;
-	struct ConnectFind  cf;
-	struct ConnectData  cd;
+	GossipSessionPriv *priv;
+	ConnectFind        cf;
+	ConnectData        cd;
 	
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
@@ -1122,13 +1137,13 @@ gossip_session_disconnect (GossipSession *session,
 
 	g_signal_emit (session, signals[DISCONNECTING], 0);
 
-	/* disconnect one account if provided */
+	/* Disconnect one account if provided. */
 	if (account) {
 		session_disconnect (session, account);
 		return;
 	}
 
-	/* disconnect ALL accounts if no one account is specified */
+	/* Disconnect ALL accounts if none is specified. */
 	g_hash_table_foreach (priv->accounts,
 			      (GHFunc)session_disconnect_foreach_cb,
 			      session);
@@ -1141,39 +1156,24 @@ gossip_session_send_message (GossipSession *session,
 	GossipSessionPriv *priv;
 	GossipContact     *contact;
 	GossipAccount     *account;
-	GList             *l;
-
+	GossipProtocol    *protocol;
+		
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (message != NULL);
 
 	priv = GET_PRIV (session);
-	
-	contact = gossip_message_get_recipient (message);
-	account = gossip_session_find_account (session, contact);
 
-	if (account) {
-		GossipProtocol *protocol;
-
-		protocol = g_hash_table_lookup (priv->accounts, account);
-		
-		gossip_protocol_send_message (protocol, message);
-
-		g_object_unref (account);
-
+	contact = gossip_message_get_sender (message);
+	account = gossip_session_find_account_for_own_contact (session, contact);
+	if (!account) {
+		g_warning ("Could not find the account to send message from.");
 		return;
 	}
+	
+	protocol = g_hash_table_lookup (priv->accounts, account);
+	gossip_protocol_send_message (protocol, message);
 
-	/* NOTE: is this right? look for the account based on the
-	   recipient, if not known then send to ALL?? */
-	for (l = priv->protocols; l; l = l->next) {
-		GossipProtocol *protocol = GOSSIP_PROTOCOL (l->data);
-
-		if (!gossip_protocol_is_connected (protocol)) {
-			continue;
-		}
-
-		gossip_protocol_send_message (protocol, message);
-	}
+	g_object_unref (account);
 }
 
 void

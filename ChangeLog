@@ -1,5 +1,22 @@
 2006-07-26  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-session.c: (session_get_accounts_foreach_cb),
+	(gossip_session_get_accounts), (session_count_accounts_foreach_cb),
+	(gossip_session_count_accounts), (gossip_session_add_account),
+	(gossip_session_remove_account), (session_find_account_foreach_cb),
+	(gossip_session_find_account),
+	(session_find_account_for_own_contact_foreach_cb),
+	(gossip_session_find_account_for_own_contact),
+	(session_connect_match_foreach_cb), (session_connect_foreach_cb),
+	(gossip_session_connect), (gossip_session_disconnect),
+	(gossip_session_send_message):
+	* protocols/jabber/gossip-jabber.c: (jabber_send_message): Clean
+	up; use typedefs instead of struct foo everywhere. 
+	- Also add function to find the account for the "own contact", and
+	use this to send messages from, fixes bug #347383.
+
+2006-07-26  Richard Hult  <richard@imendio.com>
+
 	* Touch a lot of files: get the data paths through an API instead
 	of using defines setup in the makefiles. When saving XML files,
 	don't put a DTD pointer in them pointing to a local absolute path
