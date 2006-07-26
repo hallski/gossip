@@ -1023,7 +1023,7 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 	
         window = g_new0 (GossipChatroomsWindow, 1);
 
-	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
+	glade = gossip_glade_get_file ("group-chat.glade",
 				       "chatrooms_window",
 				       NULL,
 				       "chatrooms_window", &window->window,

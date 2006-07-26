@@ -561,7 +561,7 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 
 	dialog = g_new0 (GossipVCardDialog, 1);
 
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "vcard_dialog",
 				       NULL,
 				       "vcard_dialog", &dialog->dialog,

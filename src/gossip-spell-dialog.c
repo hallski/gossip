@@ -217,7 +217,7 @@ gossip_spell_dialog_show (GossipChat  *chat,
 	dialog->start = start;
 	dialog->end = end;
 
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+	gui = gossip_glade_get_file ("main.glade",
 				     "spell_dialog",
 				     NULL,
 				     "spell_dialog", &dialog->window,

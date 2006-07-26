@@ -1,3 +1,13 @@
+2006-07-26  Richard Hult  <richard@imendio.com>
+
+	* Touch a lot of files: get the data paths through an API instead
+	of using defines setup in the makefiles. When saving XML files,
+	don't put a DTD pointer in them pointing to a local absolute path
+	(we are still validating when loading them). Don't create the 
+	directories we look for files in when loading, only when saving.
+
+	* ui/pixmaps/Makefile.am: Install the logo.
+
 2006-07-22  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Make backend check automatic and fix the output of
@@ -10641,7 +10651,7 @@
 	* data/images/gossip-*.png:
 	* src/gossip-roster.c (gossip_roster_add_user): 
 	* src/gossip-app.c (gossip_app_init): Try a new set of icons.
-	(gossip_app_init): Put busy before away·
+	(gossip_app_init): Put busy before away.
 
 	* src/gossip-utils.c (gossip_text_view_setup_tags): Tweak colors
 	again.

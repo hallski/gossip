@@ -142,7 +142,7 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 
 	dialog->chatroom = g_object_ref (chatroom);
 
-	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
+	glade = gossip_glade_get_file ("group-chat.glade",
 				       "edit_chatroom_dialog",
 				       NULL,
 				       "edit_chatroom_dialog", &dialog->dialog,

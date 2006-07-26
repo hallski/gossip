@@ -33,6 +33,7 @@
 #include <libgossip/gossip-account-manager.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-paths.h>
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
@@ -46,8 +47,6 @@
 #include "gossip-stock.h"
 #include "gossip-app.h"
 
-#define GNOME_PARAM_GOPTION_CONTEXT "goption-context"
-
 static gboolean  no_connect = FALSE;
 static gboolean  multiple_instances = FALSE;
 static gboolean  list_accounts = FALSE;
@@ -56,8 +55,11 @@ static gchar    *account_name = NULL;
 int
 main (int argc, char *argv[])
 {
+	gchar                *localedir;
 #ifdef HAVE_GNOME
 	GnomeProgram         *program;
+#else
+	GError               *error = NULL;
 #endif
 	GossipSession        *session;
 	GossipAccountManager *account_manager;
@@ -82,11 +84,13 @@ main (int argc, char *argv[])
 		  N_("Which account to connect to on startup"),
 		  N_("ACCOUNT-NAME") },
 		{ NULL }
-	};	
-	
-	bindtextdomain (GETTEXT_PACKAGE, GNOMELOCALEDIR);
+	};
+
+	localedir = gossip_paths_get_locale_path ();
+	bindtextdomain (GETTEXT_PACKAGE, localedir);
         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
+	g_free (localedir);
 
 	context = g_option_context_new (_("- Gossip Instant Messenger"));
 	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);	
@@ -98,15 +102,18 @@ main (int argc, char *argv[])
 				      LIBGNOMEUI_MODULE,
                                       argc, argv,
                                       GNOME_PROGRAM_STANDARD_PROPERTIES,
-				      GNOME_PARAM_GOPTION_CONTEXT, context,
+				      "goption-context", context,
 				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
 #else
-	gtk_init_with_args (&argc, &argv,
-			    _("- Gossip Instant Messenger"),
-			    options,
-			    GETTEXT_PACKAGE,
-			    NULL);
+	if (!gtk_init_with_args (&argc, &argv,
+				 _("- Gossip Instant Messenger"),
+				 options,
+				 GETTEXT_PACKAGE,
+				 &error)) {
+		g_printerr ("%s\n", error->message);
+		return 1;
+	}
 #endif
 
 	gossip_window_set_default_icon_name ("gossip");

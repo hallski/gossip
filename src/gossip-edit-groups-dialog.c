@@ -133,7 +133,7 @@ gossip_edit_groups_new (GossipContact *contact)
         info->contact = g_object_ref (contact);
         groups = gossip_contact_get_groups (contact);
         
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+	gui = gossip_glade_get_file ("main.glade",
 				     "edit_groups_dialog",
 				     NULL,
 				     "edit_groups_dialog", &info->dialog,

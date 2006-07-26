@@ -2,16 +2,10 @@ SUBDIRS = sounds
 
 AM_CPPFLAGS =	                                 	\
 	-I$(top_srcdir)                          	\
-	-DGNOMELOCALEDIR=\""$(datadir)/locale"\" 	\
 	-DPREFIX="\"$(prefix)"\"			\
-	-DSYSCONFDIR=\""$(sysconfdir)"\"        	\
+	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
 	-DDATADIR=\""$(datadir)"\"              	\
 	-DLIBDIR=\""$(libdir)"\"			\
-	-DGLADEDIR=\"$(datadir)/gossip\"		\
-	-DIMAGEDIR=\"$(datadir)/gossip\"		\
-	-DPROTOCOLSDIR=\"$(datadir)/gossip/protocols\" 	\
-	-DSTYLESHEETDIR=\"$(datadir)/gossip\"		\
-	-DDTDDIR=\"$(datadir)/gossip\"			\
 	-DDBUS_API_SUBJECT_TO_CHANGE			\
 	$(GOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
 

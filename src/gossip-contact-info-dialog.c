@@ -26,6 +26,7 @@
 
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-paths.h>
 
 #include "gossip-app.h"
 #include "gossip-avatar-image.h"
@@ -546,6 +547,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	guint                    id;
 	GtkWidget               *avatar_image_placeholder;
 	GdkPixbuf               *pixbuf;
+	gchar                   *path;
 
 	contact_info_dialog_init ();
 
@@ -564,7 +566,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 
 	g_hash_table_insert (contact_info_dialogs, dialog->contact, dialog);
 
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "contact_information_dialog",
 				       NULL,
 				       "contact_information_dialog", &dialog->dialog,
@@ -599,7 +601,9 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	gtk_container_add (GTK_CONTAINER (avatar_image_placeholder),
 			   dialog->avatar_image);
 
-	pixbuf = gdk_pixbuf_new_from_file (IMAGEDIR "/vcard_48.png", NULL);
+	path = gossip_paths_get_image_path ("vcard_48.png");
+	pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+	g_free (path);
 	if (pixbuf) {
 		gossip_avatar_image_set_pixbuf (
 			GOSSIP_AVATAR_IMAGE (dialog->avatar_image), pixbuf);

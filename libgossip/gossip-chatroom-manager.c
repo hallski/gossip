@@ -797,11 +797,9 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 {
 	GossipChatroomManagerPriv *priv;
 	xmlDocPtr                 doc;  
-	xmlDtdPtr                 dtd;  
 	xmlNodePtr                root;
 	GList                    *chatrooms;
 	GList                    *l;
-	gchar                    *dtd_file;
 	gchar                    *dir;
 	gchar                    *file;
 
@@ -819,13 +817,9 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		g_free (dir);
 	}
 
-	dtd_file = g_build_filename (DTDDIR, CHATROOMS_DTD_FILENAME, NULL);
-
 	doc = xmlNewDoc ("1.0");
 	root = xmlNewNode (NULL, "chatrooms");
 	xmlDocSetRootElement (doc, root);
-
-	dtd = xmlCreateIntSubset (doc, "chatrooms", NULL, dtd_file);
 
 	if (!priv->default_name) {
 		priv->default_name = g_strdup ("Default");

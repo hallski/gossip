@@ -64,14 +64,10 @@ gossip_contact_groups_get_all (void)
 	}
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	}
-
 	file_with_path = g_build_filename (dir, CONTACT_GROUPS_XML_FILENAME, NULL);
 	g_free (dir);
 
-	if (g_file_test(file_with_path, G_FILE_TEST_EXISTS)) {
+	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
 		contact_groups_file_parse (file_with_path);
 	}
 	
@@ -81,11 +77,11 @@ gossip_contact_groups_get_all (void)
 static void
 contact_groups_file_parse (const gchar *filename) 
 {
-	xmlParserCtxtPtr  ctxt;
-	xmlDocPtr         doc;
-	xmlNodePtr        contacts;
-	xmlNodePtr        account;
-	xmlNodePtr        node;
+	xmlParserCtxtPtr ctxt;
+	xmlDocPtr        doc;
+	xmlNodePtr       contacts;
+	xmlNodePtr       account;
+	xmlNodePtr       node;
 	
 	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 	
@@ -184,29 +180,20 @@ static gboolean
 contact_groups_file_save (void)
 {
 	xmlDocPtr   doc;  
-	xmlDtdPtr   dtd;  
 	xmlNodePtr  root;
 	xmlNodePtr  node;
 	GList      *l;
-	gchar      *dtd_file;
 	gchar      *dir;
 	gchar      *file;
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-		g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
-	}
-
+	g_mkdir_with_parents (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 	file = g_build_filename (dir, CONTACT_GROUPS_XML_FILENAME, NULL);
 	g_free (dir);
-
-	dtd_file = g_build_filename (DTDDIR, CONTACT_GROUPS_DTD_FILENAME, NULL);
 
 	doc = xmlNewDoc ("1.0");
 	root = xmlNewNode (NULL, "contacts");
 	xmlDocSetRootElement (doc, root);
-
-	dtd = xmlCreateIntSubset (doc, "contacts", NULL, dtd_file);
 
 	node = xmlNewChild (root, NULL, "account", NULL);
 	xmlNewProp (node, "name", "Default");
@@ -227,11 +214,9 @@ contact_groups_file_save (void)
 	xmlFreeDoc (doc);
 
 	xmlCleanupParser ();
-
 	xmlMemoryDump ();
 	
 	g_free (file);
-	g_free (dtd_file);
 
 	return TRUE;
 }

@@ -20,7 +20,6 @@
 
 #include <config.h>
 #include <string.h>
-
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
@@ -393,7 +392,7 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 
 	dialog = g_new0 (GossipNewMessageDialog, 1);
      
-	ui = gossip_glade_get_file (GLADEDIR "/main.glade",
+	ui = gossip_glade_get_file ("main.glade",
 				    "new_message_dialog",
 				    NULL,
 				    "new_message_dialog", &dialog->dialog,

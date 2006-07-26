@@ -815,7 +815,7 @@ gossip_preferences_show (void)
         preferences = g_new0 (GossipPreferences, 1);
 
 	glade = gossip_glade_get_file (
-		GLADEDIR "/main.glade",
+		"main.glade",
 		"preferences_dialog",
 		NULL,
 		"preferences_dialog", &preferences->dialog,

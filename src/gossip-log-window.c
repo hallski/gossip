@@ -18,9 +18,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include <glib/gi18n.h>
 #include <gtk/gtk.h> 
 
@@ -1719,7 +1719,7 @@ gossip_log_window_show (GossipContact  *contact,
 	
         window = g_new0 (GossipLogWindow, 1);
 
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "log_window",
 				       NULL,
 				       "log_window", &window->window,

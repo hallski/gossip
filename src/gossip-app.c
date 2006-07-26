@@ -544,7 +544,7 @@ app_setup (GossipSession        *session,
 
 	/* set up interface */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Initialising interface");
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "main_window",
 				       NULL,
 				       "main_window", &priv->window,
@@ -1223,19 +1223,15 @@ app_session_get_password_cb (GossipSession *session,
 static void
 app_accels_load (void)
 {
-	gchar *dir;
-	gchar *file_with_path;
+	gchar *filename;
 
-	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-	file_with_path = g_build_filename (dir, ACCELS_FILENAME, NULL);
-	g_free (dir);
-
-	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
-		gossip_debug (DEBUG_DOMAIN_ACCELS, "Loading from:'%s'", file_with_path);
-		gtk_accel_map_load (file_with_path);
+	filename = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, ACCELS_FILENAME, NULL);
+	if (g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		gossip_debug (DEBUG_DOMAIN_ACCELS, "Loading from:'%s'", filename);
+		gtk_accel_map_load (filename;
 	}
 	
-	g_free (file_with_path);
+	g_free (filename);
 }
 
 static void
@@ -1439,7 +1435,7 @@ app_tray_create_menu (void)
 
 	priv = GET_PRIV (app);
 
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "tray_menu",
 				       NULL,
 				       "tray_menu", &priv->popup_menu,

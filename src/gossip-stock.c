@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003 Imendio AB
+ * Copyright (C) 2003-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,6 +20,9 @@
 
 #include <config.h>
 #include <gtk/gtk.h>
+
+#include <libgossip/gossip-paths.h>
+
 #include "gossip-stock.h"
 
 static GtkIconFactory *icon_factory = NULL;
@@ -52,11 +55,13 @@ gossip_stock_init (void)
 	g_object_unref (icon_factory);
 	
 	for (i = 0; i < G_N_ELEMENTS (stock_items); i++) {
-		gchar     *filename;
+		gchar     *path, *filename;
 		GdkPixbuf *pixbuf;
 
-		filename = g_strdup_printf (IMAGEDIR "/%s.png", stock_items[i].stock_id);
-		pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
+		filename = g_strdup_printf ("%s.png", stock_items[i].stock_id);
+		path = gossip_paths_get_image_path (filename);
+		pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+		g_free (path);
 		g_free (filename);
 		
 		icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);

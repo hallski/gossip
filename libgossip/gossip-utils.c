@@ -28,6 +28,7 @@
 
 #include "gossip-utils.h"
 #include "gossip-conf.h"
+#include "gossip-paths.h"
 
 #define DEBUG_MSG(x)   
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
@@ -295,7 +296,7 @@ gossip_xml_validate (xmlDoc      *doc,
 	xmlDtd       *dtd;
 	gboolean      ret;
 		
-	path = g_build_filename (DTDDIR, dtd_filename, NULL);
+	path = gossip_paths_get_dtd_path (dtd_filename);
 
 	memset (&cvp, 0, sizeof (cvp));
 	dtd = xmlParseDTD (NULL, path);

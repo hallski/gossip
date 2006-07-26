@@ -521,7 +521,7 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 	
         dialog = g_new0 (GossipNewChatroomDialog, 1);
 
-	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
+	glade = gossip_glade_get_file ("group-chat.glade",
 				       "new_chatroom_dialog",
 				       NULL,
 				       "new_chatroom_dialog", &dialog->window,

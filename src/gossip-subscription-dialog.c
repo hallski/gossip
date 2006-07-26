@@ -262,7 +262,7 @@ subscription_dialog_vcard_cb (GossipResult              result,
 		url = gossip_vcard_get_url (vcard);
 	}
 
-	gossip_glade_get_file_simple (GLADEDIR "/main.glade",
+	gossip_glade_get_file_simple ("main.glade",
 				      "subscription_request_dialog",
 				      NULL,
 				      "subscription_request_dialog", &dialog->dialog,
@@ -278,7 +278,6 @@ subscription_dialog_vcard_cb (GossipResult              result,
 				      "personal_table", &dialog->personal_table,
 				      NULL);
 
-	/* look and feel - aligning... */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	gtk_size_group_add_widget (size_group, dialog->id_label);
@@ -288,7 +287,6 @@ subscription_dialog_vcard_cb (GossipResult              result,
 
 	g_object_unref (size_group);
 
-	/* set labels based on known name */
 	if (name) {
 		gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
 
@@ -304,13 +302,10 @@ subscription_dialog_vcard_cb (GossipResult              result,
 		question = g_strdup (_("Do you want to add this person to your contact list?"));
 	}
 
-	/* set focus for entry */
 	gtk_widget_grab_focus (dialog->name_entry);
 
-	/* set groups */
 	subscription_dialog_setup_groups (GTK_COMBO_BOX_ENTRY (dialog->group_comboboxentry));
 
-	/* set labels */
 	str = g_strdup_printf ("<span weight='bold' size='larger'>%s</span>", who);
 	gtk_label_set_markup (GTK_LABEL (dialog->who_label), str);
 	gtk_label_set_use_markup (GTK_LABEL (dialog->who_label), TRUE);
@@ -324,7 +319,6 @@ subscription_dialog_vcard_cb (GossipResult              result,
 	gtk_label_set_text (GTK_LABEL (dialog->id_label_value), 
 			    gossip_contact_get_id (dialog->contact));
 
-	/* Set up url button */
 	if (url && strlen (url) > 0) {
 		GArray *start, *end;
 
@@ -337,7 +331,6 @@ subscription_dialog_vcard_cb (GossipResult              result,
 		g_array_free (end, TRUE);
 	}
 
-	/* Add url button to table */
 	if (num_matches > 0) {
 		GtkWidget *href;
 		GtkWidget *alignment;

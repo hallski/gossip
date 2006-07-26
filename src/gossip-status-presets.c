@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -80,10 +80,10 @@ gossip_status_presets_get_all (void)
 static void
 status_presets_file_parse (const gchar *filename) 
 {
-	xmlParserCtxtPtr  ctxt;
-	xmlDocPtr         doc;
-	xmlNodePtr        presets_node;
-	xmlNodePtr        node;
+	xmlParserCtxtPtr ctxt;
+	xmlDocPtr        doc;
+	xmlNodePtr       presets_node;
+	xmlNodePtr       node;
 	
 	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 
@@ -103,7 +103,7 @@ status_presets_file_parse (const gchar *filename)
 		xmlFreeParserCtxt (ctxt);
 		return;
 	}
-
+	
 	/* The root node, presets. */
 	presets_node = xmlDocGetRootElement (doc);
 
@@ -176,10 +176,8 @@ static gboolean
 status_presets_file_save (void)
 {
 	xmlDocPtr   doc;  
-	xmlDtdPtr   dtd;  
 	xmlNodePtr  root;
 	GList      *l;
-	gchar      *dtd_file;
 	gchar      *dir;
 	gchar      *file;
 	gint        count[4] = { 0, 0, 0, 0};
@@ -189,13 +187,9 @@ status_presets_file_save (void)
 	file = g_build_filename (dir, STATUS_PRESETS_XML_FILENAME, NULL);
 	g_free (dir);
 
-	dtd_file = g_build_filename (DTDDIR, STATUS_PRESETS_DTD_FILENAME, NULL);
-
 	doc = xmlNewDoc ("1.0");
 	root = xmlNewNode (NULL, "presets");
 	xmlDocSetRootElement (doc, root);
-
-	dtd = xmlCreateIntSubset (doc, "presets", NULL, dtd_file);
 
 	for (l = presets; l; l = l->next) {
 		StatusPreset *sp;

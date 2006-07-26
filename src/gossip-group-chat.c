@@ -730,7 +730,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 
 	priv = GET_PRIV (chat);
 	
-	glade = gossip_glade_get_file (GLADEDIR "/group-chat.glade",
+	glade = gossip_glade_get_file ("group-chat.glade",
 				       "group_chat_widget",
 				       NULL,
 				       "group_chat_widget", &priv->widget,

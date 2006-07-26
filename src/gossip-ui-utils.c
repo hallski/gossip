@@ -37,6 +37,8 @@
 #include <Cocoa/Cocoa.h>
 #endif
 
+#include <libgossip/gossip-paths.h>
+
 #include "gossip-stock.h"
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
@@ -61,11 +63,15 @@ get_glade_file (const gchar *filename,
 		const gchar *first_required_widget, 
 		va_list      args)
 {
+	gchar      *path;
 	GladeXML   *gui;
 	const char *name;
 	GtkWidget **widget_ptr;
 
-	gui = glade_xml_new (filename, root, domain);
+	path = gossip_paths_get_glade_path (filename);
+	gui = glade_xml_new (path, root, domain);
+	g_free (path);
+
 	if (!gui) {
 		g_warning ("Couldn't find necessary glade file '%s'", filename);
 		return NULL;
@@ -128,7 +134,7 @@ gossip_glade_get_file (const gchar *filename,
 			      domain,
 			      first_required_widget,
 			      args);
-	
+
 	va_end (args);
 
 	if (!gui) {
@@ -1344,12 +1350,13 @@ gossip_url_show (const char *url)
 void
 gossip_url_show (const char *url)
 {
-	gchar  *real_url;
+	gchar             *real_url;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSString          *string;
 
 	real_url = fixup_url (url);
 	
-	NSString *string = [NSString stringWithUTF8String: real_url];
+	string = [NSString stringWithUTF8String: real_url];
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:string]];
 
 	[pool release];
@@ -1408,6 +1415,7 @@ gossip_link_button_new (const gchar *url,
 #endif
 }
 
+/* FIXME: Do this in a proper way at some point, probably in GTK+? */
 void
 gossip_window_set_default_icon_name (const gchar *name)
 {
@@ -1415,13 +1423,19 @@ gossip_window_set_default_icon_name (const gchar *name)
 	gtk_window_set_default_icon_name (name);
 #elif defined(HAVE_COCOA)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	gchar             *path;
+	NSString          *tmp;
+	NSImage           *image;
 
-	/* FIXME: Do this in a proper way at some point, probably in GTK+? */
-	NSImage *image = [[NSImage alloc] initWithContentsOfFile:
-			  @PREFIX"/share/icons/hicolor/48x48/apps/gossip.png"];
-	[NSApp setApplicationIconImage: image];
+	path = gossip_paths_get_image_path ("gossip-logo.png");
+	
+	tmp = [NSString stringWithUTF8String:path];
+	image = [[NSImage alloc] initWithContentsOfFile:tmp];
+	[NSApp setApplicationIconImage:image];
 	[image release];
 	
+	g_free (path);
+
 	[pool release];
 #endif
 }

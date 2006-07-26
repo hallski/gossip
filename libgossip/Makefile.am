@@ -1,18 +1,22 @@
 AM_CPPFLAGS =                                           \
 	-I.                                             \
 	-I$(top_srcdir)                                 \
-	-DPROTOCOL_DIR=\""$(libdir)/gossip/protocols"\" \
-	-DDTDDIR=\"$(datadir)/gossip\"			\
+	-DDATADIR=\""$(datadir)"\"              	\
+	-DLOCALEDIR=\""$(datadir)/locale"\"		\
 	-I$(top_srcdir)/protocols/jabber                \
 	$(LIBGOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
 
 noinst_LTLIBRARIES = libgossip.la
 
 if HAVE_GNOME
-  gossip_conf_impl = gossip-conf-gnome.c
+backend_impl = 						\
+	gossip-conf-gnome.c				\
+	gossip-paths-gnome.c
 endif
 if HAVE_COCOA
-  gossip_conf_impl = gossip-conf-cocoa.c
+backend_impl = 						\
+	gossip-conf-cocoa.c				\
+	gossip-paths-cocoa.c
 endif
 
 libgossip_la_SOURCES =             			\
@@ -41,8 +45,8 @@ libgossip_la_SOURCES =             			\
 	gossip-ft-provider.h 				\
 	gossip-message.c           			\
 	gossip-message.h           			\
-	$(gossip_conf_impl)				\
 	gossip-conf.h          				\
+	gossip-paths.h         				\
 	gossip-presence.c          			\
 	gossip-presence.h          			\
 	gossip-protocol.c          			\
@@ -57,7 +61,8 @@ libgossip_la_SOURCES =             			\
 	gossip-vcard.h             			\
 	gossip-version-info.c      			\
 	gossip-version-info.h      			\
-	libgossip-marshal-main.c
+	libgossip-marshal-main.c			\
+	$(backend_impl)
 
 libgossip_la_LIBADD =              			\
 	$(LIBGOSSIP_LIBS)          			\

@@ -661,11 +661,9 @@ account_manager_file_save (GossipAccountManager *manager)
 {
 	GossipAccountManagerPriv *priv;
 	xmlDocPtr                 doc;  
-	xmlDtdPtr                 dtd;  
 	xmlNodePtr                root;
 	GList                    *accounts;
 	GList                    *l;
-	gchar                    *dtd_file;
 	gchar                    *xml_dir;
 	gchar                    *xml_file;
 	mode_t                    old_mask;
@@ -676,21 +674,15 @@ account_manager_file_save (GossipAccountManager *manager)
 		xml_file = g_strdup (priv->accounts_file_name);
 	} else {
 		xml_dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, NULL);
-		if (!g_file_test (xml_dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
-			g_mkdir_with_parents (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
-		}
+		g_mkdir_with_parents (xml_dir, S_IRUSR | S_IWUSR | S_IXUSR);
 					 
 		xml_file = g_build_filename (xml_dir, ACCOUNTS_XML_FILENAME, NULL);
 		g_free (xml_dir);
 	}
 
-	dtd_file = g_build_filename (DTDDIR, ACCOUNTS_DTD_FILENAME, NULL);
-
 	doc = xmlNewDoc ("1.0");
 	root = xmlNewNode (NULL, "accounts");
 	xmlDocSetRootElement (doc, root);
-
-	dtd = xmlCreateIntSubset (doc, "accounts", NULL, dtd_file);
 
 	if (!priv->default_name) {
 		priv->default_name = g_strdup ("Default");

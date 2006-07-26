@@ -224,7 +224,7 @@ private_chat_create_ui (GossipPrivateChat *chat)
 
 	priv = GET_PRIV (chat);
 
-        gossip_glade_get_file_simple (GLADEDIR "/chat.glade",
+        gossip_glade_get_file_simple ("chat.glade",
                                       "chat_widget",
                                       NULL,
                                       "chat_widget", &priv->widget,
