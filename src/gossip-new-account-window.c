@@ -693,7 +693,7 @@ gossip_new_account_window_show (GtkWindow *parent)
 
 	window = g_new0 (GossipNewAccountWindow, 1);
 	
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "new_account_window",
 				       NULL,
 				       "new_account_window", &window->window,

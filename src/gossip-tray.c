@@ -176,7 +176,7 @@ tray_create_menu (GossipTray *tray)
 
 	priv = GET_PRIV (tray);
 
-	glade = gossip_glade_get_file (GLADEDIR "/main.glade",
+	glade = gossip_glade_get_file ("main.glade",
 				       "tray_menu",
 				       NULL,
 				       "tray_menu", &priv->popup_menu,

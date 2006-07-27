@@ -580,7 +580,7 @@ gossip_add_contact_window_show (GtkWindow     *parent,
 	window->group_completion = g_completion_new (NULL);
 
 	glade = gossip_glade_get_file (
-		GLADEDIR "/main.glade",
+		"main.glade",
 		"add_contact_window",
 		NULL,
 		"add_contact_window", &window->window,

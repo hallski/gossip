@@ -265,7 +265,7 @@ ft_window_vcard_cb (GossipResult  result,
 
 	contact = gossip_ft_get_contact (data->ft);
 
-	gossip_glade_get_file_simple (GLADEDIR "/file-transfer.glade",
+	gossip_glade_get_file_simple ("file-transfer.glade",
 				      "file_transfer_dialog",
 				      NULL,
 				      "file_transfer_dialog", &dialog,

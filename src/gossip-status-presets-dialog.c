@@ -364,7 +364,7 @@ gossip_status_presets_dialog_show (void)
 	
 	dialog = g_new0 (GossipStatusPresetsDialog, 1);
 	
-	gui = gossip_glade_get_file (GLADEDIR "/main.glade",
+	gui = gossip_glade_get_file ("main.glade",
 				     "status_presets_dialog",
 				     NULL,
 				     "status_presets_dialog", &dialog->dialog,

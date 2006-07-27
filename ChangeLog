@@ -1,3 +1,13 @@
+2006-07-27  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-add-contact-window.c:
+	* src/gossip-ft-window.c:
+	* src/gossip-new-account-window.c:
+	* src/gossip-status-presets-dialog.c:
+	* src/gossip-transport-accounts-window.c:
+	* src/gossip-transport-add-window.c:
+	* src/gossip-tray.c: Fix build.
+
 2006-07-26  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-session.c: (session_get_accounts_foreach_cb),
