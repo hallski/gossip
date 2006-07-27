@@ -1,5 +1,4 @@
 INCLUDES = 							\
-	$(GTK_VER) $(PANEL_VER) 				\
 	-DPKGDATADIR=\""$(pkgdatadir)"\"	 		\
 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" 	\
 	-DIMAGEDIR=\"$(datadir)/gossip\"			\

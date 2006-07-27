@@ -511,6 +511,9 @@ button_release_cb (GossipNotebook *notebook,
                    GdkEventButton *event,
                    gpointer        data)
 {
+	gboolean ret;
+
+	ret = FALSE;
         if (notebook->priv->drag_in_progress) {
                 gint cur_page_num;
                 GtkWidget *cur_page;
@@ -543,12 +546,14 @@ button_release_cb (GossipNotebook *notebook,
 					       0, cur_page);
 			}
 		}
+
+		ret = TRUE;
 	}
 
         /* this must be called even if a drag isn't happening. */
         drag_stop (notebook);
 
-        return FALSE;
+        return ret;
 }
 
 static gboolean

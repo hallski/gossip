@@ -1,5 +1,15 @@
 2006-07-27  Richard Hult  <richard@imendio.com>
 
+	* configure.ac:
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.c: Remove checks for older panel,
+	we need 2.10 or newer anyway.
+
+	* src/gossip-notebook.c: (button_release_cb): Return TRUE if we
+	handle the event, fixes bug #341243.
+
+2006-07-27  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-add-contact-window.c:
 	* src/gossip-ft-window.c:
 	* src/gossip-new-account-window.c:

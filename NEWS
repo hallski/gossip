@@ -12,6 +12,7 @@ from Tommi Komulainen).
 message dialog (Richard).
 - Fixed #347670, Make sound notifications work again (Sam Morris).
 - Fixed #347383, Messages are sent from the wrong account (Richard).
+- Fixed #341243, Crash when dragging tabs with GTK+ 2.10 (Richard).
 
 
 NEWS in 0.12:

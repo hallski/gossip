@@ -35,7 +35,7 @@ GCONF_REQUIRED=1.2.0
 LIBGNOME_REQUIRED=2.0.0
 LIBGNOMEVFS_REQUIRED=2.0.0
 DESKTOP_FILE_UTILS_REQUIRED=0.2.90
-LIBPANELAPPLET_REQUIRED=2.8.0
+LIBPANELAPPLET_REQUIRED=2.10.0
 
 
 dnl -----------------------------------------------------------
@@ -240,16 +240,6 @@ AM_CONDITIONAL(HAVE_PEEKABOO, test x$have_peekaboo = xyes)
 
 GLIB_GENMARSHAL=`$PKG_CONFIG glib-2.0 --variable=glib_genmarshal`
 AC_SUBST(GLIB_GENMARSHAL)
-
-PKG_CHECK_MODULES(GTK_VER, gtk+-2.0 >= 2.7.3,
-		  GTK_VER="-DNEW_GTK",
-		  GTK_VER="-UNEW_GTK")
-AC_SUBST(GTK_VER)
-
-PKG_CHECK_MODULES(PANEL_VER, libpanelapplet-2.0 >= 2.9.4,
-		  PANEL_VER="-UUSE_OLDER_PANEL_APPLET",
-		  PANEL_VER="-DUSE_OLDER_PANEL_APPLET")
-AC_SUBST(PANEL_VER)
 
 
 dnl -----------------------------------------------------------

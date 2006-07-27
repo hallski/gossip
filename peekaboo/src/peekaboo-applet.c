@@ -143,10 +143,6 @@ applet_entry_button_press_event_cb (GtkWidget      *widget,
 				    GdkEventButton *event, 
 				    PeekabooApplet *applet)
 {
-#ifndef USE_OLDER_PANEL_APPLET
-	panel_applet_request_focus (PANEL_APPLET (applet->applet_widget), event->time);
-#endif
-
 	return FALSE;
 }
 
