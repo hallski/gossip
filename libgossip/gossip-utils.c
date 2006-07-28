@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <regex.h>
 #include <glib/gi18n.h>
+#include <libxml/uri.h>
 
 #include "gossip-utils.h"
 #include "gossip-conf.h"
@@ -291,19 +292,24 @@ gboolean
 gossip_xml_validate (xmlDoc      *doc, 
 		     const gchar *dtd_filename)
 {
-	gchar        *path;
+	gchar        *path, *escaped;
 	xmlValidCtxt  cvp;
 	xmlDtd       *dtd;
 	gboolean      ret;
 		
 	path = gossip_paths_get_dtd_path (dtd_filename);
 
+	/* The list of valid chars is taken from libxml. */
+	escaped = xmlURIEscapeStr (path, ":@&=+$,/?;");
+
+	g_free (path);
+	
 	memset (&cvp, 0, sizeof (cvp));
-	dtd = xmlParseDTD (NULL, path);
+	dtd = xmlParseDTD (NULL, escaped);
 	ret = xmlValidateDtd (&cvp, doc, dtd);
 	
+	xmlFree (escaped);
 	xmlFreeDtd (dtd);
-	g_free (path);
 	
         return ret;
 }

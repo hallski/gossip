@@ -1,3 +1,8 @@
+2006-07-28  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-utils.c: (gossip_xml_validate): Escape to make 
+	libxml love me again.
+
 2006-07-27  Richard Hult  <richard@imendio.com>
 
 	* configure.ac:
