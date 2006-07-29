@@ -213,7 +213,8 @@ chat_finalize (GObject *object)
 }
 
 static void
-chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, GossipChat *chat)
+chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, 
+				   GossipChat    *chat)
 {
 	GossipChatPriv *priv;
 	GtkTextIter     start, end;

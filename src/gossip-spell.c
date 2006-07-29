@@ -49,15 +49,12 @@ typedef struct {
         AspellSpeller      *spell_checker;
 } SpellLanguage;
 
-
 #define ISO_CODES_DATADIR    ISO_CODES_PREFIX "/share/xml/iso-codes"
 #define ISO_CODES_LOCALESDIR ISO_CODES_PREFIX "/share/locale"
-
 
 static GHashTable  *iso_code_names = NULL;
 static GList       *languages = NULL;
 static gboolean     gossip_conf_notify_inited = FALSE;
-
 
 static void
 spell_iso_codes_parse_start_tag (GMarkupParseContext  *ctx,
@@ -135,7 +132,7 @@ spell_iso_code_names_init (void)
 	gsize   buf_len;
 
 	iso_code_names = g_hash_table_new_full (g_str_hash, g_str_equal,
-					   g_free, g_free);
+						g_free, g_free);
 
 	bindtextdomain ("iso_639", ISO_CODES_LOCALESDIR);
 	bind_textdomain_codeset ("iso_639", "UTF-8");
@@ -172,6 +169,8 @@ spell_notify_languages_cb (GossipConf  *conf,
 {
 	GList *l;
 
+	gossip_debug (DEBUG_DOMAIN, "Resetting languages due to config change");
+
 	/* We just reset the languages list. */
 	for (l = languages; l; l = l->next) {
 		SpellLanguage *lang;
@@ -202,6 +201,7 @@ spell_setup_languages (void)
 	}
 	
 	if (languages) {
+		gossip_debug (DEBUG_DOMAIN, "No languages to setup");
 		return;
 	}
 
@@ -216,6 +216,8 @@ spell_setup_languages (void)
 		i = 0;
 		while (strv && strv[i]) {
 			SpellLanguage *lang;
+
+			gossip_debug (DEBUG_DOMAIN, "Setting up language:'%s'", strv[i]);
 			
 			lang = g_new0 (SpellLanguage, 1);
 		
@@ -229,8 +231,7 @@ spell_setup_languages (void)
 			if (aspell_error_number (lang->spell_possible_err) == 0) {
 				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
 				languages = g_list_append (languages, lang);
-			}
-			else {
+			} else {
 				delete_aspell_config (lang->spell_config);
 				g_free (lang);
 			}
@@ -313,6 +314,7 @@ gossip_spell_check (const gchar *word)
 	spell_setup_languages ();
 
 	if (!languages) {
+		gossip_debug (DEBUG_DOMAIN, "No languages to check against");
 		return TRUE;
 	}
 
@@ -384,8 +386,11 @@ gboolean
 gossip_spell_supported (void)
 {
 	if (g_getenv ("GOSSIP_SPELL_DISABLED")) {
+		gossip_debug (DEBUG_DOMAIN, "GOSSIP_SPELL_DISABLE env variable defined");
 		return FALSE;
 	}
+
+	gossip_debug (DEBUG_DOMAIN, "Support enabled");
 
 	return TRUE;
 }
@@ -395,30 +400,40 @@ gossip_spell_supported (void)
 gboolean
 gossip_spell_supported (void)
 {
+	gossip_debug (DEBUG_DOMAIN, "Support disabled");
+
 	return FALSE;
 }
 
 GList *
 gossip_spell_get_suggestions (const gchar *word)
 {
+	gossip_debug (DEBUG_DOMAIN, "Support disabled, could not get suggestions");
+
 	return NULL;
 }
 
 gboolean
 gossip_spell_check (const gchar *word)
 {
+	gossip_debug (DEBUG_DOMAIN, "Support disabled, could not check spelling");
+
 	return TRUE;
 }
 
 const char *
 gossip_spell_get_language_name (const char *lang)
 {
+	gossip_debug (DEBUG_DOMAIN, "Support disabled, could not get language name");
+
 	return NULL;
 }
 
 GList *
 gossip_spell_get_language_codes (void)
 {
+	gossip_debug (DEBUG_DOMAIN, "Support disabled, could not get language codes");
+
 	return NULL;
 }
 

@@ -50,19 +50,23 @@ enum {
 	COL_SPELL_COUNT
 };
 
-static void spell_dialog_populate_columns     (GossipSpellDialog *dialog);
-static void spell_dialog_populate_suggestions (GossipSpellDialog *dialog);
-static void spell_dialog_selection_changed_cb (GtkTreeSelection  *treeselection,
-					       GossipSpellDialog *dialog);
-static void spell_dialog_setup                (GossipSpellDialog *dialog);
-static void spell_dialog_response_cb          (GtkWidget         *widget,
-					       gint               response,
-					       GossipSpellDialog *dialog);
-static void spell_dialog_destroy_cb           (GtkWidget         *widget,
-					       GossipSpellDialog *dialog);
+static void spell_dialog_model_populate_columns     (GossipSpellDialog *dialog);
+static void spell_dialog_model_populate_suggestions (GossipSpellDialog *dialog);
+static void spell_dialog_model_row_activated_cb     (GtkTreeView       *tree_view,
+						     GtkTreePath       *path,
+						     GtkTreeViewColumn *column,
+						     GossipSpellDialog *dialog);
+static void spell_dialog_model_selection_changed_cb (GtkTreeSelection  *treeselection,
+						     GossipSpellDialog *dialog);
+static void spell_dialog_model_setup                (GossipSpellDialog *dialog);
+static void spell_dialog_response_cb                (GtkWidget         *widget,
+						     gint               response,
+						     GossipSpellDialog *dialog);
+static void spell_dialog_destroy_cb                 (GtkWidget         *widget,
+						     GossipSpellDialog *dialog);
 
 static void 
-spell_dialog_populate_columns (GossipSpellDialog *dialog)
+spell_dialog_model_populate_columns (GossipSpellDialog *dialog)
 {
 	GtkTreeModel      *model;
 	GtkTreeViewColumn *column; 
@@ -89,7 +93,7 @@ spell_dialog_populate_columns (GossipSpellDialog *dialog)
 }
 
 static void
-spell_dialog_populate_suggestions (GossipSpellDialog *dialog)
+spell_dialog_model_populate_suggestions (GossipSpellDialog *dialog)
 {
 	GossipChat   *chat;
 	GtkTreeModel *model;
@@ -118,7 +122,16 @@ spell_dialog_populate_suggestions (GossipSpellDialog *dialog)
 }
 
 static void
-spell_dialog_selection_changed_cb (GtkTreeSelection  *treeselection,
+spell_dialog_model_row_activated_cb (GtkTreeView       *tree_view,
+			       GtkTreePath       *path,
+			       GtkTreeViewColumn *column,
+			       GossipSpellDialog *dialog)
+{
+	spell_dialog_response_cb (dialog->window, GTK_RESPONSE_OK, dialog);
+}
+
+static void
+spell_dialog_model_selection_changed_cb (GtkTreeSelection  *treeselection,
 				   GossipSpellDialog *dialog)
 {
 	gint count;
@@ -128,26 +141,32 @@ spell_dialog_selection_changed_cb (GtkTreeSelection  *treeselection,
 }
 
 static void 
-spell_dialog_setup (GossipSpellDialog *dialog)
+spell_dialog_model_setup (GossipSpellDialog *dialog)
 {
+	GtkTreeView      *view;
 	GtkListStore     *store;
 	GtkTreeSelection *selection;
+
+	view = GTK_TREE_VIEW (dialog->treeview_words);
+
+	g_signal_connect (view, "row-activated", 
+			  G_CALLBACK (spell_dialog_model_row_activated_cb),
+			  dialog);
 
 	store = gtk_list_store_new (COL_SPELL_COUNT,
 				    G_TYPE_STRING);   /* word */
 	
-	gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->treeview_words), 
-				 GTK_TREE_MODEL (store));
+	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
 
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->treeview_words));
+	selection = gtk_tree_view_get_selection (view);
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 	
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (spell_dialog_selection_changed_cb),
+			  G_CALLBACK (spell_dialog_model_selection_changed_cb),
 			  dialog);
 
-	spell_dialog_populate_columns (dialog);
-	spell_dialog_populate_suggestions (dialog);
+	spell_dialog_model_populate_columns (dialog);
+	spell_dialog_model_populate_suggestions (dialog);
 
 	g_object_unref (store);
 }
@@ -241,7 +260,7 @@ gossip_spell_dialog_show (GossipChat  *chat,
 	gtk_label_set_markup (GTK_LABEL (dialog->label_word), str);
 	g_free (str);
 	
-	spell_dialog_setup (dialog);
+	spell_dialog_model_setup (dialog);
 
 	gtk_widget_show (dialog->window);
 }

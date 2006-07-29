@@ -1,5 +1,19 @@
 2006-07-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-spell-dialog.c: Accept the suggested spelling
+	replacement with double click or by pressing enter from using the
+	"row-activated" signal, fixed #347929 (Johan Dalin).
+
+	* src/gossip-spell.c: Added some debugging.
+
+	* gossip.schemas.in:
+	* src/gossip-preferences.[ch]:
+	* ui/main.glade: Added an option to turn off spell checking
+	directly instead of having to uncheck all languages (which didn't
+	work anyway).
+
+2006-07-29  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-group-chat.c: 
 	* src/gossip-private-chat.c: Disable the input textview when we
 	are disconnected in group chat for the right account, don't wait

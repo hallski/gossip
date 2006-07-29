@@ -171,6 +171,21 @@
       </locale>
     </schema>
 
+    <schema>
+      <key>/schemas/apps/gossip/conversation/spell_checker_enabled</key>
+      <applyto>/apps/gossip/conversation/spell_checker_enabled</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Enable spell checker</short>
+	<long>
+	Whether or not to check words typed against the languages you
+      want to check with.
+	</long>
+      </locale>
+    </schema>
+
   </schemalist>  
 </gconfschemafile>
 

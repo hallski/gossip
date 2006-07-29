@@ -16,6 +16,8 @@ message dialog (Richard).
 - Fixed #137800, Save the last status message (Martyn).
 - Fixed #346944, Disable the input textview when disconnected for that
 account not ALL accounts (Martyn).
+- Fixed #347929, Use "row-activated" signal in spell suggestions
+- dialog (Martyn).
 
 
 NEWS in 0.12:

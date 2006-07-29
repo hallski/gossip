@@ -50,6 +50,7 @@ typedef struct {
 	GtkWidget *checkbutton_popups_when_available;
 
 	GtkWidget *treeview_spell_checker;
+        GtkWidget *checkbutton_spell_checker;
 
 	GList     *notify_ids;
 } GossipPreferences;
@@ -174,6 +175,10 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	preferences_hookup_string_combo (preferences,
 					 GOSSIP_PREFS_CHAT_THEME,
 					 preferences->combobox_chat_theme);
+
+	preferences_hookup_toggle_button (preferences,
+					  GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
+					  preferences->checkbutton_spell_checker);
 }
 
 static void 
@@ -829,6 +834,7 @@ gossip_preferences_show (void)
 		"checkbutton_sounds_when_away", &preferences->checkbutton_sounds_when_away,
 		"checkbutton_popups_when_available", &preferences->checkbutton_popups_when_available,
 		"treeview_spell_checker", &preferences->treeview_spell_checker,
+		"checkbutton_spell_checker", &preferences->checkbutton_spell_checker,
 		NULL);
 
 	gossip_glade_connect (glade, 
