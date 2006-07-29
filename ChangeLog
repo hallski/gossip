@@ -1,5 +1,13 @@
 2006-07-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-group-chat.c: 
+	* src/gossip-private-chat.c: Disable the input textview when we
+	are disconnected in group chat for the right account, don't wait
+	until we are disconnected from ALL accounts before doing it. Fixes
+	#346944 (Keywan Najafi Tonekaboni).
+
+2006-07-29  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c: 
 	* src/gossip-status-presets.[ch]:
 	* src/gossip-status-presets.dtd: Save the last status and use it

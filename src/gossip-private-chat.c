@@ -40,12 +40,11 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-		       GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
-
-#define DEBUG_DOMAIN "PrivateChat"
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
+
+#define DEBUG_DOMAIN "PrivateChat"
 
 #define COMPOSING_STOP_TIMEOUT 5
 

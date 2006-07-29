@@ -90,6 +90,14 @@ typedef struct {
 static void            group_chat_contact_list_iface_init     (GossipContactListIfaceClass  *iface);
 static void            group_chat_finalize                    (GObject                      *object);
 static void            group_chats_init                       (void);
+static void            group_chat_protocol_connected_cb       (GossipSession                *session,
+							       GossipAccount                *account,
+							       GossipProtocol               *protocol,
+							       GossipGroupChat              *chat);
+static void            group_chat_protocol_disconnected_cb    (GossipSession                *session,
+							       GossipAccount                *account,
+							       GossipProtocol               *protocol,
+							       GossipGroupChat              *chat);
 static gboolean        group_chat_key_press_event_cb          (GtkWidget                    *widget,
 							       GdkEventKey                  *event,
 							       GossipGroupChat              *chat);
@@ -125,10 +133,6 @@ static gboolean        group_chat_contacts_find               (GossipGroupChat  
 static gint            group_chat_contacts_completion_func    (const gchar                  *s1,
 							       const gchar                  *s2,
 							       gsize                         n);
-static void            group_chat_connected_cb                (GossipSession                *session,
-							       GossipGroupChat              *chat);
-static void            group_chat_disconnected_cb             (GossipSession                *session,
-							       GossipGroupChat              *chat);
 static void            group_chat_create_gui                  (GossipGroupChat              *chat);
 static void            group_chat_joined_cb                   (GossipChatroomProvider       *provider,
 							       gint                          id,
@@ -242,6 +246,16 @@ gossip_group_chat_init (GossipGroupChat *chat)
 	priv = GET_PRIV (chat);
                                                                                
 	priv->contacts_visible = TRUE;
+
+	g_signal_connect_object (gossip_app_get_session (),
+				 "protocol-connected",
+				 G_CALLBACK (group_chat_protocol_connected_cb),
+				 chat, 0);
+
+	g_signal_connect_object (gossip_app_get_session (),
+				 "protocol-disconnected",
+				 G_CALLBACK (group_chat_protocol_disconnected_cb),
+				 chat, 0);
 }
 
 static void
@@ -315,6 +329,52 @@ group_chats_init (void)
 					     NULL,
 					     NULL,
 					     (GDestroyNotify) g_object_unref);
+}
+
+static void
+group_chat_protocol_connected_cb (GossipSession   *session,
+				  GossipAccount   *account,
+				  GossipProtocol  *protocol,
+				  GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+	GossipAccount       *this_account;
+
+	priv = GET_PRIV (chat);
+
+	this_account = gossip_contact_get_account (priv->own_contact);
+	if (!gossip_account_equal (this_account, account)) {
+		return;
+	}
+
+/* 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); */
+
+/* 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected")); */
+
+	/* FIXME: We should really attempt to re-join group chat here */
+}
+
+static void
+group_chat_protocol_disconnected_cb (GossipSession   *session,
+				     GossipAccount   *account,
+				     GossipProtocol  *protocol,
+				     GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+	GossipAccount       *this_account;
+
+	priv = GET_PRIV (chat);
+
+	this_account = gossip_contact_get_account (priv->own_contact);
+	if (!gossip_account_equal (this_account, account)) {
+		return;
+	}
+
+	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE);
+
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected"));
+
+	g_signal_emit_by_name (chat, "status-changed");
 }
 
 static gboolean
@@ -535,15 +595,6 @@ group_chat_widget_destroy_cb (GtkWidget       *widget,
 
 	priv = GET_PRIV (chat);
 	
-	/* disconnect signals */
-	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
-					      group_chat_connected_cb,
-					      chat);
-
-	g_signal_handlers_disconnect_by_func (gossip_app_get_session (),
-					      group_chat_disconnected_cb,
-					      chat);
-
 	gossip_chatroom_provider_leave (priv->chatroom_provider, priv->chatroom_id);
 	
 	g_hash_table_remove (group_chats, GINT_TO_POINTER (priv->chatroom_id));
@@ -697,26 +748,6 @@ group_chat_contacts_completion_func (const gchar *s1,
 	g_free (nick2);
 
 	return ret;
-}
-
-static void
-group_chat_connected_cb (GossipSession   *session, 
-			 GossipGroupChat *chat)
-{
- 	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (chat)); 
-
- 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected")); 
-}
-
-static void
-group_chat_disconnected_cb (GossipSession   *session, 
-			    GossipGroupChat *chat)
-{
- 	g_return_if_fail (GOSSIP_IS_GROUP_CHAT (chat)); 
-
- 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE); 
-
- 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected")); 
 }
 
 static void
@@ -1494,16 +1525,6 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	g_signal_connect (provider, "chatroom-contact-updated",
 			  G_CALLBACK (group_chat_contact_updated_cb),
 			  chat);
-
-	g_signal_connect_object (gossip_app_get_session (),
-				 "connected",
-				 G_CALLBACK (group_chat_connected_cb),
-				 chat, 0);
-
-	g_signal_connect_object (gossip_app_get_session (),
-				 "disconnected",
-				 G_CALLBACK (group_chat_disconnected_cb),
-				 chat, 0);
 
 	gossip_chat_present (GOSSIP_CHAT (chat));
 

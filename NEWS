@@ -14,6 +14,8 @@ message dialog (Richard).
 - Fixed #347383, Messages are sent from the wrong account (Richard).
 - Fixed #341243, Crash when dragging tabs with GTK+ 2.10 (Richard).
 - Fixed #137800, Save the last status message (Martyn).
+- Fixed #346944, Disable the input textview when disconnected for that
+account not ALL accounts (Martyn).
 
 
 NEWS in 0.12:
