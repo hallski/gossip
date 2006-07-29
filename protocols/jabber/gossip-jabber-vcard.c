@@ -24,14 +24,14 @@
 
 #include <loudmouth/loudmouth.h>
 
+#include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jabber-vcard.h"
 #include "gossip-jabber-private.h"
 #include "gossip-jid.h"
 
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "JabberVCard"
 
 static LmHandlerResult 
 jabber_vcard_get_cb (LmMessageHandler   *handler,
@@ -66,14 +66,14 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			
 			switch (code) {
 			case 404: {
-				/* receipient unavailable */
-				DEBUG_MSG (("VCard: Receipient is unavailable"));
+				/* Receipient unavailable */
+				gossip_debug (DEBUG_DOMAIN, "Receipient is unavailable");
 				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
 			}
 
 			default:
-				DEBUG_MSG (("VCard: Unhandled presence error:%d", code));
+				gossip_debug (DEBUG_DOMAIN, "Unhandled presence error:%d", code);
 				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
 				break;
 			}
@@ -175,7 +175,7 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	jid = gossip_jid_new (jid_str);
 	jid_without_resource = gossip_jid_get_without_resource (jid);
 
-	DEBUG_MSG (("Protocol: Requesting VCard, JID:'%s'", jid_without_resource));
+	gossip_debug (DEBUG_DOMAIN, "Requesting VCard, JID:'%s'", jid_without_resource);
 
 	m = lm_message_new (jid_without_resource, 
 			    LM_MESSAGE_TYPE_IQ);
@@ -222,7 +222,7 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 	callback = data->callback;
 	(callback) (GOSSIP_RESULT_OK, data->user_data);
 
-	DEBUG_MSG (("Protocol: Setting presence after vcard"));
+	gossip_debug (DEBUG_DOMAIN, "Setting presence after vcard");
 	
 	/* Send our current presence to indicate the avatar has changed */
 	gossip_jabber_send_presence (GOSSIP_JABBER (data->internal_data), NULL);

@@ -59,21 +59,6 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gossip/status/preset_messages</key>
-      <applyto>/apps/gossip/status/preset_messages</applyto>
-      <owner>gossip</owner>
-      <type>list</type>
-      <list_type>string</list_type>
-      <default>[]</default>
-       <locale name="C">
-          <short>Preset status messages</short>
-          <long>
-            Preset status messages.
-          </long>
-       </locale>
-    </schema>
-
-    <schema>
       <key>/schemas/apps/gossip/notifications/play_sounds</key>
       <applyto>/apps/gossip/notifications/play_sounds</applyto>
       <owner>gossip</owner>

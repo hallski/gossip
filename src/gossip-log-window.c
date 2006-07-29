@@ -24,14 +24,15 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h> 
 
+#include <libgossip/gossip-debug.h>
+
 #include "gossip-app.h"
 #include "gossip-account-chooser.h"
 #include "gossip-log.h"
 #include "gossip-log-window.h"
 #include "gossip-ui-utils.h"
 
-#define DEBUG_MSG(x)   
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+#define DEBUG_DOMAIN "LogWindow"   
 
 typedef struct {
 	GtkWidget      *window;
@@ -864,7 +865,7 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 			}
 
 
-			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
+			gossip_debug (DEBUG_DOMAIN, "Marking date:'%s'", str);
 			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar_contacts), day);
 				
 			if (l->next) {
@@ -992,7 +993,7 @@ log_window_calendar_contacts_day_selected_cb (GtkWidget       *calendar,
 	
 	date = g_strdup_printf ("%4.4d%2.2d%2.2d", year, month, day);
 
-	DEBUG_MSG (("LogWindow: Currently selected date is:'%s'", date));
+	gossip_debug (DEBUG_DOMAIN, "Currently selected date is:'%s'", date);
 
 	log_window_contacts_get_messages (window, date);
 
@@ -1014,7 +1015,7 @@ log_window_calendar_contacts_month_changed_cb (GtkWidget       *calendar,
 
 	contact = log_window_contacts_get_selected (window);
 	if (!contact) {
-		DEBUG_MSG (("LogWindow: No contact selected to get dates for..."));
+		gossip_debug (DEBUG_DOMAIN, "No contact selected to get dates for...");
 		return;
 	}
 
@@ -1044,7 +1045,7 @@ log_window_calendar_contacts_month_changed_cb (GtkWidget       *calendar,
 		sscanf (str, "%4d%2d%2d", &year, &month, &day);
 		
 		if (year == year_selected && month == month_selected) {
-			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
+			gossip_debug (DEBUG_DOMAIN, "Marking date:'%s'", str);
 			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar_contacts), day);
 		}
 	}
@@ -1052,8 +1053,9 @@ log_window_calendar_contacts_month_changed_cb (GtkWidget       *calendar,
 	g_list_foreach (dates, (GFunc) g_free, NULL);
 	g_list_free (dates);
 
-	DEBUG_MSG (("LogWindow: Currently showing month %d and year %d", 
-		    month_selected, year_selected));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Currently showing month %d and year %d", 
+		      month_selected, year_selected);
 }
 
 static void
@@ -1419,7 +1421,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	account = gossip_chatroom_get_account (chatroom);
 	if (!account) {
 		/* Protect against invalid data. */
-		DEBUG_MSG (("LogWindow: No account for the chatroom"));
+		gossip_debug (DEBUG_DOMAIN, "No account for the chatroom");
 		return;
 	}
 	
@@ -1458,7 +1460,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 				continue;
 			}
 
-			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
+			gossip_debug (DEBUG_DOMAIN, "Marking date:'%s'", str);
 			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar_chatrooms), day);
 				
 			if (l->next) {
@@ -1581,7 +1583,7 @@ log_window_calendar_chatrooms_day_selected_cb (GtkWidget       *calendar,
 	
 	date = g_strdup_printf ("%4.4d%2.2d%2.2d", year, month, day);
 
-	DEBUG_MSG (("LogWindow: Currently selected date is:'%s'", date));
+	gossip_debug (DEBUG_DOMAIN, "Currently selected date is:'%s'", date);
 
 	log_window_chatrooms_get_messages (window, date);
 
@@ -1602,7 +1604,7 @@ log_window_calendar_chatrooms_month_changed_cb (GtkWidget       *calendar,
 
 	chatroom = log_window_chatrooms_get_selected (window);
 	if (!chatroom) {
-		DEBUG_MSG (("LogWindow: No chatroom selected to get dates for..."));
+		gossip_debug (DEBUG_DOMAIN, "No chatroom selected to get dates for...");
 		return;
 	}
 
@@ -1632,7 +1634,7 @@ log_window_calendar_chatrooms_month_changed_cb (GtkWidget       *calendar,
 		sscanf (str, "%4d%2d%2d", &year, &month, &day);
 		
 		if (year == year_selected && month == month_selected) {
-			DEBUG_MSG (("LogWindow: Marking date:'%s'", str));
+			gossip_debug (DEBUG_DOMAIN, "Marking date:'%s'", str);
 			gtk_calendar_mark_day (GTK_CALENDAR (window->calendar_chatrooms), day);
 		}
 	}
@@ -1640,8 +1642,9 @@ log_window_calendar_chatrooms_month_changed_cb (GtkWidget       *calendar,
 	g_list_foreach (dates, (GFunc) g_free, NULL);
 	g_list_free (dates);
 
-	DEBUG_MSG (("LogWindow: Currently showing month %d and year %d", 
-		    month_selected, year_selected));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Currently showing month %d and year %d", 
+		      month_selected, year_selected);
 }
 
 static void

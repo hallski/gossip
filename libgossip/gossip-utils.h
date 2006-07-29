@@ -25,7 +25,6 @@
 #include <libxml/tree.h>
 
 #include "gossip-account.h"
-#include "gossip-presence.h"
 
 typedef enum {
 	GOSSIP_REGEX_AS_IS,
@@ -34,16 +33,6 @@ typedef enum {
 	GOSSIP_REGEX_OTHER,
 	GOSSIP_REGEX_ALL,
 } GossipRegExType;
-
-typedef struct {
-	GossipPresenceState  state;
-	gchar               *string;
-} GossipStatusEntry;
-
-/* Status messages */
-GList *  gossip_status_messages_get  (void);
-void     gossip_status_messages_set  (GList           *list);
-void     gossip_status_messages_free (GList           *list);
 
 /* Regular expressions */
 gchar *  gossip_substring            (const gchar     *str,

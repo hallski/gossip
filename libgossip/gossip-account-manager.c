@@ -22,12 +22,18 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
 #include "libgossip-marshal.h"
-#include "gossip-utils.h"
 #include "gossip-account-manager.h"
+#include "gossip-debug.h"
+#include "gossip-utils.h"
+
+#define DEBUG_DOMAIN "AccountManager"
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
 /* For splitting an id of user@server/resource to just user@server with resource
  * in it's own xml tags (for Gossip release 0.10.2).
@@ -36,11 +42,6 @@
 
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
-
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
 typedef struct _GossipAccountManagerPriv GossipAccountManagerPriv;
 
@@ -176,9 +177,9 @@ gossip_account_manager_add (GossipAccountManager *manager,
 		type = gossip_account_get_type (account);
 		name = gossip_account_get_name (account);
 
-		DEBUG_MSG (("Account Manager: Adding %s account with name:'%s'", 
-			   gossip_account_type_to_string (type), 
-			   name));
+		gossip_debug (DEBUG_DOMAIN, "Adding %s account with name:'%s'", 
+			      gossip_account_type_to_string (type), 
+			      name);
 		
 		priv->accounts = g_list_append (priv->accounts, g_object_ref (account));
 
@@ -201,8 +202,9 @@ gossip_account_manager_remove (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 
- 	DEBUG_MSG (("Account Manager: Removing account with name:'%s'",  
- 		   gossip_account_get_name (account)));
+ 	gossip_debug (DEBUG_DOMAIN, 
+		      "Removing account with name:'%s'",  
+		      gossip_account_get_name (account));
 
 	priv->accounts = g_list_remove (priv->accounts, account);
 	
@@ -305,8 +307,9 @@ gossip_account_manager_set_overridden_default (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 
- 	DEBUG_MSG (("Account Manager: Setting overriding default account with name:'%s'",  
- 		   name)); 
+ 	gossip_debug (DEBUG_DOMAIN, 
+		      "Setting overriding default account with name:'%s'",  
+		      name); 
 
 	g_free (priv->default_name_override);
 	priv->default_name_override = g_strdup (name);
@@ -324,8 +327,9 @@ gossip_account_manager_set_default (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 	
- 	DEBUG_MSG (("Account Manager: Setting default account with name:'%s'",  
- 		   gossip_account_get_name (account))); 
+ 	gossip_debug (DEBUG_DOMAIN, 
+		      "Setting default account with name:'%s'",  
+		      gossip_account_get_name (account)); 
 
 	name = gossip_account_get_name (account);
 	g_return_if_fail (name != NULL);
@@ -392,7 +396,7 @@ gossip_account_manager_store (GossipAccountManager *manager)
 {
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 
- 	DEBUG_MSG (("Account Manager: Saving accounts"));  
+ 	gossip_debug (DEBUG_DOMAIN, "Saving accounts");  
 	
 	return account_manager_file_save (manager);
 }
@@ -597,7 +601,9 @@ account_manager_file_parse (GossipAccountManager *manager,
 
 	priv = GET_PRIV (manager);
 	
-	DEBUG_MSG (("Account Manager: Attempting to parse file:'%s'...", filename));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Attempting to parse file:'%s'...", 
+		      filename);
 
  	ctxt = xmlNewParserCtxt ();
 
@@ -637,11 +643,13 @@ account_manager_file_parse (GossipAccountManager *manager,
 		node = node->next;
 	}
 	
-	DEBUG_MSG (("Account Manager: Parsed %d accounts", 
-		   g_list_length (priv->accounts)));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Parsed %d accounts", 
+		      g_list_length (priv->accounts));
 
-	DEBUG_MSG (("Account Manager: Default account is:'%s'", 
-		   priv->default_name));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Default account is:'%s'", 
+		      priv->default_name);
 	
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
@@ -728,7 +736,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		g_free (port);
 	}
 
-	DEBUG_MSG (("Account Manager: Saving file:'%s'", xml_file));
+	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", xml_file);
 
 	/* Set the umask to get the proper permissions when libxml saves the
 	 * file, but also change the permissions expiicitly in case the file

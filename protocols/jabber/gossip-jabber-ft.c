@@ -21,18 +21,20 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include <loudmouth/loudmouth.h>
 
 #ifdef HAVE_GNOME
 #include <libgnomevfs/gnome-vfs.h>
 #endif
 
+#include <libgossip/gossip-debug.h>
+
 #include "gossip-jabber-ft.h"
 #include "gossip-jabber-private.h"
 #include "gossip-jid.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
+#define DEBUG_DOMAIN "JabberFT" 
 
 #define XMPP_FILE_TRANSFER_XMLNS        "http://jabber.org/protocol/si"
 #define XMPP_FILE_TRANSFER_PROFILE      "http://jabber.org/protocol/si/profile/file-transfer"
@@ -47,7 +49,6 @@
 
 #define IMPP_ERROR_XMLNS                "urn:ietf:params:xml:ns:xmpp-stanzas"
 
-
 struct _GossipJabberFTs {
 	GossipJabber   *jabber;
 	LmConnection   *connection;
@@ -56,7 +57,6 @@ struct _GossipJabberFTs {
 	GHashTable     *ft_ids;
 	GHashTable     *remote_ids;
 };
-
 
 static LmHandlerResult jabber_ft_iq_si_handler        (LmMessageHandler  *handler,
 						       LmConnection      *conn,
@@ -76,7 +76,6 @@ static gboolean        jabber_ft_get_file_details     (const gchar       *uri,
 						       gchar            **file_size,
 						       gchar            **mime_type);
 static gchar *         jabber_ft_get_contact_last_jid (GossipContact     *contact);
-
 
 GossipJabberFTs *
 gossip_jabber_ft_init (GossipJabber *jabber)
@@ -236,11 +235,12 @@ jabber_ft_handle_request (GossipJabber *jabber,
 	
 	g_object_get (ft, "id", &id, NULL);
 
-	DEBUG_MSG (("ProtocolFT: ID[%d] File transfer request from:'%s' with file:'%s', size:'%s'", 
-		  id, 
-		  from_str,
-		  file_name,
-		  file_size));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "ID[%d] File transfer request from:'%s' with file:'%s', size:'%s'", 
+		      id, 
+		      from_str,
+		      file_name,
+		      file_size);
 
 	g_hash_table_insert (fts->str_ids, GUINT_TO_POINTER (id), g_strdup (id_str));
 	g_hash_table_insert (fts->ft_ids, g_strdup (id_str), ft);
@@ -273,7 +273,9 @@ jabber_ft_handle_error (GossipJabber *jabber,
 
 	ft = g_hash_table_lookup (fts->ft_ids, id_str);
 	if (!ft) {
-		DEBUG_MSG (("ProtocolFT: Could not find GossipFT* id:'%s'", id_str));
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Could not find GossipFT* id:'%s'", 
+			      id_str);
 		return;
 	}
 
@@ -284,10 +286,11 @@ jabber_ft_handle_error (GossipJabber *jabber,
 	error_reason = lm_message_node_get_value (node);
 	error_code_str = lm_message_node_get_attribute (node, "code"); 
 
-	DEBUG_MSG (("ProtocolFT: File transfer error from:'%s' with code:'%s', reason:'%s'", 
-		  from_str,
-		  error_code_str,
-		  error_reason));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "File transfer error from:'%s' with code:'%s', reason:'%s'", 
+		      from_str,
+		      error_code_str,
+		      error_reason);
 	
 	switch (atoi (error_code_str)) {
 	case 400:
@@ -341,7 +344,7 @@ jabber_ft_get_file_details (const gchar  *uri,
 	GnomeVFSFileInfo *file_info;
 	GnomeVFSResult    result;
 
-	DEBUG_MSG (("ProtocolFT: Getting file info for URI:'%s'", uri));
+	gossip_debug (DEBUG_DOMAIN, "Getting file info for URI:'%s'", uri);
 
 	file_info = gnome_vfs_file_info_new ();
 	
@@ -505,8 +508,9 @@ gossip_jabber_ft_send (GossipJabberFTs *fts,
 	
 	g_object_get (ft, "id", &id, NULL);
 
-	DEBUG_MSG (("ProtocolFT: ID[%d] Sending file transfer request for URI:'%s'", 
-		  id, file));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "ID[%d] Sending file transfer request for URI:'%s'", 
+		      id, file);
 
 	g_hash_table_insert (fts->str_ids, GUINT_TO_POINTER (id), g_strdup (id_str));
 	g_hash_table_insert (fts->ft_ids, g_strdup (id_str), ft);
@@ -537,7 +541,7 @@ gossip_jabber_ft_accept (GossipJabberFTs *fts,
 	
 	g_return_if_fail (fts != NULL);
 
-	DEBUG_MSG (("ProtocolFT: ID[%d] Accepting file transfer", id));
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Accepting file transfer", id);
 
 	connection = gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);
@@ -606,7 +610,7 @@ gossip_jabber_ft_decline (GossipJabberFTs *fts,
 
 	g_return_if_fail (fts != NULL);
 
-	DEBUG_MSG (("ProtocolFT: ID[%d] Declining file transfer", id));
+	gossip_debug (DEBUG_DOMAIN, "ID[%d] Declining file transfer", id);
 
 	connection = gossip_jabber_get_connection (fts->jabber);
 	own_contact = gossip_jabber_get_own_contact (fts->jabber);

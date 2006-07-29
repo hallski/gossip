@@ -1,3 +1,32 @@
+2006-07-29  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c: 
+	* src/gossip-status-presets.[ch]:
+	* src/gossip-status-presets.dtd: Save the last status and use it
+	when we connect again, fixes #137800 (seeder@pf.pl, Jaime Frutos
+	Morales). 
+
+	* gossip.schemas.in:
+	* libgossip/gossip-utils.[ch]: Removed old status preset code that
+	hasn't been used in a while because we use an XML file.
+	
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-contact.c:
+	* protocols/jabber/gossip-jabber-ft-utils.c:
+	* protocols/jabber/gossip-jabber-ft.c:
+	* protocols/jabber/gossip-jabber-services.c:
+	* protocols/jabber/gossip-jabber-vcard.c: 
+	* src/gossip-log-window.c:
+	* src/gossip-presence-chooser.c: Use gossip-debug instead of
+	DEBUG_MSG, now Peekaboo is all that doesn't use the new debugging.
+
+2006-07-29  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c (gossip_app_set_presence): Fixed bug with NULL
+	status being used causing a crash.
+
 2006-07-28  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-utils.c: (gossip_xml_validate): Escape to make 

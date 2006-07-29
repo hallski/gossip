@@ -26,9 +26,6 @@
 #include "gossip-utils.h"
 #include "gossip-contact.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
-
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
 
 /* Make sure any additions to the private contact structure are copied
@@ -747,10 +744,6 @@ gossip_contact_name_compare (gconstpointer a,
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (a), 0);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (b), 0);
 	
-	DEBUG_MSG (("Contact: Comparing %s vs. %s",
-		    gossip_contact_get_name (GOSSIP_CONTACT (a)),
-		    gossip_contact_get_name (GOSSIP_CONTACT (b))));
-
 	return strcmp (gossip_contact_get_name (GOSSIP_CONTACT (a)),
 		       gossip_contact_get_name (GOSSIP_CONTACT (b)));
 }

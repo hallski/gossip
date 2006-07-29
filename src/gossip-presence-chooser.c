@@ -233,7 +233,7 @@ presence_chooser_set_state (GossipPresenceChooser *chooser,
 	} else {
 		/* Only store the value if it differs from the default ones. */
 		if (save && strcmp (status, default_status) != 0) {
-			gossip_status_presets_set_last (status, state);
+			gossip_status_presets_set_last (state, status);
 		}
 	}
 

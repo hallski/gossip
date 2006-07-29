@@ -20,122 +20,23 @@
  */
 
 #include <config.h>
+
 #include <string.h>
 #include <time.h>
 #include <sys/types.h>
 #include <regex.h>
+
 #include <glib/gi18n.h>
 #include <libxml/uri.h>
 
 #include "gossip-utils.h"
 #include "gossip-conf.h"
 #include "gossip-paths.h"
+#include "gossip-debug.h"
 
-#define DEBUG_MSG(x)   
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");   */
+#define DEBUG_DOMAIN "Utils"
 
-static void regex_init                  (void);
-static void status_message_free_foreach (GossipStatusEntry *entry);
-
-
-GList *
-gossip_status_messages_get (void)
-{
-	GSList            *list, *l;
-	GList             *ret = NULL;
-	GossipStatusEntry *entry;
-	const gchar       *status;
-	
-	gossip_conf_get_string_list (gossip_conf_get (),
-				     "/apps/gossip/status/preset_messages",
-				     &list);
-
-	/* This is really ugly, but we can't store a list of pairs and a dir
-	 * with entries wouldn't work since we have no guarantee on the order of
-	 * entries.
-	 */
-	
-	for (l = list; l; l = l->next) {
-		entry = g_new (GossipStatusEntry, 1);
-
-		status = l->data;
-
-		if (strncmp (status, "available/", 10) == 0) {
-			entry->string = g_strdup (&status[10]);
-			entry->state = GOSSIP_PRESENCE_STATE_AVAILABLE;
-		}
-		else if (strncmp (status, "busy/", 5) == 0) {
-			entry->string = g_strdup (&status[5]);
-			entry->state = GOSSIP_PRESENCE_STATE_BUSY;
-		}
-		else if (strncmp (status, "away/", 5) == 0) {
-			entry->string = g_strdup (&status[5]);
-			entry->state = GOSSIP_PRESENCE_STATE_AWAY;
-		} else {
-			continue;
-		}
-		
-		ret = g_list_append (ret, entry);
-	}
-	
-	g_slist_foreach (list, (GFunc) g_free, NULL);
-	g_slist_free (list);
-	
-	return ret;
-}
-
-void 
-gossip_status_messages_set (GList *list)
-{
-	GList             *l;
-	GossipStatusEntry *entry;
-	GSList            *slist = NULL;
-	const gchar       *state;
-	gchar             *str;
-	
-	for (l = list; l; l = l->next) {
-		entry = l->data;
-
-		switch (entry->state) {
-		case GOSSIP_PRESENCE_STATE_AVAILABLE:
-			state = "available";
-			break;
-		case GOSSIP_PRESENCE_STATE_BUSY:
-			state = "busy";
-			break;
-		case GOSSIP_PRESENCE_STATE_AWAY:
-			state = "away";
-			break;
-		default:
-			state = NULL;
-			g_assert_not_reached ();
-		}
-		
-		str = g_strdup_printf ("%s/%s", state, entry->string);
-		slist = g_slist_append (slist, str);
-	}
-
-	gossip_conf_set_string_list (gossip_conf_get (),
-				     "/apps/gossip/status/preset_messages",
-				     slist);
-
-	g_slist_foreach (slist, (GFunc) g_free, NULL);
-	g_slist_free (slist);
-}
-
-static void
-status_message_free_foreach (GossipStatusEntry *entry)
-{
-	g_free (entry->string);
-	g_free (entry);
-}
-
-void
-gossip_status_messages_free (GList *list)
-{
-	g_list_foreach (list, (GFunc) status_message_free_foreach, NULL);
-	g_list_free (list);
-}
+static void regex_init (void);
 
 gchar *
 gossip_substring (const gchar *str, 
@@ -236,7 +137,9 @@ gossip_regex_match (GossipRegExType  type,
 	}
 
  	if (type != GOSSIP_REGEX_ALL) { 
-		DEBUG_MSG (("Utils: Found %d matches for regex type:%d", num_matches, type));
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Found %d matches for regex type:%d", 
+			      num_matches, type);
 		return num_matches;
 	}
 
@@ -258,7 +161,9 @@ gossip_regex_match (GossipRegExType  type,
 		}
 	}
 
-	DEBUG_MSG (("Utils: Found %d matches for ALL regex types", num_matches));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Found %d matches for ALL regex types", 
+		      num_matches);
 
 	return num_matches;
 }

@@ -28,16 +28,16 @@
 #include "libgossip-marshal.h"
 
 #include "gossip-utils.h"
+#include "gossip-debug.h"
 #include "gossip-chatroom-manager.h"
 #include "gossip-protocol.h"
 
-#define CHATROOMS_XML_FILENAME "chatrooms.xml"
-#define CHATROOMS_DTD_FILENAME "gossip-chatroom.dtd"
-
-#define DEBUG_MSG(x)
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
+#define DEBUG_DOMAIN "ChatroomManager"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManagerPriv))
+
+#define CHATROOMS_XML_FILENAME "chatrooms.xml"
+#define CHATROOMS_DTD_FILENAME "gossip-chatroom.dtd"
 
 typedef struct _GossipChatroomManagerPriv GossipChatroomManagerPriv;
 
@@ -251,11 +251,11 @@ gossip_chatroom_manager_add (GossipChatroomManager *manager,
 		type = gossip_chatroom_get_type (chatroom);
 		name = gossip_chatroom_get_name (chatroom);
 
-		DEBUG_MSG (("ChatroomManager: Adding %s%s chatroom with name:'%s'", 
-			   gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "", 
-			   gossip_chatroom_type_to_string (type), 
-			   name));
-		
+		gossip_debug (DEBUG_DOMAIN, "Adding %s%s chatroom with name:'%s'", 
+			      gossip_chatroom_get_auto_connect (chatroom) ? "connecting on startup " : "", 
+			      gossip_chatroom_type_to_string (type), 
+			      name);
+	
 		g_signal_connect (chatroom, "notify::enabled", 
 				  G_CALLBACK (chatroom_manager_chatroom_enabled_cb), 
 				  manager);
@@ -291,8 +291,9 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 
 	priv = GET_PRIV (manager);
 
- 	DEBUG_MSG (("ChatroomManager: Removing chatroom with name:'%s'",  
- 		   gossip_chatroom_get_name (chatroom)));
+ 	gossip_debug (DEBUG_DOMAIN,
+		      "Removing chatroom with name:'%s'",  
+		      gossip_chatroom_get_name (chatroom));
 
 	g_signal_handlers_disconnect_by_func (chatroom, 
 					      chatroom_manager_chatroom_enabled_cb, 
@@ -481,8 +482,9 @@ gossip_chatroom_manager_set_default (GossipChatroomManager *manager,
 
 	priv = GET_PRIV (manager);
 	
- 	DEBUG_MSG (("ChatroomManager: Setting default chatroom with name:'%s'",  
- 		   gossip_chatroom_get_name (chatroom))); 
+ 	gossip_debug (DEBUG_DOMAIN, 
+		      "Setting default chatroom with name:'%s'",  
+		      gossip_chatroom_get_name (chatroom)); 
 
 	name = gossip_chatroom_get_name (chatroom);
 	g_return_if_fail (name != NULL);
@@ -530,7 +532,7 @@ gossip_chatroom_manager_store (GossipChatroomManager *manager)
 {
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager), FALSE);
 
- 	DEBUG_MSG (("ChatroomManager: Saving chatrooms"));  
+ 	gossip_debug (DEBUG_DOMAIN, "Saving chatrooms");  
 	
 	return chatroom_manager_file_save (manager);
 }
@@ -741,7 +743,7 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
 
 	priv = GET_PRIV (manager);
 	
-	DEBUG_MSG (("ChatroomManager: Attempting to parse file:'%s'...", filename));
+	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 
  	ctxt = xmlNewParserCtxt ();
 
@@ -780,11 +782,13 @@ chatroom_manager_file_parse (GossipChatroomManager *manager,
 		node = node->next;
 	}
 	
-	DEBUG_MSG (("ChatroomManager: Parsed %d chatrooms", 
-		   g_list_length (priv->chatrooms)));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Parsed %d chatrooms", 
+		      g_list_length (priv->chatrooms));
 
-	DEBUG_MSG (("ChatroomManager: Default chatroom is:'%s'", 
-		   priv->default_name));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Default chatroom is:'%s'", 
+		      priv->default_name);
 	
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
@@ -866,7 +870,7 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 		g_free (type);
 	}
 
-	DEBUG_MSG (("ChatroomManager: Saving file:'%s'", file));
+	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", file);
 	xmlSaveFormatFileEnc (file, doc, "utf-8", 1);
 	xmlFreeDoc (doc);
 
@@ -905,9 +909,9 @@ chatroom_manager_protocol_connected_cb (GossipSession         *session,
 
 	priv = GET_PRIV (manager);
 	
-	DEBUG_MSG (("ChatroomManager: Account:'%s' connected, "
-		    "checking chatroom auto connects.",
-		   gossip_account_get_name (account)));
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Account:'%s' connected, checking chatroom auto connects.",
+		      gossip_account_get_name (account));
 
 	chatrooms = gossip_chatroom_manager_get_chatrooms (manager, account);
 

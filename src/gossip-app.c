@@ -1143,6 +1143,11 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	app_connection_items_update ();
 	app_chatroom_favourite_update ();
+
+	/* Use saved presence */
+	gossip_app_set_presence (gossip_status_presets_get_default_state (), 
+				 gossip_status_presets_get_default_status());
+
 	app_presence_updated ();
 }
 
@@ -2264,14 +2269,14 @@ gossip_app_set_presence (GossipPresenceState  state,
 		 * across two Gossips.
 		 */
 		default_status = gossip_presence_state_get_default_status (state);
-		if (strcmp (status, default_status) == 0) {
-			status = NULL;
+
+		if (status && strcmp (status, default_status) == 0) {
+			g_object_set (priv->presence, "status", NULL, NULL);
+		} else {
+			g_object_set (priv->presence, "status", status, NULL);
 		}
 		
-		g_object_set (priv->presence,
-			      "state", state,
-			      "status", status,
-			      NULL);
+		g_object_set (priv->presence, "state", state, NULL);
 
 		app_status_flash_stop ();
 		app_status_clear_away ();
@@ -2289,6 +2294,7 @@ app_presence_chooser_changed_cb (GtkWidget           *chooser,
 				 gpointer             user_data)
 {
 	gossip_app_set_presence (state, status);
+	gossip_status_presets_set_default (state, status);
 }
 
 static gboolean

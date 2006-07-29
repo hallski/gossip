@@ -1,10 +1,14 @@
 <!--
   DTD for Gossips status presets.
-  by Martyn Russell <mr@gnome.org>
+  by Martyn Russell <martyn@imendio.com>
 -->
 
 <!-- Root element. -->
-<!ELEMENT presets (status*)>
+<!ELEMENT presets ((default?),status*)>
+
+<!ELEMENT default (#PCDATA)>
+<!ATTLIST default
+    presence (available|busy|away|ext_away) "available">
 
 <!ELEMENT status (#PCDATA)>
 <!ATTLIST status

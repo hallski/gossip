@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2002-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,6 +16,8 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Author: Martyn Russell <martyn@imendio.com>
  */
 
 #include <config.h>
@@ -28,14 +30,9 @@
 
 #include "gossip-account.h"
 
-#define DEBUG_MSG(x) 
-/* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
-
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
 
-
 typedef struct _GossipAccountPriv GossipAccountPriv;
-
 
 struct _GossipAccountPriv {
 	gint               unique_id;
@@ -54,7 +51,6 @@ struct _GossipAccountPriv {
 	gboolean           use_proxy;
 };
 
-
 static void account_class_init   (GossipAccountClass *class);
 static void account_init         (GossipAccount      *account);
 static void account_finalize     (GObject            *object);
@@ -68,7 +64,6 @@ static void account_set_property (GObject            *object,
 				  GParamSpec         *pspec);
 static void account_set_type     (GossipAccount      *account,
 				  GossipAccountType   type);
-
 
 enum {
 	PROP_0,
@@ -84,17 +79,13 @@ enum {
 	PROP_USE_PROXY
 };
 
-
 enum {
 	CHANGED,
 	LAST_SIGNAL
 };
 
-
 static guint     signals[LAST_SIGNAL] = {0};
-
 static gpointer  parent_class = NULL;
-
 
 GType
 gossip_account_get_gtype (void)
@@ -717,5 +708,4 @@ gossip_account_type_to_string (GossipAccountType type)
 
 	return "";
 }
-
 

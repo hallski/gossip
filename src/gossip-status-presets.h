@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,6 +16,8 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Author: Martyn Russell <martyn@imendio.com>
  */
 
 #ifndef __GOSSIP_STATUS_PRESETS_H__
@@ -25,12 +27,16 @@ G_BEGIN_DECLS
 
 #include <libgossip/gossip-presence.h>
 
-void   gossip_status_presets_get_all    (void);
-GList *gossip_status_presets_get        (GossipPresenceState  state,
-					 gint                 max_number);
-void   gossip_status_presets_set_last   (const gchar         *status,
-					 GossipPresenceState  state);
-void   gossip_status_presets_reset      (void);
+void                gossip_status_presets_get_all            (void);
+GList *             gossip_status_presets_get                (GossipPresenceState  state,
+							      gint                 max_number);
+void                gossip_status_presets_set_last           (GossipPresenceState  state,
+							      const gchar         *status);
+void                gossip_status_presets_reset              (void);
+GossipPresenceState gossip_status_presets_get_default_state  (void);
+const gchar *       gossip_status_presets_get_default_status (void);
+void                gossip_status_presets_set_default        (GossipPresenceState  state,
+							      const gchar         *status);
 
 G_END_DECLS
 
