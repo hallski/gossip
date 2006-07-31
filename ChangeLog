@@ -1,5 +1,9 @@
 2006-07-31  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.13.
+
+2006-07-31  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	* src/gossip-group-chat.c:
 	* src/gossip-theme-manager.[ch]: Don't apply the chat theme to

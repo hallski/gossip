@@ -1,6 +1,9 @@
 NEW in 0.13:
 ============
-
+- Don't apply chat themes to group chats (Martyn).
+- Added an option back into the preferences to enable or disable the
+spell checker instead of making the user unselect all languages (which
+didn't work anyway) (Martyn).
 - More memory usage trimming (Richard).
 - Fixed #346770, Complete the startup notification when there is a
 second instance running already (Richard).
@@ -16,8 +19,17 @@ message dialog (Richard).
 - Fixed #137800, Save the last status message (Martyn).
 - Fixed #346944, Disable the input textview when disconnected for that
 account not ALL accounts (Martyn).
-- Fixed #347929, Use "row-activated" signal in spell suggestions
-- dialog (Martyn).
+- Fixed #347929, Make double click and Enter key accept the selected
+spelling suggestion in the spell suggestion dialog (Martyn).
+
+Translations:
+Chao-Hsiung Liao (zh_TW, zh_HK)
+Francisco Javier F. Serrador (es)
+Inaki Larranaga (eu)
+Nickolay V. Shmyrev (ru)
+Richard Hult (sv)
+Sigurd Gartmann (nb)
+Žygimantas Beručka (lt)
 
 
 NEWS in 0.12:
