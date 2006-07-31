@@ -42,8 +42,7 @@
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj),	\
-		       GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
 #define DEBUG_DOMAIN "ChatView"
 
@@ -69,6 +68,7 @@ struct _GossipChatViewPriv {
 	BlockType      last_block_type;
 
 	gboolean       allow_scrolling;
+	gboolean       is_group_chat;
 	
 	GtkTextMark   *find_mark;
 	gboolean       find_wrapped;
@@ -285,6 +285,8 @@ gossip_chat_view_init (GossipChatView *view)
 
 	priv->allow_scrolling = TRUE;
 
+	priv->is_group_chat = FALSE;
+
 	g_object_set (view,
 		      "wrap-mode", GTK_WRAP_WORD_CHAR,
 		      "editable", FALSE,
@@ -306,7 +308,7 @@ gossip_chat_view_init (GossipChatView *view)
 
 	chat_view_setup_tags (view);
 
-	gossip_theme_manager_apply (gossip_theme_manager_get (), view);
+	gossip_theme_manager_apply_saved (gossip_theme_manager_get (), view);
 
 	show_avatars = FALSE;
 	gossip_conf_get_bool (gossip_conf_get (),
@@ -1424,10 +1426,17 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 	gboolean            show_avatars = FALSE;
 
 	priv = GET_PRIV (view);
-	
+
+	/* Do nothing for group chats since they are always the same
+	 * theme.
+	 */
+	if (priv->is_group_chat) {
+		return;
+	}
+
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	
-	gossip_theme_manager_apply (manager, view);
+	gossip_theme_manager_apply_saved (manager, view);
 
 	/* Needed for now to update the "rise" property of the names to get it
 	 * vertically centered.
@@ -2114,3 +2123,24 @@ gossip_chat_view_get_smiley_menu (GCallback    callback,
 	return menu;
 }
 
+void
+gossip_chat_view_set_is_group_chat (GossipChatView *view,
+				    gboolean        is_group_chat)
+{
+	GossipChatViewPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	
+	priv = GET_PRIV (view);
+
+	priv->is_group_chat = is_group_chat;
+
+	if (is_group_chat) {
+		gossip_theme_manager_apply (gossip_theme_manager_get (), 
+					    view, 
+					    NULL);
+	} else {
+		gossip_theme_manager_apply_saved (gossip_theme_manager_get (), 
+						  view);
+	}
+}

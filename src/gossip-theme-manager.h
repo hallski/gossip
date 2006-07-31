@@ -46,6 +46,9 @@ GType               gossip_theme_manager_get_type            (void) G_GNUC_CONST
 GossipThemeManager *gossip_theme_manager_get                 (void);
 const gchar **      gossip_theme_manager_get_themes          (void);
 void                gossip_theme_manager_apply               (GossipThemeManager *manager,
+							      GossipChatView     *view,
+							      const gchar        *theme);
+void                gossip_theme_manager_apply_saved         (GossipThemeManager *manager,
 							      GossipChatView     *view);
 void                gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
 							      GossipChatView     *view,

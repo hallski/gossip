@@ -118,4 +118,7 @@ const gchar *   gossip_chat_view_get_smiley_text           (GossipSmiley    smil
 GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       callback,
 							    gpointer        user_data,
 							    GtkTooltips    *tooltips);
+void            gossip_chat_view_set_is_group_chat         (GossipChatView *view,
+							    gboolean        is_group_chat);
+
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

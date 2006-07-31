@@ -164,7 +164,8 @@ theme_manager_notify_name_cb (GossipConf  *conf,
 	g_free (priv->name);
 
 	name = NULL;
-	if (!gossip_conf_get_string (conf, key, &name) || name == NULL || name[0] == 0) {
+	if (!gossip_conf_get_string (conf, key, &name) || 
+	    name == NULL || name[0] == 0) {
 		priv->name = g_strdup ("classic");
 		g_free (name);
 	} else {
@@ -928,12 +929,24 @@ gossip_theme_manager_get_themes (void)
 
 void
 gossip_theme_manager_apply (GossipThemeManager *manager,
-			    GossipChatView     *view)
+			    GossipChatView     *view,
+			    const gchar        *name)
 {
 	GossipThemeManagerPriv *priv;
 
 	priv = GET_PRIV (manager);
-	
+
+	theme_manager_apply_theme (manager, view, name);
+}
+
+void
+gossip_theme_manager_apply_saved (GossipThemeManager *manager,
+				  GossipChatView     *view)
+{
+	GossipThemeManagerPriv *priv;
+
+	priv = GET_PRIV (manager);
+
 	theme_manager_apply_theme (manager, view, priv->name);
 }
 

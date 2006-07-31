@@ -242,6 +242,7 @@ static void
 gossip_group_chat_init (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
+	GossipChatView      *chatview;
 
 	priv = GET_PRIV (chat);
                                                                                
@@ -256,6 +257,9 @@ gossip_group_chat_init (GossipGroupChat *chat)
 				 "protocol-disconnected",
 				 G_CALLBACK (group_chat_protocol_disconnected_cb),
 				 chat, 0);
+
+	chatview = GOSSIP_CHAT_VIEW (GOSSIP_CHAT (chat)->view);
+	gossip_chat_view_set_is_group_chat (chatview, TRUE);
 }
 
 static void
