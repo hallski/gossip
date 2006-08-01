@@ -29,6 +29,7 @@
 #define GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE        GOSSIP_PREFS_PATH "/notifications/popups_when_available"
 #define GOSSIP_PREFS_CHAT_SHOW_SMILEYS            GOSSIP_PREFS_PATH "/conversation/graphical_smileys"
 #define GOSSIP_PREFS_CHAT_THEME                   GOSSIP_PREFS_PATH "/conversation/theme"
+#define GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM         GOSSIP_PREFS_PATH "/conversation/theme_chat_room"
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES GOSSIP_PREFS_PATH "/conversation/spell_checker_languages"
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED   GOSSIP_PREFS_PATH "/conversation/spell_checker_enabled"
 #define GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS     GOSSIP_PREFS_PATH "/ui/separate_chat_windows"
@@ -39,7 +40,6 @@
 #define GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE        GOSSIP_PREFS_PATH "/contacts/show_offline"
 
 void gossip_preferences_show               (void);
-void gossip_preferences_show_status_editor (void);
 
 #endif /* __GOSSIP_PREFERENCES_H__ */
 

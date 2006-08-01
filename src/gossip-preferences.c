@@ -42,6 +42,7 @@ typedef struct {
 	GtkWidget *checkbutton_show_avatars;
 	GtkWidget *checkbutton_show_smileys;
 	GtkWidget *combobox_chat_theme;
+	GtkWidget *checkbutton_theme_chat_room;
         GtkWidget *checkbutton_separate_chat_windows;
 
 	GtkWidget *checkbutton_sounds_for_messages;
@@ -176,9 +177,16 @@ preferences_setup_widgets (GossipPreferences *preferences)
 					 GOSSIP_PREFS_CHAT_THEME,
 					 preferences->combobox_chat_theme);
 
+        preferences_hookup_toggle_button (preferences,
+					  GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
+					  preferences->checkbutton_theme_chat_room);
+
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
 					  preferences->checkbutton_spell_checker);
+	preferences_hookup_sensitivity (preferences,
+					GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
+					preferences->treeview_spell_checker);
 }
 
 static void 
@@ -828,6 +836,7 @@ gossip_preferences_show (void)
 		"checkbutton_show_avatars", &preferences->checkbutton_show_avatars,
 		"checkbutton_show_smileys", &preferences->checkbutton_show_smileys,
 		"combobox_chat_theme", &preferences->combobox_chat_theme,
+		"checkbutton_theme_chat_room", &preferences->checkbutton_theme_chat_room,
 		"checkbutton_separate_chat_windows", &preferences->checkbutton_separate_chat_windows,
 		"checkbutton_sounds_for_messages", &preferences->checkbutton_sounds_for_messages,
 		"checkbutton_sounds_when_busy", &preferences->checkbutton_sounds_when_busy,

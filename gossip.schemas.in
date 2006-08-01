@@ -158,6 +158,20 @@
     </schema>
 
     <schema>
+      <key>/schemas/apps/gossip/conversation/theme_chat_room</key>
+      <applyto>/apps/gossip/conversation/theme_chat_room</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+         <short>Use theme for chat rooms</short>
+         <long>
+           Whether to use the theme for chat rooms or not.
+         </long>
+      </locale>
+    </schema>
+
+    <schema>
       <key>/schemas/apps/gossip/conversation/spell_checker_languages</key>
       <applyto>/apps/gossip/conversation/spell_checker_languages</applyto>
       <owner>gossip</owner>

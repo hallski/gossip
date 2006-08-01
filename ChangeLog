@@ -1,5 +1,27 @@
 2006-08-01  Richard Hult  <richard@imendio.com>
 
+	* gossip.schemas.in:
+	* libgossip/gossip-conf-cocoa.c: (gossip_conf_init):
+	* src/gossip-chat-view.c: (chat_view_theme_changed_cb),
+	(gossip_chat_view_set_is_group_chat):
+	* src/gossip-preferences.c: (preferences_setup_widgets),
+	(gossip_preferences_show):
+	* src/gossip-preferences.h:
+	* src/gossip-theme-manager.c: (gossip_theme_manager_init),
+	(theme_manager_finalize), (theme_manager_notify_name_cb),
+	(theme_manager_notify_room_cb): Handle the new pref for chat room
+	theme.
+	- Also make the list of languages insensitive when the feature is
+	disabled.
+
+	* ui/main.glade: Add (at least as a try) a checkbox to decide if
+	the theme should apply for chat rooms as well. Also move the
+	"enable spell checking" checkbox above the list of language since
+	it's the more logical order (and change the capitalization to
+	sentence style as the HIG says).
+
+2006-08-01  Richard Hult  <richard@imendio.com>
+
 	* ui/main.glade: Remove the question icon from the Forget button,
 	it makes the row look odd since it's heigher than the rest, and
 	the question icon doesn't really mean forget.

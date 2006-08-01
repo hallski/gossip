@@ -42,7 +42,8 @@
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
 #define DEBUG_DOMAIN "ChatView"
 
@@ -1424,20 +1425,21 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 {
 	GossipChatViewPriv *priv;
 	gboolean            show_avatars = FALSE;
+	gboolean            theme_rooms = FALSE;
 
 	priv = GET_PRIV (view);
 
-	/* Do nothing for group chats since they are always the same
-	 * theme.
-	 */
-	if (priv->is_group_chat) {
-		return;
-	}
-
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	
-	gossip_theme_manager_apply_saved (manager, view);
-
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
+			      &theme_rooms);
+	if (!theme_rooms && priv->is_group_chat) {
+		gossip_theme_manager_apply (manager, view, NULL);
+	} else {
+		gossip_theme_manager_apply_saved (manager, view);
+	}
+	
 	/* Needed for now to update the "rise" property of the names to get it
 	 * vertically centered.
 	 */
@@ -2123,19 +2125,27 @@ gossip_chat_view_get_smiley_menu (GCallback    callback,
 	return menu;
 }
 
+/* FIXME: Do we really need this? Better to do it internally only at setup time,
+ * we will never change it on the fly.
+ */
 void
 gossip_chat_view_set_is_group_chat (GossipChatView *view,
 				    gboolean        is_group_chat)
 {
 	GossipChatViewPriv *priv;
-
+	gboolean            theme_rooms = FALSE;
+	
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 	
 	priv = GET_PRIV (view);
 
 	priv->is_group_chat = is_group_chat;
 
-	if (is_group_chat) {
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
+			      &theme_rooms);
+
+	if (!theme_rooms && is_group_chat) {
 		gossip_theme_manager_apply (gossip_theme_manager_get (), 
 					    view, 
 					    NULL);

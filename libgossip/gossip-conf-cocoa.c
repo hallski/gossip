@@ -87,8 +87,9 @@ gossip_conf_init (GossipConf *conf)
 #define GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE        GOSSIP_PREFS_PATH "/notifications/popups_when_available"
 #define GOSSIP_PREFS_CHAT_SHOW_SMILEYS            GOSSIP_PREFS_PATH "/conversation/graphical_smileys"
 #define GOSSIP_PREFS_CHAT_THEME                   GOSSIP_PREFS_PATH "/conversation/theme"
+#define GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM         GOSSIP_PREFS_PATH "/conversation/theme_chat_room"
 #define GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES GOSSIP_PREFS_PATH "/conversation/spell_checker_languages"
-#define GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED   GOSSIP_PREFS_PATH "/conversation/enable_spell_checker"
+#define GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED   GOSSIP_PREFS_PATH "/conversation/spell_checker_enabled"
 #define GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS     GOSSIP_PREFS_PATH "/ui/separate_chat_windows"
 #define GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN        GOSSIP_PREFS_PATH "/ui/main_window_hidden"
 #define GOSSIP_PREFS_UI_AVATAR_DIRECTORY          GOSSIP_PREFS_PATH "/ui/avatar_directory"
@@ -102,6 +103,7 @@ gossip_conf_init (GossipConf *conf)
 		@"NO", @GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
 		@"YES", @GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
 		@"clean", @GOSSIP_PREFS_CHAT_THEME,
+		@"YES", @GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
 		@"", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
 		@"NO", @GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
 		@"NO", @GOSSIP_PREFS_UI_SEPARATE_CHAT_WINDOWS,
