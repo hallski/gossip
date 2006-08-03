@@ -9,6 +9,9 @@ already on your roster, just silently subscribe them (Martyn).
 - Fixed #349649, Don't crash when D-Bus session is missing (Richard).
 - Fixed #349329, Don't crash on exit with D-Bus (Richard).
 
+Translations:
+Richard Hult (sv)
+
 
 NEW in 0.13:
 ============
