@@ -61,6 +61,7 @@ main (int argc, char *argv[])
 #else
 	GError               *error = NULL;
 #endif
+	gboolean              init_galago;
 	GossipSession        *session;
 	GossipAccountManager *account_manager;
 	GossipAccount        *account = NULL;
@@ -178,11 +179,15 @@ main (int argc, char *argv[])
       	session = gossip_session_new (account_manager);
 
 #ifdef HAVE_DBUS
-	gossip_dbus_init_for_session (session, multiple_instances);
+	init_galago = gossip_dbus_init_for_session (session, multiple_instances);
+#else
+	init_galago = TRUE;
 #endif
 	
 #ifdef HAVE_GALAGO
-	gossip_galago_init (session);
+	if (init_galago) {
+		gossip_galago_init (session);
+	}
 #endif
 
 	gossip_app_create (session, account_manager);

@@ -346,11 +346,19 @@ gossip_dbus_init_for_session (GossipSession *session,
 void 
 gossip_dbus_finalize_for_session (void)
 {
-	g_object_unref (bus_proxy);
-	g_object_unref (nm_proxy);
+	if (bus_proxy) {
+		g_object_unref (bus_proxy);
+	}
+	if (nm_proxy) {
+		g_object_unref (nm_proxy);
+	}
 
-	g_object_unref (gossip_dbus);
-	g_object_unref (saved_session);
+	if (gossip_dbus) {
+		g_object_unref (gossip_dbus);
+	}
+	if (saved_session) {
+		g_object_unref (saved_session);
+	}
 }
 
 /*
@@ -371,7 +379,7 @@ dbus_freedesktop_init (void)
 		return bus_proxy;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Initialising Freedesktop proxy");
+	gossip_debug (DEBUG_DOMAIN, "Initializing Freedesktop proxy");
 
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {

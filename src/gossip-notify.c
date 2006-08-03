@@ -84,6 +84,7 @@ enum {
 	NOTIFY_SHOW_ROSTER
 };
 
+static gboolean    inited = FALSE;
 static GHashTable *account_states = NULL;
 static GHashTable *contact_states = NULL;
 static GHashTable *message_notifications = NULL;
@@ -566,8 +567,6 @@ void
 gossip_notify_init (GossipSession      *session,
 		    GossipEventManager *event_manager)
 {
-	static gboolean inited = FALSE;
-
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_EVENT_MANAGER (event_manager));
 	
@@ -625,10 +624,14 @@ gossip_notify_init (GossipSession      *session,
 void
 gossip_notify_finalize (void)
 {
+	if (!inited) {
+		return;
+	}
+
 	g_hash_table_destroy (account_states);
 	g_hash_table_destroy (contact_states);
 	g_hash_table_destroy (message_notifications);
 	g_hash_table_destroy (event_notifications);
-
+	
 	notify_uninit ();
 }

@@ -22,7 +22,6 @@
 #include <config.h>
 #include <glib/gi18n.h>
 #include <libgalago/galago.h>
-#include <dbus/dbus-glib-lowlevel.h>
 
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-debug.h>

@@ -1,5 +1,14 @@
 2006-08-03  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-dbus.c: (gossip_dbus_finalize_for_session),
+	(dbus_freedesktop_init):
+	* src/gossip-galago.c:
+	* src/gossip-main.c: (main):
+	* src/gossip-notify.c: (gossip_notify_init),
+	(gossip_notify_finalize): Fix bug #349649, handle missing D-Bus.
+
+2006-08-03  Richard Hult  <richard@imendio.com>
+
 	* configure.ac: Patch from Paul van Tilburg to use the right name
 	for D-Bus, and fix the galago check.
 
