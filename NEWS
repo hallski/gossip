@@ -6,6 +6,8 @@ NEW in 0.14:
 (patch by Wouter Bolsterlee). 
 - Fixed #349530, Don't show subscribe request dialog for contacts
 already on your roster, just silently subscribe them (Johan Dahlin).
+- Fixed #349649, Handle missing D-Bus (Richard).
+- Fixed #349329, Crash on exit with D-Bus (Richard).
 
 
 NEW in 0.13:

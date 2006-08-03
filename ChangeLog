@@ -1,6 +1,12 @@
 2006-08-03  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-dbus.c: (gossip_dbus_finalize_for_session),
+	(nm_proxy_notify_cb), (dbus_nm_init), (gossip_dbus_nm_get_state):
+	Fix bug #349329, crash on exit with D-Bus.
+
+2006-08-03  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-dbus.c: (gossip_dbus_finalize_for_session),
 	(dbus_freedesktop_init):
 	* src/gossip-galago.c:
 	* src/gossip-main.c: (main):

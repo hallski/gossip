@@ -66,31 +66,34 @@ struct GossipDBusClass {
 
 G_DEFINE_TYPE(GossipDBus, gossip_dbus, G_TYPE_OBJECT)
 
-gboolean gossip_dbus_set_presence       (GossipDBus   *obj,
-					 const char   *state,
-					 const char   *status,
-					 GError      **error);
-gboolean gossip_dbus_set_not_away       (GossipDBus   *obj,
-					 GError      **error);
-gboolean gossip_dbus_set_network_status (GossipDBus   *obj,
-					 gboolean      up,
-					 GError      **error);
-gboolean gossip_dbus_set_roster_visible (GossipDBus   *obj,
-					 gboolean      visible,
-					 GError      **error);
-gboolean gossip_dbus_get_roster_visible (GossipDBus   *obj,
-					 gboolean     *visible,
-					 GError      **error);
-gboolean gossip_dbus_get_open_chats     (GossipDBus   *obj,
-					 char       ***contacts,
-					 GError      **error);
-gboolean gossip_dbus_send_message       (GossipDBus   *obj,
-					 const gchar  *contact_id,
-					 GError      **error);
-gboolean gossip_dbus_new_message        (GossipDBus   *obj,
-					 GError      **error);
-gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
-					 GError      **error);
+static gboolean gossip_dbus_set_presence       (GossipDBus   *obj,
+						const char   *state,
+						const char   *status,
+						GError      **error);
+static gboolean gossip_dbus_set_not_away       (GossipDBus   *obj,
+						GError      **error);
+static gboolean gossip_dbus_set_network_status (GossipDBus   *obj,
+						gboolean      up,
+						GError      **error);
+static gboolean gossip_dbus_set_roster_visible (GossipDBus   *obj,
+						gboolean      visible,
+						GError      **error);
+static gboolean gossip_dbus_get_roster_visible (GossipDBus   *obj,
+						gboolean     *visible,
+						GError      **error);
+static gboolean gossip_dbus_get_open_chats     (GossipDBus   *obj,
+						char       ***contacts,
+						GError      **error);
+static gboolean gossip_dbus_send_message       (GossipDBus   *obj,
+						const gchar  *contact_id,
+						GError      **error);
+static gboolean gossip_dbus_new_message        (GossipDBus   *obj,
+						GError      **error);
+static gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
+						GError      **error);
+static void     nm_proxy_notify_cb             (gpointer      data,
+						GObject      *where_the_object_was);
+
 
 #include "gossip-dbus-glue.h"
 
@@ -113,7 +116,7 @@ gossip_dbus_class_init (GossipDBusClass *klass)
 {
 }
 
-gboolean
+static gboolean
 gossip_dbus_set_presence (GossipDBus   *obj, 
 			  const char   *state, 
 			  const char   *status,
@@ -150,7 +153,7 @@ gossip_dbus_set_presence (GossipDBus   *obj,
 	return TRUE;
 }
 
-gboolean
+static gboolean
 gossip_dbus_set_not_away (GossipDBus  *obj, 
 			  GError     **error)
 {
@@ -160,7 +163,7 @@ gossip_dbus_set_not_away (GossipDBus  *obj,
 	return TRUE;
 }
 
-gboolean
+static gboolean
 gossip_dbus_set_network_status (GossipDBus *obj, 
 				gboolean    up, 
 				GError     **error)
@@ -177,7 +180,7 @@ gossip_dbus_set_network_status (GossipDBus *obj,
 	return TRUE;
 }
 
-gboolean
+static gboolean
 gossip_dbus_set_roster_visible (GossipDBus  *obj,
 				gboolean     visible,
 				GError     **error)
@@ -190,7 +193,7 @@ gossip_dbus_set_roster_visible (GossipDBus  *obj,
 	return TRUE;
 }
 
-gboolean 
+static gboolean 
 gossip_dbus_get_roster_visible (GossipDBus   *obj,
 				gboolean     *visible,
 				GError      **error)
@@ -202,7 +205,7 @@ gossip_dbus_get_roster_visible (GossipDBus   *obj,
 	return TRUE;
 }
 
-gboolean 
+static gboolean 
 gossip_dbus_get_open_chats (GossipDBus   *obj,
 			    char       ***contacts,
 			    GError      **error)
@@ -229,7 +232,7 @@ gossip_dbus_get_open_chats (GossipDBus   *obj,
 	return TRUE;
 }
 
-gboolean
+static gboolean
 gossip_dbus_send_message (GossipDBus   *obj, 
 			  const gchar  *contact_id, 
 			  GError      **error)
@@ -252,7 +255,7 @@ gossip_dbus_send_message (GossipDBus   *obj,
 	return TRUE;
 }
 
-gboolean 
+static gboolean 
 gossip_dbus_new_message (GossipDBus  *obj,
 			 GError     **error)
 {
@@ -262,7 +265,7 @@ gossip_dbus_new_message (GossipDBus  *obj,
 	return TRUE;
 }
 
-gboolean 
+static gboolean 
 gossip_dbus_toggle_roster (GossipDBus  *obj,
 			   GError     **error)
 {
@@ -350,6 +353,7 @@ gossip_dbus_finalize_for_session (void)
 		g_object_unref (bus_proxy);
 	}
 	if (nm_proxy) {
+		g_object_weak_unref (G_OBJECT (nm_proxy), nm_proxy_notify_cb, NULL);
 		g_object_unref (nm_proxy);
 	}
 
@@ -473,11 +477,9 @@ nm_proxy_restart_timeout_cb (gpointer user_data)
 }
 		
 static void
-nm_proxy_notify_cb (gpointer conn,
-		    GObject *where_the_object_was)
+nm_proxy_notify_cb (gpointer  data,
+		    GObject  *where_the_object_was)
 {
-	dbus_connection_unref (conn);
-
 	nm_proxy = NULL;
 	nm_proxy_restart_retries = 5;
 
@@ -509,6 +511,10 @@ dbus_nm_init (void)
 		return FALSE;
 	}
 
+	/* Note that we are kind of leaking this here, although it doesn't
+	 * really matter since there is only one anyway, during the whole
+	 * session.
+	 */
 	conn = dbus_g_connection_get_connection (bus);
 	dbus_connection_set_exit_on_disconnect (conn, FALSE);
 	
@@ -518,11 +524,11 @@ dbus_nm_init (void)
 					       NM_DBUS_INTERFACE);
 
 	if (!nm_proxy) {
-		g_warning ("Could not connect to Network Manager");
+		/* Don't warn because the user might just not have nm. */
 		return FALSE;
 	}
 
-	g_object_weak_ref (G_OBJECT (nm_proxy), nm_proxy_notify_cb, conn);
+	g_object_weak_ref (G_OBJECT (nm_proxy), nm_proxy_notify_cb, NULL);
 	
 	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT, 
 					   G_TYPE_NONE, G_TYPE_UINT, G_TYPE_INVALID);
@@ -545,7 +551,7 @@ gossip_dbus_nm_get_state (gboolean *connected)
 	
 	g_return_val_if_fail (connected != NULL, FALSE);
 
-	/* Set the initial value of connected incase we have to return */
+	/* Set the initial value of connected in case we have to return. */
 	*connected = FALSE;
 
 	if (nm_proxy_restart_timeout_id) {
