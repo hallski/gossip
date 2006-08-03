@@ -1,5 +1,12 @@
 2006-08-03  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-subscription-dialog.c:
+	(subscription_dialog_request_cb): Don't show subscribe request
+	dialog for contacts already on your roster, just silently
+	subscribe them, fixes #349530 (Johan Dahlin).
+
+2006-08-03  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-utils.c: (regex_init): Make regex used to highlight
 	URIs case insensitive, fixes #349810 (patch by Wouter Bolsterlee).
 

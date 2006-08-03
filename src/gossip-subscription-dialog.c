@@ -144,13 +144,11 @@ subscription_dialog_request_cb (GossipProtocol *protocol,
 	subscription = gossip_contact_get_subscription (contact);
 	
 	/* If the contact is on our contact list and we get a
-	 * subscription request when we already have subscription
-	 * "TO" them then we silently send back subscribed because
+	 * subscription request, send back subscribed because
 	 * we obviously want them on our roster, there is no need to
 	 * show a dialog and confirm it with the user.
 	 */
-	if (type == GOSSIP_CONTACT_TYPE_CONTACTLIST && 
-	    subscription == GOSSIP_SUBSCRIPTION_TO) {
+	if (type == GOSSIP_CONTACT_TYPE_CONTACTLIST) {
 		gossip_debug (DEBUG_DOMAIN, "Silently accepting request");
 		gossip_protocol_set_subscription (protocol, contact, TRUE);
 		return;

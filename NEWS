@@ -1,10 +1,11 @@
 NEW in 0.14:
 ===========
-- Use the correct SHA function when signing in with digest so we don't
-fail with the correct login credentials (Richard, Paul van Tilburg,
-Keywan Najafi Tonekaboni). 
+- Fixed a regression for PPC when signing in with digest passwords
+(Richard, Paul van Tilburg, Keywan Najafi Tonekaboni). 
 - Fixed #349810, Make regex used to highlight URIs case insensitive
 (patch by Wouter Bolsterlee). 
+- Fixed #349530, Don't show subscribe request dialog for contacts
+already on your roster, just silently subscribe them (Johan Dahlin).
 
 
 NEW in 0.13:
