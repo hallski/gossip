@@ -1,3 +1,8 @@
+2006-08-03  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Patch from Paul van Tilburg to use the right name
+	for D-Bus, and fix the galago check.
+
 2006-08-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-subscription-dialog.c:

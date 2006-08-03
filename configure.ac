@@ -80,19 +80,16 @@ dnl D-BUS
 dnl -----------------------------------------------------------
 AC_ARG_ENABLE(dbus,
               AS_HELP_STRING([--enable-dbus=@<:@no/yes/auto@:>@],
-                             [compile with dbus support]), ,
+                             [compile with D-Bus support]), ,
               enable_dbus=auto)
 
 if test "x$enable_dbus" != "xno"; then
    dbus_pkgconfig_tmp="dbus-1 >= 0.60 dbus-glib-1"
    PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
    if test x$have_dbus = xyes; then
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(HAVE_DBUS, 1, [d-bus support])
+      AC_DEFINE(HAVE_DBUS, 1, [D-Bus support])
       dbus_pkgconfig=$dbus_pkgconfig_tmp
-  else
-      AC_MSG_RESULT(no)
-  fi
+   fi
 else
    have_dbus=no
    dbus_pkgconfig=
@@ -100,7 +97,7 @@ fi
 
 if test "x$enable_dbus" = "xyes"; then
    if test "x$have_dbus" != "xyes"; then
-      AC_MSG_ERROR([Couldn't find d-bus.])
+      AC_MSG_ERROR([Couldn't find D-Bus.])
    fi
 fi
 
@@ -116,19 +113,19 @@ AC_ARG_ENABLE(galago,
               enable_galago=no)
 
 if test "x$enable_galago" != "xno"; then
-   galago_pkgconfig_tmp="libgalago"
+   galago_pkgconfig_tmp="libgalago >= 0.5.1"
    PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
    if test x$have_galago = xyes; then
       AC_DEFINE(HAVE_GALAGO, 1, [Galago support])
       galago_pkgconfig=$galago_pkgconfig_tmp
-  fi
+   fi
 else
    have_galago=no
    galago_pkgconfig=
 fi
 
 if test "x$enable_galago" = "xyes"; then
-   if test "x$enable_galago" != "xyes"; then
+   if test "x$have_galago" != "xyes"; then
       AC_MSG_ERROR([Couldn't find Galago])
    fi
 fi
