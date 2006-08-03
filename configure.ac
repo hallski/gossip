@@ -113,7 +113,7 @@ AC_ARG_ENABLE(galago,
               enable_galago=no)
 
 if test "x$enable_galago" != "xno"; then
-   galago_pkgconfig_tmp="libgalago >= 0.5.1"
+   galago_pkgconfig_tmp="libgalago >= 0.5.0"
    PKG_CHECK_MODULES(GALAGO, $galago_pkgconfig_tmp, have_galago=yes, have_galago=no)
    if test x$have_galago = xyes; then
       AC_DEFINE(HAVE_GALAGO, 1, [Galago support])

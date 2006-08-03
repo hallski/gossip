@@ -567,6 +567,7 @@ chat_view_event_cb (GossipChatView *view,
 		    GtkTextTag     *tag)
 {
 	static GdkCursor  *hand = NULL;
+	static GdkCursor  *beam = NULL;
 	GtkTextWindowType  type;
 	GtkTextIter        iter;
 	GdkWindow         *win;
@@ -599,10 +600,14 @@ chat_view_event_cb (GossipChatView *view,
 	if (gtk_text_iter_has_tag (&iter, tag)) {
 		if (!hand) {
 			hand = gdk_cursor_new (GDK_HAND2);
+			beam = gdk_cursor_new (GDK_XTERM);
 		}
 		gdk_window_set_cursor (win, hand);
 	} else {
-		gdk_window_set_cursor (win, NULL);
+		if (!beam) {
+			beam = gdk_cursor_new (GDK_XTERM);
+		}
+		gdk_window_set_cursor (win, beam);
 	}
 
 	return FALSE;
