@@ -1,3 +1,8 @@
+2006-08-03  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-utils.c: (regex_init): Make regex used to highlight
+	URIs case insensitive, fixes #349810 (patch by Wouter Bolsterlee).
+
 2006-08-03  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/Makefile.am:

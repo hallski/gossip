@@ -99,7 +99,7 @@ regex_init (void)
 		}
 		
 		memset (&dingus[i], 0, sizeof (regex_t));
-		regcomp (&dingus[i], expression, REG_EXTENDED);
+		regcomp (&dingus[i], expression, REG_EXTENDED | REG_ICASE);
 	}
 	
 	inited = TRUE;
