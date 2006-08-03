@@ -2,6 +2,7 @@ AM_CPPFLAGS =                                   \
 	-I.                                     \
 	-I$(top_srcdir)                         \
 	-DPROTOCOLSDIR=\"$(datadir)/gossip/protocols\" 	\
+	-DRUNTIME_ENDIAN			\
 	$(GOSSIP_JABBER_CFLAGS) $(WARN_CFLAGS)
 
 noinst_LTLIBRARIES = libgossip-jabber.la

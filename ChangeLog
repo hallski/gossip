@@ -1,3 +1,10 @@
+2006-08-03  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/Makefile.am:
+	* protocols/jabber/gossip-sha.c: Fix for PPC and don't expose the
+	sha functions. Thanks to Paul van Tilburg for helping spot this
+	one.
+
 2006-08-01  Richard Hult  <richard@imendio.com>
 
 	* gossip.schemas.in:
