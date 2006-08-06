@@ -1,3 +1,7 @@
+2006-08-06  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_finalize): Work around bug #349872.
+
 2006-08-03  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.14.

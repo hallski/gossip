@@ -375,7 +375,13 @@ app_finalize (GObject *object)
 	g_list_free (priv->widgets_disconnected);
 
 	if (priv->errors) {
-		g_hash_table_destroy (priv->errors);
+		/* FIXME: We are leaking this on exit. We need to
+		 * connect to the error widgets' "destroy" signals and
+		 * remove them from the hash table, otherwise this
+		 * call will crash, since the widgets are gone
+		 * already.
+		 */
+		/*g_hash_table_destroy (priv->errors);*/
 	}
 
 	gtk_widget_destroy (priv->popup_menu);
