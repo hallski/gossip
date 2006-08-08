@@ -1,3 +1,10 @@
+2006-08-08  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: Remove all the GtkItemFactory code
+	which is now pretty obsolete and replace it with the new
+	GtkUIManager and GtkAction code. Fixes #349345 (Wouter Bolsterlee)
+	and #347055 (Aredridel).
+
 2006-08-08  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-notify.c (notify_contact_online): Make the avatars a

@@ -5,6 +5,11 @@ NEW in 0.15:
 - Fixed #349872, Don't crash on exit when cleaning up hash tables
 (Richard). 
 - Fixed #350416, Show avatars in notifications (Martyn).
+- Fixed #349345, Include a "Chat" item on the contact list context
+menu which does the same as double clicking to activate that row
+(Martyn). 
+- Fixed #347055, Now we use the GtkUIManager and GtkAction API instead
+of GtkItemFactory (Martyn).
 
 Translations:
 
