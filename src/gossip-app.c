@@ -740,6 +740,7 @@ app_setup (GossipSession        *session,
 		gossip_conf_get_bool (conf,
 				      GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
 				      &hidden);
+		gtk_widget_show (GTK_WIDGET (priv->actions_hide_list));
 	}
 
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
