@@ -2,6 +2,7 @@
 
 	* src/gossip-notify.c (notify_contact_online): Make the avatars a
 	bit smaller.
+	(notify_new_message): Change here as well.
 
 2006-08-08  Martyn Russell  <martyn@imendio.com>
 
