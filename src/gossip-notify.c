@@ -184,7 +184,7 @@ notify_contact_online (GossipContact *contact)
 			       &show_avatars);
 
 	if (show_avatars) {
-		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 64, 64);
+		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 48, 48);
 	}
 
 	if (!pixbuf) {
