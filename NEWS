@@ -1,3 +1,14 @@
+NEW in 0.15:
+===========
+- Fixed "Hide Contact List" menu item which was actually hidden itself
+(Martyn). 
+- Fixed #349872, Don't crash on exit when cleaning up hash tables
+(Richard). 
+- Fixed #350416, Show avatars in notifications (Martyn).
+
+Translations:
+
+
 NEW in 0.14:
 ===========
 - Fixed a regression for PPC when signing in with digest passwords

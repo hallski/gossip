@@ -91,7 +91,6 @@ static GHashTable *message_notifications = NULL;
 static GHashTable *event_notifications = NULL;
 static GtkWidget  *attach_widget = NULL;
 
-
 static const gchar *
 notify_get_status_from_presence (GossipPresence *presence)
 {
@@ -153,11 +152,12 @@ notify_contact_online (GossipContact *contact)
 {
 	GossipPresence     *presence;
 	NotifyNotification *notify;
-	GdkPixbuf          *pixbuf;
+	GdkPixbuf          *pixbuf = NULL;
 	gchar              *title;
 	const gchar        *status;
 	GError             *error = NULL;
 	gboolean            show_popup;
+	gboolean            show_avatars;
 
 	if (!gossip_conf_get_bool (gossip_conf_get (),
 				   GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
@@ -177,7 +177,20 @@ notify_contact_online (GossipContact *contact)
 		      gossip_contact_get_id (contact));
 
 	presence = gossip_contact_get_active_presence (contact);
-	pixbuf = gossip_pixbuf_for_presence (presence);
+
+	show_avatars = FALSE;
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_UI_SHOW_AVATARS,
+			       &show_avatars);
+
+	if (show_avatars) {
+		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 64, 64);
+	}
+
+	if (!pixbuf) {
+		/* Fall back to presence state */
+		pixbuf = gossip_pixbuf_for_presence (presence); 
+	}
 
 	title = g_markup_printf_escaped (_("%s has come online"), 
 					 gossip_contact_get_name (contact));
@@ -272,13 +285,14 @@ notify_new_message (GossipEventManager *event_manager,
 { 
 	GossipContact      *contact;
 	NotifyNotification *notify;
-	GdkPixbuf          *pixbuf;
+	GdkPixbuf          *pixbuf = NULL;
+	GError             *error = NULL;
 	gchar              *title;
 	gchar              *body_copy;
 	const gchar        *body_stripped;
 	gchar              *str;
 	gint                len;
-	GError             *error = NULL;
+	gboolean            show_avatars;
 
 	contact = gossip_message_get_sender (message);
 
@@ -296,7 +310,19 @@ notify_new_message (GossipEventManager *event_manager,
 	gossip_debug (DEBUG_DOMAIN, "Setting up notification for new message from:'%s'", 
 		      gossip_contact_get_id (contact));
 
-	pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
+	show_avatars = FALSE;
+	gossip_conf_get_bool (gossip_conf_get (),
+			       GOSSIP_PREFS_UI_SHOW_AVATARS,
+			       &show_avatars);
+
+	if (show_avatars) {
+		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 64, 64);
+	}
+
+	if (!pixbuf) {
+		/* Fall back to message icon */
+		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
+	}
 
 	title = g_strdup_printf (_("New message from %s"), 
 				 gossip_contact_get_name (contact));
