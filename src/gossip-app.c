@@ -141,9 +141,11 @@ struct _GossipAppPriv {
 	GtkWidget             *actions_disconnect;
 	GtkWidget             *actions_hide_list;
 	GtkWidget             *actions_group_chat_join;   
+	GtkWidget             *edit_context;   
+	GtkWidget             *edit_context_separator;   
 
 	/* Tray */
-	/*EggTrayIcon*/ GtkWidget           *tray_icon;
+	GtkWidget             *tray_icon;
 	GtkWidget             *tray_event_box;
 	GtkWidget             *tray_image;
 	GList                 *tray_flash_icons;
@@ -194,35 +196,38 @@ static gboolean        app_main_window_delete_event_cb      (GtkWidget          
 static gboolean        app_main_window_key_press_event_cb   (GtkWidget                *window,
 							     GdkEventKey              *event,
 							     GossipApp                *app);
-static void            app_quit_cb                          (GtkWidget                *window,
+static void            app_actions_quit_cb                  (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_connect_cb                       (GtkWidget                *window,
+static void            app_actions_connect_cb               (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_disconnect_cb                    (GtkWidget                *window,
+static void            app_actions_disconnect_cb            (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_new_message_cb                   (GtkWidget                *widget,
+static void            app_actions_new_message_cb           (GtkWidget                *widget,
 							     GossipApp                *app);
-static void            app_history_cb                       (GtkWidget                *window,
+static void            app_actions_history_cb               (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_group_chat_new_cb                (GtkWidget                *window,
+static void            app_actions_group_chat_new_cb        (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_group_chat_join_cb               (GtkWidget                *window,
+static void            app_actions_group_chat_join_cb       (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_group_chat_rooms_cb              (GtkWidget                *window,
+static void            app_actions_group_chat_rooms_cb      (GtkWidget                *window,
 							     GossipApp                *app);
-static void            app_add_contact_cb                   (GtkWidget                *widget,
+static void            app_actions_add_contact_cb           (GtkWidget                *widget,
 							     GossipApp                *app);
-static void            app_show_offline_cb                  (GtkCheckMenuItem         *item,
+static void            app_actions_show_offline_cb          (GtkCheckMenuItem         *item,
 							     GossipApp                *app);
-static void            app_accounts_cb                      (GtkWidget                *widget,
+static gboolean        app_edit_button_press_event_cb       (GtkWidget                *widget,
+							     GdkEventButton           *event,
 							     GossipApp                *app);
-static void            app_personal_information_cb          (GtkWidget                *widget,
+static void            app_edit_accounts_cb                 (GtkWidget                *widget,
 							     GossipApp                *app);
-static void            app_preferences_cb                   (GtkWidget                *widget,
+static void            app_edit_personal_information_cb     (GtkWidget                *widget,
 							     GossipApp                *app);
-static void            app_about_cb                         (GtkWidget                *window,
+static void            app_edit_preferences_cb              (GtkWidget                *widget,
 							     GossipApp                *app);
-static void            app_help_cb                          (GtkWidget                *window,
+static void            app_help_about_cb                    (GtkWidget                *window,
+							     GossipApp                *app);
+static void            app_help_contents_cb                 (GtkWidget                *window,
 							     GossipApp                *app);
 static gboolean        app_throbber_button_press_event_cb   (GtkWidget                *throbber,
 							     GdkEventButton           *event,
@@ -265,7 +270,7 @@ static void            app_status_flash_start               (void);
 static void            app_status_flash_stop                (void);
 static void            app_notify_show_offline_cb           (GossipConf               *conf,
 							     const gchar              *key,
- 							     gpointer                  check_menu_item);
+							     gpointer                  check_menu_item);
 static void            app_notify_show_avatars_cb           (GossipConf               *conf,
 							     const gchar              *key,
 							     gpointer                  user_data);
@@ -285,6 +290,7 @@ static void            app_accounts_error_display           (GossipAccount      
 static GossipPresence *app_get_effective_presence           (void);
 static void            app_set_away                         (const gchar              *status);
 static GdkPixbuf *     app_get_current_status_pixbuf        (void);
+
 static GossipPresenceState
                        app_get_current_state                (void);
 static GossipPresenceState
@@ -322,7 +328,7 @@ static void            app_contact_activated_cb             (GossipContactList  
 							     GossipEventId             event_id,
 							     gpointer                  user_data);
 
-static GossipApp    *app;
+static GossipApp *app = NULL;
 
 G_DEFINE_TYPE (GossipApp, gossip_app, G_TYPE_OBJECT);
 
@@ -561,6 +567,8 @@ app_setup (GossipSession        *session,
 				       "actions_show_offline", &show_offline_widget,
 				       "actions_hide_list", &priv->actions_hide_list,
 				       "actions_group_chat_join", &priv->actions_group_chat_join,
+				       "edit_context", &priv->edit_context,
+				       "edit_context_separator", &priv->edit_context_separator,
 				       "presence_toolbar", &priv->presence_toolbar,
 				       "roster_scrolledwindow", &sw,
 				       NULL);
@@ -571,21 +579,22 @@ app_setup (GossipSession        *session,
 			      "main_window", "delete_event", app_main_window_delete_event_cb,
 			      "main_window", "configure_event", app_window_configure_event_cb,
 			      "main_window", "key_press_event", app_main_window_key_press_event_cb,
-			      "file_quit", "activate", app_quit_cb,
-			      "actions_connect", "activate", app_connect_cb,
- 			      "actions_disconnect", "activate", app_disconnect_cb, 
-			      "actions_new_message", "activate", app_new_message_cb,
-			      "actions_history", "activate", app_history_cb,
-			      "actions_group_chat_new", "activate", app_group_chat_new_cb,
-			      "actions_group_chat_join", "activate", app_group_chat_join_cb,
-			      "actions_group_chat_rooms", "activate", app_group_chat_rooms_cb,
-			      "actions_add_contact", "activate", app_add_contact_cb,
-			      "actions_show_offline", "toggled", app_show_offline_cb,
-			      "edit_accounts", "activate", app_accounts_cb,
-			      "edit_personal_information", "activate", app_personal_information_cb,
-			      "edit_preferences", "activate", app_preferences_cb,
-			      "help_about", "activate", app_about_cb,
-			      "help_contents", "activate", app_help_cb,
+			      "actions_quit", "activate", app_actions_quit_cb,
+			      "actions_connect", "activate", app_actions_connect_cb,
+ 			      "actions_disconnect", "activate", app_actions_disconnect_cb, 
+			      "actions_new_message", "activate", app_actions_new_message_cb,
+			      "actions_history", "activate", app_actions_history_cb,
+			      "actions_group_chat_new", "activate", app_actions_group_chat_new_cb,
+			      "actions_group_chat_join", "activate", app_actions_group_chat_join_cb,
+			      "actions_group_chat_rooms", "activate", app_actions_group_chat_rooms_cb,
+			      "actions_add_contact", "activate", app_actions_add_contact_cb,
+			      "actions_show_offline", "toggled", app_actions_show_offline_cb,
+			      "edit", "button-press-event", app_edit_button_press_event_cb,
+			      "edit_accounts", "activate", app_edit_accounts_cb,
+			      "edit_personal_information", "activate", app_edit_personal_information_cb,
+			      "edit_preferences", "activate", app_edit_preferences_cb,
+			      "help_about", "activate", app_help_about_cb,
+			      "help_contents", "activate", app_help_contents_cb,
 			      NULL);
 
 	/* Set up menu */
@@ -602,6 +611,9 @@ app_setup (GossipSession        *session,
 
 	g_signal_connect (priv->actions_hide_list, "activate", 
 			  G_CALLBACK (app_show_hide_list_cb), app);
+
+	gtk_widget_hide (priv->edit_context);
+	gtk_widget_hide (priv->edit_context_separator);
 
 	/* Set up connection related widgets. */
 	app_connection_items_setup (glade);
@@ -936,7 +948,7 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 }
 
 static void 
-app_quit_cb (GtkWidget *window,
+app_actions_quit_cb (GtkWidget *window,
 	     GossipApp *app)
 {
 	GossipAppPriv *priv;
@@ -949,8 +961,8 @@ app_quit_cb (GtkWidget *window,
 }
 
 static void
-app_connect_cb (GtkWidget *window,
-		GossipApp *app)
+app_actions_connect_cb (GtkWidget *window,
+			GossipApp *app)
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
@@ -958,8 +970,8 @@ app_connect_cb (GtkWidget *window,
 }
 
 static void
-app_disconnect_cb (GtkWidget *window,
-		   GossipApp *app)
+app_actions_disconnect_cb (GtkWidget *window,
+			   GossipApp *app)
 {
 	g_return_if_fail (GOSSIP_IS_APP (app));
 
@@ -967,8 +979,8 @@ app_disconnect_cb (GtkWidget *window,
 }
 
 static void
-app_new_message_cb (GtkWidget *widget,
-		    GossipApp *app)
+app_actions_new_message_cb (GtkWidget *widget,
+			    GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -978,8 +990,8 @@ app_new_message_cb (GtkWidget *widget,
 }
 
 static void
-app_history_cb (GtkWidget *widget,
-		GossipApp *app)
+app_actions_history_cb (GtkWidget *widget,
+			GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -989,8 +1001,8 @@ app_history_cb (GtkWidget *widget,
 }
 
 static void
-app_group_chat_new_cb (GtkWidget *window,
-		       GossipApp *app)
+app_actions_group_chat_new_cb (GtkWidget *window,
+			       GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -1000,8 +1012,8 @@ app_group_chat_new_cb (GtkWidget *window,
 }
 
 static void
-app_group_chat_join_cb (GtkWidget *window,
-			GossipApp *app)
+app_actions_group_chat_join_cb (GtkWidget *window,
+				GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -1011,15 +1023,15 @@ app_group_chat_join_cb (GtkWidget *window,
 }
 
 static void
-app_group_chat_rooms_cb (GtkWidget *window,
-			 GossipApp *app)
+app_actions_group_chat_rooms_cb (GtkWidget *window,
+				 GossipApp *app)
 {
 	gossip_chatrooms_window_show (NULL, FALSE);
 }
 
 static void
-app_add_contact_cb (GtkWidget *widget, 
-		    GossipApp *app)
+app_actions_add_contact_cb (GtkWidget *widget, 
+			    GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -1029,8 +1041,8 @@ app_add_contact_cb (GtkWidget *widget,
 }
 
 static void
-app_show_offline_cb (GtkCheckMenuItem *item, 
-		     GossipApp        *app)
+app_actions_show_offline_cb (GtkCheckMenuItem *item, 
+			     GossipApp        *app)
 {
 	GossipAppPriv *priv;
 	gboolean       current;
@@ -1049,16 +1061,80 @@ app_show_offline_cb (GtkCheckMenuItem *item,
 	gossip_sound_set_enabled (TRUE);
 }
 
+static gboolean
+app_edit_button_press_event_cb (GtkWidget      *widget, 
+				GdkEventButton *event,
+				GossipApp      *app)
+{
+	GossipAppPriv *priv;
+	GossipContact *contact;
+	gchar         *group;
+
+	if (!event->button == 1) {
+		return FALSE;
+	}
+	
+	priv = GET_PRIV (app);
+
+	group = gossip_contact_list_get_selected_group (priv->contact_list);
+	if (group) {
+		GtkMenuItem *item;
+		GtkWidget   *label;
+		GtkWidget   *submenu;
+
+		item = GTK_MENU_ITEM (priv->edit_context);
+		label = gtk_bin_get_child (GTK_BIN (item));
+		gtk_label_set_text (GTK_LABEL (label), _("Group"));
+		
+		gtk_widget_show (priv->edit_context); 
+		gtk_widget_show (priv->edit_context_separator); 
+
+		submenu = gossip_contact_list_get_group_menu (priv->contact_list);
+		gtk_menu_item_set_submenu (item, submenu);
+
+		g_free (group);
+		
+		return FALSE;
+	}
+
+	contact = gossip_contact_list_get_selected (priv->contact_list);
+	if (contact) {
+		GtkMenuItem *item;
+		GtkWidget   *label;
+		GtkWidget   *submenu;
+
+		item = GTK_MENU_ITEM (priv->edit_context);
+		label = gtk_bin_get_child (GTK_BIN (item));
+		gtk_label_set_text (GTK_LABEL (label), _("Contact"));
+		
+		gtk_widget_show (priv->edit_context); 
+		gtk_widget_show (priv->edit_context_separator); 
+
+		submenu = gossip_contact_list_get_contact_menu (priv->contact_list, 
+								contact);
+		gtk_menu_item_set_submenu (item, submenu);
+
+		g_object_unref (contact);
+
+		return FALSE;
+	}
+
+	gtk_widget_hide (priv->edit_context); 
+	gtk_widget_hide (priv->edit_context_separator); 
+
+	return FALSE;
+}
+
 static void
-app_accounts_cb (GtkWidget *widget, 
-		 GossipApp *app)
+app_edit_accounts_cb (GtkWidget *widget, 
+		      GossipApp *app)
 {
 	gossip_accounts_dialog_show (NULL);
 }
 
 static void
-app_personal_information_cb (GtkWidget *widget, 
-			     GossipApp *app)
+app_edit_personal_information_cb (GtkWidget *widget, 
+				  GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -1068,15 +1144,15 @@ app_personal_information_cb (GtkWidget *widget,
 }
 
 static void
-app_preferences_cb (GtkWidget *widget, 
-		    GossipApp *app)
+app_edit_preferences_cb (GtkWidget *widget, 
+			 GossipApp *app)
 {
 	gossip_preferences_show ();
 }
 
 static void
-app_about_cb (GtkWidget *window,
-	      GossipApp *app)
+app_help_about_cb (GtkWidget *window,
+		   GossipApp *app)
 {
 	GossipAppPriv *priv;
 
@@ -1086,8 +1162,8 @@ app_about_cb (GtkWidget *window,
 }
 
 static void
-app_help_cb (GtkWidget *window,
-	     GossipApp *app)
+app_help_contents_cb (GtkWidget *window,
+		      GossipApp *app)
 {
 	gossip_help_show ();
 }
@@ -1459,7 +1535,7 @@ app_tray_create_menu (void)
 	gossip_glade_connect (glade,
 			      app,
 			      "tray_new_message", "activate", app_popup_new_message_cb,
-			      "tray_quit", "activate", app_quit_cb,
+			      "tray_quit", "activate", app_actions_quit_cb,
 			      NULL);
 
 	g_signal_connect (priv->popup_menu_show_list_item, "toggled", 

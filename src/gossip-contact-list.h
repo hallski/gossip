@@ -61,5 +61,10 @@ void               gossip_contact_list_set_show_offline   (GossipContactList *li
 void               gossip_contact_list_set_show_avatars   (GossipContactList *list,
 							   gboolean           show_avatars);
 
+GtkWidget *        gossip_contact_list_get_contact_menu   (GossipContactList *list,
+							   GossipContact     *contact);
+GtkWidget *        gossip_contact_list_get_group_menu     (GossipContactList *list);
+
+
 #endif /* __GOSSIP_CONTACT_LIST_H__ */
 

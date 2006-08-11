@@ -219,8 +219,6 @@ static GtkWidget *contact_list_get_contact_menu              (GossipContactList 
 							      GtkWidget              *invite_menu,
 							      gboolean                can_send_file,
 							      gboolean                can_show_log);
-static GtkWidget *contact_list_get_group_menu                (GossipContactList      *list);
-
 static gboolean contact_list_button_press_event_cb           (GossipContactList      *list,
 							      GdkEventButton         *event,
 							      gpointer                user_data);
@@ -1913,17 +1911,45 @@ contact_list_get_contact_menu (GossipContactList *list,
 	return widget;
 }
 
-static GtkWidget *
-contact_list_get_group_menu (GossipContactList *list)
+GtkWidget *
+gossip_contact_list_get_group_menu (GossipContactList *list)
 {
 	GossipContactListPriv *priv;
 	GtkWidget             *widget;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
 	
 	priv = GET_PRIV (list);
 
 	widget = gtk_ui_manager_get_widget (priv->ui, "/Group");
 
  	return widget;
+}
+
+GtkWidget *
+gossip_contact_list_get_contact_menu (GossipContactList *list,
+				      GossipContact     *contact)
+{
+	GtkWidget *menu;
+	GtkWidget *invite_menu;
+	gboolean   can_show_log;
+	gboolean   can_send_file;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	can_show_log = gossip_log_exists_for_contact (contact);
+	can_send_file = FALSE;
+	
+	/* Set up invites menu. */
+	invite_menu = gossip_chat_invite_contact_menu (contact);
+	g_object_unref (contact);
+	
+	menu = contact_list_get_contact_menu (list,
+					      invite_menu,
+					      can_send_file,
+					      can_show_log);
+	return menu;
 }
 
 static gboolean 
@@ -1968,23 +1994,9 @@ contact_list_button_press_event_cb (GossipContactList *list,
 	gtk_tree_model_get (model, &iter, COL_CONTACT, &contact, -1);
 	
 	if (contact) {
-		GtkWidget *invite_menu;
-		gboolean   can_show_log;
-		gboolean   can_send_file;
-
-		can_show_log = gossip_log_exists_for_contact (contact);
-		can_send_file = FALSE;
-	
-		/* Set up invites menu. */
-		invite_menu = gossip_chat_invite_contact_menu (contact);
-		g_object_unref (contact);
-		
-		menu = contact_list_get_contact_menu (list,
-						      invite_menu,
-						      can_send_file,
-						      can_show_log);
+		menu = gossip_contact_list_get_contact_menu (list, contact);
 	} else {
-		menu = contact_list_get_group_menu (list);
+		menu = gossip_contact_list_get_group_menu (list);
 	}
 	
 	if (!menu) {

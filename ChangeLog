@@ -1,3 +1,10 @@
+2006-08-11  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c:
+	* src/gossip-contact-list.[ch]:
+	* ui/main.glade: Make the context menu for the contact list
+	available in the main menu, fixes #121001 (Mark Finlay).
+
 2006-08-08  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: Remove all the GtkItemFactory code
