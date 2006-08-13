@@ -40,7 +40,8 @@
 #include "gossip-sound.h"
 #include "gossip-stock.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+		       GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
 
 #define DEBUG_DOMAIN "ContactList"
 
@@ -240,8 +241,6 @@ static gboolean contact_list_find_contact_foreach            (GtkTreeModel      
 							      GtkTreePath            *path,
 							      GtkTreeIter            *iter,
 							      FindContact            *fc);
-static gchar *  contact_list_action_group_translate_func     (const gchar            *path,
-							      gpointer                data);
 static void     contact_list_action_cb                       (GtkAction              *action,
 							      GossipContactList      *list);
 static void     contact_list_action_activated                (GossipContactList      *list,
@@ -294,45 +293,51 @@ enum {
 	PROP_SHOW_AVATARS
 };
 
-const GtkActionEntry entries[] = {
-	{ "ContactMenu", NULL, "_Contact" },             
-	{ "GroupMenu", NULL, "_Group" },             
+static const GtkActionEntry entries[] = {
+	{ "ContactMenu", NULL,
+	  N_("_Contact"), NULL, NULL,
+	  NULL
+	},
+	{ "GroupMenu", NULL,
+	  N_("_Group"),NULL, NULL,
+	  NULL
+	},
 	{ "Chat", GOSSIP_STOCK_MESSAGE,
-	  N_("_Chat"), NULL,
-	  N_("Chat with contact"),
-	  G_CALLBACK (contact_list_action_cb) },      
+	  N_("_Chat"), NULL, N_("Chat with contact"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Information", GOSSIP_STOCK_CONTACT_INFORMATION,
-	  N_("Contact Infor_mation"), "<control>I",
-	  N_("View contact information"),
-	  G_CALLBACK (contact_list_action_cb) },      
+	  N_("Contact Infor_mation"), "<control>I", N_("View contact information"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Rename", NULL, 
-	  N_("Re_name"), NULL,
-	  N_("Rename contact"),
-	  G_CALLBACK (contact_list_action_cb) }, 
+	  N_("Re_name"), NULL, N_("Rename contact"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "RenameGroup", NULL, 
-	  N_("Re_name group"), NULL,
-	  N_("Rename group"),
-	  G_CALLBACK (contact_list_action_cb) }, 
+	  N_("Re_name group"), NULL, N_("Rename group"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Groups", GTK_STOCK_EDIT, 
-	  N_("_Edit Groups"), NULL,
-	  N_("Edit the groups for this contact"),     
-	  G_CALLBACK (contact_list_action_cb) },
+	  N_("_Edit Groups"), NULL, N_("Edit the groups for this contact"),     
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Remove", GTK_STOCK_REMOVE, 
-	  N_("_Remove contact"), NULL,
-	  N_("Remove contact"),         
-	  G_CALLBACK (contact_list_action_cb) },
+	  N_("_Remove contact"), NULL, N_("Remove contact"),         
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Invite", GOSSIP_STOCK_GROUP_MESSAGE,                    
-	  N_("_Invite to Chat Room"), NULL,      
-	  N_("Invite to a currently open chat room"),
-	  G_CALLBACK (contact_list_action_cb) },
+	  N_("_Invite to Chat Room"), NULL, N_("Invite to a currently open chat room"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "SendFile", NULL,
-	  N_("_Send File..."), NULL,
-	  N_("Send a file"),
-	  G_CALLBACK (contact_list_action_cb) },
+	  N_("_Send File..."), NULL, N_("Send a file"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 	{ "Log", GTK_STOCK_JUSTIFY_LEFT,
-	  N_("_View Previous Conversations"), NULL,                               
-	  N_("View previous conversations with this contact"),
-	  G_CALLBACK (contact_list_action_cb) },
+	  N_("_View Previous Conversations"), NULL, N_("View previous conversations with this contact"),
+	  G_CALLBACK (contact_list_action_cb)
+	},
 };
 
 static guint n_entries = G_N_ELEMENTS (entries);
@@ -453,11 +458,8 @@ gossip_contact_list_init (GossipContactList *list)
 	priv->ui = gtk_ui_manager_new ();
 
 	action_group = gtk_action_group_new ("Actions");
+	gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
 	gtk_action_group_add_actions (action_group, entries, n_entries, list);
-	gtk_action_group_set_translate_func (action_group, 
-					     contact_list_action_group_translate_func, 
-					     NULL, NULL);
-	
 	gtk_ui_manager_insert_action_group (priv->ui, action_group, 0);
 	
 #if 0	
@@ -2160,13 +2162,6 @@ contact_list_find_contact_foreach (GtkTreeModel *model,
 	 * returned. 
 	 */
 	return FALSE;
-}
-
-static gchar *
-contact_list_action_group_translate_func (const gchar *path, 
-					  gpointer     data)
-{
-	return _(path);
 }
 
 static void

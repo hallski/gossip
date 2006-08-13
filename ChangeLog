@@ -1,3 +1,9 @@
+2006-08-13  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c: (gossip_contact_list_init),
+	(contact_list_find_contact_foreach): Mark everything for
+	translation and set the translation domain.
+
 2006-08-11  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:
