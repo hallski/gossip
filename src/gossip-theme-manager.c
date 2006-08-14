@@ -29,8 +29,7 @@
 #include "gossip-preferences.h"
 #include "gossip-app.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-		       GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerPriv))
 
 typedef struct {
 	gchar    *name;
@@ -453,8 +452,14 @@ theme_manager_apply_theme_simple (GossipThemeManager *manager,
 	GtkTextBuffer          *buffer;
 	GtkTextTagTable        *table;
 	GtkTextTag             *tag;
+	GtkWidget              *widget;
+	GtkStyle               *style;
 
 	priv = GET_PRIV (manager);
+
+	widget = gtk_entry_new ();
+ 	style = gtk_widget_get_style (widget);
+ 	gtk_widget_destroy (widget); 
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
 	table = gtk_text_buffer_get_tag_table (buffer);
@@ -500,7 +505,7 @@ theme_manager_apply_theme_simple (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-action-self");
 	g_object_set (tag,
-/* 		      "foreground", "brown4", */
+ 		      "foreground-gdk", &style->base[GTK_STATE_SELECTED], 
 		      "style", PANGO_STYLE_ITALIC,
 		      "pixels-above-lines", 2,
 		      "pixels-below-lines", 2,
@@ -548,7 +553,7 @@ theme_manager_apply_theme_simple (GossipThemeManager *manager,
 
 	tag = theme_manager_init_tag_by_name (table, "fancy-action-other");
 	g_object_set (tag,
-/* 		      "foreground", "brown4", */
+ 		      "foreground-gdk", &style->base[GTK_STATE_SELECTED], 
 		      "style", PANGO_STYLE_ITALIC,
 		      "pixels-above-lines", 2,
 		      "pixels-below-lines", 2,
@@ -565,27 +570,27 @@ theme_manager_apply_theme_simple (GossipThemeManager *manager,
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-time");
 	g_object_set (tag,
-/* 		      "foreground", "darkgrey", */
+		      "foreground", "darkgrey",
 		      "justification", GTK_JUSTIFY_CENTER,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 	
 	tag = theme_manager_init_tag_by_name (table, "fancy-event");
 	g_object_set (tag,
-/* 		      "foreground", BLUE_LINE_OTHER, */
+		      "foreground", "darkgrey",
 		      "justification", GTK_JUSTIFY_LEFT,
 		      NULL);
 	theme_manager_add_tag (table, tag);
 
 	tag = theme_manager_init_tag_by_name (table, "fancy-invite");
-/* 	g_object_set (tag, */
-/*  		      "foreground", "sienna",  */
-/* 		      NULL); */
+ 	g_object_set (tag, 
+		      "foreground", "darkgrey",
+ 		      NULL); 
 	theme_manager_add_tag (table, tag);
 
 	tag = theme_manager_init_tag_by_name (table, "fancy-link");
 	g_object_set (tag,
-/* 		      "foreground", "#49789e", */
+ 		      "foreground-gdk", &style->base[GTK_STATE_SELECTED],
 		      "underline", PANGO_UNDERLINE_SINGLE,
 		      NULL);
 	theme_manager_add_tag (table, tag);

@@ -1,3 +1,9 @@
+2006-08-14  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-theme-manager.c: (theme_manager_apply_theme_simple):
+	Updated to use the selected colour for the /me actions and
+	darkgrey for events/time, etc.
+
 2006-08-13  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-list.c: (gossip_contact_list_init),

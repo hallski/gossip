@@ -1,5 +1,6 @@
 NEW in 0.15:
 ===========
+- Updated the "Simple" theme (Martyn).
 - Fixed "Hide Contact List" menu item which was actually hidden itself
 (Martyn). 
 - Fixed #349872, Don't crash on exit when cleaning up hash tables
@@ -14,6 +15,7 @@ of GtkItemFactory (Martyn).
 main menu (Martyn).
 
 Translations:
+Richard Hult (sv)
 
 
 NEW in 0.14:
