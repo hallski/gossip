@@ -23,12 +23,15 @@
 #include <gconf/gconf-client.h>
 
 #include "gossip-conf.h"
+#include "gossip-debug.h"
 
 #define GOSSIP_CONF_ROOT       "/apps/gossip"
 #define HTTP_PROXY_ROOT        "/system/http_proxy"
 #define DESKTOP_INTERFACE_ROOT "/desktop/gnome/interface"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONF, GossipConfPriv))
+
+#define DEBUG_DOMAIN "Config"
 
 typedef struct {
 	GConfClient *gconf_client;
@@ -133,6 +136,8 @@ gossip_conf_set_int (GossipConf  *conf,
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
+	gossip_debug (DEBUG_DOMAIN, "Setting int:'%s' to %d", key, value);
+
 	priv = GET_PRIV (conf);
 	
 	return gconf_client_set_int (priv->gconf_client,
@@ -152,12 +157,17 @@ gossip_conf_get_int (GossipConf  *conf,
 	*value = 0;
 	
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+	g_return_val_if_fail (value != NULL, FALSE);
 
 	priv = GET_PRIV (conf);
 	
 	*value = gconf_client_get_int (priv->gconf_client,
 				       key,
 				       &error);
+
+	gossip_debug (DEBUG_DOMAIN, "Getting int:'%s' (=%d), error:'%s'", 
+		      key, *value, error ? error->message : "None");
+
 	if (error) {
 		g_error_free (error);
 		return FALSE;
@@ -174,6 +184,9 @@ gossip_conf_set_bool (GossipConf  *conf,
 	GossipConfPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+
+	gossip_debug (DEBUG_DOMAIN, "Setting bool:'%s' to %d ---> %s", 
+		      key, value, value ? "true" : "false");
 
 	priv = GET_PRIV (conf);
 
@@ -194,12 +207,18 @@ gossip_conf_get_bool (GossipConf  *conf,
 	*value = FALSE;
 	
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+	g_return_val_if_fail (value != NULL, FALSE);
 
 	priv = GET_PRIV (conf);
 
 	*value = gconf_client_get_bool (priv->gconf_client,
 					key,
 					&error);
+
+	gossip_debug (DEBUG_DOMAIN, "Getting bool:'%s' (=%d ---> %s), error:'%s'", 
+		      key, *value, *value ? "true" : "false",
+		      error ? error->message : "None");
+
 	if (error) {
 		g_error_free (error);
 		return FALSE;
@@ -216,6 +235,9 @@ gossip_conf_set_string (GossipConf  *conf,
 	GossipConfPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
+
+	gossip_debug (DEBUG_DOMAIN, "Setting string:'%s' to '%s'", 
+		      key, value);
 
 	priv = GET_PRIV (conf);
 
@@ -242,6 +264,10 @@ gossip_conf_get_string (GossipConf   *conf,
 	*value = gconf_client_get_string (priv->gconf_client,
 					  key,
 					  &error);
+
+	gossip_debug (DEBUG_DOMAIN, "Getting string:'%s' (='%s'), error:'%s'", 
+		      key, *value, error ? error->message : "None");
+
 	if (error) {
 		g_error_free (error);
 		return FALSE;

@@ -39,6 +39,8 @@
 
 #define GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE        GOSSIP_PREFS_PATH "/contacts/show_offline"
 
+#define GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW      GOSSIP_PREFS_PATH "/hints/close_main_window"
+
 void gossip_preferences_show               (void);
 
 #endif /* __GOSSIP_PREFERENCES_H__ */

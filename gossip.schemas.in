@@ -200,6 +200,21 @@
       </locale>
     </schema>
 
+    <schema>
+      <key>/schemas/apps/gossip/hints/close_main_window</key>
+      <applyto>/apps/gossip/hints/close_main_window</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Show hint about closing the main window</short>
+	<long>
+	Whether or not to show the message dialog about closing the
+      main window with the 'x' button in the title bar.
+	</long>
+      </locale>
+    </schema>
+
   </schemalist>  
 </gconfschemafile>
 

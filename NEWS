@@ -13,6 +13,8 @@ menu which does the same as double clicking to activate that row
 of GtkItemFactory (Martyn).
 - Fixed #121001, Make the contact list context menu available in the
 main menu (Martyn).
+- Fixed #351407, Don't quit when clicking 'x' on the roster window
+(Martyn). 
 
 Translations:
 Richard Hult (sv)

@@ -1,3 +1,12 @@
+2006-08-15  Martyn Russell  <martyn@imendio.com>
+
+	* gossip.schemas.in:
+	* libgossip/gossip-conf-gnome.c:
+	* src/gossip-app.c: 
+	* src/gossip-preferences.h:
+	* src/gossip-ui-utils.[ch]: Don't quit when clicking the 'x' on
+	the roster window, fixes bug #351407 (Xavier Claessens).
+	
 2006-08-14  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-theme-manager.c: (theme_manager_apply_theme_simple):

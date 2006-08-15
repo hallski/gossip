@@ -791,7 +791,7 @@ app_main_window_quit_confirm (GossipApp *app,
 
 	events = gossip_event_manager_get_events (priv->event_manager);
 
-	if (g_list_length ((GList*)events) > 0) {
+	if (g_list_length ((GList*) events) > 0) {
 		GList     *l;
 		gint       i;
 		gint       count[GOSSIP_EVENT_ERROR];
@@ -932,7 +932,49 @@ app_main_window_delete_event_cb (GtkWidget *window,
 				 GdkEvent  *event,
 				 GossipApp *app)
 {
-	return app_main_window_quit_confirm (app, window);
+	if (gossip_have_tray ()) { 
+		gossip_hint_dialog_show (GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
+					 _("Gossip is still running, it is just hidden."),
+					 _("Click on the notification area icon to show Gossip."),
+					 GTK_WINDOW (gossip_app_get_window ()),
+					 NULL, NULL);
+
+		gossip_app_set_visibility (FALSE);
+
+		return TRUE;
+ 	} 
+
+	if (app_main_window_quit_confirm (app, window)) {
+		/* Don't quit if we have messages open */
+		return TRUE;
+	}
+
+	if (gossip_hint_dialog_show (GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
+				     _("You were about to quit!"),
+				     _("Since no system or notification tray has been "
+				       "found, this action would normally quit Gossip.\n\n"
+				       "This is just a reminder, from now on, Gossip will "
+				       "quit when performing this action unless you uncheck "
+				       "the option below."),
+				     GTK_WINDOW (gossip_app_get_window ()),
+				     NULL, NULL)) {
+		/* Shown, we don't quit because the callback will
+		 * decide that based on the YES|NO response from the
+		 * question we are about to ask, since this behaviour
+		 * is new. 
+		 */
+		return TRUE;
+	}
+
+	/* At this point, we have checked we have: 
+	 *   - No tray 
+	 *   - No pending messages
+	 *   - Have NOT shown the hint
+	 *   
+	 * So we just quit.
+	 */
+	   
+	return FALSE;
 }
 
 static gboolean
