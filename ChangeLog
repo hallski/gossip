@@ -1,5 +1,12 @@
 2006-08-15  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-presence-chooser.c:
+	(presence_chooser_clear_activate_cb):  Don't use a parent for the
+	clear status messages confirmation dialog, if you are on another
+	desktop, the dialog is not shown. Fixes bug #351479 (Xavier Claessens).
+
+2006-08-15  Martyn Russell  <martyn@imendio.com>
+
 	* gossip.schemas.in:
 	* libgossip/gossip-conf-gnome.c:
 	* src/gossip-app.c: 

@@ -388,8 +388,8 @@ presence_chooser_clear_activate_cb (GtkWidget             *item,
 	GtkWidget *dialog;
 
 	dialog = gtk_message_dialog_new (
-		GTK_WINDOW (gtk_widget_get_toplevel (GTK_WIDGET (chooser))),
-		GTK_DIALOG_DESTROY_WITH_PARENT,
+		NULL,
+		0, 
 		GTK_MESSAGE_QUESTION,
 		GTK_BUTTONS_NONE,
 		_("Are you sure you want to empy the "
@@ -404,6 +404,8 @@ presence_chooser_clear_activate_cb (GtkWidget             *item,
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				_("Clear List"), GTK_RESPONSE_OK,
 				NULL);
+
+	gtk_window_set_skip_taskbar_hint (GTK_WINDOW (dialog), FALSE);
 
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
 		gossip_status_presets_reset ();
