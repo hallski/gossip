@@ -561,7 +561,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
  	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
 	g_free (str);
 
-	gossip_chat_invite_dialog (contact, priv->chatroom_id);
+	gossip_chat_invite_dialog_show (contact, priv->chatroom_id);
 
 	/* clean up dnd */
 	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);

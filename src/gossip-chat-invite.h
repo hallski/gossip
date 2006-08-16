@@ -24,11 +24,7 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-chatroom-provider.h>
 
-GtkWidget *gossip_chat_invite_contact_menu   (GossipContact    *contact);
-GtkWidget *gossip_chat_invite_groupchat_menu (GossipContact    *contact,
-					      GossipChatroomId  id);
-gboolean   gossip_chat_invite_dialog         (GossipContact    *contact,
-					      GossipChatroomId  id);
-
+void gossip_chat_invite_dialog_show (GossipContact    *contact,
+				     GossipChatroomId  id);
 
 #endif /* __GOSSIP_CHAT_INVITE_H__ */

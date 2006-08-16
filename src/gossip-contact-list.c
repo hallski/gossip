@@ -217,7 +217,6 @@ static void     contact_list_text_cell_data_func             (GtkTreeViewColumn 
 							      GtkTreeIter            *iter,
 							      GossipContactList      *list);
 static GtkWidget *contact_list_get_contact_menu              (GossipContactList      *list,
-							      GtkWidget              *invite_menu,
 							      gboolean                can_send_file,
 							      gboolean                can_show_log);
 static gboolean contact_list_button_press_event_cb           (GossipContactList      *list,
@@ -249,6 +248,7 @@ static void     contact_list_action_rename_entry_activate_cb (GtkWidget         
 							      GtkDialog              *dialog);
 static void     contact_list_action_rename_selected          (GossipContactList      *list);
 static void     contact_list_action_remove_selected          (GossipContactList      *list);
+static void     contact_list_action_invite_selected          (GossipContactList      *list);
 static void     contact_list_action_rename_group_selected    (GossipContactList      *list);
 static void     contact_list_free_flash_timeout_data         (FlashTimeoutData       *timeout_data);
 static void     contact_list_flash_free_data                 (FlashData              *data);
@@ -1874,7 +1874,6 @@ contact_list_text_cell_data_func (GtkTreeViewColumn *tree_column,
 
 static GtkWidget *
 contact_list_get_contact_menu (GossipContactList *list,
-			       GtkWidget         *invite_menu,
 			       gboolean           can_send_file,
 			       gboolean           can_show_log)
 {
@@ -1891,22 +1890,6 @@ contact_list_get_contact_menu (GossipContactList *list,
 	/* FIXME: disable file transfer until finished. */
 	action = gtk_ui_manager_get_action (priv->ui, "/Contact/SendFile");
 	gtk_action_set_visible (action, can_send_file);
-
-	/* Show invite menu if we have one */
-	action = gtk_ui_manager_get_action (priv->ui, "/Contact/Invite");
-
-	if (invite_menu) {
-		GtkWidget *invite_item;
-
-		invite_item = gtk_ui_manager_get_widget (priv->ui, "/Contact/Invite");
-		gtk_menu_item_set_submenu (GTK_MENU_ITEM (invite_item), 
-					   invite_menu);
-		gtk_widget_show_all (invite_menu);
-		
-		gtk_action_set_visible (action, TRUE);
-	} else {
-		gtk_action_set_visible (action, FALSE);
-	}
 
 	widget = gtk_ui_manager_get_widget (priv->ui, "/Contact");
 
@@ -1933,7 +1916,6 @@ gossip_contact_list_get_contact_menu (GossipContactList *list,
 				      GossipContact     *contact)
 {
 	GtkWidget *menu;
-	GtkWidget *invite_menu;
 	gboolean   can_show_log;
 	gboolean   can_send_file;
 
@@ -1944,11 +1926,9 @@ gossip_contact_list_get_contact_menu (GossipContactList *list,
 	can_send_file = FALSE;
 	
 	/* Set up invites menu. */
-	invite_menu = gossip_chat_invite_contact_menu (contact);
 	g_object_unref (contact);
 	
 	menu = contact_list_get_contact_menu (list,
-					      invite_menu,
 					      can_send_file,
 					      can_show_log);
 	return menu;
@@ -2221,6 +2201,11 @@ contact_list_action_cb (GtkAction         *action,
 		contact_list_action_remove_selected (list);
 		return;
 	}
+
+	if (strcmp (name, "Invite") == 0) {
+		contact_list_action_invite_selected (list);
+		return;
+	}
 	
 	if (strcmp (name, "SendFile") == 0) {
 		GossipContact *contact;
@@ -2384,6 +2369,19 @@ contact_list_action_remove_selected (GossipContactList *list)
 	}
 
 	g_object_unref (contact);
+} 
+
+static void
+contact_list_action_invite_selected (GossipContactList *list)
+{
+        GossipContact *contact;
+	
+        contact = gossip_contact_list_get_selected (list);
+        if (!contact) {
+                return;
+        }
+
+	gossip_chat_invite_dialog_show (contact, 0);
 } 
 
 static void

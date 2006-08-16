@@ -1,3 +1,18 @@
+2006-08-16  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-invite.[ch]:
+	* src/gossip-chat-window.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-spell-dialog.c:
+	* ui/chat.glade: Show a dialog instead of using a menu to invite
+	people to group chats, fixes bug #339650 (Paul van Tilburg).
+
+	* src/gossip-vcard-dialog.c: Fix a race condition where clicking
+	the Save button quickly more than once will crash the
+	application. This is a temporary fix, we need to cancel the
+	set_vcard() call.
+
 2006-08-15  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-presence-chooser.c:

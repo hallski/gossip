@@ -30,263 +30,327 @@
 #include "gossip-chat-invite.h"
 #include "gossip-app.h"
 
-
 typedef struct {
-	GossipChatroomId  id;
 	GossipContact    *contact;
+	GossipChatroomId  chatroom_id;
+
+	GtkWidget        *window;
+	GtkWidget        *treeview;
+	GtkWidget        *label;
 	GtkWidget        *entry;
-} ChatInviteData;
+	GtkWidget        *button;
+} GossipChatInviteDialog;
+ 
+enum {
+	COL_NAME,
+	COL_CHATROOM_ID,
+	COL_CONTACT,
+	COL_COUNT
+};
 
+static void chat_invite_dialog_model_populate_columns     (GossipChatInviteDialog *dialog);
+static void chat_invite_dialog_model_populate_suggestions (GossipChatInviteDialog *dialog);
+static void chat_invite_dialog_model_row_activated_cb     (GtkTreeView            *tree_view,
+							   GtkTreePath            *path,
+							   GtkTreeViewColumn      *column,
+							   GossipChatInviteDialog *dialog);
+static void chat_invite_dialog_model_selection_changed_cb (GtkTreeSelection       *treeselection,
+							   GossipChatInviteDialog *dialog);
+static void chat_invite_dialog_model_setup                (GossipChatInviteDialog *dialog);
+static void chat_invite_dialog_response_cb                (GtkWidget              *widget,
+							   gint                    response,
+							   GossipChatInviteDialog *dialog);
+static void chat_invite_dialog_destroy_cb                 (GtkWidget              *widget,
+							   GossipChatInviteDialog *dialog);
 
-static void chat_invite_menu_activate_cb   (GtkWidget      *menuitem,
-					    gpointer        user_data);
-static void chat_invite_dialog_response_cb (GtkWidget      *dialog,
-					    gint            response,
-					    ChatInviteData *cid);
-static void chat_invite_entry_activate_cb  (GtkWidget      *entry,
-					    GtkDialog      *dialog);
-
-
-GtkWidget *
-gossip_chat_invite_contact_menu (GossipContact *contact)
+static void 
+chat_invite_dialog_model_populate_columns (GossipChatInviteDialog *dialog)
 {
+	GtkTreeView       *view;
+	GtkTreeModel      *model;
+	GtkTreeViewColumn *column; 
+	GtkCellRenderer   *renderer;
+	guint              col_offset;
+	
+	view = GTK_TREE_VIEW (dialog->treeview);
+	model = gtk_tree_view_get_model (view);
+	
+	renderer = gtk_cell_renderer_text_new ();
+	col_offset = gtk_tree_view_insert_column_with_attributes (view,
+								  -1, _("Word"),
+								  renderer, 
+								  "text", COL_NAME,
+								  NULL);
+	
+	g_object_set_data (G_OBJECT (renderer), "column", GINT_TO_POINTER (COL_NAME));
+	
+	column = gtk_tree_view_get_column (GTK_TREE_VIEW (dialog->treeview), col_offset - 1);
+	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
+	gtk_tree_view_column_set_resizable (column, FALSE);
+	gtk_tree_view_column_set_clickable (GTK_TREE_VIEW_COLUMN (column), TRUE);
+}
+
+static void
+chat_invite_dialog_model_populate_suggestions (GossipChatInviteDialog *dialog)
+{
+	GtkTreeView            *view;
+	GtkListStore           *store;
+	GtkTreeIter             iter;
+
 	GossipSession          *session;
 	GossipAccount          *account;
 	GossipChatroomProvider *provider;
-	GList                  *rooms = NULL;
+	GList                  *list = NULL;
 	GList                  *l;
-	GtkWidget              *menu = NULL;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
 	session = gossip_app_get_session ();
-	account = gossip_contact_get_account (contact);
+	account = gossip_contact_get_account (dialog->contact);
 	provider = gossip_session_get_chatroom_provider (session, account);
 
-	rooms = gossip_chatroom_provider_get_rooms (provider);
+	if (dialog->chatroom_id != 0) {
+		list = gossip_session_get_contacts_by_account (session, account);
 
-	if (!rooms || g_list_length (rooms) < 1) {
-		g_list_free (rooms);
-		return NULL;
-	}
-
-	menu = gtk_menu_new ();
-	
-	for (l = rooms; l; l = l->next) {
-		GossipChatroomId  id;
-		GossipChatroom   *chatroom;
-		const gchar      *name;
-		GtkWidget        *item;
-		
-		id = GPOINTER_TO_INT(l->data);
-		chatroom = gossip_chatroom_provider_find (provider, id);
-		name = gossip_chatroom_get_name (chatroom);
-		
-		if (name == NULL || strlen (name) < 1) {
-			continue;
+		if (!list || g_list_length (list) < 1) {
+			g_list_free (list);
+			return;
 		}
 		
-		item = gtk_menu_item_new_with_label (name);
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+		view = GTK_TREE_VIEW (dialog->treeview);
+		store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
 		
-		g_object_set_data_full (G_OBJECT (item), "contact", 
-					g_object_ref (contact),
-					g_object_unref);
-		g_object_set_data (G_OBJECT (item), "chatroom_id", l->data);
-		
-		g_signal_connect (GTK_MENU_ITEM (item), "activate",
-				  G_CALLBACK (chat_invite_menu_activate_cb),
-				  NULL);
-	}
-
-	g_list_free (rooms);
-	
-	return menu;
-}
-
-GtkWidget *
-gossip_chat_invite_groupchat_menu (GossipContact    *contact,
-				   GossipChatroomId  id)
-{
-	GossipSession *session;
-	GossipAccount *account;
-	GList         *list = NULL;
-	GList         *l;
-	GtkWidget     *menu = NULL;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-
-	account = gossip_contact_get_account (contact);
-
-	session = gossip_app_get_session ();
-
-	list = gossip_session_get_contacts_by_account (session, account);
-	if (!list || g_list_length (list) < 1) {
-		g_list_free (list);
-		return NULL;
-	}
-
-	for (l = list; l; l = l->next) {
-		GossipContact *contact = NULL;
-		const gchar   *name;
-		GtkWidget     *item;
-		
-		/* get name */
-		contact = l->data;
+		for (l = list; l; l = l->next) {
+			GossipContact *contact = l->data;
+			const gchar   *name;
 			
-		if (!gossip_contact_is_online (contact)) {
-			continue;
-		}
+			if (!gossip_contact_is_online (contact)) {
+				continue;
+			}
 			
-		name = gossip_contact_get_name (contact);
-		if (!name && strlen (name) > 0) {
-			continue;
-		}
-
-		if (!menu) {
-			menu = gtk_menu_new ();
-		}
-
-		/* get name */
-		item = gtk_menu_item_new_with_label (name);
+			name = gossip_contact_get_name (contact);
+			if (!name && strlen (name) > 0) {
+				continue;
+			}
+		       
+			gtk_list_store_append (store, &iter);
+			gtk_list_store_set (store, &iter, 
+					    COL_NAME, name,
+					    COL_CONTACT, contact,
+					    -1);
+		}	
+	} else {
+		list = gossip_chatroom_provider_get_rooms (provider);
 		
-		/* set data */
-		g_object_set_data_full (G_OBJECT (item), "contact", 
-					g_object_ref (contact), 
-					g_object_unref);
-		g_object_set_data (G_OBJECT (item), "chatroom_id", 
-				   GINT_TO_POINTER (id));
-
-		g_signal_connect (G_OBJECT (item), "activate", 
-				  G_CALLBACK (chat_invite_menu_activate_cb),
-				  NULL);
+		if (!list || g_list_length (list) < 1) {
+			g_list_free (list);
+			return;
+		}
 		
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+		view = GTK_TREE_VIEW (dialog->treeview);
+		store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
+		
+		for (l = list; l; l = l->next) {
+			GossipChatroomId  id;
+			GossipChatroom   *chatroom;
+			const gchar      *name;
+			
+			id = GPOINTER_TO_INT(l->data);
+			chatroom = gossip_chatroom_provider_find (provider, id);
+			name = gossip_chatroom_get_name (chatroom);
+			
+			if (name == NULL || strlen (name) < 1) {
+				continue;
+			}
+			
+			gtk_list_store_append (store, &iter);
+			gtk_list_store_set (store, &iter, 
+					    COL_NAME, name,
+					    COL_CHATROOM_ID, id,
+					    -1);
+		}
 	}
 
 	g_list_free (list);
 
-	return menu;
-}
-
-static void 
-chat_invite_menu_activate_cb (GtkWidget *menuitem,
-			      gpointer   user_data)
-{
-	GossipContact    *contact;
-	GossipChatroomId  id;
-	gpointer          pid;
-
-	contact = g_object_get_data (G_OBJECT (menuitem), "contact");
-	pid = g_object_get_data (G_OBJECT (menuitem), "chatroom_id");
-	
-	id = GPOINTER_TO_INT (pid);
-
-	gossip_chat_invite_dialog (contact, id);
-}
-
-gboolean
-gossip_chat_invite_dialog (GossipContact    *contact,
-			   GossipChatroomId  id)
-{
-	ChatInviteData *cid;
-	gchar          *str;
-
-	GtkWidget      *dialog;
-	GtkWidget      *entry;
-	GtkWidget      *hbox;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
-	g_return_val_if_fail (id >= 0, FALSE);
-
-	/* construct dialog for invitiation text */
-	str = g_strdup_printf ("<b>%s</b>", gossip_contact_get_name (contact));
-
-	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
-					 0,
-					 GTK_MESSAGE_INFO,
-					 GTK_BUTTONS_OK_CANCEL,
-					 _("Please enter your invitation message to:\n%s"),
-					 str);
-	
-	g_free (str);
-
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
-		      "use-markup", TRUE,
-		      NULL);
-
-        entry = gtk_entry_new ();
-	gtk_widget_show (entry);
-
-	gtk_entry_set_text (GTK_ENTRY (entry), 
-                            _("You have been invited to join a chat conference."));
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-	
-	g_signal_connect (entry,
-			  "activate",
-			  G_CALLBACK (chat_invite_entry_activate_cb),
-			  dialog);
-
-	hbox = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox);
-	
-	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
-	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), 
-			    hbox, FALSE, TRUE, 4);
-
-	/* save details to pass on to response callback */
-	cid = g_new0 (ChatInviteData, 1);
-
-	cid->id = id;
-	cid->contact = g_object_ref (contact);
-	cid->entry = g_object_ref (entry);
-
-	g_signal_connect (dialog, "response",
-			  G_CALLBACK (chat_invite_dialog_response_cb),
-			  cid);
-
-	gtk_widget_show (dialog);
-
-	return TRUE;
-}
-
-static void 
-chat_invite_dialog_response_cb (GtkWidget      *dialog, 
-				gint            response, 
-				ChatInviteData *cid) 
-{
-	if (response == GTK_RESPONSE_OK) {
-		GossipSession          *session;
-		GossipAccount          *account;
-		GossipChatroomProvider *provider;
-		const gchar            *reason;
-
-		session = gossip_app_get_session ();
-		account = gossip_contact_get_account (cid->contact);
-		provider = gossip_session_get_chatroom_provider (session, account);
-
-		reason = gtk_entry_get_text (GTK_ENTRY (cid->entry));
-
-		/* NULL uses the other end (in their language) */
-		reason = (strlen (reason) > 0) ? reason : NULL;
-
-		gossip_chatroom_provider_invite (provider,
-						 cid->id,
-						 cid->contact,
-						 reason);
-	}
-	
-	g_object_unref (cid->contact);
-	g_object_unref (cid->entry);
-
-	g_free (cid);
-
-	gtk_widget_destroy (dialog);
 }
 
 static void
-chat_invite_entry_activate_cb (GtkWidget *entry, 
-				       GtkDialog *dialog)
+chat_invite_dialog_model_row_activated_cb (GtkTreeView            *tree_view,
+					   GtkTreePath            *path,
+					   GtkTreeViewColumn      *column,
+					   GossipChatInviteDialog *dialog)
 {
-	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+	chat_invite_dialog_response_cb (dialog->window, GTK_RESPONSE_OK, dialog);
 }
+
+static void
+chat_invite_dialog_model_selection_changed_cb (GtkTreeSelection      *treeselection,
+					       GossipChatInviteDialog *dialog)
+{
+	gint count;
+
+	count = gtk_tree_selection_count_selected_rows (treeselection);
+	gtk_widget_set_sensitive (dialog->button, (count == 1));
+}
+
+static void 
+chat_invite_dialog_model_setup (GossipChatInviteDialog *dialog)
+{
+	GtkTreeView      *view;
+	GtkListStore     *store;
+	GtkTreeSelection *selection;
+
+	view = GTK_TREE_VIEW (dialog->treeview);
+
+	g_signal_connect (view, "row-activated", 
+			  G_CALLBACK (chat_invite_dialog_model_row_activated_cb),
+			  dialog);
+
+	store = gtk_list_store_new (COL_COUNT,
+				    G_TYPE_STRING,         /* name */
+				    G_TYPE_INT,            /* chatroom id */
+				    GOSSIP_TYPE_CONTACT);  /* contact */
+	
+	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
+
+	selection = gtk_tree_view_get_selection (view);
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+	
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (chat_invite_dialog_model_selection_changed_cb),
+			  dialog);
+
+	chat_invite_dialog_model_populate_columns (dialog);
+	chat_invite_dialog_model_populate_suggestions (dialog);
+
+	g_object_unref (store);
+}
+
+static void
+chat_invite_dialog_destroy_cb (GtkWidget              *widget, 
+			       GossipChatInviteDialog *dialog)
+{
+	if (dialog->contact) {
+		g_object_unref (dialog->contact);
+	}
+	
+ 	g_free (dialog); 
+}
+
+static void
+chat_invite_dialog_response_cb (GtkWidget              *widget,
+				gint                    response, 
+				GossipChatInviteDialog *dialog)
+{
+	if (response == GTK_RESPONSE_OK) {
+		GtkTreeView            *view;
+		GtkTreeModel           *model;
+		GtkTreeSelection       *selection;
+		GtkTreeIter             iter;
+		GossipSession          *session;
+		GossipAccount          *account;
+		GossipChatroomProvider *provider;
+		GossipChatroomId        id;
+		GossipContact          *contact;
+		const gchar            *message;
+
+		view = GTK_TREE_VIEW (dialog->treeview);
+		selection = gtk_tree_view_get_selection (view);
+
+		if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+			return;
+		}
+	
+		if (dialog->chatroom_id != 0) {
+			id = dialog->chatroom_id;
+			gtk_tree_model_get (model, &iter, COL_CONTACT, &contact, -1);
+		} else {
+			contact = g_object_ref (dialog->contact);
+			gtk_tree_model_get (model, &iter, COL_CHATROOM_ID, &id, -1);
+		}
+
+		/* If NULL is used, it means the invite is translated
+		 * and shown in the contact's language.
+		 */
+		message = gtk_entry_get_text (GTK_ENTRY (dialog->entry));
+		message = (strlen (message) > 0) ? message : NULL;
+
+		session = gossip_app_get_session ();
+		account = gossip_contact_get_account (dialog->contact);
+		provider = gossip_session_get_chatroom_provider (session, account);
+
+		gossip_chatroom_provider_invite (provider, id, contact, message);
+
+		g_object_unref (contact);
+	}
+
+	gtk_widget_destroy (dialog->window);
+}
+
+void
+gossip_chat_invite_dialog_show (GossipContact    *contact,
+				GossipChatroomId  id)
+{
+	GossipChatInviteDialog *dialog;
+	GladeXML               *gui;
+	gchar                  *name;
+	gchar                  *str;
+
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
+	dialog = g_new0 (GossipChatInviteDialog, 1);
+
+	dialog->contact = g_object_ref (contact);
+	dialog->chatroom_id = id;
+
+	gui = gossip_glade_get_file ("chat.glade",
+				     "chat_invite_dialog",
+				     NULL,
+				     "chat_invite_dialog", &dialog->window,
+				     "treeview", &dialog->treeview,
+				     "label", &dialog->label,
+				     "entry", &dialog->entry,
+				     "button_invite", &dialog->button,
+				     NULL);
+
+	gossip_glade_connect (gui,
+			      dialog,
+			      "chat_invite_dialog", "response", chat_invite_dialog_response_cb,
+			      "chat_invite_dialog", "destroy", chat_invite_dialog_destroy_cb,
+			      NULL);
+
+	g_object_unref (gui);
+
+	if (dialog->chatroom_id != 0) {
+		GossipSession          *session;
+		GossipAccount          *account;
+		GossipChatroomProvider *provider;
+		GossipChatroom         *chatroom;
+		
+		/* Show a list of contacts */
+		session = gossip_app_get_session ();
+		account = gossip_contact_get_account (dialog->contact);
+		provider = gossip_session_get_chatroom_provider (session, account);
+		chatroom = gossip_chatroom_provider_find (provider, dialog->chatroom_id);
+
+		name = g_markup_escape_text (gossip_chatroom_get_name (chatroom), -1);
+		str = g_strdup_printf ("%s\n<b>%s</b>", 
+				       _("Select who would you like to invite to room:"),
+				       name);
+	} else {
+		/* Show a list of rooms */
+		name = g_markup_escape_text (gossip_contact_get_name (dialog->contact), -1);
+		str = g_strdup_printf ("%s\n<b>%s</b>", 
+				       _("Select which room you would like to invite:"),	
+				       name);
+	}
+
+	gtk_label_set_markup (GTK_LABEL (dialog->label), str);
+		
+	g_free (name);
+	g_free (str);
+
+	chat_invite_dialog_model_setup (dialog);
+
+	gtk_widget_show (dialog->window);
+}
+

@@ -95,7 +95,9 @@ static void       chat_window_insert_smiley_activate_cb (GtkWidget             *
 							 GossipChatWindow      *window);
 static void       chat_window_close_activate_cb         (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
-static void       chat_window_add_room_activate_cb      (GtkWidget             *menuitem,
+static void       chat_window_room_invite_activate_cb   (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_room_add_activate_cb      (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_cut_activate_cb           (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
@@ -294,7 +296,8 @@ gossip_chat_window_init (GossipChatWindow *window)
 			      "menu_conv_add_contact", "activate", chat_window_add_contact_activate_cb,
 			      "menu_conv_info", "activate", chat_window_info_activate_cb,
 			      "menu_conv_close", "activate", chat_window_close_activate_cb,
-			      "menu_room_add", "activate", chat_window_add_room_activate_cb,
+			      "menu_room_invite", "activate", chat_window_room_invite_activate_cb,
+			      "menu_room_add", "activate", chat_window_room_add_activate_cb,
 			      "menu_edit", "activate", chat_window_edit_activate_cb,
 			      "menu_edit_cut", "activate", chat_window_cut_activate_cb,
 			      "menu_edit_copy", "activate", chat_window_copy_activate_cb,
@@ -799,7 +802,6 @@ chat_window_update_menu (GossipChatWindow *window)
 	GossipChatWindowPriv *priv;
 	GossipContact        *contact;
 	GossipContact        *own_contact;
-	GtkWidget            *invite_menu = NULL;
 	gboolean              show_contacts;
 	gboolean              first_page;
 	gboolean              last_page;
@@ -841,9 +843,6 @@ chat_window_update_menu (GossipChatWindow *window)
 		gtk_widget_hide (priv->menu_conv_separator);
 		gtk_widget_hide (priv->menu_conv_add_contact);
 		gtk_widget_hide (priv->menu_conv_info);
-
-		/* Set up invite menu */
-		invite_menu = gossip_chat_invite_groupchat_menu (own_contact, id);
 
 		/* Can we add this room to our favourites? */
 		manager = gossip_app_get_chatroom_manager ();
@@ -888,20 +887,6 @@ chat_window_update_menu (GossipChatWindow *window)
 
 		gtk_widget_show (priv->menu_conv_separator);
 		gtk_widget_show (priv->menu_conv_info);
-
-		/* Set up invite menu */
- 		invite_menu = gossip_chat_invite_contact_menu (own_contact); 	
-	}
-
-	if (invite_menu) {
-		gtk_widget_set_sensitive (priv->menu_room_invite, TRUE);
-
-		gtk_widget_show_all (invite_menu);
-		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_room_invite), invite_menu);
-	} else {
-		gtk_menu_item_remove_submenu (GTK_MENU_ITEM (priv->menu_room_invite));
-
-		gtk_widget_set_sensitive (priv->menu_room_invite, FALSE);
 	}
 }
 
@@ -1102,9 +1087,31 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 
 	gossip_chat_window_remove_chat (window, priv->current_chat);
 }
+
+static void
+chat_window_room_invite_activate_cb (GtkWidget        *menuitem,
+				     GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GossipContact        *own_contact;
+	GossipChatroomId      id = 0;
+
+	priv = GET_PRIV (window);
+
+	own_contact = gossip_chat_get_own_contact (priv->current_chat);
+
+	if (gossip_chat_is_group_chat (priv->current_chat)) {
+		GossipGroupChat *group_chat;
+
+		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
+		id = gossip_group_chat_get_chatroom_id (group_chat);
+	}
+
+	gossip_chat_invite_dialog_show (own_contact, id);
+}
  
 static void
-chat_window_add_room_activate_cb (GtkWidget        *menuitem,
+chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 				  GossipChatWindow *window)
 {
 	GossipChatWindowPriv   *priv;

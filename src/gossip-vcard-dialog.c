@@ -84,10 +84,7 @@ typedef struct {
 	GtkWidget *avatar_chooser;
 
 	guint      timeout_id; 
-	guint      saved_id;
-
 	gboolean   requesting_vcard;
-
 	gint       last_account_selected;
 
 #ifdef HAVE_GNOME
@@ -355,11 +352,6 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 		g_source_remove (dialog->timeout_id);
 		dialog->timeout_id = 0;
 	}
-
-	if (dialog->saved_id != 0) {
-		g_source_remove (dialog->saved_id);
-		dialog->saved_id = 0;
-	}
 }
 
 static void
@@ -521,6 +513,7 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 {
 	switch (response) {
 	case RESPONSE_SAVE:
+		gtk_widget_set_sensitive (dialog->button_save, FALSE);
 		vcard_dialog_set_vcard (dialog);
 		return;
 

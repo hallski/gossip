@@ -30,7 +30,7 @@
 #include "gossip-ui-utils.h"
 #include "gossip-spell-dialog.h"
 
-struct _GossipSpellDialog {
+typedef struct {
 	GtkWidget   *window;
 	GtkWidget   *button_replace;
 	GtkWidget   *label_word;
@@ -41,10 +41,8 @@ struct _GossipSpellDialog {
 	gchar       *word;
 	GtkTextIter  start;
 	GtkTextIter  end;
-};
-
-typedef struct _GossipSpellDialog GossipSpellDialog;
-
+} GossipSpellDialog;
+ 
 enum {
 	COL_SPELL_WORD,
 	COL_SPELL_COUNT
