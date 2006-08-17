@@ -1,6 +1,8 @@
 NEW in 0.15:
 ===========
 - Updated the "Simple" theme (Martyn).
+- Removed the Edit Groups dialog and merged it into an Edit Contact
+dialog where you can set the name too (Martyn).
 - Fixed "Hide Contact List" menu item which was actually hidden itself
 (Martyn). 
 - Fixed #349872, Don't crash on exit when cleaning up hash tables

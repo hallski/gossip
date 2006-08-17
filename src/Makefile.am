@@ -58,7 +58,7 @@ gossip_SOURCES = 				                        	\
 	gossip-contact-list-iface.c        gossip-contact-list-iface.h         	\
 	gossip-contact-info-dialog.c       gossip-contact-info-dialog.h         \
 	gossip-edit-chatroom-dialog.c      gossip-edit-chatroom-dialog.h	\
-	gossip-edit-groups-dialog.c        gossip-edit-groups-dialog.h		\
+	gossip-edit-contact-dialog.c       gossip-edit-contact-dialog.h		\
 	gossip-ft-window.c		   gossip-ft-window.h			\
 	gossip-geometry.c		   gossip-geometry.h			\
 	gossip-group-chat.c	           gossip-group-chat.h			\

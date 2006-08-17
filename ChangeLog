@@ -1,3 +1,17 @@
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
+	* NEWS:
+	* src/Makefile.am:
+	* src/gossip-contact-list.c: Removed the rename contact code here.
+	
+	* ui/main.glade: 
+	* src/gossip-edit-contact-dialog.[ch]: Added to edit the contacts
+	name and groups. This is not yet finished, it really needs to get
+	the contact's name from their vcard with the "Retrieve"
+	button. This should take no time to implement.
+	
+	* src/gossip-edit-groups-dialog.[ch]: Removed.
+	
 2006-08-16  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-invite.[ch]:
