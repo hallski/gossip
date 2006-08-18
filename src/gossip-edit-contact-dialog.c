@@ -62,6 +62,7 @@ enum {
 	COL_COUNT
 };
 
+static void     edit_contact_dialog_init                        (void);
 static void     edit_contact_dialog_save_name                   (GossipEditContactDialog *dialog);
 static void     edit_contact_dialog_save_groups                 (GossipEditContactDialog *dialog);
 static gboolean edit_contact_dialog_can_save                    (GossipEditContactDialog *dialog);
@@ -93,6 +94,21 @@ static void     edit_contact_dialog_destroy_cb                  (GtkWidget      
 static void     edit_contact_dialog_response_cb                 (GtkWidget               *widget,
 								 gint                     response,
 								 GossipEditContactDialog *dialog);
+
+static GHashTable *dialogs = NULL;
+
+static void
+edit_contact_dialog_init (void)
+{
+	if (dialogs) {
+		return;
+	}
+	
+	dialogs = g_hash_table_new_full (gossip_contact_hash,
+					 gossip_contact_equal,
+					 g_object_unref,
+					 NULL);
+}
 
 static void
 edit_contact_dialog_save_name (GossipEditContactDialog *dialog)
@@ -492,20 +508,21 @@ static void
 edit_contact_dialog_destroy_cb (GtkWidget        *widget,
 				GossipEditContactDialog *dialog)
 {
-        g_object_unref (dialog->contact);
-
 	if (dialog->renderer) {
 		g_object_unref (dialog->renderer);
 	}
+
+	g_hash_table_remove (dialogs, dialog->contact);
 
  	g_free (dialog); 
 }
 
 void
-gossip_edit_contact_dialog_show (GossipContact *contact)
+gossip_edit_contact_dialog_show (GossipContact *contact,
+				 GtkWindow     *parent)
 {
 	GossipEditContactDialog *dialog;
-	GladeXML                *gui;
+	GladeXML                *glade;
 	gchar                   *id;
 	gchar                   *str;
         GList                   *groups;
@@ -513,24 +530,34 @@ gossip_edit_contact_dialog_show (GossipContact *contact)
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
+	edit_contact_dialog_init ();
+
+	dialog = g_hash_table_lookup (dialogs, contact);
+	if (dialog) {
+		gtk_window_present (GTK_WINDOW (dialog->dialog));
+		return;
+	}
+
 	dialog = g_new0 (GossipEditContactDialog, 1);
 
         dialog->contact = g_object_ref (contact);
-        
-	gui = gossip_glade_get_file ("main.glade",
-				     "edit_contact_dialog",
-				     NULL,
-				     "edit_contact_dialog", &dialog->dialog,
-				     "label_name", &dialog->label_name,
-				     "entry_name", &dialog->entry_name,
-				     "button_retrieve", &dialog->button_retrieve,
-				     "entry_group", &dialog->entry_group,
-				     "button_add", &dialog->button_add,
-				     "treeview", &dialog->treeview,
-				     "button_ok", &dialog->button_ok,
-				     NULL);
 
-	gossip_glade_connect (gui,
+	g_hash_table_insert (dialogs, dialog->contact, dialog);
+        
+	glade = gossip_glade_get_file ("main.glade",
+				       "edit_contact_dialog",
+				       NULL,
+				       "edit_contact_dialog", &dialog->dialog,
+				       "label_name", &dialog->label_name,
+				       "entry_name", &dialog->entry_name,
+				       "button_retrieve", &dialog->button_retrieve,
+				       "entry_group", &dialog->entry_group,
+				       "button_add", &dialog->button_add,
+				       "treeview", &dialog->treeview,
+				       "button_ok", &dialog->button_ok,
+				       NULL);
+
+	gossip_glade_connect (glade,
 			      dialog,
 			      "edit_contact_dialog", "response", edit_contact_dialog_response_cb,
 			      "edit_contact_dialog", "destroy", edit_contact_dialog_destroy_cb,
@@ -540,7 +567,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact)
 			      "button_add", "clicked", edit_contact_dialog_button_add_clicked_cb,
 			      NULL);
 
-	g_object_unref (gui);
+	g_object_unref (glade);
 
 	/* Set up name */
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), 
@@ -573,7 +600,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact)
 	g_object_unref (size_group);
 
 	/* Set up transient parent */
-	gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog),
-                                      GTK_WINDOW (gossip_app_get_window ()));
-
+	if (parent) {
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
+	}
 }

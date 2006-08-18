@@ -2162,9 +2162,12 @@ contact_list_action_cb (GtkAction         *action,
 
 	if (strcmp (name, "Information") == 0) {
 		GossipContact *contact;
+		GtkWindow     *parent;
+
+		parent = GTK_WINDOW (gossip_app_get_window ());
 
 		contact = gossip_contact_list_get_selected (list);
-		gossip_contact_info_dialog_show (contact);
+		gossip_contact_info_dialog_show (contact, parent);
 		g_object_unref (contact);
 
 		return;
@@ -2177,9 +2180,12 @@ contact_list_action_cb (GtkAction         *action,
 
 	if (strcmp (name, "Edit") == 0) {
 		GossipContact *contact;
+		GtkWindow     *parent;
+
+		parent = GTK_WINDOW (gossip_app_get_window ());
 
 		contact = gossip_contact_list_get_selected (list);
-		gossip_edit_contact_dialog_show (contact);
+		gossip_edit_contact_dialog_show (contact, parent);
 		g_object_unref (contact);
 
 		return;

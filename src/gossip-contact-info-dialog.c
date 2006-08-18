@@ -98,23 +98,19 @@ static void contact_info_dialog_response_cb          (GtkWidget               *w
 						      gint                     response,
 						      GossipContactInfoDialog *dialog);
 
-static GHashTable *contact_info_dialogs = NULL;
+static GHashTable *dialogs = NULL;
 
 static void
 contact_info_dialog_init (void)
 {
-	static gboolean inited = FALSE;
-
-	if (inited) {
+	if (dialogs) {
 		return;
 	}
 	
-	inited = TRUE;
-	
-	contact_info_dialogs = g_hash_table_new_full (gossip_contact_hash,
-						      gossip_contact_equal,
-						      g_object_unref,
-						      NULL);
+	dialogs = g_hash_table_new_full (gossip_contact_hash,
+					 gossip_contact_equal,
+					 g_object_unref,
+					 NULL);
 }
 
 static void
@@ -271,7 +267,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	const gchar             *str;
 	GdkPixbuf               *pixbuf;
 	
-	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
+	dialog = g_hash_table_lookup (dialogs, contact);
 	g_object_unref (contact);
 	
 	if (!dialog) {
@@ -376,7 +372,7 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 	const gchar             *str;
 	gboolean                 show_client_info = FALSE;
 
-	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
+	dialog = g_hash_table_lookup (dialogs, contact);
 	g_object_unref (contact);
 
 	if (!dialog) {
@@ -437,7 +433,7 @@ contact_info_dialog_contact_updated_cb (GossipSession           *session,
 {
 	GossipContactInfoDialog *dialog;
 
-	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
+	dialog = g_hash_table_lookup (dialogs, contact);
 
 	if (!dialog) {
 		return;
@@ -458,7 +454,7 @@ contact_info_dialog_presence_updated_cb (GossipSession *session,
 {
 	GossipContactInfoDialog *dialog;
 
-	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
+	dialog = g_hash_table_lookup (dialogs, contact);
 
 	if (!dialog) {
 		return;
@@ -512,7 +508,7 @@ contact_info_dialog_destroy_cb (GtkWidget               *widget,
 		g_source_remove (dialog->show_timeout_id);
 	}
 	
-	g_hash_table_remove (contact_info_dialogs, dialog->contact);
+	g_hash_table_remove (dialogs, dialog->contact);
 	
 	g_free (dialog);
 }
@@ -536,7 +532,8 @@ contact_info_dialog_show_timeout_cb (GossipContactInfoDialog *dialog)
 }
 
 void
-gossip_contact_info_dialog_show (GossipContact *contact)
+gossip_contact_info_dialog_show (GossipContact *contact,
+				 GtkWindow     *parent)
 {
 	GossipContactInfoDialog *dialog;
 	GossipSession           *session;
@@ -549,9 +546,11 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	GdkPixbuf               *pixbuf;
 	gchar                   *path;
 
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
 	contact_info_dialog_init ();
 
-	dialog = g_hash_table_lookup (contact_info_dialogs, contact);
+	dialog = g_hash_table_lookup (dialogs, contact);
 	if (dialog) {
 		gtk_window_present (GTK_WINDOW (dialog->dialog));
 		return;
@@ -564,7 +563,7 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 
 	dialog->contact = g_object_ref (contact);
 
-	g_hash_table_insert (contact_info_dialogs, dialog->contact, dialog);
+	g_hash_table_insert (dialogs, dialog->contact, dialog);
 
 	glade = gossip_glade_get_file ("main.glade",
 				       "contact_information_dialog",
@@ -638,10 +637,15 @@ gossip_contact_info_dialog_show (GossipContact *contact)
 	gtk_label_set_text (GTK_LABEL (dialog->name_label), 
 			    gossip_contact_get_name (contact));
 
+	/* Set up transient parent */
+	if (parent) {
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
+	}
+
 	/* Set details */
 	contact_info_dialog_update_subscription (dialog);
 	contact_info_dialog_update_presences (dialog);
-		
+	
 	/* Subscription listener */
 	id = g_signal_connect (session,
 			       "contact-updated",

@@ -48,6 +48,51 @@
 
 #define DEBUG_DOMAIN "ChatWindow"
 
+#define URGENCY_TIMEOUT 60*1000
+
+struct _GossipChatWindowPriv {
+	GList       *chats;
+	GList       *chats_new_msg;
+	GList       *chats_composing;
+
+	GossipChat  *current_chat;
+
+	gboolean     new_msg;
+
+	guint        urgency_timeout_id;
+	
+	GtkWidget   *dialog;
+	GtkWidget   *notebook;
+
+	GtkTooltips *tooltips;
+
+	/* Menu items. */
+	GtkWidget   *menu_conv_clear;
+	GtkWidget   *menu_conv_log;
+	GtkWidget   *menu_conv_separator;
+	GtkWidget   *menu_conv_add_contact;
+	GtkWidget   *menu_conv_info;
+	GtkWidget   *menu_conv_close;
+
+	GtkWidget   *menu_room;
+	GtkWidget   *menu_room_invite;
+	GtkWidget   *menu_room_add;
+	GtkWidget   *menu_room_show_contacts;
+
+	GtkWidget   *menu_edit_insert_smiley;
+	GtkWidget   *menu_edit_cut;
+	GtkWidget   *menu_edit_copy;
+	GtkWidget   *menu_edit_paste;
+
+	GtkWidget   *menu_tabs_next;
+	GtkWidget   *menu_tabs_prev;
+	GtkWidget   *menu_tabs_left;
+	GtkWidget   *menu_tabs_right;
+	GtkWidget   *menu_tabs_detach;
+
+	guint        save_geometry_id;
+};
+
 static void       gossip_chat_window_class_init         (GossipChatWindowClass *klass);
 static void       gossip_chat_window_init               (GossipChatWindow      *window);
 static void       gossip_chat_window_finalize           (GObject               *object);
@@ -155,54 +200,11 @@ static void       chat_window_drag_data_received        (GtkWidget             *
 							 guint                  info,
 							 guint                  time,
 							 GossipChatWindow      *window);
-static void       chat_window_set_urgency_hint           (GossipChatWindow     *window,
-							  gboolean              urgent);
+static void       chat_window_set_urgency_hint          (GossipChatWindow      *window,
+							 gboolean               urgent);
 
 /* Called from Glade, so it shouldn't be static. */
-GtkWidget * chat_window_create_notebook (gpointer data);
-
-struct _GossipChatWindowPriv {
-	GList       *chats;
-	GList       *chats_new_msg;
-	GList       *chats_composing;
-
-	GossipChat  *current_chat;
-
-	gboolean     new_msg;
-
-	guint        urgency_timeout_id;
-	
-	GtkWidget   *dialog;
-	GtkWidget   *notebook;
-
-	GtkTooltips *tooltips;
-
-	/* Menu items. */
-	GtkWidget   *menu_conv_clear;
-	GtkWidget   *menu_conv_log;
-	GtkWidget   *menu_conv_separator;
-	GtkWidget   *menu_conv_add_contact;
-	GtkWidget   *menu_conv_info;
-	GtkWidget   *menu_conv_close;
-
-	GtkWidget   *menu_room;
-	GtkWidget   *menu_room_invite;
-	GtkWidget   *menu_room_add;
-	GtkWidget   *menu_room_show_contacts;
-
-	GtkWidget   *menu_edit_insert_smiley;
-	GtkWidget   *menu_edit_cut;
-	GtkWidget   *menu_edit_copy;
-	GtkWidget   *menu_edit_paste;
-
-	GtkWidget   *menu_tabs_next;
-	GtkWidget   *menu_tabs_prev;
-	GtkWidget   *menu_tabs_left;
-	GtkWidget   *menu_tabs_right;
-	GtkWidget   *menu_tabs_detach;
-
-	guint        save_geometry_id;
-};
+GtkWidget *       chat_window_create_notebook           (gpointer data);
 
 static GList *chat_windows = NULL;
 
@@ -220,8 +222,6 @@ static const GtkTargetEntry drop_types[] = {
 };
 
 G_DEFINE_TYPE (GossipChatWindow, gossip_chat_window, G_TYPE_OBJECT);
-
-#define URGENCY_TIMEOUT 60*1000
 
 static void
 gossip_chat_window_class_init (GossipChatWindowClass *klass)
@@ -972,12 +972,13 @@ chat_window_info_activate_cb (GtkWidget        *menuitem,
 {
 	GossipChatWindowPriv *priv;
 	GossipContact        *contact;
-	
+
 	priv = GET_PRIV (window);
 
 	contact = gossip_chat_get_contact (priv->current_chat);
 
-	gossip_contact_info_dialog_show (contact);
+	gossip_contact_info_dialog_show (contact, 
+					 GTK_WINDOW (priv->dialog));
 }
 
 static gboolean

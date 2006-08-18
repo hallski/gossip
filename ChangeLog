@@ -1,5 +1,21 @@
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-notify.c: 
+	* src/gossip-contact-list.c: 
+	* src/gossip-chat-window.c: Send parent for transient call with
+	contact-info and edit-contact.
+	
+	* src/gossip-contact-info-dialog.[ch]: Clean up in places.
+
+	* ui/main.glade:
+	* src/gossip-edit-contact-dialog.[ch]: Don't make this modal, and
+	allow one per contact like the contact-info dialog.
+	
+	* src/gossip-vcard-dialog.[ch]: Try to fix #350936, still a
+	problem though.
+
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
 	* ui/main.glade: Don't use images for the buttons in the edit
 	contact dialog, it looks less weird.
 

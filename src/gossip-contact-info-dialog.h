@@ -18,11 +18,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GOSSIP_CONTACT_INFO_H__
-#define __GOSSIP_CONTACT_INFO_H__
+#ifndef __GOSSIP_CONTACT_INFO_DIALOG_H__
+#define __GOSSIP_CONTACT_INFO_DIALOG_H__
 
 #include <libgossip/gossip-contact.h>
 
-void gossip_contact_info_dialog_show (GossipContact *contact);
+void gossip_contact_info_dialog_show (GossipContact *contact,
+				      GtkWindow     *parent);
 
-#endif /* __GOSSIP_CONTACT_INFO_H__ */
+#endif /* __GOSSIP_CONTACT_INFO_DIALOG_H__ */

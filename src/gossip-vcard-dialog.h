@@ -21,8 +21,6 @@
 #ifndef __GOSSIP_VCARD_DIALOG_H__
 #define __GOSSIP_VCARD_DIALOG_H__
 
-#include "gossip-app.h"
-
 void gossip_vcard_dialog_show (GtkWindow *parent);
 
 #endif /* __GOSSIP_VCARD_DIALOG_H__ */

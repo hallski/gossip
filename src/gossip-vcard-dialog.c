@@ -150,8 +150,8 @@ vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
 		gchar *path;
 
 		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (widget));
-		gossip_image_chooser_set_from_file (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-						    filename);
+		gossip_image_chooser_set_from_file 
+			(GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser), filename);
 		g_free (filename);
 
 		path = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (widget));
@@ -162,8 +162,8 @@ vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
 			g_free (path);
 		}
 	} else if (response == GTK_RESPONSE_NO) {
-		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-						     NULL, 0);
+		gossip_image_chooser_set_image_data 
+			(GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser), NULL, 0);
 	}
 
 	gtk_widget_destroy (widget);
@@ -365,12 +365,16 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	const guchar  *avatar;
 	gsize          avatar_size;
 
-	gossip_debug (DEBUG_DOMAIN, "Got a VCard response");
+	gossip_debug (DEBUG_DOMAIN, "Received VCard response");
+
+	if (!dialog) {
+		return;
+	}
 
 	vcard_dialog_lookup_stop (dialog);
 
 	if (result != GOSSIP_RESULT_OK) {
-		gossip_debug (DEBUG_DOMAIN, "VCard result was not good");
+		gossip_debug (DEBUG_DOMAIN, "Received VCard response was not good");
 		return;
 	}
 
@@ -397,6 +401,19 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	/* Save position incase the next lookup fails. */
 	combo_box = GTK_COMBO_BOX (dialog->account_chooser);
 	dialog->last_account_selected = gtk_combo_box_get_active (combo_box);
+}
+
+static void
+vcard_dialog_set_vcard_cb (GossipResult       result, 
+			   GossipVCardDialog *dialog)
+{
+	gossip_debug (DEBUG_DOMAIN, "Received VCard response");
+	gossip_debug (DEBUG_DOMAIN, "dialog:%p", dialog);
+	if (!dialog) {
+		return;
+	}
+	
+	gtk_widget_destroy (dialog->dialog);
 }
 
 static void
@@ -463,19 +480,16 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	g_object_unref (account);
 }
 
-static void
-vcard_dialog_set_vcard_cb (GossipResult       result, 
-			   GossipVCardDialog *dialog)
-{
-	gossip_debug (DEBUG_DOMAIN, "Got a VCard response");
-	
-	gtk_widget_destroy (dialog->dialog);
-}
-
 static gboolean
 vcard_dialog_timeout_cb (GossipVCardDialog *dialog)
 {
 	GtkWidget *md;
+
+	gossip_debug (DEBUG_DOMAIN, "Received VCard lookup timeout");
+
+	if (!dialog) {
+		return FALSE;
+	}
 
 	vcard_dialog_lookup_stop (dialog);
 
@@ -531,13 +545,17 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 		break;
 	}
 
+	gossip_debug (DEBUG_DOMAIN, "DESTROYING");
 	gtk_widget_destroy (dialog->dialog);
+	gossip_debug (DEBUG_DOMAIN, "DESTROYED");
 }
 
 static void
 vcard_dialog_destroy_cb (GtkWidget         *widget, 
 			 GossipVCardDialog *dialog)
 {
+	gossip_debug (DEBUG_DOMAIN, "DESTROYED CALLBACK");
+
 	vcard_dialog_lookup_stop (dialog);
 
 	g_free (dialog);
@@ -546,11 +564,16 @@ vcard_dialog_destroy_cb (GtkWidget         *widget,
 void
 gossip_vcard_dialog_show (GtkWindow *parent)
 {
-	GossipSession     *session;
-	GossipVCardDialog *dialog;
-	GladeXML          *glade;
-	GList             *accounts;
-	GtkSizeGroup      *size_group;
+	static GossipVCardDialog *dialog = NULL;
+	GossipSession            *session;
+	GladeXML                 *glade;
+	GList                    *accounts;
+	GtkSizeGroup             *size_group;
+
+	if (dialog) {
+		gtk_window_present (GTK_WINDOW (dialog->dialog));
+		return;
+	}
 
 	dialog = g_new0 (GossipVCardDialog, 1);
 
@@ -583,8 +606,11 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			      "vcard_dialog", "response", vcard_dialog_response_cb,
 			      NULL);
 
+	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
+
 	g_object_unref (glade);
 
+	/* Line up widgets */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	gtk_size_group_add_widget (size_group, dialog->label_account);
@@ -624,15 +650,15 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 		gtk_widget_hide (dialog->hbox_account);
 	}
 
-	g_list_foreach (accounts, (GFunc)g_object_unref, NULL);
+	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
+	/* Set up transient parent */
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
 	}
 
-	gtk_widget_show (dialog->dialog);
-	
 	vcard_dialog_lookup_start (dialog);
 }
+
 
