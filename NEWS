@@ -23,7 +23,8 @@ shown (Xavier Claessens)
 - Fixed #351964, Use stock icon for Quit menu item (Xavier Claessens)
 - Fixed #350936, Don't crash on race condition when saving vcards
 (Martyn).
-
+- Fixes #351967, Use libnotify to show hints if it is available,
+fallback to a message dialog (Xavier Claessens).
 
 Translations:
 Richard Hult (sv)

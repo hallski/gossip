@@ -1,5 +1,16 @@
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: Bumped version to 0.15.
+	
+	* src/gossip-notify.[ch]: Make it possible to show hints using
+	libnotify as well as a dialog.
+
+	* src/gossip-ui-utils.[ch]: Use a dialog if libnotify is not
+	available, otherwise use the notify API to tell users about
+	hints, fixes #351967 (Xavier Claessens).
+
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c: (app_setup):
 	* ui/main.glade: Remove the "Hide Contact List" item but keep the
 	Show/Hide roster item in the tray menu.
