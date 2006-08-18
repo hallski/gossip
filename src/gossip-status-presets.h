@@ -33,10 +33,13 @@ GList *             gossip_status_presets_get                (GossipPresenceStat
 void                gossip_status_presets_set_last           (GossipPresenceState  state,
 							      const gchar         *status);
 void                gossip_status_presets_reset              (void);
+
+/* Default */
 GossipPresenceState gossip_status_presets_get_default_state  (void);
 const gchar *       gossip_status_presets_get_default_status (void);
 void                gossip_status_presets_set_default        (GossipPresenceState  state,
 							      const gchar         *status);
+void                gossip_status_presets_clear_default      (void);
 
 G_END_DECLS
 

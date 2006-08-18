@@ -24,10 +24,15 @@
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-event-manager.h>
 
-void gossip_notify_init              (GossipSession      *session,
-				      GossipEventManager *event_manager);
-void gossip_notify_finalize          (void);
+void     gossip_notify_init              (GossipSession      *session,
+					  GossipEventManager *event_manager);
+void     gossip_notify_finalize          (void);
 
-void gossip_notify_set_attach_widget (GtkWidget          *new_attach_widget);
+void     gossip_notify_set_attach_widget (GtkWidget          *new_attach_widget);
+gboolean gossip_notify_hint_show         (const gchar        *conf_path, 
+					  const gchar        *summary,
+					  const gchar        *message,
+					  GFunc               func,
+					  gpointer            user_data);
 
 #endif /* __GOSSIP_NOTIFY_H__ */

@@ -1,5 +1,11 @@
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: 
+	* src/gossip-status-presets.[ch]: Added an API to remove the
+	default presence state, fixes #350699 (Richard).
+
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bumped version to 0.15.
 	
 	* src/gossip-notify.[ch]: Make it possible to show hints using

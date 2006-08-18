@@ -592,6 +592,65 @@ gossip_notify_set_attach_widget (GtkWidget *new_attach_widget)
 	}
 }
 
+static void
+notify_hint_closed_cb (NotifyNotification *notification,
+		       gpointer            user_data)
+{
+	GFunc        func;
+	const gchar *conf_path;
+
+	conf_path = g_object_get_data (G_OBJECT (notification), "conf_path");
+	func = g_object_get_data (G_OBJECT (notification), "func");
+
+	gossip_conf_set_bool (gossip_conf_get (), conf_path, FALSE);
+
+	g_object_unref (notification);
+
+	if (func) {
+		(func) ((gpointer) conf_path, user_data);
+	}
+}
+
+gboolean
+gossip_notify_hint_show (const gchar        *conf_path, 
+			 const gchar        *summary,
+			 const gchar        *message,
+			 GFunc               func,
+			 gpointer            user_data)
+{
+	gboolean            ok;
+	gboolean            show_hint = TRUE;
+	NotifyNotification *notify;
+	GError             *error = NULL;
+
+	g_return_val_if_fail (conf_path != NULL, FALSE);
+	g_return_val_if_fail (summary != NULL, FALSE);
+
+	ok = gossip_conf_get_bool (gossip_conf_get (), 
+				   conf_path, 
+				   &show_hint);
+	
+	if (ok && !show_hint) {
+		return FALSE;
+	}
+
+	notify = notify_notification_new (summary, message, NULL, attach_widget);
+	g_object_set_data_full (G_OBJECT (notify), "conf_path", g_strdup (conf_path), g_free);
+	g_object_set_data (G_OBJECT (notify), "func", func);
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_hint_closed_cb),
+			  user_data);
+
+	if (!notify_notification_show (notify, &error)) {
+		g_warning ("Failed to send notification: %s",
+			   error->message);
+		g_error_free (error);
+	}
+
+	return TRUE;
+}
+
 void
 gossip_notify_init (GossipSession      *session,
 		    GossipEventManager *event_manager)

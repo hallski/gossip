@@ -395,3 +395,14 @@ gossip_status_presets_set_default (GossipPresenceState  state,
 	status_presets_set_default (state, status);
 	status_presets_file_save ();
 }
+
+void
+gossip_status_presets_clear_default (void)
+{
+	if (default_preset) {
+		status_preset_free (default_preset);
+		default_preset = NULL;
+	}
+
+	status_presets_file_save ();
+}

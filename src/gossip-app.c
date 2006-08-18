@@ -926,11 +926,11 @@ app_main_window_delete_event_cb (GtkWidget *window,
 				 GossipApp *app)
 {
 	if (gossip_have_tray ()) { 
-		gossip_hint_dialog_show (GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
-					 _("Gossip is still running, it is just hidden."),
-					 _("Click on the notification area icon to show Gossip."),
-					 GTK_WINDOW (gossip_app_get_window ()),
-					 NULL, NULL);
+		gossip_hint_show (GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
+				  _("Gossip is still running, it is just hidden."),
+				  _("Click on the notification area icon to show Gossip."),
+				  GTK_WINDOW (gossip_app_get_window ()),
+				  NULL, NULL);
 
 		gossip_app_set_visibility (FALSE);
 
@@ -2346,6 +2346,9 @@ app_status_clear_away (void)
 		g_object_unref (priv->away_presence);
 		priv->away_presence = NULL;
 	}
+
+	/* Clear the default state */
+	gossip_status_presets_clear_default ();	
 
 	priv->leave_time = 0;
 	app_status_flash_stop ();

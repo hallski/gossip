@@ -37,6 +37,10 @@
 #include <Cocoa/Cocoa.h>
 #endif
 
+#ifdef HAVE_LIBNOTIFY
+#include "gossip-notify.h"
+#endif
+
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-paths.h>
 
@@ -362,6 +366,26 @@ gossip_hint_dialog_show (const gchar *conf_path,
 	gtk_widget_show_all (dialog);
 
 	return TRUE;
+}
+
+gboolean
+gossip_hint_show (const gchar         *conf_path, 
+		  const gchar         *message1,
+		  const gchar         *message2,
+		  GtkWindow           *parent,
+		  GFunc                func,
+		  gpointer             user_data)
+{
+#ifdef HAVE_LIBNOTIFY
+	return gossip_notify_hint_show (conf_path,
+					message1, message2,
+					func, user_data);
+#else
+	return gossip_hint_dialog_show (conf_path,
+					message1, message2,
+					parent,
+					func, user_data);
+#endif
 }
 
 GdkPixbuf *
