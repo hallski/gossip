@@ -1,5 +1,10 @@
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 
+	* ui/main.glade: Don't use images for the buttons in the edit
+	contact dialog, it looks less weird.
+
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
 	* NEWS:
 	* src/Makefile.am:
 	* src/gossip-contact-list.c: Removed the rename contact code here.
