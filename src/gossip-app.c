@@ -139,7 +139,6 @@ struct _GossipAppPriv {
 	/* Menu widgets */
 	GtkWidget             *actions_connect;
 	GtkWidget             *actions_disconnect;
-	GtkWidget             *actions_hide_list;
 	GtkWidget             *actions_group_chat_join;   
 	GtkWidget             *edit_context;   
 	GtkWidget             *edit_context_separator;   
@@ -565,7 +564,6 @@ app_setup (GossipSession        *session,
 				       "actions_connect", &priv->actions_connect,
 				       "actions_disconnect", &priv->actions_disconnect,
 				       "actions_show_offline", &show_offline_widget,
-				       "actions_hide_list", &priv->actions_hide_list,
 				       "actions_group_chat_join", &priv->actions_group_chat_join,
 				       "edit_context", &priv->edit_context,
 				       "edit_context_separator", &priv->edit_context_separator,
@@ -608,9 +606,6 @@ app_setup (GossipSession        *session,
 	gtk_image_set_from_stock (GTK_IMAGE (image), GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_MENU);
 	gtk_label_set_text_with_mnemonic (GTK_LABEL (GTK_BIN (priv->actions_disconnect)->child), 
 					  _("_Disconnect"));
-
-	g_signal_connect (priv->actions_hide_list, "activate", 
-			  G_CALLBACK (app_show_hide_list_cb), app);
 
 	gtk_widget_hide (priv->edit_context);
 	gtk_widget_hide (priv->edit_context_separator);
@@ -747,12 +742,10 @@ app_setup (GossipSession        *session,
 	 */
 	if (!gossip_have_tray ()) {
 		hidden = FALSE;
-		gtk_widget_hide (GTK_WIDGET (priv->actions_hide_list));
 	} else {
 		gossip_conf_get_bool (conf,
 				      GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
 				      &hidden);
-		gtk_widget_show (GTK_WIDGET (priv->actions_hide_list));
 	}
 
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),

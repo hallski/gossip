@@ -1,5 +1,11 @@
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: (app_setup):
+	* ui/main.glade: Remove the "Hide Contact List" item but keep the
+	Show/Hide roster item in the tray menu.
+
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-vcard-dialog.c: Don't crash with a race condition
 	when saving vcards, fixes 350936 (Johan Dahlin).
 
