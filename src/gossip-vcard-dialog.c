@@ -107,7 +107,7 @@ static void     vcard_dialog_get_vcard_cb               (GossipResult       resu
 							 GossipVCardDialog *dialog);
 static void     vcard_dialog_set_vcard                  (GossipVCardDialog *dialog);
 static void     vcard_dialog_set_vcard_cb               (GossipResult       result,
-							 GossipVCardDialog *dialog);
+							 gpointer           user_data);
 static gboolean vcard_dialog_timeout_cb                 (GossipVCardDialog *dialog);
 static void     vcard_dialog_account_changed_cb         (GtkWidget         *combo_box,
 							 GossipVCardDialog *dialog);
@@ -119,6 +119,8 @@ static void     vcard_dialog_destroy_cb                 (GtkWidget         *widg
 
 /* Called from Glade, so it shouldn't be static. */
 GtkWidget *vcard_dialog_create_avatar_chooser (gpointer data);
+
+static GossipVCardDialog *dialog = NULL;
 
 GtkWidget *
 vcard_dialog_create_avatar_chooser (gpointer data)
@@ -404,11 +406,11 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 }
 
 static void
-vcard_dialog_set_vcard_cb (GossipResult       result, 
-			   GossipVCardDialog *dialog)
+vcard_dialog_set_vcard_cb (GossipResult result, 
+			   gpointer     user_data)
 {
 	gossip_debug (DEBUG_DOMAIN, "Received VCard response");
-	gossip_debug (DEBUG_DOMAIN, "dialog:%p", dialog);
+
 	if (!dialog) {
 		return;
 	}
@@ -469,7 +471,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 				  account,
 				  vcard, 
 				  (GossipResultCallback) vcard_dialog_set_vcard_cb,
-				  dialog, &error);
+				  NULL, &error);
 
 	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);
 	contact = gossip_protocol_get_own_contact (protocol);
@@ -545,30 +547,26 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 		break;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "DESTROYING");
 	gtk_widget_destroy (dialog->dialog);
-	gossip_debug (DEBUG_DOMAIN, "DESTROYED");
 }
 
 static void
 vcard_dialog_destroy_cb (GtkWidget         *widget, 
 			 GossipVCardDialog *dialog)
 {
-	gossip_debug (DEBUG_DOMAIN, "DESTROYED CALLBACK");
-
 	vcard_dialog_lookup_stop (dialog);
 
 	g_free (dialog);
+	dialog = NULL;
 }
 
 void
 gossip_vcard_dialog_show (GtkWindow *parent)
 {
-	static GossipVCardDialog *dialog = NULL;
-	GossipSession            *session;
-	GladeXML                 *glade;
-	GList                    *accounts;
-	GtkSizeGroup             *size_group;
+	GossipSession *session;
+	GladeXML      *glade;
+	GList         *accounts;
+	GtkSizeGroup  *size_group;
 
 	if (dialog) {
 		gtk_window_present (GTK_WINDOW (dialog->dialog));

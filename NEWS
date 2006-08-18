@@ -21,6 +21,8 @@ main menu (Martyn).
 confirmation dialog, if you are on another desktop, the dialog is not
 shown (Xavier Claessens)
 - Fixed #351964, Use stock icon for Quit menu item (Xavier Claessens)
+- Fixed #350936, Don't crash on race condition when saving vcards
+(Martyn).
 
 
 Translations:

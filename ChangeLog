@@ -1,3 +1,8 @@
+2006-08-18  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-vcard-dialog.c: Don't crash with a race condition
+	when saving vcards, fixes 350936 (Johan Dahlin).
+
 2006-08-18  Richard Hult  <richard@imendio.com>
 
 	* ui/main.glade: Patch from Xavier Claessens to add stock icon for
