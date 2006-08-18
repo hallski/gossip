@@ -20,6 +20,8 @@ main menu (Martyn).
 - Fixed #351479, Don't use a parent for the clear status messages
 confirmation dialog, if you are on another desktop, the dialog is not
 shown (Xavier Claessens)
+- Fixed #351964, Use stock icon for Quit menu item (Xavier Claessens)
+
 
 Translations:
 Richard Hult (sv)
