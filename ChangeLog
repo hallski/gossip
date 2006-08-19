@@ -33,7 +33,8 @@
 
 	* src/gossip-app.c: (app_setup):
 	* ui/main.glade: Remove the "Hide Contact List" item but keep the
-	Show/Hide roster item in the tray menu.
+	Show/Hide roster item in the tray menu, fixes #346861 (Wouter
+	Bolsterlee).
 
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 

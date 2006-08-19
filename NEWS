@@ -26,6 +26,8 @@ shown (Xavier Claessens)
 - Fixed #351967, Use libnotify to show hints if it is available,
 fallback to a message dialog (Xavier Claessens).
 - Fixed #350699, Wrong status is restored on restart (Martyn).
+- Fixed #346861, Corrected a string inconsistency with the hide roster
+option (Martyn).
 
 Translations:
 Richard Hult (sv)

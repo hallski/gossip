@@ -70,6 +70,9 @@ static void     presence_chooser_show_dialog            (GossipPresenceChooser *
 							 GossipPresenceState    state);
 static void     presence_chooser_custom_activate_cb     (GtkWidget             *item,
 							 GossipPresenceChooser *chooser);
+static void     presence_chooser_clear_response_cb      (GtkWidget             *widget,
+							 gint                   response,
+							 gpointer               user_data);
 static void     presence_chooser_clear_activate_cb      (GtkWidget             *item,
 							 GossipPresenceChooser *chooser);
 static void     presence_chooser_menu_add_item          (GossipPresenceChooser *chooser,
@@ -382,18 +385,44 @@ presence_chooser_noncustom_activate_cb (GtkWidget             *item,
 }
 
 static void
+presence_chooser_clear_response_cb (GtkWidget *widget,
+				    gint       response,
+				    gpointer   user_data)
+{
+	if (response == GTK_RESPONSE_OK) {
+		gossip_status_presets_reset ();
+	}
+
+	gtk_widget_destroy (widget);
+}
+
+static void
 presence_chooser_clear_activate_cb (GtkWidget             *item,
 				    GossipPresenceChooser *chooser)
 {
 	GtkWidget *dialog;
+	GtkWidget *toplevel;
+	GtkWindow *parent = NULL;
 
-	dialog = gtk_message_dialog_new (
-		NULL,
-		0, 
-		GTK_MESSAGE_QUESTION,
-		GTK_BUTTONS_NONE,
-		_("Are you sure you want to empy the "
-		  "list?"));
+	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (chooser));
+	if (GTK_WIDGET_TOPLEVEL (toplevel) &&
+	    GTK_IS_WINDOW (toplevel)) {
+		GtkWindow *window;
+		gboolean   visible;
+
+		window = GTK_WINDOW (toplevel);
+		visible = gossip_window_get_is_visible (window);
+
+		if (visible) {
+			parent = window;
+		}
+	}
+
+	dialog = gtk_message_dialog_new (GTK_WINDOW (parent),
+					 0, 
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_NONE,
+					 _("Are you sure you want to clear the list?"));
 
 	gtk_message_dialog_format_secondary_text (
 		GTK_MESSAGE_DIALOG (dialog),
@@ -407,11 +436,11 @@ presence_chooser_clear_activate_cb (GtkWidget             *item,
 
 	gtk_window_set_skip_taskbar_hint (GTK_WINDOW (dialog), FALSE);
 
-	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
-		gossip_status_presets_reset ();
-	}
+	g_signal_connect (dialog, "response", 
+			  G_CALLBACK (presence_chooser_clear_response_cb),
+			  NULL);
 
-	gtk_widget_destroy (dialog);
+	gtk_widget_show (dialog);
 }
 
 static void
