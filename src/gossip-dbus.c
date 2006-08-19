@@ -35,9 +35,16 @@
 #define GOSSIP_DBUS_ERROR_DOMAIN "GossipDBus"
 
 /* None-generated functions */
-static DBusGProxy *dbus_freedesktop_init (void);
-static gboolean    dbus_nm_init          (void);
-static gboolean    dbus_gossip_show      (gboolean show);
+static DBusGProxy * dbus_freedesktop_init            (void);
+static const gchar *dbus_nm_state_to_string          (guint32     state);
+static void         dbus_nm_state_cb                 (DBusGProxy *proxy,
+						      guint       state,
+						      gpointer    user_data);
+static gboolean     dbus_nm_proxy_restart_timeout_cb (gpointer    user_data);
+static void         dbus_nm_proxy_notify_cb          (gpointer    data,
+						      GObject    *where_the_object_was);
+static gboolean     dbus_nm_init                     (void);
+static gboolean     dbus_gossip_show                 (gboolean    show);
 
 /* Set up the DBus GObject to use */
 typedef struct GossipDBus GossipDBus;
@@ -66,34 +73,40 @@ struct GossipDBusClass {
 
 G_DEFINE_TYPE(GossipDBus, gossip_dbus, G_TYPE_OBJECT)
 
-static gboolean gossip_dbus_set_presence       (GossipDBus   *obj,
-						const char   *state,
-						const char   *status,
-						GError      **error);
-static gboolean gossip_dbus_set_not_away       (GossipDBus   *obj,
-						GError      **error);
-static gboolean gossip_dbus_set_network_status (GossipDBus   *obj,
-						gboolean      up,
-						GError      **error);
-static gboolean gossip_dbus_set_roster_visible (GossipDBus   *obj,
-						gboolean      visible,
-						GError      **error);
-static gboolean gossip_dbus_get_roster_visible (GossipDBus   *obj,
-						gboolean     *visible,
-						GError      **error);
-static gboolean gossip_dbus_get_open_chats     (GossipDBus   *obj,
-						char       ***contacts,
-						GError      **error);
-static gboolean gossip_dbus_send_message       (GossipDBus   *obj,
-						const gchar  *contact_id,
-						GError      **error);
-static gboolean gossip_dbus_new_message        (GossipDBus   *obj,
-						GError      **error);
-static gboolean gossip_dbus_toggle_roster      (GossipDBus   *obj,
-						GError      **error);
-static void     nm_proxy_notify_cb             (gpointer      data,
-						GObject      *where_the_object_was);
-
+static gboolean gossip_dbus_set_presence         (GossipDBus    *obj,
+						  const char    *state,
+						  const char    *status,
+						  GError       **error);
+static gboolean gossip_dbus_set_not_away         (GossipDBus    *obj,
+						  GError       **error);
+static gboolean gossip_dbus_set_network_status   (GossipDBus    *obj,
+						  gboolean       up,
+						  GError       **error);
+static gboolean gossip_dbus_set_roster_visible   (GossipDBus    *obj,
+						  gboolean       visible,
+						  GError       **error);
+static gboolean gossip_dbus_get_presence         (GossipDBus    *obj,
+						  const gchar   *id,
+						  char         **state,
+						  char         **status,
+						  GError       **error);
+static gboolean gossip_dbus_get_name             (GossipDBus    *obj,
+						  const gchar   *id,
+						  char         **name,
+						  GError       **error);
+static gboolean gossip_dbus_get_roster_visible   (GossipDBus    *obj,
+						  gboolean      *visible,
+						  GError       **error);
+static gboolean gossip_dbus_get_open_chats       (GossipDBus    *obj,
+						  char        ***contacts,
+						  GError       **error);
+static gboolean gossip_dbus_send_message         (GossipDBus    *obj,
+						  const gchar   *contact_id,
+						  GError       **error);
+static gboolean gossip_dbus_new_message          (GossipDBus    *obj,
+						  GError       **error);
+static gboolean gossip_dbus_toggle_roster        (GossipDBus    *obj,
+						  GError       **error);
 
 #include "gossip-dbus-glue.h"
 
@@ -190,6 +203,113 @@ gossip_dbus_set_roster_visible (GossipDBus  *obj,
 
 	gossip_app_set_visibility (visible);
 
+	return TRUE;
+}
+
+static gboolean
+gossip_dbus_get_presence (GossipDBus   *obj, 
+			  const gchar  *id,
+			  char        **state, 
+			  char        **status,
+			  GError      **error)
+{
+	GossipContact  *contact;
+	GossipPresence *presence;
+	const gchar    *str;
+
+	gossip_debug (DEBUG_DOMAIN, "Getting presence for:'%s'...", 
+		      id ? id : "SELF");
+
+	if (id && strlen (id) > 0) {
+		contact = gossip_session_find_contact (saved_session, id);
+		if (!contact) {
+			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
+			
+			g_set_error (error, gossip_dbus_error_quark (), 0, 
+				     "Contact:'%s' unrecognised", id);
+			
+			return FALSE;
+		}
+
+		presence = gossip_contact_get_active_presence (contact);
+	} else {
+		presence = gossip_session_get_presence (saved_session);
+	}
+
+	if (!presence) {
+		*state = g_strdup_printf ("unavailable");
+		*status = NULL;
+	} else {
+		switch (gossip_presence_get_state (presence)) {
+		case GOSSIP_PRESENCE_STATE_AVAILABLE:
+			*state = g_strdup ("available");
+			break;
+		case GOSSIP_PRESENCE_STATE_BUSY:
+			*state = g_strdup ("busy");
+			break;
+		case GOSSIP_PRESENCE_STATE_AWAY:
+			*state = g_strdup ("away");
+			break;
+		case GOSSIP_PRESENCE_STATE_EXT_AWAY:
+			*state = g_strdup ("xa");
+			break;
+		case GOSSIP_PRESENCE_STATE_HIDDEN:
+		case GOSSIP_PRESENCE_STATE_UNAVAILABLE:
+			*state = g_strdup ("unavailable");
+			break;
+		}
+
+		str = gossip_presence_get_status (presence);
+		if (str) {
+			*status = g_strdup (str);
+		} else {
+			*status = NULL;
+		}
+	}
+	
+	return TRUE;
+}
+
+static gboolean
+gossip_dbus_get_name (GossipDBus   *obj, 
+		      const gchar  *id,
+		      char        **name, 
+		      GError      **error)
+{
+	GossipContact *contact;
+	const gchar   *str;
+
+	gossip_debug (DEBUG_DOMAIN, "Getting name for:'%s'...", 
+		      id ? id : "SELF");
+
+	*name = NULL;
+
+	if (id && strlen (id) > 0) {
+		contact = gossip_session_find_contact (saved_session, id);
+		if (!contact) {
+			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
+			
+			g_set_error (error, gossip_dbus_error_quark (), 0, 
+				     "Contact:'%s' unrecognised", id);
+			
+			return FALSE;
+		}
+	} else {
+		gossip_debug (DEBUG_DOMAIN, "Can not get own name, not yet implemented");
+		
+		g_set_error (error, gossip_dbus_error_quark (), 0, 
+			     "Can not get own name, not yet implemented");
+		
+		return FALSE;
+	}
+
+	str = gossip_contact_get_name (contact);
+	if (str) {
+		*name = g_strdup (str);
+	} else {
+		*name = NULL;
+	}
+	
 	return TRUE;
 }
 
@@ -353,7 +473,7 @@ gossip_dbus_finalize_for_session (void)
 		g_object_unref (bus_proxy);
 	}
 	if (nm_proxy) {
-		g_object_weak_unref (G_OBJECT (nm_proxy), nm_proxy_notify_cb, NULL);
+		g_object_weak_unref (G_OBJECT (nm_proxy), dbus_nm_proxy_notify_cb, NULL);
 		g_object_unref (nm_proxy);
 	}
 
@@ -460,7 +580,7 @@ dbus_nm_state_cb (DBusGProxy *proxy,
 }
 
 static gboolean
-nm_proxy_restart_timeout_cb (gpointer user_data)
+dbus_nm_proxy_restart_timeout_cb (gpointer user_data)
 {
 	if (dbus_nm_init ()) {
 		nm_proxy_restart_timeout_id = 0;
@@ -477,8 +597,8 @@ nm_proxy_restart_timeout_cb (gpointer user_data)
 }
 		
 static void
-nm_proxy_notify_cb (gpointer  data,
-		    GObject  *where_the_object_was)
+dbus_nm_proxy_notify_cb (gpointer  data,
+			 GObject  *where_the_object_was)
 {
 	nm_proxy = NULL;
 	nm_proxy_restart_retries = 5;
@@ -489,7 +609,7 @@ nm_proxy_notify_cb (gpointer  data,
 	
 	nm_proxy_restart_timeout_id = 
 		g_timeout_add (10*1000,
-			       nm_proxy_restart_timeout_cb,
+			       dbus_nm_proxy_restart_timeout_cb,
 			       NULL);
 }
 
@@ -528,7 +648,7 @@ dbus_nm_init (void)
 		return FALSE;
 	}
 
-	g_object_weak_ref (G_OBJECT (nm_proxy), nm_proxy_notify_cb, NULL);
+	g_object_weak_ref (G_OBJECT (nm_proxy), dbus_nm_proxy_notify_cb, NULL);
 	
 	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT, 
 					   G_TYPE_NONE, G_TYPE_UINT, G_TYPE_INVALID);

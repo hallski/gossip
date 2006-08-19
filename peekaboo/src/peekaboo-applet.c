@@ -217,7 +217,6 @@ applet_button_press_event_cb (GtkWidget      *widget,
 	GtkWidget            *menu;
 	GtkWidget            *item;
 	GtkWidget            *image;
-	gchar                *name;
 	const gchar          *stock_id;
 	gchar               **chats;
 	gchar               **p;
@@ -233,7 +232,7 @@ applet_button_press_event_cb (GtkWidget      *widget,
 	item = gtk_image_menu_item_new_with_label (_("New Message..."));
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
-	
+
 	image = gtk_image_new_from_stock (PEEKABOO_STOCK_MESSAGE, GTK_ICON_SIZE_MENU);
 	gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 	gtk_widget_show (image);
@@ -242,20 +241,35 @@ applet_button_press_event_cb (GtkWidget      *widget,
 			  G_CALLBACK (applet_menu_new_message_activate_cb),
 			  NULL);
 
-	chats = peekaboo_dbus_get_open_chats ();
-	if (chats && chats[0]) {
+	if (peekaboo_dbus_get_open_chats (&chats) && chats && chats[0]) {
 		item = gtk_separator_menu_item_new ();
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 		gtk_widget_show (item);
 		
 		DEBUG_MSG (("Applet: Open chats:"));
 		for (p = chats; *p; p++) {
-			if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) {
-				DEBUG_MSG (("\t\"%s\"", *p));
+			gchar *status;
+			gchar *name;
+
+/* 			if (!peekaboo_galago_get_state_and_name (*p, &name, &state)) { */
+/* 				DEBUG_MSG (("\t\"%s\"", *p)); */
+/* 				continue; */
+/* 			} */
+
+			if (!peekaboo_dbus_get_name (*p, &name) || 
+			    !name || strlen (name) < 1) {
+				g_warning ("Couldn't get name for contact:'%s'", *p);
 				continue;
 			}
 			
-			DEBUG_MSG (("\tid:'%s', name:'%s'", *p, name));
+			if (!peekaboo_dbus_get_presence (*p, &state, &status)) {
+				g_warning ("Couldn't get presence for contact:'%s'", *p);
+				g_free (name);
+				continue;
+			}
+
+			DEBUG_MSG (("\tid:'%s', name:'%s', state:%d, status:'%s'", 
+				    *p, name, state, status));
 
 			item = gtk_image_menu_item_new_with_label (name);
 			gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -274,6 +288,7 @@ applet_button_press_event_cb (GtkWidget      *widget,
 					  NULL);
 			
 			g_free (name);
+			g_free (status);
 		}
 	}
 

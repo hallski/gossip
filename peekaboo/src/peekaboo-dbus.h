@@ -23,10 +23,17 @@
 
 #include <dbus/dbus-glib.h>
 
-gboolean peekaboo_dbus_get_roster_visible (void);
-char **  peekaboo_dbus_get_open_chats     (void);
-void     peekaboo_dbus_send_message       (const gchar *contact_id);
-void     peekaboo_dbus_new_message        (void);
-void     peekaboo_dbus_toggle_roster      (void);
+#include <libgossip/gossip-presence.h>
+
+gboolean peekaboo_dbus_get_presence       (const gchar           *id,
+					   GossipPresenceState   *state,
+					   gchar                **status);
+gboolean peekaboo_dbus_get_name           (const gchar           *id,
+					   gchar                **name);
+gboolean peekaboo_dbus_get_roster_visible (gboolean              *visible);
+gboolean peekaboo_dbus_get_open_chats     (gchar               ***open_chats);
+gboolean peekaboo_dbus_send_message       (const gchar           *contact_id);
+gboolean peekaboo_dbus_new_message        (void);
+gboolean peekaboo_dbus_toggle_roster      (void);
 
 #endif /* __PEEKABO_DBUS_H__ */

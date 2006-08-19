@@ -14,6 +14,15 @@
     <method name="SetRosterVisible">
       <arg name="visible" type="b" direction="in"/>
     </method>
+    <method name="GetPresence">
+      <arg name="contact" type="s" direction="in"/>
+      <arg name="state" type="s" direction="out"/>
+      <arg name="status" type="s" direction="out"/>
+    </method>
+    <method name="GetName">
+      <arg name="contact" type="s" direction="in"/>
+      <arg name="name" type="s" direction="out"/>
+    </method>
     <method name="GetRosterVisible">
       <arg name="visible" type="b" direction="out"/>
     </method>

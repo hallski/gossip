@@ -28,6 +28,8 @@ fallback to a message dialog (Xavier Claessens).
 - Fixed #350699, Wrong status is restored on restart (Martyn).
 - Fixed #346861, Corrected a string inconsistency with the hide roster
 option (Martyn).
+- Fixed #349585, Don't crash in Peekaboo if Gossip isn't running
+(Martyn).
 
 Translations:
 Richard Hult (sv)
