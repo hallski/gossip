@@ -1,3 +1,8 @@
+2006-08-19  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-conf-cocoa.c (gossip_conf_init): Add new hint
+	preference.
+
 2006-08-19  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-presence-chooser.c: Make sure we show the

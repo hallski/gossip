@@ -95,6 +95,7 @@ gossip_conf_init (GossipConf *conf)
 #define GOSSIP_PREFS_UI_AVATAR_DIRECTORY          GOSSIP_PREFS_PATH "/ui/avatar_directory"
 #define GOSSIP_PREFS_UI_SHOW_AVATARS              GOSSIP_PREFS_PATH "/ui/show_avatars"
 #define GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE        GOSSIP_PREFS_PATH "/contacts/show_offline"
+#define GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW      GOSSIP_PREFS_PATH "/hints/close_main_window"
 
 	dict = [NSDictionary dictionaryWithObjectsAndKeys:
 		@"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES, 
@@ -111,6 +112,7 @@ gossip_conf_init (GossipConf *conf)
 		@"", @GOSSIP_PREFS_UI_AVATAR_DIRECTORY,
 		@"YES", @GOSSIP_PREFS_UI_SHOW_AVATARS,
 		@"NO", @GOSSIP_PREFS_CONTACTS_SHOW_OFFLINE,
+		@"YES", @GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW,
 		nil];
 
 	/* Setup defaults. FIXME: Can we do this only when needed? */
