@@ -30,6 +30,9 @@ fallback to a message dialog (Xavier Claessens).
 option (Martyn).
 - Fixed #349585, Don't crash in Peekaboo if Gossip isn't running
 (Martyn).
+- Fixed #312293, Always show events (messages, subscription requests,
+etc) for contacts regardless to their state and the users preference
+to show offline contacts or not (Martyn).
 
 Translations:
 Richard Hult (sv)

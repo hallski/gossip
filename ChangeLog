@@ -1,5 +1,11 @@
 2006-08-19  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-list.c: Added some debugging and make sure we
+	always show contacts if they have event data to show (messages,
+	subscription requests, etc), fixes #312293 (Marcel Moreaux).
+
+2006-08-19  Martyn Russell  <martyn@imendio.com>
+
 	* README: Added a blurb about how to use DBus with Gossip.
 	
 	* peekaboo/data/GNOME_Peekaboo_Applet.xml: Removed the "Toggle
