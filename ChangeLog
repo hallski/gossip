@@ -1,3 +1,12 @@
+2006-08-19  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-presence-chooser.c: Make sure we show the
+	clear presets dialog on the right desktop AND only set the parent
+	if the window is clearly visible and on the same desktop, fixes
+	#351479 (Xavier Claessens), again.
+
+	* src/gossip-status-presets-dialog.[ch]: Removed, not longer used.
+
 2006-08-18  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: 
