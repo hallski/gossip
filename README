@@ -12,17 +12,18 @@ Please report bugs to the GNOME Bugzilla, in the gossip module:
 
 http://bugzilla.gnome.org/enter_bug.cgi?product=gossip
 
-DBUS:
-=====
+D-Bus:
+======
 
-You can use the DBus interface to Gossip with the dbus-send command:
+You can use the D-Bus interface to Gossip with the dbus-send command:
 
 For example:
 
-  $ dbus-send --print-reply --dest=org.gnome.Gossip /org/gnome/Gossip org.gnome.Gossip.GetPresence string:'richard@imendio.com'
+  $ dbus-send --print-reply --dest=org.gnome.Gossip \
+    /org/gnome/Gossip org.gnome.Gossip.GetPresence string:'richard@imendio.com'
 
     method return sender=:1.31 -> dest=:1.34
     string "busy"
-    string "Martyn är en gurka"
+    string "Working"
 
 Use the dbus-viewer to find out more about other interfaces available.
