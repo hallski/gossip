@@ -1,3 +1,9 @@
+2006-08-20  Daniel Nylander <po@danielnylander.se>
+
+	* help/sv/sv.po: Added initial Swedish translation.
+	* help/sv/figures: Added directory.
+	* help/Makefile.am: Added sv to DOC_LINGUAS
+
 2006-08-20  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c (chat_window_create_label): Try with 0

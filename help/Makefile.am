@@ -19,4 +19,4 @@ DOC_FIGURES = 					\
 	figures/gossip-message.png		\
 	figures/gossip-typing.png
 
-DOC_LINGUAS =
+DOC_LINGUAS = sv
