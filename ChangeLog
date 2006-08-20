@@ -1,5 +1,27 @@
 2006-08-20  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-chat-window.c (chat_window_create_label): Try with 0
+	space padding between the close button and label, since there is
+	some padding already due to the button relief.
+
+	* src/Makefile.am: Remove -export-dynamic, not needed anymore.
+	
+	* src/gossip-chat-window.c: (gossip_chat_window_class_init):
+	Remove whitespace.
+	(gossip_chat_window_init)
+	* src/gossip-edit-contact-dialog.c:
+	(gossip_edit_contact_dialog_show):
+	* src/gossip-vcard-dialog.c: (vcard_dialog_create_avatar_chooser),
+	(gossip_vcard_dialog_show):
+	* ui/chat.glade:
+	* ui/main.glade: Don't use glade custom creation functions, we
+	don't want to force -export-dynamic and it's just a really ugly
+	hack. Also make the vcard and edit contact dialogs not visible
+	from start and show them by code instead. Make the avatar button
+	not change size after showing it.
+
+2006-08-20  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-about-dialog.c: Update link.
 
 2006-08-19  Martyn Russell  <martyn@imendio.com>

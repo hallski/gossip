@@ -92,38 +92,37 @@ typedef struct {
 #endif
 } GossipVCardDialog;
 
-static void     vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
-							 gint               response,
-							 GossipVCardDialog *dialog);
-static void     vcard_dialog_avatar_clicked_cb          (GtkWidget         *button,
-							 GossipVCardDialog *dialog);
-static void     vcard_dialog_avatar_update_preview_cb   (GtkFileChooser    *chooser,
-							 GossipVCardDialog *dialog);
-static void     vcard_dialog_set_account_to_last        (GossipVCardDialog *dialog);
-static void     vcard_dialog_lookup_start               (GossipVCardDialog *dialog);
-static void     vcard_dialog_lookup_stop                (GossipVCardDialog *dialog);
-static void     vcard_dialog_get_vcard_cb               (GossipResult       result,
-							 GossipVCard       *vcard,
-							 GossipVCardDialog *dialog);
-static void     vcard_dialog_set_vcard                  (GossipVCardDialog *dialog);
-static void     vcard_dialog_set_vcard_cb               (GossipResult       result,
-							 gpointer           user_data);
-static gboolean vcard_dialog_timeout_cb                 (GossipVCardDialog *dialog);
-static void     vcard_dialog_account_changed_cb         (GtkWidget         *combo_box,
-							 GossipVCardDialog *dialog);
-static void     vcard_dialog_response_cb                (GtkDialog         *widget,
-							 gint               response,
-							 GossipVCardDialog *dialog);
-static void     vcard_dialog_destroy_cb                 (GtkWidget         *widget,
-							 GossipVCardDialog *dialog);
+static GtkWidget *vcard_dialog_create_avatar_chooser      (void);
+static void       vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
+							   gint               response,
+							   GossipVCardDialog *dialog);
+static void       vcard_dialog_avatar_clicked_cb          (GtkWidget         *button,
+							   GossipVCardDialog *dialog);
+static void       vcard_dialog_avatar_update_preview_cb   (GtkFileChooser    *chooser,
+							   GossipVCardDialog *dialog);
+static void       vcard_dialog_set_account_to_last        (GossipVCardDialog *dialog);
+static void       vcard_dialog_lookup_start               (GossipVCardDialog *dialog);
+static void       vcard_dialog_lookup_stop                (GossipVCardDialog *dialog);
+static void       vcard_dialog_get_vcard_cb               (GossipResult       result,
+							   GossipVCard       *vcard,
+							   GossipVCardDialog *dialog);
+static void       vcard_dialog_set_vcard                  (GossipVCardDialog *dialog);
+static void       vcard_dialog_set_vcard_cb               (GossipResult       result,
+							   gpointer           user_data);
+static gboolean   vcard_dialog_timeout_cb                 (GossipVCardDialog *dialog);
+static void       vcard_dialog_account_changed_cb         (GtkWidget         *combo_box,
+							   GossipVCardDialog *dialog);
+static void       vcard_dialog_response_cb                (GtkDialog         *widget,
+							   gint               response,
+							   GossipVCardDialog *dialog);
+static void       vcard_dialog_destroy_cb                 (GtkWidget         *widget,
+							   GossipVCardDialog *dialog);
 
-/* Called from Glade, so it shouldn't be static. */
-GtkWidget *vcard_dialog_create_avatar_chooser (gpointer data);
 
 static GossipVCardDialog *dialog = NULL;
 
-GtkWidget *
-vcard_dialog_create_avatar_chooser (gpointer data)
+static GtkWidget *
+vcard_dialog_create_avatar_chooser (void)
 {
 	GtkWidget *chooser;
 
@@ -133,11 +132,11 @@ vcard_dialog_create_avatar_chooser (gpointer data)
 						 AVATAR_MAX_WIDTH, 
 						 AVATAR_MAX_HEIGHT);
 
-	gtk_widget_show_all (chooser);
-
 	gtk_widget_set_size_request (chooser, 
 				     AVATAR_MAX_WIDTH / 2,
 				     AVATAR_MAX_HEIGHT / 2);
+
+	gtk_widget_show_all (chooser);
 
 	return chooser;
 }
@@ -595,7 +594,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "button_cancel", &dialog->button_cancel,
 				       "button_save", &dialog->button_save,
 				       "button_image", &dialog->button_image,
-				       "avatar_chooser", &dialog->avatar_chooser,
 				       NULL);
 
 	gossip_glade_connect (glade, 
@@ -608,6 +606,9 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 
 	g_object_unref (glade);
 
+	dialog->avatar_chooser = vcard_dialog_create_avatar_chooser ();
+	gtk_container_add (GTK_CONTAINER (dialog->button_image), dialog->avatar_chooser);
+	
 	/* Line up widgets */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -656,6 +657,8 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
 	}
 
+	gtk_widget_show (dialog->dialog);
+	
 	vcard_dialog_lookup_start (dialog);
 }
 

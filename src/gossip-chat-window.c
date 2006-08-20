@@ -203,8 +203,6 @@ static void       chat_window_drag_data_received        (GtkWidget             *
 static void       chat_window_set_urgency_hint          (GossipChatWindow      *window,
 							 gboolean               urgent);
 
-/* Called from Glade, so it shouldn't be static. */
-GtkWidget *       chat_window_create_notebook           (gpointer data);
 
 static GList *chat_windows = NULL;
 
@@ -213,9 +211,9 @@ static const guint tab_accel_keys[] = {
 	GDK_6, GDK_7, GDK_8, GDK_9, GDK_0
 };
 
-enum DndDropType {
+typedef enum {
 	DND_DROP_TYPE_CONTACT_ID,
-};
+} DndDropType;
 
 static const GtkTargetEntry drop_types[] = {
 	{ "text/contact-id", 0, DND_DROP_TYPE_CONTACT_ID },
@@ -234,12 +232,12 @@ gossip_chat_window_class_init (GossipChatWindowClass *klass)
 
 	/* Set up a style for the close button with no focus padding. */ 	 
 	gtk_rc_parse_string ( 	 
-		"style \"gossip-close-button-style\"\n" 	 
-		"{\n" 	 
-		"  GtkWidget::focus-padding = 0\n" 	 
-		"  xthickness = 0\n" 	 
-		"  ythickness = 0\n" 	 
-		"}\n" 	 
+		"style \"gossip-close-button-style\"\n"
+		"{\n"
+		"  GtkWidget::focus-padding = 0\n"
+		"  xthickness = 0\n"
+		"  ythickness = 0\n"
+		"}\n"
 		"widget \"*.gossip-close-button\" style \"gossip-close-button-style\"");
 }
 
@@ -254,6 +252,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 	GtkWidget            *menu_conv;
 	GtkWidget            *menu;
 	gint                  i;
+	GtkWidget            *chat_vbox;
 
 	priv = GET_PRIV (window);
 
@@ -264,7 +263,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "chat_window",
 				       NULL,
 				       "chat_window", &priv->dialog,
-				       "chats_notebook", &priv->notebook,
+				       "chat_vbox", &chat_vbox,
 				       "menu_conv", &menu_conv,
 				       "menu_conv_clear", &priv->menu_conv_clear,
 				       "menu_conv_log", &priv->menu_conv_log,
@@ -309,6 +308,10 @@ gossip_chat_window_init (GossipChatWindow *window)
 
 	g_object_unref (glade);
 
+	priv->notebook = gossip_notebook_new ();
+	gtk_widget_show (priv->notebook);
+	gtk_box_pack_start (GTK_BOX (chat_vbox), priv->notebook, TRUE, TRUE, 0);
+	
 	/* Set up accels */
 	accel_group = gtk_accel_group_new ();
 	gtk_window_add_accel_group (GTK_WINDOW (priv->dialog), accel_group);
@@ -597,8 +600,9 @@ chat_window_create_label (GossipChatWindow *window,
 	GtkRequisition        size;
 
 	priv = GET_PRIV (window);
-	
-	hbox = gtk_hbox_new (FALSE, 2);
+
+	/* The spacing between the button and the label. */
+	hbox = gtk_hbox_new (FALSE, 0);
 
  	event_box = gtk_event_box_new (); 
  	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box), FALSE); 
@@ -621,6 +625,7 @@ chat_window_create_label (GossipChatWindow *window,
 
 	status_image = gtk_image_new ();
 
+	/* Spacing between the icon and label. */
 	event_box_hbox = gtk_hbox_new (FALSE, 2);
 
 	gtk_box_pack_start (GTK_BOX (event_box_hbox), status_image, FALSE, FALSE, 0);
@@ -670,81 +675,6 @@ chat_window_create_label (GossipChatWindow *window,
 	gtk_widget_hide (close_button);
 
 	return hbox;
-
-#if 0
-	GossipChatWindowPriv *priv;
-	GtkWidget            *hbox;
-	GtkWidget            *label;
-	GtkWidget            *image;
-	const gchar          *name;
-	GtkWidget            *event_box_tab; 
-	GtkWidget            *event_box_image;
-	PangoAttrList        *attr_list;
-	PangoAttribute       *attr;
-
-	priv = GET_PRIV (window);
-
-	/* Set up event box for tooltip */
- 	event_box_tab = gtk_event_box_new (); 
- 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box_tab), FALSE); 
-  	g_object_set_data (G_OBJECT (chat), "chat-window-tab-tooltip-widget", event_box_tab);
-
-	/* Set up label */
-	name = gossip_chat_get_name (chat);
-	label = gtk_label_new (name);
-
-	gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
-	
-	attr_list = pango_attr_list_new ();
-	attr = pango_attr_scale_new (1/1.2);
-	attr->start_index = 0;
-	attr->end_index = -1;
-	pango_attr_list_insert (attr_list, attr);
-	gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-	pango_attr_list_unref (attr_list);
-
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
-	g_object_set_data (G_OBJECT (chat), "chat-window-tab-label", label); 
-
-	/* Set up event box for label */
- 	event_box_image = gtk_event_box_new ();
- 	gtk_event_box_set_visible_window (GTK_EVENT_BOX (event_box_image), FALSE);
-
-	/* Set up image */
-	image = gtk_image_new ();
-	g_object_set_data (G_OBJECT (chat), "chat-window-tab-image", image);
-
- 	gtk_container_add (GTK_CONTAINER (event_box_image), image); 
-
-	/* Add to the hbox */
-	hbox = gtk_hbox_new (FALSE, 2);
-  	gtk_box_pack_start (GTK_BOX (hbox), event_box_image, FALSE, FALSE, 0);  
-	gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
-
-	/* Add the hbox to the tooltip event box, this way both the
-	 * image and the label get the tooltip text.
-	 */
-	gtk_container_add (GTK_CONTAINER (event_box_tab), hbox);
-
-	/* Set up motion events for both event boxes */
-	gtk_widget_add_events (event_box_image, 
-			       GDK_ENTER_NOTIFY_MASK |
-			       GDK_LEAVE_NOTIFY_MASK);
-	g_signal_connect (event_box_image, "enter-notify-event",
-			  G_CALLBACK (chat_window_status_enter_notify_cb),
-			  chat);
-	g_signal_connect (event_box_image, "leave-notify-event",
-			  G_CALLBACK (chat_window_tab_leave_notify_cb),
-			  chat);
-
-	/* Set up tooltip */
-	chat_window_update_tooltip (window, chat);
-
-	/* Make everything visible */
-	gtk_widget_show_all (event_box_tab);
-
-	return event_box_tab;
-#endif
 }
 
 static void
@@ -1729,18 +1659,6 @@ chat_window_set_urgency_hint (GossipChatWindow *window,
 		URGENCY_TIMEOUT,
 		(GSourceFunc) chat_window_urgency_timeout_func,
 		window);
-}
-
-GtkWidget *
-chat_window_create_notebook (gpointer data)
-{
-	GtkWidget *notebook;
-
-	notebook = gossip_notebook_new ();
-
-	gtk_widget_show (notebook);
-
-	return notebook;
 }
 
 GossipChatWindow *

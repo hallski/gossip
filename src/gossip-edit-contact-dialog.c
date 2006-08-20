@@ -603,4 +603,6 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
 	}
+
+	gtk_widget_show_all (dialog->dialog);
 }

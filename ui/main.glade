@@ -4951,7 +4951,6 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="vcard_dialog">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Personal Details</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -5363,14 +5362,7 @@ This name could be something associated with the service provider, for example, 
 			  <property name="focus_on_click">True</property>
 
 			  <child>
-			    <widget class="Custom" id="avatar_chooser">
-			      <property name="visible">True</property>
-			      <property name="creation_function">vcard_dialog_create_avatar_chooser</property>
-			      <property name="string1">stock_person</property>
-			      <property name="int1">0</property>
-			      <property name="int2">0</property>
-			      <property name="last_modification_time">Mon, 22 May 2006 16:56:19 GMT</property>
-			    </widget>
+			    <placeholder/>
 			  </child>
 			</widget>
 		      </child>
@@ -7711,7 +7703,6 @@ This name could be something associated with the service provider, for example, 
 </widget>
 
 <widget class="GtkDialog" id="edit_contact_dialog">
-  <property name="visible">True</property>
   <property name="title" translatable="yes">Edit Contact</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
