@@ -25,7 +25,7 @@
 #include "gossip-about-dialog.h"
 #include "gossip-ui-utils.h"
 
-#define WEB_SITE "http://developer.imendio.com/wiki/gossip"
+#define WEB_SITE "http://developer.imendio.com/projects/gossip/"
 
 static void about_dialog_activate_link_cb (GtkAboutDialog  *about,
 					   const gchar     *link,
