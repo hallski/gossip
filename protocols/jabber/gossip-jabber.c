@@ -1317,6 +1317,13 @@ jabber_get_default_server (GossipProtocol *protocol,
 	
 	jid = gossip_jid_new (username);
 	str = gossip_jid_get_part_host (jid);
+
+	/* Specfic services have different connection servers */
+	if (g_ascii_strncasecmp (str, "gmail.com", -1) == 0 ||
+  	    g_ascii_strncasecmp (str, "googlemail.com", -1) == 0) {
+		str = "talk.google.com";
+	}
+	
 	server = g_strdup (str);
 	gossip_jid_unref (jid);
 
