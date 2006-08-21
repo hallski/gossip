@@ -321,6 +321,11 @@ static JabberData *     jabber_data_new                     (GossipJabber       
 							     gpointer                 user_data);
 static void             jabber_data_free                    (JabberData              *data);
 
+static const gchar *server_conversions[] = {
+	"gmail.com", "talk.google.com",
+	"googlemail.com", "talk.google.com",
+	NULL
+};
 
 G_DEFINE_TYPE_WITH_CODE (GossipJabber, gossip_jabber, GOSSIP_TYPE_PROTOCOL,
 			 G_IMPLEMENT_INTERFACE (GOSSIP_TYPE_CHATROOM_PROVIDER,
@@ -1309,6 +1314,7 @@ jabber_get_default_server (GossipProtocol *protocol,
 	GossipJID        *jid;
 	const gchar      *str;
 	gchar            *server;
+	gint              i = 0;
 
 	g_return_val_if_fail (username != NULL, NULL);
 
@@ -1318,10 +1324,13 @@ jabber_get_default_server (GossipProtocol *protocol,
 	jid = gossip_jid_new (username);
 	str = gossip_jid_get_part_host (jid);
 
-	/* Specfic services have different connection servers */
-	if (g_ascii_strncasecmp (str, "gmail.com", -1) == 0 ||
-  	    g_ascii_strncasecmp (str, "googlemail.com", -1) == 0) {
-		str = "talk.google.com";
+	while (server_conversions[i] != NULL) {
+		if (g_ascii_strncasecmp (str, server_conversions[i], -1) == 0) {
+			str = server_conversions[i + 1];
+			break;
+		}
+
+		i += 2;
 	}
 	
 	server = g_strdup (str);

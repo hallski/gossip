@@ -1,3 +1,10 @@
+2006-08-21  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: (jabber_get_default_server):
+	If the Jabber ID is a Google Jabber ID, then replace the
+	connecting server for the talk.google.com, fixes #352228 (Patch by
+	Xavier Claessens).
+
 2006-08-20  Daniel Nylander <po@danielnylander.se>
 
 	* help/sv/sv.po: Added initial Swedish translation.

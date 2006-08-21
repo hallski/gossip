@@ -33,6 +33,8 @@ option (Martyn).
 - Fixed #312293, Always show events (messages, subscription requests,
 etc) for contacts regardless to their state and the users preference
 to show offline contacts or not (Martyn).
+- Fixed #352228, Use talk.google.com for the connecting server when
+setting up new Google accounts (Xavier Claessens).
 
 Translations:
 Richard Hult (sv)
