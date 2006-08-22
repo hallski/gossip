@@ -33,21 +33,25 @@ gossip_time_get_current (void)
 	return time (NULL);
 }
 
-/* The format is: "20021209T23:51:30" and is in UTC. 0 is returned on failure. */
+/* The format is: "20021209T23:51:30" and is in UTC. 0 is returned on
+ * failure. The alternative format "20021209" is also accepted.
+ */
 gossip_time_t
 gossip_time_parse (const gchar *str)
 {
 	struct tm tm;
 	gint      year, month;
+	gint      n_parsed;
 	
 	memset (&tm, 0, sizeof (struct tm));
 
-	if (sscanf (str, "%4d%2d%2dT%2d:%2d:%2d", 
+	n_parsed = sscanf (str, "%4d%2d%2dT%2d:%2d:%2d",
 		    &year, &month, &tm.tm_mday, &tm.tm_hour,
-		    &tm.tm_min, &tm.tm_sec) != 6) {
+			   &tm.tm_min, &tm.tm_sec);
+	if (n_parsed != 3 && n_parsed != 6) {
 		return 0;
 	}
-
+	
 	tm.tm_year = year - 1900;
 	tm.tm_mon = month - 1;
 	tm.tm_isdst = -1;
@@ -63,7 +67,6 @@ gossip_time_to_string_utc (gossip_time_t  t,
 	gchar      stamp[128];
 	struct tm *tm;
 
-	g_return_val_if_fail (t > 0, NULL);
 	g_return_val_if_fail (format != NULL, NULL);
 	
 	tm = gmtime (&t);
@@ -82,7 +85,6 @@ gossip_time_to_string_local (gossip_time_t  t,
 	gchar      stamp[128];
 	struct tm *tm;
 
-	g_return_val_if_fail (t > 0, NULL);
 	g_return_val_if_fail (format != NULL, NULL);
 	
 	tm = localtime (&t);

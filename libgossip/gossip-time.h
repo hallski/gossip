@@ -33,6 +33,8 @@ typedef long gossip_time_t;
 
 gossip_time_t  gossip_time_get_current     (void);
 gossip_time_t  gossip_time_parse           (const gchar   *str);
+gossip_time_t  gossip_time_parse_format    (const gchar *str,
+					    const gchar *format);
 gchar         *gossip_time_to_string_utc   (gossip_time_t  t,
 					    const gchar   *format);
 gchar         *gossip_time_to_string_local (gossip_time_t  t,

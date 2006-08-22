@@ -1104,14 +1104,13 @@ gossip_log_get_chatrooms (GossipAccount *account)
 	return chatrooms;
 }
 
-// FIXME: Move to gossip-log-window.c
+/* Format is just date, 20061201. */
 gchar *
 gossip_log_get_date_readable (const gchar *date)
 {
 	gossip_time_t t;
 
-	// koko this won't work as the input doesn't have the time.
-	t = gossip_time_parse (date); //, LOG_TIME_FORMAT);
+	t = gossip_time_parse (date);
 
 	return gossip_time_to_string_local (t, "%a %d %b %Y");
 }

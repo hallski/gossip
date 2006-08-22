@@ -1,3 +1,11 @@
+2006-08-22  Richard Hult  <richard@imendio.com>
+
+	* libgossip/gossip-time.c: (gossip_time_parse),
+	(gossip_time_to_string_utc), (gossip_time_to_string_local):
+	* libgossip/gossip-time.h:
+	* src/gossip-log.c: (gossip_log_get_date_readable): Parse the
+	dates for the log window correctly, fixes bug #352385.
+
 2006-08-21  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c: (jabber_get_default_server):
