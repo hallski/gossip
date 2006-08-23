@@ -311,7 +311,7 @@ static const GtkActionEntry entries[] = {
 	  G_CALLBACK (contact_list_action_cb)
 	},
 	{ "Rename", NULL, 
-	  N_("Re_name group"), NULL, N_("Rename group"),
+	  N_("Re_name"), NULL, N_("Rename"),
 	  G_CALLBACK (contact_list_action_cb)
 	},
 	{ "Edit", GTK_STOCK_EDIT, 
@@ -319,7 +319,7 @@ static const GtkActionEntry entries[] = {
 	  G_CALLBACK (contact_list_action_cb)
 	},
 	{ "Remove", GTK_STOCK_REMOVE, 
-	  N_("_Remove contact"), NULL, N_("Remove contact"),         
+	  N_("_Remove"), NULL, N_("Remove contact"),         
 	  G_CALLBACK (contact_list_action_cb)
 	},
 	{ "Invite", GOSSIP_STOCK_GROUP_MESSAGE,                    
@@ -342,17 +342,15 @@ static const gchar *ui_info =
 	"<ui>"
 	"  <popup name='Contact'>"
 	"    <menuitem action='Chat'/>"
+	"    <menuitem action='Log'/>"
+	"    <menuitem action='SendFile'/>"
 	"    <separator/>"
-	"    <menuitem action='Information'/>"
+	"    <menuitem action='Invite'/>"
 	"    <separator/>"
 	"    <menuitem action='Edit'/>"
 	"    <menuitem action='Remove'/>"
 	"    <separator/>"
-	"    <menuitem action='Invite'/>"
-	"    <separator/>"
-	"    <menuitem action='SendFile'/>"
-	"    <separator/>"
-	"    <menuitem action='Log'/>"
+	"    <menuitem action='Information'/>"
 	"  </popup>"
 	"  <popup name='Group'>"
 	"    <menuitem action='Rename'/>"
