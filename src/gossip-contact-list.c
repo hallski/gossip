@@ -1968,9 +1968,6 @@ gossip_contact_list_get_contact_menu (GossipContactList *list,
 	can_show_log = gossip_log_exists_for_contact (contact);
 	can_send_file = FALSE;
 	
-	/* Set up invites menu. */
-	g_object_unref (contact);
-	
 	menu = contact_list_get_contact_menu (list,
 					      can_send_file,
 					      can_show_log);
@@ -2020,6 +2017,7 @@ contact_list_button_press_event_cb (GossipContactList *list,
 	
 	if (contact) {
 		menu = gossip_contact_list_get_contact_menu (list, contact);
+		g_object_unref (contact);
 	} else {
 		menu = gossip_contact_list_get_group_menu (list);
 	}
@@ -2217,9 +2215,11 @@ contact_list_action_cb (GtkAction         *action,
 		parent = GTK_WINDOW (gossip_app_get_window ());
 
 		contact = gossip_contact_list_get_selected (list);
-		gossip_contact_info_dialog_show (contact, parent);
-		g_object_unref (contact);
-
+		if (contact) {
+			gossip_contact_info_dialog_show (contact, parent);
+			g_object_unref (contact);
+		}
+		
 		return;
 	}
 
@@ -2235,9 +2235,11 @@ contact_list_action_cb (GtkAction         *action,
 		parent = GTK_WINDOW (gossip_app_get_window ());
 
 		contact = gossip_contact_list_get_selected (list);
-		gossip_edit_contact_dialog_show (contact, parent);
-		g_object_unref (contact);
-
+		if (contact) {
+			gossip_edit_contact_dialog_show (contact, parent);
+			g_object_unref (contact);
+		}
+		
 		return;
 	}
 
@@ -2255,8 +2257,10 @@ contact_list_action_cb (GtkAction         *action,
 		GossipContact *contact;
 
 		contact = gossip_contact_list_get_selected (list);
-		gossip_ft_window_send_file (contact);
-		g_object_unref (contact);
+		if (contact) {
+			gossip_ft_window_send_file (contact);
+			g_object_unref (contact);
+		}
 
 		return;
 	}
@@ -2265,9 +2269,11 @@ contact_list_action_cb (GtkAction         *action,
 		GossipContact *contact;
 
 		contact = gossip_contact_list_get_selected (list);
-		gossip_log_window_show (contact, NULL);
-		g_object_unref (contact);
-
+		if (contact) {
+			gossip_log_window_show (contact, NULL);
+			g_object_unref (contact);
+		}
+		
 		return;
 	}
 }

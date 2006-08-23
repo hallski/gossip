@@ -1,3 +1,11 @@
+2006-08-23  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c:
+	(gossip_contact_list_get_contact_menu): Remove spurious unref,
+	fixes bug #352377.
+	(contact_list_button_press_event_cb), (contact_list_action_cb):
+	Check that we have a contact before doing anything.
+
 2006-08-22  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-time.c: (gossip_time_parse),
@@ -53,7 +61,7 @@
 
 2006-08-19  Martyn Russell  <martyn@imendio.com>
 
-	* README: Added a blurb about how to use DBus with Gossip.
+	* README: Added a blurb about how to use D-Bus with Gossip.
 	
 	* peekaboo/data/GNOME_Peekaboo_Applet.xml: Removed the "Toggle
 	roster visibility" option here.

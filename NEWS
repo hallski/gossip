@@ -35,7 +35,10 @@ etc) for contacts regardless to their state and the users preference
 to show offline contacts or not (Martyn).
 - Fixed #352228, Use talk.google.com for the connecting server when
 setting up new Google accounts (Xavier Claessens).
-- Fixed #352385, Parse the dates for the log window correctly.
+- Fixed #352385, Parse the dates for the log window correctly 
+(Richard).
+- Fixed #352377, Warnings when bringing up contact/group sub menu
+(Richard).
 
 Translations:
 Richard Hult (sv)
