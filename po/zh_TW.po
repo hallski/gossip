@@ -1556,7 +1556,7 @@ msgstr "稍後您可以在選單中選取「編輯→帳號」來更改帳號設
 msgid ""
 "You need to set a name for the connection, for example, <b>Home</b> or "
 "<b>Laptop</b>."
-msgstr "您須要設定該連線的名稱，例如，<b>家裡</b> 或 <b>筆電</b>。"
+msgstr "您需要設定該連線的名稱，例如，<b>家裡</b> 或 <b>筆電</b>。"
 
 #: ../ui/main.glade.h:128
 msgid "Your Account"
