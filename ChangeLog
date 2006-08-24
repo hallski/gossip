@@ -1,3 +1,30 @@
+2006-08-25  Martyn Russell  <martyn@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: Unsubscribe contacts when
+	removing them, not just remove them from our roster. Removed
+	internal references for contacts in the Jabber backend when
+	removing the contact, this makes sure that when they are added
+	again during the same session, they are not just sent silent
+	subscribed responses.
+	
+	* src/gossip-galago.c: Since we warn a lot here, ALL warnings are
+	now debug statements. To see them turn on
+	GOSSIP_DEBUG=Galago. This should also stop the crash reports on
+	Edgy since warnings are critical there (we think).
+	
+	* src/gossip-notify.c: Added notifications when subscription
+	requests arrive (Xavier Claessens). 
+
+	* src/gossip-subscription-dialog.c:
+	* ui/main.glade: Show "requesting information..." label in the
+	subscription dialog and show the dialog imendiately instead of
+	waiting for the vcard first, fixes #314555 (Xavier Claessens).
+
+2006-08-24  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-session.c: Actually unsubscribe someone when we
+	remove them from our roster. 	
+
 2006-08-24  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-vcard-dialog.c (vcard_dialog_get_vcard_cb): Check the

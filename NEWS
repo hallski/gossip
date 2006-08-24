@@ -5,6 +5,15 @@ NEW in 0.15:
 dialog where you can set the name too (Martyn).
 - Fixed "Hide Contact List" menu item which was actually hidden itself
 (Martyn). 
+- Unsubscribe contacts when removing them, not just remove them from
+our roster (Martyn). 
+- Removed internal references for contacts in the Jabber backend when
+removing the contact, this makes sure that when they are added again
+during the same session, they are not just sent silent subscribed
+responses (Martyn).
+- Added notifications when subscription requests arrive (Xavier
+Claessens). 
+- Don't set contact type to permanent if they subscription is NONE.
 - Fixed #349872, Don't crash on exit when cleaning up hash tables
 (Richard). 
 - Fixed #350416, Show avatars in notifications (Martyn).
@@ -39,6 +48,8 @@ setting up new Google accounts (Xavier Claessens).
 (Richard).
 - Fixed #352377, Warnings when bringing up contact/group sub menu
 (Richard).
+- Fixed #314555, Can not respond to Google subscribe requests (Xavier
+Claessens, Martyn).
 
 Translations:
 Richard Hult (sv)
