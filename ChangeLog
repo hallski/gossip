@@ -1,3 +1,9 @@
+2006-08-24  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-vcard-dialog.c (vcard_dialog_get_vcard_cb): Check the
+	global dialog variable, not the one passed as argument. Fixes a
+	crash when there is no vcard retrieved from the server.
+
 2006-08-23  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: Re-arrange the context menu so it is

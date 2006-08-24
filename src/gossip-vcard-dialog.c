@@ -358,7 +358,7 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 static void
 vcard_dialog_get_vcard_cb (GossipResult       result,
 			   GossipVCard       *vcard,
-			   GossipVCardDialog *dialog)
+			   GossipVCardDialog *user_data)
 {
 	GtkComboBox   *combo_box;
 	GtkTextBuffer *buffer;
