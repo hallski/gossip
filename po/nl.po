@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-20 20:52+0200\n"
-"PO-Revision-Date: 2006-08-20 20:52+0200 \n"
+"POT-Creation-Date: 2006-08-25 10:16+0200\n"
+"PO-Revision-Date: 2006-08-25 10:17+0200 \n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -277,11 +277,11 @@ msgstr "Deze functie is niet toegankelijk."
 msgid "A specific protocol error occurred that was unexpected."
 msgstr "Er is een onverwachtse protocolfout opgetreden."
 
-#: ../protocols/jabber/gossip-jabber.c:1077
+#: ../protocols/jabber/gossip-jabber.c:1082
 msgid "Connection could not be opened"
 msgstr "Verbinding kon niet gemaakt worden"
 
-#: ../protocols/jabber/gossip-jabber.c:1125
+#: ../protocols/jabber/gossip-jabber.c:1130
 msgid "Couldn't send message!"
 msgstr "Bericht kon niet verzonden worden!"
 
@@ -429,7 +429,7 @@ msgstr "%s zal aan uw contactlijst worden toegevoegd."
 
 #: ../src/gossip-add-contact-window.c:434
 #: ../src/gossip-contact-info-dialog.c:478
-#: ../src/gossip-subscription-dialog.c:391
+#: ../src/gossip-subscription-dialog.c:414
 msgid "I would like to add you to my contact list."
 msgstr "Ik wil je graag toevoegen aan mijn contactlijst."
 
@@ -576,7 +576,7 @@ msgstr "Kies wie u wilt uitnodigen in deze ruimte:"
 msgid "Select which room you would like to invite:"
 msgstr "Kies welke ruimte u wilt uitnodigen:"
 
-#: ../src/gossip-chat-manager.c:147 ../src/gossip-notify.c:330
+#: ../src/gossip-chat-manager.c:147 ../src/gossip-notify.c:407
 #, c-format
 msgid "New message from %s"
 msgstr "Nieuw bericht van %s"
@@ -660,12 +660,12 @@ msgid "View contact information"
 msgstr "Contactinformatie tonen"
 
 #: ../src/gossip-contact-list.c:314
-msgid "Re_name group"
-msgstr "Groep her_noemen"
+msgid "Re_name"
+msgstr "Her_noemen"
 
 #: ../src/gossip-contact-list.c:314
-msgid "Rename group"
-msgstr "Groep hernoemen"
+msgid "Rename"
+msgstr "Hernoemen"
 
 #: ../src/gossip-contact-list.c:318 ../ui/chat.glade.h:19
 #: ../ui/main.glade.h:152
@@ -677,8 +677,8 @@ msgid "Edit the groups and name for this contact"
 msgstr "Groepen en naam voor dit contact bewerken"
 
 #: ../src/gossip-contact-list.c:322
-msgid "_Remove contact"
-msgstr "Contact _verwijderen"
+msgid "_Remove"
+msgstr "_Verwijderen"
 
 #: ../src/gossip-contact-list.c:322
 msgid "Remove contact"
@@ -709,11 +709,11 @@ msgstr "_Vorige gesprekken tonen"
 msgid "View previous conversations with this contact"
 msgstr "Vorige gesprekken met dit contact tonen"
 
-#: ../src/gossip-contact-list.c:2326
+#: ../src/gossip-contact-list.c:2330
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Wilt u dit contact echt uit de contactlijst verwijderen?"
 
-#: ../src/gossip-contact-list.c:2393
+#: ../src/gossip-contact-list.c:2397
 #, c-format
 msgid ""
 "Please enter a new name for the group:\n"
@@ -728,7 +728,7 @@ msgstr "Selecteren"
 
 #: ../src/gossip-edit-contact-dialog.c:234
 #: ../src/gossip-edit-contact-dialog.c:244
-#: ../src/gossip-subscription-dialog.c:218
+#: ../src/gossip-subscription-dialog.c:359
 msgid "Unsorted"
 msgstr "Ongesorteerd"
 
@@ -863,24 +863,38 @@ msgstr "Thuis"
 msgid "Example"
 msgstr "Voorbeeld"
 
-#: ../src/gossip-notify.c:195 ../src/gossip-private-chat.c:466
+#: ../src/gossip-notify.c:201 ../src/gossip-private-chat.c:466
 #, c-format
 msgid "%s has come online"
 msgstr "%s is nu online"
 
-#: ../src/gossip-notify.c:212 ../src/gossip-notify.c:358
+#: ../src/gossip-notify.c:218 ../src/gossip-notify.c:291
+#: ../src/gossip-notify.c:435
 msgid "Default"
 msgstr "Standaard"
 
-#: ../src/gossip-notify.c:215
+#: ../src/gossip-notify.c:221
 msgid "Chat!"
 msgstr "Chatten"
 
-#: ../src/gossip-notify.c:361
+#: ../src/gossip-notify.c:258 ../src/gossip-subscription-dialog.c:294
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr "%s wil aan uw contactlijst worden toegevoegd."
+
+#: ../src/gossip-notify.c:260 ../src/gossip-subscription-dialog.c:239
+msgid "Someone wants to be added to your contact list."
+msgstr "Iemand wil aan de contactlijst worden toegevoegd."
+
+#: ../src/gossip-notify.c:277
+msgid "Subscription request"
+msgstr "Inschrijvingsverzoek"
+
+#: ../src/gossip-notify.c:438
 msgid "Show"
 msgstr "Tonen"
 
-#: ../src/gossip-notify.c:366 ../ui/main.glade.h:35
+#: ../src/gossip-notify.c:444 ../ui/main.glade.h:35
 msgid "Contact Information"
 msgstr "Contactinformatie"
 
@@ -927,28 +941,19 @@ msgstr "Onderwerp: %s"
 msgid "Suggestions for the word"
 msgstr "Suggesties voor dit woord"
 
-#: ../src/gossip-subscription-dialog.c:161
+#: ../src/gossip-subscription-dialog.c:162
 #, c-format
 msgid "New subscription request from %s"
 msgstr "Nieuw inschrijvingsverzoek van %s"
 
-#: ../src/gossip-subscription-dialog.c:291
-#, c-format
-msgid "%s wants to be added to your contact list."
-msgstr "%s wil aan uw contactlijst worden toegevoegd."
+#: ../src/gossip-subscription-dialog.c:240
+msgid "Do you want to add this person to your contact list?"
+msgstr "Wilt u deze persoon aan de contactlijst toevoegen?"
 
-#: ../src/gossip-subscription-dialog.c:293
+#: ../src/gossip-subscription-dialog.c:296
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Wilt u %s aan de contactlijst toevoegen?"
-
-#: ../src/gossip-subscription-dialog.c:299
-msgid "Someone wants to be added to your contact list."
-msgstr "Iemand wil aan de contactlijst worden toegevoegd."
-
-#: ../src/gossip-subscription-dialog.c:300
-msgid "Do you want to add this person to your contact list?"
-msgstr "Wilt u deze persoon aan de contactlijst toevoegen?"
 
 #: ../src/gossip-ui-utils.c:234
 #, c-format
@@ -1907,6 +1912,12 @@ msgstr "Voor chatruimtes _gebruiken"
 msgid "_Yes"
 msgstr "_Ja"
 
+#~ msgid "Re_name group"
+#~ msgstr "Groep her_noemen"
+
+#~ msgid "Rename group"
+#~ msgstr "Groep hernoemen"
+
 #~ msgid "_Hide Contact List"
 #~ msgstr "Contactlijst _verbergen"
 
@@ -1916,9 +1927,6 @@ msgstr "_Ja"
 #~ msgstr ""
 #~ "Vul een uitnodigingsbericht in voor\n"
 #~ "%s"
-
-#~ msgid "Re_name"
-#~ msgstr "Her_noemen"
 
 #~ msgid "Rename contact"
 #~ msgstr "Contact hernoemen"
