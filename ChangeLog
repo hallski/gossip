@@ -1,5 +1,9 @@
 2006-08-25  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.15.
+
+2006-08-25  Martyn Russell  <martyn@imendio.com>
+
 	* protocols/jabber/gossip-jabber.c: Unsubscribe contacts when
 	removing them, not just remove them from our roster. Removed
 	internal references for contacts in the Jabber backend when

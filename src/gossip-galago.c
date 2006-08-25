@@ -274,7 +274,7 @@ galago_contact_removed_cb (GossipSession *session,
 
 	gpe = g_hash_table_lookup (people, contact);
 	if (!gpe) { 
-		g_warning ("Can not find person:'%s'", contact_id); 
+ 		gossip_debug (DEBUG_DOMAIN, "Can not find person:'%s'", contact_id);  
 		return;
 	}
 
@@ -327,14 +327,14 @@ galago_contact_presence_updated_cb (GossipSession *session,
 
 	gpe = g_hash_table_lookup (people, contact);
 	if (!gpe) { 
-		g_warning ("Can not find person:'%s'", contact_id);
+ 		gossip_debug (DEBUG_DOMAIN, "Can not find person:'%s'", contact_id); 
 		return;
 	}
 
 	gs = gossip_galago_get_service (account);
 	ga = galago_person_get_account (gpe, gs, contact_id, FALSE);
 	if (!ga) { 
-		g_warning ("Can not find account from contact:'%s'", contact_id); 
+ 		gossip_debug (DEBUG_DOMAIN, "Can not find account from contact:'%s'", contact_id);  
 		return;
 	}
 
@@ -383,7 +383,7 @@ gossip_galago_init (GossipSession *session)
 	gossip_debug (DEBUG_DOMAIN, "Initiating...");
 
 	if (!galago_init (PACKAGE_NAME, GALAGO_INIT_FEED)) {
-		g_warning ("Can not initialise Galago integration");
+		gossip_debug (DEBUG_DOMAIN, "Can not initialise Galago integration");
 		return;
 	}
 

@@ -67,7 +67,7 @@
  * the user has stopped composing.
  */
 #define COMPOSING_TIMEOUT          45
-  
+ 
 struct _GossipJabberPriv {
 	LmConnection          *connection;
 	
@@ -1799,6 +1799,16 @@ jabber_contact_remove (GossipProtocol *protocol,
  	
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
+
+	/* Remove current subscription */
+	gossip_protocol_set_subscription (protocol, contact, FALSE);
+
+	/* Remove from internal hash table */
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' being removed with current ref count:%d", 
+		      gossip_contact_get_id (contact), G_OBJECT (contact)->ref_count);
+
+	g_hash_table_remove (priv->contacts, contact);
 }
 
 static void
@@ -2724,8 +2734,6 @@ jabber_request_roster (GossipJabber *jabber,
 							      &new_item, 
 							      FALSE);
 
-		g_object_set (contact, "type", GOSSIP_CONTACT_TYPE_CONTACTLIST, NULL);
-
 		/* Groups */
 		groups = NULL;
 		for (subnode = node->children; subnode; subnode = subnode->next) {
@@ -2765,6 +2773,26 @@ jabber_request_roster (GossipJabber *jabber,
 				type = GOSSIP_SUBSCRIPTION_FROM;
 			} else {
 				type = GOSSIP_SUBSCRIPTION_NONE;
+			}
+
+			/* In the rare cases where we have this state,
+			 * NONE means that we are in the process of
+			 * setting up subscription so the contact is
+			 * still temporary, any other state and we
+			 * assume they must be a proper contact list
+			 * contact. 
+			 *
+			 * Also, later when we present the
+			 * subscription dialog to the user, we need to
+			 * know if user is temporary contact or an old
+			 * contact so we can silently accept
+			 * subscription requests for people already on
+			 * the roster with "to" or "from" conditions.
+			 */
+			if (type != GOSSIP_SUBSCRIPTION_NONE) {
+				g_object_set (contact, "type", 
+					      GOSSIP_CONTACT_TYPE_CONTACTLIST, 
+					      NULL);
 			}
 
 			gossip_contact_set_subscription (contact, type);
@@ -3224,7 +3252,9 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
-		gossip_debug (DEBUG_DOMAIN, "New contact:'%s'", gossip_jid_get_full (jid));
+		gossip_debug (DEBUG_DOMAIN, 
+			      "New contact:'%s' (GOSSIP_CONTACT_TYPE_TEMPORARY)", 
+			      gossip_jid_get_full (jid));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
 					      priv->account);
 		gossip_contact_set_id (contact, 
@@ -3245,7 +3275,32 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 			jabber_contact_vcard (jabber, contact);
 		}
 	} else {
-		gossip_debug (DEBUG_DOMAIN, "Get contact:'%s'", gossip_jid_get_full (jid));
+		GossipContactType  type;
+		const gchar       *type_str;
+
+		type = gossip_contact_get_type (contact);
+
+		switch (type) {
+		case GOSSIP_CONTACT_TYPE_TEMPORARY:
+			type_str = "GOSSIP_CONTACT_TYPE_TEMPORARY";
+			break;
+		case GOSSIP_CONTACT_TYPE_CONTACTLIST:
+			type_str = "GOSSIP_CONTACT_TYPE_CONTACTLIST";
+			break;
+		case GOSSIP_CONTACT_TYPE_CHATROOM:
+			type_str = "GOSSIP_CONTACT_TYPE_CHATROOM";
+			break;
+		case GOSSIP_CONTACT_TYPE_USER:
+			type_str = "GOSSIP_CONTACT_TYPE_USER";
+			break;
+		default:
+			type_str = "unknown";
+			break;
+		}
+
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Get contact:'%s', type:%d-->'%s'", 
+			      gossip_jid_get_full (jid), type, type_str);
 	}
 
 	gossip_jid_unref (jid);

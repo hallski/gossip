@@ -35,6 +35,7 @@
 #define DEBUG_DOMAIN "Notify"
 
 #define NOTIFY_MESSAGE_TIME 20000
+#define NOTIFY_SUBSCRIPTION_TIME 20000
 
 /* Max length of the body part of a message we show in the
  * notification. 
@@ -46,38 +47,43 @@
  */ 
 #define NOTIFY_WAIT_TIME 10000
 
-static const gchar *       notify_get_status_from_presence    (GossipPresence     *presence);
-static gboolean            notify_get_is_busy                 (void);
-static void                notify_contact_online              (GossipContact      *contact);
-static void                notify_online_action_cb            (NotifyNotification *notify,
-							       gchar              *label,
-							       GossipContact      *contact);
-static void                notify_new_message_contact_cb      (NotifyNotification *notify,
-							       gchar              *label,
-							       GossipEventManager *event_manager);
-static NotifyNotification *notify_new_message                 (GossipEventManager *event_manager,
-							       GossipMessage      *message);
-static gboolean            notify_protocol_timeout_cb         (GossipAccount      *account);
-static void                notify_protocol_connected_cb       (GossipSession      *session,
-							       GossipAccount      *account,
-							       GossipProtocol     *protocol,
-							       gpointer            user_data);
-static void                notify_protocol_disconnected_cb    (GossipSession      *session,
-							       GossipAccount      *account,
-							       GossipProtocol     *protocol,
-							       gpointer            user_data);
-static void                notify_contact_presence_updated_cb (GossipSession      *session,
-							       GossipContact      *contact,
-							       gpointer            user_data);
-static void                notify_event_added_cb              (GossipEventManager *event_manager,
-							       GossipEvent        *event,
-							       gpointer            user_data);
-static gboolean            notify_event_remove_foreach        (gpointer            key,
-							       GossipEvent        *event,
-							       GossipEvent        *event_to_compare);
-static void                notify_event_removed_cb            (GossipEventManager *event_manager,
-							       GossipEvent        *event,
-							       gpointer            user_data);
+static const gchar *       notify_get_status_from_presence        (GossipPresence     *presence);
+static gboolean            notify_get_is_busy                     (void);
+static void                notify_contact_online                  (GossipContact      *contact);
+static void                notify_online_action_cb                (NotifyNotification *notify,
+								   gchar              *label,
+								   GossipContact      *contact);
+static void                notify_subscription_request_default_cb (NotifyNotification *notify,
+								   gchar              *label,
+								   gpointer            user_data);
+static void                notify_subscription_request_show       (GossipContact      *contact);
+static void                notify_new_message_contact_cb          (NotifyNotification *notify,
+								   gchar              *label,
+								   GossipEventManager *event_manager);
+static NotifyNotification *notify_new_message                     (GossipEventManager *event_manager,
+								   GossipMessage      *message);
+static gboolean            notify_protocol_timeout_cb             (GossipAccount      *account);
+static void                notify_protocol_connected_cb           (GossipSession      *session,
+								   GossipAccount      *account,
+								   GossipProtocol     *protocol,
+								   gpointer            user_data);
+static void                notify_protocol_disconnected_cb        (GossipSession      *session,
+								   GossipAccount      *account,
+								   GossipProtocol     *protocol,
+								   gpointer            user_data);
+static void                notify_contact_presence_updated_cb     (GossipSession      *session,
+								   GossipContact      *contact,
+								   gpointer            user_data);
+static gboolean            notify_subscription_request_show_cb    (GossipContact      *contact);
+static void                notify_event_added_cb                  (GossipEventManager *event_manager,
+								   GossipEvent        *event,
+								   gpointer            user_data);
+static gboolean            notify_event_remove_foreach            (gpointer            key,
+								   GossipEvent        *event,
+								   GossipEvent        *event_to_compare);
+static void                notify_event_removed_cb                (GossipEventManager *event_manager,
+								   GossipEvent        *event,
+								   gpointer            user_data);
 
 enum {
 	NOTIFY_SHOW_MESSAGE,
@@ -230,6 +236,77 @@ notify_contact_online (GossipContact *contact)
 }
 
 static void
+notify_subscription_request_default_cb (NotifyNotification *notify,
+					gchar              *label,
+					gpointer            user_data)
+{
+	/* FIXME: Show subscription dialog */
+}
+
+static void
+notify_subscription_request_show (GossipContact *contact)
+{
+	NotifyNotification  *notify;
+	GdkPixbuf           *pixbuf = NULL;
+	GError              *error = NULL;
+	const gchar         *name;
+	gchar               *message;
+	gboolean             show_avatars = FALSE;
+
+	name = gossip_contact_get_name (contact);
+	if (name) {
+		message = g_strdup_printf (_("%s wants to be added to your contact list."), name);
+	} else {
+		message = g_strdup (_("Someone wants to be added to your contact list."));
+	}
+
+	gossip_conf_get_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_UI_SHOW_AVATARS,
+			      &show_avatars);
+
+	if (show_avatars) {
+		pixbuf = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
+	}
+
+	if (!pixbuf) {
+		/* Fall back to presence state */
+		pixbuf = gossip_pixbuf_from_stock (GTK_STOCK_DIALOG_QUESTION, 
+						   GTK_ICON_SIZE_MENU);
+	}
+
+	notify = notify_notification_new (_("Subscription request"),
+					  message,
+					  NULL,
+					  attach_widget);
+	g_free (message);
+
+	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
+	notify_notification_set_timeout (notify, NOTIFY_SUBSCRIPTION_TIME);
+
+	if (pixbuf) {
+		notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+		g_object_unref (pixbuf);
+	}
+
+	notify_notification_add_action (notify, "default", _("Default"),
+					(NotifyActionCallback) notify_subscription_request_default_cb,
+					NULL, NULL);
+
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_closed_cb),
+			  NULL);
+
+	if (!notify_notification_show (notify, &error)) {
+		g_warning ("Failed to send notification: %s",
+			   error->message);
+		g_error_free (error);
+	}
+
+	return;
+}
+
+static void
 notify_new_message_default_cb (NotifyNotification *notify,
 			       gchar              *label,
 			       GossipEventManager *event_manager)
@@ -361,6 +438,7 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_add_action (notify, "respond", _("Show"),
 					(NotifyActionCallback) notify_new_message_default_cb,
 					g_object_ref (event_manager), NULL);
+
 	if (gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY) {
 		notify_notification_add_action (
 			notify, "contact", _("Contact Information"),
@@ -504,6 +582,14 @@ notify_contact_presence_updated_cb (GossipSession *session,
 	}
 }
 
+static gboolean
+notify_subscription_request_show_cb (GossipContact *contact)
+{
+	notify_subscription_request_show (contact);
+
+	return FALSE;
+}
+
 static void
 notify_event_added_cb (GossipEventManager *event_manager,
 		       GossipEvent        *event,
@@ -517,7 +603,7 @@ notify_event_added_cb (GossipEventManager *event_manager,
 		NotifyNotification  *notify;
 		GossipMessage       *message;
 		GossipContact       *contact;
-		
+
 		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
 		contact = gossip_message_get_sender (message);
 
@@ -536,6 +622,12 @@ notify_event_added_cb (GossipEventManager *event_manager,
 						     g_object_ref (event));  
 			}
 		}
+	}
+	else if (type == GOSSIP_EVENT_SUBSCRIPTION_REQUEST) {
+		/* Give a chance to the server to have time to give us infos */
+		g_timeout_add (1000,
+			       (GSourceFunc) notify_subscription_request_show_cb,
+			       gossip_event_get_data (event));
 	}
 }
 
