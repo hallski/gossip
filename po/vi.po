@@ -6,8 +6,8 @@ msgid ""
 ""
 msgstr "Project-Id-Version: gossip HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-24 04:51+0200\n"
-"PO-Revision-Date: 2006-08-24 21:44+0930\n"
+"POT-Creation-Date: 2006-08-27 04:42+0200\n"
+"PO-Revision-Date: 2006-08-27 16:40+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <gnomevi-list@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -115,7 +115,8 @@ msgstr "Có nên kiểm tra đoạn gõ so với những ngôn ngữ đã chọn
 #: ../gossip.schemas.in.h:22
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
-msgstr "Bật/tắt chuyển đổi ký tự miêu tả mặt cười thành biểu tượng xúc cảm trong đối thoại."
+msgstr "Bật/tắt chuyển đổi ký tự miêu tả mặt cười thành biểu tượng xúc cảm trong đối "
+"thoại."
 
 #: ../gossip.schemas.in.h:23
 msgid "Whether or not to play a sound when messages arrive."
@@ -137,7 +138,8 @@ msgstr "Có nên bật lên khi liên lạc mới sẵn sàng hay không."
 msgid ""
 "Whether or not to show avatars for contacts in the contact list and chat "
 "windows."
-msgstr "Có nên hiển thị ảnh riêng cho mỗi liên lạc nằm trong danh sách liên lạc và cửa sổ trò chuyện hay không."
+msgstr "Có nên hiển thị ảnh riêng cho mỗi liên lạc nằm trong danh sách liên lạc và "
+"cửa sổ trò chuyện hay không."
 
 #: ../gossip.schemas.in.h:28
 msgid "Whether or not to show contacts that are offline in the contact list."
@@ -147,7 +149,8 @@ msgstr "Bật/tắt hiển thị các liên lác đang ngoại tuyến trong dan
 msgid ""
 "Whether or not to show the message dialog about closing the main window with "
 "the 'x' button in the title bar."
-msgstr "Có nên hiển thị hộp thoại thông điệp về việc đóng cửa sổ chính bằng cái nút « x » trên thanh tựa hay không."
+msgstr "Có nên hiển thị hộp thoại thông điệp về việc đóng cửa sổ chính bằng cái nút "
+"« x » trên thanh tựa hay không."
 
 #: ../gossip.schemas.in.h:30
 msgid "Whether to use the theme for chat rooms or not."
@@ -304,7 +307,8 @@ msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
 "Street, Fifth Floor, Boston, MA 02110-130159 USA"
-msgstr "Bạn đã nhận một bản sao của Giấy phép Công cộng GNU cùng với chương trình này; nếu không, hãy viết thư cho Tổ chức Phần mềm Tự do,\n"
+msgstr "Bạn đã nhận một bản sao của Giấy phép Công cộng GNU cùng với chương trình "
+"này; nếu không, hãy viết thư cho Tổ chức Phần mềm Tự do,\n"
 "Free Software Foundation, Inc.,\n"
 " 51 Franklin Street, Fifth Floor,\n"
 "Boston, MA  02110-1301, USA."
@@ -422,7 +426,7 @@ msgstr "%s sẽ được thêm vào danh sách liên lạc của bạn."
 
 #: ../src/gossip-add-contact-window.c:434
 #: ../src/gossip-contact-info-dialog.c:478
-#: ../src/gossip-subscription-dialog.c:391
+#: ../src/gossip-subscription-dialog.c:414
 msgid "I would like to add you to my contact list."
 msgstr "Tôi muốn thêm bạn vào danh sách liên lạc mình."
 
@@ -508,9 +512,11 @@ msgid ""
 "\n"
 "This is just a reminder, from now on, Gossip will quit when performing this "
 "action unless you uncheck the option below."
-msgstr "Vì không tìm thấy khay hệ thống hay thông báo, hành động này thường thoát khỏi trình Gossip.\n"
+msgstr "Vì không tìm thấy khay hệ thống hay thông báo, hành động này thường thoát "
+"khỏi trình Gossip.\n"
 "\n"
-"Đây chỉ là lời nhắc nhở, kể từ bây giờ, trình Gossip sẽ thoát khi thực hiện hành động này, nếu bạn không bỏ chọn tùy chọn bên dưới."
+"Đây chỉ là lời nhắc nhở, kể từ bây giờ, trình Gossip sẽ thoát khi thực hiện "
+"hành động này, nếu bạn không bỏ chọn tùy chọn bên dưới."
 
 #: ../src/gossip-app.c:1122
 #: ../src/gossip-edit-contact-dialog.c:194
@@ -562,7 +568,7 @@ msgid "Select which room you would like to invite:"
 msgstr "Chọn phòng vào đó bạn muốn mời người:"
 
 #: ../src/gossip-chat-manager.c:147
-#: ../src/gossip-notify.c:330
+#: ../src/gossip-notify.c:407
 #, c-format
 msgid "New message from %s"
 msgstr "Tin nhẳn mới từ %s"
@@ -718,7 +724,7 @@ msgstr "Chọn"
 
 #: ../src/gossip-edit-contact-dialog.c:234
 #: ../src/gossip-edit-contact-dialog.c:244
-#: ../src/gossip-subscription-dialog.c:218
+#: ../src/gossip-subscription-dialog.c:359
 msgid "Unsorted"
 msgstr "Chưa sắp xếp"
 
@@ -818,7 +824,8 @@ msgstr "- Bộ tin nhắn tức khắc Gossip"
 
 #: ../src/gossip-main.c:126
 msgid "You can not use --no-connect together with --account"
-msgstr "Bạn không thể sử dụng tùy chọn « --no-connect » (không kết nối) cùng với tùy chọn « --account » (tài khoản)"
+msgstr "Bạn không thể sử dụng tùy chọn « --no-connect » (không kết nối) cùng với tùy "
+"chọn « --account » (tài khoản)"
 
 #: ../src/gossip-main.c:138
 msgid "No accounts available."
@@ -854,26 +861,43 @@ msgstr "Nhà"
 msgid "Example"
 msgstr "Ví dụ"
 
-#: ../src/gossip-notify.c:195
+#: ../src/gossip-notify.c:201
 #: ../src/gossip-private-chat.c:466
 #, c-format
 msgid "%s has come online"
 msgstr "%s mới trực tuyến"
 
-#: ../src/gossip-notify.c:212
-#: ../src/gossip-notify.c:358
+#: ../src/gossip-notify.c:218
+#: ../src/gossip-notify.c:291
+#: ../src/gossip-notify.c:435
 msgid "Default"
 msgstr "Mặc định"
 
-#: ../src/gossip-notify.c:215
+#: ../src/gossip-notify.c:221
 msgid "Chat!"
 msgstr "Trò chuyện !"
 
-#: ../src/gossip-notify.c:361
+#: ../src/gossip-notify.c:258
+#: ../src/gossip-subscription-dialog.c:294
+#, c-format
+msgid "%s wants to be added to your contact list."
+msgstr "%s muốn được thêm vào danh sách liên lạc của bạn."
+
+#: ../src/gossip-notify.c:260
+#: ../src/gossip-subscription-dialog.c:239
+msgid "Someone wants to be added to your contact list."
+msgstr "Người nào muốn được thêm vào danh sách liên lạc của bạn."
+
+#, fuzzy
+#: ../src/gossip-notify.c:277
+msgid "Subscription request"
+msgstr "Yêu cầu đăng ký"
+
+#: ../src/gossip-notify.c:438
 msgid "Show"
 msgstr "Hiện"
 
-#: ../src/gossip-notify.c:366
+#: ../src/gossip-notify.c:444
 #: ../ui/main.glade.h:35
 msgid "Contact Information"
 msgstr "Thông tin liên lạc"
@@ -890,7 +914,8 @@ msgstr "Bạn có chắc muốn xoá danh sách này không?"
 msgid ""
 "This will remove any custom messages you have added to the list of preset "
 "status messages."
-msgstr "Việc này sẽ gỡ bỏ thông điệp riêng nào bạn đã thêm vào danh sách các thông điệp trạng thái định sẵn."
+msgstr "Việc này sẽ gỡ bỏ thông điệp riêng nào bạn đã thêm vào danh sách các thông "
+"điệp trạng thái định sẵn."
 
 #: ../src/gossip-presence-chooser.c:434
 msgid "Clear List"
@@ -920,28 +945,19 @@ msgstr "Chủ đề : %s"
 msgid "Suggestions for the word"
 msgstr "Đề nghị từ"
 
-#: ../src/gossip-subscription-dialog.c:161
+#: ../src/gossip-subscription-dialog.c:162
 #, c-format
 msgid "New subscription request from %s"
 msgstr "Yêu cầu đăng ký mới từ %s"
 
-#: ../src/gossip-subscription-dialog.c:291
-#, c-format
-msgid "%s wants to be added to your contact list."
-msgstr "%s muốn được thêm vào danh sách liên lạc của bạn."
+#: ../src/gossip-subscription-dialog.c:240
+msgid "Do you want to add this person to your contact list?"
+msgstr "Bạn có muốn thêm họ vào danh sách liên lạc không?"
 
-#: ../src/gossip-subscription-dialog.c:293
+#: ../src/gossip-subscription-dialog.c:296
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Bạn có muốn thêm %s vào danh sách liên lạc không?"
-
-#: ../src/gossip-subscription-dialog.c:299
-msgid "Someone wants to be added to your contact list."
-msgstr "Người nào muốn được thêm vào danh sách liên lạc của bạn."
-
-#: ../src/gossip-subscription-dialog.c:300
-msgid "Do you want to add this person to your contact list?"
-msgstr "Bạn có muốn thêm họ vào danh sách liên lạc không?"
 
 #: ../src/gossip-ui-utils.c:234
 #, c-format
@@ -1301,11 +1317,13 @@ msgstr "<b>Hiển thị</b>"
 msgid ""
 "<small>The list of languages reflects only the languages for which you have "
 "a dictionary installed.</small>"
-msgstr "<small>Danh sách ngôn ngữ phản ánh chỉ mỗi ngôn ngữ cho đó bạn đã cài đặt từ điển.</small>"
+msgstr "<small>Danh sách ngôn ngữ phản ánh chỉ mỗi ngôn ngữ cho đó bạn đã cài đặt từ "
+"điển.</small>"
 
 #: ../ui/main.glade.h:19
 msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
-msgstr "<span size=\"smaller\">Ví dụ : Văn Minh hoặc người_dùng@máy_phục_vụ.org</span>"
+msgstr "<span size=\"smaller\">Ví dụ : Văn Minh hoặc người_dùng@máy_phục_vụ.org</"
+"span>"
 
 #: ../ui/main.glade.h:20
 msgid "<span size=\"smaller\">Example: user@jabber.org</span>"
@@ -1528,7 +1546,8 @@ msgid ""
 "Leave this blank if you don't want your password stored on a public machine. "
 "If you decide to do this, you will be prompted each time you connect for a "
 "password"
-msgstr "Bỏ rỗng nếu bạn không muốn cho phép mật khẩu của mình được cất giữ trên máy công. Tuy nhiên, bạn sẽ được nhắc với mật khẩu mỗi lần kết nối"
+msgstr "Bỏ rỗng nếu bạn không muốn cho phép mật khẩu của mình được cất giữ trên máy "
+"công. Tuy nhiên, bạn sẽ được nhắc với mật khẩu mỗi lần kết nối"
 
 #: ../ui/main.glade.h:79
 msgid "Login I_D:"
@@ -1606,7 +1625,8 @@ msgstr "Tìm kiếm"
 msgid ""
 "Select the groups you want this contact to appear in, you can select more "
 "than one group or no groups."
-msgstr "Chọn những nhóm nơi bạn muốn liên lạc này xuất hiện; bạn có khả năng chọn một hay nhiều nhóm, hay không chọn nhóm (≥0 nhóm)."
+msgstr "Chọn những nhóm nơi bạn muốn liên lạc này xuất hiện; bạn có khả năng chọn "
+"một hay nhiều nhóm, hay không chọn nhóm (≥0 nhóm)."
 
 #: ../ui/main.glade.h:98
 msgid "Sending request"
@@ -1668,8 +1688,9 @@ msgid ""
 "This acts as a filter to the contact list below. You can use segments of "
 "contact's name or ID, for example, \"jabber.org\" will list everyone using "
 "that server"
-msgstr "Điều này lọc danh sách liên lạc bên dưới. Bạn có khả năng sử dụng phần tên hoặc "
-"ID của liên lạc; thí dụ, « jabber.org » sẽ liệt kê mọi người sử dụng máy phục vụ đó."
+msgstr "Điều này lọc danh sách liên lạc bên dưới. Bạn có khả năng sử dụng phần tên "
+"hoặc ID của liên lạc; thí dụ, « jabber.org » sẽ liệt kê mọi người sử dụng "
+"máy phục vụ đó."
 
 #: ../ui/main.glade.h:114
 msgid "This is the name that will be used on your roster for this contact"
@@ -1682,7 +1703,8 @@ msgstr "Tên này sẽ được dùng để nhận diện bạn trong cửa sổ
 #: ../ui/main.glade.h:116
 msgid ""
 "This name will be used to identify you when new contacts lookup your details"
-msgstr "Tên này sẽ được dùng để nhận diện bạn khi liên lạc mới tra tìm chi tiết về bạn"
+msgstr "Tên này sẽ được dùng để nhận diện bạn khi liên lạc mới tra tìm chi tiết về "
+"bạn"
 
 #: ../ui/main.glade.h:117
 msgid "Use _encryption (SSL)"
