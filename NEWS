@@ -4,6 +4,8 @@ NEW in 0.16:
 isn't arrived yet (Xavier Claessens).
 - Fixed #353243, Should be possible to remove the alias set for users
 (Xavier Claessens). 
+- Fixed #354002, Favorite chatrooms should be accessible in group_chat
+menu (Xavier Claessens).
 
 
 NEW in 0.15:

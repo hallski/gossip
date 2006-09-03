@@ -1,5 +1,11 @@
 2006-09-03  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c:
+	* ui/main.glade: Favorite chatrooms should be accessible in
+	group_chat menu, fixes #354002 (Xavier Claessens).
+
+2006-09-03  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-edit-contact-dialog.c: You can now retrieve the
 	user's vcard name and nickname in the Edit Contact dialog, fixes
 	#353243 (Xavier Claessens).
