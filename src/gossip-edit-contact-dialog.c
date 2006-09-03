@@ -62,38 +62,43 @@ enum {
 	COL_COUNT
 };
 
-static void     edit_contact_dialog_init                        (void);
-static void     edit_contact_dialog_save_name                   (GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_save_groups                 (GossipEditContactDialog *dialog);
-static gboolean edit_contact_dialog_can_save                    (GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_model_setup                 (GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_model_populate_columns      (GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_model_populate_data         (GossipEditContactDialog *dialog,
-								 GList                   *groups);
-static gboolean edit_contact_dialog_model_find_name             (GossipEditContactDialog *dialog,
-								 const gchar             *name,
-								 GtkTreeIter             *iter);
-static gboolean edit_contact_dialog_model_find_name_foreach     (GtkTreeModel            *model,
-								 GtkTreePath             *path,
-								 GtkTreeIter             *iter,
-								 FindName                *data);
-static GList *  edit_contact_dialog_model_find_selected         (GossipEditContactDialog *dialog);
-static gboolean edit_contact_dialog_model_find_selected_foreach (GtkTreeModel            *model,
-								 GtkTreePath             *path,
-								 GtkTreeIter             *iter,
-								 FindSelected            *data);
-static void     edit_contact_dialog_cell_toggled                (GtkCellRendererToggle   *cell,
-								 gchar                   *path_string,
-								 GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_entry_name_changed_cb       (GtkEditable             *editable,
-								 GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_button_add_clicked_cb       (GtkButton               *button,
-								 GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_destroy_cb                  (GtkWidget               *widget,
-								 GossipEditContactDialog *dialog);
-static void     edit_contact_dialog_response_cb                 (GtkWidget               *widget,
-								 gint                     response,
-								 GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_init                         (void);
+static void     edit_contact_dialog_save_name                    (GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_save_groups                  (GossipEditContactDialog *dialog);
+static gboolean edit_contact_dialog_can_save                     (GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_model_setup                  (GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_model_populate_columns       (GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_model_populate_data          (GossipEditContactDialog *dialog,
+								  GList                   *groups);
+static gboolean edit_contact_dialog_model_find_name              (GossipEditContactDialog *dialog,
+								  const gchar             *name,
+								  GtkTreeIter             *iter);
+static gboolean edit_contact_dialog_model_find_name_foreach      (GtkTreeModel            *model,
+								  GtkTreePath             *path,
+								  GtkTreeIter             *iter,
+								  FindName                *data);
+static GList *  edit_contact_dialog_model_find_selected          (GossipEditContactDialog *dialog);
+static gboolean edit_contact_dialog_model_find_selected_foreach  (GtkTreeModel            *model,
+								  GtkTreePath             *path,
+								  GtkTreeIter             *iter,
+								  FindSelected            *data);
+static void     edit_contact_dialog_cell_toggled                 (GtkCellRendererToggle   *cell,
+								  gchar                   *path_string,
+								  GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_entry_name_changed_cb        (GtkEditable             *editable,
+								  GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_button_add_clicked_cb        (GtkButton               *button,
+								  GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_button_retrieve_get_vcard_cb (GossipResult             result,
+								  GossipVCard             *vcard,
+								  GossipContact           *contact);
+static void     edit_contact_dialog_button_retrieve_clicked_cb   (GtkButton               *button,
+								  GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_destroy_cb                   (GtkWidget               *widget,
+								  GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_response_cb                  (GtkWidget               *widget,
+								  gint                     response,
+								  GossipEditContactDialog *dialog);
 
 static GHashTable *dialogs = NULL;
 
@@ -492,6 +497,61 @@ edit_contact_dialog_button_add_clicked_cb (GtkButton               *button,
 }
 
 static void
+edit_contact_dialog_button_retrieve_get_vcard_cb (GossipResult   result,
+						  GossipVCard   *vcard,
+						  GossipContact *contact)
+{
+	GossipEditContactDialog *dialog;
+	const gchar             *name;
+
+	dialog = g_hash_table_lookup (dialogs, contact);
+	g_object_unref (contact);
+	
+	if (!dialog) {
+		return;
+	}
+
+	gtk_widget_set_sensitive (dialog->entry_name, TRUE);
+	gtk_widget_set_sensitive (dialog->button_retrieve, TRUE);
+
+	if (result != GOSSIP_RESULT_OK) {
+		return;
+	}
+
+	name = gossip_vcard_get_nickname (vcard);
+	if (name && strlen (name) > 0) {
+		gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), name);
+		return;
+	}
+
+	name = gossip_vcard_get_name (vcard);
+	if (name && strlen (name) > 0) {
+		gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), name);
+		return;
+	}
+}
+
+static void
+edit_contact_dialog_button_retrieve_clicked_cb (GtkButton               *button,
+						GossipEditContactDialog *dialog)
+{
+	GossipSession *session;
+
+	gtk_widget_set_sensitive (dialog->entry_name, FALSE);
+	gtk_widget_set_sensitive (dialog->button_retrieve, FALSE);
+
+	session = gossip_app_get_session ();
+	
+	gossip_session_get_vcard (session,
+				  NULL,
+				  dialog->contact,
+				  (GossipVCardCallback) 
+				  edit_contact_dialog_button_retrieve_get_vcard_cb,
+				  g_object_ref (dialog->contact),
+				  NULL);
+}
+
+static void
 edit_contact_dialog_response_cb (GtkWidget               *widget, 
 				 gint                     response, 
 				 GossipEditContactDialog *dialog)
@@ -500,12 +560,12 @@ edit_contact_dialog_response_cb (GtkWidget               *widget,
 		edit_contact_dialog_save_groups (dialog);
 		edit_contact_dialog_save_name (dialog);
 	}
-	
+
 	gtk_widget_destroy (dialog->dialog);
 }
 
 static void
-edit_contact_dialog_destroy_cb (GtkWidget        *widget,
+edit_contact_dialog_destroy_cb (GtkWidget               *widget,
 				GossipEditContactDialog *dialog)
 {
 	if (dialog->renderer) {
@@ -565,6 +625,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 			      "entry_group", "changed", edit_contact_dialog_entry_group_changed_cb,
 			      "entry_group", "activate", edit_contact_dialog_entry_group_activate_cb,
 			      "button_add", "clicked", edit_contact_dialog_button_add_clicked_cb,
+			      "button_retrieve", "clicked", edit_contact_dialog_button_retrieve_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
@@ -584,8 +645,6 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 
 	gtk_label_set_markup (GTK_LABEL (dialog->label_name), str);
 	g_free (str);
-
-	gtk_widget_set_sensitive (dialog->button_retrieve, FALSE);
 
 	/* Set up groups */
         groups = gossip_contact_get_groups (contact);

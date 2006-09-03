@@ -1,5 +1,11 @@
 2006-09-03  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-edit-contact-dialog.c: You can now retrieve the
+	user's vcard name and nickname in the Edit Contact dialog, fixes
+	#353243 (Xavier Claessens).
+
+2006-09-03  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac: Bumped version to 0.16.
 	
 	* src/gossip-subscription-dialog.c: Don't crash when closing
