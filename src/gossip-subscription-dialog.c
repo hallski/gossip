@@ -53,32 +53,43 @@ typedef struct {
 	GossipVCard    *vcard;
 } GossipSubscriptionDialog;
 
-static void     subscription_dialog_protocol_connected_cb    (GossipSession            *session,
-							      GossipAccount            *account,
-							      GossipProtocol           *protocol, 
-							      gpointer                  user_data);
-static void     subscription_dialog_protocol_disconnected_cb (GossipSession            *session,
-							      GossipAccount            *account,
-							      GossipProtocol           *protocol,
-							      gpointer                  user_data);
-static void     subscription_dialog_request_cb               (GossipProtocol           *protocol,
-							      GossipContact            *contact,
-							      gpointer                  user_data);
-static void     subscription_dialog_event_activated_cb       (GossipEventManager       *event_manager,
-							      GossipEvent              *event,
-							      GossipProtocol           *protocol);
-static void     subscription_dialog_show                     (GossipSubscriptionDialog *dialog);
-static void     subscription_dialog_vcard_cb                 (GossipResult              result,
-							      GossipVCard              *vcard,
-							      GossipSubscriptionDialog *data);
-static void     subscription_dialog_setup_groups             (GtkComboBoxEntry         *comboboxentry);
-static void     subscription_dialog_request_dialog_cb        (GtkWidget                *dialog,
-							      gint                      response,
-							      GossipSubscriptionDialog *data);
+static void subscription_dialog_protocol_connected_cb    (GossipSession            *session,
+							  GossipAccount            *account,
+							  GossipProtocol           *protocol,
+							  gpointer                  user_data);
+static void subscription_dialog_protocol_disconnected_cb (GossipSession            *session,
+							  GossipAccount            *account,
+							  GossipProtocol           *protocol,
+							  gpointer                  user_data);
+static void subscription_dialog_request_cb               (GossipProtocol           *protocol,
+							  GossipContact            *contact,
+							  gpointer                  user_data);
+static void subscription_dialog_event_activated_cb       (GossipEventManager       *event_manager,
+							  GossipEvent              *event,
+							  GossipProtocol           *protocol);
+static void subscription_dialog_show                     (GossipSubscriptionDialog *dialog);
+static void subscription_dialog_vcard_cb                 (GossipResult              result,
+							  GossipVCard              *vcard,
+							  GossipContact            *contact);
+static void subscription_dialog_setup_groups             (GtkComboBoxEntry         *comboboxentry);
+static void subscription_dialog_request_dialog_cb        (GtkWidget                *dialog,
+							  gint                      response,
+							  GossipSubscriptionDialog *data);
+
+static GHashTable *dialogs = NULL;
 
 void
 gossip_subscription_dialog_init (GossipSession *session)
 {
+	if (dialogs) {
+		return;
+	}
+	
+	dialogs = g_hash_table_new_full (gossip_contact_hash,
+					 gossip_contact_equal,
+					 g_object_unref,
+					 NULL);
+
 	g_object_ref (session);
 
 	g_signal_connect (session, 
@@ -103,6 +114,9 @@ gossip_subscription_dialog_finalize (GossipSession *session)
 					      NULL);
 
 	g_object_unref (session);
+	
+	g_hash_table_destroy (dialogs);
+	dialogs = NULL;
 }
 
 static void
@@ -185,10 +199,18 @@ subscription_dialog_event_activated_cb (GossipEventManager *event_manager,
 
 	contact = GOSSIP_CONTACT (gossip_event_get_data (event));
 
+	dialog = g_hash_table_lookup (dialogs, contact);
+	if (dialog) {
+		gtk_window_present (GTK_WINDOW (dialog->dialog));
+		return;
+	}
+
 	dialog = g_new0 (GossipSubscriptionDialog, 1);
 
 	dialog->protocol = g_object_ref (protocol);
 	dialog->contact = g_object_ref (contact);
+
+	g_hash_table_insert (dialogs, dialog->contact, dialog);
 	
 	subscription_dialog_show (dialog);
 }
@@ -205,7 +227,7 @@ subscription_dialog_show (GossipSubscriptionDialog *dialog)
 				  NULL,
 				  dialog->contact,
 				  (GossipVCardCallback) subscription_dialog_vcard_cb,
-				  dialog, 
+				  g_object_ref (dialog->contact), 
 				  NULL);
 
 	gossip_glade_get_file_simple ("main.glade",
@@ -267,14 +289,22 @@ subscription_dialog_show (GossipSubscriptionDialog *dialog)
 }
 
 static void
-subscription_dialog_vcard_cb (GossipResult              result,
-			      GossipVCard              *vcard,
-			      GossipSubscriptionDialog *dialog)
+subscription_dialog_vcard_cb (GossipResult   result,
+			      GossipVCard   *vcard,
+			      GossipContact *contact)
 {
-	const gchar  *name = NULL;
-	const gchar  *url = NULL;
-	gint          num_matches = 0;
+	GossipSubscriptionDialog *dialog;
+	const gchar              *name = NULL;
+	const gchar              *url = NULL;
+	gint                      num_matches = 0;
 	
+	dialog = g_hash_table_lookup (dialogs, contact);
+	g_object_unref (contact);
+	
+	if (!dialog) {
+		return;
+	}
+
 	if (GOSSIP_IS_VCARD (vcard)) {
 		dialog->vcard = g_object_ref (vcard);
 
@@ -422,10 +452,10 @@ subscription_dialog_request_dialog_cb (GtkWidget                *widget,
 		}
 	}
 
+	g_hash_table_remove (dialogs, dialog->contact);
 	gtk_widget_destroy (widget);
 	
 	g_object_unref (dialog->protocol);
-	g_object_unref (dialog->contact);
 
 	if (dialog->vcard) {
 		g_object_unref (dialog->vcard);

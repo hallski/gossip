@@ -1,3 +1,9 @@
+NEW in 0.16:
+===========
+- Fixed #353576, crash when closing subscribe dialog and the vcard
+isn't arrived yet (Xavier Claessens).
+
+
 NEW in 0.15:
 ===========
 - Updated the "Simple" theme (Martyn).
