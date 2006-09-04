@@ -24,6 +24,7 @@
 
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-chatroom-contact.h>
 
 #include "gossip-jabber-chatrooms.h"
 #include "gossip-jid.h"
@@ -398,10 +399,9 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 		name = id;
 	}
 
-	contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_CHATROOM, 
-					   gossip_contact_get_account (room->own_contact),
-					   id, 
-					   name);
+	contact = GOSSIP_CONTACT (gossip_chatroom_contact_new_full (gossip_contact_get_account (room->own_contact),
+								    id, 
+								    name));
 	room->contacts = g_slist_prepend (room->contacts, contact);
 
 	return contact;

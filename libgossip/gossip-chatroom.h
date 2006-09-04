@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -59,6 +59,23 @@ typedef enum {
 	GOSSIP_CHATROOM_STATUS_ERROR,
 	GOSSIP_CHATROOM_STATUS_UNKNOWN,
 } GossipChatroomStatus;
+
+#define GOSSIP_TYPE_CHATROOM_ROLE (gossip_chatroom_role_get_gtype ())
+typedef enum {
+	GOSSIP_CHATROOM_ROLE_MODERATOR,
+	GOSSIP_CHATROOM_ROLE_PARTICIPANT,
+	GOSSIP_CHATROOM_ROLE_VISITOR,
+	GOSSIP_CHATROOM_ROLE_NONE
+} GossipChatroomRole;
+
+#define GOSSIP_TYPE_CHATROOM_AFFILIATION (gossip_chatroom_affiliation_get_gtype ())
+typedef enum {
+	GOSSIP_CHATROOM_AFFILIATION_OWNER,
+	GOSSIP_CHATROOM_AFFILIATION_ADMIN,
+	GOSSIP_CHATROOM_AFFILIATION_MEMBER,
+	GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
+	GOSSIP_CHATROOM_AFFILIATION_NONE
+} GossipChatroomAffiliation;
 
 GType              gossip_chatroom_get_gtype          (void) G_GNUC_CONST;
 
@@ -124,5 +141,8 @@ void               gossip_chatroom_invite_unref       (GossipChatroomInvite *inv
 GossipContact *    gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite);
 const gchar *      gossip_chatroom_invite_get_id      (GossipChatroomInvite *invite);
 const gchar *      gossip_chatroom_invite_get_reason  (GossipChatroomInvite *invite);
+
+GType              gossip_chatroom_role_get_gtype        (void) G_GNUC_CONST;
+GType              gossip_chatroom_affiliation_get_gtype (void) G_GNUC_CONST;
 
 #endif /* __GOSSIP_CHATROOM_H__ */

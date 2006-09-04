@@ -1,3 +1,14 @@
+2006-09-04  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-chatroom.[ch]: 
+	- Added Role and Affiliation enums.
+	* libgossip/gossip-chatroom-contact.[ch]: 
+	- Subclass of GossipContact that adds Role and Affiliation properties.
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	- Create GossipChatroomContacts instead of GossipContacts.
+	- Not hooked up to get the information about role and affiliation yet.
+
 2006-09-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c:

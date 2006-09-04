@@ -123,7 +123,6 @@ gossip_chatroom_get_gtype (void)
 	}
 
 	return type;
-
 }
 
 static void
@@ -998,5 +997,83 @@ gossip_chatroom_invite_get_reason (GossipChatroomInvite *invite)
 	g_return_val_if_fail (invite != NULL, NULL);
 
 	return invite->reason;
+}
+
+GType
+gossip_chatroom_role_get_gtype (void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{
+				GOSSIP_CHATROOM_ROLE_MODERATOR,
+				"GOSSIP_CHATROOM_ROLE_MODERATOR",
+				"Moderator role"
+			},
+			{
+				GOSSIP_CHATROOM_ROLE_PARTICIPANT,
+				"GOSSIP_CHATROOM_ROLE_PARTICIPANT",
+				"Participant role"
+			},
+			{
+				GOSSIP_CHATROOM_ROLE_VISITOR,
+				"GOSSIP_CHATROOM_ROLE_VISITOR",
+				"Visitor role"
+			},
+			{
+				GOSSIP_CHATROOM_ROLE_NONE,
+				"GOSSIP_CHATROOM_ROLE_NONE",
+				"No role specified"
+			},
+			{ 0, NULL, NULL }
+		};
+
+		type = g_enum_register_static ("GossipChatroomRole", values);
+	}
+
+	return type;
+}
+
+GType
+gossip_chatroom_affiliation_get_gtype (void)
+{
+	static GType type = 0;
+
+	if (type == 0) {
+		static const GEnumValue values[] = {
+			{
+				GOSSIP_CHATROOM_AFFILIATION_OWNER,
+				"GOSSIP_CHATROOM_AFFILIATION_OWNER",
+				"Owner affiliation"
+			},
+			{
+				GOSSIP_CHATROOM_AFFILIATION_ADMIN,
+				"GOSSIP_CHATROOM_AFFILIATION_ADMIN",
+				"Admin affiliation"
+			},
+			{
+				GOSSIP_CHATROOM_AFFILIATION_MEMBER,
+				"GOSSIP_CHATROOM_AFFILIATION_MEMBER",
+				"Member affiliation"
+			},
+			{
+				GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
+				"GOSSIP_CHATROOM_AFFILIATION_OUTCAST",
+				"Outcast affiliation"
+			},
+			{
+				GOSSIP_CHATROOM_AFFILIATION_NONE,
+				"GOSSIP_CHATROOM_AFFILIATION_NONE",
+				"No affiliation specified"
+			},
+			{ 0, NULL, NULL }
+		};
+
+		type = g_enum_register_static ("GossipChatroomAffiliation",
+					       values);
+	}
+
+	return type;
 }
 
