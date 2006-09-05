@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-02 08:07+0200\n"
-"PO-Revision-Date: 2006-09-02 09:24+0100\n"
+"POT-Creation-Date: 2006-09-05 05:04+0200\n"
+"PO-Revision-Date: 2006-09-05 08:49+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -153,28 +153,28 @@ msgstr "Huruvida meddelandedialogen om att stänga huvudfönstret ska visas elle
 msgid "Whether to use the theme for chat rooms or not."
 msgstr "Huruvida tema ska användas för chattrum eller inte."
 
-#: ../libgossip/gossip-chatroom.c:878
+#: ../libgossip/gossip-chatroom.c:877
 msgid "Normal"
 msgstr "Normalt"
 
-#: ../libgossip/gossip-chatroom.c:889
+#: ../libgossip/gossip-chatroom.c:888
 msgid "Joining"
 msgstr "Går in"
 
-#: ../libgossip/gossip-chatroom.c:891
+#: ../libgossip/gossip-chatroom.c:890
 msgid "Active"
 msgstr "Aktivt"
 
-#: ../libgossip/gossip-chatroom.c:893
+#: ../libgossip/gossip-chatroom.c:892
 #: ../ui/group-chat.glade.h:8
 msgid "Inactive"
 msgstr "Inaktivt"
 
-#: ../libgossip/gossip-chatroom.c:895
+#: ../libgossip/gossip-chatroom.c:894
 msgid "Unknown"
 msgstr "Okänt"
 
-#: ../libgossip/gossip-chatroom.c:897
+#: ../libgossip/gossip-chatroom.c:896
 msgid "Error"
 msgstr "Fel"
 
@@ -200,7 +200,7 @@ msgstr "Ett okänt fel har inträffat, kontrollera att dina detaljer är korrekt
 
 #: ../libgossip/gossip-contact.c:839
 #: ../libgossip/gossip-presence.c:234
-#: ../src/gossip-app.c:2315
+#: ../src/gossip-app.c:2518
 #: ../src/gossip-contact-info-dialog.c:165
 #: ../src/gossip-galago.c:179
 msgid "Offline"
@@ -329,7 +329,7 @@ msgid "Connecting"
 msgstr "Ansluter"
 
 #: ../src/gossip-account-button.c:403
-#: ../src/gossip-app.c:1668
+#: ../src/gossip-app.c:1871
 #: ../src/gossip-group-chat.c:379
 #: ../src/gossip-private-chat.c:562
 msgid "Disconnected"
@@ -403,7 +403,7 @@ msgstr "%s kommer att läggas till i din kontaktlista."
 
 #: ../src/gossip-add-contact-window.c:434
 #: ../src/gossip-contact-info-dialog.c:478
-#: ../src/gossip-subscription-dialog.c:414
+#: ../src/gossip-subscription-dialog.c:444
 msgid "I would like to add you to my contact list."
 msgstr "Jag vill lägga till dig i min kontaktlista."
 
@@ -418,76 +418,66 @@ msgstr "%s id för ny kontakt:"
 msgid "Example: %s"
 msgstr "Exempel: %s"
 
-#: ../src/gossip-app.c:603
-#: ../ui/main.glade.h:148
-msgid "_Connect"
-msgstr "An_slut"
-
-#: ../src/gossip-app.c:608
-#: ../ui/main.glade.h:151
-msgid "_Disconnect"
-msgstr "_Koppla ifrån"
-
-#: ../src/gossip-app.c:650
+#: ../src/gossip-app.c:654
 msgid "Show accounts and pending connections"
 msgstr "Visa konton och avvaktande anslutningar"
 
-#: ../src/gossip-app.c:796
+#: ../src/gossip-app.c:800
 msgid "To summarize:"
 msgstr "Sammanfattning:"
 
-#: ../src/gossip-app.c:823
+#: ../src/gossip-app.c:827
 #, c-format
 msgid "%d new message"
 msgid_plural "%d new messages"
 msgstr[0] "%d nytt meddelande"
 msgstr[1] "%d nya meddelanden"
 
-#: ../src/gossip-app.c:828
+#: ../src/gossip-app.c:832
 #, c-format
 msgid "%d subscription request"
 msgid_plural "%d subscription requests"
 msgstr[0] "%d prenumerationsförfrågan"
 msgstr[1] "%d prenumerationsförfrågan"
 
-#: ../src/gossip-app.c:833
+#: ../src/gossip-app.c:837
 #, c-format
 msgid "%d file transfer request"
 msgid_plural "%d file transfer requests"
 msgstr[0] "%d filöverföringsförfrågan"
 msgstr[1] "%d filöverföringsförfrågan"
 
-#: ../src/gossip-app.c:838
+#: ../src/gossip-app.c:842
 #, c-format
 msgid "%d server message"
 msgid_plural "%d server messages"
 msgstr[0] "%d servermeddelande"
 msgstr[1] "%d servermeddelanden"
 
-#: ../src/gossip-app.c:843
+#: ../src/gossip-app.c:847
 #, c-format
 msgid "%d error"
 msgid_plural "%d errors"
 msgstr[0] "%d fel"
 msgstr[1] "%d fel"
 
-#: ../src/gossip-app.c:868
+#: ../src/gossip-app.c:872
 msgid "If you quit, you will lose all unread information."
 msgstr "Om du avslutar kommer all oläst information förloras."
 
-#: ../src/gossip-app.c:930
+#: ../src/gossip-app.c:934
 msgid "Gossip is still running, it is just hidden."
 msgstr "Gossip kör fortfarande, den är bara dold."
 
-#: ../src/gossip-app.c:931
+#: ../src/gossip-app.c:935
 msgid "Click on the notification area icon to show Gossip."
 msgstr "Klicka på ikonen i notifieringsytan för att visa Gossip."
 
-#: ../src/gossip-app.c:946
+#: ../src/gossip-app.c:950
 msgid "You were about to quit!"
 msgstr "Du är på väg att avsluta!"
 
-#: ../src/gossip-app.c:947
+#: ../src/gossip-app.c:951
 msgid ""
 "Since no system or notification tray has been found, this action would normally quit Gossip.\n"
 "\n"
@@ -497,24 +487,24 @@ msgstr ""
 "\n"
 "Detta är bara en påminnelse, från och med nu kommer Gossip att avslutas när denna åtgärd genomförs såvida du inte avkryssar alternativet nedan."
 
-#: ../src/gossip-app.c:1122
-#: ../src/gossip-edit-contact-dialog.c:194
+#: ../src/gossip-app.c:1325
+#: ../src/gossip-edit-contact-dialog.c:199
 msgid "Group"
 msgstr "Grupp"
 
-#: ../src/gossip-app.c:1143
+#: ../src/gossip-app.c:1346
 msgid "Contact"
 msgstr "Kontakt"
 
-#: ../src/gossip-app.c:1857
+#: ../src/gossip-app.c:2060
 msgid "You have no Instant Messaging accounts configured!"
 msgstr "Du har inte konfigurerar ett snabbmeddelandekonto!"
 
-#: ../src/gossip-app.c:1859
+#: ../src/gossip-app.c:2062
 msgid "Next you will be presented with the Account Information dialog to set your details up."
 msgstr "Kontoinformationsdialogen kommer nu att visas så att du kan mata in din information."
 
-#: ../src/gossip-app.c:2156
+#: ../src/gossip-app.c:2359
 msgid "Edit Account _Details"
 msgstr "Redigera konto_detaljer"
 
@@ -695,17 +685,17 @@ msgstr ""
 "Ange ett nytt namn för gruppen:\n"
 "%s"
 
-#: ../src/gossip-edit-contact-dialog.c:184
+#: ../src/gossip-edit-contact-dialog.c:189
 msgid "Select"
 msgstr "Markera"
 
-#: ../src/gossip-edit-contact-dialog.c:234
-#: ../src/gossip-edit-contact-dialog.c:244
-#: ../src/gossip-subscription-dialog.c:359
+#: ../src/gossip-edit-contact-dialog.c:239
+#: ../src/gossip-edit-contact-dialog.c:249
+#: ../src/gossip-subscription-dialog.c:389
 msgid "Unsorted"
 msgstr "Osorterade"
 
-#: ../src/gossip-edit-contact-dialog.c:578
+#: ../src/gossip-edit-contact-dialog.c:639
 #, c-format
 msgid ""
 "Set the alias you want to use for:\n"
@@ -857,13 +847,13 @@ msgid "Chat!"
 msgstr "Chatta!"
 
 #: ../src/gossip-notify.c:258
-#: ../src/gossip-subscription-dialog.c:294
+#: ../src/gossip-subscription-dialog.c:324
 #, c-format
 msgid "%s wants to be added to your contact list."
 msgstr "%s vill bli tillagd till din kontaktlista."
 
 #: ../src/gossip-notify.c:260
-#: ../src/gossip-subscription-dialog.c:239
+#: ../src/gossip-subscription-dialog.c:261
 msgid "Someone wants to be added to your contact list."
 msgstr "Någon vill bli tillagd till din kontaktlista."
 
@@ -920,16 +910,16 @@ msgstr "Ämne: %s"
 msgid "Suggestions for the word"
 msgstr "Förslag för ordet"
 
-#: ../src/gossip-subscription-dialog.c:162
+#: ../src/gossip-subscription-dialog.c:176
 #, c-format
 msgid "New subscription request from %s"
 msgstr "Prenumerationsförfrågan från %s"
 
-#: ../src/gossip-subscription-dialog.c:240
+#: ../src/gossip-subscription-dialog.c:262
 msgid "Do you want to add this person to your contact list?"
 msgstr "Vill du lägga till denna person till din kontaktlista?"
 
-#: ../src/gossip-subscription-dialog.c:296
+#: ../src/gossip-subscription-dialog.c:326
 #, c-format
 msgid "Do you want to add %s to your contact list?"
 msgstr "Vill du lägga till %s till din kontaktlista?"
@@ -1506,8 +1496,8 @@ msgid "Login I_D:"
 msgstr "Inloggningsid:"
 
 #: ../ui/main.glade.h:80
-msgid "Manage Chat Rooms"
-msgstr "Hantera chattrum"
+msgid "Manage Chat Rooms..."
+msgstr "Hantera chattrum..."
 
 #: ../ui/main.glade.h:81
 msgid "Name:"
@@ -1756,9 +1746,17 @@ msgstr "_Konton"
 msgid "_Add to status message list"
 msgstr "_Lägg till i statusmeddelandelistan"
 
+#: ../ui/main.glade.h:148
+msgid "_Connect"
+msgstr "An_slut"
+
 #: ../ui/main.glade.h:149
 msgid "_Contents"
 msgstr "I_nnehåll"
+
+#: ../ui/main.glade.h:151
+msgid "_Disconnect"
+msgstr "_Koppla ifrån"
 
 #: ../ui/main.glade.h:153
 msgid "_Enable spell checking"
