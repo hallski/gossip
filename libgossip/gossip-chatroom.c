@@ -1009,22 +1009,22 @@ gossip_chatroom_role_get_gtype (void)
 			{
 				GOSSIP_CHATROOM_ROLE_MODERATOR,
 				"GOSSIP_CHATROOM_ROLE_MODERATOR",
-				"Moderator role"
+				"Moderator"
 			},
 			{
 				GOSSIP_CHATROOM_ROLE_PARTICIPANT,
 				"GOSSIP_CHATROOM_ROLE_PARTICIPANT",
-				"Participant role"
+				"Participant"
 			},
 			{
 				GOSSIP_CHATROOM_ROLE_VISITOR,
 				"GOSSIP_CHATROOM_ROLE_VISITOR",
-				"Visitor role"
+				"Visitor"
 			},
 			{
 				GOSSIP_CHATROOM_ROLE_NONE,
 				"GOSSIP_CHATROOM_ROLE_NONE",
-				"No role specified"
+				"None"
 			},
 			{ 0, NULL, NULL }
 		};
@@ -1045,27 +1045,27 @@ gossip_chatroom_affiliation_get_gtype (void)
 			{
 				GOSSIP_CHATROOM_AFFILIATION_OWNER,
 				"GOSSIP_CHATROOM_AFFILIATION_OWNER",
-				"Owner affiliation"
+				"Owner"
 			},
 			{
 				GOSSIP_CHATROOM_AFFILIATION_ADMIN,
 				"GOSSIP_CHATROOM_AFFILIATION_ADMIN",
-				"Admin affiliation"
+				"Admin"
 			},
 			{
 				GOSSIP_CHATROOM_AFFILIATION_MEMBER,
 				"GOSSIP_CHATROOM_AFFILIATION_MEMBER",
-				"Member affiliation"
+				"Member"
 			},
 			{
 				GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
 				"GOSSIP_CHATROOM_AFFILIATION_OUTCAST",
-				"Outcast affiliation"
+				"Outcast"
 			},
 			{
 				GOSSIP_CHATROOM_AFFILIATION_NONE,
 				"GOSSIP_CHATROOM_AFFILIATION_NONE",
-				"No affiliation specified"
+				"None"
 			},
 			{ 0, NULL, NULL }
 		};

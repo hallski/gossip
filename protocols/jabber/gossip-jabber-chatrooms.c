@@ -95,6 +95,9 @@ static void             jabber_chatrooms_get_rooms_foreach     (gpointer        
 static void             jabber_chatrooms_set_presence_foreach  (gpointer                key,
 								JabberChatroom         *room,
 								GossipJabberChatrooms  *chatrooms);
+static LmMessageNode *  jabber_chatrooms_find_muc_user_node    (LmMessageNode          *parent_node);
+static GossipChatroomRole jabber_chatrooms_get_role            (LmMessageNode          *muc_node);
+static GossipChatroomAffiliation jabber_chatrooms_get_affiliation (LmMessageNode       *muc_node);
 
 GossipJabberChatrooms *
 gossip_jabber_chatrooms_init (GossipJabber *jabber)
@@ -413,17 +416,20 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 				   LmMessage             *m,
 				   GossipJabberChatrooms *chatrooms)
 {
-	const gchar         *from;
-	GossipJID           *jid;
-	JabberChatroom      *room;
-	GossipContact       *contact;
-	GossipPresence      *presence;
-	GossipPresenceState  p_state;
-	GossipChatroomId     id;
-	LmMessageSubType     type;
-	LmMessageNode       *node;
-	gboolean             new_contact;
-	gboolean             was_offline;
+	const gchar               *from;
+	GossipJID                 *jid;
+	JabberChatroom            *room;
+	GossipContact             *contact;
+	GossipPresence            *presence;
+	GossipPresenceState        p_state;
+	GossipChatroomId           id;
+	LmMessageSubType           type;
+	LmMessageNode             *node;
+	gboolean                   new_contact;
+	gboolean                   was_offline;
+	LmMessageNode             *muc_user_node;
+	GossipChatroomRole         muc_role;
+	GossipChatroomAffiliation  muc_affiliation;
 	
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
@@ -460,6 +466,15 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		was_offline = !gossip_contact_is_online (contact);
 		gossip_contact_add_presence (contact, presence);
 
+		muc_user_node = jabber_chatrooms_find_muc_user_node (m->node);
+		muc_role = jabber_chatrooms_get_role (muc_user_node);
+		muc_affiliation = jabber_chatrooms_get_affiliation (muc_user_node);
+
+		g_object_set (contact,
+			      "role", muc_role,
+			      "affiliation", muc_affiliation,
+			      NULL);
+	
 		g_object_unref (presence);
 
 		/* is contact new or updated */
@@ -1170,6 +1185,104 @@ jabber_chatrooms_set_presence_foreach (gpointer               key,
 	
 	lm_connection_send (connection, m, NULL);
 	lm_message_unref (m);
+}
+
+static LmMessageNode *
+jabber_chatrooms_find_muc_user_node (LmMessageNode *parent_node)
+{
+	LmMessageNode *child;
+
+	/* Should have a function in Loudmouth to find a child with xmlns */
+	child = parent_node->children;
+
+	if (!child) {
+		return NULL;
+	}
+
+	while (child) {
+		if (strcmp (child->name, "x") == 0) {
+			const gchar *xmlns;
+
+			xmlns = lm_message_node_get_attribute (child, "xmlns");
+
+			if (xmlns && strcmp (xmlns, XMPP_MUC_USER_XMLNS) == 0) {
+				return child;
+			} 
+		}
+
+		child = child->next;
+	}
+
+	return NULL;
+}
+
+static GossipChatroomRole
+jabber_chatrooms_get_role (LmMessageNode *muc_node)
+{
+	LmMessageNode *item_node;
+	const gchar   *role;
+
+	if (!muc_node) {
+		return GOSSIP_CHATROOM_ROLE_NONE;
+	}
+
+	item_node = lm_message_node_get_child (muc_node, "item");
+	if (!item_node) {
+		return GOSSIP_CHATROOM_ROLE_NONE;
+	}
+
+	role = lm_message_node_get_attribute (item_node, "role");
+	if (!role) {
+		return GOSSIP_CHATROOM_ROLE_NONE;
+	}
+
+	if (strcmp (role, "moderator") == 0) {
+		return GOSSIP_CHATROOM_ROLE_MODERATOR;
+	}
+	else if (strcmp (role, "participant") == 0) {
+		return GOSSIP_CHATROOM_ROLE_PARTICIPANT;
+	}
+	else if (strcmp (role, "visitor") == 0) {
+		return GOSSIP_CHATROOM_ROLE_VISITOR;
+	} else {
+		return GOSSIP_CHATROOM_ROLE_NONE;
+	}
+}
+
+static GossipChatroomAffiliation
+jabber_chatrooms_get_affiliation (LmMessageNode *muc_node)
+{
+	LmMessageNode *item_node;
+	const gchar   *affiliation;
+
+	if (!muc_node) {
+		return GOSSIP_CHATROOM_AFFILIATION_NONE;
+	}
+
+	item_node = lm_message_node_get_child (muc_node, "item");
+	if (!item_node) {
+		return GOSSIP_CHATROOM_AFFILIATION_NONE;
+	}
+
+	affiliation = lm_message_node_get_attribute (item_node, "affiliation");
+	if (!affiliation) {
+		return GOSSIP_CHATROOM_AFFILIATION_NONE;
+	}
+
+	if (strcmp (affiliation, "owner") == 0) {
+		return GOSSIP_CHATROOM_AFFILIATION_OWNER;
+	}
+	else if (strcmp (affiliation, "admin") == 0) {
+		return GOSSIP_CHATROOM_AFFILIATION_ADMIN;
+	}
+	else if (strcmp (affiliation, "member") == 0) {
+		return GOSSIP_CHATROOM_AFFILIATION_MEMBER;
+	} 
+	else if (strcmp (affiliation, "outcast") == 0) {
+		return GOSSIP_CHATROOM_AFFILIATION_OUTCAST;
+	} else {
+		return GOSSIP_CHATROOM_AFFILIATION_NONE;
+	}
 }
 
 void

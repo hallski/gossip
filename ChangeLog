@@ -1,3 +1,15 @@
+2006-09-05  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-chatroom.c: (gossip_chatroom_role_get_gtype),
+	(gossip_chatroom_affiliation_get_gtype):
+	- Changed the value nick to just be the attribute values.
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	(jabber_chatrooms_presence_handler),
+	(jabber_chatrooms_set_presence_foreach),
+	(jabber_chatrooms_find_muc_user_node), (jabber_chatrooms_get_role),
+	(jabber_chatrooms_get_affiliation):
+	- Set the role and affiliation on the chatroom contacts.
+
 2006-09-04  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/Makefile.am:
