@@ -2502,6 +2502,7 @@ contact_list_flash_timeout_func (FlashTimeoutData *timeout_data)
 			case GOSSIP_EVENT_SERVER_MESSAGE: 
 				stock_id = GOSSIP_STOCK_MESSAGE;
 				break;
+			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST: 
 			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST: 
 				stock_id = GTK_STOCK_DIALOG_QUESTION;
 				break;
@@ -2546,6 +2547,7 @@ contact_list_event_added_cb (GossipEventManager *manager,
 {
 	GossipContactListPriv *priv;
 	GossipMessage         *message;
+	GossipFT              *ft;
 	GossipContact         *contact;
 	GossipEventType        type;
 	FlashData             *data;
@@ -2565,14 +2567,25 @@ contact_list_event_added_cb (GossipEventManager *manager,
 		contact = GOSSIP_CONTACT (gossip_event_get_data (event));
 		break;
 
+	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+		ft = GOSSIP_FT (gossip_event_get_data (event));
+		contact = gossip_ft_get_contact (ft);
+		break;
+
 	default:
 		/* Not handled */
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Event type not added to the flashing event table",
+			      type);
 		return;
 	}
 
 	data = g_hash_table_lookup (priv->flash_table, contact);
 	if (data) {
 		/* Already flashing this item. */
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Event already flashing for contact:'%s'",
+			      gossip_contact_get_name (contact));
 		return;
 	}
 
@@ -2613,6 +2626,7 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 {
 	GossipContactListPriv *priv;
 	GossipMessage         *message;
+	GossipFT              *ft;
 	GossipContact         *contact;
 	GossipEventType        type;
 	FlashData             *data;
@@ -2629,6 +2643,11 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 
 	case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
 		contact = GOSSIP_CONTACT (gossip_event_get_data (event));
+		break;
+
+	case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
+		ft = GOSSIP_FT (gossip_event_get_data (event));
+		contact = gossip_ft_get_contact (ft);
 		break;
 
 	default:

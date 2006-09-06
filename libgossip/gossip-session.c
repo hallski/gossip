@@ -1346,8 +1346,7 @@ gossip_session_get_ft_provider (GossipSession *session,
 
 	priv = GET_PRIV (session);
 
-	protocol = g_hash_table_lookup (priv->accounts, 
-					gossip_account_get_name (account));
+	protocol = g_hash_table_lookup (priv->accounts, account);
 
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
 

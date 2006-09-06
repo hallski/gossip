@@ -2697,13 +2697,18 @@ app_tray_flash_timeout_func (gpointer data)
 			event = priv->tray_flash_icons->data;
 			switch (gossip_event_get_type (event)) {
 			case GOSSIP_EVENT_NEW_MESSAGE:
+			case GOSSIP_EVENT_SERVER_MESSAGE: 
 				stock_id = GOSSIP_STOCK_MESSAGE;
 				break;
+
 			case GOSSIP_EVENT_SUBSCRIPTION_REQUEST:
+			case GOSSIP_EVENT_FILE_TRANSFER_REQUEST:
 				stock_id = GTK_STOCK_DIALOG_QUESTION;
 				break;
 
 			default:
+				/* Shouldn't happen */
+				stock_id = GTK_STOCK_DIALOG_WARNING;
 				break;
 			}
 			

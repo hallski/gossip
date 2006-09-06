@@ -1,3 +1,14 @@
+2006-09-06  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-event.c: Added some debugging.
+	
+	* libgossip/gossip-session.c: Fixed a crasher with inbound file
+	transfer requests (spotted by Alex Jones).
+	
+	* src/gossip-app.c: 
+	* src/gossip-contact-list.c: Fix file transfer requests so they
+	are actually shown in the tray and contact list.
+
 2006-09-05  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-chatroom.c: (gossip_chatroom_role_get_gtype),

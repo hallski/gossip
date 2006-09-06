@@ -20,9 +20,12 @@
 
 #include <config.h>
 
+#include "gossip-debug.h"
 #include "gossip-event.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_EVENT, GossipEventPriv))
+
+#define DEBUG_DOMAIN "Event"
 
 typedef struct _GossipEventPriv GossipEventPriv;
 
@@ -234,6 +237,8 @@ event_set_property (GObject      *object,
 GossipEvent *
 gossip_event_new (GossipEventType type)
 {
+	gossip_debug (DEBUG_DOMAIN, "New of type:%d", type);
+
 	return g_object_new (GOSSIP_TYPE_EVENT, 
 			     "type", type,
 			     NULL);
