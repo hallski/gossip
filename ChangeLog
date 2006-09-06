@@ -1,3 +1,12 @@
+2006-09-07  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-chatroom-contact.c:
+	(gossip_chatroom_contact_class_init): Correct property name typo.
+	* src/gossip-group-chat.c: (group_chat_contacts_setup),
+	(group_chat_is_group_chat), (group_chat_roster_name_data_func):
+	- Prepend a @ on moderator names in group chat contact lists.
+	- This will be changed when we start depending on 2.10.
+
 2006-09-06  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-event.c: Added some debugging.

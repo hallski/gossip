@@ -76,7 +76,7 @@ gossip_chatroom_contact_class_init (GossipChatroomContactClass *klass)
 							    GOSSIP_CHATROOM_ROLE_NONE,
 							    G_PARAM_READWRITE));
 	g_object_class_install_property (object_class, PROP_AFFILIATION,
-					 g_param_spec_enum ("affilition",
+					 g_param_spec_enum ("affiliation",
 							    NULL, NULL,
 							    GOSSIP_TYPE_CHATROOM_AFFILIATION,
 							    GOSSIP_CHATROOM_AFFILIATION_NONE,

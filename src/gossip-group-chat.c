@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2005 Imendio AB
+ * Copyright (C) 2002-2006 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,6 +25,7 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
+#include <libgossip/gossip-chatroom-contact.h>
 #include <libgossip/gossip-chatroom-provider.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-message.h>
@@ -190,6 +191,12 @@ static gboolean        group_chat_get_show_contacts           (GossipChat       
 static void            group_chat_set_show_contacts           (GossipChat                   *chat,
 							       gboolean                      show);
 static gboolean        group_chat_is_group_chat               (GossipChat                   *chat);
+static void            group_chat_roster_name_data_func       (GtkTreeViewColumn      *tree_column,
+							      GtkCellRenderer        *cell,
+							      GtkTreeModel           *model,
+							      GtkTreeIter            *iter,
+							      GossipGroupChat        *chat);
+
 
 enum {
 	COL_STATUS,
@@ -665,10 +672,11 @@ group_chat_contacts_setup (GossipGroupChat *chat)
 
 	cell = gossip_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
-	gtk_tree_view_column_add_attribute (col,
-					    cell,
-					    "name", COL_NAME);
 
+	gtk_tree_view_column_set_cell_data_func (col, cell, 
+						 (GtkTreeCellDataFunc) group_chat_roster_name_data_func,
+						chat, NULL);
+	
 	gtk_tree_view_append_column (tree, col);
 
 	g_signal_connect (tree,
@@ -1407,6 +1415,34 @@ group_chat_is_group_chat (GossipChat *chat)
 	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
 
 	return TRUE;
+}
+
+static void
+group_chat_roster_name_data_func (GtkTreeViewColumn *tree_column,
+				  GtkCellRenderer   *cell,
+				  GtkTreeModel      *model,
+				  GtkTreeIter       *iter,
+				  GossipGroupChat   *chat)
+{
+	GossipChatroomContact *contact;
+	gchar                 *name;
+	gchar                 *modified_name;
+
+	gtk_tree_model_get (model, iter,
+			    COL_NAME, &name,
+			    COL_CONTACT, &contact,
+			    -1);
+
+	if (gossip_chatroom_contact_get_role (contact) == GOSSIP_CHATROOM_ROLE_MODERATOR) {
+		modified_name = g_strdup_printf ("@%s", name);
+		g_object_set (cell, "name", modified_name, NULL);
+		g_free (modified_name);
+	} else {
+		g_object_set (cell, "name", name, NULL);
+	}
+	
+	g_free (name);
+	g_object_unref (contact);
 }
 
 /* Scroll down after the back-log has been received. */
