@@ -1,3 +1,10 @@
+2006-09-07  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c: (gossip_app_set_visibility): Make sure clicking on
+	the 'x' which hides the window actually saves that setting so that
+	when you quit from the tray and restart Gossip it starts hidden. Fixes
+	#354735 (Xavier Claessens).
+
 2006-09-07  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c (jabber_request_version): Don't

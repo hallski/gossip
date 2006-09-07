@@ -1646,6 +1646,10 @@ gossip_app_set_visibility (gboolean visible)
 	GtkWidget *window;
 
 	window = gossip_app_get_window ();
+
+	gossip_conf_set_bool (gossip_conf_get (),
+			      GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
+			      !visible);
 	
 	if (visible) {
 		gossip_window_present (GTK_WINDOW (window));
