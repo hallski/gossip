@@ -2,7 +2,7 @@
 
 	* src/gossip-chat.c: (gossip_chat_init),
 	(chat_text_view_scroll_hide_cb), (chat_text_view_size_allocate_cb):
-	Set max height on the input GtkTextview, fixes bug #132514 (Xavier
+	Set max height on the input text view, fixes bug #132514 (Xavier
 	Claessens).
 
 2006-09-07  Martyn Russell  <martyn@imendio.com>
