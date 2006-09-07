@@ -1,3 +1,7 @@
+2006-09-07  Martyn Russell  <martyn@imendio.com>
+
+	* ui/group-chat.glade: Made contact list a little wider
+
 2006-09-07  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-chatroom-contact.c:
