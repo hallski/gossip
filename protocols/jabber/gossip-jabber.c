@@ -2661,9 +2661,12 @@ jabber_request_version (GossipJabber *jabber,
 	r = lm_message_new_with_sub_type (from,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_RESULT);
-	lm_message_node_set_attributes (r->node,
-					"id", id,
-					NULL);
+	if (id) {
+		lm_message_node_set_attributes (r->node,
+						"id", id,
+						NULL);
+	}
+
 	info = gossip_version_info_get_own ();
 	node = lm_message_node_add_child (r->node, "query", NULL);
 	lm_message_node_set_attributes (node, 

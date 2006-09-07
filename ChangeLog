@@ -1,3 +1,9 @@
+2006-09-07  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c (jabber_request_version): Don't
+	use the id if there is none (id is optional for iq), fixes
+	warning with new loudmouth.
+
 2006-09-07  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-group-chat.c: (group_chat_contacts_sort_func):
@@ -5,7 +11,7 @@
 
 2006-09-07  Martyn Russell  <martyn@imendio.com>
 
-	* ui/group-chat.glade: Made contact list a little wider
+	* ui/group-chat.glade: Made contact list a little wider.
 
 2006-09-07  Mikael Hallendal  <micke@imendio.com>
 
@@ -14,7 +20,7 @@
 	* src/gossip-group-chat.c: (group_chat_contacts_setup),
 	(group_chat_is_group_chat), (group_chat_roster_name_data_func):
 	- Prepend a @ on moderator names in group chat contact lists.
-	- This will be changed when we start depending on 2.10.
+	- This will be changed when we start depending on GTK+ 2.10.
 
 2006-09-06  Martyn Russell  <martyn@imendio.com>
 
