@@ -1,3 +1,9 @@
+2006-09-07  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: Keep the 'x' on chat tabs permanently
+	on, it is a bit shit flashing away as it does, fixes bug #354304
+	(Xavier Claessens). 
+
 2006-09-07  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat.c: (gossip_chat_init),
