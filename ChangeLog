@@ -1,3 +1,10 @@
+2006-09-07  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat.c: (gossip_chat_init),
+	(chat_text_view_scroll_hide_cb), (chat_text_view_size_allocate_cb):
+	Patch from Xavier Claessens to fix bug #132514, set max height on
+	the input textview.
+
 2006-09-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: (gossip_app_set_visibility): Make sure clicking on

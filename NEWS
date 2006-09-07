@@ -9,6 +9,8 @@ isn't arrived yet (Xavier Claessens).
 menu (Xavier Claessens).
 - Fixed #354735, Save hidden state when closing roster with 'x' 
 (Xavier Claessens).
+- Fixed #132514, Set a max height for the input entry (Xavier
+Claessens).
 
 
 NEW in 0.15:

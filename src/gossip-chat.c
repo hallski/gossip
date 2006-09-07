@@ -48,6 +48,8 @@
 #define CHAT_DIR_CREATE_MODE  (S_IRUSR | S_IWUSR | S_IXUSR)
 #define CHAT_FILE_CREATE_MODE (S_IRUSR | S_IWUSR)
 
+#define MAX_INPUT_HEIGHT 150
+
 struct _GossipChatPriv {
 	GossipChatWindow *window;
 
@@ -59,6 +61,7 @@ struct _GossipChatPriv {
 	gint              padding_height;
 	gint              default_window_height;
 	gint              last_input_height;
+	gboolean          vscroll_visible;
 };
 
 typedef struct {
@@ -73,6 +76,8 @@ static void             gossip_chat_class_init            (GossipChatClass *klas
 static void             gossip_chat_init                  (GossipChat      *chat);
 static void             chat_finalize                     (GObject         *object);
 static void             chat_input_text_buffer_changed_cb (GtkTextBuffer   *buffer,
+							   GossipChat      *chat);
+static void             chat_text_view_scroll_hide_cb     (GtkWidget       *widget,
 							   GossipChat      *chat);
 static void             chat_text_view_size_allocate_cb   (GtkWidget       *widget,
 							   GtkAllocation   *allocation,
@@ -176,6 +181,7 @@ gossip_chat_init (GossipChat *chat)
 	priv->tooltips = gtk_tooltips_new ();
 	
 	priv->default_window_height = -1;
+	priv->vscroll_visible = FALSE;
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	g_signal_connect (buffer,
@@ -323,24 +329,59 @@ chat_change_size_in_idle_cb (ChangeSizeData *data)
 }
 
 static void
+chat_text_view_scroll_hide_cb (GtkWidget  *widget,
+			       GossipChat *chat)
+{
+	GossipChatPriv *priv;
+	GtkWidget      *sw;
+
+	priv = GET_PRIV (chat);
+
+	priv->vscroll_visible = FALSE;
+	g_signal_handlers_disconnect_by_func (widget, chat_text_view_scroll_hide_cb, chat);
+
+	sw = gtk_widget_get_parent (chat->input_text_view);
+	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+					GTK_POLICY_NEVER,
+					GTK_POLICY_NEVER);
+	g_object_set (sw, "height-request", -1, NULL);
+}
+
+static void
 chat_text_view_size_allocate_cb (GtkWidget     *widget,
 		                 GtkAllocation *allocation,
 				 GossipChat    *chat)
 {
-	GossipChatPriv   *priv;
-	gint              width;
-	GtkWidget        *dialog;
-	ChangeSizeData   *data;
-	gint              window_height;
-	gint              new_height;
-	GtkAllocation    *view_allocation;
-	gint              current_height;
-	gint              diff;
+	GossipChatPriv *priv;
+	gint            width;
+	GtkWidget      *dialog;
+	ChangeSizeData *data;
+	gint            window_height;
+	gint            new_height;
+	GtkAllocation  *view_allocation;
+	gint            current_height;
+	gint            diff;
+	GtkWidget      *sw;
 
 	priv = GET_PRIV (chat);
 
 	if (priv->default_window_height <= 0) {
 		return;
+	}
+	
+	sw = gtk_widget_get_parent (widget);
+	if (sw->allocation.height >= MAX_INPUT_HEIGHT && !priv->vscroll_visible) {
+		GtkWidget *vscroll;
+
+		priv->vscroll_visible = TRUE;
+		gtk_widget_set_size_request (sw, -1, MAX_INPUT_HEIGHT);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+						GTK_POLICY_NEVER,
+						GTK_POLICY_AUTOMATIC);
+		vscroll = gtk_scrolled_window_get_vscrollbar (GTK_SCROLLED_WINDOW (sw));
+		g_signal_connect (vscroll, "hide",
+				  G_CALLBACK (chat_text_view_scroll_hide_cb),
+				  chat);
 	}
 
 	if (priv->last_input_height <= allocation->height) {
