@@ -617,16 +617,30 @@ group_chat_contacts_sort_func (GtkTreeModel *model,
 			       GtkTreeIter  *iter_b,
 			       gpointer      user_data)
 {
-	gchar *name_a, *name_b;
-	gint   ret_val;
+	GossipContact      *contact_a, *contact_b;
+	GossipChatroomRole  role_a, role_b;
+	gint                ret_val;
 	
-	gtk_tree_model_get (model, iter_a, COL_NAME, &name_a, -1);
-	gtk_tree_model_get (model, iter_b, COL_NAME, &name_b, -1);
-	
-	ret_val = g_ascii_strcasecmp (name_a, name_b);
+	gtk_tree_model_get (model, iter_a, COL_CONTACT, &contact_a, -1);
+	gtk_tree_model_get (model, iter_b, COL_CONTACT, &contact_b, -1);
 
-	g_free (name_a);
-	g_free (name_b);
+	role_a = gossip_chatroom_contact_get_role (GOSSIP_CHATROOM_CONTACT (contact_a));
+	role_b = gossip_chatroom_contact_get_role (GOSSIP_CHATROOM_CONTACT (contact_b));
+
+	if (role_a == role_b) {
+		const gchar *name_a;
+		const gchar *name_b;
+
+		name_a = gossip_contact_get_name (contact_a);
+		name_b = gossip_contact_get_name (contact_b);
+
+		ret_val = g_ascii_strcasecmp (name_a, name_b);
+	} else {
+		ret_val = role_a - role_b;
+	}
+	
+	g_object_unref (contact_a);
+	g_object_unref (contact_b);
 
 	return ret_val;
 }
