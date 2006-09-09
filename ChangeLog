@@ -1,3 +1,13 @@
+2006-09-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-accounts-dialog.c
+	(accounts_dialog_protocol_error_cb): Add error handler, for now
+	just does the same as disconnect, might need to show an error icon
+	or something like that. Fixes bug #349515, since it resets the
+	connecting state on error.
+	Also remove some pointless comments that just says exactly what
+	the code already says, remove some assignments from declarations.
+
 2006-09-07  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: Keep the 'x' on chat tabs permanently
