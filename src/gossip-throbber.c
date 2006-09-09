@@ -26,7 +26,8 @@
 
 #include "gossip-throbber.h"
 
-#define THROBBER_DEFAULT_TIMEOUT 100	/* Milliseconds Per Frame */
+#define THROBBER_DEFAULT_TIMEOUT 100	/* Milliseconds per frame */
+#define ICON_SIZE                24
 
 struct GossipThrobberDetails {
 	GList	  *image_list;
@@ -307,10 +308,9 @@ scale_to_real_size (GossipThrobber *throbber,
 
 	size = gdk_pixbuf_get_height (pixbuf);
 
-	if (throbber->details->small_mode) {
+	if (size > ICON_SIZE) {
 		result = gdk_pixbuf_scale_simple (pixbuf,
-						  size * 2 / 3,
-						  size * 2 / 3,
+						  ICON_SIZE, ICON_SIZE,
 						  GDK_INTERP_BILINEAR);
 	} else {
 		result = g_object_ref (pixbuf);
@@ -353,7 +353,7 @@ gossip_throbber_load_images (GossipThrobber *throbber)
 
 	/* Load the animation */
 	icon_info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (),
-						"gnome-spinner", -1, 0);
+						"gnome-spinner", ICON_SIZE, 0);
 	if (icon_info == NULL) {
 		g_warning ("Throbber animation not found");
 		return;
@@ -393,7 +393,7 @@ gossip_throbber_load_images (GossipThrobber *throbber)
 
 	/* Load the rest icon */
 	icon_info = gtk_icon_theme_lookup_icon (gtk_icon_theme_get_default (),
-						"gnome-spinner-rest", -1, 0);
+						"gnome-spinner-rest", ICON_SIZE, 0);
 	if (icon_info == NULL) {
 		g_warning ("Throbber rest icon not found\n");
 		return;
@@ -410,6 +410,7 @@ gossip_throbber_load_images (GossipThrobber *throbber)
 	gtk_icon_info_free (icon_info);
 }
 
+/* Note: this doesn't do anything in gossip's version. */
 void
 gossip_throbber_set_small_mode (GossipThrobber *throbber, 
 				gboolean        new_mode)
@@ -433,7 +434,7 @@ gossip_throbber_size_request (GtkWidget      *widget,
 	get_throbber_dimensions (throbber, &throbber_width, &throbber_height);
 	
 	/* Allocate some extra margin so we don't butt up against toolbar edges */
-	requisition->width = throbber_width + 8;
+	requisition->width = throbber_width; /* Patch out for gossip: + 8;*/
    	requisition->height = throbber_height;
 }
 

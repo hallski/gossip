@@ -642,7 +642,6 @@ app_setup (GossipSession        *session,
 
 	/* Set up the throbber */
 	priv->throbber = gossip_throbber_new ();
-	gossip_throbber_set_small_mode (GOSSIP_THROBBER (priv->throbber), TRUE);
 	gtk_widget_show (priv->throbber);
 
 	item = gtk_tool_item_new ();

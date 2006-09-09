@@ -1,5 +1,17 @@
 2006-09-09  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-app.c: (app_setup): Don't set the small mode on the
+	throbber.
+
+	* src/gossip-throbber.c: (scale_to_real_size),
+	(gossip_throbber_load_images), (gossip_throbber_size_request): Use
+	an icon size that is available in the new icon theme for GNOME
+	2.16. Only scale when the right size is not available (older GNOME
+	versions). This makes the throbber work in both 2.16 and earlier
+	versions. Also remove the extra horizontal padding, looks better.
+
+2006-09-09  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-accounts-dialog.c
 	(accounts_dialog_protocol_error_cb): Add error handler, for now
 	just does the same as disconnect, might need to show an error icon
