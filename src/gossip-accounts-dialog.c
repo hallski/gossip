@@ -958,15 +958,14 @@ accounts_dialog_checkbutton_toggled_cb (GtkWidget            *widget,
 					GossipAccountsDialog *dialog)
 {
 	GossipAccount *account;
-	gboolean       active;
-	gboolean       changed;
 
 	account = accounts_dialog_model_get_selected (dialog);
 
 	if (widget == dialog->checkbutton_ssl) {
+		gboolean       active;
+		gboolean       changed;
 		GossipSession  *session;
 		GossipProtocol *protocol;
-
 		guint16         port;
 		guint16         port_with_ssl;
 
@@ -987,6 +986,8 @@ accounts_dialog_checkbutton_toggled_cb (GtkWidget            *widget,
 			   (gossip_account_get_port (account) == port_with_ssl)) {
 			gossip_account_set_port (account, port);
 			changed = TRUE;
+		} else {
+			changed = FALSE;
 		}
 		
 		if (changed) {
