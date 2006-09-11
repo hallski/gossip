@@ -1,3 +1,12 @@
+2006-09-11  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-ui-utils.c:
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	* ui/transports.glade: Changed the default password character from
+	the asterisk to the black circle, fixes bug #355117 (Xavier
+	Claessens).
+
 2006-09-09  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c: (app_setup): Don't set the small mode on the

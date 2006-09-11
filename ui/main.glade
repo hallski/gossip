@@ -190,7 +190,7 @@
 				  <property name="max_length">0</property>
 				  <property name="text" translatable="yes"></property>
 				  <property name="has_frame">True</property>
-				  <property name="invisible_char">*</property>
+				  <property name="invisible_char">●</property>
 				  <property name="activates_default">True</property>
 				</widget>
 				<packing>
@@ -606,7 +606,7 @@
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
+			  <property name="invisible_char">●</property>
 			  <property name="activates_default">True</property>
 			</widget>
 			<packing>
@@ -672,7 +672,7 @@
 			      <property name="max_length">0</property>
 			      <property name="text" translatable="yes"></property>
 			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
+			      <property name="invisible_char">●</property>
 			      <property name="activates_default">False</property>
 			    </widget>
 			  </child>
@@ -2428,7 +2428,7 @@
 			  <property name="max_length">64</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
+			  <property name="invisible_char">●</property>
 			  <property name="activates_default">True</property>
 			</widget>
 			<packing>
@@ -2824,7 +2824,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			      <property name="max_length">0</property>
 			      <property name="text" translatable="yes"></property>
 			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
+			      <property name="invisible_char">●</property>
 			      <property name="activates_default">True</property>
 			    </widget>
 			    <packing>
@@ -2950,7 +2950,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
+			  <property name="invisible_char">●</property>
 			  <property name="activates_default">True</property>
 			</widget>
 			<packing>
@@ -3006,7 +3006,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
+			  <property name="invisible_char">●</property>
 			  <property name="activates_default">True</property>
 			</widget>
 			<packing>
@@ -3103,7 +3103,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			      <property name="max_length">0</property>
 			      <property name="text" translatable="yes">Home</property>
 			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
+			      <property name="invisible_char">●</property>
 			      <property name="activates_default">True</property>
 			    </widget>
 			    <packing>
@@ -3207,7 +3207,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			      <property name="max_length">0</property>
 			      <property name="text" translatable="yes"></property>
 			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
+			      <property name="invisible_char">●</property>
 			      <property name="activates_default">True</property>
 			    </widget>
 			    <packing>
@@ -3229,7 +3229,7 @@ To get started, just click &quot;Forward&quot;.</property>
 			      <property name="max_length">0</property>
 			      <property name="text" translatable="yes"></property>
 			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
+			      <property name="invisible_char">●</property>
 			      <property name="activates_default">False</property>
 			      <property name="width_chars">6</property>
 			    </widget>
@@ -3440,7 +3440,7 @@ This name could be something associated with the service provider, for example, 
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
+			  <property name="invisible_char">●</property>
 			  <property name="activates_default">True</property>
 			</widget>
 			<packing>
@@ -4687,7 +4687,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char">*</property>
+		      <property name="invisible_char">●</property>
 		      <property name="activates_default">False</property>
 		    </widget>
 		    <packing>
@@ -5143,7 +5143,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char">*</property>
+		      <property name="invisible_char">●</property>
 		      <property name="activates_default">False</property>
 		    </widget>
 		    <packing>
@@ -5165,7 +5165,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char">*</property>
+		      <property name="invisible_char">●</property>
 		      <property name="activates_default">False</property>
 		    </widget>
 		    <packing>
@@ -5186,7 +5186,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char">*</property>
+		      <property name="invisible_char">●</property>
 		      <property name="activates_default">False</property>
 		    </widget>
 		    <packing>
@@ -5207,7 +5207,7 @@ This name could be something associated with the service provider, for example, 
 		      <property name="max_length">0</property>
 		      <property name="text" translatable="yes"></property>
 		      <property name="has_frame">True</property>
-		      <property name="invisible_char">*</property>
+		      <property name="invisible_char">●</property>
 		      <property name="activates_default">False</property>
 		    </widget>
 		    <packing>
@@ -5846,7 +5846,7 @@ This name could be something associated with the service provider, for example, 
 			  <property name="max_length">0</property>
 			  <property name="text" translatable="yes"></property>
 			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
+			  <property name="invisible_char">●</property>
 			  <property name="activates_default">True</property>
 			</widget>
 			<packing>
@@ -6491,7 +6491,7 @@ This name could be something associated with the service provider, for example, 
 		  <property name="max_length">0</property>
 		  <property name="text" translatable="yes"></property>
 		  <property name="has_frame">True</property>
-		  <property name="invisible_char">*</property>
+		  <property name="invisible_char">●</property>
 		  <property name="activates_default">True</property>
 		</widget>
 		<packing>
@@ -6657,7 +6657,7 @@ This name could be something associated with the service provider, for example, 
 		  <property name="max_length">0</property>
 		  <property name="text" translatable="yes"></property>
 		  <property name="has_frame">True</property>
-		  <property name="invisible_char">*</property>
+		  <property name="invisible_char">●</property>
 		  <property name="activates_default">True</property>
 		</widget>
 		<packing>
@@ -6848,7 +6848,7 @@ This name could be something associated with the service provider, for example, 
 		  <property name="max_length">0</property>
 		  <property name="text" translatable="yes"></property>
 		  <property name="has_frame">True</property>
-		  <property name="invisible_char">*</property>
+		  <property name="invisible_char">●</property>
 		  <property name="activates_default">True</property>
 		</widget>
 		<packing>
@@ -7228,7 +7228,7 @@ This name could be something associated with the service provider, for example, 
 				      <property name="max_length">0</property>
 				      <property name="text" translatable="yes"></property>
 				      <property name="has_frame">True</property>
-				      <property name="invisible_char">*</property>
+				      <property name="invisible_char">●</property>
 				      <property name="activates_default">True</property>
 				      <property name="width_chars">20</property>
 				    </widget>
@@ -7337,7 +7337,7 @@ This name could be something associated with the service provider, for example, 
 				      <property name="max_length">0</property>
 				      <property name="text" translatable="yes"></property>
 				      <property name="has_frame">True</property>
-				      <property name="invisible_char">*</property>
+				      <property name="invisible_char">●</property>
 				      <property name="activates_default">True</property>
 				    </widget>
 				    <packing>
@@ -7359,7 +7359,7 @@ This name could be something associated with the service provider, for example, 
 				      <property name="max_length">0</property>
 				      <property name="text" translatable="yes"></property>
 				      <property name="has_frame">True</property>
-				      <property name="invisible_char">*</property>
+				      <property name="invisible_char">●</property>
 				      <property name="activates_default">True</property>
 				    </widget>
 				    <packing>
@@ -7513,7 +7513,7 @@ This name could be something associated with the service provider, for example, 
 				  <property name="max_length">0</property>
 				  <property name="text" translatable="yes"></property>
 				  <property name="has_frame">True</property>
-				  <property name="invisible_char">*</property>
+				  <property name="invisible_char">●</property>
 				  <property name="activates_default">True</property>
 				</widget>
 				<packing>
@@ -7534,7 +7534,7 @@ This name could be something associated with the service provider, for example, 
 				  <property name="max_length">0</property>
 				  <property name="text" translatable="yes"></property>
 				  <property name="has_frame">True</property>
-				  <property name="invisible_char">*</property>
+				  <property name="invisible_char">●</property>
 				  <property name="activates_default">True</property>
 				</widget>
 				<packing>
@@ -7642,7 +7642,7 @@ This name could be something associated with the service provider, for example, 
 				  <property name="max_length">0</property>
 				  <property name="text" translatable="yes"></property>
 				  <property name="has_frame">True</property>
-				  <property name="invisible_char">*</property>
+				  <property name="invisible_char">●</property>
 				  <property name="activates_default">True</property>
 				</widget>
 				<packing>
