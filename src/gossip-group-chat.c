@@ -98,6 +98,7 @@ static void            group_chat_protocol_connected_cb       (GossipSession    
 static void            group_chat_protocol_disconnected_cb    (GossipSession                *session,
 							       GossipAccount                *account,
 							       GossipProtocol               *protocol,
+							       gint                          reason,
 							       GossipGroupChat              *chat);
 static gboolean        group_chat_key_press_event_cb          (GtkWidget                    *widget,
 							       GdkEventKey                  *event,
@@ -369,6 +370,7 @@ static void
 group_chat_protocol_disconnected_cb (GossipSession   *session,
 				     GossipAccount   *account,
 				     GossipProtocol  *protocol,
+				     gint             reason,
 				     GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;

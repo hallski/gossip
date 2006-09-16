@@ -89,6 +89,7 @@ static void       account_button_protocol_connected_cb     (GossipSession       
 static void       account_button_protocol_disconnected_cb  (GossipSession       *session,
 							    GossipAccount       *account,
 							    GossipProtocol      *protocol,
+							    gint                 reason,
 							    GossipAccountButton *account_button);
 static void       account_button_protocol_error_cb         (GossipSession       *session,
 							    GossipProtocol      *protocol,
@@ -583,6 +584,7 @@ static void
 account_button_protocol_disconnected_cb (GossipSession       *session,
 					 GossipAccount       *account,
 					 GossipProtocol      *protocol,
+					 gint                 reason,
 					 GossipAccountButton *account_button)
 {
 	GossipAccountButtonPriv *priv;

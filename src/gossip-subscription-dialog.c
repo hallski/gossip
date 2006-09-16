@@ -60,6 +60,7 @@ static void subscription_dialog_protocol_connected_cb    (GossipSession         
 static void subscription_dialog_protocol_disconnected_cb (GossipSession            *session,
 							  GossipAccount            *account,
 							  GossipProtocol           *protocol,
+							  gint                      reason,
 							  gpointer                  user_data);
 static void subscription_dialog_request_cb               (GossipProtocol           *protocol,
 							  GossipContact            *contact,
@@ -135,6 +136,7 @@ static void
 subscription_dialog_protocol_disconnected_cb (GossipSession  *session,
 					      GossipAccount  *account,
 					      GossipProtocol *protocol,
+					      gint            reason,
 					      gpointer        user_data)
 {
  	g_signal_handlers_disconnect_by_func (protocol, 

@@ -1,3 +1,23 @@
+2006-09-16  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-protocol.c:
+	* libgossip/gossip-session.[ch]:
+	* libgossip/libgossip-marshal.list:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-account-button.c:
+	* src/gossip-account-chooser.c:
+	* src/gossip-accounts-dialog.c:
+	* src/gossip-app.c: 
+	* src/gossip-ft-window.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-notify.c: 
+	* src/gossip-private-chat.c:
+	* src/gossip-sound.c: 
+	* src/gossip-subscription-dialog.c: Added the disconnect reason up and
+	down the stack and reconnect when not disconnected normally. Patch by
+	Xavier Claessens, fixes bug #121003 (Xavier Claessens).
+
 2006-09-16  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-ui-utils.c: (gossip_password_dialog_run):

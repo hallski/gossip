@@ -86,6 +86,7 @@ static void            session_protocol_logged_in                (GossipProtocol
 								  GossipSession        *session);
 static void            session_protocol_logged_out               (GossipProtocol       *protocol,
 								  GossipAccount        *account,
+								  gint                  reason,
 								  GossipSession        *session);
 static void            session_protocol_new_message              (GossipProtocol       *protocol,
 								  GossipMessage        *message,
@@ -224,9 +225,9 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT_OBJECT,
+			      libgossip_marshal_VOID__OBJECT_OBJECT_INT,
 			      G_TYPE_NONE, 
-			      2, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL);
+			      3, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL, G_TYPE_INT);
 
 	signals[PROTOCOL_DISCONNECTING] = 
 		g_signal_new ("protocol-disconnecting",
@@ -454,6 +455,7 @@ session_protocol_logged_in (GossipProtocol *protocol,
 static void
 session_protocol_logged_out (GossipProtocol *protocol, 
 			     GossipAccount  *account,
+			     gint            reason,
 			     GossipSession  *session) 
 {
 	GossipSessionPriv *priv;
@@ -483,8 +485,9 @@ session_protocol_logged_out (GossipProtocol *protocol,
 		priv->connecting_counter--;
 	}
 
-	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0, account, protocol);
-	
+	g_signal_emit (session, signals[PROTOCOL_DISCONNECTED], 0,
+		       account, protocol, reason);
+
 	if (priv->connected_counter == 0) {
 		/* Last connected protocol was disconnected */
 		g_signal_emit (session, signals[DISCONNECTED], 0);

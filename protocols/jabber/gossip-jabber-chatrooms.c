@@ -68,6 +68,7 @@ typedef struct {
 
 static void             jabber_chatrooms_logged_out_cb         (GossipProtocol         *jabber,
 								GossipAccount          *account,
+								gint                    reason,
 								GossipJabberChatrooms  *chatrooms);
 static JabberChatroom * jabber_chatrooms_chatroom_new          (GossipJabberChatrooms  *chatrooms,
 								GossipChatroom         *chatroom);
@@ -179,6 +180,7 @@ gossip_jabber_chatrooms_finalize (GossipJabberChatrooms *chatrooms)
 static void
 jabber_chatrooms_logged_out_cb (GossipProtocol        *jabber,
 				GossipAccount         *account,
+				gint                   reason,
 				GossipJabberChatrooms *chatrooms)
 {
 	GList *rooms;

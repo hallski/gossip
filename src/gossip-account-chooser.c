@@ -83,6 +83,7 @@ static void     account_chooser_protocol_connected_cb    (GossipSession         
 static void     account_chooser_protocol_disconnected_cb (GossipSession         *session,
 							  GossipAccount         *account,
 							  GossipProtocol        *protocol,
+							  gint                   reason,
 							  GossipAccountChooser  *account_chooser);
 static gboolean account_chooser_set_account_foreach      (GtkTreeModel          *model,
 							  GtkTreePath           *path,
@@ -406,6 +407,7 @@ static void
 account_chooser_protocol_disconnected_cb (GossipSession        *session,
 					  GossipAccount        *account,
 					  GossipProtocol       *protocol,
+					  gint                  reason,
 					  GossipAccountChooser *account_chooser)
 {
 	GtkComboBox           *combobox;

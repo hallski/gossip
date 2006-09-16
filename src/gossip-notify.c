@@ -70,6 +70,7 @@ static void                notify_protocol_connected_cb           (GossipSession
 static void                notify_protocol_disconnected_cb        (GossipSession      *session,
 								   GossipAccount      *account,
 								   GossipProtocol     *protocol,
+								   gint                reason,
 								   gpointer            user_data);
 static void                notify_contact_presence_updated_cb     (GossipSession      *session,
 								   GossipContact      *contact,
@@ -507,6 +508,7 @@ static void
 notify_protocol_disconnected_cb (GossipSession  *session,
 				 GossipAccount  *account,
 				 GossipProtocol *protocol,
+				 gint            reason,
 				 gpointer        user_data)
 {
 	g_hash_table_remove (account_states, account);

@@ -83,7 +83,6 @@
 #include "gossip-notify.h"
 #endif
 
-
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_APP, GossipAppPriv))
 
 #define DEBUG_DOMAIN_SETUP     "AppSetup"
@@ -117,6 +116,9 @@
 /* Accels (menu shortcuts) can be configured and saved */
 #define ACCELS_FILENAME "accels.txt"
 
+/* Delay for retry to connect when disconnected (seconds) */
+#define RETRY_CONNECT_TIMEOUT 20
+
 struct _GossipAppPriv {
 	GossipSession         *session;
 
@@ -132,6 +134,7 @@ struct _GossipAppPriv {
 	GtkWidget             *main_vbox;
 	GtkWidget             *errors_vbox;
 	GHashTable            *errors;
+	GHashTable            *reconnects;
 
 	/* Tooltips for all widgets */
 	GtkTooltips           *tooltips;
@@ -260,9 +263,12 @@ static void            app_session_protocol_connected_cb      (GossipSession    
 							       GossipAccount            *account,
 							       GossipProtocol           *protocol,
 							       gpointer                  user_data);
+static void            app_reconnect_remove                   (gpointer                  p);
+static gboolean        app_reconnect_cb                       (GossipAccount            *account);
 static void            app_session_protocol_disconnected_cb   (GossipSession            *session,
 							       GossipAccount            *account,
 							       GossipProtocol           *protocol,
+							       gint                      reason,
 							       gpointer                  user_data);
 static void            app_session_protocol_error_cb          (GossipSession            *session,
 							       GossipProtocol           *protocol,
@@ -370,6 +376,12 @@ gossip_app_init (GossipApp *singleton_app)
 					      gossip_account_equal,
 					      g_object_unref,
 					      (GDestroyNotify) gtk_widget_destroy);
+
+	priv->reconnects = g_hash_table_new_full (gossip_account_hash,
+			  		      	  gossip_account_equal,
+					      	  g_object_unref,
+					      	  (GDestroyNotify) app_reconnect_remove);
+
 	priv->tooltips = g_object_ref (gtk_tooltips_new ());
 	gtk_object_sink (GTK_OBJECT (priv->tooltips));
 }
@@ -403,6 +415,10 @@ app_finalize (GObject *object)
 		 * already.
 		 */
 		/*g_hash_table_destroy (priv->errors);*/
+	}
+
+	if (priv->reconnects) {
+		g_hash_table_destroy (priv->reconnects);
 	}
 
 	gtk_widget_destroy (priv->popup_menu);
@@ -1460,6 +1476,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 	}
 
 	g_hash_table_remove (priv->errors, account);
+	g_hash_table_remove (priv->reconnects, account);	
 
 	app_connection_items_update ();
 	app_favorite_chatroom_menu_update ();
@@ -1472,13 +1489,38 @@ app_session_protocol_connected_cb (GossipSession  *session,
 }
 
 static void
+app_reconnect_remove (gpointer data)
+{
+	guint *id;
+
+	id = (guint*) data;
+	g_source_remove (*id);
+}
+
+static gboolean
+app_reconnect_cb (GossipAccount *account)
+{
+	GossipAppPriv *priv;
+
+	priv = GET_PRIV (app);
+
+	gossip_app_connect (account, TRUE);
+	g_hash_table_remove (priv->reconnects, account);
+
+	return FALSE;
+}
+
+static void
 app_session_protocol_disconnected_cb (GossipSession  *session,
 				      GossipAccount  *account,
 				      GossipProtocol *protocol,
+				      gint            reason,
 				      gpointer        user_data)
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
+	gboolean       should_reconnect;
+	gboolean       nm_connected;
 
 	priv = GET_PRIV (app);
 
@@ -1497,6 +1539,30 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
  	app_connection_items_update ();
 	app_favorite_chatroom_menu_update ();
 	app_presence_updated ();
+
+	should_reconnect = reason != GOSSIP_DISCONNECT_ASKED;
+
+#ifdef HAVE_DBUS
+	/* If NM says we are offline that's useless to retry to connect,
+	 * NM will tell us when network is up again. */
+	if (gossip_dbus_nm_get_state (&nm_connected)) {
+		should_reconnect &= nm_connected;
+	}
+#endif
+
+	should_reconnect &= !g_hash_table_lookup (priv->reconnects, account);
+
+	if (should_reconnect) {
+		guint id;
+
+		/* Unexpected disconnection, try to reconnect */
+		id = g_timeout_add (RETRY_CONNECT_TIMEOUT * 1000,
+			    	    (GSourceFunc) app_reconnect_cb,
+			    	    account);
+		g_hash_table_insert (priv->reconnects, 	
+				     g_object_ref (account),
+				     &id);
+	}
 }
 
 static void

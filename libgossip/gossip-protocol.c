@@ -105,9 +105,9 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
+			      libgossip_marshal_VOID__OBJECT_INT,
 			      G_TYPE_NONE, 
-			      1, GOSSIP_TYPE_ACCOUNT);
+			      2, GOSSIP_TYPE_ACCOUNT, G_TYPE_INT);
 
 	signals[NEW_MESSAGE] = 
 		g_signal_new ("new-message",

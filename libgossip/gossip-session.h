@@ -34,6 +34,11 @@
 #include "gossip-protocol.h"
 #include "gossip-vcard.h"
 
+typedef enum {
+	GOSSIP_DISCONNECT_ASKED,
+	GOSSIP_DISCONNECT_ERROR
+} GossipDisconnectReason;
+
 #define GOSSIP_TYPE_SESSION         (gossip_session_get_type ())
 #define GOSSIP_SESSION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_SESSION, GossipSession))
 #define GOSSIP_SESSION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_SESSION, GossipSessionClass))

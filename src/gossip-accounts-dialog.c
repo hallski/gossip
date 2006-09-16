@@ -123,6 +123,7 @@ static void           accounts_dialog_protocol_connected_cb     (GossipSession  
 static void           accounts_dialog_protocol_disconnected_cb  (GossipSession         *session,
 								 GossipAccount         *account,
 								 GossipProtocol        *protocol,
+								 gint                   reason,
 								 GossipAccountsDialog  *dialog);
 static void           accounts_dialog_protocol_error_cb         (GossipSession         *session,
 								 GossipProtocol        *protocol,
@@ -1190,6 +1191,7 @@ static void
 accounts_dialog_protocol_disconnected_cb (GossipSession        *session,
 					  GossipAccount        *account,
 					  GossipProtocol       *protocol,
+					  gint                  reason,
 					  GossipAccountsDialog *dialog)
 {
 	GtkTreeView      *view;

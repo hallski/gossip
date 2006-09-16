@@ -54,6 +54,7 @@ static void ft_window_protocol_connected_cb    (GossipSession      *session,
 static void ft_window_protocol_disconnected_cb (GossipSession      *session,
 						GossipAccount      *account,
 						GossipProtocol     *protocol,
+						gint                reason,
 						gpointer            user_data);
 static void ft_window_request_cb               (GossipProtocol     *protocol,
 						GossipFT           *ft,
@@ -130,6 +131,7 @@ static void
 ft_window_protocol_disconnected_cb (GossipSession  *session,
 				    GossipAccount  *account,
 				    GossipProtocol *protocol,
+				    gint            reason,
 				    gpointer        user_data)
 {
  	g_signal_handlers_disconnect_by_func (protocol, 

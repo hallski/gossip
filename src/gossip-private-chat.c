@@ -94,6 +94,7 @@ static void           private_chat_protocol_connected_cb        (GossipSession  
 static void           private_chat_protocol_disconnected_cb     (GossipSession          *session,
 								 GossipAccount          *account,
 								 GossipProtocol         *protocol,
+								 gint                    reason,
 								 GossipPrivateChat      *chat);
 static void           private_chat_composing_cb                 (GossipSession          *session,
 								 GossipContact          *contact,
@@ -545,6 +546,7 @@ static void
 private_chat_protocol_disconnected_cb (GossipSession     *session,
 				       GossipAccount     *account,
 				       GossipProtocol    *protocol,
+				       gint               reason,
 				       GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;

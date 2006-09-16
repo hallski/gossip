@@ -30,6 +30,7 @@
 #include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-chatroom-provider.h>
 #include <libgossip/gossip-ft-provider.h>
+#include <libgossip/gossip-session.h>
 
 #include "gossip-jid.h"
 #include "gossip-jabber-chatrooms.h"
@@ -67,7 +68,10 @@
  * the user has stopped composing.
  */
 #define COMPOSING_TIMEOUT          45
- 
+
+/* How many rand char should be happend to the resource */
+#define N_RAND_CHAR                6
+
 struct _GossipJabberPriv {
 	LmConnection          *connection;
 	
@@ -738,7 +742,12 @@ jabber_connection_open_cb (LmConnection *connection,
 	gchar            *id;
 	const gchar      *resource;
 	gchar            *password = NULL;
-	
+#ifdef USE_RAND_RESOURCE
+	gchar            *resource_rand;
+	gchar             rand_str[N_RAND_CHAR + 1];
+	gint              i;
+#endif
+
 	priv = GET_PRIV (jabber);
 
 	if (priv->disconnect_request) {
@@ -798,12 +807,34 @@ jabber_connection_open_cb (LmConnection *connection,
 		return;
 	}
 
+#ifdef USE_RAND_RESOURCE
+	/* appens a random string to the resource to avoid conflicts */
+	for (i = 0; i < N_RAND_CHAR; i++) {
+		if (g_random_boolean()) {
+			rand_str[i] = g_random_int_range('A', 'Z' + 1);
+		} else {
+			rand_str[i] = g_random_int_range('0', '9' + 1);
+		}
+	}
+	rand_str[N_RAND_CHAR] = '\0';
+	resource_rand = g_strdup_printf ("%s.%s", resource, rand_str);
+
+	lm_connection_authenticate (priv->connection,
+				    id,
+				    password, 
+				    resource_rand,
+				    (LmResultFunction) jabber_connection_auth_cb,
+				    jabber, NULL, NULL);
+
+	g_free (resource_rand);
+#else
 	lm_connection_authenticate (priv->connection,
 				    id,
 				    password, 
 				    resource,
 				    (LmResultFunction) jabber_connection_auth_cb,
 				    jabber, NULL, NULL);
+#endif
 
 	g_free (id);
 	g_free (password);
@@ -885,7 +916,8 @@ jabber_disconnect_cb (LmConnection       *connection,
 		      LmDisconnectReason  reason,
 		      GossipJabber       *jabber)
 {
-	GossipJabberPriv *priv;
+	GossipJabberPriv       *priv;
+	GossipDisconnectReason  gossip_reason;
 
 	priv = GET_PRIV (jabber);
 
@@ -900,8 +932,22 @@ jabber_disconnect_cb (LmConnection       *connection,
 					     (GHRFunc) jabber_logout_contact_foreach,
 					     jabber);
 	}
-
-	g_signal_emit_by_name (jabber, "logged-out", priv->account);
+	
+	switch (reason) {
+	case LM_DISCONNECT_REASON_OK:
+		gossip_reason = GOSSIP_DISCONNECT_ASKED;
+		break;
+	case LM_DISCONNECT_REASON_PING_TIME_OUT:
+	case LM_DISCONNECT_REASON_HUP:
+	case LM_DISCONNECT_REASON_ERROR:
+	case LM_DISCONNECT_REASON_UNKNOWN:
+		gossip_reason = GOSSIP_DISCONNECT_ERROR;
+		break;
+	default:
+		g_assert_not_reached();
+	}
+	
+	g_signal_emit_by_name (jabber, "logged-out", priv->account, gossip_reason);
 }
 
 static LmSSLResponse 
