@@ -1,5 +1,12 @@
 2006-09-16  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c:
+	(presence_chooser_dialog_response_cb),
+	(presence_chooser_show_dialog): Fill in the status dialog with
+	exiting strings. Fixes bug #354771 (Xavier Claessens).
+
+2006-09-16  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-new-chatroom-dialog.c:
 	(new_chatroom_dialog_update_join_button): Remove debug output,
 	fixes bug #355999 (Xavier Claessens).

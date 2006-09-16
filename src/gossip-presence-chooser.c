@@ -255,24 +255,48 @@ presence_chooser_dialog_response_cb (GtkWidget             *dialog,
 		GtkWidget           *entry;
 		GtkWidget           *checkbutton;
 		GtkListStore        *store;
+		GtkTreeModel        *model;
 		GtkTreeIter          iter;
 		GossipPresenceState  state;
 		const gchar         *status;
 		gboolean             save;
+		gboolean             duplicate = FALSE;
+		gboolean             has_next;
 
 		entry = g_object_get_data (G_OBJECT (dialog), "entry");
 		status = gtk_entry_get_text (GTK_ENTRY (entry));
-
 		store = g_object_get_data (G_OBJECT (dialog), "store");
-		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 0, status, -1);
+		model = GTK_TREE_MODEL (store);
 
-		state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dialog), "state"));
+		has_next = gtk_tree_model_get_iter_first (model, &iter);
+		while (has_next) {
+			gchar *str;
 
-		checkbutton = g_object_get_data (G_OBJECT (dialog), "checkbutton");
-		save = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+			gtk_tree_model_get (model, &iter,
+					    0, &str,
+					    -1);
 
-		presence_chooser_set_state (chooser, state, status, save);
+			if (strcmp (status, str) == 0) {
+				g_free (str);
+				duplicate = TRUE;
+				break;
+			}
+
+			g_free (str);
+
+			has_next = gtk_tree_model_iter_next (model, &iter);
+		}
+
+		if (!duplicate) {
+			gtk_list_store_append (store, &iter);
+			gtk_list_store_set (store, &iter, 0, status, -1);
+
+			checkbutton = g_object_get_data (G_OBJECT (dialog), "checkbutton");
+			save = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+			state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dialog), "state"));
+
+			presence_chooser_set_state (chooser, state, status, save);
+		}
 	}
 
 	gtk_widget_destroy (dialog);
@@ -325,7 +349,18 @@ presence_chooser_show_dialog (GossipPresenceChooser *chooser,
 	g_object_unref (pixbuf);
 
 	if (!store[state]) {
+		GList       *presets, *l;
+		GtkTreeIter  iter;
+
 		store[state] = gtk_list_store_new (1, G_TYPE_STRING);
+
+		presets = gossip_status_presets_get (state, -1);
+		for (l = presets; l; l = l->next) {
+			gtk_list_store_append (store[state], &iter);
+			gtk_list_store_set (store[state], &iter, 0, l->data, -1);
+		}
+
+		g_list_free (presets);
 	}
 
 	default_status = gossip_presence_state_get_default_status (state);
