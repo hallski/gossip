@@ -1,3 +1,9 @@
+2006-09-16  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_update_join_button): Remove debug output,
+	fixes bug #355999 (Xavier Claessens).
+
 2006-09-11  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-ui-utils.c:
