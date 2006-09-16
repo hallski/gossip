@@ -633,7 +633,7 @@
 		  <property name="max_length">0</property>
 		  <property name="text" translatable="yes">You have been invited to join a chat conference.</property>
 		  <property name="has_frame">True</property>
-		  <property name="invisible_char">●</property>
+		  <property name="invisible_char">*</property>
 		  <property name="activates_default">True</property>
 		  <property name="width_chars">40</property>
 		</widget>

@@ -250,7 +250,6 @@ gossip_password_dialog_run (GossipAccount *account,
 
 	entry = gtk_entry_new ();
 	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
-	gtk_entry_set_invisible_char (GTK_ENTRY (entry), g_utf8_get_char ("●"));
 	
 	g_signal_connect (entry,
 			  "activate",

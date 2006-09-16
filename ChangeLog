@@ -1,5 +1,14 @@
 2006-09-16  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-ui-utils.c: (gossip_password_dialog_run):
+	* ui/chat.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	* ui/transports.glade: Revert patch for #355117, that's an Ubuntu
+	specific thing (setting invalid char).
+
+2006-09-16  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-presence-chooser.c:
 	(presence_chooser_dialog_response_cb),
 	(presence_chooser_show_dialog): Fill in the status dialog with
