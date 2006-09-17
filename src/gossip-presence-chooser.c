@@ -148,9 +148,9 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (alignment);
  	gtk_container_add (GTK_CONTAINER (chooser), alignment); 
-	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 2, 2);
+	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 1, 0);
 
- 	priv->hbox = gtk_hbox_new (FALSE, 2); 
+ 	priv->hbox = gtk_hbox_new (FALSE, 1); 
 	gtk_widget_show (priv->hbox);
  	gtk_container_add (GTK_CONTAINER (alignment), priv->hbox); 
 
@@ -163,11 +163,11 @@ gossip_presence_chooser_init (GossipPresenceChooser *chooser)
 	gtk_box_pack_start (GTK_BOX (priv->hbox), priv->label, TRUE, TRUE, 0);
 	gtk_label_set_ellipsize (GTK_LABEL (priv->label), PANGO_ELLIPSIZE_END);
  	gtk_misc_set_alignment (GTK_MISC (priv->label), 0, 0.5); 
+ 	gtk_misc_set_padding (GTK_MISC (priv->label), 4, 1); 
 
 	alignment = gtk_alignment_new (0.5, 0.5, 1, 1);
 	gtk_widget_show (alignment);
 	gtk_box_pack_start (GTK_BOX (priv->hbox), alignment, FALSE, FALSE, 0);
-	gtk_alignment_set_padding (GTK_ALIGNMENT (alignment), 0, 0, 4, 0);
 
 	arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_OUT);
 	gtk_widget_show (arrow);

@@ -1,6 +1,7 @@
 NEW in 0.17:
 ============
 - Require GTK+ 2.10
+- Show the contacts in a flat type mode instead of tree like so we don't waste space on the left (Martyn).
 
 
 NEW in 0.16:

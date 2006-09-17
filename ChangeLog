@@ -1,3 +1,15 @@
+2006-09-17  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: (contact_list_setup_view),
+	(contact_list_cell_set_background),
+	(contact_list_row_activated_cb): Updated the padding and added a flat
+	view approach to the roster so we don't waste space on the left making
+	the contacts look like a tree.
+
+	* src/gossip-presence-chooser.c: (gossip_presence_chooser_init):
+	Updated the padding and spacing so things look nice and lined up as
+	you look down the roster.
+
 2006-09-17  Richard Hult  <richard@imendio.com>
 
 	* src/Makefile.am: Don't build the old account button.

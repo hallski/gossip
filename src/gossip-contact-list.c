@@ -1396,14 +1396,16 @@ contact_list_setup_view (GossipContactList *list)
 	g_object_set (list, 
 		      "headers-visible", FALSE,
 		      "reorderable", TRUE,
+		      "show-expanders", FALSE,
+/* 		      "level-indentation", 3, */
 		      NULL);
 
 	col  = gtk_tree_view_column_new ();
 	
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell, 
-		      "xpad", (guint) 0,
-		      "ypad", (guint) 1,
+		      "xpad", 5,
+		      "ypad", 1,
 		      "visible", FALSE,
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
@@ -1415,8 +1417,8 @@ contact_list_setup_view (GossipContactList *list)
 	
 	cell = gossip_cell_renderer_text_new ();
 	g_object_set (cell,
-		      "xpad", (guint) 4, 
-		      "ypad", (guint) 1,
+		      "xpad", 0, 
+		      "ypad", 1,
 		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_add_attribute (col, cell, 
@@ -1433,8 +1435,8 @@ contact_list_setup_view (GossipContactList *list)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell, 
-		      "xpad", (guint) 0,
-		      "ypad", (guint) 0,
+		      "xpad", 0,
+		      "ypad", 0,
 		      "visible", FALSE,
 		      "width", 32,
 		      "height", 32,
@@ -1808,29 +1810,39 @@ contact_list_cell_set_background (GossipContactList  *list,
 	
 	g_return_if_fail (list != NULL);
 	g_return_if_fail (cell != NULL);
+	
+	style = gtk_widget_get_style (GTK_WIDGET (list));
 
-	if (is_active && !is_group) {	
-		style = gtk_widget_get_style (GTK_WIDGET (list));
-		
-		/* 	color = style->base[GTK_STATE_SELECTED];  */
-		/*  	color = style->text_aa[GTK_STATE_NORMAL];   */
-		color = style->bg[GTK_STATE_SELECTED]; 
-		
-		/* Here we take the current theme colour and add it to
-		 * the colour for white and average the two. This
-		 * gives a colour which is inline with the theme but
-		 * slightly whiter. 
-		 */ 
+	if (!is_group) {
+		if (is_active) {	
+			color = style->bg[GTK_STATE_SELECTED]; 
+			
+			/* Here we take the current theme colour and add it to
+			 * the colour for white and average the two. This
+			 * gives a colour which is inline with the theme but
+			 * slightly whiter. 
+			 */ 
+			color.red = (color.red + (style->white).red) / 2;
+			color.green = (color.green + (style->white).green) / 2;
+			color.blue = (color.blue + (style->white).blue) / 2;
+			
+			g_object_set (cell, 
+				      "cell-background-gdk", &color, 
+				      NULL);
+		} else {
+			g_object_set (cell, 
+				      "cell-background-gdk", NULL, 
+				      NULL);
+		}
+	} else {
+		color = style->text_aa[GTK_STATE_INSENSITIVE];
+
 		color.red = (color.red + (style->white).red) / 2;
 		color.green = (color.green + (style->white).green) / 2;
 		color.blue = (color.blue + (style->white).blue) / 2;
-		
+
 		g_object_set (cell, 
-			      "cell-background-gdk", &color, 
-			      NULL);
-	} else {
-		g_object_set (cell, 
-			      "cell-background-gdk", NULL, 
+			      "cell-background-gdk", &color,
 			      NULL);
 	}
 }
@@ -2040,10 +2052,12 @@ contact_list_row_activated_cb (GossipContactList *list,
 			       gpointer           user_data)
 {
 	GossipContact *contact;
+	GtkTreeView   *view;
 	GtkTreeModel  *model;
 	GtkTreeIter    iter;
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+	view = GTK_TREE_VIEW (list);
+	model = gtk_tree_view_get_model (view);
 
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter, COL_CONTACT, &contact, -1);
@@ -2051,6 +2065,16 @@ contact_list_row_activated_cb (GossipContactList *list,
 	if (contact) { 
 		contact_list_action_activated (list, contact);
 		g_object_unref (contact);
+	}
+
+	if (gtk_tree_path_get_depth (path) > 1) {
+		return;
+	}
+
+	if (gtk_tree_view_row_expanded (view, path)) {
+		gtk_tree_view_collapse_row (view, path);
+	} else {
+		gtk_tree_view_expand_row (view, path, FALSE);
 	}
 }
 
