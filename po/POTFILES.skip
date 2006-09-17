@@ -4,10 +4,10 @@ gossip.desktop.in
 ui/transports.glade
 
 src/eggtrayicon.c
+src/gossip-account-button.c
 src/gossip-tray.c
 src/gossip-transport-accounts-window.c
 src/gossip-transport-add-window.c
-src/gossip-status-presets-dialog.c
 
 peekaboo/data/GNOME_Peekaboo_Applet.server.in.in
 peekaboo/data/GNOME_Peekaboo_Applet.server.in

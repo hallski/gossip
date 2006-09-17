@@ -1,3 +1,9 @@
+2006-09-17  Richard Hult  <richard@imendio.com>
+
+	* POTFILES.in:
+	* POTFILES.skip: Update.
+	* sv.po: Update.
+
 2006-09-15  Ilkka Tuohela  <hile@iki.fi>
 
 	* fi.po: Updated Finnish translation.

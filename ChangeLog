@@ -1,3 +1,15 @@
+2006-09-17  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am: Don't build the old account button.
+
+	* src/gossip-app.c: (app_setup), (app_tray_update_tooltip),
+	(app_presence_updated):
+	* src/gossip-group-chat.c: (group_chat_protocol_connected_cb),
+	(group_chat_protocol_disconnected_cb):
+	* src/gossip-private-chat.c: (private_chat_protocol_connected_cb),
+	(private_chat_protocol_disconnected_cb): Add some comments for
+	translators and tweak some strings to help translators.
+
 2006-09-17  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version to 0.17 and depend on GTK+ 2.10. 

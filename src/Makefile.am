@@ -41,7 +41,6 @@ gossip_SOURCES = 				                        	\
 	$(eggtray_sources)		     	                        	\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
-	gossip-account-button.c		   gossip-account-button.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
 	gossip-add-contact-window.c        gossip-add-contact-window.h		\
 	gossip-app.c	 	           gossip-app.h				\

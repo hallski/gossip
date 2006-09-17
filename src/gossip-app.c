@@ -44,7 +44,6 @@
 #include <libgossip/gossip-conf.h>
 
 #include "gossip-about-dialog.h"
-#include "gossip-account-button.h"
 #include "gossip-accounts-dialog.h"
 #include "gossip-add-contact-window.h"
 #include "gossip-app.h"
@@ -666,7 +665,7 @@ app_setup (GossipSession        *session,
 
 	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
 
-	str = _("Show accounts and pending connections");
+	str = _("Show and edit accounts");
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
 			      priv->throbber, str, str);
 
@@ -1937,7 +1936,8 @@ app_tray_update_tooltip (void)
 				status = gossip_presence_state_get_default_status (state);
 			}
 		} else {
-			status = _("Disconnected");
+			/* i18n: The current state of the connection. */
+			status = _("Offline");
 		}
 
 		if (priv->tray_event_box) {
@@ -2585,6 +2585,7 @@ app_presence_updated (void)
 		gossip_presence_chooser_set_status (
 			GOSSIP_PRESENCE_CHOOSER (priv->presence_chooser),
 			_("Offline"));
+		app_tray_update_tooltip ();
 		return;
 	}
 

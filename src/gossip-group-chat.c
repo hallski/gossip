@@ -361,7 +361,7 @@ group_chat_protocol_connected_cb (GossipSession   *session,
 
 /* 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); */
 
-/* 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected")); */
+/*	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Connected")); */
 
 	/* FIXME: We should really attempt to re-join group chat here */
 }
@@ -385,7 +385,9 @@ group_chat_protocol_disconnected_cb (GossipSession   *session,
 
 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, FALSE);
 
-	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, _("Disconnected"));
+	/* i18n: Disconnected as in "was disconnected". */
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
+				       _("Disconnected"));
 
 	g_signal_emit_by_name (chat, "status-changed");
 }
