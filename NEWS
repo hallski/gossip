@@ -1,10 +1,45 @@
+NEW in 0.17:
+============
+- Require GTK+ 2.10
+
+
 NEW in 0.16:
-===========
+============
 - Added roles in group chat (Mikael)
+- Fixed #121003, Don't ask to reconnect, just do it (Xavier Claessens)
+- Fixed #132514, Set a max height on the expandable entry (Xavier
+Claessens)
+- Fixed #349515, Stop button in the accounts dialog doesn't work after
+errors (Richard Hult)
+- Fixed #353243, Should be possible to remove the alias set for users
+(Xavier Claessens)
+- Fixed #353576, Crash when closing subscribe dialog & vcard isn't
+arrived yet (Xavier Claessens)
+- Fixed #354002, Favorite chatrooms should be shown in group chat menu
+(Xavier Claessens)
+- Fixed #354304, Change close button flashing on chat tabs to show all
+the time (Xavier Claessens)
+- Fixed #354735, Save hidden state when closing roster with 'x' (Xavier
+Claessens)
+- Fixed #354771, Completion strings for status presets dialog not
+remembered after restart (Xavier Claessens)
+- Fixed #355999, Remove debug message in
+new_chatroom_dialog_update_join_button (Xavier Claessens)
+
+Translations:
+- Updated fr: Quentin Delance
+- Updated nl: Wouter Bolsterlee
+- Updated vi: Clytie Siddall
+- Updated ca: Jordi Mallach
+- Updated sv: Daniel Nylander
+- Updated lt: Gintautas Miliauskas, Žygimantas Beručka
+- Updated en_GB: David Lodge
+- Updated fi: Ilkka Tuohela
+- Updated es: Francisco Javier F. Serrador
 
 
 NEW in 0.15:
-===========
+============
 - Updated the "Simple" theme (Martyn).
 - Removed the Edit Groups dialog and merged it into an Edit Contact
 dialog where you can set the name too (Martyn).
@@ -69,7 +104,7 @@ es: Francisco Javier F. Serrador
 
 
 NEW in 0.14:
-===========
+============
 - Fixed a regression for PPC when signing in with digest passwords
 (Richard, Paul van Tilburg, Keywan Najafi Tonekaboni). 
 - Fixed #349810, Make regex used to highlight URIs case insensitive
