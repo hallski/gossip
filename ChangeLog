@@ -1,3 +1,11 @@
+2006-09-17  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version to 0.17 and depend on GTK+ 2.10. 
+
+2006-09-16  Martyn Russell  <martyn@imendio.com>
+
+	* Release 0.16.
+	
 2006-09-16  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-protocol.c:
