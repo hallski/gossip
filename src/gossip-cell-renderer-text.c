@@ -286,6 +286,8 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 			      "weight", PANGO_WEIGHT_BOLD, 
 			      "text", priv->name,
 			      "attributes", NULL,
+			      "xpad", 1,
+			      "ypad", 1,
 			      NULL);
 
 		priv->is_selected = selected;
@@ -330,6 +332,8 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		      "weight", PANGO_WEIGHT_NORMAL,
 		      "text", str,
 		      "attributes", attr_list,
+		      "xpad", 0,
+		      "ypad", 1,
 		      NULL);
       
 	g_free (str);

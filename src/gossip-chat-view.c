@@ -409,7 +409,7 @@ chat_view_setup_tags (GossipChatView *view)
 			  priv->buffer);
 
 	g_signal_connect (view,
-			  "event",
+			  "motion-notify-event",
 			  G_CALLBACK (chat_view_event_cb),
 			  tag);
 }

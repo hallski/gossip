@@ -1,3 +1,15 @@
+2006-09-18  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-cell-renderer-text.c:
+	(cell_renderer_text_update_text): Set xpad and ypad differently
+	for groups and contacts, improves appearance.
+	
+	* src/gossip-contact-list.c: (contact_list_setup_view): Don't set
+	the padding here.
+
+	* src/gossip-chat-view.c: (chat_view_setup_tags): Don't connect to
+	event, we're only interested in motion notify.
+
 2006-09-17  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_setup_view),

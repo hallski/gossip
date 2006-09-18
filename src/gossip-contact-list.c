@@ -1416,10 +1416,6 @@ contact_list_setup_view (GossipContactList *list)
 		list, NULL);
 	
 	cell = gossip_cell_renderer_text_new ();
-	g_object_set (cell,
-		      "xpad", 0, 
-		      "ypad", 1,
-		      NULL);
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
 	gtk_tree_view_column_add_attribute (col, cell, 
 					    "name", COL_NAME);
