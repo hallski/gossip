@@ -1,5 +1,11 @@
 2006-09-19  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-image-chooser.c (image_chooser_set_image_from_data):
+	Close the loader before trying to get the pixbuf so that all the
+	data gets processed. Fixes bug #353090.
+
+2006-09-19  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-accounts-dialog.c (accounts_dialog_destroy_cb):
 	Disconnect the error handler too, fixes bug #356647.
 

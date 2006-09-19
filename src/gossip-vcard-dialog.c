@@ -396,6 +396,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	gtk_text_buffer_set_text (buffer, STRING_EMPTY (str) ? "" : str, -1);
 
 	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
+
 	gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
 					     (gchar*) avatar, avatar_size);
 

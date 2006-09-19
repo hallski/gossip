@@ -283,8 +283,10 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 	}
 
 	loader = gdk_pixbuf_loader_new ();
+
 	gdk_pixbuf_loader_write (loader, data, size, NULL);
-	
+	gdk_pixbuf_loader_close (loader, NULL);
+
 	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
 	if (pixbuf) {  
 		GdkPixbuf *scaled_pixbuf;
@@ -325,9 +327,8 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 		g_object_unref (scaled_pixbuf);
 		
 		success = TRUE;
-	} 
+	}
 	
-	gdk_pixbuf_loader_close (loader, NULL);
 	g_object_unref (loader);
 	
 	return success;
