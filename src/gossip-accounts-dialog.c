@@ -1526,7 +1526,11 @@ accounts_dialog_destroy_cb (GtkWidget            *widget,
 	g_signal_handlers_disconnect_by_func (session,
 					      accounts_dialog_protocol_disconnected_cb, 
 					      dialog);
-
+	
+	g_signal_handlers_disconnect_by_func (session,
+					      accounts_dialog_protocol_error_cb, 
+					      dialog);
+		
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->treeview));
 	gtk_tree_model_foreach (model, 
 				(GtkTreeModelForeachFunc) accounts_dialog_foreach, 
