@@ -1,3 +1,8 @@
+2006-09-21  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c (app_session_protocol_disconnected_cb): Fix
+	build without dbus.
+
 2006-09-19  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-image-chooser.c (image_chooser_set_image_from_data):

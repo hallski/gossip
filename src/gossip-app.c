@@ -1519,7 +1519,9 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	GossipAppPriv *priv;
 	gboolean       connecting;
 	gboolean       should_reconnect;
+#ifdef HAVE_DBUS
 	gboolean       nm_connected;
+#endif
 
 	priv = GET_PRIV (app);
 
