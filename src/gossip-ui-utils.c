@@ -1545,29 +1545,6 @@ gossip_window_set_default_icon_name (const gchar *name)
 #endif
 }
 
-gboolean
-gossip_have_tray (void)
-{
-#ifdef HAVE_GNOME
-	Screen *xscreen = DefaultScreenOfDisplay (gdk_display);
-	Atom    selection_atom;
-	char   *selection_atom_name;
-	
-	selection_atom_name = g_strdup_printf ("_NET_SYSTEM_TRAY_S%d",
-					       XScreenNumberOfScreen (xscreen));
-	selection_atom = XInternAtom (DisplayOfScreen (xscreen), selection_atom_name, False);
-	g_free (selection_atom_name);
-	
-	if (XGetSelectionOwner (DisplayOfScreen (xscreen), selection_atom)) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
-#else
-	return FALSE;
-#endif
-}
-
 void
 gossip_request_user_attention (void)
 {

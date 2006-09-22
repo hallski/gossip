@@ -124,7 +124,6 @@ void       gossip_help_show                         (void);
 GtkWidget *gossip_link_button_new                   (const gchar         *url,
 						     const gchar         *title);
 
-gboolean   gossip_have_tray                         (void);
 void       gossip_request_user_attention            (void);
 
 #endif /*  __GOSSIP_UI_UTILS_H__ */

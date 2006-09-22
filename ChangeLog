@@ -1,3 +1,14 @@
+2006-09-22  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: 
+	* src/Makefile.am:
+	* src/eggtrayicon.[ch]: 
+	* src/gossip-app.c:
+	* src/gossip-notify.[ch]:
+	* src/gossip-ui-utils.[ch]: Removed EggTrayIcon to use GtkStatusIcon
+	instead and bumped version of libnotify we depend on to 0.4.1, fixes
+	bug #351421 (Xavier Claessens).
+
 2006-09-21  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-app.c (app_session_protocol_disconnected_cb): Fix

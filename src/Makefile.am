@@ -28,17 +28,12 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
-if HAVE_GNOME
-eggtray_sources = eggtrayicon.c eggtrayicon.h
-endif
-
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	$(galago_sources)		     	                        	\
 	$(libnotify_sources)		     	                        	\
-	$(eggtray_sources)		     	                        	\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
@@ -127,6 +122,5 @@ EXTRA_DIST =						\
 	$(dbus_sources)					\
 	$(dbus_binding_sources)				\
 	$(galago_sources)				\
-	$(libnotify_sources)				\
-	$(eggtray_sources)
+	$(libnotify_sources)
 

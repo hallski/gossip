@@ -91,12 +91,13 @@ enum {
 	NOTIFY_SHOW_ROSTER
 };
 
-static gboolean    inited = FALSE;
-static GHashTable *account_states = NULL;
-static GHashTable *contact_states = NULL;
-static GHashTable *message_notifications = NULL;
-static GHashTable *event_notifications = NULL;
-static GtkWidget  *attach_widget = NULL;
+static gboolean       inited = FALSE;
+static GHashTable    *account_states = NULL;
+static GHashTable    *contact_states = NULL;
+static GHashTable    *message_notifications = NULL;
+static GHashTable    *event_notifications = NULL;
+static GtkWidget     *attach_widget = NULL;
+static GtkStatusIcon *attach_status_icon = NULL;
 
 static const gchar *
 notify_get_status_from_presence (GossipPresence *presence)
@@ -212,8 +213,8 @@ notify_contact_online (GossipContact *contact)
 			  G_CALLBACK (notify_closed_cb),
 			  NULL);
 
-	if (attach_widget) {
-		notify_notification_attach_to_widget (notify, attach_widget);
+	if (attach_status_icon) {
+		notify_notification_attach_to_status_icon (notify, attach_status_icon);
 	}
 
 	notify_notification_add_action (notify, "default", _("Default"),
@@ -278,7 +279,7 @@ notify_subscription_request_show (GossipContact *contact)
 	notify = notify_notification_new (_("Subscription request"),
 					  message,
 					  NULL,
-					  attach_widget);
+					  NULL);
 	g_free (message);
 
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
@@ -429,8 +430,8 @@ notify_new_message (GossipEventManager *event_manager,
 			  G_CALLBACK (notify_closed_cb),
 			  NULL);
 
-	if (attach_widget) {
-		notify_notification_attach_to_widget (notify, attach_widget);
+	if (attach_status_icon) {
+		notify_notification_attach_to_status_icon (notify, attach_status_icon);
 	}
 	
 	notify_notification_add_action (notify, "default", _("Default"),
@@ -686,6 +687,21 @@ gossip_notify_set_attach_widget (GtkWidget *new_attach_widget)
 	}
 }
 
+void
+gossip_notify_set_attach_status_icon (GtkStatusIcon *new_attach)
+{
+	if (attach_status_icon) {
+		g_object_remove_weak_pointer (G_OBJECT (attach_status_icon),
+					      (gpointer) &attach_status_icon);
+	}
+	
+	attach_status_icon = new_attach;
+	if (attach_status_icon) {
+		g_object_add_weak_pointer (G_OBJECT (attach_status_icon),
+					   (gpointer) &attach_status_icon);
+	}
+}
+
 static void
 notify_hint_closed_cb (NotifyNotification *notification,
 		       gpointer            user_data)
@@ -728,13 +744,17 @@ gossip_notify_hint_show (const gchar        *conf_path,
 		return FALSE;
 	}
 
-	notify = notify_notification_new (summary, message, NULL, attach_widget);
+	notify = notify_notification_new (summary, message, NULL, NULL);
 	g_object_set_data_full (G_OBJECT (notify), "conf_path", g_strdup (conf_path), g_free);
 	g_object_set_data (G_OBJECT (notify), "func", func);
 	g_signal_connect (notify,
 			  "closed",
 			  G_CALLBACK (notify_hint_closed_cb),
 			  user_data);
+
+	if (attach_status_icon) {
+		notify_notification_attach_to_status_icon (notify, attach_status_icon);
+	}
 
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
