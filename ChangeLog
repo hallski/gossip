@@ -1,3 +1,10 @@
+2006-09-23  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/gossip-jabber-vcard.c (jabber_vcard_get_cb)
+	(gossip_jabber_vcard_set): Do as the spec says: require that the
+	email is put inside a USERID and not as CDATA in the EMAIL
+	tag. Also do the same when setting the vcard. Fixes bug #343339.
+
 2006-09-22  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: 

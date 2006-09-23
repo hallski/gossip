@@ -111,18 +111,10 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 
 	node = lm_message_node_get_child (vcard_node, "EMAIL");
 	if (node) {
-		gchar *email = NULL;
-
-		if (node->value) {
-			email = node->value;
-		} else {
-			node = lm_message_node_get_child (node, "USERID");
-			if (node) {
-				email = node->value;
-			}
+		node = lm_message_node_get_child (node, "USERID");
+		if (node && node->value) {
+			gossip_vcard_set_email (vcard, node->value);
 		}
-			
-		gossip_vcard_set_email (vcard, email);
 	}
 
 	node = lm_message_node_get_child (vcard_node, "URL");
@@ -240,6 +232,7 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	LmConnection       *connection;
 	LmMessage          *m;
 	LmMessageNode      *node;
+	LmMessageNode      *child;
 	LmMessageHandler   *handler;
 	GossipCallbackData *data;
 	gboolean            result;
@@ -259,8 +252,10 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	lm_message_node_add_child (node, "NICKNAME", 
 				   gossip_vcard_get_nickname (vcard));
 	lm_message_node_add_child (node, "URL", gossip_vcard_get_url (vcard));
-	lm_message_node_add_child (node, "EMAIL",
-				   gossip_vcard_get_email (vcard));
+
+	child = lm_message_node_add_child (node, "EMAIL", NULL);
+	lm_message_node_add_child (child, "USERID", gossip_vcard_get_email (vcard));
+
 	lm_message_node_add_child (node, "DESC", 
 				   gossip_vcard_get_description (vcard)); 
 				   
