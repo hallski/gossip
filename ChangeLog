@@ -1,5 +1,10 @@
 2006-09-23  Richard Hult  <richard@imendio.com>
 
+	* protocols/jabber/gossip-jabber-vcard.c (jabber_vcard_get_cb):
+	Handle error 503 (service unavailable), fixes bug #333188.
+
+2006-09-23  Richard Hult  <richard@imendio.com>
+
 	* protocols/jabber/gossip-jabber-vcard.c (jabber_vcard_get_cb)
 	(gossip_jabber_vcard_set): Do as the spec says: require that the
 	email is put inside a USERID and not as CDATA in the EMAIL

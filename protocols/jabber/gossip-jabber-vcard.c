@@ -65,13 +65,18 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			code = str ? atoi (str) : 0;
 			
 			switch (code) {
-			case 404: {
+			case 404:
 				/* Receipient unavailable */
 				gossip_debug (DEBUG_DOMAIN, "Receipient is unavailable");
 				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
-			}
 
+			case 503:
+				/* Service unavailable */
+				gossip_debug (DEBUG_DOMAIN, "Service is unavailable");
+				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
+				break;
+				
 			default:
 				gossip_debug (DEBUG_DOMAIN, "Unhandled presence error:%d", code);
 				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
