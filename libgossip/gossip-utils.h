@@ -35,29 +35,35 @@ typedef enum {
 } GossipRegExType;
 
 /* Regular expressions */
-gchar *  gossip_substring            (const gchar     *str,
-				      gint             start,
-				      gint             end);
-gint     gossip_regex_match          (GossipRegExType  type,
-				      const gchar     *msg,
-				      GArray          *start,
-				      GArray          *end);
+gchar *       gossip_substring           (const gchar     *str,
+					  gint             start,
+					  gint             end);
+gint          gossip_regex_match         (GossipRegExType  type,
+					  const gchar     *msg,
+					  GArray          *start,
+					  GArray          *end);
 
 /* Strings */
-gint     gossip_strcasecmp           (const gchar     *s1,
-				      const gchar     *s2);
-gint     gossip_strncasecmp          (const gchar     *s1,
-				      const gchar     *s2,
-				      gsize            n);
+gint          gossip_strcasecmp          (const gchar     *s1,
+					  const gchar     *s2);
+gint          gossip_strncasecmp         (const gchar     *s1,
+					  const gchar     *s2,
+					  gsize            n);
 
 /* XML */
-gboolean gossip_xml_validate         (xmlDoc          *doc,
-				      const gchar     *dtd_filename);
+gboolean      gossip_xml_validate        (xmlDoc          *doc,
+					  const gchar     *dtd_filename);
 
 /* Encoding */
-guchar * gossip_base64_decode        (const gchar     *data,
-				      gsize           *len);
-gchar *  gossip_base64_encode        (const guchar    *data,
-				      gsize            len);
+guchar *      gossip_base64_decode       (const gchar     *data,
+					  gsize           *len);
+gchar *       gossip_base64_encode       (const guchar    *data,
+					  gsize            len);
+/* GValue/GType */
+GType         gossip_dbus_type_to_g_type (const gchar     *dbus_type_string);
+const gchar * gossip_g_type_to_dbus_type (GType            g_type);
+gchar *       gossip_g_value_to_string   (const GValue    *value);
+GValue *      gossip_string_to_g_value   (const gchar     *str,
+					  GType            type);
 
 #endif /*  __GOSSIP_UTILS_H__ */

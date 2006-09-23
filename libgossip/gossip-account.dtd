@@ -9,7 +9,7 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT account 
-    (type,name,id,(resource?),(password?),(server?),port,(enabled?),(auto_connect?),(use_ssl?),(use_proxy?))>
+    (type,name,(id?),(resource?),(password?),(server?),(port?),(enabled?),(auto_connect?),(use_ssl?),(use_proxy?),(parameter*))>
 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
@@ -22,4 +22,9 @@
 <!ELEMENT auto_connect (#PCDATA)>
 <!ELEMENT use_ssl (#PCDATA)>
 <!ELEMENT use_proxy (#PCDATA)>
+<!ELEMENT parameter (#PCDATA)>
 
+<!ATTLIST parameter name CDATA #REQUIRED>
+<!ATTLIST parameter type CDATA #REQUIRED>
+<!ATTLIST parameter required CDATA #REQUIRED>
+<!ATTLIST parameter has-default CDATA #REQUIRED>

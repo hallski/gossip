@@ -1,3 +1,11 @@
+2006-09-23  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account-manager.[ch]:
+	* libgossip/gossip-account.[ch]:
+	* libgossip/gossip-account.dtd:
+	* libgossip/gossip-utils.[ch]: Reworked GossipAccount to be more
+	agreeable to Telepathy, fixes bug #355797 (Xavier Claessens).
+
 2006-09-23  Richard Hult  <richard@imendio.com>
 
 	* protocols/jabber/gossip-jabber-vcard.c (jabber_vcard_get_cb):

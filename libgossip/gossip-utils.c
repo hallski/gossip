@@ -333,3 +333,89 @@ gossip_base64_encode (const guchar *data,
 
 	return rv;
 }
+
+GType
+gossip_dbus_type_to_g_type (const gchar *dbus_type_string)
+{
+	if (dbus_type_string == NULL)
+		return G_TYPE_NONE;
+	
+	if (dbus_type_string[0] == 's') {
+		return G_TYPE_STRING;
+	}
+	else if (dbus_type_string[0] == 'b') {
+		return G_TYPE_BOOLEAN;
+	}
+	else if (dbus_type_string[0] == 'q') {
+		return G_TYPE_UINT;
+	}
+	else if (dbus_type_string[0] == 'n') {
+		return G_TYPE_INT;
+	}
+
+	g_assert_not_reached ();
+	return G_TYPE_NONE;
+}
+
+const gchar *
+gossip_g_type_to_dbus_type (GType g_type)
+{
+	switch (g_type)
+	{
+	case G_TYPE_STRING:
+		return "s";
+	case G_TYPE_BOOLEAN:
+		return "b";
+	case G_TYPE_UINT:
+		return "q";
+	case G_TYPE_INT:
+		return "n";
+	default:
+		g_assert_not_reached ();
+	}
+	
+	return NULL;
+}
+
+gchar *
+gossip_g_value_to_string (const GValue *value)
+{
+	gchar  *return_string = NULL;
+	GValue string_g_value = {0, };
+
+	g_value_init (&string_g_value, G_TYPE_STRING);
+	g_value_transform (value, &string_g_value);
+	return_string = g_value_dup_string (&string_g_value);
+	g_value_unset (&string_g_value);
+
+	return return_string;
+}
+
+GValue *
+gossip_string_to_g_value (const gchar *str, GType type)
+{
+	GValue *g_value;
+	
+	g_value = g_new0 (GValue, 1);
+	g_value_init (g_value, type);
+	
+	switch (type)
+	{
+	case G_TYPE_BOOLEAN:
+		g_value_set_boolean (g_value, (str[0] == 'y' || str[0] == 'T'));
+		break;
+	case G_TYPE_UINT:
+		g_value_set_uint (g_value, atoi (str));
+		break;
+	case G_TYPE_INT:
+		g_value_set_int (g_value, atoi (str));
+		break;
+	case G_TYPE_STRING:
+		g_value_set_string (g_value, str);
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	
+	return g_value;
+}

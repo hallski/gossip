@@ -49,7 +49,7 @@ struct _GossipAccountManagerClass {
 
 GType          gossip_account_manager_get_type               (void) G_GNUC_CONST;
 GossipAccountManager *
-               gossip_account_manager_new                    (const gchar          *filename);
+	       gossip_account_manager_new                    (const gchar          *filename);
 gboolean       gossip_account_manager_add                    (GossipAccountManager *manager,
 							      GossipAccount        *account);
 void           gossip_account_manager_remove                 (GossipAccountManager *manager,
