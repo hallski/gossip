@@ -1688,7 +1688,7 @@ gossip_app_toggle_visibility (void)
 			gtk_window_move (GTK_WINDOW (priv->window), x, y);
 		}
 
-		gossip_window_present (GTK_WINDOW (priv->window));
+		gossip_window_present (GTK_WINDOW (priv->window), TRUE);
 
 		gossip_conf_set_bool (gossip_conf_get (),
 				       GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN, FALSE);
@@ -1707,7 +1707,7 @@ gossip_app_set_visibility (gboolean visible)
 			      !visible);
 	
 	if (visible) {
-		gossip_window_present (GTK_WINDOW (window));
+		gossip_window_present (GTK_WINDOW (window), TRUE);
 	} else {
 		gtk_widget_hide (window);
 	}

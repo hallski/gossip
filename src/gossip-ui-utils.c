@@ -679,10 +679,12 @@ gossip_window_get_is_visible (GtkWindow *window)
 
 /* Takes care of moving the window to the current workspace. */
 void
-gossip_window_present (GtkWindow *window)
+gossip_window_present (GtkWindow *window,
+		       gboolean   steal_focus)
 {
 	gboolean visible;
 	gboolean on_current;
+	guint32  timestamp;
 
 	/* There are three cases: hidden, visible, visible on another
 	 * workspace.
@@ -699,7 +701,12 @@ gossip_window_present (GtkWindow *window)
 		gtk_widget_hide (GTK_WIDGET (window));
 	}
 
-	gtk_window_present (window);
+	timestamp = gtk_get_current_event_time ();
+	if (steal_focus && timestamp != GDK_CURRENT_TIME) {
+		gtk_window_present_with_time (window, timestamp);
+	} else {
+		gtk_window_present (window);
+	}
 }
 
 GdkPixbuf *

@@ -1,3 +1,12 @@
+2006-09-23  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-app.c: 
+	* src/gossip-chat.c:
+	* src/gossip-ui-utils.c (gossip_window_present): Use the current
+	event time if there is one to allow us to steal focus when we want
+	to (as a result of user interaction). Metacity seems to work now,
+	yay :) Fixes bug #333110.
+
 2006-09-23  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account-manager.[ch]:
