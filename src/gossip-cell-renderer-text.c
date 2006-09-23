@@ -23,6 +23,8 @@
 
 #include "gossip-cell-renderer-text.h"
 
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CELL_RENDERER_TEXT, GossipCellRendererTextPriv))
+
 struct _GossipCellRendererTextPriv {
 	gchar    *name;
 	gchar    *status;
@@ -61,7 +63,6 @@ static void cell_renderer_text_update_text       (GossipCellRendererText      *c
 						  GtkWidget                   *widget,
 						  gboolean                     selected);
 
-
 /* Properties */
 enum {
 	PROP_0,
@@ -70,9 +71,7 @@ enum {
 	PROP_IS_GROUP,
 };
 
-
 G_DEFINE_TYPE (GossipCellRendererText, gossip_cell_renderer_text, GTK_TYPE_CELL_RENDERER_TEXT);
-
 
 static void 
 gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
@@ -81,7 +80,7 @@ gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 	GtkCellRendererClass *cell_class;
 	
 	object_class = G_OBJECT_CLASS (klass);
-	cell_class   = GTK_CELL_RENDERER_CLASS (klass);
+	cell_class = GTK_CELL_RENDERER_CLASS (klass);
 	
 	object_class->finalize = cell_renderer_text_finalize;
 
@@ -112,6 +111,8 @@ gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 							       "Whether this cell is a group",
 							       FALSE,
 							       G_PARAM_READWRITE));
+
+	g_type_class_add_private (object_class, sizeof (GossipCellRendererTextPriv));
 }
 
 static void
@@ -119,16 +120,14 @@ gossip_cell_renderer_text_init (GossipCellRendererText *cell)
 {
 	GossipCellRendererTextPriv *priv;
 
+	priv = GET_PRIV (cell);
+
 	g_object_set (cell,
 		      "ellipsize", PANGO_ELLIPSIZE_END,
 		      NULL);
 
-	priv = g_new0 (GossipCellRendererTextPriv, 1);
-
 	priv->name = g_strdup ("");
 	priv->status = g_strdup ("");
-
-	cell->priv = priv;
 }
 
 static void
@@ -138,12 +137,10 @@ cell_renderer_text_finalize (GObject *object)
 	GossipCellRendererTextPriv *priv;
 
 	cell = GOSSIP_CELL_RENDERER_TEXT (object);
-	priv = cell->priv;
+	priv = GET_PRIV (cell);
 
 	g_free (priv->name);
 	g_free (priv->status);
-
-	g_free (priv);
 
 	(G_OBJECT_CLASS (gossip_cell_renderer_text_parent_class)->finalize) (object);
 }
@@ -158,7 +155,7 @@ cell_renderer_text_get_property (GObject    *object,
 	GossipCellRendererTextPriv *priv;
 
 	cell = GOSSIP_CELL_RENDERER_TEXT (object);
-	priv = cell->priv;
+	priv = GET_PRIV (cell);
 
 	switch (param_id) {
 	case PROP_NAME:
@@ -187,7 +184,7 @@ cell_renderer_text_set_property (GObject      *object,
 	const gchar                *str;
 
 	cell = GOSSIP_CELL_RENDERER_TEXT (object);
-	priv = cell->priv;
+	priv = GET_PRIV (cell);
 
 	switch (param_id) {
 	case PROP_NAME:
@@ -227,7 +224,7 @@ cell_renderer_text_get_size (GtkCellRenderer *cell,
 	GossipCellRendererTextPriv *priv;
 	
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
-	priv     = celltext->priv;
+	priv = GET_PRIV (cell);
 
 	/* Only update if not already valid so we get the right size. */
 	cell_renderer_text_update_text (celltext, widget, priv->is_selected);
@@ -274,7 +271,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	GtkStyle                   *style;
 	gchar                      *str;
 
-	priv = cell->priv;
+	priv = GET_PRIV (cell);
 
 	if (priv->is_valid && priv->is_selected == selected) {
 		return;

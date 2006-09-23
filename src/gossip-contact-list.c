@@ -27,6 +27,7 @@
 #include <libgossip/gossip-debug.h>
 
 #include "gossip-app.h"
+#include "gossip-cell-renderer-expander.h"
 #include "gossip-cell-renderer-text.h"
 #include "gossip-chat-invite.h"
 #include "gossip-contact-groups.h"
@@ -215,6 +216,11 @@ static void     contact_list_avatar_cell_data_func           (GtkTreeViewColumn 
 							      GtkTreeIter            *iter,
 							      GossipContactList      *list);
 static void     contact_list_text_cell_data_func             (GtkTreeViewColumn      *tree_column,
+							      GtkCellRenderer        *cell,
+							      GtkTreeModel           *model,
+							      GtkTreeIter            *iter,
+							      GossipContactList      *list);
+static void     contact_list_expander_cell_data_func         (GtkTreeViewColumn      *column,
 							      GtkCellRenderer        *cell,
 							      GtkTreeModel           *model,
 							      GtkTreeIter            *iter,
@@ -1397,26 +1403,32 @@ contact_list_setup_view (GossipContactList *list)
 		      "headers-visible", FALSE,
 		      "reorderable", TRUE,
 		      "show-expanders", FALSE,
-/* 		      "level-indentation", 3, */
 		      NULL);
 
-	col  = gtk_tree_view_column_new ();
+	col = gtk_tree_view_column_new ();
 	
+	/* State */
 	cell = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_column_pack_start (col, cell, FALSE);
+	gtk_tree_view_column_set_cell_data_func (
+		col, cell, 
+		(GtkTreeCellDataFunc) contact_list_pixbuf_cell_data_func,
+		list, NULL);
+
 	g_object_set (cell, 
 		      "xpad", 5,
 		      "ypad", 1,
 		      "visible", FALSE,
 		      NULL);
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
-
-	gtk_tree_view_column_set_cell_data_func (
-		col, cell, 
-		(GtkTreeCellDataFunc) contact_list_pixbuf_cell_data_func,
-		list, NULL);
 	
+	/* Name */
 	cell = gossip_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
+	gtk_tree_view_column_set_cell_data_func (
+		col, cell, 
+		(GtkTreeCellDataFunc) contact_list_text_cell_data_func,
+		list, NULL);
+
 	gtk_tree_view_column_add_attribute (col, cell, 
 					    "name", COL_NAME);
 	gtk_tree_view_column_add_attribute (col, cell,
@@ -1424,12 +1436,14 @@ contact_list_setup_view (GossipContactList *list)
 	gtk_tree_view_column_add_attribute (col, cell,
 					    "is_group", COL_IS_GROUP);
 
+	/* Avatar */
+	cell = gtk_cell_renderer_pixbuf_new ();
+	gtk_tree_view_column_pack_start (col, cell, FALSE);
 	gtk_tree_view_column_set_cell_data_func (
 		col, cell, 
-		(GtkTreeCellDataFunc) contact_list_text_cell_data_func,
+		(GtkTreeCellDataFunc) contact_list_avatar_cell_data_func,
 		list, NULL);
 
-	cell = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (cell, 
 		      "xpad", 0,
 		      "ypad", 0,
@@ -1437,13 +1451,16 @@ contact_list_setup_view (GossipContactList *list)
 		      "width", 32,
 		      "height", 32,
 		      NULL);
-	gtk_tree_view_column_pack_start (col, cell, FALSE);
-
+	
+	/* Expander */
+	cell = gossip_cell_renderer_expander_new ();
+	gtk_tree_view_column_pack_end (col, cell, FALSE);
 	gtk_tree_view_column_set_cell_data_func (
-		col, cell, 
-		(GtkTreeCellDataFunc) contact_list_avatar_cell_data_func,
+		col, cell,
+		(GtkTreeCellDataFunc) contact_list_expander_cell_data_func,
 		list, NULL);
 
+	/* Actually add the column now we have added all cell renderers */
 	gtk_tree_view_append_column (GTK_TREE_VIEW (list), col);
 
 	/* Drag & Drop. */ 
@@ -1917,6 +1934,40 @@ contact_list_text_cell_data_func (GtkTreeViewColumn *tree_column,
 			    COL_IS_GROUP, &is_group, 
 			    COL_IS_ACTIVE, &is_active, 
 			    -1);
+
+	contact_list_cell_set_background (list, cell, is_group, is_active);
+}
+
+static void
+contact_list_expander_cell_data_func (GtkTreeViewColumn *column,
+				      GtkCellRenderer   *cell,
+				      GtkTreeModel      *model,
+				      GtkTreeIter       *iter,
+				      GossipContactList *list)
+{
+	gboolean is_group;
+	gboolean is_active;
+
+	gtk_tree_model_get (model, iter, 
+			    COL_IS_GROUP, &is_group, 
+			    COL_IS_ACTIVE, &is_active, 
+			    -1);
+
+	if (gtk_tree_model_iter_has_child (model, iter)) {
+		GtkTreePath *path;
+		gboolean     row_expanded;
+		
+		path = gtk_tree_model_get_path (model, iter);
+		row_expanded = gtk_tree_view_row_expanded (GTK_TREE_VIEW (column->tree_view), path);
+		gtk_tree_path_free (path);
+		
+		g_object_set (cell,
+			      "visible", TRUE,
+			      "expander-style", row_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED,
+			      NULL);
+	} else {
+		g_object_set (cell, "visible", FALSE, NULL);
+	}
 
 	contact_list_cell_set_background (list, cell, is_group, is_active);
 }
