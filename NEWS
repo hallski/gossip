@@ -2,6 +2,19 @@ NEW in 0.17:
 ============
 - Require GTK+ 2.10
 - Show the contacts in a flat type mode instead of tree like so we don't waste space on the left (Martyn).
+- Fixed #333188, Handle vcard presence error: 503 (Richard Hult)
+- Fixed #356647, Crasher: Disconnect the error handler in the accounts dialog (Richard Hult)
+- Fixed #333110, Focus is broken for new chat windows (Richard Hult)
+- Fixed #343339, Gossip confused by my vcard (Richard Hult)
+- Fixed #346432, Gossip doesn't reread proxy settings when connecting (Richard Hult)
+- Fixed #351421, Deprecate EggTrayIcon in favour of GtkStatusIcon (Xavier Claessens)
+- Fixed #353090, Personal Information window displayed no avatar picture (Richard Hult)
+- Fixed #355797, Rework GossipAccount to support variable parameters per protocol (Xavier Claessens)
+- Fixed #357160, New roster view has no collapse/expand triangle (Kristian Rietveld, Martyn Russell)
+
+Translations:
+- Updated nl: Wouter Bolsterlee
+- Updated sv: Richard Hult
 
 
 NEW in 0.16:
