@@ -554,15 +554,9 @@ jabber_setup_connection (GossipJabber *jabber)
 
 	if (gossip_account_get_use_proxy (priv->account)) {
 		gossip_debug (DEBUG_DOMAIN, "Using proxy");
-
 		jabber_set_proxy (priv->connection);
 	} else {
-		/* FIXME: Just pass NULL when Loudmouth > 0.17.1 */
-		LmProxy *proxy;
-
-		proxy = lm_proxy_new (LM_PROXY_TYPE_NONE);
-		lm_connection_set_proxy (priv->connection, proxy);
-		lm_proxy_unref (proxy);
+		lm_connection_set_proxy (priv->connection, NULL);
 	}
 }
 
@@ -2241,6 +2235,7 @@ jabber_get_version (GossipProtocol         *protocol,
 						   error);
 }
 
+//koko
 void
 jabber_set_proxy (LmConnection *conn)
 {
@@ -2258,6 +2253,7 @@ jabber_set_proxy (LmConnection *conn)
 				    &use_auth,
 				    &username,
 				    &password);
+
 	if (use_http_proxy) {
 		LmProxy  *proxy;
 		
@@ -2271,6 +2267,8 @@ jabber_set_proxy (LmConnection *conn)
 		}
 		
 		lm_proxy_unref (proxy);
+	} else {
+		lm_connection_set_proxy (conn, NULL);
 	}
 
 	g_free (host);

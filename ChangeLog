@@ -1,3 +1,11 @@
+2006-09-24  Richard Hult  <richard@imendio.com>
+
+	* protocols/jabber/gossip-jabber.c: (jabber_setup_connection),
+	(jabber_set_proxy): Remove old "NONE" type proxy, workaround for
+	pre-0.17 loudmouth versions, just set the proxy to NULL. Also
+	reset the proxy when the setting is to use direct
+	connection. Fixes the last bit of bug #346432.
+
 2006-09-24  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-contact-list.c: (contact_list_row_activated_cb):
