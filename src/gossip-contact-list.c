@@ -2113,16 +2113,6 @@ contact_list_row_activated_cb (GossipContactList *list,
 		contact_list_action_activated (list, contact);
 		g_object_unref (contact);
 	}
-
-	if (gtk_tree_path_get_depth (path) > 1) {
-		return;
-	}
-
-	if (gtk_tree_view_row_expanded (view, path)) {
-		gtk_tree_view_collapse_row (view, path);
-	} else {
-		gtk_tree_view_expand_row (view, path, FALSE);
-	}
 }
 
 static void 

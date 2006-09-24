@@ -1,3 +1,9 @@
+2006-09-24  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-contact-list.c: (contact_list_row_activated_cb):
+	Remove the old double-click expand/collapse code I forgot to clean
+	up yesterday.
+
 2006-09-23  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped glib dependency to 2.10 since the new accounts
