@@ -22,7 +22,6 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -74,7 +73,7 @@ static void     account_manager_add_parameters_foreach (GossipAccount        *ac
 static guint signals[LAST_SIGNAL] = {0};
 
 #ifdef RESOURCE_HACK
-gboolean need_saving = FALSE;
+static gboolean need_saving = FALSE;
 #endif
 
 G_DEFINE_TYPE (GossipAccountManager, gossip_account_manager, G_TYPE_OBJECT);

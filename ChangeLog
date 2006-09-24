@@ -1,5 +1,7 @@
 2006-09-24  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-account-manager.c: Staticify a variable.
+
 	* protocols/jabber/gossip-jabber.c: (jabber_setup_connection),
 	(jabber_set_proxy): Remove old "NONE" type proxy, workaround for
 	pre-0.17 loudmouth versions, just set the proxy to NULL. Also
