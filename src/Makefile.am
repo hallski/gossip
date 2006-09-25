@@ -82,8 +82,10 @@ gossip_SOURCES = 				                        	\
 	gossip-theme-manager.c	    	   gossip-theme-manager.h		
 
 
-gossip_LDADD = $(GOSSIP_LIBS) $(XSS_LIBS)					\
-	$(top_builddir)/libgossip/libgossip.la
+gossip_LDADD = \
+	$(top_builddir)/libgossip/libgossip.la					\
+	$(GOSSIP_LIBS)								\
+	$(XSS_LIBS)
 
 gossip_LDFLAGS = $(BACKEND_LDFLAGS)
 
