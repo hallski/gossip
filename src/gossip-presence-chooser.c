@@ -21,7 +21,6 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
@@ -30,10 +29,10 @@
 #include "gossip-ui-utils.h"
 #include "gossip-stock.h"
 #include "gossip-presence-chooser.h"
-
 #include "gossip-status-presets.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+                       GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooserPriv))
 
 typedef struct {
 	GtkWidget           *hbox;
@@ -290,13 +289,13 @@ presence_chooser_dialog_response_cb (GtkWidget             *dialog,
 		if (!duplicate) {
 			gtk_list_store_append (store, &iter);
 			gtk_list_store_set (store, &iter, 0, status, -1);
-
-			checkbutton = g_object_get_data (G_OBJECT (dialog), "checkbutton");
-			save = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
-			state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dialog), "state"));
-
-			presence_chooser_set_state (chooser, state, status, save);
 		}
+
+		checkbutton = g_object_get_data (G_OBJECT (dialog), "checkbutton");
+		save = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+		state = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (dialog), "state"));
+		
+		presence_chooser_set_state (chooser, state, status, save);
 	}
 
 	gtk_widget_destroy (dialog);

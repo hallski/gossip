@@ -1,5 +1,10 @@
 2006-09-25  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-presence-chooser.c (presence_chooser_dialog_response_cb):
+	Always allow the status string to be used, even if it's not a new one.
+
+2006-09-25  Richard Hult  <richard@imendio.com>
+
 	* src/Makefile.am: Make --as-needed linking work, fixes bug
 	#357501 (Fryderyk Dziarmagowski).
 
