@@ -901,6 +901,46 @@ gossip_chatroom_status_to_string (GossipChatroomStatus status)
 	return "";
 }
 
+const gchar *
+gossip_chatroom_role_to_string (GossipChatroomRole role)
+{
+	switch (role) {
+	case GOSSIP_CHATROOM_ROLE_MODERATOR:
+		return _("Moderator");
+	case GOSSIP_CHATROOM_ROLE_PARTICIPANT:
+		return _("Participant");
+	case GOSSIP_CHATROOM_ROLE_VISITOR:
+		return _("Visitor");
+	case GOSSIP_CHATROOM_ROLE_NONE:
+		return _("No role");
+	}
+
+	g_warning ("Invalid role: %d", role);
+
+	return "";
+}
+
+const gchar *
+gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation)
+{
+	switch (affiliation) {
+	case GOSSIP_CHATROOM_AFFILIATION_OWNER:
+		return _("Owner");
+	case GOSSIP_CHATROOM_AFFILIATION_ADMIN:
+		return _("Administrator");
+	case GOSSIP_CHATROOM_AFFILIATION_MEMBER:
+		return _("Member");
+	case GOSSIP_CHATROOM_AFFILIATION_OUTCAST:
+		return _("Outcast");
+	case GOSSIP_CHATROOM_AFFILIATION_NONE:
+		return _("No affiliation");
+	}
+	
+	g_warning ("Invalid affiliation: %d", affiliation);
+
+	return "";
+}
+
 /*
  * Chatroom invite functions
  */

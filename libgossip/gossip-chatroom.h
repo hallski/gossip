@@ -125,6 +125,8 @@ gboolean           gossip_chatroom_equal_full         (gconstpointer         v1,
 
 const gchar *      gossip_chatroom_type_to_string     (GossipChatroomType    type);
 const gchar *      gossip_chatroom_status_to_string   (GossipChatroomStatus  status);
+const gchar *      gossip_chatroom_role_to_string     (GossipChatroomRole    role);
+const gchar *      gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation);
 
 /* Chatroom invite functions */
 typedef struct _GossipChatroomInvite GossipChatroomInvite;

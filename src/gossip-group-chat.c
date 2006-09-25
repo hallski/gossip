@@ -192,17 +192,33 @@ static gboolean        group_chat_get_show_contacts           (GossipChat       
 static void            group_chat_set_show_contacts           (GossipChat                   *chat,
 							       gboolean                      show);
 static gboolean        group_chat_is_group_chat               (GossipChat                   *chat);
-static void            group_chat_roster_name_data_func       (GtkTreeViewColumn      *tree_column,
+static void            group_chat_get_role_iter               (GossipGroupChat       *chat,
+							       GossipChatroomRole     role,
+							       GtkTreeIter           *iter);
+static gboolean group_chat_cl_test_collapse_row_cb           (GtkTreeView            *tree_view,
+							      GtkTreeIter            *iter,
+							      GtkTreePath            *path,
+							      GossipGroupChat        *chat);
+static void     group_chat_cl_pixbuf_cell_data_func          (GtkTreeViewColumn      *tree_column,
 							      GtkCellRenderer        *cell,
 							      GtkTreeModel           *model,
 							      GtkTreeIter            *iter,
 							      GossipGroupChat        *chat);
-
+static void     group_chat_cl_text_cell_data_func            (GtkTreeViewColumn      *tree_column,
+							      GtkCellRenderer        *cell,
+							      GtkTreeModel           *model,
+							      GtkTreeIter            *iter,
+							      GossipGroupChat        *chat);
+static void      group_chat_cl_set_background                (GossipGroupChat                 *chat,
+				  GtkCellRenderer    *cell,
+				  gboolean            is_header);
 
 enum {
 	COL_STATUS,
 	COL_NAME,
 	COL_CONTACT,
+	COL_IS_HEADER,
+	COL_HEADER_ROLE,
 	NUMBER_OF_COLS
 };
 
@@ -588,6 +604,11 @@ group_chat_row_activated_cb (GtkTreeView       *view,
 	GtkTreeIter    iter;
 	GossipContact *contact;
 
+	if (gtk_tree_path_get_depth (path) == 1) {
+		/* Do nothing for role groups */
+		return;
+	}
+
 	model = gtk_tree_view_get_model (view);
 
 	gtk_tree_model_get_iter (model, &iter, path);
@@ -621,32 +642,46 @@ group_chat_contacts_sort_func (GtkTreeModel *model,
 			       GtkTreeIter  *iter_b,
 			       gpointer      user_data)
 {
-	GossipContact      *contact_a, *contact_b;
-	GossipChatroomRole  role_a, role_b;
-	gint                ret_val;
-	
-	gtk_tree_model_get (model, iter_a, COL_CONTACT, &contact_a, -1);
-	gtk_tree_model_get (model, iter_b, COL_CONTACT, &contact_b, -1);
+	gboolean is_header;
 
-	role_a = gossip_chatroom_contact_get_role (GOSSIP_CHATROOM_CONTACT (contact_a));
-	role_b = gossip_chatroom_contact_get_role (GOSSIP_CHATROOM_CONTACT (contact_b));
+	gtk_tree_model_get (model, iter_a,
+			    COL_IS_HEADER, &is_header,
+			    -1);
 
-	if (role_a == role_b) {
-		const gchar *name_a;
-		const gchar *name_b;
+	if (is_header) {
+		GossipChatroomRole role_a, role_b;
+
+		gtk_tree_model_get (model, iter_a,
+				    COL_HEADER_ROLE, &role_a,
+				    -1);
+		gtk_tree_model_get (model, iter_b,
+				    COL_HEADER_ROLE, &role_b,
+				    -1);
+
+		return role_a - role_b;
+	} else {
+		GossipContact *contact_a, *contact_b;
+		const gchar   *name_a, *name_b;
+		gint           ret_val;
+
+		gtk_tree_model_get (model, iter_a, 
+				    COL_CONTACT, &contact_a, 
+				    -1);
+
+		gtk_tree_model_get (model, iter_b, 
+				    COL_CONTACT, &contact_b, 
+				    -1);
 
 		name_a = gossip_contact_get_name (contact_a);
 		name_b = gossip_contact_get_name (contact_b);
 
 		ret_val = g_ascii_strcasecmp (name_a, name_b);
-	} else {
-		ret_val = role_a - role_b;
-	}
 	
-	g_object_unref (contact_a);
-	g_object_unref (contact_b);
+		g_object_unref (contact_a);
+		g_object_unref (contact_b);
 
-	return ret_val;
+		return ret_val;
+	}
 }
 
 static void
@@ -655,7 +690,7 @@ group_chat_contacts_setup (GossipGroupChat *chat)
 	GossipGroupChatPriv *priv;
 	GtkTreeView         *tree;
 	GtkTextView         *tv;
-	GtkListStore        *store;
+	GtkTreeStore        *store;
 	GtkCellRenderer     *cell;	
 	GtkTreeViewColumn   *col;
 
@@ -664,10 +699,18 @@ group_chat_contacts_setup (GossipGroupChat *chat)
 	tree = GTK_TREE_VIEW (priv->treeview);
 	tv = GTK_TEXT_VIEW (GOSSIP_CHAT (chat)->view);
 
-	store = gtk_list_store_new (NUMBER_OF_COLS,
+	g_object_set (tree,
+		      "show-expanders", FALSE,
+		      "reorderable", FALSE,
+		      "headers-visible", FALSE,
+		      NULL);
+
+	store = gtk_tree_store_new (NUMBER_OF_COLS,
 				    GDK_TYPE_PIXBUF,
 				    G_TYPE_STRING,
-				    G_TYPE_OBJECT);
+				    G_TYPE_OBJECT,
+				    G_TYPE_BOOLEAN,
+				    G_TYPE_INT);
 
 	gtk_tree_sortable_set_default_sort_func (GTK_TREE_SORTABLE (store),
 						 group_chat_contacts_sort_func,
@@ -684,22 +727,38 @@ group_chat_contacts_setup (GossipGroupChat *chat)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (col, cell, FALSE);
-	gtk_tree_view_column_add_attribute (col,
-					    cell,
-					    "pixbuf", COL_STATUS);
+
+	gtk_tree_view_column_set_cell_data_func (col, cell,
+						 (GtkTreeCellDataFunc) group_chat_cl_pixbuf_cell_data_func,
+						 chat, NULL);
+
+	g_object_set (cell,
+		      "xpad", 5,
+		      "ypad", 1,
+		      "visible", FALSE,
+		      NULL);
 
 	cell = gossip_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (col, cell, TRUE);
+	gtk_tree_view_column_set_cell_data_func (col, cell,
+						 (GtkTreeCellDataFunc) group_chat_cl_text_cell_data_func,
+						 chat, NULL);
+	gtk_tree_view_column_add_attribute (col, cell,
+					    "name", COL_NAME);
 
-	gtk_tree_view_column_set_cell_data_func (col, cell, 
-						 (GtkTreeCellDataFunc) group_chat_roster_name_data_func,
-						chat, NULL);
-	
+	gtk_tree_view_column_add_attribute (col, cell,
+					    "is_group", COL_IS_HEADER);
+
 	gtk_tree_view_append_column (tree, col);
 
 	g_signal_connect (tree,
 			  "row_activated",
 			  G_CALLBACK (group_chat_row_activated_cb),
+			  chat);
+
+	g_signal_connect (tree,
+			  "test-collapse-row",
+			  G_CALLBACK (group_chat_cl_test_collapse_row_cb),
 			  chat);
 }
 
@@ -711,6 +770,11 @@ group_chat_contacts_find_foreach (GtkTreeModel    *model,
 {
 	GossipContact *contact;
 	gboolean       equal;
+
+	if (gtk_tree_path_get_depth (path) == 1) {
+		/* No contacts on depth 1 */
+		return FALSE;
+	}
 
 	gtk_tree_model_get (model,
 			    iter,
@@ -867,7 +931,7 @@ group_chat_joined_cb (GossipChatroomProvider *provider,
 	GossipChatView      *chatview;
 	GtkTreeView         *view;
 	GtkTreeModel        *model;
-	GtkListStore        *store;
+	GtkTreeStore        *store;
 	
 	priv = GET_PRIV (chat);
 
@@ -885,8 +949,8 @@ group_chat_joined_cb (GossipChatroomProvider *provider,
 	/* Clear previous roster */
 	view = GTK_TREE_VIEW (priv->treeview);
 	model = gtk_tree_view_get_model (view);
-	store = GTK_LIST_STORE (model);
-	gtk_list_store_clear (store);
+	store = GTK_TREE_STORE (model);
+	gtk_tree_store_clear (store);
 
 	/* Allow use of the input textview */
  	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); 
@@ -1004,7 +1068,10 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 	GossipGroupChatPriv *priv;
 	GtkTreeModel        *model;
 	GtkTreeIter          iter;
+	GtkTreeIter          parent;
 	GdkPixbuf           *pixbuf;
+	GossipChatroomRole   role;
+	GtkTreePath         *path;
 		
 	priv = GET_PRIV (chat);
 	
@@ -1017,18 +1084,110 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 
 	pixbuf = gossip_pixbuf_for_contact (contact);
 	
+	role = gossip_chatroom_contact_get_role (GOSSIP_CHATROOM_CONTACT (contact));
+	group_chat_get_role_iter (chat, role, &parent);
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
-	gtk_list_store_append (GTK_LIST_STORE (model), &iter);
-	gtk_list_store_set (GTK_LIST_STORE (model),
+	gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &parent);
+
+	gtk_tree_store_set (GTK_TREE_STORE (model),
 			    &iter,
 			    COL_CONTACT, contact,
 			    COL_NAME, gossip_contact_get_name (contact),
 			    COL_STATUS, pixbuf,
+			    COL_IS_HEADER, FALSE,
 			    -1);
+
+	path = gtk_tree_model_get_path (model, &parent);
+	gtk_tree_view_expand_row (GTK_TREE_VIEW (priv->treeview), path, TRUE);
+	gtk_tree_path_free (path);
 
 	g_object_unref (pixbuf);
 
 	g_signal_emit_by_name (chat, "contact_added", contact);
+}
+
+static gboolean
+group_chat_cl_test_collapse_row_cb (GtkTreeView     *tree_view,
+				    GtkTreeIter     *iter,
+				    GtkTreePath     *path,
+				    GossipGroupChat *chat)
+{
+	/* Never allow collapsing */
+	return FALSE;
+}
+
+static void
+group_chat_cl_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
+				     GtkCellRenderer   *cell,
+				     GtkTreeModel      *model,
+				     GtkTreeIter       *iter,
+				     GossipGroupChat   *chat)
+{
+	GdkPixbuf *pixbuf;
+	gboolean   is_header;
+
+	gtk_tree_model_get (model, iter,
+			    COL_IS_HEADER, &is_header,
+			    COL_STATUS, &pixbuf,
+			    -1);
+
+	g_object_set (cell,
+		      "visible", !is_header,
+		      "pixbuf", pixbuf,
+		      NULL);
+
+	if (pixbuf) {
+		g_object_unref (pixbuf);
+	}
+
+	group_chat_cl_set_background (chat, cell, is_header);
+}
+
+static void
+group_chat_cl_text_cell_data_func (GtkTreeViewColumn *tree_column,
+				   GtkCellRenderer   *cell,
+				   GtkTreeModel      *model,
+				   GtkTreeIter       *iter,
+				   GossipGroupChat   *chat)
+{
+	gboolean is_header;
+
+	gtk_tree_model_get (model, iter,
+			    COL_IS_HEADER, &is_header,
+			    -1);
+	
+	group_chat_cl_set_background (chat, cell, is_header);
+}
+
+static void
+group_chat_cl_set_background (GossipGroupChat *chat,
+			      GtkCellRenderer *cell,
+			      gboolean         is_header)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+
+	if (is_header) {
+		GdkColor  color;
+		GtkStyle *style;
+
+		style = gtk_widget_get_style (GTK_WIDGET (priv->treeview));
+		color = style->text_aa[GTK_STATE_INSENSITIVE];
+
+		color.red = (color.red + (style->white).red) / 2;
+		color.green = (color.green + (style->white).green) / 2;
+		color.blue = (color.blue + (style->white).blue) / 2;
+
+		g_object_set (cell, 
+			      "cell-background-gdk", &color,
+			      NULL);
+	} else {
+		g_object_set (cell, 
+			      "cell-background-gdk", NULL, 
+			      NULL);
+	}		
 }
 
 static void
@@ -1051,8 +1210,16 @@ group_chat_contact_left_cb (GossipChatroomProvider *provider,
 	
 	if (group_chat_contacts_find (chat, contact, &iter)) {
 		GtkTreeModel *model;
+		GtkTreeIter   parent;
+
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
-		gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+		gtk_tree_model_iter_parent (model, &parent, &iter);
+
+		gtk_tree_store_remove (GTK_TREE_STORE (model), &iter);
+
+		if (!gtk_tree_model_iter_has_child (model, &parent)) {
+			gtk_tree_store_remove (GTK_TREE_STORE (model), &parent);
+		}
 
 		g_signal_emit_by_name (chat, "contact_removed", contact);
 	}
@@ -1083,7 +1250,7 @@ group_chat_contact_presence_updated_cb (GossipChatroomProvider *provider,
 		pixbuf = gossip_pixbuf_for_contact (contact);
 
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
-		gtk_list_store_set (GTK_LIST_STORE (model),
+		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    &iter,
 				    COL_STATUS, pixbuf,
 				    -1);
@@ -1114,7 +1281,7 @@ group_chat_contact_updated_cb (GossipChatroomProvider *provider,
 		GtkTreeModel *model;
 		
 		model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
-		gtk_list_store_set (GTK_LIST_STORE (model),
+		gtk_tree_store_set (GTK_TREE_STORE (model),
 				    &iter,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    -1);
@@ -1263,6 +1430,11 @@ group_chat_get_nick_list_foreach (GtkTreeModel  *model,
 				  GList        **list)
 {
 	gchar *name;
+
+	if (gtk_tree_path_get_depth (path) == 1) {
+		/* No contacts on depth 1 */
+		return FALSE;
+	}
 
 	gtk_tree_model_get (model,
 			    iter,
@@ -1435,32 +1607,68 @@ group_chat_is_group_chat (GossipChat *chat)
 	return TRUE;
 }
 
-static void
-group_chat_roster_name_data_func (GtkTreeViewColumn *tree_column,
-				  GtkCellRenderer   *cell,
-				  GtkTreeModel      *model,
-				  GtkTreeIter       *iter,
-				  GossipGroupChat   *chat)
+typedef struct {
+	GtkTreeIter        iter;
+	GossipChatroomRole role;
+	gboolean           found;
+} FindRoleIterData;
+
+static gboolean
+group_chat_get_role_iter_foreach (GtkTreeModel     *model,
+				  GtkTreePath      *path,
+				  GtkTreeIter      *iter,
+				  FindRoleIterData *fr)
 {
-	GossipChatroomContact *contact;
-	gchar                 *name;
-	gchar                 *modified_name;
+	GossipChatroomRole role;
+	gboolean           is_header;
+
+	/* Headers are only at the top level. */
+	if (gtk_tree_path_get_depth (path) != 1) {
+		return FALSE;
+	}
 
 	gtk_tree_model_get (model, iter,
-			    COL_NAME, &name,
-			    COL_CONTACT, &contact,
+			    COL_IS_HEADER, &is_header,
+			    COL_HEADER_ROLE, &role,
 			    -1);
 
-	if (gossip_chatroom_contact_get_role (contact) == GOSSIP_CHATROOM_ROLE_MODERATOR) {
-		modified_name = g_strdup_printf ("@%s", name);
-		g_object_set (cell, "name", modified_name, NULL);
-		g_free (modified_name);
-	} else {
-		g_object_set (cell, "name", name, NULL);
+	if (is_header && role == fr->role) {
+		fr->iter = *iter;
+		fr->found = TRUE;
 	}
-	
-	g_free (name);
-	g_object_unref (contact);
+
+	return fr->found;
+}
+
+static void
+group_chat_get_role_iter (GossipGroupChat    *chat,
+			  GossipChatroomRole  role,
+			  GtkTreeIter        *iter)
+{
+	GossipGroupChatPriv *priv;
+	GtkTreeModel        *model;
+	FindRoleIterData     fr;
+
+	priv = GET_PRIV (chat);
+
+	fr.found = FALSE;
+	fr.role  = role;
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
+	gtk_tree_model_foreach (model,
+				(GtkTreeModelForeachFunc) group_chat_get_role_iter_foreach,
+				&fr);
+
+	if (!fr.found) {
+		gtk_tree_store_append (GTK_TREE_STORE (model), iter, NULL);
+		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
+				    COL_NAME, gossip_chatroom_role_to_string (role),
+				    COL_IS_HEADER, TRUE,
+				    COL_HEADER_ROLE, role,
+				    -1);
+	} else {
+		*iter = fr.iter;
+	}
 }
 
 /* Scroll down after the back-log has been received. */

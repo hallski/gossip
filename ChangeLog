@@ -1,3 +1,25 @@
+2006-09-26  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-chatroom.[ch]: (gossip_chatroom_role_to_string),
+	(gossip_chatroom_affiliation_to_string):
+	- Added to convert a role and affiliation to a translated string.
+	* src/gossip-group-chat.c: (group_chat_row_activated_cb),
+	(group_chat_contacts_sort_func), (group_chat_contacts_setup),
+	(group_chat_contacts_find_foreach), (group_chat_joined_cb),
+	(group_chat_contact_joined_cb),
+	(group_chat_cl_test_collapse_row_cb),
+	(group_chat_cl_pixbuf_cell_data_func),
+	(group_chat_cl_text_cell_data_func),
+	(group_chat_cl_set_background), (group_chat_contact_left_cb),
+	(group_chat_contact_presence_updated_cb),
+	(group_chat_contact_updated_cb),
+	(group_chat_get_nick_list_foreach),
+	(group_chat_get_role_iter_foreach), (group_chat_get_role_iter):
+	- Converted the contact list in group chats to a "tree".
+	- Show roles a headers in contact list.
+	- This really should be shared with the roster code as was intended
+	  from the beginning.
+
 2006-09-25  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-presence-chooser.c (presence_chooser_dialog_response_cb):
