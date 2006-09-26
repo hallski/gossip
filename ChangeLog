@@ -2,6 +2,20 @@
 
 	* libgossip/gossip-chatroom.[ch]: (gossip_chatroom_role_to_string),
 	(gossip_chatroom_affiliation_to_string):
+	- Changed to take a number argument to determine format of returned
+	  string.
+	* src/gossip-group-chat.c:
+	(group_chat_cl_text_cell_data_func): Now also used for the name
+	string. And makes use of the modified role_to_string function to use
+	plural if more than one contact of each role exists.
+	(group_chat_get_role_iter):
+	- No need to set the name of the group here, it's fetched from the
+	data func.
+
+2006-09-26  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-chatroom.[ch]: (gossip_chatroom_role_to_string),
+	(gossip_chatroom_affiliation_to_string):
 	- Added to convert a role and affiliation to a translated string.
 	* src/gossip-group-chat.c: (group_chat_row_activated_cb),
 	(group_chat_contacts_sort_func), (group_chat_contacts_setup),

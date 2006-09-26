@@ -1156,7 +1156,33 @@ group_chat_cl_text_cell_data_func (GtkTreeViewColumn *tree_column,
 	gtk_tree_model_get (model, iter,
 			    COL_IS_HEADER, &is_header,
 			    -1);
-	
+
+	if (is_header) {
+		GossipChatroomRole role;
+		gint               nr;
+
+		gtk_tree_model_get (model, iter,
+				    COL_HEADER_ROLE, &role,
+				    -1);
+
+		nr = gtk_tree_model_iter_n_children (model, iter);
+		
+		g_object_set (cell,
+			      "name", gossip_chatroom_role_to_string (role, nr),
+			      NULL);
+	} else {
+		gchar *name;
+
+		gtk_tree_model_get (model, iter,
+				    COL_NAME, &name,
+				    -1);
+		g_object_set (cell,
+			      "name", name,
+			      NULL);
+
+		g_free (name);
+	}
+
 	group_chat_cl_set_background (chat, cell, is_header);
 }
 
@@ -1662,7 +1688,6 @@ group_chat_get_role_iter (GossipGroupChat    *chat,
 	if (!fr.found) {
 		gtk_tree_store_append (GTK_TREE_STORE (model), iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), iter,
-				    COL_NAME, gossip_chatroom_role_to_string (role),
 				    COL_IS_HEADER, TRUE,
 				    COL_HEADER_ROLE, role,
 				    -1);

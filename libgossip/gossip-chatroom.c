@@ -902,15 +902,16 @@ gossip_chatroom_status_to_string (GossipChatroomStatus status)
 }
 
 const gchar *
-gossip_chatroom_role_to_string (GossipChatroomRole role)
+gossip_chatroom_role_to_string (GossipChatroomRole role,
+				gint               nr)
 {
 	switch (role) {
 	case GOSSIP_CHATROOM_ROLE_MODERATOR:
-		return _("Moderator");
+		return ngettext ("Moderator", "Moderators", nr);
 	case GOSSIP_CHATROOM_ROLE_PARTICIPANT:
-		return _("Participant");
+		return ngettext ("Participant", "Participants", nr);
 	case GOSSIP_CHATROOM_ROLE_VISITOR:
-		return _("Visitor");
+		return ngettext ("Visitor", "Visitors", nr);
 	case GOSSIP_CHATROOM_ROLE_NONE:
 		return _("No role");
 	}
@@ -921,17 +922,18 @@ gossip_chatroom_role_to_string (GossipChatroomRole role)
 }
 
 const gchar *
-gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation)
+gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation,
+				       gint                      nr)
 {
 	switch (affiliation) {
 	case GOSSIP_CHATROOM_AFFILIATION_OWNER:
-		return _("Owner");
+		return ngettext ("Owner", "Owners", nr);
 	case GOSSIP_CHATROOM_AFFILIATION_ADMIN:
-		return _("Administrator");
+		return ngettext ("Administrator", "Administrators", nr);
 	case GOSSIP_CHATROOM_AFFILIATION_MEMBER:
-		return _("Member");
+		return ngettext ("Member", "Members", nr);
 	case GOSSIP_CHATROOM_AFFILIATION_OUTCAST:
-		return _("Outcast");
+		return ngettext ("Outcast", "Outcasts", nr);
 	case GOSSIP_CHATROOM_AFFILIATION_NONE:
 		return _("No affiliation");
 	}
