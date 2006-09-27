@@ -1,3 +1,7 @@
+2006-09-27  Richard Hult  <richard@imendio.com>
+
+	* configure.ac: Bail out if xss isn't found, fixes bug #357736.
+
 2006-09-26  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-chatroom.[ch]: (gossip_chatroom_role_to_string),

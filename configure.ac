@@ -272,6 +272,10 @@ if test x$ac_backend = xgnome; then
       ])
 
    AC_SUBST(XSS_LIBS)
+
+   if test x$have_xss != xyes; then
+      AC_MSG_ERROR([You must have xss installed])
+   fi
 fi
 
 
