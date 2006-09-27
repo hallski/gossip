@@ -70,6 +70,7 @@ struct _GossipContactListPriv {
 
 	gboolean             show_offline;
 	gboolean             show_avatars;
+	gboolean             is_compact;
 	gboolean             show_active;
 };
 
@@ -267,10 +268,10 @@ static void     contact_list_event_added_cb                  (GossipEventManager
 static void     contact_list_event_removed_cb                (GossipEventManager     *manager,
 							      GossipEvent            *event,
 							      GossipContactList      *list);
-static gboolean contact_list_set_show_avatars_foreach        (GtkTreeModel           *model,
+static gboolean contact_list_update_list_mode_foreach        (GtkTreeModel           *model,
 							      GtkTreePath            *path,
 							      GtkTreeIter            *iter,
-							      gpointer                show_avatars);
+							      GossipContactList      *list);
 
 enum {
         CONTACT_ACTIVATED,
@@ -285,6 +286,7 @@ enum {
 	COL_PIXBUF_AVATAR_VISIBLE,
 	COL_NAME,
 	COL_STATUS,
+	COL_STATUS_VISIBLE,
 	COL_CONTACT,
 	COL_IS_GROUP,
 	COL_IS_ACTIVE,
@@ -296,7 +298,8 @@ enum {
 enum {
 	PROP_0,
 	PROP_SHOW_OFFLINE,
-	PROP_SHOW_AVATARS
+	PROP_SHOW_AVATARS,
+	PROP_IS_COMPACT,
 };
 
 static const GtkActionEntry entries[] = {
@@ -388,14 +391,13 @@ G_DEFINE_TYPE (GossipContactList, gossip_contact_list, GTK_TYPE_TREE_VIEW);
 static void
 gossip_contact_list_class_init (GossipContactListClass *klass)
 {
-	GParamSpec   *param;
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
         object_class->finalize = contact_list_finalize;
 	object_class->get_property = contact_list_get_property;
 	object_class->set_property = contact_list_set_property;
 
-        signals[CONTACT_ACTIVATED] =
+	signals[CONTACT_ACTIVATED] =
                 g_signal_new ("contact-activated",
                               G_TYPE_FROM_CLASS (klass),
                               G_SIGNAL_RUN_LAST,
@@ -405,27 +407,31 @@ gossip_contact_list_class_init (GossipContactListClass *klass)
                               G_TYPE_NONE,
                               2, GOSSIP_TYPE_CONTACT, G_TYPE_INT);
 
-	param = g_param_spec_boolean ("show_offline",
-				      "Show Offline",
-				      "Whether contact list should display "
-				      "offline contacts",
-				      FALSE,
-				      G_PARAM_READWRITE);
-
 	g_object_class_install_property (object_class,
 					 PROP_SHOW_OFFLINE,
-					 param);
+					 g_param_spec_boolean ("show-offline",
+							       "Show Offline",
+							       "Whether contact list should display "
+							       "offline contacts",
+							       FALSE,
+							       G_PARAM_READWRITE));
 
-	param = g_param_spec_boolean ("show_avatars",
-				      "Show Avatars",
-				      "Whether contact list should display "
-				      "avatars for contacts",
-				      TRUE,
-				      G_PARAM_READWRITE);
+	 g_object_class_install_property (object_class,
+					  PROP_SHOW_AVATARS,
+					  g_param_spec_boolean ("show-avatars",
+								"Show Avatars",
+								"Whether contact list should display "
+								"avatars for contacts",
+								TRUE,
+								G_PARAM_READWRITE));
 
-	g_object_class_install_property (object_class,
-					 PROP_SHOW_AVATARS,
-					 param);
+	g_object_class_install_property (object_class, 
+					 PROP_IS_COMPACT,
+					 g_param_spec_boolean ("is-compact",
+							       "Is Compact",
+							       "Whether the conact list is in compact mode or not",
+							       FALSE,
+							       G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipContactListPriv));
 }
@@ -446,6 +452,8 @@ gossip_contact_list_init (GossipContactList *list)
 	priv = GET_PRIV (list);
 
 	priv->session = g_object_ref (session);
+
+	priv->is_compact = FALSE;
 
 	priv->flash_table = g_hash_table_new_full (gossip_contact_hash,
 						   gossip_contact_equal,
@@ -570,6 +578,9 @@ contact_list_get_property (GObject    *object,
 	case PROP_SHOW_AVATARS:
 		g_value_set_boolean (value, priv->show_avatars);
 		break;
+	case PROP_IS_COMPACT:
+		g_value_set_boolean (value, priv->is_compact);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -594,6 +605,10 @@ contact_list_set_property (GObject      *object,
 	case PROP_SHOW_AVATARS:
 		gossip_contact_list_set_show_avatars (GOSSIP_CONTACT_LIST (object),
 						      g_value_get_boolean (value));
+		break;
+	case PROP_IS_COMPACT:
+		gossip_contact_list_set_is_compact (GOSSIP_CONTACT_LIST (object),
+						    g_value_get_boolean (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -1191,18 +1206,24 @@ contact_list_add_contact (GossipContactList *list,
 	if (!groups) {
 		GdkPixbuf *pixbuf_status;
 		GdkPixbuf *pixbuf_avatar;
+		gboolean   show_avatar = FALSE;
 
 		pixbuf_status = gossip_pixbuf_for_contact (contact);
 		pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (
 			contact, 32, 32);
+
+		if (priv->show_avatars && !priv->is_compact) {
+			show_avatar = TRUE;
+		} 
 		
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, NULL);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
 				    COL_PIXBUF_AVATAR, pixbuf_avatar,
-				    COL_PIXBUF_AVATAR_VISIBLE, priv->show_avatars,
+				    COL_PIXBUF_AVATAR_VISIBLE, show_avatar,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_STATUS, gossip_contact_get_status (contact),
+				    COL_STATUS_VISIBLE, !priv->is_compact,
 				    COL_CONTACT, contact,
 				    COL_IS_GROUP, FALSE,
 				    COL_IS_ACTIVE, FALSE,
@@ -1224,6 +1245,7 @@ contact_list_add_contact (GossipContactList *list,
 		GdkPixbuf   *pixbuf_avatar;
 		const gchar *name;
 		gboolean     created;
+		gboolean     show_avatar = FALSE;
 
 		name = l->data;
 		if (!name) {
@@ -1236,13 +1258,18 @@ contact_list_add_contact (GossipContactList *list,
 		
 		contact_list_get_group (list, name, &iter_group, &created);
 
+		if (priv->show_avatars && !priv->is_compact) {
+			show_avatar = TRUE;
+		} 
+
 		gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &iter_group);
 		gtk_tree_store_set (GTK_TREE_STORE (model), &iter,
 				    COL_PIXBUF_STATUS, pixbuf_status,
 				    COL_PIXBUF_AVATAR, pixbuf_avatar,
-				    COL_PIXBUF_AVATAR_VISIBLE, priv->show_avatars,
+				    COL_PIXBUF_AVATAR_VISIBLE, show_avatar,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_STATUS, gossip_contact_get_status (contact),
+				    COL_STATUS_VISIBLE, !priv->is_compact,
 				    COL_CONTACT, contact,
 				    COL_IS_GROUP, FALSE,
 				    COL_IS_ACTIVE, FALSE,
@@ -1336,6 +1363,7 @@ contact_list_create_model (GossipContactList *list)
 				    G_TYPE_BOOLEAN,      /* Avatar pixbuf visible */
 				    G_TYPE_STRING,       /* Name */
 				    G_TYPE_STRING,       /* Status string */
+				    G_TYPE_BOOLEAN,      /* Show status */
 				    GOSSIP_TYPE_CONTACT, /* Contact type */
 				    G_TYPE_BOOLEAN,      /* Is group */
 				    G_TYPE_BOOLEAN,      /* Is active */
@@ -1929,11 +1957,17 @@ contact_list_text_cell_data_func (GtkTreeViewColumn *tree_column,
 {
 	gboolean is_group;
 	gboolean is_active;
+	gboolean show_status;
 
 	gtk_tree_model_get (model, iter, 
 			    COL_IS_GROUP, &is_group, 
 			    COL_IS_ACTIVE, &is_active, 
+			    COL_STATUS_VISIBLE, &show_status,
 			    -1);
+
+	g_object_set (cell,
+		      "show-status", show_status,
+		      NULL);
 
 	contact_list_cell_set_background (list, cell, is_group, is_active);
 }
@@ -2772,16 +2806,26 @@ contact_list_event_removed_cb (GossipEventManager *manager,
 }
 
 static gboolean    
-contact_list_set_show_avatars_foreach (GtkTreeModel *model,
-				       GtkTreePath  *path,
-				       GtkTreeIter  *iter,
-				       gpointer      show_avatars)
+contact_list_update_list_mode_foreach (GtkTreeModel      *model,
+				       GtkTreePath       *path,
+				       GtkTreeIter       *iter,
+				       GossipContactList *list)
 {
+	GossipContactListPriv *priv;
+	gboolean               show_avatar = FALSE;
+
+	priv = GET_PRIV (list);
+
+	if (priv->show_avatars && !priv->is_compact) {
+		show_avatar = TRUE;
+	}
+
 	gtk_tree_store_set (GTK_TREE_STORE (model), iter,
-			    COL_PIXBUF_AVATAR_VISIBLE, GPOINTER_TO_INT (show_avatars), 
+			    COL_PIXBUF_AVATAR_VISIBLE, show_avatar,
+			    COL_STATUS_VISIBLE, !priv->is_compact,
 			    -1);
 
-	gtk_tree_model_row_changed (model, path, iter);  
+	gtk_tree_model_row_changed (model, path, iter);
 
 	return FALSE;
 }
@@ -2859,18 +2903,6 @@ gossip_contact_list_get_show_offline (GossipContactList *list)
 	return priv->show_offline;
 }
 
-gboolean
-gossip_contact_list_get_show_avatars (GossipContactList *list)
-{
-	GossipContactListPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), TRUE);
-
-	priv = GET_PRIV (list);
-
-	return priv->show_avatars;
-}
-
 void         
 gossip_contact_list_set_show_offline (GossipContactList *list,
 				      gboolean           show_offline)
@@ -2906,6 +2938,18 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 	priv->show_active = show_active;
 }
 
+gboolean
+gossip_contact_list_get_show_avatars (GossipContactList *list)
+{
+	GossipContactListPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), TRUE);
+
+	priv = GET_PRIV (list);
+
+	return priv->show_avatars;
+}
+
 void         
 gossip_contact_list_set_show_avatars (GossipContactList *list,
 				      gboolean           show_avatars)
@@ -2923,6 +2967,40 @@ gossip_contact_list_set_show_avatars (GossipContactList *list,
 
 	gtk_tree_model_foreach (model, 
 				(GtkTreeModelForeachFunc) 
-				contact_list_set_show_avatars_foreach, 
-				GINT_TO_POINTER (show_avatars));
+				contact_list_update_list_mode_foreach,
+				list);
 }
+
+gboolean
+gossip_contact_list_get_is_compact (GossipContactList *list)
+{
+	GossipContactListPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT_LIST (list), TRUE);
+
+	priv = GET_PRIV (list);
+
+	return priv->is_compact;
+}
+
+void
+gossip_contact_list_set_is_compact (GossipContactList *list,
+				    gboolean           is_compact)
+{
+	GossipContactListPriv *priv;
+	GtkTreeModel          *model;
+		
+	g_return_if_fail (GOSSIP_IS_CONTACT_LIST (list));
+
+	priv = GET_PRIV (list);
+
+	priv->is_compact = is_compact;
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
+
+	gtk_tree_model_foreach (model, 
+				(GtkTreeModelForeachFunc) 
+				contact_list_update_list_mode_foreach,
+				list);
+}
+

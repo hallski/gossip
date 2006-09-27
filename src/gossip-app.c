@@ -294,6 +294,9 @@ static void            app_notify_show_offline_cb             (GossipConf       
 static void            app_notify_show_avatars_cb             (GossipConf               *conf,
 							       const gchar              *key,
 							       gpointer                  user_data);
+static void            app_notify_compact_contact_list_cb     (GossipConf               *conf,
+							       const gchar              *key,
+							       gpointer                  user_data);
 static void            app_connect_no_accounts_response_cb    (GtkWidget                *widget,
 							       gint                      response,
 							       gpointer                  user_data);
@@ -488,6 +491,7 @@ app_setup (GossipSession        *session,
 	gchar          *str;
 	gboolean        show_offline;
 	gboolean        show_avatars;
+	gboolean        compact_contact_list;
 	gboolean        hidden;
 	gint            x, y, w, h;
 
@@ -737,8 +741,18 @@ app_setup (GossipSession        *session,
 				GOSSIP_PREFS_UI_SHOW_AVATARS,
 				app_notify_show_avatars_cb,
 				NULL);
+	gossip_conf_get_bool (conf,
+			      GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
+			      &compact_contact_list);
+	gossip_conf_notify_add (conf,
+				GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
+				app_notify_compact_contact_list_cb,
+				NULL);
 
-	g_object_set (priv->contact_list, "show-avatars", show_avatars, NULL);
+	g_object_set (priv->contact_list, 
+		      "show-avatars", show_avatars, 
+		      "is-compact", compact_contact_list,
+		      NULL);
 
 	/* Set window to be hidden. If doesn't have status icon, show window
 	 * and mask "actions_hide_list".
@@ -1930,7 +1944,24 @@ app_notify_show_avatars_cb (GossipConf  *conf,
 	priv = GET_PRIV (app);
 
 	if (gossip_conf_get_bool (conf, key, &show_avatars)) {
-		gossip_contact_list_set_show_avatars (priv->contact_list, show_avatars);
+		gossip_contact_list_set_show_avatars (priv->contact_list, 
+						      show_avatars);
+	}
+}
+
+static void
+app_notify_compact_contact_list_cb (GossipConf  *conf,
+				    const gchar *key,
+				    gpointer     user_data)
+{
+	GossipAppPriv *priv;
+	gboolean       compact_contact_list;
+
+	priv = GET_PRIV (app);
+
+	if (gossip_conf_get_bool (conf, key, &compact_contact_list)) {
+		gossip_contact_list_set_is_compact (priv->contact_list, 
+						    compact_contact_list);
 	}
 }
 

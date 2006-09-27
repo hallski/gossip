@@ -40,6 +40,7 @@ typedef struct {
 	GtkWidget *notebook;
 
 	GtkWidget *checkbutton_show_avatars;
+	GtkWidget *checkbutton_compact_contact_list;
 	GtkWidget *checkbutton_show_smileys;
 	GtkWidget *combobox_chat_theme;
 	GtkWidget *checkbutton_theme_chat_room;
@@ -168,6 +169,10 @@ preferences_setup_widgets (GossipPreferences *preferences)
 	preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_UI_SHOW_AVATARS,
 					  preferences->checkbutton_show_avatars);
+
+	preferences_hookup_toggle_button (preferences,
+					  GOSSIP_PREFS_UI_COMPACT_CONTACT_LIST,
+					  preferences->checkbutton_compact_contact_list);
 
         preferences_hookup_toggle_button (preferences,
 					  GOSSIP_PREFS_CHAT_SHOW_SMILEYS,
@@ -834,6 +839,7 @@ gossip_preferences_show (void)
 		"preferences_dialog", &preferences->dialog,
 		"notebook", &preferences->notebook,
 		"checkbutton_show_avatars", &preferences->checkbutton_show_avatars,
+		"checkbutton_compact_contact_list", &preferences->checkbutton_compact_contact_list,
 		"checkbutton_show_smileys", &preferences->checkbutton_show_smileys,
 		"combobox_chat_theme", &preferences->combobox_chat_theme,
 		"checkbutton_theme_chat_room", &preferences->checkbutton_theme_chat_room,

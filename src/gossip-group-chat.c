@@ -31,6 +31,7 @@
 #include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
+#include "gossip-cell-renderer-expander.h"
 #include "gossip-cell-renderer-text.h"
 #include "gossip-chat.h"
 #include "gossip-chat-invite.h"
@@ -195,16 +196,17 @@ static gboolean        group_chat_is_group_chat               (GossipChat       
 static void            group_chat_get_role_iter               (GossipGroupChat       *chat,
 							       GossipChatroomRole     role,
 							       GtkTreeIter           *iter);
-static gboolean group_chat_cl_test_collapse_row_cb           (GtkTreeView            *tree_view,
-							      GtkTreeIter            *iter,
-							      GtkTreePath            *path,
-							      GossipGroupChat        *chat);
 static void     group_chat_cl_pixbuf_cell_data_func          (GtkTreeViewColumn      *tree_column,
 							      GtkCellRenderer        *cell,
 							      GtkTreeModel           *model,
 							      GtkTreeIter            *iter,
 							      GossipGroupChat        *chat);
 static void     group_chat_cl_text_cell_data_func            (GtkTreeViewColumn      *tree_column,
+							      GtkCellRenderer        *cell,
+							      GtkTreeModel           *model,
+							      GtkTreeIter            *iter,
+							      GossipGroupChat        *chat);
+static void      group_chat_cl_expander_cell_data_func       (GtkTreeViewColumn      *tree_column,
 							      GtkCellRenderer        *cell,
 							      GtkTreeModel           *model,
 							      GtkTreeIter            *iter,
@@ -749,16 +751,18 @@ group_chat_contacts_setup (GossipGroupChat *chat)
 	gtk_tree_view_column_add_attribute (col, cell,
 					    "is_group", COL_IS_HEADER);
 
+	cell = gossip_cell_renderer_expander_new ();
+	gtk_tree_view_column_pack_end (col, cell, FALSE);
+	gtk_tree_view_column_set_cell_data_func (
+		col, cell,
+		(GtkTreeCellDataFunc) group_chat_cl_expander_cell_data_func,
+		chat, NULL);
+
 	gtk_tree_view_append_column (tree, col);
 
 	g_signal_connect (tree,
 			  "row_activated",
 			  G_CALLBACK (group_chat_row_activated_cb),
-			  chat);
-
-	g_signal_connect (tree,
-			  "test-collapse-row",
-			  G_CALLBACK (group_chat_cl_test_collapse_row_cb),
 			  chat);
 }
 
@@ -1107,16 +1111,6 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 	g_signal_emit_by_name (chat, "contact_added", contact);
 }
 
-static gboolean
-group_chat_cl_test_collapse_row_cb (GtkTreeView     *tree_view,
-				    GtkTreeIter     *iter,
-				    GtkTreePath     *path,
-				    GossipGroupChat *chat)
-{
-	/* Never allow collapsing */
-	return FALSE;
-}
-
 static void
 group_chat_cl_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 				     GtkCellRenderer   *cell,
@@ -1183,6 +1177,38 @@ group_chat_cl_text_cell_data_func (GtkTreeViewColumn *tree_column,
 		g_free (name);
 	}
 
+	group_chat_cl_set_background (chat, cell, is_header);
+}
+
+static void
+group_chat_cl_expander_cell_data_func (GtkTreeViewColumn      *column,
+				       GtkCellRenderer        *cell,
+				       GtkTreeModel           *model,
+				       GtkTreeIter            *iter,
+				       GossipGroupChat        *chat)
+{
+	gboolean is_header;
+
+	gtk_tree_model_get (model, iter,
+			    COL_IS_HEADER, &is_header,
+			    -1);
+
+	if (is_header) {
+		GtkTreePath *path;
+		gboolean     row_expanded;
+		
+		path = gtk_tree_model_get_path (model, iter);
+		row_expanded = gtk_tree_view_row_expanded (GTK_TREE_VIEW (column->tree_view), path);
+		gtk_tree_path_free (path);
+		
+		g_object_set (cell,
+			      "visible", TRUE,
+			      "expander-style", row_expanded ? GTK_EXPANDER_EXPANDED : GTK_EXPANDER_COLLAPSED,
+			      NULL);
+	} else {
+		g_object_set (cell, "visible", FALSE, NULL);
+	}
+	
 	group_chat_cl_set_background (chat, cell, is_header);
 }
 

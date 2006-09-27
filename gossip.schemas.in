@@ -31,6 +31,20 @@
     </schema>
 
     <schema>
+      <key>/schemas/apps/gossip/ui/compact_contact_list</key>
+      <applyto>/apps/gossip/ui/compact_contact_list</applyto>
+      <owner>gossip</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Compact contact list</short>
+	<long>
+	Whether to show the contact list in compact mode or not. 
+	</long>
+      </locale>
+    </schema>
+
+    <schema>
        <key>/schemas/apps/gossip/ui/main_window_hidden</key>
        <applyto>/apps/gossip/ui/main_window_hidden</applyto>
        <owner>gossip</owner>

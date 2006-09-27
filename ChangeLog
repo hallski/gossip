@@ -1,3 +1,42 @@
+2006-09-27  Mikael Hallendal  <micke@imendio.com>
+
+	* gossip.schemas.in:
+	* src/gossip-app.c: (app_setup), (app_notify_show_avatars_cb),
+	(app_notify_compact_contact_list_cb):
+	* src/gossip-preferences.c: (preferences_setup_widgets),
+	(gossip_preferences_show):
+	* src/gossip-preferences.h:
+	* ui/main.glade:
+	- Added a setting for compact contact list.
+	* src/gossip-cell-renderer-text.c:
+	(gossip_cell_renderer_text_class_init),
+	(gossip_cell_renderer_text_init),
+	(cell_renderer_text_get_property),
+	(cell_renderer_text_set_property),
+	(cell_renderer_text_update_text):
+	- Added a show-status property on the text cell renderer.
+	* src/gossip-contact-list.[ch]: (gossip_contact_list_class_init),
+	(gossip_contact_list_init), (contact_list_get_property),
+	(contact_list_set_property), (contact_list_add_contact),
+	(contact_list_create_model), (contact_list_text_cell_data_func),
+	(contact_list_update_list_mode_foreach),
+	(gossip_contact_list_get_show_avatars),
+	(gossip_contact_list_set_show_avatars),
+	(gossip_contact_list_get_is_compact),
+	(gossip_contact_list_set_is_compact):
+	- Added a is-compact property on the contact list.
+	- Make the is-compact property decide whether to show status and
+	  avatar.
+	- If is-compact is FALSE, the show-avatars property will be used to
+	  decide if avatars should be shown or not. (This might be better to
+	  try to scale down the avatars but that's not tried).
+	* src/gossip-group-chat.c: (group_chat_contacts_setup),
+	(group_chat_cl_text_cell_data_func),
+	(group_chat_cl_expander_cell_data_func):
+	- Added an expander to the group chat contact list.
+	* ui/group-chat.glade:
+	- Increased the width of the contact list in group chats.
+
 2006-09-27  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Bail out if xss isn't found, fixes bug #357736.

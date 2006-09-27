@@ -32,6 +32,8 @@ struct _GossipCellRendererTextPriv {
 
 	gboolean  is_valid;
 	gboolean  is_selected;
+
+	gboolean  show_status;
 };
 
 static void gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass);
@@ -69,6 +71,7 @@ enum {
 	PROP_NAME,
 	PROP_STATUS,
 	PROP_IS_GROUP,
+	PROP_SHOW_STATUS,
 };
 
 G_DEFINE_TYPE (GossipCellRendererText, gossip_cell_renderer_text, GTK_TYPE_CELL_RENDERER_TEXT);
@@ -111,6 +114,13 @@ gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 							       "Whether this cell is a group",
 							       FALSE,
 							       G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
+					 PROP_SHOW_STATUS,
+					 g_param_spec_boolean ("show-status",
+							       "Show status",
+							       "Whether to show the status line",
+							       TRUE,
+							       G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipCellRendererTextPriv));
 }
@@ -128,6 +138,7 @@ gossip_cell_renderer_text_init (GossipCellRendererText *cell)
 
 	priv->name = g_strdup ("");
 	priv->status = g_strdup ("");
+	priv->show_status = TRUE;
 }
 
 static void
@@ -167,6 +178,9 @@ cell_renderer_text_get_property (GObject    *object,
 	case PROP_IS_GROUP:
 		g_value_set_boolean (value, priv->is_group);
 		break;
+	case PROP_SHOW_STATUS:
+		g_value_set_boolean (value, priv->show_status);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -203,6 +217,10 @@ cell_renderer_text_set_property (GObject      *object,
 		break;
 	case PROP_IS_GROUP:
 		priv->is_group = g_value_get_boolean (value);
+		priv->is_valid = FALSE;
+		break;
+	case PROP_SHOW_STATUS:
+		priv->show_status = g_value_get_boolean (value);
 		priv->is_valid = FALSE;
 		break;
 	default:
@@ -318,7 +336,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	attr_size->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_size);
 
-	if (!priv->status || !priv->status[0]) {
+	if (!priv->status || !priv->status[0] || !priv->show_status) {
 		str = g_strdup (priv->name);
 	} else {
 		str = g_strdup_printf ("%s\n%s", priv->name, priv->status);
