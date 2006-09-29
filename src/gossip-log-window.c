@@ -567,6 +567,7 @@ log_window_contacts_set_selected  (GossipLogWindow *window,
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
+	GtkTreePath      *path;
 	GossipContact    *this_contact;
 	gboolean          ok;
 
@@ -589,6 +590,9 @@ log_window_contacts_set_selected  (GossipLogWindow *window,
 
 		if (gossip_contact_equal (contact, this_contact)) {
 			gtk_tree_selection_select_iter (selection, &iter);
+			path = gtk_tree_model_get_path (model, &iter);
+			gtk_tree_view_scroll_to_cell (view, path, NULL, TRUE, 0.5, 0.0);
+			gtk_tree_path_free (path);
 			g_object_unref (this_contact);
 			break;
 		} 

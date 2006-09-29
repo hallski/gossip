@@ -1,5 +1,11 @@
 2006-09-29  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-log-window.c: (log_window_contacts_set_selected):
+	Scroll the contact's name in the history window, fixes bug #358036
+	(Wouter Bolsterlee).
+
+2006-09-29  Martyn Russell  <martyn@imendio.com>
+
 	* MAINTAINERS:
 	* gossip-about-dialog.c: Updated information and included Xavier
 	Claessens & Eitan Isaacson since they have made large
