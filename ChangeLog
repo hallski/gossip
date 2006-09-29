@@ -1,9 +1,9 @@
 2006-09-29  Martyn Russell  <martyn@imendio.com>
 
 	* MAINTAINERS:
-	* AUTHORS:
 	* gossip-about-dialog.c: Updated information and included Xavier
-	Claessens since he has made an outstanding contribution lately.
+	Claessens & Eitan Isaacson since they have made large
+	contributions to Gossip.
 
 2006-09-27  Mikael Hallendal  <micke@imendio.com>
 

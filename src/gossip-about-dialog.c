@@ -35,9 +35,10 @@ static const char *authors[] = {
 	"Mikael Hallendal",
 	"Richard Hult",
 	"Martyn Russell",
-	"Xavier Claessens",
 	"Geert-Jan Van den Bogaerde",
 	"Kevin Dougherty",
+	"Eitan Isaacson",
+	"Xavier Claessens",
 	NULL
 };
 
