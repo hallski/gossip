@@ -49,7 +49,7 @@ struct _GossipChatroomClass {
 };
 
 typedef enum {
-        GOSSIP_CHATROOM_TYPE_NORMAL,
+	GOSSIP_CHATROOM_TYPE_NORMAL,
 } GossipChatroomType;
 
 typedef enum {
@@ -90,7 +90,7 @@ const gchar *      gossip_chatroom_get_password       (GossipChatroom       *cha
 gboolean           gossip_chatroom_get_auto_connect   (GossipChatroom       *chatroom);
 gboolean           gossip_chatroom_get_is_favourite   (GossipChatroom       *chatroom);
 GossipChatroomStatus
-                   gossip_chatroom_get_status         (GossipChatroom       *chatroom);
+		   gossip_chatroom_get_status         (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_last_error     (GossipChatroom       *chatroom);
 GossipAccount *    gossip_chatroom_get_account        (GossipChatroom       *chatroom);
 
@@ -135,11 +135,11 @@ typedef struct _GossipChatroomInvite GossipChatroomInvite;
 
 GType              gossip_chatroom_invite_get_type    (void) G_GNUC_CONST;
 GossipChatroomInvite *
-                   gossip_chatroom_invite_new         (GossipContact        *invitor,
+		   gossip_chatroom_invite_new         (GossipContact        *invitor,
 						       const gchar          *id,
 						       const gchar          *reason);
 GossipChatroomInvite *
-                   gossip_chatroom_invite_ref         (GossipChatroomInvite *invite);
+		   gossip_chatroom_invite_ref         (GossipChatroomInvite *invite);
 void               gossip_chatroom_invite_unref       (GossipChatroomInvite *invite);
 
 GossipContact *    gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite);

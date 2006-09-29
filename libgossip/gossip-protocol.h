@@ -73,7 +73,7 @@ struct _GossipProtocolClass {
 						const gchar     *username);
 	guint16         (*get_default_port)    (GossipProtocol  *protocol,
 						gboolean         use_ssl);
-	
+
 	void            (*send_message)        (GossipProtocol  *protocol,
 						GossipMessage   *message);
 	void            (*send_composing)      (GossipProtocol  *protocol,
@@ -85,10 +85,10 @@ struct _GossipProtocolClass {
 						GossipContact  *contact,
 						gboolean        subscribed);
 	gboolean        (*set_vcard)           (GossipProtocol  *protocol,
-					        GossipVCard     *vcard,
+						GossipVCard     *vcard,
 						GossipResultCallback callback,
-					        gpointer         user_data,
-					        GError         **error);
+						gpointer         user_data,
+						GError         **error);
 	GossipContact * (*find_contact)        (GossipProtocol  *protocol,
 						const gchar     *id);
 	void            (*add_contact)         (GossipProtocol  *protocol,
@@ -111,23 +111,23 @@ struct _GossipProtocolClass {
 	const gchar *   (*get_active_resource) (GossipProtocol  *protocol,
 						GossipContact   *contact);
 	GList *         (*get_groups)          (GossipProtocol  *protocol);
-	
-	
+
+
 	gboolean        (*get_vcard)           (GossipProtocol  *protocol,
-					        GossipContact   *contact,
-					        GossipVCardCallback callback,
-					        gpointer         user_data,
-					        GError         **error);
+						GossipContact   *contact,
+						GossipVCardCallback callback,
+						gpointer         user_data,
+						GError         **error);
 	gboolean        (*get_version)         (GossipProtocol  *protocol,
-					        GossipContact   *contact,
+						GossipContact   *contact,
 						GossipVersionCallback callback,
-					        gpointer         user_data,
-					        GError         **error);
+						gpointer         user_data,
+						GError         **error);
 	void            (*register_account)    (GossipProtocol  *protocol,
-					        GossipAccount   *account,
+						GossipAccount   *account,
 						GossipVCard     *vcard,
-					        GossipRegisterCallback callback,
-					        gpointer         user_data);
+						GossipRegisterCallback callback,
+						gpointer         user_data);
 	void            (*register_cancel)     (GossipProtocol  *protocol);
 };
 

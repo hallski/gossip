@@ -604,22 +604,22 @@ SHA1Final (SHA1Context *sc, guint8 hash[SHA1_HASH_SIZE])
 gchar *
 gossip_sha_hash (const guchar *str, gsize len)
 {
-        static gchar  ret_val[41];
-        SHA1Context   ctx;
-        guint8         hash[SHA1_HASH_SIZE];
-        gchar        *ch;
-        guint          i;
+	static gchar  ret_val[41];
+	SHA1Context   ctx;
+	guint8         hash[SHA1_HASH_SIZE];
+	gchar        *ch;
+	guint          i;
 
-        SHA1Init (&ctx);
-        SHA1Update (&ctx, str, len);
-        SHA1Final (&ctx, hash);
+	SHA1Init (&ctx);
+	SHA1Update (&ctx, str, len);
+	SHA1Final (&ctx, hash);
 
-        ch = ret_val;
+	ch = ret_val;
 
-        for (i = 0; i < SHA1_HASH_SIZE; ++i) {
-                snprintf (ch, 3, "%02x", hash[i]);
-                ch += 2;
-        }
+	for (i = 0; i < SHA1_HASH_SIZE; ++i) {
+		snprintf (ch, 3, "%02x", hash[i]);
+		ch += 2;
+	}
 
-        return g_strdup (ret_val);
+	return g_strdup (ret_val);
 }

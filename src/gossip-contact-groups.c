@@ -32,7 +32,7 @@
 
 #include "gossip-contact-groups.h"
 
-#define DEBUG_DOMAIN "ContactGroups" 
+#define DEBUG_DOMAIN "ContactGroups"
 
 #define CONTACT_GROUPS_XML_FILENAME "contact-groups.xml"
 #define CONTACT_GROUPS_DTD_FILENAME "gossip-contact-groups.dtd"
@@ -48,7 +48,7 @@ static ContactGroup *contact_group_new         (const gchar  *name,
 						gboolean      expanded);
 static void          contact_group_free        (ContactGroup *group);
 
-static GList *groups = NULL; 
+static GList *groups = NULL;
 
 void
 gossip_contact_groups_get_all (void)
@@ -70,25 +70,25 @@ gossip_contact_groups_get_all (void)
 	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
 		contact_groups_file_parse (file_with_path);
 	}
-	
+
 	g_free (file_with_path);
 }
 
 static void
-contact_groups_file_parse (const gchar *filename) 
+contact_groups_file_parse (const gchar *filename)
 {
 	xmlParserCtxtPtr ctxt;
 	xmlDocPtr        doc;
 	xmlNodePtr       contacts;
 	xmlNodePtr       account;
 	xmlNodePtr       node;
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
-	
- 	ctxt = xmlNewParserCtxt ();
+
+	ctxt = xmlNewParserCtxt ();
 
 	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);
 	if (!doc) {
 		g_warning ("Failed to parse file:'%s'", filename);
 		xmlFreeParserCtxt (ctxt);
@@ -129,13 +129,13 @@ contact_groups_file_parse (const gchar *filename)
 
 			name = (gchar *) xmlGetProp (node, "name");
 			expanded_str = (gchar *) xmlGetProp (node, "expanded");
-			
+
 			if (expanded_str && strcmp (expanded_str, "yes") == 0) {
 				expanded = TRUE;
 			} else {
 				expanded = FALSE;
 			}
-			
+
 			contact_group = contact_group_new (name, expanded);
 			groups = g_list_append (groups, contact_group);
 
@@ -145,9 +145,9 @@ contact_groups_file_parse (const gchar *filename)
 
 		node = node->next;
 	}
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Parsed %d contact groups", g_list_length (groups));
-	  
+
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt (ctxt);
 }
@@ -159,7 +159,7 @@ contact_group_new (const gchar *name,
 	ContactGroup *group;
 
 	group = g_new0 (ContactGroup, 1);
-	
+
 	group->name = g_strdup (name);
 	group->expanded = expanded;
 
@@ -170,16 +170,16 @@ static void
 contact_group_free (ContactGroup *group)
 {
 	g_return_if_fail (group != NULL);
-	
+
 	g_free (group->name);
-	
+
 	g_free (group);
 }
 
 static gboolean
 contact_groups_file_save (void)
 {
-	xmlDocPtr   doc;  
+	xmlDocPtr   doc;
 	xmlNodePtr  root;
 	xmlNodePtr  node;
 	GList      *l;
@@ -203,9 +203,9 @@ contact_groups_file_save (void)
 		xmlNodePtr    subnode;
 
 		cg = l->data;
-		
+
 		subnode = xmlNewChild (node, NULL, "group", NULL);
-		xmlNewProp (subnode, "expanded", cg->expanded ? "yes" : "no");	
+		xmlNewProp (subnode, "expanded", cg->expanded ? "yes" : "no");
 		xmlNewProp (subnode, "name", cg->name);
 	}
 
@@ -215,7 +215,7 @@ contact_groups_file_save (void)
 
 	xmlCleanupParser ();
 	xmlMemoryDump ();
-	
+
 	g_free (file);
 
 	return TRUE;
@@ -228,7 +228,7 @@ gossip_contact_group_get_expanded (const gchar *group)
 	gboolean  default_val = TRUE;
 
 	g_return_val_if_fail (group != NULL, default_val);
-	
+
 	for (l = groups; l; l = l->next) {
 		ContactGroup *cg = l->data;
 
@@ -244,8 +244,8 @@ gossip_contact_group_get_expanded (const gchar *group)
 	return default_val;
 }
 
-void    
-gossip_contact_group_set_expanded (const gchar *group, 
+void
+gossip_contact_group_set_expanded (const gchar *group,
 				   gboolean     expanded)
 {
 	GList        *l;
@@ -253,7 +253,7 @@ gossip_contact_group_set_expanded (const gchar *group,
 	gboolean      changed = FALSE;
 
 	g_return_if_fail (group != NULL);
-	
+
 	for (l = groups; l; l = l->next) {
 		ContactGroup *cg = l->data;
 

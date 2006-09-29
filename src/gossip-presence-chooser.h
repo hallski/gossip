@@ -34,11 +34,11 @@ typedef struct _GossipPresenceChooser      GossipPresenceChooser;
 typedef struct _GossipPresenceChooserClass GossipPresenceChooserClass;
 
 struct _GossipPresenceChooser {
-        GtkToggleButton parent;
+	GtkToggleButton parent;
 };
 
 struct _GossipPresenceChooserClass {
-        GtkToggleButtonClass parent_class;
+	GtkToggleButtonClass parent_class;
 };
 
 GType      gossip_presence_chooser_get_type           (void) G_GNUC_CONST;

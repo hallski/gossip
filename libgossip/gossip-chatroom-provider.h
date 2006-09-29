@@ -47,7 +47,7 @@ typedef enum {
 
 typedef void (*GossipChatroomJoinCb) (GossipChatroomProvider   *provider,
 				      GossipChatroomJoinResult  result,
-                                      gint                      id,
+				      gint                      id,
 				      gpointer                  user_data);
 
 struct _GossipChatroomProviderIface {
@@ -90,7 +90,7 @@ struct _GossipChatroomProviderIface {
 GType        gossip_chatroom_provider_get_type           (void) G_GNUC_CONST;
 
 GossipChatroomId
-             gossip_chatroom_provider_join               (GossipChatroomProvider *provider,
+	     gossip_chatroom_provider_join               (GossipChatroomProvider *provider,
 							  GossipChatroom         *chatroom,
 							  GossipChatroomJoinCb    callback,
 							  gpointer                user_data);
@@ -108,7 +108,7 @@ void         gossip_chatroom_provider_change_nick        (GossipChatroomProvider
 void         gossip_chatroom_provider_leave              (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);
 GossipChatroom *
-             gossip_chatroom_provider_find               (GossipChatroomProvider *provider,
+	     gossip_chatroom_provider_find               (GossipChatroomProvider *provider,
 							  GossipChatroomId        id);
 void         gossip_chatroom_provider_invite             (GossipChatroomProvider *provider,
 							  GossipChatroomId        id,

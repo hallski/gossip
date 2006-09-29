@@ -26,7 +26,7 @@ G_BEGIN_DECLS
 void gossip_contact_groups_get_all (void);
 
 gboolean gossip_contact_group_get_expanded (const gchar *group);
-void     gossip_contact_group_set_expanded (const gchar *group, 
+void     gossip_contact_group_set_expanded (const gchar *group,
 					    gboolean     expanded);
 
 G_END_DECLS

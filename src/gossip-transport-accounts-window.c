@@ -96,7 +96,7 @@ gossip_transport_accounts_window_show (void)
 		gtk_window_present (GTK_WINDOW (current_window->window));
 		return current_window;
 	}
-	
+
 	/* FIXME: need to do this better, plus need a gui to select */
 	l = gossip_transport_account_lists_get_all ();
 	al = g_list_nth_data (l, 0);
@@ -166,7 +166,7 @@ transport_accounts_window_account_update_cb (GossipTransportAccount        *acco
 	GtkTreeIter   iter;
 	gboolean      valid;
 
-	if (FALSE) { 
+	if (FALSE) {
 		transport_accounts_window_account_update_cb (NULL, NULL);
 	}
 
@@ -177,7 +177,7 @@ transport_accounts_window_account_update_cb (GossipTransportAccount        *acco
 	     valid;
 	     valid = gtk_tree_model_iter_next (model, &iter)) {
 		gtk_tree_model_get (model, &iter, 0, &account, -1);
-		
+
 		if (account == account) {
 			GtkTreePath *path;
 
@@ -188,7 +188,7 @@ transport_accounts_window_account_update_cb (GossipTransportAccount        *acco
 	}
 }
 
-static void 
+static void
 transport_accounts_window_update (GossipTransportAccountsWindow *window)
 {
 	GtkTreeView  *view;
@@ -238,14 +238,14 @@ transport_accounts_window_setup (GossipTransportAccountsWindow *window)
 	store = gtk_list_store_new (COL_TRANSPORT_ACC_COUNT,
 				    GOSSIP_TYPE_ACCOUNT,  /* object */
 				    G_TYPE_BOOLEAN);      /* editable */
-	
-	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_accounts), 
+
+	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_accounts),
 				 GTK_TREE_MODEL (store));
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_accounts));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
-	g_signal_connect (G_OBJECT (selection), "changed", 
+	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (transport_accounts_window_selection_changed_cb), window);
 
 
@@ -255,21 +255,21 @@ transport_accounts_window_setup (GossipTransportAccountsWindow *window)
 	g_object_unref (store);
 }
 
-static void 
+static void
 transport_accounts_window_populate_columns (GossipTransportAccountsWindow *window)
 {
-	GtkTreeViewColumn *column; 
+	GtkTreeViewColumn *column;
 	GtkCellRenderer   *cell;
-	
+
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (window->treeview_accounts), FALSE);
 
 	column = gtk_tree_view_column_new ();
-	
+
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, cell, FALSE);
-	gtk_tree_view_column_set_cell_data_func (column, cell, 
+	gtk_tree_view_column_set_cell_data_func (column, cell,
 						 (GtkTreeCellDataFunc) transport_accounts_window_pixbuf_cell_data_func,
-						 window, 
+						 window,
 						 NULL);
 
 	cell = gtk_cell_renderer_text_new ();
@@ -282,7 +282,7 @@ transport_accounts_window_populate_columns (GossipTransportAccountsWindow *windo
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview_accounts), column);
 }
 
-static void  
+static void
 transport_accounts_window_pixbuf_cell_data_func (GtkTreeViewColumn             *tree_column,
 						 GtkCellRenderer               *cell,
 						 GtkTreeModel                  *model,
@@ -303,7 +303,7 @@ transport_accounts_window_pixbuf_cell_data_func (GtkTreeViewColumn             *
 	g_return_if_fail (account != NULL);
 
 	disco_type = gossip_transport_account_get_disco_type (account);
-	
+
 	/* we should get these from the GossipDiscoProtocol API */
 	icon = NULL;
 
@@ -324,14 +324,14 @@ transport_accounts_window_pixbuf_cell_data_func (GtkTreeViewColumn             *
 		} else {
 			/* we average the two, this way if the height
 			   and width are not equal, they meet in the middle */
-			size = (w + h) / 2; 
+			size = (w + h) / 2;
 		}
 	}
 
 	if (core_icon) {
 		GError       *error = NULL;
 		GtkIconTheme *theme;
-				
+
 		theme = gtk_icon_theme_get_default ();
 		pixbuf = gtk_icon_theme_load_icon (theme,
 						   core_icon, /* icon name */
@@ -342,21 +342,21 @@ transport_accounts_window_pixbuf_cell_data_func (GtkTreeViewColumn             *
 			g_warning ("could not load icon: %s", error->message);
 			g_error_free (error);
 
-			g_object_set (cell, 
+			g_object_set (cell,
 				      "visible", TRUE,
 				      "stock_id", NULL,
 				      "pixbuf", NULL,
-				      NULL); 
+				      NULL);
 
 			return;
 		}
 	} else if (stock_id) {
-		g_object_set (cell, 
+		g_object_set (cell,
 			      "visible", TRUE,
 			      "stock-id", stock_id,
-			      "stock-size", GTK_ICON_SIZE_DND, 
+			      "stock-size", GTK_ICON_SIZE_DND,
 			      "pixbuf", NULL,
-			      NULL); 
+			      NULL);
 
 		return;
 	} else if (icon) {
@@ -368,26 +368,26 @@ transport_accounts_window_pixbuf_cell_data_func (GtkTreeViewColumn             *
 			g_warning ("could not load icon: %s", error->message);
 			g_error_free (error);
 
-			g_object_set (cell, 
+			g_object_set (cell,
 				      "visible", TRUE,
 				      "stock_id", NULL,
 				      "pixbuf", NULL,
-				      NULL); 
+				      NULL);
 
 			return;
 		}
 	}
 
-	g_object_set (cell, 
+	g_object_set (cell,
 		      "visible", TRUE,
 		      "stock_id", NULL,
 		      "pixbuf", pixbuf,
-		      NULL); 
-	
-	g_object_unref (pixbuf); 
+		      NULL);
+
+	g_object_unref (pixbuf);
 }
 
-static void  
+static void
 transport_accounts_window_name_cell_data_func (GtkTreeViewColumn             *tree_column,
 					       GtkCellRenderer               *cell,
 					       GtkTreeModel                  *model,
@@ -422,7 +422,7 @@ transport_accounts_window_name_cell_data_func (GtkTreeViewColumn             *tr
 	disco_type = gossip_transport_account_get_disco_type (account);
 	username = gossip_transport_account_get_username (account);
 	count = gossip_transport_account_count_contacts (account);
-	
+
 	if (count >= 1) {
 		contacts = g_strdup_printf (ngettext (
 			"1 contact",
@@ -446,7 +446,7 @@ transport_accounts_window_name_cell_data_func (GtkTreeViewColumn             *tr
 	if (!name) {
 		name = gossip_jid_get_full (jid);
 	} else {
-		/* we should really use user name, 
+		/* we should really use user name,
 		   e.g. someone@hotmail.com */
 /* 		description = gossip_jid_get_full (jid); */
 	}
@@ -456,7 +456,7 @@ transport_accounts_window_name_cell_data_func (GtkTreeViewColumn             *tr
 		username = name;
 	}
 
-	str = g_strdup_printf ("%s\n%s%s%s", 
+	str = g_strdup_printf ("%s\n%s%s%s",
 			       username ? username : "",
 			       description ? description : "",
 			       description ? "\n" : "",
@@ -492,7 +492,7 @@ transport_accounts_window_name_cell_data_func (GtkTreeViewColumn             *tr
 	attr_size->start_index = attr_style->start_index;
 	attr_size->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_size);
-	
+
 	g_object_set (cell,
 		      "visible", TRUE,
 		      "weight", PANGO_WEIGHT_NORMAL,
@@ -528,7 +528,7 @@ transport_accounts_window_model_foreach_cb (GtkTreeModel *model,
 
 	gtk_tree_model_get (model, iter, COL_TRANSPORT_ACC_DATA, &account, -1);
 	gossip_transport_account_unref (account);
-	
+
 	return FALSE;
 }
 
@@ -552,7 +552,7 @@ transport_accounts_window_button_add_clicked (GtkButton                     *but
 
 	gtk_tree_model_get (model, &iter, COL_TRANSPORT_ACC_DATA, &account, -1);
 
- 	al = gossip_transport_account_list_find (account); 
+	al = gossip_transport_account_list_find (account);
 #endif
 
 	/* FIXME: need to do this better, plus need a gui to select */
@@ -597,8 +597,8 @@ transport_accounts_window_button_remove_clicked (GtkButton                     *
 	} else {
 		str = g_strdup_printf (_("If you continue, you will not be able to add "
 					 "or talk to contacts using this transport!"));
-	} 
-		
+	}
+
 	dialog = gtk_message_dialog_new (NULL,
 					 0,
 					 GTK_MESSAGE_QUESTION,
@@ -606,10 +606,10 @@ transport_accounts_window_button_remove_clicked (GtkButton                     *
 					 "%s\n\n%s",
 					 str,
 					 _("Are you sure you want to remove this account?"));
-	
+
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
-	
+
 	g_free (str);
 
 	if (response == GTK_RESPONSE_NO) {
@@ -627,7 +627,7 @@ transport_accounts_window_button_close_clicked (GtkButton                     *b
 }
 
 static void
-transport_accounts_window_destroy (GtkWidget                     *widget, 
+transport_accounts_window_destroy (GtkWidget                     *widget,
 				   GossipTransportAccountsWindow *window)
 {
 	GossipTransportAccountList *al;
@@ -648,9 +648,9 @@ transport_accounts_window_destroy (GtkWidget                     *widget,
 
 	jabber = gossip_transport_account_list_get_jabber (al);
 
- 	g_signal_handlers_disconnect_by_func (GOSSIP_PROTOCOL (jabber),  
- 					      transport_accounts_window_roster_update_cb, 
- 					      window); 
+	g_signal_handlers_disconnect_by_func (GOSSIP_PROTOCOL (jabber),
+					      transport_accounts_window_roster_update_cb,
+					      window);
 
- 	g_free (window); 
+	g_free (window);
 }

@@ -61,7 +61,7 @@
 /* We use 3.5 minutes because if the port is just wrong then it
  * will timeout before then with that error.
  */
-#define CONNECT_TIMEOUT            210 
+#define CONNECT_TIMEOUT            210
 
 /* This is the timeout we will accept the user to be composing for
  * before we assume it is stuck and the server has failed to tell us
@@ -74,7 +74,7 @@
 
 struct _GossipJabberPriv {
 	LmConnection          *connection;
-	
+
 	GossipContact         *contact;
 	GossipAccount         *account;
 	GossipPresence        *presence;
@@ -94,7 +94,7 @@ struct _GossipJabberPriv {
 	GossipJabberFTs       *fts;
 
 	/* Used to hold a list of composing message ids, this is so we
-	 * can send the cancelation to the last message id. 
+	 * can send the cancelation to the last message id.
 	 */
 	GHashTable            *composing_ids;
 	GHashTable            *composing_timeouts;
@@ -342,7 +342,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 {
 	GObjectClass        *object_class = G_OBJECT_CLASS (klass);
 	GossipProtocolClass *protocol_class = GOSSIP_PROTOCOL_CLASS (klass);
-	
+
 	object_class->finalize = jabber_finalize;
 
 	protocol_class->setup                 = jabber_setup;
@@ -360,20 +360,20 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->set_vcard             = jabber_set_vcard;
 	protocol_class->send_message          = jabber_send_message;
 	protocol_class->send_composing        = jabber_send_composing;
-        protocol_class->find_contact          = jabber_contact_find;
-        protocol_class->add_contact           = jabber_contact_add;
-        protocol_class->rename_contact        = jabber_contact_rename;
-        protocol_class->remove_contact        = jabber_contact_remove;
+	protocol_class->find_contact          = jabber_contact_find;
+	protocol_class->add_contact           = jabber_contact_add;
+	protocol_class->rename_contact        = jabber_contact_rename;
+	protocol_class->remove_contact        = jabber_contact_remove;
 	protocol_class->update_contact        = jabber_contact_update;
- 	protocol_class->rename_group          = jabber_group_rename;
+	protocol_class->rename_group          = jabber_group_rename;
 	protocol_class->get_contacts          = jabber_get_contacts;
 	protocol_class->get_own_contact       = jabber_get_own_contact;
 	protocol_class->get_active_resource   = jabber_get_active_resource;
- 	protocol_class->get_groups            = jabber_get_groups;
+	protocol_class->get_groups            = jabber_get_groups;
 	protocol_class->get_vcard             = jabber_get_vcard;
 	protocol_class->get_version           = jabber_get_version;
- 	protocol_class->register_account      = jabber_register_account;
- 	protocol_class->register_cancel       = jabber_register_cancel;
+	protocol_class->register_account      = jabber_register_account;
+	protocol_class->register_cancel       = jabber_register_cancel;
 
 	g_type_class_add_private (object_class, sizeof (GossipJabberPriv));
 }
@@ -381,43 +381,43 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 static void
 gossip_jabber_init (GossipJabber *jabber)
 {
- 	GossipJabberPriv *priv; 
+	GossipJabberPriv *priv;
 
 	priv = GET_PRIV (jabber);
 
-	priv->contacts = 
+	priv->contacts =
 		g_hash_table_new_full (g_str_hash,
 				       g_str_equal,
 				       (GDestroyNotify) g_free,
 				       (GDestroyNotify) g_object_unref);
 
-	priv->composing_ids = 
+	priv->composing_ids =
 		g_hash_table_new_full (gossip_contact_hash,
 				       gossip_contact_equal,
 				       (GDestroyNotify) g_object_unref,
 				       (GDestroyNotify) g_free);
 
-	priv->composing_timeouts = 
+	priv->composing_timeouts =
 		g_hash_table_new_full (gossip_contact_hash,
 				       gossip_contact_equal,
 				       (GDestroyNotify) g_object_unref,
 				       (GDestroyNotify) jabber_data_free);
 
-	priv->composing_requests = 
+	priv->composing_requests =
 		g_hash_table_new_full (gossip_contact_hash,
 				       gossip_contact_equal,
 				       (GDestroyNotify) g_object_unref,
 				       NULL);
 }
-	
+
 static void
 jabber_finalize (GObject *object)
 {
- 	GossipJabber     *jabber;
- 	GossipJabberPriv *priv;
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
 
- 	jabber = GOSSIP_JABBER (object);
- 	priv = GET_PRIV (jabber);
+	jabber = GOSSIP_JABBER (object);
+	priv = GET_PRIV (jabber);
 
 	if (priv->account) {
 		g_object_unref (priv->account);
@@ -430,23 +430,23 @@ jabber_finalize (GObject *object)
 	if (priv->presence) {
 		g_object_unref (priv->presence);
 	}
-	
+
 	g_hash_table_destroy (priv->contacts);
 
 	/* finalize extended modules */
- 	gossip_jabber_chatrooms_finalize (priv->chatrooms);
+	gossip_jabber_chatrooms_finalize (priv->chatrooms);
 	gossip_jabber_ft_finalize (priv->fts);
 
- 	g_hash_table_destroy (priv->composing_ids);
- 	g_hash_table_destroy (priv->composing_timeouts);
- 	g_hash_table_destroy (priv->composing_requests);
+	g_hash_table_destroy (priv->composing_ids);
+	g_hash_table_destroy (priv->composing_timeouts);
+	g_hash_table_destroy (priv->composing_requests);
 
 	if (priv->connection_timeout_id != 0) {
 		g_source_remove (priv->connection_timeout_id);
 	}
-	
+
 #ifdef USE_TRANSPORTS
- 	gossip_transport_account_list_free (priv->account_list);
+	gossip_transport_account_list_free (priv->account_list);
 #endif
 
 	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
@@ -454,24 +454,24 @@ jabber_finalize (GObject *object)
 
 static void
 jabber_setup (GossipProtocol *protocol,
- 	      GossipAccount  *account)
+	      GossipAccount  *account)
 {
- 	GossipJabber     *jabber;
- 	GossipJabberPriv *priv;
- 	LmMessageHandler *handler;
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+	LmMessageHandler *handler;
 	GossipJID        *jid;
-	
-        g_return_if_fail (GOSSIP_IS_JABBER (protocol));
-        g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	
- 	jabber = GOSSIP_JABBER (protocol);
- 	priv = GET_PRIV (jabber);
- 	
- 	priv->account = g_object_ref (account);
- 
- 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
+
+	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	jabber = GOSSIP_JABBER (protocol);
+	priv = GET_PRIV (jabber);
+
+	priv->account = g_object_ref (account);
+
+	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
-	
+
 	g_object_set (priv->contact,
 		      "id", gossip_account_get_id (account),
 		      "name", gossip_account_get_id (account),
@@ -480,7 +480,7 @@ jabber_setup (GossipProtocol *protocol,
 	priv->connection = lm_connection_new (gossip_account_get_server (account));
 
 	/* setup the connection to send keep alive messages every 30 seconds */
-        lm_connection_set_keep_alive_rate (priv->connection, 30);
+	lm_connection_set_keep_alive_rate (priv->connection, 30);
 
 	lm_connection_set_disconnect_function (priv->connection,
 					       (LmDisconnectFunction) jabber_disconnect_cb,
@@ -569,7 +569,7 @@ jabber_login (GossipProtocol *protocol)
 	gboolean          result;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
-	
+
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
@@ -578,9 +578,9 @@ jabber_login (GossipProtocol *protocol)
 	if (priv->presence) {
 		g_object_unref (priv->presence);
 	}
-	
+
 	priv->presence = gossip_presence_new ();
-	gossip_presence_set_state (priv->presence, 
+	gossip_presence_set_state (priv->presence,
 				   GOSSIP_PRESENCE_STATE_AVAILABLE);
 	gossip_jabber_chatrooms_set_presence (priv->chatrooms, priv->presence);
 
@@ -591,7 +591,7 @@ jabber_login (GossipProtocol *protocol)
 		return;
 	}
 
-	result = lm_connection_open (priv->connection, 
+	result = lm_connection_open (priv->connection,
 				     (LmResultFunction) jabber_connection_open_cb,
 				     jabber, NULL, &error);
 
@@ -604,11 +604,11 @@ jabber_login (GossipProtocol *protocol)
 		priv->connection_timeout_id = g_timeout_add (CONNECT_TIMEOUT * 1000,
 							     (GSourceFunc) jabber_login_timeout_cb,
 							     jabber);
-		
+
 		return;
 	}
 
-	if (error->code == 1 && 
+	if (error->code == 1 &&
 	    strcmp (error->message, "getaddrinfo() failed") == 0) {
 		/* host lookup failed */
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_SUCH_HOST);
@@ -617,7 +617,7 @@ jabber_login (GossipProtocol *protocol)
 	g_error_free (error);
 }
 
-static gboolean 
+static gboolean
 jabber_login_timeout_cb (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
@@ -682,7 +682,7 @@ jabber_logout_contact_foreach (gpointer       key,
 	}
 
 	g_list_free (presences);
-	
+
 	g_signal_emit_by_name (jabber, "contact-removed", contact);
 	return TRUE;
 }
@@ -703,7 +703,7 @@ jabber_error_create (GossipProtocolError  code,
 }
 
 static void
-jabber_error (GossipProtocol      *protocol, 
+jabber_error (GossipProtocol      *protocol,
 	      GossipProtocolError  code)
 {
 	GossipJabber     *jabber;
@@ -721,7 +721,7 @@ jabber_error (GossipProtocol      *protocol,
 
 	error = jabber_error_create (code, message);
 	g_signal_emit_by_name (protocol, "error", priv->account, error);
- 	g_error_free (error); 
+	g_error_free (error);
 }
 
 static void
@@ -769,14 +769,14 @@ jabber_connection_open_cb (LmConnection *connection,
 	account_password = gossip_account_get_password (account);
 
 	if (!account_password || strlen (account_password) < 1) {
-		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'", 
+		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
 			      gossip_account_get_id (account));
 
-		g_signal_emit_by_name (jabber, "get-password", 
+		g_signal_emit_by_name (jabber, "get-password",
 				       account, &password);
 
 		if (!password) {
-			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'", 
+			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'",
 				      gossip_account_get_id (account));
 
 			jabber_logout (GOSSIP_PROTOCOL (jabber));
@@ -785,7 +785,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	} else {
 		password = g_strdup (account_password);
 	}
-	 
+
 	/* FIXME: Decide on Resource */
 	jid_str = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN, "Attempting to use JabberID:'%s'", jid_str);
@@ -815,7 +815,7 @@ jabber_connection_open_cb (LmConnection *connection,
 
 	lm_connection_authenticate (priv->connection,
 				    id,
-				    password, 
+				    password,
 				    resource_rand,
 				    (LmResultFunction) jabber_connection_auth_cb,
 				    jabber, NULL, NULL);
@@ -824,7 +824,7 @@ jabber_connection_open_cb (LmConnection *connection,
 #else
 	lm_connection_authenticate (priv->connection,
 				    id,
-				    password, 
+				    password,
 				    resource,
 				    (LmResultFunction) jabber_connection_auth_cb,
 				    jabber, NULL, NULL);
@@ -842,9 +842,9 @@ jabber_connection_auth_cb (LmConnection *connection,
 	GossipJabberPriv *priv;
 	LmMessage        *m;
 	LmMessageNode    *node;
-	
+
 	priv = GET_PRIV (jabber);
-	
+
 	if (result == FALSE) {
 		jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_AUTH_FAILED);
@@ -858,7 +858,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_GET);
 	node = lm_message_node_add_child (m->node, "query", NULL);
-	lm_message_node_set_attributes (node, 
+	lm_message_node_set_attributes (node,
 					"xmlns", XMPP_ROSTER_XMLNS,
 					NULL);
 	lm_connection_send (priv->connection, m, NULL);
@@ -876,25 +876,25 @@ jabber_connection_auth_cb (LmConnection *connection,
 	if (priv->vcard) {
 		gchar *name;
 
-		name = gossip_jabber_get_name_to_use 
+		name = gossip_jabber_get_name_to_use
 			(gossip_contact_get_id (priv->contact),
 			 gossip_vcard_get_nickname (priv->vcard),
 			 gossip_vcard_get_name (priv->vcard));
-		
+
 		gossip_contact_set_name (priv->contact, name);
 		g_free (name);
 
-		g_signal_emit_by_name (jabber, 
-				       "contact-updated", 
+		g_signal_emit_by_name (jabber,
+				       "contact-updated",
 				       priv->contact);
 
 		/* Set the vcard waiting to be sent to our jabber server once
-		 * connected. 
+		 * connected.
 		 */
 		gossip_jabber_vcard_set (jabber,
 					 priv->vcard,
 					 NULL, NULL, NULL);
-		
+
 		g_object_unref (priv->vcard);
 		priv->vcard = NULL;
 	} else {
@@ -905,7 +905,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 	}
 }
 
-static void 
+static void
 jabber_disconnect_cb (LmConnection       *connection,
 		      LmDisconnectReason  reason,
 		      GossipJabber       *jabber)
@@ -926,7 +926,7 @@ jabber_disconnect_cb (LmConnection       *connection,
 					     (GHRFunc) jabber_logout_contact_foreach,
 					     jabber);
 	}
-	
+
 	switch (reason) {
 	case LM_DISCONNECT_REASON_OK:
 		gossip_reason = GOSSIP_DISCONNECT_ASKED;
@@ -940,11 +940,11 @@ jabber_disconnect_cb (LmConnection       *connection,
 	default:
 		g_assert_not_reached();
 	}
-	
+
 	g_signal_emit_by_name (jabber, "logged-out", priv->account, gossip_reason);
 }
 
-static LmSSLResponse 
+static LmSSLResponse
 jabber_ssl_status_cb (LmConnection *connection,
 		      LmSSLStatus   status,
 		      GossipJabber *jabber)
@@ -952,28 +952,28 @@ jabber_ssl_status_cb (LmConnection *connection,
 	const gchar *str = "";
 
 	switch (status) {
-	case LM_SSL_STATUS_NO_CERT_FOUND: 
+	case LM_SSL_STATUS_NO_CERT_FOUND:
 		str = "No certificate found";
 		break;
-	case LM_SSL_STATUS_UNTRUSTED_CERT: 
+	case LM_SSL_STATUS_UNTRUSTED_CERT:
 		str = "Untrusted certificate";
 		break;
-	case LM_SSL_STATUS_CERT_EXPIRED: 
+	case LM_SSL_STATUS_CERT_EXPIRED:
 		str = "Certificate expired";
 		break;
-	case LM_SSL_STATUS_CERT_NOT_ACTIVATED: 
+	case LM_SSL_STATUS_CERT_NOT_ACTIVATED:
 		str = "Certificate not activated";
 		break;
-	case LM_SSL_STATUS_CERT_HOSTNAME_MISMATCH: 
+	case LM_SSL_STATUS_CERT_HOSTNAME_MISMATCH:
 		str = "Certificate host mismatch";
 		break;
-	case LM_SSL_STATUS_CERT_FINGERPRINT_MISMATCH: 
+	case LM_SSL_STATUS_CERT_FINGERPRINT_MISMATCH:
 		str = "Certificate fingerprint mismatch";
 		break;
 	case LM_SSL_STATUS_GENERIC_ERROR:
 		str = "Generic error";
 		break;
-	default: 
+	default:
 		str = "Unknown error:";
 		break;
 	}
@@ -991,7 +991,7 @@ jabber_register_account_new (GossipJabber           *jabber,
 	RegisterData *ra;
 
 	ra = g_new0 (RegisterData, 1);
-	
+
 	ra->jabber = g_object_ref (jabber);
 
 	ra->callback = callback;
@@ -1012,13 +1012,13 @@ jabber_register_account_free (RegisterData *ra)
 	}
 
 	/* FIXME: should we clean up the message handler or does
-	 * closing the connection do this for us? 
+	 * closing the connection do this for us?
 	 */
 
 	g_free (ra);
 }
 
-static void            
+static void
 jabber_register_account (GossipProtocol          *protocol,
 			 GossipAccount           *account,
 			 GossipVCard             *vcard,
@@ -1030,7 +1030,7 @@ jabber_register_account (GossipProtocol          *protocol,
 	RegisterData        *ra = NULL;
 	gboolean             result;
 	GossipProtocolError  error_code;
-	const gchar         *error_message; 
+	const gchar         *error_message;
 	GError              *error;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
@@ -1040,9 +1040,9 @@ jabber_register_account (GossipProtocol          *protocol,
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
-	
+
 	/* Save vcard information so the next time we connect we can
-	 * set it, this could be done better */  
+	 * set it, this could be done better */
 	priv->vcard = g_object_ref (vcard);
 
 	priv->register_cancel = FALSE;
@@ -1053,27 +1053,27 @@ jabber_register_account (GossipProtocol          *protocol,
 		goto error;
 	}
 
-	ra = jabber_register_account_new (jabber, callback, user_data); 
-	result = lm_connection_open (priv->connection, 
+	ra = jabber_register_account_new (jabber, callback, user_data);
+	result = lm_connection_open (priv->connection,
 				     (LmResultFunction) jabber_register_connection_open_cb,
 				     ra, NULL, NULL);
 	if (result) {
 		return;
 	}
-	
+
 error:
 	error_code = GOSSIP_PROTOCOL_NO_CONNECTION;
 	error_message = gossip_protocol_error_to_string (error_code);
 	error = jabber_error_create (error_code, error_message);
 
 	gossip_debug (DEBUG_DOMAIN, "%s", error_message);
-	
+
 	if (callback) {
-		(callback) (GOSSIP_RESULT_ERROR_REGISTRATION, 
-			    error, 
+		(callback) (GOSSIP_RESULT_ERROR_REGISTRATION,
+			    error,
 			    user_data);
 	}
-	
+
 	g_error_free (error);
 	jabber_register_account_free (ra);
 }
@@ -1110,12 +1110,12 @@ jabber_register_connection_open_cb (LmConnection *connection,
 	gboolean          ok = FALSE;
 
 	priv = GET_PRIV (ra->jabber);
-	
+
 	if (priv->register_cancel) {
 		jabber_register_account_free (ra);
 		return;
 	}
-	
+
 	if (result == FALSE) {
 		GError *error;
 
@@ -1126,8 +1126,8 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		gossip_debug (DEBUG_DOMAIN, "%s", error_message);
 
 		if (ra->callback) {
-			(ra->callback) (GOSSIP_RESULT_ERROR_REGISTRATION, 
-					error, 
+			(ra->callback) (GOSSIP_RESULT_ERROR_REGISTRATION,
+					error,
 					ra->user_data);
 		}
 
@@ -1135,23 +1135,23 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		jabber_register_account_free (ra);
 		return;
 	}
- 
+
 	gossip_debug (DEBUG_DOMAIN, "Connection open!");
 
-	ra->message_handler = lm_message_handler_new ((LmHandleMessageFunction) 
+	ra->message_handler = lm_message_handler_new ((LmHandleMessageFunction)
 						      jabber_register_message_handler,
-						      ra, 
+						      ra,
 						      NULL);
 
-        m = lm_message_new_with_sub_type (gossip_account_get_server (priv->account),
-                                          LM_MESSAGE_TYPE_IQ,
-                                          LM_MESSAGE_SUB_TYPE_SET);
+	m = lm_message_new_with_sub_type (gossip_account_get_server (priv->account),
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
 
-        lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
-	
+	lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
+
 	id = gossip_account_get_id (priv->account);
 	username = gossip_jid_string_get_part_name (id);
 	lm_message_node_add_child (node, "username", username);
@@ -1159,10 +1159,10 @@ jabber_register_connection_open_cb (LmConnection *connection,
 
 	lm_message_node_add_child (node, "password", gossip_account_get_password (priv->account));
 
-        ok = lm_connection_send_with_reply (connection, m, 
-					    ra->message_handler, 
+	ok = lm_connection_send_with_reply (connection, m,
+					    ra->message_handler,
 					    NULL);
-        lm_message_unref (m);
+	lm_message_unref (m);
 
 	if (!ok) {
 		GError *error;
@@ -1174,8 +1174,8 @@ jabber_register_connection_open_cb (LmConnection *connection,
 		gossip_debug (DEBUG_DOMAIN, "%s", error_message);
 
 		if (ra->callback) {
-			(ra->callback) (GOSSIP_RESULT_ERROR_REGISTRATION, 
-					error, 
+			(ra->callback) (GOSSIP_RESULT_ERROR_REGISTRATION,
+					error,
 					ra->user_data);
 		}
 
@@ -1205,12 +1205,12 @@ jabber_register_message_handler (LmMessageHandler *handler,
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
-	node = lm_message_node_get_child (m->node, "error");	
+	node = lm_message_node_get_child (m->node, "error");
 	if (node) {
 		GossipProtocolError  error_code;
 		const gchar         *error_code_str;
 		const gchar         *error_message;
-	
+
 		result = GOSSIP_RESULT_ERROR_REGISTRATION;
 		error_code_str = lm_message_node_get_attribute (node, "code");
 
@@ -1219,16 +1219,16 @@ jabber_register_message_handler (LmMessageHandler *handler,
 		case 407: /* Registration Required */
 			error_code = GOSSIP_PROTOCOL_UNAUTHORIZED;
 			break;
-			
+
 		case 501: /* Not Implemented */
 		case 503: /* Service Unavailable */
 			error_code = GOSSIP_PROTOCOL_UNAVAILABLE;
 			break;
-			
+
 		case 409: /* Conflict */
 			error_code = GOSSIP_PROTOCOL_DUPLICATE_USER;
 			break;
-			
+
 		case 408: /* Request Timeout */
 		case 504: /* Remote Server Timeout */
 			error_code = GOSSIP_PROTOCOL_TIMED_OUT;
@@ -1254,17 +1254,17 @@ jabber_register_message_handler (LmMessageHandler *handler,
 					     error_message);
 
 		gossip_debug (DEBUG_DOMAIN, "Registration failed with error:%s->'%s'",
-			      error_code_str, error_message);	
+			      error_code_str, error_message);
 	} else {
 		gossip_debug (DEBUG_DOMAIN, "Registration success");
 	}
 
 	if (ra->callback) {
-		(ra->callback) (result, 
-				error, 
+		(ra->callback) (result,
+				error,
 				ra->user_data);
 	}
-	
+
 	/* Clean up */
 	if (error) {
 		g_error_free (error);
@@ -1318,7 +1318,7 @@ jabber_is_connecting (GossipProtocol *protocol)
 }
 
 static gboolean
-jabber_is_valid_username (GossipProtocol *protocol, 
+jabber_is_valid_username (GossipProtocol *protocol,
 			  const gchar    *username)
 {
 	GossipJabber     *jabber;
@@ -1350,7 +1350,7 @@ jabber_get_default_server (GossipProtocol *protocol,
 			   const gchar    *username)
 {
 	GossipJabber     *jabber;
-	GossipJabberPriv *priv; 
+	GossipJabberPriv *priv;
 	GossipJID        *jid;
 	const gchar      *str;
 	gchar            *server;
@@ -1360,7 +1360,7 @@ jabber_get_default_server (GossipProtocol *protocol,
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
-	
+
 	jid = gossip_jid_new (username);
 	str = gossip_jid_get_part_host (jid);
 
@@ -1372,7 +1372,7 @@ jabber_get_default_server (GossipProtocol *protocol,
 
 		i += 2;
 	}
-	
+
 	server = g_strdup (str);
 	gossip_jid_unref (jid);
 
@@ -1391,7 +1391,7 @@ jabber_get_default_port (GossipProtocol *protocol,
 }
 
 static void
-jabber_send_message (GossipProtocol *protocol, 
+jabber_send_message (GossipProtocol *protocol,
 		     GossipMessage  *message)
 {
 	GossipJabber     *jabber;
@@ -1414,10 +1414,10 @@ jabber_send_message (GossipProtocol *protocol,
 	resource = gossip_message_get_explicit_resource (message);
 
 	/* Getting contact from JID, this will add them to our
-	 * contacts hash table if they don't exist too. 
+	 * contacts hash table if they don't exist too.
 	 */
-	recipient = gossip_jabber_get_contact_from_jid (jabber, 
-							recipient_id, 
+	recipient = gossip_jabber_get_contact_from_jid (jabber,
+							recipient_id,
 							&new_contact,
 							TRUE);
 	if (new_contact) {
@@ -1431,7 +1431,7 @@ jabber_send_message (GossipProtocol *protocol,
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Sending message to:'%s'", jid_str);
-	
+
 	m = lm_message_new_with_sub_type (jid_str,
 					  LM_MESSAGE_TYPE_MESSAGE,
 					  LM_MESSAGE_SUB_TYPE_CHAT);
@@ -1440,7 +1440,7 @@ jabber_send_message (GossipProtocol *protocol,
 				   gossip_message_get_body (message));
 
 	/* If we have had a request for composing then we send the
-	 * other side composing details with every message 
+	 * other side composing details with every message
 	 */
 	if (gossip_message_is_requesting_composing (message)) {
 		LmMessageNode *node;
@@ -1481,10 +1481,10 @@ jabber_send_composing (GossipProtocol *protocol,
 
 	contact_id = gossip_contact_get_id (contact);
 
-	gossip_debug (DEBUG_DOMAIN, "Sending %s to contact:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Sending %s to contact:'%s'",
 		      typing ? "composing" : "not composing",
 		      contact_id);
-	
+
 	jid_str = g_strdup (contact_id);
 
 	m = lm_message_new_with_sub_type (jid_str,
@@ -1492,19 +1492,19 @@ jabber_send_composing (GossipProtocol *protocol,
 					  LM_MESSAGE_SUB_TYPE_CHAT);
 	node = lm_message_node_add_child (m->node, "x", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "jabber:x:event");
-	
-	if (typing) {
-		id = lm_message_node_get_attribute (m->node, "id"); 
 
-		g_hash_table_insert (priv->composing_ids, 
+	if (typing) {
+		id = lm_message_node_get_attribute (m->node, "id");
+
+		g_hash_table_insert (priv->composing_ids,
 				     g_object_ref (contact),
 				     g_strdup (id));
 
 		lm_message_node_add_child (node, "composing", NULL);
-		lm_message_node_add_child (node, "id", id); 
+		lm_message_node_add_child (node, "id", id);
 	} else {
 		id = g_hash_table_lookup (priv->composing_ids, contact);
-		lm_message_node_add_child (node, "id", id); 
+		lm_message_node_add_child (node, "id", id);
 
 		if (id) {
 			g_hash_table_remove (priv->composing_ids, contact);
@@ -1518,7 +1518,7 @@ jabber_send_composing (GossipProtocol *protocol,
 }
 
 static void
-jabber_set_presence (GossipProtocol *protocol, 
+jabber_set_presence (GossipProtocol *protocol,
 		     GossipPresence *presence)
 {
 	GossipJabber        *jabber;
@@ -1542,16 +1542,16 @@ jabber_set_presence (GossipProtocol *protocol,
 	}
 
 	priv->presence = g_object_ref (presence);
-	
-	m = lm_message_new_with_sub_type (NULL, 
+
+	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_AVAILABLE);
 
 	state = gossip_presence_get_state (presence);
 	status = gossip_presence_get_status (presence);
-	
+
 	show = gossip_jabber_presence_state_to_str (presence);
-	
+
 	switch (state) {
 	case GOSSIP_PRESENCE_STATE_BUSY:
 		priority = "40";
@@ -1572,10 +1572,10 @@ jabber_set_presence (GossipProtocol *protocol,
 	sha1 = gossip_sha_hash (avatar, avatar_size);
 
 	gossip_debug (DEBUG_DOMAIN, "Setting presence to:'%s', status:'%s', "
-		      "priority:'%s' sha1:'%s' avatar_size:%" G_GSIZE_FORMAT " avatar:%p", 
-		      show ? show : "available", 
+		      "priority:'%s' sha1:'%s' avatar_size:%" G_GSIZE_FORMAT " avatar:%p",
+		      show ? show : "available",
 		      status ? status : "",
-		      priority, sha1, 
+		      priority, sha1,
 		      avatar_size, avatar);
 
 	if (show) {
@@ -1583,7 +1583,7 @@ jabber_set_presence (GossipProtocol *protocol,
 	}
 
 	lm_message_node_add_child (m->node, "priority", priority);
-	
+
 	if (status) {
 		lm_message_node_add_child (m->node, "status", status);
 	}
@@ -1594,15 +1594,15 @@ jabber_set_presence (GossipProtocol *protocol,
 	/* I can't think of an elegant way of doing this correctly so
 	 * I won't. We need to send an empty "x" element before we
 	 * download the user's vcard. And an empty "photo" element
-	 * when the user chooses not to use an avatar. 
-	 * 
+	 * when the user chooses not to use an avatar.
+	 *
 	 * See:
-	 * http://www.jabber.org/jeps/jep-0153.html#bizrules-presence 
+	 * http://www.jabber.org/jeps/jep-0153.html#bizrules-presence
 	 */
-	
+
 	lm_message_node_add_child (node, "photo", sha1);
 	g_free (sha1);
-	
+
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 
@@ -1622,7 +1622,7 @@ jabber_set_subscription (GossipProtocol *protocol,
 
 	jabber = GOSSIP_JABBER (protocol);
 
-	gossip_debug (DEBUG_DOMAIN, "Setting subscription for contact:'%s' as %s", 
+	gossip_debug (DEBUG_DOMAIN, "Setting subscription for contact:'%s' as %s",
 		      gossip_contact_get_id (contact),
 		      subscribed ? "subscribed" : "unsubscribed");
 
@@ -1643,10 +1643,10 @@ jabber_set_vcard (GossipProtocol        *protocol,
 	GossipJabber *jabber;
 
 	jabber = GOSSIP_JABBER (protocol);
-	
-	gossip_debug (DEBUG_DOMAIN, "Setting vcard for '%s'", 
+
+	gossip_debug (DEBUG_DOMAIN, "Setting vcard for '%s'",
 		      gossip_vcard_get_name (vcard));
-	
+
 	return gossip_jabber_vcard_set (jabber,
 					vcard,
 					callback, user_data,
@@ -1666,7 +1666,7 @@ jabber_contact_find (GossipProtocol *protocol,
 	priv = GET_PRIV (jabber);
 
 	jid = gossip_jid_new (id);
-	contact = g_hash_table_lookup (priv->contacts, 
+	contact = g_hash_table_lookup (priv->contacts,
 				       gossip_jid_get_without_resource (jid));
 
 	gossip_jid_unref (jid);
@@ -1691,7 +1691,7 @@ jabber_contact_add (GossipProtocol *protocol,
 	gchar              *escaped;
 	gboolean            add_to_roster;
 
-	gossip_debug (DEBUG_DOMAIN, "Adding contact:'%s' with name:'%s' and group:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Adding contact:'%s' with name:'%s' and group:'%s'",
 		      id, name, group);
 
 	jabber = GOSSIP_JABBER (protocol);
@@ -1708,37 +1708,37 @@ jabber_contact_add (GossipProtocol *protocol,
 
 	/* We would normally only add to roster IF not on it but we
 	 * always do this because the server will inforce it otherwise
-	 * and it makes sense to use our provided name/group, etc 
+	 * and it makes sense to use our provided name/group, etc
 	 */
 	add_to_roster = TRUE;
 /* 	add_to_roster = gossip_contact_get_type (contact) == GOSSIP_CONTACT_TYPE_TEMPORARY; */
 
 	if (add_to_roster) {
 		gossip_debug (DEBUG_DOMAIN, "Adding contact:'%s' to roster...", id);
-		
-		m = lm_message_new_with_sub_type (NULL, 
+
+		m = lm_message_new_with_sub_type (NULL,
 						  LM_MESSAGE_TYPE_IQ,
 						  LM_MESSAGE_SUB_TYPE_SET);
-		
+
 		node = lm_message_node_add_child (m->node, "query", NULL);
 		lm_message_node_set_attributes (node,
 						"xmlns", XMPP_ROSTER_XMLNS, NULL);
-		
+
 		node = lm_message_node_add_child (node, "item", NULL);
-		
+
 		escaped = g_markup_escape_text (name, -1);
-		lm_message_node_set_attributes (node, 
-						"jid", gossip_jid_get_without_resource (jid), 
+		lm_message_node_set_attributes (node,
+						"jid", gossip_jid_get_without_resource (jid),
 						"name", escaped,
 						NULL);
 		g_free (escaped);
-		
+
 		if (group && g_utf8_strlen (group, -1) > 0) {
 			escaped = g_markup_escape_text (group, -1);
 			lm_message_node_add_child (node, "group", escaped);
 			g_free (escaped);
 		}
-		
+
 		lm_connection_send (priv->connection, m, NULL);
 		lm_message_unref (m);
 	}
@@ -1746,17 +1746,17 @@ jabber_contact_add (GossipProtocol *protocol,
 	/* Request subscription */
 	if (subscription == GOSSIP_SUBSCRIPTION_NONE ||
 	    subscription == GOSSIP_SUBSCRIPTION_FROM) {
-		gossip_debug (DEBUG_DOMAIN, "Sending subscribe request with message:'%s'...", 
+		gossip_debug (DEBUG_DOMAIN, "Sending subscribe request with message:'%s'...",
 			      message);
-		
-		m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (jid), 
+
+		m = lm_message_new_with_sub_type (gossip_jid_get_without_resource (jid),
 						  LM_MESSAGE_TYPE_PRESENCE,
 						  LM_MESSAGE_SUB_TYPE_SUBSCRIBE);
-		
+
 		escaped = g_markup_escape_text (message, -1);
 		lm_message_node_add_child (m->node, "status", escaped);
 		g_free (escaped);
-		
+
 		lm_connection_send (priv->connection, m, NULL);
 		lm_message_unref (m);
 	} else {
@@ -1777,47 +1777,47 @@ jabber_contact_rename (GossipProtocol *protocol,
 	LmMessage        *m;
 	LmMessageNode    *node;
 	gchar            *escaped;
-	GList            *l; 
-	
+	GList            *l;
+
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
-	m = lm_message_new_with_sub_type (NULL, 
+	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attributes (node,
 					"xmlns", XMPP_ROSTER_XMLNS,
 					NULL);
-	
+
 	escaped = g_markup_escape_text (new_name, -1);
 
 	node = lm_message_node_add_child (node, "item", NULL);
-	lm_message_node_set_attributes (node, 
+	lm_message_node_set_attributes (node,
 					"jid", gossip_contact_get_id (contact),
 					"name", escaped,
 					NULL);
 	g_free (escaped);
-	
+
 	for (l = gossip_contact_get_groups (contact); l; l = l->next) {
 		escaped = g_markup_escape_text (l->data, -1);
 		lm_message_node_add_child (node, "group", escaped);
 		g_free (escaped);
-	}	
+	}
 
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 }
 
 static void
-jabber_contact_remove (GossipProtocol *protocol, 
+jabber_contact_remove (GossipProtocol *protocol,
 		       GossipContact  *contact)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
 	LmMessage        *m;
 	LmMessageNode    *node;
-	
+
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
@@ -1825,18 +1825,18 @@ jabber_contact_remove (GossipProtocol *protocol,
 	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
-	
+
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attribute (node,
 				       "xmlns",
 				       XMPP_ROSTER_XMLNS);
-	
+
 	node = lm_message_node_add_child (node, "item", NULL);
 	lm_message_node_set_attributes (node,
 					"jid", gossip_contact_get_id (contact),
 					"subscription", "remove",
 					NULL);
- 	
+
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 
@@ -1844,22 +1844,22 @@ jabber_contact_remove (GossipProtocol *protocol,
 	gossip_protocol_set_subscription (protocol, contact, FALSE);
 
 	/* Remove from internal hash table */
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Contact:'%s' being removed with current ref count:%d", 
+	gossip_debug (DEBUG_DOMAIN,
+		      "Contact:'%s' being removed with current ref count:%d",
 		      gossip_contact_get_id (contact), G_OBJECT (contact)->ref_count);
 
 	g_hash_table_remove (priv->contacts, contact);
 }
 
 static void
-jabber_contact_update (GossipProtocol *protocol, 
+jabber_contact_update (GossipProtocol *protocol,
 		       GossipContact  *contact)
 {
 	/* We set the groups _and_ the name here, the rename function
 	 * will do exactly what we want to do so just call that.
 	 */
-	jabber_contact_rename (protocol, 
-			       contact, 
+	jabber_contact_rename (protocol,
+			       contact,
 			       gossip_contact_get_name (contact));
 }
 
@@ -1875,8 +1875,8 @@ jabber_contact_is_avatar_latest_cb (GossipResult  result,
 		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
 
-		g_signal_emit_by_name (data->jabber, 
-				       "contact-updated", 
+		g_signal_emit_by_name (data->jabber,
+				       "contact-updated",
 				       data->contact);
 	}
 
@@ -1884,7 +1884,7 @@ jabber_contact_is_avatar_latest_cb (GossipResult  result,
 }
 
 static void
-jabber_contact_is_avatar_latest (GossipJabber  *jabber, 
+jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 				 GossipContact *contact,
 				 LmMessageNode *m,
 				 gboolean       force_update)
@@ -1905,14 +1905,14 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 					       "contact-updated",
 					       contact);
 			return;
-		}	
+		}
 
 		avatar = gossip_contact_get_avatar (contact, &avatar_size);
 		sha1 = gossip_sha_hash (avatar, avatar_size);
-		
+
 		same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
 		g_free (sha1);
-	
+
 		if (same) {
 			return;
 		}
@@ -1921,8 +1921,8 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 	data = jabber_data_new (jabber, contact, NULL);
 	gossip_jabber_vcard_get (jabber,
 				 gossip_contact_get_id (contact),
-				 (GossipVCardCallback) jabber_contact_is_avatar_latest_cb, 
-				 data, 
+				 (GossipVCardCallback) jabber_contact_is_avatar_latest_cb,
+				 data,
 				 NULL);
 }
 
@@ -1939,19 +1939,19 @@ jabber_contact_vcard_cb (GossipResult  result,
 
 		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
-		
-		name = gossip_jabber_get_name_to_use 
+
+		name = gossip_jabber_get_name_to_use
 			(gossip_contact_get_id (data->contact),
 			 gossip_vcard_get_nickname (vcard),
 			 gossip_vcard_get_name (vcard));
-		
+
 		gossip_contact_set_name (data->contact, name);
 		g_free (name);
 
-		g_signal_emit_by_name (data->jabber, 
-				       "contact-updated", 
-				       data->contact);	
-		
+		g_signal_emit_by_name (data->jabber,
+				       "contact-updated",
+				       data->contact);
+
 		/* Send presence if this is the user's VCard
 		 * (Avatar support, JEP-0153)
 		 */
@@ -1969,13 +1969,13 @@ jabber_contact_vcard (GossipJabber  *jabber,
 		      GossipContact *contact)
 {
 	JabberData *data;
-	
+
 	data = jabber_data_new (jabber, contact, NULL);
-	
+
 	gossip_jabber_vcard_get (jabber,
 				 gossip_contact_get_id (contact),
-				 (GossipVCardCallback) jabber_contact_vcard_cb, 
-				 data, 
+				 (GossipVCardCallback) jabber_contact_vcard_cb,
+				 data,
 				 NULL);
 }
 
@@ -1991,15 +1991,15 @@ jabber_group_rename (GossipProtocol *protocol,
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
-	
+
 	rg = g_new0 (RenameGroupData, 1);
-	
+
 	rg->jabber = jabber;
 	rg->group = g_strdup (group);
 	rg->new_name = g_strdup (new_name);
 
-	g_hash_table_foreach (priv->contacts, 
-			      (GHFunc)jabber_group_rename_foreach_cb, 
+	g_hash_table_foreach (priv->contacts,
+			      (GHFunc)jabber_group_rename_foreach_cb,
 			      rg);
 
 	g_free (rg->group);
@@ -2016,7 +2016,7 @@ jabber_group_rename_foreach_cb (const gchar     *jid,
 	LmMessage        *m;
 	LmMessageNode    *node;
 	gchar            *escaped;
-	GList            *l; 
+	GList            *l;
 	gboolean          found = FALSE;
 
 	priv = GET_PRIV (rg->jabber);
@@ -2028,31 +2028,31 @@ jabber_group_rename_foreach_cb (const gchar     *jid,
 			found = TRUE;
 		}
 	}
-	
+
 	if (!found) {
 		return;
 	}
 
-	m = lm_message_new_with_sub_type (NULL, 
+	m = lm_message_new_with_sub_type (NULL,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
 	node = lm_message_node_add_child (m->node, "query", NULL);
 	lm_message_node_set_attributes (node,
 					"xmlns", XMPP_ROSTER_XMLNS,
 					NULL);
-	
+
 	escaped = g_markup_escape_text (gossip_contact_get_name (contact), -1);
-	
+
 	node = lm_message_node_add_child (node, "item", NULL);
-	lm_message_node_set_attributes (node, 
+	lm_message_node_set_attributes (node,
 					"jid", gossip_contact_get_id (contact),
 					"name", escaped,
 					NULL);
 	g_free (escaped);
-	
+
 	for (l = gossip_contact_get_groups (contact); l; l = l->next) {
 		const gchar *group = (const gchar*) l->data;
-		
+
 		/* Do not include the group we are renaming */
 		if (group && strcmp (group, rg->group) == 0) {
 			continue;
@@ -2061,13 +2061,13 @@ jabber_group_rename_foreach_cb (const gchar     *jid,
 		escaped = g_markup_escape_text (group, -1);
 		lm_message_node_add_child (node, "group", escaped);
 		g_free (escaped);
-	}	
+	}
 
 	/* Add the new group name */
 	escaped = g_markup_escape_text (rg->new_name, -1);
 	lm_message_node_add_child (node, "group", escaped);
 	g_free (escaped);
-	
+
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 }
@@ -2078,7 +2078,7 @@ jabber_get_presence (LmMessage *m)
 	GossipPresence      *presence;
 	LmMessageNode       *node;
 	GossipPresenceState  state;
-	
+
 	if (lm_message_node_find_child (m->node, "error")) {
 		/* FIXME: Handle this (send offline?) */
 	}
@@ -2097,12 +2097,12 @@ jabber_get_presence (LmMessage *m)
 	}
 
 	gossip_presence_set_state (presence, state);
-	
+
 	node = lm_message_node_get_child (m->node, "status");
 	if (node) {
 		gossip_presence_set_status (presence, node->value);
 	}
-	
+
 	node = lm_message_node_get_child (m->node, "priority");
 	if (node) {
 		gossip_presence_set_priority (presence, atoi (node->value));
@@ -2134,7 +2134,7 @@ jabber_get_active_resource (GossipProtocol *protocol,
 {
 	GList          *list;
 	GossipPresence *presence;
-	
+
 	list = gossip_contact_get_presence_list (contact);
 	if (!list) {
 		return NULL;
@@ -2142,7 +2142,7 @@ jabber_get_active_resource (GossipProtocol *protocol,
 
 	/* The first one is the active one. */
 	presence = list->data;
-	
+
 	return gossip_presence_get_resource (presence);
 }
 
@@ -2155,9 +2155,9 @@ jabber_get_groups (GossipProtocol *protocol)
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
-	
-	g_hash_table_foreach (priv->contacts, 
-			      (GHFunc)jabber_get_groups_foreach_cb, 
+
+	g_hash_table_foreach (priv->contacts,
+			      (GHFunc)jabber_get_groups_foreach_cb,
 			      &list);
 
 	list = g_list_sort (list, (GCompareFunc)strcmp);
@@ -2181,10 +2181,10 @@ jabber_get_groups_foreach_cb (const gchar    *jid,
 		GList *found;
 
 		group = (gchar*) l->data;
-		found = g_list_find_custom (*list, 
-					    group, 
+		found = g_list_find_custom (*list,
+					    group,
 					    (GCompareFunc)strcmp);
-		
+
 		if (!found) {
 			*list = g_list_prepend (*list, g_strdup (group));
 		}
@@ -2199,7 +2199,7 @@ jabber_get_vcard (GossipProtocol       *protocol,
 		  GError              **error)
 {
 	GossipJabber     *jabber;
-	GossipJabberPriv *priv; 
+	GossipJabberPriv *priv;
 	const gchar      *jid_str;
 
 	jabber = GOSSIP_JABBER (protocol);
@@ -2210,7 +2210,7 @@ jabber_get_vcard (GossipProtocol       *protocol,
 	} else {
 		jid_str = gossip_contact_get_id (priv->contact);
 	}
-	
+
 	return gossip_jabber_vcard_get (jabber,
 					jid_str,
 					callback, user_data, error);
@@ -2224,11 +2224,11 @@ jabber_get_version (GossipProtocol         *protocol,
 		    GError                **error)
 {
 	GossipJabber     *jabber;
-	GossipJabberPriv *priv; 
+	GossipJabberPriv *priv;
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
-	
+
 	return gossip_jabber_services_get_version (priv->connection,
 						   contact,
 						   callback, user_data,
@@ -2256,7 +2256,7 @@ jabber_set_proxy (LmConnection *conn)
 
 	if (use_http_proxy) {
 		LmProxy  *proxy;
-		
+
 		proxy = lm_proxy_new_with_server (LM_PROXY_TYPE_HTTP,
 						  host, (guint) port);
 		lm_connection_set_proxy (conn, proxy);
@@ -2265,7 +2265,7 @@ jabber_set_proxy (LmConnection *conn)
 			lm_proxy_set_username (proxy, username);
 			lm_proxy_set_password (proxy, password);
 		}
-		
+
 		lm_proxy_unref (proxy);
 	} else {
 		lm_connection_set_proxy (conn, NULL);
@@ -2312,45 +2312,45 @@ jabber_message_handler (LmMessageHandler *handler,
 	const gchar          *resource;
 
 	priv = GET_PRIV (jabber);
-	
-	gossip_debug (DEBUG_DOMAIN, "New message from:'%s'", 
+
+	gossip_debug (DEBUG_DOMAIN, "New message from:'%s'",
 		      lm_message_node_get_attribute (m->node, "from"));
 
 	sub_type = lm_message_get_sub_type (m);
-	if (sub_type != LM_MESSAGE_SUB_TYPE_NOT_SET && 
-	    sub_type != LM_MESSAGE_SUB_TYPE_NORMAL && 
-	    sub_type != LM_MESSAGE_SUB_TYPE_CHAT && 
+	if (sub_type != LM_MESSAGE_SUB_TYPE_NOT_SET &&
+	    sub_type != LM_MESSAGE_SUB_TYPE_NORMAL &&
+	    sub_type != LM_MESSAGE_SUB_TYPE_CHAT &&
 	    sub_type != LM_MESSAGE_SUB_TYPE_HEADLINE) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	from_str = lm_message_node_get_attribute (m->node, "from");
-	from = gossip_jabber_get_contact_from_jid (jabber, 
-						   from_str, 
+	from = gossip_jabber_get_contact_from_jid (jabber,
+						   from_str,
 						   NULL,
 						   TRUE);
-	
+
 	if (gossip_jabber_get_message_is_event (m)) {
 		gboolean composing;
-		
+
 		composing = gossip_jabber_get_message_is_composing (m);
-		
+
 		gossip_debug (DEBUG_DOMAIN, "Contact:'%s' %s",
 			      gossip_contact_get_id (from),
 			      composing ? "is composing" : "is NOT composing");
-		
+
 		g_signal_emit_by_name (jabber, "composing", from, composing);
-		
+
 		if (composing) {
 			JabberData *data;
 			guint       id;
-			
+
 			data = g_hash_table_lookup (priv->composing_timeouts, from);
 			if (data) {
 				g_source_remove (GPOINTER_TO_UINT (data->user_data));
 				g_hash_table_remove (priv->composing_timeouts, from);
 			}
-			
+
 			data = jabber_data_new (jabber, from, NULL);
 			id = g_timeout_add (COMPOSING_TIMEOUT * 1000,
 					    (GSourceFunc) jabber_composing_timeout_cb,
@@ -2366,27 +2366,27 @@ jabber_message_handler (LmMessageHandler *handler,
 				g_hash_table_remove (priv->composing_timeouts, from);
 			}
 		}
-		
+
 		/* If event, then we can ignore the rest */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	} else {
 		gboolean wants_composing;
-		
+
 		wants_composing = gossip_jabber_get_message_is_composing (m);
-		
+
 		if (wants_composing) {
-			g_hash_table_insert (priv->composing_requests, 
+			g_hash_table_insert (priv->composing_requests,
 					     g_object_ref (from),
 					     GINT_TO_POINTER (TRUE));
 		} else {
 			g_hash_table_remove (priv->composing_requests, from);
 		}
-		
+
 		gossip_debug (DEBUG_DOMAIN, "Contact:'%s' %s composing info...",
 			      gossip_contact_get_id (from),
 			      wants_composing ? "wants" : "does NOT want");
 	}
-	
+
 	node = lm_message_node_get_child (m->node, "subject");
 	if (node) {
 		subject = node->value;
@@ -2395,27 +2395,27 @@ jabber_message_handler (LmMessageHandler *handler,
 	invite = gossip_jabber_get_message_conference (jabber, m);
 	if (invite) {
 		GossipContact *invitor;
-		
+
 		invitor = gossip_chatroom_invite_get_invitor (invite);
-		
-		gossip_debug (DEBUG_DOMAIN, "Chat room invitiation from:'%s' for room:'%s', reason:'%s'", 
-			      gossip_contact_get_id (invitor), 
-			      gossip_chatroom_invite_get_id (invite), 
+
+		gossip_debug (DEBUG_DOMAIN, "Chat room invitiation from:'%s' for room:'%s', reason:'%s'",
+			      gossip_contact_get_id (invitor),
+			      gossip_chatroom_invite_get_id (invite),
 			      gossip_chatroom_invite_get_reason (invite));
-		
+
 		/* We set the from to be the person that invited you,
 		 * not the chatroom that sent the request on their
 		 * behalf.
 		 */
 		from = invitor;
-		
+
 		/* Make sure we have some sort of body for
 		 * invitations, since it is not necessary but should
 		 * really exist.
 		 */
 		body = "";
 	}
-	
+
 	node = lm_message_node_get_child (m->node, "body");
 	if (node) {
 		body = node->value;
@@ -2423,7 +2423,7 @@ jabber_message_handler (LmMessageHandler *handler,
 
 	if (!body && !invite) {
 		/* If no body to the message, we ignore it since it
-		 * has no purpose now (see fixes #309912). 
+		 * has no purpose now (see fixes #309912).
 		 */
 
 		gossip_debug (DEBUG_DOMAIN, "Dropping new message, no <body> element");
@@ -2434,7 +2434,7 @@ jabber_message_handler (LmMessageHandler *handler,
 	if (node) {
 		thread = node->value;
 	}
-	
+
 	message = gossip_message_new (GOSSIP_MESSAGE_TYPE_NORMAL,
 				      priv->contact);
 
@@ -2452,39 +2452,39 @@ jabber_message_handler (LmMessageHandler *handler,
 		if (!resource) {
 			resource = "";
 		}
-		
+
 		gossip_contact_set_name (from, resource);
 
 		gossip_jid_unref (jid);
 	}
-		
+
 	gossip_message_set_sender (message, from);
 	gossip_message_set_body (message, body);
 
 	resource = gossip_jid_string_get_part_resource (from_str);
 	gossip_message_set_explicit_resource (message, resource);
-	
+
 	if (subject) {
 		gossip_message_set_subject (message, subject);
 	}
-	
+
 	if (thread) {
 		gossip_message_set_thread (message, thread);
 	}
 
 	if (invite) {
-		gossip_message_set_invite (message, invite); 
+		gossip_message_set_invite (message, invite);
 		gossip_chatroom_invite_unref (invite);
 	}
-	
+
 	gossip_message_set_timestamp (message,
 				      gossip_jabber_get_message_timestamp (m));
-	
+
 	g_signal_emit_by_name (jabber, "new-message", message);
 	g_signal_emit_by_name (jabber, "composing", from, FALSE);
-	
+
 	g_object_unref (message);
-	
+
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
@@ -2503,14 +2503,14 @@ jabber_presence_handler (LmMessageHandler *handler,
 	priv = GET_PRIV (jabber);
 
 	from = lm_message_node_get_attribute (m->node, "from");
-	gossip_debug (DEBUG_DOMAIN, "New presence from:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "New presence from:'%s'",
 		      lm_message_node_get_attribute (m->node, "from"));
 
 	if (gossip_jabber_chatrooms_get_jid_is_chatroom (priv->chatrooms,
 							 from)) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	contact = gossip_jabber_get_contact_from_jid (jabber, from, &new_item, TRUE);
 
 	/* Get the type */
@@ -2520,7 +2520,7 @@ jabber_presence_handler (LmMessageHandler *handler,
 	}
 
 	if (strcmp (type, "subscribe") == 0) {
-		g_signal_emit_by_name (jabber, "subscription-request", 
+		g_signal_emit_by_name (jabber, "subscription-request",
 				       contact, NULL);
 
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -2528,12 +2528,12 @@ jabber_presence_handler (LmMessageHandler *handler,
 		/* FIXME: Handle this? */
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
-	
+
 	if (contact) {
 		GossipPresence *presence;
 		GossipJID      *jid;
 		const gchar    *resource;
-		
+
 		jid = gossip_jid_new (from);
 		resource = gossip_jid_get_resource (jid);
 		if (!resource) {
@@ -2548,21 +2548,21 @@ jabber_presence_handler (LmMessageHandler *handler,
 								presence);
 			}
 		} else {
-			if (gossip_contact_get_presence_list (contact)) { 
+			if (gossip_contact_get_presence_list (contact)) {
 				/* Check avatar xml tags to see if we
 				 * have the latest.
 				 */
-				jabber_contact_is_avatar_latest (jabber, contact, m->node, FALSE); 
+				jabber_contact_is_avatar_latest (jabber, contact, m->node, FALSE);
 			} else {
 				/* Force retrieval of the latest avatar for
 				 * the contact because no presence information
 				 * should mean they were offline.
-				 * 
+				 *
 				 * The reason we do this is because
 				 * some clients don't support the
 				 * avatar xml tags (JEP 0153).
-				 */		
-				jabber_contact_is_avatar_latest (jabber, contact, m->node, TRUE); 
+				 */
+				jabber_contact_is_avatar_latest (jabber, contact, m->node, TRUE);
 			}
 
 			gossip_presence_set_resource (presence, resource);
@@ -2570,14 +2570,14 @@ jabber_presence_handler (LmMessageHandler *handler,
 
 			g_object_unref (presence);
 		}
-		
+
 		gossip_jid_unref (jid);
-	
+
 		g_signal_emit_by_name (jabber,
-				       "contact-presence-updated", 
+				       "contact-presence-updated",
 				       contact);
 	}
-	
+
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
@@ -2590,9 +2590,9 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 	GossipJabberPriv *priv;
 	LmMessageNode    *node;
 	const gchar      *xmlns;
-	
+
 	priv = GET_PRIV (jabber);
-	
+
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GET &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_SET &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT) {
@@ -2614,7 +2614,7 @@ jabber_iq_query_handler (LmMessageHandler *handler,
 		/* Do nothing at this point */
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	if (xmlns && strcmp (xmlns, XMPP_VERSION_XMLNS) == 0) {
 		jabber_request_version (jabber, m);
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -2651,7 +2651,7 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 
 	/* Clean up */
 	lm_message_handler_invalidate (handler);
-	
+
 	/* Send subscribed to them */
 	gossip_debug (DEBUG_DOMAIN, "Sending subscribed message to new service:'%s'", to);
 	new_message = lm_message_new_with_sub_type (to,
@@ -2666,7 +2666,7 @@ jabber_subscription_message_handler (LmMessageHandler  *handler,
 	lm_message_unref (new_message);
 
 	/* Send our presence */
-	new_message = lm_message_new_with_sub_type (to, 
+	new_message = lm_message_new_with_sub_type (to,
 						    LM_MESSAGE_TYPE_PRESENCE,
 						    LM_MESSAGE_SUB_TYPE_AVAILABLE);
 
@@ -2713,13 +2713,13 @@ jabber_request_version (GossipJabber *jabber,
 
 	info = gossip_version_info_get_own ();
 	node = lm_message_node_add_child (r->node, "query", NULL);
-	lm_message_node_set_attributes (node, 
+	lm_message_node_set_attributes (node,
 					"xmlns", XMPP_VERSION_XMLNS,
 					NULL);
 
 	if (gossip_version_info_get_name (info)) {
-		lm_message_node_add_child (node, 
-					   "name", 
+		lm_message_node_add_child (node,
+					   "name",
 					   gossip_version_info_get_name (info));
 	}
 
@@ -2740,14 +2740,14 @@ jabber_request_version (GossipJabber *jabber,
 }
 
 static void
-jabber_request_roster (GossipJabber *jabber, 
+jabber_request_roster (GossipJabber *jabber,
 		       LmMessage    *m)
 {
 	GossipJabberPriv *priv;
 	LmMessageNode    *node;
-	
+
 	priv = GET_PRIV (jabber);
-	
+
 	node = lm_message_node_get_child (m->node, "query");
 	if (!node) {
 		return;
@@ -2765,7 +2765,7 @@ jabber_request_roster (GossipJabber *jabber,
 		const gchar   *name;
 		GList         *new_groups;
 		gboolean       name_updated, groups_updated;
-		
+
 
 		if (strcmp (node->name, "item") != 0) {
 			continue;
@@ -2776,9 +2776,9 @@ jabber_request_roster (GossipJabber *jabber,
 			continue;
 		}
 
-		contact = gossip_jabber_get_contact_from_jid (jabber, 
-							      jid_str, 
-							      &new_item, 
+		contact = gossip_jabber_get_contact_from_jid (jabber,
+							      jid_str,
+							      &new_item,
 							      FALSE);
 
 		/* Groups */
@@ -2787,18 +2787,18 @@ jabber_request_roster (GossipJabber *jabber,
 			if (strcmp (subnode->name, "group") != 0) {
 				continue;
 			}
-			
+
 			if (subnode->value) {
 				/* FIXME: unescape the markup here: #342927 */
 				groups = g_list_append (groups, subnode->value);
 			}
 		}
-		
+
 		/* FIXME: why is this here if we set the groups below */
 		if (groups) {
 			gossip_contact_set_groups (contact, groups);
 		}
-		
+
 		g_list_free (groups);
 
 		/* Subscription */
@@ -2809,7 +2809,7 @@ jabber_request_roster (GossipJabber *jabber,
 			if (strcmp (subscription, "remove") == 0) {
 				g_signal_emit_by_name (jabber,
 						       "contact-removed", contact);
-				g_hash_table_remove (priv->contacts, 
+				g_hash_table_remove (priv->contacts,
 						     gossip_contact_get_id (contact));
 				continue;
 			} else if (strcmp (subscription, "both") == 0) {
@@ -2827,7 +2827,7 @@ jabber_request_roster (GossipJabber *jabber,
 			 * setting up subscription so the contact is
 			 * still temporary, any other state and we
 			 * assume they must be a proper contact list
-			 * contact. 
+			 * contact.
 			 *
 			 * Also, later when we present the
 			 * subscription dialog to the user, we need to
@@ -2837,14 +2837,14 @@ jabber_request_roster (GossipJabber *jabber,
 			 * the roster with "to" or "from" conditions.
 			 */
 			if (type != GOSSIP_SUBSCRIPTION_NONE) {
-				g_object_set (contact, "type", 
-					      GOSSIP_CONTACT_TYPE_CONTACTLIST, 
+				g_object_set (contact, "type",
+					      GOSSIP_CONTACT_TYPE_CONTACTLIST,
 					      NULL);
 			}
 
 			gossip_contact_set_subscription (contact, type);
-		} 
-		
+		}
+
 		/* Find out if any thing has updated */
 		name_updated = groups_updated = FALSE;
 
@@ -2866,27 +2866,27 @@ jabber_request_roster (GossipJabber *jabber,
 		}
 
 		g_list_free (new_groups);
-		
+
 		updated = (name_updated || groups_updated);
-		
+
 		if (new_item) {
-			g_signal_emit_by_name (jabber, 
+			g_signal_emit_by_name (jabber,
 					       "contact-added", contact);
 		}
 		else if (updated) {
-			g_signal_emit_by_name (jabber, 
+			g_signal_emit_by_name (jabber,
 					       "contact-updated", contact);
 		}
 	}
 }
 
 static void
-jabber_request_unknown (GossipJabber *jabber, 
+jabber_request_unknown (GossipJabber *jabber,
 			LmMessage    *m)
 {
 	GossipJabberPriv *priv;
 	LmMessageNode    *node;
-	
+
 	LmMessage         *new_m;
 	const gchar       *from_str, *xmlns;
 
@@ -2903,13 +2903,13 @@ jabber_request_unknown (GossipJabber *jabber,
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 
 	/* construct response */
-	new_m = lm_message_new_with_sub_type (from_str, 
+	new_m = lm_message_new_with_sub_type (from_str,
 					      LM_MESSAGE_TYPE_IQ,
 					      LM_MESSAGE_SUB_TYPE_ERROR);
 
 	node = lm_message_node_add_child (new_m->node, "query", NULL);
 	lm_message_node_set_attribute (node, "xmlns", xmlns);
-	
+
 	node = lm_message_node_add_child (new_m->node, "error", NULL);
 	lm_message_node_set_attribute (node, "type", "cancel");
 	lm_message_node_set_attribute (node, "code", "503");
@@ -2957,7 +2957,7 @@ jabber_chatroom_join (GossipChatroomProvider      *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_chatrooms_join (priv->chatrooms, chatroom, 
+	return gossip_jabber_chatrooms_join (priv->chatrooms, chatroom,
 					     callback, user_data);
 }
 
@@ -3087,8 +3087,8 @@ jabber_chatroom_invite_accept (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	gossip_jabber_chatrooms_invite_accept (priv->chatrooms, 
-					       callback, 
+	gossip_jabber_chatrooms_invite_accept (priv->chatrooms,
+					       callback,
 					       invite,
 					       nickname);
 }
@@ -3106,7 +3106,7 @@ jabber_chatroom_invite_decline (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	gossip_jabber_chatrooms_invite_decline (priv->chatrooms, 
+	gossip_jabber_chatrooms_invite_decline (priv->chatrooms,
 						invite,
 						reason);
 }
@@ -3217,9 +3217,9 @@ jabber_data_new (GossipJabber  *jabber,
 
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	
+
 	data = g_new0 (JabberData, 1);
-	
+
 	data->jabber = g_object_ref (jabber);
 	data->contact = g_object_ref (contact);
 
@@ -3246,9 +3246,9 @@ jabber_data_free (JabberData *data)
 	g_free (data);
 }
 
-/* 
- * External functions 
- */ 
+/*
+ * External functions
+ */
 
 GQuark
 gossip_jabber_error_quark (void)
@@ -3260,11 +3260,11 @@ GossipAccount *
 gossip_jabber_get_account (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
-	
+
 	priv = GET_PRIV (jabber);
-	
+
 	return priv->account;
 }
 
@@ -3281,7 +3281,7 @@ gossip_jabber_get_own_contact (GossipJabber *jabber)
 }
 
 GossipContact *
-gossip_jabber_get_contact_from_jid (GossipJabber *jabber, 
+gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 				    const gchar  *jid_str,
 				    gboolean     *new_item,
 				    gboolean      get_vcard)
@@ -3294,30 +3294,30 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 	priv = GET_PRIV (jabber);
 
 	jid = gossip_jid_new (jid_str);
-	
-	contact = g_hash_table_lookup (priv->contacts, 
+
+	contact = g_hash_table_lookup (priv->contacts,
 				       gossip_jid_get_without_resource (jid));
 
 	if (!contact) {
-		gossip_debug (DEBUG_DOMAIN, 
-			      "New contact:'%s' (GOSSIP_CONTACT_TYPE_TEMPORARY)", 
+		gossip_debug (DEBUG_DOMAIN,
+			      "New contact:'%s' (GOSSIP_CONTACT_TYPE_TEMPORARY)",
 			      gossip_jid_get_full (jid));
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY,
 					      priv->account);
-		gossip_contact_set_id (contact, 
+		gossip_contact_set_id (contact,
 				       gossip_jid_get_full (jid));
-		gossip_contact_set_name (contact, 
+		gossip_contact_set_name (contact,
 					 gossip_jid_get_without_resource (jid));
 
 		tmp_new_item = TRUE;
-		
-		g_hash_table_insert (priv->contacts, 
+
+		g_hash_table_insert (priv->contacts,
 				     g_strdup (gossip_jid_get_without_resource (jid)),
 				     g_object_ref (contact));
-		
+
 		if (get_vcard) {
 			/* Request contacts VCard details so we can get the
-			 * real name for them for chat windows, etc 
+			 * real name for them for chat windows, etc
 			 */
 			jabber_contact_vcard (jabber, contact);
 		}
@@ -3345,8 +3345,8 @@ gossip_jabber_get_contact_from_jid (GossipJabber *jabber,
 			break;
 		}
 
-		gossip_debug (DEBUG_DOMAIN, 
-			      "Get contact:'%s', type:%d-->'%s'", 
+		gossip_debug (DEBUG_DOMAIN,
+			      "Get contact:'%s', type:%d-->'%s'",
 			      gossip_jid_get_full (jid), type, type_str);
 	}
 
@@ -3369,7 +3369,7 @@ gossip_jabber_send_presence (GossipJabber   *jabber,
 
 	priv = GET_PRIV (jabber);
 
-	jabber_set_presence (GOSSIP_PROTOCOL (jabber), 
+	jabber_set_presence (GOSSIP_PROTOCOL (jabber),
 			     presence ? presence : priv->presence);
 }
 
@@ -3388,7 +3388,7 @@ gossip_jabber_send_subscribed (GossipJabber  *jabber,
 
 	id = gossip_contact_get_id (contact);
 
-	m = lm_message_new_with_sub_type (id, 
+	m = lm_message_new_with_sub_type (id,
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_SUBSCRIBED);
 
@@ -3408,10 +3408,10 @@ gossip_jabber_send_unsubscribed (GossipJabber  *jabber,
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
 	priv = GET_PRIV (jabber);
-	
+
 	id = gossip_contact_get_id (contact);
 
-	m = lm_message_new_with_sub_type (id, 
+	m = lm_message_new_with_sub_type (id,
 					  LM_MESSAGE_TYPE_PRESENCE,
 					  LM_MESSAGE_SUB_TYPE_UNSUBSCRIBED);
 
@@ -3426,20 +3426,20 @@ gossip_jabber_subscription_allow_all (GossipJabber *jabber)
 	LmMessageHandler *handler;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (jabber));
-	
+
 	priv = GET_PRIV (jabber);
 
 	handler = priv->subscription_handler;
 	if (handler) {
-		lm_connection_unregister_message_handler (priv->connection, 
+		lm_connection_unregister_message_handler (priv->connection,
 							  handler,
 							  LM_MESSAGE_TYPE_PRESENCE);
 		priv->subscription_handler = NULL;
 	}
 
 	/* Set up handler to sliently catch the subscription request */
-	handler = lm_message_handler_new 
-		((LmHandleMessageFunction) jabber_subscription_message_handler, 
+	handler = lm_message_handler_new
+		((LmHandleMessageFunction) jabber_subscription_message_handler,
 		 jabber, NULL);
 
 	lm_connection_register_message_handler (priv->connection,
@@ -3460,7 +3460,7 @@ gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
 	priv = GET_PRIV (jabber);
 
 	if (priv->subscription_handler) {
-		lm_connection_unregister_message_handler (priv->connection, 
+		lm_connection_unregister_message_handler (priv->connection,
 							  priv->subscription_handler,
 							  LM_MESSAGE_TYPE_PRESENCE);
 		priv->subscription_handler = NULL;
@@ -3468,18 +3468,18 @@ gossip_jabber_subscription_disallow_all (GossipJabber *jabber)
 }
 
 /*
- * Private functions 
+ * Private functions
  */
 
 LmConnection *
 gossip_jabber_get_connection (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
-	
+
 	priv = GET_PRIV (jabber);
-	
+
 	return priv->connection;
 }
 
@@ -3491,6 +3491,6 @@ gossip_jabber_get_fts (GossipJabber *jabber)
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
 
 	priv = GET_PRIV (jabber);
-	
+
 	return priv->fts;
 }

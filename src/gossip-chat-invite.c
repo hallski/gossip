@@ -40,7 +40,7 @@ typedef struct {
 	GtkWidget        *entry;
 	GtkWidget        *button;
 } GossipChatInviteDialog;
- 
+
 enum {
 	COL_NAME,
 	COL_CHATROOM_ID,
@@ -63,27 +63,27 @@ static void chat_invite_dialog_response_cb                (GtkWidget            
 static void chat_invite_dialog_destroy_cb                 (GtkWidget              *widget,
 							   GossipChatInviteDialog *dialog);
 
-static void 
+static void
 chat_invite_dialog_model_populate_columns (GossipChatInviteDialog *dialog)
 {
 	GtkTreeView       *view;
 	GtkTreeModel      *model;
-	GtkTreeViewColumn *column; 
+	GtkTreeViewColumn *column;
 	GtkCellRenderer   *renderer;
 	guint              col_offset;
-	
+
 	view = GTK_TREE_VIEW (dialog->treeview);
 	model = gtk_tree_view_get_model (view);
-	
+
 	renderer = gtk_cell_renderer_text_new ();
 	col_offset = gtk_tree_view_insert_column_with_attributes (view,
 								  -1, _("Word"),
-								  renderer, 
+								  renderer,
 								  "text", COL_NAME,
 								  NULL);
-	
+
 	g_object_set_data (G_OBJECT (renderer), "column", GINT_TO_POINTER (COL_NAME));
-	
+
 	column = gtk_tree_view_get_column (GTK_TREE_VIEW (dialog->treeview), col_offset - 1);
 	gtk_tree_view_column_set_sort_column_id (column, COL_NAME);
 	gtk_tree_view_column_set_resizable (column, FALSE);
@@ -114,55 +114,55 @@ chat_invite_dialog_model_populate_suggestions (GossipChatInviteDialog *dialog)
 			g_list_free (list);
 			return;
 		}
-		
+
 		view = GTK_TREE_VIEW (dialog->treeview);
 		store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
-		
+
 		for (l = list; l; l = l->next) {
 			GossipContact *contact = l->data;
 			const gchar   *name;
-			
+
 			if (!gossip_contact_is_online (contact)) {
 				continue;
 			}
-			
+
 			name = gossip_contact_get_name (contact);
 			if (!name && strlen (name) > 0) {
 				continue;
 			}
-		       
+
 			gtk_list_store_append (store, &iter);
-			gtk_list_store_set (store, &iter, 
+			gtk_list_store_set (store, &iter,
 					    COL_NAME, name,
 					    COL_CONTACT, contact,
 					    -1);
-		}	
+		}
 	} else {
 		list = gossip_chatroom_provider_get_rooms (provider);
-		
+
 		if (!list || g_list_length (list) < 1) {
 			g_list_free (list);
 			return;
 		}
-		
+
 		view = GTK_TREE_VIEW (dialog->treeview);
 		store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
-		
+
 		for (l = list; l; l = l->next) {
 			GossipChatroomId  id;
 			GossipChatroom   *chatroom;
 			const gchar      *name;
-			
+
 			id = GPOINTER_TO_INT(l->data);
 			chatroom = gossip_chatroom_provider_find (provider, id);
 			name = gossip_chatroom_get_name (chatroom);
-			
+
 			if (name == NULL || strlen (name) < 1) {
 				continue;
 			}
-			
+
 			gtk_list_store_append (store, &iter);
-			gtk_list_store_set (store, &iter, 
+			gtk_list_store_set (store, &iter,
 					    COL_NAME, name,
 					    COL_CHATROOM_ID, id,
 					    -1);
@@ -192,7 +192,7 @@ chat_invite_dialog_model_selection_changed_cb (GtkTreeSelection      *treeselect
 	gtk_widget_set_sensitive (dialog->button, (count == 1));
 }
 
-static void 
+static void
 chat_invite_dialog_model_setup (GossipChatInviteDialog *dialog)
 {
 	GtkTreeView      *view;
@@ -201,7 +201,7 @@ chat_invite_dialog_model_setup (GossipChatInviteDialog *dialog)
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 
-	g_signal_connect (view, "row-activated", 
+	g_signal_connect (view, "row-activated",
 			  G_CALLBACK (chat_invite_dialog_model_row_activated_cb),
 			  dialog);
 
@@ -209,12 +209,12 @@ chat_invite_dialog_model_setup (GossipChatInviteDialog *dialog)
 				    G_TYPE_STRING,         /* name */
 				    G_TYPE_INT,            /* chatroom id */
 				    GOSSIP_TYPE_CONTACT);  /* contact */
-	
+
 	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
 
 	selection = gtk_tree_view_get_selection (view);
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-	
+
 	g_signal_connect (selection, "changed",
 			  G_CALLBACK (chat_invite_dialog_model_selection_changed_cb),
 			  dialog);
@@ -226,19 +226,19 @@ chat_invite_dialog_model_setup (GossipChatInviteDialog *dialog)
 }
 
 static void
-chat_invite_dialog_destroy_cb (GtkWidget              *widget, 
+chat_invite_dialog_destroy_cb (GtkWidget              *widget,
 			       GossipChatInviteDialog *dialog)
 {
 	if (dialog->contact) {
 		g_object_unref (dialog->contact);
 	}
-	
- 	g_free (dialog); 
+
+	g_free (dialog);
 }
 
 static void
 chat_invite_dialog_response_cb (GtkWidget              *widget,
-				gint                    response, 
+				gint                    response,
 				GossipChatInviteDialog *dialog)
 {
 	if (response == GTK_RESPONSE_OK) {
@@ -259,7 +259,7 @@ chat_invite_dialog_response_cb (GtkWidget              *widget,
 		if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 			return;
 		}
-	
+
 		if (dialog->chatroom_id != 0) {
 			id = dialog->chatroom_id;
 			gtk_tree_model_get (model, &iter, COL_CONTACT, &contact, -1);
@@ -325,7 +325,7 @@ gossip_chat_invite_dialog_show (GossipContact    *contact,
 		GossipAccount          *account;
 		GossipChatroomProvider *provider;
 		GossipChatroom         *chatroom;
-		
+
 		/* Show a list of contacts */
 		session = gossip_app_get_session ();
 		account = gossip_contact_get_account (dialog->contact);
@@ -333,19 +333,19 @@ gossip_chat_invite_dialog_show (GossipContact    *contact,
 		chatroom = gossip_chatroom_provider_find (provider, dialog->chatroom_id);
 
 		name = g_markup_escape_text (gossip_chatroom_get_name (chatroom), -1);
-		str = g_strdup_printf ("%s\n<b>%s</b>", 
+		str = g_strdup_printf ("%s\n<b>%s</b>",
 				       _("Select who would you like to invite to room:"),
 				       name);
 	} else {
 		/* Show a list of rooms */
 		name = g_markup_escape_text (gossip_contact_get_name (dialog->contact), -1);
-		str = g_strdup_printf ("%s\n<b>%s</b>", 
-				       _("Select which room you would like to invite:"),	
+		str = g_strdup_printf ("%s\n<b>%s</b>",
+				       _("Select which room you would like to invite:"),
 				       name);
 	}
 
 	gtk_label_set_markup (GTK_LABEL (dialog->label), str);
-		
+
 	g_free (name);
 	g_free (str);
 

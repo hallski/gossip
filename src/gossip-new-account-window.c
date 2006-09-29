@@ -36,7 +36,7 @@
 typedef struct {
 	GtkWidget      *window;
 	GtkWidget      *druid;
-	
+
 	/* Page one */
 	GtkWidget      *one_page;
 
@@ -44,7 +44,7 @@ typedef struct {
 	GtkWidget      *two_page;
 	GtkWidget      *two_yes_radiobutton;
 	GtkWidget      *two_no_radiobutton;
-	
+
 	/* Page three */
 	GtkWidget      *three_page;
 	GtkWidget      *three_username_label;
@@ -90,7 +90,7 @@ typedef struct {
 
 	/* Connection details */
 	gulong          port_changed_signal_id;
-	gboolean        port_changed; 
+	gboolean        port_changed;
 
 	/* Misc */
 	gboolean        gtk_main_started;
@@ -99,15 +99,15 @@ typedef struct {
 
 #ifdef HAVE_GNOME
 static gboolean new_account_window_progress_pulse_cb   (GtkWidget               *progressbar);
-static void     new_account_window_register_cb         (GossipResult             result, 
+static void     new_account_window_register_cb         (GossipResult             result,
 							GError                  *error,
 							GossipNewAccountWindow  *window);
 static void     new_account_window_register            (GossipNewAccountWindow  *window);
 static void     new_account_window_cancel              (GossipNewAccountWindow  *window);
 static gboolean new_account_window_get_account_info    (GossipNewAccountWindow  *window,
 							GossipAccount          **account);
-static GossipAccountType  
-                new_account_window_get_account_type    (GossipNewAccountWindow  *window); 
+static GossipAccountType
+		new_account_window_get_account_type    (GossipNewAccountWindow  *window);
 
 static void     new_account_window_1_prepare           (GnomeDruidPage          *page,
 							GnomeDruid              *druid,
@@ -149,7 +149,7 @@ static void     new_account_window_destroy             (GtkWidget               
 							GossipNewAccountWindow  *window);
 
 
-static gboolean 
+static gboolean
 new_account_window_progress_pulse_cb (GtkWidget *progressbar)
 {
 	g_return_val_if_fail (GTK_IS_PROGRESS_BAR (progressbar), FALSE);
@@ -159,7 +159,7 @@ new_account_window_progress_pulse_cb (GtkWidget *progressbar)
 }
 
 static void
-new_account_window_register_cb (GossipResult            result, 
+new_account_window_register_cb (GossipResult            result,
 				GError                 *error,
 				GossipNewAccountWindow *window)
 {
@@ -177,24 +177,24 @@ new_account_window_register_cb (GossipResult            result,
 				      GNOME_DRUID_PAGE (window->last_page));
 		return;
 	}
-		
+
 	gtk_image_set_from_stock (GTK_IMAGE (window->six_progress_image),
 				  GTK_STOCK_DIALOG_ERROR,
 				  GTK_ICON_SIZE_BUTTON);
-	
-	gtk_label_set_markup (GTK_LABEL (window->six_progress_label), 
+
+	gtk_label_set_markup (GTK_LABEL (window->six_progress_label),
 			      _("Failed to register your new account settings"));
 
 	if (error && error->message) {
-		gtk_label_set_markup (GTK_LABEL (window->six_error_label), 
+		gtk_label_set_markup (GTK_LABEL (window->six_error_label),
 				      error->message);
 	} else {
 		gtk_label_set_markup (GTK_LABEL (window->six_error_label), "");
 	}
-	
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   TRUE, FALSE, TRUE, FALSE);	
-}	
+
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   TRUE, FALSE, TRUE, FALSE);
+}
 
 static void
 new_account_window_register (GossipNewAccountWindow *window)
@@ -217,7 +217,7 @@ new_account_window_register (GossipNewAccountWindow *window)
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->six_progress_progressbar), 0);
 
-	window->register_pulse_id = 
+	window->register_pulse_id =
 		g_timeout_add (50,
 			       (GSourceFunc) new_account_window_progress_pulse_cb,
 			       window->six_progress_progressbar);
@@ -227,7 +227,7 @@ new_account_window_register (GossipNewAccountWindow *window)
 	vcard = gossip_vcard_new ();
 
 	name = gtk_entry_get_text (GTK_ENTRY (window->three_name_entry));
-	
+
 	last_part = strstr (name, " ");
 	if (last_part) {
 		gint len;
@@ -242,8 +242,8 @@ new_account_window_register (GossipNewAccountWindow *window)
 	gossip_vcard_set_nickname (vcard, nickname);
 
 	g_free (nickname);
-	
-        gossip_session_register_account (session,
+
+	gossip_session_register_account (session,
 					 window->account,
 					 vcard,
 					 (GossipRegisterCallback) new_account_window_register_cb,
@@ -260,7 +260,7 @@ new_account_window_cancel (GossipNewAccountWindow *window)
 	}
 
 	session = gossip_app_get_session ();
-	gossip_session_register_cancel (session, 
+	gossip_session_register_cancel (session,
 					window->account);
 
 	window->registering = FALSE;
@@ -283,7 +283,7 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 	gboolean         use_ssl;
 	gboolean         use_proxy;
 	const gchar     *name;
-	 
+
 	toggle = GTK_TOGGLE_BUTTON (window->two_yes_radiobutton);
 	has_account = gtk_toggle_button_get_active (toggle);
 
@@ -304,14 +304,14 @@ new_account_window_get_account_info (GossipNewAccountWindow  *window,
 
 	toggle = GTK_TOGGLE_BUTTON (window->four_ssl_checkbutton);
 	use_ssl = gtk_toggle_button_get_active (toggle);
-	
+
 	toggle = GTK_TOGGLE_BUTTON (window->four_proxy_checkbutton);
 	use_proxy = gtk_toggle_button_get_active (toggle);
 
 	if (!resource || resource[0] == '\0') {
 		name = _("Home");
 	}
-	
+
 	/* create account */
 	port_int = atoi (port);
 
@@ -339,8 +339,8 @@ new_account_window_get_account_type (GossipNewAccountWindow *window)
 }
 
 static void
-new_account_window_1_prepare (GnomeDruidPage         *page, 
-			      GnomeDruid             *druid, 
+new_account_window_1_prepare (GnomeDruidPage         *page,
+			      GnomeDruid             *druid,
 			      GossipNewAccountWindow *window)
 {
 	gnome_druid_set_buttons_sensitive (druid, FALSE, TRUE, TRUE, FALSE);
@@ -348,7 +348,7 @@ new_account_window_1_prepare (GnomeDruidPage         *page,
 
 static void
 new_account_window_2_prepare (GnomeDruidPage         *page,
-			      GnomeDruid             *druid, 
+			      GnomeDruid             *druid,
 			      GossipNewAccountWindow *window)
 {
 	gboolean first_time;
@@ -359,7 +359,7 @@ new_account_window_2_prepare (GnomeDruidPage         *page,
 
 static void
 new_account_window_3_prepare (GnomeDruidPage         *page,
-				   GnomeDruid             *druid, 
+				   GnomeDruid             *druid,
 				   GossipNewAccountWindow *window)
 {
 	gboolean         ok = TRUE;
@@ -367,7 +367,7 @@ new_account_window_3_prepare (GnomeDruidPage         *page,
 	GtkToggleButton *toggle;
 	gboolean         has_account;
 	const gchar     *example;
-	
+
 	str = gtk_entry_get_text (GTK_ENTRY (window->three_username_entry));
 	ok &= str && strlen (str) > 0;
 
@@ -400,7 +400,7 @@ new_account_window_3_prepare (GnomeDruidPage         *page,
 	if (example) {
 		gchar *str;
 
-		str = g_strdup_printf ("<span size=\"smaller\">%s: %s</span>", 
+		str = g_strdup_printf ("<span size=\"smaller\">%s: %s</span>",
 				       _("Example"), example);
 		gtk_label_set_markup (GTK_LABEL (window->three_example_label), str);
 		g_free (str);
@@ -416,7 +416,7 @@ new_account_window_3_prepare (GnomeDruidPage         *page,
 static void
 new_account_window_4_prepare (GnomeDruidPage         *page,
 			      GnomeDruid             *druid,
-			      GossipNewAccountWindow *window) 
+			      GossipNewAccountWindow *window)
 {
 	GtkToggleButton *toggle;
 	gboolean         use_ssl;
@@ -433,14 +433,14 @@ new_account_window_4_prepare (GnomeDruidPage         *page,
 
 	toggle = GTK_TOGGLE_BUTTON (window->four_ssl_checkbutton);
 	use_ssl = gtk_toggle_button_get_active (toggle);
-	port = gossip_protocol_get_default_port (window->selected_protocol, 
+	port = gossip_protocol_get_default_port (window->selected_protocol,
 						 use_ssl);
 
 	port_str = g_strdup_printf ("%d", port);
-	g_signal_handler_block (window->four_port_entry, 
+	g_signal_handler_block (window->four_port_entry,
 				window->port_changed_signal_id);
 	gtk_entry_set_text (GTK_ENTRY (window->four_port_entry), port_str);
-	g_signal_handler_unblock (window->four_port_entry, 
+	g_signal_handler_unblock (window->four_port_entry,
 				  window->port_changed_signal_id);
 	g_free (port_str);
 
@@ -452,7 +452,7 @@ new_account_window_4_prepare (GnomeDruidPage         *page,
 static void
 new_account_window_5_prepare (GnomeDruidPage         *page,
 			      GnomeDruid             *druid,
-			      GossipNewAccountWindow *window) 
+			      GossipNewAccountWindow *window)
 {
 	gtk_widget_grab_focus (window->five_name_entry);
 	new_account_window_cancel (window);
@@ -461,12 +461,12 @@ new_account_window_5_prepare (GnomeDruidPage         *page,
 static void
 new_account_window_6_prepare (GnomeDruidPage         *page,
 			      GnomeDruid             *druid,
-			      GossipNewAccountWindow *window) 
+			      GossipNewAccountWindow *window)
 {
 	GossipAccount *account;
 	gboolean       has_account;
 
-	has_account = new_account_window_get_account_info (window, &account); 
+	has_account = new_account_window_get_account_info (window, &account);
 
 	if (window->account) {
 		g_object_unref (window->account);
@@ -475,7 +475,7 @@ new_account_window_6_prepare (GnomeDruidPage         *page,
 	window->account = account;
 
 	gnome_druid_set_show_finish (GNOME_DRUID (window->druid), FALSE);
-	gnome_druid_set_buttons_sensitive (druid, FALSE, FALSE, TRUE, FALSE); 
+	gnome_druid_set_buttons_sensitive (druid, FALSE, FALSE, TRUE, FALSE);
 
 	if (!has_account) {
 		new_account_window_register (window);
@@ -503,7 +503,7 @@ new_account_window_last_page_finished (GnomeDruidPage         *page,
 	GossipAccountManager *manager;
 
 	session = gossip_app_get_session ();
- 	manager = gossip_session_get_account_manager (session);
+	manager = gossip_session_get_account_manager (session);
 
 	gossip_account_manager_add (manager, window->account);
 	gossip_account_manager_store (manager);
@@ -515,16 +515,16 @@ new_account_window_last_page_finished (GnomeDruidPage         *page,
 	gtk_widget_destroy (window->window);
 }
 
-static void  
+static void
 new_account_window_port_insert_text (GtkEditable            *editable,
 				     gchar                  *new_text,
 				     gint                    len,
 				     gint                   *position,
 				     GossipNewAccountWindow *window)
 {
-	gchar *ch; 
+	gchar *ch;
 	gint   i;
-	
+
 	for (i = 0; i < len; ++i) {
 		ch = new_text + i;
 
@@ -556,14 +556,14 @@ new_account_window_ssl_toggled (GtkToggleButton        *button,
 
 	use_ssl = gtk_toggle_button_get_active (button);
 
-	port = gossip_protocol_get_default_port (window->selected_protocol, 
+	port = gossip_protocol_get_default_port (window->selected_protocol,
 						 use_ssl);
-	
+
 	port_str = g_strdup_printf ("%d", port);
-	g_signal_handler_block (window->four_port_entry, 
+	g_signal_handler_block (window->four_port_entry,
 				window->port_changed_signal_id);
 	gtk_entry_set_text (GTK_ENTRY (window->four_port_entry), port_str);
-	g_signal_handler_unblock (window->four_port_entry, 
+	g_signal_handler_unblock (window->four_port_entry,
 				  window->port_changed_signal_id);
 	g_free (port_str);
 }
@@ -580,9 +580,9 @@ new_account_window_entry_3_changed (GtkEntry               *entry,
 	/* Passwords can be empty since it allows the user to be
 	 * prompted when they connect to a server and also means the
 	 * password is not stored on the machine if it is a public
-	 * computer. 
+	 * computer.
 	 */
-	
+
 	username = gtk_entry_get_text (GTK_ENTRY (window->three_username_entry));
 	ok &= username && strlen (username) > 0;
 	ok &= gossip_protocol_is_valid_username (window->selected_protocol, username);
@@ -608,7 +608,7 @@ new_account_window_entry_changed (GtkEntry               *entry,
 {
 	const gchar *str;
 	gboolean     ok = TRUE;
-	
+
 	str = gtk_entry_get_text (entry);
 	ok &= str && strlen (str) > 0;
 
@@ -692,7 +692,7 @@ gossip_new_account_window_show (GtkWindow *parent)
 	gboolean                ssl_supported;
 
 	window = g_new0 (GossipNewAccountWindow, 1);
-	
+
 	glade = gossip_glade_get_file ("main.glade",
 				       "new_account_window",
 				       NULL,
@@ -729,7 +729,7 @@ gossip_new_account_window_show (GtkWindow *parent)
 				       "last_action_label", &window->last_action_label,
 				       NULL);
 
-	gossip_glade_connect (glade, 
+	gossip_glade_connect (glade,
 			      window,
 			      "new_account_window", "destroy", new_account_window_destroy,
 			      "druid", "cancel", new_account_window_druid_cancel,
@@ -767,8 +767,8 @@ gossip_new_account_window_show (GtkWindow *parent)
 				G_CALLBACK (new_account_window_last_page_prepare),
 				window);
 
-	window->port_changed_signal_id = 
-		g_signal_connect (window->four_port_entry, "changed", 
+	window->port_changed_signal_id =
+		g_signal_connect (window->four_port_entry, "changed",
 				  G_CALLBACK (new_account_window_port_changed),
 				  window);
 
@@ -777,12 +777,12 @@ gossip_new_account_window_show (GtkWindow *parent)
 				      window);
 
 	druid = GNOME_DRUID (window->druid);
-	
-	g_object_set (G_OBJECT (druid->next), 
+
+	g_object_set (G_OBJECT (druid->next),
 		      "can-default", TRUE,
 		      "has-default", TRUE,
 		      NULL);
-	
+
 	/* set default account type */
 	type = new_account_window_get_account_type (window);
 	window->selected_protocol = gossip_protocol_new_from_account_type (type);
@@ -793,10 +793,10 @@ gossip_new_account_window_show (GtkWindow *parent)
 
 	/* set the position, either center on screen on startup, or on the parent window */
 	if (parent != NULL) {
-		gtk_window_set_transient_for (GTK_WINDOW (window->window), 
+		gtk_window_set_transient_for (GTK_WINDOW (window->window),
 					      parent);
 	} else {
-		gtk_window_set_position (GTK_WINDOW (window->window), 
+		gtk_window_set_position (GTK_WINDOW (window->window),
 					 GTK_WIN_POS_CENTER);
 	}
 

@@ -87,7 +87,7 @@ new_message_dialog_update_buttons (GossipNewMessageDialog *dialog)
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
 	gboolean          can_chat = FALSE;
-	const gchar      *text;       
+	const gchar      *text;
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -171,7 +171,7 @@ new_message_dialog_filter_func (GtkTreeModel           *model,
 	    strstr (name_nocase, text_nocase)) {
 		found = TRUE;
 	}
-	
+
 	g_object_unref (contact);
 
 	g_free (id_nocase);
@@ -181,13 +181,13 @@ new_message_dialog_filter_func (GtkTreeModel           *model,
 	return found;
 }
 
-static void 
+static void
 new_message_dialog_row_activated (GtkTreeView            *view,
 				  GtkTreePath            *path,
 				  GtkTreeViewColumn      *column,
 				  GossipNewMessageDialog *dialog)
 {
-	new_message_dialog_response (dialog->dialog, 
+	new_message_dialog_response (dialog->dialog,
 				     GTK_RESPONSE_OK,
 				     dialog);
 }
@@ -211,18 +211,18 @@ new_message_dialog_setup_contacts (GossipNewMessageDialog *dialog)
 	for (l = contacts; l; l = l->next) {
 		GossipContact *contact;
 		GtkTreeIter    iter;
-		
+
 		contact = l->data;
 
 		gtk_list_store_append (dialog->store, &iter);
-		gtk_list_store_set (dialog->store, &iter, 
+		gtk_list_store_set (dialog->store, &iter,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    COL_POINTER, contact,
 				    -1);
 	}
 }
 
-static void 
+static void
 new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 {
 	GtkTreeView       *view;
@@ -231,7 +231,7 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 	GtkTreeSortable   *sortable;
 	GtkTreeViewColumn *column;
 	GtkListStore      *store;
-	GtkCellRenderer   *cell;	
+	GtkCellRenderer   *cell;
 
 	view = GTK_TREE_VIEW (dialog->treeview);
 	selection = gtk_tree_view_get_selection (view);
@@ -263,44 +263,44 @@ new_message_dialog_setup_view (GossipNewMessageDialog *dialog)
 
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, cell, FALSE);
-	gtk_tree_view_column_set_cell_data_func (column, cell, 
-						 (GtkTreeCellDataFunc) 
+	gtk_tree_view_column_set_cell_data_func (column, cell,
+						 (GtkTreeCellDataFunc)
 						 new_message_dialog_pixbuf_data_func,
-						 dialog, 
+						 dialog,
 						 NULL);
 
 	cell = gtk_cell_renderer_text_new ();
 	g_object_set (cell, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_tree_view_column_pack_start (column, cell, TRUE);
-	gtk_tree_view_column_set_cell_data_func (column, cell, 
-						 (GtkTreeCellDataFunc) 
+	gtk_tree_view_column_set_cell_data_func (column, cell,
+						 (GtkTreeCellDataFunc)
 						 new_message_dialog_text_data_func,
-						 dialog, 
+						 dialog,
 						 NULL);
 
 	gtk_tree_view_append_column (view, column);
 
 	/* set up treeview properties */
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-	gtk_tree_sortable_set_sort_column_id (sortable, 
-					      COL_NAME, 
+	gtk_tree_sortable_set_sort_column_id (sortable,
+					      COL_NAME,
 					      GTK_SORT_ASCENDING);
 
 	/* set up signals */
-	g_signal_connect (view, "row-activated", 
-			  G_CALLBACK (new_message_dialog_row_activated), 
+	g_signal_connect (view, "row-activated",
+			  G_CALLBACK (new_message_dialog_row_activated),
 			  dialog);
 
-	g_signal_connect (selection, "changed", 
-			  G_CALLBACK (new_message_dialog_selection_changed), 
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (new_message_dialog_selection_changed),
 			  dialog);
 
 	dialog->store = store;
 	dialog->filter = filter;
 }
 
-static void 
-new_message_dialog_name_entry_changed (GtkEntry               *entry, 
+static void
+new_message_dialog_name_entry_changed (GtkEntry               *entry,
 				       GossipNewMessageDialog *dialog)
 {
 	GtkTreeView  *view;
@@ -311,7 +311,7 @@ new_message_dialog_name_entry_changed (GtkEntry               *entry,
 	view = GTK_TREE_VIEW (dialog->treeview);
 	model = gtk_tree_view_get_model (view);
 
-        if (gtk_tree_model_iter_n_children (model, NULL) > 0) {
+	if (gtk_tree_model_iter_n_children (model, NULL) > 0) {
 		GtkTreeSelection *selection;
 		GtkTreeIter       iter;
 
@@ -327,12 +327,12 @@ static void
 new_message_dialog_destroy (GtkWidget              *widget,
 			    GossipNewMessageDialog *dialog)
 {
- 	g_free (dialog); 
+	g_free (dialog);
 }
 
 static void
-new_message_dialog_response (GtkWidget              *widget, 
-			     gint                    response, 
+new_message_dialog_response (GtkWidget              *widget,
+			     gint                    response,
 			     GossipNewMessageDialog *dialog)
 {
 	GtkTreeView       *view;
@@ -341,7 +341,7 @@ new_message_dialog_response (GtkWidget              *widget,
 	GtkTreeIter        iter;
 	GossipContact     *contact;
 	GossipChatManager *chat_manager;
-	
+
 	if (response != GTK_RESPONSE_OK) {
 		gtk_widget_destroy (dialog->dialog);
 		return;
@@ -356,28 +356,28 @@ new_message_dialog_response (GtkWidget              *widget,
 		GossipAccount        *account;
 		GossipAccountChooser *accounts_chooser;
 		const gchar          *text;
-		
+
 		accounts_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->accounts_chooser);
 		account = gossip_account_chooser_get_account (accounts_chooser);
-		
+
 		text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
-		
+
 		contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
 		if (contact) {
 			gossip_contact_set_id (contact, text);
 		}
 	} else {
-		gtk_tree_model_get (model, &iter, 
-				    COL_POINTER, &contact, 
+		gtk_tree_model_get (model, &iter,
+				    COL_POINTER, &contact,
 				    -1);
 	}
-	
+
 	gtk_widget_destroy (dialog->dialog);
 
 	if (contact) {
 		chat_manager = gossip_app_get_chat_manager ();
 		gossip_chat_manager_show_chat (chat_manager, contact);
-		
+
 		g_object_unref (contact);
 	}
 }
@@ -391,7 +391,7 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 	GladeXML               *ui;
 
 	dialog = g_new0 (GossipNewMessageDialog, 1);
-     
+
 	ui = gossip_glade_get_file ("main.glade",
 				    "new_message_dialog",
 				    NULL,
@@ -418,11 +418,11 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 	session = gossip_app_get_session ();
 
 	dialog->accounts_chooser = gossip_account_chooser_new (session);
-	gtk_box_pack_start (GTK_BOX (dialog->accounts_vbox), 
+	gtk_box_pack_start (GTK_BOX (dialog->accounts_vbox),
 			    dialog->accounts_chooser,
 			    TRUE, TRUE, 0);
 	gtk_widget_show (dialog->accounts_chooser);
-	
+
 	accounts = gossip_session_get_accounts (session);
 	if (g_list_length (accounts) > 1) {
 		gtk_widget_show (dialog->accounts_vbox);
@@ -430,12 +430,12 @@ gossip_new_message_dialog_show (GtkWindow *parent)
 		/* show no accounts combo box */
 		gtk_widget_hide (dialog->accounts_vbox);
 	}
-	
+
 	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
 	if (parent) {
-		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
 	}
 
 	gtk_widget_show (dialog->dialog);

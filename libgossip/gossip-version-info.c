@@ -27,7 +27,7 @@
 #define GOSSIP_VERSION_INFO_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_VERSION_INFO, GossipVersionInfoPriv))
 
 typedef struct _GossipVersionInfoPriv GossipVersionInfoPriv;
-struct _GossipVersionInfoPriv { 
+struct _GossipVersionInfoPriv {
 	gchar *name;
 	gchar *version;
 	gchar *os;
@@ -101,13 +101,13 @@ gossip_version_info_init (GossipVersionInfo *VERSION_INFO)
 	priv->os      = NULL;
 }
 
-static void                
+static void
 version_info_finalize (GObject *object)
 {
 	GossipVersionInfoPriv *priv;
 
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (object);
-	
+
 	g_free (priv->name);
 	g_free (priv->version);
 	g_free (priv->os);
@@ -138,7 +138,7 @@ version_info_get_property (GObject    *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};		
+	};
 }
 
 static void
@@ -153,21 +153,21 @@ version_info_set_property (GObject      *object,
 
 	switch (param_id) {
 	case PROP_NAME:
-		gossip_version_info_set_name (GOSSIP_VERSION_INFO (object), 
+		gossip_version_info_set_name (GOSSIP_VERSION_INFO (object),
 					      g_value_get_string (value));
 		break;
 	case PROP_VERSION:
-		gossip_version_info_set_version (GOSSIP_VERSION_INFO (object), 
+		gossip_version_info_set_version (GOSSIP_VERSION_INFO (object),
 						 g_value_get_string (value));
 		break;
 	case PROP_OS:
-		gossip_version_info_set_os (GOSSIP_VERSION_INFO (object), 
+		gossip_version_info_set_os (GOSSIP_VERSION_INFO (object),
 					    g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};		
+	};
 }
 
 GossipVersionInfo *
@@ -182,7 +182,7 @@ gossip_version_info_get_name (GossipVersionInfo *info)
 	GossipVersionInfoPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VERSION_INFO (info), NULL);
-	
+
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (info);
 
 	return priv->name;
@@ -195,7 +195,7 @@ gossip_version_info_set_name (GossipVersionInfo *info, const gchar *name)
 
 	g_return_if_fail (GOSSIP_IS_VERSION_INFO (info));
 	g_return_if_fail (name != NULL);
-	
+
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (info);
 
 	g_free (priv->name);
@@ -203,12 +203,12 @@ gossip_version_info_set_name (GossipVersionInfo *info, const gchar *name)
 }
 
 const gchar *
-gossip_version_info_get_version (GossipVersionInfo *info) 
+gossip_version_info_get_version (GossipVersionInfo *info)
 {
 	GossipVersionInfoPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VERSION_INFO (info), NULL);
-	
+
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (info);
 
 	return priv->version;
@@ -229,12 +229,12 @@ gossip_version_info_set_version (GossipVersionInfo *info, const gchar *version)
 }
 
 const gchar *
-gossip_version_info_get_os (GossipVersionInfo *info) 
+gossip_version_info_get_os (GossipVersionInfo *info)
 {
 	GossipVersionInfoPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VERSION_INFO (info), NULL);
-	
+
 	priv = GOSSIP_VERSION_INFO_GET_PRIV (info);
 
 	return priv->os;
@@ -261,7 +261,7 @@ gossip_version_info_get_own (void)
 
 	if (!info) {
 		struct utsname osinfo;
-		
+
 		uname (&osinfo);
 		info = g_object_new (GOSSIP_TYPE_VERSION_INFO,
 				     "name", "Imendio Gossip",

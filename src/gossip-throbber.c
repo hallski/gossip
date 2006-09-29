@@ -1,5 +1,5 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 8; tab-width: 8 -*- */
-/* 
+/*
  * Copyright (C) 2000 Eazel, Inc.
  *
  * This program is free software; you can redistribute it and/or
@@ -33,12 +33,12 @@ struct GossipThrobberDetails {
 	GList	  *image_list;
 
 	GdkPixbuf *quiescent_pixbuf;
-	
+
 	int	   max_frame;
 	int	   delay;
-	int	   current_frame;	
+	int	   current_frame;
 	guint	   timer_task;
-	
+
 	gboolean   ready;
 	gboolean   small_mode;
 
@@ -60,7 +60,7 @@ is_throbbing (GossipThrobber *throbber)
 }
 
 static void
-get_throbber_dimensions (GossipThrobber *throbber, 
+get_throbber_dimensions (GossipThrobber *throbber,
 			 gint           *throbber_width,
 			 gint           *throbber_height)
 {
@@ -68,7 +68,7 @@ get_throbber_dimensions (GossipThrobber *throbber,
 	GdkPixbuf *pixbuf;
 	int        current_width, current_height;
 	int        pixbuf_width, pixbuf_height;
-	
+
 	current_width = 0;
 	current_height = 0;
 
@@ -84,16 +84,16 @@ get_throbber_dimensions (GossipThrobber *throbber,
 		pixbuf = GDK_PIXBUF (image_list->data);
 		pixbuf_width = gdk_pixbuf_get_width (pixbuf);
 		pixbuf_height = gdk_pixbuf_get_height (pixbuf);
-		
+
 		if (pixbuf_width > current_width) {
 			current_width = pixbuf_width;
 		}
-		
+
 		if (pixbuf_height > current_height) {
 			current_height = pixbuf_height;
 		}
 	}
-		
+
 	*throbber_width = current_width;
 	*throbber_height = current_height;
 }
@@ -102,18 +102,18 @@ static void
 gossip_throbber_init (GossipThrobber *throbber)
 {
 	GtkWidget *widget = GTK_WIDGET (throbber);
-	
+
 	GTK_WIDGET_UNSET_FLAGS (throbber, GTK_NO_WINDOW);
 
-	gtk_widget_set_events (widget, 
+	gtk_widget_set_events (widget,
 			       gtk_widget_get_events (widget)
 			       | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK
 			       | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK);
-	
+
 	throbber->details = g_new0 (GossipThrobberDetails, 1);
-	
+
 	throbber->details->delay = THROBBER_DEFAULT_TIMEOUT;
-	
+
 	throbber->details->icon_theme_changed_tag =
 		g_signal_connect (gtk_icon_theme_get_default (),
 				  "changed",
@@ -132,7 +132,7 @@ gossip_throbber_theme_changed (GtkIconTheme   *icon_theme,
 	gtk_widget_hide (GTK_WIDGET (throbber));
 	gossip_throbber_load_images (throbber);
 
-	gtk_widget_show (GTK_WIDGET (throbber));	
+	gtk_widget_show (GTK_WIDGET (throbber));
 	gtk_widget_queue_resize ( GTK_WIDGET (throbber));
 }
 
@@ -148,18 +148,18 @@ select_throbber_image (GossipThrobber *throbber)
 			return g_object_ref (throbber->details->quiescent_pixbuf);
 		}
 	}
-	
+
 	if (throbber->details->image_list == NULL) {
 		return NULL;
 	}
-	
+
 	element = g_list_nth (throbber->details->image_list, throbber->details->current_frame);
-	
+
 	return g_object_ref (element->data);
 }
 
 static int
-gossip_throbber_expose (GtkWidget      *widget, 
+gossip_throbber_expose (GtkWidget      *widget,
 			GdkEventExpose *event)
 {
 	GossipThrobber *throbber;
@@ -195,7 +195,7 @@ gossip_throbber_expose (GtkWidget      *widget,
 		g_object_unref (pixbuf);
 		return FALSE;
 	}
-	
+
 	gdk_draw_pixbuf (widget->window, NULL, pixbuf,
 			 dest.x - x_offset, dest.y - y_offset,
 			 dest.x, dest.y,
@@ -211,14 +211,14 @@ static void
 gossip_throbber_map (GtkWidget *widget)
 {
 	GossipThrobber *throbber;
-	
+
 	throbber = GOSSIP_THROBBER (widget);
-	
+
 	GTK_WIDGET_CLASS (gossip_throbber_parent_class)->map (widget);
 	throbber->details->ready = TRUE;
 }
 
-static gboolean 
+static gboolean
 bump_throbber_frame (gpointer callback_data)
 {
 	GossipThrobber *throbber;
@@ -247,7 +247,7 @@ gossip_throbber_start (GossipThrobber *throbber)
 	if (throbber->details->timer_task != 0) {
 		g_source_remove (throbber->details->timer_task);
 	}
-	
+
 	/* reset the frame count */
 	throbber->details->current_frame = 0;
 	throbber->details->timer_task = g_timeout_add_full (G_PRIORITY_HIGH,
@@ -263,7 +263,7 @@ gossip_throbber_remove_update_callback (GossipThrobber *throbber)
 	if (throbber->details->timer_task != 0) {
 		g_source_remove (throbber->details->timer_task);
 	}
-	
+
 	throbber->details->timer_task = 0;
 }
 
@@ -294,13 +294,13 @@ gossip_throbber_unload_images (GossipThrobber *throbber)
 		g_object_unref (current_entry->data);
 		current_entry = current_entry->next;
 	}
-	
+
 	g_list_free (throbber->details->image_list);
 	throbber->details->image_list = NULL;
 }
 
 static GdkPixbuf *
-scale_to_real_size (GossipThrobber *throbber, 
+scale_to_real_size (GossipThrobber *throbber,
 		    GdkPixbuf      *pixbuf)
 {
 	GdkPixbuf *result;
@@ -362,14 +362,14 @@ gossip_throbber_load_images (GossipThrobber *throbber)
 	size = gtk_icon_info_get_base_size (icon_info);
 	icon = gtk_icon_info_get_filename (icon_info);
 	g_return_if_fail (icon != NULL);
-	
+
 	icon_pixbuf = gdk_pixbuf_new_from_file (icon, NULL);
 	if (icon_pixbuf == NULL) {
 		g_warning ("Could not load the spinner file\n");
 		gtk_icon_info_free (icon_info);
 		return;
 	}
-	
+
 	grid_width = gdk_pixbuf_get_width (icon_pixbuf);
 	grid_height = gdk_pixbuf_get_height (icon_pixbuf);
 
@@ -412,7 +412,7 @@ gossip_throbber_load_images (GossipThrobber *throbber)
 
 /* Note: this doesn't do anything in gossip's version. */
 void
-gossip_throbber_set_small_mode (GossipThrobber *throbber, 
+gossip_throbber_set_small_mode (GossipThrobber *throbber,
 				gboolean        new_mode)
 {
 	if (new_mode != throbber->details->small_mode) {
@@ -424,7 +424,7 @@ gossip_throbber_set_small_mode (GossipThrobber *throbber,
 }
 
 static void
-gossip_throbber_size_request (GtkWidget      *widget, 
+gossip_throbber_size_request (GtkWidget      *widget,
 			      GtkRequisition *requisition)
 {
 	GossipThrobber *throbber;;
@@ -432,10 +432,10 @@ gossip_throbber_size_request (GtkWidget      *widget,
 
 	throbber = GOSSIP_THROBBER (widget);
 	get_throbber_dimensions (throbber, &throbber_width, &throbber_height);
-	
+
 	/* Allocate some extra margin so we don't butt up against toolbar edges */
 	requisition->width = throbber_width; /* Patch out for gossip: + 8;*/
-   	requisition->height = throbber_height;
+	requisition->height = throbber_height;
 }
 
 static void
@@ -447,7 +447,7 @@ gossip_throbber_finalize (GObject *object)
 
 	gossip_throbber_remove_update_callback (throbber);
 	gossip_throbber_unload_images (throbber);
-	
+
 	if (throbber->details->icon_theme_changed_tag != 0) {
 		g_signal_handler_disconnect (gtk_icon_theme_get_default (),
 					     throbber->details->icon_theme_changed_tag);
@@ -465,11 +465,11 @@ gossip_throbber_class_init (GossipThrobberClass *class)
 	GtkWidgetClass *widget_class;
 
 	widget_class = GTK_WIDGET_CLASS (class);
-	
+
 	G_OBJECT_CLASS (class)->finalize = gossip_throbber_finalize;
 
 	widget_class->expose_event = gossip_throbber_expose;
-	widget_class->size_request = gossip_throbber_size_request;	
+	widget_class->size_request = gossip_throbber_size_request;
 	widget_class->map          = gossip_throbber_map;
 }
 

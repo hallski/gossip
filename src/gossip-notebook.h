@@ -3,7 +3,7 @@
  * The source code in this file is based on code contained in the file
  * ephy-notebook.h, as part of the Epiphany web browser.
  * Changes from the original source code are:
- * 
+ *
  * Copyright (C) 2003 Geert-Jan Van den Bogaerde <gvdbogaerde@pandora.be>
  *
  * The original source code is:
@@ -47,27 +47,27 @@ typedef struct _GossipNotebookPriv GossipNotebookPriv;
 
 enum
 {
-        GOSSIP_NOTEBOOK_INSERT_LAST = -1,
+	GOSSIP_NOTEBOOK_INSERT_LAST = -1,
 };
 
 struct _GossipNotebook
 {
-        GtkNotebook parent;
-        GossipNotebookPriv *priv;
+	GtkNotebook parent;
+	GossipNotebookPriv *priv;
 };
 
 struct _GossipNotebookClass
 {
-        GtkNotebookClass parent_class;
+	GtkNotebookClass parent_class;
 
-        /* Signals */
-        void (* tab_added)      (GossipNotebook *notebook,
-                                 GtkWidget      *child);
-        void (* tab_removed)    (GossipNotebook *notebook,
-                                 GtkWidget      *child);
-        void (* tab_detached)   (GossipNotebook *notebook,
-                                 GtkWidget      *child);
-        void (* tabs_reordered) (GossipNotebook *notebook);
+	/* Signals */
+	void (* tab_added)      (GossipNotebook *notebook,
+				 GtkWidget      *child);
+	void (* tab_removed)    (GossipNotebook *notebook,
+				 GtkWidget      *child);
+	void (* tab_detached)   (GossipNotebook *notebook,
+				 GtkWidget      *child);
+	void (* tabs_reordered) (GossipNotebook *notebook);
 };
 
 GType           gossip_notebook_get_type        (void);
@@ -75,28 +75,28 @@ GType           gossip_notebook_get_type        (void);
 GtkWidget      *gossip_notebook_new             (void);
 
 void            gossip_notebook_insert_page     (GossipNotebook *notebook,
-                                                 GtkWidget      *child,
-                                                 GtkWidget      *label,
-                                                 gint            position,
-                                                 gboolean        jump_to);
+						 GtkWidget      *child,
+						 GtkWidget      *label,
+						 gint            position,
+						 gboolean        jump_to);
 
 void            gossip_notebook_remove_page     (GossipNotebook *notebook,
-                                                 GtkWidget      *child);
+						 GtkWidget      *child);
 
 void            gossip_notebook_move_page       (GossipNotebook *notebook,
-                                                 GossipNotebook *dest,
-                                                 GtkWidget      *child,
-                                                 gint            dest_page);
+						 GossipNotebook *dest,
+						 GtkWidget      *child,
+						 gint            dest_page);
 
 void            gossip_notebook_set_show_tabs   (GossipNotebook *notebook,
-                                                 gboolean        show_tabs);
+						 gboolean        show_tabs);
 
 GtkWidget      *gossip_notebook_get_tab_label   (GossipNotebook *notebook,
-                                                 GtkWidget      *child);
+						 GtkWidget      *child);
 
 void            gossip_notebook_set_tab_label   (GossipNotebook *notebook,
-                                                 GtkWidget      *child,
-                                                 GtkWidget      *label);
+						 GtkWidget      *child,
+						 GtkWidget      *label);
 
 G_END_DECLS
 

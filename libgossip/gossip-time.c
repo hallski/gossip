@@ -42,7 +42,7 @@ gossip_time_parse (const gchar *str)
 	struct tm tm;
 	gint      year, month;
 	gint      n_parsed;
-	
+
 	memset (&tm, 0, sizeof (struct tm));
 
 	n_parsed = sscanf (str, "%4d%2d%2dT%2d:%2d:%2d",
@@ -51,12 +51,12 @@ gossip_time_parse (const gchar *str)
 	if (n_parsed != 3 && n_parsed != 6) {
 		return 0;
 	}
-	
+
 	tm.tm_year = year - 1900;
 	tm.tm_mon = month - 1;
 	tm.tm_isdst = -1;
 
- 	return timegm (&tm);
+	return timegm (&tm);
 }
 
 /* Converts the UTC timestamp to a string, also in UTC. Returns NULL on failure. */
@@ -68,12 +68,12 @@ gossip_time_to_string_utc (gossip_time_t  t,
 	struct tm *tm;
 
 	g_return_val_if_fail (format != NULL, NULL);
-	
+
 	tm = gmtime (&t);
 	if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
 		return NULL;
 	}
-	
+
 	return g_strdup (stamp);
 }
 
@@ -86,12 +86,12 @@ gossip_time_to_string_local (gossip_time_t  t,
 	struct tm *tm;
 
 	g_return_val_if_fail (format != NULL, NULL);
-	
+
 	tm = localtime (&t);
 	if (strftime (stamp, sizeof (stamp), format, tm) == 0) {
 		return NULL;
 	}
-	
+
 	return g_strdup (stamp);
 }
 

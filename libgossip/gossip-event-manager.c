@@ -34,7 +34,7 @@ struct _GossipEventManagerPriv {
 
 enum {
 	EVENT_ADDED,
-	EVENT_REMOVED, 
+	EVENT_REMOVED,
 	LAST_SIGNAL
 };
 
@@ -69,26 +69,26 @@ gossip_event_manager_class_init (GossipEventManagerClass *klass)
 
 	object_class->finalize = event_manager_finalize;
 
-	signals[EVENT_ADDED] = 
+	signals[EVENT_ADDED] =
 		g_signal_new ("event-added",
-                              G_TYPE_FROM_CLASS (klass),
+			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
-                              NULL, NULL,
+			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_EVENT);
-        signals[EVENT_REMOVED] = 
+	signals[EVENT_REMOVED] =
 		g_signal_new ("event-removed",
 			      G_TYPE_FROM_CLASS (klass),
-                              G_SIGNAL_RUN_LAST,
-			      0, 
+			      G_SIGNAL_RUN_LAST,
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_EVENT);
 
-	g_type_class_add_private (object_class, 
+	g_type_class_add_private (object_class,
 				  sizeof (GossipEventManagerPriv));
 }
 
@@ -99,7 +99,7 @@ gossip_event_manager_init (GossipEventManager *manager)
 
 	priv = GET_PRIV (manager);
 
-	priv->events = g_hash_table_new_full (gossip_event_hash, 
+	priv->events = g_hash_table_new_full (gossip_event_hash,
 					      gossip_event_equal,
 					      g_object_unref,
 					      (GDestroyNotify) event_manager_free_event);
@@ -109,7 +109,7 @@ static void
 event_manager_finalize (GObject *object)
 {
 	GossipEventManagerPriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	g_hash_table_destroy (priv->events);
@@ -162,7 +162,7 @@ gossip_event_manager_add (GossipEventManager          *manager,
 
 void
 gossip_event_manager_remove (GossipEventManager *manager,
-			     GossipEvent        *event, 
+			     GossipEvent        *event,
 			     GObject            *object)
 {
 	GossipEventManagerPriv *priv;
@@ -183,10 +183,10 @@ gossip_event_manager_remove (GossipEventManager *manager,
 	g_hash_table_remove (priv->events, event);
 }
 
-void 
-gossip_event_manager_activate (GossipEventManager *manager, 
+void
+gossip_event_manager_activate (GossipEventManager *manager,
 			       GossipEvent        *event)
-{	
+{
 	GossipEventManagerPriv *priv;
 	EventData              *data;
 	GObject                *issuer;
@@ -227,7 +227,7 @@ event_manager_find_foreach (GossipEvent *event,
 	return FALSE;
 }
 
-void        
+void
 gossip_event_manager_activate_by_id (GossipEventManager *manager,
 				     GossipEventId       event_id)
 {
@@ -240,17 +240,17 @@ gossip_event_manager_activate_by_id (GossipEventManager *manager,
 
 	priv = GET_PRIV (manager);
 
-	data = g_hash_table_find (priv->events, 
-				  (GHRFunc) event_manager_find_foreach, 
+	data = g_hash_table_find (priv->events,
+				  (GHRFunc) event_manager_find_foreach,
 				  GINT_TO_POINTER (event_id));
-	
+
 	if (!data) {
 		return;
 	}
 
 	event = g_object_ref (data->event);
 	issuer = g_object_ref (data->issuer);
-	
+
 	(data->callback) (manager, data->event, data->issuer);
 
 	gossip_event_manager_remove (manager, event, issuer);
@@ -279,21 +279,21 @@ gossip_event_manager_get_events (GossipEventManager *manager)
 
 	priv = GET_PRIV (manager);
 
-	g_hash_table_foreach (priv->events, 
+	g_hash_table_foreach (priv->events,
 			      (GHFunc) event_manager_get_events_foreach_cb,
 			      &list);
 
 	return list;
 }
 
-guint 
+guint
 gossip_event_manager_get_event_count (GossipEventManager *manager)
 {
 	GossipEventManagerPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_EVENT_MANAGER (manager), 0);
-	
+
 	priv = GET_PRIV (manager);
-	
+
 	return g_hash_table_size (priv->events);
 }

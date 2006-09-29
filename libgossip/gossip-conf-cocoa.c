@@ -27,7 +27,7 @@
 #include "gossip-conf.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-                       GOSSIP_TYPE_CONF, GossipConfPriv))
+		       GOSSIP_TYPE_CONF, GossipConfPriv))
 
 #define POOL_ALLOC   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]
 #define POOL_RELEASE [pool release]
@@ -78,7 +78,7 @@ gossip_conf_init (GossipConf *conf)
 	 * instead of in the GUI, or have a way for the GUI to register
 	 * them.
 	 */
-	
+
 #define GOSSIP_PREFS_PATH "/apps/gossip"
 
 #define GOSSIP_PREFS_SOUNDS_FOR_MESSAGES          GOSSIP_PREFS_PATH "/notifications/sounds_for_messages"
@@ -98,7 +98,7 @@ gossip_conf_init (GossipConf *conf)
 #define GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW      GOSSIP_PREFS_PATH "/hints/close_main_window"
 
 	dict = [NSDictionary dictionaryWithObjectsAndKeys:
-		@"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES, 
+		@"YES", @GOSSIP_PREFS_SOUNDS_FOR_MESSAGES,
 		@"NO", @GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
 		@"NO", @GOSSIP_PREFS_SOUNDS_WHEN_BUSY,
 		@"NO", @GOSSIP_PREFS_POPUPS_WHEN_AVAILABLE,
@@ -138,7 +138,7 @@ conf_finalize (GObject *object)
 				 HTTP_PROXY_ROOT,
 				 NULL);
 	*/
-	
+
 	[priv->defaults synchronize];
 
 	G_OBJECT_CLASS (gossip_conf_parent_class)->finalize (object);
@@ -181,7 +181,7 @@ gossip_conf_set_int (GossipConf  *conf,
 	[priv->defaults setInteger: value forKey: string];
 
 	POOL_RELEASE;
-	 
+
 	return TRUE;
 }
 
@@ -198,14 +198,14 @@ gossip_conf_get_int (GossipConf  *conf,
 	priv = GET_PRIV (conf);
 
 	POOL_ALLOC;
-	
+
 	string = [NSString stringWithUTF8String: key];
 	*value = [priv->defaults integerForKey: string];
 
 	[priv->defaults synchronize];
-	
+
 	POOL_RELEASE;
-	
+
 	return TRUE;
 }
 
@@ -227,9 +227,9 @@ gossip_conf_set_bool (GossipConf  *conf,
 	[priv->defaults setBool: value forKey: string];
 
 	[priv->defaults synchronize];
-	
+
 	POOL_RELEASE;
-	 
+
 	return TRUE;
 }
 
@@ -246,12 +246,12 @@ gossip_conf_get_bool (GossipConf  *conf,
 	priv = GET_PRIV (conf);
 
 	POOL_ALLOC;
-	
+
 	string = [NSString stringWithUTF8String: key];
 	*value = [priv->defaults boolForKey: string];
 
 	POOL_RELEASE;
-	
+
 	return TRUE;
 }
 
@@ -268,15 +268,15 @@ gossip_conf_set_string (GossipConf  *conf,
 	priv = GET_PRIV (conf);
 
 	POOL_ALLOC;
-	
+
 	string = [NSString stringWithUTF8String: key];
 	nsvalue = [NSString stringWithUTF8String: value];
 	[priv->defaults setObject: nsvalue forKey: string];
 
 	[priv->defaults synchronize];
-	
+
 	POOL_RELEASE;
-	
+
 	return TRUE;
 }
 
@@ -293,7 +293,7 @@ gossip_conf_get_string (GossipConf   *conf,
 	priv = GET_PRIV (conf);
 
 	POOL_ALLOC;
-	
+
 	string = [NSString stringWithUTF8String: key];
 	nsvalue = [priv->defaults stringForKey: string];
 
@@ -373,7 +373,7 @@ gossip_conf_notify_add (GossipConf           *conf,
 	GossipConfPriv       *priv;
 	guint                  id;
 	GossipConfNotifyData *data;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), 0);
 
 	priv = GET_PRIV (conf);
@@ -382,7 +382,7 @@ gossip_conf_notify_add (GossipConf           *conf,
 	data->func = func;
 	data->user_data = user_data;
 	data->conf = g_object_ref (conf);
-		
+
 	id = 0; /*gconf_client_notify_add (priv->gconf_client,
 				      key,
 				      conf_notify_func,
@@ -400,11 +400,11 @@ gossip_conf_notify_remove (GossipConf *conf,
 	GossipConfPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
-	
+
 	priv = GET_PRIV (conf);
 
 	/*gconf_client_notify_remove (priv->gconf_client, id);*/
-	
+
 	return TRUE;
 }
 
@@ -422,9 +422,9 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 	GossipConfPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
-	
+
 	priv = GET_PRIV (conf);
-	/*	
+	/*
 	*use_http_proxy = gconf_client_get_bool (priv->gconf_client,
 						 HTTP_PROXY_ROOT "/use_http_proxy",
 						 NULL);
@@ -451,7 +451,7 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 	*use_auth = FALSE;
 	*username = NULL;
 	*password = NULL;
-	
+
 	return TRUE;
 }
 

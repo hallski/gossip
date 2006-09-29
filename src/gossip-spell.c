@@ -46,7 +46,7 @@
 typedef struct {
 	AspellConfig       *spell_config;
 	AspellCanHaveError *spell_possible_err;
-        AspellSpeller      *spell_checker;
+	AspellSpeller      *spell_checker;
 } SpellLanguage;
 
 #define ISO_CODES_DATADIR    ISO_CODES_PREFIX "/share/xml/iso-codes"
@@ -110,13 +110,13 @@ spell_iso_codes_parse_start_tag (GMarkupParseContext  *ctx,
 				     g_strdup (ccode),
 				     g_strdup (lang_name));
 	}
-	
+
 	if (ccode_longB) {
 		g_hash_table_insert (iso_code_names,
 				     g_strdup (ccode_longB),
 				     g_strdup (lang_name));
 	}
-	
+
 	if (ccode_longT) {
 		g_hash_table_insert (iso_code_names,
 				     g_strdup (ccode_longT),
@@ -179,14 +179,14 @@ spell_notify_languages_cb (GossipConf  *conf,
 
 		delete_aspell_config (lang->spell_config);
 		delete_aspell_speller (lang->spell_checker);
-		
+
 		g_free (lang);
 	}
 
 	g_list_free (languages);
 	languages = NULL;
 }
-	
+
 static void
 spell_setup_languages (void)
 {
@@ -196,10 +196,10 @@ spell_setup_languages (void)
 		gossip_conf_notify_add (gossip_conf_get (),
 					 GOSSIP_PREFS_CHAT_SPELL_CHECKER_LANGUAGES,
 					 spell_notify_languages_cb, NULL);
-		
+
 		gossip_conf_notify_inited = TRUE;
 	}
-	
+
 	if (languages) {
 		gossip_debug (DEBUG_DOMAIN, "No languages to setup");
 		return;
@@ -210,7 +210,7 @@ spell_setup_languages (void)
 				     &str) && str) {
 		gchar **strv;
 		gint    i;
-		
+
 		strv = g_strsplit (str, ",", -1);
 
 		i = 0;
@@ -218,16 +218,16 @@ spell_setup_languages (void)
 			SpellLanguage *lang;
 
 			gossip_debug (DEBUG_DOMAIN, "Setting up language:'%s'", strv[i]);
-			
+
 			lang = g_new0 (SpellLanguage, 1);
-		
+
 			lang->spell_config = new_aspell_config();
-		
+
 			aspell_config_replace (lang->spell_config, "encoding", "utf-8");
 			aspell_config_replace (lang->spell_config, "lang", strv[i++]);
-		
+
 			lang->spell_possible_err = new_aspell_speller (lang->spell_config);
-		
+
 			if (aspell_error_number (lang->spell_possible_err) == 0) {
 				lang->spell_checker = to_aspell_speller (lang->spell_possible_err);
 				languages = g_list_append (languages, lang);
@@ -236,7 +236,7 @@ spell_setup_languages (void)
 				g_free (lang);
 			}
 		}
-		
+
 		if (strv) {
 			g_strfreev (strv);
 		}
@@ -255,12 +255,12 @@ gossip_spell_get_language_name (const char *code)
 	if (!iso_code_names) {
 		spell_iso_code_names_init ();
 	}
-	
+
 	name = g_hash_table_lookup (iso_code_names, code);
 	if (!name) {
 		return NULL;
 	}
-	
+
 	return dgettext ("iso_639", name);
 }
 
@@ -329,12 +329,12 @@ gossip_spell_check (const gchar *word)
 		gossip_debug (DEBUG_DOMAIN, "Not spell checking word:'%s', it is all digits", word);
 		return TRUE;
 	}
-		
+
 	len = strlen (word);
 	n_langs = g_list_length (languages);
 	for (l = languages; l; l = l->next) {
 		SpellLanguage *lang;
-		
+
 		lang = l->data;
 
 		correct = aspell_speller_check (lang->spell_checker, word, len);
@@ -364,14 +364,14 @@ gossip_spell_get_suggestions (const gchar *word)
 
 	for (l1 = languages; l1; l1 = l1->next) {
 		SpellLanguage *lang;
-		
+
 		lang = l1->data;
-		
+
 		suggestions = aspell_speller_suggest (lang->spell_checker,
 						      word, len);
-		
+
 		elements = aspell_word_list_elements (suggestions);
-		
+
 		while ((next = aspell_string_enumeration_next (elements))) {
 			l2 = g_list_append (l2, g_strdup (next));
 		}

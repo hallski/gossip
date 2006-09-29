@@ -15,7 +15,7 @@
  */
 
 #ifndef __GOSSIP_JABBER_UTILS_H__
-#define __GOSSIP_JABBER_UTILS_H__ 
+#define __GOSSIP_JABBER_UTILS_H__
 
 #include <loudmouth/loudmouth.h>
 
@@ -28,7 +28,7 @@ const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence  *pre
 GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar     *str);
 gossip_time_t       gossip_jabber_get_message_timestamp    (LmMessage       *m);
 GossipChatroomInvite *
-                    gossip_jabber_get_message_conference   (GossipJabber    *jabber,
+		    gossip_jabber_get_message_conference   (GossipJabber    *jabber,
 							    LmMessage       *m);
 gboolean            gossip_jabber_get_message_is_event     (LmMessage       *m);
 gboolean            gossip_jabber_get_message_is_composing (LmMessage       *m);

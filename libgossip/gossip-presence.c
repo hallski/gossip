@@ -147,7 +147,7 @@ presence_get_property (GObject    *object,
 		g_value_set_int (value, priv->state);
 		break;
 	case PROP_STATUS:
-		g_value_set_string (value, 
+		g_value_set_string (value,
 				    gossip_presence_get_status (GOSSIP_PRESENCE (object)));
 		break;
 	case PROP_RESOURCE:
@@ -203,7 +203,7 @@ GossipPresence *
 gossip_presence_new_full (GossipPresenceState  state,
 			  const gchar         *status)
 {
-	return g_object_new (GOSSIP_TYPE_PRESENCE, 
+	return g_object_new (GOSSIP_TYPE_PRESENCE,
 			     "state", state,
 			     "status", status,
 			     NULL);
@@ -217,9 +217,9 @@ gossip_presence_get_resource (GossipPresence *presence)
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), NULL);
 
 	priv = GET_PRIV (presence);
-	
+
 	if (priv->resource) {
-		return priv->resource; 
+		return priv->resource;
 	}
 
 	return NULL;
@@ -230,7 +230,7 @@ gossip_presence_get_status (GossipPresence *presence)
 {
 	GossipPresencePriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence), 
+	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
 			      _("Offline"));
 
 	priv = GET_PRIV (presence);
@@ -250,7 +250,7 @@ gossip_presence_get_priority (GossipPresence *presence)
 }
 
 void
-gossip_presence_set_resource (GossipPresence *presence, 
+gossip_presence_set_resource (GossipPresence *presence,
 			      const gchar    *resource)
 {
 	GossipPresencePriv *priv;
@@ -273,14 +273,14 @@ gossip_presence_get_state (GossipPresence *presence)
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
 			      GOSSIP_PRESENCE_STATE_AVAILABLE);
-	
+
 	priv = GET_PRIV (presence);
 
 	return priv->state;
 }
 
 void
-gossip_presence_set_state (GossipPresence      *presence, 
+gossip_presence_set_state (GossipPresence      *presence,
 			   GossipPresenceState  state)
 {
 	GossipPresencePriv *priv;
@@ -291,11 +291,11 @@ gossip_presence_set_state (GossipPresence      *presence,
 
 	priv->state = state;
 
-	g_object_notify (G_OBJECT (presence), "state");	
+	g_object_notify (G_OBJECT (presence), "state");
 }
 
 void
-gossip_presence_set_status (GossipPresence *presence, 
+gossip_presence_set_status (GossipPresence *presence,
 			    const gchar    *status)
 {
 	GossipPresencePriv *priv;
@@ -304,7 +304,7 @@ gossip_presence_set_status (GossipPresence *presence,
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
 	g_free (priv->status);
-	
+
 	if (status) {
 		priv->status = g_strdup (status);
 	} else {
@@ -330,7 +330,7 @@ gossip_presence_set_priority (GossipPresence *presence,
 }
 
 gboolean
-gossip_presence_resource_equal (gconstpointer a, 
+gossip_presence_resource_equal (gconstpointer a,
 				gconstpointer b)
 {
 	GossipPresencePriv *priv1;
@@ -346,14 +346,14 @@ gossip_presence_resource_equal (gconstpointer a,
 		if (!priv2->resource) {
 			return TRUE;
 		}
-		
+
 		return FALSE;
 	}
 
 	if (!priv2->resource) {
 		return FALSE;
 	}
-	
+
 	if (strcmp (priv1->resource, priv2->resource) == 0) {
 		return TRUE;
 	}

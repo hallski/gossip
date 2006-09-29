@@ -33,13 +33,13 @@
 #include "gossip-transport-accounts.h"
 #include "gossip-transport-protocol.h"
 
-#define DEBUG_MSG(x) 
+#define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
 struct _GossipTransportProtocol {
 	guint  ref_count;
-	
+
 	gchar *name;
 	gchar *disco_type;
 	gchar *stock_icon;
@@ -91,14 +91,14 @@ static GossipTransportService   *transport_service_new               (const gcha
 
 
 static int
-transport_gnomevfs_print_error (GnomeVFSResult  result, 
+transport_gnomevfs_print_error (GnomeVFSResult  result,
 				const char     *uri_string)
 {
 	const char *error_string;
 
 	error_string = gnome_vfs_result_to_string (result);
 
-	g_warning ("Error %s occured opening location %s", 
+	g_warning ("Error %s occured opening location %s",
 		   error_string, uri_string);
 
 	return FALSE;
@@ -114,28 +114,28 @@ gossip_transport_protocol_get_all (void)
 	gchar          *dir;
 
 	DEBUG_MSG (("ProtocolTransport: Attempting to get a list of "
-		    "protocols with uri:'%s'", 
+		    "protocols with uri:'%s'",
 		    PROTOCOLSDIR));
 
-	/* 
-	 * look up files packaged with Gossip 
+	/*
+	 * look up files packaged with Gossip
 	 */
-	result = gnome_vfs_directory_list_load (&files, PROTOCOLSDIR, 
-						GNOME_VFS_FILE_INFO_DEFAULT | 
+	result = gnome_vfs_directory_list_load (&files, PROTOCOLSDIR,
+						GNOME_VFS_FILE_INFO_DEFAULT |
 						GNOME_VFS_FILE_INFO_GET_MIME_TYPE |
 						GNOME_VFS_FILE_INFO_FOLLOW_LINKS);
 
 	if (result != GNOME_VFS_OK) {
-		transport_gnomevfs_print_error (result, PROTOCOLSDIR);  
+		transport_gnomevfs_print_error (result, PROTOCOLSDIR);
 		return NULL;
 	}
 
 	if (!files || g_list_length (files) < 1) {
-		DEBUG_MSG (("ProtocolTransport: No protocol xml files found in %s", 
+		DEBUG_MSG (("ProtocolTransport: No protocol xml files found in %s",
 			    PROTOCOLSDIR));
 		return NULL;
 	}
-	
+
 	for (l=files; l; l=l->next) {
 		GossipTransportProtocol *protocol;
 		GnomeVFSFileInfo        *file;
@@ -163,8 +163,8 @@ gossip_transport_protocol_get_all (void)
 		g_free (file_with_path);
 	}
 
-	/* 
-	 * Look up user files in ~/.gnome2/Gossip/protocols 
+	/*
+	 * Look up user files in ~/.gnome2/Gossip/protocols
 	 */
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, "protocols", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
@@ -172,27 +172,27 @@ gossip_transport_protocol_get_all (void)
 	}
 
 	DEBUG_MSG (("ProtocolTransport: Attempting to get a list of "
-		    "protocols with uri:'%s'", 
+		    "protocols with uri:'%s'",
 		    dir));
 
-	result = gnome_vfs_directory_list_load (&files, dir, 
-						GNOME_VFS_FILE_INFO_DEFAULT | 
+	result = gnome_vfs_directory_list_load (&files, dir,
+						GNOME_VFS_FILE_INFO_DEFAULT |
 						GNOME_VFS_FILE_INFO_GET_MIME_TYPE |
 						GNOME_VFS_FILE_INFO_FOLLOW_LINKS);
 
 	if (result != GNOME_VFS_OK) {
 		g_free (dir);
-		transport_gnomevfs_print_error (result, PROTOCOLSDIR);  
+		transport_gnomevfs_print_error (result, PROTOCOLSDIR);
 		return NULL;
 	}
 
 	if (!files || g_list_length (files) < 1) {
 		g_free (dir);
-		DEBUG_MSG (("ProtocolTransport: No protocol xml files found in %s", 
+		DEBUG_MSG (("ProtocolTransport: No protocol xml files found in %s",
 			    PROTOCOLSDIR));
 		return NULL;
 	}
-	
+
 	for (l=files; l; l=l->next) {
 		GossipTransportProtocol *protocol;
 		GnomeVFSFileInfo        *file;
@@ -219,11 +219,11 @@ gossip_transport_protocol_get_all (void)
 
 		g_free (file_with_path);
 	}
-	
+
 /* 	(func)(protocol_list, user_data); */
 
 	g_free (dir);
-	
+
 	return protocol_list;
 }
 
@@ -232,19 +232,19 @@ transport_protocol_file_validate (const char *filename)
 {
 
 	xmlParserCtxtPtr ctxt;
-	xmlDocPtr        doc; 
-    
+	xmlDocPtr        doc;
+
 	gboolean         ret = FALSE;
 
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	DEBUG_MSG (("ProtocolTransport: Attempting to validate file (against DTD):'%s'", 
+	DEBUG_MSG (("ProtocolTransport: Attempting to validate file (against DTD):'%s'",
 		    filename));
 
 	/* create a parser context */
 	ctxt = xmlNewParserCtxt();
 	if (ctxt == NULL) {
-		g_warning ("failed to allocate parser context for file:'%s'", 
+		g_warning ("failed to allocate parser context for file:'%s'",
 			   filename);
 		return FALSE;
 	}
@@ -254,12 +254,12 @@ transport_protocol_file_validate (const char *filename)
 
 	/* check if parsing suceeded */
 	if (doc == NULL) {
-		g_warning ("failed to parse file:'%s'", 
+		g_warning ("failed to parse file:'%s'",
 			   filename);
 	} else {
 		/* check if validation suceeded */
 		if (ctxt->valid == 0) {
-			g_warning ("failed to validate file:'%s'", 
+			g_warning ("failed to validate file:'%s'",
 				   filename);
 		} else {
 			ret = TRUE;
@@ -276,7 +276,7 @@ transport_protocol_file_validate (const char *filename)
 }
 
 static GossipTransportProtocol *
-transport_protocol_file_parse (const gchar *filename) 
+transport_protocol_file_parse (const gchar *filename)
 {
 	GossipTransportProtocol *protocol = NULL;
 
@@ -287,7 +287,7 @@ transport_protocol_file_parse (const gchar *filename)
 	g_return_val_if_fail (filename != NULL, FALSE);
 
 	DEBUG_MSG (("ProtocolTransport: Attempting to parse file:'%s'...", filename));
-	
+
 	reader = xmlReaderForFile(filename, NULL, 0);
 	if (reader == NULL) {
 		g_warning ("could not create xml reader for file:'%s' filename",
@@ -295,7 +295,7 @@ transport_protocol_file_parse (const gchar *filename)
 		return NULL;
 	}
 
-        if (xmlTextReaderPreservePattern(reader, (xmlChar *) "preserved", NULL) < 0) {
+	if (xmlTextReaderPreservePattern(reader, (xmlChar *) "preserved", NULL) < 0) {
 		g_warning ("could not preserve pattern for file:'%s' filename",
 			   filename);
 		return NULL;
@@ -306,7 +306,7 @@ transport_protocol_file_parse (const gchar *filename)
 	if (ret == 1) {
 		protocol = transport_protocol_new ();
 	}
-	
+
 	while (ret == 1) {
 		const gchar *node = NULL;
 		const gchar *value = NULL;
@@ -314,10 +314,10 @@ transport_protocol_file_parse (const gchar *filename)
 		if (!(node = (const gchar *) xmlTextReaderConstName(reader))) {
 			continue;
 		}
-			
+
 		if (strcmp (node, "name") == 0 ||
 		    strcmp (node, "disco-type") == 0 ||
-		    strcmp (node, "stock-icon") == 0 || 
+		    strcmp (node, "stock-icon") == 0 ||
 		    strcmp (node, "description") == 0 ||
 		    strcmp (node, "example") == 0 ||
 		    strcmp (node, "icon") == 0) {
@@ -326,9 +326,9 @@ transport_protocol_file_parse (const gchar *filename)
 			if ((ret = xmlTextReaderRead(reader)) != 1) {
 				break;
 			}
-			
+
 			node_text = (const gchar *) xmlTextReaderConstName(reader);
-			
+
 			if (!value && strcmp (node_text, "#text") == 0) {
 				value = (const gchar *) xmlTextReaderConstValue(reader);
 			}
@@ -344,11 +344,11 @@ transport_protocol_file_parse (const gchar *filename)
 				protocol->url = g_strdup ((gchar *) url);
 				xmlFree (url);
 			}
-			
+
 			while ((ret = xmlTextReaderRead(reader)) == 1) {
 				GossipTransportService *service;
 				xmlChar               *name, *host, *port;
-				const gchar           *server_node; 
+				const gchar           *server_node;
 
 				server_node = (const gchar *) xmlTextReaderConstName(reader);
 
@@ -374,10 +374,10 @@ transport_protocol_file_parse (const gchar *filename)
 				xmlFree (host);
 				xmlFree (port);
 			}
-			
+
 			continue;
 		}
-		
+
 		if (node && value) {
 			if (!protocol->name && strcmp (node, "name") == 0) {
 				protocol->name = g_strdup (value);
@@ -396,14 +396,14 @@ transport_protocol_file_parse (const gchar *filename)
 
 		ret = xmlTextReaderRead(reader);
 	}
-	
+
 	if (ret != 0) {
 		g_warning ("could not parse file:'%s' filename",
 			   filename);
 		xmlFreeTextReader(reader);
 		return NULL;
 	}
-	
+
 	DEBUG_MSG (("ProtocolTransport: protocol name:'%s'\n"
 		   "\tdisco_type:'%s'\n"
 		   "\tstock_icon:'%s'\n"
@@ -418,17 +418,17 @@ transport_protocol_file_parse (const gchar *filename)
 		   protocol->description,
 		   protocol->example,
 		   protocol->icon,
-		   protocol->url, 
+		   protocol->url,
 		   g_list_length (protocol->services)));
-	
+
 	DEBUG_MSG (("ProtocolTransport: cleaning up parser for file:'%s'", filename));
-	  
+
 	doc = xmlTextReaderCurrentDoc(reader);
 	xmlFreeDoc(doc);
 
 	xmlCleanupParser();
 	xmlFreeTextReader(reader);
-	
+
 	return protocol;
 }
 
@@ -438,7 +438,7 @@ transport_protocol_new ()
 	GossipTransportProtocol *protocol;
 
 	protocol = g_new0 (GossipTransportProtocol, 1);
-	
+
 	protocol->ref_count = 1;
 
 	/* should we set a default icon here? */
@@ -450,26 +450,26 @@ static void
 transport_protocol_free (GossipTransportProtocol *protocol)
 {
 	g_return_if_fail (protocol != NULL);
-	
+
 	g_free (protocol->name);
 	g_free (protocol->disco_type);
 	g_free (protocol->stock_icon);
 	g_free (protocol->description);
 	g_free (protocol->example);
 	g_free (protocol->icon);
-	
+
 	g_free (protocol->url);
-	
+
 	if (protocol->services) {
 		g_list_foreach (protocol->services, (GFunc)gossip_transport_service_free, NULL);
 		g_list_free (protocol->services);
 	}
-	
+
 	g_free (protocol);
 }
 
 GossipTransportProtocol *
-gossip_transport_protocol_ref (GossipTransportProtocol *protocol) 
+gossip_transport_protocol_ref (GossipTransportProtocol *protocol)
 {
 	g_return_val_if_fail (protocol != NULL, NULL);
 
@@ -478,7 +478,7 @@ gossip_transport_protocol_ref (GossipTransportProtocol *protocol)
 }
 
 void
-gossip_transport_protocol_unref (GossipTransportProtocol *protocol) 
+gossip_transport_protocol_unref (GossipTransportProtocol *protocol)
 {
 	g_return_if_fail (protocol != NULL);
 
@@ -554,7 +554,7 @@ gossip_transport_protocol_get_services (GossipTransportProtocol *protocol)
 }
 
 GossipTransportProtocol *
-gossip_transport_protocol_find_by_disco_type (const gchar *disco_type) 
+gossip_transport_protocol_find_by_disco_type (const gchar *disco_type)
 {
 	GList *protocols;
 	GList *l;
@@ -562,12 +562,12 @@ gossip_transport_protocol_find_by_disco_type (const gchar *disco_type)
 	g_return_val_if_fail (disco_type != NULL, NULL);
 
 	protocols = gossip_transport_protocol_get_all ();
-	
+
 	for (l=protocols; l; l=l->next) {
 		GossipTransportProtocol *protocol;
 
 		protocol = (GossipTransportProtocol*) l->data;
-		
+
 		if (protocol->disco_type &&
 		    strcmp (protocol->disco_type, disco_type) == 0) {
 			return protocol;
@@ -578,7 +578,7 @@ gossip_transport_protocol_find_by_disco_type (const gchar *disco_type)
 }
 
 static GossipTransportService *
-transport_service_new (const gchar *name, 
+transport_service_new (const gchar *name,
 		      const gchar *host)
 {
 	GossipTransportService *service;
@@ -587,7 +587,7 @@ transport_service_new (const gchar *name,
 	g_return_val_if_fail (host != NULL, NULL);
 
 	service = g_new0 (GossipTransportService, 1);
-	
+
 	service->name = g_strdup (name);
 	service->host = g_strdup (host);
 
@@ -598,11 +598,11 @@ void
 gossip_transport_service_free (GossipTransportService *service)
 {
 	g_return_if_fail (service != NULL);
-	
+
 	g_free (service->name);
 	g_free (service->host);
 	g_free (service->port);
-	
+
 	g_free (service);
 }
 
@@ -622,7 +622,7 @@ gossip_transport_service_get_host (GossipTransportService *service)
 	return service->host;
 }
 
-gint 
+gint
 gossip_transport_service_get_port (GossipTransportService *service)
 {
 	g_return_val_if_fail (service != NULL, 5222);
@@ -633,8 +633,8 @@ gossip_transport_service_get_port (GossipTransportService *service)
 /*
  * utils
  */
-void 
-gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol, 
+void
+gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
 				     const gchar                   *id,
 				     GossipTransportProtocolIDFunc  func,
 				     gpointer                       user_data)
@@ -647,9 +647,9 @@ gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
 	GossipJID              *jid;
 
 	LmConnection           *connection;
-        LmMessageHandler       *handler;
+	LmMessageHandler       *handler;
 
-        LmMessage              *m;
+	LmMessage              *m;
 	LmMessageNode          *node;
 
 	ProtocolID             *pi;
@@ -672,8 +672,8 @@ gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
 	/* set up message handler */
 	connection = gossip_jabber_get_connection (jabber);
 
-	handler = lm_message_handler_new (transport_protocol_message_handler, 
-					  pi, 
+	handler = lm_message_handler_new (transport_protocol_message_handler,
+					  pi,
 					  NULL);
 
 	lm_connection_register_message_handler (connection,
@@ -682,21 +682,21 @@ gossip_transport_protocol_id_to_jid (GossipTransportProtocol       *protocol,
 						LM_HANDLER_PRIORITY_NORMAL);
 
 	/* create message */
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
-                                          LM_MESSAGE_TYPE_IQ,
-                                          LM_MESSAGE_SUB_TYPE_SET);
-	
+	m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
+
 	DEBUG_MSG (("ProtocolTransport: Requesting id to jid translation for: %s", id));
-	
+
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
-	
-        lm_message_node_set_attribute (node, "xmlns", "jabber:iq:gateway");
-	
+
+	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:gateway");
+
 	lm_message_node_add_child (node, "prompt", id);
-	
-        lm_connection_send (connection, m, NULL);
-        lm_message_unref (m);
+
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
 }
 
 static LmHandlerResult
@@ -705,50 +705,50 @@ transport_protocol_message_handler (LmMessageHandler *handler,
 				    LmMessage        *m,
 				    gpointer          user_data)
 {
-	LmMessageNode *node; 
+	LmMessageNode *node;
 	ProtocolID    *pi;
 	GossipJID     *jid;
 	const char    *xmlns;
 
-	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT && 
+	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	node = lm_message_node_get_child (m->node, "query");
-        if (!node) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+	if (!node) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 	if (!xmlns || strcmp (xmlns, "jabber:iq:gateway") != 0) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-		
+
 	node = lm_message_node_get_child (node, "prompt");
 	if (!node || !node->value) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	pi = (ProtocolID*) user_data;
-		
+
 	jid = gossip_jid_new (node->value);
-	DEBUG_MSG (("ProtocolTransport: Translation is: %s\n", 
+	DEBUG_MSG (("ProtocolTransport: Translation is: %s\n",
 		    gossip_jid_get_full (jid)));
-	
+
 	/* call callback */
 	(pi->func)(jid, pi->id, pi->user_data);
-	
-	/* clean up */
- 	lm_connection_unregister_message_handler (connection,  
- 						  handler,  
- 						  LM_MESSAGE_TYPE_IQ); 
 
-  	lm_message_handler_unref (handler);  
+	/* clean up */
+	lm_connection_unregister_message_handler (connection,
+						  handler,
+						  LM_MESSAGE_TYPE_IQ);
+
+	lm_message_handler_unref (handler);
 
 	transport_protocol_id_free (pi);
 
-	return LM_HANDLER_RESULT_REMOVE_MESSAGE;	
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 static ProtocolID  *transport_protocol_id_new (const char *id,
@@ -782,6 +782,6 @@ transport_protocol_id_free (ProtocolID *pi)
 	g_free (pi->id);
 
 	gossip_transport_protocol_unref (pi->protocol);
-	
+
 	g_free (pi);
 }

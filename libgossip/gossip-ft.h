@@ -77,7 +77,7 @@ const gchar *  gossip_ft_get_file_mime_type (GossipFT      *ft);
 void           gossip_ft_set_file_mime_type (GossipFT      *ft,
 					     const gchar   *file_mime_type);
 
-gboolean       gossip_ft_equal              (gconstpointer  a, 
+gboolean       gossip_ft_equal              (gconstpointer  a,
 					     gconstpointer  b);
 
 #endif /* __GOSSIP_FT_H__ */

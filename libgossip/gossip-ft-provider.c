@@ -45,23 +45,23 @@ gossip_ft_provider_get_type (void)
 		static const GTypeInfo info =
 		{
 			sizeof (GossipFTProviderIface),
-			ft_provider_base_init,       
-			NULL,                           
+			ft_provider_base_init,
 			NULL,
-			NULL,                          
-			NULL,                          
+			NULL,
+			NULL,
+			NULL,
 			0,
-			0,                              
+			0,
 			NULL
 		};
 
-		type = g_type_register_static (G_TYPE_INTERFACE, 
+		type = g_type_register_static (G_TYPE_INTERFACE,
 					       "GossipFTProvider",
 					       &info, 0);
 
 		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 	}
-	
+
 	return type;
 }
 

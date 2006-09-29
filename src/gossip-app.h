@@ -43,11 +43,11 @@ typedef struct _GossipAppClass GossipAppClass;
 typedef struct _GossipAppPriv  GossipAppPriv;
 
 struct _GossipApp {
-        GObject parent;
+	GObject parent;
 };
 
 struct _GossipAppClass {
-        GObjectClass parent_class;
+	GObjectClass parent_class;
 };
 
 GType                  gossip_app_get_type             (void) G_GNUC_CONST;

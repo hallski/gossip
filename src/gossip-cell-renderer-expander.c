@@ -174,15 +174,15 @@ gossip_cell_renderer_expander_get_property (GObject    *object,
 	case PROP_EXPANDER_STYLE:
 		g_value_set_enum (value, priv->expander_style);
 		break;
-		
+
 	case PROP_EXPANDER_SIZE:
 		g_value_set_int (value, priv->expander_size);
 		break;
-		
+
 	case PROP_ACTIVATABLE:
 		g_value_set_boolean (value, priv->activatable);
 		break;
-		
+
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -205,15 +205,15 @@ gossip_cell_renderer_expander_set_property (GObject      *object,
 	case PROP_EXPANDER_STYLE:
 		priv->expander_style = g_value_get_enum (value);
 		break;
-		
+
 	case PROP_EXPANDER_SIZE:
 		priv->expander_size = g_value_get_int (value);
 		break;
-		
+
 	case PROP_ACTIVATABLE:
 		priv->activatable = g_value_get_boolean (value);
 		break;
-		
+
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -400,7 +400,7 @@ gossip_cell_renderer_expander_start_animation (GossipCellRendererExpander *expan
 	if (expanding) {
 		priv->animation_style = GTK_EXPANDER_SEMI_COLLAPSED;
 	} else {
-		priv->animation_style = GTK_EXPANDER_SEMI_EXPANDED; 
+		priv->animation_style = GTK_EXPANDER_SEMI_EXPANDED;
 	}
 
 	priv->animation_area = *background_area;

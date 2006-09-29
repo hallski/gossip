@@ -108,7 +108,7 @@ gossip_event_class_init (GossipEventClass *klass)
 							   G_MAXINT,
 							   1,
 							   G_PARAM_READABLE));
-	
+
 
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
@@ -135,7 +135,7 @@ gossip_event_class_init (GossipEventClass *klass)
 							      "Data object sent with the event",
 							      G_TYPE_OBJECT,
 							      G_PARAM_READWRITE));
-	
+
 	g_type_class_add_private (object_class, sizeof (GossipEventPriv));
 }
 
@@ -159,7 +159,7 @@ gossip_event_finalize (GObject *object)
 	GossipEventPriv *priv;
 
 	priv = GET_PRIV (object);
-	
+
 	g_free (priv->msg);
 	if (priv->data) {
 		g_object_unref (priv->data);
@@ -195,7 +195,7 @@ event_get_property (GObject    *object,
 	case PROP_DATA:
 		if (priv->data) {
 			g_value_set_object (value, priv->data);
-		} 
+		}
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -225,7 +225,7 @@ event_set_property (GObject      *object,
 		if (priv->data) {
 			g_object_unref (priv->data);
 		}
-		
+
 		priv->data = g_object_ref (g_value_get_object (value));
 		break;
 	default:
@@ -239,7 +239,7 @@ gossip_event_new (GossipEventType type)
 {
 	gossip_debug (DEBUG_DOMAIN, "New of type:%d", type);
 
-	return g_object_new (GOSSIP_TYPE_EVENT, 
+	return g_object_new (GOSSIP_TYPE_EVENT,
 			     "type", type,
 			     NULL);
 }
@@ -250,9 +250,9 @@ gossip_event_get_id (GossipEvent *event)
 	GossipEventPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
-	
+
 	priv = GET_PRIV (event);
-	
+
 	return priv->id;
 }
 
@@ -268,32 +268,32 @@ gossip_event_get_message (GossipEvent *event)
 	return priv->msg;
 }
 
-GossipEventType 
+GossipEventType
 gossip_event_get_type (GossipEvent *event)
 {
-        GossipEventPriv *priv;
+	GossipEventPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), -1);
 
-        priv = GET_PRIV (event);
+	priv = GET_PRIV (event);
 
-        return priv->type;
+	return priv->type;
 }
 
 GObject *
 gossip_event_get_data (GossipEvent *event)
 {
-        GossipEventPriv *priv;
+	GossipEventPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_EVENT (event), NULL);
 
-        priv = GET_PRIV (event);
+	priv = GET_PRIV (event);
 
 	return priv->data;
 }
 
 void
-gossip_event_set_data (GossipEvent *event, 
+gossip_event_set_data (GossipEvent *event,
 		       GObject     *data)
 {
 	GossipEventPriv *priv;
@@ -305,40 +305,40 @@ gossip_event_set_data (GossipEvent *event,
 	if (priv->data) {
 		g_object_unref (priv->data);
 	}
-	
+
 	priv->data = g_object_ref (data);
 }
 
-guint 
+guint
 gossip_event_hash (gconstpointer key)
 {
 	GossipEventId id;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_EVENT (key), 0);
 
 	id = gossip_event_get_id (GOSSIP_EVENT (key));
-	
+
 	return g_int_hash (&id);
 }
 
 gboolean
-gossip_event_equal (gconstpointer a, 
+gossip_event_equal (gconstpointer a,
 		    gconstpointer b)
 {
 	GossipEventId id_a;
 	GossipEventId id_b;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_EVENT (a), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_EVENT (b), FALSE);
 
 	id_a = gossip_event_get_id (GOSSIP_EVENT (a));
 	id_b = gossip_event_get_id (GOSSIP_EVENT (b));
-	
+
 	return (id_a == id_b);
 }
 
 gint
-gossip_event_compare (gconstpointer a, 
+gossip_event_compare (gconstpointer a,
 		      gconstpointer b)
 {
 	GossipEventId id_a;
@@ -353,7 +353,7 @@ gossip_event_compare (gconstpointer a,
 	if (id_a == id_b) {
 		return 0;
 	}
-	
+
 	if (id_a < id_b) {
 		return -1;
 	}

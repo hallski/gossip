@@ -37,14 +37,14 @@ gossip_contact_list_iface_get_type (void)
 			NULL,
 		};
 
-		type = g_type_register_static (G_TYPE_INTERFACE, 
+		type = g_type_register_static (G_TYPE_INTERFACE,
 					       "GossipContactListIface",
 					       &type_info, 0);
 	}
 
 	return type;
 }
-	
+
 static void
 contact_list_base_init (gpointer klass)
 {
@@ -70,7 +70,7 @@ contact_list_base_init (gpointer klass)
 			      gossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
-		
+
 		g_signal_new ("contact_updated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -80,7 +80,7 @@ contact_list_base_init (gpointer klass)
 			      gossip_marshal_VOID__POINTER,
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
-		
+
 		g_signal_new ("contact_presence_updated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,

@@ -81,8 +81,8 @@ gossip_chatroom_contact_class_init (GossipChatroomContactClass *klass)
 							    GOSSIP_TYPE_CHATROOM_AFFILIATION,
 							    GOSSIP_CHATROOM_AFFILIATION_NONE,
 							    G_PARAM_READWRITE));
-	
-	g_type_class_add_private (object_class, 
+
+	g_type_class_add_private (object_class,
 				  sizeof (GossipChatroomContactPriv));
 }
 
@@ -119,7 +119,7 @@ chatroom_contact_get_property (GObject            *object,
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
 	};
-	
+
 }
 
 static void
@@ -154,7 +154,7 @@ gossip_chatroom_contact_new (GossipAccount *account)
 			     NULL);
 }
 
-GossipChatroomContact * 
+GossipChatroomContact *
 gossip_chatroom_contact_new_full (GossipAccount  *account,
 				  const gchar    *id,
 				  const gchar    *name)
@@ -171,9 +171,9 @@ gossip_chatroom_contact_get_role (GossipChatroomContact *contact)
 {
 	GossipChatroomContactPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_CONTACT (contact), 
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_CONTACT (contact),
 			      GOSSIP_CHATROOM_ROLE_NONE);
-	
+
 	priv = GET_PRIV (contact);
 
 	return priv->role;
@@ -198,9 +198,9 @@ gossip_chatroom_contact_get_affiliation (GossipChatroomContact *contact)
 {
 	GossipChatroomContactPriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_CHATROOM_CONTACT (contact), 
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_CONTACT (contact),
 			      GOSSIP_CHATROOM_AFFILIATION_NONE);
-	
+
 	priv = GET_PRIV (contact);
 
 	return priv->affiliation;

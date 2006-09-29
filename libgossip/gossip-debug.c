@@ -55,7 +55,7 @@ debug_init (void)
 				all_domains = TRUE;
 			}
 		}
-		
+
 		inited = TRUE;
 	}
 }
@@ -67,19 +67,19 @@ gossip_debug_impl (const gchar *domain, const gchar *msg, ...)
 
 	g_return_if_fail (domain != NULL);
 	g_return_if_fail (msg != NULL);
-	
+
 	debug_init ();
 
 	for (i = 0; debug_strv && debug_strv[i]; i++) {
 		if (all_domains || strcmp (domain, debug_strv[i]) == 0) {
 			va_list args;
-			
+
 			g_print ("%s: ", domain);
-			
+
 			va_start (args, msg);
 			g_vprintf (msg, args);
 			va_end (args);
-			
+
 			g_print ("\n");
 			break;
 		}

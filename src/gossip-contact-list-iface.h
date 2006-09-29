@@ -32,7 +32,7 @@
 #define GOSSIP_IS_CONTACT_LIST_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT_LIST_IFACE))
 #define GOSSIP_CONTACT_LIST_IFACE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONTACT_LIST_IFACE, GossipContactListIfaceClass))
 
-typedef struct _GossipContactListIface      GossipContactListIface;  
+typedef struct _GossipContactListIface      GossipContactListIface;
 typedef struct _GossipContactListIfaceClass GossipContactListIfaceClass;
 
 struct _GossipContactListIfaceClass {
@@ -49,7 +49,7 @@ struct _GossipContactListIfaceClass {
 					   GossipContact      *contact);
 
 	/* vtable */
-	
+
 	GList * (*get_contacts)           (GossipContactListIface  *list);
 };
 

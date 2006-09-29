@@ -49,7 +49,7 @@ typedef void (* GossipEventActivateFunction) (GossipEventManager *manager,
 
 GType        gossip_event_manager_get_type        (void) G_GNUC_CONST;
 GossipEventManager *
-             gossip_event_manager_new             (void);
+	     gossip_event_manager_new             (void);
 void         gossip_event_manager_add             (GossipEventManager          *manager,
 						   GossipEvent                 *event,
 						   GossipEventActivateFunction  callback,

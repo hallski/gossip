@@ -21,7 +21,7 @@
 #ifndef __GOSSIP_JABBER_PRIVATE_H__
 #define __GOSSIP_JABBER_PRIVATE_H__
 
-#include <loudmouth/loudmouth.h> 
+#include <loudmouth/loudmouth.h>
 
 #include "gossip-jabber.h"
 #include "gossip-jabber-ft.h"

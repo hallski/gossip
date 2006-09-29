@@ -55,14 +55,14 @@ GType      gossip_ft_provider_get_type (void) G_GNUC_CONST;
 
 
 GossipFTId gossip_ft_provider_send     (GossipFTProvider *provider,
-				        GossipContact    *contact,
-				        const gchar      *file);
+					GossipContact    *contact,
+					const gchar      *file);
 void       gossip_ft_provider_cancel   (GossipFTProvider *provider,
-				        GossipFTId        id);
+					GossipFTId        id);
 void       gossip_ft_provider_accept   (GossipFTProvider *provider,
-				        GossipFTId        id);
+					GossipFTId        id);
 void       gossip_ft_provider_decline  (GossipFTProvider *provider,
-				        GossipFTId        id);
+					GossipFTId        id);
 
 
 #endif /* __GOSSIP_FT_PROVIDER_H__ */

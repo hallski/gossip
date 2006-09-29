@@ -24,7 +24,7 @@
 #include "gossip-jabber-utils.h"
 #include "gossip-jid.h"
 
-const gchar * 
+const gchar *
 gossip_jabber_presence_state_to_str (GossipPresence *presence)
 {
 	switch (gossip_presence_get_state (presence)) {
@@ -67,7 +67,7 @@ gossip_jabber_get_message_timestamp (LmMessage *m)
 	const gchar   *xmlns;
 	const gchar   *stamp;
 	gossip_time_t  t;
-	
+
 	g_return_val_if_fail (m != NULL, gossip_time_get_current ());
 	g_return_val_if_fail (m->node != NULL, gossip_time_get_current ());
 
@@ -82,16 +82,16 @@ gossip_jabber_get_message_timestamp (LmMessage *m)
 			stamp = lm_message_node_get_attribute (node, "stamp");
 			break;
 		}
-        }
+	}
 
 	if (!stamp) {
 		return gossip_time_get_current ();
-	} 
+	}
 
 	t = gossip_time_parse (stamp);
 	if (!t) {
 		return gossip_time_get_current ();
-	}		
+	}
 
 	return t;
 }
@@ -110,15 +110,15 @@ gossip_jabber_get_message_conference (GossipJabber *jabber,
 	g_return_val_if_fail (m != NULL, NULL);
 	g_return_val_if_fail (m->node != NULL, NULL);
 	g_return_val_if_fail (m->node->children != NULL, NULL);
-	
+
 	node = lm_message_node_find_child (m->node, "invite");
 	if (!node) {
 		return NULL;
 	}
 
 	contact_id = lm_message_node_get_attribute (node, "from");
-	contact = gossip_jabber_get_contact_from_jid (jabber, 
-						      contact_id, 
+	contact = gossip_jabber_get_contact_from_jid (jabber,
+						      contact_id,
 						      NULL,
 						      TRUE);
 
@@ -140,7 +140,7 @@ gossip_jabber_get_message_is_event (LmMessage *m)
 {
 	LmMessageNode *node;
 	const gchar   *xmlns;
-	
+
 	g_return_val_if_fail (m != NULL, FALSE);
 	g_return_val_if_fail (m->node != NULL, FALSE);
 	g_return_val_if_fail (m->node->children != NULL, FALSE);
@@ -158,9 +158,9 @@ gossip_jabber_get_message_is_event (LmMessage *m)
 		if (xmlns && strcmp (xmlns, "jabber:x:event") == 0) {
 			return TRUE;
 		}
-        }
+	}
 
-	return FALSE;	
+	return FALSE;
 }
 
 gboolean
@@ -168,7 +168,7 @@ gossip_jabber_get_message_is_composing (LmMessage *m)
 {
 	LmMessageNode *node;
 	const gchar   *xmlns;
-	
+
 	g_return_val_if_fail (m != NULL, FALSE);
 	g_return_val_if_fail (m->node != NULL, FALSE);
 	g_return_val_if_fail (m->node->children != NULL, FALSE);
@@ -187,14 +187,14 @@ gossip_jabber_get_message_is_composing (LmMessage *m)
 				return TRUE;
 			}
 		}
-        }
+	}
 
-	return FALSE;	
+	return FALSE;
 }
 
 gchar *
 gossip_jabber_get_name_to_use (const gchar *jid_str,
-			       const gchar *nickname, 
+			       const gchar *nickname,
 			       const gchar *full_name)
 {
 	if (nickname && strlen (nickname) > 0) {
@@ -204,7 +204,7 @@ gossip_jabber_get_name_to_use (const gchar *jid_str,
 	if (full_name && strlen (full_name) > 0) {
 		return g_strdup (full_name);
 	}
-	
+
 	if (jid_str && strlen (jid_str) > 0) {
 		GossipJID *jid;
 		gchar     *part_name;

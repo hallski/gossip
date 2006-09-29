@@ -70,7 +70,7 @@ gboolean                  gossip_transport_disco_item_has_type         (GossipTr
 									const gchar                  *type);
 gboolean                  gossip_transport_disco_servers               (void);
 
-      
+
 G_END_DECLS
 
 #endif /* __GOSSIP_TRANSPORT_DISCO_H__ */

@@ -20,7 +20,7 @@
 
 #include <config.h>
 
-#include <stdlib.h> 
+#include <stdlib.h>
 
 #include <loudmouth/loudmouth.h>
 
@@ -33,7 +33,7 @@
 
 #define DEBUG_DOMAIN "JabberVCard"
 
-static LmHandlerResult 
+static LmHandlerResult
 jabber_vcard_get_cb (LmMessageHandler   *handler,
 		     LmConnection       *connection,
 		     LmMessage          *m,
@@ -63,7 +63,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 
 			str = lm_message_node_get_attribute (node, "code");
 			code = str ? atoi (str) : 0;
-			
+
 			switch (code) {
 			case 404:
 				/* Receipient unavailable */
@@ -76,7 +76,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 				gossip_debug (DEBUG_DOMAIN, "Service is unavailable");
 				result = GOSSIP_RESULT_ERROR_UNAVAILABLE;
 				break;
-				
+
 			default:
 				gossip_debug (DEBUG_DOMAIN, "Unhandled presence error:%d", code);
 				result = GOSSIP_RESULT_ERROR_INVALID_REPLY;
@@ -84,17 +84,17 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 			}
 		}
 
-		(callback) (result, 
+		(callback) (result,
 			    NULL,
 			    data->user_data);
 
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
-	} 
+	}
 
 	/* no vcard node */
 	vcard_node = lm_message_node_get_child (m->node, "vCard");
 	if (!vcard_node) {
-		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY, 
+		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY,
 			    NULL,
 			    data->user_data);
 
@@ -103,7 +103,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 
 	/* everything else must be OK */
 	vcard = gossip_vcard_new ();
-	
+
 	node = lm_message_node_get_child (vcard_node, "FN");
 	if (node) {
 		gossip_vcard_set_name (vcard, node->value);
@@ -154,7 +154,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 
 gboolean
 gossip_jabber_vcard_get (GossipJabber         *jabber,
-			 const gchar          *jid_str, 
+			 const gchar          *jid_str,
 			 GossipVCardCallback   callback,
 			 gpointer              user_data,
 			 GError              **error)
@@ -174,7 +174,7 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 
 	gossip_debug (DEBUG_DOMAIN, "Requesting VCard, JID:'%s'", jid_without_resource);
 
-	m = lm_message_new (jid_without_resource, 
+	m = lm_message_new (jid_without_resource,
 			    LM_MESSAGE_TYPE_IQ);
 
 	gossip_jid_unref (jid);
@@ -185,11 +185,11 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	data = g_new0 (GossipCallbackData, 1);
 	data->callback = callback;
 	data->user_data = user_data;
-	
+
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_get_cb,
-					  data, 
+					  data,
 					  g_free);
-	
+
 	if (!lm_connection_send_with_reply (connection, m, handler, error)) {
 		lm_message_unref (m);
 		lm_message_handler_unref (handler);
@@ -197,14 +197,14 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	}
 
 	/* FIXME: Set a timeout */
-	
+
 	lm_message_unref (m);
 	lm_message_handler_unref (handler);
 
 	return TRUE;
 }
 
-static LmHandlerResult 
+static LmHandlerResult
 jabber_vcard_set_cb (LmMessageHandler   *handler,
 		     LmConnection       *connection,
 		     LmMessage          *m,
@@ -220,10 +220,10 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 	(callback) (GOSSIP_RESULT_OK, data->user_data);
 
 	gossip_debug (DEBUG_DOMAIN, "Setting presence after vcard");
-	
+
 	/* Send our current presence to indicate the avatar has changed */
 	gossip_jabber_send_presence (GOSSIP_JABBER (data->internal_data), NULL);
-	
+
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
@@ -254,22 +254,22 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
 	lm_message_node_add_child (node, "FN", gossip_vcard_get_name (vcard));
-	lm_message_node_add_child (node, "NICKNAME", 
+	lm_message_node_add_child (node, "NICKNAME",
 				   gossip_vcard_get_nickname (vcard));
 	lm_message_node_add_child (node, "URL", gossip_vcard_get_url (vcard));
 
 	child = lm_message_node_add_child (node, "EMAIL", NULL);
 	lm_message_node_add_child (child, "USERID", gossip_vcard_get_email (vcard));
 
-	lm_message_node_add_child (node, "DESC", 
-				   gossip_vcard_get_description (vcard)); 
-				   
+	lm_message_node_add_child (node, "DESC",
+				   gossip_vcard_get_description (vcard));
+
 	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 	if (avatar != NULL) {
 		gchar *avatar_encoded;
-		
+
 		node = lm_message_node_add_child (node, "PHOTO", NULL);
-		lm_message_node_add_child (node, "TYPE", "image/png"); 
+		lm_message_node_add_child (node, "TYPE", "image/png");
 
 		avatar_encoded = gossip_base64_encode (avatar, avatar_size);
 		lm_message_node_add_child (node, "BINVAL", avatar_encoded);
@@ -281,13 +281,13 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	data->callback = callback;
 	data->user_data = user_data;
 	data->internal_data = jabber;
-	
+
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_set_cb,
-					  data, 
+					  data,
 					  g_free);
- 
+
 	result = lm_connection_send_with_reply (connection, m, handler, error);
-	
+
 	lm_message_unref (m);
 	lm_message_handler_unref (handler);
 

@@ -34,7 +34,7 @@
 #define GEOMETRY_FILE_CREATE_MODE (S_IRUSR | S_IWUSR)
 
 #define GEOMETRY_KEY_FILENAME     "geometry.ini"
-  
+
 #define GEOMETRY_FORMAT           "%d,%d,%d,%d"
 
 static gchar *geometry_get_filename (void);
@@ -57,8 +57,8 @@ geometry_get_filename (void)
 	return filename;
 }
 
-void 
-gossip_geometry_save_for_chat (GossipChat *chat, 
+void
+gossip_geometry_save_for_chat (GossipChat *chat,
 			       gint        x,
 			       gint        y,
 			       gint        w,
@@ -75,7 +75,7 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	gsize        length;
 	gchar       *str;
 
-	gossip_debug (DEBUG_DOMAIN, "Saving for chat: x:%d, y:%d, w:%d, h:%d\n", 
+	gossip_debug (DEBUG_DOMAIN, "Saving for chat: x:%d, y:%d, w:%d, h:%d\n",
 		      x, y, w, h);
 
 	if (gossip_chat_is_group_chat (chat)) {
@@ -101,7 +101,7 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	y = CLAMP (y, 0, max_height - h);
 
 	str = g_strdup_printf (GEOMETRY_FORMAT, x, y, w, h);
-	
+
 	key_file = g_key_file_new ();
 
 	filename = geometry_get_filename ();
@@ -112,8 +112,8 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	g_free (str);
 
 	content = g_key_file_to_data (key_file, &length, NULL);
-	if (!g_file_set_contents (filename, content, length, &error)) { 
-		g_warning ("Couldn't save chat window geometry, error:%d->'%s'", 
+	if (!g_file_set_contents (filename, content, length, &error)) {
+		g_warning ("Couldn't save chat window geometry, error:%d->'%s'",
 			   error->code, error->message);
 		g_error_free (error);
 	}
@@ -123,7 +123,7 @@ gossip_geometry_save_for_chat (GossipChat *chat,
 	g_key_file_free (key_file);
 }
 
-void 
+void
 gossip_geometry_load_for_chat (GossipChat *chat,
 			       gint       *x,
 			       gint       *y,
@@ -179,15 +179,15 @@ gossip_geometry_load_for_chat (GossipChat *chat,
 		if (x) {
 			*x = tmp_x;
 		}
-		
+
 		if (y) {
 			*y = tmp_y;
 		}
-		
+
 		if (w) {
 			*w = tmp_w;
 		}
-		
+
 		if (h) {
 			*h = tmp_h;
 		}
@@ -195,17 +195,17 @@ gossip_geometry_load_for_chat (GossipChat *chat,
 		g_free (str);
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Loading for chat: x:%d, y:%d, w:%d, h:%d\n", 
-		      x ? *x : -1, 
-		      y ? *y : -1, 
-		      w ? *w : -1, 
+	gossip_debug (DEBUG_DOMAIN, "Loading for chat: x:%d, y:%d, w:%d, h:%d\n",
+		      x ? *x : -1,
+		      y ? *y : -1,
+		      w ? *w : -1,
 		      h ? *h : -1);
 
 	g_free (filename);
 	g_key_file_free (key_file);
 }
 
-void 
+void
 gossip_geometry_save_for_main_window (gint x,
 				      gint y,
 				      gint w,
@@ -221,7 +221,7 @@ gossip_geometry_save_for_main_window (gint x,
 	gsize      length;
 	gchar     *str;
 
-	gossip_debug (DEBUG_DOMAIN, "Saving for main window: x:%d, y:%d, w:%d, h:%d\n", 
+	gossip_debug (DEBUG_DOMAIN, "Saving for main window: x:%d, y:%d, w:%d, h:%d\n",
 		      x, y, w, h);
 
 	screen = gdk_screen_get_default ();
@@ -235,7 +235,7 @@ gossip_geometry_save_for_main_window (gint x,
 	y = CLAMP (y, 0, max_height - h);
 
 	str = g_strdup_printf (GEOMETRY_FORMAT, x, y, w, h);
-	
+
 	key_file = g_key_file_new ();
 
 	filename = geometry_get_filename ();
@@ -246,8 +246,8 @@ gossip_geometry_save_for_main_window (gint x,
 	g_free (str);
 
 	content = g_key_file_to_data (key_file, &length, NULL);
-	if (!g_file_set_contents (filename, content, length, &error)) { 
-		g_warning ("Couldn't save main window geometry, error:%d->'%s'", 
+	if (!g_file_set_contents (filename, content, length, &error)) {
+		g_warning ("Couldn't save main window geometry, error:%d->'%s'",
 			   error->code, error->message);
 		g_error_free (error);
 	}
@@ -257,7 +257,7 @@ gossip_geometry_save_for_main_window (gint x,
 	g_key_file_free (key_file);
 }
 
-void 
+void
 gossip_geometry_load_for_main_window (gint *x,
 				      gint *y,
 				      gint *w,
@@ -299,15 +299,15 @@ gossip_geometry_load_for_main_window (gint *x,
 		if (x) {
 			*x = tmp_x;
 		}
-		
+
 		if (y) {
 			*y = tmp_y;
 		}
-		
+
 		if (w) {
 			*w = tmp_w;
 		}
-		
+
 		if (h) {
 			*h = tmp_h;
 		}
@@ -315,10 +315,10 @@ gossip_geometry_load_for_main_window (gint *x,
 		g_free (str);
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Loading for main window: x:%d, y:%d, w:%d, h:%d\n", 
-		      x ? *x : -1, 
-		      y ? *y : -1, 
-		      w ? *w : -1, 
+	gossip_debug (DEBUG_DOMAIN, "Loading for main window: x:%d, y:%d, w:%d, h:%d\n",
+		      x ? *x : -1,
+		      y ? *y : -1,
+		      w ? *w : -1,
 		      h ? *h : -1);
 
 	g_free (filename);

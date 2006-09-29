@@ -76,13 +76,13 @@ void              gossip_message_set_thread              (GossipMessage        *
 
 
 
-/* What return value should we have here? */ 
+/* What return value should we have here? */
 gossip_time_t     gossip_message_get_timestamp           (GossipMessage        *message);
 void              gossip_message_set_timestamp           (GossipMessage        *message,
 							  gossip_time_t         timestamp);
 
 GossipChatroomInvite *
-                  gossip_message_get_invite              (GossipMessage        *message); 
+		  gossip_message_get_invite              (GossipMessage        *message);
 void              gossip_message_set_invite              (GossipMessage        *message,
 							  GossipChatroomInvite *invite);
 void              gossip_message_request_composing       (GossipMessage        *message);

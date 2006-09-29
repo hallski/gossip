@@ -19,7 +19,7 @@
  */
 
 /* Part of this file is copied from GtkSourceView (gtksourceiter.c):
- *  Copyright (C) 2000 - 2005 Paolo Maggi 
+ *  Copyright (C) 2000 - 2005 Paolo Maggi
  *  Copyright (C) 2002, 2003 Jeroen Zwartepoorte
  */
 
@@ -66,7 +66,7 @@ static GladeXML *
 get_glade_file (const gchar *filename,
 		const gchar *root,
 		const gchar *domain,
-		const gchar *first_required_widget, 
+		const gchar *first_required_widget,
 		va_list      args)
 {
 	gchar      *path;
@@ -85,9 +85,9 @@ get_glade_file (const gchar *filename,
 
 	for (name = first_required_widget; name; name = va_arg (args, char *)) {
 		widget_ptr = va_arg (args, void *);
-		
+
 		*widget_ptr = glade_xml_get_widget (gui, name);
-		
+
 		if (!*widget_ptr) {
 			g_warning ("Glade file '%s' is missing widget '%s'.",
 				   filename, name);
@@ -114,7 +114,7 @@ gossip_glade_get_file_simple (const gchar *filename,
 			      domain,
 			      first_required_widget,
 			      args);
-	
+
 	va_end (args);
 
 	if (!gui) {
@@ -162,7 +162,7 @@ gossip_glade_connect (GladeXML *gui,
 	gpointer    *callback;
 
 	va_start (args, first_widget);
-	
+
 	for (name = first_widget; name; name = va_arg (args, char *)) {
 		signal = va_arg (args, void *);
 		callback = va_arg (args, void *);
@@ -196,7 +196,7 @@ gossip_glade_setup_size_group (GladeXML         *gui,
 	va_start (args, first_widget);
 
 	size_group = gtk_size_group_new (mode);
-	
+
 	for (name = first_widget; name; name = va_arg (args, char *)) {
 		widget = glade_xml_get_widget (gui, name);
 		if (!widget) {
@@ -219,7 +219,7 @@ password_dialog_activate_cb (GtkWidget *entry, GtkDialog *dialog)
 }
 
 gchar *
-gossip_password_dialog_run (GossipAccount *account, 
+gossip_password_dialog_run (GossipAccount *account,
 			    GtkWindow     *parent)
 {
 	GtkWidget *dialog;
@@ -230,7 +230,7 @@ gossip_password_dialog_run (GossipAccount *account,
 	gchar     *password;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-	
+
 	str = g_strdup_printf (_("Please enter your %s account password"),
 			       gossip_account_get_name (account));
 	dialog = gtk_message_dialog_new_with_markup (parent,
@@ -241,7 +241,7 @@ gossip_password_dialog_run (GossipAccount *account,
 						     str);
 	g_free (str);
 
-	str = g_strdup_printf (_("Logging in with: %s"), 
+	str = g_strdup_printf (_("Logging in with: %s"),
 			       gossip_account_get_id (account));
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", str);
 	g_free (str);
@@ -249,31 +249,31 @@ gossip_password_dialog_run (GossipAccount *account,
 	checkbox = gtk_check_button_new_with_label (_("Remember Password?"));
 
 	entry = gtk_entry_new ();
-	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE); 
-	
+	gtk_entry_set_visibility (GTK_ENTRY (entry), FALSE);
+
 	g_signal_connect (entry,
 			  "activate",
 			  G_CALLBACK (password_dialog_activate_cb),
 			  dialog);
-	
+
 	vbox = gtk_vbox_new (FALSE, 6);
 
- 	gtk_container_set_border_width  (GTK_CONTAINER (vbox), 6); 
-	
+	gtk_container_set_border_width  (GTK_CONTAINER (vbox), 6);
+
 	gtk_box_pack_start (GTK_BOX (vbox), entry, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), checkbox, FALSE, FALSE, 0);
 
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox, FALSE, FALSE, 0);
 
- 	gtk_widget_show_all (dialog); 
-	
+	gtk_widget_show_all (dialog);
+
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
 		password = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
 
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbox))) {
 			GossipSession        *session;
 			GossipAccountManager *manager;
-			
+
 			session = gossip_app_get_session ();
 			manager = gossip_session_get_account_manager (session);
 
@@ -314,7 +314,7 @@ hint_dialog_response_cb (GtkWidget *widget,
 }
 
 gboolean
-gossip_hint_dialog_show (const gchar *conf_path, 
+gossip_hint_dialog_show (const gchar *conf_path,
 			 const gchar *message1,
 			 const gchar *message2,
 			 GtkWindow   *parent,
@@ -330,10 +330,10 @@ gossip_hint_dialog_show (const gchar *conf_path,
 	g_return_val_if_fail (conf_path != NULL, FALSE);
 	g_return_val_if_fail (message1 != NULL, FALSE);
 
-	ok = gossip_conf_get_bool (gossip_conf_get (), 
-				   conf_path, 
+	ok = gossip_conf_get_bool (gossip_conf_get (),
+				   conf_path,
 				   &show_hint);
-	
+
 	if (ok && !show_hint) {
 		return FALSE;
 	}
@@ -345,13 +345,13 @@ gossip_hint_dialog_show (const gchar *conf_path,
 						     "<b>%s</b>",
 						     message1);
 
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), 
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
 						  "%s", message2);
 	checkbutton = gtk_check_button_new_with_label (_("Do not show this again"));
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (checkbutton), TRUE);
 
 	vbox = gtk_vbox_new (FALSE, 6);
- 	gtk_container_set_border_width  (GTK_CONTAINER (vbox), 6); 
+	gtk_container_set_border_width  (GTK_CONTAINER (vbox), 6);
 	gtk_box_pack_start (GTK_BOX (vbox), checkbutton, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox, FALSE, FALSE, 0);
 
@@ -359,17 +359,17 @@ gossip_hint_dialog_show (const gchar *conf_path,
 	g_object_set_data (G_OBJECT (dialog), "user_data", user_data);
 	g_object_set_data (G_OBJECT (dialog), "func", func);
 
-	g_signal_connect (dialog, "response", 
+	g_signal_connect (dialog, "response",
 			  G_CALLBACK (hint_dialog_response_cb),
 			  checkbutton);
-	
+
 	gtk_widget_show_all (dialog);
 
 	return TRUE;
 }
 
 gboolean
-gossip_hint_show (const gchar         *conf_path, 
+gossip_hint_show (const gchar         *conf_path,
 		  const gchar         *message1,
 		  const gchar         *message2,
 		  GtkWindow           *parent,
@@ -404,7 +404,7 @@ gossip_pixbuf_from_account_type (GossipAccountType type,
 	GdkPixbuf     *pixbuf = NULL;
 	GError        *error = NULL;
 	gint           w, h;
-	gint           size = 48;  
+	gint           size = 48;
 	const gchar   *icon_id = NULL;
 
 	theme = gtk_icon_theme_get_default ();
@@ -412,7 +412,7 @@ gossip_pixbuf_from_account_type (GossipAccountType type,
 	if (!gtk_icon_size_lookup (icon_size, &w, &h)) {
 		size = 48;
 	} else {
-		size = (w + h) / 2; 
+		size = (w + h) / 2;
 	}
 
 	switch (type) {
@@ -477,7 +477,7 @@ gossip_pixbuf_from_account_status (GossipAccount *account,
 		modded_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB,
 						TRUE,
 						8,
-						gdk_pixbuf_get_width (pixbuf), 
+						gdk_pixbuf_get_width (pixbuf),
 						gdk_pixbuf_get_height (pixbuf));
 
 		gdk_pixbuf_saturate_and_pixelate (pixbuf,
@@ -498,7 +498,7 @@ gossip_pixbuf_from_account_error (GossipAccount *account,
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *pixbuf_error;
 
-	pixbuf = gossip_pixbuf_from_account_status (account, 
+	pixbuf = gossip_pixbuf_from_account_status (account,
 						    icon_size,
 						    FALSE);
 	if (!pixbuf) {
@@ -512,8 +512,8 @@ gossip_pixbuf_from_account_error (GossipAccount *account,
 		return NULL;
 	}
 
-	gdk_pixbuf_composite (pixbuf_error, 
-			      pixbuf, 
+	gdk_pixbuf_composite (pixbuf_error,
+			      pixbuf,
 			      0, 0,
 			      gdk_pixbuf_get_width (pixbuf_error),
 			      gdk_pixbuf_get_height (pixbuf_error),
@@ -535,7 +535,7 @@ gossip_pixbuf_from_smiley (GossipSmiley type,
 	GdkPixbuf     *pixbuf = NULL;
 	GError        *error = NULL;
 	gint           w, h;
-	gint           size;  
+	gint           size;
 	const gchar   *icon_id;
 
 	theme = gtk_icon_theme_get_default ();
@@ -543,7 +543,7 @@ gossip_pixbuf_from_smiley (GossipSmiley type,
 	if (!gtk_icon_size_lookup (icon_size, &w, &h)) {
 		size = 16;
 	} else {
-		size = (w + h) / 2; 
+		size = (w + h) / 2;
 	}
 
 	switch (type) {
@@ -610,26 +610,26 @@ gossip_pixbuf_from_smiley (GossipSmiley type,
 	case GOSSIP_SMILEY_BLUSH:        /*  *S   */
 		icon_id = "stock_smiley-23";
 		break;
-	case GOSSIP_SMILEY_COOLBIGSMILE: /*  8D   */ 
+	case GOSSIP_SMILEY_COOLBIGSMILE: /*  8D   */
 		icon_id = "stock_smiley-25";
 		break;
-	case GOSSIP_SMILEY_ANGRY:        /*  :@   */  
-		icon_id = "stock_smiley-16"; 
-		break; 
-	case GOSSIP_SMILEY_BOSS:         /*  @)   */  
-		icon_id = "stock_smiley-21"; 
-		break; 
-	case GOSSIP_SMILEY_MONKEY:       /*  #)   */  
-		icon_id = "stock_smiley-22"; 
-		break; 
-	case GOSSIP_SMILEY_SILLY:        /*  O)   */  
-		icon_id = "stock_smiley-24"; 
-		break; 
-	case GOSSIP_SMILEY_SICK:         /*  +o(  */  
-		icon_id = "stock_smiley-26"; 
-		break; 
+	case GOSSIP_SMILEY_ANGRY:        /*  :@   */
+		icon_id = "stock_smiley-16";
+		break;
+	case GOSSIP_SMILEY_BOSS:         /*  @)   */
+		icon_id = "stock_smiley-21";
+		break;
+	case GOSSIP_SMILEY_MONKEY:       /*  #)   */
+		icon_id = "stock_smiley-22";
+		break;
+	case GOSSIP_SMILEY_SILLY:        /*  O)   */
+		icon_id = "stock_smiley-24";
+		break;
+	case GOSSIP_SMILEY_SICK:         /*  +o(  */
+		icon_id = "stock_smiley-26";
+		break;
 
-	default: 
+	default:
 		g_assert_not_reached ();
 		icon_id = NULL;
 	}
@@ -646,7 +646,7 @@ gossip_pixbuf_from_smiley (GossipSmiley type,
 GdkPixbuf *
 gossip_pixbuf_offline (void)
 {
-	return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE, 
+	return gossip_pixbuf_from_stock (GOSSIP_STOCK_OFFLINE,
 					 GTK_ICON_SIZE_MENU);
 }
 
@@ -712,7 +712,7 @@ gossip_window_present (GtkWindow *window,
 GdkPixbuf *
 gossip_pixbuf_for_presence_state (GossipPresenceState state)
 {
-	const gchar *stock = NULL; 
+	const gchar *stock = NULL;
 
 	switch (state) {
 	case GOSSIP_PRESENCE_STATE_AVAILABLE:
@@ -739,7 +739,7 @@ gossip_pixbuf_for_presence_state (GossipPresenceState state)
 GdkPixbuf *
 gossip_pixbuf_for_presence (GossipPresence *presence)
 {
-	GossipPresenceState state; 
+	GossipPresenceState state;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (presence),
 			      gossip_pixbuf_offline ());
@@ -749,13 +749,13 @@ gossip_pixbuf_for_presence (GossipPresence *presence)
 	return gossip_pixbuf_for_presence_state (state);
 }
 
-GdkPixbuf *  
+GdkPixbuf *
 gossip_pixbuf_for_contact (GossipContact *contact)
 {
 	GossipPresence     *presence;
 	GossipSubscription  subscription;
 
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), 
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact),
 			      gossip_pixbuf_offline ());
 
 	presence = gossip_contact_get_active_presence (contact);
@@ -766,9 +766,9 @@ gossip_pixbuf_for_contact (GossipContact *contact)
 
 	subscription = gossip_contact_get_subscription (contact);
 
-	if (subscription != GOSSIP_SUBSCRIPTION_BOTH && 
+	if (subscription != GOSSIP_SUBSCRIPTION_BOTH &&
 	    subscription != GOSSIP_SUBSCRIPTION_TO) {
-		return gossip_pixbuf_from_stock (GOSSIP_STOCK_PENDING, 
+		return gossip_pixbuf_from_stock (GOSSIP_STOCK_PENDING,
 						 GTK_ICON_SIZE_MENU);
 	}
 
@@ -786,7 +786,7 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
 	status = gossip_chatroom_get_status (chatroom);
-	
+
 	switch (status) {
 	case GOSSIP_CHATROOM_STATUS_JOINING:
 		stock_id = GTK_STOCK_EXECUTE;
@@ -796,7 +796,7 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 		break;
 	case GOSSIP_CHATROOM_STATUS_ERROR:
 		stock_id = GTK_STOCK_DIALOG_ERROR;
-		break;	
+		break;
 	default:
 	case GOSSIP_CHATROOM_STATUS_INACTIVE:
 	case GOSSIP_CHATROOM_STATUS_UNKNOWN:
@@ -810,16 +810,16 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 }
 
 GdkPixbuf *
-gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard) 
+gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard)
 {
 	GdkPixbuf	*pixbuf;
 	GdkPixbufLoader	*loader;
 	const guchar    *avatar;
 	gsize		 len;
 	GError          *error = NULL;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	
+
 	avatar = gossip_vcard_get_avatar (vcard, &len);
 	if (!avatar) {
 		return NULL;
@@ -846,16 +846,16 @@ gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard)
 }
 
 GdkPixbuf *
-gossip_pixbuf_avatar_from_contact (GossipContact *contact) 
+gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 {
 	GdkPixbuf	*pixbuf;
 	GdkPixbufLoader	*loader;
 	const guchar	*avatar;
 	gsize		 len;
 	GError          *error = NULL;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	
+
 	avatar = gossip_contact_get_avatar (contact, &len);
 	if (!avatar) {
 		return NULL;
@@ -923,7 +923,7 @@ pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 }
 
 GdkPixbuf *
-gossip_pixbuf_from_avatar_scaled (const guchar *avatar, 
+gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 				  gsize         len,
 				  gint          width,
 				  gint          height)
@@ -943,8 +943,8 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 
 	loader = gdk_pixbuf_loader_new ();
 
-	g_signal_connect (loader, "size-prepared", 
-			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb), 
+	g_signal_connect (loader, "size-prepared",
+			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb),
 			  &data);
 
 	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
@@ -966,7 +966,7 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 }
 
 GdkPixbuf *
-gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact, 
+gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact,
 					  gint           width,
 					  gint           height)
 {
@@ -979,18 +979,18 @@ gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact,
 	if (!avatar) {
 		return NULL;
 	}
-	
+
 	return gossip_pixbuf_from_avatar_scaled (avatar, len, width, height);
 }
 
 GdkPixbuf *
-gossip_pixbuf_avatar_from_vcard_scaled (GossipVCard *vcard, 
+gossip_pixbuf_avatar_from_vcard_scaled (GossipVCard *vcard,
 					GtkIconSize  size)
 {
 	const guchar *avatar;
 	gsize	      len;
 	gint          width, height;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
 
 	avatar = gossip_vcard_get_avatar (vcard, &len);
@@ -1123,7 +1123,7 @@ g_utf8_caselessnmatch (const char *s1, const char *s2,
 
 finally_2:
 	g_free (normalized_s1);
-	g_free (normalized_s2);	
+	g_free (normalized_s2);
 
 	return ret;
 }
@@ -1162,7 +1162,7 @@ forward_chars_with_skipping (GtkTextIter *iter,
 		{
 			/* being UTF8 correct sucks; this accounts for extra
 			   offsets coming from canonical decompositions of
-			   UTF8 characters (e.g. accented characters) which 
+			   UTF8 characters (e.g. accented characters) which
 			   g_utf8_normalize() performs */
 			gchar *normal;
 			gchar buffer[6];
@@ -1379,7 +1379,7 @@ gossip_text_iter_forward_search (const GtkTextIter   *iter,
 			return FALSE;
 		}
 	}
-	
+
 	visible_only = TRUE;
 	slice = FALSE;
 
@@ -1467,12 +1467,12 @@ gossip_url_show (const char *url)
 	NSString          *string;
 
 	real_url = fixup_url (url);
-	
+
 	string = [NSString stringWithUTF8String: real_url];
 	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:string]];
 
 	[pool release];
-	
+
 	g_free (real_url);
 }
 #else
@@ -1502,13 +1502,13 @@ gossip_help_show (void)
 						     "<b>%s</b>\n\n%s",
 						     _("Could not display the help contents."),
 						     err->message);
-	
+
 	g_signal_connect_swapped (dialog, "response",
 				  G_CALLBACK (gtk_widget_destroy),
 				  dialog);
 
 	gtk_widget_show (dialog);
-		
+
 	g_error_free (err);
 #elif defined(HAVE_COCOA)
 	/* Nothing for now. */
@@ -1540,12 +1540,12 @@ gossip_window_set_default_icon_name (const gchar *name)
 	NSImage           *image;
 
 	path = gossip_paths_get_image_path ("gossip-logo.png");
-	
+
 	tmp = [NSString stringWithUTF8String:path];
 	image = [[NSImage alloc] initWithContentsOfFile:tmp];
 	[NSApp setApplicationIconImage:image];
 	[image release];
-	
+
 	g_free (path);
 
 	[pool release];

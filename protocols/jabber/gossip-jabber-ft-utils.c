@@ -26,7 +26,7 @@
 
 #include "gossip-jabber-ft-utils.h"
 
-#define DEBUG_DOMAIN "JabberFTUtils" 
+#define DEBUG_DOMAIN "JabberFTUtils"
 
 static void base64_init (void);
 
@@ -65,32 +65,32 @@ base64_init (void)
  * little bit.
  */
 size_t
-gossip_jabber_ft_base64_encode_close (guint8 const *in, 
+gossip_jabber_ft_base64_encode_close (guint8 const *in,
 				      size_t        inlen,
-				      gboolean      break_lines, 
-				      guint8       *out, 
+				      gboolean      break_lines,
+				      guint8       *out,
 				      int          *state,
 				      unsigned int *save)
 {
 	int     c1, c2;
 	guint8 *outptr = out;
 
- 	base64_init ();
+	base64_init ();
 
 	if (inlen > 0) {
-		outptr += gossip_jabber_ft_base64_encode_step (in, inlen, 
-							       break_lines, outptr, 
+		outptr += gossip_jabber_ft_base64_encode_step (in, inlen,
+							       break_lines, outptr,
 							       state, save);
 	}
 
 	c1 = ((guint8 *)save)[1];
 	c2 = ((guint8 *)save)[2];
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Base64: mode = %d\nc1 = %c\nc2 = %c",
 		      (int)((char *)save)[0],
 		      (int)((char *)save)[1],
 		      (int)((char *)save)[2]);
-	
+
 	switch (((char *)save)[0]) {
 	case 2:
 		outptr[2] = base64_alphabet[ ( (c2 &0x0f) << 2 ) ];
@@ -117,20 +117,20 @@ gossip_jabber_ft_base64_encode_close (guint8 const *in,
 
 /* Performs an 'encode step', only encodes blocks of 3 characters to
  * the output at a time, saves left-over state in state and save
- * (initialise to 0 on first invocation). 
+ * (initialise to 0 on first invocation).
  */
 size_t
-gossip_jabber_ft_base64_encode_step (guint8 const *in, 
+gossip_jabber_ft_base64_encode_step (guint8 const *in,
 				     size_t        len,
-				     gboolean      break_lines, 
-				     guint8       *out, 
-				     int          *state, 
+				     gboolean      break_lines,
+				     guint8       *out,
+				     int          *state,
 				     unsigned int *save)
 {
 	register guint8 const *inptr;
 	register guint8       *outptr;
 
- 	base64_init ();
+	base64_init ();
 
 	if (len <= 0) {
 		return 0;
@@ -139,8 +139,8 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 	inptr = in;
 	outptr = out;
 
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Base64: we have %d chars, and %d saved chars", 
+	gossip_debug (DEBUG_DOMAIN,
+		      "Base64: we have %d chars, and %d saved chars",
 		      len, ((char *)save)[0]);
 
 	if (len + ((char *)save)[0] > 2) {
@@ -155,7 +155,7 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 		case 2:	c1 = ((guint8 *)save)[1];
 			c2 = ((guint8 *)save)[2]; goto skip2;
 		}
-		
+
 		/* yes, we jump into the loop, no i'm not going to change it, it's beautiful! */
 		while (inptr < inend) {
 			c1 = *inptr++;
@@ -180,7 +180,7 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 		*state = already;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, 
+	gossip_debug (DEBUG_DOMAIN,
 		      "Base64: state = %d, len = %d",
 		      (int)((char *)save)[0], len);
 
@@ -198,20 +198,20 @@ gossip_jabber_ft_base64_encode_step (guint8 const *in,
 		((char*)save)[0] += len;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, 
+	gossip_debug (DEBUG_DOMAIN,
 		      "Base64: mode = %d\nc1 = %c\nc2 = %c",
 		      (int)((char *)save)[0],
 		      (int)((char *)save)[1],
 		      (int)((char *)save)[2]);
-	
+
 	return outptr-out;
 }
 
 size_t
-gossip_jabber_ft_base64_decode_step (guint8 const *in, 
+gossip_jabber_ft_base64_decode_step (guint8 const *in,
 				     size_t        len,
 				     guint8       *out,
-				     int          *state, 
+				     int          *state,
 				     guint        *save)
 {
 	register guint8 const *inptr;
@@ -220,7 +220,7 @@ gossip_jabber_ft_base64_decode_step (guint8 const *in,
 	guint8 const          *inend;
 	int                    i;
 
- 	base64_init ();
+	base64_init ();
 
 	inend = in+len;
 	outptr = out;
@@ -264,7 +264,7 @@ gossip_jabber_ft_base64_decode_step (guint8 const *in,
 }
 
 guint8 *
-gossip_jabber_ft_base64_encode_simple (guint8 const *data, 
+gossip_jabber_ft_base64_encode_simple (guint8 const *data,
 				       size_t        len)
 {
 	guint8       *out;
@@ -272,7 +272,7 @@ gossip_jabber_ft_base64_encode_simple (guint8 const *data,
 	unsigned int  save = 0;
 	gboolean      break_lines = TRUE;
 
- 	base64_init ();
+	base64_init ();
 
 	outlen = len * 4 / 3 + 5;
 	if (break_lines) {
@@ -287,7 +287,7 @@ gossip_jabber_ft_base64_encode_simple (guint8 const *data,
 }
 
 size_t
-gossip_jabber_ft_base64_decode_simple (guint8 *data, 
+gossip_jabber_ft_base64_decode_simple (guint8 *data,
 				       size_t  len)
 {
 	int          state = 0;

@@ -44,25 +44,25 @@ typedef struct _GossipChatPriv GossipChatPriv;
 #include "gossip-spell.h"
 
 struct _GossipChat {
-        GObject         parent;
+	GObject         parent;
 
 	/* Protected */
 	GossipChatView *view;
 	GtkWidget      *input_text_view;
 	gboolean        is_first_char;
 
-        GossipChatPriv *priv;
+	GossipChatPriv *priv;
 };
 
 struct _GossipChatClass {
-        GObjectClass parent;
+	GObjectClass parent;
 
-        /* Signals */
+	/* Signals */
 	void             (*new_message)      (GossipChat  *chat);
-        void             (*composing)        (GossipChat  *chat, 
+	void             (*composing)        (GossipChat  *chat,
 					      gboolean     composing);
 	void             (*name_changed)     (GossipChat  *chat,
-				              const gchar *name);
+					      const gchar *name);
 	void             (*status_changed)   (GossipChat  *chat);
 
 	/* VTable */
@@ -78,8 +78,8 @@ struct _GossipChatClass {
 	void             (*set_show_contacts)(GossipChat  *chat,
 					      gboolean     show);
 
-	gboolean         (*is_group_chat)    (GossipChat  *chat); 
-        void             (*save_geometry)    (GossipChat  *chat,
+	gboolean         (*is_group_chat)    (GossipChat  *chat);
+	void             (*save_geometry)    (GossipChat  *chat,
 					      gint         x,
 					      gint         y,
 					      gint         w,

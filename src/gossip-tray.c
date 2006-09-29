@@ -36,21 +36,21 @@ struct _GossipTrayPriv {
 	GtkTooltips *tray_tooltips;
 	GList       *tray_flash_icons;
 	guint        tray_flash_timeout_id;
-	
+
 	GtkWidget   *popup_menu;
 	GtkWidget   *popup_menu_status_item;
 	GtkWidget   *show_popup_item;
 	GtkWidget   *hide_popup_item;
-	
+
 };
 
 static void     tray_finalize           (GObject *object);
 static gboolean tray_destroy_cb         (GtkWidget          *widget,
-                                         gpointer            user_data);
+					 gpointer            user_data);
 static void     tray_create_menu        (GossipTray *tray);
 static void     tray_create             (GossipTray *tray);
 static gboolean tray_pop_message        (GossipTray *tray,
-                                         GossipContact *contact);
+					 GossipContact *contact);
 static void     tray_update_tooltip     (GossipTray *tray);
 static gboolean tray_applet_exists      (void);
 static void     tray_flash_start        (GossipTray *tray);
@@ -64,7 +64,7 @@ gossip_tray_class_init (GossipTrayClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = tray_finalize;
-	
+
 	g_type_class_add_private (object_class, sizeof (GossipTrayPriv));
 }
 
@@ -79,7 +79,7 @@ tray_finalize (GObject *object)
 	GossipTrayPriv *priv;
 
 	priv = GET_PRIV (object);
-	
+
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
 	}
@@ -90,9 +90,9 @@ tray_finalize (GObject *object)
 static gboolean
 tray_destroy_cb (GtkWidget *widget, gpointer user_data)
 {
-        GossipTrayPriv *priv;
-        
-        priv = GET_PRIV (widget);
+	GossipTrayPriv *priv;
+
+	priv = GET_PRIV (widget);
 
 	gtk_widget_destroy (GTK_WIDGET (priv->tray_icon));
 	priv->tray_icon = NULL;
@@ -108,17 +108,17 @@ tray_destroy_cb (GtkWidget *widget, gpointer user_data)
 	tray_create (GOSSIP_TRAY (widget));
 
 	/* Show the window in case the notification area was removed. */
-        /*if (!tray_applet_exists ()) {
-                gtk_widget_show (priv->window);
+	/*if (!tray_applet_exists ()) {
+		gtk_widget_show (priv->window);
 	}*/
 
 	return TRUE;
 }
 
 static gboolean
-tray_button_press_cb (GtkWidget      *widget, 
-                      GdkEventButton *event, 
-                      GossipTray     *tray)
+tray_button_press_cb (GtkWidget      *widget,
+		      GdkEventButton *event,
+		      GossipTray     *tray)
 {
 	GossipTrayPriv *priv;
 	GtkWidget     *submenu;
@@ -129,14 +129,14 @@ tray_button_press_cb (GtkWidget      *widget,
 	    event->type == GDK_3BUTTON_PRESS) {
 		return FALSE;
 	}
-	
+
 	switch (event->button) {
 	case 1:
 		if (tray_pop_message (GOSSIP_TRAY (widget), NULL)) {
 			break;
 		}
 
-                /* FIXME: app_toggle_visibility (tray); */
+		/* FIXME: app_toggle_visibility (tray); */
 		break;
 
 	case 3:
@@ -152,12 +152,12 @@ tray_button_press_cb (GtkWidget      *widget,
 		submenu = app_create_status_menu (FALSE);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->popup_menu_status_item),
 					   submenu);
-		
-                gtk_menu_popup (GTK_MENU (priv->popup_menu), NULL, NULL, NULL,
+
+		gtk_menu_popup (GTK_MENU (priv->popup_menu), NULL, NULL, NULL,
 				NULL, event->button, event->time);
 #endif
-                return TRUE;
-		
+		return TRUE;
+
 		break;
 
 	default:
@@ -193,7 +193,7 @@ tray_create_menu (GossipTray *tray)
 			      "tray_new_message", "activate", app_popup_new_message_cb,
 			      "tray_quit", "activate", app_quit_cb,
 			      NULL);
-	
+
 	priv->enabled_connected_widgets = g_list_prepend (priv->enabled_connected_widgets,
 							  priv->popup_menu_status_item);
 
@@ -211,19 +211,19 @@ tray_create (GossipTray *tray)
 	priv = GET_PRIV (tray);
 
 	priv->tray_icon = egg_tray_icon_new (_("Gossip, Instant Messaging Client"));
-		
+
 	priv->tray_event_box = gtk_event_box_new ();
 	priv->tray_image = gtk_image_new ();
-	
+
 	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
 				  app_get_current_status_icon (),
 				  GTK_ICON_SIZE_MENU);
-	
+
 	gtk_container_add (GTK_CONTAINER (priv->tray_event_box),
 			   priv->tray_image);
 
 	priv->tray_tooltips = gtk_tooltips_new ();
-	
+
 	gtk_widget_show (priv->tray_event_box);
 	gtk_widget_show (priv->tray_image);
 
@@ -233,7 +233,7 @@ tray_create (GossipTray *tray)
 
 	gtk_widget_add_events (GTK_WIDGET (priv->tray_icon),
 			       GDK_BUTTON_PRESS_MASK);
-	
+
 	g_signal_connect (priv->tray_icon,
 			  "button_press_event",
 			  G_CALLBACK (tray_button_press_cb),
@@ -262,7 +262,7 @@ tray_pop_message (GossipTray *tray, GossipContact *contact)
 	if (!contact) {
 		contact = priv->tray_flash_icons->data;
 	}
-	
+
 	chat = gossip_chat_manager_get_chat (priv->chat_manager, contact);
 	if (!chat) {
 		return FALSE;
@@ -286,7 +286,7 @@ tray_pop_message (GossipTray *tray, GossipContact *contact)
 	/*	gossip_contact_list_flash_contact (priv->contact_list,
 						   contact, FALSE);*/
 	}
-	
+
 	g_object_unref (contact);
 
 	return TRUE;
@@ -312,15 +312,15 @@ tray_update_tooltip (GossipTray *tray)
 	contact = priv->tray_flash_icons->data;
 
 	name = gossip_contact_get_name (contact);
-	
+
 	str = g_strdup_printf (_("New message from %s"), name);
-	
+
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tray_tooltips),
 			      priv->tray_event_box,
 			      str, str);
-	
+
 	g_free (str);
-}	
+}
 
 static gboolean
 tray_applet_exists ()
@@ -328,12 +328,12 @@ tray_applet_exists ()
 	Screen *xscreen = DefaultScreenOfDisplay (gdk_display);
 	Atom    selection_atom;
 	char   *selection_atom_name;
-	
+
 	selection_atom_name = g_strdup_printf ("_NET_SYSTEM_TRAY_S%d",
 					       XScreenNumberOfScreen (xscreen));
 	selection_atom = XInternAtom (DisplayOfScreen (xscreen), selection_atom_name, False);
 	g_free (selection_atom_name);
-	
+
 	if (XGetSelectionOwner (DisplayOfScreen (xscreen), selection_atom)) {
 		return TRUE;
 	} else {
@@ -360,7 +360,7 @@ tray_flash_timeout_func (gpointer data)
 		g_print ("expl == auto, flashing\n");
 	}
 #endif
-	
+
 	if (priv->status_flash_timeout_id != 0) {
 		if (on) {
 			switch (priv->explicit_show) {
@@ -389,7 +389,7 @@ tray_flash_timeout_func (gpointer data)
 	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
 				  icon,
 				  GTK_ICON_SIZE_MENU);
-	
+
 	on = !on;
 
 	return TRUE;
@@ -412,17 +412,17 @@ static void
 tray_flash_maybe_stop (GossipTray *tray)
 {
 	GossipTrayPriv *priv;
-        
-        priv = GET_PRIV (tray);
-	
+
+	priv = GET_PRIV (tray);
+
 	if (priv->tray_flash_icons != NULL || priv->leave_time > 0) {
 		return;
 	}
-	
+
 	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
 				  app_get_current_status_icon (),
 				  GTK_ICON_SIZE_MENU);
-	
+
 	if (priv->tray_flash_timeout_id) {
 		g_source_remove (priv->tray_flash_timeout_id);
 		priv->tray_flash_timeout_id = 0;
@@ -445,7 +445,7 @@ gossip_tray_set_icon (GossipTray *tray, const gchar *stock_id)
 	g_return_if_fail (stock_id != NULL);
 
 	priv = GET_PRIV (tray);
-	
+
 	gtk_image_set_from_stock (GTK_IMAGE (priv->tray_image),
 				  stock_id,
 				  GTK_ICON_SIZE_MENU);

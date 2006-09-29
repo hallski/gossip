@@ -83,12 +83,12 @@ gossip_about_dialog_new (GtkWindow *parent)
 
 	gtk_about_dialog_set_url_hook (about_dialog_activate_link_cb, NULL, NULL);
 
-	license_trans = g_strconcat (_(license[0]), "\n\n", 
+	license_trans = g_strconcat (_(license[0]), "\n\n",
 				     _(license[1]), "\n\n",
-				     _(license[2]), "\n\n", 
+				     _(license[2]), "\n\n",
 				     NULL);
 
-        gtk_show_about_dialog (parent,
+	gtk_show_about_dialog (parent,
 			       "artists", artists,
 			       "authors", authors,
 			       "comments", _("An Instant Messaging client for GNOME"),

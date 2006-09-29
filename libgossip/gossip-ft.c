@@ -29,7 +29,7 @@ typedef struct _GossipFTPriv GossipFTPriv;
 
 struct _GossipFTPriv {
 	GossipFTId     id;
-	
+
 	GossipFTType   type;
 
 	GossipContact *contact;
@@ -111,7 +111,7 @@ ft_class_init (GossipFTClass *class)
 					 g_param_spec_int ("id",
 							   "Transaction ID",
 							   "The file transfer transaction id",
-							   0, 
+							   0,
 							   G_MAXINT,
 							   0,
 							   G_PARAM_READABLE));
@@ -125,7 +125,7 @@ ft_class_init (GossipFTClass *class)
 							   GOSSIP_FT_TYPE_SENDING,
 							   GOSSIP_FT_TYPE_RECEIVING,
 							   G_PARAM_READWRITE));
-	
+
 	g_object_class_install_property (object_class,
 					 PROP_CONTACT,
 					 g_param_spec_object ("contact",
@@ -148,7 +148,7 @@ ft_class_init (GossipFTClass *class)
 					 g_param_spec_uint64 ("file-size",
 							      "File Size",
 							      "The file size in bytes",
-							      0, 
+							      0,
 							      G_MAXUINT64,
 							      0,
 							      G_PARAM_READWRITE));
@@ -190,7 +190,7 @@ ft_finalize (GObject *object)
 	GossipFTPriv *priv;
 
 	priv = GET_PRIV (object);
-	
+
 	if (priv->contact) {
 		g_object_unref (priv->contact);
 	}
@@ -208,7 +208,7 @@ ft_get_property (GObject    *object,
 		      GParamSpec *pspec)
 {
 	GossipFTPriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
@@ -243,7 +243,7 @@ ft_set_property (GObject      *object,
 		 GParamSpec   *pspec)
 {
 	GossipFTPriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
@@ -310,7 +310,7 @@ gossip_ft_set_type (GossipFT     *ft,
 	GossipFTPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_FT (ft));
-	g_return_if_fail (type >= GOSSIP_FT_TYPE_RECEIVING || 
+	g_return_if_fail (type >= GOSSIP_FT_TYPE_RECEIVING ||
 			  type <= GOSSIP_FT_TYPE_SENDING);
 
 	priv = GET_PRIV (ft);
@@ -426,7 +426,7 @@ gossip_ft_set_file_mime_type (GossipFT    *ft,
 }
 
 gboolean
-gossip_ft_equal (gconstpointer a, 
+gossip_ft_equal (gconstpointer a,
 		 gconstpointer b)
 {
 	GossipFTPriv *priv1;

@@ -42,7 +42,7 @@ typedef struct {
 	GtkTextIter  start;
 	GtkTextIter  end;
 } GossipSpellDialog;
- 
+
 enum {
 	COL_SPELL_WORD,
 	COL_SPELL_COUNT
@@ -63,27 +63,27 @@ static void spell_dialog_response_cb                (GtkWidget         *widget,
 static void spell_dialog_destroy_cb                 (GtkWidget         *widget,
 						     GossipSpellDialog *dialog);
 
-static void 
+static void
 spell_dialog_model_populate_columns (GossipSpellDialog *dialog)
 {
 	GtkTreeModel      *model;
-	GtkTreeViewColumn *column; 
+	GtkTreeViewColumn *column;
 	GtkCellRenderer   *renderer;
 	guint              col_offset;
-	
+
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->treeview_words));
-	
+
 	renderer = gtk_cell_renderer_text_new ();
 	col_offset = gtk_tree_view_insert_column_with_attributes (
 		GTK_TREE_VIEW (dialog->treeview_words),
 		-1, _("Word"),
-		renderer, 
+		renderer,
 		"text", COL_SPELL_WORD,
 		NULL);
-	
+
 	g_object_set_data (G_OBJECT (renderer),
 			   "column", GINT_TO_POINTER (COL_SPELL_WORD));
-	
+
 	column = gtk_tree_view_get_column (GTK_TREE_VIEW (dialog->treeview_words), col_offset - 1);
 	gtk_tree_view_column_set_sort_column_id (column, COL_SPELL_WORD);
 	gtk_tree_view_column_set_resizable (column, FALSE);
@@ -107,7 +107,7 @@ spell_dialog_model_populate_suggestions (GossipSpellDialog *dialog)
 	for (l = suggestions; l; l=l->next) {
 		GtkTreeIter  iter;
 		gchar       *word;
-		
+
 		word = l->data;
 
 		gtk_list_store_append (store, &iter);
@@ -138,7 +138,7 @@ spell_dialog_model_selection_changed_cb (GtkTreeSelection  *treeselection,
 	gtk_widget_set_sensitive (dialog->button_replace, (count == 1));
 }
 
-static void 
+static void
 spell_dialog_model_setup (GossipSpellDialog *dialog)
 {
 	GtkTreeView      *view;
@@ -147,18 +147,18 @@ spell_dialog_model_setup (GossipSpellDialog *dialog)
 
 	view = GTK_TREE_VIEW (dialog->treeview_words);
 
-	g_signal_connect (view, "row-activated", 
+	g_signal_connect (view, "row-activated",
 			  G_CALLBACK (spell_dialog_model_row_activated_cb),
 			  dialog);
 
 	store = gtk_list_store_new (COL_SPELL_COUNT,
 				    G_TYPE_STRING);   /* word */
-	
+
 	gtk_tree_view_set_model (view, GTK_TREE_MODEL (store));
 
 	selection = gtk_tree_view_get_selection (view);
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-	
+
 	g_signal_connect (selection, "changed",
 			  G_CALLBACK (spell_dialog_model_selection_changed_cb),
 			  dialog);
@@ -170,18 +170,18 @@ spell_dialog_model_setup (GossipSpellDialog *dialog)
 }
 
 static void
-spell_dialog_destroy_cb (GtkWidget         *widget, 
+spell_dialog_destroy_cb (GtkWidget         *widget,
 			 GossipSpellDialog *dialog)
 {
 	g_object_unref (dialog->chat);
 	g_free (dialog->word);
-	
- 	g_free (dialog); 
+
+	g_free (dialog);
 }
 
 static void
 spell_dialog_response_cb (GtkWidget         *widget,
-			  gint               response, 
+			  gint               response,
 			  GossipSpellDialog *dialog)
 {
 	if (response == GTK_RESPONSE_OK) {
@@ -198,14 +198,14 @@ spell_dialog_response_cb (GtkWidget         *widget,
 		if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 			return;
 		}
-		
+
 		gtk_tree_model_get (model, &iter, COL_SPELL_WORD, &new_word, -1);
 
-		gossip_chat_correct_word (dialog->chat, 
+		gossip_chat_correct_word (dialog->chat,
 					  dialog->start,
 					  dialog->end,
 					  new_word);
-		
+
 		g_free (new_word);
 	}
 
@@ -251,13 +251,13 @@ gossip_spell_dialog_show (GossipChat  *chat,
 
 	g_object_unref (gui);
 
-	str = g_strdup_printf ("%s:\n<b>%s</b>", 
+	str = g_strdup_printf ("%s:\n<b>%s</b>",
 			       _("Suggestions for the word"),
 			       word);
 
 	gtk_label_set_markup (GTK_LABEL (dialog->label_word), str);
 	g_free (str);
-	
+
 	spell_dialog_model_setup (dialog);
 
 	gtk_widget_show (dialog->window);

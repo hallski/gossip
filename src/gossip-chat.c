@@ -54,7 +54,7 @@ struct _GossipChatPriv {
 	GossipChatWindow *window;
 
 	GtkTooltips      *tooltips;
-	
+
 	/* Used to automatically shrink a window that has temporarily grown due
 	 * to long input.
 	 */
@@ -66,10 +66,10 @@ struct _GossipChatPriv {
 
 typedef struct {
 	GossipChat  *chat;
-       	gchar       *word;
+	gchar       *word;
 
-       	GtkTextIter  start;
-       	GtkTextIter  end;
+	GtkTextIter  start;
+	GtkTextIter  end;
 } GossipChatSpell;
 
 static void             gossip_chat_class_init            (GossipChatClass *klass);
@@ -114,15 +114,15 @@ gossip_chat_class_init (GossipChatClass *klass)
 
 	object_class->finalize = chat_finalize;
 
-        chat_signals[COMPOSING] =
-                g_signal_new ("composing",
-                              G_OBJECT_CLASS_TYPE (object_class),
-                              G_SIGNAL_RUN_LAST,
-                              G_STRUCT_OFFSET (GossipChatClass, composing),
-                              NULL, NULL,
+	chat_signals[COMPOSING] =
+		g_signal_new ("composing",
+			      G_OBJECT_CLASS_TYPE (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GossipChatClass, composing),
+			      NULL, NULL,
 			      gossip_marshal_VOID__BOOLEAN,
-                              G_TYPE_NONE,
-                              1, G_TYPE_BOOLEAN);
+			      G_TYPE_NONE,
+			      1, G_TYPE_BOOLEAN);
 
 	chat_signals[NEW_MESSAGE] =
 		g_signal_new ("new-message",
@@ -179,7 +179,7 @@ gossip_chat_init (GossipChat *chat)
 	priv = GET_PRIV (chat);
 
 	priv->tooltips = gtk_tooltips_new ();
-	
+
 	priv->default_window_height = -1;
 	priv->vscroll_visible = FALSE;
 
@@ -219,7 +219,7 @@ chat_finalize (GObject *object)
 }
 
 static void
-chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer, 
+chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 				   GossipChat    *chat)
 {
 	GossipChatPriv *priv;
@@ -230,9 +230,9 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 	priv = GET_PRIV (chat);
 
 	gossip_conf_get_bool (gossip_conf_get (),
-			      GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED, 
-			      &spell_checker); 
-	
+			      GOSSIP_PREFS_CHAT_SPELL_CHECKER_ENABLED,
+			      &spell_checker);
+
 	if (chat->is_first_char) {
 		GtkRequisition  req;
 		gint            window_height;
@@ -266,7 +266,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 	if (!gossip_spell_supported ()) {
 		return;
 	}
-	
+
 	/* NOTE: this is really inefficient, we shouldn't have to
 	   reiterate the whole buffer each time and check each work
 	   every time. */
@@ -287,18 +287,18 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 				break;
 			}
 
-			start = end; 
+			start = end;
 			gtk_text_iter_backward_word_start (&start);
 		}
-	
+
 		str = gtk_text_buffer_get_text (buffer, &start, &end, FALSE);
 
 		/* spell check string */
-  		if (!gossip_chat_get_is_command (str)) { 
+		if (!gossip_chat_get_is_command (str)) {
 			correct = gossip_spell_check (str);
- 		} else { 
- 			correct = TRUE; 
- 		} 
+		} else {
+			correct = TRUE;
+		}
 
 		if (!correct) {
 			gtk_text_buffer_apply_tag_by_name (buffer, "misspelled", &start, &end);
@@ -309,7 +309,7 @@ chat_input_text_buffer_changed_cb (GtkTextBuffer *buffer,
 		g_free (str);
 
 		/* set start iter to the end iters position */
-		start = end; 
+		start = end;
 	}
 }
 
@@ -322,7 +322,7 @@ typedef struct {
 static gboolean
 chat_change_size_in_idle_cb (ChangeSizeData *data)
 {
-	gtk_window_resize (GTK_WINDOW (data->window), 
+	gtk_window_resize (GTK_WINDOW (data->window),
 			   data->width, data->height);
 
 	return FALSE;
@@ -349,7 +349,7 @@ chat_text_view_scroll_hide_cb (GtkWidget  *widget,
 
 static void
 chat_text_view_size_allocate_cb (GtkWidget     *widget,
-		                 GtkAllocation *allocation,
+				 GtkAllocation *allocation,
 				 GossipChat    *chat)
 {
 	GossipChatPriv *priv;
@@ -368,7 +368,7 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 	if (priv->default_window_height <= 0) {
 		return;
 	}
-	
+
 	sw = gtk_widget_get_parent (widget);
 	if (sw->allocation.height >= MAX_INPUT_HEIGHT && !priv->vscroll_visible) {
 		GtkWidget *vscroll;
@@ -391,7 +391,7 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 
 	diff = priv->last_input_height - allocation->height;
 	priv->last_input_height = allocation->height;
-	
+
 	view_allocation = &GTK_WIDGET (chat->view)->allocation;
 
 	dialog = gossip_chat_window_get_dialog (priv->window);
@@ -423,7 +423,7 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 }
 
 static void
-chat_insert_smiley_activate_cb (GtkWidget  *menuitem, 
+chat_insert_smiley_activate_cb (GtkWidget  *menuitem,
 				GossipChat *chat)
 {
 	GtkTextBuffer *buffer;
@@ -434,7 +434,7 @@ chat_insert_smiley_activate_cb (GtkWidget  *menuitem,
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 	gtk_text_buffer_get_end_iter (buffer, &iter);
-	gtk_text_buffer_insert (buffer, &iter, 
+	gtk_text_buffer_insert (buffer, &iter,
 				smiley, -1);
 }
 
@@ -455,18 +455,18 @@ chat_text_populate_popup_cb (GtkTextView *view,
 	GtkWidget       *smiley_menu;
 
 	priv = GET_PRIV (chat);
-	
+
 	/* Add the emoticon menu. */
 	item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
-	
+
 	item = gtk_menu_item_new_with_mnemonic (_("Insert Smiley"));
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
 
 	smiley_menu = gossip_chat_view_get_smiley_menu (
-		G_CALLBACK (chat_insert_smiley_activate_cb), 
+		G_CALLBACK (chat_insert_smiley_activate_cb),
 		chat,
 		priv->tooltips);
 	gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), smiley_menu);
@@ -476,22 +476,22 @@ chat_text_populate_popup_cb (GtkTextView *view,
 	table = gtk_text_buffer_get_tag_table (buffer);
 
 	tag = gtk_text_tag_table_lookup (table, "misspelled");
-	
+
 	gtk_widget_get_pointer (GTK_WIDGET (view), &x, &y);
-	
-	gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (view), 
+
+	gtk_text_view_window_to_buffer_coords (GTK_TEXT_VIEW (view),
 					       GTK_TEXT_WINDOW_WIDGET,
 					       x, y,
 					       &x, &y);
-	
+
 	gtk_text_view_get_iter_at_location (GTK_TEXT_VIEW (view), &iter, x, y);
 
 	start = end = iter;
-	
+
 	if (gtk_text_iter_backward_to_tag_toggle (&start, tag) &&
 	    gtk_text_iter_forward_to_tag_toggle (&end, tag)) {
-					
-		str = gtk_text_buffer_get_text (buffer, 
+
+		str = gtk_text_buffer_get_text (buffer,
 						&start, &end, FALSE);
 	}
 
@@ -501,14 +501,14 @@ chat_text_populate_popup_cb (GtkTextView *view,
 
 	chat_spell = chat_spell_new (chat, str, start, end);
 
-	g_object_set_data_full (G_OBJECT (menu), 
-				"chat_spell", chat_spell, 
+	g_object_set_data_full (G_OBJECT (menu),
+				"chat_spell", chat_spell,
 				(GDestroyNotify) chat_spell_free);
 
 	item = gtk_separator_menu_item_new ();
 	gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 	gtk_widget_show (item);
-	
+
 	item = gtk_menu_item_new_with_mnemonic (_("_Check Word Spelling..."));
 	g_signal_connect (item,
 			  "activate",
@@ -518,8 +518,8 @@ chat_text_populate_popup_cb (GtkTextView *view,
 	gtk_widget_show (item);
 }
 
-static void     
-chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem, 
+static void
+chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem,
 				  GossipChatSpell *chat_spell)
 {
 	gossip_spell_dialog_show (chat_spell->chat,
@@ -529,7 +529,7 @@ chat_text_check_word_spelling_cb (GtkMenuItem     *menuitem,
 }
 
 static GossipChatSpell *
-chat_spell_new (GossipChat  *chat, 
+chat_spell_new (GossipChat  *chat,
 		const gchar *word,
 		GtkTextIter  start,
 		GtkTextIter  end)
@@ -542,7 +542,7 @@ chat_spell_new (GossipChat  *chat,
 	chat_spell->word = g_strdup (word);
 	chat_spell->start = start;
 	chat_spell->end = end;
-	
+
 	return chat_spell;
 }
 
@@ -562,7 +562,7 @@ gossip_chat_get_is_command (const gchar *str)
 	if (str[0] != '/') {
 		return FALSE;
 	}
-	
+
 	if (g_str_has_prefix (str, "/me")) {
 		return TRUE;
 	}
@@ -590,8 +590,8 @@ gossip_chat_correct_word (GossipChat  *chat,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
 
 	gtk_text_buffer_delete (buffer, &start, &end);
-	gtk_text_buffer_insert (buffer, &start, 
-				new_word, 
+	gtk_text_buffer_insert (buffer, &start,
+				new_word,
 				-1);
 }
 
@@ -691,7 +691,7 @@ gossip_chat_is_group_chat (GossipChat *chat)
 	return FALSE;
 }
 
-gboolean 
+gboolean
 gossip_chat_get_show_contacts (GossipChat *chat)
 {
 	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), FALSE);
@@ -703,8 +703,8 @@ gossip_chat_get_show_contacts (GossipChat *chat)
 	return FALSE;
 }
 
-void 
-gossip_chat_set_show_contacts (GossipChat *chat, 
+void
+gossip_chat_set_show_contacts (GossipChat *chat,
 			       gboolean    show)
 {
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
@@ -714,8 +714,8 @@ gossip_chat_set_show_contacts (GossipChat *chat,
 	}
 }
 
-void 
-gossip_chat_save_geometry (GossipChat *chat, 
+void
+gossip_chat_save_geometry (GossipChat *chat,
 			   gint        x,
 			   gint        y,
 			   gint        w,
@@ -724,7 +724,7 @@ gossip_chat_save_geometry (GossipChat *chat,
 	gossip_geometry_save_for_chat (chat, x, y, w, h);
 }
 
-void 
+void
 gossip_chat_load_geometry (GossipChat *chat,
 			   gint       *x,
 			   gint       *y,
@@ -743,7 +743,7 @@ gossip_chat_clear (GossipChat *chat)
 }
 
 void
-gossip_chat_set_window (GossipChat       *chat, 
+gossip_chat_set_window (GossipChat       *chat,
 			GossipChatWindow *window)
 {
 	GossipChatPriv *priv;
@@ -774,7 +774,7 @@ void
 gossip_chat_cut (GossipChat *chat)
 {
 	GtkTextBuffer *buffer;
-	
+
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
@@ -791,7 +791,7 @@ void
 gossip_chat_copy (GossipChat *chat)
 {
 	GtkTextBuffer *buffer;
-	
+
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
 	if (gossip_chat_view_get_selection_bounds (chat->view, NULL, NULL)) {
@@ -831,7 +831,7 @@ gossip_chat_present (GossipChat *chat)
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
 	priv = GET_PRIV (chat);
-	
+
 	if (priv->window == NULL) {
 		GossipChatWindow *window;
 		gboolean          for_group_chat;
@@ -847,9 +847,9 @@ gossip_chat_present (GossipChat *chat)
 		}
 
 		gossip_chat_window_add_chat (window, chat);
-        }
+	}
 
-        gossip_chat_window_switch_to_chat (priv->window, chat);
+	gossip_chat_window_switch_to_chat (priv->window, chat);
 	gossip_window_present (
 		GTK_WINDOW (gossip_chat_window_get_dialog (priv->window)),
 		TRUE);
@@ -867,7 +867,7 @@ gossip_chat_should_play_sound (GossipChat *chat)
 
 	window = gossip_chat_get_window (GOSSIP_CHAT (chat));
 	if (!window) {
-		return TRUE; 
+		return TRUE;
 	}
 
 	play = !gossip_chat_window_has_focus (window);
@@ -895,7 +895,7 @@ gossip_chat_should_highlight_nick (GossipMessage *message,
 	if (!msg) {
 		return FALSE;
 	}
-		
+
 	if (my_contact) {
 		contact = my_contact;
 	} else {

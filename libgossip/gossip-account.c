@@ -16,7 +16,7 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
- * 
+ *
  * Author: Martyn Russell <martyn@imendio.com>
  */
 
@@ -131,8 +131,8 @@ account_class_init (GossipAccountClass *class)
 	object_class->get_property = account_get_property;
 	object_class->set_property = account_set_property;
 
-	/* 
-	 * properties 
+	/*
+	 * properties
 	 */
 
 	g_object_class_install_property (object_class,
@@ -210,7 +210,7 @@ account_class_init (GossipAccountClass *class)
 							       "Identifies if the connection uses secure methods",
 							       FALSE,
 							       G_PARAM_READWRITE));
-	
+
 	g_object_class_install_property (object_class,
 					 PROP_USE_PROXY,
 					 g_param_spec_boolean ("use_proxy",
@@ -218,16 +218,16 @@ account_class_init (GossipAccountClass *class)
 							       "Identifies if the connection uses the environment proxy",
 							       FALSE,
 							       G_PARAM_READWRITE));
-	
+
 	/*
 	 * signals
 	 */
 
-	signals[CHANGED] = 
+	signals[CHANGED] =
 		g_signal_new ("changed",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      0, 
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE,
@@ -241,7 +241,7 @@ account_init (GossipAccount *account)
 {
 	GossipAccountPriv *priv;
 	static gint        id = 1;
- 
+
 	priv = GET_PRIV (account);
 
 	priv->unique_id    = id++;
@@ -278,7 +278,7 @@ account_get_property (GObject    *object,
 {
 	GossipAccountPriv *priv;
 	GossipAccount     *account;
-	
+
 	priv = GET_PRIV (object);
 	account = GOSSIP_ACCOUNT (object);
 
@@ -318,7 +318,7 @@ account_get_property (GObject    *object,
 		break;
 	};
 }
-	
+
 static void
 account_set_property (GObject      *object,
 		      guint         param_id,
@@ -326,9 +326,9 @@ account_set_property (GObject      *object,
 		      GParamSpec   *pspec)
 {
 	GossipAccountPriv *priv;
-	
+
 	priv = GET_PRIV (object);
-	
+
 	switch (param_id) {
 	case PROP_TYPE:
 		account_set_type (GOSSIP_ACCOUNT (object),
@@ -388,7 +388,7 @@ gossip_account_param_set_full (GossipAccount           *account,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
 	priv = GET_PRIV (account);
-	
+
 	param = g_hash_table_lookup (priv->parameters, param_name);
 
 	if (!param) {
@@ -445,7 +445,7 @@ gossip_account_param_set_g_value (GossipAccount *account,
 	} else {
 		flags = GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT;
 	}
-	
+
 	gossip_account_param_set_full (account,
 				       param_name,
 				       g_value,
@@ -514,7 +514,7 @@ gossip_account_param_foreach (GossipAccount           *account,
 	data->callback = callback;
 	data->user_data = user_data;
 	data->account = account;
-	
+
 	g_hash_table_foreach (priv->parameters,
 			      (GHFunc) account_param_get_all_foreach,
 			      data);
@@ -531,7 +531,7 @@ account_param_get_all_foreach (gchar                  *param_name,
 			data->user_data);
 }
 
-static void 
+static void
 account_param_free (GossipAccountParam *param)
 {
 	g_value_unset (&param->g_value);
@@ -544,7 +544,7 @@ gossip_account_get_type (GossipAccount *account)
 	GossipAccountPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), 0);
-	
+
 	priv = GET_PRIV (account);
 	return priv->type;
 }
@@ -590,11 +590,11 @@ gossip_account_get_port (GossipAccount *account)
 	const GValue *g_value;
 
 	g_value = gossip_account_param_get_g_value (account, "port");
-	
+
 	if (g_value) {
 		return g_value_get_uint (g_value);
 	}
-	
+
 	return 0;
 }
 
@@ -615,11 +615,11 @@ gossip_account_get_use_ssl (GossipAccount *account)
 	const GValue *g_value;
 
 	g_value = gossip_account_param_get_g_value (account, "use_ssl");
-	
+
 	if (g_value) {
 		return g_value_get_boolean (g_value);
 	}
-	
+
 	return FALSE;
 }
 
@@ -656,9 +656,9 @@ gossip_account_set_name (GossipAccount *account,
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (name != NULL);
-	
+
 	priv = GET_PRIV (account);
-	
+
 	g_free (priv->name);
 	priv->name = g_strdup (name);
 
@@ -723,7 +723,7 @@ gossip_account_set_auto_connect (GossipAccount *account,
 
 void
 gossip_account_set_use_ssl (GossipAccount *account,
- 			    gboolean       use_ssl)
+			    gboolean       use_ssl)
 {
 	GValue g_value = {0, };
 
@@ -748,11 +748,11 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	g_signal_emit (account, signals[CHANGED], 0);
 }
 
-guint 
+guint
 gossip_account_hash (gconstpointer key)
 {
 	GossipAccountPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (key), 0);
 
 	priv = GET_PRIV (key);
@@ -761,7 +761,7 @@ gossip_account_hash (gconstpointer key)
 }
 
 gboolean
-gossip_account_equal (gconstpointer a, 
+gossip_account_equal (gconstpointer a,
 		      gconstpointer b)
 {
 	GossipAccountPriv *priv1;
@@ -786,7 +786,7 @@ gossip_account_type_to_string (GossipAccountType type)
 	case GOSSIP_ACCOUNT_TYPE_MSN:     return "MSN";
 	case GOSSIP_ACCOUNT_TYPE_YAHOO:   return "Yahoo!";
 
-	case GOSSIP_ACCOUNT_TYPE_UNKNOWN: 
+	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
 	default:
 		break;
 	}
@@ -812,6 +812,6 @@ gossip_account_string_to_type (const gchar *str)
 	else if (gossip_strncasecmp (str, "Yahoo!", -1) == 0) {
 		return GOSSIP_ACCOUNT_TYPE_YAHOO;
 	}
-	
+
 	return GOSSIP_ACCOUNT_TYPE_UNKNOWN;
 }

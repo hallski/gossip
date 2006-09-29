@@ -39,8 +39,8 @@
 static void regex_init (void);
 
 gchar *
-gossip_substring (const gchar *str, 
-		  gint         start, 
+gossip_substring (const gchar *str,
+		  gint         start,
 		  gint         end)
 {
 	return g_strndup (str + start, end - start);
@@ -65,7 +65,7 @@ regex_init (void)
 	static gboolean  inited = FALSE;
 	const gchar     *expression;
 	gint             i;
-	
+
 	if (inited) {
 		return;
 	}
@@ -73,22 +73,22 @@ regex_init (void)
 	for (i = 0; i < GOSSIP_REGEX_ALL; i++) {
 		switch (i) {
 		case GOSSIP_REGEX_AS_IS:
-			expression = 
+			expression =
 				SCHEME "//(" USER "@)?[" HOSTCHARS ".]+"
 				"(:[0-9]+)?(" URLPATH ")?";
 			break;
 		case GOSSIP_REGEX_BROWSER:
-			expression = 
+			expression =
 				"(www|ftp)[" HOSTCHARS "]*\\.[" HOSTCHARS ".]+"
 				"(:[0-9]+)?(" URLPATH ")?";
 			break;
 		case GOSSIP_REGEX_EMAIL:
-			expression = 
+			expression =
 				"(mailto:)?[a-z0-9][a-z0-9.-]*@[a-z0-9]"
 				"[a-z0-9-]*(\\.[a-z0-9][a-z0-9-]*)+";
 			break;
 		case GOSSIP_REGEX_OTHER:
-			expression = 
+			expression =
 				"news:[-A-Z\\^_a-z{|}~!\"#$%&'()*+,./0-9;:=?`]+"
 				"@[" HOSTCHARS ".]+(:[0-9]+)?";
 			break;
@@ -97,16 +97,16 @@ regex_init (void)
 			expression = NULL;
 			continue;
 		}
-		
+
 		memset (&dingus[i], 0, sizeof (regex_t));
 		regcomp (&dingus[i], expression, REG_EXTENDED | REG_ICASE);
 	}
-	
+
 	inited = TRUE;
 }
 
 gint
-gossip_regex_match (GossipRegExType  type, 
+gossip_regex_match (GossipRegExType  type,
 		    const gchar     *msg,
 		    GArray          *start,
 		    GArray          *end)
@@ -125,64 +125,64 @@ gossip_regex_match (GossipRegExType  type,
 		ret = regexec (&dingus[type], msg + offset, 1, matches, 0);
 		if (ret == 0) {
 			gint s;
-			
+
 			num_matches++;
-			
+
 			s = matches[0].rm_so + offset;
 			offset = matches[0].rm_eo + offset;
-			
+
 			g_array_append_val (start, s);
 			g_array_append_val (end, offset);
 		}
 	}
 
- 	if (type != GOSSIP_REGEX_ALL) { 
-		gossip_debug (DEBUG_DOMAIN, 
-			      "Found %d matches for regex type:%d", 
+	if (type != GOSSIP_REGEX_ALL) {
+		gossip_debug (DEBUG_DOMAIN,
+			      "Found %d matches for regex type:%d",
 			      num_matches, type);
 		return num_matches;
 	}
 
 	/* If GOSSIP_REGEX_ALL then we run ALL regex's on the string. */
-	for (i = 0; i < GOSSIP_REGEX_ALL; i++, ret = 0) { 
+	for (i = 0; i < GOSSIP_REGEX_ALL; i++, ret = 0) {
 		while (!ret) {
 			ret = regexec (&dingus[i], msg + offset, 1, matches, 0);
 			if (ret == 0) {
 				gint s;
-				
+
 				num_matches++;
-				
+
 				s = matches[0].rm_so + offset;
 				offset = matches[0].rm_eo + offset;
-				
+
 				g_array_append_val (start, s);
 				g_array_append_val (end, offset);
 			}
 		}
 	}
 
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Found %d matches for ALL regex types", 
+	gossip_debug (DEBUG_DOMAIN,
+		      "Found %d matches for ALL regex types",
 		      num_matches);
 
 	return num_matches;
 }
 
 gint
-gossip_strcasecmp (const gchar *s1, 
+gossip_strcasecmp (const gchar *s1,
 		   const gchar *s2)
 {
 	return gossip_strncasecmp (s1, s2, -1);
-}	
+}
 
 gint
-gossip_strncasecmp (const gchar *s1, 
-		    const gchar *s2, 
+gossip_strncasecmp (const gchar *s1,
+		    const gchar *s2,
 		    gsize        n)
 {
 	gchar *u1, *u2;
 	gint   ret_val;
-	
+
 	u1 = g_utf8_casefold (s1, n);
 	u2 = g_utf8_casefold (s2, n);
 
@@ -193,34 +193,34 @@ gossip_strncasecmp (const gchar *s1,
 	return ret_val;
 }
 
-gboolean 
-gossip_xml_validate (xmlDoc      *doc, 
+gboolean
+gossip_xml_validate (xmlDoc      *doc,
 		     const gchar *dtd_filename)
 {
 	gchar        *path, *escaped;
 	xmlValidCtxt  cvp;
 	xmlDtd       *dtd;
 	gboolean      ret;
-		
+
 	path = gossip_paths_get_dtd_path (dtd_filename);
 
 	/* The list of valid chars is taken from libxml. */
 	escaped = xmlURIEscapeStr (path, ":@&=+$,/?;");
 
 	g_free (path);
-	
+
 	memset (&cvp, 0, sizeof (cvp));
 	dtd = xmlParseDTD (NULL, escaped);
 	ret = xmlValidateDtd (&cvp, doc, dtd);
-	
+
 	xmlFree (escaped);
 	xmlFreeDtd (dtd);
-	
-        return ret;
+
+	return ret;
 }
 
 guchar *
-gossip_base64_decode (const char *str, 
+gossip_base64_decode (const char *str,
 		      gsize      *ret_len)
 {
 	guchar      *out = NULL;
@@ -291,7 +291,7 @@ gossip_base64_decode (const char *str,
 }
 
 gchar *
-gossip_base64_encode (const guchar *data, 
+gossip_base64_encode (const guchar *data,
 		      gsize         len)
 {
 	gchar              *out;
@@ -339,7 +339,7 @@ gossip_dbus_type_to_g_type (const gchar *dbus_type_string)
 {
 	if (dbus_type_string == NULL)
 		return G_TYPE_NONE;
-	
+
 	if (dbus_type_string[0] == 's') {
 		return G_TYPE_STRING;
 	}
@@ -373,7 +373,7 @@ gossip_g_type_to_dbus_type (GType g_type)
 	default:
 		g_assert_not_reached ();
 	}
-	
+
 	return NULL;
 }
 
@@ -395,10 +395,10 @@ GValue *
 gossip_string_to_g_value (const gchar *str, GType type)
 {
 	GValue *g_value;
-	
+
 	g_value = g_new0 (GValue, 1);
 	g_value_init (g_value, type);
-	
+
 	switch (type)
 	{
 	case G_TYPE_BOOLEAN:
@@ -416,6 +416,6 @@ gossip_string_to_g_value (const gchar *str, GType type)
 	default:
 		g_assert_not_reached ();
 	}
-	
+
 	return g_value;
 }

@@ -66,15 +66,15 @@ GossipProtocol *gossip_session_get_protocol            (GossipSession           
 
 /* providers */
 GossipChatroomProvider *
-                gossip_session_get_chatroom_provider   (GossipSession           *session,
+		gossip_session_get_chatroom_provider   (GossipSession           *session,
 							GossipAccount           *account);
 GossipFTProvider *
-                gossip_session_get_ft_provider         (GossipSession           *session,
+		gossip_session_get_ft_provider         (GossipSession           *session,
 							GossipAccount           *account);
 
 /* accounts */
 GossipAccountManager *
-                gossip_session_get_account_manager     (GossipSession           *session);
+		gossip_session_get_account_manager     (GossipSession           *session);
 GList *         gossip_session_get_accounts            (GossipSession           *session);
 gdouble         gossip_session_get_connected_time      (GossipSession           *session,
 							GossipAccount           *account);

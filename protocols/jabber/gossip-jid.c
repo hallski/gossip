@@ -49,7 +49,7 @@ const gchar *
 jid_locate_resource (const gchar *str)
 {
 	gchar *ch;
-	
+
 	ch = strchr (str, '/');
 	if (ch) {
 		return (const gchar *) (ch + 1);
@@ -74,7 +74,7 @@ jid_casefold_node (const gchar *str)
 	tmp = g_utf8_casefold (str, at - str);
 	ret = g_strconcat (tmp, at, NULL);
 	g_free (tmp);
-	
+
 	return ret;
 }
 
@@ -82,7 +82,7 @@ GossipJID *
 gossip_jid_new (const gchar *str_jid)
 {
 	GossipJID *jid;
-	
+
 	g_return_val_if_fail (str_jid != NULL, NULL);
 
 	jid = g_new0 (GossipJID, 1);
@@ -99,11 +99,11 @@ gossip_jid_new (const gchar *str_jid)
 	return jid;
 }
 
-void 
+void
 gossip_jid_set_without_resource (GossipJID *jid, const gchar *str)
 {
 	gchar *resource = NULL;
-	
+
 	g_return_if_fail (jid != NULL);
 
 	if (jid->resource) {
@@ -140,11 +140,11 @@ const gchar *
 gossip_jid_get_full (GossipJID *jid)
 {
 	g_return_val_if_fail (jid != NULL, "");
-	
+
 	return jid->full;
 }
 
-const gchar * 
+const gchar *
 gossip_jid_get_without_resource (GossipJID *jid)
 {
 	g_return_val_if_fail (jid != NULL, "");
@@ -168,7 +168,7 @@ gossip_jid_get_resource (GossipJID *jid)
 	return NULL;
 }
 
-gboolean 
+gboolean
 gossip_jid_is_service (GossipJID *jid)
 {
 	gchar *ch;
@@ -200,7 +200,7 @@ gossip_jid_get_part_name (GossipJID *jid)
 		}
 	}
 
-	return g_strdup (""); 
+	return g_strdup ("");
 }
 
 const gchar *
@@ -209,7 +209,7 @@ gossip_jid_get_part_host (GossipJID *jid)
 	const gchar *ch;
 
 	g_return_val_if_fail (jid != NULL, "");
-	
+
 	for (ch = gossip_jid_get_without_resource (jid); *ch; ++ch) {
 		if (*ch == '@') {
 			return ch + 1;
@@ -225,10 +225,10 @@ gossip_jid_ref (GossipJID *jid)
 	g_return_val_if_fail (jid != NULL, NULL);
 
 	jid->ref_count++;
-	
+
 	return jid;
 }
-	
+
 void
 gossip_jid_unref (GossipJID *jid)
 {
@@ -241,7 +241,7 @@ gossip_jid_unref (GossipJID *jid)
 }
 
 gboolean
-gossip_jid_equals (GossipJID *jid_a, 
+gossip_jid_equals (GossipJID *jid_a,
 		   GossipJID *jid_b)
 {
 	g_return_val_if_fail (jid_a != NULL, FALSE);
@@ -259,17 +259,17 @@ gossip_jid_equals (GossipJID *jid_a,
 }
 
 gboolean
-gossip_jid_equals_without_resource (GossipJID *jid_a, 
+gossip_jid_equals_without_resource (GossipJID *jid_a,
 				    GossipJID *jid_b)
 {
 	const gchar *a, *b;
-	
+
 	g_return_val_if_fail (jid_a != NULL, FALSE);
 	g_return_val_if_fail (jid_b != NULL, FALSE);
 
 	a = gossip_jid_get_without_resource (jid_a);
 	b = gossip_jid_get_without_resource (jid_b);
-	
+
 	/* NOTE: This is not strictly correct, since the node and resource are
 	 * UTF8, and the domain have other rules. The node is also already
 	 * casefolded.
@@ -289,7 +289,7 @@ gossip_jid_string_is_valid (const gchar *str,
 	const gchar *dot;
 	const gchar *slash;
 	gint         len;
-	
+
 	if (!str || strlen (str) < 1) {
 		return FALSE;
 	}
@@ -299,8 +299,8 @@ gossip_jid_string_is_valid (const gchar *str,
 	/* check for the '@' sign and make sure it isn't at the start
 	   of the string or the last character */
 	at = strchr (str, '@');
-	if (!at || 
-	    at == str || 
+	if (!at ||
+	    at == str ||
 	    at == str + len - 1) {
 		return FALSE;
 	}
@@ -308,22 +308,22 @@ gossip_jid_string_is_valid (const gchar *str,
 	/* check for the '.' character and if it exists make sure it
 	   is not directly after the '@' sign or the last character. */
 	dot = strchr (at, '.');
-	if (dot == at + 1 || 
-	    dot == str + len - 1 || 
+	if (dot == at + 1 ||
+	    dot == str + len - 1 ||
 	    dot == str + len - 2) {
 		return FALSE;
 	}
 
 	/* check the '/' character exists (if we are checking with
 	   resource) and make sure it is not after the '@' sign or the
-	   last character */ 
+	   last character */
 	slash = strchr (at, '/');
-	if (with_resource && 
+	if (with_resource &&
 	    (slash == NULL ||
 	     slash == at + 1 ||
 	     slash == str + len - 1)) {
 		return FALSE;
-	} 
+	}
 
 	/* if slash exists and we are expecting a JID without the
 	   resource then we return FALSE */
@@ -347,11 +347,11 @@ gossip_jid_string_get_part_name (const gchar *str)
 		}
 	}
 
-	return g_strdup (""); 
+	return g_strdup ("");
 }
 
 gchar *
-gossip_jid_string_get_part_host (const gchar *str) 
+gossip_jid_string_get_part_host (const gchar *str)
 {
 	const gchar *r_loc;
 	const gchar *ch;
@@ -365,20 +365,20 @@ gossip_jid_string_get_part_host (const gchar *str)
 
 			if (r_loc) {
 				return g_strndup (ch, r_loc - 1 - ch);
-			} 
+			}
 
 			return g_strdup (ch);
 		}
 	}
 
-	return g_strdup (""); 
+	return g_strdup ("");
 }
 
 const gchar *
 gossip_jid_string_get_part_resource (const gchar *str)
 {
 	gchar *ch;
-	
+
 	ch = strchr (str, '/');
 	if (ch) {
 		return (const gchar *) (ch + 1);
@@ -388,19 +388,19 @@ gossip_jid_string_get_part_resource (const gchar *str)
 }
 
 gint
-gossip_jid_case_compare (gconstpointer a, 
+gossip_jid_case_compare (gconstpointer a,
 			 gconstpointer b)
 {
 	const gchar *str_a, *str_b;
 
 	str_a = gossip_jid_get_without_resource ((GossipJID *) a);
 	str_b = gossip_jid_get_without_resource ((GossipJID *) b);
-	
+
 	return gossip_strncasecmp (str_a, str_b, -1);
 }
 
 gboolean
-gossip_jid_equal (gconstpointer v1, 
+gossip_jid_equal (gconstpointer v1,
 		  gconstpointer v2)
 {
 	const gchar *a, *b;

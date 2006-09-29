@@ -43,7 +43,7 @@ struct GossipThrobber {
 
 struct GossipThrobberClass {
 	GtkEventBoxClass parent_class;
-	
+
 	/* Signals */
 	void (* location_changed) (GossipThrobber *throbber,
 				   const char     *location);

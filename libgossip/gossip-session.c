@@ -32,7 +32,7 @@
 typedef struct _GossipSessionPriv  GossipSessionPriv;
 
 struct _GossipSessionPriv {
- 	GossipAccountManager *account_manager; 
+	GossipAccountManager *account_manager;
 
 	GHashTable           *accounts;
 	GList                *protocols;
@@ -126,7 +126,7 @@ static void            session_connect                           (GossipSession 
 								  GossipAccount        *account);
 static void            session_disconnect                        (GossipSession        *session,
 								  GossipAccount        *account);
-	
+
 enum {
 	CONNECTING,
 	CONNECTED,
@@ -158,98 +158,98 @@ static void
 gossip_session_class_init (GossipSessionClass *klass)
 {
 	GObjectClass *object_class;
-	
+
 	object_class = G_OBJECT_CLASS (klass);
 
 	object_class->finalize = session_finalize;
 
-	signals[CONNECTING] = 
+	signals[CONNECTING] =
 		g_signal_new ("connecting",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
-			      0, 
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
-	signals[CONNECTED] = 
+	signals[CONNECTED] =
 		g_signal_new ("connected",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
-			      0, 
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
-	signals[DISCONNECTING] = 
+	signals[DISCONNECTING] =
 		g_signal_new ("disconnecting",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
-			      0, 
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
-	signals[DISCONNECTED] = 
+	signals[DISCONNECTED] =
 		g_signal_new ("disconnected",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
-			      0, 
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
-	signals[PROTOCOL_CONNECTING] = 
+	signals[PROTOCOL_CONNECTING] =
 		g_signal_new ("protocol-connecting",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT_OBJECT,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      2, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL);
 
-	signals[PROTOCOL_CONNECTED] = 
+	signals[PROTOCOL_CONNECTED] =
 		g_signal_new ("protocol-connected",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT_OBJECT,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      2, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL);
-	
-	signals[PROTOCOL_DISCONNECTED] = 
+
+	signals[PROTOCOL_DISCONNECTED] =
 		g_signal_new ("protocol-disconnected",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT_OBJECT_INT,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      3, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL, G_TYPE_INT);
 
-	signals[PROTOCOL_DISCONNECTING] = 
+	signals[PROTOCOL_DISCONNECTING] =
 		g_signal_new ("protocol-disconnecting",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT_OBJECT,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      2, GOSSIP_TYPE_ACCOUNT, GOSSIP_TYPE_PROTOCOL);
-	
-	signals[PROTOCOL_ERROR] = 
+
+	signals[PROTOCOL_ERROR] =
 		g_signal_new ("protocol-error",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT_OBJECT_POINTER,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      3, GOSSIP_TYPE_PROTOCOL, GOSSIP_TYPE_ACCOUNT, G_TYPE_POINTER);
 
-	signals[NEW_MESSAGE] = 
+	signals[NEW_MESSAGE] =
 		g_signal_new ("new-message",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -259,7 +259,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_MESSAGE);
 
-	signals[PRESENCE_CHANGED] = 
+	signals[PRESENCE_CHANGED] =
 		g_signal_new ("presence-changed",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -269,7 +269,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_PRESENCE);
 
-	signals[CONTACT_ADDED] = 
+	signals[CONTACT_ADDED] =
 		g_signal_new ("contact-added",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -278,7 +278,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
-	signals[CONTACT_UPDATED] = 
+	signals[CONTACT_UPDATED] =
 		g_signal_new ("contact-updated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -288,7 +288,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[CONTACT_PRESENCE_UPDATED] = 
+	signals[CONTACT_PRESENCE_UPDATED] =
 		g_signal_new ("contact-presence-updated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -298,7 +298,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[CONTACT_REMOVED] = 
+	signals[CONTACT_REMOVED] =
 		g_signal_new ("contact-removed",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -325,7 +325,7 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      libgossip_marshal_STRING__OBJECT,
 			      G_TYPE_STRING,
 			      1, GOSSIP_TYPE_ACCOUNT);
-	
+
 	g_type_class_add_private (object_class, sizeof (GossipSessionPriv));
 }
 
@@ -335,8 +335,8 @@ gossip_session_init (GossipSession *session)
 	GossipSessionPriv *priv;
 
 	priv = GET_PRIV (session);
-	
-	priv->accounts = g_hash_table_new_full (gossip_account_hash, 
+
+	priv->accounts = g_hash_table_new_full (gossip_account_hash,
 						gossip_account_equal,
 						g_object_unref,
 						g_object_unref);
@@ -345,7 +345,7 @@ gossip_session_init (GossipSession *session)
 
 	priv->connected_counter = 0;
 
-	priv->timers = g_hash_table_new_full (gossip_account_hash, 
+	priv->timers = g_hash_table_new_full (gossip_account_hash,
 					      gossip_account_equal,
 					      g_object_unref,
 					      (GDestroyNotify)g_timer_destroy);
@@ -358,7 +358,7 @@ session_finalize (GObject *object)
 	GossipSessionPriv *priv;
 
 	priv = GET_PRIV (object);
-	
+
 	g_hash_table_destroy (priv->accounts);
 
 	g_list_foreach (priv->protocols, (GFunc) g_object_unref, NULL);
@@ -374,23 +374,23 @@ session_finalize (GObject *object)
 	g_hash_table_destroy (priv->timers);
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
-					      session_account_added_cb, 
+					      session_account_added_cb,
 					      object);
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
-					      session_account_removed_cb, 
+					      session_account_removed_cb,
 					      object);
 
-	g_object_unref (priv->account_manager); 
+	g_object_unref (priv->account_manager);
 
 	(G_OBJECT_CLASS (gossip_session_parent_class)->finalize) (object);
 }
 
 static void
-session_protocol_signals_setup (GossipSession  *session, 
+session_protocol_signals_setup (GossipSession  *session,
 				GossipProtocol *protocol)
 {
-	g_signal_connect (protocol, "logged-in", 
+	g_signal_connect (protocol, "logged-in",
 			  G_CALLBACK (session_protocol_logged_in),
 			  session);
 	g_signal_connect (protocol, "logged-out",
@@ -417,7 +417,7 @@ session_protocol_signals_setup (GossipSession  *session,
 	g_signal_connect (protocol, "get-password",
 			  G_CALLBACK (session_protocol_get_password),
 			  session);
-	g_signal_connect (protocol, "error", 
+	g_signal_connect (protocol, "error",
 			  G_CALLBACK (session_protocol_error),
 			  session);
 }
@@ -433,10 +433,10 @@ session_protocol_logged_in (GossipProtocol *protocol,
 
 	priv = GET_PRIV (session);
 
-	g_hash_table_insert (priv->timers, 
-			     g_object_ref (account), 
+	g_hash_table_insert (priv->timers,
+			     g_object_ref (account),
 			     g_timer_new ());
-	
+
 	/* Update some status? */
 	priv->connected_counter++;
 
@@ -453,16 +453,16 @@ session_protocol_logged_in (GossipProtocol *protocol,
 }
 
 static void
-session_protocol_logged_out (GossipProtocol *protocol, 
+session_protocol_logged_out (GossipProtocol *protocol,
 			     GossipAccount  *account,
 			     gint            reason,
-			     GossipSession  *session) 
+			     GossipSession  *session)
 {
 	GossipSessionPriv *priv;
 	gdouble            seconds;
 
 	seconds = gossip_session_get_connected_time (session, account);
-	gossip_debug (DEBUG_DOMAIN, "Protocol logged out (after %.2f seconds)", 
+	gossip_debug (DEBUG_DOMAIN, "Protocol logged out (after %.2f seconds)",
 		      seconds);
 
 	priv = GET_PRIV (session);
@@ -474,7 +474,7 @@ session_protocol_logged_out (GossipProtocol *protocol,
 	if (priv->connected_counter < 0) {
 		g_warning ("We have some issues in the connection counting");
 		return;
-	} 
+	}
 
 	/* Don't go lower than 0 */
 	if (priv->connected_counter > 0) {
@@ -514,10 +514,10 @@ session_protocol_contact_added (GossipProtocol *protocol,
 		      gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (session);
-	
-	priv->contacts = g_list_prepend (priv->contacts, 
+
+	priv->contacts = g_list_prepend (priv->contacts,
 					 g_object_ref (contact));
-	
+
 	g_signal_emit (session, signals[CONTACT_ADDED], 0, contact);
 }
 
@@ -532,7 +532,7 @@ session_protocol_contact_updated (GossipProtocol *protocol,
 	g_signal_emit (session, signals[CONTACT_UPDATED], 0, contact);
 }
 
-static void     
+static void
 session_protocol_contact_presence_updated (GossipProtocol *protocol,
 					   GossipContact  *contact,
 					   GossipSession  *session)
@@ -542,38 +542,38 @@ session_protocol_contact_presence_updated (GossipProtocol *protocol,
 	g_signal_emit (session, signals[CONTACT_PRESENCE_UPDATED], 0, contact);
 }
 
-static void 
+static void
 session_protocol_contact_removed (GossipProtocol *protocol,
 				  GossipContact  *contact,
 				  GossipSession  *session)
 {
 	GossipSessionPriv *priv;
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Contact removed '%s'",
 		   gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (session);
-	
+
 	g_signal_emit (session, signals[CONTACT_REMOVED], 0, contact);
 
 	priv->contacts = g_list_remove (priv->contacts, contact);
 	g_object_unref (contact);
 }
 
-static void 
+static void
 session_protocol_composing (GossipProtocol *protocol,
 			    GossipContact  *contact,
 			    gboolean        composing,
 			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Contact %s composing:'%s'",
 		      composing ? "is" : "is not",
 		      gossip_contact_get_name (contact));
 
 	priv = GET_PRIV (session);
-	
+
 	g_signal_emit (session, signals[COMPOSING], 0, contact, composing);
 }
 
@@ -587,7 +587,7 @@ session_protocol_get_password (GossipProtocol *protocol,
 	gossip_debug (DEBUG_DOMAIN, "Get password");
 
 	g_signal_emit (session, signals[GET_PASSWORD], 0, account, &password);
-	
+
 	return password;
 }
 
@@ -599,7 +599,7 @@ session_protocol_error (GossipProtocol *protocol,
 {
 	GossipSessionPriv *priv;
 
-	gossip_debug (DEBUG_DOMAIN, "Error:%d->'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Error:%d->'%s'",
 		      error->code, error->message);
 
 	priv = GET_PRIV (session);
@@ -608,17 +608,17 @@ session_protocol_error (GossipProtocol *protocol,
 		priv->connecting_counter--;
 	}
 
-	g_signal_emit (session, signals[PROTOCOL_ERROR], 0, protocol, account, error); 
+	g_signal_emit (session, signals[PROTOCOL_ERROR], 0, protocol, account, error);
 }
 
 static GossipProtocol *
-session_get_protocol (GossipSession *session, 
+session_get_protocol (GossipSession *session,
 		      GossipContact *contact)
 {
 	GossipSessionPriv *priv;
 	GList             *l;
 	const gchar       *id;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
@@ -629,14 +629,14 @@ session_get_protocol (GossipSession *session,
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;
 		GossipContact  *this_contact;
-		
+
 		protocol = l->data;
 
 		this_contact = gossip_protocol_find_contact (protocol, id);
 		if (!this_contact) {
 			continue;
 		}
-	     
+
 		if (gossip_contact_equal (this_contact, contact)) {
 			return protocol;
 		}
@@ -651,7 +651,7 @@ gossip_session_new (GossipAccountManager *manager)
 	GossipSession     *session;
 	GossipSessionPriv *priv;
 	GList             *accounts, *l;
- 
+
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 
 	session = g_object_new (GOSSIP_TYPE_SESSION, NULL);
@@ -661,18 +661,18 @@ gossip_session_new (GossipAccountManager *manager)
 	priv->account_manager = g_object_ref (manager);
 
 	g_signal_connect (priv->account_manager, "account_added",
-			  G_CALLBACK (session_account_added_cb), 
+			  G_CALLBACK (session_account_added_cb),
 			  session);
 
 	g_signal_connect (priv->account_manager, "account_removed",
-			  G_CALLBACK (session_account_removed_cb), 
+			  G_CALLBACK (session_account_removed_cb),
 			  session);
 
 	accounts = gossip_account_manager_get_accounts (manager);
-	
+
 	for (l = accounts; l; l = l->next) {
 		GossipAccount *account = l->data;
-		
+
 		gossip_session_add_account (session, account);
 	}
 
@@ -697,7 +697,7 @@ gossip_session_get_protocol (GossipSession *session,
 }
 
 GossipAccountManager *
-gossip_session_get_account_manager (GossipSession *session) 
+gossip_session_get_account_manager (GossipSession *session)
 {
 	GossipSessionPriv *priv;
 
@@ -728,13 +728,13 @@ gossip_session_get_accounts (GossipSession *session)
 	GList             *list;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-	
+
 	priv = GET_PRIV (session);
 
 	ga.session = session;
 	ga.accounts = NULL;
 
-	g_hash_table_foreach (priv->accounts, 
+	g_hash_table_foreach (priv->accounts,
 			      (GHFunc) session_get_accounts_foreach_cb,
 			      &ga);
 
@@ -784,7 +784,7 @@ session_count_accounts_foreach_cb (GossipAccount  *account,
 	}
 }
 
-void 
+void
 gossip_session_count_accounts (GossipSession *session,
 			       guint         *connected,
 			       guint         *connecting,
@@ -792,9 +792,9 @@ gossip_session_count_accounts (GossipSession *session,
 {
 	GossipSessionPriv *priv;
 	CountAccounts      ca;
-	
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-	
+
 	priv = GET_PRIV (session);
 
 	ca.session = session;
@@ -803,7 +803,7 @@ gossip_session_count_accounts (GossipSession *session,
 	ca.connecting = 0;
 	ca.disconnected = 0;
 
-	g_hash_table_foreach (priv->accounts, 
+	g_hash_table_foreach (priv->accounts,
 			      (GHFunc) session_count_accounts_foreach_cb,
 			      &ca);
 
@@ -826,7 +826,7 @@ gossip_session_count_accounts (GossipSession *session,
 	}
 }
 
-gboolean 
+gboolean
 gossip_session_add_account (GossipSession *session,
 			    GossipAccount *account)
 {
@@ -849,17 +849,17 @@ gossip_session_add_account (GossipSession *session,
 	protocol = gossip_protocol_new_from_account_type (type);
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), FALSE);
 
-	priv->protocols = g_list_append (priv->protocols, 
+	priv->protocols = g_list_append (priv->protocols,
 					 g_object_ref (protocol));
 
-	g_hash_table_insert (priv->accounts, 
-			     g_object_ref (account), 
+	g_hash_table_insert (priv->accounts,
+			     g_object_ref (account),
 			     g_object_ref (protocol));
 
 	session_protocol_signals_setup (session, protocol);
 
 	g_object_unref (protocol);
-			
+
 	return TRUE;
 }
 
@@ -876,7 +876,7 @@ gossip_session_remove_account (GossipSession *session,
 	priv = GET_PRIV (session);
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
-	
+
 	if (!protocol) {
 		/* Not added in the first place. */
 		return TRUE;
@@ -898,7 +898,7 @@ session_find_account_foreach_cb (GossipAccount  *account,
 	}
 }
 
-GossipAccount * 
+GossipAccount *
 gossip_session_find_account (GossipSession *session,
 			     GossipContact *contact)
 {
@@ -907,13 +907,13 @@ gossip_session_find_account (GossipSession *session,
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	
+
 	priv = GET_PRIV (session);
 
 	fa.contact_id = gossip_contact_get_id (contact);
 	fa.account = NULL;
 
-	g_hash_table_foreach (priv->accounts, 
+	g_hash_table_foreach (priv->accounts,
 			      (GHFunc) session_find_account_foreach_cb,
 			      &fa);
 
@@ -932,15 +932,15 @@ session_find_account_for_own_contact_foreach_cb (GossipAccount  *account,
 	if (!own_contact) {
 		return;
 	}
-	
+
 	id = gossip_contact_get_id (own_contact);
-	
+
 	if (g_str_equal (id, fa->contact_id)) {
 		fa->account = g_object_ref (account);
 	}
 }
 
-GossipAccount * 
+GossipAccount *
 gossip_session_find_account_for_own_contact (GossipSession *session,
 					     GossipContact *own_contact)
 {
@@ -949,13 +949,13 @@ gossip_session_find_account_for_own_contact (GossipSession *session,
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (own_contact), NULL);
-	
+
 	priv = GET_PRIV (session);
 
 	fa.contact_id = gossip_contact_get_id (own_contact);
 	fa.account = NULL;
 
-	g_hash_table_foreach (priv->accounts, 
+	g_hash_table_foreach (priv->accounts,
 			      (GHFunc) session_find_account_for_own_contact_foreach_cb,
 			      &fa);
 
@@ -980,7 +980,7 @@ session_account_removed_cb (GossipAccountManager *manager,
 
 static void
 session_connect (GossipSession *session,
-		 GossipAccount *account) 
+		 GossipAccount *account)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
@@ -988,17 +988,17 @@ session_connect (GossipSession *session,
 	priv = GET_PRIV (session);
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
-	
+
 	if (gossip_protocol_is_connected (protocol)) {
 		return;
 	}
-	
+
 	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, protocol);
 	priv->connecting_counter++;
 
 	/* Can we not just pass the GossipAccount on the GObject init? */
 	gossip_protocol_setup (protocol, account);
-	
+
 	/* Setup the network connection */
 	gossip_protocol_login (protocol);
 }
@@ -1034,16 +1034,16 @@ session_connect_foreach_cb (GossipAccount  *account,
 	 * connecting account.
 	 */
 	if (cd->startup) {
-		if (gossip_account_get_auto_connect (account)) { 
+		if (gossip_account_get_auto_connect (account)) {
 			session_connect (cd->session, account);
 		}
-		return; 
-	} 
+		return;
+	}
 
 	/* Connect it if we should be connecting ALL accounts anyway. */
 	if (cd->connect_all) {
 		session_connect (cd->session, account);
-	} 
+	}
 	else if (gossip_account_get_auto_connect (account)) {
 		session_connect (cd->session, account);
 	}
@@ -1057,7 +1057,7 @@ gossip_session_connect (GossipSession *session,
 	GossipSessionPriv *priv;
 	ConnectFind        cf;
 	ConnectData        cd;
-	
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 
 	priv = GET_PRIV (session);
@@ -1066,7 +1066,7 @@ gossip_session_connect (GossipSession *session,
 
 	/* Temporary */
 	if (!priv->presence) {
-		priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE, 
+		priv->presence = gossip_presence_new_full (GOSSIP_PRESENCE_STATE_AVAILABLE,
 							   NULL);
 	}
 
@@ -1079,7 +1079,7 @@ gossip_session_connect (GossipSession *session,
 	/* We do some clever stuff here and check that ALL accounts
 	 * are either auto connecting or not, if they are all the same
 	 * then we connect ALL accounts, if not, we just connect the
-	 * auto connect accounts 
+	 * auto connect accounts
 	 */
 	cf.first = TRUE;
 	cf.same = TRUE;
@@ -1100,19 +1100,19 @@ gossip_session_connect (GossipSession *session,
 
 static void
 session_disconnect (GossipSession *session,
-		    GossipAccount *account) 
+		    GossipAccount *account)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 
 	priv = GET_PRIV (session);
-	
+
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	
+
 	protocol = g_hash_table_lookup (priv->accounts, account);
-	
+
 	g_signal_emit (session, signals[PROTOCOL_DISCONNECTING], 0, account, protocol);
-	
+
 	gossip_protocol_logout (protocol);
 }
 
@@ -1124,7 +1124,7 @@ session_disconnect_foreach_cb (GossipAccount  *account,
 	GossipSessionPriv *priv;
 
 	priv = GET_PRIV (session);
-	
+
 	session_disconnect (session, account);
 }
 
@@ -1152,15 +1152,15 @@ gossip_session_disconnect (GossipSession *session,
 			      session);
 }
 
-void 
-gossip_session_send_message (GossipSession *session, 
+void
+gossip_session_send_message (GossipSession *session,
 			     GossipMessage *message)
 {
 	GossipSessionPriv *priv;
 	GossipContact     *contact;
 	GossipAccount     *account;
 	GossipProtocol    *protocol;
-		
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (message != NULL);
 
@@ -1172,7 +1172,7 @@ gossip_session_send_message (GossipSession *session,
 		g_warning ("Could not find the account to send message from.");
 		return;
 	}
-	
+
 	protocol = g_hash_table_lookup (priv->accounts, account);
 	gossip_protocol_send_message (protocol, message);
 
@@ -1196,7 +1196,7 @@ gossip_session_send_composing (GossipSession  *session,
 		/* We don't warn here because if no protocol is found,
 		 * it is likely that it is because the contact is a
 		 * temporary contact, instead we just silently ignore
-		 * it and don't send composing. 
+		 * it and don't send composing.
 		 */
 		return;
 	}
@@ -1218,11 +1218,11 @@ gossip_session_get_presence (GossipSession *session)
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
 
 	priv = GET_PRIV (session);
-	
+
 	return priv->presence;
 }
 
-void 
+void
 gossip_session_set_presence (GossipSession  *session,
 			     GossipPresence *presence)
 {
@@ -1257,14 +1257,14 @@ gossip_session_is_connected (GossipSession *session,
 	GossipProtocol    *protocol;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
-	
+
 	priv = GET_PRIV (session);
 
 	if (account) {
 		protocol = g_hash_table_lookup (priv->accounts, account);
-		
+
 		return gossip_protocol_is_connected (protocol);
-	} 
+	}
 
 	/* Fall back to counter if no account is provided */
 	gossip_session_count_accounts (session, NULL, NULL, NULL);
@@ -1280,14 +1280,14 @@ gossip_session_is_connecting (GossipSession *session,
 	GossipProtocol    *protocol;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
-	
+
 	priv = GET_PRIV (session);
 
 	if (account) {
 		protocol = g_hash_table_lookup (priv->accounts, account);
-		
+
 		return gossip_protocol_is_connecting (protocol);
-	} 
+	}
 
 	/* Fall back to counter if no account is provided */
 	gossip_session_count_accounts (session, NULL, NULL, NULL);
@@ -1303,7 +1303,7 @@ gossip_session_get_active_resource (GossipSession *session,
 	GossipProtocol    *protocol;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-	
+
 	/* Get the activate resource, needed to be able to lock the
 	 * chat against a certain resource.
 	 */
@@ -1314,7 +1314,7 @@ gossip_session_get_active_resource (GossipSession *session,
 	if (!protocol) {
 		return NULL;
 	}
-	
+
 	return gossip_protocol_get_active_resource (protocol, contact);
 }
 
@@ -1357,21 +1357,21 @@ gossip_session_get_ft_provider (GossipSession *session,
 }
 
 GossipContact *
-gossip_session_find_contact (GossipSession *session, 
+gossip_session_find_contact (GossipSession *session,
 			     const gchar   *id)
 {
 	GossipSessionPriv *priv;
 	GList             *l;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-        g_return_val_if_fail (id != NULL, NULL);
+	g_return_val_if_fail (id != NULL, NULL);
 
 	priv = GET_PRIV (session);
 
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;
 		GossipContact  *contact;
-		
+
 		protocol = l->data;
 
 		contact = gossip_protocol_find_contact (protocol, id);
@@ -1386,40 +1386,40 @@ gossip_session_find_contact (GossipSession *session,
 void
 gossip_session_add_contact (GossipSession *session,
 			    GossipAccount *account,
-                            const gchar   *id,
-                            const gchar   *name,
-                            const gchar   *group,
-                            const gchar   *message)
+			    const gchar   *id,
+			    const gchar   *name,
+			    const gchar   *group,
+			    const gchar   *message)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-        g_return_if_fail (id != NULL);
-        g_return_if_fail (name != NULL);
-        g_return_if_fail (message != NULL);
+	g_return_if_fail (id != NULL);
+	g_return_if_fail (name != NULL);
+	g_return_if_fail (message != NULL);
 
 	priv = GET_PRIV (session);
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
 
-        gossip_protocol_add_contact (protocol,
-                                     id, name, group, message);
+	gossip_protocol_add_contact (protocol,
+				     id, name, group, message);
 }
 
 void
 gossip_session_rename_contact (GossipSession *session,
-                               GossipContact *contact,
-                               const gchar   *new_name)
+			       GossipContact *contact,
+			       const gchar   *new_name)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-        g_return_if_fail (GOSSIP_IS_CONTACT (contact));
-        g_return_if_fail (new_name != NULL);
-	
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+	g_return_if_fail (new_name != NULL);
+
 	/* get the activate resource, needed to be able to lock the
 	   chat against a certain resource */
 
@@ -1429,20 +1429,20 @@ gossip_session_rename_contact (GossipSession *session,
 	if (!protocol) {
 		return;
 	}
-	
-        gossip_protocol_rename_contact (protocol, contact, new_name);
+
+	gossip_protocol_rename_contact (protocol, contact, new_name);
 }
 
 void
 gossip_session_remove_contact (GossipSession *session,
-                               GossipContact *contact)
+			       GossipContact *contact)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-        g_return_if_fail (GOSSIP_IS_CONTACT (contact));
-	
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
 	/* Get the activate resource, needed to be able to lock the
 	 * chat against a certain resource.
 	 */
@@ -1453,28 +1453,28 @@ gossip_session_remove_contact (GossipSession *session,
 	if (!protocol) {
 		return;
 	}
-	
-        gossip_protocol_remove_contact (protocol, contact);
+
+	gossip_protocol_remove_contact (protocol, contact);
 }
 
 void
 gossip_session_update_contact (GossipSession *session,
-                               GossipContact *contact)
+			       GossipContact *contact)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-        g_return_if_fail (contact != NULL);
-	
+	g_return_if_fail (contact != NULL);
+
 	priv = GET_PRIV (session);
 
 	protocol = session_get_protocol (session, contact);
 	if (!protocol) {
 		return;
 	}
-	
-        gossip_protocol_update_contact (protocol, contact);
+
+	gossip_protocol_update_contact (protocol, contact);
 }
 
 void
@@ -1486,9 +1486,9 @@ gossip_session_rename_group (GossipSession *session,
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-        g_return_if_fail (group != NULL);
-        g_return_if_fail (new_name != NULL);
-	
+	g_return_if_fail (group != NULL);
+	g_return_if_fail (new_name != NULL);
+
 	priv = GET_PRIV (session);
 
 	/* 	protocol = session_get_protocol (session, NULL); */
@@ -1499,7 +1499,7 @@ gossip_session_rename_group (GossipSession *session,
 	   accounts */
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol = GOSSIP_PROTOCOL (l->data);
-	
+
 		gossip_protocol_rename_group (protocol, group, new_name);
 	}
 }
@@ -1531,7 +1531,7 @@ gossip_session_get_contacts_by_account (GossipSession *session,
 	for (l = priv->contacts; l; l = l->next) {
 		GossipContact *contact;
 		GossipAccount *this_account;
-		
+
 		contact = l->data;
 
 		this_account = gossip_contact_get_account (contact);
@@ -1542,11 +1542,11 @@ gossip_session_get_contacts_by_account (GossipSession *session,
 
 		list = g_list_append (list, contact);
 	}
-	
+
 	return list;
 }
 
-GossipContact * 
+GossipContact *
 gossip_session_get_own_contact (GossipSession *session,
 				GossipAccount *account)
 {
@@ -1578,13 +1578,13 @@ gossip_session_get_groups (GossipSession *session)
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;
 		GList          *groups;
-		
+
 		protocol = l->data;
 
 		groups = gossip_protocol_get_groups (protocol);
 		for (j = groups; j; j = j->next) {
-			if (!g_list_find_custom (all_groups, 
-						 j->data, 
+			if (!g_list_find_custom (all_groups,
+						 j->data,
 						 (GCompareFunc) strcmp)) {
 				all_groups = g_list_append (all_groups, j->data);
 			}
@@ -1625,7 +1625,7 @@ gossip_session_register_account (GossipSession           *session,
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
-	
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 	g_return_if_fail (callback != NULL);
@@ -1634,11 +1634,11 @@ gossip_session_register_account (GossipSession           *session,
 
 	/* make sure we have added the account to our list */
 	gossip_session_add_account (session, account);
-	
+
 	protocol = g_hash_table_lookup (priv->accounts, account);
 	gossip_protocol_setup (protocol, account);
 
-        gossip_protocol_register_account (protocol, account, vcard,
+	gossip_protocol_register_account (protocol, account, vcard,
 					  callback, user_data);
 }
 
@@ -1648,7 +1648,7 @@ gossip_session_register_cancel (GossipSession *session,
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
-	
+
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
@@ -1656,7 +1656,7 @@ gossip_session_register_cancel (GossipSession *session,
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
 
-        gossip_protocol_register_cancel (protocol);
+	gossip_protocol_register_cancel (protocol);
 }
 
 gboolean
@@ -1668,12 +1668,12 @@ gossip_session_get_vcard (GossipSession        *session,
 			  GError              **error)
 {
 	GossipSessionPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
 
 	priv = GET_PRIV (session);
-	
+
 	if (!account && !contact) {
 		g_warning ("No GossipAccount and no GossipContact to use for vcard request");
 		return FALSE;
@@ -1682,14 +1682,14 @@ gossip_session_get_vcard (GossipSession        *session,
 	/* find contact and get vcard */
 	if (contact) {
 		GossipProtocol *protocol;
-		
+
 		protocol = session_get_protocol (session, contact);
-		
+
 		/* use account, must be temp contact, use account protocol */
 		if (!protocol && GOSSIP_IS_ACCOUNT (account)) {
-			protocol = g_hash_table_lookup (priv->accounts, account);	
+			protocol = g_hash_table_lookup (priv->accounts, account);
 		}
-		
+
 		return gossip_protocol_get_vcard (protocol, contact,
 						  callback, user_data,
 						  error);
@@ -1722,13 +1722,13 @@ gossip_session_set_vcard (GossipSession         *session,
 	GossipSessionPriv *priv;
 	GList             *l;
 	gboolean           ok = TRUE;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
-	
+
 	priv = GET_PRIV (session);
-	
+
 	/* if account is supplied set the vcard for that account only! */
 	if (account) {
 		GossipProtocol *protocol;
@@ -1736,7 +1736,7 @@ gossip_session_set_vcard (GossipSession         *session,
 		g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
 
 		protocol = g_hash_table_lookup (priv->accounts, account);
-		
+
 		return gossip_protocol_set_vcard (protocol,
 						  vcard,
 						  callback,
@@ -1746,7 +1746,7 @@ gossip_session_set_vcard (GossipSession         *session,
 
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;
-		
+
 		protocol = l->data;
 
 		/* FIXME: error is pointless here... since if this is
@@ -1758,7 +1758,7 @@ gossip_session_set_vcard (GossipSession         *session,
 						user_data,
 						error);
 	}
-	
+
 	return ok;
 }
 
@@ -1774,14 +1774,14 @@ gossip_session_get_version (GossipSession          *session,
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
 	g_return_val_if_fail (callback != NULL, FALSE);
-	
+
 	protocol = session_get_protocol (session, contact);
 
 	if (!protocol) {
 		return FALSE;
 	}
-	
-	return gossip_protocol_get_version (protocol, contact, 
+
+	return gossip_protocol_get_version (protocol, contact,
 					    callback, user_data,
 					    error);
 }

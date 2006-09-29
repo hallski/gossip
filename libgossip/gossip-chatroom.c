@@ -38,7 +38,7 @@ struct _GossipChatroomPriv {
 	GossipChatroomId      id;
 
 	gchar                *id_str;
-	
+
 	gchar                *name;
 	gchar                *nick;
 	gchar                *server;
@@ -46,7 +46,7 @@ struct _GossipChatroomPriv {
 	gchar                *password;
 	gboolean              auto_connect;
 	gboolean              favourite;
-	
+
 	GossipChatroomStatus  status;
 	gchar                *last_error;
 
@@ -137,8 +137,8 @@ chatroom_class_init (GossipChatroomClass *class)
 	object_class->get_property = chatroom_get_property;
 	object_class->set_property = chatroom_set_property;
 
-	/* 
-	 * properties 
+	/*
+	 * properties
 	 */
 
 	g_object_class_install_property (object_class,
@@ -255,11 +255,11 @@ chatroom_class_init (GossipChatroomClass *class)
 	 * signals
 	 */
 
-        signals[CHANGED] = 
+	signals[CHANGED] =
 		g_signal_new ("changed",
 			      G_TYPE_FROM_CLASS (object_class),
-                              G_SIGNAL_RUN_LAST,
-			      0, 
+			      G_SIGNAL_RUN_LAST,
+			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__VOID,
 			      G_TYPE_NONE,
@@ -301,11 +301,11 @@ static void
 chatroom_finalize (GObject *object)
 {
 	GossipChatroomPriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	g_free (priv->id_str);
-	
+
 	g_free (priv->name);
 	g_free (priv->nick);
 	g_free (priv->server);
@@ -313,7 +313,7 @@ chatroom_finalize (GObject *object)
 	g_free (priv->password);
 
 	g_free (priv->last_error);
-	
+
 	if (priv->account) {
 		g_object_unref (priv->account);
 	}
@@ -328,7 +328,7 @@ chatroom_get_property (GObject    *object,
 		       GParamSpec *pspec)
 {
 	GossipChatroomPriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
@@ -376,7 +376,7 @@ chatroom_get_property (GObject    *object,
 		break;
 	};
 }
-	
+
 static void
 chatroom_set_property (GObject      *object,
 		       guint         param_id,
@@ -384,9 +384,9 @@ chatroom_set_property (GObject      *object,
 		       GParamSpec   *pspec)
 {
 	GossipChatroomPriv *priv;
-	
+
 	priv = GET_PRIV (object);
-	
+
 	switch (param_id) {
 	case PROP_TYPE:
 		priv->type = g_value_get_int (value);
@@ -444,7 +444,7 @@ gossip_chatroom_get_id (GossipChatroom *chatroom)
 	GossipChatroomPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
-	
+
 	priv = GET_PRIV (chatroom);
 	return priv->id;
 }
@@ -455,7 +455,7 @@ gossip_chatroom_get_type (GossipChatroom *chatroom)
 	GossipChatroomPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), 0);
-	
+
 	priv = GET_PRIV (chatroom);
 	return priv->type;
 }
@@ -466,14 +466,14 @@ gossip_chatroom_get_id_str (GossipChatroom *chatroom)
 	GossipChatroomPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
-	
+
 	priv = GET_PRIV (chatroom);
 
 	if (!priv->room && !priv->server) {
 		priv->id_str = g_strdup ("");
 	}
-		
-	return priv->id_str;	
+
+	return priv->id_str;
 }
 
 const gchar *
@@ -562,7 +562,7 @@ gossip_chatroom_get_status (GossipChatroom *chatroom)
 			      GOSSIP_CHATROOM_STATUS_UNKNOWN);
 
 	priv = GET_PRIV (chatroom);
-	
+
 	return priv->status;
 }
 
@@ -585,7 +585,7 @@ gossip_chatroom_get_account (GossipChatroom *chatroom)
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
 
 	priv = GET_PRIV (chatroom);
-	
+
 	if (!priv->account) {
 		return NULL;
 	}
@@ -593,7 +593,7 @@ gossip_chatroom_get_account (GossipChatroom *chatroom)
 	return priv->account;
 }
 
-void 
+void
 gossip_chatroom_set_name (GossipChatroom *chatroom,
 			  const gchar    *name)
 {
@@ -601,9 +601,9 @@ gossip_chatroom_set_name (GossipChatroom *chatroom,
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (name != NULL);
-	
+
 	priv = GET_PRIV (chatroom);
-	
+
 	g_free (priv->name);
 	priv->name = g_strdup (name);
 
@@ -619,7 +619,7 @@ gossip_chatroom_set_nick (GossipChatroom *chatroom,
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (nick != NULL);
-	
+
 	priv = GET_PRIV (chatroom);
 
 	g_free (priv->nick);
@@ -639,7 +639,7 @@ gossip_chatroom_set_server (GossipChatroom *chatroom,
 	g_return_if_fail (server != NULL);
 
 	priv = GET_PRIV (chatroom);
-	
+
 	g_free (priv->server);
 	priv->server = g_strdup (server);
 
@@ -660,9 +660,9 @@ gossip_chatroom_set_room (GossipChatroom *chatroom,
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (room != NULL);
-	
+
 	priv = GET_PRIV (chatroom);
-	
+
 	g_free (priv->room);
 	priv->room = g_strdup (room);
 
@@ -683,9 +683,9 @@ gossip_chatroom_set_password (GossipChatroom *chatroom,
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
 	g_return_if_fail (password != NULL);
-	
+
 	priv = GET_PRIV (chatroom);
-	
+
 	g_free (priv->password);
 	priv->password = g_strdup (password);
 
@@ -746,9 +746,9 @@ gossip_chatroom_set_last_error (GossipChatroom *chatroom,
 	GossipChatroomPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
-	
+
 	priv = GET_PRIV (chatroom);
-	
+
 	g_free (priv->last_error);
 	if (last_error) {
 		priv->last_error = g_strdup (last_error);
@@ -773,18 +773,18 @@ gossip_chatroom_set_account (GossipChatroom *chatroom,
 	if (priv->account) {
 		g_object_unref (priv->account);
 	}
-		
+
 	priv->account = g_object_ref (account);
 
 	g_object_notify (G_OBJECT (chatroom), "account");
 	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
-guint 
+guint
 gossip_chatroom_hash (gconstpointer key)
 {
 	GossipChatroomPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM (key), 0);
 
 	priv = GET_PRIV (key);
@@ -793,7 +793,7 @@ gossip_chatroom_hash (gconstpointer key)
 }
 
 gboolean
-gossip_chatroom_equal (gconstpointer a, 
+gossip_chatroom_equal (gconstpointer a,
 		       gconstpointer b)
 {
 	GossipChatroomPriv *priv1;
@@ -812,12 +812,12 @@ gossip_chatroom_equal (gconstpointer a,
 	if (!priv2) {
 		return FALSE;
 	}
-	
+
 	return (priv1->id == priv2->id);
 }
 
 gboolean
-gossip_chatroom_equal_full (gconstpointer a, 
+gossip_chatroom_equal_full (gconstpointer a,
 			    gconstpointer b)
 {
 	GossipChatroomPriv *priv1;
@@ -837,32 +837,32 @@ gossip_chatroom_equal_full (gconstpointer a,
 		return FALSE;
 	}
 
-	if ((priv1->account && !priv2->account) || 
-	    (priv2->account && !priv1->account) || 
+	if ((priv1->account && !priv2->account) ||
+	    (priv2->account && !priv1->account) ||
 	    !gossip_account_equal (priv1->account, priv2->account)) {
 		return FALSE;
 	}
 
-	if ((priv1->name && !priv2->name) || 
-	    (priv2->name && !priv1->name) || 
+	if ((priv1->name && !priv2->name) ||
+	    (priv2->name && !priv1->name) ||
 	    strcmp (priv1->name, priv2->name) != 0) {
 		return FALSE;
 	}
 
-	if ((priv1->nick && !priv2->nick) || 
-	    (priv2->nick && !priv1->nick) || 
+	if ((priv1->nick && !priv2->nick) ||
+	    (priv2->nick && !priv1->nick) ||
 	    strcmp (priv1->nick, priv2->nick) != 0) {
 		return FALSE;
 	}
 
-	if ((priv1->server && !priv2->server) || 
-	    (priv2->server && !priv1->server) || 
+	if ((priv1->server && !priv2->server) ||
+	    (priv2->server && !priv1->server) ||
 	    strcmp (priv1->server, priv2->server) != 0) {
 		return FALSE;
 	}
 
-	if ((priv1->room && !priv2->room) || 
-	    (priv2->room && !priv1->room) || 
+	if ((priv1->room && !priv2->room) ||
+	    (priv2->room && !priv1->room) ||
 	    strcmp (priv1->room, priv2->room) != 0) {
 		return FALSE;
 	}
@@ -897,7 +897,7 @@ gossip_chatroom_status_to_string (GossipChatroomStatus status)
 	}
 
 	g_warning ("Invalid chatroom status: %d", status);
-	
+
 	return "";
 }
 
@@ -937,7 +937,7 @@ gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation,
 	case GOSSIP_CHATROOM_AFFILIATION_NONE:
 		return _("No affiliation");
 	}
-	
+
 	g_warning ("Invalid affiliation: %d", affiliation);
 
 	return "";
@@ -952,7 +952,7 @@ gossip_chatroom_invite_ref (GossipChatroomInvite *invite)
 {
 	g_return_val_if_fail (invite != NULL, NULL);
 	g_return_val_if_fail (invite->ref_count > 0, NULL);
-	
+
 	invite->ref_count++;
 
 	return invite;
@@ -963,9 +963,9 @@ gossip_chatroom_invite_unref (GossipChatroomInvite *invite)
 {
 	g_return_if_fail (invite != NULL);
 	g_return_if_fail (invite->ref_count > 0);
-	
+
 	invite->ref_count--;
-	
+
 	if (invite->ref_count > 0) {
 		return;
 	}
@@ -982,21 +982,21 @@ GType
 gossip_chatroom_invite_get_type (void)
 {
 	static GType type = 0;
-	
+
 	if (type == 0) {
-		type = g_boxed_type_register_static 
+		type = g_boxed_type_register_static
 			("GossipChatroomInvite",
 			 (GBoxedCopyFunc) gossip_chatroom_invite_ref,
 			 (GBoxedFreeFunc) gossip_chatroom_invite_unref);
 	}
-	
+
 	return type;
 }
 
 GossipChatroomInvite *
 gossip_chatroom_invite_new (GossipContact *invitor,
 			    const gchar   *id,
-			    const gchar   *reason) 
+			    const gchar   *reason)
 {
 	GossipChatroomInvite *invite;
 
@@ -1004,7 +1004,7 @@ gossip_chatroom_invite_new (GossipContact *invitor,
 	g_return_val_if_fail (id != NULL, NULL);
 
 	invite = g_new0 (GossipChatroomInvite, 1);
-	
+
 	invite->ref_count = 1;
 
 	invite->invitor = g_object_ref (invitor);

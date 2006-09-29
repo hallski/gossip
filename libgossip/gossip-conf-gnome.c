@@ -139,7 +139,7 @@ gossip_conf_set_int (GossipConf  *conf,
 	gossip_debug (DEBUG_DOMAIN, "Setting int:'%s' to %d", key, value);
 
 	priv = GET_PRIV (conf);
-	
+
 	return gconf_client_set_int (priv->gconf_client,
 				     key,
 				     value,
@@ -155,24 +155,24 @@ gossip_conf_get_int (GossipConf  *conf,
 	GError          *error = NULL;
 
 	*value = 0;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 	g_return_val_if_fail (value != NULL, FALSE);
 
 	priv = GET_PRIV (conf);
-	
+
 	*value = gconf_client_get_int (priv->gconf_client,
 				       key,
 				       &error);
 
-	gossip_debug (DEBUG_DOMAIN, "Getting int:'%s' (=%d), error:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Getting int:'%s' (=%d), error:'%s'",
 		      key, *value, error ? error->message : "None");
 
 	if (error) {
 		g_error_free (error);
 		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -185,7 +185,7 @@ gossip_conf_set_bool (GossipConf  *conf,
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	gossip_debug (DEBUG_DOMAIN, "Setting bool:'%s' to %d ---> %s", 
+	gossip_debug (DEBUG_DOMAIN, "Setting bool:'%s' to %d ---> %s",
 		      key, value, value ? "true" : "false");
 
 	priv = GET_PRIV (conf);
@@ -205,7 +205,7 @@ gossip_conf_get_bool (GossipConf  *conf,
 	GError          *error = NULL;
 
 	*value = FALSE;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 	g_return_val_if_fail (value != NULL, FALSE);
 
@@ -215,7 +215,7 @@ gossip_conf_get_bool (GossipConf  *conf,
 					key,
 					&error);
 
-	gossip_debug (DEBUG_DOMAIN, "Getting bool:'%s' (=%d ---> %s), error:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Getting bool:'%s' (=%d ---> %s), error:'%s'",
 		      key, *value, *value ? "true" : "false",
 		      error ? error->message : "None");
 
@@ -223,7 +223,7 @@ gossip_conf_get_bool (GossipConf  *conf,
 		g_error_free (error);
 		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -236,7 +236,7 @@ gossip_conf_set_string (GossipConf  *conf,
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
-	gossip_debug (DEBUG_DOMAIN, "Setting string:'%s' to '%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Setting string:'%s' to '%s'",
 		      key, value);
 
 	priv = GET_PRIV (conf);
@@ -256,7 +256,7 @@ gossip_conf_get_string (GossipConf   *conf,
 	GError          *error = NULL;
 
 	*value = NULL;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
 	priv = GET_PRIV (conf);
@@ -265,14 +265,14 @@ gossip_conf_get_string (GossipConf   *conf,
 					  key,
 					  &error);
 
-	gossip_debug (DEBUG_DOMAIN, "Getting string:'%s' (='%s'), error:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Getting string:'%s' (='%s'), error:'%s'",
 		      key, *value, error ? error->message : "None");
 
 	if (error) {
 		g_error_free (error);
 		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -303,7 +303,7 @@ gossip_conf_get_string_list (GossipConf   *conf,
 	GError          *error = NULL;
 
 	*value = NULL;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
 
 	priv = GET_PRIV (conf);
@@ -316,7 +316,7 @@ gossip_conf_get_string_list (GossipConf   *conf,
 		g_error_free (error);
 		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -341,7 +341,7 @@ conf_notify_func (GConfClient *client,
 		    gconf_entry_get_key (entry),
 		    data->user_data);
 }
-	
+
 guint
 gossip_conf_notify_add (GossipConf           *conf,
 			const gchar          *key,
@@ -351,7 +351,7 @@ gossip_conf_notify_add (GossipConf           *conf,
 	GossipConfPriv       *priv;
 	guint                  id;
 	GossipConfNotifyData *data;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), 0);
 
 	priv = GET_PRIV (conf);
@@ -360,7 +360,7 @@ gossip_conf_notify_add (GossipConf           *conf,
 	data->func = func;
 	data->user_data = user_data;
 	data->conf = g_object_ref (conf);
-	
+
 	id = gconf_client_notify_add (priv->gconf_client,
 				      key,
 				      conf_notify_func,
@@ -378,11 +378,11 @@ gossip_conf_notify_remove (GossipConf *conf,
 	GossipConfPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
-	
+
 	priv = GET_PRIV (conf);
 
 	gconf_client_notify_remove (priv->gconf_client, id);
-	
+
 	return TRUE;
 }
 
@@ -400,9 +400,9 @@ gossip_conf_get_http_proxy (GossipConf  *conf,
 	GossipConfPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_CONF (conf), FALSE);
-	
+
 	priv = GET_PRIV (conf);
-	
+
 	*use_http_proxy = gconf_client_get_bool (priv->gconf_client,
 						 HTTP_PROXY_ROOT "/use_http_proxy",
 						 NULL);

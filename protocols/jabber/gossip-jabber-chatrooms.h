@@ -34,10 +34,10 @@ typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 
 
 GossipJabberChatrooms *
-               gossip_jabber_chatrooms_init                (GossipJabber          *jabber);
+	       gossip_jabber_chatrooms_init                (GossipJabber          *jabber);
 void           gossip_jabber_chatrooms_finalize            (GossipJabberChatrooms *chatrooms);
-GossipChatroomId       
-               gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatrooms,
+GossipChatroomId
+	       gossip_jabber_chatrooms_join                (GossipJabberChatrooms *chatrooms,
 							    GossipChatroom        *chatroom,
 							    GossipChatroomJoinCb   callback,
 							    gpointer               user_data);
@@ -55,7 +55,7 @@ void           gossip_jabber_chatrooms_change_nick         (GossipJabberChatroom
 void           gossip_jabber_chatrooms_leave               (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
 GossipChatroom *
-               gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
+	       gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
 void           gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id,

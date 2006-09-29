@@ -76,15 +76,15 @@ enum {
 
 G_DEFINE_TYPE (GossipCellRendererText, gossip_cell_renderer_text, GTK_TYPE_CELL_RENDERER_TEXT);
 
-static void 
+static void
 gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 {
 	GObjectClass         *object_class;
 	GtkCellRendererClass *cell_class;
-	
+
 	object_class = G_OBJECT_CLASS (klass);
 	cell_class = GTK_CELL_RENDERER_CLASS (klass);
-	
+
 	object_class->finalize = cell_renderer_text_finalize;
 
 	object_class->get_property = cell_renderer_text_get_property;
@@ -92,7 +92,7 @@ gossip_cell_renderer_text_class_init (GossipCellRendererTextClass *klass)
 
 	cell_class->get_size = cell_renderer_text_get_size;
 	cell_class->render = cell_renderer_text_render;
-	
+
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
 					 g_param_spec_string ("name",
@@ -240,13 +240,13 @@ cell_renderer_text_get_size (GtkCellRenderer *cell,
 {
 	GossipCellRendererText     *celltext;
 	GossipCellRendererTextPriv *priv;
-	
+
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
 	priv = GET_PRIV (cell);
 
 	/* Only update if not already valid so we get the right size. */
 	cell_renderer_text_update_text (celltext, widget, priv->is_selected);
-	
+
 	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->get_size) (cell, widget,
 										      cell_area,
 										      x_offset, y_offset,
@@ -267,19 +267,19 @@ cell_renderer_text_render (GtkCellRenderer      *cell,
 	celltext = GOSSIP_CELL_RENDERER_TEXT (cell);
 
 	cell_renderer_text_update_text (celltext,
-					widget, 
+					widget,
 					(flags & GTK_CELL_RENDERER_SELECTED));
 
 	(GTK_CELL_RENDERER_CLASS (gossip_cell_renderer_text_parent_class)->render) (
-		cell, window, 
-		widget, 
+		cell, window,
+		widget,
 		background_area,
 		cell_area,
 		expose_area, flags);
 }
 
 static void
-cell_renderer_text_update_text (GossipCellRendererText *cell, 
+cell_renderer_text_update_text (GossipCellRendererText *cell,
 				GtkWidget              *widget,
 				gboolean                selected)
 {
@@ -296,9 +296,9 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	}
 
 	if (priv->is_group) {
-		g_object_set (cell, 
+		g_object_set (cell,
 			      "visible", TRUE,
-			      "weight", PANGO_WEIGHT_BOLD, 
+			      "weight", PANGO_WEIGHT_BOLD,
 			      "text", priv->name,
 			      "attributes", NULL,
 			      "xpad", 1,
@@ -309,8 +309,8 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		priv->is_valid = TRUE;
 		return;
 	}
-	
- 	style = gtk_widget_get_style (widget);
+
+	style = gtk_widget_get_style (widget);
 
 	attr_list = pango_attr_list_new ();
 
@@ -319,16 +319,16 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	attr_style->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_style);
 
-  	if (!selected) {  
+	if (!selected) {
 		GdkColor color;
-		
+
 		color = style->text_aa[GTK_STATE_NORMAL];
 
-		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);   
-   		attr_color->start_index = attr_style->start_index;   
-   		attr_color->end_index = -1;   
-   		pango_attr_list_insert (attr_list, attr_color);   
-   	}   
+		attr_color = pango_attr_foreground_new (color.red, color.green, color.blue);
+		attr_color->start_index = attr_style->start_index;
+		attr_color->end_index = -1;
+		pango_attr_list_insert (attr_list, attr_color);
+	}
 
 	attr_size = pango_attr_size_new (pango_font_description_get_size (style->font_desc) / 1.2);
 
@@ -341,7 +341,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	} else {
 		str = g_strdup_printf ("%s\n%s", priv->name, priv->status);
 	}
-	
+
 	g_object_set (cell,
 		      "visible", TRUE,
 		      "weight", PANGO_WEIGHT_NORMAL,
@@ -350,7 +350,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 		      "xpad", 0,
 		      "ypad", 1,
 		      NULL);
-      
+
 	g_free (str);
 	pango_attr_list_unref (attr_list);
 
@@ -358,7 +358,7 @@ cell_renderer_text_update_text (GossipCellRendererText *cell,
 	priv->is_valid = TRUE;
 }
 
-GtkCellRenderer * 
+GtkCellRenderer *
 gossip_cell_renderer_text_new (void)
 {
 	return g_object_new (GOSSIP_TYPE_CELL_RENDERER_TEXT, NULL);

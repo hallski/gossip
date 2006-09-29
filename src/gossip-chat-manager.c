@@ -122,7 +122,7 @@ chat_manager_new_message_cb (GossipSession     *session,
 
 	/* Add event to event manager if one doesn't exist already. */
 	if (!chat) {
-		gossip_debug (DEBUG_DOMAIN, "New chat for: %s", 
+		gossip_debug (DEBUG_DOMAIN, "New chat for: %s",
 			      gossip_contact_get_id (sender));
 		chat = gossip_chat_manager_get_chat (manager, sender);
 
@@ -138,26 +138,26 @@ chat_manager_new_message_cb (GossipSession     *session,
 			event = gossip_event_new (GOSSIP_EVENT_NEW_MESSAGE);
 		}
 	}
-				
+
 	gossip_private_chat_append_message (chat, message);
 
 	if (event) {
 		gchar *str;
 
-		str = g_strdup_printf (_("New message from %s"), 
+		str = g_strdup_printf (_("New message from %s"),
 				       gossip_contact_get_name (sender));
-		g_object_set (event, 
-			      "message", str, 
+		g_object_set (event,
+			      "message", str,
 			      "data", message,
 			      NULL);
 		g_free (str);
 
 		gossip_event_manager_add (gossip_app_get_event_manager (),
-					  event, 
+					  event,
 					  chat_manager_event_activated_cb,
 					  G_OBJECT (manager));
 
-		g_hash_table_insert (priv->events, 
+		g_hash_table_insert (priv->events,
 				     g_object_ref (sender),
 				     g_object_ref (event));
 	}
@@ -177,7 +177,7 @@ chat_manager_event_activated_cb (GossipEventManager *event_manager,
 	gossip_chat_manager_show_chat (GOSSIP_CHAT_MANAGER (object), contact);
 }
 
-static void 
+static void
 chat_manager_get_chats_foreach (GossipContact      *contact,
 				GossipPrivateChat  *chat,
 				GList             **chats)
@@ -203,22 +203,22 @@ gossip_chat_manager_get_chat (GossipChatManager *manager,
 
 	g_return_val_if_fail (GOSSIP_IS_CHAT_MANAGER (manager), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	
+
 	priv = GET_PRIV (manager);
 
 	chat = g_hash_table_lookup (priv->chats, contact);
-	
+
 	if (!chat) {
 		GossipSession *session;
 		GossipAccount *account;
 		GossipContact *own_contact;
-		
+
 		session = gossip_app_get_session ();
 		account = gossip_contact_get_account (contact);
 		own_contact = gossip_session_get_own_contact (session, account);
 
 		chat = gossip_private_chat_new (own_contact, contact);
-		g_hash_table_insert (priv->chats, 
+		g_hash_table_insert (priv->chats,
 				     g_object_ref (contact),
 				     chat);
 
@@ -234,12 +234,12 @@ gossip_chat_manager_get_chats (GossipChatManager *manager)
 {
 	GossipChatManagerPriv *priv;
 	GList                 *chats = NULL;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CHAT_MANAGER (manager), NULL);
-	
+
 	priv = GET_PRIV (manager);
 
-	g_hash_table_foreach (priv->chats, 
+	g_hash_table_foreach (priv->chats,
 			      (GHFunc) chat_manager_get_chats_foreach,
 			      &chats);
 
@@ -249,7 +249,7 @@ gossip_chat_manager_get_chats (GossipChatManager *manager)
 }
 
 void
-gossip_chat_manager_show_chat (GossipChatManager *manager, 
+gossip_chat_manager_show_chat (GossipChatManager *manager,
 			       GossipContact     *contact)
 {
 	GossipChatManagerPriv *priv;
@@ -258,13 +258,13 @@ gossip_chat_manager_show_chat (GossipChatManager *manager,
 
 	g_return_if_fail (GOSSIP_IS_CHAT_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
-	
+
 	priv = GET_PRIV (manager);
 
 	chat = gossip_chat_manager_get_chat (manager, contact);
 
 	gossip_chat_present (GOSSIP_CHAT (chat));
-	 
+
 	event = g_hash_table_lookup (priv->events, contact);
 	if (event) {
 		gossip_event_manager_remove (gossip_app_get_event_manager (),

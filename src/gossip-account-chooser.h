@@ -37,11 +37,11 @@ typedef struct _GossipAccountChooser      GossipAccountChooser;
 typedef struct _GossipAccountChooserClass GossipAccountChooserClass;
 
 struct _GossipAccountChooser {
-        GtkComboBox parent;
+	GtkComboBox parent;
 };
 
 struct _GossipAccountChooserClass {
-        GtkComboBoxClass parent_class;
+	GtkComboBoxClass parent_class;
 };
 
 GType          gossip_account_chooser_get_type           (void) G_GNUC_CONST;

@@ -78,7 +78,7 @@ gboolean gossip_transport_register_cancel     (GossipJID                       *
 
 
 
- 
+
 
 
 G_END_DECLS

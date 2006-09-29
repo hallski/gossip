@@ -54,7 +54,7 @@ const gchar *        status_presets_get_state_as_str (GossipPresenceState  state
 static void          status_presets_set_default      (GossipPresenceState  state,
 						      const gchar         *status);
 
-static GList        *presets = NULL; 
+static GList        *presets = NULL;
 static StatusPreset *default_preset = NULL;
 
 static StatusPreset *
@@ -64,7 +64,7 @@ status_preset_new (GossipPresenceState  state,
 	StatusPreset *preset;
 
 	preset = g_new0 (StatusPreset, 1);
-	
+
 	preset->status = g_strdup (status);
 	preset->state = state;
 
@@ -79,19 +79,19 @@ status_preset_free (StatusPreset *preset)
 }
 
 static void
-status_presets_file_parse (const gchar *filename) 
+status_presets_file_parse (const gchar *filename)
 {
 	xmlParserCtxtPtr ctxt;
 	xmlDocPtr        doc;
 	xmlNodePtr       presets_node;
 	xmlNodePtr       node;
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Attempting to parse file:'%s'...", filename);
 
- 	ctxt = xmlNewParserCtxt ();
+	ctxt = xmlNewParserCtxt ();
 
 	/* Parse and validate the file. */
-	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);	
+	doc = xmlCtxtReadFile (ctxt, filename, NULL, 0);
 	if (!doc) {
 		g_warning ("Failed to parse file:'%s'", filename);
 		xmlFreeParserCtxt (ctxt);
@@ -104,13 +104,13 @@ status_presets_file_parse (const gchar *filename)
 		xmlFreeParserCtxt (ctxt);
 		return;
 	}
-	
+
 	/* The root node, presets. */
 	presets_node = xmlDocGetRootElement (doc);
 
 	node = presets_node->children;
 	while (node) {
-		if (strcmp ((gchar *) node->name, "status") == 0 || 
+		if (strcmp ((gchar *) node->name, "status") == 0 ||
 		    strcmp ((gchar *) node->name, "default") == 0) {
 			GossipPresenceState  state;
 			gchar               *status;
@@ -142,8 +142,8 @@ status_presets_file_parse (const gchar *filename)
 				}
 
 				if (is_default) {
-					gossip_debug (DEBUG_DOMAIN, 
-						      "Default status preset state is:'%s', status:'%s'", 
+					gossip_debug (DEBUG_DOMAIN,
+						      "Default status preset state is:'%s', status:'%s'",
 						      state_str, status);
 
 					status_presets_set_default (state, status);
@@ -159,14 +159,14 @@ status_presets_file_parse (const gchar *filename)
 
 		node = node->next;
 	}
-	
+
 	/* Use the default if not set */
 	if (!default_preset) {
 		status_presets_set_default (GOSSIP_PRESENCE_STATE_AVAILABLE, NULL);
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Parsed %d status presets", g_list_length (presets));
-	
+
 	xmlFreeDoc (doc);
 	xmlFreeParserCtxt (ctxt);
 }
@@ -192,7 +192,7 @@ gossip_status_presets_get_all (void)
 	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS)) {
 		status_presets_file_parse (file_with_path);
 	}
-	
+
 	g_free (file_with_path);
 }
 
@@ -216,7 +216,7 @@ status_presets_get_state_as_str (GossipPresenceState state)
 static gboolean
 status_presets_file_save (void)
 {
-	xmlDocPtr   doc;  
+	xmlDocPtr   doc;
 	xmlNodePtr  root;
 	GList      *l;
 	gchar      *dir;
@@ -238,9 +238,9 @@ status_presets_file_save (void)
 
 		state = (gchar*) status_presets_get_state_as_str (default_preset->state);
 
- 		subnode = xmlNewTextChild (root, NULL, "default", 
-					   default_preset->status); 
- 		xmlNewProp (subnode, "presence", state);	 
+		subnode = xmlNewTextChild (root, NULL, "default",
+					   default_preset->status);
+		xmlNewProp (subnode, "presence", state);
 	}
 
 	for (l = presets; l; l = l->next) {
@@ -255,10 +255,10 @@ status_presets_file_save (void)
 		if (count[sp->state] > STATUS_PRESETS_MAX_EACH) {
 			continue;
 		}
-		
-		subnode = xmlNewTextChild (root, NULL, 
+
+		subnode = xmlNewTextChild (root, NULL,
 					   "status", sp->status);
-		xmlNewProp (subnode, "presence", state);	
+		xmlNewProp (subnode, "presence", state);
 	}
 
 	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", file);
@@ -271,7 +271,7 @@ status_presets_file_save (void)
 }
 
 GList *
-gossip_status_presets_get (GossipPresenceState state, 
+gossip_status_presets_get (GossipPresenceState state,
 			   gint                max_number)
 {
 	GList *list = NULL;
@@ -287,7 +287,7 @@ gossip_status_presets_get (GossipPresenceState state,
 		if (sp->state != state) {
 			continue;
 		}
-		
+
 		list = g_list_append (list, sp->status);
 		i++;
 
@@ -332,7 +332,7 @@ gossip_status_presets_set_last (GossipPresenceState  state,
 		}
 
 		num++;
-		
+
 		if (num > STATUS_PRESETS_MAX_EACH) {
 			status_preset_free (preset);
 			presets = g_list_delete_link (presets, l);
@@ -362,18 +362,18 @@ gossip_status_presets_get_default_state (void)
 	if (!default_preset) {
 		return GOSSIP_PRESENCE_STATE_AVAILABLE;
 	}
-	
+
 	return default_preset->state;
 }
 
 const gchar *
 gossip_status_presets_get_default_status (void)
 {
-	if (!default_preset || 
+	if (!default_preset ||
 	    !default_preset->status) {
 		return NULL;
 	}
-	
+
 	return default_preset->status;
 }
 
@@ -384,7 +384,7 @@ status_presets_set_default (GossipPresenceState  state,
 	if (default_preset) {
 		status_preset_free (default_preset);
 	}
-	
+
 	default_preset = status_preset_new (state, status);
 }
 

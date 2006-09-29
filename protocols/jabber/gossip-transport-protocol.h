@@ -28,16 +28,16 @@ G_BEGIN_DECLS
 /* protocols */
 typedef struct _GossipTransportProtocol GossipTransportProtocol;
 
-typedef void (*GossipTransportProtocolIDFunc) (GossipJID  *jid, 
-					       const gchar *id, 
+typedef void (*GossipTransportProtocolIDFunc) (GossipJID  *jid,
+					       const gchar *id,
 					       gpointer    user_data);
 
 
 GList *      gossip_transport_protocol_get_all            (void);
 GossipTransportProtocol *
-             gossip_transport_protocol_find_by_disco_type (const gchar                   *disco_type);
+	     gossip_transport_protocol_find_by_disco_type (const gchar                   *disco_type);
 GossipTransportProtocol *
-             gossip_transport_protocol_ref                (GossipTransportProtocol       *protocol); 
+	     gossip_transport_protocol_ref                (GossipTransportProtocol       *protocol);
 void         gossip_transport_protocol_unref              (GossipTransportProtocol       *protocol);
 const gchar *gossip_transport_protocol_get_name           (GossipTransportProtocol       *protocol);
 const gchar *gossip_transport_protocol_get_disco_type     (GossipTransportProtocol       *protocol);

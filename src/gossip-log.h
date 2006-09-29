@@ -27,7 +27,7 @@
 /* Log message handlers */
 typedef void (* GossipLogMessageFunc)  (GossipContact  *own_contact,
 					GossipMessage  *message,
-				        gpointer        user_data);
+					gpointer        user_data);
 
 void           gossip_log_handler_add_for_contact   (GossipContact        *contact,
 						     GossipLogMessageFunc  func,
@@ -62,7 +62,7 @@ void           gossip_log_message_for_chatroom      (GossipChatroom       *chatr
 gboolean       gossip_log_exists_for_chatroom       (GossipChatroom       *chatroom);
 
 /* Searching */
- typedef struct _GossipLogSearchHit GossipLogSearchHit;  
+ typedef struct _GossipLogSearchHit GossipLogSearchHit;
 GList *        gossip_log_search_new                (const gchar          *text);
 void           gossip_log_search_free               (GList                *hits);
 GossipAccount *gossip_log_search_hit_get_account    (GossipLogSearchHit   *hit);

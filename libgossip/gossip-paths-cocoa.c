@@ -44,7 +44,7 @@ paths_get_root_dir (void)
 			root = g_strdup (DATADIR);
 		}
 	}
-	
+
 	return root;
 }
 

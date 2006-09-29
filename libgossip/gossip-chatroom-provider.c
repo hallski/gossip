@@ -52,23 +52,23 @@ gossip_chatroom_provider_get_type (void)
 		static const GTypeInfo info =
 		{
 			sizeof (GossipChatroomProviderIface),
-			chatroom_provider_base_init,       
-			NULL,                           
+			chatroom_provider_base_init,
 			NULL,
-			NULL,                          
-			NULL,                          
+			NULL,
+			NULL,
+			NULL,
 			0,
-			0,                              
+			0,
 			NULL
 		};
 
-		type = g_type_register_static (G_TYPE_INTERFACE, 
+		type = g_type_register_static (G_TYPE_INTERFACE,
 					       "GossipChatroomProvider",
 					       &info, 0);
 
 		g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 	}
-	
+
 	return type;
 }
 
@@ -78,7 +78,7 @@ chatroom_provider_base_init (gpointer g_class)
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		signals[CHATROOM_JOINED] = 
+		signals[CHATROOM_JOINED] =
 			g_signal_new ("chatroom-joined",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -106,7 +106,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT_STRING,
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, G_TYPE_STRING);
-		signals[CHATROOM_TOPIC_CHANGED] = 
+		signals[CHATROOM_TOPIC_CHANGED] =
 			g_signal_new ("chatroom-topic-changed",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -115,8 +115,8 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT_OBJECT_STRING,
 				      G_TYPE_NONE,
 				      3, G_TYPE_INT, GOSSIP_TYPE_CONTACT, G_TYPE_STRING);
-	
-		signals[CHATROOM_CONTACT_JOINED] = 
+
+		signals[CHATROOM_CONTACT_JOINED] =
 			g_signal_new ("chatroom-contact-joined",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -126,7 +126,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 
-		signals[CHATROOM_CONTACT_LEFT] = 
+		signals[CHATROOM_CONTACT_LEFT] =
 			g_signal_new ("chatroom-contact-left",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -136,7 +136,7 @@ chatroom_provider_base_init (gpointer g_class)
 				      G_TYPE_NONE,
 				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 
-		signals[CHATROOM_CONTACT_PRESENCE_UPDATED] = 
+		signals[CHATROOM_CONTACT_PRESENCE_UPDATED] =
 			g_signal_new ("chatroom-contact-presence-updated",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
@@ -225,7 +225,7 @@ gossip_chatroom_provider_change_topic (GossipChatroomProvider *provider,
 	}
 }
 
-void 
+void
 gossip_chatroom_provider_change_nick (GossipChatroomProvider *provider,
 				      GossipChatroomId        id,
 				      const gchar            *new_nick)
@@ -282,7 +282,7 @@ gossip_chatroom_provider_invite (GossipChatroomProvider *provider,
 	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite) {
 		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->invite (provider,
 								       id,
-								       contact, 
+								       contact,
 								       reason);
 	}
 }

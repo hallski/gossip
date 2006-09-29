@@ -34,11 +34,11 @@ typedef struct _GossipAccountButton      GossipAccountButton;
 typedef struct _GossipAccountButtonClass GossipAccountButtonClass;
 
 struct _GossipAccountButton {
-        GtkToggleToolButton parent;
+	GtkToggleToolButton parent;
 };
 
 struct _GossipAccountButtonClass {
-        GtkToggleToolButtonClass parent_class;
+	GtkToggleToolButtonClass parent_class;
 };
 
 GType      gossip_account_button_get_type       (void) G_GNUC_CONST;
@@ -46,7 +46,7 @@ GType      gossip_account_button_get_type       (void) G_GNUC_CONST;
 GtkWidget *gossip_account_button_new            (void);
 
 GossipAccount *
-           gossip_account_button_get_account    (GossipAccountButton *button);
+	   gossip_account_button_get_account    (GossipAccountButton *button);
 void       gossip_account_button_set_account    (GossipAccountButton *button,
 						 GossipAccount       *account);
 void       gossip_account_button_set_status     (GossipAccountButton *button,

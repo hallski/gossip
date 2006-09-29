@@ -26,7 +26,7 @@
 #include <gtk/gtkoptionmenu.h>
 #include <gtk/gtkwidget.h>
 #include <gtk/gtktextview.h>
-#include <gtk/gtkmessagedialog.h> 
+#include <gtk/gtkmessagedialog.h>
 #include <gtk/gtksizegroup.h>
 #include <glade/glade.h>
 
@@ -61,13 +61,13 @@ void       gossip_glade_setup_size_group            (GladeXML            *gui,
 /* Dialogs */
 gchar *    gossip_password_dialog_run               (GossipAccount       *account,
 						     GtkWindow           *parent);
-gboolean   gossip_hint_dialog_show                  (const gchar         *conf_path, 
+gboolean   gossip_hint_dialog_show                  (const gchar         *conf_path,
 						     const gchar         *message1,
 						     const gchar         *message2,
 						     GtkWindow           *parent,
 						     GFunc                func,
 						     gpointer             user_data);
-gboolean   gossip_hint_show                         (const gchar         *conf_path, 
+gboolean   gossip_hint_show                         (const gchar         *conf_path,
 						     const gchar         *message1,
 						     const gchar         *message2,
 						     GtkWindow           *parent,
@@ -102,7 +102,7 @@ GdkPixbuf *gossip_pixbuf_avatar_from_vcard          (GossipVCard         *vcard)
 GdkPixbuf *gossip_pixbuf_avatar_from_vcard_scaled   (GossipVCard         *vcard,
 						     GtkIconSize          size);
 GdkPixbuf *gossip_pixbuf_avatar_from_contact        (GossipContact       *contact);
-GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact, 
+GdkPixbuf *gossip_pixbuf_avatar_from_contact_scaled (GossipContact       *contact,
 						     gint                 width,
 						     gint                 height);
 

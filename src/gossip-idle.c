@@ -53,7 +53,7 @@ gossip_idle_get_seconds (void)
 		if (XScreenSaverQueryExtension (GDK_DISPLAY (), &event_base, &error_base)) {
 			ss_info = XScreenSaverAllocInfo ();
 		}
-		
+
 		inited = TRUE;
 	}
 
@@ -66,25 +66,25 @@ gossip_idle_get_seconds (void)
 	if (idle < 3) {
 		return timestamp - time (NULL);
 	}
-	
+
 	timestamp = time (NULL);
 
 	return idle;
-	
+
 #elif defined(HAVE_COCOA)
 	static mach_port_t         port;
 	static io_registry_entry_t object;
 	CFMutableDictionaryRef     properties;
 	CFTypeRef                  idle_object;
 	uint64_t                   idle_time;
-	
+
 	if (!inited) {
 		io_iterator_t iter;
 
 		timestamp = time (NULL);
 
 		inited = TRUE;
-		
+
 		IOMasterPort (MACH_PORT_NULL, &port);
 		IOServiceGetMatchingServices (port,
 					      IOServiceMatching ("IOHIDSystem"),
@@ -96,7 +96,7 @@ gossip_idle_get_seconds (void)
 
 		object = IOIteratorNext (iter);
 	}
-	
+
 	if (!object) {
 		return 5;
 	}
@@ -126,7 +126,7 @@ gossip_idle_get_seconds (void)
 	if (idle_time < 3) {
 		return timestamp - time (NULL);
 	}
-	
+
 	timestamp = time (NULL);
 
 	return idle_time;

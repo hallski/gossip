@@ -27,7 +27,7 @@
 #include "gossip-jabber-private.h"
 #include "gossip-transport-register.h"
 
-#define DEBUG_MSG(x) 
+#define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 
@@ -60,18 +60,18 @@ typedef struct {
 static void transport_register_init                (void);
 
 
-static LmHandlerResult 
-            transport_unregister_message_handler   (LmMessageHandler      *handler,
+static LmHandlerResult
+	    transport_unregister_message_handler   (LmMessageHandler      *handler,
 						    LmConnection          *connection,
 						    LmMessage             *m,
 						    gpointer               user_data);
-static LmHandlerResult 
-            transport_requirements_message_handler (LmMessageHandler      *handler,
+static LmHandlerResult
+	    transport_requirements_message_handler (LmMessageHandler      *handler,
 						    LmConnection          *connection,
 						    LmMessage             *m,
 						    gpointer               user_data);
-static LmHandlerResult 
-            transport_register_message_handler     (LmMessageHandler      *handler,
+static LmHandlerResult
+	    transport_register_message_handler     (LmMessageHandler      *handler,
 						    LmConnection          *connection,
 						    LmMessage             *m,
 						    gpointer               user_data);
@@ -90,18 +90,18 @@ transport_register_init (void)
 	if (inited) {
 		return;
 	}
-	
-        unregisters = g_hash_table_new_full (gossip_jid_hash,
+
+	unregisters = g_hash_table_new_full (gossip_jid_hash,
 					     gossip_jid_equal,
 					     (GDestroyNotify) gossip_jid_unref,
 					     (GDestroyNotify) g_free);
 
-        requirements = g_hash_table_new_full (gossip_jid_hash,
+	requirements = g_hash_table_new_full (gossip_jid_hash,
 					      gossip_jid_equal,
 					      (GDestroyNotify) gossip_jid_unref,
 					      (GDestroyNotify) g_free);
 
-        registers = g_hash_table_new_full (gossip_jid_hash,
+	registers = g_hash_table_new_full (gossip_jid_hash,
 					   gossip_jid_equal,
 					   (GDestroyNotify) gossip_jid_unref,
 					   (GDestroyNotify) g_free);
@@ -110,10 +110,10 @@ transport_register_init (void)
 }
 
 
-/* 
- * unregister 
+/*
+ * unregister
  */
-void 
+void
 gossip_transport_unregister (GossipJabber                  *jabber,
 			     GossipJID                     *jid,
 			     GossipTransportUnregisterFunc  func,
@@ -122,7 +122,7 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 	TransportUnregister *tu;
 	LmConnection        *connection;
 	LmMessageHandler    *handler;
-        LmMessage           *m;
+	LmMessage           *m;
 	LmMessageNode       *node;
 
 	g_return_if_fail (jabber != NULL);
@@ -140,13 +140,13 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 
 	g_hash_table_insert (unregisters, tu->jid, tu);
 
-	DEBUG_MSG (("ProtocolTransport: Disco unregister to: %s (requirements)", 
+	DEBUG_MSG (("ProtocolTransport: Disco unregister to: %s (requirements)",
 		   gossip_jid_get_full (jid)));
 
 	/* set up handler */
 	connection = gossip_jabber_get_connection (jabber);
 
-	handler = lm_message_handler_new (transport_unregister_message_handler, 
+	handler = lm_message_handler_new (transport_unregister_message_handler,
 					  NULL, NULL);
 
 	lm_connection_register_message_handler (connection,
@@ -155,17 +155,17 @@ gossip_transport_unregister (GossipJabber                  *jabber,
 						LM_HANDLER_PRIORITY_NORMAL);
 
 	/* send message */
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
-                                          LM_MESSAGE_TYPE_IQ,
-                                          LM_MESSAGE_SUB_TYPE_GET);
+	m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_GET);
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
 
-        lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
+	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
 
-        lm_connection_send (connection, m, NULL);
-        lm_message_unref (m);
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
 }
 
 static LmHandlerResult
@@ -176,7 +176,7 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 {
 	TransportUnregister *tu;
 
-        LmMessage           *new_message;
+	LmMessage           *new_message;
 	LmMessageNode       *node;
 
 	gboolean             require_username = FALSE;
@@ -198,16 +198,16 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 	const gchar         *error_code;
 	const gchar         *error_reason;
 
-	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT && 
+	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	from = lm_message_node_get_attribute (m->node, "from");
 	if (!from) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	from_jid = gossip_jid_new (from);
 	tu = g_hash_table_lookup (unregisters, from_jid);
 	gossip_jid_unref (from_jid);
@@ -217,10 +217,10 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 	}
 
 	node = lm_message_node_get_child (m->node, "query");
-        if (!node) {
+	if (!node) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 
 	if (!xmlns || strcmp (xmlns, "jabber:iq:register") != 0) {
@@ -269,10 +269,10 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 	if (error_code || error_reason || tu->got_requirements) {
 		(tu->func) (tu->jid, error_code, error_reason, tu->user_data);
 
-                lm_connection_unregister_message_handler (connection, 
-							  handler, 
+		lm_connection_unregister_message_handler (connection,
+							  handler,
 							  LM_MESSAGE_TYPE_IQ);
-                lm_message_handler_unref (handler);
+		lm_message_handler_unref (handler);
 
 		g_hash_table_remove (unregisters, tu->jid);
 
@@ -283,17 +283,17 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 	tu->got_requirements = TRUE;
 
 	/* send actual unregister message */
-        new_message = lm_message_new_with_sub_type (gossip_jid_get_full (tu->jid),
+	new_message = lm_message_new_with_sub_type (gossip_jid_get_full (tu->jid),
 						    LM_MESSAGE_TYPE_IQ,
 						    LM_MESSAGE_SUB_TYPE_SET);
 
 	DEBUG_MSG (("ProtocolTransport: Disco unregister to: %s (request)", gossip_jid_get_full (tu->jid)));
-	
+
 	lm_message_node_add_child (new_message->node, "query", NULL);
 	node = lm_message_node_get_child (new_message->node, "query");
 
-        lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
-	
+	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
+
 	lm_message_node_add_child (node, "key", key);
 
 	if (require_username) {
@@ -302,10 +302,10 @@ transport_unregister_message_handler (LmMessageHandler    *handler,
 
 	lm_message_node_add_child (node, "remove", NULL);
 
-        lm_connection_send (connection, new_message, NULL);
-        lm_message_unref (new_message);
+	lm_connection_send (connection, new_message, NULL);
+	lm_message_unref (new_message);
 
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
@@ -325,7 +325,7 @@ gossip_transport_unregister_cancel (GossipJID *jid)
 
 
 /*
- * transport requirements 
+ * transport requirements
  */
 void
 gossip_transport_requirements (GossipJabber                    *jabber,
@@ -338,7 +338,7 @@ gossip_transport_requirements (GossipJabber                    *jabber,
 	LmConnection          *connection;
 	LmMessageHandler      *handler;
 	LmMessageNode         *node;
-        LmMessage             *m;
+	LmMessage             *m;
 
 	g_return_if_fail (jabber != NULL);
 	g_return_if_fail (jid != NULL);
@@ -358,7 +358,7 @@ gossip_transport_requirements (GossipJabber                    *jabber,
 	/* set up handler */
 	connection = gossip_jabber_get_connection (jabber);
 
-	handler = lm_message_handler_new (transport_requirements_message_handler, 
+	handler = lm_message_handler_new (transport_requirements_message_handler,
 					  NULL, NULL);
 
 	lm_connection_register_message_handler (connection,
@@ -367,19 +367,19 @@ gossip_transport_requirements (GossipJabber                    *jabber,
 						LM_HANDLER_PRIORITY_NORMAL);
 
 	/* send message */
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
-                                          LM_MESSAGE_TYPE_IQ,
-                                          LM_MESSAGE_SUB_TYPE_GET);
+	m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_GET);
 
 	DEBUG_MSG (("ProtocolTransport: Disco register to: %s (requirements)", gossip_jid_get_full (jid)));
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
 
-        lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
+	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
 
-        lm_connection_send (connection, m, NULL);
-        lm_message_unref (m);
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
 }
 
 static LmHandlerResult
@@ -390,13 +390,13 @@ transport_requirements_message_handler (LmMessageHandler      *handler,
 {
 	TransportRequirements *trq;
 
-	LmMessageNode         *node; 
+	LmMessageNode         *node;
 
 	gboolean               require_username = FALSE;
 	gboolean               require_password = FALSE;
 	gboolean               require_nick = FALSE;
 	gboolean               require_email = FALSE;
-	
+
 	gboolean               is_registered = FALSE;
 
 	const gchar           *from = NULL;
@@ -414,16 +414,16 @@ transport_requirements_message_handler (LmMessageHandler      *handler,
 	const gchar           *error_code = NULL;
 	const gchar           *error_reason = NULL;
 
-	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT && 
+	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	from = lm_message_node_get_attribute (m->node, "from");
 	if (!from) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	from_jid = gossip_jid_new (from);
 	trq = g_hash_table_lookup (requirements, from_jid);
 	gossip_jid_unref (from_jid);
@@ -431,17 +431,17 @@ transport_requirements_message_handler (LmMessageHandler      *handler,
 	if (!trq) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	node = lm_message_node_get_child (m->node, "query");
-        if (!node) {
-		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;	
+	if (!node) {
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-			
+
 	xmlns = lm_message_node_get_attribute (node, "xmlns");
 	if (!xmlns) {
-		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;	
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	if (strcmp (xmlns, "jabber:iq:register") != 0) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
@@ -508,15 +508,15 @@ transport_requirements_message_handler (LmMessageHandler      *handler,
 		     error_code,
 		     error_reason,
 		     trq->user_data);
-	
-	lm_connection_unregister_message_handler (connection, 
-						  handler, 
+
+	lm_connection_unregister_message_handler (connection,
+						  handler,
 						  LM_MESSAGE_TYPE_IQ);
 	lm_message_handler_unref (handler);
 
 	g_hash_table_remove (requirements, trq->jid);
-	
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
@@ -530,14 +530,14 @@ gossip_transport_requirements_cancel (GossipJID *jid)
 	if (p) {
 		return g_hash_table_remove (requirements, p->jid);
 	}
-	
+
 	return FALSE;
 }
 
 /*
- * transport register 
+ * transport register
  */
-void 
+void
 gossip_transport_register (GossipJabber                *jabber,
 			   GossipJID                   *jid,
 			   const gchar                 *key,
@@ -552,7 +552,7 @@ gossip_transport_register (GossipJabber                *jabber,
 
 	LmConnection      *connection;
 	LmMessageHandler  *handler;
-        LmMessage         *m;
+	LmMessage         *m;
 	LmMessageNode     *node;
 
 	g_return_if_fail (jabber != NULL);
@@ -576,7 +576,7 @@ gossip_transport_register (GossipJabber                *jabber,
 	/* set up handler */
 	connection = gossip_jabber_get_connection (jabber);
 
-	handler = lm_message_handler_new (transport_register_message_handler, 
+	handler = lm_message_handler_new (transport_register_message_handler,
 					  NULL, NULL);
 
 	lm_connection_register_message_handler (connection,
@@ -585,16 +585,16 @@ gossip_transport_register (GossipJabber                *jabber,
 						LM_HANDLER_PRIORITY_NORMAL);
 
 	/* send message */
-        m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
-                                          LM_MESSAGE_TYPE_IQ,
-                                          LM_MESSAGE_SUB_TYPE_SET);
+	m = lm_message_new_with_sub_type (gossip_jid_get_full (jid),
+					  LM_MESSAGE_TYPE_IQ,
+					  LM_MESSAGE_SUB_TYPE_SET);
 
 	DEBUG_MSG (("ProtocolTransport: Disco register to: %s (register)", gossip_jid_get_full (jid)));
 
 	lm_message_node_add_child (m->node, "query", NULL);
 	node = lm_message_node_get_child (m->node, "query");
 
-        lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
+	lm_message_node_set_attribute (node, "xmlns", "jabber:iq:register");
 
 	lm_message_node_add_child (node, "key", key);
 
@@ -614,8 +614,8 @@ gossip_transport_register (GossipJabber                *jabber,
 		lm_message_node_add_child (node, "email", email);
 	}
 
-        lm_connection_send (connection, m, NULL);
-        lm_message_unref (m);
+	lm_connection_send (connection, m, NULL);
+	lm_message_unref (m);
 }
 
 static LmHandlerResult
@@ -634,16 +634,16 @@ transport_register_message_handler (LmMessageHandler  *handler,
 	const gchar       *error_code = NULL;
 	const gchar       *error_reason = NULL;
 
-	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT && 
+	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_RESULT &&
 	    lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_ERROR) {
-                return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
+		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
 
 	from = lm_message_node_get_attribute (m->node, "from");
 	if (!from) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	from_jid = gossip_jid_new (from);
 	trg = g_hash_table_lookup (registers, from_jid);
 	gossip_jid_unref (from_jid);
@@ -651,10 +651,10 @@ transport_register_message_handler (LmMessageHandler  *handler,
 	if (!trg) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 	}
-	
+
 	/* look for error */
 	node = lm_message_node_get_child (m->node, "query");
-        if (node) {
+	if (node) {
 		const gchar *xmlns;
 
 		xmlns = lm_message_node_get_attribute (node, "xmlns");
@@ -672,15 +672,15 @@ transport_register_message_handler (LmMessageHandler  *handler,
 	}
 
 	(trg->func) (trg->jid, error_code, error_reason, trg->user_data);
-	
-	lm_connection_unregister_message_handler (connection, 
-						  handler, 
+
+	lm_connection_unregister_message_handler (connection,
+						  handler,
 						  LM_MESSAGE_TYPE_IQ);
 	lm_message_handler_unref (handler);
-	
+
 	g_hash_table_remove (registers, trg->jid);
 
-        return LM_HANDLER_RESULT_REMOVE_MESSAGE;
+	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
 
 gboolean
@@ -694,7 +694,7 @@ gossip_transport_register_cancel (GossipJID *jid)
 	if (p) {
 		return g_hash_table_remove (registers, p->jid);
 	}
-	
+
 	return FALSE;
 }
 

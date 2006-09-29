@@ -106,7 +106,7 @@ contact_info_dialog_init (void)
 	if (dialogs) {
 		return;
 	}
-	
+
 	dialogs = g_hash_table_new_full (gossip_contact_hash,
 					 gossip_contact_equal,
 					 g_object_unref,
@@ -151,7 +151,7 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 	   each resource if in the case of Jabber). */
 	dialog->presence_table = gtk_table_new (1, cols, FALSE);
 	gtk_widget_show (dialog->presence_table);
-	gtk_box_pack_start (GTK_BOX (dialog->presence_list_vbox), 
+	gtk_box_pack_start (GTK_BOX (dialog->presence_list_vbox),
 			    dialog->presence_table, FALSE, FALSE, 0);
 	gtk_table_set_row_spacings (GTK_TABLE (dialog->presence_table), 6);
 	gtk_table_set_col_spacings (GTK_TABLE (dialog->presence_table), 6);
@@ -167,18 +167,18 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 		widget = gtk_image_new_from_pixbuf (pixbuf);
 		g_object_unref (pixbuf);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
-				  widget, 
+				  widget,
 				  0, 1,
-				  i, i + 1, 
-				  0, 0, 
+				  i, i + 1,
+				  0, 0,
 				  0, 0);
 
 		widget = gtk_label_new (status);
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
-				  widget, 
+				  widget,
 				  1, 2,
-				  i, i + 1, 
+				  i, i + 1,
 				  0, 0,
 				  0, 0);
 
@@ -189,23 +189,23 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 	for (l = presences, i = 0; l; l = l->next, i++) {
 		GossipPresence *presence;
 		GtkWidget      *widget;
-		
+
 		presence = l->data;
 
 		if (presence) {
 			pixbuf = gossip_pixbuf_for_presence (presence);
-			
+
 			status = gossip_presence_get_status (presence);
 			if (!status) {
 				GossipPresenceState state;
-				
+
 				state = gossip_presence_get_state (presence);
 				status = gossip_presence_state_get_default_status (state);
 			}
-			
+
 			resource = gossip_presence_get_resource (presence);
 		}
-		
+
 		if (i > 1) {
 			gtk_table_resize (GTK_TABLE (dialog->presence_table), i, cols);
 		}
@@ -213,20 +213,20 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 		widget = gtk_image_new_from_pixbuf (pixbuf);
 		g_object_unref (pixbuf);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
-				  widget, 
+				  widget,
 				  0, 1,
 				  i, i + 1,
-				  0, 0, 
+				  0, 0,
 				  0, 0);
-		
+
 		widget = gtk_label_new (status);
 		gtk_label_set_line_wrap (GTK_LABEL (widget), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
-				  widget, 
+				  widget,
 				  1, 2,
-				  i, i + 1, 
-				  GTK_FILL, 
+				  i, i + 1,
+				  GTK_FILL,
 				  GTK_FILL,
 				  0, 0);
 
@@ -236,8 +236,8 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 
 		widget = gtk_label_new ("-");
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
-		gtk_table_attach (GTK_TABLE (dialog->presence_table), widget, 
-				  2, 3, 
+		gtk_table_attach (GTK_TABLE (dialog->presence_table), widget,
+				  2, 3,
 				  i, i + 1,
 				  0, 0,
 				  0, 0.5);
@@ -246,10 +246,10 @@ contact_info_dialog_update_presences (GossipContactInfoDialog *dialog)
 		gtk_label_set_line_wrap (GTK_LABEL (widget), TRUE);
 		gtk_misc_set_alignment (GTK_MISC (widget), 0, 0.5);
 		gtk_table_attach (GTK_TABLE (dialog->presence_table),
-				  widget, 
+				  widget,
 				  3, 4,
 				  i, i + 1,
-				  GTK_EXPAND | GTK_FILL, 
+				  GTK_EXPAND | GTK_FILL,
 				  GTK_EXPAND | GTK_FILL,
 				  0, 0);
 	}
@@ -266,10 +266,10 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	gboolean                 show_personal = FALSE;
 	const gchar             *str;
 	GdkPixbuf               *pixbuf;
-	
+
 	dialog = g_hash_table_lookup (dialogs, contact);
 	g_object_unref (contact);
-	
+
 	if (!dialog) {
 		return;
 	}
@@ -282,13 +282,13 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 
 		return;
 	}
-	
+
 	pixbuf = gossip_pixbuf_avatar_from_vcard (vcard);
 	if (pixbuf != NULL) {
 		gossip_avatar_image_set_pixbuf (GOSSIP_AVATAR_IMAGE (dialog->avatar_image), pixbuf);
 		g_object_unref (pixbuf);
 	}
-	
+
 	str = gossip_vcard_get_description (vcard);
 	if (str && strlen (str) > 0) {
 		gtk_label_set_text (GTK_LABEL (dialog->description_label), str);
@@ -296,12 +296,12 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	} else {
 		gtk_widget_hide (dialog->description_vbox);
 	}
-	
+
 	str = gossip_vcard_get_name (vcard);
 	if (str && strlen (str) > 0) {
 		gtk_label_set_text (GTK_LABEL (dialog->name_label), str);
 	}
-	
+
 	str = gossip_vcard_get_email (vcard);
 	if (str && strlen (str) > 0) {
 		GtkWidget *href, *alignment;
@@ -314,7 +314,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
-		
+
 		gtk_table_attach (GTK_TABLE (dialog->personal_table),
 				  alignment,
 				  1, 2,
@@ -342,7 +342,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		gtk_container_add (GTK_CONTAINER (alignment), href);
 
 		gtk_table_attach (GTK_TABLE (dialog->personal_table),
-				  alignment, 
+				  alignment,
 				  1, 2,
 				  1, 2,
 				  GTK_FILL, GTK_FILL,
@@ -442,12 +442,12 @@ contact_info_dialog_contact_updated_cb (GossipSession           *session,
 	if (!gossip_contact_equal (contact, dialog->contact)) {
 		return;
 	}
-	
+
 	contact_info_dialog_update_subscription (dialog);
 	contact_info_dialog_update_presences (dialog);
 }
 
-static void 
+static void
 contact_info_dialog_presence_updated_cb (GossipSession *session,
 					 GossipContact *contact,
 					 gpointer       user_data)
@@ -468,7 +468,7 @@ contact_info_dialog_presence_updated_cb (GossipSession *session,
 }
 
 static void
-contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget, 
+contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget,
 					  GossipContactInfoDialog *dialog)
 {
 	GossipSession *session;
@@ -480,9 +480,9 @@ contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget,
 	session = gossip_app_get_session ();
 	account = gossip_session_find_account (session, dialog->contact);
 
-        gossip_session_add_contact (session,
+	gossip_session_add_contact (session,
 				    account,
-                                    gossip_contact_get_id (dialog->contact), 
+				    gossip_contact_get_id (dialog->contact),
 				    gossip_contact_get_name (dialog->contact),
 				    NULL, /* group */
 				    message);
@@ -495,26 +495,26 @@ contact_info_dialog_destroy_cb (GtkWidget               *widget,
 				GossipContactInfoDialog *dialog)
 {
 	if (dialog->contact_signal_handler) {
-		g_signal_handler_disconnect (gossip_app_get_session (), 
+		g_signal_handler_disconnect (gossip_app_get_session (),
 					     dialog->contact_signal_handler);
 	}
 
 	if (dialog->presence_signal_handler) {
-		g_signal_handler_disconnect (gossip_app_get_session (), 
+		g_signal_handler_disconnect (gossip_app_get_session (),
 					     dialog->presence_signal_handler);
 	}
 
 	if (dialog->show_timeout_id) {
 		g_source_remove (dialog->show_timeout_id);
 	}
-	
+
 	g_hash_table_remove (dialogs, dialog->contact);
-	
+
 	g_free (dialog);
 }
 
 static void
-contact_info_dialog_response_cb (GtkWidget               *widget, 
+contact_info_dialog_response_cb (GtkWidget               *widget,
 				 gint                     response,
 				 GossipContactInfoDialog *dialog)
 {
@@ -595,7 +595,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 				       "presence_table", &dialog->presence_table,
 				       "avatar_image_placeholder", &avatar_image_placeholder,
 				       NULL);
-	
+
 	dialog->avatar_image = gossip_avatar_image_new (NULL);
 	gtk_container_add (GTK_CONTAINER (avatar_image_placeholder),
 			   dialog->avatar_image);
@@ -609,7 +609,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 		g_object_unref (pixbuf);
 	}
 	gtk_widget_show (dialog->avatar_image);
-	
+
 	gossip_glade_connect (glade,
 			      dialog,
 			      "contact_information_dialog", "destroy", contact_info_dialog_destroy_cb,
@@ -629,27 +629,27 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 	gtk_size_group_add_widget (size_group, dialog->stub_os_label);
 
 	g_object_unref (size_group);
-	
+
 	/* Set labels */
-	gtk_label_set_text (GTK_LABEL (dialog->id_label), 
+	gtk_label_set_text (GTK_LABEL (dialog->id_label),
 			    gossip_contact_get_id (contact));
 
-	gtk_label_set_text (GTK_LABEL (dialog->name_label), 
+	gtk_label_set_text (GTK_LABEL (dialog->name_label),
 			    gossip_contact_get_name (contact));
 
 	/* Set up transient parent */
 	if (parent) {
-		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent); 
+		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
 	}
 
 	/* Set details */
 	contact_info_dialog_update_subscription (dialog);
 	contact_info_dialog_update_presences (dialog);
-	
+
 	/* Subscription listener */
 	id = g_signal_connect (session,
 			       "contact-updated",
-			       G_CALLBACK (contact_info_dialog_contact_updated_cb), 
+			       G_CALLBACK (contact_info_dialog_contact_updated_cb),
 			       NULL);
 	dialog->contact_signal_handler = id;
 
@@ -661,7 +661,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 	dialog->presence_signal_handler = id;
 
 	/* Get vcard and version info */
-	str = g_strdup_printf ("<i>%s</i>", 
+	str = g_strdup_printf ("<i>%s</i>",
 			       _("Information requested..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->personal_status_label), str);
 	gtk_label_set_markup (GTK_LABEL (dialog->client_status_label), str);
@@ -674,15 +674,15 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 				  account,
 				  contact,
 				  (GossipVCardCallback) contact_info_dialog_get_vcard_cb,
-				  g_object_ref (contact), 
+				  g_object_ref (contact),
 				  NULL);
 
 	gossip_session_get_version (session,
 				    contact,
 				    (GossipVersionCallback) contact_info_dialog_get_version_cb,
-				    g_object_ref (contact), 
+				    g_object_ref (contact),
 				    NULL);
-	
+
 	dialog->show_timeout_id =
 		g_timeout_add (500,
 			       (GSourceFunc) contact_info_dialog_show_timeout_cb,

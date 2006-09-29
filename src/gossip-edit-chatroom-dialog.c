@@ -27,7 +27,7 @@
 
 #include <libgossip/gossip-chatroom-provider.h>
 
-#include "gossip-app.h" 
+#include "gossip-app.h"
 #include "gossip-edit-chatroom-dialog.h"
 
 
@@ -78,11 +78,11 @@ edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 	g_object_set (dialog->chatroom, "room", str, NULL);
 
 	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect);
-	g_object_set (dialog->chatroom, "auto_connect", 
+	g_object_set (dialog->chatroom, "auto_connect",
 		      gtk_toggle_button_get_active (togglebutton), NULL);
 
 	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_favourite);
-	g_object_set (dialog->chatroom, "favourite", 
+	g_object_set (dialog->chatroom, "favourite",
 		      gtk_toggle_button_get_active (togglebutton), NULL);
 
 	gossip_chatroom_manager_store (manager);
@@ -137,8 +137,8 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 	GladeXML                 *glade;
 
 	g_return_if_fail (chatroom != NULL);
-	
-        dialog = g_new0 (GossipEditChatroomDialog, 1);
+
+	dialog = g_new0 (GossipEditChatroomDialog, 1);
 
 	dialog->chatroom = g_object_ref (chatroom);
 
@@ -154,8 +154,8 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				       "checkbutton_favourite", &dialog->checkbutton_favourite,
 				       "button_save", &dialog->button_save,
 				       NULL);
-	
-	gossip_glade_connect (glade, 
+
+	gossip_glade_connect (glade,
 			      dialog,
 			      "edit_chatroom_dialog", "destroy", edit_chatroom_dialog_destroy_cb,
 			      "edit_chatroom_dialog", "response", edit_chatroom_dialog_response_cb,
@@ -167,13 +167,13 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 
 	g_object_unref (glade);
 
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), 
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
 			    gossip_chatroom_get_name (chatroom));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), 
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname),
 			    gossip_chatroom_get_nick (chatroom));
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_server),
 			    gossip_chatroom_get_server (chatroom));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_room), 
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_room),
 			    gossip_chatroom_get_room (chatroom));
 	gtk_toggle_button_set_active (
 		GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),

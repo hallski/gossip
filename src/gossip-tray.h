@@ -34,17 +34,17 @@ typedef struct _GossipTray      GossipTray;
 typedef struct _GossipTrayClass GossipTrayClass;
 
 struct _GossipTray {
-        GObject parent;
+	GObject parent;
 };
 
 struct _GossipTrayClass {
-        GObjectClass parent_class;
+	GObjectClass parent_class;
 };
 
 GType       gossip_tray_get_type   (void) G_GNUC_CONST;
 GossipTray *gossip_tray_new        (void);
 void        gossip_tray_set_icon   (GossipTray  *tray,
-                                    const gchar *stock_id);
+				    const gchar *stock_id);
 
 #endif /* __GOSSIP_TRAY_H__ */
 

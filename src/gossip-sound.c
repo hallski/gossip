@@ -36,8 +36,8 @@
 #define DEBUG_DOMAIN "Sound"
 
 /* Time to wait before we use sounds for an account after it has gone
- * online/offline, so we don't spam the sound with online's, etc 
- */ 
+ * online/offline, so we don't spam the sound with online's, etc
+ */
 #define SOUND_WAIT_TIME 10000
 
 static void sound_contact_presence_updated_cb (GossipSession *session,
@@ -72,7 +72,7 @@ sound_protocol_connected_cb (GossipSession  *session,
 		      gossip_account_get_id (account));
 
 	id = g_timeout_add (SOUND_WAIT_TIME,
-			    (GSourceFunc) sound_protocol_timeout_cb, 
+			    (GSourceFunc) sound_protocol_timeout_cb,
 			    account);
 	g_hash_table_insert (account_states, account, GUINT_TO_POINTER (id));
 }
@@ -85,7 +85,7 @@ sound_disconnected_contact_foreach (GossipContact  *contact,
 	GossipAccount *contact_account;
 
 	contact_account = gossip_contact_get_account (contact);
-	
+
 	if (gossip_account_equal (contact_account, account)) {
 		return TRUE;
 	}
@@ -125,26 +125,26 @@ sound_contact_presence_updated_cb (GossipSession *session,
 				      gossip_contact_get_id (contact));
 			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
 		}
-			
+
 		g_hash_table_remove (contact_states, contact);
 	} else {
 		GossipAccount *account;
-		
+
 		account = gossip_contact_get_account (contact);
 
 		/* Only show notifications after being online for some
 		 * time instead of spamming notifications each time we
 		 * connect.
 		 */
-		if (!g_hash_table_lookup (account_states, account) && 
+		if (!g_hash_table_lookup (account_states, account) &&
 		    !g_hash_table_lookup (contact_states, contact)) {
 			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now online",
 				      gossip_contact_get_id (contact));
 			gossip_sound_play (GOSSIP_SOUND_ONLINE);
 		}
 
-		g_hash_table_insert (contact_states, 
-				     g_object_ref (contact), 
+		g_hash_table_insert (contact_states,
+				     g_object_ref (contact),
 				     g_object_ref (presence));
 	}
 }
@@ -153,8 +153,8 @@ void
 gossip_sound_play (GossipSound sound)
 {
 	GossipSession       *session;
-        GossipPresence      *p;
-        GossipPresenceState  state;
+	GossipPresence      *p;
+	GossipPresenceState  state;
 	gboolean             enabled;
 	gboolean             sounds_when_busy;
 	gboolean             sounds_when_away;
@@ -184,15 +184,15 @@ gossip_sound_play (GossipSound sound)
 	gossip_conf_get_bool (gossip_conf_get (),
 			       GOSSIP_PREFS_SOUNDS_WHEN_AWAY,
 			       &sounds_when_away);
-	
-        p = gossip_session_get_presence (gossip_app_get_session ());
-        state = gossip_presence_get_state (p);
 
-        if (!sounds_when_busy && state == GOSSIP_PRESENCE_STATE_BUSY) {
+	p = gossip_session_get_presence (gossip_app_get_session ());
+	state = gossip_presence_get_state (p);
+
+	if (!sounds_when_busy && state == GOSSIP_PRESENCE_STATE_BUSY) {
 		return;
 	}
 
-	if (!sounds_when_away && (state == GOSSIP_PRESENCE_STATE_AWAY || 
+	if (!sounds_when_away && (state == GOSSIP_PRESENCE_STATE_AWAY ||
 				  state == GOSSIP_PRESENCE_STATE_EXT_AWAY)) {
 		return;
 	}
@@ -216,15 +216,15 @@ gossip_sound_play (GossipSound sound)
 		return;
 	}
 #endif
-}		
+}
 
-void 
+void
 gossip_sound_set_enabled (gboolean enabled)
 {
 	sound_disabled = !enabled;
 }
 
-void 
+void
 gossip_sound_init (GossipSession *session)
 {
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
@@ -237,7 +237,7 @@ gossip_sound_init (GossipSession *session)
 	gnome_sound_sample_load ("gossip/Online", DATADIR "/sounds/gossip/online.wav");
 	gnome_sound_sample_load ("gossip/Offline", DATADIR "/sounds/gossip/offline.wav");
 #endif
-	
+
 	saved_session = g_object_ref (session);
 
 	account_states = g_hash_table_new_full (gossip_account_hash,
@@ -264,7 +264,7 @@ gossip_sound_init (GossipSession *session)
 			  NULL);
 }
 
-void 
+void
 gossip_sound_finalize (void)
 {
 	g_assert (saved_session != NULL);
@@ -275,7 +275,7 @@ gossip_sound_finalize (void)
 	g_signal_handlers_disconnect_by_func (saved_session,
 					      sound_contact_presence_updated_cb,
 					      NULL);
-	
+
 	g_hash_table_destroy (account_states);
 	g_hash_table_destroy (contact_states);
 

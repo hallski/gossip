@@ -26,7 +26,7 @@
 
 typedef struct _GossipVCardPriv GossipVCardPriv;
 
-struct _GossipVCardPriv { 
+struct _GossipVCardPriv {
 	gchar    *name;
 	gchar    *nickname;
 	gchar    *email;
@@ -120,17 +120,17 @@ gossip_vcard_class_init (GossipVCardClass *class)
 							       "Avatar image",
 							       "The avatar image",
 							       G_PARAM_READWRITE));
-	
+
 	g_object_class_install_property (object_class,
 					 PROP_AVATAR_SIZE,
 					 g_param_spec_uint ("avatar_size",
 							    "Avatar size",
 							    "The size of the avatar image",
-							    0, 
+							    0,
 							    G_MAXUINT,
 							    0,
 							    G_PARAM_READWRITE));
-	
+
 	g_type_class_add_private (object_class, sizeof (GossipVCardPriv));
 }
 
@@ -145,19 +145,19 @@ gossip_vcard_init (GossipVCard *vcard)
 	priv->nickname    = NULL;
 	priv->email       = NULL;
 	priv->url         = NULL;
-        priv->country     = NULL;
+	priv->country     = NULL;
 	priv->description = NULL;
 	priv->avatar      = NULL;
 	priv->avatar_size = 0;
 }
 
-static void                
+static void
 vcard_finalize (GObject *object)
 {
 	GossipVCardPriv *priv;
 
 	priv = GOSSIP_VCARD_GET_PRIV (object);
-	
+
 	g_free (priv->name);
 	g_free (priv->nickname);
 	g_free (priv->email);
@@ -165,7 +165,7 @@ vcard_finalize (GObject *object)
 	g_free (priv->country);
 	g_free (priv->description);
 	g_free (priv->avatar);
-	
+
 	(G_OBJECT_CLASS (gossip_vcard_parent_class)->finalize) (object);
 }
 
@@ -207,7 +207,7 @@ vcard_get_property (GObject    *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};		
+	};
 }
 
 static void
@@ -222,19 +222,19 @@ vcard_set_property (GObject      *object,
 
 	switch (param_id) {
 	case PROP_NAME:
-		gossip_vcard_set_name (GOSSIP_VCARD (object), 
+		gossip_vcard_set_name (GOSSIP_VCARD (object),
 				       g_value_get_string (value));
 		break;
 	case PROP_NICKNAME:
-		gossip_vcard_set_nickname (GOSSIP_VCARD (object), 
+		gossip_vcard_set_nickname (GOSSIP_VCARD (object),
 					   g_value_get_string (value));
 		break;
 	case PROP_EMAIL:
-		gossip_vcard_set_email (GOSSIP_VCARD (object), 
+		gossip_vcard_set_email (GOSSIP_VCARD (object),
 					g_value_get_string (value));
 		break;
 	case PROP_URL:
-		gossip_vcard_set_url (GOSSIP_VCARD (object), 
+		gossip_vcard_set_url (GOSSIP_VCARD (object),
 				      g_value_get_string (value));
 		break;
 	case PROP_COUNTRY:
@@ -242,7 +242,7 @@ vcard_set_property (GObject      *object,
 					  g_value_get_string (value));
 		break;
 	case PROP_DESCRIPTION:
-		gossip_vcard_set_description (GOSSIP_VCARD (object), 
+		gossip_vcard_set_description (GOSSIP_VCARD (object),
 					      g_value_get_string (value));
 		break;
 	case PROP_AVATAR:
@@ -254,7 +254,7 @@ vcard_set_property (GObject      *object,
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
-	};		
+	};
 }
 
 GossipVCard *
@@ -269,19 +269,19 @@ gossip_vcard_get_name (GossipVCard *vcard)
 	GossipVCardPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	return priv->name;
 }
 
 const gchar *
-gossip_vcard_get_nickname (GossipVCard *vcard) 
+gossip_vcard_get_nickname (GossipVCard *vcard)
 {
 	GossipVCardPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	return priv->nickname;
@@ -305,7 +305,7 @@ gossip_vcard_get_url (GossipVCard *vcard)
 	GossipVCardPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	return priv->url;
@@ -317,7 +317,7 @@ gossip_vcard_get_country (GossipVCard *vcard)
 	GossipVCardPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	return priv->country;
@@ -329,14 +329,14 @@ gossip_vcard_get_description (GossipVCard *vcard)
 	GossipVCardPriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	return priv->description;
 }
 
 const guchar *
-gossip_vcard_get_avatar (GossipVCard *vcard, 
+gossip_vcard_get_avatar (GossipVCard *vcard,
 			 gsize       *avatar_size)
 {
 	GossipVCardPriv *priv;
@@ -344,7 +344,7 @@ gossip_vcard_get_avatar (GossipVCard *vcard,
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
 	g_return_val_if_fail (avatar_size != NULL, NULL);
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	avatar = (guchar*) priv->avatar;
@@ -356,13 +356,13 @@ gossip_vcard_get_avatar (GossipVCard *vcard,
 
 
 void
-gossip_vcard_set_name (GossipVCard *vcard, 
+gossip_vcard_set_name (GossipVCard *vcard,
 		       const gchar *name)
 {
 	GossipVCardPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->name);
@@ -375,7 +375,7 @@ gossip_vcard_set_name (GossipVCard *vcard,
 }
 
 void
-gossip_vcard_set_nickname (GossipVCard *vcard, 
+gossip_vcard_set_nickname (GossipVCard *vcard,
 			   const gchar *nickname)
 {
 	GossipVCardPriv *priv;
@@ -411,14 +411,14 @@ gossip_vcard_set_email (GossipVCard *vcard,
 	}
 }
 
-void   
+void
 gossip_vcard_set_url (GossipVCard *vcard,
 		      const gchar *url)
 {
 	GossipVCardPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->url);
@@ -430,14 +430,14 @@ gossip_vcard_set_url (GossipVCard *vcard,
 	}
 }
 
-void   
-gossip_vcard_set_country (GossipVCard *vcard, 
+void
+gossip_vcard_set_country (GossipVCard *vcard,
 			  const gchar *country)
 {
 	GossipVCardPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
-	
+
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	g_free (priv->country);
@@ -468,9 +468,9 @@ gossip_vcard_set_description (GossipVCard *vcard,
 	}
 }
 
-void 
-gossip_vcard_set_avatar (GossipVCard  *vcard, 
-			 const guchar *avatar, 
+void
+gossip_vcard_set_avatar (GossipVCard  *vcard,
+			 const guchar *avatar,
 			 gsize         avatar_size)
 {
 	GossipVCardPriv *priv;
@@ -478,7 +478,7 @@ gossip_vcard_set_avatar (GossipVCard  *vcard,
 	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
 
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
-	
+
 	g_free (priv->avatar);
 
 	if (avatar) {

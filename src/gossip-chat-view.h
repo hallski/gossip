@@ -67,13 +67,13 @@ typedef enum {
 	GOSSIP_SMILEY_OOOH,         /*  :x   */
 	GOSSIP_SMILEY_LOOKAWAY,     /*  *)   */
 	GOSSIP_SMILEY_BLUSH,        /*  *S   */
-	GOSSIP_SMILEY_COOLBIGSMILE, /*  8D   */ 
+	GOSSIP_SMILEY_COOLBIGSMILE, /*  8D   */
 	GOSSIP_SMILEY_ANGRY,        /*  :@   */
 	GOSSIP_SMILEY_BOSS,         /*  @)   */
 	GOSSIP_SMILEY_MONKEY,       /*  #)   */
 	GOSSIP_SMILEY_SILLY,        /*  O)   */
 	GOSSIP_SMILEY_SICK,         /*  +o(  */
-	
+
 	GOSSIP_SMILEY_COUNT
 } GossipSmiley;
 
@@ -101,10 +101,10 @@ gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view
 							    GtkTextIter    *start,
 							    GtkTextIter    *end);
 void            gossip_chat_view_clear                     (GossipChatView *view);
-void            gossip_chat_view_find                      (GossipChatView *view, 
+void            gossip_chat_view_find                      (GossipChatView *view,
 							    const gchar    *search_criteria,
 							    gboolean        new_search);
-void            gossip_chat_view_highlight                 (GossipChatView *view, 
+void            gossip_chat_view_highlight                 (GossipChatView *view,
 							    const gchar    *text);
 void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
 

@@ -43,7 +43,7 @@ struct _GossipVersionInfoClass {
 
 GType               gossip_version_info_get_type    (void) G_GNUC_CONST;
 
-GossipVersionInfo * gossip_version_info_new         (void); 
+GossipVersionInfo * gossip_version_info_new         (void);
 
 const gchar *       gossip_version_info_get_name    (GossipVersionInfo *info);
 void                gossip_version_info_set_name    (GossipVersionInfo *info,

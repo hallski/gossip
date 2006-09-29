@@ -29,7 +29,7 @@ typedef struct _GossipMessagePriv GossipMessagePriv;
 struct _GossipMessagePriv {
 	GossipContact        *recipient;
 	gchar                *resource;
-	
+
 	GossipContact        *sender;
 
 	gchar                *subject;
@@ -39,7 +39,7 @@ struct _GossipMessagePriv {
 	gossip_time_t         timestamp;
 
 	GossipChatroomInvite *invite;
-	
+
 	gboolean              request_composing;
 
 	GossipMessageType     type;
@@ -244,7 +244,7 @@ message_get_property (GObject    *object,
 		      GParamSpec *pspec)
 {
 	GossipMessagePriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
@@ -285,7 +285,7 @@ message_set_property (GObject      *object,
 		      GParamSpec   *pspec)
 {
 	GossipMessagePriv *priv;
-	
+
 	priv = GET_PRIV (object);
 
 	switch (param_id) {
@@ -326,7 +326,7 @@ message_set_property (GObject      *object,
 }
 
 GossipMessage *
-gossip_message_new (GossipMessageType  type, 
+gossip_message_new (GossipMessageType  type,
 		    GossipContact     *recipient)
 {
 	return g_object_new (GOSSIP_TYPE_MESSAGE,
@@ -340,11 +340,11 @@ gossip_message_get_type (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
 
-	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), 
+	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message),
 			      GOSSIP_MESSAGE_TYPE_NORMAL);
 
 	priv = GET_PRIV (message);
-	
+
 	return priv->type;
 }
 
@@ -373,7 +373,7 @@ gossip_message_set_recipient (GossipMessage *message, GossipContact *contact)
 
 	old_recipient = priv->recipient;
 	priv->recipient = g_object_ref (contact);
-	
+
 	if (old_recipient) {
 		g_object_unref (old_recipient);
 	}
@@ -414,36 +414,36 @@ gossip_message_set_explicit_resource (GossipMessage *message,
 	g_object_notify (G_OBJECT (message), "resource");
 }
 
-GossipContact * 
+GossipContact *
 gossip_message_get_sender (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
-	
+
 	priv = GET_PRIV (message);
 
 	return priv->sender;
 }
 
-void 
+void
 gossip_message_set_sender (GossipMessage *message, GossipContact *contact)
 {
 	GossipMessagePriv *priv;
 	GossipContact     *old_sender;
-	
+
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
-	
+
 	priv = GET_PRIV (message);
 
 	old_sender = priv->sender;
 	priv->sender = g_object_ref (contact);
-	
+
 	if (old_sender) {
 		g_object_unref (old_sender);
 	}
-	
+
 	g_object_notify (G_OBJECT (message), "sender");
 }
 
@@ -459,14 +459,14 @@ gossip_message_get_subject (GossipMessage *message)
 	return priv->subject;
 }
 
-void       
-gossip_message_set_subject (GossipMessage *message, 
+void
+gossip_message_set_subject (GossipMessage *message,
 			    const gchar   *subject)
 {
 	GossipMessagePriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
-	
+
 	priv = GET_PRIV (message);
 
 	g_free (priv->subject);
@@ -492,14 +492,14 @@ gossip_message_get_body (GossipMessage *message)
 	return priv->body;
 }
 
-void      
+void
 gossip_message_set_body (GossipMessage *message,
 			 const gchar   *body)
 {
 	GossipMessagePriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
-	
+
 	priv = GET_PRIV (message);
 
 	g_free (priv->body);
@@ -519,20 +519,20 @@ gossip_message_get_thread (GossipMessage *message)
 	GossipMessagePriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
-	
+
 	priv = GET_PRIV (message);
 
 	return priv->thread;
 }
 
-void       
-gossip_message_set_thread (GossipMessage *message, 
+void
+gossip_message_set_thread (GossipMessage *message,
 			   const gchar   *thread)
 {
 	GossipMessagePriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
-	
+
 	priv = GET_PRIV (message);
 
 	g_free (priv->thread);
@@ -550,7 +550,7 @@ gossip_time_t
 gossip_message_get_timestamp (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), -1);
 
 	priv = GET_PRIV (message);
@@ -559,11 +559,11 @@ gossip_message_get_timestamp (GossipMessage *message)
 }
 
 void
-gossip_message_set_timestamp (GossipMessage *message, 
+gossip_message_set_timestamp (GossipMessage *message,
 			      gossip_time_t  timestamp)
 {
 	GossipMessagePriv *priv;
-	
+
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
 	g_return_if_fail (timestamp >= -1);
 
@@ -584,25 +584,25 @@ gossip_message_get_invite (GossipMessage *message)
 	GossipMessagePriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), NULL);
-	
+
 	priv = GET_PRIV (message);
 
 	return priv->invite;
 }
 
-void       
-gossip_message_set_invite (GossipMessage        *message, 
+void
+gossip_message_set_invite (GossipMessage        *message,
 			   GossipChatroomInvite *invite)
 {
 	GossipMessagePriv    *priv;
 	GossipChatroomInvite *old_invite;
 
 	g_return_if_fail (GOSSIP_IS_MESSAGE (message));
-	
+
 	priv = GET_PRIV (message);
 
 	old_invite = priv->invite;
-	
+
 	if (invite) {
 		priv->invite = gossip_chatroom_invite_ref (invite);
 	} else {
@@ -616,7 +616,7 @@ gossip_message_set_invite (GossipMessage        *message,
 	g_object_notify (G_OBJECT (message), "invite");
 }
 
-void         
+void
 gossip_message_request_composing (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
@@ -636,7 +636,7 @@ gossip_message_is_requesting_composing (GossipMessage *message)
 	GossipMessagePriv *priv;
 
 	g_return_val_if_fail (GOSSIP_IS_MESSAGE (message), FALSE);
-	
+
 	priv = GET_PRIV (message);
 
 	return priv->request_composing;

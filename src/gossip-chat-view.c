@@ -70,7 +70,7 @@ struct _GossipChatViewPriv {
 
 	gboolean       allow_scrolling;
 	gboolean       is_group_chat;
-	
+
 	GtkTextMark   *find_mark;
 	gboolean       find_wrapped;
 
@@ -137,7 +137,7 @@ static const GossipSmileyPattern smileys[] = {
 	{ GOSSIP_SMILEY_MONKEY,       "#)"  },
 	{ GOSSIP_SMILEY_SILLY,        "O)"  },
 	{ GOSSIP_SMILEY_SICK,         "+o(" },
-	
+
 	/* Backward smileys. */
 	{ GOSSIP_SMILEY_NORMAL,       "(:"  },
 	{ GOSSIP_SMILEY_WINK,         "(;"  },
@@ -276,7 +276,7 @@ gossip_chat_view_init (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
 	gboolean            show_avatars;
-		
+
 	priv = GET_PRIV (view);
 
 	priv->buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
@@ -294,14 +294,14 @@ gossip_chat_view_init (GossipChatView *view)
 		      "cursor-visible", FALSE,
 		      NULL);
 
-	priv->notify_system_fonts_id = 
+	priv->notify_system_fonts_id =
 		gossip_conf_notify_add (gossip_conf_get (),
 					 "/desktop/gnome/interface/document_font_name",
 					 chat_view_notify_system_font_cb,
 					 view);
 	chat_view_system_font_update (view);
-	
-	priv->notify_show_avatars_id = 
+
+	priv->notify_show_avatars_id =
 		gossip_conf_notify_add (gossip_conf_get (),
 					 GOSSIP_PREFS_UI_SHOW_AVATARS,
 					 chat_view_notify_show_avatars_cb,
@@ -315,10 +315,10 @@ gossip_chat_view_init (GossipChatView *view)
 	gossip_conf_get_bool (gossip_conf_get (),
 			       GOSSIP_PREFS_UI_SHOW_AVATARS,
 			       &show_avatars);
-	
+
 	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
 						  view, show_avatars);
-	
+
 	g_signal_connect (view,
 			  "populate-popup",
 			  G_CALLBACK (chat_view_populate_popup),
@@ -360,7 +360,7 @@ chat_view_drag_motion (GtkWidget        *widget,
 	/* Don't handle drag motion, since we don't want the view to scroll as
 	 * the result of dragging something across it.
 	 */
-	
+
 	return TRUE;
 }
 
@@ -402,7 +402,7 @@ chat_view_setup_tags (GossipChatView *view)
 	tag = gtk_text_buffer_create_tag (priv->buffer,
 					  "link",
 					  NULL);
-	
+
 	g_signal_connect (tag,
 			  "event",
 			  G_CALLBACK (chat_view_url_event_cb),
@@ -428,7 +428,7 @@ chat_view_system_font_update (GossipChatView *view)
 	} else {
 		font_description = NULL;
 	}
-	
+
 	gtk_widget_modify_font (GTK_WIDGET (view), font_description);
 
 	if (font_description) {
@@ -447,7 +447,7 @@ chat_view_notify_system_font_cb (GossipConf  *conf,
 	view = user_data;
 
 	chat_view_system_font_update (view);
-	
+
 	/* Ugly, again, to adjust the vertical position of the nick... Will fix
 	 * this when reworking the theme manager so that view register
 	 * themselves with it instead of the other way around.
@@ -455,7 +455,7 @@ chat_view_notify_system_font_cb (GossipConf  *conf,
 	gossip_conf_get_bool (conf,
 			       GOSSIP_PREFS_UI_SHOW_AVATARS,
 			       &show_avatars);
-	
+
 	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
 						  view, show_avatars);
 }
@@ -473,7 +473,7 @@ chat_view_notify_show_avatars_cb (GossipConf  *conf,
 	priv = GET_PRIV (view);
 
 	gossip_conf_get_bool (conf, key, &show_avatars);
-	
+
 	gossip_theme_manager_update_show_avatars (gossip_theme_manager_get (),
 						  view, show_avatars);
 }
@@ -498,11 +498,11 @@ chat_view_populate_popup (GossipChatView *view,
 		item = gtk_menu_item_new ();
 		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 		gtk_widget_show (item);
-		
+
 		item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CLEAR, NULL);
 		gtk_menu_shell_prepend (GTK_MENU_SHELL (menu), item);
 		gtk_widget_show (item);
-		
+
 		g_signal_connect (item,
 				  "activate",
 				  G_CALLBACK (chat_view_clear_view_cb),
@@ -728,7 +728,7 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 					     smileys_index[i] > 0) &&
 					    smileys[i].pattern[smileys_index[i]] == c) {
 						submatch = i;
-						
+
 						smileys_index[i]++;
 						if (!smileys[i].pattern[smileys_index[i]]) {
 							match = i;
@@ -749,15 +749,15 @@ chat_view_insert_text_with_emoticons (GtkTextBuffer *buf,
 		}
 
 		start = p - strlen (smileys[match].pattern);
-		
+
 		if (start > str) {
 			len = start - str;
 			gtk_text_buffer_insert (buf, iter, str, len);
 		}
-		
+
 		pixbuf = gossip_chat_view_get_smiley_image (smileys[match].smiley);
 		gtk_text_buffer_insert_pixbuf (buf, iter, pixbuf);
-		
+
 		gtk_text_buffer_insert (buf, iter, " ", 1);
 
 		str = g_utf8_find_next_char (p, NULL);
@@ -817,7 +817,7 @@ chat_view_maybe_trim_buffer (GossipChatView *view)
 	if (!tag) {
 		return;
 	}
-	
+
 	if (!gtk_text_iter_forward_to_tag_toggle (&bottom, tag)) {
 		return;
 	}
@@ -846,7 +846,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	} else {
 		tag = "fancy-time";
 	}
-	
+
 	if (priv->last_block_type == BLOCK_TYPE_TIME) {
 		return;
 	}
@@ -857,7 +857,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 	if (msg) {
 		timestamp = gossip_message_get_timestamp (msg);
 	}
-	
+
 	if (timestamp <= 0) {
 		timestamp = gossip_time_get_current ();
 	}
@@ -875,7 +875,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 		append_date = TRUE;
 		append_time = TRUE;
 	}
-	
+
 	if (priv->last_timestamp + TIMESTAMP_INTERVAL < timestamp) {
 		append_time = TRUE;
 	}
@@ -885,7 +885,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 
 		g_string_append (str, "- ");
 	}
-	
+
 	if (append_date) {
 		gchar buf[256];
 
@@ -899,7 +899,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 
 	g_date_free (date);
 	g_date_free (last_date);
-	
+
 	if (append_time) {
 		gchar *tmp;
 
@@ -917,7 +917,7 @@ chat_view_maybe_append_date_and_time (GossipChatView *view,
 							  str->str, -1,
 							  tag,
 							  NULL);
-		
+
 		priv->last_block_type = BLOCK_TYPE_TIME;
 		priv->last_timestamp = timestamp;
 	}
@@ -931,7 +931,7 @@ chat_view_append_spacing (GossipChatView *view)
 	GossipChatViewPriv *priv;
 	const gchar        *tag;
 	GtkTextIter         iter;
-	
+
 	priv = GET_PRIV (view);
 
 	if (priv->irc_style) {
@@ -939,7 +939,7 @@ chat_view_append_spacing (GossipChatView *view)
 	} else {
 		tag = "fancy-spacing";
 	}
-	
+
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
 						  &iter,
@@ -970,7 +970,7 @@ chat_view_append_text (GossipChatView *view,
 	} else {
 		link_tag = "fancy-link";
 	}
-	
+
 	gtk_text_buffer_get_end_iter (priv->buffer, &start_iter);
 	mark = gtk_text_buffer_create_mark (priv->buffer, NULL, &start_iter, TRUE);
 
@@ -1037,12 +1037,12 @@ chat_view_append_text (GossipChatView *view,
 	/* Apply the style to the inserted text. */
 	gtk_text_buffer_get_iter_at_mark (priv->buffer, &start_iter, mark);
 	gtk_text_buffer_get_end_iter (priv->buffer, &end_iter);
-	
+
 	gtk_text_buffer_apply_tag_by_name (priv->buffer,
 					   tag,
 					   &start_iter,
 					   &end_iter);
-	
+
 	gtk_text_buffer_delete_mark (priv->buffer, mark);
 }
 
@@ -1067,18 +1067,18 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 	priv = GET_PRIV (view);
 
 	contact = gossip_message_get_sender (msg);
-	
+
 	gossip_debug (DEBUG_DOMAIN, "Maybe add fancy header");
 
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
-		
+
 		tag = "fancy-header-self";
 		line_top_tag = "fancy-line-top-self";
 		line_bottom_tag = "fancy-line-bottom-self";
 	} else {
 		name = gossip_contact_get_name (contact);
-		
+
 		tag = "fancy-header-other";
 		line_top_tag = "fancy-line-top-other";
 		line_bottom_tag = "fancy-line-bottom-other";
@@ -1099,18 +1099,18 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 	else if (!from_self && priv->last_block_type == BLOCK_TYPE_SELF) {
 		header = TRUE;
 	}
-	else if (!from_self && 
+	else if (!from_self &&
 		 (!priv->last_contact ||
 		  !gossip_contact_equal (contact, priv->last_contact))) {
 		header = TRUE;
 	}
-		
+
 	if (!header) {
 		return;
 	}
-	
+
 	chat_view_append_spacing (view);
-		
+
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
 						  &iter,
@@ -1121,9 +1121,9 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 
 	if (avatar) {
 		GtkTextIter start;
-		
+
 		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
- 		gtk_text_buffer_insert_pixbuf (priv->buffer, &iter, avatar);
+		gtk_text_buffer_insert_pixbuf (priv->buffer, &iter, avatar);
 
 		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 		start = iter;
@@ -1139,8 +1139,8 @@ chat_view_maybe_append_fancy_header (GossipChatView *view,
 							   "fancy-avatar-other",
 							   &start, &iter);
 			avatar_tag = "fancy-header-other-avatar";
-		}			
-		
+		}
+
 	} else {
 		avatar_tag = NULL;
 	}
@@ -1186,14 +1186,14 @@ chat_view_append_irc_action (GossipChatView *view,
 	/* Skip the "/me ". */
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
-		
+
 		tag = "irc-action-self";
 	} else {
 		GossipContact *contact;
 
 		contact = gossip_message_get_sender (msg);
 		name = gossip_contact_get_name (contact);
-		
+
 		tag = "irc-action-other";
 	}
 
@@ -1201,7 +1201,7 @@ chat_view_append_irc_action (GossipChatView *view,
 	    priv->last_block_type != BLOCK_TYPE_OTHER) {
 		chat_view_append_spacing (view);
 	}
-	
+
 	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
 
 	tmp = g_strdup_printf (" * %s ", name);
@@ -1241,7 +1241,7 @@ chat_view_append_fancy_action (GossipChatView *view,
 
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
-		
+
 		tag = "fancy-action-self";
 		line_tag = "fancy-line-self";
 	} else {
@@ -1249,7 +1249,7 @@ chat_view_append_fancy_action (GossipChatView *view,
 
 		contact = gossip_message_get_sender (msg);
 		name = gossip_contact_get_name (contact);
-		
+
 		tag = "fancy-action-other";
 		line_tag = "fancy-line-other";
 	}
@@ -1290,7 +1290,7 @@ chat_view_append_irc_message (GossipChatView *view,
 
 	if (from_self) {
 		name = gossip_contact_get_name (my_contact);
-		
+
 		nick_tag = "irc-nick-self";
 		body_tag = "irc-body-self";
 	} else {
@@ -1304,7 +1304,7 @@ chat_view_append_irc_message (GossipChatView *view,
 		} else {
 			nick_tag = "irc-nick-other";
 		}
-		
+
 		body_tag = "irc-body-other";
 	}
 
@@ -1341,7 +1341,7 @@ chat_view_append_fancy_message (GossipChatView *view,
 	const gchar        *tag;
 
 	priv = GET_PRIV (view);
-	
+
 	if (from_self) {
 		tag = "fancy-body-self";
 	} else {
@@ -1349,7 +1349,7 @@ chat_view_append_fancy_message (GossipChatView *view,
 
 		/* FIXME: Might want to support nick highlighting here... */
 	}
-	
+
 	body = gossip_message_get_body (msg);
 	chat_view_append_text (view, body, tag);
 }
@@ -1435,7 +1435,7 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 	priv = GET_PRIV (view);
 
 	priv->last_block_type = BLOCK_TYPE_NONE;
-	
+
 	gossip_conf_get_bool (gossip_conf_get (),
 			      GOSSIP_PREFS_CHAT_THEME_CHAT_ROOM,
 			      &theme_rooms);
@@ -1444,7 +1444,7 @@ chat_view_theme_changed_cb (GossipThemeManager *manager,
 	} else {
 		gossip_theme_manager_apply_saved (manager, view);
 	}
-	
+
 	/* Needed for now to update the "rise" property of the names to get it
 	 * vertically centered.
 	 */
@@ -1488,7 +1488,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 						     my_contact,
 						     TRUE, avatar);
 	}
-	
+
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
 	 */
@@ -1513,7 +1513,7 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 		g_object_unref (priv->last_contact);
 		priv->last_contact = NULL;
 	}
-	
+
 	if (scroll_down) {
 		gossip_chat_view_scroll_down (view);
 	}
@@ -1547,7 +1547,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 						     contact, FALSE,
 						     avatar);
 	}
-	
+
 	/* Handle action messages (/me) and normal messages, in combination with
 	 * irc style and fancy style.
 	 */
@@ -1572,7 +1572,7 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 		g_object_unref (priv->last_contact);
 	}
 	priv->last_contact = g_object_ref (gossip_message_get_sender (msg));
-	
+
 	if (scroll_down) {
 		gossip_chat_view_scroll_down (view);
 	}
@@ -1589,7 +1589,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 	const gchar        *tag;
 
 	priv = GET_PRIV (view);
-	
+
 	bottom = chat_view_is_scrolled_down (view);
 
 	chat_view_maybe_trim_buffer (view);
@@ -1601,7 +1601,7 @@ gossip_chat_view_append_event (GossipChatView *view,
 		tag = "fancy-event";
 		msg = g_strdup_printf (" - %s\n", str);
 	}
-	
+
 	if (priv->last_block_type != BLOCK_TYPE_EVENT) {
 		/* Comment out for now. */
 		/*chat_view_append_spacing (view);*/
@@ -1649,7 +1649,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	} else {
 		tag = "fancy-invite";
 	}
-	
+
 	bottom = chat_view_is_scrolled_down (view);
 
 	sender = gossip_message_get_sender (message);
@@ -1673,9 +1673,9 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 		s = g_string_append (s, reason);
 	}
-	
+
 	if (s->len < 1) {
-		s = g_string_append 
+		s = g_string_append
 			(s, _("You have been invited to join a chat conference."));
 	}
 
@@ -1690,7 +1690,7 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	}
 
 	s = g_string_prepend_c (s, '\n');
-	
+
 	chat_view_append_text (view, s->str, tag);
 	g_string_free (s, TRUE);
 
@@ -1723,10 +1723,10 @@ gossip_chat_view_append_invite (GossipChatView *view,
 
 	/* Set up data */
 	g_object_set_data_full (G_OBJECT (button_accept), "invite",
-				gossip_chatroom_invite_ref (invite), 
+				gossip_chatroom_invite_ref (invite),
 				(GDestroyNotify) gossip_chatroom_invite_unref);
- 	g_object_set_data_full (G_OBJECT (button_accept), "other_button",
- 				g_object_ref (button_decline), 
+	g_object_set_data_full (G_OBJECT (button_accept), "other_button",
+				g_object_ref (button_decline),
 				g_object_unref);
 
 	g_signal_connect (button_accept, "clicked",
@@ -1734,10 +1734,10 @@ gossip_chat_view_append_invite (GossipChatView *view,
 			  NULL);
 
 	g_object_set_data_full (G_OBJECT (button_decline), "invite",
-				gossip_chatroom_invite_ref (invite), 
+				gossip_chatroom_invite_ref (invite),
 				(GDestroyNotify) gossip_chatroom_invite_unref);
- 	g_object_set_data_full (G_OBJECT (button_decline), "other_button",
- 				g_object_ref (button_accept), 
+	g_object_set_data_full (G_OBJECT (button_decline), "other_button",
+				g_object_ref (button_accept),
 				g_object_unref);
 
 	g_signal_connect (button_decline, "clicked",
@@ -1837,13 +1837,13 @@ gossip_chat_view_clear (GossipChatView *view)
 	 * conversations start.
 	 */
 	priv = GET_PRIV (view);
-	
+
 	priv->last_block_type = BLOCK_TYPE_NONE;
 	priv->last_timestamp = 0;
 }
 
 void
-gossip_chat_view_find (GossipChatView *view, 
+gossip_chat_view_find (GossipChatView *view,
 		       const gchar    *search_criteria,
 		       gboolean        new_search)
 {
@@ -1859,13 +1859,13 @@ gossip_chat_view_find (GossipChatView *view,
 	g_return_if_fail (search_criteria != NULL);
 
 	priv = GET_PRIV (view);
-	
+
 	buffer = priv->buffer;
-	
+
 	if (strlen (search_criteria) == 0) {
 		if (priv->find_mark) {
 			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
-			
+
 			gtk_text_buffer_move_mark (buffer,
 						   priv->find_mark,
 						   &iter_at_mark);
@@ -1879,14 +1879,14 @@ gossip_chat_view_find (GossipChatView *view,
 						      &iter_at_mark,
 						      &iter_at_mark);
 		}
-		
+
 		return;
 	}
-	
+
 	if (new_search) {
 		from_start = TRUE;
 	}
-     
+
 	if (priv->find_mark) {
 		gtk_text_buffer_get_iter_at_mark (buffer,
 						  &iter_at_mark,
@@ -1895,18 +1895,18 @@ gossip_chat_view_find (GossipChatView *view,
 		gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
 		from_start = TRUE;
 	}
-	
+
 	found = gossip_text_iter_forward_search (&iter_at_mark,
 						 search_criteria,
-						 &iter_match_start, 
+						 &iter_match_start,
 						 &iter_match_end,
 						 NULL);
-    
+
 	if (!found) {
 		if (from_start) {
 			return;
 		}
-	
+
 		/* Here we wrap around. */
 		if (!new_search && !priv->find_wrapped) {
 			priv->find_wrapped = TRUE;
@@ -1916,7 +1916,7 @@ gossip_chat_view_find (GossipChatView *view,
 
 		return;
 	}
-    
+
 	/* Set new mark and show on screen */
 	if (!priv->find_mark) {
 		priv->find_mark = gtk_text_buffer_create_mark (buffer, NULL,
@@ -1927,7 +1927,7 @@ gossip_chat_view_find (GossipChatView *view,
 					   priv->find_mark,
 					   &iter_match_end);
 	}
-	
+
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
 				      priv->find_mark,
 				      0.0,
@@ -1940,7 +1940,7 @@ gossip_chat_view_find (GossipChatView *view,
 }
 
 void
-gossip_chat_view_highlight (GossipChatView *view, 
+gossip_chat_view_highlight (GossipChatView *view,
 			    const gchar    *text)
 {
 	GtkTextBuffer *buffer;
@@ -1954,12 +1954,12 @@ gossip_chat_view_highlight (GossipChatView *view,
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-    
+
 	gtk_text_buffer_get_start_iter (buffer, &iter);
 
 	gtk_text_buffer_get_bounds (buffer, &iter_start, &iter_end);
-	gtk_text_buffer_remove_tag_by_name (buffer, "highlight", 
-					    &iter_start, 
+	gtk_text_buffer_remove_tag_by_name (buffer, "highlight",
+					    &iter_start,
 					    &iter_end);
 
 	if (!text || strlen (text) < 1) {
@@ -1967,9 +1967,9 @@ gossip_chat_view_highlight (GossipChatView *view,
 	}
 
 	while (1) {
-		found = gossip_text_iter_forward_search (&iter, 
-							 text, 
-							 &iter_match_start, 
+		found = gossip_text_iter_forward_search (&iter,
+							 text,
+							 &iter_match_start,
 							 &iter_match_end,
 							 NULL);
 
@@ -1977,8 +1977,8 @@ gossip_chat_view_highlight (GossipChatView *view,
 			break;
 		}
 
-		gtk_text_buffer_apply_tag_by_name (buffer, "highlight", 
-						   &iter_match_start, 
+		gtk_text_buffer_apply_tag_by_name (buffer, "highlight",
+						   &iter_match_start,
 						   &iter_match_end);
 
 		iter = iter_match_end;
@@ -2004,7 +2004,7 @@ gboolean
 gossip_chat_view_get_irc_style (GossipChatView *view)
 {
 	GossipChatViewPriv *priv;
-	
+
 	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
 
 	priv = GET_PRIV (view);
@@ -2017,7 +2017,7 @@ gossip_chat_view_set_irc_style (GossipChatView *view,
 				gboolean        irc_style)
 {
 	GossipChatViewPriv *priv;
-	
+
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = GET_PRIV (view);
@@ -2030,7 +2030,7 @@ gossip_chat_view_set_margin (GossipChatView *view,
 			     gint            margin)
 {
 	GossipChatViewPriv *priv;
-	
+
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = GET_PRIV (view);
@@ -2064,7 +2064,7 @@ const gchar *
 gossip_chat_view_get_smiley_text (GossipSmiley smiley)
 {
 	gint i;
-	
+
 	for (i = 0; i < G_N_ELEMENTS (smileys); i++) {
 		if (smileys[i].smiley != smiley) {
 			continue;
@@ -2072,12 +2072,12 @@ gossip_chat_view_get_smiley_text (GossipSmiley smiley)
 
 		return smileys[i].pattern;
 	}
-	
+
 	return NULL;
 }
 
 GtkWidget *
-gossip_chat_view_get_smiley_menu (GCallback    callback, 
+gossip_chat_view_get_smiley_menu (GCallback    callback,
 				  gpointer     user_data,
 				  GtkTooltips *tooltips)
 {
@@ -2109,14 +2109,14 @@ gossip_chat_view_get_smiley_menu (GCallback    callback,
 
 		smiley_text = gossip_chat_view_get_smiley_text (i);
 
-		gtk_tooltips_set_tip (tooltips, 
-				      item, 
-				      smiley_text, 
+		gtk_tooltips_set_tip (tooltips,
+				      item,
+				      smiley_text,
 				      NULL);
 
 		g_object_set_data  (G_OBJECT (item), "smiley_text", (gpointer) smiley_text);
 		g_signal_connect (item, "activate", callback, user_data);
-		
+
 		if (x > 3) {
 			y++;
 			x = 0;
@@ -2139,9 +2139,9 @@ gossip_chat_view_set_is_group_chat (GossipChatView *view,
 {
 	GossipChatViewPriv *priv;
 	gboolean            theme_rooms = FALSE;
-	
+
 	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
-	
+
 	priv = GET_PRIV (view);
 
 	priv->is_group_chat = is_group_chat;
@@ -2151,11 +2151,11 @@ gossip_chat_view_set_is_group_chat (GossipChatView *view,
 			      &theme_rooms);
 
 	if (!theme_rooms && is_group_chat) {
-		gossip_theme_manager_apply (gossip_theme_manager_get (), 
-					    view, 
+		gossip_theme_manager_apply (gossip_theme_manager_get (),
+					    view,
 					    NULL);
 	} else {
-		gossip_theme_manager_apply_saved (gossip_theme_manager_get (), 
+		gossip_theme_manager_apply_saved (gossip_theme_manager_get (),
 						  view);
 	}
 }

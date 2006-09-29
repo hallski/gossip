@@ -29,7 +29,7 @@
 
 G_BEGIN_DECLS
 
-void gossip_spell_dialog_show (GossipChat  *chat, 
+void gossip_spell_dialog_show (GossipChat  *chat,
 			       GtkTextIter  start,
 			       GtkTextIter  end,
 			       const gchar *word);

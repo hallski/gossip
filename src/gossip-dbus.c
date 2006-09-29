@@ -130,8 +130,8 @@ gossip_dbus_class_init (GossipDBusClass *klass)
 }
 
 static gboolean
-gossip_dbus_set_presence (GossipDBus   *obj, 
-			  const char   *state, 
+gossip_dbus_set_presence (GossipDBus   *obj,
+			  const char   *state,
 			  const char   *status,
 			  GError      **error)
 {
@@ -141,55 +141,55 @@ gossip_dbus_set_presence (GossipDBus   *obj,
 
 	if (strcasecmp (state, "available") == 0) {
 		show = GOSSIP_PRESENCE_STATE_AVAILABLE;
-	} 
+	}
 	else if (strcasecmp (state, "busy") == 0) {
-  		show = GOSSIP_PRESENCE_STATE_BUSY;
+		show = GOSSIP_PRESENCE_STATE_BUSY;
 	}
 	else if (strcasecmp (state, "away") == 0) {
-  		show = GOSSIP_PRESENCE_STATE_AWAY;
+		show = GOSSIP_PRESENCE_STATE_AWAY;
 	}
 	else if (strcasecmp (state, "xa") == 0) {
-  		show = GOSSIP_PRESENCE_STATE_EXT_AWAY;
+		show = GOSSIP_PRESENCE_STATE_EXT_AWAY;
 	} else {
 		gossip_debug (DEBUG_DOMAIN, "Presence state:'%s' not recognised, try 'available', "
 			    "'busy', 'away', or 'xa'", state);
 
-		g_set_error (error, gossip_dbus_error_quark (), 0, 
-			     "State:'%s' unrecognised, try 'available', 'busy', 'away', or 'xa'", 
+		g_set_error (error, gossip_dbus_error_quark (), 0,
+			     "State:'%s' unrecognised, try 'available', 'busy', 'away', or 'xa'",
 			     state);
 
 		return FALSE;
 	}
-	
+
 	gossip_app_set_presence (show, status);
 
 	return TRUE;
 }
 
 static gboolean
-gossip_dbus_set_not_away (GossipDBus  *obj, 
+gossip_dbus_set_not_away (GossipDBus  *obj,
 			  GError     **error)
 {
 	gossip_debug (DEBUG_DOMAIN, "Setting presence to NOT AWAY");
 	gossip_app_set_not_away ();
-	
+
 	return TRUE;
 }
 
 static gboolean
-gossip_dbus_set_network_status (GossipDBus *obj, 
-				gboolean    up, 
+gossip_dbus_set_network_status (GossipDBus *obj,
+				gboolean    up,
 				GError     **error)
 {
-	gossip_debug (DEBUG_DOMAIN, "Setting network status %s", 
+	gossip_debug (DEBUG_DOMAIN, "Setting network status %s",
 		      up ? "up" : "down");
-	
+
 	if (up) {
 		gossip_app_net_up ();
 	} else {
 		gossip_app_net_down ();
 	}
- 
+
 	return TRUE;
 }
 
@@ -207,9 +207,9 @@ gossip_dbus_set_roster_visible (GossipDBus  *obj,
 }
 
 static gboolean
-gossip_dbus_get_presence (GossipDBus   *obj, 
+gossip_dbus_get_presence (GossipDBus   *obj,
 			  const gchar  *id,
-			  char        **state, 
+			  char        **state,
 			  char        **status,
 			  GError      **error)
 {
@@ -217,17 +217,17 @@ gossip_dbus_get_presence (GossipDBus   *obj,
 	GossipPresence *presence;
 	const gchar    *str;
 
-	gossip_debug (DEBUG_DOMAIN, "Getting presence for:'%s'...", 
+	gossip_debug (DEBUG_DOMAIN, "Getting presence for:'%s'...",
 		      id ? id : "SELF");
 
 	if (id && strlen (id) > 0) {
 		contact = gossip_session_find_contact (saved_session, id);
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
-			
-			g_set_error (error, gossip_dbus_error_quark (), 0, 
+
+			g_set_error (error, gossip_dbus_error_quark (), 0,
 				     "Contact:'%s' unrecognised", id);
-			
+
 			return FALSE;
 		}
 
@@ -266,20 +266,20 @@ gossip_dbus_get_presence (GossipDBus   *obj,
 			*status = NULL;
 		}
 	}
-	
+
 	return TRUE;
 }
 
 static gboolean
-gossip_dbus_get_name (GossipDBus   *obj, 
+gossip_dbus_get_name (GossipDBus   *obj,
 		      const gchar  *id,
-		      char        **name, 
+		      char        **name,
 		      GError      **error)
 {
 	GossipContact *contact;
 	const gchar   *str;
 
-	gossip_debug (DEBUG_DOMAIN, "Getting name for:'%s'...", 
+	gossip_debug (DEBUG_DOMAIN, "Getting name for:'%s'...",
 		      id ? id : "SELF");
 
 	*name = NULL;
@@ -288,18 +288,18 @@ gossip_dbus_get_name (GossipDBus   *obj,
 		contact = gossip_session_find_contact (saved_session, id);
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
-			
-			g_set_error (error, gossip_dbus_error_quark (), 0, 
+
+			g_set_error (error, gossip_dbus_error_quark (), 0,
 				     "Contact:'%s' unrecognised", id);
-			
+
 			return FALSE;
 		}
 	} else {
 		gossip_debug (DEBUG_DOMAIN, "Can not get own name, not yet implemented");
-		
-		g_set_error (error, gossip_dbus_error_quark (), 0, 
+
+		g_set_error (error, gossip_dbus_error_quark (), 0,
 			     "Can not get own name, not yet implemented");
-		
+
 		return FALSE;
 	}
 
@@ -309,11 +309,11 @@ gossip_dbus_get_name (GossipDBus   *obj,
 	} else {
 		*name = NULL;
 	}
-	
+
 	return TRUE;
 }
 
-static gboolean 
+static gboolean
 gossip_dbus_get_roster_visible (GossipDBus   *obj,
 				gboolean     *visible,
 				GError      **error)
@@ -325,7 +325,7 @@ gossip_dbus_get_roster_visible (GossipDBus   *obj,
 	return TRUE;
 }
 
-static gboolean 
+static gboolean
 gossip_dbus_get_open_chats (GossipDBus   *obj,
 			    char       ***contacts,
 			    GError      **error)
@@ -339,22 +339,22 @@ gossip_dbus_get_open_chats (GossipDBus   *obj,
 
 	manager = gossip_app_get_chat_manager ();
 	chats = gossip_chat_manager_get_chats (manager);
-	
+
 	n = g_list_length (chats) + 1;
 	*contacts = g_new0 (char*, n);
 
 	for (l = chats, i = 0; l; l = l->next, i++) {
-		(*contacts)[i] = l->data;   
+		(*contacts)[i] = l->data;
 	}
-	
- 	g_list_free (chats); 
+
+	g_list_free (chats);
 
 	return TRUE;
 }
 
 static gboolean
-gossip_dbus_send_message (GossipDBus   *obj, 
-			  const gchar  *contact_id, 
+gossip_dbus_send_message (GossipDBus   *obj,
+			  const gchar  *contact_id,
 			  GError      **error)
 {
 	GossipChatManager *manager;
@@ -364,7 +364,7 @@ gossip_dbus_send_message (GossipDBus   *obj,
 
 	contact = gossip_session_find_contact (saved_session, contact_id);
 	if (!contact) {
-		g_set_error (error, gossip_dbus_error_quark (), 0, 
+		g_set_error (error, gossip_dbus_error_quark (), 0,
 			     "Contact:'%s' not found", contact_id);
 		return FALSE;
 	}
@@ -375,7 +375,7 @@ gossip_dbus_send_message (GossipDBus   *obj,
 	return TRUE;
 }
 
-static gboolean 
+static gboolean
 gossip_dbus_new_message (GossipDBus  *obj,
 			 GError     **error)
 {
@@ -385,7 +385,7 @@ gossip_dbus_new_message (GossipDBus  *obj,
 	return TRUE;
 }
 
-static gboolean 
+static gboolean
 gossip_dbus_toggle_roster (GossipDBus  *obj,
 			   GError     **error)
 {
@@ -398,7 +398,7 @@ gossip_dbus_toggle_roster (GossipDBus  *obj,
 GQuark
 gossip_dbus_error_quark (void)
 {
-        return g_quark_from_static_string (GOSSIP_DBUS_ERROR_DOMAIN);
+	return g_quark_from_static_string (GOSSIP_DBUS_ERROR_DOMAIN);
 }
 
 gboolean
@@ -420,13 +420,13 @@ gossip_dbus_init_for_session (GossipSession *session,
 	saved_session = g_object_ref (session);
 
 	gossip_debug (DEBUG_DOMAIN, "Initialising Gossip object");
-	
+
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
 		g_warning ("Couldn't connect to the session bus");
 		return FALSE;
 	}
-	
+
 	proxy = dbus_freedesktop_init ();
 	if (!proxy) {
 		return FALSE;
@@ -437,7 +437,7 @@ gossip_dbus_init_for_session (GossipSession *session,
 	gossip_dbus = g_object_new (GOSSIP_TYPE_DBUS, NULL);
 
 	dbus_g_connection_register_g_object (bus, GOSSIP_DBUS_PATH, G_OBJECT (gossip_dbus));
-	
+
 	if (!org_freedesktop_DBus_request_name (proxy,
 						GOSSIP_DBUS_SERVICE,
 						DBUS_NAME_FLAG_DO_NOT_QUEUE,
@@ -457,7 +457,7 @@ gossip_dbus_init_for_session (GossipSession *session,
 
 		exit (EXIT_SUCCESS);
 	}
-	
+
 	/* Set up GNOME Network Manager if available so we get signals. */
 	dbus_nm_init ();
 
@@ -466,7 +466,7 @@ gossip_dbus_init_for_session (GossipSession *session,
 	return TRUE;
 }
 
-void 
+void
 gossip_dbus_finalize_for_session (void)
 {
 	if (bus_proxy) {
@@ -545,24 +545,24 @@ dbus_nm_state_to_string (guint32 state)
 	switch (state) {
 	case NM_STATE_ASLEEP:
 		return "asleep";
-	case NM_STATE_CONNECTING:   
+	case NM_STATE_CONNECTING:
 		return "connecting";
-	case NM_STATE_CONNECTED:    
+	case NM_STATE_CONNECTED:
 		return "connected";
-	case NM_STATE_DISCONNECTED: 
+	case NM_STATE_DISCONNECTED:
 		return "disconnected";
 	case NM_STATE_UNKNOWN:
-	default:                    
+	default:
 		return "unknown";
 	}
 }
 
 static void
-dbus_nm_state_cb (DBusGProxy *proxy, 
+dbus_nm_state_cb (DBusGProxy *proxy,
 		  guint       state,
-		  gpointer    user_data) 
+		  gpointer    user_data)
 {
-	gossip_debug (DEBUG_DOMAIN, "New network state:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "New network state:'%s'",
 		      dbus_nm_state_to_string (state));
 
 	switch (state) {
@@ -595,7 +595,7 @@ dbus_nm_proxy_restart_timeout_cb (gpointer user_data)
 
 	return TRUE;
 }
-		
+
 static void
 dbus_nm_proxy_notify_cb (gpointer  data,
 			 GObject  *where_the_object_was)
@@ -606,8 +606,8 @@ dbus_nm_proxy_notify_cb (gpointer  data,
 	if (nm_proxy_restart_timeout_id) {
 		g_source_remove (nm_proxy_restart_timeout_id);
 	}
-	
-	nm_proxy_restart_timeout_id = 
+
+	nm_proxy_restart_timeout_id =
 		g_timeout_add (10*1000,
 			       dbus_nm_proxy_restart_timeout_cb,
 			       NULL);
@@ -637,10 +637,10 @@ dbus_nm_init (void)
 	 */
 	conn = dbus_g_connection_get_connection (bus);
 	dbus_connection_set_exit_on_disconnect (conn, FALSE);
-	
+
 	nm_proxy = dbus_g_proxy_new_for_name (bus,
-					       NM_DBUS_SERVICE, 
-					       NM_DBUS_PATH, 
+					       NM_DBUS_SERVICE,
+					       NM_DBUS_PATH,
 					       NM_DBUS_INTERFACE);
 
 	if (!nm_proxy) {
@@ -649,26 +649,26 @@ dbus_nm_init (void)
 	}
 
 	g_object_weak_ref (G_OBJECT (nm_proxy), dbus_nm_proxy_notify_cb, NULL);
-	
-	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT, 
+
+	dbus_g_object_register_marshaller (g_cclosure_marshal_VOID__UINT,
 					   G_TYPE_NONE, G_TYPE_UINT, G_TYPE_INVALID);
 
 	dbus_g_proxy_add_signal (nm_proxy, "StateChange",
 				 G_TYPE_UINT, G_TYPE_INVALID);
 
-	dbus_g_proxy_connect_signal (nm_proxy, "StateChange", 
+	dbus_g_proxy_connect_signal (nm_proxy, "StateChange",
 				     G_CALLBACK (dbus_nm_state_cb),
 				     NULL, NULL);
 
 	return TRUE;
-} 
+}
 
-gboolean 
+gboolean
 gossip_dbus_nm_get_state (gboolean *connected)
 {
 	GError  *error = NULL;
 	guint32  state;
-	
+
 	g_return_val_if_fail (connected != NULL, FALSE);
 
 	/* Set the initial value of connected in case we have to return. */
@@ -685,14 +685,14 @@ gossip_dbus_nm_get_state (gboolean *connected)
 	}
 
 	if (!dbus_g_proxy_call (nm_proxy, "state", &error,
-				G_TYPE_INVALID, 
+				G_TYPE_INVALID,
 				G_TYPE_UINT, &state, G_TYPE_INVALID)) {
-		gossip_debug (DEBUG_DOMAIN, "Failed to complete 'state' request. %s", 
+		gossip_debug (DEBUG_DOMAIN, "Failed to complete 'state' request. %s",
 			      error->message);
 		return FALSE;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Current network state:'%s'", 
+	gossip_debug (DEBUG_DOMAIN, "Current network state:'%s'",
 		      dbus_nm_state_to_string (state));
 
 	if (connected) {
@@ -703,7 +703,7 @@ gossip_dbus_nm_get_state (gboolean *connected)
 }
 
 /*
- * Gossip 
+ * Gossip
  */
 static gboolean
 dbus_gossip_show (gboolean show)
@@ -712,7 +712,7 @@ dbus_gossip_show (gboolean show)
 	DBusGProxy      *proxy;
 	GError          *error = NULL;
 	gboolean         success = TRUE;
-	
+
 	bus = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
 	if (!bus) {
 		g_warning ("Could not connect to session bus");
@@ -722,21 +722,21 @@ dbus_gossip_show (gboolean show)
 	/* We are doing this because normally we wouldn't have a
 	 * connection to ourselves.
 	 */
-	proxy = dbus_g_proxy_new_for_name (bus, 
+	proxy = dbus_g_proxy_new_for_name (bus,
 					   GOSSIP_DBUS_SERVICE,
 					   GOSSIP_DBUS_PATH,
 					   GOSSIP_DBUS_INTERFACE);
-	
+
 	if (!proxy) {
 		g_warning ("Could not connect to other instance of Gossip");
 		return FALSE;
 	}
-		
+
 	if (!dbus_g_proxy_call (proxy, "SetRosterVisible", &error,
 				G_TYPE_BOOLEAN, show,
 				G_TYPE_INVALID,
 				G_TYPE_INVALID)) {
-		g_warning ("Failed to complete 'SetRosterVisible' request. %s", 
+		g_warning ("Failed to complete 'SetRosterVisible' request. %s",
 			   error->message);
 		success = FALSE;
 	}

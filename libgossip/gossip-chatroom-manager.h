@@ -47,7 +47,7 @@ struct _GossipChatroomManagerClass {
 
 GType           gossip_chatroom_manager_get_type        (void) G_GNUC_CONST;
 GossipChatroomManager *
-                gossip_chatroom_manager_new             (GossipAccountManager  *manager,
+		gossip_chatroom_manager_new             (GossipAccountManager  *manager,
 							 GossipSession         *session,
 							 const gchar           *filename);
 gboolean        gossip_chatroom_manager_add             (GossipChatroomManager *manager,

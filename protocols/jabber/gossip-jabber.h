@@ -19,7 +19,7 @@
  */
 
 #ifndef __GOSSIP_JABBER_H__
-#define __GOSSIP_JABBER_H__ 
+#define __GOSSIP_JABBER_H__
 
 #include <libgossip/gossip-async.h>
 #include <libgossip/gossip-presence.h>

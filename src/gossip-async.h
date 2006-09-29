@@ -28,20 +28,20 @@ typedef enum {
 	GOSSIP_ASYNC_OK,
 	GOSSIP_ASYNC_ERROR_INVALID_REPLY,
 	GOSSIP_ASYNC_ERROR_TIMEOUT,
-        GOSSIP_ASYNC_ERROR_REGISTRATION
+	GOSSIP_ASYNC_ERROR_REGISTRATION
 } GossipAsyncResult;
 
 typedef void (*GossipAsyncRegisterCallback) (GossipAsyncResult  result,
-                                             const gchar       *err_message,
-                                             gpointer           user_data);
+					     const gchar       *err_message,
+					     gpointer           user_data);
 typedef void (*GossipAsyncVCardCallback)    (GossipAsyncResult  result,
-                                             GossipVCard       *vcard,
-                                             gpointer           user_data);
+					     GossipVCard       *vcard,
+					     gpointer           user_data);
 
 typedef void (*GossipAsyncResultCallback)   (GossipAsyncResult  result,
-                                             gpointer           user_data);
+					     gpointer           user_data);
 typedef void (*GossipAsyncVersionCallback)  (GossipAsyncResult  result,
-                                             GossipVersionInfo *info,
-                                             gpointer           user_data);
+					     GossipVersionInfo *info,
+					     gpointer           user_data);
 
 #endif /* __GOSSIP_ASYNC_H__ */

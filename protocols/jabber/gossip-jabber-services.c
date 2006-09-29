@@ -21,7 +21,7 @@
 #include <config.h>
 
 #include <string.h>
-#include <stdlib.h>  
+#include <stdlib.h>
 
 #include <libgossip/gossip-debug.h>
 
@@ -29,7 +29,7 @@
 
 #define DEBUG_DOMAIN "JabberServices"
 
-static LmHandlerResult 
+static LmHandlerResult
 jabber_services_get_version_cb (LmMessageHandler   *handler,
 				LmConnection       *connection,
 				LmMessage          *m,
@@ -47,7 +47,7 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 	}
 
-        /* check for error */
+	/* check for error */
 	type = lm_message_get_sub_type (m);
 
 	if (type == LM_MESSAGE_SUB_TYPE_ERROR) {
@@ -60,7 +60,7 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 
 			str = lm_message_node_get_attribute (node, "code");
 			code = str ? atoi (str) : 0;
-			
+
 			switch (code) {
 			case 404: {
 				/* not found */
@@ -83,7 +83,7 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 			}
 		}
 
-		(callback) (result, 
+		(callback) (result,
 			    NULL,
 			    data->user_data);
 
@@ -93,7 +93,7 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 	/* no vcard node */
 	query_node = lm_message_node_get_child (m->node, "query");
 	if (!query_node) {
-		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY, 
+		(callback) (GOSSIP_RESULT_ERROR_INVALID_REPLY,
 			    NULL,
 			    data->user_data);
 
@@ -104,31 +104,31 @@ jabber_services_get_version_cb (LmMessageHandler   *handler,
 
 	node = lm_message_node_get_child (query_node, "name");
 	if (node) {
-		gossip_version_info_set_name (info, 
+		gossip_version_info_set_name (info,
 					      lm_message_node_get_value (node));
 	}
-	
+
 	node = lm_message_node_get_child (query_node, "version");
 	if (node) {
 		gossip_version_info_set_version (info,
 						 lm_message_node_get_value (node));
 	}
-	
+
 	node = lm_message_node_get_child (query_node, "os");
 	if (node) {
 		gossip_version_info_set_os (info,
 					    lm_message_node_get_value (node));
 	}
-	
+
 	(callback) (GOSSIP_RESULT_OK,
 		    info,
 		    data->user_data);
-	
+
 	g_object_unref (info);
-	
+
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
- 
+
 gboolean
 gossip_jabber_services_get_version (LmConnection           *connection,
 				    GossipContact          *contact,
@@ -146,8 +146,8 @@ gossip_jabber_services_get_version (LmConnection           *connection,
 	const gchar        *resource = NULL;
 	gchar              *jid_str;
 
-	gossip_debug (DEBUG_DOMAIN, 
-		      "Requesting client information from contact:'%s'", 
+	gossip_debug (DEBUG_DOMAIN,
+		      "Requesting client information from contact:'%s'",
 		      gossip_contact_get_id (contact));
 
 	/* If offline, contacts don't have presence */
@@ -157,7 +157,7 @@ gossip_jabber_services_get_version (LmConnection           *connection,
 	}
 
 	id = gossip_contact_get_id (contact);
- 
+
 	if (resource && strcmp (resource, "") != 0) {
 		jid_str = g_strdup_printf ("%s/%s", id, resource);
 	} else {
@@ -176,10 +176,10 @@ gossip_jabber_services_get_version (LmConnection           *connection,
 	data = g_new0 (GossipCallbackData, 1);
 	data->callback = callback;
 	data->user_data = user_data;
-	
+
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_services_get_version_cb,
 					  data, g_free);
-	
+
 	result = lm_connection_send_with_reply (connection, m, handler, error);
 
 	lm_message_unref (m);

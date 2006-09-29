@@ -39,11 +39,11 @@ typedef struct _GossipChatWindowPriv  GossipChatWindowPriv;
 #include "gossip-chat.h"
 
 struct _GossipChatWindow {
-        GObject parent;
+	GObject parent;
 };
 
 struct _GossipChatWindowClass {
-        GObjectClass parent_class;
+	GObjectClass parent_class;
 };
 
 GType             gossip_chat_window_get_type        (void);

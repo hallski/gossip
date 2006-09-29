@@ -68,19 +68,19 @@ main (int argc, char *argv[])
 	GOptionContext       *context;
 	GList                *accounts;
 	GOptionEntry          options[] = {
-		{ "no-connect", 'n', 
+		{ "no-connect", 'n',
 		  0, G_OPTION_ARG_NONE, &no_connect,
 		  N_("Don't connect on startup"),
 		  NULL },
-		{ "multiple-instances", 'm', 
+		{ "multiple-instances", 'm',
 		  0, G_OPTION_ARG_NONE, &multiple_instances,
 		  N_("Allow multiple instances of the application to run at the same time"),
 		  NULL },
-		{ "list-accounts", 'l', 
+		{ "list-accounts", 'l',
 		  0, G_OPTION_ARG_NONE, &list_accounts,
 		  N_("List the available accounts"),
 		  NULL },
-		{ "account", 'a', 
+		{ "account", 'a',
 		  0, G_OPTION_ARG_STRING, &account_name,
 		  N_("Which account to connect to on startup"),
 		  N_("ACCOUNT-NAME") },
@@ -89,20 +89,20 @@ main (int argc, char *argv[])
 
 	localedir = gossip_paths_get_locale_path ();
 	bindtextdomain (GETTEXT_PACKAGE, localedir);
-        bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 	g_free (localedir);
 
 	context = g_option_context_new (_("- Gossip Instant Messenger"));
-	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);	
+	g_option_context_add_main_entries (context, options, GETTEXT_PACKAGE);
 
 	g_set_application_name (PACKAGE_NAME);
 
 #ifdef HAVE_GNOME
 	program = gnome_program_init ("gossip", PACKAGE_VERSION,
 				      LIBGNOMEUI_MODULE,
-                                      argc, argv,
-                                      GNOME_PROGRAM_STANDARD_PROPERTIES,
+				      argc, argv,
+				      GNOME_PROGRAM_STANDARD_PROPERTIES,
 				      "goption-context", context,
 				      GNOME_PARAM_HUMAN_READABLE_NAME, PACKAGE_NAME,
 				      NULL);
@@ -120,7 +120,7 @@ main (int argc, char *argv[])
 	gossip_window_set_default_icon_name ("gossip");
 
 	/* Get all accounts. */
- 	account_manager = gossip_account_manager_new (NULL);
+	account_manager = gossip_account_manager_new (NULL);
 
 	if (account_name && no_connect) {
 		g_printerr (_("You can not use --no-connect together with --account"));
@@ -139,14 +139,14 @@ main (int argc, char *argv[])
 			g_printerr ("\n");
 		} else {
 			def = gossip_account_manager_get_default (account_manager);
-			
+
 			g_printerr (_("Available accounts:"));
 			g_printerr ("\n");
 		}
-		
+
 		for (l = accounts; l; l = l->next) {
 			GossipAccount *account = l->data;
-			
+
 			g_print (" %s", gossip_account_get_name (account));
 			if (def && gossip_account_equal (account, def)) {
 				g_printerr (" ");
@@ -161,7 +161,7 @@ main (int argc, char *argv[])
 
 		return EXIT_SUCCESS;
 	}
-	
+
 	if (account_name) {
 		account = gossip_account_manager_find (account_manager,
 						       account_name);
@@ -176,14 +176,14 @@ main (int argc, char *argv[])
 
 	gossip_stock_init ();
 
-      	session = gossip_session_new (account_manager);
+	session = gossip_session_new (account_manager);
 
 #ifdef HAVE_DBUS
 	init_galago = gossip_dbus_init_for_session (session, multiple_instances);
 #else
 	init_galago = TRUE;
 #endif
-	
+
 #ifdef HAVE_GALAGO
 	if (init_galago) {
 		gossip_galago_init (session);
@@ -193,11 +193,11 @@ main (int argc, char *argv[])
 	gossip_app_create (session, account_manager);
 	g_object_unref (session);
 	g_object_unref (account_manager);
-	
+
 	if (!no_connect) {
 		gossip_app_connect (account, TRUE);
 	}
-	
+
 	gtk_main ();
 
 #ifdef HAVE_DBUS
@@ -211,7 +211,7 @@ main (int argc, char *argv[])
 #ifdef HAVE_GNOME
 	g_object_unref (program);
 #endif
-	
+
 	return EXIT_SUCCESS;
 }
 
@@ -224,11 +224,11 @@ main (int argc, char *argv[])
   2 GossipPresence, 64 bytes
   1 GossipJabber, 80 bytes
   2 GossipContact, 104 bytes
-  
+
   Having a chat window open and connecting/disconnecting a few times before
   quitting:
-  
+
   5 GossipAccount, 340 bytes
   10 GossipContact, 520 bytes
-  
+
 */

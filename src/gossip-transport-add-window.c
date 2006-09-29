@@ -34,7 +34,7 @@
 #include "gossip-stock.h"
 #include "gossip-contact.h"
 
-#define DEBUG_MSG(x)  
+#define DEBUG_MSG(x)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 
 #define SEARCH_MAX 15
@@ -56,7 +56,7 @@ struct _GossipTransportAddWindow {
 	GtkWidget *treeview_service;
 	GtkWidget *scrolledwindow_service;
 	GtkWidget *entry_service;
-	
+
 	/* page 3 */
 	GtkWidget *page_3;
 	GtkWidget *label_service;
@@ -77,7 +77,7 @@ struct _GossipTransportAddWindow {
 	GtkWidget *label_register_result;
 	GtkWidget *progressbar_registering;
 
-	/* disco stuff */ 
+	/* disco stuff */
 	GList *disco_list;
 
 	const gchar *disco_type;
@@ -196,9 +196,9 @@ static void     transport_add_window_register_cb                    (GossipJID  
 								     const gchar              *error_code,
 								     const gchar              *error_reason,
 								     GossipTransportAddWindow *window);
-static void     transport_add_window_roster_update_cb               (GossipProtocol           *protocol, 
- 								     GossipContact            *contact, 
- 								     GossipTransportAddWindow *window); 
+static void     transport_add_window_roster_update_cb               (GossipProtocol           *protocol,
+								     GossipContact            *contact,
+								     GossipTransportAddWindow *window);
 static gboolean transport_add_window_roster_timeout_cb              (GossipTransportAddWindow *window);
 
 static void     transport_add_window_protocol_pixbuf_cell_data_func (GtkTreeViewColumn        *tree_column,
@@ -217,19 +217,19 @@ static gboolean transport_add_window_progress_cb                    (GtkProgress
 
 
 static GossipTransportAddWindow *current_window = NULL;
-    
+
 
 GossipTransportAddWindow *
 gossip_transport_add_window_show (GossipTransportAccountList *al)
 {
 	GossipTransportAddWindow *window;
 	GladeXML                 *gui;
-	
+
 	g_return_val_if_fail (al != NULL, NULL);
 
 	if (current_window) {
 		gtk_window_present (GTK_WINDOW (current_window->window));
-		return current_window;	
+		return current_window;
 	}
 
 	current_window = window = g_new0 (GossipTransportAddWindow, 1);
@@ -256,15 +256,15 @@ gossip_transport_add_window_show (GossipTransportAccountList *al)
 				     "treeview_service", &window->treeview_service,
 				     "scrolledwindow_service", &window->scrolledwindow_service,
 				     "label_requirements_result", &window->label_requirements_result,
- 				     "label_register_result", &window->label_register_result, 
+				     "label_register_result", &window->label_register_result,
 				     "label_instructions", &window->label_instructions,
 				     "label_username", &window->label_username,
 				     "label_password", &window->label_password,
-				     "label_email", &window->label_email, 
+				     "label_email", &window->label_email,
 				     "label_nickname", &window->label_nickname,
 				     "entry_username", &window->entry_username,
 				     "entry_password", &window->entry_password,
-				     "entry_email", &window->entry_email, 
+				     "entry_email", &window->entry_email,
 				     "entry_nickname", &window->entry_nickname,
 				     NULL);
 
@@ -297,8 +297,8 @@ gossip_transport_add_window_show (GossipTransportAccountList *al)
 				G_CALLBACK (transport_add_window_finish_page_4),
 				window);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, FALSE, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, FALSE, TRUE, TRUE);
 
 	transport_add_window_protocol_setup (window);
 	transport_add_window_service_setup (window);
@@ -313,7 +313,7 @@ gossip_transport_add_window_show (GossipTransportAccountList *al)
  * 3. Search 5-10 of the services on the list
  *
  *
- * NOTE: 
+ * NOTE:
  * How do we know if they are registered with MSN/ICQ/etc in the first
  * place? We could always go through the contact list and find out
  * which JIDs are services and query them (but what if they are not a
@@ -322,7 +322,7 @@ gossip_transport_add_window_show (GossipTransportAccountList *al)
  *
  */
 
-static void 
+static void
 transport_add_window_disco_cleanup (GossipTransportAddWindow *window)
 {
 	GList *l;
@@ -332,12 +332,12 @@ transport_add_window_disco_cleanup (GossipTransportAddWindow *window)
 		GossipTransportDisco *d = l->data;
 		gossip_transport_disco_destroy (d);
 	}
-	
+
 	g_list_free (window->disco_list);
 	window->disco_list = NULL;
 }
 
-static void 
+static void
 transport_add_window_check_local (GossipTransportAddWindow *window)
 {
 	GossipTransportDisco *disco;
@@ -351,30 +351,30 @@ transport_add_window_check_local (GossipTransportAddWindow *window)
 	own_contact = gossip_jabber_get_own_contact (jabber);
 	id = gossip_contact_get_id (own_contact);
 	jid = gossip_jid_new (id);
- 	host = gossip_jid_get_part_host (jid); 
-	
+	host = gossip_jid_get_part_host (jid);
+
 	window->service_found = FALSE;
 
 	DEBUG_MSG (("TransportWindow: Running disco on local service:'%s'", host));
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 0);
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching), 
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching),
 				   _("Searching Local Services..."));
 
 	disco = gossip_transport_disco_request (jabber,
-						host, 
+						host,
 						(GossipTransportDiscoItemFunc) transport_add_window_check_local_cb,
 						window);
-	
+
 	window->disco_list = g_list_append (window->disco_list, disco);
 
 	gossip_jid_unref (jid);
 }
 
 static void
-transport_add_window_check_local_cb (GossipTransportDisco      *disco, 
-				     GossipTransportDiscoItem  *item, 
-				     gboolean                  last_item, 
+transport_add_window_check_local_cb (GossipTransportDisco      *disco,
+				     GossipTransportDiscoItem  *item,
+				     gboolean                  last_item,
 				     gboolean                  timeout,
 				     GError                   *error,
 				     GossipTransportAddWindow *window)
@@ -396,34 +396,34 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 			   "discovery, trying 3rd party services"));
 		transport_add_window_disco_cleanup (window);
 		transport_add_window_check_others (window);
-		
+
 		return;
 	}
 
 	/* show progress */
 	fraction = 1 - (remaining / total);
 
-	DEBUG_MSG (("TransportWindow: Disco local items: complete:%d, items:%d, remaining:%d, fraction:%f", 
+	DEBUG_MSG (("TransportWindow: Disco local items: complete:%d, items:%d, remaining:%d, fraction:%f",
 		   (gint)total - (gint)remaining, (gint)remaining, (gint)total, (gfloat)fraction));
 
-	str = g_strdup_printf (_("Searching Local Services (%d of %d)"), 
+	str = g_strdup_printf (_("Searching Local Services (%d of %d)"),
 			       (gint)total - (gint)remaining, (gint)total);
 
-	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching),
 				       fraction);
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching),
 				   str);
 
 	g_free (str);
 
-	if (!window->service_found &&  
+	if (!window->service_found &&
 	    (!item ||
 	     !gossip_transport_disco_item_has_feature (item, "jabber:iq:register") ||
 	     !gossip_transport_disco_item_has_category (item, "gateway") ||
 	     !gossip_transport_disco_item_has_type (item, window->disco_type))) {
 		if (timeout) {
 			DEBUG_MSG (("TransportWindow: Disco timed out"));
-		} 
+		}
 
 		if (last_item) {
 			DEBUG_MSG (("TransportWindow: All local disco services received"));
@@ -432,18 +432,18 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 		}
 
 		return;
-	} 
+	}
 
 	/* check we are not already registered, if so, we want to look
 	   further at other servers because we might be registering a
 	   second transport. */
 	account = gossip_transport_account_find_by_disco_type (window->al,
 							       window->disco_type);
-	if (account && gossip_jid_equals_without_resource (gossip_transport_account_get_jid (account), 
+	if (account && gossip_jid_equals_without_resource (gossip_transport_account_get_jid (account),
 							   gossip_transport_disco_item_get_jid (item))) {
 		already_registered = TRUE;
-	} 
-	    
+	}
+
 	if (!window->service_found && !already_registered) {
 		GossipJID *jid;
 
@@ -452,22 +452,22 @@ transport_add_window_check_local_cb (GossipTransportDisco      *disco,
 
 		jid = gossip_transport_disco_item_get_jid (item);
 		jid = gossip_jid_ref (jid);
-		
-		DEBUG_MSG (("TransportWindow: Disco service found: '%s'!", 
+
+		DEBUG_MSG (("TransportWindow: Disco service found: '%s'!",
 			    gossip_jid_get_full (jid)));
-		
+
 		transport_add_window_disco_cleanup (window);
-		
+
 		if (timeout) {
 			DEBUG_MSG (("TransportWindow: Disco timed out"));
 		}
-		
+
 		if (last_item) {
 			DEBUG_MSG (("TransportWindow: All local disco services received"));
 		}
-		
+
 		transport_add_window_requirements (window, jid);
-		
+
 		gossip_jid_unref (jid);
 	}
 }
@@ -481,9 +481,9 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
-	
+
 	DEBUG_MSG (("TransportWindow: Checking other services, "
-		    "protocol:'%s' not found locally", 
+		    "protocol:'%s' not found locally",
 		   window->disco_type));
 
 	jabber = gossip_transport_account_list_get_jabber (window->al);
@@ -496,7 +496,7 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 						     (GSourceFunc)transport_add_window_progress_cb,
 						     GTK_PROGRESS_BAR (window->progressbar_searching));
 
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching), 
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching),
 				   _("Searching 3rd Party Services..."));
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_protocol));
@@ -508,13 +508,13 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 		gtk_tree_model_get (model, &iter, COL_DISCO_TYPE_DATA, &protocol, -1);
 		g_return_if_fail (protocol != NULL);
 
- 		DEBUG_MSG (("TransportWindow: Only looking up %d services from "
-			    "protocol service listing",  
- 			   SEARCH_MAX)); 
-		
+		DEBUG_MSG (("TransportWindow: Only looking up %d services from "
+			    "protocol service listing",
+			   SEARCH_MAX));
+
 		l = gossip_transport_protocol_get_services (protocol);
-		
- 		for (count=0; l && count < SEARCH_MAX; l=l->next, count++) { 
+
+		for (count=0; l && count < SEARCH_MAX; l=l->next, count++) {
 			GossipTransportDisco  *disco;
 			GossipTransportService *service;
 			const gchar           *host;
@@ -522,11 +522,11 @@ transport_add_window_check_others (GossipTransportAddWindow *window)
 			service = (GossipTransportService*) l->data;
 			host = gossip_transport_service_get_host (service);
 
-			DEBUG_MSG (("TransportWindow: Running disco on remote service:'%s'", 
+			DEBUG_MSG (("TransportWindow: Running disco on remote service:'%s'",
 				    host));
 
 			disco = gossip_transport_disco_request_info (jabber,
-								     host, 
+								     host,
 								     (GossipTransportDiscoItemFunc) transport_add_window_check_others_cb,
 								     window);
 
@@ -548,8 +548,8 @@ transport_add_window_progress_cb (GtkProgressBar *progress_bar)
 }
 
 static void
-transport_add_window_check_others_cb (GossipTransportDisco     *disco, 
-				      GossipTransportDiscoItem *item, 
+transport_add_window_check_others_cb (GossipTransportDisco     *disco,
+				      GossipTransportDiscoItem *item,
 				      gboolean                  last_item,
 				      gboolean                  timeout,
 				      GError                   *error,
@@ -568,13 +568,13 @@ transport_add_window_check_others_cb (GossipTransportDisco     *disco,
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
 
 	jid = gossip_transport_disco_item_get_jid (item);
-	
+
 	window->discos_received++;
 
-	DEBUG_MSG (("TransportWindow: Disco checking item with jid:'%s'...", 
+	DEBUG_MSG (("TransportWindow: Disco checking item with jid:'%s'...",
 		    gossip_jid_get_full (jid)));
 
-	str = g_strdup_printf (_("Searching 3rd Party Services (%d of %d)"), 
+	str = g_strdup_printf (_("Searching 3rd Party Services (%d of %d)"),
 			       (gint)window->discos_received, (gint)SEARCH_MAX);
 
 	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_searching),
@@ -589,7 +589,7 @@ transport_add_window_check_others_cb (GossipTransportDisco     *disco,
 			g_source_remove (window->progress_timeout_id);
 			window->progress_timeout_id = 0;
 		}
-			
+
 		gtk_widget_show (window->label_service_response);
 		gtk_widget_hide (window->progressbar_searching);
 
@@ -603,30 +603,30 @@ transport_add_window_check_others_cb (GossipTransportDisco     *disco,
 						 "Please try again later."));
 			gtk_label_set_markup (GTK_LABEL (window->label_service_response), str);
 			g_free (str);
-						
+
 			gtk_widget_hide (window->scrolledwindow_service);
 
-			gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-							   FALSE, FALSE, TRUE, TRUE); 
+			gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+							   FALSE, FALSE, TRUE, TRUE);
 		} else {
 			str = g_strdup_printf ("%s\n%s",
 					       _("Select your preferred service."),
 					       _("This will be used to configure your account details."));
 
 			gtk_widget_show (window->scrolledwindow_service);
-			
+
 			gtk_label_set_markup (GTK_LABEL (window->label_service_response), str);
 			g_free (str);
 		}
 	}
 
-	if (item && 
+	if (item &&
 	    !timeout &&
 	    gossip_transport_disco_item_has_feature (item, "jabber:iq:register") &&
 	    gossip_transport_disco_item_has_category (item, "gateway") &&
 	    gossip_transport_disco_item_has_type (item, window->disco_type)) {
 		gtk_list_store_append (store, &iter);
-		gtk_list_store_set (store, &iter, 
+		gtk_list_store_set (store, &iter,
 				    COL_DISCO_SERVICE_NAME, NULL,
 				    COL_DISCO_SERVICE_JID, gossip_jid_get_full (jid),
 				    COL_DISCO_SERVICE_CAN_REGISTER, TRUE,
@@ -644,14 +644,14 @@ transport_add_window_requirements (GossipTransportAddWindow *window, GossipJID *
 	}
 
 	DEBUG_MSG (("TransportWindow: Asking for disco registration "
-		    "requirements for protocol:'%s' with service jid:'%s'", 
-		   window->disco_type, 
+		    "requirements for protocol:'%s' with service jid:'%s'",
+		   window->disco_type,
 		   gossip_jid_get_full (jid)));
 
 	/* set up widgets */
 	gtk_label_set_text (GTK_LABEL (window->label_service), gossip_jid_get_full (jid));
 
-	gnome_druid_set_page (GNOME_DRUID (window->druid), 
+	gnome_druid_set_page (GNOME_DRUID (window->druid),
 			      GNOME_DRUID_PAGE (window->page_3));
 
 	/* send disco request */
@@ -703,18 +703,18 @@ transport_add_window_requirements_cb (GossipJID                *jid,
 	   After looking at PSI and JEP-0077, registrations are now
 	   accepted without a "key", but older services still require
 	   a key.  To keep backwards compatibility, we will allow
-	   registration without a key.  
+	   registration without a key.
 	*/
 
 	if (!key) {
 		gchar *str;
-		
+
 		if (username) {
 			gchar *reg_str;
 
 			reg_str = g_strdup_printf (_("The service confirmed the user '%s' is already registered."),
 						   username);
-							  
+
 			str = g_strdup_printf ("<b>%s</b>\n\n%s\n\n%s\n\n%s",
 					       _("Unable to Register"),
 					       _("When registering a token is provided by the service to register with, "
@@ -793,7 +793,7 @@ transport_add_window_requirements_cb (GossipJID                *jid,
 
 	/* we are bypassing using the instructions from the service
 	   because usually they are in different languages */
- 	gtk_widget_show (window->label_instructions); 
+	gtk_widget_show (window->label_instructions);
 }
 
 static void
@@ -822,15 +822,15 @@ transport_add_window_register (GossipTransportAddWindow *window)
 
 	/* register transport */
 	DEBUG_MSG (("TransportWindow: Requesting disco registration"));
- 	gossip_transport_register (jabber,
+	gossip_transport_register (jabber,
 				   window->jid,
-				   window->key, 
+				   window->key,
 				   window->require_username ? username : NULL,
 				   window->require_password ? password : NULL,
 				   window->require_nick ? nick : NULL,
 				   window->require_email ? email : NULL,
-				   (GossipTransportRegisterFunc) transport_add_window_register_cb, 
-				   window); 
+				   (GossipTransportRegisterFunc) transport_add_window_register_cb,
+				   window);
 }
 
 static void
@@ -839,8 +839,8 @@ transport_add_window_register_cb (GossipJID                *jid,
 				  const gchar              *error_reason,
 				  GossipTransportAddWindow *window)
 {
- 	gchar *str; 
-		
+	gchar *str;
+
 	if (error_code || error_reason) {
 		gtk_widget_hide (window->progressbar_registering);
 
@@ -851,17 +851,17 @@ transport_add_window_register_cb (GossipJID                *jid,
 		g_free (str);
 
 		gnome_druid_set_show_finish (GNOME_DRUID (window->druid), TRUE);
-		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-						   FALSE, FALSE, TRUE, TRUE); 
+		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+						   FALSE, FALSE, TRUE, TRUE);
 		return;
-	} 
+	}
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_registering), 0.5);
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_registering), 
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_registering),
 				   _("Configuring Roster"));
-	
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, FALSE, FALSE, TRUE); 
+
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, FALSE, FALSE, TRUE);
 }
 
 static void
@@ -870,7 +870,7 @@ transport_add_window_roster_update_cb (GossipProtocol           *protocol,
 				       GossipTransportAddWindow *window)
 {
 	guint id;
-	
+
 	/* if already set, remove so we always wait another 2 seconds
 	   after the last update */
 	if (window->roster_timeout_id) {
@@ -878,34 +878,34 @@ transport_add_window_roster_update_cb (GossipProtocol           *protocol,
 	}
 
 	/* allow 2 seconds of no activity to same OK we are done here */
-	id = g_timeout_add (2000, 
+	id = g_timeout_add (2000,
 			    (GSourceFunc) transport_add_window_roster_timeout_cb,
 			    window);
-				    
+
 	window->roster_timeout_id = id;
 }
 
 static gboolean
 transport_add_window_roster_timeout_cb (GossipTransportAddWindow *window)
 {
- 	gchar *str; 
+	gchar *str;
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_registering), 1);
 	gtk_widget_hide (window->progressbar_registering);
-	
+
 	/* show success */
 	str = g_strdup_printf ("<b>%s</b>\n\n%s",
 			       _("Registration Successful!"),
 			       _("You are now able to add contacts using this transport."));
 
 	gtk_label_set_markup (GTK_LABEL (window->label_register_result), str);
-	
+
 	g_free (str);
 
 	/* set up buttons */
 	gnome_druid_set_show_finish (GNOME_DRUID (window->druid), TRUE);
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, TRUE, FALSE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, TRUE, FALSE, TRUE);
 
 	window->roster_timeout_id = 0;
 
@@ -924,20 +924,20 @@ transport_add_window_protocol_setup (GossipTransportAddWindow *window)
 	store = gtk_list_store_new (COL_DISCO_TYPE_COUNT,
 				    G_TYPE_POINTER,  /* object */
 				    G_TYPE_BOOLEAN); /* editable */
-	
-	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_protocol), 
+
+	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_protocol),
 				 GTK_TREE_MODEL (store));
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_protocol));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
-	g_signal_connect (G_OBJECT (selection), "changed", 
+	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (transport_add_window_protocol_selection_changed_cb), window);
 
 
 	transport_add_window_protocol_populate_columns (window);
 
- 	protocols = gossip_transport_protocol_get_all ();
+	protocols = gossip_transport_protocol_get_all ();
 
 	/* populate protocols */
 	for (l=protocols; l; l=l->next) {
@@ -955,21 +955,21 @@ transport_add_window_protocol_setup (GossipTransportAddWindow *window)
 	g_object_unref (store);
 }
 
-static void 
+static void
 transport_add_window_protocol_populate_columns (GossipTransportAddWindow *window)
 {
-	GtkTreeViewColumn *column; 
+	GtkTreeViewColumn *column;
 	GtkCellRenderer   *cell;
-	
+
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (window->treeview_protocol), FALSE);
 
 	column = gtk_tree_view_column_new ();
-	
+
 	cell = gtk_cell_renderer_pixbuf_new ();
 	gtk_tree_view_column_pack_start (column, cell, FALSE);
-	gtk_tree_view_column_set_cell_data_func (column, cell, 
+	gtk_tree_view_column_set_cell_data_func (column, cell,
 						 (GtkTreeCellDataFunc) transport_add_window_protocol_pixbuf_cell_data_func,
-						 window, 
+						 window,
 						 NULL);
 
 	cell = gtk_cell_renderer_text_new ();
@@ -982,7 +982,7 @@ transport_add_window_protocol_populate_columns (GossipTransportAddWindow *window
 	gtk_tree_view_append_column (GTK_TREE_VIEW (window->treeview_protocol), column);
 }
 
-static void  
+static void
 transport_add_window_protocol_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 						      GtkCellRenderer   *cell,
 						      GtkTreeModel      *model,
@@ -997,7 +997,7 @@ transport_add_window_protocol_pixbuf_cell_data_func (GtkTreeViewColumn *tree_col
 	GdkPixbuf               *pixbuf = NULL;
 	gint                     w, h;
 	gint                     size = 48;  /* default size */
-	
+
 	gtk_tree_model_get (model, iter, COL_DISCO_TYPE_DATA, &protocol, -1);
 
 	g_return_if_fail (protocol != NULL);
@@ -1024,14 +1024,14 @@ transport_add_window_protocol_pixbuf_cell_data_func (GtkTreeViewColumn *tree_col
 		} else {
 			/* we average the two, this way if the height
 			   and width are not equal, they meet in the middle */
-			size = (w + h) / 2; 
+			size = (w + h) / 2;
 		}
 	}
 
 	if (core_icon) {
 		GError       *error = NULL;
 		GtkIconTheme *theme;
-				
+
 		theme = gtk_icon_theme_get_default ();
 		pixbuf = gtk_icon_theme_load_icon (theme,
 						   core_icon, /* icon name */
@@ -1042,20 +1042,20 @@ transport_add_window_protocol_pixbuf_cell_data_func (GtkTreeViewColumn *tree_col
 			g_warning ("could not load icon: %s", error->message);
 			g_error_free (error);
 
-			g_object_set (cell, 
+			g_object_set (cell,
 				      "visible", TRUE,
 				      "stock_id", NULL,
 				      "pixbuf", NULL,
-				      NULL); 
+				      NULL);
 
 			return;
 		}
 	} else if (stock_id) {
-		g_object_set (cell, 
+		g_object_set (cell,
 			      "visible", TRUE,
 			      "stock-id", stock_id,
-			      "stock-size", GTK_ICON_SIZE_DND, 
-			      NULL); 
+			      "stock-size", GTK_ICON_SIZE_DND,
+			      NULL);
 
 		return;
 	} else if (icon) {
@@ -1067,26 +1067,26 @@ transport_add_window_protocol_pixbuf_cell_data_func (GtkTreeViewColumn *tree_col
 			g_warning ("could not load icon: %s", error->message);
 			g_error_free (error);
 
-			g_object_set (cell, 
+			g_object_set (cell,
 				      "visible", TRUE,
 				      "stock_id", NULL,
 				      "pixbuf", NULL,
-				      NULL); 
+				      NULL);
 
 			return;
 		}
 	}
 
-	g_object_set (cell, 
+	g_object_set (cell,
 		      "visible", TRUE,
 		      "stock_id", NULL,
 		      "pixbuf", pixbuf,
-		      NULL); 
-			
-	g_object_unref (pixbuf); 
+		      NULL);
+
+	g_object_unref (pixbuf);
 }
 
-static void  
+static void
 transport_add_window_protocol_name_cell_data_func (GtkTreeViewColumn        *tree_column,
 						    GtkCellRenderer          *cell,
 						    GtkTreeModel             *model,
@@ -1112,8 +1112,8 @@ transport_add_window_protocol_name_cell_data_func (GtkTreeViewColumn        *tre
 	name = gossip_transport_protocol_get_name (protocol);
 	description = gossip_transport_protocol_get_description (protocol);
 
-	str = g_strdup_printf ("%s%s%s", 
-			       name, 
+	str = g_strdup_printf ("%s%s%s",
+			       name,
 			       description ? "\n" : "",
 			       description ? description : "");
 
@@ -1140,7 +1140,7 @@ transport_add_window_protocol_name_cell_data_func (GtkTreeViewColumn        *tre
 	attr_size->start_index = attr_style->start_index;
 	attr_size->end_index = -1;
 	pango_attr_list_insert (attr_list, attr_size);
-	
+
 	g_object_set (cell,
 		      "visible", TRUE,
 		      "weight", PANGO_WEIGHT_NORMAL,
@@ -1163,14 +1163,14 @@ transport_add_window_service_setup (GossipTransportAddWindow *window)
 				    G_TYPE_STRING,   /* name */
 				    G_TYPE_STRING,   /* jid */
 				    G_TYPE_BOOLEAN); /* can register */
-	
-	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_service), 
+
+	gtk_tree_view_set_model (GTK_TREE_VIEW (window->treeview_service),
 				 GTK_TREE_MODEL (store));
 
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_service));
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
-	g_signal_connect (G_OBJECT (selection), "changed", 
+	g_signal_connect (G_OBJECT (selection), "changed",
 			  G_CALLBACK (transport_add_window_service_selection_changed_cb), window);
 
 	transport_add_window_service_populate_columns (window);
@@ -1178,11 +1178,11 @@ transport_add_window_service_setup (GossipTransportAddWindow *window)
 	g_object_unref (store);
 }
 
-static void 
+static void
 transport_add_window_service_populate_columns (GossipTransportAddWindow *window)
 {
 	GtkCellRenderer   *renderer;
-	GtkTreeViewColumn *column; 
+	GtkTreeViewColumn *column;
 
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (window->treeview_service), FALSE);
 
@@ -1202,8 +1202,8 @@ transport_add_window_protocol_selection_changed_cb (GtkTreeSelection         *tr
 
 	next = (gtk_tree_selection_count_selected_rows (treeselection) == 1);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, next, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, next, TRUE, TRUE);
 }
 
 static void
@@ -1214,13 +1214,13 @@ transport_add_window_service_selection_changed_cb (GtkTreeSelection         *tre
 
 	next = transport_add_window_check_service_valid (window);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, next, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, next, TRUE, TRUE);
 }
 
 static void
 transport_add_window_prepare_page_1 (GnomeDruidPage           *page,
-				     GnomeDruid               *druid, 
+				     GnomeDruid               *druid,
 				     GossipTransportAddWindow *window)
 {
 	GtkTreeView  *view;
@@ -1233,13 +1233,13 @@ transport_add_window_prepare_page_1 (GnomeDruidPage           *page,
 	store = GTK_LIST_STORE (gtk_tree_view_get_model (view));
 	gtk_list_store_clear (store);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, FALSE, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, FALSE, TRUE, TRUE);
 }
 
 static void
 transport_add_window_prepare_page_2 (GnomeDruidPage           *page,
-				     GnomeDruid               *druid, 
+				     GnomeDruid               *druid,
 				     GossipTransportAddWindow *window)
 {
 	GtkTreeModel     *model;
@@ -1259,25 +1259,25 @@ transport_add_window_prepare_page_2 (GnomeDruidPage           *page,
 	gtk_widget_show (window->progressbar_searching);
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_searching), 0);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, FALSE, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, FALSE, TRUE, TRUE);
 
 	/* get selected item to know which protocol to configure */
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_protocol));
 	if (gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		GossipTransportProtocol *protocol;
 
-		gtk_tree_model_get (model, &iter, 
+		gtk_tree_model_get (model, &iter,
 				    COL_DISCO_TYPE_DATA, &protocol,
 				    -1);
 
 		g_return_if_fail (protocol != NULL);
 
 		window->disco_type = gossip_transport_protocol_get_disco_type (protocol);
-	} 
-	
+	}
+
 	/* make sure there are no discos left around first */
-	transport_add_window_disco_cleanup (window); 
+	transport_add_window_disco_cleanup (window);
 
 	/* look up local service availability first */
 	transport_add_window_check_local (window);
@@ -1285,13 +1285,13 @@ transport_add_window_prepare_page_2 (GnomeDruidPage           *page,
 
 static void
 transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
-				     GnomeDruid               *druid, 
+				     GnomeDruid               *druid,
 				     GossipTransportAddWindow *window)
 {
 	GtkTreeModel     *model;
 	GtkTreeSelection *selection;
 	GtkTreeIter       iter;
-	
+
 	GossipJID        *jid = NULL;
 	const gchar      *jid_str;
 
@@ -1302,7 +1302,7 @@ transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
 	}
 
 	/* set up widgets */
-	gtk_label_set_markup (GTK_LABEL (window->label_requirements_result), 
+	gtk_label_set_markup (GTK_LABEL (window->label_requirements_result),
 			      "<b>Requested service requirements, please wait...</b>");
 
 	gtk_widget_show (window->label_requirements_result);
@@ -1310,8 +1310,8 @@ transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
 	gtk_widget_hide (window->label_service);
 	gtk_widget_hide (window->label_stub_service);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, FALSE, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, FALSE, TRUE, TRUE);
 
 	/* if local, we have already done what follows */
 	if (window->using_local_service) {
@@ -1320,20 +1320,20 @@ transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
 
 	/* if we have a prefered service, use that first */
 	jid_str = gtk_entry_get_text (GTK_ENTRY (window->entry_service));
-	
+
 	if (jid_str && strlen (jid_str) > 0) {
 		jid = gossip_jid_new (jid_str);
 	}
-	
+
 	/* get selected item to know which service to use */
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->treeview_service));
 	if (!jid && gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		gchar *str;
-		
+
 		gtk_tree_model_get (model, &iter, COL_DISCO_SERVICE_JID, &str, -1);
 		jid = gossip_jid_new (str);
 		g_free (str);
-	} 
+	}
 
 	transport_add_window_requirements (window, jid);
 	gossip_jid_unref (jid);
@@ -1341,7 +1341,7 @@ transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
 
 static void
 transport_add_window_prepare_page_4 (GnomeDruidPage           *page,
-				     GnomeDruid               *druid, 
+				     GnomeDruid               *druid,
 				     GossipTransportAddWindow *window)
 {
 	gtk_label_set_markup (GTK_LABEL (window->label_register_result),
@@ -1352,31 +1352,31 @@ transport_add_window_prepare_page_4 (GnomeDruidPage           *page,
 	gtk_widget_show (window->progressbar_registering);
 
 	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (window->progressbar_registering), 0);
-	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_registering), 
+	gtk_progress_bar_set_text (GTK_PROGRESS_BAR (window->progressbar_registering),
 				   _("Registering With Service"));
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, FALSE, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, FALSE, TRUE, TRUE);
 
 	transport_add_window_register (window);
 }
 
 static void
 transport_add_window_finish_page_4 (GnomeDruidPage           *page,
-				    GtkWidget                *widget, 
+				    GtkWidget                *widget,
 				    GossipTransportAddWindow *window)
 {
 	gtk_widget_destroy (window->window);
 }
 
 static void
-transport_add_window_druid_stop (GtkWidget                *widget, 
+transport_add_window_druid_stop (GtkWidget                *widget,
 				 GossipTransportAddWindow *window)
 {
 	gtk_widget_destroy (window->window);
 }
 
-static void 
+static void
 transport_add_window_entry_details_changed (GtkEntry                 *entry,
 					    GossipTransportAddWindow *window)
 {
@@ -1389,24 +1389,24 @@ transport_add_window_entry_details_changed (GtkEntry                 *entry,
 	password = gtk_entry_get_text (GTK_ENTRY (window->entry_password));
 	email = gtk_entry_get_text (GTK_ENTRY (window->entry_email));
 	nickname = gtk_entry_get_text (GTK_ENTRY (window->entry_nickname));
-	
-	if ((GTK_WIDGET_VISIBLE (window->entry_username) && 
+
+	if ((GTK_WIDGET_VISIBLE (window->entry_username) &&
 	     (!username || strlen (username) < 1)) ||
-	    (GTK_WIDGET_VISIBLE (window->entry_password) && 
+	    (GTK_WIDGET_VISIBLE (window->entry_password) &&
 	     (!password || strlen (password) < 1)) ||
-	    (GTK_WIDGET_VISIBLE (window->entry_email) && 
+	    (GTK_WIDGET_VISIBLE (window->entry_email) &&
 	     (!email || strlen (email) < 1)) ||
-	    (GTK_WIDGET_VISIBLE (window->entry_nickname) && 
+	    (GTK_WIDGET_VISIBLE (window->entry_nickname) &&
 	     (!nickname || strlen (nickname) < 1))) {
-		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-						   FALSE, FALSE, TRUE, TRUE); 
+		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+						   FALSE, FALSE, TRUE, TRUE);
 	} else {
-		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-						   FALSE, TRUE, TRUE, TRUE); 
-	}		
+		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+						   FALSE, TRUE, TRUE, TRUE);
+	}
 }
 
-static void 
+static void
 transport_add_window_entry_service_changed (GtkEntry                 *entry,
 					   GossipTransportAddWindow *window)
 {
@@ -1414,8 +1414,8 @@ transport_add_window_entry_service_changed (GtkEntry                 *entry,
 
 	next = transport_add_window_check_service_valid (window);
 
-	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid), 
-					   FALSE, next, TRUE, TRUE); 
+	gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
+					   FALSE, next, TRUE, TRUE);
 }
 
 static gboolean
@@ -1438,9 +1438,9 @@ transport_add_window_check_service_valid (GossipTransportAddWindow *window)
 
 		at = strchr (str, '@');
 		dot = strchr (str, '.');
-		if (!at && 
-		    dot != str + 1 && 
-		    dot != str + len - 1 && 
+		if (!at &&
+		    dot != str + 1 &&
+		    dot != str + len - 1 &&
 		    dot != str + len - 2) {
 			prefered_service = TRUE;
 		}
@@ -1464,12 +1464,12 @@ transport_add_window_protocol_model_foreach_cb (GtkTreeModel *model,
 
 	gtk_tree_model_get (model, iter, COL_DISCO_TYPE_DATA, &protocol, -1);
 	gossip_transport_protocol_unref (protocol);
-	
+
 	return FALSE;
 }
 
 static void
-transport_add_window_destroy (GtkWidget                *widget, 
+transport_add_window_destroy (GtkWidget                *widget,
 			      GossipTransportAddWindow *window)
 {
 	GossipJabber *jabber;
@@ -1502,11 +1502,11 @@ transport_add_window_destroy (GtkWidget                *widget,
 	g_signal_handlers_disconnect_by_func (GOSSIP_PROTOCOL (jabber),
 					      transport_add_window_roster_update_cb,
 					      window);
-	
+
 	g_free (window->key);
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (window->treeview_protocol));
 	gtk_tree_model_foreach (model, transport_add_window_protocol_model_foreach_cb, NULL);
 
- 	g_free (window); 
+	g_free (window);
 }

@@ -45,7 +45,7 @@ enum {
 
 	/* Used to get password from user. */
 	GET_PASSWORD,
-	
+
 	SUBSCRIPTION_REQUEST,
 
 	ERROR,
@@ -74,42 +74,42 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->set_vcard            = NULL;
 	klass->send_message         = NULL;
 	klass->send_composing       = NULL;
-        klass->find_contact         = NULL;
-        klass->add_contact          = NULL;
-        klass->rename_contact       = NULL;
-        klass->remove_contact       = NULL;
+	klass->find_contact         = NULL;
+	klass->add_contact          = NULL;
+	klass->rename_contact       = NULL;
+	klass->remove_contact       = NULL;
 	klass->update_contact       = NULL;
 	klass->rename_group         = NULL;
 	klass->get_contacts         = NULL;
 	klass->get_own_contact      = NULL;
 	klass->get_active_resource  = NULL;
 	klass->get_groups           = NULL;
- 	klass->get_vcard            = NULL;
- 	klass->get_version          = NULL;
+	klass->get_vcard            = NULL;
+	klass->get_version          = NULL;
 	klass->register_account     = NULL;
- 
-	signals[LOGGED_IN] = 
+
+	signals[LOGGED_IN] =
 		g_signal_new ("logged-in",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_ACCOUNT);
 
 	/* Maybe include a reason for disconnect? */
-	signals[LOGGED_OUT] = 
+	signals[LOGGED_OUT] =
 		g_signal_new ("logged-out",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
 			      libgossip_marshal_VOID__OBJECT_INT,
-			      G_TYPE_NONE, 
+			      G_TYPE_NONE,
 			      2, GOSSIP_TYPE_ACCOUNT, G_TYPE_INT);
 
-	signals[NEW_MESSAGE] = 
+	signals[NEW_MESSAGE] =
 		g_signal_new ("new-message",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -119,7 +119,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_MESSAGE);
 
-	signals[CONTACT_ADDED] = 
+	signals[CONTACT_ADDED] =
 		g_signal_new ("contact-added",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -129,7 +129,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[CONTACT_UPDATED] = 
+	signals[CONTACT_UPDATED] =
 		g_signal_new ("contact-updated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -138,7 +138,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
-	
+
 	signals[CONTACT_PRESENCE_UPDATED] =
 		g_signal_new ("contact-presence-updated",
 			      G_TYPE_FROM_CLASS (klass),
@@ -149,7 +149,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[CONTACT_REMOVED] = 
+	signals[CONTACT_REMOVED] =
 		g_signal_new ("contact-removed",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -159,7 +159,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[COMPOSING] = 
+	signals[COMPOSING] =
 		g_signal_new ("composing",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -179,17 +179,17 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_STRING,
 			      1, GOSSIP_TYPE_ACCOUNT);
 
-        signals[SUBSCRIPTION_REQUEST] =
-                g_signal_new ("subscription-request",
+	signals[SUBSCRIPTION_REQUEST] =
+		g_signal_new ("subscription-request",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-                              libgossip_marshal_VOID__OBJECT,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
 
-	signals[ERROR] = 
+	signals[ERROR] =
 		g_signal_new ("error",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
@@ -239,7 +239,7 @@ gossip_protocol_setup (GossipProtocol *protocol,
 	}
 }
 
-void 
+void
 gossip_protocol_login (GossipProtocol *protocol)
 {
 	GossipProtocolClass *klass;
@@ -327,7 +327,7 @@ gossip_protocol_is_ssl_supported (GossipProtocol *protocol)
 	return FALSE;
 }
 
-const gchar * 
+const gchar *
 gossip_protocol_get_example_username (GossipProtocol *protocol)
 {
 	GossipProtocolClass *klass;
@@ -342,7 +342,7 @@ gossip_protocol_get_example_username (GossipProtocol *protocol)
 	return NULL;
 }
 
-gchar * 
+gchar *
 gossip_protocol_get_default_server (GossipProtocol *protocol,
 				    const gchar    *username)
 {
@@ -359,7 +359,7 @@ gossip_protocol_get_default_server (GossipProtocol *protocol,
 	return NULL;
 }
 
-guint16 
+guint16
 gossip_protocol_get_default_port (GossipProtocol *protocol,
 				  gboolean        use_ssl)
 {
@@ -376,7 +376,7 @@ gossip_protocol_get_default_port (GossipProtocol *protocol,
 }
 
 void
-gossip_protocol_send_message (GossipProtocol *protocol, 
+gossip_protocol_send_message (GossipProtocol *protocol,
 			      GossipMessage  *message)
 {
 	GossipProtocolClass *klass;
@@ -405,7 +405,7 @@ gossip_protocol_send_composing (GossipProtocol *protocol,
 }
 
 void
-gossip_protocol_set_presence (GossipProtocol *protocol, 
+gossip_protocol_set_presence (GossipProtocol *protocol,
 			      GossipPresence *presence)
 {
 	GossipProtocolClass *klass;
@@ -433,7 +433,7 @@ gossip_protocol_set_subscription (GossipProtocol *protocol,
 	}
 }
 
-gboolean 
+gboolean
 gossip_protocol_set_vcard (GossipProtocol        *protocol,
 			   GossipVCard           *vcard,
 			   GossipResultCallback   callback,
@@ -447,7 +447,7 @@ gossip_protocol_set_vcard (GossipProtocol        *protocol,
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->set_vcard) {
 		return klass->set_vcard (protocol, vcard,
-					       callback, user_data, 
+					       callback, user_data,
 					       error);
 	}
 
@@ -459,39 +459,39 @@ GossipContact *
 gossip_protocol_find_contact (GossipProtocol *protocol,
 			      const gchar    *id)
 {
-        GossipProtocolClass *klass;
+	GossipProtocolClass *klass;
 
 	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->find_contact) {
-                return klass->find_contact (protocol, id);
-        }
+		return klass->find_contact (protocol, id);
+	}
 
 	return NULL;
 }
 
 void
 gossip_protocol_add_contact (GossipProtocol *protocol,
-                             const gchar    *id,
-                             const gchar    *name,
-                             const gchar    *group,
-                             const gchar    *message)
+			     const gchar    *id,
+			     const gchar    *name,
+			     const gchar    *group,
+			     const gchar    *message)
 {
-        GossipProtocolClass *klass;
+	GossipProtocolClass *klass;
 
 	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
 
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->add_contact) {
-                klass->add_contact (protocol, id, name, group, message);
-        }
+		klass->add_contact (protocol, id, name, group, message);
+	}
 }
 
 void
 gossip_protocol_rename_contact (GossipProtocol *protocol,
-                                GossipContact  *contact,
-                                const gchar    *new_name)
+				GossipContact  *contact,
+				const gchar    *new_name)
 {
 	GossipProtocolClass *klass;
 
@@ -505,7 +505,7 @@ gossip_protocol_rename_contact (GossipProtocol *protocol,
 
 void
 gossip_protocol_remove_contact (GossipProtocol *protocol,
-                                GossipContact  *contact)
+				GossipContact  *contact)
 {
 	GossipProtocolClass *klass;
 
@@ -519,7 +519,7 @@ gossip_protocol_remove_contact (GossipProtocol *protocol,
 
 void
 gossip_protocol_update_contact (GossipProtocol *protocol,
-                                GossipContact  *contact)
+				GossipContact  *contact)
 {
 	GossipProtocolClass *klass;
 
@@ -546,7 +546,7 @@ gossip_protocol_rename_group (GossipProtocol *protocol,
 	}
 }
 
-GossipContact * 
+GossipContact *
 gossip_protocol_get_own_contact (GossipProtocol *protocol)
 {
 	GossipProtocolClass *klass;
@@ -576,7 +576,7 @@ gossip_protocol_get_contacts (GossipProtocol *protocol)
 	return NULL;
 }
 
-const gchar * 
+const gchar *
 gossip_protocol_get_active_resource (GossipProtocol *protocol,
 				     GossipContact  *contact)
 {
@@ -592,7 +592,7 @@ gossip_protocol_get_active_resource (GossipProtocol *protocol,
 	return NULL;
 }
 
-GList * 
+GList *
 gossip_protocol_get_groups (GossipProtocol *protocol)
 {
 	GossipProtocolClass *klass;
@@ -621,7 +621,7 @@ gossip_protocol_get_vcard (GossipProtocol       *protocol,
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->get_vcard) {
 		return klass->get_vcard (protocol, contact,
-					 callback, user_data, 
+					 callback, user_data,
 					 error);
 	}
 
@@ -643,14 +643,14 @@ gossip_protocol_get_version (GossipProtocol         *protocol,
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->get_version) {
 		return klass->get_version (protocol, contact,
-						 callback, user_data, 
+						 callback, user_data,
 						 error);
 	}
 
 	/* Don't report error if protocol doesn't implement this */
 	return TRUE;
 }
- 
+
 void
 gossip_protocol_register_account (GossipProtocol          *protocol,
 				  GossipAccount           *account,

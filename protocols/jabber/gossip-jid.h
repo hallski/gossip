@@ -23,7 +23,7 @@
 
 #include <glib.h>
 
-typedef struct GossipJID GossipJID;		
+typedef struct GossipJID GossipJID;
 
 GossipJID *  gossip_jid_new                      (const gchar   *str_jid);
 GossipJID *  gossip_jid_ref                      (GossipJID     *jid);

@@ -80,14 +80,14 @@ static void ft_window_filechooser_response_cb  (GtkDialog          *dialog,
 void
 gossip_ft_window_init (GossipSession *session)
 {
- 	g_object_ref (session);
-	
-	g_signal_connect (session, 
+	g_object_ref (session);
+
+	g_signal_connect (session,
 			  "protocol-connected",
 			  G_CALLBACK (ft_window_protocol_connected_cb),
 			  NULL);
 
-	g_signal_connect (session, 
+	g_signal_connect (session,
 			  "protocol-disconnected",
 			  G_CALLBACK (ft_window_protocol_disconnected_cb),
 			  NULL);
@@ -96,11 +96,11 @@ gossip_ft_window_init (GossipSession *session)
 void
 gossip_ft_window_finalize (GossipSession *session)
 {
- 	g_signal_handlers_disconnect_by_func (session, 
-					      ft_window_protocol_connected_cb, 
+	g_signal_handlers_disconnect_by_func (session,
+					      ft_window_protocol_connected_cb,
 					      NULL);
- 	g_signal_handlers_disconnect_by_func (session, 
-					      ft_window_protocol_disconnected_cb, 
+	g_signal_handlers_disconnect_by_func (session,
+					      ft_window_protocol_disconnected_cb,
 					      NULL);
 
 	g_object_unref (session);
@@ -117,14 +117,14 @@ ft_window_protocol_connected_cb (GossipSession  *session,
 				 gpointer        user_data)
 {
 	g_signal_connect (protocol,
-                          "file-transfer-request",
-                          G_CALLBACK (ft_window_request_cb),
-                          session);
+			  "file-transfer-request",
+			  G_CALLBACK (ft_window_request_cb),
+			  session);
 
 	g_signal_connect (protocol,
-                          "file-transfer-error",
-                          G_CALLBACK (ft_window_error_cb),
-                          session);
+			  "file-transfer-error",
+			  G_CALLBACK (ft_window_error_cb),
+			  session);
 }
 
 static void
@@ -134,11 +134,11 @@ ft_window_protocol_disconnected_cb (GossipSession  *session,
 				    gint            reason,
 				    gpointer        user_data)
 {
- 	g_signal_handlers_disconnect_by_func (protocol, 
-					      ft_window_request_cb, 
+	g_signal_handlers_disconnect_by_func (protocol,
+					      ft_window_request_cb,
 					      session);
- 	g_signal_handlers_disconnect_by_func (protocol, 
-					      ft_window_error_cb, 
+	g_signal_handlers_disconnect_by_func (protocol,
+					      ft_window_error_cb,
 					      session);
 }
 
@@ -154,17 +154,17 @@ ft_window_request_cb (GossipProtocol *protocol,
 	event = gossip_event_new (GOSSIP_EVENT_FILE_TRANSFER_REQUEST);
 	contact = gossip_ft_get_contact (ft);
 
-	str = g_strdup_printf (_("New file transfer request from %s"), 
+	str = g_strdup_printf (_("New file transfer request from %s"),
 			       gossip_contact_get_name (contact));
 
-	g_object_set (event, 
-		      "message", str, 
+	g_object_set (event,
+		      "message", str,
 		      "data", ft,
 		      NULL);
 	g_free (str);
 
 	gossip_event_manager_add (gossip_app_get_event_manager (),
-				  event, 
+				  event,
 				  (GossipEventActivateFunction) ft_window_event_activated_cb,
 				  G_OBJECT (protocol));
 }
@@ -178,11 +178,11 @@ ft_window_error_cb (GossipProtocol *protocol,
 	GtkWidget      *dialog;
 	GtkMessageType  type;
 	const gchar    *str1, *str2;
-	
+
 	type = GTK_MESSAGE_ERROR;
 
 	str2 = error->message;
-		
+
 	switch (error->code) {
 	case GOSSIP_FT_ERROR_UNSUPPORTED:
 		type = GTK_MESSAGE_INFO;
@@ -193,10 +193,10 @@ ft_window_error_cb (GossipProtocol *protocol,
 		str1 = _("Your file transfer offer declined.");
 		str2 = _("The other user decided not to continue.");
 		break;
-		
+
 	case GOSSIP_FT_ERROR_UNKNOWN:
 	default:
-		str1 = _("Unknown error occurred during file transfer."); 
+		str1 = _("Unknown error occurred during file transfer.");
 		break;
 	}
 
@@ -207,7 +207,7 @@ ft_window_error_cb (GossipProtocol *protocol,
 						     "<b>%s</b>\n\n%s",
 						     str1,
 						     str2);
-	
+
 	g_signal_connect_swapped (dialog, "response",
 				  G_CALLBACK (gtk_widget_destroy),
 				  dialog);
@@ -234,7 +234,7 @@ ft_window_event_activated_cb (GossipEventManager *event_manager,
 				  NULL,
 				  gossip_ft_get_contact (ft),
 				  (GossipVCardCallback) ft_window_vcard_cb,
-				  data, 
+				  data,
 				  NULL);
 }
 
@@ -247,8 +247,8 @@ ft_window_vcard_cb (GossipResult  result,
 	GtkWidget     *dialog;
 	GtkWidget     *who_label;
 	GtkWidget     *id_label;
- 	GtkWidget     *website_label;
- 	GtkWidget     *personal_table;
+	GtkWidget     *website_label;
+	GtkWidget     *personal_table;
 	GtkWidget     *file_name_label;
 	GtkWidget     *file_size_label;
 	const gchar   *name = NULL;
@@ -280,7 +280,7 @@ ft_window_vcard_cb (GossipResult  result,
 				      NULL);
 
 	if (name) {
-		who = g_strdup_printf (_("%s would like to send you a file."), 
+		who = g_strdup_printf (_("%s would like to send you a file."),
 				       name);
 	} else {
 		who = g_strdup (_("Someone would like to send you a file."));
@@ -305,7 +305,7 @@ ft_window_vcard_cb (GossipResult  result,
 
 		start = g_array_new (FALSE, FALSE, sizeof (gint));
 		end = g_array_new (FALSE, FALSE, sizeof (gint));
-		
+
 		num_matches = gossip_regex_match (GOSSIP_REGEX_ALL, url, start, end);
 
 		g_array_free (start, TRUE);
@@ -322,12 +322,12 @@ ft_window_vcard_cb (GossipResult  result,
 		gtk_container_add (GTK_CONTAINER (alignment), href);
 
 		gtk_table_attach (GTK_TABLE (personal_table),
-				  alignment, 
+				  alignment,
 				  1, 2,
 				  1, 2,
 				  GTK_FILL, GTK_FILL,
 				  0, 0);
-		
+
 		gtk_widget_show_all (personal_table);
 	} else {
 		gtk_widget_hide (website_label);
@@ -352,33 +352,33 @@ ft_window_request_dialog_cb (GtkWidget *dialog,
 	g_return_if_fail (GOSSIP_IS_FT (data->ft));
 
 	gtk_widget_destroy (dialog);
-	
+
 /* 	g_return_if_fail (GOSSIP_IS_CONTACT (contact)); */
 /* 	g_return_if_fail (file != NULL && strlen (file) > 0); */
 
 	if (response == GTK_RESPONSE_YES) {
-		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->protocol), 
+		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->protocol),
 					   gossip_ft_get_id (data->ft));
 	} else {
-		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->protocol), 
+		gossip_ft_provider_decline (GOSSIP_FT_PROVIDER (data->protocol),
 					    gossip_ft_get_id (data->ft));
 	}
-	
+
 	g_object_unref (data->protocol);
 	g_object_unref (data->ft);
 
 	if (data->vcard) {
 		g_object_unref (data->vcard);
 	}
-	
+
 	g_free (data);
 }
 
 /*
- * sending with the file chooser 
+ * sending with the file chooser
  */
 
-void 
+void
 gossip_ft_window_send_file (GossipContact *contact)
 {
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
@@ -386,7 +386,7 @@ gossip_ft_window_send_file (GossipContact *contact)
 	ft_window_filechooser_create (contact);
 }
 
-void 
+void
 gossip_ft_window_send_file_from_uri (GossipContact *contact,
 				     const gchar   *file)
 {
@@ -399,9 +399,9 @@ gossip_ft_window_send_file_from_uri (GossipContact *contact,
 
 	account = gossip_contact_get_account (contact);
 
- 	session = gossip_app_get_session (); 
+	session = gossip_app_get_session ();
 	provider = gossip_session_get_ft_provider (session, account);
-	
+
 	gossip_ft_provider_send (provider, contact, file);
 }
 
@@ -417,18 +417,18 @@ ft_window_filechooser_create (GossipContact *contact)
 			       "action", GTK_FILE_CHOOSER_ACTION_OPEN,
 			       "select-multiple", FALSE,
 			       NULL);
-	
+
 	gtk_window_set_title (GTK_WINDOW (dialog), _("Select a file"));
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				GTK_STOCK_OPEN, GTK_RESPONSE_OK,
 				NULL);
 
-	gtk_dialog_set_default_response (GTK_DIALOG (dialog), 
+	gtk_dialog_set_default_response (GTK_DIALOG (dialog),
 					 GTK_RESPONSE_OK);
 
 	g_signal_connect (dialog, "response",
-			  G_CALLBACK (ft_window_filechooser_response_cb), 
+			  G_CALLBACK (ft_window_filechooser_response_cb),
 			  g_object_ref (contact));
 
 	/* filters */
@@ -452,20 +452,20 @@ ft_window_filechooser_response_cb (GtkDialog     *dialog,
 
 		if (list) {
 			GSList *l;
-			
+
 			gossip_debug (DEBUG_DOMAIN, "File chooser selected files:");
-			
+
 			for (l = list; l; l = l->next) {
 				gchar *file;
-				
+
 				file = l->data;
-				
+
 				gossip_debug (DEBUG_DOMAIN, "\t%s", file);
 				gossip_ft_window_send_file_from_uri (contact, file);
-				
+
 				g_free (file);
 			}
-			
+
 			g_slist_free (list);
 		} else {
 			gossip_debug (DEBUG_DOMAIN, "File chooser had no files selected");
