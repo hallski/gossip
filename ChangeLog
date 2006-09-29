@@ -1,3 +1,10 @@
+2006-09-29  Martyn Russell  <martyn@imendio.com>
+
+	* MAINTAINERS:
+	* AUTHORS:
+	* gossip-about-dialog.c: Updated information and included Xavier
+	Claessens since he has made an outstanding contribution lately.
+
 2006-09-27  Mikael Hallendal  <micke@imendio.com>
 
 	* gossip.schemas.in:
