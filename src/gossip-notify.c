@@ -348,8 +348,12 @@ notify_new_message_contact_cb (NotifyNotification *notify,
 
 		message = GOSSIP_MESSAGE (gossip_event_get_data (event));
 		contact = gossip_message_get_sender (message);
-
+		
 		parent = GTK_WINDOW (gossip_app_get_window ());
+		if (!gossip_window_get_is_visible (parent)) {
+			parent = NULL;
+		}
+
 		gossip_contact_info_dialog_show (contact, parent);
 
 		g_hash_table_remove (event_notifications, notify);

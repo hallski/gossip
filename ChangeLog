@@ -1,3 +1,9 @@
+2006-09-30  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-notify.c (notify_new_message_contact_cb): Only use
+	the contact list as parent window if it's visible on the current
+	desktop. Fixes bug #358101.
+
 2006-09-30  Martyn Russell  <martyn@imendio.com>
 
 	* ui/main.glade: Updated the label for the new "Compact contact
