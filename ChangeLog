@@ -3,7 +3,8 @@
 	* ui/main.glade: Updated the label for the new "Compact contact
 	list" preference that Mikael added so it doesn't double up on the
 	mnemonic. Also add a separate tab for themeing since the "General"
-	tab is looking a little crowded.
+	tab is looking a little crowded. NOTE: Do not use glade-3 for
+	Gossip UI editing, it breaks translations.
 
 2006-09-30  Martyn Russell  <martyn@imendio.com>
 
