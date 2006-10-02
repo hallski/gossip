@@ -40,7 +40,7 @@
 
 #include "gossip-about-dialog.h"
 #include "gossip-accounts-dialog.h"
-#include "gossip-add-contact-window.h"
+#include "gossip-add-contact-dialog.h"
 #include "gossip-app.h"
 #include "gossip-chat.h"
 #include "gossip-chatrooms-window.h"
@@ -1292,7 +1292,7 @@ app_actions_add_contact_cb (GtkWidget *widget,
 
 	priv = GET_PRIV (app);
 
-	gossip_add_contact_window_show (GTK_WINDOW (priv->window), NULL);
+	gossip_add_contact_dialog_show (GTK_WINDOW (priv->window), NULL);
 }
 
 static void

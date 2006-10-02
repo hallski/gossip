@@ -21,6 +21,7 @@
 #include <config.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 #include <loudmouth/loudmouth.h>
 
@@ -116,9 +117,25 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 
 	node = lm_message_node_get_child (vcard_node, "EMAIL");
 	if (node) {
+		const gchar *email = NULL;
+
+		if (node->value) {
+			/* CRACK ALERT:
+			 * Included for legacy crappy vcards which
+			 * don't work and don't abide by the standards.
+			 */
+			email = node->value;
+		}
+
+		/* Correct method: */
 		node = lm_message_node_get_child (node, "USERID");
 		if (node && node->value) {
-			gossip_vcard_set_email (vcard, node->value);
+			email = node->value;
+		}
+
+		/* Some checking */
+		if (email && strchr (email, '@')) {
+			gossip_vcard_set_email (vcard, email);
 		}
 	}
 

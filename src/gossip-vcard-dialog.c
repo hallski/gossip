@@ -604,7 +604,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
-
 	g_object_unref (glade);
 
 	dialog->avatar_chooser = vcard_dialog_create_avatar_chooser ();

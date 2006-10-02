@@ -37,7 +37,7 @@ gossip_SOURCES = 				                        	\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
-	gossip-add-contact-window.c        gossip-add-contact-window.h		\
+	gossip-add-contact-dialog.c        gossip-add-contact-dialog.h		\
 	gossip-app.c	 	           gossip-app.h				\
 	gossip-avatar-image.c		   gossip-avatar-image.h		\
 	gossip-cell-renderer-expander.c    gossip-cell-renderer-expander.h      \

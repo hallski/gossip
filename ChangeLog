@@ -1,3 +1,21 @@
+2006-10-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-add-contact-dialog.[ch]: 
+	* src/gossip-add-contact-window.[ch]: 
+	* src/gossip-app.c: 
+	* src/gossip-chat-window.c: 
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-vcard-dialog.c:
+	* ui/main.glade: Update the add contact experience, fixes bug
+	#357457 (Xavier Claessens, Martyn Russell).
+	
+	* protocols/jabber/gossip-jabber-vcard.c (jabber_vcard_get_cb):
+	Fixed the vcard handling code so it will check for a '@' instead
+	of accept any old crap and also make sure it works with old broken
+	vcards that use <email>%s</email> instead of
+	<email><userid>%s</userid></email>.
+
 2006-09-30  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-notify.c (notify_new_message_contact_cb): Only use

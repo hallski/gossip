@@ -311,6 +311,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 
 		link = g_strdup_printf ("mailto:%s", str);
 		href = gossip_link_button_new (link, str);
+		g_free (link);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
@@ -321,8 +322,6 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 				  0, 1,
 				  GTK_FILL, GTK_FILL,
 				  0, 0);
-
-		g_free (link);
 
 		gtk_widget_show_all (alignment);
 		gtk_widget_show (dialog->stub_email_label);
@@ -393,8 +392,10 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (dialog->client_label), str);
+		gtk_widget_show (dialog->client_label);
 		gtk_widget_show (dialog->stub_client_label);
 	} else {
+		gtk_widget_hide (dialog->client_label);
 		gtk_widget_hide (dialog->stub_client_label);
 	}
 
@@ -403,8 +404,10 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (dialog->version_label), str);
+		gtk_widget_show (dialog->version_label);
 		gtk_widget_show (dialog->stub_version_label);
 	} else {
+		gtk_widget_hide (dialog->version_label);
 		gtk_widget_hide (dialog->stub_version_label);
 	}
 
@@ -413,13 +416,17 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 		show_client_info = TRUE;
 
 		gtk_label_set_text (GTK_LABEL (dialog->os_label), str);
+		gtk_widget_show (dialog->os_label);
 		gtk_widget_show (dialog->stub_os_label);
 	} else {
+		gtk_widget_hide (dialog->os_label);
 		gtk_widget_hide (dialog->stub_os_label);
 	}
 
+	gtk_widget_hide (dialog->client_status_hbox);
+
 	if (show_client_info) {
-		gtk_widget_hide (dialog->client_status_hbox);
+		gtk_widget_show (dialog->client_vbox);
 		gtk_widget_show (dialog->client_table);
 	} else {
 		gtk_widget_hide (dialog->client_vbox);
