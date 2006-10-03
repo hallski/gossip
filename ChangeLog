@@ -1,3 +1,8 @@
+2006-10-03  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-add-contact-dialog.c: Don't lookup example ID vcard and
+	don't assume the first group should be used.
+
 2006-10-02  Martyn Russell  <martyn@imendio.com>
 
 	* src/Makefile.am:

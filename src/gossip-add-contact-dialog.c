@@ -174,8 +174,10 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 {
 	GossipAccountChooser *account_chooser;
 	GossipAccount        *account;
+	GossipProtocol       *protocol;
 	GossipContact        *contact;
 	const gchar          *id;
+	const gchar          *example;
 	gchar                *str;
 	gboolean              lookup = TRUE;
 
@@ -184,10 +186,21 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 		return FALSE;
 	}
 
-	/* Make sure we aren't looking up the same ID */
+	/* Get protocol for example */
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
+	protocol = gossip_session_get_protocol (gossip_app_get_session (), 
+						account);
+
+	/* Make sure we aren't looking up the same ID or the example */
 	id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
+	example = gossip_protocol_get_example_username (protocol);
 
 	lookup &= strlen (id) > 0;
+
+	if (example && strlen (example) > 0) {
+		lookup &= strcmp (id, example) != 0;
+	}
 
 	if (dialog->last_id) {
 		lookup &= strcmp (dialog->last_id, id) != 0;
@@ -200,8 +213,6 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 	/* Remember so we don't keep lookup the same ID */
 	dialog->last_id = g_strdup (id);
 
-	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
-	account = gossip_account_chooser_get_account (account_chooser);
 
 	contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
 	gossip_contact_set_id (contact, id);
@@ -260,14 +271,14 @@ add_contact_dialog_complete_group_idle (GossipAddContactDialog *dialog)
 	GtkEntry    *entry;
 	const gchar *prefix;
 	gchar       *new_prefix;
-	gint         text_len;
+	gint         len;
 
 	entry = GTK_ENTRY (dialog->entry_group);
 	prefix = gtk_entry_get_text (entry);
-	text_len = strlen (prefix);
+	len = strlen (prefix);
 
 	g_completion_complete (dialog->group_completion,
-			       (gchar *)prefix,
+			       (gchar*) prefix,
 			       &new_prefix);
 
 	if (new_prefix) {
@@ -281,9 +292,9 @@ add_contact_dialog_complete_group_idle (GossipAddContactDialog *dialog)
 						   add_contact_dialog_entry_group_insert_text_cb,
 						   dialog);
 
-		gtk_editable_set_position (GTK_EDITABLE (entry), text_len);
+		gtk_editable_set_position (GTK_EDITABLE (entry), len);
 		gtk_editable_select_region (GTK_EDITABLE (entry),
-					    text_len, -1);
+					    len, -1);
 		g_free (new_prefix);
 	}
 
@@ -473,6 +484,7 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 	}
 
 	/* Set focus to the entry */
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_group), "");
 	gtk_entry_select_region (GTK_ENTRY (dialog->entry_id), 0, -1);
 
 	if (parent) {
