@@ -101,7 +101,8 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 {
 	gossip_debug (DEBUG_DOMAIN, "VCard response");
 
-	if (!p) {
+	/* If we get a callback for an old dialog, ignore it. */
+	if (p != dialog) {
 		return;
 	}
 
@@ -353,10 +354,13 @@ static void
 add_contact_dialog_destroy_cb (GtkWidget              *widget,
 			       GossipAddContactDialog *dialog)
 {
+	if (dialog->idle_complete) {
+		g_source_remove (dialog->idle_complete);
+	}
+	
 	g_completion_free (dialog->group_completion);
 
 	g_free (dialog);
-	dialog = NULL;
 }
 
 void

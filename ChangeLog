@@ -1,3 +1,10 @@
+2006-10-04  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-add-contact-dialog.c (add_contact_dialog_vcard_cb):
+	Don't check if we have ANY dialog, check if we have the right one,
+	otherwise a slow response can arrive when we have a new dialog up.
+	(add_contact_dialog_destroy_cb): Remove the complete idle.
+
 2006-10-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-add-contact-dialog.c: Don't lookup example ID vcard and
