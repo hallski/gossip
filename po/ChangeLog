@@ -1,3 +1,17 @@
+2006-10-04  Richard Hult  <richard@imendio.com>
+
+	reviewed by: <delete if not using a buddy>
+
+	* ChangeLog:
+	* POTFILES.in:
+	* sv.po:
+
+2006-10-04  Richard Hult  <richard@imendio.com>
+
+	* sv.po: Update.
+
+	* POTFILES.in: Update for recent changes.
+
 2006-10-01  Ilkka Tuohela  <hile@iki.fi>
 
 	* fi.po: Updated Finnish translation.

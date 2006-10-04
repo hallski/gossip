@@ -1,5 +1,16 @@
 2006-10-04  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-add-contact-dialog.c: (add_contact_dialog_vcard_cb):
+	Use italic instead of bold for the information label, style fix.
+	(add_contact_dialog_id_entry_focus_cb): No need to check for focus
+	in, we'll never get that. Don't leak the account. Use italic.
+	(gossip_add_contact_dialog_show): Style fix.
+
+	* ui/main.glade: Move the information label a bit to make it look
+	better. We still have a problem with a cut off label though.
+
+2006-10-04  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-add-contact-dialog.c (add_contact_dialog_vcard_cb):
 	Don't check if we have ANY dialog, check if we have the right one,
 	otherwise a slow response can arrive when we have a new dialog up.

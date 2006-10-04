@@ -112,16 +112,15 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 	     !gossip_vcard_get_country (vcard))) {
 		gchar *str;
 
-	    	gtk_widget_show (dialog->label_information);
-
-		str = g_strdup_printf ("<b>%s</b>",
+		str = g_strdup_printf ("<i>%s</i>",
 				       _("No information is available for this contact."));
 		gtk_label_set_markup (GTK_LABEL (dialog->label_information), str);
 		g_free (str);
 
+	    	gtk_widget_show (dialog->label_information);
 	} else {
 		GdkPixbuf   *pixbuf;
-		const gchar *value = NULL;
+		const gchar *value;
 
 		gtk_widget_hide (dialog->label_information);
 
@@ -182,11 +181,6 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 	gchar                *str;
 	gboolean              lookup = TRUE;
 
-	/* We don't care about focus in, just focus out */
-	if (event->in) {
-		return FALSE;
-	}
-
 	/* Get protocol for example */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
@@ -208,12 +202,12 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 	}
 
 	if (!lookup) {
+		g_object_unref (account);
 		return FALSE;
 	}	
 
 	/* Remember so we don't keep lookup the same ID */
 	dialog->last_id = g_strdup (id);
-
 
 	contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_TEMPORARY, account);
 	gossip_contact_set_id (contact, id);
@@ -229,7 +223,7 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 	gtk_widget_show (dialog->vbox_information);
 	gtk_widget_show (dialog->label_information);
 
-	str = g_strdup_printf ("<b>%s</b>",
+	str = g_strdup_printf ("<i>%s</i>",
 			       _("Information requested, please wait..."));
 	gtk_label_set_markup (GTK_LABEL (dialog->label_information), str);
 	g_free (str);
@@ -379,7 +373,8 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 		return;
 	}
 
-	dialog = p = g_new0 (GossipAddContactDialog, 1);
+	dialog = g_new0 (GossipAddContactDialog, 1);
+	p = dialog;
 
 	dialog->group_completion = g_completion_new (NULL);
 
@@ -426,9 +421,6 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 				G_CALLBACK (add_contact_dialog_entry_group_insert_text_cb),
 				dialog);
 
-	session = gossip_app_get_session ();
-
-	/* Make the UI look puurrty :) */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	gtk_size_group_set_ignore_hidden (size_group, FALSE);
 	gtk_size_group_add_widget (size_group, dialog->label_account);
@@ -439,6 +431,8 @@ gossip_add_contact_dialog_show (GtkWindow     *parent,
 	gtk_size_group_add_widget (size_group, dialog->label_alias);
 	gtk_size_group_add_widget (size_group, dialog->label_group);
 	g_object_unref (size_group);
+
+	session = gossip_app_get_session ();
 
 	/* Add our own customary widgets */
 	dialog->account_chooser = gossip_account_chooser_new (session);
