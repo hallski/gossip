@@ -205,7 +205,7 @@ msgstr "Fel"
 msgid "Moderator"
 msgid_plural "Moderators"
 msgstr[0] "Moderator"
-msgstr[1] "Moderatörer"
+msgstr[1] "Moderatorer"
 
 #: ../libgossip/gossip-chatroom.c:912
 msgid "Participant"
