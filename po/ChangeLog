@@ -1,10 +1,6 @@
-2006-10-04  Richard Hult  <richard@imendio.com>
+2006-10-05  Wouter Bolsterlee  <wbolster@gnome.org>
 
-	reviewed by: <delete if not using a buddy>
-
-	* ChangeLog:
-	* POTFILES.in:
-	* sv.po:
+	* nl.po: Dutch translation updated by Wouter Bolsterlee.
 
 2006-10-04  Richard Hult  <richard@imendio.com>
 
