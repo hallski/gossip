@@ -370,14 +370,14 @@ gossip_contact_copy (GossipContact *contact)
 						   g_strdup (l->data));
 	}
 
-	g_list_reverse (priv->groups);
+	priv->groups = g_list_reverse (priv->groups);
 
 	for (l = priv->presences; l; l = l->next) {
 		new_priv->presences = g_list_prepend (new_priv->presences,
 						      g_strdup (l->data));
 	}
 	
-	g_list_reverse (priv->presences);
+	priv->presences = g_list_reverse (priv->presences);
 
 	return new_contact;
 }
