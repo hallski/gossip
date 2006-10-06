@@ -25,7 +25,6 @@
  *    aren't fast enough to trigger two or more animations at once anyway :P
  *    (could guard for this by just cancelling the "old" animation, and
  *     start the new one).
- *  - is caching the background_area for the animation reliable?
  */
 
 #include <gtk/gtktreeview.h>
@@ -334,11 +333,28 @@ gossip_cell_renderer_expander_render (GtkCellRenderer      *cell,
 			    expander_style);
 }
 
+static void
+invalidate_node (GtkTreeView *tree_view,
+		 GtkTreePath *path)
+{
+       GdkWindow    *bin_window;
+       GdkRectangle  rect;
+
+       bin_window = gtk_tree_view_get_bin_window (tree_view);
+
+       gtk_tree_view_get_background_area (tree_view, path, NULL, &rect);
+
+       rect.x = 0;
+       rect.width = GTK_WIDGET (tree_view)->allocation.width;
+
+       gdk_window_invalidate_rect (bin_window, &rect, TRUE);
+}
+
 static gboolean
 do_animation (GossipCellRendererExpander *expander)
 {
 	GossipCellRendererExpanderPriv *priv;
-	GdkWindow                      *bin_window;
+	GtkTreePath                    *path;
 	gboolean                        done = FALSE;
 
 	priv = GET_PRIV (expander);
@@ -359,8 +375,9 @@ do_animation (GossipCellRendererExpander *expander)
 		}
 	}
 
-	bin_window = gtk_tree_view_get_bin_window (priv->animation_view);
-	gdk_window_invalidate_rect (bin_window, &priv->animation_area, TRUE);
+	path = gtk_tree_row_reference_get_path (priv->animation_node);
+	invalidate_node (priv->animation_view, path);
+	gtk_tree_path_free (path);
 
 	if (done) {
 		gtk_tree_row_reference_free (priv->animation_node);
@@ -392,7 +409,6 @@ gossip_cell_renderer_expander_start_animation (GossipCellRendererExpander *expan
 					       gboolean                    expanding,
 					       GdkRectangle               *background_area)
 {
-	GdkWindow                      *bin_window;
 	GossipCellRendererExpanderPriv *priv;
 
 	priv = GET_PRIV (expander);
@@ -403,9 +419,7 @@ gossip_cell_renderer_expander_start_animation (GossipCellRendererExpander *expan
 		priv->animation_style = GTK_EXPANDER_SEMI_EXPANDED;
 	}
 
-	priv->animation_area = *background_area;
-	bin_window = gtk_tree_view_get_bin_window (tree_view);
-	gdk_window_invalidate_rect (bin_window, &priv->animation_area, TRUE);
+	invalidate_node (tree_view, path);
 
 	priv->animation_expanding = expanding;
 	priv->animation_view = tree_view;

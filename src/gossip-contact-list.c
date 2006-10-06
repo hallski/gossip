@@ -429,7 +429,7 @@ gossip_contact_list_class_init (GossipContactListClass *klass)
 					 PROP_IS_COMPACT,
 					 g_param_spec_boolean ("is-compact",
 							       "Is Compact",
-							       "Whether the conact list is in compact mode or not",
+							       "Whether the contact list is in compact mode or not",
 							       FALSE,
 							       G_PARAM_READWRITE));
 
@@ -2824,8 +2824,6 @@ contact_list_update_list_mode_foreach (GtkTreeModel      *model,
 			    COL_PIXBUF_AVATAR_VISIBLE, show_avatar,
 			    COL_STATUS_VISIBLE, !priv->is_compact,
 			    -1);
-
-	gtk_tree_model_row_changed (model, path, iter);
 
 	return FALSE;
 }

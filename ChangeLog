@@ -1,3 +1,13 @@
+2006-10-06  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-cell-renderer-expander.c: Fixed the expander cell
+	renderer animation when the scrolled window adjustments are in
+	use (patch by Kristian Rietveld).
+	
+	* src/gossip-contact-list.c: Fixed class property description
+	type and removed an extraneous gtk_tree_model_row_changed() call
+	both spotted by Kristian Rietveld.
+
 2006-10-04  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-add-contact-dialog.c: (add_contact_dialog_vcard_cb):
