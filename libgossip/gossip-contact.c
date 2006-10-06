@@ -366,14 +366,18 @@ gossip_contact_copy (GossipContact *contact)
 	new_priv->subscription = priv->subscription;
 
 	for (l = priv->groups; l; l = l->next) {
-		new_priv->groups = g_list_append (new_priv->groups,
-						  g_strdup (l->data));
+		new_priv->groups = g_list_prepend (new_priv->groups,
+						   g_strdup (l->data));
 	}
 
+	g_list_reverse (priv->groups);
+
 	for (l = priv->presences; l; l = l->next) {
-		new_priv->presences = g_list_append (new_priv->presences,
-						     g_strdup (l->data));
+		new_priv->presences = g_list_prepend (new_priv->presences,
+						      g_strdup (l->data));
 	}
+	
+	g_list_reverse (priv->presences);
 
 	return new_contact;
 }
