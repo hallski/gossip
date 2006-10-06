@@ -54,11 +54,6 @@ gint          gossip_strncasecmp         (const gchar     *s1,
 gboolean      gossip_xml_validate        (xmlDoc          *doc,
 					  const gchar     *dtd_filename);
 
-/* Encoding */
-guchar *      gossip_base64_decode       (const gchar     *data,
-					  gsize           *len);
-gchar *       gossip_base64_encode       (const guchar    *data,
-					  gsize            len);
 /* GValue/GType */
 GType         gossip_dbus_type_to_g_type (const gchar     *dbus_type_string);
 const gchar * gossip_g_type_to_dbus_type (GType            g_type);

@@ -1,3 +1,12 @@
+2006-10-06  Richard Hult  <richard@imendio.com>
+
+	* configure.ac:
+	* libgossip/gossip-utils.c:
+	* libgossip/gossip-utils.h:
+	* protocols/jabber/gossip-jabber-vcard.c: (jabber_vcard_get_cb),
+	(gossip_jabber_vcard_set): Use the base64 API in glib and remove
+	our version. Fixes bug #359725 (Xavier Claessens).
+
 2006-10-06  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-cell-renderer-expander.c: Fixed the expander cell
