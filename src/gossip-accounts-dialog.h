@@ -23,6 +23,7 @@
 
 #include <libgossip/gossip-account.h>
 
-void gossip_accounts_dialog_show (GossipAccount *account);
+void       gossip_accounts_dialog_show           (GossipAccount *account);
+gboolean   gossip_accounts_dialog_is_needed      (void);
 
 #endif /* __GOSSIP_ACCOUNTS_DIALOG_H__ */

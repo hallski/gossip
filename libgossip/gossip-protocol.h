@@ -71,7 +71,7 @@ struct _GossipProtocolClass {
 	const gchar *   (*get_example_username)(GossipProtocol  *protocol);
 	gchar *         (*get_default_server)  (GossipProtocol  *protocol,
 						const gchar     *username);
-	guint16         (*get_default_port)    (GossipProtocol  *protocol,
+	guint           (*get_default_port)    (GossipProtocol  *protocol,
 						gboolean         use_ssl);
 
 	void            (*send_message)        (GossipProtocol  *protocol,
@@ -129,6 +129,7 @@ struct _GossipProtocolClass {
 						GossipRegisterCallback callback,
 						gpointer         user_data);
 	void            (*register_cancel)     (GossipProtocol  *protocol);
+	GossipAccount * (*new_account)         (GossipProtocol  *protocol);
 };
 
 GType           gossip_protocol_get_type              (void) G_GNUC_CONST;
@@ -147,7 +148,7 @@ gboolean        gossip_protocol_is_ssl_supported      (GossipProtocol          *
 const gchar   * gossip_protocol_get_example_username  (GossipProtocol          *protocol);
 gchar         * gossip_protocol_get_default_server    (GossipProtocol          *protocol,
 						       const gchar             *username);
-guint16         gossip_protocol_get_default_port      (GossipProtocol          *protocol,
+guint           gossip_protocol_get_default_port      (GossipProtocol          *protocol,
 						       gboolean                 use_ssl);
 void            gossip_protocol_send_message          (GossipProtocol          *protocol,
 						       GossipMessage           *message);
@@ -202,6 +203,7 @@ void            gossip_protocol_register_account      (GossipProtocol          *
 						       GossipRegisterCallback   callback,
 						       gpointer                 user_data);
 void            gossip_protocol_register_cancel       (GossipProtocol          *protocol);
+GossipAccount * gossip_protocol_new_account           (GossipProtocol          *protocol);
 const gchar *   gossip_protocol_error_to_string       (GossipProtocolError      error);
 
 #endif /* __GOSSIP_PROTOCOL_H__ */

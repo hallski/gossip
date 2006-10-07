@@ -652,7 +652,7 @@ log_get_filename_by_date_for_contact (GossipContact *contact,
 		return NULL;
 	}
 
-	account_id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	account_id_escaped = log_escape (account_id);
 
 	log_check_dir (&log_directory);
@@ -718,7 +718,7 @@ log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 		return NULL;
 	}
 
-	account_id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	account_id_escaped = log_escape (account_id);
 
 	log_check_dir (&log_directory);
@@ -777,10 +777,10 @@ log_get_contacts_filename (GossipAccount *account)
 		return filename;
 	}
 
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	gossip_debug (DEBUG_DOMAIN, "No contacts file recorded against account id:'%s'...",
-		    gossip_account_get_id (account));
+		      account_id);
 
-	account_id = gossip_account_get_id (account);
 	account_id_escaped = log_escape (account_id);
 
 	log_check_dir (&log_directory);
@@ -903,7 +903,7 @@ gossip_log_get_own_contact (GossipAccount *account)
 
 	g_key_file_free (key_file);
 
-	id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &id, NULL);
 
 	if (!name) {
 		gossip_debug (DEBUG_DOMAIN, "No name in contacts file, using id for name.");
@@ -987,7 +987,7 @@ gossip_log_get_contacts (GossipAccount *account)
 		return NULL;
 	}
 
-	account_id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	account_id_escaped = log_escape (account_id);
 
 	directory = g_build_path (G_DIR_SEPARATOR_S,
@@ -1054,7 +1054,7 @@ gossip_log_get_chatrooms (GossipAccount *account)
 		return NULL;
 	}
 
-	account_id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	account_id_escaped = log_escape (account_id);
 
 	directory = g_build_path (G_DIR_SEPARATOR_S,
@@ -1142,7 +1142,7 @@ gossip_log_get_dates_for_contact (GossipContact *contact)
 		return NULL;
 	}
 
-	account_id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	account_id_escaped = log_escape (account_id);
 
 	contact_id = gossip_contact_get_id (contact);
@@ -1576,7 +1576,7 @@ gossip_log_get_dates_for_chatroom (GossipChatroom *chatroom)
 		return NULL;
 	}
 
-	account_id = gossip_account_get_id (account);
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	account_id_escaped = log_escape (account_id);
 
 	chatroom_id = gossip_chatroom_get_id_str (chatroom);

@@ -222,12 +222,13 @@ gchar *
 gossip_password_dialog_run (GossipAccount *account,
 			    GtkWindow     *parent)
 {
-	GtkWidget *dialog;
-	GtkWidget *checkbox;
-	GtkWidget *entry;
-	GtkWidget *vbox;
-	gchar     *str;
-	gchar     *password;
+	GtkWidget   *dialog;
+	GtkWidget   *checkbox;
+	GtkWidget   *entry;
+	GtkWidget   *vbox;
+	gchar       *str;
+	gchar       *password;
+	const gchar *id;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
@@ -241,8 +242,8 @@ gossip_password_dialog_run (GossipAccount *account,
 						     str);
 	g_free (str);
 
-	str = g_strdup_printf (_("Logging in with: %s"),
-			       gossip_account_get_id (account));
+	gossip_account_param_get (account, "id", &id, NULL);
+	str = g_strdup_printf (_("Logging in with: %s"), id);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", str);
 	g_free (str);
 
@@ -277,7 +278,7 @@ gossip_password_dialog_run (GossipAccount *account,
 			session = gossip_app_get_session ();
 			manager = gossip_session_get_account_manager (session);
 
-			gossip_account_set_password (account, password);
+			gossip_account_param_set (account, "password", password, NULL);
 			gossip_account_manager_store (manager);
 		}
 	} else {

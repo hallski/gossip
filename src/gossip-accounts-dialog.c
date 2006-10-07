@@ -19,9 +19,7 @@
  */
 
 #include <config.h>
-#include <ctype.h>
 #include <string.h>
-#include <stdlib.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
@@ -30,40 +28,42 @@
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
 
+#include "gossip-account-widget-jabber.h"
+#include "gossip-account-widget-generic.h"
 #include "gossip-accounts-dialog.h"
 #include "gossip-app.h"
-#include "gossip-new-account-window.h"
-
-#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
 
+#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
+
 typedef struct {
 	GtkWidget *window;
 
-	GtkWidget *treeview;
+	GtkWidget *alignment_settings;
+
 	GtkWidget *vbox_details;
+	GtkWidget *hbox_no_account;
+	GtkWidget *label_no_account;
+	GtkWidget *label_no_account_blurb;
+
+	GtkWidget *treeview;
 
 	GtkWidget *button_remove;
 	GtkWidget *button_connect;
-	GtkWidget *button_forget;
+	GtkWidget *button_register;
 
+	GtkWidget *label_name;
 	GtkWidget *entry_name;
-	GtkWidget *entry_id;
-	GtkWidget *entry_resource;
-	GtkWidget *entry_server;
-	GtkWidget *entry_password;
-	GtkWidget *entry_port;
-
-	GtkWidget *checkbutton_ssl;
-	GtkWidget *checkbutton_proxy;
 	GtkWidget *checkbutton_connect;
-
-	gboolean   account_changed;
+	GtkWidget *checkbutton_proxy;
+	GtkWidget *settings_widget;
 
 	gboolean   connecting_show;
 	guint      connecting_id;
+	gboolean   registering;
+	gboolean   account_changed;
 } GossipAccountsDialog;
 
 typedef struct {
@@ -71,99 +71,94 @@ typedef struct {
 	GtkComboBox   *combobox;
 } SetAccountData;
 
-static void           accounts_dialog_setup                     (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_update_connect_button     (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_update_account            (GossipAccountsDialog  *dialog,
-								 GossipAccount         *account);
-static void           accounts_dialog_block_widgets             (GossipAccountsDialog  *dialog,
-								 gboolean               block);
-static void           accounts_dialog_save                      (GossipAccountsDialog  *dialog,
-								 GossipAccount         *account);
-static void           accounts_dialog_model_setup               (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_model_add_columns         (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_model_pixbuf_data_func    (GtkTreeViewColumn     *tree_column,
-								 GtkCellRenderer       *cell,
-								 GtkTreeModel          *model,
-								 GtkTreeIter           *iter,
-								 GossipAccountsDialog  *dialog);
-static GossipAccount *accounts_dialog_model_get_selected        (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_model_set_selected        (GossipAccountsDialog  *dialog,
-								 GossipAccount         *account);
-static void           accounts_dialog_model_select_first        (GossipAccountsDialog  *dialog);
-
-static gboolean       accounts_dialog_model_remove_selected     (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_model_selection_changed   (GtkTreeSelection      *selection,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_model_cell_edited         (GtkCellRendererText   *cell,
-								 const gchar           *path_string,
-								 const gchar           *new_text,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_account_added_cb          (GossipAccountManager  *manager,
-								 GossipAccount         *account,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_account_removed_cb        (GossipAccountManager  *manager,
-								 GossipAccount         *account,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_account_name_changed_cb   (GossipAccount         *account,
-								 GParamSpec            *param,
-								 GossipAccountsDialog  *dialog);
-static gboolean       accounts_dialog_flash_connecting_foreach  (GtkTreeModel          *model,
-								 GtkTreePath           *path,
-								 GtkTreeIter           *iter,
-								 gpointer               user_data);
-static gboolean       accounts_dialog_flash_connecting_cb       (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_protocol_connecting_cb    (GossipSession         *session,
-								 GossipAccount         *account,
-								 GossipProtocol        *protocol,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_protocol_connected_cb     (GossipSession         *session,
-								 GossipAccount         *account,
-								 GossipProtocol        *protocol,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_protocol_disconnected_cb  (GossipSession         *session,
-								 GossipAccount         *account,
-								 GossipProtocol        *protocol,
-								 gint                   reason,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_protocol_error_cb         (GossipSession         *session,
-								 GossipProtocol        *protocol,
-								 GossipAccount         *account,
-								 GError                *error,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_entry_changed_cb          (GtkWidget             *widget,
-								 GossipAccountsDialog  *dialog);
-static gboolean       accounts_dialog_entry_focus_cb            (GtkWidget             *widget,
-								 GdkEventFocus         *event,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_checkbutton_toggled_cb    (GtkWidget             *widget,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_entry_port_insert_text_cb (GtkEditable           *editable,
-								 gchar                 *new_text,
-								 gint                   len,
-								 gint                  *position,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_button_forget_clicked_cb  (GtkWidget             *button,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_button_add_clicked_cb     (GtkWidget             *button,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_remove_response_cb        (GtkWidget             *dialog,
-								 gint                   response,
-								 GossipAccount         *account);
-static void           accounts_dialog_button_remove_clicked_cb  (GtkWidget             *button,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_treeview_row_activated_cb (GtkTreeView           *tree_view,
-								 GtkTreePath           *path,
-								 GtkTreeViewColumn     *column,
-								 gpointer              *dialog);
-static gboolean       accounts_dialog_foreach                   (GtkTreeModel          *model,
-								 GtkTreePath           *path,
-								 GtkTreeIter           *iter,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_response_cb               (GtkWidget             *widget,
-								 gint                   response,
-								 GossipAccountsDialog  *dialog);
-static void           accounts_dialog_destroy_cb                (GtkWidget             *widget,
-								 GossipAccountsDialog  *dialog);
+static void           accounts_dialog_setup                      (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_update_connect_button      (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_update_account             (GossipAccountsDialog  *dialog,
+								  GossipAccount         *account);   
+static void           accounts_dialog_model_setup                (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_model_add_columns          (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_model_pixbuf_data_func     (GtkTreeViewColumn     *tree_column,
+								  GtkCellRenderer       *cell,
+								  GtkTreeModel          *model,
+								  GtkTreeIter           *iter,
+								  GossipAccountsDialog  *dialog);
+static GossipAccount *accounts_dialog_model_get_selected         (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_model_set_selected         (GossipAccountsDialog  *dialog,
+								  GossipAccount         *account);
+static void           accounts_dialog_model_select_first         (GossipAccountsDialog  *dialog);
+static gboolean       accounts_dialog_model_remove_selected      (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_model_selection_changed    (GtkTreeSelection      *selection,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_model_cell_edited          (GtkCellRendererText   *cell,
+								  const gchar           *path_string,
+								  const gchar           *new_text,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_account_added_cb           (GossipAccountManager  *manager,
+								  GossipAccount         *account,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_account_removed_cb         (GossipAccountManager  *manager,
+								  GossipAccount         *account,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_account_name_changed_cb    (GossipAccount         *account,
+								  GParamSpec            *param,
+								  GossipAccountsDialog  *dialog);
+static gboolean       accounts_dialog_flash_connecting_foreach   (GtkTreeModel          *model,
+								  GtkTreePath           *path,
+								  GtkTreeIter           *iter,
+								  gpointer               user_data);
+static gboolean       accounts_dialog_flash_connecting_cb        (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_protocol_connecting_cb     (GossipSession         *session,
+								  GossipAccount         *account,
+								  GossipProtocol        *protocol,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_protocol_connected_cb      (GossipSession         *session,
+								  GossipAccount         *account,
+								  GossipProtocol        *protocol,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_protocol_disconnected_cb   (GossipSession         *session,
+								  GossipAccount         *account,
+								  GossipProtocol        *protocol,
+								  gint                   reason,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_protocol_error_cb          (GossipSession         *session,
+								  GossipProtocol        *protocol,
+								  GossipAccount         *account,
+								  GError                *error,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_register_cancel            (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_register_cb                (GossipResult           result,
+								  GError                *error,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_button_register_clicked_cb (GtkWidget             *button,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_button_add_clicked_cb      (GtkWidget             *button,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_remove_response_cb         (GtkWidget             *dialog,
+								  gint                   response,
+								  GossipAccount         *account);
+static void           accounts_dialog_button_remove_clicked_cb   (GtkWidget             *button,
+								 GossipAccountsDialog   *dialog);
+static void           accounts_dialog_treeview_row_activated_cb  (GtkTreeView           *tree_view,
+								  GtkTreePath           *path,
+								  GtkTreeViewColumn     *column,
+								  gpointer              *dialog);
+static void           accounts_dialog_save                       (GossipAccountsDialog  *dialog);
+static void           accounts_dialog_entry_changed_cb           (GtkWidget             *widget,
+								  GossipAccountsDialog  *dialog);
+static gboolean       accounts_dialog_entry_focus_cb             (GtkWidget             *widget,
+								  GdkEventFocus         *event,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_checkbutton_toggled_cb     (GtkWidget             *widget,
+								  GossipAccountsDialog  *dialog);
+static gboolean       accounts_dialog_foreach                    (GtkTreeModel          *model,
+								  GtkTreePath           *path,
+								  GtkTreeIter           *iter,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_response_cb                (GtkWidget             *widget,
+								  gint                   response,
+								  GossipAccountsDialog  *dialog);
+static void           accounts_dialog_destroy_cb                 (GtkWidget             *widget,
+								  GossipAccountsDialog  *dialog);
 enum {
 	COL_NAME,
 	COL_EDITABLE,
@@ -249,6 +244,7 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 	selection = gtk_tree_view_get_selection (view);
 
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		gtk_widget_set_sensitive (dialog->button_connect, FALSE);
 		return;
 	}
 
@@ -259,17 +255,14 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 
 	if (is_connecting) {
 		label = _("Stop");
-		stock_id = "gtk-stop";
+		stock_id = GTK_STOCK_STOP;
 	} else {
-		/* The stock items are not defined correctly in GTK+ so we do it
-		 * ourselves (#318939).
-		 */
 		if (is_connected) {
 			label = _("Disconnect");
-			stock_id = "gtk-disconnect";
+			stock_id = GTK_STOCK_DISCONNECT;
 		} else {
 			label = _("Connect");
-			stock_id = "gtk-connect";
+			stock_id = GTK_STOCK_CONNECT;
 		}
 	}
 
@@ -277,173 +270,85 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 
 	gtk_button_set_label (GTK_BUTTON (dialog->button_connect), label);
 	gtk_button_set_image (GTK_BUTTON (dialog->button_connect), image);
+
+	gtk_widget_set_sensitive (dialog->button_register, !is_connected && !is_connecting);
 }
 
 static void
 accounts_dialog_update_account (GossipAccountsDialog *dialog,
 				GossipAccount        *account)
 {
-	GossipSession  *session;
-	GossipProtocol *protocol;
-	gchar          *port_str;
-	const gchar    *id;
-	const gchar    *resource;
-	const gchar    *server;
-	const gchar    *password;
-
-	accounts_dialog_block_widgets (dialog, TRUE);
-
-	session = gossip_app_get_session ();
-	protocol = gossip_session_get_protocol (session, account);
-
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name),
-			    gossip_account_get_name (account));
-
-	if (gossip_protocol_is_ssl_supported (protocol)) {
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_ssl),
-					      gossip_account_get_use_ssl (account));
-	} else {
-		gtk_widget_set_sensitive (dialog->checkbutton_ssl, FALSE);
+	if (dialog->settings_widget) {
+		gtk_widget_destroy (dialog->settings_widget);
+		dialog->settings_widget = NULL;
 	}
 
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_proxy),
-				      gossip_account_get_use_proxy (account));
+	if (!account) {
+		GtkTreeView  *view;
+		GtkTreeModel *model;
 
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect),
-				      gossip_account_get_auto_connect (account));
+		gtk_widget_show (dialog->hbox_no_account);
+		gtk_widget_hide (dialog->vbox_details);
 
+		gtk_widget_set_sensitive (dialog->button_connect, FALSE);
+		gtk_widget_set_sensitive (dialog->button_register, FALSE);
+		gtk_widget_set_sensitive (dialog->button_remove, FALSE);
 
-	id = gossip_account_get_id (account);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_id), id);
+		view = GTK_TREE_VIEW (dialog->treeview);
+		model = gtk_tree_view_get_model (view);
 
-	password = gossip_account_get_password (account);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password), password ? password : "");
-
-	resource = gossip_account_get_resource (account);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_resource), resource ? resource : "");
-
-	server = gossip_account_get_server (account);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), server ? server : "");
-
-	port_str = g_strdup_printf ("%d", gossip_account_get_port (account));
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_port), port_str);
-	g_free (port_str);
-
-	gtk_widget_set_sensitive (dialog->button_forget, ! STRING_EMPTY (password));
-
-	accounts_dialog_block_widgets (dialog, FALSE);
-}
-
-static void
-accounts_dialog_block_widgets (GossipAccountsDialog *dialog,
-			       gboolean              block)
-{
-	/* FIXME: need to do this better */
-	if (block) {
-		g_signal_handlers_block_by_func (dialog->entry_name,
-						 accounts_dialog_entry_changed_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->entry_id,
-						 accounts_dialog_entry_changed_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->entry_password,
-						 accounts_dialog_entry_changed_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->entry_resource,
-						 accounts_dialog_entry_changed_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->entry_server,
-						 accounts_dialog_entry_changed_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->entry_port,
-						 accounts_dialog_entry_changed_cb,
-						 dialog);
-
-		g_signal_handlers_block_by_func (dialog->checkbutton_proxy,
-						 accounts_dialog_checkbutton_toggled_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->checkbutton_ssl,
-						 accounts_dialog_checkbutton_toggled_cb,
-						 dialog);
-		g_signal_handlers_block_by_func (dialog->checkbutton_connect,
-						 accounts_dialog_checkbutton_toggled_cb,
-						 dialog);
+		if (gtk_tree_model_iter_n_children (model, NULL) > 0) {
+			gtk_label_set_markup (GTK_LABEL (dialog->label_no_account),
+					      _("<b>No Account Selected</b>"));
+			gtk_label_set_markup (GTK_LABEL (dialog->label_no_account_blurb),
+					      _("To add a new account, you can click on the "
+						"'Add' button and a new entry will be created "
+						"for you to start configuring.\n"
+						"\n"
+						"If you do not want to add an account, simply "
+						"click on the account you want to configure in "
+						"the list on the left."));
+		} else {
+			gtk_label_set_markup (GTK_LABEL (dialog->label_no_account),
+					      _("<b>No Accounts Configured</b>"));
+			gtk_label_set_markup (GTK_LABEL (dialog->label_no_account_blurb),
+					      _("To add a new account, you can click on the "
+						"'Add' button and a new entry will be created "
+						"for you to start configuring."));
+		}
 	} else {
-		g_signal_handlers_unblock_by_func (dialog->entry_name,
-						   accounts_dialog_entry_changed_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->entry_id,
-						   accounts_dialog_entry_changed_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->entry_password,
-						   accounts_dialog_entry_changed_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->entry_resource,
-						   accounts_dialog_entry_changed_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->entry_server,
-						   accounts_dialog_entry_changed_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->entry_port,
-						   accounts_dialog_entry_changed_cb,
-						   dialog);
+		gtk_widget_hide (dialog->hbox_no_account);
+		gtk_widget_show (dialog->vbox_details);
 
-		g_signal_handlers_unblock_by_func (dialog->checkbutton_proxy,
-						   accounts_dialog_checkbutton_toggled_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->checkbutton_ssl,
-						   accounts_dialog_checkbutton_toggled_cb,
-						   dialog);
-		g_signal_handlers_unblock_by_func (dialog->checkbutton_connect,
-						   accounts_dialog_checkbutton_toggled_cb,
-						   dialog);
+		/* FIXME: Should have some way to know if we _CAN_ register */
+		gtk_widget_set_sensitive (dialog->button_register, TRUE);
+
+		switch (gossip_account_get_type (account)) {
+		case GOSSIP_ACCOUNT_TYPE_JABBER:
+			dialog->settings_widget = gossip_account_widget_jabber_new 
+				(account, dialog->label_name);
+			break;
+		default:
+			dialog->settings_widget = gossip_account_widget_generic_new 
+				(account, dialog->label_name);
+		}
 	}
-}
 
-static void
-accounts_dialog_save (GossipAccountsDialog *dialog,
-		      GossipAccount        *account)
-{
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	const gchar          *str;
-	guint16               pnr;
-	gboolean              bool;
+	if (dialog->settings_widget) {
+		gtk_container_add (GTK_CONTAINER (dialog->alignment_settings),
+				   dialog->settings_widget);
+	}
 
-	session = gossip_app_get_session ();
-	manager = gossip_session_get_account_manager (session);
+	if (account) {
+		gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), 
+				    gossip_account_get_name (account));
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
-	gossip_account_set_name (account, str);
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_proxy),
+					      gossip_account_get_use_proxy (account));
 
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
-	gossip_account_set_id (account, str);
-
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_password));
-	gossip_account_set_password (account, str);
-
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_resource));
-	gossip_account_set_resource (account, str);
-
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
-	gossip_account_set_server (account, str);
-
-	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_port));
-	pnr = strtol (str, NULL, 10);
-	gossip_account_set_port (account, pnr);
-
-	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect));
-	gossip_account_set_auto_connect (account, bool);
-
-	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_proxy));
-	gossip_account_set_use_proxy (account, bool);
-
-	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_ssl));
-	gossip_account_set_use_ssl (account, bool);
-
-	gossip_account_manager_store (manager);
-
-	dialog->account_changed = FALSE;
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect),
+					      gossip_account_get_auto_connect (account));
+	}
 }
 
 static void
@@ -526,14 +431,12 @@ accounts_dialog_model_select_first (GossipAccountsDialog *dialog)
 	/* select first */
 	view = GTK_TREE_VIEW (dialog->treeview);
 	model = gtk_tree_view_get_model (view);
-
-	if (!gtk_tree_model_get_iter_first (model, &iter)) {
-		gtk_widget_set_sensitive (dialog->vbox_details, FALSE);
-	} else {
-		gtk_widget_set_sensitive (dialog->vbox_details, TRUE);
-
+	
+	if (gtk_tree_model_get_iter_first (model, &iter)) {
 		selection = gtk_tree_view_get_selection (view);
 		gtk_tree_selection_select_iter (selection, &iter);
+	} else {
+		accounts_dialog_update_account (dialog, NULL);
 	}
 }
 
@@ -662,37 +565,32 @@ static void
 accounts_dialog_model_selection_changed (GtkTreeSelection     *selection,
 					 GossipAccountsDialog *dialog)
 {
-	GtkTreeModel         *model;
-	GtkTreeIter           iter;
-	gboolean              is_selection;
-
-	static GossipAccount *account = NULL;
-
-	if (account && dialog->account_changed) {
-		accounts_dialog_save (dialog, account);
-	}
+	GossipSession *session;
+	GossipAccount *account;
+	GtkTreeModel  *model;
+	GtkTreeIter    iter;
+	gboolean       is_selection;
 
 	is_selection = gtk_tree_selection_get_selected (selection, &model, &iter);
 
-	gtk_widget_set_sensitive (dialog->vbox_details, is_selection);
 	gtk_widget_set_sensitive (dialog->button_remove, is_selection);
 	gtk_widget_set_sensitive (dialog->button_connect, is_selection);
 
 	accounts_dialog_update_connect_button (dialog);
 
-	if (is_selection) {
-		GossipSession *session;
+	session = gossip_app_get_session ();
+	account = accounts_dialog_model_get_selected (dialog);
+	accounts_dialog_update_account (dialog, account);
 
-		session = gossip_app_get_session ();
-		account = accounts_dialog_model_get_selected (dialog);
-		accounts_dialog_update_account (dialog, account);
-
-		if (gossip_session_is_connected (session, account)) {
-			gtk_widget_set_sensitive (dialog->button_remove, FALSE);
-		}
-
-		g_object_unref (account);
+	if (!account) {
+		return;
 	}
+
+	if (gossip_session_is_connected (session, account)) {
+		gtk_widget_set_sensitive (dialog->button_remove, FALSE);
+	}
+
+	g_object_unref (account);
 }
 
 static void
@@ -831,197 +729,6 @@ accounts_dialog_account_name_changed_cb (GossipAccount        *account,
 					    COL_NAME, gossip_account_get_name (account),
 					    -1);
 			break;
-		}
-	}
-}
-
-static gboolean
-accounts_dialog_entry_focus_cb (GtkWidget            *widget,
-				GdkEventFocus        *event,
-				GossipAccountsDialog *dialog)
-{
-	GossipAccount *account;
-
-	account = accounts_dialog_model_get_selected (dialog);
-
-	if (widget == dialog->entry_id) {
-		GossipSession  *session;
-		GossipProtocol *protocol;
-
-		session = gossip_app_get_session ();
-		protocol = gossip_session_get_protocol (session, account);
-
-		if (protocol) {
-			const gchar *str;
-
-			str = gtk_entry_get_text (GTK_ENTRY (widget));
-
-			if (!gossip_protocol_is_valid_username (protocol, str)) {
-				str = gossip_account_get_id (account);
-				dialog->account_changed = FALSE;
-			}
-
-			gtk_entry_set_text (GTK_ENTRY (widget), str);
-		}
-	}
-
-	if (widget == dialog->entry_name ||
-	    widget == dialog->entry_password ||
-	    widget == dialog->entry_resource ||
-	    widget == dialog->entry_server) {
-		const gchar *str;
-
-		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		if (STRING_EMPTY (str)) {
-			if (widget == dialog->entry_name) {
-				str = gossip_account_get_name (account);
-			} else if (widget == dialog->entry_password) {
-				str = gossip_account_get_password (account);
-			} else if (widget == dialog->entry_resource) {
-				str = gossip_account_get_resource (account);
-			} else if (widget == dialog->entry_server) {
-				str = gossip_account_get_server (account);
-			}
-
-			gtk_entry_set_text (GTK_ENTRY (widget), str);
-			dialog->account_changed = FALSE;
-		}
-	}
-
-	if (widget == dialog->entry_port) {
-		const gchar *str;
-
-		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		if (STRING_EMPTY (str)) {
-			gchar   *port_str;
-			guint16  port;
-
-			port = gossip_account_get_port (account);
-			port_str = g_strdup_printf ("%d", port);
-			gtk_entry_set_text (GTK_ENTRY (widget), port_str);
-			g_free (port_str);
-
-			dialog->account_changed = FALSE;
-		}
-	}
-
-	if (dialog->account_changed) {
-		accounts_dialog_save (dialog, account);
-	}
-
-	g_object_unref (account);
-
-	return FALSE;
-}
-
-static void
-accounts_dialog_entry_changed_cb (GtkWidget            *widget,
-				  GossipAccountsDialog *dialog)
-{
-	if (widget == dialog->entry_port) {
-		const gchar *str;
-		gint         pnr;
-
-		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		pnr = strtol (str, NULL, 10);
-
-		if (pnr <= 0 || pnr >= 65556) {
-			GossipAccount *account;
-			gchar         *port_str;
-
-			account = accounts_dialog_model_get_selected (dialog);
-			port_str = g_strdup_printf ("%d", gossip_account_get_port (account));
-			g_signal_handlers_block_by_func (dialog->entry_port,
-							 accounts_dialog_entry_changed_cb,
-							 dialog);
-			gtk_entry_set_text (GTK_ENTRY (widget), port_str);
-			g_signal_handlers_unblock_by_func (dialog->entry_port,
-							   accounts_dialog_entry_changed_cb,
-							   dialog);
-			g_free (port_str);
-			g_object_unref (account);
-
-			return;
-		}
-	} else if (widget == dialog->entry_password) {
-		const gchar *str;
-
-		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		gtk_widget_set_sensitive (dialog->button_forget, ! STRING_EMPTY (str));
-	}
-
-	/* save */
-	dialog->account_changed = TRUE;
-}
-
-static void
-accounts_dialog_checkbutton_toggled_cb (GtkWidget            *widget,
-					GossipAccountsDialog *dialog)
-{
-	GossipAccount *account;
-
-	account = accounts_dialog_model_get_selected (dialog);
-
-	if (widget == dialog->checkbutton_ssl) {
-		gboolean       active;
-		gboolean       changed;
-		GossipSession  *session;
-		GossipProtocol *protocol;
-		guint16         port;
-		guint16         port_with_ssl;
-
-		session = gossip_app_get_session ();
-		protocol = gossip_session_get_protocol (session, account);
-
-		port = gossip_protocol_get_default_port (protocol, FALSE);
-		port_with_ssl = gossip_protocol_get_default_port (protocol, TRUE);
-
-		active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget));
-		gossip_account_set_use_ssl (account, active);
-
-		if (active &&
-		    (gossip_account_get_port (account) == port)) {
-			gossip_account_set_port (account, port_with_ssl);
-			changed = TRUE;
-		} else if (!active &&
-			   (gossip_account_get_port (account) == port_with_ssl)) {
-			gossip_account_set_port (account, port);
-			changed = TRUE;
-		} else {
-			changed = FALSE;
-		}
-
-		if (changed) {
-			gchar *port_str;
-
-			port_str = g_strdup_printf ("%d", gossip_account_get_port (account));
-			gtk_entry_set_text (GTK_ENTRY (dialog->entry_port), port_str);
-			g_free (port_str);
-		}
-	}
-
-	accounts_dialog_save (dialog, account);
-
-	g_object_unref (account);
-}
-
-static void
-accounts_dialog_entry_port_insert_text_cb (GtkEditable          *editable,
-					   gchar                *new_text,
-					   gint                  len,
-					   gint                 *position,
-					   GossipAccountsDialog *dialog)
-{
-	gint i;
-
-	for (i = 0; i < len; ++i) {
-		gchar *ch;
-
-		ch = new_text + i;
-		if (!isdigit (*ch)) {
-			g_signal_stop_emission_by_name (editable,
-							"insert-text");
-			return;
 		}
 	}
 }
@@ -1320,27 +1027,6 @@ accounts_dialog_protocol_error_cb (GossipSession        *session,
 }
 
 static void
-accounts_dialog_button_forget_clicked_cb (GtkWidget            *button,
-					  GossipAccountsDialog *dialog)
-{
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	GossipAccount        *account;
-
-	session = gossip_app_get_session ();
-	manager = gossip_session_get_account_manager (session);
-
-	account = accounts_dialog_model_get_selected (dialog);
-
-	gossip_account_set_password (account, "");
-	gossip_account_manager_store (manager);
-
-	g_object_unref (account);
-
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_password), "");
-}
-
-static void
 accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 					   GossipAccountsDialog *dialog)
 {
@@ -1397,10 +1083,130 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 }
 
 static void
+accounts_dialog_register_cancel (GossipAccountsDialog *dialog)
+{
+	GossipSession *session;
+	GossipAccount *account;
+
+	if (!dialog->registering) {
+		return;
+	}
+
+	session = gossip_app_get_session ();
+	account = accounts_dialog_model_get_selected (dialog);
+	gossip_session_register_cancel (session,
+					account);
+
+	dialog->registering = FALSE;
+	g_object_unref (account);
+}
+
+static void
+accounts_dialog_register_cb (GossipResult          result,
+			     GError               *error,
+			     GossipAccountsDialog *dialog)
+{
+	GtkWidget *md;
+
+	dialog->registering = FALSE;
+
+	/* FIXME: Not sure how to do this right, but really we
+	 * shouldn't show the register button as sensitive if we have
+	 * just registered.
+	 */
+	gtk_widget_set_sensitive (dialog->button_register, TRUE);
+
+	if (result == GOSSIP_RESULT_OK) {
+		md = gtk_message_dialog_new (GTK_WINDOW (dialog->window),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_INFO,
+					     GTK_BUTTONS_CLOSE,
+					     _("Successfully registered your new account settings."));
+
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
+							  _("You should now be able to connect to your new account."));
+
+	} else {
+		md = gtk_message_dialog_new (GTK_WINDOW (dialog->window),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_ERROR,
+					     GTK_BUTTONS_CLOSE,
+					     _("Failed to register your new account settings."));
+		
+		if (error && error->message) {
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
+								  error->message);
+		}
+	}
+
+	g_signal_connect_swapped (md,
+				  "response", 
+				  G_CALLBACK (gtk_widget_destroy),
+				  md);
+
+	gtk_widget_show_all (md);
+}
+
+static void
+accounts_dialog_button_register_clicked_cb (GtkWidget            *button,
+					    GossipAccountsDialog *dialog)
+{
+	GossipSession *session;
+	GossipAccount *account;
+	GossipVCard   *vcard;
+	gchar         *nickname;
+	const gchar   *name;
+	const gchar   *last_part;
+
+	dialog->registering = TRUE;
+	gtk_widget_set_sensitive (dialog->button_register, FALSE);
+
+	session = gossip_app_get_session ();
+	account = accounts_dialog_model_get_selected (dialog);
+	vcard = gossip_vcard_new ();
+	name = gossip_account_get_name (account);
+
+	last_part = strstr (name, " ");
+	if (last_part) {
+		gint len;
+
+		len = last_part - name;
+		nickname = g_strndup (name, len);
+	} else {
+		nickname = g_strdup (name);
+	}
+
+	gossip_vcard_set_name (vcard, name);
+	gossip_vcard_set_nickname (vcard, nickname);
+
+	g_free (nickname);
+
+	gossip_session_register_account (session,
+					 account,
+					 vcard,
+					 (GossipRegisterCallback) accounts_dialog_register_cb,
+					 dialog);
+
+	g_object_unref (account);
+}
+
+static void
 accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 				       GossipAccountsDialog *dialog)
 {
-	gossip_new_account_window_show (GTK_WINDOW (dialog->window));
+	GossipAccountManager *manager;
+	GossipAccount        *account;
+	GossipSession        *session;
+
+	session = gossip_app_get_session ();
+	manager = gossip_session_get_account_manager (session);
+	account = gossip_session_new_account (session, GOSSIP_ACCOUNT_TYPE_JABBER);
+
+	gossip_account_manager_add (manager, account);
+	accounts_dialog_model_set_selected (dialog, account);
+	g_object_unref (account);
+
+	gtk_widget_grab_focus (dialog->entry_name);
 }
 
 static void
@@ -1469,6 +1275,80 @@ accounts_dialog_treeview_row_activated_cb (GtkTreeView           *tree_view,
 						   dialog);
 }
 
+static void
+accounts_dialog_save (GossipAccountsDialog *dialog)
+{
+	GossipSession        *session;
+	GossipAccount        *account;
+	GossipAccountManager *manager;
+ 	const gchar          *str;
+	gboolean              bool;
+
+	dialog->account_changed = FALSE;
+
+	session = gossip_app_get_session ();
+ 	manager = gossip_session_get_account_manager (session);
+ 	account = accounts_dialog_model_get_selected (dialog);
+
+	if (!account) {
+		return;
+	}
+
+	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
+ 	gossip_account_set_name (account, str); 
+
+	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_connect));
+	gossip_account_set_auto_connect (account, bool);
+
+	bool = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_proxy));
+	gossip_account_set_use_proxy (account, bool);
+
+	gossip_account_manager_store (manager);
+
+	g_object_unref (account);
+}
+
+static void
+accounts_dialog_entry_changed_cb (GtkWidget            *widget,
+				  GossipAccountsDialog *dialog)
+{
+	dialog->account_changed = TRUE;
+}
+
+static gboolean
+accounts_dialog_entry_focus_cb (GtkWidget            *widget,
+				GdkEventFocus        *event,
+				GossipAccountsDialog *dialog)
+{
+	GossipAccount *account;
+	const gchar   *str;
+
+ 	account = accounts_dialog_model_get_selected (dialog);
+
+	str = gtk_entry_get_text (GTK_ENTRY (widget));
+	if (STRING_EMPTY (str)) {
+		str = gossip_account_get_name (account);
+
+		gtk_entry_set_text (GTK_ENTRY (widget), str);
+		dialog->account_changed = FALSE;
+	}
+
+	if (dialog->account_changed) {
+ 		accounts_dialog_save (dialog); 
+	}
+
+	g_object_unref (account);
+
+	return FALSE;
+}
+
+static void  
+accounts_dialog_checkbutton_toggled_cb (GtkWidget            *widget,
+					GossipAccountsDialog *dialog)
+{
+	accounts_dialog_save (dialog);
+}
+
 static gboolean
 accounts_dialog_foreach (GtkTreeModel         *model,
 			 GtkTreePath          *path,
@@ -1504,6 +1384,8 @@ accounts_dialog_destroy_cb (GtkWidget            *widget,
 	GossipAccountManager *manager;
 	GtkTreeModel         *model;
 
+	accounts_dialog_register_cancel (dialog);
+
 	session = gossip_app_get_session ();
 	manager = gossip_session_get_account_manager (session);
 
@@ -1537,12 +1419,7 @@ accounts_dialog_destroy_cb (GtkWidget            *widget,
 				dialog);
 
 	if (dialog->account_changed) {
-		GossipAccount *account;
-
-		account = accounts_dialog_model_get_selected (dialog);
-		accounts_dialog_save (dialog, account);
-
-		g_object_unref (account);
+ 		accounts_dialog_save (dialog); 
 	}
 
 	if (dialog->connecting_id) {
@@ -1559,9 +1436,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	GossipAccountManager        *manager;
 	static GossipAccountsDialog *dialog = NULL;
 	GladeXML                    *glade;
-	GtkSizeGroup                *size_group;
-	GtkWidget                   *label_name, *label_id, *label_password;
-	GtkWidget                   *label_server, *label_resource, *label_port;
 	GtkWidget                   *bbox, *button_close;
 
 	if (dialog) {
@@ -1575,55 +1449,36 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "accounts_dialog",
 				       NULL,
 				       "accounts_dialog", &dialog->window,
+				       "vbox_details", &dialog->vbox_details,
+				       "hbox_no_account", &dialog->hbox_no_account,
+				       "label_no_account", &dialog->label_no_account,
+				       "label_no_account_blurb", &dialog->label_no_account_blurb,
+				       "alignment_settings", &dialog->alignment_settings,
 				       "dialog-action_area", &bbox,
 				       "treeview", &dialog->treeview,
-				       "vbox_details", &dialog->vbox_details,
-				       "label_name", &label_name,
-				       "label_id", &label_id,
-				       "label_password", &label_password,
-				       "label_resource", &label_resource,
-				       "label_server", &label_server,
-				       "label_port", &label_port,
-				       "entry_name", &dialog->entry_name,
-				       "entry_id", &dialog->entry_id,
-				       "entry_resource", &dialog->entry_resource,
-				       "entry_server", &dialog->entry_server,
-				       "entry_password", &dialog->entry_password,
-				       "entry_port", &dialog->entry_port,
-				       "checkbutton_ssl", &dialog->checkbutton_ssl,
-				       "checkbutton_proxy", &dialog->checkbutton_proxy,
-				       "checkbutton_connect", &dialog->checkbutton_connect,
 				       "button_remove", &dialog->button_remove,
 				       "button_connect", &dialog->button_connect,
-				       "button_forget", &dialog->button_forget,
 				       "button_close", &button_close,
+				       "button_register", &dialog->button_register,
+				       "label_name", &dialog->label_name,
+				       "entry_name", &dialog->entry_name,
+				       "checkbutton_connect", &dialog->checkbutton_connect,
+				       "checkbutton_proxy", &dialog->checkbutton_proxy,
 				       NULL);
 
 	gossip_glade_connect (glade,
 			      dialog,
 			      "accounts_dialog", "destroy", accounts_dialog_destroy_cb,
 			      "accounts_dialog", "response", accounts_dialog_response_cb,
-			      "entry_name", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_id", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_password", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_resource", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_server", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_port", "changed", accounts_dialog_entry_changed_cb,
-			      "entry_name", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_id", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_password", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_resource", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_server", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_port", "focus-out-event", accounts_dialog_entry_focus_cb,
-			      "entry_port", "insert_text", accounts_dialog_entry_port_insert_text_cb,
-			      "checkbutton_proxy", "toggled", accounts_dialog_checkbutton_toggled_cb,
-			      "checkbutton_ssl", "toggled", accounts_dialog_checkbutton_toggled_cb,
-			      "checkbutton_connect", "toggled", accounts_dialog_checkbutton_toggled_cb,
-			      "button_forget", "clicked", accounts_dialog_button_forget_clicked_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
+			      "button_register", "clicked", accounts_dialog_button_register_clicked_cb,
 			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
 			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
 			      "treeview", "row-activated", accounts_dialog_treeview_row_activated_cb,
+			      "entry_name", "changed", accounts_dialog_entry_changed_cb,
+			      "entry_name", "focus-out-event", accounts_dialog_entry_focus_cb,
+			      "checkbutton_connect", "toggled", accounts_dialog_checkbutton_toggled_cb,
+			      "checkbutton_proxy", "toggled", accounts_dialog_checkbutton_toggled_cb,
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);
@@ -1660,31 +1515,9 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	accounts_dialog_model_setup (dialog);
 	accounts_dialog_setup (dialog);
 
-	/* set up remaining widgets */
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
-	gtk_size_group_add_widget (size_group, label_name);
-	gtk_size_group_add_widget (size_group, label_id);
-	gtk_size_group_add_widget (size_group, label_password);
-
-	g_object_unref (size_group);
-
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
-	gtk_size_group_add_widget (size_group, label_resource);
-	gtk_size_group_add_widget (size_group, label_server);
-	gtk_size_group_add_widget (size_group, label_port);
-
-	g_object_unref (size_group);
-
-/* 	gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (bbox),  */
-/* 					    button_close, TRUE); */
-
 	gtk_window_set_transient_for (GTK_WINDOW (dialog->window),
 				      GTK_WINDOW (gossip_app_get_window ()));
 	gtk_widget_show (dialog->window);
-
-	gtk_widget_set_sensitive (dialog->vbox_details, FALSE);
 
 	if (GOSSIP_IS_ACCOUNT (account)) {
 		/* if account was specified then we select it */
@@ -1692,4 +1525,31 @@ gossip_accounts_dialog_show (GossipAccount *account)
 	} else {
 		accounts_dialog_model_select_first (dialog);
 	}
+}
+
+gboolean
+gossip_accounts_dialog_is_needed (void)
+{
+	GossipSession          *session;
+	GossipAccountManager   *manager;
+
+	if (g_getenv ("GOSSIP_FORCE_SHOW_ACCOUNTS")) {
+		return TRUE;
+	}
+
+	session = gossip_app_get_session ();
+	if (!session) {
+		return FALSE;
+	}
+
+	manager = gossip_session_get_account_manager (session);
+	if (!manager) {
+		return FALSE;
+	}
+
+	if (gossip_account_manager_get_count (manager) < 1) {
+		return TRUE;
+	}
+
+	return FALSE;
 }

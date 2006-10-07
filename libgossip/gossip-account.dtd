@@ -9,7 +9,9 @@
 <!ELEMENT default (#PCDATA)>
 
 <!ELEMENT account 
-    (type,name,(id?),(resource?),(password?),(server?),(port?),(enabled?),(auto_connect?),(use_ssl?),(use_proxy?),(parameter*))>
+    ((type?),name,(id?),(resource?),(password?),(server?),(port?),(enabled?),(auto_connect?),(use_ssl?),(use_proxy?),(parameter*))>
+
+<!ATTLIST account type CDATA #IMPLIED>
 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT name (#PCDATA)>
@@ -26,5 +28,5 @@
 
 <!ATTLIST parameter name CDATA #REQUIRED>
 <!ATTLIST parameter type CDATA #REQUIRED>
-<!ATTLIST parameter required CDATA #REQUIRED>
-<!ATTLIST parameter has-default CDATA #REQUIRED>
+<!ATTLIST parameter required CDATA #IMPLIED>
+<!ATTLIST parameter has-default CDATA #IMPLIED>

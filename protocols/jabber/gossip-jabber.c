@@ -165,6 +165,7 @@ static void             jabber_register_account             (GossipProtocol     
 							     GossipRegisterCallback   callback,
 							     gpointer                 user_data);
 static void             jabber_register_cancel              (GossipProtocol          *protocol);
+static GossipAccount *  jabber_new_account                  (GossipProtocol          *protocol);
 static void             jabber_register_connection_open_cb  (LmConnection            *connection,
 							     gboolean                 result,
 							     RegisterData            *ra);
@@ -181,7 +182,7 @@ static gboolean         jabber_is_ssl_supported             (GossipProtocol     
 static const gchar *    jabber_get_example_username         (GossipProtocol          *protocol);
 static gchar *          jabber_get_default_server           (GossipProtocol          *protocol,
 							     const gchar             *username);
-static guint16          jabber_get_default_port             (GossipProtocol          *protocol,
+static guint            jabber_get_default_port             (GossipProtocol          *protocol,
 							     gboolean                 use_ssl);
 static void             jabber_send_message                 (GossipProtocol          *protocol,
 							     GossipMessage           *message);
@@ -374,6 +375,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->get_version           = jabber_get_version;
 	protocol_class->register_account      = jabber_register_account;
 	protocol_class->register_cancel       = jabber_register_cancel;
+	protocol_class->new_account           = jabber_new_account;
 
 	g_type_class_add_private (object_class, sizeof (GossipJabberPriv));
 }
@@ -460,6 +462,9 @@ jabber_setup (GossipProtocol *protocol,
 	GossipJabberPriv *priv;
 	LmMessageHandler *handler;
 	GossipJID        *jid;
+	const gchar      *id;
+	const gchar      *server;
+	guint             port;
 
 	g_return_if_fail (GOSSIP_IS_JABBER (protocol));
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
@@ -472,12 +477,18 @@ jabber_setup (GossipProtocol *protocol,
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 
+	gossip_account_param_get (account,
+				  "id", &id,
+				  "server", &server,
+				  "port", &port,
+				  NULL);
+
 	g_object_set (priv->contact,
-		      "id", gossip_account_get_id (account),
-		      "name", gossip_account_get_id (account),
+		      "id", id,
+		      "name", id,
 		      NULL);
 
-	priv->connection = lm_connection_new (gossip_account_get_server (account));
+	priv->connection = lm_connection_new (server);
 
 	/* setup the connection to send keep alive messages every 30 seconds */
 	lm_connection_set_keep_alive_rate (priv->connection, 30);
@@ -486,9 +497,9 @@ jabber_setup (GossipProtocol *protocol,
 					       (LmDisconnectFunction) jabber_disconnect_cb,
 					       jabber, NULL);
 
-	lm_connection_set_port (priv->connection, gossip_account_get_port (account));
+	lm_connection_set_port (priv->connection, port);
 
-	jid = gossip_jid_new (gossip_account_get_id (account));
+	jid = gossip_jid_new (id);
 	lm_connection_set_jid (priv->connection, gossip_jid_get_without_resource (jid));
 	gossip_jid_unref (jid);
 
@@ -531,12 +542,19 @@ static void
 jabber_setup_connection (GossipJabber *jabber)
 {
 	GossipJabberPriv *priv;
+	gboolean          use_ssl;
+	guint             port;
 
 	priv = GET_PRIV (jabber);
 
 	priv->disconnect_request = FALSE;
 
-	if (gossip_account_get_use_ssl (priv->account)) {
+	gossip_account_param_get (priv->account,
+				  "use_ssl", &use_ssl,
+				  "port", &port,
+				  NULL);
+
+	if (use_ssl) {
 		LmSSL *ssl;
 
 		gossip_debug (DEBUG_DOMAIN, "Using SSL");
@@ -546,8 +564,7 @@ jabber_setup_connection (GossipJabber *jabber)
 				  jabber, NULL);
 
 		lm_connection_set_ssl (priv->connection, ssl);
-		lm_connection_set_port (priv->connection,
-					gossip_account_get_port (priv->account));
+		lm_connection_set_port (priv->connection, port);
 
 		lm_ssl_unref (ssl);
 	}
@@ -732,9 +749,10 @@ jabber_connection_open_cb (LmConnection *connection,
 	GossipJabberPriv *priv;
 	GossipAccount    *account;
 	const gchar      *account_password;
+	const gchar      *account_id;
+	const gchar      *account_resource;
 	const gchar      *jid_str;
 	gchar            *id;
-	const gchar      *resource;
 	gchar            *password = NULL;
 #ifdef USE_RAND_RESOURCE
 	gchar            *resource_rand;
@@ -766,18 +784,22 @@ jabber_connection_open_cb (LmConnection *connection,
 	}
 
 	account = priv->account;
-	account_password = gossip_account_get_password (account);
+	gossip_account_param_get (account,
+				  "password", &account_password,
+				  "id", &account_id,
+				  "resource", &account_resource,
+				  NULL);
 
 	if (!account_password || strlen (account_password) < 1) {
 		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
-			      gossip_account_get_id (account));
+			      account_id);
 
 		g_signal_emit_by_name (jabber, "get-password",
 				       account, &password);
 
 		if (!password) {
 			gossip_debug (DEBUG_DOMAIN, "Cancelled password request for:'%s'",
-				      gossip_account_get_id (account));
+				      account_id);
 
 			jabber_logout (GOSSIP_PROTOCOL (jabber));
 			return;
@@ -787,13 +809,12 @@ jabber_connection_open_cb (LmConnection *connection,
 	}
 
 	/* FIXME: Decide on Resource */
-	jid_str = gossip_account_get_id (account);
+	jid_str = account_id;
 	gossip_debug (DEBUG_DOMAIN, "Attempting to use JabberID:'%s'", jid_str);
 
 	id = gossip_jid_string_get_part_name (jid_str);
-	resource = gossip_account_get_resource (account);
 
-	if (!resource) {
+	if (!account_resource) {
 		gossip_debug (DEBUG_DOMAIN, "JabberID:'%s' is invalid, there is no resource.", jid_str);
 
 		jabber_logout (GOSSIP_PROTOCOL (jabber));
@@ -811,7 +832,7 @@ jabber_connection_open_cb (LmConnection *connection,
 		}
 	}
 	rand_str[N_RAND_CHAR] = '\0';
-	resource_rand = g_strdup_printf ("%s.%s", resource, rand_str);
+	resource_rand = g_strdup_printf ("%s.%s", account_resource, rand_str);
 
 	lm_connection_authenticate (priv->connection,
 				    id,
@@ -825,7 +846,7 @@ jabber_connection_open_cb (LmConnection *connection,
 	lm_connection_authenticate (priv->connection,
 				    id,
 				    password,
-				    resource,
+				    account_resource,
 				    (LmResultFunction) jabber_connection_auth_cb,
 				    jabber, NULL, NULL);
 #endif
@@ -1096,6 +1117,42 @@ jabber_register_cancel (GossipProtocol *protocol)
 	jabber_logout (protocol);
 }
 
+static GossipAccount *
+jabber_new_account (GossipProtocol *protocol)
+{
+	GossipAccount *account;
+	const gchar   *id;
+	const gchar   *server;
+	gboolean       ssl;
+	guint          port;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
+
+	id = jabber_get_example_username (protocol);
+	server = jabber_get_default_server (protocol, id);
+	ssl = jabber_is_ssl_supported (protocol);
+	port = jabber_get_default_port (protocol, ssl);
+	
+	/* Set a default value for each account parameter */
+	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
+				"type", GOSSIP_ACCOUNT_TYPE_JABBER,
+				"name", _("new account"),
+				"auto_connect", TRUE,
+				"use_proxy", FALSE,
+				NULL);
+
+	gossip_account_param_new (account,
+				  "id", G_TYPE_STRING, id, 0,
+				  "password", G_TYPE_STRING, "", 0,
+				  "resource", G_TYPE_STRING, _("Home"), 0,
+				  "server", G_TYPE_STRING, server, 0,
+				  "port", G_TYPE_UINT, port, 0,
+				  "use_ssl", G_TYPE_BOOLEAN, ssl, 0,
+				  NULL);
+
+	return account;
+}
+
 static void
 jabber_register_connection_open_cb (LmConnection *connection,
 				    gboolean      result,
@@ -1106,6 +1163,8 @@ jabber_register_connection_open_cb (LmConnection *connection,
 	LmMessageNode    *node;
 	const gchar      *error_message = NULL;
 	const gchar      *id;
+	const gchar      *server;
+	const gchar      *password;
 	gchar            *username;
 	gboolean          ok = FALSE;
 
@@ -1143,7 +1202,13 @@ jabber_register_connection_open_cb (LmConnection *connection,
 						      ra,
 						      NULL);
 
-	m = lm_message_new_with_sub_type (gossip_account_get_server (priv->account),
+	gossip_account_param_get (priv->account,
+				  "server", &server,
+				  "id", &id,
+				  "password", &password,
+				  NULL);
+
+	m = lm_message_new_with_sub_type (server,
 					  LM_MESSAGE_TYPE_IQ,
 					  LM_MESSAGE_SUB_TYPE_SET);
 
@@ -1152,12 +1217,11 @@ jabber_register_connection_open_cb (LmConnection *connection,
 
 	lm_message_node_set_attribute (node, "xmlns", XMPP_REGISTER_XMLNS);
 
-	id = gossip_account_get_id (priv->account);
 	username = gossip_jid_string_get_part_name (id);
 	lm_message_node_add_child (node, "username", username);
 	g_free (username);
 
-	lm_message_node_add_child (node, "password", gossip_account_get_password (priv->account));
+	lm_message_node_add_child (node, "password", password);
 
 	ok = lm_connection_send_with_reply (connection, m,
 					    ra->message_handler,
@@ -1379,7 +1443,7 @@ jabber_get_default_server (GossipProtocol *protocol,
 	return server;
 }
 
-static guint16
+static guint
 jabber_get_default_port (GossipProtocol *protocol,
 			 gboolean        use_ssl)
 {

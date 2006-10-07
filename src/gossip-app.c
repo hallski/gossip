@@ -51,7 +51,6 @@
 #include "gossip-idle.h"
 #include "gossip-log-window.h"
 #include "gossip-marshal.h"
-#include "gossip-new-account-window.h"
 #include "gossip-new-chatroom-dialog.h"
 #include "gossip-new-message-dialog.h"
 #include "gossip-preferences.h"
@@ -297,9 +296,6 @@ static void            app_notify_show_avatars_cb             (GossipConf       
 static void            app_notify_compact_contact_list_cb     (GossipConf               *conf,
 							       const gchar              *key,
 							       gpointer                  user_data);
-static void            app_connect_no_accounts_response_cb    (GtkWidget                *widget,
-							       gint                      response,
-							       gpointer                  user_data);
 static gboolean        app_idle_check_cb                      (GossipApp                *app);
 static void            app_disconnect                         (void);
 static void            app_connection_items_setup             (GladeXML                 *glade);
@@ -509,11 +505,11 @@ app_setup (GossipSession        *session,
 	gossip_subscription_dialog_init (priv->session);
 	gossip_ft_window_init (priv->session);
 
-	if (gossip_new_account_window_is_needed ()) {
+	if (gossip_accounts_dialog_is_needed ()) {
 		gossip_debug (DEBUG_DOMAIN_SETUP,
 			      "Showing new account window "
 			      "for first time run");
-		gossip_new_account_window_show (NULL);
+		gossip_accounts_dialog_show (NULL);
 	}
 
 	gossip_debug (DEBUG_DOMAIN_SETUP,
@@ -1445,11 +1441,12 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 				    gpointer        user_data)
 {
 	GossipAppPriv *priv;
+	const gchar   *id;
 
 	priv = GET_PRIV (app);
 
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'",
-		      gossip_account_get_id (account));
+	gossip_account_param_get (account, "id", &id, NULL);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", id);
 
 	gossip_throbber_start (GOSSIP_THROBBER (priv->throbber));
 }
@@ -1462,11 +1459,12 @@ app_session_protocol_connected_cb (GossipSession  *session,
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
+	const gchar   *id;
 
 	priv = GET_PRIV (app);
 
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Connected account:'%s'",
-		      gossip_account_get_id (account));
+	gossip_account_param_get (account, "id", &id, NULL);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Connected account:'%s'", id);
 
 	gossip_session_count_accounts (priv->session,
 				       NULL,
@@ -1522,14 +1520,15 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	GossipAppPriv *priv;
 	gboolean       connecting;
 	gboolean       should_reconnect;
+	const gchar   *id;
 #ifdef HAVE_DBUS
 	gboolean       nm_connected;
 #endif
 
 	priv = GET_PRIV (app);
 
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Disconnected account:'%s'",
-		      gossip_account_get_id (account));
+	gossip_account_param_get (account, "id", &id, NULL);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Disconnected account:'%s'", id);
 
 	gossip_session_count_accounts (priv->session,
 				       NULL,
@@ -1578,11 +1577,12 @@ app_session_protocol_error_cb (GossipSession  *session,
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
+	const gchar   *id;
 
 	priv = GET_PRIV (app);
 
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Error for account:'%s'",
-		      gossip_account_get_id (account));
+	gossip_account_param_get (account, "id", &id, NULL);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Error for account:'%s'", id);
 
 	gossip_session_count_accounts (priv->session,
 				       NULL,
@@ -2049,15 +2049,6 @@ app_idle_check_cb (GossipApp *app)
  * App
  */
 
-static void
-app_connect_no_accounts_response_cb (GtkWidget *widget,
-				     gint       response,
-				     gpointer   user_data)
-{
-	gtk_widget_destroy (widget);
-	gossip_accounts_dialog_show (NULL);
-}
-
 void
 gossip_app_connect (GossipAccount *account,
 		    gboolean       startup)
@@ -2069,26 +2060,7 @@ gossip_app_connect (GossipAccount *account,
 
 	manager = gossip_session_get_account_manager (priv->session);
 	if (gossip_account_manager_get_count (manager) < 1) {
-		GtkWidget *dialog;
-
-		dialog = gtk_message_dialog_new_with_markup (
-			GTK_WINDOW (gossip_app_get_window ()),
-			GTK_DIALOG_MODAL |
-			GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_INFO,
-			GTK_BUTTONS_CLOSE,
-			"<b>%s</b>\n\n%s",
-			_("You have no Instant Messaging accounts "
-			  "configured!"),
-			_("Next you will be presented with the "
-			  "Account Information dialog to set your "
-			  "details up."));
-
-		g_signal_connect (dialog, "response",
-				  G_CALLBACK (app_connect_no_accounts_response_cb),
-				  NULL);
-
-		gtk_widget_show (dialog);
+		/* Show the accounts dialog instead */
 		return;
 	}
 

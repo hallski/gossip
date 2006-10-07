@@ -17,7 +17,8 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Author: Martyn Russell <martyn@imendio.com>
+ * Authors: Martyn Russell <martyn@imendio.com>
+ *          Xavier Claessens <xclaesse@gmail.com>
  */
 
 #ifndef __GOSSIP_ACCOUNT_H__
@@ -32,15 +33,12 @@
 #define GOSSIP_IS_ACCOUNT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT))
 #define GOSSIP_ACCOUNT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT, GossipAccountClass))
 
-
 typedef struct _GossipAccount      GossipAccount;
 typedef struct _GossipAccountClass GossipAccountClass;
-
 
 struct _GossipAccount {
 	GObject parent;
 };
-
 
 struct _GossipAccountClass {
 	GObjectClass parent_class;
@@ -74,50 +72,31 @@ typedef void (*GossipAccountParamFunc) (GossipAccount      *account,
 					gpointer            user_data);
 
 GType             gossip_account_get_gtype         (void) G_GNUC_CONST;
-
-void              gossip_account_param_set_full    (GossipAccount           *account,
-						    const gchar             *param_name,
-						    const GValue            *g_value,
-						    GossipAccountParamFlags  flags);
+void              gossip_account_param_new         (GossipAccount           *account,
+						    const gchar             *first_param_name,
+						    ...);
+void              gossip_account_param_set         (GossipAccount           *account,
+						    const gchar             *first_param_name,
+						    ...);
 void              gossip_account_param_set_g_value (GossipAccount           *account,
 						    const gchar             *param_name,
 						    const GValue            *g_value);
-void              gossip_account_param_set_string  (GossipAccount           *account,
-						    const gchar             *param_name,
-						    const gchar             *value);
+void              gossip_account_param_get         (GossipAccount           *account,
+						    const gchar             *first_param_name,
+						    ...);
 const GValue *    gossip_account_param_get_g_value (GossipAccount           *account,
-						    const gchar             *param_name);
-const gchar *     gossip_account_param_get_string  (GossipAccount           *account,
 						    const gchar             *param_name);
 void              gossip_account_param_foreach     (GossipAccount           *account,
 						    GossipAccountParamFunc   callback,
 						    gpointer                 user_data);
 GossipAccountType gossip_account_get_type          (GossipAccount           *account);
 const gchar *     gossip_account_get_name          (GossipAccount           *account);
-const gchar *     gossip_account_get_id            (GossipAccount           *account);
-const gchar *     gossip_account_get_password      (GossipAccount           *account);
-const gchar *     gossip_account_get_resource      (GossipAccount           *account);
-const gchar *     gossip_account_get_server        (GossipAccount           *account);
-guint16           gossip_account_get_port          (GossipAccount           *account);
 gboolean          gossip_account_get_auto_connect  (GossipAccount           *account);
-gboolean          gossip_account_get_use_ssl       (GossipAccount           *account);
 gboolean          gossip_account_get_use_proxy     (GossipAccount           *account);
 void              gossip_account_set_name          (GossipAccount           *account,
 						    const gchar             *name);
-void              gossip_account_set_id            (GossipAccount           *account,
-						    const gchar             *id);
-void              gossip_account_set_password      (GossipAccount           *account,
-						    const gchar             *password);
-void              gossip_account_set_resource      (GossipAccount           *account,
-						    const gchar             *resource);
-void              gossip_account_set_server        (GossipAccount           *account,
-						    const gchar             *server);
-void              gossip_account_set_port          (GossipAccount           *account,
-						    guint16                  port);
 void              gossip_account_set_auto_connect  (GossipAccount           *account,
 						    gboolean                 auto_connect);
-void              gossip_account_set_use_ssl       (GossipAccount           *account,
-						    gboolean                 use_ssl);
 void              gossip_account_set_use_proxy     (GossipAccount           *account,
 						    gboolean                 use_proxy);
 guint             gossip_account_hash              (gconstpointer            key);

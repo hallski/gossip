@@ -17,7 +17,8 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * Author: Martyn Russell <martyn@imendio.com>
+ * Authors: Martyn Russell <martyn@imendio.com>
+ *          Xavier Claessens <xclaesse@gmail.com>
  */
 
 #include <config.h>
@@ -26,6 +27,7 @@
 
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <gobject/gvaluecollector.h>
 
 #include "libgossip-marshal.h"
 #include "gossip-utils.h"
@@ -64,6 +66,15 @@ static void           account_set_property          (GObject                *obj
 						     guint                   param_id,
 						     const GValue           *value,
 						     GParamSpec             *pspec);
+static void           account_param_new_valist      (GossipAccount          *account,
+						     const gchar            *first_param_name,
+						     va_list                 var_args);
+static void           account_param_set_valist      (GossipAccount          *account,
+						     const gchar            *first_param_name,
+						     va_list                 var_args);
+static void           account_param_get_valist      (GossipAccount          *account,
+						     const gchar            *first_param_name,
+						     va_list                 var_args);
 static void           account_param_get_all_foreach (gchar                  *param_name,
 						     GossipAccountParam     *param,
 						     GossipAccountParamData *data);
@@ -75,13 +86,7 @@ enum {
 	PROP_0,
 	PROP_TYPE,
 	PROP_NAME,
-	PROP_ID,
-	PROP_PASSWORD,
-	PROP_RESOURCE,
-	PROP_SERVER,
-	PROP_PORT,
 	PROP_AUTO_CONNECT,
-	PROP_USE_SSL,
 	PROP_USE_PROXY
 };
 
@@ -131,9 +136,15 @@ account_class_init (GossipAccountClass *class)
 	object_class->get_property = account_get_property;
 	object_class->set_property = account_set_property;
 
-	/*
-	 * properties
-	 */
+	signals[CHANGED] =
+		g_signal_new ("changed",
+			      G_TYPE_FROM_CLASS (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
 
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
@@ -154,61 +165,11 @@ account_class_init (GossipAccountClass *class)
 							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
-					 PROP_ID,
-					 g_param_spec_string ("id",
-							      "Account ID",
-							      "For example someone@jabber.org",
-							      NULL,
-							      G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_PASSWORD,
-					 g_param_spec_string ("password",
-							      "Account Password",
-							      "Authentication token",
-							      NULL,
-							      G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_SERVER,
-					 g_param_spec_string ("server",
-							      "Account Server",
-							      "Machine to connect to",
-							      NULL,
-							      G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_RESOURCE,
-					 g_param_spec_string ("resource",
-							      "Connection Resource",
-							      "The name for the connection",
-							      NULL,
-							      G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_PORT,
-					 g_param_spec_int ("port",
-							   "Account Port",
-							   "Port used in the connection to Server",
-							   0,
-							   65535,
-							   0,
-							   G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
 					 PROP_AUTO_CONNECT,
 					 g_param_spec_boolean ("auto_connect",
 							       "Account Auto Connect",
 							       "Connect on startup",
 							       TRUE,
-							       G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_USE_SSL,
-					 g_param_spec_boolean ("use_ssl",
-							       "Account Uses SSL",
-							       "Identifies if the connection uses secure methods",
-							       FALSE,
 							       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
@@ -218,20 +179,6 @@ account_class_init (GossipAccountClass *class)
 							       "Identifies if the connection uses the environment proxy",
 							       FALSE,
 							       G_PARAM_READWRITE));
-
-	/*
-	 * signals
-	 */
-
-	signals[CHANGED] =
-		g_signal_new ("changed",
-			      G_TYPE_FROM_CLASS (object_class),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__VOID,
-			      G_TYPE_NONE,
-			      0);
 
 	g_type_class_add_private (object_class, sizeof (GossipAccountPriv));
 }
@@ -295,24 +242,6 @@ account_get_property (GObject    *object,
 	case PROP_USE_PROXY:
 		g_value_set_boolean (value, priv->use_proxy);
 		break;
-	case PROP_ID:
-		g_value_set_string (value, gossip_account_get_id (account));
-		break;
-	case PROP_PASSWORD:
-		g_value_set_string (value, gossip_account_get_password (account));
-		break;
-	case PROP_RESOURCE:
-		g_value_set_string (value, gossip_account_get_resource (account));
-		break;
-	case PROP_SERVER:
-		g_value_set_string (value, gossip_account_get_server (account));
-		break;
-	case PROP_PORT:
-		g_value_set_int (value, gossip_account_get_port (account));
-		break;
-	case PROP_USE_SSL:
-		g_value_set_boolean (value, gossip_account_get_use_ssl (account));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
 		break;
@@ -338,33 +267,9 @@ account_set_property (GObject      *object,
 		gossip_account_set_name (GOSSIP_ACCOUNT (object),
 					 g_value_get_string (value));
 		break;
-	case PROP_ID:
-		gossip_account_set_id (GOSSIP_ACCOUNT (object),
-				       g_value_get_string (value));
-		break;
-	case PROP_PASSWORD:
-		gossip_account_set_password (GOSSIP_ACCOUNT (object),
-					     g_value_get_string (value));
-		break;
-	case PROP_RESOURCE:
-		gossip_account_set_resource (GOSSIP_ACCOUNT (object),
-					     g_value_get_string (value));
-		break;
-	case PROP_SERVER:
-		gossip_account_set_server (GOSSIP_ACCOUNT (object),
-					   g_value_get_string (value));
-		break;
-	case PROP_PORT:
-		gossip_account_set_port (GOSSIP_ACCOUNT (object),
-					 g_value_get_int (value));
-		break;
 	case PROP_AUTO_CONNECT:
 		gossip_account_set_auto_connect (GOSSIP_ACCOUNT (object),
 						 g_value_get_boolean (value));
-		break;
-	case PROP_USE_SSL:
-		gossip_account_set_use_ssl (GOSSIP_ACCOUNT (object),
-					    g_value_get_boolean (value));
 		break;
 	case PROP_USE_PROXY:
 		gossip_account_set_use_proxy (GOSSIP_ACCOUNT (object),
@@ -376,11 +281,140 @@ account_set_property (GObject      *object,
 	};
 }
 
+static void
+account_param_new_valist (GossipAccount *account,
+			  const gchar   *first_param_name,
+			  va_list        var_args)
+{
+	GossipAccountPriv *priv;
+	const gchar       *name;
+
+	priv = GET_PRIV (account);
+
+	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
+		GossipAccountParam *param;
+		GType               g_type;
+		gchar              *error = NULL;
+
+		param = g_hash_table_lookup (priv->parameters, name);
+		if (param) {
+			g_warning ("GossipAccount already has a parameter named `%s'", name);
+			break;
+		}
+		param = g_new0 (GossipAccountParam, 1);
+
+		g_type = va_arg (var_args, GType);
+		g_value_init (&param->g_value, g_type);
+
+		G_VALUE_COLLECT (&param->g_value, var_args, 0, &error);
+		if (error) {
+			g_warning ("%s: %s", G_STRFUNC, error);
+			g_free (error);
+			break;
+		}
+
+		param->flags = va_arg (var_args, GossipAccountParamFlags);
+
+		g_hash_table_insert (priv->parameters,
+				     g_strdup (name),
+				     param);
+	}
+}
+
+static void
+account_param_set_valist (GossipAccount *account,
+			  const gchar   *first_param_name,
+			  va_list        var_args)
+{
+	GossipAccountPriv *priv;
+	const gchar       *name;
+
+	priv = GET_PRIV (account);
+
+	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
+		GossipAccountParam *param;
+		gchar              *error = NULL;
+
+		param = g_hash_table_lookup (priv->parameters, name);
+		if (!param) {
+			g_warning ("GossipAccount has no parameter named `%s'", name);
+			break;
+		}
+
+		G_VALUE_COLLECT (&param->g_value, var_args, 0, &error);
+		if (error) {
+			g_warning ("%s: %s", G_STRFUNC, error);
+			g_free (error);
+			break;
+		}
+	}
+}
+
+static void
+account_param_get_valist (GossipAccount *account,
+			  const gchar   *first_param_name,
+			  va_list        var_args)
+{
+	GossipAccountPriv *priv;
+	const gchar       *name;
+
+	priv = GET_PRIV (account);
+
+	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
+		GossipAccountParam *param;
+		gchar              *error = NULL;
+
+		param = g_hash_table_lookup (priv->parameters, name);
+		if (!param) {
+			g_warning ("GossipAccount has no parameter named `%s'", name);
+			break;
+		}
+
+		G_VALUE_LCOPY (&param->g_value, var_args, 0, &error);
+		if (error) {
+			g_warning ("%s: %s", G_STRFUNC, error);
+			g_free (error);
+			break;
+		}
+	}
+}
+
 void
-gossip_account_param_set_full (GossipAccount           *account,
-			       const gchar             *param_name,
-			       const GValue            *g_value,
-			       GossipAccountParamFlags  flags)
+gossip_account_param_new (GossipAccount *account,
+			  const gchar   *first_param_name,
+			  ...)
+{
+	va_list var_args;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	va_start (var_args, first_param_name);
+	account_param_new_valist (account, first_param_name, var_args);
+	va_end (var_args);
+
+	g_signal_emit (account, signals[CHANGED], 0);
+}
+
+void
+gossip_account_param_set (GossipAccount *account,
+			  const gchar   *first_param_name,
+			  ...)
+{
+	va_list var_args;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	va_start (var_args, first_param_name);
+	account_param_set_valist (account, first_param_name, var_args);
+	va_end (var_args);
+
+	g_signal_emit (account, signals[CHANGED], 0);
+}
+
+void
+gossip_account_param_set_g_value (GossipAccount           *account,
+				  const gchar             *param_name,
+				  const GValue            *g_value)
 {
 	GossipAccountPriv  *priv;
 	GossipAccountParam *param;
@@ -390,81 +424,28 @@ gossip_account_param_set_full (GossipAccount           *account,
 	priv = GET_PRIV (account);
 
 	param = g_hash_table_lookup (priv->parameters, param_name);
-
 	if (!param) {
-		param = g_new0 (GossipAccountParam, 1);
-		g_value_init (&param->g_value, G_VALUE_TYPE (g_value));
-
-		g_hash_table_insert (priv->parameters,
-				     g_strdup (param_name),
-				     param);
+		g_warning ("GossipAccount has no parameter named `%s'", param_name);
+		return;
 	}
 
-	param->flags = flags;
 	g_value_copy (g_value, &param->g_value);
-
-	if (strcmp (param_name, "id") == 0) {
-		g_object_notify (G_OBJECT (account), "id");
-	}
-	else if (strcmp (param_name, "password") == 0) {
-		g_object_notify (G_OBJECT (account), "password");
-	}
-	else if (strcmp (param_name, "resource") == 0) {
-		g_object_notify (G_OBJECT (account), "resource");
-	}
-	else if (strcmp (param_name, "server") == 0) {
-		g_object_notify (G_OBJECT (account), "server");
-	}
-	else if (strcmp (param_name, "port") == 0) {
-		g_object_notify (G_OBJECT (account), "port");
-	}
-	else if (strcmp (param_name, "use_ssl") == 0) {
-		g_object_notify (G_OBJECT (account), "use_ssl");
-	}
 
 	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
-gossip_account_param_set_g_value (GossipAccount *account,
-				  const gchar   *param_name,
-				  const GValue  *g_value)
+gossip_account_param_get (GossipAccount *account,
+			  const gchar   *first_param_name,
+			  ...)
 {
-	GossipAccountPriv       *priv;
-	GossipAccountParam      *param;
-	GossipAccountParamFlags  flags;
+	va_list var_args;
 
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
-	priv = GET_PRIV (account);
-
-	param = g_hash_table_lookup (priv->parameters, param_name);
-
-	if (param) {
-		flags = param->flags;
-	} else {
-		flags = GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT;
-	}
-
-	gossip_account_param_set_full (account,
-				       param_name,
-				       g_value,
-				       flags);
-}
-
-void
-gossip_account_param_set_string (GossipAccount *account,
-				 const gchar   *param_name,
-				 const gchar   *value)
-{
-	GValue g_value = {0, };
-
-	g_value_init (&g_value, G_TYPE_STRING);
-	g_value_set_string (&g_value, value);
-	gossip_account_param_set_g_value (account,
-					  param_name,
-					  &g_value);
-	g_value_unset (&g_value);
+	va_start (var_args, first_param_name);
+	account_param_get_valist (account, first_param_name, var_args);
+	va_end (var_args);
 }
 
 const GValue *
@@ -479,23 +460,12 @@ gossip_account_param_get_g_value (GossipAccount *account,
 	priv = GET_PRIV (account);
 
 	param = g_hash_table_lookup (priv->parameters, param_name);
-
-	if (param) {
-		return &param->g_value;
+	if (!param) {
+		g_warning ("GossipAccount has no parameter named `%s'", param_name);
+		return NULL;
 	}
 
-	return NULL;
-}
-
-const gchar *
-gossip_account_param_get_string (GossipAccount *account,
-				 const gchar   *param_name)
-{
-	const GValue *g_value;
-
-	g_value = gossip_account_param_get_g_value (account, param_name);
-
-	return g_value_get_string (g_value);
+	return &param->g_value;
 }
 
 void
@@ -560,44 +530,6 @@ gossip_account_get_name (GossipAccount *account)
 	return priv->name;
 }
 
-const gchar *
-gossip_account_get_id (GossipAccount *account)
-{
-	return gossip_account_param_get_string (account, "id");
-}
-
-const gchar *
-gossip_account_get_password (GossipAccount *account)
-{
-	return gossip_account_param_get_string (account, "password");
-}
-
-const gchar *
-gossip_account_get_resource (GossipAccount *account)
-{
-	return gossip_account_param_get_string (account, "resource");
-}
-
-const gchar *
-gossip_account_get_server (GossipAccount *account)
-{
-	return gossip_account_param_get_string (account, "server");
-}
-
-guint16
-gossip_account_get_port (GossipAccount *account)
-{
-	const GValue *g_value;
-
-	g_value = gossip_account_param_get_g_value (account, "port");
-
-	if (g_value) {
-		return g_value_get_uint (g_value);
-	}
-
-	return 0;
-}
-
 gboolean
 gossip_account_get_auto_connect (GossipAccount *account)
 {
@@ -607,20 +539,6 @@ gossip_account_get_auto_connect (GossipAccount *account)
 
 	priv = GET_PRIV (account);
 	return priv->auto_connect;
-}
-
-gboolean
-gossip_account_get_use_ssl (GossipAccount *account)
-{
-	const GValue *g_value;
-
-	g_value = gossip_account_param_get_g_value (account, "use_ssl");
-
-	if (g_value) {
-		return g_value_get_boolean (g_value);
-	}
-
-	return FALSE;
 }
 
 gboolean
@@ -667,46 +585,6 @@ gossip_account_set_name (GossipAccount *account,
 }
 
 void
-gossip_account_set_id (GossipAccount *account,
-		       const gchar   *id)
-{
-	gossip_account_param_set_string (account, "id", id);
-}
-
-void
-gossip_account_set_password (GossipAccount *account,
-			     const gchar   *password)
-{
-	gossip_account_param_set_string (account, "password", password);
-}
-
-void
-gossip_account_set_resource (GossipAccount *account,
-			     const gchar   *resource)
-{
-	gossip_account_param_set_string (account, "resource", resource);
-}
-
-void
-gossip_account_set_server (GossipAccount *account,
-			   const gchar   *server)
-{
-	gossip_account_param_set_string (account, "server", server);
-}
-
-void
-gossip_account_set_port (GossipAccount *account,
-			 guint16        port)
-{
-	GValue g_value = {0, };
-
-	g_value_init (&g_value, G_TYPE_UINT);
-	g_value_set_uint (&g_value, port);
-	gossip_account_param_set_g_value (account, "port", &g_value);
-	g_value_unset (&g_value);
-}
-
-void
 gossip_account_set_auto_connect (GossipAccount *account,
 				 gboolean       auto_connect)
 {
@@ -719,18 +597,6 @@ gossip_account_set_auto_connect (GossipAccount *account,
 
 	g_object_notify (G_OBJECT (account), "auto_connect");
 	g_signal_emit (account, signals[CHANGED], 0);
-}
-
-void
-gossip_account_set_use_ssl (GossipAccount *account,
-			    gboolean       use_ssl)
-{
-	GValue g_value = {0, };
-
-	g_value_init (&g_value, G_TYPE_BOOLEAN);
-	g_value_set_boolean (&g_value, use_ssl);
-	gossip_account_param_set_g_value (account, "use_ssl", &g_value);
-	g_value_unset (&g_value);
 }
 
 void

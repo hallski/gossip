@@ -28,6 +28,7 @@
 #include "libgossip-marshal.h"
 #include "gossip-account-manager.h"
 #include "gossip-debug.h"
+#include "gossip-protocol.h"
 #include "gossip-utils.h"
 
 #define DEBUG_DOMAIN "AccountManager"
@@ -289,7 +290,7 @@ gossip_account_manager_find_by_id (GossipAccountManager *manager,
 		const gchar   *account_id;
 
 		account = l->data;
-		account_id = gossip_account_get_id (account);
+		gossip_account_param_get (account, "id", &account_id, NULL);
 
 		if (strcmp (account_id, id) == 0) {
 			return account;
@@ -446,16 +447,22 @@ static void
 account_manager_parse_account (GossipAccountManager *manager,
 			       xmlNodePtr            node)
 {
-	GossipAccount *account;
-	xmlNodePtr     child;
-	gchar         *str;
+	GossipAccount  *account;
+	GossipProtocol *protocol;
+	xmlNodePtr      child;
+	gchar          *str;
 
-	/* Default values */
-	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
-				"type", GOSSIP_ACCOUNT_TYPE_JABBER,
-				"auto_connect", TRUE,
-				"port", 5222,
-				NULL);
+	str = xmlGetProp (node, "type");
+	if (str) {
+		protocol = gossip_protocol_new_from_account_type (gossip_account_string_to_type (str));
+	} else {
+		protocol = gossip_protocol_new_from_account_type (GOSSIP_ACCOUNT_TYPE_JABBER);
+	}
+
+	account = gossip_protocol_new_account (protocol);
+
+	g_object_unref (protocol);
+	xmlFree (str);
 
 	child = node->children;
 	while (child) {
@@ -463,6 +470,10 @@ account_manager_parse_account (GossipAccountManager *manager,
 
 		tag = (gchar *) child->name;
 		str = (gchar *) xmlNodeGetContent (child);
+
+		if (!str) {
+			continue;
+		}
 
 		if (strcmp (tag, "name") == 0) {
 			gossip_account_set_name (account, str);
@@ -480,64 +491,52 @@ account_manager_parse_account (GossipAccountManager *manager,
 				      NULL);
 		}
 		else if (strcmp (tag, "parameter") == 0) {
-			GValue                  *g_value;
 			gchar                   *param_name;
 			gchar                   *type_str;
-			gchar                   *required_str;
-			gchar                   *has_default_str;
 			GType                    type;
-			GossipAccountParamFlags  flags = 0;
+			GValue                  *g_value;
 
 			param_name = xmlGetProp (child, "name");
 			type_str = xmlGetProp (child, "type");
-			required_str = xmlGetProp (child, "required");
-			has_default_str = xmlGetProp (child, "has-default");
-
-			if (strcmp (required_str, "yes") == 0) {
-				flags |= GOSSIP_ACCOUNT_PARAM_FLAG_REQUIRED;
-			}
-			if (strcmp (has_default_str, "yes") == 0) {
-				flags |= GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT;
-			}
 
 			type = gossip_dbus_type_to_g_type (type_str);
 			g_value = gossip_string_to_g_value (str, type);
 
-			gossip_account_param_set_full (account,
-						       param_name,
-						       g_value,
-						       flags);
+			gossip_account_param_set_g_value (account,
+							  param_name,
+							  g_value);
 
 			g_value_unset (g_value);
 			g_free (g_value);
 			xmlFree (param_name);
 			xmlFree (type_str);
-			xmlFree (required_str);
-			xmlFree (has_default_str);
 		}
 		/* Those are deprecated and kept for compatibility only */
 		else if (strcmp (tag, "id") == 0) {
-			gossip_account_set_id (account, str);
+			gossip_account_param_set (account, "id", str, NULL);
 		}
 		else if (strcmp (tag, "resource") == 0) {
-			gossip_account_set_resource (account, str);
+			gossip_account_param_set (account, "resource", str, NULL);
 		}
 		else if (strcmp (tag, "password") == 0) {
-			gossip_account_set_password (account, str);
+			gossip_account_param_set (account, "password", str, NULL);
 		}
 		else if (strcmp (tag, "server") == 0) {
-			gossip_account_set_server (account, str);
+			gossip_account_param_set (account, "server", str, NULL);
 		}
 		else if (strcmp (tag, "port") == 0) {
 			guint tmp_port;
 
 			tmp_port = atoi (str);
 			if (tmp_port != 0) {
-				gossip_account_set_port (account, tmp_port);
+				gossip_account_param_set (account, "port",
+							  tmp_port, NULL);
 			}
 		}
 		else if (strcmp (tag, "use_ssl") == 0) {
-			gossip_account_set_use_ssl (account, strcmp (str, "yes") == 0);
+			gossip_account_param_set (account, "use_ssl",
+						  strcmp (str, "yes") == 0,
+						  NULL);
 		}
 
 		xmlFree (str);
@@ -546,8 +545,10 @@ account_manager_parse_account (GossipAccountManager *manager,
 	}
 #ifdef RESOURCE_HACK
 	const gchar *resource_found = NULL;
+	const gchar *id;
 
-	str = g_strdup (gossip_account_get_id (account));
+	gossip_account_param_get (account, "id", &id, NULL);
+	str = g_strdup (id);
 	if (str) {
 		/* FIXME: This hack is so we don't get bug
 		 * reports and basically gets the resource
@@ -566,8 +567,10 @@ account_manager_parse_account (GossipAccountManager *manager,
 	}
 
 	if (resource_found) {
-		gossip_account_set_id (account, str);
-		gossip_account_set_resource (account, resource_found);
+		gossip_account_param_set (account,
+					  "id", str,
+					  "resource", resource_found,
+					  NULL);
 		need_saving = TRUE;
 	}
 
@@ -703,7 +706,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		type = gossip_account_type_to_string (gossip_account_get_type (account));
 
 		node = xmlNewChild (root, NULL, "account", NULL);
-		xmlNewTextChild (node, NULL, "type", type);
+		xmlNewProp (node, "type", type);
 		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
 		xmlNewTextChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
 		xmlNewTextChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
@@ -744,19 +747,13 @@ account_manager_add_parameters_foreach (GossipAccount      *account,
 {
 	gchar       *value_str;
 	const gchar *type_str;
-	gboolean     required;
-	gboolean     has_default;
 
 	value_str = gossip_g_value_to_string (&param->g_value);
 	type_str = gossip_g_type_to_dbus_type (G_VALUE_TYPE (&param->g_value));
-	required = param->flags & GOSSIP_ACCOUNT_PARAM_FLAG_REQUIRED;
-	has_default = param->flags & GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT;
 
 	node = xmlNewTextChild (node, NULL, "parameter", value_str);
 	xmlNewProp (node, "name", param_name);
 	xmlNewProp (node, "type", type_str);
-	xmlNewProp (node, "required", required ? "yes" : "no");
-	xmlNewProp (node, "has-default", has_default ? "yes" : "no");
 
 	g_free (value_str);
 }

@@ -1,5 +1,27 @@
 2006-10-07  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-account.[ch]: 
+	* libgossip/gossip-account.dtd:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.[ch]:
+	* protocols/jabber/gossip-jabber.c: 
+	* src/Makefile.am:
+	* src/gossip-accounts-dialog.[ch]:
+	* src/gossip-app.[ch]:
+	* src/gossip-log.c: 
+	* src/gossip-new-account-window.[ch]:
+	* src/gossip-new-chatroom-dialog.c:
+	* src/gossip-notify.c:
+	* src/gossip-sound.c: 
+	* src/gossip-ui-utils.c:
+	* ui/main.glade: Remove the old druid for adding accounts and use
+	the accounts dialog instead. This also makes the 'Settings' part
+	of the dialog protocol specific according to the new GossipAccount
+	API that Xavier has worked on.
+
+2006-10-07  Martyn Russell  <martyn@imendio.com>
+
 	* configure.ac:
 	* peekaboo/src/Makefile.am:
 	* peekaboo/src/peekaboo-applet.c: Removed the need for Galago with

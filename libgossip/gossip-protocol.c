@@ -87,6 +87,7 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->get_vcard            = NULL;
 	klass->get_version          = NULL;
 	klass->register_account     = NULL;
+	klass->new_account          = NULL;
 
 	signals[LOGGED_IN] =
 		g_signal_new ("logged-in",
@@ -359,7 +360,7 @@ gossip_protocol_get_default_server (GossipProtocol *protocol,
 	return NULL;
 }
 
-guint16
+guint
 gossip_protocol_get_default_port (GossipProtocol *protocol,
 				  gboolean        use_ssl)
 {
@@ -681,6 +682,21 @@ gossip_protocol_register_cancel (GossipProtocol *protocol)
 	if (klass->register_cancel) {
 		klass->register_cancel (protocol);
 	}
+}
+
+GossipAccount *
+gossip_protocol_new_account (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->new_account) {
+		return klass->new_account (protocol);
+	}
+
+	return NULL;
 }
 
 const gchar *

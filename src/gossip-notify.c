@@ -533,14 +533,16 @@ notify_protocol_connected_cb (GossipSession  *session,
 			      GossipProtocol *protocol,
 			      gpointer        user_data)
 {
-	guint id;
+	guint        id;
+	const gchar *account_id;
 
 	if (g_hash_table_lookup (account_states, account)) {
 		return;
 	}
 
+	gossip_account_param_get (account, "id", &account_id, NULL);
 	gossip_debug (DEBUG_DOMAIN, "Account update, account:'%s' is now online",
-		      gossip_account_get_id (account));
+		      account_id);
 
 	id = g_timeout_add (NOTIFY_WAIT_TIME,
 			    (GSourceFunc) notify_protocol_timeout_cb,

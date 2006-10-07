@@ -37,6 +37,8 @@ gossip_SOURCES = 				                        	\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
+	gossip-account-widget-jabber.c	   gossip-account-widget-jabber.h	\
+	gossip-account-widget-generic.c	   gossip-account-widget-generic.h	\
 	gossip-add-contact-dialog.c        gossip-add-contact-dialog.h		\
 	gossip-app.c	 	           gossip-app.h				\
 	gossip-avatar-image.c		   gossip-avatar-image.h		\
@@ -63,7 +65,6 @@ gossip_SOURCES = 				                        	\
 	gossip-log-window.c	           gossip-log-window.h			\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \
-	gossip-new-account-window.c        gossip-new-account-window.h		\
 	gossip-new-chatroom-dialog.c       gossip-new-chatroom-dialog.h		\
 	gossip-new-message-dialog.c        gossip-new-message-dialog.h		\
 	gossip-notebook.c	           gossip-notebook.h			\

@@ -826,6 +826,36 @@ gossip_session_count_accounts (GossipSession *session,
 	}
 }
 
+GossipAccount *
+gossip_session_new_account (GossipSession     *session,
+			    GossipAccountType  type)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+	GossipAccount     *account;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+
+	priv = GET_PRIV (session);
+
+	protocol = gossip_protocol_new_from_account_type (type);
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	account = gossip_protocol_new_account (protocol);
+	priv->protocols = g_list_append (priv->protocols,
+					 g_object_ref (protocol));
+
+	g_hash_table_insert (priv->accounts,
+			     g_object_ref (account),
+			     g_object_ref (protocol));
+
+	session_protocol_signals_setup (session, protocol);
+
+	g_object_unref (protocol);
+	
+	return account;
+}
+
 gboolean
 gossip_session_add_account (GossipSession *session,
 			    GossipAccount *account)
