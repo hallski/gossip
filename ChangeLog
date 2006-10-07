@@ -1,3 +1,10 @@
+2006-10-07  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac:
+	* peekaboo/src/Makefile.am:
+	* peekaboo/src/peekaboo-applet.c: Removed the need for Galago with
+	Peekaboo, since we don't use it at the moment.
+
 2006-10-06  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-contact.c: (gossip_contact_copy): Use a more

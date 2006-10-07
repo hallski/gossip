@@ -217,7 +217,7 @@ PKG_CHECK_MODULES(GOSSIP_JABBER,
    $gnome_vfs_pkgconfig
 ])
 
-if test x$have_dbus = xyes -a x$have_galago = xyes; then
+if test x$have_dbus = xyes; then
    PKG_CHECK_MODULES(PEEKABOO, 
    [
       libgnomeui-2.0 
@@ -227,7 +227,6 @@ if test x$have_dbus = xyes -a x$have_galago = xyes; then
       gtk+-2.0 >= $GTK_REQUIRED
       libglade-2.0 >= $LIBGLADE_REQUIRED 
       $dbus_pkgconfig
-      $galago_pkgconfig
    ], have_peekaboo="yes", have_peekaboo="no")
 else
   have_peekaboo="no"
@@ -345,5 +344,5 @@ echo "Galago:   $have_galago"
 echo "ASpell:   $have_aspell"
 echo "Notify:   $have_libnotify"
 echo "XSS:      $have_xss (only with GNOME)"
-echo "Peekaboo: $have_peekaboo (requires DBUS & Galago)"
+echo "Peekaboo: $have_peekaboo (only with DBUS)"
 echo

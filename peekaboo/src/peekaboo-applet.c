@@ -29,7 +29,9 @@
 
 #include "peekaboo-applet.h"
 #include "peekaboo-dbus.h"
+#ifdef HAVE_GALAGO
 #include "peekaboo-galago.h"
+#endif
 #include "peekaboo-stock.h"
 #include "peekaboo-utils.h"
 
@@ -98,13 +100,6 @@ applet_preferences_cb (BonoboUIComponent *uic,
 		       PeekabooApplet    *applet, 
 		       const gchar       *verb_name)
 {
- 	GList *services;
- 	GList *people;
- 	GList *accounts;
-
-	services = peekaboo_galago_get_services ();	
-	people = peekaboo_galago_get_people ();	
-	accounts = peekaboo_galago_get_accounts ();	
 }
 
 static void
@@ -397,7 +392,10 @@ applet_new (PanelApplet *parent_applet)
 			  G_CALLBACK (applet_destroy_cb), applet);
 
 	/* Initialise other modules */
+#ifdef HAVE_GALAGO
 	peekaboo_galago_init ();
+#endif
+
 	peekaboo_stock_init ();
 
 	return TRUE;
