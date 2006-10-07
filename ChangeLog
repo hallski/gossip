@@ -18,7 +18,8 @@
 	* ui/main.glade: Remove the old druid for adding accounts and use
 	the accounts dialog instead. This also makes the 'Settings' part
 	of the dialog protocol specific according to the new GossipAccount
-	API that Xavier has worked on.
+	API that Xavier has worked on. Fixes bug #358099 (Xavier
+	Claessens, Martyn Russell).
 
 2006-10-07  Martyn Russell  <martyn@imendio.com>
 
