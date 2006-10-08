@@ -15,6 +15,7 @@ protocols/jabber/gossip-jabber.c
 
 src/gossip-about-dialog.c
 src/gossip-accounts-dialog.c
+src/gossip-account-widget-generic.c
 src/gossip-add-contact-dialog.c
 src/gossip-app.c
 src/gossip-avatar-image.c

@@ -1,3 +1,7 @@
+2006-10-08  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: Added src/gossip-account-widget-generic.c
+
 2006-10-07  Daniel Nylander <po@danielnylander.se>
 
 	* sv.po: Updated Swedish translation.
