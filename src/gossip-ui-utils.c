@@ -1516,16 +1516,26 @@ gossip_help_show (void)
 #endif
 }
 
-/* FIXME: Replace with GtkLinkButton in 2.10. */
+static void
+link_button_hook (GtkLinkButton *button,
+		  const gchar *link,
+		  gpointer user_data)
+{
+	gossip_url_show (link);
+}
+
 GtkWidget *
 gossip_link_button_new (const gchar *url,
 			const gchar *title)
 {
-#ifdef HAVE_GNOME
-	return gnome_href_new (url, title);
-#else
-	return gtk_label_new (title);
-#endif
+	static gboolean hook = FALSE;
+
+	if (!hook) {
+		hook = TRUE;
+		gtk_link_button_set_uri_hook (link_button_hook, NULL, NULL);
+	}
+
+	return gtk_link_button_new_with_label (url, title);
 }
 
 /* FIXME: Do this in a proper way at some point, probably in GTK+? */

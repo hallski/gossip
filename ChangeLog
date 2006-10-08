@@ -1,5 +1,12 @@
 2006-10-08  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-ui-utils.c: (link_button_hook),
+	(gossip_link_button_new): Use new gtk link widget to launch URIs
+	instead of the gnomeui widget, fixes bug #360348 (Xavier
+	Claessens).
+
+2006-10-08  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-account-widget-generic.[ch]:
 	* src/gossip-account-widget-jabber.h.[ch]: Forgot to add these.
 
@@ -24,7 +31,8 @@
 	the accounts dialog instead. This also makes the 'Settings' part
 	of the dialog protocol specific according to the new GossipAccount
 	API that Xavier has worked on. Fixes bug #358099 (Xavier
-	Claessens, Martyn Russell).
+	Claessens, Martyn Russell). This also fixes bug #359619 (Xavier
+	Claessens).
 
 2006-10-07  Martyn Russell  <martyn@imendio.com>
 
