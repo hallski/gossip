@@ -1,5 +1,10 @@
 2006-10-10  Richard Hult  <richard@imendio.com>
 
+	* configure.ac: Add back the optional galago check so that
+	peekaboo builds both with and without galago. Fixes bug #361244.
+
+2006-10-10  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-contact-list.c: Break a line.
 	
 	* src/gossip-galago.c: (galago_get_account): Fix build, bug

@@ -227,6 +227,7 @@ if test x$have_dbus = xyes; then
       gtk+-2.0 >= $GTK_REQUIRED
       libglade-2.0 >= $LIBGLADE_REQUIRED 
       $dbus_pkgconfig
+      $galago_pkgconfig
    ], have_peekaboo="yes", have_peekaboo="no")
 else
   have_peekaboo="no"
