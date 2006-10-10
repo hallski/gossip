@@ -1,3 +1,10 @@
+2006-10-10  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-contact-list.c: Break a line.
+	
+	* src/gossip-galago.c: (galago_get_account): Fix build, bug
+	#361235 (Xavier Claessens).
+
 2006-10-08  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-ui-utils.c: (link_button_hook),

@@ -41,7 +41,8 @@
 #include "gossip-sound.h"
 #include "gossip-stock.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
+                       GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
 
 #define DEBUG_DOMAIN "ContactList"
 
