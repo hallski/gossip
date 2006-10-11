@@ -158,6 +158,14 @@ galago_set_status (GalagoAccount  *account,
 			gst = GALAGO_STATUS_EXTENDED_AWAY;
 			id = GALAGO_STATUS_ID_EXTENDED_AWAY;
 			break;
+		case GOSSIP_PRESENCE_STATE_HIDDEN:
+			gst = GALAGO_STATUS_HIDDEN;
+			id = GALAGO_STATUS_ID_HIDDEN;
+			break;
+		case GOSSIP_PRESENCE_STATE_UNAVAILABLE:
+			gst = GALAGO_STATUS_OFFLINE;
+			id = GALAGO_STATUS_ID_OFFLINE;
+			break;
 		default:
 			g_assert_not_reached ();
 		}

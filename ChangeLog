@@ -1,3 +1,8 @@
+2006-10-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-galago.c: (galago_set_status): Fix crash when using
+	galago, bug #361272 (Eitan Isaacson).
+
 2006-10-10  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Add back the optional galago check so that
