@@ -86,6 +86,8 @@ void              gossip_account_param_get         (GossipAccount           *acc
 						    ...);
 const GValue *    gossip_account_param_get_g_value (GossipAccount           *account,
 						    const gchar             *param_name);
+gboolean          gossip_account_has_param         (GossipAccount           *account,
+						    const gchar             *param_name);
 void              gossip_account_param_foreach     (GossipAccount           *account,
 						    GossipAccountParamFunc   callback,
 						    gpointer                 user_data);

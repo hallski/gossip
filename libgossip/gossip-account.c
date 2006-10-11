@@ -468,6 +468,19 @@ gossip_account_param_get_g_value (GossipAccount *account,
 	return &param->g_value;
 }
 
+gboolean
+gossip_account_has_param (GossipAccount *account,
+			  const gchar   *param_name)
+{
+	GossipAccountPriv      *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
+
+	priv = GET_PRIV (account);
+
+	return g_hash_table_lookup (priv->parameters, param_name) != NULL;
+}
+
 void
 gossip_account_param_foreach (GossipAccount           *account,
 			      GossipAccountParamFunc   callback,

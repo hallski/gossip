@@ -1,5 +1,10 @@
 2006-10-11  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-account.c: (gossip_account_has_param): Add,
+	fixes bug #361278 (Xavier Claessens).
+
+2006-10-11  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-galago.c: (galago_set_status): Fix crash when using
 	galago, bug #361272 (Eitan Isaacson).
 
