@@ -1,3 +1,7 @@
+2006-10-15  Dimitris Glezos  <dimitris@glezos.com>
+
+	* el.po: Created el.po file
+
 2006-10-08  Martyn Russell  <martyn@imendio.com>
 
 	* POTFILES.in: Added src/gossip-account-widget-generic.c

@@ -1,0 +1,2026 @@
+# translation of el.po to Greek
+# translation of el.po to
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Dimitris Glezos <dimitris@glezos.com>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: el\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-10-15 19:27+0100\n"
+"PO-Revision-Date: 2006-10-15 20:00+0100\n"
+"Last-Translator: Dimitris Glezos <dimitris@glezos.com>\n"
+"Language-Team: Greek <team@gnome.gr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: ../gossip.desktop.in.in.h:1
+#, fuzzy
+msgid "Gossip Instant Messenger"
+msgstr "Gossip Messenger"
+
+#: ../gossip.desktop.in.in.h:2
+#, fuzzy
+msgid "Instant Messenger"
+msgstr "Στιγμιαίος αποστολέας μηνυμάτων"
+
+#: ../gossip.schemas.in.h:1
+#, fuzzy
+msgid "Always open a separate chat window for new chats."
+msgstr "Πάντα άνοιγμα a παράθυρο για νέο."
+
+#: ../gossip.schemas.in.h:2
+#, fuzzy
+msgid "Chat window theme"
+msgstr "Συζήτηση παράθυρο"
+
+#: ../gossip.schemas.in.h:3
+#, fuzzy
+msgid "Comma separated list of spell checker languages to use (e.g. en, fr, nl)."
+msgstr "Κόμμα λίστα από στο e g."
+
+#: ../gossip.schemas.in.h:4
+#, fuzzy
+msgid "Compact contact list"
+msgstr "Συμπαγής λίστα"
+
+#: ../gossip.schemas.in.h:5
+#, fuzzy
+msgid "Default directory to select an avatar image from"
+msgstr "Προεπιλογή στο επιλογή εικόνα  από"
+
+#: ../gossip.schemas.in.h:6
+#, fuzzy
+msgid "Enable popup when contact is available"
+msgstr "Ενεργοποίηση αναδυόμενο είναι διαθέσιμο"
+
+#: ../gossip.schemas.in.h:7
+#, fuzzy
+msgid "Enable sound when away"
+msgstr "Ενεργοποίηση σε απουσία"
+
+#: ../gossip.schemas.in.h:8
+#, fuzzy
+msgid "Enable sound when busy"
+msgstr "Ενεργοποίηση"
+
+#: ../gossip.schemas.in.h:9
+#, fuzzy
+msgid "Enable spell checker"
+msgstr "Ενεργοποίηση"
+
+#: ../gossip.schemas.in.h:10
+#, fuzzy
+msgid "Hide main window"
+msgstr "Απόκρυψη παράθυρο"
+
+#: ../gossip.schemas.in.h:11
+#, fuzzy
+msgid "Hide the main window."
+msgstr "Απόκρυψη παράθυρο."
+
+#: ../gossip.schemas.in.h:12
+#, fuzzy
+msgid "Open new chats in separate windows"
+msgstr "Άνοιγμα νέο in παράθυρα"
+
+#: ../gossip.schemas.in.h:13
+#, fuzzy
+msgid "Show avatars"
+msgstr "Εμφάνιση"
+
+#: ../gossip.schemas.in.h:14
+#, fuzzy
+msgid "Show hint about closing the main window"
+msgstr "Εμφάνιση υπόδειξη περί παράθυρο"
+
+#: ../gossip.schemas.in.h:15
+#, fuzzy
+msgid "Show offline contacts"
+msgstr "Εμφάνιση"
+
+#: ../gossip.schemas.in.h:16
+#, fuzzy
+msgid "Spell checking languages"
+msgstr "έλεγχος"
+
+#: ../gossip.schemas.in.h:17
+#, fuzzy
+msgid "The last directory that an avatar image was chosen from."
+msgstr "τελευταία εικόνα  από."
+
+#: ../gossip.schemas.in.h:18
+#, fuzzy
+msgid "The theme that is used to display the conversation in chat windows."
+msgstr "είναι σε χρήση στο in παράθυρα."
+
+#: ../gossip.schemas.in.h:19
+#, fuzzy
+msgid "Use graphical smileys"
+msgstr "Χρήση"
+
+#: ../gossip.schemas.in.h:20
+#, fuzzy
+msgid "Use notification sounds"
+msgstr "Χρήση"
+
+#: ../gossip.schemas.in.h:21
+#, fuzzy
+msgid "Use theme for chat rooms"
+msgstr "Χρήση για"
+
+#: ../gossip.schemas.in.h:22
+#, fuzzy
+msgid ""
+"Whether or not to check words typed against the languages you want to check "
+"with."
+msgstr "ή not στο υποφαινόμενο στο με."
+
+#: ../gossip.schemas.in.h:23
+#, fuzzy
+msgid "Whether or not to convert smileys into graphical images in conversations."
+msgstr "ή not στο μετατροπή εικόνες in."
+
+#: ../gossip.schemas.in.h:24
+#, fuzzy
+msgid "Whether or not to play a sound when messages arrive."
+msgstr "ή not στο αναπαραγωγή a."
+
+#: ../gossip.schemas.in.h:25
+#, fuzzy
+msgid "Whether or not to play sounds when away."
+msgstr "ή not στο αναπαραγωγή σε απουσία."
+
+#: ../gossip.schemas.in.h:26
+#, fuzzy
+msgid "Whether or not to play sounds when busy."
+msgstr "ή not στο αναπαραγωγή."
+
+#: ../gossip.schemas.in.h:27
+#, fuzzy
+msgid "Whether or not to show a popup when a contact becomes available."
+msgstr "ή not στο a αναδυόμενο a διαθέσιμο."
+
+#: ../gossip.schemas.in.h:28
+#, fuzzy
+msgid ""
+"Whether or not to show avatars for contacts in the contact list and chat "
+"windows."
+msgstr "ή not στο για in λίστα και παράθυρα."
+
+#: ../gossip.schemas.in.h:29
+#, fuzzy
+msgid "Whether or not to show contacts that are offline in the contact list."
+msgstr "ή not στο in λίστα."
+
+#: ../gossip.schemas.in.h:30
+#, fuzzy
+msgid ""
+"Whether or not to show the message dialog about closing the main window with "
+"the 'x' button in the title bar."
+msgstr "ή not στο μήνυμα διάλογος περί παράθυρο με x κουμπί in τίτλος."
+
+#: ../gossip.schemas.in.h:31
+#, fuzzy
+msgid "Whether to show the contact list in compact mode or not."
+msgstr "στο λίστα in λειτουργία ή not."
+
+#: ../gossip.schemas.in.h:32
+#, fuzzy
+msgid "Whether to use the theme for chat rooms or not."
+msgstr "στο για ή not."
+
+#: ../libgossip/gossip-chatroom.c:877
+#, fuzzy
+msgid "Normal"
+msgstr "Κανονικό"
+
+#: ../libgossip/gossip-chatroom.c:888
+msgid "Joining"
+msgstr ""
+
+#: ../libgossip/gossip-chatroom.c:890
+#, fuzzy
+msgid "Active"
+msgstr "Ενεργό"
+
+#: ../libgossip/gossip-chatroom.c:892 ../ui/group-chat.glade.h:8
+#, fuzzy
+msgid "Inactive"
+msgstr "Ανενεργό"
+
+#: ../libgossip/gossip-chatroom.c:894
+#, fuzzy
+msgid "Unknown"
+msgstr "Άγνωστο"
+
+#: ../libgossip/gossip-chatroom.c:896
+#, fuzzy
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: ../libgossip/gossip-chatroom.c:910
+msgid "Moderator"
+msgid_plural "Moderators"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libgossip/gossip-chatroom.c:912
+#, fuzzy
+msgid "Participant"
+msgid_plural "Participants"
+msgstr[0] "Συμμετέχων"
+msgstr[1] "Συμμετέχων"
+
+#: ../libgossip/gossip-chatroom.c:914
+msgid "Visitor"
+msgid_plural "Visitors"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libgossip/gossip-chatroom.c:916
+#, fuzzy
+msgid "No role"
+msgstr "Όχι"
+
+#: ../libgossip/gossip-chatroom.c:930
+#, fuzzy
+msgid "Owner"
+msgid_plural "Owners"
+msgstr[0] "Ιδιοκτήτης"
+msgstr[1] "Ιδιοκτήτης"
+
+#: ../libgossip/gossip-chatroom.c:932
+#, fuzzy
+msgid "Administrator"
+msgid_plural "Administrators"
+msgstr[0] "Διαχειριστής"
+msgstr[1] "Διαχειριστής"
+
+#: ../libgossip/gossip-chatroom.c:934
+#, fuzzy
+msgid "Member"
+msgid_plural "Members"
+msgstr[0] "Μέλος"
+msgstr[1] "Μέλος"
+
+#: ../libgossip/gossip-chatroom.c:936
+msgid "Outcast"
+msgid_plural "Outcasts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ../libgossip/gossip-chatroom.c:938
+#, fuzzy
+msgid "No affiliation"
+msgstr "Όχι"
+
+#: ../libgossip/gossip-chatroom-provider.c:343
+#, fuzzy
+msgid "The nickname you have chosen is already in use."
+msgstr "υποφαινόμενο είναι in."
+
+#: ../libgossip/gossip-chatroom-provider.c:347
+#, fuzzy
+msgid "The chat room you tried to join requires a password."
+msgstr "υποφαινόμενο στο a."
+
+#: ../libgossip/gossip-chatroom-provider.c:351
+#, fuzzy
+msgid "The remote conference server did not respond in a sensible time."
+msgstr "απομακρυσμένο εξυπηρετητής not in a ώρα."
+
+#: ../libgossip/gossip-chatroom-provider.c:355
+#, fuzzy
+msgid "The conference server you tried to join could not be found."
+msgstr "εξυπηρετητής υποφαινόμενο στο not βρέθηκε."
+
+#: ../libgossip/gossip-chatroom-provider.c:359
+#, fuzzy
+msgid "An unknown error occurred, check your details are correct."
+msgstr "άγνωστο σφάλμα σωστό."
+
+#. i18n: The current state of the connection.
+#: ../libgossip/gossip-contact.c:843 ../libgossip/gossip-presence.c:234
+#: ../src/gossip-app.c:1883 ../src/gossip-app.c:2509
+#: ../src/gossip-contact-info-dialog.c:165 ../src/gossip-galago.c:187
+#, fuzzy
+msgid "Offline"
+msgstr "Χωρίς σύνδεση"
+
+#: ../libgossip/gossip-presence.c:385 ../libgossip/gossip-presence.c:402
+#: ../src/gossip-presence-chooser.c:717 ../src/gossip-presence-chooser.c:850
+#: ../src/gossip-presence-chooser.c:880
+#, fuzzy
+msgid "Available"
+msgstr "Διαθέσιμα"
+
+#: ../libgossip/gossip-presence.c:389 ../src/gossip-presence-chooser.c:729
+#: ../src/gossip-presence-chooser.c:908
+#, fuzzy
+msgid "Busy"
+msgstr "Απασχολημένος"
+
+#: ../libgossip/gossip-presence.c:394 ../src/gossip-presence-chooser.c:741
+#: ../src/gossip-presence-chooser.c:936
+msgid "Away"
+msgstr ""
+
+#: ../libgossip/gossip-presence.c:399
+msgid "Unavailable"
+msgstr ""
+
+#: ../libgossip/gossip-protocol.c:705
+#, fuzzy
+msgid "An unknown error occurred."
+msgstr "Ένα άγνωστο σφάλμα συνέβη."
+
+#: ../libgossip/gossip-protocol.c:709
+#, fuzzy
+msgid "Connection refused."
+msgstr "Σύνδεση."
+
+#: ../libgossip/gossip-protocol.c:712
+#, fuzzy
+msgid "Server address could not be resolved."
+msgstr "Εξυπηρετητής διεύθυνση not."
+
+#: ../libgossip/gossip-protocol.c:715
+#, fuzzy
+msgid "Connection timed out."
+msgstr "Τέλος χρονικού ορίου σύνδεσης."
+
+#: ../libgossip/gossip-protocol.c:718
+#, fuzzy
+msgid "Authentication failed."
+msgstr "Η πιστοποίηση απέτυχε."
+
+#: ../libgossip/gossip-protocol.c:721
+#, fuzzy
+msgid "The username you are trying already exists."
+msgstr "υποφαινόμενο υπάρχει."
+
+#: ../libgossip/gossip-protocol.c:724
+#, fuzzy
+msgid "The username you are trying is not valid."
+msgstr "υποφαινόμενο είναι not."
+
+#: ../libgossip/gossip-protocol.c:727
+#, fuzzy
+msgid "This feature is unavailable."
+msgstr "χαρακτηριστικό είναι μη διαθέσιμο."
+
+#: ../libgossip/gossip-protocol.c:730
+#, fuzzy
+msgid "This feature is unauthorized."
+msgstr "χαρακτηριστικό είναι."
+
+#: ../libgossip/gossip-protocol.c:733
+#, fuzzy
+msgid "A specific protocol error occurred that was unexpected."
+msgstr "A σφάλμα."
+
+#: ../protocols/jabber/gossip-jabber.c:1139
+#, fuzzy
+msgid "new account"
+msgstr "νέο λογαριασμός"
+
+#: ../protocols/jabber/gossip-jabber.c:1147
+#, fuzzy
+msgid "Home"
+msgstr "Αρχικός Κατάλογος"
+
+#: ../protocols/jabber/gossip-jabber.c:1181
+#, fuzzy
+msgid "Connection could not be opened"
+msgstr "Σύνδεση not"
+
+#: ../protocols/jabber/gossip-jabber.c:1234
+#, fuzzy
+msgid "Couldn't send message!"
+msgstr "t μήνυμα!"
+
+#: ../src/gossip-about-dialog.c:58
+#, fuzzy
+msgid ""
+"Gossip is free software; you can redistribute it and/or modify it under the "
+"terms of the GNU General Public License as published by the Free Software "
+"Foundation; either version 2 of the License, or (at your option) any later "
+"version."
+msgstr "Gossip είναι υποφαινόμενο και ή από Γενικά Δημόσιο Άδεια χρήσης από Διαθέσιμη Λογισμικό έκδοση από Άδεια χρήσης ή στα/στις κάθε έκδοση."
+
+#: ../src/gossip-about-dialog.c:62
+#, fuzzy
+msgid ""
+"Gossip is distributed in the hope that it will be useful, but WITHOUT ANY "
+"WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS "
+"FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more "
+"details."
+msgstr "Gossip είναι in από ή A Βλέπε Γενικά Δημόσιο Άδεια χρήσης για περισσότερα."
+
+#: ../src/gossip-about-dialog.c:66
+#, fuzzy
+msgid ""
+"You should have received a copy of the GNU General Public License along with "
+"Gossip; if not, write to the Free Software Foundation, Inc., 51 Franklin "
+"Street, Fifth Floor, Boston, MA 02110-130159 USA"
+msgstr "Εσείς a αντιγραφή από Γενικά Δημόσιο Άδεια χρήσης με Gossip not στο Διαθέσιμη Λογισμικό Franklin Οδός Πάτωμα Βοστώνη ΗΠΑ"
+
+#: ../src/gossip-about-dialog.c:94
+#, fuzzy
+msgid "An Instant Messaging client for GNOME"
+msgstr "για GNOME"
+
+#: ../src/gossip-about-dialog.c:100
+#, fuzzy
+msgid "translator-credits"
+msgstr ""
+"Συμεών (σίμος) Ξενιτέλλης <simos@hellug.gr>\n"
+"Κώστας Παπαδήμας <pkst@gnome.org>"
+
+#: ../src/gossip-accounts-dialog.c:257
+#, fuzzy
+msgid "Stop"
+msgstr "Διακοπή"
+
+#: ../src/gossip-accounts-dialog.c:261
+#, fuzzy
+msgid "Disconnect"
+msgstr "Αποσύνδεση"
+
+#: ../src/gossip-accounts-dialog.c:264
+#, fuzzy
+msgid "Connect"
+msgstr "Σύνδεση"
+
+#: ../src/gossip-accounts-dialog.c:302 ../ui/main.glade.h:12
+#, fuzzy
+msgid "<b>No Account Selected</b>"
+msgstr "<b> Όχι Λογαριασμός Επιλεγμένα</b>"
+
+#: ../src/gossip-accounts-dialog.c:304
+#, fuzzy
+msgid ""
+"To add a new account, you can click on the 'Add' button and a new entry will "
+"be created for you to start configuring.\n"
+"\n"
+"If you do not want to add an account, simply click on the account you want "
+"to configure in the list on the left."
+msgstr "Προς προσθήκη a νέο λογαριασμός υποφαινόμενο κλικ ενεργό Προσθήκη κουμπί και a νέο καταχώρηση για υποφαινόμενο στο έναρξη ο υποφαινόμενο not στο προσθήκη λογαριασμός κλικ ενεργό λογαριασμός υποφαινόμενο στο in λίστα ενεργό αριστερά."
+
+#: ../src/gossip-accounts-dialog.c:313
+#, fuzzy
+msgid "<b>No Accounts Configured</b>"
+msgstr "<b> Όχι Λογαριασμοί</b>"
+
+#: ../src/gossip-accounts-dialog.c:315
+#, fuzzy
+msgid ""
+"To add a new account, you can click on the 'Add' button and a new entry will "
+"be created for you to start configuring."
+msgstr "Προς προσθήκη a νέο λογαριασμός υποφαινόμενο κλικ ενεργό Προσθήκη κουμπί και a νέο καταχώρηση για υποφαινόμενο στο έναρξη."
+
+#: ../src/gossip-accounts-dialog.c:399 ../ui/main.glade.h:22
+#, fuzzy
+msgid "Accounts"
+msgstr "Λογαριασμοί"
+
+#: ../src/gossip-accounts-dialog.c:1124
+#, fuzzy
+msgid "Successfully registered your new account settings."
+msgstr "Επιτυχία νέο λογαριασμός."
+
+#: ../src/gossip-accounts-dialog.c:1127
+#, fuzzy
+msgid "You should now be able to connect to your new account."
+msgstr "Εσείς τώρα στο σύνδεση στο νέο λογαριασμός."
+
+#: ../src/gossip-accounts-dialog.c:1134
+#, fuzzy
+msgid "Failed to register your new account settings."
+msgstr "Απέτυχε στο νέο λογαριασμός."
+
+#: ../src/gossip-accounts-dialog.c:1247
+#, c-format
+#, fuzzy
+msgid ""
+"You are about to remove your %s account!\n"
+"Are you sure you want to proceed?"
+msgstr "Εσείς περί στο απομάκρυνση s λογαριασμός υποφαινόμενο υποφαινόμενο στο?"
+
+#: ../src/gossip-accounts-dialog.c:1253
+#, fuzzy
+msgid ""
+"Any associated conversations and chat rooms will NOT be removed if you "
+"decide to proceed.\n"
+"\n"
+"Should you decide to add the account back at a later time, they will still "
+"be available."
+msgstr "Οποιοδήποτε και ΟΧΙ υποφαινόμενο στο ο υποφαινόμενο στο προσθήκη λογαριασμός πίσω στα/στις a ώρα διαθέσιμο."
+
+#: ../src/gossip-account-widget-generic.c:173
+#, c-format
+#, fuzzy
+msgid "%s:"
+msgstr "%s:"
+
+#: ../src/gossip-add-contact-dialog.c:116
+#, fuzzy
+msgid "No information is available for this contact."
+msgstr "Όχι είναι διαθέσιμο για."
+
+#: ../src/gossip-add-contact-dialog.c:227
+#, fuzzy
+msgid "Information requested, please wait..."
+msgstr "Πληροφορίες."
+
+#: ../src/gossip-add-contact-dialog.c:328
+#: ../src/gossip-contact-info-dialog.c:485
+#: ../src/gossip-subscription-dialog.c:446
+#, fuzzy
+msgid "I would like to add you to my contact list."
+msgstr "Ι όμοιο στο προσθήκη υποφαινόμενο στο λίστα."
+
+#: ../src/gossip-app.c:653
+#, fuzzy
+msgid "Show and edit accounts"
+msgstr "Εμφάνιση και επεξεργασία"
+
+#: ../src/gossip-app.c:809
+#, fuzzy
+msgid "To summarize:"
+msgstr "Προς:"
+
+#: ../src/gossip-app.c:836
+#, c-format
+#, fuzzy
+msgid "%d new message"
+msgid_plural "%d new messages"
+msgstr[0] "μ νέο μήνυμα"
+msgstr[1] "μ νέο μήνυμα"
+
+#: ../src/gossip-app.c:841
+#, c-format
+#, fuzzy
+msgid "%d subscription request"
+msgid_plural "%d subscription requests"
+msgstr[0] "μ"
+msgstr[1] "μ"
+
+#: ../src/gossip-app.c:846
+#, c-format
+#, fuzzy
+msgid "%d file transfer request"
+msgid_plural "%d file transfer requests"
+msgstr[0] "μ αρχείο"
+msgstr[1] "μ αρχείο"
+
+#: ../src/gossip-app.c:851
+#, c-format
+#, fuzzy
+msgid "%d server message"
+msgid_plural "%d server messages"
+msgstr[0] "μ εξυπηρετητής μήνυμα"
+msgstr[1] "μ εξυπηρετητής μήνυμα"
+
+#: ../src/gossip-app.c:856
+#, c-format
+#, fuzzy
+msgid "%d error"
+msgid_plural "%d errors"
+msgstr[0] "μ σφάλμα"
+msgstr[1] "μ σφάλμα"
+
+#: ../src/gossip-app.c:881
+#, fuzzy
+msgid "If you quit, you will lose all unread information."
+msgstr "υποφαινόμενο έξοδος υποφαινόμενο όλα αδιάβαστο."
+
+#: ../src/gossip-app.c:947
+#, fuzzy
+msgid "Gossip is still running, it is just hidden."
+msgstr "Gossip είναι εκτελείται είναι κρυμμένος."
+
+#: ../src/gossip-app.c:948
+#, fuzzy
+msgid "Click on the notification area icon to show Gossip."
+msgstr "Κλικ ενεργό περιοχής εικονίδιο στο Gossip."
+
+#: ../src/gossip-app.c:963
+#, fuzzy
+msgid "You were about to quit!"
+msgstr "Εσείς περί στο έξοδος!"
+
+#: ../src/gossip-app.c:964
+#, fuzzy
+msgid ""
+"Since no system or notification tray has been found, this action would "
+"normally quit Gossip.\n"
+"\n"
+"This is just a reminder, from now on, Gossip will quit when performing this "
+"action unless you uncheck the option below."
+msgstr "όχι σύστημα ή βρέθηκε ενέργεια έξοδος Gossip ο είναι a από τώρα ενεργό Gossip έξοδος ενέργεια υποφαινόμενο."
+
+#: ../src/gossip-app.c:1338 ../src/gossip-edit-contact-dialog.c:199
+#, fuzzy
+msgid "Group"
+msgstr "Ομάδα"
+
+#: ../src/gossip-app.c:1359
+#, fuzzy
+msgid "Contact"
+msgstr "Επαφή"
+
+#: ../src/gossip-app.c:2352
+#, fuzzy
+msgid "Edit Account _Details"
+msgstr "Επεξεργασία Λογαριασμός Λεπτομέρειες"
+
+#: ../src/gossip-avatar-image.c:341
+#, fuzzy
+msgid "Click to enlarge"
+msgstr "Κλικ στο"
+
+#: ../src/gossip-chat.c:464
+#, fuzzy
+msgid "Insert Smiley"
+msgstr "Εισαγωγή"
+
+#: ../src/gossip-chat.c:512
+#, fuzzy
+msgid "_Check Word Spelling..."
+msgstr "Έλεγχος Λέξη Ορθογραφία."
+
+#: ../src/gossip-chat-invite.c:80 ../src/gossip-spell-dialog.c:79
+#, fuzzy
+msgid "Word"
+msgstr "Λέξη"
+
+#: ../src/gossip-chat-invite.c:337
+#, fuzzy
+msgid "Select who would you like to invite to room:"
+msgstr "Επιλογή υποφαινόμενο όμοιο στο στο:"
+
+#: ../src/gossip-chat-invite.c:343
+#, fuzzy
+msgid "Select which room you would like to invite:"
+msgstr "Επιλογή υποφαινόμενο όμοιο στο:"
+
+#: ../src/gossip-chat-manager.c:147 ../src/gossip-notify.c:413
+#, c-format
+#, fuzzy
+msgid "New message from %s"
+msgstr "Νέο μήνυμα από s"
+
+#: ../src/gossip-chat-view.c:547
+#, fuzzy
+msgid "_Copy Link Address"
+msgstr "Αντιγρα_φή Διεύθυνσης Συνδέσμου"
+
+#: ../src/gossip-chat-view.c:555
+#, fuzzy
+msgid "_Open Link"
+msgstr "_Άνοιγμα Συνδέσμου"
+
+#: ../src/gossip-chat-view.c:892
+#, fuzzy
+msgid "%A %d %B %Y"
+msgstr "A μ B Y"
+
+#: ../src/gossip-chat-view.c:1414
+msgid "Your invitation has been declined"
+msgstr ""
+
+#: ../src/gossip-chat-view.c:1679 ../ui/chat.glade.h:12
+#, fuzzy
+msgid "You have been invited to join a chat conference."
+msgstr "Εσείς στο a."
+
+#: ../src/gossip-chat-view.c:1701
+#, fuzzy
+msgid "Accept"
+msgstr "Αποδοχή"
+
+#: ../src/gossip-chat-view.c:1717
+#, fuzzy
+msgid "Decline"
+msgstr "Άρνηση"
+
+#: ../src/gossip-chat-window.c:1222
+#, fuzzy
+msgid "Typing a message."
+msgstr "Πληκτρολόγηση a μήνυμα."
+
+#: ../src/gossip-chatrooms-window.c:169
+#, fuzzy
+msgid "Auto Connect"
+msgstr "Αυτόματη σύνδεση"
+
+#: ../src/gossip-chatrooms-window.c:181
+#, fuzzy
+msgid "Chat Room"
+msgstr "Συζήτηση Αίθουσα"
+
+#: ../src/gossip-chatrooms-window.c:211
+#, fuzzy
+msgid "Favourite"
+msgstr "Αγαπημένο"
+
+#: ../src/gossip-chatrooms-window.c:787
+#: ../src/gossip-new-chatroom-dialog.c:172 ../ui/group-chat.glade.h:9
+#, fuzzy
+msgid "Join"
+msgstr "Ένωση"
+
+#: ../src/gossip-contact-info-dialog.c:672 ../ui/main.glade.h:51
+#, fuzzy
+msgid "Information requested..."
+msgstr "Πληροφορίες."
+
+#: ../src/gossip-contact-list.c:308
+#, fuzzy
+msgid "_Contact"
+msgstr "_Επαφή"
+
+#: ../src/gossip-contact-list.c:312
+#, fuzzy
+msgid "_Group"
+msgstr "Ομάδα"
+
+#: ../src/gossip-contact-list.c:316 ../ui/main.glade.h:105
+#, fuzzy
+msgid "_Chat"
+msgstr "Συζήτηση"
+
+#: ../src/gossip-contact-list.c:316
+#, fuzzy
+msgid "Chat with contact"
+msgstr "Συζήτηση με"
+
+#: ../src/gossip-contact-list.c:320
+msgid "Infor_mation"
+msgstr ""
+
+#: ../src/gossip-contact-list.c:320
+#, fuzzy
+msgid "View contact information"
+msgstr "Προβολή"
+
+#: ../src/gossip-contact-list.c:324
+#, fuzzy
+msgid "Re_name"
+msgstr "Μετο_νομασία"
+
+#: ../src/gossip-contact-list.c:324
+#, fuzzy
+msgid "Rename"
+msgstr "Μετονομασία"
+
+#: ../src/gossip-contact-list.c:328 ../ui/chat.glade.h:19
+#: ../ui/main.glade.h:110
+#, fuzzy
+msgid "_Edit"
+msgstr "_Επεξεργασία"
+
+#: ../src/gossip-contact-list.c:328
+#, fuzzy
+msgid "Edit the groups and name for this contact"
+msgstr "Επεξεργασία και όνομα για"
+
+#: ../src/gossip-contact-list.c:332
+#, fuzzy
+msgid "_Remove"
+msgstr "_Απομάκρυνση"
+
+#: ../src/gossip-contact-list.c:332
+#, fuzzy
+msgid "Remove contact"
+msgstr "Αφαίρεση"
+
+#: ../src/gossip-contact-list.c:336
+#, fuzzy
+msgid "_Invite to Chat Room"
+msgstr "Πρόσκληση στο Συζήτηση Αίθουσα"
+
+#: ../src/gossip-contact-list.c:336
+#, fuzzy
+msgid "Invite to a currently open chat room"
+msgstr "Πρόσκληση στο a άνοιγμα"
+
+#: ../src/gossip-contact-list.c:340
+#, fuzzy
+msgid "_Send File..."
+msgstr "Αποστολή Αρχείο."
+
+#: ../src/gossip-contact-list.c:340
+#, fuzzy
+msgid "Send a file"
+msgstr "Αποστολή a αρχείο"
+
+#: ../src/gossip-contact-list.c:344 ../ui/chat.glade.h:26
+#: ../ui/main.glade.h:129
+#, fuzzy
+msgid "_View Previous Conversations"
+msgstr "Προβολή Προηγούμενο Συζητήσεις"
+
+#: ../src/gossip-contact-list.c:344
+#, fuzzy
+msgid "View previous conversations with this contact"
+msgstr "Προβολή με"
+
+#: ../src/gossip-contact-list.c:2426
+#, fuzzy
+msgid "Do you want to remove this contact from your roster?"
+msgstr "Κάντο υποφαινόμενο στο απομάκρυνση από?"
+
+#: ../src/gossip-contact-list.c:2493
+#, c-format
+#, fuzzy
+msgid ""
+"Please enter a new name for the group:\n"
+"%s"
+msgstr "enter a νέο όνομα για ομάδα ο s"
+
+#: ../src/gossip-edit-contact-dialog.c:189
+#, fuzzy
+msgid "Select"
+msgstr "Επιλογή"
+
+#: ../src/gossip-edit-contact-dialog.c:239
+#: ../src/gossip-edit-contact-dialog.c:249
+#: ../src/gossip-subscription-dialog.c:391
+msgid "Unsorted"
+msgstr ""
+
+#: ../src/gossip-edit-contact-dialog.c:639
+#, c-format
+#, fuzzy
+msgid ""
+"Set the alias you want to use for:\n"
+"<b>%s</b>\n"
+"\n"
+"You can retrieve contact information from the server."
+msgstr ""
+"Ορισμός υποφαινόμενο στο για\n"
+"<b> s</b> ο από εξυπηρετητής."
+
+#: ../src/gossip-ft-window.c:157
+#, c-format
+#, fuzzy
+msgid "New file transfer request from %s"
+msgstr "Νέο αρχείο από s"
+
+#: ../src/gossip-ft-window.c:189
+#, fuzzy
+msgid "File transfer is not supported by both parties."
+msgstr "Αρχείο είναι not υποστηρίζεται από."
+
+#: ../src/gossip-ft-window.c:193
+#, fuzzy
+msgid "Your file transfer offer declined."
+msgstr "αρχείο."
+
+#: ../src/gossip-ft-window.c:194
+#, fuzzy
+msgid "The other user decided not to continue."
+msgstr "άλλο χρήστης not στο."
+
+#: ../src/gossip-ft-window.c:199
+#, fuzzy
+msgid "Unknown error occurred during file transfer."
+msgstr "Άγνωστο σφάλμα αρχείο."
+
+#: ../src/gossip-ft-window.c:283
+#, c-format
+#, fuzzy
+msgid "%s would like to send you a file."
+msgstr "s όμοιο στο υποφαινόμενο a αρχείο."
+
+#: ../src/gossip-ft-window.c:286
+#, fuzzy
+msgid "Someone would like to send you a file."
+msgstr "όμοιο στο υποφαινόμενο a αρχείο."
+
+#: ../src/gossip-ft-window.c:421
+#, fuzzy
+msgid "Select a file"
+msgstr "Επιλογή ενός αρχείου"
+
+#: ../src/gossip-group-chat.c:408 ../src/gossip-private-chat.c:568
+#, fuzzy
+msgid "Disconnected"
+msgstr "Αποσυνδέθηκε"
+
+#. send event to chat window
+#: ../src/gossip-group-chat.c:588
+#, c-format
+#, fuzzy
+msgid "Invited %s to join this chat conference."
+msgstr "s στο."
+
+#: ../src/gossip-group-chat.c:1057
+#, c-format
+#, fuzzy
+msgid "%s has set the topic"
+msgstr "s set"
+
+#: ../src/gossip-log-window.c:444
+#, fuzzy
+msgid "Account"
+msgstr "Λογαριασμός"
+
+#: ../src/gossip-log-window.c:451
+msgid "Conversation With"
+msgstr ""
+
+#: ../src/gossip-log-window.c:461
+#, fuzzy
+msgid "Date"
+msgstr "Ημερομηνία"
+
+#: ../src/gossip-main.c:73
+#, fuzzy
+msgid "Don't connect on startup"
+msgstr "t σύνδεση ενεργό εκκίνηση"
+
+#: ../src/gossip-main.c:77
+#, fuzzy
+msgid "Allow multiple instances of the application to run at the same time"
+msgstr "Επιτρέπονται από εφαρμογή στο στα/στις ώρα"
+
+#: ../src/gossip-main.c:81
+#, fuzzy
+msgid "List the available accounts"
+msgstr "Λίστα διαθέσιμο"
+
+#: ../src/gossip-main.c:85
+#, fuzzy
+msgid "Which account to connect to on startup"
+msgstr "λογαριασμός στο σύνδεση στο ενεργό εκκίνηση"
+
+#: ../src/gossip-main.c:86
+#, fuzzy
+msgid "ACCOUNT-NAME"
+msgstr "ΌΝΟΜΑ"
+
+#: ../src/gossip-main.c:96 ../src/gossip-main.c:111
+#, fuzzy
+msgid "- Gossip Instant Messenger"
+msgstr "Gossip Messenger"
+
+#: ../src/gossip-main.c:126
+#, fuzzy
+msgid "You can not use --no-connect together with --account"
+msgstr "Εσείς not όχι σύνδεση με λογαριασμός"
+
+#: ../src/gossip-main.c:138
+#, fuzzy
+msgid "No accounts available."
+msgstr "Όχι διαθέσιμο."
+
+#: ../src/gossip-main.c:143
+#, fuzzy
+msgid "Available accounts:"
+msgstr "Διαθέσιμα:"
+
+#: ../src/gossip-main.c:153
+#, fuzzy
+msgid "[default]"
+msgstr "προκαθορισμένο"
+
+#: ../src/gossip-main.c:169
+#, c-format
+#, fuzzy
+msgid "There is no account with the name '%s'."
+msgstr "είναι όχι λογαριασμός με όνομα s."
+
+#: ../src/gossip-notify.c:203 ../src/gossip-private-chat.c:467
+#, c-format
+#, fuzzy
+msgid "%s has come online"
+msgstr "s σε σύνδεση"
+
+#: ../src/gossip-notify.c:220 ../src/gossip-notify.c:293
+#: ../src/gossip-notify.c:441
+#, fuzzy
+msgid "Default"
+msgstr "Προεπιλογή"
+
+#: ../src/gossip-notify.c:223
+#, fuzzy
+msgid "Chat!"
+msgstr "Συζήτηση!"
+
+#: ../src/gossip-notify.c:260 ../src/gossip-subscription-dialog.c:326
+#, c-format
+#, fuzzy
+msgid "%s wants to be added to your contact list."
+msgstr "s στο στο λίστα."
+
+#: ../src/gossip-notify.c:262 ../src/gossip-subscription-dialog.c:263
+#, fuzzy
+msgid "Someone wants to be added to your contact list."
+msgstr "στο στο λίστα."
+
+#: ../src/gossip-notify.c:279
+#, fuzzy
+msgid "Subscription request"
+msgstr "Εγγραφή"
+
+#: ../src/gossip-notify.c:444
+#, fuzzy
+msgid "Show"
+msgstr "Εμφάνιση"
+
+#: ../src/gossip-notify.c:450 ../ui/main.glade.h:32
+#, fuzzy
+msgid "Contact Information"
+msgstr "Πληροφορίες επαφής"
+
+#: ../src/gossip-preferences.c:235
+#, fuzzy
+msgid "Language"
+msgstr "Γλώσσα"
+
+#: ../src/gossip-presence-chooser.c:459
+#, fuzzy
+msgid "Are you sure you want to clear the list?"
+msgstr "υποφαινόμενο υποφαινόμενο στο εκκαθάριση λίστα?"
+
+#: ../src/gossip-presence-chooser.c:463
+#, fuzzy
+msgid ""
+"This will remove any custom messages you have added to the list of preset "
+"status messages."
+msgstr "απομάκρυνση κάθε προσαρμοσμένο υποφαινόμενο στο λίστα από κατάσταση."
+
+#: ../src/gossip-presence-chooser.c:468
+#, fuzzy
+msgid "Clear List"
+msgstr "Καθαρισμός Λίστα"
+
+#: ../src/gossip-presence-chooser.c:897 ../src/gossip-presence-chooser.c:925
+#: ../src/gossip-presence-chooser.c:953
+#, fuzzy
+msgid "Custom message..."
+msgstr "Προσαρμοσμένο μήνυμα."
+
+#: ../src/gossip-presence-chooser.c:962
+#, fuzzy
+msgid "Clear List..."
+msgstr "Καθαρισμός Λίστα."
+
+#: ../src/gossip-private-chat.c:452
+#, c-format
+#, fuzzy
+msgid "%s went offline"
+msgstr "s"
+
+#: ../src/gossip-private-chat.c:544
+#, fuzzy
+msgid "Connected"
+msgstr "Συνδεδεμένο"
+
+#: ../src/gossip-private-chat.c:1025
+#, c-format
+#, fuzzy
+msgid "Subject: %s"
+msgstr "Θέμα s"
+
+#: ../src/gossip-spell-dialog.c:255
+#, fuzzy
+msgid "Suggestions for the word"
+msgstr "Προτάσεις για"
+
+#: ../src/gossip-subscription-dialog.c:178
+#, c-format
+#, fuzzy
+msgid "New subscription request from %s"
+msgstr "Νέο από s"
+
+#: ../src/gossip-subscription-dialog.c:264
+#, fuzzy
+msgid "Do you want to add this person to your contact list?"
+msgstr "Κάντο υποφαινόμενο στο προσθήκη πρόσωπο στο λίστα?"
+
+#: ../src/gossip-subscription-dialog.c:328
+#, c-format
+#, fuzzy
+msgid "Do you want to add %s to your contact list?"
+msgstr "Κάντο υποφαινόμενο στο προσθήκη s στο λίστα?"
+
+#: ../src/gossip-ui-utils.c:235
+#, c-format
+#, fuzzy
+msgid "Please enter your %s account password"
+msgstr "enter s λογαριασμός"
+
+#: ../src/gossip-ui-utils.c:246
+#, c-format
+#, fuzzy
+msgid "Logging in with: %s"
+msgstr "Καταγραφή in με s"
+
+#: ../src/gossip-ui-utils.c:250
+#, fuzzy
+msgid "Remember Password?"
+msgstr "Στη μνήμη Κωδικός πρόσβασης?"
+
+#: ../src/gossip-ui-utils.c:351
+#, fuzzy
+msgid "Do not show this again"
+msgstr "Κάντο not"
+
+#: ../src/gossip-ui-utils.c:1504
+#, fuzzy
+msgid "Could not display the help contents."
+msgstr "not βοήθεια περιεχόμενα."
+
+#: ../src/gossip-theme-manager.c:82
+#, fuzzy
+msgid "Classic"
+msgstr "Κλασσικό"
+
+#: ../src/gossip-theme-manager.c:83
+#, fuzzy
+msgid "Simple"
+msgstr "Απλό"
+
+#: ../src/gossip-theme-manager.c:84
+#, fuzzy
+msgid "Clean"
+msgstr "Καθαρισμός"
+
+#: ../src/gossip-theme-manager.c:85
+#, fuzzy
+msgid "Blue"
+msgstr "Μπλε"
+
+#: ../src/gossip-vcard-dialog.c:184
+#, fuzzy
+msgid "Select Your Avatar Image"
+msgstr "Επιλογή Εικόνα"
+
+#: ../src/gossip-vcard-dialog.c:187
+#, fuzzy
+msgid "No Image"
+msgstr "Χωρίς Εικόνα"
+
+#: ../src/gossip-vcard-dialog.c:508
+#, fuzzy
+msgid "The server does not seem to be responding."
+msgstr "εξυπηρετητής not στο."
+
+#: ../src/gossip-vcard-dialog.c:509
+#, fuzzy
+msgid "Try again later."
+msgstr "Δοκιμή."
+
+#: ../src/sounds/gossip.soundlist.in.h:1 ../ui/chat.glade.h:2
+#, fuzzy
+msgid "Chat"
+msgstr "Συζήτηση"
+
+#: ../src/sounds/gossip.soundlist.in.h:2
+#, fuzzy
+msgid "Contact goes offline"
+msgstr "Επαφή"
+
+#: ../src/sounds/gossip.soundlist.in.h:3
+#, fuzzy
+msgid "Contact goes online"
+msgstr "Επαφή σε σύνδεση"
+
+#: ../ui/chat.glade.h:1
+#, fuzzy
+msgid "C_lear"
+msgstr "Ε_κκαθάριση"
+
+#: ../ui/chat.glade.h:3
+#, fuzzy
+msgid "Contact Infor_mation"
+msgstr "Επαφή"
+
+#: ../ui/chat.glade.h:4
+#, fuzzy
+msgid "Cu_t"
+msgstr "Απο_κοπή"
+
+#: ../ui/chat.glade.h:5
+#, fuzzy
+msgid "In_vite"
+msgstr "Μέσα"
+
+#: ../ui/chat.glade.h:6
+#, fuzzy
+msgid "Insert _Smiley"
+msgstr "Εισαγωγή"
+
+#: ../ui/chat.glade.h:7
+#, fuzzy
+msgid "Invitation message:"
+msgstr "Πρόσκληση μήνυμα:"
+
+#: ../ui/chat.glade.h:8
+#, fuzzy
+msgid "Invite"
+msgstr "Πρόσκληση"
+
+#: ../ui/chat.glade.h:9
+#, fuzzy
+msgid "Move Tab _Left"
+msgstr "Μετακίνηση Καρτέλας _Αριστερά"
+
+#: ../ui/chat.glade.h:10
+#, fuzzy
+msgid "Move Tab _Right"
+msgstr "Μετακίνηση Καρτέλας _Δεξιά"
+
+#: ../ui/chat.glade.h:11
+#, fuzzy
+msgid "Select who would you like to invite:"
+msgstr "Επιλογή υποφαινόμενο όμοιο στο:"
+
+#: ../ui/chat.glade.h:13 ../ui/main.glade.h:103
+#, fuzzy
+msgid "_Add Contact..."
+msgstr "_Νέα Γνωριμία..."
+
+#: ../ui/chat.glade.h:14
+#, fuzzy
+msgid "_Add To Favorites"
+msgstr "Προσθήκη Προς Αγαπημένα"
+
+#: ../ui/chat.glade.h:15
+#, fuzzy
+msgid "_Close"
+msgstr "_Κλείσιμο"
+
+#: ../ui/chat.glade.h:16
+msgid "_Conversation"
+msgstr ""
+
+#: ../ui/chat.glade.h:17
+#, fuzzy
+msgid "_Copy"
+msgstr "Αντι_γραφή"
+
+#: ../ui/chat.glade.h:18
+#, fuzzy
+msgid "_Detach Tab"
+msgstr "Από_σπαση Καρτέλας"
+
+#: ../ui/chat.glade.h:20
+#, fuzzy
+msgid "_Next Tab"
+msgstr "_Επόμενη Καρτέλα"
+
+#: ../ui/chat.glade.h:21
+#, fuzzy
+msgid "_Paste"
+msgstr "_Επικόλληση"
+
+#: ../ui/chat.glade.h:22
+#, fuzzy
+msgid "_Previous Tab"
+msgstr "_Προηγούμενη Καρτέλα"
+
+#: ../ui/chat.glade.h:23
+#, fuzzy
+msgid "_Room"
+msgstr "Αίθουσα"
+
+#: ../ui/chat.glade.h:24
+#, fuzzy
+msgid "_Show Contacts"
+msgstr "Εμφάνιση Επαφές"
+
+#: ../ui/chat.glade.h:25
+#, fuzzy
+msgid "_Tabs"
+msgstr "_Καρτέλες"
+
+#: ../ui/file-transfer.glade.h:1
+#, fuzzy
+msgid "Contact ID:"
+msgstr "ID επαφής:"
+
+#: ../ui/file-transfer.glade.h:2
+#, fuzzy
+msgid "Do you want to accept this file?"
+msgstr "Κάντο υποφαινόμενο στο αρχείο?"
+
+#: ../ui/file-transfer.glade.h:3
+#, fuzzy
+msgid "File Transfer Request"
+msgstr "Αρχείο Μεταφορά Αίτηση"
+
+#: ../ui/file-transfer.glade.h:4
+#, fuzzy
+msgid "File name:"
+msgstr "Όνομα αρχείου:"
+
+#: ../ui/file-transfer.glade.h:5
+#, fuzzy
+msgid "File size:"
+msgstr "Μέγεθος αρχείου:"
+
+#: ../ui/file-transfer.glade.h:6
+#, fuzzy
+msgid "Not supported yet"
+msgstr "Όχι υποστηρίζεται"
+
+#: ../ui/file-transfer.glade.h:7
+#, fuzzy
+msgid "This person wishes to send you this file:"
+msgstr "πρόσωπο στο υποφαινόμενο αρχείο:"
+
+#: ../ui/file-transfer.glade.h:8 ../ui/main.glade.h:97
+#, fuzzy
+msgid "Web site:"
+msgstr "Δικτυακός Ιστός site:"
+
+#: ../ui/file-transfer.glade.h:9 ../ui/main.glade.h:101
+#, fuzzy
+msgid "_Accept"
+msgstr "_Αποδοχή"
+
+#: ../ui/file-transfer.glade.h:10 ../ui/main.glade.h:108
+#, fuzzy
+msgid "_Deny"
+msgstr "Άρ_νηση"
+
+#: ../ui/group-chat.glade.h:1 ../ui/main.glade.h:21
+#, fuzzy
+msgid "Account:"
+msgstr "Λογαριασμός:"
+
+#: ../ui/group-chat.glade.h:2
+#, fuzzy
+msgid "Add to _favourites"
+msgstr "Προσθήκη στο"
+
+#: ../ui/group-chat.glade.h:3 ../ui/main.glade.h:27
+#, fuzzy
+msgid "Chat Rooms"
+msgstr "Συζήτηση Δωμάτια"
+
+#: ../ui/group-chat.glade.h:4
+#, fuzzy
+msgid "Customize your own nickname, the server and chatroom which you wish to join."
+msgstr "Προσαρμογή εξυπηρετητής και υποφαινόμενο στο."
+
+#: ../ui/group-chat.glade.h:5
+#, fuzzy
+msgid "Edit Chat Room"
+msgstr "Επεξεργασία Συζήτηση Αίθουσα"
+
+#: ../ui/group-chat.glade.h:6
+#, fuzzy
+msgid "Edit your chat room details:"
+msgstr "Επεξεργασία:"
+
+#: ../ui/group-chat.glade.h:7
+#, fuzzy
+msgid "Group Chat"
+msgstr "Ομάδα Συζήτηση"
+
+#: ../ui/group-chat.glade.h:10
+#, fuzzy
+msgid "Join room on start_up"
+msgstr "Ένωση ενεργό έναρξη πάνω"
+
+#: ../ui/group-chat.glade.h:11
+#, fuzzy
+msgid "Join the chat room"
+msgstr "Ένωση"
+
+#: ../ui/group-chat.glade.h:12
+#, fuzzy
+msgid "Join this chat room when Gossip starts and you are connected"
+msgstr "Ένωση Gossip και υποφαινόμενο σε σύνδεση"
+
+#: ../ui/group-chat.glade.h:13
+#, fuzzy
+msgid "N_ame:"
+msgstr "Β:"
+
+#: ../ui/group-chat.glade.h:14
+msgid "Na_me:"
+msgstr ""
+
+#: ../ui/group-chat.glade.h:15
+#, fuzzy
+msgid "New Chat Room"
+msgstr "Νέο Συζήτηση Αίθουσα"
+
+#: ../ui/group-chat.glade.h:16
+#, fuzzy
+msgid ""
+"Pick a saved chat room from the presets available below and click Join to "
+"start chatting."
+msgstr "a από διαθέσιμο και κλικ Ένωση στο έναρξη."
+
+#: ../ui/group-chat.glade.h:17
+#, fuzzy
+msgid "S_erver:"
+msgstr "Εξ_υπηρετητής:"
+
+#: ../ui/group-chat.glade.h:18
+#, fuzzy
+msgid "Save _this chat room"
+msgstr "Αποθήκευση"
+
+#: ../ui/group-chat.glade.h:19
+#, fuzzy
+msgid "_Nickname:"
+msgstr "_ Ψευδώνυμο:"
+
+#: ../ui/group-chat.glade.h:20
+#, fuzzy
+msgid "_Room:"
+msgstr "Αίθουσα:"
+
+#: ../ui/group-chat.glade.h:21 ../ui/main.glade.h:125
+#, fuzzy
+msgid "_Server:"
+msgstr "_Εξυπηρετητής:"
+
+#: ../ui/group-chat.glade.h:22
+#, fuzzy
+msgid "_Topic:"
+msgstr "Θέμα:"
+
+#: ../ui/main.glade.h:1
+#, fuzzy
+msgid "    "
+msgstr "    "
+
+#: ../ui/main.glade.h:2
+#, fuzzy
+msgid "-"
+msgstr "-"
+
+#: ../ui/main.glade.h:3
+#, fuzzy
+msgid "<b>About</b>"
+msgstr "<b> Περί</b>"
+
+#: ../ui/main.glade.h:4
+#, fuzzy
+msgid "<b>Account</b>"
+msgstr "<b>Λογαριασμός</b>"
+
+#: ../ui/main.glade.h:5
+#, fuzzy
+msgid "<b>Appearance</b>"
+msgstr "<b>Εμφάνιση</b>"
+
+#: ../ui/main.glade.h:6
+#, fuzzy
+msgid "<b>Audio</b>"
+msgstr "<b>Ήχος</b>"
+
+#: ../ui/main.glade.h:7
+#, fuzzy
+msgid "<b>Behaviour</b>"
+msgstr "<b> Συμπεριφορά</b>"
+
+#: ../ui/main.glade.h:8
+#, fuzzy
+msgid "<b>Client Information</b>"
+msgstr "<b> Πελάτης Πληροφορίες</b>"
+
+#: ../ui/main.glade.h:9
+#, fuzzy
+msgid "<b>Groups</b>"
+msgstr "<b> Ομάδες</b>"
+
+#: ../ui/main.glade.h:10
+#, fuzzy
+msgid "<b>Languages</b>"
+msgstr "<b>Γλώσσες</b>"
+
+#: ../ui/main.glade.h:11
+#, fuzzy
+msgid "<b>Name</b>"
+msgstr "<b> Όνομα</b>"
+
+#: ../ui/main.glade.h:13
+#, fuzzy
+msgid "<b>Options</b>"
+msgstr "<b>Επιλογές</b>"
+
+#: ../ui/main.glade.h:14
+#, fuzzy
+msgid "<b>Personal Details</b>"
+msgstr "<b> Προσωπικό Λεπτομέρειες</b>"
+
+#: ../ui/main.glade.h:15
+#, fuzzy
+msgid "<b>Settings</b>"
+msgstr "<b>Ρυθμίσεις</b>"
+
+#: ../ui/main.glade.h:16
+#, fuzzy
+msgid "<b>Status</b>"
+msgstr "<b> Κατάσταση</b>"
+
+#: ../ui/main.glade.h:17
+#, fuzzy
+msgid "<b>Visual</b>"
+msgstr "<b> Οπτική</b>"
+
+#: ../ui/main.glade.h:18
+#, fuzzy
+msgid ""
+"<small>The list of languages reflects only the languages for which you have "
+"a dictionary installed.</small>"
+msgstr "<small> λίστα από για υποφαινόμενο a εγκατεστημένο</small>"
+
+#: ../ui/main.glade.h:19
+#, fuzzy
+msgid "<span size=\"smaller\">Example: Mikael or user@server.org</span>"
+msgstr "<span size=\"smaller\"> Παράδειγμα ήuser@server.org</span>"
+
+#: ../ui/main.glade.h:20
+#, fuzzy
+msgid "Accou_nt:"
+msgstr "nt:"
+
+#: ../ui/main.glade.h:23
+#, fuzzy
+msgid "Alia_s:"
+msgstr "s:"
+
+#: ../ui/main.glade.h:24
+msgid "Avatar:"
+msgstr ""
+
+#: ../ui/main.glade.h:25
+#, fuzzy
+msgid "Avatars are user chosen images shown in the contact list"
+msgstr "χρήστης εικόνες in λίστα"
+
+#: ../ui/main.glade.h:26
+#, fuzzy
+msgid "Ch_at"
+msgstr "στα/στις"
+
+#: ../ui/main.glade.h:28
+#, fuzzy
+msgid "Chat Th_eme:"
+msgstr "Συζήτηση Πε:"
+
+#: ../ui/main.glade.h:29
+#, fuzzy
+msgid "Client:"
+msgstr "Πελάτης:"
+
+#: ../ui/main.glade.h:30
+#, fuzzy
+msgid "Con_tact:"
+msgstr "Con:"
+
+#: ../ui/main.glade.h:31
+#, fuzzy
+msgid "Connect on S_tartup"
+msgstr "Σύνδεση ενεργό Ν"
+
+#: ../ui/main.glade.h:33
+#, fuzzy
+msgid "Contacts"
+msgstr "Επαφές"
+
+#: ../ui/main.glade.h:34
+#, fuzzy
+msgid "Context"
+msgstr "Περιεχόμενο"
+
+#: ../ui/main.glade.h:35
+#, fuzzy
+msgid "Country:"
+msgstr "Χώρα:"
+
+#: ../ui/main.glade.h:36
+#, fuzzy
+msgid "Decide _Later"
+msgstr "Αργότερα"
+
+#: ../ui/main.glade.h:37
+#, fuzzy
+msgid "Description:"
+msgstr "Περιγραφή:"
+
+#: ../ui/main.glade.h:38
+#, fuzzy
+msgid "Display notifications when contacts come _online"
+msgstr "Εμφάνιση σε σύνδεση"
+
+#: ../ui/main.glade.h:39
+#, fuzzy
+msgid "Edit Contact"
+msgstr "Διόρθωση επαφής"
+
+#: ../ui/main.glade.h:40
+#, fuzzy
+msgid "Edit Groups"
+msgstr "Επεξεργασία Ομάδες"
+
+#: ../ui/main.glade.h:41
+#, fuzzy
+msgid "Email:"
+msgstr "Email:"
+
+#: ../ui/main.glade.h:42
+#, fuzzy
+msgid "Enable sounds when _away"
+msgstr "Ενεργοποίηση σε απουσία"
+
+#: ../ui/main.glade.h:43
+#, fuzzy
+msgid "Enable sounds when _busy"
+msgstr "Ενεργοποίηση"
+
+#: ../ui/main.glade.h:44
+#, fuzzy
+msgid "Enter status message:"
+msgstr "Enter κατάσταση μήνυμα:"
+
+#: ../ui/main.glade.h:45
+#, fuzzy
+msgid "Enter the name or contact ID of the person you want to chat to below:"
+msgstr "Enter όνομα ή ID από πρόσωπο υποφαινόμενο στο στο:"
+
+#: ../ui/main.glade.h:46
+#, fuzzy
+msgid "General"
+msgstr "Γενικά"
+
+#: ../ui/main.glade.h:47
+#, fuzzy
+msgid "Gossip"
+msgstr "Gossip"
+
+#: ../ui/main.glade.h:48
+#, fuzzy
+msgid "Group:"
+msgstr "Ομάδα:"
+
+#: ../ui/main.glade.h:49
+#, fuzzy
+msgid "ID:"
+msgstr "ID:"
+
+#: ../ui/main.glade.h:50
+#, fuzzy
+msgid "If you chose to decide later you will be asked the next time you log on."
+msgstr "υποφαινόμενο στο υποφαινόμενο ώρα υποφαινόμενο log ενεργό."
+
+#: ../ui/main.glade.h:52
+#, fuzzy
+msgid "Join _Favourites"
+msgstr "Ένωση"
+
+#: ../ui/main.glade.h:53
+#, fuzzy
+msgid "Join _New..."
+msgstr "Ένωση Νέο."
+
+#: ../ui/main.glade.h:54
+#, fuzzy
+msgid "Login I_D:"
+msgstr "Είσοδος Ι D:"
+
+#: ../ui/main.glade.h:55
+#, fuzzy
+msgid "Manage Chat Rooms..."
+msgstr "Συζήτηση Δωμάτια."
+
+#: ../ui/main.glade.h:56
+#, fuzzy
+msgid "Name:"
+msgstr "Όνομα:"
+
+#: ../ui/main.glade.h:57
+#, fuzzy
+msgid "New Message"
+msgstr "Νέο μήνυμα"
+
+#: ../ui/main.glade.h:58
+#, fuzzy
+msgid "Nickname:"
+msgstr "Παρατσούκλι:"
+
+#: ../ui/main.glade.h:59
+#, fuzzy
+msgid "Notifications"
+msgstr "Ειδοποιήσεις"
+
+#: ../ui/main.glade.h:60
+#, fuzzy
+msgid "OS:"
+msgstr "Λειτουργικό σύστημα:"
+
+#: ../ui/main.glade.h:61
+#, fuzzy
+msgid "Pass_word:"
+msgstr "Συν_θηματικό:"
+
+#: ../ui/main.glade.h:62
+#, fuzzy
+msgid "Personal Details"
+msgstr "Προσωπικό Λεπτομέρειες"
+
+#: ../ui/main.glade.h:63
+#, fuzzy
+msgid "Preferences"
+msgstr "Προτιμήσεις"
+
+#: ../ui/main.glade.h:64
+#, fuzzy
+msgid "Press Subscribe to request to receive their status"
+msgstr "Πάτημα Συνδρομή στο στο κατάσταση"
+
+#: ../ui/main.glade.h:65
+#, fuzzy
+msgid "R_egister"
+msgstr "R"
+
+#: ../ui/main.glade.h:66
+msgid "Reso_urce:"
+msgstr ""
+
+#: ../ui/main.glade.h:67
+#, fuzzy
+msgid "Search"
+msgstr "Αναζήτηση"
+
+#: ../ui/main.glade.h:68
+#, fuzzy
+msgid ""
+"Select the groups you want this contact to appear in, you can select more "
+"than one group or no groups."
+msgstr "Επιλογή υποφαινόμενο στο in υποφαινόμενο επιλογή περισσότερα ένα ομάδα ή όχι."
+
+#: ../ui/main.glade.h:69
+#, fuzzy
+msgid ""
+"Set the alias you want to use for:\n"
+"<b>martyn@imendio.com</b>\n"
+"\n"
+"You can retrieve contact information from the server. "
+msgstr ""
+"Ορισμός υποφαινόμενο στο για\n"
+"<b>martyn@imendio.com</b> ο από εξυπηρετητής "
+
+#: ../ui/main.glade.h:73
+#, fuzzy
+msgid "Show _Offline Contacts"
+msgstr "Εμφάνιση Χωρίς σύνδεση Επαφές"
+
+#: ../ui/main.glade.h:74
+#, fuzzy
+msgid "Show _avatars"
+msgstr "Εμφάνιση"
+
+#: ../ui/main.glade.h:75
+#, fuzzy
+msgid "Show _smileys as images"
+msgstr "Εμφάνιση εικόνες"
+
+#: ../ui/main.glade.h:76
+#, fuzzy
+msgid "Show co_mpact contact list"
+msgstr "Εμφάνιση λίστα"
+
+#: ../ui/main.glade.h:77
+#, fuzzy
+msgid "Spell Checker"
+msgstr "Ελεγκτής ορθογραφίας"
+
+#: ../ui/main.glade.h:78
+#, fuzzy
+msgid "Spell Checking"
+msgstr "Έλεγχος Ορθογραφίας"
+
+#: ../ui/main.glade.h:79
+#, fuzzy
+msgid "Status"
+msgstr "Κατάσταση"
+
+#: ../ui/main.glade.h:80
+#, fuzzy
+msgid "Status Message Presets"
+msgstr "Κατάσταση Μήνυμα Προκαθορισμένα"
+
+#: ../ui/main.glade.h:81
+#, fuzzy
+msgid "Subscription Request"
+msgstr "Εγγραφή Αίτηση"
+
+#: ../ui/main.glade.h:82
+#, fuzzy
+msgid "Suggestions for the word:"
+msgstr "Προτάσεις για:"
+
+#: ../ui/main.glade.h:83
+#, fuzzy
+msgid "Themes"
+msgstr "Θέματα"
+
+#: ../ui/main.glade.h:84
+#, fuzzy
+msgid ""
+"This acts as a filter to the contact list below. You can use segments of "
+"contact's name or ID, for example, \"jabber.org\" will list everyone using "
+"that server"
+msgstr "a φίλτρο στο λίστα Εσείς από s όνομα ή ID για παράδειγμα οργανισμός λίστα εξυπηρετητής"
+
+#: ../ui/main.glade.h:85
+#, fuzzy
+msgid "This is the name that will be used on your roster for this contact"
+msgstr "είναι όνομα σε χρήση ενεργό για"
+
+#: ../ui/main.glade.h:86
+#, fuzzy
+msgid "This name will be used to identify you in chat windows"
+msgstr "όνομα σε χρήση στο υποφαινόμενο in παράθυρα"
+
+#: ../ui/main.glade.h:87
+#, fuzzy
+msgid "This name will be used to identify you when new contacts lookup your details"
+msgstr "όνομα σε χρήση στο υποφαινόμενο νέο"
+
+#: ../ui/main.glade.h:88
+#, fuzzy
+msgid ""
+"To add a new account, you can click on the 'Add' button and a new entry will "
+"be created for you to started configuring.\n"
+"\n"
+"If you do not want to add an account, simply click on the account you want "
+"to configure in the list on the left."
+msgstr "Προς προσθήκη a νέο λογαριασμός υποφαινόμενο κλικ ενεργό Προσθήκη κουμπί και a νέο καταχώρηση για υποφαινόμενο στο ο υποφαινόμενο not στο προσθήκη λογαριασμός κλικ ενεργό λογαριασμός υποφαινόμενο στο in λίστα ενεργό αριστερά."
+
+#: ../ui/main.glade.h:91
+#, fuzzy
+msgid "Use default name here from the contact's VCard."
+msgstr "Χρήση προκαθορισμένο όνομα από s."
+
+#: ../ui/main.glade.h:92
+#, fuzzy
+msgid "Use encryption (SS_L)"
+msgstr "Χρήση ΔΔ L"
+
+#: ../ui/main.glade.h:93
+#, fuzzy
+msgid "Use system pro_xy"
+msgstr "Χρήση σύστημα"
+
+#: ../ui/main.glade.h:94
+#, fuzzy
+msgid "Version:"
+msgstr "Έκδοση:"
+
+#: ../ui/main.glade.h:95
+#, fuzzy
+msgid "View Previous Conversations"
+msgstr "Προβολή Προηγούμενο Συζητήσεις"
+
+#: ../ui/main.glade.h:96
+#, fuzzy
+msgid "Web Site:"
+msgstr "Δικτυακός Ιστός Τοποθεσία:"
+
+#: ../ui/main.glade.h:98
+#, fuzzy
+msgid "Which account do you want to use?"
+msgstr "λογαριασμός υποφαινόμενο στο?"
+
+#: ../ui/main.glade.h:99
+#, fuzzy
+msgid "You are not subscribed to this contact."
+msgstr "Εσείς not στο."
+
+#: ../ui/main.glade.h:100
+#, fuzzy
+msgid "_About"
+msgstr "_Περί"
+
+#: ../ui/main.glade.h:102
+#, fuzzy
+msgid "_Accounts"
+msgstr "Λογαριασμοί"
+
+#: ../ui/main.glade.h:104
+#, fuzzy
+msgid "_Add to status message list"
+msgstr "Προσθήκη στο κατάσταση μήνυμα λίστα"
+
+#: ../ui/main.glade.h:106
+#, fuzzy
+msgid "_Connect"
+msgstr "_Σύνδεση"
+
+#: ../ui/main.glade.h:107
+#, fuzzy
+msgid "_Contents"
+msgstr "_Περιεχόμενα"
+
+#: ../ui/main.glade.h:109
+#, fuzzy
+msgid "_Disconnect"
+msgstr "_Αποσύνδεση"
+
+#: ../ui/main.glade.h:111
+#, fuzzy
+msgid "_Enable spell checking"
+msgstr "Ενεργοποίηση έλεγχος"
+
+#: ../ui/main.glade.h:112
+msgid "_Forget"
+msgstr ""
+
+#: ../ui/main.glade.h:113
+#, fuzzy
+msgid "_Group Chat"
+msgstr "Ομάδα Συζήτηση"
+
+#: ../ui/main.glade.h:114
+#, fuzzy
+msgid "_Group:"
+msgstr "_Ομάδα:"
+
+#: ../ui/main.glade.h:115
+#, fuzzy
+msgid "_Help"
+msgstr "_Βοήθεια"
+
+#: ../ui/main.glade.h:116
+#, fuzzy
+msgid "_Name:"
+msgstr "Ό_νομα:"
+
+#: ../ui/main.glade.h:117
+#, fuzzy
+msgid "_New Message..."
+msgstr "Νέο Μήνυμα."
+
+#: ../ui/main.glade.h:118
+#, fuzzy
+msgid "_Open new chats in separate windows"
+msgstr "Άνοιγμα νέο in παράθυρα"
+
+#: ../ui/main.glade.h:119
+#, fuzzy
+msgid "_Personal Information"
+msgstr "Προσωπικό Πληροφορίες"
+
+#: ../ui/main.glade.h:120
+#, fuzzy
+msgid "_Play sound when messages arrive"
+msgstr "Αναπαραγωγή"
+
+#: ../ui/main.glade.h:121
+#, fuzzy
+msgid "_Port:"
+msgstr "_Θύρα:"
+
+#: ../ui/main.glade.h:122
+#, fuzzy
+msgid "_Preferences"
+msgstr "_Προτιμήσεις"
+
+#: ../ui/main.glade.h:123
+#, fuzzy
+msgid "_Quit"
+msgstr "Έ_ξοδος"
+
+#: ../ui/main.glade.h:124
+msgid "_Retrieve"
+msgstr ""
+
+#: ../ui/main.glade.h:126
+#, fuzzy
+msgid "_Show Contact List"
+msgstr "Εμφάνιση Επαφή Λίστα"
+
+#: ../ui/main.glade.h:127
+#, fuzzy
+msgid "_Subscribe"
+msgstr "Ε_γγραφή"
+
+#: ../ui/main.glade.h:128
+#, fuzzy
+msgid "_Use for chat rooms"
+msgstr "Χρήση για"
+
+#: ../ui/main.glade.h:130
+#, fuzzy
+msgid "jabber account settings"
+msgstr "λογαριασμός"
+
