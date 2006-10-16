@@ -1,5 +1,28 @@
 NEW in 0.18:
 ============
+- Fixed #361272, Fix crash in src/gossip-galago.c due to missing presence states (Eitan Isaacson)
+- Fixed #357244, Fix white space bugs (Xavier Claessens)
+- Fixed #357457, Redesign adding a contact to a GtkDialog instead of GnomeDruid (Xavier Claessens, Martyn Russell)
+- Fixed #357501, Fix wrong linking order (Fryderyk Dziarmagowski)
+- Fixed #357736, Does not compile on Ubuntu Dapper Drake (Richard Hult)
+- Fixed #358036, Scroll to contact name in history window (Wouter Bolsterlee)
+- Fixed #358099, The accounts dialog should use widget sets for known protocols (Martyn Russell)
+- Fixed #358101, Contact information window should appear on the same desktop (Richard Hult)
+- Fixed #359619, Remove protocol specific instances of gossip_account_[set,get]_* (Xavier Claessens)
+- Fixed #359725, Use g_base64_[decode/encode] instead of our version (Xavier Claessens)
+- Fixed #360121, Bad glist usage, use g_list_prepend instead (Martyn Russell)
+- Fixed #360348, Use GtkLinkButton instead of GnomeHRef (Xavier Claessens)
+- Fixed #361235, Gossip fails to build with Galago enabled (Xavier Claessens)
+- Fixed #361244, Gossip fails to build due to some errors in peekaboo-galago.c (Richard Hult)
+- Fixed #361278, Implement gossip_account_has_param() (Xavier Claessens)
+- Fixed #362661, Empty resource results in invalid JID used to send messages (Michele Campeotto)
+
+Translations:
+- Updated el: Dimitris Glezos
+- Updated nl: Wouter Bolsterlee
+- Updated sv: Daniel Nylander, Richard Hult
+- Updated ne: Pawan Chitrakar
+- Updated fi: Ilkka Tuohela
 
 
 NEW in 0.17:
