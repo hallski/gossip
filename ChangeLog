@@ -1,5 +1,9 @@
 2006-10-16  Martyn Russell  <martyn@imendio.com>
 
+	* Released 0.18.
+
+2006-10-16  Martyn Russell  <martyn@imendio.com>
+
 	* peekaboo/src/Makefile.am:
 	* po/POTFILES.in: Fixed make distcheck failures.
 
