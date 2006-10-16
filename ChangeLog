@@ -4,6 +4,13 @@
 
 2006-10-16  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c: (jabber_connection_open_cb),
+	(jabber_send_message): Don't use an empty resource when sending a
+	message, the server returns a malformed JID error. This fixes bug
+	#362661 (Michele Campeotto).
+
+2006-10-16  Martyn Russell  <martyn@imendio.com>
+
 	* peekaboo/src/Makefile.am:
 	* po/POTFILES.in: Fixed make distcheck failures.
 

@@ -790,7 +790,7 @@ jabber_connection_open_cb (LmConnection *connection,
 				  "resource", &account_resource,
 				  NULL);
 
-	if (!account_password || strlen (account_password) < 1) {
+	if (!account_password || g_utf8_strlen (account_password, -1) < 1) {
 		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
 			      account_id);
 
@@ -1488,7 +1488,7 @@ jabber_send_message (GossipProtocol *protocol,
 		g_object_unref (recipient);
 	}
 
-	if (resource) {
+	if (resource && g_utf8_strlen (resource, -1) > 0) {
 		jid_str = g_strdup_printf ("%s/%s", recipient_id, resource);
 	} else {
 		jid_str = g_strdup (recipient_id);
