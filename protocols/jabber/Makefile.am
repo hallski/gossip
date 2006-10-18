@@ -14,6 +14,8 @@ libgossip_jabber_la_SOURCES =                   \
 	gossip-jabber.h                         \
 	gossip-jabber-chatrooms.c               \
 	gossip-jabber-chatrooms.h               \
+	gossip-jabber-disco.c			\
+	gossip-jabber-disco.h			\
 	gossip-jabber-ft.c			\
 	gossip-jabber-ft.h			\
 	gossip-jabber-ft-utils.c		\

@@ -1,3 +1,10 @@
+2006-10-18  Martyn Russell  <martyn@imendio.com>
+	
+	* protocols/jabber/gossip-jabber-disco.[ch]:
+	* protocols/jabber/Makefile.am: Added disco work I did for
+	transports into the backend so they can be used for other disco
+	stuff.
+	
 2006-10-16  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version to 0.19.
