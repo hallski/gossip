@@ -103,6 +103,9 @@ static void       chat_window_accel_cb                  (GtkAccelGroup         *
 							 guint                  key,
 							 GdkModifierType        mod,
 							 GossipChatWindow      *window);
+static void       chat_window_avatar_changed_cb         (GossipContact         *contact,
+							 GParamSpec            *param,
+							 GossipChatWindow      *window);
 static void       chat_window_close_clicked_cb          (GtkWidget             *button,
 							 GossipChat            *chat);
 static GtkWidget *chat_window_create_label              (GossipChatWindow      *window,
@@ -535,6 +538,24 @@ chat_window_accel_cb (GtkAccelGroup    *accelgroup,
 }
 
 static void
+chat_window_avatar_changed_cb (GossipContact    *contact,
+			       GParamSpec       *param,
+			       GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	GossipContact        *current_contact;
+
+	priv = GET_PRIV (window);
+
+	current_contact = gossip_chat_get_contact (priv->current_chat);
+	if (!gossip_contact_equal (current_contact, contact)) {
+		return;
+	}
+
+	chat_window_update_title (window, priv->current_chat);
+}
+
+static void
 chat_window_close_clicked_cb (GtkWidget  *button,
 			      GossipChat *chat)
 {
@@ -656,8 +677,9 @@ chat_window_update_title (GossipChatWindow *window,
 			  GossipChat       *chat)
 {
 	GossipChatWindowPriv *priv;
+	GossipContact        *contact;
 	const gchar          *name;
-	GdkPixbuf 	     *pixbuf;
+	GdkPixbuf 	     *pixbuf = NULL;
 
 	priv = GET_PRIV (window);
 
@@ -676,11 +698,17 @@ chat_window_update_title (GossipChatWindow *window,
 	if (priv->new_msg) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
-		gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
-		g_object_unref (pixbuf);
 	} else {
-		gtk_window_set_icon (GTK_WINDOW (priv->dialog), NULL);
+		/* Update the avatar if we have one */
+		contact = gossip_chat_get_contact (priv->current_chat);
+		pixbuf = gossip_pixbuf_avatar_from_contact (contact);
+
 		chat_window_set_urgency_hint (window, FALSE);
+	}
+
+	gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
+	if (pixbuf) {
+		g_object_unref (pixbuf);
 	}
 }
 
@@ -1620,6 +1648,7 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 			     GossipChat	      *chat)
 {
 	GossipChatWindowPriv *priv;
+	GossipContact        *contact;
 	GtkWidget            *label;
 
 	gossip_debug (DEBUG_DOMAIN, "Adding chat");
@@ -1654,6 +1683,14 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 				     GOSSIP_NOTEBOOK_INSERT_LAST,
 				     TRUE);
 
+	contact = gossip_chat_get_contact (chat);
+	if (contact) {
+		g_signal_connect (contact, 
+				  "notify::avatar",
+				  G_CALLBACK (chat_window_avatar_changed_cb),
+				  window);
+	}
+
 	/* FIXME: somewhat ugly */
 	g_object_ref (chat);
 }
@@ -1663,6 +1700,7 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 				GossipChat	 *chat)
 {
 	GossipChatWindowPriv *priv;
+	GossipContact        *contact;
 
 	gossip_debug (DEBUG_DOMAIN, "Removing chat");
 
@@ -1670,6 +1708,15 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 
 	gossip_notebook_remove_page (GOSSIP_NOTEBOOK (priv->notebook),
 				     gossip_chat_get_widget (chat));
+
+	contact = gossip_chat_get_contact (chat);
+	if (contact) {
+		g_signal_handlers_disconnect_by_func 
+			(contact, 
+			 chat_window_avatar_changed_cb,
+			 window);
+	}
+
 	/* FIXME: somewhat ugly */
 	g_object_unref (chat);
 }

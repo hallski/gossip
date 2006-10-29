@@ -1,3 +1,8 @@
+2006-10-29  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: Use avatars as window icons, fixes bug
+	#362218. 
+
 2006-10-18  Martyn Russell  <martyn@imendio.com>
 	
 	* protocols/jabber/gossip-jabber-disco.[ch]:
