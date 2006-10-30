@@ -152,7 +152,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 	photo_node = lm_message_node_get_child (vcard_node, "PHOTO");
 	if (photo_node) {
 		node = lm_message_node_get_child (photo_node, "BINVAL");
-		if (node) {
+		if (node && node->value) {
 			guchar *decoded_avatar;
 			gsize   len;
 

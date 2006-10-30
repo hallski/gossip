@@ -1,3 +1,9 @@
+2006-10-30  Mikael Hallendal  <micke@imendio.com>
+
+	* protocols/jabber/gossip-jabber-vcard.c: (jabber_vcard_get_cb):
+	- Check that the vcard value is not NULL before trying to decode it.
+	- Fix #367823.
+
 2006-10-29  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: Use avatars as window icons, fixes bug
