@@ -1,3 +1,8 @@
+2006-10-31  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c (chat_window_update_title): Fix warning
+	for group chats.
+
 2006-10-30  Mikael Hallendal  <micke@imendio.com>
 
 	* protocols/jabber/gossip-jabber-vcard.c: (jabber_vcard_get_cb):

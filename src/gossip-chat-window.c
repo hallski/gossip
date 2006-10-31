@@ -701,7 +701,9 @@ chat_window_update_title (GossipChatWindow *window,
 	} else {
 		/* Update the avatar if we have one */
 		contact = gossip_chat_get_contact (priv->current_chat);
-		pixbuf = gossip_pixbuf_avatar_from_contact (contact);
+		if (contact) {
+			pixbuf = gossip_pixbuf_avatar_from_contact (contact);
+		}
 
 		chat_window_set_urgency_hint (window, FALSE);
 	}
