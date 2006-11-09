@@ -1,3 +1,20 @@
+
+NEW in 0.19:
+==============
+- Added the ability to search back and forward through the search
+results in log searching (Martyn Russell). 
+- Fixed #367823, Common crasher with missing strlen() (Mikael Hallendal)
+- Fixed #362218, Use avatars as window icons (Martyn Russell)
+- Fixed #372158, Updated help documentation (Brian Pepple)
+
+Translations:
+- Updated el: Dimitris Glezos
+- Updated nl: Wouter Bolsterlee
+- Updated sv: Daniel Nylander
+- Updated es: Francisco Javier F. Serrador
+- Updated fi: Ilkka Tuohela
+
+
 NEW in 0.18:
 ============
 - Fixed #361272, Fix crash in src/gossip-galago.c due to missing presence states (Eitan Isaacson)
