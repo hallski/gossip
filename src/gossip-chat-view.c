@@ -71,8 +71,10 @@ struct _GossipChatViewPriv {
 	gboolean       allow_scrolling;
 	gboolean       is_group_chat;
 
-	GtkTextMark   *find_mark;
+	GtkTextMark   *find_mark_previous;
+	GtkTextMark   *find_mark_next;
 	gboolean       find_wrapped;
+	gboolean       find_last_direction;
 
 	/* This is for the group chat so we know if the "other" last contact
 	 * changed, so we know whether to insert a header or not.
@@ -1842,10 +1844,10 @@ gossip_chat_view_clear (GossipChatView *view)
 	priv->last_timestamp = 0;
 }
 
-void
-gossip_chat_view_find (GossipChatView *view,
-		       const gchar    *search_criteria,
-		       gboolean        new_search)
+gboolean
+gossip_chat_view_find_previous (GossipChatView *view,
+				const gchar    *search_criteria,
+				gboolean        new_search)
 {
 	GossipChatViewPriv *priv;
 	GtkTextBuffer      *buffer;
@@ -1855,22 +1857,22 @@ gossip_chat_view_find (GossipChatView *view,
 	gboolean            found;
 	gboolean            from_start = FALSE;
 
-	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
-	g_return_if_fail (search_criteria != NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
+	g_return_val_if_fail (search_criteria != NULL, FALSE);
 
 	priv = GET_PRIV (view);
 
 	buffer = priv->buffer;
 
 	if (strlen (search_criteria) == 0) {
-		if (priv->find_mark) {
+		if (priv->find_mark_previous) {
 			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
 
 			gtk_text_buffer_move_mark (buffer,
-						   priv->find_mark,
+						   priv->find_mark_previous,
 						   &iter_at_mark);
 			gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-						      priv->find_mark,
+						      priv->find_mark_previous,
 						      0.0,
 						      TRUE,
 						      0.0,
@@ -1880,21 +1882,138 @@ gossip_chat_view_find (GossipChatView *view,
 						      &iter_at_mark);
 		}
 
-		return;
+		return FALSE;
 	}
 
 	if (new_search) {
 		from_start = TRUE;
 	}
 
-	if (priv->find_mark) {
+	if (priv->find_mark_previous) {
 		gtk_text_buffer_get_iter_at_mark (buffer,
 						  &iter_at_mark,
-						  priv->find_mark);
+						  priv->find_mark_previous);
+	} else {
+		gtk_text_buffer_get_end_iter (buffer, &iter_at_mark);
+		from_start = TRUE;
+	}
+
+	priv->find_last_direction = FALSE;
+
+	found = gossip_text_iter_backward_search (&iter_at_mark,
+						  search_criteria,
+						  &iter_match_start,
+						  &iter_match_end,
+						  NULL);
+
+	if (!found) {
+		gboolean result = FALSE;
+
+		if (from_start) {
+			return result;
+		}
+
+		/* Here we wrap around. */
+		if (!new_search && !priv->find_wrapped) {
+			priv->find_wrapped = TRUE;
+			result = gossip_chat_view_find_previous (view, 
+								 search_criteria, 
+								 FALSE);
+			priv->find_wrapped = FALSE;
+		}
+
+		return result;
+	}
+
+	/* Set new mark and show on screen */
+	if (!priv->find_mark_previous) {
+		priv->find_mark_previous = gtk_text_buffer_create_mark (buffer, NULL,
+									&iter_match_start,
+									TRUE);
+	} else {
+		gtk_text_buffer_move_mark (buffer,
+					   priv->find_mark_previous,
+					   &iter_match_start);
+	}
+
+	if (!priv->find_mark_next) {
+		priv->find_mark_next = gtk_text_buffer_create_mark (buffer, NULL,
+								    &iter_match_end,
+								    TRUE);
+	} else {
+		gtk_text_buffer_move_mark (buffer,
+					   priv->find_mark_next,
+					   &iter_match_end);
+	}
+
+	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+				      priv->find_mark_previous,
+				      0.0,
+				      TRUE,
+				      0.5,
+				      0.5);
+
+	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
+	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);
+
+	return TRUE;
+}
+
+gboolean
+gossip_chat_view_find_next (GossipChatView *view,
+			    const gchar    *search_criteria,
+			    gboolean        new_search)
+{
+	GossipChatViewPriv *priv;
+	GtkTextBuffer      *buffer;
+	GtkTextIter         iter_at_mark;
+	GtkTextIter         iter_match_start;
+	GtkTextIter         iter_match_end;
+	gboolean            found;
+	gboolean            from_start = FALSE;
+
+	g_return_val_if_fail (GOSSIP_IS_CHAT_VIEW (view), FALSE);
+	g_return_val_if_fail (search_criteria != NULL, FALSE);
+
+	priv = GET_PRIV (view);
+
+	buffer = priv->buffer;
+
+	if (strlen (search_criteria) == 0) {
+		if (priv->find_mark_next) {
+			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
+
+			gtk_text_buffer_move_mark (buffer,
+						   priv->find_mark_next,
+						   &iter_at_mark);
+			gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
+						      priv->find_mark_next,
+						      0.0,
+						      TRUE,
+						      0.0,
+						      0.0);
+			gtk_text_buffer_select_range (buffer,
+						      &iter_at_mark,
+						      &iter_at_mark);
+		}
+
+		return FALSE;
+	}
+
+	if (new_search) {
+		from_start = TRUE;
+	}
+
+	if (priv->find_mark_next) {
+		gtk_text_buffer_get_iter_at_mark (buffer,
+						  &iter_at_mark,
+						  priv->find_mark_next);
 	} else {
 		gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
 		from_start = TRUE;
 	}
+
+	priv->find_last_direction = TRUE;
 
 	found = gossip_text_iter_forward_search (&iter_at_mark,
 						 search_criteria,
@@ -1903,33 +2022,47 @@ gossip_chat_view_find (GossipChatView *view,
 						 NULL);
 
 	if (!found) {
+		gboolean result = FALSE;
+
 		if (from_start) {
-			return;
+			return result;
 		}
 
 		/* Here we wrap around. */
 		if (!new_search && !priv->find_wrapped) {
 			priv->find_wrapped = TRUE;
-			gossip_chat_view_find (view, search_criteria, FALSE);
+			result = gossip_chat_view_find_next (view, 
+							     search_criteria, 
+							     FALSE);
 			priv->find_wrapped = FALSE;
 		}
 
-		return;
+		return result;
 	}
 
 	/* Set new mark and show on screen */
-	if (!priv->find_mark) {
-		priv->find_mark = gtk_text_buffer_create_mark (buffer, NULL,
+	if (!priv->find_mark_next) {
+		priv->find_mark_next = gtk_text_buffer_create_mark (buffer, NULL,
 							       &iter_match_end,
 							       TRUE);
 	} else {
 		gtk_text_buffer_move_mark (buffer,
-					   priv->find_mark,
+					   priv->find_mark_next,
 					   &iter_match_end);
 	}
 
+	if (!priv->find_mark_previous) {
+		priv->find_mark_previous = gtk_text_buffer_create_mark (buffer, NULL,
+									&iter_match_start,
+									TRUE);
+	} else {
+		gtk_text_buffer_move_mark (buffer,
+					   priv->find_mark_previous,
+					   &iter_match_start);
+	}
+
 	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view),
-				      priv->find_mark,
+				      priv->find_mark_next,
 				      0.0,
 				      TRUE,
 				      0.5,
@@ -1937,6 +2070,62 @@ gossip_chat_view_find (GossipChatView *view,
 
 	gtk_text_buffer_move_mark_by_name (buffer, "selection_bound", &iter_match_start);
 	gtk_text_buffer_move_mark_by_name (buffer, "insert", &iter_match_end);
+
+	return TRUE;
+}
+
+
+void
+gossip_chat_view_find_abilities (GossipChatView *view,
+				 const gchar    *search_criteria,
+				 gboolean       *can_do_previous,
+				 gboolean       *can_do_next)
+{
+	GossipChatViewPriv *priv;
+	GtkTextBuffer      *buffer;
+	GtkTextIter         iter_at_mark;
+	GtkTextIter         iter_match_start;
+	GtkTextIter         iter_match_end;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (search_criteria != NULL);
+	g_return_if_fail (can_do_previous != NULL && can_do_next != NULL);
+
+	priv = GET_PRIV (view);
+
+	buffer = priv->buffer;
+
+	if (can_do_previous) {
+		if (priv->find_mark_previous) {
+			gtk_text_buffer_get_iter_at_mark (buffer,
+							  &iter_at_mark,
+							  priv->find_mark_previous);
+		} else {
+			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
+		}
+		
+		*can_do_previous = gossip_text_iter_backward_search (&iter_at_mark,
+								     search_criteria,
+								     &iter_match_start,
+								     &iter_match_end,
+								     NULL);
+	}
+
+	if (can_do_next) {
+		if (priv->find_mark_next) {
+			gtk_text_buffer_get_iter_at_mark (buffer,
+							  &iter_at_mark,
+							  priv->find_mark_next);
+		} else {
+			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
+		}
+		
+		*can_do_next = gossip_text_iter_forward_search (&iter_at_mark,
+								search_criteria,
+								&iter_match_start,
+								&iter_match_end,
+								NULL);
+	}
 }
 
 void

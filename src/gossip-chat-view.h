@@ -91,23 +91,29 @@ void            gossip_chat_view_append_event              (GossipChatView *view
 							    const gchar    *str);
 void            gossip_chat_view_append_invite             (GossipChatView *view,
 							    GossipMessage  *message);
+
 /* void            gossip_chat_view_set_margin                (GossipChatView *view, */
 /* 							    gint            margin); */
 void            gossip_chat_view_scroll                    (GossipChatView *view,
 							    gboolean        allow_scrolling);
 void            gossip_chat_view_scroll_down               (GossipChatView *view);
-
 gboolean        gossip_chat_view_get_selection_bounds      (GossipChatView *view,
 							    GtkTextIter    *start,
 							    GtkTextIter    *end);
 void            gossip_chat_view_clear                     (GossipChatView *view);
-void            gossip_chat_view_find                      (GossipChatView *view,
+gboolean        gossip_chat_view_find_previous             (GossipChatView *view,
 							    const gchar    *search_criteria,
 							    gboolean        new_search);
+gboolean        gossip_chat_view_find_next                 (GossipChatView *view,
+							    const gchar    *search_criteria,
+							    gboolean        new_search);
+void            gossip_chat_view_find_abilities            (GossipChatView *view,
+							    const gchar    *search_criteria,
+							    gboolean       *can_do_previous,
+							    gboolean       *can_do_next);
 void            gossip_chat_view_highlight                 (GossipChatView *view,
 							    const gchar    *text);
 void            gossip_chat_view_copy_clipboard            (GossipChatView *view);
-
 gboolean        gossip_chat_view_get_irc_style             (GossipChatView *view);
 void            gossip_chat_view_set_irc_style             (GossipChatView *view,
 							    gboolean        irc_style);

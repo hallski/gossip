@@ -1,3 +1,20 @@
+2006-11-09  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.[ch]: Added a backward search capability
+	but also updated the forward searching so it works from the last
+	place irrespective of the last search direction.
+
+	* src/gossip-log-window.c: 
+	* ui/main.glade: Added Next and Previous buttons to the log window
+	and made the "Find" button state more reliable.
+
+	* src/gossip-log.c: Fixed warnings and a potential crasher when an
+	unrelated directory in the logs directory exists but is not
+	related to any logging at all (i.e. it is added by something else).
+	
+	* src/gossip-ui-utils.[ch]: Added GtkTextView backward searching
+	functions.
+
 2006-10-31  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c (chat_window_update_title): Fix warning

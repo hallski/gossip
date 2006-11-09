@@ -112,6 +112,11 @@ gboolean   gossip_text_iter_forward_search          (const GtkTextIter   *iter,
 						     GtkTextIter         *match_start,
 						     GtkTextIter         *match_end,
 						     const GtkTextIter   *limit);
+gboolean   gossip_text_iter_backward_search         (const GtkTextIter   *iter,
+						     const gchar         *str,
+						     GtkTextIter         *match_start,
+						     GtkTextIter         *match_end,
+						     const GtkTextIter   *limit);
 
 /* Windows */
 gboolean   gossip_window_get_is_visible             (GtkWindow           *window);

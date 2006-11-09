@@ -778,7 +778,8 @@ log_get_contacts_filename (GossipAccount *account)
 	}
 
 	gossip_account_param_get (account, "id", &account_id, NULL);
-	gossip_debug (DEBUG_DOMAIN, "No contacts file recorded against account id:'%s'...",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "No contacts file recorded against account id:'%s'...",
 		      account_id);
 
 	account_id_escaped = log_escape (account_id);
@@ -1951,6 +1952,15 @@ gossip_log_search_new (const gchar *text)
 			account_id = log_get_account_id_from_filename (filename);
 			account = gossip_account_manager_find_by_id (manager, account_id);
 
+			if (!account) {
+				/* We must have other directories in
+				 * here which are not account
+				 * directories, so we just ignore them.
+				 */
+				g_free (account_id);
+				continue;
+			}
+
 			contact_id = log_get_contact_id_from_filename (filename);
 
 			hit = g_new0 (GossipLogSearchHit, 1);
@@ -1964,8 +1974,9 @@ gossip_log_search_new (const gchar *text)
 
 			hits = g_list_append (hits, hit);
 
-			gossip_debug (DEBUG_DOMAIN, "Found text:'%s' in file:'%s' on date:'%s'...",
-				    text, hit->filename, hit->date);
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Found text:'%s' in file:'%s' on date:'%s'...",
+				      text, hit->filename, hit->date);
 
 			g_free (account_id);
 			g_free (contact_id);

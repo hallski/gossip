@@ -1422,6 +1422,252 @@ gossip_text_iter_forward_search (const GtkTextIter   *iter,
 	return retval;
 }
 
+static const gchar *
+g_utf8_strrcasestr (const gchar *haystack, const gchar *needle)
+{
+	gsize needle_len;
+	gsize haystack_len;
+	const gchar *ret = NULL;
+	gchar *p;
+	gchar *casefold;
+	gchar *caseless_haystack;
+	gint i;
+
+	g_return_val_if_fail (haystack != NULL, NULL);
+	g_return_val_if_fail (needle != NULL, NULL);
+
+	casefold = g_utf8_casefold (haystack, -1);
+	caseless_haystack = g_utf8_normalize (casefold, -1, G_NORMALIZE_NFD);
+	g_free (casefold);
+
+	needle_len = g_utf8_strlen (needle, -1);
+	haystack_len = g_utf8_strlen (caseless_haystack, -1);
+
+	if (needle_len == 0)
+	{
+		ret = (gchar *)haystack;
+		goto finally_1;
+	}
+
+	if (haystack_len < needle_len)
+	{
+		ret = NULL;
+		goto finally_1;
+	}
+
+	i = haystack_len - needle_len;
+	p = g_utf8_offset_to_pointer (caseless_haystack, i);
+	needle_len = strlen (needle);
+
+	while (p >= caseless_haystack)
+	{
+		if (strncmp (p, needle, needle_len) == 0)
+		{
+			ret = pointer_from_offset_skipping_decomp (haystack, i);
+			goto finally_1;
+		}
+
+		p = g_utf8_prev_char (p);
+		i--;
+	}
+
+finally_1:
+	g_free (caseless_haystack);
+
+	return ret;
+}
+
+static gboolean
+backward_lines_match (const GtkTextIter *start,
+		      const gchar      **lines,
+		      gboolean           visible_only,
+		      gboolean           slice,
+		      GtkTextIter       *match_start,
+		      GtkTextIter       *match_end)
+{
+	GtkTextIter line, next;
+	gchar *line_text;
+	const gchar *found;
+	gint offset;
+
+	if (*lines == NULL || **lines == '\0')
+	{
+		if (match_start)
+			*match_start = *start;
+		if (match_end)
+			*match_end = *start;
+		return TRUE;
+	}
+
+	line = next = *start;
+	if (gtk_text_iter_get_line_offset (&next) == 0)
+	{
+		if (!gtk_text_iter_backward_line (&next))
+			return FALSE;
+	}
+	else
+		gtk_text_iter_set_line_offset (&next, 0);
+
+	if (slice)
+	{
+		if (visible_only)
+			line_text = gtk_text_iter_get_visible_slice (&next, &line);
+		else
+			line_text = gtk_text_iter_get_slice (&next, &line);
+	}
+	else
+	{
+		if (visible_only)
+			line_text = gtk_text_iter_get_visible_text (&next, &line);
+		else
+			line_text = gtk_text_iter_get_text (&next, &line);
+	}
+
+	if (match_start) /* if this is the first line we're matching */
+	{
+		found = g_utf8_strrcasestr (line_text, *lines);
+	}
+	else
+	{
+		/* If it's not the first line, we have to match from the
+		 * start of the line.
+		 */
+		if (g_utf8_caselessnmatch (line_text, *lines, strlen (line_text),
+					   strlen (*lines)))
+			found = line_text;
+		else
+			found = NULL;
+	}
+
+	if (found == NULL)
+	{
+		g_free (line_text);
+		return FALSE;
+	}
+
+	/* Get offset to start of search string */
+	offset = g_utf8_strlen (line_text, found - line_text);
+
+	forward_chars_with_skipping (&next, offset, visible_only, !slice, FALSE);
+
+	/* If match start needs to be returned, set it to the
+	 * start of the search string.
+	 */
+	if (match_start)
+	{
+		*match_start = next;
+	}
+
+	/* Go to end of search string */
+	forward_chars_with_skipping (&next, g_utf8_strlen (*lines, -1), visible_only, !slice, TRUE);
+
+	g_free (line_text);
+
+	++lines;
+
+	if (match_end)
+		*match_end = next;
+
+	/* try to match the rest of the lines forward, passing NULL
+	 * for match_start so lines_match will try to match the entire
+	 * line */
+	return lines_match (&next, lines, visible_only,
+			    slice, NULL, match_end);
+}
+
+gboolean
+gossip_text_iter_backward_search (const GtkTextIter   *iter,
+				  const gchar         *str,
+				  GtkTextIter         *match_start,
+				  GtkTextIter         *match_end,
+				  const GtkTextIter   *limit)
+{
+	gchar **lines = NULL;
+	GtkTextIter match;
+	gboolean retval = FALSE;
+	GtkTextIter search;
+	gboolean visible_only;
+	gboolean slice;
+
+	g_return_val_if_fail (iter != NULL, FALSE);
+	g_return_val_if_fail (str != NULL, FALSE);
+
+	if (limit && gtk_text_iter_compare (iter, limit) <= 0)
+		return FALSE;
+
+	if (*str == '\0')
+	{
+		/* If we can move one char, return the empty string there */
+		match = *iter;
+
+		if (gtk_text_iter_backward_char (&match))
+		{
+			if (limit && gtk_text_iter_equal (&match, limit))
+				return FALSE;
+
+			if (match_start)
+				*match_start = match;
+			if (match_end)
+				*match_end = match;
+			return TRUE;
+		}
+		else
+		{
+			return FALSE;
+		}
+	}
+
+	visible_only = TRUE;
+	slice = TRUE;
+
+	/* locate all lines */
+	lines = strbreakup (str, "\n", -1);
+
+	search = *iter;
+
+	while (TRUE)
+	{
+		/* This loop has an inefficient worst-case, where
+		 * gtk_text_iter_get_text () is called repeatedly on
+		 * a single line.
+		 */
+		GtkTextIter end;
+
+		if (limit && gtk_text_iter_compare (&search, limit) <= 0)
+			break;
+
+		if (backward_lines_match (&search, (const gchar**)lines,
+					  visible_only, slice, &match, &end))
+		{
+			if (limit == NULL || (limit &&
+					      gtk_text_iter_compare (&end, limit) > 0))
+			{
+				retval = TRUE;
+
+				if (match_start)
+					*match_start = match;
+				if (match_end)
+					*match_end = end;
+			}
+			break;
+		}
+
+		if (gtk_text_iter_get_line_offset (&search) == 0)
+		{
+			if (!gtk_text_iter_backward_line (&search))
+				break;
+		}
+		else
+		{
+			gtk_text_iter_set_line_offset (&search, 0);
+		}
+	}
+
+	g_strfreev ((gchar**)lines);
+
+	return retval;
+}
+
 /* The URL opening code can't handle schemeless strings, so we try to be
  * smart and add http if there is no scheme or doesn't look like a mail
  * address. This should work in most cases, and let us click on strings
