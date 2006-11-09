@@ -1,5 +1,19 @@
 2006-11-09  Martyn Russell  <martyn@imendio.com>
 
+	* help/C/figures/gossip-group-message.png:
+	* help/C/figures/gossip-message.png:
+	* help/C/figures/gossip-typing.png:
+	* help/C/figures/gossip_first_start_window.png:
+	* help/C/figures/gossip_new_chat_room.png:
+	* help/C/figures/gossip_roster.png:
+	* help/C/figures/gossip_status_message.png:
+	* help/C/gossip.xml:
+	* help/ChangeLog:
+	* help/Makefile.am: Updated the help and the roster image, removed
+	older images no longer used, fixes bug #372158 (Brian Pepple).
+
+2006-11-09  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.[ch]: Added a backward search capability
 	but also updated the forward searching so it works from the last
 	place irrespective of the last search direction.

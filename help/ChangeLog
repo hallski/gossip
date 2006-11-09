@@ -1,3 +1,8 @@
+2006-11-07  Brian Pepple  <bpepple@fedoraproject.org>
+
+	* Makefile.am (DOC_FIGURES): Drop images not being used.
+	* C/gossip.xml: Update for ui changes.
+
 2006-11-05  Francisco Javier F. Serrador  <serrador@openshine.com>
 
 	* es/*: Added initial Spanish translation doc.

@@ -2,9 +2,9 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
 "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.12">
-  <!ENTITY manrevision "2.2">
-  <!ENTITY date "June 2006">
+  <!ENTITY appversion "0.18">
+  <!ENTITY manrevision "2.3">
+  <!ENTITY date "November 2006">
   <!ENTITY app "Gossip">
 ]>
 <!-- 
@@ -75,7 +75,7 @@
 	        <firstname>Brian</firstname>
 	        <surname>Pepple</surname>
 	        <affiliation>
-	                <orgname>Fedora Extras Project</orgname>
+	                <orgname>Fedora Project</orgname>
 	                <address> <email>bpepple@fedoraproject.org</email> </address>
 	        </affiliation>
       </author>
@@ -113,6 +113,16 @@
       <revision>
                 <revnumber>&app; Manual V&manrevision;</revnumber>
 		<date>&date;</date>
+		<revdescription>
+		        <para role="author">Brian Pepple
+			<email>bpepple@fedoraproject.org</email>
+			</para>
+			<para role="publisher">GNOME Documentation Project</para>
+		</revdescription>
+      </revision>
+      <revision>
+                <revnumber>&app; Manual V2.2</revnumber>
+		<date>June 2006</date>
 		<revdescription>
 		        <para role="author">Brian Pepple
 			<email>bpepple@fedoraproject.org</email>
@@ -186,7 +196,7 @@
     <title>What is Instant Messaging</title>
     <para>
 	Instant messaging lets people send text messages to each other over a 
-	network, such as the internet. They can add each other to a list, to 
+	network, such as the Internet. They can add each other to a list, to 
 	see if their <emphasis>contacts</emphasis> are available. 
     </para>
   </sect2>
@@ -199,7 +209,7 @@
     <para>
 	The Jabber protocol is an open, free and public standard, which was 
 	accepted by Internet Engineering Task Force (IETF) under the name XMPP 
-	in 2004. It's decentralized and extensible with cusom functionality.
+	in 2004. It's decentralized and extensible with custom functionality.
     </para>
     <para>
 	More information on the Jabber protocol can be found on the Website of 
@@ -247,158 +257,62 @@
     </sect2>
     
     <sect2 id="gossip-start-first">
-    <title>When You Start &app; the First Time</title>
-    <para>When you start <application>&app;</application> the first time, the following window is displayed.</para>
-
-    <!-- ==== Figure ==== -->
-      <figure id="firstwindow-fig"> 
-	<title>&app; First Start Up Window</title> 
-	<screenshot> 
-	  <mediaobject> 
-	    <imageobject><imagedata
-		fileref="figures/gossip_first_start_window.png" format="PNG"/> 
-	    </imageobject>
-	    <!-- EPS versions of the figures are not required at the moment. -->
-            <!-- 
-		    <imageobject>
-      		<imagedata fileref="figures/image.eps" format="EPS"/>
-    		    </imageobject>
-	    -->
-	    <textobject> 
-	      <phrase>Shows &app;s first start window which is an assistant to set up &app;.</phrase> 
-	    </textobject> 
-	  </mediaobject> 
-	</screenshot> 
-      </figure>
-    <!-- ==== End of Figure ==== -->
-
-    <!-- Include any descriptions of the GUI immediately after the screenshot of the main UI, -->
-    <!-- for example, the items on the menubar and on the toolbar. This section is optional. -->
-
-    	<para>
-    		This window is an assistant to set up &app;. With this assistant you 
-    		can set up &app; in few steps. You can use it to get a new Jabber
-    		account or setting up &app; for using an existing Jabber account.
-    	</para>
-    </sect2>
- 
-    <sect2 id="gossip-get-a-jabber-account">
-      <title>Getting a Jabber Account</title>
-      <para>&app; will help set up a new Jabber account:</para>
+      <title>When You Start &app; the First Time</title>
+      <para>When you start <application>&app;</application> the first time, you will be
+      prompted to configure a Jabber account.</para>
       <orderedlist>
-	<listitem>
+        <listitem>
 	  <para>
-            When first running &app;, answer <guibutton>No</guibutton> to
-            the <guilabel>"Do you already have an account on a Jabber server?"
-    	    </guilabel> question and click <guibutton>Next</guibutton>. 
-          </para>
+	    Click <guibutton>Add</guibutton>, to add an account.  Then complete the
+	    following information:
+	  </para>
+	  <itemizedlist>
+	    <listitem>
+	      <para>Give the account the <guilabel>Name</guilabel> you wish to be displayed.</para>
+	    </listitem>
+	    <listitem>
+	      <para>
+	        Select <guilabel>Connect on Startup</guilabel>, if you wish to have the account
+		automatically connect when &app; starts.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+	        Select <guilabel>Use system proxy</guilabel> if you wish to connect using a 
+		system proxy.
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>Enter the <guilabel>Login ID</guilabel>.</para>
+	    </listitem>
+	    <listitem>
+	      <para>Enter the <guilabel>Password</guilabel>.</para>
+	    </listitem>
+	    <listitem>
+	      <para>Enter the <guilabel>Resource</guilabel>.</para>
+	    </listitem>
+	    <listitem>
+	      <para>Enter the <guilabel>Server</guilabel> that you wish to connect to.</para>
+	    </listitem>
+	    <listitem>
+	      <para>Enter the <guilabel>Port</guilabel> that you wish to use.</para>
+	    </listitem>
+	    <listitem>
+	      <para>
+	        Select <guilabel>Use encryption (SSL)</guilabel> if your server supports
+		encryption.
+	      </para>
+	    </listitem>
+	  </itemizedlist>
 	</listitem>
 	<listitem>
 	  <para>
-    	    Fill in desired user name and actual name and click 
-    	    <guibutton>Next</guibutton>.
-    	  </para>
-	</listitem>
-	<listitem>
-	  <para>Add the server information.</para>
-            <para>
-            <itemizedlist>
-	      <listitem>
-		<para>
-                  Choose the correct server for the account from the list, or type
-                  in a custom server if needed.
-                </para>
-	      </listitem>
-	      <listitem>
-		<para>
-                  Select the <guilabel>Use encryption (SSL)</guilabel> option if your
-                  server supports it or requires it.
-                </para>
-	      </listitem>
-	      <listitem>
-		<para>
-                  Select the <guilabel>Use system proxy</guilabel> option if you use a proxy.
-                </para>
-	      </listitem>
-	      <listitem>
-		<para>
-                  Once all options are set, click <guibutton>Next</guibutton>.
-                </para>
-	      </listitem>
-	    </itemizedlist>
-          </para>
-	</listitem>
-	<listitem>
-	  <para>
-            Review the information and click <guibutton>Apply</guibutton>.
-    	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-            When prompted on first connection with the account, enter desired 
-    	    password.
-          </para>
+	    If this is a new Jabber account, then press <guibutton>Register</guibutton>.
+	    Otherwise, press <guibutton>Connect</guibutton>.
+	  </para>
 	</listitem>
       </orderedlist>
-    </sect2>
-
-    <sect2 id="gossip-existing-jabber-account">
-      <title>Setting Up &app; to use an Existing Jabber Account</title>
-      <para>&app; will let you use an existing Jabber account:</para>
-      <orderedlist>
-	<listitem>
-	  <para>
-            When first running &app;, answer <guibutton>Yes</guibutton> to
-            the <guilabel>"Do you already have an account set up on a server?"</guilabel>
-    	    question and click <guibutton>Next</guibutton>.
-     	  </para> 
-	</listitem>
-	<listitem>
-	  <para>
-            Fill in the user name of the account and click <guibutton>Next</guibutton>.
-          </para>
-	</listitem>
-	<listitem>
-	  <para>Add the server information.</para>
-	  <para>
-            <itemizedlist>
-	      <listitem>
-		<para>
-                  Choose the correct server for the account from the list, or type
-                  in a custom server if needed.
-                </para>
-	      </listitem>
-	      <listitem>
-		<para>
-                  Select the <guilabel>Use encryption (SSL)</guilabel> option if your
-                  server requires it.
-                </para>
-	      </listitem>
-	      <listitem>
-		<para>
-                  Select the <guilabel>Use system proxy</guilabel> option if you use a proxy.
-                </para>
-	      </listitem>
-	      <listitem>
-		<para>
-                  Once all options are set, click <guibutton>Next</guibutton>.
-                </para>
-	      </listitem>
-	    </itemizedlist>
-           </para>
-	</listitem>
-	<listitem>
-	  <para>
-            Review the information and click <guibutton>Apply</guibutton>.
-          </para>
-	</listitem>
-	<listitem>
-	  <para>
-            When prompted on first connection with the account, enter desired password.
-          </para>
-	</listitem>
-      </orderedlist>
-    </sect2>   		
+    </sect2>	
 
     <sect2 id="gossip-when-start">
     <title>When You Start &app;</title>
@@ -444,21 +358,6 @@
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term>Accounts Toolbar</term>
-	  <listitem>
-	    <para>
-              The buttons on the account toolbar allow you, depending on account state, to
-              connect, disconnect, and edit an account.
-            </para>
-	    <note>
-	      <para>
-                The accounts toolbar is only visible if you have two or more Jabbers accounts
-                set-up in &app;.
-              </para>
-	    </note>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
 	  <term>Status Drop-Down List. </term>
 	    <listitem>
 	      <para> You can use this selector to change your online state. </para>
@@ -478,7 +377,7 @@
   which the application is designed. -->
   <sect1 id="gossip-basic-usage"> 
     <title>Basic Usage</title> 
-    <!-- TODO: Maybe the next sentence is obsolote, because usage is splitted in 
+    <!-- TODO: Maybe the next sentence is obsolete, because usage is splitted in 
       different sections -->
     <para>You can use the &app; application to perform the following tasks:</para>
     <!-- ================ Usage Subsection ================================ -->
@@ -595,7 +494,7 @@
     		    </imageobject>
 	    -->
 	    <textobject> 
-	      <phrase>Shows &app;s Personal Details windo, where the user can edit his personal
+	      <phrase>Shows &app;s Personal Details window, where the user can edit his personal
 	        information.
 	      </phrase> 
 	    </textobject> 
@@ -607,7 +506,7 @@
         This will open the <interface>Personal Details</interface> dialog,
         which will allow you to provide the following information:
       </para>
-      <orderedlist>
+      <itemizedlist>
 	<listitem>
 	  <para>
             Select the <guilabel>Account</guilabel> you wish to edit from the 
@@ -649,7 +548,7 @@
 	    select the image you wish to use.
 	  </para>
 	</listitem>
-      </orderedlist>
+      </itemizedlist>
       <para>
         After reviewing the information, click <guibutton>Save</guibutton> to publish your
 	information.
@@ -660,9 +559,9 @@
   <!-- Use this section to describe how to work with contacts. -->
   <sect1 id="gossip-contacts"> 
     <title>Working With Contacts</title> 
-    <para>
-       TODO: Describe briefly what the idea of contacts is in one or two sentence.
-    </para> 
+    <!-- <para>
+      TODO: Describe briefly what the idea of contacts is in one or two sentence.
+    </para> -->
     <!-- ================ Contacts Subsection ================================ -->
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-add-contact"> 
@@ -684,38 +583,33 @@
 	</listitem>
 	<listitem>
 	  <para>
-	    Use the <guilabel>Which account do you want to add this contact to?</guilabel>
-	    arrow button to specify which account to add a contact to.
+	    Select the <guilabel>Account</guilabel> you wish to add the contact to.
           </para>
 	</listitem>
 	<listitem>
 	  <para>
-            Enter the <guilabel>Jabber ID of new contact</guilabel>, and then
-            click <guibutton>Forward</guibutton>.
+            Enter the <guilabel>Contact</guilabel> identity.
           </para>
 	  <tip>
 	    <para>
-              The Jabber ID (JID) looks like an email-address. Example: name@host.domain
+              The Contact identity looks like an email-address. Example: user@jabber.org
             </para>
 	  </tip>
 	</listitem>
 	<listitem>
 	  <para>
-            Enter <guilabel>What nickname do you want to use for this contact?</guilabel>,
-            this is the nickname that will be displayed in the Contact List.
+            Enter the <guilabel>Alias</guilabel>, you wish to display in the Contact List.
           </para>
 	</listitem>
 	<listitem>
 	  <para>
-            Use the <guilabel>In which group do you want to place this contact?</guilabel>
-            arrow button to choose a group for this contact.  The contact will be
-            displayed in the Contact List under the chosen group name. Click
-            <guibutton>Forward</guibutton> when finished.
+            Select the <guilabel>Group</guilabel> to associate with this contact
+	    from the drop-down list.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Review the information displayed and click <guibutton>Apply.</guibutton>.
+	    Review the information displayed and click <guibutton>Add</guibutton>.
           </para>
 	  <note>
 	    <para>
@@ -746,39 +640,75 @@
     </sect2>
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-contact-info"> 
-      <title>Accessing a Contact's Information</title> 
-      <para>
-        To access a contact's information, right click a contact's nickname
-        in the Contact List and select <guimenuitem>Contact Information</guimenuitem>.
-      </para> 
+      <title>Accessing a Contact's Information</title>
+      <para>A contact's information can be accessed with the following methods:</para>
+      <itemizedlist>
+        <listitem>
+	  <para>
+	    Right click a contact's alias in the Contact List and select
+	    <guimenuitem>Information</guimenuitem>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>With the contact selected in the Contact List, choose
+	    <menuchoice>
+	      <guimenu>Edit</guimenu> 
+	      <guimenuitem>Contact</guimenuitem>
+	      <guimenuitem>Information</guimenuitem>
+	    </menuchoice>
+	  </para>
+	</listitem>
+      </itemizedlist>
     </sect2>
     <!-- ================ Usage Subsection ================================ -->
-    <sect2 id="gossip-rename-contact"> 
-      <title>Renaming a Contact</title> 
-      <para>To rename a contact in the Contact List, perform the following steps:</para>
-      <orderedlist>
+    <sect2 id="gossip-edit-contact"> 
+      <title>Editing a Contact</title> 
+      <para>
+        The <interface>Edit Contact</interface> dialog can be open with the
+	following methods:</para>
+      <itemizedlist>
 	<listitem>
 	  <para>
-            Right click a contact's nickname in the Contact List and select
-            <guimenuitem>Rename Contact</guimenuitem>.
+            Right click a contact's alias in the Contact List and select
+            <guimenuitem>Edit</guimenuitem>.
           </para>
 	</listitem>
 	<listitem>
 	  <para>
-            Enter a new name and click <guibutton>OK</guibutton> to apply, or
-            <guibutton>Cancel</guibutton> to discard all changes.
-          </para>
+	    With the contact selected in the Contact List, choose
+	    <menuchoice>
+	      <guimenu>Edit</guimenu> 
+	      <guimenuitem>Contact</guimenuitem>
+	      <guimenuitem>Edit</guimenuitem>
+	    </menuchoice>
+	  </para>
 	</listitem>
-      </orderedlist>
+      </itemizedlist>
     </sect2> 
     <!-- ================ Usage Subsection ================================ -->
     <sect2 id="gossip-removing-contact"> 
       <title>Removing a Contact</title> 
       <para>
-        To remove a contact, right click a contact's nickname in
-        the Contact List and select <guilabel>Remove Contact</guilabel>.
-        Click <guibutton>Remove</guibutton> when prompted to finish removal.
+        A contact can be removed with the following methods:
       </para>
+      <itemizedlist>
+        <listitem>
+	  <para>
+	    Right click a contact's alias in the Contact List and select
+	    <guimenuitem>Remove</guimenuitem>.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    With the contact selected in the in the Contact list, choose
+	    <menuchoice>
+	      <guimenu>Edit</guimenu>
+	      <guimenuitem>Contact</guimenuitem>
+	      <guimenuitem>Remove</guimenuitem>
+	    </menuchoice>
+	  </para>
+	</listitem>
+      </itemizedlist>
     </sect2> 
   </sect1>
   <!-- ============= Online Status============================== -->
@@ -919,17 +849,17 @@
     <sect2 id="gossip-status-auto"> 
       <title>Automatic Online Status</title>
       <para>
-	If you didn't use your computer for five minutes, &app; will switch 
+	If your computer is inactive for five minutes, &app; will switch 
 	your online status from <guilabel>Available</guilabel> to 
-	<guilabel>Away</guilabel>. If you didn't use your computer for 30 
+	<guilabel>Away</guilabel>. If your computer remains inactive for 30 
 	minutes, &app; will switch from <guilabel>Away</guilabel> to 
 	<guilabel>Extended away</guilabel>.
       </para>
       <para>
-	If you use your computer again , &app; will switch after 15 seconds
+	Once your computer becomes active again , &app; will switch after 15 seconds
 	from <guilabel>Away</guilabel> or <guilabel>Extended away</guilabel>
 	to <guilabel>Available</guilabel>. Also when you send a message, &app;
-	switchs back to <guilabel>Available</guilabel>.
+	switches back to <guilabel>Available</guilabel>.
       </para>
     </sect2>
     <!-- ================ Status Subsection =============================== -->
@@ -968,9 +898,7 @@
   <sect1 id="gossip-group-chat"> 
     <title>Using Group Chats</title> 
     <para>
-	You can use a group chat to chat with more than one person in the 
-	same room.
-	<!-- TODO: better formulation needed, maybe more information -->
+	Group chat can be used to have a conversation with more than one person.
     </para> 
     <!-- ================ Group Chat Subsection ========================== -->
     <sect2 id="gossip-group-chat-join-new"> 
@@ -982,87 +910,83 @@
 	  <guimenuitem>Join New</guimenuitem>
 	</menuchoice> from the MenuBar.
       </para>
-      <!-- ==== Figure ==== -->
-      <figure id="gossip_new_chatroom-fig"> 
-	<title>&app; New Chat Room Dialog</title> 
-	<screenshot> 
-	  <mediaobject> 
-	    <imageobject><imagedata
-		fileref="figures/gossip_new_chat_room.png" format="PNG"/> 
-	    </imageobject>
-	    <!-- EPS versions of the figures are not required at the moment. -->
-            <!-- 
-		    <imageobject>
-      		<imagedata fileref="figures/image.eps" format="EPS"/>
-    		    </imageobject>
-	    -->
-	    <textobject> 
-	      <phrase>Shows &app; New Chat Room dialog.</phrase> 
-	    </textobject> 
-	  </mediaobject> 
-	</screenshot> 
-      </figure>
-    <!-- ==== End of Figure ==== -->
       <para>
         This will open the <interface>New Chat Room</interface> dialog, in which
-	you will need to complete the following information:
+	the following information will need to be completed:
       </para>
-      <orderedlist>
+      <itemizedlist>
 	<listitem>
 	  <para>
-            Select the Jabber account you wish to use from the
-	    <guilabel>Account</guilabel> drop-down box.
+            Select the Jabber account to use from the <guilabel>Account</guilabel> drop-down box.
           </para>
 	</listitem>
 	<listitem>
 	  <para>
-            Enter the <guilabel>Nickname</guilabel> you wish to use.
+            Enter your <guilabel>Nickname</guilabel>.
           </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Enter the <guilabel>Server</guilabel> that you wish to connect.
+	    Enter the <guilabel>Server</guilabel> to connect to.
 	  </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    Enter the <guilabel>Room</guilabel> that you wish to join.
+	    Enter the <guilabel>Room</guilabel> to join.
 	  </para>
 	</listitem>
-      </orderedlist>
+      </itemizedlist>
       <para>
         After completing the necessary information, click
 	<guibutton>Join</guibutton> to enter the Chat Room.
       </para>
     </sect2>
     <!-- ================ Group Chat Subsection ========================== -->
-    <sect2 id="gossip-group-chat-manage"> 
+    <!-- <sect2 id="gossip-group-chat-manage"> 
       <title>Managing Group chat </title>
       <para>
         TODO
       </para>
-    </sect2> 
+    </sect2> -->
     <!-- ================ Group Chat Subsection ========================== -->
-    <sect2 id="gossip-group-chat-join-existing"> 
+    <!-- <sect2 id="gossip-group-chat-join-existing"> 
       <title>Joining A Existing Group Chat </title>
       <para>
         TODO.
       </para> 
-    </sect2> 
+    </sect2> -->
     <!-- ================ Group Chat Subsection ========================== -->
-    <sect2 id="gossip-group-chat-use"> 
-	<!-- TODO: better title needed -->
-      <title>Using A Group Chat </title> 
+    <!-- <sect2 id="gossip-group-chat-use"> 
+      <title>Using Group Chat </title> 
       <para>
 	TODO: Group Chat window, close, group and single chat
       </para>
-    </sect2> 
+    </sect2> -->
     <!-- ================ Group Chat Subsection ========================== -->
     <sect2 id="gossip-group-chat-invite">
       <title>Invite A Contact To A Group Chat </title> 
       <para>
-	TODO: How to invite a contact to a group chat
+        To open the <interface>Invite</interface> dialog, which allows the user
+	to invite contacts to a group chat.  Perform one of the following methods:
       </para>
+      <itemizedlist>
+        <listitem>
+	  <para>
+	    Right click a contact's alias in the Contact List, and select
+	    <guimenuitem>Invite to Chat Room</guimenuitem>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+	    With the contact selected in the in the Contact list, choose
+	    <menuchoice>
+	      <guimenu>Edit</guimenu>
+	      <guimenuitem>Contact</guimenuitem>
+	      <guimenuitem>Invite to Chat Room</guimenuitem>
+	    </menuchoice>
+	  </para>
+	</listitem>
+      </itemizedlist>
     </sect2> 
   </sect1>
   <!-- ============= Customization ============================= -->
@@ -1092,6 +1016,11 @@
 	<para> 
 	  <xref linkend="gossip-prefs-spelling"/>
         </para> 
+      </listitem>
+      <listitem>
+        <para>
+	  <xref linkend="gossip-prefs-themes"/>
+	</para>
       </listitem> 
     </itemizedlist>
 <!-- =============== Customization Subsection ================ -->
@@ -1105,20 +1034,22 @@
 	  <listitem> 
 	    <itemizedlist>
 	      <listitem>
-	        <para>Select the <guilabel>Show avatars</guilabel> option, to enable avatar support
+	        <para>
+		  Select the <guilabel>Show avatars</guilabel> option, to enable avatar support
 		  in the contact list area.
 		</para>
 	      </listitem> 
-	      <listitem> 
-		<para>Select the <guilabel>Show smileys as images</guilabel> option,
-                  to enable graphical images. This will replace text-smileys like ":)" by corresponding
-		  images.
-		</para> 
-	      </listitem>
 	      <listitem>
-	        <para>Select the <guilabel>Chat Theme</guilabel>, that you wish to use in the
-		  chat windows.
-		</para>
+	        <para>
+		  Select <guilabel>Show compact contact list</guilabel> option, to not show
+		  the contact's presence status message in the Contact List.
+		</para>		
+	      </listitem>
+	      <listitem> 
+		<para>
+		  Select the <guilabel>Show smileys as images</guilabel> option, to enable graphical
+		  images. This will replace text-smileys like ":)" by corresponding images.
+		</para> 
 	      </listitem>
 	    </itemizedlist>
 	  </listitem>
@@ -1129,7 +1060,7 @@
 	      <itemizedlist>
 	        <listitem> 
 		  <para>Select the <guilabel>Open new chats in separate windows</guilabel> option,
-                    to open chats in separate windows. If you didn't select this option, new chats 
+                    to open chats in separate windows. If you did not select this option, new chats 
 		    will open in tabs in the last opened chat window.
 		  </para>
 		</listitem>  
@@ -1202,8 +1133,50 @@
 	    </tip>
 	  </listitem>
 	</varlistentry>
+	<varlistentry>
+	  <term><guilabel>Options</guilabel></term>
+	  <listitem>
+	    <itemizedlist>
+	      <listitem>
+	        <para>
+		  Select <guilabel>Enable spell checking</guilabel>, if desired.
+		</para>
+	      </listitem>
+	    </itemizedlist>
+	  </listitem>
+	</varlistentry>
       </variablelist>
-    </sect2> 
+    </sect2>
+    <!-- ============= Customization Subsection ===================== -->
+    <!-- Another tabbed section on the Preferences dialog. -->
+    <sect2 id="gossip-prefs-themes">
+    <title>Themes</title>
+    <variablelist>
+	<varlistentry> 
+	  <term><guilabel>Appearance</guilabel></term> 
+	  <listitem> 
+	    <itemizedlist> 
+	      <listitem> 
+		<para>
+		  Select the desired <guilabel>Chat Theme</guilabel>
+                  from the drop-down list.
+                </para> 
+	      </listitem>
+	    </itemizedlist>
+	  </listitem>
+	 </varlistentry>
+	 <varlistentry>
+	   <term><guilabel>Options</guilabel></term>
+	   <listitem>
+	     <itemizedlist>
+	       <listitem>
+	         <para>Select <guilabel>Use for chat rooms</guilabel>, if desired.</para>
+	       </listitem>
+	     </itemizedlist>
+	   </listitem>
+	 </varlistentry>
+     </variablelist> 
+    </sect2>
   </sect1>
 <!-- ============= Bugs ================================== -->
 <!-- This section is optional and is commented out by default. 
