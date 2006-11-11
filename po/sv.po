@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-04 04:58+0100\n"
-"PO-Revision-Date: 2006-11-04 20:40+0100\n"
+"POT-Creation-Date: 2006-11-11 12:56+0100\n"
+"PO-Revision-Date: 2006-11-11 13:40+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -573,32 +573,32 @@ msgstr "Välj vilket rum du vill bjuda in till:"
 msgid "New message from %s"
 msgstr "Nytt meddelande från %s"
 
-#: ../src/gossip-chat-view.c:547
+#: ../src/gossip-chat-view.c:549
 msgid "_Copy Link Address"
 msgstr "_Kopiera länkadress"
 
-#: ../src/gossip-chat-view.c:555
+#: ../src/gossip-chat-view.c:557
 msgid "_Open Link"
 msgstr "_Öppna länk"
 
-#: ../src/gossip-chat-view.c:892
+#: ../src/gossip-chat-view.c:894
 msgid "%A %d %B %Y"
 msgstr "%A %d %B %Y"
 
-#: ../src/gossip-chat-view.c:1414
+#: ../src/gossip-chat-view.c:1416
 msgid "Your invitation has been declined"
 msgstr "Ditt inbjudan har nekats."
 
-#: ../src/gossip-chat-view.c:1679
+#: ../src/gossip-chat-view.c:1681
 #: ../ui/chat.glade.h:12
 msgid "You have been invited to join a chat conference."
 msgstr "Du har blivit inbjuden till en chattkonferens."
 
-#: ../src/gossip-chat-view.c:1701
+#: ../src/gossip-chat-view.c:1703
 msgid "Accept"
 msgstr "Acceptera"
 
-#: ../src/gossip-chat-view.c:1717
+#: ../src/gossip-chat-view.c:1719
 msgid "Decline"
 msgstr "Neka"
 
@@ -698,7 +698,7 @@ msgstr "Skicka en fil"
 
 #: ../src/gossip-contact-list.c:344
 #: ../ui/chat.glade.h:26
-#: ../ui/main.glade.h:129
+#: ../ui/main.glade.h:130
 msgid "_View Previous Conversations"
 msgstr "_Visa tidigare konversationer"
 
@@ -792,15 +792,15 @@ msgstr "Inbjöd %s till att gå med i chattkonferens."
 msgid "%s has set the topic"
 msgstr "%s har satt ämnet"
 
-#: ../src/gossip-log-window.c:444
+#: ../src/gossip-log-window.c:462
 msgid "Account"
 msgstr "Konto"
 
-#: ../src/gossip-log-window.c:451
+#: ../src/gossip-log-window.c:469
 msgid "Conversation With"
 msgstr "Konversation med"
 
-#: ../src/gossip-log-window.c:461
+#: ../src/gossip-log-window.c:479
 msgid "Date"
 msgstr "Datum"
 
@@ -968,7 +968,7 @@ msgstr "Kom ihåg lösenord?"
 msgid "Do not show this again"
 msgstr "Visa inte det här igen"
 
-#: ../src/gossip-ui-utils.c:1504
+#: ../src/gossip-ui-utils.c:1750
 msgid "Could not display the help contents."
 msgstr "Kunde inte visa hjälpinnehållet."
 
@@ -1226,7 +1226,7 @@ msgid "_Room:"
 msgstr "_Rum:"
 
 #: ../ui/group-chat.glade.h:21
-#: ../ui/main.glade.h:125
+#: ../ui/main.glade.h:126
 msgid "_Server:"
 msgstr "_Server:"
 
@@ -1627,70 +1627,74 @@ msgid "_Enable spell checking"
 msgstr "_Aktivera stavningskontroll"
 
 #: ../ui/main.glade.h:112
+msgid "_For:"
+msgstr "_För:"
+
+#: ../ui/main.glade.h:113
 msgid "_Forget"
 msgstr "_Glöm"
 
-#: ../ui/main.glade.h:113
+#: ../ui/main.glade.h:114
 msgid "_Group Chat"
 msgstr "_Gruppchatt"
 
-#: ../ui/main.glade.h:114
+#: ../ui/main.glade.h:115
 msgid "_Group:"
 msgstr "_Grupp:"
 
-#: ../ui/main.glade.h:115
+#: ../ui/main.glade.h:116
 msgid "_Help"
 msgstr "_Hjälp"
 
-#: ../ui/main.glade.h:116
+#: ../ui/main.glade.h:117
 msgid "_Name:"
 msgstr "_Namn:"
 
-#: ../ui/main.glade.h:117
+#: ../ui/main.glade.h:118
 msgid "_New Message..."
 msgstr "_Nytt meddelande..."
 
-#: ../ui/main.glade.h:118
+#: ../ui/main.glade.h:119
 msgid "_Open new chats in separate windows"
 msgstr "_Öppna nya chattar i separata fönster"
 
-#: ../ui/main.glade.h:119
+#: ../ui/main.glade.h:120
 msgid "_Personal Information"
 msgstr "_Personlig information"
 
-#: ../ui/main.glade.h:120
+#: ../ui/main.glade.h:121
 msgid "_Play sound when messages arrive"
 msgstr "_Spela ljud när meddelanden kommer"
 
-#: ../ui/main.glade.h:121
+#: ../ui/main.glade.h:122
 msgid "_Port:"
 msgstr "_Port:"
 
-#: ../ui/main.glade.h:122
+#: ../ui/main.glade.h:123
 msgid "_Preferences"
 msgstr "In_ställningar"
 
-#: ../ui/main.glade.h:123
+#: ../ui/main.glade.h:124
 msgid "_Quit"
 msgstr "_Avsluta"
 
-#: ../ui/main.glade.h:124
+#: ../ui/main.glade.h:125
 msgid "_Retrieve"
 msgstr "_Hämta"
 
-#: ../ui/main.glade.h:126
+#: ../ui/main.glade.h:127
 msgid "_Show Contact List"
 msgstr "_Visa kontaktlista"
 
-#: ../ui/main.glade.h:127
+#: ../ui/main.glade.h:128
 msgid "_Subscribe"
 msgstr "_Prenumerera"
 
-#: ../ui/main.glade.h:128
+#: ../ui/main.glade.h:129
 msgid "_Use for chat rooms"
 msgstr "Använd för _chattrum"
 
-#: ../ui/main.glade.h:130
+#: ../ui/main.glade.h:131
 msgid "jabber account settings"
 msgstr "inställningar för jabberkonto"
 
