@@ -505,9 +505,17 @@ account_manager_parse_account (GossipAccountManager *manager,
 			type = gossip_dbus_type_to_g_type (type_str);
 			g_value = gossip_string_to_g_value (str, type);
 
-			gossip_account_param_set_g_value (account,
-							  param_name,
-							  g_value);
+			/* Compatibility: The ID was defined here
+			 * in old accounts.xml files. */
+			if (strcmp (param_name, "id") != 0) {
+				gossip_account_param_set_g_value (account,
+								  param_name,
+								  g_value);			
+			} else {
+				/* Save in the new format */
+				need_saving = TRUE;
+				gossip_account_set_id (account, str);
+			}
 
 			g_value_unset (g_value);
 			g_free (g_value);

@@ -1,5 +1,12 @@
 2006-11-16  Mikael Hallendal  <micke@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	(account_manager_parse_account):
+	- Add compatibility with old settings files after moving the ID.
+	- Patch from Xavier Claessens.
+
+2006-11-16  Mikael Hallendal  <micke@imendio.com>
+
 	* libgossip/gossip-account.[ch]: (account_class_init), (account_init),
 	(account_finalize), (account_get_property), (account_set_property),
 	(gossip_account_get_id), (account_set_type),
