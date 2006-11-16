@@ -39,7 +39,7 @@
 	* src/gossip-ui-utils.c: (gossip_password_dialog_run):
 	- Adapt to the new id-API
 	- Patch from Eitan Isaacson and Xavier Claessens.
-	- Fixes bug #368644.
+	- Fixes bug #368644 (Eitan Isaacson, Xavier Claessens).
 
 2006-11-11  Richard Hult  <richard@imendio.com>
 
