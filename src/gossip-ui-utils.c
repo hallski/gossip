@@ -242,7 +242,7 @@ gossip_password_dialog_run (GossipAccount *account,
 						     str);
 	g_free (str);
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	str = g_strdup_printf (_("Logging in with: %s"), id);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", str);
 	g_free (str);

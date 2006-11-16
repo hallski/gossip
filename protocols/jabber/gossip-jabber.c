@@ -477,8 +477,9 @@ jabber_setup (GossipProtocol *protocol,
 	priv->contact = gossip_contact_new (GOSSIP_CONTACT_TYPE_USER,
 					    priv->account);
 
+	id = gossip_account_get_id (account);
+
 	gossip_account_param_get (account,
-				  "id", &id,
 				  "server", &server,
 				  "port", &port,
 				  NULL);
@@ -786,9 +787,9 @@ jabber_connection_open_cb (LmConnection *connection,
 	account = priv->account;
 	gossip_account_param_get (account,
 				  "password", &account_password,
-				  "id", &account_id,
 				  "resource", &account_resource,
 				  NULL);
+	account_id = gossip_account_get_id (account);
 
 	if (!account_password || g_utf8_strlen (account_password, -1) < 1) {
 		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
@@ -1136,13 +1137,13 @@ jabber_new_account (GossipProtocol *protocol)
 	/* Set a default value for each account parameter */
 	account = g_object_new (GOSSIP_TYPE_ACCOUNT,
 				"type", GOSSIP_ACCOUNT_TYPE_JABBER,
+				"id", id,
 				"name", _("new account"),
 				"auto_connect", TRUE,
 				"use_proxy", FALSE,
 				NULL);
 
 	gossip_account_param_new (account,
-				  "id", G_TYPE_STRING, id, 0,
 				  "password", G_TYPE_STRING, "", 0,
 				  "resource", G_TYPE_STRING, _("Home"), 0,
 				  "server", G_TYPE_STRING, server, 0,
@@ -1204,9 +1205,10 @@ jabber_register_connection_open_cb (LmConnection *connection,
 
 	gossip_account_param_get (priv->account,
 				  "server", &server,
-				  "id", &id,
 				  "password", &password,
 				  NULL);
+
+	id = gossip_account_get_id (priv->account);
 
 	m = lm_message_new_with_sub_type (server,
 					  LM_MESSAGE_TYPE_IQ,

@@ -69,7 +69,7 @@ sound_protocol_connected_cb (GossipSession  *session,
 		return;
 	}
 
-	gossip_account_param_get (account, "id", &account_id, NULL);
+	account_id = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN, "Account update, account:'%s' is now online",
 		      account_id);
 

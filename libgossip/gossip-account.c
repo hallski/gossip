@@ -42,6 +42,7 @@ struct _GossipAccountPriv {
 	gint               unique_id;
 
 	GossipAccountType  type;
+	gchar             *id;
 	gchar             *name;
 	gboolean           auto_connect;
 	gboolean           use_proxy;
@@ -85,6 +86,7 @@ static void           account_set_type              (GossipAccount          *acc
 enum {
 	PROP_0,
 	PROP_TYPE,
+	PROP_ID,
 	PROP_NAME,
 	PROP_AUTO_CONNECT,
 	PROP_USE_PROXY
@@ -157,6 +159,14 @@ account_class_init (GossipAccountClass *class)
 							   G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
+					 PROP_ID,
+					 g_param_spec_string ("id",
+							      "Account ID",
+							      "Your unique network ID, e.g. a JID",
+							      "Myself",
+							      G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
 					 PROP_NAME,
 					 g_param_spec_string ("name",
 							      "Account Name",
@@ -194,6 +204,7 @@ account_init (GossipAccount *account)
 	priv->unique_id    = id++;
 
 	priv->type         = 0;
+	priv->id           = NULL;
 	priv->name         = NULL;
 	priv->auto_connect = TRUE;
 	priv->use_proxy    = FALSE;
@@ -211,6 +222,7 @@ account_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
+	g_free (priv->id);
 	g_free (priv->name);
 	g_hash_table_unref (priv->parameters);
 
@@ -232,6 +244,9 @@ account_get_property (GObject    *object,
 	switch (param_id) {
 	case PROP_TYPE:
 		g_value_set_int (value, priv->type);
+		break;
+	case PROP_ID:
+		g_value_set_string (value, priv->id);
 		break;
 	case PROP_NAME:
 		g_value_set_string (value, priv->name);
@@ -262,6 +277,10 @@ account_set_property (GObject      *object,
 	case PROP_TYPE:
 		account_set_type (GOSSIP_ACCOUNT (object),
 				  g_value_get_int (value));
+		break;
+	case PROP_ID:
+		gossip_account_set_id (GOSSIP_ACCOUNT (object),
+					 g_value_get_string (value));
 		break;
 	case PROP_NAME:
 		gossip_account_set_name (GOSSIP_ACCOUNT (object),
@@ -533,6 +552,17 @@ gossip_account_get_type (GossipAccount *account)
 }
 
 const gchar *
+gossip_account_get_id (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (account);
+	return priv->id;
+}
+
+const gchar *
 gossip_account_get_name (GossipAccount *account)
 {
 	GossipAccountPriv *priv;
@@ -576,6 +606,24 @@ account_set_type (GossipAccount     *account,
 	priv = GET_PRIV (account);
 	priv->type = type;
 
+	g_signal_emit (account, signals[CHANGED], 0);
+}
+
+void
+gossip_account_set_id (GossipAccount *account,
+		       const gchar   *id)
+{
+	GossipAccountPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	g_return_if_fail (id != NULL);
+
+	priv = GET_PRIV (account);
+
+	g_free (priv->id);
+	priv->id = g_strdup (id);
+
+	g_object_notify (G_OBJECT (account), "id");
 	g_signal_emit (account, signals[CHANGED], 0);
 }
 

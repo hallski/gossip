@@ -119,7 +119,7 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), nickname);
 	}
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	server = gossip_protocol_get_default_server (protocol, id);
 	if (server) {
 		gchar *conference_server;

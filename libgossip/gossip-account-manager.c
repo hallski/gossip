@@ -478,6 +478,9 @@ account_manager_parse_account (GossipAccountManager *manager,
 		if (strcmp (tag, "name") == 0) {
 			gossip_account_set_name (account, str);
 		}
+		else if (strcmp (tag, "id") == 0) {
+			gossip_account_set_id (account, str);
+		}
 		else if (strcmp (tag, "auto_connect") == 0) {
 			gossip_account_set_auto_connect (account, strcmp (str, "yes") == 0);
 		}
@@ -512,9 +515,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 			xmlFree (type_str);
 		}
 		/* Those are deprecated and kept for compatibility only */
-		else if (strcmp (tag, "id") == 0) {
-			gossip_account_param_set (account, "id", str, NULL);
-		}
 		else if (strcmp (tag, "resource") == 0) {
 			gossip_account_param_set (account, "resource", str, NULL);
 		}
@@ -547,7 +547,7 @@ account_manager_parse_account (GossipAccountManager *manager,
 	const gchar *resource_found = NULL;
 	const gchar *id;
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	str = g_strdup (id);
 	if (str) {
 		/* FIXME: This hack is so we don't get bug
@@ -708,6 +708,7 @@ account_manager_file_save (GossipAccountManager *manager)
 		node = xmlNewChild (root, NULL, "account", NULL);
 		xmlNewProp (node, "type", type);
 		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
+		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
 		xmlNewTextChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
 		xmlNewTextChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
 

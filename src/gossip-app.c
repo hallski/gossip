@@ -1445,7 +1445,7 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 
 	priv = GET_PRIV (app);
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", id);
 
 	gossip_throbber_start (GOSSIP_THROBBER (priv->throbber));
@@ -1463,7 +1463,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 
 	priv = GET_PRIV (app);
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN_SESSION, "Connected account:'%s'", id);
 
 	gossip_session_count_accounts (priv->session,
@@ -1527,7 +1527,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 
 	priv = GET_PRIV (app);
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN_SESSION, "Disconnected account:'%s'", id);
 
 	gossip_session_count_accounts (priv->session,
@@ -1581,7 +1581,7 @@ app_session_protocol_error_cb (GossipSession  *session,
 
 	priv = GET_PRIV (app);
 
-	gossip_account_param_get (account, "id", &id, NULL);
+	id = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN_SESSION, "Error for account:'%s'", id);
 
 	gossip_session_count_accounts (priv->session,

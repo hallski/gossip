@@ -1,3 +1,39 @@
+2006-11-16  Mikael Hallendal  <micke@imendio.com>
+
+	* libgossip/gossip-account.[ch]: (account_class_init), (account_init),
+	(account_finalize), (account_get_property), (account_set_property),
+	(gossip_account_get_id), (account_set_type),
+	(gossip_account_set_id):
+	Make "id" a property that already exists and should be set by the
+	backend.
+	* libgossip/gossip-account-manager.c:
+	(account_manager_parse_account), (account_manager_file_save):
+	* protocols/jabber/gossip-jabber.c: (jabber_setup),
+	(jabber_connection_open_cb), (jabber_new_account),
+	(jabber_register_connection_open_cb):
+	* src/gossip-account-widget-jabber.c: (account_widget_jabber_save),
+	(account_widget_jabber_entry_focus_cb),
+	(account_widget_jabber_setup):
+	* src/gossip-app.c: (app_session_protocol_connecting_cb),
+	(app_session_protocol_connected_cb),
+	(app_session_protocol_disconnected_cb),
+	(app_session_protocol_error_cb):
+	* src/gossip-galago.c: (galago_get_account):
+	* src/gossip-log.c: (log_get_filename_by_date_for_contact),
+	(log_get_filename_by_date_for_chatroom),
+	(log_get_contacts_filename), (gossip_log_get_own_contact),
+	(gossip_log_get_contacts), (gossip_log_get_chatrooms),
+	(gossip_log_get_dates_for_contact),
+	(gossip_log_get_dates_for_chatroom):
+	* src/gossip-new-chatroom-dialog.c:
+	(new_chatroom_dialog_set_defaults):
+	* src/gossip-notify.c: (notify_protocol_connected_cb):
+	* src/gossip-sound.c: (sound_protocol_connected_cb):
+	* src/gossip-ui-utils.c: (gossip_password_dialog_run):
+	- Adapt to the new id-API
+	- Patch from Eitan Isaacson and Xavier Claessens.
+	- Fixes bug #368644.
+
 2006-11-11  Richard Hult  <richard@imendio.com>
 
 	* configure.ac: Bump version and use the full bugzilla link for

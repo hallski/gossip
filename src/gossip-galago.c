@@ -104,7 +104,7 @@ galago_get_account (GossipAccount *account)
 		static GalagoPerson *me = NULL;
 		const gchar         *account_id;
 
-		gossip_account_param_get (account, "id", &account_id, NULL);
+		account_id = gossip_account_get_id (account);
 
 		gossip_debug (DEBUG_DOMAIN, "Added account:'%s'", account_id);
 

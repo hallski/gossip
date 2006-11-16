@@ -95,8 +95,9 @@ account_widget_jabber_save (GossipAccountWidgetJabber *settings)
 	port = strtol (port_str, NULL, 10);
 	use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (settings->checkbutton_ssl));
 
+	gossip_account_set_id (settings->account, id);
+
 	gossip_account_param_set (settings->account,
-				  "id", id,
 				  "password", password,
 				  "resource", resource,
 				  "server", server,
@@ -127,7 +128,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 			str = gtk_entry_get_text (GTK_ENTRY (widget));
 
 			if (!gossip_protocol_is_valid_username (protocol, str)) {
-				gossip_account_param_get (settings->account, "id", &str, NULL);
+				str = gossip_account_get_id (settings->account);
 				settings->account_changed = FALSE;
 			} else {
 				gchar *server;
@@ -340,9 +341,10 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	session = gossip_app_get_session ();
 	protocol = gossip_session_get_protocol (session, settings->account);
 
+	id = gossip_account_get_id (settings->account);
+
 	gossip_account_param_get (settings->account,
 				  "use_ssl", &use_ssl,
-				  "id", &id,
 				  "password", &password,
 				  "resource", &resource,
 				  "server", &server,
