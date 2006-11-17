@@ -415,6 +415,33 @@ gossip_account_param_new (GossipAccount *account,
 }
 
 void
+gossip_account_param_new_g_value (GossipAccount           *account,
+				  const gchar             *param_name,
+				  const GValue            *g_value,
+				  GossipAccountParamFlags  flags)
+{
+	GossipAccountParam *param;
+	GossipAccountPriv  *priv;
+
+	priv = GET_PRIV (account);
+
+	param = g_hash_table_lookup (priv->parameters, param_name);
+	if (param) {
+		g_warning ("GossipAccount already has a parameter named `%s'", param_name);
+		return;
+	}
+	param = g_new0 (GossipAccountParam, 1);
+
+	g_value_init (&param->g_value, G_VALUE_TYPE (g_value));
+	g_value_copy (g_value, &param->g_value);
+	param->flags = flags;
+
+	g_hash_table_insert (priv->parameters,
+			     g_strdup (param_name),
+			     param);
+}
+
+void
 gossip_account_param_set (GossipAccount *account,
 			  const gchar   *first_param_name,
 			  ...)

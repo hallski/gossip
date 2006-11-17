@@ -75,6 +75,10 @@ GType             gossip_account_get_gtype         (void) G_GNUC_CONST;
 void              gossip_account_param_new         (GossipAccount           *account,
 						    const gchar             *first_param_name,
 						    ...);
+void              gossip_account_param_new_g_value (GossipAccount           *account,
+						    const gchar             *param_name,
+						    const GValue            *g_value,
+						    GossipAccountParamFlags  flags);
 void              gossip_account_param_set         (GossipAccount           *account,
 						    const gchar             *first_param_name,
 						    ...);

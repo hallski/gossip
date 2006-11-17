@@ -1,5 +1,13 @@
 2006-11-17  Xavier Claessens  <xclaesse@gmail.com>
 
+	* libgossip/gossip-account.[ch]: Add gossip_account_param_new_g_value()
+	from TELEPATHY but it's not teleapthy-specific.
+	* src/gossip-ui-utils.c: Add missing case GOSSIP_ACCOUNT_TYPE_UNKNOWN in
+	gossip_pixbuf_from_account_type(), was fixed in TELEPATHY branch were
+	it can happen to have an unknown account.
+
+2006-11-17  Xavier Claessens  <xclaesse@gmail.com>
+
 	* libgossip/gossip-contact.c
 	* libgossip/gossip-contact.h
 	* libgossip/gossip-session.c

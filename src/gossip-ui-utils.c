@@ -432,6 +432,10 @@ gossip_pixbuf_from_account_type (GossipAccountType type,
 	case GOSSIP_ACCOUNT_TYPE_YAHOO:
 		icon_id = "im-yahoo";
 		break;
+	case GOSSIP_ACCOUNT_TYPE_UNKNOWN:
+		/* FIXME: we should have an artwork for unknown protocols */
+		icon_id = "im-jabber";
+		break;
 	default:
 		g_assert_not_reached ();
 	}
