@@ -2231,7 +2231,7 @@ contact_list_iter_equal_contact (GtkTreeModel  *model,
 		return FALSE;
 	}
 
-	equal = (gossip_contact_compare (c, contact) == 0);
+	equal = gossip_contact_equal (c, contact);
 	g_object_unref (c);
 
 	return equal;

@@ -48,7 +48,7 @@ struct _GossipSessionPriv {
 };
 
 typedef struct {
-	const gchar   *contact_id;
+	GossipContact *contact;
 	GossipAccount *account;
 } FindAccount;
 
@@ -923,7 +923,10 @@ session_find_account_foreach_cb (GossipAccount  *account,
 				 GossipProtocol *protocol,
 				 FindAccount    *fa)
 {
-	if (gossip_protocol_find_contact (protocol, fa->contact_id)) {
+	const gchar *id;
+
+	id = gossip_contact_get_id (fa->contact);
+	if (gossip_protocol_find_contact (protocol, id)) {
 		fa->account = g_object_ref (account);
 	}
 }
@@ -940,7 +943,7 @@ gossip_session_find_account (GossipSession *session,
 
 	priv = GET_PRIV (session);
 
-	fa.contact_id = gossip_contact_get_id (contact);
+	fa.contact = contact;
 	fa.account = NULL;
 
 	g_hash_table_foreach (priv->accounts,
@@ -956,16 +959,13 @@ session_find_account_for_own_contact_foreach_cb (GossipAccount  *account,
 						 FindAccount    *fa)
 {
 	GossipContact *own_contact;
-	const gchar   *id;
 
 	own_contact = gossip_protocol_get_own_contact (protocol);
 	if (!own_contact) {
 		return;
 	}
 
-	id = gossip_contact_get_id (own_contact);
-
-	if (g_str_equal (id, fa->contact_id)) {
+	if (gossip_contact_equal (own_contact, fa->contact)) {
 		fa->account = g_object_ref (account);
 	}
 }
@@ -982,7 +982,7 @@ gossip_session_find_account_for_own_contact (GossipSession *session,
 
 	priv = GET_PRIV (session);
 
-	fa.contact_id = gossip_contact_get_id (own_contact);
+	fa.contact = own_contact;
 	fa.account = NULL;
 
 	g_hash_table_foreach (priv->accounts,

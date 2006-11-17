@@ -23,8 +23,9 @@
 #include <glib/gi18n.h>
 #include <string.h>
 
-#include "gossip-utils.h"
+#include "gossip-account.h"
 #include "gossip-contact.h"
+#include "gossip-utils.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
 
@@ -725,23 +726,6 @@ gossip_contact_set_subscription (GossipContact      *contact,
 }
 
 gint
-gossip_contact_compare (gconstpointer a,
-			gconstpointer b)
-{
-	const gchar *id_a;
-	const gchar *id_b;
-
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (a), 0);
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (b), 0);
-
-	id_a = gossip_contact_get_id (GOSSIP_CONTACT (a));
-	id_b = gossip_contact_get_id (GOSSIP_CONTACT (b));
-
-	/* FIXME: Maybe use utf8 strcmp? At least jabber ids are UTF8. */
-	return strcmp (id_a, id_b);
-}
-
-gint
 gossip_contact_name_compare (gconstpointer a,
 			     gconstpointer b)
 {
@@ -782,8 +766,10 @@ gboolean
 gossip_contact_equal (gconstpointer v1,
 		      gconstpointer v2)
 {
-	const gchar *id_a;
-	const gchar *id_b;
+	const gchar   *id_a;
+	const gchar   *id_b;
+	GossipAccount *account_a;
+	GossipAccount *account_b;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (v1), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (v2), FALSE);
@@ -791,15 +777,24 @@ gossip_contact_equal (gconstpointer v1,
 	id_a = gossip_contact_get_id (GOSSIP_CONTACT (v1));
 	id_b = gossip_contact_get_id (GOSSIP_CONTACT (v2));
 
-	return g_str_equal (id_a, id_b);
+	account_a = gossip_contact_get_account (GOSSIP_CONTACT (v1));
+	account_b = gossip_contact_get_account (GOSSIP_CONTACT (v2));
+
+	return g_str_equal (id_a, id_b) &&
+	       gossip_account_equal (account_a, account_b);
 }
 
 guint
 gossip_contact_hash (gconstpointer key)
 {
+	GossipContactPriv *priv;
+
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (key), +1);
 
-	return g_str_hash (gossip_contact_get_id (GOSSIP_CONTACT (key)));
+	priv = GET_PRIV (GOSSIP_CONTACT (key));
+
+	return g_str_hash (gossip_contact_get_id (GOSSIP_CONTACT (key))) + 
+	       gossip_account_hash (gossip_contact_get_account (GOSSIP_CONTACT (key)));
 }
 
 /* convenience functions */

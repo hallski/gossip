@@ -97,8 +97,6 @@ gboolean           gossip_contact_set_groups                (GossipContact      
 							     GList              *categories);
 void               gossip_contact_set_subscription          (GossipContact      *contact,
 							     GossipSubscription  subscription);
-gint               gossip_contact_compare                   (gconstpointer       a,
-							     gconstpointer       b);
 gint               gossip_contact_name_compare              (gconstpointer       a,
 							     gconstpointer       b);
 gint               gossip_contact_name_case_compare         (gconstpointer       a,
