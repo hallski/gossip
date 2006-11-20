@@ -53,9 +53,9 @@ typedef struct {
 
 	GtkWidget        *treeview;
 
-	GtkWidget        *button_new;
+	GtkWidget        *button_add;
+	GtkWidget        *button_remove;
 	GtkWidget        *button_edit;
-	GtkWidget        *button_delete;
 
 	GtkWidget        *button_close;
 	GtkWidget        *button_join;
@@ -116,23 +116,23 @@ static void     chatrooms_window_join_cb                      (GossipChatroomPro
 							       GossipChatroomJoinResult  result,
 							       GossipChatroomId          id,
 							       GossipChatroomsWindow    *window);
-static void     chatrooms_window_new_clicked_cb               (GtkWidget                *widget,
+static void     chatrooms_window_button_add_clicked_cb        (GtkWidget                *widget,
 							       GossipChatroomsWindow    *window);
-static void     chatrooms_window_edit_clicked_cb              (GtkWidget                *widget,
+static void     chatrooms_window_button_remove_clicked_cb     (GtkWidget                *widget,
 							       GossipChatroomsWindow    *window);
-static void     chatrooms_window_delete_clicked_cb            (GtkWidget                *widget,
-							       GossipChatroomsWindow    *window);
-static gboolean chatrooms_window_delete_foreach               (GtkTreeModel             *model,
+static gboolean chatrooms_window_remove_foreach               (GtkTreeModel             *model,
 							       GtkTreePath              *path,
 							       GtkTreeIter              *iter,
 							       GossipChatroom           *chatroom);
-static void     chatrooms_window_close_clicked_cb             (GtkWidget                *widget,
+static void     chatrooms_window_button_edit_clicked_cb       (GtkWidget                *widget,
+							       GossipChatroomsWindow    *window);
+static void     chatrooms_window_button_close_clicked_cb      (GtkWidget                *widget,
 							       GossipChatroomsWindow    *window);
 static gboolean chatrooms_window_chatroom_changed_foreach     (GtkTreeModel             *model,
 							       GtkTreePath              *path,
 							       GtkTreeIter              *iter,
 							       GossipChatroom           *chatroom);
-static void     chatrooms_window_join_clicked_cb              (GtkWidget                *widget,
+static void     chatrooms_window_button_join_clicked_cb       (GtkWidget                *widget,
 							       GossipChatroomsWindow    *window);
 static void     chatrooms_window_chatroom_changed_cb          (GossipChatroom           *chatroom,
 							       GParamSpec               *param,
@@ -142,7 +142,6 @@ static void     chatrooms_window_chatroom_added_cb            (GossipChatroomMan
 							       GossipChatroomsWindow    *window);
 static void     chatrooms_window_account_chatroom_changed_cb  (GtkWidget                *combo_box,
 							       GossipChatroomsWindow    *window);
-
 
 enum {
 	COL_IMAGE,
@@ -686,7 +685,7 @@ chatrooms_window_model_remove_selected (GossipChatroomsWindow *window)
 
 		gossip_chatroom_manager_remove (manager, chatroom);
 		gtk_tree_model_foreach (model,
-					(GtkTreeModelForeachFunc)chatrooms_window_delete_foreach,
+					(GtkTreeModelForeachFunc) chatrooms_window_remove_foreach,
 					chatroom);
 	}
 
@@ -791,13 +790,14 @@ chatrooms_window_update_buttons (GossipChatroomsWindow *window)
 		break;
 	}
 
-	sensitive &= (status != GOSSIP_CHATROOM_STATUS_ACTIVE);
+	sensitive &= status != GOSSIP_CHATROOM_STATUS_ACTIVE;
 	gtk_widget_set_sensitive (window->button_join, sensitive);
 
-	sensitive &= (status != GOSSIP_CHATROOM_STATUS_JOINING);
-	gtk_widget_set_sensitive (window->button_delete, sensitive);
+	sensitive &= status != GOSSIP_CHATROOM_STATUS_JOINING;
+	sensitive &= g_list_length (chatrooms) > 0;
+	gtk_widget_set_sensitive (window->button_remove, sensitive);
 
-	sensitive &= (g_list_length (chatrooms) == 1);
+	sensitive &= g_list_length (chatrooms) == 1;
 	gtk_widget_set_sensitive (window->button_edit, sensitive);
 
 	g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
@@ -850,7 +850,8 @@ chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 				chatrooms_window_chatroom_any_joining_foreach,
 				&any_joining);
 
-	if (result == GOSSIP_CHATROOM_JOIN_CANCELED) {
+	if (result == GOSSIP_CHATROOM_JOIN_CANCELED ||
+	    result != GOSSIP_CHATROOM_JOIN_OK) {
 		return;
 	}
 
@@ -860,37 +861,21 @@ chatrooms_window_join_cb (GossipChatroomProvider   *provider,
 }
 
 static void
-chatrooms_window_new_clicked_cb (GtkWidget             *widget,
-				 GossipChatroomsWindow *window)
+chatrooms_window_button_add_clicked_cb (GtkWidget             *widget,
+					GossipChatroomsWindow *window)
 {
 	gossip_new_chatroom_dialog_show (GTK_WINDOW (window->window));
 }
 
 static void
-chatrooms_window_edit_clicked_cb (GtkWidget             *widget,
-				  GossipChatroomsWindow *window)
-{
-	GList          *chatrooms;
-	GossipChatroom *chatroom;
-
-	chatrooms = chatrooms_window_model_get_selected (window);
-	chatroom = g_list_nth_data (chatrooms, 0);
-
-	gossip_edit_chatroom_dialog_show (GTK_WINDOW (window->window), chatroom);
-
-	g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
-	g_list_free (chatrooms);
-}
-
-static void
-chatrooms_window_delete_clicked_cb (GtkWidget             *widget,
-				    GossipChatroomsWindow *window)
+chatrooms_window_button_remove_clicked_cb (GtkWidget             *widget,
+					   GossipChatroomsWindow *window)
 {
 	chatrooms_window_model_remove_selected (window);
 }
 
 static gboolean
-chatrooms_window_delete_foreach (GtkTreeModel   *model,
+chatrooms_window_remove_foreach (GtkTreeModel   *model,
 				 GtkTreePath    *path,
 				 GtkTreeIter    *iter,
 				 GossipChatroom *chatroom_to_delete)
@@ -913,15 +898,31 @@ chatrooms_window_delete_foreach (GtkTreeModel   *model,
 }
 
 static void
-chatrooms_window_close_clicked_cb (GtkWidget             *widget,
-				   GossipChatroomsWindow *window)
+chatrooms_window_button_edit_clicked_cb (GtkWidget             *widget,
+					 GossipChatroomsWindow *window)
+{
+	GList          *chatrooms;
+	GossipChatroom *chatroom;
+
+	chatrooms = chatrooms_window_model_get_selected (window);
+	chatroom = g_list_nth_data (chatrooms, 0);
+
+	gossip_edit_chatroom_dialog_show (GTK_WINDOW (window->window), chatroom);
+
+	g_list_foreach (chatrooms, (GFunc) g_object_unref, NULL);
+	g_list_free (chatrooms);
+}
+
+static void
+chatrooms_window_button_close_clicked_cb (GtkWidget             *widget,
+					  GossipChatroomsWindow *window)
 {
 	gtk_widget_hide (window->window);
 }
 
 static void
-chatrooms_window_join_clicked_cb (GtkWidget             *widget,
-				  GossipChatroomsWindow *window)
+chatrooms_window_button_join_clicked_cb (GtkWidget             *widget,
+					 GossipChatroomsWindow *window)
 {
 	chatrooms_window_model_action_selected (window);
 }
@@ -1030,20 +1031,20 @@ gossip_chatrooms_window_show (GtkWindow *parent,
 				       "hbox_account_chatroom", &window->hbox_account_chatroom,
 				       "label_account_chatroom", &window->label_account_chatroom,
 				       "treeview", &window->treeview,
-				       "button_new", &window->button_new,
+				       "button_add", &window->button_add,
 				       "button_edit", &window->button_edit,
-				       "button_delete", &window->button_delete,
+				       "button_remove", &window->button_remove,
 				       "button_close", &window->button_close,
 				       "button_join", &window->button_join,
 				       NULL);
 
 	gossip_glade_connect (glade,
 			      window,
-			      "button_new", "clicked", chatrooms_window_new_clicked_cb,
-			      "button_edit", "clicked", chatrooms_window_edit_clicked_cb,
-			      "button_delete", "clicked", chatrooms_window_delete_clicked_cb,
-			      "button_close", "clicked", chatrooms_window_close_clicked_cb,
-			      "button_join", "clicked", chatrooms_window_join_clicked_cb,
+			      "button_add", "clicked", chatrooms_window_button_add_clicked_cb,
+			      "button_remove", "clicked", chatrooms_window_button_remove_clicked_cb,
+			      "button_edit", "clicked", chatrooms_window_button_edit_clicked_cb,
+			      "button_close", "clicked", chatrooms_window_button_close_clicked_cb,
+			      "button_join", "clicked", chatrooms_window_button_join_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);

@@ -45,8 +45,6 @@
 
 #define DEBUG_DOMAIN "VCardDialog"
 
-#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
-
 #define VCARD_TIMEOUT     20000
 #define SAVED_TIMEOUT     10000
 
@@ -380,20 +378,20 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	}
 
 	str = gossip_vcard_get_name (vcard);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), STRING_EMPTY (str) ? "" : str);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), G_STR_EMPTY (str) ? "" : str);
 
 	str = gossip_vcard_get_nickname (vcard);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), STRING_EMPTY (str) ? "" : str);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), G_STR_EMPTY (str) ? "" : str);
 
 	str = gossip_vcard_get_email (vcard);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email), STRING_EMPTY (str) ? "" : str);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email), G_STR_EMPTY (str) ? "" : str);
 
 	str = gossip_vcard_get_url (vcard);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_web_site), STRING_EMPTY (str) ? "" : str);
+	gtk_entry_set_text (GTK_ENTRY (dialog->entry_web_site), G_STR_EMPTY (str) ? "" : str);
 
 	str = gossip_vcard_get_description (vcard);
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
-	gtk_text_buffer_set_text (buffer, STRING_EMPTY (str) ? "" : str, -1);
+	gtk_text_buffer_set_text (buffer, G_STR_EMPTY (str) ? "" : str, -1);
 
 	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
 

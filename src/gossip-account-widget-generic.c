@@ -29,8 +29,6 @@
 #include "gossip-account-widget-generic.h"
 #include "gossip-app.h"
 
-#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
-
 typedef struct {
 	GossipAccount *account;
 

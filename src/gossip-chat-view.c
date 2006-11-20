@@ -532,7 +532,7 @@ chat_view_populate_popup (GossipChatView *view,
 						&start, &end, FALSE);
 	}
 
-	if (!str || strlen (str) < 1) {
+	if (G_STR_EMPTY (str)) {
 		g_free (str);
 		return;
 	}
@@ -1663,12 +1663,12 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	reason = gossip_chatroom_invite_get_reason (invite);
 
 	s = g_string_new ("");
-	if (body && strlen (body) > 0) {
+	if (!G_STR_EMPTY (body)) {
 		s = g_string_append (s, body);
 	}
 
 	/* Make sure the reason is not the body (or in the body) */
-	if (reason && strlen (reason) > 0 && !strstr (body, reason)) {
+	if (!G_STR_EMPTY (reason) && !strstr (body, reason)) {
 		if (s->len > 0) {
 			s = g_string_append_c (s, '\n');
 		}
@@ -1864,7 +1864,7 @@ gossip_chat_view_find_previous (GossipChatView *view,
 
 	buffer = priv->buffer;
 
-	if (strlen (search_criteria) == 0) {
+	if (G_STR_EMPTY (search_criteria)) {
 		if (priv->find_mark_previous) {
 			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
 
@@ -1979,7 +1979,7 @@ gossip_chat_view_find_next (GossipChatView *view,
 
 	buffer = priv->buffer;
 
-	if (strlen (search_criteria) == 0) {
+	if (G_STR_EMPTY (search_criteria)) {
 		if (priv->find_mark_next) {
 			gtk_text_buffer_get_start_iter (buffer, &iter_at_mark);
 
@@ -2151,7 +2151,7 @@ gossip_chat_view_highlight (GossipChatView *view,
 					    &iter_start,
 					    &iter_end);
 
-	if (!text || strlen (text) < 1) {
+	if (G_STR_EMPTY (text)) {
 		return;
 	}
 

@@ -338,7 +338,7 @@ subscription_dialog_vcard_cb (GossipResult   result,
 		g_free (question);
 	}
 
-	if (url && strlen (url) > 0) {
+	if (!G_STR_EMPTY (url)) {
 		GArray *start, *end;
 
 		start = g_array_new (FALSE, FALSE, sizeof (gint));

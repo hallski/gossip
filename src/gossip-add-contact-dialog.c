@@ -126,7 +126,7 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 
 		/* Name */
 		value = gossip_vcard_get_name (vcard);
-		if (value && strlen (value) > 0) {
+		if (!G_STR_EMPTY (value)) {
 			gtk_widget_show (dialog->label_name);
 			gtk_widget_show (dialog->label_name_stub);
 			gtk_label_set_text (GTK_LABEL (dialog->label_name), value);
@@ -135,7 +135,7 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 		
 		/* Email */
 		value = gossip_vcard_get_email (vcard);
-		if (value && strlen (value) > 0) {
+		if (!G_STR_EMPTY (value)) {
 			gtk_widget_show (dialog->label_email);
 			gtk_widget_show (dialog->label_email_stub);
 			gtk_label_set_text (GTK_LABEL (dialog->label_email), value);
@@ -143,7 +143,7 @@ add_contact_dialog_vcard_cb (GossipResult            result,
 		
 		/* Country */
 		value = gossip_vcard_get_country (vcard);
-		if (value && strlen (value) > 0) {
+		if (!G_STR_EMPTY (value)) {
 			gtk_widget_show (dialog->label_country);
 			gtk_widget_show (dialog->label_country_stub);
 			gtk_label_set_text (GTK_LABEL (dialog->label_country), value);
@@ -191,9 +191,9 @@ add_contact_dialog_id_entry_focus_cb (GtkWidget              *widget,
 	id = gtk_entry_get_text (GTK_ENTRY (dialog->entry_id));
 	example = gossip_protocol_get_example_username (protocol);
 
-	lookup &= strlen (id) > 0;
+	lookup &= !G_STR_EMPTY (id);
 
-	if (example && strlen (example) > 0) {
+	if (!G_STR_EMPTY (example)) {
 		lookup &= strcmp (id, example) != 0;
 	}
 
@@ -257,7 +257,7 @@ add_contact_dialog_id_entry_changed_cb (GtkEntry               *entry,
 	const gchar *id;
 
 	id = gtk_entry_get_text (GTK_ENTRY (entry));
-	gtk_widget_set_sensitive (dialog->button_add, id && strlen (id) > 0);
+	gtk_widget_set_sensitive (dialog->button_add, !G_STR_EMPTY (id));
 }
 
 static gboolean

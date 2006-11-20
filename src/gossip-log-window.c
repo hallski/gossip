@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-app.h"
 #include "gossip-account-chooser.h"
@@ -237,10 +238,10 @@ log_window_entry_find_changed_cb (GtkWidget       *entry,
 
 	str = gtk_entry_get_text (GTK_ENTRY (window->entry_find));
 
-	is_sensitive &= str != NULL;
-	is_sensitive &= strlen (str) > 0;
-	is_sensitive &= !window->last_find || (window->last_find && 
-					       strcmp (window->last_find, str) != 0);
+	is_sensitive &= !G_STR_EMPTY (str);
+	is_sensitive &= 
+		!window->last_find || 
+		(window->last_find && strcmp (window->last_find, str) != 0);
 
 	gtk_widget_set_sensitive (window->button_find, is_sensitive);
 }
@@ -370,7 +371,7 @@ log_window_find_populate (GossipLogWindow *window,
 
 	gtk_list_store_clear (store);
 
-	if (strlen (search_criteria) == 0) {
+	if (G_STR_EMPTY (search_criteria)) {
 		/* Just clear the search. */
 		return;
 	}

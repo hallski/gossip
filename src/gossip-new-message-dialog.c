@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"
@@ -94,7 +95,7 @@ new_message_dialog_update_buttons (GossipNewMessageDialog *dialog)
 
 	text = gtk_entry_get_text (GTK_ENTRY (dialog->name_entry));
 
-	can_chat |= (strlen (text) > 0);
+	can_chat |= !G_STR_EMPTY (text);
 	can_chat |= gtk_tree_selection_get_selected (selection, &model, &iter);
 
 	gtk_widget_set_sensitive (dialog->chat_button, can_chat);
@@ -162,11 +163,10 @@ new_message_dialog_filter_func (GtkTreeModel           *model,
 	/* casefold */
 	id_nocase = g_utf8_casefold (id, -1);
 	name_nocase = g_utf8_casefold (name, -1);
-
 	text_nocase = g_utf8_casefold (text, -1);
 
 	/* compare */
-	if (strlen (text_nocase) < 1 ||
+	if (G_STR_EMPTY (text_nocase) ||
 	    strstr (id_nocase, text_nocase) ||
 	    strstr (name_nocase, text_nocase)) {
 		found = TRUE;

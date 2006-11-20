@@ -23,6 +23,8 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-app.h"
 #include "gossip-edit-contact-dialog.h"
 
@@ -280,7 +282,7 @@ edit_contact_dialog_model_find_name (GossipEditContactDialog *dialog,
 	GtkTreeModel *model;
 	FindName      data;
 
-	if (!name || strlen (name) < 1) {
+	if (G_STR_EMPTY (name)) {
 		return FALSE;
 	}
 
@@ -390,8 +392,7 @@ edit_contact_dialog_can_save (GossipEditContactDialog *dialog)
 	name = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
 
 	ok &= dialog->changes_made == TRUE;
-	ok &= name != NULL;
-	ok &= strlen (name) > 0;
+	ok &= !G_STR_EMPTY (name);
 
 	return ok;
 }
@@ -459,7 +460,7 @@ edit_contact_dialog_entry_group_changed_cb (GtkEditable             *editable,
 
 	} else {
 		gtk_widget_set_sensitive (GTK_WIDGET (dialog->button_add),
-					  group && strlen (group) > 0);
+					  !G_STR_EMPTY (group));
 	}
 }
 
@@ -519,13 +520,13 @@ edit_contact_dialog_button_retrieve_get_vcard_cb (GossipResult   result,
 	}
 
 	name = gossip_vcard_get_nickname (vcard);
-	if (name && strlen (name) > 0) {
+	if (!G_STR_EMPTY (name)) {
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), name);
 		return;
 	}
 
 	name = gossip_vcard_get_name (vcard);
-	if (name && strlen (name) > 0) {
+	if (!G_STR_EMPTY (name)) {
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_name), name);
 		return;
 	}

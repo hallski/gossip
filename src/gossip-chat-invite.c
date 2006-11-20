@@ -26,6 +26,7 @@
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-chat-invite.h"
 #include "gossip-app.h"
@@ -127,7 +128,7 @@ chat_invite_dialog_model_populate_suggestions (GossipChatInviteDialog *dialog)
 			}
 
 			name = gossip_contact_get_name (contact);
-			if (!name && strlen (name) > 0) {
+			if (G_STR_EMPTY (name)) {
 				continue;
 			}
 
@@ -157,7 +158,7 @@ chat_invite_dialog_model_populate_suggestions (GossipChatInviteDialog *dialog)
 			chatroom = gossip_chatroom_provider_find (provider, id);
 			name = gossip_chatroom_get_name (chatroom);
 
-			if (name == NULL || strlen (name) < 1) {
+			if (G_STR_EMPTY (name)) {
 				continue;
 			}
 

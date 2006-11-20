@@ -26,6 +26,8 @@
 
 #include "gossip-account.h"
 
+#define G_STR_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
+
 typedef enum {
 	GOSSIP_REGEX_AS_IS,
 	GOSSIP_REGEX_BROWSER,

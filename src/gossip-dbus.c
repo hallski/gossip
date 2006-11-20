@@ -25,6 +25,7 @@
 #include <dbus/dbus-glib-lowlevel.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-app.h"
 #include "gossip-dbus.h"
@@ -220,7 +221,7 @@ gossip_dbus_get_presence (GossipDBus   *obj,
 	gossip_debug (DEBUG_DOMAIN, "Getting presence for:'%s'...",
 		      id ? id : "SELF");
 
-	if (id && strlen (id) > 0) {
+	if (!G_STR_EMPTY (id)) {
 		contact = gossip_session_find_contact (saved_session, id);
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);
@@ -284,7 +285,7 @@ gossip_dbus_get_name (GossipDBus   *obj,
 
 	*name = NULL;
 
-	if (id && strlen (id) > 0) {
+	if (!G_STR_EMPTY (id)) {
 		contact = gossip_session_find_contact (saved_session, id);
 		if (!contact) {
 			gossip_debug (DEBUG_DOMAIN, "Contact:'%s' not recognised", id);

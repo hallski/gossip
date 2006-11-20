@@ -1321,7 +1321,7 @@ transport_add_window_prepare_page_3 (GnomeDruidPage           *page,
 	/* if we have a prefered service, use that first */
 	jid_str = gtk_entry_get_text (GTK_ENTRY (window->entry_service));
 
-	if (jid_str && strlen (jid_str) > 0) {
+	if (!G_STR_EMPTY (jid_str)) {
 		jid = gossip_jid_new (jid_str);
 	}
 
@@ -1390,14 +1390,10 @@ transport_add_window_entry_details_changed (GtkEntry                 *entry,
 	email = gtk_entry_get_text (GTK_ENTRY (window->entry_email));
 	nickname = gtk_entry_get_text (GTK_ENTRY (window->entry_nickname));
 
-	if ((GTK_WIDGET_VISIBLE (window->entry_username) &&
-	     (!username || strlen (username) < 1)) ||
-	    (GTK_WIDGET_VISIBLE (window->entry_password) &&
-	     (!password || strlen (password) < 1)) ||
-	    (GTK_WIDGET_VISIBLE (window->entry_email) &&
-	     (!email || strlen (email) < 1)) ||
-	    (GTK_WIDGET_VISIBLE (window->entry_nickname) &&
-	     (!nickname || strlen (nickname) < 1))) {
+	if ((GTK_WIDGET_VISIBLE (window->entry_username) && G_STR_EMPTY (username)) ||
+	    (GTK_WIDGET_VISIBLE (window->entry_password) && G_STR_EMPTY (password)) ||
+	    (GTK_WIDGET_VISIBLE (window->entry_email) && G_STR_EMPTY (email)) ||
+	    (GTK_WIDGET_VISIBLE (window->entry_nickname) && G_STR_EMPTY (nickname))) {
 		gnome_druid_set_buttons_sensitive (GNOME_DRUID (window->druid),
 						   FALSE, FALSE, TRUE, TRUE);
 	} else {

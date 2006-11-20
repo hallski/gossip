@@ -49,6 +49,10 @@ typedef void (*GossipChatroomJoinCb) (GossipChatroomProvider   *provider,
 				      GossipChatroomJoinResult  result,
 				      gint                      id,
 				      gpointer                  user_data);
+typedef void (*GossipChatroomBrowseCb) (GossipChatroomProvider   *provider,
+					const gchar              *server,
+					GList                    *rooms,
+					gpointer                  user_data);
 
 struct _GossipChatroomProviderIface {
 	GTypeInterface g_iface;
@@ -85,6 +89,10 @@ struct _GossipChatroomProviderIface {
 					     GossipChatroomInvite   *invite,
 					     const gchar            *reason);
 	GList *          (*get_rooms)       (GossipChatroomProvider *provider);
+	void             (*browse_rooms)    (GossipChatroomProvider *provider,
+					     const gchar            *server,
+					     GossipChatroomBrowseCb  callback,
+					     gpointer                user_data);
 };
 
 GType        gossip_chatroom_provider_get_type           (void) G_GNUC_CONST;
@@ -123,6 +131,10 @@ void         gossip_chatroom_provider_invite_decline     (GossipChatroomProvider
 							  const gchar            *reason);
 
 GList *      gossip_chatroom_provider_get_rooms          (GossipChatroomProvider *provider);
+void         gossip_chatroom_provider_browse_rooms       (GossipChatroomProvider *provider,
+							  const gchar            *server,
+							  GossipChatroomBrowseCb  callback,
+							  gpointer                user_data);
 
 const gchar *gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result);
 

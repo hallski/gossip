@@ -307,6 +307,10 @@ static void             jabber_chatroom_invite_decline      (GossipChatroomProvi
 							     GossipChatroomInvite    *invite,
 							     const gchar             *reason);
 static GList *          jabber_chatroom_get_rooms           (GossipChatroomProvider  *provider);
+static void             jabber_chatroom_browse_rooms        (GossipChatroomProvider  *provider,
+							     const gchar             *server,
+							     GossipChatroomBrowseCb   callback,
+							     gpointer                 user_data);
 
 /* fts */
 static void             jabber_ft_init                      (GossipFTProviderIface   *iface);
@@ -3006,6 +3010,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->invite_accept   = jabber_chatroom_invite_accept;
 	iface->invite_decline  = jabber_chatroom_invite_decline;
 	iface->get_rooms       = jabber_chatroom_get_rooms;
+	iface->browse_rooms    = jabber_chatroom_browse_rooms;
 }
 
 static GossipChatroomId
@@ -3189,6 +3194,26 @@ jabber_chatroom_get_rooms (GossipChatroomProvider *provider)
 	priv = GET_PRIV (jabber);
 
 	return gossip_jabber_chatrooms_get_rooms (priv->chatrooms);
+}
+
+static void
+jabber_chatroom_browse_rooms (GossipChatroomProvider *provider,
+			      const gchar            *server,
+			      GossipChatroomBrowseCb  callback,
+			      gpointer                user_data)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_JABBER (provider));
+	g_return_if_fail (server != NULL);
+	g_return_if_fail (callback != NULL);
+
+	jabber = GOSSIP_JABBER (provider);
+	priv = GET_PRIV (jabber);
+
+	gossip_jabber_chatrooms_browse_rooms (priv->chatrooms, server, 
+					      callback, user_data);
 }
 
 /*

@@ -1,3 +1,17 @@
+2006-11-20  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/*.[ch]:
+	* src/*.[ch]:
+	* protocols/jabber/*.[ch]:
+	* ui/*.glade: Many many things:
+	- Added G_STR_EMPTY macro to do the incredibly frequent job of
+	checking if a string is NULL or "" and use it everywhere.
+	- Move the group chat menu to a new position of its own since it is
+	big enough and common enough.
+	- Implemented browsing chatrooms (this is dodgy with SSL on
+	conference.jabber.org with its 1000+ rooms).
+
+
 2006-11-17  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-account.[ch]: Add gossip_account_param_new_g_value()

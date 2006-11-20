@@ -333,6 +333,24 @@ gossip_chatroom_provider_get_rooms (GossipChatroomProvider *provider)
 	return NULL;
 }
 
+void
+gossip_chatroom_provider_browse_rooms (GossipChatroomProvider *provider,
+				       const gchar            *server,
+				       GossipChatroomBrowseCb  callback,
+				       gpointer                user_data)
+{
+	g_return_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider));
+	g_return_if_fail (server != NULL);
+	g_return_if_fail (callback != NULL);
+
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->browse_rooms) {
+		GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->browse_rooms (provider, 
+									     server,
+									     callback,
+									     user_data);
+	}
+}
+
 const gchar *
 gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result)
 {

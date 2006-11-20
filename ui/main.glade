@@ -4727,22 +4727,22 @@
 	  <property name="child_pack_direction">GTK_PACK_DIRECTION_LTR</property>
 
 	  <child>
-	    <widget class="GtkMenuItem" id="actions">
+	    <widget class="GtkMenuItem" id="chat">
 	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">_Chat</property>
 	      <property name="use_underline">True</property>
 
 	      <child>
-		<widget class="GtkMenu" id="actions_menu">
+		<widget class="GtkMenu" id="chat_menu">
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="actions_connect">
+		    <widget class="GtkImageMenuItem" id="chat_connect">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Connect</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image723">
+			<widget class="GtkImage" id="image823">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-connect</property>
 			  <property name="icon_size">1</property>
@@ -4756,13 +4756,13 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="actions_disconnect">
+		    <widget class="GtkImageMenuItem" id="chat_disconnect">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Disconnect</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image724">
+			<widget class="GtkImage" id="image824">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-disconnect</property>
 			  <property name="icon_size">1</property>
@@ -4782,14 +4782,14 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="actions_new_message">
+		    <widget class="GtkImageMenuItem" id="chat_new_message">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_New Message...</property>
 		      <property name="use_underline">True</property>
 		      <accelerator key="N" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image725">
+			<widget class="GtkImage" id="image825">
 			  <property name="visible">True</property>
 			  <property name="pixbuf">gossip-message.png</property>
 			  <property name="xalign">0.5</property>
@@ -4802,14 +4802,14 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="actions_history">
+		    <widget class="GtkImageMenuItem" id="chat_history">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_View Previous Conversations</property>
 		      <property name="use_underline">True</property>
 		      <accelerator key="F3" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image726">
+			<widget class="GtkImage" id="image826">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-justify-left</property>
 			  <property name="icon_size">1</property>
@@ -4823,92 +4823,19 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkMenuItem" id="actions_group_chat">
-		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">_Group Chat</property>
-		      <property name="use_underline">True</property>
-
-		      <child>
-			<widget class="GtkMenu" id="actions_group_chat_menu">
-
-			  <child>
-			    <widget class="GtkImageMenuItem" id="actions_group_chat_new">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Join _New...</property>
-			      <property name="use_underline">True</property>
-
-			      <child internal-child="image">
-				<widget class="GtkImage" id="image727">
-				  <property name="visible">True</property>
-				  <property name="stock">gtk-new</property>
-				  <property name="icon_size">1</property>
-				  <property name="xalign">0.5</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				</widget>
-			      </child>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkMenuItem" id="actions_group_chat_join">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Join _Favourites</property>
-			      <property name="use_underline">True</property>
-			      <accelerator key="F5" modifiers="0" signal="activate"/>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkSeparatorMenuItem" id="actions_group_chat_sep">
-			      <property name="visible">True</property>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkSeparatorMenuItem" id="séparateur3">
-			      <property name="visible">True</property>
-			    </widget>
-			  </child>
-
-			  <child>
-			    <widget class="GtkImageMenuItem" id="actions_group_chat_rooms">
-			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Manage Chat Rooms...</property>
-			      <property name="use_underline">True</property>
-
-			      <child internal-child="image">
-				<widget class="GtkImage" id="image728">
-				  <property name="visible">True</property>
-				  <property name="pixbuf">gossip-group-message.png</property>
-				  <property name="xalign">0.5</property>
-				  <property name="yalign">0.5</property>
-				  <property name="xpad">0</property>
-				  <property name="ypad">0</property>
-				</widget>
-			      </child>
-			    </widget>
-			  </child>
-			</widget>
-		      </child>
-		    </widget>
-		  </child>
-
-		  <child>
 		    <widget class="GtkSeparatorMenuItem" id="separator5">
 		      <property name="visible">True</property>
 		    </widget>
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="actions_add_contact">
+		    <widget class="GtkImageMenuItem" id="chat_add_contact">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Add Contact...</property>
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image729">
+			<widget class="GtkImage" id="image827">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-add</property>
 			  <property name="icon_size">1</property>
@@ -4928,7 +4855,7 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkCheckMenuItem" id="actions_show_offline">
+		    <widget class="GtkCheckMenuItem" id="chat_show_offline">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">Show _Offline Contacts</property>
 		      <property name="use_underline">True</property>
@@ -4944,17 +4871,90 @@
 		  </child>
 
 		  <child>
-		    <widget class="GtkImageMenuItem" id="actions_quit">
+		    <widget class="GtkImageMenuItem" id="chat_quit">
 		      <property name="visible">True</property>
 		      <property name="label" translatable="yes">_Quit</property>
 		      <property name="use_underline">True</property>
 		      <accelerator key="Q" modifiers="GDK_CONTROL_MASK" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image730">
+			<widget class="GtkImage" id="image828">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-quit</property>
 			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+		</widget>
+	      </child>
+	    </widget>
+	  </child>
+
+	  <child>
+	    <widget class="GtkMenuItem" id="room">
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes">_Room</property>
+	      <property name="use_underline">True</property>
+
+	      <child>
+		<widget class="GtkMenu" id="room_menu">
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="room_join_new">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Join _New...</property>
+		      <property name="use_underline">True</property>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image829">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-new</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkMenuItem" id="room_join_favorites">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Join _Favorites</property>
+		      <property name="use_underline">True</property>
+		      <accelerator key="F5" modifiers="0" signal="activate"/>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="room_sep">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkSeparatorMenuItem" id="room_sep2">
+		      <property name="visible">True</property>
+		    </widget>
+		  </child>
+
+		  <child>
+		    <widget class="GtkImageMenuItem" id="room_manage_favorites">
+		      <property name="visible">True</property>
+		      <property name="label" translatable="yes">Manage Favorites...</property>
+		      <property name="use_underline">True</property>
+
+		      <child internal-child="image">
+			<widget class="GtkImage" id="image830">
+			  <property name="visible">True</property>
+			  <property name="pixbuf">gossip-group-message.png</property>
 			  <property name="xalign">0.5</property>
 			  <property name="yalign">0.5</property>
 			  <property name="xpad">0</property>
@@ -5021,7 +5021,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image731">
+			<widget class="GtkImage" id="image831">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-preferences</property>
 			  <property name="icon_size">1</property>
@@ -5055,7 +5055,7 @@
 		      <accelerator key="F1" modifiers="0" signal="activate"/>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image732">
+			<widget class="GtkImage" id="image832">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-help</property>
 			  <property name="icon_size">1</property>
@@ -5075,7 +5075,7 @@
 		      <property name="use_underline">True</property>
 
 		      <child internal-child="image">
-			<widget class="GtkImage" id="image733">
+			<widget class="GtkImage" id="image833">
 			  <property name="visible">True</property>
 			  <property name="stock">gtk-about</property>
 			  <property name="icon_size">1</property>

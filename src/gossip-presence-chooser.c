@@ -24,6 +24,8 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
+#include <libgossip/gossip-utils.h>
+
 #include "gossip-marshal.h"
 #include "gossip-app.h"
 #include "gossip-ui-utils.h"
@@ -230,7 +232,7 @@ presence_chooser_set_state (GossipPresenceChooser *chooser,
 
 	default_status = gossip_presence_state_get_default_status (state);
 
-	if (strlen (status) < 1) {
+	if (G_STR_EMPTY (status)) {
 		status = default_status;
 	} else {
 		/* Only store the value if it differs from the default ones. */

@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-theme-manager.h"
 #include "gossip-preferences.h"
@@ -234,7 +235,7 @@ theme_manager_ensure_theme_exists (const gchar *name)
 {
 	gint i;
 
-	if (!name || strlen (name) < 1) {
+	if (G_STR_EMPTY (name)) {
 		return FALSE;
 	}
 

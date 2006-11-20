@@ -1825,3 +1825,16 @@ gossip_request_user_attention (void)
 #endif
 }
 
+
+void
+gossip_toggle_button_set_state_quietly (GtkWidget *widget,
+					GCallback  callback,
+					gpointer   user_data,
+					gboolean   active)
+{
+	g_return_if_fail (GTK_IS_TOGGLE_BUTTON (widget));
+
+	g_signal_handlers_block_by_func (widget, callback, user_data);
+	g_object_set (widget, "active", active, NULL);
+	g_signal_handlers_unblock_by_func (widget, callback, user_data);
+}

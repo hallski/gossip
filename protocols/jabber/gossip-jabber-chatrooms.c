@@ -27,9 +27,10 @@
 #include <libgossip/gossip-chatroom-contact.h>
 
 #include "gossip-jabber-chatrooms.h"
-#include "gossip-jid.h"
+#include "gossip-jabber-disco.h"
 #include "gossip-jabber-utils.h"
 #include "gossip-jabber-private.h"
+#include "gossip-jid.h"
 
 #define DEBUG_DOMAIN "JabberChatrooms"
 
@@ -66,39 +67,48 @@ typedef struct {
 	LmMessageHandler      *join_handler;
 } JabberChatroom;
 
-static void             jabber_chatrooms_logged_out_cb         (GossipProtocol         *jabber,
-								GossipAccount          *account,
-								gint                    reason,
-								GossipJabberChatrooms  *chatrooms);
-static JabberChatroom * jabber_chatrooms_chatroom_new          (GossipJabberChatrooms  *chatrooms,
-								GossipChatroom         *chatroom);
-static JabberChatroom * jabber_chatrooms_chatroom_ref          (JabberChatroom         *room);
-static void             jabber_chatrooms_chatroom_unref        (JabberChatroom         *room);
-static GossipChatroomId jabber_chatrooms_chatroom_get_id       (JabberChatroom         *room);
-static GossipContact *  jabber_chatrooms_get_contact           (JabberChatroom         *room,
-								GossipJID              *jid,
-								gboolean               *new_contact);
-static LmHandlerResult  jabber_chatrooms_message_handler       (LmMessageHandler       *handler,
-								LmConnection           *conn,
-								LmMessage              *message,
-								GossipJabberChatrooms  *chatrooms);
-static LmHandlerResult  jabber_chatrooms_presence_handler      (LmMessageHandler       *handler,
-								LmConnection           *conn,
-								LmMessage              *message,
-								GossipJabberChatrooms  *chatrooms);
-static LmHandlerResult  jabber_chatrooms_join_cb               (LmMessageHandler       *handler,
-								LmConnection           *connection,
-								LmMessage              *message,
-								JabberChatroom         *room);
-static void             jabber_chatrooms_get_rooms_foreach     (gpointer                key,
-								JabberChatroom         *room,
-								GList                 **list);
-static void             jabber_chatrooms_set_presence_foreach  (gpointer                key,
-								JabberChatroom         *room,
-								GossipJabberChatrooms  *chatrooms);
-static LmMessageNode *  jabber_chatrooms_find_muc_user_node    (LmMessageNode          *parent_node);
-static GossipChatroomRole jabber_chatrooms_get_role            (LmMessageNode          *muc_node);
-static GossipChatroomAffiliation jabber_chatrooms_get_affiliation (LmMessageNode       *muc_node);
+static void             jabber_chatrooms_logged_out_cb        (GossipProtocol         *jabber,
+							       GossipAccount          *account,
+							       gint                    reason,
+							       GossipJabberChatrooms  *chatrooms);
+static JabberChatroom * jabber_chatrooms_chatroom_new         (GossipJabberChatrooms  *chatrooms,
+							       GossipChatroom         *chatroom);
+static JabberChatroom * jabber_chatrooms_chatroom_ref         (JabberChatroom         *room);
+static void             jabber_chatrooms_chatroom_unref       (JabberChatroom         *room);
+static GossipChatroomId jabber_chatrooms_chatroom_get_id      (JabberChatroom         *room);
+static GossipContact *  jabber_chatrooms_get_contact          (JabberChatroom         *room,
+							       GossipJID              *jid,
+							       gboolean               *new_contact);
+static LmHandlerResult  jabber_chatrooms_message_handler      (LmMessageHandler       *handler,
+							       LmConnection           *conn,
+							       LmMessage              *message,
+							       GossipJabberChatrooms  *chatrooms);
+static LmHandlerResult  jabber_chatrooms_presence_handler     (LmMessageHandler       *handler,
+							       LmConnection           *conn,
+							       LmMessage              *message,
+							       GossipJabberChatrooms  *chatrooms);
+static LmHandlerResult  jabber_chatrooms_join_cb              (LmMessageHandler       *handler,
+							       LmConnection           *connection,
+							       LmMessage              *message,
+							       JabberChatroom         *room);
+static void             jabber_chatrooms_get_rooms_foreach    (gpointer                key,
+							       JabberChatroom         *room,
+							       GList                 **list);
+static void             jabber_chatrooms_browse_rooms_cb      (GossipJabberDisco      *disco,
+							       GossipJabberDiscoItem  *item,
+							       gboolean                last_item,
+							       gboolean                timeout,
+							       GError                 *error,
+							       GossipCallbackData     *data);
+static void             jabber_chatrooms_set_presence_foreach (gpointer                key,
+							       JabberChatroom         *room,
+							       GossipJabberChatrooms  *chatrooms);
+
+static LmMessageNode *  jabber_chatrooms_find_muc_user_node   (LmMessageNode          *parent_node);
+static GossipChatroomRole 
+                        jabber_chatrooms_get_role             (LmMessageNode          *muc_node);
+static GossipChatroomAffiliation 
+                        jabber_chatrooms_get_affiliation      (LmMessageNode       *muc_node);
 
 GossipJabberChatrooms *
 gossip_jabber_chatrooms_init (GossipJabber *jabber)
@@ -310,7 +320,6 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 	JabberChatroom   *room;
 	LmMessageNode    *node;
 	const gchar      *from;
-
 
 	if (lm_message_get_sub_type (m) != LM_MESSAGE_SUB_TYPE_GROUPCHAT) {
 		return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -662,7 +671,8 @@ gossip_jabber_chatrooms_join (GossipJabberChatrooms *chatrooms,
 						LM_HANDLER_PRIORITY_FIRST);
 
 	/* Some servers don't honor the id so we don't get a reply and
-	   are waiting forever. */
+	 * are waiting forever. 
+	 */
 	lm_connection_send (chatrooms->connection, m,  NULL);
 
 	lm_message_unref (m);
@@ -1134,6 +1144,14 @@ gossip_jabber_chatrooms_invite_decline (GossipJabberChatrooms *chatrooms,
 	lm_message_unref (m);
 }
 
+static void
+jabber_chatrooms_get_rooms_foreach (gpointer               key,
+				    JabberChatroom        *room,
+				    GList                **list)
+{
+	*list = g_list_append (*list, key);
+}
+
 GList *
 gossip_jabber_chatrooms_get_rooms (GossipJabberChatrooms *chatrooms)
 {
@@ -1149,11 +1167,108 @@ gossip_jabber_chatrooms_get_rooms (GossipJabberChatrooms *chatrooms)
 }
 
 static void
-jabber_chatrooms_get_rooms_foreach (gpointer               key,
-				    JabberChatroom        *room,
-				    GList                **list)
+jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
+				  GossipJabberDiscoItem *item,
+				  gboolean               last_item,
+				  gboolean               timeout,
+				  GError                *error,
+				  GossipCallbackData    *data)
 {
-	*list = g_list_append (*list, key);
+	GossipJID             *jid;
+	GossipJabberChatrooms *chatrooms;
+	GossipChatroom        *chatroom = NULL;
+	JabberChatroom        *room;
+	GList                 *list;
+	gchar                 *server;
+
+	if (timeout && !last_item) {
+		return;
+	}
+
+	chatrooms = data->data1;
+	server = data->data2;
+	list = data->data3;
+
+	jid = gossip_jabber_disco_item_get_jid (item);
+	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+
+	if (room) {
+		chatroom = room->chatroom;
+	} 
+
+	if (!room && !timeout) {
+		GossipAccount  *account;
+		const gchar    *server;
+		const gchar    *name;
+		gchar          *room;
+		
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Chatroom found on server not set up here, creating for:'%s'...",
+			      gossip_jid_get_full (jid));
+
+		account = gossip_jabber_get_account (chatrooms->jabber);
+		server = gossip_jid_get_part_host (jid);
+		room = gossip_jid_get_part_name (jid);
+		name = gossip_jabber_disco_item_get_name (item);
+
+		/* Create new chatroom */
+		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
+					 "type", GOSSIP_CHATROOM_TYPE_NORMAL,
+					 "account", account,
+					 "server", server,
+					 "name", room,
+					 "room", room,
+					 NULL);
+		g_free (room);
+	}
+
+	if (chatroom) {
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Chatroom:'%s' added to list found on server:'%s'...",
+			      gossip_chatroom_get_room (chatroom),
+			      gossip_chatroom_get_server (chatroom));
+
+		list = g_list_prepend (list, chatroom);
+		data->data3 = list;
+	}
+
+	if (last_item) {
+		GossipChatroomBrowseCb callback;
+		
+		callback = data->callback;
+		(callback)(GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
+			   server, list, data->user_data);
+
+		g_list_foreach (list, (GFunc) g_object_unref, NULL);
+		g_list_free (list);
+
+		g_free (server);
+
+		g_free (data);
+	}
+}
+
+void
+gossip_jabber_chatrooms_browse_rooms (GossipJabberChatrooms  *chatrooms,
+				      const gchar            *server,
+				      GossipChatroomBrowseCb  callback,
+				      gpointer                user_data)
+{
+	GossipJabberDisco  *disco;
+	GossipCallbackData *data;
+	
+	data = g_new0 (GossipCallbackData, 1);
+	
+	data->callback = callback;
+	data->user_data = user_data;
+	data->data1 = chatrooms;
+	data->data2 = g_strdup (server);
+
+	disco = gossip_jabber_disco_request (chatrooms->jabber,
+					     server,
+					     (GossipJabberDiscoItemFunc) 
+					     jabber_chatrooms_browse_rooms_cb,
+					     data);
 }
 
 static void

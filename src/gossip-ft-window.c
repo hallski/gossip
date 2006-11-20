@@ -300,7 +300,7 @@ ft_window_vcard_cb (GossipResult  result,
 
 	gtk_label_set_text (GTK_LABEL (id_label), gossip_contact_get_id (contact));
 
-	if (url && strlen (url) > 0) {
+	if (!G_STR_EMPTY (url)) {
 		GArray *start, *end;
 
 		start = g_array_new (FALSE, FALSE, sizeof (gint));
@@ -354,7 +354,7 @@ ft_window_request_dialog_cb (GtkWidget *dialog,
 	gtk_widget_destroy (dialog);
 
 /* 	g_return_if_fail (GOSSIP_IS_CONTACT (contact)); */
-/* 	g_return_if_fail (file != NULL && strlen (file) > 0); */
+/* 	g_return_if_fail (!G_STR_EMPTY (file)); */
 
 	if (response == GTK_RESPONSE_YES) {
 		gossip_ft_provider_accept (GOSSIP_FT_PROVIDER (data->protocol),
@@ -395,7 +395,7 @@ gossip_ft_window_send_file_from_uri (GossipContact *contact,
 	GossipFTProvider *provider;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
-	g_return_if_fail (file != NULL && strlen (file) > 0);
+	g_return_if_fail (!G_STR_EMPTY (file));
 
 	account = gossip_contact_get_account (contact);
 

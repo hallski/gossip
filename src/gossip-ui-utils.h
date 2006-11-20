@@ -127,6 +127,10 @@ void       gossip_window_set_default_icon_name      (const gchar         *name);
 void       gossip_url_show                          (const char          *url);
 void       gossip_help_show                         (void);
 
+void       gossip_toggle_button_set_state_quietly   (GtkWidget           *widget,
+						     GCallback            callback,
+						     gpointer             user_data,
+						     gboolean             active);
 GtkWidget *gossip_link_button_new                   (const gchar         *url,
 						     const gchar         *title);
 

@@ -1,6 +1,10 @@
+NEW in 0.20:
+============
+- Added chatroom browsing.
+- Reworked the chatroom joining and creating experience.
 
 NEW in 0.19:
-==============
+============
 - Added the ability to search back and forward through the search
 results in log searching (Martyn Russell). 
 - Fixed #367823, Common crasher with missing strlen() (Mikael Hallendal)

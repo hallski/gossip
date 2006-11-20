@@ -35,7 +35,9 @@ typedef enum {
 typedef struct {
 	gpointer callback;
 	gpointer user_data;
-	gpointer internal_data;
+	gpointer data1;
+	gpointer data2;
+	gpointer data3;
 } GossipCallbackData;
 
 typedef void (*GossipRegisterCallback) (GossipResult       result,

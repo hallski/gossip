@@ -1906,8 +1906,7 @@ gossip_log_search_new (const gchar *text)
 	gchar                *contents_casefold;
 	GList                *hits = NULL;
 
-	g_return_val_if_fail (text != NULL, NULL);
-	g_return_val_if_fail (strlen (text) > 0, NULL);
+	g_return_val_if_fail (!G_STR_EMPTY (text), NULL);
 
 	text_casefold = g_utf8_casefold (text, -1);
 

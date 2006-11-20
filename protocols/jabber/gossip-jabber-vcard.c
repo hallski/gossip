@@ -239,7 +239,7 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 	gossip_debug (DEBUG_DOMAIN, "Setting presence after vcard");
 
 	/* Send our current presence to indicate the avatar has changed */
-	gossip_jabber_send_presence (GOSSIP_JABBER (data->internal_data), NULL);
+	gossip_jabber_send_presence (GOSSIP_JABBER (data->data1), NULL);
 
 	return LM_HANDLER_RESULT_REMOVE_MESSAGE;
 }
@@ -297,7 +297,7 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 
 	data->callback = callback;
 	data->user_data = user_data;
-	data->internal_data = jabber;
+	data->data1 = jabber;
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_set_cb,
 					  data,

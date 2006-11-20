@@ -40,7 +40,7 @@
 
 /* In seconds */
 #define DISCO_TIMEOUT      20
-#define DISCO_INFO_TIMEOUT 10
+#define DISCO_INFO_TIMEOUT 15
 
 typedef struct {
 	gchar *category;

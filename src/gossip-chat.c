@@ -30,6 +30,7 @@
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-app.h"
 #include "gossip-chat.h"
@@ -495,7 +496,7 @@ chat_text_populate_popup_cb (GtkTextView *view,
 						&start, &end, FALSE);
 	}
 
-	if (!str || strlen (str) == 0) {
+	if (G_STR_EMPTY (str)) {
 		return;
 	}
 

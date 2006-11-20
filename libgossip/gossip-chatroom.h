@@ -79,6 +79,7 @@ typedef enum {
 
 GType              gossip_chatroom_get_gtype          (void) G_GNUC_CONST;
 
+/* Gets */
 GossipChatroomType gossip_chatroom_get_type           (GossipChatroom       *chatroom);
 GossipChatroomId   gossip_chatroom_get_id             (GossipChatroom       *chatroom);
 const gchar *      gossip_chatroom_get_id_str         (GossipChatroom       *chatroom);
@@ -94,6 +95,7 @@ GossipChatroomStatus
 const gchar *      gossip_chatroom_get_last_error     (GossipChatroom       *chatroom);
 GossipAccount *    gossip_chatroom_get_account        (GossipChatroom       *chatroom);
 
+/* Sets */
 void               gossip_chatroom_set_type           (GossipChatroom       *chatroom,
 						       GossipChatroomType    type);
 void               gossip_chatroom_set_name           (GossipChatroom       *chatroom,
@@ -116,13 +118,12 @@ void               gossip_chatroom_set_last_error     (GossipChatroom       *cha
 						       const gchar          *last_error);
 void               gossip_chatroom_set_account        (GossipChatroom       *chatroom,
 						       GossipAccount        *account);
-
+/* Utils */
 guint              gossip_chatroom_hash               (gconstpointer         key);
 gboolean           gossip_chatroom_equal              (gconstpointer         v1,
 						       gconstpointer         v2);
 gboolean           gossip_chatroom_equal_full         (gconstpointer         v1,
 						       gconstpointer         v2);
-
 const gchar *      gossip_chatroom_type_to_string     (GossipChatroomType    type);
 const gchar *      gossip_chatroom_status_to_string   (GossipChatroomStatus  status);
 const gchar *      gossip_chatroom_role_to_string     (GossipChatroomRole    role,
@@ -130,7 +131,7 @@ const gchar *      gossip_chatroom_role_to_string     (GossipChatroomRole    rol
 const gchar *      gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation,
 							  gint                      nr);
 
-/* Chatroom invite functions */
+/* Invite functions */
 typedef struct _GossipChatroomInvite GossipChatroomInvite;
 
 GType              gossip_chatroom_invite_get_type    (void) G_GNUC_CONST;

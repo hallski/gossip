@@ -27,6 +27,7 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-paths.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-app.h"
 #include "gossip-avatar-image.h"
@@ -290,7 +291,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	}
 
 	str = gossip_vcard_get_description (vcard);
-	if (str && strlen (str) > 0) {
+	if (!G_STR_EMPTY (str)) {
 		gtk_label_set_text (GTK_LABEL (dialog->description_label), str);
 		gtk_widget_show (dialog->description_vbox);
 	} else {
@@ -298,12 +299,12 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	}
 
 	str = gossip_vcard_get_name (vcard);
-	if (str && strlen (str) > 0) {
+	if (!G_STR_EMPTY (str)) {
 		gtk_label_set_text (GTK_LABEL (dialog->name_label), str);
 	}
 
 	str = gossip_vcard_get_email (vcard);
-	if (str && strlen (str) > 0) {
+	if (!G_STR_EMPTY (str)) {
 		GtkWidget *href, *alignment;
 		gchar     *link;
 
@@ -330,7 +331,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 	}
 
 	str = gossip_vcard_get_url (vcard);
-	if (str && strlen (str) > 0) {
+	if (!G_STR_EMPTY (str)) {
 		GtkWidget *href, *alignment;
 
 		show_personal = TRUE;

@@ -27,13 +27,12 @@
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-account-widget-jabber.h"
 #include "gossip-app.h"
 #include "gossip-marshal.h"
 #include "gossip-ui-utils.h"
-
-#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
 typedef struct {
 	GossipAccount *account;
@@ -148,7 +147,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 		const gchar *str;
 
 		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		if (STRING_EMPTY (str)) {
+		if (G_STR_EMPTY (str)) {
 			if (widget == settings->entry_password) {
 				gossip_account_param_get (settings->account, "password", &str, NULL);
 			} else if (widget == settings->entry_resource) {
@@ -166,7 +165,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 		const gchar *str;
 		
 		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		if (STRING_EMPTY (str)) {
+		if (G_STR_EMPTY (str)) {
 			gchar   *port_str;
 			guint    port;
 
@@ -218,7 +217,7 @@ account_widget_jabber_entry_changed_cb (GtkWidget                 *widget,
 		const gchar *str;
 
 		str = gtk_entry_get_text (GTK_ENTRY (widget));
-		gtk_widget_set_sensitive (settings->button_forget, ! STRING_EMPTY (str));
+		gtk_widget_set_sensitive (settings->button_forget, !G_STR_EMPTY (str));
 	}
 
 	/* Save */
@@ -367,7 +366,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	gtk_entry_set_text (GTK_ENTRY (settings->entry_port), port_str);
 	g_free (port_str);
 
-	gtk_widget_set_sensitive (settings->button_forget, ! STRING_EMPTY (password));
+	gtk_widget_set_sensitive (settings->button_forget, !G_STR_EMPTY (password));
 }
 
 GtkWidget *

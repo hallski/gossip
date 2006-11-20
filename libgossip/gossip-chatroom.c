@@ -33,6 +33,8 @@
 typedef struct _GossipChatroomPriv GossipChatroomPriv;
 
 struct _GossipChatroomPriv {
+	GossipAccount        *account;
+
 	GossipChatroomType    type;
 
 	GossipChatroomId      id;
@@ -49,8 +51,6 @@ struct _GossipChatroomPriv {
 
 	GossipChatroomStatus  status;
 	gchar                *last_error;
-
-	GossipAccount        *account;
 };
 
 struct _GossipChatroomInvite {

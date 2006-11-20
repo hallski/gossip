@@ -29,9 +29,7 @@
 
 #include "gossip-jabber.h"
 
-
 typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
-
 
 GossipJabberChatrooms *
 	       gossip_jabber_chatrooms_init                (GossipJabber          *jabber);
@@ -69,6 +67,11 @@ void           gossip_jabber_chatrooms_invite_decline      (GossipJabberChatroom
 							    GossipChatroomInvite  *invite,
 							    const gchar           *reason);
 GList *        gossip_jabber_chatrooms_get_rooms           (GossipJabberChatrooms *chatrooms);
+void           gossip_jabber_chatrooms_browse_rooms        (GossipJabberChatrooms  *chatrooms,
+							    const gchar            *server,
+							    GossipChatroomBrowseCb  callback,
+							    gpointer                user_data);
+
 void           gossip_jabber_chatrooms_set_presence        (GossipJabberChatrooms *chatrooms,
 							    GossipPresence        *presence);
 gboolean       gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,

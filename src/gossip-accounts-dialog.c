@@ -36,8 +36,6 @@
 /* Flashing delay for icons (milliseconds). */
 #define FLASH_TIMEOUT 500
 
-#define STRING_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
-
 typedef struct {
 	GtkWidget *window;
 
@@ -1326,7 +1324,7 @@ accounts_dialog_entry_focus_cb (GtkWidget            *widget,
  	account = accounts_dialog_model_get_selected (dialog);
 
 	str = gtk_entry_get_text (GTK_ENTRY (widget));
-	if (STRING_EMPTY (str)) {
+	if (G_STR_EMPTY (str)) {
 		str = gossip_account_get_name (account);
 
 		gtk_entry_set_text (GTK_ENTRY (widget), str);
