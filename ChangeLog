@@ -1,3 +1,12 @@
+2006-11-21  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: 
+	* src/gossip-chatrooms-window.c:
+	* src/gossip-edit-chatroom-dialog.c:
+	* src/gossip-new-chatroom-dialog.c:
+	* ui/group-chat.glade: Clean up the chatroom management window and
+	make things a lot smoother to use.
+
 2006-11-20  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/*.[ch]:

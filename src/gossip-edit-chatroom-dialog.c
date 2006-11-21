@@ -26,6 +26,7 @@
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-app.h"
 #include "gossip-edit-chatroom-dialog.h"
@@ -38,7 +39,6 @@ typedef struct {
 	GtkWidget      *entry_server;
 	GtkWidget      *entry_room;
 	GtkWidget      *checkbutton_auto_connect;
-	GtkWidget      *checkbutton_favourite;
 	GtkWidget      *button_save;
 
 	GossipChatroom *chatroom;
@@ -64,7 +64,7 @@ edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 
 	manager = gossip_app_get_chatroom_manager ();
 
-	/* set chatroom information */
+	/* Set chatroom information */
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
 	g_object_set (dialog->chatroom, "name", str, NULL);
 
@@ -81,10 +81,6 @@ edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)
 	g_object_set (dialog->chatroom, "auto_connect",
 		      gtk_toggle_button_get_active (togglebutton), NULL);
 
-	togglebutton = GTK_TOGGLE_BUTTON (dialog->checkbutton_favourite);
-	g_object_set (dialog->chatroom, "favourite",
-		      gtk_toggle_button_get_active (togglebutton), NULL);
-
 	gossip_chatroom_manager_store (manager);
 }
 
@@ -96,13 +92,13 @@ edit_chatroom_dialog_entry_changed_cb (GtkEntry                 *entry,
 	gboolean     disabled = FALSE;
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
-	disabled |= !str || str[0] == 0;
+	disabled |= G_STR_EMPTY (str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_server));
-	disabled |= !str || str[0] == 0;
+	disabled |= G_STR_EMPTY (str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_room));
-	disabled |= !str || str[0] == 0;
+	disabled |= G_STR_EMPTY (str);
 
 	gtk_widget_set_sensitive (dialog->button_save, !disabled);
 }
@@ -112,10 +108,8 @@ edit_chatroom_dialog_response_cb (GtkWidget               *widget,
 				  gint                     response,
 				  GossipEditChatroomDialog *dialog)
 {
-	switch (response) {
-	case GTK_RESPONSE_OK:
+	if (response == GTK_RESPONSE_OK) {
 		edit_chatroom_dialog_set (dialog);
-		break;
 	}
 
 	gtk_widget_destroy (widget);
@@ -151,7 +145,6 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				       "entry_server", &dialog->entry_server,
 				       "entry_room", &dialog->entry_room,
 				       "checkbutton_auto_connect", &dialog->checkbutton_auto_connect,
-				       "checkbutton_favourite", &dialog->checkbutton_favourite,
 				       "button_save", &dialog->button_save,
 				       NULL);
 
@@ -178,9 +171,6 @@ gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 	gtk_toggle_button_set_active (
 		GTK_TOGGLE_BUTTON (dialog->checkbutton_auto_connect),
 		gossip_chatroom_get_auto_connect (chatroom));
-	gtk_toggle_button_set_active (
-		GTK_TOGGLE_BUTTON (dialog->checkbutton_favourite),
-		gossip_chatroom_get_is_favourite (chatroom));
 
 	if (parent) {
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);

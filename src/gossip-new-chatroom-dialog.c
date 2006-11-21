@@ -405,9 +405,7 @@ new_chatroom_dialog_model_row_activated_cb (GtkTreeView             *tree_view,
 					    GtkTreeViewColumn       *column,
 					    GossipNewChatroomDialog *dialog)
 {
-	if (GTK_WIDGET_IS_SENSITIVE (dialog->button_join)) {
-/* 		chatrooms_window_model_action_selected (window); */
-	}
+	gtk_widget_activate (dialog->button_join);
 }
 
 static void
@@ -635,6 +633,7 @@ new_chatroom_dialog_model_setup (GossipNewChatroomDialog *dialog)
 	GtkListStore     *store;
 	GtkTreeSelection *selection;
 
+	/* View */
 	view = GTK_TREE_VIEW (dialog->treeview);
 
 	g_signal_connect (view, "row-activated",

@@ -1053,6 +1053,7 @@ chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 	provider = gossip_group_chat_get_chatroom_provider (group_chat);
 
 	chatroom = gossip_chatroom_provider_find (provider, id);
+	gossip_chatroom_set_favourite (chatroom, TRUE);
 
 	manager = gossip_app_get_chatroom_manager ();
 	gossip_chatroom_manager_add (manager, chatroom);
