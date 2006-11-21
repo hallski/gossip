@@ -1,3 +1,11 @@
+2006-11-21  Xavier Claessens  <xclaesse@gmail.com>
+
+	* src/Makefile.am:
+	* src/gossip-chat-window.c:
+	* src/gossip-notebook.c:
+	* src/gossip-notebook.h: Use new GTK 2.10 API for DnD tabs.
+	GossipNotebook is now useless. Fixes bug #377867.
+
 2006-11-21  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: 
