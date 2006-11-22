@@ -1429,7 +1429,7 @@ chat_window_tab_added_cb (GtkNotebook      *notebook,
 	GossipChatWindowPriv *priv;
 	GossipChat           *chat;
 	GtkWidget            *label;
-	gboolean              expand = TRUE;
+	GossipContact        *contact;
 
 	gossip_debug (DEBUG_DOMAIN, "Tab added");
 
@@ -1445,7 +1445,7 @@ chat_window_tab_added_cb (GtkNotebook      *notebook,
 	gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook), child, label);
 
 	gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (notebook), child,
-					    expand, TRUE, GTK_PACK_START);
+					    TRUE, TRUE, GTK_PACK_START);
 
 	g_signal_connect (chat, "status_changed",
 			  G_CALLBACK (chat_window_status_changed_cb),
@@ -1467,6 +1467,14 @@ chat_window_tab_added_cb (GtkNotebook      *notebook,
 	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 
+	contact = gossip_chat_get_contact (chat);
+	if (contact) {
+		g_signal_connect (contact, 
+				  "notify::avatar",
+				  G_CALLBACK (chat_window_avatar_changed_cb),
+				  window);
+	}
+	
 	gossip_chat_scroll_down (chat);
 }
 
@@ -1478,6 +1486,7 @@ chat_window_tab_removed_cb (GtkNotebook      *notebook,
 {
 	GossipChatWindowPriv *priv;
 	GossipChat           *chat;
+	GossipContact        *contact;
 
 	gossip_debug (DEBUG_DOMAIN, "Tab removed");
 
@@ -1499,6 +1508,14 @@ chat_window_tab_removed_cb (GtkNotebook      *notebook,
 	g_signal_handlers_disconnect_by_func (chat,
 					      G_CALLBACK (chat_window_new_message_cb),
 					      window);
+
+	contact = gossip_chat_get_contact (chat);
+	if (contact) {
+		g_signal_handlers_disconnect_by_func (
+			contact, 
+			chat_window_avatar_changed_cb,
+			window);
+	}
 
 	priv->chats = g_list_remove (priv->chats, chat);
 
@@ -1666,7 +1683,6 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 			     GossipChat	      *chat)
 {
 	GossipChatWindowPriv *priv;
-	GossipContact        *contact;
 	GtkWidget            *label;
 	GtkWidget            *child;
 
@@ -1706,14 +1722,6 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (priv->notebook),
 					 child, TRUE);
 
-	contact = gossip_chat_get_contact (chat);
-	if (contact) {
-		g_signal_connect (contact, 
-				  "notify::avatar",
-				  G_CALLBACK (chat_window_avatar_changed_cb),
-				  window);
-	}
-
 	/* FIXME: somewhat ugly */
 	g_object_ref (chat);
 }
@@ -1723,7 +1731,6 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 				GossipChat	 *chat)
 {
 	GossipChatWindowPriv *priv;
-	GossipContact        *contact;
 	gint                  position;
 
 	gossip_debug (DEBUG_DOMAIN, "Removing chat");
@@ -1734,14 +1741,6 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 					  gossip_chat_get_widget (chat));
 	gtk_notebook_remove_page (GTK_NOTEBOOK (priv->notebook),
 				  position);
-
-	contact = gossip_chat_get_contact (chat);
-	if (contact) {
-		g_signal_handlers_disconnect_by_func 
-			(contact, 
-			 chat_window_avatar_changed_cb,
-			 window);
-	}
 
 	/* FIXME: somewhat ugly */
 	g_object_unref (chat);

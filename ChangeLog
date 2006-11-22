@@ -1,3 +1,12 @@
+2006-11-22  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_tab_added_cb),
+	(chat_window_tab_removed_cb), (gossip_chat_window_add_chat),
+	(gossip_chat_window_remove_chat): Connect/disconnect the avatar
+	changed callback in the right place so it covers all the
+	cases. Fixes crash when someone changes avatar after dragging the
+	tab.
+
 2006-11-22  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: 
