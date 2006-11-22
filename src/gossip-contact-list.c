@@ -368,16 +368,16 @@ static const gchar *ui_info =
 	"</ui>";
 
 enum DndDragType {
-	DND_DRAG_TYPE_STRING,
-	DND_DRAG_TYPE_URL,
 	DND_DRAG_TYPE_CONTACT_ID,
+	DND_DRAG_TYPE_URL,
+	DND_DRAG_TYPE_STRING,
 };
 
 static const GtkTargetEntry drag_types_dest[] = {
-	{ "STRING",          0, DND_DRAG_TYPE_STRING },
-	{ "text/plain",      0, DND_DRAG_TYPE_STRING },
-	{ "text/uri-list",   0, DND_DRAG_TYPE_URL },
 	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
+	{ "text/uri-list",   0, DND_DRAG_TYPE_URL },
+	{ "text/plain",      0, DND_DRAG_TYPE_STRING },
+	{ "STRING",          0, DND_DRAG_TYPE_STRING },
 };
 
 static const GtkTargetEntry drag_types_source[] = {

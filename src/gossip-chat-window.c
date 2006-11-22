@@ -406,7 +406,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 			   GTK_DEST_DEFAULT_ALL,
 			   drop_types,
 			   G_N_ELEMENTS (drop_types),
-			   GDK_ACTION_COPY);
+			   GDK_ACTION_MOVE);
 
 	g_signal_connect (priv->notebook,
 			  "drag-data-received",
@@ -1553,41 +1553,46 @@ chat_window_drag_data_received (GtkWidget        *widget,
 	const gchar       *id;
 
 	if (info == DND_DROP_TYPE_TAB) {
-		gossip_debug (DEBUG_DOMAIN, "Received DnD tab");
-	} else if (info == DND_DROP_TYPE_CONTACT_ID) {
-		id = (const gchar*) selection->data;
-		gossip_debug (DEBUG_DOMAIN, "Received drag & drop contact "
-			      "from roster with id:'%s'",
-			      id);
+		gossip_debug (DEBUG_DOMAIN, "Received drag & drop tab");
+		return;
+	}
 
-		contact = gossip_session_find_contact (gossip_app_get_session (), id);
+	if (info != DND_DROP_TYPE_CONTACT_ID) {
+		gossip_debug (DEBUG_DOMAIN, "Received drag & drop info not known");
+		return;
+	}
 
-		if (!contact) {
-			gossip_debug (DEBUG_DOMAIN, "No contact found associated "
-				      "with drag & drop");
+	id = (const gchar*) selection->data;
+	gossip_debug (DEBUG_DOMAIN,
+		      "Received drag & drop contact "
+		      "from roster with id:'%s'",
+		      id);
+	
+	contact = gossip_session_find_contact (gossip_app_get_session (), id);
+	if (!contact) {
+		gossip_debug (DEBUG_DOMAIN, "No contact found associated with drag & drop");
+		return;
+	}
+	
+	manager = gossip_app_get_chat_manager ();
+	chat = GOSSIP_CHAT (gossip_chat_manager_get_chat (manager, contact));
+	old_window = gossip_chat_get_window (chat);
+	
+	if (old_window) {
+		if (old_window == window) {
+			gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
 			return;
 		}
-
-		manager = gossip_app_get_chat_manager ();
-		chat = GOSSIP_CHAT (gossip_chat_manager_get_chat (manager, contact));
-		old_window = gossip_chat_get_window (chat);
-
-		if (old_window) {
-			if (old_window == window) {
-				gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
-				return;
-			}
-
-			gossip_chat_window_remove_chat (old_window, chat);
-		}
-
-		gossip_chat_window_add_chat (window, chat);
-
-		/* added to take care of any outstanding chat events */
-		gossip_chat_manager_show_chat (manager, contact);
-
-		gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
+		
+		gossip_chat_window_remove_chat (old_window, chat);
 	}
+	
+	gossip_chat_window_add_chat (window, chat);
+	
+	/* Added to take care of any outstanding chat events */
+	gossip_chat_manager_show_chat (manager, contact);
+	
+	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
 }
 
 static gboolean

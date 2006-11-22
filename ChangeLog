@@ -1,3 +1,9 @@
+2006-11-22  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: 
+	* src/gossip-contact-list.c: Make it possible to drag from the
+	roster into the chat window again. 
+
 2006-11-21  Xavier Claessens  <xclaesse@gmail.com>
 
 	* src/Makefile.am:
@@ -27,7 +33,6 @@
 	big enough and common enough.
 	- Implemented browsing chatrooms (this is dodgy with SSL on
 	conference.jabber.org with its 1000+ rooms).
-
 
 2006-11-17  Xavier Claessens  <xclaesse@gmail.com>
 
