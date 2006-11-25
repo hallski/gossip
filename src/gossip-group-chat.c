@@ -224,12 +224,12 @@ enum {
 	NUMBER_OF_COLS
 };
 
-enum DndDragType {
+typedef enum {
 	DND_DRAG_TYPE_CONTACT_ID,
-};
+} DndDragType;
 
-static const GtkTargetEntry drop_types[] = {
-	{ "text/contact-id", 0, DND_DRAG_TYPE_CONTACT_ID },
+static const GtkTargetEntry drag_types_dest[] = {
+	{ "text/contact-id", GTK_TARGET_SAME_APP, DND_DRAG_TYPE_CONTACT_ID },
 };
 
 static GHashTable *group_chats = NULL;
@@ -567,33 +567,41 @@ group_chat_drag_data_received (GtkWidget        *widget,
 			       guint             time,
 			       GossipGroupChat  *chat)
 {
-	GossipGroupChatPriv *priv;
-	GossipContact       *contact;
-	const gchar         *id;
-	gchar               *str;
+	if (info == DND_DRAG_TYPE_CONTACT_ID) {
+		GossipGroupChatPriv *priv;
+		GossipContact       *contact;
+		const gchar         *id;
+		gchar               *str;
 
-	priv = GET_PRIV (chat);
-
-	id = (const gchar*) selection->data;
-	/*g_print ("Received drag & drop contact from roster with id:'%s'\n", id);*/
-
-	contact = gossip_session_find_contact (gossip_app_get_session (), id);
-
-	if (!contact) {
-		/*g_print ("No contact found associated with drag & drop\n");*/
-		return;
+		priv = GET_PRIV (chat);
+		
+		id = (const gchar*) selection->data;
+		
+		contact = gossip_session_find_contact (gossip_app_get_session (), id);
+		if (!contact) {
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Drag data received, but no contact found by the id:'%s'", 
+				      id);
+			return;
+		}
+		
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Drag data received, for contact:'%s'", 
+			      id);
+		
+		/* send event to chat window */
+		str = g_strdup_printf (_("Invited %s to join this chat conference."),
+				       gossip_contact_get_id (contact));
+		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		g_free (str);
+		
+		gossip_chat_invite_dialog_show (contact, priv->chatroom_id);
+		
+		gtk_drag_finish (context, TRUE, FALSE, time);
+	} else {
+		gossip_debug (DEBUG_DOMAIN, "Received drag & drop from unknown source");
+		gtk_drag_finish (context, FALSE, FALSE, time);
 	}
-
-	/* send event to chat window */
-	str = g_strdup_printf (_("Invited %s to join this chat conference."),
-			       gossip_contact_get_id (contact));
-	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
-	g_free (str);
-
-	gossip_chat_invite_dialog_show (contact, priv->chatroom_id);
-
-	/* clean up dnd */
-	gtk_drag_finish (context, TRUE, FALSE, GDK_CURRENT_TIME);
 }
 
 static void
@@ -878,6 +886,7 @@ group_chat_create_gui (GossipGroupChat *chat)
 			      "topic_entry", "activate", group_chat_topic_activate_cb,
 			      NULL);
 
+	g_object_ref (priv->widget);
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
 	gtk_container_add (GTK_CONTAINER (priv->textview_sw),
@@ -898,12 +907,12 @@ group_chat_create_gui (GossipGroupChat *chat)
 			  G_CALLBACK (group_chat_focus_in_event_cb),
 			  chat);
 
-	/* drag & drop */
+	/* Drag & drop */
 	gtk_drag_dest_set (GTK_WIDGET (priv->treeview),
 			   GTK_DEST_DEFAULT_ALL,
-			   drop_types,
-			   G_N_ELEMENTS (drop_types),
-			   GDK_ACTION_COPY);
+			   drag_types_dest,
+			   G_N_ELEMENTS (drag_types_dest),
+			   GDK_ACTION_MOVE);
 
 	g_signal_connect (priv->treeview,
 			  "drag-data-received",

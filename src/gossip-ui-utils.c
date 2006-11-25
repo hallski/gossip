@@ -675,6 +675,8 @@ gossip_window_get_is_visible (GtkWindow *window)
 {
 	gboolean visible;
 
+	g_return_val_if_fail (window != NULL, FALSE);
+
 	g_object_get (window,
 		      "visible", &visible,
 		      NULL);
@@ -690,6 +692,8 @@ gossip_window_present (GtkWindow *window,
 	gboolean visible;
 	gboolean on_current;
 	guint32  timestamp;
+
+	g_return_if_fail (window != NULL);
 
 	/* There are three cases: hidden, visible, visible on another
 	 * workspace.

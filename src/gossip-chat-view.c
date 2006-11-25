@@ -268,7 +268,7 @@ gossip_chat_view_class_init (GossipChatViewClass *klass)
 
 	object_class->finalize = chat_view_finalize;
 	widget_class->size_allocate = chat_view_size_allocate;
-	widget_class->drag_motion = chat_view_drag_motion;
+ 	widget_class->drag_motion = chat_view_drag_motion; 
 
 	g_type_class_add_private (object_class, sizeof (GossipChatViewPriv));
 }
@@ -363,7 +363,7 @@ chat_view_drag_motion (GtkWidget        *widget,
 	 * the result of dragging something across it.
 	 */
 
-	return TRUE;
+	return FALSE;
 }
 
 static void

@@ -1,3 +1,28 @@
+2006-11-25  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-view.c: (gossip_chat_view_class_init),
+	(chat_view_drag_motion): Returned FALSE instead of TRUE here so
+	that dragging tabs between windows isn't random any more. The drag
+	was being disruppted whenever the GossipChatView received a drag
+	motion event.
+	
+	* src/gossip-chat-window.c: Cleaned up the code a little and made
+	some minor improvements such as: group chat tabs are now shown on
+	the right hand side of the chat window and normal chats on the
+	left. Tabs are now the exact width they need to be, (i.e. no
+	ellipsizing) which isn't final but I want to see how much better
+	it is than using fixed widths and possibly fix it up to do a bit
+	of both somehow.
+
+	* src/gossip-group-chat.c (group_chat_create_gui): Fixed a crasher
+	with the priv->widget group chat widget not being referenced, so
+	when you would drag a group chat tab out to a new window it was
+	crashing (which worked perfectly with normal chats of course).  
+
+	* src/gossip-ui-utils.c: (gossip_window_get_is_visible),
+	(gossip_window_present): NULL check these functions so we don't
+	crash with random crap.
+	
 2006-11-22  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_tab_added_cb),
