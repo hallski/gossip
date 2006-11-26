@@ -194,19 +194,19 @@ gossip_message_init (GossipMessage *message)
 
 	priv = GET_PRIV (message);
 
-	priv->recipient         = NULL;
-	priv->sender            = NULL;
-	priv->resource          = NULL;
+	priv->recipient = NULL;
+	priv->sender = NULL;
+	priv->resource = NULL;
 
-	priv->subject           = NULL;
-	priv->body              = NULL;
-	priv->thread            = NULL;
+	priv->subject = NULL;
+	priv->body = NULL;
+	priv->thread = NULL;
 
-	priv->timestamp         = gossip_time_get_current ();
+	priv->timestamp = gossip_time_get_current ();
 
 	priv->request_composing = FALSE;
 
-	priv->invite            = NULL;
+	priv->invite = NULL;
 }
 
 static void

@@ -1,5 +1,17 @@
 2006-11-26  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-contact.c: (gossip_contact_add_presence),
+	(gossip_contact_remove_presence):
+	* libgossip/gossip-presence.c: (gossip_presence_init),
+	(gossip_presence_sort_func):
+	* libgossip/gossip-presence.h: Improve the presence sorting
+	function so that we don't just compare the priority (which in an
+	Ideal world with just the Jabber protocol would be fine). Now we
+	compare 1. state, 2. priority, 3. time we received it. This fixes
+	bug #369330.
+	
+2006-11-26  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-app.c: (app_setup), (app_status_icon_create),
 	(app_status_icon_check_embedded_cb): After discovering that the
 	GtkStatusIcon doesn't have an "embedded" signal, just a function

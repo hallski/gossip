@@ -624,34 +624,45 @@ gossip_contact_add_presence (GossipContact  *contact,
 			     GossipPresence *presence)
 {
 	GossipContactPriv *priv;
+	GossipPresence    *this_presence;
 	GList             *l;
-	gboolean           old;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
 	priv = GET_PRIV (contact);
 
-	old = FALSE;
+	for (l = priv->presences; l && presence; l = l->next) {
+		this_presence = l->data;
 
-	for (l = priv->presences; l; l = l->next) {
-		if (gossip_presence_resource_equal (l->data, presence)) {
-			/* Replace the old presence with the new */
-			g_object_unref (l->data);
-			l->data = g_object_ref (presence);
-			old = TRUE;
+		if (gossip_presence_resource_equal (this_presence, presence)) {
+			gint ref_count;
+
+			ref_count = G_OBJECT (presence)->ref_count;
+
+			/* Remove old presence for this resource, we
+			 * would use g_list_remove_all() here but we
+			 * want to make sure we unref for each
+			 * instance we find it in the list.
+			 */
+			priv->presences = g_list_remove (priv->presences, this_presence);
+			g_object_unref (this_presence);
+
+			if (!priv->presences || ref_count <= 1) {
+				break;
+			}
+
+			/* Reset list to beginnging to make sure we
+			 * didn't miss any duplicates.
+			 */
+			l = priv->presences;
 		}
 	}
 
-	if (!old) {
-		priv->presences = g_list_prepend (priv->presences,
-						  g_object_ref (presence));
-	}
-
-	priv->presences = g_list_sort (priv->presences,
-				       gossip_presence_priority_sort_func);
-	/* Highest priority first */
-	priv->presences = g_list_reverse (priv->presences);
+	/* Add new presence */
+	priv->presences = g_list_insert_sorted (priv->presences, 
+						g_object_ref (presence),
+						gossip_presence_sort_func);
 }
 
 void
@@ -659,6 +670,7 @@ gossip_contact_remove_presence (GossipContact  *contact,
 				GossipPresence *presence)
 {
 	GossipContactPriv *priv;
+	GossipPresence    *this_presence;
 	GList             *l;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
@@ -667,22 +679,34 @@ gossip_contact_remove_presence (GossipContact  *contact,
 	priv = GET_PRIV (contact);
 
 	for (l = priv->presences; l; l = l->next) {
-		if (gossip_presence_resource_equal (l->data, presence)) {
-			break;
+		this_presence = l->data;
+
+		if (gossip_presence_resource_equal (this_presence, presence)) {
+			gint ref_count;
+
+			ref_count = G_OBJECT (presence)->ref_count;
+
+			/* Remove old presence for this resource, we
+			 * would use g_list_remove_all() here but we
+			 * want to make sure we unref for each
+			 * instance we find it in the list.
+			 */
+			priv->presences = g_list_remove (priv->presences, this_presence);
+			g_object_unref (this_presence);
+
+			if (!priv->presences || ref_count <= 1) {
+				break;
+			}
+
+			/* Reset list to beginnging to make sure we
+			 * didn't miss any duplicates.
+			 */
+			l = priv->presences;
 		}
 	}
 
-	if (l) {
-		priv->presences = g_list_remove_link (priv->presences, l);
-
-		g_object_unref (l->data);
-		g_list_free_1 (l);
-	}
-
 	priv->presences = g_list_sort (priv->presences,
-				       gossip_presence_priority_sort_func);
-	/* Highest priority first */
-	priv->presences = g_list_reverse (priv->presences);
+				       gossip_presence_sort_func);
 }
 
 gboolean

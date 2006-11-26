@@ -71,7 +71,7 @@ void                gossip_presence_set_priority             (GossipPresence    
 							      gint                 priority);
 gboolean            gossip_presence_resource_equal           (gconstpointer        a,
 							      gconstpointer        b);
-gint                gossip_presence_priority_sort_func       (gconstpointer        a,
+gint                gossip_presence_sort_func                (gconstpointer        a,
 							      gconstpointer        b);
 
 const gchar *       gossip_presence_state_get_default_status (GossipPresenceState  state);

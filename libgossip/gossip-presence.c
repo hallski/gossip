@@ -25,6 +25,7 @@
 
 #include "gossip-utils.h"
 #include "gossip-presence.h"
+#include "gossip-time.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRESENCE, GossipPresencePriv))
 
@@ -32,11 +33,12 @@ typedef struct _GossipPresencePriv GossipPresencePriv;
 
 struct _GossipPresencePriv {
 	GossipPresenceState  state;
-	gchar               *status;
 
+	gchar               *status;
 	gchar               *resource;
 
 	gint                 priority;
+	gossip_time_t        timestamp;
 };
 
 static void         presence_finalize           (GObject             *object);
@@ -113,10 +115,14 @@ gossip_presence_init (GossipPresence *presence)
 
 	priv = GET_PRIV (presence);
 
-	priv->state    = GOSSIP_PRESENCE_STATE_AVAILABLE;
-	priv->status   = NULL;
+	priv->state = GOSSIP_PRESENCE_STATE_AVAILABLE;
+
+	priv->status = NULL;
 	priv->resource = NULL;
+
 	priv->priority = 0;
+
+	priv->timestamp = gossip_time_get_current ();
 }
 
 static void
@@ -362,19 +368,49 @@ gossip_presence_resource_equal (gconstpointer a,
 }
 
 gint
-gossip_presence_priority_sort_func (gconstpointer a,
-				    gconstpointer b)
+gossip_presence_sort_func (gconstpointer a,
+			   gconstpointer b)
 {
-	GossipPresencePriv *priv1;
-	GossipPresencePriv *priv2;
+	GossipPresencePriv *priv_a;
+	GossipPresencePriv *priv_b;
+	gint                diff;
 
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (a), 0);
 	g_return_val_if_fail (GOSSIP_IS_PRESENCE (b), 0);
 
-	priv1 = GET_PRIV (a);
-	priv2 = GET_PRIV (b);
+	/* We sort here by priority AND status, in theory, the
+	 * priority would be enough for JUST Jabber contacts which
+	 * actually abide to the protocol, but for other protocols and
+	 * dodgy clients, we will sort by:
+	 *   
+	 *    1. State
+	 *    2. Priority
+	 *    3. Time it was set (most recent first).
+	 */
+	 
+	priv_a = GET_PRIV (a);
+	priv_b = GET_PRIV (b);
 
-	return priv1->priority - priv2->priority;
+	/* 1. State */
+	diff = priv_a->state - priv_b->state;
+	if (diff != 0) {
+		return diff < 1 ? -1 : +1;
+	}
+
+	/* 2. Priority */
+	diff = priv_a->priority - priv_b->priority;
+	if (diff != 0) {
+		return diff < 1 ? -1 : +1;
+	}
+
+	/* 3. Time (newest first) */
+	diff = priv_b->timestamp - priv_a->timestamp;
+	if (diff != 0) {
+		return diff < 1 ? -1 : +1;
+	}
+		
+	/* No real difference, except maybe resource */
+	return 0;
 }
 
 const gchar *
