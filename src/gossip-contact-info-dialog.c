@@ -61,8 +61,6 @@ typedef struct {
 	GtkWidget     *client_not_avail_label;
 	GtkWidget     *client_table;
 
-	GtkWidget     *subscription_hbox;
-	GtkWidget     *subscription_label;
 	GtkWidget     *presence_list_vbox;
 	GtkWidget     *presence_table;
 
@@ -77,7 +75,6 @@ typedef struct {
 } GossipContactInfoDialog;
 
 static void contact_info_dialog_init                 (void);
-static void contact_info_dialog_update_subscription  (GossipContactInfoDialog *dialog);
 static void contact_info_dialog_update_presences     (GossipContactInfoDialog *dialog);
 static void contact_info_dialog_get_vcard_cb         (GossipResult             result,
 						      GossipVCard             *vcard,
@@ -85,14 +82,9 @@ static void contact_info_dialog_get_vcard_cb         (GossipResult             r
 static void contact_info_dialog_get_version_cb       (GossipResult             result,
 						      GossipVersionInfo       *version_info,
 						      GossipContact           *contact);
-static void contact_info_dialog_contact_updated_cb   (GossipSession           *session,
-						      GossipContact           *contact,
-						      gpointer                 user_data);
 static void contact_info_dialog_presence_updated_cb  (GossipSession           *session,
 						      GossipContact           *contact,
 						      gpointer                 user_data);
-static void contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget,
-						      GossipContactInfoDialog *dialog);
 static void contact_info_dialog_destroy_cb           (GtkWidget               *widget,
 						      GossipContactInfoDialog *dialog);
 static void contact_info_dialog_response_cb          (GtkWidget               *widget,
@@ -112,24 +104,6 @@ contact_info_dialog_init (void)
 					 gossip_contact_equal,
 					 g_object_unref,
 					 NULL);
-}
-
-static void
-contact_info_dialog_update_subscription (GossipContactInfoDialog *dialog)
-{
-	GossipSubscription subscription;
-
-	g_return_if_fail (dialog != NULL);
-	g_return_if_fail (GOSSIP_IS_CONTACT (dialog->contact));
-
-	subscription = gossip_contact_get_subscription (dialog->contact);
-
-	if (subscription == GOSSIP_SUBSCRIPTION_NONE ||
-	    subscription == GOSSIP_SUBSCRIPTION_FROM) {
-		gtk_widget_show_all (dialog->subscription_hbox);
-	} else {
-		gtk_widget_hide (dialog->subscription_hbox);
-	}
 }
 
 static void
@@ -435,27 +409,6 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 }
 
 static void
-contact_info_dialog_contact_updated_cb (GossipSession           *session,
-					GossipContact           *contact,
-					gpointer                 user_data)
-{
-	GossipContactInfoDialog *dialog;
-
-	dialog = g_hash_table_lookup (dialogs, contact);
-
-	if (!dialog) {
-		return;
-	}
-
-	if (!gossip_contact_equal (contact, dialog->contact)) {
-		return;
-	}
-
-	contact_info_dialog_update_subscription (dialog);
-	contact_info_dialog_update_presences (dialog);
-}
-
-static void
 contact_info_dialog_presence_updated_cb (GossipSession *session,
 					 GossipContact *contact,
 					 gpointer       user_data)
@@ -473,29 +426,6 @@ contact_info_dialog_presence_updated_cb (GossipSession *session,
 	}
 
 	contact_info_dialog_update_presences (dialog);
-}
-
-static void
-contact_info_dialog_subscribe_clicked_cb (GtkWidget               *widget,
-					  GossipContactInfoDialog *dialog)
-{
-	GossipSession *session;
-	GossipAccount *account;
-	const gchar   *message;
-
-	message = _("I would like to add you to my contact list.");
-
-	session = gossip_app_get_session ();
-	account = gossip_session_find_account (session, dialog->contact);
-
-	gossip_session_add_contact (session,
-				    account,
-				    gossip_contact_get_id (dialog->contact),
-				    gossip_contact_get_name (dialog->contact),
-				    NULL, /* group */
-				    message);
-
-	g_object_unref (account);
 }
 
 static void
@@ -597,8 +527,6 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 				       "client_status_label", &dialog->client_status_label,
 				       "client_status_hbox", &dialog->client_status_hbox,
 				       "client_vbox", &dialog->client_vbox,
-				       "subscription_hbox", &dialog->subscription_hbox,
-				       "subscription_label", &dialog->subscription_label,
 				       "presence_list_vbox", &dialog->presence_list_vbox,
 				       "presence_table", &dialog->presence_table,
 				       "avatar_image_placeholder", &avatar_image_placeholder,
@@ -622,7 +550,6 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 			      dialog,
 			      "contact_information_dialog", "destroy", contact_info_dialog_destroy_cb,
 			      "contact_information_dialog", "response", contact_info_dialog_response_cb,
-			      "subscribe_button", "clicked", contact_info_dialog_subscribe_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
@@ -651,15 +578,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 	}
 
 	/* Set details */
-	contact_info_dialog_update_subscription (dialog);
 	contact_info_dialog_update_presences (dialog);
-
-	/* Subscription listener */
-	id = g_signal_connect (session,
-			       "contact-updated",
-			       G_CALLBACK (contact_info_dialog_contact_updated_cb),
-			       NULL);
-	dialog->contact_signal_handler = id;
 
 	/* Presence listener */
 	id = g_signal_connect (session,

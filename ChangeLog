@@ -1,5 +1,13 @@
 2006-11-26  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-edit-contact-dialog.c:
+	* ui/main.glade: Move the subscription information from the
+	contact info to the edit contact dialog, this is more appropriate
+	and fixes bug #305371.
+
+2006-11-26  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-contact.c: (gossip_contact_add_presence),
 	(gossip_contact_remove_presence):
 	* libgossip/gossip-presence.c: (gossip_presence_init),

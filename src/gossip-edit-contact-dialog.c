@@ -37,10 +37,15 @@ typedef struct {
 	GtkWidget       *button_add;
 	GtkWidget       *treeview;
 	GtkWidget       *button_ok;
+	GtkWidget       *frame_subscription;
+	GtkWidget       *label_subscription;
+	GtkWidget       *button_subscribe;
 
 	GossipContact   *contact;
 	GtkCellRenderer *renderer;
 	gboolean         changes_made;
+
+	gulong           contact_signal_handler;
 } GossipEditContactDialog;
 
 typedef struct {
@@ -84,6 +89,10 @@ static gboolean edit_contact_dialog_model_find_selected_foreach  (GtkTreeModel  
 								  GtkTreePath             *path,
 								  GtkTreeIter             *iter,
 								  FindSelected            *data);
+static void     edit_contact_dialog_update_widgets               (GossipContact           *contact);
+static void     edit_contact_dialog_contact_updated_cb           (GossipSession           *session,
+								  GossipContact           *contact,
+								  gpointer                 user_data);
 static void     edit_contact_dialog_cell_toggled                 (GtkCellRendererToggle   *cell,
 								  gchar                   *path_string,
 								  GossipEditContactDialog *dialog);
@@ -95,6 +104,8 @@ static void     edit_contact_dialog_button_retrieve_get_vcard_cb (GossipResult  
 								  GossipVCard             *vcard,
 								  GossipContact           *contact);
 static void     edit_contact_dialog_button_retrieve_clicked_cb   (GtkButton               *button,
+								  GossipEditContactDialog *dialog);
+static void     edit_contact_dialog_button_subscribe_clicked_cb  (GtkWidget               *widget,
 								  GossipEditContactDialog *dialog);
 static void     edit_contact_dialog_destroy_cb                   (GtkWidget               *widget,
 								  GossipEditContactDialog *dialog);
@@ -142,6 +153,20 @@ edit_contact_dialog_save_groups (GossipEditContactDialog *dialog)
 
 	g_list_foreach (groups, (GFunc)g_free, NULL);
 	g_list_free (groups);
+}
+
+static gboolean
+edit_contact_dialog_can_save (GossipEditContactDialog *dialog)
+{
+	const gchar *name;
+	gboolean    ok = TRUE;
+
+	name = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
+
+	ok &= dialog->changes_made == TRUE;
+	ok &= !G_STR_EMPTY (name);
+
+	return ok;
 }
 
 static void
@@ -383,18 +408,38 @@ edit_contact_dialog_model_find_selected (GossipEditContactDialog *dialog)
 	return data.list;
 }
 
-static gboolean
-edit_contact_dialog_can_save (GossipEditContactDialog *dialog)
+static void
+edit_contact_dialog_update_widgets (GossipContact *contact)
 {
-	const gchar *name;
-	gboolean    ok = TRUE;
+	GossipEditContactDialog *dialog;
+	GossipSubscription       subscription;
 
-	name = gtk_entry_get_text (GTK_ENTRY (dialog->entry_name));
+	dialog = g_hash_table_lookup (dialogs, contact);
 
-	ok &= dialog->changes_made == TRUE;
-	ok &= !G_STR_EMPTY (name);
+	if (!dialog) {
+		return;
+	}
 
-	return ok;
+	if (!gossip_contact_equal (contact, dialog->contact)) {
+		return;
+	}
+
+	subscription = gossip_contact_get_subscription (dialog->contact);
+
+	if (subscription == GOSSIP_SUBSCRIPTION_NONE ||
+	    subscription == GOSSIP_SUBSCRIPTION_FROM) {
+		gtk_widget_show_all (dialog->frame_subscription);
+	} else {
+		gtk_widget_hide (dialog->frame_subscription);
+	}
+}
+
+static void
+edit_contact_dialog_contact_updated_cb (GossipSession           *session,
+					GossipContact           *contact,
+					gpointer                 user_data)
+{
+	edit_contact_dialog_update_widgets (contact);	
 }
 
 static void
@@ -553,6 +598,29 @@ edit_contact_dialog_button_retrieve_clicked_cb (GtkButton               *button,
 }
 
 static void
+edit_contact_dialog_button_subscribe_clicked_cb (GtkWidget               *widget,
+						 GossipEditContactDialog *dialog)
+{
+	GossipSession *session;
+	GossipAccount *account;
+	const gchar   *message;
+
+	message = _("I would like to add you to my contact list.");
+
+	session = gossip_app_get_session ();
+	account = gossip_session_find_account (session, dialog->contact);
+
+	gossip_session_add_contact (session,
+				    account,
+				    gossip_contact_get_id (dialog->contact),
+				    gossip_contact_get_name (dialog->contact),
+				    NULL, /* group */
+				    message);
+
+	g_object_unref (account);
+}
+
+static void
 edit_contact_dialog_response_cb (GtkWidget               *widget,
 				 gint                     response,
 				 GossipEditContactDialog *dialog)
@@ -575,6 +643,11 @@ edit_contact_dialog_destroy_cb (GtkWidget               *widget,
 
 	g_hash_table_remove (dialogs, dialog->contact);
 
+	if (dialog->contact_signal_handler) {
+		g_signal_handler_disconnect (gossip_app_get_session (),
+					     dialog->contact_signal_handler);
+	}
+
 	g_free (dialog);
 }
 
@@ -583,11 +656,13 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 				 GtkWindow     *parent)
 {
 	GossipEditContactDialog *dialog;
+	GossipSession           *session;
 	GladeXML                *glade;
-	gchar                   *id;
-	gchar                   *str;
 	GList                   *groups;
 	GtkSizeGroup            *size_group;
+	gchar                   *id_escaped;
+	gchar                   *str;
+	guint                    id;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
@@ -616,6 +691,9 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 				       "button_add", &dialog->button_add,
 				       "treeview", &dialog->treeview,
 				       "button_ok", &dialog->button_ok,
+				       "frame_subscription", &dialog->frame_subscription,
+				       "label_subscription", &dialog->label_subscription,
+				       "button_subscribe", &dialog->button_subscribe,
 				       NULL);
 
 	gossip_glade_connect (glade,
@@ -627,6 +705,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 			      "entry_group", "activate", edit_contact_dialog_entry_group_activate_cb,
 			      "button_add", "clicked", edit_contact_dialog_button_add_clicked_cb,
 			      "button_retrieve", "clicked", edit_contact_dialog_button_retrieve_clicked_cb,
+			      "button_subscribe", "clicked", edit_contact_dialog_button_subscribe_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
@@ -636,16 +715,27 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 			    gossip_contact_get_name (dialog->contact));
 	gtk_editable_select_region (GTK_EDITABLE (dialog->entry_name), 0, -1);
 
-	id = g_markup_escape_text (gossip_contact_get_id (contact), -1);
+	id_escaped = g_markup_escape_text (gossip_contact_get_id (contact), -1);
 	str = g_strdup_printf (_("Set the alias you want to use for:\n"
 				 "<b>%s</b>\n"
 				 "\n"
 				 "You can retrieve contact information from the server."),
-			       id);
-	g_free (id);
+			       id_escaped);
+	g_free (id_escaped);
 
 	gtk_label_set_markup (GTK_LABEL (dialog->label_name), str);
 	g_free (str);
+
+	/* Subscription listener */
+	session = gossip_app_get_session ();
+	id = g_signal_connect (session,
+			       "contact-updated",
+			       G_CALLBACK (edit_contact_dialog_contact_updated_cb),
+			       NULL);
+	dialog->contact_signal_handler = id;
+
+	/* Set up contact subscription widgets */
+	edit_contact_dialog_update_widgets (contact);	
 
 	/* Set up groups */
 	groups = gossip_contact_get_groups (contact);
@@ -656,6 +746,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 	/* Line up buttons */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	gtk_size_group_add_widget (size_group, dialog->button_retrieve);
+	gtk_size_group_add_widget (size_group, dialog->button_subscribe);
 	gtk_size_group_add_widget (size_group, dialog->button_add);
 	g_object_unref (size_group);
 
@@ -664,5 +755,5 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 		gtk_window_set_transient_for (GTK_WINDOW (dialog->dialog), parent);
 	}
 
-	gtk_widget_show_all (dialog->dialog);
+	gtk_widget_show (dialog->dialog);
 }
