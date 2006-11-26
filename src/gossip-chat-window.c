@@ -58,6 +58,7 @@ struct _GossipChatWindowPriv {
 
 	gboolean     new_msg;
 	gboolean     page_added;
+	gboolean     dnd_same_window;
 
 	guint        urgency_timeout_id;
 
@@ -1440,9 +1441,19 @@ chat_window_page_added_cb (GtkNotebook      *notebook,
 	GossipChat           *chat;
 	GossipContact        *contact;
 
-	gossip_debug (DEBUG_DOMAIN, "Page added");
-
 	priv = GET_PRIV (window);
+
+	/* If we just received DND to the same window, we don't want
+	 * to do anything here like removing the tab and then readding
+	 * it, so we return here and in "page-added".
+	 */
+	if (priv->dnd_same_window) {
+		gossip_debug (DEBUG_DOMAIN, "Page added (back to the same window)");
+		priv->dnd_same_window = FALSE;
+		return;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Page added");
 
 	/* Get chat object */
 	chat = g_object_get_data (G_OBJECT (child), "chat");
@@ -1492,9 +1503,18 @@ chat_window_page_removed_cb (GtkNotebook      *notebook,
 	GossipChat           *chat;
 	GossipContact        *contact;
 
-	gossip_debug (DEBUG_DOMAIN, "Page removed");
-
 	priv = GET_PRIV (window);
+
+	/* If we just received DND to the same window, we don't want
+	 * to do anything here like removing the tab and then readding
+	 * it, so we return here and in "page-added".
+	 */
+	if (priv->dnd_same_window) {
+		gossip_debug (DEBUG_DOMAIN, "Page removed (and will be readded to same window)");
+		return;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, "Page removed");
 
 	/* Get chat object */
 	chat = g_object_get_data (G_OBJECT (child), "chat");
@@ -1579,19 +1599,17 @@ chat_window_drag_data_received (GtkWidget        *widget,
 		GossipContact     *contact;
 		GossipChat        *chat;
 		GossipChatWindow  *old_window;
-		const gchar       *id;
+		const gchar       *id = NULL;
 
-		gossip_debug (DEBUG_DOMAIN, "Received drag & drop contact id");
+		if (selection) {
+			id = (const gchar*) selection->data;
+		}
 
-		id = (const gchar*) selection->data;
-		gossip_debug (DEBUG_DOMAIN,
-			      "Received drag & drop contact "
-			      "from roster with id:'%s'",
-			      id);
+		gossip_debug (DEBUG_DOMAIN, "DND contact from roster with id:'%s'", id);
 		
 		contact = gossip_session_find_contact (gossip_app_get_session (), id);
 		if (!contact) {
-			gossip_debug (DEBUG_DOMAIN, "No contact found associated with drag & drop");
+			gossip_debug (DEBUG_DOMAIN, "DND contact from roster not found");
 			return;
 		}
 		
@@ -1613,12 +1631,51 @@ chat_window_drag_data_received (GtkWidget        *widget,
 		/* Added to take care of any outstanding chat events */
 		gossip_chat_manager_show_chat (manager, contact);
 
+		/* We should return TRUE to remove the data when doing
+		 * GDK_ACTION_MOVE, but we don't here otherwise it has
+		 * weird consequences, and we handle that internally
+		 * anyway with add_chat() and remove_chat().
+		 */
 		gtk_drag_finish (context, TRUE, FALSE, time);
 	} else if (info == DND_DRAG_TYPE_TAB) {
-		gossip_debug (DEBUG_DOMAIN, "Received drag & drop tab");
- 		gtk_drag_finish (context, TRUE, FALSE, time); 
+		GossipChat        *chat = NULL;
+		GossipChatWindow  *old_window;
+		GtkWidget        **child = NULL;
+
+		gossip_debug (DEBUG_DOMAIN, "DND tab");
+
+		if (selection) {
+			child = (void*) selection->data;
+		}
+
+		if (child) {
+			chat = g_object_get_data (G_OBJECT (*child), "chat");
+		}
+
+		old_window = gossip_chat_get_window (chat);
+		if (old_window) {
+			GossipChatWindowPriv *priv;
+
+			priv = GET_PRIV (window);
+
+			if (old_window == window) {
+				gossip_debug (DEBUG_DOMAIN, "DND tab (within same window)");
+				priv->dnd_same_window = TRUE;
+				gtk_drag_finish (context, TRUE, FALSE, time);
+				return;
+			}
+			
+			priv->dnd_same_window = FALSE;
+		}
+
+		/* We should return TRUE to remove the data when doing
+		 * GDK_ACTION_MOVE, but we don't here otherwise it has
+		 * weird consequences, and we handle that internally
+		 * anyway with add_chat() and remove_chat().
+		 */
+		gtk_drag_finish (context, TRUE, FALSE, time);
 	} else {
-		gossip_debug (DEBUG_DOMAIN, "Received drag & drop from unknown source");
+		gossip_debug (DEBUG_DOMAIN, "DND from unknown source");
 		gtk_drag_finish (context, FALSE, FALSE, time);
 	}
 }
