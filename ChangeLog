@@ -1,5 +1,11 @@
 2006-11-26  Martyn Russell  <martyn@imendio.com>
 
+	* ui/main.glade: Change the semantics of the add contact dialog so
+	it is not a fixed width and doesn't cut off the infomation label
+	depending on your LANG, fixes bug #359813.
+
+2006-11-26  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-contact-info-dialog.c:
 	* src/gossip-edit-contact-dialog.c:
 	* ui/main.glade: Move the subscription information from the
