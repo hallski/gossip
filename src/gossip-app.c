@@ -283,6 +283,7 @@ static void            app_status_icon_popup_menu_cb          (GtkStatusIcon    
 							       GossipApp                *app);
 static void            app_status_icon_create_menu            (void);
 static void            app_status_icon_create                 (void);
+static gboolean        app_status_icon_check_embedded_cb      (gpointer                  user_data);
 static void            app_status_icon_update_tooltip         (void);
 static void            app_status_icon_flash_start            (void);
 static void            app_status_icon_flash_maybe_stop       (void);
@@ -481,14 +482,12 @@ app_setup (GossipSession        *session,
 	GossipConf     *conf;
 	GladeXML       *glade;
 	GtkWidget      *sw;
-	GtkToolItem    *item;
 	GtkWidget      *show_offline_widget;
-	GtkRequisition  req;
+	GtkToolItem    *item;
 	gchar          *str;
 	gboolean        show_offline;
 	gboolean        show_avatars;
 	gboolean        compact_contact_list;
-	gboolean        hidden;
 	gint            x, y, w, h;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
@@ -533,6 +532,7 @@ app_setup (GossipSession        *session,
 
 	gossip_sound_init (priv->session);
 
+	/* Set up signals */
 	g_signal_connect (priv->session, "protocol-connecting",
 			  G_CALLBACK (app_session_protocol_connecting_cb),
 			  NULL);
@@ -681,11 +681,6 @@ app_setup (GossipSession        *session,
 	gtk_container_add (GTK_CONTAINER (sw),
 			   GTK_WIDGET (priv->contact_list));
 
-	/* Set up notification area / tray. */
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
-	app_status_icon_create_menu ();
-	app_status_icon_create ();
-
 	/* Load user-defined accelerators. */
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring accels");
 	app_accels_load ();
@@ -712,6 +707,11 @@ app_setup (GossipSession        *session,
 		gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring window default position x:%d, y:%d", x, y);
 		gtk_window_move (GTK_WINDOW (priv->window), x, y);
 	}
+
+	/* Set up notification area / tray. */
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Configuring notification area widgets");
+	app_status_icon_create_menu ();
+	app_status_icon_create ();
 
 	/* Set up current presence. */
 	app_presence_updated ();
@@ -753,37 +753,7 @@ app_setup (GossipSession        *session,
 	/* Set window to be hidden. If doesn't have status icon, show window
 	 * and mask "chat_hide_list".
 	 */
-	if (!gtk_status_icon_is_embedded (priv->status_icon)) {
-		hidden = FALSE;
-	} else {
-		gossip_conf_get_bool (conf,
-				      GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
-				      &hidden);
-	}
-
-	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (show_offline_widget),
-					show_offline);
-
-	if (!hidden) {
-		gtk_widget_show (priv->window);
-	} else {
-		gdk_notify_startup_complete ();
-	}
-
-	/* This is a hack that sets the minimal size of the window so it doesn't
-	 * allow resizing to a smaller width than the menubar takes up. We must
-	 * set a minimal size, otherwise the window won't shrink beyond the
-	 * longest string in the roster, which will cause the ellipsizing cell
-	 * renderer not to work. FIXME: needs to update this on theme/font
-	 * change.
-	 */
-	gtk_widget_size_request (priv->window, &req);
-	req.width = MAX (req.width, MIN_WIDTH);
-	gtk_widget_set_size_request (priv->window, req.width, -1);
-
-	app_connection_items_update ();
-
-	gossip_debug (DEBUG_DOMAIN_SETUP, "Complete!");
+	g_timeout_add (200, app_status_icon_check_embedded_cb, NULL);
 }
 
 static gboolean
@@ -1849,11 +1819,76 @@ app_status_icon_create (void)
 			  G_CALLBACK (app_status_icon_popup_menu_cb),
 			  app);
 
+	gtk_status_icon_set_visible (priv->status_icon, TRUE);
+
 #ifdef HAVE_LIBNOTIFY
 	gossip_notify_set_attach_status_icon (priv->status_icon);
 #endif
 
 	app_status_icon_update_tooltip ();
+}
+
+#define MAX_CHECKS 5
+
+static gboolean
+app_status_icon_check_embedded_cb (gpointer user_data)
+{
+	static guint    checks = 1;
+	GossipAppPriv  *priv;
+	GtkRequisition  req;
+	gboolean        hidden;
+	gboolean        embedded;
+
+	priv = GET_PRIV (app);
+
+	embedded = gtk_status_icon_is_embedded (priv->status_icon);
+
+	if (!embedded && checks < MAX_CHECKS) {
+		gossip_debug (DEBUG_DOMAIN_SETUP, 
+			      "Configuring window (status icon not embedded, check %d/%d)", 
+			      checks, MAX_CHECKS);
+		checks++;
+		return TRUE;
+	}
+	
+	if (!embedded) {
+		gossip_debug (DEBUG_DOMAIN_SETUP, 
+			      "Configuring window (status icon not embedded, showing)");
+		hidden = FALSE;
+	} else {
+		GossipConf *conf;
+
+		conf = gossip_conf_get ();
+		gossip_conf_get_bool (conf,
+				      GOSSIP_PREFS_UI_MAIN_WINDOW_HIDDEN,
+				      &hidden);
+		gossip_debug (DEBUG_DOMAIN_SETUP, 
+			      "Configuring window visibility (config says %s)", 
+			      hidden ? "hide it" : "show it");
+	}
+
+	if (!hidden) {
+		gtk_widget_show (priv->window);
+	} else {
+		gdk_notify_startup_complete ();
+	}
+
+	/* This is a hack that sets the minimal size of the window so it doesn't
+	 * allow resizing to a smaller width than the menubar takes up. We must
+	 * set a minimal size, otherwise the window won't shrink beyond the
+	 * longest string in the roster, which will cause the ellipsizing cell
+	 * renderer not to work. FIXME: needs to update this on theme/font
+	 * change.
+	 */
+	gtk_widget_size_request (priv->window, &req);
+	req.width = MAX (req.width, MIN_WIDTH);
+	gtk_widget_set_size_request (priv->window, req.width, -1);
+
+	app_connection_items_update ();
+
+	gossip_debug (DEBUG_DOMAIN_SETUP, "Complete!");
+
+	return FALSE;
 }
 
 static void

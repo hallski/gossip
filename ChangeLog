@@ -1,5 +1,14 @@
 2006-11-26  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-app.c: (app_setup), (app_status_icon_create),
+	(app_status_icon_check_embedded_cb): After discovering that the
+	GtkStatusIcon doesn't have an "embedded" signal, just a function
+	to call, and that you may have to wait some time before it is
+	embedded (which sucks badly) we now have a time out to check
+	periodically during startup. Fixes bug #379079.
+
+2006-11-26  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: (chat_window_page_added_cb),
 	(chat_window_page_removed_cb), (chat_window_drag_data_received):
 	Make sure we don't remove the tab when dragging it back into the
