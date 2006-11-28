@@ -1,3 +1,8 @@
+2006-11-28  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_add_chat): Don't
+	segregate private chat and group chat tabs.
+
 2006-11-26  Martyn Russell  <martyn@imendio.com>
 
 	* ui/main.glade: Change the semantics of the add contact dialog so

@@ -1787,13 +1787,6 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (priv->notebook), child, TRUE);
 	gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (priv->notebook), child, TRUE);
 
-	/* For group chats pack at the end */
-	if (gossip_chat_is_group_chat (chat)) {
-		gtk_container_child_set (GTK_CONTAINER (priv->notebook), 
-					 child, "tab-pack", 
-					 GTK_PACK_END, NULL);
-	}
-
 	gossip_debug (DEBUG_DOMAIN, "Chat added");
 }
 
