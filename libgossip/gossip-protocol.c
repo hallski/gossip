@@ -699,6 +699,29 @@ gossip_protocol_new_account (GossipProtocol *protocol)
 	return NULL;
 }
 
+void
+gossip_protocol_get_avatar_requirements (GossipProtocol  *protocol,
+					 guint           *min_width,
+					 guint           *min_height,
+					 guint           *max_width,
+					 guint           *max_height,
+					 gsize           *max_size,
+					 gchar          **format)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->get_avatar_requirements) {
+		klass->get_avatar_requirements (protocol,
+						min_width, min_height,
+						max_width, max_height,
+						max_size,
+						format);
+	}
+}
+
 const gchar *
 gossip_protocol_error_to_string (GossipProtocolError error)
 {

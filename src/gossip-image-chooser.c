@@ -47,8 +47,12 @@ typedef struct {
 	gchar        *image_data;
 	gint          image_data_size;
 
-	gint          image_max_width;
-	gint          image_max_height;
+	gint         image_min_width;
+	gint         image_min_height;
+	gint         image_max_width;
+	gint         image_max_height;
+	gsize        image_max_size;
+	gchar       *image_format;
 
 	GdkPixbuf    *pixbuf;
 
@@ -135,8 +139,12 @@ gossip_image_chooser_init (GossipImageChooser *chooser)
 
 	priv = GET_PRIV (chooser);
 
+	priv->image_min_width = -1;
+	priv->image_min_height = -1;
 	priv->image_max_width = -1;
 	priv->image_max_height = -1;
+	priv->image_max_size = 100*1024;
+	priv->image_format = g_strdup ("png");
 
 	gtk_box_set_homogeneous (GTK_BOX (chooser), FALSE);
 
@@ -182,6 +190,8 @@ image_chooser_finalize (GObject *object)
 		g_object_unref (priv->pixbuf);
 		priv->pixbuf = NULL;
 	}
+
+	g_free (priv->image_format);
 
 	G_OBJECT_CLASS (gossip_image_chooser_parent_class)->finalize (object);
 }
@@ -308,10 +318,8 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 		gdk_pixbuf_save_to_buffer (scaled_pixbuf,
 					   &scaled_data,
 					   &scaled_size,
-					   "png",
-					   NULL,
-					   "compression", "9",
-					   NULL);
+					   priv->image_format,
+					   NULL, NULL);
 
 		g_free (priv->image_data);
 
@@ -544,23 +552,33 @@ gossip_image_chooser_set_editable (GossipImageChooser *chooser,
 }
 
 void
-gossip_image_chooser_set_image_max_size   (GossipImageChooser  *chooser,
-					   gint                 width,
-					   gint                 height)
+gossip_image_chooser_set_requirements (GossipImageChooser  *chooser,
+				       gint                 min_width,
+				       gint                 min_height,
+				       gint                 max_width,
+				       gint                 max_height,
+				       gsize                max_size,
+				       const gchar         *format)
 {
 	GossipImageChooserPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_IMAGE_CHOOSER (chooser));
-	g_return_if_fail (width > 0 && height > 0);
+	g_return_if_fail (max_width >= min_width);
+	g_return_if_fail (max_height >= min_height);
 
 	priv = GET_PRIV (chooser);
 
-	if (width > 0) {
-		priv->image_max_width = width;
-	}
+	priv->image_min_width = min_width;
+	priv->image_min_height = min_height;
+	priv->image_max_width = max_width;
+	priv->image_max_height = max_height;
+	priv->image_max_size = max_size;
 
-	if (height > 0) {
-		priv->image_max_height = height;
+	g_free (priv->image_format);
+	if (format) {
+		priv->image_format = g_strdup (format);
+	} else {
+		priv->image_format = g_strdup ("png");
 	}
 }
 
@@ -586,22 +604,36 @@ gossip_image_chooser_get_image_data (GossipImageChooser  *chooser,
 }
 
 void
-gossip_image_chooser_get_image_max_size (GossipImageChooser  *chooser,
-					 gint                *width,
-					 gint                *height)
+gossip_image_chooser_get_requirements (GossipImageChooser  *chooser,
+				       gint                *min_width,
+				       gint                *min_height,
+				       gint                *max_width,
+				       gint                *max_height,
+				       gsize               *max_size,
+				       gchar              **format)
 {
 	GossipImageChooserPriv *priv;
 
 	g_return_if_fail (GOSSIP_IS_IMAGE_CHOOSER (chooser));
-	g_return_if_fail (width != NULL || height != NULL);
 
 	priv = GET_PRIV (chooser);
 
-	if (width) {
-		*width = priv->image_max_width;
+	if (min_width) {
+		*min_width = priv->image_min_width;
 	}
-
-	if (height) {
-		*height = priv->image_max_height;
+	if (min_height) {
+		*min_height = priv->image_min_height;
+	}
+	if (max_width) {
+		*max_width = priv->image_max_width;
+	}
+	if (max_height) {
+		*max_height = priv->image_max_height;
+	}
+	if (max_size) {
+		*max_size = priv->image_max_size;
+	}
+	if (format) {
+		*format = g_strdup (priv->image_format);
 	}
 }

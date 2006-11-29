@@ -115,6 +115,14 @@ gboolean        gossip_session_set_vcard               (GossipSession           
 							GossipResultCallback     callback,
 							gpointer                 user_data,
 							GError                 **error);
+void            gossip_session_get_avatar_requirements (GossipSession           *session,
+							GossipAccount           *account,
+							guint                   *min_width,
+							guint                   *min_height,
+							guint                   *max_width,
+							guint                   *max_height,
+							gsize                   *max_size,
+							gchar                  **format);
 /* contact management */
 GossipContact * gossip_session_find_contact            (GossipSession           *session,
 							const gchar             *str);

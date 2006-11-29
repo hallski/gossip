@@ -1,3 +1,15 @@
+2006-11-29  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-protocol.c:
+	* libgossip/gossip-protocol.h:
+	* libgossip/gossip-session.c:
+	* libgossip/gossip-session.h:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-image-chooser.c:
+	* src/gossip-image-chooser.h:
+	* src/gossip-vcard-dialog.c:Make sure the UI loads avatars in a
+	format/size supported by the protocol. Fixes bug #380466.
+
 2006-11-28  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: (gossip_chat_window_add_chat): Don't

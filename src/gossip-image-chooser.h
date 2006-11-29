@@ -56,16 +56,24 @@ gboolean   gossip_image_chooser_set_from_file      (GossipImageChooser  *chooser
 gboolean   gossip_image_chooser_set_image_data     (GossipImageChooser  *chooser,
 						    const gchar         *data,
 						    gsize                data_size);
-void       gossip_image_chooser_set_image_max_size (GossipImageChooser  *chooser,
-						    gint                 width,
-						    gint                 height);
+void       gossip_image_chooser_set_requirements   (GossipImageChooser  *chooser,
+						    gint                 min_width,
+						    gint                 min_height,
+						    gint                 max_width,
+						    gint                 max_height,
+						    gsize                max_size,
+						    const gchar         *format);
 void       gossip_image_chooser_set_editable       (GossipImageChooser  *chooser,
 						    gboolean             editable);
 gboolean   gossip_image_chooser_get_image_data     (GossipImageChooser  *chooser,
 						    gchar              **data,
 						    gsize               *data_size);
-void       gossip_image_chooser_get_image_max_size (GossipImageChooser  *chooser,
-						    gint                *width,
-						    gint                *height);
+void       gossip_image_chooser_get_requirements   (GossipImageChooser  *chooser,
+						    gint                *min_width,
+						    gint                *min_height,
+						    gint                *max_width,
+						    gint                *max_height,
+						    gsize               *max_size,
+						    gchar              **format);
 
 #endif /* __GOSSIP_IMAGE_CHOOSER_H__ */

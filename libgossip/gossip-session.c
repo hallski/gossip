@@ -1792,6 +1792,31 @@ gossip_session_set_vcard (GossipSession         *session,
 	return ok;
 }
 
+void
+gossip_session_get_avatar_requirements (GossipSession *session,
+					GossipAccount *account,
+					guint         *min_width,
+					guint         *min_height,
+					guint         *max_width,
+					guint         *max_height,
+					gsize         *max_size,
+					gchar        **format)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, account);
+	
+	gossip_protocol_get_avatar_requirements (protocol,
+						 min_width, min_height,
+						 max_width, max_height,
+						 max_size, format);
+}
+
 gboolean
 gossip_session_get_version (GossipSession          *session,
 			    GossipContact          *contact,

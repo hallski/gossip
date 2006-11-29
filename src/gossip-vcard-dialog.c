@@ -90,7 +90,7 @@ typedef struct {
 #endif
 } GossipVCardDialog;
 
-static GtkWidget *vcard_dialog_create_avatar_chooser      (void);
+static void       vcard_dialog_create_avatar_chooser      (GossipVCardDialog *dialog);
 static void       vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
 							   gint               response,
 							   GossipVCardDialog *dialog);
@@ -119,24 +119,42 @@ static void       vcard_dialog_destroy_cb                 (GtkWidget         *wi
 
 static GossipVCardDialog *dialog = NULL;
 
-static GtkWidget *
-vcard_dialog_create_avatar_chooser (void)
+static void
+vcard_dialog_create_avatar_chooser (GossipVCardDialog *dialog)
 {
-	GtkWidget *chooser;
+	GossipAccountChooser *account_chooser;
+	GossipAccount        *account;
+	guint                min_width;
+	guint                min_height;
+	guint                max_width;
+	guint                max_height;
+	gsize                max_size;
+	gchar               *format;
 
-	chooser = gossip_image_chooser_new ();
+	dialog->avatar_chooser = gossip_image_chooser_new ();
+	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
+	account = gossip_account_chooser_get_account (account_chooser);
 
-	gossip_image_chooser_set_image_max_size (GOSSIP_IMAGE_CHOOSER (chooser),
-						 AVATAR_MAX_WIDTH,
-						 AVATAR_MAX_HEIGHT);
+	gossip_session_get_avatar_requirements (gossip_app_get_session (),
+						account,
+						&min_width, &min_height,
+						&max_width, &max_height,
+						&max_size,  &format);
 
-	gtk_widget_set_size_request (chooser,
+	gossip_image_chooser_set_requirements (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
+					       min_width, min_height,
+					       max_width, max_height,
+					       max_size, format);
+
+	g_free (format);
+
+	gtk_widget_set_size_request (dialog->avatar_chooser,
 				     AVATAR_MAX_WIDTH / 2,
 				     AVATAR_MAX_HEIGHT / 2);
 
-	gtk_widget_show_all (chooser);
-
-	return chooser;
+	gtk_container_add (GTK_CONTAINER (dialog->button_image),
+			   dialog->avatar_chooser);
+	gtk_widget_show_all (dialog->avatar_chooser);
 }
 
 static void
@@ -604,9 +622,6 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
 	g_object_unref (glade);
 
-	dialog->avatar_chooser = vcard_dialog_create_avatar_chooser ();
-	gtk_container_add (GTK_CONTAINER (dialog->button_image), dialog->avatar_chooser);
-
 	/* Line up widgets */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -637,6 +652,9 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			  dialog);
 
 	gtk_widget_show (dialog->account_chooser);
+
+	/* Create the avatar chooser */
+	vcard_dialog_create_avatar_chooser (dialog);
 
 	/* Select first */
 	accounts = gossip_session_get_accounts (session);

@@ -166,6 +166,13 @@ static void             jabber_register_account             (GossipProtocol     
 							     gpointer                 user_data);
 static void             jabber_register_cancel              (GossipProtocol          *protocol);
 static GossipAccount *  jabber_new_account                  (GossipProtocol          *protocol);
+static void             jabber_get_avatar_requirements      (GossipProtocol          *protocol,
+							     guint                   *min_width,
+							     guint                   *min_height,
+							     guint                   *max_width,
+							     guint                   *max_height,
+							     gsize                   *max_size,
+							     gchar                  **format);
 static void             jabber_register_connection_open_cb  (LmConnection            *connection,
 							     gboolean                 result,
 							     RegisterData            *ra);
@@ -380,6 +387,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 	protocol_class->register_account      = jabber_register_account;
 	protocol_class->register_cancel       = jabber_register_cancel;
 	protocol_class->new_account           = jabber_new_account;
+	protocol_class->get_avatar_requirements = jabber_get_avatar_requirements;
 
 	g_type_class_add_private (object_class, sizeof (GossipJabberPriv));
 }
@@ -1156,6 +1164,35 @@ jabber_new_account (GossipProtocol *protocol)
 				  NULL);
 
 	return account;
+}
+
+static void
+jabber_get_avatar_requirements (GossipProtocol  *protocol,
+				guint           *min_width,
+				guint           *min_height,
+				guint           *max_width,
+				guint           *max_height,
+				gsize           *max_size,
+				gchar          **format)
+{
+	if (min_width) {
+		*min_width = 32;
+	}
+	if (min_height) {
+		*min_height = 32;
+	}
+	if (max_width) {
+		*max_width = 96;
+	}
+	if (max_height) {
+		*max_height = 96;
+	}
+	if (max_size) {
+		*max_size = 8*1024; /* 8kb */
+	}
+	if (format) {
+		*format = g_strdup ("png");
+	}
 }
 
 static void
