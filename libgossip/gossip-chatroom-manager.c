@@ -892,7 +892,7 @@ chatroom_manager_join_cb (GossipChatroomProvider   *provider,
 {
 	GossipChatroom *chatroom;
 
-	chatroom = gossip_chatroom_provider_find (provider, id);
+	chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 
 	g_signal_emit (manager, signals[CHATROOM_AUTO_CONNECT_UPDATE], 0,
 		       provider, chatroom, result);

@@ -300,8 +300,10 @@ static void             jabber_chatroom_change_nick         (GossipChatroomProvi
 							     const gchar             *new_nick);
 static void             jabber_chatroom_leave               (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id);
-static GossipChatroom * jabber_chatroom_find                (GossipChatroomProvider  *provider,
+static GossipChatroom * jabber_chatroom_find_by_id          (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id);
+static GossipChatroom * jabber_chatroom_find                (GossipChatroomProvider  *provider,
+							     GossipChatroom          *chatroom);
 static void             jabber_chatroom_invite              (GossipChatroomProvider  *provider,
 							     GossipChatroomId         id,
 							     GossipContact           *contact,
@@ -3042,6 +3044,7 @@ jabber_chatroom_init (GossipChatroomProviderIface *iface)
 	iface->change_topic    = jabber_chatroom_change_topic;
 	iface->change_nick     = jabber_chatroom_change_nick;
 	iface->leave           = jabber_chatroom_leave;
+	iface->find_by_id      = jabber_chatroom_find_by_id;
 	iface->find            = jabber_chatroom_find;
 	iface->invite          = jabber_chatroom_invite;
 	iface->invite_accept   = jabber_chatroom_invite_accept;
@@ -3149,8 +3152,8 @@ jabber_chatroom_leave (GossipChatroomProvider *provider,
 }
 
 static GossipChatroom *
-jabber_chatroom_find (GossipChatroomProvider *provider,
-		      GossipChatroomId        id)
+jabber_chatroom_find_by_id (GossipChatroomProvider *provider,
+			    GossipChatroomId        id)
 {
 	GossipJabber     *jabber;
 	GossipJabberPriv *priv;
@@ -3160,7 +3163,23 @@ jabber_chatroom_find (GossipChatroomProvider *provider,
 	jabber = GOSSIP_JABBER (provider);
 	priv = GET_PRIV (jabber);
 
-	return gossip_jabber_chatrooms_find (priv->chatrooms, id);
+	return gossip_jabber_chatrooms_find_by_id (priv->chatrooms, id);
+}
+
+static GossipChatroom *
+jabber_chatroom_find (GossipChatroomProvider *provider,
+		      GossipChatroom         *chatroom)
+{
+	GossipJabber     *jabber;
+	GossipJabberPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (provider), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	jabber = GOSSIP_JABBER (provider);
+	priv = GET_PRIV (jabber);
+
+	return gossip_jabber_chatrooms_find (priv->chatrooms, chatroom);
 }
 
 static void

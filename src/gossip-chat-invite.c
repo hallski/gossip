@@ -155,7 +155,7 @@ chat_invite_dialog_model_populate_suggestions (GossipChatInviteDialog *dialog)
 			const gchar      *name;
 
 			id = GPOINTER_TO_INT(l->data);
-			chatroom = gossip_chatroom_provider_find (provider, id);
+			chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 			name = gossip_chatroom_get_name (chatroom);
 
 			if (G_STR_EMPTY (name)) {
@@ -331,7 +331,7 @@ gossip_chat_invite_dialog_show (GossipContact    *contact,
 		session = gossip_app_get_session ();
 		account = gossip_contact_get_account (dialog->contact);
 		provider = gossip_session_get_chatroom_provider (session, account);
-		chatroom = gossip_chatroom_provider_find (provider, dialog->chatroom_id);
+		chatroom = gossip_chatroom_provider_find_by_id (provider, dialog->chatroom_id);
 
 		name = g_markup_escape_text (gossip_chatroom_get_name (chatroom), -1);
 		str = g_strdup_printf ("%s\n<b>%s</b>",

@@ -192,10 +192,6 @@ static gboolean        app_main_window_delete_event_cb        (GtkWidget        
 static gboolean        app_main_window_key_press_event_cb     (GtkWidget                *window,
 							       GdkEventKey              *event,
 							       GossipApp                *app);
-static void            app_favorite_chatroom_menu_join_cb     (GossipChatroomProvider   *provider,
-							       GossipChatroomJoinResult  result,
-							       GossipChatroomId          id,
-							       gpointer                  user_data);
 static void            app_favorite_chatroom_menu_activate_cb (GtkMenuItem              *menu_item,
 							       GossipChatroom           *chatroom);
 static void            app_favorite_chatroom_menu_update      (void);
@@ -970,18 +966,6 @@ app_main_window_key_press_event_cb (GtkWidget   *window,
 }
 
 static void
-app_favorite_chatroom_menu_join_cb (GossipChatroomProvider   *provider,
-				    GossipChatroomJoinResult  result,
-				    GossipChatroomId          id,
-				    gpointer                  user_data)
-{
-	if (result == GOSSIP_CHATROOM_JOIN_OK ||
-	    result == GOSSIP_CHATROOM_JOIN_ALREADY_OPEN) {
-		gossip_group_chat_new (provider, id);
-	}
-}
-
-static void
 app_favorite_chatroom_menu_activate_cb (GtkMenuItem    *menu_item,
 					GossipChatroom *chatroom)
 {
@@ -993,10 +977,7 @@ app_favorite_chatroom_menu_activate_cb (GtkMenuItem    *menu_item,
 	account = gossip_chatroom_get_account (chatroom);
 	provider = gossip_session_get_chatroom_provider (session, account);
 
-	gossip_chatroom_provider_join (provider,
-				       chatroom,
-				       app_favorite_chatroom_menu_join_cb,
-				       NULL);
+	gossip_group_chat_new (provider, chatroom);
 }
 
 static void
@@ -2816,8 +2797,7 @@ app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
 	case GOSSIP_CHATROOM_JOIN_OK:
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
 		gossip_debug (DEBUG_DOMAIN_CHATROOMS, "Auto connect update: success for room:'%s'", name);
-		gossip_group_chat_new (provider,
-				       gossip_chatroom_get_id (chatroom));
+		gossip_group_chat_new (provider, chatroom);
 		break;
 
 	case GOSSIP_CHATROOM_JOIN_CANCELED:

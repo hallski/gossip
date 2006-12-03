@@ -56,8 +56,8 @@ struct _GossipChatPriv {
 
 	GtkTooltips      *tooltips;
 
-	/* Used to automatically shrink a window that has temporarily grown due
-	 * to long input.
+	/* Used to automatically shrink a window that has temporarily
+	 * grown due to long input. 
 	 */
 	gint              padding_height;
 	gint              default_window_height;

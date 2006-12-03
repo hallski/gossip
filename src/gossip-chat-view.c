@@ -1423,7 +1423,12 @@ chat_view_invite_join_cb (GossipChatroomProvider   *provider,
 			  gint                      id,
 			  gpointer                  user_data)
 {
-	gossip_group_chat_new (provider, id);
+	GossipChatroom  *chatroom;
+	GossipGroupChat *chat;
+
+	chatroom = gossip_chatroom_provider_find_by_id (provider, id);
+	chat = gossip_group_chat_new (provider, chatroom);
+	g_object_unref (chat);
 }
 
 static void

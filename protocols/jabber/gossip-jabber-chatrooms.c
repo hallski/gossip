@@ -845,7 +845,6 @@ gossip_jabber_chatrooms_cancel (GossipJabberChatrooms *chatrooms,
 		room->join_handler = NULL;
 	}
 
-
 	gossip_chatroom_set_status (room->chatroom, GOSSIP_CHATROOM_STATUS_INACTIVE);
 	gossip_chatroom_set_last_error (room->chatroom, NULL);
 
@@ -995,8 +994,8 @@ gossip_jabber_chatrooms_leave (GossipJabberChatrooms *chatrooms,
 }
 
 GossipChatroom *
-gossip_jabber_chatrooms_find (GossipJabberChatrooms *chatrooms,
-			      GossipChatroomId       id)
+gossip_jabber_chatrooms_find_by_id (GossipJabberChatrooms *chatrooms,
+				    GossipChatroomId       id)
 {
 	JabberChatroom *room;
 
@@ -1004,6 +1003,33 @@ gossip_jabber_chatrooms_find (GossipJabberChatrooms *chatrooms,
 
 	room = g_hash_table_lookup (chatrooms->room_id_hash,
 				    GINT_TO_POINTER (id));
+	if (!room) {
+		return NULL;
+	}
+
+	return room->chatroom;
+}
+
+GossipChatroom *
+gossip_jabber_chatrooms_find (GossipJabberChatrooms *chatrooms,
+			      GossipChatroom        *chatroom)
+{
+	JabberChatroom *room;
+	GossipJID      *jid;
+	gchar          *jid_str;
+
+	g_return_val_if_fail (chatrooms != NULL, NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
+	jid_str = g_strdup_printf ("%s/%s",
+				   gossip_chatroom_get_id_str (chatroom),
+				   gossip_chatroom_get_nick (chatroom));
+	jid = gossip_jid_new (jid_str);
+	g_free (jid_str);
+
+	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+	gossip_jid_unref (jid);
+
 	if (!room) {
 		return NULL;
 	}

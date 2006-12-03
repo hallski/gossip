@@ -804,7 +804,8 @@ gossip_pixbuf_for_chatroom_status (GossipChatroom *chatroom,
 		stock_id = GOSSIP_STOCK_GROUP_MESSAGE;
 		break;
 	case GOSSIP_CHATROOM_STATUS_ERROR:
-		stock_id = GTK_STOCK_DIALOG_ERROR;
+		/* NOTE: GTK_STOCK_DIALOG_ERROR is too big for menu images */
+		stock_id = GTK_STOCK_DIALOG_QUESTION;
 		break;
 	default:
 	case GOSSIP_CHATROOM_STATUS_INACTIVE:

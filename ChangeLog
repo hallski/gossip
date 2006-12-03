@@ -1,3 +1,40 @@
+2006-12-03  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c:
+	* libgossip/gossip-chatroom-provider.[ch]: 
+	* protocols/jabber/gossip-jabber-chatrooms.[ch]: 
+	* protocols/jabber/gossip-jabber.c: 
+	* src/gossip-chat-invite.c: Moved the _find() function to
+	_find_by_id() so we can find chatrooms by a candidate chatroom and
+	the backend should know what to check to know if it is the same
+	(like the JID for the Jabber backend). 
+
+	* src/gossip-chat-view.c:
+	* src/gossip-chat-window.[ch]: Added a function to move tabs
+	between windows by adding a reference before and removing one
+	after to make sure we don't loose tabs in transaction.
+	
+	* src/gossip-app.c:
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.[ch]: Maintain a reference to a
+	GossipChatroom* and also do the joining when we create a new group
+	chat keeping the current status and any errors that occur all
+	inside the input GtkTextView instead of having a dialog with
+	popups for errors.
+	
+	* src/gossip-new-chatroom-dialog.c: Removed all the "joining" crap
+	in this dialog, just create new group chat objects for each room
+	we want to join, the gossip-group-chat.c module does the rest now.
+	
+	* src/gossip-spell-dialog.c: Removed some unnecessary code.
+	
+	* src/gossip-ui-utils.c: Use the GTK_STOCK_DIALOG_QUESTION icon
+	for group chat errors because the GTK_STOCK_DIALOG_ERROR icon is
+	too big for use in the tab.
+	
+	* ui/group-chat.glade: Make group chat widgets insensitive by
+	default so they are not available while joining.
+
 2006-11-29  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-protocol.c:

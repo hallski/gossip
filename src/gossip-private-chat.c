@@ -924,10 +924,12 @@ gossip_private_chat_new (GossipContact *own_contact,
 	/* Turn back on scrolling */
 	gossip_chat_view_scroll (view, TRUE);
 
-	/* Scroll to the most recent messages */
-	g_object_ref (chat);
-	priv->scroll_idle_id = g_idle_add (
-		(GSourceFunc) private_chat_scroll_down_idle_func, chat);
+	/* Scroll to the most recent messages, we reference the chat
+	 * for the duration of the scroll func.
+	 */
+	priv->scroll_idle_id = g_idle_add ((GSourceFunc) 
+					   private_chat_scroll_down_idle_func, 
+					   g_object_ref (chat));
 
 	/* Set up signals */
 	g_signal_connect_object (gossip_app_get_session (),

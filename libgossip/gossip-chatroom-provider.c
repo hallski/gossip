@@ -255,14 +255,28 @@ gossip_chatroom_provider_leave (GossipChatroomProvider *provider,
 }
 
 GossipChatroom *
-gossip_chatroom_provider_find (GossipChatroomProvider *provider,
-			       GossipChatroomId        id)
+gossip_chatroom_provider_find_by_id (GossipChatroomProvider *provider,
+				     GossipChatroomId        id)
 {
 	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
 	g_return_val_if_fail (id > 0, NULL);
 
+	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->find_by_id) {
+		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->find_by_id (provider, id);
+	}
+
+	return NULL;
+}
+
+GossipChatroom *
+gossip_chatroom_provider_find (GossipChatroomProvider *provider,
+			       GossipChatroom         *chatroom)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM_PROVIDER (provider), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+
 	if (GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->find) {
-		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->find (provider, id);
+		return GOSSIP_CHATROOM_PROVIDER_GET_IFACE (provider)->find (provider, chatroom);
 	}
 
 	return NULL;
@@ -375,6 +389,10 @@ gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result)
 
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
 		last_error = _("An unknown error occurred, check your details are correct.");
+		break;
+
+	case GOSSIP_CHATROOM_JOIN_CANCELED:
+		last_error = _("Joining the chatroom was canceled.");
 		break;
 
 	default:

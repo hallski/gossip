@@ -57,6 +57,9 @@ void              gossip_chat_window_add_chat        (GossipChatWindow *window,
 						      GossipChat       *chat);
 void              gossip_chat_window_remove_chat     (GossipChatWindow *window,
 						      GossipChat       *chat);
+void              gossip_chat_window_move_chat       (GossipChatWindow *old_window,
+						      GossipChatWindow *new_window,
+						      GossipChat       *chat);
 void              gossip_chat_window_switch_to_chat  (GossipChatWindow *window,
 						      GossipChat       *chat);
 

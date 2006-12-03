@@ -883,7 +883,7 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 		id = gossip_group_chat_get_chatroom_id (group_chat);
 		provider = gossip_group_chat_get_chatroom_provider (group_chat);
 
-		chatroom = gossip_chatroom_provider_find (provider, id);
+		chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 		gossip_log_window_show (NULL, chatroom);
 	} else {
 		GossipContact *contact;
@@ -972,7 +972,7 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 		id = gossip_group_chat_get_chatroom_id (group_chat);
 		provider = gossip_group_chat_get_chatroom_provider (group_chat);
 
-		chatroom = gossip_chatroom_provider_find (provider, id);
+		chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 		if (chatroom) {
 			log_exists = gossip_log_exists_for_chatroom (chatroom);
 		}
@@ -1061,7 +1061,7 @@ chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 	id = gossip_group_chat_get_chatroom_id (group_chat);
 	provider = gossip_group_chat_get_chatroom_provider (group_chat);
 
-	chatroom = gossip_chatroom_provider_find (provider, id);
+	chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 	gossip_chatroom_set_favourite (chatroom, TRUE);
 
 	manager = gossip_app_get_chatroom_manager ();
@@ -1206,11 +1206,10 @@ chat_window_detach_activate_cb (GtkWidget        *menuitem,
 
 	chat = priv->current_chat;
 	new_window = gossip_chat_window_new ();
+
+	gossip_chat_window_move_chat (window, new_window, chat);
+
 	priv = GET_PRIV (new_window);
-
-	gossip_chat_window_remove_chat (window, chat);
-	gossip_chat_window_add_chat (new_window, chat);
-
 	gtk_widget_show (priv->dialog);
 }
 
@@ -1230,8 +1229,7 @@ chat_window_delete_event_cb (GtkWidget        *dialog,
 	list = g_list_copy (priv->chats);
 
 	for (l = list; l; l = l->next) {
-		GossipChat *chat = l->data;
-		gossip_chat_window_remove_chat (window, chat);
+		gossip_chat_window_remove_chat (window, l->data);
 	}
 
 	g_list_free (list);
@@ -1411,19 +1409,18 @@ chat_window_detach_hook (GtkNotebook *source,
 			 gpointer     user_data)
 {
 	GossipChatWindowPriv *priv;
-	GossipChatWindow     *window, *old_window;
+	GossipChatWindow     *window, *new_window;
 	GossipChat           *chat;
 
 	chat = g_object_get_data (G_OBJECT (page), "chat");
-	old_window = gossip_chat_get_window (chat);
+	window = gossip_chat_get_window (chat);
 
-	window = gossip_chat_window_new ();
-	priv = GET_PRIV (window);
+	new_window = gossip_chat_window_new ();
+	priv = GET_PRIV (new_window);
 
 	gossip_debug (DEBUG_DOMAIN, "Detach hook called");
 
-	gossip_chat_window_remove_chat (old_window, chat);
-	gossip_chat_window_add_chat (window, chat);
+	gossip_chat_window_move_chat (window, new_window, chat);
 
 	gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
 	gtk_widget_show (priv->dialog);
@@ -1623,10 +1620,10 @@ chat_window_drag_data_received (GtkWidget        *widget,
 				return;
 			}
 			
-			gossip_chat_window_remove_chat (old_window, chat);
+			gossip_chat_window_move_chat (old_window, window, chat);
+		} else {
+			gossip_chat_window_add_chat (window, chat);
 		}
-		
-		gossip_chat_window_add_chat (window, chat);
 		
 		/* Added to take care of any outstanding chat events */
 		gossip_chat_manager_show_chat (manager, contact);
@@ -1787,7 +1784,9 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (priv->notebook), child, TRUE);
 	gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (priv->notebook), child, TRUE);
 
-	gossip_debug (DEBUG_DOMAIN, "Chat added");
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Chat added (%d references)",
+		      G_OBJECT (chat)->ref_count);
 }
 
 void
@@ -1803,9 +1802,30 @@ gossip_chat_window_remove_chat (GossipChatWindow *window,
 					  gossip_chat_get_widget (chat));
 	gtk_notebook_remove_page (GTK_NOTEBOOK (priv->notebook), position);
 
-	g_object_unref (chat);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Chat removed (%d references)", 
+		      G_OBJECT (chat)->ref_count - 1);
 
-	gossip_debug (DEBUG_DOMAIN, "Chat removed");
+	g_object_unref (chat);
+}
+
+void
+gossip_chat_window_move_chat (GossipChatWindow *old_window,
+			      GossipChatWindow *new_window,
+			      GossipChat       *chat)
+{
+	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (old_window));
+	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (new_window));
+	g_return_if_fail (GOSSIP_IS_CHAT (chat));
+
+	/* Make sure we don't loose the chat during the move */
+	g_object_ref (chat);
+
+	gossip_chat_window_remove_chat (old_window, chat);
+	gossip_chat_window_add_chat (new_window, chat);
+
+	/* Clean up reference */
+	g_object_unref (chat);
 }
 
 void

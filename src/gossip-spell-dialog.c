@@ -93,12 +93,9 @@ spell_dialog_model_populate_columns (GossipSpellDialog *dialog)
 static void
 spell_dialog_model_populate_suggestions (GossipSpellDialog *dialog)
 {
-	GossipChat   *chat;
 	GtkTreeModel *model;
 	GtkListStore *store;
 	GList        *suggestions, *l;
-
-	chat = dialog->chat;
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->treeview_words));
 	store = GTK_LIST_STORE (model);

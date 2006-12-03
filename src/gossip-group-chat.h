@@ -48,7 +48,7 @@ struct _GossipGroupChatClass {
 
 GType            gossip_group_chat_get_type              (void) G_GNUC_CONST;
 GossipGroupChat *gossip_group_chat_new                   (GossipChatroomProvider *provider,
-							  GossipChatroomId        id);
+							  GossipChatroom         *chatroom);
 GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat        *groupchat);
 GossipChatroomProvider *
 		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *groupchat);

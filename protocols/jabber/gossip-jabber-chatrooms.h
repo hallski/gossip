@@ -53,8 +53,11 @@ void           gossip_jabber_chatrooms_change_nick         (GossipJabberChatroom
 void           gossip_jabber_chatrooms_leave               (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
 GossipChatroom *
-	       gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
+	       gossip_jabber_chatrooms_find_by_id          (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id);
+GossipChatroom *
+	       gossip_jabber_chatrooms_find                (GossipJabberChatrooms *chatrooms,
+							    GossipChatroom        *chatroom);
 void           gossip_jabber_chatrooms_invite              (GossipJabberChatrooms *chatrooms,
 							    GossipChatroomId       id,
 							    GossipContact         *contact,
