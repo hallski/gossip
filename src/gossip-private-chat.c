@@ -519,10 +519,10 @@ private_chat_contact_added (gpointer           not_user,
 	g_object_unref (priv->contact);
 	priv->contact = g_object_ref (contact);
 
-	g_signal_connect (priv->contact,
-			  "notify::avatar",
-			  G_CALLBACK (private_chat_other_avatar_notify_cb),
-			  chat);
+	g_signal_connect_object (priv->contact,
+				 "notify::avatar",
+				 G_CALLBACK (private_chat_other_avatar_notify_cb),
+				 chat, 0);
 }
 
 static void
@@ -880,15 +880,15 @@ gossip_private_chat_new (GossipContact *own_contact,
 
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
-	g_signal_connect (priv->own_contact,
-			  "notify::avatar",
-			  G_CALLBACK (private_chat_own_avatar_notify_cb),
-			  chat);
+	g_signal_connect_object (priv->own_contact,
+				 "notify::avatar",
+				 G_CALLBACK (private_chat_own_avatar_notify_cb),
+				 chat, 0);
 
-	g_signal_connect (priv->contact,
-			  "notify::avatar",
-			  G_CALLBACK (private_chat_other_avatar_notify_cb),
-			  chat);
+	g_signal_connect_object (priv->contact,
+				 "notify::avatar",
+				 G_CALLBACK (private_chat_other_avatar_notify_cb),
+				 chat, 0);
 
 	private_chat_own_avatar_notify_cb (priv->own_contact, NULL, chat);
 	private_chat_other_avatar_notify_cb (priv->contact, NULL, chat);

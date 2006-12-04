@@ -1,5 +1,12 @@
 2006-12-04  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-private-chat.c: Fixed a crasher in
+	private_chat_other_avatar_notify_cb() where the user_data (a
+	GossipPrivateChat object) was no longer valid, use
+	g_signal_connect_object() instead of g_signal_connect() here.
+
+2006-12-04  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-view.[ch]:
 	* src/gossip-group-chat.c: Add a "Retry Connection" button in the
 	GtkTextView if we fail to join group chat for various reasons.
