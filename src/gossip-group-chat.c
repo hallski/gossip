@@ -101,6 +101,9 @@ typedef struct {
 
 static void            group_chat_contact_list_iface_init     (GossipContactListIfaceClass  *iface);
 static void            group_chat_finalize                    (GObject                      *object);
+static void            group_chat_retry_connection_clicked_cb (GtkWidget                    *button,
+							       GossipGroupChat              *chat);
+static void            group_chat_join                        (GossipGroupChat              *chat);
 static void            group_chat_join_cb                     (GossipChatroomProvider       *provider,
 							       GossipChatroomJoinResult      result,
 							       GossipChatroomId              id,
@@ -382,6 +385,32 @@ group_chat_finalize (GObject *object)
 	G_OBJECT_CLASS (gossip_group_chat_parent_class)->finalize (object);
 }
 
+static void
+group_chat_retry_connection_clicked_cb (GtkWidget       *button,
+					GossipGroupChat *chat)
+{
+	group_chat_join (chat);
+	gtk_widget_set_sensitive (button, FALSE);
+}
+
+static void
+group_chat_join (GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+
+	gossip_chatroom_provider_join (priv->chatroom_provider,
+				       priv->chatroom,
+				       (GossipChatroomJoinCb) group_chat_join_cb,
+				       NULL);
+
+	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
+				       _("Connecting..."));
+
+	g_signal_emit_by_name (chat, "status-changed");
+}
+
 static void     
 group_chat_join_cb (GossipChatroomProvider   *provider,
 		    GossipChatroomJoinResult  result,
@@ -394,6 +423,7 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 	GtkTreeView         *view;
 	GtkTreeModel        *model;
 	GtkTreeStore        *store;
+	GtkWidget           *button;
 	const gchar         *result_str;
 
 	chat = g_hash_table_lookup (group_chats, GINT_TO_POINTER (id));
@@ -418,16 +448,29 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
 		break;
 
-	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
 	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
-	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
+		gossip_chat_view_append_event (chatview, result_str);
+		return;
+
+	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
+	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
 	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
 	case GOSSIP_CHATROOM_JOIN_CANCELED:
 		/* FIXME: Need special case for nickname to put an
 		 * entry in the chat view and to request a new nick.
 		 */
+		button = gtk_button_new_with_label (_("Retry connection"));
+		g_signal_connect (button, "clicked", 
+				  G_CALLBACK (group_chat_retry_connection_clicked_cb),
+				  chat);
+
 		gossip_chat_view_append_event (chatview, result_str);
+		gossip_chat_view_append_button (chatview,
+						NULL,
+						button,
+						NULL);
+
 		return;
 	}
 
@@ -1902,13 +1945,7 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 			  chat);
 
 	/* Actually join the chat room */
-	gossip_chatroom_provider_join (provider,
-				       chatroom,
-				       (GossipChatroomJoinCb) group_chat_join_cb,
-				       NULL);
-
-	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, 
-				       _("Connecting..."));
+	group_chat_join (chat);
 
 	/* NOTE: We must start the join before here otherwise the
 	 * chatroom doesn't exist for the provider to find it, and

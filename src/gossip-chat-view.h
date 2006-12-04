@@ -91,9 +91,12 @@ void            gossip_chat_view_append_event              (GossipChatView *view
 							    const gchar    *str);
 void            gossip_chat_view_append_invite             (GossipChatView *view,
 							    GossipMessage  *message);
-
-/* void            gossip_chat_view_set_margin                (GossipChatView *view, */
-/* 							    gint            margin); */
+void            gossip_chat_view_append_button             (GossipChatView *view,
+							    const gchar    *message,
+							    GtkWidget      *button1,
+							    GtkWidget      *button2);
+void            gossip_chat_view_set_margin                (GossipChatView *view,
+							    gint            margin);
 void            gossip_chat_view_scroll                    (GossipChatView *view,
 							    gboolean        allow_scrolling);
 void            gossip_chat_view_scroll_down               (GossipChatView *view);

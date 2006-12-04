@@ -1767,6 +1767,79 @@ gossip_chat_view_append_invite (GossipChatView *view,
 }
 
 void
+gossip_chat_view_append_button (GossipChatView *view,
+				const gchar    *message,
+				GtkWidget      *button1,
+				GtkWidget      *button2)
+{
+	GossipChatViewPriv   *priv;
+	GtkTextChildAnchor   *anchor;
+	GtkTextIter           iter;
+	gboolean              bottom;
+	const gchar          *tag;
+
+	g_return_if_fail (button1 != NULL);
+
+	priv = GET_PRIV (view);
+
+	if (priv->irc_style) {
+		tag = "irc-invite";
+	} else {
+		tag = "fancy-invite";
+	}
+
+	bottom = chat_view_is_scrolled_down (view);
+
+	chat_view_maybe_append_date_and_time (view, NULL);
+
+	if (message) {
+		chat_view_append_text (view, message, tag);
+	}
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+
+	anchor = gtk_text_buffer_create_child_anchor (priv->buffer, &iter);
+	gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view), button1, anchor);
+	gtk_widget_show (button1);
+
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  " ",
+						  1,
+						  tag,
+						  NULL);
+
+	if (button2) {
+		gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+		
+		anchor = gtk_text_buffer_create_child_anchor (priv->buffer, &iter);
+		gtk_text_view_add_child_at_anchor (GTK_TEXT_VIEW (view), button2, anchor);
+		gtk_widget_show (button2);
+		
+		gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+							  &iter,
+							  " ",
+							  1,
+							  tag,
+							  NULL);
+	}
+
+	gtk_text_buffer_get_end_iter (priv->buffer, &iter);
+	gtk_text_buffer_insert_with_tags_by_name (priv->buffer,
+						  &iter,
+						  "\n\n",
+						  2,
+						  tag,
+						  NULL);
+
+	if (bottom) {
+		gossip_chat_view_scroll_down (view);
+	}
+
+	priv->last_block_type = BLOCK_TYPE_INVITE;
+}
+
+void
 gossip_chat_view_scroll (GossipChatView *view,
 			 gboolean        allow_scrolling)
 {
