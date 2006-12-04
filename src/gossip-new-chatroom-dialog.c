@@ -117,6 +117,7 @@ static void     new_chatroom_dialog_entry_changed_cb                (GtkWidget  
 static void     new_chatroom_dialog_browse_cb                       (GossipChatroomProvider   *provider,
 								     const gchar              *server,
 								     GList                    *rooms,
+								     GError                   *error,
 								     GossipNewChatroomDialog  *dialog);
 static void     new_chatroom_dialog_browse_start                    (GossipNewChatroomDialog  *dialog);
 static void     new_chatroom_dialog_browse_stop                     (GossipNewChatroomDialog  *dialog);
@@ -736,21 +737,31 @@ static void
 new_chatroom_dialog_browse_cb (GossipChatroomProvider  *provider,
 			       const gchar             *server,
 			       GList                   *rooms,
+			       GError                  *error,
 			       GossipNewChatroomDialog *dialog)
 {
 	GList *l;
 	gchar *str;
 
-	new_chatroom_dialog_model_clear (dialog);
-
-	for (l = rooms; l; l = l->next) {
-		new_chatroom_dialog_model_add (dialog, l->data, FALSE);
-	}
-
 	gossip_toggle_button_set_state_quietly (dialog->togglebutton_refresh, 
 						G_CALLBACK (new_chatroom_dialog_togglebutton_refresh_toggled_cb),
 						dialog,
 						FALSE);
+
+	gossip_throbber_stop (GOSSIP_THROBBER (dialog->throbber));
+
+	new_chatroom_dialog_model_clear (dialog);
+	gtk_widget_set_sensitive (dialog->treeview, TRUE);
+
+	if (error) {
+		gtk_image_set_from_icon_name (GTK_IMAGE (dialog->image_status), 
+					      GTK_STOCK_DIALOG_ERROR,
+					      GTK_ICON_SIZE_BUTTON); 
+		
+		gtk_label_set_text (GTK_LABEL (dialog->label_status), error->message);
+		
+		return;
+	}
 
  	gtk_image_set_from_icon_name (GTK_IMAGE (dialog->image_status), 
 				      GTK_STOCK_FIND,
@@ -760,8 +771,9 @@ new_chatroom_dialog_browse_cb (GossipChatroomProvider  *provider,
 	gtk_label_set_text (GTK_LABEL (dialog->label_status), str);
 	g_free (str);
 
-	gtk_widget_set_sensitive (dialog->treeview, TRUE);
-	gossip_throbber_stop (GOSSIP_THROBBER (dialog->throbber));
+	for (l = rooms; l; l = l->next) {
+		new_chatroom_dialog_model_add (dialog, l->data, FALSE);
+	}
 }
 
 static void

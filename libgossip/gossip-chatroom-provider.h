@@ -52,6 +52,7 @@ typedef void (*GossipChatroomJoinCb) (GossipChatroomProvider   *provider,
 typedef void (*GossipChatroomBrowseCb) (GossipChatroomProvider   *provider,
 					const gchar              *server,
 					GList                    *rooms,
+					GError                   *error,
 					gpointer                  user_data);
 
 struct _GossipChatroomProviderIface {

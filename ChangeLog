@@ -1,3 +1,13 @@
+2006-12-04  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-provider.h:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber-disco.c:
+	* src/gossip-new-chatroom-dialog.c: Handle disco error conditions
+	and returned from the server in the event that the service can't
+	be found or some other issue occurs (this is an issue for Google
+	users that default to conference.talk.google.com). 
+
 2006-12-03  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-chatroom-manager.c:

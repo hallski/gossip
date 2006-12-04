@@ -24,6 +24,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <glib/gi18n.h>
+
 #include <loudmouth/loudmouth.h>
 
 #include <libgossip/gossip-debug.h>
@@ -231,7 +233,7 @@ jabber_disco_set_last_error (GossipJabberDisco *disco,
 	LmMessageNode *node;
 	const gchar   *xmlns;
 	const gchar   *error_code;
-	const gchar   *error_reason;
+	const gchar   *error_reason = NULL;
 
 	node = lm_message_node_get_child (m->node, "query");
 	if (!node) {
@@ -254,13 +256,54 @@ jabber_disco_set_last_error (GossipJabberDisco *disco,
 	}
 
 	error_code = lm_message_node_get_attribute (node, "code");
-	error_reason = lm_message_node_get_value (node);
+	if (error_code) {
+		switch (atoi (error_code)) {
+		case 302:
+			error_reason = _("Service has gone and is no longer available");
+			break;
+		case 400:
+			error_reason = _("Bad or malformed request to this service");
+			break;
+		case 401:
+			error_reason = _("Unauthorized request to this service");
+			break;
+		case 402:
+			error_reason = _("Payment is required for this service");
+			break;
+		case 403:
+		case 405:
+			error_reason = _("This service is forbidden");
+			break;
+		case 404:
+		case 503:
+			error_reason = _("This service is unavailable or not found");
+			break;
+		case 406:
+			error_reason = _("Unacceptable request sent to this services");
+			break;
+		case 407:
+			error_reason = _("Registration is required");
+			break;
+		case 409:
+			error_reason = _("There was a conflict of interest trying to use this service");
+			break;
+		case 500:
+			error_reason = _("There was an internal service error");
+			break;
+		case 501:
+			error_reason = _("This feature is not implemented");
+			break;
+		case 504:
+			error_reason = _("The remove service timed out");
+			break;
+		}
+	}
 
 	if (error_code || error_reason) {
 		GQuark quark;
 		GError *error;
 
-		quark = g_quark_from_string ("gossip-transport-discover");
+		quark = g_quark_from_string ("gossip-jabber-disco");
 		error = g_error_new_literal (quark,
 					     atoi (error_code),
 					     error_reason);

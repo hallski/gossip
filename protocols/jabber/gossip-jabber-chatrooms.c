@@ -1200,7 +1200,7 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 				  GError                *error,
 				  GossipCallbackData    *data)
 {
-	GossipJID             *jid;
+	GossipJID             *jid = NULL;
 	GossipJabberChatrooms *chatrooms;
 	GossipChatroom        *chatroom = NULL;
 	JabberChatroom        *room = NULL;
