@@ -1203,7 +1203,7 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 	GossipJID             *jid;
 	GossipJabberChatrooms *chatrooms;
 	GossipChatroom        *chatroom = NULL;
-	JabberChatroom        *room;
+	JabberChatroom        *room = NULL;
 	GList                 *list;
 	gchar                 *server;
 
@@ -1215,14 +1215,16 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 	server = data->data2;
 	list = data->data3;
 
-	jid = gossip_jabber_disco_item_get_jid (item);
-	room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+	if (item) {
+		jid = gossip_jabber_disco_item_get_jid (item);
+		room = g_hash_table_lookup (chatrooms->room_jid_hash, jid);
+	}
 
 	if (room) {
 		chatroom = room->chatroom;
 	} 
 
-	if (!room && !timeout) {
+	if (!room && !timeout && !error) {
 		GossipAccount  *account;
 		const gchar    *server;
 		const gchar    *name;
@@ -1263,7 +1265,7 @@ jabber_chatrooms_browse_rooms_cb (GossipJabberDisco     *disco,
 		
 		callback = data->callback;
 		(callback)(GOSSIP_CHATROOM_PROVIDER (chatrooms->jabber),
-			   server, list, data->user_data);
+			   server, list, error, data->user_data);
 
 		g_list_foreach (list, (GFunc) g_object_unref, NULL);
 		g_list_free (list);
