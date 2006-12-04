@@ -1,3 +1,28 @@
+2006-12-04  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c:
+	* src/gossip-app.c: 
+	* src/gossip-chat-manager.c:
+	* src/gossip-chat-view.c: 
+	* src/gossip-chat-window.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-new-chatroom-dialog.c:
+	* src/gossip-private-chat.c: Sort out the reference counting
+	nightmare with private/group chats and the chat window. Now we
+	don't keep the private chats around for the duration of the time
+	you use Gossip, instead remove them when the tab closes. This
+	means we now free GossipPrivateChat objects when they are closed
+	and this should also mean Peekaboo updates better with current
+	chats. The commit also fixes some issues with reopening
+	GossipGroupChat objects because of internal hash table issues.
+
+2006-12-04  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom-manager.c:
+	* src/gossip-app.c: Make the chatroom manager signal when we can
+	auto connect chatrooms and pass the chatroom so we just need to
+	call gossip_group_chat_new () with it.
+
 2006-12-04  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-account-manager.c:

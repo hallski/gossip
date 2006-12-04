@@ -309,9 +309,21 @@ group_chat_finalize (GObject *object)
 {
 	GossipGroupChat     *chat;
 	GossipGroupChatPriv *priv;
+	GossipChatroomId     id;
+
+	gossip_debug (DEBUG_DOMAIN, "Finalized:%p", object);
 
 	chat = GOSSIP_GROUP_CHAT (object);
 	priv = GET_PRIV (chat);
+	
+	/* Make absolutely sure we don't still have the chatroom ID in
+	 * the hash table, this can happen when we have called
+	 * g_object_unref (chat) too many times. 
+	 *
+	 * This shouldn't happen.
+	 */
+	id = gossip_chatroom_get_id (priv->chatroom);
+	g_hash_table_steal (group_chats, GINT_TO_POINTER (id));
 
 	if (priv->chatroom) {
 		GossipChatroomStatus status;
@@ -329,7 +341,8 @@ group_chat_finalize (GObject *object)
 	}
 
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
-					      group_chat_new_message_cb, chat);
+					      group_chat_new_message_cb, 
+					      chat);
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_new_event_cb,
 					      chat);
@@ -354,7 +367,7 @@ group_chat_finalize (GObject *object)
 	g_free (priv->name);
 
 	g_list_foreach (priv->private_chats,
-			(GFunc)group_chat_private_chat_stop_foreach,
+			(GFunc) group_chat_private_chat_stop_foreach,
 			chat);
 	g_list_free (priv->private_chats);
 
@@ -417,11 +430,6 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 		gossip_chat_view_append_event (chatview, result_str);
 		return;
 	}
-
-#if 0
-	/* Clear previous messages */
-	gossip_chat_view_clear (chatview);
-#endif
 
 	/* Clear previous roster */
 	view = GTK_TREE_VIEW (priv->treeview);
@@ -663,7 +671,7 @@ group_chat_drag_data_received (GtkWidget        *widget,
 			      "Drag data received, for contact:'%s'", 
 			      id);
 		
-		/* send event to chat window */
+		/* Send event to chat window */
 		str = g_strdup_printf (_("Invited %s to join this chat conference."),
 				       gossip_contact_get_id (contact));
 		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
@@ -713,10 +721,10 @@ group_chat_widget_destroy_cb (GtkWidget       *widget,
 	GossipGroupChatPriv *priv;
 	GossipChatroomId     id;
 
-	priv = GET_PRIV (chat);
+	gossip_debug (DEBUG_DOMAIN, "Destroyed, removing from hash table");
 
+	priv = GET_PRIV (chat);
 	id = gossip_chatroom_get_id (priv->chatroom);
-	gossip_chatroom_provider_leave (priv->chatroom_provider, id);
 
 	g_hash_table_remove (group_chats, GINT_TO_POINTER (id));
 }
@@ -961,7 +969,8 @@ group_chat_create_ui (GossipGroupChat *chat)
 			      "entry_topic", "activate", group_chat_topic_activate_cb,
 			      NULL);
 
-	g_object_ref (priv->widget);
+	g_object_unref (glade);
+
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
 	gtk_container_add (GTK_CONTAINER (priv->scrolled_window_chat),
@@ -993,8 +1002,6 @@ group_chat_create_ui (GossipGroupChat *chat)
 			  "drag-data-received",
 			  G_CALLBACK (group_chat_drag_data_received),
 			  chat);
-
-	g_object_unref (glade);
 
 	list = NULL;
 	list = g_list_append (list, GOSSIP_CHAT (chat)->input_text_view);

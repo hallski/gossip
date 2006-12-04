@@ -1752,9 +1752,11 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	GtkWidget            *child;
 
 	priv = GET_PRIV (window);
-	
-	/* Set the chat window */
+
+	/* Reference the chat object */
 	g_object_ref (chat);
+
+	/* Set the chat window */
 	gossip_chat_set_window (chat, window);
 
 	if (g_list_length (priv->chats) == 0) {
@@ -1814,17 +1816,29 @@ gossip_chat_window_move_chat (GossipChatWindow *old_window,
 			      GossipChatWindow *new_window,
 			      GossipChat       *chat)
 {
+	GtkWidget *widget;
+
 	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (old_window));
 	g_return_if_fail (GOSSIP_IS_CHAT_WINDOW (new_window));
 	g_return_if_fail (GOSSIP_IS_CHAT (chat));
 
-	/* Make sure we don't loose the chat during the move */
+	widget = gossip_chat_get_widget (chat);
+
+	gossip_debug (DEBUG_DOMAIN,
+		      "Chat moving with widget:%p (%d references)", 
+		      widget,
+		      G_OBJECT (widget)->ref_count);
+
+	/* We reference here to make sure we don't loose the widget
+	 * and the GossipChat object during the move.
+	 */
 	g_object_ref (chat);
+	g_object_ref (widget);
 
 	gossip_chat_window_remove_chat (old_window, chat);
 	gossip_chat_window_add_chat (new_window, chat);
 
-	/* Clean up reference */
+	g_object_unref (widget);
 	g_object_unref (chat);
 }
 

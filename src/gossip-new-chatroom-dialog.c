@@ -702,7 +702,7 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 		/* Now do the join */
 		chat = gossip_group_chat_new (provider, chatroom);
 
-		g_object_unref (chat);
+/* 		g_object_unref (chat); */
 		g_object_unref (chatroom);
 	} else {
 		GList *chatrooms, *l;
@@ -715,7 +715,7 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 			gossip_chatroom_set_nick (chatroom, nick);
 			chat = gossip_group_chat_new (provider, chatroom);
 			
-			g_object_unref (chat);
+/* 			g_object_unref (chat); */
 		}
 	}
 

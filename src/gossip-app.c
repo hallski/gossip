@@ -322,10 +322,9 @@ static gboolean        app_window_configure_event_cb          (GtkWidget        
 							       GossipApp                *app);
 static void            app_status_flash_start                 (void);
 static void            app_status_flash_stop                  (void);
-static void            app_chatroom_auto_connect_update_cb    (GossipChatroomManager    *manager,
+static void            app_chatroom_auto_connect_cb           (GossipChatroomManager    *manager,
 							       GossipChatroomProvider   *provider,
 							       GossipChatroom           *chatroom,
-							       GossipChatroomJoinResult  result,
 							       gpointer                  user_data);
 static void            app_event_added_cb                     (GossipEventManager       *manager,
 							       GossipEvent              *event,
@@ -441,7 +440,7 @@ app_finalize (GObject *object)
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (priv->chatroom_manager,
-					      app_chatroom_auto_connect_update_cb,
+					      app_chatroom_auto_connect_cb,
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
@@ -549,8 +548,8 @@ app_setup (GossipSession        *session,
 			  G_CALLBACK (app_session_get_password_cb),
 			  NULL);
 
-	g_signal_connect (priv->chatroom_manager, "chatroom-auto-connect-update",
-			  G_CALLBACK (app_chatroom_auto_connect_update_cb),
+	g_signal_connect (priv->chatroom_manager, "chatroom-auto-connect",
+			  G_CALLBACK (app_chatroom_auto_connect_cb),
 			  NULL);
 
 	g_signal_connect (priv->event_manager, "event-added",
@@ -2774,35 +2773,19 @@ app_status_icon_flash_maybe_stop (void)
 }
 
 static void
-app_chatroom_auto_connect_update_cb (GossipChatroomManager    *manager,
-				     GossipChatroomProvider   *provider,
-				     GossipChatroom           *chatroom,
-				     GossipChatroomJoinResult  result,
-				     gpointer                  user_data)
+app_chatroom_auto_connect_cb (GossipChatroomManager    *manager,
+			      GossipChatroomProvider   *provider,
+			      GossipChatroom           *chatroom,
+			      gpointer                  user_data)
 {
-	const gchar *name;
+	GossipGroupChat *chat;
 
-	name = gossip_chatroom_get_name (chatroom);
+	gossip_debug (DEBUG_DOMAIN_CHATROOMS, 
+		      "Auto connect for room:'%s'", 
+		      gossip_chatroom_get_name (chatroom));
 
-	switch (result) {
-	case GOSSIP_CHATROOM_JOIN_NICK_IN_USE:
-	case GOSSIP_CHATROOM_JOIN_NEED_PASSWORD:
-	case GOSSIP_CHATROOM_JOIN_TIMED_OUT:
-	case GOSSIP_CHATROOM_JOIN_UNKNOWN_HOST:
-	case GOSSIP_CHATROOM_JOIN_UNKNOWN_ERROR:
-		gossip_debug (DEBUG_DOMAIN_CHATROOMS, "Auto connect update: failed for room:'%s'", name);
-		gossip_chatrooms_window_show (NULL, TRUE);
-		break;
-
-	case GOSSIP_CHATROOM_JOIN_OK:
-	case GOSSIP_CHATROOM_JOIN_ALREADY_OPEN:
-		gossip_debug (DEBUG_DOMAIN_CHATROOMS, "Auto connect update: success for room:'%s'", name);
-		gossip_group_chat_new (provider, chatroom);
-		break;
-
-	case GOSSIP_CHATROOM_JOIN_CANCELED:
-		break;
-	}
+	chat = gossip_group_chat_new (provider, chatroom);
+/* 	g_object_unref (chat); */
 }
 
 static void

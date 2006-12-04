@@ -1428,7 +1428,7 @@ chat_view_invite_join_cb (GossipChatroomProvider   *provider,
 
 	chatroom = gossip_chatroom_provider_find_by_id (provider, id);
 	chat = gossip_group_chat_new (provider, chatroom);
-	g_object_unref (chat);
+/* 	g_object_unref (chat); */
 }
 
 static void

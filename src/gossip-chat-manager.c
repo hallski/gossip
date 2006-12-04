@@ -50,6 +50,9 @@ static void chat_manager_event_activated_cb (GossipEventManager  *event_manager,
 static void chat_manager_get_chats_foreach  (GossipContact       *contact,
 					     GossipPrivateChat   *chat,
 					     GList              **chats);
+static void chat_manager_chat_removed_cb    (GossipChatManager   *manager,
+					     GossipChat          *chat,
+					     gboolean             is_last_ref);
 
 G_DEFINE_TYPE (GossipChatManager, gossip_chat_manager, G_TYPE_OBJECT);
 
@@ -194,6 +197,29 @@ gossip_chat_manager_new (void)
 	return g_object_new (GOSSIP_TYPE_CHAT_MANAGER, NULL);
 }
 
+static void
+chat_manager_chat_removed_cb (GossipChatManager *manager,
+			      GossipChat        *chat,
+			      gboolean           is_last_ref) 
+{
+	GossipChatManagerPriv *priv;
+	GossipContact         *contact;
+
+	if (!is_last_ref) {
+		return;
+	}
+	
+	priv = GET_PRIV (manager);
+	
+	contact = gossip_chat_get_contact (chat);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Removing an old chat:'%s'",
+		      gossip_contact_get_id (contact));
+
+	g_hash_table_remove (priv->chats, contact);
+}			      
+
 GossipPrivateChat *
 gossip_chat_manager_get_chat (GossipChatManager *manager,
 			      GossipContact     *contact)
@@ -221,8 +247,12 @@ gossip_chat_manager_get_chat (GossipChatManager *manager,
 		g_hash_table_insert (priv->chats,
 				     g_object_ref (contact),
 				     chat);
+		g_object_add_toggle_ref (G_OBJECT (chat),
+					 (GToggleNotify) chat_manager_chat_removed_cb, 
+					 manager);
 
-		gossip_debug (DEBUG_DOMAIN, "Creating a new chat: %s",
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Creating a new chat:'%s'",
 			      gossip_contact_get_id (contact));
 	}
 

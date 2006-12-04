@@ -108,8 +108,7 @@ static void           private_chat_input_text_buffer_changed_cb (GtkTextBuffer  
 static gboolean       private_chat_text_view_focus_in_event_cb  (GtkWidget              *widget,
 								 GdkEvent               *event,
 								 GossipPrivateChat      *chat);
-static gboolean       private_chat_delete_event_cb              (GtkWidget              *widget,
-								 GdkEvent               *event,
+static void           private_chat_widget_destroy_cb            (GtkWidget              *widget,
 								 GossipPrivateChat      *chat);
 static void           private_chat_own_avatar_notify_cb         (GossipContact          *contact,
 								 GParamSpec             *pspec,
@@ -183,6 +182,8 @@ private_chat_finalize (GObject *object)
 	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
 
+	gossip_debug (DEBUG_DOMAIN, "Finalized:%p", object);
+	
 	chat = GOSSIP_PRIVATE_CHAT (object);
 	priv = GET_PRIV (chat);
 
@@ -218,19 +219,29 @@ private_chat_finalize (GObject *object)
 static void
 private_chat_create_ui (GossipPrivateChat *chat)
 {
+	GladeXML              *glade;
 	GossipPrivateChatPriv *priv;
 	GtkTextBuffer         *buffer;
 	GtkWidget             *input_text_view_sw;
 
 	priv = GET_PRIV (chat);
 
-	gossip_glade_get_file_simple ("chat.glade",
-				      "chat_widget",
-				      NULL,
+	glade = gossip_glade_get_file ("chat.glade",
+				       "chat_widget",
+				       NULL,
 				      "chat_widget", &priv->widget,
 				      "chat_view_sw", &priv->text_view_sw,
 				      "input_text_view_sw", &input_text_view_sw,
-				      NULL);
+				       NULL);
+
+	gossip_glade_connect (glade,
+			      chat,
+			      "chat_widget", "destroy", private_chat_widget_destroy_cb,
+			      NULL);
+
+	g_object_unref (glade);
+
+	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
 	gtk_container_add (GTK_CONTAINER (priv->text_view_sw),
 			   GTK_WIDGET (GOSSIP_CHAT (chat)->view));
@@ -239,9 +250,6 @@ private_chat_create_ui (GossipPrivateChat *chat)
 	gtk_container_add (GTK_CONTAINER (input_text_view_sw),
 			   GOSSIP_CHAT (chat)->input_text_view);
 	gtk_widget_show (GOSSIP_CHAT (chat)->input_text_view);
-
-	g_object_ref (priv->widget);
-	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
 	g_signal_connect (GOSSIP_CHAT (chat)->input_text_view,
 			  "key_press_event",
@@ -257,10 +265,6 @@ private_chat_create_ui (GossipPrivateChat *chat)
 			  "focus_in_event",
 			  G_CALLBACK (private_chat_text_view_focus_in_event_cb),
 			  chat);
-	g_signal_connect (priv->widget,
-			  "delete_event",
-			  G_CALLBACK (private_chat_delete_event_cb),
-			  NULL);
 
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
@@ -701,12 +705,13 @@ private_chat_text_view_focus_in_event_cb (GtkWidget         *widget,
 	return TRUE;
 }
 
-static gboolean
-private_chat_delete_event_cb (GtkWidget         *widget,
-			      GdkEvent          *event,
-			      GossipPrivateChat *chat)
+static void
+private_chat_widget_destroy_cb (GtkWidget         *widget,
+				GossipPrivateChat *chat)
 {
-	return TRUE;
+	gossip_debug (DEBUG_DOMAIN, "Destroyed");
+
+	g_object_unref (chat);
 }
 
 static void
