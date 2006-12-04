@@ -290,7 +290,11 @@ gossip_account_manager_find_by_id (GossipAccountManager *manager,
 		const gchar   *account_id;
 
 		account = l->data;
-		gossip_account_param_get (account, "id", &account_id, NULL);
+		gossip_account_get_id (account);
+
+		if (!account_id) {
+			continue;
+		}
 
 		if (strcmp (account_id, id) == 0) {
 			return account;

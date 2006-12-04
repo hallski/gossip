@@ -1,5 +1,13 @@
 2006-12-04  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-account-manager.c:
+	(gossip_account_manager_find_by_id): Use gossip_account_get_id()
+	instead of gossip_account_get_param() to get the ID which was
+	failing and causing crashes and general things not working in the
+	log viewer.
+
+2006-12-04  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom-provider.h:
 	* protocols/jabber/gossip-jabber-chatrooms.c:
 	* protocols/jabber/gossip-jabber-disco.c:
