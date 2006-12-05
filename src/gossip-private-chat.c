@@ -119,9 +119,10 @@ static void           private_chat_other_avatar_notify_cb       (GossipContact  
 static const gchar *  private_chat_get_name                     (GossipChat             *chat);
 static gchar *        private_chat_get_tooltip                  (GossipChat             *chat);
 static GdkPixbuf *    private_chat_get_status_pixbuf            (GossipChat             *chat);
-static GtkWidget *    private_chat_get_widget                   (GossipChat             *chat);
 static GossipContact *private_chat_get_contact                  (GossipChat             *chat);
 static GossipContact *private_chat_get_own_contact              (GossipChat             *chat);
+static GtkWidget *    private_chat_get_widget                   (GossipChat             *chat);
+static gboolean       private_chat_is_connected                 (GossipChat             *chat);
 static GdkPixbuf *    private_chat_pad_to_size                  (GdkPixbuf              *pixbuf,
 								 gint                    width,
 								 gint                    height,
@@ -143,6 +144,10 @@ gossip_private_chat_class_init (GossipPrivateChatClass *klass)
 	chat_class->get_contact       = private_chat_get_contact;
 	chat_class->get_own_contact   = private_chat_get_own_contact;
 	chat_class->get_widget        = private_chat_get_widget;
+	chat_class->get_show_contacts = NULL;
+	chat_class->set_show_contacts = NULL;
+	chat_class->is_group_chat     = NULL;
+	chat_class->is_connected      = private_chat_is_connected;
 
 	g_type_class_add_private (object_class, sizeof (GossipPrivateChatPriv));
 }
@@ -186,6 +191,14 @@ private_chat_finalize (GObject *object)
 	
 	chat = GOSSIP_PRIVATE_CHAT (object);
 	priv = GET_PRIV (chat);
+
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_own_avatar_notify_cb,
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_other_avatar_notify_cb,
+					      chat);
+		
 
 	if (priv->contact) {
 		g_object_unref (priv->contact);
@@ -519,10 +532,10 @@ private_chat_contact_added (gpointer           not_user,
 	g_object_unref (priv->contact);
 	priv->contact = g_object_ref (contact);
 
-	g_signal_connect_object (priv->contact,
-				 "notify::avatar",
-				 G_CALLBACK (private_chat_other_avatar_notify_cb),
-				 chat, 0);
+	g_signal_connect (priv->contact,
+			  "notify::avatar",
+			  G_CALLBACK (private_chat_other_avatar_notify_cb),
+			  chat);
 }
 
 static void
@@ -546,6 +559,8 @@ private_chat_protocol_connected_cb (GossipSession     *session,
 	/* i18n: An event, as in "has now been connected". */
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view,
 				       _("Connected"));
+
+	g_signal_emit_by_name (chat, "status-changed");
 }
 
 static void
@@ -791,7 +806,7 @@ private_chat_get_tooltip (GossipChat *chat)
 				status);
 }
 
-GdkPixbuf *
+static GdkPixbuf *
 private_chat_get_status_pixbuf (GossipChat *chat)
 {
 	GossipPrivateChatPriv *priv;
@@ -840,6 +855,28 @@ private_chat_get_widget (GossipChat *chat)
 	return priv->widget;
 }
 
+static gboolean
+private_chat_is_connected (GossipChat *chat)
+{
+	GossipPrivateChatPriv *priv;
+	GossipAccount         *account;
+
+	g_return_val_if_fail (GOSSIP_IS_PRIVATE_CHAT (chat), FALSE);
+	
+	priv = GET_PRIV (chat);
+
+	if (!priv->own_contact) {
+		return FALSE;
+	}
+	
+	account = gossip_contact_get_account (priv->own_contact);
+	if (!account) {
+		return FALSE;
+	}
+
+	return gossip_session_is_connected (gossip_app_get_session (), account);
+}
+
 /* Scroll down after the back-log has been received. */
 static gboolean
 private_chat_scroll_down_idle_func (GossipChat *chat)
@@ -880,15 +917,15 @@ gossip_private_chat_new (GossipContact *own_contact,
 
 	priv->name = g_strdup (gossip_contact_get_name (contact));
 
-	g_signal_connect_object (priv->own_contact,
-				 "notify::avatar",
-				 G_CALLBACK (private_chat_own_avatar_notify_cb),
-				 chat, 0);
+	g_signal_connect (priv->own_contact,
+			  "notify::avatar",
+			  G_CALLBACK (private_chat_own_avatar_notify_cb),
+			  chat);
 
-	g_signal_connect_object (priv->contact,
-				 "notify::avatar",
-				 G_CALLBACK (private_chat_other_avatar_notify_cb),
-				 chat, 0);
+	g_signal_connect (priv->contact,
+			  "notify::avatar",
+			  G_CALLBACK (private_chat_other_avatar_notify_cb),
+			  chat);
 
 	private_chat_own_avatar_notify_cb (priv->own_contact, NULL, chat);
 	private_chat_other_avatar_notify_cb (priv->contact, NULL, chat);

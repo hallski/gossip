@@ -69,6 +69,7 @@ struct _GossipChatWindowPriv {
 
 	/* Menu items. */
 	GtkWidget   *menu_conv_clear;
+	GtkWidget   *menu_conv_insert_smiley;
 	GtkWidget   *menu_conv_log;
 	GtkWidget   *menu_conv_separator;
 	GtkWidget   *menu_conv_add_contact;
@@ -80,11 +81,12 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_room_add;
 	GtkWidget   *menu_room_show_contacts;
 
-	GtkWidget   *menu_edit_insert_smiley;
+	GtkWidget   *menu_edit;
 	GtkWidget   *menu_edit_cut;
 	GtkWidget   *menu_edit_copy;
 	GtkWidget   *menu_edit_paste;
 
+	GtkWidget   *menu_tabs;
 	GtkWidget   *menu_tabs_next;
 	GtkWidget   *menu_tabs_prev;
 	GtkWidget   *menu_tabs_left;
@@ -274,6 +276,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "chat_vbox", &chat_vbox,
 				       "menu_conv", &menu_conv,
 				       "menu_conv_clear", &priv->menu_conv_clear,
+				       "menu_conv_insert_smiley", &priv->menu_conv_insert_smiley,
 				       "menu_conv_log", &priv->menu_conv_log,
 				       "menu_conv_separator", &priv->menu_conv_separator,
 				       "menu_conv_add_contact", &priv->menu_conv_add_contact,
@@ -283,10 +286,11 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_room_invite", &priv->menu_room_invite,
 				       "menu_room_add", &priv->menu_room_add,
 				       "menu_room_show_contacts", &priv->menu_room_show_contacts,
-				       "menu_edit_insert_smiley", &priv->menu_edit_insert_smiley,
+				       "menu_edit", &priv->menu_edit,
 				       "menu_edit_cut", &priv->menu_edit_cut,
 				       "menu_edit_copy", &priv->menu_edit_copy,
 				       "menu_edit_paste", &priv->menu_edit_paste,
+				       "menu_tabs", &priv->menu_tabs,
 				       "menu_tabs_next", &priv->menu_tabs_next,
 				       "menu_tabs_prev", &priv->menu_tabs_prev,
 				       "menu_tabs_left", &priv->menu_tabs_left,
@@ -351,7 +355,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 		G_CALLBACK (chat_window_insert_smiley_activate_cb),
 		window,
 		priv->tooltips);
-	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_edit_insert_smiley), menu);
+	gtk_menu_item_set_submenu (GTK_MENU_ITEM (priv->menu_conv_insert_smiley), menu);
 
 	/* Set up signals we can't do with glade since we may need to
 	 * block/unblock them at some later stage.
@@ -732,16 +736,26 @@ chat_window_update_menu (GossipChatWindow *window)
 	gboolean              show_contacts;
 	gboolean              first_page;
 	gboolean              last_page;
+	gboolean              is_connected;
 	gint                  num_pages;
 	gint                  page_num;
 
 	priv = GET_PRIV (window);
 
+	/* Notebook pages */
 	page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (priv->notebook));
 	num_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (priv->notebook));
 	first_page = (page_num == 0);
 	last_page = (page_num == (num_pages - 1));
 
+	gtk_widget_set_sensitive (priv->menu_tabs, num_pages > 1);
+	gtk_widget_set_sensitive (priv->menu_tabs_next, !last_page);
+	gtk_widget_set_sensitive (priv->menu_tabs_prev, !first_page);
+	gtk_widget_set_sensitive (priv->menu_tabs_detach, num_pages > 1);
+	gtk_widget_set_sensitive (priv->menu_tabs_left, !first_page);
+	gtk_widget_set_sensitive (priv->menu_tabs_right, !last_page);
+	
+	/* Contacts/Chats */
 	contact = gossip_chat_get_contact (priv->current_chat);
 	own_contact = gossip_chat_get_own_contact (priv->current_chat);
 
@@ -749,35 +763,36 @@ chat_window_update_menu (GossipChatWindow *window)
 		return;
 	}
 
-	gtk_widget_set_sensitive (priv->menu_tabs_next, !last_page);
-	gtk_widget_set_sensitive (priv->menu_tabs_prev, !first_page);
-	gtk_widget_set_sensitive (priv->menu_tabs_detach, num_pages > 1);
-	gtk_widget_set_sensitive (priv->menu_tabs_left, !first_page);
-	gtk_widget_set_sensitive (priv->menu_tabs_right, !last_page);
-	gtk_widget_set_sensitive (priv->menu_conv_info, contact != NULL);
+	is_connected = gossip_chat_is_connected (priv->current_chat);
 
 	if (gossip_chat_is_group_chat (priv->current_chat)) {
 		GossipGroupChat       *group_chat;
 		GossipChatroomManager *manager;
+		GossipChatroom        *chatroom;
 		GossipChatroomId       id;
+		gboolean               saved;
 
 		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-		id = gossip_group_chat_get_chatroom_id (group_chat);
+		chatroom = gossip_group_chat_get_chatroom (group_chat);
 
 		/* Show / Hide widgets */
 		gtk_widget_show (priv->menu_room);
 
-		gtk_widget_hide (priv->menu_conv_separator);
 		gtk_widget_hide (priv->menu_conv_add_contact);
 		gtk_widget_hide (priv->menu_conv_info);
+		gtk_widget_hide (priv->menu_conv_separator);
 
-		/* Can we add this room to our favourites? */
+		/* Can we add this room to our favourites and are we
+		 * connected to the room?
+		 */
 		manager = gossip_app_get_chatroom_manager ();
-		if (gossip_chatroom_manager_find (manager, id)) {
-			gtk_widget_set_sensitive (priv->menu_room_add, FALSE);
-		} else {
-			gtk_widget_set_sensitive (priv->menu_room_add, TRUE);
-		}
+		id = gossip_chatroom_get_id (chatroom);
+		saved = gossip_chatroom_manager_find (manager, id) != NULL;
+
+		gtk_widget_set_sensitive (priv->menu_room_add, !saved);
+		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
+		gtk_widget_set_sensitive (priv->menu_edit, is_connected);
+		gtk_widget_set_sensitive (priv->menu_room_invite, is_connected);
 
 		/* We need to block the signal here because all we are
 		 * really trying to do is check or uncheck the menu
@@ -814,6 +829,12 @@ chat_window_update_menu (GossipChatWindow *window)
 
 		gtk_widget_show (priv->menu_conv_separator);
 		gtk_widget_show (priv->menu_conv_info);
+
+		/* Are we connected? */
+		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
+		gtk_widget_set_sensitive (priv->menu_conv_add_contact, is_connected);
+		gtk_widget_set_sensitive (priv->menu_conv_info, is_connected);
+		gtk_widget_set_sensitive (priv->menu_edit, is_connected);
 	}
 }
 
@@ -873,17 +894,11 @@ chat_window_log_activate_cb (GtkWidget        *menuitem,
 	priv = GET_PRIV (window);
 
 	if (gossip_chat_is_group_chat (priv->current_chat)) {
-		GossipGroupChat        *group_chat;
-		GossipChatroomProvider *provider;
-		GossipChatroom         *chatroom;
-		GossipChatroomId        id;
+		GossipGroupChat *group_chat;
+		GossipChatroom  *chatroom;
 
 		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-
-		id = gossip_group_chat_get_chatroom_id (group_chat);
-		provider = gossip_group_chat_get_chatroom_provider (group_chat);
-
-		chatroom = gossip_chatroom_provider_find_by_id (provider, id);
+		chatroom = gossip_group_chat_get_chatroom (group_chat);
 		gossip_log_window_show (NULL, chatroom);
 	} else {
 		GossipContact *contact;
@@ -962,17 +977,11 @@ chat_window_conv_activate_cb (GtkWidget        *menuitem,
 	priv = GET_PRIV (window);
 
 	if (gossip_chat_is_group_chat (priv->current_chat)) {
-		GossipGroupChat        *group_chat;
-		GossipChatroomProvider *provider;
-		GossipChatroom         *chatroom;
-		GossipChatroomId        id;
+		GossipGroupChat *group_chat;
+		GossipChatroom  *chatroom;
 
 		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-
-		id = gossip_group_chat_get_chatroom_id (group_chat);
-		provider = gossip_group_chat_get_chatroom_provider (group_chat);
-
-		chatroom = gossip_chatroom_provider_find_by_id (provider, id);
+		chatroom = gossip_group_chat_get_chatroom (group_chat);
 		if (chatroom) {
 			log_exists = gossip_log_exists_for_chatroom (chatroom);
 		}
@@ -1042,12 +1051,10 @@ static void
 chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 				  GossipChatWindow *window)
 {
-	GossipChatWindowPriv   *priv;
-	GossipGroupChat        *group_chat;
-	GossipChatroomManager  *manager;
-	GossipChatroomProvider *provider;
-	GossipChatroom         *chatroom;
-	GossipChatroomId        id;
+	GossipChatWindowPriv  *priv;
+	GossipGroupChat       *group_chat;
+	GossipChatroomManager *manager;
+	GossipChatroom        *chatroom;
 
 	priv = GET_PRIV (window);
 
@@ -1058,10 +1065,7 @@ chat_window_room_add_activate_cb (GtkWidget        *menuitem,
 	}
 
 	group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
-	id = gossip_group_chat_get_chatroom_id (group_chat);
-	provider = gossip_group_chat_get_chatroom_provider (group_chat);
-
-	chatroom = gossip_chatroom_provider_find_by_id (provider, id);
+	chatroom = gossip_group_chat_get_chatroom (group_chat);
 	gossip_chatroom_set_favourite (chatroom, TRUE);
 
 	manager = gossip_app_get_chatroom_manager ();
@@ -1241,6 +1245,8 @@ static void
 chat_window_status_changed_cb (GossipChat       *chat,
 			       GossipChatWindow *window)
 {
+	chat_window_update_title (window, NULL);
+	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
 
@@ -1362,8 +1368,7 @@ chat_window_disconnected_cb (GossipApp        *app,
 	 * belong to contacts on accounts which might still be online.
 	 */
 	for (l = priv->chats; l != NULL; l = g_list_next (l)) {
-		GossipChat *chat = GOSSIP_CHAT (l->data);
-		chat_window_update_status (window, chat);
+		chat_window_update_status (window, l->data);
 	}
 
 	chat_window_update_menu (window);

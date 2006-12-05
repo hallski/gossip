@@ -79,6 +79,7 @@ struct _GossipChatClass {
 					      gboolean     show);
 
 	gboolean         (*is_group_chat)    (GossipChat  *chat);
+	gboolean         (*is_connected)     (GossipChat  *chat);
 	void             (*save_geometry)    (GossipChat  *chat,
 					      gint         x,
 					      gint         y,
@@ -115,6 +116,7 @@ void              gossip_chat_set_show_contacts     (GossipChat       *chat,
 						     gboolean          show);
 
 gboolean          gossip_chat_is_group_chat         (GossipChat       *chat);
+gboolean          gossip_chat_is_connected          (GossipChat       *chat);
 
 void              gossip_chat_save_geometry         (GossipChat       *chat,
 						     gint              x,

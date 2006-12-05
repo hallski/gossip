@@ -692,6 +692,18 @@ gossip_chat_is_group_chat (GossipChat *chat)
 	return FALSE;
 }
 
+gboolean 
+gossip_chat_is_connected (GossipChat *chat)
+{
+	g_return_val_if_fail (GOSSIP_IS_CHAT (chat), FALSE);
+
+	if (GOSSIP_CHAT_GET_CLASS (chat)->is_connected) {
+		return GOSSIP_CHAT_GET_CLASS (chat)->is_connected (chat);
+	}
+
+	return FALSE;
+}
+
 gboolean
 gossip_chat_get_show_contacts (GossipChat *chat)
 {

@@ -1,3 +1,13 @@
+2006-12-05  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.[ch]:
+	* src/gossip-group-chat.[ch]:
+	* src/gossip-private-chat.c:
+	* ui/chat.glade: Move the Insert Smiley to Conversation
+	menu. Added gossip_chat_is_connected(). Update menus properly now
+	depending on connection state.  
+
 2006-12-04  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-private-chat.c: Fixed a crasher in

@@ -52,5 +52,6 @@ GossipGroupChat *gossip_group_chat_new                   (GossipChatroomProvider
 GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat        *groupchat);
 GossipChatroomProvider *
 		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *groupchat);
+GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat        *groupchat);
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */

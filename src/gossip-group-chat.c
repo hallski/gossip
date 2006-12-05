@@ -206,6 +206,7 @@ static gboolean        group_chat_get_show_contacts           (GossipChat       
 static void            group_chat_set_show_contacts           (GossipChat                   *chat,
 							       gboolean                      show);
 static gboolean        group_chat_is_group_chat               (GossipChat                   *chat);
+static gboolean        group_chat_is_connected                (GossipChat                   *chat);
 static void            group_chat_get_role_iter               (GossipGroupChat              *chat,
 							       GossipChatroomRole            role,
 							       GtkTreeIter                  *iter);
@@ -273,6 +274,7 @@ gossip_group_chat_class_init (GossipGroupChatClass *klass)
 	chat_class->get_show_contacts = group_chat_get_show_contacts;
 	chat_class->set_show_contacts = group_chat_set_show_contacts;
 	chat_class->is_group_chat     = group_chat_is_group_chat;
+	chat_class->is_connected      = group_chat_is_connected;
 
 	g_type_class_add_private (object_class, sizeof (GossipGroupChatPriv));
 }
@@ -503,6 +505,8 @@ group_chat_protocol_connected_cb (GossipSession   *session,
 	if (!gossip_account_equal (this_account, account)) {
 		return;
 	}
+
+	g_signal_emit_by_name (chat, "status-changed");
 
 /* 	gtk_widget_set_sensitive (GOSSIP_CHAT (chat)->input_text_view, TRUE); */
 
@@ -1756,6 +1760,25 @@ group_chat_is_group_chat (GossipChat *chat)
 }
 
 static gboolean
+group_chat_is_connected (GossipChat *chat)
+{
+	GossipGroupChatPriv  *priv;
+	GossipChatroomStatus  status;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), FALSE);
+	
+	priv = GET_PRIV (chat);
+	
+	if (!priv->chatroom) {
+		return FALSE;
+	}
+
+	status = gossip_chatroom_get_status (priv->chatroom);
+
+	return status == GOSSIP_CHATROOM_STATUS_ACTIVE;
+}
+
+static gboolean
 group_chat_get_role_iter_foreach (GtkTreeModel     *model,
 				  GtkTreePath      *path,
 				  GtkTreeIter      *iter,
@@ -1989,4 +2012,16 @@ gossip_group_chat_get_chatroom_provider (GossipGroupChat *chat)
 	priv = GET_PRIV (chat);
 
 	return priv->chatroom_provider;
+}
+
+GossipChatroom * 
+gossip_group_chat_get_chatroom (GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_GROUP_CHAT (chat), NULL);
+
+	priv = GET_PRIV (chat);
+
+	return priv->chatroom;
 }
