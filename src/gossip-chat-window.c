@@ -81,12 +81,10 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_room_add;
 	GtkWidget   *menu_room_show_contacts;
 
-	GtkWidget   *menu_edit;
 	GtkWidget   *menu_edit_cut;
 	GtkWidget   *menu_edit_copy;
 	GtkWidget   *menu_edit_paste;
 
-	GtkWidget   *menu_tabs;
 	GtkWidget   *menu_tabs_next;
 	GtkWidget   *menu_tabs_prev;
 	GtkWidget   *menu_tabs_left;
@@ -286,11 +284,9 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_room_invite", &priv->menu_room_invite,
 				       "menu_room_add", &priv->menu_room_add,
 				       "menu_room_show_contacts", &priv->menu_room_show_contacts,
-				       "menu_edit", &priv->menu_edit,
 				       "menu_edit_cut", &priv->menu_edit_cut,
 				       "menu_edit_copy", &priv->menu_edit_copy,
 				       "menu_edit_paste", &priv->menu_edit_paste,
-				       "menu_tabs", &priv->menu_tabs,
 				       "menu_tabs_next", &priv->menu_tabs_next,
 				       "menu_tabs_prev", &priv->menu_tabs_prev,
 				       "menu_tabs_left", &priv->menu_tabs_left,
@@ -748,7 +744,6 @@ chat_window_update_menu (GossipChatWindow *window)
 	first_page = (page_num == 0);
 	last_page = (page_num == (num_pages - 1));
 
-	gtk_widget_set_sensitive (priv->menu_tabs, num_pages > 1);
 	gtk_widget_set_sensitive (priv->menu_tabs_next, !last_page);
 	gtk_widget_set_sensitive (priv->menu_tabs_prev, !first_page);
 	gtk_widget_set_sensitive (priv->menu_tabs_detach, num_pages > 1);
@@ -791,7 +786,6 @@ chat_window_update_menu (GossipChatWindow *window)
 
 		gtk_widget_set_sensitive (priv->menu_room_add, !saved);
 		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
-		gtk_widget_set_sensitive (priv->menu_edit, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_invite, is_connected);
 
 		/* We need to block the signal here because all we are
@@ -834,7 +828,6 @@ chat_window_update_menu (GossipChatWindow *window)
 		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
 		gtk_widget_set_sensitive (priv->menu_conv_add_contact, is_connected);
 		gtk_widget_set_sensitive (priv->menu_conv_info, is_connected);
-		gtk_widget_set_sensitive (priv->menu_edit, is_connected);
 	}
 }
 
@@ -1080,36 +1073,38 @@ chat_window_edit_activate_cb (GtkWidget        *menuitem,
 			      GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
-	GossipChat           *chat;
 	GtkClipboard         *clipboard;
 	GtkTextBuffer        *buffer;
+	gboolean              text_available;
 
 	priv = GET_PRIV (window);
 
 	g_return_if_fail (priv->current_chat != NULL);
 
-	chat = priv->current_chat;
+	if (!gossip_chat_is_connected (priv->current_chat)) {
+		gtk_widget_set_sensitive (priv->menu_edit_copy, FALSE);
+		gtk_widget_set_sensitive (priv->menu_edit_cut, FALSE);
+		gtk_widget_set_sensitive (priv->menu_edit_paste, FALSE);
+		return;
+	}
 
-	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (priv->current_chat->input_text_view));
 	if (gtk_text_buffer_get_selection_bounds (buffer, NULL, NULL)) {
 		gtk_widget_set_sensitive (priv->menu_edit_copy, TRUE);
 		gtk_widget_set_sensitive (priv->menu_edit_cut, TRUE);
 	} else {
-		gtk_widget_set_sensitive (priv->menu_edit_cut, FALSE);
+		gboolean selection;
 
-		if (gossip_chat_view_get_selection_bounds (chat->view, NULL, NULL)) {
-			gtk_widget_set_sensitive (priv->menu_edit_copy, TRUE);
-		} else {
-			gtk_widget_set_sensitive (priv->menu_edit_copy, FALSE);
-		}
+		selection = gossip_chat_view_get_selection_bounds (priv->current_chat->view, 
+								   NULL, NULL);
+
+		gtk_widget_set_sensitive (priv->menu_edit_cut, FALSE);
+		gtk_widget_set_sensitive (priv->menu_edit_copy, selection);
 	}
 
 	clipboard = gtk_clipboard_get (GDK_SELECTION_CLIPBOARD);
-	if (gtk_clipboard_wait_is_text_available (clipboard)) {
-		gtk_widget_set_sensitive (priv->menu_edit_paste, TRUE);
-	} else {
-		gtk_widget_set_sensitive (priv->menu_edit_paste, FALSE);
-	}
+	text_available = gtk_clipboard_wait_is_text_available (clipboard);
+	gtk_widget_set_sensitive (priv->menu_edit_paste, text_available);
 }
 
 static void

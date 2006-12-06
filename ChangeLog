@@ -1,3 +1,10 @@
+2006-12-06  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: After speaking with Richard about
+	completely desensitising menus like Edit and Tab in a chat window,
+	it is better to show all items as insensitive than just the menu
+	parent itself.
+
 2006-12-05  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c:
