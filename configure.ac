@@ -1,4 +1,4 @@
-AC_INIT(Gossip, 0.20, http://bugzilla.gnome.org/enter_bug.cgi?product=gossip)
+AC_INIT(Gossip, 0.21, http://bugzilla.gnome.org/enter_bug.cgi?product=gossip)
 AC_PREREQ(2.59)
 AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
 
