@@ -2,6 +2,23 @@ NEW in 0.20:
 ============
 - Added chatroom browsing.
 - Reworked the chatroom joining and creating experience.
+- Fixed #305371, Location of presence resubscription UI (Martyn Russell)
+- Fixed #322110, Problems with online states of buddies with multiple accounts (Xavier Claessens)
+- Fixed #359813, Add contact info label is cut off (Martyn Russell)
+- Fixed #368644, GossipAccount should have an "id" property (Eitan Isaacson, Xavier Claessens)
+- Fixed #369330, Online status displays away although one resource is available (Martyn Russell)
+- Fixed #377867, GtkNotebook now support tab DnD, use it instead of GossipNotebook (Xavier Claessens, Martyn Russell)
+- Fixed #379079, Gossip shows roster when it was quit minimised (Martyn Russell)
+- Fixed #380466, Make sure the UI loads avatars in a format/size supported by the protocol (Xavier Claessens)
+
+Translations:
+- Updated el: Dimitris Glezos
+- Updated nl: Wouter Bolsterlee
+- Updated sv: Daniel Nylander
+- Updated hu: Gabor Kelemen
+- Updated ar: Djihed Afifi <djihed@gmail.com>
+- Updated es: Francisco Javier F. Serrador
+
 
 NEW in 0.19:
 ============
