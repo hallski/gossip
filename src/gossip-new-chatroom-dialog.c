@@ -138,6 +138,8 @@ enum {
 	COL_COUNT
 };
 
+static GossipNewChatroomDialog *dialog_p = NULL;
+
 static void
 new_chatroom_dialog_update_buttons (GossipNewChatroomDialog *dialog)
 {
@@ -743,6 +745,10 @@ new_chatroom_dialog_browse_cb (GossipChatroomProvider  *provider,
 	GList *l;
 	gchar *str;
 
+	if (!dialog_p) {
+		return;
+	}
+
 	gossip_toggle_button_set_state_quietly (dialog->togglebutton_refresh, 
 						G_CALLBACK (new_chatroom_dialog_togglebutton_refresh_toggled_cb),
 						dialog,
@@ -908,20 +914,20 @@ new_chatroom_dialog_destroy_cb (GtkWidget               *widget,
 void
 gossip_new_chatroom_dialog_show (GtkWindow *parent)
 {
-	static GossipNewChatroomDialog *dialog = NULL;
-	GladeXML                       *glade;
-	GossipSession                  *session;
-	GList                          *accounts;
-	gint                            account_num;
-	GossipChatroomManager          *manager;
-	GtkSizeGroup                   *size_group;
+	GossipNewChatroomDialog *dialog;
+	GladeXML                *glade;
+	GossipSession           *session;
+	GList                   *accounts;
+	gint                     account_num;
+	GossipChatroomManager   *manager;
+	GtkSizeGroup            *size_group;
 
-	if (dialog) {
-		gtk_window_present (GTK_WINDOW (dialog->window));
+	if (dialog_p) {
+		gtk_window_present (GTK_WINDOW (dialog_p->window));
 		return;
 	}
 
-	dialog = g_new0 (GossipNewChatroomDialog, 1);
+	dialog_p = dialog = g_new0 (GossipNewChatroomDialog, 1);
 
 	glade = gossip_glade_get_file ("group-chat.glade",
 				       "new_chatroom_dialog",
@@ -957,7 +963,7 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 
 	g_object_unref (glade);
 
-	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog);
+	g_object_add_weak_pointer (G_OBJECT (dialog->window), (gpointer) &dialog_p);
 
 	/* Label alignment */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);

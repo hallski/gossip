@@ -1,5 +1,11 @@
 2006-12-08  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-new-chatroom-dialog.c: Since we don't have a way to
+	cancel the browse request yet, make sure we don't crash when
+	closing the dialog before the response comes back.
+
+2006-12-08  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chatrooms-window.c: Make it possible to sort columns.
 
 2006-12-08  Xavier Claessens  <xclaesse@gmail.com>
