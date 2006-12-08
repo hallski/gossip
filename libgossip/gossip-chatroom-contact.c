@@ -148,7 +148,7 @@ chatroom_contact_set_property (GObject            *object,
 GossipChatroomContact *
 gossip_chatroom_contact_new (GossipAccount *account)
 {
-	return g_object_new (GOSSIP_TYPE_CONTACT,
+	return g_object_new (GOSSIP_TYPE_CHATROOM_CONTACT,
 			     "type", GOSSIP_CONTACT_TYPE_CHATROOM,
 			     "account", account,
 			     NULL);

@@ -1,3 +1,9 @@
+2006-12-08  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-chatroom-contact.c: gossip_chatroom_contact_new()
+	should create a GOSSIP_TYPE_CHATROOM_CONTACT instead of
+	GOSSIP_TYPE_CONTACT.
+
 2006-12-06  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: After speaking with Richard about
