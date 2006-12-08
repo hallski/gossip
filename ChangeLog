@@ -1,3 +1,7 @@
+2006-12-08  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chatrooms-window.c: Make it possible to sort columns.
+
 2006-12-08  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-chatroom-contact.c: gossip_chatroom_contact_new()
