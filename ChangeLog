@@ -1,3 +1,14 @@
+2006-12-09  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-vcard.[ch]: 
+	* protocols/jabber/gossip-jabber-vcard.c: Added birthday to the vcard. 
+
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-vcard-dialog.c: 
+	* ui/main.glade: Make it possible to get and set your own birthday
+	in the contact information, fixes bug #380373 (Laurent Bigonville,
+	Martyn Russell).
+
 2006-12-08  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bump version.

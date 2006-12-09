@@ -115,6 +115,11 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 		gossip_vcard_set_nickname (vcard, node->value);
 	}
 
+	node = lm_message_node_get_child (vcard_node, "BDAY");
+	if (node) {
+		gossip_vcard_set_birthday (vcard, node->value);
+	}
+
 	node = lm_message_node_get_child (vcard_node, "EMAIL");
 	if (node) {
 		const gchar *email = NULL;
@@ -273,6 +278,8 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	lm_message_node_add_child (node, "FN", gossip_vcard_get_name (vcard));
 	lm_message_node_add_child (node, "NICKNAME",
 				   gossip_vcard_get_nickname (vcard));
+	lm_message_node_add_child (node, "BDAY",
+				   gossip_vcard_get_birthday (vcard));
 	lm_message_node_add_child (node, "URL", gossip_vcard_get_url (vcard));
 
 	child = lm_message_node_add_child (node, "EMAIL", NULL);

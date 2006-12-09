@@ -48,8 +48,6 @@
 #define VCARD_TIMEOUT     20000
 #define SAVED_TIMEOUT     10000
 
-#define RESPONSE_SAVE     1
-
 #define AVATAR_MAX_HEIGHT 96
 #define AVATAR_MAX_WIDTH  96
 
@@ -60,7 +58,7 @@ typedef struct {
 	GtkWidget *label_account;
 	GtkWidget *account_chooser;
 
-	GtkWidget *table_vcard;
+	GtkWidget *vbox_details;
 
 	GtkWidget *label_name;
 	GtkWidget *label_nickname;
@@ -74,6 +72,7 @@ typedef struct {
 	GtkWidget *entry_email;
 
 	GtkWidget *textview_description;
+	GtkWidget *calendar_birthday;
 
 	GtkWidget *button_cancel;
 	GtkWidget *button_save;
@@ -115,7 +114,6 @@ static void       vcard_dialog_response_cb                (GtkDialog         *wi
 							   GossipVCardDialog *dialog);
 static void       vcard_dialog_destroy_cb                 (GtkWidget         *widget,
 							   GossipVCardDialog *dialog);
-
 
 static GossipVCardDialog *dialog = NULL;
 
@@ -332,7 +330,7 @@ vcard_dialog_lookup_start (GossipVCardDialog *dialog)
 	GossipAccount        *account;
 	GossipAccountChooser *account_chooser;
 
-	gtk_widget_set_sensitive (dialog->table_vcard, FALSE);
+	gtk_widget_set_sensitive (dialog->vbox_details, FALSE);
 	gtk_widget_set_sensitive (dialog->account_chooser, FALSE);
 	gtk_widget_set_sensitive (dialog->button_save, FALSE);
 
@@ -361,7 +359,7 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 {
 	dialog->requesting_vcard = FALSE;
 
-	gtk_widget_set_sensitive (dialog->table_vcard, TRUE);
+	gtk_widget_set_sensitive (dialog->vbox_details, TRUE);
 	gtk_widget_set_sensitive (dialog->account_chooser, TRUE);
 	gtk_widget_set_sensitive (dialog->button_save, TRUE);
 
@@ -369,6 +367,23 @@ vcard_dialog_lookup_stop (GossipVCardDialog *dialog)
 		g_source_remove (dialog->timeout_id);
 		dialog->timeout_id = 0;
 	}
+}
+
+static gboolean
+vcard_dialog_is_birthday_string (const gchar *date,
+				 guint       *year,
+				 guint       *month,
+				 guint       *day)
+{
+	if (G_STR_EMPTY (date)) {
+		return FALSE;
+	}
+	
+	if (sscanf (date, "%04d-%02d-%02d", year, month, day) == 3) {
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 static void
@@ -381,6 +396,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	const gchar   *str;
 	const guchar  *avatar;
 	gsize          avatar_size;
+	guint          year, month, day;
 
 	gossip_debug (DEBUG_DOMAIN, "Received VCard response");
 
@@ -400,6 +416,12 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 
 	str = gossip_vcard_get_nickname (vcard);
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), G_STR_EMPTY (str) ? "" : str);
+
+	str = gossip_vcard_get_birthday (vcard);
+	if (vcard_dialog_is_birthday_string (str, &year, &month, &day)) {
+		gtk_calendar_select_month (GTK_CALENDAR (dialog->calendar_birthday), month - 1, year);
+		gtk_calendar_select_day (GTK_CALENDAR (dialog->calendar_birthday), day);
+	}
 
 	str = gossip_vcard_get_email (vcard);
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email), G_STR_EMPTY (str) ? "" : str);
@@ -449,6 +471,8 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	const gchar          *str;
 	gchar                *avatar;
 	gsize                 avatar_size;
+	gchar                *date;
+	guint                 year, month, day;
 
 	if (!gossip_app_is_connected ()) {
 		gossip_debug (DEBUG_DOMAIN, "Not connected, not setting VCard");
@@ -462,6 +486,13 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
 	gossip_vcard_set_nickname (vcard, str);
+
+	gtk_calendar_get_date (GTK_CALENDAR (dialog->calendar_birthday),
+			       &year, &month, &day);
+	month++;
+	date = g_strdup_printf ("%04d-%02d-%02d", year, month, day);
+	gossip_vcard_set_birthday (vcard, date);
+	g_free (date);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_web_site));
 	gossip_vcard_set_url (vcard, str);
@@ -544,7 +575,7 @@ vcard_dialog_response_cb (GtkDialog         *widget,
 			  GossipVCardDialog *dialog)
 {
 	switch (response) {
-	case RESPONSE_SAVE:
+	case GTK_RESPONSE_OK:
 		gtk_widget_set_sensitive (dialog->button_save, FALSE);
 		vcard_dialog_set_vcard (dialog);
 		return;
@@ -597,7 +628,7 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "vcard_dialog", &dialog->dialog,
 				       "hbox_account", &dialog->hbox_account,
 				       "label_account", &dialog->label_account,
-				       "table_vcard", &dialog->table_vcard,
+				       "vbox_details", &dialog->vbox_details,
 				       "label_name", &dialog->label_name,
 				       "label_nickname", &dialog->label_nickname,
 				       "label_web_site", &dialog->label_web_site,
@@ -608,6 +639,7 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "entry_web_site", &dialog->entry_web_site,
 				       "entry_email", &dialog->entry_email,
 				       "textview_description", &dialog->textview_description,
+				       "calendar_birthday", &dialog->calendar_birthday,
 				       "button_cancel", &dialog->button_cancel,
 				       "button_save", &dialog->button_save,
 				       "button_image", &dialog->button_image,

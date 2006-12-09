@@ -43,6 +43,7 @@ typedef struct {
 	GtkWidget     *name_label;
 	GtkWidget     *stub_email_label;
 	GtkWidget     *stub_web_label;
+	GtkWidget     *stub_birthday_label;
 	GtkWidget     *personal_status_label;
 	GtkWidget     *personal_status_hbox;
 	GtkWidget     *personal_vbox;
@@ -328,6 +329,31 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		gtk_widget_hide (dialog->stub_web_label);
 	}
 
+	str = gossip_vcard_get_birthday (vcard);
+	if (!G_STR_EMPTY (str)) {
+		GtkWidget *label, *alignment;
+
+		show_personal = TRUE;
+
+		label = gtk_label_new (str);
+		gtk_label_set_selectable (GTK_LABEL (label), TRUE);
+
+		alignment = gtk_alignment_new (0, 1, 0, 0.5);
+		gtk_container_add (GTK_CONTAINER (alignment), label);
+
+		gtk_table_attach (GTK_TABLE (dialog->personal_table),
+				  alignment,
+				  1, 2,
+				  2, 3,
+				  GTK_FILL, GTK_FILL,
+				  0, 0);
+
+		gtk_widget_show_all (alignment);
+		gtk_widget_show (dialog->stub_birthday_label);
+	} else {
+		gtk_widget_hide (dialog->stub_birthday_label);
+	}
+
 	gtk_widget_hide (dialog->personal_status_hbox);
 
 	if (show_personal) {
@@ -519,6 +545,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 				       "client_table", &dialog->client_table,
 				       "stub_email_label", &dialog->stub_email_label,
 				       "stub_web_label", &dialog->stub_web_label,
+				       "stub_birthday_label", &dialog->stub_birthday_label,
 				       "stub_client_label", &dialog->stub_client_label,
 				       "stub_version_label", &dialog->stub_version_label,
 				       "stub_os_label", &dialog->stub_os_label,
@@ -559,6 +586,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 
 	gtk_size_group_add_widget (size_group, dialog->stub_email_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_web_label);
+	gtk_size_group_add_widget (size_group, dialog->stub_birthday_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_client_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_version_label);
 	gtk_size_group_add_widget (size_group, dialog->stub_os_label);

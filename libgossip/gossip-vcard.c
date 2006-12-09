@@ -29,6 +29,7 @@ typedef struct _GossipVCardPriv GossipVCardPriv;
 struct _GossipVCardPriv {
 	gchar    *name;
 	gchar    *nickname;
+	gchar    *birthday;
 	gchar    *email;
 	gchar    *url;
 	gchar    *country;
@@ -51,6 +52,7 @@ enum {
 	PROP_0,
 	PROP_NAME,
 	PROP_NICKNAME,
+	PROP_BIRTHDAY,
 	PROP_EMAIL,
 	PROP_URL,
 	PROP_COUNTRY,
@@ -84,6 +86,13 @@ gossip_vcard_class_init (GossipVCardClass *class)
 					 g_param_spec_string ("nickname",
 							      "Nickname field",
 							      "The nickname field",
+							      NULL,
+							      G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
+					 PROP_BIRTHDAY,
+					 g_param_spec_string ("birthday",
+							      "Birthday field",
+							      "The birthday field",
 							      NULL,
 							      G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
@@ -143,6 +152,7 @@ gossip_vcard_init (GossipVCard *vcard)
 
 	priv->name        = NULL;
 	priv->nickname    = NULL;
+	priv->birthday    = NULL;
 	priv->email       = NULL;
 	priv->url         = NULL;
 	priv->country     = NULL;
@@ -160,6 +170,7 @@ vcard_finalize (GObject *object)
 
 	g_free (priv->name);
 	g_free (priv->nickname);
+	g_free (priv->birthday);
 	g_free (priv->email);
 	g_free (priv->url);
 	g_free (priv->country);
@@ -185,6 +196,9 @@ vcard_get_property (GObject    *object,
 		break;
 	case PROP_NICKNAME:
 		g_value_set_string (value, priv->nickname);
+		break;
+	case PROP_BIRTHDAY:
+		g_value_set_string (value, priv->birthday);
 		break;
 	case PROP_EMAIL:
 		g_value_set_string (value, priv->email);
@@ -227,6 +241,10 @@ vcard_set_property (GObject      *object,
 		break;
 	case PROP_NICKNAME:
 		gossip_vcard_set_nickname (GOSSIP_VCARD (object),
+					   g_value_get_string (value));
+		break;
+	case PROP_BIRTHDAY:
+		gossip_vcard_set_birthday (GOSSIP_VCARD (object),
 					   g_value_get_string (value));
 		break;
 	case PROP_EMAIL:
@@ -285,6 +303,18 @@ gossip_vcard_get_nickname (GossipVCard *vcard)
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
 	return priv->nickname;
+}
+
+const gchar *
+gossip_vcard_get_birthday (GossipVCard *vcard)
+{
+	GossipVCardPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
+
+	priv = GOSSIP_VCARD_GET_PRIV (vcard);
+
+	return priv->birthday;
 }
 
 const gchar *
@@ -389,6 +419,24 @@ gossip_vcard_set_nickname (GossipVCard *vcard,
 		priv->nickname = g_strdup (nickname);
 	} else {
 		priv->nickname = NULL;
+	}
+}
+
+void
+gossip_vcard_set_birthday (GossipVCard *vcard,
+			   const gchar *birthday)
+{
+	GossipVCardPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_VCARD (vcard));
+
+	priv = GOSSIP_VCARD_GET_PRIV (vcard);
+
+	g_free (priv->birthday);
+	if (birthday) {
+		priv->birthday = g_strdup (birthday);
+	} else {
+		priv->birthday = NULL;
 	}
 }
 

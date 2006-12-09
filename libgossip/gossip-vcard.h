@@ -47,6 +47,7 @@ GossipVCard * gossip_vcard_new             (void);
 
 const gchar * gossip_vcard_get_name        (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_nickname    (GossipVCard  *vcard);
+const gchar * gossip_vcard_get_birthday    (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_email       (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_url         (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_country     (GossipVCard  *vcard);
@@ -58,6 +59,8 @@ void          gossip_vcard_set_name        (GossipVCard  *vcard,
 					    const gchar  *name);
 void          gossip_vcard_set_nickname    (GossipVCard  *vcard,
 					    const gchar  *nickname);
+void          gossip_vcard_set_birthday    (GossipVCard  *vcard,
+					    const gchar  *birthday);
 void          gossip_vcard_set_email       (GossipVCard  *vcard,
 					    const gchar  *email);
 void          gossip_vcard_set_url         (GossipVCard  *vcard,
