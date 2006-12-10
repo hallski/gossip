@@ -130,11 +130,11 @@ static void     contact_list_contact_update                  (GossipContactList 
 static void     contact_list_contact_added_cb                (GossipSession          *session,
 							      GossipContact          *contact,
 							      GossipContactList      *list);
-static void     contact_list_contact_updated_cb              (GossipSession          *session,
-							      GossipContact          *contact,
+static void     contact_list_contact_updated_cb              (GossipContact          *contact,
+							      GParamSpec             *param,
 							      GossipContactList      *list);
-static void     contact_list_contact_presence_updated_cb     (GossipSession          *session,
-							      GossipContact          *contact,
+static void     contact_list_contact_presence_updated_cb     (GossipContact          *contact,
+							      GParamSpec             *param,
 							      GossipContactList      *list);
 static void     contact_list_contact_removed_cb              (GossipSession          *session,
 							      GossipContact          *contact,
@@ -501,14 +501,6 @@ gossip_contact_list_init (GossipContactList *list)
 			  G_CALLBACK (contact_list_contact_added_cb),
 			  list);
 	g_signal_connect (priv->session,
-			  "contact-updated",
-			  G_CALLBACK (contact_list_contact_updated_cb),
-			  list);
-	g_signal_connect (priv->session,
-			  "contact-presence-updated",
-			  G_CALLBACK (contact_list_contact_presence_updated_cb),
-			  list);
-	g_signal_connect (priv->session,
 			  "contact-removed",
 			  G_CALLBACK (contact_list_contact_removed_cb),
 			  list);
@@ -663,6 +655,7 @@ contact_list_contact_update (GossipContactList *list,
 	const GdkPixbuf       *pixbuf;
 	GdkPixbuf             *pixbuf_composing;
 	GdkPixbuf             *pixbuf_presence;
+	GdkPixbuf             *pixbuf_avatar;
 
 	priv = GET_PRIV (list);
 
@@ -790,6 +783,7 @@ contact_list_contact_update (GossipContactList *list,
 	pixbuf_presence = gossip_pixbuf_for_contact (contact);
 	pixbuf_composing = gossip_pixbuf_from_stock (GOSSIP_STOCK_TYPING,
 						     GTK_ICON_SIZE_MENU);
+	pixbuf_avatar = gossip_pixbuf_avatar_from_contact_scaled (contact, 32, 32);
 
 	pixbuf = pixbuf_presence;
 
@@ -806,11 +800,16 @@ contact_list_contact_update (GossipContactList *list,
 				    COL_PIXBUF_STATUS, pixbuf,
 				    COL_STATUS, gossip_contact_get_status (contact),
 				    COL_IS_ONLINE, now_online,
+				    COL_NAME, gossip_contact_get_name (contact),
+				    COL_PIXBUF_AVATAR, pixbuf_avatar,
 				    -1);
 	}
 
 	g_object_unref (pixbuf_presence);
 	g_object_unref (pixbuf_composing);
+	if (pixbuf_avatar) {
+		g_object_unref (pixbuf_avatar);
+	}
 
 	if (priv->show_active && do_set_active) {
 		contact_list_contact_set_active (list, contact, do_set_active, do_set_refresh);
@@ -839,13 +838,29 @@ contact_list_contact_added_cb (GossipSession     *session,
 {
 	GossipContactListPriv *priv;
 	GtkTreeModel          *model;
-	GList                 *groups;
 	gboolean               has_events;
 
 	priv = GET_PRIV (list);
 
 	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' added",
 		      gossip_contact_get_name (contact));
+
+	/* Connect notifications for contact updates */
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (contact_list_contact_presence_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::groups",
+			  G_CALLBACK (contact_list_contact_presence_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::name",
+			  G_CALLBACK (contact_list_contact_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::avatar",
+			  G_CALLBACK (contact_list_contact_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::type",
+			  G_CALLBACK (contact_list_contact_updated_cb),
+			  list);
 
 	has_events = g_hash_table_lookup (priv->flash_table, contact) != NULL;
 
@@ -857,20 +872,16 @@ contact_list_contact_added_cb (GossipSession     *session,
 
 	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
 
-	groups = gossip_contact_get_groups (contact);
-
 	contact_list_add_contact (list, contact);
 }
 
 static void
-contact_list_contact_updated_cb (GossipSession     *session,
-				 GossipContact     *contact,
-				 GossipContactList *list)
+contact_list_contact_presence_updated_cb (GossipContact     *contact,
+					  GParamSpec        *param,
+					  GossipContactList *list)
 {
 	GossipContactListPriv *priv;
 	GossipContactType      type;
-	GossipPresence        *presence;
-	GtkTreeModel          *model;
 
 	priv = GET_PRIV (list);
 
@@ -883,13 +894,11 @@ contact_list_contact_updated_cb (GossipSession     *session,
 		return;
 	}
 
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (list));
-	presence = gossip_contact_get_active_presence (contact);
-
 	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' updated",
 		      gossip_contact_get_name (contact));
 
 	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
+		contact_list_contact_update (list, contact);
 		return;
 	}
 
@@ -902,13 +911,10 @@ contact_list_contact_updated_cb (GossipSession     *session,
 }
 
 static void
-contact_list_contact_presence_updated_cb (GossipSession     *session,
-					  GossipContact     *contact,
-					  GossipContactList *list)
+contact_list_contact_updated_cb (GossipContact     *contact,
+				 GParamSpec        *param,
+				 GossipContactList *list)
 {
-	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' presence update",
-		      gossip_contact_get_name (contact));
-
 	contact_list_contact_update (list, contact);
 }
 
@@ -2929,8 +2935,7 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 
 		contact = GOSSIP_CONTACT (l->data);
 
-		contact_list_contact_presence_updated_cb (session, contact,
-							  list);
+		contact_list_contact_presence_updated_cb (contact, NULL, list);
 	}
 
 	/* Restore to original setting. */

@@ -83,6 +83,7 @@ typedef struct {
 	guint      timeout_id;
 	gboolean   requesting_vcard;
 	gint       last_account_selected;
+	gchar     *avatar_format;
 
 #ifdef HAVE_GNOME
 	GnomeThumbnailFactory *thumbs;
@@ -122,12 +123,11 @@ vcard_dialog_create_avatar_chooser (GossipVCardDialog *dialog)
 {
 	GossipAccountChooser *account_chooser;
 	GossipAccount        *account;
-	guint                min_width;
-	guint                min_height;
-	guint                max_width;
-	guint                max_height;
-	gsize                max_size;
-	gchar               *format;
+	guint                 min_width;
+	guint                 min_height;
+	guint                 max_width;
+	guint                 max_height;
+	gsize                 max_size;
 
 	dialog->avatar_chooser = gossip_image_chooser_new ();
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
@@ -137,14 +137,12 @@ vcard_dialog_create_avatar_chooser (GossipVCardDialog *dialog)
 						account,
 						&min_width, &min_height,
 						&max_width, &max_height,
-						&max_size,  &format);
+						&max_size,  &dialog->avatar_format);
 
 	gossip_image_chooser_set_requirements (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
 					       min_width, min_height,
 					       max_width, max_height,
-					       max_size, format);
-
-	g_free (format);
+					       max_size,  dialog->avatar_format);
 
 	gtk_widget_set_size_request (dialog->avatar_chooser,
 				     AVATAR_MAX_WIDTH / 2,
@@ -394,8 +392,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	GtkComboBox   *combo_box;
 	GtkTextBuffer *buffer;
 	const gchar   *str;
-	const guchar  *avatar;
-	gsize          avatar_size;
+	GossipAvatar  *avatar;
 	guint          year, month, day;
 
 	gossip_debug (DEBUG_DOMAIN, "Received VCard response");
@@ -433,10 +430,10 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (dialog->textview_description));
 	gtk_text_buffer_set_text (buffer, G_STR_EMPTY (str) ? "" : str, -1);
 
-	avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
+	avatar = gossip_vcard_get_avatar (vcard);
 
 	gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-					     (gchar*) avatar, avatar_size);
+					     (gchar*) avatar->data, avatar->len);
 
 	/* Save position incase the next lookup fails. */
 	combo_box = GTK_COMBO_BOX (dialog->account_chooser);
@@ -469,8 +466,9 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	GtkTextIter           iter_begin, iter_end;
 	gchar                *description;
 	const gchar          *str;
-	gchar                *avatar;
+	gchar                *avatar_data;
 	gsize                 avatar_size;
+	GossipAvatar         *avatar;
 	gchar                *date;
 	guint                 year, month, day;
 
@@ -507,8 +505,9 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	g_free (description);
 
 	gossip_image_chooser_get_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-					     &avatar, &avatar_size);
-	gossip_vcard_set_avatar (vcard, avatar, avatar_size);
+					     &avatar_data, &avatar_size);
+	avatar = gossip_avatar_new (avatar_data, avatar_size, dialog->avatar_format);
+	gossip_vcard_set_avatar (vcard, avatar);
 
 	/* NOTE: if account is NULL, all accounts will get the same vcard */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
@@ -522,10 +521,9 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 
 	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);
 	contact = gossip_protocol_get_own_contact (protocol);
-	gossip_contact_set_avatar (GOSSIP_CONTACT(contact), avatar, avatar_size);
+	gossip_contact_set_avatar (GOSSIP_CONTACT(contact), avatar);
 
-	g_free (avatar);
-
+	gossip_avatar_free (avatar);
 	g_object_unref (account);
 }
 

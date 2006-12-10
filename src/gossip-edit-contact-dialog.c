@@ -44,8 +44,6 @@ typedef struct {
 	GossipContact   *contact;
 	GtkCellRenderer *renderer;
 	gboolean         changes_made;
-
-	gulong           contact_signal_handler;
 } GossipEditContactDialog;
 
 typedef struct {
@@ -90,8 +88,7 @@ static gboolean edit_contact_dialog_model_find_selected_foreach  (GtkTreeModel  
 								  GtkTreeIter             *iter,
 								  FindSelected            *data);
 static void     edit_contact_dialog_update_widgets               (GossipContact           *contact);
-static void     edit_contact_dialog_contact_updated_cb           (GossipSession           *session,
-								  GossipContact           *contact,
+static void     edit_contact_dialog_contact_updated_cb           (GossipContact           *contact,
 								  gpointer                 user_data);
 static void     edit_contact_dialog_cell_toggled                 (GtkCellRendererToggle   *cell,
 								  gchar                   *path_string,
@@ -435,8 +432,7 @@ edit_contact_dialog_update_widgets (GossipContact *contact)
 }
 
 static void
-edit_contact_dialog_contact_updated_cb (GossipSession           *session,
-					GossipContact           *contact,
+edit_contact_dialog_contact_updated_cb (GossipContact           *contact,
 					gpointer                 user_data)
 {
 	edit_contact_dialog_update_widgets (contact);	
@@ -641,13 +637,11 @@ edit_contact_dialog_destroy_cb (GtkWidget               *widget,
 		g_object_unref (dialog->renderer);
 	}
 
+	g_signal_handlers_disconnect_by_func (dialog->contact,
+					      edit_contact_dialog_contact_updated_cb,
+					      NULL);
+
 	g_hash_table_remove (dialogs, dialog->contact);
-
-	if (dialog->contact_signal_handler) {
-		g_signal_handler_disconnect (gossip_app_get_session (),
-					     dialog->contact_signal_handler);
-	}
-
 	g_free (dialog);
 }
 
@@ -656,13 +650,11 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 				 GtkWindow     *parent)
 {
 	GossipEditContactDialog *dialog;
-	GossipSession           *session;
 	GladeXML                *glade;
 	GList                   *groups;
 	GtkSizeGroup            *size_group;
 	gchar                   *id_escaped;
 	gchar                   *str;
-	guint                    id;
 
 	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
@@ -727,12 +719,9 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 	g_free (str);
 
 	/* Subscription listener */
-	session = gossip_app_get_session ();
-	id = g_signal_connect (session,
-			       "contact-updated",
-			       G_CALLBACK (edit_contact_dialog_contact_updated_cb),
-			       NULL);
-	dialog->contact_signal_handler = id;
+	g_signal_connect (contact, "updated",
+			  G_CALLBACK (edit_contact_dialog_contact_updated_cb),
+			  NULL);
 
 	/* Set up contact subscription widgets */
 	edit_contact_dialog_update_widgets (contact);	

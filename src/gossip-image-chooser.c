@@ -143,8 +143,8 @@ gossip_image_chooser_init (GossipImageChooser *chooser)
 	priv->image_min_height = -1;
 	priv->image_max_width = -1;
 	priv->image_max_height = -1;
-	priv->image_max_size = 100*1024;
-	priv->image_format = g_strdup ("png");
+	priv->image_max_size = 8*1024;
+	priv->image_format = g_strdup ("image/png");
 
 	gtk_box_set_homogeneous (GTK_BOX (chooser), FALSE);
 
@@ -299,9 +299,10 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 
 	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
 	if (pixbuf) {
-		GdkPixbuf *scaled_pixbuf;
-		gchar     *scaled_data;
-		gsize      scaled_size;
+		GdkPixbuf   *scaled_pixbuf;
+		gchar       *scaled_data;
+		gsize        scaled_size;
+		const gchar *format;
 
 		/* Remember pixbuf */
 		if (priv->pixbuf) {
@@ -309,6 +310,9 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 		}
 
 		priv->pixbuf = g_object_ref (pixbuf);
+
+		/* image_format is a MIME type (eg image/png) */
+		format = strchr (priv->image_format, '/') + 1;
 
 		/* Scale the image data */
 		scaled_pixbuf = image_chooser_scale_pixbuf (pixbuf,
@@ -318,7 +322,7 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 		gdk_pixbuf_save_to_buffer (scaled_pixbuf,
 					   &scaled_data,
 					   &scaled_size,
-					   priv->image_format,
+					   format,
 					   NULL, NULL);
 
 		g_free (priv->image_data);
@@ -578,7 +582,7 @@ gossip_image_chooser_set_requirements (GossipImageChooser  *chooser,
 	if (format) {
 		priv->image_format = g_strdup (format);
 	} else {
-		priv->image_format = g_strdup ("png");
+		priv->image_format = g_strdup ("image/png");
 	}
 }
 

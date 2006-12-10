@@ -22,6 +22,7 @@
 #define __GOSSIP_VCARD_H__
 
 #include <glib-object.h>
+#include "gossip-utils.h"
 
 #define GOSSIP_TYPE_VCARD         (gossip_vcard_get_type ())
 #define GOSSIP_VCARD(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_VCARD, GossipVCard))
@@ -52,8 +53,7 @@ const gchar * gossip_vcard_get_email       (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_url         (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_country     (GossipVCard  *vcard);
 const gchar * gossip_vcard_get_description (GossipVCard  *vcard);
-const guchar *gossip_vcard_get_avatar      (GossipVCard  *vcard,
-					    gsize        *avatar_size);
+GossipAvatar *gossip_vcard_get_avatar      (GossipVCard  *vcard);
 
 void          gossip_vcard_set_name        (GossipVCard  *vcard,
 					    const gchar  *name);
@@ -70,7 +70,6 @@ void          gossip_vcard_set_country     (GossipVCard  *vcard,
 void          gossip_vcard_set_description (GossipVCard  *vcard,
 					    const gchar  *desc);
 void          gossip_vcard_set_avatar      (GossipVCard  *vcard,
-					    const guchar *avatar_image,
-					    gsize         avatar_size);
+					    GossipAvatar *avatar);
 
 #endif /* __GOSSIP_VCARD_H__ */

@@ -25,6 +25,7 @@
 
 #include "gossip-account.h"
 #include "gossip-presence.h"
+#include "gossip-utils.h"
 
 #define GOSSIP_TYPE_CONTACT         (gossip_contact_get_gtype ())
 #define GOSSIP_CONTACT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT, GossipContact))
@@ -71,8 +72,7 @@ GossipContact *    gossip_contact_copy                      (GossipContact      
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);
-const guchar *     gossip_contact_get_avatar                (GossipContact      *contact,
-							     gsize              *avatar_size);
+GossipAvatar *     gossip_contact_get_avatar                (GossipContact      *contact);
 GossipAccount *    gossip_contact_get_account               (GossipContact      *contact);
 void               gossip_contact_add_presence              (GossipContact      *contact,
 							     GossipPresence     *presence);
@@ -89,11 +89,10 @@ void               gossip_contact_set_id                    (GossipContact      
 void               gossip_contact_set_name                  (GossipContact      *contact,
 							     const gchar        *name);
 void               gossip_contact_set_avatar                (GossipContact      *contact,
-							     const guchar       *avatar,
-							     gsize               avatar_size);
+							     GossipAvatar       *avatar);
 void               gossip_contact_set_account               (GossipContact      *contact,
 							     GossipAccount      *account);
-gboolean           gossip_contact_set_groups                (GossipContact      *contact,
+void               gossip_contact_set_groups                (GossipContact      *contact,
 							     GList              *categories);
 void               gossip_contact_set_subscription          (GossipContact      *contact,
 							     GossipSubscription  subscription);

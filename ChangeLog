@@ -1,3 +1,35 @@
+2006-12-10  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-chatroom-provider.c:
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-contact.h:
+	* libgossip/gossip-protocol.c:
+	* libgossip/gossip-session.c:
+	* libgossip/gossip-utils.c:
+	* libgossip/gossip-utils.h:
+	* libgossip/gossip-vcard.c:
+	* libgossip/gossip-vcard.h:
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber-vcard.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-contact-info-dialog.c:
+	* src/gossip-contact-list-iface.c:
+	* src/gossip-contact-list-iface.h:
+	* src/gossip-contact-list.c:
+	* src/gossip-edit-contact-dialog.c:
+	* src/gossip-galago.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-image-chooser.c:
+	* src/gossip-image-chooser.h:
+	* src/gossip-notify.c:
+	* src/gossip-private-chat.c:
+	* src/gossip-sound.c:
+	* src/gossip-ui-utils.c:
+	* src/gossip-ui-utils.h:
+	* src/gossip-vcard-dialog.c: Use GossipContact property notifications
+	and  use GossipAvatar to store avatar's info (data, size, format).
+	See bug #384013.
+
 2006-12-09  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-vcard.[ch]: 

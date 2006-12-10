@@ -920,10 +920,6 @@ jabber_connection_auth_cb (LmConnection *connection,
 		gossip_contact_set_name (priv->contact, name);
 		g_free (name);
 
-		g_signal_emit_by_name (jabber,
-				       "contact-updated",
-				       priv->contact);
-
 		/* Set the vcard waiting to be sent to our jabber server once
 		 * connected.
 		 */
@@ -1193,7 +1189,7 @@ jabber_get_avatar_requirements (GossipProtocol  *protocol,
 		*max_size = 8*1024; /* 8kb */
 	}
 	if (format) {
-		*format = g_strdup ("png");
+		*format = g_strdup ("image/png");
 	}
 }
 
@@ -1640,8 +1636,7 @@ jabber_set_presence (GossipProtocol *protocol,
 	const gchar         *status;
 	const gchar         *priority;
 	gchar               *sha1;
-	const guchar        *avatar;
-	gsize                avatar_size;
+	GossipAvatar        *avatar;
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
@@ -1677,15 +1672,18 @@ jabber_set_presence (GossipProtocol *protocol,
 	}
 
 	contact = gossip_jabber_get_own_contact (jabber);
-	avatar = gossip_contact_get_avatar (contact, &avatar_size);
-	sha1 = gossip_sha_hash (avatar, avatar_size);
+	avatar = gossip_contact_get_avatar (contact);
+	if (avatar) {
+		sha1 = gossip_sha_hash (avatar->data, avatar->len);
+	} else {
+		sha1 = gossip_sha_hash (NULL, 0);
+	}
 
 	gossip_debug (DEBUG_DOMAIN, "Setting presence to:'%s', status:'%s', "
-		      "priority:'%s' sha1:'%s' avatar_size:%" G_GSIZE_FORMAT " avatar:%p",
+		      "priority:'%s' sha1:'%s'",
 		      show ? show : "available",
 		      status ? status : "",
-		      priority, sha1,
-		      avatar_size, avatar);
+		      priority, sha1);
 
 	if (show) {
 		lm_message_node_add_child (m->node, "show", show);
@@ -1978,15 +1976,10 @@ jabber_contact_is_avatar_latest_cb (GossipResult  result,
 				    JabberData   *data)
 {
 	if (result == GOSSIP_RESULT_OK) {
-		const guchar *avatar;
-		gsize         avatar_size;
+		GossipAvatar *avatar;
 
-		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
-		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
-
-		g_signal_emit_by_name (data->jabber,
-				       "contact-updated",
-				       data->contact);
+		avatar = gossip_vcard_get_avatar (vcard);
+		gossip_contact_set_avatar (data->contact, avatar);
 	}
 
 	jabber_data_free (data);
@@ -2000,24 +1993,23 @@ jabber_contact_is_avatar_latest (GossipJabber  *jabber,
 {
 	JabberData    *data;
 	LmMessageNode *avatar_node;
-	const guchar  *avatar;
-	gsize          avatar_size;
+	GossipAvatar  *avatar;
 	gchar         *sha1;
 	gboolean       same;
 
 	if (!force_update) {
 		avatar_node = lm_message_node_find_child (m, "photo");
 		if (!avatar_node || !avatar_node->value) {
-			gossip_contact_set_avatar (contact, NULL, 0);
-
-			g_signal_emit_by_name (jabber,
-					       "contact-updated",
-					       contact);
+			gossip_contact_set_avatar (contact, NULL);
 			return;
 		}
 
-		avatar = gossip_contact_get_avatar (contact, &avatar_size);
-		sha1 = gossip_sha_hash (avatar, avatar_size);
+		avatar = gossip_contact_get_avatar (contact);
+		if (avatar) {
+			sha1 = gossip_sha_hash (avatar->data, avatar->len);
+		} else {
+			sha1 = gossip_sha_hash (NULL, 0);
+		}
 
 		same = g_ascii_strcasecmp (sha1, avatar_node->value) == 0;
 		g_free (sha1);
@@ -2043,11 +2035,10 @@ jabber_contact_vcard_cb (GossipResult  result,
 	if (result == GOSSIP_RESULT_OK) {
 		GossipContact *own_contact;
 		gchar         *name;
-		const guchar  *avatar;
-		gsize          avatar_size;
+		GossipAvatar  *avatar;
 
-		avatar = gossip_vcard_get_avatar (vcard, &avatar_size);
-		gossip_contact_set_avatar (data->contact, avatar, avatar_size);
+		avatar = gossip_vcard_get_avatar (vcard);
+		gossip_contact_set_avatar (data->contact, avatar);
 
 		name = gossip_jabber_get_name_to_use
 			(gossip_contact_get_id (data->contact),
@@ -2056,10 +2047,6 @@ jabber_contact_vcard_cb (GossipResult  result,
 
 		gossip_contact_set_name (data->contact, name);
 		g_free (name);
-
-		g_signal_emit_by_name (data->jabber,
-				       "contact-updated",
-				       data->contact);
 
 		/* Send presence if this is the user's VCard
 		 * (Avatar support, JEP-0153)
@@ -2681,10 +2668,6 @@ jabber_presence_handler (LmMessageHandler *handler,
 		}
 
 		gossip_jid_unref (jid);
-
-		g_signal_emit_by_name (jabber,
-				       "contact-presence-updated",
-				       contact);
 	}
 
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
@@ -2867,13 +2850,11 @@ jabber_request_roster (GossipJabber *jabber,
 		const gchar   *jid_str;
 		const gchar   *subscription;
 		gboolean       new_item = FALSE;
-		gboolean       updated;
 		LmMessageNode *subnode;
 		LmMessageNode *child;
 		GList         *groups;
 		const gchar   *name;
 		GList         *new_groups;
-		gboolean       name_updated, groups_updated;
 
 
 		if (strcmp (node->name, "item") != 0) {
@@ -2954,12 +2935,8 @@ jabber_request_roster (GossipJabber *jabber,
 			gossip_contact_set_subscription (contact, type);
 		}
 
-		/* Find out if any thing has updated */
-		name_updated = groups_updated = FALSE;
-
 		name = lm_message_node_get_attribute (node, "name");
 		if (name) {
-			name_updated = TRUE;
 			gossip_contact_set_name (contact, name);
 		}
 
@@ -2971,20 +2948,14 @@ jabber_request_roster (GossipJabber *jabber,
 		}
 
 		if (new_groups) {
-			groups_updated = gossip_contact_set_groups (contact, new_groups);
+			gossip_contact_set_groups (contact, new_groups);
 		}
 
 		g_list_free (new_groups);
 
-		updated = (name_updated || groups_updated);
-
 		if (new_item) {
 			g_signal_emit_by_name (jabber,
 					       "contact-added", contact);
-		}
-		else if (updated) {
-			g_signal_emit_by_name (jabber,
-					       "contact-updated", contact);
 		}
 	}
 }

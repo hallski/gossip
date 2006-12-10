@@ -72,7 +72,13 @@ static void                notify_protocol_disconnected_cb        (GossipSession
 								   GossipProtocol     *protocol,
 								   gint                reason,
 								   gpointer            user_data);
-static void                notify_contact_presence_updated_cb     (GossipSession      *session,
+static void                notify_contact_presence_updated_cb     (GossipContact      *contact,
+								   GParamSpec         *param,
+								   gpointer            user_data);
+static void                notify_contact_added_cb                (GossipSession      *session,
+								   GossipContact      *contact,
+								   gpointer            user_data);
+static void                notify_contact_removed_cb              (GossipSession      *session,
 								   GossipContact      *contact,
 								   gpointer            user_data);
 static gboolean            notify_subscription_request_show_cb    (GossipContact      *contact);
@@ -551,8 +557,8 @@ notify_protocol_connected_cb (GossipSession  *session,
 }
 
 static void
-notify_contact_presence_updated_cb (GossipSession *session,
-				    GossipContact *contact,
+notify_contact_presence_updated_cb (GossipContact *contact,
+				    GParamSpec    *param,
 				    gpointer       user_data)
 {
 	GossipPresence *presence;
@@ -589,6 +595,29 @@ notify_contact_presence_updated_cb (GossipSession *session,
 				     g_object_ref (contact),
 				     g_object_ref (presence));
 	}
+}
+
+static void
+notify_contact_added_cb (GossipSession *session,
+			 GossipContact *contact,
+			 gpointer       user_data)
+{
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (notify_contact_presence_updated_cb),
+			  NULL);
+	g_signal_connect (contact, "notify::type",
+			  G_CALLBACK (notify_contact_presence_updated_cb),
+			  NULL);
+}
+
+static void
+notify_contact_removed_cb (GossipSession *session,
+			   GossipContact *contact,
+			   gpointer       user_data)
+{
+	g_signal_handlers_disconnect_by_func (contact,
+					      notify_contact_presence_updated_cb,
+					      NULL);
 }
 
 static gboolean
@@ -815,8 +844,11 @@ gossip_notify_init (GossipSession      *session,
 	g_signal_connect (session, "protocol-disconnected",
 			  G_CALLBACK (notify_protocol_disconnected_cb),
 			  NULL);
-	g_signal_connect (session, "contact-presence-updated",
-			  G_CALLBACK (notify_contact_presence_updated_cb),
+	g_signal_connect (session, "contact-added",
+			  G_CALLBACK (notify_contact_added_cb),
+			  NULL);
+	g_signal_connect (session, "contact-removed",
+			  G_CALLBACK (notify_contact_removed_cb),
 			  NULL);
 
 	g_signal_connect (event_manager, "event-added",

@@ -94,8 +94,7 @@ GdkPixbuf *gossip_pixbuf_for_contact                (GossipContact       *contac
 GdkPixbuf *gossip_pixbuf_offline                    (void);
 GdkPixbuf *gossip_pixbuf_for_chatroom_status        (GossipChatroom      *chatroom,
 						     GtkIconSize          icon_size);
-GdkPixbuf *gossip_pixbuf_from_avatar_scaled         (const guchar        *avatar,
-						     gsize                len,
+GdkPixbuf *gossip_pixbuf_from_avatar_scaled         (GossipAvatar        *avatar,
 						     gint                 width,
 						     gint                 height);
 GdkPixbuf *gossip_pixbuf_avatar_from_vcard          (GossipVCard         *vcard);

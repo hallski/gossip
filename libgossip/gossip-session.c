@@ -94,12 +94,6 @@ static void            session_protocol_new_message              (GossipProtocol
 static void            session_protocol_contact_added            (GossipProtocol       *protocol,
 								  GossipContact        *contact,
 								  GossipSession        *session);
-static void            session_protocol_contact_updated          (GossipProtocol       *protocol,
-								  GossipContact        *contact,
-								  GossipSession        *session);
-static void            session_protocol_contact_presence_updated (GossipProtocol       *protocol,
-								  GossipContact        *contact,
-								  GossipSession        *session);
 static void            session_protocol_contact_removed          (GossipProtocol       *protocol,
 								  GossipContact        *contact,
 								  GossipSession        *session);
@@ -140,8 +134,6 @@ enum {
 	NEW_MESSAGE,
 	PRESENCE_CHANGED,
 	CONTACT_ADDED,
-	CONTACT_UPDATED,
-	CONTACT_PRESENCE_UPDATED,
 	CONTACT_REMOVED,
 	COMPOSING,
 
@@ -278,25 +270,6 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_CONTACT);
-	signals[CONTACT_UPDATED] =
-		g_signal_new ("contact-updated",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_CONTACT);
-
-	signals[CONTACT_PRESENCE_UPDATED] =
-		g_signal_new ("contact-presence-updated",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_CONTACT);
 
 	signals[CONTACT_REMOVED] =
 		g_signal_new ("contact-removed",
@@ -401,12 +374,6 @@ session_protocol_signals_setup (GossipSession  *session,
 			  session);
 	g_signal_connect (protocol, "contact-added",
 			  G_CALLBACK (session_protocol_contact_added),
-			  session);
-	g_signal_connect (protocol, "contact-updated",
-			  G_CALLBACK (session_protocol_contact_updated),
-			  session);
-	g_signal_connect (protocol, "contact-presence-updated",
-			  G_CALLBACK (session_protocol_contact_presence_updated),
 			  session);
 	g_signal_connect (protocol, "contact-removed",
 			  G_CALLBACK (session_protocol_contact_removed),
@@ -519,27 +486,6 @@ session_protocol_contact_added (GossipProtocol *protocol,
 					 g_object_ref (contact));
 
 	g_signal_emit (session, signals[CONTACT_ADDED], 0, contact);
-}
-
-static void
-session_protocol_contact_updated (GossipProtocol *protocol,
-				  GossipContact  *contact,
-				  GossipSession  *session)
-{
-	gossip_debug (DEBUG_DOMAIN, "Contact updated '%s'",
-		      gossip_contact_get_name (contact));
-
-	g_signal_emit (session, signals[CONTACT_UPDATED], 0, contact);
-}
-
-static void
-session_protocol_contact_presence_updated (GossipProtocol *protocol,
-					   GossipContact  *contact,
-					   GossipSession  *session)
-{
-	gossip_debug (DEBUG_DOMAIN, "Contact presence updated '%s'",
-		      gossip_contact_get_name (contact));
-	g_signal_emit (session, signals[CONTACT_PRESENCE_UPDATED], 0, contact);
 }
 
 static void

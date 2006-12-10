@@ -824,23 +824,23 @@ gossip_pixbuf_avatar_from_vcard (GossipVCard *vcard)
 {
 	GdkPixbuf	*pixbuf;
 	GdkPixbufLoader	*loader;
-	const guchar    *avatar;
-	gsize		 len;
+	GossipAvatar    *avatar;
 	GError          *error = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
 
-	avatar = gossip_vcard_get_avatar (vcard, &len);
+	avatar = gossip_vcard_get_avatar (vcard);
 	if (!avatar) {
 		return NULL;
 	}
 
 	loader = gdk_pixbuf_loader_new ();
 
-	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
+	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len,
+				      &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
 			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
-			   avatar, len, error->message);
+			   avatar->data, avatar->len, error->message);
 		g_error_free (error);
 		return NULL;
 	}
@@ -860,23 +860,22 @@ gossip_pixbuf_avatar_from_contact (GossipContact *contact)
 {
 	GdkPixbuf	*pixbuf;
 	GdkPixbufLoader	*loader;
-	const guchar	*avatar;
-	gsize		 len;
+	GossipAvatar    *avatar;
 	GError          *error = NULL;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	avatar = gossip_contact_get_avatar (contact, &len);
+	avatar = gossip_contact_get_avatar (contact);
 	if (!avatar) {
 		return NULL;
 	}
 
 	loader = gdk_pixbuf_loader_new ();
 
-	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
+	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
 			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
-			   avatar, len, error->message);
+			   avatar->data, avatar->len, error->message);
 		g_error_free (error);
 		return NULL;
 	}
@@ -933,8 +932,7 @@ pixbuf_from_avatar_size_prepared_cb (GdkPixbufLoader *loader,
 }
 
 GdkPixbuf *
-gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
-				  gsize         len,
+gossip_pixbuf_from_avatar_scaled (GossipAvatar *avatar,
 				  gint          width,
 				  gint          height)
 {
@@ -957,10 +955,10 @@ gossip_pixbuf_from_avatar_scaled (const guchar *avatar,
 			  G_CALLBACK (pixbuf_from_avatar_size_prepared_cb),
 			  &data);
 
-	if (!gdk_pixbuf_loader_write (loader, avatar, len, &error)) {
+	if (!gdk_pixbuf_loader_write (loader, avatar->data, avatar->len, &error)) {
 		g_warning ("Couldn't write avatar image:%p with "
 			   "length:%" G_GSIZE_FORMAT " to pixbuf loader: %s",
-			   avatar, len, error->message);
+			   avatar->data, avatar->len, error->message);
 		g_error_free (error);
 		return NULL;
 	}
@@ -980,39 +978,31 @@ gossip_pixbuf_avatar_from_contact_scaled (GossipContact *contact,
 					  gint           width,
 					  gint           height)
 {
-	const guchar *avatar;
-	gsize         len;
+	GossipAvatar *avatar;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	avatar = gossip_contact_get_avatar (contact, &len);
-	if (!avatar) {
-		return NULL;
-	}
+	avatar = gossip_contact_get_avatar (contact);
 
-	return gossip_pixbuf_from_avatar_scaled (avatar, len, width, height);
+	return gossip_pixbuf_from_avatar_scaled (avatar, width, height);
 }
 
 GdkPixbuf *
 gossip_pixbuf_avatar_from_vcard_scaled (GossipVCard *vcard,
 					GtkIconSize  size)
 {
-	const guchar *avatar;
-	gsize	      len;
+	GossipAvatar *avatar;
 	gint          width, height;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
 
-	avatar = gossip_vcard_get_avatar (vcard, &len);
-	if (!avatar) {
-		return NULL;
-	}
+	avatar = gossip_vcard_get_avatar (vcard);
 
 	if (!gtk_icon_size_lookup (size, &width, &height)) {
 		height = width = 48;
 	}
 
-	return gossip_pixbuf_from_avatar_scaled (avatar, len, width, height);
+	return gossip_pixbuf_from_avatar_scaled (avatar, width, height);
 }
 
 /* Stolen from GtkSourceView, hence the weird intendation. Please keep it like

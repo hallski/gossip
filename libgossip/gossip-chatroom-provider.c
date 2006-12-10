@@ -36,8 +36,6 @@ enum {
 	CHATROOM_TOPIC_CHANGED,
 	CHATROOM_CONTACT_JOINED,
 	CHATROOM_CONTACT_LEFT,
-	CHATROOM_CONTACT_PRESENCE_UPDATED,
-	CHATROOM_CONTACT_UPDATED,
 	LAST_SIGNAL
 };
 
@@ -128,26 +126,6 @@ chatroom_provider_base_init (gpointer g_class)
 
 		signals[CHATROOM_CONTACT_LEFT] =
 			g_signal_new ("chatroom-contact-left",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__INT_OBJECT,
-				      G_TYPE_NONE,
-				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
-
-		signals[CHATROOM_CONTACT_PRESENCE_UPDATED] =
-			g_signal_new ("chatroom-contact-presence-updated",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__INT_OBJECT,
-				      G_TYPE_NONE,
-				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
-
-		signals[CHATROOM_CONTACT_UPDATED] =
-			g_signal_new ("chatroom-contact-updated",
 				      G_TYPE_FROM_CLASS (g_class),
 				      G_SIGNAL_RUN_LAST,
 				      0,

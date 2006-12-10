@@ -239,6 +239,10 @@ galago_contact_added_cb (GossipSession *session,
 
 	gossip_debug (DEBUG_DOMAIN, "Added contact:'%s'", contact_id);
 
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (galago_contact_presence_updated_cb),
+			  NULL);
+
 	ga_me = galago_get_account (account);
 	gs = galago_account_get_service (ga_me);
 
@@ -277,6 +281,10 @@ galago_contact_removed_cb (GossipSession *session,
 
 	gossip_debug (DEBUG_DOMAIN, "Contact removed:'%s'", contact_id);
 
+	g_signal_handlers_disconnect_by_func (contact,
+					      galago_contact_presence_updated_cb,
+					      NULL);
+
 	ga_me = galago_get_account (account);
 	gs = galago_account_get_service (ga_me);
 
@@ -313,8 +321,8 @@ galago_contact_updated_cb (GossipSession  *session,
 }
 
 static void
-galago_contact_presence_updated_cb (GossipSession *session,
-				    GossipContact *contact,
+galago_contact_presence_updated_cb (GossipContact *contact,
+				    GParamSpec    *param,
 				    gpointer       user_data)
 {
 	GossipAccount  *account;
@@ -413,14 +421,6 @@ gossip_galago_init (GossipSession *session)
 	g_signal_connect (session,
 			  "contact-added",
 			  G_CALLBACK (galago_contact_added_cb),
-			  NULL);
-	g_signal_connect (session,
-			  "contact-updated",
-			  G_CALLBACK (galago_contact_updated_cb),
-			  NULL);
-	g_signal_connect (session,
-			  "contact-presence-updated",
-			  G_CALLBACK (galago_contact_presence_updated_cb),
 			  NULL);
 	g_signal_connect (session,
 			  "contact-removed",

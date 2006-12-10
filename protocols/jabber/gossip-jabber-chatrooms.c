@@ -495,12 +495,6 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 			g_signal_emit_by_name (chatrooms->jabber,
 					       "chatroom-contact-joined",
 					       id, contact);
-		} else {
-			gossip_debug (DEBUG_DOMAIN, "ID[%d] Presence updated for contact:'%s'",
-				      id, gossip_jid_get_full (jid));
-			g_signal_emit_by_name (chatrooms->jabber,
-					       "chatroom-contact-presence-updated",
-					       id, contact);
 		}
 		break;
 

@@ -78,11 +78,11 @@ static void           private_chat_composing_start              (GossipPrivateCh
 static void           private_chat_composing_stop               (GossipPrivateChat      *chat);
 static void           private_chat_composing_remove_timeout     (GossipPrivateChat      *chat);
 static gboolean       private_chat_composing_stop_timeout_cb    (GossipPrivateChat      *chat);
-static void           private_chat_contact_presence_updated     (gpointer                not_used,
-								 GossipContact          *contact,
+static void           private_chat_contact_presence_updated     (GossipContact          *contact,
+								 GParamSpec             *param,
 								 GossipPrivateChat      *chat);
-static void           private_chat_contact_updated              (gpointer                not_used,
-								 GossipContact          *contact,
+static void           private_chat_contact_updated              (GossipContact          *contact,
+								 GParamSpec             *param,
 								 GossipPrivateChat      *chat);
 static void           private_chat_contact_added                (gpointer                not_used,
 								 GossipContact          *contact,
@@ -197,6 +197,12 @@ private_chat_finalize (GObject *object)
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->contact,
 					      private_chat_other_avatar_notify_cb,
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_contact_updated,
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_contact_presence_updated,
 					      chat);
 		
 
@@ -443,17 +449,13 @@ private_chat_composing_stop_timeout_cb (GossipPrivateChat *chat)
 }
 
 static void
-private_chat_contact_presence_updated (gpointer           not_used,
-				       GossipContact     *contact,
+private_chat_contact_presence_updated (GossipContact     *contact,
+				       GParamSpec        *param,
 				       GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
 	priv = GET_PRIV (chat);
-
-	if (!gossip_contact_equal (contact, priv->contact)) {
-		return;
-	}
 
 	gossip_debug (DEBUG_DOMAIN, "Presence update for contact: %s",
 		      gossip_contact_get_id (contact));
@@ -493,17 +495,13 @@ private_chat_contact_presence_updated (gpointer           not_used,
 }
 
 static void
-private_chat_contact_updated (gpointer           not_used,
-			      GossipContact     *contact,
+private_chat_contact_updated (GossipContact     *contact,
+			      GParamSpec        *param,
 			      GossipPrivateChat *chat)
 {
 	GossipPrivateChatPriv *priv;
 
 	priv = GET_PRIV (chat);
-
-	if (!gossip_contact_equal (contact, priv->contact)) {
-		return;
-	}
 
 	if (strcmp (priv->name, gossip_contact_get_name (contact)) != 0) {
 		g_free (priv->name);
@@ -528,6 +526,12 @@ private_chat_contact_added (gpointer           not_user,
 	g_signal_handlers_disconnect_by_func (priv->contact,
 					      private_chat_other_avatar_notify_cb,
 					      chat);
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_contact_updated,
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->contact,
+					      private_chat_contact_presence_updated,
+					      chat);
 
 	g_object_unref (priv->contact);
 	priv->contact = g_object_ref (contact);
@@ -535,6 +539,14 @@ private_chat_contact_added (gpointer           not_user,
 	g_signal_connect (priv->contact,
 			  "notify::avatar",
 			  G_CALLBACK (private_chat_other_avatar_notify_cb),
+			  chat);
+	g_signal_connect (priv->contact,
+			  "notify::name",
+			  G_CALLBACK (private_chat_contact_updated),
+			  chat);
+	g_signal_connect (priv->contact,
+			  "notify::presences",
+			  G_CALLBACK (private_chat_contact_presence_updated),
 			  chat);
 }
 
@@ -921,11 +933,23 @@ gossip_private_chat_new (GossipContact *own_contact,
 			  "notify::avatar",
 			  G_CALLBACK (private_chat_own_avatar_notify_cb),
 			  chat);
-
 	g_signal_connect (priv->contact,
 			  "notify::avatar",
 			  G_CALLBACK (private_chat_other_avatar_notify_cb),
 			  chat);
+	g_signal_connect (priv->contact,
+			  "notify::name",
+			  G_CALLBACK (private_chat_contact_updated),
+			  chat);
+	g_signal_connect (priv->contact,
+			  "notify::presences",
+			  G_CALLBACK (private_chat_contact_presence_updated),
+			  chat);
+
+	g_signal_connect_object (gossip_app_get_session (),
+				 "contact_added",
+				 G_CALLBACK (private_chat_contact_added),
+				 chat, 0);
 
 	private_chat_own_avatar_notify_cb (priv->own_contact, NULL, chat);
 	private_chat_other_avatar_notify_cb (priv->contact, NULL, chat);
@@ -972,22 +996,6 @@ gossip_private_chat_new (GossipContact *own_contact,
 	priv->scroll_idle_id = g_idle_add ((GSourceFunc) 
 					   private_chat_scroll_down_idle_func, 
 					   g_object_ref (chat));
-
-	/* Set up signals */
-	g_signal_connect_object (gossip_app_get_session (),
-				 "contact_presence_updated",
-				 G_CALLBACK (private_chat_contact_presence_updated),
-				 chat, 0);
-
-	g_signal_connect_object (gossip_app_get_session (),
-				 "contact_updated",
-				 G_CALLBACK (private_chat_contact_updated),
-				 chat, 0);
-
-	g_signal_connect_object (gossip_app_get_session (),
-				 "contact_added",
-				 G_CALLBACK (private_chat_contact_added),
-				 chat, 0);
 
 	priv->is_online = gossip_contact_is_online (priv->contact);
 

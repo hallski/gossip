@@ -38,8 +38,6 @@ enum {
 	LOGGED_OUT,
 	NEW_MESSAGE,
 	CONTACT_ADDED,
-	CONTACT_UPDATED,
-	CONTACT_PRESENCE_UPDATED,
 	CONTACT_REMOVED,
 	COMPOSING,
 
@@ -122,26 +120,6 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 
 	signals[CONTACT_ADDED] =
 		g_signal_new ("contact-added",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_CONTACT);
-
-	signals[CONTACT_UPDATED] =
-		g_signal_new ("contact-updated",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_CONTACT);
-
-	signals[CONTACT_PRESENCE_UPDATED] =
-		g_signal_new ("contact-presence-updated",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,

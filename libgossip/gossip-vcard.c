@@ -27,15 +27,14 @@
 typedef struct _GossipVCardPriv GossipVCardPriv;
 
 struct _GossipVCardPriv {
-	gchar    *name;
-	gchar    *nickname;
-	gchar    *birthday;
-	gchar    *email;
-	gchar    *url;
-	gchar    *country;
-	gchar    *description;
-	gpointer *avatar;
-	guint     avatar_size;
+	gchar        *name;
+	gchar        *nickname;
+	gchar        *birthday;
+	gchar        *email;
+	gchar        *url;
+	gchar        *country;
+	gchar        *description;
+	GossipAvatar *avatar;
 };
 
 static void vcard_finalize     (GObject      *object);
@@ -58,7 +57,6 @@ enum {
 	PROP_COUNTRY,
 	PROP_DESCRIPTION,
 	PROP_AVATAR,
-	PROP_AVATAR_SIZE
 };
 
 G_DEFINE_TYPE (GossipVCard, gossip_vcard, G_TYPE_OBJECT);
@@ -130,16 +128,6 @@ gossip_vcard_class_init (GossipVCardClass *class)
 							       "The avatar image",
 							       G_PARAM_READWRITE));
 
-	g_object_class_install_property (object_class,
-					 PROP_AVATAR_SIZE,
-					 g_param_spec_uint ("avatar_size",
-							    "Avatar size",
-							    "The size of the avatar image",
-							    0,
-							    G_MAXUINT,
-							    0,
-							    G_PARAM_READWRITE));
-
 	g_type_class_add_private (object_class, sizeof (GossipVCardPriv));
 }
 
@@ -158,7 +146,6 @@ gossip_vcard_init (GossipVCard *vcard)
 	priv->country     = NULL;
 	priv->description = NULL;
 	priv->avatar      = NULL;
-	priv->avatar_size = 0;
 }
 
 static void
@@ -175,7 +162,7 @@ vcard_finalize (GObject *object)
 	g_free (priv->url);
 	g_free (priv->country);
 	g_free (priv->description);
-	g_free (priv->avatar);
+	gossip_avatar_free (priv->avatar);
 
 	(G_OBJECT_CLASS (gossip_vcard_parent_class)->finalize) (object);
 }
@@ -214,9 +201,6 @@ vcard_get_property (GObject    *object,
 		break;
 	case PROP_AVATAR:
 		g_value_set_pointer (value, priv->avatar);
-		break;
-	case PROP_AVATAR_SIZE:
-		g_value_set_uint (value, priv->avatar_size);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -264,10 +248,8 @@ vcard_set_property (GObject      *object,
 					      g_value_get_string (value));
 		break;
 	case PROP_AVATAR:
-		priv->avatar = g_value_get_pointer (value);
-		break;
-	case PROP_AVATAR_SIZE:
-		priv->avatar_size = g_value_get_uint (value);
+		gossip_vcard_set_avatar (GOSSIP_VCARD (object),
+					 g_value_get_pointer (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
@@ -365,22 +347,16 @@ gossip_vcard_get_description (GossipVCard *vcard)
 	return priv->description;
 }
 
-const guchar *
-gossip_vcard_get_avatar (GossipVCard *vcard,
-			 gsize       *avatar_size)
+GossipAvatar *
+gossip_vcard_get_avatar (GossipVCard *vcard)
 {
 	GossipVCardPriv *priv;
-	guchar          *avatar;
 
 	g_return_val_if_fail (GOSSIP_IS_VCARD (vcard), NULL);
-	g_return_val_if_fail (avatar_size != NULL, NULL);
 
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
-	avatar = (guchar*) priv->avatar;
-	*avatar_size = priv->avatar_size;
-
-	return avatar;
+	return priv->avatar;
 }
 
 
@@ -518,8 +494,7 @@ gossip_vcard_set_description (GossipVCard *vcard,
 
 void
 gossip_vcard_set_avatar (GossipVCard  *vcard,
-			 const guchar *avatar,
-			 gsize         avatar_size)
+			 GossipAvatar *avatar)
 {
 	GossipVCardPriv *priv;
 
@@ -527,13 +502,7 @@ gossip_vcard_set_avatar (GossipVCard  *vcard,
 
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
-	g_free (priv->avatar);
-
-	if (avatar) {
-		priv->avatar = g_memdup (avatar, avatar_size);
-		priv->avatar_size = avatar_size;
-	} else {
-		priv->avatar = NULL;
-		priv->avatar_size = 0;
-	}
+	gossip_avatar_free (priv->avatar);
+	priv->avatar = gossip_avatar_copy (avatar);
 }
+

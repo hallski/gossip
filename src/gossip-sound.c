@@ -40,7 +40,13 @@
  */
 #define SOUND_WAIT_TIME 10000
 
-static void sound_contact_presence_updated_cb (GossipSession *session,
+static void sound_contact_presence_updated_cb (GossipContact *contact,
+					       GParamSpec    *param,
+					       gpointer       user_data);
+static void sound_contact_added_cb            (GossipSession *session,
+					       GossipContact *contact,
+					       gpointer       user_data);
+static void sound_contact_removed_cb          (GossipSession *session,
 					       GossipContact *contact,
 					       gpointer       user_data);
 
@@ -110,8 +116,8 @@ sound_protocol_disconnected_cb (GossipSession  *session,
 }
 
 static void
-sound_contact_presence_updated_cb (GossipSession *session,
-				   GossipContact *contact,
+sound_contact_presence_updated_cb (GossipContact *contact,
+				   GParamSpec    *param,
 				   gpointer       user_data)
 {
 	GossipPresence *presence;
@@ -149,6 +155,29 @@ sound_contact_presence_updated_cb (GossipSession *session,
 				     g_object_ref (contact),
 				     g_object_ref (presence));
 	}
+}
+
+static void
+sound_contact_added_cb (GossipSession *session,
+			GossipContact *contact,
+			gpointer       user_data)
+{
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (sound_contact_presence_updated_cb),
+			  NULL);
+	g_signal_connect (contact, "notify::type",
+			  G_CALLBACK (sound_contact_presence_updated_cb),
+			  NULL);
+}
+
+static void
+sound_contact_removed_cb (GossipSession *session,
+			  GossipContact *contact,
+			  gpointer       user_data)
+{
+	g_signal_handlers_disconnect_by_func (contact,
+					      sound_contact_presence_updated_cb,
+					      NULL);
 }
 
 void
@@ -252,17 +281,17 @@ gossip_sound_init (GossipSession *session)
 						(GDestroyNotify) g_object_unref,
 						(GDestroyNotify) g_object_unref);
 
-	g_signal_connect (session,
-			  "protocol-connected",
+	g_signal_connect (session, "protocol-connected",
 			  G_CALLBACK (sound_protocol_connected_cb),
 			  NULL);
-	g_signal_connect (session,
-			  "protocol-disconnected",
+	g_signal_connect (session, "protocol-disconnected",
 			  G_CALLBACK (sound_protocol_disconnected_cb),
 			  NULL);
-	g_signal_connect (session,
-			  "contact-presence-updated",
-			  G_CALLBACK (sound_contact_presence_updated_cb),
+	g_signal_connect (session, "contact-added",
+			  G_CALLBACK (sound_contact_added_cb),
+			  NULL);
+	g_signal_connect (session, "contact-removed",
+			  G_CALLBACK (sound_contact_removed_cb),
 			  NULL);
 }
 

@@ -43,11 +43,6 @@ struct _GossipContactListIfaceClass {
 					   GossipContact      *contact);
 	void (*contact_removed)           (GossipContactListIface  *list,
 					   GossipContact      *contact);
-	void (*contact_updated)           (GossipContactListIface  *list,
-					   GossipContact      *contact);
-	void (*contact_presence_updated)  (GossipContactListIface  *list,
-					   GossipContact      *contact);
-
 	/* vtable */
 
 	GList * (*get_contacts)           (GossipContactListIface  *list);

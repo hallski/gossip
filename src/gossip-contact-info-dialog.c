@@ -83,8 +83,8 @@ static void contact_info_dialog_get_vcard_cb         (GossipResult             r
 static void contact_info_dialog_get_version_cb       (GossipResult             result,
 						      GossipVersionInfo       *version_info,
 						      GossipContact           *contact);
-static void contact_info_dialog_presence_updated_cb  (GossipSession           *session,
-						      GossipContact           *contact,
+static void contact_info_dialog_presence_updated_cb  (GossipContact           *contact,
+						      GParamSpec              *param,
 						      gpointer                 user_data);
 static void contact_info_dialog_destroy_cb           (GtkWidget               *widget,
 						      GossipContactInfoDialog *dialog);
@@ -435,8 +435,8 @@ contact_info_dialog_get_version_cb (GossipResult       result,
 }
 
 static void
-contact_info_dialog_presence_updated_cb (GossipSession *session,
-					 GossipContact *contact,
+contact_info_dialog_presence_updated_cb (GossipContact *contact,
+					 GParamSpec    *param,
 					 gpointer       user_data)
 {
 	GossipContactInfoDialog *dialog;
@@ -444,10 +444,9 @@ contact_info_dialog_presence_updated_cb (GossipSession *session,
 	dialog = g_hash_table_lookup (dialogs, contact);
 
 	if (!dialog) {
-		return;
-	}
-
-	if (!gossip_contact_equal (contact, dialog->contact)) {
+		g_signal_handlers_disconnect_by_func (contact,
+						      contact_info_dialog_presence_updated_cb,
+						      NULL);
 		return;
 	}
 
@@ -609,8 +608,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 	contact_info_dialog_update_presences (dialog);
 
 	/* Presence listener */
-	id = g_signal_connect (session,
-			       "contact-presence-updated",
+	id = g_signal_connect (contact, "notify::presences",
 			       G_CALLBACK (contact_info_dialog_presence_updated_cb),
 			       NULL);
 	dialog->presence_signal_handler = id;

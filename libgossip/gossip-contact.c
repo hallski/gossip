@@ -26,6 +26,7 @@
 #include "gossip-account.h"
 #include "gossip-contact.h"
 #include "gossip-utils.h"
+#include "libgossip-marshal.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
 
@@ -44,37 +45,44 @@ struct _GossipContactPriv {
 	GList              *groups;
 
 	GossipSubscription  subscription;
-
-	guchar             *avatar;
-	guint               avatar_size;
-
+	GossipAvatar       *avatar;
 	GossipAccount      *account;
 };
 
-static void contact_class_init   (GossipContactClass *class);
-static void contact_init         (GossipContact      *contact);
-static void contact_finalize     (GObject            *object);
-static void contact_get_property (GObject            *object,
-				  guint               param_id,
-				  GValue             *value,
-				  GParamSpec         *pspec);
-static void contact_set_property (GObject            *object,
-				  guint               param_id,
-				  const GValue       *value,
-				  GParamSpec         *pspec);
+static void contact_class_init    (GossipContactClass *class);
+static void contact_init          (GossipContact      *contact);
+static void contact_finalize      (GObject            *object);
+static void contact_get_property  (GObject            *object,
+				   guint               param_id,
+				   GValue             *value,
+				   GParamSpec         *pspec);
+static void contact_set_property  (GObject            *object,
+				   guint               param_id,
+				   const GValue       *value,
+				   GParamSpec         *pspec);
+static void contact_set_type      (GossipContact      *contact,
+				   GossipContactType   type);
+static void contact_set_presences (GossipContact      *contact,
+				   GList              *presences);
 
 enum {
 	PROP_0,
 	PROP_TYPE,
 	PROP_NAME,
 	PROP_ID,
-	PROP_ACTIVE_PRESENCE,
+	PROP_PRESENCES,
+	PROP_GROUPS,
 	PROP_SUBSCRIPTION,
 	PROP_AVATAR,
-	PROP_AVATAR_SIZE,
 	PROP_ACCOUNT
 };
 
+enum {
+	UPDATED,
+	LAST_SIGNAL
+};
+
+static guint    signals[LAST_SIGNAL] = {0};
 static gpointer parent_class = NULL;
 
 GType
@@ -115,6 +123,16 @@ contact_class_init (GossipContactClass *class)
 	object_class->get_property = contact_get_property;
 	object_class->set_property = contact_set_property;
 
+	signals[UPDATED] =
+		g_signal_new ("updated",
+			      G_TYPE_FROM_CLASS (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__VOID,
+			      G_TYPE_NONE,
+			      0);
+
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
 					 g_param_spec_int ("type",
@@ -142,12 +160,18 @@ contact_class_init (GossipContactClass *class)
 							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
-					 PROP_ACTIVE_PRESENCE,
-					 g_param_spec_object ("active-presence",
-							      "Contact active presence",
-							      "Current presence of contact",
-							      GOSSIP_TYPE_PRESENCE,
-							      G_PARAM_READABLE));
+					 PROP_PRESENCES,
+					 g_param_spec_pointer ("presences",
+							       "Contact presences",
+							       "Presences of contact",
+							       G_PARAM_READWRITE));
+
+	g_object_class_install_property (object_class,
+					 PROP_GROUPS,
+					 g_param_spec_pointer ("groups",
+							       "Contact groups",
+							       "Groups of contact",
+							       G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_SUBSCRIPTION,
@@ -165,15 +189,6 @@ contact_class_init (GossipContactClass *class)
 							       "Avatar image",
 							       "The avatar image",
 							       G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-					 PROP_AVATAR_SIZE,
-					 g_param_spec_uint ("avatar_size",
-							    "Avatar size",
-							    "The size of the avatar image",
-							    0,
-							    G_MAXUINT,
-							    0,
-							    G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_ACCOUNT,
@@ -200,7 +215,6 @@ contact_init (GossipContact *contact)
 	priv->account     = NULL;
 	priv->groups      = NULL;
 	priv->avatar      = NULL;
-	priv->avatar_size = 0;
 }
 
 static void
@@ -212,7 +226,7 @@ contact_finalize (GObject *object)
 
 	g_free (priv->name);
 	g_free (priv->id);
-	g_free (priv->avatar);
+	gossip_avatar_free (priv->avatar);
 
 	if (priv->presences) {
 		g_list_foreach (priv->presences, (GFunc) g_object_unref, NULL);
@@ -251,21 +265,17 @@ contact_get_property (GObject    *object,
 		g_value_set_string (value,
 				    gossip_contact_get_id (GOSSIP_CONTACT (object)));
 		break;
-	case PROP_ACTIVE_PRESENCE:
-		if (priv->presences) {
-			g_value_set_object (value, G_OBJECT (priv->presences->data));
-		} else {
-			g_value_set_object (value, NULL);
-		}
+	case PROP_PRESENCES:
+		g_value_set_pointer (value, priv->presences);
+		break;
+	case PROP_GROUPS:
+		g_value_set_pointer (value, priv->groups);
 		break;
 	case PROP_SUBSCRIPTION:
 		g_value_set_int (value, priv->subscription);
 		break;
 	case PROP_AVATAR:
 		g_value_set_pointer (value, priv->avatar);
-		break;
-	case PROP_AVATAR_SIZE:
-		g_value_set_uint (value, priv->avatar_size);
 		break;
 	case PROP_ACCOUNT:
 		if (priv->account) {
@@ -292,7 +302,8 @@ contact_set_property (GObject      *object,
 
 	switch (param_id) {
 	case PROP_TYPE:
-		priv->type = g_value_get_int (value);
+		contact_set_type (GOSSIP_CONTACT (object),
+				  g_value_get_int (value));
 		break;
 	case PROP_NAME:
 		gossip_contact_set_name (GOSSIP_CONTACT (object),
@@ -302,14 +313,21 @@ contact_set_property (GObject      *object,
 		gossip_contact_set_id (GOSSIP_CONTACT (object),
 				       g_value_get_string (value));
 		break;
+	case PROP_PRESENCES:
+		contact_set_presences (GOSSIP_CONTACT (object),
+				       g_value_get_pointer (value));
+		break;
+	case PROP_GROUPS:
+		gossip_contact_set_groups (GOSSIP_CONTACT (object),
+					   g_value_get_pointer (value));
+		break;
 	case PROP_SUBSCRIPTION:
-		priv->subscription = g_value_get_int (value);
+		gossip_contact_set_subscription (GOSSIP_CONTACT (object),
+						 g_value_get_int (value));
 		break;
 	case PROP_AVATAR:
-		priv->avatar = g_value_get_pointer (value);
-		break;
-	case PROP_AVATAR_SIZE:
-		priv->avatar_size = g_value_get_uint (value);
+		gossip_contact_set_avatar (GOSSIP_CONTACT (object),
+					   g_value_get_pointer (value));
 		break;
 	case PROP_ACCOUNT:
 		gossip_contact_set_account (GOSSIP_CONTACT (object),
@@ -428,22 +446,16 @@ gossip_contact_get_name (GossipContact *contact)
 	return priv->name;
 }
 
-const guchar *
-gossip_contact_get_avatar (GossipContact *contact,
-			   gsize         *avatar_size)
+GossipAvatar *
+gossip_contact_get_avatar (GossipContact *contact)
 {
 	GossipContactPriv *priv;
-	guchar            *avatar;
 
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-	g_return_val_if_fail (avatar_size != NULL, NULL);
 
 	priv = GET_PRIV (contact);
 
-	avatar = (guchar*) priv->avatar;
-	*avatar_size = priv->avatar_size;
-
-	return avatar;
+	return priv->avatar;
 }
 
 GossipAccount *
@@ -536,6 +548,20 @@ gossip_contact_get_subscription (GossipContact *contact)
 	return priv->subscription;
 }
 
+static void
+contact_set_type (GossipContact      *contact,
+		  GossipContactType   type)
+{
+	GossipContactPriv *priv;
+
+	priv = GET_PRIV (contact);
+
+	priv->type = type;
+
+	g_object_notify (G_OBJECT (contact), "type");
+	g_signal_emit (contact, signals[UPDATED], 0);
+}
+
 void
 gossip_contact_set_id (GossipContact *contact,
 		       const gchar   *id)
@@ -551,6 +577,7 @@ gossip_contact_set_id (GossipContact *contact,
 	priv->id = g_strdup (id);
 
 	g_object_notify (G_OBJECT (contact), "id");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -568,12 +595,32 @@ gossip_contact_set_name (GossipContact *contact,
 	priv->name = g_strdup (name);
 
 	g_object_notify (G_OBJECT (contact), "name");
+	g_signal_emit (contact, signals[UPDATED], 0);
+}
+
+static void
+contact_set_presences (GossipContact *contact,
+		       GList         *presences)
+{
+	GossipContactPriv *priv;
+
+	priv = GET_PRIV (contact);
+
+	if (priv->presences) {
+		g_list_foreach (priv->presences, (GFunc) g_object_unref, NULL);
+		g_list_free (priv->presences);
+	}
+
+	priv->presences = g_list_copy (presences);
+	g_list_foreach (priv->presences, (GFunc) g_object_ref, NULL);
+
+	g_object_notify (G_OBJECT (contact), "presences");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
 gossip_contact_set_avatar (GossipContact *contact,
-			   const guchar  *avatar,
-			   gsize          avatar_size)
+			   GossipAvatar  *avatar)
 {
 	GossipContactPriv *priv;
 
@@ -581,18 +628,11 @@ gossip_contact_set_avatar (GossipContact *contact,
 
 	priv = GET_PRIV (contact);
 
-	g_free (priv->avatar);
-
-	if (avatar) {
-		priv->avatar = g_memdup (avatar, avatar_size);
-		priv->avatar_size = avatar_size;
-	} else {
-		priv->avatar = NULL;
-		priv->avatar_size = 0;
-	}
+	gossip_avatar_free (priv->avatar);
+	priv->avatar = gossip_avatar_copy (avatar);
 
 	g_object_notify (G_OBJECT (contact), "avatar");
-	g_object_notify (G_OBJECT (contact), "avatar-size");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -617,6 +657,7 @@ gossip_contact_set_account (GossipContact *contact,
 	}
 
 	g_object_notify (G_OBJECT (contact), "account");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -663,6 +704,9 @@ gossip_contact_add_presence (GossipContact  *contact,
 	priv->presences = g_list_insert_sorted (priv->presences, 
 						g_object_ref (presence),
 						gossip_presence_sort_func);
+
+	g_object_notify (G_OBJECT (contact), "presences");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -707,16 +751,19 @@ gossip_contact_remove_presence (GossipContact  *contact,
 
 	priv->presences = g_list_sort (priv->presences,
 				       gossip_presence_sort_func);
+
+	g_object_notify (G_OBJECT (contact), "presences");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
-gboolean
+void
 gossip_contact_set_groups (GossipContact *contact,
 			   GList         *groups)
 {
 	GossipContactPriv *priv;
 	GList             *old_groups, *l;
 
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), FALSE);
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
 
 	priv = GET_PRIV (contact);
 
@@ -731,7 +778,8 @@ gossip_contact_set_groups (GossipContact *contact,
 	g_list_foreach (old_groups, (GFunc) g_free, NULL);
 	g_list_free (old_groups);
 
-	return TRUE;
+	g_object_notify (G_OBJECT (contact), "groups");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -747,6 +795,7 @@ gossip_contact_set_subscription (GossipContact      *contact,
 	priv->subscription = subscription;
 
 	g_object_notify (G_OBJECT (contact), "subscription");
+	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 gint

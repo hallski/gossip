@@ -304,3 +304,43 @@ gossip_string_to_g_value (const gchar *str, GType type)
 
 	return g_value;
 }
+
+GossipAvatar *
+gossip_avatar_new (guchar *data,
+		   gsize   len,
+		   gchar  *format)
+{
+	GossipAvatar *avatar;
+
+	avatar = g_new0 (GossipAvatar, 1);
+	avatar->data = g_memdup (data, len);
+	avatar->len = len;
+	avatar->format = g_strdup (format);
+
+	return avatar;
+}
+
+void
+gossip_avatar_free (GossipAvatar *avatar)
+{
+	if (!avatar) {
+		return;
+	}
+
+	g_free (avatar->data);
+	g_free (avatar->format);
+	g_free (avatar);
+}
+
+GossipAvatar *
+gossip_avatar_copy (GossipAvatar *avatar)
+{
+	if (!avatar) {
+		return NULL;
+	}
+
+	return gossip_avatar_new (avatar->data,
+				  avatar->len,
+				  avatar->format);
+}
+

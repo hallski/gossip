@@ -71,26 +71,6 @@ contact_list_base_init (gpointer klass)
 			      G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
 
-		g_signal_new ("contact_updated",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GossipContactListIfaceClass,
-					       contact_updated),
-			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
-			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
-
-		g_signal_new ("contact_presence_updated",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GossipContactListIfaceClass,
-					       contact_presence_updated),
-			      NULL, NULL,
-			      gossip_marshal_VOID__POINTER,
-			      G_TYPE_NONE,
-			      1, G_TYPE_POINTER);
-
 		initialized = TRUE;
 	}
 }
