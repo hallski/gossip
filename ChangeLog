@@ -1,5 +1,9 @@
 2006-12-10  Xavier Claessens  <xclaesse@gmail.com>
 
+	* src/gossip-galago.c: Fix compilation error.
+
+2006-12-10  Xavier Claessens  <xclaesse@gmail.com>
+
 	* libgossip/gossip-chatroom-provider.c:
 	* libgossip/gossip-contact.c:
 	* libgossip/gossip-contact.h:

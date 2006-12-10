@@ -49,11 +49,8 @@ static void           galago_contact_added_cb            (GossipSession  *sessio
 static void           galago_contact_removed_cb          (GossipSession  *session,
 							  GossipContact  *contact,
 							  gpointer        user_data);
-static void           galago_contact_updated_cb          (GossipSession  *session,
-							  GossipContact  *contact,
-							  gpointer        user_data);
-static void           galago_contact_presence_updated_cb (GossipSession  *session,
-							  GossipContact  *contact,
+static void           galago_contact_presence_updated_cb (GossipContact  *contact,
+							  GParamSpec     *param,
 							  gpointer        user_data);
 static void           galago_setup_accounts              (GossipSession  *session);
 
@@ -307,17 +304,6 @@ galago_contact_removed_cb (GossipSession *session,
 	galago_account_remove_contact (ga_me, ga);
 
 	g_hash_table_remove (people, contact);
-}
-
-static void
-galago_contact_updated_cb (GossipSession  *session,
-			   GossipContact  *contact,
-			   gpointer        user_data)
-{
-	gossip_debug (DEBUG_DOMAIN, "Contact updated:'%s'",
-		      gossip_contact_get_id (contact));
-
-	/* TODO */
 }
 
 static void
