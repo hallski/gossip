@@ -1410,9 +1410,6 @@ group_chat_contact_presence_updated_cb (GossipContact   *contact,
 				    -1);
 
 		gdk_pixbuf_unref (pixbuf);
-
-		g_signal_emit_by_name (chat, "contact_presence_updated",
-				       contact);
 	} else {
 		g_signal_handlers_disconnect_by_func (contact,
 						      group_chat_contact_presence_updated_cb,
@@ -1438,8 +1435,6 @@ group_chat_contact_updated_cb (GossipContact   *contact,
 				    &iter,
 				    COL_NAME, gossip_contact_get_name (contact),
 				    -1);
-
-		g_signal_emit_by_name (chat, "contact_updated", contact);
 	} else {
 		g_signal_handlers_disconnect_by_func (contact,
 						      group_chat_contact_updated_cb,
