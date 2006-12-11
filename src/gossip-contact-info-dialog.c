@@ -69,7 +69,6 @@ typedef struct {
 	GtkWidget     *description_label;
 	GtkWidget     *avatar_image;
 
-	gulong         contact_signal_handler;
 	gulong         presence_signal_handler;
 
 	guint          show_timeout_id;
@@ -457,13 +456,8 @@ static void
 contact_info_dialog_destroy_cb (GtkWidget               *widget,
 				GossipContactInfoDialog *dialog)
 {
-	if (dialog->contact_signal_handler) {
-		g_signal_handler_disconnect (gossip_app_get_session (),
-					     dialog->contact_signal_handler);
-	}
-
 	if (dialog->presence_signal_handler) {
-		g_signal_handler_disconnect (gossip_app_get_session (),
+		g_signal_handler_disconnect (dialog->contact,
 					     dialog->presence_signal_handler);
 	}
 
@@ -504,7 +498,7 @@ gossip_contact_info_dialog_show (GossipContact *contact,
 	GladeXML                *glade;
 	gchar                   *str;
 	GtkSizeGroup            *size_group;
-	guint                    id;
+	gulong                   id;
 	GtkWidget               *avatar_image_placeholder;
 	GdkPixbuf               *pixbuf;
 	gchar                   *path;
