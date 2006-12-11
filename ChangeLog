@@ -1,3 +1,8 @@
+2006-12-11  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-vcard-dialog.c (vcard_dialog_get_vcard_cb): Don't
+	crash if there is no avatar.
+
 2006-12-10  Xavier Claessens  <xclaesse@gmail.com>
 
 	* src/gossip-group-chat.c: Don't emit a "contact-presence-updated" and

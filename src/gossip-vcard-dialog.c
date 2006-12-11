@@ -432,9 +432,14 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 
 	avatar = gossip_vcard_get_avatar (vcard);
 
-	gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
-					     (gchar*) avatar->data, avatar->len);
-
+	if (avatar) {
+		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
+						     (gchar*) avatar->data, avatar->len);
+	} else {
+		gossip_image_chooser_set_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
+						     NULL, 0);
+	}
+	
 	/* Save position incase the next lookup fails. */
 	combo_box = GTK_COMBO_BOX (dialog->account_chooser);
 	dialog->last_account_selected = gtk_combo_box_get_active (combo_box);
