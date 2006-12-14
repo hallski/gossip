@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gossip-account.h"
+#include "gossip-avatar.h"
 #include "gossip-presence.h"
 #include "gossip-utils.h"
 

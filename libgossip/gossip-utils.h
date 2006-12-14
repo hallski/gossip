@@ -36,13 +36,6 @@ typedef enum {
 	GOSSIP_REGEX_ALL,
 } GossipRegExType;
 
-typedef struct
-{
-	guchar *data;
-	gsize   len;
-	gchar  *format;
-} GossipAvatar;
-
 /* Regular expressions */
 gchar *       gossip_substring           (const gchar     *str,
 					  gint             start,
@@ -69,11 +62,4 @@ const gchar * gossip_g_type_to_dbus_type (GType            g_type);
 gchar *       gossip_g_value_to_string   (const GValue    *value);
 GValue *      gossip_string_to_g_value   (const gchar     *str,
 					  GType            type);
-/* GossipAvatar */
-GossipAvatar *gossip_avatar_new          (guchar          *avatar,
-					  gsize            len,
-					  gchar           *format);
-void          gossip_avatar_free         (GossipAvatar    *avatar);
-GossipAvatar *gossip_avatar_copy         (GossipAvatar    *avatar);
-
 #endif /*  __GOSSIP_UTILS_H__ */

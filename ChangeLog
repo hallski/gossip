@@ -1,3 +1,20 @@
+2006-12-10  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-contact.h:
+	* libgossip/gossip-utils.c:
+	* libgossip/gossip-utils.h:
+	* libgossip/gossip-vcard.c:
+	* libgossip/gossip-vcard.h:
+	* protocols/jabber/gossip-jabber-vcard.c:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-vcard-dialog.c: GossipAvatar is now ref-counted and moved
+	into his own module.
+
+	* libgossip/gossip-avatar.c
+	* libgossip/gossip-avatar.h: New files.
+
 2006-12-11  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-contact-info-dialog.c:

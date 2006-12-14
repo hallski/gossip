@@ -22,6 +22,8 @@
 #define __GOSSIP_VCARD_H__
 
 #include <glib-object.h>
+
+#include "gossip-avatar.h"
 #include "gossip-utils.h"
 
 #define GOSSIP_TYPE_VCARD         (gossip_vcard_get_type ())

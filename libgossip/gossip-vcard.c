@@ -20,6 +20,7 @@
 
 #include <config.h>
 
+#include "gossip-avatar.h"
 #include "gossip-vcard.h"
 
 #define GOSSIP_VCARD_GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_VCARD, GossipVCardPriv))
@@ -162,7 +163,7 @@ vcard_finalize (GObject *object)
 	g_free (priv->url);
 	g_free (priv->country);
 	g_free (priv->description);
-	gossip_avatar_free (priv->avatar);
+	gossip_avatar_unref (priv->avatar);
 
 	(G_OBJECT_CLASS (gossip_vcard_parent_class)->finalize) (object);
 }
@@ -502,7 +503,7 @@ gossip_vcard_set_avatar (GossipVCard  *vcard,
 
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
-	gossip_avatar_free (priv->avatar);
-	priv->avatar = gossip_avatar_copy (avatar);
+	gossip_avatar_unref (priv->avatar);
+	priv->avatar = gossip_avatar_ref (avatar);
 }
 

@@ -25,6 +25,7 @@
 
 #include <loudmouth/loudmouth.h>
 
+#include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-utils.h>
 
@@ -167,7 +168,7 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 						    len, "image/png");
 			gossip_vcard_set_avatar (vcard, avatar);
 			g_free (decoded_avatar);
-			gossip_avatar_free (avatar);
+			gossip_avatar_unref (avatar);
 		}
 	}
 

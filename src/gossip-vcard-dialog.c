@@ -528,7 +528,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	contact = gossip_protocol_get_own_contact (protocol);
 	gossip_contact_set_avatar (GOSSIP_CONTACT(contact), avatar);
 
-	gossip_avatar_free (avatar);
+	gossip_avatar_unref (avatar);
 	g_object_unref (account);
 }
 

@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "gossip-account.h"
+#include "gossip-avatar.h"
 #include "gossip-contact.h"
 #include "gossip-utils.h"
 #include "libgossip-marshal.h"
@@ -226,7 +227,7 @@ contact_finalize (GObject *object)
 
 	g_free (priv->name);
 	g_free (priv->id);
-	gossip_avatar_free (priv->avatar);
+	gossip_avatar_unref (priv->avatar);
 
 	if (priv->presences) {
 		g_list_foreach (priv->presences, (GFunc) g_object_unref, NULL);
@@ -628,8 +629,8 @@ gossip_contact_set_avatar (GossipContact *contact,
 
 	priv = GET_PRIV (contact);
 
-	gossip_avatar_free (priv->avatar);
-	priv->avatar = gossip_avatar_copy (avatar);
+	gossip_avatar_unref (priv->avatar);
+	priv->avatar = gossip_avatar_ref (avatar);
 
 	g_object_notify (G_OBJECT (contact), "avatar");
 	g_signal_emit (contact, signals[UPDATED], 0);

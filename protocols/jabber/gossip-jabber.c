@@ -25,6 +25,7 @@
 
 #include <libgossip/gossip-conf.h>
 #include <libgossip/gossip-account.h>
+#include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-vcard.h>

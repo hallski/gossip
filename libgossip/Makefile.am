@@ -25,6 +25,8 @@ libgossip_la_SOURCES =             			\
 	gossip-account-manager.c   			\
 	gossip-account-manager.h   			\
 	gossip-async.h             			\
+	gossip-avatar.c           			\
+	gossip-avatar.h           			\
 	gossip-chatroom.c				\
 	gossip-chatroom.h				\
 	gossip-chatroom-contact.c                       \
