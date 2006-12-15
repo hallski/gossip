@@ -601,7 +601,7 @@ chat_window_create_label (GossipChatWindow *window,
 	name = gossip_chat_get_name (chat);
 	name_label = gtk_label_new (name);
 
-/* 	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END); */
+ 	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
 
 	attr_list = pango_attr_list_new ();
 	attr = pango_attr_scale_new (1/1.2);
@@ -1786,6 +1786,9 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 	gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (priv->notebook), child, TRUE);
 	gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (priv->notebook), child, TRUE);
 
+	gtk_notebook_set_tab_label_packing (GTK_NOTEBOOK (priv->notebook),
+					    child, TRUE, TRUE, GTK_PACK_START); 
+	
 	gossip_debug (DEBUG_DOMAIN, 
 		      "Chat added (%d references)",
 		      G_OBJECT (chat)->ref_count);

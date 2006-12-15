@@ -1,3 +1,9 @@
+2006-12-15  Mikael Hallendal  <micke@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_create_label),
+	(gossip_chat_window_add_chat):
+	- Reverted change that turned off ellipsizing in chat windows.
+
 2006-12-10  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/Makefile.am:
