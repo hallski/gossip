@@ -1,3 +1,17 @@
+2006-12-16  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-avatar.c:
+	* libgossip/gossip-chatroom-contact.c:
+	* libgossip/gossip-chatroom-contact.h:
+	* libgossip/gossip-contact.c:
+	* libgossip/gossip-contact.h:
+	* libgossip/gossip-vcard.c:
+	* protocols/jabber/gossip-jabber-chatrooms.c: Add warnings when
+	ref/unref GossipAvatar, check to not pass NULL to gossip_avatar_(un)ref.
+	gossip_contact_copy now copy properties to one contact to another and
+	gossip_contact_dup create a new contact and copy properties from another
+	contact.
+
 2006-12-15  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_create_label),

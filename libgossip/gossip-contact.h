@@ -70,6 +70,8 @@ GossipContact *    gossip_contact_new_full                  (GossipContactType  
 							     const gchar        *id,
 							     const gchar        *name);
 GossipContact *    gossip_contact_copy                      (GossipContact      *contact);
+void               gossip_contact_copy_values               (GossipContact      *contact_from,
+							     GossipContact      *contact_to);
 GossipContactType  gossip_contact_get_type                  (GossipContact      *contact);
 const gchar *      gossip_contact_get_id                    (GossipContact      *contact);
 const gchar *      gossip_contact_get_name                  (GossipContact      *contact);

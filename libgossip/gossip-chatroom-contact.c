@@ -166,6 +166,22 @@ gossip_chatroom_contact_new_full (GossipAccount  *account,
 			     "id", id,
 			     NULL);
 }
+
+GossipChatroomContact *
+gossip_chatroom_contact_new_from_contact (GossipContact *contact)
+{
+	GossipChatroomContact *new_contact;
+
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	new_contact = g_object_new (GOSSIP_TYPE_CHATROOM_CONTACT,
+				    "type", GOSSIP_CONTACT_TYPE_CHATROOM,
+				    NULL);
+	gossip_contact_copy_values (contact, GOSSIP_CONTACT (new_contact));
+
+	return new_contact;
+}
+
 GossipChatroomRole
 gossip_chatroom_contact_get_role (GossipChatroomContact *contact)
 {

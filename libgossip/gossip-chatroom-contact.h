@@ -44,19 +44,18 @@ struct _GossipChatroomContactClass {
 	GossipContactClass parent_class;
 };
 
-GType                   gossip_chatroom_contact_get_type (void) G_GNUC_CONST;
+GType                   gossip_chatroom_contact_get_type         (void) G_GNUC_CONST;
 
-GossipChatroomContact * gossip_chatroom_contact_new      (GossipAccount  *account);
-
-GossipChatroomContact * gossip_chatroom_contact_new_full (GossipAccount  *account,
-							  const gchar    *id,
-							  const gchar    *name);
-GossipChatroomRole      gossip_chatroom_contact_get_role (GossipChatroomContact *contact);
-void                    gossip_chatroom_contact_set_role (GossipChatroomContact *contact,
-							  GossipChatroomRole     role);
-
-GossipChatroomAffiliation gossip_chatroom_contact_get_affiliation (GossipChatroomContact *contact);
-void                    gossip_chatroom_contact_set_affiliation (GossipChatroomContact *contact,
-							  GossipChatroomAffiliation affiliation);
+GossipChatroomContact * gossip_chatroom_contact_new              (GossipAccount             *account);
+GossipChatroomContact * gossip_chatroom_contact_new_full         (GossipAccount             *account,
+								  const gchar               *id,
+								  const gchar               *name);
+GossipChatroomContact * gossip_chatroom_contact_new_from_contact (GossipContact             *contact);
+GossipChatroomRole      gossip_chatroom_contact_get_role         (GossipChatroomContact     *contact);
+void                    gossip_chatroom_contact_set_role         (GossipChatroomContact     *contact,
+								  GossipChatroomRole         role);
+GossipChatroomAffiliation gossip_chatroom_contact_get_affiliation (GossipChatroomContact    *contact);
+void                    gossip_chatroom_contact_set_affiliation  (GossipChatroomContact     *contact,
+								  GossipChatroomAffiliation  affiliation);
 
 #endif /* __GOSSIP_CHATROOM_CONTACT_H__ */

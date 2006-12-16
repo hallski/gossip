@@ -49,9 +49,7 @@ gossip_avatar_new (guchar *data,
 void
 gossip_avatar_unref (GossipAvatar *avatar)
 {
-	if (!avatar) {
-		return;
-	}
+	g_return_if_fail (avatar != NULL);
 
 	avatar->refcount--;
 	if (avatar->refcount == 0) {
@@ -64,9 +62,7 @@ gossip_avatar_unref (GossipAvatar *avatar)
 GossipAvatar *
 gossip_avatar_ref (GossipAvatar *avatar)
 {
-	if (!avatar) {
-		return NULL;
-	}
+	g_return_val_if_fail (avatar != NULL, NULL);
 
 	avatar->refcount++;
 

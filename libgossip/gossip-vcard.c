@@ -163,7 +163,10 @@ vcard_finalize (GObject *object)
 	g_free (priv->url);
 	g_free (priv->country);
 	g_free (priv->description);
-	gossip_avatar_unref (priv->avatar);
+
+	if (priv->avatar) {
+		gossip_avatar_unref (priv->avatar);
+	}
 
 	(G_OBJECT_CLASS (gossip_vcard_parent_class)->finalize) (object);
 }
@@ -503,7 +506,13 @@ gossip_vcard_set_avatar (GossipVCard  *vcard,
 
 	priv = GOSSIP_VCARD_GET_PRIV (vcard);
 
-	gossip_avatar_unref (priv->avatar);
-	priv->avatar = gossip_avatar_ref (avatar);
+	if (priv->avatar) {
+		gossip_avatar_unref (priv->avatar);
+		priv->avatar = NULL;
+	}
+
+	if (avatar) {
+		priv->avatar = gossip_avatar_ref (avatar);
+	}
 }
 

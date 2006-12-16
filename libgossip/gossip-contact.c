@@ -32,7 +32,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
 
 /* Make sure any additions to the private contact structure are copied
- * in the gossip_contact_copy() function further down.
+ * in the gossip_contact_copy_values() function further down.
  */
 typedef struct _GossipContactPriv GossipContactPriv;
 
@@ -227,7 +227,10 @@ contact_finalize (GObject *object)
 
 	g_free (priv->name);
 	g_free (priv->id);
-	gossip_avatar_unref (priv->avatar);
+
+	if (priv->avatar) {
+		gossip_avatar_unref (priv->avatar);
+	}
 
 	if (priv->presences) {
 		g_list_foreach (priv->presences, (GFunc) g_object_unref, NULL);
@@ -239,7 +242,9 @@ contact_finalize (GObject *object)
 		g_list_free (priv->groups);
 	}
 
-	g_object_unref (priv->account);
+	if (priv->account) {
+		g_object_unref (priv->account);
+	}
 
 	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -367,39 +372,32 @@ gossip_contact_new_full (GossipContactType  type,
 GossipContact *
 gossip_contact_copy (GossipContact *contact)
 {
-	GossipContact     *new_contact;
-	GossipContactPriv *new_priv;
-	GossipContactPriv *priv;
-	GList             *l;
+	GossipContact *new_contact;
 
-	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
-
-	priv = GET_PRIV (contact);
-
-	new_contact = gossip_contact_new_full (priv->type,
-					       priv->account,
-					       priv->id,
-					       priv->name);
-
-	new_priv = GET_PRIV (new_contact);
-
-	new_priv->subscription = priv->subscription;
-
-	for (l = priv->groups; l; l = l->next) {
-		new_priv->groups = g_list_prepend (new_priv->groups,
-						   g_strdup (l->data));
-	}
-
-	priv->groups = g_list_reverse (priv->groups);
-
-	for (l = priv->presences; l; l = l->next) {
-		new_priv->presences = g_list_prepend (new_priv->presences,
-						      g_strdup (l->data));
-	}
-	
-	priv->presences = g_list_reverse (priv->presences);
+	new_contact = g_object_new (GOSSIP_TYPE_CONTACT, NULL);
+	gossip_contact_copy_values (contact, new_contact);
 
 	return new_contact;
+}
+
+void
+gossip_contact_copy_values (GossipContact *contact_from,
+			    GossipContact *contact_to)
+{
+	GossipContactPriv *from_priv;
+
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact_from));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact_to));
+
+	from_priv = GET_PRIV (contact_from);
+
+	gossip_contact_set_name (contact_to, from_priv->name);
+	gossip_contact_set_id (contact_to, from_priv->id);
+	gossip_contact_set_subscription (contact_to, from_priv->subscription);
+	gossip_contact_set_avatar (contact_to, from_priv->avatar);
+	gossip_contact_set_account (contact_to, from_priv->account);
+	gossip_contact_set_groups (contact_to, from_priv->groups);
+	contact_set_presences (contact_to, from_priv->presences);
 }
 
 GossipContactType
@@ -629,8 +627,14 @@ gossip_contact_set_avatar (GossipContact *contact,
 
 	priv = GET_PRIV (contact);
 
-	gossip_avatar_unref (priv->avatar);
-	priv->avatar = gossip_avatar_ref (avatar);
+	if (priv->avatar) {
+		gossip_avatar_unref (priv->avatar);
+		priv->avatar = NULL;
+	}
+	
+	if (avatar) {
+		priv->avatar = gossip_avatar_ref (avatar);
+	}
 
 	g_object_notify (G_OBJECT (contact), "avatar");
 	g_signal_emit (contact, signals[UPDATED], 0);
