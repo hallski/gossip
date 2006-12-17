@@ -1209,6 +1209,16 @@ group_chat_contact_joined_cb (GossipChatroomProvider *provider,
 			  chat);
 
 	g_signal_emit_by_name (chat, "contact_added", contact);
+	
+	/* Add event to chatroom */
+	if (!gossip_contact_equal (priv->own_contact, contact)) {
+		gchar *str;
+
+		str = g_strdup_printf (_("%s has joined the room"),
+				       gossip_contact_get_name (contact));
+		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		g_free (str);
+	}
 }
 
 static void
@@ -1381,6 +1391,15 @@ group_chat_contact_left_cb (GossipChatroomProvider *provider,
 		}
 
 		g_signal_emit_by_name (chat, "contact_removed", contact);
+
+		/* Add event to chatroom */
+		if (!gossip_contact_equal (priv->own_contact, contact)) {
+			gchar *str;
+			str = g_strdup_printf (_("%s has left the room"),
+					       gossip_contact_get_name (contact));
+			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+			g_free (str);
+		}
 	}
 }
 

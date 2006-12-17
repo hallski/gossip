@@ -1,5 +1,10 @@
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-group-chat.c: Added "foo has joined" and "bar has
+	left" messages in the chatroom.
+
+2006-12-17  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-account.c: 
 	* libgossip/gossip-event-manager.c: 
 	* protocols/jabber/gossip-jabber-chatrooms.c:
