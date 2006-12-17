@@ -179,6 +179,12 @@ jabber_vcard_get_cb (LmMessageHandler   *handler,
 	return LM_HANDLER_RESULT_ALLOW_MORE_HANDLERS;
 }
 
+static void
+jabber_vcard_free (GossipCallbackData *data)
+{
+	g_slice_free (GossipCallbackData, data);
+}
+
 gboolean
 gossip_jabber_vcard_get (GossipJabber         *jabber,
 			 const gchar          *jid_str,
@@ -209,13 +215,13 @@ gossip_jabber_vcard_get (GossipJabber         *jabber,
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
-	data = g_new0 (GossipCallbackData, 1);
+	data = g_slice_new0 (GossipCallbackData);
 	data->callback = callback;
 	data->user_data = user_data;
 
 	handler = lm_message_handler_new ((LmHandleMessageFunction) jabber_vcard_get_cb,
 					  data,
-					  g_free);
+					  (GDestroyNotify) jabber_vcard_free);
 
 	if (!lm_connection_send_with_reply (connection, m, handler, error)) {
 		lm_message_unref (m);

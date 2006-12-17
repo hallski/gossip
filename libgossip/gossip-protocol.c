@@ -34,8 +34,10 @@ static void    gossip_protocol_class_init       (GossipProtocolClass *klass);
 static void    gossip_protocol_init             (GossipProtocol      *protocol);
 
 enum {
-	LOGGED_IN,
-	LOGGED_OUT,
+	CONNECTING,
+	CONNECTED,
+	DISCONNECTING,
+	DISCONNECTED,
 	NEW_MESSAGE,
 	CONTACT_ADDED,
 	CONTACT_REMOVED,
@@ -87,8 +89,8 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 	klass->register_account     = NULL;
 	klass->new_account          = NULL;
 
-	signals[LOGGED_IN] =
-		g_signal_new ("logged-in",
+	signals[CONNECTING] =
+		g_signal_new ("connecting",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,
@@ -97,9 +99,28 @@ gossip_protocol_class_init (GossipProtocolClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_ACCOUNT);
 
-	/* Maybe include a reason for disconnect? */
-	signals[LOGGED_OUT] =
-		g_signal_new ("logged-out",
+	signals[CONNECTED] =
+		g_signal_new ("connected",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__OBJECT,
+			      G_TYPE_NONE,
+			      1, GOSSIP_TYPE_ACCOUNT);
+
+	signals[DISCONNECTING] =
+		g_signal_new ("disconnecting",
+			      G_TYPE_FROM_CLASS (klass),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__OBJECT,
+			      G_TYPE_NONE,
+			      1, GOSSIP_TYPE_ACCOUNT);
+
+	signals[DISCONNECTED] =
+		g_signal_new ("disconnected",
 			      G_TYPE_FROM_CLASS (klass),
 			      G_SIGNAL_RUN_LAST,
 			      0,

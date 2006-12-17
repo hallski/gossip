@@ -134,7 +134,7 @@ gossip_jabber_chatrooms_init (GossipJabber *jabber)
 							  (GDestroyNotify) gossip_jid_unref,
 							  NULL);
 
-	g_signal_connect (GOSSIP_PROTOCOL (chatrooms->jabber), "logged-out",
+	g_signal_connect (GOSSIP_PROTOCOL (chatrooms->jabber), "disconnected",
 			  G_CALLBACK (jabber_chatrooms_logged_out_cb),
 			  chatrooms);
 

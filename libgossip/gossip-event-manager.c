@@ -123,7 +123,7 @@ event_manager_free_event (EventData *data)
 	g_object_unref (data->event);
 	g_object_unref (data->issuer);
 
-	g_free (data);
+	g_slice_free (EventData, data);
 }
 
 GossipEventManager *
@@ -149,7 +149,7 @@ gossip_event_manager_add (GossipEventManager          *manager,
 
 	priv = GET_PRIV (manager);
 
-	data = g_new0 (EventData, 1);
+	data = g_slice_new0 (EventData);
 
 	data->event    = g_object_ref (event);
 	data->issuer   = g_object_ref (object);

@@ -606,7 +606,8 @@ jabber_login (GossipProtocol *protocol)
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
 
-	gossip_debug (DEBUG_DOMAIN, "Logging in Jabber");
+	gossip_debug (DEBUG_DOMAIN, "Connecting...");
+	g_signal_emit_by_name (jabber, "connecting", priv->account);
 
 	if (priv->presence) {
 		g_object_unref (priv->presence);
@@ -620,6 +621,13 @@ jabber_login (GossipProtocol *protocol)
 	jabber_setup_connection (jabber);
 
 	if (!priv->connection) {
+		/* Should we emit these or just call jabber_logout()
+		 * with the risk of not getting the disconnected
+		 * signal from Loudmouth? 
+		 */
+		g_signal_emit_by_name (jabber, "disconnecting", priv->account);
+		g_signal_emit_by_name (jabber, "disconnected", priv->account);
+
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_CONNECTION);
 		return;
 	}
@@ -630,10 +638,11 @@ jabber_login (GossipProtocol *protocol)
 
 	if (result && !error) {
 		/* FIXME: add timeout incase we get nothing back from
-		   Loudmouth, this happens with current CVS loudmouth
-		   1.01 where you connect to port 5222 using SSL, the
-		   error is not reflecting back into Gossip so we just
-		   hang around waiting. */
+		 * Loudmouth, this happens with current CVS loudmouth
+		 * 1.01 where you connect to port 5222 using SSL, the
+		 * error is not reflecting back into Gossip so we just
+		 * hang around waiting.
+		 */
 		priv->connection_timeout_id = g_timeout_add (CONNECT_TIMEOUT * 1000,
 							     (GSourceFunc) jabber_login_timeout_cb,
 							     jabber);
@@ -643,7 +652,7 @@ jabber_login (GossipProtocol *protocol)
 
 	if (error->code == 1 &&
 	    strcmp (error->message, "getaddrinfo() failed") == 0) {
-		/* host lookup failed */
+		jabber_logout (GOSSIP_PROTOCOL (jabber));
 		jabber_error (GOSSIP_PROTOCOL (jabber), GOSSIP_PROTOCOL_NO_SUCH_HOST);
 	}
 
@@ -674,6 +683,12 @@ jabber_logout (GossipProtocol *protocol)
 
 	jabber = GOSSIP_JABBER (protocol);
 	priv = GET_PRIV (jabber);
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Disconnecting for account:'%s'",
+		      gossip_account_get_name (priv->account));
+
+	g_signal_emit_by_name (jabber, "disconnecting", priv->account);
 
 	if (priv->connection_timeout_id != 0) {
 		g_source_remove (priv->connection_timeout_id);
@@ -717,6 +732,7 @@ jabber_logout_contact_foreach (gpointer       key,
 	g_list_free (presences);
 
 	g_signal_emit_by_name (jabber, "contact-removed", contact);
+
 	return TRUE;
 }
 
@@ -908,7 +924,7 @@ jabber_connection_auth_cb (LmConnection *connection,
 	lm_connection_send (priv->connection, m, NULL);
 	lm_message_unref (m);
 
-	g_signal_emit_by_name (jabber, "logged-in", priv->account);
+	g_signal_emit_by_name (jabber, "connected", priv->account);
 
 	if (priv->vcard) {
 		gchar *name;
@@ -974,7 +990,7 @@ jabber_disconnect_cb (LmConnection       *connection,
 		g_assert_not_reached();
 	}
 
-	g_signal_emit_by_name (jabber, "logged-out", priv->account, gossip_reason);
+	g_signal_emit_by_name (jabber, "disconnected", priv->account, gossip_reason);
 }
 
 static LmSSLResponse
@@ -3337,7 +3353,7 @@ jabber_data_new (GossipJabber  *jabber,
 	g_return_val_if_fail (GOSSIP_IS_JABBER (jabber), NULL);
 	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
 
-	data = g_new0 (JabberData, 1);
+	data = g_slice_new0 (JabberData);
 
 	data->jabber = g_object_ref (jabber);
 	data->contact = g_object_ref (contact);
@@ -3362,7 +3378,7 @@ jabber_data_free (JabberData *data)
 		g_object_unref (data->contact);
 	}
 
-	g_free (data);
+	g_slice_free (JabberData, data);
 }
 
 /*

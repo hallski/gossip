@@ -71,12 +71,17 @@ sound_protocol_connected_cb (GossipSession  *session,
 	guint        id;
 	const gchar *account_id;
 
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Protocol connected for account:'%s'",
+		      gossip_account_get_name (account));
+
 	if (g_hash_table_lookup (account_states, account)) {
 		return;
 	}
 
 	account_id = gossip_account_get_id (account);
-	gossip_debug (DEBUG_DOMAIN, "Account update, account:'%s' is now online",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Account update, account:'%s' is now online",
 		      account_id);
 
 	id = g_timeout_add (SOUND_WAIT_TIME,
@@ -102,12 +107,15 @@ sound_disconnected_contact_foreach (GossipContact  *contact,
 }
 
 static void
-sound_protocol_disconnected_cb (GossipSession  *session,
-				GossipAccount  *account,
-				GossipProtocol *protocol,
-				gint            reason,
-				gpointer        user_data)
+sound_protocol_disconnecting_cb (GossipSession  *session,
+				 GossipAccount  *account,
+				 GossipProtocol *protocol,
+				 gpointer        user_data)
 {
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Protocol disconnecting for account:'%s'",
+		      gossip_account_get_name (account));
+
 	g_hash_table_remove (account_states, account);
 
 	g_hash_table_foreach_remove (contact_states,
@@ -129,7 +137,8 @@ sound_contact_presence_updated_cb (GossipContact *contact,
 	presence = gossip_contact_get_active_presence (contact);
 	if (!presence) {
 		if (g_hash_table_lookup (contact_states, contact)) {
-			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now offline",
+			gossip_debug (DEBUG_DOMAIN,
+				      "Presence update, contact:'%s' is now offline",
 				      gossip_contact_get_id (contact));
 			gossip_sound_play (GOSSIP_SOUND_OFFLINE);
 		}
@@ -146,7 +155,8 @@ sound_contact_presence_updated_cb (GossipContact *contact,
 		 */
 		if (!g_hash_table_lookup (account_states, account) &&
 		    !g_hash_table_lookup (contact_states, contact)) {
-			gossip_debug (DEBUG_DOMAIN, "Presence update, contact:'%s' is now online",
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Presence update, contact:'%s' is now online",
 				      gossip_contact_get_id (contact));
 			gossip_sound_play (GOSSIP_SOUND_ONLINE);
 		}
@@ -284,8 +294,8 @@ gossip_sound_init (GossipSession *session)
 	g_signal_connect (session, "protocol-connected",
 			  G_CALLBACK (sound_protocol_connected_cb),
 			  NULL);
-	g_signal_connect (session, "protocol-disconnected",
-			  G_CALLBACK (sound_protocol_disconnected_cb),
+	g_signal_connect (session, "protocol-disconnecting",
+			  G_CALLBACK (sound_protocol_disconnecting_cb),
 			  NULL);
 	g_signal_connect (session, "contact-added",
 			  G_CALLBACK (sound_contact_added_cb),

@@ -42,7 +42,7 @@ jid_free (GossipJID *jid)
 	g_free (jid->full);
 	g_free (jid->no_resource);
 
-	g_free (jid);
+	g_slice_free (GossipJID, jid);
 }
 
 const gchar *
@@ -85,7 +85,8 @@ gossip_jid_new (const gchar *str_jid)
 
 	g_return_val_if_fail (str_jid != NULL, NULL);
 
-	jid = g_new0 (GossipJID, 1);
+	jid = g_slice_new0 (GossipJID);
+
 	jid->ref_count = 1;
 	jid->full = jid_casefold_node (str_jid);
 

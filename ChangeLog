@@ -1,5 +1,32 @@
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
+	* libgossip/gossip-account.c: 
+	* libgossip/gossip-event-manager.c: 
+	* protocols/jabber/gossip-jabber-chatrooms.c:
+	* protocols/jabber/gossip-jabber-vcard.c: 
+	* protocols/jabber/gossip-jabber-disco.c: 
+	* protocols/jabber/gossip-jid.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-spell.c: Use g_slice_new0() in appropriate places.
+
+	* protocols/jabber/gossip-jabber.c: Added "connecting" and "disconnecting"
+	signals. Renamed "logged-in" and "logged-out" signals to connected and
+	connecting.
+	
+	* libgossip/gossip-session.c: Removed "presence-updated" signal,
+	it was unused. Fixed a regression where we would call
+	protocol->setup function on session_connect() which meant that
+	Jabber backend protocols would throw up warnings because private
+	data was not initialised when disconnecting. Instead of doing our
+	own "connecting" and "disconnecting" signals, we listen for the
+	protocol signals.
+
+	* src/gossip-sound.c: Use the "protocol-disconnecting" signal for
+	the session so we don't play sounds to people going offline
+	because we disconnected.
+
+2006-12-17  Martyn Russell  <martyn@imendio.com>
+
 	* ui/chat.glade:
 	* ui/file-transfer.glade:
 	* ui/group-chat.glade:

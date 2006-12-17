@@ -40,9 +40,6 @@ static GalagoService *gossip_galago_get_service          (GossipAccount  *accoun
 static GalagoAccount *galago_get_account                 (GossipAccount  *account);
 static void           galago_set_status                  (GalagoAccount  *account,
 							  GossipPresence *presence);
-static void           galago_presence_changed_cb         (GossipSession  *gossip_session,
-							  GossipPresence *gossip_presence,
-							  gpointer        userdata);
 static void           galago_contact_added_cb            (GossipSession  *session,
 							  GossipContact  *contact,
 							  gpointer        user_data);
@@ -187,37 +184,6 @@ galago_set_status (GalagoAccount  *account,
 	gp = galago_account_create_presence (account);
 	galago_presence_clear_statuses (gp);
 	galago_presence_add_status (gp, galago_status_new (gst, id, status, TRUE));
-}
-
-static void
-galago_presence_changed_cb (GossipSession  *session,
-			    GossipPresence *presence,
-			    gpointer        userdata)
-{
-	GList *accounts;
-	GList *l;
-
-	gossip_debug (DEBUG_DOMAIN, "Session presence changed");
-
-	accounts = gossip_session_get_accounts (session);
-
-	for (l = accounts; l != NULL; l = l->next) {
-		GossipAccount *account;
-		GalagoAccount *ga;
-
-		account = GOSSIP_ACCOUNT (l->data);
-
-		/* Only set status to presence for connected accounts */
-		if (!gossip_session_is_connected (session, account)) {
-			continue;
-		}
-
-		ga = galago_get_account (account);
-		galago_set_status (ga, presence);
-	}
-
-	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
-	g_list_free (accounts);
 }
 
 static void
@@ -369,7 +335,7 @@ galago_setup_accounts (GossipSession *session)
 
 		presence = gossip_session_get_presence (session);
 		if (presence) {
-			galago_presence_changed_cb (session, presence, NULL);
+			galago_set_status (ga, presence);
 		}
 	}
 
@@ -400,10 +366,6 @@ gossip_galago_init (GossipSession *session)
 
 	galago_setup_accounts (session);
 
-	g_signal_connect (session,
-			  "presence-changed",
-			  G_CALLBACK (galago_presence_changed_cb),
-			  NULL);
 	g_signal_connect (session,
 			  "contact-added",
 			  G_CALLBACK (galago_contact_added_cb),

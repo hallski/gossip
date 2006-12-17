@@ -180,7 +180,7 @@ spell_notify_languages_cb (GossipConf  *conf,
 		delete_aspell_config (lang->spell_config);
 		delete_aspell_speller (lang->spell_checker);
 
-		g_free (lang);
+		g_slice_free (SpellLanguage, lang);
 	}
 
 	g_list_free (languages);
@@ -219,7 +219,7 @@ spell_setup_languages (void)
 
 			gossip_debug (DEBUG_DOMAIN, "Setting up language:'%s'", strv[i]);
 
-			lang = g_new0 (SpellLanguage, 1);
+			lang = g_slice_new0 (SpellLanguage);
 
 			lang->spell_config = new_aspell_config();
 
@@ -233,7 +233,7 @@ spell_setup_languages (void)
 				languages = g_list_append (languages, lang);
 			} else {
 				delete_aspell_config (lang->spell_config);
-				g_free (lang);
+				g_slice_free (SpellLanguage, lang);
 			}
 		}
 

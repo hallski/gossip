@@ -99,6 +99,7 @@ struct _GossipJabberDiscoItem {
 
 static GossipJabberDisco *jabber_disco_new                      (GossipJabber          *jabber);
 static void               jabber_disco_init                     (void);
+static void               jabber_disco_free                     (GossipJabberDisco     *disco);
 static void               jabber_disco_destroy_items_foreach    (GossipJabberDiscoItem *item,
 								 gpointer               user_data);
 static void               jabber_disco_destroy_info_foreach     (JabberDiscoInfo       *info,
@@ -127,6 +128,12 @@ static void               jabber_disco_handle_info              (GossipJabberDis
 
 static GHashTable *discos = NULL;
 
+static void
+jabber_disco_free (GossipJabberDisco *disco)
+{
+	g_slice_free (GossipJabberDisco, disco);
+}
+
 static GossipJabberDisco *
 jabber_disco_new (GossipJabber *jabber)
 {
@@ -134,7 +141,7 @@ jabber_disco_new (GossipJabber *jabber)
 	LmConnection      *connection;
 	LmMessageHandler  *handler;
 
-	disco = g_new0 (GossipJabberDisco, 1);
+	disco = g_slice_new0 (GossipJabberDisco);
 
 	disco->jabber = g_object_ref (jabber);
 
@@ -164,7 +171,7 @@ jabber_disco_init (void)
 	discos = g_hash_table_new_full (gossip_jid_hash,
 					gossip_jid_equal,
 					(GDestroyNotify) gossip_jid_unref,
-					(GDestroyNotify) g_free);
+					(GDestroyNotify) jabber_disco_free);
 }
 
 static void
@@ -183,17 +190,20 @@ jabber_disco_destroy_items_foreach (GossipJabberDiscoItem *item,
 
 	if (item->info) {
 		jabber_disco_destroy_info_foreach (item->info, NULL);
+		g_slice_free (JabberDiscoInfo, item->info);
 	}
+
+	g_slice_free (GossipJabberDiscoItem, item);
 }
 
 static void
 jabber_disco_destroy_info_foreach (JabberDiscoInfo *info,
 				   gpointer         user_data)
 {
-	g_list_foreach (info->identities, (GFunc)jabber_disco_destroy_ident_foreach, NULL);
+	g_list_foreach (info->identities, (GFunc) jabber_disco_destroy_ident_foreach, NULL);
 	g_list_free (info->identities);
 
-	g_list_foreach (info->features, (GFunc)g_free, NULL);
+	g_list_foreach (info->features, (GFunc) g_free, NULL);
 	g_list_free (info->features);
 }
 
@@ -204,6 +214,8 @@ jabber_disco_destroy_ident_foreach (JabberDiscoIdentity *ident,
 	g_free (ident->category);
 	g_free (ident->type);
 	g_free (ident->name);
+
+	g_slice_free (JabberDiscoIdentity, ident);
 }
 
 static gboolean
@@ -504,7 +516,7 @@ jabber_disco_handle_items (GossipJabberDisco *disco,
 	node = lm_message_node_find_child (m->node, "item");
 
 	while (node) {
-		item = g_new0 (GossipJabberDiscoItem, 1);
+		item = g_slice_new0 (GossipJabberDiscoItem);
 
 		jid_str = lm_message_node_get_attribute (node, "jid");
 		item->jid = gossip_jid_new (jid_str);
@@ -629,14 +641,14 @@ jabber_disco_handle_info (GossipJabberDisco *disco,
 		return;
 	}
 
-	info = g_new0 (JabberDiscoInfo, 1);
+	info = g_slice_new0 (JabberDiscoInfo);
 
 	node = lm_message_node_find_child (m->node, "identity");
 
 	while (node && strcmp (node->name, "identity") == 0) {
 		JabberDiscoIdentity *ident;
 
-		ident = g_new0 (JabberDiscoIdentity, 1);
+		ident = g_slice_new0 (JabberDiscoIdentity);
 
 		category = lm_message_node_get_attribute (node, "category");
 		ident->category = g_strdup (category);
@@ -762,7 +774,7 @@ gossip_jabber_disco_destroy (GossipJabberDisco *disco)
 		lm_message_handler_unref (handler);
 	}
 
-	g_list_foreach (disco->items, (GFunc)jabber_disco_destroy_items_foreach, NULL);
+	g_list_foreach (disco->items, (GFunc) jabber_disco_destroy_items_foreach, NULL);
 	g_list_free (disco->items);
 
 	if (disco->timeout_id) {
@@ -806,7 +818,7 @@ gossip_jabber_disco_request_info (GossipJabber              *jabber,
 	}
 
 	/* Create disco */
-	disco = g_new0 (GossipJabberDisco, 1);
+	disco = g_slice_new0 (GossipJabberDisco);
 
 	disco->jabber = g_object_ref (jabber);
 
@@ -834,7 +846,7 @@ gossip_jabber_disco_request_info (GossipJabber              *jabber,
 	disco->items_total = 1;
 
 	/* Add item */
-	item = g_new0 (GossipJabberDiscoItem, 1);
+	item = g_slice_new0 (GossipJabberDiscoItem);
 
 	item->jid = gossip_jid_ref (jid);
 

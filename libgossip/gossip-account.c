@@ -320,7 +320,8 @@ account_param_new_valist (GossipAccount *account,
 			g_warning ("GossipAccount already has a parameter named `%s'", name);
 			break;
 		}
-		param = g_new0 (GossipAccountParam, 1);
+
+		param = g_slice_new0 (GossipAccountParam);
 
 		g_type = va_arg (var_args, GType);
 		g_value_init (&param->g_value, g_type);
@@ -564,7 +565,7 @@ static void
 account_param_free (GossipAccountParam *param)
 {
 	g_value_unset (&param->g_value);
-	g_free (param);
+	g_slice_free (GossipAccountParam, param);
 }
 
 GossipAccountType

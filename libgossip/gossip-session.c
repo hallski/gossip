@@ -81,10 +81,16 @@ static void            gossip_session_init                       (GossipSession 
 static void            session_finalize                          (GObject              *object);
 static void            session_protocol_signals_setup            (GossipSession        *session,
 								  GossipProtocol       *protocol);
-static void            session_protocol_logged_in                (GossipProtocol       *protocol,
+static void            session_protocol_connecting               (GossipProtocol       *protocol,
 								  GossipAccount        *account,
 								  GossipSession        *session);
-static void            session_protocol_logged_out               (GossipProtocol       *protocol,
+static void            session_protocol_connected                (GossipProtocol       *protocol,
+								  GossipAccount        *account,
+								  GossipSession        *session);
+static void            session_protocol_disconnecting            (GossipProtocol       *protocol,
+								  GossipAccount        *account,
+								  GossipSession        *session);
+static void            session_protocol_disconnected             (GossipProtocol       *protocol,
 								  GossipAccount        *account,
 								  gint                  reason,
 								  GossipSession        *session);
@@ -132,7 +138,6 @@ enum {
 	PROTOCOL_DISCONNECTING,
 	PROTOCOL_ERROR,
 	NEW_MESSAGE,
-	PRESENCE_CHANGED,
 	CONTACT_ADDED,
 	CONTACT_REMOVED,
 	COMPOSING,
@@ -251,16 +256,6 @@ gossip_session_class_init (GossipSessionClass *klass)
 			      G_TYPE_NONE,
 			      1, GOSSIP_TYPE_MESSAGE);
 
-	signals[PRESENCE_CHANGED] =
-		g_signal_new ("presence-changed",
-			      G_TYPE_FROM_CLASS (klass),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__OBJECT,
-			      G_TYPE_NONE,
-			      1, GOSSIP_TYPE_PRESENCE);
-
 	signals[CONTACT_ADDED] =
 		g_signal_new ("contact-added",
 			      G_TYPE_FROM_CLASS (klass),
@@ -363,11 +358,17 @@ static void
 session_protocol_signals_setup (GossipSession  *session,
 				GossipProtocol *protocol)
 {
-	g_signal_connect (protocol, "logged-in",
-			  G_CALLBACK (session_protocol_logged_in),
+	g_signal_connect (protocol, "connecting",
+			  G_CALLBACK (session_protocol_connecting),
 			  session);
-	g_signal_connect (protocol, "logged-out",
-			  G_CALLBACK (session_protocol_logged_out),
+	g_signal_connect (protocol, "connected",
+			  G_CALLBACK (session_protocol_connected),
+			  session);
+	g_signal_connect (protocol, "disconnecting",
+			  G_CALLBACK (session_protocol_disconnecting),
+			  session);
+	g_signal_connect (protocol, "disconnected",
+			  G_CALLBACK (session_protocol_disconnected),
 			  session);
 	g_signal_connect (protocol, "new_message",
 			  G_CALLBACK (session_protocol_new_message),
@@ -390,13 +391,31 @@ session_protocol_signals_setup (GossipSession  *session,
 }
 
 static void
-session_protocol_logged_in (GossipProtocol *protocol,
+session_protocol_connecting (GossipProtocol *protocol,
+			     GossipAccount  *account,
+			     GossipSession  *session)
+{
+	GossipSessionPriv *priv;
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Protocol connecting for account:'%s'",
+		      gossip_account_get_name (account));
+
+	priv = GET_PRIV (session);
+
+	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, protocol);
+
+	priv->connecting_counter++;
+}
+
+static void
+session_protocol_connected (GossipProtocol *protocol,
 			    GossipAccount  *account,
 			    GossipSession  *session)
 {
 	GossipSessionPriv *priv;
 
-	gossip_debug (DEBUG_DOMAIN, "Protocol logged in");
+	gossip_debug (DEBUG_DOMAIN, "Protocol Connected");
 
 	priv = GET_PRIV (session);
 
@@ -420,16 +439,29 @@ session_protocol_logged_in (GossipProtocol *protocol,
 }
 
 static void
-session_protocol_logged_out (GossipProtocol *protocol,
-			     GossipAccount  *account,
-			     gint            reason,
-			     GossipSession  *session)
+session_protocol_disconnecting (GossipProtocol *protocol,
+				GossipAccount  *account,
+				GossipSession  *session)
+{
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Protocol disconnecting for account:'%s'",
+		      gossip_account_get_name (account));
+	
+	g_signal_emit (session, signals[PROTOCOL_DISCONNECTING], 0, account, protocol);
+}
+
+static void
+session_protocol_disconnected (GossipProtocol *protocol,
+			       GossipAccount  *account,
+			       gint            reason,
+			       GossipSession  *session)
 {
 	GossipSessionPriv *priv;
 	gdouble            seconds;
 
 	seconds = gossip_session_get_connected_time (session, account);
-	gossip_debug (DEBUG_DOMAIN, "Protocol logged out (after %.2f seconds)",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Protocol disconnected (after %.2f seconds)",
 		      seconds);
 
 	priv = GET_PRIV (session);
@@ -797,6 +829,8 @@ gossip_session_new_account (GossipSession     *session,
 
 	session_protocol_signals_setup (session, protocol);
 
+	gossip_protocol_setup (protocol, account);
+
 	g_object_unref (protocol);
 	
 	return account;
@@ -833,6 +867,8 @@ gossip_session_add_account (GossipSession *session,
 			     g_object_ref (protocol));
 
 	session_protocol_signals_setup (session, protocol);
+
+	gossip_protocol_setup (protocol, account);
 
 	g_object_unref (protocol);
 
@@ -969,12 +1005,6 @@ session_connect (GossipSession *session,
 		return;
 	}
 
-	g_signal_emit (session, signals[PROTOCOL_CONNECTING], 0, account, protocol);
-	priv->connecting_counter++;
-
-	/* Can we not just pass the GossipAccount on the GObject init? */
-	gossip_protocol_setup (protocol, account);
-
 	/* Setup the network connection */
 	gossip_protocol_login (protocol);
 }
@@ -1086,8 +1116,8 @@ session_disconnect (GossipSession *session,
 	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
 
 	protocol = g_hash_table_lookup (priv->accounts, account);
-
-	g_signal_emit (session, signals[PROTOCOL_DISCONNECTING], 0, account, protocol);
+	gossip_debug (DEBUG_DOMAIN, "about to disconnect account:%p, name:'%s'",
+		      account, gossip_account_get_name (account));
 
 	gossip_protocol_logout (protocol);
 }
@@ -1221,8 +1251,6 @@ gossip_session_set_presence (GossipSession  *session,
 
 		gossip_protocol_set_presence (protocol, presence);
 	}
-
-	g_signal_emit (session, signals[PRESENCE_CHANGED], 0, presence);
 }
 
 gboolean
@@ -1467,12 +1495,11 @@ gossip_session_rename_group (GossipSession *session,
 
 	priv = GET_PRIV (session);
 
-	/* 	protocol = session_get_protocol (session, NULL); */
-
 	/* FIXME: don't just blindly do this across all protocols
-	   actually pass the protocol in some how from the contact
-	   list? - what if we have the same group name in 2 different
-	   accounts */
+	 * actually pass the protocol in some how from the contact
+	 * list? - what if we have the same group name in 2 different
+	 * accounts.
+	 */
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol = GOSSIP_PROTOCOL (l->data);
 

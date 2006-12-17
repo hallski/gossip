@@ -1031,7 +1031,12 @@ contact_list_contact_active_new (GossipContactList *list,
 	g_return_val_if_fail (list != NULL, NULL);
 	g_return_val_if_fail (contact != NULL, NULL);
 
-	data = g_new0 (ShowActiveData, 1);
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' now active, and %s be removed",
+		      gossip_contact_get_name (contact), 
+		      remove ? "WILL" : "WILL NOT");
+	
+	data = g_slice_new0 (ShowActiveData);
 
 	data->list = g_object_ref (list);
 	data->contact = g_object_ref (contact);
@@ -1049,7 +1054,7 @@ contact_list_contact_active_free (ShowActiveData *data)
 	g_object_unref (data->contact);
 	g_object_unref (data->list);
 
-	g_free (data);
+	g_slice_free (ShowActiveData, data);
 }
 
 static gboolean
@@ -1064,13 +1069,17 @@ contact_list_contact_active_cb (ShowActiveData *data)
 	if (data->remove &&
 	    !priv->show_offline &&
 	    !gossip_contact_is_online (data->contact)) {
-		gossip_debug (DEBUG_DOMAIN, "Remove item (active timeout)!");
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Contact:'%s' active timeout, removing item",
+			      gossip_contact_get_name (data->contact));
 		contact_list_remove_contact (data->list,
 					     data->contact,
 					     FALSE);
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Setting contact to no longer be active");
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Contact:'%s' no longer active",
+		      gossip_contact_get_name (data->contact));
 	contact_list_contact_set_active (data->list,
 					 data->contact,
 					 FALSE,
@@ -2551,7 +2560,7 @@ contact_list_free_flash_timeout_data (FlashTimeoutData *timeout_data)
 
 	g_object_unref (timeout_data->contact);
 
-	g_free (timeout_data);
+	g_slice_free (FlashTimeoutData, timeout_data);
 }
 
 static void
@@ -2563,7 +2572,7 @@ contact_list_flash_free_data (FlashData *data)
 		g_source_remove (data->flash_timeout_id);
 	}
 
-	g_free (data);
+	g_slice_free (FlashData, data);
 }
 
 static gboolean
@@ -2691,12 +2700,12 @@ contact_list_event_added_cb (GossipEventManager *manager,
 		return;
 	}
 
-	timeout_data = g_new0 (FlashTimeoutData, 1);
+	timeout_data = g_slice_new0 (FlashTimeoutData);
 
 	timeout_data->list = list;
 	timeout_data->contact = g_object_ref (contact);
 
-	data = g_new0 (FlashData, 1);
+	data = g_slice_new0 (FlashData);
 
 	data->event_id = gossip_event_get_id (event);
 	data->event_type = type;
