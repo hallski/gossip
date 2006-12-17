@@ -77,6 +77,7 @@ struct _GossipChatWindowPriv {
 	GtkWidget   *menu_conv_close;
 
 	GtkWidget   *menu_room;
+	GtkWidget   *menu_room_set_topic;
 	GtkWidget   *menu_room_invite;
 	GtkWidget   *menu_room_add;
 	GtkWidget   *menu_room_show_contacts;
@@ -137,6 +138,8 @@ static void       chat_window_edit_activate_cb          (GtkWidget             *
 static void       chat_window_insert_smiley_activate_cb (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_close_activate_cb         (GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_room_set_topic_activate_cb(GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_room_invite_activate_cb   (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
@@ -281,6 +284,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_conv_info", &priv->menu_conv_info,
 				       "menu_conv_close", &priv->menu_conv_close,
 				       "menu_room", &priv->menu_room,
+				       "menu_room_set_topic", &priv->menu_room_set_topic,
 				       "menu_room_invite", &priv->menu_room_invite,
 				       "menu_room_add", &priv->menu_room_add,
 				       "menu_room_show_contacts", &priv->menu_room_show_contacts,
@@ -303,6 +307,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 			      "menu_conv_add_contact", "activate", chat_window_add_contact_activate_cb,
 			      "menu_conv_info", "activate", chat_window_info_activate_cb,
 			      "menu_conv_close", "activate", chat_window_close_activate_cb,
+			      "menu_room_set_topic", "activate", chat_window_room_set_topic_activate_cb,
 			      "menu_room_invite", "activate", chat_window_room_invite_activate_cb,
 			      "menu_room_add", "activate", chat_window_room_add_activate_cb,
 			      "menu_edit", "activate", chat_window_edit_activate_cb,
@@ -600,7 +605,6 @@ chat_window_create_label (GossipChatWindow *window,
 
 	name = gossip_chat_get_name (chat);
 	name_label = gtk_label_new (name);
-
  	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
 
 	attr_list = pango_attr_list_new ();
@@ -1016,6 +1020,22 @@ chat_window_close_activate_cb (GtkWidget        *menuitem,
 	g_return_if_fail (priv->current_chat != NULL);
 
 	gossip_chat_window_remove_chat (window, priv->current_chat);
+}
+
+static void
+chat_window_room_set_topic_activate_cb (GtkWidget        *menuitem,
+					GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+	
+	priv = GET_PRIV (window);
+
+	if (gossip_chat_is_group_chat (priv->current_chat)) {
+		GossipGroupChat *group_chat;
+
+		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
+		gossip_group_chat_set_topic (group_chat);
+	}
 }
 
 static void

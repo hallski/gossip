@@ -49,9 +49,10 @@ struct _GossipGroupChatClass {
 GType            gossip_group_chat_get_type              (void) G_GNUC_CONST;
 GossipGroupChat *gossip_group_chat_new                   (GossipChatroomProvider *provider,
 							  GossipChatroom         *chatroom);
-GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat        *groupchat);
+GossipChatroomId gossip_group_chat_get_chatroom_id       (GossipGroupChat        *group_chat);
 GossipChatroomProvider *
-		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *groupchat);
-GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat        *groupchat);
+		 gossip_group_chat_get_chatroom_provider (GossipGroupChat        *group_chat);
+GossipChatroom * gossip_group_chat_get_chatroom          (GossipGroupChat        *group_chat);
+void             gossip_group_chat_set_topic             (GossipGroupChat        *group_chat);
 
 #endif /* __GOSSIP_GROUP_CHAT_H__ */

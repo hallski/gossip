@@ -57,15 +57,16 @@ struct _GossipGroupChatPriv {
 	GossipChatroom         *chatroom;
 
 	GtkWidget              *widget;
+	GtkWidget              *hpaned;
+
 	GtkWidget              *scrolled_window_chat;
 	GtkWidget              *scrolled_window_input;
 	GtkWidget              *scrolled_window_contacts;
 
 	GtkWidget              *hbox_topic;
-	GtkWidget              *entry_topic;
+	GtkWidget              *label_topic;
 
 	GtkWidget              *treeview;
-	GtkWidget              *hpaned;
 
 	gchar                  *name;
 
@@ -166,6 +167,11 @@ static void            group_chat_topic_changed_cb            (GossipChatroomPro
 							       GossipContact                *who,
 							       const gchar                  *new_topic,
 							       GossipGroupChat              *chat);
+static void            group_chat_topic_entry_activate_cb     (GtkWidget                    *entry,
+							       GtkDialog                    *dialog);
+static void            group_chat_topic_response_cb           (GtkWidget                    *dialog,
+							       gint                          response,
+							       GossipGroupChat              *chat);
 static void            group_chat_contact_joined_cb           (GossipChatroomProvider       *provider,
 							       gint                          id,
 							       GossipContact                *contact,
@@ -179,8 +185,6 @@ static void            group_chat_contact_presence_updated_cb (GossipContact    
 							       GossipGroupChat              *chat);
 static void            group_chat_contact_updated_cb          (GossipContact                *contact,
 							       GParamSpec                   *param,
-							       GossipGroupChat              *chat);
-static void            group_chat_topic_activate_cb           (GtkEntry                     *entry,
 							       GossipGroupChat              *chat);
 static void            group_chat_private_chat_new            (GossipGroupChat              *chat,
 							       GossipContact                *contact);
@@ -524,7 +528,7 @@ group_chat_protocol_disconnected_cb (GossipSession   *session,
 		return;
 	}
 
-	gtk_widget_set_sensitive (priv->entry_topic, FALSE);
+	gtk_widget_set_sensitive (priv->hbox_topic, FALSE);
 	gtk_widget_set_sensitive (priv->scrolled_window_contacts, FALSE);
 	gtk_widget_set_sensitive (priv->scrolled_window_input, FALSE);
 
@@ -992,30 +996,36 @@ group_chat_create_ui (GossipGroupChat *chat)
 				       "group_chat_widget",
 				       NULL,
 				       "group_chat_widget", &priv->widget,
+				       "hpaned", &priv->hpaned,
+				       "vbox_left", &vbox_left,
 				       "scrolled_window_chat", &priv->scrolled_window_chat,
 				       "scrolled_window_input", &priv->scrolled_window_input,
 				       "hbox_topic", &priv->hbox_topic,
-				       "entry_topic", &priv->entry_topic,
-				       "treeview", &priv->treeview,
+				       "label_topic", &priv->label_topic,
 				       "scrolled_window_contacts", &priv->scrolled_window_contacts,
-				       "vbox_left", &vbox_left,
-				       "hpaned", &priv->hpaned,
+				       "treeview", &priv->treeview,
 				       NULL);
 
 	gossip_glade_connect (glade,
 			      chat,
 			      "group_chat_widget", "destroy", group_chat_widget_destroy_cb,
-			      "entry_topic", "activate", group_chat_topic_activate_cb,
 			      NULL);
 
 	g_object_unref (glade);
 
 	g_object_set_data (G_OBJECT (priv->widget), "chat", chat);
 
+	/* Add room GtkTextView. */
 	gtk_container_add (GTK_CONTAINER (priv->scrolled_window_chat),
 			   GTK_WIDGET (GOSSIP_CHAT (chat)->view));
 	gtk_widget_show (GTK_WIDGET (GOSSIP_CHAT (chat)->view));
 
+	g_signal_connect (GOSSIP_CHAT (chat)->view,
+			  "focus_in_event",
+			  G_CALLBACK (group_chat_focus_in_event_cb),
+			  chat);
+
+	/* Add input GtkTextView */
 	gtk_container_add (GTK_CONTAINER (priv->scrolled_window_input),
 			   GOSSIP_CHAT (chat)->input_text_view);
 	gtk_widget_show (GOSSIP_CHAT (chat)->input_text_view);
@@ -1023,11 +1033,6 @@ group_chat_create_ui (GossipGroupChat *chat)
 	g_signal_connect (GOSSIP_CHAT (chat)->input_text_view,
 			  "key_press_event",
 			  G_CALLBACK (group_chat_key_press_event_cb),
-			  chat);
-
-	g_signal_connect (GOSSIP_CHAT (chat)->view,
-			  "focus_in_event",
-			  G_CALLBACK (group_chat_focus_in_event_cb),
 			  chat);
 
 	/* Drag & drop */
@@ -1042,18 +1047,19 @@ group_chat_create_ui (GossipGroupChat *chat)
 			  G_CALLBACK (group_chat_drag_data_received),
 			  chat);
 
-	list = NULL;
-	list = g_list_append (list, GOSSIP_CHAT (chat)->input_text_view);
-	list = g_list_append (list, priv->entry_topic);
-
+	/* Set widget focus order */
+	list = g_list_append (NULL, GOSSIP_CHAT (chat)->input_text_view);
 	gtk_container_set_focus_chain (GTK_CONTAINER (vbox_left), list);
 
+	/* Add nick name completion */
 	priv->completion = g_completion_new (NULL);
 	g_completion_set_compare (priv->completion,
 				  group_chat_contacts_completion_func);
 
-	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 	group_chat_contacts_setup (chat);
+
+	/* Set focus ready to chat */
+	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
 static void
@@ -1145,7 +1151,7 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 	gossip_debug (DEBUG_DOMAIN, "[%d] Topic changed by:'%s' to:'%s'",
 		      id, gossip_contact_get_id (who), new_topic);
 
-	gtk_entry_set_text (GTK_ENTRY (priv->entry_topic), new_topic);
+	gtk_label_set_markup (GTK_LABEL (priv->label_topic), new_topic);
 
 	str = g_strdup_printf (_("%s has set the topic"),
 				 gossip_contact_get_name (who));
@@ -1154,6 +1160,81 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
 	g_free (event);
+}
+
+static void
+group_chat_topic_entry_activate_cb (GtkWidget *entry,
+				    GtkDialog *dialog)
+{
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+}
+
+static void
+group_chat_topic_response_cb (GtkWidget       *dialog,
+			      gint             response,			      
+			      GossipGroupChat *chat)
+{
+	if (response == GTK_RESPONSE_OK) {
+		GtkWidget   *entry;
+		const gchar *topic;
+
+		entry = g_object_get_data (G_OBJECT (dialog), "entry");
+		topic = gtk_entry_get_text (GTK_ENTRY (entry));
+		
+		if (!G_STR_EMPTY (topic)) {
+			GossipGroupChatPriv *priv;
+
+			priv = GET_PRIV (chat);
+
+			gossip_chatroom_provider_change_topic (priv->chatroom_provider,
+							       gossip_chatroom_get_id (priv->chatroom),
+							       topic);
+		}
+	}
+
+	gtk_widget_destroy (dialog);
+}
+
+void
+gossip_group_chat_set_topic (GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+	GtkWidget           *dialog;
+	GtkWidget           *entry;
+	GtkWidget           *hbox;
+	const gchar         *topic;
+
+	priv = GET_PRIV (chat);
+
+	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
+					 0,
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_OK_CANCEL,
+					 _("Enter the new topic you want to set for this room:"));
+
+	topic = gtk_label_get_text (GTK_LABEL (priv->label_topic));
+
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+			    hbox, FALSE, TRUE, 4);
+
+	entry = gtk_entry_new ();
+	gtk_entry_set_text (GTK_ENTRY (entry), topic);
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+		    
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
+
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
+	g_object_set_data (G_OBJECT (dialog), "entry", entry);
+
+	g_signal_connect (entry, "activate",
+			  G_CALLBACK (group_chat_topic_entry_activate_cb),
+			  dialog);
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (group_chat_topic_response_cb),
+			  chat);
+
+	gtk_widget_show_all (dialog);
 }
 
 static void
@@ -1459,21 +1540,6 @@ group_chat_contact_updated_cb (GossipContact   *contact,
 						      group_chat_contact_updated_cb,
 						      chat);
 	}
-}
-
-static void
-group_chat_topic_activate_cb (GtkEntry *entry,
-			      GossipGroupChat *chat)
-{
-	GossipGroupChatPriv *priv;
-
-	priv = GET_PRIV (chat);
-
-	gossip_chatroom_provider_change_topic (priv->chatroom_provider,
-					       gossip_chatroom_get_id (priv->chatroom),
-					       gtk_entry_get_text (entry));
-
-	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
 static void

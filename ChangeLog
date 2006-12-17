@@ -1,5 +1,16 @@
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat-window.c: 
+	* src/gossip-contact-list.c: Use async dialogs instead of
+	gtk_dialog_run() for renaming groups and removing contacts.
+	
+	* src/gossip-group-chat.[ch]:
+	* ui/chat.glade:
+	* ui/group-chat.glade: Make the topic a label and set it from the
+	menu or by the /topic command in the input GtkTextView.
+
+2006-12-17  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-group-chat.c: Added "foo has joined" and "bar has
 	left" messages in the chatroom.
 

@@ -257,6 +257,9 @@ static void     contact_list_action_activated                (GossipContactList 
 							      GossipContact          *contact);
 static void     contact_list_action_entry_activate_cb        (GtkWidget              *entry,
 							      GtkDialog              *dialog);
+static void     contact_list_action_remove_response_cb       (GtkWidget              *dialog,
+							      gint                    response,
+							      GossipContactList      *list);
 static void     contact_list_action_remove_selected          (GossipContactList      *list);
 static void     contact_list_action_invite_selected          (GossipContactList      *list);
 static void     contact_list_action_rename_group_selected    (GossipContactList      *list);
@@ -2413,13 +2416,30 @@ contact_list_action_entry_activate_cb (GtkWidget *entry,
 }
 
 static void
+contact_list_action_remove_response_cb (GtkWidget         *dialog,
+					gint               response,
+					GossipContactList *list)
+{
+	if (response == GTK_RESPONSE_YES) {
+		GossipContact         *contact;
+		GossipContactListPriv *priv;
+
+		priv = GET_PRIV (list);
+
+		contact = g_object_get_data (G_OBJECT (dialog), "contact");
+		gossip_session_remove_contact (priv->session, contact);
+	}
+
+	gtk_widget_destroy (dialog);
+}
+
+static void
 contact_list_action_remove_selected (GossipContactList *list)
 {
 	GossipContactListPriv *priv;
 	GossipContact         *contact;
-	gchar                 *name;
 	GtkWidget             *dialog;
-	gint                   response;
+	gchar                 *name;
 
 	priv = GET_PRIV (list);
 
@@ -2431,7 +2451,7 @@ contact_list_action_remove_selected (GossipContactList *list)
 	name = g_strdup_printf ("<b>%s</b>\n",
 				gossip_contact_get_name (contact));
 
-	dialog = gtk_message_dialog_new (NULL,
+	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_NONE,
@@ -2444,10 +2464,8 @@ contact_list_action_remove_selected (GossipContactList *list)
 	g_free (name);
 
 	gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-				GTK_STOCK_CANCEL,
-				GTK_RESPONSE_NO,
-				GTK_STOCK_REMOVE,
-				GTK_RESPONSE_YES,
+				GTK_STOCK_CANCEL, GTK_RESPONSE_NO,
+				GTK_STOCK_REMOVE, GTK_RESPONSE_YES,
 				NULL);
 
 	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
@@ -2455,17 +2473,13 @@ contact_list_action_remove_selected (GossipContactList *list)
 		      "wrap", FALSE,
 		      NULL);
 
-	gtk_window_set_transient_for (GTK_WINDOW (dialog),
-				      GTK_WINDOW (gossip_app_get_window ()));
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
+	g_object_set_data_full (G_OBJECT (dialog), "contact", contact, g_object_unref);
 
-	if (response == GTK_RESPONSE_YES) {
-		gossip_session_remove_contact (priv->session,
-					       contact);
-	}
-
-	g_object_unref (contact);
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (contact_list_action_remove_response_cb),
+			  list);
+	
+	gtk_widget_show_all (dialog);
 }
 
 static void
@@ -2479,6 +2493,31 @@ contact_list_action_invite_selected (GossipContactList *list)
 	}
 
 	gossip_chat_invite_dialog_show (contact, 0);
+}
+
+static void
+contact_list_action_rename_group_response_cb (GtkWidget         *dialog,
+					      gint               response,
+					      GossipContactList *list)
+{
+	if (response == GTK_RESPONSE_OK) {
+		GtkWidget   *entry;
+		const gchar *name;
+		const gchar *group;
+		
+		entry = g_object_get_data (G_OBJECT (dialog), "entry");
+		group = g_object_get_data (G_OBJECT (dialog), "group");
+		name = gtk_entry_get_text (GTK_ENTRY (entry));
+		
+		if (!G_STR_EMPTY (name)) {
+			GossipContactListPriv *priv;
+
+			priv = GET_PRIV (list);
+			gossip_session_rename_group (priv->session, group, name);
+		}
+	}
+
+	gtk_widget_destroy (dialog);
 }
 
 static void
@@ -2498,9 +2537,8 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 		return;
 	}
 
-	str = g_strdup_printf ("<b>%s</b>", group);
-
 	/* Translator: %s denotes the contact ID */
+	str = g_strdup_printf ("<b>%s</b>", group);
 	dialog = gtk_message_dialog_new (GTK_WINDOW (gossip_app_get_window ()),
 					 0,
 					 GTK_MESSAGE_QUESTION,
@@ -2510,43 +2548,27 @@ contact_list_action_rename_group_selected (GossipContactList *list)
 
 	g_free (str);
 
-	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label,
-		      "use-markup", TRUE,
-		      NULL);
-
-	entry = gtk_entry_new ();
-	gtk_widget_show (entry);
-
-	gtk_entry_set_text (GTK_ENTRY (entry), group);
-	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-
-	g_signal_connect (entry,
-			  "activate",
-			  G_CALLBACK (contact_list_action_entry_activate_cb),
-			  dialog);
-
 	hbox = gtk_hbox_new (FALSE, 0);
-	gtk_widget_show (hbox);
-
-	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
 			    hbox, FALSE, TRUE, 4);
 
-	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK) {
-		str = g_strdup (gtk_entry_get_text (GTK_ENTRY (entry)));
-	} else {
-		str = NULL;
-	}
+	entry = gtk_entry_new ();
+	gtk_entry_set_text (GTK_ENTRY (entry), group);
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
 
-	gtk_widget_destroy (dialog);
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
+	g_object_set_data (G_OBJECT (dialog), "entry", entry);
+	g_object_set_data_full (G_OBJECT (dialog), "group", group, g_free);
 
-	if (!str || !str[0]) {
-		g_free (group);
-		return;
-	}
+	g_signal_connect (entry, "activate",
+			  G_CALLBACK (contact_list_action_entry_activate_cb),
+			  dialog);
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (contact_list_action_rename_group_response_cb),
+			  list);
 
-	gossip_session_rename_group (priv->session, group, str);
-	g_free (group);
+	gtk_widget_show_all (dialog);
 }
 
 static void
@@ -2873,7 +2895,7 @@ gossip_contact_list_get_selected (GossipContactList *list)
 	return contact;
 }
 
-char *
+gchar *
 gossip_contact_list_get_selected_group (GossipContactList *list)
 {
 	GossipContactListPriv *priv;
