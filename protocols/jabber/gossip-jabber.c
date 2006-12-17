@@ -440,6 +440,10 @@ jabber_finalize (GObject *object)
 		g_object_unref (priv->account);
 	}
 
+	if (priv->contact) {
+		g_object_unref (priv->contact);
+	}
+
 	if (priv->vcard) {
 		g_object_unref (priv->vcard);
 	}

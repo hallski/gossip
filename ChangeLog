@@ -1,5 +1,13 @@
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber.c: Unref the contact when we are
+	done, leak spotted by Xavier.
+	
+	* src/gossip-private-chat.c: Clean up signal handling and fix a
+	potential crasher with the composing signal.
+
+2006-12-17  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: 
 	* src/gossip-contact-list.c: Use async dialogs instead of
 	gtk_dialog_run() for renaming groups and removing contacts.
