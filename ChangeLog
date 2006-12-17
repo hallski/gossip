@@ -1,3 +1,11 @@
+2006-12-17  Martyn Russell  <martyn@imendio.com>
+
+	* ui/chat.glade:
+	* ui/file-transfer.glade:
+	* ui/group-chat.glade:
+	* ui/main.glade:
+	* ui/transports.glade: HIGify dialogs, fixes bug #383504 (chpe).
+
 2006-12-16  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-avatar.c:
