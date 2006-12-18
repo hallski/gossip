@@ -24,7 +24,7 @@
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-group-chat.c: Added "foo has joined" and "bar has
-	left" messages in the chatroom.
+	left" messages in the chatroom, fixes bug #352066.
 
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
