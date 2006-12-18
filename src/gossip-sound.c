@@ -87,7 +87,8 @@ sound_protocol_connected_cb (GossipSession  *session,
 	id = g_timeout_add (SOUND_WAIT_TIME,
 			    (GSourceFunc) sound_protocol_timeout_cb,
 			    account);
-	g_hash_table_insert (account_states, account, GUINT_TO_POINTER (id));
+	g_hash_table_insert (account_states, g_object_ref (account),
+			     GUINT_TO_POINTER (id));
 }
 
 static gboolean

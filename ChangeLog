@@ -1,6 +1,7 @@
 2006-12-16  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-session.c: Fix refcounting of priv->presence.
+	* src/gossip-sound.c: Fix refcounting of account.
 
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
