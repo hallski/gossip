@@ -1236,9 +1236,14 @@ gossip_session_set_presence (GossipSession  *session,
 	GList            *l;
 
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	g_return_if_fail (GOSSIP_IS_PRESENCE (presence));
 
 	priv = GET_PRIV (session);
-	priv->presence = presence;
+
+	if (priv->presence) {
+		g_object_unref (priv->presence);
+	}
+	priv->presence = g_object_ref (presence);
 
 	for (l = priv->protocols; l; l = l->next) {
 		GossipProtocol *protocol;

@@ -1,3 +1,7 @@
+2006-12-16  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-session.c: Fix refcounting of priv->presence.
+
 2006-12-17  Martyn Russell  <martyn@imendio.com>
 
 	* protocols/jabber/gossip-jabber.c: Unref the contact when we are
