@@ -27,7 +27,6 @@
 #include "gossip-avatar.h"
 #include "gossip-contact.h"
 #include "gossip-utils.h"
-#include "libgossip-marshal.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT, GossipContactPriv))
 
@@ -78,12 +77,6 @@ enum {
 	PROP_ACCOUNT
 };
 
-enum {
-	UPDATED,
-	LAST_SIGNAL
-};
-
-static guint    signals[LAST_SIGNAL] = {0};
 static gpointer parent_class = NULL;
 
 GType
@@ -123,16 +116,6 @@ contact_class_init (GossipContactClass *class)
 	object_class->finalize     = contact_finalize;
 	object_class->get_property = contact_get_property;
 	object_class->set_property = contact_set_property;
-
-	signals[UPDATED] =
-		g_signal_new ("updated",
-			      G_TYPE_FROM_CLASS (object_class),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__VOID,
-			      G_TYPE_NONE,
-			      0);
 
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
@@ -558,7 +541,6 @@ contact_set_type (GossipContact      *contact,
 	priv->type = type;
 
 	g_object_notify (G_OBJECT (contact), "type");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -576,7 +558,6 @@ gossip_contact_set_id (GossipContact *contact,
 	priv->id = g_strdup (id);
 
 	g_object_notify (G_OBJECT (contact), "id");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -594,7 +575,6 @@ gossip_contact_set_name (GossipContact *contact,
 	priv->name = g_strdup (name);
 
 	g_object_notify (G_OBJECT (contact), "name");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 static void
@@ -614,7 +594,6 @@ contact_set_presences (GossipContact *contact,
 	g_list_foreach (priv->presences, (GFunc) g_object_ref, NULL);
 
 	g_object_notify (G_OBJECT (contact), "presences");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -637,7 +616,6 @@ gossip_contact_set_avatar (GossipContact *contact,
 	}
 
 	g_object_notify (G_OBJECT (contact), "avatar");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -662,7 +640,6 @@ gossip_contact_set_account (GossipContact *contact,
 	}
 
 	g_object_notify (G_OBJECT (contact), "account");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -711,7 +688,6 @@ gossip_contact_add_presence (GossipContact  *contact,
 						gossip_presence_sort_func);
 
 	g_object_notify (G_OBJECT (contact), "presences");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -758,7 +734,6 @@ gossip_contact_remove_presence (GossipContact  *contact,
 				       gossip_presence_sort_func);
 
 	g_object_notify (G_OBJECT (contact), "presences");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -784,7 +759,6 @@ gossip_contact_set_groups (GossipContact *contact,
 	g_list_free (old_groups);
 
 	g_object_notify (G_OBJECT (contact), "groups");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 void
@@ -800,7 +774,6 @@ gossip_contact_set_subscription (GossipContact      *contact,
 	priv->subscription = subscription;
 
 	g_object_notify (G_OBJECT (contact), "subscription");
-	g_signal_emit (contact, signals[UPDATED], 0);
 }
 
 gint
