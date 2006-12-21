@@ -206,7 +206,7 @@ private_chat_finalize (GObject *object)
 					      private_chat_contact_added,
 					      chat);
 
-	g_signal_handlers_disconnect_by_func (priv->contact,
+	g_signal_handlers_disconnect_by_func (priv->own_contact,
 					      private_chat_own_avatar_notify_cb,
 					      chat);
 	g_signal_handlers_disconnect_by_func (priv->contact,
