@@ -719,7 +719,7 @@ gossip_edit_contact_dialog_show (GossipContact *contact,
 	g_free (str);
 
 	/* Subscription listener */
-	g_signal_connect (contact, "updated",
+	g_signal_connect (contact, "notify",
 			  G_CALLBACK (edit_contact_dialog_contact_updated_cb),
 			  NULL);
 

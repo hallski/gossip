@@ -1,3 +1,14 @@
+2006-12-20  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-chatroom-manager.c: Unref chatroom only if removed
+	from lists.
+	* libgossip/gossip-session.c: Unref account and protocol only if
+	removed from lists. Fixes bug #387652.
+	* src/gossip-edit-contact-dialog.c: "updated" signal doesn't exists
+	anymore, replace by "notify".
+	* src/gossip-notify.c:
+	* src/gossip-sound.c: Disconnect signal when removing from hash table.
+
 2006-12-19  Mikael Hallendal  <micke@imendio.com>
 
 	* libgossip/gossip-contact.c: Reverted unnecessary updated signal.

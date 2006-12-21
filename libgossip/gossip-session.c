@@ -526,6 +526,7 @@ session_protocol_contact_removed (GossipProtocol *protocol,
 				  GossipSession  *session)
 {
 	GossipSessionPriv *priv;
+	GList             *link;
 
 	gossip_debug (DEBUG_DOMAIN, "Contact removed '%s'",
 		   gossip_contact_get_name (contact));
@@ -534,8 +535,11 @@ session_protocol_contact_removed (GossipProtocol *protocol,
 
 	g_signal_emit (session, signals[CONTACT_REMOVED], 0, contact);
 
-	priv->contacts = g_list_remove (priv->contacts, contact);
-	g_object_unref (contact);
+	link = g_list_find (priv->contacts, contact);
+	if (link) {
+		priv->contacts = g_list_delete_link (priv->contacts, link);
+		g_object_unref (contact);
+	}
 }
 
 static void
@@ -881,6 +885,7 @@ gossip_session_remove_account (GossipSession *session,
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
+	GList             *link;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
@@ -894,8 +899,11 @@ gossip_session_remove_account (GossipSession *session,
 		return TRUE;
 	}
 
-	priv->protocols = g_list_remove (priv->protocols, protocol);
-	g_object_unref (protocol);
+	link = g_list_find (priv->protocols, protocol);
+	if (link) {
+		priv->protocols = g_list_delete_link (priv->protocols, link);
+		g_object_unref (protocol);
+	}
 
 	return g_hash_table_remove (priv->accounts, account);
 }

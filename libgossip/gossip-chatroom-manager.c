@@ -280,6 +280,7 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 				GossipChatroom        *chatroom)
 {
 	GossipChatroomManagerPriv *priv;
+	GList                     *link;
 
 	g_return_if_fail (GOSSIP_IS_CHATROOM_MANAGER (manager));
 	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
@@ -298,12 +299,18 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 					      chatroom_manager_chatroom_favourite_cb,
 					      manager);
 
-	priv->chatrooms = g_list_remove (priv->chatrooms, chatroom);
-	priv->chatrooms_to_start = g_list_remove (priv->chatrooms_to_start, chatroom);
+	link = g_list_find (priv->chatrooms, chatroom);
+	if (link) {
+		priv->chatrooms = g_list_delete_link (priv->chatrooms, link);
+		g_object_unref (chatroom);
+	}
+	link = g_list_find (priv->chatrooms_to_start , chatroom);
+	if (link) {
+		priv->chatrooms_to_start  = g_list_delete_link (priv->chatrooms_to_start , link);
+		g_object_unref (chatroom);
+	}
 
 	g_signal_emit (manager, signals[CHATROOM_REMOVED], 0, chatroom);
-
-	g_object_unref (chatroom);
 }
 
 static void
