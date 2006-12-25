@@ -1,3 +1,13 @@
+2006-12-25  Martyn Russell  <martyn@imendio.com>
+
+	* src/Makefile.am:
+	* src/ephy-spinner.[ch]:
+	* src/ephy-spinner.h:
+	* src/gossip-app.c:
+	* src/gossip-chat.c: 
+	* src/gossip-new-chatroom-dialog.c: Updated the throbber to the newer
+	code used by Epiphany, fixes bug #389280 (Christian Persch).
+
 2006-12-21  Mikael Hallendal  <micke@imendio.com>
 
 	* src/gossip-private-chat.c: (private_chat_finalize):

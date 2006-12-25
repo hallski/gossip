@@ -34,6 +34,7 @@ gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	$(galago_sources)		     	                        	\
 	$(libnotify_sources)		     	                        	\
+	ephy-spinner.c                     ephy-spinner.h			\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\
 	gossip-account-chooser.c	   gossip-account-chooser.h		\
@@ -76,7 +77,6 @@ gossip_SOURCES = 				                        	\
 	gossip-spell-dialog.c 		   gossip-spell-dialog.h                \
 	gossip-status-presets.c		   gossip-status-presets.h	       	\
 	gossip-subscription-dialog.c       gossip-subscription-dialog.h		\
-	gossip-throbber.c       	   gossip-throbber.h			\
 	gossip-ui-utils.c	           gossip-ui-utils.h			\
 	gossip-vcard-dialog.c	    	   gossip-vcard-dialog.h		\
 	gossip-theme-manager.c	    	   gossip-theme-manager.h		

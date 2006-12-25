@@ -35,8 +35,8 @@
 #include "gossip-app.h"
 #include "gossip-chatrooms-window.h"
 #include "gossip-new-chatroom-dialog.h"
-#include "gossip-throbber.h"
 #include "gossip-ui-utils.h"
+#include "ephy-spinner.h"
 
 #define DEBUG_DOMAIN "NewChatroomDialog"
 
@@ -754,7 +754,7 @@ new_chatroom_dialog_browse_cb (GossipChatroomProvider  *provider,
 						dialog,
 						FALSE);
 
-	gossip_throbber_stop (GOSSIP_THROBBER (dialog->throbber));
+	ephy_spinner_stop (EPHY_SPINNER (dialog->throbber));
 
 	new_chatroom_dialog_model_clear (dialog);
 	gtk_widget_set_sensitive (dialog->treeview, TRUE);
@@ -812,7 +812,7 @@ new_chatroom_dialog_browse_start (GossipNewChatroomDialog *dialog)
 			    _("Browsing for conference rooms, please wait..."));
 
 	gtk_widget_set_sensitive (dialog->treeview, FALSE);
-	gossip_throbber_start (GOSSIP_THROBBER (dialog->throbber));
+	ephy_spinner_start (EPHY_SPINNER (dialog->throbber));
 
 	/* Fire off request */
 	session = gossip_app_get_session ();
@@ -853,7 +853,7 @@ new_chatroom_dialog_browse_stop (GossipNewChatroomDialog *dialog)
 			    _("Browsing cancelled!"));
 	
 	gtk_widget_set_sensitive (dialog->treeview, TRUE);
-	gossip_throbber_stop (GOSSIP_THROBBER (dialog->throbber));
+	ephy_spinner_stop (EPHY_SPINNER (dialog->throbber));
 
 	/* Fire off cancellation */
 	session = gossip_app_get_session ();
@@ -1002,8 +1002,8 @@ gossip_new_chatroom_dialog_show (GtkWindow *parent)
 	}
 
 	/* Add throbber */
-	dialog->throbber = gossip_throbber_new ();
-	gossip_throbber_set_small_mode (GOSSIP_THROBBER (dialog->throbber), TRUE);
+	dialog->throbber = ephy_spinner_new ();
+	ephy_spinner_set_size (EPHY_SPINNER (dialog->throbber), GTK_ICON_SIZE_LARGE_TOOLBAR);
 	gtk_widget_show (dialog->throbber);
 
 	gtk_box_pack_start (GTK_BOX (dialog->hbox_status), dialog->throbber, 

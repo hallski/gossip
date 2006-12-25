@@ -60,9 +60,9 @@
 #include "gossip-status-presets.h"
 #include "gossip-stock.h"
 #include "gossip-subscription-dialog.h"
-#include "gossip-throbber.h"
 #include "gossip-ui-utils.h"
 #include "gossip-vcard-dialog.h"
+#include "ephy-spinner.h"
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
@@ -478,6 +478,7 @@ app_setup (GossipSession        *session,
 	GladeXML       *glade;
 	GtkWidget      *sw;
 	GtkWidget      *show_offline_widget;
+	GtkWidget      *ebox;
 	GtkToolItem    *item;
 	gchar          *str;
 	gboolean        show_offline;
@@ -636,20 +637,24 @@ app_setup (GossipSession        *session,
 						  priv->presence_chooser);
 
 	/* Set up the throbber */
-	priv->throbber = gossip_throbber_new ();
-	gtk_widget_show (priv->throbber);
+	ebox = gtk_event_box_new ();
+	gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
+
+	priv->throbber = ephy_spinner_new ();
+	ephy_spinner_set_size (EPHY_SPINNER (priv->throbber), GTK_ICON_SIZE_LARGE_TOOLBAR);
+	gtk_container_add (GTK_CONTAINER (ebox), priv->throbber);
 
 	item = gtk_tool_item_new ();
-	gtk_container_add (GTK_CONTAINER (item), priv->throbber);
-	gtk_widget_show (GTK_WIDGET (item));
+	gtk_container_add (GTK_CONTAINER (item), ebox);
+	gtk_widget_show_all (GTK_WIDGET (item));
 
 	gtk_toolbar_insert (GTK_TOOLBAR (priv->presence_toolbar), item, -1);
 
 	str = _("Show and edit accounts");
 	gtk_tooltips_set_tip (GTK_TOOLTIPS (priv->tooltips),
-			      priv->throbber, str, str);
+			      ebox, str, str);
 
-	g_signal_connect (priv->throbber,
+	g_signal_connect (ebox,
 			  "button-press-event",
 			  G_CALLBACK (app_throbber_button_press_event_cb),
 			  NULL);
@@ -1370,7 +1375,7 @@ app_help_contents_cb (GtkWidget *window,
 }
 
 static gboolean
-app_throbber_button_press_event_cb (GtkWidget      *throbber,
+app_throbber_button_press_event_cb (GtkWidget      *throbber_ebox,
 				    GdkEventButton *event,
 				    gpointer        user_data)
 {
@@ -1398,7 +1403,7 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 	id = gossip_account_get_id (account);
 	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", id);
 
-	gossip_throbber_start (GOSSIP_THROBBER (priv->throbber));
+	ephy_spinner_start (EPHY_SPINNER (priv->throbber));
 }
 
 static void
@@ -1422,7 +1427,7 @@ app_session_protocol_connected_cb (GossipSession  *session,
 				       NULL);
 
 	if (connecting < 1) {
-		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
+		ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
 	}
 
 	g_hash_table_remove (priv->errors, account);
@@ -1486,7 +1491,7 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 				       NULL);
 
 	if (connecting < 1) {
-		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
+		ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
 	}
 
 	app_connection_items_update ();
@@ -1540,7 +1545,7 @@ app_session_protocol_error_cb (GossipSession  *session,
 				       NULL);
 
 	if (connecting < 1) {
-		gossip_throbber_stop (GOSSIP_THROBBER (priv->throbber));
+		ephy_spinner_stop (EPHY_SPINNER (priv->throbber));
 	}
 
 	app_accounts_error_display (account, error);

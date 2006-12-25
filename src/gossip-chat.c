@@ -434,9 +434,12 @@ chat_insert_smiley_activate_cb (GtkWidget  *menuitem,
 	smiley = g_object_get_data (G_OBJECT (menuitem), "smiley_text");
 
 	buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (chat->input_text_view));
+
 	gtk_text_buffer_get_end_iter (buffer, &iter);
-	gtk_text_buffer_insert (buffer, &iter,
-				smiley, -1);
+	gtk_text_buffer_insert (buffer, &iter, smiley, -1);
+
+	gtk_text_buffer_get_end_iter (buffer, &iter);
+	gtk_text_buffer_insert (buffer, &iter, " ", -1);
 }
 
 static void
