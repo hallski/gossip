@@ -256,10 +256,9 @@ gossip_chatroom_manager_remove (GossipChatroomManager *manager,
 	link = g_list_find (priv->chatrooms, chatroom);
 	if (link) {
 		priv->chatrooms = g_list_delete_link (priv->chatrooms, link);
+		g_signal_emit (manager, signals[CHATROOM_REMOVED], 0, chatroom);
 		g_object_unref (chatroom);
 	}
-
-	g_signal_emit (manager, signals[CHATROOM_REMOVED], 0, chatroom);
 }
 
 static void
