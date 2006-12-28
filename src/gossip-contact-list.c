@@ -133,7 +133,7 @@ static void     contact_list_contact_added_cb                (GossipSession     
 static void     contact_list_contact_updated_cb              (GossipContact          *contact,
 							      GParamSpec             *param,
 							      GossipContactList      *list);
-static void     contact_list_contact_presence_updated_cb     (GossipContact          *contact,
+static void     contact_list_contact_groups_updated_cb       (GossipContact          *contact,
 							      GParamSpec             *param,
 							      GossipContactList      *list);
 static void     contact_list_contact_removed_cb              (GossipSession          *session,
@@ -849,11 +849,11 @@ contact_list_contact_added_cb (GossipSession     *session,
 		      gossip_contact_get_name (contact));
 
 	/* Connect notifications for contact updates */
-	g_signal_connect (contact, "notify::presences",
-			  G_CALLBACK (contact_list_contact_presence_updated_cb),
-			  list);
 	g_signal_connect (contact, "notify::groups",
-			  G_CALLBACK (contact_list_contact_presence_updated_cb),
+			  G_CALLBACK (contact_list_contact_groups_updated_cb),
+			  list);
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (contact_list_contact_updated_cb),
 			  list);
 	g_signal_connect (contact, "notify::name",
 			  G_CALLBACK (contact_list_contact_updated_cb),
@@ -879,9 +879,9 @@ contact_list_contact_added_cb (GossipSession     *session,
 }
 
 static void
-contact_list_contact_presence_updated_cb (GossipContact     *contact,
-					  GParamSpec        *param,
-					  GossipContactList *list)
+contact_list_contact_groups_updated_cb (GossipContact     *contact,
+					GParamSpec        *param,
+					GossipContactList *list)
 {
 	GossipContactListPriv *priv;
 	GossipContactType      type;
@@ -897,13 +897,8 @@ contact_list_contact_presence_updated_cb (GossipContact     *contact,
 		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' updated",
+	gossip_debug (DEBUG_DOMAIN, "Contact:'%s' groups updated",
 		      gossip_contact_get_name (contact));
-
-	if (!priv->show_offline && !gossip_contact_is_online (contact)) {
-		contact_list_contact_update (list, contact);
-		return;
-	}
 
 	/* We do this to make sure the groups are correct, if not, we
 	 * would have to check the groups already set up for each
@@ -2966,7 +2961,7 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 
 		contact = GOSSIP_CONTACT (l->data);
 
-		contact_list_contact_presence_updated_cb (contact, NULL, list);
+		contact_list_contact_update (list, contact);
 	}
 
 	/* Restore to original setting. */
