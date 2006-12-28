@@ -130,7 +130,7 @@
 	* ui/file-transfer.glade:
 	* ui/group-chat.glade:
 	* ui/main.glade:
-	* ui/transports.glade: HIGify dialogs, fixes bug #383504 (chpe).
+	* ui/transports.glade: HIGify dialogs, fixes bug #383504 (Christian Persch).
 
 2006-12-16  Xavier Claessens  <xclaesse@gmail.com>
 
