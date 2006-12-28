@@ -58,7 +58,8 @@ GossipAccount *gossip_account_manager_get_default            (GossipAccountManag
 GossipAccount *gossip_account_manager_find                   (GossipAccountManager *manager,
 							      const gchar          *name);
 GossipAccount *gossip_account_manager_find_by_id             (GossipAccountManager *manager,
-							      const gchar          *id);
+							      const gchar          *account_id,
+							      const gchar          *protocol);
 void           gossip_account_manager_set_overridden_default (GossipAccountManager *manager,
 							      const gchar          *name);
 void           gossip_account_manager_set_default            (GossipAccountManager *manager,

@@ -275,30 +275,38 @@ gossip_account_manager_find (GossipAccountManager *manager,
 
 GossipAccount *
 gossip_account_manager_find_by_id (GossipAccountManager *manager,
-				   const gchar          *id)
+				   const gchar          *id,
+				   const gchar          *type_str)
 {
 	GossipAccountManagerPriv *priv;
 	GList                    *l;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
-	g_return_val_if_fail (id != NULL, NULL);
+	g_return_val_if_fail (id != NULL || type_str != NULL, NULL);
 
 	priv = GET_PRIV (manager);
 
 	for (l = priv->accounts; l; l = l->next) {
-		GossipAccount *account;
-		const gchar   *account_id;
+		GossipAccount     *account;
+		GossipAccountType  account_type;
+		const gchar       *account_id;
+		const gchar       *account_type_str;
 
 		account = l->data;
-		account_id = gossip_account_get_id (account);
 
-		if (!account_id) {
+		account_id = gossip_account_get_id (account);
+		account_type = gossip_account_get_type (account);
+		account_type_str = gossip_account_type_to_string (account_type);
+
+		if (id && account_id && strcmp (id, account_id) != 0) {
 			continue;
 		}
 
-		if (strcmp (account_id, id) == 0) {
-			return account;
+		if (type_str && account_type_str && strcmp (type_str, account_type_str) != 0) {
+			continue;
 		}
+
+		return account;
 	}
 
 	return NULL;
@@ -579,8 +587,8 @@ account_manager_parse_account (GossipAccountManager *manager,
 	}
 
 	if (resource_found) {
+		gossip_account_set_id (account, str);
 		gossip_account_param_set (account,
-					  "id", str,
 					  "resource", resource_found,
 					  NULL);
 		need_saving = TRUE;
@@ -720,7 +728,9 @@ account_manager_file_save (GossipAccountManager *manager)
 		node = xmlNewChild (root, NULL, "account", NULL);
 		xmlNewProp (node, "type", type);
 		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
-		xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
+		if (gossip_account_get_id (account)) {
+			xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
+		}
 		xmlNewTextChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
 		xmlNewTextChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
 

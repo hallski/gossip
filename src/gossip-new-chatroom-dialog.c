@@ -631,14 +631,18 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	}
 
 	id = gossip_account_get_id (account);
-	server = gossip_protocol_get_default_server (protocol, id);
-	if (server) {
-		gchar *conference_server;
+	if (id != NULL) {
+		server = gossip_protocol_get_default_server (protocol, id);
+		if (server) {
+			gchar *conference_server;
 
-		conference_server = g_strconcat ("conference.", server, NULL);
-		gtk_entry_set_text (GTK_ENTRY (dialog->entry_server), conference_server);
-		g_free (conference_server);
-		g_free (server);
+			conference_server = g_strconcat ("conference.",
+							 server, NULL);
+			gtk_entry_set_text (GTK_ENTRY (dialog->entry_server),
+						       conference_server);
+			g_free (conference_server);
+			g_free (server);
+		}
 	}
 }
 
