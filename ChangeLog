@@ -1,3 +1,12 @@
+2006-12-28  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_init),
+	(chat_window_update_menu),
+	(chat_window_room_set_topic_activate_cb),
+	(chat_window_room_join_new_activate_cb):
+	* ui/chat.glade: Provide way to join another group chat from group
+	chat window, fixes bug #346465.
+
 2006-12-28  Xavier Claessens  <xclaesse@gmail.com>
 
 	* src/gossip-contact-list.c: Don't add & remove a contact from the

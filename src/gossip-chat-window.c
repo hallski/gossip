@@ -37,6 +37,7 @@
 #include "gossip-chat-window.h"
 #include "gossip-contact-info-dialog.h"
 #include "gossip-log-window.h"
+#include "gossip-new-chatroom-dialog.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"
@@ -78,6 +79,7 @@ struct _GossipChatWindowPriv {
 
 	GtkWidget   *menu_room;
 	GtkWidget   *menu_room_set_topic;
+	GtkWidget   *menu_room_join_new;
 	GtkWidget   *menu_room_invite;
 	GtkWidget   *menu_room_add;
 	GtkWidget   *menu_room_show_contacts;
@@ -140,6 +142,8 @@ static void       chat_window_insert_smiley_activate_cb (GtkWidget             *
 static void       chat_window_close_activate_cb         (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_room_set_topic_activate_cb(GtkWidget             *menuitem,
+							 GossipChatWindow      *window);
+static void       chat_window_room_join_new_activate_cb (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
 static void       chat_window_room_invite_activate_cb   (GtkWidget             *menuitem,
 							 GossipChatWindow      *window);
@@ -285,6 +289,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 				       "menu_conv_close", &priv->menu_conv_close,
 				       "menu_room", &priv->menu_room,
 				       "menu_room_set_topic", &priv->menu_room_set_topic,
+				       "menu_room_join_new", &priv->menu_room_join_new,
 				       "menu_room_invite", &priv->menu_room_invite,
 				       "menu_room_add", &priv->menu_room_add,
 				       "menu_room_show_contacts", &priv->menu_room_show_contacts,
@@ -308,6 +313,7 @@ gossip_chat_window_init (GossipChatWindow *window)
 			      "menu_conv_info", "activate", chat_window_info_activate_cb,
 			      "menu_conv_close", "activate", chat_window_close_activate_cb,
 			      "menu_room_set_topic", "activate", chat_window_room_set_topic_activate_cb,
+			      "menu_room_join_new", "activate", chat_window_room_join_new_activate_cb,
 			      "menu_room_invite", "activate", chat_window_room_invite_activate_cb,
 			      "menu_room_add", "activate", chat_window_room_add_activate_cb,
 			      "menu_edit", "activate", chat_window_edit_activate_cb,
@@ -790,6 +796,7 @@ chat_window_update_menu (GossipChatWindow *window)
 
 		gtk_widget_set_sensitive (priv->menu_room_add, !saved);
 		gtk_widget_set_sensitive (priv->menu_conv_insert_smiley, is_connected);
+		gtk_widget_set_sensitive (priv->menu_room_join_new, is_connected);
 		gtk_widget_set_sensitive (priv->menu_room_invite, is_connected);
 
 		/* We need to block the signal here because all we are
@@ -1036,6 +1043,17 @@ chat_window_room_set_topic_activate_cb (GtkWidget        *menuitem,
 		group_chat = GOSSIP_GROUP_CHAT (priv->current_chat);
 		gossip_group_chat_set_topic (group_chat);
 	}
+}
+
+static void
+chat_window_room_join_new_activate_cb (GtkWidget        *menuitem,
+				       GossipChatWindow *window)
+{
+	GossipChatWindowPriv *priv;
+
+	priv = GET_PRIV (window);
+
+	gossip_new_chatroom_dialog_show (GTK_WINDOW (priv->dialog));
 }
 
 static void
