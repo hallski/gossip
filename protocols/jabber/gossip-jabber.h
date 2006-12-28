@@ -26,6 +26,8 @@
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-account.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_JABBER         (gossip_jabber_get_type ())
 #define GOSSIP_JABBER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_JABBER, GossipJabber))
 #define GOSSIP_JABBER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_JABBER, GossipJabberClass))
@@ -68,5 +70,7 @@ void           gossip_jabber_send_unsubscribed         (GossipJabber        *jab
 							GossipContact       *contact);
 void           gossip_jabber_subscription_allow_all    (GossipJabber        *jabber);
 void           gossip_jabber_subscription_disallow_all (GossipJabber        *jabber);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_H__ */

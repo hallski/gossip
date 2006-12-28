@@ -21,8 +21,12 @@
 #ifndef __GOSSIP_NEW_CHATROOMS_WINDOW_H__
 #define __GOSSIP_NEW_CHATROOMS_WINDOW_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtkwindow.h>
+
+G_BEGIN_DECLS
 
 void gossip_new_chatroom_dialog_show (GtkWindow *parent);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_NEW_CHATROOMS_WINDOW_H__ */

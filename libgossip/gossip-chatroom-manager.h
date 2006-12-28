@@ -24,8 +24,9 @@
 #include <glib-object.h>
 
 #include "gossip-account-manager.h"
-#include "gossip-session.h"
 #include "gossip-chatroom.h"
+
+G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHATROOM_MANAGER         (gossip_chatroom_manager_get_type ())
 #define GOSSIP_CHATROOM_MANAGER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM_MANAGER, GossipChatroomManager))
@@ -48,7 +49,6 @@ struct _GossipChatroomManagerClass {
 GType           gossip_chatroom_manager_get_type        (void) G_GNUC_CONST;
 GossipChatroomManager *
 		gossip_chatroom_manager_new             (GossipAccountManager  *manager,
-							 GossipSession         *session,
 							 const gchar           *filename);
 gboolean        gossip_chatroom_manager_add             (GossipChatroomManager *manager,
 							 GossipChatroom        *chatroom);
@@ -61,7 +61,6 @@ GList *         gossip_chatroom_manager_find_extended   (GossipChatroomManager *
 							 const gchar           *server,
 							 const gchar           *room);
 gboolean        gossip_chatroom_manager_store           (GossipChatroomManager *manager);
-void            gossip_chatroom_manager_join_favourites (GossipChatroomManager *manager);
 GList *         gossip_chatroom_manager_get_chatrooms   (GossipChatroomManager *manager,
 							 GossipAccount         *account);
 guint           gossip_chatroom_manager_get_count       (GossipChatroomManager *manager,
@@ -69,5 +68,7 @@ guint           gossip_chatroom_manager_get_count       (GossipChatroomManager *
 GossipChatroom *gossip_chatroom_manager_get_default     (GossipChatroomManager *manager);
 void            gossip_chatroom_manager_set_default     (GossipChatroomManager *manager,
 							 GossipChatroom        *chatroom);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CHATROOM_MANAGER_H__ */

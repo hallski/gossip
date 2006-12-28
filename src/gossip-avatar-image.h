@@ -23,6 +23,8 @@
 
 #include <gtk/gtkeventbox.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_AVATAR_IMAGE         (gossip_avatar_image_get_type ())
 #define GOSSIP_AVATAR_IMAGE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImage))
 #define GOSSIP_AVATAR_IMAGE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_AVATAR_IMAGE, GossipAvatarImageClass))
@@ -46,5 +48,6 @@ GtkWidget * gossip_avatar_image_new        (GdkPixbuf         *pixbuf);
 void        gossip_avatar_image_set_pixbuf (GossipAvatarImage *avatar_image,
 					    GdkPixbuf         *pixbuf);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_AVATAR_IMAGE_H__ */

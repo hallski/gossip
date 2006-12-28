@@ -49,20 +49,18 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <gtk/gtk.h>
 #include <glib/gi18n.h>
 #include <glib/gstdio.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-message.h>
-#include <libgossip/gossip-utils.h>
+#include "gossip-chatroom-manager.h"
+#include "gossip-debug.h"
+#include "gossip-message.h"
+#include "gossip-log.h"
+#include "gossip-utils.h"
 
 #ifdef HAVE_GNOME
 #include <libgnomevfs/gnome-vfs-utils.h>
 #endif
-
-#include "gossip-app.h"
-#include "gossip-log.h"
 
 #define DEBUG_DOMAIN "Log"
 
@@ -147,6 +145,26 @@ static gboolean        log_set_own_name                        (GossipAccount   
 
 static GHashTable *contact_files = NULL;
 static GHashTable *message_handlers = NULL;
+
+/* FIXME: Really crappy way of doing this */
+static GossipSession *saved_session = NULL;
+
+void
+gossip_log_init (GossipSession *session)
+{
+	if (saved_session) {
+		return;
+	}
+
+	saved_session = g_object_ref (session);
+}
+
+void
+gossip_log_term (void)
+{
+	g_object_unref (saved_session);
+	saved_session = NULL;
+}
 
 static gchar *
 log_escape (const gchar *str)
@@ -400,7 +418,7 @@ static GossipChatroom *
 log_get_chatroom_from_filename (GossipAccount *account,
 				const gchar   *filename)
 {
-	GossipChatroomManager *manager;
+	GossipChatroomManager *chatroom_manager;
 	GossipChatroom        *chatroom;
 	GList                 *found;
 	gchar                 *server;
@@ -417,8 +435,8 @@ log_get_chatroom_from_filename (GossipAccount *account,
 	server[0] = '\0';
 	server++;
 
-	manager = gossip_app_get_chatroom_manager ();
-	found = gossip_chatroom_manager_find_extended (manager, account, server, room);
+	chatroom_manager = gossip_session_get_chatroom_manager (saved_session);
+	found = gossip_chatroom_manager_find_extended (chatroom_manager, account, server, room);
 
 	if (!found) {
 		chatroom = g_object_new (GOSSIP_TYPE_CHATROOM,
@@ -1896,8 +1914,7 @@ log_foo (GtkWidget *window)
 GList *
 gossip_log_search_new (const gchar *text)
 {
-	GossipSession        *session;
-	GossipAccountManager *manager;
+	GossipAccountManager *account_manager;
 	GList                *files;
 	GList                *l;
 	const gchar          *filename;
@@ -1916,8 +1933,7 @@ gossip_log_search_new (const gchar *text)
 		gossip_debug (DEBUG_DOMAIN, "Failed to retrieve all log files");
 	}
 
-	session = gossip_app_get_session ();
-	manager = gossip_session_get_account_manager (session);
+	account_manager = gossip_session_get_account_manager (saved_session);
 
 	for (l = files; l; l = l->next) {
 		GMappedFile *file;
@@ -1949,7 +1965,7 @@ gossip_log_search_new (const gchar *text)
 			gchar              *contact_id;
 
 			account_id = log_get_account_id_from_filename (filename);
-			account = gossip_account_manager_find_by_id (manager, account_id);
+			account = gossip_account_manager_find_by_id (account_manager, account_id);
 
 			if (!account) {
 				/* We must have other directories in

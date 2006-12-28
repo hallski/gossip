@@ -26,6 +26,7 @@
 #include "gossip-account.h"
 #include "gossip-account-manager.h"
 #include "gossip-async.h"
+#include "gossip-chatroom-manager.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-contact.h"
 #include "gossip-ft-provider.h"
@@ -33,6 +34,8 @@
 #include "gossip-presence.h"
 #include "gossip-protocol.h"
 #include "gossip-vcard.h"
+
+G_BEGIN_DECLS
 
 typedef enum {
 	GOSSIP_DISCONNECT_ASKED,
@@ -42,8 +45,8 @@ typedef enum {
 #define GOSSIP_TYPE_SESSION         (gossip_session_get_type ())
 #define GOSSIP_SESSION(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_SESSION, GossipSession))
 #define GOSSIP_SESSION_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_SESSION, GossipSessionClass))
-#define GOSSIP_IS_SESSION(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_SESSION))
-#define GOSSIP_IS_SESSION_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_SESSION))
+#define GOSSIP_IS_SESSION(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_SESSION))
+#define GOSSIP_IS_SESSION_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_SESSION))
 #define GOSSIP_SESSION_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_SESSION, GossipSessionClass))
 
 typedef struct _GossipSession      GossipSession;
@@ -58,13 +61,14 @@ struct _GossipSessionClass {
 };
 
 GType           gossip_session_get_type                (void) G_GNUC_CONST;
-GossipSession * gossip_session_new                     (GossipAccountManager    *manager);
+GossipSession * gossip_session_new                     (const gchar *accounts_file,
+							const gchar *chatrooms_file);
 
-/* get protocol */
+/* Get protocol */
 GossipProtocol *gossip_session_get_protocol            (GossipSession           *session,
 							GossipAccount           *account);
 
-/* providers */
+/* Providers */
 GossipChatroomProvider *
 		gossip_session_get_chatroom_provider   (GossipSession           *session,
 							GossipAccount           *account);
@@ -72,9 +76,11 @@ GossipFTProvider *
 		gossip_session_get_ft_provider         (GossipSession           *session,
 							GossipAccount           *account);
 
-/* accounts */
+/* Accounts */
 GossipAccountManager *
-		gossip_session_get_account_manager     (GossipSession           *session);
+                gossip_session_get_account_manager     (GossipSession           *session);
+GossipChatroomManager *
+                gossip_session_get_chatroom_manager    (GossipSession           *session);
 GList *         gossip_session_get_accounts            (GossipSession           *session);
 gdouble         gossip_session_get_connected_time      (GossipSession           *session,
 							GossipAccount           *account);
@@ -123,7 +129,7 @@ void            gossip_session_get_avatar_requirements (GossipSession           
 							guint                   *max_height,
 							gsize                   *max_size,
 							gchar                  **format);
-/* contact management */
+/* Contact management */
 GossipContact * gossip_session_find_contact            (GossipSession           *session,
 							const gchar             *str);
 void            gossip_session_add_contact             (GossipSession           *session,
@@ -172,6 +178,9 @@ void            gossip_session_register_account        (GossipSession           
 							gpointer                 user_data);
 void            gossip_session_register_cancel         (GossipSession           *session,
 							GossipAccount           *account);
+void            gossip_session_chatroom_join_favorites (GossipSession           *session);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_SESSION_H__ */
 

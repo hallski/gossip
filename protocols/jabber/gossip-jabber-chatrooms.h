@@ -29,6 +29,8 @@
 
 #include "gossip-jabber.h"
 
+G_BEGIN_DECLS
+
 typedef struct _GossipJabberChatrooms GossipJabberChatrooms;
 
 GossipJabberChatrooms *
@@ -79,5 +81,7 @@ void           gossip_jabber_chatrooms_set_presence        (GossipJabberChatroom
 							    GossipPresence        *presence);
 gboolean       gossip_jabber_chatrooms_get_jid_is_chatroom (GossipJabberChatrooms *chatrooms,
 							    const gchar           *jid_str);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_CHATROOM_H__ */

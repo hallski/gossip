@@ -25,6 +25,8 @@
 
 #include "gossip-contact.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_FT         (gossip_ft_get_gtype ())
 #define GOSSIP_FT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_FT, GossipFT))
 #define GOSSIP_FT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_FT, GossipFTClass))
@@ -56,7 +58,6 @@ typedef enum {
 	GOSSIP_FT_ERROR_UNKNOWN
 } GossipFTError;
 
-
 GType          gossip_ft_get_gtype           (void) G_GNUC_CONST;
 
 GossipFT *     gossip_ft_new                (void);
@@ -79,5 +80,7 @@ void           gossip_ft_set_file_mime_type (GossipFT      *ft,
 
 gboolean       gossip_ft_equal              (gconstpointer  a,
 					     gconstpointer  b);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_FT_H__ */

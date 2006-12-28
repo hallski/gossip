@@ -47,6 +47,8 @@ libgossip_la_SOURCES =             			\
 	gossip-ft.h 					\
 	gossip-ft-provider.c	 			\
 	gossip-ft-provider.h 				\
+	gossip-log.c					\
+	gossip-log.h					\
 	gossip-message.c           			\
 	gossip-message.h           			\
 	gossip-conf.h          				\
@@ -79,6 +81,9 @@ dtd_DATA = 						\
 	gossip-account.dtd				\
 	gossip-chatroom.dtd
 
+stylesheetdir = $(datadir)/gossip
+stylesheet_DATA = gossip-log.xsl
+
 libgossip-marshal.h: libgossip-marshal.list
 	(cd $(srcdir) && \
 	$(GLIB_GENMARSHAL) --prefix=libgossip_marshal libgossip-marshal.list --header) > xgen-gmh \
@@ -99,6 +104,7 @@ BUILT_SOURCES = 					\
 
 EXTRA_DIST =						\
 	$(dtd_DATA)					\
+	$(stylesheet_DATA)				\
 	libgossip-marshal.list
 
 CLEANFILES = $(BUILT_SOURCES)

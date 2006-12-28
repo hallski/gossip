@@ -23,8 +23,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include <libgossip/gossip-session.h>
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-log.h>
+#include <libgossip/gossip-session.h>
 
 #include "gossip-app.h"
 #include "gossip-cell-renderer-expander.h"
@@ -35,7 +36,6 @@
 #include "gossip-contact-list.h"
 #include "gossip-edit-contact-dialog.h"
 #include "gossip-ft-window.h"
-#include "gossip-log.h"
 #include "gossip-log-window.h"
 #include "gossip-marshal.h"
 #include "gossip-sound.h"

@@ -23,6 +23,8 @@
 
 #include <gtk/gtkcellrenderertext.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CELL_RENDERER_TEXT         (gossip_cell_renderer_text_get_type ())
 #define GOSSIP_CELL_RENDERER_TEXT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CELL_RENDERER_TEXT, GossipCellRendererText))
 #define GOSSIP_CELL_RENDERER_TEXT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_CELL_RENDERER_TEXT, GossipCellRendererTextClass))
@@ -46,5 +48,7 @@ struct _GossipCellRendererTextClass {
 
 GType             gossip_cell_renderer_text_get_type (void) G_GNUC_CONST;
 GtkCellRenderer * gossip_cell_renderer_text_new      (void);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CELL_RENDERER_TEXT_H__ */

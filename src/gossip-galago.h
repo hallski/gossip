@@ -24,6 +24,10 @@
 
 #include <libgossip/gossip-session.h>
 
+G_BEGIN_DECLS
+
 void gossip_galago_init (GossipSession *session);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_GALAGO_H__ */

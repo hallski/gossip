@@ -23,7 +23,11 @@
 
 #include <libgossip/gossip-session.h>
 
+G_BEGIN_DECLS
+
 void gossip_subscription_dialog_init     (GossipSession *session);
 void gossip_subscription_dialog_finalize (GossipSession *session);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_SUBSCRIPTION_DIALOG_H__ */

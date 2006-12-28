@@ -24,6 +24,8 @@
 #include <libgossip/gossip-session.h>
 #include <libgossip/gossip-event-manager.h>
 
+G_BEGIN_DECLS
+
 void gossip_notify_init                   (GossipSession      *session,
 					   GossipEventManager *event_manager);
 void gossip_notify_finalize               (void);
@@ -34,5 +36,7 @@ gboolean gossip_notify_hint_show          (const gchar        *conf_path,
 					   const gchar        *message,
 					   GFunc               func,
 					   gpointer            user_data);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_NOTIFY_H__ */

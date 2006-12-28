@@ -38,6 +38,8 @@
 
 #include "gossip-chat-view.h"
 
+G_BEGIN_DECLS
+
 /* Glade */
 void       gossip_glade_get_file_simple             (const gchar         *filename,
 						     const gchar         *root,
@@ -134,5 +136,7 @@ GtkWidget *gossip_link_button_new                   (const gchar         *url,
 						     const gchar         *title);
 
 void       gossip_request_user_attention            (void);
+
+G_END_DECLS
 
 #endif /*  __GOSSIP_UI_UTILS_H__ */

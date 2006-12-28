@@ -31,6 +31,8 @@
 #include "gossip-chat-manager.h"
 #include "gossip-ui-utils.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_APP         (gossip_app_get_type ())
 #define GOSSIP_APP(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_APP, GossipApp))
 #define GOSSIP_APP_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_APP, GossipAppClass))
@@ -55,8 +57,7 @@ void                   gossip_app_connect              (GossipAccount        *ac
 							gboolean              startup);
 void                   gossip_app_net_down             (void);
 void                   gossip_app_net_up               (void);
-void                   gossip_app_create               (GossipSession        *session,
-							GossipAccountManager *manager);
+void                   gossip_app_create               (GossipSession        *session);
 GossipApp *            gossip_app_get                  (void);
 gboolean               gossip_app_is_connected         (void);
 gboolean               gossip_app_is_window_visible    (void);
@@ -70,5 +71,7 @@ GossipSession *        gossip_app_get_session          (void);
 GossipChatroomManager *gossip_app_get_chatroom_manager (void);
 GossipChatManager *    gossip_app_get_chat_manager     (void);
 GossipEventManager *   gossip_app_get_event_manager    (void);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_APP_H__ */

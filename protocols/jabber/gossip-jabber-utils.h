@@ -23,6 +23,8 @@
 #include <libgossip/gossip-time.h>
 #include <libgossip/gossip-chatroom.h>
 
+G_BEGIN_DECLS
+
 /* utils */
 const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence  *presence);
 GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar     *str);
@@ -35,5 +37,7 @@ gboolean            gossip_jabber_get_message_is_composing (LmMessage       *m);
 gchar *             gossip_jabber_get_name_to_use          (const gchar     *jid_str,
 							    const gchar     *nickname,
 							    const gchar     *full_name);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_UTILS_H__ */

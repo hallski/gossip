@@ -25,11 +25,13 @@
 #ifndef __GOSSIP_CONTACT_LIST_IFACE_H__
 #define __GOSSIP_CONTACT_LIST_IFACE_H__
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CONTACT_LIST_IFACE         (gossip_contact_list_iface_get_type ())
-#define GOSSIP_CONTACT_LIST_IFACE(o)     (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT_LIST_IFACE, GossipContactListIface))
+#define GOSSIP_CONTACT_LIST_IFACE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT_LIST_IFACE, GossipContactListIface))
 #define GOSSIP_CONTACT_LIST_IFACE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_CONTACT_LIST_IFACE, GossipContactListIfaceClass))
-#define GOSSIP_IS_CONTACT_LIST(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CONTACT_LIST_IFACE))
-#define GOSSIP_IS_CONTACT_LIST_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT_LIST_IFACE))
+#define GOSSIP_IS_CONTACT_LIST(o)              (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CONTACT_LIST_IFACE))
+#define GOSSIP_IS_CONTACT_LIST_CLASS(k)        (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CONTACT_LIST_IFACE))
 #define GOSSIP_CONTACT_LIST_IFACE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CONTACT_LIST_IFACE, GossipContactListIfaceClass))
 
 typedef struct _GossipContactListIface      GossipContactListIface;
@@ -51,6 +53,8 @@ struct _GossipContactListIfaceClass {
 GType   gossip_contact_list_iface_get_type     (void) G_GNUC_CONST;
 
 GList * gossip_contact_list_iface_get_contacts (GossipContactListIface *list);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CONTACT_LIST_IFACE_H__ */
 

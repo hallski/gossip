@@ -29,6 +29,8 @@
 #include "gossip-account.h"
 #include "gossip-vcard.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_PROTOCOL         (gossip_protocol_get_type ())
 #define GOSSIP_PROTOCOL(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PROTOCOL, GossipProtocol))
 #define GOSSIP_PROTOCOL_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_PROTOCOL, GossipProtocolClass))
@@ -216,5 +218,7 @@ void            gossip_protocol_get_avatar_requirements (GossipProtocol         
 							 gsize                   *max_size,
 							 gchar                  **format);
 const gchar *   gossip_protocol_error_to_string         (GossipProtocolError      error);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_PROTOCOL_H__ */

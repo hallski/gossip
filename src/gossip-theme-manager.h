@@ -24,6 +24,8 @@
 #include <gtk/gtktexttag.h>
 #include "gossip-chat-view.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_THEME_MANAGER         (gossip_theme_manager_get_type ())
 #define GOSSIP_THEME_MANAGER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManager))
 #define GOSSIP_THEME_MANAGER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_THEME_MANAGER, GossipThemeManagerClass))
@@ -53,5 +55,7 @@ void                gossip_theme_manager_apply_saved         (GossipThemeManager
 void                gossip_theme_manager_update_show_avatars (GossipThemeManager *manager,
 							      GossipChatView     *view,
 							      gboolean            show);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_THEME_MANAGER_H__ */

@@ -25,6 +25,8 @@
 
 #include <libgossip/gossip-contact.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CHAT_MANAGER         (gossip_chat_manager_get_type ())
 #define GOSSIP_CHAT_MANAGER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManager))
 #define GOSSIP_CHAT_MANAGER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHAT_MANAGER, GossipChatManagerClass))
@@ -54,6 +56,8 @@ GossipPrivateChat *gossip_chat_manager_get_chat       (GossipChatManager *manage
 GList *            gossip_chat_manager_get_chats      (GossipChatManager *manager);
 void               gossip_chat_manager_show_chat      (GossipChatManager *manager,
 						       GossipContact     *contact);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_MANAGER_H__ */
 

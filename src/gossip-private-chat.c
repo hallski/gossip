@@ -27,13 +27,13 @@
 #include <glib/gi18n.h>
 
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-log.h>
 #include <libgossip/gossip-message.h>
 
 #include "gossip-app.h"
 #include "gossip-chat-window.h"
 #include "gossip-chat-view.h"
 #include "gossip-chat.h"
-#include "gossip-log.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"
 #include "gossip-sound.h"

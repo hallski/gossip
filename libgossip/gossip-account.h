@@ -26,6 +26,8 @@
 
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_ACCOUNT         (gossip_account_get_gtype ())
 #define GOSSIP_ACCOUNT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT, GossipAccount))
 #define GOSSIP_ACCOUNT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_ACCOUNT, GossipAccountClass))
@@ -113,5 +115,7 @@ gboolean          gossip_account_equal             (gconstpointer            v1,
 						    gconstpointer            v2);
 const gchar *     gossip_account_type_to_string    (GossipAccountType        type);
 GossipAccountType gossip_account_string_to_type    (const gchar             *str);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_ACCOUNT_H__ */

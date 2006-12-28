@@ -177,8 +177,7 @@ struct _GossipAppPriv {
 static void            gossip_app_class_init                  (GossipAppClass           *klass);
 static void            gossip_app_init                        (GossipApp                *singleton_app);
 static void            app_finalize                           (GObject                  *object);
-static void            app_setup                              (GossipSession            *session,
-							       GossipAccountManager     *manager);
+static void            app_setup                              (GossipSession            *session);
 static gboolean        app_main_window_quit_confirm           (GossipApp                *app,
 							       GtkWidget                *window);
 static void            app_main_window_quit_confirm_cb        (GtkWidget                *dialog,
@@ -322,7 +321,7 @@ static gboolean        app_window_configure_event_cb          (GtkWidget        
 							       GossipApp                *app);
 static void            app_status_flash_start                 (void);
 static void            app_status_flash_stop                  (void);
-static void            app_chatroom_auto_connect_cb           (GossipChatroomManager    *manager,
+static void            app_session_chatroom_auto_connect_cb   (GossipSession            *session,
 							       GossipChatroomProvider   *provider,
 							       GossipChatroom           *chatroom,
 							       gpointer                  user_data);
@@ -438,9 +437,8 @@ app_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (priv->session,
 					      app_session_get_password_cb,
 					      NULL);
-
-	g_signal_handlers_disconnect_by_func (priv->chatroom_manager,
-					      app_chatroom_auto_connect_cb,
+	g_signal_handlers_disconnect_by_func (priv->session,
+					      app_session_chatroom_auto_connect_cb,
 					      NULL);
 
 	g_signal_handlers_disconnect_by_func (priv->event_manager,
@@ -470,21 +468,20 @@ app_finalize (GObject *object)
 }
 
 static void
-app_setup (GossipSession        *session,
-	   GossipAccountManager *manager)
+app_setup (GossipSession *session)
 {
-	GossipAppPriv  *priv;
-	GossipConf     *conf;
-	GladeXML       *glade;
-	GtkWidget      *sw;
-	GtkWidget      *show_offline_widget;
-	GtkWidget      *ebox;
-	GtkToolItem    *item;
-	gchar          *str;
-	gboolean        show_offline;
-	gboolean        show_avatars;
-	gboolean        compact_contact_list;
-	gint            x, y, w, h;
+	GossipAppPriv *priv;
+	GossipConf    *conf;
+	GladeXML      *glade;
+	GtkWidget     *sw;
+	GtkWidget     *show_offline_widget;
+	GtkWidget     *ebox;
+	GtkToolItem   *item;
+	gchar         *str;
+	gboolean       show_offline;
+	gboolean       show_avatars;
+	gboolean       compact_contact_list;
+	gint           x, y, w, h;
 
 	gossip_debug (DEBUG_DOMAIN_SETUP, "Beginning...");
 
@@ -511,9 +508,7 @@ app_setup (GossipSession        *session,
 		      "Initialising managers "
 		      "(chatroom, chat, event)");
 
-	priv->chatroom_manager = gossip_chatroom_manager_new (manager,
-							      priv->session,
-							      NULL);
+	priv->chatroom_manager = gossip_session_get_chatroom_manager (priv->session);
 
 	priv->chat_manager = gossip_chat_manager_new ();
 	priv->event_manager = gossip_event_manager_new ();
@@ -549,8 +544,8 @@ app_setup (GossipSession        *session,
 			  G_CALLBACK (app_session_get_password_cb),
 			  NULL);
 
-	g_signal_connect (priv->chatroom_manager, "chatroom-auto-connect",
-			  G_CALLBACK (app_chatroom_auto_connect_cb),
+	g_signal_connect (priv->session, "chatroom-auto-connect",
+			  G_CALLBACK (app_session_chatroom_auto_connect_cb),
 			  NULL);
 
 	g_signal_connect (priv->event_manager, "event-added",
@@ -1225,7 +1220,7 @@ app_room_join_favorites_cb (GtkWidget *window,
 
 	priv = GET_PRIV (app);
 
-	gossip_chatroom_manager_join_favourites (priv->chatroom_manager);
+	gossip_session_chatroom_join_favorites (priv->session);
 }
 
 static void
@@ -2162,16 +2157,14 @@ gossip_app_net_up (void)
 }
 
 void
-gossip_app_create (GossipSession        *session,
-		   GossipAccountManager *manager)
+gossip_app_create (GossipSession *session)
 
 {
 	g_return_if_fail (GOSSIP_IS_SESSION (session));
-	g_return_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager));
 
 	g_object_new (GOSSIP_TYPE_APP, NULL);
 
-	app_setup (session, manager);
+	app_setup (session);
 }
 
 GossipApp *
@@ -2778,10 +2771,10 @@ app_status_icon_flash_maybe_stop (void)
 }
 
 static void
-app_chatroom_auto_connect_cb (GossipChatroomManager    *manager,
-			      GossipChatroomProvider   *provider,
-			      GossipChatroom           *chatroom,
-			      gpointer                  user_data)
+app_session_chatroom_auto_connect_cb (GossipSession            *session,
+				      GossipChatroomProvider   *provider,
+				      GossipChatroom           *chatroom,
+				      gpointer                  user_data)
 {
 	GossipGroupChat *chat;
 
@@ -2790,7 +2783,6 @@ app_chatroom_auto_connect_cb (GossipChatroomManager    *manager,
 		      gossip_chatroom_get_name (chatroom));
 
 	chat = gossip_group_chat_new (provider, chatroom);
-/* 	g_object_unref (chat); */
 }
 
 static void

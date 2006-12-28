@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 #ifdef G_HAVE_ISO_VARARGS
 #  ifdef GOSSIP_DISABLE_DEBUG
 #    define gossip_debug(...)
@@ -44,6 +46,8 @@
 #endif
 
 void gossip_debug_impl (const gchar *domain, const gchar *msg, ...);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_DEBUG_H__ */
 

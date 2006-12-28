@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_VERSION_INFO         (gossip_version_info_get_type ())
 #define GOSSIP_VERSION_INFO(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_VERSION_INFO, GossipVersionInfo))
 #define GOSSIP_VERSION_INFO_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_VERSION_INFO, GossipVersionInfoClass))
@@ -57,6 +59,8 @@ void                gossip_version_info_set_os      (GossipVersionInfo *info,
 
 /* Don't free the returned version info */
 GossipVersionInfo * gossip_version_info_get_own     (void);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_VERSION_INFO_H__ */
 

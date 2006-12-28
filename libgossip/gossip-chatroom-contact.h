@@ -26,6 +26,8 @@
 #include "gossip-contact.h"
 #include "gossip-chatroom.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CHATROOM_CONTACT         (gossip_chatroom_contact_get_type ())
 #define GOSSIP_CHATROOM_CONTACT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM_CONTACT, GossipChatroomContact))
 #define GOSSIP_CHATROOM_CONTACT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHATROOM_CONTACT, GossipChatroomContactClass))
@@ -57,5 +59,7 @@ void                    gossip_chatroom_contact_set_role         (GossipChatroom
 GossipChatroomAffiliation gossip_chatroom_contact_get_affiliation (GossipChatroomContact    *contact);
 void                    gossip_chatroom_contact_set_affiliation  (GossipChatroomContact     *contact,
 								  GossipChatroomAffiliation  affiliation);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CHATROOM_CONTACT_H__ */

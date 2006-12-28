@@ -120,7 +120,8 @@ main (int argc, char *argv[])
 	gossip_window_set_default_icon_name ("gossip");
 
 	/* Get all accounts. */
-	account_manager = gossip_account_manager_new (NULL);
+	session = gossip_session_new (NULL, NULL);
+	account_manager = gossip_session_get_account_manager (session);
 
 	if (account_name && no_connect) {
 		g_printerr (_("You can not use --no-connect together with --account"));
@@ -176,8 +177,6 @@ main (int argc, char *argv[])
 
 	gossip_stock_init ();
 
-	session = gossip_session_new (account_manager);
-
 #ifdef HAVE_DBUS
 	init_galago = gossip_dbus_init_for_session (session, multiple_instances);
 #else
@@ -190,9 +189,8 @@ main (int argc, char *argv[])
 	}
 #endif
 
-	gossip_app_create (session, account_manager);
+	gossip_app_create (session);
 	g_object_unref (session);
-	g_object_unref (account_manager);
 
 	if (!no_connect) {
 		gossip_app_connect (account, TRUE);

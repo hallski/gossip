@@ -1,5 +1,32 @@
 2006-12-25  Martyn Russell  <martyn@imendio.com>
 
+	* src/*.h:
+	* libgossip/*.h:
+	* protocols/jabber/*.h: Added G_BEGIN_DECLS and G_END_DECLS, it was
+	inconsistent across all header files.
+
+	* configure.ac:
+	* src/Makefile.am:
+	* src/gossip-chat-window.c:
+	* src/gossip-contact-list.c:
+	* src/gossip-group-chat.c:
+	* src/gossip-log-window.c:
+	* src/gossip-private-chat.c:
+	* libgossip/Makefile.am:
+	* libgossip/gossip-log.[ch]:
+	* libgossip/gossip-log.xsl: Moved the gossip-log code to libgossip and
+	added a GnomeVFS dep to libgossip (required for the gossip-log
+	code).
+
+	* src/gossip-app.c:
+	* src/gossip-main.c:
+	* libgossip/gossip-session.[ch]:
+	* libgossip/gossip-chatroom-manager.[ch]: Updated the session
+	initiation process to initiate the account manager, chatroom
+	manager and the logging.
+
+2006-12-25  Martyn Russell  <martyn@imendio.com>
+
 	* src/Makefile.am:
 	* src/ephy-spinner.[ch]:
 	* src/ephy-spinner.h:

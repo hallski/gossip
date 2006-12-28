@@ -23,6 +23,8 @@
 
 #include <gtk/gtk.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_ACCOUNT_BUTTON         (gossip_account_button_get_type ())
 #define GOSSIP_ACCOUNT_BUTTON(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButton))
 #define GOSSIP_ACCOUNT_BUTTON_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_ACCOUNT_BUTTON, GossipAccountButtonClass))
@@ -53,6 +55,8 @@ void       gossip_account_button_set_status     (GossipAccountButton *button,
 						 gboolean             online);
 gboolean   gossip_account_button_is_important   (GossipAccountButton *button);
 gboolean   gossip_account_button_is_error_shown (GossipAccountButton *button);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_ACCOUNT_BUTTON_H__ */
 

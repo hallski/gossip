@@ -25,8 +25,12 @@
 
 #include <libgossip/gossip-contact.h>
 
+G_BEGIN_DECLS
+
 void  gossip_add_contact_dialog_show (GtkWindow     *parent,
 				      GossipContact *contact);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_ADD_CONTACT_DIALOG_H__ */
 

@@ -26,6 +26,8 @@
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-session.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_ACCOUNT_CHOOSER (gossip_account_chooser_get_type ())
 #define GOSSIP_ACCOUNT_CHOOSER(o) (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooser))
 #define GOSSIP_ACCOUNT_CHOOSER_CLASS(k) (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_ACCOUNT_CHOOSER, GossipAccountChooserClass))
@@ -52,6 +54,8 @@ gboolean       gossip_account_chooser_set_account        (GossipAccountChooser *
 GossipAccount *gossip_account_chooser_get_account        (GossipAccountChooser *chooser);
 void           gossip_account_chooser_set_can_select_all (GossipAccountChooser *account_chooser,
 							  gboolean              can_select_all);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_ACCOUNT_CHOOSER_H__ */
 

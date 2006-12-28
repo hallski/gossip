@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_EVENT         (gossip_event_get_gtype ())
 #define GOSSIP_EVENT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_EVENT, GossipEvent))
 #define GOSSIP_EVENT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_EVENT, GossipEventClass))
@@ -68,6 +70,8 @@ gboolean        gossip_event_equal       (gconstpointer    a,
 					  gconstpointer    b);
 gint            gossip_event_compare     (gconstpointer    a,
 					  gconstpointer    b);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_EVENT_H__ */
 

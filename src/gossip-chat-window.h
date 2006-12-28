@@ -25,6 +25,8 @@
 #include <gtk/gtktreestore.h>
 #include <gtk/gtktreeselection.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CHAT_WINDOW         (gossip_chat_window_get_type ())
 #define GOSSIP_CHAT_WINDOW(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindow))
 #define GOSSIP_CHAT_WINDOW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHAT_WINDOW, GossipChatWindowClass))
@@ -64,5 +66,7 @@ void              gossip_chat_window_switch_to_chat  (GossipChatWindow *window,
 						      GossipChat       *chat);
 
 gboolean          gossip_chat_window_has_focus       (GossipChatWindow *window);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_WINDOW_H__ */

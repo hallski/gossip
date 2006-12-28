@@ -21,7 +21,9 @@
 #ifndef __GOSSIP_PRESENCE_CHOOSER_H__
 #define __GOSSIP_PRESENCE_CHOOSER_H__
 
-#include <gtk/gtk.h>
+#include <gtk/gtktogglebutton.h>
+
+G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_PRESENCE_CHOOSER         (gossip_presence_chooser_get_type ())
 #define GOSSIP_PRESENCE_CHOOSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PRESENCE_CHOOSER, GossipPresenceChooser))
@@ -59,7 +61,7 @@ void       gossip_presence_chooser_flash_stop         (GossipPresenceChooser *ch
 						       GossipPresenceState    state);
 gboolean   gossip_presence_chooser_is_flashing        (GossipPresenceChooser *chooser);
 
-
+G_END_DECLS
 
 #endif /* __GOSSIP_PRESENCE_CHOOSER_H__ */
 

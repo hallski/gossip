@@ -21,8 +21,13 @@
 #ifndef __GOSSIP_LOG_H__
 #define __GOSSIP_LOG_H__
 
-#include <glib.h>
-#include <libgossip/gossip-message.h>
+#include "gossip-message.h"
+#include "gossip-session.h"
+
+G_BEGIN_DECLS
+
+void           gossip_log_init                      (GossipSession        *session);
+void           gossip_log_term                      (void);
 
 /* Log message handlers */
 typedef void (* GossipLogMessageFunc)  (GossipContact  *own_contact,
@@ -62,7 +67,8 @@ void           gossip_log_message_for_chatroom      (GossipChatroom       *chatr
 gboolean       gossip_log_exists_for_chatroom       (GossipChatroom       *chatroom);
 
 /* Searching */
- typedef struct _GossipLogSearchHit GossipLogSearchHit;
+typedef struct _GossipLogSearchHit GossipLogSearchHit;
+
 GList *        gossip_log_search_new                (const gchar          *text);
 void           gossip_log_search_free               (GList                *hits);
 GossipAccount *gossip_log_search_hit_get_account    (GossipLogSearchHit   *hit);
@@ -77,5 +83,7 @@ void           gossip_log_show_for_contact            (GtkWidget          *windo
 void           gossip_log_show_for_chatroom           (GtkWidget          *window,
 						       GossipChatroom     *chatroom);
 #endif /* DEPRECATED */
+
+G_END_DECLS
 
 #endif /* __GOSSIP_LOG_H__ */

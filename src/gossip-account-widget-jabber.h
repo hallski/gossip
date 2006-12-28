@@ -24,7 +24,11 @@
 #include <gtk/gtkwidget.h>
 #include <libgossip/gossip-account.h>
 
+G_BEGIN_DECLS
+
 GtkWidget *gossip_account_widget_jabber_new (GossipAccount *account,
 					     GtkWidget     *label_name);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_ACCOUNT_WIDGET_JABBER_H__ */

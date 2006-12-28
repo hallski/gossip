@@ -23,7 +23,11 @@
 
 #include <glib.h>
 
-gint32		gossip_idle_get_seconds	    (void);
-void            gossip_idle_reset           (void);
+G_BEGIN_DECLS
+
+gint32 gossip_idle_get_seconds (void);
+void   gossip_idle_reset       (void);
+
+G_END_DECLS
 
 #endif /*  __GOSSIP_IDLE_H__ */

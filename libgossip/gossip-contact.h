@@ -28,6 +28,8 @@
 #include "gossip-presence.h"
 #include "gossip-utils.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CONTACT         (gossip_contact_get_gtype ())
 #define GOSSIP_CONTACT(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT, GossipContact))
 #define GOSSIP_CONTACT_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CONTACT, GossipContactClass))
@@ -111,6 +113,8 @@ gboolean           gossip_contact_equal                     (gconstpointer      
 guint              gossip_contact_hash                      (gconstpointer       key);
 gboolean           gossip_contact_is_online                 (GossipContact      *contact);
 const gchar *      gossip_contact_get_status                (GossipContact      *contact);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CONTACT_H__ */
 

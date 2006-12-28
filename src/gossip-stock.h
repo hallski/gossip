@@ -21,6 +21,8 @@
 #ifndef __GOSSIP_STOCK_H__
 #define __GOSSIP_STOCK_H__
 
+G_BEGIN_DECLS
+
 #define GOSSIP_STOCK_OFFLINE             "gossip-offline"
 #define GOSSIP_STOCK_AVAILABLE           "gossip-available"
 #define GOSSIP_STOCK_BUSY                "gossip-busy"
@@ -43,5 +45,7 @@
 
 void gossip_stock_init     (void);
 void gossip_stock_finalize (void);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_STOCK_ICONS_H__ */

@@ -26,8 +26,12 @@
 #include "gossip-jabber.h"
 #include "gossip-jabber-ft.h"
 
+G_BEGIN_DECLS
+
 LmConnection *   gossip_jabber_get_connection (GossipJabber *jabber);
 GossipJabberFTs *gossip_jabber_get_fts        (GossipJabber *jabber);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_PRIVATE_H__ */
 

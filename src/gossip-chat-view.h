@@ -26,6 +26,8 @@
 
 #include <libgossip/gossip-message.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CHAT_VIEW         (gossip_chat_view_get_type ())
 #define GOSSIP_CHAT_VIEW(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHAT_VIEW, GossipChatView))
 #define GOSSIP_CHAT_VIEW_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewClass))
@@ -129,5 +131,7 @@ GtkWidget *     gossip_chat_view_get_smiley_menu           (GCallback       call
 							    GtkTooltips    *tooltips);
 void            gossip_chat_view_set_is_group_chat         (GossipChatView *view,
 							    gboolean        is_group_chat);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_VIEW_H__ */

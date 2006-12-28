@@ -24,7 +24,11 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-chatroom.h>
 
+G_BEGIN_DECLS
+
 void gossip_log_window_show (GossipContact  *contact,
 			     GossipChatroom *chatroom);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_LOG_WINDOW_H__ */

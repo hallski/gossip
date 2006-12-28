@@ -28,6 +28,7 @@
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-log.h>
 #include <libgossip/gossip-protocol.h>
 
 #include "gossip-add-contact-dialog.h"
@@ -35,7 +36,6 @@
 #include "gossip-chat-invite.h"
 #include "gossip-chat-window.h"
 #include "gossip-contact-info-dialog.h"
-#include "gossip-log.h"
 #include "gossip-log-window.h"
 #include "gossip-preferences.h"
 #include "gossip-private-chat.h"

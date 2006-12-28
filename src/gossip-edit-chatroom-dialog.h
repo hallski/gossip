@@ -24,7 +24,11 @@
 #include <gtk/gtk.h>
 #include <libgossip/gossip-chatroom.h>
 
+G_BEGIN_DECLS
+
 void gossip_edit_chatroom_dialog_show (GtkWindow      *parent,
 				       GossipChatroom *chatroom);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_EDIT_CHATROOMS_WINDOW_H__ */

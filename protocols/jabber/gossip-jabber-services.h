@@ -26,10 +26,14 @@
 #include <libgossip/gossip-async.h>
 #include <libgossip/gossip-contact.h>
 
+G_BEGIN_DECLS
+
 gboolean gossip_jabber_services_get_version (LmConnection           *connection,
 					     GossipContact          *contact,
 					     GossipVersionCallback   callback,
 					     gpointer                user_data,
 					     GError                **error);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_SERVICES_H__ */

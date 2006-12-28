@@ -26,6 +26,8 @@
 #include "gossip-chatroom.h"
 #include "gossip-contact.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CHATROOM_PROVIDER           (gossip_chatroom_provider_get_type ())
 #define GOSSIP_CHATROOM_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER, GossipChatroomProvider))
 #define GOSSIP_IS_CHATROOM_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_CHATROOM_PROVIDER))
@@ -144,5 +146,6 @@ void         gossip_chatroom_provider_browse_rooms       (GossipChatroomProvider
 
 const gchar *gossip_chatroom_provider_join_result_as_str (GossipChatroomJoinResult result);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_CHATROOM_PROVIDER_H__ */

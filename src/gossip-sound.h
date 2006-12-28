@@ -23,6 +23,8 @@
 
 #include <libgossip/gossip-session.h>
 
+G_BEGIN_DECLS
+
 typedef enum {
 	GOSSIP_SOUND_CHAT,
 	GOSSIP_SOUND_OFFLINE,
@@ -33,5 +35,7 @@ void gossip_sound_init        (GossipSession *session);
 void gossip_sound_finalize    (void);
 void gossip_sound_play        (GossipSound sound);
 void gossip_sound_set_enabled (gboolean    enabled);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_SOUND_H__ */

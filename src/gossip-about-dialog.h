@@ -23,6 +23,10 @@
 
 #include <gtk/gtkwindow.h>
 
+G_BEGIN_DECLS
+
 void gossip_about_dialog_new (GtkWindow *parent);
+
+G_END_DECLS
 
 #endif /*  __GOSSIP_ABOUT_DIALOG_H__ */

@@ -24,7 +24,11 @@
 #include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-chatroom-provider.h>
 
+G_BEGIN_DECLS
+
 void gossip_chat_invite_dialog_show (GossipContact    *contact,
 				     GossipChatroomId  id);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CHAT_INVITE_H__ */

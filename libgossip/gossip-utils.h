@@ -26,6 +26,8 @@
 
 #include "gossip-account.h"
 
+G_BEGIN_DECLS
+
 #define G_STR_EMPTY(x) ((x) == NULL || (x)[0] == '\0')
 
 typedef enum {
@@ -62,4 +64,7 @@ const gchar * gossip_g_type_to_dbus_type (GType            g_type);
 gchar *       gossip_g_value_to_string   (const GValue    *value);
 GValue *      gossip_string_to_g_value   (const gchar     *str,
 					  GType            type);
+
+G_END_DECLS
+
 #endif /*  __GOSSIP_UTILS_H__ */

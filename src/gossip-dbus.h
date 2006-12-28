@@ -25,6 +25,8 @@
 
 #include <libgossip/gossip-session.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_DBUS_ERROR gnome_dbus_error_quark()
 
 GQuark   gossip_dbus_error_quark          (void) G_GNUC_CONST;
@@ -37,5 +39,7 @@ void     gossip_dbus_finalize_for_session (void);
 /* GNOME Network Manager */
 gboolean gossip_dbus_nm_setup             (void);
 gboolean gossip_dbus_nm_get_state         (gboolean      *connected);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_DBUS_H__ */

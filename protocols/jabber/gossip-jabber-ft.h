@@ -27,8 +27,9 @@
 
 #include "gossip-jabber.h"
 
-typedef struct _GossipJabberFTs GossipJabberFTs;
+G_BEGIN_DECLS
 
+typedef struct _GossipJabberFTs GossipJabberFTs;
 
 GossipJabberFTs *gossip_jabber_ft_init                (GossipJabber    *jabber);
 void             gossip_jabber_ft_finalize            (GossipJabberFTs *fts);
@@ -70,5 +71,6 @@ void             gossip_jabber_ft_iib_finish_response (GossipJabber    *jabber,
 						       const gchar     *to,
 						       const gchar     *id);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_FT_H__ */

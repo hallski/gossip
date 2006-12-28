@@ -26,11 +26,12 @@
 #include "gossip-ft.h"
 #include "gossip-contact.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_FT_PROVIDER           (gossip_ft_provider_get_type ())
 #define GOSSIP_FT_PROVIDER(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_FT_PROVIDER, GossipFTProvider))
 #define GOSSIP_IS_FT_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_FT_PROVIDER))
 #define GOSSIP_FT_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GOSSIP_TYPE_FT_PROVIDER, GossipFTProviderIface))
-
 
 typedef struct _GossipFTProvider      GossipFTProvider;
 typedef struct _GossipFTProviderIface GossipFTProviderIface;
@@ -50,9 +51,7 @@ struct _GossipFTProviderIface {
 			       GossipFTId        id);
 };
 
-
 GType      gossip_ft_provider_get_type (void) G_GNUC_CONST;
-
 
 GossipFTId gossip_ft_provider_send     (GossipFTProvider *provider,
 					GossipContact    *contact,
@@ -64,5 +63,6 @@ void       gossip_ft_provider_accept   (GossipFTProvider *provider,
 void       gossip_ft_provider_decline  (GossipFTProvider *provider,
 					GossipFTId        id);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_FT_PROVIDER_H__ */

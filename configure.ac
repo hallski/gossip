@@ -190,6 +190,7 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
    $gconf_pkgconfig
+   $gnome_vfs_pkgconfig
 ])
 
 PKG_CHECK_MODULES(GOSSIP,

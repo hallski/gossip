@@ -62,7 +62,6 @@ gossip_SOURCES = 				                        	\
 	gossip-group-chat.c	           gossip-group-chat.h			\
 	gossip-idle.c		           gossip-idle.h			\
 	gossip-image-chooser.c             gossip-image-chooser.h		\
-	gossip-log.c		           gossip-log.h				\
 	gossip-log-window.c	           gossip-log-window.h			\
 	gossip-main.c				                        	\
 	gossip-marshal-main.c                                                   \
@@ -94,9 +93,6 @@ dtd_DATA = 									\
 	gossip-contact-groups.dtd						\
 	gossip-status-presets.dtd
 
-stylesheetdir = $(datadir)/gossip
-stylesheet_DATA = gossip-log.xsl
-
 gossip-marshal.h: gossip-marshal.list
 	(cd $(srcdir) && \
 	$(GLIB_GENMARSHAL) --prefix=gossip_marshal gossip-marshal.list --header) > xgen-gmh \
@@ -119,7 +115,6 @@ BUILT_SOURCES = 					\
 CLEANFILES = $(BUILT_SOURCES)
 
 EXTRA_DIST =						\
-	gossip-log.xsl					\
 	gossip-marshal.list                             \
 	$(dtd_DATA)					\
 	$(dbus_sources)					\

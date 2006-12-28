@@ -26,6 +26,8 @@
 
 #include "gossip-jabber.h"
 
+G_BEGIN_DECLS
+
 gboolean gossip_jabber_vcard_get (GossipJabber          *jabber,
 				  const gchar           *jid_str,
 				  GossipVCardCallback    callback,
@@ -36,5 +38,7 @@ gboolean gossip_jabber_vcard_set (GossipJabber          *jabber,
 				  GossipResultCallback   callback,
 				  gpointer               user_data,
 				  GError               **error);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_VCARD_H__ */

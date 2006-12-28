@@ -24,6 +24,8 @@
 #include "gossip-vcard.h"
 #include "gossip-version-info.h"
 
+G_BEGIN_DECLS
+
 typedef enum {
 	GOSSIP_RESULT_OK,
 	GOSSIP_RESULT_ERROR_INVALID_REPLY,
@@ -54,5 +56,7 @@ typedef void (*GossipVersionCallback)  (GossipResult       result,
 
 typedef void (*GossipResultCallback)   (GossipResult       result,
 					gpointer           user_data);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_ASYNC_H__ */

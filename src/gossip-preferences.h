@@ -21,6 +21,8 @@
 #ifndef __GOSSIP_PREFERENCES_H__
 #define __GOSSIP_PREFERENCES_H__
 
+G_BEGIN_DECLS
+
 #define GOSSIP_PREFS_PATH "/apps/gossip"
 
 #define GOSSIP_PREFS_SOUNDS_FOR_MESSAGES          GOSSIP_PREFS_PATH "/notifications/sounds_for_messages"
@@ -43,6 +45,8 @@
 #define GOSSIP_PREFS_HINTS_CLOSE_MAIN_WINDOW      GOSSIP_PREFS_PATH "/hints/close_main_window"
 
 void gossip_preferences_show               (void);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_PREFERENCES_H__ */
 

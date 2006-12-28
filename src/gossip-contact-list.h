@@ -25,6 +25,8 @@
 
 #include <libgossip/gossip-contact.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CONTACT_LIST         (gossip_contact_list_get_type ())
 #define GOSSIP_CONTACT_LIST(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONTACT_LIST, GossipContactList))
 #define GOSSIP_CONTACT_LIST_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), GOSSIP_TYPE_CONTACT_LIST, GossipContactListClass))
@@ -68,6 +70,7 @@ GtkWidget *        gossip_contact_list_get_contact_menu   (GossipContactList *li
 							   GossipContact     *contact);
 GtkWidget *        gossip_contact_list_get_group_menu     (GossipContactList *list);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_CONTACT_LIST_H__ */
 

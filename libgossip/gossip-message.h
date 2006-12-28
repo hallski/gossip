@@ -27,6 +27,8 @@
 #include "gossip-time.h"
 #include "gossip-chatroom.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_MESSAGE         (gossip_message_get_gtype ())
 #define GOSSIP_MESSAGE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_MESSAGE, GossipMessage))
 #define GOSSIP_MESSAGE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_MESSAGE, GossipMessageClass))
@@ -74,8 +76,6 @@ const gchar *     gossip_message_get_thread              (GossipMessage        *
 void              gossip_message_set_thread              (GossipMessage        *message,
 							  const gchar          *thread);
 
-
-
 /* What return value should we have here? */
 gossip_time_t     gossip_message_get_timestamp           (GossipMessage        *message);
 void              gossip_message_set_timestamp           (GossipMessage        *message,
@@ -87,5 +87,7 @@ void              gossip_message_set_invite              (GossipMessage        *
 							  GossipChatroomInvite *invite);
 void              gossip_message_request_composing       (GossipMessage        *message);
 gboolean          gossip_message_is_requesting_composing (GossipMessage        *message);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_MESSAGE_H__ */

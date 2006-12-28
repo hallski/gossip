@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_PRESENCE         (gossip_presence_get_type ())
 #define GOSSIP_PRESENCE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_PRESENCE, GossipPresence))
 #define GOSSIP_PRESENCE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_PRESENCE, GossipPresenceClass))
@@ -75,6 +77,8 @@ gint                gossip_presence_sort_func                (gconstpointer     
 							      gconstpointer        b);
 
 const gchar *       gossip_presence_state_get_default_status (GossipPresenceState  state);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_PRESENCE_H__ */
 

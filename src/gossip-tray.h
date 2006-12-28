@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_TRAY         (gossip_tray_get_type ())
 #define GOSSIP_TRAY(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_TRAY, GossipTray))
 #define GOSSIP_TRAY_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_TRAY, GossipTrayClass))
@@ -45,6 +47,8 @@ GType       gossip_tray_get_type   (void) G_GNUC_CONST;
 GossipTray *gossip_tray_new        (void);
 void        gossip_tray_set_icon   (GossipTray  *tray,
 				    const gchar *stock_id);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_TRAY_H__ */
 

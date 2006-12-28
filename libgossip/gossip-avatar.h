@@ -23,6 +23,8 @@
 
 #include "gossip-utils.h"
 
+G_BEGIN_DECLS
+
 typedef struct {
 	guchar *data;
 	gsize   len;
@@ -35,5 +37,7 @@ GossipAvatar *gossip_avatar_new   (guchar       *avatar,
 				   gchar        *format);
 GossipAvatar *gossip_avatar_ref   (GossipAvatar *avatar);
 void          gossip_avatar_unref (GossipAvatar *avatar);
+
+G_END_DECLS
 
 #endif /*  __GOSSIP_AVATAR_H__ */

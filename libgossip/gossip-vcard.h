@@ -26,6 +26,8 @@
 #include "gossip-avatar.h"
 #include "gossip-utils.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_VCARD         (gossip_vcard_get_type ())
 #define GOSSIP_VCARD(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_VCARD, GossipVCard))
 #define GOSSIP_VCARD_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_VCARD, GossipVCardClass))
@@ -73,5 +75,7 @@ void          gossip_vcard_set_description (GossipVCard  *vcard,
 					    const gchar  *desc);
 void          gossip_vcard_set_avatar      (GossipVCard  *vcard,
 					    GossipAvatar *avatar);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_VCARD_H__ */

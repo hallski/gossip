@@ -23,6 +23,7 @@
 
 #include <glib.h>
 
+G_BEGIN_DECLS
 
 size_t  gossip_jabber_ft_base64_encode_close  (guint8 const *in,
 					       size_t        inlen,
@@ -46,5 +47,6 @@ guint8 *gossip_jabber_ft_base64_encode_simple (guint8 const *data,
 size_t  gossip_jabber_ft_base64_decode_simple (guint8       *data,
 					       size_t        len);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_JABBER_FT_UTILS_H__ */

@@ -25,6 +25,8 @@
 
 #include "gossip-account.h"
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_ACCOUNT_MANAGER         (gossip_account_manager_get_type ())
 #define GOSSIP_ACCOUNT_MANAGER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManager))
 #define GOSSIP_ACCOUNT_MANAGER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerClass))
@@ -32,20 +34,16 @@
 #define GOSSIP_IS_ACCOUNT_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT_MANAGER))
 #define GOSSIP_ACCOUNT_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerClass))
 
-
 typedef struct _GossipAccountManager      GossipAccountManager;
 typedef struct _GossipAccountManagerClass GossipAccountManagerClass;
-
 
 struct _GossipAccountManager {
 	GObject parent;
 };
 
-
 struct _GossipAccountManagerClass {
 	GObjectClass parent_class;
 };
-
 
 GType          gossip_account_manager_get_type               (void) G_GNUC_CONST;
 GossipAccountManager *
@@ -67,5 +65,6 @@ void           gossip_account_manager_set_default            (GossipAccountManag
 							      GossipAccount        *account);
 gboolean       gossip_account_manager_store                  (GossipAccountManager *manager);
 
+G_END_DECLS
 
 #endif /* __GOSSIP_ACCOUNT_MANAGER_H__ */

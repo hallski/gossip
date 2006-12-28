@@ -23,6 +23,8 @@
 
 #include <glib-object.h>
 
+G_BEGIN_DECLS
+
 #define GOSSIP_TYPE_CONF         (gossip_conf_get_type ())
 #define GOSSIP_CONF(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CONF, GossipConf))
 #define GOSSIP_CONF_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CONF, GossipConfClass))
@@ -38,8 +40,9 @@ typedef struct {
 	GObjectClass parent_class;
 } GossipConfClass;
 
-typedef void (*GossipConfNotifyFunc) (GossipConf *conf, const gchar *key, gpointer user_data);
-
+typedef void (*GossipConfNotifyFunc) (GossipConf  *conf, 
+				      const gchar *key,
+				      gpointer     user_data);
 
 GType       gossip_conf_get_type        (void) G_GNUC_CONST;
 GossipConf *gossip_conf_get             (void);
@@ -81,6 +84,8 @@ gboolean    gossip_conf_get_http_proxy  (GossipConf            *conf,
 					 gboolean              *use_auth,
 					 gchar                **username,
 					 gchar                **password);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_CONF_H__ */
 

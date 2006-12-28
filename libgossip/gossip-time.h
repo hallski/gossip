@@ -25,6 +25,8 @@
 #include <time.h>
 #include <glib.h>
 
+G_BEGIN_DECLS
+
 /* Note: Always in UTC. */
 typedef long gossip_time_t;
 
@@ -39,6 +41,8 @@ gchar         *gossip_time_to_string_utc   (gossip_time_t  t,
 					    const gchar   *format);
 gchar         *gossip_time_to_string_local (gossip_time_t  t,
 					    const gchar   *format);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_TIME_H__ */
 

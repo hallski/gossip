@@ -21,6 +21,8 @@
 #ifndef __GOSSIP_GEOMETRY_H__
 #define __GOSSIP_GEOMETRY_H__
 
+G_BEGIN_DECLS
+
 void gossip_geometry_save_for_chat        (GossipChat *chat,
 					   gint        x,
 					   gint        y,
@@ -39,5 +41,7 @@ void gossip_geometry_load_for_main_window (gint       *x,
 					   gint       *y,
 					   gint       *w,
 					   gint       *h);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_GEOMETRY_H__ */
