@@ -1,5 +1,10 @@
 2006-12-31  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-accounts-dialog.c: When connecting, accounts dialog
+	shows account to be disconnected, fixes bug #390924.
+
+2006-12-31  Martyn Russell  <martyn@imendio.com>
+
 	* .cvsignore:
 	* libgossip/.cvsignore:
 	* peekaboo/.cvsignore:
