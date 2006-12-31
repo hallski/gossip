@@ -104,6 +104,16 @@ contact_info_dialog_init (void)
 					 gossip_contact_equal,
 					 g_object_unref,
 					 NULL);
+
+	/* Set up a style for the close button with no focus padding. */
+	gtk_rc_parse_string (
+		"style \"gossip-contact-info-link-button-style\"\n"
+		"{\n"
+		"  GtkWidget::focus-padding = 0\n"
+		"  xthickness = 0\n"
+		"  ythickness = 0\n"
+		"}\n"
+		"widget \"*.gossip-contact-info-link-button\" style \"gossip-contact-info-link-button-style\"");
 }
 
 static void
@@ -288,6 +298,9 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		href = gossip_link_button_new (link, str);
 		g_free (link);
 
+		/* Set widget names for style fixes */
+		gtk_widget_set_name (href, "gossip-contact-info-link-button");
+
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
 
@@ -312,6 +325,9 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 
 		href = gossip_link_button_new (str, str);
 
+		/* Set widget names for style fixes */
+		gtk_widget_set_name (href, "gossip-contact-info-link-button");
+
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
 		gtk_container_add (GTK_CONTAINER (alignment), href);
 
@@ -335,6 +351,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		show_personal = TRUE;
 
 		label = gtk_label_new (str);
+		gtk_misc_set_padding (GTK_MISC (label), 1, -1);
 		gtk_label_set_selectable (GTK_LABEL (label), TRUE);
 
 		alignment = gtk_alignment_new (0, 1, 0, 0.5);
@@ -350,7 +367,7 @@ contact_info_dialog_get_vcard_cb (GossipResult   result,
 		gtk_widget_show_all (alignment);
 		gtk_widget_show (dialog->stub_birthday_label);
 	} else {
-		gtk_widget_hide (dialog->stub_birthday_label);
+ 		gtk_widget_hide (dialog->stub_birthday_label); 
 	}
 
 	gtk_widget_hide (dialog->personal_status_hbox);

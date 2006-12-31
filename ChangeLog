@@ -1,5 +1,23 @@
 2006-12-31  Martyn Russell  <martyn@imendio.com>
 
+	* protocols/jabber/gossip-jabber-vcard.c:
+	(gossip_jabber_vcard_set): Don't set xml elements when the strings
+	are empty (e.g. with no birthday set).
+	
+	* ui/main.glade:
+	* src/gossip-contact-info-dialog.c: (contact_info_dialog_init),
+	(contact_info_dialog_get_vcard_cb): Create a style for the link
+	buttons so we have NO padding and it doesn't look silly spacing
+	wise. Make sure the birthday stub label is visible when the
+	birthday is shown.
+	
+	* src/gossip-vcard-dialog.c: Make it possible to NOT save your
+	birthday, since some people may not want this and by default, if
+	you have no birthday, you don't save today's date. Fixes bug
+	#388306.
+
+2006-12-31  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-accounts-dialog.c: When connecting, accounts dialog
 	shows account to be disconnected, fixes bug #390924.
 

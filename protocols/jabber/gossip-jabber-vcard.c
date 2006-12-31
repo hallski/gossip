@@ -273,8 +273,9 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	LmMessageNode      *child;
 	LmMessageHandler   *handler;
 	GossipCallbackData *data;
-	gboolean            result;
 	GossipAvatar       *avatar;
+	const gchar        *str;
+	gboolean            result;
 
 	connection = gossip_jabber_get_connection (jabber);
 
@@ -285,18 +286,36 @@ gossip_jabber_vcard_set (GossipJabber          *jabber,
 	node = lm_message_node_add_child (m->node, "vCard", NULL);
 	lm_message_node_set_attribute (node, "xmlns", "vcard-temp");
 
-	lm_message_node_add_child (node, "FN", gossip_vcard_get_name (vcard));
-	lm_message_node_add_child (node, "NICKNAME",
-				   gossip_vcard_get_nickname (vcard));
-	lm_message_node_add_child (node, "BDAY",
-				   gossip_vcard_get_birthday (vcard));
-	lm_message_node_add_child (node, "URL", gossip_vcard_get_url (vcard));
+	str = gossip_vcard_get_name (vcard);
+	if (!G_STR_EMPTY (str)) {
+		lm_message_node_add_child (node, "FN", str);
+	}
 
-	child = lm_message_node_add_child (node, "EMAIL", NULL);
-	lm_message_node_add_child (child, "USERID", gossip_vcard_get_email (vcard));
+	str = gossip_vcard_get_nickname (vcard);
+	if (!G_STR_EMPTY (str)) {
+		lm_message_node_add_child (node, "NICKNAME", str);
+	}
 
-	lm_message_node_add_child (node, "DESC",
-				   gossip_vcard_get_description (vcard));
+	str = gossip_vcard_get_birthday (vcard);
+	if (!G_STR_EMPTY (str)) {
+		lm_message_node_add_child (node, "BDAY", str);
+	}
+
+	str = gossip_vcard_get_url (vcard);
+	if (!G_STR_EMPTY (str)) {
+		lm_message_node_add_child (node, "URL", str);
+	}
+	
+	str = gossip_vcard_get_email (vcard);
+	if (!G_STR_EMPTY (str)) {
+		child = lm_message_node_add_child (node, "EMAIL", NULL);
+		lm_message_node_add_child (child, "USERID", str);
+	}
+
+	str = gossip_vcard_get_description (vcard);
+	if (!G_STR_EMPTY (str)) {
+		lm_message_node_add_child (node, "DESC", str);
+	}
 
 	avatar = gossip_vcard_get_avatar (vcard);
 	if (avatar != NULL) {

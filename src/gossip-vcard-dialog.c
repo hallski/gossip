@@ -72,6 +72,8 @@ typedef struct {
 	GtkWidget *entry_email;
 
 	GtkWidget *textview_description;
+	GtkWidget *label_birthday;
+	GtkWidget *checkbutton_birthday;
 	GtkWidget *calendar_birthday;
 
 	GtkWidget *button_cancel;
@@ -90,31 +92,33 @@ typedef struct {
 #endif
 } GossipVCardDialog;
 
-static void       vcard_dialog_create_avatar_chooser      (GossipVCardDialog *dialog);
-static void       vcard_dialog_avatar_chooser_response_cb (GtkWidget         *widget,
-							   gint               response,
-							   GossipVCardDialog *dialog);
-static void       vcard_dialog_avatar_clicked_cb          (GtkWidget         *button,
-							   GossipVCardDialog *dialog);
-static void       vcard_dialog_avatar_update_preview_cb   (GtkFileChooser    *chooser,
-							   GossipVCardDialog *dialog);
-static void       vcard_dialog_set_account_to_last        (GossipVCardDialog *dialog);
-static void       vcard_dialog_lookup_start               (GossipVCardDialog *dialog);
-static void       vcard_dialog_lookup_stop                (GossipVCardDialog *dialog);
-static void       vcard_dialog_get_vcard_cb               (GossipResult       result,
-							   GossipVCard       *vcard,
-							   GossipVCardDialog *dialog);
-static void       vcard_dialog_set_vcard                  (GossipVCardDialog *dialog);
-static void       vcard_dialog_set_vcard_cb               (GossipResult       result,
-							   gpointer           user_data);
-static gboolean   vcard_dialog_timeout_cb                 (GossipVCardDialog *dialog);
-static void       vcard_dialog_account_changed_cb         (GtkWidget         *combo_box,
-							   GossipVCardDialog *dialog);
-static void       vcard_dialog_response_cb                (GtkDialog         *widget,
-							   gint               response,
-							   GossipVCardDialog *dialog);
-static void       vcard_dialog_destroy_cb                 (GtkWidget         *widget,
-							   GossipVCardDialog *dialog);
+static void     vcard_dialog_create_avatar_chooser           (GossipVCardDialog *dialog);
+static void     vcard_dialog_avatar_chooser_response_cb      (GtkWidget         *widget,
+							      gint               response,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_avatar_clicked_cb               (GtkWidget         *button,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_avatar_update_preview_cb        (GtkFileChooser    *chooser,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_checkbutton_birthday_toggled_cb (GtkWidget         *togglebutton,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_set_account_to_last             (GossipVCardDialog *dialog);
+static void     vcard_dialog_lookup_start                    (GossipVCardDialog *dialog);
+static void     vcard_dialog_lookup_stop                     (GossipVCardDialog *dialog);
+static void     vcard_dialog_get_vcard_cb                    (GossipResult       result,
+							      GossipVCard       *vcard,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_set_vcard                       (GossipVCardDialog *dialog);
+static void     vcard_dialog_set_vcard_cb                    (GossipResult       result,
+							      gpointer           user_data);
+static gboolean vcard_dialog_timeout_cb                      (GossipVCardDialog *dialog);
+static void     vcard_dialog_account_changed_cb              (GtkWidget         *combo_box,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_response_cb                     (GtkDialog         *widget,
+							      gint               response,
+							      GossipVCardDialog *dialog);
+static void     vcard_dialog_destroy_cb                      (GtkWidget         *widget,
+							      GossipVCardDialog *dialog);
 
 static GossipVCardDialog *dialog = NULL;
 
@@ -307,6 +311,17 @@ vcard_dialog_avatar_update_preview_cb (GtkFileChooser    *chooser,
 }
 
 static void
+vcard_dialog_checkbutton_birthday_toggled_cb (GtkWidget         *togglebutton,
+					      GossipVCardDialog *dialog)
+{
+	gboolean active;
+
+	active = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (togglebutton));
+
+	gtk_widget_set_sensitive (dialog->calendar_birthday, !active);
+}
+
+static void
 vcard_dialog_set_account_to_last (GossipVCardDialog *dialog)
 {
 	g_signal_handlers_block_by_func (dialog->account_chooser,
@@ -373,10 +388,6 @@ vcard_dialog_is_birthday_string (const gchar *date,
 				 guint       *month,
 				 guint       *day)
 {
-	if (G_STR_EMPTY (date)) {
-		return FALSE;
-	}
-	
 	if (sscanf (date, "%04d-%02d-%02d", year, month, day) == 3) {
 		return TRUE;
 	}
@@ -394,6 +405,7 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	const gchar   *str;
 	GossipAvatar  *avatar;
 	guint          year, month, day;
+	gboolean       empty;
 
 	gossip_debug (DEBUG_DOMAIN, "Received VCard response");
 
@@ -415,7 +427,10 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), G_STR_EMPTY (str) ? "" : str);
 
 	str = gossip_vcard_get_birthday (vcard);
-	if (vcard_dialog_is_birthday_string (str, &year, &month, &day)) {
+	empty = G_STR_EMPTY (str);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_birthday), empty);
+	
+	if (!empty && vcard_dialog_is_birthday_string (str, &year, &month, &day)) {
 		gtk_calendar_select_month (GTK_CALENDAR (dialog->calendar_birthday), month - 1, year);
 		gtk_calendar_select_day (GTK_CALENDAR (dialog->calendar_birthday), day);
 	}
@@ -474,8 +489,6 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gchar                *avatar_data;
 	gsize                 avatar_size;
 	GossipAvatar         *avatar;
-	gchar                *date;
-	guint                 year, month, day;
 
 	if (!gossip_app_is_connected ()) {
 		gossip_debug (DEBUG_DOMAIN, "Not connected, not setting VCard");
@@ -490,12 +503,17 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_nickname));
 	gossip_vcard_set_nickname (vcard, str);
 
-	gtk_calendar_get_date (GTK_CALENDAR (dialog->calendar_birthday),
-			       &year, &month, &day);
-	month++;
-	date = g_strdup_printf ("%04d-%02d-%02d", year, month, day);
-	gossip_vcard_set_birthday (vcard, date);
-	g_free (date);
+	if (!gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->checkbutton_birthday))) {
+		gchar *date;
+		guint  year, month, day;
+		
+		gtk_calendar_get_date (GTK_CALENDAR (dialog->calendar_birthday),
+				       &year, &month, &day);
+		month++;
+		date = g_strdup_printf ("%04d-%02d-%02d", year, month, day);
+		gossip_vcard_set_birthday (vcard, date);
+		g_free (date);
+	} 
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_web_site));
 	gossip_vcard_set_url (vcard, str);
@@ -642,6 +660,8 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 				       "entry_web_site", &dialog->entry_web_site,
 				       "entry_email", &dialog->entry_email,
 				       "textview_description", &dialog->textview_description,
+				       "label_birthday", &dialog->label_birthday,
+				       "checkbutton_birthday", &dialog->checkbutton_birthday,
 				       "calendar_birthday", &dialog->calendar_birthday,
 				       "button_cancel", &dialog->button_cancel,
 				       "button_save", &dialog->button_save,
@@ -652,6 +672,8 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			      dialog,
 			      "vcard_dialog", "destroy", vcard_dialog_destroy_cb,
 			      "vcard_dialog", "response", vcard_dialog_response_cb,
+			      "checkbutton_birthday", "toggled", vcard_dialog_checkbutton_birthday_toggled_cb,
+			      "button_image", "clicked", vcard_dialog_avatar_clicked_cb,
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
@@ -659,20 +681,23 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 
 	/* Line up widgets */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-
 	gtk_size_group_add_widget (size_group, dialog->label_account);
 	gtk_size_group_add_widget (size_group, dialog->label_name);
 	gtk_size_group_add_widget (size_group, dialog->label_nickname);
 	gtk_size_group_add_widget (size_group, dialog->label_email);
 	gtk_size_group_add_widget (size_group, dialog->label_web_site);
 	gtk_size_group_add_widget (size_group, dialog->label_description);
+	g_object_unref (size_group);
 
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
+	gtk_size_group_add_widget (size_group, dialog->entry_name);
+	gtk_size_group_add_widget (size_group, dialog->label_birthday);
 	g_object_unref (size_group);
 
 	/* Setup image chooser */
-	g_signal_connect (dialog->button_image, "clicked",
-			  G_CALLBACK (vcard_dialog_avatar_clicked_cb),
-			  dialog);
+/* 	g_signal_connect (dialog->button_image, "clicked", */
+/* 			  G_CALLBACK (vcard_dialog_avatar_clicked_cb), */
+/* 			  dialog); */
 
 	/* Sort out accounts */
 	session = gossip_app_get_session ();
