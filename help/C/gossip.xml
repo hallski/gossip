@@ -2,9 +2,9 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
 "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
   <!ENTITY legal SYSTEM "legal.xml">
-  <!ENTITY appversion "0.18">
-  <!ENTITY manrevision "2.3">
-  <!ENTITY date "November 2006">
+  <!ENTITY appversion "0.21">
+  <!ENTITY manrevision "2.4">
+  <!ENTITY date "December 2006">
   <!ENTITY app "Gossip">
 ]>
 <!-- 
@@ -121,6 +121,16 @@
 		</revdescription>
       </revision>
       <revision>
+                <revnumber>&app; Manual V2.3</revnumber>
+		<date>November 2006</date>
+		<revdescription>
+		        <para role="author">Brian Pepple
+			<email>bpepple@fedoraproject.org</email>
+			</para>
+			<para role="publisher">GNOME Documentation Project</para>
+		</revdescription>
+      </revision>
+      <revision>
                 <revnumber>&app; Manual V2.2</revnumber>
 		<date>June 2006</date>
 		<revdescription>
@@ -164,9 +174,10 @@
     </releaseinfo> 
     <legalnotice> 
       <title>Feedback</title> 
-      <para>To report a bug or make a suggestion regarding the &app; application or
-      this manual, follow the directions in the <ulink url="ghelp:gnome-feedback"
-	  type="help">GNOME Feedback Page</ulink>. 
+      <para>
+        To report a bug or make a suggestion regarding the <application>&app;</application>
+        application or this manual, follow the directions in the Feedback section of the
+	<ulink url="ghelp:user-guide?feedback-bugs" type="help">GNOME User Guide</ulink>.
       </para>
 <!-- Translators may also add here feedback address for translations -->
     </legalnotice> 
@@ -324,7 +335,7 @@
 	<screenshot> 
 	  <mediaobject> 
 	    <imageobject><imagedata
-		fileref="figures/gossip_roster.png" format="PNG"/> 
+		fileref="figures/gossip-roster.png" format="PNG"/> 
 	    </imageobject>
 	    <!-- EPS versions of the figures are not required at the moment. -->
             <!-- 
@@ -345,31 +356,60 @@
     <!-- Include any descriptions of the GUI immediately after the screenshot of the main UI, -->
     <!-- for example, the items on the menubar and on the toolbar. This section is optional. -->
 
-    <para>The &app; window contains the following elements:
+    <para>
+      <xref linkend="gossip-TBL-1"/> describes the components of a browser window.
     </para>
-      <variablelist>
-	<varlistentry>
-	  <term>Menubar.</term>
-	  <listitem>
-	    <para>The menus on the menubar contain all of the commands you needed
-              to connect to servers and manage accounts, contacts, and preferences in  
-	      <application>&app;</application>.
-            </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>Status Drop-Down List. </term>
-	    <listitem>
-	      <para> You can use this selector to change your online state. </para>
-	    </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>Contact List</term>
-	  <listitem>
-	    <para>The Contact List shows all available contacts and their associated statuses.</para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
+    <table frame="topbot" id="gossip-TBL-1">
+      <title>&app; Main Components</title>
+	<tgroup cols="2" colsep="0" rowsep="0">
+	<colspec colname="colspec0" colwidth="29.39*"/>
+	<colspec colname="colspec1" colwidth="70.61*"/>
+	<thead>
+	  <row rowsep="1">
+	    <entry valign="top">
+	      <para>Component</para>
+	    </entry>
+	    <entry valign="top">
+	      <para>Description</para>
+	    </entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry valign="top">
+	      <para>Menubar</para>
+	    </entry>
+	    <entry valign="top">
+	      <para>Contains menus that are used to perform tasks in &app;.</para>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry valign="top">
+	      <para>Status Drop-Down List</para>
+	    </entry>
+	    <entry valign="top">
+	      <para>A drop-down list that allows the user to update their status.</para>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry valign="top">
+	      <para>Account Button</para>
+	    </entry>
+	    <entry valign="top">
+	      <para>Opens the <interface>Accounts</interface> dialog.</para>
+	    </entry>
+	  </row>
+	  <row>
+	    <entry valign="top">
+	      <para>Contact List</para>
+	    </entry>
+	    <entry valign="top">
+	      <para>Shows all available contacts and their associated statuses.</para>
+	    </entry>
+	  </row>
+	  </tbody>
+	</tgroup>
+      </table>
     </sect2>
   </sect1>
 <!-- ================ Usage ================================ -->
@@ -485,7 +525,7 @@
 	<screenshot> 
 	  <mediaobject> 
 	    <imageobject><imagedata
-		fileref="figures/gossip_personal_details.png" format="PNG"/> 
+		fileref="figures/gossip-personal-details.png" format="PNG"/> 
 	    </imageobject>
 	    <!-- EPS versions of the figures are not required at the moment. -->
             <!-- 
@@ -512,6 +552,11 @@
             Select the <guilabel>Account</guilabel> you wish to edit from the 
             drop-down list box.
           </para>
+	  <note>
+	    <para>
+              This drop-down box will only be shown if you have more than one account set-up in &app;.
+            </para>
+	  </note>
 	</listitem>
 	<listitem>
 	  <para>
@@ -538,14 +583,20 @@
 	</listitem>
 	<listitem>
 	  <para>
+	    To add an avatar, click the <guibutton>Avatar</guibutton> image chooser button and
+	    select the image you wish to use.
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
             To add a description about you, edit the contents of the <guilabel>Description</guilabel>
             text box.
           </para>
 	</listitem>
 	<listitem>
 	  <para>
-	    To add an avatar, click the <guibutton>Avatar</guibutton> image chooser button and
-	    select the image you wish to use.
+	    To add your birthday, uncheck the <guilabel>Don't save</guilabel> checkbox in the 
+	    <guilabel>Birthday</guilabel> section, and use the calendar to set your birthday.
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -585,6 +636,11 @@
 	  <para>
 	    Select the <guilabel>Account</guilabel> you wish to add the contact to.
           </para>
+	  <note>
+	    <para>
+              This drop-down box will only be shown if you have more than one account set-up in &app;.
+            </para>
+	  </note>
 	</listitem>
 	<listitem>
 	  <para>
@@ -903,15 +959,14 @@
     <!-- ================ Group Chat Subsection ========================== -->
     <sect2 id="gossip-group-chat-join-new"> 
       <title>Joining A New Group Chat Room</title>
-      <para>To join a new Group Chat Room, choose
+      <para>To join a new Group Chat Room, choose 
         <menuchoice>
-	  <guimenu>Chat</guimenu> 
-	  <guimenuitem>Group Chat</guimenuitem>
+	  <guimenu>Room</guimenu> 
 	  <guimenuitem>Join New</guimenuitem>
 	</menuchoice> from the MenuBar.
       </para>
       <para>
-        This will open the <interface>New Chat Room</interface> dialog, in which
+        This will open the <interface>Join New</interface> dialog, in which
 	the following information will need to be completed:
       </para>
       <itemizedlist>
@@ -919,11 +974,11 @@
 	  <para>
             Select the Jabber account to use from the <guilabel>Account</guilabel> drop-down box.
           </para>
-	</listitem>
-	<listitem>
-	  <para>
-            Enter your <guilabel>Nickname</guilabel>.
-          </para>
+	  <note>
+	    <para>
+              This drop-down box will only be shown if you have more than one account set-up in &app;.
+            </para>
+	  </note>
 	</listitem>
 	<listitem>
 	  <para>
@@ -935,6 +990,11 @@
 	    Enter the <guilabel>Room</guilabel> to join.
 	  </para>
 	</listitem>
+	<listitem>
+	  <para>
+            Enter your <guilabel>Nickname</guilabel>.
+          </para>
+	</listitem>
       </itemizedlist>
       <para>
         After completing the necessary information, click
@@ -942,12 +1002,19 @@
       </para>
     </sect2>
     <!-- ================ Group Chat Subsection ========================== -->
-    <!-- <sect2 id="gossip-group-chat-manage"> 
-      <title>Managing Group chat </title>
-      <para>
-        TODO
+    <sect2 id="gossip-group-chat-manage"> 
+      <title>Managing Favorite Group Chats</title>
+      <para>To manage a users favorite group chats, choose 
+        <menuchoice>
+	  <guimenu>Room</guimenu> 
+	  <guimenuitem>Manage Favorites...</guimenuitem>
+	</menuchoice> from the MenuBar.
       </para>
-    </sect2> -->
+      <para>
+        This will open the <interface>Manage Favorite Rooms</interface> dialog, which
+	will allow the user to edit their favorite chat rooms.
+      </para>
+    </sect2>
     <!-- ================ Group Chat Subsection ========================== -->
     <!-- <sect2 id="gossip-group-chat-join-existing"> 
       <title>Joining A Existing Group Chat </title>
@@ -1219,8 +1286,8 @@
     </para>
     <para>
       To report a bug or make a suggestion regarding this application or
-      this manual, follow the directions in this 
-      <ulink url="ghelp:gnome-feedback"   type="help">document</ulink>.
+      this manual, see the Feedback section of the
+      <ulink url="ghelp:user-guide?feedback-bugs" type="help">GNOME User Guide</ulink>.
     </para>
 
     <para> This program is distributed under the terms of the GNU
