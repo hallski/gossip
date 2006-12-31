@@ -1,3 +1,18 @@
+2006-12-31  Martyn Russell  <martyn@imendio.com>
+
+	* .cvsignore:
+	* libgossip/.cvsignore:
+	* peekaboo/.cvsignore:
+	* peekaboo/data/.cvsignore:
+	* peekaboo/src/.cvsignore:
+	* protocols/.cvsignore:
+	* protocols/jabber/.cvsignore:
+	* src/.cvsignore:
+	* src/sounds/.cvsignore:
+	* ui/.cvsignore:
+	* ui/pixmaps/.cvsignore: Removed .cvsignore files now they are
+	obsolete with the move to svn.
+
 2006-12-28  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: (gossip_chat_window_init),

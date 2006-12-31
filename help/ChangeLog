@@ -1,3 +1,9 @@
+2006-12-31  Martyn Russell  <martyn@imendio.com>
+
+	* .cvsignore:
+	* C/.cvsignore: Removed .cvsignore files now they are obsolete
+	with the move to svn. 
+	
 2006-11-07  Brian Pepple  <bpepple@fedoraproject.org>
 
 	* Makefile.am (DOC_FIGURES): Drop images not being used.
