@@ -1,3 +1,7 @@
+2007-01-01  Martyn Russell  <martyn@imendio.com>
+
+	* POTFILES.in: Updated due to gossip-log.c moving to libgossip/.
+
 2006-12-31  Martyn Russell  <martyn@imendio.com>
 
 	* .cvsignore: Removed .cvsignore files now they are obsolete with
