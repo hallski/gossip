@@ -5,8 +5,8 @@ DOC_MODULE = gossip
 DOC_ENTITIES = legal.xml
 DOC_INCLUDES = 
 DOC_FIGURES = 					\
-	figures/gossip_personal_details.png	\
-	figures/gossip_roster.png		\
+	figures/gossip-personal-details.png	\
+	figures/gossip-roster.png		\
 	figures/gossip-available.png		\
 	figures/gossip-away.png			\
 	figures/gossip-busy.png			\
