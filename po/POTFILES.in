@@ -8,6 +8,7 @@ libgossip/gossip-account.c
 libgossip/gossip-chatroom.c
 libgossip/gossip-chatroom-provider.c
 libgossip/gossip-contact.c
+libgossip/gossip-log.c
 libgossip/gossip-presence.c
 libgossip/gossip-protocol.c
 
@@ -33,7 +34,6 @@ src/gossip-ft-window.c
 src/gossip-galago.c
 src/gossip-group-chat.c
 src/gossip-idle.c
-src/gossip-log.c
 src/gossip-log-window.c
 src/gossip-main.c
 src/gossip-new-chatroom-dialog.c
