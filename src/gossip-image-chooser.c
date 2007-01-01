@@ -208,8 +208,8 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 	new_height = gdk_pixbuf_get_height (pixbuf);
 	new_width = gdk_pixbuf_get_width (pixbuf);
 
-	gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf size "
-		      "(width:%d, height:%d, max width:%d, max height:%d)...",
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Scaling pixbuf size (width:%d, height:%d, max width:%d, max height:%d)...",
 		      new_width, new_height, max_width, max_height);
 
 	if ((max_width <= 0 && max_height <= 0) ||
@@ -220,26 +220,26 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 		/* Scale down */
 		if ((new_width - max_width) > (new_height - max_height)) {
 			scale = (gfloat) max_width / new_width;
-			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf down to %f "
-				      "(width is bigger)",
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Scaling pixbuf down to %f (width is bigger)",
 				      scale);
 		} else {
 			scale = (gfloat) max_height / new_height;
-			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf down to %f "
-				      "(height is bigger)",
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Scaling pixbuf down to %f (height is bigger)",
 				      scale);
 		}
 	} else {
 		/* Scale up */
 		if (new_height > new_width) {
 			scale = (gfloat) new_height / max_height;
-			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf up to %f "
-				      "(height is bigger)",
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Scaling pixbuf up to %f (height is bigger)",
 				      scale);
 		} else {
 			scale = (gfloat) new_width / max_width;
-			gossip_debug (DEBUG_DOMAIN, "Scaling pixbuf up to %f "
-				      "(width is bigger)",
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Scaling pixbuf up to %f (width is bigger)",
 				      scale);
 		}
 	}
@@ -247,7 +247,8 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 	if (scale == 1.0) {
 		scaled = g_object_ref (pixbuf);
 
-		gossip_debug (DEBUG_DOMAIN, "Using width:%d, height:%d",
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Using width:%d, height:%d",
 			      new_width, new_height);
 	} else {
 		new_width *= scale;
@@ -255,7 +256,8 @@ image_chooser_scale_pixbuf (GdkPixbuf *pixbuf,
 		new_width = MIN (new_width, max_width);
 		new_height = MIN (new_height, max_height);
 
-		gossip_debug (DEBUG_DOMAIN, "Using width:%d, height:%d",
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Using width:%d, height:%d",
 			      new_width, new_height);
 
 		scaled = gdk_pixbuf_scale_simple (pixbuf,
@@ -300,10 +302,36 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 	pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
 	if (pixbuf) {
 		GdkPixbuf   *scaled_pixbuf;
+		GError      *error = NULL;
 		gchar       *scaled_data;
 		gsize        scaled_size;
 		const gchar *format;
 
+		/* The image_format is a MIME type (eg image/png) */
+		format = strchr (priv->image_format, '/');
+		if (!format) {
+			g_warning ("Format was unrecognised, could not find '/'");
+			return FALSE;
+		}
+
+		format++;
+
+		/* Scale the image data */
+		scaled_pixbuf = image_chooser_scale_pixbuf (pixbuf,
+							    priv->image_max_width,
+							    priv->image_max_height);
+
+		if (!gdk_pixbuf_save_to_buffer (scaled_pixbuf,
+						&scaled_data,
+						&scaled_size,
+						format,
+						&error, NULL)) {
+			g_warning ("Could not save scaled pixbuf, %s", 
+				   error && error->message ? error->message : "no error given");
+			g_clear_error (&error);
+			return FALSE;
+		}
+		
 		/* Remember pixbuf */
 		if (priv->pixbuf) {
 			g_object_unref (priv->pixbuf);
@@ -311,20 +339,7 @@ image_chooser_set_image_from_data (GossipImageChooser *chooser,
 
 		priv->pixbuf = g_object_ref (pixbuf);
 
-		/* image_format is a MIME type (eg image/png) */
-		format = strchr (priv->image_format, '/') + 1;
-
-		/* Scale the image data */
-		scaled_pixbuf = image_chooser_scale_pixbuf (pixbuf,
-							    priv->image_max_width,
-							    priv->image_max_height);
-
-		gdk_pixbuf_save_to_buffer (scaled_pixbuf,
-					   &scaled_data,
-					   &scaled_size,
-					   format,
-					   NULL, NULL);
-
+		/* Set new image data */
 		g_free (priv->image_data);
 
 		priv->image_data = scaled_data;

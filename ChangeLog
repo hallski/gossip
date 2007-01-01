@@ -1,3 +1,13 @@
+2007-01-01  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-image-chooser.c: (image_chooser_scale_pixbuf),
+	(image_chooser_set_image_from_data): Updated the code here so it
+	is more safe and less susceptible to producing the crash in bug
+	#388033. 
+	
+	* src/gossip-vcard-dialog.c: Don't warn about NULL avatars when we
+	set NO avatar in image chooser. 
+
 2006-12-31  Martyn Russell  <martyn@imendio.com>
 
 	* C/gossip.xml: Updated help to fix bug #391329 (Brian Pepple).

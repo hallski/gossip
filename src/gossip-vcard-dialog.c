@@ -488,7 +488,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	const gchar          *str;
 	gchar                *avatar_data;
 	gsize                 avatar_size;
-	GossipAvatar         *avatar;
+	GossipAvatar         *avatar = NULL;
 
 	if (!gossip_app_is_connected ()) {
 		gossip_debug (DEBUG_DOMAIN, "Not connected, not setting VCard");
@@ -529,8 +529,10 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 
 	gossip_image_chooser_get_image_data (GOSSIP_IMAGE_CHOOSER (dialog->avatar_chooser),
 					     &avatar_data, &avatar_size);
-	avatar = gossip_avatar_new (avatar_data, avatar_size, dialog->avatar_format);
-	gossip_vcard_set_avatar (vcard, avatar);
+	if (avatar_data) {
+		avatar = gossip_avatar_new (avatar_data, avatar_size, dialog->avatar_format);
+		gossip_vcard_set_avatar (vcard, avatar);
+	}
 
 	/* NOTE: if account is NULL, all accounts will get the same vcard */
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
@@ -546,7 +548,10 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	contact = gossip_protocol_get_own_contact (protocol);
 	gossip_contact_set_avatar (GOSSIP_CONTACT(contact), avatar);
 
-	gossip_avatar_unref (avatar);
+	if (avatar) {
+		gossip_avatar_unref (avatar);
+	}
+
 	g_object_unref (account);
 }
 
