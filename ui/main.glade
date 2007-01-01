@@ -5472,7 +5472,7 @@ If you do not want to add an account, simply click on the account you want to co
 			<widget class="GtkLabel" id="label_name">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">Set the alias you want to use for:
-&lt;b&gt;martyn@imendio.com&lt;/b&gt;
+&lt;b&gt;foo@bar.baz&lt;/b&gt;
 
 You can retrieve contact information from the server. </property>
 			  <property name="use_underline">False</property>
