@@ -1,5 +1,13 @@
 2007-01-01  Martyn Russell  <martyn@imendio.com>
 
+	* ui/main.glade: Don't use my name in the personal information
+	dialog by default - must have been left in there from testing.
+
+	* src/gossip-new-chatroom-dialog.c: Removed some unnecessary
+	comments that had been left in the code.
+
+2007-01-01  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-image-chooser.c: (image_chooser_scale_pixbuf),
 	(image_chooser_set_image_from_data): Updated the code here so it
 	is more safe and less susceptible to producing the crash in bug

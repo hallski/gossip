@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
+:D/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * Copyright (C) 2002-2006 Imendio AB
  *
@@ -707,8 +707,6 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 
 		/* Now do the join */
 		chat = gossip_group_chat_new (provider, chatroom);
-
-/* 		g_object_unref (chat); */
 		g_object_unref (chatroom);
 	} else {
 		GList *chatrooms, *l;
@@ -720,8 +718,6 @@ new_chatroom_dialog_join (GossipNewChatroomDialog *dialog)
 			/* Make sure we set the nick */
 			gossip_chatroom_set_nick (chatroom, nick);
 			chat = gossip_group_chat_new (provider, chatroom);
-			
-/* 			g_object_unref (chat); */
 		}
 	}
 
