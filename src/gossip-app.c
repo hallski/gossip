@@ -695,7 +695,7 @@ app_setup (GossipSession *session)
 		gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
 	}
 
-	if (x >= 1 && y >= 1) {
+	if (x >= 0 && y >= 0) {
 		/* Let the window manager position it if we
 		 * don't have good x, y coordinates.
 		 */
@@ -1645,7 +1645,7 @@ gossip_app_toggle_visibility (void)
 			gtk_window_set_default_size (GTK_WINDOW (priv->window), w, h);
 		}
 
-		if (x >= 1 && y >= 1) {
+		if (x >= 0 && y >= 0) {
 			/* Let the window manager position it if we
 			 * don't have good x, y coordinates.
 			 */

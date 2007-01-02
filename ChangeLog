@@ -1,3 +1,9 @@
+2007-01-02  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-app.c: (app_setup), (gossip_app_toggle_visibility):
+	consistently maintain the main window's location, fixes bug #380171
+	(Thomas Andersen).
+
 2007-01-01  Martyn Russell  <martyn@imendio.com>
 
 	* ui/main.glade: Don't use my name in the personal information
