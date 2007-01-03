@@ -1,5 +1,13 @@
 2007-01-03  Richard Hult  <richard@imendio.com>
 
+	* src/gossip-vcard-dialog.c: (vcard_dialog_birthday_parse_string),
+	(vcard_dialog_birthday_string_to_server),
+	(vcard_dialog_get_vcard_cb), (vcard_dialog_set_vcard_cb),
+	(vcard_dialog_set_vcard): Convert the date we get from the server
+	to the locale format before showing it in the UI.
+
+2007-01-03  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-vcard-dialog.c: (gossip_vcard_dialog_show):
 	* ui/main.glade: Add back the sizegroup to make Martyn happy ;)
 

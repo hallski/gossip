@@ -113,7 +113,8 @@ static gboolean   vcard_dialog_birthday_parse_string      (const gchar       *st
 							   gint              *year,
 							   gint              *month,
 							   gint              *day);
-static gchar *    vcard_dialog_birthday_reformat_string   (const gchar       *str);
+static gchar *    vcard_dialog_birthday_string_to_server  (const gchar       *str);
+static gchar *    vcard_dialog_birthday_string_from_server(const gchar       *str);
 static void       vcard_dialog_set_account_to_last        (GossipVCardDialog *dialog);
 static void       vcard_dialog_lookup_start               (GossipVCardDialog *dialog);
 static void       vcard_dialog_lookup_stop                (GossipVCardDialog *dialog);
@@ -364,13 +365,38 @@ vcard_dialog_birthday_parse_string (const gchar *str,
 }
 
 static gchar *
-vcard_dialog_birthday_reformat_string (const gchar *str)
+vcard_dialog_birthday_string_to_server (const gchar *str)
 {
 	gint year, month, day;
 
 	if (vcard_dialog_birthday_parse_string (str, &year, &month, &day)) {
 		return g_strdup_printf ("%04d-%02d-%02d", year, month, day);
 	}
+
+	return NULL;
+}
+
+static gchar *
+vcard_dialog_birthday_string_from_server (const gchar *str)
+{
+	gint         year, month, day;
+	GDate       *date;
+	const gchar *format = "%x"; /* Keep in variable get rid of warning. */
+	gchar        buf[128];
+
+	if (sscanf (str, "%04d-%02d-%02d", &year, &month, &day) != 3) {
+		return NULL;
+	}
+
+	date = g_date_new ();
+	g_date_set_dmy (date, day, month, year);
+
+	if (g_date_strftime (buf, sizeof (buf), format, date) > 0) {
+		g_date_free (date);
+		return g_strdup (buf);
+	}
+
+	g_date_free (date);
 
 	return NULL;
 }
@@ -554,7 +580,13 @@ vcard_dialog_get_vcard_cb (GossipResult       result,
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_nickname), G_STR_EMPTY (str) ? "" : str);
 
 	str = gossip_vcard_get_birthday (vcard);
-	gtk_entry_set_text (GTK_ENTRY (dialog->entry_birthday), G_STR_EMPTY (str) ? "" : str);
+	if (str) {
+		gchar *date;
+
+		date = vcard_dialog_birthday_string_from_server (str);
+		gtk_entry_set_text (GTK_ENTRY (dialog->entry_birthday), G_STR_EMPTY (date) ? "" : date);
+		g_free (date);
+	}
 
 	str = gossip_vcard_get_email (vcard);
 	gtk_entry_set_text (GTK_ENTRY (dialog->entry_email), G_STR_EMPTY (str) ? "" : str);
@@ -626,7 +658,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gossip_vcard_set_nickname (vcard, str);
 
 	str = gtk_entry_get_text (GTK_ENTRY (dialog->entry_birthday));
-	birthday = vcard_dialog_birthday_reformat_string (str);
+	birthday = vcard_dialog_birthday_string_to_server (str);
 	if (birthday) {
 		gossip_vcard_set_birthday (vcard, birthday);
 		g_free (birthday);
