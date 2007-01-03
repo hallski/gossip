@@ -1527,9 +1527,6 @@ chat_window_page_added_cb (GtkNotebook      *notebook,
 
 	/* Get list of chats up to date */
 	priv->chats = g_list_append (priv->chats, chat);
-
-	gtk_widget_grab_focus (child);
-
 }
 
 static void

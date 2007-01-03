@@ -1,3 +1,12 @@
+2007-01-03  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c: 
+	* src/gossip-group-chat.c: Removed all unnecessary grabs, set up
+	the focus chain properly and now make the input text view have
+	the widget flag GTK_HAS_FOCUS set on creation so it automatically
+	gets focus. Fixes bug #387923.
+
 2007-01-03  Richard Hult  <richard@imendio.com>
 
 	* ui/chat.glade: Change a string to make it easier to translate.

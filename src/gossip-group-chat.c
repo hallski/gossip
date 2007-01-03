@@ -1057,10 +1057,6 @@ group_chat_create_ui (GossipGroupChat *chat)
 	group_chat_contacts_setup (chat);
 
 	/* Set widget focus order */
-#if 0
-	list = g_list_append (NULL, GOSSIP_CHAT (chat)->input_text_view);
-	gtk_container_set_focus_chain (GTK_CONTAINER (priv->widget), list);
-#else
 	list = g_list_append (NULL, priv->scrolled_window_input);
 	gtk_container_set_focus_chain (GTK_CONTAINER (priv->vbox_left), list);
 	g_list_free (list);
@@ -1074,9 +1070,6 @@ group_chat_create_ui (GossipGroupChat *chat)
 	list = g_list_append (list, priv->hbox_topic);
 	gtk_container_set_focus_chain (GTK_CONTAINER (priv->widget), list);
 	g_list_free (list);
-#endif
-
-	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
 static void

@@ -166,6 +166,9 @@ gossip_chat_init (GossipChat *chat)
 
 	chat->view = gossip_chat_view_new ();
 	chat->input_text_view = gtk_text_view_new ();
+
+	GTK_WIDGET_SET_FLAGS (chat->input_text_view, GTK_HAS_FOCUS);
+
 	chat->is_first_char = TRUE;
 
 	g_object_set (chat->input_text_view,
@@ -864,7 +867,7 @@ gossip_chat_present (GossipChat *chat)
 		GTK_WINDOW (gossip_chat_window_get_dialog (priv->window)),
 		TRUE);
 
-	gtk_widget_grab_focus (chat->input_text_view);
+ 	gtk_widget_grab_focus (chat->input_text_view); 
 }
 
 gboolean
