@@ -1,5 +1,9 @@
 2007-01-03  Richard Hult  <richard@imendio.com>
 
+	* libgossip/gossip-log.c: Protect GnomeVFS using code with HAVE_GNOME.
+
+2007-01-03  Richard Hult  <richard@imendio.com>
+
 	* src/gossip-vcard-dialog.c: (vcard_dialog_birthday_parse_string),
 	(vcard_dialog_birthday_string_to_server),
 	(vcard_dialog_get_vcard_cb), (vcard_dialog_set_vcard_cb),

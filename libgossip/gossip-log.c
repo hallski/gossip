@@ -121,7 +121,9 @@ static void            log_handlers_notify_all                 (GossipContact   
 								GossipChatroom  *chatroom,
 								GossipMessage   *message);
 static gboolean        log_check_dir                           (gchar          **directory);
+#ifdef HAVE_GNOME
 static gboolean        log_check_is_old_version                (void);
+#endif
 static gchar *         log_get_basedir                         (GossipAccount   *account,
 								const gchar     *log_dir);
 static gchar *         log_get_timestamp_from_message          (GossipMessage   *msg);
@@ -169,6 +171,8 @@ gossip_log_init (GossipSession *session)
 
 	saved_session = g_object_ref (session);
 
+	/* We only support this when running GNOME. */
+#ifdef HAVE_GNOME
 	/* Check for new log protocol version, and if so we fix the
 	 * differences here.
 	 */
@@ -287,6 +291,7 @@ gossip_log_init (GossipSession *session)
 		g_dir_close (dir);
 		g_free (log_directory);
 	}
+#endif /* HAVE_GNOME */
 }
 
 void
@@ -474,6 +479,7 @@ log_check_dir (gchar **directory)
 	return created;
 }
 
+#ifdef HAVE_GNOME
 static gboolean
 log_check_is_old_version (void)
 {
@@ -518,6 +524,7 @@ log_check_is_old_version (void)
 	
 	return old_version;
 }
+#endif /* HAVE_GNOME */
 
 static gchar *
 log_get_basedir (GossipAccount *account,
