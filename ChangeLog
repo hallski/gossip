@@ -1,3 +1,14 @@
+2007-01-03  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c:
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.c: 
+	* ui/group-chat.glade: Fix memory leak with the list we use for
+	the focus chain in the group chat UI setup. Make the focus ring
+	more usable (i.e. allow focus for the topic and the contact list
+	secondary to the actual input scrolled window. Partially fixes for
+	bug #387923. 
+
 2007-01-02  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-app.c: (app_setup), (gossip_app_toggle_visibility):

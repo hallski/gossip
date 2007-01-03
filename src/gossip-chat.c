@@ -850,14 +850,8 @@ gossip_chat_present (GossipChat *chat)
 
 	if (priv->window == NULL) {
 		GossipChatWindow *window;
-		gboolean          for_group_chat;
 
-		for_group_chat = gossip_chat_is_group_chat (chat);
-
-		/* get the default window for either group chats or
-		   normal chats, we do not want to mix them */
 		window = gossip_chat_window_get_default ();
-
 		if (!window) {
 			window = gossip_chat_window_new ();
 		}

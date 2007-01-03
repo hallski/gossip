@@ -613,6 +613,7 @@ chat_window_create_label (GossipChatWindow *window,
 	name_label = gtk_label_new (name);
  	gtk_label_set_ellipsize (GTK_LABEL (name_label), PANGO_ELLIPSIZE_END);
 
+
 	attr_list = pango_attr_list_new ();
 	attr = pango_attr_scale_new (1/1.2);
 	attr->start_index = 0;
@@ -1526,6 +1527,9 @@ chat_window_page_added_cb (GtkNotebook      *notebook,
 
 	/* Get list of chats up to date */
 	priv->chats = g_list_append (priv->chats, chat);
+
+	gtk_widget_grab_focus (child);
+
 }
 
 static void
@@ -1802,14 +1806,14 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 
 		gossip_chat_load_geometry (chat, &x, &y, &w, &h);
 
-		if (x >= 1 && y >= 1) {
+		if (x >= 0 && y >= 0) {
 			/* Let the window manager position it if we
 			 * don't have good x, y coordinates.
 			 */
 			gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
 		}
 
-		if (w >= 1 && h >= 1) {
+		if (w >= 0 && h >= 0) {
 			/* Use the defaults from the glade file if we
 			 * don't have good w, h geometry.
 			 */

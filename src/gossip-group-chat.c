@@ -58,6 +58,7 @@ struct _GossipGroupChatPriv {
 
 	GtkWidget              *widget;
 	GtkWidget              *hpaned;
+	GtkWidget              *vbox_left;
 
 	GtkWidget              *scrolled_window_chat;
 	GtkWidget              *scrolled_window_input;
@@ -303,6 +304,8 @@ gossip_group_chat_init (GossipGroupChat *chat)
 
 	chatview = GOSSIP_CHAT_VIEW (GOSSIP_CHAT (chat)->view);
 	gossip_chat_view_set_is_group_chat (chatview, TRUE);
+
+	group_chat_create_ui (chat);
 }
 
 static void
@@ -987,8 +990,7 @@ group_chat_create_ui (GossipGroupChat *chat)
 {
 	GossipGroupChatPriv *priv;
 	GladeXML            *glade;
-	GtkWidget           *vbox_left;
-	GList               *list;
+ 	GList               *list = NULL; 
 
 	priv = GET_PRIV (chat);
 
@@ -997,7 +999,7 @@ group_chat_create_ui (GossipGroupChat *chat)
 				       NULL,
 				       "group_chat_widget", &priv->widget,
 				       "hpaned", &priv->hpaned,
-				       "vbox_left", &vbox_left,
+				       "vbox_left", &priv->vbox_left,
 				       "scrolled_window_chat", &priv->scrolled_window_chat,
 				       "scrolled_window_input", &priv->scrolled_window_input,
 				       "hbox_topic", &priv->hbox_topic,
@@ -1047,10 +1049,6 @@ group_chat_create_ui (GossipGroupChat *chat)
 			  G_CALLBACK (group_chat_drag_data_received),
 			  chat);
 
-	/* Set widget focus order */
-	list = g_list_append (NULL, GOSSIP_CHAT (chat)->input_text_view);
-	gtk_container_set_focus_chain (GTK_CONTAINER (vbox_left), list);
-
 	/* Add nick name completion */
 	priv->completion = g_completion_new (NULL);
 	g_completion_set_compare (priv->completion,
@@ -1058,7 +1056,26 @@ group_chat_create_ui (GossipGroupChat *chat)
 
 	group_chat_contacts_setup (chat);
 
-	/* Set focus ready to chat */
+	/* Set widget focus order */
+#if 0
+	list = g_list_append (NULL, GOSSIP_CHAT (chat)->input_text_view);
+	gtk_container_set_focus_chain (GTK_CONTAINER (priv->widget), list);
+#else
+	list = g_list_append (NULL, priv->scrolled_window_input);
+	gtk_container_set_focus_chain (GTK_CONTAINER (priv->vbox_left), list);
+	g_list_free (list);
+
+	list = g_list_append (NULL, priv->vbox_left);
+	list = g_list_append (list, priv->scrolled_window_contacts);
+	gtk_container_set_focus_chain (GTK_CONTAINER (priv->hpaned), list);
+	g_list_free (list);
+
+	list = g_list_append (NULL, priv->hpaned);
+	list = g_list_append (list, priv->hbox_topic);
+	gtk_container_set_focus_chain (GTK_CONTAINER (priv->widget), list);
+	g_list_free (list);
+#endif
+
 	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
@@ -2025,9 +2042,7 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 
 	priv->private_chats = NULL;
 
-	group_chat_create_ui (chat);
-
-	g_hash_table_insert (group_chats, GINT_TO_POINTER (id), chat);
+ 	g_hash_table_insert (group_chats, GINT_TO_POINTER (id), chat);
 
 	g_signal_connect (provider, "chatroom-new-message",
 			  G_CALLBACK (group_chat_new_message_cb),
@@ -2055,7 +2070,8 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	 * from the provider by id and if we haven't started the join,
 	 * it officially doesn't exist according to the backend.
 	 */
-	gossip_chat_present (GOSSIP_CHAT (chat));
+	
+ 	gossip_chat_present (GOSSIP_CHAT (chat)); 
 
 	priv->scroll_idle_id = g_idle_add ((GSourceFunc) 
 					   group_chat_scroll_down_idle_func, 
