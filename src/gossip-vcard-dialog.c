@@ -797,6 +797,19 @@ gossip_vcard_dialog_show (GtkWindow *parent)
 			      NULL);
 
 	g_object_add_weak_pointer (G_OBJECT (dialog->dialog), (gpointer) &dialog);
+
+	gossip_glade_setup_size_group (glade,
+				       GTK_SIZE_GROUP_HORIZONTAL,
+				       "label_account",
+				       "label_name",
+				       "label_nickname",
+				       "label_email",
+				       "label_web_site",
+				       "label_birthday",
+				       "label_avatar",
+				       "label_description",
+				       NULL);
+
 	g_object_unref (glade);
 
 	/* Birthday chooser */

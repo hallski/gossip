@@ -2968,7 +2968,7 @@
 			  </child>
 
 			  <child>
-			    <widget class="GtkLabel" id="label601">
+			    <widget class="GtkLabel" id="label_avatar">
 			      <property name="visible">True</property>
 			      <property name="label" translatable="yes">Avatar:</property>
 			      <property name="use_underline">True</property>
