@@ -15,7 +15,7 @@
 	* ui/main.glade: Use a popup button and popup the calendar widget
 	instead of embedding it in the vcard dialog. Also add an entry so
 	you can type in the date instead of going back 20-30 years (since
-	most people are not born yesterday).
+	most people are not born yesterday). Fixes bug #387924.
 
 2007-01-03  Martyn Russell  <martyn@imendio.com>
 
