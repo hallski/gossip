@@ -1,3 +1,7 @@
+2007-01-03  Richard Hult  <richard@imendio.com>
+
+	* ui/chat.glade: Change a string to make it easier to translate.
+
 2007-01-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c:
