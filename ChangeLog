@@ -1,3 +1,17 @@
+2007-01-03  Richard Hult  <richard@imendio.com>
+
+	* src/Makefile.am:
+	* src/gossip-popup-button.c:
+	* src/gossip-popup-button.h: Add new files for a popup button.
+
+	* src/gossip-marshal.list: Add marshallers for the popup button.
+
+	* src/gossip-vcard-dialog.c:
+	* ui/main.glade: Use a popup button and popup the calendar widget
+	instead of embedding it in the vcard dialog. Also add an entry so
+	you can type in the date instead of going back 20-30 years (since
+	most people are not born yesterday).
+
 2007-01-03  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c:

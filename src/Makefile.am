@@ -67,6 +67,7 @@ gossip_SOURCES = 				                        	\
 	gossip-marshal-main.c                                                   \
 	gossip-new-chatroom-dialog.c       gossip-new-chatroom-dialog.h		\
 	gossip-new-message-dialog.c        gossip-new-message-dialog.h		\
+	gossip-popup-button.c              gossip-popup-button.h		\
 	gossip-presence-chooser.c          gossip-presence-chooser.h        	\
 	gossip-preferences.c               gossip-preferences.h	        	\
 	gossip-private-chat.c              gossip-private-chat.h               	\
