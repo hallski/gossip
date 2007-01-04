@@ -1099,7 +1099,7 @@ msgstr "Onglet _précédent"
 
 #: ../ui/chat.glade.h:23
 msgid "_Room"
-msgstr "_Salle :"
+msgstr "_Salle"
 
 #: ../ui/chat.glade.h:24
 msgid "_Show Contacts"
