@@ -1697,11 +1697,11 @@ gossip_session_get_nickname (GossipSession *session,
 }
 
 void
-gossip_session_register_account (GossipSession           *session,
-				 GossipAccount           *account,
-				 GossipVCard             *vcard,
-				 GossipRegisterCallback   callback,
-				 gpointer                 user_data)
+gossip_session_register_account (GossipSession             *session,
+				 GossipAccount             *account,
+				 GossipVCard               *vcard,
+				 GossipResultErrorCallback  callback,
+				 gpointer                   user_data)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
@@ -1737,6 +1737,45 @@ gossip_session_register_cancel (GossipSession *session,
 	protocol = g_hash_table_lookup (priv->accounts, account);
 
 	gossip_protocol_register_cancel (protocol);
+}
+
+void
+gossip_session_change_password (GossipSession             *session, 
+				GossipAccount             *account,
+				const gchar               *new_password,
+				GossipResultErrorCallback  callback,
+				gpointer                   user_data)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+	g_return_if_fail (new_password != NULL);
+	g_return_if_fail (callback != NULL);
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, account);
+
+	gossip_protocol_change_password (protocol, new_password, callback, user_data);
+}
+
+void
+gossip_session_change_password_cancel (GossipSession *session,
+				       GossipAccount *account)
+{
+	GossipSessionPriv *priv;
+	GossipProtocol    *protocol;
+
+	g_return_if_fail (GOSSIP_IS_SESSION (session));
+	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
+
+	priv = GET_PRIV (session);
+
+	protocol = g_hash_table_lookup (priv->accounts, account);
+
+	gossip_protocol_change_password_cancel (protocol);
 }
 
 gboolean

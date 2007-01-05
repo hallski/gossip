@@ -53,7 +53,6 @@ typedef struct {
 
 	GtkWidget *button_remove;
 	GtkWidget *button_connect;
-	GtkWidget *button_register;
 
 	GtkWidget *label_name;
 	GtkWidget *entry_name;
@@ -127,12 +126,6 @@ static void           accounts_dialog_protocol_error_cb          (GossipSession 
 								  GossipProtocol        *protocol,
 								  GossipAccount         *account,
 								  GError                *error,
-								  GossipAccountsDialog  *dialog);
-static void           accounts_dialog_register_cancel            (GossipAccountsDialog  *dialog);
-static void           accounts_dialog_register_cb                (GossipResult           result,
-								  GError                *error,
-								  GossipAccountsDialog  *dialog);
-static void           accounts_dialog_button_register_clicked_cb (GtkWidget             *button,
 								  GossipAccountsDialog  *dialog);
 static void           accounts_dialog_button_add_clicked_cb      (GtkWidget             *button,
 								  GossipAccountsDialog  *dialog);
@@ -348,8 +341,6 @@ accounts_dialog_update_connect_button (GossipAccountsDialog *dialog)
 
 	gtk_button_set_label (GTK_BUTTON (dialog->button_connect), label);
 	gtk_button_set_image (GTK_BUTTON (dialog->button_connect), image);
-
-	gtk_widget_set_sensitive (dialog->button_register, !is_connected && !is_connecting);
 }
 
 static void
@@ -369,7 +360,6 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 		gtk_widget_hide (dialog->vbox_details);
 
 		gtk_widget_set_sensitive (dialog->button_connect, FALSE);
-		gtk_widget_set_sensitive (dialog->button_register, FALSE);
 		gtk_widget_set_sensitive (dialog->button_remove, FALSE);
 
 		view = GTK_TREE_VIEW (dialog->treeview);
@@ -397,9 +387,6 @@ accounts_dialog_update_account (GossipAccountsDialog *dialog,
 	} else {
 		gtk_widget_hide (dialog->hbox_no_account);
 		gtk_widget_show (dialog->vbox_details);
-
-		/* FIXME: Should have some way to know if we _CAN_ register */
-		gtk_widget_set_sensitive (dialog->button_register, TRUE);
 
 		switch (gossip_account_get_type (account)) {
 		case GOSSIP_ACCOUNT_TYPE_JABBER:
@@ -1104,115 +1091,6 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 }
 
 static void
-accounts_dialog_register_cancel (GossipAccountsDialog *dialog)
-{
-	GossipSession *session;
-	GossipAccount *account;
-
-	if (!dialog->registering) {
-		return;
-	}
-
-	session = gossip_app_get_session ();
-	account = accounts_dialog_model_get_selected (dialog);
-	gossip_session_register_cancel (session,
-					account);
-
-	dialog->registering = FALSE;
-	g_object_unref (account);
-}
-
-static void
-accounts_dialog_register_cb (GossipResult          result,
-			     GError               *error,
-			     GossipAccountsDialog *dialog)
-{
-	GtkWidget   *md;
-	const gchar *str;
-
-	dialog->registering = FALSE;
-
-	/* FIXME: Not sure how to do this right, but really we
-	 * shouldn't show the register button as sensitive if we have
-	 * just registered.
-	 */
-	gtk_widget_set_sensitive (dialog->button_register, TRUE);
-
-	if (result == GOSSIP_RESULT_OK) {
-		str = _("Successfully registered your new account settings.");
-		md = gtk_message_dialog_new (GTK_WINDOW (dialog->window),
-					     GTK_DIALOG_MODAL,
-					     GTK_MESSAGE_INFO,
-					     GTK_BUTTONS_CLOSE,
-					     str);
-
-		str = _("You should now be able to connect to your new account.");
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md), str);
-	} else {
-		str = _("Failed to register your new account settings.");
-		md = gtk_message_dialog_new (GTK_WINDOW (dialog->window),
-					     GTK_DIALOG_MODAL,
-					     GTK_MESSAGE_ERROR,
-					     GTK_BUTTONS_CLOSE,
-					     str);
-		
-		if (error && error->message) {
-			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
-								  error->message);
-		}
-	}
-
-	g_signal_connect_swapped (md, "response", 
-				  G_CALLBACK (gtk_widget_destroy),
-				  md);
-
-	gtk_widget_show_all (md);
-}
-
-static void
-accounts_dialog_button_register_clicked_cb (GtkWidget            *button,
-					    GossipAccountsDialog *dialog)
-{
-	GossipSession *session;
-	GossipAccount *account;
-	GossipVCard   *vcard;
-	gchar         *nickname;
-	const gchar   *name;
-	const gchar   *last_part;
-
-	dialog->registering = TRUE;
-	gtk_widget_set_sensitive (dialog->button_register, FALSE);
-
-	session = gossip_app_get_session ();
-	account = accounts_dialog_model_get_selected (dialog);
-	vcard = gossip_vcard_new ();
-	name = gossip_account_get_name (account);
-
-	last_part = strstr (name, " ");
-	if (last_part) {
-		gint len;
-
-		len = last_part - name;
-		nickname = g_strndup (name, len);
-	} else {
-		nickname = g_strdup (name);
-	}
-
-	gossip_vcard_set_name (vcard, name);
-	gossip_vcard_set_nickname (vcard, nickname);
-
-	g_free (nickname);
-
-	gossip_session_register_account (session,
-					 account,
-					 vcard,
-					 (GossipRegisterCallback) accounts_dialog_register_cb,
-					 dialog);
-
-	g_object_unref (account);
-}
-
-static void
 accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 				       GossipAccountsDialog *dialog)
 {
@@ -1406,8 +1284,6 @@ accounts_dialog_destroy_cb (GtkWidget            *widget,
 	GossipAccountManager *manager;
 	GtkTreeModel         *model;
 
-	accounts_dialog_register_cancel (dialog);
-
 	session = gossip_app_get_session ();
 	manager = gossip_session_get_account_manager (session);
 
@@ -1481,7 +1357,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 				       "button_remove", &dialog->button_remove,
 				       "button_connect", &dialog->button_connect,
 				       "button_close", &button_close,
-				       "button_register", &dialog->button_register,
 				       "label_name", &dialog->label_name,
 				       "entry_name", &dialog->entry_name,
 				       "checkbutton_connect", &dialog->checkbutton_connect,
@@ -1493,7 +1368,6 @@ gossip_accounts_dialog_show (GossipAccount *account)
 			      "accounts_dialog", "destroy", accounts_dialog_destroy_cb,
 			      "accounts_dialog", "response", accounts_dialog_response_cb,
 			      "button_connect", "clicked", accounts_dialog_button_connect_clicked_cb,
-			      "button_register", "clicked", accounts_dialog_button_register_clicked_cb,
 			      "button_add", "clicked", accounts_dialog_button_add_clicked_cb,
 			      "button_remove", "clicked", accounts_dialog_button_remove_clicked_cb,
 			      "treeview", "row-activated", accounts_dialog_treeview_row_activated_cb,

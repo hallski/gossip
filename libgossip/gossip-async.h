@@ -30,7 +30,7 @@ typedef enum {
 	GOSSIP_RESULT_OK,
 	GOSSIP_RESULT_ERROR_INVALID_REPLY,
 	GOSSIP_RESULT_ERROR_TIMEOUT,
-	GOSSIP_RESULT_ERROR_REGISTRATION,
+	GOSSIP_RESULT_ERROR_FAILED,
 	GOSSIP_RESULT_ERROR_UNAVAILABLE
 } GossipResult;
 
@@ -42,20 +42,20 @@ typedef struct {
 	gpointer data3;
 } GossipCallbackData;
 
-typedef void (*GossipRegisterCallback) (GossipResult       result,
-					GError            *error,
-					gpointer           user_data);
+typedef void (*GossipResultCallback)      (GossipResult       result,
+					   gpointer           user_data);
 
-typedef void (*GossipVCardCallback)    (GossipResult       result,
-					GossipVCard       *vcard,
-					gpointer           user_data);
+typedef void (*GossipResultErrorCallback) (GossipResult       result,
+					   GError            *error,
+					   gpointer           user_data);
 
-typedef void (*GossipVersionCallback)  (GossipResult       result,
-					GossipVersionInfo *info,
-					gpointer           user_data);
+typedef void (*GossipVCardCallback)       (GossipResult       result,
+					   GossipVCard       *vcard,
+					   gpointer           user_data);
 
-typedef void (*GossipResultCallback)   (GossipResult       result,
-					gpointer           user_data);
+typedef void (*GossipVersionCallback)     (GossipResult       result,
+					   GossipVersionInfo *info,
+					   gpointer           user_data);
 
 G_END_DECLS
 

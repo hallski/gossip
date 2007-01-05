@@ -652,11 +652,11 @@ gossip_protocol_get_version (GossipProtocol         *protocol,
 }
 
 void
-gossip_protocol_register_account (GossipProtocol          *protocol,
-				  GossipAccount           *account,
-				  GossipVCard             *vcard,
-				  GossipRegisterCallback   callback,
-				  gpointer                 user_data)
+gossip_protocol_register_account (GossipProtocol            *protocol,
+				  GossipAccount             *account,
+				  GossipVCard               *vcard,
+				  GossipResultErrorCallback  callback,
+				  gpointer                   user_data)
 {
 	GossipProtocolClass *klass;
 
@@ -680,6 +680,38 @@ gossip_protocol_register_cancel (GossipProtocol *protocol)
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->register_cancel) {
 		klass->register_cancel (protocol);
+	}
+}
+
+void
+gossip_protocol_change_password (GossipProtocol            *protocol,
+				 const gchar               *new_password,
+				 GossipResultErrorCallback  callback,
+				 gpointer                   user_data)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+	g_return_if_fail (new_password != NULL);
+	g_return_if_fail (callback != NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->change_password) {
+		klass->change_password (protocol, new_password,
+					callback, user_data);
+	}
+}
+
+void
+gossip_protocol_change_password_cancel (GossipProtocol *protocol)
+{
+	GossipProtocolClass *klass;
+
+	g_return_if_fail (GOSSIP_IS_PROTOCOL (protocol));
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->change_password_cancel) {
+		klass->change_password_cancel (protocol);
 	}
 }
 

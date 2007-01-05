@@ -1,3 +1,17 @@
+2007-01-05  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-async.h:
+	* libgossip/gossip-protocol.[ch]:
+	* libgossip/gossip-session.[ch]:
+	* protocols/jabber/gossip-jabber.c:
+	* src/gossip-account-widget-jabber.c: 
+	* ui/main.glade: Make it possible to change your Jabber password,
+	fixed bug #142085. 
+	
+	* src/gossip-accounts-dialog.c: Move the "Register" button
+	to the protocol specific widget page.
+	
+
 2007-01-03  Richard Hult  <richard@imendio.com>
 
 	* libgossip/gossip-log.c: Protect GnomeVFS using code with HAVE_GNOME.

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Martyn Russell <martyn@imendio.com>
+ * Copyright (C) 2005-2007 Martyn Russell <martyn@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,6 +21,9 @@
 #include <config.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
@@ -40,7 +43,10 @@ typedef struct {
 
 	GtkWidget     *vbox_settings;
 
+	GtkWidget     *button_register;
+
 	GtkWidget     *button_forget;
+	GtkWidget     *button_change_password;
 
 	GtkWidget     *entry_id;
 	GtkWidget     *entry_resource;
@@ -49,26 +55,51 @@ typedef struct {
 	GtkWidget     *entry_port;
 
 	GtkWidget     *checkbutton_ssl;
+
+	gboolean       registering;
+	gboolean       changing_password;
 } GossipAccountWidgetJabber;
 
-static void     account_widget_jabber_save                      (GossipAccountWidgetJabber *settings);
-static gboolean account_widget_jabber_entry_focus_cb            (GtkWidget                 *widget,
-								 GdkEventFocus             *event,
-								 GossipAccountWidgetJabber *settings);
-static void     account_widget_jabber_entry_changed_cb          (GtkWidget                 *widget,
-								 GossipAccountWidgetJabber *settings);
-static void     account_widget_jabber_checkbutton_toggled_cb    (GtkWidget                 *widget,
-								 GossipAccountWidgetJabber *settings);
-static void     account_widget_jabber_entry_port_insert_text_cb (GtkEditable               *editable,
-								 gchar                     *new_text,
-								 gint                       len,
-								 gint                      *position,
-								 GossipAccountWidgetJabber *settings);
-static void     account_widget_jabber_button_forget_clicked_cb  (GtkWidget                 *button,
-								 GossipAccountWidgetJabber *settings);
-static void     account_widget_jabber_destroy_cb                (GtkWidget                 *widget,
-								 GossipAccountWidgetJabber *settings);
-static void     account_widget_jabber_setup                     (GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_save                              (GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_protocol_connected_cb             (GossipSession             *session,
+									 GossipAccount             *account,
+									 GossipProtocol            *protocol,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_protocol_disconnected_cb          (GossipSession             *session,
+									 GossipAccount             *account,
+									 GossipProtocol            *protocol,
+									 gint                       reason,
+									 GossipAccountWidgetJabber *settings);
+static gboolean account_widget_jabber_entry_focus_cb                    (GtkWidget                 *widget,
+									 GdkEventFocus             *event,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_entry_changed_cb                  (GtkWidget                 *widget,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_checkbutton_toggled_cb            (GtkWidget                 *widget,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_entry_port_insert_text_cb         (GtkEditable               *editable,
+									 gchar                     *new_text,
+									 gint                       len,
+									 gint                      *position,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_register_cancel                   (GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_register_cb                       (GossipResult               result,
+									 GError                    *error,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_button_register_clicked_cb        (GtkWidget                 *button,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_button_forget_clicked_cb          (GtkWidget                 *button,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_cp_entry_activate_cb              (GtkWidget                 *entry,
+									 GtkDialog                 *dialog);
+static void     account_widget_jabber_cp_response_cb                    (GtkWidget                 *dialog,
+									 gint                       response,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_button_change_password_clicked_cb (GtkWidget                 *button,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_destroy_cb                        (GtkWidget                 *widget,
+									 GossipAccountWidgetJabber *settings);
+static void     account_widget_jabber_setup                             (GossipAccountWidgetJabber *settings);
 
 static void
 account_widget_jabber_save (GossipAccountWidgetJabber *settings)
@@ -107,6 +138,43 @@ account_widget_jabber_save (GossipAccountWidgetJabber *settings)
 	gossip_account_manager_store (manager);
 
 	settings->account_changed = FALSE;
+}
+
+static void
+account_widget_jabber_protocol_connected_cb (GossipSession             *session,
+					     GossipAccount             *account,
+					     GossipProtocol            *protocol,
+					     GossipAccountWidgetJabber *settings)
+{
+	if (gossip_account_equal (account, settings->account)) {
+		gtk_widget_set_sensitive (settings->button_register, FALSE);
+		gtk_widget_set_sensitive (settings->button_change_password, TRUE);
+	}
+}
+
+static void
+account_widget_jabber_protocol_disconnected_cb (GossipSession             *session,
+						GossipAccount             *account,
+						GossipProtocol            *protocol,
+						gint                       reason,
+						GossipAccountWidgetJabber *settings)
+{
+	if (gossip_account_equal (account, settings->account)) {
+		gtk_widget_set_sensitive (settings->button_register, TRUE);
+		gtk_widget_set_sensitive (settings->button_change_password, FALSE);
+	}
+}
+
+static void
+account_widget_jabber_protocol_error_cb (GossipSession             *session,
+					 GossipProtocol            *protocol,
+					 GossipAccount             *account,
+					 GError                    *error,
+					 GossipAccountWidgetJabber *settings)
+{
+	if (gossip_account_equal (account, settings->account)) {
+		/* FIXME: HANDLE ERRORS */
+	}	
 }
 
 static gboolean
@@ -297,6 +365,119 @@ account_widget_jabber_entry_port_insert_text_cb (GtkEditable               *edit
 }
 
 static void
+account_widget_jabber_register_cancel (GossipAccountWidgetJabber *settings)
+{
+	GossipSession *session;
+
+	if (!settings->registering) {
+		return;
+	}
+
+	session = gossip_app_get_session ();
+	gossip_session_register_cancel (session, settings->account);
+
+	settings->registering = FALSE;
+	gtk_widget_set_sensitive (settings->button_register, TRUE);
+	gtk_widget_set_sensitive (settings->vbox_settings, TRUE);
+}
+
+static void
+account_widget_jabber_register_cb (GossipResult               result,
+				   GError                    *error,
+				   GossipAccountWidgetJabber *settings)
+{
+	GtkWidget   *toplevel;
+	GtkWidget   *md;
+	const gchar *str;
+
+	settings->registering = FALSE;
+
+	/* FIXME: Not sure how to do this right, but really we
+	 * shouldn't show the register button as sensitive if we have
+	 * just registered.
+	 */
+	gtk_widget_set_sensitive (settings->button_register, TRUE);
+	gtk_widget_set_sensitive (settings->vbox_settings, TRUE);
+
+	toplevel = gtk_widget_get_toplevel (settings->vbox_settings);
+	if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
+	    GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
+		toplevel = NULL;
+	}
+	
+	if (result == GOSSIP_RESULT_OK) {
+		str = _("Successfully registered your new account settings.");
+		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_INFO,
+					     GTK_BUTTONS_CLOSE,
+					     str);
+
+		str = _("You should now be able to connect to your new account.");
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md), str);
+	} else {
+		str = _("Failed to register your new account settings.");
+		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_ERROR,
+					     GTK_BUTTONS_CLOSE,
+					     str);
+		
+		if (error && error->message) {
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
+								  error->message);
+		}
+	}
+
+	g_signal_connect_swapped (md, "response", 
+				  G_CALLBACK (gtk_widget_destroy),
+				  md);
+
+	gtk_widget_show_all (md);
+}
+
+static void
+account_widget_jabber_button_register_clicked_cb (GtkWidget                 *button,
+						  GossipAccountWidgetJabber *settings)
+{
+	GossipSession *session;
+	GossipVCard   *vcard;
+	gchar         *nickname;
+	const gchar   *name;
+	const gchar   *last_part;
+
+	settings->registering = TRUE;
+	gtk_widget_set_sensitive (settings->button_register, FALSE);
+	gtk_widget_set_sensitive (settings->vbox_settings, FALSE);
+
+	session = gossip_app_get_session ();
+	vcard = gossip_vcard_new ();
+	name = gossip_account_get_name (settings->account);
+
+	last_part = strstr (name, " ");
+	if (last_part) {
+		gint len;
+
+		len = last_part - name;
+		nickname = g_strndup (name, len);
+	} else {
+		nickname = g_strdup (name);
+	}
+
+	gossip_vcard_set_name (vcard, name);
+	gossip_vcard_set_nickname (vcard, nickname);
+
+	g_free (nickname);
+
+	gossip_session_register_account (session,
+					 settings->account,
+					 vcard,
+					 (GossipResultErrorCallback) 
+					 account_widget_jabber_register_cb,
+					 settings);
+}
+
+static void
 account_widget_jabber_button_forget_clicked_cb (GtkWidget                 *button,
 						GossipAccountWidgetJabber *settings)
 {
@@ -313,12 +494,187 @@ account_widget_jabber_button_forget_clicked_cb (GtkWidget                 *butto
 }
 
 static void
+account_widget_jabber_change_password_cancel (GossipAccountWidgetJabber *settings)
+{
+	GossipSession *session;
+
+	if (!settings->changing_password) {
+		return;
+	}
+
+	session = gossip_app_get_session ();
+	gossip_session_change_password_cancel (session, settings->account);
+
+	settings->changing_password = FALSE;
+	gtk_widget_set_sensitive (settings->button_change_password, TRUE);
+	gtk_widget_set_sensitive (settings->vbox_settings, TRUE);
+}
+
+static void
+account_widget_jabber_change_password_cb (GossipResult               result,
+					  GError                    *error,
+					  GossipAccountWidgetJabber *settings)
+{
+	GtkWidget   *toplevel;
+	GtkWidget   *md;
+	const gchar *str;
+
+	settings->changing_password = FALSE;
+
+	/* FIXME: Not sure how to do this right, but really we
+	 * shouldn't show the register button as sensitive if we have
+	 * just registered.
+	 */
+	gtk_widget_set_sensitive (settings->button_change_password, TRUE);
+	gtk_widget_set_sensitive (settings->vbox_settings, TRUE);
+
+	toplevel = gtk_widget_get_toplevel (settings->vbox_settings);
+	if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
+	    GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
+		toplevel = NULL;
+	}
+	
+	if (result == GOSSIP_RESULT_OK) {
+		str = _("Successfully changed your account password.");
+		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_INFO,
+					     GTK_BUTTONS_CLOSE,
+					     str);
+
+		str = _("You should now be able to connect with your new password.");
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md), str);
+	} else {
+		str = _("Failed to change your account password.");
+		md = gtk_message_dialog_new (GTK_WINDOW (toplevel),
+					     GTK_DIALOG_MODAL,
+					     GTK_MESSAGE_ERROR,
+					     GTK_BUTTONS_CLOSE,
+					     str);
+		
+		if (error && error->message) {
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (md),
+								  error->message);
+		}
+	}
+
+	g_signal_connect_swapped (md, "response", 
+				  G_CALLBACK (gtk_widget_destroy),
+				  md);
+
+	gtk_widget_show_all (md);
+}
+
+static void
+account_widget_jabber_cp_entry_activate_cb (GtkWidget *entry,
+					    GtkDialog *dialog)
+{
+	gtk_dialog_response (dialog, GTK_RESPONSE_OK);
+}
+
+static void
+account_widget_jabber_cp_response_cb (GtkWidget                 *dialog,
+				      gint                       response,
+				      GossipAccountWidgetJabber *settings)
+{
+	if (response == GTK_RESPONSE_OK) {
+		GossipSession *session;
+		GtkWidget     *entry;
+		const gchar   *new_password;
+
+		entry = g_object_get_data (G_OBJECT (dialog), "entry");
+		new_password = gtk_entry_get_text (GTK_ENTRY (entry));
+		
+		settings->changing_password = TRUE;
+		gtk_widget_set_sensitive (settings->button_change_password, FALSE);
+		gtk_widget_set_sensitive (settings->vbox_settings, FALSE);
+
+		session = gossip_app_get_session ();
+		gossip_session_change_password (session,
+						settings->account,
+						new_password,
+						(GossipResultErrorCallback)
+						account_widget_jabber_change_password_cb,
+						settings);
+	}
+
+	gtk_widget_destroy (dialog);
+}
+
+static void
+account_widget_jabber_button_change_password_clicked_cb (GtkWidget                 *button,
+							 GossipAccountWidgetJabber *settings)
+{
+	GtkWidget *toplevel;
+	GtkWidget *dialog;
+	GtkWidget *entry;
+	GtkWidget *hbox;
+	gchar     *str;
+
+	toplevel = gtk_widget_get_toplevel (settings->vbox_settings);
+	if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
+	    GTK_WIDGET_TYPE (toplevel) != GTK_TYPE_WINDOW) {
+		toplevel = NULL;
+	}
+
+	/* Dialog here to get new password from user */
+	str = g_strdup_printf ("<b>%s</b>", gossip_account_get_id (settings->account));
+	dialog = gtk_message_dialog_new (GTK_WINDOW (toplevel),
+					 0,
+					 GTK_MESSAGE_QUESTION,
+					 GTK_BUTTONS_OK_CANCEL,
+					 _("Please enter a new password for this account:\n%s"),
+					 str);
+
+	g_free (str);
+
+	hbox = gtk_hbox_new (FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox),
+			    hbox, FALSE, TRUE, 4);
+
+	entry = gtk_entry_new ();
+	gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+	gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 4);
+
+	g_object_set (GTK_MESSAGE_DIALOG (dialog)->label, "use-markup", TRUE, NULL);
+	g_object_set_data (G_OBJECT (dialog), "entry", entry);
+
+	g_signal_connect (entry, "activate",
+			  G_CALLBACK (account_widget_jabber_cp_entry_activate_cb),
+			  dialog);
+	g_signal_connect (dialog, "response",
+			  G_CALLBACK (account_widget_jabber_cp_response_cb),
+			  settings);
+
+	gtk_widget_show_all (dialog);
+}
+
+static void
 account_widget_jabber_destroy_cb (GtkWidget                 *widget,
 				  GossipAccountWidgetJabber *settings)
 {
+	GossipSession *session;
+
+	account_widget_jabber_register_cancel (settings);
+	account_widget_jabber_change_password_cancel (settings);
+
 	if (settings->account_changed) {
  		account_widget_jabber_save (settings); 
 	}
+
+	session = gossip_app_get_session ();
+
+	g_signal_handlers_disconnect_by_func (session,
+					      account_widget_jabber_protocol_connected_cb,
+					      settings);
+
+	g_signal_handlers_disconnect_by_func (session,
+					      account_widget_jabber_protocol_disconnected_cb,
+					      settings);
+
+	g_signal_handlers_disconnect_by_func (session,
+					      account_widget_jabber_protocol_error_cb,
+					      settings);
 
 	g_object_unref (settings->account);
 	g_free (settings);
@@ -373,6 +729,7 @@ GtkWidget *
 gossip_account_widget_jabber_new (GossipAccount *account,
 				  GtkWidget     *label_name)
 {
+	GossipSession             *session;
 	GossipAccountWidgetJabber *settings;
 	GladeXML                  *glade;
 	GtkSizeGroup              *size_group;
@@ -386,6 +743,9 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 				       "vbox_jabber_settings",
 				       NULL,
 				       "vbox_jabber_settings", &settings->vbox_settings,
+				       "button_register", &settings->button_register,
+				       "button_forget", &settings->button_forget,
+				       "button_change_password", &settings->button_change_password,
 				       "label_id", &label_id,
 				       "label_password", &label_password,
 				       "label_resource", &label_resource,
@@ -397,7 +757,6 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 				       "entry_password", &settings->entry_password,
 				       "entry_port", &settings->entry_port,
 				       "checkbutton_ssl", &settings->checkbutton_ssl,
-				       "button_forget", &settings->button_forget,
 				       NULL);
 
 	account_widget_jabber_setup (settings);
@@ -405,6 +764,9 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 	gossip_glade_connect (glade, 
 			      settings,
 			      "vbox_jabber_settings", "destroy", account_widget_jabber_destroy_cb,
+			      "button_register", "clicked", account_widget_jabber_button_register_clicked_cb,
+			      "button_forget", "clicked", account_widget_jabber_button_forget_clicked_cb,
+			      "button_change_password", "clicked", account_widget_jabber_button_change_password_clicked_cb,
 			      "entry_id", "changed", account_widget_jabber_entry_changed_cb,
 			      "entry_password", "changed", account_widget_jabber_entry_changed_cb,
 			      "entry_resource", "changed", account_widget_jabber_entry_changed_cb,
@@ -417,7 +779,6 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 			      "entry_port", "focus-out-event", account_widget_jabber_entry_focus_cb,
 			      "entry_port", "insert_text", account_widget_jabber_entry_port_insert_text_cb,
 			      "checkbutton_ssl", "toggled", account_widget_jabber_checkbutton_toggled_cb,
-			      "button_forget", "clicked", account_widget_jabber_button_forget_clicked_cb,
 			      NULL);
 
 	g_object_unref (glade);
@@ -441,6 +802,21 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 	}
 
 	g_object_unref (size_group);
+
+	/* Set up protocol signals */
+	session = gossip_app_get_session ();
+
+	g_signal_connect (session, "protocol-connected",
+			  G_CALLBACK (account_widget_jabber_protocol_connected_cb),
+			  settings);
+
+	g_signal_connect (session, "protocol-disconnected",
+			  G_CALLBACK (account_widget_jabber_protocol_disconnected_cb),
+			  settings);
+
+	g_signal_connect (session, "protocol-error",
+			  G_CALLBACK (account_widget_jabber_protocol_error_cb),
+			  settings);
 
 	return settings->vbox_settings;
 }

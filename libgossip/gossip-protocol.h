@@ -125,9 +125,15 @@ struct _GossipProtocolClass {
 	void            (*register_account)        (GossipProtocol         *protocol,
 						    GossipAccount          *account,
 						    GossipVCard            *vcard,
-						    GossipRegisterCallback  callback,
+						    GossipResultErrorCallback  callback,
 						    gpointer                user_data);
 	void            (*register_cancel)         (GossipProtocol         *protocol);
+	void            (*change_password)         (GossipProtocol         *protocol,
+						    const gchar            *new_password,
+						    GossipResultErrorCallback  callback,
+						    gpointer                user_data);
+	void            (*change_password_cancel)  (GossipProtocol         *protocol);
+	
 	GossipAccount * (*new_account)             (GossipProtocol         *protocol);
 	void            (*get_avatar_requirements) (GossipProtocol         *protocol,
 						    guint                  *min_width,
@@ -206,9 +212,15 @@ gboolean        gossip_protocol_get_version             (GossipProtocol         
 void            gossip_protocol_register_account        (GossipProtocol          *protocol,
 							 GossipAccount           *account,
 							 GossipVCard             *vcard,
-							 GossipRegisterCallback   callback,
+							 GossipResultErrorCallback callback,
 							 gpointer                 user_data);
 void            gossip_protocol_register_cancel         (GossipProtocol          *protocol);
+void            gossip_protocol_change_password         (GossipProtocol          *protocol,
+							 const gchar             *new_password,
+							 GossipResultErrorCallback callback,
+							 gpointer                 user_data);
+void            gossip_protocol_change_password_cancel  (GossipProtocol          *protocol);
+
 GossipAccount * gossip_protocol_new_account             (GossipProtocol          *protocol);
 void            gossip_protocol_get_avatar_requirements (GossipProtocol          *protocol,
 							 guint                   *min_width,
