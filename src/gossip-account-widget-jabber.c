@@ -692,6 +692,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	const gchar    *server;
 	const gchar    *password;
 	gboolean        use_ssl;
+	gboolean        is_connected;
 
 	session = gossip_app_get_session ();
 	protocol = gossip_session_get_protocol (session, settings->account);
@@ -723,13 +724,31 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	g_free (port_str);
 
 	gtk_widget_set_sensitive (settings->button_forget, !G_STR_EMPTY (password));
+
+	/* Set up connection specific buttons */
+	is_connected = gossip_session_is_connected (session, settings->account);
+	gtk_widget_set_sensitive (settings->button_register, !is_connected);
+	gtk_widget_set_sensitive (settings->button_change_password, is_connected);
+
+	/* Set up protocol signals */
+	g_signal_connect (session, "protocol-connected",
+			  G_CALLBACK (account_widget_jabber_protocol_connected_cb),
+			  settings);
+
+	g_signal_connect (session, "protocol-disconnected",
+			  G_CALLBACK (account_widget_jabber_protocol_disconnected_cb),
+			  settings);
+
+	g_signal_connect (session, "protocol-error",
+			  G_CALLBACK (account_widget_jabber_protocol_error_cb),
+			  settings);
+
 }
 
 GtkWidget *
 gossip_account_widget_jabber_new (GossipAccount *account,
 				  GtkWidget     *label_name)
 {
-	GossipSession             *session;
 	GossipAccountWidgetJabber *settings;
 	GladeXML                  *glade;
 	GtkSizeGroup              *size_group;
@@ -802,21 +821,6 @@ gossip_account_widget_jabber_new (GossipAccount *account,
 	}
 
 	g_object_unref (size_group);
-
-	/* Set up protocol signals */
-	session = gossip_app_get_session ();
-
-	g_signal_connect (session, "protocol-connected",
-			  G_CALLBACK (account_widget_jabber_protocol_connected_cb),
-			  settings);
-
-	g_signal_connect (session, "protocol-disconnected",
-			  G_CALLBACK (account_widget_jabber_protocol_disconnected_cb),
-			  settings);
-
-	g_signal_connect (session, "protocol-error",
-			  G_CALLBACK (account_widget_jabber_protocol_error_cb),
-			  settings);
 
 	return settings->vbox_settings;
 }
