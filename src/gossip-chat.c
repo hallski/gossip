@@ -83,6 +83,8 @@ static void             chat_text_view_scroll_hide_cb     (GtkWidget       *widg
 static void             chat_text_view_size_allocate_cb   (GtkWidget       *widget,
 							   GtkAllocation   *allocation,
 							   GossipChat      *chat);
+static void             chat_text_view_realize_cb         (GtkWidget       *widget,
+							   GossipChat      *chat);
 static void             chat_text_populate_popup_cb       (GtkTextView     *view,
 							   GtkMenu         *menu,
 							   GossipChat      *chat);
@@ -167,8 +169,6 @@ gossip_chat_init (GossipChat *chat)
 	chat->view = gossip_chat_view_new ();
 	chat->input_text_view = gtk_text_view_new ();
 
-	GTK_WIDGET_SET_FLAGS (chat->input_text_view, GTK_HAS_FOCUS);
-
 	chat->is_first_char = TRUE;
 
 	g_object_set (chat->input_text_view,
@@ -196,6 +196,11 @@ gossip_chat_init (GossipChat *chat)
 	g_signal_connect (chat->input_text_view,
 			  "size_allocate",
 			  G_CALLBACK (chat_text_view_size_allocate_cb),
+			  chat);
+
+	g_signal_connect (chat->input_text_view,
+			  "realize",
+			  G_CALLBACK (chat_text_view_realize_cb),
 			  chat);
 
 	g_signal_connect (GTK_TEXT_VIEW (chat->input_text_view),
@@ -424,6 +429,14 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 	g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
 			 (GSourceFunc) chat_change_size_in_idle_cb,
 			 data, g_free);
+}
+
+static void
+chat_text_view_realize_cb (GtkWidget  *widget,
+			   GossipChat *chat)
+{
+	gossip_debug (DEBUG_DOMAIN, "Setting focus to the input text view");
+	gtk_widget_grab_focus (widget);
 }
 
 static void

@@ -487,6 +487,8 @@ group_chat_join_cb (GossipChatroomProvider   *provider,
 	gtk_widget_set_sensitive (priv->scrolled_window_input, TRUE);
 
 	gossip_chat_view_append_event (chatview, _("Connected"));
+
+	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
 static void

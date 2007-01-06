@@ -297,8 +297,6 @@ private_chat_create_ui (GossipPrivateChat *chat)
 			  "focus_in_event",
 			  G_CALLBACK (private_chat_text_view_focus_in_event_cb),
 			  chat);
-
-	gtk_widget_grab_focus (GOSSIP_CHAT (chat)->input_text_view);
 }
 
 static void

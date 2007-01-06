@@ -1,3 +1,14 @@
+2007-01-06  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-chat-window.c: 
+	* src/gossip-chat.c:
+	* src/gossip-group-chat.c: 
+	* src/gossip-private-chat.c:: Revert the HAS_FOCUS flag change on
+	the input text view to try and get it to have focus when new group
+	chats or chats are created. Now we do this properly by grabbing
+	focus when the input text view is realized and also when it is
+	made sensitive again after joining, fixes bug #387923. 
+
 2007-01-05  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-async.h:
@@ -50,7 +61,7 @@
 	* src/gossip-group-chat.c: Removed all unnecessary grabs, set up
 	the focus chain properly and now make the input text view have
 	the widget flag GTK_HAS_FOCUS set on creation so it automatically
-	gets focus. Fixes bug #387923.
+	gets focus. 
 
 2007-01-03  Richard Hult  <richard@imendio.com>
 
