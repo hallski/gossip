@@ -1,3 +1,30 @@
+NEW in 0.21:
+==============
+- Fixed #142085, Need a Change Password button (Martyn Russell)
+- Fixed #346465, Provide way to join another group chat from group chat window (Martyn Russell)
+- Fixed #352066, Join/leave messages are missing in groupchat (Martyn Russell)
+- Fixed #361898, Save logs with account type & don't assume protocol has account parameter (Xavier Claessens, Martyn Russell)
+- Fixed #380171, Gossip main window doesn't consistently maintain it's location (Thomas Andersen)
+- Fixed #380373, Add birthday support to contact information (Laurent Bigonville, Martyn Russell)
+- Fixed #383504, HIGify dialogues (Christian Persch)
+- Fixed #387652, Fix some object reference counting issues (Xavier Claessens)
+- Fixed #387923, Topic label in group chats are selected and have focus (Martyn Russell)
+- Fixed #387924, Improve date setting in personal information (Richard Hult)
+- Fixed #388033, Crash when trying to add an avatar (Martyn Russell)
+- Fixed #388090, Disconnect signals properly when freeing GossipPrivateChat (Mikael Hallendal)
+- Fixed #388275, Don't add & remove a contact from the roster for presence updates (Xavier Claessens)
+- Fixed #388306, Birthday stub label in contact information dialog not shown (Martyn Russell)
+- Fixed #389280, Use EphySpinner instead of GossipThrobber (Christian Persch)
+- Fixed #390924, When connecting, accounts dialog shows account to be disconnected (Martyn Russell)
+- Fixed #391329, Update the help documentation ready for release 0.21 (Brian Pepple)
+
+Translations:
+- Updated fr: Xavier Claessens
+- Updated nl: Wouter Bolsterlee
+- Updated lt: Žygimantas Beručka
+- Updated sv: Richard Hult, Daniel Nylander
+
+
 NEW in 0.20:
 ============
 - Added chatroom browsing.

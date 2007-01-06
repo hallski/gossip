@@ -1,5 +1,10 @@
 2007-01-06  Martyn Russell  <martyn@imendio.com>
 
+	* Release 0.21.
+	* NEWS: Updated.
+
+2007-01-06  Martyn Russell  <martyn@imendio.com>
+
 	* src/gossip-chat-window.c: 
 	* src/gossip-chat.c:
 	* src/gossip-group-chat.c: 
