@@ -1,5 +1,9 @@
 2007-01-06  Martyn Russell  <martyn@imendio.com>
 
+	* configure.ac: Bumped version to 0.22.
+
+2007-01-06  Martyn Russell  <martyn@imendio.com>
+
 	* Release 0.21.
 	* NEWS: Updated.
 
