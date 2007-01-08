@@ -2,7 +2,7 @@
 
 	* src/gossip-chat-window.c (chat_window_focus_in_event_cb): Remove
 	left over test code, fixes problem where windows wouldn't clear
-	the "new message" window icon on focus in.
+	the "new message" window icon on focus in, fixes bug #393835.
 
 2007-01-06  Martyn Russell  <martyn@imendio.com>
 
