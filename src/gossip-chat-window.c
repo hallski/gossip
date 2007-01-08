@@ -1611,8 +1611,6 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 {
 	GossipChatWindowPriv *priv;
 
-	return FALSE;
-
 	gossip_debug (DEBUG_DOMAIN, "Focus in event, updating title");
 
 	priv = GET_PRIV (window);
