@@ -136,19 +136,19 @@ gossip_geometry_load_for_chat (GossipChat *chat,
 	gchar       *str = NULL;
 
 	if (x) {
-		*x = 0;
+		*x = -1;
 	}
 
 	if (y) {
-		*y = 0;
+		*y = -1;
 	}
 
 	if (w) {
-		*w = 0;
+		*w = -1;
 	}
 
 	if (h) {
-		*h = 0;
+		*h = -1;
 	}
 
 	if (gossip_chat_is_group_chat (chat)) {

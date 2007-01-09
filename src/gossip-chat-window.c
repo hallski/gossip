@@ -1806,15 +1806,15 @@ gossip_chat_window_add_chat (GossipChatWindow *window,
 		gossip_chat_load_geometry (chat, &x, &y, &w, &h);
 
 		if (x >= 0 && y >= 0) {
-			/* Let the window manager position it if we
-			 * don't have good x, y coordinates.
+			/* Let the window manager position it if we don't have
+			 * good x, y coordinates.
 			 */
 			gtk_window_move (GTK_WINDOW (priv->dialog), x, y);
 		}
 
-		if (w >= 0 && h >= 0) {
-			/* Use the defaults from the glade file if we
-			 * don't have good w, h geometry.
+		if (w > 0 && h > 0) {
+			/* Use the defaults from the glade file if we don't have
+			 * good w, h geometry.
 			 */
 			gtk_window_resize (GTK_WINDOW (priv->dialog), w, h);
 		}

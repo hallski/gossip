@@ -66,6 +66,7 @@ struct _GossipGroupChatPriv {
 
 	GtkWidget              *hbox_topic;
 	GtkWidget              *label_topic;
+	gchar                  *topic;
 
 	GtkWidget              *treeview;
 
@@ -369,6 +370,7 @@ group_chat_finalize (GObject *object)
 	g_object_unref (priv->chatroom_provider);
 
 	g_free (priv->name);
+	g_free (priv->topic);
 
 	g_list_foreach (priv->private_chats,
 			(GFunc) group_chat_private_chat_stop_foreach,
@@ -1152,7 +1154,6 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 {
 	GossipGroupChatPriv *priv;
 	gchar               *event;
-	gchar               *str;
 
 	priv = GET_PRIV (chat);
 
@@ -1163,15 +1164,18 @@ group_chat_topic_changed_cb (GossipChatroomProvider *provider,
 	gossip_debug (DEBUG_DOMAIN, "[%d] Topic changed by:'%s' to:'%s'",
 		      id, gossip_contact_get_id (who), new_topic);
 
-	gtk_label_set_markup (GTK_LABEL (priv->label_topic), new_topic);
+	g_free (priv->topic);
+	priv->topic = g_strdup (new_topic);
+	
+	gtk_label_set_text (GTK_LABEL (priv->label_topic), new_topic);
 
-	str = g_strdup_printf (_("%s has set the topic"),
-				 gossip_contact_get_name (who));
-	event = g_strconcat (str, ": ", new_topic, NULL);
-	g_free (str);
-
+	event = g_strdup_printf (_("%s has set the topic: %s"),
+				 gossip_contact_get_name (who),
+				 new_topic);
 	gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, event);
 	g_free (event);
+
+	g_signal_emit_by_name (chat, "status-changed");
 }
 
 static void
@@ -1753,6 +1757,16 @@ group_chat_get_tooltip (GossipChat *chat)
 
 	group_chat = GOSSIP_GROUP_CHAT (chat);
 	priv = GET_PRIV (group_chat);
+
+	if (priv->topic) {
+		gchar *topic, *tmp;
+
+		topic = g_strdup_printf (_("Topic: %s"), priv->topic);
+		tmp = g_strdup_printf ("%s\n%s", priv->name, topic);
+		g_free (topic);
+
+		return tmp;
+	}
 
 	return g_strdup (priv->name);
 }

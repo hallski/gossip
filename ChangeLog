@@ -1,3 +1,17 @@
+2007-01-09  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (gossip_chat_window_add_chat): Don't
+	try to set a 0 size, fixes a critical warning introduced recently.
+	
+	* src/gossip-geometry.c: (gossip_geometry_load_for_chat): Let -1
+	mean unset/invalid, otherwise we end up at (0,0) for
+	unknown/uninitialized coords.
+
+	* src/gossip-group-chat.c: (group_chat_finalize),
+	(group_chat_topic_changed_cb), (group_chat_get_tooltip):
+	* ui/group-chat.glade: Keep track of the topic and use it for the
+	tooltip for group chats. Make the topic label a single line label.
+
 2007-01-08  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c (chat_window_focus_in_event_cb): Remove
