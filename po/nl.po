@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip cvs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-07 15:13+0100\n"
-"PO-Revision-Date: 2007-01-07 15:03+0100 \n"
+"POT-Creation-Date: 2007-01-10 21:14+0100\n"
+"PO-Revision-Date: 2007-01-10 21:14+0100 \n"
 "Last-Translator: Wouter Bolsterlee <uws+gnome@xs4all.nl>\n"
 "Language-Team: Gnome-NL <gnome-nl-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -801,7 +801,7 @@ msgstr "Iemand wil u een bestand toesturen."
 msgid "Select a file"
 msgstr "Bestand selecteren"
 
-#: ../src/gossip-group-chat.c:410
+#: ../src/gossip-group-chat.c:412
 msgid "Connecting..."
 msgstr "Verbinden..."
 
@@ -809,42 +809,47 @@ msgstr "Verbinden..."
 #. FIXME: Need special case for nickname to put an
 #. * entry in the chat view and to request a new nick.
 #.
-#: ../src/gossip-group-chat.c:464
+#: ../src/gossip-group-chat.c:466
 msgid "Retry connection"
 msgstr "Opnieuw verbinding maken"
 
-#: ../src/gossip-group-chat.c:489 ../src/gossip-private-chat.c:584
+#: ../src/gossip-group-chat.c:491 ../src/gossip-private-chat.c:584
 msgid "Connected"
 msgstr "Verbonden"
 
-#: ../src/gossip-group-chat.c:542 ../src/gossip-private-chat.c:610
+#: ../src/gossip-group-chat.c:544 ../src/gossip-private-chat.c:610
 msgid "Disconnected"
 msgstr "Verbinding verbroken"
 
 #. Send event to chat window
-#: ../src/gossip-group-chat.c:723
+#: ../src/gossip-group-chat.c:725
 #, c-format
 msgid "Invited %s to join this chat conference."
 msgstr "%s wordt uitgenodigd om aan dit gesprek deel te nemen."
 
-#: ../src/gossip-group-chat.c:1168
+#: ../src/gossip-group-chat.c:1172
 #, c-format
-msgid "%s has set the topic"
-msgstr "%s heeft het onderwerp ingesteld"
+msgid "%s has set the topic: %s"
+msgstr "%s heeft het onderwerp ingesteld op: %s"
 
-#: ../src/gossip-group-chat.c:1225
+#: ../src/gossip-group-chat.c:1229
 msgid "Enter the new topic you want to set for this room:"
 msgstr "Geef een nieuw onderwerp dat u voor deze chatruime wilt instellen:"
 
-#: ../src/gossip-group-chat.c:1310
+#: ../src/gossip-group-chat.c:1314
 #, c-format
 msgid "%s has joined the room"
 msgstr "%s is de chatruimte binnengekomen"
 
-#: ../src/gossip-group-chat.c:1491
+#: ../src/gossip-group-chat.c:1495
 #, c-format
 msgid "%s has left the room"
 msgstr "%s heeft de chatruimte verlaten"
+
+#: ../src/gossip-group-chat.c:1764
+#, c-format
+msgid "Topic: %s"
+msgstr "Onderwerp: %s"
 
 #: ../src/gossip-log-window.c:463
 msgid "Account"
