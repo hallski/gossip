@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-09 17:11+0100\n"
-"PO-Revision-Date: 2006-12-26 10:33+0100\n"
+"POT-Creation-Date: 2007-01-11 00:33+0100\n"
+"PO-Revision-Date: 2007-01-11 00:33+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -361,6 +361,55 @@ msgstr "Hemma"
 msgid "Connection could not be opened"
 msgstr "Anslutning kunde inte öppnas"
 
+#: ../protocols/jabber/gossip-jabber-disco.c:274
+msgid "Service has gone and is no longer available"
+msgstr "Tjänsten ar försvunnit och finns inte längre tillgänglig"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:277
+msgid "Bad or malformed request to this service"
+msgstr "Felaktig eller felformulerad begäran till den här tjänsten"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:280
+msgid "Unauthorized request to this service"
+msgstr "Obehörig begäran till den här tjänsten"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:283
+msgid "Payment is required for this service"
+msgstr "Betalning krävs för den här tjänsten"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:287
+msgid "This service is forbidden"
+msgstr "Den här tjänsten är förbjuden"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:291
+msgid "This service is unavailable or not found"
+msgstr "Den här tjänsten är inte tillgänglig eller hittades inte"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:294
+msgid "Unacceptable request sent to this services"
+msgstr "Oaccepterbar begäran skickades till den här tjänsten"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:297
+msgid "Registration is required"
+msgstr "Registrering krävs"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:300
+msgid "There was a conflict of interest trying to use this service"
+msgstr ""
+"Det inträffade en intressekonflikt vid försök att använda den här tjänsten "
+
+#: ../protocols/jabber/gossip-jabber-disco.c:303
+msgid "There was an internal service error"
+msgstr "Det inträffade ett internt fel i tjänsten"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:306
+msgid "This feature is not implemented"
+msgstr "Den här funktionen är inte implementerad"
+
+#: ../protocols/jabber/gossip-jabber-disco.c:309
+msgid "The remove service timed out"
+msgstr "Tidsgränsen för fjärrtjänsten överstegs"
+
 #: ../src/gossip-about-dialog.c:58
 msgid ""
 "Gossip is free software; you can redistribute it and/or modify it under the "
@@ -475,6 +524,39 @@ msgstr ""
 "\n"
 "Om du senare lägger till kontot igen, kommer dessa fortfarande vara "
 "tillgängliga."
+
+#: ../src/gossip-account-widget-jabber.c:409
+msgid "Successfully registered your new account settings."
+msgstr "Registrering av dina nya kontoinställningar lyckades."
+
+#: ../src/gossip-account-widget-jabber.c:416
+msgid "You should now be able to connect to your new account."
+msgstr "Du ska nu kunna ansluta med ditt nya konto."
+
+#: ../src/gossip-account-widget-jabber.c:419
+msgid "Failed to register your new account settings."
+msgstr "Misslyckades med att registrera dina nya kontoinställningar."
+
+#: ../src/gossip-account-widget-jabber.c:538
+msgid "Successfully changed your account password."
+msgstr "Ditt kontolösenord ändrades."
+
+#: ../src/gossip-account-widget-jabber.c:545
+msgid "You should now be able to connect with your new password."
+msgstr "Du ska nu kunna ansluta med ditt nya lösenord."
+
+#: ../src/gossip-account-widget-jabber.c:548
+msgid "Failed to change your account password."
+msgstr "Misslyckades med att ändra ditt kontolösenord."
+
+#: ../src/gossip-account-widget-jabber.c:626
+#, c-format
+msgid ""
+"Please enter a new password for this account:\n"
+"%s"
+msgstr ""
+"Ange ett nytt lösenord för det här kontot:\n"
+"%s"
 
 #: ../src/gossip-account-widget-generic.c:171
 #, c-format
@@ -1075,11 +1157,11 @@ msgstr "Ingen bild"
 
 #: ../src/gossip-vcard-dialog.c:471
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: ../src/gossip-vcard-dialog.c:478
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: ../src/gossip-vcard-dialog.c:730
 msgid "The server does not seem to be responding."
@@ -1484,7 +1566,7 @@ msgstr "Ange statusmeddelande:"
 
 #: ../ui/main.glade.h:45
 msgid "Forget password and clear the entry."
-msgstr ""
+msgstr "Glöm lösenordet och töm inmatningen."
 
 #: ../ui/main.glade.h:46
 msgid "General"
@@ -1802,15 +1884,6 @@ msgstr "_Webbplats:"
 msgid "jabber account settings"
 msgstr "inställningar för jabberkonto"
 
-#~ msgid "Successfully registered your new account settings."
-#~ msgstr "Registrering av dina nya kontoinställningar lyckades."
-
-#~ msgid "You should now be able to connect to your new account."
-#~ msgstr "Du ska nu kunna ansluta med ditt nya konto."
-
-#~ msgid "Failed to register your new account settings."
-#~ msgstr "Misslyckades med att registrera dina nya kontoinställningar."
-
 #~ msgid "_Forget"
 #~ msgstr "_Glöm"
 
@@ -1919,9 +1992,6 @@ msgstr "inställningar för jabberkonto"
 #~ msgid "Enter the server used in the connection for this account"
 #~ msgstr "Ange den server som ska anslutas till för detta konto"
 
-#~ msgid "Enter your account password:"
-#~ msgstr "Ange ditt lösenord:"
-
 #~ msgid "Enter your real name here"
 #~ msgstr "Ange ditt riktiga namn här"
 
@@ -1975,9 +2045,6 @@ msgstr "inställningar för jabberkonto"
 
 #~ msgid "Registering Account"
 #~ msgstr "Registrerar konto"
-
-#~ msgid "Registration"
-#~ msgstr "Registrering"
 
 #~ msgid "Resource:"
 #~ msgstr "Resurs:"
@@ -2417,9 +2484,6 @@ msgstr "inställningar för jabberkonto"
 
 #~ msgid "Conflict"
 #~ msgstr "Konflikt"
-
-#~ msgid "Internal Server Error"
-#~ msgstr "Internt serverfel"
 
 #~ msgid "Not Implemented"
 #~ msgstr "Inte implementerat"

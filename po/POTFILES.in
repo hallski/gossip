@@ -13,9 +13,11 @@ libgossip/gossip-presence.c
 libgossip/gossip-protocol.c
 
 protocols/jabber/gossip-jabber.c
+protocols/jabber/gossip-jabber-disco.c
 
 src/gossip-about-dialog.c
 src/gossip-accounts-dialog.c
+src/gossip-account-widget-jabber.c
 src/gossip-account-widget-generic.c
 src/gossip-add-contact-dialog.c
 src/gossip-app.c
