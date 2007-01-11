@@ -82,6 +82,9 @@ static void           account_param_get_valist      (GossipAccount          *acc
 						     va_list                 var_args);
 static void           account_param_get_all_foreach (gchar                  *param_name,
 						     GossipAccountParam     *param,
+						     GList                 **params);
+static void           account_param_foreach_foreach (const gchar            *param_name,
+						     GossipAccountParam     *param,
 						     GossipAccountParamData *data);
 static void           account_param_free            (GossipAccountParam     *param);
 static void           account_set_type              (GossipAccount          *account,
@@ -587,6 +590,58 @@ gossip_account_has_param (GossipAccount *account,
 	return g_hash_table_lookup (priv->parameters, param_name) != NULL;
 }
 
+static void
+account_param_get_all_foreach (gchar               *param_name,
+			       GossipAccountParam  *param,
+			       GList              **params)
+{
+	*params = g_list_prepend (*params, g_strdup (account_param_name_convert (param_name)));
+}
+
+GList *
+gossip_account_param_get_all (GossipAccount *account)
+{
+	GossipAccountPriv *priv;
+	GList             *params = NULL;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (account);
+
+	g_hash_table_foreach (priv->parameters,
+			      (GHFunc) account_param_get_all_foreach,
+			      &params);
+
+	params = g_list_sort (params, (GCompareFunc) strcmp);
+
+	return params;
+}
+
+GossipAccountParam *
+gossip_account_param_get_param (GossipAccount *account,
+				const gchar   *param_name)
+{
+	GossipAccountPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
+
+	priv = GET_PRIV (account);
+
+	return g_hash_table_lookup (priv->parameters, param_name);
+}
+
+
+static void
+account_param_foreach_foreach (const gchar            *param_name,
+			       GossipAccountParam     *param,
+			       GossipAccountParamData *data)
+{
+	data->callback (data->account,
+			account_param_name_convert (param_name),
+			param,
+			data->user_data);
+}
+
 void
 gossip_account_param_foreach (GossipAccount           *account,
 			      GossipAccountParamFunc   callback,
@@ -605,20 +660,8 @@ gossip_account_param_foreach (GossipAccount           *account,
 	data->account = account;
 
 	g_hash_table_foreach (priv->parameters,
-			      (GHFunc) account_param_get_all_foreach,
+			      (GHFunc) account_param_foreach_foreach,
 			      data);
-}
-
-static void
-account_param_get_all_foreach (gchar                  *param_name,
-			       GossipAccountParam     *param,
-			       GossipAccountParamData *data)
-{
-	param_name = (gchar*) account_param_name_convert (param_name);
-	data->callback (data->account,
-			param_name,
-			param,
-			data->user_data);
 }
 
 static void

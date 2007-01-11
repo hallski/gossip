@@ -19,6 +19,9 @@
  */
 
 #include <config.h>
+
+#include <string.h>
+
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
@@ -41,21 +44,20 @@ typedef struct {
 	gboolean       account_changed;
 } GossipAccountWidgetGeneric;
 
-static void     account_widget_generic_save_foreach           (GtkWidget            *widget,
+static void     account_widget_generic_save_foreach           (GtkWidget                  *widget,
 							       GossipAccountWidgetGeneric *settings);
 static void     account_widget_generic_save                   (GossipAccountWidgetGeneric *settings);
-static gboolean account_widget_generic_entry_focus_cb         (GtkWidget            *widget,
-							       GdkEventFocus        *event,
+static gboolean account_widget_generic_entry_focus_cb         (GtkWidget                  *widget,
+							       GdkEventFocus              *event,
 							       GossipAccountWidgetGeneric *settings);
-static void     account_widget_generic_entry_changed_cb       (GtkWidget            *widget,
+static void     account_widget_generic_entry_changed_cb       (GtkWidget                  *widget,
 							       GossipAccountWidgetGeneric *settings);
-static void     account_widget_generic_checkbutton_toggled_cb (GtkWidget            *widget,
+static void     account_widget_generic_checkbutton_toggled_cb (GtkWidget                  *widget,
 							       GossipAccountWidgetGeneric *settings);
-static void     account_widget_generic_setup_foreach          (GossipAccount        *account,
-							       gchar                *param_name,
-							       GossipAccountParam   *param,
+static gchar *  account_widget_generic_format_param_name      (const gchar                *param_name);
+static void     account_widget_generic_setup_foreach          (gchar                      *param_name,
 							       GossipAccountWidgetGeneric *settings);
-static void     account_widget_generic_destroy_cb             (GtkWidget            *widget,
+static void     account_widget_generic_destroy_cb             (GtkWidget                  *widget,
 							       GossipAccountWidgetGeneric *settings);
 
 static void
@@ -137,14 +139,39 @@ account_widget_generic_checkbutton_toggled_cb (GtkWidget                  *widge
  	account_widget_generic_save (settings); 
 }
 
+static gchar *
+account_widget_generic_format_param_name (const gchar *param_name)
+{
+	gchar *str;
+	gchar *p;
+
+	str = g_strdup (param_name);
+	
+	if (str && g_ascii_isalpha (str[0])) {
+		str[0] = g_ascii_toupper (str[0]);
+	}
+	
+	while ((p = strchr (str, '-')) != NULL) {
+		if (p[1] != '\0' && g_ascii_isalpha (p[1])) {
+			p[0] = ' ';
+			p[1] = g_ascii_toupper (p[1]);
+		}
+
+		p++;
+	}
+	
+	return str;
+}
+
 static void
-account_widget_generic_setup_foreach (GossipAccount              *account,
-				      gchar                      *param_name,
-				      GossipAccountParam         *param,
+account_widget_generic_setup_foreach (gchar                      *param_name,
 				      GossipAccountWidgetGeneric *settings)
 {
-	GtkWidget *widget;
+	GtkWidget          *widget;
+	GossipAccountParam *param;
 
+	param = gossip_account_param_get_param (settings->account, param_name);
+		
 	gtk_table_resize (GTK_TABLE (settings->table_settings),
 			  ++settings->n_rows,
 			  2);
@@ -158,24 +185,33 @@ account_widget_generic_setup_foreach (GossipAccount              *account,
 				  G_CALLBACK (account_widget_generic_checkbutton_toggled_cb),
 				  settings);
 
-		gtk_table_attach_defaults (GTK_TABLE (settings->table_settings),
-					   widget,
-					   0, 2,
-					   settings->n_rows - 1, settings->n_rows);
+		gtk_table_attach (GTK_TABLE (settings->table_settings),
+				  widget,
+				  0, 2,
+				  settings->n_rows - 1, settings->n_rows,
+				  GTK_FILL | GTK_EXPAND, 0,
+				  0, 0);
 
 		g_object_set_data (G_OBJECT (widget), "param_name", param_name);
 		settings->widgets = g_list_prepend (settings->widgets, widget);
 	} else {
+		gchar *param_name_formatted;
 		gchar *str;
 
-		str = g_strdup_printf (_("%s:"), param_name);
+		param_name_formatted = account_widget_generic_format_param_name (param_name);
+		str = g_strdup_printf (_("%s:"), param_name_formatted);
 		widget = gtk_label_new (str);
-		gtk_size_group_add_widget (settings->size_group, widget);
-		gtk_table_attach_defaults (GTK_TABLE (settings->table_settings),
-					   widget,
-					   0, 1,
-					   settings->n_rows - 1, settings->n_rows);
+		g_free (param_name_formatted);
 		g_free (str);
+
+		gtk_misc_set_alignment (GTK_MISC (widget), 0.0, 0.5);
+		gtk_size_group_add_widget (settings->size_group, widget);
+		gtk_table_attach (GTK_TABLE (settings->table_settings),
+				  widget,
+				  0, 1,
+				  settings->n_rows - 1, settings->n_rows,
+				  GTK_FILL, 0,
+				  0, 0);
 
 		widget = gtk_entry_new ();
 		str = gossip_g_value_to_string (&param->g_value);
@@ -195,10 +231,12 @@ account_widget_generic_setup_foreach (GossipAccount              *account,
 				  G_CALLBACK (account_widget_generic_entry_focus_cb),
 				  settings);
 
-		gtk_table_attach_defaults (GTK_TABLE (settings->table_settings),
-					   widget,
-					   1, 2,
-					   settings->n_rows - 1, settings->n_rows);
+		gtk_table_attach (GTK_TABLE (settings->table_settings),
+				  widget,
+				  1, 2,
+				  settings->n_rows - 1, settings->n_rows,
+				  GTK_FILL | GTK_EXPAND, 0,
+				  0, 0);
 
 		g_object_set_data (G_OBJECT (widget), "param_name", param_name);
 		settings->widgets = g_list_prepend (settings->widgets, widget);
@@ -227,6 +265,7 @@ gossip_account_widget_generic_new (GossipAccount *account,
 				   GtkWidget     *label_name)
 {
 	GossipAccountWidgetGeneric *settings;
+	GList                      *params;
 
 	settings = g_new0 (GossipAccountWidgetGeneric, 1);
 
@@ -241,9 +280,14 @@ gossip_account_widget_generic_new (GossipAccount *account,
 		gtk_size_group_add_widget (settings->size_group, label_name);
 	}
 	
-	gossip_account_param_foreach (settings->account,
-				      (GossipAccountParamFunc) account_widget_generic_setup_foreach,
-				      settings);
+	params = gossip_account_param_get_all (settings->account);
+	g_list_foreach (params, (GFunc) account_widget_generic_setup_foreach, settings);
+	g_list_foreach (params, (GFunc) g_free, NULL);
+	g_list_free (params);
+
+/* 	gossip_account_param_foreach (settings->account, */
+/* 				      (GossipAccountParamFunc) account_widget_generic_setup_foreach, */
+/* 				      settings); */
 
 	g_signal_connect (settings->table_settings, "destroy",
 			  G_CALLBACK (account_widget_generic_destroy_cb),

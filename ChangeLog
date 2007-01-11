@@ -1,3 +1,12 @@
+2007-01-11  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-account.[ch]: Make it possible to get a list of
+	params sorted alphabetically.
+
+	* src/gossip-account-widget-generic.c: Actually make this widget
+	look nice by aligning the labels nicely and doing some trickery
+	with the param names so they look nicer and less hacked up.
+
 2006-01-11  Xavier Claessens  <xclaesse@gmail.com>
 
 	*  Merged TELEPATHY branch to TRUNK. Fixes bug #391284.

@@ -69,7 +69,7 @@ typedef enum {
 } GossipAccountType;
 
 typedef void (*GossipAccountParamFunc) (GossipAccount      *account,
-					gchar              *param_name,
+					const gchar        *param_name,
 					GossipAccountParam *param,
 					gpointer            user_data);
 
@@ -93,6 +93,10 @@ void              gossip_account_param_get         (GossipAccount           *acc
 const GValue *    gossip_account_param_get_g_value (GossipAccount           *account,
 						    const gchar             *param_name);
 gboolean          gossip_account_has_param         (GossipAccount           *account,
+						    const gchar             *param_name);
+GList *           gossip_account_param_get_all     (GossipAccount           *account);
+GossipAccountParam *
+                  gossip_account_param_get_param   (GossipAccount           *account,
 						    const gchar             *param_name);
 void              gossip_account_param_foreach     (GossipAccount           *account,
 						    GossipAccountParamFunc   callback,
