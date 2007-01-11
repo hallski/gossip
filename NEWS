@@ -1,3 +1,14 @@
+NEW in 0.22:
+==============
+- Topic labels now ellipsize and are shown in the tab tooltip (Richard Hult)
+- Fixed #393835, chat window show unread message everytime (Richard Hult)
+
+Translations:
+- Updated dz: Pema Geyleg
+- Updated nl: Wouter Bolsterlee
+- Updated sv: Daniel Nylander, Richard Hult
+
+
 NEW in 0.21:
 ==============
 - Fixed #142085, Need a Change Password button (Martyn Russell)

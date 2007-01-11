@@ -1,3 +1,8 @@
+2007-01-11  Martyn Russell  <martyn@imendio.com>
+
+	* Release 0.22.
+	* NEWS: Updated for release.
+
 2007-01-09  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (gossip_chat_window_add_chat): Don't
