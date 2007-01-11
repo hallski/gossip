@@ -36,7 +36,7 @@ LIBGNOME_REQUIRED=2.0.0
 LIBGNOMEVFS_REQUIRED=2.0.0
 DESKTOP_FILE_UTILS_REQUIRED=0.2.90
 LIBPANELAPPLET_REQUIRED=2.10.0
-
+DBUS_REQUIRED=0.61
 
 dnl -----------------------------------------------------------
 dnl Backend (currently GNOME or Cocoa)
@@ -84,7 +84,7 @@ AC_ARG_ENABLE(dbus,
               enable_dbus=auto)
 
 if test "x$enable_dbus" != "xno"; then
-   dbus_pkgconfig_tmp="dbus-1 >= 0.60 dbus-glib-1"
+   dbus_pkgconfig_tmp="dbus-1 >= $DBUS_REQUIRED dbus-glib-1"
    PKG_CHECK_MODULES(DBUS, $dbus_pkgconfig_tmp, have_dbus=yes, have_dbus=no)
    if test x$have_dbus = xyes; then
       AC_DEFINE(HAVE_DBUS, 1, [D-Bus support])
@@ -131,6 +131,48 @@ if test "x$enable_galago" = "xyes"; then
 fi
 
 AM_CONDITIONAL(HAVE_GALAGO, test x$have_galago = xyes)
+
+
+dnl -----------------------------------------------------------
+dnl Telepathy
+dnl -----------------------------------------------------------
+AC_ARG_ENABLE(telepathy,
+              AS_HELP_STRING([--enable-telepathy=@<:@no/yes/auto@:>@],
+                             [compile with telepathy support]), ,
+              enable_telepathy=no)
+
+if test "x$enable_telepathy" != "xno" -a "x$have_dbus" = "xyes"; then
+   telepathy_pkgconfig_tmp="libtelepathy >= 0.0.41 "
+   PKG_CHECK_MODULES(GOSSIP_TELEPATHY,
+   [
+      glib-2.0 >= $GLIB_REQUIRED
+      gobject-2.0
+      gconf-2.0 >= $GCONF_REQUIRED
+      gnome-vfs-2.0 >= $LIBGNOMEVFS_REQUIRED
+      libxml-2.0 >= $LIBXML_REQUIRED
+      $dbus_pkgconfig
+      $telepathy_pkgconfig_tmp
+   ], have_telepathy="yes", have_telepathy="no")
+   if test x$have_telepathy = xyes; then
+      AC_DEFINE(USE_TELEPATHY, 1, [Telepathy support])
+      telepathy_pkgconfig=$telepathy_pkgconfig_tmp
+   fi
+else
+   have_telepathy=no
+   telepathy_pkgconfig=
+fi
+
+if test "x$enable_telepathy" = "xyes"; then
+   if test "x$have_dbus" != "xyes"; then
+      AC_MSG_ERROR([Telepathy needs D-Bus.])
+   else
+      if test "x$have_telepathy" != "xyes"; then
+         AC_MSG_ERROR([Couldn't find Telepathy])
+      fi
+   fi
+fi
+
+AM_CONDITIONAL(USE_TELEPATHY, test x$have_telepathy = xyes)
 
 
 dnl -----------------------------------------------------------
@@ -190,6 +232,8 @@ PKG_CHECK_MODULES(LIBGOSSIP,
    glib-2.0 >= $GLIB_REQUIRED
    gobject-2.0
    $gconf_pkgconfig
+   $dbus_pkgconfig
+   $telepathy_pkgconfig
    $gnome_vfs_pkgconfig
 ])
 
@@ -203,6 +247,7 @@ PKG_CHECK_MODULES(GOSSIP,
    loudmouth-1.0 >= $LOUDMOUTH_REQUIRED
    $iso_codes_pkgconfig
    $dbus_pkgconfig
+   $telepathy_pkgconfig
    $galago_pkgconfig
    $libnotify_pkgconfig
    $libgnomeui_pkgconfig
@@ -330,6 +375,7 @@ AC_OUTPUT([
   src/sounds/Makefile
   protocols/Makefile
   protocols/jabber/Makefile
+  protocols/telepathy/Makefile
   po/Makefile.in
   help/Makefile
   peekaboo/Makefile
@@ -339,12 +385,13 @@ AC_OUTPUT([
 ])
 
 echo
-echo "Prefix:   $prefix"
-echo "Backend:  $ac_backend"
-echo "DBUS:     $have_dbus"
-echo "Galago:   $have_galago"
-echo "ASpell:   $have_aspell"
-echo "Notify:   $have_libnotify"
-echo "XSS:      $have_xss (only with GNOME)"
-echo "Peekaboo: $have_peekaboo (only with DBUS)"
+echo "Prefix:    $prefix"
+echo "Backend:   $ac_backend"
+echo "DBUS:      $have_dbus"
+echo "Galago:    $have_galago"
+echo "Telepathy: $have_telepathy"
+echo "ASpell:    $have_aspell"
+echo "Notify:    $have_libnotify"
+echo "XSS:       $have_xss (only with GNOME)"
+echo "Peekaboo:  $have_peekaboo (only with DBUS)"
 echo

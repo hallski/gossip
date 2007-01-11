@@ -1,3 +1,9 @@
+2006-01-11  Xavier Claessens  <xclaesse@gmail.com>
+
+	*  Merged TELEPATHY branch to TRUNK. Fixes bug #391284.
+	Thanks to all contributors (Xavier Claessens, Eitan Isaacson,
+	Raphael Slinckx, Sjoerd Simons).
+
 2007-01-11  Martyn Russell  <martyn@imendio.com>
 
 	* Release 0.22.

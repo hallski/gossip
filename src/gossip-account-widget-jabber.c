@@ -125,14 +125,13 @@ account_widget_jabber_save (GossipAccountWidgetJabber *settings)
 	port = strtol (port_str, NULL, 10);
 	use_ssl = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (settings->checkbutton_ssl));
 
-	gossip_account_set_id (settings->account, id);
-
 	gossip_account_param_set (settings->account,
 				  "password", password,
 				  "resource", resource,
 				  "server", server,
 				  "port", port,
 				  "use_ssl", use_ssl,
+				  "account", id,
 				  NULL);
 
 	gossip_account_manager_store (manager);
@@ -195,7 +194,9 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 			str = gtk_entry_get_text (GTK_ENTRY (widget));
 
 			if (!gossip_protocol_is_valid_username (protocol, str)) {
-				str = gossip_account_get_id (settings->account);
+				gossip_account_param_get (settings->account,
+							  "account", &str,
+							  NULL);
 				settings->account_changed = FALSE;
 			} else {
 				gchar *server;
@@ -224,7 +225,7 @@ account_widget_jabber_entry_focus_cb (GtkWidget                 *widget,
 				gossip_account_param_get (settings->account, "server", &str, NULL);
 			}
 
-			gtk_entry_set_text (GTK_ENTRY (widget), str);
+			gtk_entry_set_text (GTK_ENTRY (widget), str ? str : "");
 			settings->account_changed = FALSE;
 		}
 	}
@@ -330,6 +331,15 @@ account_widget_jabber_checkbutton_toggled_cb (GtkWidget                 *widget,
 					  "port", account_port,
 					  "use_ssl", active,
 					  NULL);
+
+		/* FIXME: We shouldn't always ignore errors, that's a security
+		 *        problem ! But we don't have the choice since
+		 *        loudmouth/gnutls doesn't have any certificates. */
+		if (gossip_account_has_param (settings->account, "ignore-ssl-errors")) {
+			gossip_account_param_set (settings->account,
+						  "ignore-ssl-errors", active,
+						  NULL);
+		}
 
 		if (changed) {
 			gchar *port_str;
@@ -697,14 +707,13 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 	session = gossip_app_get_session ();
 	protocol = gossip_session_get_protocol (session, settings->account);
 
-	id = gossip_account_get_id (settings->account);
-
 	gossip_account_param_get (settings->account,
 				  "use_ssl", &use_ssl,
 				  "password", &password,
 				  "resource", &resource,
 				  "server", &server,
 				  "port", &port,
+				  "account", &id,
 				  NULL);
 
 	if (gossip_protocol_is_ssl_supported (protocol)) {
@@ -714,7 +723,7 @@ account_widget_jabber_setup (GossipAccountWidgetJabber *settings)
 		gtk_widget_set_sensitive (settings->checkbutton_ssl, FALSE);
 	}
 
-	gtk_entry_set_text (GTK_ENTRY (settings->entry_id), id);
+	gtk_entry_set_text (GTK_ENTRY (settings->entry_id), id ? id : "");
 	gtk_entry_set_text (GTK_ENTRY (settings->entry_password), password ? password : "");
 	gtk_entry_set_text (GTK_ENTRY (settings->entry_resource), resource ? resource : "");
 	gtk_entry_set_text (GTK_ENTRY (settings->entry_server), server ? server : "");

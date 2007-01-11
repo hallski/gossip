@@ -28,6 +28,10 @@
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-utils.h>
+#ifdef USE_TELEPATHY
+#include <protocols/telepathy/gossip-telepathy-cmgr.h>
+#include "gossip-protocol-chooser.h"
+#endif
 
 #include "gossip-account-widget-jabber.h"
 #include "gossip-account-widget-generic.h"
@@ -1090,6 +1094,73 @@ accounts_dialog_button_connect_clicked_cb (GtkWidget            *button,
 	g_object_unref (account);
 }
 
+#ifdef USE_TELEPATHY
+static void
+accounts_dialog_choose_protocol_response_cb (GtkDialog            *widget,
+					     gint                  response,
+					     GossipAccountsDialog *dialog)
+{
+	GossipAccountManager *manager;
+	GossipAccount        *account;
+	GossipSession        *session;
+	GtkWidget            *chooser;
+	gchar                *cmgr;
+	gchar                *protocol;
+
+	if (response != GTK_RESPONSE_OK) {
+		gtk_widget_destroy (GTK_WIDGET (widget));
+		return;
+	}
+
+	session = gossip_app_get_session ();
+	manager = gossip_session_get_account_manager (session);
+	chooser = g_object_get_data (G_OBJECT (widget), "chooser");
+
+	gossip_protocol_chooser_get_protocol (chooser, &cmgr, &protocol);
+	account = gossip_telepathy_cmgr_new_account (cmgr, protocol);
+	gossip_account_manager_add (manager, account);
+	accounts_dialog_model_set_selected (dialog, account);
+	gtk_widget_grab_focus (dialog->entry_name);
+
+	g_free (protocol);
+	g_free (cmgr);
+	gtk_widget_destroy (GTK_WIDGET (widget));	
+	g_object_unref (account);
+}
+
+static void
+accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
+				       GossipAccountsDialog *dialog)
+{
+	GtkWidget *chooser;
+	GtkWidget *cd;
+	GtkWidget *hbox;
+	GtkWidget *label;
+
+	chooser = gossip_protocol_chooser_new ();
+	hbox = gtk_hbox_new (FALSE, 6);
+	label = gtk_label_new (_("Protocol:"));
+	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_end (GTK_BOX (hbox), chooser, FALSE, FALSE, 0);
+	cd = gtk_dialog_new_with_buttons (_("Choose the protocol"),
+					  GTK_WINDOW (dialog->window),
+					  GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					  GTK_STOCK_OK,
+					  GTK_RESPONSE_OK,
+					  GTK_STOCK_CANCEL,
+					  GTK_RESPONSE_CANCEL,
+					  NULL);
+	gtk_container_add (GTK_CONTAINER (GTK_DIALOG (cd)->vbox), hbox);
+
+	g_signal_connect (cd, "response",
+			  G_CALLBACK (accounts_dialog_choose_protocol_response_cb),
+			  dialog);
+
+	g_object_set_data (G_OBJECT (cd), "chooser", chooser);
+
+	gtk_widget_show_all (cd);
+}
+#else
 static void
 accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 				       GossipAccountsDialog *dialog)
@@ -1108,6 +1179,7 @@ accounts_dialog_button_add_clicked_cb (GtkWidget            *button,
 
 	gtk_widget_grab_focus (dialog->entry_name);
 }
+#endif
 
 static void
 accounts_dialog_remove_response_cb (GtkWidget     *dialog,

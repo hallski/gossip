@@ -1,4 +1,8 @@
+if USE_TELEPATHY
+SUBDIRS = telepathy
+else
 SUBDIRS = jabber
+endif
 
 protocolsdir = $(datadir)/gossip/protocols
 

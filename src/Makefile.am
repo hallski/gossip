@@ -28,12 +28,17 @@ if HAVE_LIBNOTIFY
 libnotify_sources = gossip-notify.c gossip-notify.h
 endif
 
+if USE_TELEPATHY
+telepathy_sources = gossip-protocol-chooser.c gossip-protocol-chooser.h
+endif
+
 bin_PROGRAMS = gossip
 
 gossip_SOURCES = 				                        	\
 	$(dbus_sources)			     	                        	\
 	$(galago_sources)		     	                        	\
 	$(libnotify_sources)		     	                        	\
+	$(telepathy_sources)		     	                        	\
 	ephy-spinner.c                     ephy-spinner.h			\
 	gossip-about-dialog.c              gossip-about-dialog.h		\
 	gossip-accounts-dialog.c           gossip-accounts-dialog.h		\

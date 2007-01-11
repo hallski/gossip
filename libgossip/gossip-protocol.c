@@ -25,7 +25,11 @@
 /* FIXME: we should really have a definition in config.h so we can
  * include certain protocol head files.
  */
+#ifdef USE_TELEPATHY
+#include <protocols/telepathy/gossip-telepathy.h>
+#else 
 #include <gossip-jabber.h>
+#endif
 
 #include "libgossip-marshal.h"
 #include "gossip-protocol.h"
@@ -212,6 +216,9 @@ gossip_protocol_new_from_account_type (GossipAccountType type)
 {
 	GossipProtocol *protocol = NULL;
 
+#ifdef USE_TELEPATHY
+	protocol = g_object_new (GOSSIP_TYPE_TELEPATHY, NULL);
+#else
 	/* create protocol for account type */
 	switch (type) {
 	case GOSSIP_ACCOUNT_TYPE_JABBER:
@@ -220,6 +227,7 @@ gossip_protocol_new_from_account_type (GossipAccountType type)
 	default:
 		break;
 	}
+#endif
 
 	return protocol;
 }

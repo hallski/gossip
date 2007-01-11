@@ -1,10 +1,20 @@
+if USE_TELEPATHY
+protocol_cflags = -I$(top_srcdir)/protocols/telepathy
+protocol_libs = $(top_builddir)/protocols/telepathy/libgossip-telepathy.la
+else
+protocol_cflags = -I$(top_srcdir)/protocols/jabber
+protocol_libs = $(top_builddir)/protocols/jabber/libgossip-jabber.la
+endif
+
 AM_CPPFLAGS =                                           \
 	-I.                                             \
 	-I$(top_srcdir)                                 \
 	-DDATADIR=\""$(datadir)"\"              	\
 	-DLOCALEDIR=\""$(datadir)/locale"\"		\
-	-I$(top_srcdir)/protocols/jabber                \
-	$(LIBGOSSIP_CFLAGS) $(WARN_CFLAGS) $(BACKEND_CFLAGS)
+	$(protocol_cflags)				\
+	$(LIBGOSSIP_CFLAGS) 				\
+	$(WARN_CFLAGS) 					\
+	$(BACKEND_CFLAGS)
 
 noinst_LTLIBRARIES = libgossip.la
 
@@ -72,7 +82,7 @@ libgossip_la_SOURCES =             			\
 
 libgossip_la_LIBADD =              			\
 	$(LIBGOSSIP_LIBS)          			\
-	$(top_builddir)/protocols/jabber/libgossip-jabber.la
+	$(protocol_libs)
 
 libgossipincludedir = $(includedir)/gossip/
 

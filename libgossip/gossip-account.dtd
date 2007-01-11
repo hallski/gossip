@@ -12,6 +12,8 @@
     ((type?),name,(id?),(resource?),(password?),(server?),(port?),(enabled?),(auto_connect?),(use_ssl?),(use_proxy?),(parameter*))>
 
 <!ATTLIST account type CDATA #IMPLIED>
+<!ATTLIST account cmgr_name CDATA #IMPLIED>
+<!ATTLIST account protocol CDATA #IMPLIED>
 
 <!ELEMENT type (#PCDATA)>
 <!ELEMENT name (#PCDATA)>

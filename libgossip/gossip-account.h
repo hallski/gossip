@@ -110,6 +110,14 @@ void              gossip_account_set_auto_connect  (GossipAccount           *acc
 						    gboolean                 auto_connect);
 void              gossip_account_set_use_proxy     (GossipAccount           *account,
 						    gboolean                 use_proxy);
+#ifdef USE_TELEPATHY
+const gchar *     gossip_account_get_protocol      (GossipAccount           *account);
+const gchar *     gossip_account_get_cmgr_name     (GossipAccount           *account);
+void              gossip_account_set_protocol      (GossipAccount           *account,
+						    const gchar             *protocol);
+void              gossip_account_set_cmgr_name     (GossipAccount           *account,
+						    const gchar             *cmgr_name);
+#endif
 guint             gossip_account_hash              (gconstpointer            key);
 gboolean          gossip_account_equal             (gconstpointer            v1,
 						    gconstpointer            v2);

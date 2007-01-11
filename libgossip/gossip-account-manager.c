@@ -25,6 +25,10 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+#ifdef USE_TELEPATHY
+#include <protocols/telepathy/gossip-telepathy-cmgr.h>
+#endif 
+
 #include "libgossip-marshal.h"
 #include "gossip-account-manager.h"
 #include "gossip-debug.h"
@@ -460,22 +464,46 @@ account_manager_parse_account (GossipAccountManager *manager,
 			       xmlNodePtr            node)
 {
 	GossipAccount  *account;
-	GossipProtocol *protocol;
 	xmlNodePtr      child;
 	gchar          *str;
+#ifdef USE_TELEPATHY
+	gchar *cmgr_name;
+	gchar *protocol;
+
+	if (!xmlHasProp (node, "cmgr_name") ||
+	    !xmlHasProp (node, "protocol")) {
+		/* That's a jabber account */
+		return;
+	}
+
+	cmgr_name = xmlGetProp (node, "cmgr_name");
+	protocol = xmlGetProp (node, "protocol");	
+	account = gossip_telepathy_cmgr_new_account (cmgr_name, protocol);
+	xmlFree (cmgr_name);
+	xmlFree (protocol);
+#else
+	GossipProtocol *protocol;
+
+	if (xmlHasProp (node, "cmgr_name") ||
+	    xmlHasProp (node, "protocol")) {
+		/* That's a telepathy account */
+		return;
+	}
 
 	str = xmlGetProp (node, "type");
 	if (str) {
 		protocol = gossip_protocol_new_from_account_type (gossip_account_string_to_type (str));
 	} else {
 		protocol = gossip_protocol_new_from_account_type (GOSSIP_ACCOUNT_TYPE_JABBER);
+		/* Old config file, need saving in new format */
+		need_saving = TRUE;
 	}
 
 	account = gossip_protocol_new_account (protocol);
 
 	g_object_unref (protocol);
 	xmlFree (str);
-
+#endif
 	child = node->children;
 	while (child) {
 		gchar *tag;
@@ -490,9 +518,6 @@ account_manager_parse_account (GossipAccountManager *manager,
 		if (strcmp (tag, "name") == 0) {
 			gossip_account_set_name (account, str);
 		}
-		else if (strcmp (tag, "id") == 0) {
-			gossip_account_set_id (account, str);
-		}
 		else if (strcmp (tag, "auto_connect") == 0) {
 			gossip_account_set_auto_connect (account, strcmp (str, "yes") == 0);
 		}
@@ -506,10 +531,10 @@ account_manager_parse_account (GossipAccountManager *manager,
 				      NULL);
 		}
 		else if (strcmp (tag, "parameter") == 0) {
-			gchar                   *param_name;
-			gchar                   *type_str;
-			GType                    type;
-			GValue                  *g_value;
+			gchar  *param_name;
+			gchar  *type_str;
+			GType   type;
+			GValue *g_value;
 
 			param_name = xmlGetProp (child, "name");
 			type_str = xmlGetProp (child, "type");
@@ -517,16 +542,17 @@ account_manager_parse_account (GossipAccountManager *manager,
 			type = gossip_dbus_type_to_g_type (type_str);
 			g_value = gossip_string_to_g_value (str, type);
 
-			/* Compatibility: The ID was defined here
-			 * in old accounts.xml files. */
+			/* Compatibility: "id" param is now renamed
+			 * to "account". */
 			if (strcmp (param_name, "id") != 0) {
 				gossip_account_param_set_g_value (account,
 								  param_name,
 								  g_value);			
 			} else {
-				/* Save in the new format */
+				gossip_account_param_set_g_value (account,
+								  "account",
+								  g_value);			
 				need_saving = TRUE;
-				gossip_account_set_id (account, str);
 			}
 
 			g_value_unset (g_value);
@@ -537,12 +563,15 @@ account_manager_parse_account (GossipAccountManager *manager,
 		/* Those are deprecated and kept for compatibility only */
 		else if (strcmp (tag, "resource") == 0) {
 			gossip_account_param_set (account, "resource", str, NULL);
+			need_saving = TRUE;
 		}
 		else if (strcmp (tag, "password") == 0) {
 			gossip_account_param_set (account, "password", str, NULL);
+			need_saving = TRUE;
 		}
 		else if (strcmp (tag, "server") == 0) {
 			gossip_account_param_set (account, "server", str, NULL);
+			need_saving = TRUE;
 		}
 		else if (strcmp (tag, "port") == 0) {
 			guint tmp_port;
@@ -552,11 +581,17 @@ account_manager_parse_account (GossipAccountManager *manager,
 				gossip_account_param_set (account, "port",
 							  tmp_port, NULL);
 			}
+			need_saving = TRUE;
 		}
 		else if (strcmp (tag, "use_ssl") == 0) {
 			gossip_account_param_set (account, "use_ssl",
 						  strcmp (str, "yes") == 0,
 						  NULL);
+			need_saving = TRUE;
+		}
+		else if (strcmp (tag, "id") == 0) {
+			gossip_account_param_set (account, "account", str, NULL);
+			need_saving = TRUE;
 		}
 
 		xmlFree (str);
@@ -565,9 +600,11 @@ account_manager_parse_account (GossipAccountManager *manager,
 	}
 #ifdef RESOURCE_HACK
 	const gchar *resource_found = NULL;
-	const gchar *id;
+	const gchar *id = NULL;
 
-	id = gossip_account_get_id (account);
+	if (gossip_account_has_param (account, "account")) {
+		gossip_account_param_get (account, "account", &id, NULL);
+	}
 	str = g_strdup (id);
 	if (str) {
 		/* FIXME: This hack is so we don't get bug
@@ -683,7 +720,9 @@ account_manager_file_save (GossipAccountManager *manager)
 {
 	GossipAccountManagerPriv *priv;
 	xmlDocPtr                 doc;
+	xmlDocPtr                 old_doc;
 	xmlNodePtr                root;
+	xmlParserCtxtPtr          ctxt;
 	GList                    *accounts;
 	GList                    *l;
 	gchar                    *xml_dir;
@@ -714,23 +753,54 @@ account_manager_file_save (GossipAccountManager *manager)
 		    "default",
 		    priv->default_name);
 
-	accounts = gossip_account_manager_get_accounts (manager);
+	/* Copy not used accounts in the new document */
+	ctxt = xmlNewParserCtxt ();
+	old_doc = xmlCtxtReadFile (ctxt, xml_file, NULL, 0);
+	if (old_doc) {
+		xmlNodePtr node;
 
+		node = xmlDocGetRootElement (old_doc);
+		for (node = node->children; node; node = node->next) {
+			if (strcmp ((gchar *) node->name, "default") == 0) {
+				continue;
+			}
+#ifdef USE_TELEPATHY
+			if (!xmlHasProp (node, "cmgr_name") ||
+			    !xmlHasProp (node, "protocol")) {
+				/* That's a jabber account */
+				xmlAddChild (root, xmlCopyNode (node, 1));
+			}
+#else
+			if (xmlHasProp (node, "cmgr_name") ||
+			    xmlHasProp (node, "protocol")) {
+				/* That's a telepathy account */
+				xmlAddChild (root, xmlCopyNode (node, 1));
+			}
+#endif
+		}
+
+		xmlFreeDoc(old_doc);
+	}
+	xmlFreeParserCtxt (ctxt);
+
+	accounts = gossip_account_manager_get_accounts (manager);
 	for (l = accounts; l; l = l->next) {
-		GossipAccount           *account;
-		const gchar             *type;
-		xmlNodePtr               node;
+		GossipAccount *account;
+		const gchar   *type;
+		xmlNodePtr     node;
 
 		account = l->data;
 
 		type = gossip_account_type_to_string (gossip_account_get_type (account));
 
 		node = xmlNewChild (root, NULL, "account", NULL);
+#ifdef USE_TELEPATHY
+		xmlNewProp (node, "cmgr_name", gossip_account_get_cmgr_name (account));
+		xmlNewProp (node, "protocol", gossip_account_get_protocol (account));
+#else
 		xmlNewProp (node, "type", type);
+#endif
 		xmlNewTextChild (node, NULL, "name", gossip_account_get_name (account));
-		if (gossip_account_get_id (account)) {
-			xmlNewTextChild (node, NULL, "id", gossip_account_get_id (account));
-		}
 		xmlNewTextChild (node, NULL, "auto_connect", gossip_account_get_auto_connect (account) ? "yes" : "no");
 		xmlNewTextChild (node, NULL, "use_proxy", gossip_account_get_use_proxy (account) ? "yes" : "no");
 
