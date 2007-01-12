@@ -1,3 +1,7 @@
+2007-01-12  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Bumped version.
+
 2007-01-11  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/gossip-account.[ch]: Make it possible to get a list of
