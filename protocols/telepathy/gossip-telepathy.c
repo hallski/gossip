@@ -1342,7 +1342,7 @@ telepathy_newchannel_cb (DBusGProxy      *proxy,
 	gossip_debug (DEBUG_DOMAIN, "telepathy_newchannel_cb: handle: %d handle_type: %d type: %s",
 		      new_chan->handle,
 		      new_chan->handle_type,
-		      dbus_g_proxy_get_path (DBUS_G_PROXY (new_chan)));
+		      channel_type);
 
 	if (strcmp (channel_type, TP_IFACE_CHANNEL_TYPE_CONTACT_LIST) == 0) {
 		gossip_telepathy_contact_list_newchannel (priv->contact_list,

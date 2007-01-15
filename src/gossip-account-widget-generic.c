@@ -191,9 +191,6 @@ account_widget_generic_setup_foreach (gchar                      *param_name,
 				  settings->n_rows - 1, settings->n_rows,
 				  GTK_FILL | GTK_EXPAND, 0,
 				  0, 0);
-
-		g_object_set_data (G_OBJECT (widget), "param_name", param_name);
-		settings->widgets = g_list_prepend (settings->widgets, widget);
 	} else {
 		gchar *param_name_formatted;
 		gchar *str;
@@ -237,10 +234,11 @@ account_widget_generic_setup_foreach (gchar                      *param_name,
 				  settings->n_rows - 1, settings->n_rows,
 				  GTK_FILL | GTK_EXPAND, 0,
 				  0, 0);
-
-		g_object_set_data (G_OBJECT (widget), "param_name", param_name);
-		settings->widgets = g_list_prepend (settings->widgets, widget);
 	}
+
+	g_object_set_data_full (G_OBJECT (widget), "param_name", 
+				g_strdup(param_name), g_free);
+	settings->widgets = g_list_prepend (settings->widgets, widget);
 }
 
 static void
