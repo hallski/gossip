@@ -1,3 +1,9 @@
+2007-01-15  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-about-dialog.c: Include the backend used (i.e. if we are
+	using Telepathy or the original Jabber backend, fixes bug #393913
+	(Vincent Untz).
+
 2007-01-12  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Bumped version.
