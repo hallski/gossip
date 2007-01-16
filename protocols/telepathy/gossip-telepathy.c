@@ -644,6 +644,8 @@ telepathy_connection_setup (GossipTelepathy *telepathy)
 		g_array_free (handles, TRUE);
 		goto skip;
 	}
+
+	gossip_debug (DEBUG_DOMAIN, "Set account ID to %s", *handles_names);
 	gossip_account_set_id (priv->account, *handles_names);
 	gossip_contact_set_id (priv->contact, *handles_names);
 	g_array_free (handles, TRUE);

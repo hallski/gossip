@@ -2036,7 +2036,7 @@ app_idle_check_cb (GossipApp *app)
 		 state == GOSSIP_PRESENCE_STATE_EXT_AWAY) {
 		/* Allow some slack before returning from away. */
 		if (idle >= -BACK_SLACK && idle <= 0) {
-			gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing.");
+			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Slack, do nothing."); */
 			app_status_flash_start ();
 		}
 		else if (idle < -BACK_SLACK) {
@@ -2045,7 +2045,7 @@ app_idle_check_cb (GossipApp *app)
 			return TRUE;
 		}
 		else if (idle > BACK_SLACK) {
-			gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break.");
+			/* gossip_debug (DEBUG_DOMAIN_IDLE, "Don't interrupt break."); */
 			app_status_flash_stop ();
 		}
 	}

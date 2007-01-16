@@ -1,5 +1,11 @@
 2006-01-16  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy.c: Add debug message when setting
+	the account ID.
+	* src/gossip-app.c: Comment out debug messages spammed when away.
+
+2006-01-16  Xavier Claessens  <xclaesse@gmail.com>
+
 	* src/gossip-account-chooser.c: unref the session and the account
 	manager.
 	* src/gossip-contact-list.c: useless to have a session variable when
