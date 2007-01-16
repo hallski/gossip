@@ -2939,7 +2939,6 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 				      gboolean           show_offline)
 {
 	GossipContactListPriv *priv;
-	GossipSession         *session;
 	const GList           *contacts;
 	const GList           *l;
 	gboolean               show_active;
@@ -2954,8 +2953,7 @@ gossip_contact_list_set_show_offline (GossipContactList *list,
 	/* Disable temporarily. */
 	priv->show_active = FALSE;
 
-	session = priv->session;
-	contacts = gossip_session_get_contacts (session);
+	contacts = gossip_session_get_contacts (priv->session);
 	for (l = contacts; l; l = l->next) {
 		GossipContact *contact;
 

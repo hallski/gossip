@@ -1,3 +1,12 @@
+2006-01-16  Xavier Claessens  <xclaesse@gmail.com>
+
+	* src/gossip-account-chooser.c: unref the session and the account
+	manager.
+	* src/gossip-contact-list.c: useless to have a session variable when
+	we have priv->session
+	* src/gossip-app.c: account manager isn't used and it seems dangerous
+	to use priv->session after unreffing it.
+
 2006-01-15  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy.c: Print the channel type in

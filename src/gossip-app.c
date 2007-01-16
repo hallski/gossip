@@ -376,9 +376,8 @@ gossip_app_init (GossipApp *singleton_app)
 static void
 app_finalize (GObject *object)
 {
-	GossipApp            *app;
-	GossipAppPriv        *priv;
-	GossipAccountManager *manager;
+	GossipApp     *app;
+	GossipAppPriv *priv;
 
 	app = GOSSIP_APP (object);
 	priv = GET_PRIV (app);
@@ -420,8 +419,6 @@ app_finalize (GObject *object)
 
 	gossip_sound_finalize ();
 
-	manager = gossip_session_get_account_manager (priv->session);
-
 	g_signal_handlers_disconnect_by_func (priv->session,
 					      app_session_protocol_connecting_cb,
 					      NULL);
@@ -456,13 +453,13 @@ app_finalize (GObject *object)
 		g_object_unref (priv->away_presence);
 	}
 
+	gossip_ft_window_finalize (priv->session);
+	gossip_subscription_dialog_finalize (priv->session);
+
 	g_object_unref (priv->event_manager);
 	g_object_unref (priv->chat_manager);
 	g_object_unref (priv->chatroom_manager);
 	g_object_unref (priv->session);
-
-	gossip_ft_window_finalize (priv->session);
-	gossip_subscription_dialog_finalize (priv->session);
 
 	G_OBJECT_CLASS (gossip_app_parent_class)->finalize (object);
 }

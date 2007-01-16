@@ -141,6 +141,9 @@ account_chooser_finalize (GObject *object)
 					      account_chooser_protocol_disconnected_cb,
 					      account_chooser);
 
+	g_object_unref (priv->session);
+	g_object_unref (priv->account_manager);
+
 	G_OBJECT_CLASS (gossip_account_chooser_parent_class)->finalize (object);
 }
 
