@@ -109,7 +109,7 @@ gossip_about_dialog_new (GtkWindow *parent)
 			       "comments", comments,
 			       "license", license_trans,
 			       "wrap-license", TRUE,
-			       "copyright", "Imendio AB 2002-2006",
+			       "copyright", "Imendio AB 2002-2007",
 			       "documenters", documenters,
 			       "logo-icon-name", "gossip",
 			       "translator-credits", _("translator-credits"),
