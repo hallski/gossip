@@ -1,6 +1,6 @@
 AC_INIT(Gossip, 0.23, http://bugzilla.gnome.org/enter_bug.cgi?product=gossip)
 AC_PREREQ(2.59)
-AC_COPYRIGHT([Copyright (C) 2003-2006 Imendio AB])
+AC_COPYRIGHT([Copyright (C) 2003-2007 Imendio AB])
 
 AC_CONFIG_SRCDIR(src/gossip-app.h)
 AM_CONFIG_HEADER(config.h)

@@ -1,3 +1,7 @@
+2007-01-18  Martyn Russell  <martyn@imendio.com>
+
+	* configure.ac: Updated copyright years.
+
 2006-01-16  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy.c: Add debug message when setting
