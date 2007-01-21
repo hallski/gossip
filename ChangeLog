@@ -1,3 +1,10 @@
+2007-01-21  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-account-widget-jabber.c: Don't reset the port in the
+	Jabber account entry if the entry is empty, this means that you
+	can actually delete the text before you enter a new port, fixes
+	bug #396846 (Joel Dimbernat).
+
 2007-01-18  Martyn Russell  <martyn@imendio.com>
 
 	* configure.ac: Updated copyright years.

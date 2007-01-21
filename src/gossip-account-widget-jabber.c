@@ -265,7 +265,7 @@ account_widget_jabber_entry_changed_cb (GtkWidget                 *widget,
 		str = gtk_entry_get_text (GTK_ENTRY (widget));
 		pnr = strtol (str, NULL, 10);
 		
-		if (pnr <= 0 || pnr >= 65556) {
+		if ((pnr <= 0 || pnr >= 65556) && !G_STR_EMPTY (str)) {
 			guint  port;
 			gchar *port_str;
 			
