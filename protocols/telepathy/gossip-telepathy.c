@@ -408,13 +408,15 @@ static TpConn *
 telepathy_get_existing_connection (GossipAccount *account)
 {
 	TpConn       *tp_conn = NULL;
-	const gchar  *account_id;
+	const gchar  *account_id = NULL;
 	gchar       **name;
 	gchar       **name_list;
 	gboolean      found = FALSE;
 
-	/* FIXME: what if there is no "account" param ? */
-	gossip_account_param_get (account, "account", &account_id, NULL);
+	/* FIXME: We shouldn't depend on the account parameter */
+	if (gossip_account_has_param (account, "account")) {
+		gossip_account_param_get (account, "account", &account_id, NULL);
+	}
 
 	dbus_g_proxy_call (tp_get_bus_proxy (),
 			   "ListNames", NULL,
@@ -471,7 +473,7 @@ telepathy_get_existing_connection (GossipAccount *account)
 				goto next;
 			}
 
-			if (strcmp (*handle_name, account_id) == 0) {
+			if (!account_id || strcmp (*handle_name, account_id) == 0) {
 				tp_conn = tp_conn_new (tp_get_bus (),
 						       *name,
 						       obj_path);

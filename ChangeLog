@@ -1,3 +1,9 @@
+2006-01-22  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy.c: Workaround to get existing
+	connections of telepatyh-salut which has no "account" parameter.
+	(Sjoerd Simons)
+
 2007-01-21  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-account-widget-jabber.c: Don't reset the port in the
