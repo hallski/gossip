@@ -64,6 +64,8 @@ const gchar * gossip_g_type_to_dbus_type (GType            g_type);
 gchar *       gossip_g_value_to_string   (const GValue    *value);
 GValue *      gossip_string_to_g_value   (const gchar     *str,
 					  GType            type);
+gboolean      gossip_g_value_equal       (const GValue    *value1,
+					  const GValue    *value2);
 
 G_END_DECLS
 

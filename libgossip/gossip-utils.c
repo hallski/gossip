@@ -286,6 +286,9 @@ gossip_string_to_g_value (const gchar *str, GType type)
 
 	switch (type)
 	{
+	case G_TYPE_STRING:
+		g_value_set_string (g_value, str);
+		break;
 	case G_TYPE_BOOLEAN:
 		g_value_set_boolean (g_value, (str[0] == 'y' || str[0] == 'T'));
 		break;
@@ -295,13 +298,48 @@ gossip_string_to_g_value (const gchar *str, GType type)
 	case G_TYPE_INT:
 		g_value_set_int (g_value, atoi (str));
 		break;
-	case G_TYPE_STRING:
-		g_value_set_string (g_value, str);
-		break;
 	default:
 		g_assert_not_reached ();
 	}
 
 	return g_value;
+}
+
+gboolean
+gossip_g_value_equal (const GValue *value1,
+		      const GValue *value2)
+{
+	GType type;
+
+	g_return_val_if_fail (value1 != NULL, FALSE);
+	g_return_val_if_fail (value2 != NULL, FALSE);
+
+	type = G_VALUE_TYPE (value1);
+	if (type != G_VALUE_TYPE (value2)) {
+		return FALSE;
+	}
+
+	switch (type)
+	{
+	case G_TYPE_STRING: {
+		const gchar *str1;
+		const gchar *str2;
+
+		str1 = g_value_get_string (value1);
+		str2 = g_value_get_string (value2);
+		return (str1 && str2 && strcmp (str1, str2) == 0) ||
+		       (G_STR_EMPTY (str1) && G_STR_EMPTY (str2));
+	}
+	case G_TYPE_BOOLEAN:
+		return g_value_get_boolean (value1) == g_value_get_boolean (value2);
+	case G_TYPE_UINT:
+		return g_value_get_uint (value1) == g_value_get_uint (value2);
+	case G_TYPE_INT:
+		return g_value_get_int (value1) == g_value_get_int (value2);
+	default:
+		g_warning ("Unsupported GType in value comparaison");
+	}
+
+	return FALSE;
 }
 

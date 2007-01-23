@@ -410,6 +410,7 @@ account_param_set_valist (GossipAccount *account,
 	for (name = first_param_name; name; name = va_arg (var_args, gchar*)) {
 		GossipAccountParam *param;
 		gchar              *error = NULL;
+		GValue              g_value = {0, };
 
 		name = account_param_name_convert (name);
 		param = g_hash_table_lookup (priv->parameters, name);
@@ -418,12 +419,19 @@ account_param_set_valist (GossipAccount *account,
 			break;
 		}
 
-		G_VALUE_COLLECT (&param->g_value, var_args, 0, &error);
+		g_value_init (&g_value, G_VALUE_TYPE (&param->g_value));
+		G_VALUE_COLLECT (&g_value, var_args, 0, &error);
 		if (error) {
+			g_value_unset (&g_value);
 			g_warning ("%s: %s", G_STRFUNC, error);
 			g_free (error);
 			break;
 		}
+		if (!gossip_g_value_equal (&g_value, &param->g_value)) {
+			param->modified = TRUE;
+			g_value_copy (&g_value, &param->g_value);
+		}
+		g_value_unset (&g_value);
 	}
 }
 
@@ -518,9 +526,9 @@ gossip_account_param_set (GossipAccount *account,
 }
 
 void
-gossip_account_param_set_g_value (GossipAccount           *account,
-				  const gchar             *param_name,
-				  const GValue            *g_value)
+gossip_account_param_set_g_value (GossipAccount *account,
+				  const gchar   *param_name,
+				  const GValue  *g_value)
 {
 	GossipAccountPriv  *priv;
 	GossipAccountParam *param;
@@ -536,9 +544,11 @@ gossip_account_param_set_g_value (GossipAccount           *account,
 		return;
 	}
 
-	g_value_copy (g_value, &param->g_value);
-
-	g_signal_emit (account, signals[CHANGED], 0);
+	if (!gossip_g_value_equal (g_value, &param->g_value)) {
+		param->modified = TRUE;
+		g_value_copy (g_value, &param->g_value);
+		g_signal_emit (account, signals[CHANGED], 0);
+	}
 }
 
 void

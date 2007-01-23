@@ -1,3 +1,12 @@
+2006-01-23  Xavier Claessens  <xclaesse@gmail.com>
+
+	* libgossip/gossip-account.c:
+	* libgossip/gossip-utils.c:
+	* libgossip/gossip-account.h:
+	* libgossip/gossip-account-manager.c:
+	* libgossip/gossip-utils.h: Don't save account parameters that are not
+	changed to keep default value. Fix bug #399715.
+
 2006-01-22  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy.c: Workaround to get existing

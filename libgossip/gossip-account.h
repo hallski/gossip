@@ -56,6 +56,7 @@ typedef enum {
 typedef struct {
 	GossipAccountParamFlags flags;
 	GValue                  g_value;
+	gboolean                modified;
 } GossipAccountParam;
 
 typedef enum {

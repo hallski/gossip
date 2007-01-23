@@ -841,6 +841,10 @@ account_manager_add_parameters_foreach (GossipAccount      *account,
 	gchar       *value_str;
 	const gchar *type_str;
 
+	if (!param->modified) {
+		return;
+	}
+
 	value_str = gossip_g_value_to_string (&param->g_value);
 	type_str = gossip_g_type_to_dbus_type (G_VALUE_TYPE (&param->g_value));
 
@@ -850,3 +854,4 @@ account_manager_add_parameters_foreach (GossipAccount      *account,
 
 	g_free (value_str);
 }
+
