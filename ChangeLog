@@ -1,5 +1,10 @@
 2006-01-23  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy-message.c: Set timeout_id to 0
+	otherwise we remove some random g_source. (Sjoerd Simons)
+
+2006-01-23  Xavier Claessens  <xclaesse@gmail.com>
+
 	* libgossip/gossip-account.c:
 	* libgossip/gossip-utils.c:
 	* libgossip/gossip-account.h:

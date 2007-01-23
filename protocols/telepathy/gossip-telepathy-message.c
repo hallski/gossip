@@ -140,7 +140,7 @@ gossip_telepathy_message_newchannel (GossipTelepathyMessage *message,
 	text_iface = tp_chan_get_interface (new_chan,
 					    TELEPATHY_CHAN_IFACE_TEXT_QUARK);
 
-	msg_chan = g_slice_new (TelepathyMessageChan);
+	msg_chan = g_slice_new0 (TelepathyMessageChan);
 	msg_chan->text_chan = g_object_ref (new_chan);
 	msg_chan->text_iface = text_iface;
 	msg_chan->telepathy = message->telepathy;
@@ -359,6 +359,8 @@ telepathy_message_timeout (TelepathyMessageChan *msg_chan)
 	GError *error = NULL;
 
 	gossip_debug (DEBUG_DOMAIN, "Timeout, closing channel...");
+
+	msg_chan->timeout_id = 0;
 
 	if (!tp_chan_close (DBUS_G_PROXY (msg_chan->text_chan), &error)) {
 		gossip_debug (DEBUG_DOMAIN, "Error closing text channel: %s",
