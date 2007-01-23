@@ -1,5 +1,11 @@
 2006-01-23  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy-contacts.c: Hold handles when
+	adding them in the hash table. We still need to release handles.
+	Fixes bug #399194.
+	
+2006-01-23  Xavier Claessens  <xclaesse@gmail.com>
+
 	* protocols/telepathy/gossip-telepathy-message.c: Set timeout_id to 0
 	otherwise we remove some random g_source. (Sjoerd Simons)
 

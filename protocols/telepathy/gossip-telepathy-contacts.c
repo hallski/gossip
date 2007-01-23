@@ -22,6 +22,7 @@
 
 #include <string.h>
 
+#include <libtelepathy/tp-conn-gen.h>
 #include <libtelepathy/tp-conn-iface-aliasing-gen.h>
 #include <libtelepathy/tp-conn-iface-presence-gen.h>
 #include <libtelepathy/tp-conn-iface-avatars-gen.h>
@@ -302,10 +303,14 @@ gossip_telepathy_contacts_get_from_handle (GossipTelepathyContacts *contacts,
 	g_array_append_val (handles, handle);
 
 	list = gossip_telepathy_contacts_get_from_handles (contacts, handles);
-	contact = list->data;
-
-	g_list_free (list);
 	g_array_free (handles, TRUE);
+
+	if (!list) {
+		return NULL;
+	}
+
+	contact = list->data;
+	g_list_free (list);
 
 	return contact;
 }
@@ -532,7 +537,7 @@ gossip_telepathy_contacts_send_presence (GossipTelepathyContacts *contacts,
 }
 
 static gboolean
-telepathy_contacts_finalize_foreach (guint            key,
+telepathy_contacts_finalize_foreach (guint            handle,
 				     GossipContact   *contact,
 				     GossipTelepathy *telepathy)
 {
@@ -580,6 +585,16 @@ telepathy_contacts_create_from_handles (GossipTelepathyContacts *contacts,
 	}
 
 	account = gossip_telepathy_get_account (contacts->telepathy);
+
+	/* FIXME: Here we holds all handles, we should release them at some point. */
+	if (!tp_conn_hold_handles (DBUS_G_PROXY (tp_conn),
+				   TP_CONN_HANDLE_TYPE_CONTACT,
+				   handles, &error)) {
+		gossip_debug (DEBUG_DOMAIN, "HoldHandles Error; %s",
+			      error->message);
+		g_clear_error (&error);
+		return NULL;
+	}
 
 	/* Create GossipContact objects */
 	id = handles_names;
