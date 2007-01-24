@@ -523,14 +523,14 @@ vcard_dialog_lookup_start (GossipVCardDialog *dialog)
 	account_chooser = GOSSIP_ACCOUNT_CHOOSER (dialog->account_chooser);
 	account = gossip_account_chooser_get_account (account_chooser);
 
+	dialog->requesting_vcard = TRUE;
+
 	gossip_session_get_vcard (session,
 				  account,
 				  NULL,
 				  (GossipVCardCallback) vcard_dialog_get_vcard_cb,
 				  dialog,
 				  NULL);
-
-	dialog->requesting_vcard = TRUE;
 
 	g_object_unref (account);
 }

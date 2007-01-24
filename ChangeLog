@@ -1,3 +1,8 @@
+2006-01-24  Xavier Claessens  <xclaesse@gmail.com>
+
+	* src/gossip-vcard-dialog.c: Set requesting_vcard=TRUE before calling
+	_get_vcard(). Fixes bug #400176.
+
 2006-01-23  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-contacts.c: Hold handles when
