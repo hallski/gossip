@@ -45,6 +45,7 @@
 #include <libgossip/gossip-ft-provider.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
 
 
 #include "gossip-telepathy.h"
@@ -514,6 +515,9 @@ telepathy_login (GossipProtocol *protocol)
 	const gchar         *cmgr_name;
 	TpConnMgr           *conn_manager;
 	TpConnMgrInfo       *cmgr_info;
+	gchar               *requested_pass = NULL;
+	GValue               requested_pass_value = {0, };
+	GossipAccountParam  *pass_param;
 
 	g_return_if_fail (GOSSIP_IS_TELEPATHY (protocol));
 
@@ -550,6 +554,29 @@ telepathy_login (GossipProtocol *protocol)
 				      (GossipAccountParamFunc) telepathy_insert_params_foreach,
 				      connection_parameters);
 
+	/* Request the password to the user if not set */
+	if ((pass_param = gossip_account_param_get_param (priv->account, "password")) &&
+	    G_VALUE_HOLDS (&pass_param->g_value, G_TYPE_STRING)) {
+		const gchar *str;
+		
+		str = g_value_get_string (&pass_param->g_value);
+		if (G_STR_EMPTY (str)) { 
+			g_signal_emit_by_name (protocol, "get-password", 
+					       priv->account,
+					       &requested_pass);
+
+			if (requested_pass == NULL) {
+				g_hash_table_destroy (connection_parameters);
+				return;
+			}
+
+			g_value_init (&requested_pass_value, G_TYPE_STRING);
+			g_value_set_static_string (&requested_pass_value, requested_pass);
+			g_hash_table_insert (connection_parameters, "password", 
+					     &requested_pass_value);
+		}
+	}
+
 	protocol_name = gossip_account_get_protocol (priv->account);
 	cmgr_name = gossip_account_get_cmgr_name (priv->account);
 	cmgr_info = tp_connmgr_get_info ((gchar*) cmgr_name);
@@ -563,6 +590,7 @@ telepathy_login (GossipProtocol *protocol)
 						   (gchar*) protocol_name);
 
 	g_hash_table_destroy (connection_parameters);
+	g_free (requested_pass);
 	g_object_unref (conn_manager);
 	tp_connmgr_info_free (cmgr_info);
 

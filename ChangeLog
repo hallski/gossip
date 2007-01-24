@@ -1,5 +1,10 @@
 2006-01-24  Xavier Claessens  <xclaesse@gmail.com>
 
+	* protocols/telepathy/gossip-telepathy.c: Request the password to the
+	user if the "password" account parameter is empty. (Sjoerd Simons)
+
+2006-01-24  Xavier Claessens  <xclaesse@gmail.com>
+
 	* src/gossip-vcard-dialog.c: Set requesting_vcard=TRUE before calling
 	_get_vcard(). Fixes bug #400176.
 
