@@ -1,3 +1,12 @@
+2007-01-25  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/Makefile.am:
+	* src/gossip-accounts-dialog.c:
+	(accounts_dialog_button_remove_clicked_cb): Don't use "Yes" and
+	"No" in the account removal confirmation dialog, instead use
+	"Cancel" and "Remove", this is more in line with the HIG and it
+	fixes bug #398081 (Joel Dimbernat).
+
 2006-01-25  Xavier Claessens  <xclaesse@gmail.com>
 
 	* protocols/telepathy/gossip-telepathy-contacts.c: Do not set status

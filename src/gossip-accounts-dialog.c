@@ -1215,7 +1215,7 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
 		(GTK_WINDOW (dialog->window),
 		 GTK_DIALOG_DESTROY_WITH_PARENT,
 		 GTK_MESSAGE_QUESTION,
-		 GTK_BUTTONS_YES_NO,
+		 GTK_BUTTONS_NONE,
 		 _("You are about to remove your %s account!\n"
 		   "Are you sure you want to proceed?"),
 		 gossip_account_get_name (account));
@@ -1227,6 +1227,13 @@ accounts_dialog_button_remove_clicked_cb (GtkWidget            *button,
 		   "\n"
 		   "Should you decide to add the account back at a later time, "
 		   "they will still be available."));
+
+	gtk_dialog_add_button (GTK_DIALOG (message_dialog),
+			       GTK_STOCK_CANCEL, 
+			       GTK_RESPONSE_NO);
+	gtk_dialog_add_button (GTK_DIALOG (message_dialog),
+			       GTK_STOCK_REMOVE, 
+			       GTK_RESPONSE_YES);
 
 	g_signal_connect (message_dialog, "response",
 			  G_CALLBACK (accounts_dialog_remove_response_cb),
