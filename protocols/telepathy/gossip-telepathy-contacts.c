@@ -514,13 +514,12 @@ gossip_telepathy_contacts_send_presence (GossipTelepathyContacts *contacts,
 	status_id = telepathy_presence_state_to_str (presence_state);
 	message = gossip_presence_get_status (presence);
 
-	if (!message) {
-		message = gossip_presence_state_get_default_status (presence_state);
+	if (message) {
+		g_value_init (&value_message, G_TYPE_STRING);
+		g_value_set_string (&value_message, message);
+		g_hash_table_insert (status_options, "message", &value_message);
 	}
 
-	g_value_init (&value_message, G_TYPE_STRING);
-	g_value_set_string (&value_message, message);
-	g_hash_table_insert (status_options, "message", &value_message);
 	g_hash_table_insert (status_ids,
 			     g_strdup (status_id),
 			     status_options);
