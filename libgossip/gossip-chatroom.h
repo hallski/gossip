@@ -77,77 +77,86 @@ typedef enum {
 	GOSSIP_CHATROOM_AFFILIATION_NONE
 } GossipChatroomAffiliation;
 
-GType              gossip_chatroom_get_gtype          (void) G_GNUC_CONST;
+typedef struct {
+	GossipChatroomRole        role;
+	GossipChatroomAffiliation affiliation;
+} GossipChatroomContactInfo;
+
+GType                      gossip_chatroom_get_gtype          (void) G_GNUC_CONST;
 
 /* Gets */
-GossipChatroomType gossip_chatroom_get_type           (GossipChatroom       *chatroom);
-GossipChatroomId   gossip_chatroom_get_id             (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_id_str         (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_name           (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_nick           (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_server         (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_room           (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_password       (GossipChatroom       *chatroom);
-gboolean           gossip_chatroom_get_auto_connect   (GossipChatroom       *chatroom);
-gboolean           gossip_chatroom_get_is_favourite   (GossipChatroom       *chatroom);
-GossipChatroomStatus
-		   gossip_chatroom_get_status         (GossipChatroom       *chatroom);
-const gchar *      gossip_chatroom_get_last_error     (GossipChatroom       *chatroom);
-GossipAccount *    gossip_chatroom_get_account        (GossipChatroom       *chatroom);
+GossipChatroomType         gossip_chatroom_get_type           (GossipChatroom            *chatroom);
+GossipChatroomId           gossip_chatroom_get_id             (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_id_str         (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_name           (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_nick           (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_server         (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_room           (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_password       (GossipChatroom            *chatroom);
+gboolean                   gossip_chatroom_get_auto_connect   (GossipChatroom            *chatroom);
+gboolean                   gossip_chatroom_get_is_favourite   (GossipChatroom            *chatroom);
+GossipChatroomStatus       gossip_chatroom_get_status         (GossipChatroom            *chatroom);
+const gchar *              gossip_chatroom_get_last_error     (GossipChatroom            *chatroom);
+GossipAccount *            gossip_chatroom_get_account        (GossipChatroom            *chatroom);
+GossipChatroomContactInfo *gossip_chatroom_get_contact_info   (GossipChatroom            *chatroom,
+							       GossipContact             *contact);
 
 /* Sets */
-void               gossip_chatroom_set_type           (GossipChatroom       *chatroom,
-						       GossipChatroomType    type);
-void               gossip_chatroom_set_name           (GossipChatroom       *chatroom,
-						       const gchar          *name);
-void               gossip_chatroom_set_nick           (GossipChatroom       *chatroom,
-						       const gchar          *nick);
-void               gossip_chatroom_set_server         (GossipChatroom       *chatroom,
-						       const gchar          *server);
-void               gossip_chatroom_set_room           (GossipChatroom       *chatroom,
-						       const gchar          *room);
-void               gossip_chatroom_set_password       (GossipChatroom       *chatroom,
-						       const gchar          *password);
-void               gossip_chatroom_set_auto_connect   (GossipChatroom       *chatroom,
-						       gboolean              auto_connect);
-void               gossip_chatroom_set_favourite      (GossipChatroom       *chatroom,
-						       gboolean              favourite);
-void               gossip_chatroom_set_status         (GossipChatroom       *chatroom,
-						       GossipChatroomStatus  status);
-void               gossip_chatroom_set_last_error     (GossipChatroom       *chatroom,
-						       const gchar          *last_error);
-void               gossip_chatroom_set_account        (GossipChatroom       *chatroom,
-						       GossipAccount        *account);
-/* Utils */
-guint              gossip_chatroom_hash               (gconstpointer         key);
-gboolean           gossip_chatroom_equal              (gconstpointer         v1,
-						       gconstpointer         v2);
-gboolean           gossip_chatroom_equal_full         (gconstpointer         v1,
-						       gconstpointer         v2);
-const gchar *      gossip_chatroom_type_to_string     (GossipChatroomType    type);
-const gchar *      gossip_chatroom_status_to_string   (GossipChatroomStatus  status);
-const gchar *      gossip_chatroom_role_to_string     (GossipChatroomRole    role,
-						       gint                  nr);
-const gchar *      gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation,
-							  gint                      nr);
+void                       gossip_chatroom_set_type           (GossipChatroom            *chatroom,
+							       GossipChatroomType         type);
+void                       gossip_chatroom_set_name           (GossipChatroom            *chatroom,
+							       const gchar               *name);
+void                       gossip_chatroom_set_nick           (GossipChatroom            *chatroom,
+							       const gchar               *nick);
+void                       gossip_chatroom_set_server         (GossipChatroom            *chatroom,
+							       const gchar               *server);
+void                       gossip_chatroom_set_room           (GossipChatroom            *chatroom,
+							       const gchar               *room);
+void                       gossip_chatroom_set_password       (GossipChatroom            *chatroom,
+							       const gchar               *password);
+void                       gossip_chatroom_set_auto_connect   (GossipChatroom            *chatroom,
+							       gboolean                   auto_connect);
+void                       gossip_chatroom_set_favourite      (GossipChatroom            *chatroom,
+							       gboolean                   favourite);
+void                       gossip_chatroom_set_status         (GossipChatroom            *chatroom,
+							       GossipChatroomStatus       status);
+void                       gossip_chatroom_set_last_error     (GossipChatroom            *chatroom,
+							       const gchar               *last_error);
+void                       gossip_chatroom_set_account        (GossipChatroom            *chatroom,
+							       GossipAccount             *account);
+void                       gossip_chatroom_set_contact_info   (GossipChatroom            *chatroom,
+							       GossipContact             *contact,
+							       GossipChatroomContactInfo *info);
 
+/* Utils */
+guint                      gossip_chatroom_hash               (gconstpointer              key);
+gboolean                   gossip_chatroom_equal              (gconstpointer              v1,
+							       gconstpointer              v2);
+gboolean                   gossip_chatroom_equal_full         (gconstpointer              v1,
+							       gconstpointer              v2);
+const gchar *              gossip_chatroom_type_to_string     (GossipChatroomType         type);
+const gchar *              gossip_chatroom_status_to_string   (GossipChatroomStatus       status);
+const gchar *              gossip_chatroom_role_to_string     (GossipChatroomRole         role,
+							       gint                       nr);
+const gchar *              gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation  affiliation,
+							       gint                       nr);
+void                       gossip_chatroom_contact_joined     (GossipChatroom            *chatroom,
+							       GossipContact             *contact,
+							       GossipChatroomContactInfo *info);
+void                       gossip_chatroom_contact_left       (GossipChatroom            *chatroom,
+							       GossipContact             *contact);
 /* Invite functions */
 typedef struct _GossipChatroomInvite GossipChatroomInvite;
 
-GType              gossip_chatroom_invite_get_type    (void) G_GNUC_CONST;
-GossipChatroomInvite *
-		   gossip_chatroom_invite_new         (GossipContact        *invitor,
-						       const gchar          *id,
-						       const gchar          *reason);
-GossipChatroomInvite *
-		   gossip_chatroom_invite_ref         (GossipChatroomInvite *invite);
-void               gossip_chatroom_invite_unref       (GossipChatroomInvite *invite);
+GType                      gossip_chatroom_invite_get_type    (void) G_GNUC_CONST;
+GossipChatroomInvite *     gossip_chatroom_invite_new         (GossipContact        *invitor,
+							       const gchar          *id,
+							       const gchar          *reason);
+GossipChatroomInvite *     gossip_chatroom_invite_ref         (GossipChatroomInvite *invite);
+void                       gossip_chatroom_invite_unref       (GossipChatroomInvite *invite);
 
-GossipContact *    gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite);
-const gchar *      gossip_chatroom_invite_get_id      (GossipChatroomInvite *invite);
-const gchar *      gossip_chatroom_invite_get_reason  (GossipChatroomInvite *invite);
-
-GType              gossip_chatroom_role_get_gtype        (void) G_GNUC_CONST;
-GType              gossip_chatroom_affiliation_get_gtype (void) G_GNUC_CONST;
+GossipContact *            gossip_chatroom_invite_get_invitor (GossipChatroomInvite *invite);
+const gchar *              gossip_chatroom_invite_get_id      (GossipChatroomInvite *invite);
+const gchar *              gossip_chatroom_invite_get_reason  (GossipChatroomInvite *invite);
 
 #endif /* __GOSSIP_CHATROOM_H__ */

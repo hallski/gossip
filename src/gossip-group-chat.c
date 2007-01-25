@@ -25,8 +25,8 @@
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-chatroom-contact.h>
 #include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-contact.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-log.h>
 #include <libgossip/gossip-message.h>
@@ -174,14 +174,19 @@ static void            group_chat_topic_entry_activate_cb     (GtkWidget        
 static void            group_chat_topic_response_cb           (GtkWidget                    *dialog,
 							       gint                          response,
 							       GossipGroupChat              *chat);
-static void            group_chat_contact_joined_cb           (GossipChatroomProvider       *provider,
-							       gint                          id,
+static void            group_chat_contact_joined_cb           (GossipChatroom               *chatroom,
 							       GossipContact                *contact,
 							       GossipGroupChat              *chat);
-static void            group_chat_contact_left_cb             (GossipChatroomProvider       *provider,
-							       gint                          id,
+static void            group_chat_contact_left_cb             (GossipChatroom               *chatroom,
 							       GossipContact                *contact,
 							       GossipGroupChat              *chat);
+static void            group_chat_contact_info_changed_cb     (GossipChatroom               *chatroom,
+							       GossipContact                *contact,
+							       GossipGroupChat              *chat);
+static void            group_chat_contact_add                 (GossipGroupChat              *chat,
+							       GossipContact                *contact);
+static void            group_chat_contact_remove              (GossipGroupChat              *chat,
+							       GossipContact                *contact);
 static void            group_chat_contact_presence_updated_cb (GossipContact                *contact,
 							       GParamSpec                   *param,
 							       GossipGroupChat              *chat);
@@ -360,11 +365,14 @@ group_chat_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
 					      group_chat_topic_changed_cb,
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom,
 					      group_chat_contact_joined_cb,
 					      chat);
-	g_signal_handlers_disconnect_by_func (priv->chatroom_provider,
+	g_signal_handlers_disconnect_by_func (priv->chatroom,
 					      group_chat_contact_left_cb,
+					      chat);
+	g_signal_handlers_disconnect_by_func (priv->chatroom,
+					      group_chat_contact_info_changed_cb,
 					      chat);
 	
 	g_object_unref (priv->chatroom_provider);
@@ -1254,71 +1262,6 @@ gossip_group_chat_set_topic (GossipGroupChat *chat)
 }
 
 static void
-group_chat_contact_joined_cb (GossipChatroomProvider *provider,
-			      gint                    id,
-			      GossipContact          *contact,
-			      GossipGroupChat        *chat)
-{
-	GossipGroupChatPriv *priv;
-	GtkTreeModel        *model;
-	GtkTreeIter          iter;
-	GtkTreeIter          parent;
-	GdkPixbuf           *pixbuf;
-	GossipChatroomRole   role;
-	GtkTreePath         *path;
-
-	priv = GET_PRIV (chat);
-
-	if (id != gossip_chatroom_get_id (priv->chatroom)) {
-		return;
-	}
-
-	gossip_debug (DEBUG_DOMAIN, "[%d] Contact joined:'%s'",
-		      id, gossip_contact_get_id (contact));
-
-	pixbuf = gossip_pixbuf_for_contact (contact);
-
-	role = gossip_chatroom_contact_get_role (GOSSIP_CHATROOM_CONTACT (contact));
-	group_chat_get_role_iter (chat, role, &parent);
-
-	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
-	gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &parent);
-
-	gtk_tree_store_set (GTK_TREE_STORE (model),
-			    &iter,
-			    COL_CONTACT, contact,
-			    COL_NAME, gossip_contact_get_name (contact),
-			    COL_STATUS, pixbuf,
-			    COL_IS_HEADER, FALSE,
-			    -1);
-
-	path = gtk_tree_model_get_path (model, &parent);
-	gtk_tree_view_expand_row (GTK_TREE_VIEW (priv->treeview), path, TRUE);
-	gtk_tree_path_free (path);
-
-	g_object_unref (pixbuf);
-
-	g_signal_connect (contact, "notify::presences",
-			  G_CALLBACK (group_chat_contact_presence_updated_cb),
-			  chat);
-	g_signal_connect (contact, "notify::name",
-			  G_CALLBACK (group_chat_contact_updated_cb),
-			  chat);
-
-	g_signal_emit_by_name (chat, "contact_added", contact);
-	
-	/* Add event to chatroom */
-	if (!gossip_contact_equal (priv->own_contact, contact)) {
-		gchar *str;
-
-		str = g_strdup_printf (_("%s has joined the room"),
-				       gossip_contact_get_name (contact));
-		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
-		g_free (str);
-	}
-}
-
-static void
 group_chat_cl_pixbuf_cell_data_func (GtkTreeViewColumn *tree_column,
 				     GtkCellRenderer   *cell,
 				     GtkTreeModel      *model,
@@ -1450,22 +1393,50 @@ group_chat_cl_set_background (GossipGroupChat *chat,
 }
 
 static void
-group_chat_contact_left_cb (GossipChatroomProvider *provider,
-			    gint                    id,
-			    GossipContact          *contact,
-			    GossipGroupChat        *chat)
+group_chat_contact_joined_cb (GossipChatroom  *chatroom,
+			      GossipContact   *contact,
+			      GossipGroupChat *chat)
 {
-	GossipGroupChatPriv *priv;
-	GtkTreeIter          iter;
+	GossipGroupChatPriv       *priv;
 
 	priv = GET_PRIV (chat);
 
-	if (id != gossip_chatroom_get_id (priv->chatroom)) {
-		return;
-	}
+	gossip_debug (DEBUG_DOMAIN, "Contact joined:'%s'",
+		      gossip_contact_get_id (contact));
 
-	gossip_debug (DEBUG_DOMAIN, "[%d] Contact left:'%s'",
-		      id, gossip_contact_get_id (contact));
+	group_chat_contact_add (chat, contact);
+
+	g_signal_connect (contact, "notify::presences",
+			  G_CALLBACK (group_chat_contact_presence_updated_cb),
+			  chat);
+	g_signal_connect (contact, "notify::name",
+			  G_CALLBACK (group_chat_contact_updated_cb),
+			  chat);
+
+	g_signal_emit_by_name (chat, "contact_added", contact);
+	
+	/* Add event to chatroom */
+	if (!gossip_contact_equal (priv->own_contact, contact)) {
+		gchar *str;
+
+		str = g_strdup_printf (_("%s has joined the room"),
+				       gossip_contact_get_name (contact));
+		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		g_free (str);
+	}
+}
+
+static void
+group_chat_contact_left_cb (GossipChatroom  *chatroom,
+			    GossipContact   *contact,
+			    GossipGroupChat *chat)
+{
+	GossipGroupChatPriv *priv;
+
+	priv = GET_PRIV (chat);
+
+	gossip_debug (DEBUG_DOMAIN, "Contact left:'%s'",
+		      gossip_contact_get_id (contact));
 
 	g_signal_handlers_disconnect_by_func (contact,
 					      group_chat_contact_updated_cb,
@@ -1473,6 +1444,79 @@ group_chat_contact_left_cb (GossipChatroomProvider *provider,
 	g_signal_handlers_disconnect_by_func (contact,
 					      group_chat_contact_presence_updated_cb,
 					      chat);
+
+	group_chat_contact_remove (chat, contact);
+
+	g_signal_emit_by_name (chat, "contact_removed", contact);
+
+	/* Add event to chatroom */
+	if (!gossip_contact_equal (priv->own_contact, contact)) {
+		gchar *str;
+		str = g_strdup_printf (_("%s has left the room"),
+				       gossip_contact_get_name (contact));
+		gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
+		g_free (str);
+	}
+}
+
+static void
+group_chat_contact_info_changed_cb (GossipChatroom            *chatroom,
+				    GossipContact             *contact,
+				    GossipGroupChat           *chat)
+{
+	group_chat_contact_remove (chat, contact);
+	group_chat_contact_add (chat, contact);
+}
+
+static void
+group_chat_contact_add (GossipGroupChat *chat,
+			GossipContact   *contact)
+{
+	GossipGroupChatPriv       *priv;
+	GossipChatroomContactInfo *info;
+	GossipChatroomRole         role = GOSSIP_CHATROOM_ROLE_NONE;
+	GtkTreeModel              *model;
+	GtkTreeIter                iter;
+	GtkTreeIter                parent;
+	GdkPixbuf                 *pixbuf;
+	GtkTreePath               *path;
+
+	priv = GET_PRIV (chat);
+
+	pixbuf = gossip_pixbuf_for_contact (contact);
+
+	info = gossip_chatroom_get_contact_info (priv->chatroom, contact);
+	if (info) {
+		role = info->role;
+	}
+	group_chat_get_role_iter (chat, role, &parent);
+
+	model = gtk_tree_view_get_model (GTK_TREE_VIEW (priv->treeview));
+	gtk_tree_store_append (GTK_TREE_STORE (model), &iter, &parent);
+
+	gtk_tree_store_set (GTK_TREE_STORE (model),
+			    &iter,
+			    COL_CONTACT, contact,
+			    COL_NAME, gossip_contact_get_name (contact),
+			    COL_STATUS, pixbuf,
+			    COL_IS_HEADER, FALSE,
+			    -1);
+
+	path = gtk_tree_model_get_path (model, &parent);
+	gtk_tree_view_expand_row (GTK_TREE_VIEW (priv->treeview), path, TRUE);
+	gtk_tree_path_free (path);
+
+	g_object_unref (pixbuf);
+}
+
+static void
+group_chat_contact_remove (GossipGroupChat *chat,
+			   GossipContact   *contact)
+{
+	GossipGroupChatPriv *priv;
+	GtkTreeIter          iter;
+
+	priv = GET_PRIV (chat);
 
 	if (group_chat_contacts_find (chat, contact, &iter)) {
 		GtkTreeModel *model;
@@ -1485,17 +1529,6 @@ group_chat_contact_left_cb (GossipChatroomProvider *provider,
 
 		if (!gtk_tree_model_iter_has_child (model, &parent)) {
 			gtk_tree_store_remove (GTK_TREE_STORE (model), &parent);
-		}
-
-		g_signal_emit_by_name (chat, "contact_removed", contact);
-
-		/* Add event to chatroom */
-		if (!gossip_contact_equal (priv->own_contact, contact)) {
-			gchar *str;
-			str = g_strdup_printf (_("%s has left the room"),
-					       gossip_contact_get_name (contact));
-			gossip_chat_view_append_event (GOSSIP_CHAT (chat)->view, str);
-			g_free (str);
 		}
 	}
 }
@@ -2062,11 +2095,14 @@ gossip_group_chat_new (GossipChatroomProvider *provider,
 	g_signal_connect (provider, "chatroom-topic-changed",
 			  G_CALLBACK (group_chat_topic_changed_cb),
 			  chat);
-	g_signal_connect (provider, "chatroom-contact-joined",
+	g_signal_connect (chatroom, "contact-joined",
 			  G_CALLBACK (group_chat_contact_joined_cb),
 			  chat);
-	g_signal_connect (provider, "chatroom-contact-left",
+	g_signal_connect (chatroom, "contact-left",
 			  G_CALLBACK (group_chat_contact_left_cb),
+			  chat);
+	g_signal_connect (chatroom, "contact-info-changed",
+			  G_CALLBACK (group_chat_contact_info_changed_cb),
 			  chat);
 
 	/* Actually join the chat room */

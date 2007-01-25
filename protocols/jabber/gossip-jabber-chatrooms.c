@@ -24,7 +24,7 @@
 
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-chatroom-contact.h>
+#include <libgossip/gossip-contact.h>
 
 #include "gossip-jabber-chatrooms.h"
 #include "gossip-jabber-disco.h"
@@ -413,9 +413,12 @@ jabber_chatrooms_get_contact (JabberChatroom *room,
 		name = id;
 	}
 
-	contact = GOSSIP_CONTACT (gossip_chatroom_contact_new_full (gossip_contact_get_account (room->own_contact),
-								    id,
-								    name));
+	contact = g_object_new (GOSSIP_TYPE_CONTACT,
+				"account", gossip_contact_get_account (room->own_contact),
+				"id", id,
+				"name", name,
+				NULL);
+
 	room->contacts = g_slist_prepend (room->contacts, contact);
 
 	return contact;
@@ -439,8 +442,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 	gboolean                   new_contact;
 	gboolean                   was_offline;
 	LmMessageNode             *muc_user_node;
-	GossipChatroomRole         muc_role;
-	GossipChatroomAffiliation  muc_affiliation;
+	GossipChatroomContactInfo  muc_contact_info;
 
 	from = lm_message_node_get_attribute (m->node, "from");
 	jid = gossip_jid_new (from);
@@ -476,25 +478,23 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		/* should signal joined if contact was found but offline */
 		was_offline = !gossip_contact_is_online (contact);
 		gossip_contact_add_presence (contact, presence);
+		g_object_unref (presence);
 
 		muc_user_node = jabber_chatrooms_find_muc_user_node (m->node);
-		muc_role = jabber_chatrooms_get_role (muc_user_node);
-		muc_affiliation = jabber_chatrooms_get_affiliation (muc_user_node);
-
-		g_object_set (contact,
-			      "role", muc_role,
-			      "affiliation", muc_affiliation,
-			      NULL);
-
-		g_object_unref (presence);
+		muc_contact_info.role = jabber_chatrooms_get_role (muc_user_node);
+		muc_contact_info.affiliation = jabber_chatrooms_get_affiliation (muc_user_node);
 
 		/* is contact new or updated */
 		if (new_contact || was_offline) {
 			gossip_debug (DEBUG_DOMAIN, "ID[%d] Presence for new joining contact:'%s'",
 				      id, gossip_jid_get_full (jid));
-			g_signal_emit_by_name (chatrooms->jabber,
-					       "chatroom-contact-joined",
-					       id, contact);
+			gossip_chatroom_contact_joined (room->chatroom,
+							contact,
+							&muc_contact_info);
+		} else {
+			gossip_chatroom_set_contact_info (room->chatroom,
+							  contact,
+							  &muc_contact_info);
 		}
 		break;
 
@@ -503,9 +503,7 @@ jabber_chatrooms_presence_handler (LmMessageHandler      *handler,
 		if (contact) {
 			gossip_debug (DEBUG_DOMAIN, "ID[%d] Contact left:'%s'",
 				      id, gossip_jid_get_full (jid));
-			g_signal_emit_by_name (chatrooms->jabber,
-					       "chatroom-contact-left",
-					       id, contact);
+			gossip_chatroom_contact_left (room->chatroom, contact);
 			room->contacts = g_slist_remove (room->contacts, contact);
 			g_object_unref (contact);
 		}

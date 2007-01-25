@@ -1,5 +1,26 @@
 2006-01-25  Xavier Claessens  <xclaesse@gmail.com>
 
+	* libgossip/gossip-chatroom-contact.c
+	* libgossip/gossip-chatroom-contact.h: Removed.
+
+	* protocols/telepathy/gossip-telepathy-chatrooms.c
+	* protocols/telepathy/gossip-telepathy.c
+	* protocols/telepathy/gossip-telepathy-contacts.c
+	* protocols/jabber/gossip-jabber.c
+	* protocols/jabber/gossip-jabber-chatrooms.c
+	* src/gossip-group-chat.c
+	* libgossip/gossip-chatroom.c
+	* libgossip/gossip-chatroom.h
+	* libgossip/gossip-chatroom-provider.c
+	* libgossip/Makefile.am: Store role and affiliation in GossipChatroom
+	instead if GossipChatroomContact. Fixes bug #398846
+
+	* protocols/telepathy/gossip-telepathy.c: Ask the password to the user
+	only if the "password" parameter is required.
+
+
+2006-01-25  Xavier Claessens  <xclaesse@gmail.com>
+
 	* protocols/telepathy/gossip-telepathy.c
 	* protocols/telepathy/gossip-telepathy-contacts.c
 	* protocols/telepathy/gossip-telepathy-contacts.h

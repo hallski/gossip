@@ -41,7 +41,6 @@
 #include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-utils.h>
 #include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-chatroom-contact.h>
 #include <libgossip/gossip-ft-provider.h>
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-session.h>
@@ -556,7 +555,8 @@ telepathy_login (GossipProtocol *protocol)
 
 	/* Request the password to the user if not set */
 	if ((pass_param = gossip_account_param_get_param (priv->account, "password")) &&
-	    G_VALUE_HOLDS (&pass_param->g_value, G_TYPE_STRING)) {
+	    G_VALUE_HOLDS (&pass_param->g_value, G_TYPE_STRING) &&
+	    (pass_param->flags & GOSSIP_ACCOUNT_PARAM_FLAG_REQUIRED)) {
 		const gchar *str;
 		
 		str = g_value_get_string (&pass_param->g_value);

@@ -34,8 +34,6 @@ enum {
 	CHATROOM_NEW_MESSAGE,
 	CHATROOM_NEW_EVENT,
 	CHATROOM_TOPIC_CHANGED,
-	CHATROOM_CONTACT_JOINED,
-	CHATROOM_CONTACT_LEFT,
 	LAST_SIGNAL
 };
 
@@ -113,26 +111,6 @@ chatroom_provider_base_init (gpointer g_class)
 				      libgossip_marshal_VOID__INT_OBJECT_STRING,
 				      G_TYPE_NONE,
 				      3, G_TYPE_INT, GOSSIP_TYPE_CONTACT, G_TYPE_STRING);
-
-		signals[CHATROOM_CONTACT_JOINED] =
-			g_signal_new ("chatroom-contact-joined",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__INT_OBJECT,
-				      G_TYPE_NONE,
-				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
-
-		signals[CHATROOM_CONTACT_LEFT] =
-			g_signal_new ("chatroom-contact-left",
-				      G_TYPE_FROM_CLASS (g_class),
-				      G_SIGNAL_RUN_LAST,
-				      0,
-				      NULL, NULL,
-				      libgossip_marshal_VOID__INT_OBJECT,
-				      G_TYPE_NONE,
-				      2, G_TYPE_INT, GOSSIP_TYPE_CONTACT);
 
 		initialized = TRUE;
 	}

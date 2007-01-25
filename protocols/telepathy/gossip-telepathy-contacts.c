@@ -28,7 +28,6 @@
 #include <libtelepathy/tp-conn-iface-avatars-gen.h>
 
 #include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-chatroom-contact.h>
 #include <libgossip/gossip-account.h>
 #include <libgossip/gossip-debug.h>
 
@@ -590,9 +589,7 @@ telepathy_contacts_create_from_handles (GossipTelepathyContacts *contacts,
 		GossipContact *contact;
 		guint          handle;
 
-		/* FIXME: This is ugly but we need chatroom contact for
-		 *        contacts that are in chatrooms */
-		contact = g_object_new (GOSSIP_TYPE_CHATROOM_CONTACT,
+		contact = g_object_new (GOSSIP_TYPE_CONTACT,
 					"type", GOSSIP_CONTACT_TYPE_TEMPORARY,
 					"account", account,
 					NULL);

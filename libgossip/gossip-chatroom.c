@@ -51,6 +51,8 @@ struct _GossipChatroomPriv {
 
 	GossipChatroomStatus  status;
 	gchar                *last_error;
+
+	GHashTable           *contacts;
 };
 
 struct _GossipChatroomInvite {
@@ -91,7 +93,9 @@ enum {
 };
 
 enum {
-	CHANGED,
+	CONTACT_JOINED,
+	CONTACT_LEFT,
+	CONTACT_INFO_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -255,16 +259,33 @@ chatroom_class_init (GossipChatroomClass *class)
 	 * signals
 	 */
 
-	signals[CHANGED] =
-		g_signal_new ("changed",
+	signals[CONTACT_JOINED] =
+		g_signal_new ("contact-joined",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      0,
 			      NULL, NULL,
-			      libgossip_marshal_VOID__VOID,
+			      libgossip_marshal_VOID__OBJECT,
 			      G_TYPE_NONE,
-			      0);
-
+			      1, GOSSIP_TYPE_CONTACT);
+	signals[CONTACT_LEFT] =
+		g_signal_new ("contact-left",
+			      G_TYPE_FROM_CLASS (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__OBJECT,
+			      G_TYPE_NONE,
+			      1, GOSSIP_TYPE_CONTACT);
+	signals[CONTACT_INFO_CHANGED] =
+		g_signal_new ("contact-info-changed",
+			      G_TYPE_FROM_CLASS (object_class),
+			      G_SIGNAL_RUN_LAST,
+			      0,
+			      NULL, NULL,
+			      libgossip_marshal_VOID__OBJECT,
+			      G_TYPE_NONE,
+			      1, GOSSIP_TYPE_CONTACT);
 
 	g_type_class_add_private (object_class, sizeof (GossipChatroomPriv));
 }
@@ -295,6 +316,10 @@ chatroom_init (GossipChatroom *chatroom)
 	priv->last_error   = NULL;
 
 	priv->account      = NULL;
+	priv->contacts     = g_hash_table_new_full (gossip_contact_hash,
+						    gossip_contact_equal,
+						    (GDestroyNotify) g_object_unref,
+						    g_free);
 }
 
 static void
@@ -317,6 +342,8 @@ chatroom_finalize (GObject *object)
 	if (priv->account) {
 		g_object_unref (priv->account);
 	}
+
+	g_hash_table_destroy (priv->contacts);
 
 	(G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
@@ -390,7 +417,6 @@ chatroom_set_property (GObject      *object,
 	switch (param_id) {
 	case PROP_TYPE:
 		priv->type = g_value_get_int (value);
-		g_signal_emit (GOSSIP_CHATROOM (object), signals[CHANGED], 0);
 		break;
 	case PROP_NAME:
 		gossip_chatroom_set_name (GOSSIP_CHATROOM (object),
@@ -593,6 +619,20 @@ gossip_chatroom_get_account (GossipChatroom *chatroom)
 	return priv->account;
 }
 
+GossipChatroomContactInfo *
+gossip_chatroom_get_contact_info (GossipChatroom *chatroom,
+				  GossipContact  *contact)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_CHATROOM (chatroom), NULL);
+	g_return_val_if_fail (GOSSIP_IS_CONTACT (contact), NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	return g_hash_table_lookup (priv->contacts, contact);
+}
+
 void
 gossip_chatroom_set_name (GossipChatroom *chatroom,
 			  const gchar    *name)
@@ -608,7 +648,6 @@ gossip_chatroom_set_name (GossipChatroom *chatroom,
 	priv->name = g_strdup (name);
 
 	g_object_notify (G_OBJECT (chatroom), "name");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -626,7 +665,6 @@ gossip_chatroom_set_nick (GossipChatroom *chatroom,
 	priv->nick = g_strdup (nick);
 
 	g_object_notify (G_OBJECT (chatroom), "nick");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -649,7 +687,6 @@ gossip_chatroom_set_server (GossipChatroom *chatroom,
 	}
 
 	g_object_notify (G_OBJECT (chatroom), "server");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -672,7 +709,6 @@ gossip_chatroom_set_room (GossipChatroom *chatroom,
 	}
 
 	g_object_notify (G_OBJECT (chatroom), "room");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -690,7 +726,6 @@ gossip_chatroom_set_password (GossipChatroom *chatroom,
 	priv->password = g_strdup (password);
 
 	g_object_notify (G_OBJECT (chatroom), "password");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -705,7 +740,6 @@ gossip_chatroom_set_auto_connect (GossipChatroom *chatroom,
 	priv->auto_connect = auto_connect;
 
 	g_object_notify (G_OBJECT (chatroom), "auto_connect");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -720,7 +754,6 @@ gossip_chatroom_set_favourite (GossipChatroom *chatroom,
 	priv->favourite = favourite;
 
 	g_object_notify (G_OBJECT (chatroom), "favourite");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -736,7 +769,6 @@ gossip_chatroom_set_status (GossipChatroom       *chatroom,
 	priv->status = status;
 
 	g_object_notify (G_OBJECT (chatroom), "status");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -757,7 +789,6 @@ gossip_chatroom_set_last_error (GossipChatroom *chatroom,
 	}
 
 	g_object_notify (G_OBJECT (chatroom), "last_error");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
 }
 
 void
@@ -777,7 +808,31 @@ gossip_chatroom_set_account (GossipChatroom *chatroom,
 	priv->account = g_object_ref (account);
 
 	g_object_notify (G_OBJECT (chatroom), "account");
-	g_signal_emit (chatroom, signals[CHANGED], 0);
+}
+
+void
+gossip_chatroom_set_contact_info (GossipChatroom            *chatroom,
+				  GossipContact             *contact,
+				  GossipChatroomContactInfo *info)
+{
+	GossipChatroomPriv        *priv;
+	GossipChatroomContactInfo *chatroom_contact;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+	g_return_if_fail (info != NULL);
+
+	priv = GET_PRIV (chatroom);
+
+	chatroom_contact = g_new0 (GossipChatroomContactInfo, 1);
+	chatroom_contact->role = info->role;
+	chatroom_contact->affiliation = info->affiliation;
+	
+	g_hash_table_insert (priv->contacts, 
+			     g_object_ref (contact),
+			     chatroom_contact);
+
+	g_signal_emit (chatroom, signals[CONTACT_INFO_CHANGED], 0, contact);
 }
 
 guint
@@ -935,6 +990,49 @@ gossip_chatroom_affiliation_to_string (GossipChatroomAffiliation affiliation,
 	return "";
 }
 
+void
+gossip_chatroom_contact_joined (GossipChatroom            *chatroom,
+				GossipContact             *contact,
+				GossipChatroomContactInfo *info)
+{
+	GossipChatroomPriv        *priv;
+	GossipChatroomContactInfo *chatroom_contact;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
+	priv = GET_PRIV (chatroom);
+
+	chatroom_contact = g_new0 (GossipChatroomContactInfo, 1);
+	if (info) {
+		chatroom_contact->role = info->role;
+		chatroom_contact->affiliation = info->affiliation;		
+	} else {
+		chatroom_contact->role = GOSSIP_CHATROOM_ROLE_NONE;
+		chatroom_contact->affiliation = GOSSIP_CHATROOM_AFFILIATION_NONE;
+	}
+	g_hash_table_insert (priv->contacts,
+			     g_object_ref (contact),
+			     chatroom_contact);
+
+	g_signal_emit (chatroom, signals[CONTACT_JOINED], 0, contact);
+}
+
+void
+gossip_chatroom_contact_left (GossipChatroom *chatroom,
+			      GossipContact  *contact)
+{
+	GossipChatroomPriv *priv;
+
+	g_return_if_fail (GOSSIP_IS_CHATROOM (chatroom));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
+	priv = GET_PRIV (chatroom);
+
+	g_signal_emit (chatroom, signals[CONTACT_LEFT], 0, contact);
+	g_hash_table_remove (priv->contacts, contact);
+}
+
 /*
  * Chatroom invite functions
  */
@@ -1031,83 +1129,5 @@ gossip_chatroom_invite_get_reason (GossipChatroomInvite *invite)
 	g_return_val_if_fail (invite != NULL, NULL);
 
 	return invite->reason;
-}
-
-GType
-gossip_chatroom_role_get_gtype (void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{
-				GOSSIP_CHATROOM_ROLE_MODERATOR,
-				"GOSSIP_CHATROOM_ROLE_MODERATOR",
-				"Moderator"
-			},
-			{
-				GOSSIP_CHATROOM_ROLE_PARTICIPANT,
-				"GOSSIP_CHATROOM_ROLE_PARTICIPANT",
-				"Participant"
-			},
-			{
-				GOSSIP_CHATROOM_ROLE_VISITOR,
-				"GOSSIP_CHATROOM_ROLE_VISITOR",
-				"Visitor"
-			},
-			{
-				GOSSIP_CHATROOM_ROLE_NONE,
-				"GOSSIP_CHATROOM_ROLE_NONE",
-				"None"
-			},
-			{ 0, NULL, NULL }
-		};
-
-		type = g_enum_register_static ("GossipChatroomRole", values);
-	}
-
-	return type;
-}
-
-GType
-gossip_chatroom_affiliation_get_gtype (void)
-{
-	static GType type = 0;
-
-	if (type == 0) {
-		static const GEnumValue values[] = {
-			{
-				GOSSIP_CHATROOM_AFFILIATION_OWNER,
-				"GOSSIP_CHATROOM_AFFILIATION_OWNER",
-				"Owner"
-			},
-			{
-				GOSSIP_CHATROOM_AFFILIATION_ADMIN,
-				"GOSSIP_CHATROOM_AFFILIATION_ADMIN",
-				"Admin"
-			},
-			{
-				GOSSIP_CHATROOM_AFFILIATION_MEMBER,
-				"GOSSIP_CHATROOM_AFFILIATION_MEMBER",
-				"Member"
-			},
-			{
-				GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
-				"GOSSIP_CHATROOM_AFFILIATION_OUTCAST",
-				"Outcast"
-			},
-			{
-				GOSSIP_CHATROOM_AFFILIATION_NONE,
-				"GOSSIP_CHATROOM_AFFILIATION_NONE",
-				"None"
-			},
-			{ 0, NULL, NULL }
-		};
-
-		type = g_enum_register_static ("GossipChatroomAffiliation",
-					       values);
-	}
-
-	return type;
 }
 

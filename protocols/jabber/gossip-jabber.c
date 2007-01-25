@@ -834,7 +834,7 @@ jabber_connection_open_cb (LmConnection *connection,
 
 	if (!account_password || g_utf8_strlen (account_password, -1) < 1) {
 		gossip_debug (DEBUG_DOMAIN, "Requesting password for:'%s'",
-			      account_id);
+			      account_param);
 
 		g_signal_emit_by_name (jabber, "get-password",
 				       account, &password);

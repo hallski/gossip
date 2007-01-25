@@ -28,7 +28,7 @@
 #include <libtelepathy/tp-constants.h>
 
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-chatroom-contact.h>
+#include <libgossip/gossip-contact.h>
 
 #include "gossip-telepathy-chatrooms.h"
 #include "gossip-telepathy-group.h"
@@ -518,17 +518,7 @@ telepathy_chatrooms_members_added_cb (GossipTelepathyGroup *group,
 								 members);
 
 	for (l = added_list; l; l = l->next) {
-		GossipChatroomContact *contact;
-
-		contact = l->data;
-		gossip_chatroom_contact_set_role (contact,
-						  GOSSIP_CHATROOM_ROLE_PARTICIPANT);
-		gossip_chatroom_contact_set_affiliation (contact,
-							 GOSSIP_CHATROOM_AFFILIATION_MEMBER);
-
-		g_signal_emit_by_name (room->telepathy, "chatroom-contact-joined",
-				       gossip_chatroom_get_id (room->chatroom),
-				       GOSSIP_CONTACT (contact));
+		gossip_chatroom_contact_joined (room->chatroom, l->data, NULL);
 	}
 
 	g_list_free (added_list);
@@ -554,9 +544,7 @@ telepathy_chatrooms_members_removed_cb (GossipTelepathyGroup *group,
 		contact = gossip_telepathy_contacts_get_from_handle (contacts,
 								     handle);
 
-		g_signal_emit_by_name (room->telepathy, "chatroom-contact-left",
-				       gossip_chatroom_get_id (room->chatroom),
-				       contact);
+		gossip_chatroom_contact_left (room->chatroom, contact);
 	}
 }
 
