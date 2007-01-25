@@ -27,11 +27,10 @@
  * manage older logs with file systems commands, etc.
  *
  * The basic structure is:
- *   ~/.gnome2/Gossip/logs/<type>/<account>/<contact>/<date>.log
+ *   ~/.gnome2/Gossip/logs/<account>/<contact>/<date>.log
  *
  * Where:
- *   - <type> is a string representation of the account type (e.g. MSN).
- *   - <account> is a string representation of the account id.
+ *   - <account> is a string representation of the account name.
  *   - <contact> is a string representation of the contact id.
  *   - <date> is "20060102" and represents a day
  *
@@ -41,7 +40,7 @@
  * new file is created.
  *
  * For group chat, files are stored as:
- *   ~/.gnome2/Gossip/logs/<type>/<account>/chatrooms/<room@server>/<date>.log
+ *   ~/.gnome2/Gossip/logs/<account>/chatrooms/<room@server>/<date>.log
  *
  */
 
@@ -68,7 +67,7 @@
 
 #define DEBUG_DOMAIN "Log"
 
-#define LOG_PROTOCOL_VERSION   "1.0"
+#define LOG_PROTOCOL_VERSION   "2.0"
 
 #define LOG_HEADER \
     "<?xml version='1.0' encoding='utf-8'?>\n" \
@@ -111,50 +110,68 @@ struct _GossipLogSearchHit {
 	gchar         *date;
 };
 
-static gchar *         log_escape                              (const gchar    *str);
-static gchar *         log_unescape                            (const gchar    *str);
+typedef enum {
+	LOG_VERSION_0,    /* filenames were "<account id>/<contact id>/" */
+	LOG_VERSION_1,    /* filenames were "<protocol type>/<account id>/<contact id>/" */
+	LOG_VERSION_LAST  /* filenames are  "<account name>/<contact id>/"*/
+} LogVersion;
+
+static void            log_move_contact_dirs                   (const gchar          *log_directory,
+								const gchar          *filename,
+								const gchar          *account_type);
+static void            log_account_added_cb                    (GossipAccountManager *manager,
+								GossipAccount        *account,
+								gpointer              user_data);
+static void            log_account_removed_cb                  (GossipAccountManager *manager,
+								GossipAccount        *account,
+								gpointer              user_data);
+static void            log_account_renamed_cb                  (GossipAccount        *account,
+								GParamSpec           *param,
+								gpointer              user_data);
+static gchar *         log_escape                              (const gchar          *str);
+static gchar *         log_unescape                            (const gchar          *str);
 static void            log_handlers_notify_foreach             (GossipLogMessageFunc   func,
-								HandlerData           *data,
-								GList                **list);
-static void            log_handlers_notify_all                 (GossipContact   *own_contact,
-								GossipContact   *contact,
-								GossipChatroom  *chatroom,
-								GossipMessage   *message);
-static gboolean        log_check_dir                           (gchar          **directory);
+								HandlerData          *data,
+								GList               **list);
+static void            log_handlers_notify_all                 (GossipContact        *own_contact,
+								GossipContact        *contact,
+								GossipChatroom       *chatroom,
+								GossipMessage        *message);
+static gboolean        log_check_dir                           (gchar               **directory);
 #ifdef HAVE_GNOME
-static gboolean        log_check_is_old_version                (void);
+static LogVersion      log_check_version                       (void);
 #endif
-static gchar *         log_get_basedir                         (GossipAccount   *account,
-								const gchar     *log_dir);
-static gchar *         log_get_timestamp_from_message          (GossipMessage   *msg);
+static gchar *         log_get_basedir                         (GossipAccount        *account,
+								const gchar          *log_dir);
+static gchar *         log_get_timestamp_from_message          (GossipMessage        *msg);
 static gchar *         log_get_timestamp_filename              (void);
-static gchar *         log_get_contact_id_from_filename        (const gchar     *filename);
-static GossipChatroom *log_get_chatroom_from_filename          (GossipAccount   *account,
-								const gchar     *filename);
-static gboolean        log_get_all_log_files                   (GList          **files);
-static void            log_get_all_log_files_for_chatroom_dir  (const gchar     *chatrooms_dir,
-								GList          **files);
-static void            log_get_all_log_files_for_chatrooms_dir (const gchar     *chatrooms_dir,
-								GList          **files);
-static void            log_get_all_log_files_for_contact_dir   (const gchar     *contact_dir,
-								GList          **files);
-static void            log_get_all_log_files_for_account_dir   (const gchar     *account_dir,
-								GList          **files);
-static void            log_get_all_log_files_for_type_dir      (const gchar     *type_dir,
-								GList          **files);
-static GossipAccount * log_get_account_from_filename           (const gchar     *filename);
-static gchar *         log_get_date_from_filename              (const gchar     *filename);
-static gchar *         log_get_filename_by_date_for_contact    (GossipContact   *contact,
-								const gchar     *particular_date);
-static gchar *         log_get_filename_by_date_for_chatroom   (GossipChatroom  *chatroom,
-								const gchar     *particular_date);
-static const gchar *   log_get_contacts_filename               (GossipAccount   *account);
-static GossipContact * log_get_contact                         (GossipAccount   *account,
-								const gchar     *contact_id);
-static gboolean        log_set_name                            (GossipAccount   *account,
-								GossipContact   *contact);
-static gboolean        log_set_own_name                        (GossipAccount   *account,
-								GossipContact   *contact);
+static gchar *         log_get_contact_id_from_filename        (const gchar          *filename);
+static GossipChatroom *log_get_chatroom_from_filename          (GossipAccount        *account,
+								const gchar          *filename);
+static gboolean        log_get_all_log_files                   (GList               **files);
+static void            log_get_all_log_files_for_chatroom_dir  (const gchar          *chatrooms_dir,
+								GList               **files);
+static void            log_get_all_log_files_for_chatrooms_dir (const gchar          *chatrooms_dir,
+								GList               **files);
+static void            log_get_all_log_files_for_contact_dir   (const gchar          *contact_dir,
+								GList               **files);
+static void            log_get_all_log_files_for_account_dir   (const gchar          *account_dir,
+								GList               **files);
+static void            log_get_all_log_files_for_type_dir      (const gchar          *type_dir,
+								GList               **files);
+static GossipAccount * log_get_account_from_filename           (const gchar          *filename);
+static gchar *         log_get_date_from_filename              (const gchar          *filename);
+static gchar *         log_get_filename_by_date_for_contact    (GossipContact        *contact,
+								const gchar          *particular_date);
+static gchar *         log_get_filename_by_date_for_chatroom   (GossipChatroom       *chatroom,
+								const gchar          *particular_date);
+static const gchar *   log_get_contacts_filename               (GossipAccount        *account);
+static GossipContact * log_get_contact                         (GossipAccount        *account,
+								const gchar          *contact_id);
+static gboolean        log_set_name                            (GossipAccount        *account,
+								GossipContact        *contact);
+static gboolean        log_set_own_name                        (GossipAccount        *account,
+								GossipContact        *contact);
 
 static GHashTable *contact_files = NULL;
 static GHashTable *message_handlers = NULL;
@@ -165,6 +182,10 @@ static GossipSession *saved_session = NULL;
 void
 gossip_log_init (GossipSession *session)
 {
+	LogVersion            version;
+	GossipAccountManager *manager;
+	GList                *accounts, *l;
+
 	if (saved_session) {
 		return;
 	}
@@ -176,18 +197,17 @@ gossip_log_init (GossipSession *session)
 	/* Check for new log protocol version, and if so we fix the
 	 * differences here.
 	 */
-	if (log_check_is_old_version ()) {
-		GossipAccountManager *account_manager;
-		GnomeVFSURI          *new_uri_unknown;
-		GDir                 *dir;
-		gchar                *log_directory;
-		const gchar          *basename;
+	version = log_check_version ();
+	if (version == LOG_VERSION_0 || version == LOG_VERSION_1) {
+		GDir        *dir;
+		gchar       *log_directory;
+		const gchar *basename;
 
-		/* The difference between the old and new log versions
-		 * here is that the directory structure is deeper, now
-		 * with the protocol type in there too, so we just
-		 * need to move all existing logs to the same place
-		 * with the account type prefixed.
+		/* - Difference between version_0 and version_2 is we now use
+		 *   account's name instead of account's id for the folder
+		 * - Difference between version_1 and version_2 is we don't
+		 *   prefix with the protocol type anymore and we use account
+		 *   name instead of account id.
 		 */
 
 		if (log_check_dir (&log_directory)) {
@@ -203,95 +223,58 @@ gossip_log_init (GossipSession *session)
 			return;
 		}
 
-		new_uri_unknown = gnome_vfs_uri_new (log_directory);
-		new_uri_unknown = gnome_vfs_uri_append_path (new_uri_unknown, "Unknown");
-
-		account_manager = gossip_session_get_account_manager (saved_session);
-
 		while ((basename = g_dir_read_name (dir)) != NULL) {
-			GnomeVFSResult     result = GNOME_VFS_OK;
-			GnomeVFSURI       *new_uri, *old_uri;
-			GossipAccount     *account;
-			GossipAccountType  type;
-			const gchar       *type_str;
-			gchar             *filename;
-			
-			filename = g_build_filename (log_directory, basename, NULL);
+			gchar *filename;
 
-			if (strcmp (basename, LOG_DIR_CHATROOMS) == 0) {
-				/* Special case */
-				old_uri = gnome_vfs_uri_new (filename);
-				new_uri = gnome_vfs_uri_ref (new_uri_unknown);
-				g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
-				new_uri = gnome_vfs_uri_append_path (new_uri, basename);
-			} else if (strcmp (basename, LOG_KEY_FILENAME) == 0) {
-				/* Remove this file since it can't be
-				 * placed anywhere and it will be
-				 * regenerated anyway. 
-				 */
-				gossip_debug (DEBUG_DOMAIN, 
-					      "Removing:'%s', will be recreated in the right place",
-					      filename);
-				g_remove (filename);
-				g_free (filename);
+			if (strcmp (basename, "version") == 0) {
 				continue;
-			} else if (strcmp (basename, "version") == 0) {
-				/* Do nothing, this was just created */
-				g_free (filename);
-				continue;
-			} else {
-				account = gossip_account_manager_find_by_id (account_manager, basename, NULL);
-				if (!account) {
-					/* We must have other directories in
-					 * here which are not account
-					 * directories, so we just ignore them.
-					 */
-					gossip_debug (DEBUG_DOMAIN, 
-						      "No account related to filename:'%s'",
-						      filename);
-					old_uri = gnome_vfs_uri_new (filename);
-					new_uri = gnome_vfs_uri_dup (new_uri_unknown);
-					g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
-					new_uri = gnome_vfs_uri_append_path (new_uri, basename);
-				} else {
-					old_uri = gnome_vfs_uri_new (filename);
-					new_uri = gnome_vfs_uri_get_parent (old_uri);
-					
-					type = gossip_account_get_type (account);
-					type_str = gossip_account_type_to_string (type);
-
-					new_uri = gnome_vfs_uri_append_path (new_uri, type_str);
-					g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
-					new_uri = gnome_vfs_uri_append_path (new_uri, basename);
-				}
 			}
 
+			filename = g_build_filename (log_directory, basename, NULL);
+			if (version == LOG_VERSION_0) {
+				log_move_contact_dirs (log_directory, filename, NULL);
+			} else {
+				GDir        *type_dir;
+				const gchar *basename2;
+
+				type_dir = g_dir_open (filename, 0, NULL);
+				if (!type_dir) {
+					gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'", filename);
+					g_free (filename);
+					continue;
+				}
+
+				while ((basename2 = g_dir_read_name (type_dir)) != NULL) {
+					gchar *filename2;
+
+					filename2 = g_build_filename (filename, basename2, NULL);
+					log_move_contact_dirs (log_directory, filename2, basename);
+					g_free (filename2);
+				}
+				g_dir_close (type_dir);
+				g_remove (filename);
+			}
 			g_free (filename);
-
-			result = gnome_vfs_xfer_uri (old_uri, new_uri, 
-						     GNOME_VFS_XFER_REMOVESOURCE |
-						     GNOME_VFS_XFER_RECURSIVE, 
-						     GNOME_VFS_XFER_ERROR_MODE_ABORT,
-						     GNOME_VFS_XFER_OVERWRITE_MODE_SKIP,
-						     NULL,
-						     NULL);
-			
-			gossip_debug (DEBUG_DOMAIN,
-				      "Transfering old URI:'%s' to new URI:'%s' returned:%d->'%s'",
-				      gnome_vfs_uri_get_path (old_uri),
-				      gnome_vfs_uri_get_path (new_uri),
-				      result, 
-				      gnome_vfs_result_to_string (result));
-			
-			gnome_vfs_uri_unref (old_uri);
-			gnome_vfs_uri_unref (new_uri);
 		}
-
-		gnome_vfs_uri_unref (new_uri_unknown);
 		g_dir_close (dir);
 		g_free (log_directory);
 	}
 #endif /* HAVE_GNOME */
+	manager = gossip_session_get_account_manager (saved_session);
+
+	accounts = gossip_account_manager_get_accounts (manager);
+	for (l = accounts; l; l = l->next) {
+		log_account_added_cb (manager, l->data, NULL);
+		g_object_unref (l->data);
+	}
+	g_list_free (accounts);
+
+	g_signal_connect (manager, "account-added",
+			  G_CALLBACK (log_account_added_cb),
+			  NULL);
+	g_signal_connect (manager, "account-removed",
+			  G_CALLBACK (log_account_removed_cb),
+			  NULL);
 }
 
 void
@@ -299,8 +282,158 @@ gossip_log_term (void)
 {
 	g_object_unref (saved_session);
 	saved_session = NULL;
+	g_hash_table_destroy (contact_files);
+	g_hash_table_destroy (message_handlers);
 }
 
+static void
+log_move_contact_dirs (const gchar *log_directory,
+		       const gchar *filename,
+		       const gchar *type_str)
+{
+#ifdef HAVE_GNOME
+	GnomeVFSResult        result = GNOME_VFS_OK;
+	GnomeVFSURI          *new_uri, *old_uri;
+	GnomeVFSURI          *new_uri_unknown;
+	GossipAccountManager *account_manager;
+	GossipAccount        *account;
+	gchar                *basename;
+
+	new_uri_unknown = gnome_vfs_uri_new (log_directory);
+	new_uri_unknown = gnome_vfs_uri_append_path (new_uri_unknown, "Unknown");
+	account_manager = gossip_session_get_account_manager (saved_session);
+	basename = g_path_get_basename (filename);
+
+	if (strcmp (basename, LOG_DIR_CHATROOMS) == 0) {
+		/* Special case */
+		old_uri = gnome_vfs_uri_new (filename);
+		new_uri = gnome_vfs_uri_ref (new_uri_unknown);
+		g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
+		new_uri = gnome_vfs_uri_append_path (new_uri, basename);
+	} else if (strcmp (basename, LOG_KEY_FILENAME) == 0) {
+		/* Remove this file since it can't be
+		 * placed anywhere and it will be
+		 * regenerated anyway. 
+		 */
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Removing:'%s', will be recreated in the right place",
+			      filename);
+		g_remove (filename);
+		g_free (basename);
+		gnome_vfs_uri_unref (new_uri_unknown);
+		return;
+	} else {
+		account = gossip_account_manager_find_by_id (account_manager,
+							     basename,
+							     type_str);
+		if (!account) {
+			/* We must have other directories in
+			 * here which are not account
+			 * directories, so we just ignore them.
+			 */
+			gossip_debug (DEBUG_DOMAIN, 
+				      "No account related to filename:'%s'",
+				      filename);
+			old_uri = gnome_vfs_uri_new (filename);
+			new_uri = gnome_vfs_uri_dup (new_uri_unknown);
+			g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
+			new_uri = gnome_vfs_uri_append_path (new_uri, basename);
+		} else {
+			const gchar *account_name;
+
+			old_uri = gnome_vfs_uri_new (filename);
+			new_uri = gnome_vfs_uri_new (log_directory);
+
+			account_name = gossip_account_get_name (account);
+			new_uri = gnome_vfs_uri_append_path (new_uri, account_name);
+			g_mkdir_with_parents (gnome_vfs_uri_get_path (new_uri), LOG_DIR_CREATE_MODE);
+		}
+	}
+
+	result = gnome_vfs_move_uri (old_uri, new_uri, TRUE);
+			
+	gossip_debug (DEBUG_DOMAIN,
+		      "Transfering old URI:'%s' to new URI:'%s' returned:%d->'%s'",
+		      gnome_vfs_uri_get_path (old_uri),
+		      gnome_vfs_uri_get_path (new_uri),
+		      result, 
+		      gnome_vfs_result_to_string (result));
+			
+	g_free (basename);
+	gnome_vfs_uri_unref (old_uri);
+	gnome_vfs_uri_unref (new_uri);
+	gnome_vfs_uri_unref (new_uri_unknown);
+#endif
+}
+
+static void
+log_account_added_cb (GossipAccountManager *manager,
+		      GossipAccount        *account,
+		      gpointer              user_data)
+{
+	g_object_set_data_full (G_OBJECT (account), "log-name",
+				g_strdup (gossip_account_get_name (account)),
+				(GDestroyNotify) g_free);
+	g_signal_connect (account, "notify::name",
+			  G_CALLBACK (log_account_renamed_cb),
+			  NULL);
+}
+
+static void
+log_account_removed_cb (GossipAccountManager *manager,
+			GossipAccount        *account,
+			gpointer              user_data)
+{
+	g_signal_handlers_disconnect_by_func (account,
+					      G_CALLBACK (log_account_renamed_cb),
+					      NULL);
+}
+
+static void
+log_account_renamed_cb (GossipAccount *account,
+			GParamSpec    *param,
+			gpointer       user_data)
+{
+#ifdef HAVE_GNOME
+	const gchar    *old_name;
+	const gchar    *new_name;
+	gchar          *log_directory;
+	gchar          *new_uri;
+	gchar          *old_uri;
+	GnomeVFSResult  result;
+
+	old_name = g_object_get_data (G_OBJECT (account), "log-name");
+	new_name = gossip_account_get_name (account);
+
+	if (strcmp (old_name, new_name) == 0) {
+		return;
+	}
+
+	if (log_check_dir (&log_directory)) {
+		gossip_debug (DEBUG_DOMAIN, "No log directory exists");
+		g_free (log_directory);
+		return;
+	}
+
+	old_uri = g_build_filename (log_directory, old_name, NULL);
+	new_uri = g_build_filename (log_directory, new_name, NULL);
+	result = gnome_vfs_move (old_uri, new_uri, TRUE);
+
+	gossip_debug (DEBUG_DOMAIN,
+		      "Transfering logs from:'%s' to:'%s' returned:%d->'%s'",
+		      old_uri, new_uri, result, 
+		      gnome_vfs_result_to_string (result));
+
+	g_object_set_data_full (G_OBJECT (account), "log-name",
+				g_strdup (new_name),
+				(GDestroyNotify) g_free);
+	g_hash_table_remove (contact_files, account);
+
+	g_free (log_directory);
+	g_free (old_uri);
+	g_free (new_uri);
+#endif
+}
 
 static gchar *
 log_escape (const gchar *str)
@@ -462,12 +595,18 @@ log_check_dir (gchar **directory)
 {
 	gchar    *dir;
 	gboolean  created = FALSE;
+	gchar    *filename;
 
 	dir = g_build_filename (g_get_home_dir (), ".gnome2", PACKAGE_NAME, "logs", NULL);
 	if (!g_file_test (dir, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
 		gossip_debug (DEBUG_DOMAIN, "Creating directory:'%s'", dir);
 		created = TRUE;
 		g_mkdir_with_parents (dir, LOG_DIR_CREATE_MODE);
+
+		filename = g_build_filename (dir, "version", NULL);
+		g_file_set_contents (filename, LOG_PROTOCOL_VERSION, -1, NULL);
+		g_chmod (filename, LOG_FILE_CREATE_MODE);
+		g_free (filename);
 	}
 
 	if (directory) {
@@ -480,49 +619,95 @@ log_check_dir (gchar **directory)
 }
 
 #ifdef HAVE_GNOME
-static gboolean
-log_check_is_old_version (void)
+static LogVersion
+log_check_version (void)
 {
-	gchar    *log_directory;
-	gchar    *filename;
-	gboolean  old_version = FALSE;
+	gchar *log_directory;
+	gchar *filename;
+	gchar *content;
 
 	if (log_check_dir (&log_directory)) {
 		gossip_debug (DEBUG_DOMAIN, "No log directory exists");
 		g_free (log_directory);
-		return FALSE;
+		return LOG_VERSION_LAST;
 	}
 
 	filename = g_build_filename (log_directory, "version", NULL);
-	g_free (log_directory);
-
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)) {
+		GDir        *dir;
+		const gchar *basename;
+		gboolean     found = FALSE;
+
 		gossip_debug (DEBUG_DOMAIN,
 			      "Version file:'%s' does not exist, creating with version:'%s'",
 			      filename, LOG_PROTOCOL_VERSION);
-		old_version = TRUE;
 
 		/* Create version file */
 		g_file_set_contents (filename, LOG_PROTOCOL_VERSION, -1, NULL);
 		g_chmod (filename, LOG_FILE_CREATE_MODE);
-	} else {
-		gchar *content;
+		g_free (filename);
 
-		g_file_get_contents (filename, &content, NULL, NULL);
-		
-		if (content && strcmp (content, LOG_PROTOCOL_VERSION) != 0) {
-			gossip_debug (DEBUG_DOMAIN, 
-				      "Version file:'%s' exists but is older version:'%s'", 
-				      filename, content);
-			old_version = TRUE;
+		/* There is a bug with log version 1.0, the version file was
+		 * not created when gossip creates a new log directory.
+		 * Here we try to guess if we have version_0 or version_1 */
+		dir = g_dir_open (log_directory, 0, NULL);
+		if (!dir) {
+			gossip_debug (DEBUG_DOMAIN, "Could not open directory:'%s'",
+				      log_directory);
+			g_free (log_directory);
+			return LOG_VERSION_0;
 		}
 
-		g_free (content);
+		while ((basename = g_dir_read_name (dir)) != NULL) {
+			gchar *contacts_file;
+
+			contacts_file = g_build_filename (log_directory,
+							  basename,
+							  "contacts.ini",
+							  NULL);
+			if (g_file_test (contacts_file, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR)) {
+				found = TRUE;
+				break;
+			}
+			
+			g_free (contacts_file);
+		}
+
+		g_dir_close (dir);
+		g_free (log_directory);
+
+		if (!found) {
+			return LOG_VERSION_1;
+		}
+
+		return LOG_VERSION_0;
+	}
+	g_free (log_directory);
+
+	g_file_get_contents (filename, &content, NULL, NULL);
+	g_file_set_contents (filename, LOG_PROTOCOL_VERSION, -1, NULL);
+	g_free (filename);
+		
+	if (!content) {
+		return LOG_VERSION_0;
 	}
 
-	g_free (filename);
+	if (strcmp (content, LOG_PROTOCOL_VERSION) == 0) {
+		g_free (content);
+		return LOG_VERSION_LAST;
+	}
+
+	gossip_debug (DEBUG_DOMAIN, 
+		      "Version file exists but is older version:'%s'", content);
+
+	if (g_ascii_strncasecmp (content, "1.0", 3) == 0) {
+		g_free (content);
+		return LOG_VERSION_1;
+	}
+
+	g_free (content);
 	
-	return old_version;
+	return LOG_VERSION_LAST;
 }
 #endif /* HAVE_GNOME */
 
@@ -530,32 +715,16 @@ static gchar *
 log_get_basedir (GossipAccount *account,
 		 const gchar   *log_dir)
 {
-	const gchar       *id;
-	gchar             *id_escaped;
-	GossipAccountType  type;
-	const gchar       *type_str;
-	gchar             *type_str_escaped;
-	gchar             *basedir;
+	const gchar *name;
+	gchar       *name_escaped;
+	gchar       *basedir;
 
-	type = gossip_account_get_type (account);
-	type_str = gossip_account_type_to_string (type);
-	type_str_escaped = log_escape (type_str);
-
-	id = gossip_account_get_id (account);
-	if (id) {
-		id_escaped = log_escape (id);
-		basedir = g_build_filename (log_dir,
-					    type_str_escaped,
-					    id_escaped,
-					    NULL);
-		g_free (id_escaped);
-	} else {
-		basedir = g_build_filename (log_dir,
-					    type_str_escaped,
-					    NULL);
-	}
-
-	g_free (type_str_escaped);
+	name = gossip_account_get_name (account);
+	name_escaped = log_escape (name);
+	basedir = g_build_filename (log_dir,
+				    name_escaped,
+				    NULL);
+	g_free (name_escaped);
 
 	return basedir;
 }
@@ -610,8 +779,7 @@ log_get_account_from_filename (const gchar *filename)
 	gchar                *log_directory;
 	const gchar          *p1;
 	const gchar          *p2;
-	gchar                *type_str;
-	gchar                *id;
+	gchar                *name;
 
 	log_check_dir (&log_directory);
 
@@ -623,28 +791,18 @@ log_get_account_from_filename (const gchar *filename)
 
 	p1 += strlen (log_directory) + 1;
 
-	/* Get the protocol */
+	/* Get account name */
 	p2 = strstr (p1, G_DIR_SEPARATOR_S);
 	if (!p2) {
 		g_free (log_directory);
 		return NULL;
 	}
-	type_str = g_strndup (p1, p2 - p1);
-
-	/* Get account id */
-	p1 = ++p2;
-	p2 = strstr (p1, G_DIR_SEPARATOR_S);
-	if (!p2) {
-		g_free (log_directory);
-		return NULL;
-	}
-	id = g_strndup (p1, p2 - p1);
+	name = g_strndup (p1, p2 - p1);
 
 	manager = gossip_session_get_account_manager (saved_session);
-	account = gossip_account_manager_find_by_id (manager, id, type_str);
+	account = gossip_account_manager_find (manager, name);
 
-	g_free (type_str);
-	g_free (id);
+	g_free (name);
 	g_free (log_directory);
 
 	return account;
@@ -1032,7 +1190,7 @@ log_get_filename_by_date_for_chatroom (GossipChatroom *chatroom,
 static const gchar *
 log_get_contacts_filename (GossipAccount *account)
 {
-	const gchar *account_id;
+	const gchar *account_name;
 	gchar       *log_directory;
 	gchar       *filename;
 	gchar       *basedir;
@@ -1049,10 +1207,10 @@ log_get_contacts_filename (GossipAccount *account)
 		return filename;
 	}
 
-	account_id = gossip_account_get_id (account);
+	account_name = gossip_account_get_name (account);
 	gossip_debug (DEBUG_DOMAIN, 
-		      "No contacts file recorded against account id:'%s'...",
-		      account_id);
+		      "No contacts file recorded against account name:'%s'...",
+		      account_name);
 
 
 	log_check_dir (&log_directory);
@@ -1065,8 +1223,8 @@ log_get_contacts_filename (GossipAccount *account)
 	g_free (log_directory);
 	g_free (basedir);
 
-	gossip_debug (DEBUG_DOMAIN, "Saving contacts file:'%s' for account id:'%s'",
-		    filename, account_id);
+	gossip_debug (DEBUG_DOMAIN, "Saving contacts file:'%s' for account name:'%s'",
+		    filename, account_name);
 	g_hash_table_insert (contact_files, g_object_ref (account), filename);
 
 	return filename;
@@ -1162,7 +1320,7 @@ gossip_log_get_own_contact (GossipAccount *account)
 	GossipContact *contact;
 	GKeyFile      *key_file;
 	const gchar   *filename;
-	const gchar   *id;
+	const gchar   *account_param;
 	gchar         *name = NULL;
 
 	filename = log_get_contacts_filename (account);
@@ -1175,16 +1333,20 @@ gossip_log_get_own_contact (GossipAccount *account)
 
 	g_key_file_free (key_file);
 
-	id = gossip_account_get_id (account);
+	if (gossip_account_has_param (account, "account")) {
+		gossip_account_param_get (account, "account", &account_param, NULL);
+	} else {
+		account_param = _("me");
+	}
 
 	if (!name) {
 		gossip_debug (DEBUG_DOMAIN, "No name in contacts file, using id for name.");
-		name = g_strdup (id);
+		name = g_strdup (account_param);
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Own contact ID:'%s', name:'%s'", id, name);
+	gossip_debug (DEBUG_DOMAIN, "Own contact ID:'%s', name:'%s'", account_param, name);
 	contact = gossip_contact_new_full (GOSSIP_CONTACT_TYPE_TEMPORARY,
-					   account, id, name);
+					   account, account_param, name);
 
 	g_free (name);
 

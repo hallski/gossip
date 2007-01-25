@@ -805,11 +805,7 @@ gossip_chatroom_equal (gconstpointer a,
 	priv1 = GET_PRIV (a);
 	priv2 = GET_PRIV (b);
 
-	if (!priv1) {
-		return FALSE;
-	}
-
-	if (!priv2) {
+	if (!priv1 || !priv2) {
 		return FALSE;
 	}
 
@@ -829,11 +825,7 @@ gossip_chatroom_equal_full (gconstpointer a,
 	priv1 = GET_PRIV (a);
 	priv2 = GET_PRIV (b);
 
-	if (!priv1) {
-		return FALSE;
-	}
-
-	if (!priv2) {
+	if (!priv1 || !priv2) {
 		return FALSE;
 	}
 

@@ -30,7 +30,6 @@ G_BEGIN_DECLS
 typedef struct _GossipTelepathyContacts GossipTelepathyContacts;
 
 GossipTelepathyContacts *gossip_telepathy_contacts_init             (GossipTelepathy                *telepathy);
-void                     gossip_telepathy_contacts_setup            (GossipTelepathyContacts        *contacts);
 void                     gossip_telepathy_contacts_finalize         (GossipTelepathyContacts        *contacts);
 GossipContact *          gossip_telepathy_contacts_find             (GossipTelepathyContacts        *contacts,
 								     const gchar                    *id,

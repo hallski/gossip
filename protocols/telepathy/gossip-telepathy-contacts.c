@@ -67,6 +67,9 @@ static void     telepathy_contacts_disconnected_cb         (GossipProtocol      
 							    GossipAccount                        *account,
 							    gint                                  reason,
 							    GossipTelepathyContacts              *contacts);
+void            telepathy_contacts_connected_cb            (GossipProtocol                       *telepathy,
+							    GossipAccount                        *account,
+							    GossipTelepathyContacts              *contacts);
 static gboolean telepathy_contacts_finalize_foreach        (guint                                 key,
 							    GossipContact                        *contact,
 							    GossipTelepathy                      *telepathy);
@@ -132,6 +135,9 @@ gossip_telepathy_contacts_init (GossipTelepathy *telepathy)
 	g_signal_connect (telepathy, "disconnected",
 			  G_CALLBACK (telepathy_contacts_disconnected_cb),
 			  contacts);
+	g_signal_connect (telepathy, "connected",
+			  G_CALLBACK (telepathy_contacts_connected_cb),
+			  contacts);
 
 	return contacts;
 }
@@ -152,17 +158,13 @@ telepathy_contacts_disconnected_cb (GossipProtocol          *telepathy,
 }
 
 void
-gossip_telepathy_contacts_setup (GossipTelepathyContacts *contacts)
+telepathy_contacts_connected_cb (GossipProtocol          *telepathy,
+				 GossipAccount           *account,
+				 GossipTelepathyContacts *contacts)
 {
-	TpConn        *tp_conn;
-	GossipContact *contact;
-	guint          handle;
-	GArray        *handles;
-
-	g_return_if_fail (contacts != NULL);
+	TpConn *tp_conn;
 
 	tp_conn = gossip_telepathy_get_connection (contacts->telepathy);
-
 	contacts->aliasing_iface = tp_conn_get_interface (tp_conn,
 							  TELEPATHY_CONN_IFACE_ALIASING_QUARK);
 	contacts->avatars_iface = tp_conn_get_interface (tp_conn,
@@ -190,19 +192,6 @@ gossip_telepathy_contacts_setup (GossipTelepathyContacts *contacts)
 					     G_CALLBACK (telepathy_contacts_presence_update_cb),
 					     contacts, NULL);
 	}
-
-	/* Add our own contact into the hash table */
-	contact = gossip_telepathy_get_own_contact (contacts->telepathy);
-	handle = gossip_telepathy_contacts_get_handle (contacts,
-						       gossip_contact_get_id (contact));
-	g_hash_table_insert (contacts->contacts,
-			     GUINT_TO_POINTER (handle),
-			     g_object_ref (contact));
-
-	handles = g_array_new (FALSE, FALSE, sizeof (guint));
-	g_array_append_val (handles, handle);
-	telepathy_contacts_get_info (contacts, handles);
-	g_array_free (handles, TRUE);
 }
 
 void

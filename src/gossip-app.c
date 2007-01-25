@@ -1388,12 +1388,12 @@ app_session_protocol_connecting_cb (GossipSession  *session,
 				    gpointer        user_data)
 {
 	GossipAppPriv *priv;
-	const gchar   *id;
+	const gchar   *name;
 
 	priv = GET_PRIV (app);
 
-	id = gossip_account_get_id (account);
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", id);
+	name = gossip_account_get_name (account);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Connecting account:'%s'", name);
 
 	ephy_spinner_start (EPHY_SPINNER (priv->throbber));
 }
@@ -1406,12 +1406,12 @@ app_session_protocol_connected_cb (GossipSession  *session,
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
-	const gchar   *id;
+	const gchar   *name;
 
 	priv = GET_PRIV (app);
 
-	id = gossip_account_get_id (account);
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Connected account:'%s'", id);
+	name = gossip_account_get_name (account);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Connected account:'%s'", name);
 
 	gossip_session_count_accounts (priv->session,
 				       NULL,
@@ -1467,15 +1467,15 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	GossipAppPriv *priv;
 	gboolean       connecting;
 	gboolean       should_reconnect;
-	const gchar   *id;
+	const gchar   *name;
 #ifdef HAVE_DBUS
 	gboolean       nm_connected;
 #endif
 
 	priv = GET_PRIV (app);
 
-	id = gossip_account_get_id (account);
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Disconnected account:'%s'", id);
+	name = gossip_account_get_name (account);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Disconnected account:'%s'", name);
 
 	gossip_session_count_accounts (priv->session,
 				       NULL,
@@ -1524,12 +1524,12 @@ app_session_protocol_error_cb (GossipSession  *session,
 {
 	GossipAppPriv *priv;
 	gboolean       connecting;
-	const gchar   *id;
+	const gchar   *name;
 
 	priv = GET_PRIV (app);
 
-	id = gossip_account_get_id (account);
-	gossip_debug (DEBUG_DOMAIN_SESSION, "Error for account:'%s'", id);
+	name = gossip_account_get_name (account);
+	gossip_debug (DEBUG_DOMAIN_SESSION, "Error for account:'%s'", name);
 
 	gossip_session_count_accounts (priv->session,
 				       NULL,

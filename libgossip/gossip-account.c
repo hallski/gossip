@@ -42,7 +42,6 @@ struct _GossipAccountPriv {
 	gint               unique_id;
 
 	GossipAccountType  type;
-	gchar             *id;
 	gchar             *name;
 	gboolean           auto_connect;
 	gboolean           use_proxy;
@@ -94,7 +93,6 @@ const gchar *         account_param_name_convert    (const gchar            *par
 enum {
 	PROP_0,
 	PROP_TYPE,
-	PROP_ID,
 	PROP_NAME,
 	PROP_AUTO_CONNECT,
 	PROP_USE_PROXY,
@@ -104,12 +102,6 @@ enum {
 #endif
 };
 
-enum {
-	CHANGED,
-	LAST_SIGNAL
-};
-
-static guint     signals[LAST_SIGNAL] = {0};
 static gpointer  parent_class = NULL;
 
 GType
@@ -150,16 +142,6 @@ account_class_init (GossipAccountClass *class)
 	object_class->get_property = account_get_property;
 	object_class->set_property = account_set_property;
 
-	signals[CHANGED] =
-		g_signal_new ("changed",
-			      G_TYPE_FROM_CLASS (object_class),
-			      G_SIGNAL_RUN_LAST,
-			      0,
-			      NULL, NULL,
-			      libgossip_marshal_VOID__VOID,
-			      G_TYPE_NONE,
-			      0);
-
 	g_object_class_install_property (object_class,
 					 PROP_TYPE,
 					 g_param_spec_int ("type",
@@ -169,14 +151,6 @@ account_class_init (GossipAccountClass *class)
 							   G_MAXINT,
 							   GOSSIP_ACCOUNT_TYPE_JABBER,
 							   G_PARAM_READWRITE));
-
-	g_object_class_install_property (object_class,
-					 PROP_ID,
-					 g_param_spec_string ("id",
-							      "Account ID",
-							      "Your unique network ID, e.g. a JID",
-							      "Myself",
-							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
@@ -226,14 +200,10 @@ static void
 account_init (GossipAccount *account)
 {
 	GossipAccountPriv *priv;
-	static gint        id = 1;
 
 	priv = GET_PRIV (account);
 
-	priv->unique_id    = id++;
-
 	priv->type         = 0;
-	priv->id           = NULL;
 	priv->name         = NULL;
 	priv->auto_connect = TRUE;
 	priv->use_proxy    = FALSE;
@@ -255,7 +225,6 @@ account_finalize (GObject *object)
 
 	priv = GET_PRIV (object);
 
-	g_free (priv->id);
 	g_free (priv->name);
 #ifdef USE_TELEPATHY
 	g_free (priv->protocol);
@@ -281,9 +250,6 @@ account_get_property (GObject    *object,
 	switch (param_id) {
 	case PROP_TYPE:
 		g_value_set_int (value, priv->type);
-		break;
-	case PROP_ID:
-		g_value_set_string (value, priv->id);
 		break;
 	case PROP_NAME:
 		g_value_set_string (value, priv->name);
@@ -322,10 +288,6 @@ account_set_property (GObject      *object,
 	case PROP_TYPE:
 		account_set_type (GOSSIP_ACCOUNT (object),
 				  g_value_get_int (value));
-		break;
-	case PROP_ID:
-		gossip_account_set_id (GOSSIP_ACCOUNT (object),
-					 g_value_get_string (value));
 		break;
 	case PROP_NAME:
 		gossip_account_set_name (GOSSIP_ACCOUNT (object),
@@ -477,8 +439,6 @@ gossip_account_param_new (GossipAccount *account,
 	va_start (var_args, first_param_name);
 	account_param_new_valist (account, first_param_name, var_args);
 	va_end (var_args);
-
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -521,8 +481,6 @@ gossip_account_param_set (GossipAccount *account,
 	va_start (var_args, first_param_name);
 	account_param_set_valist (account, first_param_name, var_args);
 	va_end (var_args);
-
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -547,7 +505,6 @@ gossip_account_param_set_g_value (GossipAccount *account,
 	if (!gossip_g_value_equal (g_value, &param->g_value)) {
 		param->modified = TRUE;
 		g_value_copy (g_value, &param->g_value);
-		g_signal_emit (account, signals[CHANGED], 0);
 	}
 }
 
@@ -693,17 +650,6 @@ gossip_account_get_type (GossipAccount *account)
 }
 
 const gchar *
-gossip_account_get_id (GossipAccount *account)
-{
-	GossipAccountPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
-
-	priv = GET_PRIV (account);
-	return priv->id;
-}
-
-const gchar *
 gossip_account_get_name (GossipAccount *account)
 {
 	GossipAccountPriv *priv;
@@ -746,26 +692,6 @@ account_set_type (GossipAccount     *account,
 
 	priv = GET_PRIV (account);
 	priv->type = type;
-
-	g_signal_emit (account, signals[CHANGED], 0);
-}
-
-void
-gossip_account_set_id (GossipAccount *account,
-		       const gchar   *id)
-{
-	GossipAccountPriv *priv;
-
-	g_return_if_fail (GOSSIP_IS_ACCOUNT (account));
-	g_return_if_fail (id != NULL);
-
-	priv = GET_PRIV (account);
-
-	g_free (priv->id);
-	priv->id = g_strdup (id);
-
-	g_object_notify (G_OBJECT (account), "id");
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -783,7 +709,6 @@ gossip_account_set_name (GossipAccount *account,
 	priv->name = g_strdup (name);
 
 	g_object_notify (G_OBJECT (account), "name");
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -798,7 +723,6 @@ gossip_account_set_auto_connect (GossipAccount *account,
 	priv->auto_connect = auto_connect;
 
 	g_object_notify (G_OBJECT (account), "auto_connect");
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void
@@ -813,7 +737,6 @@ gossip_account_set_use_proxy (GossipAccount *account,
 	priv->use_proxy = use_proxy;
 
 	g_object_notify (G_OBJECT (account), "use_proxy");
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 #ifdef USE_TELEPATHY
@@ -854,7 +777,6 @@ gossip_account_set_protocol (GossipAccount *account,
 	priv->protocol = g_strdup (protocol);
 
 	g_object_notify (G_OBJECT (account), "protocol");
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 
 void 
@@ -872,36 +794,20 @@ gossip_account_set_cmgr_name (GossipAccount *account,
 	priv->cmgr_name = g_strdup (cmgr_name);
 
 	g_object_notify (G_OBJECT (account), "cmgr_name");
-	g_signal_emit (account, signals[CHANGED], 0);
 }
 #endif
 
 guint
 gossip_account_hash (gconstpointer key)
 {
-	GossipAccountPriv *priv;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (key), 0);
-
-	priv = GET_PRIV (key);
-
-	return g_int_hash (&priv->unique_id);
+	return g_direct_hash (key);
 }
 
 gboolean
 gossip_account_equal (gconstpointer a,
 		      gconstpointer b)
 {
-	GossipAccountPriv *priv1;
-	GossipAccountPriv *priv2;
-
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (a), FALSE);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (b), FALSE);
-
-	priv1 = GET_PRIV (a);
-	priv2 = GET_PRIV (b);
-
-	return (priv1->unique_id == priv2->unique_id);
+	return g_direct_equal (a, b);
 }
 
 const gchar *

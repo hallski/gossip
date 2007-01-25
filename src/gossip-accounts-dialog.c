@@ -1312,6 +1312,21 @@ accounts_dialog_entry_focus_cb (GtkWidget            *widget,
 		dialog->account_changed = FALSE;
 	}
 
+	if (widget == dialog->entry_name) {
+		GossipAccountManager *manager;
+		const gchar          *name;
+
+		gossip_account_set_name (account, str);
+		manager = gossip_session_get_account_manager (gossip_app_get_session ());
+		gossip_account_manager_set_unique_name (manager, account);
+
+		name = gossip_account_get_name (account);
+		if (strcmp (str, name) != 0) {
+			gtk_entry_set_text (GTK_ENTRY (widget), name);
+			dialog->account_changed = TRUE;
+		}
+	}
+
 	if (dialog->account_changed) {
  		accounts_dialog_save (dialog); 
 	}

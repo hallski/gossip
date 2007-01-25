@@ -228,7 +228,7 @@ gossip_password_dialog_run (GossipAccount *account,
 	GtkWidget   *vbox;
 	gchar       *str;
 	gchar       *password;
-	const gchar *id;
+	const gchar *name;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), NULL);
 
@@ -242,8 +242,8 @@ gossip_password_dialog_run (GossipAccount *account,
 						     str);
 	g_free (str);
 
-	id = gossip_account_get_id (account);
-	str = g_strdup_printf (_("Logging in with: %s"), id);
+	name = gossip_account_get_name (account);
+	str = g_strdup_printf (_("Logging in to account '%s'"), name);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", str);
 	g_free (str);
 

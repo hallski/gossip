@@ -616,7 +616,7 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 	GossipProtocol       *protocol;
 	gchar                *server;
 	const gchar          *nick;
-	const gchar          *id;
+	const gchar          *account_param = NULL;
 
 	session = gossip_app_get_session ();
 
@@ -630,9 +630,11 @@ new_chatroom_dialog_set_defaults (GossipNewChatroomDialog *dialog)
 		gtk_entry_set_text (GTK_ENTRY (dialog->entry_nick), nick);
 	}
 
-	id = gossip_account_get_id (account);
-	if (id != NULL) {
-		server = gossip_protocol_get_default_server (protocol, id);
+	if (gossip_account_has_param (account, "account")) {
+		gossip_account_param_get (account, "account", &account_param, NULL);
+	}
+	if (account_param != NULL) {
+		server = gossip_protocol_get_default_server (protocol, account_param);
 		if (server) {
 			gchar *conference_server;
 

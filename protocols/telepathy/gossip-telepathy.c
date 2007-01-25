@@ -409,14 +409,14 @@ static TpConn *
 telepathy_get_existing_connection (GossipAccount *account)
 {
 	TpConn       *tp_conn = NULL;
-	const gchar  *account_id = NULL;
+	const gchar  *account_param = NULL;
 	gchar       **name;
 	gchar       **name_list;
 	gboolean      found = FALSE;
 
 	/* FIXME: We shouldn't depend on the account parameter */
 	if (gossip_account_has_param (account, "account")) {
-		gossip_account_param_get (account, "account", &account_id, NULL);
+		gossip_account_param_get (account, "account", &account_param, NULL);
 	}
 
 	dbus_g_proxy_call (tp_get_bus_proxy (),
@@ -474,14 +474,14 @@ telepathy_get_existing_connection (GossipAccount *account)
 				goto next;
 			}
 
-			if (!account_id || strcmp (*handle_name, account_id) == 0) {
+			if (!account_param || strcmp (*handle_name, account_param) == 0) {
 				tp_conn = tp_conn_new (tp_get_bus (),
 						       *name,
 						       obj_path);
 
 				gossip_debug (DEBUG_DOMAIN,
 					      "Found connected account: %s",
-					      account_id);
+					      account_param);
 				found = TRUE;
 			}
 	next:
@@ -627,8 +627,6 @@ telepathy_connection_setup (GossipTelepathy *telepathy)
 {
 	GossipTelepathyPriv  *priv;
 	guint                 handle;
-	GArray               *handles;
-	gchar               **handles_names;
 	GError               *error = NULL;
 
 	priv = GET_PRIV (telepathy);
@@ -645,43 +643,24 @@ telepathy_connection_setup (GossipTelepathy *telepathy)
 			  G_CALLBACK (telepathy_connection_destroy_cb),
 			  telepathy);
 
-	/* FIXME: Shouldn't be a chatroom contact, we do that to be able to
-	 *        add it into a chatroom */
-	priv->contact = GOSSIP_CONTACT (gossip_chatroom_contact_new (priv->account));
-
-	g_object_set (priv->contact,
-		      "type", GOSSIP_CONTACT_TYPE_USER,
-		      NULL);
-
-	/* Get our own handle and id */
+	/* Get our own handle and contact */
 	if (!tp_conn_get_self_handle (DBUS_G_PROXY (priv->tp_conn),
 				      &handle, &error)) {
 		gossip_debug (DEBUG_DOMAIN, "GetSelfHandle Error: %s",
 			      error->message);
 		g_clear_error (&error);
-		goto skip;
-	}
-	handles = g_array_new (FALSE, FALSE, sizeof (guint));
-	g_array_append_val (handles, handle);
-	if (!tp_conn_inspect_handles (DBUS_G_PROXY (priv->tp_conn),
-				      TP_CONN_HANDLE_TYPE_CONTACT,
-				      handles,
-				      &handles_names,
-				      &error)) {
-		gossip_debug (DEBUG_DOMAIN, "InspectHandle Error: %s",
-			      error->message);
-		g_clear_error (&error);
-		g_array_free (handles, TRUE);
-		goto skip;
+		return;
 	}
 
-	gossip_debug (DEBUG_DOMAIN, "Set account ID to %s", *handles_names);
-	gossip_account_set_id (priv->account, *handles_names);
-	gossip_contact_set_id (priv->contact, *handles_names);
-	g_array_free (handles, TRUE);
-	g_strfreev (handles_names);
-skip:
-	gossip_telepathy_contacts_setup (priv->contacts);
+	if (priv->contact) {
+		g_object_unref (priv->contact);
+	}
+	priv->contact = gossip_telepathy_contacts_get_from_handle (priv->contacts,
+								   handle);
+	g_object_ref (priv->contact);
+	g_object_set (priv->contact,
+		      "type", GOSSIP_CONTACT_TYPE_USER,
+		      NULL);
 }
 
 static void

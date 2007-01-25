@@ -70,7 +70,7 @@ sound_protocol_connected_cb (GossipSession  *session,
 			     gpointer        user_data)
 {
 	guint        id;
-	const gchar *account_id;
+	const gchar *account_name;
 
 	gossip_debug (DEBUG_DOMAIN, 
 		      "Protocol connected for account:'%s'",
@@ -80,10 +80,10 @@ sound_protocol_connected_cb (GossipSession  *session,
 		return;
 	}
 
-	account_id = gossip_account_get_id (account);
+	account_name = gossip_account_get_name (account);
 	gossip_debug (DEBUG_DOMAIN, 
 		      "Account update, account:'%s' is now online",
-		      account_id);
+		      account_name);
 
 	id = g_timeout_add (SOUND_WAIT_TIME,
 			    (GSourceFunc) sound_protocol_timeout_cb,

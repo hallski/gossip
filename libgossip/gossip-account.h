@@ -103,12 +103,9 @@ void              gossip_account_param_foreach     (GossipAccount           *acc
 						    GossipAccountParamFunc   callback,
 						    gpointer                 user_data);
 GossipAccountType gossip_account_get_type          (GossipAccount           *account);
-const gchar *     gossip_account_get_id            (GossipAccount           *account);
 const gchar *     gossip_account_get_name          (GossipAccount           *account);
 gboolean          gossip_account_get_auto_connect  (GossipAccount           *account);
 gboolean          gossip_account_get_use_proxy     (GossipAccount           *account);
-void              gossip_account_set_id            (GossipAccount           *account,
-						    const gchar             *id);
 void              gossip_account_set_name          (GossipAccount           *account,
 						    const gchar             *name);
 void              gossip_account_set_auto_connect  (GossipAccount           *account,
@@ -124,8 +121,8 @@ void              gossip_account_set_cmgr_name     (GossipAccount           *acc
 						    const gchar             *cmgr_name);
 #endif
 guint             gossip_account_hash              (gconstpointer            key);
-gboolean          gossip_account_equal             (gconstpointer            v1,
-						    gconstpointer            v2);
+gboolean          gossip_account_equal             (gconstpointer            a,
+						    gconstpointer            b);
 const gchar *     gossip_account_type_to_string    (GossipAccountType        type);
 GossipAccountType gossip_account_string_to_type    (const gchar             *str);
 

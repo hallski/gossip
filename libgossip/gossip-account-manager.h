@@ -58,13 +58,15 @@ GossipAccount *gossip_account_manager_get_default            (GossipAccountManag
 GossipAccount *gossip_account_manager_find                   (GossipAccountManager *manager,
 							      const gchar          *name);
 GossipAccount *gossip_account_manager_find_by_id             (GossipAccountManager *manager,
-							      const gchar          *account_id,
-							      const gchar          *protocol);
+							      const gchar          *id,
+							      const gchar          *type_str);
 void           gossip_account_manager_set_overridden_default (GossipAccountManager *manager,
 							      const gchar          *name);
 void           gossip_account_manager_set_default            (GossipAccountManager *manager,
 							      GossipAccount        *account);
 gboolean       gossip_account_manager_store                  (GossipAccountManager *manager);
+gboolean       gossip_account_manager_set_unique_name        (GossipAccountManager *manager,
+							      GossipAccount        *account);
 
 G_END_DECLS
 

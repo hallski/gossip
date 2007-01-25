@@ -171,6 +171,9 @@ gossip_account_manager_add (GossipAccountManager *manager,
 			    GossipAccount        *account)
 {
 	GossipAccountManagerPriv *priv;
+	GList                    *l;
+	const gchar              *name;
+	GossipAccountType         type;
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT (account), FALSE);
@@ -178,25 +181,25 @@ gossip_account_manager_add (GossipAccountManager *manager,
 	priv = GET_PRIV (manager);
 
 	/* Don't add more than once */
-	if (!gossip_account_manager_find (manager, gossip_account_get_name (account))) {
-		const gchar       *name;
-		GossipAccountType  type;
-
-		type = gossip_account_get_type (account);
-		name = gossip_account_get_name (account);
-
-		gossip_debug (DEBUG_DOMAIN, "Adding %s account with name:'%s'",
-			      gossip_account_type_to_string (type),
-			      name);
-
-		priv->accounts = g_list_append (priv->accounts, g_object_ref (account));
-
-		g_signal_emit (manager, signals[ACCOUNT_ADDED], 0, account);
-
-		return TRUE;
+	for (l = priv->accounts; l; l = l->next) {
+		if (gossip_account_equal (l->data, account)) {
+			return FALSE;
+		}
 	}
 
-	return FALSE;
+	priv->accounts = g_list_append (priv->accounts, g_object_ref (account));
+	gossip_account_manager_set_unique_name (manager, account);
+
+	type = gossip_account_get_type (account);
+	name = gossip_account_get_name (account);
+	gossip_debug (DEBUG_DOMAIN, "Adding %s account with name:'%s'",
+		      gossip_account_type_to_string (type),
+		      name);
+
+
+	g_signal_emit (manager, signals[ACCOUNT_ADDED], 0, account);
+
+	return TRUE;
 }
 
 void
@@ -284,33 +287,38 @@ gossip_account_manager_find_by_id (GossipAccountManager *manager,
 {
 	GossipAccountManagerPriv *priv;
 	GList                    *l;
+	GossipAccountType         type = GOSSIP_ACCOUNT_TYPE_COUNT;
+
+	/* WARNING: This function is used for compatibility with old log format,
+	 *          it shouldn't be used for new code. */
 
 	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), NULL);
 	g_return_val_if_fail (id != NULL || type_str != NULL, NULL);
 
 	priv = GET_PRIV (manager);
 
+	if (type_str) {
+		type = gossip_account_string_to_type (type_str);
+	}
 	for (l = priv->accounts; l; l = l->next) {
 		GossipAccount     *account;
 		GossipAccountType  account_type;
-		const gchar       *account_id;
-		const gchar       *account_type_str;
+		const gchar       *account_param = NULL;
 
 		account = l->data;
 
-		account_id = gossip_account_get_id (account);
 		account_type = gossip_account_get_type (account);
-		account_type_str = gossip_account_type_to_string (account_type);
+		if (gossip_account_has_param (account, "account")) {
+			gossip_account_param_get (account, "account", &account_param, NULL);
+		}
 
-		if (id && account_id && strcmp (id, account_id) != 0) {
+		if (type != GOSSIP_ACCOUNT_TYPE_COUNT && type != account_type) {
 			continue;
 		}
 
-		if (type_str && account_type_str && strcmp (type_str, account_type_str) != 0) {
-			continue;
+		if (id && account_param && strcmp (id, account_param) == 0) {
+			return account;
 		}
-
-		return account;
 	}
 
 	return NULL;
@@ -600,12 +608,12 @@ account_manager_parse_account (GossipAccountManager *manager,
 	}
 #ifdef RESOURCE_HACK
 	const gchar *resource_found = NULL;
-	const gchar *id = NULL;
+	const gchar *account_param = NULL;
 
 	if (gossip_account_has_param (account, "account")) {
-		gossip_account_param_get (account, "account", &id, NULL);
+		gossip_account_param_get (account, "account", &account_param, NULL);
 	}
-	str = g_strdup (id);
+	str = g_strdup (account_param);
 	if (str) {
 		/* FIXME: This hack is so we don't get bug
 		 * reports and basically gets the resource
@@ -624,9 +632,9 @@ account_manager_parse_account (GossipAccountManager *manager,
 	}
 
 	if (resource_found) {
-		gossip_account_set_id (account, str);
 		gossip_account_param_set (account,
 					  "resource", resource_found,
+					  "account", str,
 					  NULL);
 		need_saving = TRUE;
 	}
@@ -853,5 +861,39 @@ account_manager_add_parameters_foreach (GossipAccount      *account,
 	xmlNewProp (node, "type", type_str);
 
 	g_free (value_str);
+}
+
+gboolean
+gossip_account_manager_set_unique_name (GossipAccountManager *manager,
+					GossipAccount        *account)
+{
+	GossipAccountManagerPriv *priv;
+	GList                    *l;
+	gchar                    *new_name;
+
+	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (manager), FALSE);
+
+	priv = GET_PRIV (manager);
+
+	new_name = g_strdup (gossip_account_get_name (account));
+	l = priv->accounts;
+	while (l) {
+		if (l->data != account &&
+		    strcmp (new_name, gossip_account_get_name (l->data)) == 0) {
+			gchar *str;
+
+			str = g_strdup_printf ("%s_", new_name);
+			g_free (new_name);
+			new_name = str;
+
+			l = priv->accounts;
+			continue;
+		}
+		l = l->next;
+	}
+	gossip_account_set_name (account, new_name);
+	g_free (new_name);
+
+	return TRUE;
 }
 

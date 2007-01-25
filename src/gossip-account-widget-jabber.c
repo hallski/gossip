@@ -615,11 +615,12 @@ static void
 account_widget_jabber_button_change_password_clicked_cb (GtkWidget                 *button,
 							 GossipAccountWidgetJabber *settings)
 {
-	GtkWidget *toplevel;
-	GtkWidget *dialog;
-	GtkWidget *entry;
-	GtkWidget *hbox;
-	gchar     *str;
+	GtkWidget   *toplevel;
+	GtkWidget   *dialog;
+	GtkWidget   *entry;
+	GtkWidget   *hbox;
+	gchar       *str;
+	const gchar *account_id;
 
 	toplevel = gtk_widget_get_toplevel (settings->vbox_settings);
 	if (GTK_WIDGET_TOPLEVEL (toplevel) != TRUE || 
@@ -628,7 +629,8 @@ account_widget_jabber_button_change_password_clicked_cb (GtkWidget              
 	}
 
 	/* Dialog here to get new password from user */
-	str = g_strdup_printf ("<b>%s</b>", gossip_account_get_id (settings->account));
+	gossip_account_param_get (settings->account, "account", &account_id, NULL);
+	str = g_strdup_printf ("<b>%s</b>", account_id);
 	dialog = gtk_message_dialog_new (GTK_WINDOW (toplevel),
 					 0,
 					 GTK_MESSAGE_QUESTION,

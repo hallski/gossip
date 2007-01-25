@@ -1,3 +1,24 @@
+2006-01-25  Xavier Claessens  <xclaesse@gmail.com>
+
+	* protocols/telepathy/gossip-telepathy.c
+	* protocols/telepathy/gossip-telepathy-contacts.c
+	* protocols/telepathy/gossip-telepathy-contacts.h
+	* protocols/jabber/gossip-jabber.c
+	* src/gossip-account-widget-jabber.c
+	* src/gossip-new-chatroom-dialog.c
+	* src/gossip-app.c
+	* src/gossip-notify.c
+	* src/gossip-ui-utils.c
+	* src/gossip-sound.c
+	* src/gossip-accounts-dialog.c
+	* libgossip/gossip-account.c
+	* libgossip/gossip-account.h
+	* libgossip/gossip-account-manager.c
+	* libgossip/gossip-account-manager.h
+	* libgossip/gossip-chatroom.c
+	* libgossip/gossip-log.c: Remove GossipAccount's id property and use
+	the name property instead for unique identifier. Fixes bug #397733
+
 2007-01-25  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/Makefile.am:
