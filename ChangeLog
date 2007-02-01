@@ -1,3 +1,9 @@
+2007-02-01  Martyn Russell  <martyn@imendio.com>
+
+	* src/gossip-notify.c: Don't unref the NotifyNotification on the
+	"closed" signal since this has caused crashes with what seems to
+	be newer versions of libnotify, fixes bug #395588 (Dimitur Kirov).
+
 2006-01-25  Xavier Claessens  <xclaesse@gmail.com>
 
 	* libgossip/gossip-chatroom-contact.c
