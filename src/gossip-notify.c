@@ -143,6 +143,9 @@ static void
 notify_closed_cb (NotifyNotification *notify,
 		  gpointer            user_data)
 {
+	/* NOTE: We only do this because libnotify breaks here
+	 * otherwise, this is all detailed in bug #395588.
+	 */
 	g_idle_add ((GSourceFunc) g_object_unref, notify);
 }
 
