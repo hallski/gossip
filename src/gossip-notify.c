@@ -139,6 +139,13 @@ notify_online_action_cb (NotifyNotification *notify,
 	g_object_unref (contact);
 }
 
+static void
+notify_closed_cb (NotifyNotification *notify,
+		  gpointer            user_data)
+{
+	g_idle_add ((GSourceFunc) g_object_unref, notify);
+}
+
 static gboolean
 notify_get_is_busy (void)
 {
@@ -207,6 +214,11 @@ notify_contact_online (GossipContact *contact)
 	notify = notify_notification_new (title, status, NULL, NULL);
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_LOW);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
+
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_closed_cb),
+			  NULL);
 
 	if (attach_status_icon) {
 		notify_notification_attach_to_status_icon (notify, attach_status_icon);
@@ -288,6 +300,11 @@ notify_subscription_request_show (GossipContact *contact)
 	notify_notification_add_action (notify, "default", _("Default"),
 					(NotifyActionCallback) notify_subscription_request_default_cb,
 					NULL, NULL);
+
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_closed_cb),
+			  NULL);
 
 	if (!notify_notification_show (notify, &error)) {
 		g_warning ("Failed to send notification: %s",
@@ -418,6 +435,11 @@ notify_new_message (GossipEventManager *event_manager,
 	notify_notification_set_urgency (notify, NOTIFY_URGENCY_NORMAL);
 	notify_notification_set_icon_from_pixbuf (notify, pixbuf);
 	notify_notification_set_timeout (notify, NOTIFY_MESSAGE_TIME);
+
+	g_signal_connect (notify,
+			  "closed",
+			  G_CALLBACK (notify_closed_cb),
+			  NULL);
 
 	if (attach_status_icon) {
 		notify_notification_attach_to_status_icon (notify, attach_status_icon);
