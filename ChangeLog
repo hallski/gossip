@@ -1,3 +1,9 @@
+2007-02-03  Richard Hult  <richard@imendio.com>
+
+	* ui/pixmaps: Remove some old unused images, and add new tangofied
+	icons by Andreas Nilsson. We might need a few more but this is a
+	good start.
+
 2007-02-01  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-notify.c: Don't unref the NotifyNotification on the

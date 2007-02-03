@@ -11,10 +11,6 @@ image_DATA =				\
 	gossip-message.png		\
 	gossip-typing.png		\
 	gossip-group-message.png 	\
-	channel-old4.png		\
-	my-user_48.png			\
-	query_48.png			\
-	watermark.png			\
 	vcard_16.png			\
 	vcard_48.png
 
