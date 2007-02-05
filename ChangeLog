@@ -1,3 +1,8 @@
+2007-02-05  Richard Hult  <richard@imendio.com>
+
+	* ui/pixmaps: Use the old icons again, the new ones need some more
+	work.
+
 2007-02-03  Martyn Russell  <martyn@imendio.com>
 	
 	* ui/pixmaps/gossip-extended-away.png:
