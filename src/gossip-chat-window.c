@@ -25,6 +25,7 @@
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
+#include <glib/gprintf.h>
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
@@ -570,8 +571,6 @@ chat_window_avatar_changed_cb (GossipContact    *contact,
 	if (!gossip_contact_equal (current_contact, contact)) {
 		return;
 	}
-
-	chat_window_update_title (window, priv->current_chat);
 }
 
 static void
@@ -688,7 +687,8 @@ chat_window_update_status (GossipChatWindow *window,
 	gtk_image_set_from_pixbuf (image, pixbuf);
 
 	g_object_unref (pixbuf);
-
+	
+	chat_window_update_title (window, chat);
 	chat_window_update_tooltip (window, chat);
 }
 
@@ -696,39 +696,48 @@ static void
 chat_window_update_title (GossipChatWindow *window,
 			  GossipChat       *chat)
 {
-	GossipChatWindowPriv *priv;
-	GossipContact        *contact;
-	const gchar          *name;
-	GdkPixbuf 	     *pixbuf = NULL;
-
+	GossipChatWindowPriv	*priv;
+	GdkPixbuf		*pixbuf = NULL;
+	const gchar             *str;
+	gchar			*title;
+	gint  			 number_of_chats;
+	
 	priv = GET_PRIV (window);
 
-	/* Use the name from the supplied chat, which happens when we get a
-	 * message from an tab other than the active one. This makes it easier
-	 * to see who talked to you when you have multiple tabs.
-	 */
-	if (chat) {
-		name = gossip_chat_get_name (chat);
+	number_of_chats = g_list_length(priv->chats);
+	str = ngettext ("Conversation", "Conversations", number_of_chats);
+
+	if (number_of_chats == 1) {
+		title = g_strdup_printf ("%s - %s", 
+					 gossip_chat_get_name (priv->current_chat), 
+					 str);
 	} else {
-		name = gossip_chat_get_name (priv->current_chat);
+		title = g_strdup_printf ("%s (%d)", 
+					 str, 
+					 number_of_chats);
 	}
 
-	gtk_window_set_title (GTK_WINDOW (priv->dialog), name);
+	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);
+	g_free (title);
 
 	if (priv->new_msg) {
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
 	} else {
-		/* Update the avatar if we have one */
-		contact = gossip_chat_get_contact (priv->current_chat);
-		if (contact) {
-			pixbuf = gossip_pixbuf_avatar_from_contact (contact);
+		if (number_of_chats == 1) {
+			pixbuf = chat_window_get_status_pixbuf (window, priv->current_chat);
+		} else {
+			/* TODO: We really could do with an icon here
+			 * for this, something like the new message
+			 * icon but without the "new" part of it.
+			 */
 		}
 
 		chat_window_set_urgency_hint (window, FALSE);
 	}
 
 	gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
+
 	if (pixbuf) {
 		g_object_unref (pixbuf);
 	}
@@ -1205,7 +1214,6 @@ chat_window_tabs_left_activate_cb (GtkWidget        *menuitem,
 				    gossip_chat_get_widget (chat),
 				    index - 1);
 
-	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1227,7 +1235,6 @@ chat_window_tabs_right_activate_cb (GtkWidget        *menuitem,
 				    gossip_chat_get_widget (chat),
 				    index + 1);
 
-	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1279,7 +1286,6 @@ static void
 chat_window_status_changed_cb (GossipChat       *chat,
 			       GossipChatWindow *window)
 {
-	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1462,7 +1468,6 @@ chat_window_page_switched_cb (GtkNotebook	     *notebook,
 	priv->current_chat = chat;
 	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, chat);
 
-	chat_window_update_title (window, NULL);
 	chat_window_update_menu (window);
 	chat_window_update_status (window, chat);
 }
@@ -1601,6 +1606,7 @@ chat_window_page_removed_cb (GtkNotebook      *notebook,
 		g_object_unref (window);
 	} else {
 		chat_window_update_menu (window);
+		chat_window_update_title (window, NULL);
 	}
 }
 
