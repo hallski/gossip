@@ -30,6 +30,8 @@ backend_impl = 						\
 endif
 
 libgossip_la_SOURCES =             			\
+	gossip.h					\
+	gossip-types.h					\
 	gossip-account.c           			\
 	gossip-account.h           			\
 	gossip-account-manager.c   			\
@@ -45,6 +47,8 @@ libgossip_la_SOURCES =             			\
 	gossip-chatroom-provider.h 			\
 	gossip-contact.c           			\
 	gossip-contact.h           			\
+	gossip-contact-manager.c       			\
+	gossip-contact-manager.h       			\
 	gossip-debug.c					\
 	gossip-debug.h					\
 	gossip-event.c             			\
@@ -87,6 +91,7 @@ libgossipincludedir = $(includedir)/gossip/
 dtddir = $(datadir)/gossip
 dtd_DATA = 						\
 	gossip-account.dtd				\
+	gossip-contact.dtd				\
 	gossip-chatroom.dtd
 
 stylesheetdir = $(datadir)/gossip

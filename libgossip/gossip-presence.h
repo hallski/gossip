@@ -32,7 +32,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_PRESENCE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_PRESENCE))
 #define GOSSIP_PRESENCE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_PRESENCE, GossipPresenceClass))
 
-typedef struct _GossipPresence      GossipPresence;
 typedef struct _GossipPresenceClass GossipPresenceClass;
 
 struct _GossipPresence {
@@ -42,15 +41,6 @@ struct _GossipPresence {
 struct _GossipPresenceClass {
 	GObjectClass parent_class;
 };
-
-typedef enum {
-	GOSSIP_PRESENCE_STATE_AVAILABLE,
-	GOSSIP_PRESENCE_STATE_BUSY,
-	GOSSIP_PRESENCE_STATE_AWAY,
-	GOSSIP_PRESENCE_STATE_EXT_AWAY,
-	GOSSIP_PRESENCE_STATE_HIDDEN,      /* When you appear offline to others */
-	GOSSIP_PRESENCE_STATE_UNAVAILABLE,
-} GossipPresenceState;
 
 GType               gossip_presence_get_type                 (void) G_GNUC_CONST;
 

@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
- * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,18 +16,23 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
+ *          Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
+
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-log.h>
-#include <libgossip/gossip-message.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-chat-window.h"
@@ -40,13 +44,13 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
-
-#define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
-
 #define DEBUG_DOMAIN "PrivateChat"
 
 #define COMPOSING_STOP_TIMEOUT 5
+
+#define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_PRIVATE_CHAT, GossipPrivateChatPriv))
 
 struct _GossipPrivateChatPriv {
 	GossipContact    *contact;
@@ -358,6 +362,7 @@ private_chat_send (GossipPrivateChat *chat,
 		   const gchar       *msg)
 {
 	GossipPrivateChatPriv *priv;
+	GossipLogManager      *log_manager;
 	GossipMessage         *message;
 
 	priv = GET_PRIV (chat);
@@ -387,7 +392,8 @@ private_chat_send (GossipPrivateChat *chat,
 	gossip_message_request_composing (message);
 	gossip_message_set_sender (message, priv->own_contact);
 
-	gossip_log_message_for_contact (message, FALSE);
+	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
+	gossip_log_message_for_contact (log_manager, message, FALSE);
 
 	gossip_chat_view_append_message_from_self (GOSSIP_CHAT (chat)->view,
 						   message,
@@ -920,8 +926,9 @@ GossipPrivateChat *
 gossip_private_chat_new (GossipContact *own_contact,
 			 GossipContact *contact)
 {
-	GossipPrivateChat     *chat;
 	GossipPrivateChatPriv *priv;
+	GossipPrivateChat     *chat;
+	GossipLogManager      *log_manager;
 	GossipChatView        *view;
 	GossipContact         *sender;
 	GossipMessage         *message;
@@ -971,7 +978,8 @@ gossip_private_chat_new (GossipContact *own_contact,
 	gossip_chat_view_scroll (view, FALSE);
 
 	/* Add messages from last conversation */
-	messages = gossip_log_get_last_for_contact (priv->contact);
+	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
+	messages = gossip_log_get_last_for_contact (log_manager, priv->contact);
 	num_messages  = g_list_length (messages);
 
 	for (l = messages, i = 0; l; l = l->next, i++) {
@@ -1045,6 +1053,7 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 				    GossipMessage     *message)
 {
 	GossipPrivateChatPriv *priv;
+	GossipLogManager      *log_manager;
 	GossipContact         *sender;
 	GossipChatroomInvite  *invite;
 	const gchar           *resource;
@@ -1079,7 +1088,8 @@ gossip_private_chat_append_message (GossipPrivateChat *chat,
 		}
 	}
 
-	gossip_log_message_for_contact (message, TRUE);
+	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
+	gossip_log_message_for_contact (log_manager, message, TRUE);
 
 	subject = gossip_message_get_subject (message);
 	if (subject) {

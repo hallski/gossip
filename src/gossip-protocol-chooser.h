@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2006 Xavier Claessens <xclaesse@gmail.com>
+ * Copyright (C) 2006-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,12 +16,12 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Xavier Claessens <xclaesse@gmail.com>
  */
 
 #ifndef __GOSSIP_PROTOCOL_CHOOSER_H__
 #define __GOSSIP_PROTOCOL_CHOOSER_H__
-
-#include <gtk/gtkcombobox.h>
 
 GtkWidget * gossip_protocol_chooser_new          (void);
 void        gossip_protocol_chooser_get_protocol (GtkWidget  *widget,

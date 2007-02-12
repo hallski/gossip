@@ -23,8 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-event.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_EVENT_MANAGER         (gossip_event_manager_get_type ())
@@ -34,7 +32,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_EVENT_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_EVENT_MANAGER))
 #define GOSSIP_EVENT_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_EVENT_MANAGER, GossipEventManagerClass))
 
-typedef struct _GossipEventManager      GossipEventManager;
 typedef struct _GossipEventManagerClass GossipEventManagerClass;
 
 struct _GossipEventManager {
@@ -44,10 +41,6 @@ struct _GossipEventManager {
 struct _GossipEventManagerClass {
 	GObjectClass parent_class;
 };
-
-typedef void (* GossipEventActivateFunction) (GossipEventManager *manager,
-					      GossipEvent        *event,
-					      GObject            *object);
 
 GType        gossip_event_manager_get_type        (void) G_GNUC_CONST;
 GossipEventManager *

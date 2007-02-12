@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2006 Imendio AB
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,34 +16,36 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <sys/types.h>
 #include <string.h>
 #include <time.h>
+
 #include <glib/gi18n.h>
+#include <gtk/gtkbutton.h>
 #include <gtk/gtkimage.h>
 #include <gtk/gtkmenu.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtkimagemenuitem.h>
 #include <gtk/gtkstock.h>
 #include <gtk/gtkscrolledwindow.h>
+#include <gtk/gtksizegroup.h>
+#include <glade/glade.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-time.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-chat-view.h"
 #include "gossip-preferences.h"
 #include "gossip-theme-manager.h"
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-		       GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
+#include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "ChatView"
 
@@ -51,6 +53,8 @@
 #define TIMESTAMP_INTERVAL 300
 
 #define MAX_LINES 800
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CHAT_VIEW, GossipChatViewPriv))
 
 typedef enum {
 	BLOCK_TYPE_NONE,
@@ -1478,6 +1482,10 @@ gossip_chat_view_append_message_from_self (GossipChatView *view,
 	const gchar        *body;
 	gboolean            scroll_down;
 
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_MESSAGE (msg));
+	g_return_if_fail (GOSSIP_IS_CONTACT (my_contact));
+
 	priv = GET_PRIV (view);
 
 	body = gossip_message_get_body (msg);
@@ -1537,6 +1545,10 @@ gossip_chat_view_append_message_from_other (GossipChatView *view,
 	const gchar        *body;
 	gboolean            scroll_down;
 
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (GOSSIP_IS_MESSAGE (msg));
+	g_return_if_fail (GOSSIP_IS_CONTACT (contact));
+
 	priv = GET_PRIV (view);
 
 	body = gossip_message_get_body (msg);
@@ -1595,6 +1607,9 @@ gossip_chat_view_append_event (GossipChatView *view,
 	gchar              *msg;
 	const gchar        *tag;
 
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+	g_return_if_fail (!G_STR_EMPTY (str));
+
 	priv = GET_PRIV (view);
 
 	bottom = chat_view_is_scrolled_down (view);
@@ -1648,6 +1663,8 @@ gossip_chat_view_append_invite (GossipChatView *view,
 	gboolean              bottom;
 	const gchar          *tag;
 	GString              *s;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = GET_PRIV (view);
 
@@ -1778,6 +1795,7 @@ gossip_chat_view_append_button (GossipChatView *view,
 	gboolean              bottom;
 	const gchar          *tag;
 
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 	g_return_if_fail (button1 != NULL);
 
 	priv = GET_PRIV (view);
@@ -1845,6 +1863,8 @@ gossip_chat_view_scroll (GossipChatView *view,
 {
 	GossipChatViewPriv *priv;
 
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
+
 	priv = GET_PRIV (view);
 
 	priv->allow_scrolling = allow_scrolling;
@@ -1860,6 +1880,8 @@ gossip_chat_view_scroll_down (GossipChatView *view)
 	GtkTextBuffer      *buffer;
 	GtkTextIter         iter;
 	GtkTextMark        *mark;
+
+	g_return_if_fail (GOSSIP_IS_CHAT_VIEW (view));
 
 	priv = GET_PRIV (view);
 
@@ -2352,6 +2374,8 @@ gossip_chat_view_get_smiley_menu (GCallback    callback,
 	gint       x;
 	gint       y;
 	gint       i;
+
+	g_return_val_if_fail (callback != NULL, NULL);
 
 	menu = gtk_menu_new ();
 

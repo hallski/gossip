@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2006 Imendio AB
+ * Copyright (C) 2006-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,14 +16,17 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <sys/stat.h>
+
 #include <glib.h>
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-debug.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-chat.h"
 #include "gossip-geometry.h"

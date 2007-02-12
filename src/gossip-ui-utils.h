@@ -1,8 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2006 Imendio AB
- * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
- * Copyright (C) 2005      Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,23 +16,18 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
+ * 
+ *          Part of this file is copied from GtkSourceView (gtksourceiter.c):
+ *          Paolo Maggi
+ *          Jeroen Zwartepoorte
  */
 
 #ifndef __GOSSIP_UI_UTILS_H__
 #define __GOSSIP_UI_UTILS_H__
-
-#include <gtk/gtkoptionmenu.h>
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktextview.h>
-#include <gtk/gtkmessagedialog.h>
-#include <gtk/gtksizegroup.h>
-#include <glade/glade.h>
-
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-vcard.h>
 
 #include "gossip-chat-view.h"
 

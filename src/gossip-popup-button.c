@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 Imendio AB
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,16 +16,22 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Richard Hult <richard@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <stdlib.h>
+
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
 #include "gossip-popup-button.h"
 #include "gossip-marshal.h"
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_POPUP_BUTTON, GossipPopupButtonPriv))
 
 typedef struct {
 	GtkWidget *popup_window;
@@ -40,12 +46,8 @@ static void     popup_button_popup          (GossipPopupButton *button);
 static void     popup_button_popdown        (GossipPopupButton *button,
 					     gboolean           ok);
 
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_POPUP_BUTTON, GossipPopupButtonPriv))
-
 G_DEFINE_TYPE (GossipPopupButton, gossip_popup_button, GTK_TYPE_TOGGLE_BUTTON);
 
-/* Signals */
 enum {
 	POPUP,
 	POPDOWN,

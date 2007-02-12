@@ -23,12 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-async.h"
-#include "gossip-contact.h"
-#include "gossip-message.h"
-#include "gossip-account.h"
-#include "gossip-vcard.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_PROTOCOL         (gossip_protocol_get_type ())
@@ -50,6 +44,11 @@ typedef enum {
 	GOSSIP_PROTOCOL_SPECIFIC_ERROR,
 } GossipProtocolError;
 
+typedef enum {
+	GOSSIP_PROTOCOL_DISCONNECT_ASKED,
+	GOSSIP_PROTOCOL_DISCONNECT_ERROR
+} GossipProtocolDisconnectReason;
+
 typedef struct _GossipProtocol      GossipProtocol;
 typedef struct _GossipProtocolClass GossipProtocolClass;
 
@@ -61,6 +60,9 @@ struct _GossipProtocolClass {
 	GObjectClass parent_class;
 
 	/* virtual functions */
+	GossipContact * (*new_contact)             (GossipProtocol         *protocol,
+						    const gchar            *id,
+						    const gchar            *name);
 	void            (*setup)                   (GossipProtocol         *protocol,
 						    GossipAccount          *account);
 	void            (*login)                   (GossipProtocol         *protocol);
@@ -87,7 +89,7 @@ struct _GossipProtocolClass {
 						    gboolean                subscribed);
 	gboolean        (*set_vcard)               (GossipProtocol         *protocol,
 						    GossipVCard            *vcard,
-						    GossipResultCallback    callback,
+						    GossipCallback          callback,
 						    gpointer                user_data,
 						    GError                **error);
 	GossipContact * (*find_contact)            (GossipProtocol         *protocol,
@@ -125,12 +127,12 @@ struct _GossipProtocolClass {
 	void            (*register_account)        (GossipProtocol         *protocol,
 						    GossipAccount          *account,
 						    GossipVCard            *vcard,
-						    GossipResultErrorCallback  callback,
+						    GossipErrorCallback     callback,
 						    gpointer                user_data);
 	void            (*register_cancel)         (GossipProtocol         *protocol);
 	void            (*change_password)         (GossipProtocol         *protocol,
 						    const gchar            *new_password,
-						    GossipResultErrorCallback  callback,
+						    GossipErrorCallback     callback,
 						    gpointer                user_data);
 	void            (*change_password_cancel)  (GossipProtocol         *protocol);
 	
@@ -146,90 +148,91 @@ struct _GossipProtocolClass {
 
 GType           gossip_protocol_get_type                (void) G_GNUC_CONST;
 
-GossipProtocol *gossip_protocol_new_from_account_type   (GossipAccountType        type);
-
-void            gossip_protocol_setup                   (GossipProtocol          *protocol,
-							 GossipAccount           *account);
-void            gossip_protocol_login                   (GossipProtocol          *protocol);
-void            gossip_protocol_logout                  (GossipProtocol          *protocol);
-gboolean        gossip_protocol_is_connected            (GossipProtocol          *protocol);
-gboolean        gossip_protocol_is_connecting           (GossipProtocol          *protocol);
-gboolean        gossip_protocol_is_valid_username       (GossipProtocol          *protocol,
-							 const gchar             *username);
-gboolean        gossip_protocol_is_ssl_supported        (GossipProtocol          *protocol);
-const gchar   * gossip_protocol_get_example_username    (GossipProtocol          *protocol);
-gchar         * gossip_protocol_get_default_server      (GossipProtocol          *protocol,
-							 const gchar             *username);
-guint           gossip_protocol_get_default_port        (GossipProtocol          *protocol,
-							 gboolean                 use_ssl);
-void            gossip_protocol_send_message            (GossipProtocol          *protocol,
-							 GossipMessage           *message);
-void            gossip_protocol_send_composing          (GossipProtocol          *protocol,
-							 GossipContact           *contact,
-							 gboolean                 typing);
-void            gossip_protocol_set_presence            (GossipProtocol          *protocol,
-							 GossipPresence          *presence);
-void            gossip_protocol_set_subscription        (GossipProtocol          *protocol,
-							 GossipContact           *contact,
-							 gboolean                 subscribed);
-gboolean        gossip_protocol_set_vcard               (GossipProtocol          *protocol,
-							 GossipVCard             *vcard,
-							 GossipResultCallback     callback,
-							 gpointer                 user_data,
-							 GError                 **error);
-GossipContact * gossip_protocol_find_contact            (GossipProtocol          *protocol,
-							 const gchar             *id);
-void            gossip_protocol_add_contact             (GossipProtocol          *protocol,
-							 const gchar             *id,
-							 const gchar             *name,
-							 const gchar             *group,
-							 const gchar             *message);
-void            gossip_protocol_rename_contact          (GossipProtocol          *protocol,
-							 GossipContact           *contact,
-							 const gchar             *new_name);
-void            gossip_protocol_remove_contact          (GossipProtocol          *protocol,
-							 GossipContact           *contact);
-void            gossip_protocol_update_contact          (GossipProtocol          *protocol,
-							 GossipContact           *contact);
-void            gossip_protocol_rename_group            (GossipProtocol          *protocol,
-							 const gchar             *group,
-							 const gchar             *new_name);
-const GList *   gossip_protocol_get_contacts            (GossipProtocol          *protocol);
-GossipContact * gossip_protocol_get_own_contact         (GossipProtocol          *protocol);
-const gchar *   gossip_protocol_get_active_resource     (GossipProtocol          *protocol,
-							 GossipContact           *contact);
-GList *         gossip_protocol_get_groups              (GossipProtocol          *protocol);
-gboolean        gossip_protocol_get_vcard               (GossipProtocol          *protocol,
-							 GossipContact           *contact,
-							 GossipVCardCallback      callback,
-							 gpointer                 user_data,
-							 GError                 **error);
-gboolean        gossip_protocol_get_version             (GossipProtocol          *protocol,
-							 GossipContact           *contact,
-							 GossipVersionCallback    callback,
-							 gpointer                 user_data,
-							 GError                 **error);
-void            gossip_protocol_register_account        (GossipProtocol          *protocol,
-							 GossipAccount           *account,
-							 GossipVCard             *vcard,
-							 GossipResultErrorCallback callback,
-							 gpointer                 user_data);
-void            gossip_protocol_register_cancel         (GossipProtocol          *protocol);
-void            gossip_protocol_change_password         (GossipProtocol          *protocol,
-							 const gchar             *new_password,
-							 GossipResultErrorCallback callback,
-							 gpointer                 user_data);
-void            gossip_protocol_change_password_cancel  (GossipProtocol          *protocol);
-
-GossipAccount * gossip_protocol_new_account             (GossipProtocol          *protocol);
-void            gossip_protocol_get_avatar_requirements (GossipProtocol          *protocol,
-							 guint                   *min_width,
-							 guint                   *min_height,
-							 guint                   *max_width,
-							 guint                   *max_height,
-							 gsize                   *max_size,
-							 gchar                  **format);
-const gchar *   gossip_protocol_error_to_string         (GossipProtocolError      error);
+GossipProtocol *gossip_protocol_new_from_account_type   (GossipAccountType       type);
+GossipContact  *gossip_protocol_new_contact             (GossipProtocol         *protocol,
+							 const gchar            *id,
+							 const gchar            *name);
+void            gossip_protocol_setup                   (GossipProtocol         *protocol,
+							 GossipAccount          *account);
+void            gossip_protocol_login                   (GossipProtocol         *protocol);
+void            gossip_protocol_logout                  (GossipProtocol         *protocol);
+gboolean        gossip_protocol_is_connected            (GossipProtocol         *protocol);
+gboolean        gossip_protocol_is_connecting           (GossipProtocol         *protocol);
+gboolean        gossip_protocol_is_valid_username       (GossipProtocol         *protocol,
+							 const gchar            *username);
+gboolean        gossip_protocol_is_ssl_supported        (GossipProtocol         *protocol);
+const gchar   * gossip_protocol_get_example_username    (GossipProtocol         *protocol);
+gchar         * gossip_protocol_get_default_server      (GossipProtocol         *protocol,
+							 const gchar            *username);
+guint           gossip_protocol_get_default_port        (GossipProtocol         *protocol,
+							 gboolean                use_ssl);
+void            gossip_protocol_send_message            (GossipProtocol         *protocol,
+							 GossipMessage          *message);
+void            gossip_protocol_send_composing          (GossipProtocol         *protocol,
+							 GossipContact          *contact,
+							 gboolean                typing);
+void            gossip_protocol_set_presence            (GossipProtocol         *protocol,
+							 GossipPresence         *presence);
+void            gossip_protocol_set_subscription        (GossipProtocol         *protocol,
+							 GossipContact          *contact,
+							 gboolean                subscribed);
+gboolean        gossip_protocol_set_vcard               (GossipProtocol         *protocol,
+							 GossipVCard            *vcard,
+							 GossipCallback          callback,
+							 gpointer                user_data,
+							 GError                **error);
+GossipContact * gossip_protocol_find_contact            (GossipProtocol         *protocol,
+							 const gchar            *id);
+void            gossip_protocol_add_contact             (GossipProtocol         *protocol,
+							 const gchar            *id,
+							 const gchar            *name,
+							 const gchar            *group,
+							 const gchar            *message);
+void            gossip_protocol_rename_contact          (GossipProtocol         *protocol,
+							 GossipContact          *contact,
+							 const gchar            *new_name);
+void            gossip_protocol_remove_contact          (GossipProtocol         *protocol,
+							 GossipContact          *contact);
+void            gossip_protocol_update_contact          (GossipProtocol         *protocol,
+							 GossipContact          *contact);
+void            gossip_protocol_rename_group            (GossipProtocol         *protocol,
+							 const gchar            *group,
+							 const gchar            *new_name);
+const GList *   gossip_protocol_get_contacts            (GossipProtocol         *protocol);
+GossipContact * gossip_protocol_get_own_contact         (GossipProtocol         *protocol);
+const gchar *   gossip_protocol_get_active_resource     (GossipProtocol         *protocol,
+							 GossipContact          *contact);
+GList *         gossip_protocol_get_groups              (GossipProtocol         *protocol);
+gboolean        gossip_protocol_get_vcard               (GossipProtocol         *protocol,
+							 GossipContact          *contact,
+							 GossipVCardCallback     callback,
+							 gpointer                user_data,
+							 GError                **error);
+gboolean        gossip_protocol_get_version             (GossipProtocol         *protocol,
+							 GossipContact          *contact,
+							 GossipVersionCallback   callback,
+							 gpointer                user_data,
+							 GError                **error);
+void            gossip_protocol_register_account        (GossipProtocol         *protocol,
+							 GossipAccount          *account,
+							 GossipVCard            *vcard,
+							 GossipErrorCallback     callback,
+							 gpointer                user_data);
+void            gossip_protocol_register_cancel         (GossipProtocol         *protocol);
+void            gossip_protocol_change_password         (GossipProtocol         *protocol,
+							 const gchar            *new_password,
+							 GossipErrorCallback     callback,
+							 gpointer                user_data);
+void            gossip_protocol_change_password_cancel  (GossipProtocol         *protocol);
+GossipAccount * gossip_protocol_new_account             (GossipProtocol         *protocol);
+void            gossip_protocol_get_avatar_requirements (GossipProtocol         *protocol,
+							 guint                  *min_width,
+							 guint                  *min_height,
+							 guint                  *max_width,
+							 guint                  *max_height,
+							 gsize                  *max_size,
+							 gchar                 **format);
+const gchar *   gossip_protocol_error_to_string         (GossipProtocolError     error);
 
 G_END_DECLS
 

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,11 +16,18 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
+#include "gossip-types.h"
+
+#include "gossip-chatroom.h"
+#include "gossip-contact.h"
 #include "gossip-message.h"
+#include "gossip-time.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_MESSAGE, GossipMessagePriv))
 
@@ -36,7 +43,7 @@ struct _GossipMessagePriv {
 	gchar                *body;
 	gchar                *thread;
 
-	gossip_time_t         timestamp;
+	GossipTime            timestamp;
 
 	GossipChatroomInvite *invite;
 
@@ -546,7 +553,7 @@ gossip_message_set_thread (GossipMessage *message,
 	g_object_notify (G_OBJECT (message), "thread");
 }
 
-gossip_time_t
+GossipTime
 gossip_message_get_timestamp (GossipMessage *message)
 {
 	GossipMessagePriv *priv;
@@ -560,7 +567,7 @@ gossip_message_get_timestamp (GossipMessage *message)
 
 void
 gossip_message_set_timestamp (GossipMessage *message,
-			      gossip_time_t  timestamp)
+			      GossipTime     timestamp)
 {
 	GossipMessagePriv *priv;
 

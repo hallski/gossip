@@ -23,9 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-avatar.h"
-#include "gossip-utils.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_VCARD         (gossip_vcard_get_type ())
@@ -35,7 +32,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_VCARD_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_VCARD))
 #define GOSSIP_VCARD_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_VCARD, GossipVCardClass))
 
-typedef struct _GossipVCard      GossipVCard;
 typedef struct _GossipVCardClass GossipVCardClass;
 
 struct _GossipVCard {

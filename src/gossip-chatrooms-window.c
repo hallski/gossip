@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,24 +16,30 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdio.h>
+
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <glib.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-chatroom.h>
-#include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"
 #include "gossip-chatrooms-window.h"
 #include "gossip-edit-chatroom-dialog.h"
 #include "gossip-new-chatroom-dialog.h"
+#include "gossip-ui-utils.h"
 
 /* This is turned off for now, but to configure the auto connect in
  * the list instead of from the edit dialog, define this variable: */

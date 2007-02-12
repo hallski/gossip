@@ -16,9 +16,11 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <glib/gi18n.h>
 
@@ -28,14 +30,20 @@
 #ifdef USE_TELEPATHY
 #include <protocols/telepathy/gossip-telepathy.h>
 #else 
-#include <gossip-jabber.h>
+#include <protocols/jabber/gossip-jabber.h>
 #endif
 
-#include "libgossip-marshal.h"
+#include "gossip-types.h"
+
+#include "gossip-account.h"
+#include "gossip-contact.h"
+#include "gossip-message.h"
 #include "gossip-protocol.h"
 
-static void    gossip_protocol_class_init       (GossipProtocolClass *klass);
-static void    gossip_protocol_init             (GossipProtocol      *protocol);
+#include "libgossip-marshal.h"
+
+static void gossip_protocol_class_init (GossipProtocolClass *klass);
+static void gossip_protocol_init       (GossipProtocol      *protocol);
 
 enum {
 	CONNECTING,
@@ -230,6 +238,23 @@ gossip_protocol_new_from_account_type (GossipAccountType type)
 #endif
 
 	return protocol;
+}
+
+GossipContact *
+gossip_protocol_new_contact (GossipProtocol *protocol,
+			     const gchar    *id,
+			     const gchar    *name)
+{
+	GossipProtocolClass *klass;
+
+	g_return_val_if_fail (GOSSIP_IS_PROTOCOL (protocol), NULL);
+
+	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
+	if (klass->new_contact) {
+		return klass->new_contact (protocol, id, name);
+	}
+
+	return NULL;
 }
 
 void
@@ -442,11 +467,11 @@ gossip_protocol_set_subscription (GossipProtocol *protocol,
 }
 
 gboolean
-gossip_protocol_set_vcard (GossipProtocol        *protocol,
-			   GossipVCard           *vcard,
-			   GossipResultCallback   callback,
-			   gpointer               user_data,
-			   GError               **error)
+gossip_protocol_set_vcard (GossipProtocol  *protocol,
+			   GossipVCard     *vcard,
+			   GossipCallback   callback,
+			   gpointer         user_data,
+			   GError         **error)
 {
 	GossipProtocolClass *klass;
 
@@ -455,8 +480,8 @@ gossip_protocol_set_vcard (GossipProtocol        *protocol,
 	klass = GOSSIP_PROTOCOL_GET_CLASS (protocol);
 	if (klass->set_vcard) {
 		return klass->set_vcard (protocol, vcard,
-					       callback, user_data,
-					       error);
+					 callback, user_data,
+					 error);
 	}
 
 	/* Don't report error if protocol doesn't implement this */
@@ -660,11 +685,11 @@ gossip_protocol_get_version (GossipProtocol         *protocol,
 }
 
 void
-gossip_protocol_register_account (GossipProtocol            *protocol,
-				  GossipAccount             *account,
-				  GossipVCard               *vcard,
-				  GossipResultErrorCallback  callback,
-				  gpointer                   user_data)
+gossip_protocol_register_account (GossipProtocol      *protocol,
+				  GossipAccount       *account,
+				  GossipVCard         *vcard,
+				  GossipErrorCallback  callback,
+				  gpointer             user_data)
 {
 	GossipProtocolClass *klass;
 
@@ -692,10 +717,10 @@ gossip_protocol_register_cancel (GossipProtocol *protocol)
 }
 
 void
-gossip_protocol_change_password (GossipProtocol            *protocol,
-				 const gchar               *new_password,
-				 GossipResultErrorCallback  callback,
-				 gpointer                   user_data)
+gossip_protocol_change_password (GossipProtocol      *protocol,
+				 const gchar         *new_password,
+				 GossipErrorCallback  callback,
+				 gpointer             user_data)
 {
 	GossipProtocolClass *klass;
 

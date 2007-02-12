@@ -23,8 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-contact.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_FT         (gossip_ft_get_gtype ())

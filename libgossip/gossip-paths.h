@@ -25,11 +25,11 @@
 
 G_BEGIN_DECLS
 
-gchar *gossip_paths_get_glade_path         (const gchar *filename);
-gchar *gossip_paths_get_image_path         (const gchar *filename);
-gchar *gossip_paths_get_dtd_path           (const gchar *filename);
-gchar *gossip_paths_get_sound_path         (const gchar *filename);
-gchar *gossip_paths_get_locale_path        (void);
+gchar *gossip_paths_get_glade_path  (const gchar *filename);
+gchar *gossip_paths_get_image_path  (const gchar *filename);
+gchar *gossip_paths_get_dtd_path    (const gchar *filename);
+gchar *gossip_paths_get_sound_path  (const gchar *filename);
+gchar *gossip_paths_get_locale_path (void);
 
 G_END_DECLS
 

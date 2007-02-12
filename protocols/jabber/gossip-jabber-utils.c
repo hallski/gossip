@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Martyn Russell <mr@gnome.org>
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,9 +16,18 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include "string.h"
+#include <string.h>
+
+#include <libgossip/gossip-types.h>
+#include <libgossip/gossip-presence.h>
+#include <libgossip/gossip-time.h>
+#include <libgossip/gossip-chatroom.h>
 
 #include "gossip-jabber.h"
 #include "gossip-jabber-utils.h"
@@ -60,13 +69,13 @@ gossip_jabber_presence_state_from_str (const gchar *str)
 	return GOSSIP_PRESENCE_STATE_AVAILABLE;
 }
 
-gossip_time_t
+GossipTime
 gossip_jabber_get_message_timestamp (LmMessage *m)
 {
 	LmMessageNode *node;
 	const gchar   *xmlns;
 	const gchar   *stamp;
-	gossip_time_t  t;
+	GossipTime     t;
 
 	g_return_val_if_fail (m != NULL, gossip_time_get_current ());
 	g_return_val_if_fail (m->node != NULL, gossip_time_get_current ());

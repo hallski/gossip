@@ -18,13 +18,20 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
 
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-types.h>
+
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-chatroom.h>
+#include <libgossip/gossip-ft.h>
+#include <libgossip/gossip-ft-provider.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-utils.h>
 
 #include "gossip-jabber-chatrooms.h"
 #include "gossip-jabber-disco.h"
@@ -343,7 +350,7 @@ jabber_chatrooms_message_handler (LmMessageHandler      *handler,
 					       "chatroom-new-event",
 					       id, node->value);
 		} else {
-			gossip_time_t timestamp;
+			GossipTime timestamp;
 
 			timestamp = gossip_jabber_get_message_timestamp (m);
 

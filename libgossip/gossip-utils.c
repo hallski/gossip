@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2006 Imendio AB
- * Copyright (C) 2002-2003 Richard Hult <richard@imendio.com>
+ * Copyright (C) 2003-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,9 +16,12 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <string.h>
 #include <time.h>
@@ -27,7 +29,10 @@
 #include <regex.h>
 
 #include <glib/gi18n.h>
+
 #include <libxml/uri.h>
+
+#include "gossip-types.h"
 
 #include "gossip-utils.h"
 #include "gossip-conf.h"
@@ -217,6 +222,71 @@ gossip_xml_validate (xmlDoc      *doc,
 	xmlFreeDtd (dtd);
 
 	return ret;
+}
+
+xmlNodePtr
+gossip_xml_node_get_child (xmlNodePtr   node, 
+			   const gchar *child_name)
+{
+	xmlNodePtr l;
+
+        g_return_val_if_fail (node != NULL, NULL);
+        g_return_val_if_fail (child_name != NULL, NULL);
+
+	for (l = node->children; l; l = l->next) {
+		if (l->name && strcmp (l->name, child_name) == 0) {
+			return l;
+		}
+	}
+
+	return NULL;
+}
+
+xmlChar *
+gossip_xml_node_get_child_content (xmlNodePtr   node, 
+				   const gchar *child_name)
+{
+	xmlNodePtr l;
+
+        g_return_val_if_fail (node != NULL, NULL);
+        g_return_val_if_fail (child_name != NULL, NULL);
+
+	l = gossip_xml_node_get_child (node, child_name);
+	if (l) {
+		return xmlNodeGetContent (l);
+	}
+		
+	return NULL;
+}
+
+xmlNodePtr
+gossip_xml_node_find_child_prop_value (xmlNodePtr   node, 
+				       const gchar *prop_name,
+				       const gchar *prop_value)
+{
+	xmlNodePtr l;
+	xmlNodePtr found = NULL;
+
+        g_return_val_if_fail (node != NULL, NULL);
+        g_return_val_if_fail (prop_name != NULL, NULL);
+        g_return_val_if_fail (prop_value != NULL, NULL);
+
+	for (l = node->children; l && !found; l = l->next) {
+		xmlChar *prop;
+
+		if (!xmlHasProp (l, prop_name)) {
+			continue;
+		}
+
+		prop = xmlGetProp (l, prop_name);
+		if (prop && strcmp (prop, prop_value) == 0) {
+			found = l;
+		}
+		
+		xmlFree (prop);
+	}
+		
+	return found;
 }
 
 GType

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2006 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,22 +16,39 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <stdlib.h>
 #include <string.h>
+
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-types.h>
+
 #include <libgossip/gossip-account.h>
+#include <libgossip/gossip-async.h>
 #include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-contact-manager.h>
+#include <libgossip/gossip-conf.h>
+#include <libgossip/gossip-chatroom.h>
 #include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-vcard.h>
 #include <libgossip/gossip-chatroom-provider.h>
+#include <libgossip/gossip-contact.h>
+#include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-ft-provider.h>
+#include <libgossip/gossip-message.h>
+#include <libgossip/gossip-protocol.h>
 #include <libgossip/gossip-session.h>
+#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip-vcard.h>
+#include <libgossip/gossip-version-info.h>
 
 #include "gossip-jid.h"
 #include "gossip-jabber-chatrooms.h"
@@ -40,17 +57,15 @@
 #include "gossip-jabber-services.h"
 #include "gossip-jabber-utils.h"
 
-#ifdef USE_TRANSPORTS
-#include "gossip-transport-accounts.h"
-#endif
-
 #include "gossip-jabber.h"
 #include "gossip-jabber-private.h"
 #include "gossip-sha.h"
 
-#define DEBUG_DOMAIN "Jabber"
+#ifdef USE_TRANSPORTS
+#include "gossip-transport-accounts.h"
+#endif
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
+#define DEBUG_DOMAIN "Jabber"
 
 #define GOSSIP_JABBER_ERROR_DOMAIN "GossipJabber"
 
@@ -72,6 +87,8 @@
 
 /* How many rand char should be happend to the resource */
 #define N_RAND_CHAR                6
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_JABBER, GossipJabberPriv))
 
 struct _GossipJabberPriv {
 	LmConnection          *connection;
@@ -112,11 +129,11 @@ struct _GossipJabberPriv {
 };
 
 typedef struct {
-	GossipJabber     *jabber;
-	LmMessageHandler *message_handler;
+	GossipJabber       *jabber;
+	LmMessageHandler   *message_handler;
 
-	GossipResultErrorCallback callback;
-	gpointer          user_data;
+	GossipErrorCallback callback;
+	gpointer            user_data;
 } AsyncData;
 
 typedef struct {
@@ -134,6 +151,9 @@ typedef struct {
 static void             gossip_jabber_class_init            (GossipJabberClass          *klass);
 static void             gossip_jabber_init                  (GossipJabber               *jabber);
 static void             jabber_finalize                     (GObject                    *object);
+static GossipContact *  jabber_new_contact                  (GossipProtocol             *protocol,
+							     const gchar                *id,
+							     const gchar                *name);
 static void             jabber_setup                        (GossipProtocol             *protocol,
 							     GossipAccount              *account);
 static void             jabber_setup_connection             (GossipJabber               *jabber);
@@ -160,18 +180,18 @@ static LmSSLResponse    jabber_ssl_status_cb                (LmConnection       
 							     LmSSLStatus                 status,
 							     GossipJabber               *jabber);
 static AsyncData *      jabber_async_data_new               (GossipJabber               *jabber,
-							     GossipResultErrorCallback   callback,
+							     GossipErrorCallback         callback,
 							     gpointer                    user_data);
 static void             jabber_async_data_free              (AsyncData                  *ad);
 static void             jabber_register_account             (GossipProtocol             *protocol,
 							     GossipAccount              *account,
 							     GossipVCard                *vcard,
-							     GossipResultErrorCallback   callback,
+							     GossipErrorCallback         callback,
 							     gpointer                    user_data);
 static void             jabber_register_cancel              (GossipProtocol             *protocol);
 static void             jabber_change_password              (GossipProtocol             *protocol,
 							     const gchar                *new_password,
-							     GossipResultErrorCallback   callback,
+							     GossipErrorCallback         callback,
 							     gpointer                    user_data);
 static void             jabber_change_password_cancel       (GossipProtocol             *protocol);
 static GossipAccount *  jabber_new_account                  (GossipProtocol             *protocol);
@@ -212,7 +232,7 @@ static void             jabber_set_subscription             (GossipProtocol     
 							     gboolean                    subscribed);
 static gboolean         jabber_set_vcard                    (GossipProtocol             *protocol,
 							     GossipVCard                *vcard,
-							     GossipResultCallback        callback,
+							     GossipCallback              callback,
 							     gpointer                    user_data,
 							     GError                    **error);
 static GossipContact *  jabber_contact_find                 (GossipProtocol             *protocol,
@@ -368,6 +388,7 @@ gossip_jabber_class_init (GossipJabberClass *klass)
 
 	object_class->finalize = jabber_finalize;
 
+	protocol_class->new_contact             = jabber_new_contact;
 	protocol_class->setup                   = jabber_setup;
 	protocol_class->login                   = jabber_login;
 	protocol_class->logout                  = jabber_logout;
@@ -481,6 +502,30 @@ jabber_finalize (GObject *object)
 #endif
 
 	(G_OBJECT_CLASS (gossip_jabber_parent_class)->finalize) (object);
+}
+
+static GossipContact *
+jabber_new_contact (GossipProtocol *protocol,
+		    const gchar    *id,
+		    const gchar    *name)
+{
+	GossipJabber  *jabber;
+	GossipContact *contact;
+	gboolean       new_contact;
+
+	g_return_val_if_fail (GOSSIP_IS_JABBER (protocol), NULL);
+
+	jabber = GOSSIP_JABBER (protocol);
+
+	contact = gossip_jabber_get_contact_from_jid (jabber,
+						      id,
+						      &new_contact,
+						      FALSE);
+	if (new_contact && !G_STR_EMPTY (name)) {
+		gossip_contact_set_name (contact, name);
+	}
+
+	return contact;
 }
 
 static void
@@ -969,8 +1014,8 @@ jabber_disconnect_cb (LmConnection       *connection,
 		      LmDisconnectReason  reason,
 		      GossipJabber       *jabber)
 {
-	GossipJabberPriv       *priv;
-	GossipDisconnectReason  gossip_reason;
+	GossipJabberPriv               *priv;
+	GossipProtocolDisconnectReason  gossip_reason;
 
 	priv = GET_PRIV (jabber);
 
@@ -988,13 +1033,13 @@ jabber_disconnect_cb (LmConnection       *connection,
 
 	switch (reason) {
 	case LM_DISCONNECT_REASON_OK:
-		gossip_reason = GOSSIP_DISCONNECT_ASKED;
+		gossip_reason = GOSSIP_PROTOCOL_DISCONNECT_ASKED;
 		break;
 	case LM_DISCONNECT_REASON_PING_TIME_OUT:
 	case LM_DISCONNECT_REASON_HUP:
 	case LM_DISCONNECT_REASON_ERROR:
 	case LM_DISCONNECT_REASON_UNKNOWN:
-		gossip_reason = GOSSIP_DISCONNECT_ERROR;
+		gossip_reason = GOSSIP_PROTOCOL_DISCONNECT_ERROR;
 		break;
 	default:
 		g_assert_not_reached();
@@ -1043,9 +1088,9 @@ jabber_ssl_status_cb (LmConnection *connection,
 }
 
 static AsyncData *
-jabber_async_data_new (GossipJabber              *jabber,
-		       GossipResultErrorCallback  callback,
-		       gpointer                   user_data)
+jabber_async_data_new (GossipJabber        *jabber,
+		       GossipErrorCallback  callback,
+		       gpointer             user_data)
 {
 	AsyncData *ad;
 
@@ -1078,11 +1123,11 @@ jabber_async_data_free (AsyncData *ad)
 }
 
 static void
-jabber_register_account (GossipProtocol            *protocol,
-			 GossipAccount             *account,
-			 GossipVCard               *vcard,
-			 GossipResultErrorCallback  callback,
-			 gpointer                   user_data)
+jabber_register_account (GossipProtocol      *protocol,
+			 GossipAccount       *account,
+			 GossipVCard         *vcard,
+			 GossipErrorCallback  callback,
+			 gpointer             user_data)
 {
 	GossipJabber        *jabber;
 	GossipJabberPriv    *priv;
@@ -1244,10 +1289,10 @@ jabber_change_password_message_handler (LmMessageHandler *handler,
 }
 
 static void
-jabber_change_password (GossipProtocol            *protocol,
-			const gchar               *new_password,
-			GossipResultErrorCallback  callback,
-			gpointer                   user_data)
+jabber_change_password (GossipProtocol      *protocol,
+			const gchar         *new_password,
+			GossipErrorCallback  callback,
+			gpointer             user_data)
 {
 	GossipJabber        *jabber;
 	GossipJabberPriv    *priv;
@@ -1950,11 +1995,11 @@ jabber_set_subscription (GossipProtocol *protocol,
 }
 
 static gboolean
-jabber_set_vcard (GossipProtocol        *protocol,
-		  GossipVCard           *vcard,
-		  GossipResultCallback   callback,
-		  gpointer               user_data,
-		  GError               **error)
+jabber_set_vcard (GossipProtocol  *protocol,
+		  GossipVCard     *vcard,
+		  GossipCallback   callback,
+		  gpointer         user_data,
+		  GError         **error)
 {
 	GossipJabber *jabber;
 

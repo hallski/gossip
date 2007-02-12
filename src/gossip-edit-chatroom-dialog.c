@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,21 +16,26 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Martyn Russell <martyn@imendio.com>
+ *          Richard Hult <richard@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdio.h>
-#include <glade/glade.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
+#include <glade/glade.h>
 
-#include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-edit-chatroom-dialog.h"
-
+#include "gossip-ui-utils.h"
 
 typedef struct {
 	GtkWidget      *dialog;
@@ -44,7 +49,6 @@ typedef struct {
 	GossipChatroom *chatroom;
 } GossipEditChatroomDialog;
 
-
 static void edit_chatroom_dialog_set              (GossipEditChatroomDialog *dialog);
 static void edit_chatroom_dialog_entry_changed_cb (GtkEntry                 *entry,
 						   GossipEditChatroomDialog *dialog);
@@ -53,7 +57,6 @@ static void edit_chatroom_dialog_response_cb      (GtkWidget                *wid
 						   GossipEditChatroomDialog *dialog);
 static void edit_chatroom_dialog_destroy_cb       (GtkWidget                *widget,
 						   GossipEditChatroomDialog *dialog);
-
 
 static void
 edit_chatroom_dialog_set (GossipEditChatroomDialog *dialog)

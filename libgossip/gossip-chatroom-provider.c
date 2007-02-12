@@ -18,13 +18,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <glib/gi18n.h>
 
+#include "gossip-types.h"
+
+#include "gossip-chatroom.h"
+#include "gossip-chatroom-provider.h"
 #include "gossip-contact.h"
 #include "gossip-message.h"
-#include "gossip-chatroom-provider.h"
+
 #include "libgossip-marshal.h"
 
 static void chatroom_provider_base_init (gpointer g_class);

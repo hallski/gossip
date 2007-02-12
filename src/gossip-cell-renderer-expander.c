@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2006  Kristian Rietveld <kris@babi-pangang.org>
+ * Copyright (C) 2006-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,6 +16,8 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Kristian Rietveld <kris@imendio.com>
  */
 
 /* To do:
@@ -66,7 +68,6 @@ static gboolean gossip_cell_renderer_expander_activate     (GtkCellRenderer     
 							    GdkRectangle                    *cell_area,
 							    GtkCellRendererState             flags);
 
-/* Properties */
 enum {
 	PROP_0,
 	PROP_EXPANDER_STYLE,

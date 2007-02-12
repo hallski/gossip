@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2007 Martyn Russell <martyn@imendio.com>
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,9 +16,12 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,10 +30,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-protocol.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-account-widget-jabber.h"
 #include "gossip-app.h"
@@ -482,7 +482,7 @@ account_widget_jabber_button_register_clicked_cb (GtkWidget                 *but
 	gossip_session_register_account (session,
 					 settings->account,
 					 vcard,
-					 (GossipResultErrorCallback) 
+					 (GossipErrorCallback) 
 					 account_widget_jabber_register_cb,
 					 settings);
 }
@@ -603,7 +603,7 @@ account_widget_jabber_cp_response_cb (GtkWidget                 *dialog,
 		gossip_session_change_password (session,
 						settings->account,
 						new_password,
-						(GossipResultErrorCallback)
+						(GossipErrorCallback)
 						account_widget_jabber_change_password_cb,
 						settings);
 	}

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,9 +16,12 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <gtk/gtktooltips.h>
 
@@ -29,6 +32,7 @@
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_TRAY, GossipTrayPriv))
 
 typedef struct _GossipTrayPriv GossipTrayPriv;
+
 struct _GossipTrayPriv {
 	EggTrayIcon *tray_icon;
 	GtkWidget   *tray_event_box;

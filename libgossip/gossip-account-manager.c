@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2006 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,12 +16,16 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -29,15 +33,17 @@
 #include <protocols/telepathy/gossip-telepathy-cmgr.h>
 #endif 
 
-#include "libgossip-marshal.h"
-#include "gossip-account-manager.h"
+#include "gossip-types.h"
+
+#include "gossip-account.h" 
+#include "gossip-account-manager.h" 
 #include "gossip-debug.h"
 #include "gossip-protocol.h"
-#include "gossip-utils.h"
+#include "gossip-utils.h" 
+
+#include "libgossip-marshal.h"
 
 #define DEBUG_DOMAIN "AccountManager"
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
 /* For splitting an id of user@server/resource to just user@server with resource
  * in it's own xml tags (for Gossip release 0.10.2).
@@ -46,6 +52,8 @@
 
 #define ACCOUNTS_XML_FILENAME "accounts.xml"
 #define ACCOUNTS_DTD_FILENAME "gossip-account.dtd"
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerPriv))
 
 typedef struct _GossipAccountManagerPriv GossipAccountManagerPriv;
 
@@ -455,7 +463,7 @@ account_manager_get_all (GossipAccountManager *manager)
 		file_with_path = g_strdup (priv->accounts_file_name);
 	}
 
-	/* read file in */
+	/* Read file in */
 	if (g_file_test (file_with_path, G_FILE_TEST_EXISTS) &&
 	    !account_manager_file_parse (manager, file_with_path)) {
 		g_free (file_with_path);
@@ -764,6 +772,7 @@ account_manager_file_save (GossipAccountManager *manager)
 	/* Copy not used accounts in the new document */
 	ctxt = xmlNewParserCtxt ();
 	old_doc = xmlCtxtReadFile (ctxt, xml_file, NULL, 0);
+
 	if (old_doc) {
 		xmlNodePtr node;
 
@@ -789,6 +798,7 @@ account_manager_file_save (GossipAccountManager *manager)
 
 		xmlFreeDoc(old_doc);
 	}
+
 	xmlFreeParserCtxt (ctxt);
 
 	accounts = gossip_account_manager_get_accounts (manager);
@@ -825,7 +835,13 @@ account_manager_file_save (GossipAccountManager *manager)
 	 */
 	old_mask = umask (077);
 	chmod (xml_file, 0600);
+
+	/* Make sure the XML is indented properly */
+	xmlIndentTreeOutput = 1;
+
 	xmlSaveFormatFileEnc (xml_file, doc, "utf-8", 1);
+
+	/* Reset the umask */
 	umask (old_mask);
 
 	xmlFreeDoc (doc);

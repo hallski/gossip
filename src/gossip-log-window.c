@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2006 Imendio AB
+ * Copyright (C) 2006-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,17 +16,20 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
+
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-log.h>
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-account-chooser.h"
@@ -36,35 +39,37 @@
 #define DEBUG_DOMAIN "LogWindow"
 
 typedef struct {
-	GtkWidget      *window;
+	GtkWidget        *window;
 
-	GtkWidget      *notebook;
+	GtkWidget        *notebook;
 
-	GtkWidget      *entry_find;
-	GtkWidget      *button_find;
-	GtkWidget      *treeview_find;
-	GtkWidget      *scrolledwindow_find;
-	GossipChatView *chatview_find;
-	GtkWidget      *button_previous;
-	GtkWidget      *button_next;
+	GtkWidget        *entry_find;
+	GtkWidget        *button_find;
+	GtkWidget        *treeview_find;
+	GtkWidget        *scrolledwindow_find;
+	GossipChatView   *chatview_find;
+	GtkWidget        *button_previous;
+	GtkWidget        *button_next;
 
-	GtkWidget      *vbox_contacts;
-	GtkWidget      *account_chooser_contacts;
-	GtkWidget      *entry_contacts;
-	GtkWidget      *calendar_contacts;
-	GtkWidget      *treeview_contacts;
-	GtkWidget      *scrolledwindow_contacts;
-	GossipChatView *chatview_contacts;
+	GtkWidget        *vbox_contacts;
+	GtkWidget        *account_chooser_contacts;
+	GtkWidget        *entry_contacts;
+	GtkWidget        *calendar_contacts;
+	GtkWidget        *treeview_contacts;
+	GtkWidget        *scrolledwindow_contacts;
+	GossipChatView   *chatview_contacts;
 
-	GtkWidget      *vbox_chatrooms;
-	GtkWidget      *account_chooser_chatrooms;
-	GtkWidget      *entry_chatrooms;
-	GtkWidget      *calendar_chatrooms;
-	GtkWidget      *treeview_chatrooms;
-	GtkWidget      *scrolledwindow_chatrooms;
-	GossipChatView *chatview_chatrooms;
+	GtkWidget        *vbox_chatrooms;
+	GtkWidget        *account_chooser_chatrooms;
+	GtkWidget        *entry_chatrooms;
+	GtkWidget        *calendar_chatrooms;
+	GtkWidget        *treeview_chatrooms;
+	GtkWidget        *scrolledwindow_chatrooms;
+	GossipChatView   *chatview_chatrooms;
 
-	gchar          *last_find;
+	gchar            *last_find;
+
+	GossipLogManager *log_manager;
 } GossipLogWindow;
 
 /* Searching */
@@ -293,11 +298,11 @@ log_window_find_changed_cb (GtkTreeSelection *selection,
 	gossip_chat_view_scroll (window->chatview_find, FALSE);
 
 	/* Get own contact to know which messages are from me or the contact */
-	own_contact = gossip_log_get_own_contact (account);
+	own_contact = gossip_log_get_own_contact (window->log_manager, account);
 	g_object_unref (account);
 
 	/* Get messages */
-	messages = gossip_log_get_messages_for_contact (contact, date);
+	messages = gossip_log_get_messages_for_contact (window->log_manager, contact, date);
 	g_object_unref (contact);
 	g_free (date);
 
@@ -344,20 +349,19 @@ static void
 log_window_find_populate (GossipLogWindow *window,
 			  const gchar     *search_criteria)
 {
-	GossipSession        *session;
-	GossipAccountManager *manager;
-	GossipAccount        *account;
-	GossipContact        *contact;
+	GossipSession      *session;
+	GossipAccount      *account;
+	GossipContact      *contact;
 
-	GList                *hits;
-	GList                *l;
-	GossipLogSearchHit   *hit;
+	GList              *hits;
+	GList              *l;
+	GossipLogSearchHit *hit;
 
-	GtkTreeView          *view;
-	GtkTreeModel         *model;
-	GtkTreeSelection     *selection;
-	GtkListStore         *store;
-	GtkTreeIter           iter;
+	GtkTreeView        *view;
+	GtkTreeModel       *model;
+	GtkTreeSelection   *selection;
+	GtkListStore       *store;
+	GtkTreeIter         iter;
 
 	view = GTK_TREE_VIEW (window->treeview_find);
 	model = gtk_tree_view_get_model (view);
@@ -365,7 +369,6 @@ log_window_find_populate (GossipLogWindow *window,
 	store = GTK_LIST_STORE (model);
 
 	session = gossip_app_get_session ();
-	manager = gossip_session_get_account_manager (session);
 
 	gossip_chat_view_clear (window->chatview_find);
 
@@ -376,7 +379,7 @@ log_window_find_populate (GossipLogWindow *window,
 		return;
 	}
 
-	hits = gossip_log_search_new (search_criteria);
+	hits = gossip_log_search_new (window->log_manager, search_criteria);
 
 	for (l = hits; l; l = l->next) {
 		const gchar *date;
@@ -716,7 +719,7 @@ log_window_contacts_populate (GossipLogWindow *window)
 
 	gtk_list_store_clear (store);
 
-	contacts = gossip_log_get_contacts (account);
+	contacts = gossip_log_get_contacts (window->log_manager, account);
 
 	/* Contacts */
 	for (l = contacts; l; l = l->next) {
@@ -840,15 +843,15 @@ log_window_contacts_new_message_cb (GossipContact   *own_contact,
 static gboolean
 log_window_contacts_is_today_selected (GossipLogWindow *window)
 {
-	gossip_time_t  t;
-	gchar         *timestamp;
-	guint          year_selected;
-	guint          year;
-	guint          month;
-	guint          month_selected;
-	guint          day;
-	guint          day_selected;
-	gboolean       selected;
+	GossipTime  t;
+	gchar      *timestamp;
+	guint       year_selected;
+	guint       year;
+	guint       month;
+	guint       month_selected;
+	guint       day;
+	guint       day_selected;
+	gboolean    selected;
 
 	t = gossip_time_get_current ();
 	timestamp = gossip_time_to_string_local (t, "%Y%m%d");
@@ -884,15 +887,12 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 	GList         *messages;
 	GList         *dates = NULL;
 	GList         *l;
-
 	const gchar   *date;
-
 	guint          year_selected;
 	guint          year;
 	guint          month;
 	guint          month_selected;
 	guint          day;
-
 
 	contact = log_window_contacts_get_selected (window);
 	if (!contact) {
@@ -986,12 +986,14 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 
 	if (log_window_contacts_is_today_selected (window)) {
 		gossip_log_handler_add_for_contact
-			(contact,
+			(window->log_manager, 
+			 contact,
 			 (GossipLogMessageFunc) log_window_contacts_new_message_cb,
 			 window);
 	} else {
 		gossip_log_handler_remove
-			((GossipLogMessageFunc) log_window_contacts_new_message_cb);
+			(window->log_manager, 
+			 (GossipLogMessageFunc) log_window_contacts_new_message_cb);
 	}
 
 	/* Clear all current messages shown in the textview */
@@ -1002,10 +1004,10 @@ log_window_contacts_get_messages (GossipLogWindow *window,
 
 	/* Get own contact to know which messages are from me or the contact */
 	account = gossip_contact_get_account (contact);
-	own_contact = gossip_log_get_own_contact (account);
+	own_contact = gossip_log_get_own_contact (window->log_manager, account);
 
 	/* Get messages */
-	messages = gossip_log_get_messages_for_contact (contact, date);
+	messages = gossip_log_get_messages_for_contact (window->log_manager, contact, date);
 
 	for (l = messages; l; l = l->next) {
 		message = l->data;
@@ -1306,7 +1308,7 @@ log_window_chatrooms_populate (GossipLogWindow *window)
 
 	gtk_list_store_clear (store);
 
-	chatrooms = gossip_log_get_chatrooms (account);
+	chatrooms = gossip_log_get_chatrooms (window->log_manager, account);
 
 	/* Chatrooms */
 	for (l = chatrooms; l; l = l->next) {
@@ -1429,15 +1431,15 @@ log_window_chatrooms_new_message_cb (GossipContact   *own_contact,
 static gboolean
 log_window_chatrooms_is_today_selected (GossipLogWindow *window)
 {
-	gossip_time_t  t;
-	gchar         *timestamp;
-	guint          year_selected;
-	guint          year;
-	guint          month;
-	guint          month_selected;
-	guint          day;
-	guint          day_selected;
-	gboolean       selected;
+	GossipTime  t;
+	gchar      *timestamp;
+	guint       year_selected;
+	guint       year;
+	guint       month;
+	guint       month_selected;
+	guint       day;
+	guint       day_selected;
+	gboolean    selected;
 
 	t = gossip_time_get_current ();
 	timestamp = gossip_time_to_string_local (t, "%Y%m%d");
@@ -1493,7 +1495,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	}
 
 	/* Get own contact to know which messages are from me or the contact */
-	own_contact = gossip_log_get_own_contact (account);
+	own_contact = gossip_log_get_own_contact (window->log_manager, account);
 
 	/* Either use the supplied date or get the last */
 	date = date_to_show;
@@ -1581,12 +1583,14 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 
 	if (log_window_chatrooms_is_today_selected (window)) {
 		gossip_log_handler_add_for_chatroom
-			(chatroom,
+			(window->log_manager, 
+			 chatroom,
 			 (GossipLogMessageFunc) log_window_chatrooms_new_message_cb,
 			 window);
 	} else {
 		gossip_log_handler_remove
-			((GossipLogMessageFunc) log_window_chatrooms_new_message_cb);
+			(window->log_manager,
+			 (GossipLogMessageFunc) log_window_chatrooms_new_message_cb);
 	}
 
 	/* Clear all current messages shown in the textview */
@@ -1596,7 +1600,7 @@ log_window_chatrooms_get_messages (GossipLogWindow *window,
 	gossip_chat_view_scroll (window->chatview_find, FALSE);
 
 	/* Get messages */
-	messages = gossip_log_get_messages_for_chatroom (chatroom, date);
+	messages = gossip_log_get_messages_for_chatroom (window->log_manager, chatroom, date);
 
 	for (l = messages; l; l = l->next) {
 		message = l->data;
@@ -1755,9 +1759,13 @@ log_window_destroy_cb (GtkWidget       *widget,
 	g_free (window->last_find);
 
 	gossip_log_handler_remove
-		((GossipLogMessageFunc) log_window_contacts_new_message_cb);
+		(window->log_manager,
+		 (GossipLogMessageFunc) log_window_contacts_new_message_cb);
 	gossip_log_handler_remove
-		((GossipLogMessageFunc) log_window_chatrooms_new_message_cb);
+		(window->log_manager,
+		 (GossipLogMessageFunc) log_window_chatrooms_new_message_cb);
+
+	g_object_unref (window->log_manager);
 
 	g_free (window);
 }
@@ -1767,11 +1775,12 @@ gossip_log_window_show (GossipContact  *contact,
 			GossipChatroom *chatroom)
 {
 	static GossipLogWindow *window = NULL;
-	GladeXML               *glade;
 	GossipSession          *session;
+	GossipLogManager       *log_manager;
+	GossipAccountChooser   *account_chooser;
 	GList                  *accounts;
 	gint                    account_num;
-	GossipAccountChooser   *account_chooser;
+	GladeXML               *glade;
 
 	if (window) {
 		gtk_window_present (GTK_WINDOW (window->window));
@@ -1788,6 +1797,9 @@ gossip_log_window_show (GossipContact  *contact,
 	}
 
 	window = g_new0 (GossipLogWindow, 1);
+
+	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
+	window->log_manager = g_object_ref (log_manager);
 
 	glade = gossip_glade_get_file ("main.glade",
 				       "log_window",

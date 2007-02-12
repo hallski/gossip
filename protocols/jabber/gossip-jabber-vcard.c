@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,17 +16,23 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 #include <loudmouth/loudmouth.h>
 
+#include <libgossip/gossip-types.h>
+
 #include <libgossip/gossip-avatar.h>
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-ft.h>
+#include <libgossip/gossip-ft-provider.h>
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jabber-vcard.h"
@@ -243,7 +249,7 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 		     LmMessage          *m,
 		     GossipCallbackData *data)
 {
-	GossipResultCallback callback;
+	GossipCallback callback;
 
 	if (!data || !data->callback) {
 		return LM_HANDLER_RESULT_REMOVE_MESSAGE;
@@ -261,11 +267,11 @@ jabber_vcard_set_cb (LmMessageHandler   *handler,
 }
 
 gboolean
-gossip_jabber_vcard_set (GossipJabber          *jabber,
-			 GossipVCard           *vcard,
-			 GossipResultCallback   callback,
-			 gpointer               user_data,
-			 GError               **error)
+gossip_jabber_vcard_set (GossipJabber    *jabber,
+			 GossipVCard     *vcard,
+			 GossipCallback   callback,
+			 gpointer         user_data,
+			 GError         **error)
 {
 	LmConnection       *connection;
 	LmMessage          *m;

@@ -23,9 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-chatroom.h"
-#include "gossip-contact.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_CHATROOM_PROVIDER           (gossip_chatroom_provider_get_type ())

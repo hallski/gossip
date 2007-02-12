@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 <mr@gnome.org>
+ * Copyright (C) 2005-2007 <martyn@imendio.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,8 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-account.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_ACCOUNT_MANAGER         (gossip_account_manager_get_type ())
@@ -34,7 +32,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_ACCOUNT_MANAGER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT_MANAGER))
 #define GOSSIP_ACCOUNT_MANAGER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT_MANAGER, GossipAccountManagerClass))
 
-typedef struct _GossipAccountManager      GossipAccountManager;
 typedef struct _GossipAccountManagerClass GossipAccountManagerClass;
 
 struct _GossipAccountManager {

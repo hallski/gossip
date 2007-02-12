@@ -16,14 +16,19 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
-#include "libgossip-marshal.h"
+#include "gossip-types.h"
 
 #include "gossip-contact.h"
+#include "gossip-ft.h"
 #include "gossip-ft-provider.h"
+
+#include "libgossip-marshal.h"
 
 static void  ft_provider_base_init (gpointer g_class);
 

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,14 +16,14 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
 #ifndef __GOSSIP_CHAT_MANAGER_H__
 #define __GOSSIP_CHAT_MANAGER_H__
 
 #include <glib-object.h>
-
-#include <libgossip/gossip-contact.h>
 
 G_BEGIN_DECLS
 
@@ -47,15 +47,13 @@ struct _GossipChatManagerClass {
 	GObjectClass parent_class;
 };
 
-
 GType              gossip_chat_manager_get_type       (void) G_GNUC_CONST;
-
-GossipChatManager *gossip_chat_manager_new            (void);
-GossipPrivateChat *gossip_chat_manager_get_chat       (GossipChatManager *manager,
-						       GossipContact     *contact);
-GList *            gossip_chat_manager_get_chats      (GossipChatManager *manager);
-void               gossip_chat_manager_show_chat      (GossipChatManager *manager,
-						       GossipContact     *contact);
+GossipChatManager *gossip_chat_manager_new       (void);
+GossipPrivateChat *gossip_chat_manager_get_chat  (GossipChatManager *manager,
+						  GossipContact     *contact);
+GList *            gossip_chat_manager_get_chats (GossipChatManager *manager);
+void               gossip_chat_manager_show_chat (GossipChatManager *manager,
+						  GossipContact     *contact);
 
 G_END_DECLS
 

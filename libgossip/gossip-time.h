@@ -23,24 +23,22 @@
 
 #define __USE_XOPEN
 #include <time.h>
+
 #include <glib.h>
 
 G_BEGIN_DECLS
 
-/* Note: Always in UTC. */
-typedef long gossip_time_t;
-
 #define GOSSIP_TIME_FORMAT_DISPLAY_SHORT "%H:%M"
 #define GOSSIP_TIME_FORMAT_DISPLAY_LONG  "%a %d %b %Y"
 
-gossip_time_t  gossip_time_get_current     (void);
-gossip_time_t  gossip_time_parse           (const gchar   *str);
-gossip_time_t  gossip_time_parse_format    (const gchar *str,
-					    const gchar *format);
-gchar         *gossip_time_to_string_utc   (gossip_time_t  t,
-					    const gchar   *format);
-gchar         *gossip_time_to_string_local (gossip_time_t  t,
-					    const gchar   *format);
+GossipTime  gossip_time_get_current     (void);
+GossipTime  gossip_time_parse           (const gchar *str);
+GossipTime  gossip_time_parse_format    (const gchar *str,
+					 const gchar *format);
+gchar      *gossip_time_to_string_utc   (GossipTime   t,
+					 const gchar *format);
+gchar      *gossip_time_to_string_local (GossipTime   t,
+					 const gchar *format);
 
 G_END_DECLS
 

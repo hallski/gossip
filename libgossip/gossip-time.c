@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2003-2006 Imendio AB
+ * Copyright (C) 2003-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,18 +16,23 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Richard Hult <richard@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
 
+#include "gossip-types.h"
+
 #include "gossip-time.h"
 
-/* Note: gossip_time_t is always in UTC. */
+/* Note: GossipTime is always in UTC. */
 
-gossip_time_t
+GossipTime
 gossip_time_get_current (void)
 {
 	return time (NULL);
@@ -36,7 +41,7 @@ gossip_time_get_current (void)
 /* The format is: "20021209T23:51:30" and is in UTC. 0 is returned on
  * failure. The alternative format "20021209" is also accepted.
  */
-gossip_time_t
+GossipTime
 gossip_time_parse (const gchar *str)
 {
 	struct tm tm;
@@ -61,8 +66,8 @@ gossip_time_parse (const gchar *str)
 
 /* Converts the UTC timestamp to a string, also in UTC. Returns NULL on failure. */
 gchar *
-gossip_time_to_string_utc (gossip_time_t  t,
-			   const gchar   *format)
+gossip_time_to_string_utc (GossipTime   t,
+			   const gchar *format)
 {
 	gchar      stamp[128];
 	struct tm *tm;
@@ -79,8 +84,8 @@ gossip_time_to_string_utc (gossip_time_t  t,
 
 /* Converts the UTC timestamp to a string, in local time. Returns NULL on failure. */
 gchar *
-gossip_time_to_string_local (gossip_time_t  t,
-			     const gchar   *format)
+gossip_time_to_string_local (GossipTime   t,
+			     const gchar *format)
 {
 	gchar      stamp[128];
 	struct tm *tm;

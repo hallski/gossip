@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 Imendio AB
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,16 +16,20 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
+
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-log.h>
-#include <libgossip/gossip-session.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-cell-renderer-expander.h"
@@ -40,9 +44,7 @@
 #include "gossip-marshal.h"
 #include "gossip-sound.h"
 #include "gossip-stock.h"
-
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-                       GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
+#include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "ContactList"
 
@@ -58,6 +60,8 @@
 
 /* Time after connecting which we wait before active users are enabled */
 #define ACTIVE_USER_WAIT_TO_ENABLE_TIME 5000
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONTACT_LIST, GossipContactListPriv))
 
 struct _GossipContactListPriv {
 	GossipSession       *session;

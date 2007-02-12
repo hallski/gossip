@@ -21,16 +21,14 @@
 #ifndef __GOSSIP_AVATAR_H__
 #define __GOSSIP_AVATAR_H__
 
-#include "gossip-utils.h"
-
 G_BEGIN_DECLS
 
-typedef struct {
+struct _GossipAvatar {
 	guchar *data;
 	gsize   len;
 	gchar  *format;
 	guint   refcount;
-} GossipAvatar;
+};
 
 GossipAvatar *gossip_avatar_new   (guchar       *avatar,
 				   gsize         len,

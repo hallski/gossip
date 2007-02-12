@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 Imendio AB
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,12 +16,16 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Richard Hult <richard@imendio.com>
  */
 
 #ifndef __GOSSIP_POPUP_BUTTON_H__
 #define __GOSSIP_POPUP_BUTTON_H__
 
 #include <gtk/gtktogglebutton.h>
+
+G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_POPUP_BUTTON            (gossip_popup_button_get_type ())
 #define GOSSIP_POPUP_BUTTON(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GOSSIP_TYPE_POPUP_BUTTON, GossipPopupButton))
@@ -47,5 +51,7 @@ GtkWidget *gossip_popup_button_new      (const gchar       *label);
 void       gossip_popup_button_popup    (GossipPopupButton *button);
 void       gossip_popup_button_popdown  (GossipPopupButton *button,
 					 gboolean           ok);
+
+G_END_DECLS
 
 #endif /* __GOSSIP_POPUP_BUTTON_H__ */

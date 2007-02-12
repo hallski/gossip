@@ -23,22 +23,18 @@
 
 #include <glib-object.h>
 
-#include "gossip-account.h"
-#include "gossip-contact.h"
+#define GOSSIP_TYPE_CHATROOM             (gossip_chatroom_get_gtype ())
+#define GOSSIP_CHATROOM(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM, GossipChatroom))
+#define GOSSIP_CHATROOM_CLASS(k)         (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
+#define GOSSIP_IS_CHATROOM(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CHATROOM))
+#define GOSSIP_IS_CHATROOM_CLASS(k)      (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHATROOM))
+#define GOSSIP_CHATROOM_GET_CLASS(o)     (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
 
-#define GOSSIP_TYPE_CHATROOM         (gossip_chatroom_get_gtype ())
-#define GOSSIP_CHATROOM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), GOSSIP_TYPE_CHATROOM, GossipChatroom))
-#define GOSSIP_CHATROOM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST ((k), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
-#define GOSSIP_IS_CHATROOM(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), GOSSIP_TYPE_CHATROOM))
-#define GOSSIP_IS_CHATROOM_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHATROOM))
-#define GOSSIP_CHATROOM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHATROOM, GossipChatroomClass))
+#define GOSSIP_TYPE_CHATROOM_INVITE      (gossip_chatroom_invite_get_type ())
+#define GOSSIP_TYPE_CHATROOM_ROLE        (gossip_chatroom_role_get_gtype ())
+#define GOSSIP_TYPE_CHATROOM_AFFILIATION (gossip_chatroom_affiliation_get_gtype ())
 
-#define GOSSIP_TYPE_CHATROOM_INVITE  (gossip_chatroom_invite_get_type ())
-
-typedef struct _GossipChatroom       GossipChatroom;
 typedef struct _GossipChatroomClass  GossipChatroomClass;
-
-typedef gint GossipChatroomId;
 
 struct _GossipChatroom {
 	GObject parent;
@@ -48,39 +44,10 @@ struct _GossipChatroomClass {
 	GObjectClass parent_class;
 };
 
-typedef enum {
-	GOSSIP_CHATROOM_TYPE_NORMAL,
-} GossipChatroomType;
-
-typedef enum {
-	GOSSIP_CHATROOM_STATUS_INACTIVE,
-	GOSSIP_CHATROOM_STATUS_JOINING,
-	GOSSIP_CHATROOM_STATUS_ACTIVE,
-	GOSSIP_CHATROOM_STATUS_ERROR,
-	GOSSIP_CHATROOM_STATUS_UNKNOWN,
-} GossipChatroomStatus;
-
-#define GOSSIP_TYPE_CHATROOM_ROLE (gossip_chatroom_role_get_gtype ())
-typedef enum {
-	GOSSIP_CHATROOM_ROLE_MODERATOR,
-	GOSSIP_CHATROOM_ROLE_PARTICIPANT,
-	GOSSIP_CHATROOM_ROLE_VISITOR,
-	GOSSIP_CHATROOM_ROLE_NONE
-} GossipChatroomRole;
-
-#define GOSSIP_TYPE_CHATROOM_AFFILIATION (gossip_chatroom_affiliation_get_gtype ())
-typedef enum {
-	GOSSIP_CHATROOM_AFFILIATION_OWNER,
-	GOSSIP_CHATROOM_AFFILIATION_ADMIN,
-	GOSSIP_CHATROOM_AFFILIATION_MEMBER,
-	GOSSIP_CHATROOM_AFFILIATION_OUTCAST,
-	GOSSIP_CHATROOM_AFFILIATION_NONE
-} GossipChatroomAffiliation;
-
-typedef struct {
+struct _GossipChatroomContactInfo {
 	GossipChatroomRole        role;
 	GossipChatroomAffiliation affiliation;
-} GossipChatroomContactInfo;
+};
 
 GType                      gossip_chatroom_get_gtype          (void) G_GNUC_CONST;
 
@@ -146,8 +113,6 @@ void                       gossip_chatroom_contact_joined     (GossipChatroom   
 void                       gossip_chatroom_contact_left       (GossipChatroom            *chatroom,
 							       GossipContact             *contact);
 /* Invite functions */
-typedef struct _GossipChatroomInvite GossipChatroomInvite;
-
 GType                      gossip_chatroom_invite_get_type    (void) G_GNUC_CONST;
 GossipChatroomInvite *     gossip_chatroom_invite_new         (GossipContact        *invitor,
 							       const gchar          *id,

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 Imendio AB
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,8 +22,6 @@
 
 #ifndef __GOSSIP_STATUS_PRESETS_H__
 #define __GOSSIP_STATUS_PRESETS_H__
-
-#include <libgossip/gossip-presence.h>
 
 G_BEGIN_DECLS
 

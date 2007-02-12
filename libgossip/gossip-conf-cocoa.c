@@ -16,21 +16,26 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Richard Hult <richard@imendio.com>
  */
 
 /* TODO: notifications, string list, org.gnome.gossip domain. */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
+
 #include <Cocoa/Cocoa.h>
+
+#include "gossip-types.h"
 
 #include "gossip-conf.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), \
-		       GOSSIP_TYPE_CONF, GossipConfPriv))
-
 #define POOL_ALLOC   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]
 #define POOL_RELEASE [pool release]
+
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_CONF, GossipConfPriv))
 
 typedef struct {
 	NSUserDefaults *defaults;
@@ -46,9 +51,7 @@ static void conf_finalize (GObject *object);
 
 G_DEFINE_TYPE (GossipConf, gossip_conf, G_TYPE_OBJECT);
 
-
 static GossipConf *global_conf = NULL;
-
 
 static void
 gossip_conf_class_init (GossipConfClass *class)

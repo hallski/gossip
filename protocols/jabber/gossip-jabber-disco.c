@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2006 Imendio AB 
+ * Copyright (C) 2004-2007 Imendio AB 
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,7 +20,8 @@
  * Author: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -28,7 +29,10 @@
 
 #include <loudmouth/loudmouth.h>
 
+#include <libgossip/gossip-types.h>
+
 #include <libgossip/gossip-debug.h>
+#include <libgossip/gossip-ft.h>
 #include <libgossip/gossip-utils.h>
 
 #include "gossip-jabber-private.h"

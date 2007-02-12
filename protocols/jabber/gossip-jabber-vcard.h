@@ -28,16 +28,16 @@
 
 G_BEGIN_DECLS
 
-gboolean gossip_jabber_vcard_get (GossipJabber          *jabber,
-				  const gchar           *jid_str,
-				  GossipVCardCallback    callback,
-				  gpointer               user_data,
-				  GError               **error);
-gboolean gossip_jabber_vcard_set (GossipJabber          *jabber,
-				  GossipVCard           *vcard,
-				  GossipResultCallback   callback,
-				  gpointer               user_data,
-				  GError               **error);
+gboolean gossip_jabber_vcard_get (GossipJabber         *jabber,
+				  const gchar          *jid_str,
+				  GossipVCardCallback   callback,
+				  gpointer              user_data,
+				  GError              **error);
+gboolean gossip_jabber_vcard_set (GossipJabber         *jabber,
+				  GossipVCard          *vcard,
+				  GossipCallback        callback,
+				  gpointer              user_data,
+				  GError              **error);
 
 G_END_DECLS
 

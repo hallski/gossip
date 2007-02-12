@@ -1,8 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
- * Copyright (C) 2004-2005 Martyn Russell <mr@gnome.org>
- * Copyright (C) 2003      Kevin Dougherty <gossip@kdough.net>
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,25 +16,26 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
+ *          Kevin Dougherty <gossip@kdough.net>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <gdk/gdkkeysyms.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-ft.h>
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-protocol.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-conf.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-about-dialog.h"
 #include "gossip-accounts-dialog.h"
@@ -1490,11 +1489,12 @@ app_session_protocol_disconnected_cb (GossipSession  *session,
 	app_favorite_chatroom_menu_update ();
 	app_presence_updated ();
 
-	should_reconnect = reason != GOSSIP_DISCONNECT_ASKED;
+	should_reconnect = reason != GOSSIP_PROTOCOL_DISCONNECT_ASKED;
 
 #ifdef HAVE_DBUS
 	/* If NM says we are offline that's useless to retry to connect,
-	 * NM will tell us when network is up again. */
+	 * NM will tell us when network is up again. 
+	 */
 	if (gossip_dbus_nm_get_state (&nm_connected)) {
 		should_reconnect &= nm_connected;
 	}

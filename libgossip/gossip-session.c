@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2005 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,15 +16,34 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 
-#include "libgossip-marshal.h"
+#include "gossip-types.h"
+
+#include "gossip-account.h"
+#include "gossip-account-manager.h"
+#include "gossip-chatroom.h"
+#include "gossip-chatroom-manager.h"
+#include "gossip-chatroom-provider.h"
+#include "gossip-contact.h"
+#include "gossip-contact-manager.h"
 #include "gossip-debug.h"
+#include "gossip-ft.h"
+#include "gossip-ft-provider.h"
 #include "gossip-log.h"
+#include "gossip-message.h"
+#include "gossip-presence.h"
+#include "gossip-protocol.h"
 #include "gossip-session.h"
+#include "gossip-vcard.h"
+
+#include "libgossip-marshal.h"
 
 #define DEBUG_DOMAIN "Session"
 
@@ -34,7 +53,9 @@ typedef struct _GossipSessionPriv  GossipSessionPriv;
 
 struct _GossipSessionPriv {
 	GossipAccountManager  *account_manager;
+	GossipContactManager  *contact_manager;
 	GossipChatroomManager *chatroom_manager;
+	GossipLogManager      *log_manager;
 
 	GHashTable            *accounts;
 	GList                 *protocols;
@@ -357,7 +378,9 @@ session_finalize (GObject *object)
 
 	g_hash_table_destroy (priv->timers);
 
+	g_object_unref (priv->log_manager);
 	g_object_unref (priv->chatroom_manager);
+	g_object_unref (priv->contact_manager);
 
 	g_signal_handlers_disconnect_by_func (priv->account_manager,
 					      session_account_added_cb,
@@ -672,6 +695,7 @@ session_get_protocol (GossipSession *session,
 
 GossipSession *
 gossip_session_new (const gchar *accounts_file,
+		    const gchar *contacts_file,
 		    const gchar *chatrooms_file)
 {
 	GossipSession     *session;
@@ -705,13 +729,20 @@ gossip_session_new (const gchar *accounts_file,
 	g_list_foreach (accounts, (GFunc) g_object_unref, NULL);
 	g_list_free (accounts);
 
+	/* Set up contact manager */
+	priv->contact_manager = gossip_contact_manager_new (session,
+							    priv->account_manager,
+							    contacts_file);
+
 	/* Set up chatroom manager */
 	priv->chatroom_manager = gossip_chatroom_manager_new (priv->account_manager, 
 							      chatrooms_file);
 
 	/* Set up log manager */
-	/* WARNING: CRACK ALERT!!! */
-	gossip_log_init (session);
+	priv->log_manager = gossip_log_manager_new (session, 
+						    priv->account_manager,
+						    priv->contact_manager,
+						    priv->chatroom_manager);
 
 	return session;
 }
@@ -742,6 +773,18 @@ gossip_session_get_account_manager (GossipSession *session)
 	return priv->account_manager;
 }
 
+GossipContactManager *
+gossip_session_get_contact_manager (GossipSession *session)
+{
+	GossipSessionPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+
+	priv = GET_PRIV (session);
+
+	return priv->contact_manager;
+}
+
 GossipChatroomManager *
 gossip_session_get_chatroom_manager (GossipSession *session)
 {
@@ -752,6 +795,18 @@ gossip_session_get_chatroom_manager (GossipSession *session)
 	priv = GET_PRIV (session);
 
 	return priv->chatroom_manager;
+}
+
+GossipLogManager *
+gossip_session_get_log_manager (GossipSession *session)
+{
+	GossipSessionPriv *priv;
+
+	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
+
+	priv = GET_PRIV (session);
+
+	return priv->log_manager;
 }
 
 static void
@@ -1697,11 +1752,11 @@ gossip_session_get_nickname (GossipSession *session,
 }
 
 void
-gossip_session_register_account (GossipSession             *session,
-				 GossipAccount             *account,
-				 GossipVCard               *vcard,
-				 GossipResultErrorCallback  callback,
-				 gpointer                   user_data)
+gossip_session_register_account (GossipSession       *session,
+				 GossipAccount       *account,
+				 GossipVCard         *vcard,
+				 GossipErrorCallback  callback,
+				 gpointer             user_data)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
@@ -1740,11 +1795,11 @@ gossip_session_register_cancel (GossipSession *session,
 }
 
 void
-gossip_session_change_password (GossipSession             *session, 
-				GossipAccount             *account,
-				const gchar               *new_password,
-				GossipResultErrorCallback  callback,
-				gpointer                   user_data)
+gossip_session_change_password (GossipSession       *session, 
+				GossipAccount       *account,
+				const gchar         *new_password,
+				GossipErrorCallback  callback,
+				gpointer             user_data)
 {
 	GossipSessionPriv *priv;
 	GossipProtocol    *protocol;
@@ -1831,12 +1886,12 @@ gossip_session_get_vcard (GossipSession        *session,
 }
 
 gboolean
-gossip_session_set_vcard (GossipSession         *session,
-			  GossipAccount         *account,
-			  GossipVCard           *vcard,
-			  GossipResultCallback   callback,
-			  gpointer               user_data,
-			  GError               **error)
+gossip_session_set_vcard (GossipSession   *session,
+			  GossipAccount   *account,
+			  GossipVCard     *vcard,
+			  GossipCallback   callback,
+			  gpointer         user_data,
+			  GError         **error)
 {
 	GossipSessionPriv *priv;
 	GList             *l;

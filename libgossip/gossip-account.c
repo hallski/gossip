@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,7 +21,8 @@
  *          Xavier Claessens <xclaesse@gmail.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
 
@@ -29,10 +30,12 @@
 #include <glib/gi18n.h>
 #include <gobject/gvaluecollector.h>
 
-#include "libgossip-marshal.h"
-#include "gossip-utils.h"
+#include "gossip-types.h"
 
 #include "gossip-account.h"
+#include "gossip-utils.h"
+
+#include "libgossip-marshal.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_ACCOUNT, GossipAccountPriv))
 

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004-2006 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,26 +16,27 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <unistd.h>
+
+#include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
-#include <glib/gi18n.h>
 
 #ifdef HAVE_GNOME
 #include <libgnomeui/libgnomeui.h>
 #include <libgnomevfs/gnome-vfs-mime-utils.h>
 #endif
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-conf.h>
-#include <libgossip/gossip-protocol.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
-#include <libgossip/gossip-vcard.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-account-chooser.h"
 #include "gossip-app.h"
@@ -43,6 +44,7 @@
 #include "gossip-image-chooser.h"
 #include "gossip-preferences.h"
 #include "gossip-popup-button.h"
+#include "gossip-ui-utils.h"
 
 #define DEBUG_DOMAIN "VCardDialog"
 
@@ -690,7 +692,7 @@ vcard_dialog_set_vcard (GossipVCardDialog *dialog)
 	gossip_session_set_vcard (gossip_app_get_session (),
 				  account,
 				  vcard,
-				  (GossipResultCallback) vcard_dialog_set_vcard_cb,
+				  (GossipCallback) vcard_dialog_set_vcard_cb,
 				  NULL, &error);
 
 	protocol = gossip_session_get_protocol (gossip_app_get_session (), account);

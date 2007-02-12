@@ -1,7 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2003 Imendio AB
- * Copyright (C) 2003-2004 Geert-Jan Van den Bogaerde <geertjan@gnome.org>
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,14 +16,17 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
+ *          Geert-Jan Van den Bogaerde <geertjan@gnome.org>
  */
 
 #ifndef __GOSSIP_CHAT_H__
 #define __GOSSIP_CHAT_H__
 
 #include <glib-object.h>
-
-#include <libgossip/gossip-contact.h>
 
 G_BEGIN_DECLS
 
@@ -35,13 +37,13 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_CHAT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_CHAT))
 #define GOSSIP_CHAT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_CHAT, GossipChatClass))
 
-typedef struct _GossipChat GossipChat;
-typedef struct _GossipChatClass GossipChatClass;
-typedef struct _GossipChatPriv GossipChatPriv;
+typedef struct _GossipChat       GossipChat;
+typedef struct _GossipChatClass  GossipChatClass;
+typedef struct _GossipChatPriv   GossipChatPriv;
 
-#include "gossip-chat-view.h"
-#include "gossip-chat-window.h"
-#include "gossip-spell.h"
+#include "gossip-chat-view.h" 
+#include "gossip-chat-window.h" 
+#include "gossip-spell.h" 
 
 struct _GossipChat {
 	GObject         parent;

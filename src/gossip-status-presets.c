@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005-2006 Imendio AB
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,17 +20,19 @@
  * Author: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-status-presets.h"
 
@@ -260,6 +262,9 @@ status_presets_file_save (void)
 					   "status", sp->status);
 		xmlNewProp (subnode, "presence", state);
 	}
+
+	/* Make sure the XML is indented properly */
+	xmlIndentTreeOutput = 1;
 
 	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", file);
 	xmlSaveFormatFileEnc (file, doc, "utf-8", 1);

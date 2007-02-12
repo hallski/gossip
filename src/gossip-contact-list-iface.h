@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,14 +16,15 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
-
-#include <glib-object.h>
-
-#include <libgossip/gossip-contact.h>
 
 #ifndef __GOSSIP_CONTACT_LIST_IFACE_H__
 #define __GOSSIP_CONTACT_LIST_IFACE_H__
+
+#include <glib-object.h>
 
 G_BEGIN_DECLS
 
@@ -40,14 +41,13 @@ typedef struct _GossipContactListIfaceClass GossipContactListIfaceClass;
 struct _GossipContactListIfaceClass {
 	GTypeInterface   base_iface;
 
-	/* signals */
-	void (*contact_added)             (GossipContactListIface  *list,
-					   GossipContact      *contact);
-	void (*contact_removed)           (GossipContactListIface  *list,
-					   GossipContact      *contact);
-	/* vtable */
-
-	GList * (*get_contacts)           (GossipContactListIface  *list);
+	/* Signals */
+	void (*contact_added)             (GossipContactListIface *list,
+					   GossipContact          *contact);
+	void (*contact_removed)           (GossipContactListIface *list,
+					   GossipContact          *contact);
+	/* VTabled */
+	GList * (*get_contacts)           (GossipContactListIface *list);
 };
 
 GType   gossip_contact_list_iface_get_type     (void) G_GNUC_CONST;

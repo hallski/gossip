@@ -23,9 +23,6 @@
 
 #include <glib-object.h>
 
-#include "gossip-ft.h"
-#include "gossip-contact.h"
-
 G_BEGIN_DECLS
 
 #define GOSSIP_TYPE_FT_PROVIDER           (gossip_ft_provider_get_type ())
@@ -33,7 +30,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_FT_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GOSSIP_TYPE_FT_PROVIDER))
 #define GOSSIP_FT_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), GOSSIP_TYPE_FT_PROVIDER, GossipFTProviderIface))
 
-typedef struct _GossipFTProvider      GossipFTProvider;
 typedef struct _GossipFTProviderIface GossipFTProviderIface;
 
 struct _GossipFTProviderIface {

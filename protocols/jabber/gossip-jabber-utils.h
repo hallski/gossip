@@ -1,4 +1,8 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
+ * Copyright (C) 2004-2007 Imendio AB
+ *
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of the
  * License, or (at your option) any later version.
@@ -12,6 +16,10 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
 #ifndef __GOSSIP_JABBER_UTILS_H__
@@ -19,16 +27,12 @@
 
 #include <loudmouth/loudmouth.h>
 
-#include <libgossip/gossip-presence.h>
-#include <libgossip/gossip-time.h>
-#include <libgossip/gossip-chatroom.h>
-
 G_BEGIN_DECLS
 
 /* utils */
 const gchar *       gossip_jabber_presence_state_to_str    (GossipPresence  *presence);
 GossipPresenceState gossip_jabber_presence_state_from_str  (const gchar     *str);
-gossip_time_t       gossip_jabber_get_message_timestamp    (LmMessage       *m);
+GossipTime          gossip_jabber_get_message_timestamp    (LmMessage       *m);
 GossipChatroomInvite *
 		    gossip_jabber_get_message_conference   (GossipJabber    *jabber,
 							    LmMessage       *m);

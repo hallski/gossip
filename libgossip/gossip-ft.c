@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2005 Imendio AB
+ * Copyright (C) 2005-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,14 +16,18 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
+#include "gossip-types.h"
+
+#include "gossip-contact.h"
 #include "gossip-ft.h"
 
 #define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_FT, GossipFTPriv))
-
 
 typedef struct _GossipFTPriv GossipFTPriv;
 
@@ -39,7 +43,6 @@ struct _GossipFTPriv {
 	gchar         *file_mime_type;
 };
 
-
 static void ft_class_init   (GossipFTClass *class);
 static void ft_init         (GossipFT      *ft);
 static void ft_finalize     (GObject       *object);
@@ -52,7 +55,6 @@ static void ft_set_property (GObject       *object,
 			     const GValue  *value,
 			     GParamSpec    *pspec);
 
-
 enum {
 	PROP_0,
 	PROP_ID,
@@ -63,9 +65,7 @@ enum {
 	PROP_FILE_MIME_TYPE,
 };
 
-
 static gpointer parent_class = NULL;
-
 
 GType
 gossip_ft_get_gtype (void)
@@ -162,7 +162,6 @@ ft_class_init (GossipFTClass *class)
 							      G_PARAM_READWRITE));
 
 	g_type_class_add_private (object_class, sizeof (GossipFTPriv));
-
 }
 
 static void

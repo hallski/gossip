@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,20 +16,22 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
+
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-chatroom-provider.h>
-#include <libgossip/gossip-contact.h>
-#include <libgossip/gossip-debug.h>
-#include <libgossip/gossip-log.h>
-#include <libgossip/gossip-message.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-app.h"
 #include "gossip-cell-renderer-expander.h"
@@ -44,11 +46,11 @@
 #include "gossip-stock.h"
 #include "gossip-ui-utils.h"
 
-#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatPriv))
+#define DEBUG_DOMAIN "GroupChat"
 
 #define IS_ENTER(v) (v == GDK_Return || v == GDK_ISO_Enter || v == GDK_KP_Enter)
 
-#define DEBUG_DOMAIN "GroupChat"
+#define GET_PRIV(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), GOSSIP_TYPE_GROUP_CHAT, GossipGroupChatPriv))
 
 struct _GossipGroupChatPriv {
 	GossipContact          *own_contact;
@@ -1092,6 +1094,7 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 {
 	GossipGroupChatPriv  *priv;
 	GossipChatroomInvite *invite;
+	GossipLogManager     *log_manager;
 
 	priv = GET_PRIV (chat);
 
@@ -1129,7 +1132,8 @@ group_chat_new_message_cb (GossipChatroomProvider *provider,
 		gossip_sound_play (GOSSIP_SOUND_CHAT);
 	}
 
-	gossip_log_message_for_chatroom (priv->chatroom, message, FALSE);
+	log_manager = gossip_session_get_log_manager (gossip_app_get_session ());
+	gossip_log_message_for_chatroom (log_manager, priv->chatroom, message, FALSE);
 
 	g_signal_emit_by_name (chat, "new-message", message);
 }

@@ -1,3 +1,23 @@
+2007-02-12  Martyn Russell  <martyn@imendio.com>
+
+	* src/*.[ch]: Updated to work with new libgossip format.
+
+	* libgossip/*.[ch]: Updated library to comply to the GIMP's
+	devel-docs/includes.txt so that all typedefs are defined in one
+	place and you remove the issue of circular dependencies.
+
+	Added GossipContactManager to write names for all contacts for
+	offline use in logging.
+
+	Updated the logging to now have a GossipLogManager which is
+	associated with the session.
+
+	* protocols/jabber/*.[ch]: Now all contacts are created in the
+	backend instead of all over the code.
+
+	* all: Updated copyright information.
+	
+
 2007-02-12  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c: (chat_window_update_title),

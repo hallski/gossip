@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2002-2006 Imendio AB
+ * Copyright (C) 2002-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,24 +16,28 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Mikael Hallendal <micke@imendio.com>
+ *          Richard Hult <richard@imendio.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <stdlib.h>
-#include <gtk/gtk.h>
+
 #include <glib.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
+#include <glade/glade.h>
 
 #ifdef HAVE_GNOME
 #include <libgnome/gnome-program.h>
 #include <libgnomeui/gnome-ui-init.h>
 #endif
 
-#include <libgossip/gossip-account-manager.h>
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-paths.h>
+#include <libgossip/gossip.h>
 
 #ifdef HAVE_DBUS
 #include "gossip-dbus.h"
@@ -43,9 +47,10 @@
 #include "gossip-galago.h"
 #endif
 
+#include "gossip-app.h"
 #include "gossip-preferences.h"
 #include "gossip-stock.h"
-#include "gossip-app.h"
+#include "gossip-ui-utils.h"
 
 static gboolean  no_connect = FALSE;
 static gboolean  multiple_instances = FALSE;
@@ -120,7 +125,7 @@ main (int argc, char *argv[])
 	gossip_window_set_default_icon_name ("gossip");
 
 	/* Get all accounts. */
-	session = gossip_session_new (NULL, NULL);
+	session = gossip_session_new (NULL, NULL, NULL);
 	account_manager = gossip_session_get_account_manager (session);
 
 	if (account_name && no_connect) {

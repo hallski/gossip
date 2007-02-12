@@ -35,7 +35,6 @@ G_BEGIN_DECLS
 #define GOSSIP_IS_ACCOUNT_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), GOSSIP_TYPE_ACCOUNT))
 #define GOSSIP_ACCOUNT_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), GOSSIP_TYPE_ACCOUNT, GossipAccountClass))
 
-typedef struct _GossipAccount      GossipAccount;
 typedef struct _GossipAccountClass GossipAccountClass;
 
 struct _GossipAccount {
@@ -46,35 +45,15 @@ struct _GossipAccountClass {
 	GObjectClass parent_class;
 };
 
-typedef enum {
-	GOSSIP_ACCOUNT_PARAM_FLAG_REQUIRED    = 1 << 0,
-	GOSSIP_ACCOUNT_PARAM_FLAG_REGISTER    = 1 << 1,
-	GOSSIP_ACCOUNT_PARAM_FLAG_HAS_DEFAULT = 1 << 2,
-	GOSSIP_ACCOUNT_PARAM_FLAG_ALL         = (1 << 3) - 1
-} GossipAccountParamFlags;
-
-typedef struct {
+struct _GossipAccountParam {
 	GossipAccountParamFlags flags;
 	GValue                  g_value;
 	gboolean                modified;
-} GossipAccountParam;
-
-typedef enum {
-	GOSSIP_ACCOUNT_TYPE_JABBER,
-	GOSSIP_ACCOUNT_TYPE_AIM,
-	GOSSIP_ACCOUNT_TYPE_ICQ,
-	GOSSIP_ACCOUNT_TYPE_MSN,
-	GOSSIP_ACCOUNT_TYPE_YAHOO,
-	GOSSIP_ACCOUNT_TYPE_UNKNOWN,
-	GOSSIP_ACCOUNT_TYPE_COUNT
-} GossipAccountType;
-
-typedef void (*GossipAccountParamFunc) (GossipAccount      *account,
-					const gchar        *param_name,
-					GossipAccountParam *param,
-					gpointer            user_data);
+};
 
 GType             gossip_account_get_gtype         (void) G_GNUC_CONST;
+
+/* Account parameter functions */
 void              gossip_account_param_new         (GossipAccount           *account,
 						    const gchar             *first_param_name,
 						    ...);
@@ -102,6 +81,8 @@ GossipAccountParam *
 void              gossip_account_param_foreach     (GossipAccount           *account,
 						    GossipAccountParamFunc   callback,
 						    gpointer                 user_data);
+
+/* Account functions */
 GossipAccountType gossip_account_get_type          (GossipAccount           *account);
 const gchar *     gossip_account_get_name          (GossipAccount           *account);
 gboolean          gossip_account_get_auto_connect  (GossipAccount           *account);

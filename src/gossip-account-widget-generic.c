@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2006 Xavier Claessens <xclaesse@gmail.com>
+ * Copyright (C) 2006-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,18 +16,19 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
+ * Authors: Xavier Claessens <xclaesse@gmail.com>
+ *          Martyn Russell <martyn@imendio.com>
  */
 
-#include <config.h>
+#include "config.h"
 
 #include <string.h>
 
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include <libgossip/gossip-account.h>
-#include <libgossip/gossip-session.h>
-#include <libgossip/gossip-utils.h>
+#include <libgossip/gossip.h>
 
 #include "gossip-account-widget-generic.h"
 #include "gossip-app.h"

@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * Copyright (C) 2004 Imendio AB
+ * Copyright (C) 2004-2007 Imendio AB
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,21 +16,29 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ * 
  */
 
-#include <config.h>
+#include "config.h"
+
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-#include "libgossip-marshal.h"
+#include "gossip-types.h"
 
-#include "gossip-utils.h"
-#include "gossip-debug.h"
+#include "gossip-account.h"
+#include "gossip-account-manager.h"
+#include "gossip-chatroom.h"
 #include "gossip-chatroom-manager.h"
+#include "gossip-debug.h"
 #include "gossip-protocol.h"
+#include "gossip-utils.h"
+
+#include "libgossip-marshal.h"
 
 #define DEBUG_DOMAIN "ChatroomManager"
 
@@ -783,6 +791,9 @@ chatroom_manager_file_save (GossipChatroomManager *manager)
 
 		g_free (type);
 	}
+
+	/* Make sure the XML is indented properly */
+	xmlIndentTreeOutput = 1;
 
 	gossip_debug (DEBUG_DOMAIN, "Saving file:'%s'", file);
 	xmlSaveFormatFileEnc (file, doc, "utf-8", 1);
