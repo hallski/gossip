@@ -1,0 +1,19 @@
+<!--
+  DTD for Gossip contacts.
+  by Martyn Russell <martyn@imendio.com>
+-->
+
+<!-- Root element. -->
+<!ELEMENT contacts (account+)>
+
+<!ELEMENT account (type,(self?),(contact*))>
+<!ATTLIST account id CDATA #REQUIRED>
+
+<!ELEMENT type (#PCDATA)>
+<!ELEMENT self (name)>
+
+<!ELEMENT contact (name)>
+<!ATTLIST contact id CDATA #REQUIRED>
+
+<!ELEMENT name (#PCDATA)>
+ 
