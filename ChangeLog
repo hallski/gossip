@@ -1,3 +1,15 @@
+2007-02-12  Richard Hult  <richard@imendio.com>
+
+	* src/gossip-chat-window.c: (chat_window_update_title),
+	(chat_window_composing_cb), (chat_window_new_message_cb),
+	(chat_window_page_removed_cb), (chat_window_focus_in_event_cb):
+	Rework the patch for bug #400265: Don't show the presence icon in
+	the window title, add back info on who has sent new messages, but
+	add it as a comma separated list. This might not always fit in the
+	window title, but when it does, it's helpful and more consistent
+	than just keeping the last one, and we also keep all unread ones
+	until they are read. Hopefully will satisfy everone...
+
 2007-02-08  Martyn Russell  <martyn@imendio.com>
 
 	* src/gossip-chat-window.c: Improvements to the window title and

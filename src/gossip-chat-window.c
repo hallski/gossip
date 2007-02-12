@@ -25,7 +25,6 @@
 #include <gdk/gdkkeysyms.h>
 #include <glade/glade.h>
 #include <glib/gi18n.h>
-#include <glib/gprintf.h>
 
 #include <libgossip/gossip-debug.h>
 #include <libgossip/gossip-conf.h>
@@ -700,21 +699,50 @@ chat_window_update_title (GossipChatWindow *window,
 	GdkPixbuf		*pixbuf = NULL;
 	const gchar             *str;
 	gchar			*title;
-	gint  			 number_of_chats;
+	gint  			 n_chats;
 	
 	priv = GET_PRIV (window);
-
-	number_of_chats = g_list_length(priv->chats);
-	str = ngettext ("Conversation", "Conversations", number_of_chats);
-
-	if (number_of_chats == 1) {
-		title = g_strdup_printf ("%s - %s", 
-					 gossip_chat_get_name (priv->current_chat), 
-					 str);
+	
+	n_chats = g_list_length (priv->chats);
+	if (n_chats == 1) {
+		if (priv->new_msg) {
+			/* i18n: Window title for when there's a new message
+			 * from "%s".
+			 */
+			title = g_strdup_printf (_("%s - New Message"),
+						 gossip_chat_get_name (priv->current_chat));
+		} else {			
+			/* i18n: Window title for one conversation with contact
+			 * "%s".
+			 */
+			title = g_strdup_printf (
+				_("%s - Conversation"), 
+				gossip_chat_get_name (priv->current_chat));
+		}
 	} else {
-		title = g_strdup_printf ("%s (%d)", 
-					 str, 
-					 number_of_chats);
+		if (priv->chats_new_msg) {
+			GString *names;
+			GList   *l;
+			gint     n_messages = 0;
+
+			names = g_string_new (NULL);
+
+			for (l = priv->chats_new_msg; l; l = l->next) {
+				n_messages++;
+				g_string_append (names,
+						 gossip_chat_get_name (l->data));
+				if (l->next) {
+					g_string_append (names, ", ");
+				}
+			}
+			
+			str = ngettext ("New Message", "New Messages", n_messages);
+			title = g_strdup_printf ("%s - %s", names->str, str);
+			g_string_free (names, TRUE);
+		} else {
+			str = ngettext ("Conversation", "Conversations (%d)", n_chats);
+			title = g_strdup_printf (str, n_chats);
+		}
 	}
 
 	gtk_window_set_title (GTK_WINDOW (priv->dialog), title);
@@ -724,16 +752,8 @@ chat_window_update_title (GossipChatWindow *window,
 		pixbuf = gossip_pixbuf_from_stock (GOSSIP_STOCK_MESSAGE,
 						   GTK_ICON_SIZE_MENU);
 	} else {
-		if (number_of_chats == 1) {
-			pixbuf = chat_window_get_status_pixbuf (window, priv->current_chat);
-		} else {
-			/* TODO: We really could do with an icon here
-			 * for this, something like the new message
-			 * icon but without the "new" part of it.
-			 */
-		}
-
 		chat_window_set_urgency_hint (window, FALSE);
+		pixbuf = NULL;
 	}
 
 	gtk_window_set_icon (GTK_WINDOW (priv->dialog), pixbuf);
@@ -1355,40 +1375,36 @@ chat_window_new_message_cb (GossipChat       *chat,
 			    GossipChatWindow *window)
 {
 	GossipChatWindowPriv *priv;
+	GossipContact        *own_contact;
 
 	priv = GET_PRIV (window);
 
 	gossip_request_user_attention ();
 
-	if (!gossip_chat_window_has_focus (window)) {
-		GossipContact *own_contact;
+	if (gossip_chat_window_has_focus (window)) {
+		gossip_debug (DEBUG_DOMAIN, "New message, we have focus");
+		return;
+	}
+	
+	gossip_debug (DEBUG_DOMAIN, "New message, no focus");
 
-		gossip_debug (DEBUG_DOMAIN, "New message, no focus");
+	priv->new_msg = TRUE;
 
-		priv->new_msg = TRUE;
-		chat_window_update_title (window, chat);
-
-		if (gossip_chat_is_group_chat (chat)) {
-			own_contact = gossip_chat_get_own_contact (chat);
-
-			if (gossip_chat_should_highlight_nick (message, own_contact)) {
-				gossip_debug (DEBUG_DOMAIN, "Highlight this nick");
-				chat_window_set_urgency_hint (window, TRUE);
-			}
-		} else {
+	if (gossip_chat_is_group_chat (chat)) {
+		own_contact = gossip_chat_get_own_contact (chat);
+		
+		if (gossip_chat_should_highlight_nick (message, own_contact)) {
+			gossip_debug (DEBUG_DOMAIN, "Highlight this nick");
 			chat_window_set_urgency_hint (window, TRUE);
 		}
 	} else {
-		gossip_debug (DEBUG_DOMAIN, "New message, we have focus");
-	}
-
-	if (chat == priv->current_chat) {
-		return;
+		chat_window_set_urgency_hint (window, TRUE);
 	}
 
 	if (!g_list_find (priv->chats_new_msg, chat)) {
 		priv->chats_new_msg = g_list_prepend (priv->chats_new_msg, chat);
 		chat_window_update_status (window, chat);
+		chat_window_update_title (window, chat);
 	}
 }
 
@@ -1621,9 +1637,11 @@ chat_window_focus_in_event_cb (GtkWidget        *widget,
 
 	priv = GET_PRIV (window);
 	priv->new_msg = FALSE;
+	priv->chats_new_msg = g_list_remove (priv->chats_new_msg, priv->current_chat);
 
 	/* Set the title, since we now mark all unread messages as read */
-	chat_window_update_title (window, NULL);
+	chat_window_update_title (window, priv->current_chat);
+	chat_window_update_status (window, priv->current_chat);
 
 	return FALSE;
 }
