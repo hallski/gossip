@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gossip\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-12 19:51+0100\n"
+"POT-Creation-Date: 2007-02-13 08:34+0100\n"
 "PO-Revision-Date: 2007-02-03 00:19+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -106,7 +106,7 @@ msgstr "Den senaste katalogen som en avatarbild valdes från."
 
 #: ../gossip.schemas.in.h:18
 msgid "The theme that is used to display the conversation in chat windows."
-msgstr "Det tema som används för att visa konversionationer i chattfönster."
+msgstr "Det tema som används för att visa samtal i chattfönster."
 
 #: ../gossip.schemas.in.h:19
 msgid "Use graphical smileys"
@@ -130,8 +130,7 @@ msgstr "Huruvida ord som skrivs ska kontrolleras mot språken du valt."
 msgid ""
 "Whether or not to convert smileys into graphical images in conversations."
 msgstr ""
-"Huruvida smilisar ska omvandlas till grafiska bilder eller inte i "
-"konversationer."
+"Huruvida smilisar ska omvandlas till grafiska bilder eller inte i samtal."
 
 #: ../gossip.schemas.in.h:24
 msgid "Whether or not to play a sound when messages arrive."
@@ -537,7 +536,7 @@ msgid ""
 "Should you decide to add the account back at a later time, they will still "
 "be available."
 msgstr ""
-"Eventuella konversationer och chattrum kommer inte tas bort.\n"
+"Eventuella samtal och chattrum kommer inte tas bort.\n"
 "\n"
 "Om du senare lägger till kontot igen, kommer dessa fortfarande vara "
 "tillgängliga."
@@ -736,33 +735,25 @@ msgstr "Acceptera"
 msgid "Decline"
 msgstr "Neka"
 
-#. i18n: Window title for when there's a new message
-#. * from "%s".
-#.
-#: ../src/gossip-chat-window.c:712
-#, c-format
-msgid "%s - New Message"
-msgstr "%s - Nytt meddelande"
-
-#: ../src/gossip-chat-window.c:719
-#, c-format
-msgid "%s - Conversation"
-msgstr "%s - Samtal"
-
-#: ../src/gossip-chat-window.c:739 ../ui/main.glade.h:57
+#: ../src/gossip-chat-window.c:712 ../src/gossip-chat-window.c:742
+#: ../ui/main.glade.h:57
 msgid "New Message"
 msgid_plural "New Messages"
 msgstr[0] "Nytt meddelande"
 msgstr[1] "Nya meddelanden"
 
-#: ../src/gossip-chat-window.c:743
+#: ../src/gossip-chat-window.c:718
+msgid "Chat Room"
+msgstr "Chattrum"
+
+#: ../src/gossip-chat-window.c:723 ../src/gossip-chat-window.c:746
 #, c-format
 msgid "Conversation"
 msgid_plural "Conversations (%d)"
 msgstr[0] "Samtal"
 msgstr[1] "Samtal (%d)"
 
-#: ../src/gossip-chat-window.c:1327
+#: ../src/gossip-chat-window.c:1330
 msgid "Typing a message."
 msgstr "Skriver ett meddelande."
 
@@ -850,11 +841,11 @@ msgstr "Skicka en fil"
 #: ../src/gossip-contact-list.c:347 ../ui/chat.glade.h:28
 #: ../ui/main.glade.h:131
 msgid "_View Previous Conversations"
-msgstr "_Visa tidigare konversationer"
+msgstr "_Visa tidigare samtal"
 
 #: ../src/gossip-contact-list.c:347
 msgid "View previous conversations with this contact"
-msgstr "Visa tidigare konversationer med denna kontakt"
+msgstr "Visa tidigare samtal med denna kontakt"
 
 #: ../src/gossip-contact-list.c:2456
 msgid "Do you want to remove this contact from your roster?"
@@ -1800,7 +1791,7 @@ msgstr "Version:"
 
 #: ../ui/main.glade.h:93
 msgid "View Previous Conversations"
-msgstr "Visa tidigare konversationer"
+msgstr "Visa tidigare samtal"
 
 #: ../ui/main.glade.h:95
 msgid "Which account do you want to use?"
@@ -1923,6 +1914,12 @@ msgstr "_Webbplats:"
 msgid "jabber account settings"
 msgstr "inställningar för jabberkonto"
 
+#~ msgid "%s - New Message"
+#~ msgstr "%s - Nytt meddelande"
+
+#~ msgid "%s - Conversation"
+#~ msgstr "%s - Samtal"
+
 #~ msgid "_Forget"
 #~ msgstr "_Glöm"
 
@@ -1949,9 +1946,6 @@ msgstr "inställningar för jabberkonto"
 # "Web site" är "webbplats". "Web page" är "webbsida".
 #~ msgid "Web Site:"
 #~ msgstr "Webbplats:"
-
-#~ msgid "Chat Room"
-#~ msgstr "Chattrum"
 
 #~ msgid "Favourite"
 #~ msgstr "Favorit"
@@ -2273,7 +2267,7 @@ msgstr "inställningar för jabberkonto"
 #~ msgstr "/Kontaktinfor_mation"
 
 #~ msgid "/_View Previous Conversations"
-#~ msgstr "/Visa tidigare konversationer"
+#~ msgstr "/Visa tidigare samtal"
 
 #~ msgid "Enable Spell Checker"
 #~ msgstr "Aktivera stavningskontroll"

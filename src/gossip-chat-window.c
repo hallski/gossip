@@ -709,18 +709,21 @@ chat_window_update_title (GossipChatWindow *window,
 	n_chats = g_list_length (priv->chats);
 	if (n_chats == 1) {
 		if (priv->new_msg) {
-			/* i18n: Window title for when there's a new message
-			 * from "%s".
-			 */
-			title = g_strdup_printf (_("%s - New Message"),
-						 gossip_chat_get_name (priv->current_chat));
-		} else {			
-			/* i18n: Window title for one conversation with contact
-			 * "%s".
-			 */
 			title = g_strdup_printf (
-				_("%s - Conversation"), 
-				gossip_chat_get_name (priv->current_chat));
+				"%s - %s",
+				gossip_chat_get_name (priv->current_chat),
+				_("New Message"));
+		}
+		else if (gossip_chat_is_group_chat (chat)) {
+			title = g_strdup_printf (
+				"%s - %s", 
+				gossip_chat_get_name (priv->current_chat),
+				_("Chat Room"));
+		} else {
+			title = g_strdup_printf (
+				"%s - %s", 
+				gossip_chat_get_name (priv->current_chat),
+				_("Conversation"));
 		}
 	} else {
 		if (priv->chats_new_msg) {
