@@ -3100,16 +3100,16 @@ jabber_request_roster (GossipJabber *jabber,
 	}
 
 	for (node = node->children; node; node = node->next) {
-		GossipContact *contact;
-		const gchar   *jid_str;
-		const gchar   *subscription;
-		gboolean       new_item = FALSE;
-		LmMessageNode *subnode;
-		LmMessageNode *child;
-		GList         *groups;
-		const gchar   *name;
-		GList         *new_groups;
-
+		GossipContact     *contact;
+		GossipContactType  type;
+		const gchar       *jid_str;
+		const gchar       *subscription;
+		gboolean           new_item = FALSE;
+		LmMessageNode     *subnode;
+		LmMessageNode     *child;
+		GList             *groups;
+		const gchar       *name;
+		GList             *new_groups;
 
 		if (strcmp (node->name, "item") != 0) {
 			continue;
@@ -3124,6 +3124,8 @@ jabber_request_roster (GossipJabber *jabber,
 							      jid_str,
 							      &new_item,
 							      FALSE);
+
+		type = gossip_contact_get_type (contact);
 
 		/* Groups */
 		groups = NULL;
@@ -3181,9 +3183,13 @@ jabber_request_roster (GossipJabber *jabber,
 			 * the roster with "to" or "from" conditions.
 			 */
 			if (type != GOSSIP_SUBSCRIPTION_NONE) {
-				g_object_set (contact, "type",
-					      GOSSIP_CONTACT_TYPE_CONTACTLIST,
-					      NULL);
+				g_object_get (contact, "type", &type, NULL);
+				if (type != GOSSIP_CONTACT_TYPE_CONTACTLIST) {
+					new_item = TRUE;
+				}
+				
+				type = GOSSIP_CONTACT_TYPE_CONTACTLIST;
+				g_object_set (contact, "type", type, NULL);
 			}
 
 			gossip_contact_set_subscription (contact, type);

@@ -37,6 +37,7 @@
 #include "gossip-contact-manager.h"
 #include "gossip-chatroom-provider.h"
 #include "gossip-debug.h"
+#include "gossip-private.h"
 #include "gossip-protocol.h"
 #include "gossip-session.h"
 #include "gossip-utils.h"
@@ -53,13 +54,12 @@
 typedef struct _GossipContactManagerPriv GossipContactManagerPriv;
 
 struct _GossipContactManagerPriv {
-	GossipSession        *session;
-	GossipAccountManager *account_manager;
+	GossipSession *session;
 
-	GList                *contacts;
-	gchar                *contacts_file_name;
+	GList         *contacts;
+	gchar         *contacts_file_name;
 
-	guint                 store_timeout_id;
+	guint          store_timeout_id;
 };
 
 static void     contact_manager_finalize         (GObject              *object);
@@ -106,10 +106,6 @@ contact_manager_finalize (GObject *object)
 		priv->store_timeout_id = 0;
 	}
 
-	if (priv->account_manager) {
-		g_object_unref (priv->account_manager);
-	}
-
 	if (priv->session) {
 		g_object_unref (priv->session);
 	}
@@ -122,22 +118,19 @@ contact_manager_finalize (GObject *object)
 }
 
 GossipContactManager *
-gossip_contact_manager_new (GossipSession        *session,
-			    GossipAccountManager *account_manager,
-			    const gchar          *filename)
+gossip_contact_manager_new (GossipSession *session,
+			    const gchar   *filename)
 {
-	GossipContactManager     *manager;
 	GossipContactManagerPriv *priv;
+	GossipContactManager     *manager;
 
 	g_return_val_if_fail (GOSSIP_IS_SESSION (session), NULL);
-	g_return_val_if_fail (GOSSIP_IS_ACCOUNT_MANAGER (account_manager), NULL);
 
 	manager = g_object_new (GOSSIP_TYPE_CONTACT_MANAGER, NULL);
 
 	priv = GET_PRIV (manager);
 
 	priv->session = g_object_ref (session);
-	priv->account_manager = g_object_ref (account_manager);
 
 	g_signal_connect (priv->session, "contact-added",
 			  G_CALLBACK (contact_manager_contact_added_cb),
@@ -172,8 +165,15 @@ gossip_contact_manager_add (GossipContactManager *manager,
 	gossip_account_param_get (account, "account", &account_param, NULL);
 	contact_id = gossip_contact_get_id (contact);
 
+	/* Don't add if it is a self contact, since we do this ourselves */
+	if (!G_STR_EMPTY (account_param) && 
+	    !G_STR_EMPTY (contact_id) && 
+	    strcmp (account_param, contact_id) == 0) {
+		return TRUE;
+	}
+
 	/* Don't add more than once */
-	found = gossip_contact_manager_find (manager, contact_id, account_param) != NULL;
+	found = gossip_contact_manager_find (manager, account_param, contact_id) != NULL;
 
 	if (!found) {
 		gossip_debug (DEBUG_DOMAIN, 
@@ -411,6 +411,7 @@ contact_manager_file_parse (GossipContactManager *manager,
 			    const gchar          *filename)
 {
 	GossipContactManagerPriv *priv;
+	GossipAccountManager     *account_manager;
 	xmlParserCtxtPtr          ctxt;
 	xmlDocPtr                 doc;
 	xmlNodePtr                contacts;
@@ -438,6 +439,9 @@ contact_manager_file_parse (GossipContactManager *manager,
 		xmlFreeParserCtxt (ctxt);
 		return FALSE;
 	}
+
+	/* Do this now so we don't do it for each contact node */
+	account_manager = gossip_session_get_account_manager (priv->session);
 
 	/* The root node, contacts. */
 	contacts = xmlDocGetRootElement (doc);
@@ -474,7 +478,7 @@ contact_manager_file_parse (GossipContactManager *manager,
 			continue;
 		}
 
-		account = gossip_account_manager_find_by_id (priv->account_manager, id, type);
+		account = gossip_account_manager_find_by_id (account_manager, id, type);
 
 		xmlFree (id);
 		xmlFree (type);
@@ -515,7 +519,7 @@ static gboolean
 contact_manager_file_save (GossipContactManager *manager)
 {
 	GossipContactManagerPriv *priv;
-	GossipContact            *contact;
+	GossipAccountManager     *account_manager;
 	GossipAccount            *account;
 	gchar                    *directory;
 	gchar                    *filename;
@@ -523,6 +527,7 @@ contact_manager_file_save (GossipContactManager *manager)
 	xmlParserCtxtPtr          ctxt;
 	xmlDocPtr                 doc;
 	xmlNodePtr                root;
+	GList                    *accounts;
 	GList                    *l;
 	GHashTable               *nodes;
 	gboolean                  create_file = FALSE;
@@ -585,22 +590,19 @@ contact_manager_file_save (GossipContactManager *manager)
 	/* Because each contact may belong to a different account, we
 	 * need to make sure we iterate this per account.
 	 */
+	account_manager = gossip_session_get_account_manager (priv->session);
+	accounts = gossip_account_manager_get_accounts (account_manager);
+
 	gossip_debug (DEBUG_DOMAIN, "Checking account nodes exist");
 
-	for (l = priv->contacts; l; l = l->next) {
+	for (l = accounts; l; l = l->next) {
 		xmlNodePtr         node;
 		GossipAccountType  account_type;
 		const gchar       *account_type_str;
 		const gchar       *account_param;
 		gboolean           exists = FALSE;
 		
-		contact = l->data;
-		account = gossip_contact_get_account (contact);
-
-		if (!account) {
-			g_warning ("ACCOUNT WAS NULL - WTF?");
-			continue;
-		}
+		account = l->data;
 
 		if (g_hash_table_lookup (nodes, account)) {
 			continue;
@@ -652,6 +654,50 @@ contact_manager_file_save (GossipContactManager *manager)
 		g_hash_table_insert (nodes, account, node);
 	}
 
+
+	/* This is a self contact */
+	for (l = accounts; l; l = l->next) {
+		xmlNodePtr      node, child, p;
+		GossipProtocol *protocol;
+		GossipContact  *contact;
+		const gchar    *name; 
+
+		account = l->data;
+		
+		protocol = gossip_session_get_protocol (priv->session, account);
+		contact = gossip_protocol_get_own_contact (protocol);
+		name = gossip_contact_get_name (contact);
+
+		node = g_hash_table_lookup (nodes, account);
+		
+		/* Set self details */
+		p = gossip_xml_node_get_child (node, "self");
+		if (!p) {
+			gossip_debug (DEBUG_DOMAIN, 
+				      "Creating xml node for self contact for "
+				      "account:'%s'", 
+				      gossip_account_get_name (account));
+			child = xmlNewChild (node, NULL, "self", NULL);
+		} else {
+			child = p;
+		}
+		
+		p = gossip_xml_node_get_child (child, "name");
+		if (!p) {
+			child = xmlNewChild (child, NULL, "name", NULL);
+		} else {
+			child = p;
+		}
+		
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Updating xml node for self contact for "
+			      "account:'%s' with name:'%s'", 
+			      gossip_account_get_name (account),
+			      name);
+		
+		xmlNodeSetContent (child, name);
+	}
+
 	for (l = priv->contacts; l; l = l->next) {
 		xmlNodePtr     node, child, p;
 		GossipContact *contact;
@@ -678,65 +724,36 @@ contact_manager_file_save (GossipContactManager *manager)
 			continue;
 		}
 
-		if (strcmp (id, account_param) == 0) {
-			/* This is a self contact */
-			p = gossip_xml_node_get_child (node, "self");
-			if (!p) {
-				gossip_debug (DEBUG_DOMAIN, 
-					      "Creating xml node for self contact for "
-					      "account:'%s'", 
-					      gossip_account_get_name (account));
-				child = xmlNewChild (node, NULL, "self", NULL);
-			} else {
-				child = p;
-			}
-
-			p = gossip_xml_node_get_child (child, "name");
-			if (!p) {
-				child = xmlNewChild (child, NULL, "name", NULL);
-			} else {
-				child = p;
-			}
-
+		/* This is a normal contact */
+		p = gossip_xml_node_find_child_prop_value (node, "id", id); 
+		if (!p) {
 			gossip_debug (DEBUG_DOMAIN, 
-				      "Updating xml node for self contact for "
-				      "account:'%s' with name:'%s'", 
-				      gossip_account_get_name (account),
-				      name);
-
-			xmlNodeSetContent (child, name);
+				      "Creating xml node for contact:'%s' for "
+				      "account:'%s'", 
+				      id,
+				      gossip_account_get_name (account));
+			child = xmlNewChild (node, NULL, "contact", NULL);
+			xmlNewProp (child, "id", id);
 		} else {
-			/* This is a normal contact */
-			p = gossip_xml_node_find_child_prop_value (node, "id", id); 
-			if (!p) {
-				gossip_debug (DEBUG_DOMAIN, 
-					      "Creating xml node for contact:'%s' for "
-					      "account:'%s'", 
-					      id,
-					      gossip_account_get_name (account));
-				child = xmlNewChild (node, NULL, "contact", NULL);
-				xmlNewProp (child, "id", id);
-			} else {
-				child = p;
-			}
-
-			p = gossip_xml_node_get_child (child, "name");
-			if (!p) {
-				gossip_debug (DEBUG_DOMAIN, "Adding name node...");
-				child = xmlNewChild (child, NULL, "name", NULL);
-			} else {
-				child = p;
-			}
-
-			gossip_debug (DEBUG_DOMAIN, 
-				      "Updating xml node for contact:'%s' for "
-				      "account:'%s' to:'%s'", 
-				      id, 
-				      gossip_account_get_name (account),
-				      name);
-			
-			xmlNodeSetContent (child, name);
+			child = p;
 		}
+		
+		p = gossip_xml_node_get_child (child, "name");
+		if (!p) {
+			gossip_debug (DEBUG_DOMAIN, "Adding name node...");
+			child = xmlNewChild (child, NULL, "name", NULL);
+		} else {
+			child = p;
+		}
+		
+		gossip_debug (DEBUG_DOMAIN, 
+			      "Updating xml node for contact:'%s' for "
+			      "account:'%s' to:'%s'", 
+			      id, 
+			      gossip_account_get_name (account),
+			      name);
+		
+		xmlNodeSetContent (child, name);
 	}
 
 	/* Save own contacts */

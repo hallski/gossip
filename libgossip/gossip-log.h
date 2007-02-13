@@ -44,11 +44,6 @@ struct _GossipLogManagerClass {
 };
 
 GType             gossip_log_manager_get_type          (void) G_GNUC_CONST;
-GossipLogManager *gossip_log_manager_new               (GossipSession         *session,
-							GossipAccountManager  *account_manager,
-							GossipContactManager  *contact_manager,
-							GossipChatroomManager *chatroom_manager);
-
 
 /* Log message handlers */
 void              gossip_log_handler_add_for_contact   (GossipLogManager      *manager,

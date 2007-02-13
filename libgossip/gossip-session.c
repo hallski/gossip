@@ -39,6 +39,7 @@
 #include "gossip-log.h"
 #include "gossip-message.h"
 #include "gossip-presence.h"
+#include "gossip-private.h"
 #include "gossip-protocol.h"
 #include "gossip-session.h"
 #include "gossip-vcard.h"
@@ -698,8 +699,8 @@ gossip_session_new (const gchar *accounts_file,
 		    const gchar *contacts_file,
 		    const gchar *chatrooms_file)
 {
-	GossipSession     *session;
 	GossipSessionPriv *priv;
+	GossipSession     *session;
 	GList             *accounts, *l;
 
 	session = g_object_new (GOSSIP_TYPE_SESSION, NULL);
@@ -731,7 +732,6 @@ gossip_session_new (const gchar *accounts_file,
 
 	/* Set up contact manager */
 	priv->contact_manager = gossip_contact_manager_new (session,
-							    priv->account_manager,
 							    contacts_file);
 
 	/* Set up chatroom manager */
@@ -739,10 +739,7 @@ gossip_session_new (const gchar *accounts_file,
 							      chatrooms_file);
 
 	/* Set up log manager */
-	priv->log_manager = gossip_log_manager_new (session, 
-						    priv->account_manager,
-						    priv->contact_manager,
-						    priv->chatroom_manager);
+	priv->log_manager = gossip_log_manager_new (session);
 
 	return session;
 }

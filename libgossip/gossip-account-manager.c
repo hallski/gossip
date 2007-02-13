@@ -38,6 +38,7 @@
 #include "gossip-account.h" 
 #include "gossip-account-manager.h" 
 #include "gossip-debug.h"
+#include "gossip-private.h"
 #include "gossip-protocol.h"
 #include "gossip-utils.h" 
 

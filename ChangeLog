@@ -1,3 +1,33 @@
+2007-02-13  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/Makefile.am:
+	* libgossip/gossip-account-manager.[ch]:
+	* libgossip/gossip-chatroom-manager.[ch]:
+	* libgossip/gossip-contact-manager.[ch]:
+	* libgossip/gossip-log.[ch]:
+	* libgossip/gossip-private.h: Add _new() functions into -private.h
+	since we don't need these outside libgossip and this fixes the
+	circular dep issue I have been trying to figure out for a while
+	now, stupid fooool :(
+
+	* libgossip/gossip-contact-manager.c: Fixed DTD issues by making
+	sure we always put the "self" xml element after the "type" element
+	instead of inserting it randomly.
+
+	* libgossip/gossip-log.c: Fixed unref on own_contact when logging
+	chatroom messages.
+	
+	* libgossip/gossip-session.c: Updated the calls to the _new()
+	functions for the chatroom, account, contact and log managers so
+	we don't pass in other managers, instead we can get those from the
+	session. 
+	
+	* protocols/jabber/gossip-jabber.c: Make sure we emit the
+	"contact-added" signal even if the contact wasn't created after
+	logging on - due to the new gossip-contact-manager code, contacts
+	were being created pre-connection and not emitted due to already
+	existing.
+
 2007-02-13  Richard Hult  <richard@imendio.com>
 
 	* src/gossip-chat-window.c (chat_window_update_title): Tweak the

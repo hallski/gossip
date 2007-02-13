@@ -44,9 +44,6 @@ struct _GossipContactManagerClass {
 };
 
 GType                 gossip_contact_manager_get_type (void) G_GNUC_CONST;
-GossipContactManager *gossip_contact_manager_new      (GossipSession        *session,
-						       GossipAccountManager *account_manager,
-						       const gchar          *filename);
 gboolean              gossip_contact_manager_add      (GossipContactManager *manager,
 						       GossipContact        *contact);
 void                  gossip_contact_manager_remove   (GossipContactManager *manager,

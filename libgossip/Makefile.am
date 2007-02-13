@@ -67,6 +67,7 @@ libgossip_la_SOURCES =             			\
 	gossip-paths.h         				\
 	gossip-presence.c          			\
 	gossip-presence.h          			\
+	gossip-private.h				\
 	gossip-protocol.c          			\
 	gossip-protocol.h          			\
 	gossip-session.c           			\

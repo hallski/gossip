@@ -35,6 +35,7 @@
 #include "gossip-chatroom.h"
 #include "gossip-chatroom-manager.h"
 #include "gossip-debug.h"
+#include "gossip-private.h"
 #include "gossip-protocol.h"
 #include "gossip-utils.h"
 
@@ -563,6 +564,11 @@ chatroom_manager_parse_chatroom (GossipChatroomManager *manager,
 
 	while (child) {
 		gchar *tag;
+
+		if (xmlNodeIsText (child)) {
+			child = child->next;
+			continue;
+		}
 
 		tag = (gchar *) child->name;
 		str = (gchar *) xmlNodeGetContent (child);
