@@ -502,7 +502,7 @@ gossip_chatroom_get_id_str (GossipChatroom *chatroom)
 
 	priv = GET_PRIV (chatroom);
 
-	if (!priv->room && !priv->server) {
+	if (!priv->id_str) {
 		priv->id_str = g_strdup ("");
 	}
 

@@ -1,3 +1,9 @@
+2007-02-15  Martyn Russell  <martyn@imendio.com>
+
+	* libgossip/gossip-chatroom.c: (gossip_chatroom_get_id_str):
+	Crashes when inviting to a group with no room name, fixes bug
+	#405701 (Sjoerd Simons).
+
 2007-02-13  Martyn Russell  <martyn@imendio.com>
 
 	* libgossip/Makefile.am:
