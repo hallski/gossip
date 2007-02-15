@@ -1,5 +1,11 @@
 2007-02-15  Martyn Russell  <martyn@imendio.com>
 
+	* src/gossip-chat.c: (chat_text_view_size_allocate_cb): Long
+	entries expand the chat window automatically, infinitely, fixes
+	bug #398852 (Marcus Leyman).
+
+2007-02-15  Martyn Russell  <martyn@imendio.com>
+
 	* libgossip/gossip-chatroom.c: (gossip_chatroom_get_id_str):
 	Crashes when inviting to a group with no room name, fixes bug
 	#405701 (Sjoerd Simons).

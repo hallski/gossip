@@ -385,7 +385,7 @@ chat_text_view_size_allocate_cb (GtkWidget     *widget,
 		GtkWidget *vscroll;
 
 		priv->vscroll_visible = TRUE;
-		gtk_widget_set_size_request (sw, -1, MAX_INPUT_HEIGHT);
+		gtk_widget_set_size_request (sw, sw->allocation.width, MAX_INPUT_HEIGHT);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
 						GTK_POLICY_NEVER,
 						GTK_POLICY_AUTOMATIC);
